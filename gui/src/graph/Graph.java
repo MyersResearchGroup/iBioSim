@@ -68,6 +68,7 @@ import lpn.parser.LhpnFile;
 import main.Gui;
 import main.Log;
 import main.util.Utility;
+import main.util.dataparser.DTSDParser;
 import main.util.dataparser.DataParser;
 import main.util.dataparser.TSDParser;
 
@@ -433,7 +434,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private void readGraphSpecies(String file) {
 		Gui.frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		graphSpecies = new TSDParser(file, true).getSpecies();
+		
+		if (file.contains(".dtsd"))
+			graphSpecies = (new DTSDParser(file)).getSpecies();
+		else
+			graphSpecies = new TSDParser(file, true).getSpecies();
+		
 		Gui.frame.setCursor(null);
 		if (learnSpecs != null) {
 			for (String spec : learnSpecs) {
@@ -470,6 +476,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 		if ((label.contains("average") && file.contains("mean")) || (label.contains("variance") && file.contains("variance"))
 				|| (label.contains("deviation") && file.contains("standard_deviation"))) {
+			
 			Gui.frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			TSDParser p = new TSDParser(file, warn);
 			Gui.frame.setCursor(null);
@@ -544,13 +551,30 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				return calculateAverageVarianceDeviation(runs, 2, directory, warn, false);
 			}
 		}
+		//if it's not a stats file
 		else {
 			Gui.frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			TSDParser p = new TSDParser(file, warn);
-			Gui.frame.setCursor(null);
-			warn = p.getWarning();
-			graphSpecies = p.getSpecies();
-			ArrayList<ArrayList<Double>> data = p.getData();
+			
+			DTSDParser dtsdParser;
+			TSDParser p;
+			ArrayList<ArrayList<Double>> data;
+			
+			if (file.contains(".dtsd")) {
+				
+				dtsdParser = new DTSDParser(file);
+				Gui.frame.setCursor(null);
+				warn = false;
+				graphSpecies = dtsdParser.getSpecies();
+				data = dtsdParser.getData();
+			}
+			else {
+				p = new TSDParser(file, warn);
+				Gui.frame.setCursor(null);
+				warn = p.getWarning();
+				graphSpecies = p.getSpecies();
+				data = p.getData();
+			}
+			
 			if (learnSpecs != null) {
 				for (String spec : learnSpecs) {
 					if (!graphSpecies.contains(spec)) {
@@ -1660,7 +1684,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		boolean addConst = false;
 		directories = new ArrayList<String>();
 		for (String file : files) {
-			if (file.length() > 3 && file.substring(file.length() - 4).equals("." + printer_id.substring(0, printer_id.length() - 8))) {
+			
+			if (file.length() > 3 && (file.substring(file.length() - 4).equals("." + printer_id.substring(0, printer_id.length() - 8))
+					|| file.substring(file.length() - 5).equals(".dtsd"))) {
+				
 				if (file.contains("run-") || file.contains("mean")) {
 					addMean = true;
 				}
@@ -1718,13 +1745,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				// }
 				for (String getFile : files3) {
 					if (getFile.length() > 3
-							&& getFile.substring(getFile.length() - 4).equals("." + printer_id.substring(0, printer_id.length() - 8))) {
+							&& (getFile.substring(getFile.length() - 4).equals("." + printer_id.substring(0, printer_id.length() - 8))
+							|| getFile.substring(getFile.length() - 5).equals(".dtsd"))) {
 						addIt = true;
 					}
 					else if (new File(outDir + separator + file + separator + getFile).isDirectory()) {
 						for (String getFile2 : new File(outDir + separator + file + separator + getFile).list()) {
 							if (getFile2.length() > 3
-									&& getFile2.substring(getFile2.length() - 4).equals("." + printer_id.substring(0, printer_id.length() - 8))) {
+									&& (getFile2.substring(getFile2.length() - 4).equals("." + printer_id.substring(0, printer_id.length() - 8))
+									|| getFile.substring(getFile.length() - 5).equals(".dtsd"))) {
 								addIt = true;
 							}
 						}
@@ -1741,7 +1770,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					boolean addPercent2 = false;
 					boolean addConst2 = false;
 					for (String f : files3) {
-						if (f.contains(printer_id.substring(0, printer_id.length() - 8))) {
+						if (f.contains(printer_id.substring(0, printer_id.length() - 8)) ||
+								f.contains(".dtsd")) {
 							if (f.contains("run-") || f.contains("mean")) {
 								addMean2 = true;
 							}
@@ -1801,7 +1831,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							// }
 							for (String getFile2 : files2) {
 								if (getFile2.length() > 3
-										&& getFile2.substring(getFile2.length() - 4).equals("." + printer_id.substring(0, printer_id.length() - 8))) {
+										&& (getFile2.substring(getFile2.length() - 4).equals("." + printer_id.substring(0, printer_id.length() - 8))
+												|| getFile2.substring(getFile2.length() - 5).equals(".dtsd"))) {
 									addIt2 = true;
 								}
 							}
@@ -1816,7 +1847,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								boolean addPercent3 = false;
 								boolean addConst3 = false;
 								for (String f2 : files2) {
-									if (f2.contains(printer_id.substring(0, printer_id.length() - 8))) {
+									if (f2.contains(printer_id.substring(0, printer_id.length() - 8))
+											|| f2.contains(".dtsd")) {
 										if (f2.contains("run-") || f2.contains("mean")) {
 											addMean3 = true;
 										}
@@ -1985,7 +2017,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 											for (int j = 1; j < 5; j++) {
 												end = s.charAt(s.length() - j) + end;
 											}
-											if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
+											if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv") || end.equals(".dtsd")) {
 												if (s.contains("run-")) {
 													run = Math.max(run, Integer.parseInt(s.substring(4, s.length() - end.length())));
 												}
@@ -1994,7 +2026,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									}
 									for (int i = 0; i < run; i++) {
 										if (new File(outDir + separator + file + separator + f + separator + "run-" + (i + 1) + "."
-												+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+												+ printer_id.substring(0, printer_id.length() - 8)).exists() ||
+												new File(outDir + separator + file + separator + f 
+														+ separator + "run-" + (i + 1) + ".dtsd").exists()) {
 											IconNode n;
 											if (learnSpecs != null) {
 												n = new IconNode(p.get("run-" + (i + 1) + "." + printer_id.substring(0, printer_id.length() - 8)),
@@ -2161,7 +2195,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								for (int j = 1; j < 5; j++) {
 									end = s.charAt(s.length() - j) + end;
 								}
-								if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
+								if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv") || end.equals(".dtsd")) {
 									if (s.contains("run-")) {
 										run = Math.max(run, Integer.parseInt(s.substring(4, s.length() - end.length())));
 									}
@@ -2321,7 +2355,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					for (int j = 1; j < 5; j++) {
 						end = s.charAt(s.length() - j) + end;
 					}
-					if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
+					if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv") || end.equals(".dtsd")) {
 						if (s.contains("run-")) {
 							run = Math.max(run, Integer.parseInt(s.substring(4, s.length() - end.length())));
 						}
@@ -2329,7 +2363,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 			}
 			for (int i = 0; i < run; i++) {
-				if (new File(outDir + separator + "run-" + (i + 1) + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
+				if (new File(outDir + separator + "run-" + (i + 1) + "." + printer_id.substring(0, printer_id.length() - 8)).exists()
+						|| new File(outDir + separator + "run-" + (i + 1) + ".dtsd").exists()) {
 					IconNode n;
 					if (learnSpecs != null) {
 						n = new IconNode(p.get("run-" + (i + 1) + "." + printer_id.substring(0, printer_id.length() - 8)), "run-" + (i + 1));
@@ -2665,6 +2700,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			int value = JOptionPane.showOptionDialog(Gui.frame, all, "Edit Graph", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
 					options, options[0]);
 			if (value == JOptionPane.YES_OPTION) {
+				
 				double minY;
 				double maxY;
 				double scaleY;
@@ -2696,22 +2732,31 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
+				
 				lastSelected = selected;
 				selected = "";
 				ArrayList<XYSeries> graphData = new ArrayList<XYSeries>();
 				XYLineAndShapeRenderer rend = (XYLineAndShapeRenderer) chart.getXYPlot().getRenderer();
 				int thisOne = -1;
+				
 				for (int i = 1; i < graphed.size(); i++) {
-					GraphSpecies index = graphed.get(i);
+					
+					GraphSpecies index = graphed.get(i);					
 					int j = i;
-					while ((j > 0) && (graphed.get(j - 1).getSpecies().compareToIgnoreCase(index.getSpecies()) > 0)) {
+					
+					while ((j > 0) && 
+							(graphed.get(j - 1).getSpecies().compareToIgnoreCase(index.getSpecies()) > 0)) {
+						
 						graphed.set(j, graphed.get(j - 1));
 						j = j - 1;
 					}
+					
 					graphed.set(j, index);
 				}
+				
 				ArrayList<GraphSpecies> unableToGraph = new ArrayList<GraphSpecies>();
 				HashMap<String, ArrayList<ArrayList<Double>>> allData = new HashMap<String, ArrayList<ArrayList<Double>>>();
+				
 				for (GraphSpecies g : graphed) {
 					if (g.getDirectory().equals("")) {
 						thisOne++;
@@ -2721,17 +2766,34 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						rend.setSeriesShapesVisible(thisOne, g.getVisible());
 						rend.setSeriesPaint(thisOne, g.getShapeAndPaint().getPaint());
 						rend.setSeriesShape(thisOne, g.getShapeAndPaint().getShape());
+						
 						if (!g.getRunNumber().equals("Average") && !g.getRunNumber().equals("Variance")
 								&& !g.getRunNumber().equals("Standard Deviation") && !g.getRunNumber().equals("Termination Time")
 								&& !g.getRunNumber().equals("Percent Termination") && !g.getRunNumber().equals("Constraint Termination")) {
-							if (new File(outDir + separator + g.getRunNumber() + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
+							
+							if (new File(outDir + separator + g.getRunNumber() + "." 
+									+ printer_id.substring(0, printer_id.length() - 8)).exists() ||
+									new File(outDir + separator + g.getRunNumber() + ".dtsd").exists()) {
+								
 								ArrayList<ArrayList<Double>> data;
+								
 								if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 									data = allData.get(g.getRunNumber() + " " + g.getDirectory());
 								}
 								else {
-									data = readData(outDir + separator + g.getRunNumber() + "." + printer_id.substring(0, printer_id.length() - 8),
+									
+									String extension = printer_id.substring(0, printer_id.length() - 8);
+									
+									if (new File(outDir + separator + g.getRunNumber() + "." 
+											+ printer_id.substring(0, printer_id.length() - 8)).exists() == false 
+											&& new File(outDir + separator + g.getRunNumber() + ".dtsd").exists()) {
+										
+										extension = "dtsd";
+									}
+									
+									data = readData(outDir + separator + g.getRunNumber() + "." + extension,
 											g.getRunNumber(), null, false);
+									
 									for (int i = 2; i < graphSpecies.size(); i++) {
 										String index = graphSpecies.get(i);
 										ArrayList<Double> index2 = data.get(i);
@@ -2961,6 +3023,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									ableToGraph = false;
 								}
 								if (ableToGraph) {
+									
 									int next = 1;
 									while (!new File(outDir + separator + "run-" + next + "." + printer_id.substring(0, printer_id.length() - 8))
 											.exists()) {
@@ -3010,19 +3073,37 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						rend.setSeriesShapesVisible(thisOne, g.getVisible());
 						rend.setSeriesPaint(thisOne, g.getShapeAndPaint().getPaint());
 						rend.setSeriesShape(thisOne, g.getShapeAndPaint().getShape());
+						
 						if (!g.getRunNumber().equals("Average") && !g.getRunNumber().equals("Variance")
 								&& !g.getRunNumber().equals("Standard Deviation") && !g.getRunNumber().equals("Termination Time")
 								&& !g.getRunNumber().equals("Percent Termination") && !g.getRunNumber().equals("Constraint Termination")) {
+							
 							if (new File(outDir + separator + g.getDirectory() + separator + g.getRunNumber() + "."
-									+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+									+ printer_id.substring(0, printer_id.length() - 8)).exists()
+									|| new File(outDir + separator + g.getDirectory() + separator + g.getRunNumber() + ".dtsd").exists()) {
+								
 								ArrayList<ArrayList<Double>> data;
+								
+								//if the data has already been put into the data structure
 								if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 									data = allData.get(g.getRunNumber() + " " + g.getDirectory());
 								}
 								else {
+									
+									String extension = printer_id.substring(0, printer_id.length() - 8);
+									
+									if (new File(outDir + separator + g.getDirectory() + separator + g.getRunNumber() + "."
+											+ printer_id.substring(0, printer_id.length() - 8)).exists() == false
+											&& new File(outDir + separator + g.getDirectory() + separator 
+													+ g.getRunNumber() + ".dtsd").exists()) {
+										
+										extension = "dtsd";
+									}
+									
 									data = readData(
 											outDir + separator + g.getDirectory() + separator + g.getRunNumber() + "."
-													+ printer_id.substring(0, printer_id.length() - 8), g.getRunNumber(), g.getDirectory(), false);
+													+ extension, g.getRunNumber(), g.getDirectory(), false);
+									
 									for (int i = 2; i < graphSpecies.size(); i++) {
 										String index = graphSpecies.get(i);
 										ArrayList<Double> index2 = data.get(i);
@@ -3050,6 +3131,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								thisOne--;
 							}
 						}
+						//if it's one of the stats/termination files
 						else {
 							if (g.getRunNumber().equals("Average")
 									&& new File(outDir + separator + g.getDirectory() + separator + "mean" + "."
@@ -3083,7 +3165,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
-							}
+							} //end average
 							else if (g.getRunNumber().equals("Variance")
 									&& new File(outDir + separator + g.getDirectory() + separator + "variance" + "."
 											+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
@@ -3116,7 +3198,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
-							}
+							} //end variance
 							else if (g.getRunNumber().equals("Standard Deviation")
 									&& new File(outDir + separator + g.getDirectory() + separator + "standard_deviation" + "."
 											+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
@@ -3149,7 +3231,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
-							}
+							} //end standard deviation
 							else if (g.getRunNumber().equals("Termination Time")
 									&& new File(outDir + separator + g.getDirectory() + separator + "term-time" + "."
 											+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
@@ -3182,7 +3264,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
-							}
+							} //end termination time
 							else if (g.getRunNumber().equals("Percent Termination")
 									&& new File(outDir + separator + g.getDirectory() + separator + "percent-term-time" + "."
 											+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
@@ -3215,7 +3297,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
-							}
+							} //end percent termination
 							else if (g.getRunNumber().equals("Constraint Termination")
 									&& new File(outDir + separator + g.getDirectory() + separator + "sim-rep" + "."
 											+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
@@ -3248,7 +3330,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
-							}
+							} //end constraint termination
 							else {
 								boolean ableToGraph = false;
 								try {
@@ -3329,7 +3411,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					axis.setRange(minX, maxX);
 					axis.setTickUnit(new NumberTickUnit(scaleX));
 				}
-			}
+			} //end of "Ok" option being true
 			else {
 				selected = "";
 				int size = graphed.size();
@@ -3801,7 +3883,13 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 			}
 			else {
-				readGraphSpecies(outDir + separator + selected + "." + printer_id.substring(0, printer_id.length() - 8));
+				
+				String extension = printer_id.substring(0, printer_id.length() - 8);
+				
+				if (new File(outDir + separator + selected + "." + extension).exists() == false)
+					extension = "dtsd";
+				
+				readGraphSpecies(outDir + separator + selected + "." + extension);
 			}
 		}
 		else {

@@ -215,8 +215,6 @@ public abstract class Simulator {
 		
 		document = reader.readSBML(SBMLFileName);
 		
-		//document.checkConsistency();
-		
 		SBMLErrorLog errors = document.getListOfErrors();
 		
 		//if the sbml document has errors, tell the user and don't simulate
@@ -2442,16 +2440,40 @@ public abstract class Simulator {
 			new HashMap<String, ArrayList<DescriptiveStatistics> >();
 		
 		ArrayList<String> allSpecies = new ArrayList<String>();
+		HashSet<String> speciesSet = new HashSet<String>();
+		
+		//if it's dynamic, we have to parse every run's file to get the full list of species
+		if (dynamicBoolean == true) {
+			
+			for (int run = 1; run <= numRuns; ++run) {
+				
+				DTSDParser dtsdParser = new DTSDParser(outputDirectory + "run-" + run + ".dtsd");
+				speciesSet.addAll(dtsdParser.getSpecies());
+			}
+			
+			speciesSet.remove("time");
+			allSpecies.add("time");		
+			allSpecies.addAll(speciesSet);
+		}
 		
 		//store the TSD data for analysis
 		for (int run = 1; run <= numRuns; ++run) {
 			
-			DTSDParser dtsdParser = new DTSDParser(outputDirectory + "run-" + run + ".dtsd");
+			DTSDParser dtsdParser = null;
+			TSDParser tsdParser = null;
+			HashMap<String, ArrayList<Double> > runStatistics = null;
 			
-			TSDParser tsdParser = new TSDParser(outputDirectory + "run-" + run + ".tsd" , false);
-			allSpecies = tsdParser.getSpecies();
-			
-			HashMap<String, ArrayList<Double> > runStatistics = tsdParser.getHashMap();
+			if (dynamicBoolean == true) {
+				
+				dtsdParser = new DTSDParser(outputDirectory + "run-" + run + ".dtsd");
+				//allSpecies = dtsdParser.getSpecies();
+				runStatistics = dtsdParser.getHashMap(allSpecies);
+			}
+			else {
+				tsdParser = new TSDParser(outputDirectory + "run-" + run + ".tsd", false);			
+				allSpecies = tsdParser.getSpecies();				
+				runStatistics = tsdParser.getHashMap();
+			}
 			
 			for (int speciesIndex = 0; speciesIndex < allSpecies.size(); ++speciesIndex) {
 			

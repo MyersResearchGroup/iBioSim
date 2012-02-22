@@ -2620,7 +2620,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					printer_track_quantity, root + separator + simName, nary, 1, intSpecies, log, biomodelsim, simTab,
 					root, progress, simName + " " + direct, gcmEditor, direct, timeLimit, runTime, modelFile,
 					lhpnAbstraction, abstraction, lpnProperty, absError, timeStep, printInterval, run, rndSeed,
-					refresh, label);
+					refresh, label, running);
 		}
 		else {
 			/*
@@ -2641,7 +2641,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			exit = runProgram.execute(simProp, sbml, dot, xhtml, lhpn, Gui.frame, ODE, monteCarlo, sim, printer_id,
 					printer_track_quantity, root + separator + simName, nary, 1, intSpecies, log, biomodelsim, simTab,
 					root, progress, simName, gcmEditor, null, timeLimit, runTime, modelFile, lhpnAbstraction,
-					abstraction, lpnProperty, absError, timeStep, printInterval, run, rndSeed, refresh, label);
+					abstraction, lpnProperty, absError, timeStep, printInterval, run, rndSeed, refresh, label, running);
 		}
 		if (nary.isSelected() && gcmEditor == null && !sim.contains("markov-chain-analysis") && !lhpn.isSelected()
 				&& exit == 0) {

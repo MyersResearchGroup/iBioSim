@@ -24,6 +24,8 @@ public class DTSDParser {
 	private TDoubleObjectHashMap<HashMap<String, Point> > frameToComponentToLocationMapMap = 
 		new TDoubleObjectHashMap<HashMap<String, Point> >();
 	
+	private ArrayList<String> allSpecies = new ArrayList<String>();
+	
 	int overallMinRow = Integer.MAX_VALUE;
 	int overallMinCol = Integer.MAX_VALUE;
 	int overallMaxRow = Integer.MIN_VALUE;
@@ -39,6 +41,8 @@ public class DTSDParser {
 		
 		FileInputStream fileInput = null;
 		BufferedInputStream fileStream = null;
+		
+		allSpecies.add("time");
 		
 		try {
 		
@@ -166,6 +170,72 @@ public class DTSDParser {
 	
 		return frameToComponentToLocationMapMap.get(frameIndex);
 	}
+
+	/**
+	 * returns data in a format for the grapher
+	 * @return
+	 */
+	public ArrayList<ArrayList<Double>> getData() {
+		
+		ArrayList<ArrayList<Double>> speciesData = new ArrayList<ArrayList<Double>>();
+		
+		int index = 0;
+		
+		for (String speciesID : allSpecies) {
+			
+			speciesData.add(new ArrayList<Double>());
+			
+			if (speciesID.equals("time")) {
+				
+				for (Double time : timeToDataMapMap.keySet())
+					speciesData.get(index).add(time);
+			}
+			else {
+				for (HashMap<String, Double> dataMap : timeToDataMapMap.values()) {
+					
+					if (dataMap.containsKey(speciesID)) {					
+						speciesData.get(index).add(dataMap.get(speciesID));
+					}
+					else speciesData.get(index).add(0.0);
+				}
+			}
+			
+			++index;
+		}
+		
+		return speciesData;
+	}
+	
+	/**
+	 * returns a hashmap in a format for printing statistics
+	 * @return
+	 */
+	public HashMap<String, ArrayList<Double>> getHashMap(ArrayList<String> allSpecies) {
+		
+		HashMap<String, ArrayList<Double>> speciesData = new HashMap<String, ArrayList<Double>>();
+		
+		for (String speciesID : allSpecies) {
+			
+			speciesData.put(speciesID, new ArrayList<Double>());
+			
+			if (speciesID.equals("time")) {
+				
+				for (Double time : timeToDataMapMap.keySet())
+					speciesData.get(speciesID).add(time);
+			}
+			else {
+				for (HashMap<String, Double> dataMap : timeToDataMapMap.values()) {
+					
+					if (dataMap.containsKey(speciesID)) {					
+						speciesData.get(speciesID).add(dataMap.get(speciesID));
+					}
+					else speciesData.get(speciesID).add(0.0);
+				}
+			}
+		}
+		
+		return speciesData;
+	}
 	
 	/**
 	 * returns the dynamic tsd data in hashmap form
@@ -178,6 +248,16 @@ public class DTSDParser {
 	}
 
 	/**
+	 * returns an arraylist of every species (ie, the max number of species)
+	 * 
+	 * @return
+	 */
+	public ArrayList<String> getSpecies() {
+		
+		return allSpecies;
+	}
+	
+	/**
 	 * returns species and values for a particular frame
 	 * 
 	 * @param frameIndex
@@ -185,7 +265,7 @@ public class DTSDParser {
 	 */
 	public HashMap<String, Double> getSpeciesToValueMap(int frameIndex) {
 		
-		return frameToDataMapMap.get(frameIndex);		
+		return frameToDataMapMap.get(frameIndex);
 	}
 	
 	/**
@@ -296,6 +376,8 @@ public class DTSDParser {
 		
 		dataIndex = 0;
 		
+		HashSet<String> speciesSet = new HashSet<String>();
+		
 		//adjust locations so that they display properly
 		for (HashMap<String, Double> speciesToValueMap : timeToDataMapMap.values()) {
 			
@@ -323,6 +405,8 @@ public class DTSDParser {
 			
 			speciesToValueMap.putAll(speciesToAdd);
 			
+			speciesSet.addAll(speciesToValueMap.keySet());
+			
 			//update the component locations due to the new grid size
 			
 			HashMap<String, Point> componentToLocationMap = frameToComponentToLocationMapMap.get(dataIndex);
@@ -335,6 +419,8 @@ public class DTSDParser {
 			
 			++dataIndex;
 		}
+		
+		allSpecies.addAll(speciesSet);
 	}
 	
 

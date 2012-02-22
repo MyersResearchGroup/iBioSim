@@ -171,6 +171,7 @@ public class TSDParser extends DataParser {
 			}
 		}
 		catch (IOException e) {
+			e.printStackTrace();
 			JOptionPane.showMessageDialog(component, "Error Reading Data!" + "\nThere was an error reading the simulation output data.",
 					"Error Reading Data", JOptionPane.ERROR_MESSAGE);
 		}
