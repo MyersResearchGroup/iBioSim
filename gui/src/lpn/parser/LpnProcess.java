@@ -206,6 +206,10 @@ public class LpnProcess extends LhpnFile {
 		variables.addAll(processInternal);
 		return variables;
 	}
+	
+	public int getProcessVarSize() {
+		return processInternal.size() + processInput.size() + processOutput.size();
+	}
 
 	public LhpnFile buildLPN(LhpnFile lpnProc) {
 		// Places
