@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -1016,6 +1017,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					tempFiles.add(lpnFiles[i]);
 				}
 			}
+			Arrays.sort(tempFiles.toArray());
 			lpnFiles = new String[tempFiles.size()];
 			for (int i = 0; i < lpnFiles.length; i++) {
 				lpnFiles[i] = tempFiles.get(i);
