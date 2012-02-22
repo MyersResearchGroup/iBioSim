@@ -15,43 +15,55 @@ public class LpnComponentGraph{
 			HashMap<Integer,Component> compMap, Integer maxNumProcInOneComp) {
 		this.maxNumVarsInOneComp = maxNumProcInOneComp;
 		vertices = new HashMap<Integer, Vertex>();
-		// Create a component graph. Vertex = component ID. Weighted edge = the number of shared variables between two components.	
-		for (ArrayList<Integer> componentIDList : sharedCompVarsMap.values()) {
-			for (int i=0; i<componentIDList.size(); i++) {
-				Vertex curVertex; 
-				if (vertices.keySet().contains(componentIDList.get(i))) {
-					curVertex = vertices.get(componentIDList.get(i));
-				}
-				else {
-					curVertex = new Vertex(componentIDList.get(i), compMap.get(componentIDList.get(i)).getNumVars());
-					vertices.put(componentIDList.get(i), curVertex);
-				}
-				for (int j=0; j<componentIDList.size(); j++) {
-					Vertex nextVertex; 
-					if (vertices.keySet().contains(componentIDList.get(j))) {
-						nextVertex = vertices.get(componentIDList.get(j));
+		// Create a component graph. vertex = component ID. edge weights = the number of shared variables between two components.
+		if (sharedCompVarsMap.isEmpty() && compMap.size() == 1) {
+			for (Iterator<Integer> compMapIter = compMap.keySet().iterator(); compMapIter.hasNext();) {
+				Integer curCompId = compMapIter.next();
+				Vertex curVertex = new Vertex(compMap.get(curCompId).getComponentId(), maxNumProcInOneComp);
+				vertices.put(compMap.get(curCompId).getComponentId(), curVertex);
+			}
+		}
+		else {
+			for (ArrayList<Integer> componentIDList : sharedCompVarsMap.values()) {
+				for (int i=0; i<componentIDList.size(); i++) {
+					Vertex curVertex; 
+					if (vertices.keySet().contains(componentIDList.get(i))) {
+						curVertex = vertices.get(componentIDList.get(i));
 					}
 					else {
-						nextVertex = new Vertex(componentIDList.get(j), compMap.get(componentIDList.get(i)).getNumVars());
-						vertices.put(componentIDList.get(j), nextVertex);
+						curVertex = new Vertex(componentIDList.get(i), compMap.get(componentIDList.get(i)).getNumVars());
+						vertices.put(componentIDList.get(i), curVertex);
 					}
-					if (nextVertex.componentID != curVertex.componentID) {
-						HashMap<Integer,Edge> edges = curVertex.getAdjacencies();
-						// edges != null
-						Edge e; 
-						if (!edges.keySet().contains(nextVertex.componentID)) {
-							e = new Edge(nextVertex);
-							e.addWeight();
-							edges.put(nextVertex.componentID, e);
-						}
-						else {
-							e = edges.get(nextVertex.componentID);
-							e.addWeight();
+					for (int j=0; j<componentIDList.size(); j++) {
+						if (i != j) {
+							Vertex nextVertex; 
+							if (vertices.keySet().contains(componentIDList.get(j))) {
+								nextVertex = vertices.get(componentIDList.get(j));
+							}
+							else {
+								nextVertex = new Vertex(componentIDList.get(j), compMap.get(componentIDList.get(j)).getNumVars());
+								vertices.put(componentIDList.get(j), nextVertex);
+							}
+							if (nextVertex.componentID != curVertex.componentID) {
+								HashMap<Integer,Edge> edges = curVertex.getAdjacencies();
+								// edges != null
+								Edge e; 
+								if (!edges.keySet().contains(nextVertex.componentID)) {
+									e = new Edge(nextVertex);
+									e.addWeight();
+									edges.put(nextVertex.componentID, e);
+								}
+								else {
+									e = edges.get(nextVertex.componentID);
+									e.addWeight();
+								}
+							}
 						}
 					}
 				}
 			}
 		}
+
 	}
 	
 	public void outputDotFile(String fileName) {
@@ -76,7 +88,6 @@ public class LpnComponentGraph{
 	}
 
 	public Vertex selectVerticesToCoalesce() {
-		// Construct a priority queue.
 		VertexComparator comparator = new VertexComparator(maxNumVarsInOneComp);
 		if (vertices.size() < 1) {
 			return null;
