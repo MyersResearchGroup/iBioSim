@@ -32,8 +32,7 @@ public class Vertex {
 			Edge e = adjacencies.get(i);
 			Vertex targetVertex = e.target;
 			int numInternal = e.getWeight(); // e is the shared edge between this vertex and the target vertex.
-//			if (numInternal + this.getNumInternalVars() + targetVertex.getNumInternalVars() > maxNumVarsInOneComp) {
-			if (this.getNumVars() + targetVertex.getNumVars() - numInternal > maxNumVarsInOneComp) {
+			if ((this.getNumVars() + targetVertex.getNumVars() - numInternal) > maxNumVarsInOneComp) {
 				System.out.println("^^^^^^^^^^^^^^^^^^^^^^^");
 				System.out.println("Component " + this.componentID + " has " + this.getNumVars() + " variable(s).");
 				System.out.println("Component " + targetVertex.componentID + " has " + targetVertex.getNumVars() + " variable(s).");
@@ -43,7 +42,7 @@ public class Vertex {
 				System.out.println("vvvvvvvvvvvvvvvvvvvvvvv");
 			}
 			else {
-				int numRemainGlobal = targetVertex.getAllEdgesWeights() - e.getWeight();
+				int numRemainGlobal = targetVertex.getAllEdgesWeights() - numInternal;
 				if (bestNetGain < numInternal - numRemainGlobal) {
 					bestNetGain = numInternal - numRemainGlobal;
 					edgeToMostConnectedNeighbor = e; 
