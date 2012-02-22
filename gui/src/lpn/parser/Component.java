@@ -29,8 +29,8 @@ public class Component extends LhpnFile{
 	}
 
 	public Component() {
-		//compTrans = new ArrayList<Transition>();
-		//compPlaces = new ArrayList<Place>();
+		compTrans = new ArrayList<Transition>();
+		compPlaces = new ArrayList<Place>();
 		processIDList = new ArrayList<Integer>();
 		compInputs = new ArrayList<Variable>();
 		compOutputs = new ArrayList<Variable>();
@@ -53,7 +53,7 @@ public class Component extends LhpnFile{
 		return processIDList;
 	}
 	
-	public void setProcessIDList(ArrayList processIDList) {
+	public void setProcessIDList(ArrayList<Integer> processIDList) {
 		this.processIDList = processIDList;
 	}
 
@@ -81,45 +81,47 @@ public class Component extends LhpnFile{
 			lpnComp.addTransition(t);
 		}
 		// Inputs
-		for (int i=0; i< this.getCompInput().size(); i++) {
-			Variable var = this.getCompInput().get(i);
+		for (int i=0; i< this.getInputs().size(); i++) {
+			Variable var = this.getInputs().get(i);
 			lpnComp.addInput(var.getName(), var.getType(), var.getInitValue());
 		}
 		// Outputs
-		for (int i=0; i< this.getCompOutput().size(); i++) {
-			Variable var = this.getCompOutput().get(i);
+		for (int i=0; i< this.getOutputs().size(); i++) {
+			Variable var = this.getOutputs().get(i);
 			lpnComp.addOutput(var.getName(), var.getType(), var.getInitValue());
 		}
 		// Internal
-		for (int i=0; i< this.getCompInternal().size(); i++) {
-			Variable var = this.getCompInternal().get(i);
+		for (int i=0; i< this.getInternals().size(); i++) {
+			Variable var = this.getInternals().get(i);
 			lpnComp.addInternal(var.getName(), var.getType(), var.getInitValue());
 		}
 		return lpnComp;		
 	}
 
-	private ArrayList<Variable> getCompInternal() {
-		return compInternals;
-	}
-
-	private ArrayList<Variable> getCompOutput() {
-		return compOutputs;
-	}
-
-	private ArrayList<Variable> getCompInput() {
-		return compInputs;
-	}
-
-	private ArrayList<Transition> getCompTransitions() {
+	public ArrayList<Transition> getCompTransitions() {
 		return compTrans;
 	}
 
-	private ArrayList<Place> getComponentPlaces() {
+	public ArrayList<Place> getComponentPlaces() {
 		return compPlaces;
 	}
 	
 	public int getNumVars() {
 		// return the number of variables in this component
+		System.out.println("+++++++ Vars in component " + this.getComponentId() + "+++++++");
+		System.out.println("compInputs:");
+		for (int i=0; i < compInputs.size(); i++) {
+			System.out.println(compInputs.get(i).getName());
+		}
+		System.out.println("compOutputs:");
+		for (int i=0; i < compOutputs.size(); i++) {
+			System.out.println(compOutputs.get(i).getName());
+		}
+		System.out.println("compInternal:");
+		for (int i=0; i < compInternals.size(); i++) {
+			System.out.println(compInternals.get(i).getName());
+		}
+		System.out.println("++++++++++++++++++");
 		return compInputs.size() + compInternals.size() + compOutputs.size();
 	}
 	
