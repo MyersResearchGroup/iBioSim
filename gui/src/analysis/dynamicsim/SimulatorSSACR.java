@@ -122,6 +122,8 @@ public class SimulatorSSACR extends Simulator {
 		
 		while (currentTime < timeLimit && cancelFlag == false) {
 			
+			System.err.println(variableToValueMap.contains(speciesIDSet.toArray()[0]));
+			
 			//if a constraint fails
 			if (constraintFailureFlag == true) {
 				
@@ -214,7 +216,7 @@ public class SimulatorSSACR extends Simulator {
 			String selectedReactionID = selectReaction(selectedGroup, r3, r4);
 			
 			//step3bTime += System.nanoTime() - step3bInitial;
-				
+			
 			
 			
 			//STEP 4: perform selected reaction and update species counts
@@ -254,6 +256,7 @@ public class SimulatorSSACR extends Simulator {
 			//step6Time += System.nanoTime() - step6Initial;
 			
 			
+			
 			//update time for next iteration
 			currentTime += delta_t;
 			
@@ -275,24 +278,7 @@ public class SimulatorSSACR extends Simulator {
 					e.printStackTrace();
 				}
 				
-				printTime += printInterval;
-				
-//				//duplicate a random component
-//				if (currentTime < 30) {
-//					
-//					int compIndex = 0;
-//					int compNum = (int) (randomNumberGenerator.nextDouble() * componentToLocationMap.size());
-//					String compName = "";
-//					
-//					for (String compID : componentToLocationMap.keySet()) {
-//						if (compIndex == compNum)
-//							{compName = compID; break;}
-//						++compIndex;
-//					}
-//					
-//					duplicateComponent(compName);
-//				}
-			}
+				printTime += printInterval;			}
 			
 		} //end simulation loop
 		
@@ -390,9 +376,6 @@ public class SimulatorSSACR extends Simulator {
 		
 		HashSet<String> comps = new HashSet<String>();
 		comps.addAll(componentToLocationMap.keySet());
-		
-//		for (String componentID : comps)
-//			duplicateComponent(componentID);
 		
 		bufferedTSDWriter.write("(" + "\"" + "time" + "\"");
 		
@@ -539,6 +522,7 @@ public class SimulatorSSACR extends Simulator {
 		groupToReactionSetList.clear();
 		groupToTotalGroupPropensityMap.clear();
 		nonemptyGroupSet.clear();
+		speciesIDSet.clear();
 	}
 	
 	/**
@@ -790,9 +774,11 @@ public class SimulatorSSACR extends Simulator {
 				e.printStackTrace();
 			}
 		}
+		//if it's not a dynamic model
 		else {
-		
+			
 			try {
+				setupArrays();
 				setupSpecies();
 			} catch (IOException e) {
 				e.printStackTrace();

@@ -1830,9 +1830,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							// files2[j] = index;
 							// }
 							for (String getFile2 : files2) {
-								if ((getFile2.length() > 3
-										&& (getFile2.substring(getFile2.length() - 4).equals("." + printer_id.substring(0, printer_id.length() - 8))))
-												|| (getFile2.length() > 4 && getFile2.substring(getFile2.length() - 5).equals(".dtsd"))) {
+								if (getFile2.length() > 3
+										&& (getFile2.substring(getFile2.length() - 4).equals("." + printer_id.substring(0, printer_id.length() - 8))
+												|| getFile2.substring(getFile2.length() - 5).equals(".dtsd"))) {
 									addIt2 = true;
 								}
 							}
@@ -2017,7 +2017,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 											for (int j = 1; j < 5; j++) {
 												end = s.charAt(s.length() - j) + end;
 											}
-											if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv") || end.equals("dtsd")) {
+											if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv") || end.equals(".dtsd")) {
 												if (s.contains("run-")) {
 													run = Math.max(run, Integer.parseInt(s.substring(4, s.length() - end.length())));
 												}
@@ -2195,7 +2195,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								for (int j = 1; j < 5; j++) {
 									end = s.charAt(s.length() - j) + end;
 								}
-								if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv") || end.equals("dtsd")) {
+								if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv") || end.equals(".dtsd")) {
 									if (s.contains("run-")) {
 										run = Math.max(run, Integer.parseInt(s.substring(4, s.length() - end.length())));
 									}
@@ -2355,7 +2355,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					for (int j = 1; j < 5; j++) {
 						end = s.charAt(s.length() - j) + end;
 					}
-					if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv") || end.equals("dtsd")) {
+					if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv") || end.equals(".dtsd")) {
 						if (s.contains("run-")) {
 							run = Math.max(run, Integer.parseInt(s.substring(4, s.length() - end.length())));
 						}
