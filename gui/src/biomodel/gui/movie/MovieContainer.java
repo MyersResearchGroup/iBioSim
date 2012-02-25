@@ -177,13 +177,14 @@ public class MovieContainer extends JPanel implements ActionListener {
 		try {
 			filename = TreeChooser.selectFromTree(Gui.frame, filenames, "Choose a simulation file");
 		}
-		catch(TreeChooser.EmptyTreeException e) {
+		catch (TreeChooser.EmptyTreeException e) {
 			
-			JOptionPane.showMessageDialog(Gui.frame, "Sorry, there aren't any simulation files. Please simulate then try again.");
+			JOptionPane.showMessageDialog(Gui.frame, "Sorry, there aren't any simulation files. " +
+					"Please simulate then try again.");
 			return;
 		}
 		
-		if (filename == null)
+		if (filename == null || (filename.contains(".tsd") == false && filename.contains(".dtsd") == false))
 			return;
 		
 		String fullFilePath = analysisView.getRootPath() + filename;
@@ -195,8 +196,10 @@ public class MovieContainer extends JPanel implements ActionListener {
 			numTimePoints = dynamicParser.getNumSamples();
 		}
 		else {
+			dynamic = false;
 			parser = new TSDParser(fullFilePath, false);		
 			numTimePoints = parser.getNumSamples();
+			//schematic.getGraph().buildGraph();
 		}
 		
 		slider.setMaximum(numTimePoints - 1);

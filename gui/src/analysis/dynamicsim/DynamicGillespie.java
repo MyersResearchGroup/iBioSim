@@ -52,7 +52,7 @@ public class DynamicGillespie {
 				break;
 			
 			progressLabel.setText(progressLabel.getText().replace(" (" + (run - 1) + ")","") + " (" + run + ")");
-			running.setMinimumSize(new Dimension((progressLabel.getText().length() * 10) + 30, (int) running.getSize().getHeight()));
+			running.setMinimumSize(new Dimension((progressLabel.getText().length() * 10) + 20, (int) running.getSize().getHeight()));
 	
 			simulator.simulate();
 			simulator.clear();
