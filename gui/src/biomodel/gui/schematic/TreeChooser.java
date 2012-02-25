@@ -17,50 +17,11 @@ public class TreeChooser extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	
-	private TreeChooser(JFrame frame, Vector<Object> list, String message){
+	private JTree tree;
+	
+	private TreeChooser(JFrame frame, Vector<Object> list, String message) {
+		
 		super(new BorderLayout());
-//		jlist = new JList(list);
-//		
-//		jlist.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-//		jlist.setLayoutOrientation(JList.VERTICAL);
-//		jlist.setVisibleRowCount(-1);
-//		jlist.setSelectedIndex(0);
-//		jlist.addMouseListener(new MouseListener() {
-//			
-//			public void mouseReleased(MouseEvent e) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//			
-//			public void mousePressed(MouseEvent e) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//			
-//			public void mouseExited(MouseEvent e) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//			
-//			public void mouseEntered(MouseEvent e) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//			
-//			public void mouseClicked(MouseEvent e) {
-//				// TODO Auto-generated method stub
-//				if(e.getClickCount() == 2){
-//					// TODO: Figure out how to 
-//					//throw new Error("BAH!");
-//				}
-//			}
-//		});
-//		
-//		
-//		JScrollPane listScroller = new JScrollPane(jlist);
-//		listScroller.setPreferredSize(new Dimension(450, 130));
-//		
-//		this.add(listScroller, BorderLayout.NORTH);
 		
 		tree = new JTree(processHierarchy(list));
 		JScrollPane listScroller = new JScrollPane(tree);
@@ -69,22 +30,30 @@ public class TreeChooser extends JPanel {
 		
 		int choice = JOptionPane.showOptionDialog(frame, this, message, JOptionPane.OK_CANCEL_OPTION, 
 				JOptionPane.PLAIN_MESSAGE, null, null, JOptionPane.OK_OPTION);
-		if(choice == JOptionPane.CANCEL_OPTION){
-		//	jlist.removeSelectionInterval(0, list.length);
+		
+		if (choice == JOptionPane.CANCEL_OPTION) {
+			
 			tree.removeAll();
+			tree = null;
 		}
 	}
 	
-	//private JList jlist;
-	private JTree tree;
-	public String getSelectedValue(){
-		TreePath tp = tree.getSelectionPath();
-		if(tp == null)
+	public String getSelectedValue() {
+		
+		if (tree == null)
 			return null;
+		
+		TreePath tp = tree.getSelectionPath();
+		
+		if (tp == null)
+			return null;
+		
 		String out = "";
-		for(Object part:tp.getPath()){
+		
+		for (Object part : tp.getPath()) {
 			out += File.separator + ((DefaultMutableTreeNode)part).toString();
 		}
+		
 		return out;
 	}
 
@@ -116,17 +85,21 @@ public class TreeChooser extends JPanel {
 	 * @param type
 	 * @return
 	 */
-	public static class EmptyTreeException extends Exception{private static final long serialVersionUID = 1L;}
-	public static String selectFromTree(JFrame frame, Vector<Object> list, String message) throws EmptyTreeException{
-		if(list.size() == 0)
-			throw new EmptyTreeException();
+	public static class EmptyTreeException extends Exception {
+		private static final long serialVersionUID = 1L;
+	}
+	
+	public static String selectFromTree(JFrame frame, Vector<Object> list, String message) throws EmptyTreeException {
 		
-		//if(list.size() == 1){
-		//	return (String)list.get(0);
+		if (list.size() == 0)
+			throw new EmptyTreeException();
 			
 		TreeChooser pc = new TreeChooser(frame, list, message);
-		String sv = pc.getSelectedValue();
-		return sv;
+		String path = "";
+		
+		path = pc.getSelectedValue();
+		
+		return path;
 	}
 	
 	
