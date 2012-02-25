@@ -1329,8 +1329,12 @@ public abstract class Simulator {
 				return currentTime;
 			}
 			else {
-								
-				return variableToValueMap.get(node.getName());
+				
+				if (this.speciesToHasOnlySubstanceUnitsMap.get(node.getName()) != null &&
+						this.speciesToHasOnlySubstanceUnitsMap.get(node.getName()) == false)
+					return (variableToValueMap.get(node.getName()) / this.speciesToCompartmentSizeMap.get(node.getName()));
+				else				
+					return variableToValueMap.get(node.getName());
 			}
 		}
 		
@@ -2263,6 +2267,11 @@ public abstract class Simulator {
 						String compartmentID = ((String[])eventToFire.eventID.split("__"))[0];
 						duplicateComponent(compartmentID, eventToFire.eventID);
 					}
+					else if (eventToFire.eventID.contains("__Death__")) {
+						
+						String compartmentID = ((String[])eventToFire.eventID.split("__"))[0];
+						eraseComponent(compartmentID);
+					}
 						
 					if (speciesToHasOnlySubstanceUnitsMap.get(variable) != null && 
 							speciesToHasOnlySubstanceUnitsMap.get(variable) == false)
@@ -2344,11 +2353,7 @@ public abstract class Simulator {
 			if (speciesToIsBoundaryConditionMap.get(speciesID) == false &&
 					variableToIsConstantMap.get(speciesID) == false) {
 				
-				if (speciesToHasOnlySubstanceUnitsMap.get(speciesID) == false)
-					variableToValueMap.adjustValue(speciesID, 
-							(int)(stoichiometry / speciesToCompartmentSizeMap.get(speciesID)));				
-				else				
-					variableToValueMap.adjustValue(speciesID, stoichiometry);
+				variableToValueMap.adjustValue(speciesID, stoichiometry);
 			}
 			
 			//if this variable that was just updated is part of an assignment rule (RHS)
@@ -2400,7 +2405,6 @@ public abstract class Simulator {
 			}			
 			
 			bufferedTSDWriter.write("),\n");
-		
 		}
 		
 		bufferedTSDWriter.write("(");
@@ -3200,7 +3204,13 @@ public abstract class Simulator {
 		if (speciesIDSet.contains(speciesID))
 			return;
 		
-		variableToValueMap.put(speciesID, species.getInitialAmount());
+		if (species.isSetInitialAmount())
+			variableToValueMap.put(speciesID, species.getInitialAmount());
+		else if (species.isSetInitialConcentration()) {
+			
+				variableToValueMap.put(speciesID, species.getInitialConcentration() 
+						* species.getCompartmentInstance().getSize());
+		}
 		
 		if (numRules > 0)
 			variableToIsInAssignmentRuleMap.put(speciesID, false);
@@ -3512,6 +3522,27 @@ public abstract class Simulator {
 			TSDWriter = new FileWriter(outputDirectory + "run-" + currentRun + extension);
 			bufferedTSDWriter = new BufferedWriter(TSDWriter);
 			bufferedTSDWriter.write('(');
+			
+			if (currentRun > 1 && dynamicBoolean == false) {
+			
+				bufferedTSDWriter.write("(" + "\"" + "time" + "\"");
+				
+				for (String speciesID : speciesIDSet) {
+					
+					bufferedTSDWriter.write(", \"" + speciesID + "\"");
+				}
+				
+				//print compartment location IDs
+				for (String componentLocationID : componentToLocationMap.keySet()) {
+					
+					String locationX = componentLocationID + "__locationX";
+					String locationY = componentLocationID + "__locationY";
+					
+					bufferedTSDWriter.write(", \"" + locationX + "\", \"" + locationY + "\"");
+				}
+				
+				bufferedTSDWriter.write("),\n");
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}		
@@ -3596,6 +3627,7 @@ public abstract class Simulator {
 		
 		
 	}
+	
 	
 	//EVENT TO FIRE INNER CLASS
 	/**
