@@ -263,6 +263,9 @@ public class SimulatorSSADirect extends Simulator {
 		setupEvents();
 	}
 
+	protected void eraseComponentFurther(HashSet<String> reactionIDs) {
+	}
+	
 	/**
 	 * 
 	 */

@@ -6,7 +6,6 @@ import gnu.trove.map.hash.TObjectIntHashMap;
 import gnu.trove.set.hash.TIntHashSet;
 
 import java.awt.Point;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import java.util.ArrayList;
@@ -24,11 +23,7 @@ import javax.xml.stream.XMLStreamException;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.SBMLDocument;
-import org.sbml.jsbml.SBMLErrorLog;
 import org.sbml.jsbml.SBMLReader;
-
-import analysis.dynamicsim.Simulator.EventToFire;
-import analysis.dynamicsim.Simulator.StringDoublePair;
 
 import main.Gui;
 import main.util.MutableBoolean;
@@ -122,8 +117,6 @@ public class SimulatorSSACR extends Simulator {
 		
 		while (currentTime < timeLimit && cancelFlag == false) {
 			
-			System.err.println(variableToValueMap.contains(speciesIDSet.toArray()[0]));
-			
 			//if a constraint fails
 			if (constraintFailureFlag == true) {
 				
@@ -199,7 +192,7 @@ public class SimulatorSSACR extends Simulator {
 			int selectedGroup = selectGroup(r2);
 			
 			//this happens when there aren't any nonempty groups
-			if (selectedGroup == 0) {				
+			if (selectedGroup == 0) {
 				
 				currentTime = printTime + printInterval/2;
 				continue;
@@ -278,7 +271,8 @@ public class SimulatorSSACR extends Simulator {
 					e.printStackTrace();
 				}
 				
-				printTime += printInterval;			}
+				printTime += printInterval;			
+			}
 			
 		} //end simulation loop
 		
@@ -526,6 +520,19 @@ public class SimulatorSSACR extends Simulator {
 	}
 	
 	/**
+	 * removes a component's reactions from reactionToGroupMap and groupToReactionSetList
+	 */
+	protected void eraseComponentFurther(HashSet<String> reactionIDs) {
+		
+		for (String reactionID : reactionIDs) {
+			
+			int group = reactionToGroupMap.get(reactionID);
+			reactionToGroupMap.remove(reactionID);
+			groupToReactionSetList.get(group).remove(reactionID);
+		}
+	}
+	
+	/**
 	 * assigns all reactions to (possibly new) groups
 	 * this is called when the minPropensity changes, which
 	 * changes the groups' floor/ceiling propensity values
@@ -568,12 +575,15 @@ public class SimulatorSSACR extends Simulator {
 			groupToTotalGroupPropensityMap.put(groupNum, 0.0);
 		}
 		
-		numGroups = newNumGroups;		
+		numGroups = newNumGroups;
+		totalPropensity = 0;
 		
 		//assign reactions to groups
 		for (String reaction : reactionToPropensityMap.keySet()) {
 			
 			double propensity = reactionToPropensityMap.get(reaction);
+			
+			totalPropensity += propensity;
 			
 			//the zero-propensity group doesn't need altering
 			if (propensity == 0.0) continue;
@@ -946,6 +956,9 @@ public class SimulatorSSACR extends Simulator {
 			
 			HashSet<StringDoublePair> reactantStoichiometrySet = 
 				reactionToReactantStoichiometrySetMap.get(affectedReactionID);
+			
+			if (reactantStoichiometrySet == null)
+				continue;
 			
 			//check for enough molecules for the reaction to occur
 			for (StringDoublePair speciesAndStoichiometry : reactantStoichiometrySet) {

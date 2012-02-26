@@ -141,6 +141,8 @@ public abstract class Simulator {
 	
 	protected HashMap<String, HashSet<String> > componentToEventSetMap = null;
 	
+	protected HashSet<String> componentIDSet = new HashSet<String>();
+	
 	//propensity variables
 	protected double totalPropensity = 0.0;
 	protected double minPropensity = Double.MAX_VALUE;
@@ -595,12 +597,14 @@ public abstract class Simulator {
 		int componentNumber = componentToReactionSetMap.size() + 1;
 		String childComponentID = "C" + String.valueOf(componentNumber);
 		
-		while (componentToReactionSetMap.keySet().contains(childComponentID) == true) {
+		while (componentToReactionSetMap.keySet().contains(childComponentID) == true ||
+				componentIDSet.contains(childComponentID) == true) {
 			
 			++componentNumber;
 			childComponentID = "C" + String.valueOf(componentNumber);
 		}
 		
+		componentIDSet.add(childComponentID);
 		childComponentID = childComponentID + "_of_" + parentComponentID;
 		
 		//determine new component location
@@ -1142,6 +1146,8 @@ public abstract class Simulator {
 		componentToEventSetMap.put(childComponentID, childEventSet);
 	}
 	
+	protected abstract void eraseComponentFurther(HashSet<String> reactionIDs);
+	
 	/**
 	 * erases all traces of a component (ie, its reactions and species and parameters, etc) and updates data structures
 	 * and the simulation state
@@ -1149,9 +1155,68 @@ public abstract class Simulator {
 	 * 
 	 * @param componentID
 	 */
-	protected void eraseComponent(String componentID) {
+	protected HashSet<String> eraseComponent(String componentID) {
 		
+		for (String reactionID : componentToReactionSetMap.get(componentID)) {
+			
+			reactionToPropensityMap.remove(reactionID);
+			reactionToSpeciesAndStoichiometrySetMap.remove(reactionID);	
+			reactionToReactantStoichiometrySetMap.remove(reactionID);	
+			reactionToFormulaMap.remove(reactionID);
+		}
 		
+		//simulator-specific data structure erasal
+		eraseComponentFurther(componentToReactionSetMap.get(componentID));
+		
+		for (String variableID : componentToVariableSetMap.get(componentID)) {
+			
+			variableToEventSetMap.remove(variableID);
+			
+			if (variableToAffectedAssignmentRuleSetMap != null)
+				variableToAffectedAssignmentRuleSetMap.remove(variableID);
+			if (variableToIsInAssignmentRuleMap != null)
+				variableToIsInAssignmentRuleMap.remove(variableID);
+			if (variableToAffectedConstraintSetMap != null)
+				variableToAffectedConstraintSetMap.remove(variableID);
+			if (variableToIsInConstraintMap != null)
+				variableToIsInConstraintMap.remove(variableID);
+			
+			variableToIsConstantMap.remove(variableID);
+			variableToValueMap.remove(variableID);
+				
+			speciesToIsBoundaryConditionMap.remove(variableID);
+			speciesToHasOnlySubstanceUnitsMap.remove(variableID);
+			speciesToCompartmentSizeMap.remove(variableID);
+			speciesIDSet.remove(variableID);
+		}
+		
+//		for (String eventID : componentToEventSetMap.get(componentID)) {
+//			
+//			triggeredEventQueue.remove(eventID);
+//			untriggeredEventSet.remove(eventID);
+//			eventToPriorityMap.remove(eventID);
+//			eventToDelayMap.remove(eventID);
+//			eventToHasDelayMap.remove(eventID);
+//			eventToTriggerPersistenceMap.remove(eventID);
+//			eventToUseValuesFromTriggerTimeMap.remove(eventID);
+//			eventToTriggerMap.remove(eventID);
+//			eventToTriggerInitiallyTrueMap.remove(eventID);
+//			eventToPreviousTriggerValueMap.remove(eventID);
+//			eventToAssignmentSetMap.remove(eventID);
+//			eventToAffectedReactionSetMap.remove(eventID);
+//		}
+		
+		HashSet<String> deadEvents = new HashSet<String>();
+		deadEvents.addAll(componentToEventSetMap.get(componentID));
+		
+		componentToLocationMap.remove(componentID);
+		componentToReactionSetMap.remove(componentID);
+		componentToVariableSetMap.remove(componentID);
+		componentToEventSetMap.remove(componentID);
+		
+		updateAfterDynamicChanges();
+		
+		return deadEvents;
 	}
 	
 	/**
@@ -2231,13 +2296,15 @@ public abstract class Simulator {
 		//set of fired events to add to the untriggered set
 		HashSet<String> firedEvents = new HashSet<String>();
 		
+		//set of events to be removed due to component erasure
+		HashSet<String> deadEvents = new HashSet<String>();
+		
 		//fire all events whose fire time is less than the current time	
 		while (triggeredEventQueue.size() > 0 && triggeredEventQueue.peek().fireTime <= currentTime) {
 			
 			EventToFire eventToFire = triggeredEventQueue.poll();
-			String eventToFireID = eventToFire.eventID;
-			affectedReactionSet.addAll(eventToAffectedReactionSetMap.get(eventToFireID));
-			
+			String eventToFireID = eventToFire.eventID;			
+			affectedReactionSet.addAll(eventToAffectedReactionSetMap.get(eventToFireID));			
 			firedEvents.add(eventToFireID);
 			eventToPreviousTriggerValueMap.put(eventToFireID, true);
 			
@@ -2262,6 +2329,8 @@ public abstract class Simulator {
 				//update the species, but only if it's not a constant
 				if (variableToIsConstantMap.get(variable) == false) {
 					
+					//these are in here because there's always a size event assignment
+					//for the size of the components array
 					if (eventToFire.eventID.contains("__Division__")) {
 						
 						String compartmentID = ((String[])eventToFire.eventID.split("__"))[0];
@@ -2270,7 +2339,7 @@ public abstract class Simulator {
 					else if (eventToFire.eventID.contains("__Death__")) {
 						
 						String compartmentID = ((String[])eventToFire.eventID.split("__"))[0];
-						eraseComponent(compartmentID);
+						deadEvents = eraseComponent(compartmentID);
 					}
 						
 					if (speciesToHasOnlySubstanceUnitsMap.get(variable) != null && 
@@ -2294,6 +2363,39 @@ public abstract class Simulator {
 		//add the fired events back into the untriggered set
 		//this allows them to trigger/fire again later
 		untriggeredEventSet.addAll(firedEvents);
+		
+		if (deadEvents.size() > 0) {
+			
+			for (String eventID : deadEvents) {
+				
+				untriggeredEventSet.remove(eventID);
+				eventToPriorityMap.remove(eventID);
+				eventToDelayMap.remove(eventID);
+				eventToHasDelayMap.remove(eventID);
+				eventToTriggerPersistenceMap.remove(eventID);
+				eventToUseValuesFromTriggerTimeMap.remove(eventID);
+				eventToTriggerMap.remove(eventID);
+				eventToTriggerInitiallyTrueMap.remove(eventID);
+				eventToPreviousTriggerValueMap.remove(eventID);
+				eventToAssignmentSetMap.remove(eventID);
+				eventToAffectedReactionSetMap.remove(eventID);
+			}
+			
+			//copy the triggered event queue -- except the events that are now dead/removed
+			PriorityQueue<EventToFire> newTriggeredEventQueue = new PriorityQueue<EventToFire>(5, eventComparator);
+			
+			while (triggeredEventQueue.size() > 0) {
+			
+				EventToFire event = triggeredEventQueue.poll();
+				EventToFire eventToAdd = 
+					new EventToFire(event.eventID, (HashSet<Object>) event.eventAssignmentSet.clone(), event.fireTime);
+				
+				if (deadEvents.contains(event.eventID) == false)
+					newTriggeredEventQueue.add(eventToAdd);
+			}
+			
+			triggeredEventQueue = newTriggeredEventQueue;
+		}
 		
 		if (affectedAssignmentRuleSet.size() > 0)
 			performAssignmentRules(affectedAssignmentRuleSet);
@@ -3184,6 +3286,8 @@ public abstract class Simulator {
 				//if there's an underscore, remove everything before it to leave the compartmentID
 				String[] splitEventID = componentID.split("_");
 				componentID = splitEventID[splitEventID.length - 1];
+				
+				componentIDSet.add(componentID);
 				
 				if (componentToEventSetMap.containsKey(componentID) == false)
 					componentToEventSetMap.put(componentID, new HashSet<String>());
