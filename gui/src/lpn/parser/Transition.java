@@ -792,13 +792,24 @@ public class Transition {
 				}
 			}
 			if (disabled == true) {
+				Place[] preset1 = this.getPreset();
+				Place[] preset2 = curTran.getPreset();
+				Boolean share=false;
+				for (int i=0; i < preset1.length && !share; i++) {
+					for (int j=0; j < preset2.length && !share; j++) {
+						if (preset1[i].getName().equals(preset2[j].getName())) share=true;
+					}
+				}
+				if (!share) return curTran;
 //				if(this.sharePreSet(curTran) == false)
 //				  return curTran;
+				/*
 				for (Iterator<String> confIter = this.getConflictSetTransNames().iterator(); confIter.hasNext();) { 
 					String tran = confIter.next();
 					if (curTran.getConflictSetTransNames().contains(tran))
 						return curTran;
 				}
+				*/
 			}
 		}
 		return null;
