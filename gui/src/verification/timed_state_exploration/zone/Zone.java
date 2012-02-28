@@ -129,7 +129,8 @@ public class Zone {
 		// Sorting the array.
 		Arrays.sort(_indexToTimer);
 		
-		if(_indexToTimer[0] != 0)
+		//if(_indexToTimer[0] != 0)
+		if(_indexToTimer[0] != -1)
 		{
 			// Add the zeroth timer.
 			int[] newIndexToTimer = new int[_indexToTimer.length+1];
@@ -139,6 +140,7 @@ public class Zone {
 			}
 			
 			_indexToTimer = newIndexToTimer;
+			_indexToTimer[0] = -1;
 		}
 		
 //		if(_indexToTimer[0] < 0)
@@ -162,7 +164,7 @@ public class Zone {
 		for(int i=0; i<timers.length; i++)
 		{
 			// Since the zeroth timer is not included in the timers passed
-			// the index in the DBM is 1 more than the index of the timer
+			// to the index in the DBM is 1 more than the index of the timer
 			// in the timers array.
 			newIndex.put(i+1, Arrays.binarySearch(_indexToTimer, timers[i]));
 		}
@@ -280,6 +282,7 @@ public class Zone {
 		//_indexToTimer = new int[indexToTran.size()+1];
 		//_indexToTimer = new int[_indexToTransition.size()+1];
 		_indexToTimer = new int[enabledTranMap.size()+1];
+		_indexToTimer[0] = -1;
 		
 		// Load the indices starting at index 1, since the zero timer will
 		// be index 0.
@@ -850,6 +853,13 @@ public class Zone {
 		//newZone._indexToTimer = enabledTimers;
 		
 		newZone._indexToTimer = new int[enabledTimers.length+1];
+		
+		// Put the _indexToTimer value for the zeroth timer to -1.
+		// See the Abstraction Function section at the top of the
+		// class for a discussion on why.
+		newZone._indexToTimer[0] = -1;
+		
+		
 		for(int i=0; i<enabledTimers.length; i++)
 		{
 			newZone._indexToTimer[i+1]=enabledTimers[i];
@@ -1163,7 +1173,7 @@ public class Zone {
 		// timer.
 		for(int i=1; i<_indexToTimer.length; i++)
 		{
-			if(getdbm(0, i)>getLowerBoundbydbmIndex(i))
+			if(getdbm(0, i) >= -1 * getLowerBoundbydbmIndex(i))
 			{
 				enabledTransitions.add(_indexToTransition.get(_indexToTimer[i]));
 			}

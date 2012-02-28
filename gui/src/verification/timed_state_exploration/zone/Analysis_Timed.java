@@ -30,7 +30,10 @@ public class Analysis_Timed extends Analysis{
 	int stack_depth = 0;
 	int max_stack_depth = 0;
 	
-	public StateGraph[] search_dfs_timed(final StateGraph[] sgList, final State[] initStateArray) {
+	//public StateGraph_timed[] search_dfs_timed(final StateGraph_timed[] sgList, 
+	//		final TimedState[] initStateArray) {
+	public StateGraph_timed[] search_dfs_timed(final StateGraph_timed[] sgList,
+			final State[] initStateArray){
 		System.out.println("---> calling function search_dfs_timed");
 				
 		double peakUsedMem = 0;
@@ -100,7 +103,7 @@ public class Analysis_Timed extends Analysis{
 				curIndexStack.pop();
 				curIndex++;
 				while (curIndex < arraySize) {
-					curEnabled = (sgList[curIndex].getEnabled(curStateArray[curIndex])).clone();
+					curEnabled = (sgList[curIndex].getEnabled((TimedState) curStateArray[curIndex])).clone();
 					if (curEnabled.size() > 0) {
 						lpnTranStack.push(curEnabled);
 						curIndexStack.push(curIndex);
@@ -119,7 +122,10 @@ public class Analysis_Timed extends Analysis{
 			Transition firedTran = curEnabled.removeLast();	
 //			System.out.println("###################");			
 //			System.out.println("Fired transition: " + firedTran.getName());
-			State[] nextStateArray = sgList[curIndex].fire(sgList, curStateArray, firedTran);
+			//TimedState[] nextStateArray =
+			State[] nextStateArray =
+				//sgList[curIndex].fire(sgList, (TimedState[]) curStateArray, firedTran);
+				sgList[curIndex].fire(sgList, curStateArray, firedTran);
 			tranFiringCnt++;
 
 			// Check if the firedTran causes disabling error or deadlock.
@@ -128,10 +134,11 @@ public class Analysis_Timed extends Analysis{
 			@SuppressWarnings("unchecked")
 			LinkedList<Transition>[] nextEnabledArray = new LinkedList[arraySize];
 			for (int i = 0; i < arraySize; i++) {
-				StateGraph sg = sgList[i];
-				LinkedList<Transition> enabledList = sg.getEnabled(curStateArray[i]);
+				StateGraph_timed sg = sgList[i];
+				LinkedList<Transition> enabledList = sg.getEnabled((TimedState) curStateArray[i]);
 				curEnabledArray[i] = enabledList;
-				enabledList = sg.getEnabled(nextStateArray[i]);
+				enabledList = sg.getEnabled((TimedState) nextStateArray[i]);
+				//enabledList = sg.getEnabled(nextStateArray[i]);
 				nextEnabledArray[i] = enabledList;
 				Transition disabledTran = firedTran.disablingError(
 						curEnabledArray[i], nextEnabledArray[i]);
