@@ -64,8 +64,11 @@ import main.Log;
 import verification.platu.main.Options;
 import verification.platu.project.Project;
 import verification.platu.stategraph.StateGraph;
+import verification.timed_state_exploration.zone.Project_Timed;
+import verification.timed_state_exploration.zone.StateGraph_timed;
 import biomodel.gui.PropertyList;
 import biomodel.util.Utility;
+
 
 
 
@@ -1406,7 +1409,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		{
 			LhpnFile lpn = new LhpnFile();
 			lpn.load(directory + separator + lpnFile);
-			Project timedStateSearch = new Project(lpn);
 			
 			// The full state graph is created for only one LPN.
 			
@@ -1416,7 +1418,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			 * in the Options class that is queried by the search method.
 			 */
 			Options.setTimingAnalsysisType("zone");
-			StateGraph[] stateGraphArray = timedStateSearch.search();
+
+			Project_Timed timedStateSearch = new Project_Timed(lpn, Options.getTimingAnalysisFlag());
+			StateGraph_timed[] stateGraphArray = timedStateSearch.search();
 			String graphFileName = verifyFile.replace(".lpn", "") + "_sg.dot";
 			if (stateGraphArray.length > 1) {
 				JOptionPane.showMessageDialog(
