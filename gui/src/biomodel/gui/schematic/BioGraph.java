@@ -1906,7 +1906,9 @@ public class BioGraph extends mxGraph {
 	public void setSpeciesAnimationValue(String species, MovieAppearance appearance) {
 		
 		mxCell cell = this.speciesToMxCellMap.get(species);
-		setCellAnimationValue(cell, appearance);
+		if (cell != null) {
+			setCellAnimationValue(cell, appearance);
+		}
 	}
 	
 	/**
