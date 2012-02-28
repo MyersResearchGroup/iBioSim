@@ -39,7 +39,7 @@ public class Project {
 	protected List<StateGraph> designUnitSet;
 	
 	/* The list for timing analysis */
-	protected List<StateGraph_timed> designUnitTimedSet;
+//	protected List<StateGraph_timed> designUnitTimedSet;
 	
 	protected LPNTranRelation lpnTranRelation = null;
 	
@@ -63,30 +63,33 @@ public class Project {
 	 * If the OptionsFlag is false, then this constructor is identical to
 	 * Poject(LhpnFile lpn). If the OptionsFlag is true, this constructor uses
 	 * StateGraph_timed objects.
+	 * 
+	 * @author Andrew N. Fisher
+	 * 
 	 * @param lpn
 	 * 			The lpn under consideration.
 	 * @param OptionsFlag
 	 * 			True for timing analysis and false otherwise. The option should match
 	 * 			Options.getTimingAnalysisFlag().
 	 */
-	public Project(LhpnFile lpn, boolean OptionsFlag)
-	{
-		if(Options.getTimingAnalysisFlag())
-		{
-			this.label = "";
-			this.designUnitSet = new ArrayList<StateGraph>(0);
-			this.designUnitTimedSet = new ArrayList<StateGraph_timed>(1);
-			StateGraph_timed stategraph = new StateGraph_timed(lpn);
-			designUnitTimedSet.add(stategraph);
-		}
-		else
-		{
-			this.label = "";
-			this.designUnitSet = new ArrayList<StateGraph>(1);
-			StateGraph stateGraph = new StateGraph(lpn);
-			designUnitSet.add(stateGraph);
-		}
-	}
+//	public Project(LhpnFile lpn, boolean OptionsFlag)
+//	{
+//		if(Options.getTimingAnalysisFlag())
+//		{
+//			this.label = "";
+//			this.designUnitSet = new ArrayList<StateGraph>(0);
+//			this.designUnitTimedSet = new ArrayList<StateGraph_timed>(1);
+//			StateGraph_timed stategraph = new StateGraph_timed(lpn);
+//			designUnitTimedSet.add(stategraph);
+//		}
+//		else
+//		{
+//			this.label = "";
+//			this.designUnitSet = new ArrayList<StateGraph>(1);
+//			StateGraph stateGraph = new StateGraph(lpn);
+//			designUnitSet.add(stateGraph);
+//		}
+//	}
 
 	public Project(ArrayList<LhpnFile> lpns) {
 		this.label = "";
@@ -131,16 +134,16 @@ public class Project {
 			sgArray[lpn.getIndex()] = du;
 		}
 		
-		// If timing, then created the sgArray with StateGraph_timed objects.
-		if(Options.getTimingAnalysisFlag())
-		{
-			for(StateGraph du : this.designUnitTimedSet)
-			{
-				LhpnFile lpn = du.getLpn();
-				lpn.setIndex(idx++);
-				sgArray[lpn.getIndex()] = du;
-			}
-		}
+		// If timing, then create the sgArray with StateGraph_timed objects.
+//		if(Options.getTimingAnalysisFlag())
+//		{
+//			for(StateGraph_timed du : this.designUnitTimedSet)
+//			{
+//				LhpnFile lpn = du.getLpn();
+//				lpn.setIndex(idx++);
+//				sgArray[lpn.getIndex()] = du;
+//			}
+//		}
 
 		// Initialize the project state
 		HashMap<String, Integer> varValMap = new HashMap<String, Integer>();
@@ -167,7 +170,19 @@ public class Project {
 			StateGraph curSg = sgArray[index];
 			initStateArray[index].update(curSg, varValMap, curSg.getLpn().getVarIndexMap());
 			initStateArray[index] = curSg.addState(initStateArray[index]);			
-		}		
+		}
+		
+		// Initialize the zones for the initStateArray, if timining is enabled.
+//		if(Options.getTimingAnalysisFlag())
+//		{
+//			for(int index =0; index < lpnCnt; index++)
+//			{
+//				if(sgArray[index] instanceof StateGraph_timed)
+//				{
+//					
+//				}
+//			}
+//		}
 		
 //		if (Options.getTimingAnalysisFlag()) {
 //			new TimingAnalysis(sgArray); 
@@ -186,12 +201,12 @@ public class Project {
 //		}
 		
 		/* Entry point for the timed analysis. */
-		if(Options.getTimingAnalysisFlag())
-		{
-			Analysis_Timed dfsTimedStateExploration = new Analysis_Timed(sgArray);
-			dfsTimedStateExploration.search_dfs_timed(sgArray, initStateArray);
-			return new StateGraph[0];
-		}
+//		if(Options.getTimingAnalysisFlag())
+//		{
+//			Analysis_Timed dfsTimedStateExploration = new Analysis_Timed(sgArray);
+//			dfsTimedStateExploration.search_dfs_timed(sgArray, initStateArray);
+//			return new StateGraph[0];
+//		}
 		
 		Analysis dfsStateExploration = new Analysis(sgArray);
 		StateGraph[] stateGraphArray = dfsStateExploration.search_dfs(sgArray, initStateArray);
@@ -421,7 +436,7 @@ public class Project {
     /**
      * Validates each lpn's input variables are driven by another lpn's output.
      */
-    private void validateInputs(){
+    protected void validateInputs(){	// Changed protection level. ANF
     	boolean error = false;
     	for(StateGraph sg : designUnitSet){
 	        for(String input : sg.getLpn().getAllInputs().keySet()){
