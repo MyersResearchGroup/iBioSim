@@ -476,15 +476,16 @@ public class MovieContainer extends JPanel implements ActionListener {
 					
 					MovieAppearance speciesAppearance = null;
 					
-					//get the component's appearance and send it to the graph for updating
+					//get the species' appearance and send it to the graph for updating
 					if (speciesTSData.get(speciesID) != null) {
 						
 						speciesAppearance = 
 							movieScheme.createAppearance(speciesID, GlobalConstants.SPECIES, speciesTSData);
 					}
 					
-					if (speciesAppearance != null)
+					if (speciesAppearance != null) {
 						schematic.getGraph().setSpeciesAnimationValue(speciesID, speciesAppearance);
+					}
 				}
 			}
 		}
