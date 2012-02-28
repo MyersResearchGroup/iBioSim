@@ -2191,10 +2191,10 @@ public abstract class Simulator {
 				
 				String[] annotationString = species.getAnnotationString().split("=");
 				
-				numRowsLower = Integer.valueOf(((String[])(annotationString[1].split(" ")))[0].replace("\"",""));
-				numRowsUpper = Integer.valueOf(((String[])(annotationString[2].split(" ")))[0].replace("\"",""));
-				numColsLower = Integer.valueOf(((String[])(annotationString[3].split(" ")))[0].replace("\"",""));
-				numColsUpper = Integer.valueOf(((String[])(annotationString[4].split(" ")))[0].replace("\"",""));
+				numColsLower = Integer.valueOf(((String[])(annotationString[1].split(" ")))[0].replace("\"",""));
+				numColsUpper = Integer.valueOf(((String[])(annotationString[2].split(" ")))[0].replace("\"",""));
+				numRowsLower = Integer.valueOf(((String[])(annotationString[3].split(" ")))[0].replace("\"",""));
+				numRowsUpper = Integer.valueOf(((String[])(annotationString[4].split(" ")))[0].replace("\"",""));
 				
 				SpeciesDimensions speciesDimensions = 
 					new SpeciesDimensions(numRowsLower, numRowsUpper, numColsLower, numColsUpper);
