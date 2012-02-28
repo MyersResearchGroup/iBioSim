@@ -146,10 +146,6 @@ public class TimedState extends State{
 		return _state.getLocalState();
 	}
 
-	@Override
-	public int[] getEnabledSet() {
-		return _state.getEnabledSet();
-	}
 
 	@Override
 	public String getEnabledSetString() {
