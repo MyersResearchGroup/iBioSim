@@ -14,6 +14,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
+import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.SBMLException;
+
 import main.Gui;
 import main.util.MutableBoolean;
 import odk.lang.FastMath;
@@ -220,8 +223,7 @@ public class SimulatorSSACR extends Simulator {
 			
 			boolean newMinPropensityFlag = updatePropensities(affectedReactionSet);
 			
-			//step5Time += System.nanoTime() - step5Initial;
-			
+			//step5Time += System.nanoTime() - step5Initial; 
 			
 			
 			//STEP 6: re-assign affected reactions to appropriate groups
@@ -236,8 +238,7 @@ public class SimulatorSSACR extends Simulator {
 				updateGroups(affectedReactionSet);
 			
 			//step6Time += System.nanoTime() - step6Initial;
-			
-			
+
 			
 			//update time for next iteration
 			currentTime += delta_t;
@@ -262,7 +263,6 @@ public class SimulatorSSACR extends Simulator {
 				
 				printTime += printInterval;			
 			}
-			
 		} //end simulation loop
 		
 		
@@ -322,8 +322,7 @@ public class SimulatorSSACR extends Simulator {
 		rulesFlag = new MutableBoolean(false);
 		constraintsFlag = new MutableBoolean(false);
 		
-		//setupArrays();
-		expandArrays2();
+		setupArrays();
 		setupSpecies();
 		setupInitialAssignments();
 		setupParameters();

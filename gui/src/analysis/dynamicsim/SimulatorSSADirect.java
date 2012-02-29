@@ -230,7 +230,7 @@ public class SimulatorSSADirect extends Simulator {
 	private void initialize() 
 	throws IOException, XMLStreamException {	
 		
-		//setupArrays();
+		setupArrays();
 		setupSpecies();
 		setupInitialAssignments();
 		setupParameters();
@@ -258,9 +258,11 @@ public class SimulatorSSADirect extends Simulator {
 		
 		
 		//STEP 0: calculate initial propensities (including the total)		
-		setupReactions();
-		
+		setupReactions();		
 		setupEvents();
+		
+		if (dynamicBoolean == true)
+			setupGrid();
 	}
 
 	protected void eraseComponentFurther(HashSet<String> reactionIDs) {
@@ -375,7 +377,10 @@ public class SimulatorSSADirect extends Simulator {
 	 */
 	protected void setupForNewRun(int newRun) {
 		
-		//setupArrays();
+		//get rid of things that were created dynamically last run
+		if (dynamicBoolean == true) {
+			resetModel();
+		}
 		
 		try {
 			setupSpecies();
@@ -408,11 +413,12 @@ public class SimulatorSSADirect extends Simulator {
 			constraintsFlag.setValue(false);
 		
 		//STEP 0A: calculate initial propensities (including the total)		
-		setupReactions();
-		
-		setupEvents();
-		
+		setupReactions();		
+		setupEvents();		
 		setupForOutput(0, newRun);
+		
+		if (dynamicBoolean == true)
+			setupGrid();
 	}
 	
 }
