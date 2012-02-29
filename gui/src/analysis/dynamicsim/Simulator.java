@@ -319,6 +319,8 @@ public abstract class Simulator {
 			ListOf<SpeciesReference> reactantsList, ListOf<SpeciesReference> productsList, 
 			ListOf<ModifierSpeciesReference> modifiersList) {
 		
+		reactionID = reactionID.replace("_negative_","-");
+		
 		boolean notEnoughMoleculesFlagFd = false;
 		boolean notEnoughMoleculesFlagRv = false;
 		boolean notEnoughMoleculesFlag = false;
@@ -336,6 +338,7 @@ public abstract class Simulator {
 			for (SpeciesReference reactant : reactantsList) {
 				
 				String reactantID = reactant.getSpecies();
+				reactantID = reactantID.replace("_negative_","-");			
 				double reactantStoichiometry = reactant.getStoichiometry();
 				
 				reactionToSpeciesAndStoichiometrySetMap.get(reactionID + "_fd").add(
@@ -357,6 +360,7 @@ public abstract class Simulator {
 			for (SpeciesReference product : productsList) {
 				
 				String productID = product.getSpecies();
+				productID = productID.replace("_negative_","-");
 				double productStoichiometry = product.getStoichiometry();
 				
 				reactionToSpeciesAndStoichiometrySetMap.get(reactionID + "_fd").add(
@@ -378,6 +382,7 @@ public abstract class Simulator {
 			for (ModifierSpeciesReference modifier : modifiersList) {
 				
 				String modifierID = modifier.getSpecies();
+				modifierID = modifierID.replace("_negative_","-");
 				
 				String forwardString = "", reverseString = "";
 				
@@ -445,6 +450,7 @@ public abstract class Simulator {
 			for (SpeciesReference reactant : reactantsList) {
 				
 				String reactantID = reactant.getSpecies();
+				reactantID = reactantID.replace("_negative_","-");
 				double reactantStoichiometry = reactant.getStoichiometry();
 				
 				reactionToSpeciesAndStoichiometrySetMap.get(reactionID).add(
@@ -463,7 +469,7 @@ public abstract class Simulator {
 			for (SpeciesReference product : productsList) {
 				
 				reactionToSpeciesAndStoichiometrySetMap.get(reactionID).add(
-						new StringDoublePair(product.getSpecies(), product.getStoichiometry()));
+						new StringDoublePair(product.getSpecies().replace("_negative_","-"), product.getStoichiometry()));
 				
 				//don't need to check if there are enough, because products are added
 			}
@@ -471,6 +477,7 @@ public abstract class Simulator {
 			for (ModifierSpeciesReference modifier : modifiersList) {
 				
 				String modifierID = modifier.getSpecies();
+				modifierID = modifierID.replace("_negative_","-");
 				
 				//as a modifier, this species affects the reaction's propensity
 				speciesToAffectedReactionSetMap.get(modifierID).add(reactionID);
@@ -731,6 +738,11 @@ public abstract class Simulator {
 		
 		HashSet<String> underlyingSpeciesIDs = new HashSet<String>();
 		HashSet<String> newGridSpeciesIDs = new HashSet<String>();
+		HashMap<String, String> newGridSpeciesIDToOldRowSubstring = new HashMap<String, String>();
+		HashMap<String, String> newGridSpeciesIDToOldColSubstring = new HashMap<String, String>();
+		HashMap<String, String> newGridSpeciesIDToNewRowSubstring = new HashMap<String, String>();
+		HashMap<String, String> newGridSpeciesIDToNewColSubstring = new HashMap<String, String>();
+
 		
 		for (String speciesID : speciesIDSet) {
 		
@@ -751,8 +763,25 @@ public abstract class Simulator {
 					
 					for (String underlyingSpeciesID : underlyingSpeciesIDs) {
 						
-						String newID = "ROW" + newRow + "_COL" + col + "__" + underlyingSpeciesID;
-						newGridSpeciesIDs.add(newID);
+						String nonnegRow = Integer.toString(newRow);
+						String nonnegCol = Integer.toString(col);
+						
+						if (newRow < 0)
+							nonnegRow = nonnegRow.replace("-", "_negative_");
+						if (col < 0)
+							nonnegCol = nonnegCol.replace("-", "_negative_");	
+						
+						String newID = "ROW" + nonnegRow + "_COL" + nonnegCol + "__" + underlyingSpeciesID;
+						String newIDWithNegatives = "ROW" + newRow + "_COL" + col + "__" + underlyingSpeciesID;
+						
+						if (model.getSpecies(newID) != null)
+							continue;
+						
+						newGridSpeciesIDs.add(newIDWithNegatives);
+						newGridSpeciesIDToOldRowSubstring.put(newIDWithNegatives, "ROW" + newRow);
+						newGridSpeciesIDToOldColSubstring.put(newIDWithNegatives, "COL" + col);
+						newGridSpeciesIDToNewRowSubstring.put(newIDWithNegatives, "ROW" + nonnegRow);
+						newGridSpeciesIDToNewColSubstring.put(newIDWithNegatives, "COL" + nonnegCol);
 						
 						Species gridSpecies = null;
 						
@@ -766,12 +795,13 @@ public abstract class Simulator {
 						
 						Species newSpecies = gridSpecies.clone();
 						newSpecies.setId(newID);
+						newSpecies.setMetaId(newID);
 						
 						//add new grid species to the model (so that altering the kinetic law through jsbml can work)
 						model.addSpecies(newSpecies);
 						
 						//add a new species to the simulation data structures
-						setupSingleSpecies(gridSpecies, newID);
+						setupSingleSpecies(gridSpecies, newIDWithNegatives);
 						variableToValueMap.put(newID, 0);
 					}
 				}
@@ -787,8 +817,24 @@ public abstract class Simulator {
 					
 					for (String underlyingSpeciesID : underlyingSpeciesIDs) {
 						
-						String newID = "ROW" + row + "_COL" + newCol + "__" + underlyingSpeciesID;
-						newGridSpeciesIDs.add(newID);
+						String nonnegRow = Integer.toString(row);
+						String nonnegCol = Integer.toString(newCol);
+						
+						if (row < 0)
+							nonnegRow = nonnegRow.replace("-", "_negative_");
+						if (newCol < 0)
+							nonnegCol = nonnegCol.replace("-", "_negative_");
+						
+						String newID = "ROW" + nonnegRow + "_COL" + nonnegCol + "__" + underlyingSpeciesID;
+						String newIDWithNegatives = "ROW" + row + "_COL" + newCol + "__" + underlyingSpeciesID;
+						newGridSpeciesIDs.add(newIDWithNegatives);
+						newGridSpeciesIDToOldRowSubstring.put(newIDWithNegatives, "ROW" + row);
+						newGridSpeciesIDToOldColSubstring.put(newIDWithNegatives, "COL" + newCol);
+						newGridSpeciesIDToNewRowSubstring.put(newIDWithNegatives, "ROW" + nonnegRow);
+						newGridSpeciesIDToNewColSubstring.put(newIDWithNegatives, "COL" + nonnegCol);
+						
+						if (model.getSpecies(newID) != null)
+							continue;
 						
 						Species gridSpecies = null;
 						
@@ -802,12 +848,13 @@ public abstract class Simulator {
 						
 						Species newSpecies = gridSpecies.clone();
 						newSpecies.setId(newID);
+						newSpecies.setMetaId(newID);
 						
 						//add new grid species to the model (so that altering the kinetic law through jsbml can work)
 						model.addSpecies(newSpecies);
 						
 						//add a new species to the simulation data structures
-						setupSingleSpecies(gridSpecies, newID);
+						setupSingleSpecies(gridSpecies, newIDWithNegatives);
 						variableToValueMap.put(newID, 0);
 					}
 				}
@@ -816,6 +863,10 @@ public abstract class Simulator {
 		
 		//create new grid diffusion and degradation reactions for the new grid species
 		for (String speciesID : newGridSpeciesIDs) {
+			
+			String newGridSpeciesID = speciesID.replace(
+					newGridSpeciesIDToOldRowSubstring.get(speciesID), newGridSpeciesIDToNewRowSubstring.get(speciesID)).replace(
+							newGridSpeciesIDToOldColSubstring.get(speciesID), newGridSpeciesIDToNewColSubstring.get(speciesID));
 			
 			String[] splitID = speciesID.split("_");
 			
@@ -844,7 +895,7 @@ public abstract class Simulator {
 						&& reactionID.contains("_fd")) {
 					
 					newNode = reactionAndFormula.getValue().clone();
-					newNode.getRightChild().setVariable(model.getSpecies(speciesID));
+					newNode.getRightChild().setVariable(model.getSpecies(newGridSpeciesID));
 				}
 			}
 			
@@ -868,16 +919,28 @@ public abstract class Simulator {
 				
 				if (speciesIDSet.contains(neighborID)) {
 					
+					if (nRow < 0)
+						neighborID = neighborID.replace("ROW" + nRow, "ROW" + "_negative_" + (-1 * nRow));
+					if (nCol < 0)
+						neighborID = neighborID.replace("COL" + nCol, "COL" + "_negative_" + (-1 * nCol));
+					
 					//create forward reaction if it doesn't exist already as a reverse reaction from a neighbor
 					if (reactionToPropensityMap.containsKey("ROW" + nRow + "_COL" + nCol 
 							+ "_Diffusion_" + underlyingSpeciesID + "_" + rvString + "_rv") == false) {
 						
-						Reaction fdReaction = model.createReaction("ROW" + row + "_COL" + col + "_Diffusion_" 
-								+ underlyingSpeciesID + "_" + fdString + "_fd");
+						String newReactionID = "ROW" + row + "_COL" + col + "_Diffusion_" 
+						+ underlyingSpeciesID + "_" + fdString + "_fd";
+						
+						if (row < 0)
+							newReactionID = newReactionID.replace("ROW" + row, "ROW" + "_negative_" + (-1 * row));
+						if (col < 0)
+							newReactionID = newReactionID.replace("COL" + col, "COL" + "_negative_" + (-1 * col));
+						
+						Reaction fdReaction = model.createReaction(newReactionID);
 						KineticLaw fdKineticLaw = model.createKineticLaw();
 						fdKineticLaw.setMath(newNode.clone());
 						fdReaction.setKineticLaw(fdKineticLaw);
-						fdReaction.addReactant(new SpeciesReference(model.getSpecies(speciesID)));
+						fdReaction.addReactant(new SpeciesReference(model.getSpecies(newGridSpeciesID)));
 						fdReaction.addProduct(new SpeciesReference(model.getSpecies(neighborID)));
 						
 						setupLocalParameters(fdReaction.getKineticLaw(), fdReaction.getId());
@@ -892,13 +955,20 @@ public abstract class Simulator {
 						//alter kinetic law for reverse reaction
 						newNode.getRightChild().setVariable(model.getSpecies(neighborID));
 						
+						String newReactionID = "ROW" + row + "_COL" + col + "_Diffusion_" 
+						+ underlyingSpeciesID + "_" + fdString + "_rv";
+						
+						if (row < 0)
+							newReactionID = newReactionID.replace("ROW" + row, "ROW" + "_negative_" + (-1 * row));
+						if (col < 0)
+							newReactionID = newReactionID.replace("COL" + col, "COL" + "_negative_" + (-1 * col));
+						
 						//create reverse reaction
-						Reaction rvReaction = model.createReaction("ROW" + row + "_COL" + col + "_Diffusion_" 
-								+ underlyingSpeciesID + "_" + fdString + "_rv");
+						Reaction rvReaction = model.createReaction(newReactionID);
 						KineticLaw rvKineticLaw = model.createKineticLaw();
 						rvKineticLaw.setMath(newNode.clone());
 						rvReaction.setKineticLaw(rvKineticLaw);
-						rvReaction.addProduct(new SpeciesReference(model.getSpecies(speciesID)));
+						rvReaction.addProduct(new SpeciesReference(model.getSpecies(newGridSpeciesID)));
 						rvReaction.addReactant(new SpeciesReference(model.getSpecies(neighborID)));
 	
 						setupLocalParameters(rvReaction.getKineticLaw(), rvReaction.getId());
@@ -921,17 +991,23 @@ public abstract class Simulator {
 				if (reactionID.contains("Degradation_" + underlyingSpeciesID)) {
 					
 					degradationNode = reactionAndFormula.getValue().clone();
-					degradationNode.getRightChild().setVariable(model.getSpecies(speciesID));
+					degradationNode.getRightChild().setVariable(model.getSpecies(newGridSpeciesID));
 					break;
 				}
 			}
 			
-			Reaction degReaction = model.createReaction("ROW" + row + "_COL" + col + "Degradation_" 
-					+ underlyingSpeciesID);
+			String newDegReactionID = "ROW" + row + "_COL" + col + "_Degradation_" + underlyingSpeciesID;
+			
+			if (row < 0)
+				newDegReactionID = newDegReactionID.replace("ROW" + row, "ROW" + "_negative_" + (-1 * row));
+			if (col < 0)
+				newDegReactionID = newDegReactionID.replace("COL" + col, "COL" + "_negative_" + (-1 * col));
+			
+			Reaction degReaction = model.createReaction(newDegReactionID);
 			KineticLaw degKineticLaw = model.createKineticLaw();
 			degKineticLaw.setMath(degradationNode.clone());
 			degReaction.setKineticLaw(degKineticLaw);
-			degReaction.addReactant(new SpeciesReference(model.getSpecies(speciesID)));
+			degReaction.addReactant(new SpeciesReference(model.getSpecies(newGridSpeciesID)));
 			
 			setupLocalParameters(degReaction.getKineticLaw(), degReaction.getId());
 			setupSingleReaction(degReaction.getId(), degReaction.getKineticLaw().getMath(), false,
@@ -949,6 +1025,12 @@ public abstract class Simulator {
 			
 			//this means it's a species
 			if (speciesIDSet.contains(parentVariableID)) {
+				
+				//duplicate species into the model
+				Species newSpecies = model.getSpecies(parentVariableID).clone();
+				newSpecies.setId(childVariableID);
+				newSpecies.setMetaId(childVariableID);
+				model.addSpecies(newSpecies);
 				
 				if (speciesToHasOnlySubstanceUnitsMap.get(parentVariableID) == false)
 					speciesToCompartmentSizeMap.put(childVariableID, speciesToCompartmentSizeMap.get(parentVariableID));
@@ -1034,7 +1116,17 @@ public abstract class Simulator {
 					String parentRowCol = "ROW" + (int) parentLocation.getX() + "_" + "COL" + (int) parentLocation.getY();
 					String childRowCol = "ROW" + (int) childLocation.getX() + "_" + "COL" + (int) childLocation.getY();
 					
-					alterNode(childFormulaNode, parentRowCol, childRowCol);
+					if (childReactionFormula.contains("ROW") && childReactionFormula.contains("COL"))					
+						alterNode(childFormulaNode, parentRowCol, childRowCol);
+					else {
+					
+						String childSpeciesID = ((String[])childReactionFormula.split("\\*"))[1];
+						String underlyingSpeciesID = childSpeciesID.split("__")[childSpeciesID.split("__").length - 1];
+						childReactionFormula = childReactionFormula.replace(childSpeciesID + "__kmdiff", 
+								parentComponentID + "__" + underlyingSpeciesID + "__kmdiff");
+						
+						childFormulaNode = ASTNode.parseFormula(childReactionFormula);
+					}
 				}
 				else
 					childFormulaNode = ASTNode.parseFormula(childReactionFormula);
@@ -1147,8 +1239,8 @@ public abstract class Simulator {
 				ea.setVariable(((EventAssignment)assignment).getVariable()
 						.replace(parentComponentID, childComponentID));
 				
-				try {
-					ea.setFormula(((EventAssignment)assignment).getFormula()
+				try {					
+					ea.setFormula(((EventAssignment)assignment).getMath().toFormula()
 							.replace(parentComponentID, childComponentID));
 				} catch (ParseException e) {
 					e.printStackTrace();
@@ -1168,6 +1260,33 @@ public abstract class Simulator {
 		}
 		
 		componentToEventSetMap.put(childComponentID, childEventSet);
+		
+		for (String reactionID : reactionToPropensityMap.keySet()) {
+			
+			if (reactionToPropensityMap.get(reactionID) > 0) {
+			
+				System.err.println(reactionID);
+				
+				try {
+					System.err.println(ASTNode.formulaToString(reactionToFormulaMap.get(reactionID)));
+				} catch (SBMLException e) {
+					e.printStackTrace();
+				}				
+				
+				System.err.println(reactionToPropensityMap.get(reactionID));
+				
+				System.err.println();
+				System.err.println();
+			}
+		}
+		
+		for (String variableID : variableToValueMap.keySet()) {
+			
+			System.err.println(variableID);
+			System.err.println(variableToValueMap.get(variableID));
+			System.err.println();
+			System.err.println();
+		}
 	}
 	
 	protected abstract void eraseComponentFurther(HashSet<String> reactionIDs);
@@ -1344,76 +1463,7 @@ public abstract class Simulator {
 		//eg, a species name or global/local parameter
 		else if (node.isName()) {
 				
-			//use node name to determine function
-			//i'm not sure what to do with completely user-defined functions, though
-			String nodeName = node.getName();
-			
-			//generates a uniform random number between the upper and lower bound
-			if (nodeName.equals("uniform")) {
-				
-				double leftChildValue = evaluateExpressionRecursive(node.getLeftChild());
-				double rightChildValue = evaluateExpressionRecursive(node.getRightChild());
-				double lowerBound = FastMath.min(leftChildValue, rightChildValue);
-				double upperBound = FastMath.max(leftChildValue, rightChildValue);
-				
-				return prng.nextDouble(lowerBound, upperBound);
-			}
-			else if (nodeName.equals("exponential")) {
-				
-				return prng.nextExponential(evaluateExpressionRecursive(node.getLeftChild()), 1);
-			}
-			else if (nodeName.equals("gamma")) {
-				
-				return prng.nextGamma(1, evaluateExpressionRecursive(node.getLeftChild()), 
-						evaluateExpressionRecursive(node.getRightChild()));
-			}
-			else if (nodeName.equals("chisq")) {
-				
-				return prng.nextChiSquare((int) evaluateExpressionRecursive(node.getLeftChild()));
-			}
-			else if (nodeName.equals("lognormal")) {
-				
-				return prng.nextLogNormal(evaluateExpressionRecursive(node.getLeftChild()), 
-						evaluateExpressionRecursive(node.getRightChild()));
-			}
-			else if (nodeName.equals("laplace")) {
-				
-				//function doesn't exist in current libraries
-			}
-			else if (nodeName.equals("cauchy")) {
-				
-				return prng.nextLorentzian(0, evaluateExpressionRecursive(node.getLeftChild()));
-			}
-			else if (nodeName.equals("poisson")) {
-				
-				return prng.nextPoissonian(evaluateExpressionRecursive(node.getLeftChild()));
-			}
-			else if (nodeName.equals("binomial")) {
-				
-				return prng.nextBinomial(evaluateExpressionRecursive(node.getLeftChild()),
-						(int) evaluateExpressionRecursive(node.getRightChild()));
-			}
-			else if (nodeName.equals("bernoulli")) {
-				
-				return prng.nextBinomial(evaluateExpressionRecursive(node.getLeftChild()), 1);
-			}
-			else if (nodeName.equals("normal")) {
-				
-				return prng.nextGaussian(evaluateExpressionRecursive(node.getLeftChild()),
-						evaluateExpressionRecursive(node.getRightChild()));	
-			}
-			else if (nodeName.equals("get2DArrayElement")) {
-				
-//				int leftIndex = node.getChild(1).getInteger();
-//				int rightIndex = node.getChild(2).getInteger();
-//				String speciesName = "ROW" + leftIndex + "_COL" + rightIndex + "__" + node.getChild(0).getName();
-//				
-//				//check bounds
-//				//if species exists, return its value/amount
-//				if (variableToValueMap.containsKey(speciesName))
-//					return variableToValueMap.get(speciesName);
-			}
-			else if (node.getType().equals(org.sbml.jsbml.ASTNode.Type.NAME_TIME)) {
+			if (node.getType().equals(org.sbml.jsbml.ASTNode.Type.NAME_TIME)) {
 				
 				return currentTime;
 			}
@@ -1475,8 +1525,74 @@ public abstract class Simulator {
 			case FUNCTION: {
 				//use node name to determine function
 				//i'm not sure what to do with completely user-defined functions, though
+				String nodeName = node.getName();
 				
-				//String nodeName = node.getName();
+				//generates a uniform random number between the upper and lower bound
+				if (nodeName.equals("uniform")) {
+					
+					double leftChildValue = evaluateExpressionRecursive(node.getLeftChild());
+					double rightChildValue = evaluateExpressionRecursive(node.getRightChild());
+					double lowerBound = FastMath.min(leftChildValue, rightChildValue);
+					double upperBound = FastMath.max(leftChildValue, rightChildValue);
+					
+					return prng.nextDouble(lowerBound, upperBound);
+				}
+				else if (nodeName.equals("exponential")) {
+					
+					return prng.nextExponential(evaluateExpressionRecursive(node.getLeftChild()), 1);
+				}
+				else if (nodeName.equals("gamma")) {
+					
+					return prng.nextGamma(1, evaluateExpressionRecursive(node.getLeftChild()), 
+							evaluateExpressionRecursive(node.getRightChild()));
+				}
+				else if (nodeName.equals("chisq")) {
+					
+					return prng.nextChiSquare((int) evaluateExpressionRecursive(node.getLeftChild()));
+				}
+				else if (nodeName.equals("lognormal")) {
+					
+					return prng.nextLogNormal(evaluateExpressionRecursive(node.getLeftChild()), 
+							evaluateExpressionRecursive(node.getRightChild()));
+				}
+				else if (nodeName.equals("laplace")) {
+					
+					//function doesn't exist in current libraries
+				}
+				else if (nodeName.equals("cauchy")) {
+					
+					return prng.nextLorentzian(0, evaluateExpressionRecursive(node.getLeftChild()));
+				}
+				else if (nodeName.equals("poisson")) {
+					
+					return prng.nextPoissonian(evaluateExpressionRecursive(node.getLeftChild()));
+				}
+				else if (nodeName.equals("binomial")) {
+					
+					return prng.nextBinomial(evaluateExpressionRecursive(node.getLeftChild()),
+							(int) evaluateExpressionRecursive(node.getRightChild()));
+				}
+				else if (nodeName.equals("bernoulli")) {
+					
+					return prng.nextBinomial(evaluateExpressionRecursive(node.getLeftChild()), 1);
+				}
+				else if (nodeName.equals("normal")) {
+					
+					return prng.nextGaussian(evaluateExpressionRecursive(node.getLeftChild()),
+							evaluateExpressionRecursive(node.getRightChild()));	
+				}
+				else if (nodeName.equals("get2DArrayElement")) {
+					
+//					int leftIndex = node.getChild(1).getInteger();
+//					int rightIndex = node.getChild(2).getInteger();
+//					String speciesName = "ROW" + leftIndex + "_COL" + rightIndex + "__" + node.getChild(0).getName();
+//					
+//					//check bounds
+//					//if species exists, return its value/amount
+//					if (variableToValueMap.containsKey(speciesName))
+//						return variableToValueMap.get(speciesName);
+				}
+				else 
 				
 				break;
 			}
@@ -1602,7 +1718,11 @@ public abstract class Simulator {
 		return 0.0;
 	}
 
-	protected void expandArrays2() {
+	/**
+	 * non-static version of the method that flattens arrays into the sbml model
+	 * this one doesn't print the model back out, though
+	 */
+	protected void setupArrays() {
 		
 		//ARRAYED SPECIES BUSINESS
 		//create all new species that are implicit in the arrays and put them into the model		
@@ -1683,7 +1803,7 @@ public abstract class Simulator {
 				
 				splitAnnotation[splitAnnotation.length - 2] = ((String[])splitAnnotation[splitAnnotation.length - 2].split("xmlns:"))[0];
 				
-				for (int i = 2; i < splitAnnotation.length - 1; ++i) {
+				for (int i = 2; i < splitAnnotation.length; ++i) {
 					
 					String compartmentID = ((String[])splitAnnotation[i].split("="))[0];
 					eventCompartments.add(compartmentID);
@@ -1772,11 +1892,11 @@ public abstract class Simulator {
 				
 				splitAnnotation[splitAnnotation.length - 2] = ((String[])splitAnnotation[splitAnnotation.length - 2].split("xmlns:"))[0];
 				
-				for (int i = 2; i < splitAnnotation.length - 1; ++i) {
+				for (int i = 2; i < splitAnnotation.length; ++i) {
 					
 					String compartmentID = ((String[])splitAnnotation[i].split("="))[0];
-					String row = ((String[])((String[])splitAnnotation[i].split("="))[1].split(","))[0].replace("(","");
-					String col = ((String[])((String[])splitAnnotation[i].split("="))[1].split(","))[1].replace(")","");
+					String row = ((String[])((String[])splitAnnotation[i].split(" ")[0].split("="))[1].split(","))[0].replace("(","");
+					String col = ((String[])((String[])splitAnnotation[i].split(" ")[0].split("="))[1].split(","))[1].replace(")","");
 					
 					membraneDiffusionRows.add(Integer.valueOf(row.trim()));
 					membraneDiffusionCols.add(Integer.valueOf(col.trim()));
@@ -2125,14 +2245,6 @@ public abstract class Simulator {
 			allEvents.remove(eventID);
 		
 		model.setListOfEvents(allEvents);
-		
-//		for (Reaction reaction : model.getListOfReactions()) {
-//			System.out.println("id " + reaction.getId());
-//			for (SpeciesReference reactant : reaction.getListOfReactants())
-//				System.out.println(reactant.getSpecies());
-//			for (SpeciesReference reactant : reaction.getListOfProducts())
-//				System.out.println(reactant.getSpecies());
-//		}
 		
 		SBMLWriter writer = new SBMLWriter();
 		PrintStream p;
@@ -2839,6 +2951,9 @@ public abstract class Simulator {
 					
 					if (eventToHasDelayMap.get(untriggeredEventID) == true)
 						fireTime += evaluateExpressionRecursive(eventToDelayMap.get(untriggeredEventID));
+					
+					System.err.println(untriggeredEventID + "  " + fireTime);
+					System.err.println("   " + eventToDelayMap.get(untriggeredEventID));
 							
 					triggeredEventQueue.add(new EventToFire(
 							untriggeredEventID, evaluatedAssignments, fireTime));
@@ -2849,6 +2964,9 @@ public abstract class Simulator {
 					
 					if (eventToHasDelayMap.get(untriggeredEventID) == true)
 						fireTime += evaluateExpressionRecursive(eventToDelayMap.get(untriggeredEventID));
+					
+					System.err.println(untriggeredEventID + "  " + fireTime);
+					System.err.println("   " + eventToDelayMap.get(untriggeredEventID));
 									
 					triggeredEventQueue.add(new EventToFire(
 							untriggeredEventID, eventToAssignmentSetMap.get(untriggeredEventID), fireTime));
@@ -2951,6 +3069,41 @@ public abstract class Simulator {
 						
 						String compartmentID = ((String[])eventToFire.eventID.split("__"))[0];
 						deadEvents = eraseComponent(compartmentID);
+						
+						firedEvents.removeAll(deadEvents);
+						
+						if (deadEvents.size() > 0) {
+							
+							for (String eventID : deadEvents) {
+								
+								untriggeredEventSet.remove(eventID);
+								eventToPriorityMap.remove(eventID);
+								eventToDelayMap.remove(eventID);
+								eventToHasDelayMap.remove(eventID);
+								eventToTriggerPersistenceMap.remove(eventID);
+								eventToUseValuesFromTriggerTimeMap.remove(eventID);
+								eventToTriggerMap.remove(eventID);
+								eventToTriggerInitiallyTrueMap.remove(eventID);
+								eventToPreviousTriggerValueMap.remove(eventID);
+								eventToAssignmentSetMap.remove(eventID);
+								eventToAffectedReactionSetMap.remove(eventID);
+							}
+							
+							//copy the triggered event queue -- except the events that are now dead/removed
+							PriorityQueue<EventToFire> newTriggeredEventQueue = new PriorityQueue<EventToFire>(5, eventComparator);
+							
+							while (triggeredEventQueue.size() > 0) {
+							
+								EventToFire event = triggeredEventQueue.poll();
+								EventToFire eventToAdd = 
+									new EventToFire(event.eventID, (HashSet<Object>) event.eventAssignmentSet.clone(), event.fireTime);
+								
+								if (deadEvents.contains(event.eventID) == false)
+									newTriggeredEventQueue.add(eventToAdd);
+							}
+							
+							triggeredEventQueue = newTriggeredEventQueue;
+						}
 					}
 						
 					if (speciesToHasOnlySubstanceUnitsMap.get(variable) != null && 
@@ -2974,39 +3127,6 @@ public abstract class Simulator {
 		//add the fired events back into the untriggered set
 		//this allows them to trigger/fire again later
 		untriggeredEventSet.addAll(firedEvents);
-		
-		if (deadEvents.size() > 0) {
-			
-			for (String eventID : deadEvents) {
-				
-				untriggeredEventSet.remove(eventID);
-				eventToPriorityMap.remove(eventID);
-				eventToDelayMap.remove(eventID);
-				eventToHasDelayMap.remove(eventID);
-				eventToTriggerPersistenceMap.remove(eventID);
-				eventToUseValuesFromTriggerTimeMap.remove(eventID);
-				eventToTriggerMap.remove(eventID);
-				eventToTriggerInitiallyTrueMap.remove(eventID);
-				eventToPreviousTriggerValueMap.remove(eventID);
-				eventToAssignmentSetMap.remove(eventID);
-				eventToAffectedReactionSetMap.remove(eventID);
-			}
-			
-			//copy the triggered event queue -- except the events that are now dead/removed
-			PriorityQueue<EventToFire> newTriggeredEventQueue = new PriorityQueue<EventToFire>(5, eventComparator);
-			
-			while (triggeredEventQueue.size() > 0) {
-			
-				EventToFire event = triggeredEventQueue.poll();
-				EventToFire eventToAdd = 
-					new EventToFire(event.eventID, (HashSet<Object>) event.eventAssignmentSet.clone(), event.fireTime);
-				
-				if (deadEvents.contains(event.eventID) == false)
-					newTriggeredEventQueue.add(eventToAdd);
-			}
-			
-			triggeredEventQueue = newTriggeredEventQueue;
-		}
 		
 		if (affectedAssignmentRuleSet.size() > 0)
 			performAssignmentRules(affectedAssignmentRuleSet);
@@ -3324,7 +3444,7 @@ public abstract class Simulator {
 	/**
 	 * puts array stuff into data structures to be used during simulation
 	 */
-	protected void setupArrays() throws IOException {
+	protected void setupArraysOLD() throws IOException {
 				
 		//ARRAYED SPECIES BUSINESS
 		//create all new species that are implicit in the arrays and put them into the model	
@@ -3353,10 +3473,10 @@ public abstract class Simulator {
 				
 				String[] annotationString = species.getAnnotationString().split("=");
 				
-				numRowsLower = Integer.valueOf(((String[])(annotationString[1].split(" ")))[0].replace("\"",""));
-				numRowsUpper = Integer.valueOf(((String[])(annotationString[2].split(" ")))[0].replace("\"",""));
-				numColsLower = Integer.valueOf(((String[])(annotationString[3].split(" ")))[0].replace("\"",""));
-				numColsUpper = Integer.valueOf(((String[])(annotationString[4].split(" ")))[0].replace("\"",""));
+				numColsLower = Integer.valueOf(((String[])(annotationString[1].split(" ")))[0].replace("\"",""));
+				numColsUpper = Integer.valueOf(((String[])(annotationString[2].split(" ")))[0].replace("\"",""));
+				numRowsLower = Integer.valueOf(((String[])(annotationString[3].split(" ")))[0].replace("\"",""));
+				numRowsUpper = Integer.valueOf(((String[])(annotationString[4].split(" ")))[0].replace("\"",""));
 				
 				minRow = numRowsLower;
 				maxRow = numRowsUpper;
@@ -3966,6 +4086,8 @@ public abstract class Simulator {
 	 */
 	private void setupSingleSpecies(Species species, String speciesID) {
 		
+		speciesID = speciesID.replace("_negative_", "-");
+		
 		if (speciesIDSet.contains(speciesID))
 			return;
 		
@@ -4047,6 +4169,8 @@ public abstract class Simulator {
 	 * @param reactionID
 	 */
 	private void setupLocalParameters(KineticLaw kineticLaw, String reactionID) {
+		
+		reactionID = reactionID.replace("_negative_","-");
 		
 		for (LocalParameter localParameter : kineticLaw.getListOfLocalParameters()) {
 			
