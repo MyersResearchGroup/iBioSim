@@ -9,9 +9,6 @@ import lpn.parser.Transition;
 
 final public class LpnTranList extends LinkedList<Transition> {
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private LhpnFile lpn;
 
