@@ -188,6 +188,8 @@ public abstract class Simulator {
 	protected int maxRow = 0;
 	protected int maxCol = 0;
 	
+	protected boolean duplicated = false;
+	
 	//true means the model is dynamic
 	protected boolean dynamicBoolean = false;
 
@@ -624,6 +626,8 @@ public abstract class Simulator {
 	 */
 	protected void duplicateComponent(String parentComponentID, String eventID) {
 		
+		duplicated = true;
+		
 		//determine new component ID
 		int componentNumber = componentToReactionSetMap.size() + 1;
 		String childComponentID = "C" + String.valueOf(componentNumber);
@@ -736,6 +740,26 @@ public abstract class Simulator {
 			newCols.add(maxCol);
 		}
 		
+		for (Point location : componentToLocationMap.values()) {
+			
+			if ((int) location.getX() < minRow) {
+				minRow = (int) location.getX();
+				//newRows.add(minRow);
+			}
+			else if ((int) location.getX() > maxRow) {
+				maxRow = (int) location.getX();
+				//newRows.add(maxRow);
+			}
+			if ((int) location.getY() < minCol) {
+				minCol = (int) location.getY();
+				//newCols.add(minCol);
+			}
+			else if ((int) location.getY() > maxCol) {
+				maxCol = (int) location.getY();
+				//newCols.add(maxCol);
+			}
+		}
+		
 		HashSet<String> underlyingSpeciesIDs = new HashSet<String>();
 		HashSet<String> newGridSpeciesIDs = new HashSet<String>();
 		HashMap<String, String> newGridSpeciesIDToOldRowSubstring = new HashMap<String, String>();
@@ -802,7 +826,7 @@ public abstract class Simulator {
 						
 						//add a new species to the simulation data structures
 						setupSingleSpecies(gridSpecies, newIDWithNegatives);
-						variableToValueMap.put(newID, 0);
+						variableToValueMap.put(newID.replace("_negative_","-"), 0);
 					}
 				}
 			}
@@ -855,7 +879,7 @@ public abstract class Simulator {
 						
 						//add a new species to the simulation data structures
 						setupSingleSpecies(gridSpecies, newIDWithNegatives);
-						variableToValueMap.put(newID, 0);
+						variableToValueMap.put(newID.replace("_negative_","-"), 0);
 					}
 				}
 			}
@@ -883,7 +907,7 @@ public abstract class Simulator {
 			String underlyingSpeciesID = speciesID.split("__")[1];
 			ASTNode newNode = new ASTNode();
 			
-			//find a forward grid diffusion reaction with this underlying species to take values from
+			//find a grid diffusion reaction with this underlying species to take values from
 			for (Map.Entry<String, ASTNode> reactionAndFormula : reactionToFormulaMap.entrySet()) {
 				
 				String reactionID = reactionAndFormula.getKey();
@@ -891,11 +915,9 @@ public abstract class Simulator {
 				if (reactionID.contains("Diffusion_" + underlyingSpeciesID + "_Below") 
 						|| reactionID.contains("Diffusion_" + underlyingSpeciesID + "_Above")
 						|| reactionID.contains("Diffusion_" + underlyingSpeciesID + "_Left")
-						|| reactionID.contains("Diffusion_" + underlyingSpeciesID + "_Right")
-						&& reactionID.contains("_fd")) {
+						|| reactionID.contains("Diffusion_" + underlyingSpeciesID + "_Right")) {
 					
 					newNode = reactionAndFormula.getValue().clone();
-					newNode.getRightChild().setVariable(model.getSpecies(newGridSpeciesID));
 				}
 			}
 			
@@ -909,14 +931,15 @@ public abstract class Simulator {
 				
 				String fdString = "", rvString = "";
 				
-				switch (directionIndex) {
-				
-				case 0: fdString = "Right"; rvString = "Left"; break;
-				case 1: fdString = "Below"; rvString = "Above"; break;
-				case 2: fdString = "Left"; rvString = "Right"; break;
-				case 3: fdString = "Above"; rvString = "Below"; break;				
+				switch (directionIndex) {				
+
+				case 0: fdString = "Below"; rvString = "Above"; break;
+				case 1: fdString = "Right"; rvString = "Left"; break;
+				case 2: fdString = "Above"; rvString = "Below"; break;		
+				case 3: fdString = "Left"; rvString = "Right"; break;
 				}
 				
+				//make sure that the neighbor exists (ie, is a species contained on the current grid size)
 				if (speciesIDSet.contains(neighborID)) {
 					
 					if (nRow < 0)
@@ -924,12 +947,15 @@ public abstract class Simulator {
 					if (nCol < 0)
 						neighborID = neighborID.replace("COL" + nCol, "COL" + "_negative_" + (-1 * nCol));
 					
-					//create forward reaction if it doesn't exist already as a reverse reaction from a neighbor
-					if (reactionToPropensityMap.containsKey("ROW" + nRow + "_COL" + nCol 
-							+ "_Diffusion_" + underlyingSpeciesID + "_" + rvString + "_rv") == false) {
+					//create forward reaction (to the neighbor) if it doesn't exist already
+					if (reactionToPropensityMap.containsKey("ROW" + row + "_COL" + col 
+							+ "_Diffusion_" + underlyingSpeciesID + "_" + fdString) == false) {
+						
+						//alter kinetic law for forward reaction
+						newNode.getRightChild().setVariable(model.getSpecies(newGridSpeciesID));						
 						
 						String newReactionID = "ROW" + row + "_COL" + col + "_Diffusion_" 
-						+ underlyingSpeciesID + "_" + fdString + "_fd";
+						+ underlyingSpeciesID + "_" + fdString;
 						
 						if (row < 0)
 							newReactionID = newReactionID.replace("ROW" + row, "ROW" + "_negative_" + (-1 * row));
@@ -939,39 +965,49 @@ public abstract class Simulator {
 						Reaction fdReaction = model.createReaction(newReactionID);
 						KineticLaw fdKineticLaw = model.createKineticLaw();
 						fdKineticLaw.setMath(newNode.clone());
-						fdReaction.setKineticLaw(fdKineticLaw);
-						fdReaction.addReactant(new SpeciesReference(model.getSpecies(newGridSpeciesID)));
-						fdReaction.addProduct(new SpeciesReference(model.getSpecies(neighborID)));
+						fdReaction.setKineticLaw(fdKineticLaw);						
+						SpeciesReference reactant = new SpeciesReference(model.getSpecies(newGridSpeciesID));
+						reactant.setStoichiometry(1);
+						fdReaction.addReactant(reactant);
+						SpeciesReference product = new SpeciesReference(model.getSpecies(neighborID));
+						product.setStoichiometry(1);
+						fdReaction.addProduct(product);
 						
-						setupLocalParameters(fdReaction.getKineticLaw(), fdReaction.getId());
+						setupLocalParameters(fdReaction.getKineticLaw(), fdReaction.getId());						
+						
 						setupSingleReaction(fdReaction.getId(), fdReaction.getKineticLaw().getMath(), false,
 								fdReaction.getListOfReactants(), fdReaction.getListOfProducts(), fdReaction.getListOfModifiers());
 					}
 					
-					//create the reverse reaction if it doesn't already exist as the reverse reaction from a neighbor
+					//create the reverse reaction (from the neighbor) if it doesn't already exist
 					if (reactionToPropensityMap.containsKey("ROW" + nRow + "_COL" + nCol 
-							+ "_Diffusion_" + underlyingSpeciesID + "_" + rvString + "_fd") == false) {
+							+ "_Diffusion_" + underlyingSpeciesID + "_" + rvString) == false) {
 						
 						//alter kinetic law for reverse reaction
 						newNode.getRightChild().setVariable(model.getSpecies(neighborID));
 						
-						String newReactionID = "ROW" + row + "_COL" + col + "_Diffusion_" 
-						+ underlyingSpeciesID + "_" + fdString + "_rv";
+						String newReactionID = "ROW" + nRow + "_COL" + nCol + "_Diffusion_"
+						+ underlyingSpeciesID + "_" + rvString;
 						
-						if (row < 0)
-							newReactionID = newReactionID.replace("ROW" + row, "ROW" + "_negative_" + (-1 * row));
-						if (col < 0)
-							newReactionID = newReactionID.replace("COL" + col, "COL" + "_negative_" + (-1 * col));
+						if (nRow < 0)
+							newReactionID = newReactionID.replace("ROW" + nRow, "ROW" + "_negative_" + (-1 * nRow));
+						if (nCol < 0)
+							newReactionID = newReactionID.replace("COL" + nCol, "COL" + "_negative_" + (-1 * nCol));
 						
 						//create reverse reaction
 						Reaction rvReaction = model.createReaction(newReactionID);
 						KineticLaw rvKineticLaw = model.createKineticLaw();
 						rvKineticLaw.setMath(newNode.clone());
-						rvReaction.setKineticLaw(rvKineticLaw);
-						rvReaction.addProduct(new SpeciesReference(model.getSpecies(newGridSpeciesID)));
-						rvReaction.addReactant(new SpeciesReference(model.getSpecies(neighborID)));
+						rvReaction.setKineticLaw(rvKineticLaw);						
+						SpeciesReference reactant = new SpeciesReference(model.getSpecies(neighborID));
+						reactant.setStoichiometry(1);
+						rvReaction.addReactant(reactant);
+						SpeciesReference product = new SpeciesReference(model.getSpecies(newGridSpeciesID));
+						product.setStoichiometry(1);
+						rvReaction.addProduct(product);
 	
 						setupLocalParameters(rvReaction.getKineticLaw(), rvReaction.getId());
+						
 						setupSingleReaction(rvReaction.getId(), rvReaction.getKineticLaw().getMath(), false,
 								rvReaction.getListOfReactants(), rvReaction.getListOfProducts(), rvReaction.getListOfModifiers());
 					}
@@ -1007,12 +1043,15 @@ public abstract class Simulator {
 			KineticLaw degKineticLaw = model.createKineticLaw();
 			degKineticLaw.setMath(degradationNode.clone());
 			degReaction.setKineticLaw(degKineticLaw);
-			degReaction.addReactant(new SpeciesReference(model.getSpecies(newGridSpeciesID)));
+			SpeciesReference reactant = new SpeciesReference(model.getSpecies(newGridSpeciesID));
+			reactant.setStoichiometry(1);
+			degReaction.addReactant(reactant);
 			
 			setupLocalParameters(degReaction.getKineticLaw(), degReaction.getId());
 			setupSingleReaction(degReaction.getId(), degReaction.getKineticLaw().getMath(), false,
 					degReaction.getListOfReactants(), degReaction.getListOfProducts(), degReaction.getListOfModifiers());
 		}
+		
 		
 		//DUPLICATE VARIABLES and alter them to coincide with the new ID
 		
@@ -1085,7 +1124,7 @@ public abstract class Simulator {
 			}
 		}
 		
-		componentToVariableSetMap.put(childComponentID, childComponentVariableSet);	
+		componentToVariableSetMap.put(childComponentID, childComponentVariableSet);
 		
 		
 		//DUPLICATE REACTIONS and alter them to coincide with the new ID
@@ -1106,6 +1145,7 @@ public abstract class Simulator {
 			}
 			
 			ASTNode childFormulaNode = reactionToFormulaMap.get(parentReactionID).clone();
+			String crf = "";
 			
 			try {
 				
@@ -1116,6 +1156,8 @@ public abstract class Simulator {
 					String parentRowCol = "ROW" + (int) parentLocation.getX() + "_" + "COL" + (int) parentLocation.getY();
 					String childRowCol = "ROW" + (int) childLocation.getX() + "_" + "COL" + (int) childLocation.getY();
 					
+					crf = childReactionFormula;
+					
 					if (childReactionFormula.contains("ROW") && childReactionFormula.contains("COL"))					
 						alterNode(childFormulaNode, parentRowCol, childRowCol);
 					else {
@@ -1125,12 +1167,16 @@ public abstract class Simulator {
 						childReactionFormula = childReactionFormula.replace(childSpeciesID + "__kmdiff", 
 								parentComponentID + "__" + underlyingSpeciesID + "__kmdiff");
 						
+						crf = childReactionFormula;
+						
 						childFormulaNode = ASTNode.parseFormula(childReactionFormula);
 					}
 				}
 				else
 					childFormulaNode = ASTNode.parseFormula(childReactionFormula);
 			} catch (ParseException e) {
+				
+				System.err.println(crf);
 				e.printStackTrace();
 			}
 			
@@ -1261,32 +1307,40 @@ public abstract class Simulator {
 		
 		componentToEventSetMap.put(childComponentID, childEventSet);
 		
-		for (String reactionID : reactionToPropensityMap.keySet()) {
-			
-			if (reactionToPropensityMap.get(reactionID) > 0) {
-			
-				System.err.println(reactionID);
-				
-				try {
-					System.err.println(ASTNode.formulaToString(reactionToFormulaMap.get(reactionID)));
-				} catch (SBMLException e) {
-					e.printStackTrace();
-				}				
-				
-				System.err.println(reactionToPropensityMap.get(reactionID));
-				
-				System.err.println();
-				System.err.println();
-			}
-		}
+		double total = 0.0;
 		
-		for (String variableID : variableToValueMap.keySet()) {
-			
-			System.err.println(variableID);
-			System.err.println(variableToValueMap.get(variableID));
-			System.err.println();
-			System.err.println();
-		}
+		for (double prop : reactionToPropensityMap.values())
+			total += prop;
+		
+//		for (String reactionID : reactionToPropensityMap.keySet()) {
+//			
+//			if (reactionID.contains("_of_")) {
+//			
+//				System.err.println(reactionID);
+//				
+//				try {
+//					System.err.println(ASTNode.formulaToString(reactionToFormulaMap.get(reactionID)));
+//				} catch (SBMLException e) {
+//					e.printStackTrace();
+//				}				
+//				
+//				System.err.println(reactionToPropensityMap.get(reactionID));
+//				
+//				System.err.println();
+//				System.err.println();
+//			}
+//		}
+//		
+//		for (String variableID : variableToValueMap.keySet()) {
+//			
+//			System.err.println(variableID);
+//			System.err.println(variableToValueMap.get(variableID));
+//			System.err.println();
+//			System.err.println();
+//		}
+		
+//		System.err.println("duplicate finished");
+//		System.err.println("num reactions: " + reactionToPropensityMap.size());
 	}
 	
 	protected abstract void eraseComponentFurther(HashSet<String> reactionIDs);
@@ -1462,6 +1516,8 @@ public abstract class Simulator {
 		//if it's a user-defined variable
 		//eg, a species name or global/local parameter
 		else if (node.isName()) {
+			
+			String name = node.getName().replace("_negative_","-");
 				
 			if (node.getType().equals(org.sbml.jsbml.ASTNode.Type.NAME_TIME)) {
 				
@@ -1469,11 +1525,11 @@ public abstract class Simulator {
 			}
 			else {
 				
-				if (this.speciesToHasOnlySubstanceUnitsMap.get(node.getName()) != null &&
-						this.speciesToHasOnlySubstanceUnitsMap.get(node.getName()) == false)
-					return (variableToValueMap.get(node.getName()) / this.speciesToCompartmentSizeMap.get(node.getName()));
+				if (this.speciesToHasOnlySubstanceUnitsMap.get(name) != null &&
+						this.speciesToHasOnlySubstanceUnitsMap.get(name) == false)
+					return (variableToValueMap.get(name) / this.speciesToCompartmentSizeMap.get(name));
 				else				
-					return variableToValueMap.get(node.getName());
+					return variableToValueMap.get(name);
 			}
 		}
 		
@@ -2059,10 +2115,10 @@ public abstract class Simulator {
 					newReaction.setListOfModifiers(new ListOf<ModifierSpeciesReference>());
 					newReaction.setId("ROW" + row + "_COL" + col + "_" + reactionID);
 					
-					if (reactionID.contains("Degradation"))
-						newReaction.setReversible(false);
-					else
-						newReaction.setReversible(true);
+					//if (reactionID.contains("Degradation"))
+					newReaction.setReversible(false);
+					//else
+					//newReaction.setReversible(true);
 					
 					newReaction.setFast(false);
 					newReaction.setCompartment(reaction.getCompartment());
@@ -2192,24 +2248,32 @@ public abstract class Simulator {
 						productHeadNode.setVariable(model.getSpecies(newProduct.getSpecies()));
 					} //end looping through products
 					
-					boolean i = false, j = false;
-					
-					for (LocalParameter lp : newReaction.getKineticLaw().getListOfLocalParameters()) {
+					if (abort == false) {
 						
-						if (lp.getId().equals("i"))
-							i = true;
-						else if (lp.getId().equals("j"))
-							j = true;
-					}
+						boolean i = false, j = false;
 						
-					if (i)
-						newReaction.getKineticLaw().getListOfLocalParameters().remove("i");
-					
-					if (j)
-						newReaction.getKineticLaw().getListOfLocalParameters().remove("j");
-					
-					if (abort == false)
+						//checking for these local parameters using getLocalParameters() doesn't seem to work
+						for (LocalParameter lp : newReaction.getKineticLaw().getListOfLocalParameters()) {
+							
+							if (lp.getId().equals("i"))
+								i = true;
+							else if (lp.getId().equals("j"))
+								j = true;
+						}
+							
+						if (i)
+							newReaction.getKineticLaw().getListOfLocalParameters().remove("i");
+						
+						if (j)
+							newReaction.getKineticLaw().getListOfLocalParameters().remove("j");
+						
+						//this isn't a reversible reaction; only take the left side
+						if (newReaction.getId().contains("Degradation") == false) {
+							newReaction.getKineticLaw().setMath(newReaction.getKineticLaw().getMath().getLeftChild());
+						}						
+						
 						reactionsToAdd.add(newReaction);
+					}
 					else
 						abort = false;
 				}
@@ -2246,15 +2310,15 @@ public abstract class Simulator {
 		
 		model.setListOfEvents(allEvents);
 		
-		SBMLWriter writer = new SBMLWriter();
-		PrintStream p;
-		
-		try {
-			p = new PrintStream(new FileOutputStream(SBMLFileName), true, "UTF-8");
-			p.print(writer.writeSBMLToString(model.getSBMLDocument()));
-		} catch (Exception e) {
-			//e.printStackTrace();
-		}
+//		SBMLWriter writer = new SBMLWriter();
+//		PrintStream p;
+//		
+//		try {
+//			p = new PrintStream(new FileOutputStream(SBMLFileName), true, "UTF-8");
+//			p.print(writer.writeSBMLToString(model.getSBMLDocument()));
+//		} catch (Exception e) {
+//			//e.printStackTrace();
+//		}
 	}
 	
 	/**
@@ -2611,10 +2675,10 @@ public abstract class Simulator {
 					newReaction.setListOfModifiers(new ListOf<ModifierSpeciesReference>());
 					newReaction.setId("ROW" + row + "_COL" + col + "_" + reactionID);
 					
-					if (reactionID.contains("Degradation"))
-						newReaction.setReversible(false);
-					else
-						newReaction.setReversible(true);
+					//if (reactionID.contains("Degradation"))
+					newReaction.setReversible(false);
+					//else
+					//	newReaction.setReversible(true);
 					
 					newReaction.setFast(false);
 					newReaction.setCompartment(reaction.getCompartment());
@@ -2744,24 +2808,32 @@ public abstract class Simulator {
 						productHeadNode.setVariable(model.getSpecies(newProduct.getSpecies()));
 					} //end looping through products
 					
-					boolean i = false, j = false;
-					
-					for (LocalParameter lp : newReaction.getKineticLaw().getListOfLocalParameters()) {
+					if (abort == false) {
 						
-						if (lp.getId().equals("i"))
-							i = true;
-						else if (lp.getId().equals("j"))
-							j = true;
-					}
+						boolean i = false, j = false;
 						
-					if (i)
-						newReaction.getKineticLaw().getListOfLocalParameters().remove("i");
-					
-					if (j)
-						newReaction.getKineticLaw().getListOfLocalParameters().remove("j");
-					
-					if (abort == false)
+						//getLocalParameter doesn't seem to work, so i'm doing it this way
+						for (LocalParameter lp : newReaction.getKineticLaw().getListOfLocalParameters()) {
+							
+							if (lp.getId().equals("i"))
+								i = true;
+							else if (lp.getId().equals("j"))
+								j = true;
+						}
+							
+						if (i)
+							newReaction.getKineticLaw().getListOfLocalParameters().remove("i");
+						
+						if (j)
+							newReaction.getKineticLaw().getListOfLocalParameters().remove("j");
+						
+						//this isn't a reversible reaction; only take the left side
+						if (newReaction.getId().contains("Degradation") == false) {
+							newReaction.getKineticLaw().setMath(newReaction.getKineticLaw().getMath().getLeftChild());
+						}
+						
 						reactionsToAdd.add(newReaction);
+					}
 					else
 						abort = false;
 				}
@@ -2951,9 +3023,6 @@ public abstract class Simulator {
 					
 					if (eventToHasDelayMap.get(untriggeredEventID) == true)
 						fireTime += evaluateExpressionRecursive(eventToDelayMap.get(untriggeredEventID));
-					
-					System.err.println(untriggeredEventID + "  " + fireTime);
-					System.err.println("   " + eventToDelayMap.get(untriggeredEventID));
 							
 					triggeredEventQueue.add(new EventToFire(
 							untriggeredEventID, evaluatedAssignments, fireTime));
@@ -2964,9 +3033,6 @@ public abstract class Simulator {
 					
 					if (eventToHasDelayMap.get(untriggeredEventID) == true)
 						fireTime += evaluateExpressionRecursive(eventToDelayMap.get(untriggeredEventID));
-					
-					System.err.println(untriggeredEventID + "  " + fireTime);
-					System.err.println("   " + eventToDelayMap.get(untriggeredEventID));
 									
 					triggeredEventQueue.add(new EventToFire(
 							untriggeredEventID, eventToAssignmentSetMap.get(untriggeredEventID), fireTime));
@@ -4511,8 +4577,6 @@ public abstract class Simulator {
 			
 			reactionToPropensityMap.put(reactionID, newPropensity);	
 		}
-		
-		
 	}
 	
 	
