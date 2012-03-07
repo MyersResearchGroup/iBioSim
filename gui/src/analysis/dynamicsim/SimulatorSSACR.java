@@ -14,9 +14,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
-import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.SBMLException;
-
 import main.Gui;
 import main.util.MutableBoolean;
 import odk.lang.FastMath;
@@ -202,7 +199,7 @@ public class SimulatorSSACR extends Simulator {
 			
 			//step3bTime += System.nanoTime() - step3bInitial;
 			
-			
+			//System.err.println(selectedReactionID + "  " + reactionToPropensityMap.get(selectedReactionID));
 			
 			//STEP 4: perform selected reaction and update species counts
 			
@@ -211,6 +208,7 @@ public class SimulatorSSACR extends Simulator {
 			performReaction(selectedReactionID, noAssignmentRulesFlag, noConstraintsFlag);
 			
 			//step4Time += System.nanoTime() - step4Initial;
+			
 			
 			
 			
@@ -223,8 +221,9 @@ public class SimulatorSSACR extends Simulator {
 			
 			boolean newMinPropensityFlag = updatePropensities(affectedReactionSet);
 			
-			//step5Time += System.nanoTime() - step5Initial; 
+			//step5Time += System.nanoTime() - step5Initial;
 			
+
 			
 			//STEP 6: re-assign affected reactions to appropriate groups
 			
@@ -261,7 +260,14 @@ public class SimulatorSSACR extends Simulator {
 					e.printStackTrace();
 				}
 				
-				printTime += printInterval;			
+//				for (String speciesID : speciesIDSet)
+//					if (speciesID.contains("ROW"))
+//						System.err.println(speciesID + "   " + variableToValueMap.get(speciesID));
+//				
+//				System.err.println();
+//				System.err.println();
+				
+				printTime += printInterval;
 			}
 		} //end simulation loop
 		
