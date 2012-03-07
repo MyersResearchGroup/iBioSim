@@ -862,6 +862,10 @@ public class LhpnFile {
 		return allTransitions;
 	}
 	
+	public Transition getTransition(int index) {
+		return getAllTransitions()[index];
+	}
+	
 	public ArrayList<String> getTransitionListArrayList() {
 		ArrayList<String> transitionList = new ArrayList<String>(transitions.size());
 		int i = 0;
