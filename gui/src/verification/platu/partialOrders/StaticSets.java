@@ -48,23 +48,28 @@ public class StaticSets {
 					&& anotherTranEnablingTree.getChange(curTran.getAssignments())=='F')
 				disableByFailingEnableCond.add(anotherTran.getIndex());
 		}
-		
+		// modifyAssignment contains transitions (T) that satisfy either (1) or (2): for every t in T, 
+		// (1) intersection(VA(curTran), supportA(t)) != empty
+		// (2) intersection(VA(t), supportA(curTran)) != empty
+		// VA(t) : set of variables being assigned in transition t.
+		// supportA(t): set of variables appearing in the expressions assigned to the variables of t (r.h.s of the assignment). 
 		for (int i = 0; i < allTransitions.length; i++) {
 			if (curTran.equals(allTransitions[i]))
 				continue;
 			Transition anotherTran = allTransitions[i];
-			boolean anotherTranAdded = false;
 			for (String v : curTran.getAssignTrees().keySet()) {
 				for (ExprTree anotherTranAssignTree : anotherTran.getAssignTrees().values()) {
 					if (anotherTranAssignTree != null && anotherTranAssignTree.containsVar(v)) {
 						modifyAssignment.add(anotherTran.getIndex());
-						anotherTranAdded = true;
-						break;
 					}					
 				}
-				if (anotherTranAdded) 
-					break;
-					
+			}
+			for (ExprTree exprTree : curTran.getAssignTrees().values()) {
+				for (String v : anotherTran.getAssignTrees().keySet()) {
+					if (exprTree != null && exprTree.containsVar(v)) {
+						modifyAssignment.add(anotherTran.getIndex());
+					}
+				}
 			}
 		}
 		disableSet.addAll(disableByStealingToken);
@@ -87,7 +92,7 @@ public class StaticSets {
 		}
 	}
 
-	public HashSet<Integer> getDisable() {
+	public HashSet<Integer> getDisabled() {
 		return disableSet;
 	}
 
