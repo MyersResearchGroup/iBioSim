@@ -1462,6 +1462,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				if (dot.isSelected()) {
 					stateGraphArray[0].outputStateGraph(directory + separator + graphFileName);  
 				}
+				if(graph.isSelected()){
+					showGraph(directory + separator + graphFileName);
+				}
 			}
 			
 			Options.setTimingAnalsysisType("off");
@@ -2609,4 +2612,38 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		return abstPane;
 	}
 
+	/**
+	 * Calls the appropriate dot program to show the graph.
+	 * @param fileName The absolute file
+	 */
+	public void showGraph(String fileName)
+	{
+		File file = new File(fileName);
+		
+		File work = file.getParentFile();
+		try {
+			Runtime exec = Runtime.getRuntime();
+			if (new File(fileName).exists()) {
+				String command;
+				if (System.getProperty("os.name")
+						.contentEquals("Linux")) {
+					command = "gnome-open ";
+				} else if (System.getProperty("os.name").toLowerCase()
+						.startsWith("mac os")) {
+					command = "open ";
+				} else {
+					command = "dotty ";
+				}
+				Process dot = exec.exec(command + fileName, null, work);
+				log.addText(command + fileName + "\n");
+				dot.waitFor();
+			} else {
+				JOptionPane.showMessageDialog(Gui.frame,
+						"Unable to view LHPN.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }
