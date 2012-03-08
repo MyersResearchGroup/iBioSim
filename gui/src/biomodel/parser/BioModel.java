@@ -3237,6 +3237,7 @@ public class BioModel {
 				SpeciesReference reactant = r.createReactant();
 				reactant.setSpecies(speciesID);
 				reactant.setStoichiometry(1);
+				reactant.setConstant(false);
 				
 				LocalParameter i = kl.createLocalParameter();
 				LocalParameter j = kl.createLocalParameter();
@@ -3316,11 +3317,13 @@ public class BioModel {
 					SpeciesReference reactant = r.createReactant();
 					reactant.setSpecies(speciesID);
 					reactant.setStoichiometry(1);
+					reactant.setConstant(false);
 					
 					//product is neighboring species
 					SpeciesReference product = r.createProduct();
 					product.setSpecies(speciesID);
 					product.setStoichiometry(1);
+					product.setConstant(false);
 					
 					LocalParameter i = kl.createLocalParameter();
 					LocalParameter j = kl.createLocalParameter();
@@ -3373,11 +3376,13 @@ public class BioModel {
 			SpeciesReference reactant = r.createReactant();
 			reactant.setSpecies(speciesID);
 			reactant.setStoichiometry(1);
+			reactant.setConstant(false);
 			
 			//product is outer species
 			SpeciesReference product = r.createProduct();
 			product.setSpecies(speciesID);
 			product.setStoichiometry(1);
+			product.setConstant(false);
 			
 			LocalParameter i = kl.createLocalParameter();
 			LocalParameter j = kl.createLocalParameter();
