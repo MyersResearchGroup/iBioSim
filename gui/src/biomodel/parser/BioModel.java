@@ -29,6 +29,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import org.sbml.libsbml.ASTNode;
@@ -3951,6 +3952,22 @@ public class BioModel {
 			long numErrors = gcm.getSBMLDocument().checkConsistency();
 			if (numErrors > 0) {
 				Utility.createErrorMessage("Merged SBMLs Are Inconsistent", "The merged sbml files have inconsistencies.");
+				String message = "";
+				for (long i = 0; i < numErrors; i++) {
+					String error = gcm.getSBMLDocument().getError(i).getMessage(); // .replace(". ",
+					// ".\n");
+					message += i + ":" + error + "\n";
+				}
+				if (numErrors > 0) {
+					JTextArea messageArea = new JTextArea(message);
+					messageArea.setLineWrap(true);
+					messageArea.setEditable(false);
+					JScrollPane scroll = new JScrollPane();
+					scroll.setMinimumSize(new Dimension(600, 600));
+					scroll.setPreferredSize(new Dimension(600, 600));
+					scroll.setViewportView(messageArea);
+					JOptionPane.showMessageDialog(Gui.frame, scroll, "SBML Errors and Warnings", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		}
 		new File(filename + ".temp").delete();
