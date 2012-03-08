@@ -150,6 +150,7 @@ public abstract class Simulator {
 	protected ListOf<Species> initialSpecies = new ListOf<Species>();
 	protected ListOf<Reaction> initialReactions = new ListOf<Reaction>();
 	protected ListOf<Event> initialEvents = new ListOf<Event>();
+	protected ListOf<Parameter> initialParameters = new ListOf<Parameter>();
 	
 	//propensity variables
 	protected double totalPropensity = 0.0;
@@ -608,13 +609,8 @@ public abstract class Simulator {
 		
 		initialSpecies = model.getListOfSpecies().clone();
 		initialReactions = model.getListOfReactions().clone();
-		//initialEvents = model.getListOfEvents().clone();
-		
-//		for (Species s : initialSpecies)
-//			System.err.println(s.getId());
-//			
-//		for (Reaction r : initialReactions)
-//			System.err.println(r.getId());
+		initialEvents = model.getListOfEvents().clone();
+		initialParameters = model.getListOfParameters().clone();
 	}
 	
 	/**
@@ -3473,38 +3469,10 @@ public abstract class Simulator {
 	 */
 	protected void resetModel() {
 		
-
-		
 		model.setListOfSpecies(initialSpecies);
 		model.setListOfReactions(initialReactions);
-		//model.setListOfEvents(initialEvents);
-		
-		System.err.println("initially: ");
-		
-		for (Species s : model.getListOfSpecies())
-			System.err.println(s.getId());
-			
-		for (Reaction r : model.getListOfReactions()) {
-			System.err.println(r.getId());
-			try {
-				System.err.println("    " + r.getKineticLaw().getMath().toFormula());
-			} catch (SBMLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		SBMLWriter writer = new SBMLWriter();
-		PrintStream p;
-		
-		try {
-			p = new PrintStream(new FileOutputStream(SBMLFileName), true, "UTF-8");
-			p.print(writer.writeSBMLToString(model.getSBMLDocument()));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		System.err.println("done printing to " + SBMLFileName);
+		model.setListOfEvents(initialEvents);
+		model.setListOfParameters(initialParameters);
 	}
 	
 	/**
@@ -4252,7 +4220,8 @@ public abstract class Simulator {
 			variableToValueMap.put(parameterID, localParameter.getValue());
 						
 			//alter the local parameter ID so that it goes to the local and not global value
-			localParameter.setId(parameterID);
+			if (localParameter.getId() != parameterID)
+				localParameter.setId(parameterID);
 			
 			//for some reason, changing the local parameter sometimes changes the kinetic law instances
 			//of that parameter id (and sometimes doesn't), so those ones are fine and ignore them

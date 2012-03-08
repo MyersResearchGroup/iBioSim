@@ -706,89 +706,6 @@ public class SimulatorSSACR extends Simulator {
 	 */
 	protected void setupForNewRun(int newRun) {
 		
-//		if (dynamicBoolean == true) {
-//			
-//			SBMLReader reader = new SBMLReader();
-//			SBMLDocument document = null;
-//			
-//			try {
-//				document = reader.readSBML(SBMLFileName);
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
-//			
-//			model = document.getModel();
-//			
-//			numSpecies = model.getNumSpecies();
-//			numParameters = model.getNumParameters();
-//			numReactions = model.getNumReactions();
-//			numEvents = model.getNumEvents();
-//			numRules = model.getNumRules();
-//			numConstraints = model.getNumConstraints();
-//			numInitialAssignments = model.getNumInitialAssignments();
-//			
-//			//set initial capacities for collections (1.5 is used to multiply numReactions due to reversible reactions)
-//			speciesToAffectedReactionSetMap = new HashMap<String, HashSet<String> >((int) numSpecies);
-//			speciesToIsBoundaryConditionMap = new HashMap<String, Boolean>((int) numSpecies);
-//			variableToIsConstantMap = new HashMap<String, Boolean>((int) (numSpecies + numParameters));
-//			speciesToHasOnlySubstanceUnitsMap = new HashMap<String, Boolean>((int) numSpecies);
-//			speciesToCompartmentSizeMap = new TObjectDoubleHashMap<String>((int) numSpecies);
-//			speciesIDSet = new LinkedHashSet<String>((int) numSpecies);
-//			variableToValueMap = new TObjectDoubleHashMap<String>((int) numSpecies + (int) numParameters);
-//			
-//			reactionToPropensityMap = new TObjectDoubleHashMap<String>((int) (numReactions * 1.5));		
-//			reactionToSpeciesAndStoichiometrySetMap = new HashMap<String, HashSet<StringDoublePair> >((int) (numReactions * 1.5));	
-//			reactionToReactantStoichiometrySetMap = new HashMap<String, HashSet<StringDoublePair> >((int) (numReactions * 1.5));
-//			reactionToFormulaMap = new HashMap<String, ASTNode>((int) (numReactions * 1.5));
-//			
-//			componentToLocationMap = new LinkedHashMap<String, Point>();
-//			componentToReactionSetMap = new HashMap<String, HashSet<String> >();
-//			componentToVariableSetMap = new HashMap<String, HashSet<String> >();
-//			componentToEventSetMap = new HashMap<String, HashSet<String> >();
-//			
-//			if (numEvents > 0) {
-//				
-//				triggeredEventQueue = new PriorityQueue<EventToFire>((int) numEvents, eventComparator);
-//				untriggeredEventSet = new HashSet<String>((int) numEvents);
-//				eventToPriorityMap = new TObjectDoubleHashMap<String>((int) numEvents);
-//				eventToDelayMap = new HashMap<String, ASTNode>((int) numEvents);
-//				eventToHasDelayMap = new HashMap<String, Boolean>((int) numEvents);
-//				eventToTriggerMap = new HashMap<String, ASTNode>((int) numEvents);
-//				eventToTriggerInitiallyTrueMap = new HashMap<String, Boolean>((int) numEvents);
-//				eventToTriggerPersistenceMap = new HashMap<String, Boolean>((int) numEvents);
-//				eventToUseValuesFromTriggerTimeMap = new HashMap<String, Boolean>((int) numEvents);
-//				eventToAssignmentSetMap = new HashMap<String, HashSet<Object> >((int) numEvents);
-//				eventToAffectedReactionSetMap = new HashMap<String, HashSet<String> >((int) numEvents);
-//				eventToPreviousTriggerValueMap = new HashMap<String, Boolean>((int) numEvents);
-//				variableToEventSetMap = new HashMap<String, HashSet<String> >((int) numEvents);
-//			}
-//			
-//			if (numRules > 0) {
-//				
-//				variableToAffectedAssignmentRuleSetMap = new HashMap<String, HashSet<AssignmentRule> >((int) numRules);
-//				variableToIsInAssignmentRuleMap = new HashMap<String, Boolean>((int) (numSpecies + numParameters));
-//			}
-//			
-//			if (numConstraints > 0) {
-//				
-//				variableToAffectedConstraintSetMap = new HashMap<String, HashSet<ASTNode> >((int) numConstraints);		
-//				variableToIsInConstraintMap = new HashMap<String, Boolean>((int) (numSpecies + numParameters));
-//			}
-//			
-//			totalPropensity = 0.0;
-//			numGroups = 0;
-//			minPropensity = Double.MAX_VALUE;
-//			maxPropensity = Double.MIN_VALUE;
-//			
-//			try {
-//				initialize(0, newRun);
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
-//		}
-//		//if it's not a dynamic model
-//		else {
-		
 		//get rid of things that were created dynamically last run
 		if (dynamicBoolean == true) {
 			resetModel();
@@ -836,7 +753,6 @@ public class SimulatorSSACR extends Simulator {
 		
 		if (dynamicBoolean == true)
 			setupGrid();
-		//}
 	}
 	
 	/**
