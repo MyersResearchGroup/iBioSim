@@ -392,7 +392,10 @@ public class Analysis {
 	 */
 	public StateGraph search_dfsPOR(final StateGraph[] sgList, final State[] initStateArray, int cycleClosingMthdIndex) {
 		System.out.println("---> calling function search_dfsPORSingleLpn");
-				
+		if (cycleClosingMthdIndex == 0) 
+			System.out.println("---> POR with sticky transitions");
+		else if (cycleClosingMthdIndex == 3)
+			System.out.println("---> POR without cycle closing check");
 		double peakUsedMem = 0;
 		double peakTotalMem = 0;
 		boolean failure = false;
@@ -584,7 +587,10 @@ public class Analysis {
 	 */
 	public StateGraph search_dfsPORrefinedCycleRule(final StateGraph[] sgList, final State[] initStateArray, int cycleClosingMthdIndex) {
 		System.out.println("---> calling function search_dfsPORrefinedCycleRule");
-				
+		if (cycleClosingMthdIndex == 1) 
+			System.out.println("---> POR with behavioral analysis");
+		else if (cycleClosingMthdIndex == 2)
+			System.out.println("---> POR with behavioral analysis and state trace-back");	
 		double peakUsedMem = 0;
 		double peakTotalMem = 0;
 		boolean failure = false;
@@ -617,7 +623,7 @@ public class Analysis {
 			tmpMap.put(curTran.getIndex(), curStatic);
 		}
 		staticSetsMap.put(sgList[0].getLpn().getIndex(), tmpMap);
-//		printStaticSetMap(staticSetsMap);
+		//printStaticSetMap(staticSetsMap);
 		
 //		System.out.println("call getAmple on initStateArray at 0: ");
 		boolean init = true;
@@ -804,7 +810,7 @@ public class Analysis {
 			HashMap<Integer, StaticSets> tmp = staticSetsMap.get(i);
 			for (Integer j : tmp.keySet()) {
 				StaticSets statSets = tmp.get(j);
-				printDisableOREnableSet(statSets.getLpn(), statSets.getTran(), statSets.getDisable(), "disableSet");
+				printDisableOREnableSet(statSets.getLpn(), statSets.getTran(), statSets.getDisabled(), "disableSet");
 				printDisableOREnableSet(statSets.getLpn(), statSets.getTran(), statSets.getEnable(), "enableSet");
 			}
 		}
@@ -850,7 +856,7 @@ public class Analysis {
 		for(Iterator<Integer> processMapIter = processMap.keySet().iterator(); processMapIter.hasNext();) {
 			LpnProcess curProc = processMap.get(processMapIter.next());
 			curProc.assignStickyTransitions();
-			//curProc.printProcWithStickyTrans();
+			curProc.printProcWithStickyTrans();
 		}
 		return lpn.getAllTransitions();
 	}
