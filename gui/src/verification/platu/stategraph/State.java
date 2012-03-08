@@ -4,10 +4,12 @@ import java.io.*;
 import java.util.*;
 
 import lpn.parser.LhpnFile;
+import lpn.parser.Transition;
 
 import verification.platu.common.PlatuObj;
 import verification.platu.lpn.DualHashMap;
 import verification.platu.lpn.LPN;
+import verification.platu.lpn.LpnTranList;
 import verification.platu.lpn.VarSet;
 
 /**
@@ -22,7 +24,7 @@ public class State extends PlatuObj {
     protected int[] vector;
     protected boolean[] tranVector; // indicator vector to record whether each transition is enabled or not. 
     private int hashVal = 0;
-    private LhpnFile lpnModel = null;
+    private LhpnFile lpn = null;
     private int index;
     private boolean localEnabledOnly;
     protected boolean failure = false;
@@ -36,7 +38,7 @@ public class State extends PlatuObj {
     }
 
     public State(final LhpnFile lpn, int[] new_marking, int[] new_vector, boolean[] new_isTranEnabled) {
-    	this.lpnModel = lpn;
+    	this.lpn = lpn;
         this.marking = new_marking;
         this.vector = new_vector;
         this.tranVector = new_isTranEnabled;
@@ -56,7 +58,7 @@ public class State extends PlatuObj {
             new NullPointerException().printStackTrace();
         }
         
-        this.lpnModel = other.lpnModel;        	
+        this.lpn = other.lpn;        	
         this.marking = new int[other.marking.length];
         System.arraycopy(other.marking, 0, this.marking, 0, other.marking.length);
 
@@ -105,11 +107,11 @@ public class State extends PlatuObj {
 //    }
     
     public void setLpn(final LhpnFile thisLpn) {
-    	this.lpnModel = thisLpn;
+    	this.lpn = thisLpn;
     }
     
     public LhpnFile getLpn() {
-    	return this.lpnModel;
+    	return this.lpn;
     }
     
     public void setLabel(String lbl) {
@@ -159,7 +161,7 @@ public class State extends PlatuObj {
     }
 
     public String print() {
-    	DualHashMap<String, Integer> VarIndexMap = this.lpnModel.getVarIndexMap();
+    	DualHashMap<String, Integer> VarIndexMap = this.lpn.getVarIndexMap();
     	String message = "Marking: [";
         for (int i : marking) {
             message += i + ",";
@@ -181,7 +183,7 @@ public class State extends PlatuObj {
 		if(hashVal == 0){
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + ((lpnModel == null) ? 0 : lpnModel.getLabel().hashCode());
+			result = prime * result + ((lpn == null) ? 0 : lpn.getLabel().hashCode());
 			result = prime * result + Arrays.hashCode(marking);
 			result = prime * result + Arrays.hashCode(vector);
 			result = prime * result + Arrays.hashCode(tranVector);
@@ -203,11 +205,11 @@ public class State extends PlatuObj {
 			return false;
 		
 		State other = (State) obj;
-		if (lpnModel == null) {
-			if (other.lpnModel != null)
+		if (lpn == null) {
+			if (other.lpn != null)
 				return false;
 		} 
-		else if (!lpnModel.equals(other.lpnModel))
+		else if (!lpn.equals(other.lpn))
 			return false;
 		
 		if (!Arrays.equals(marking, other.marking))
@@ -275,9 +277,9 @@ public class State extends PlatuObj {
     public State getLocalState() {
     	//VarSet lpnOutputs = this.lpnModel.getOutputs();
     	//VarSet lpnInternals = this.lpnModel.getInternals();
-    	Set<String> lpnOutputs = this.lpnModel.getAllOutputs().keySet();
-    	Set<String> lpnInternals = this.lpnModel.getAllInternals().keySet();
-    	DualHashMap<String,Integer> varIndexMap = this.lpnModel.getVarIndexMap();
+    	Set<String> lpnOutputs = this.lpn.getAllOutputs().keySet();
+    	Set<String> lpnInternals = this.lpn.getAllInternals().keySet();
+    	DualHashMap<String,Integer> varIndexMap = this.lpn.getVarIndexMap();
     	 
     	int[] outVec = new int[this.vector.length];
     	
@@ -293,7 +295,7 @@ public class State extends PlatuObj {
     			outVec[i] = 0;
     	}
     	// TODO: (??) Need to create outTranVector as well?
-    	return new State(this.lpnModel, this.marking, outVec, this.tranVector);
+    	return new State(this.lpn, this.marking, outVec, this.tranVector);
     }
     
     /**
@@ -302,7 +304,17 @@ public class State extends PlatuObj {
     public int[] getEnabledSet() {
         return null;// enabledSet;
     }
-
+    
+    public LpnTranList getEnabledTransitions() {
+       LpnTranList enabledTrans = new LpnTranList();
+       for (int i=0; i<tranVector.length; i++) {
+    	   if (tranVector[i]) {
+    		   enabledTrans.add(this.lpn.getTransition(i));
+    	   }
+       }
+       return enabledTrans;
+    }
+    
     public String getEnabledSetString() {
         String ret = "";
         // for (int i : enabledSet) {
@@ -340,7 +352,7 @@ public class State extends PlatuObj {
     	}
         boolean[] newEnabledTranVector = SG.updateEnabledTranVector(this.getTranVector(), this.marking, newStateVector, null);
     	if(newState == true)
-    		return new State(this.lpnModel, this.marking, newStateVector, newEnabledTranVector);
+    		return new State(this.lpn, this.marking, newStateVector, newEnabledTranVector);
     	
     	return null;
     }
@@ -375,7 +387,7 @@ public class State extends PlatuObj {
     		newState = true;
     	
     	if(newState == true)
-    		return new State(this.lpnModel, this.marking, newStateVector, newTranVector);
+    		return new State(this.lpn, this.marking, newStateVector, newTranVector);
 
     	return null;
     }
