@@ -66,6 +66,7 @@ import org.sbml.libsbml.SpeciesGlyph;
 import org.sbml.libsbml.SpeciesReference;
 import org.sbml.libsbml.Submodel;
 import org.sbml.libsbml.TextGlyph;
+import org.sbml.libsbml.Unit;
 import org.sbml.libsbml.UnitDefinition;
 import org.sbml.libsbml.Layout;
 import org.sbml.libsbml.XMLAttributes;
@@ -3221,6 +3222,18 @@ public class BioModel {
 			double decayRate = sbml.getModel().getParameter("kecd").getValue();
 				
 			String decayUnitString = "u_1_second_n1";
+			
+			if (sbml.getModel().getUnitDefinition(decayUnitString) == null) {
+				
+				UnitDefinition ud = sbml.getModel().createUnitDefinition();
+				Unit unit = ud.createUnit();
+				unit.setExponent(-1);
+				unit.setKind(libsbml.UnitKind_forName("second"));
+				unit.setScale(0);
+				unit.setMultiplier(1);
+				ud.setId(decayUnitString);
+				sbml.getModel().addUnitDefinition(ud);
+			}
 			
 			Reaction r = sbml.getModel().createReaction();
 			r.setId("Degradation_" + speciesID);
