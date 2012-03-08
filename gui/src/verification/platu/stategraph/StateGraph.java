@@ -22,6 +22,9 @@ import verification.platu.lpn.DualHashMap;
 import verification.platu.lpn.LpnTranList;
 import verification.platu.main.Main;
 import verification.platu.main.Options;
+import verification.platu.partialOrders.AmpleSet;
+import verification.platu.partialOrders.StaticSets;
+import verification.platu.project.PrjState;
 
 public class StateGraph {
     protected State init = null;
@@ -406,10 +409,8 @@ public class StateGraph {
         }
     	
         LpnTranList curEnabled = new LpnTranList();
-        System.out.println("----Enabled transitions----");
         for (Transition tran : this.lpn.getAllTransitions()) {
         	if (isEnabled(tran,curState)) {
-        		System.out.println("Transition " + tran.getName() + " is enabled");
         		if(tran.local()==true)
         			curEnabled.addLast(tran);
                 else
@@ -421,94 +422,320 @@ public class StateGraph {
     }
     
     /**
-     * Return the enabled transitions in the state with index 'stateIdx'.
-     * @param stateIdx
-     * @param applyPOR
-     * @return
-     */
-    public LpnTranList getEnabledWithPOR(int stateIdx, HashMap<Integer, HashSet<Integer>> disableSet, 
-    		HashMap<Integer, HashSet<Integer>> disableByStealingToken, HashMap<Integer, HashSet<Integer>> enableSet) {
-    	State curState = this.getState(stateIdx);
-        return this.getEnabledWithPOR(curState, disableSet, disableByStealingToken, enableSet);
-    }
-    
-    /**
      * Return the set of all LPN transitions that are enabled in 'state'.
      * @param curState
+     * @return
+     */
+    public LpnTranList getEnabled(State curState, boolean init) {
+    	if (curState == null) {
+            throw new NullPointerException();
+        }   	
+    	if(enabledSetTbl.containsKey(curState) == true){
+//    		System.out.println("~~~~~~~ existing state in enabledSetTbl: S" + curState.getIndex() + "~~~~~~~~");
+//    		printTransitionSet((LpnTranList)enabledSetTbl.get(curState), "enabled trans at this state ");
+            return (LpnTranList)enabledSetTbl.get(curState).clone();
+        }   	
+        LpnTranList curEnabled = new LpnTranList();
+        //System.out.println("----Enabled transitions----");
+        if (init) {
+        	for (Transition tran : this.lpn.getAllTransitions()) {
+            	if (isEnabled(tran,curState)) {
+            		//System.out.println("Transition " + tran.getName() + " is enabled");
+            		if(tran.local()==true)
+            			curEnabled.addLast(tran);
+                    else
+                    	curEnabled.addFirst(tran);
+                 } 
+            }
+        }
+        else {
+        	for (int i=0; i < this.lpn.getAllTransitions().length; i++) {
+        		Transition tran = this.lpn.getAllTransitions()[i];
+        		if (curState.getTranVector()[i])
+        			if(tran.local()==true)
+            			curEnabled.addLast(tran);
+                    else
+                    	curEnabled.addFirst(tran);
+        			
+        	}
+        }
+        this.enabledSetTbl.put(curState, curEnabled);
+//        System.out.println("~~~~~~~~ State S" + curState.getIndex() + " does not exist in enabledSetTbl. Add to enabledSetTbl.");
+//        printEnabledSetTbl();
+        return curEnabled;
+    }
+    
+    private void printEnabledSetTbl() {
+    	System.out.println("******* enabledSetTbl **********");
+    	for (State s : enabledSetTbl.keySet()) {
+    		System.out.print("S" + s.getIndex() + " -> ");
+    		printTransitionSet(enabledSetTbl.get(s), "");
+    	}
+		
+	}
+    
+    /**
+     * Return the set of all LPN transitions that are enabled in 'state'. The "init" flag indicates whether a transition
+     * needs to be evaluated. 
+     * @param curState
+     * @param stateStack 
      * @param enable 
      * @param disableByStealingToken 
      * @param disable 
+     * @param init 
      * @return
      */
-    public LpnTranList getEnabledWithPOR(State curState, HashMap<Integer, HashSet<Integer>> disable, 
-    		HashMap<Integer, HashSet<Integer>> disableByStealingToken, HashMap<Integer, HashSet<Integer>> enable) {
+    public AmpleSet getAmple(State curState, HashMap<Integer,HashMap<Integer,StaticSets>> staticSetsMap, HashSet<PrjState> stateStack, boolean init) {
     	if (curState == null) {
             throw new NullPointerException();
         }
-     	if(enabledSetTbl.containsKey(curState) == true){
-    		//printCurState(curState);
-            return (LpnTranList)enabledSetTbl.get(curState).clone();
-        }
-        LpnTranList curEnabled = new LpnTranList();
+    	AmpleSet curAmple = new AmpleSet();
+    	// Cycle closing check: If curState is on the stateStack and it has been visited before, it is a cycle.
+    	if(enabledSetTbl.containsKey(curState) == true) { 
+//     		System.out.println("~~~~~~~ existing state in enabledSetTbl: S" + curState.getIndex() + "~~~~~~~~");
+//    		printTransitionSet((LpnTranList)enabledSetTbl.get(curState), "Old ample at this state: ");
+    		curAmple.getAmpleSet().addAll((LpnTranList)enabledSetTbl.get(curState).clone());
+    		return curAmple;
+    	}
+//    	System.out.println("~~~~~~~~ State S" + curState.getIndex() + " does not exist in enabledSetTbl.");
         HashSet<Integer> curEnabledIndices = new HashSet<Integer>();
         HashSet<Integer> curNonStickyEnabledIndices = new HashSet<Integer>();
         boolean allEnabledAreSticky = true;
-        for (int i=0; i < this.lpn.getAllTransitions().length; i++) {
-        	Transition tran = this.lpn.getAllTransitions()[i];
-        	if (isEnabled(tran,curState)){
-        		//System.out.println("Transition " + tran.getName() + " is enabled");
-        		curEnabledIndices.add(i);
-        		allEnabledAreSticky = allEnabledAreSticky && tran.isSticky();
-        		if (!tran.isSticky()) {
-        			curNonStickyEnabledIndices.add(i);
-        		}
-             }
+        if (init) {
+        	for (int i=0; i < this.lpn.getAllTransitions().length; i++) {
+            	Transition tran = this.lpn.getAllTransitions()[i];
+            	if (isEnabled(tran,curState)){
+            		//System.out.println("Transition " + tran.getName() + " is enabled");
+            		curEnabledIndices.add(i);
+            		allEnabledAreSticky = allEnabledAreSticky && tran.isSticky();
+            		if (!tran.isSticky()) {
+            			curNonStickyEnabledIndices.add(i);
+            		}
+                 }
+            }
         }
+        else {
+        	for (int i=0; i < this.lpn.getAllTransitions().length; i++) {
+        		Transition tran = this.lpn.getAllTransitions()[i];
+        		if (curState.getTranVector()[i])
+        			curEnabledIndices.add(i);
+        			allEnabledAreSticky = allEnabledAreSticky && tran.isSticky();
+        			if (!tran.isSticky()) {
+        				curNonStickyEnabledIndices.add(i);
+        			}
+        	}
+        }
+        
         // Apply POR with traceback here.
         HashSet<Integer> ready = new HashSet<Integer>();
-       	System.out.println("********************");
-   		System.out.println("Begin POR:");
-   		printIntegerSet(curEnabledIndices, "Enabled set");
-   		//printIntegerSet(curNonStickyEnabledIndices, "Enabled set (non-sticky)");
-   		ready = partialOrderReduction(curState, curEnabledIndices, disable, disableByStealingToken, enable, allEnabledAreSticky);
-        printIntegerSet(ready, "Ready set");
-        System.out.println("End POR");
-  		System.out.println("********************");
+//        System.out.println("******** getAmple ************");
+//   		System.out.println("Begin POR:");
+//   		printIntegerSet(curEnabledIndices, "Enabled set");
+   		ready = partialOrderReduction(curState, curEnabledIndices, staticSetsMap, allEnabledAreSticky);
+//        printIntegerSet(ready, "Ready set");
+//        System.out.println("End POR");
+//  		System.out.println("********************");
         Object[] readyArray = ready.toArray();
         for (int i=0; i < readyArray.length; i++) {      	
         	Transition tran = this.lpn.getAllTransitions()[(Integer) readyArray[i]];
         	if(tran.local()==true)
-    			curEnabled.addLast(tran);
+    			curAmple.getAmpleSet().addLast(tran);
             else
-            	curEnabled.addFirst(tran);
+            	curAmple.getAmpleSet().addFirst(tran);
         }          
-        this.enabledSetTbl.put(curState, curEnabled);
-        return curEnabled;
+        this.enabledSetTbl.put(curState, (LpnTranList) curAmple.getAmpleSet());
+//        System.out.println("Add S" + curState.getIndex() + " to enabledSetTbl.");
+//        printEnabledSetTbl();
+        return curAmple;
     }
- 	@SuppressWarnings("unchecked")
+
+	/**
+     * Return the set of all LPN transitions that are enabled in 'state'. The "init" flag indicates whether a transition
+     * needs to be evaluated. 
+     * @param nextState
+     * @param enable 
+     * @param disableByStealingToken 
+     * @param disable 
+     * @param init 
+	 * @param cycleClosingMthdIndex 
+     * @param isNextState
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+	public AmpleSet getAmpleRefinedCycleRule(State curState, State nextState, 
+    		HashMap<Integer, HashMap<Integer, StaticSets>> staticMap, HashSet<PrjState> stateStack, boolean init, int cycleClosingMthdIndex) {
+    	AmpleSet nextAmple = new AmpleSet();
+    	if (nextState == null) {
+            throw new NullPointerException();
+        }
+    	if(enabledSetTbl.containsKey(nextState) == true && stateOnStack(nextState, stateStack)) {
+//     		System.out.println("~~~~~~~ existing state in enabledSetTbl and on stateStack: S" + nextState.getIndex() + "~~~~~~~~");
+//    		printTransitionSet((LpnTranList)enabledSetTbl.get(nextState), "Old ample at this state: ");
+  			// Cycle closing check
+    		LpnTranList nextAmpleTransOld = (LpnTranList) nextAmple.getAmpleSet();
+    		nextAmpleTransOld = enabledSetTbl.get(nextState);
+    		LpnTranList curAmpleTrans = enabledSetTbl.get(curState);
+    		LpnTranList curReduced = new LpnTranList();
+    		LpnTranList curEnabled = curState.getEnabledTransitions(); 		
+    		for (int i=0; i<curEnabled.size(); i++) {
+    			if (!curAmpleTrans.contains(curEnabled.get(i))) {
+    				curReduced.add(curEnabled.get(i));
+    			}
+    		}
+    		if (!nextAmpleTransOld.containsAll(curReduced)) {
+//    			System.out.println("((((((((((((((((((((()))))))))))))))))))))");
+//    			printTransitionSet(curEnabled, "curEnabled:");
+//    			printTransitionSet(curAmpleTrans, "curAmpleTrans:");
+//    			printTransitionSet(curReduced, "curReduced:");
+//    			printTransitionSet(nextState.getEnabledTransitions(), "nextEnabled:");
+//    			printTransitionSet(nextAmpleTransOld, "nextAmpleTransOld:");
+    			nextAmple.setAmpleChanged();
+    			HashSet<Integer> curEnabledIndicies = new HashSet<Integer>();
+        		for (int i=0; i<curEnabled.size(); i++) {
+        			curEnabledIndicies.add(curEnabled.get(i).getIndex());
+        		} 			
+    			// transToAdd = curReduced - nextAmpleOld
+    			LpnTranList overlyReducedTrans = getSetSubtraction(curReduced, nextAmpleTransOld);
+    			HashSet<Integer> transToAddIndices = new HashSet<Integer>();
+    			for (int i=0; i<overlyReducedTrans.size(); i++) {
+    				transToAddIndices.add(overlyReducedTrans.get(i).getIndex());
+    			}	
+    			HashSet<Integer> nextAmpleNewIndices = (HashSet<Integer>) curEnabledIndicies.clone();
+    			for (Integer tranToAdd : transToAddIndices) {
+    				HashSet<Integer> dependent = new HashSet<Integer>();
+    				//Transition enabledTransition = this.lpn.getAllTransitions()[tranToAdd];
+    				dependent = getDependentSet(curState,tranToAdd,dependent,curEnabledIndicies,staticMap);  				
+    				// printIntegerSet(dependent, "dependent set for enabled transition " + this.lpn.getAllTransitions()[enabledTran]);
+    				// TODO: (??) temporarily dealing with dummy transitions (This requires the dummy transitions to have "_dummy" in their names.)				
+    				boolean dependentOnlyHasDummyTrans = true;
+    				for (Integer curTranIndex : dependent) {
+    					Transition curTran = this.lpn.getAllTransitions()[curTranIndex];
+    					dependentOnlyHasDummyTrans = dependentOnlyHasDummyTrans && isDummyTran(curTran.getName());
+    				}			
+    				if (dependent.size() < nextAmpleNewIndices.size() && !dependentOnlyHasDummyTrans) 
+    					nextAmpleNewIndices = (HashSet<Integer>) dependent.clone();
+    				if (nextAmpleNewIndices.size() == 1)
+    					break;
+    			}
+       			LpnTranList nextAmpleNew = new LpnTranList();
+    			for (Integer nextAmpleNewIndex : nextAmpleNewIndices) {
+    				nextAmpleNew.add(this.getLpn().getTransition(nextAmpleNewIndex));
+    			}
+    			LpnTranList transToAdd = getSetSubtraction(nextAmpleNew, nextAmpleTransOld);
+    			boolean allTransToAddFired = true;
+    			if (cycleClosingMthdIndex == 2) {
+    				// For every transition t in transToAdd, if t was fired in the any state on stateStack, there is no need to put it to the new ample of nextState.
+            		boolean[] transToAddFiredBefore = new boolean[transToAdd.size()];
+            		for (int i=0; i<transToAdd.size(); i++) {
+            			Transition tranToAdd = transToAdd.get(i);
+            			reducedTranFired(transToAddFiredBefore, tranToAdd, nextAmpleTransOld, nextState, i);
+            		}
+            		for (int i=0; i<transToAddFiredBefore.length; i++) {
+            			allTransToAddFired = allTransToAddFired && transToAddFiredBefore[i];
+            		}
+    			}
+        		// Update the old ample of the next state 
+    			// to include reduced transition(s) before closing the cycle.
+        		if (!allTransToAddFired || cycleClosingMthdIndex == 3) {
+        			nextAmple.getAmpleSet().clear();
+        			nextAmple.getAmpleSet().addAll(transToAdd);
+        			enabledSetTbl.get(nextState).addAll(transToAdd);
+//        			printTransitionSet(nextAmpleNew, "nextAmpleNew:");
+//        			printTransitionSet(transToAdd, "transToAdd:");
+//        			System.out.println("((((((((((((((((((((()))))))))))))))))))))");
+        		}
+    		}
+    		// enabledSetTble stores the ample set at curState. 
+    		// The fully enabled set at each state is stored in the tranVector in each state. 		
+    		return (AmpleSet) nextAmple;
+    	}
+//    	System.out.println("~~~~~~~~ State S" + nextState.getIndex() + " does not exist in enabledSetTbl.~~~~~~~~~");
+    	AmpleSet curAmple = new AmpleSet();
+        HashSet<Integer> curEnabledIndices = new HashSet<Integer>();
+        if (init) {
+        	for (int i=0; i < this.lpn.getAllTransitions().length; i++) {
+            	Transition tran = this.lpn.getAllTransitions()[i];
+            	if (isEnabled(tran,nextState)){
+            		//System.out.println("Transition " + tran.getName() + " is enabled");
+            		curEnabledIndices.add(i);
+                 }
+            }
+        }
+        else {
+        	for (int i=0; i < this.lpn.getAllTransitions().length; i++) {
+        		if (nextState.getTranVector()[i])
+        			curEnabledIndices.add(i);
+        	}
+        }
+        HashSet<Integer> ready = new HashSet<Integer>();
+//       	System.out.println("******** getAmpleRefinedCycleRule ************");
+//   		System.out.println("Begin POR");
+//   		printIntegerSet(curEnabledIndices, "Enabled set");
+   		//printIntegerSet(curNonStickyEnabledIndices, "Enabled set (non-sticky)");
+   		ready = partialOrderReduction(nextState, curEnabledIndices, staticMap, false);
+//        printIntegerSet(ready, "Ready set");
+//        System.out.println("End POR");
+//  		System.out.println("********************");
+        Object[] readyArray = ready.toArray();
+        for (int i=0; i < readyArray.length; i++) {      	
+        	Transition tran = this.lpn.getAllTransitions()[(Integer) readyArray[i]];
+        	if(tran.local()==true)
+    			curAmple.getAmpleSet().addLast(tran);
+            else
+            	curAmple.getAmpleSet().addFirst(tran);
+        }          
+        this.enabledSetTbl.put(nextState, (LpnTranList)curAmple.getAmpleSet());
+//        System.out.println("~~~~~~~~ Add S" + nextState.getIndex() + " to the enabledSet ~~~~~~~~~~");
+//        printEnabledSetTbl();
+        return curAmple;
+    }
+    
+ 	private void reducedTranFired(boolean[] curReducedFired,
+			Transition reducedTran, LpnTranList oldAmple, State state, int index) {
+		for (Transition oldAmpleTran : oldAmple) {
+			State successor = nextStateMap.get(state).get(oldAmpleTran);
+			LpnTranList successorOldAmple = enabledSetTbl.get(successor);
+			if (successorOldAmple.contains(reducedTran)) {
+				curReducedFired[index] = true;
+				break;
+			}
+			else {
+				reducedTranFired(curReducedFired, reducedTran, successorOldAmple, successor, index);
+			}
+
+		}
+		
+	}
+
+	private LpnTranList getSetSubtraction(LpnTranList set1,
+			LpnTranList set2) {
+ 		LpnTranList setAfterSubtraction = new LpnTranList();
+		for (int i=0; i<set1.size(); i++) {
+			if (!set2.contains(set1.get(i))) {
+				setAfterSubtraction.add(set1.get(i));
+			}
+		}
+		return setAfterSubtraction;
+	}
+
+	@SuppressWarnings("unchecked")
 	private HashSet<Integer> partialOrderReduction(State curState,
-			HashSet<Integer> curEnabled, HashMap<Integer, HashSet<Integer>> disable, 
-    		HashMap<Integer, HashSet<Integer>> disableByStealingToken, HashMap<Integer, 
-    		HashSet<Integer>> enable, boolean allEnabledAreSticky) {
+			HashSet<Integer> curEnabled, HashMap<Integer, HashMap<Integer, StaticSets>> staticMap, boolean allEnabledAreSticky) {
 		HashSet<Integer> ready = (HashSet<Integer>) curEnabled.clone();
 		if (!allEnabledAreSticky)
-			for (Iterator<Integer> enabledSetIter = curEnabled.iterator(); enabledSetIter.hasNext();) {
-				Integer enabledTran = enabledSetIter.next();
+			for (Integer enabledTran : curEnabled) {
 				HashSet<Integer> dependent = new HashSet<Integer>();
-	//			System.out.println("currently enabled transition: " + this.lpn.getAllTransitions()[enabledTran]);
 				Transition enabledTransition = this.lpn.getAllTransitions()[enabledTran];
 				if (enabledTransition.isSticky()) {
 					dependent = (HashSet<Integer>) ready.clone();
 				}
 				else {
-					dependent = getDependentSet(curState,enabledTran,dependent,curEnabled,disable,disableByStealingToken,enable);
+					dependent = getDependentSet(curState,enabledTran,dependent,curEnabled,staticMap);
 				}
-				
-				printIntegerSet(dependent, "dependent set for enabled transition " + this.lpn.getAllTransitions()[enabledTran]);
+//				printIntegerSet(dependent, "dependent set for enabled transition " + this.lpn.getAllTransitions()[enabledTran]);
 				// TODO: (??) temporarily dealing with dummy transitions (This requires the dummy transitions to have "_dummy" in their names.)				
 				boolean dependentOnlyHasDummyTrans = true;
-				for (Iterator<Integer> depIter = dependent.iterator(); depIter.hasNext();) {
-					Integer curTranIndex = depIter.next();
+				for (Integer curTranIndex : dependent) {
 					Transition curTran = this.lpn.getAllTransitions()[curTranIndex];
 					dependentOnlyHasDummyTrans = dependentOnlyHasDummyTrans && isDummyTran(curTran.getName());
 				}			
@@ -520,6 +747,7 @@ public class StateGraph {
 		return ready;
 	}
 
+
 	private boolean isDummyTran(String tranName) {
 		if (tranName.contains("_dummy"))
 			return true;
@@ -528,34 +756,36 @@ public class StateGraph {
 	}
 
 	private HashSet<Integer> getDependentSet(State curState,
-			Integer tran, HashSet<Integer> dependent, HashSet<Integer> curEnabled, 
-			HashMap<Integer,HashSet<Integer>> disable, HashMap<Integer,HashSet<Integer>> disableByStealingToken, 
-			HashMap<Integer,HashSet<Integer>> enable) {
-		dependent.add(tran);
-		System.out.println("tran @ getDependentSet = " + this.lpn.getAllTransitions()[tran]);
-		HashSet<Integer> canDisable = disable.get(tran); // canDisable is the set of transitions that can be disabled by firing tran.
-		HashSet<Integer> transCanLoseToken = disableByStealingToken.get(tran);
+			Integer tranIndex, HashSet<Integer> dependent, HashSet<Integer> curEnabled, 
+			HashMap<Integer,HashMap<Integer, StaticSets>> staticMap) {
+		dependent.add(tranIndex);
+//		System.out.println("@ getDependentSet, consider transition " + this.lpn.getAllTransitions()[tranIndex]);
+		// canDisable is the set of transitions that can be disabled by firing tranIndex.
+		HashSet<Integer> canDisable = staticMap.get(this.lpn.getIndex()).get(tranIndex).getDisable(); 
+		HashSet<Integer> transCanLoseToken = staticMap.get(this.lpn.getIndex()).get(tranIndex).getDisableByStealingToken();
+		//HashSet<Integer> enable = staticSets.get(this.lpn.getIndex()).get(tranIndex).getEnable();
+//		printIntegerSet(canDisable, this.lpn.getAllTransitions()[tranIndex] + " can disable");
+		//printIntegerSet(enable, this.lpn.getAllTransitions()[tranIndex] + " can be enabled by");
 		for (Iterator<Integer> canDisableIter = canDisable.iterator(); canDisableIter.hasNext();) {
 			Integer tranCanBeDisabled = canDisableIter.next();
 			boolean tranCanBeDisabledPersistent = this.lpn.getAllTransitions()[tranCanBeDisabled].isPersistent();
 			if (curEnabled.contains(tranCanBeDisabled) && !dependent.contains(tranCanBeDisabled)
 					&& (transCanLoseToken.contains(tranCanBeDisabled) || !tranCanBeDisabledPersistent)) {
-				dependent.addAll(getDependentSet(curState,tranCanBeDisabled,dependent,curEnabled,disable,
-						disableByStealingToken,enable));
-				printIntegerSet(dependent, "dependent set @ getDependentSet = ");
+				dependent.addAll(getDependentSet(curState,tranCanBeDisabled,dependent,curEnabled,staticMap));
+//				printIntegerSet(dependent, "dependent set @ getDependentSet = ");
 			}
 			else if (!curEnabled.contains(tranCanBeDisabled)) {
+				//HashSet<Integer> enable = staticSets.get(this.lpn.getIndex()).get(tranCanBeDisabled).getEnable();
 				HashSet<Integer> necessary = 
-						getNecessarySet(curState,tranCanBeDisabled,dependent,curEnabled,enable);
-				printIntegerSet(necessary, "necessary set for transition " + this.lpn.getAllTransitions()[tranCanBeDisabled]);
+						getNecessarySet(curState,tranCanBeDisabled,dependent,curEnabled, staticMap);
+//				printIntegerSet(necessary, "necessary set for transition " + this.lpn.getAllTransitions()[tranCanBeDisabled]);
 				for (Iterator<Integer> tranNecessaryIter = necessary.iterator(); tranNecessaryIter.hasNext();) {
 					Integer tranNecessary = tranNecessaryIter.next();
 					if (!dependent.contains(tranNecessary)) {
-						dependent.addAll(getDependentSet(curState,tranNecessary,dependent,curEnabled,disable,
-								disableByStealingToken,enable));
+						dependent.addAll(getDependentSet(curState,tranNecessary,dependent,curEnabled,staticMap));
 					}					
 				}
-				printIntegerSet(dependent, "dependent set @ getDependentSet = ");
+//				printIntegerSet(dependent, "dependent set @ getDependentSet = ");
 			}
 		}
 		return dependent;
@@ -564,80 +794,79 @@ public class StateGraph {
 	@SuppressWarnings("unchecked")
 	private HashSet<Integer> getNecessarySet(State curState,
 			Integer tran, HashSet<Integer> dependent,
-			HashSet<Integer> curEnabled,
-			HashMap<Integer, HashSet<Integer>> enable) {
-		HashSet<Integer> nMarking = (HashSet<Integer>) dependent.clone();
+			HashSet<Integer> curEnabled, HashMap<Integer,HashMap<Integer,StaticSets>> staticMap) {
+		HashSet<Integer> nMarking = null;
 		Transition transition = this.lpn.getAllTransitions()[tran];
 		int[] presetPlaces = this.lpn.getPresetIndex(transition.getName());
-//		printIntegerArray(presetPlaces, "presetPlaces @ getNecessarySet");
-		System.out.println("~~~~~~necessary calculation~~~~~~~");
-		System.out.println("transition: " + transition.getName());
+//		System.out.println("~~~~~~necessary calculation~~~~~~~");
+//		System.out.println("transition: " + transition.getName());
 		for (int i=0; i < presetPlaces.length; i++) {
 			int place = presetPlaces[i];
 			if (curState.getMarking()[place]==0) {
 				HashSet<Integer> nMarkingTemp = new HashSet<Integer>();				
 				String placeName = this.lpn.getAllPlaces().get(place);
+//				System.out.println("preset place of " + transition.getName() + " is " + placeName);
 				int[] presetTrans = this.lpn.getPresetIndex(placeName);
 				for (int j=0; j < presetTrans.length; j++) {
 					if (curEnabled.contains(presetTrans[j])) {
 						nMarkingTemp.add(presetTrans[j]);
 					}
 					else {
-						nMarkingTemp.addAll(getNecessarySet(curState, presetTrans[j], dependent, curEnabled, enable));
+						nMarkingTemp.addAll(getNecessarySet(curState, presetTrans[j], dependent, curEnabled, staticMap));
 					}
 				}
 				if (nMarking == null || nMarkingTemp.size() < nMarking.size()) {
 					nMarking = (HashSet<Integer>) nMarkingTemp.clone();
 				}
 			}
+//			else {
+//				System.out.println("Place " + this.lpn.getAllPlaces().get(place) + " marked");
+//			}
 		}
-		HashSet<Integer> nEnable = (HashSet<Integer>) dependent.clone();
-		//HashSet<Integer> nEnable = null;
+		HashSet<Integer> nEnable = null;
 		int[] varValueVector = curState.getVector();
-		HashSet<Integer> canEnable = enable.get(tran);
+		HashSet<Integer> canEnable = staticMap.get(this.lpn.getIndex()).get(tran).getEnable();
+//		printIntegerSet(canEnable, this.lpn.getAllTransitions()[tran] + " can be enabled by");
 		if (transition.getEnablingTree() != null
 				&& transition.getEnablingTree().evaluateExpr(this.lpn.getAllVarsAndValues(varValueVector)) == 0.0) {
 			nEnable = new HashSet<Integer>();
-			for (Iterator<Integer> canEnableIter = canEnable.iterator(); canEnableIter.hasNext();) {
-				Integer tranCanEnable = canEnableIter.next();
+			for (Integer tranCanEnable : canEnable) {
 				if (curEnabled.contains(tranCanEnable)) {
 					nEnable.add(tranCanEnable);
 				}
 				else {
-					nEnable.addAll(getNecessarySet(curState, tranCanEnable, dependent, curEnabled, enable));
+					nEnable.addAll(getNecessarySet(curState, tranCanEnable, dependent, curEnabled, staticMap));
 				}
 			}
 		}
-		printIntegerSet(nMarking, "nMarking");
-		printIntegerSet(nEnable, "nEnable");
+//		printIntegerSet(nMarking, "nMarking");
+//		printIntegerSet(nEnable, "nEnable");
 		if (nEnable == null) 
 			return nMarking;
 		else if (nMarking == null) 
 			return nEnable;
 		else {
-			// TODO: substract sets than compare sizes
-			if (nMarking.size() < nEnable.size())
+			if (getIntSetSubstraction(nMarking, dependent).size() < getIntSetSubstraction(nEnable, dependent).size())
+			//if (nMarking.size() < nEnable.size())
 				return nMarking;
 			else
 				return nEnable;
 		}
 	}
 
-	private void printIntegerArray(int[] intArray, String string) {
-		System.out.println(string);
-		if (intArray.length==0) {
-			System.out.println("empty");
+	private HashSet<Integer> getIntSetSubstraction(
+			HashSet<Integer> a, HashSet<Integer> b) {
+		HashSet<Integer> sub = new HashSet<Integer>();
+		for (Integer i : a) {
+			if (!b.contains(i))
+				sub.add(i);
 		}
-		else {
-			for (int i=0; i < intArray.length; i++) {
-				System.out.print(intArray[i] + "\t");
-			}
-		}
-		System.out.println("\n");
+		return sub;
 	}
 
 	private void printIntegerSet(HashSet<Integer> integerSet, String setName) {
-		System.out.print(setName + " is: ");
+		if (!setName.isEmpty())
+			System.out.print(setName + ": ");
 		if (integerSet == null) {
 			System.out.println("null");
 		}
@@ -683,42 +912,6 @@ public class StateGraph {
 			}
 		return true;
 }
-
-    
-    // TODO: (done) Change isEnabled to work with our transitions.
-    /*
-    final public boolean isEnabled(final State curState) {
-        if (curState == null) {
-            throw new NullPointerException();
-        }
-
-		if (this.preSet != null && this.preSet.length > 0) {
-			for (int pp : this.preSet) {
-				int[] curMarking = curState.getMarking();
-				boolean included = false;
-				
-				for (int i = 0; i < curMarking.length; i++) {
-					if (curMarking[i] == pp) {
-						included = true;
-						break;
-					}
-				}
-				
-				if (included == false)
-					return false;
-            }
-		}
-        
-        int[] curVector = curState.getVector();
-        if (curVector.length > 0) {
-            if(getEnablingGuard().evaluate(curVector) == 0)
-                return false;
-        }
-
-        return true;
-    }
-	*/
-	
     
 	public int reachSize() {
     	if(this.stateCache == null){
@@ -728,7 +921,22 @@ public class StateGraph {
 		return this.stateCache.size();
     }
     
-
+	public boolean stateOnStack(State curState, HashSet<PrjState> stateStack) {
+		boolean isStateOnStack = false;
+		for (PrjState prjState : stateStack) {
+			State[] stateArray = prjState.toStateArray();
+			for (State s : stateArray) {
+				if (s == curState) {
+					isStateOnStack = true;
+					break;
+				}
+			}
+			if (isStateOnStack) 
+				break;
+		}
+		return isStateOnStack;
+	}
+	
     /*
      * Add the module state mState into the local cache, and also add its local portion into
      * the local portion cache, and build the mapping between the mState and lState for fast lookup
@@ -845,8 +1053,8 @@ public class StateGraph {
     	State curState = curStateArray[thisLpnIndex];
     	State nextState = this.fire(curSgArray[thisLpnIndex], curState, firedTran);   
     	
-    	int[] nextVector = nextState.getVector();
-    	int[] curVector = curState.getVector();
+    	//int[] nextVector = nextState.getVector();
+    	//int[] curVector = curState.getVector();
     	
     	// TODO: (future) assertions in our LPN?
     	/*
@@ -862,24 +1070,24 @@ public class StateGraph {
 //    		nextStateArray[thisLpnIndex] = curSgArray[thisLpnIndex].addState(nextState);
         	return nextStateArray;
 		}
-
+		
         HashMap<String, Integer> vvSet = new HashMap<String, Integer>();
-        for (String key : this.lpn.getAllVarsAndValues(curVector).keySet()) {
-        	if (this.lpn.getBoolAssignTree(firedTran.getName(), key) != null) {
-        		int newValue = (int)this.lpn.getBoolAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsAndValues(curVector));
-        		vvSet.put(key, newValue);
-        	}
-        	// TODO: (temp) type cast continuous variable to int.
-        	if (this.lpn.getContAssignTree(firedTran.getName(), key) != null) {
-        		int newValue = (int)this.lpn.getContAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsAndValues(curVector));
-        		vvSet.put(key, newValue);
-        	}
-        	if (this.lpn.getIntAssignTree(firedTran.getName(), key) != null) {
-        		int newValue = (int)this.lpn.getIntAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsAndValues(curVector));
-        		vvSet.put(key, newValue);
-        	}
-        }       
-        // TODO: (check) if the code above is the same as below when constructing vvSet.
+        vvSet = this.lpn.getAllVarsWithValues(nextState.getVector());
+//        for (String key : this.lpn.getAllVarsAndValues(curVector).keySet()) {
+//        	if (this.lpn.getBoolAssignTree(firedTran.getName(), key) != null) {
+//        		int newValue = (int)this.lpn.getBoolAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsAndValues(curVector));
+//        		vvSet.put(key, newValue);
+//        	}
+//        	// TODO: (temp) type cast continuous variable to int.
+//        	if (this.lpn.getContAssignTree(firedTran.getName(), key) != null) {
+//        		int newValue = (int)this.lpn.getContAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsAndValues(curVector));
+//        		vvSet.put(key, newValue);
+//        	}
+//        	if (this.lpn.getIntAssignTree(firedTran.getName(), key) != null) {
+//        		int newValue = (int)this.lpn.getIntAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsAndValues(curVector));
+//        		vvSet.put(key, newValue);
+//        	}
+//        }       
         /*
         for (VarExpr s : this.getAssignments()) {
             int newValue = nextVector[s.getVar().getIndex(curVector)];
@@ -888,8 +1096,7 @@ public class StateGraph {
         */
         
         // Update other local states with the new values generated for the shared variables.
-		//nextStateArray[this.lpn.getIndex()] = nextState;
-		// TODO: (temp) currently only add one LPN to dstLpnList
+		//nextStateArray[this.lpn.getIndex()] = nextState;      
 //		if (!firedTran.getDstLpnList().contains(this.lpn))
 //			firedTran.getDstLpnList().add(this.lpn);
 		for(LhpnFile curLPN : firedTran.getDstLpnList()) {
@@ -1161,7 +1368,8 @@ public class StateGraph {
 			for (int i=0; i< curState.getVector().length; i++) {
 				arrayStr = arrayStr + curState.getVector()[i] + ",";
 			}
-			arrayStr = arrayStr.substring(0, arrayStr.lastIndexOf(","));
+			if (arrayStr.contains(","))
+				arrayStr = arrayStr.substring(0, arrayStr.lastIndexOf(","));
 		}
 		return arrayStr;
 	}
@@ -1178,5 +1386,20 @@ public class StateGraph {
 				arrayStr = arrayStr.substring(0, arrayStr.lastIndexOf(","));
 		}
 		return arrayStr;
+	}
+	
+	private void printTransitionSet(LpnTranList transitionSet, String setName) {
+		if (!setName.isEmpty())
+			System.out.print(setName + " ");
+		if (transitionSet.isEmpty()) {
+			System.out.println("empty");
+		}
+		else {
+			for (Iterator<Transition> curTranIter = transitionSet.iterator(); curTranIter.hasNext();) {
+				Transition tranInDisable = curTranIter.next();
+				System.out.print(tranInDisable.getName() + " ");
+			}
+			System.out.print("\n");
+		}
 	}
 }
