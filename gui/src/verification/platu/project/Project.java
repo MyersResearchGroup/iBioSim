@@ -245,11 +245,12 @@ public class Project {
 	/**
 	 * Find the SG for the entire project where each project state is a tuple of
 	 * local states. Use partial order reduction during dfs search.
+	 * @param cycleClosingMthdIndex 
 	 * @param outputDotFile 
 	 * @return 
 	 * 
 	 */
-	public StateGraph searchWithPOR() {	
+	public StateGraph searchWithPOR(int cycleClosingMthdIndex) {	
 		validateInputs();
 //		
 //		if(Options.getSearchType().equals("compositional")){
@@ -294,7 +295,6 @@ public class Project {
 //			}
 		}
 
-		// TODO: (future) Need to adjust the transition vector as well?
 		// Adjust the value of the input variables in LPN in the initial state.
 		// Add the initial states into their respective LPN.
 		for (int index = 0; index < lpnCnt; index++) {
@@ -306,7 +306,14 @@ public class Project {
 		
 		StateGraph stateGraph;
 		Analysis dfsStateExplorationWithPOR = new Analysis(sgArray);
-		stateGraph = dfsStateExplorationWithPOR.search_dfsPORSingleLpn(sgArray, initStateArray);
+		// cycleClosingMthdIndex: 0 = Use sticky transitions
+		//						  1 = Use behavioral analysis
+		//						  2 = Use behavioral analysis with state trace-back
+		//                        3 = No cycle closing
+		if (cycleClosingMthdIndex == 0 || cycleClosingMthdIndex == 3) 
+			stateGraph = dfsStateExplorationWithPOR.search_dfsPOR(sgArray, initStateArray, cycleClosingMthdIndex);
+		else 
+			stateGraph = dfsStateExplorationWithPOR.search_dfsPORrefinedCycleRule(sgArray, initStateArray, cycleClosingMthdIndex);
 		
 		long elapsedTimeMillis = System.currentTimeMillis() - start; 
 		float elapsedTimeSec = elapsedTimeMillis/1000F;
