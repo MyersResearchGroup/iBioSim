@@ -1115,10 +1115,39 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			if (!decomposeLPN.isSelected() && !multipleLPNs.isSelected() && lpnList.getSelectedValue() == null) {			
 				Project untimedStateSearch = new Project(lpn);
 				if (untimedPOR.isSelected()) {
-					StateGraph stateGraph = untimedStateSearch.searchWithPOR();
+					// GUI for different cycle closing methods.
+					String[] entries = {"Use sticky transitions",
+										"Use behavioral analysis",
+										"Use behavioral analysis and state trace-back",
+										"No cycle closing"};
+					JList cycleClosingList = new JList(entries);
+					cycleClosingList.setVisibleRowCount(4);
+					//cycleClosingList.addListSelectionListener(new ValueReporter());
+					JScrollPane cycleClosingPane = new JScrollPane(cycleClosingList);
+					JPanel mainPanel = new JPanel(new BorderLayout());
+					mainPanel.add("North", new JLabel("Select a cycle closing method:"));
+					mainPanel.add("Center", cycleClosingPane);							
+					Object[] options = {"Run", "Cancel"};
+					int optionRtVal = JOptionPane.showOptionDialog(Gui.frame, mainPanel, "Cycle closing method selection", 
+								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+					if (optionRtVal == 1) {
+						// Cancel
+						return;
+					}
+					int cycleClosingMthdIndex = cycleClosingList.getSelectedIndex();
+					StateGraph stateGraph = untimedStateSearch.searchWithPOR(cycleClosingMthdIndex);
 					if (dot.isSelected()) {
-						String graphFileName = verifyFile.replace(".lpn", "") + "POR_sg.dot";			
-						stateGraph.outputStateGraph(directory + separator + graphFileName);				
+						String graphFileName = null;
+						if (cycleClosingMthdIndex == 0)
+							graphFileName = verifyFile.replace(".lpn", "") + "POR_sticky_sg.dot";			
+						else if (cycleClosingMthdIndex == 1)
+							graphFileName = verifyFile.replace(".lpn", "") + "POR_behaveAnaly_sg.dot";
+						else if (cycleClosingMthdIndex == 2)
+							graphFileName = verifyFile.replace(".lpn", "") + "POR_stateTraceback_sg.dot";
+						else if (cycleClosingMthdIndex == 3)
+							graphFileName = verifyFile.replace(".lpn", "") + "POR_noCycleClosing_sg.dot";
+						if (graphFileName != null)
+							stateGraph.outputStateGraph(directory + separator + graphFileName);				
 					}
 				}
 				else {
@@ -1258,7 +1287,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						}
 					}
 				}		
-				// Find the least number of variables in each process
+				// Find the process with least number of variables, and record this number.
 				int leastNumVarsInOneProcess = lpn.getVariables().length;
 				for (Iterator<Integer> processMapIter = processMap.keySet().iterator(); processMapIter.hasNext();) {
 					Integer curProcId = processMapIter.next();
