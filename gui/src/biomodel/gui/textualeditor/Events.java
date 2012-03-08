@@ -299,7 +299,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				JOptionPane.showMessageDialog(Gui.frame, "Priority formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 				error = true;
 			}
-			else if (assign.length == 0) {
+			else if (document.getLevel() < 3 && assign.length == 0) {
 				JOptionPane.showMessageDialog(Gui.frame, "Event must have at least one event assignment.", "Event Assignment Needed",
 						JOptionPane.ERROR_MESSAGE);
 				error = true;
