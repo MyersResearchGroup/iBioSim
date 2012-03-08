@@ -2310,9 +2310,9 @@ public abstract class Simulator {
 		
 		model.setListOfEvents(allEvents);
 		
-//		SBMLWriter writer = new SBMLWriter();
-//		PrintStream p;
-//		
+		SBMLWriter writer = new SBMLWriter();
+		PrintStream p;
+		
 //		try {
 //			p = new PrintStream(new FileOutputStream(SBMLFileName), true, "UTF-8");
 //			p.print(writer.writeSBMLToString(model.getSBMLDocument()));

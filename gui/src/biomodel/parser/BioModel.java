@@ -3221,7 +3221,8 @@ public class BioModel {
 				
 			String decayUnitString = "u_1_second_n1";
 			
-			Reaction r = Utility.Reaction("Degradation_" + speciesID);
+			Reaction r = sbml.getModel().createReaction();
+			r.setId("Degradation_" + speciesID);
 			r.setCompartment(sbml.getModel().getCompartment(0).getId());
 			r.setReversible(false);
 			r.setFast(false);
@@ -3231,13 +3232,14 @@ public class BioModel {
 			if (decayRate > 0) {
 				
 				//this is the mathematical expression for the decay
-				String isDecayExpression = decayString + "* get2DArrayElement(" + speciesID + ", i, j)";
+				String decayExpression = decayString + "* get2DArrayElement(" + speciesID + ", i, j)";				
 				
-				SpeciesReference reactant = Utility.SpeciesReference(speciesID, 1);
-				r.addReactant(reactant);
+				SpeciesReference reactant = r.createReactant();
+				reactant.setSpecies(speciesID);
+				reactant.setStoichiometry(1);
 				
-				LocalParameter i = new LocalParameter(Gui.SBML_LEVEL, Gui.SBML_VERSION);
-				LocalParameter j = new LocalParameter(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+				LocalParameter i = kl.createLocalParameter();
+				LocalParameter j = kl.createLocalParameter();
 				
 				XMLAttributes attr = new XMLAttributes();
 				attr.add("xmlns:array", "http://www.fakeuri.com");
@@ -3258,14 +3260,12 @@ public class BioModel {
 				i.setId("i");
 				j.setId("j");
 				
-				kl.addLocalParameter(i);
-				kl.addLocalParameter(j);
-				
-				//parameter: id="kd" value=isDecay (usually 0.0075) units="u_1_second_n1" (inverse seconds)
+				//parameter: id="kecd" value=(usually 0.005) units="u_1_second_n1" (inverse seconds)
 				kl.addParameter(Utility.Parameter(decayString, decayRate, decayUnitString));
 				
-				//formula: kd * inner species
-				kl.setFormula(isDecayExpression);
+				//formula: kecd * species
+				kl.setFormula(decayExpression);
+				
 				Utility.addReaction(sbml, r);
 			}
 			
@@ -3296,7 +3296,8 @@ public class BioModel {
 				
 				//reversible between neighboring "outer" species
 				//this is the diffusion across the "medium" if you will
-				r = Utility.Reaction("Diffusion_" + speciesID + "_" + direction);
+				r = sbml.getModel().createReaction();
+				r.setId("Diffusion_" + speciesID + "_" + direction);
 				r.setCompartment(diffComp);
 				r.setReversible(true);
 				r.setFast(false);
@@ -3312,15 +3313,17 @@ public class BioModel {
 						+ String.valueOf(neighborRowIndexOffset) + ", j " + String.valueOf(neighborColIndexOffset) + ")";
 
 					//reactant is current outer species					
-					SpeciesReference reactant = Utility.SpeciesReference(speciesID, 1);
-					r.addReactant(reactant);
+					SpeciesReference reactant = r.createReactant();
+					reactant.setSpecies(speciesID);
+					reactant.setStoichiometry(1);
 					
 					//product is neighboring species
-					SpeciesReference product = Utility.SpeciesReference(speciesID, 1);					
-					r.addProduct(product);
+					SpeciesReference product = r.createProduct();
+					product.setSpecies(speciesID);
+					product.setStoichiometry(1);
 					
-					LocalParameter i = new LocalParameter(Gui.SBML_LEVEL, Gui.SBML_VERSION);
-					LocalParameter j = new LocalParameter(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+					LocalParameter i = kl.createLocalParameter();
+					LocalParameter j = kl.createLocalParameter();
 					
 					XMLAttributes attr = new XMLAttributes();
 					attr.add("xmlns:array", "http://www.fakeuri.com");
@@ -3341,13 +3344,10 @@ public class BioModel {
 					i.setId("i");
 					j.setId("j");
 					
-					kl.addLocalParameter(i);
-					kl.addLocalParameter(j);
-					
 					//parameters: id="kecdiff" value=kecdiff units="u_1_second_n1" (inverse seconds)
-					kl.addParameter(Utility.Parameter(diffusionString, kecdiff, diffusionUnitString));
-					
+					kl.addParameter(Utility.Parameter(diffusionString, kecdiff, diffusionUnitString));					
 					kl.setFormula(diffusionExpression);
+					
 					Utility.addReaction(sbml, r);
 				}
 			}		
@@ -3356,7 +3356,8 @@ public class BioModel {
 			
 			String membraneDiffusionComp = sbml.getModel().getCompartment(0).getId();
 			
-			r = Utility.Reaction("MembraneDiffusion_" + speciesID);
+			r = sbml.getModel().createReaction();
+			r.setId("MembraneDiffusion_" + speciesID);
 			r.setCompartment(membraneDiffusionComp);
 			r.setReversible(true);
 			r.setFast(false);
@@ -3368,16 +3369,18 @@ public class BioModel {
 				+ speciesID + ", i, j" + ") - get2DArrayElement(kmdiff_r, i, j) * get2DArrayElement(" 
 				+ speciesID + ", i, j" + ")";
 
-			//reactant is inner/submodel species
-			SpeciesReference reactant = Utility.SpeciesReference(speciesID, 1);			
-			r.addReactant(reactant);
+			//reactant is inner/submodel species					
+			SpeciesReference reactant = r.createReactant();
+			reactant.setSpecies(speciesID);
+			reactant.setStoichiometry(1);
 			
 			//product is outer species
-			SpeciesReference product = Utility.SpeciesReference(speciesID, 1);			
-			r.addProduct(product);
+			SpeciesReference product = r.createProduct();
+			product.setSpecies(speciesID);
+			product.setStoichiometry(1);
 			
-			LocalParameter i = new LocalParameter(Gui.SBML_LEVEL, Gui.SBML_VERSION);
-			LocalParameter j = new LocalParameter(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+			LocalParameter i = kl.createLocalParameter();
+			LocalParameter j = kl.createLocalParameter();
 			
 			XMLAttributes attr = new XMLAttributes();
 			attr.add("xmlns:array", "http://www.fakeuri.com");
@@ -3397,9 +3400,6 @@ public class BioModel {
 			
 			i.setId("i");
 			j.setId("j");
-			
-			kl.addLocalParameter(i);
-			kl.addLocalParameter(j);
 			
 			kl.setFormula(membraneDiffusionExpression);
 			Utility.addReaction(sbml, r);			

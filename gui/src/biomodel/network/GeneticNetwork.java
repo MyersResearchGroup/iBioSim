@@ -253,7 +253,7 @@ public class GeneticNetwork {
 			
 			//printDiffusion(document);
 			//printDiffusionWithArrays(document);
-			reformatArrayContent(document);
+			reformatArrayContent(document, filename);
 			//expandArrayContent(document.getModel());
 			
 			PrintStream p = new PrintStream(new FileOutputStream(filename),true,"UTF-8");
@@ -415,7 +415,7 @@ public class GeneticNetwork {
 	 * 
 	 * @param document
 	 */
-	private void reformatArrayContent(SBMLDocument document) {
+	private void reformatArrayContent(SBMLDocument document, String filename) {
 		
 		ArrayList<Reaction> membraneDiffusionReactions = new ArrayList<Reaction>();
 		
@@ -524,8 +524,12 @@ public class GeneticNetwork {
 		
 		//make arrays out of the dynamic events (for the top-level model)
 		for (Event dynEvent : dynamicEvents) {
+			
+			Event e = dynEvent.cloneObject();
+			e.setNamespaces(document.getNamespaces());
 						
-			document.getModel().addEvent(dynEvent.cloneObject());			
+			document.getModel().addEvent(e);
+			
 			Event dynamicEvent = document.getModel().getEvent(dynEvent.getId());
 			
 			String submodelID = ((String[])dynamicEvent.getId().split("__"))[0];
@@ -702,6 +706,15 @@ public class GeneticNetwork {
 					}
 				}
 			}
+		}
+		
+		SBMLWriter writer = new SBMLWriter();
+		PrintStream p;
+		try {
+			p = new PrintStream(new FileOutputStream(filename), true, "UTF-8");
+			p.print(writer.writeSBMLToString(document));
+		} catch (Exception e) {
+			//e.printStackTrace();
 		}
 	}
 	
