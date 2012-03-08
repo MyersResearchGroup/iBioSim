@@ -761,7 +761,7 @@ public class StateGraph {
 		dependent.add(tranIndex);
 //		System.out.println("@ getDependentSet, consider transition " + this.lpn.getAllTransitions()[tranIndex]);
 		// canDisable is the set of transitions that can be disabled by firing tranIndex.
-		HashSet<Integer> canDisable = staticMap.get(this.lpn.getIndex()).get(tranIndex).getDisable(); 
+		HashSet<Integer> canDisable = staticMap.get(this.lpn.getIndex()).get(tranIndex).getDisabled(); 
 		HashSet<Integer> transCanLoseToken = staticMap.get(this.lpn.getIndex()).get(tranIndex).getDisableByStealingToken();
 		//HashSet<Integer> enable = staticSets.get(this.lpn.getIndex()).get(tranIndex).getEnable();
 //		printIntegerSet(canDisable, this.lpn.getAllTransitions()[tranIndex] + " can disable");
