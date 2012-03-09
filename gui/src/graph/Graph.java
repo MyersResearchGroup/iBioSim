@@ -2422,6 +2422,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			JPanel editPanel = new JPanel(new BorderLayout());
 			editPanel.add(specPanel, "Center");
 			scroll.setViewportView(editPanel);
+			scroll.getVerticalScrollBar().setUnitIncrement(10);
 			// JButton ok = new JButton("Ok");
 			/*
 			 * ok.addActionListener(new ActionListener() { public void
