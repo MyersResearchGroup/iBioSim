@@ -2812,8 +2812,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
-												(data.get(g.getNumber() + 1)).get(i));
+										if (i < data.get(g.getXNumber()).size() && i < data.get(g.getNumber() + 1).size()) {
+											graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
+													(data.get(g.getNumber() + 1)).get(i));
+										}
 									}
 								}
 							}
@@ -2849,8 +2851,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
-												(data.get(g.getNumber() + 1)).get(i));
+										if (i < data.get(g.getXNumber()).size() && i < data.get(g.getNumber() + 1).size()) {
+											graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
+													(data.get(g.getNumber() + 1)).get(i));
+										}
 									}
 								}
 							}
@@ -2880,8 +2884,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
-												(data.get(g.getNumber() + 1)).get(i));
+										if (i < data.get(g.getXNumber()).size() && i < data.get(g.getNumber() + 1).size()) {
+											graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
+													(data.get(g.getNumber() + 1)).get(i));
+										}
 									}
 								}
 							}
@@ -2912,8 +2918,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
-												(data.get(g.getNumber() + 1)).get(i));
+										if (i < data.get(g.getXNumber()).size() && i < data.get(g.getNumber() + 1).size()) {
+											graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
+													(data.get(g.getNumber() + 1)).get(i));
+										}
 									}
 								}
 							}
@@ -2943,8 +2951,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
-												(data.get(g.getNumber() + 1)).get(i));
+										if (i < data.get(g.getXNumber()).size() && i < data.get(g.getNumber() + 1).size()) {
+											graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
+													(data.get(g.getNumber() + 1)).get(i));
+										}
 									}
 								}
 							}
@@ -2975,8 +2985,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
-												(data.get(g.getNumber() + 1)).get(i));
+										if (i < data.get(g.getXNumber()).size() && i < data.get(g.getNumber() + 1).size()) {
+											graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
+													(data.get(g.getNumber() + 1)).get(i));
+										}
 									}
 								}
 							}
@@ -3006,8 +3018,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
-												(data.get(g.getNumber() + 1)).get(i));
+										if (i < data.get(g.getXNumber()).size() && i < data.get(g.getNumber() + 1).size()) {
+											graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
+													(data.get(g.getNumber() + 1)).get(i));
+										}
 									}
 								}
 							}
@@ -3054,8 +3068,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									graphData.add(new XYSeries(g.getSpecies()));
 									if (data.size() != 0) {
 										for (int i = 0; i < (data.get(0)).size(); i++) {
-											graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
-													(data.get(g.getNumber() + 1)).get(i));
+											if (i < data.get(g.getXNumber()).size() && i < data.get(g.getNumber() + 1).size()) {
+												graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
+														(data.get(g.getNumber() + 1)).get(i));
+											}
 										}
 									}
 								}
@@ -3122,8 +3138,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
-												(data.get(g.getNumber() + 1)).get(i));
+										if (i < data.get(g.getXNumber()).size() && i < data.get(g.getNumber() + 1).size()) {
+											graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
+													(data.get(g.getNumber() + 1)).get(i));
+										}
 									}
 								}
 							}
@@ -3162,8 +3180,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
-												(data.get(g.getNumber() + 1)).get(i));
+										if (i < data.get(g.getXNumber()).size() && i < data.get(g.getNumber() + 1).size()) {
+											graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
+													(data.get(g.getNumber() + 1)).get(i));
+										}
 									}
 								}
 							} //end average
@@ -3195,8 +3215,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
-												(data.get(g.getNumber() + 1)).get(i));
+										if (i < data.get(g.getXNumber()).size() && i < data.get(g.getNumber() + 1).size()) {
+											graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
+													(data.get(g.getNumber() + 1)).get(i));
+										}
 									}
 								}
 							} //end variance
@@ -3228,8 +3250,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
-												(data.get(g.getNumber() + 1)).get(i));
+										if (i < data.get(g.getXNumber()).size() && i < data.get(g.getNumber() + 1).size()) {
+											graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
+													(data.get(g.getNumber() + 1)).get(i));
+										}
 									}
 								}
 							} //end standard deviation
@@ -3261,8 +3285,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
-												(data.get(g.getNumber() + 1)).get(i));
+										if (i < data.get(g.getXNumber()).size() && i < data.get(g.getNumber() + 1).size()) {
+											graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
+													(data.get(g.getNumber() + 1)).get(i));
+										}
 									}
 								}
 							} //end termination time
@@ -3294,8 +3320,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
-												(data.get(g.getNumber() + 1)).get(i));
+										if (i < data.get(g.getXNumber()).size() && i < data.get(g.getNumber() + 1).size()) {
+											graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
+													(data.get(g.getNumber() + 1)).get(i));
+										}
 									}
 								}
 							} //end percent termination
@@ -3327,8 +3355,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
-												(data.get(g.getNumber() + 1)).get(i));
+										if (i < data.get(g.getXNumber()).size() && i < data.get(g.getNumber() + 1).size()) {
+											graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
+													(data.get(g.getNumber() + 1)).get(i));
+										}
 									}
 								}
 							} //end constraint termination
@@ -3376,8 +3406,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									graphData.add(new XYSeries(g.getSpecies()));
 									if (data.size() != 0) {
 										for (int i = 0; i < (data.get(0)).size(); i++) {
-											graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
-													(data.get(g.getNumber() + 1)).get(i));
+											if (i < data.get(g.getXNumber()).size() && i < data.get(g.getNumber() + 1).size()) {
+												graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
+														(data.get(g.getNumber() + 1)).get(i));
+											}
 										}
 									}
 								}
@@ -5943,8 +5975,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
-												(data.get(g.getNumber() + 1)).get(i));
+										if (i < data.get(g.getXNumber()).size() && i < data.get(g.getNumber() + 1).size()) {
+											graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
+													(data.get(g.getNumber() + 1)).get(i));
+										}
 									}
 								}
 							}
@@ -6131,8 +6165,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
-												(data.get(g.getNumber() + 1)).get(i));
+										if (i < data.get(g.getXNumber()).size() && i < data.get(g.getNumber() + 1).size()) {
+											graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
+													(data.get(g.getNumber() + 1)).get(i));
+										}
 									}
 								}
 							}
@@ -6211,8 +6247,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
-												(data.get(g.getNumber() + 1)).get(i));
+										if (i < data.get(g.getXNumber()).size() && i < data.get(g.getNumber() + 1).size()) {
+											graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
+													(data.get(g.getNumber() + 1)).get(i));
+										}
 									}
 								}
 							}
@@ -6421,8 +6459,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
-												(data.get(g.getNumber() + 1)).get(i));
+										if (i < data.get(g.getXNumber()).size() && i < data.get(g.getNumber() + 1).size()) {
+											graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
+													(data.get(g.getNumber() + 1)).get(i));
+										}
 									}
 								}
 							}

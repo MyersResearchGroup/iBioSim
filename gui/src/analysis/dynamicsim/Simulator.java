@@ -3323,6 +3323,7 @@ public abstract class Simulator {
 		}
 		
 		bufferedTSDWriter.write(")");
+		bufferedTSDWriter.flush();
 	}
 	
 	/**
