@@ -310,6 +310,7 @@ public class Project {
 		//						  1 = Use behavioral analysis
 		//						  2 = Use behavioral analysis with state trace-back
 		//                        3 = No cycle closing
+		//						  4 = Peled's cycle condition
 		if (cycleClosingMthdIndex == 0 || cycleClosingMthdIndex == 3) 
 			stateGraph = dfsStateExplorationWithPOR.search_dfsPOR(sgArray, initStateArray, cycleClosingMthdIndex);
 		else 

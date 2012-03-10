@@ -592,6 +592,8 @@ public class Analysis {
 			System.out.println("---> POR with behavioral analysis");
 		else if (cycleClosingMthdIndex == 2)
 			System.out.println("---> POR with behavioral analysis and state trace-back");	
+		else if (cycleClosingMthdIndex == 4)
+			System.out.println("---> POR with Peled's cycle condition");
 		double peakUsedMem = 0;
 		double peakTotalMem = 0;
 		boolean failure = false;
