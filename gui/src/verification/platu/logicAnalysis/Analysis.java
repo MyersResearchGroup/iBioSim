@@ -395,7 +395,7 @@ public class Analysis {
 		if (cycleClosingMthdIndex == 0) 
 			System.out.println("---> POR with sticky transitions");
 		else if (cycleClosingMthdIndex == 3)
-			System.out.println("---> POR without cycle closing check");
+			System.out.println("---> POR without cycle closing");
 		double peakUsedMem = 0;
 		double peakTotalMem = 0;
 		boolean failure = false;
@@ -430,6 +430,7 @@ public class Analysis {
 			StaticSets curStatic = new StaticSets(sgList[0].getLpn(), curTran, allTransitions);
 			curStatic.buildDisableSet();
 			curStatic.buildEnableSet();
+			curStatic.buildModifyAssignSet();
 			tmpMap.put(curTran.getIndex(), curStatic);
 		}
 		staticSetsMap.put(sgList[0].getLpn().getIndex(), tmpMap);
@@ -620,10 +621,11 @@ public class Analysis {
 			StaticSets curStatic = new StaticSets(sgList[0].getLpn(), curTran, allTransitions);
 			curStatic.buildDisableSet();
 			curStatic.buildEnableSet();
+			curStatic.buildModifyAssignSet();
 			tmpMap.put(curTran.getIndex(), curStatic);
 		}
 		staticSetsMap.put(sgList[0].getLpn().getIndex(), tmpMap);
-		//printStaticSetMap(staticSetsMap);
+//		printStaticSetMap(staticSetsMap);
 		
 //		System.out.println("call getAmple on initStateArray at 0: ");
 		boolean init = true;
@@ -730,7 +732,7 @@ public class Analysis {
 //				System.out.println("call getAmpleRefinedCycleRule on nextStateArray at 3: i = " + i);
 				ampleList = sg_tmp.getAmpleRefinedCycleRule(curStateArray[i], nextStateArray[i], staticSetsMap, stateStack, init, cycleClosingMthdIndex);
 				nextAmpleArray[i] = ampleList.getAmpleSet();
-				if (ampleList.getAmpleChanged() && !updatedAmpleDueToCycleRule) {
+				if (!updatedAmpleDueToCycleRule && ampleList.getAmpleChanged()) {
 					updatedAmpleDueToCycleRule = true;
 				}
 //				System.out.println("-------------- curAmpleArray --------------");
