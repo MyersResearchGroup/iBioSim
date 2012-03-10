@@ -1119,7 +1119,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					String[] entries = {"Use sticky transitions",
 										"Use behavioral analysis",
 										"Use behavioral analysis and state trace-back",
-										"No cycle closing"};
+										"No cycle closing",
+										"Peled's cycle condition"};
 					JList cycleClosingList = new JList(entries);
 					cycleClosingList.setVisibleRowCount(4);
 					//cycleClosingList.addListSelectionListener(new ValueReporter());
@@ -1146,6 +1147,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 							graphFileName = verifyFile.replace(".lpn", "") + "POR_stateTraceback_sg.dot";
 						else if (cycleClosingMthdIndex == 3)
 							graphFileName = verifyFile.replace(".lpn", "") + "POR_noCycleClosing_sg.dot";
+						else if (cycleClosingMthdIndex == 4)
+							graphFileName = verifyFile.replace(".lpn", "") + "POR_PeledsCycleClosing_sg.dot";
 						if (graphFileName != null)
 							stateGraph.outputStateGraph(directory + separator + graphFileName);				
 					}
