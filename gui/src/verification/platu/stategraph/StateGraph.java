@@ -631,7 +631,8 @@ public class StateGraph {
             		HashSet<Transition> transAlreadyVisited = new HashSet<Transition>();
              		for (int i=0; i<transToAdd.size(); i++) {
             			Transition tranToAdd = transToAdd.get(i);
-            			tranNeverFired = reducedTranFired(transToAddFiredBefore, tranToAdd, nextAmpleTransOld, nextState, i, transAlreadyVisited, tranNeverFired);
+            			if (transToAdd != null && !transToAdd.isEmpty())
+            				tranNeverFired = reducedTranFired(transToAddFiredBefore, tranToAdd, nextAmpleTransOld, nextState, i, transAlreadyVisited, tranNeverFired);
             			if (tranNeverFired)
             				break;
              		}
@@ -712,6 +713,8 @@ public class StateGraph {
 			}
 			State successor = nextStateMap.get(state).get(oldAmpleTran);
 			LpnTranList successorOldAmple = enabledSetTbl.get(successor);
+			if (successor == null || successorOldAmple == null)
+				break;
 			if (successorOldAmple != null)
 				transAlreadyVisited.addAll(successorOldAmple);
 			if (successorOldAmple.contains(reducedTran)) {
