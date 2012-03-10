@@ -1122,7 +1122,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 										"No cycle closing",
 										"Peled's cycle condition"};
 					JList cycleClosingList = new JList(entries);
-					cycleClosingList.setVisibleRowCount(4);
+					cycleClosingList.setVisibleRowCount(5);
 					//cycleClosingList.addListSelectionListener(new ValueReporter());
 					JScrollPane cycleClosingPane = new JScrollPane(cycleClosingList);
 					JPanel mainPanel = new JPanel(new BorderLayout());
