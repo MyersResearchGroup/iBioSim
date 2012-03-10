@@ -472,8 +472,9 @@ public class Analysis {
 			State[] curStateArray = stateStackTop.toStateArray(); //stateStack.peek();
 			int curIndex = curIndexStack.peek();
 //			System.out.println("curIndex = " + curIndex);
+			//AmpleSet curAmple = new AmpleSet();
+			//LinkedList<Transition> curAmpleTrans = curAmple.getAmpleSet();
 			LinkedList<Transition> curAmpleTrans = lpnTranStack.peek();
-			curAmpleTrans = lpnTranStack.peek();
 
 			// If all enabled transitions of the current LPN are considered,
 			// then consider the next LPN
@@ -667,9 +668,9 @@ public class Analysis {
 			State[] curStateArray = stateStackTop.toStateArray(); //stateStack.peek();
 			int curIndex = curIndexStack.peek();
 //			System.out.println("curIndex = " + curIndex);
-			AmpleSet curAmple = new AmpleSet();
-			LinkedList<Transition> curAmpleTrans = curAmple.getAmpleSet();
-			curAmpleTrans = lpnTranStack.peek();
+			//AmpleSet curAmple = new AmpleSet();
+			//LinkedList<Transition> curAmpleTrans = curAmple.getAmpleSet();
+			LinkedList<Transition> curAmpleTrans = lpnTranStack.peek();
 						
 //			System.out.println("------- curStateArray ----------");
 //			printStateArray(curStateArray);
