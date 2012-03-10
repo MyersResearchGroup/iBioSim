@@ -48,6 +48,26 @@ public class StaticSets {
 					&& anotherTranEnablingTree.getChange(curTran.getAssignments())=='F')
 				disableByFailingEnableCond.add(anotherTran.getIndex());
 		}
+		disableSet.addAll(disableByStealingToken);
+		disableSet.addAll(disableByFailingEnableCond);
+	}
+	
+	/**
+	 * Construct a set of transitions that can make the enabling condition of curTran true, by firing their assignments.
+	 */
+	public void buildEnableSet() {
+		for (int i = 0; i < allTransitions.length; i++) {
+			if (curTran.equals(allTransitions[i]))
+				continue;
+			Transition anotherTran = allTransitions[i];
+			ExprTree curTranEnablingTree = curTran.getEnablingTree();
+			if (curTranEnablingTree != null
+					&& curTranEnablingTree.getChange(anotherTran.getAssignments())=='T')
+				enableSet.add(anotherTran.getIndex());
+		}
+	}
+	
+	public void buildModifyAssignSet() {
 		// modifyAssignment contains transitions (T) that satisfy either (1) or (2): for every t in T, 
 		// (1) intersection(VA(curTran), supportA(t)) != empty
 		// (2) intersection(VA(t), supportA(curTran)) != empty
@@ -72,26 +92,12 @@ public class StaticSets {
 				}
 			}
 		}
-		disableSet.addAll(disableByStealingToken);
-		disableSet.addAll(disableByFailingEnableCond);
-		disableSet.addAll(modifyAssignment);
+	}
+ 
+	public HashSet<Integer> getModifyAssignSet() {
+		return modifyAssignment;
 	}
 	
-	/**
-	 * Construct a set of transitions that can make the enabling condition of curTran true, by firing their assignments.
-	 */
-	public void buildEnableSet() {
-		for (int i = 0; i < allTransitions.length; i++) {
-			if (curTran.equals(allTransitions[i]))
-				continue;
-			Transition anotherTran = allTransitions[i];
-			ExprTree curTranEnablingTree = curTran.getEnablingTree();
-			if (curTranEnablingTree != null
-					&& curTranEnablingTree.getChange(anotherTran.getAssignments())=='T')
-				enableSet.add(anotherTran.getIndex());
-		}
-	}
-
 	public HashSet<Integer> getDisabled() {
 		return disableSet;
 	}
