@@ -652,8 +652,8 @@ public class StateGraph {
         		}
         		if (cycleClosingMthdIndex == 4) {
         			nextAmple.getAmpleSet().clear();
-        			nextAmple.getAmpleSet().addAll(curReduced);
-        			enabledSetTbl.get(nextState).addAll(curReduced);
+        			nextAmple.getAmpleSet().addAll(overlyReducedTrans);
+        			enabledSetTbl.get(nextState).addAll(overlyReducedTrans);
 //        			printTransitionSet(nextAmpleNew, "nextAmpleNew:");
 //        			printTransitionSet(transToAdd, "transToAdd:");
 //        			System.out.println("((((((((((((((((((((()))))))))))))))))))))");
