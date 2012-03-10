@@ -563,7 +563,8 @@ public class StateGraph {
      */
     @SuppressWarnings("unchecked")
 	public AmpleSet getAmpleRefinedCycleRule(State curState, State nextState, 
-    		HashMap<Integer, HashMap<Integer, StaticSets>> staticMap, HashSet<PrjState> stateStack, boolean init, int cycleClosingMthdIndex) {
+    		HashMap<Integer, HashMap<Integer, StaticSets>> staticMap, 
+    		HashSet<PrjState> stateStack, boolean init, int cycleClosingMthdIndex) {
     	AmpleSet nextAmple = new AmpleSet();
     	if (nextState == null) {
             throw new NullPointerException();
@@ -640,11 +641,18 @@ public class StateGraph {
              			}
     			}
         		// Update the old ample of the next state 
-    			// to include reduced transition(s) before closing the cycle.
         		if (!allTransToAddFired || cycleClosingMthdIndex == 1) {
         			nextAmple.getAmpleSet().clear();
         			nextAmple.getAmpleSet().addAll(transToAdd);
         			enabledSetTbl.get(nextState).addAll(transToAdd);
+//        			printTransitionSet(nextAmpleNew, "nextAmpleNew:");
+//        			printTransitionSet(transToAdd, "transToAdd:");
+//        			System.out.println("((((((((((((((((((((()))))))))))))))))))))");
+        		}
+        		if (cycleClosingMthdIndex == 4) {
+        			nextAmple.getAmpleSet().clear();
+        			nextAmple.getAmpleSet().addAll(curReduced);
+        			enabledSetTbl.get(nextState).addAll(curReduced);
 //        			printTransitionSet(nextAmpleNew, "nextAmpleNew:");
 //        			printTransitionSet(transToAdd, "transToAdd:");
 //        			System.out.println("((((((((((((((((((((()))))))))))))))))))))");
