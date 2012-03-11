@@ -622,23 +622,15 @@ public class StateGraph {
     				nextAmpleNew.add(this.getLpn().getTransition(nextAmpleNewIndex));
     			}
     			LpnTranList transToAdd = getSetSubtraction(nextAmpleNew, nextAmpleTransOld);
-    			boolean allTransToAddFired = true;
+    			boolean allTransToAddFired = false;
     			if (cycleClosingMthdIndex == 2) {
     				// For every transition t in transToAdd, if t was fired in the any state on stateStack, there is no need to put it to the new ample of nextState.
-            		boolean[] transToAddFiredBefore = new boolean[transToAdd.size()];
-            		boolean tranNeverFired = false;
-            		HashSet<Transition> transAlreadyVisited = new HashSet<Transition>();
-             		for (int i=0; i<transToAdd.size(); i++) {
-            			Transition tranToAdd = transToAdd.get(i);
-            			if (transToAdd != null && !transToAdd.isEmpty())
-            				tranNeverFired = reducedTranFired(transToAddFiredBefore, tranToAdd, nextAmpleTransOld, nextState, i, transAlreadyVisited, tranNeverFired);
-            			if (tranNeverFired)
-            				break;
-             		}
-             		if (!tranNeverFired)
-             			for (int i=0; i<transToAddFiredBefore.length; i++) {
-             				allTransToAddFired = allTransToAddFired && transToAddFiredBefore[i];
-             			}
+            		if (transToAdd != null) {
+            			LpnTranList transToAddCopy = transToAdd.copy();
+            			HashSet<Integer> stateVisited = new HashSet<Integer>();
+            			stateVisited.add(nextState.getIndex());
+            			allTransToAddFired = allTransToAddFired(nextAmpleTransOld, nextState, transToAddCopy, allTransToAddFired, stateVisited);
+            		}
     			}
         		// Update the old ample of the next state 
         		if (!allTransToAddFired || cycleClosingMthdIndex == 1) {
@@ -702,31 +694,31 @@ public class StateGraph {
         return curAmple;
     }
     
- 	private boolean reducedTranFired(boolean[] curReducedFired,
-			Transition reducedTran, LpnTranList oldAmple, State state, int index, 
-			HashSet<Transition> transAlreadyVisited, boolean tranNeverFired) {
+ 	private boolean allTransToAddFired(LpnTranList oldAmple, State state, LpnTranList transToAddCopy, boolean allTransFired, HashSet<Integer> stateVisited) {
 		for (Transition oldAmpleTran : oldAmple) {
-			if (transAlreadyVisited.contains(oldAmpleTran)) {
-	 			tranNeverFired = true;
-	 			break;
-			}
 			State successor = nextStateMap.get(state).get(oldAmpleTran);
+			if (stateVisited.contains(successor.getLabel())) {
+				break;
+			}
+			else
+				stateVisited.add(successor.getIndex());
 			LpnTranList successorOldAmple = enabledSetTbl.get(successor);
-			if (successor == null || successorOldAmple == null)
-				break;
-			if (successorOldAmple != null)
-				transAlreadyVisited.addAll(successorOldAmple);
-			if (successorOldAmple.contains(reducedTran)) {
-				curReducedFired[index] = true;
-				tranNeverFired = false;
-				break;
+			// Either successor or sucessorOldAmple should not be null for a nonterminal state graph.
+			HashSet<Transition> transToAddFired = new HashSet<Transition>();
+			for (Transition tran : transToAddCopy) {
+				if (successorOldAmple.contains(tran))
+					transToAddFired.add(tran);
 			}
+			transToAddCopy.removeAll(transToAddFired);
+			if (transToAddCopy.size() == 0) {
+				allTransFired = true;
+				break;
+			}				
 			else {
-				reducedTranFired(curReducedFired, reducedTran, successorOldAmple, successor, index, transAlreadyVisited, tranNeverFired);
+				allTransFired = allTransToAddFired(successorOldAmple, successor, transToAddCopy, allTransFired, stateVisited);
 			}
-
 		}
-		return tranNeverFired;
+		return allTransFired;
 	}
 
 	private LpnTranList getSetSubtraction(LpnTranList set1,
