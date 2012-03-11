@@ -2642,7 +2642,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				dot.waitFor();
 			} else {
 				JOptionPane.showMessageDialog(Gui.frame,
-						"Unable to view LHPN.", "Error",
+						"Unable to view dot file.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		} catch (Exception e) {
