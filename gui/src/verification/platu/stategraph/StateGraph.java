@@ -505,7 +505,6 @@ public class StateGraph {
         	for (int i=0; i < this.lpn.getAllTransitions().length; i++) {
             	Transition tran = this.lpn.getAllTransitions()[i];
             	if (isEnabled(tran,curState)){
-            		//System.out.println("Transition " + tran.getName() + " is enabled");
             		curEnabledIndices.add(i);
             		allEnabledAreSticky = allEnabledAreSticky && tran.isSticky();
             		if (!tran.isSticky()) {
@@ -526,13 +525,13 @@ public class StateGraph {
         	}
         }
         
-        // Apply POR with traceback here.
+        // Apply POR with trace-back here.
         HashSet<Integer> ready = new HashSet<Integer>();
 //      System.out.println("******** getAmple ************");
-//   	System.out.println("Begin POR:");
-//   	printIntegerSet(curEnabledIndices, "Enabled set");
+//    	System.out.println("Begin POR:");
+//    	printIntegerSet(curEnabledIndices, "Enabled set");
    		ready = partialOrderReduction(curState, curEnabledIndices, staticSetsMap, allEnabledAreSticky);
-//      printIntegerSet(ready, "Ready set");
+//   	printIntegerSet(ready, "Ready set");
 //      System.out.println("End POR");
 // 		System.out.println("********************");
         Object[] readyArray = ready.toArray();
@@ -572,7 +571,7 @@ public class StateGraph {
     	if(enabledSetTbl.containsKey(nextState) == true && stateOnStack(nextState, stateStack)) {
 //     		System.out.println("~~~~~~~ existing state in enabledSetTbl and on stateStack: S" + nextState.getIndex() + "~~~~~~~~");
 //    		printTransitionSet((LpnTranList)enabledSetTbl.get(nextState), "Old ample at this state: ");
-  			// Cycle closing check
+ 			// Cycle closing check
     		LpnTranList nextAmpleTransOld = (LpnTranList) nextAmple.getAmpleSet();
     		nextAmpleTransOld = enabledSetTbl.get(nextState);
     		LpnTranList curAmpleTrans = enabledSetTbl.get(curState);
@@ -794,10 +793,14 @@ public class StateGraph {
 		HashSet<Integer> transCanLoseToken = staticMap.get(this.lpn.getIndex()).get(tranIndex).getDisableByStealingToken();
 		HashSet<Integer> canModifyAssign = staticMap.get(this.lpn.getIndex()).get(tranIndex).getModifyAssignSet();
 		HashSet<Integer> transVisitedByNecessary = new HashSet<Integer>();
-		dependent.add(tranIndex);
-		dependent.addAll(canModifyAssign);
 //		System.out.println("@ getDependentSet, consider transition " + this.lpn.getAllTransitions()[tranIndex]);
+//		printIntegerSet(canModifyAssign, this.lpn.getAllTransitions()[tranIndex] + " can modify assignments");
 //		printIntegerSet(canDisable, this.lpn.getAllTransitions()[tranIndex] + " can disable");
+		dependent.add(tranIndex);
+		for (Integer i : canModifyAssign) {
+			if (curEnabled.contains(i))
+				dependent.add(i);
+		}	
 		for (Iterator<Integer> canDisableIter = canDisable.iterator(); canDisableIter.hasNext();) {
 			Integer tranCanBeDisabled = canDisableIter.next();
 			boolean tranCanBeDisabledPersistent = this.lpn.getAllTransitions()[tranCanBeDisabled].isPersistent();
@@ -1360,9 +1363,9 @@ public class StateGraph {
         newEnabledTranArray[firedTran.getIndex()] = false;
         State newState = new State(this.lpn, curNewMarking, newVectorArray, newEnabledTranArray);
         
-        int[] newVector = newState.getVector();
-        // TODO: (future) assertions in our LPN?
+     // TODO: (future) assertions in our LPN?
         /*
+        int[] newVector = newState.getVector();
 		for(Expression e : assertions){
         	if(e.evaluate(newVector) == 0){
         		System.err.println("Assertion " + e.toString() + " failed in LPN transition " + this.lpn.getLabel() + ":" + this.label);
@@ -1455,5 +1458,18 @@ public class StateGraph {
 			}
 			System.out.print("\n");
 		}
+	}
+
+	public HashMap<State,LpnTranList> copyEnabledSetTbl() {
+		HashMap<State,LpnTranList> copyEnabledSetTbl = new HashMap<State,LpnTranList>();
+		for (State s : enabledSetTbl.keySet()) {
+			LpnTranList tranList = enabledSetTbl.get(s).clone();
+			copyEnabledSetTbl.put(s.clone(), tranList);
+		}
+		return copyEnabledSetTbl;
+	}
+
+	public void setEnabledSetTbl(HashMap<State, LpnTranList> enabledSetTbl) {
+		this.enabledSetTbl = enabledSetTbl;	
 	}
 }
