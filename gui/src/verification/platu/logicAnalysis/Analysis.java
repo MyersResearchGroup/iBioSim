@@ -434,18 +434,19 @@ public class Analysis {
 			tmpMap.put(curTran.getIndex(), curStatic);
 		}
 		staticSetsMap.put(sgList[0].getLpn().getIndex(), tmpMap);
-//		printStaticSetMap(staticSetsMap);
+		//printStaticSetMap(staticSetsMap);
 		boolean init = true;
 		AmpleSet initAmple = new AmpleSet();
+//		System.out.println("call getAmple on curStateArray at 0: ");
 		initAmple = sgList[0].getAmple(initStateArray[0], staticSetsMap, stateStack, init);
+		HashMap<State, LpnTranList> initEnabledSetTbl = (HashMap<State, LpnTranList>) sgList[0].copyEnabledSetTbl();
 		lpnTranStack.push(initAmple.getAmpleSet());
 		curIndexStack.push(0);
-		init = false;
 //		System.out.println("+++++++ Push trans onto lpnTranStack ++++++++");
 //		printTransitionSet((LpnTranList) initAmple.getAmpleSet(), "");
 
 		main_while_loop: while (failure == false && stateStack.size() != 0) {
-//			System.out.println("$$$$$$$$$$$ loop begins $$$$$$$$$$");
+			//System.out.println("$$$$$$$$$$$ loop begins $$$$$$$$$$");
 			long curTotalMem = Runtime.getRuntime().totalMemory();
 			long curUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 
@@ -488,7 +489,7 @@ public class Analysis {
 //				System.out.println("+++++++ Pop index off curIndexStack ++++++++");
 				curIndex++;
 				while (curIndex < numLpns) {
-//					System.out.println("call getEnabled on curStateArray at 1: ");
+//					System.out.println("call getAmple on curStateArray at 1: ");
 					LpnTranList tmpAmpleTrans = (LpnTranList) (sgList[curIndex].getAmple(curStateArray[curIndex], staticSetsMap, stateStack, init)).getAmpleSet();
 					curAmpleTrans = tmpAmpleTrans.clone();
 					//printTransitionSet(curEnabled, "curEnabled set");
@@ -523,12 +524,20 @@ public class Analysis {
 			LinkedList<Transition>[] curAmpleArray = new LinkedList[numLpns];
 			@SuppressWarnings("unchecked")
 			LinkedList<Transition>[] nextAmpleArray = new LinkedList[numLpns];
+			
 			for (int i = 0; i < numLpns; i++) {
-				StateGraph sg_tmp = sgList[i];				
+				StateGraph sg_tmp = sgList[i];	
 //				System.out.println("call getAmple on curStateArray at 2: i = " + i);
-				AmpleSet ampleList = sg_tmp.getAmple(curStateArray[i], staticSetsMap, stateStack, init);
+				AmpleSet ampleList = new AmpleSet();
+				if (init) {
+					ampleList = initAmple;
+					sg_tmp.setEnabledSetTbl(initEnabledSetTbl);
+					init = false;
+				}
+				else
+					ampleList = sg_tmp.getAmple(curStateArray[i], staticSetsMap, stateStack, init);
 				curAmpleArray[i] = ampleList.getAmpleSet();
-//				System.out.println("call getAmpleRefinedCycleRule on nextStateArray at 3: i = " + i);
+//				System.out.println("call getAmple on nextStateArray at 3: i = " + i);
 				ampleList = sg_tmp.getAmple(nextStateArray[i], staticSetsMap, stateStack, init);
 				nextAmpleArray[i] = ampleList.getAmpleSet();				
 				Transition disabledTran = firedTran.disablingError(
@@ -634,9 +643,9 @@ public class Analysis {
 		boolean init = true;
 		AmpleSet initAmple = new AmpleSet();
 		initAmple = sgList[0].getAmple(initStateArray[0], staticSetsMap, stateStack, init);
+		HashMap<State, LpnTranList> initEnabledSetTbl = (HashMap<State, LpnTranList>) sgList[0].copyEnabledSetTbl();
 		lpnTranStack.push(initAmple.getAmpleSet());
 		curIndexStack.push(0);
-		init = false;
 //		System.out.println("+++++++ Push trans onto lpnTranStack ++++++++");
 //		printTransitionSet((LpnTranList) initAmple.getAmpleSet(), "");
 
@@ -730,7 +739,14 @@ public class Analysis {
 			for (int i = 0; i < numLpns; i++) {
 				StateGraph sg_tmp = sgList[i];
 //				System.out.println("call getAmple on curStateArray at 2: i = " + i);
-				AmpleSet ampleList = sg_tmp.getAmple(curStateArray[i], staticSetsMap, stateStack, init);
+				AmpleSet ampleList = new AmpleSet();
+				if (init) {
+					ampleList = initAmple;
+					sg_tmp.setEnabledSetTbl(initEnabledSetTbl);
+					init = false;
+				}
+				else
+					ampleList = sg_tmp.getAmple(curStateArray[i], staticSetsMap, stateStack, init);
 				curAmpleArray[i] = ampleList.getAmpleSet();
 //				System.out.println("call getAmpleRefinedCycleRule on nextStateArray at 3: i = " + i);
 				ampleList = sg_tmp.getAmpleRefinedCycleRule(curStateArray[i], nextStateArray[i], staticSetsMap, stateStack, init, cycleClosingMthdIndex);
@@ -2411,5 +2427,14 @@ public class Analysis {
 		}
 		//System.out.println();
 		return localIdxArray;
+	}
+	
+    private void printEnabledSetTbl(HashMap<State, LpnTranList> enabledSetTbl) {
+    	System.out.println("******* enabledSetTbl **********");		
+		for (State s : enabledSetTbl.keySet()) {
+    		System.out.print("S" + s.getIndex() + " -> ");
+    		printTransitionSet(enabledSetTbl.get(s), "");
+    	}
+		
 	}
 }
