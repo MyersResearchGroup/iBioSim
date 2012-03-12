@@ -910,18 +910,20 @@ public class Zone {
 		// Copy the tempZone to the new zone.
 		for(int i=0; i<tempZone.dbmSize(); i++)
 		{
-			if(!oldTimers.contains(newZone._indexToTimer[i]))
+			if(!oldTimers.contains(tempZone._indexToTimer[i]))
 			{
-				break;
+//				break;
+				continue;
 			}
 			// Get the new index of for the timer.
 			int newIndexi = i==0 ? 0 : 
 				Arrays.binarySearch(newZone._indexToTimer, tempZone._indexToTimer[i]);
 			for(int j=0; j<tempZone.dbmSize(); j++)
 			{
-				if(!oldTimers.contains(newZone._indexToTimer[j]))
+				if(!oldTimers.contains(tempZone._indexToTimer[j]))
 				{
-					break;
+//					break;
+					continue;
 				}
 				int newIndexj = j==0 ? 0 : 
 					Arrays.binarySearch(newZone._indexToTimer, tempZone._indexToTimer[i]);
@@ -935,9 +937,10 @@ public class Zone {
 		//for(int i=0; i<tempZone.dbmSize(); i++)
 		for(int i=1; i<tempZone.dbmSize(); i++)
 		{
-			if(!oldTimers.contains(newZone._indexToTimer[i]))
+			if(!oldTimers.contains(tempZone._indexToTimer[i]))
 			{
-				break;
+//				break;
+				continue;
 			}
 			newZone.setLowerBoundbyTransitionIndex(tempZone._indexToTimer[i], 
 					tempZone.getLowerBoundbydbmIndex(i));
@@ -960,11 +963,11 @@ public class Zone {
 				
 				newZone.setdbm(newZone.timerIndexToDBMIndex(timerNew),
 						newZone.timerIndexToDBMIndex(timerOld),
-						 tempZone.getdbm(0, timerOld));
+						 tempZone.getdbm(0, tempZone.timerIndexToDBMIndex(timerOld)));
 				
 				newZone.setdbm(newZone.timerIndexToDBMIndex(timerOld),
 						newZone.timerIndexToDBMIndex(timerNew),
-						tempZone.getdbm(timerOld, 0));
+						tempZone.getdbm(tempZone.timerIndexToDBMIndex(timerOld), 0));
 			}
 		}
 		
