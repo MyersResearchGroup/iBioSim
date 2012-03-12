@@ -13,7 +13,7 @@ import org.junit.Test;
 
 public class ZoneTest {
 
-	static Zone zone1, zone2;
+	static Zone zone1, zone2, zone3, zone4;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -40,6 +40,26 @@ public class ZoneTest {
 		matrix2[5] = new int[]{-7, 0, 0, 0, 0, 0};
 		
 		zone2 = new Zone(timers2, matrix2);
+		
+		// Set up third Zone.
+		int[] timers3 = new int[]{2};
+		int[][] matrix3 = new int[][]{
+				{ 0,  0, 3},
+				{ 0,  0, 3},
+				{-1,  0, 0}
+		};
+		
+		zone3 = new Zone(timers3, matrix3);
+		
+		// Set up fourth Zone.
+		int[] timers4 = new int[]{1};
+		int[][] matrix4 = new int[][]{
+				{ 0,  0, 3},
+				{ 0,  0, 3},
+				{-1,  0, 0}
+		};
+		
+		zone4 = new Zone(timers4, matrix4);
 	}
 
 	@Test
@@ -56,8 +76,10 @@ public class ZoneTest {
 	}
 
 	@Test
-	public void testGetDBMIndex() {
-		fail("Not yet implemented");
+	public void testGetdbm() {
+		int expected = 2;
+		int actual = zone1.getdbm(0, 1);
+		assertEquals(expected, actual);
 	}
 
 	@Test
@@ -132,14 +154,39 @@ public class ZoneTest {
 
 	@Test
 	public void testEqualsZone() {
-		fail("Not yet implemented");
+		assertFalse(zone3.equals(zone4));
 	}
 	
 	@Test
 	public void testMergeZone(){
 		Zone z = zone1.mergeZones(zone2);
 		
-		System.out.print(z);
+		System.out.println("Merging zones 1 and 2 :");
+		System.out.println(z);
+	}
+	
+	@Test
+	public void testMergeZone2(){
+		Zone z = zone3.mergeZones(zone4);
+		
+		
+		System.out.println("Merging zones 3 and 4 :");
+		System.out.println(z);
+	}
+	
+	@Test
+	public void testMergeZone3(){
+		boolean exceptionThrown = false;
+		
+		try{
+			Zone z = zone3.mergeZones(zone1);
+		}
+		catch(Exception e)
+		{
+			exceptionThrown = true;
+		}
+		
+		assertTrue(exceptionThrown);
 	}
 	
 	/**
