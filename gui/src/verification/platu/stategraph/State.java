@@ -6,12 +6,12 @@ import java.util.*;
 import lpn.parser.LhpnFile;
 import lpn.parser.Transition;
 
-import verification.platu.TimingAnalysis.TimingState;
 import verification.platu.common.PlatuObj;
 import verification.platu.lpn.DualHashMap;
 import verification.platu.lpn.LPN;
 import verification.platu.lpn.LpnTranList;
 import verification.platu.lpn.VarSet;
+import verification.timed_state_exploration.zone.TimedState;
 
 /**
  * State
@@ -31,7 +31,7 @@ public class State extends PlatuObj {
     protected boolean failure = false;
     
  // The TimingState that extends this state with a zone. Null if untimed.
-    protected TimingState timeExtension;
+    protected TimedState timeExtension;
 
     @Override
     public String toString() {
@@ -474,7 +474,7 @@ public class State extends PlatuObj {
 	 * @return
 	 * 		The TimingState that extends this state if it has been set. Null, otherwise.
 	 */
-	public TimingState getTimeExtension(){
+	public TimedState getTimeExtension(){
 		return timeExtension;
 	}
 	
@@ -483,7 +483,7 @@ public class State extends PlatuObj {
 	 * @param s
 	 * 		The TimingState that exteds this state.
 	 */
-	public void setTimeExtension(TimingState s){
+	public void setTimeExtension(TimedState s){
 		timeExtension = s;
 	}
 }
