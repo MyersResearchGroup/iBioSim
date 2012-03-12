@@ -498,7 +498,7 @@ public class Zone {
 	 * @return
 	 * 			The value of the (i, j) element of the DBM.
 	 */
-	private int getdbm(int i, int j)
+	public int getdbm(int i, int j)
 	{
 		return _matrix[dbmIndexToMatrixIndex(i)][dbmIndexToMatrixIndex(j)];
 	}
