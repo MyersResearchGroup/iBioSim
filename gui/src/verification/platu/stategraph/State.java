@@ -481,7 +481,7 @@ public class State extends PlatuObj {
 	/**
 	 * Setter for the TimingState that extends this state.
 	 * @param s
-	 * 		The TimingState that exteds this state.
+	 * 		The TimingState that extends this state.
 	 */
 	public void setTimeExtension(TimedState s){
 		timeExtension = s;
