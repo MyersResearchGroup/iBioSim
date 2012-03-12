@@ -135,6 +135,13 @@ public class ZoneTest {
 		fail("Not yet implemented");
 	}
 	
+	@Test
+	public void testMergeZone(){
+		Zone z = zone1.mergeZones(zone2);
+		
+		System.out.print(z);
+	}
+	
 	/**
 	 * Reads in zones for testing.
 	 * @param zoneFile
