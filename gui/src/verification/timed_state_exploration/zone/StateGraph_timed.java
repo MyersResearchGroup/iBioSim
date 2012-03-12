@@ -1,5 +1,8 @@
 package verification.timed_state_exploration.zone;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.util.HashMap;
 import java.util.List;
 
 import lpn.parser.LhpnFile;
@@ -88,7 +91,36 @@ public class StateGraph_timed extends StateGraph{
 		return new TimedState(initialStateNoTime);
 	}
 	 
-	 
+	
+	public void outputStateGraph(String file) {
+		try {
+			BufferedWriter out = new BufferedWriter(new FileWriter(file));
+			out.write("digraph G {\n");
+			for (State curState : nextStateMap.keySet()) {
+				String curStateName = "S" + curState.getIndex();
+				out.write(curStateName + "[shape=\"ellipse\",label=\"" + curStateName + "\\n" + 
+						((TimedState)curState).getZone().toString().replace("\n", "\\n") + "\"]\n");
+			}
+			
+			for (State curState : nextStateMap.keySet()) {
+				HashMap<Transition, State> stateTransitionPair = nextStateMap.get(curState);
+				for (Transition curTran : stateTransitionPair.keySet()) {
+					String curStateName = "S" + curState.getIndex();
+					String nextStateName = "S" + stateTransitionPair.get(curTran).getIndex();
+					String curTranName = curTran.getName();
+					out.write(curStateName + " -> " + nextStateName + " [label=\"" + curTranName + "\"]\n");
+				}
+			}
+			out.write("}");
+			out.close();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			System.err.println("Error outputting state graph as dot file.");
+		}
+		
+	}
+
 	
 //	public TimedState addState(State mState) 
 //	{
