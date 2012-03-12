@@ -22,9 +22,14 @@ import verification.platu.stategraph.StateGraph;
  */
 public class TimedState extends State{
 	
-	/* A Zone for keeping track timing information. */
+	// Abstraction Function:
+	// This class follows the extension pattern for extending a base class. A TimedState
+	// adds a Zone for keeping track of timing relations.
+	
+	// A Zone for keeping track timing information.
 	private Zone _zone;
 
+	// The state that this TimingState extends.
 	private State _state;
 	
 	@Override
@@ -185,6 +190,16 @@ public class TimedState extends State{
 		_state.print(lpn);
 	}
 
+	@Override
+	public TimedState getTimeExtension() {
+		return super.getTimeExtension();
+	}
+
+	@Override
+	public void setTimeExtension(TimedState s) {
+		super.setTimeExtension(s);
+	}
+
 	public TimedState(LhpnFile lpn, int[] new_marking, int[] new_vector,
 			boolean[] new_isTranEnabled) {
 		super(lpn, new_marking, new_vector, new_isTranEnabled);
@@ -193,6 +208,8 @@ public class TimedState extends State{
 		_state = new State(lpn, new_marking, new_vector, new_isTranEnabled);
 		
 		_zone = new Zone(new State(lpn, new_marking, new_vector, new_isTranEnabled));
+		
+		_state.setTimeExtension(this);
 	}
 
 	/**
@@ -206,6 +223,8 @@ public class TimedState extends State{
 		
 		_state = other;
 		_zone = new Zone(other);
+		
+		_state.setTimeExtension(this);
 	}
 	
 	public TimedState(State s, Zone z)
@@ -214,6 +233,7 @@ public class TimedState extends State{
 		// TODO: Find a way to remove the super call.
 		_state = s;
 		_zone = z.clone();
+		_state.setTimeExtension(this);
 	}
 	
 	public String toString()
