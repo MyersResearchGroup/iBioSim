@@ -568,9 +568,17 @@ public class Zone {
 		// Print the timers.
 		for(int i=1; i<_indexToTimer.length; i++, count++)
 		{
-			//result += "t" + _indexToTimer + " : " + 
-			result += " " +  _indexToTransition.get(_indexToTimer[i]) + ":" + 
-			"[ " + -1*getLowerBoundbydbmIndex(i) + ", " + getUpperBoundbydbmIndex(i) + " ]";
+			if(_indexToTransition == null)
+			{
+				// If an index to transition map has not been set up,
+				// use the transition index for the timer.
+				result += " t" + _indexToTimer[i] + " : ";
+			}
+			else
+			{
+				result += " " +  _indexToTransition.get(_indexToTimer[i]) + ":";
+			}
+			result += "[ " + -1*getLowerBoundbydbmIndex(i) + ", " + getUpperBoundbydbmIndex(i) + " ]";
 			
 			if(count > 9)
 			{
@@ -1033,18 +1041,108 @@ public class Zone {
 		
 		Zone mergedZone = new Zone();
 		
-		mergedZone._indexToTimer = mergeTimers(this._indexToTimer, otherZone._indexToTimer);
+		//mergedZone._indexToTimer = mergeTimers(this._indexToTimer, otherZone._indexToTimer);
 		
-		/* Maps the index of this Zone's timers to the mergeZone. */
-		HashMap<Integer, Integer> thisNewIndex = new HashMap<Integer, Integer>();
+		/* Maps the index of this Zone's timers to the mergedZone. */
+		//HashMap<Integer, Integer> thisNewIndex;
 		
-		thisNewIndex = makeIndexMap(this._indexToTimer, mergedZone._indexToTimer);
+		//thisNewIndex = makeIndexMap(this._indexToTimer, mergedZone._indexToTimer);
 		
 		/* Maps the index of otherZone Zone's timers to the mergeZone. */
-		HashMap<Integer, Integer> otherNewIndex = new HashMap<Integer, Integer>();
+		//HashMap<Integer, Integer> otherNewIndex;
 		
-		otherNewIndex = makeIndexMap(otherZone._indexToTimer, mergedZone._indexToTimer);
+		//otherNewIndex = makeIndexMap(otherZone._indexToTimer, mergedZone._indexToTimer);
 		
+		//mergedZone._matrix = new int[mergedZone.matrixSize()][mergedZone.matrixSize()];
+		
+		ZoneTriple[] zoneAndIndex = mergeTimers(otherZone);
+		
+		mergedZone._indexToTimer = new int[zoneAndIndex.length];
+		
+		for(int i=0; i<zoneAndIndex.length; i++)
+		{
+			mergedZone._indexToTimer[i] = zoneAndIndex[i]._timer;
+		}
+		
+		// Create the matrix for the merged zone.
+		mergedZone._matrix = new int[mergedZone.matrixSize()][mergedZone.matrixSize()];
+		
+		for(int i=0; i<mergedZone.dbmSize(); i++)
+		{
+			for(int j=0; j<mergedZone.dbmSize(); j++)
+			{
+				// If the timer occurs in both zones to be merged,
+				// then check if the values agree.
+				if(zoneAndIndex[i]._zone2 != null && zoneAndIndex[j]._zone2 != null)
+				{
+					int value1 = this.getdbm(zoneAndIndex[i]._index1,
+							zoneAndIndex[j]._index1);
+					
+					int value2 = otherZone.getdbm(zoneAndIndex[i]._index2,
+							zoneAndIndex[j]._index2);
+					
+					if(value1 != value2)
+					{
+						throw new IncompatibleZoneException("The common timers do not agree.");
+					}
+					else
+					{
+						mergedZone.setdbm(i, j, value1);
+					}
+				}
+				
+				// The timer does not occur in both.
+				else
+				{
+					int iIndex = 0;
+					int jIndex = 0;
+					Zone z;
+					
+					// Get the zone with both the timers.
+					if(zoneAndIndex[i]._zone2 != null && 
+							zoneAndIndex[i]._zone1 == zoneAndIndex[j]._zone1)
+					{
+						// zoneAndIndex[i] is the timer in a single zone,
+						// and is the same as the first zone in zoneAndIndex.
+						
+						z = zoneAndIndex[i]._zone1;
+						iIndex = zoneAndIndex[i]._index1;
+						jIndex = zoneAndIndex[j]._index1;
+					}
+					else if(zoneAndIndex[i]._zone2 != null && 
+							zoneAndIndex[i]._zone1 == zoneAndIndex[j]._zone2)
+					{
+						// zoneAndIndex[i] is the timer in a single zone,
+						// and is the same as the second zone in zoneAndIndex.
+						
+						z = zoneAndIndex[j]._zone1;
+						iIndex = zoneAndIndex[i]._index1;
+						jIndex = zoneAndIndex[j]._index2;
+					}
+					else if(zoneAndIndex[j]._zone2 != null && 
+							zoneAndIndex[j]._zone1 == zoneAndIndex[i]._zone1)
+					{
+						// zoneAndIndex[j] is the timer in a single zone,
+						// and is the same as the first zone in zoneAndIndex.
+						
+						z = zoneAndIndex[j]._zone1;
+						iIndex = zoneAndIndex[i]._index1;
+						jIndex = zoneAndIndex[j]._index1;
+					}
+					else
+					{
+						// zoneAndIndex[j] is the timer in a single zone,
+						// and is the same as the second zone in zoneAndIndex.
+						
+						z = zoneAndIndex[j]._zone1;
+						iIndex = zoneAndIndex[i]._index2;
+						jIndex = zoneAndIndex[j]._index1;
+					}
+					
+					mergedZone.setdbm(iIndex, j, z.getdbm(iIndex, jIndex));
+				}
+			}
+		}
 		
 		return mergedZone;
 	}
@@ -1058,15 +1156,137 @@ public class Zone {
 	 * @return
 	 * 			The merged array.
 	 */
-	private int[] mergeTimers(int[] timer1, int[] timer2)
+//	private int[] mergeTimers(int[] timer1, int[] timer2)
+//	{
+//		/* These integers give the current index of the _indexToTimer. */
+//		int thisIndex = 1;
+//		int otherIndex = 1;
+//		int newIndex = 1;
+//		
+//		// Define an array for merging the timers. 
+//		int[] tempTimer = new int[timer1.length + timer2.length + 1];
+//		
+//		while(thisIndex<timer1.length && otherIndex<timer2.length)
+//		{
+//			if(timer1[thisIndex] == timer2[otherIndex])
+//			{
+//				tempTimer[newIndex] = timer1[thisIndex];
+//				
+//				thisIndex++;
+//				otherIndex++;
+//			}
+//			else if (timer1[thisIndex]<timer2[otherIndex])
+//			{
+//				tempTimer[newIndex] = timer1[thisIndex++];
+//			}
+//			else
+//			{
+//				tempTimer[newIndex] = timer2[otherIndex++];
+//			}
+//			
+//			newIndex++;
+//		}
+//		
+//		if(thisIndex<timer1.length)
+//		{
+//			while(thisIndex<timer1.length)
+//			{
+//				tempTimer[newIndex] = timer1[thisIndex];
+//				newIndex++;
+//				thisIndex++;
+//			}
+//		}
+//		else if(otherIndex<timer2.length)
+//		{
+//			while(otherIndex<timer2.length)
+//			{
+//				tempTimer[newIndex] = timer2[otherIndex];
+//				newIndex++;
+//				otherIndex++;
+//			}
+//		}
+//		
+//		int[] newTimer = new int[newIndex];
+//		
+//		for(int i=1; i<newIndex; i++)
+//		{
+//			newTimer[i] = tempTimer[i];
+//		}
+//		
+//		return newTimer;
+//	}
+	
+	private ZoneTriple[] mergeTimers(Zone otherZone)
 	{
 		/* These integers give the current index of the _indexToTimer. */
-		int thisCurrentTimerIndex = 0;
-		int otherCurrentTimerIndex = 0;
+		int thisIndex = 1;
+		int otherIndex = 1;
+		int newIndex = 1;
 		
-		// TODO: Finish.
+		int thisTimerLength = this._indexToTimer.length;
+		int timer2length = otherZone._indexToTimer.length;
 		
-		return null;
+		// Define an array for merging the timers.  
+		ZoneTriple[] tempTimer = new ZoneTriple[thisTimerLength + timer2length + 1];
+		
+		// The zero is in common to both zones.
+		tempTimer[0] = new ZoneTriple(0, this, 0, otherZone, 0);
+		
+		while(thisIndex<thisTimerLength && otherIndex<timer2length)
+		{
+			if(this._indexToTimer[thisIndex] == otherZone._indexToTimer[otherIndex])
+			{
+				tempTimer[newIndex] = new ZoneTriple(this._indexToTimer[thisIndex],
+						this, thisIndex, otherZone, otherIndex);
+				
+				thisIndex++;
+				otherIndex++;
+			}
+			else if (this._indexToTimer[thisIndex]<otherZone._indexToTimer[otherIndex])
+			{
+				tempTimer[newIndex] = new ZoneTriple(this._indexToTimer[thisIndex],
+						this ,thisIndex);
+				thisIndex++;
+			}
+			else
+			{
+				tempTimer[newIndex] = new ZoneTriple(otherZone._indexToTimer[otherIndex],
+						otherZone, otherIndex);
+				
+				otherIndex++;
+			}
+			
+			newIndex++;
+		}
+		
+		if(thisIndex<thisTimerLength)
+		{
+			while(thisIndex<thisTimerLength)
+			{
+				tempTimer[newIndex] = new ZoneTriple(this._indexToTimer[thisIndex],
+						this, thisIndex);
+				newIndex++;
+				thisIndex++;
+			}
+		}
+		else if(otherIndex<timer2length)
+		{
+			while(otherIndex<timer2length)
+			{
+				tempTimer[newIndex] = new ZoneTriple(otherZone._indexToTimer[otherIndex],
+						otherZone, otherIndex);
+				newIndex++;
+				otherIndex++;
+			}
+		}
+		
+		ZoneTriple[] newTimer = new ZoneTriple[newIndex];
+		
+		for(int i=0; i<newIndex; i++)
+		{
+			newTimer[i] = tempTimer[i];
+		}
+		return newTimer;
 	}
 	
 	/**
@@ -1106,10 +1326,7 @@ public class Zone {
 		{
 			newIndex.put(i, Arrays.binarySearch(newTimers, baseTimers[i]));
 		}
-		
-		// Add the zeroth map.
-		newIndex.put(-1, -1);
-		
+				
 		return newIndex;
 	}
 	
@@ -1210,6 +1427,132 @@ public class Zone {
 		}
 	}
 	
+	/**
+	 * This exception is thrown when trying to merge two zones whose corresponding timers
+	 * do not agree.
+	 * @author Andrew N. Fisher
+	 *
+	 */
+	public class IncompatibleZoneException extends java.lang.RuntimeException
+	{
+
+		/**
+		 * Generated serialVersionUID
+		 */
+		private static final long serialVersionUID = -2453680267411313227L;
+		
+		
+		public IncompatibleZoneException(String Message)
+		{
+			super(Message);
+		}
+	}
 	
+	/**
+	 * TODO
+	 * @author Andrew N. Fisher
+	 *
+	 */
+	private class ZoneTriple
+	{
+		
+		// Representation Invariant:
+		// If both _zone1 and _zone2 are non null, then this Zone should be 
+		// in _zone1.
+		
+		private int _timer;
+		private Zone _zone1;
+		private int _index1;
+		private Zone _zone2;
+		private int _index2;
+		
+		public ZoneTriple (int timer, Zone zone, int index)
+		{
+			_timer = timer;
+			_zone1 = zone;
+			_index1 = index;
+		}
+		
+		public ZoneTriple(int timer, Zone zone1, int index1, Zone zone2, int index2)
+		{
+			_timer = timer;
+			_zone1 = zone1;
+			_index1 = index1;
+			_zone2 = zone2;
+			_index2 = index2;
+		}
+		
+		public Zone get_zone1() {
+			return _zone1;
+		}
+
+		public void set_zone1(Zone _zone1) {
+			this._zone1 = _zone1;
+		}
+
+		public int get_index1() {
+			return _index1;
+		}
+
+		public void set_index1(int _index1) {
+			this._index1 = _index1;
+		}
+
+		public Zone get_zone2() {
+			return _zone2;
+		}
+
+		public void set_zone2(Zone _zone2) {
+			this._zone2 = _zone2;
+		}
+
+		public int get_index2() {
+			return _index2;
+		}
+
+		public void set_index2(int _index2) {
+			this._index2 = _index2;
+		}
+
+		public int get_timer() {
+			return _timer;
+		}
+		public void set_timer(int _timer) {
+			this._timer = _timer;
+		}
+		
+		public String toString()
+		{	
+			String result= "";
+			
+			result = "Timer : " + _timer + "\n";
+			
+			if(_zone2 == null)
+			{
+				result += "In single zone : \n";
+				result += "********************************\n";
+				result += _zone1 + "\n";
+				result += "++++++++++++++++++++++++++++++++\n";
+				result += "Index : " + _index1 + "\n";
+				result += "********************************\n";
+			}
+			else
+			{
+				result += "In both zones : \n";
+				result += "***First Zone*******************\n";
+				result += _zone1 + "\n";
+				result += "++++++++++++++++++++++++++++++++\n";
+				result += "Index : " + _index1 + "\n";
+				result += "********************************\n";
+				result += "***Second Zone*******************\n";
+				result += _zone2 + "\n";
+				result += "++++++++++++++++++++++++++++++++\n";
+				result += "Index : " + _index2 + "\n";
+				result += "********************************\n";
+			}
+			
+			return result;
+		}
+	}
 	
 }
