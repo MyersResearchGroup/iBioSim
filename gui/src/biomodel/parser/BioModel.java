@@ -1151,6 +1151,48 @@ public class BioModel {
 		return r;
 	}
 	
+	public static boolean isActivator(ModifierSpeciesReference modifier) {
+		if (modifier.isSetAnnotation()) {
+			if (modifier.getAnnotationString().contains(GlobalConstants.ACTIVATION)) {
+				modifier.setSBOTerm(GlobalConstants.SBO_ACTIVATION);
+				modifier.unsetAnnotation();
+				return true;
+			}
+		}
+		if (modifier.isSetSBOTerm()) {
+			if (modifier.getSBOTerm()==GlobalConstants.SBO_ACTIVATION) return true;
+		}
+		return false;
+	}
+	
+	public static boolean isRepressor(ModifierSpeciesReference modifier) {
+		if (modifier.isSetAnnotation()) {
+			if (modifier.getAnnotationString().contains(GlobalConstants.REPRESSION)) {
+				modifier.setSBOTerm(GlobalConstants.SBO_REPRESSION);
+				modifier.unsetAnnotation();
+				return true;
+			}
+		}
+		if (modifier.isSetSBOTerm()) {
+			if (modifier.getSBOTerm()==GlobalConstants.SBO_REPRESSION) return true;
+		}
+		return false;
+	}
+	
+	public static boolean isRegulator(ModifierSpeciesReference modifier) {
+		if (modifier.isSetAnnotation()) {
+			if (modifier.getAnnotationString().contains(GlobalConstants.REGULATION)) {
+				modifier.setSBOTerm(GlobalConstants.SBO_REGULATION);
+				modifier.unsetAnnotation();
+				return true;
+			}
+		}
+		if (modifier.isSetSBOTerm()) {
+			if (modifier.getSBOTerm()==GlobalConstants.SBO_REGULATION) return true;
+		}
+		return false;
+	}
+	
 	public Reaction addActivatorToProductionReaction(String promoterId,String activatorId,String productId,String npStr,
 			String ncStr,String KaStr) {
 		Reaction r = sbml.getModel().getReaction("Production_" + promoterId);
@@ -1158,9 +1200,9 @@ public class BioModel {
 		if (!activatorId.equals("none") && modifier==null) {
 			modifier = r.createModifier();
 			modifier.setSpecies(activatorId);
-			modifier.setAnnotation(GlobalConstants.ACTIVATION);
-		} else if (modifier != null && modifier.getAnnotationString().contains(GlobalConstants.REPRESSION)) {
-			modifier.setAnnotation(GlobalConstants.REGULATION);
+			modifier.setSBOTerm(GlobalConstants.SBO_ACTIVATION);
+		} else if (modifier != null && isRepressor(modifier)) {
+			modifier.setSBOTerm(GlobalConstants.SBO_REGULATION);
 		}
 		if (!productId.equals("none") && r.getProduct(productId)==null) {
 			SpeciesReference product = r.createProduct();
@@ -1202,9 +1244,9 @@ public class BioModel {
 		if (!repressorId.equals("none") && modifier==null) {
 			modifier = r.createModifier();
 			modifier.setSpecies(repressorId);
-			modifier.setAnnotation(GlobalConstants.REPRESSION);
-		} else if (modifier != null && modifier.getAnnotationString().contains(GlobalConstants.ACTIVATION)) {
-			modifier.setAnnotation(GlobalConstants.REGULATION);
+			modifier.setSBOTerm(GlobalConstants.SBO_REPRESSION);
+		} else if (modifier != null && isActivator(modifier)) {
+			modifier.setSBOTerm(GlobalConstants.SBO_REGULATION);
 		}
 		if (!productId.equals("none") && r.getProduct(productId)==null) {
 			SpeciesReference product = r.createProduct();
@@ -1502,8 +1544,7 @@ public class BioModel {
 		boolean activated = false;
 		String promoter = "";
 		for (int i=0;i<reaction.getNumModifiers();i++) {
-			if (reaction.getModifier(i).getAnnotationString().contains(GlobalConstants.ACTIVATION)||
-					reaction.getModifier(i).getAnnotationString().contains(GlobalConstants.REGULATION)) {
+			if (isActivator(reaction.getModifier(i))||isRegulator(reaction.getModifier(i))) {
 				activated = true;
 			} else if (reaction.getModifier(i).getAnnotationString().contains("promoter")) {
 				promoter = reaction.getModifier(i).getSpecies();
@@ -1515,8 +1556,7 @@ public class BioModel {
 					+ GlobalConstants.RNAP_STRING;
 			String actBottom = "";
 			for (int i=0;i<reaction.getNumModifiers();i++) {
-				if (reaction.getModifier(i).getAnnotationString().contains(GlobalConstants.ACTIVATION)||
-						reaction.getModifier(i).getAnnotationString().contains(GlobalConstants.REGULATION)) {
+				if (isActivator(reaction.getModifier(i)) || isRegulator(reaction.getModifier(i))) {
 					String activator = reaction.getModifier(i).getSpecies();
 					if (reaction.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KACT_STRING.replace("_","_"+activator+"_"))==null) {
 						kineticLaw += "+" + GlobalConstants.ACTIVATED_STRING + "*" + 
@@ -1551,8 +1591,7 @@ public class BioModel {
 			kineticLaw += ")/(1+(" + GlobalConstants.FORWARD_RNAP_BINDING_STRING + "/" + 
 					GlobalConstants.REVERSE_RNAP_BINDING_STRING + ")*" + GlobalConstants.RNAP_STRING + actBottom;
 			for (int i=0;i<reaction.getNumModifiers();i++) {
-				if (reaction.getModifier(i).getAnnotationString().contains(GlobalConstants.REPRESSION) ||
-					reaction.getModifier(i).getAnnotationString().contains(GlobalConstants.REGULATION)) {
+				if (isRepressor(reaction.getModifier(i)) || isRegulator(reaction.getModifier(i))) {
 					String repressor = reaction.getModifier(i).getSpecies();
 					if (reaction.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KREP_STRING.replace("_","_"+repressor+"_"))==null) {
 						kineticLaw += "+pow((" + GlobalConstants.FORWARD_KREP_STRING + "/" + GlobalConstants.REVERSE_KREP_STRING + ")*" 
@@ -1576,7 +1615,7 @@ public class BioModel {
 					GlobalConstants.FORWARD_RNAP_BINDING_STRING + "/" + GlobalConstants.REVERSE_RNAP_BINDING_STRING + ")*" 
 					+ GlobalConstants.RNAP_STRING;
 			for (int i=0;i<reaction.getNumModifiers();i++) {
-				if (reaction.getModifier(i).getAnnotationString().contains(GlobalConstants.REPRESSION)) {
+				if (isRepressor(reaction.getModifier(i))) {
 					String repressor = reaction.getModifier(i).getSpecies();
 					if (reaction.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KREP_STRING.replace("_","_"+repressor+"_"))==null) {
 						kineticLaw += "+pow((" + GlobalConstants.FORWARD_KREP_STRING + "/" + GlobalConstants.REVERSE_KREP_STRING + ")*" 
@@ -2931,11 +2970,11 @@ public class BioModel {
 		} else if (name.contains(",")) {
 			Reaction reaction = sbml.getModel().getReaction("Production_"+name.substring(name.indexOf(",")+1));
 			ModifierSpeciesReference modifier = reaction.getModifier(name.substring(0,name.indexOf("-")));
-			if (modifier.getAnnotationString().contains(GlobalConstants.REGULATION)) {
+			if (isRegulator(modifier)) {
 				if (name.contains("|")) {
-					modifier.setAnnotation(GlobalConstants.ACTIVATION);
+					modifier.setSBOTerm(GlobalConstants.SBO_ACTIVATION);
 				} else {
-					modifier.setAnnotation(GlobalConstants.REPRESSION);
+					modifier.setSBOTerm(GlobalConstants.SBO_REPRESSION);
 				}
 			} else {
 				if (name.contains("x>")) {
@@ -2953,8 +2992,8 @@ public class BioModel {
 		} else if (name.contains("|")) {
 			Reaction reaction = sbml.getModel().getReaction("Production_"+name.substring(name.indexOf("|")+1));
 			ModifierSpeciesReference modifier = reaction.getModifier(name.substring(0,name.indexOf("-")));
-			if (modifier.getAnnotationString().contains(GlobalConstants.REGULATION)) {
-				modifier.setAnnotation(GlobalConstants.ACTIVATION);
+			if (isRegulator(modifier)) {
+				modifier.setSBOTerm(GlobalConstants.SBO_ACTIVATION);
 			} else {
 				if (name.contains("x>")) {
 					reaction.removeModifier(name.substring(0,name.indexOf(">")-1));
@@ -2972,8 +3011,8 @@ public class BioModel {
 				} else {
 					modifier = reaction.getModifier(name.substring(0,name.indexOf("-")));
 				}
-				if (modifier.getAnnotationString().contains(GlobalConstants.REGULATION)) {
-					modifier.setAnnotation(GlobalConstants.REPRESSION);
+				if (isRegulator(modifier)) {
+					modifier.setSBOTerm(GlobalConstants.SBO_REPRESSION);
 				} else {
 					if (name.contains("x>")) {
 						reaction.removeModifier(name.substring(0,name.indexOf(">")-1));

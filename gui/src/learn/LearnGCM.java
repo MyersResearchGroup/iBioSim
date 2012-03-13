@@ -400,19 +400,19 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 									write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=diamond];\n");
 								}
 							}
-							if (modifier.isSetAnnotation() && modifier.getAnnotationString().contains(GlobalConstants.ACTIVATION)) {
+							if (BioModel.isActivator(modifier)) {
 								for (int k = 0; k < r.getNumProducts(); k++) {
 									SpeciesReference product = r.getProduct(k);
 									write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=vee];\n");
 								}
 							}
-							if (modifier.isSetAnnotation() && modifier.getAnnotationString().contains(GlobalConstants.REPRESSION)) {
+							if (BioModel.isRepressor(modifier)) {
 								for (int k = 0; k < r.getNumProducts(); k++) {
 									SpeciesReference product = r.getProduct(k);
 									write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=tee];\n");
 								}
 							}
-							if (modifier.isSetAnnotation() && modifier.getAnnotationString().contains(GlobalConstants.REGULATION)) {
+							if (BioModel.isRegulator(modifier)) {
 								for (int k = 0; k < r.getNumProducts(); k++) {
 									SpeciesReference product = r.getProduct(k);
 									write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=tee];\n");

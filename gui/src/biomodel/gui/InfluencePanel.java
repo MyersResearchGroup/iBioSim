@@ -352,31 +352,31 @@ public class InfluencePanel extends JPanel implements ActionListener {
 					modifier = production.createModifier();
 					modifier.setSpecies(regulator);
 					if (typeBox.getSelectedItem().equals(GlobalConstants.REPRESSION)) {
-						modifier.setAnnotation(GlobalConstants.REPRESSION);
+						modifier.setSBOTerm(GlobalConstants.SBO_REPRESSION);
 					} else if (typeBox.getSelectedItem().equals(GlobalConstants.ACTIVATION)) {
-						modifier.setAnnotation(GlobalConstants.ACTIVATION);
+						modifier.setSBOTerm(GlobalConstants.SBO_ACTIVATION);
 					} else if (typeBox.getSelectedItem().equals(GlobalConstants.NOINFLUENCE)) {
 						modifier.setAnnotation(GlobalConstants.NOINFLUENCE);
 					}
 				} else {
 					if (typeBox.getSelectedItem().equals(GlobalConstants.REPRESSION) && 
 							modifier.getAnnotationString().contains(GlobalConstants.ACTIVATION)) {
-						modifier.setAnnotation(GlobalConstants.REGULATION);
+						modifier.setSBOTerm(GlobalConstants.SBO_REGULATION);
 					} else if (typeBox.getSelectedItem().equals(GlobalConstants.ACTIVATION) && 
-								modifier.getAnnotationString().contains(GlobalConstants.REPRESSION)) {
-							modifier.setAnnotation(GlobalConstants.REGULATION);
+								BioModel.isRepressor(modifier)) {
+							modifier.setSBOTerm(GlobalConstants.SBO_REGULATION);
 					}
 				}
 			}
 			
 			if (typeBox.getSelectedItem().equals(GlobalConstants.REPRESSION) &&
-					(production.getModifier(regulator).getAnnotationString().contains(GlobalConstants.ACTIVATION) ||
+					(BioModel.isActivator(production.getModifier(regulator)) ||
 							production.getModifier(regulator).getAnnotationString().contains(GlobalConstants.NOINFLUENCE))) {
-				production.getModifier(regulator).setAnnotation(GlobalConstants.REPRESSION);
+				production.getModifier(regulator).setSBOTerm(GlobalConstants.SBO_REPRESSION);
 			} else if (typeBox.getSelectedItem().equals(GlobalConstants.ACTIVATION) &&
-					(production.getModifier(regulator).getAnnotationString().contains(GlobalConstants.REPRESSION) ||
+					(BioModel.isRepressor(production.getModifier(regulator)) ||
 					production.getModifier(regulator).getAnnotationString().contains(GlobalConstants.NOINFLUENCE))) {
-				production.getModifier(regulator).setAnnotation(GlobalConstants.ACTIVATION);
+				production.getModifier(regulator).setSBOTerm(GlobalConstants.SBO_ACTIVATION);
 			} else if (typeBox.getSelectedItem().equals(GlobalConstants.NOINFLUENCE)) {
 				production.getModifier(regulator).setAnnotation(GlobalConstants.NOINFLUENCE);
 			}
