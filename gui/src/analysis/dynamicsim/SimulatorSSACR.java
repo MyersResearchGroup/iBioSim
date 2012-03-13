@@ -376,13 +376,32 @@ public class SimulatorSSACR extends Simulator {
 			bufferedTSDWriter.write(", \"" + speciesID + "\"");
 		}
 		
-		//print compartment location IDs
-		for (String componentLocationID : componentToLocationMap.keySet()) {
+		if (dynamicBoolean == true) {
+		
+			//print compartment location IDs
+			for (String componentLocationID : componentToLocationMap.keySet()) {
+				
+				String locationX = componentLocationID + "__locationX";
+				String locationY = componentLocationID + "__locationY";
+				
+				bufferedTSDWriter.write(", \"" + locationX + "\", \"" + locationY + "\"");
+			}
+		}
+		
+		//print compartment IDs (for sizes)
+		for (String componentID : compartmentIDSet) {
 			
-			String locationX = componentLocationID + "__locationX";
-			String locationY = componentLocationID + "__locationY";
+			bufferedTSDWriter.write(", \"" + componentID + "\"");
+		}		
+		
+		//print nonconstant parameter IDs
+		for (String parameterID : nonconstantParameterIDSet) {
 			
-			bufferedTSDWriter.write(", \"" + locationX + "\", \"" + locationY + "\"");
+			try {
+				bufferedTSDWriter.write(", \"" + parameterID + "\"");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		bufferedTSDWriter.write("),\n");
@@ -508,6 +527,7 @@ public class SimulatorSSACR extends Simulator {
 		}
 		
 		reactionToGroupMap.clear();
+		reactionToFormulaMap.clear();
 		groupToMaxValueMap.clear();
 		groupToPropensityFloorMap.clear();
 		groupToPropensityCeilingMap.clear();
@@ -519,6 +539,13 @@ public class SimulatorSSACR extends Simulator {
 		componentToReactionSetMap.clear();
 		componentToVariableSetMap.clear();
 		componentToEventSetMap.clear();
+		compartmentIDSet.clear();
+		nonconstantParameterIDSet.clear();
+		
+		minRow = Integer.MAX_VALUE;
+		minCol = Integer.MAX_VALUE;
+		maxRow = Integer.MIN_VALUE;
+		maxCol = Integer.MIN_VALUE;
 	}
 	
 	/**
@@ -751,8 +778,49 @@ public class SimulatorSSACR extends Simulator {
 		setupEvents();
 		setupForOutput(0, newRun);
 		
-		if (dynamicBoolean == true)
+		if (dynamicBoolean == true) {
+			
 			setupGrid();
+			
+			//print compartment location IDs
+			for (String componentLocationID : componentToLocationMap.keySet()) {
+				
+				String locationX = componentLocationID + "__locationX";
+				String locationY = componentLocationID + "__locationY";
+				
+				try {
+					bufferedTSDWriter.write(", \"" + locationX + "\", \"" + locationY + "\"");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			//print compartment IDs (for sizes)
+			for (String componentID : compartmentIDSet) {
+				
+				try {
+					bufferedTSDWriter.write(", \"" + componentID + "\"");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			//print nonconstant parameter IDs
+			for (String parameterID : nonconstantParameterIDSet) {
+				
+				try {
+					bufferedTSDWriter.write(", \"" + parameterID + "\"");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			try {
+				bufferedTSDWriter.write("),\n");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	/**

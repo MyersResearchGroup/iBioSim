@@ -33,7 +33,11 @@ public class DynamicGillespie {
 			double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval, 
 			int runs, JLabel progressLabel, JFrame running) {
 		
+		String progressText = progressLabel.getText();
+		
 		try {
+			
+			progressLabel.setText("Generating Model . . .");
 			
 			if (simulatorType.equals("cr"))
 				simulator = new SimulatorSSACR(SBMLFileName, outputDirectory, timeLimit, 
@@ -51,7 +55,7 @@ public class DynamicGillespie {
 			if (cancelFlag == true)
 				break;
 			
-			progressLabel.setText(progressLabel.getText().replace(" (" + (run - 1) + ")","") + " (" + run + ")");
+			progressLabel.setText(progressText.replace(" (" + (run - 1) + ")","") + " (" + run + ")");
 			running.setMinimumSize(new Dimension((progressLabel.getText().length() * 10) + 20, (int) running.getSize().getHeight()));
 	
 			simulator.simulate();

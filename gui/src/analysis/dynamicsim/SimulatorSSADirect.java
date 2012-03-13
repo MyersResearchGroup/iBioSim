@@ -360,7 +360,7 @@ public class SimulatorSSADirect extends Simulator {
 	 */
 	protected void clear() {
 		
-		variableToValueMap.clear();		
+		variableToValueMap.clear();
 		reactionToPropensityMap.clear();
 		
 		if (numEvents > 0) {
@@ -370,6 +370,20 @@ public class SimulatorSSADirect extends Simulator {
 			eventToPriorityMap.clear();
 			eventToDelayMap.clear();
 		}
+		
+		reactionToFormulaMap.clear();
+		speciesIDSet.clear();
+		componentToLocationMap.clear();
+		componentToReactionSetMap.clear();
+		componentToVariableSetMap.clear();
+		componentToEventSetMap.clear();
+		compartmentIDSet.clear();
+		nonconstantParameterIDSet.clear();
+		
+		minRow = Integer.MAX_VALUE;
+		minCol = Integer.MAX_VALUE;
+		maxRow = Integer.MIN_VALUE;
+		maxCol = Integer.MIN_VALUE;
 	}
 
 	/**
@@ -417,8 +431,39 @@ public class SimulatorSSADirect extends Simulator {
 		setupEvents();		
 		setupForOutput(0, newRun);
 		
-		if (dynamicBoolean == true)
+		if (dynamicBoolean == true) {
+			
 			setupGrid();
+			
+			//print compartment location IDs
+			for (String componentLocationID : componentToLocationMap.keySet()) {
+				
+				String locationX = componentLocationID + "__locationX";
+				String locationY = componentLocationID + "__locationY";
+				
+				try {
+					bufferedTSDWriter.write(", \"" + locationX + "\", \"" + locationY + "\"");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			//print compartment IDs (for sizes)
+			for (String componentID : compartmentIDSet) {
+				
+				try {
+					bufferedTSDWriter.write(", \"" + componentID + "\"");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			try {
+				bufferedTSDWriter.write("),\n");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 }
