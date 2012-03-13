@@ -199,7 +199,6 @@ public class MovieContainer extends JPanel implements ActionListener {
 			dynamic = false;
 			parser = new TSDParser(fullFilePath, false);		
 			numTimePoints = parser.getNumSamples();
-			//schematic.getGraph().buildGraph();
 		}
 		
 		slider.setMaximum(numTimePoints - 1);
@@ -209,7 +208,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 //				String.valueOf(parser.getData().size()) +
 //				" rows of data loaded.");
 		
-		//loadPreferences();
+		loadPreferences();
 	}
 	
 	
@@ -696,7 +695,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	/**
 	 * outputs the preferences file
 	 */
-	public void savePreferences(){
+	public void savePreferences() {
 
 		Gson gson = new Gson();
 		String out = gson.toJson(this.movieScheme.getAllSpeciesSchemes());
@@ -760,18 +759,24 @@ public class MovieContainer extends JPanel implements ActionListener {
 			
 			Gson gson = new Gson();
 			
+			SerializableScheme[] speciesSchemes = null;
+			
 			try {
 				
-				SerializableScheme[] speciesSchemes = gson.fromJson(json, SerializableScheme[].class);
+				speciesSchemes = gson.fromJson(json, SerializableScheme[].class);
 				
 				//if there's already a scheme, keep it
 				if (movieScheme == null || movieScheme.getAllSpeciesSchemes().length == 0) {
 					
 					movieScheme = new MovieScheme();
-					movieScheme.populate(speciesSchemes, parser.getSpecies());
+					
+					if (dynamic == true)
+						movieScheme.populate(speciesSchemes, dynamicParser.getSpecies());
+					else
+						movieScheme.populate(speciesSchemes, parser.getSpecies());
 				}
 			}
-			catch(Exception e) {
+			catch (Exception e) {
 				biosim.log.addText("An error occured trying to load the preferences file " + fullPath + " ERROR: " + e.toString());
 			}
 		}

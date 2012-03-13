@@ -38,6 +38,8 @@ public class DynamicGillespie {
 		try {
 			
 			progressLabel.setText("Generating Model . . .");
+			running.setMinimumSize(new Dimension((progressLabel.getText().length() * 10) + 20, 
+					(int) running.getSize().getHeight()));
 			
 			if (simulatorType.equals("cr"))
 				simulator = new SimulatorSSACR(SBMLFileName, outputDirectory, timeLimit, 
@@ -56,7 +58,8 @@ public class DynamicGillespie {
 				break;
 			
 			progressLabel.setText(progressText.replace(" (" + (run - 1) + ")","") + " (" + run + ")");
-			running.setMinimumSize(new Dimension((progressLabel.getText().length() * 10) + 20, (int) running.getSize().getHeight()));
+			running.setMinimumSize(new Dimension((progressLabel.getText().length() * 10) + 20, 
+					(int) running.getSize().getHeight()));
 	
 			simulator.simulate();
 			simulator.clear();
