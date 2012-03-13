@@ -341,6 +341,7 @@ public class Schematic extends JPanel implements ActionListener {
 		//if (gcm.getSBMLDocument().getModel().getNumCompartments()==1) {
 		toolBar.addSeparator();
 		check = new JCheckBox();
+		check.setToolTipText("Compartment Enclosed");
 		check.setActionCommand("checkCompartment");
 		check.addActionListener(this);
 		check.setSelected(gcm.IsWithinCompartment());
@@ -348,6 +349,7 @@ public class Schematic extends JPanel implements ActionListener {
 		//compartmentList = MySpecies.createCompartmentChoices(gcm.getSBMLDocument());
 		compartmentList.setSelectedItem(gcm.getEnclosingCompartment());
 		compartmentList.addActionListener(this);
+		compartmentList.setToolTipText("Enclosing Compartment");
 		/*
 		if (gcm.getIsWithinCompartment()) {
 			compartmentList.setEnabled(true);
