@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import org.sbml.libsbml.LocalParameter;
 import org.sbml.libsbml.ModifierSpeciesReference;
 import org.sbml.libsbml.Reaction;
+import org.sbml.libsbml.SpeciesReference;
 
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
@@ -335,8 +336,17 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			}
 
 			if (promoterId != null && !promoterBox.getSelectedItem().equals(promoterId)) {
-				production.removeModifier(regulator);
+				//production.removeModifier(regulator);
+				//gcm.createProductionKineticLaw(production);
+				gcm.removeInfluence(selection);
 				production = gcm.getSBMLDocument().getModel().getReaction("Production_"+promoterBox.getSelectedItem());
+				SpeciesReference productSpecies = production.getProduct(product);
+				if (productSpecies==null) {
+					productSpecies = production.createProduct();
+					productSpecies.setSpecies(product);
+					productSpecies.setStoichiometry(1.0);
+					productSpecies.setConstant(true);
+				}
 				ModifierSpeciesReference modifier = production.getModifier(regulator);
 				if (modifier==null) {
 					modifier = production.createModifier();
