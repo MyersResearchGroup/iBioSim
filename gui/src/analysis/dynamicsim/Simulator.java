@@ -145,6 +145,8 @@ public abstract class Simulator {
 	
 	protected HashSet<String> componentIDSet = new HashSet<String>();
 	
+	protected LinkedHashSet<String> compartmentIDSet = new LinkedHashSet<String>();
+	protected LinkedHashSet<String> nonconstantParameterIDSet = new LinkedHashSet<String>();
 	
 	//initial model -- used for resetting when doing multiple dynamic runs
 	protected ListOf<Species> initialSpecies = new ListOf<Species>();
@@ -184,10 +186,10 @@ public abstract class Simulator {
 	protected long numConstraints;
 	protected int numInitialAssignments;
 	
-	protected int minRow = 0;
-	protected int minCol = 0;
-	protected int maxRow = 0;
-	protected int maxCol = 0;
+	protected int minRow = Integer.MAX_VALUE;
+	protected int minCol = Integer.MAX_VALUE;
+	protected int maxRow = Integer.MIN_VALUE;
+	protected int maxCol = Integer.MIN_VALUE;
 	
 	protected boolean duplicated = false;
 	
@@ -620,7 +622,7 @@ public abstract class Simulator {
 	 * @param parentComponentID
 	 * @param eventID the ID of the division event that just fired
 	 */
-	protected void duplicateComponent(String parentComponentID, String eventID) {
+	protected void duplicateComponent(String parentComponentID, String eventID) {		
 		
 		duplicated = true;
 		
@@ -638,6 +640,23 @@ public abstract class Simulator {
 		componentIDSet.add(childComponentID);
 		childComponentID = childComponentID + "_of_" + parentComponentID;
 		
+		Compartment childCompartment = model.createCompartment();
+		
+		//duplicate compartment
+		for (Compartment comp : model.getListOfCompartments()) {			
+			
+			if (comp.getId().contains(parentComponentID + "__")) {
+				
+				childCompartment.setId(comp.getId().replace(parentComponentID, childComponentID));
+				childCompartment.setSize(comp.getSize());
+				childCompartment.setConstant(comp.getConstant());
+				compartmentIDSet.add(childCompartment.getId());
+				variableToValueMap.put(childCompartment.getId(), childCompartment.getSize());
+				variableToIsConstantMap.put(childCompartment.getId(), childCompartment.getConstant());
+			}				
+		}
+		
+		
 		//determine new component location
 		//choose a random direction and place the component adjacent to the parent
 		//if that space is occupied, all components get moved over to make room
@@ -646,6 +665,23 @@ public abstract class Simulator {
 		
 		HashSet<Integer> newRows = new HashSet<Integer>();
 		HashSet<Integer> newCols = new HashSet<Integer>();
+		
+		//find the grid bounds
+		for (Point location : componentToLocationMap.values()) {
+			
+			if ((int) location.getX() < minRow) {
+				minRow = (int) location.getX();
+			}
+			else if ((int) location.getX() > maxRow) {
+				maxRow = (int) location.getX();
+			}
+			if ((int) location.getY() < minCol) {
+				minCol = (int) location.getY();
+			}
+			else if ((int) location.getY() > maxCol) {
+				maxCol = (int) location.getY();
+			}
+		}
 		
 		//0 = left, 1 = right, 2 = above, 3 = below
 		int randomDirection = (int) (randomNumberGenerator.nextDouble() * 4.0);
@@ -658,12 +694,16 @@ public abstract class Simulator {
 			case 3: childLocation.x += 1; break;
 		}
 		
+		HashSet<Point> locationsToMove = new HashSet<Point>();
+		
 		//if this place is taken, make room by moving the cells in the way
 		if (componentToLocationMap.containsValue(childLocation)) {
 			
+			//empty location is the location that needs to become empty so the child can go there
 			Point emptyLocation = (Point) childLocation.clone();
-			HashSet<Point> locationsToMove = new HashSet<Point>();
 			
+			//find all of the locations that are in the way and put them in the hashset
+			//this is done my moving in the direction chosen until an empty space is found
 			while (componentToLocationMap.containsValue(emptyLocation) == true) {
 				
 				locationsToMove.add((Point) emptyLocation.clone());
@@ -716,9 +756,11 @@ public abstract class Simulator {
 			}
 		}
 		
+		//now that an empty space has been created (if necessary), put in the child component
 		componentToLocationMap.put(childComponentID, childLocation);
 		
 		//keep track of min row/col and max row/col so you know the bounds of the grid
+		//this set of ifs is necessary because locationsToMove might be empty (if nothing's in the way)
 		if ((int) childLocation.getX() < minRow) {
 			minRow = (int) childLocation.getX();
 			newRows.add(minRow);
@@ -734,26 +776,6 @@ public abstract class Simulator {
 		else if ((int) childLocation.getY() > maxCol) {
 			maxCol = (int) childLocation.getY();
 			newCols.add(maxCol);
-		}
-		
-		for (Point location : componentToLocationMap.values()) {
-			
-			if ((int) location.getX() < minRow) {
-				minRow = (int) location.getX();
-				//newRows.add(minRow);
-			}
-			else if ((int) location.getX() > maxRow) {
-				maxRow = (int) location.getX();
-				//newRows.add(maxRow);
-			}
-			if ((int) location.getY() < minCol) {
-				minCol = (int) location.getY();
-				//newCols.add(minCol);
-			}
-			else if ((int) location.getY() > maxCol) {
-				maxCol = (int) location.getY();
-				//newCols.add(maxCol);
-			}
 		}
 		
 		HashSet<String> underlyingSpeciesIDs = new HashSet<String>();
@@ -1046,8 +1068,7 @@ public abstract class Simulator {
 			setupLocalParameters(degReaction.getKineticLaw(), degReaction.getId());
 			setupSingleReaction(degReaction.getId(), degReaction.getKineticLaw().getMath(), false,
 					degReaction.getListOfReactants(), degReaction.getListOfProducts(), degReaction.getListOfModifiers());
-		}
-		
+		}		
 		
 		//DUPLICATE VARIABLES and alter them to coincide with the new ID
 		
@@ -1134,14 +1155,10 @@ public abstract class Simulator {
 			
 			childReactionSet.add(childReactionID);
 			
-			try {
-				parentReactionFormula = reactionToFormulaMap.get(parentReactionID).toFormula();
-			} catch (SBMLException e) {
-				e.printStackTrace();
-			}
+			parentReactionFormula = reactionToFormulaMap.get(parentReactionID).toFormula();
 			
 			ASTNode childFormulaNode = reactionToFormulaMap.get(parentReactionID).clone();
-			String crf = "";
+			String thing = "";
 			
 			try {
 				
@@ -1152,18 +1169,25 @@ public abstract class Simulator {
 					String parentRowCol = "ROW" + (int) parentLocation.getX() + "_" + "COL" + (int) parentLocation.getY();
 					String childRowCol = "ROW" + (int) childLocation.getX() + "_" + "COL" + (int) childLocation.getY();
 					
-					crf = childReactionFormula;
+					//formulas as ASTNodes can't have negative numbers in species IDs
+					parentRowCol = parentRowCol.replace("ROW-", "ROW_negative_");
+					parentRowCol = parentRowCol.replace("COL-", "COL_negative_");
+					childRowCol = childRowCol.replace("ROW-", "ROW_negative_");
+					childRowCol = childRowCol.replace("COL-", "COL_negative_");
 					
-					if (childReactionFormula.contains("ROW") && childReactionFormula.contains("COL"))					
+					if (childReactionFormula.contains("ROW") && childReactionFormula.contains("COL")) {
 						alterNode(childFormulaNode, parentRowCol, childRowCol);
+					}
 					else {
-					
+						
 						String childSpeciesID = ((String[])childReactionFormula.split("\\*"))[1];
 						String underlyingSpeciesID = childSpeciesID.split("__")[childSpeciesID.split("__").length - 1];
+						
+						//we want the parent's kmdiff parameter, as the child's doesn't exist
 						childReactionFormula = childReactionFormula.replace(childSpeciesID + "__kmdiff", 
 								parentComponentID + "__" + underlyingSpeciesID + "__kmdiff");
 						
-						crf = childReactionFormula;
+						thing = childReactionFormula;
 						
 						childFormulaNode = ASTNode.parseFormula(childReactionFormula);
 					}
@@ -1172,7 +1196,7 @@ public abstract class Simulator {
 					childFormulaNode = ASTNode.parseFormula(childReactionFormula);
 			} catch (ParseException e) {
 				
-				System.err.println(crf);
+				System.err.println(thing);
 				e.printStackTrace();
 			}
 			
@@ -1185,7 +1209,19 @@ public abstract class Simulator {
 			for (StringDoublePair parentSpeciesAndStoichiometry : reactionToSpeciesAndStoichiometrySetMap.get(parentReactionID)) {
 				
 				double childStoichiometry = parentSpeciesAndStoichiometry.doub;
-				String childSpeciesID = parentSpeciesAndStoichiometry.string.replace(parentComponentID, childComponentID);
+				
+				String childSpeciesID = "";
+				
+				if (parentSpeciesAndStoichiometry.string.contains("ROW") &&
+						parentSpeciesAndStoichiometry.string.contains("COL")) {
+				
+					String parentRowCol = "ROW" + (int) parentLocation.getX() + "_" + "COL" + (int) parentLocation.getY();
+					String childRowCol = "ROW" + (int) childLocation.getX() + "_" + "COL" + (int) childLocation.getY();					
+					
+					childSpeciesID = parentSpeciesAndStoichiometry.string.replace(parentRowCol, childRowCol);
+				}
+				else
+					childSpeciesID = parentSpeciesAndStoichiometry.string.replace(parentComponentID, childComponentID);
 				
 				reactionToSpeciesAndStoichiometrySetMap.get(childReactionID)
 				.add(new StringDoublePair(childSpeciesID, childStoichiometry));
@@ -1201,10 +1237,21 @@ public abstract class Simulator {
 			}
 			
 			//add reactant/stoichiometry pairs for this new reactions
-			for (StringDoublePair parentReactantStoichiometry : reactionToReactantStoichiometrySetMap.get(parentReactionID)) {
+			for (StringDoublePair parentReactantAndStoichiometry : reactionToReactantStoichiometrySetMap.get(parentReactionID)) {
 				
-				double childStoichiometry = parentReactantStoichiometry.doub;
-				String childSpeciesID = parentReactantStoichiometry.string.replace(parentComponentID, childComponentID);	
+				double childStoichiometry = parentReactantAndStoichiometry.doub;
+				String childSpeciesID = "";
+				
+				if (parentReactantAndStoichiometry.string.contains("ROW") &&
+						parentReactantAndStoichiometry.string.contains("COL")) {
+				
+					String parentRowCol = "ROW" + (int) parentLocation.getX() + "_" + "COL" + (int) parentLocation.getY();
+					String childRowCol = "ROW" + (int) childLocation.getX() + "_" + "COL" + (int) childLocation.getY();					
+					
+					childSpeciesID = parentReactantAndStoichiometry.string.replace(parentRowCol, childRowCol);
+				}
+				else
+					childSpeciesID = parentReactantAndStoichiometry.string.replace(parentComponentID, childComponentID);	
 				
 				reactionToReactantStoichiometrySetMap.get(childReactionID).add(
 						new StringDoublePair(childSpeciesID, childStoichiometry));
@@ -1234,8 +1281,98 @@ public abstract class Simulator {
 		
 		componentToReactionSetMap.put(childComponentID, childReactionSet);
 		
+		HashSet<String> reactionsToAdjust = new HashSet<String>();
+		
+		reactionsToAdjust.addAll(componentToReactionSetMap.get(parentComponentID));	
+		
+		
+		//MOVE MEMBRANE DIFFUSION REACTIONS FOR COMPONENTS THAT HAVE MOVED
+		if (locationsToMove.size() > 0) {
+			
+			for (Point locationToMove : locationsToMove) {
+				
+				//adjust these locations to their new, moved location
+				switch (randomDirection) {
+				
+					case 0: locationToMove.y -= 1; break;
+					case 1: locationToMove.y += 1; break;
+					case 2: locationToMove.x -= 1; break;
+					case 3: locationToMove.x += 1; break;		
+				}
+			}
+			
+			//find the membrane diffusion reactions for these moved components and alter it
+			for (String compID : componentToLocationMap.keySet()) {
+				
+				int compX = (int) componentToLocationMap.get(compID).getX();
+				int compY = (int) componentToLocationMap.get(compID).getY();
+				
+				for (Point locationToMove : locationsToMove) {
+					
+					if (locationToMove.x == compX && locationToMove.y == compY) {
+						
+						for (String reactionID : componentToReactionSetMap.get(compID)) {
+							
+							//only need to change the rv membrane diffusion reaction
+							if (reactionID.contains("MembraneDiffusion")) {
+								
+								ASTNode formulaNode = reactionToFormulaMap.get(reactionID);
+								
+								//the right child is the one to alter
+								ASTNode speciesNode = formulaNode.getRightChild();
+
+								Point oldLocation = (Point) locationToMove.clone();
+								
+								switch (randomDirection) {
+									
+									case 0: oldLocation.y = locationToMove.y + 1; break;
+									case 1: oldLocation.y = locationToMove.y - 1; break;
+									case 2: oldLocation.x = locationToMove.x + 1; break;
+									case 3: oldLocation.x = locationToMove.x - 1; break;		
+								}
+								
+								String oldRowCol = "ROW" + (int) oldLocation.x + "_COL" + (int) oldLocation.y;
+								oldRowCol = oldRowCol.replace("ROW-", "ROW_negative_");
+								oldRowCol = oldRowCol.replace("COL-", "COL_negative_");
+								
+								String newRowCol = "ROW" + (int) locationToMove.x + "_COL" + (int) locationToMove.y;
+								newRowCol = newRowCol.replace("ROW-", "ROW_negative_");
+								newRowCol = newRowCol.replace("COL-", "COL_negative_");
+								
+								//adjust kinetic law
+								speciesNode.setVariable(model.getSpecies(speciesNode.getName().replace(oldRowCol, newRowCol)));
+								
+								newRowCol = newRowCol.replace("ROW_negative_", "ROW-");
+								newRowCol = newRowCol.replace("COL_negative_", "COL-");
+								oldRowCol = oldRowCol.replace("ROW_negative_", "ROW-");
+								oldRowCol = oldRowCol.replace("COL_negative_", "COL-");
+								
+								//adjust reactants/products
+								for (StringDoublePair speciesAndStoichiometry : 
+									reactionToSpeciesAndStoichiometrySetMap.get(reactionID)) {
+									
+									speciesAndStoichiometry.string = 
+										speciesAndStoichiometry.string.replace(oldRowCol, newRowCol);
+								}
+								
+								for (StringDoublePair reactantAndStoichiometry : 
+									reactionToReactantStoichiometrySetMap.get(reactionID)) {
+									
+									reactantAndStoichiometry.string =
+										reactantAndStoichiometry.string.replace(oldRowCol, newRowCol);
+								}
+								
+								//adjust propensity
+								reactionsToAdjust.add(reactionID);
+							}		
+						}
+					}
+				}
+			}
+		}
+		
 		//update propensities for the parent reactions, as their species values may have changed
-		updatePropensities(componentToReactionSetMap.get(parentComponentID));
+		updatePropensities(reactionsToAdjust);
 		
 		updateAfterDynamicChanges();
 		
@@ -1382,6 +1519,14 @@ public abstract class Simulator {
 			speciesToCompartmentSizeMap.remove(variableID);
 			speciesIDSet.remove(variableID);
 		}
+		
+		String compartmentIDToRemove = "";
+		
+		for (String compartmentID : compartmentIDSet)
+			if (compartmentID.contains(componentID + "__"))
+				compartmentIDToRemove = compartmentID;
+				
+		compartmentIDSet.remove(compartmentIDToRemove);
 		
 //		for (String eventID : componentToEventSetMap.get(componentID)) {
 //			
@@ -2306,6 +2451,16 @@ public abstract class Simulator {
 		
 		model.setListOfEvents(allEvents);
 		
+		ArrayList<String> parametersToRemove = new ArrayList<String>();
+		
+		//get rid of the locations parameters
+		for (Parameter parameter : model.getListOfParameters())
+			if (parameter.getId().contains("_locations") || parameter.getId().contains("_size"))
+				parametersToRemove.add(parameter.getId());
+		
+		for (String parameterID : parametersToRemove)
+			model.removeParameter(parameterID);
+		
 		SBMLWriter writer = new SBMLWriter();
 		PrintStream p;
 		
@@ -2878,7 +3033,7 @@ public abstract class Simulator {
 		
 		//get rid of the locations parameters
 		for (Parameter parameter : model.getListOfParameters())
-			if (parameter.getId().contains("_locations"))
+			if (parameter.getId().contains("_locations") || parameter.getId().contains("_size"))
 				parametersToRemove.add(parameter.getId());
 		
 		for (String parameterID : parametersToRemove)
@@ -3297,7 +3452,27 @@ public abstract class Simulator {
 				String locationY = componentLocationID + "__locationY";
 				
 				bufferedTSDWriter.write(commaSpace + "\"" + locationX + "\", \"" + locationY + "\"");
-			}			
+			}
+			
+			//print compartment IDs (for sizes)
+			for (String componentID : compartmentIDSet) {
+				
+				try {
+					bufferedTSDWriter.write(", \"" + componentID + "\"");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			//print nonconstant parameter IDs
+			for (String parameterID : nonconstantParameterIDSet) {
+				
+				try {
+					bufferedTSDWriter.write(", \"" + parameterID + "\"");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 			
 			bufferedTSDWriter.write("),\n");
 		}
@@ -3320,6 +3495,16 @@ public abstract class Simulator {
 		for (String componentID : componentToLocationMap.keySet()) {
 			bufferedTSDWriter.write(commaSpace + (int) componentToLocationMap.get(componentID).getX());
 			bufferedTSDWriter.write(commaSpace + (int) componentToLocationMap.get(componentID).getY());
+		}
+		
+		//print compartment sizes
+		for (String componentID : compartmentIDSet) {
+			bufferedTSDWriter.write(commaSpace + variableToValueMap.get(componentID));
+		}
+		
+		//print nonconstant parameter values
+		for (String parameterID : nonconstantParameterIDSet) {
+			bufferedTSDWriter.write(commaSpace + variableToValueMap.get(parameterID));
 		}
 		
 		bufferedTSDWriter.write(")");
@@ -4159,10 +4344,6 @@ public abstract class Simulator {
 		
 		//add values to hashmap for easy access to species amounts
 		for (Species species : model.getListOfSpecies()) {
-			
-//			//skip the grid species as these have already been setup
-//			if (species.getId().contains("ROW") && species.getId().contains("COL") && species.getId().contains("__"))
-//				continue;
 
 			setupSingleSpecies(species, species.getId());
 		}
@@ -4247,6 +4428,9 @@ public abstract class Simulator {
 		variableToValueMap.put(parameterID, parameter.getValue());
 		variableToIsConstantMap.put(parameterID, parameter.getConstant());
 		
+		if (parameter.getConstant() == false)
+			nonconstantParameterIDSet.add(parameterID);
+		
 		if (numRules > 0)
 			variableToIsInAssignmentRuleMap.put(parameterID, false);
 		
@@ -4273,13 +4457,17 @@ public abstract class Simulator {
 			
 			setupSingleParameter(parameter);
 		}
+
 		
 		//add compartment sizes in
 		for (Compartment compartment : model.getListOfCompartments()) {
 			
 			String compartmentID = compartment.getId();
 			
+			compartmentIDSet.add(compartmentID);
+			
 			variableToValueMap.put(compartmentID, compartment.getSize());
+			variableToIsConstantMap.put(compartmentID, compartment.getConstant());
 			
 			if (numRules > 0)
 				variableToIsInAssignmentRuleMap.put(compartmentID, false);
@@ -4446,7 +4634,7 @@ public abstract class Simulator {
 			bufferedTSDWriter = new BufferedWriter(TSDWriter);
 			bufferedTSDWriter.write('(');
 			
-			if (currentRun > 1 && dynamicBoolean == false) {
+			if (currentRun > 1) {
 			
 				bufferedTSDWriter.write("(" + "\"" + "time" + "\"");
 				
@@ -4455,20 +4643,29 @@ public abstract class Simulator {
 					bufferedTSDWriter.write(", \"" + speciesID + "\"");
 				}
 				
-				//print compartment location IDs
-				for (String componentLocationID : componentToLocationMap.keySet()) {
+				if (dynamicBoolean == false) {
+					//print compartment IDs (for sizes)
+					for (String componentID : compartmentIDSet) {
+						
+						bufferedTSDWriter.write(", \"" + componentID + "\"");
+					}
 					
-					String locationX = componentLocationID + "__locationX";
-					String locationY = componentLocationID + "__locationY";
+					//print nonconstant parameter IDs
+					for (String parameterID : nonconstantParameterIDSet) {
+						
+						try {
+							bufferedTSDWriter.write(", \"" + parameterID + "\"");
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
 					
-					bufferedTSDWriter.write(", \"" + locationX + "\", \"" + locationY + "\"");
+					bufferedTSDWriter.write("),\n");
 				}
-				
-				bufferedTSDWriter.write("),\n");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		}		
+		}
 	}
 	
 	/**
