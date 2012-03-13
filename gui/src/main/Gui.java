@@ -9846,8 +9846,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		if (document.getLevel() < SBML_LEVEL || document.getVersion() < SBML_VERSION) {
 			document.setLevelAndVersion(SBML_LEVEL, SBML_VERSION);
 			SBMLWriter writer = new SBMLWriter();
-			writer.writeSBML(document, filename);
-			document = reader.readSBML(filename);
+			String tempFileName = filename.replace(".xml", "_temp.xml");
+			writer.writeSBML(document, tempFileName);
+			document = reader.readSBML(tempFileName);
+			File tempFile = new File(tempFileName);
+			tempFile.delete();
 		}
 		return document;
 	}

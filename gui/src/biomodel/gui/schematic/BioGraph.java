@@ -265,7 +265,7 @@ public class BioGraph extends mxGraph {
 						production.setStyle("PRODUCTION");
 					}
 					for (int j = 0; j < r.getNumModifiers(); j++) {
-						if (r.getModifier(j).getAnnotationString().contains(GlobalConstants.REPRESSION)) {
+						if (BioModel.isRepressor(r.getModifier(j))) {
 							String id = r.getModifier(j).getSpecies() + "-|" + promoterId;
 							this.insertEdge(this.getDefaultParent(), id, "", 
 									this.getSpeciesCell(r.getModifier(j).getSpecies()), 
@@ -273,7 +273,7 @@ public class BioGraph extends mxGraph {
 							String style = "REPRESSION";
 							mxCell cell = this.getInfluence(id);
 							cell.setStyle(style);
-						} else if (r.getModifier(j).getAnnotationString().contains(GlobalConstants.ACTIVATION)) {
+						} else if (BioModel.isActivator(r.getModifier(j))) {
 							String id = r.getModifier(j).getSpecies() + "->" + promoterId;
 							this.insertEdge(this.getDefaultParent(), id, "", 
 									this.getSpeciesCell(r.getModifier(j).getSpecies()), 
@@ -289,7 +289,7 @@ public class BioGraph extends mxGraph {
 							String style = "NOINFLUENCE";
 							mxCell cell = this.getInfluence(id);
 							cell.setStyle(style);
-						} else if (r.getModifier(j).getAnnotationString().contains(GlobalConstants.REGULATION)) {
+						} else if (BioModel.isRegulator(r.getModifier(j))) {
 							String id = r.getModifier(j).getSpecies() + "-|" + promoterId;
 							this.insertEdge(this.getDefaultParent(), id, "", 
 									this.getSpeciesCell(r.getModifier(j).getSpecies()),
@@ -309,7 +309,7 @@ public class BioGraph extends mxGraph {
 				} else {
 					for (int j = 0; j < r.getNumModifiers(); j++) {
 						for (int k = 0; k < r.getNumProducts(); k++) {
-							if (r.getModifier(j).getAnnotationString().contains(GlobalConstants.REPRESSION)) {
+							if (BioModel.isRepressor(r.getModifier(j))) {
 								String id = r.getModifier(j).getSpecies() + "-|" + r.getProduct(k).getSpecies() + "," + promoterId;
 								this.insertEdge(this.getDefaultParent(), id, "", 
 										this.getSpeciesCell(r.getModifier(j).getSpecies()), 
@@ -318,7 +318,7 @@ public class BioGraph extends mxGraph {
 								mxCell cell = this.getInfluence(id);
 								cell.setStyle(style);
 								cell.setValue(promoterId);
-							} else if (r.getModifier(j).getAnnotationString().contains(GlobalConstants.ACTIVATION)) {
+							} else if (BioModel.isActivator(r.getModifier(j))) {
 								String id = r.getModifier(j).getSpecies() + "->" + r.getProduct(k).getSpecies() + "," + promoterId;
 								this.insertEdge(this.getDefaultParent(), id, "", 
 										this.getSpeciesCell(r.getModifier(j).getSpecies()), 
@@ -336,7 +336,7 @@ public class BioGraph extends mxGraph {
 								mxCell cell = this.getInfluence(id);
 								cell.setStyle(style);
 								cell.setValue(promoterId);
-							} else if (r.getModifier(j).getAnnotationString().contains(GlobalConstants.REGULATION)) {
+							} else if (BioModel.isRegulator(r.getModifier(j))) {
 								String id = r.getModifier(j).getSpecies() + "-|" + r.getProduct(k).getSpecies() + "," + promoterId;
 								this.insertEdge(this.getDefaultParent(), id, "", 
 										this.getSpeciesCell(r.getModifier(j).getSpecies()), 
@@ -617,7 +617,7 @@ public class BioGraph extends mxGraph {
 						for (int k = 0; k < r.getNumProducts(); k++) {
 							String endA = r.getModifier(j).getSpecies();
 							String endB = r.getProduct(k).getSpecies();
-							if (r.getModifier(j).getAnnotationString().contains(GlobalConstants.REPRESSION)) {
+							if (BioModel.isRepressor(r.getModifier(j))) {
 								String id = r.getModifier(j).getSpecies() + "-|" + r.getProduct(k).getSpecies() + "," + promoterId;
 								if(endA.compareTo(endB) > 0){
 									// swap the strings
@@ -630,7 +630,7 @@ public class BioGraph extends mxGraph {
 								if(edgeHash.containsKey(key) == false)
 									edgeHash.put(key, new Vector<mxCell>());
 								edgeHash.get(key).add(cell);
-							} else if (r.getModifier(j).getAnnotationString().contains(GlobalConstants.ACTIVATION)) {
+							} else if (BioModel.isActivator(r.getModifier(j))) {
 								String id = r.getModifier(j).getSpecies() + "->" + r.getProduct(k).getSpecies() + "," + promoterId;
 								if(endA.compareTo(endB) > 0){
 									// swap the strings
@@ -656,7 +656,7 @@ public class BioGraph extends mxGraph {
 								if(edgeHash.containsKey(key) == false)
 									edgeHash.put(key, new Vector<mxCell>());
 								edgeHash.get(key).add(cell);
-							} else if (r.getModifier(j).getAnnotationString().contains(GlobalConstants.REGULATION)) {
+							} else if (BioModel.isRegulator(r.getModifier(j))) {
 								String id = r.getModifier(j).getSpecies() + "->" + r.getProduct(k).getSpecies() + "," + promoterId;
 								if(endA.compareTo(endB) > 0){
 									// swap the strings
@@ -688,7 +688,7 @@ public class BioGraph extends mxGraph {
 					for (int j = 0; j < r.getNumModifiers(); j++) {
 						String endA = r.getModifier(j).getSpecies();
 						String endB = promoterId;
-						if (r.getModifier(j).getAnnotationString().contains(GlobalConstants.REGULATION)) {
+						if (BioModel.isRegulator(r.getModifier(j))) {
 							String id = r.getModifier(j).getSpecies() + "->" + promoterId;
 							if(endA.compareTo(endB) > 0){
 								// swap the strings

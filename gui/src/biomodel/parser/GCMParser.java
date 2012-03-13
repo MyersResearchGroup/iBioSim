@@ -213,8 +213,7 @@ public class GCMParser {
 			}
 			for (long i = 0; i < production.getNumModifiers(); i++) {
 				ModifierSpeciesReference modifier = production.getModifier(i);
-				if (modifier.getAnnotationString().contains(GlobalConstants.REPRESSION) ||
-					modifier.getAnnotationString().contains(GlobalConstants.REGULATION)) {
+				if (BioModel.isRepressor(modifier) || BioModel.isRegulator(modifier)) {
 					for (long j = 0; j < production.getNumProducts(); j++) {
 						SpeciesReference product = production.getProduct(j);
 						Influence infl = new Influence();		
@@ -246,8 +245,7 @@ public class GCMParser {
 						}
 					}
 				} 
-				if (modifier.getAnnotationString().contains(GlobalConstants.ACTIVATION) ||
-					modifier.getAnnotationString().contains(GlobalConstants.REGULATION)) {
+				if (BioModel.isActivator(modifier) || BioModel.isRegulator(modifier)) {
 					for (long j = 0; j < production.getNumProducts(); j++) {
 						SpeciesReference product = production.getProduct(j);
 						Influence infl = new Influence();		

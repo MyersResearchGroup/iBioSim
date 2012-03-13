@@ -99,8 +99,11 @@ public class GlobalConstants {
 	
 	public static final String BIO = "biochem";
 	public static final String ACTIVATION = "activation";
+	public static final int SBO_ACTIVATION = 459;
 	public static final String REPRESSION = "repression";
+	public static final int SBO_REPRESSION = 20;
 	public static final String REGULATION = "regulation";
+	public static final int SBO_REGULATION = 19;
 	public static final String NOINFLUENCE = "no influence";
 	
 	public static final String TRUE = "true";
