@@ -300,6 +300,8 @@ public class SimulatorSSACR extends Simulator {
 				e1.printStackTrace();
 			}
 		}
+		
+		System.err.println(diffCount);
 	}
 
 	/**
@@ -969,6 +971,10 @@ public class SimulatorSSACR extends Simulator {
 			
 			if (notEnoughMoleculesFlag == false)
 				newPropensity = evaluateExpressionRecursive(reactionToFormulaMap.get(affectedReactionID));
+			
+			//stoichiometry amplification -- alter the propensity
+			if (affectedReactionID.contains("_Diffusion_") && stoichAmpBoolean == true)
+				newPropensity *= (1.0 / stoichAmpGridValue);
 			
 			if (newPropensity > 0.0 && newPropensity < minPropensity) {
 				

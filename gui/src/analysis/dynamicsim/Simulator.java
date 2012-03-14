@@ -57,7 +57,6 @@ import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.SBMLWriter;
-import org.sbml.jsbml.ASTNode.Type;
 import org.sbml.jsbml.text.parser.ParseException;
 
 public abstract class Simulator {
@@ -191,10 +190,14 @@ public abstract class Simulator {
 	protected int maxRow = Integer.MIN_VALUE;
 	protected int maxCol = Integer.MIN_VALUE;
 	
-	protected boolean duplicated = false;
+	protected boolean stoichAmpBoolean = true;
+	protected double stoichAmpGridValue = 5.0;
+	protected double stoichAmpMembraneValue = 5.0;
 	
 	//true means the model is dynamic
 	protected boolean dynamicBoolean = false;
+	
+	protected int diffCount = 0;
 
 	PsRandom prng = new PsRandom();
 	
@@ -310,226 +313,6 @@ public abstract class Simulator {
 	}
 	
 	/**
-	 * calculates the initial propensity of a single reaction
-	 * also does some initialization stuff
-	 * 
-	 * @param reactionID
-	 * @param reactionFormula
-	 * @param reversible
-	 * @param reactantsList
-	 * @param productsList
-	 * @param modifiersList
-	 */
-	private void setupSingleReaction(String reactionID, ASTNode reactionFormula, boolean reversible, 
-			ListOf<SpeciesReference> reactantsList, ListOf<SpeciesReference> productsList, 
-			ListOf<ModifierSpeciesReference> modifiersList) {
-		
-		reactionID = reactionID.replace("_negative_","-");
-		
-		boolean notEnoughMoleculesFlagFd = false;
-		boolean notEnoughMoleculesFlagRv = false;
-		boolean notEnoughMoleculesFlag = false;
-		
-		//if it's a reversible reaction
-		//split into a forward and reverse reaction (based on the minus sign in the middle)
-		//and calculate both propensities
-		if (reversible == true) {
-			
-			reactionToSpeciesAndStoichiometrySetMap.put(reactionID + "_fd", new HashSet<StringDoublePair>());
-			reactionToSpeciesAndStoichiometrySetMap.put(reactionID + "_rv", new HashSet<StringDoublePair>());
-			reactionToReactantStoichiometrySetMap.put(reactionID + "_fd", new HashSet<StringDoublePair>());
-			reactionToReactantStoichiometrySetMap.put(reactionID + "_rv", new HashSet<StringDoublePair>());
-			
-			for (SpeciesReference reactant : reactantsList) {
-				
-				String reactantID = reactant.getSpecies();
-				reactantID = reactantID.replace("_negative_","-");			
-				double reactantStoichiometry = reactant.getStoichiometry();
-				
-				reactionToSpeciesAndStoichiometrySetMap.get(reactionID + "_fd").add(
-						new StringDoublePair(reactantID, -reactantStoichiometry));
-				reactionToSpeciesAndStoichiometrySetMap.get(reactionID + "_rv").add(
-						new StringDoublePair(reactantID, reactantStoichiometry));
-				reactionToReactantStoichiometrySetMap.get(reactionID + "_fd").add(
-						new StringDoublePair(reactantID, reactantStoichiometry));
-				
-				//as a reactant, this species affects the reaction's propensity in the forward direction
-				speciesToAffectedReactionSetMap.get(reactantID).add(reactionID + "_fd");
-				
-				//make sure there are enough molecules for this species
-				//(in the reverse direction, molecules aren't subtracted, but added)
-				if (variableToValueMap.get(reactantID) < reactantStoichiometry)
-					notEnoughMoleculesFlagFd = true;
-			}
-			
-			for (SpeciesReference product : productsList) {
-				
-				String productID = product.getSpecies();
-				productID = productID.replace("_negative_","-");
-				double productStoichiometry = product.getStoichiometry();
-				
-				reactionToSpeciesAndStoichiometrySetMap.get(reactionID + "_fd").add(
-						new StringDoublePair(productID, productStoichiometry));
-				reactionToSpeciesAndStoichiometrySetMap.get(reactionID + "_rv").add(
-						new StringDoublePair(productID, -productStoichiometry));
-				reactionToReactantStoichiometrySetMap.get(reactionID + "_rv").add(
-						new StringDoublePair(productID, productStoichiometry));
-				
-				//as a product, this species affects the reaction's propensity in the reverse direction
-				speciesToAffectedReactionSetMap.get(productID).add(reactionID + "_rv");
-				
-				//make sure there are enough molecules for this species
-				//(in the forward direction, molecules aren't subtracted, but added)
-				if (variableToValueMap.get(productID) < productStoichiometry)
-					notEnoughMoleculesFlagRv = true;
-			}
-			
-			for (ModifierSpeciesReference modifier : modifiersList) {
-				
-				String modifierID = modifier.getSpecies();
-				modifierID = modifierID.replace("_negative_","-");
-				
-				String forwardString = "", reverseString = "";
-				
-				try {
-					forwardString = ASTNode.formulaToString(reactionFormula.getLeftChild());
-					reverseString = ASTNode.formulaToString(reactionFormula.getRightChild());
-				} 
-				catch (SBMLException e) {
-					e.printStackTrace();
-				}
-				
-				//check the kinetic law to see which direction the modifier affects the reaction's propensity
-				if (forwardString.contains(modifierID))
-					speciesToAffectedReactionSetMap.get(modifierID).add(reactionID + "_fd");
-			
-				if (reverseString.contains(modifierID))
-					speciesToAffectedReactionSetMap.get(modifierID).add(reactionID + "_rv");
-			}				
-			
-			double propensity;
-			
-			reactionToFormulaMap.put(reactionID + "_rv", reactionFormula.getRightChild());
-			reactionToFormulaMap.put(reactionID + "_fd", reactionFormula.getLeftChild());
-			
-			//calculate forward reaction propensity
-			if (notEnoughMoleculesFlagFd == true)
-				propensity = 0.0;
-			else {
-				//the left child is what's left of the minus sign
-				propensity = evaluateExpressionRecursive(reactionFormula.getLeftChild());
-				
-				if (propensity < minPropensity && propensity > 0) 
-					minPropensity = propensity;
-				else if (propensity > maxPropensity) 
-					maxPropensity = propensity;
-				
-				totalPropensity += propensity;
-			}
-			
-			reactionToPropensityMap.put(reactionID + "_fd", propensity);
-			
-			//calculate reverse reaction propensity
-			if (notEnoughMoleculesFlagRv == true)
-				propensity = 0.0;
-			else {
-				//the right child is what's right of the minus sign
-				propensity = evaluateExpressionRecursive(reactionFormula.getRightChild());
-				
-				if (propensity < minPropensity && propensity > 0) 
-					minPropensity = propensity;
-				else if (propensity > maxPropensity) 
-					maxPropensity = propensity;
-				
-				totalPropensity += propensity;
-			}
-			
-			reactionToPropensityMap.put(reactionID + "_rv", propensity);
-		}
-		//if it's not a reversible reaction
-		else {
-			
-			reactionToSpeciesAndStoichiometrySetMap.put(reactionID, new HashSet<StringDoublePair>());
-			reactionToReactantStoichiometrySetMap.put(reactionID, new HashSet<StringDoublePair>());
-			
-			for (SpeciesReference reactant : reactantsList) {
-				
-				String reactantID = reactant.getSpecies();
-				reactantID = reactantID.replace("_negative_","-");
-				double reactantStoichiometry = reactant.getStoichiometry();
-				
-				reactionToSpeciesAndStoichiometrySetMap.get(reactionID).add(
-						new StringDoublePair(reactantID, -reactantStoichiometry));
-				reactionToReactantStoichiometrySetMap.get(reactionID).add(
-						new StringDoublePair(reactantID, reactantStoichiometry));
-				
-				//as a reactant, this species affects the reaction's propensity
-				speciesToAffectedReactionSetMap.get(reactantID).add(reactionID);
-				
-				//make sure there are enough molecules for this species
-				if (variableToValueMap.get(reactantID) < reactantStoichiometry)
-					notEnoughMoleculesFlag = true;
-			}
-			
-			for (SpeciesReference product : productsList) {
-				
-				reactionToSpeciesAndStoichiometrySetMap.get(reactionID).add(
-						new StringDoublePair(product.getSpecies().replace("_negative_","-"), product.getStoichiometry()));
-				
-				//don't need to check if there are enough, because products are added
-			}
-			
-			for (ModifierSpeciesReference modifier : modifiersList) {
-				
-				String modifierID = modifier.getSpecies();
-				modifierID = modifierID.replace("_negative_","-");
-				
-				//as a modifier, this species affects the reaction's propensity
-				speciesToAffectedReactionSetMap.get(modifierID).add(reactionID);
-			}
-			
-			reactionToFormulaMap.put(reactionID, reactionFormula);
-			
-			double propensity;
-			
-			if (notEnoughMoleculesFlag == true)
-				propensity = 0.0;
-			else {
-			
-				//calculate propensity
-				propensity = evaluateExpressionRecursive(reactionFormula);
-				
-				if (propensity < minPropensity && propensity > 0) 
-					minPropensity = propensity;
-				if (propensity > maxPropensity) 
-					maxPropensity = propensity;
-				
-				totalPropensity += propensity;
-			}
-			
-			reactionToPropensityMap.put(reactionID, propensity);
-		}
-	}	
-	
-	/**
-	 * calculates the initial propensities for each reaction in the model
-	 * 
-	 * @param numReactions the number of reactions in the model
-	 */
-	protected void setupReactions() {
-		
-		//loop through all reactions and calculate their propensities
-		for (Reaction reaction : model.getListOfReactions()) {
-			
-			String reactionID = reaction.getId();
-			ASTNode reactionFormula = reaction.getKineticLaw().getMath();
-						
-			setupSingleReaction(reactionID, reactionFormula, reaction.getReversible(), 
-					reaction.getListOfReactants(), reaction.getListOfProducts(), reaction.getListOfModifiers());
-		}
-	}
-
-	/**
 	 * replaces ROWX_COLY with ROWA_COLB in a kinetic law
 	 * this has to be done without re-parsing the formula string because the row/col
 	 * values can be negative, which gets parsed incorrectly
@@ -622,9 +405,7 @@ public abstract class Simulator {
 	 * @param parentComponentID
 	 * @param eventID the ID of the division event that just fired
 	 */
-	protected void duplicateComponent(String parentComponentID, String eventID) {		
-		
-		duplicated = true;
+	protected void duplicateComponent(String parentComponentID, String eventID) {
 		
 		//determine new component ID
 		int componentNumber = componentToReactionSetMap.size() + 1;
@@ -795,7 +576,7 @@ public abstract class Simulator {
 		}
 
 		//if there are new rows or cols added to the grid
-		//add new grid species reactions
+		//add new grid species
 		if (newRows.size() > 0) {
 			
 			for (int newRow : newRows) {
@@ -1476,6 +1257,10 @@ public abstract class Simulator {
 //		System.err.println("num reactions: " + reactionToPropensityMap.size());
 	}
 	
+	/**
+	 * simulator-specific component erasure stuff
+	 * @param reactionIDs
+	 */
 	protected abstract void eraseComponentFurther(HashSet<String> reactionIDs);
 	
 	/**
@@ -3388,6 +3173,10 @@ public abstract class Simulator {
 	 */
 	protected void performReaction(String selectedReactionID, final boolean noAssignmentRulesFlag, final boolean noConstraintsFlag) {
 		
+		
+		if (selectedReactionID.contains("_Diffusion_"))
+			++diffCount;
+		
 		//these are sets of things that need to be re-evaluated or tested due to the reaction firing
 		HashSet<AssignmentRule> affectedAssignmentRuleSet = new HashSet<AssignmentRule>();
 		HashSet<ASTNode> affectedConstraintSet = new HashSet<ASTNode>();
@@ -4669,6 +4458,257 @@ public abstract class Simulator {
 	}
 	
 	/**
+	 * calculates the initial propensity of a single reaction
+	 * also does some initialization stuff
+	 * 
+	 * @param reactionID
+	 * @param reactionFormula
+	 * @param reversible
+	 * @param reactantsList
+	 * @param productsList
+	 * @param modifiersList
+	 */
+	private void setupSingleReaction(String reactionID, ASTNode reactionFormula, boolean reversible, 
+			ListOf<SpeciesReference> reactantsList, ListOf<SpeciesReference> productsList, 
+			ListOf<ModifierSpeciesReference> modifiersList) {
+		
+		reactionID = reactionID.replace("_negative_","-");
+		
+		boolean notEnoughMoleculesFlagFd = false;
+		boolean notEnoughMoleculesFlagRv = false;
+		boolean notEnoughMoleculesFlag = false;
+		
+		//if it's a reversible reaction
+		//split into a forward and reverse reaction (based on the minus sign in the middle)
+		//and calculate both propensities
+		if (reversible == true) {
+			
+			reactionToSpeciesAndStoichiometrySetMap.put(reactionID + "_fd", new HashSet<StringDoublePair>());
+			reactionToSpeciesAndStoichiometrySetMap.put(reactionID + "_rv", new HashSet<StringDoublePair>());
+			reactionToReactantStoichiometrySetMap.put(reactionID + "_fd", new HashSet<StringDoublePair>());
+			reactionToReactantStoichiometrySetMap.put(reactionID + "_rv", new HashSet<StringDoublePair>());
+			
+			for (SpeciesReference reactant : reactantsList) {
+				
+				String reactantID = reactant.getSpecies();
+				
+				//stoichiometry amplification -- alter the stoichiometry
+				if (reactionID.contains("_Diffusion_") && stoichAmpBoolean == true)
+					reactant.setStoichiometry(stoichAmpGridValue);
+				
+				reactantID = reactantID.replace("_negative_","-");			
+				double reactantStoichiometry = reactant.getStoichiometry();
+				
+				reactionToSpeciesAndStoichiometrySetMap.get(reactionID + "_fd").add(
+						new StringDoublePair(reactantID, -reactantStoichiometry));
+				reactionToSpeciesAndStoichiometrySetMap.get(reactionID + "_rv").add(
+						new StringDoublePair(reactantID, reactantStoichiometry));
+				reactionToReactantStoichiometrySetMap.get(reactionID + "_fd").add(
+						new StringDoublePair(reactantID, reactantStoichiometry));
+				
+				//as a reactant, this species affects the reaction's propensity in the forward direction
+				speciesToAffectedReactionSetMap.get(reactantID).add(reactionID + "_fd");
+				
+				//make sure there are enough molecules for this species
+				//(in the reverse direction, molecules aren't subtracted, but added)
+				if (variableToValueMap.get(reactantID) < reactantStoichiometry)
+					notEnoughMoleculesFlagFd = true;
+			}
+			
+			for (SpeciesReference product : productsList) {
+				
+				String productID = product.getSpecies();
+				
+				//stoichiometry amplification -- alter the stoichiometry
+				if (reactionID.contains("_Diffusion_") && stoichAmpBoolean == true)
+					product.setStoichiometry(stoichAmpGridValue);
+				
+				productID = productID.replace("_negative_","-");
+				double productStoichiometry = product.getStoichiometry();
+				
+				reactionToSpeciesAndStoichiometrySetMap.get(reactionID + "_fd").add(
+						new StringDoublePair(productID, productStoichiometry));
+				reactionToSpeciesAndStoichiometrySetMap.get(reactionID + "_rv").add(
+						new StringDoublePair(productID, -productStoichiometry));
+				reactionToReactantStoichiometrySetMap.get(reactionID + "_rv").add(
+						new StringDoublePair(productID, productStoichiometry));
+				
+				//as a product, this species affects the reaction's propensity in the reverse direction
+				speciesToAffectedReactionSetMap.get(productID).add(reactionID + "_rv");
+				
+				//make sure there are enough molecules for this species
+				//(in the forward direction, molecules aren't subtracted, but added)
+				if (variableToValueMap.get(productID) < productStoichiometry)
+					notEnoughMoleculesFlagRv = true;
+			}
+			
+			for (ModifierSpeciesReference modifier : modifiersList) {
+				
+				String modifierID = modifier.getSpecies();
+				modifierID = modifierID.replace("_negative_","-");
+				
+				String forwardString = "", reverseString = "";
+				
+				try {
+					forwardString = ASTNode.formulaToString(reactionFormula.getLeftChild());
+					reverseString = ASTNode.formulaToString(reactionFormula.getRightChild());
+				} 
+				catch (SBMLException e) {
+					e.printStackTrace();
+				}
+				
+				//check the kinetic law to see which direction the modifier affects the reaction's propensity
+				if (forwardString.contains(modifierID))
+					speciesToAffectedReactionSetMap.get(modifierID).add(reactionID + "_fd");
+			
+				if (reverseString.contains(modifierID))
+					speciesToAffectedReactionSetMap.get(modifierID).add(reactionID + "_rv");
+			}				
+			
+			double propensity;
+			
+			reactionToFormulaMap.put(reactionID + "_rv", reactionFormula.getRightChild());
+			reactionToFormulaMap.put(reactionID + "_fd", reactionFormula.getLeftChild());
+			
+			//calculate forward reaction propensity
+			if (notEnoughMoleculesFlagFd == true)
+				propensity = 0.0;
+			else {
+				//the left child is what's left of the minus sign
+				propensity = evaluateExpressionRecursive(reactionFormula.getLeftChild());
+				
+				//stoichiometry amplification -- alter the propensity
+				if (reactionID.contains("_Diffusion_") && stoichAmpBoolean == true)
+					propensity *= (1.0 / stoichAmpGridValue);
+				
+				if (propensity < minPropensity && propensity > 0) 
+					minPropensity = propensity;
+				else if (propensity > maxPropensity) 
+					maxPropensity = propensity;
+				
+				totalPropensity += propensity;
+			}
+			
+			reactionToPropensityMap.put(reactionID + "_fd", propensity);
+			
+			//calculate reverse reaction propensity
+			if (notEnoughMoleculesFlagRv == true)
+				propensity = 0.0;
+			else {
+				//the right child is what's right of the minus sign
+				propensity = evaluateExpressionRecursive(reactionFormula.getRightChild());
+				
+				//stoichiometry amplification -- alter the propensity
+				if (reactionID.contains("_Diffusion_") && stoichAmpBoolean == true)
+					propensity *= (1.0 / stoichAmpGridValue);
+				
+				if (propensity < minPropensity && propensity > 0) 
+					minPropensity = propensity;
+				else if (propensity > maxPropensity) 
+					maxPropensity = propensity;
+				
+				totalPropensity += propensity;
+			}
+			
+			reactionToPropensityMap.put(reactionID + "_rv", propensity);
+		}
+		//if it's not a reversible reaction
+		else {
+			
+			reactionToSpeciesAndStoichiometrySetMap.put(reactionID, new HashSet<StringDoublePair>());
+			reactionToReactantStoichiometrySetMap.put(reactionID, new HashSet<StringDoublePair>());
+			
+			for (SpeciesReference reactant : reactantsList) {
+				
+				String reactantID = reactant.getSpecies();
+				
+				//stoichiometry amplification -- alter the stoichiometry
+				if (reactionID.contains("_Diffusion_") && stoichAmpBoolean == true)
+					reactant.setStoichiometry(stoichAmpGridValue);
+				
+				reactantID = reactantID.replace("_negative_","-");
+				double reactantStoichiometry = reactant.getStoichiometry();
+				
+				reactionToSpeciesAndStoichiometrySetMap.get(reactionID).add(
+						new StringDoublePair(reactantID, -reactantStoichiometry));
+				reactionToReactantStoichiometrySetMap.get(reactionID).add(
+						new StringDoublePair(reactantID, reactantStoichiometry));
+				
+				//as a reactant, this species affects the reaction's propensity
+				speciesToAffectedReactionSetMap.get(reactantID).add(reactionID);
+				
+				//make sure there are enough molecules for this species
+				if (variableToValueMap.get(reactantID) < reactantStoichiometry)
+					notEnoughMoleculesFlag = true;
+			}
+			
+			for (SpeciesReference product : productsList) {
+				
+				//stoichiometry amplification -- alter the stoichiometry
+				if (reactionID.contains("_Diffusion_") && stoichAmpBoolean == true)
+					product.setStoichiometry(stoichAmpGridValue);
+				
+				reactionToSpeciesAndStoichiometrySetMap.get(reactionID).add(
+						new StringDoublePair(product.getSpecies().replace("_negative_","-"), product.getStoichiometry()));
+				
+				//don't need to check if there are enough, because products are added
+			}
+			
+			for (ModifierSpeciesReference modifier : modifiersList) {
+				
+				String modifierID = modifier.getSpecies();
+				modifierID = modifierID.replace("_negative_","-");
+				
+				//as a modifier, this species affects the reaction's propensity
+				speciesToAffectedReactionSetMap.get(modifierID).add(reactionID);
+			}
+			
+			reactionToFormulaMap.put(reactionID, reactionFormula);
+			
+			double propensity;
+			
+			if (notEnoughMoleculesFlag == true)
+				propensity = 0.0;
+			else {
+			
+				//calculate propensity
+				propensity = evaluateExpressionRecursive(reactionFormula);
+				
+				//stoichiometry amplification -- alter the propensity
+				if (reactionID.contains("_Diffusion_") && stoichAmpBoolean == true)
+					propensity *= (1.0 / stoichAmpGridValue);
+				
+				if (propensity < minPropensity && propensity > 0) 
+					minPropensity = propensity;
+				if (propensity > maxPropensity) 
+					maxPropensity = propensity;
+				
+				totalPropensity += propensity;
+			}
+			
+			reactionToPropensityMap.put(reactionID, propensity);
+		}
+	}	
+	
+	/**
+	 * calculates the initial propensities for each reaction in the model
+	 * 
+	 * @param numReactions the number of reactions in the model
+	 */
+	protected void setupReactions() {
+		
+		//loop through all reactions and calculate their propensities
+		for (Reaction reaction : model.getListOfReactions()) {
+			
+			String reactionID = reaction.getId();
+			ASTNode reactionFormula = reaction.getKineticLaw().getMath();
+						
+			setupSingleReaction(reactionID, reactionFormula, reaction.getReversible(), 
+					reaction.getListOfReactants(), reaction.getListOfProducts(), reaction.getListOfModifiers());
+		}
+	}
+	
+	/**
 	 * abstract simulate method
 	 * each simulator needs a simulate method
 	 */
@@ -4730,6 +4770,10 @@ public abstract class Simulator {
 			
 			if (notEnoughMoleculesFlag == false)
 				newPropensity = evaluateExpressionRecursive(reactionToFormulaMap.get(reactionID));
+			
+			//stoichiometry amplification -- alter the propensity
+			if (reactionID.contains("_Diffusion_") && stoichAmpBoolean == true)
+				newPropensity *= (1.0 / stoichAmpGridValue);
 			
 			if (newPropensity > 0.0 && newPropensity < minPropensity)
 				minPropensity = newPropensity;
