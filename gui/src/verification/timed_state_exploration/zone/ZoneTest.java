@@ -10,10 +10,11 @@ import junit.framework.Assert;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.omg.PortableInterceptor.INACTIVE;
 
 public class ZoneTest {
 
-	static Zone zone1, zone2, zone3, zone4;
+	static Zone zone1, zone2, zone3, zone4, zone5;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -60,6 +61,30 @@ public class ZoneTest {
 		};
 		
 		zone4 = new Zone(timers4, matrix4);
+		
+		// Set up fifth zone.
+		int[] timers5 = new int[]{1, 2, 3};
+		int[][] matrix5 = new int[][]{
+				{ 0, 0, 2, 3, Zone.INFINITY},
+				{ 0, 0, 2, 3, Zone.INFINITY},
+				{-1, 0, 0, 0,             0},
+				{-2, 0, 0, 0,             0},
+				{ 0, 0, 0, 0,             0}
+		};
+		
+		zone5 = new Zone(timers5, matrix5);
+	}
+	
+	@Test
+	public void testInifinity()
+	{
+		int expected02 = 2;
+		int expected03 = 2;
+		int actual02 = zone5.getdbm(0, 2);
+		int actual03 = zone5.getdbm(0, 3);
+		
+		assertEquals(expected02, actual02);
+		assertEquals(expected03, actual03);
 	}
 
 	@Test
