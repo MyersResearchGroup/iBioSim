@@ -1439,39 +1439,46 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		 */
 		if(splitZone.isSelected())
 		{
-			LhpnFile lpn = new LhpnFile();
-			lpn.load(directory + separator + lpnFile);
 			
-			// The full state graph is created for only one LPN.
-			
-			/**
-			 * This is what selects the timing analysis.
-			 * The method setTimingAnalysisType sets a static variable
-			 * in the Options class that is queried by the search method.
-			 */
-			Options.setTimingAnalsysisType("zone");
-
-			Project_Timed timedStateSearch = new Project_Timed(lpn, Options.getTimingAnalysisFlag());
-			StateGraph_timed[] stateGraphArray = timedStateSearch.search();
-			String graphFileName = verifyFile.replace(".lpn", "") + "_sg.dot";
-			if (stateGraphArray.length > 1) {
-				JOptionPane.showMessageDialog(
-						Gui.frame,
-						"Mutiple state graphs should not be produced.",
-						"Error", JOptionPane.ERROR_MESSAGE);		
-
+			if(multipleLPNs.isSelected())
+			{
+				
 			}
-			else {
-				if (dot.isSelected()) {
-					stateGraphArray[0].outputStateGraph(directory + separator + graphFileName);  
+			else
+			{
+				LhpnFile lpn = new LhpnFile();
+				lpn.load(directory + separator + lpnFile);
+
+				// The full state graph is created for only one LPN.
+
+				/**
+				 * This is what selects the timing analysis.
+				 * The method setTimingAnalysisType sets a static variable
+				 * in the Options class that is queried by the search method.
+				 */
+				Options.setTimingAnalsysisType("zone");
+
+				Project_Timed timedStateSearch = new Project_Timed(lpn, Options.getTimingAnalysisFlag());
+				StateGraph_timed[] stateGraphArray = timedStateSearch.search();
+				String graphFileName = verifyFile.replace(".lpn", "") + "_sg.dot";
+				if (stateGraphArray.length > 1) {
+					JOptionPane.showMessageDialog(
+							Gui.frame,
+							"Mutiple state graphs should not be produced.",
+							"Error", JOptionPane.ERROR_MESSAGE);		
+
 				}
-				if(graph.isSelected()){
-					showGraph(directory + separator + graphFileName);
+				else {
+					if (dot.isSelected()) {
+						stateGraphArray[0].outputStateGraph(directory + separator + graphFileName);  
+					}
+					if(graph.isSelected()){
+						showGraph(directory + separator + graphFileName);
+					}
 				}
+			
+				Options.setTimingAnalsysisType("off");
 			}
-			
-			Options.setTimingAnalsysisType("off");
-			
 			return;
 		}
 		if (lhpn.isSelected()) {
