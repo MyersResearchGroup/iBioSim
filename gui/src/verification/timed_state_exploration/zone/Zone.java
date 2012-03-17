@@ -783,9 +783,8 @@ public class Zone {
 			{
 				for(int j=0; j<dbmSize(); j++)
 				{
-					if(getdbm(i, j) > getdbm(i, k) + getdbm(k, j) 
-							|| (getdbm(i, j) == INFINITY && getdbm(i, k) != INFINITY
-									&& getdbm(k, j) != INFINITY))
+					if(getdbm(i, k) != INFINITY && getdbm(k, j) != INFINITY
+							&& getdbm(i, j) > getdbm(i, k) + getdbm(k, j))
 					{
 						setdbm(i, j, getdbm(i, k) + getdbm(k, j));
 					}
