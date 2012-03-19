@@ -590,7 +590,7 @@ public class TimingAnalysis {
 //			System.out.println();
 //			System.out.println("firedTran " + firedTran.getFullLabel());
 
-			int curIndex = firedTran.getLpn().getIndex();
+			int curIndex = firedTran.getLpn().getLpnIndex();
 			// TODO: fire has been moved to StateGraph.
 			State[] nextStateArray = null; //firedTran.fire(lpnList, curStateArray);
 			tranFiringCnt++;
