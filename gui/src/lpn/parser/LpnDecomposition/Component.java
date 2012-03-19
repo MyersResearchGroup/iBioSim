@@ -1,6 +1,11 @@
-package lpn.parser;
+package lpn.parser.LpnDecomposition;
 
 import java.util.ArrayList;
+
+import lpn.parser.LhpnFile;
+import lpn.parser.Place;
+import lpn.parser.Transition;
+import lpn.parser.Variable;
 
 public class Component extends LhpnFile{
 	private ArrayList<Integer> processIDList;

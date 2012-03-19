@@ -1,4 +1,4 @@
-package lpn.parser;
+package lpn.parser.LpnDecomposition;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.PriorityQueue;
+
+import lpn.parser.Variable;
 
 public class LpnComponentGraph{
 	private Integer maxNumVarsInOneComp; 

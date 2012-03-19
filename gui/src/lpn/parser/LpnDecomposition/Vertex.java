@@ -1,6 +1,7 @@
-package lpn.parser;
+package lpn.parser.LpnDecomposition;
 
 import java.util.HashMap;
+
 
 public class Vertex {
 	public final Integer componentID;

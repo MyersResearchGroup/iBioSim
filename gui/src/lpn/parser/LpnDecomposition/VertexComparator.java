@@ -1,6 +1,7 @@
-package lpn.parser;
+package lpn.parser.LpnDecomposition;
 
 import java.util.Comparator;
+
 
 public class VertexComparator implements Comparator<Vertex>{
 	private int maxNumVarsInOneComp;
