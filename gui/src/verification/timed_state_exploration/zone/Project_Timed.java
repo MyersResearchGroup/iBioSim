@@ -97,8 +97,8 @@ public class Project_Timed extends Project{
 			for(StateGraph_timed du : this.designUnitTimedSet)
 			{
 				LhpnFile lpn = du.getLpn();
-				lpn.setIndex(idx++);
-				sgArray[lpn.getIndex()] = du;
+				lpn.setLpnIndex(idx++);
+				sgArray[lpn.getLpnIndex()] = du;
 			}
 		}
 
