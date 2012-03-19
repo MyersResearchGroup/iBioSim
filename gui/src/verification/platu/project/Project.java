@@ -130,8 +130,8 @@ public class Project {
         int idx = 0;
 		for (StateGraph du : designUnitSet) {
 			LhpnFile lpn = du.getLpn();
-			lpn.setIndex(idx++);
-			sgArray[lpn.getIndex()] = du;
+			lpn.setLpnIndex(idx++);
+			sgArray[lpn.getLpnIndex()] = du;
 		}
 		
 		// If timing, then create the sgArray with StateGraph_timed objects.
@@ -274,8 +274,8 @@ public class Project {
         int idx = 0;
 		for (StateGraph du : designUnitSet) {
 			LhpnFile lpn = du.getLpn();
-			lpn.setIndex(idx++);
-			sgArray[lpn.getIndex()] = du;
+			lpn.setLpnIndex(idx++);
+			sgArray[lpn.getLpnIndex()] = du;
 		}
 
 		// Initialize the project state
