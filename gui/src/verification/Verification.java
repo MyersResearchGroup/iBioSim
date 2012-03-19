@@ -52,13 +52,13 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import lpn.parser.Abstraction;
-import lpn.parser.Component;
 import lpn.parser.LhpnFile;
-import lpn.parser.LpnProcess;
 import lpn.parser.Place;
 import lpn.parser.Transition;
 import lpn.parser.Variable;
-import lpn.parser.LpnComponentList;
+import lpn.parser.LpnDecomposition.Component;
+import lpn.parser.LpnDecomposition.LpnComponentList;
+import lpn.parser.LpnDecomposition.LpnProcess;
 import main.Gui;
 import main.Log;
 import verification.platu.main.Options;
