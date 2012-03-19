@@ -71,6 +71,7 @@ public class StaticSets {
 		// modifyAssignment contains transitions (T) that satisfy either (1) or (2): for every t in T, 
 		// (1) intersection(VA(curTran), supportA(t)) != empty
 		// (2) intersection(VA(t), supportA(curTran)) != empty
+		// (3) intersection(VA(t), VA(curTran) != empty
 		// VA(t) : set of variables being assigned in transition t.
 		// supportA(t): set of variables appearing in the expressions assigned to the variables of t (r.h.s of the assignment). 
 		for (int i = 0; i < allTransitions.length; i++) {
@@ -89,6 +90,13 @@ public class StaticSets {
 					if (exprTree != null && exprTree.containsVar(v)) {
 						modifyAssignment.add(anotherTran.getIndex());
 					}
+				}
+			}
+			for (String v1 : curTran.getAssignTrees().keySet()) {
+				for (String v2 : anotherTran.getAssignTrees().keySet()) {
+					if (v1.equals(v2)) {
+						modifyAssignment.add(anotherTran.getIndex());
+					}					
 				}
 			}
 		}
