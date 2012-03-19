@@ -20,11 +20,11 @@ public class SimulatorSSADirect extends Simulator {
 	MutableBoolean constraintsFlag = new MutableBoolean(false);
 
 	public SimulatorSSADirect(String SBMLFileName, String outputDirectory, double timeLimit, 
-			double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval) 
+			double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval, double stoichAmpValue) 
 	throws IOException, XMLStreamException {
 		
 		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, randomSeed,
-				progress, printInterval, initializationTime);
+				progress, printInterval, initializationTime, stoichAmpValue);
 	}
 
 	public void simulate() {

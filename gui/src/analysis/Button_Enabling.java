@@ -27,8 +27,8 @@ public class Button_Enabling {
 			JLabel minStepLabel, JTextField minStep, JLabel stepLabel, JTextField step, JLabel errorLabel,
 			JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel, JTextField interval,
 			JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description, JRadioButton none,
-			JTextField rapid1, JTextField rapid2, JTextField qssa, JTextField maxCon, JLabel rapidLabel1,
-			JLabel rapidLabel2, JLabel qssaLabel, JLabel maxConLabel, JTextField fileStem, JLabel fileStemLabel,
+			JTextField rapid1, JTextField rapid2, JTextField qssa, JTextField maxCon, JTextField diffStoichAmp, JLabel rapidLabel1,
+			JLabel rapidLabel2, JLabel qssaLabel, JLabel maxConLabel, JLabel diffStoichAmpLabel, JTextField fileStem, JLabel fileStemLabel,
 			JList preAbs, JList loopAbs, JList postAbs, JLabel preAbsLabel, JLabel loopAbsLabel, JLabel postAbsLabel,
 			JButton addPreAbs, JButton rmPreAbs, JButton editPreAbs, JButton addLoopAbs, JButton rmLoopAbs,
 			JButton editLoopAbs, JButton addPostAbs, JButton rmPostAbs, JButton editPostAbs, JRadioButton lhpn) {
@@ -64,6 +64,8 @@ public class Button_Enabling {
 			// clearIntSpecies.setEnabled(false);
 			maxConLabel.setEnabled(false);
 			maxCon.setEnabled(false);
+			diffStoichAmpLabel.setEnabled(false);
+			diffStoichAmp.setEnabled(false);
 			qssaLabel.setEnabled(false);
 			qssa.setEnabled(false);
 			rapidLabel1.setEnabled(false);
@@ -113,6 +115,8 @@ public class Button_Enabling {
 			// clearIntSpecies.setEnabled(true);
 			maxConLabel.setEnabled(true);
 			maxCon.setEnabled(true);
+			diffStoichAmpLabel.setEnabled(true);
+			diffStoichAmp.setEnabled(true);
 			qssaLabel.setEnabled(true);
 			qssa.setEnabled(true);
 			rapidLabel1.setEnabled(true);

@@ -109,12 +109,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
 	private JLabel simulatorsLabel; // Label for possible simulators
 
-	private JTextField rapid1, rapid2, qssa, maxCon; // advanced options
+	private JTextField rapid1, rapid2, qssa, maxCon, diffStoichAmp; // advanced options
 
 	/*
 	 * advanced labels
 	 */
-	private JLabel rapidLabel1, rapidLabel2, qssaLabel, maxConLabel;
+	private JLabel rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel;
 
 	// private JComboBox availSpecies; // species for SSA
 
@@ -515,8 +515,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		 */
 
 		// Creates some abstraction options
-		JPanel advancedGrid = new JPanel(new GridLayout(2, 4));
+		JPanel advancedGrid = new JPanel(new GridLayout(5, 4));
 		advanced = new JPanel(new BorderLayout());
+		
 		rapidLabel1 = new JLabel("Rapid Equilibrium Condition 1:");
 		rapid1 = new JTextField(biosimrc.get("biosim.sim.rapid1", ""), 15);
 		rapidLabel2 = new JLabel("Rapid Equilibrium Condition 2:");
@@ -525,6 +526,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		qssa = new JTextField(biosimrc.get("biosim.sim.qssa", ""), 15);
 		maxConLabel = new JLabel("Max Concentration Threshold:");
 		maxCon = new JTextField(biosimrc.get("biosim.sim.concentration", ""), 15);
+		diffStoichAmp = new JTextField("2.0", 15);
+		diffStoichAmpLabel = new JLabel("Grid Diffusion Stoichiometry Amplification:");
+		
 		maxConLabel.setEnabled(false);
 		maxCon.setEnabled(false);
 		qssaLabel.setEnabled(false);
@@ -533,6 +537,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		rapid1.setEnabled(false);
 		rapidLabel2.setEnabled(false);
 		rapid2.setEnabled(false);
+		diffStoichAmp.setEnabled(false);
+		diffStoichAmpLabel.setEnabled(false);
+		
 		advancedGrid.add(rapidLabel1);
 		advancedGrid.add(rapid1);
 		advancedGrid.add(rapidLabel2);
@@ -541,6 +548,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		advancedGrid.add(qssa);
 		advancedGrid.add(maxConLabel);
 		advancedGrid.add(maxCon);
+		advancedGrid.add(diffStoichAmpLabel);
+		advancedGrid.add(diffStoichAmp);
 		JPanel advAbs = new JPanel(new BorderLayout());
 		advAbs.add(absHolder, "Center");
 		advAbs.add(advancedGrid, "South");
@@ -943,7 +952,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, sbml, seed, seedLabel, runs, runsLabel,
 					minStepLabel, minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
 					interval, simulators, simulatorsLabel, explanation, description, none, rapid1, rapid2, qssa,
-					maxCon, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, fileStem, fileStemLabel, preAbs, loopAbs,
+					maxCon, diffStoichAmp, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel, fileStem, fileStemLabel, preAbs, loopAbs,
 					postAbs, preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs,
 					rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn);
 			if (modelFile.contains(".lpn") || modelFile.contains(".s") || modelFile.contains(".inst")) {
@@ -974,7 +983,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, sbml, seed, seedLabel, runs, runsLabel,
 					minStepLabel, minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
 					interval, simulators, simulatorsLabel, explanation, description, none, rapid1, rapid2, qssa,
-					maxCon, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, fileStem, fileStemLabel, preAbs, loopAbs,
+					maxCon, diffStoichAmp, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel, fileStem, fileStemLabel, preAbs, loopAbs,
 					postAbs, preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs,
 					rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn);
 			if (modelFile.contains(".lpn")) {
@@ -2204,6 +2213,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		double rap2 = 0.1;
 		double qss = 0.1;
 		int con = 15;
+		double stoichAmp = 2.0;
+		
 		try {
 			// if (rapid1.isEnabled()) {
 			rap1 = Double.parseDouble(rapid1.getText().trim());
@@ -2242,6 +2253,14 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(Gui.frame, "Must Enter An Integer Into The Max"
 					+ " Concentration Threshold Field.", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		try {
+			stoichAmp = Double.parseDouble(diffStoichAmp.getText().trim());
+		}
+		catch (Exception e1) {
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Double Into the Stoich."
+					+ " Amp. Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		if (none.isSelected() && ODE.isSelected()) {
@@ -2509,7 +2528,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		// saveSAD(outDir);
 		runProgram.createProperties(timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval,
 				minTimeStep, timeStep, absError, ".", rndSeed, run, intSpecies, printer_id, printer_track_quantity,
-				simProp.split(separator), selectedButtons, this, simProp, rap1, rap2, qss, con, preAbs, loopAbs,
+				simProp.split(separator), selectedButtons, this, simProp, rap1, rap2, qss, con, stoichAmp, preAbs, loopAbs,
 				postAbs, lhpnAbstraction);
 		// int[] indecies = properties.getSelectedIndices();
 		// props = Utility.getList(props, properties);
@@ -2881,6 +2900,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		double rap2 = 0.1;
 		double qss = 0.1;
 		int con = 15;
+		double stoichAmp = 2.0;
+		
 		try {
 			// if (rapid1.isEnabled()) {
 			rap1 = Double.parseDouble(rapid1.getText().trim());
@@ -2919,6 +2940,14 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(Gui.frame, "Must Enter An Integer Into The Max"
 					+ " Concentration Threshold Field.", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		try {
+			stoichAmp = Double.parseDouble(diffStoichAmp.getText().trim());
+		}
+		catch (Exception e1) {
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Double Into the Stoich."
+					+ " Amp. Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		if (none.isSelected() && ODE.isSelected()) {
@@ -3030,7 +3059,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		// saveSAD(simName);
 		runProgram.createProperties(timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval,
 				minTimeStep, timeStep, absError, ".", rndSeed, run, intSpecies, printer_id, printer_track_quantity,
-				sbmlProp.split(separator), selectedButtons, this, sbmlProp, rap1, rap2, qss, con, preAbs, loopAbs,
+				sbmlProp.split(separator), selectedButtons, this, sbmlProp, rap1, rap2, qss, con, stoichAmp, preAbs, loopAbs,
 				postAbs, lhpnAbstraction);
 		// int[] indecies = properties.getSelectedIndices();
 		// props = Utility.getList(props, properties);
@@ -3271,6 +3300,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					}
 					else if (key.equals("reb2sac.operator.max.concentration.threshold")) {
 					}
+					else if (key.equals("reb2sac.diffusion.stoichiometry.amplification.value")){
+					}
 					else if (key.equals("ode.simulation.time.limit")) {
 					}
 					else if (key.equals("ode.simulation.print.interval")) {
@@ -3509,12 +3540,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				if (load.getProperty("reb2sac.abstraction.method").equals("none")) {
 					none.setSelected(true);
 					Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, sbml, seed, seedLabel, runs, runsLabel,
-							minStepLabel, minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit,
-							intervalLabel, interval, simulators, simulatorsLabel, explanation, description, none,
-							rapid1, rapid2, qssa, maxCon, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, fileStem,
-							fileStemLabel, preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel, postAbsLabel,
-							addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs,
-							editPostAbs, lhpn);
+							minStepLabel, minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
+							interval, simulators, simulatorsLabel, explanation, description, none, rapid1, rapid2, qssa,
+							maxCon, diffStoichAmp, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel, fileStem, fileStemLabel, preAbs, loopAbs,
+							postAbs, preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs,
+							rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn);
 					if (modelFile.contains(".lpn")) {
 						markov.setEnabled(true);
 						lhpn.setEnabled(true);
@@ -3523,12 +3553,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				else if (load.getProperty("reb2sac.abstraction.method").equals("abs")) {
 					abstraction.setSelected(true);
 					Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, sbml, seed, seedLabel, runs, runsLabel,
-							minStepLabel, minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit,
-							intervalLabel, interval, simulators, simulatorsLabel, explanation, description, none,
-							rapid1, rapid2, qssa, maxCon, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, fileStem,
-							fileStemLabel, preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel, postAbsLabel,
-							addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs,
-							editPostAbs, lhpn);
+							minStepLabel, minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
+							interval, simulators, simulatorsLabel, explanation, description, none, rapid1, rapid2, qssa,
+							maxCon, diffStoichAmp, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel, fileStem, fileStemLabel, preAbs, loopAbs,
+							postAbs, preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs,
+							rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn);
 					if (modelFile.contains(".lpn")) {
 						markov.setEnabled(true);
 						lhpn.setEnabled(true);
@@ -3856,6 +3885,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				}
 				if (load.containsKey("reb2sac.operator.max.concentration.threshold")) {
 					maxCon.setText(load.getProperty("reb2sac.operator.max.concentration.threshold"));
+				}
+				if (load.containsKey("reb2sac.diffusion.stoichiometry.amplification.value")) {
+					diffStoichAmp.setText(load.getProperty("reb2sac.diffusion.stoichiometry.amplification.value"));
 				}
 			}
 			else {
