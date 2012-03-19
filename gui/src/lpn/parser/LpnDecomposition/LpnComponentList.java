@@ -1,9 +1,14 @@
-package lpn.parser;
+package lpn.parser.LpnDecomposition;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
+
+import lpn.parser.LhpnFile;
+import lpn.parser.Place;
+import lpn.parser.Transition;
+import lpn.parser.Variable;
 
 public class LpnComponentList extends LhpnFile{
 	private Integer maxNumVarsInOneComp;

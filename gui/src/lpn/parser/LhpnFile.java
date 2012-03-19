@@ -39,7 +39,9 @@ public class LhpnFile {
 	
 	protected String label;
 	
-	protected int index;
+	protected int tranIndex;
+	
+	protected int lpnIndex;
 
 	public LhpnFile(Log log) {
 		if (File.separator.equals("\\")) {
@@ -56,8 +58,8 @@ public class LhpnFile {
 		integers = new HashMap<String, Variable>();
 		variables = new ArrayList<Variable>();
 		properties = new ArrayList<String>();
-		// TODO: (temp) Set the index of LPN to 0.
-		index = 0;
+		lpnIndex = 0;
+		tranIndex = 0;
 	}
 	
 	public LhpnFile() {
@@ -74,7 +76,8 @@ public class LhpnFile {
 		integers = new HashMap<String, Variable>();
 		variables = new ArrayList<Variable>();
 		properties = new ArrayList<String>();
-		index = 0;
+		lpnIndex = 0;
+		tranIndex = 0;
 	}
 	
 	public void save(String filename) {
@@ -615,7 +618,7 @@ public class LhpnFile {
 	public void addTransition(String name) {
 		//Transition trans = new Transition(name, variables, this);
 		// TODO: (temp) Set the local flag to true
-		Transition trans = new Transition(name, index++, variables, this, true);
+		Transition trans = new Transition(name, tranIndex++, variables, this, true);
 		transitions.put(name, trans);
 	}
 
@@ -944,8 +947,8 @@ public class LhpnFile {
 		return label;
 	}
 
-	public int getIndex() {
-		return index;
+	public int getLpnIndex() {
+		return lpnIndex;
 	}
 
 	public String[] getPlaceList() {
@@ -1531,8 +1534,8 @@ public class LhpnFile {
 		this.label = label;
 	}
 
-	public void setIndex(int index) {
-		this.index = index;
+	public void setLpnIndex(int index) {
+		this.lpnIndex = index;
 	}
 
 	public boolean isTransition(String name) {

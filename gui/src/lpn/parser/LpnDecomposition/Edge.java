@@ -1,4 +1,5 @@
-package lpn.parser;
+package lpn.parser.LpnDecomposition;
+
 
 public class Edge {
 	public final Vertex target;
