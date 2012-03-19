@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.Stack;
 
@@ -23,6 +24,8 @@ import verification.platu.lpn.LpnTranList;
 import verification.platu.main.Main;
 import verification.platu.main.Options;
 import verification.platu.partialOrders.AmpleSet;
+import verification.platu.partialOrders.DependentSet;
+import verification.platu.partialOrders.DependentSetComparator;
 import verification.platu.partialOrders.StaticSets;
 import verification.platu.project.PrjState;
 
@@ -483,9 +486,10 @@ public class StateGraph {
      * @param disableByStealingToken 
      * @param disable 
      * @param init 
+     * @param tranFiringFreq 
      * @return
      */
-    public AmpleSet getAmple(State curState, HashMap<Integer,HashMap<Integer,StaticSets>> staticSetsMap, HashSet<PrjState> stateStack, boolean init) {
+    public AmpleSet getAmple(State curState, HashMap<Integer,HashMap<Integer,StaticSets>> staticSetsMap, boolean init, HashMap<Integer,Integer> tranFiringFreq) {
     	if (curState == null) {
             throw new NullPointerException();
         }
@@ -527,12 +531,12 @@ public class StateGraph {
         
         // Apply POR with trace-back here.
         HashSet<Integer> ready = new HashSet<Integer>();
-//      System.out.println("******** getAmple ************");
+//        System.out.println("******** getAmple ************");
 //    	System.out.println("Begin POR:");
 //    	printIntegerSet(curEnabledIndices, "Enabled set");
-   		ready = partialOrderReduction(curState, curEnabledIndices, staticSetsMap, allEnabledAreSticky);
-//   	printIntegerSet(ready, "Ready set");
-//      System.out.println("End POR");
+   		ready = partialOrderReduction(curState, curEnabledIndices, staticSetsMap, allEnabledAreSticky, tranFiringFreq);
+//   		printIntegerSet(ready, "Ready set");
+//   		System.out.println("End POR");
 // 		System.out.println("********************");
         Object[] readyArray = ready.toArray();
         for (int i=0; i < readyArray.length; i++) {      	
@@ -552,18 +556,20 @@ public class StateGraph {
      * Return the set of all LPN transitions that are enabled in 'state'. The "init" flag indicates whether a transition
      * needs to be evaluated. 
      * @param nextState
+	 * @param stateStackTop 
      * @param enable 
      * @param disableByStealingToken 
      * @param disable 
      * @param init 
 	 * @param cycleClosingMthdIndex 
+	 * @param lpnIndex 
      * @param isNextState
      * @return
      */
     @SuppressWarnings("unchecked")
 	public AmpleSet getAmpleRefinedCycleRule(State curState, State nextState, 
     		HashMap<Integer, HashMap<Integer, StaticSets>> staticMap, 
-    		HashSet<PrjState> stateStack, boolean init, int cycleClosingMthdIndex) {
+    		HashSet<PrjState> stateStack, PrjState stateStackTop, boolean init, int cycleClosingMthdIndex, int lpnIndex, HashMap<Integer,Integer> tranFiringFreq) {
     	AmpleSet nextAmple = new AmpleSet();
     	if (nextState == null) {
             throw new NullPointerException();
@@ -629,7 +635,8 @@ public class StateGraph {
             			LpnTranList transToAddCopy = transToAdd.copy();
             			HashSet<Integer> stateVisited = new HashSet<Integer>();
             			stateVisited.add(nextState.getIndex());
-            			allTransToAddFired = allTransToAddFired(nextAmpleTransOld, nextState, transToAddCopy, allTransToAddFired, stateVisited);
+            			allTransToAddFired = allTransToAddFired(transToAddCopy, 
+            									allTransToAddFired, stateVisited, stateStackTop, lpnIndex);
             		}
     			}
         		// Update the old ample of the next state 
@@ -640,7 +647,7 @@ public class StateGraph {
 //        			printTransitionSet(nextAmpleNew, "nextAmpleNew:");
 //        			printTransitionSet(transToAdd, "transToAdd:");
 //        			System.out.println("((((((((((((((((((((()))))))))))))))))))))");
-        		}
+       		}
         		if (cycleClosingMthdIndex == 4) {
         			nextAmple.getAmpleSet().clear();
         			nextAmple.getAmpleSet().addAll(overlyReducedTrans);
@@ -676,7 +683,7 @@ public class StateGraph {
 //       	System.out.println("******** getAmpleRefinedCycleRule ************");
 //   		System.out.println("Begin POR");
 //   		printIntegerSet(curEnabledIndices, "Enabled set");
-   		ready = partialOrderReduction(nextState, curEnabledIndices, staticMap, false);
+   		ready = partialOrderReduction(nextState, curEnabledIndices, staticMap, false, tranFiringFreq);
 //        printIntegerSet(ready, "Ready set");
 //        System.out.println("End POR");
 //  		System.out.println("********************");
@@ -694,30 +701,34 @@ public class StateGraph {
         return curAmple;
     }
     
- 	private boolean allTransToAddFired(LpnTranList oldAmple, State state, LpnTranList transToAddCopy, boolean allTransFired, HashSet<Integer> stateVisited) {
-		for (Transition oldAmpleTran : oldAmple) {
-			State successor = nextStateMap.get(state).get(oldAmpleTran);
-			if (stateVisited.contains(successor.getLabel())) {
-				break;
-			}
-			else
-				stateVisited.add(successor.getIndex());
-			LpnTranList successorOldAmple = enabledSetTbl.get(successor);
-			// Either successor or sucessorOldAmple should not be null for a nonterminal state graph.
-			HashSet<Transition> transToAddFired = new HashSet<Transition>();
-			for (Transition tran : transToAddCopy) {
-				if (successorOldAmple.contains(tran))
-					transToAddFired.add(tran);
-			}
-			transToAddCopy.removeAll(transToAddFired);
-			if (transToAddCopy.size() == 0) {
-				allTransFired = true;
-				break;
-			}				
-			else {
-				allTransFired = allTransToAddFired(successorOldAmple, successor, transToAddCopy, allTransFired, stateVisited);
-			}
-		}
+ 	private boolean allTransToAddFired(LpnTranList transToAddCopy, boolean allTransFired, 
+ 			HashSet<Integer> stateVisited, PrjState stateStackEntry, int lpnIndex) {
+ 		State state = stateStackEntry.get(lpnIndex);
+// 		System.out.println("state = " + state.getIndex());
+ 		State predecessor = stateStackEntry.getFather().get(lpnIndex);
+// 		if (predecessor != null)
+// 			System.out.println("predecessor = " + predecessor.getIndex());
+ 		if (predecessor == null || stateVisited.contains(predecessor.getIndex())) {
+ 			return allTransFired;
+ 		}
+ 		else 
+ 			stateVisited.add(predecessor.getIndex());
+ 		LpnTranList predecessorOldAmple = enabledSetTbl.get(predecessor);
+ 		for (Transition oldAmpleTran : predecessorOldAmple) {
+ 			State tmpState = nextStateMap.get(predecessor).get(oldAmpleTran);
+ 			if (tmpState.getIndex() == state.getIndex()) {
+ 				transToAddCopy.remove(oldAmpleTran);
+ 				break;
+ 			}
+ 		}
+ 		if (transToAddCopy.size()==0) {
+ 			allTransFired = true;
+ 			return allTransFired;
+ 		}
+ 		else {
+ 			allTransFired = allTransToAddFired(transToAddCopy, allTransFired, stateVisited, 
+ 								stateStackEntry.getFather(), lpnIndex);
+ 		}
 		return allTransFired;
 	}
 
@@ -734,17 +745,23 @@ public class StateGraph {
 
 	@SuppressWarnings("unchecked")
 	private HashSet<Integer> partialOrderReduction(State curState,
-			HashSet<Integer> curEnabled, HashMap<Integer, HashMap<Integer, StaticSets>> staticMap, boolean allEnabledAreSticky) {
-		HashSet<Integer> ready = (HashSet<Integer>) curEnabled.clone();
+			HashSet<Integer> curEnabled, HashMap<Integer, HashMap<Integer, StaticSets>> staticMap, 
+			boolean allEnabledAreSticky, HashMap<Integer,Integer> tranFiringFreqMap) {
+		if (curEnabled.size() == 1) 
+			return curEnabled;
+		//HashSet<Integer> ready = (HashSet<Integer>) curEnabled.clone();
+		HashSet<Integer> ready = null;
 		if (!allEnabledAreSticky) {
 			boolean noDummyTrans = true;
 			for (Transition t : this.lpn.getAllTransitions()) 
 				noDummyTrans = noDummyTrans && isDummyTran(t.getName());
+			DependentSetComparator depComp = new DependentSetComparator(tranFiringFreqMap); 
+			PriorityQueue<DependentSet> dependentSetQueue = new PriorityQueue<DependentSet>(curEnabled.size(), depComp);
 			for (Integer enabledTran : curEnabled) {
 				HashSet<Integer> dependent = new HashSet<Integer>();
 				Transition enabledTransition = this.lpn.getAllTransitions()[enabledTran];
 				if (enabledTransition.isSticky()) {
-					dependent = (HashSet<Integer>) ready.clone();
+					dependent = (HashSet<Integer>) curEnabled.clone();
 				}
 				else {
 					dependent = getDependentSet(curState,enabledTran,dependent,curEnabled,staticMap);
@@ -759,13 +776,17 @@ public class StateGraph {
 						Transition curTran = this.lpn.getAllTransitions()[curTranIndex];
 						dependentOnlyHasDummyTrans = dependentOnlyHasDummyTrans && isDummyTran(curTran.getName());
 					}
-				if (dependent.size() < ready.size() && !dependentOnlyHasDummyTrans) 
-					ready = (HashSet<Integer>) dependent.clone();
-				if (ready.size() == 1)
-					return ready;
+				if (!dependentOnlyHasDummyTrans) {
+					DependentSet dependentSet = new DependentSet(dependent, enabledTran);
+					dependentSetQueue.add(dependentSet);
+				}			
+//				if (dependent.size() < ready.size() && !dependentOnlyHasDummyTrans) 
+//					ready = (HashSet<Integer>) dependent.clone();
+//				if (ready.size() == 1)
+//					return ready;
 			}
+			ready = dependentSetQueue.poll().getDependent();
 		}
-
 		return ready;
 	}
 
@@ -781,9 +802,9 @@ public class StateGraph {
 			Integer tranIndex, HashSet<Integer> dependent, HashSet<Integer> curEnabled, 
 			HashMap<Integer,HashMap<Integer, StaticSets>> staticMap) {
 		// canDisable is the set of transitions that can be disabled by firing tranIndex.
-		HashSet<Integer> canDisable = staticMap.get(this.lpn.getIndex()).get(tranIndex).getDisabled(); 
-		HashSet<Integer> transCanLoseToken = staticMap.get(this.lpn.getIndex()).get(tranIndex).getDisableByStealingToken();
-		HashSet<Integer> canModifyAssign = staticMap.get(this.lpn.getIndex()).get(tranIndex).getModifyAssignSet();
+		HashSet<Integer> canDisable = staticMap.get(this.lpn.getLpnIndex()).get(tranIndex).getDisabled(); 
+		HashSet<Integer> transCanLoseToken = staticMap.get(this.lpn.getLpnIndex()).get(tranIndex).getDisableByStealingToken();
+		HashSet<Integer> canModifyAssign = staticMap.get(this.lpn.getLpnIndex()).get(tranIndex).getModifyAssignSet();
 		HashSet<Integer> transVisitedByNecessary = new HashSet<Integer>();
 //		System.out.println("@ getDependentSet, consider transition " + this.lpn.getAllTransitions()[tranIndex]);
 //		printIntegerSet(canModifyAssign, this.lpn.getAllTransitions()[tranIndex] + " can modify assignments");
@@ -799,7 +820,7 @@ public class StateGraph {
 			if (curEnabled.contains(tranCanBeDisabled) && !dependent.contains(tranCanBeDisabled)
 					&& (transCanLoseToken.contains(tranCanBeDisabled) || !tranCanBeDisabledPersistent)) {
 				dependent.addAll(getDependentSet(curState,tranCanBeDisabled,dependent,curEnabled,staticMap));
-				//printIntegerSet(dependent, "@ getDependentSet at 0 for transition " + this.lpn.getAllTransitions()[tranIndex]);
+//				printIntegerSet(dependent, "@ getDependentSet at 0 for transition " + this.lpn.getAllTransitions()[tranIndex]);
 			}
 			else if (!curEnabled.contains(tranCanBeDisabled)) {		
 				HashSet<Integer> necessary = 
@@ -813,10 +834,9 @@ public class StateGraph {
 						}					
 					}
 				}
-//				else {
+//				else 
 //					System.out.println("necessary set for transition " + this.lpn.getAllTransitions()[tranIndex] + " is null.");
-//				}
-				//printIntegerSet(dependent, "@ getDependentSet at 1 for transition " + this.lpn.getAllTransitions()[tranIndex]);
+//				printIntegerSet(dependent, "@ getDependentSet at 1 for transition " + this.lpn.getAllTransitions()[tranIndex]);
 			}
 		}
 		return dependent;
@@ -862,13 +882,12 @@ public class StateGraph {
 					nMarking = (HashSet<Integer>) nMarkingTemp.clone();
 				}
 			}
-//			else {
+//			else 
 //				System.out.println("Place " + this.lpn.getAllPlaces().get(place) + " marked");
-//			}
 		}
 		HashSet<Integer> nEnable = null;
 		int[] varValueVector = curState.getVector();
-		HashSet<Integer> canEnable = staticMap.get(this.lpn.getIndex()).get(tran).getEnable();
+		HashSet<Integer> canEnable = staticMap.get(this.lpn.getLpnIndex()).get(tran).getEnable();
 //		System.out.println("####### calculate nEnable########");
 //		printIntegerSet(canEnable, this.lpn.getAllTransitions()[tran] + " can be enabled by");
 		if (transition.getEnablingTree() != null
@@ -1072,7 +1091,6 @@ public class StateGraph {
     		String var = this.lpn.getVarIndexMap().getKey(i);
     		int val = this.lpn.getInitVector(var);// this.initVector.get(var);
     		initialVector[i] = val;
-    		
     	}
 		return new State(this.lpn, this.lpn.getInitialMarkingsArray(), initialVector, this.lpn.getInitEnabledTranArray(initialVector));
     }
@@ -1096,7 +1114,7 @@ public class StateGraph {
 
     // This method is called by search_dfs(StateGraph[], State[]).
     public State[] fire(final StateGraph[] curSgArray, final State[] curStateArray, Transition firedTran) {
-    	int thisLpnIndex = this.getLpn().getIndex(); 
+    	int thisLpnIndex = this.getLpn().getLpnIndex(); 
     	State[] nextStateArray = curStateArray.clone();
     	
     	State curState = curStateArray[thisLpnIndex];
@@ -1149,7 +1167,7 @@ public class StateGraph {
 //		if (!firedTran.getDstLpnList().contains(this.lpn))
 //			firedTran.getDstLpnList().add(this.lpn);
 		for(LhpnFile curLPN : firedTran.getDstLpnList()) {
-        	int curIdx = curLPN.getIndex();
+        	int curIdx = curLPN.getLpnIndex();
 //			System.out.println("Checking " + curLPN.getLabel() + " " + curIdx);
     		State newState = curSgArray[curIdx].getNextState(curStateArray[curIdx], firedTran);
     		if(newState != null) {
@@ -1370,8 +1388,15 @@ public class StateGraph {
 	
 	public void outputStateGraph(String file) {
 		try {
+			int size = this.lpn.getVarIndexMap().size();
+			String varNames = "";
+			for(int i = 0; i < size; i++) {
+				varNames = varNames + ", " + this.lpn.getVarIndexMap().getKey(i);
+	    	}
+			varNames = varNames.replaceFirst(", ", "");
 			BufferedWriter out = new BufferedWriter(new FileWriter(file));
 			out.write("digraph G {\n");
+			out.write("Inits [shape=plaintext, label=\"<" + varNames + ">\"]\n");
 			for (State curState : nextStateMap.keySet()) {
 				String markings = intArrayToString("markings", curState);
 				String vars = intArrayToString("vars", curState);
@@ -1386,7 +1411,14 @@ public class StateGraph {
 					String curStateName = "S" + curState.getIndex();
 					String nextStateName = "S" + stateTransitionPair.get(curTran).getIndex();
 					String curTranName = curTran.getName();
-					out.write(curStateName + " -> " + nextStateName + " [label=\"" + curTranName + "\"]\n");
+					if (curTran.isFail() && !curTran.isPersistent()) 
+						out.write(curStateName + " -> " + nextStateName + " [label=\"" + curTranName + "\", fontcolor=red]\n");
+					else if (!curTran.isFail() && curTran.isPersistent())						
+						out.write(curStateName + " -> " + nextStateName + " [label=\"" + curTranName + "\", fontcolor=blue]\n");
+					else if (curTran.isFail() && curTran.isPersistent())						
+						out.write(curStateName + " -> " + nextStateName + " [label=\"" + curTranName + "\", fontcolor=purple]\n");
+					else 
+						out.write(curStateName + " -> " + nextStateName + " [label=\"" + curTranName + "\"]\n");
 				}
 			}
 			out.write("}");
