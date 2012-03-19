@@ -9,18 +9,17 @@ import java.util.Stack;
 
 import lpn.parser.Abstraction;
 import lpn.parser.LhpnFile;
-import lpn.parser.LpnProcess;
 import lpn.parser.Place;
 import lpn.parser.Transition;
+import lpn.parser.LpnDecomposition.LpnProcess;
 import verification.platu.MDD.MDT;
 import verification.platu.MDD.Mdd;
 import verification.platu.MDD.mddNode;
 import verification.platu.common.IndexObjMap;
 import verification.platu.lpn.LPNTranRelation;
 import verification.platu.lpn.LpnTranList;
-import verification.platu.partialOrders.*;
 import verification.platu.partialOrders.AmpleSet;
-import verification.platu.por1.*;
+import verification.platu.partialOrders.StaticSets;
 import verification.platu.project.PrjState;
 import verification.platu.stategraph.State;
 import verification.platu.stategraph.StateGraph;
@@ -425,6 +424,7 @@ public class Analysis {
 		if (cycleClosingMthdIndex == 3) { // No cycle closing
 			allTransitions = sgList[0].getLpn().getAllTransitions();
 		}	
+		HashMap<Integer, Integer> tranFiringFreq = new HashMap<Integer, Integer>(allTransitions.length);
 		HashMap<Integer, StaticSets> tmpMap = new HashMap<Integer, StaticSets>();
 		for (Transition curTran: allTransitions) {
 			StaticSets curStatic = new StaticSets(sgList[0].getLpn(), curTran, allTransitions);
@@ -432,13 +432,16 @@ public class Analysis {
 			curStatic.buildEnableSet();
 			curStatic.buildModifyAssignSet();
 			tmpMap.put(curTran.getIndex(), curStatic);
+			tranFiringFreq.put(curTran.getIndex(), 0);
 		}
-		staticSetsMap.put(sgList[0].getLpn().getIndex(), tmpMap);
+		staticSetsMap.put(sgList[0].getLpn().getLpnIndex(), tmpMap);
 		//printStaticSetMap(staticSetsMap);
+		
+		//boolean[] tranAlreadyFired = new boolean[allTransitions.length];
 		boolean init = true;
 		AmpleSet initAmple = new AmpleSet();
 //		System.out.println("call getAmple on curStateArray at 0: ");
-		initAmple = sgList[0].getAmple(initStateArray[0], staticSetsMap, stateStack, init);
+		initAmple = sgList[0].getAmple(initStateArray[0], staticSetsMap, init, tranFiringFreq);
 		HashMap<State, LpnTranList> initEnabledSetTbl = (HashMap<State, LpnTranList>) sgList[0].copyEnabledSetTbl();
 		lpnTranStack.push(initAmple.getAmpleSet());
 		curIndexStack.push(0);
@@ -490,7 +493,7 @@ public class Analysis {
 				curIndex++;
 				while (curIndex < numLpns) {
 //					System.out.println("call getAmple on curStateArray at 1: ");
-					LpnTranList tmpAmpleTrans = (LpnTranList) (sgList[curIndex].getAmple(curStateArray[curIndex], staticSetsMap, stateStack, init)).getAmpleSet();
+					LpnTranList tmpAmpleTrans = (LpnTranList) (sgList[curIndex].getAmple(curStateArray[curIndex], staticSetsMap, init, tranFiringFreq)).getAmpleSet();
 					curAmpleTrans = tmpAmpleTrans.clone();
 					//printTransitionSet(curEnabled, "curEnabled set");
 					if (curAmpleTrans.size() > 0) {
@@ -516,6 +519,10 @@ public class Analysis {
 //			System.out.println("###################");
 //			System.out.println("Fired Transition: " + firedTran.getName());
 //			System.out.println("###################");
+			Integer freq = tranFiringFreq.get(firedTran.getIndex()) + 1;
+			tranFiringFreq.put(firedTran.getIndex(), freq);
+//			System.out.println("~~~~~~tranFiringFreq~~~~~~~");
+//			printHashMap(tranFiringFreq, allTransitions);
 			State[] nextStateArray = sgList[curIndex].fire(sgList, curStateArray, firedTran);
 			tranFiringCnt++;
 
@@ -535,10 +542,10 @@ public class Analysis {
 					init = false;
 				}
 				else
-					ampleList = sg_tmp.getAmple(curStateArray[i], staticSetsMap, stateStack, init);
+					ampleList = sg_tmp.getAmple(curStateArray[i], staticSetsMap, init, tranFiringFreq);
 				curAmpleArray[i] = ampleList.getAmpleSet();
 //				System.out.println("call getAmple on nextStateArray at 3: i = " + i);
-				ampleList = sg_tmp.getAmple(nextStateArray[i], staticSetsMap, stateStack, init);
+				ampleList = sg_tmp.getAmple(nextStateArray[i], staticSetsMap, init, tranFiringFreq);
 				nextAmpleArray[i] = ampleList.getAmpleSet();				
 				Transition disabledTran = firedTran.disablingError(
 				curStateArray[i].getEnabledTransitions(), nextStateArray[i].getEnabledTransitions());
@@ -551,7 +558,7 @@ public class Analysis {
 				}
 			}
 
-			if (Analysis.deadLock(sgList, nextStateArray, staticSetsMap, stateStack, init) == true) {
+			if (Analysis.deadLock(sgList, nextStateArray, staticSetsMap, init, tranFiringFreq) == true) {
 				System.out.println("*** Verification failed: deadlock.");
 				failure = true;
 				break main_while_loop;
@@ -590,7 +597,7 @@ public class Analysis {
 	}
 	
 	/**
-	 * This method performs first-depth search on multiple LPNs and applies partial order reduction technique with the traceback. 
+	 * This method performs first-depth search on multiple LPNs and applies partial order reduction technique with the trace-back. 
 	 * @param sgList
 	 * @param initStateArray
 	 * @param cycleClosingMthdIndex 
@@ -614,9 +621,8 @@ public class Analysis {
 		HashSet<PrjState> stateStack = new HashSet<PrjState>();
 		Stack<LinkedList<Transition>> lpnTranStack = new Stack<LinkedList<Transition>>();
 		Stack<Integer> curIndexStack = new Stack<Integer>();
-
-		HashSet<PrjState> prjStateSet = new HashSet<PrjState>();
 		
+		HashSet<PrjState> prjStateSet = new HashSet<PrjState>();
 		PrjState initPrjState = new PrjState(initStateArray);
 		prjStateSet.add(initPrjState);
 		
@@ -629,20 +635,22 @@ public class Analysis {
 		HashMap<Integer, HashMap<Integer, StaticSets>> staticSetsMap = new HashMap<Integer, HashMap<Integer, StaticSets>>(); 
 		Transition[] allTransitions = sgList[0].getLpn().getAllTransitions();
 		HashMap<Integer, StaticSets> tmpMap = new HashMap<Integer, StaticSets>();
+		HashMap<Integer, Integer> tranFiringFreq = new HashMap<Integer, Integer>(allTransitions.length);
 		for (Transition curTran: allTransitions) {
 			StaticSets curStatic = new StaticSets(sgList[0].getLpn(), curTran, allTransitions);
 			curStatic.buildDisableSet();
 			curStatic.buildEnableSet();
 			curStatic.buildModifyAssignSet();
 			tmpMap.put(curTran.getIndex(), curStatic);
+			tranFiringFreq.put(curTran.getIndex(), 0);
 		}
-		staticSetsMap.put(sgList[0].getLpn().getIndex(), tmpMap);
-//		printStaticSetMap(staticSetsMap);
+		staticSetsMap.put(sgList[0].getLpn().getLpnIndex(), tmpMap);
+		//printStaticSetMap(staticSetsMap);
 		
 //		System.out.println("call getAmple on initStateArray at 0: ");
 		boolean init = true;
 		AmpleSet initAmple = new AmpleSet();
-		initAmple = sgList[0].getAmple(initStateArray[0], staticSetsMap, stateStack, init);
+		initAmple = sgList[0].getAmple(initStateArray[0], staticSetsMap, init, tranFiringFreq);
 		HashMap<State, LpnTranList> initEnabledSetTbl = (HashMap<State, LpnTranList>) sgList[0].copyEnabledSetTbl();
 		lpnTranStack.push(initAmple.getAmpleSet());
 		curIndexStack.push(0);
@@ -700,7 +708,7 @@ public class Analysis {
 //				System.out.println("curIndex = " + curIndex);
 				while (curIndex < numLpns) {
 //					System.out.println("call getEnabled on curStateArray at 1: ");
-					LpnTranList tmpAmpleTrans = (LpnTranList) (sgList[curIndex].getAmple(curStateArray[curIndex], staticSetsMap, stateStack, init)).getAmpleSet();
+					LpnTranList tmpAmpleTrans = (LpnTranList) (sgList[curIndex].getAmple(curStateArray[curIndex], staticSetsMap, init, tranFiringFreq)).getAmpleSet();
 					curAmpleTrans = tmpAmpleTrans.clone();
 					//printTransitionSet(curEnabled, "curEnabled set");
 					if (curAmpleTrans.size() > 0) {
@@ -727,8 +735,14 @@ public class Analysis {
 //			System.out.println("###################");			
 //			System.out.println("Fired transition: " + firedTran.getName());
 //			System.out.println("###################");
+			Integer freq = tranFiringFreq.get(firedTran.getIndex()) + 1;
+			tranFiringFreq.put(firedTran.getIndex(), freq);
+//			System.out.println("~~~~~~tranFiringFreq~~~~~~~");
+//			printHashMap(tranFiringFreq, allTransitions);
 			State[] nextStateArray = sgList[curIndex].fire(sgList, curStateArray, firedTran);
 			tranFiringCnt++;
+			
+			
 
 			// Check if the firedTran causes disabling error or deadlock.
 			@SuppressWarnings("unchecked")
@@ -746,10 +760,10 @@ public class Analysis {
 					init = false;
 				}
 				else
-					ampleList = sg_tmp.getAmple(curStateArray[i], staticSetsMap, stateStack, init);
+					ampleList = sg_tmp.getAmple(curStateArray[i], staticSetsMap, init, tranFiringFreq);
 				curAmpleArray[i] = ampleList.getAmpleSet();
 //				System.out.println("call getAmpleRefinedCycleRule on nextStateArray at 3: i = " + i);
-				ampleList = sg_tmp.getAmpleRefinedCycleRule(curStateArray[i], nextStateArray[i], staticSetsMap, stateStack, init, cycleClosingMthdIndex);
+				ampleList = sg_tmp.getAmpleRefinedCycleRule(curStateArray[i], nextStateArray[i], staticSetsMap, stateStack, stateStackTop, init, cycleClosingMthdIndex, i, tranFiringFreq);
 				nextAmpleArray[i] = ampleList.getAmpleSet();
 				if (!updatedAmpleDueToCycleRule && ampleList.getAmpleChanged()) {
 					updatedAmpleDueToCycleRule = true;
@@ -773,7 +787,7 @@ public class Analysis {
 				}
 			}
 
-			if (Analysis.deadLock(sgList, nextStateArray, staticSetsMap, stateStack, init) == true) {
+			if (Analysis.deadLock(sgList, nextStateArray, staticSetsMap, init, tranFiringFreq) == true) {
 				System.out.println("*** Verification failed: deadlock.");
 				failure = true;
 				break main_while_loop;
@@ -824,6 +838,14 @@ public class Analysis {
 		return sgList[0];
 	}
 	
+	private void printHashMap(HashMap<Integer, Integer> tranFiringFreq, Transition[] allTransitions) {
+		for (Integer curIndex : tranFiringFreq.keySet()) {
+			Transition curTran = allTransitions[curIndex];
+			System.out.println(curTran.getName() + "(" + curIndex + ")" + " -> " + tranFiringFreq.get(curIndex));
+		}
+		
+	}
+
 	private void printStaticSetMap(
 			HashMap<Integer, HashMap<Integer, StaticSets>> staticSetsMap) {
 		System.out.println("^^^^^^^^^^^^ staticSetsMap ^^^^^^^^^^^^");
@@ -1932,7 +1954,7 @@ public class Analysis {
 		@SuppressWarnings("unchecked")
 		LinkedList<Transition>[] initEnabledArray = new LinkedList[arraySize];
 		for (int i = 0; i < arraySize; i++) {
-			lpnList[i].getLpn().setIndex(i);
+			lpnList[i].getLpn().setLpnIndex(i);
 			initEnabledArray[i] = lpnList[i].getEnabled(initStateArray[i]);
 		}
 		
@@ -2037,7 +2059,7 @@ public class Analysis {
 			@SuppressWarnings("unchecked")
 			LinkedList<Transition>[] nextEnabledArray = new LinkedList[arraySize];
 			for (int i = 0; i < arraySize; i++) {
-				lpnList[i].getLpn().setIndex(i);
+				lpnList[i].getLpn().setLpnIndex(i);
 				StateGraph lpn_tmp = lpnList[i];
 				LinkedList<Transition> enabledList = lpn_tmp.getEnabled(curStateArray[i]);
 				curEnabledArray[i] = enabledList;
@@ -2213,7 +2235,7 @@ public class Analysis {
 						newCurEnabledArray[i] = new LpnTranList();
 
 					for (Transition tran : ampleSet)
-						newCurEnabledArray[tran.getLpn().getIndex()].addLast(tran);
+						newCurEnabledArray[tran.getLpn().getLpnIndex()].addLast(tran);
 
 					sortedAmpleSet = new LpnTranList();
 					for (int i = 0; i < arraySize; i++) {
@@ -2285,11 +2307,11 @@ public class Analysis {
 	 * @return
 	 */
 	// Called by search search_dfsPORrefinedCycleRule
-	public static boolean deadLock(StateGraph[] lpnArray, State[] stateArray, HashMap<Integer, HashMap<Integer, StaticSets>> staticSetsMap, HashSet<PrjState> stateStack, boolean init) {
+	public static boolean deadLock(StateGraph[] lpnArray, State[] stateArray, HashMap<Integer, HashMap<Integer, StaticSets>> staticSetsMap, boolean init, HashMap<Integer, Integer> tranFiringFreq) {
 		boolean deadlock = true;
 		//System.out.println("@deadlock:");
 		for (int i = 0; i < stateArray.length; i++) {
-			LinkedList<Transition> tmp = lpnArray[i].getAmple(stateArray[i], staticSetsMap, stateStack,init).getAmpleSet();
+			LinkedList<Transition> tmp = lpnArray[i].getAmple(stateArray[i], staticSetsMap,init, tranFiringFreq).getAmpleSet();
 			if (tmp.size() > 0) {
 				deadlock = false;
 				break;
