@@ -31,7 +31,7 @@ public class DynamicGillespie {
 	
 	public void simulate(String SBMLFileName, String outputDirectory, double timeLimit, 
 			double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval, 
-			int runs, JLabel progressLabel, JFrame running) {
+			int runs, JLabel progressLabel, JFrame running, double stoichAmpValue) {
 		
 		String progressText = progressLabel.getText();
 		
@@ -43,10 +43,10 @@ public class DynamicGillespie {
 			
 			if (simulatorType.equals("cr"))
 				simulator = new SimulatorSSACR(SBMLFileName, outputDirectory, timeLimit, 
-						maxTimeStep, randomSeed, progress, printInterval);
+						maxTimeStep, randomSeed, progress, printInterval, stoichAmpValue);
 			else if (simulatorType.equals("direct"))
 				simulator = new SimulatorSSADirect(SBMLFileName, outputDirectory, timeLimit, 
-						maxTimeStep, randomSeed, progress, printInterval);
+						maxTimeStep, randomSeed, progress, printInterval, stoichAmpValue);
 		}
 		catch (Exception e) {
 			e.printStackTrace();

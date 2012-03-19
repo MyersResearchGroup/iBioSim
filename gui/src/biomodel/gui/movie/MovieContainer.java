@@ -94,6 +94,9 @@ public class MovieContainer extends JPanel implements ActionListener {
 	
 	private boolean dynamic = false;
 	
+	private HashSet<String> previousSpeciesList = new HashSet<String>();
+	
+	
 	
 	/**
 	 * constructor
@@ -103,7 +106,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	 * @param biosim
 	 * @param gcm2sbml
 	 */
-	public MovieContainer(AnalysisView reb2sac_, BioModel gcm, Gui biosim, ModelEditor gcm2sbml) {
+ 	public MovieContainer(AnalysisView reb2sac_, BioModel gcm, Gui biosim, ModelEditor gcm2sbml) {
 		
 		super(new BorderLayout());
 		
@@ -515,12 +518,35 @@ public class MovieContainer extends JPanel implements ActionListener {
 					
 					if (gridAppearance != null)
 						schematic.getGraph().setGridRectangleAnimationValue(gridID, gridAppearance);
+					else {
+						
+						if (dynamic == true) {
+							for (String species : speciesTSData.keySet()) {
+								
+								//if this is a new row/col location due to a dynamic model,
+								//take its appearance from its neighbor
+								if (previousSpeciesList.contains(species) == false && 
+										species.contains(gridID)) {
+								
+									//find a neighbor to take an appearance from
+									gridAppearance = 
+										movieScheme.getNearestGridAppearance(row, col, species, speciesTSData);
+									
+									if (gridAppearance != null)
+										schematic.getGraph().setGridRectangleAnimationValue(gridID, gridAppearance);
+								}
+							}
+						}
+					}
 				}
 			}			
 		}
 		
 		if (refresh)
 			schematic.getGraph().refresh();
+		
+		previousSpeciesList.clear();
+		previousSpeciesList.addAll(speciesTSData.keySet());
 	}
 
 	/**

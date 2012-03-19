@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.GradientPaint;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -501,6 +502,40 @@ public class MovieScheme {
 		}
 		
 		return null;
+	}
+	
+	public MovieAppearance getNearestGridAppearance(int row, int col, 
+			String gridSpeciesID, HashMap<String, Double> speciesTSData) {
+		
+		Scheme nearestScheme = null;
+		int closestRow = 99999, closestCol = 99999;
+		
+		//loop through species schemes
+		for (String speciesID : speciesSchemes.keySet()) {
+			
+			if (speciesID.contains("ROW") && speciesID.contains("COL")) {
+				
+				int nRow = Integer.parseInt(speciesID.split("_")[0].replace("ROW",""));
+				int nCol = Integer.parseInt(speciesID.split("_")[1].split("__")[0].replace("COL",""));
+				
+				if ((Math.abs(nRow - row) + Math.abs(nCol - col)) < 
+						Math.abs((closestRow - row) + Math.abs(closestCol - col))) {
+					
+					closestRow = nRow;
+					closestCol = nCol;
+					nearestScheme = speciesSchemes.get(speciesID);
+				}				
+			}
+		}
+		
+		//add the scheme
+		if (nearestScheme != null) {			
+			speciesSchemes.put(gridSpeciesID, nearestScheme);
+		}
+		else
+			return null;		
+		
+		return createAppearance(gridSpeciesID.split("__")[0], GlobalConstants.GRID_RECTANGLE, speciesTSData);
 	}
 	
 	/**

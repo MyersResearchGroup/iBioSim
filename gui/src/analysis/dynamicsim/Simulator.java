@@ -191,13 +191,14 @@ public abstract class Simulator {
 	protected int maxCol = Integer.MIN_VALUE;
 	
 	protected boolean stoichAmpBoolean = true;
-	protected double stoichAmpGridValue = 5.0;
-	protected double stoichAmpMembraneValue = 5.0;
+	protected double stoichAmpGridValue = 10.0;
 	
 	//true means the model is dynamic
 	protected boolean dynamicBoolean = false;
 	
 	protected int diffCount = 0;
+	protected int totalCount = 0;
+	protected int memCount = 0;
 
 	PsRandom prng = new PsRandom();
 	
@@ -216,7 +217,8 @@ public abstract class Simulator {
 	 * @throws XMLStreamException
 	 */
 	public Simulator(String SBMLFileName, String outputDirectory, double timeLimit, 
-			double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval, Long initializationTime) 
+			double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval, Long initializationTime,
+			double stoichAmpValue) 
 	throws IOException, XMLStreamException {
 		
 		long initTime1 = System.nanoTime();
@@ -227,6 +229,11 @@ public abstract class Simulator {
 		this.progress = progress;
 		this.printInterval = printInterval;
 		this.outputDirectory = outputDirectory;
+		
+		if (stoichAmpValue <= 1.0)
+			stoichAmpBoolean = false;
+		else
+			stoichAmpGridValue = stoichAmpValue;
 		
 		SBMLReader reader = new SBMLReader();
 		SBMLDocument document = null;
@@ -3176,6 +3183,10 @@ public abstract class Simulator {
 		
 		if (selectedReactionID.contains("_Diffusion_"))
 			++diffCount;
+		else if (selectedReactionID.contains("MembraneDiffusion"))
+			++memCount;
+		
+		++totalCount;
 		
 		//these are sets of things that need to be re-evaluated or tested due to the reaction firing
 		HashSet<AssignmentRule> affectedAssignmentRuleSet = new HashSet<AssignmentRule>();

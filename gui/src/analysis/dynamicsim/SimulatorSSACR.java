@@ -50,11 +50,11 @@ public class SimulatorSSACR extends Simulator {
 	
 	
 	public SimulatorSSACR(String SBMLFileName, String outputDirectory, double timeLimit, 
-			double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval) 
+			double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval, double stoichAmpValue) 
 	throws IOException, XMLStreamException {
 		
 		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, randomSeed,
-				progress, printInterval, initializationTime);
+				progress, printInterval, initializationTime, stoichAmpValue);
 		
 		try {
 			initialize(randomSeed, 1);
@@ -301,7 +301,11 @@ public class SimulatorSSACR extends Simulator {
 			}
 		}
 		
-		System.err.println(diffCount);
+//		System.err.println("grid " + diffCount);
+//		System.err.println((double) diffCount / (double) totalCount);
+//		System.err.println("membrane " + memCount);
+//		System.err.println((double) memCount / (double) totalCount);
+//		System.err.println("total " + totalCount);
 	}
 
 	/**

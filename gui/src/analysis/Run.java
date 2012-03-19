@@ -5,6 +5,7 @@ import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import javax.swing.*;
@@ -72,7 +73,7 @@ public class Run implements ActionListener {
 	public void createProperties(double timeLimit, String useInterval, double printInterval, double minTimeStep,
 			double timeStep, double absError, String outDir, long rndSeed, int run, String[] intSpecies,
 			String printer_id, String printer_track_quantity, String[] getFilename, String selectedButtons,
-			Component component, String filename, double rap1, double rap2, double qss, int con, 
+			Component component, String filename, double rap1, double rap2, double qss, int con, double stoichAmp,
 			JList preAbs, JList loopAbs, JList postAbs, AbstPane abstPane) {
 		Properties abs = new Properties();
 		if (selectedButtons.contains("abs") || selectedButtons.contains("nary")) {
@@ -167,6 +168,7 @@ public class Run implements ActionListener {
 		abs.setProperty("reb2sac.rapid.equilibrium.condition.2", "" + rap2);
 		abs.setProperty("reb2sac.qssa.condition.1", "" + qss);
 		abs.setProperty("reb2sac.operator.max.concentration.threshold", "" + con);
+		abs.setProperty("reb2sac.diffusion.stoichiometry.amplification.value", "" + stoichAmp);
 		if (selectedButtons.contains("none")) {
 			abs.setProperty("reb2sac.abstraction.method", "none");
 		}
@@ -1038,6 +1040,10 @@ public class Run implements ActionListener {
 				}
 				else {
 					Preferences biosimrc = Preferences.userRoot();
+					Properties properties = new Properties();
+					properties.load(new FileInputStream(directory + separator + 
+							theFile.replace(".xml","") + ".properties"));
+					
 					if (sim.equals("gillespieJava")) {
 						time1 = System.nanoTime();
 						int index = -1;
@@ -1056,20 +1062,30 @@ public class Run implements ActionListener {
 					}
 					else if (sim.equals("Gillespie SSA-CR (Java)")) {
 						
+						double stoichAmpValue = 
+							Double.parseDouble(properties.getProperty(
+									"reb2sac.diffusion.stoichiometry.amplification.value"));
+						
 						dynSim = new DynamicGillespie("cr");
 						String SBMLFileName = directory + separator + theFile;
 						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
-								timeStep, rndSeed, progress, printInterval, runs, progressLabel, running);						
+								timeStep, rndSeed, progress, printInterval, runs, progressLabel, running,
+								stoichAmpValue);						
 						exitValue = 0;
 						
 						return exitValue;
 					}
 					else if (sim.equals("Gillespie SSA-Direct (Java)")) {
+						
+						double stoichAmpValue = 
+							Double.parseDouble(properties.getProperty(
+									"reb2sac.diffusion.stoichiometry.amplification.value"));
 
 						dynSim = new DynamicGillespie("direct");					
 						String SBMLFileName = directory + separator + theFile;
 						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
-								timeStep, rndSeed, progress, printInterval, runs, progressLabel, running);						
+								timeStep, rndSeed, progress, printInterval, runs, progressLabel, running,
+								stoichAmpValue);						
 						exitValue = 0;
 						
 						return exitValue;
