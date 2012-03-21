@@ -8233,6 +8233,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					// The new Schematic
 					if (className.indexOf("MovieContainer") >= 0) {
 						((MovieContainer) selectedPanel).display();
+						((MovieContainer) selectedPanel).reloadGrid();
 					}
 				}
 			}
@@ -9116,6 +9117,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			exportSvg.setEnabled(true);
 		}
 		else if (comp instanceof JTabbedPane) {
+			
 			Component component = ((JTabbedPane) comp).getSelectedComponent();
 			Component learnComponent = null;			
 			Boolean learn = false;
@@ -9188,6 +9190,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				runButton.setEnabled(true);
 				save.setEnabled(true);
 				run.setEnabled(true);
+				
+				for (Component c : ((JTabbedPane) comp).getComponents()) {
+					
+					if (c.getName().equals("ModelViewMovie"))
+						((MovieContainer)c).resetGridToOriginalSize();
+				}
 			}
 			else if (component instanceof SBML_Editor) {
 				saveButton.setEnabled(true);

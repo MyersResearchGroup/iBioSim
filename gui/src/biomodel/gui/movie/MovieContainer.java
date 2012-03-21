@@ -96,6 +96,9 @@ public class MovieContainer extends JPanel implements ActionListener {
 	
 	private HashSet<String> previousSpeciesList = new HashSet<String>();
 	
+	private int originalGridRows = 0;
+	private int originalGridCols = 0;
+	
 	
 	
 	/**
@@ -119,10 +122,17 @@ public class MovieContainer extends JPanel implements ActionListener {
 		this.analysisView = reb2sac_;
 		this.modelEditor = gcm2sbml;
 		this.movieScheme = new MovieScheme();
+		this.originalGridRows = gcm.getGrid().getNumRows();
+		this.originalGridCols = gcm.getGrid().getNumCols();
 		
 		this.playTimer = new Timer(0, playTimerEventHandler);
 		mode = PAUSED;
-	}	
+	}
+ 	
+ 	public void resetGridToOriginalSize() {
+ 		
+ 		gcm.getGrid().resetGrid(originalGridRows, originalGridCols);
+ 	}
 	
 	
 	//TSD FILE METHODS

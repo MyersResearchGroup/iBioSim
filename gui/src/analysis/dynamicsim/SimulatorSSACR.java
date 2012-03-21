@@ -363,7 +363,7 @@ public class SimulatorSSACR extends Simulator {
 		//STEP OB: create and populate initial groups		
 		createAndPopulateInitialGroups();
 		
-		setupEvents();		
+		setupEvents();
 		setupForOutput(randomSeed, runNumber);
 		
 		if (dynamicBoolean == true) {

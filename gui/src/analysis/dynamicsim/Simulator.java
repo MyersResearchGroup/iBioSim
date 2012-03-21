@@ -152,6 +152,7 @@ public abstract class Simulator {
 	protected ListOf<Reaction> initialReactions = new ListOf<Reaction>();
 	protected ListOf<Event> initialEvents = new ListOf<Event>();
 	protected ListOf<Parameter> initialParameters = new ListOf<Parameter>();
+	protected ListOf<Compartment> initialCompartments = new ListOf<Compartment>();
 	
 	//propensity variables
 	protected double totalPropensity = 0.0;
@@ -190,7 +191,7 @@ public abstract class Simulator {
 	protected int maxRow = Integer.MIN_VALUE;
 	protected int maxCol = Integer.MIN_VALUE;
 	
-	protected boolean stoichAmpBoolean = true;
+	protected boolean stoichAmpBoolean = false;
 	protected double stoichAmpGridValue = 10.0;
 	
 	//true means the model is dynamic
@@ -403,6 +404,7 @@ public abstract class Simulator {
 		initialReactions = model.getListOfReactions().clone();
 		initialEvents = model.getListOfEvents().clone();
 		initialParameters = model.getListOfParameters().clone();
+		initialCompartments = model.getListOfCompartments().clone();
 	}
 	
 	/**
@@ -1455,6 +1457,11 @@ public abstract class Simulator {
 			if (node.getType().equals(org.sbml.jsbml.ASTNode.Type.NAME_TIME)) {
 				
 				return currentTime;
+			}
+			//if it's a reaction id return the propensity
+			else if (reactionToPropensityMap.keySet().contains(node.getName())) {
+				
+				return reactionToPropensityMap.get(node.getName());
 			}
 			else {
 				
@@ -3041,95 +3048,101 @@ public abstract class Simulator {
 		while (triggeredEventQueue.size() > 0 && triggeredEventQueue.peek().fireTime <= currentTime) {
 			
 			EventToFire eventToFire = triggeredEventQueue.poll();
-			String eventToFireID = eventToFire.eventID;			
-			affectedReactionSet.addAll(eventToAffectedReactionSetMap.get(eventToFireID));			
+			String eventToFireID = eventToFire.eventID;
+			
+			if (eventToAffectedReactionSetMap.get(eventToFireID) != null)
+				affectedReactionSet.addAll(eventToAffectedReactionSetMap.get(eventToFireID));
+			
 			firedEvents.add(eventToFireID);
 			eventToPreviousTriggerValueMap.put(eventToFireID, true);
 			
-			//execute all assignments for this event
-			for (Object eventAssignment : eventToFire.eventAssignmentSet) {
+			//handle dynamic events
+			//the duplication method handles all event assignments
+			//so those only get executed here if it's not a dynamic event
+			if (eventToFire.eventID.contains("__Division__")) {
 				
-				String variable;
-				double assignmentValue;
+				String compartmentID = ((String[])eventToFire.eventID.split("__"))[0];
+				duplicateComponent(compartmentID, eventToFire.eventID);
+			}
+			else if (eventToFire.eventID.contains("__Death__")) {
 				
-				if (eventToUseValuesFromTriggerTimeMap.get(eventToFireID) == true)	{
+				String compartmentID = ((String[])eventToFire.eventID.split("__"))[0];
+				deadEvents = eraseComponent(compartmentID);
 				
-					variable = ((StringDoublePair) eventAssignment).string;
-					assignmentValue = ((StringDoublePair) eventAssignment).doub;
-				}
-				//assignment needs to be evaluated
-				else {
+				firedEvents.removeAll(deadEvents);
+				
+				if (deadEvents.size() > 0) {
 					
-					variable = ((EventAssignment) eventAssignment).getVariable();
-					assignmentValue = evaluateExpressionRecursive(((EventAssignment) eventAssignment).getMath());
-				}
-				
-				//update the species, but only if it's not a constant
-				if (variableToIsConstantMap.get(variable) == false) {
+					for (String eventID : deadEvents) {
+						
+						untriggeredEventSet.remove(eventID);
+						eventToPriorityMap.remove(eventID);
+						eventToDelayMap.remove(eventID);
+						eventToHasDelayMap.remove(eventID);
+						eventToTriggerPersistenceMap.remove(eventID);
+						eventToUseValuesFromTriggerTimeMap.remove(eventID);
+						eventToTriggerMap.remove(eventID);
+						eventToTriggerInitiallyTrueMap.remove(eventID);
+						eventToPreviousTriggerValueMap.remove(eventID);
+						eventToAssignmentSetMap.remove(eventID);
+						eventToAffectedReactionSetMap.remove(eventID);
+					}
 					
-					//these are in here because there's always a size event assignment
-					//for the size of the components array
-					if (eventToFire.eventID.contains("__Division__")) {
+					//copy the triggered event queue -- except the events that are now dead/removed
+					PriorityQueue<EventToFire> newTriggeredEventQueue = new PriorityQueue<EventToFire>(5, eventComparator);
+					
+					while (triggeredEventQueue.size() > 0) {
+					
+						EventToFire event = triggeredEventQueue.poll();
+						EventToFire eventToAdd = 
+							new EventToFire(event.eventID, (HashSet<Object>) event.eventAssignmentSet.clone(), event.fireTime);
 						
-						String compartmentID = ((String[])eventToFire.eventID.split("__"))[0];
-						duplicateComponent(compartmentID, eventToFire.eventID);
+						if (deadEvents.contains(event.eventID) == false)
+							newTriggeredEventQueue.add(eventToAdd);
 					}
-					else if (eventToFire.eventID.contains("__Death__")) {
-						
-						String compartmentID = ((String[])eventToFire.eventID.split("__"))[0];
-						deadEvents = eraseComponent(compartmentID);
-						
-						firedEvents.removeAll(deadEvents);
-						
-						if (deadEvents.size() > 0) {
-							
-							for (String eventID : deadEvents) {
-								
-								untriggeredEventSet.remove(eventID);
-								eventToPriorityMap.remove(eventID);
-								eventToDelayMap.remove(eventID);
-								eventToHasDelayMap.remove(eventID);
-								eventToTriggerPersistenceMap.remove(eventID);
-								eventToUseValuesFromTriggerTimeMap.remove(eventID);
-								eventToTriggerMap.remove(eventID);
-								eventToTriggerInitiallyTrueMap.remove(eventID);
-								eventToPreviousTriggerValueMap.remove(eventID);
-								eventToAssignmentSetMap.remove(eventID);
-								eventToAffectedReactionSetMap.remove(eventID);
-							}
-							
-							//copy the triggered event queue -- except the events that are now dead/removed
-							PriorityQueue<EventToFire> newTriggeredEventQueue = new PriorityQueue<EventToFire>(5, eventComparator);
-							
-							while (triggeredEventQueue.size() > 0) {
-							
-								EventToFire event = triggeredEventQueue.poll();
-								EventToFire eventToAdd = 
-									new EventToFire(event.eventID, (HashSet<Object>) event.eventAssignmentSet.clone(), event.fireTime);
-								
-								if (deadEvents.contains(event.eventID) == false)
-									newTriggeredEventQueue.add(eventToAdd);
-							}
-							
-							triggeredEventQueue = newTriggeredEventQueue;
-						}
-					}
-						
-					if (speciesToHasOnlySubstanceUnitsMap.get(variable) != null && 
-							speciesToHasOnlySubstanceUnitsMap.get(variable) == false)
-						variableToValueMap.put(variable, 
-								(int)(assignmentValue / speciesToCompartmentSizeMap.get(variable)));				
-					else				
-						variableToValueMap.put(variable, assignmentValue);
+					
+					triggeredEventQueue = newTriggeredEventQueue;
 				}
+			}
+			else {
 				
-				//if this variable that was just updated is part of an assignment rule (RHS)
-				//then re-evaluate that assignment rule
-				if (noAssignmentRulesFlag == false && variableToIsInAssignmentRuleMap.get(variable) == true) 
-					affectedAssignmentRuleSet.addAll(variableToAffectedAssignmentRuleSetMap.get(variable));
-				
-				if (noConstraintsFlag == false && variableToIsInConstraintMap.get(variable) == true)
-					affectedConstraintSet.addAll(variableToAffectedConstraintSetMap.get(variable));
+				//execute all assignments for this event
+				for (Object eventAssignment : eventToFire.eventAssignmentSet) {
+					
+					String variable;
+					double assignmentValue;
+					
+					if (eventToUseValuesFromTriggerTimeMap.get(eventToFireID) == true)	{
+					
+						variable = ((StringDoublePair) eventAssignment).string;
+						assignmentValue = ((StringDoublePair) eventAssignment).doub;
+					}
+					//assignment needs to be evaluated
+					else {
+						
+						variable = ((EventAssignment) eventAssignment).getVariable();
+						assignmentValue = evaluateExpressionRecursive(((EventAssignment) eventAssignment).getMath());
+					}
+					
+					//update the species, but only if it's not a constant
+					if (variableToIsConstantMap.get(variable) == false) {
+							
+						if (speciesToHasOnlySubstanceUnitsMap.get(variable) != null && 
+								speciesToHasOnlySubstanceUnitsMap.get(variable) == false)
+							variableToValueMap.put(variable, 
+									(int)(assignmentValue / speciesToCompartmentSizeMap.get(variable)));				
+						else				
+							variableToValueMap.put(variable, assignmentValue);
+					}
+					
+					//if this variable that was just updated is part of an assignment rule (RHS)
+					//then re-evaluate that assignment rule
+					if (noAssignmentRulesFlag == false && variableToIsInAssignmentRuleMap.get(variable) == true) 
+						affectedAssignmentRuleSet.addAll(variableToAffectedAssignmentRuleSetMap.get(variable));
+					
+					if (noConstraintsFlag == false && variableToIsInConstraintMap.get(variable) == true)
+						affectedConstraintSet.addAll(variableToAffectedConstraintSetMap.get(variable));
+				} //end loop through assignments				
 			}
 		}
 		
@@ -3455,10 +3468,11 @@ public abstract class Simulator {
 	 */
 	protected void resetModel() {
 		
-		model.setListOfSpecies(initialSpecies);
-		model.setListOfReactions(initialReactions);
-		model.setListOfEvents(initialEvents);
-		model.setListOfParameters(initialParameters);
+		model.setListOfSpecies(initialSpecies.clone());
+		model.setListOfReactions(initialReactions.clone());
+		model.setListOfEvents(initialEvents.clone());
+		model.setListOfParameters(initialParameters.clone());
+		model.setListOfCompartments(initialCompartments.clone());
 	}
 	
 	/**
