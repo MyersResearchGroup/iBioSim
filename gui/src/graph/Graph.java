@@ -836,6 +836,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									name = "term-time";
 									simDir.remove(i);
 								}
+								else if (name.equals("Constraint Termination")) {
+									name = "sim-rep";
+									simDir.remove(i);
+								}
+								else if (name.equals("Bifurcation Statistics")) {
+									name = "bifurcation";
+									simDir.remove(i);
+								}
 								else {
 									simDir.remove(i);
 								}
@@ -907,6 +915,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									}
 									else if (name.equals("Termination Time")) {
 										name = "term-time";
+										((IconNode) simDir.getChildAt(i)).remove(j);
+									}
+									else if (name.equals("Constraint Termination")) {
+										name = "sim-rep";
+										((IconNode) simDir.getChildAt(i)).remove(j);
+									}
+									else if (name.equals("Bifurcation Statistics")) {
+										name = "bifurcation";
 										((IconNode) simDir.getChildAt(i)).remove(j);
 									}
 									else {
@@ -1038,6 +1054,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					else if (name.equals("Termination Time")) {
 						name = "term-time";
 					}
+					else if (name.equals("Constraint Termination")) {
+						name = "sim-rep";
+					}
+					else if (name.equals("Bifurcation Statistics")) {
+						name = "bifurcation";
+					}
 					name += "." + printer_id.substring(0, printer_id.length() - 8);
 					File dir = new File(outDir + separator + name);
 					if (dir.isDirectory()) {
@@ -1109,6 +1131,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					}
 					else if (name.equals("Termination Time")) {
 						name = "term-time";
+					}
+					else if (name.equals("Constraint Termination")) {
+						name = "sim-rep";
+					}
+					else if (name.equals("Bifurcation Statistics")) {
+						name = "bifurcation";
 					}
 					name += "." + printer_id.substring(0, printer_id.length() - 8);
 					File dir = new File(outDir + separator + name);
@@ -1682,6 +1710,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		boolean addTerm = false;
 		boolean addPercent = false;
 		boolean addConst = false;
+		boolean addBif = false;
 		directories = new ArrayList<String>();
 		for (String file : files) {
 			
@@ -1705,6 +1734,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 				else if (file.contains("sim-rep")) {
 					addConst = true;
+				}
+				else if (file.contains("bifurcation")) {
+					addBif = true;
 				}
 				else {
 					IconNode n = new IconNode(file.substring(0, file.length() - 4), file.substring(0, file.length() - 4));
@@ -1769,6 +1801,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					boolean addTerm2 = false;
 					boolean addPercent2 = false;
 					boolean addConst2 = false;
+					boolean addBif2 = false;
 					for (String f : files3) {
 						if (f.contains(printer_id.substring(0, printer_id.length() - 8)) ||
 								f.contains(".dtsd")) {
@@ -1789,6 +1822,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							}
 							else if (f.contains("sim-rep")) {
 								addConst2 = true;
+							}
+							else if (f.contains("bifurcation")) {
+								addBif2 = true;
 							}
 							else {
 								IconNode n = new IconNode(f.substring(0, f.length() - 4), f.substring(0, f.length() - 4));
@@ -1846,6 +1882,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								boolean addTerm3 = false;
 								boolean addPercent3 = false;
 								boolean addConst3 = false;
+								boolean addBif3 = false;
 								for (String f2 : files2) {
 									if (f2.contains(printer_id.substring(0, printer_id.length() - 8))
 											|| f2.contains(".dtsd")) {
@@ -1866,6 +1903,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 										}
 										else if (f2.contains("sim-rep")) {
 											addConst3 = true;
+										}
+										else if (f2.contains("bifurcation")) {
+											addBif3 = true;
 										}
 										else {
 											IconNode n = new IconNode(f2.substring(0, f2.length() - 4), f2.substring(0, f2.length() - 4));
@@ -1991,6 +2031,24 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									n.setIconName("");
 									for (GraphSpecies g : graphed) {
 										if (g.getRunNumber().equals("Constraint Termination")
+												&& g.getDirectory().equals(d.getName() + separator + d2.getName())) {
+											n.setIcon(TextIcons.getIcon("g"));
+											n.setIconName("" + (char) 10003);
+											d2.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+											d2.setIconName("" + (char) 10003);
+											d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+											d.setIconName("" + (char) 10003);
+											simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+											simDir.setIconName("" + (char) 10003);
+										}
+									}
+								}
+								if (addBif3) {
+									IconNode n = new IconNode("Bifurcation Statistics", "Bifurcation Statistics");
+									d2.add(n);
+									n.setIconName("");
+									for (GraphSpecies g : graphed) {
+										if (g.getRunNumber().equals("Bifurcation Statistics")
 												&& g.getDirectory().equals(d.getName() + separator + d2.getName())) {
 											n.setIcon(TextIcons.getIcon("g"));
 											n.setIconName("" + (char) 10003);
@@ -2181,6 +2239,21 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							}
 						}
 					}
+					if (addBif2) {
+						IconNode n = new IconNode("Bifurcation Statistics", "Bifurcation Statistics");
+						d.add(n);
+						n.setIconName("");
+						for (GraphSpecies g : graphed) {
+							if (g.getRunNumber().equals("Bifurcation Statistics") && g.getDirectory().equals(d.getName())) {
+								n.setIcon(TextIcons.getIcon("g"));
+								n.setIconName("" + (char) 10003);
+								d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+								d.setIconName("" + (char) 10003);
+								simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+								simDir.setIconName("" + (char) 10003);
+							}
+						}
+					}
 					int run = 1;
 					String r = null;
 					for (String s : files3) {
@@ -2334,6 +2407,19 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			n.setIconName("");
 			for (GraphSpecies g : graphed) {
 				if (g.getRunNumber().equals("Constraint Termination") && g.getDirectory().equals("")) {
+					n.setIcon(TextIcons.getIcon("g"));
+					n.setIconName("" + (char) 10003);
+					simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+					simDir.setIconName("" + (char) 10003);
+				}
+			}
+		}
+		if (addBif) {
+			IconNode n = new IconNode("Bifurcation Statistics", "Bifurcation Statistics");
+			simDir.add(n);
+			n.setIconName("");
+			for (GraphSpecies g : graphed) {
+				if (g.getRunNumber().equals("Bifurcation Statistics") && g.getDirectory().equals("")) {
 					n.setIcon(TextIcons.getIcon("g"));
 					n.setIconName("" + (char) 10003);
 					simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
@@ -3025,6 +3111,39 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									}
 								}
 							}
+							else if (g.getRunNumber().equals("Bifurcation Statistics")
+									&& new File(outDir + separator + "bifurcation" + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
+								ArrayList<ArrayList<Double>> data;
+								if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
+									data = allData.get(g.getRunNumber() + " " + g.getDirectory());
+								}
+								else {
+									data = readData(outDir + separator + "bifurcation." + printer_id.substring(0, printer_id.length() - 8), g
+											.getRunNumber().toLowerCase(), null, false);
+									for (int i = 2; i < graphSpecies.size(); i++) {
+										String index = graphSpecies.get(i);
+										ArrayList<Double> index2 = data.get(i);
+										int j = i;
+										while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+											graphSpecies.set(j, graphSpecies.get(j - 1));
+											data.set(j, data.get(j - 1));
+											j = j - 1;
+										}
+										graphSpecies.set(j, index);
+										data.set(j, index2);
+									}
+									allData.put(g.getRunNumber() + " " + g.getDirectory(), data);
+								}
+								graphData.add(new XYSeries(g.getSpecies()));
+								if (data.size() != 0) {
+									for (int i = 0; i < (data.get(0)).size(); i++) {
+										if (i < data.get(g.getXNumber()).size() && i < data.get(g.getNumber() + 1).size()) {
+											graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
+													(data.get(g.getNumber() + 1)).get(i));
+										}
+									}
+								}
+							}
 							else {
 								boolean ableToGraph = false;
 								try {
@@ -3362,6 +3481,41 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									}
 								}
 							} //end constraint termination
+							else if (g.getRunNumber().equals("Bifurcation Statistics")
+									&& new File(outDir + separator + g.getDirectory() + separator + "bifurcation" + "."
+											+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+								ArrayList<ArrayList<Double>> data;
+								if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
+									data = allData.get(g.getRunNumber() + " " + g.getDirectory());
+								}
+								else {
+									data = readData(
+											outDir + separator + g.getDirectory() + separator + "bifurcation."
+													+ printer_id.substring(0, printer_id.length() - 8), g.getRunNumber().toLowerCase(), null, false);
+									for (int i = 2; i < graphSpecies.size(); i++) {
+										String index = graphSpecies.get(i);
+										ArrayList<Double> index2 = data.get(i);
+										int j = i;
+										while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+											graphSpecies.set(j, graphSpecies.get(j - 1));
+											data.set(j, data.get(j - 1));
+											j = j - 1;
+										}
+										graphSpecies.set(j, index);
+										data.set(j, index2);
+									}
+									allData.put(g.getRunNumber() + " " + g.getDirectory(), data);
+								}
+								graphData.add(new XYSeries(g.getSpecies()));
+								if (data.size() != 0) {
+									for (int i = 0; i < (data.get(0)).size(); i++) {
+										if (i < data.get(g.getXNumber()).size() && i < data.get(g.getNumber() + 1).size()) {
+											graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
+													(data.get(g.getNumber() + 1)).get(i));
+										}
+									}
+								}
+							}
 							else {
 								boolean ableToGraph = false;
 								try {
@@ -3907,6 +4061,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						&& new File(outDir + separator + "sim-rep" + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
 					readGraphSpecies(outDir + separator + "sim-rep" + "." + printer_id.substring(0, printer_id.length() - 8));
 				}
+				else if (selected.equals("Bifurcation Statistics")
+						&& new File(outDir + separator + "sim-rep" + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
+					readGraphSpecies(outDir + separator + "sim-rep" + "." + printer_id.substring(0, printer_id.length() - 8));
+				}
 				else {
 					int nextOne = 1;
 					while (!new File(outDir + separator + "run-" + nextOne + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
@@ -3960,6 +4118,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						&& new File(outDir + separator + directory + separator + "sim-rep" + "." + printer_id.substring(0, printer_id.length() - 8))
 								.exists()) {
 					readGraphSpecies(outDir + separator + directory + separator + "sim-rep" + "." + printer_id.substring(0, printer_id.length() - 8));
+				}
+				else if (selected.equals("Bifurcation Statistics")
+						&& new File(outDir + separator + directory + separator + "bifurcation" + "." + printer_id.substring(0, printer_id.length() - 8))
+								.exists()) {
+					readGraphSpecies(outDir + separator + directory + separator + "bifurcation" + "." + printer_id.substring(0, printer_id.length() - 8));
 				}
 				else {
 					int nextOne = 1;
@@ -6031,6 +6194,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									&& new File(outDir + separator + "sim-rep" + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
 								ableToGraph = true;
 							}
+							else if (g.getRunNumber().equals("Bifurcation Statistics")
+									&& new File(outDir + separator + "bifurcation" + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
+								ableToGraph = true;
+							}
 						}
 						if (ableToGraph) {
 							int nextOne = 1;
@@ -6072,6 +6239,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								else if (g.getRunNumber().equals("Constraint Termination")
 										&& new File(outDir + separator + "sim-rep" + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
 									readGraphSpecies(outDir + separator + "sim-rep" + "." + printer_id.substring(0, printer_id.length() - 8));
+								}
+								else if (g.getRunNumber().equals("Bifurcation Statistics")
+										&& new File(outDir + separator + "bifurcation" + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
+									readGraphSpecies(outDir + separator + "bifurcation" + "." + printer_id.substring(0, printer_id.length() - 8));
 								}
 								else {
 									while (!new File(outDir + separator + "run-" + nextOne + "." + printer_id.substring(0, printer_id.length() - 8))
@@ -6129,6 +6300,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								else if (g.getRunNumber().equals("Constraint Termination")
 										&& new File(outDir + separator + "sim-rep" + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
 									data = readData(outDir + separator + "sim-rep." + printer_id.substring(0, printer_id.length() - 8), g
+											.getRunNumber().toLowerCase(), null, false);
+								}
+								else if (g.getRunNumber().equals("Bifurcation Statistics")
+										&& new File(outDir + separator + "bifurcation" + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
+									data = readData(outDir + separator + "bifurcation." + printer_id.substring(0, printer_id.length() - 8), g
 											.getRunNumber().toLowerCase(), null, false);
 								}
 								else {
@@ -6307,6 +6483,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 											+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 								ableToGraph = true;
 							}
+							else if (g.getRunNumber().equals("Bifurcation Statistics")
+									&& new File(outDir + separator + g.getDirectory() + separator + "bifurcation" + "."
+											+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+								ableToGraph = true;
+							}
 						}
 						if (ableToGraph) {
 							int nextOne = 1;
@@ -6354,6 +6535,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 										&& new File(outDir + separator + g.getDirectory() + separator + "sim-rep" + "."
 												+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 									readGraphSpecies(outDir + separator + g.getDirectory() + separator + "sim-rep" + "."
+											+ printer_id.substring(0, printer_id.length() - 8));
+								}
+								else if (g.getRunNumber().equals("Bifurcation Statistics")
+										&& new File(outDir + separator + g.getDirectory() + separator + "bifurcation" + "."
+												+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+									readGraphSpecies(outDir + separator + g.getDirectory() + separator + "bifurcation" + "."
 											+ printer_id.substring(0, printer_id.length() - 8));
 								}
 								else {
@@ -6421,6 +6608,13 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 												+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 									data = readData(
 											outDir + separator + g.getDirectory() + separator + "sim-rep."
+													+ printer_id.substring(0, printer_id.length() - 8), g.getRunNumber().toLowerCase(), null, false);
+								}
+								else if (g.getRunNumber().equals("Bifurcation Statistics")
+										&& new File(outDir + separator + g.getDirectory() + separator + "bifurcation" + "."
+												+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+									data = readData(
+											outDir + separator + g.getDirectory() + separator + "bifurcation."
 													+ printer_id.substring(0, printer_id.length() - 8), g.getRunNumber().toLowerCase(), null, false);
 								}
 								else {
