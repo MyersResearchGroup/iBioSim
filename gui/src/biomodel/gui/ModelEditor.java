@@ -265,6 +265,9 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				new EditCommand("Edit " + list.getName(), list).run();
 			}
 		}
+		
+		System.err.println("reloading");
+		schematic.reloadGrid();
 	}
 
 	public void mouseEntered(MouseEvent e) {

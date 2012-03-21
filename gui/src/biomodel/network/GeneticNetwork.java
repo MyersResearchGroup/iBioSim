@@ -584,8 +584,7 @@ public class GeneticNetwork {
 			
 			XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);
 			dynamicEvent.setAnnotation(node);
-		}
-		
+		}		
 		
 		//replace all Type=Grid occurences with more complete information
 		for (int i = 0; i < document.getModel().getNumReactions(); ++i) {
