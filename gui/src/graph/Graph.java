@@ -4062,8 +4062,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					readGraphSpecies(outDir + separator + "sim-rep" + "." + printer_id.substring(0, printer_id.length() - 8));
 				}
 				else if (selected.equals("Bifurcation Statistics")
-						&& new File(outDir + separator + "sim-rep" + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
-					readGraphSpecies(outDir + separator + "sim-rep" + "." + printer_id.substring(0, printer_id.length() - 8));
+						&& new File(outDir + separator + "bifurcation" + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
+					readGraphSpecies(outDir + separator + "bifurcation" + "." + printer_id.substring(0, printer_id.length() - 8));
 				}
 				else {
 					int nextOne = 1;
