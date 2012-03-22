@@ -2856,7 +2856,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						
 						if (!g.getRunNumber().equals("Average") && !g.getRunNumber().equals("Variance")
 								&& !g.getRunNumber().equals("Standard Deviation") && !g.getRunNumber().equals("Termination Time")
-								&& !g.getRunNumber().equals("Percent Termination") && !g.getRunNumber().equals("Constraint Termination")) {
+								&& !g.getRunNumber().equals("Percent Termination") && !g.getRunNumber().equals("Constraint Termination")
+								&& !g.getRunNumber().equals("Bifurcation Statistics")) {
 							
 							if (new File(outDir + separator + g.getRunNumber() + "." 
 									+ printer_id.substring(0, printer_id.length() - 8)).exists() ||
@@ -3212,7 +3213,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						
 						if (!g.getRunNumber().equals("Average") && !g.getRunNumber().equals("Variance")
 								&& !g.getRunNumber().equals("Standard Deviation") && !g.getRunNumber().equals("Termination Time")
-								&& !g.getRunNumber().equals("Percent Termination") && !g.getRunNumber().equals("Constraint Termination")) {
+								&& !g.getRunNumber().equals("Percent Termination") && !g.getRunNumber().equals("Constraint Termination")
+								&& !g.getRunNumber().equals("Bifurcation Statistics")) {
 							
 							if (new File(outDir + separator + g.getDirectory() + separator + g.getRunNumber() + "."
 									+ printer_id.substring(0, printer_id.length() - 8)).exists()
@@ -3701,6 +3703,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						select = 0;
 					}
 					else if (selected.equals("Constraint Termination")) {
+						select = 0;
+					}
+					else if (selected.equals("Bifurcation Statistics")) {
 						select = 0;
 					}
 					else {
