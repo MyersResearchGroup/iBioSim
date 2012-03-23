@@ -637,12 +637,14 @@ public class Analysis {
 		HashMap<Integer, StaticSets> tmpMap = new HashMap<Integer, StaticSets>();
 		HashMap<Integer, Integer> tranFiringFreq = new HashMap<Integer, Integer>(allTransitions.length);
 		for (Transition curTran: allTransitions) {
+//			System.out.println("Static pieces for " + curTran.getName() + " :");
 			StaticSets curStatic = new StaticSets(sgList[0].getLpn(), curTran, allTransitions);
 			curStatic.buildDisableSet();
 			curStatic.buildEnableSet();
 			curStatic.buildModifyAssignSet();
 			tmpMap.put(curTran.getIndex(), curStatic);
 			tranFiringFreq.put(curTran.getIndex(), 0);
+//			System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 		}
 		staticSetsMap.put(sgList[0].getLpn().getLpnIndex(), tmpMap);
 		//printStaticSetMap(staticSetsMap);
