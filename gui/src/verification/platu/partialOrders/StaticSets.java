@@ -1,6 +1,7 @@
 package verification.platu.partialOrders;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import lpn.parser.ExprTree;
@@ -45,11 +46,17 @@ public class StaticSets {
 			Transition anotherTran = allTransitions[i];
 			ExprTree anotherTranEnablingTree = anotherTran.getEnablingTree();
 			if (anotherTranEnablingTree != null
-					&& anotherTranEnablingTree.getChange(curTran.getAssignments())=='F')
+					&& (anotherTranEnablingTree.getChange(curTran.getAssignments())=='F'
+						|| anotherTranEnablingTree.getChange(curTran.getAssignments())=='f'
+						|| anotherTranEnablingTree.getChange(curTran.getAssignments())=='X'))
 				disableByFailingEnableCond.add(anotherTran.getIndex());
 		}
 		disableSet.addAll(disableByStealingToken);
 		disableSet.addAll(disableByFailingEnableCond);
+		buildModifyAssignSet();
+		disableSet.addAll(modifyAssignment);
+//		printIntegerSet(disableByStealingToken, "disableByStealingToken");
+//		printIntegerSet(disableByFailingEnableCond, "disableByFailingEnableCond");
 	}
 	
 	/**
@@ -62,7 +69,9 @@ public class StaticSets {
 			Transition anotherTran = allTransitions[i];
 			ExprTree curTranEnablingTree = curTran.getEnablingTree();
 			if (curTranEnablingTree != null
-					&& curTranEnablingTree.getChange(anotherTran.getAssignments())=='T')
+					&& (curTranEnablingTree.getChange(anotherTran.getAssignments())=='T'
+					   || curTranEnablingTree.getChange(anotherTran.getAssignments())=='t'
+					   || curTranEnablingTree.getChange(anotherTran.getAssignments())=='X'))
 				enableSet.add(anotherTran.getIndex());
 		}
 	}
@@ -124,5 +133,23 @@ public class StaticSets {
 	
 	public Transition getTran() {
 		return curTran;
+	}
+	
+	private void printIntegerSet(HashSet<Integer> integerSet, String setName) {
+		if (!setName.isEmpty())
+			System.out.print(setName + ": ");
+		if (integerSet == null) {
+			System.out.println("null");
+		}
+		else if (integerSet.isEmpty()) {
+			System.out.println("empty");
+		}
+		else {
+			for (Iterator<Integer> curTranDisableIter = integerSet.iterator(); curTranDisableIter.hasNext();) {
+				Integer tranInDisable = curTranDisableIter.next();
+				System.out.print(lpn.getAllTransitions()[tranInDisable] + " ");
+			}
+			System.out.print("\n");
+		}				
 	}
  }
