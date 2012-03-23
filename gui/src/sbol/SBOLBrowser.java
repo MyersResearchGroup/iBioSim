@@ -16,7 +16,7 @@ import java.util.*;
 
 import main.Gui;
 
-public class SbolBrowser extends JPanel {
+public class SBOLBrowser extends JPanel {
 	
 	private String[] options = {"Ok", "Cancel"};
 	private JPanel selectionPanel = new JPanel(new GridLayout(1,2));
@@ -27,7 +27,7 @@ public class SbolBrowser extends JPanel {
 	private String selection = "";
 	
 	//Constructor when browsing a single RDF file from the main gui
-	public SbolBrowser(Gui gui, String filePath) {
+	public SBOLBrowser(Gui gui, String filePath) {
 		super(new BorderLayout());
 		
 		HashMap<String, org.sbolstandard.core.Collection> libMap = new HashMap<String, org.sbolstandard.core.Collection>();
@@ -56,7 +56,7 @@ public class SbolBrowser extends JPanel {
 	}
 	
 	//Constructor when browsing RDF file subsets for SBOL to GCM association
-	public SbolBrowser(HashSet<String> sbolFiles, Set<String> filter, String defaultSelection) {
+	public SBOLBrowser(HashSet<String> sbolFiles, Set<String> filter, String defaultSelection) {
 		super(new GridLayout(2,1));
 		
 		HashMap<String, org.sbolstandard.core.Collection> libMap = new HashMap<String, org.sbolstandard.core.Collection>();
@@ -88,7 +88,7 @@ public class SbolBrowser extends JPanel {
 			HashMap<String, org.sbolstandard.core.Collection> libMap, HashMap<String, DnaComponent> compMap, 
 			HashMap<String, SequenceAnnotation> annoMap, HashMap<String, DnaSequence> seqMap, String browsePath) {
 		for (String filePath : sbolFiles) {
-			org.sbolstandard.core.Collection lib = SbolUtility.loadXML(filePath);
+			org.sbolstandard.core.Collection lib = SBOLUtility.loadXML(filePath);
 			if (lib != null) {
 				if (lib.getDisplayId() != null && !lib.getDisplayId().equals("")) {
 					if ((browsePath.equals("") || browsePath.equals(filePath)) && !libURIs.contains(lib.getURI().toString())) {

@@ -29,7 +29,7 @@ import biomodel.network.SynthesisNode;
 import biomodel.util.GlobalConstants;
 import biomodel.util.Utility;
 
-public class SbolSynthesizer {
+public class SBOLSynthesizer {
 	
 //	private HashMap<String, Promoter> promoters;
 	private Collection<SynthesisNode> synNodes;
@@ -42,7 +42,7 @@ public class SbolSynthesizer {
 	private String time;
 	
 //	public SbolSynthesizer(HashMap<String, Promoter> promoters) {
-	public SbolSynthesizer(Collection<SynthesisNode> synNodes) {
+	public SBOLSynthesizer(Collection<SynthesisNode> synNodes) {
 //		this.promoters = promoters;
 		this.synNodes = synNodes;
 	}
@@ -52,7 +52,7 @@ public class SbolSynthesizer {
 		compMap = new HashMap<String, DnaComponent>();
 		for (String filePath : sbolFiles) {
 			this.sbolFiles.add(filePath.substring(filePath.lastIndexOf(File.separator) + 1));
-			org.sbolstandard.core.Collection lib = SbolUtility.loadXML(filePath);
+			org.sbolstandard.core.Collection lib = SBOLUtility.loadXML(filePath);
 			if (lib != null) 
 				for (DnaComponent dnac : lib.getComponents())
 					if (dnac.getDisplayId() != null)
@@ -88,7 +88,7 @@ public class SbolSynthesizer {
 			} catch (URISyntaxException e) {
 				e.printStackTrace();
 			}
-			SbolUtility.exportLibrary(targetFilePath, exportLib);
+			SBOLUtility.exportLibrary(targetFilePath, exportLib);
 		}
 		synthesizeDnaComponent(targetPath, targets);
 	}
@@ -141,7 +141,7 @@ public class SbolSynthesizer {
 				if (synthesizerOn) {
 					// Export DNA component
 					targetLib.addComponent(synthComp);
-					SbolUtility.exportLibrary(targetPath + File.separator + targetFileId, targetLib);
+					SBOLUtility.exportLibrary(targetPath + File.separator + targetFileId, targetLib);
 				}
 			}
 		}
@@ -182,7 +182,7 @@ public class SbolSynthesizer {
 			String userFileId = fileBox.getSelectedItem().toString();
 			if (!targetFileId.equals(userFileId)) {
 				targetFileId = userFileId;
-				targetLib = SbolUtility.loadXML(targetPath + File.separator + targetFileId);
+				targetLib = SBOLUtility.loadXML(targetPath + File.separator + targetFileId);
 				if (targetLib != null) {
 					targetURISet = new HashSet<String>();
 					for (DnaComponent dnac : targetLib.getComponents()) 
@@ -207,7 +207,7 @@ public class SbolSynthesizer {
 	// Starts at synthesis nodes containing URIs for SBOL promoters
 	// Stops at nodes containing URIs for other promoters or previously visited nodes
 	private LinkedList<String> loadSourceCompURIs() {
-		Set<String> filter = SbolUtility.typeConverter(GlobalConstants.SBOL_PROMOTER);
+		Set<String> filter = SBOLUtility.typeConverter(GlobalConstants.SBOL_PROMOTER);
 		Set<SynthesisNode> promoterNodes = new HashSet<SynthesisNode>();
 		Set<String> promoterNodeIds = new HashSet<String>();
 		

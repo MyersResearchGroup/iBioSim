@@ -3,15 +3,29 @@ package biomodel.gui;
 
 import java.awt.GridLayout;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import org.sbml.libsbml.Compartment;
 import org.sbml.libsbml.LocalParameter;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.Reaction;
+import org.sbml.libsbml.SBMLDocument;
+import org.sbml.libsbml.SBMLReader;
+import org.sbml.libsbml.SBMLWriter;
 import org.sbml.libsbml.Species;
+import org.sbml.libsbml.XMLAttributes;
+import org.sbml.libsbml.XMLNamespaces;
+import org.sbml.libsbml.XMLNode;
+import org.sbml.libsbml.XMLTriple;
+import org.sbml.libsbml.libsbml;
 
+import biomodel.annotation.AnnotationUtility;
+import biomodel.annotation.SBOLAnnotation;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 import biomodel.util.Utility;
@@ -27,7 +41,7 @@ public class PromoterPanel extends JPanel {
 	private static final long serialVersionUID = 5873800942710657929L;
 	private String[] options = { "Ok", "Cancel" };
 	private HashMap<String, PropertyField> fields = null;
-	private HashMap<String, SbolField> sbolFields;
+	private HashMap<String, SBOLField> sbolFields;
 	private String selected = "";
 	private BioModel gcm = null;
 	private boolean paramsOnly;
@@ -44,7 +58,7 @@ public class PromoterPanel extends JPanel {
 		this.gcmEditor = gcmEditor;
 
 		fields = new HashMap<String, PropertyField>();
-		sbolFields = new HashMap<String, SbolField>();
+		sbolFields = new HashMap<String, SBOLField>();
 
 		Model model = gcm.getSBMLDocument().getModel();
 		promoter = model.getSpecies(selected);
@@ -306,37 +320,14 @@ public class PromoterPanel extends JPanel {
 		
 		
 		if (!paramsOnly) {
-			// Panel for mapping SBOL DNA component
-			SbolField componentField = new SbolField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor);
+			// Field for annotating promoter with SBOL DNA components
+			SBOLField componentField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor);
 			sbolFields.put(GlobalConstants.SBOL_DNA_COMPONENT, componentField);
 			add(componentField);
-			
-			// Panel for associating SBOL promoter element
-//			SbolField Prom_Field = new SbolField(GlobalConstants.SBOL_PROMOTER, gcmEditor);
-//			sbolFields.put(GlobalConstants.SBOL_PROMOTER, Prom_Field);
-//			add(Prom_Field);
-		
-			// Panel for associating SBOL terminator element
-//			SbolField Term_Field = new SbolField(GlobalConstants.SBOL_TERMINATOR, gcmEditor);
-//			sbolFields.put(GlobalConstants.SBOL_TERMINATOR, Term_Field);
-//			add(Term_Field);
-
-			String annotation = promoter.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
-			String [] annotations = annotation.split(",");
-			for (int i=0;i<annotations.length;i++) {
-				if (annotations[i].startsWith(GlobalConstants.SBOL_DNA_COMPONENT)) {
-					String [] sbolComponent = annotations[i].split("=");
-					componentField.setText(sbolComponent[1]);
-				}
-//				if (annotations[i].startsWith(GlobalConstants.SBOL_PROMOTER)) {
-//					String [] sbolRBS = annotations[i].split("=");
-//					Prom_Field.setText(sbolRBS[1]);
-//				}
-//				if (annotations[i].startsWith(GlobalConstants.SBOL_TERMINATOR)) {
-//					String [] sbolORF = annotations[i].split("=");
-//					Term_Field.setText(sbolORF[1]);
-//				}
-			}
+			//Parse out SBOL annotations and add to SBOL field
+			Set<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(promoter.getAnnotationString());
+			if (sbolURIs.size() > 0)
+				componentField.setText(sbolURIs.iterator().next());
 		}
 
 		String oldName = null;
@@ -358,7 +349,7 @@ public class PromoterPanel extends JPanel {
 	}
 	
 	private boolean checkSbolValues() {
-		for (SbolField sf : sbolFields.values()) {
+		for (SBOLField sf : sbolFields.values()) {
 			if (!sf.isValidText())
 				return false;
 		}
@@ -392,14 +383,15 @@ public class PromoterPanel extends JPanel {
 					}
 				}
 				id = fields.get(GlobalConstants.ID).getValue();
-				promoter.setId(id);
+//				promoter.setId(id);
+//				promoter.setMetaId(id);
 				promoter.setName(fields.get(GlobalConstants.NAME).getValue());
 			}
-			promoter.setAnnotation(GlobalConstants.TYPE+"="+GlobalConstants.PROMOTER);
+			promoter.setAnnotation(GlobalConstants.TYPE + "=" + GlobalConstants.PROMOTER);
 			PropertyField f = fields.get(GlobalConstants.PROMOTER_COUNT_STRING);
 			if (f.getValue().startsWith("(")) {
 				promoter.setInitialAmount(1.0);
-				promoter.appendAnnotation(","+GlobalConstants.PROMOTER_COUNT_STRING + "=" + f.getValue());
+				promoter.appendAnnotation("," + GlobalConstants.PROMOTER_COUNT_STRING + "=" + f.getValue());
 			} else {
 				promoter.setInitialAmount(Double.parseDouble(f.getValue()));
 			}
@@ -444,15 +436,15 @@ public class PromoterPanel extends JPanel {
 			gcm.createProductionReaction(selected,kaStr,npStr,koStr,kbStr,KoStr,KaoStr);
 
 			if (!paramsOnly) {
-				String annotation = "";
-				// Add SBOL properties
-				for (SbolField sf : sbolFields.values()) {
-					if (!sf.getText().equals(""))
-						annotation += "," + sf.getType() + "=" + sf.getText();
-				}
-				promoter.setAnnotation(GlobalConstants.TYPE + "=" + GlobalConstants.PROMOTER);
-				if (!annotation.equals("")) {
-					promoter.appendAnnotation(annotation);
+				// Add GCM and SBOL annotations to promoter
+				promoter.setAnnotation(GlobalConstants.TYPE + "=" + GlobalConstants.PROMOTER + ",");
+				LinkedHashSet<String> sbolURIs = new LinkedHashSet<String>();
+				for (SBOLField sf : sbolFields.values()) 
+					if (!sf.getText().equals("")) 
+						sbolURIs.add(sf.getText());
+				if (sbolURIs.size() > 0) {
+					SBOLAnnotation sbolAnnot = new SBOLAnnotation(promoter.getMetaId(), sbolURIs);
+					AnnotationUtility.appendSBOLAnnotation(promoter, sbolAnnot);
 				} 
 
 				// rename all the influences that use this promoter if name was changed
@@ -460,7 +452,7 @@ public class PromoterPanel extends JPanel {
 					while (gcm.getUsedIDs().contains(selected)) {
 						gcm.getUsedIDs().remove(selected);
 					}
-					gcm.changePromoterName(oldName, id);
+					gcm.changePromoterId(oldName, id);
 					this.secondToLastUsedPromoter = oldName;
 					promoterNameChange = true;
 				}

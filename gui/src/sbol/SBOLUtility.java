@@ -18,7 +18,7 @@ import org.sbolstandard.xml.*;
 
 import biomodel.util.GlobalConstants;
 
-public class SbolUtility {
+public class SBOLUtility {
 
 	public static CollectionImpl loadXML(String filePath) {
 		String fileId = filePath.substring(filePath.lastIndexOf(File.separator) + 1);
