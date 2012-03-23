@@ -4041,7 +4041,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	private JPanel fixGraphChoices(final String directory) {
 		if (directory.equals("")) {
 			if (selected.equals("Average") || selected.equals("Variance") || selected.equals("Standard Deviation")
-					|| selected.equals("Termination Time") || selected.equals("Percent Termination") || selected.equals("Constraint Termination")) {
+					|| selected.equals("Termination Time") || selected.equals("Percent Termination") || selected.equals("Constraint Termination")
+					|| selected.equals("Bifurcation Statistics")) {
 				if (selected.equals("Average")
 						&& new File(outDir + separator + "mean" + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
 					readGraphSpecies(outDir + separator + "mean" + "." + printer_id.substring(0, printer_id.length() - 8));
