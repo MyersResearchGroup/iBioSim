@@ -10,12 +10,12 @@ public class SynthesisNode {
 	private Set<SynthesisNode> nextNodes = new HashSet<SynthesisNode>();
 	
 	public SynthesisNode(String id) {
-		setId(id);
+		this.id = id;
 	}
 	
 	public SynthesisNode(String id, String sbolURI) {
-		setId(id);
-		setSbolURI(sbolURI);
+		this.id = id;
+		this.sbolURI = sbolURI;
 	}
 	
 	public String getId() {

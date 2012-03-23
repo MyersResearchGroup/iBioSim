@@ -66,7 +66,7 @@ import biomodel.parser.GCMParser;
 import biomodel.util.GlobalConstants;
 import biomodel.util.Utility;
 
-import sbol.SbolSynthesizer;
+import sbol.SBOLSynthesizer;
 
 /**
  * This is the GCM2SBMLEditor class. It takes in a gcm file and allows the user
@@ -446,14 +446,14 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 	public void saveSBOL() {
 		GCMParser parser = new GCMParser(gcm, false);
-		SbolSynthesizer synthesizer = parser.buildSbolSynthesizer();
+		SBOLSynthesizer synthesizer = parser.buildSbolSynthesizer();
 		if (synthesizer.loadSbolFiles(getSbolFiles())) 
 			synthesizer.saveSbol(getPath());
 	}
 	
 	public void exportSBOL() {
 		GCMParser parser = new GCMParser(gcm, false);
-		SbolSynthesizer synthesizer = parser.buildSbolSynthesizer();
+		SBOLSynthesizer synthesizer = parser.buildSbolSynthesizer();
 		if (synthesizer.loadSbolFiles(getSbolFiles())) {
 			File lastFilePath;
 			Preferences biosimrc = Preferences.userRoot();

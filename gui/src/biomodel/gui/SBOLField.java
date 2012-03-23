@@ -18,10 +18,10 @@ import org.sbolstandard.core.*;
 import biomodel.util.GlobalConstants;
 import biomodel.util.Utility;
 
-import sbol.SbolBrowser;
-import sbol.SbolUtility;
+import sbol.SBOLBrowser;
+import sbol.SBOLUtility;
 
-public class SbolField extends JPanel implements ActionListener {
+public class SBOLField extends JPanel implements ActionListener {
 	
 	private String sbolType;
 	private JLabel sbolLabel;
@@ -29,7 +29,7 @@ public class SbolField extends JPanel implements ActionListener {
 	private JButton sbolButton = new JButton("Associate SBOL");
 	private ModelEditor gcmEditor;
 	
-	public SbolField(String sbolType, ModelEditor gcmEditor) {
+	public SBOLField(String sbolType, ModelEditor gcmEditor) {
 		super(new GridLayout(1, 3));
 	
 		this.sbolType = sbolType;
@@ -61,12 +61,12 @@ public class SbolField extends JPanel implements ActionListener {
 		else {
 			String sourceCompURI = sbolText.getText();
 			for (String filePath : gcmEditor.getSbolFiles()) {
-				Collection lib = SbolUtility.loadXML(filePath);
+				Collection lib = SBOLUtility.loadXML(filePath);
 				for (DnaComponent dnac : lib.getComponents())
 					if (sourceCompURI.equals(dnac.getURI().toString())) {
 						for (URI uri : dnac.getTypes())
 							if (sbolType.equals(GlobalConstants.SBOL_DNA_COMPONENT) || 
-									SbolUtility.typeConverter(sbolType).contains(uri.getFragment()))
+									SBOLUtility.typeConverter(sbolType).contains(uri.getFragment()))
 								return true;
 						Utility.createErrorMessage("Invalid GCM to SBOL Association", "DNA component with URI " + sourceCompURI
 								+ " is not a " + sbolLabel.getText() + ".");
@@ -82,7 +82,7 @@ public class SbolField extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("associateSBOL")) {
 			HashSet<String> sbolFiles = gcmEditor.getSbolFiles();
-			SbolBrowser browser = new SbolBrowser(sbolFiles, SbolUtility.typeConverter(sbolType), sbolText.getText());
+			SBOLBrowser browser = new SBOLBrowser(sbolFiles, SBOLUtility.typeConverter(sbolType), sbolText.getText());
 			sbolText.setText(browser.getSelection());
 		} 
 	}

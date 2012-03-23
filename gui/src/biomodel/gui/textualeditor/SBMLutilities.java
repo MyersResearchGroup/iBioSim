@@ -2,6 +2,8 @@ package biomodel.gui.textualeditor;
 
 import java.awt.Dimension;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
@@ -585,6 +587,36 @@ public class SBMLutilities {
 		return false;
 	}
 
+	public static void fillBlankMetaIDs (SBMLDocument document) {
+		int metaIDIndex = 1;
+		Model model = document.getModel();
+		Set<String> usedMetaIDs = createUsedMetaIDSet(document);
+		for (int i = 0; i < model.getNumSpecies(); i++) {
+			Species species = model.getSpecies(i);
+			String metaID = species.getMetaId();
+			if (metaID == null || metaID.equals("")) {
+				metaID = "iBioSim" + metaIDIndex;
+				while (usedMetaIDs.contains(metaID)) {
+					metaIDIndex++;
+					metaID = "iBioSim" + metaIDIndex;
+				}
+				species.setMetaId(metaID);
+				metaIDIndex++;
+			}
+		}
+	}
+	
+	public static Set<String> createUsedMetaIDSet(SBMLDocument document) {
+		Set<String> usedMetaIDs = new HashSet<String>();
+		Model model = document.getModel();
+		for (int i = 0; i < model.getNumSpecies(); i++) {
+			String metaID = model.getSpecies(i).getMetaId();
+			if (metaID != null && !metaID.equals(""))
+				usedMetaIDs.add(model.getSpecies(i).getMetaId());
+		}
+		return usedMetaIDs;
+	}
+	
 	public static ArrayList<String> CreateListOfUsedIDs(SBMLDocument document) {
 		ArrayList<String> usedIDs = new ArrayList<String>();
 		if (document==null) return usedIDs;

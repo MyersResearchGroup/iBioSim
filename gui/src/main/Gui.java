@@ -110,7 +110,7 @@ import verification.*;
 
 import org.sbml.libsbml.*;
 
-import sbol.SbolBrowser;
+import sbol.SBOLBrowser;
 import java.net.*;
 import uk.ac.ebi.biomodels.*;
 
@@ -5688,7 +5688,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			tab.setSelectedIndex(i);
 		}
 		else {
-			SbolBrowser browser = new SbolBrowser(this, filePath);
+			SBOLBrowser browser = new SBOLBrowser(this, filePath);
 		}
 	}
 	
@@ -9069,7 +9069,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			exportImageMenu.setEnabled(true);
 			exportJpg.setEnabled(true);
 		}
-		else if (comp instanceof SbolBrowser) {
+		else if (comp instanceof SBOLBrowser) {
 			// save.setEnabled(true);
 		}
 		else if (comp instanceof LHPNEditor) {

@@ -8,6 +8,8 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
@@ -23,7 +25,10 @@ import org.sbml.libsbml.Model;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.Submodel;
+import org.sbml.libsbml.libsbml;
 
+import biomodel.annotation.AnnotationUtility;
+import biomodel.annotation.SBOLAnnotation;
 import biomodel.gui.textualeditor.InitialAssignments;
 import biomodel.gui.textualeditor.MySpecies;
 import biomodel.gui.textualeditor.SBMLutilities;
@@ -107,7 +112,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		this.gcmEditor = gcmEditor;
 
 		fields = new HashMap<String, PropertyField>();
-		sbolFields = new HashMap<String, SbolField>();
+		sbolFields = new HashMap<String, SBOLField>();
 
 		Model model = gcm.getSBMLDocument().getModel();
 		species = model.getSpecies(selected);
@@ -543,21 +548,12 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		setFieldEnablings();
 		
 		if (!paramsOnly) {
-			// Panel for mapping SBOL DNA component
-			SbolField componentField = new SbolField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor);
+			// Field for annotating species with SBOL DNA components
+			SBOLField componentField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor);
 			sbolFields.put(GlobalConstants.SBOL_DNA_COMPONENT, componentField);
 			grid.add(componentField);
-			
-			// Panel for associating SBOL RBS element
-//			SbolField RBS_Field = new SbolField(GlobalConstants.SBOL_RBS, gcmEditor);
-//			sbolFields.put(GlobalConstants.SBOL_RBS, RBS_Field);			
-//			grid.add(RBS_Field);
-			
-			// Panel for associating SBOL ORF element
-//			SbolField ORF_Field = new SbolField(GlobalConstants.SBOL_ORF, gcmEditor);
-//			sbolFields.put(GlobalConstants.SBOL_ORF, ORF_Field);
-//			grid.add(ORF_Field);
 
+			// Parse out GCM and SBOL annotations and add to respective fields
 			String annotation = species.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
 			String [] annotations = annotation.split(",");
 			for (int i=0;i<annotations.length;i++) {
@@ -565,18 +561,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					String [] type = annotations[i].split("=");
 					typeBox.setSelectedItem(type[1]);
 				}
-				if (annotations[i].startsWith(GlobalConstants.SBOL_DNA_COMPONENT)) {
-					String [] sbolComponent = annotations[i].split("=");
-					componentField.setText(sbolComponent[1]);
-				}
-//				if (annotations[i].startsWith(GlobalConstants.SBOL_RBS)) {
-//					String [] sbolRBS = annotations[i].split("=");
-//					RBS_Field.setText(sbolRBS[1]);
-//				}
-//				if (annotations[i].startsWith(GlobalConstants.SBOL_ORF)) {
-//					String [] sbolORF = annotations[i].split("=");
-//					ORF_Field.setText(sbolORF[1]);
-//				}
+				Set<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(species.getAnnotationString());
+				if (sbolURIs.size() > 0)
+					componentField.setText(sbolURIs.iterator().next());
 			}
 		}
 			
@@ -617,7 +604,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	}
 	
 	private boolean checkSbolValues() {
-		for (SbolField sf : sbolFields.values()) {
+		for (SBOLField sf : sbolFields.values()) {
 			if (!sf.isValidText())
 				return false;
 		}
@@ -768,7 +755,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				
 				if (!paramsOnly) {
 					
-					species.setId(fields.get(GlobalConstants.ID).getValue());
+//					species.setId(fields.get(GlobalConstants.ID).getValue());
+//					species.setMetaId(fields.get(GlobalConstants.ID).getValue());
 					species.setName(fields.get(GlobalConstants.NAME).getValue());
 					
 					InitialAssignments.removeInitialAssignment(gcm.getSBMLDocument(), selected);
@@ -892,13 +880,16 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 			
 			if (!paramsOnly) {
-				String annotation = GlobalConstants.TYPE + "=" + speciesType;
-				// Add SBOL properties
-				for (SbolField sf : sbolFields.values()) {
+				// Add GCM and SBOL annotations to species
+				species.setAnnotation(GlobalConstants.TYPE + "=" + speciesType + ",");
+				LinkedHashSet<String> sbolURIs = new LinkedHashSet<String>();
+				for (SBOLField sf : sbolFields.values()) 
 					if (!sf.getText().equals(""))
-						annotation += "," + sf.getType() + "=" + sf.getText();
-				}
-				species.setAnnotation(annotation);
+						sbolURIs.add(sf.getText());
+				if (sbolURIs.size() > 0) {
+					SBOLAnnotation sbolAnnot = new SBOLAnnotation(species.getMetaId(), sbolURIs);
+					AnnotationUtility.appendSBOLAnnotation(species, sbolAnnot);
+				} 
 			}
 			
 			if (selected != null && !selected.equals(newSpeciesID)) {
@@ -907,7 +898,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					gcm.getUsedIDs().remove(selected);
 				}
 				
-				gcm.changeSpeciesName(selected, newSpeciesID);
+				gcm.changeSpeciesId(selected, newSpeciesID);
 				((DefaultListModel) components.getModel()).clear();
 
 				for (long i = 0; i < gcm.getSBMLCompModel().getNumSubmodels(); i++) {
@@ -1087,7 +1078,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 	private HashMap<String, PropertyField> fields = null;
 	
-	private HashMap<String, SbolField> sbolFields;
+	private HashMap<String, SBOLField> sbolFields;
 
 	private boolean paramsOnly;
 	

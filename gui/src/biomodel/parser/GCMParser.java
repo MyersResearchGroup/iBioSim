@@ -23,6 +23,7 @@ import org.sbml.libsbml.SBMLWriter;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.SpeciesReference;
 
+import biomodel.annotation.AnnotationUtility;
 import biomodel.network.BaseSpecies;
 import biomodel.network.ConstantSpecies;
 import biomodel.network.DiffusibleConstitutiveSpecies;
@@ -35,7 +36,7 @@ import biomodel.network.SpeciesInterface;
 import biomodel.network.SynthesisNode;
 import biomodel.util.GlobalConstants;
 
-import sbol.SbolSynthesizer;
+import sbol.SBOLSynthesizer;
 
 /**
  * This class parses a genetic circuit model.
@@ -152,17 +153,6 @@ public class GCMParser {
 		p.setId(promoter.getId());
 		promoterList.put(promoter.getId(), p);
 		p.setInitialAmount(promoter.getInitialAmount());
-//		String annotation = promoter.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
-//		String [] annotations = annotation.split(",");
-//		for (int i=0;i<annotations.length;i++) {
-//			if (annotations[i].startsWith(GlobalConstants.SBOL_PROMOTER)) {
-//				String [] type = annotations[i].split("=");
-//				p.setSbolPromoter(type[1]);
-//			} else if (annotations[i].startsWith(GlobalConstants.SBOL_TERMINATOR)) {
-//				String [] type = annotations[i].split("=");
-//				p.setTerminator(type[1]);
-//			}  
-//		}
 		String component = "";
 		if (promoter.getId().contains("__")) {
 			component = promoter.getId().substring(0,promoter.getId().lastIndexOf("__")+2);
@@ -335,14 +325,6 @@ public class GCMParser {
 				String [] type = annotations[i].split("=");
 				speciesIF.setType(type[1]);
 			}
-//			} else if (annotations[i].startsWith(GlobalConstants.SBOL_RBS)) {
-//				String [] type = annotations[i].split("=");
-//				speciesIF.setRBS(type[1]);
-//			} else if (annotations[i].startsWith(GlobalConstants.SBOL_ORF)) {
-//				String [] type = annotations[i].split("=");
-//				speciesIF.setORF(type[1]);
-//			}  
-//		}
 		if (species.isSetInitialAmount()) {
 			speciesIF.setInitialAmount(species.getInitialAmount());
 		} else if (species.isSetInitialConcentration()) {
@@ -447,14 +429,10 @@ public class GCMParser {
 	
 	public void parsePromoterSbol(Model sbmlModel, Species sbmlPromoter) {
 		// Create synthesis node corresponding to sbml promoter 
-		String sbolUri = "";
-		String [] annotations = sbmlPromoter.getAnnotationString().replace("<annotation>","").replace("</annotation>","").split(",");
-		for (int i=0; i < annotations.length; i++) 
-			if (annotations[i].startsWith(GlobalConstants.SBOL_DNA_COMPONENT)) 
-				sbolUri = annotations[i].split("=")[1];
+		Set<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlPromoter.getAnnotationString());
 		SynthesisNode synNode;
-		if (!sbolUri.equals(""))
-			synNode = new SynthesisNode(sbmlPromoter.getId(), sbolUri);
+		if (sbolURIs.size() > 0)
+			synNode = new SynthesisNode(sbmlPromoter.getId(), sbolURIs.iterator().next());
 		else
 			synNode = new SynthesisNode(sbmlPromoter.getId());
 		synMap.put(sbmlPromoter.getId(), synNode);
@@ -554,14 +532,10 @@ public class GCMParser {
 	
 	public void parseSpeciesSbol(Model sbmlModel, Species sbmlSpecies) {
 		// Create synthesis node corresponding to sbml species
-		String sbolUri = "";
-		String [] annotations = sbmlSpecies.getAnnotationString().replace("<annotation>","").replace("</annotation>","").split(",");
-		for (int i=0; i < annotations.length; i++) 
-			if (annotations[i].startsWith(GlobalConstants.SBOL_DNA_COMPONENT)) 
-				sbolUri = annotations[i].split("=")[1];
+		Set<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlSpecies.getAnnotationString());
 		SynthesisNode synNode;
-		if (!sbolUri.equals(""))
-			synNode = new SynthesisNode(sbmlSpecies.getId(), sbolUri);
+		if (sbolURIs.size() > 0)
+			synNode = new SynthesisNode(sbmlSpecies.getId(), sbolURIs.iterator().next());
 		else
 			synNode = new SynthesisNode(sbmlSpecies.getId());
 		synMap.put(sbmlSpecies.getId(), synNode);
@@ -618,13 +592,13 @@ public class GCMParser {
 						synMap.get(origin).addNextNode(synMap.get(destination));
 	}
 	
-	public SbolSynthesizer buildSbolSynthesizer() {
+	public SBOLSynthesizer buildSbolSynthesizer() {
 		SBMLDocument sbml = gcm.flattenGCM();		
 		if (sbml == null) return null;
 		return buildTopLevelSbolSynthesizer(sbml);
 	}
 	
-	public SbolSynthesizer buildTopLevelSbolSynthesizer(SBMLDocument sbml) {
+	public SBOLSynthesizer buildTopLevelSbolSynthesizer(SBMLDocument sbml) {
 		
 		synMap = new HashMap<String, SynthesisNode>(); // initialize map of model element IDs to synthesis nodes
 		complexMap = new HashMap<String, ArrayList<Influence>>();
@@ -656,7 +630,7 @@ public class GCMParser {
 		}
 		// Finishes connecting synthesis nodes in accordance with various maps (see above)
 		connectMappedSynthesisNodes();
-		SbolSynthesizer synthesizer = new SbolSynthesizer(synMap.values());
+		SBOLSynthesizer synthesizer = new SBOLSynthesizer(synMap.values());
 		return synthesizer;
 	}
 
