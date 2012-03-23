@@ -12,17 +12,23 @@ public class DependentSetComparator implements Comparator<DependentSet>{
 	}
 
 	public int compare(DependentSet dep0, DependentSet dep1) {
-		
-		if (dep0.getDependent().size() < dep1.getDependent().size()) 
+		if (!dep0.isEnabledTranDummy() && dep1.isEnabledTranDummy()) {
 			return -1;
-		else if (dep0.getDependent().size() > dep1.getDependent().size())
+		}
+		else if ((dep0.isEnabledTranDummy() && !dep1.isEnabledTranDummy()) || (dep0.isEnabledTranDummy() && dep1.isEnabledTranDummy()))
 			return 1;
 		else {
-			if (tranFiringFreqMap.get(dep0.getEnabledTranIndex()) < tranFiringFreqMap.get(dep1.getEnabledTranIndex())) 
+			if (dep0.getDependent().size() < dep1.getDependent().size()) 
 				return -1;
-			else 
-				return 0;
-		}
+			else if (dep0.getDependent().size() > dep1.getDependent().size())
+				return 1;
+			else {
+				if (tranFiringFreqMap.get(dep0.getEnabledTranIndex()) < tranFiringFreqMap.get(dep1.getEnabledTranIndex())) 
+					return -1;
+				else 
+					return 0;
+			}
+		}	
 	}
 
 
