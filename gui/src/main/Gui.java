@@ -7,6 +7,7 @@ import lpn.parser.Lpn2verilog;
 import lpn.parser.Translator;
 import graph.Graph;
 import lpn.parser.*;
+import antlrPackage.*;
 
 
 import java.awt.AWTError;
@@ -108,6 +109,7 @@ import synthesis.Synthesis;
 
 import verification.*;
 
+import org.antlr.runtime.RecognitionException;
 import org.sbml.libsbml.*;
 
 import sbol.SBOLBrowser;
@@ -138,7 +140,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private JMenuItem newS; // The new assembly file menu item
 	private JMenuItem newInst; // The new instruction file menu item
 	private JMenuItem newLhpn; // The new lhpn menu item
-	private JMenuItem newSva; // The new lhpn menu item				DK
+	private JMenuItem newProperty; // The new lhpn menu item				DK
 	private JMenuItem newG; // The new petri net menu item
 	private JMenuItem newCsp; // The new csp menu item
 	private JMenuItem newHse; // The new handshaking extension menu item
@@ -443,7 +445,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		newS = new JMenuItem("Assembly File");
 		newInst = new JMenuItem("Instruction File");
 		newLhpn = new JMenuItem("LPN Model");
-		newSva = new JMenuItem("SVA");				//DK
+		newProperty = new JMenuItem("Property");				//DK
 		newG = new JMenuItem("Petri Net");
 		newCsp = new JMenuItem("CSP Model");
 		newHse = new JMenuItem("Handshaking Expansion");
@@ -537,7 +539,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		newS.addActionListener(this);
 		newInst.addActionListener(this);
 		newLhpn.addActionListener(this);
-		newSva.addActionListener(this);      //DK
+		newProperty.addActionListener(this);      //DK
 		newG.addActionListener(this);
 		newCsp.addActionListener(this);
 		newHse.addActionListener(this);
@@ -749,7 +751,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		newS.setEnabled(false);
 		newInst.setEnabled(false);
 		newLhpn.setEnabled(false);
-		newSva.setEnabled(false);      // DK
+		newProperty.setEnabled(false);      // DK
 		newG.setEnabled(false);
 		newCsp.setEnabled(false);
 		newHse.setEnabled(false);
@@ -805,7 +807,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else {
 			newMenu.add(newVhdl);
-			newMenu.add(newSva);
+			newMenu.add(newProperty);
 			newMenu.add(newS);
 			newMenu.add(newInst);
 			newMenu.add(newLhpn);
@@ -3529,7 +3531,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				newGridModel.setEnabled(true);
 				newSBMLModel.setEnabled(true);
 				newVhdl.setEnabled(true);
-				newSva.setEnabled(true);   //DK
+				newProperty.setEnabled(true);   //DK
 				newS.setEnabled(true);
 				newInst.setEnabled(true);
 				newLhpn.setEnabled(true);
@@ -3659,7 +3661,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						newS.setEnabled(true);
 						newInst.setEnabled(true);
 						newLhpn.setEnabled(true);
-						newSva.setEnabled(true);  //DK
+						newProperty.setEnabled(true);  //DK
 						newG.setEnabled(true);
 						newCsp.setEnabled(true);
 						newHse.setEnabled(true);
@@ -3709,10 +3711,41 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		else if (e.getSource() == newLhpn) {
 			createLPN();
 		}
-		else if (e.getSource() == newSva) {    //DK
+		/*else if (e.getSource() == newProperty) {    //DK
 			Property prop = new Property();
 			prop.property(root, separator);
 			//property();
+		} */
+		
+	/*	else if (e.getSource() == newProperty) {    //DK
+			BuildProperty prop = new BuildProperty();
+			try {
+				prop.buildProperty(root, separator);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (RecognitionException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			//property();
+		} */
+		
+		else if (e.getSource() == newProperty) {    //DK
+			//importFile("txt", ".txt", ".txt");
+			BuildProperty prop = new BuildProperty();
+			
+				try {
+					prop.buildProperty();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (RecognitionException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+		//newModel("PROP" , ".prop");
+			
 		}
 		// if the new csp menu item is selected
 		else if (e.getSource() == newCsp) {
@@ -8233,7 +8266,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					// The new Schematic
 					if (className.indexOf("MovieContainer") >= 0) {
 						((MovieContainer) selectedPanel).display();
-						((MovieContainer) selectedPanel).reloadGrid();
 					}
 				}
 			}
@@ -8267,6 +8299,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			else {
 				popup.add(newVhdl);
+				popup.add(newProperty);
 				popup.add(newLhpn);
 				popup.add(newSpice);
 			}
@@ -9117,7 +9150,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			exportSvg.setEnabled(true);
 		}
 		else if (comp instanceof JTabbedPane) {
-			
 			Component component = ((JTabbedPane) comp).getSelectedComponent();
 			Component learnComponent = null;			
 			Boolean learn = false;
@@ -9190,12 +9222,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				runButton.setEnabled(true);
 				save.setEnabled(true);
 				run.setEnabled(true);
-				
-				for (Component c : ((JTabbedPane) comp).getComponents()) {
-					
-					if (c.getName().equals("ModelViewMovie"))
-						((MovieContainer)c).resetGridToOriginalSize();
-				}
 			}
 			else if (component instanceof SBML_Editor) {
 				saveButton.setEnabled(true);
@@ -9854,11 +9880,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		if (document.getLevel() < SBML_LEVEL || document.getVersion() < SBML_VERSION) {
 			document.setLevelAndVersion(SBML_LEVEL, SBML_VERSION);
 			SBMLWriter writer = new SBMLWriter();
-			String tempFileName = filename.replace(".xml", "_temp.xml");
-			writer.writeSBML(document, tempFileName);
-			document = reader.readSBML(tempFileName);
-			File tempFile = new File(tempFileName);
-			tempFile.delete();
+			writer.writeSBML(document, filename);
+			document = reader.readSBML(filename);
 		}
 		return document;
 	}
