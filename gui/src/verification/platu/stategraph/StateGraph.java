@@ -770,7 +770,7 @@ public class StateGraph {
 				else {
 					dependent = getDependentSet(curState,enabledTran,dependent,curEnabled,staticMap);
 				}
-//				printIntegerSet(dependent, "dependent set for enabled transition " + this.lpn.getAllTransitions()[enabledTran]);
+				printIntegerSet(dependent, "dependent set for enabled transition " + this.lpn.getAllTransitions()[enabledTran]);
 				// TODO: temporarily dealing with dummy transitions (This requires the dummy transitions to have "_dummy" in their names.)				
 //				boolean dependentOnlyHasDummyTrans = true;
 //				if (noDummyTrans)
@@ -817,9 +817,9 @@ public class StateGraph {
 		HashSet<Integer> transCanLoseToken = staticMap.get(this.lpn.getLpnIndex()).get(tranIndex).getDisableByStealingToken();
 		HashSet<Integer> canModifyAssign = staticMap.get(this.lpn.getLpnIndex()).get(tranIndex).getModifyAssignSet();
 		HashSet<Integer> transVisitedByNecessary = new HashSet<Integer>();
-//		System.out.println("@ getDependentSet, consider transition " + this.lpn.getAllTransitions()[tranIndex]);
-//		printIntegerSet(canModifyAssign, this.lpn.getAllTransitions()[tranIndex] + " can modify assignments");
-//		printIntegerSet(canDisable, this.lpn.getAllTransitions()[tranIndex] + " can disable");
+		System.out.println("@ getDependentSet, consider transition " + this.lpn.getAllTransitions()[tranIndex]);
+		printIntegerSet(canModifyAssign, this.lpn.getAllTransitions()[tranIndex] + " can modify assignments");
+		printIntegerSet(canDisable, this.lpn.getAllTransitions()[tranIndex] + " can disable");
 		dependent.add(tranIndex);
 		for (Integer i : canModifyAssign) {
 			if (curEnabled.contains(i))
@@ -831,13 +831,13 @@ public class StateGraph {
 			if (curEnabled.contains(tranCanBeDisabled) && !dependent.contains(tranCanBeDisabled)
 					&& (transCanLoseToken.contains(tranCanBeDisabled) || !tranCanBeDisabledPersistent)) {
 				dependent.addAll(getDependentSet(curState,tranCanBeDisabled,dependent,curEnabled,staticMap));
-//				printIntegerSet(dependent, "@ getDependentSet at 0 for transition " + this.lpn.getAllTransitions()[tranIndex]);
+				printIntegerSet(dependent, "@ getDependentSet at 0 for transition " + this.lpn.getAllTransitions()[tranIndex]);
 			}
 			else if (!curEnabled.contains(tranCanBeDisabled)) {		
 				HashSet<Integer> necessary = 
 						getNecessarySet(curState,tranCanBeDisabled,dependent,curEnabled, staticMap, transVisitedByNecessary);
 				if (necessary != null) {
-//					printIntegerSet(necessary, "necessary set for transition " + this.lpn.getAllTransitions()[tranCanBeDisabled]);
+					printIntegerSet(necessary, "necessary set for transition " + this.lpn.getAllTransitions()[tranCanBeDisabled]);
 					for (Iterator<Integer> tranNecessaryIter = necessary.iterator(); tranNecessaryIter.hasNext();) {
 						Integer tranNecessary = tranNecessaryIter.next();
 						if (!dependent.contains(tranNecessary)) {
@@ -845,9 +845,9 @@ public class StateGraph {
 						}					
 					}
 				}
-//				else 
-//					System.out.println("necessary set for transition " + this.lpn.getAllTransitions()[tranIndex] + " is null.");
-//				printIntegerSet(dependent, "@ getDependentSet at 1 for transition " + this.lpn.getAllTransitions()[tranIndex]);
+				else 
+					System.out.println("necessary set for transition " + this.lpn.getAllTransitions()[tranIndex] + " is null.");
+				printIntegerSet(dependent, "@ getDependentSet at 1 for transition " + this.lpn.getAllTransitions()[tranIndex]);
 			}
 		}
 		return dependent;
@@ -857,9 +857,8 @@ public class StateGraph {
 	private HashSet<Integer> getNecessarySet(State curState,
 			Integer tran, HashSet<Integer> dependent,
 			HashSet<Integer> curEnabled, HashMap<Integer,HashMap<Integer,StaticSets>> staticMap, HashSet<Integer> transVisitedByNecessary) {
-//		System.out.println("~~~~~~necessary calculation~~~~~~~");
-//		System.out.println("transition: " + this.lpn.getAllTransitions()[tran].getName());
-//		printIntegerSet(transVisitedByNecessary, "transVisitedByNecessary: ");
+		System.out.println("@ getNecessary, consider transition: " + this.lpn.getAllTransitions()[tran].getName());
+		printIntegerSet(transVisitedByNecessary, "transVisitedByNecessary: ");
 		if (transVisitedByNecessary.contains(tran)) {
 			return null;
 		}
@@ -870,57 +869,68 @@ public class StateGraph {
 		for (int i=0; i < presetPlaces.length; i++) {
 			int place = presetPlaces[i];
 			if (curState.getMarking()[place]==0) {
-//				System.out.println("####### calculate nMarking########");
+				System.out.println("####### calculate nMarking ########");
 				HashSet<Integer> nMarkingTemp = new HashSet<Integer>();				
 				String placeName = this.lpn.getAllPlaces().get(place);
-//				System.out.println("preset place of " + transition.getName() + " is " + placeName);
+				System.out.println("The preset place of " + transition.getName() + " is " + placeName);
 				int[] presetTrans = this.lpn.getPresetIndex(placeName);
 				for (int j=0; j < presetTrans.length; j++) {
+					System.out.println("@ nMarking: consider transition " + this.lpn.getAllTransitions()[presetTrans[j]].getName()); 
 					if (curEnabled.contains(presetTrans[j])) {
-//						System.out.println("@ nMarking: curEnabled contains transition " + this.lpn.getAllTransitions()[presetTrans[j]].getName() + ". Add to nMarkingTmp.");
+						System.out.println("@ nMarking: curEnabled contains transition " + this.lpn.getAllTransitions()[presetTrans[j]].getName() + ". Add to nMarkingTmp.");
 						nMarkingTemp.add(presetTrans[j]);
 					}
 					else {
+						System.out.println("@ nMarking: transition " +  this.lpn.getAllTransitions()[presetTrans[j]].getName() + " is not enabled. Compute its necessary set.");
 						HashSet<Integer> tmp = getNecessarySet(curState, presetTrans[j], dependent, 
 													curEnabled, staticMap, transVisitedByNecessary);
 						if (tmp != null)							
 							nMarkingTemp.addAll(tmp);
-//						else 
-//							System.out.println("@ nMarking: necessary set for transition " + this.lpn.getAllTransitions()[presetTrans[j]].getName() + " is null.");
+						else 
+							System.out.println("@ nMarking: necessary set for transition " + this.lpn.getAllTransitions()[presetTrans[j]].getName() + " is null.");
 					}
 				}
 				if (nMarking == null || nMarkingTemp.size() < nMarking.size()) {
 					nMarking = (HashSet<Integer>) nMarkingTemp.clone();
 				}
 			}
-//			else 
-//				System.out.println("Place " + this.lpn.getAllPlaces().get(place) + " marked");
+			else 
+				System.out.println("Place " + this.lpn.getAllPlaces().get(place) + " marked");
 		}
 		HashSet<Integer> nEnable = null;
 		int[] varValueVector = curState.getVector();
 		HashSet<Integer> canEnable = staticMap.get(this.lpn.getLpnIndex()).get(tran).getEnable();
-//		System.out.println("####### calculate nEnable########");
-//		printIntegerSet(canEnable, this.lpn.getAllTransitions()[tran] + " can be enabled by");
+		System.out.println("####### calculate nEnable ########");
+		printIntegerSet(canEnable, this.lpn.getAllTransitions()[tran] + " can be enabled by");
 		if (transition.getEnablingTree() != null
 				&& transition.getEnablingTree().evaluateExpr(this.lpn.getAllVarsAndValues(varValueVector)) == 0.0) {
 			nEnable = new HashSet<Integer>();
 			for (Integer tranCanEnable : canEnable) {
+				System.out.println("@ nEnable: consider transition " + this.lpn.getAllTransitions()[tranCanEnable].getName());
 				if (curEnabled.contains(tranCanEnable)) {
 					nEnable.add(tranCanEnable);
-//					System.out.println("@ nEnable: curEnabled contains transition " + this.lpn.getAllTransitions()[tranCanEnable].getName() + ". Add to nEnable.");
+					System.out.println("@ nEnable: curEnabled contains transition " + this.lpn.getAllTransitions()[tranCanEnable].getName() + ". Add to nEnable.");
 				}
 				else {
+					System.out.println("@ nEnable: transition " +  this.lpn.getAllTransitions()[tranCanEnable].getName() + " is not enabled. Compute its necessary set.");
 					HashSet<Integer> tmp = getNecessarySet(curState, tranCanEnable, dependent, 
 												curEnabled, staticMap, transVisitedByNecessary);
 					if (tmp != null)
 						nEnable.addAll(tmp);
-//					else
-//						System.out.println("@ nEnable: necessary set for transition " + this.lpn.getAllTransitions()[tranCanEnable] + " is null.");
+					else
+						System.out.println("@ nEnable: necessary set for transition " + this.lpn.getAllTransitions()[tranCanEnable] + " is null.");
 				}
 			}
 		}
-//		printIntegerSet(nMarking, "nMarking for transition " + transition.getName());
-//		printIntegerSet(nEnable, "nEnable for transition " + transition.getName());
+		else {
+			if (transition.getEnablingTree() == null)
+				System.out.println("@ nEnable: transition " + this.lpn.getAllTransitions()[tran] + "has no enabling conditions.");
+			else if (transition.getEnablingTree().evaluateExpr(this.lpn.getAllVarsAndValues(varValueVector)) != 0.0) {
+				System.out.println("@ nEnable: transition " + this.lpn.getAllTransitions()[tran] + "'s enabling condition is true.");
+			}
+		}
+		printIntegerSet(nMarking, "nMarking for transition " + transition.getName());
+		printIntegerSet(nEnable, "nEnable for transition " + transition.getName());
 		if (nEnable == null) 
 			return nMarking;
 		else if (nMarking == null) 
