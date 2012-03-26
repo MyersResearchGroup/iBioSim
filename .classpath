@@ -43,7 +43,6 @@
 	<classpathentry kind="lib" path="gui/lib/commons-primitives-20070823.jar"/>
 	<classpathentry kind="lib" path="gui/lib/hppc-0.3.1.jar"/>
 	<classpathentry kind="lib" path="gui/lib/SourceLibrary.jar"/>
-	<classpathentry kind="lib" path="gui/lib/antlr-3.3-complete.jar"/>
 	<classpathentry kind="lib" path="gui/lib/trove-3.0.0.jar"/>
 	<classpathentry kind="lib" path="gui/lib/openmali.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jafama.jar"/>
@@ -52,5 +51,6 @@
 	<classpathentry kind="lib" path="gui/lib/libSBOLxml.jar"/>
 	<classpathentry kind="lib" path="gui/lib/gson-2.0.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jsbml-0.8-rc1-with-dependencies.jar"/>
+	<classpathentry kind="lib" path="gui/src/antlrPackage/antlr-3.4-complete.jar"/>
 	<classpathentry kind="output" path="gui/dist/classes"/>
 </classpath>
