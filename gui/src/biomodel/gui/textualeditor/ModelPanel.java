@@ -22,6 +22,8 @@ import org.sbml.libsbml.Parameter;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.UnitDefinition;
 
+import biomodel.parser.BioModel;
+
 
 public class ModelPanel extends JPanel implements ActionListener, MouseListener {
 
@@ -35,15 +37,15 @@ public class ModelPanel extends JPanel implements ActionListener, MouseListener 
 
 	private JComboBox substanceUnits, timeUnits, volumeUnits, areaUnits, lengthUnits, extentUnits, conversionFactor;
 
-	private SBMLDocument document;
+	private BioModel gcm;
 
 	private MutableBoolean dirty;
 
-	public ModelPanel(SBMLDocument document, MutableBoolean dirty, boolean paramsOnly) {
+	public ModelPanel(BioModel gcm, MutableBoolean dirty, boolean paramsOnly) {
 		super();
-		this.document = document;
+		this.gcm = gcm;
 		this.dirty = dirty;
-		Model model = document.getModel();
+		Model model = gcm.getSBMLDocument().getModel();
 		modelName = new JTextField(model.getName(), 50);
 		modelID = new JTextField(model.getId(), 16);
 		modelName = new JTextField(model.getName(), 40);
@@ -56,7 +58,7 @@ public class ModelPanel extends JPanel implements ActionListener, MouseListener 
 		this.add(modelID);
 		this.add(modelNameLabel);
 		this.add(modelName);
-		if (document.getLevel() > 2) {
+		if (gcm.getSBMLDocument().getLevel() > 2) {
 			this.add(modelUnits);
 		}
 		if (paramsOnly) {
@@ -96,8 +98,8 @@ public class ModelPanel extends JPanel implements ActionListener, MouseListener 
 		extentUnits.addItem("( none )");
 		conversionFactor = new JComboBox();
 		conversionFactor.addItem("( none )");
-		ListOf listOfUnits = document.getModel().getListOfUnitDefinitions();
-		for (int i = 0; i < document.getModel().getNumUnitDefinitions(); i++) {
+		ListOf listOfUnits = gcm.getSBMLDocument().getModel().getListOfUnitDefinitions();
+		for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumUnitDefinitions(); i++) {
 			UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
 			if ((unit.getNumUnits() == 1)
 					&& (unit.getUnit(0).isMole() || unit.getUnit(0).isItem() || unit.getUnit(0).isGram() || unit.getUnit(0).isKilogram())
@@ -136,21 +138,21 @@ public class ModelPanel extends JPanel implements ActionListener, MouseListener 
 		extentUnits.addItem("item");
 		extentUnits.addItem("kilogram");
 		extentUnits.addItem("mole");
-		ListOf listOfParameters = document.getModel().getListOfParameters();
-		for (int i = 0; i < document.getModel().getNumParameters(); i++) {
+		ListOf listOfParameters = gcm.getSBMLDocument().getModel().getListOfParameters();
+		for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumParameters(); i++) {
 			Parameter param = (Parameter) listOfParameters.get(i);
 			if (param.getConstant()) {
 				conversionFactor.addItem(param.getId());
 			}
 		}
 		if (option.equals("OK")) {
-			substanceUnits.setSelectedItem(document.getModel().getSubstanceUnits());
-			timeUnits.setSelectedItem(document.getModel().getTimeUnits());
-			volumeUnits.setSelectedItem(document.getModel().getVolumeUnits());
-			areaUnits.setSelectedItem(document.getModel().getAreaUnits());
-			lengthUnits.setSelectedItem(document.getModel().getLengthUnits());
-			extentUnits.setSelectedItem(document.getModel().getExtentUnits());
-			conversionFactor.setSelectedItem(document.getModel().getConversionFactor());
+			substanceUnits.setSelectedItem(gcm.getSBMLDocument().getModel().getSubstanceUnits());
+			timeUnits.setSelectedItem(gcm.getSBMLDocument().getModel().getTimeUnits());
+			volumeUnits.setSelectedItem(gcm.getSBMLDocument().getModel().getVolumeUnits());
+			areaUnits.setSelectedItem(gcm.getSBMLDocument().getModel().getAreaUnits());
+			lengthUnits.setSelectedItem(gcm.getSBMLDocument().getModel().getLengthUnits());
+			extentUnits.setSelectedItem(gcm.getSBMLDocument().getModel().getExtentUnits());
+			conversionFactor.setSelectedItem(gcm.getSBMLDocument().getModel().getConversionFactor());
 		}
 		modelUnitsPanel.add(substanceUnitsLabel);
 		modelUnitsPanel.add(substanceUnits);
@@ -173,48 +175,49 @@ public class ModelPanel extends JPanel implements ActionListener, MouseListener 
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = false;
 			if (substanceUnits.getSelectedItem().equals("( none )")) {
-				document.getModel().unsetSubstanceUnits();
+				gcm.getSBMLDocument().getModel().unsetSubstanceUnits();
 			}
 			else {
-				document.getModel().setSubstanceUnits((String) substanceUnits.getSelectedItem());
+				gcm.getSBMLDocument().getModel().setSubstanceUnits((String) substanceUnits.getSelectedItem());
 			}
 			if (timeUnits.getSelectedItem().equals("( none )")) {
-				document.getModel().unsetTimeUnits();
+				gcm.getSBMLDocument().getModel().unsetTimeUnits();
 			}
 			else {
-				document.getModel().setTimeUnits((String) timeUnits.getSelectedItem());
+				gcm.getSBMLDocument().getModel().setTimeUnits((String) timeUnits.getSelectedItem());
 			}
 			if (volumeUnits.getSelectedItem().equals("( none )")) {
-				document.getModel().unsetVolumeUnits();
+				gcm.getSBMLDocument().getModel().unsetVolumeUnits();
 			}
 			else {
-				document.getModel().setVolumeUnits((String) volumeUnits.getSelectedItem());
+				gcm.getSBMLDocument().getModel().setVolumeUnits((String) volumeUnits.getSelectedItem());
 			}
 			if (areaUnits.getSelectedItem().equals("( none )")) {
-				document.getModel().unsetAreaUnits();
+				gcm.getSBMLDocument().getModel().unsetAreaUnits();
 			}
 			else {
-				document.getModel().setAreaUnits((String) areaUnits.getSelectedItem());
+				gcm.getSBMLDocument().getModel().setAreaUnits((String) areaUnits.getSelectedItem());
 			}
 			if (lengthUnits.getSelectedItem().equals("( none )")) {
-				document.getModel().unsetLengthUnits();
+				gcm.getSBMLDocument().getModel().unsetLengthUnits();
 			}
 			else {
-				document.getModel().setLengthUnits((String) lengthUnits.getSelectedItem());
+				gcm.getSBMLDocument().getModel().setLengthUnits((String) lengthUnits.getSelectedItem());
 			}
 			if (extentUnits.getSelectedItem().equals("( none )")) {
-				document.getModel().unsetExtentUnits();
+				gcm.getSBMLDocument().getModel().unsetExtentUnits();
 			}
 			else {
-				document.getModel().setExtentUnits((String) extentUnits.getSelectedItem());
+				gcm.getSBMLDocument().getModel().setExtentUnits((String) extentUnits.getSelectedItem());
 			}
 			if (conversionFactor.getSelectedItem().equals("( none )")) {
-				document.getModel().unsetConversionFactor();
+				gcm.getSBMLDocument().getModel().unsetConversionFactor();
 			}
 			else {
-				document.getModel().setConversionFactor((String) conversionFactor.getSelectedItem());
+				gcm.getSBMLDocument().getModel().setConversionFactor((String) conversionFactor.getSelectedItem());
 			}
 			dirty.setValue(true);
+			gcm.makeUndoPoint();
 			if (error) {
 				value = JOptionPane.showOptionDialog(Gui.frame, modelUnitsPanel, "Model Units Editor", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -230,7 +233,7 @@ public class ModelPanel extends JPanel implements ActionListener, MouseListener 
 	 */
 	public void setModelID(String modelID) {
 		this.modelID.setText(modelID);
-		document.getModel().setId(modelID);
+		gcm.getSBMLDocument().getModel().setId(modelID);
 	}
 
 	/**

@@ -262,7 +262,7 @@ public class BioModel {
 	}
 	
 	public void reloadSBMLFile() {
-		if (sbml==null) {
+		if (true/*sbml==null*/) {
 			sbml = Gui.readSBML(path + separator + sbmlFile);
 			sbml.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
 			sbml.setPkgRequired("layout", false); 
@@ -2234,7 +2234,7 @@ public class BioModel {
 					layout.removeTextGlyph(id);
 				}
 			}
-			speciesPanel.refreshSpeciesPanel(sbml);
+			speciesPanel.refreshSpeciesPanel(this);
 			usedMetaIDs.remove(species.getMetaId());
 		}
 		while (usedIDs.contains(id)) {
@@ -3550,7 +3550,7 @@ public class BioModel {
 			species.setInitialAmount(0);
 			species.setHasOnlySubstanceUnits(true);
 			if (speciesPanel!=null)
-				speciesPanel.refreshSpeciesPanel(sbml);
+				speciesPanel.refreshSpeciesPanel(this);
 		}
 	}
 
@@ -3805,7 +3805,7 @@ public class BioModel {
 	private void loadSBMLFile(String sbmlFile) {
 		if (!sbmlFile.equals("")) {
 			if (new File(path + separator + sbmlFile).exists()) {
-				if (sbml != null) {
+				if (false/*sbml != null*/) {
 					SBMLDocument document = Gui.readSBML(path + separator + sbmlFile);
 					sbml.setModel(document.getModel());
 					//sbml.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
@@ -3871,14 +3871,14 @@ public class BioModel {
 	private void loadSBMLFromBuffer(StringBuffer buffer) {	
 		
 		SBMLReader reader = new SBMLReader();
-		SBMLDocument document = reader.readSBMLFromString(buffer.toString());
-		sbml.setModel(document.getModel());
+		sbml = reader.readSBMLFromString(buffer.toString());
+		//sbml.setModel(document.getModel());
 		//sbml.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
 		//sbml.setPkgRequired("layout", false); 
 		//sbml.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
 		//sbml.setPkgRequired("comp", true);
 		sbmlLayout = (LayoutModelPlugin)sbml.getModel().getPlugin("layout");
-		sbmlComp = (CompSBMLDocumentPlugin)document.getPlugin("comp");
+		sbmlComp = (CompSBMLDocumentPlugin)sbml.getPlugin("comp");
 		sbmlCompModel = (CompModelPlugin)sbml.getModel().getPlugin("comp");
 		if (sbml != null) {
 			for (long i = 0; i < sbml.getModel().getNumCompartments(); i++) {

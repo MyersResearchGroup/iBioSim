@@ -235,7 +235,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 					
 					Grid grid = gcm.getGrid();
 					grid.refreshComponents();
-					gcm2sbml.getSpeciesPanel().refreshSpeciesPanel(gcm.getSBMLDocument());
+					gcm2sbml.getSpeciesPanel().refreshSpeciesPanel(gcm);
 					
 					droppedComponent = true;
 				}

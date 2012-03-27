@@ -39,6 +39,8 @@ import org.sbml.libsbml.Unit;
 import org.sbml.libsbml.UnitDefinition;
 import org.sbml.libsbml.libsbml;
 
+import biomodel.parser.BioModel;
+
 
 /**
  * This is a class for creating SBML parameters
@@ -160,7 +162,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 
 	private JButton useMassAction, clearKineticLaw;
 
-	private SBMLDocument document;
+	private BioModel gcm;
 
 	private ArrayList<String> usedIDs;
 
@@ -180,17 +182,17 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	
 	private String selectedReaction;
 
-	public Reactions(Gui biosim, SBMLDocument document, ArrayList<String> usedIDs, MutableBoolean dirty, Boolean paramsOnly,
+	public Reactions(Gui biosim, BioModel gcm, ArrayList<String> usedIDs, MutableBoolean dirty, Boolean paramsOnly,
 			ArrayList<String> getParams, String file, ArrayList<String> parameterChanges) {
 		super(new BorderLayout());
-		this.document = document;
+		this.gcm = gcm;
 		this.usedIDs = usedIDs;
 		this.biosim = biosim;
 		this.dirty = dirty;
 		this.paramsOnly = paramsOnly;
 		this.file = file;
 		this.parameterChanges = parameterChanges;
-		Model model = document.getModel();
+		Model model = gcm.getSBMLDocument().getModel();
 		JPanel addReacs = new JPanel();
 		addReac = new JButton("Add Reaction");
 		removeReac = new JButton("Remove Reaction");
@@ -251,7 +253,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Creates a frame used to edit reactions or create new ones.
 	 */
-	public void reactionsEditor(SBMLDocument document, String option, String reactionId, boolean inSchematic) {
+	public void reactionsEditor(BioModel gcm, String option, String reactionId, boolean inSchematic) {
 		/*
 		 * if (option.equals("OK") && reactions.getSelectedIndex() == -1) {
 		 * JOptionPane.showMessageDialog(Gui.frame, "No reaction selected.",
@@ -261,16 +263,16 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		JLabel id = new JLabel("ID:");
 		reacID = new JTextField(15);
 		JLabel name = new JLabel("Name:");
-		if (document.getLevel() < 3) {
+		if (gcm.getSBMLDocument().getLevel() < 3) {
 			reacName = new JTextField(50);
 		}
 		else {
 			reacName = new JTextField(30);
 		}
 		JLabel reactionCompLabel = new JLabel("Compartment:");
-		ListOf listOfCompartments = document.getModel().getListOfCompartments();
-		String[] addC = new String[(int) document.getModel().getNumCompartments()];
-		for (int i = 0; i < document.getModel().getNumCompartments(); i++) {
+		ListOf listOfCompartments = gcm.getSBMLDocument().getModel().getListOfCompartments();
+		String[] addC = new String[(int) gcm.getSBMLDocument().getModel().getNumCompartments()];
+		for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumCompartments(); i++) {
 			addC[i] = ((Compartment) listOfCompartments.get(i)).getId();
 		}
 		reactionComp = new JComboBox(addC);
@@ -284,7 +286,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		String selectedID = "";
 		Reaction copyReact = null;
 		if (option.equals("OK")) {
-			Reaction reac = document.getModel().getReaction(reactionId);
+			Reaction reac = gcm.getSBMLDocument().getModel().getReaction(reactionId);
 			copyReact = (Reaction) reac.cloneObject();
 			reacID.setText(reac.getId());
 			selectedID = reac.getId();
@@ -301,7 +303,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			else {
 				reacFast.setSelectedItem("false");
 			}
-			if (document.getLevel() > 2) {
+			if (gcm.getSBMLDocument().getLevel() > 2) {
 				reactionComp.setSelectedItem(reac.getCompartment());
 			}
 		}
@@ -336,7 +338,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		changedParameters = new ArrayList<Parameter>();
 		thisReactionParams = new ArrayList<String>();
 		if (option.equals("OK")) {
-			Reaction reac = document.getModel().getReaction(reactionId);
+			Reaction reac = gcm.getSBMLDocument().getModel().getReaction(reactionId);
 			ListOf listOfParameters = reac.getKineticLaw().getListOfParameters();
 			reacParams = new String[(int) reac.getKineticLaw().getNumParameters()];
 			for (int i = 0; i < reac.getKineticLaw().getNumParameters(); i++) {
@@ -345,7 +347,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				 * conversion bug in libsbml
 				 */
 				Parameter pp = (Parameter) listOfParameters.get(i);
-				Parameter parameter = new Parameter(document.getLevel(), document.getVersion());
+				Parameter parameter = new Parameter(gcm.getSBMLDocument().getLevel(), gcm.getSBMLDocument().getVersion());
 				parameter.setId(pp.getId());
 				parameter.setName(pp.getName());
 				parameter.setValue(pp.getValue());
@@ -373,12 +375,12 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		else {
 			// Parameter p = new Parameter(BioSim.SBML_LEVEL,
 			// BioSim.SBML_VERSION);
-			Parameter p = new Parameter(document.getLevel(), document.getVersion());
+			Parameter p = new Parameter(gcm.getSBMLDocument().getLevel(), gcm.getSBMLDocument().getVersion());
 			p.setId("kf");
 			p.setValue(0.1);
 			changedParameters.add(p);
 			// p = new Parameter(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
-			p = new Parameter(document.getLevel(), document.getVersion());
+			p = new Parameter(gcm.getSBMLDocument().getLevel(), gcm.getSBMLDocument().getVersion());
 			p.setId("kr");
 			p.setValue(1.0);
 			changedParameters.add(p);
@@ -417,7 +419,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		reacta = new String[0];
 		changedReactants = new ArrayList<SpeciesReference>();
 		if (option.equals("OK")) {
-			Reaction reac = document.getModel().getReaction(reactionId);
+			Reaction reac = gcm.getSBMLDocument().getModel().getReaction(reactionId);
 			ListOf listOfReactants = reac.getListOfReactants();
 			reacta = new String[(int) reac.getNumReactants()];
 			for (int i = 0; i < reac.getNumReactants(); i++) {
@@ -460,7 +462,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		proda = new String[0];
 		changedProducts = new ArrayList<SpeciesReference>();
 		if (option.equals("OK")) {
-			Reaction reac = document.getModel().getReaction(reactionId);
+			Reaction reac = gcm.getSBMLDocument().getModel().getReaction(reactionId);
 			ListOf listOfProducts = reac.getListOfProducts();
 			proda = new String[(int) reac.getNumProducts()];
 			for (int i = 0; i < reac.getNumProducts(); i++) {
@@ -503,7 +505,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		modifier = new String[0];
 		changedModifiers = new ArrayList<ModifierSpeciesReference>();
 		if (option.equals("OK")) {
-			Reaction reac = document.getModel().getReaction(reactionId);
+			Reaction reac = gcm.getSBMLDocument().getModel().getReaction(reactionId);
 			ListOf listOfModifiers = reac.getListOfModifiers();
 			modifier = new String[(int) reac.getNumModifiers()];
 			for (int i = 0; i < reac.getNumModifiers(); i++) {
@@ -536,7 +538,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		scroll4.setPreferredSize(new Dimension(100, 100));
 		scroll4.setViewportView(kineticLaw);
 		if (option.equals("OK")) {
-			kineticLaw.setText(SBMLutilities.myFormulaToString(document.getModel().getReaction(reactionId).getKineticLaw().getMath()));
+			kineticLaw.setText(SBMLutilities.myFormulaToString(gcm.getSBMLDocument().getModel().getReaction(reactionId).getKineticLaw().getMath()));
 		}
 		JPanel kineticPanel = new JPanel(new BorderLayout());
 		kineticPanel.add(kineticLabel, "North");
@@ -551,7 +553,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			reactionPanelNorth1.add(reacID);
 			reactionPanelNorth1.add(name);
 			reactionPanelNorth1.add(reacName);
-			if (document.getLevel() > 2) {
+			if (gcm.getSBMLDocument().getLevel() > 2) {
 				reactionPanelNorth1b.add(reactionCompLabel);
 				reactionPanelNorth1b.add(reactionComp);
 			}
@@ -576,7 +578,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			reactionPanelNorth1.add(reacID);
 			reactionPanelNorth1.add(name);
 			reactionPanelNorth1.add(reacName);
-			if (document.getLevel() > 2) {
+			if (gcm.getSBMLDocument().getLevel() > 2) {
 				reactionPanelNorth1.add(reactionCompLabel);
 				reactionPanelNorth1.add(reactionComp);
 			}
@@ -623,7 +625,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			String reac = reacID.getText().trim();
-			error = SBMLutilities.checkID(document, usedIDs, reac, selectedID, false);
+			error = SBMLutilities.checkID(gcm.getSBMLDocument(), usedIDs, reac, selectedID, false);
 			if (!error) {
 				if (kineticLaw.getText().trim().equals("")) {
 					JOptionPane.showMessageDialog(Gui.frame, "A reaction must have a kinetic law.", "Enter A Kinetic Law", JOptionPane.ERROR_MESSAGE);
@@ -664,7 +666,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						error = true;
 					}
 					if (!error) {
-						error = SBMLutilities.checkNumFunctionArguments(document, SBMLutilities.myParseFormula(kineticLaw.getText().trim()));
+						error = SBMLutilities.checkNumFunctionArguments(gcm.getSBMLDocument(), SBMLutilities.myParseFormula(kineticLaw.getText().trim()));
 					}
 				}
 			}
@@ -678,7 +680,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				if (option.equals("OK")) {
 					int index = reactions.getSelectedIndex();
 					String val = reactionId;
-					Reaction react = document.getModel().getReaction(val);
+					Reaction react = gcm.getSBMLDocument().getModel().getReaction(val);
 					ListOf remove;
 					long size;
 					remove = react.getKineticLaw().getListOfParameters();
@@ -719,7 +721,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					else {
 						react.setReversible(false);
 					}
-					if (document.getLevel() > 2) {
+					if (gcm.getSBMLDocument().getLevel() > 2) {
 						react.setCompartment((String) reactionComp.getSelectedItem());
 					}
 					if (reacFast.getSelectedItem().equals("true")) {
@@ -733,7 +735,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					react.getKineticLaw().setMath(SBMLutilities.myParseFormula(kineticLaw.getText().trim()));
 					error = checkKineticLawUnits(react.getKineticLaw());
 					if (!error) {
-						error = SBMLutilities.checkCycles(document);
+						error = SBMLutilities.checkCycles(gcm.getSBMLDocument());
 						if (error) {
 							JOptionPane.showMessageDialog(Gui.frame, "Cycle detected within initial assignments, assignment rules, and rate laws.",
 									"Cycle Detected", JOptionPane.ERROR_MESSAGE);
@@ -785,7 +787,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 				}
 				else {
-					Reaction react = document.getModel().createReaction();
+					Reaction react = gcm.getSBMLDocument().getModel().createReaction();
 					react.createKineticLaw();
 					int index = reactions.getSelectedIndex();
 					for (int i = 0; i < changedParameters.size(); i++) {
@@ -812,7 +814,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					else {
 						react.setFast(false);
 					}
-					if (document.getLevel() > 2) {
+					if (gcm.getSBMLDocument().getLevel() > 2) {
 						react.setCompartment((String) reactionComp.getSelectedItem());
 					}
 					react.setId(reacID.getText().trim());
@@ -820,7 +822,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					react.getKineticLaw().setMath(SBMLutilities.myParseFormula(kineticLaw.getText().trim()));
 					error = checkKineticLawUnits(react.getKineticLaw());
 					if (!error) {
-						error = SBMLutilities.checkCycles(document);
+						error = SBMLutilities.checkCycles(gcm.getSBMLDocument());
 						if (error) {
 							JOptionPane.showMessageDialog(Gui.frame, "Cycle detected within initial assignments, assignment rules, and rate laws.",
 									"Cycle Detected", JOptionPane.ERROR_MESSAGE);
@@ -841,7 +843,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						Utility.sort(reacts);
 						reactions.setListData(reacts);
 						reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-						if (document.getModel().getNumReactions() == 1) {
+						if (gcm.getSBMLDocument().getModel().getNumReactions() == 1) {
 							reactions.setSelectedIndex(0);
 						}
 						else {
@@ -849,10 +851,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						}
 					}
 					else {
-						removeTheReaction(document, reac);
+						removeTheReaction(gcm, reac);
 					}
 				}
 				dirty.setValue(true);
+				gcm.makeUndoPoint();
 			}
 			if (error) {
 				value = JOptionPane.showOptionDialog(Gui.frame, reactionPanel, "Reaction Editor", JOptionPane.YES_NO_OPTION,
@@ -862,8 +865,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		if (value == JOptionPane.NO_OPTION) {
 			if (option.equals("OK")) {
 				String reac = reactionId;
-				removeTheReaction(document, reac);
-				document.getModel().addReaction(copyReact);
+				removeTheReaction(gcm, reac);
+				gcm.getSBMLDocument().getModel().addReaction(copyReact);
 			}
 			return;
 		}
@@ -875,8 +878,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	private ArrayList<String> getInvalidVariablesInReaction(String formula, boolean isReaction, String arguments, boolean isFunction) {
 		ArrayList<String> validVars = new ArrayList<String>();
 		ArrayList<String> invalidVars = new ArrayList<String>();
-		ListOf sbml = document.getModel().getListOfFunctionDefinitions();
-		for (int i = 0; i < document.getModel().getNumFunctionDefinitions(); i++) {
+		ListOf sbml = gcm.getSBMLDocument().getModel().getListOfFunctionDefinitions();
+		for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumFunctionDefinitions(); i++) {
 			validVars.add(((FunctionDefinition) sbml.get(i)).getId());
 		}
 		if (isReaction) {
@@ -896,8 +899,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 		}
 		else if (!isFunction) {
-			sbml = document.getModel().getListOfSpecies();
-			for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
+			sbml = gcm.getSBMLDocument().getModel().getListOfSpecies();
+			for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumSpecies(); i++) {
 				validVars.add(((Species) sbml.get(i)).getId());
 			}
 		}
@@ -908,18 +911,18 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 		}
 		else {
-			sbml = document.getModel().getListOfCompartments();
-			for (int i = 0; i < document.getModel().getNumCompartments(); i++) {
-				if (document.getLevel() > 2 || ((Compartment) sbml.get(i)).getSpatialDimensions() != 0) {
+			sbml = gcm.getSBMLDocument().getModel().getListOfCompartments();
+			for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumCompartments(); i++) {
+				if (gcm.getSBMLDocument().getLevel() > 2 || ((Compartment) sbml.get(i)).getSpatialDimensions() != 0) {
 					validVars.add(((Compartment) sbml.get(i)).getId());
 				}
 			}
-			sbml = document.getModel().getListOfParameters();
-			for (int i = 0; i < document.getModel().getNumParameters(); i++) {
+			sbml = gcm.getSBMLDocument().getModel().getListOfParameters();
+			for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumParameters(); i++) {
 				validVars.add(((Parameter) sbml.get(i)).getId());
 			}
-			sbml = document.getModel().getListOfReactions();
-			for (int i = 0; i < document.getModel().getNumReactions(); i++) {
+			sbml = gcm.getSBMLDocument().getModel().getListOfReactions();
+			for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumReactions(); i++) {
 				Reaction reaction = (Reaction) sbml.get(i);
 				validVars.add(reaction.getId());
 				ListOf sbml2 = reaction.getListOfReactants();
@@ -957,7 +960,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					|| splitLaw[i].equals("leq") || splitLaw[i].equals("gt") || splitLaw[i].equals("neq") || splitLaw[i].equals("lt")
 					|| splitLaw[i].equals("delay") || splitLaw[i].equals("t") || splitLaw[i].equals("time") || splitLaw[i].equals("true")
 					|| splitLaw[i].equals("false") || splitLaw[i].equals("pi") || splitLaw[i].equals("exponentiale")
-					|| ((document.getLevel() > 2) && (splitLaw[i].equals("avogadro")))) {
+					|| ((gcm.getSBMLDocument().getLevel() > 2) && (splitLaw[i].equals("avogadro")))) {
 			}
 			else {
 				String temp = splitLaw[i];
@@ -1001,7 +1004,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		reacParamValue = new JTextField();
 		reacParamUnits = new JComboBox();
 		reacParamUnits.addItem("( none )");
-		Model model = document.getModel();
+		Model model = gcm.getSBMLDocument().getModel();
 		ListOf listOfUnits = model.getListOfUnitDefinitions();
 		String[] units = new String[(int) model.getNumUnitDefinitions()];
 		for (int i = 0; i < model.getNumUnitDefinitions(); i++) {
@@ -1010,7 +1013,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			// GET OTHER THINGS
 		}
 		for (int i = 0; i < units.length; i++) {
-			if (document.getLevel() > 2
+			if (gcm.getSBMLDocument().getLevel() > 2
 					|| (!units[i].equals("substance") && !units[i].equals("volume") && !units[i].equals("area") && !units[i].equals("length") && !units[i]
 							.equals("time"))) {
 				reacParamUnits.addItem(units[i]);
@@ -1023,7 +1026,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				"henry", "hertz", "item", "joule", "katal", "kelvin", "kilogram", "litre", "lumen", "lux", "metre", "mole", "newton", "ohm",
 				"pascal", "radian", "second", "siemens", "sievert", "steradian", "tesla", "volt", "watt", "weber" };
 		String[] unitIds;
-		if (document.getLevel() < 3) {
+		if (gcm.getSBMLDocument().getLevel() < 3) {
 			unitIds = unitIdsL2V4;
 		}
 		else {
@@ -1177,7 +1180,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(document, usedIDs, reacParamID.getText().trim(), selectedID, true);
+			error = SBMLutilities.checkID(gcm.getSBMLDocument(), usedIDs, reacParamID.getText().trim(), selectedID, true);
 			if (!error) {
 				if (thisReactionParams.contains(reacParamID.getText().trim()) && (!reacParamID.getText().trim().equals(selectedID))) {
 					JOptionPane.showMessageDialog(Gui.frame, "ID is not unique.", "ID Not Unique", JOptionPane.ERROR_MESSAGE);
@@ -1312,7 +1315,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						int index = reacParameters.getSelectedIndex();
 						// Parameter paramet = new Parameter(BioSim.SBML_LEVEL,
 						// BioSim.SBML_VERSION);
-						Parameter paramet = new Parameter(document.getLevel(), document.getVersion());
+						Parameter paramet = new Parameter(gcm.getSBMLDocument().getLevel(), gcm.getSBMLDocument().getVersion());
 						changedParameters.add(paramet);
 						paramet.setId(reacParamID.getText().trim());
 						paramet.setName(reacParamName.getText().trim());
@@ -1335,7 +1338,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						reacParameters.setListData(reacParams);
 						reacParameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						try {
-							if (document.getModel().getReaction(selectedReaction).getKineticLaw()
+							if (gcm.getSBMLDocument().getModel().getReaction(selectedReaction).getKineticLaw()
 									.getNumParameters() == 1) {
 								reacParameters.setSelectedIndex(0);
 							}
@@ -1348,6 +1351,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						}
 					}
 					dirty.setValue(true);
+					gcm.makeUndoPoint();
 				}
 			}
 			if (error) {
@@ -1363,9 +1367,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Creates a frame used to edit products or create new ones.
 	 */
-	public void productsEditor(SBMLDocument document, String option, String selectedProductId, SpeciesReference product) {
+	public void productsEditor(BioModel gcm, String option, String selectedProductId, SpeciesReference product) {
 		JPanel productsPanel;
-		if (document.getLevel() < 3) {
+		if (gcm.getSBMLDocument().getLevel() < 3) {
 			productsPanel = new JPanel(new GridLayout(4, 2));
 		}
 		else {
@@ -1380,17 +1384,17 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		JLabel constantLabel = new JLabel("Constant");
 		Object[] productConstantOptions = { "true", "false" };
 		productConstant = new JComboBox(productConstantOptions);
-		ListOf listOfSpecies = document.getModel().getListOfSpecies();
-		String[] speciesList = new String[(int) document.getModel().getNumSpecies()];
-		for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
+		ListOf listOfSpecies = gcm.getSBMLDocument().getModel().getListOfSpecies();
+		String[] speciesList = new String[(int) gcm.getSBMLDocument().getModel().getNumSpecies()];
+		for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumSpecies(); i++) {
 			speciesList[i] = ((Species) listOfSpecies.get(i)).getId();
 		}
 		Utility.sort(speciesList);
 		productSpecies = new JComboBox();
 		productSpecies.setEnabled(false);
 		for (int i = 0; i < speciesList.length; i++) {
-			Species species = document.getModel().getSpecies(speciesList[i]);
-			if (species.getBoundaryCondition() || (!species.getConstant() && Rules.keepVarRateRule(document, "", speciesList[i]))) {
+			Species species = gcm.getSBMLDocument().getModel().getSpecies(speciesList[i]);
+			if (species.getBoundaryCondition() || (!species.getConstant() && Rules.keepVarRateRule(gcm, "", speciesList[i]))) {
 				productSpecies.addItem(speciesList[i]);
 			}
 		}
@@ -1419,7 +1423,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				productName.setText(product.getName());
 			}
 			productSpecies.setSelectedItem(product.getSpecies());
-			if ((document.getLevel() < 3) && (product.isSetStoichiometryMath())) {
+			if ((gcm.getSBMLDocument().getLevel() < 3) && (product.isSetStoichiometryMath())) {
 				stoiciLabel.setSelectedItem("Stoichiometry Math");
 				productStoiciometry.setText("" + SBMLutilities.myFormulaToString(product.getStoichiometryMath().getMath()));
 			}
@@ -1436,14 +1440,14 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		productsPanel.add(productName);
 		productsPanel.add(speciesLabel);
 		productsPanel.add(productSpecies);
-		if (document.getLevel() < 3) {
+		if (gcm.getSBMLDocument().getLevel() < 3) {
 			productsPanel.add(stoiciLabel);
 		}
 		else {
 			productsPanel.add(stoichiometryLabel);
 		}
 		productsPanel.add(productStoiciometry);
-		if (document.getLevel() > 2) {
+		if (gcm.getSBMLDocument().getLevel() > 2) {
 			productsPanel.add(constantLabel);
 			productsPanel.add(productConstant);
 		}
@@ -1461,10 +1465,10 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			String prod = "";
 			double val = 1.0;
 			if (productId.getText().trim().equals("")) {
-				error = SBMLutilities.variableInUse(document, selectedID, false, true, true);
+				error = SBMLutilities.variableInUse(gcm.getSBMLDocument(), selectedID, false, true, true);
 			}
 			else {
-				error = SBMLutilities.checkID(document, usedIDs, productId.getText().trim(), selectedID, false);
+				error = SBMLutilities.checkID(gcm.getSBMLDocument(), usedIDs, productId.getText().trim(), selectedID, false);
 			}
 			if (!error) {
 				if (stoiciLabel.getSelectedItem().equals("Stoichiometry")) {
@@ -1549,7 +1553,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							error = true;
 						}
 						if (!error) {
-							error = SBMLutilities.checkNumFunctionArguments(document,
+							error = SBMLutilities.checkNumFunctionArguments(gcm.getSBMLDocument(),
 									SBMLutilities.myParseFormula(productStoiciometry.getText().trim()));
 						}
 						if (!error) {
@@ -1564,7 +1568,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			if (!error && option.equals("OK") && productConstant.getSelectedItem().equals("true")) {
 				String id = selectedID;
-				error = SBMLutilities.checkConstant(document, "Product stoiciometry", id);
+				error = SBMLutilities.checkConstant(gcm.getSBMLDocument(), "Product stoiciometry", id);
 			}
 			if (!error) {
 				if (option.equals("OK")) {
@@ -1609,7 +1613,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						products.setListData(proda);
 						products.setSelectedIndex(index);
 					}
-					SBMLutilities.updateVarId(document, false, selectedID, productId.getText().trim());
+					SBMLutilities.updateVarId(gcm.getSBMLDocument(), false, selectedID, productId.getText().trim());
 					if (product == null) {
 						kineticLaw.setText(SBMLutilities.updateFormulaVar(kineticLaw.getText().trim(), selectedID, productId.getText().trim()));
 					}
@@ -1617,7 +1621,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				else {
 					// SpeciesReference produ = new
 					// SpeciesReference(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
-					SpeciesReference produ = new SpeciesReference(document.getLevel(), document.getVersion());
+					SpeciesReference produ = new SpeciesReference(gcm.getSBMLDocument().getLevel(), gcm.getSBMLDocument().getVersion());
 					produ.setId(productId.getText().trim());
 					usedIDs.add(produ.getId());
 					produ.setName(productName.getText().trim());
@@ -1652,6 +1656,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					products.setSelectedIndex(0);
 				}
 				dirty.setValue(true);
+				gcm.makeUndoPoint();
 			}
 			if (error) {
 				value = JOptionPane.showOptionDialog(Gui.frame, productsPanel, "Products Editor", JOptionPane.YES_NO_OPTION,
@@ -1673,9 +1678,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		JPanel modifiersPanel = new JPanel(new GridLayout(1, 2));
 		JLabel speciesLabel = new JLabel("Species:");
-		ListOf listOfSpecies = document.getModel().getListOfSpecies();
-		String[] speciesList = new String[(int) document.getModel().getNumSpecies()];
-		for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
+		ListOf listOfSpecies = gcm.getSBMLDocument().getModel().getListOfSpecies();
+		String[] speciesList = new String[(int) gcm.getSBMLDocument().getModel().getNumSpecies()];
+		for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumSpecies(); i++) {
 			speciesList[i] = ((Species) listOfSpecies.get(i)).getId();
 		}
 		Utility.sort(speciesList);
@@ -1757,7 +1762,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					// ModifierSpeciesReference modi = new
 					// ModifierSpeciesReference(BioSim.SBML_LEVEL,
 					// BioSim.SBML_VERSION);
-					ModifierSpeciesReference modi = new ModifierSpeciesReference(document.getLevel(), document.getVersion());
+					ModifierSpeciesReference modi = new ModifierSpeciesReference(gcm.getSBMLDocument().getLevel(), gcm.getSBMLDocument().getVersion());
 					changedModifiers.add(modi);
 					modi.setSpecies((String) modifierSpecies.getSelectedItem());
 					JList add = new JList();
@@ -1774,7 +1779,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					modifiers.setListData(modifier);
 					modifiers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					try {
-						if (document.getModel().getReaction(selectedReaction).getNumModifiers() == 1) {
+						if (gcm.getSBMLDocument().getModel().getReaction(selectedReaction).getNumModifiers() == 1) {
 							modifiers.setSelectedIndex(0);
 						}
 						else {
@@ -1787,6 +1792,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 			dirty.setValue(true);
+			gcm.makeUndoPoint();
 			if (error) {
 				value = JOptionPane.showOptionDialog(Gui.frame, modifiersPanel, "Modifiers Editor", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -1800,9 +1806,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Creates a frame used to edit reactants or create new ones.
 	 */
-	public void reactantsEditor(SBMLDocument document, String option, String selectedReactantId, SpeciesReference reactant) {
+	public void reactantsEditor(BioModel gcm, String option, String selectedReactantId, SpeciesReference reactant) {
 		JPanel reactantsPanel;
-		if (document.getLevel() < 3) {
+		if (gcm.getSBMLDocument().getLevel() < 3) {
 			reactantsPanel = new JPanel(new GridLayout(4, 2));
 		}
 		else {
@@ -1817,17 +1823,17 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		JLabel constantLabel = new JLabel("Constant");
 		Object[] reactantConstantOptions = { "true", "false" };
 		reactantConstant = new JComboBox(reactantConstantOptions);
-		ListOf listOfSpecies = document.getModel().getListOfSpecies();
-		String[] speciesList = new String[(int) document.getModel().getNumSpecies()];
-		for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
+		ListOf listOfSpecies = gcm.getSBMLDocument().getModel().getListOfSpecies();
+		String[] speciesList = new String[(int) gcm.getSBMLDocument().getModel().getNumSpecies()];
+		for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumSpecies(); i++) {
 			speciesList[i] = ((Species) listOfSpecies.get(i)).getId();
 		}
 		Utility.sort(speciesList);
 		reactantSpecies = new JComboBox();
 		reactantSpecies.setEnabled(false);
 		for (int i = 0; i < speciesList.length; i++) {
-			Species species = document.getModel().getSpecies(speciesList[i]);
-			if (species.getBoundaryCondition() || (!species.getConstant() && Rules.keepVarRateRule(document, "", speciesList[i]))) {
+			Species species = gcm.getSBMLDocument().getModel().getSpecies(speciesList[i]);
+			if (species.getBoundaryCondition() || (!species.getConstant() && Rules.keepVarRateRule(gcm, "", speciesList[i]))) {
 				reactantSpecies.addItem(speciesList[i]);
 			}
 		}
@@ -1852,7 +1858,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			if (reactant.isSetName()) {
 				reactantName.setText(reactant.getName());
 			}
-			if ((document.getLevel() < 3) && (reactant.isSetStoichiometryMath())) {
+			if ((gcm.getSBMLDocument().getLevel() < 3) && (reactant.isSetStoichiometryMath())) {
 				stoiciLabel.setSelectedItem("Stoichiometry Math");
 				reactantStoiciometry.setText("" + SBMLutilities.myFormulaToString(reactant.getStoichiometryMath().getMath()));
 			}
@@ -1869,14 +1875,14 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		reactantsPanel.add(reactantName);
 		reactantsPanel.add(speciesLabel);
 		reactantsPanel.add(reactantSpecies);
-		if (document.getLevel() < 3) {
+		if (gcm.getSBMLDocument().getLevel() < 3) {
 			reactantsPanel.add(stoiciLabel);
 		}
 		else {
 			reactantsPanel.add(stoichiometryLabel);
 		}
 		reactantsPanel.add(reactantStoiciometry);
-		if (document.getLevel() > 2) {
+		if (gcm.getSBMLDocument().getLevel() > 2) {
 			reactantsPanel.add(constantLabel);
 			reactantsPanel.add(reactantConstant);
 		}
@@ -1894,10 +1900,10 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			String react = "";
 			double val = 1.0;
 			if (reactantId.getText().trim().equals("")) {
-				error = SBMLutilities.variableInUse(document, selectedID, false, true, true);
+				error = SBMLutilities.variableInUse(gcm.getSBMLDocument(), selectedID, false, true, true);
 			}
 			else {
-				error = SBMLutilities.checkID(document, usedIDs, reactantId.getText().trim(), selectedID, false);
+				error = SBMLutilities.checkID(gcm.getSBMLDocument(), usedIDs, reactantId.getText().trim(), selectedID, false);
 			}
 			if (!error) {
 				if (stoiciLabel.getSelectedItem().equals("Stoichiometry")) {
@@ -1982,7 +1988,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							error = true;
 						}
 						if (!error) {
-							error = SBMLutilities.checkNumFunctionArguments(document,
+							error = SBMLutilities.checkNumFunctionArguments(gcm.getSBMLDocument(),
 									SBMLutilities.myParseFormula(reactantStoiciometry.getText().trim()));
 						}
 						if (!error) {
@@ -1997,7 +2003,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			if (!error && option.equals("OK") && reactantConstant.getSelectedItem().equals("true")) {
 				String id = selectedID;
-				error = SBMLutilities.checkConstant(document, "Reactant stoiciometry", id);
+				error = SBMLutilities.checkConstant(gcm.getSBMLDocument(), "Reactant stoiciometry", id);
 			}
 			if (!error) {
 				if (option.equals("OK")) {
@@ -2042,7 +2048,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						reactants.setListData(reacta);
 						reactants.setSelectedIndex(index);
 					}
-					SBMLutilities.updateVarId(document, false, selectedID, reactantId.getText().trim());
+					SBMLutilities.updateVarId(gcm.getSBMLDocument(), false, selectedID, reactantId.getText().trim());
 					if (reactant == null) {
 						kineticLaw.setText(SBMLutilities.updateFormulaVar(kineticLaw.getText().trim(), selectedID, reactantId.getText().trim()));
 					}
@@ -2050,7 +2056,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				else {
 					// SpeciesReference reactan = new
 					// SpeciesReference(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
-					SpeciesReference reactan = new SpeciesReference(document.getLevel(), document.getVersion());
+					SpeciesReference reactan = new SpeciesReference(gcm.getSBMLDocument().getLevel(), gcm.getSBMLDocument().getVersion());
 					reactan.setId(reactantId.getText().trim());
 					usedIDs.add(reactan.getId());
 					reactan.setName(reactantName.getText().trim());
@@ -2086,6 +2092,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					reactants.setSelectedIndex(0);
 				}
 				dirty.setValue(true);
+				gcm.makeUndoPoint();
 			}
 			if (error) {
 				value = JOptionPane.showOptionDialog(Gui.frame, reactantsPanel, "Reactants Editor", JOptionPane.YES_NO_OPTION,
@@ -2104,7 +2111,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		int index = reactions.getSelectedIndex();
 		if (index != -1) {
 			String selected = ((String) reactions.getSelectedValue()).split(" ")[0];
-			removeTheReaction(document, selected);
+			removeTheReaction(gcm, selected);
 			usedIDs.remove(selected);
 			reactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			reacts = (String[]) Utility.remove(reactions, reacts);
@@ -2116,16 +2123,17 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				reactions.setSelectedIndex(index - 1);
 			}
 			dirty.setValue(true);
+			gcm.makeUndoPoint();
 		}
 	}
 
 	/**
 	 * Remove the reaction
 	 */
-	public void removeTheReaction(SBMLDocument document, String selected) {
-		Reaction tempReaction = document.getModel().getReaction(selected);
-		ListOf r = document.getModel().getListOfReactions();
-		for (int i = 0; i < document.getModel().getNumReactions(); i++) {
+	public void removeTheReaction(BioModel gcm, String selected) {
+		Reaction tempReaction = gcm.getSBMLDocument().getModel().getReaction(selected);
+		ListOf r = gcm.getSBMLDocument().getModel().getListOfReactions();
+		for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumReactions(); i++) {
 			if (((Reaction) r.get(i)).getId().equals(tempReaction.getId())) {
 				r.remove(i);
 			}
@@ -2142,7 +2150,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			String v = ((String) reactants.getSelectedValue()).split(" ")[0];
 			for (int i = 0; i < changedReactants.size(); i++) {
 				if (changedReactants.get(i).getSpecies().equals(v) && 
-						!SBMLutilities.variableInUse(document, changedReactants.get(i).getId(), false, true,true)) {
+						!SBMLutilities.variableInUse(gcm.getSBMLDocument(), changedReactants.get(i).getId(), false, true,true)) {
 					changedReactants.remove(i);
 					reactants.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					reacta = (String[]) Utility.remove(reactants, reacta);
@@ -2154,6 +2162,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						reactants.setSelectedIndex(index - 1);
 					}
 					dirty.setValue(true);
+					gcm.makeUndoPoint();
 				}
 			}
 		}
@@ -2168,7 +2177,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			String v = ((String) products.getSelectedValue()).split(" ")[0];
 			for (int i = 0; i < changedProducts.size(); i++) {
 				if (changedProducts.get(i).getSpecies().equals(v) && 
-						!SBMLutilities.variableInUse(document, changedProducts.get(i).getId(), false, true, true)) {
+						!SBMLutilities.variableInUse(gcm.getSBMLDocument(), changedProducts.get(i).getId(), false, true, true)) {
 					changedProducts.remove(i);
 					products.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					proda = (String[]) Utility.remove(products, proda);
@@ -2180,6 +2189,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						products.setSelectedIndex(index - 1);
 					}
 					dirty.setValue(true);
+					gcm.makeUndoPoint();
 				}
 			}
 		}
@@ -2207,6 +2217,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				modifiers.setSelectedIndex(index - 1);
 			}
 			dirty.setValue(true);
+			gcm.makeUndoPoint();
 		}
 	}
 
@@ -2229,7 +2240,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			kr = changedParameters.get(1).getId();
 		}
 		String kinetic = kf;
-		if (document.getLevel() > 2) {
+		if (gcm.getSBMLDocument().getLevel() > 2) {
 			boolean addEquil = false;
 			String equilExpr = "";
 			for (SpeciesReference s : changedReactants) {
@@ -2246,10 +2257,10 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 		}
 		for (SpeciesReference s : changedReactants) {
-			if ((document.getLevel() < 3) && (s.isSetStoichiometryMath())) {
+			if ((gcm.getSBMLDocument().getLevel() < 3) && (s.isSetStoichiometryMath())) {
 				kinetic += " * pow(" + s.getSpecies() + ", " + SBMLutilities.myFormulaToString(s.getStoichiometryMath().getMath()) + ")";
 			}
-			else if ((document.getLevel() > 2) && (s.isSetId())) {
+			else if ((gcm.getSBMLDocument().getLevel() > 2) && (s.isSetId())) {
 				kinetic += " * pow(" + s.getSpecies() + ", " + s.getId() + ")";
 			}
 			else {
@@ -2266,7 +2277,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		if (reacReverse.getSelectedItem().equals("true")) {
 			kinetic += " - " + kr;
-			if (document.getLevel() > 2) {
+			if (gcm.getSBMLDocument().getLevel() > 2) {
 				boolean addEquil = false;
 				String equilExpr = "";
 				for (SpeciesReference s : changedProducts) {
@@ -2283,10 +2294,10 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 			for (SpeciesReference s : changedProducts) {
-				if ((document.getLevel() < 3) && (s.isSetStoichiometryMath())) {
+				if ((gcm.getSBMLDocument().getLevel() < 3) && (s.isSetStoichiometryMath())) {
 					kinetic += " * pow(" + s.getSpecies() + ", " + SBMLutilities.myFormulaToString(s.getStoichiometryMath().getMath()) + ")";
 				}
-				else if ((document.getLevel() > 2) && (s.isSetId())) {
+				else if ((gcm.getSBMLDocument().getLevel() > 2) && (s.isSetId())) {
 					kinetic += " * pow(" + s.getSpecies() + ", " + s.getId() + ")";
 				}
 				else {
@@ -2304,6 +2315,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		kineticLaw.setText(kinetic);
 		dirty.setValue(true);
+		gcm.makeUndoPoint();
 	}
 
 	/**
@@ -2375,6 +2387,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				reacParameters.setSelectedIndex(index - 1);
 			}
 			dirty.setValue(true);
+			gcm.makeUndoPoint();
 		}
 	}
 
@@ -2382,7 +2395,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	 * Check the units of a kinetic law
 	 */
 	public boolean checkKineticLawUnits(KineticLaw law) {
-		document.getModel().populateListFormulaUnitsData();
+		gcm.getSBMLDocument().getModel().populateListFormulaUnitsData();
 		if (law.containsUndeclaredUnits()) {
 			if (biosim.checkUndeclared) {
 				JOptionPane.showMessageDialog(Gui.frame, "Kinetic law contains literals numbers or parameters with undeclared units.\n"
@@ -2395,9 +2408,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			UnitDefinition unitDef = law.getDerivedUnitDefinition();
 			// UnitDefinition unitDefLaw = new UnitDefinition(BioSim.SBML_LEVEL,
 			// BioSim.SBML_VERSION);
-			UnitDefinition unitDefLaw = new UnitDefinition(document.getLevel(), document.getVersion());
-			if (document.getModel().getUnitDefinition("substance") != null) {
-				UnitDefinition subUnitDef = document.getModel().getUnitDefinition("substance");
+			UnitDefinition unitDefLaw = new UnitDefinition(gcm.getSBMLDocument().getLevel(), gcm.getSBMLDocument().getVersion());
+			if (gcm.getSBMLDocument().getModel().getUnitDefinition("substance") != null) {
+				UnitDefinition subUnitDef = gcm.getSBMLDocument().getModel().getUnitDefinition("substance");
 				for (int i = 0; i < subUnitDef.getNumUnits(); i++) {
 					Unit subUnit = subUnitDef.getUnit(i);
 					unitDefLaw.addUnit(subUnit);
@@ -2410,13 +2423,13 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				unit.setScale(0);
 				unit.setMultiplier(1.0);
 			}
-			if (document.getModel().getUnitDefinition("time") != null) {
-				UnitDefinition timeUnitDef = document.getModel().getUnitDefinition("time");
+			if (gcm.getSBMLDocument().getModel().getUnitDefinition("time") != null) {
+				UnitDefinition timeUnitDef = gcm.getSBMLDocument().getModel().getUnitDefinition("time");
 				for (int i = 0; i < timeUnitDef.getNumUnits(); i++) {
 					Unit timeUnit = timeUnitDef.getUnit(i);
 					Unit recTimeUnit = unitDefLaw.createUnit();
 					recTimeUnit.setKind(timeUnit.getKind());
-					if (document.getLevel() < 3) {
+					if (gcm.getSBMLDocument().getLevel() < 3) {
 						recTimeUnit.setExponent(timeUnit.getExponent() * (-1));
 					}
 					else {
@@ -2454,7 +2467,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		// if the add parameters button is clicked
 		// if the add reactions button is clicked
 		if (e.getSource() == addReac) {
-			reactionsEditor(document, "Add", "", false);
+			reactionsEditor(gcm, "Add", "", false);
 		}
 		// if the edit reactions button is clicked
 		else if (e.getSource() == editReac) {
@@ -2462,9 +2475,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				JOptionPane.showMessageDialog(Gui.frame, "No reaction selected.", "Must Select A Reaction", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			reactionsEditor(document, "OK", ((String) reactions.getSelectedValue()).split(" ")[0], false);
-			initialsPanel.refreshInitialAssignmentPanel(document);
-			rulesPanel.refreshRulesPanel(document);
+			reactionsEditor(gcm, "OK", ((String) reactions.getSelectedValue()).split(" ")[0], false);
+			initialsPanel.refreshInitialAssignmentPanel(gcm);
+			rulesPanel.refreshRulesPanel();
 		}
 		// if the remove reactions button is clicked
 		else if (e.getSource() == removeReac) {
@@ -2484,7 +2497,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		// if the add reactants button is clicked
 		else if (e.getSource() == addReactant) {
-			reactantsEditor(document, "Add", "", null);
+			reactantsEditor(gcm, "Add", "", null);
 		}
 		// if the edit reactants button is clicked
 		else if (e.getSource() == editReactant) {
@@ -2492,9 +2505,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				JOptionPane.showMessageDialog(Gui.frame, "No reactant selected.", "Must Select A Reactant", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			reactantsEditor(document, "OK", ((String) reactants.getSelectedValue()).split(" ")[0], null);
-			initialsPanel.refreshInitialAssignmentPanel(document);
-			rulesPanel.refreshRulesPanel(document);
+			reactantsEditor(gcm, "OK", ((String) reactants.getSelectedValue()).split(" ")[0], null);
+			initialsPanel.refreshInitialAssignmentPanel(gcm);
+			rulesPanel.refreshRulesPanel();
 		}
 		// if the remove reactants button is clicked
 		else if (e.getSource() == removeReactant) {
@@ -2502,7 +2515,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		// if the add products button is clicked
 		else if (e.getSource() == addProduct) {
-			productsEditor(document, "Add", "", null);
+			productsEditor(gcm, "Add", "", null);
 		}
 		// if the edit products button is clicked
 		else if (e.getSource() == editProduct) {
@@ -2510,9 +2523,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				JOptionPane.showMessageDialog(Gui.frame, "No product selected.", "Must Select A Product", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			productsEditor(document, "OK", ((String) products.getSelectedValue()).split(" ")[0], null);
-			initialsPanel.refreshInitialAssignmentPanel(document);
-			rulesPanel.refreshRulesPanel(document);
+			productsEditor(gcm, "OK", ((String) products.getSelectedValue()).split(" ")[0], null);
+			initialsPanel.refreshInitialAssignmentPanel(gcm);
+			rulesPanel.refreshRulesPanel();
 		}
 		// if the remove products button is clicked
 		else if (e.getSource() == removeProduct) {
@@ -2534,6 +2547,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		else if (e.getSource() == clearKineticLaw) {
 			kineticLaw.setText("");
 			dirty.setValue(true);
+			gcm.makeUndoPoint();
 		}
 		// if the use mass action button is clicked
 		else if (e.getSource() == useMassAction) {
@@ -2548,9 +2562,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					JOptionPane.showMessageDialog(Gui.frame, "No reaction selected.", "Must Select A Reaction", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				reactionsEditor(document, "OK", ((String) reactions.getSelectedValue()).split(" ")[0], false);
-				initialsPanel.refreshInitialAssignmentPanel(document);
-				rulesPanel.refreshRulesPanel(document);
+				reactionsEditor(gcm, "OK", ((String) reactions.getSelectedValue()).split(" ")[0], false);
+				initialsPanel.refreshInitialAssignmentPanel(gcm);
+				rulesPanel.refreshRulesPanel();
 			}
 			else if (e.getSource() == reacParameters) {
 				reacParametersEditor("OK");
@@ -2561,9 +2575,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						JOptionPane.showMessageDialog(Gui.frame, "No reactant selected.", "Must Select A Reactant", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
-					reactantsEditor(document, "OK", ((String) reactants.getSelectedValue()).split(" ")[0], null);
-					initialsPanel.refreshInitialAssignmentPanel(document);
-					rulesPanel.refreshRulesPanel(document);
+					reactantsEditor(gcm, "OK", ((String) reactants.getSelectedValue()).split(" ")[0], null);
+					initialsPanel.refreshInitialAssignmentPanel(gcm);
+					rulesPanel.refreshRulesPanel();
 				}
 			}
 			else if (e.getSource() == products) {
@@ -2572,9 +2586,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						JOptionPane.showMessageDialog(Gui.frame, "No product selected.", "Must Select A Product", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
-					productsEditor(document, "OK", ((String) products.getSelectedValue()).split(" ")[0], null);
-					initialsPanel.refreshInitialAssignmentPanel(document);
-					rulesPanel.refreshRulesPanel(document);
+					productsEditor(gcm, "OK", ((String) products.getSelectedValue()).split(" ")[0], null);
+					initialsPanel.refreshInitialAssignmentPanel(gcm);
+					rulesPanel.refreshRulesPanel();
 				}
 			}
 			else if (e.getSource() == modifiers) {
@@ -2588,34 +2602,36 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Refresh reaction panel
 	 */
-	public void refreshReactionPanel(SBMLDocument document) {
+	public void refreshReactionPanel(BioModel gcm) {
 		String selectedReactionId = "";
 		if (!reactions.isSelectionEmpty()) {
 			selectedReactionId = ((String) reactions.getSelectedValue()).split(" ")[0];
 		}
-		this.document = document;
-		Model model = document.getModel();
+		this.gcm = gcm;
+		Model model = gcm.getSBMLDocument().getModel();
 		ListOf listOfReactions = model.getListOfReactions();
 		reacts = new String[(int) model.getNumReactions()];
 		for (int i = 0; i < model.getNumReactions(); i++) {
 			Reaction reaction = (Reaction) listOfReactions.get(i);
 			reacts[i] = reaction.getId();
-			ListOf params = reaction.getKineticLaw().getListOfParameters();
-			for (int j = 0; j < reaction.getKineticLaw().getNumParameters(); j++) {
-				Parameter paramet = ((Parameter) (params.get(j)));
-				for (int k = 0; k < parameterChanges.size(); k++) {
-					if (parameterChanges.get(k).split(" ")[0].equals(reaction.getId() + "/" + paramet.getId())) {
-						String[] splits = parameterChanges.get(k).split(" ");
-						if (splits[splits.length - 2].equals("Modified") || splits[splits.length - 2].equals("Custom")) {
-							String value = splits[splits.length - 1];
-							paramet.setValue(Double.parseDouble(value));
-						}
-						else if (splits[splits.length - 2].equals("Sweep")) {
-							String value = splits[splits.length - 1];
-							paramet.setValue(Double.parseDouble(value.split(",")[0].substring(1).trim()));
-						}
-						if (!reacts[i].contains("Modified")) {
-							reacts[i] += " Modified";
+			if (paramsOnly) {
+				ListOf params = reaction.getKineticLaw().getListOfParameters();
+				for (int j = 0; j < reaction.getKineticLaw().getNumParameters(); j++) {
+					Parameter paramet = ((Parameter) (params.get(j)));
+					for (int k = 0; k < parameterChanges.size(); k++) {
+						if (parameterChanges.get(k).split(" ")[0].equals(reaction.getId() + "/" + paramet.getId())) {
+							String[] splits = parameterChanges.get(k).split(" ");
+							if (splits[splits.length - 2].equals("Modified") || splits[splits.length - 2].equals("Custom")) {
+								String value = splits[splits.length - 1];
+								paramet.setValue(Double.parseDouble(value));
+							}
+							else if (splits[splits.length - 2].equals("Sweep")) {
+								String value = splits[splits.length - 1];
+								paramet.setValue(Double.parseDouble(value.split(",")[0].substring(1).trim()));
+							}
+							if (!reacts[i].contains("Modified")) {
+								reacts[i] += " Modified";
+							}
 						}
 					}
 				}

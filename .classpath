@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="gui/src"/>
+	<classpathentry excluding="biomodel/gui/textualeditor/SBML_Editor.java" kind="src" path="gui/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="gui/lib/AppleJavaExtensions.jar"/>
 	<classpathentry kind="lib" path="gui/lib/batik-anim.jar"/>
