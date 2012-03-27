@@ -174,7 +174,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
 	private JTabbedPane simTab; // the simulation tab
 
-	private SBML_Editor sbmlEditor; // sbml editor
+	//private SBML_Editor sbmlEditor; // sbml editor
 
 	private ModelEditor gcmEditor; // gcm editor
 
@@ -1415,6 +1415,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				stem += fileStem.getText().trim();
 			}
 			for (int i = 0; i < biomodelsim.getTab().getTabCount(); i++) {
+				/*
 				if (sbmlEditor != null) {
 					if (biomodelsim.getTab().getTitleAt(i).equals(sbmlEditor.getRefFile())) {
 						if (biomodelsim.getTab().getComponentAt(i) instanceof SBML_Editor) {
@@ -1449,7 +1450,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 						}
 					}
 				}
-				else if (gcmEditor != null) {
+				else */if (gcmEditor != null) {
 					if (biomodelsim.getTab().getTitleAt(i).equals(gcmEditor.getRefFile())) {
 						if (biomodelsim.getTab().getComponentAt(i) instanceof ModelEditor) {
 							ModelEditor gcm = ((ModelEditor) (biomodelsim.getTab().getComponentAt(i)));
@@ -1467,6 +1468,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 							}
 						}
 					}
+					/*
 					else if (biomodelsim.getTab().getTitleAt(i).equals(gcmEditor.getSBMLFile())) {
 						if (biomodelsim.getTab().getComponentAt(i) instanceof SBML_Editor) {
 							SBML_Editor sbml = ((SBML_Editor) (biomodelsim.getTab().getComponentAt(i)));
@@ -1483,7 +1485,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 								}
 							}
 						}
-					}
+					}*/
 				}
 				else {
 					if (biomodelsim.getTab().getTitleAt(i).equals(modelFile)) {
@@ -1504,10 +1506,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					}
 				}
 			}
+			/*
 			if (sbmlEditor != null) {
 				sbmlEditor.save(true, stem, true, ignoreSweep);
 			}
-			else if (gcmEditor != null) {
+			else */if (gcmEditor != null) {
 				gcmEditor.saveParams(true, stem, ignoreSweep);
 			}
 			else {
@@ -1554,10 +1557,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			if (sbml.isSelected() || dot.isSelected() || xhtml.isSelected() || lhpn.isSelected()) {
 				ignoreSweep = true;
 			}
+			/*
 			if (sbmlEditor != null) {
 				sbmlEditor.save(false, "", true, ignoreSweep);
 			}
-			else if (gcmEditor != null) {
+			else */if (gcmEditor != null) {
 				gcmEditor.saveParams(false, "", ignoreSweep);
 			}
 			save();
@@ -3974,10 +3978,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		return false;
 	}
 
+	/*
 	public void setSbml(SBML_Editor sbml) {
 		sbmlEditor = sbml;
 	}
-
+*/
+	
 	public void setGcm(ModelEditor gcm) {
 		gcmEditor = gcm;
 		// updateSpeciesList();

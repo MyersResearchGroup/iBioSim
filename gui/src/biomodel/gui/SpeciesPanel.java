@@ -197,7 +197,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		// compartment field
 		tempPanel = new JPanel();
 		tempLabel = new JLabel("Compartment");
-		compartBox = MySpecies.createCompartmentChoices(gcm.getSBMLDocument());		
+		compartBox = MySpecies.createCompartmentChoices(gcm);		
 		compartBox.setSelectedItem(species.getCompartment());
 		compartBox.addActionListener(this);
 		tempPanel.setLayout(new GridLayout(1, 2));
@@ -265,7 +265,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		// Units field
 		tempPanel = new JPanel();
 		tempLabel = new JLabel("Units");
-		unitsBox = MySpecies.createUnitsChoices(gcm.getSBMLDocument());
+		unitsBox = MySpecies.createUnitsChoices(gcm);
 		
 		if (species.isSetUnits()) {
 			
@@ -283,7 +283,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			
 			tempPanel = new JPanel();
 			tempLabel = new JLabel("Conversion Factor");
-			convBox = MySpecies.createConversionFactorChoices(gcm.getSBMLDocument());
+			convBox = MySpecies.createConversionFactorChoices(gcm);
 			
 			if (species.isSetConversionFactor()) {
 				convBox.setSelectedItem(species.getConversionFactor());
@@ -759,7 +759,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 //					species.setMetaId(fields.get(GlobalConstants.ID).getValue());
 					species.setName(fields.get(GlobalConstants.NAME).getValue());
 					
-					InitialAssignments.removeInitialAssignment(gcm.getSBMLDocument(), selected);
+					InitialAssignments.removeInitialAssignment(gcm, selected);
 					if (Utility.isValid(initialField.getText(), Utility.NUMstring)) {
 						species.setInitialAmount(Double.parseDouble(initialField.getText()));
 					} 
@@ -767,7 +767,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 						//String conc = fields.get(GlobalConstants.INITIAL_STRING).getValue();
 						species.setInitialConcentration(Double.parseDouble(initialField.getText().substring(1,initialField.getText().length()-1)));
 					} else {
-						boolean error = InitialAssignments.addInitialAssignment(biosim, gcm.getSBMLDocument(), species.getId(), 
+						boolean error = InitialAssignments.addInitialAssignment(biosim, gcm, species.getId(), 
 								initialField.getText().trim());
 						if (error) return false;
 						species.setInitialAmount(Double.parseDouble("0.0"));

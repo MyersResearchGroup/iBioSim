@@ -109,6 +109,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	private Schematic schematic;
 
 	private Compartments compartmentPanel;
+
+	private Functions functionPanel;
 	
 	private MySpecies speciesPanel;
 	
@@ -116,6 +118,14 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	
 	private Reactions reactionPanel;
 
+	private Units unitPanel;
+	
+	private Rules rulesPanel;
+	
+	private Events eventPanel;
+	
+	private Constraints consPanel;
+	
 	public ModelEditor(String path) throws Exception {
 		this(path, null, null, null, false, null, null, null, false);
 	}
@@ -246,10 +256,18 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			*/
 			//reb2sac.updateSpeciesList();
 			gcm.reloadSBMLFile();
-			compartmentPanel.refreshCompartmentPanel(gcm.getSBMLDocument());
-			speciesPanel.refreshSpeciesPanel(gcm.getSBMLDocument());
-			parametersPanel.refreshParameterPanel(gcm.getSBMLDocument());
-			reactionPanel.refreshReactionPanel(gcm.getSBMLDocument());
+			compartmentPanel.refreshCompartmentPanel(gcm);
+			speciesPanel.refreshSpeciesPanel(gcm);
+			parametersPanel.refreshParameterPanel(gcm);
+			reactionPanel.refreshReactionPanel(gcm);
+		} else {
+			compartmentPanel.refreshCompartmentPanel(gcm);
+			parametersPanel.refreshParameterPanel(gcm);
+			functionPanel.refreshFunctionsPanel();
+			unitPanel.refreshUnitsPanel();
+			rulesPanel.refreshRulesPanel();
+			consPanel.refreshConstraintsPanel();
+			eventPanel.refreshEventsPanel();
 		}
 	}
 
@@ -313,7 +331,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		//log.addText("save");
 		dirty.setValue(false);	
 		
-		speciesPanel.refreshSpeciesPanel(gcm.getSBMLDocument());
+		speciesPanel.refreshSpeciesPanel(gcm);
 
 		/*
 		if (!sbmlFiles.getSelectedItem().equals(none)) {
@@ -376,7 +394,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 						log.addText("Saving GCM file as SBML template:\n" + path + separator
 								+ templateName + "\n");
 						biosim.addToTree(templateName);
-						biosim.updateOpenSBML(templateName);
+						//biosim.updateOpenSBML(templateName);
 					}
 					else {
 						// Do nothing
@@ -428,7 +446,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 					network.mergeSBML(path + separator + gcmname + ".xml");
 					log.addText("Saving GCM file as SBML file:\n" + path + separator + gcmname + ".xml\n");
 					biosim.addToTree(gcmname + ".xml");
-					biosim.updateOpenSBML(gcmname + ".xml");
+					//biosim.updateOpenSBML(gcmname + ".xml");
 				}
 				else {
 					// Do nothing
@@ -1308,6 +1326,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		else if (o instanceof JComboBox && !lock
 				&& !gcm.getSBMLFile().equals(sbmlFiles.getSelectedItem())) {
 			dirty.setValue(true);
+			gcm.makeUndoPoint();
 		}
 		// System.out.println(o);
 	}
@@ -1341,7 +1360,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		//reloadFiles();
 		
 		// create the modelview2 (jgraph) panel
-		modelPanel = new ModelPanel(gcm.getSBMLDocument(),dirty,paramsOnly);
+		modelPanel = new ModelPanel(gcm,dirty,paramsOnly);
 		
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		mainPanel.setLayout(new BorderLayout());
@@ -1355,12 +1374,12 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		
 		String file = filename.replace(".gcm", ".xml");
 		
-		JComboBox compartmentList = MySpecies.createCompartmentChoices(gcm.getSBMLDocument());
+		JComboBox compartmentList = MySpecies.createCompartmentChoices(gcm);
 		
-		compartmentPanel = new Compartments(biosim,gcm.getSBMLDocument(),usedIDs,dirty, paramsOnly,getParams, path + separator + file,	parameterChanges,false,compartmentList);
-		reactionPanel = new Reactions(biosim,gcm.getSBMLDocument(),usedIDs,dirty, paramsOnly,getParams,path + separator + file,parameterChanges);
-		speciesPanel = new MySpecies(biosim,gcm.getSBMLDocument(),usedIDs,dirty, paramsOnly,getParams,path + separator + file,parameterChanges,gcm.getGrid().isEnabled());
-		parametersPanel = new Parameters(biosim, gcm.getSBMLDocument(),usedIDs,dirty, paramsOnly,getParams,path + separator + file,parameterChanges);
+		compartmentPanel = new Compartments(biosim,gcm,usedIDs,dirty, paramsOnly,getParams, path + separator + file,	parameterChanges,false,compartmentList);
+		reactionPanel = new Reactions(biosim,gcm,usedIDs,dirty, paramsOnly,getParams,path + separator + file,parameterChanges);
+		speciesPanel = new MySpecies(biosim,gcm,usedIDs,dirty, paramsOnly,getParams,path + separator + file,parameterChanges,gcm.getGrid().isEnabled());
+		parametersPanel = new Parameters(biosim, gcm,usedIDs,dirty, paramsOnly,getParams,path + separator + file,parameterChanges);
 		
 		JPanel compPanel = new JPanel(new BorderLayout());
 		compPanel.add(modelPanel, "North");
@@ -1462,7 +1481,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			this.getGCM().updateGridSpecies(submodel.getModelRef());
 		}
 		
-		this.getSpeciesPanel().refreshSpeciesPanel(gcm.getSBMLDocument());
+		this.getSpeciesPanel().refreshSpeciesPanel(gcm);
 		JPanel componentsPanel = Utility.createPanel(this, "Components", components, addInit, removeInit, editInit);
 		mainPanelCenterCenter.add(componentsPanel);
 		
@@ -1489,8 +1508,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			tab.addTab("Parameters", parametersPanel);
 		}
 		
-		Functions functionPanel = new Functions(gcm.getSBMLDocument(),usedIDs,dirty);
-		Units unitPanel = new Units(biosim,gcm.getSBMLDocument(),usedIDs,dirty);
+		functionPanel = new Functions(gcm,usedIDs,dirty);
+		unitPanel = new Units(biosim,gcm,usedIDs,dirty);
 		//JPanel defnPanel = new JPanel(new BorderLayout());
 		//defnPanel.add(mainPanelNorth, "North");
 		//defnPanel.add(functionPanel,"Center");
@@ -1500,8 +1519,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		tab.addTab("Units", unitPanel);
 		
 		if (gcm.getSBMLDocument().getLevel() < 3) {
-			CompartmentTypes compTypePanel = new CompartmentTypes(biosim,gcm.getSBMLDocument(),usedIDs,dirty);
-			SpeciesTypes specTypePanel = new SpeciesTypes(biosim,gcm.getSBMLDocument(),usedIDs,dirty);
+			CompartmentTypes compTypePanel = new CompartmentTypes(biosim,gcm,usedIDs,dirty);
+			SpeciesTypes specTypePanel = new SpeciesTypes(biosim,gcm,usedIDs,dirty);
 			JPanel typePanel = new JPanel(new BorderLayout());
 			typePanel.add(mainPanelNorth, "North");
 			typePanel.add(compTypePanel,"Center");
@@ -1509,15 +1528,15 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			tab.addTab("Types", typePanel);
 		}
 
-		InitialAssignments initialsPanel = new InitialAssignments(biosim,gcm.getSBMLDocument(),dirty);
-		Rules rulesPanel = new Rules(biosim,gcm.getSBMLDocument(),dirty);
+		InitialAssignments initialsPanel = new InitialAssignments(biosim,gcm,dirty);
+		rulesPanel = new Rules(biosim,gcm,dirty);
 		compartmentPanel.setPanels(initialsPanel, rulesPanel);
 		functionPanel.setPanels(initialsPanel, rulesPanel);
 		speciesPanel.setPanels(initialsPanel, rulesPanel);
 		reactionPanel.setPanels(initialsPanel, rulesPanel);
 		tab.addTab("Rules", rulesPanel);
 		
-		Events eventPanel = new Events(biosim,gcm.getSBMLDocument(),usedIDs,dirty,gcm);
+		eventPanel = new Events(biosim,gcm,usedIDs,dirty);
 		tab.addTab("Constraints", propPanel);
 		tab.addTab("Events", eventPanel);
 		setLayout(new BorderLayout());
@@ -1557,7 +1576,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		editInit = new EditButton("Edit Parameter", parameters);
 		parameters.addAllItem(generateParameters());
 		parametersPanel.setPanels(initialsPanel, rulesPanel);
-		Constraints consPanel = new Constraints(gcm.getSBMLDocument(),usedIDs,dirty);
+		consPanel = new Constraints(gcm,usedIDs,dirty);
 		propPanel.add(consPanel, "Center");
 		// parameters.addAllItem(gcm.getParameters().keySet());
 		//initPanel = Utility.createPanel(this, "Model Generation Parameters", parameters, null, null, editInit);

@@ -32,6 +32,7 @@ import org.sbml.libsbml.Species;
 import org.sbml.libsbml.SpeciesReference;
 import org.sbml.libsbml.UnitDefinition;
 
+import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 
 
@@ -55,7 +56,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 
 	private JComboBox paramConst;
 
-	private SBMLDocument document;
+	private BioModel gcm;
 
 	private ArrayList<String> usedIDs;
 
@@ -73,17 +74,17 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 
 	private Gui biosim;
 
-	public Parameters(Gui biosim, SBMLDocument document, ArrayList<String> usedIDs, MutableBoolean dirty, Boolean paramsOnly, ArrayList<String> getParams,
+	public Parameters(Gui biosim, BioModel gcm, ArrayList<String> usedIDs, MutableBoolean dirty, Boolean paramsOnly, ArrayList<String> getParams,
 			String file, ArrayList<String> parameterChanges) {
 		super(new BorderLayout());
-		this.document = document;
+		this.gcm = gcm;
 		this.usedIDs = usedIDs;
 		this.dirty = dirty;
 		this.paramsOnly = paramsOnly;
 		this.file = file;
 		this.parameterChanges = parameterChanges;
 		this.biosim = biosim;
-		Model model = document.getModel();
+		Model model = gcm.getSBMLDocument().getModel();
 		JPanel addParams = new JPanel();
 		addParam = new JButton("Add Parameter");
 		removeParam = new JButton("Remove Parameter");
@@ -166,25 +167,26 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	/**
 	 * Refresh parameter panel
 	 */
-	public void refreshParameterPanel(SBMLDocument document) {
+	public void refreshParameterPanel(BioModel gcm) {
 		String selectedParameter = "";
 		if (!parameters.isSelectionEmpty()) {
 			selectedParameter = ((String) parameters.getSelectedValue()).split(" ")[0];
 		}
-		this.document = document;
-		Model model = document.getModel();
+		this.gcm = gcm;
+		Model model = gcm.getSBMLDocument().getModel();
 		ListOf listOfParameters = model.getListOfParameters();
 		String[] params = new String[(int) model.getNumParameters()];
 		for (int i = 0; i < model.getNumParameters(); i++) {
 			Parameter parameter = (Parameter) listOfParameters.get(i);
 			params[i] = parameter.getId();
-			if (paramsOnly)
+			if (paramsOnly) {
 				params[i] += " " + parameter.getValue();
-			for (int j = 0; j < parameterChanges.size(); j++) {
-				if (parameterChanges.get(j).split(" ")[0].equals(params[i].split(" ")[0])) {
-					parameterChanges.set(j,
-							params[i] + " " + parameterChanges.get(j).split(" ")[2] + " " + parameterChanges.get(j).split(" ")[3]);
-					params[i] = parameterChanges.get(j);
+				for (int j = 0; j < parameterChanges.size(); j++) {
+					if (parameterChanges.get(j).split(" ")[0].equals(params[i].split(" ")[0])) {
+						parameterChanges.set(j,
+								params[i] + " " + parameterChanges.get(j).split(" ")[2] + " " + parameterChanges.get(j).split(" ")[3]);
+						params[i] = parameterChanges.get(j);
+					}
 				}
 			}
 		}
@@ -224,7 +226,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		paramValue = new JTextField();
 		paramUnits = new JComboBox();
 		paramUnits.addItem("( none )");
-		Model model = document.getModel();
+		Model model = gcm.getSBMLDocument().getModel();
 		ListOf listOfUnits = model.getListOfUnitDefinitions();
 		String[] units = new String[(int) model.getNumUnitDefinitions()];
 		for (int i = 0; i < model.getNumUnitDefinitions(); i++) {
@@ -232,7 +234,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			units[i] = unit.getId();
 		}
 		for (int i = 0; i < units.length; i++) {
-			if (document.getLevel() > 2
+			if (gcm.getSBMLDocument().getLevel() > 2
 					|| (!units[i].equals("substance") && !units[i].equals("volume") && !units[i].equals("area") && !units[i].equals("length") && !units[i]
 							.equals("time"))) {
 				paramUnits.addItem(units[i]);
@@ -245,7 +247,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				"henry", "hertz", "item", "joule", "katal", "kelvin", "kilogram", "litre", "lumen", "lux", "metre", "mole", "newton", "ohm",
 				"pascal", "radian", "second", "siemens", "sievert", "steradian", "tesla", "volt", "watt", "weber" };
 		String[] unitIds;
-		if (document.getLevel() < 3) {
+		if (gcm.getSBMLDocument().getLevel() < 3) {
 			unitIds = unitIdsL2V4;
 		}
 		else {
@@ -309,7 +311,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		String selectedID = "";
 		if (option.equals("OK")) {
 			try {
-				Parameter paramet = document.getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]);
+				Parameter paramet = gcm.getSBMLDocument().getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]);
 				paramID.setText(paramet.getId());
 				selectedID = paramet.getId();
 				paramName.setText(paramet.getName());
@@ -324,7 +326,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						paramValue.setText("" + paramet.getValue());
 					}
 				} else {
-					InitialAssignment init = document.getModel().getInitialAssignment(selectedID);
+					InitialAssignment init = gcm.getSBMLDocument().getModel().getInitialAssignment(selectedID);
 					if (init!=null) {
 						paramValue.setText(SBMLutilities.myFormulaToString(init.getMath()));
 					} else if (paramet.isSetValue()) {
@@ -412,7 +414,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(document, usedIDs, paramID.getText().trim(), selectedID, false);
+			error = SBMLutilities.checkID(gcm.getSBMLDocument(), usedIDs, paramID.getText().trim(), selectedID, false);
 			if (!error) {
 				double val = 0.0;
 				if (paramValue.getText().trim().startsWith("(") && paramValue.getText().trim().endsWith(")")) {
@@ -432,12 +434,12 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 					}
 				}
 				else {
-					InitialAssignments.removeInitialAssignment(document, selectedID);
+					InitialAssignments.removeInitialAssignment(gcm, selectedID);
 					try {
 						val = Double.parseDouble(paramValue.getText().trim());
 					}
 					catch (Exception e1) {
-						error = InitialAssignments.addInitialAssignment(biosim, document, paramID.getText().trim(), 
+						error = InitialAssignments.addInitialAssignment(biosim, gcm, paramID.getText().trim(), 
 								paramValue.getText().trim());
 						val = 0.0;
 						/*
@@ -486,7 +488,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 					}
 					if (!error && option.equals("OK") && paramConst.getSelectedItem().equals("true")) {
 						String v = ((String) parameters.getSelectedValue()).split(" ")[0];
-						error = SBMLutilities.checkConstant(document, "Parameters", v);
+						error = SBMLutilities.checkConstant(gcm.getSBMLDocument(), "Parameters", v);
 					}
 					if (!error && option.equals("OK") && paramConst.getSelectedItem().equals("false")) {
 						String v = ((String) parameters.getSelectedValue()).split(" ")[0];
@@ -500,7 +502,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							}
 							int index = parameters.getSelectedIndex();
 							String v = ((String) parameters.getSelectedValue()).split(" ")[0];
-							Parameter paramet = document.getModel().getParameter(v);
+							Parameter paramet = gcm.getSBMLDocument().getModel().getParameter(v);
 							parameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 							params = Utility.getList(params, parameters);
 							parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -543,7 +545,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 								}
 							}
 							else {
-								SBMLutilities.updateVarId(document, false, v, paramID.getText().trim());
+								SBMLutilities.updateVarId(gcm.getSBMLDocument(), false, v, paramID.getText().trim());
 							}
 							if (paramet.getId().equals(GlobalConstants.STOICHIOMETRY_STRING)) {
 								for (long i=0; i<model.getNumReactions(); i++) {
@@ -576,7 +578,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 								params[i] = parameters.getModel().getElementAt(i).toString();
 							}
 							int index = parameters.getSelectedIndex();
-							Parameter paramet = document.getModel().createParameter();
+							Parameter paramet = gcm.getSBMLDocument().getModel().createParameter();
 							paramet.setId(paramID.getText().trim());
 							paramet.setName(paramName.getText().trim());
 							usedIDs.add(paramID.getText().trim());
@@ -603,7 +605,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							Utility.sort(params);
 							parameters.setListData(params);
 							parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-							if (document.getModel().getNumParameters() == 1) {
+							if (gcm.getSBMLDocument().getModel().getNumParameters() == 1) {
 								parameters.setSelectedIndex(0);
 							}
 							else {
@@ -611,6 +613,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							}
 						}
 						dirty.setValue(true);
+						gcm.makeUndoPoint();
 					}
 				}
 			}
@@ -628,8 +631,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	 * Parameter that is used in a conversion factor must be constant.
 	 */
 	private boolean checkNotConstant(String val) {
-		for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
-			Species species = document.getModel().getSpecies(i);
+		for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumSpecies(); i++) {
+			Species species = gcm.getSBMLDocument().getModel().getSpecies(i);
 			if (species.getConversionFactor().equals(val)) {
 				JOptionPane.showMessageDialog(Gui.frame,
 						"Parameter must be constant because it is used as a conversion factor for " + species.getId() + ".",
@@ -646,10 +649,10 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	private void removeParameter() {
 		int index = parameters.getSelectedIndex();
 		if (index != -1) {
-			if (!SBMLutilities.variableInUse(document, ((String) parameters.getSelectedValue()).split(" ")[0], false, true, true)) {
-				Parameter tempParameter = document.getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]);
-				ListOf p = document.getModel().getListOfParameters();
-				for (int i = 0; i < document.getModel().getNumParameters(); i++) {
+			if (!SBMLutilities.variableInUse(gcm.getSBMLDocument(), ((String) parameters.getSelectedValue()).split(" ")[0], false, true, true)) {
+				Parameter tempParameter = gcm.getSBMLDocument().getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]);
+				ListOf p = gcm.getSBMLDocument().getModel().getListOfParameters();
+				for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumParameters(); i++) {
 					if (((Parameter) p.get(i)).getId().equals(tempParameter.getId())) {
 						p.remove(i);
 					}
@@ -665,6 +668,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 					parameters.setSelectedIndex(index - 1);
 				}
 				dirty.setValue(true);
+				gcm.makeUndoPoint();
 			}
 		}
 	}
@@ -685,8 +689,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		// if the edit parameters button is clicked
 		else if (e.getSource() == editParam) {
 			parametersEditor("OK");
-			initialsPanel.refreshInitialAssignmentPanel(document);
-			rulesPanel.refreshRulesPanel(document);
+			initialsPanel.refreshInitialAssignmentPanel(gcm);
+			rulesPanel.refreshRulesPanel();
 		}
 		// if the remove parameters button is clicked
 		else if (e.getSource() == removeParam) {
@@ -698,8 +702,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		if (e.getClickCount() == 2) {
 			if (e.getSource() == parameters) {
 				parametersEditor("OK");
-				initialsPanel.refreshInitialAssignmentPanel(document);
-				rulesPanel.refreshRulesPanel(document);
+				initialsPanel.refreshInitialAssignmentPanel(gcm);
+				rulesPanel.refreshRulesPanel();
 			}
 		}
 	}

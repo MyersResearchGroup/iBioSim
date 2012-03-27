@@ -36,6 +36,8 @@ import org.sbml.libsbml.Unit;
 import org.sbml.libsbml.UnitDefinition;
 import org.sbml.libsbml.libsbml;
 
+import biomodel.parser.BioModel;
+
 
 /**
  * This is a class for creating SBML units
@@ -57,7 +59,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 
 	private JTextField exp, scale, mult; // unit list fields;
 
-	private SBMLDocument document;
+	private BioModel gcm;
 
 	private ArrayList<String> usedIDs;
 
@@ -67,13 +69,13 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 
 	//private String[] uList;
 
-	public Units(Gui biosim, SBMLDocument document, ArrayList<String> usedIDs, MutableBoolean dirty) {
+	public Units(Gui biosim, BioModel gcm, ArrayList<String> usedIDs, MutableBoolean dirty) {
 		super(new BorderLayout());
-		this.document = document;
+		this.gcm = gcm;
 		this.usedIDs = usedIDs;
 		this.biosim = biosim;
 		this.dirty = dirty;
-		Model model = document.getModel();
+		Model model = gcm.getSBMLDocument().getModel();
 		addUnit = new JButton("Add Unit");
 		removeUnit = new JButton("Remove Unit");
 		editUnit = new JButton("Edit Unit");
@@ -122,7 +124,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 				"hertz", "item", "joule", "katal", "kelvin", "kilogram", "litre", "lumen", "lux", "metre", "mole", "newton", "ohm", "pascal",
 				"radian", "second", "siemens", "sievert", "steradian", "tesla", "volt", "watt", "weber" };
 		String[] kinds;
-		if (document.getLevel() < 3) {
+		if (gcm.getSBMLDocument().getLevel() < 3) {
 			kinds = kindsL2V4;
 		}
 		else {
@@ -155,7 +157,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 		String [] uList = new String[0];
 		if (option.equals("OK")) {
 			try {
-				UnitDefinition unit = document.getModel().getUnitDefinition((((String) unitDefs.getSelectedValue()).split(" ")[0]));
+				UnitDefinition unit = gcm.getSBMLDocument().getModel().getUnitDefinition((((String) unitDefs.getSelectedValue()).split(" ")[0]));
 				unitID.setText(unit.getId());
 				unitName.setText(unit.getName());
 				uList = new String[(int) unit.getNumUnits()];
@@ -168,7 +170,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 						uList[i] = uList[i] + "10^" + unit.getUnit(i).getScale() + " * ";
 					}
 					uList[i] = uList[i] + unitToString(unit.getUnit(i));
-					if (document.getLevel() < 3) {
+					if (gcm.getSBMLDocument().getLevel() < 3) {
 						if (unit.getUnit(i).getExponent() != 1) {
 							uList[i] = "( " + uList[i] + " )^" + unit.getUnit(i).getExponent();
 						}
@@ -249,7 +251,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 					error = true;
 				}
 				if ((!error)
-						&& (document.getLevel() < 3)
+						&& (gcm.getSBMLDocument().getLevel() < 3)
 						&& ((addUnit.equals("substance")) || (addUnit.equals("length")) || (addUnit.equals("area")) || (addUnit.equals("volume")) || (addUnit
 								.equals("time")))) {
 					if (uList.length > 1) {
@@ -257,7 +259,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 								JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
-					if (!error && document.getLevel() < 3) {
+					if (!error && gcm.getSBMLDocument().getLevel() < 3) {
 						if (addUnit.equals("substance")) {
 							if (!(extractUnitKind(uList[0]).equals("dimensionless")
 									|| (extractUnitKind(uList[0]).equals("mole") && Integer.valueOf(extractUnitExp(uList[0])) == 1)
@@ -317,7 +319,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 						unitDefs.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 						units = Utility.getList(units, unitDefs);
 						unitDefs.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-						UnitDefinition u = document.getModel().getUnitDefinition(val);
+						UnitDefinition u = gcm.getSBMLDocument().getModel().getUnitDefinition(val);
 						UnitDefinition uCopy = u.cloneObject();
 						u.setId(unitID.getText().trim());
 						u.setName(unitName.getText().trim());
@@ -332,7 +334,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 						for (int i = 0; i < uList.length; i++) {
 							Unit unit = u.createUnit();
 							unit.setKind(libsbml.UnitKind_forName(extractUnitKind(uList[i])));
-							if (document.getLevel() < 3) {
+							if (gcm.getSBMLDocument().getLevel() < 3) {
 								unit.setExponent(Integer.valueOf(extractUnitExp(uList[i])).intValue());
 							}
 							else {
@@ -360,14 +362,14 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 							units[i] = unitDefs.getModel().getElementAt(i).toString();
 						}
 						int index = unitDefs.getSelectedIndex();
-						UnitDefinition u = document.getModel().createUnitDefinition();
+						UnitDefinition u = gcm.getSBMLDocument().getModel().createUnitDefinition();
 						u.setId(unitID.getText().trim());
 						u.setName(unitName.getText().trim());
 						usedIDs.add(addUnit);
 						for (int i = 0; i < uList.length; i++) {
 							Unit unit = u.createUnit();
 							unit.setKind(libsbml.UnitKind_forName(extractUnitKind(uList[i])));
-							if (document.getLevel() < 3) {
+							if (gcm.getSBMLDocument().getLevel() < 3) {
 								unit.setExponent(Integer.valueOf(extractUnitExp(uList[i])).intValue());
 							}
 							else {
@@ -389,7 +391,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 						Utility.sort(units);
 						unitDefs.setListData(units);
 						unitDefs.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-						if (document.getModel().getNumUnitDefinitions() == 1) {
+						if (gcm.getSBMLDocument().getModel().getNumUnitDefinitions() == 1) {
 							unitDefs.setSelectedIndex(0);
 						}
 						else {
@@ -397,6 +399,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 						}
 					}
 					dirty.setValue(true);
+					gcm.makeUndoPoint();
 				}
 				if (error) {
 					value = JOptionPane.showOptionDialog(Gui.frame, unitDefPanel, "Unit Definition Editor", JOptionPane.YES_NO_OPTION,
@@ -430,7 +433,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 				"hertz", "item", "joule", "katal", "kelvin", "kilogram", "litre", "lumen", "lux", "metre", "mole", "newton", "ohm", "pascal",
 				"radian", "second", "siemens", "sievert", "steradian", "tesla", "volt", "watt", "weber" };
 		String[] kinds;
-		if (document.getLevel() < 3) {
+		if (gcm.getSBMLDocument().getLevel() < 3) {
 			kinds = kindsL2V4;
 		}
 		else {
@@ -465,7 +468,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = false;
-			if (document.getLevel() < 3) {
+			if (gcm.getSBMLDocument().getLevel() < 3) {
 				try {
 					Integer.valueOf(exp.getText().trim()).intValue();
 				}
@@ -565,6 +568,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 					}
 				}
 				dirty.setValue(true);
+				gcm.makeUndoPoint();
 			}
 			if (error) {
 				value = JOptionPane.showOptionDialog(Gui.frame, unitListPanel, "Unit List Editor", JOptionPane.YES_NO_OPTION,
@@ -577,12 +581,29 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 	}
 
 	/**
+	 * Refresh units panel
+	 */
+	public void refreshUnitsPanel() {
+		Model model = gcm.getSBMLDocument().getModel();
+		ListOf listOfUnits = model.getListOfUnitDefinitions();
+		String[] units = new String[(int) model.getNumUnitDefinitions()];
+		for (int i = 0; i < model.getNumUnitDefinitions(); i++) {
+			UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
+			units[i] = unit.getId();
+			// GET OTHER THINGS
+		}
+		Utility.sort(units);
+		unitDefs.setListData(units);
+		unitDefs.setSelectedIndex(0);
+	}
+	
+	/**
 	 * Remove a unit from list
 	 */
 	private void removeList() {
 		int index = unitDefs.getSelectedIndex();
 		if (index != -1) {
-			UnitDefinition tempUnit = document.getModel().getUnitDefinition(((String) unitDefs.getSelectedValue()).split(" ")[0]);
+			UnitDefinition tempUnit = gcm.getSBMLDocument().getModel().getUnitDefinition(((String) unitDefs.getSelectedValue()).split(" ")[0]);
 			if (unitList.getSelectedIndex() != -1) {
 				String selected = (String) unitList.getSelectedValue();
 				ListOf u = tempUnit.getListOfUnits();
@@ -602,6 +623,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 				unitList.setSelectedIndex(index - 1);
 			}
 			dirty.setValue(true);
+			gcm.makeUndoPoint();
 		}
 	}
 
@@ -612,9 +634,9 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 		int index = unitDefs.getSelectedIndex();
 		if (index != -1) {
 			if (!unitsInUse(((String) unitDefs.getSelectedValue()).split(" ")[0])) {
-				UnitDefinition tempUnit = document.getModel().getUnitDefinition(((String) unitDefs.getSelectedValue()).split(" ")[0]);
-				ListOf u = document.getModel().getListOfUnitDefinitions();
-				for (int i = 0; i < document.getModel().getNumUnitDefinitions(); i++) {
+				UnitDefinition tempUnit = gcm.getSBMLDocument().getModel().getUnitDefinition(((String) unitDefs.getSelectedValue()).split(" ")[0]);
+				ListOf u = gcm.getSBMLDocument().getModel().getListOfUnitDefinitions();
+				for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumUnitDefinitions(); i++) {
 					if (((UnitDefinition) u.get(i)).getId().equals(tempUnit.getId())) {
 						u.remove(i);
 					}
@@ -630,6 +652,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 					unitDefs.setSelectedIndex(index - 1);
 				}
 				dirty.setValue(true);
+				gcm.makeUndoPoint();
 			}
 		}
 	}
@@ -638,10 +661,10 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 	 * Check if a unit is in use.
 	 */
 	private boolean unitsInUse(String unit) {
-		Model model = document.getModel();
+		Model model = gcm.getSBMLDocument().getModel();
 		boolean inUse = false;
 		ArrayList<String> modelUnitsUsing = new ArrayList<String>();
-		if (document.getLevel() > 2) {
+		if (gcm.getSBMLDocument().getLevel() > 2) {
 			if (model.isSetSubstanceUnits() && model.getSubstanceUnits().equals(unit)) {
 				inUse = true;
 				modelUnitsUsing.add("substance");
@@ -974,8 +997,8 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 	private void updateUnitId(String origId, String newId) {
 		if (origId.equals(newId))
 			return;
-		Model model = document.getModel();
-		if (document.getLevel() > 2) {
+		Model model = gcm.getSBMLDocument().getModel();
+		if (gcm.getSBMLDocument().getLevel() > 2) {
 			if (model.isSetSubstanceUnits()) {
 				if (model.getSubstanceUnits().equals(origId)) {
 					model.setSubstanceUnits(newId);

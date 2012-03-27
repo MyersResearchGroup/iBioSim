@@ -29,6 +29,8 @@ import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.SBMLDocument;
 
+import biomodel.parser.BioModel;
+
 
 /**
  * This is a class for creating SBML compartment types
@@ -44,7 +46,7 @@ public class CompartmentTypes extends JPanel implements ActionListener, MouseLis
 
 	private JList compTypes; // JList of compartment types
 
-	private SBMLDocument document;
+	private BioModel gcm;
 
 	private ArrayList<String> usedIDs;
 
@@ -53,13 +55,13 @@ public class CompartmentTypes extends JPanel implements ActionListener, MouseLis
 	private Gui biosim;
 
 	/* Create initial assignment panel */
-	public CompartmentTypes(Gui biosim, SBMLDocument document, ArrayList<String> usedIDs, MutableBoolean dirty) {
+	public CompartmentTypes(Gui biosim, BioModel gcm, ArrayList<String> usedIDs, MutableBoolean dirty) {
 		super(new BorderLayout());
-		this.document = document;
+		this.gcm = gcm;
 		this.usedIDs = usedIDs;
 		this.biosim = biosim;
 		this.dirty = dirty;
-		Model model = document.getModel();
+		Model model = gcm.getSBMLDocument().getModel();
 		addCompType = new JButton("Add Type");
 		removeCompType = new JButton("Remove Type");
 		editCompType = new JButton("Edit Type");
@@ -108,7 +110,7 @@ public class CompartmentTypes extends JPanel implements ActionListener, MouseLis
 		String selectedID = "";
 		if (option.equals("OK")) {
 			try {
-				CompartmentType compType = document.getModel().getCompartmentType((((String) compTypes.getSelectedValue()).split(" ")[0]));
+				CompartmentType compType = gcm.getSBMLDocument().getModel().getCompartmentType((((String) compTypes.getSelectedValue()).split(" ")[0]));
 				compTypeID.setText(compType.getId());
 				selectedID = compType.getId();
 				compTypeName.setText(compType.getName());
@@ -126,7 +128,7 @@ public class CompartmentTypes extends JPanel implements ActionListener, MouseLis
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(document, usedIDs, compTypeID.getText().trim(), selectedID, false);
+			error = SBMLutilities.checkID(gcm.getSBMLDocument(), usedIDs, compTypeID.getText().trim(), selectedID, false);
 			if (!error) {
 				if (option.equals("OK")) {
 					String[] cpTyp = new String[compTypes.getModel().getSize()];
@@ -138,7 +140,7 @@ public class CompartmentTypes extends JPanel implements ActionListener, MouseLis
 					compTypes.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					cpTyp = Utility.getList(cpTyp, compTypes);
 					compTypes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					CompartmentType c = document.getModel().getCompartmentType(val);
+					CompartmentType c = gcm.getSBMLDocument().getModel().getCompartmentType(val);
 					c.setId(compTypeID.getText().trim());
 					c.setName(compTypeName.getText().trim());
 					for (int i = 0; i < usedIDs.size(); i++) {
@@ -150,8 +152,8 @@ public class CompartmentTypes extends JPanel implements ActionListener, MouseLis
 					Utility.sort(cpTyp);
 					compTypes.setListData(cpTyp);
 					compTypes.setSelectedIndex(index);
-					for (int i = 0; i < document.getModel().getNumCompartments(); i++) {
-						Compartment compartment = document.getModel().getCompartment(i);
+					for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumCompartments(); i++) {
+						Compartment compartment = gcm.getSBMLDocument().getModel().getCompartment(i);
 						if (compartment.getCompartmentType().equals(val)) {
 							compartment.setCompartmentType(compTypeID.getText().trim());
 						}
@@ -163,7 +165,7 @@ public class CompartmentTypes extends JPanel implements ActionListener, MouseLis
 						cpTyp[i] = compTypes.getModel().getElementAt(i).toString();
 					}
 					int index = compTypes.getSelectedIndex();
-					CompartmentType c = document.getModel().createCompartmentType();
+					CompartmentType c = gcm.getSBMLDocument().getModel().createCompartmentType();
 					c.setId(compTypeID.getText().trim());
 					c.setName(compTypeName.getText().trim());
 					usedIDs.add(compTypeID.getText().trim());
@@ -180,7 +182,7 @@ public class CompartmentTypes extends JPanel implements ActionListener, MouseLis
 					Utility.sort(cpTyp);
 					compTypes.setListData(cpTyp);
 					compTypes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					if (document.getModel().getNumCompartmentTypes() == 1) {
+					if (gcm.getSBMLDocument().getModel().getNumCompartmentTypes() == 1) {
 						compTypes.setSelectedIndex(0);
 					}
 					else {
@@ -188,6 +190,7 @@ public class CompartmentTypes extends JPanel implements ActionListener, MouseLis
 					}
 				}
 				dirty.setValue(true);
+				gcm.makeUndoPoint();
 			}
 			if (error) {
 				value = JOptionPane.showOptionDialog(Gui.frame, compTypePanel, "Compartment Type Editor", JOptionPane.YES_NO_OPTION,
@@ -207,8 +210,8 @@ public class CompartmentTypes extends JPanel implements ActionListener, MouseLis
 		if (index != -1) {
 			boolean remove = true;
 			ArrayList<String> compartmentUsing = new ArrayList<String>();
-			for (int i = 0; i < document.getModel().getNumCompartments(); i++) {
-				Compartment compartment = (Compartment) document.getModel().getListOfCompartments().get(i);
+			for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumCompartments(); i++) {
+				Compartment compartment = (Compartment) gcm.getSBMLDocument().getModel().getListOfCompartments().get(i);
 				if (compartment.isSetCompartmentType()) {
 					if (compartment.getCompartmentType().equals(((String) compTypes.getSelectedValue()).split(" ")[0])) {
 						remove = false;
@@ -217,9 +220,9 @@ public class CompartmentTypes extends JPanel implements ActionListener, MouseLis
 				}
 			}
 			if (remove) {
-				CompartmentType tempCompType = document.getModel().getCompartmentType(((String) compTypes.getSelectedValue()).split(" ")[0]);
-				ListOf c = document.getModel().getListOfCompartmentTypes();
-				for (int i = 0; i < document.getModel().getNumCompartmentTypes(); i++) {
+				CompartmentType tempCompType = gcm.getSBMLDocument().getModel().getCompartmentType(((String) compTypes.getSelectedValue()).split(" ")[0]);
+				ListOf c = gcm.getSBMLDocument().getModel().getListOfCompartmentTypes();
+				for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumCompartmentTypes(); i++) {
 					if (((CompartmentType) c.get(i)).getId().equals(tempCompType.getId())) {
 						c.remove(i);
 					}
@@ -235,6 +238,7 @@ public class CompartmentTypes extends JPanel implements ActionListener, MouseLis
 					compTypes.setSelectedIndex(index - 1);
 				}
 				dirty.setValue(true);
+				gcm.makeUndoPoint();
 			}
 			else {
 				String compartment = "";

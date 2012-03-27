@@ -23,11 +23,14 @@ import main.Gui;
 import main.util.MutableBoolean;
 import main.util.Utility;
 
+import org.sbml.libsbml.Compartment;
 import org.sbml.libsbml.FunctionDefinition;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.libsbml;
+
+import biomodel.parser.BioModel;
 
 
 /**
@@ -44,7 +47,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 
 	private JList functions; // JList of functions
 
-	private SBMLDocument document;
+	private BioModel gcm;
 
 	private ArrayList<String> usedIDs;
 
@@ -55,12 +58,12 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 	private Rules rulesPanel;
 
 	/* Create initial assignment panel */
-	public Functions(SBMLDocument document, ArrayList<String> usedIDs, MutableBoolean dirty) {
+	public Functions(BioModel gcm, ArrayList<String> usedIDs, MutableBoolean dirty) {
 		super(new BorderLayout());
-		this.document = document;
+		this.gcm = gcm;
 		this.usedIDs = usedIDs;
 		this.dirty = dirty;
-		Model model = document.getModel();
+		Model model = gcm.getSBMLDocument().getModel();
 		addFunction = new JButton("Add Function");
 		removeFunction = new JButton("Remove Function");
 		editFunction = new JButton("Edit Function");
@@ -188,7 +191,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 		String selectedID = "";
 		if (option.equals("OK")) {
 			try {
-				FunctionDefinition function = document.getModel().getFunctionDefinition((((String) functions.getSelectedValue()).split(" ")[0]));
+				FunctionDefinition function = gcm.getSBMLDocument().getModel().getFunctionDefinition((((String) functions.getSelectedValue()).split(" ")[0]));
 				funcID.setText(function.getId());
 				selectedID = function.getId();
 				funcName.setText(function.getName());
@@ -224,7 +227,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 				null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(document, usedIDs, funcID.getText().trim(), selectedID, false);
+			error = SBMLutilities.checkID(gcm.getSBMLDocument(), usedIDs, funcID.getText().trim(), selectedID, false);
 			if (!error) {
 				String[] vars = eqn.getText().trim().split(" |\\(|\\)|\\,|\\*|\\+|\\/|\\-");
 				for (int i = 0; i < vars.length; i++) {
@@ -251,7 +254,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 					error = true;
 				}
 				else {
-					ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(document, eqn.getText().trim(), args.getText().trim(), true);
+					ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(gcm.getSBMLDocument(), eqn.getText().trim(), args.getText().trim(), true);
 					if (invalidVars.size() > 0) {
 						String invalid = "";
 						for (int i = 0; i < invalidVars.size(); i++) {
@@ -278,7 +281,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 			if (!error) {
-				error = SBMLutilities.checkNumFunctionArguments(document, SBMLutilities.myParseFormula(eqn.getText().trim()));
+				error = SBMLutilities.checkNumFunctionArguments(gcm.getSBMLDocument(), SBMLutilities.myParseFormula(eqn.getText().trim()));
 			}
 			if (!error) {
 				if (option.equals("OK")) {
@@ -291,7 +294,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 					functions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					funcs = Utility.getList(funcs, functions);
 					functions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					FunctionDefinition f = document.getModel().getFunctionDefinition(val);
+					FunctionDefinition f = gcm.getSBMLDocument().getModel().getFunctionDefinition(val);
 					f.setId(funcID.getText().trim());
 					f.setName(funcName.getText().trim());
 					if (args.getText().trim().equals("")) {
@@ -317,7 +320,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 					}
 					functions.setListData(funcs);
 					functions.setSelectedIndex(index);
-					SBMLutilities.updateVarId(document, false, val, funcID.getText().trim());
+					SBMLutilities.updateVarId(gcm.getSBMLDocument(), false, val, funcID.getText().trim());
 				}
 				else {
 					String[] funcs = new String[functions.getModel().getSize()];
@@ -347,7 +350,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 						funcs = oldVal;
 					}
 					if (!error) {
-						FunctionDefinition f = document.getModel().createFunctionDefinition();
+						FunctionDefinition f = gcm.getSBMLDocument().getModel().createFunctionDefinition();
 						f.setId(funcID.getText().trim());
 						f.setName(funcName.getText().trim());
 						if (args.getText().trim().equals("")) {
@@ -360,7 +363,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 					}
 					functions.setListData(funcs);
 					functions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					if (document.getModel().getNumFunctionDefinitions() == 1) {
+					if (gcm.getSBMLDocument().getModel().getNumFunctionDefinitions() == 1) {
 						functions.setSelectedIndex(0);
 					}
 					else {
@@ -368,6 +371,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 					}
 				}
 				dirty.setValue(true);
+				gcm.makeUndoPoint();
 			}
 			if (error) {
 				value = JOptionPane.showOptionDialog(Gui.frame, functionPanel, "Function Editor", JOptionPane.YES_NO_OPTION,
@@ -385,10 +389,10 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 	private void removeFunction() {
 		int index = functions.getSelectedIndex();
 		if (index != -1) {
-			if (!SBMLutilities.variableInUse(document, ((String) functions.getSelectedValue()).split(" ")[0], false, true, true)) {
-				FunctionDefinition tempFunc = document.getModel().getFunctionDefinition(((String) functions.getSelectedValue()).split(" ")[0]);
-				ListOf f = document.getModel().getListOfFunctionDefinitions();
-				for (int i = 0; i < document.getModel().getNumFunctionDefinitions(); i++) {
+			if (!SBMLutilities.variableInUse(gcm.getSBMLDocument(), ((String) functions.getSelectedValue()).split(" ")[0], false, true, true)) {
+				FunctionDefinition tempFunc = gcm.getSBMLDocument().getModel().getFunctionDefinition(((String) functions.getSelectedValue()).split(" ")[0]);
+				ListOf f = gcm.getSBMLDocument().getModel().getListOfFunctionDefinitions();
+				for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumFunctionDefinitions(); i++) {
 					if (((FunctionDefinition) f.get(i)).getId().equals(tempFunc.getId())) {
 						f.remove(i);
 					}
@@ -404,10 +408,44 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 					functions.setSelectedIndex(index - 1);
 				}
 				dirty.setValue(true);
+				gcm.makeUndoPoint();
 			}
 		}
 	}
 
+	/**
+	 * Refresh functions panel
+	 */
+	public void refreshFunctionsPanel() {
+		Model model = gcm.getSBMLDocument().getModel();
+		ListOf listOfFunctions = model.getListOfFunctionDefinitions();
+		int count = 0;
+		for (int i = 0; i < model.getNumFunctionDefinitions(); i++) {
+			FunctionDefinition function = (FunctionDefinition) listOfFunctions.get(i);
+			if (!SBMLutilities.isSpecialFunction(function.getId())) count++;
+		}
+		String[] funcs = new String[count];
+		count = 0;
+		for (int i = 0; i < model.getNumFunctionDefinitions(); i++) {
+			FunctionDefinition function = (FunctionDefinition) listOfFunctions.get(i);
+			if (SBMLutilities.isSpecialFunction(function.getId())) continue;
+			funcs[count] = function.getId() + " ( ";
+			for (long j = 0; j < function.getNumArguments(); j++) {
+				if (j != 0) {
+					funcs[count] += ", ";
+				}
+				funcs[count] += SBMLutilities.myFormulaToString(function.getArgument(j));
+			}
+			if (function.isSetMath()) {
+				funcs[count] += " ) = " + SBMLutilities.myFormulaToString(function.getBody());
+			}
+			count++;
+		}
+		Utility.sort(funcs);
+		functions.setListData(funcs);
+		functions.setSelectedIndex(0);
+	}
+	
 	public void setPanels(InitialAssignments initialsPanel, Rules rulesPanel) {
 		this.initialsPanel = initialsPanel;
 		this.rulesPanel = rulesPanel;
@@ -421,8 +459,8 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 		// if the edit event button is clicked
 		else if (e.getSource() == editFunction) {
 			functionEditor("OK");
-			initialsPanel.refreshInitialAssignmentPanel(document);
-			rulesPanel.refreshRulesPanel(document);
+			initialsPanel.refreshInitialAssignmentPanel(gcm);
+			rulesPanel.refreshRulesPanel();
 		}
 		// if the remove event button is clicked
 		else if (e.getSource() == removeFunction) {
@@ -434,8 +472,8 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 		if (e.getClickCount() == 2) {
 			if (e.getSource() == functions) {
 				functionEditor("OK");
-				initialsPanel.refreshInitialAssignmentPanel(document);
-				rulesPanel.refreshRulesPanel(document);
+				initialsPanel.refreshInitialAssignmentPanel(gcm);
+				rulesPanel.refreshRulesPanel();
 			}
 		}
 	}
