@@ -1029,6 +1029,13 @@ public class Zone {
 		newZone.advance();
 		newZone.recononicalize();
 		
+		// If the splitting method fails, print an error message.
+		if(!testSplit(newZone))
+		{
+			System.err.print("The reduction does not work. In state" + state
+					+ "firing transition: " + index);
+		}
+		
 		return newZone;
 	}
 	
@@ -1557,6 +1564,50 @@ public class Zone {
 			
 			return result;
 		}
+	}
+	
+	/**
+	 * Tests ways of splitting a zone.
+	 * @param z
+	 * 		The Zone to split.
+	 * @return
+	 * 		True if the splitting method preserved the Zone; false otherwise.
+	 */
+	private boolean testSplit(Zone z)
+	{
+		// Get a new copy of the matrix to manipulate.
+		int[][] m = z._matrix;
+		
+		int[][] newMatrix = new int[m.length][m.length];
+		
+		// Copy the matrix.
+		for(int i=0; i<m.length; i++)
+		{
+			for(int j=0; j<m.length; j++)
+			{
+				newMatrix[i][j] = m[i][j];
+			}
+		}
+		
+		
+		boolean evenRow = true;
+		
+		for(int i=2; i<m.length; i++)
+		{
+			for(int j=2; j<m.length; j++, evenRow = !evenRow)
+			{
+				if(i != j && ((j+1 != i && evenRow) || (i+1 != j && !evenRow)))
+				{
+					newMatrix[i][j] = INFINITY;
+				}
+			}
+		}
+		
+		int[] timers = Arrays.copyOfRange(z._indexToTimer, 1, z._indexToTimer.length);
+		
+		Zone newZone = new Zone(timers, newMatrix);
+		
+		return z.equals(newZone);
 	}
 	
 }
