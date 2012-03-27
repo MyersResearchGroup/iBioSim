@@ -2624,7 +2624,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 
 	/**
 	 * Calls the appropriate dot program to show the graph.
-	 * @param fileName The absolute file
+	 * @param fileName The absolute file name.
 	 */
 	public void showGraph(String fileName)
 	{
@@ -2634,6 +2634,29 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		try {
 			Runtime exec = Runtime.getRuntime();
 			if (new File(fileName).exists()) {
+				
+				long kB = 1024;	// number of bytes in a kilobyte.
+				
+				long fileSize = file.length()/kB; // Size of file in megabytes.
+				
+				// If the file is larger than a given amount of megabytes,
+				// then give the user the chance to cancel the operation.
+				
+				int thresholdSize = 1;	// Specifies the threshold for giving the
+										// user the option to not attempt to open the file.
+				if(fileSize > thresholdSize)
+				{
+					int answer = JOptionPane.showConfirmDialog(Gui.frame,
+							"The size of the file exceeds " + thresholdSize + " MB."
+							+ "The file may not open. Do you want to continue?", 
+							"Do you want to continue?", JOptionPane.YES_NO_OPTION);
+					
+					if(answer == JOptionPane.NO_OPTION)
+					{
+						return;
+					}
+				}
+				
 				String command;
 				if (System.getProperty("os.name")
 						.contentEquals("Linux")) {
