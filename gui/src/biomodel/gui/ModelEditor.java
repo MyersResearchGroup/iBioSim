@@ -237,15 +237,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	}
 	
 	public void refresh() {
-		ArrayList<String> comps = new ArrayList<String>();
-		for (long i = 0; i < gcm.getSBMLCompModel().getNumSubmodels(); i++) {
-			Submodel submodel = gcm.getSBMLCompModel().getSubmodel(i);
-			comps.add(submodel.getId() + " " + submodel.getModelRef() + " " + gcm.getComponentPortMap(submodel.getId()));
-			this.getGCM().updateGridSpecies(submodel.getModelRef());
-		}
-		components.removeAllItem();
-		components.addAllItem(comps);
-		
+		refreshComponentsList();		
 		reloadParameters();
 		if (paramsOnly) {
 			/*
@@ -284,7 +276,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			}
 		}
 		
-		System.err.println("reloading");
+		//System.err.println("reloading");
 		schematic.reloadGrid();
 	}
 
@@ -1345,6 +1337,39 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		revalidate();
 	}
 
+	private void refreshComponentsList() {
+		components.removeAllItem();
+		for (long i = 0; i < gcm.getSBMLCompModel().getNumSubmodels(); i++) {
+			
+			Submodel submodel = gcm.getSBMLCompModel().getSubmodel(i);
+			String locationAnnotationString = "";
+			
+			//if the submodel is gridded, then get the component names from the locations parameter
+			if (gcm.getSBMLDocument().getModel().getParameter(submodel.getId().replace("GRID__","") + "__locations") != null) {
+					
+				locationAnnotationString = 
+						gcm.getSBMLDocument().getModel()
+						.getParameter(submodel.getId().replace("GRID__","") + "__locations")
+						.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
+			
+				String[] compIDs = locationAnnotationString.split("=");
+				
+				for (int j = 0; j < compIDs.length; ++j) {
+					
+					if (compIDs[j].contains("[[")) {
+						
+						compIDs[j] = compIDs[j].split(",")[0].replace("[[","").replace("]]","");
+						
+						components.addItem(compIDs[j] + " " + 
+								submodel.getModelRef() + " " + gcm.getComponentPortMap(compIDs[j]));
+					}
+				}
+			}
+			else			
+				components.addItem(submodel.getId() + " " + submodel.getModelRef() + " " + gcm.getComponentPortMap(submodel.getId()));
+		}	
+	}
+	
 	private void buildGui() {
 		
 		JPanel mainPanelNorth = new JPanel();
@@ -1449,37 +1474,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		RemoveButton removeInit = new RemoveButton("Remove Component", components);
 		EditButton editInit = new EditButton("Edit Component", components);
 		
-		for (long i = 0; i < gcm.getSBMLCompModel().getNumSubmodels(); i++) {
-			
-			Submodel submodel = gcm.getSBMLCompModel().getSubmodel(i);
-			String locationAnnotationString = "";
-			
-			//if the submodel is gridded, then get the component names from the locations parameter
-			if (gcm.getSBMLDocument().getModel().getParameter(submodel.getId().replace("GRID__","") + "__locations") != null) {
-					
-				locationAnnotationString = 
-						gcm.getSBMLDocument().getModel()
-						.getParameter(submodel.getId().replace("GRID__","") + "__locations")
-						.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
-			
-				String[] compIDs = locationAnnotationString.split("=");
-				
-				for (int j = 0; j < compIDs.length; ++j) {
-					
-					if (compIDs[j].contains("[[")) {
-						
-						compIDs[j] = compIDs[j].split(",")[0].replace("[[","").replace("]]","");
-						
-						components.addItem(compIDs[j] + " " + 
-								submodel.getModelRef() + " " + gcm.getComponentPortMap(compIDs[j]));
-					}
-				}
-			}
-			else			
-				components.addItem(submodel.getId() + " " + submodel.getModelRef() + " " + gcm.getComponentPortMap(submodel.getId()));
-			
-			this.getGCM().updateGridSpecies(submodel.getModelRef());
-		}
+		refreshComponentsList();
 		
 		this.getSpeciesPanel().refreshSpeciesPanel(gcm);
 		JPanel componentsPanel = Utility.createPanel(this, "Components", components, addInit, removeInit, editInit);
@@ -2087,7 +2082,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			String componentsListRow = this.components.getModel().getElementAt(i).toString();
 			String componentsListId = componentsListRow.split(" ")[0];
 			
-			System.err.println(componentsListId + "   " + id);
+			//System.err.println(componentsListId + "   " + id);
 			
 			if (componentsListId.equals(id)) {
 				this.components.setSelectedIndex(i);
