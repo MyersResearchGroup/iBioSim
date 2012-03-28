@@ -174,10 +174,10 @@ public class BioGraph extends mxGraph {
 		for (int i = 0; i < m.getNumReactions(); i++) {
 			
 			Reaction r = m.getReaction(i);
-			if (r.getAnnotationString().contains("Production")) continue;
+			if (BioModel.isDegradationReaction(r)) continue;
+			if (BioModel.isDiffusionReaction(r)) continue;
+			if (BioModel.isProductionReaction(r)) continue;
 			if (r.getAnnotationString().contains("Complex")) continue;
-			if (r.getAnnotationString().contains("Degradation")) continue;
-			if (r.getAnnotationString().contains("Diffusion")) continue;
 			if (r.getAnnotationString().contains("Constitutive")) continue;
 			if (r.getAnnotationString().contains("Grid")) continue;
 			
@@ -253,7 +253,7 @@ public class BioGraph extends mxGraph {
 					mxCell cell = this.getInfluence(id);
 					cell.setStyle(style);
 				}
-			} else if (r.getAnnotationString().contains("Production")) {
+			} else if (BioModel.isProductionReaction(r)) {
 				String promoterId = r.getId().substring(r.getId().indexOf("_")+1);
 				if (gcm.isPromoterExplicit(promoterId)) {
 					for (int j = 0; j < r.getNumProducts(); j++) {
@@ -425,10 +425,10 @@ public class BioGraph extends mxGraph {
 		for (int i = 0; i < m.getNumReactions(); i++) {
 			
 			Reaction r = m.getReaction(i);
-			if (r.getAnnotationString().contains("Production")) continue;
+			if (BioModel.isDegradationReaction(r)) continue;
+			if (BioModel.isDiffusionReaction(r)) continue;
+			if (BioModel.isProductionReaction(r)) continue;
 			if (r.getAnnotationString().contains("Complex")) continue;
-			if (r.getAnnotationString().contains("Degradation")) continue;
-			if (r.getAnnotationString().contains("Diffusion")) continue;
 			if (r.getAnnotationString().contains("Constitutive")) continue;
 			if (r.getAnnotationString().contains("Grid")) continue;
 			
@@ -610,7 +610,7 @@ public class BioGraph extends mxGraph {
 						edgeHash.put(key, new Vector<mxCell>());
 					edgeHash.get(key).add(cell);
 				}
-			} else if (r.getAnnotationString().contains("Production")) {
+			} else if (BioModel.isProductionReaction(r)) {
 				String promoterId = r.getId().substring(r.getId().indexOf("_")+1);
 				if (!gcm.isPromoterExplicit(promoterId)) {
 					for (int j = 0; j < r.getNumModifiers(); j++) {
@@ -722,10 +722,10 @@ public class BioGraph extends mxGraph {
 		for (int i = 0; i < m.getNumReactions(); i++) {
 			
 			Reaction r = m.getReaction(i);
-			if (r.getAnnotationString().contains("Production")) continue;
+			if (BioModel.isDegradationReaction(r)) continue;
+			if (BioModel.isDiffusionReaction(r)) continue;
+			if (BioModel.isProductionReaction(r)) continue;
 			if (r.getAnnotationString().contains("Complex")) continue;
-			if (r.getAnnotationString().contains("Degradation")) continue;
-			if (r.getAnnotationString().contains("Diffusion")) continue;
 			if (r.getAnnotationString().contains("Constitutive")) continue;
 			
 			if (gcm.getSBMLLayout().getLayout("iBioSim").getReactionGlyph(r.getId()) != null) {
@@ -1536,8 +1536,8 @@ public class BioGraph extends mxGraph {
 	 */
 	private boolean createGraphSpeciesFromModel(String sp){
 		
-		String type = gcm.getSpeciesType(sp);
-		if (gcm.isSpeciesDiffusible(sp)) type += " (D)";
+		String type = BioModel.getSpeciesType(gcm.getSBMLDocument(),sp);
+		if (gcm.getDiffusionReaction(sp)!=null) type += " (D)";
 		if (gcm.isSpeciesConstitutive(sp)) type += " (C)";
 		if (type.equals(GlobalConstants.MRNA)) return false; 
 		

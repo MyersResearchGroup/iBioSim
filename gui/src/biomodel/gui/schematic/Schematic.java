@@ -487,8 +487,8 @@ public class Schematic extends JPanel implements ActionListener {
 			//are input or output species in the GCM
 			for (String species : gcm.getSpecies()) {
 				
-				if (gcm.getSpeciesType(species).equals(GlobalConstants.INPUT) ||
-					gcm.getSpeciesType(species).equals(GlobalConstants.OUTPUT)) {
+				if (BioModel.getSpeciesType(gcm.getSBMLDocument(),species).equals(GlobalConstants.INPUT) ||
+					BioModel.getSpeciesType(gcm.getSBMLDocument(),species).equals(GlobalConstants.OUTPUT)) {
 					
 					disallow = true;
 					break;
@@ -1351,7 +1351,7 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		// Disallows user from connecting to a species that is an input
 		if (graph.getCellType(target).contains(GlobalConstants.SPECIES)) {
-			String specType = gcm.getSpeciesType(targetID);
+			String specType = BioModel.getSpeciesType(gcm.getSBMLDocument(),targetID);
 			if (specType.equals(GlobalConstants.INPUT)) {
 				// TOOD: REMOVED THIS || specType.contains(GlobalConstants.SPASTIC)) {
 				JOptionPane.showMessageDialog(Gui.frame, "You can't connect to a species that is an input or constitutive.");

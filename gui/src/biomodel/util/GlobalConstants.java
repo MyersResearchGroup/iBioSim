@@ -105,6 +105,13 @@ public class GlobalConstants {
 	public static final String REGULATION = "regulation";
 	public static final int SBO_REGULATION = 19;
 	public static final String NOINFLUENCE = "no influence";
+	public static final int SBO_PROMOTER = 535;
+	public static final int SBO_PROMOTER_SPECIES = 369;
+	public static final int SBO_MRNA = 278;
+
+	public static final int SBO_DEGRADATION = 179;
+	public static final int SBO_DIFFUSION = 185;
+	public static final int SBO_PRODUCTION = 183;
 	
 	public static final String TRUE = "true";
 	public static final String FALSE = "false";

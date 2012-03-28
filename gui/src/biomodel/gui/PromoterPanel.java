@@ -74,11 +74,7 @@ public class PromoterPanel extends JPanel {
 			fields.put(GlobalConstants.NAME, field);
 			add(field);		
 		}
-	
-		production = model.getReaction("Production_"+selected);
-		if (production != null) {
-			if (!production.isSetAnnotation() || !production.getAnnotationString().contains("Production")) production = null;
-		}
+		production = gcm.getProductionReaction(selected);
 		
 		// promoter count
 		String origString = "default";
@@ -387,7 +383,7 @@ public class PromoterPanel extends JPanel {
 //				promoter.setMetaId(id);
 				promoter.setName(fields.get(GlobalConstants.NAME).getValue());
 			}
-			promoter.setAnnotation(GlobalConstants.TYPE + "=" + GlobalConstants.PROMOTER);
+			promoter.setSBOTerm(GlobalConstants.SBO_PROMOTER_SPECIES);
 			PropertyField f = fields.get(GlobalConstants.PROMOTER_COUNT_STRING);
 			if (f.getValue().startsWith("(")) {
 				promoter.setInitialAmount(1.0);
@@ -437,7 +433,6 @@ public class PromoterPanel extends JPanel {
 
 			if (!paramsOnly) {
 				// Add GCM and SBOL annotations to promoter
-				promoter.setAnnotation(GlobalConstants.TYPE + "=" + GlobalConstants.PROMOTER + ",");
 				LinkedHashSet<String> sbolURIs = new LinkedHashSet<String>();
 				for (SBOLField sf : sbolFields.values()) 
 					if (!sf.getText().equals("")) 
