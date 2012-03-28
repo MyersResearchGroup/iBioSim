@@ -64,6 +64,7 @@
                deprecation="on"
 		   classpathref="classpath">
           <src path="${src.dir}"/>
+        	<exclude name="${src.dir}/biomodel/gui/textualeditor/SBML_Editor.java"/>
 	  </javac>	
         <!--<jar jarfile="${build.lib}/gui.jar" basedir="${build.classes}">
 	    <manifest>
