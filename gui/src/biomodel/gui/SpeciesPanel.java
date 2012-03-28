@@ -155,18 +155,12 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		tempPanel = new JPanel(new GridLayout(1,2));
 		tempPanel.add(new JLabel(""));
 
-		diffusion = model.getReaction("MembraneDiffusion_"+selected);
-		if (diffusion != null) {
-			if (!diffusion.isSetAnnotation() || !diffusion.getAnnotationString().contains("Diffusion")) diffusion = null;
-		}
+		diffusion = gcm.getDiffusionReaction(selected);
 		constitutive = model.getReaction("Constitutive_"+selected);
 		if (constitutive != null) {
 			if (!constitutive.isSetAnnotation() || !constitutive.getAnnotationString().contains("Constitutive")) constitutive = null;
 		}
-		degradation = model.getReaction("Degradation_"+selected);
-		if (degradation != null) {
-			if (!degradation.isSetAnnotation() || !degradation.getAnnotationString().contains("Degradation")) degradation = null;
-		}
+		degradation = gcm.getDegradationReaction(selected);
 		complex = model.getReaction("Complex_"+selected);
 		if (complex != null) {
 			if (!complex.isSetAnnotation() || !complex.getAnnotationString().contains("Complex")) complex = null;
@@ -321,7 +315,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			tempPanel.add(specInteresting);
 			thresholdTextField = new JTextField(thresholdText);
 			
-			if (!gcm.getSpeciesType(selected).equals(GlobalConstants.INPUT) &&
+			if (!BioModel.getSpeciesType(gcm.getSBMLDocument(),selected).equals(GlobalConstants.INPUT) &&
 					(gcmEditor.getGCM().getBiochemicalSpecies() != null &&
 					!gcmEditor.getGCM().getBiochemicalSpecies().contains(selected))) {
 				tempPanel.add(thresholdTextField);
@@ -553,6 +547,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			sbolFields.put(GlobalConstants.SBOL_DNA_COMPONENT, componentField);
 			grid.add(componentField);
 
+			typeBox.setSelectedItem(BioModel.getSpeciesType(gcm.getSBMLDocument(),species.getId()));
 			// Parse out GCM and SBOL annotations and add to respective fields
 			String annotation = species.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
 			String [] annotations = annotation.split(",");
@@ -827,7 +822,11 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 							species.setInitialConcentration(Double.parseDouble(f.getValue().substring(1,f.getValue().length()-1)));
 						} else {
 							String speciesType = typeBox.getSelectedItem().toString();
-							species.setAnnotation(GlobalConstants.TYPE + "=" + speciesType+","+GlobalConstants.INITIAL_STRING+"="+f.getValue());
+							if (!speciesType.equals(GlobalConstants.INTERNAL)) {
+								species.setAnnotation(GlobalConstants.TYPE + "=" + speciesType+","+GlobalConstants.INITIAL_STRING+"="+f.getValue());
+							} else {
+								species.setAnnotation(GlobalConstants.INITIAL_STRING+"="+f.getValue());
+							}
 						}
 					} else {
 						if (refGCM.getSBMLDocument().getModel().getSpecies(selected).isSetInitialAmount()) {
@@ -880,8 +879,11 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 			
 			if (!paramsOnly) {
+				String annotation = "";
+				if (!speciesType.equals(GlobalConstants.INTERNAL)) {
+					annotation = GlobalConstants.TYPE + "=" + speciesType;
+				}
 				// Add GCM and SBOL annotations to species
-				species.setAnnotation(GlobalConstants.TYPE + "=" + speciesType + ",");
 				LinkedHashSet<String> sbolURIs = new LinkedHashSet<String>();
 				for (SBOLField sf : sbolFields.values()) 
 					if (!sf.getText().equals(""))

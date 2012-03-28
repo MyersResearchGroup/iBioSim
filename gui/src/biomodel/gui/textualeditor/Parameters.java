@@ -550,7 +550,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							if (paramet.getId().equals(GlobalConstants.STOICHIOMETRY_STRING)) {
 								for (long i=0; i<model.getNumReactions(); i++) {
 									Reaction r = model.getReaction(i);
-									if (r.getAnnotationString().contains(GlobalConstants.PRODUCTION)) {
+									if (BioModel.isProductionReaction(r)) {
 										if (r.getKineticLaw().getLocalParameter(GlobalConstants.STOICHIOMETRY_STRING)==null) {
 											for (long j=0; j<r.getNumProducts(); j++) {
 												r.getProduct(j).setStoichiometry(paramet.getValue());

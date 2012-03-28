@@ -384,14 +384,13 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
 				write.write("digraph G {\n");
 				for (int i = 0; i < model.getNumSpecies(); i++) {
-					if (((Species)ids.get(i)).isSetAnnotation() && 
-							((Species)ids.get(i)).getAnnotationString().contains(GlobalConstants.TYPE+"="+GlobalConstants.PROMOTER)) continue;
+					if (BioModel.isPromoterSpecies(((Species)ids.get(i)))) continue;
 					speciesList.add(((Species) ids.get(i)).getId());
 					write.write(((Species) ids.get(i)).getId() + " [shape=ellipse,color=black,label=\"" + ((Species) ids.get(i)).getId() + "\"" + "];\n");
 				}
 				for (int i = 0; i < model.getNumReactions(); i++) {
 					Reaction r = model.getReaction(i);
-					if (r.isSetAnnotation() && r.getAnnotationString().contains("Production")) {
+					if (BioModel.isProductionReaction(r)) {
 						for (int j = 0; j < r.getNumModifiers(); j++) {
 							ModifierSpeciesReference modifier = r.getModifier(j);
 							if (modifier.isSetAnnotation() && modifier.getAnnotationString().contains(GlobalConstants.NOINFLUENCE)) {

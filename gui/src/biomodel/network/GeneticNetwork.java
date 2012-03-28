@@ -170,7 +170,7 @@ public class GeneticNetwork {
 			m.setName("Created from " + gcm);
 			m.setId(new File(filename).getName().replace(".xml", ""));	
 			m.setVolumeUnits("litre");
-			m.setSubstanceUnits("mole");
+			//m.setSubstanceUnits("mole");
 			p.print(writer.writeSBMLToString(document));
 			p.close();
 		} catch (FileNotFoundException e) {
