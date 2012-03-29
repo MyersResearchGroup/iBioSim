@@ -22,9 +22,9 @@ public class SBOLBrowser extends JPanel {
 	private JPanel selectionPanel = new JPanel(new GridLayout(1,2));
 	private JTextArea viewArea = new JTextArea();
 	private JScrollPane viewScroll = new JScrollPane();
-	private LibraryPanel libPanel;
-	private DnaComponentPanel compPanel;
-	private String selection = "";
+	private CollectionBrowserPanel libPanel;
+	private DNAComponentBrowserPanel compPanel;
+	private LinkedList<String> selectedCompURIs;
 	
 	//Constructor when browsing a single RDF file from the main gui
 	public SBOLBrowser(Gui gui, String filePath) {
@@ -56,8 +56,10 @@ public class SBOLBrowser extends JPanel {
 	}
 	
 	//Constructor when browsing RDF file subsets for SBOL to GCM association
-	public SBOLBrowser(HashSet<String> sbolFiles, Set<String> filter, String defaultSelection) {
+	public SBOLBrowser(HashSet<String> sbolFiles, Set<String> filter, LinkedList<String> defaultSelectedCompURIs) {
 		super(new GridLayout(2,1));
+		
+		selectedCompURIs = new LinkedList<String>();
 		
 		HashMap<String, org.sbolstandard.core.Collection> libMap = new HashMap<String, org.sbolstandard.core.Collection>();
 		LinkedList<String> libURIs = new LinkedList<String>();
@@ -76,9 +78,8 @@ public class SBOLBrowser extends JPanel {
 
 			boolean display = true;
 			while (display)
-				display = browserOpen(defaultSelection);
+				display = browserOpen();
 		} else {
-			selection = defaultSelection;
 			JOptionPane.showMessageDialog(Gui.frame, "No SBOL files are found in project.", 
 					"File Not Found", JOptionPane.ERROR_MESSAGE);
 		}
@@ -119,27 +120,18 @@ public class SBOLBrowser extends JPanel {
 		}
 	}
 	
-	private boolean browserOpen(String defaultSelection) {
-		boolean selectionValid;
-		do {
-			selectionValid = true;
-			int option = JOptionPane.showOptionDialog(Gui.frame, this,
-					"SBOL Browser", JOptionPane.YES_NO_OPTION,
-					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-			if (option == JOptionPane.YES_OPTION) {
-				String[] compIds = compPanel.getSelectedURIs();
-				if (compIds.length > 0)
-					selection = compIds[0];
-				else {
-					selectionValid = false;
-					JOptionPane.showMessageDialog(Gui.frame, "No DNA component is selected.",
-							"Invalid Selection", JOptionPane.ERROR_MESSAGE);
-				}
-			} else {
-				selection = defaultSelection;
-				selectionValid = true;
+	private boolean browserOpen() {
+		int option = JOptionPane.showOptionDialog(Gui.frame, this,
+				"SBOL Browser", JOptionPane.YES_NO_OPTION,
+				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+		if (option == JOptionPane.YES_OPTION) {
+			selectedCompURIs = compPanel.getSelectedURIs();
+			if (selectedCompURIs.size() == 0) {
+				JOptionPane.showMessageDialog(Gui.frame, "No DNA component is selected.",
+						"Invalid Selection", JOptionPane.ERROR_MESSAGE);
+				return true;
 			}
-		} while(!selectionValid);
+		}
 		return false;
 	}
 	
@@ -154,15 +146,15 @@ public class SBOLBrowser extends JPanel {
 		viewArea.setLineWrap(true);
 		viewArea.setEditable(false);
 		
-		compPanel = new DnaComponentPanel(compMap, annoMap, seqMap, viewArea);
-		libPanel = new LibraryPanel(libMap, compMap, viewArea, compPanel, filter);
+		compPanel = new DNAComponentBrowserPanel(compMap, annoMap, seqMap, viewArea);
+		libPanel = new CollectionBrowserPanel(libMap, compMap, viewArea, compPanel, filter);
 		libPanel.setLibraries(libIds, libURIs);
 		
 		selectionPanel.add(libPanel);
 		selectionPanel.add(compPanel);
 	}
 	
-	public String getSelection() {
-		return selection;
+	public LinkedList<String> getSelection() {
+		return selectedCompURIs;
 	}
 }

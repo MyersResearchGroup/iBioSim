@@ -10,7 +10,7 @@ import org.sbolstandard.core.*;
 import java.net.URI;
 import java.util.*;
 
-public class DnaComponentPanel extends JPanel implements MouseListener {
+public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 
 	private LinkedList<String> compURIs;
 	private HashMap<String, DnaComponent> compMap;
@@ -19,7 +19,7 @@ public class DnaComponentPanel extends JPanel implements MouseListener {
 	private JTextArea viewArea;
 	private JList compList = new JList();
 	
-	public DnaComponentPanel(HashMap<String, DnaComponent> compMap, HashMap<String, SequenceAnnotation> annoMap, 
+	public DNAComponentBrowserPanel(HashMap<String, DnaComponent> compMap, HashMap<String, SequenceAnnotation> annoMap, 
 			HashMap<String, DnaSequence> seqMap, JTextArea viewArea) {
 		super(new BorderLayout());
 		this.compMap = compMap;
@@ -48,21 +48,23 @@ public class DnaComponentPanel extends JPanel implements MouseListener {
 		compList.setListData(idObjects);
 	}
 	
-	public String[] getSelectedURIs() {
+	public LinkedList<String> getSelectedURIs() {
+		LinkedList<String> selectedURIs = new LinkedList<String>();
 		int[] selectedIndices = compList.getSelectedIndices();
-		String[] selectedURIs = new String[selectedIndices.length];
-		for (int i = 0; i < selectedURIs.length; i++)
-			selectedURIs[i] = compURIs.get(selectedIndices[i]).toString();
+		for (int i = 0; i < selectedIndices.length; i++)
+			selectedURIs.add(compURIs.get(selectedIndices[i]));
 		return selectedURIs;
 	}
 	
 	public void mouseClicked(MouseEvent e) {
 		if (e.getSource() == compList) {
 			viewArea.setText("");
-			String[] selectedURIs = getSelectedURIs();
+			LinkedList<String> selectedURIs = getSelectedURIs();
 			for (String compURI : selectedURIs) {
 				if (compMap.containsKey(compURI)) {
 					DnaComponent dnac = compMap.get(compURI);
+					
+					viewArea.append("Display ID:  " + dnac.getDisplayId() + "\n");
 					
 					if (dnac.getName() != null && !dnac.getName().equals(""))
 						viewArea.append("Name:  " + dnac.getName() + "\n");
@@ -99,11 +101,9 @@ public class DnaComponentPanel extends JPanel implements MouseListener {
 						viewArea.append("NA\n");
 					
 					if (dnac.getDnaSequence() != null && seqMap.containsKey(dnac.getDnaSequence().getURI().toString()))
-						viewArea.append("DNA Sequence:  " + dnac.getDnaSequence().getNucleotides() + "\n");
+						viewArea.append("DNA Sequence:  " + dnac.getDnaSequence().getNucleotides() + "\n\n");
 					else
-						viewArea.append("DNA Sequence:  NA\n");
-					
-					
+						viewArea.append("DNA Sequence:  NA\n\n");
 				}
 			}
 		} 

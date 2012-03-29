@@ -10,18 +10,18 @@ import org.sbolstandard.core.*;
 import java.net.URI;
 import java.util.*;
 
-public class LibraryPanel extends JPanel implements MouseListener {
+public class CollectionBrowserPanel extends JPanel implements MouseListener {
 
 	private LinkedList<String> libURIs;
 	private HashMap<String, org.sbolstandard.core.Collection> libMap;
 	private HashMap<String, DnaComponent> compMap;
 	private JTextArea viewArea;
-	private DnaComponentPanel compPanel;
+	private DNAComponentBrowserPanel compPanel;
 	private JList libList = new JList();
 	private Set<String> filter;
 	
-	public LibraryPanel(HashMap<String, org.sbolstandard.core.Collection> libMap, HashMap<String, DnaComponent> compMap, 
-			JTextArea viewArea, DnaComponentPanel compPanel, Set<String> filter) {
+	public CollectionBrowserPanel(HashMap<String, org.sbolstandard.core.Collection> libMap, HashMap<String, DnaComponent> compMap, 
+			JTextArea viewArea, DNAComponentBrowserPanel compPanel, Set<String> filter) {
 		super(new BorderLayout());
 		this.libMap = libMap;
 		this.compMap = compMap;
@@ -53,13 +53,14 @@ public class LibraryPanel extends JPanel implements MouseListener {
 		displaySelected();
 	}
 	
-	public String[] getSelectedURIs() {
+	private String[] getSelectedURIs() {
 		int[] selectedIndices = libList.getSelectedIndices();
 		String[] selectedURIs = new String[selectedIndices.length];
 		for (int i = 0; i < selectedURIs.length; i++) {
 			int index = selectedIndices[i];
+			// Leave first entry in selectedURIs null if "all" was selected under Collections (see displaySelected())
 			if (index != 0)
-				selectedURIs[i] = libURIs.get(index - 1).toString();
+				selectedURIs[i] = libURIs.get(index - 1);
 		}
 		return selectedURIs;
 	}
@@ -71,11 +72,12 @@ public class LibraryPanel extends JPanel implements MouseListener {
 		}
 	}
 	
-	public void displaySelected() {
+	private void displaySelected() {
 		String[] selectedURIs = getSelectedURIs();
 		LinkedList<String> compIds = new LinkedList<String>();
 		LinkedList<String> compURIs = new LinkedList<String>();
 		int n = 0;
+		// Case when a specific collection(s) is selected
 		if (selectedURIs[0] != null) {
 			org.sbolstandard.core.Collection lib = libMap.get(selectedURIs[0]);
 			if (lib.getName() != null)
@@ -96,7 +98,7 @@ public class LibraryPanel extends JPanel implements MouseListener {
 						n++;
 					}
 				}
-		} else {
+		} else {  // Case when "all" is selected under Collections
 			for (String libURI : libURIs) 
 				for (DnaComponent dnac : libMap.get(libURI).getComponents()) 
 					if (!compURIs.contains(dnac.getURI().toString())) {

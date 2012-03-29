@@ -19,13 +19,11 @@ import org.sbml.libsbml.ModifierSpeciesReference;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.Rule;
 import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.SBMLWriter;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.SpeciesReference;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.network.BaseSpecies;
-import biomodel.network.ConstantSpecies;
 import biomodel.network.DiffusibleConstitutiveSpecies;
 import biomodel.network.DiffusibleSpecies;
 import biomodel.network.GeneticNetwork;
@@ -432,10 +430,10 @@ public class GCMParser {
 	
 	public void parsePromoterSbol(Model sbmlModel, Species sbmlPromoter) {
 		// Create synthesis node corresponding to sbml promoter 
-		Set<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlPromoter.getAnnotationString());
+		LinkedList<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlPromoter.getAnnotationString());
 		SynthesisNode synNode;
 		if (sbolURIs.size() > 0)
-			synNode = new SynthesisNode(sbmlPromoter.getId(), sbolURIs.iterator().next());
+			synNode = new SynthesisNode(sbmlPromoter.getId(), sbolURIs);
 		else
 			synNode = new SynthesisNode(sbmlPromoter.getId());
 		synMap.put(sbmlPromoter.getId(), synNode);
@@ -457,14 +455,10 @@ public class GCMParser {
 	
 	public void parseReactionSbol(Reaction sbmlReaction) {
 		// Create synthesis node corresponding to sbml reaction
-		String sbolUri = "";
-		String [] annotations = sbmlReaction.getAnnotationString().replace("<annotation>","").replace("</annotation>","").split(",");
-		for (int i = 0; i < annotations.length; i++) 
-			if (annotations[i].startsWith(GlobalConstants.SBOL_DNA_COMPONENT)) 
-				sbolUri = annotations[i].split("=")[1];
+		LinkedList<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlReaction.getAnnotationString());
 		SynthesisNode synNode;
-		if (!sbolUri.equals(""))
-			synNode = new SynthesisNode(sbmlReaction.getId(), sbolUri);
+		if (sbolURIs.size() > 0)
+			synNode = new SynthesisNode(sbmlReaction.getId(), sbolURIs);
 		else
 			synNode = new SynthesisNode(sbmlReaction.getId());
 		synMap.put(sbmlReaction.getId(), synNode);
@@ -487,16 +481,13 @@ public class GCMParser {
 	
 	public void parseRuleSbol(Rule sbmlRule) {
 		// Create synthesis node corresponding to sbml rule
-		String sbolUri = "";
-		String [] annotations = sbmlRule.getAnnotationString().replace("<annotation>","").replace("</annotation>","").split(",");
-		for (int i=0; i < annotations.length; i++) 
-			if (annotations[i].startsWith(GlobalConstants.SBOL_DNA_COMPONENT)) 
-				sbolUri = annotations[i].split("=")[1];
+		LinkedList<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlRule.getAnnotationString());
 		SynthesisNode synNode;
-		if (!sbolUri.equals(""))
-			synNode = new SynthesisNode(sbmlRule.getId(), sbolUri);
+		if (sbolURIs.size() > 0)
+			synNode = new SynthesisNode(sbmlRule.getId(), sbolURIs);
 		else
 			synNode = new SynthesisNode(sbmlRule.getId());
+		synMap.put(sbmlRule.getId(), synNode);
 		// Connect synthesis nodes for input species to synthesis node for rule
 		// or maps input parameters to rules in which they're inputs
 		for (String input : parseRuleHelper(sbmlRule.getMath())) {
@@ -535,10 +526,10 @@ public class GCMParser {
 	
 	public void parseSpeciesSbol(Model sbmlModel, Species sbmlSpecies) {
 		// Create synthesis node corresponding to sbml species
-		Set<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlSpecies.getAnnotationString());
+		LinkedList<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlSpecies.getAnnotationString());
 		SynthesisNode synNode;
 		if (sbolURIs.size() > 0)
-			synNode = new SynthesisNode(sbmlSpecies.getId(), sbolURIs.iterator().next());
+			synNode = new SynthesisNode(sbmlSpecies.getId(), sbolURIs);
 		else
 			synNode = new SynthesisNode(sbmlSpecies.getId());
 		synMap.put(sbmlSpecies.getId(), synNode);
