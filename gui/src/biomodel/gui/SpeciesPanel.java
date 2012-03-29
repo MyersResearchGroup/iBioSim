@@ -870,11 +870,10 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			
 			if (!paramsOnly) {
 				// Add GCM and SBOL annotations to species
-				species.setAnnotation(GlobalConstants.TYPE + "=" + speciesType + ",");
 				LinkedList<String> sbolURIs = sbolField.getSBOLURIs();
 				if (sbolURIs.size() > 0) {
 					SBOLAnnotation sbolAnnot = new SBOLAnnotation(species.getMetaId(), sbolURIs);
-					AnnotationUtility.appendSBOLAnnotation(species, sbolAnnot);
+					AnnotationUtility.setSBOLAnnotation(species, sbolAnnot);
 				} 
 			}
 			
