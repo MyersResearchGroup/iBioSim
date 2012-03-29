@@ -1,7 +1,6 @@
 package biomodel.annotation;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,14 +11,20 @@ import biomodel.util.Utility;
 
 public class AnnotationUtility {
 
+	public static void setSBOLAnnotation(SBase sbmlObject, SBOLAnnotation sbolAnnot) {
+		if (sbmlObject.setAnnotation(sbolAnnot.toXMLString()) != libsbml.LIBSBML_OPERATION_SUCCESS)
+			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating species " 
+					+ sbmlObject.getId());
+	}
+	
 	public static void appendSBOLAnnotation(SBase sbmlObject, SBOLAnnotation sbolAnnot) {
 		if (sbmlObject.appendAnnotation(sbolAnnot.toXMLString()) != libsbml.LIBSBML_OPERATION_SUCCESS)
 			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating species " 
 					+ sbmlObject.getId());
 	}
 	
-	public static Set<String> parseSBOLAnnotation(String annotation) {
-		Set<String> sbolURIs = new LinkedHashSet<String>();
+	public static LinkedList<String> parseSBOLAnnotation(String annotation) {
+		LinkedList<String> sbolURIs = new LinkedList<String>();
 		Pattern sbolPattern = Pattern.compile(SBOL_ANNOTATION);
 		Matcher sbolMatcher = sbolPattern.matcher(annotation);
 		Pattern componentPattern = Pattern.compile(DNA_COMPONENT_ANNOTATION);

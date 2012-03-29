@@ -1,21 +1,23 @@
 package biomodel.network;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
 public class SynthesisNode {
 	
-	private String sbolURI;
+	private LinkedList<String> sbolURIs;
 	private String id;
 	private Set<SynthesisNode> nextNodes = new HashSet<SynthesisNode>();
 	
 	public SynthesisNode(String id) {
 		this.id = id;
+		this.sbolURIs = new LinkedList<String>();
 	}
 	
-	public SynthesisNode(String id, String sbolURI) {
+	public SynthesisNode(String id, LinkedList<String> sbolURIs) {
 		this.id = id;
-		this.sbolURI = sbolURI;
+		this.sbolURIs = sbolURIs;
 	}
 	
 	public String getId() {
@@ -26,12 +28,12 @@ public class SynthesisNode {
 		this.id = id;
 	}
 	
-	public String getSbolURI() {
-		return sbolURI;
+	public LinkedList<String> getSbolURIs() {
+		return sbolURIs;
 	}
 	
-	public void setSbolURI(String sbolURI) {
-		this.sbolURI = sbolURI;
+	public void setSbolURIs(LinkedList<String> sbolURIs) {
+		this.sbolURIs = sbolURIs;
 	}
 	
 	public void addNextNode(SynthesisNode nextNode) {

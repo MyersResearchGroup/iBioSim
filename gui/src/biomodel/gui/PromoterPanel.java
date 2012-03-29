@@ -3,26 +3,15 @@ package biomodel.gui;
 
 import java.awt.GridLayout;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
-import java.util.Set;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import org.sbml.libsbml.Compartment;
 import org.sbml.libsbml.LocalParameter;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.Reaction;
-import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.SBMLReader;
-import org.sbml.libsbml.SBMLWriter;
 import org.sbml.libsbml.Species;
-import org.sbml.libsbml.XMLAttributes;
-import org.sbml.libsbml.XMLNamespaces;
-import org.sbml.libsbml.XMLNode;
-import org.sbml.libsbml.XMLTriple;
-import org.sbml.libsbml.libsbml;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
@@ -41,7 +30,7 @@ public class PromoterPanel extends JPanel {
 	private static final long serialVersionUID = 5873800942710657929L;
 	private String[] options = { "Ok", "Cancel" };
 	private HashMap<String, PropertyField> fields = null;
-	private HashMap<String, SBOLField> sbolFields;
+	private SBOLField sbolField;
 	private String selected = "";
 	private BioModel gcm = null;
 	private boolean paramsOnly;
@@ -58,7 +47,7 @@ public class PromoterPanel extends JPanel {
 		this.gcmEditor = gcmEditor;
 
 		fields = new HashMap<String, PropertyField>();
-		sbolFields = new HashMap<String, SBOLField>();
+		sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor);
 
 		Model model = gcm.getSBMLDocument().getModel();
 		promoter = model.getSpecies(selected);
@@ -317,13 +306,11 @@ public class PromoterPanel extends JPanel {
 		
 		if (!paramsOnly) {
 			// Field for annotating promoter with SBOL DNA components
-			SBOLField componentField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor);
-			sbolFields.put(GlobalConstants.SBOL_DNA_COMPONENT, componentField);
-			add(componentField);
+			add(sbolField);
 			//Parse out SBOL annotations and add to SBOL field
-			Set<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(promoter.getAnnotationString());
+			LinkedList<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(promoter.getAnnotationString());
 			if (sbolURIs.size() > 0)
-				componentField.setText(sbolURIs.iterator().next());
+				sbolField.setSBOLURIs(sbolURIs);
 		}
 
 		String oldName = null;
@@ -344,24 +331,22 @@ public class PromoterPanel extends JPanel {
 		return true;
 	}
 	
-	private boolean checkSbolValues() {
-		for (SBOLField sf : sbolFields.values()) {
-			if (!sf.isValidText())
-				return false;
-		}
-		return true;
-	}
+//	private boolean checkSbolValues() {
+//		for (SBOLField sf : sbolFields.values()) {
+//			if (!sf.isValidText())
+//				return false;
+//		}
+//		return true;
+//	}
 
 	private boolean openGui(String oldName) {
 		int value = JOptionPane.showOptionDialog(Gui.frame, this,
 				"Promoter Editor", JOptionPane.YES_NO_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
-			boolean sbolValueCheck = checkSbolValues();
 			boolean valueCheck = checkValues();
-			if (!valueCheck || !sbolValueCheck) {
-				if (!valueCheck)
-					Utility.createErrorMessage("Error", "Illegal values entered.");
+			if (!valueCheck) {
+				Utility.createErrorMessage("Error", "Illegal values entered.");
 				return false;
 			}
 			String id = selected;
@@ -379,8 +364,6 @@ public class PromoterPanel extends JPanel {
 					}
 				}
 				id = fields.get(GlobalConstants.ID).getValue();
-//				promoter.setId(id);
-//				promoter.setMetaId(id);
 				promoter.setName(fields.get(GlobalConstants.NAME).getValue());
 			}
 			promoter.setSBOTerm(GlobalConstants.SBO_PROMOTER_SPECIES);
@@ -433,13 +416,10 @@ public class PromoterPanel extends JPanel {
 
 			if (!paramsOnly) {
 				// Add GCM and SBOL annotations to promoter
-				LinkedHashSet<String> sbolURIs = new LinkedHashSet<String>();
-				for (SBOLField sf : sbolFields.values()) 
-					if (!sf.getText().equals("")) 
-						sbolURIs.add(sf.getText());
+				LinkedList<String> sbolURIs = sbolField.getSBOLURIs();
 				if (sbolURIs.size() > 0) {
 					SBOLAnnotation sbolAnnot = new SBOLAnnotation(promoter.getMetaId(), sbolURIs);
-					AnnotationUtility.appendSBOLAnnotation(promoter, sbolAnnot);
+					AnnotationUtility.setSBOLAnnotation(promoter, sbolAnnot);
 				} 
 
 				// rename all the influences that use this promoter if name was changed

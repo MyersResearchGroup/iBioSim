@@ -212,19 +212,21 @@ public class SBOLSynthesizer {
 		Set<String> promoterNodeIds = new HashSet<String>();
 		
 		for (SynthesisNode synNode : synNodes) {
-			if (synthesizerOn) 
-				if (compMap.containsKey(synNode.getSbolURI())) {
-					DnaComponent sourceComp = compMap.get(synNode.getSbolURI());
-					for (URI uri : sourceComp.getTypes())
-						if (filter.contains(uri.getFragment())) {
-							promoterNodes.add(synNode);
-							promoterNodeIds.add(synNode.getId());
-						}
-				} else if (synNode.getSbolURI() != null) {
-					synthesizerOn = false;
-					JOptionPane.showMessageDialog(Gui.frame, "Component with URI " + synNode.getSbolURI() +
-							" is not found in project SBOL files.", "DNA Component Not Found", JOptionPane.ERROR_MESSAGE);
-				}
+			for (String uri : synNode.getSbolURIs()) {
+				if (synthesizerOn) 
+					if (compMap.containsKey(uri)) {
+						DnaComponent sourceComp = compMap.get(uri);
+						for (URI typeURI : sourceComp.getTypes())
+							if (filter.contains(typeURI.getFragment())) {
+								promoterNodes.add(synNode);
+								promoterNodeIds.add(synNode.getId());
+							}
+					} else if (uri != null) {
+						synthesizerOn = false;
+						JOptionPane.showMessageDialog(Gui.frame, "Component with URI " + uri +
+								" is not found in project SBOL files.", "DNA Component Not Found", JOptionPane.ERROR_MESSAGE);
+					}
+			}
 		}
 		LinkedList<String> sourceCompURIs = new LinkedList<String>();
 		Set<String> visitedNodeIds;
@@ -281,7 +283,7 @@ public class SBOLSynthesizer {
 	
 	// Recursive helper method for walking synthesis node graph and loading associated SBOL DNA component URIs
 	private void loadSourceCompURIsHelper(SynthesisNode synNode, LinkedList<String> sourceCompURIs, Set<String> visitedNodeIds) {
-		sourceCompURIs.add(synNode.getSbolURI());
+		sourceCompURIs.addAll(synNode.getSbolURIs());
 		for (SynthesisNode nextNode : synNode.getNextNodes())
 			if (!visitedNodeIds.contains(nextNode.getId())) {
 				visitedNodeIds.add(nextNode.getId());

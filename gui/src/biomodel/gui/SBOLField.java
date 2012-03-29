@@ -3,10 +3,9 @@ package biomodel.gui;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.net.URI;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedList;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -18,7 +17,7 @@ import org.sbolstandard.core.*;
 import biomodel.util.GlobalConstants;
 import biomodel.util.Utility;
 
-import sbol.SBOLBrowser;
+import sbol.SBOLAssociationPanel;
 import sbol.SBOLUtility;
 
 public class SBOLField extends JPanel implements ActionListener {
@@ -26,6 +25,7 @@ public class SBOLField extends JPanel implements ActionListener {
 	private String sbolType;
 	private JLabel sbolLabel;
 	private JTextField sbolText = new JTextField(20);
+	private LinkedList<String> sbolURIs = new LinkedList<String>();
 	private JButton sbolButton = new JButton("Associate SBOL");
 	private ModelEditor gcmEditor;
 	
@@ -37,8 +37,9 @@ public class SBOLField extends JPanel implements ActionListener {
 		sbolButton.setActionCommand("associateSBOL");
 		sbolButton.addActionListener(this);
 		this.add(sbolLabel);
-		this.add(sbolButton);
 		this.add(sbolText);
+		sbolText.setVisible(false);
+		this.add(sbolButton);
 		
 		this.gcmEditor = gcmEditor;
 	}
@@ -53,6 +54,18 @@ public class SBOLField extends JPanel implements ActionListener {
 	
 	public void setText(String text) {
 		sbolText.setText(text);
+	}
+	
+	public LinkedList<String> getSBOLURIs() {
+		return sbolURIs;
+	}
+	
+	public void setSBOLURIs(LinkedList<String> sbolURIs) {
+		this.sbolURIs = sbolURIs;
+	}
+	
+	public void addSBOLURI(String uri) {
+		sbolURIs.add(uri);
 	}
 	
 	public boolean isValidText() {
@@ -82,8 +95,10 @@ public class SBOLField extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("associateSBOL")) {
 			HashSet<String> sbolFiles = gcmEditor.getSbolFiles();
-			SBOLBrowser browser = new SBOLBrowser(sbolFiles, SBOLUtility.typeConverter(sbolType), sbolText.getText());
-			sbolText.setText(browser.getSelection());
+			SBOLAssociationPanel associationPanel = new SBOLAssociationPanel(sbolFiles, sbolURIs, SBOLUtility.typeConverter(sbolType));
+			sbolURIs = associationPanel.getCompURIs();
+			//			SBOLBrowser browser = new SBOLBrowser(sbolFiles, SBOLUtility.typeConverter(sbolType), sbolText.getText());
+//			sbolText.setText(browser.getSelection());
 		} 
 	}
 	

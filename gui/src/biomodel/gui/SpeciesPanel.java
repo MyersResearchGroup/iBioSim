@@ -8,8 +8,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.LinkedList;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
@@ -25,7 +24,6 @@ import org.sbml.libsbml.Model;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.Submodel;
-import org.sbml.libsbml.libsbml;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
@@ -112,7 +110,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		this.gcmEditor = gcmEditor;
 
 		fields = new HashMap<String, PropertyField>();
-		sbolFields = new HashMap<String, SBOLField>();
+		sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor);
 
 		Model model = gcm.getSBMLDocument().getModel();
 		species = model.getSpecies(selected);
@@ -543,9 +541,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		
 		if (!paramsOnly) {
 			// Field for annotating species with SBOL DNA components
-			SBOLField componentField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor);
-			sbolFields.put(GlobalConstants.SBOL_DNA_COMPONENT, componentField);
-			grid.add(componentField);
+			grid.add(sbolField);
 
 			typeBox.setSelectedItem(BioModel.getSpeciesType(gcm.getSBMLDocument(),species.getId()));
 			// Parse out GCM and SBOL annotations and add to respective fields
@@ -556,9 +552,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					String [] type = annotations[i].split("=");
 					typeBox.setSelectedItem(type[1]);
 				}
-				Set<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(species.getAnnotationString());
+				LinkedList<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(species.getAnnotationString());
 				if (sbolURIs.size() > 0)
-					componentField.setText(sbolURIs.iterator().next());
+					sbolField.setSBOLURIs(sbolURIs);
 			}
 		}
 			
@@ -598,13 +594,13 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		return true;
 	}
 	
-	private boolean checkSbolValues() {
-		for (SBOLField sf : sbolFields.values()) {
-			if (!sf.isValidText())
-				return false;
-		}
-		return true;
-	}
+//	private boolean checkSbolValues() {
+//		for (SBOLField sf : sbolFields.values()) {
+//			if (!sf.isValidText())
+//				return false;
+//		}
+//		return true;
+//	}
 
 	/**
 	 * adds interesting species to a list in Reb2Sac.java
@@ -677,14 +673,10 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		// "OK"
 		if (options[value].equals(options[0])) {
 			
-			boolean sbolValueCheck = checkSbolValues();
 			boolean valueCheck = checkValues();
 			
-			if (!valueCheck || !sbolValueCheck) {
-				
-				if (!valueCheck)
-					Utility.createErrorMessage("Error", "Illegal values entered.");
-				
+			if (!valueCheck) {
+				Utility.createErrorMessage("Error", "Illegal values entered.");
 				return false;
 			}
 			
@@ -749,9 +741,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				*/
 				
 				if (!paramsOnly) {
-					
-//					species.setId(fields.get(GlobalConstants.ID).getValue());
-//					species.setMetaId(fields.get(GlobalConstants.ID).getValue());
+	
 					species.setName(fields.get(GlobalConstants.NAME).getValue());
 					
 					InitialAssignments.removeInitialAssignment(gcm, selected);
@@ -879,15 +869,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 			
 			if (!paramsOnly) {
-				String annotation = "";
-				if (!speciesType.equals(GlobalConstants.INTERNAL)) {
-					annotation = GlobalConstants.TYPE + "=" + speciesType;
-				}
 				// Add GCM and SBOL annotations to species
-				LinkedHashSet<String> sbolURIs = new LinkedHashSet<String>();
-				for (SBOLField sf : sbolFields.values()) 
-					if (!sf.getText().equals(""))
-						sbolURIs.add(sf.getText());
+				species.setAnnotation(GlobalConstants.TYPE + "=" + speciesType + ",");
+				LinkedList<String> sbolURIs = sbolField.getSBOLURIs();
 				if (sbolURIs.size() > 0) {
 					SBOLAnnotation sbolAnnot = new SBOLAnnotation(species.getMetaId(), sbolURIs);
 					AnnotationUtility.appendSBOLAnnotation(species, sbolAnnot);
@@ -1080,7 +1064,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 	private HashMap<String, PropertyField> fields = null;
 	
-	private HashMap<String, SBOLField> sbolFields;
+	private SBOLField sbolField;
 
 	private boolean paramsOnly;
 	
