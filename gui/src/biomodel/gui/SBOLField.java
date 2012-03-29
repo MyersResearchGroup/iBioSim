@@ -37,9 +37,9 @@ public class SBOLField extends JPanel implements ActionListener {
 		sbolButton.setActionCommand("associateSBOL");
 		sbolButton.addActionListener(this);
 		this.add(sbolLabel);
-		this.add(sbolText);
 		sbolText.setVisible(false);
 		this.add(sbolButton);
+		this.add(sbolText);
 		
 		this.gcmEditor = gcmEditor;
 	}
