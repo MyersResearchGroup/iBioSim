@@ -443,35 +443,7 @@ public class MovieScheme {
 		
 		if (cellSchemes.size() <= 0) 
 			return null;
-		else if (cellSchemes.size() == 1) {
-			
-			//if there's just one scheme, use the frame index and the scheme
-			//to create an appearance to send back
-			
-			Map.Entry<String, Scheme> cellScheme = cellSchemes.entrySet().iterator().next();
-			
-			String speciesID = cellScheme.getKey();
-			
-			//if we're using the scheme of an ancestor, use the child's species ID
-			speciesID = speciesID.replace(newCellID, cellID);
-			
-			int min = cellScheme.getValue().getMin();
-			int max = cellScheme.getValue().getMax();
-			GradientPaint colorGradient = cellScheme.getValue().getColorGradient();
-			boolean opacityState = cellScheme.getValue().getOpacityState();
-			boolean sizeState = cellScheme.getValue().getSizeState();
-			double speciesValue = 0.0;
-			
-			if (speciesTSData.containsKey(speciesID))
-				speciesValue = speciesTSData.get(speciesID);
-			
-			//how far along this value is on the gradient spectrum of min to max
-			double gradientValue = (double)((speciesValue - min) / (max - min));
-			
-			//now calculate the correct appearance along the gradient to use			
-			return getIntermediateAppearance(colorGradient, gradientValue, opacityState, sizeState, cellType);
-		}
-		else if (cellSchemes.size() > 1) {
+		else {
 			
 			//if there's more than one scheme the colors need to be added together
 			//this may change to something else in time to make the colors separable
@@ -504,8 +476,6 @@ public class MovieScheme {
 			
 			return cellAppearance;			
 		}
-		
-		return null;
 	}
 	
 	public MovieAppearance getNearestGridAppearance(int row, int col, 
