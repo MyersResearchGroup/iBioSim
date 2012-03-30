@@ -463,8 +463,11 @@ public class MovieScheme {
 				int max = cellScheme.getValue().getMax();
 				GradientPaint colorGradient = cellScheme.getValue().getColorGradient();
 				boolean opacityState = cellScheme.getValue().getOpacityState();
-				boolean sizeState = cellScheme.getValue().getSizeState();
-				double speciesValue = speciesTSData.get(speciesID);
+				boolean sizeState = cellScheme.getValue().getSizeState();				
+				double speciesValue = 0.0;
+				
+				if (speciesTSData.containsKey(speciesID))
+					speciesValue = speciesTSData.get(speciesID);
 				
 				//how far along this value is on the gradient spectrum of min to max
 				double gradientValue = (double)((speciesValue - min) / (max - min));
