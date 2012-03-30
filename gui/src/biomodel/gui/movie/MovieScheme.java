@@ -483,6 +483,10 @@ public class MovieScheme {
 			for (Map.Entry<String, Scheme> cellScheme : cellSchemes.entrySet()) {
 				
 				String speciesID = cellScheme.getKey();
+				
+				//if we're using the scheme of an ancestor, use the child's species ID
+				speciesID = speciesID.replace(newCellID, cellID);
+				
 				int min = cellScheme.getValue().getMin();
 				int max = cellScheme.getValue().getMax();
 				GradientPaint colorGradient = cellScheme.getValue().getColorGradient();
