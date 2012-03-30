@@ -12,6 +12,8 @@ import biomodel.util.Utility;
 public class AnnotationUtility {
 
 	public static void setSBOLAnnotation(SBase sbmlObject, SBOLAnnotation sbolAnnot) {
+		if (sbmlObject.isSetAnnotation())
+			;
 		if (sbmlObject.setAnnotation(sbolAnnot.toXMLString()) != libsbml.LIBSBML_OPERATION_SUCCESS)
 			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating species " 
 					+ sbmlObject.getId());

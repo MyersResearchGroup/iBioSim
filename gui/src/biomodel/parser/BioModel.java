@@ -248,6 +248,7 @@ public class BioModel {
 	public void setSBMLDocument(SBMLDocument sbmlDoc) {
 		sbml = sbmlDoc;
 		usedIDs = SBMLutilities.CreateListOfUsedIDs(sbml);
+		SBMLutilities.fillBlankMetaIDs(sbml);
 		usedMetaIDs = SBMLutilities.createUsedMetaIDSet(sbml);
 	}
 
@@ -3681,18 +3682,10 @@ public class BioModel {
 			Model m = sbml.getModel();
 			Species species = m.createSpecies();
 			species.setId(id);
-			//s.setAnnotation(GlobalConstants.TYPE+"="+GlobalConstants.INTERNAL);
 			usedIDs.add(id);
-			// Set default species metaID
-			String metaID = "iBioSim" + creatingMetaID;
-			while (usedMetaIDs.contains(metaID)) {
-				creatingMetaID++;
-				metaID = "iBioSim" + creatingMetaID;
-			}
-			species.setMetaId(metaID);
-			usedMetaIDs.add(metaID);
 			
-			species.setAnnotation(GlobalConstants.TYPE+"="+GlobalConstants.INTERNAL);
+			// Set default species metaID
+			metaIDIndex = SBMLutilities.setDefaultMetaID(species, usedMetaIDs, metaIDIndex); 
 			
 			if (enclosingCompartment.equals("")) {
 				species.setCompartment(m.getCompartment(0).getId());
@@ -3744,6 +3737,8 @@ public class BioModel {
 		Model m = sbml.getModel();
 		Reaction r = m.createReaction();
 		r.setId(id);
+		// Set default reaction metaID
+		metaIDIndex = SBMLutilities.setDefaultMetaID(r, usedMetaIDs, metaIDIndex); 
 		if (enclosingCompartment.equals("")) {
 			r.setCompartment(m.getCompartment(0).getId());
 		} else {
@@ -3773,18 +3768,14 @@ public class BioModel {
 		}
 		promoter.setId(id);
 		usedIDs.add(id);
-		// Set default species metaID
-		String metaID = "iBioSim" + creatingMetaID;
-		while (usedMetaIDs.contains(metaID)) {
-			creatingMetaID++;
-			metaID = "iBioSim" + creatingMetaID;
-		}
+		// Set default promoter metaID
+		metaIDIndex = SBMLutilities.setDefaultMetaID(promoter, usedMetaIDs, metaIDIndex); 
+		
 		if (usedIDs != null) usedIDs.add(id);
 		promoter.setId(id);
 		promoter.setSBOTerm(GlobalConstants.SBO_PROMOTER_SPECIES);
 		promoter.setInitialAmount(sbml.getModel().getParameter(GlobalConstants.PROMOTER_COUNT_STRING).getValue());
-		promoter.setMetaId(metaID);
-		usedMetaIDs.add(metaID);
+
 		if (enclosingCompartment.equals("")) {
 			promoter.setCompartment(sbml.getModel().getCompartment(0).getId());
 		} else {
@@ -5097,7 +5088,7 @@ public class BioModel {
 	
 	private int creatingPromoterID = 0;
 	private int creatingSpeciesID = 0;
-	private int creatingMetaID = 1;
+	private int metaIDIndex = 1;
 	private int creatingReactionID = 0;
 	
 	private String path;

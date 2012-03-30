@@ -1402,7 +1402,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		JComboBox compartmentList = MySpecies.createCompartmentChoices(gcm);
 		
 		compartmentPanel = new Compartments(biosim,gcm,usedIDs,dirty, paramsOnly,getParams, path + separator + file,	parameterChanges,false,compartmentList);
-		reactionPanel = new Reactions(biosim,gcm,usedIDs,dirty, paramsOnly,getParams,path + separator + file,parameterChanges);
+		reactionPanel = new Reactions(biosim,gcm,usedIDs,dirty, paramsOnly,getParams,path + separator + file,parameterChanges, gcmEditor);
 		speciesPanel = new MySpecies(biosim,gcm,usedIDs,dirty, paramsOnly,getParams,path + separator + file,parameterChanges,gcm.getGrid().isEnabled());
 		parametersPanel = new Parameters(biosim, gcm,usedIDs,dirty, paramsOnly,getParams,path + separator + file,parameterChanges);
 		

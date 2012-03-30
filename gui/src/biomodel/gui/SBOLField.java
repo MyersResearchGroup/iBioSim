@@ -23,23 +23,26 @@ import sbol.SBOLUtility;
 public class SBOLField extends JPanel implements ActionListener {
 	
 	private String sbolType;
+	private int styleOption;
 	private JLabel sbolLabel;
 	private JTextField sbolText = new JTextField(20);
 	private LinkedList<String> sbolURIs = new LinkedList<String>();
 	private JButton sbolButton = new JButton("Associate SBOL");
 	private ModelEditor gcmEditor;
 	
-	public SBOLField(String sbolType, ModelEditor gcmEditor) {
-		super(new GridLayout(1, 3));
+	public SBOLField(String sbolType, ModelEditor gcmEditor, int styleOption) {
+		super(new GridLayout(1, 2));
 	
 		this.sbolType = sbolType;
+		this.styleOption = styleOption;
 		setLabel(sbolType);
 		sbolButton.setActionCommand("associateSBOL");
 		sbolButton.addActionListener(this);
 		this.add(sbolLabel);
-		sbolText.setVisible(false);
 		this.add(sbolButton);
-		this.add(sbolText);
+		if (styleOption == 0)
+			this.add(sbolText);
+		sbolText.setVisible(false);
 		
 		this.gcmEditor = gcmEditor;
 	}
@@ -103,9 +106,12 @@ public class SBOLField extends JPanel implements ActionListener {
 	}
 	
 	private void setLabel(String sbolType) {
-		if (sbolType.equals(GlobalConstants.SBOL_DNA_COMPONENT))
-			sbolLabel = new JLabel("SBOL DNA Component");
-		else if (sbolType.equals(GlobalConstants.SBOL_ORF))
+		if (sbolType.equals(GlobalConstants.SBOL_DNA_COMPONENT)) {
+			if (styleOption == 0)
+				sbolLabel = new JLabel("SBOL DNA Component");
+			else
+				sbolLabel = new JLabel("SBOL DNA Component: ");
+		} else if (sbolType.equals(GlobalConstants.SBOL_ORF))
 			sbolLabel = new JLabel("SBOL Coding Sequence");
 		else if (sbolType.equals(GlobalConstants.SBOL_PROMOTER))
 			sbolLabel = new JLabel("SBOL Promoter");
