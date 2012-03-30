@@ -27,6 +27,7 @@ import org.sbml.libsbml.Parameter;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.Rule;
 import org.sbml.libsbml.SBMLDocument;
+import org.sbml.libsbml.SBase;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.SpeciesReference;
 import org.sbml.libsbml.SpeciesType;
@@ -591,19 +592,26 @@ public class SBMLutilities {
 		int metaIDIndex = 1;
 		Model model = document.getModel();
 		Set<String> usedMetaIDs = createUsedMetaIDSet(document);
-		for (int i = 0; i < model.getNumSpecies(); i++) {
-			Species species = model.getSpecies(i);
-			String metaID = species.getMetaId();
-			if (metaID == null || metaID.equals("")) {
-				metaID = "iBioSim" + metaIDIndex;
-				while (usedMetaIDs.contains(metaID)) {
-					metaIDIndex++;
-					metaID = "iBioSim" + metaIDIndex;
-				}
-				species.setMetaId(metaID);
+		for (int i = 0; i < model.getNumSpecies(); i++) 
+			metaIDIndex = setDefaultMetaID(model.getSpecies(i), usedMetaIDs, metaIDIndex);
+		for (int i = 0; i < model.getNumReactions(); i++) 
+			metaIDIndex = setDefaultMetaID(model.getReaction(i), usedMetaIDs, metaIDIndex);
+		
+	}
+	
+	public static int setDefaultMetaID(SBase sbmlObject, Set<String> usedMetaIDs, int metaIDIndex) {
+		String metaID = sbmlObject.getMetaId();
+		if (metaID == null || metaID.equals("")) {
+			metaID = "iBioSim" + metaIDIndex;
+			while (usedMetaIDs.contains(metaID)) {
 				metaIDIndex++;
+				metaID = "iBioSim" + metaIDIndex;
 			}
+			sbmlObject.setMetaId(metaID);
+			usedMetaIDs.add(metaID);
+			metaIDIndex++;
 		}
+		return metaIDIndex;
 	}
 	
 	public static Set<String> createUsedMetaIDSet(SBMLDocument document) {
@@ -613,6 +621,11 @@ public class SBMLutilities {
 			String metaID = model.getSpecies(i).getMetaId();
 			if (metaID != null && !metaID.equals(""))
 				usedMetaIDs.add(model.getSpecies(i).getMetaId());
+		}
+		for (int i = 0; i < model.getNumReactions(); i++) {
+			String metaID = model.getReaction(i).getMetaId();
+			if (metaID != null && !metaID.equals(""))
+				usedMetaIDs.add(model.getReaction(i).getMetaId());
 		}
 		return usedMetaIDs;
 	}

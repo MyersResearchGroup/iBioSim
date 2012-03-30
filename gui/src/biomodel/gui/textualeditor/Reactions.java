@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -39,7 +40,12 @@ import org.sbml.libsbml.Unit;
 import org.sbml.libsbml.UnitDefinition;
 import org.sbml.libsbml.libsbml;
 
+import biomodel.annotation.AnnotationUtility;
+import biomodel.annotation.SBOLAnnotation;
+import biomodel.gui.ModelEditor;
+import biomodel.gui.SBOLField;
 import biomodel.parser.BioModel;
+import biomodel.util.GlobalConstants;
 
 
 /**
@@ -153,6 +159,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	private JTextField reactantId;
 
 	private JTextField reactantName;
+	
+	private SBOLField sbolField;
 
 	private JTextField reactantStoiciometry;
 
@@ -181,9 +189,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	private Rules rulesPanel;
 	
 	private String selectedReaction;
+	
+	private ModelEditor gcmEditor;
 
 	public Reactions(Gui biosim, BioModel gcm, ArrayList<String> usedIDs, MutableBoolean dirty, Boolean paramsOnly,
-			ArrayList<String> getParams, String file, ArrayList<String> parameterChanges) {
+			ArrayList<String> getParams, String file, ArrayList<String> parameterChanges, ModelEditor gcmEditor) {
 		super(new BorderLayout());
 		this.gcm = gcm;
 		this.usedIDs = usedIDs;
@@ -192,6 +202,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		this.paramsOnly = paramsOnly;
 		this.file = file;
 		this.parameterChanges = parameterChanges;
+		this.gcmEditor = gcmEditor;
 		Model model = gcm.getSBMLDocument().getModel();
 		JPanel addReacs = new JPanel();
 		addReac = new JButton("Add Reaction");
@@ -556,16 +567,20 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			if (gcm.getSBMLDocument().getLevel() > 2) {
 				reactionPanelNorth1b.add(reactionCompLabel);
 				reactionPanelNorth1b.add(reactionComp);
-			}
+			}			
 			reactionPanelNorth1b.add(reverse);
 			reactionPanelNorth1b.add(reacReverse);
 			reactionPanelNorth1b.add(fast);
 			reactionPanelNorth1b.add(reacFast);
+			sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 1);
+			reactionPanelNorth1b.add(sbolField);
 			reactionPanelNorth.add(reactionPanelNorth1);
 			reactionPanelNorth.add(reactionPanelNorth1b);
+			
 			reactionPanel.add(reactionPanelNorth, "North");
 			reactionPanel.add(param, "Center");
 			reactionPanel.add(kineticPanel, "South");
+			
 		}
 		else {
 			JPanel reactionPanelNorth = new JPanel();
@@ -784,6 +799,13 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							ModifierSpeciesReference modifier = (ModifierSpeciesReference) listOfModifiers.get(i);
 							changedModifiers.add(modifier);
 						}
+					}
+					if (!error) {
+						LinkedList<String> sbolURIs = sbolField.getSBOLURIs();
+						if (sbolURIs.size() > 0) {
+							SBOLAnnotation sbolAnnot = new SBOLAnnotation(react.getMetaId(), sbolURIs);
+							AnnotationUtility.setSBOLAnnotation(react, sbolAnnot);
+						} 
 					}
 				}
 				else {

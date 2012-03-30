@@ -47,7 +47,7 @@ public class PromoterPanel extends JPanel {
 		this.gcmEditor = gcmEditor;
 
 		fields = new HashMap<String, PropertyField>();
-		sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor);
+		sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 0);
 
 		Model model = gcm.getSBMLDocument().getModel();
 		promoter = model.getSpecies(selected);
