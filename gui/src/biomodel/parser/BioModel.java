@@ -2353,6 +2353,7 @@ public class BioModel {
 			}
 		}
 		usedIDs.remove(id);
+		usedMetaIDs.remove(tempReaction.getMetaId());
 	}
 
 	public ArrayList<String> getSpecies() {

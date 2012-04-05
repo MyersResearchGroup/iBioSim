@@ -10,11 +10,6 @@ public class SynthesisNode {
 	private String id;
 	private Set<SynthesisNode> nextNodes = new HashSet<SynthesisNode>();
 	
-	public SynthesisNode(String id) {
-		this.id = id;
-		this.sbolURIs = new LinkedList<String>();
-	}
-	
 	public SynthesisNode(String id, LinkedList<String> sbolURIs) {
 		this.id = id;
 		this.sbolURIs = sbolURIs;

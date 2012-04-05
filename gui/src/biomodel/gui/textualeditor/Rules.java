@@ -7,6 +7,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -34,13 +36,19 @@ import org.sbml.libsbml.RateRule;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.Rule;
 import org.sbml.libsbml.SBMLDocument;
+import org.sbml.libsbml.SBase;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.SpeciesReference;
 import org.sbml.libsbml.Unit;
 import org.sbml.libsbml.UnitDefinition;
 import org.sbml.libsbml.libsbml;
 
+import biomodel.annotation.AnnotationUtility;
+import biomodel.annotation.SBOLAnnotation;
+import biomodel.gui.ModelEditor;
+import biomodel.gui.SBOLField;
 import biomodel.parser.BioModel;
+import biomodel.util.GlobalConstants;
 
 
 /**
@@ -64,12 +72,17 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	private Gui biosim;
 
 	private JComboBox ruleType, ruleVar;
+	
+	private ModelEditor gcmEditor;
+	
+	private SBOLField sbolField;
 
 	/* Create rule panel */
-	public Rules(Gui biosim, BioModel gcm, MutableBoolean dirty) {
+	public Rules(Gui biosim, BioModel gcm, ModelEditor gcmEditor, MutableBoolean dirty) {
 		super(new BorderLayout());
 		this.gcm = gcm;
 		this.biosim = biosim;
+		this.gcmEditor = gcmEditor;
 		this.dirty = dirty;
 
 		/* Create rule panel */
@@ -196,6 +209,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 		});
+		sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 1);
 		int Rindex = -1;
 		if (option.equals("OK")) {
 			ruleType.setEnabled(false);
@@ -239,6 +253,11 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					}
 				}
 			}
+			//Parse out SBOL annotations and add to SBOL field
+			Rule rule = (Rule) (gcm.getSBMLDocument().getModel().getListOfRules()).get(Rindex);
+			LinkedList<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(rule);
+			if (sbolURIs.size() > 0)
+				sbolField.setSBOLURIs(sbolURIs);
 		}
 		else {
 			if (!assignRuleVar("") && !rateRuleVar("")) {
@@ -261,6 +280,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		rulPanel.add(ruleLabel);
 		rulPanel.add(ruleMath);
 		rulePanel.add(rulPanel);
+		rulePanel.add(sbolField);
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, rulePanel, "Rule Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
 				options, options[0]);
@@ -321,6 +341,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					int index = rules.getSelectedIndex();
 					rules.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					rul = Utility.getList(rul, rules);
+					String[] oldRul = rul.clone();
 					rules.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					Rule r = (Rule) (gcm.getSBMLDocument().getModel().getListOfRules()).get(Rindex);
 					String addStr;
@@ -345,7 +366,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 						error = checkAssignmentRuleUnits(r);
 						addStr = addVar + " = " + SBMLutilities.myFormulaToString(r.getMath());
 					}
-					String oldVal = rul[index];
+//					String oldVal = rul[index];
 					rul[index] = addStr;
 					if (!error) {
 						try {
@@ -366,9 +387,17 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 							r.setVariable(oldVar);
 						}
 						r.setMath(SBMLutilities.myParseFormula(oldMath));
-						rul[index] = oldVal;
+						rul = oldRul;
+//						rul[index] = oldVal;
+					} else {
+						LinkedList<String> sbolURIs = sbolField.getSBOLURIs();
+						if (sbolURIs.size() > 0) {
+							SBOLAnnotation sbolAnnot = new SBOLAnnotation(r.getMetaId(), sbolURIs);
+							AnnotationUtility.setSBOLAnnotation(r, sbolAnnot);
+						} else
+							AnnotationUtility.removeSBOLAnnotation(r);
 					}
-					updateRules(rul);
+//					updateRules(rul);
 					rules.setListData(rul);
 					rules.setSelectedIndex(index);
 				}
@@ -406,38 +435,54 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					catch (Exception e) {
 						JOptionPane.showMessageDialog(Gui.frame, "Cycle detected in assignments.", "Cycle Detected", JOptionPane.ERROR_MESSAGE);
 						error = true;
-						rul = oldRul;
+//						rul = oldRul;
 					}
+					Rule rPointer = null;
 					if (!error) {
+						SBMLDocument sbmlDoc = gcm.getSBMLDocument();
+						Set<String> usedMetaIDs = SBMLutilities.createUsedMetaIDSet(sbmlDoc);
 						if (ruleType.getSelectedItem().equals("Algebraic")) {
-							AlgebraicRule r = gcm.getSBMLDocument().getModel().createAlgebraicRule();
+							AlgebraicRule r = sbmlDoc.getModel().createAlgebraicRule();
 							r.setMath(SBMLutilities.myParseFormula(ruleMath.getText().trim()));
+							SBMLutilities.setDefaultMetaID(r, usedMetaIDs, 1);
 							SBMLutilities.checkOverDetermined(gcm.getSBMLDocument());
+							rPointer = r;
 						}
 						else if (ruleType.getSelectedItem().equals("Rate")) {
-							RateRule r = gcm.getSBMLDocument().getModel().createRateRule();
+							RateRule r = sbmlDoc.getModel().createRateRule();
 							r.setVariable(addVar);
 							r.setMath(SBMLutilities.myParseFormula(ruleMath.getText().trim()));
+							SBMLutilities.setDefaultMetaID(r, usedMetaIDs, 1);
 							error = checkRateRuleUnits(r);
+							rPointer = r;
 						}
 						else {
-							AssignmentRule r = gcm.getSBMLDocument().getModel().createAssignmentRule();
+							AssignmentRule r = sbmlDoc.getModel().createAssignmentRule();
 							r.setVariable(addVar);
 							r.setMath(SBMLutilities.myParseFormula(ruleMath.getText().trim()));
+							SBMLutilities.setDefaultMetaID(r, usedMetaIDs, 1);
 							error = checkAssignmentRuleUnits(r);
+							rPointer = r;
 						}
 					}
 					if (!error && SBMLutilities.checkCycles(gcm.getSBMLDocument())) {
 						JOptionPane.showMessageDialog(Gui.frame, "Cycle detected within initial assignments, assignment rules, and rate laws.",
 								"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 						error = true;
-						rul = oldRul;
+//						rul = oldRul;
 					}
 					if (error) {
 						rul = oldRul;
 						removeTheRule(addStr);
+					} else {
+						LinkedList<String> sbolURIs = sbolField.getSBOLURIs();
+						if (sbolURIs.size() > 0) {
+							SBOLAnnotation sbolAnnot = new SBOLAnnotation(rPointer.getMetaId(), sbolURIs);
+							AnnotationUtility.setSBOLAnnotation(rPointer, sbolAnnot);
+						} else
+							AnnotationUtility.removeSBOLAnnotation(rPointer);
 					}
-					updateRules(rul);
+//					updateRules(rul);
 					rules.setListData(rul);
 					rules.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					if (gcm.getSBMLDocument().getModel().getNumRules() == 1) {
@@ -815,28 +860,28 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Update rules
 	 */
-	private void updateRules(String[] rul) {
-		ListOf r = gcm.getSBMLDocument().getModel().getListOfRules();
-		while (gcm.getSBMLDocument().getModel().getNumRules() > 0) {
-			r.remove(0);
-		}
-		for (int i = 0; i < rul.length; i++) {
-			if (rul[i].split(" ")[0].equals("0")) {
-				AlgebraicRule rule = gcm.getSBMLDocument().getModel().createAlgebraicRule();
-				rule.setMath(SBMLutilities.myParseFormula(rul[i].substring(rul[i].indexOf("=") + 1)));
-			}
-			else if (rul[i].split(" ")[0].equals("d(")) {
-				RateRule rule = gcm.getSBMLDocument().getModel().createRateRule();
-				rule.setVariable(rul[i].split(" ")[1]);
-				rule.setMath(SBMLutilities.myParseFormula(rul[i].substring(rul[i].indexOf("=") + 1)));
-			}
-			else {
-				AssignmentRule rule = gcm.getSBMLDocument().getModel().createAssignmentRule();
-				rule.setVariable(rul[i].split(" ")[0]);
-				rule.setMath(SBMLutilities.myParseFormula(rul[i].substring(rul[i].indexOf("=") + 1)));
-			}
-		}
-	}
+//	private void updateRules(String[] rul) {
+//		ListOf r = gcm.getSBMLDocument().getModel().getListOfRules();
+//		while (gcm.getSBMLDocument().getModel().getNumRules() > 0) {
+//			SBase rule = r.remove(0);
+//		}
+//		for (int i = 0; i < rul.length; i++) {
+//			if (rul[i].split(" ")[0].equals("0")) {
+//				AlgebraicRule rule = gcm.getSBMLDocument().getModel().createAlgebraicRule();
+//				rule.setMath(SBMLutilities.myParseFormula(rul[i].substring(rul[i].indexOf("=") + 1)));
+//			}
+//			else if (rul[i].split(" ")[0].equals("d(")) {
+//				RateRule rule = gcm.getSBMLDocument().getModel().createRateRule();
+//				rule.setVariable(rul[i].split(" ")[1]);
+//				rule.setMath(SBMLutilities.myParseFormula(rul[i].substring(rul[i].indexOf("=") + 1)));
+//			}
+//			else {
+//				AssignmentRule rule = gcm.getSBMLDocument().getModel().createAssignmentRule();
+//				rule.setVariable(rul[i].split(" ")[0]);
+//				rule.setMath(SBMLutilities.myParseFormula(rul[i].substring(rul[i].indexOf("=") + 1)));
+//			}
+//		}
+//	}
 
 	/**
 	 * Determines if a variable is already in an initial assignment, assignment

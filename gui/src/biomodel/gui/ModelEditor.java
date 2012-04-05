@@ -102,8 +102,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	
 	private String separator;
 	
-	private ModelEditor gcmEditor;
-	
 	private ModelPanel modelPanel;
 	
 	private Schematic schematic;
@@ -133,7 +131,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	public ModelEditor(String path, String filename, Gui biosim, Log log, boolean paramsOnly,
 			String simName, String paramFile, AnalysisView reb2sac, boolean textBased) throws Exception {
 		super();
-		gcmEditor = this;
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -1402,7 +1399,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		JComboBox compartmentList = MySpecies.createCompartmentChoices(gcm);
 		
 		compartmentPanel = new Compartments(biosim,gcm,usedIDs,dirty, paramsOnly,getParams, path + separator + file,	parameterChanges,false,compartmentList);
-		reactionPanel = new Reactions(biosim,gcm,usedIDs,dirty, paramsOnly,getParams,path + separator + file,parameterChanges, gcmEditor);
+		reactionPanel = new Reactions(biosim,gcm,usedIDs,dirty, paramsOnly,getParams,path + separator + file,parameterChanges, this);
 		speciesPanel = new MySpecies(biosim,gcm,usedIDs,dirty, paramsOnly,getParams,path + separator + file,parameterChanges,gcm.getGrid().isEnabled());
 		parametersPanel = new Parameters(biosim, gcm,usedIDs,dirty, paramsOnly,getParams,path + separator + file,parameterChanges);
 		
@@ -1524,7 +1521,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 
 		InitialAssignments initialsPanel = new InitialAssignments(biosim,gcm,dirty);
-		rulesPanel = new Rules(biosim,gcm,dirty);
+		rulesPanel = new Rules(biosim, gcm, this, dirty);
 		compartmentPanel.setPanels(initialsPanel, rulesPanel);
 		functionPanel.setPanels(initialsPanel, rulesPanel);
 		speciesPanel.setPanels(initialsPanel, rulesPanel);
@@ -1990,7 +1987,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			refGCM = new BioModel(path);
 			refGCM.load(path + separator + refFile);
 		}
-		PromoterPanel panel = new PromoterPanel(id, gcm, paramsOnly, refGCM, gcmEditor);	
+		PromoterPanel panel = new PromoterPanel(id, gcm, paramsOnly, refGCM, this);	
 		
 		if (paramsOnly) {
 			String updates = panel.updates();
@@ -2045,7 +2042,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			refGCM = new BioModel(path);
 			refGCM.load(path + separator + refFile);
 		}
-		InfluencePanel panel = new InfluencePanel(id, influences, gcm, paramsOnly, refGCM, gcmEditor);
+		InfluencePanel panel = new InfluencePanel(id, influences, gcm, paramsOnly, refGCM, this);
 		
 		if (paramsOnly) {
 			String updates = panel.updates();
@@ -2251,7 +2248,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				outID = gcm.addComponent(null, comp, false, -1, -1, 0, 0);
 			}else{
 				new ComponentsPanel(selected, list, influences, gcm,
-						inputs, outputs, comp, oldPort, paramsOnly, gcmEditor);
+						inputs, outputs, comp, oldPort, paramsOnly, this);
 				outID = selected;
 			}
 

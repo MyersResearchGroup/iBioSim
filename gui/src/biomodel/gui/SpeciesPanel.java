@@ -552,7 +552,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					String [] type = annotations[i].split("=");
 					typeBox.setSelectedItem(type[1]);
 				}
-				LinkedList<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(species.getAnnotationString());
+				LinkedList<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(species);
 				if (sbolURIs.size() > 0)
 					sbolField.setSBOLURIs(sbolURIs);
 			}
@@ -874,7 +874,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				if (sbolURIs.size() > 0) {
 					SBOLAnnotation sbolAnnot = new SBOLAnnotation(species.getMetaId(), sbolURIs);
 					AnnotationUtility.setSBOLAnnotation(species, sbolAnnot);
-				} 
+				} else
+					AnnotationUtility.removeSBOLAnnotation(species);
 			}
 			
 			if (selected != null && !selected.equals(newSpeciesID)) {
