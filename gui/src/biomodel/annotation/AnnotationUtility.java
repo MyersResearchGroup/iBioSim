@@ -13,19 +13,25 @@ public class AnnotationUtility {
 
 	public static void setSBOLAnnotation(SBase sbmlObject, SBOLAnnotation sbolAnnot) {
 		if (sbmlObject.isSetAnnotation())
-			;
-		if (sbmlObject.setAnnotation(sbolAnnot.toXMLString()) != libsbml.LIBSBML_OPERATION_SUCCESS)
-			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating species " 
-					+ sbmlObject.getId());
-	}
-	
-	public static void appendSBOLAnnotation(SBase sbmlObject, SBOLAnnotation sbolAnnot) {
+			removeSBOLAnnotation(sbmlObject);
 		if (sbmlObject.appendAnnotation(sbolAnnot.toXMLString()) != libsbml.LIBSBML_OPERATION_SUCCESS)
 			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating species " 
 					+ sbmlObject.getId());
 	}
 	
-	public static LinkedList<String> parseSBOLAnnotation(String annotation) {
+	public static void removeSBOLAnnotation(SBase sbmlObject) {
+		String annotation = sbmlObject.getAnnotationString();
+		Pattern sbolPattern = Pattern.compile(SBOL_ANNOTATION);
+		Matcher sbolMatcher = sbolPattern.matcher(annotation);
+		while (sbolMatcher.find()) {
+			String sbolAnnotation = sbolMatcher.group(0);
+			annotation = annotation.replace(sbolAnnotation, "");
+		}
+		sbmlObject.setAnnotation(annotation);
+	}
+	
+	public static LinkedList<String> parseSBOLAnnotation(SBase sbmlObject) {
+		String annotation = sbmlObject.getAnnotationString();
 		LinkedList<String> sbolURIs = new LinkedList<String>();
 		Pattern sbolPattern = Pattern.compile(SBOL_ANNOTATION);
 		Matcher sbolMatcher = sbolPattern.matcher(annotation);

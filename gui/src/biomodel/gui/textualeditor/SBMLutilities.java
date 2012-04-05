@@ -596,6 +596,8 @@ public class SBMLutilities {
 			metaIDIndex = setDefaultMetaID(model.getSpecies(i), usedMetaIDs, metaIDIndex);
 		for (int i = 0; i < model.getNumReactions(); i++) 
 			metaIDIndex = setDefaultMetaID(model.getReaction(i), usedMetaIDs, metaIDIndex);
+		for (int i = 0; i < model.getSBMLDocument().getModel().getNumRules(); i++) 
+			metaIDIndex = setDefaultMetaID(model.getRule(i), usedMetaIDs, metaIDIndex);
 		
 	}
 	

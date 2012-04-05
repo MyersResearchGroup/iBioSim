@@ -573,6 +573,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			reactionPanelNorth1b.add(fast);
 			reactionPanelNorth1b.add(reacFast);
 			sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 1);
+			//Parse out SBOL annotations and add to SBOL field
+			Reaction reac = gcm.getSBMLDocument().getModel().getReaction(reactionId);
+			LinkedList<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(reac);
+			if (sbolURIs.size() > 0)
+				sbolField.setSBOLURIs(sbolURIs);
 			reactionPanelNorth1b.add(sbolField);
 			reactionPanelNorth.add(reactionPanelNorth1);
 			reactionPanelNorth.add(reactionPanelNorth1b);
@@ -805,7 +810,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						if (sbolURIs.size() > 0) {
 							SBOLAnnotation sbolAnnot = new SBOLAnnotation(react.getMetaId(), sbolURIs);
 							AnnotationUtility.setSBOLAnnotation(react, sbolAnnot);
-						} 
+						} else
+							AnnotationUtility.removeSBOLAnnotation(react);
 					}
 				}
 				else {

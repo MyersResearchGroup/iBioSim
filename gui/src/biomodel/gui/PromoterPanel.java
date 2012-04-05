@@ -308,7 +308,7 @@ public class PromoterPanel extends JPanel {
 			// Field for annotating promoter with SBOL DNA components
 			add(sbolField);
 			//Parse out SBOL annotations and add to SBOL field
-			LinkedList<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(promoter.getAnnotationString());
+			LinkedList<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(promoter);
 			if (sbolURIs.size() > 0)
 				sbolField.setSBOLURIs(sbolURIs);
 		}
@@ -420,7 +420,8 @@ public class PromoterPanel extends JPanel {
 				if (sbolURIs.size() > 0) {
 					SBOLAnnotation sbolAnnot = new SBOLAnnotation(promoter.getMetaId(), sbolURIs);
 					AnnotationUtility.setSBOLAnnotation(promoter, sbolAnnot);
-				} 
+				} else
+					AnnotationUtility.removeSBOLAnnotation(promoter);
 
 				// rename all the influences that use this promoter if name was changed
 				if (selected != null && !oldName.equals(id)) {
