@@ -23,7 +23,7 @@ import main.Gui;
  * @author jason
  *
  */
-public class GridPanel extends JPanel implements ActionListener{
+public class GridPanel extends JPanel implements ActionListener {
 	
 	private static final long serialVersionUID = 1L;
 	private BioModel gcm;
@@ -118,6 +118,12 @@ public class GridPanel extends JPanel implements ActionListener{
 		compPanel = new JPanel(new GridLayout(3, 1));
 		compPanel.add(new JLabel("Choose a model to add to the grid"));
 		componentChooser = new JComboBox(componentList.toArray());
+		
+		//don't allow dropping of a model within itself
+		String[] splitFilename = gcm.getFilename().split("/");
+		String fname = splitFilename[splitFilename.length - 1].replace(".gcm",".xml");
+		componentChooser.removeItem(fname);
+		
 		compPanel.add(componentChooser);
 		this.add(compPanel, BorderLayout.NORTH);
 		
@@ -238,6 +244,11 @@ public class GridPanel extends JPanel implements ActionListener{
 		
 		componentChooser = new JComboBox(componentList.toArray());
 		
+		//don't allow dropping of a model within itself
+		String[] splitFilename = gcm.getFilename().split("/");
+		String fname = splitFilename[splitFilename.length - 1].replace(".gcm",".xml");
+		componentChooser.removeItem(fname);
+		
 		compPanel.add(componentChooser);
 		this.add(compPanel, BorderLayout.SOUTH);
 		
@@ -277,7 +288,7 @@ public class GridPanel extends JPanel implements ActionListener{
 						rowCount = Integer.parseInt(rowsChooser.getText());
 						colCount = Integer.parseInt(columnsChooser.getText());
 					}
-					catch(NumberFormatException e){
+					catch (NumberFormatException e) {
 						
 						JOptionPane.showMessageDialog(Gui.frame,
 								"A number you entered could not be parsed.",
@@ -285,14 +296,14 @@ public class GridPanel extends JPanel implements ActionListener{
 								JOptionPane.ERROR_MESSAGE);
 					}
 					
-					if (rowCount < 1 || colCount < 1) {
+					if ((rowCount < 1 || colCount < 1) || (rowCount < 2 && colCount < 2)) {
 						
 						JOptionPane.showMessageDialog(Gui.frame,
-								"The size must be positive",
+								"The size must be at least 1x2 or 2x1",
 								"Invalid size",
 								JOptionPane.ERROR_MESSAGE);
 						
-						return false;
+						continue;
 					}
 					
 					//filename of the component

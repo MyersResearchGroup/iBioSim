@@ -99,6 +99,8 @@ public class MovieContainer extends JPanel implements ActionListener {
 	private int originalGridRows = 0;
 	private int originalGridCols = 0;
 	
+	private HashSet<String> totalComponentList = new HashSet<String>();
+	
 	
 	
 	/**
@@ -192,7 +194,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		}
 		catch (TreeChooser.EmptyTreeException e) {
 			
-			JOptionPane.showMessageDialog(Gui.frame, "Sorry, there aren't any simulation files. " +
+			JOptionPane.showMessageDialog(Gui.frame, "There aren't any simulation files. " +
 					"Please simulate then try again.");
 			return;
 		}
@@ -432,10 +434,12 @@ public class MovieContainer extends JPanel implements ActionListener {
 			grid.updateComponentLocations(dynamicParser.getComponentToLocationMap(frameIndex));
 			speciesTSData = dynamicParser.getSpeciesToValueMap(frameIndex);
 			componentList.addAll(dynamicParser.getComponentToLocationMap(frameIndex).keySet());
+			totalComponentList.addAll(dynamicParser.getComponentToLocationMap(frameIndex).keySet());
 			
 			//update the graph by resetting the grid cells and component cells
 			schematic.getGraph().updateGrid();
 		}
+		//if not dynamic
 		else {
 		
 			speciesTSData = parser.getHashMap(frameIndex);
@@ -492,7 +496,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 					if (speciesTSData.get(speciesID) != null) {
 						
 						speciesAppearance = 
-							movieScheme.createAppearance(speciesID, GlobalConstants.SPECIES, speciesTSData);
+							movieScheme.createAppearance(speciesID, GlobalConstants.SPECIES, speciesTSData, null);
 					}
 					
 					if (speciesAppearance != null) {
@@ -507,24 +511,29 @@ public class MovieContainer extends JPanel implements ActionListener {
 		
 			//get the component's appearance and send it to the graph for updating
 			MovieAppearance compAppearance = 
-				movieScheme.createAppearance(componentID, GlobalConstants.COMPONENT, speciesTSData);
+				movieScheme.createAppearance(componentID, GlobalConstants.COMPONENT, speciesTSData, totalComponentList);
 			
 			if (compAppearance != null)
 				schematic.getGraph().setComponentAnimationValue(componentID, compAppearance);
 		}
+		
+		int numRows = dynamicParser.getNumRowsAtFrame(frameIndex);
+		int numCols = dynamicParser.getNumColsAtFrame(frameIndex);
+		int minRow = dynamicParser.getMinRowAtFrame(frameIndex);
+		int minCol = dynamicParser.getMinColAtFrame(frameIndex);
 			
 		//if there's a grid to set the appearance of
 		if (gcm.getGrid().isEnabled()) {
 			
 			//loop through all grid locations and set appearances
-			for (int row = 0; row < gcm.getGrid().getNumRows(); ++row) {
-				for (int col = 0; col < gcm.getGrid().getNumCols(); ++col) {
+			for (int row = minRow; row < numRows + minRow; ++row) {
+				for (int col = minCol; col < numCols + minCol ; ++col) {
 					
 					String gridID = "ROW" + row + "_COL" + col;
 					
 					//get the component's appearance and send it to the graph for updating
 					MovieAppearance gridAppearance = 
-						movieScheme.createAppearance(gridID, GlobalConstants.GRID_RECTANGLE, speciesTSData);
+						movieScheme.createAppearance(gridID, GlobalConstants.GRID_RECTANGLE, speciesTSData, null);
 					
 					if (gridAppearance != null)
 						schematic.getGraph().setGridRectangleAnimationValue(gridID, gridAppearance);
@@ -536,14 +545,15 @@ public class MovieContainer extends JPanel implements ActionListener {
 								//if this is a new row/col location due to a dynamic model,
 								//take its appearance from its neighbor
 								if (previousSpeciesList.contains(species) == false && 
-										species.contains(gridID)) {
+										species.contains(gridID + "__")) {
 								
 									//find a neighbor to take an appearance from
 									gridAppearance = 
 										movieScheme.getNearestGridAppearance(row, col, species, speciesTSData);
 									
-									if (gridAppearance != null)
+									if (gridAppearance != null) {										
 										schematic.getGraph().setGridRectangleAnimationValue(gridID, gridAppearance);
+									}
 								}
 							}
 						}

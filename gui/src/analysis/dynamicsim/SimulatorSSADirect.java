@@ -3,6 +3,7 @@ package analysis.dynamicsim;
 import java.io.IOException;
 import java.util.HashSet;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
@@ -20,11 +21,12 @@ public class SimulatorSSADirect extends Simulator {
 	MutableBoolean constraintsFlag = new MutableBoolean(false);
 
 	public SimulatorSSADirect(String SBMLFileName, String outputDirectory, double timeLimit, 
-			double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval, double stoichAmpValue) 
+			double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval, 
+			double stoichAmpValue, JFrame running) 
 	throws IOException, XMLStreamException {
 		
 		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, randomSeed,
-				progress, printInterval, initializationTime, stoichAmpValue);
+				progress, printInterval, initializationTime, stoichAmpValue, running);
 	}
 
 	public void simulate() {
@@ -187,6 +189,7 @@ public class SimulatorSSADirect extends Simulator {
 				}
 				
 				printTime += printInterval;
+				running.setTitle("Progress (" + (int)((currentTime / timeLimit) * 100.0) + "%)");
 			}
 			
 		} //end simulation loop
@@ -384,17 +387,17 @@ public class SimulatorSSADirect extends Simulator {
 		minCol = Integer.MAX_VALUE;
 		maxRow = Integer.MIN_VALUE;
 		maxCol = Integer.MIN_VALUE;
+		
+		//get rid of things that were created dynamically last run
+		if (dynamicBoolean == true) {
+			resetModel();
+		}
 	}
 
 	/**
 	 * does minimized initalization process to prepare for a new run
 	 */
 	protected void setupForNewRun(int newRun) {
-		
-		//get rid of things that were created dynamically last run
-		if (dynamicBoolean == true) {
-			resetModel();
-		}
 		
 		try {
 			setupSpecies();

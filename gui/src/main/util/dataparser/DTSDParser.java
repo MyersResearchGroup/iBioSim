@@ -24,6 +24,9 @@ public class DTSDParser {
 	private TDoubleObjectHashMap<HashMap<String, Point> > frameToComponentToLocationMapMap = 
 		new TDoubleObjectHashMap<HashMap<String, Point> >();
 	
+	private TIntObjectHashMap<Point> frameToRowColMap = new TIntObjectHashMap<Point>();
+	private TIntObjectHashMap<Point> frameToMinRowColMap = new TIntObjectHashMap<Point>();
+	
 	private ArrayList<String> allSpecies = new ArrayList<String>();
 	
 	int overallMinRow = Integer.MAX_VALUE;
@@ -294,6 +297,22 @@ public class DTSDParser {
 		return overallMaxCol - overallMinCol + 1;
 	}
 	
+	public int getNumRowsAtFrame(int frameIndex) {
+		return (int) this.frameToRowColMap.get(frameIndex).getX();
+	}
+	
+	public int getNumColsAtFrame(int frameIndex) {
+		return (int) this.frameToRowColMap.get(frameIndex).getY();
+	}
+	
+	public int getMinRowAtFrame(int frameIndex) {
+		return (int) this.frameToMinRowColMap.get(frameIndex).getX();
+	}
+	
+	public int getMinColAtFrame(int frameIndex) {
+		return (int) this.frameToMinRowColMap.get(frameIndex).getY();
+	}
+	
 	/**
 	 * parses the data and figures out the grid size for each time point
 	 */
@@ -323,8 +342,7 @@ public class DTSDParser {
 						
 						int row = (int) dataIterator.getValue().doubleValue();				
 						//String compID = dataIterator.getKey().split("__")[0];
-						String compID = dataIterator.getKey().replace("__locationX","");
-						
+						String compID = dataIterator.getKey().replace("__locationX","");						
 						
 						if (componentToLocationMap.get(compID) == null)
 							componentToLocationMap.put(compID, new Point());
@@ -357,6 +375,8 @@ public class DTSDParser {
 				}
 			}
 			
+			frameToRowColMap.put(dataIndex, new Point(maxRow - minRow + 1, maxCol - minCol + 1));
+			frameToMinRowColMap.put(dataIndex, new Point(minRow, minCol));
 			frameToDataMapMap.put(dataIndex, frameDataMap);
 			
 			if (minRow < overallMinRow)
@@ -394,7 +414,8 @@ public class DTSDParser {
 					
 					String underlyingSpeciesID = ((String[])speciesID.split("__"))[1];
 					
-					speciesToAdd.put("ROW" + (row - overallMinRow) + "_COL" + (col - overallMinCol) + "__" + underlyingSpeciesID,
+					speciesToAdd.put("ROW" + (row - overallMinRow) + "_COL" 
+							+ (col - overallMinCol) + "__" + underlyingSpeciesID,
 							speciesToValueMap.get(speciesID));
 					speciesToRemove.add(speciesID);
 				}
@@ -418,6 +439,12 @@ public class DTSDParser {
 			}
 			
 			++dataIndex;
+		}
+		
+		for (Point minRowCol : frameToMinRowColMap.valueCollection()) {
+			
+			minRowCol.x = minRowCol.x - overallMinRow;
+			minRowCol.y = minRowCol.y - overallMinCol;
 		}
 		
 		allSpecies.addAll(speciesSet);

@@ -177,6 +177,11 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		
 		componentChooser = new JComboBox(componentList.toArray());
 		
+		//don't allow dropping of a model within itself
+		String[] splitFilename = gcm.getFilename().split("/");
+		String fname = splitFilename[splitFilename.length - 1].replace(".gcm",".xml");
+		componentChooser.removeItem(fname);
+		
 		compPanel.add(componentChooser);
 		this.add(compPanel, BorderLayout.NORTH);
 		
