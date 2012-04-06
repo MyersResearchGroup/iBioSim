@@ -18,8 +18,7 @@ public class DynamicGillespie {
 	//the simulator object
 	private Simulator simulator = null;
 	
-	private boolean cancelFlag = false;
-	
+	private boolean cancelFlag = false;	
 	
 	/**
 	 * constructor; sets the simulator type
@@ -43,10 +42,10 @@ public class DynamicGillespie {
 			
 			if (simulatorType.equals("cr"))
 				simulator = new SimulatorSSACR(SBMLFileName, outputDirectory, timeLimit, 
-						maxTimeStep, randomSeed, progress, printInterval, stoichAmpValue);
+						maxTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running);
 			else if (simulatorType.equals("direct"))
 				simulator = new SimulatorSSADirect(SBMLFileName, outputDirectory, timeLimit, 
-						maxTimeStep, randomSeed, progress, printInterval, stoichAmpValue);
+						maxTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running);
 		}
 		catch (Exception e) {
 			e.printStackTrace();

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
@@ -50,11 +51,12 @@ public class SimulatorSSACR extends Simulator {
 	
 	
 	public SimulatorSSACR(String SBMLFileName, String outputDirectory, double timeLimit, 
-			double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval, double stoichAmpValue) 
+			double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval, 
+			double stoichAmpValue, JFrame running) 
 	throws IOException, XMLStreamException {
 		
 		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, randomSeed,
-				progress, printInterval, initializationTime, stoichAmpValue);
+				progress, printInterval, initializationTime, stoichAmpValue, running);
 		
 		try {
 			initialize(randomSeed, 1);
@@ -104,6 +106,9 @@ public class SimulatorSSACR extends Simulator {
 		if (noEventsFlag == false)
 			handleEvents(noAssignmentRulesFlag, noConstraintsFlag);
 		
+//		for (String reactionID : reactionToPropensityMap.keySet())
+//		System.err.println(reactionID + "   " + reactionToPropensityMap.get(reactionID));
+		
 		while (currentTime < timeLimit && cancelFlag == false) {
 			
 			//if a constraint fails
@@ -145,11 +150,11 @@ public class SimulatorSSACR extends Simulator {
 					e.printStackTrace();
 				}
 				
-				printTime += printInterval;					
+				printTime += printInterval;	
 			}
 			
 			//update progress bar
-			progress.setValue((int)((currentTime / timeLimit) * 100.0));		
+			progress.setValue((int)((currentTime / timeLimit) * 100.0));
 			
 			//STEP 1: generate random numbers
 			
@@ -268,6 +273,7 @@ public class SimulatorSSACR extends Simulator {
 //				System.err.println();
 				
 				printTime += printInterval;
+				running.setTitle("Progress (" + (int)((currentTime / timeLimit) * 100.0) + "%)");
 			}
 		} //end simulation loop
 		
@@ -552,6 +558,12 @@ public class SimulatorSSACR extends Simulator {
 		minCol = Integer.MAX_VALUE;
 		maxRow = Integer.MIN_VALUE;
 		maxCol = Integer.MIN_VALUE;
+		
+		//get rid of things that were created dynamically this run
+		//or else dynamically created stuff will still be in the model next run
+		if (dynamicBoolean == true) {
+			resetModel();
+		}
 	}
 	
 	/**
@@ -738,11 +750,6 @@ public class SimulatorSSACR extends Simulator {
 	 * does a minimized initialization process to prepare for a new run
 	 */
 	protected void setupForNewRun(int newRun) {
-		
-		//get rid of things that were created dynamically last run
-		if (dynamicBoolean == true) {
-			resetModel();
-		}
 			
 		try {
 			setupSpecies();

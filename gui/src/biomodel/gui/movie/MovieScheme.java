@@ -418,7 +418,7 @@ public class MovieScheme {
 	 * @return the appearance at
 	 */
 	public MovieAppearance createAppearance(String cellID, String cellType, 
-			HashMap<String, Double> speciesTSData) {
+			HashMap<String, Double> speciesTSData, HashSet<String> componentList) {
 		
 		HashMap<String, Scheme> cellSchemes = getSchemesWithinCell(cellID, cellType);
 		
@@ -428,11 +428,39 @@ public class MovieScheme {
 		//so take its appearance from its ancestor if the user hasn't specified the appearance explicitly
 		if (cellSchemes.size() <= 0 && cellID.contains("_of_")) {
 			
-			//find the first ancestor with a scheme and use that as the scheme
-			while (cellSchemes.size() <= 0 && cellID.contains("_of_")) {
+			//get the parent cell ID
+			cellID = cellID.substring(cellID.indexOf("_of_") + 4, cellID.length());
+			cellSchemes = getSchemesWithinCell(cellID, cellType);
+			
+			if (componentList != null) {
 				
-				cellID = cellID.substring(cellID.indexOf("_of_") + 4, cellID.length());
-				cellSchemes = getSchemesWithinCell(cellID, cellType);
+				//find the first ancestor with a scheme and use that as the scheme
+				while (cellSchemes.size() <= 0) {
+					
+					boolean keepLooking = false;
+					
+					for (String ID : componentList) {
+						
+						if (ID.split("_of_")[0].equals(cellID)) {
+							
+							cellID = ID;							
+							cellSchemes = getSchemesWithinCell(cellID, cellType);
+							
+							if (cellID.contains("_of_") && cellSchemes.size() <= 0) {
+								
+								cellID = cellID.substring(cellID.indexOf("_of_") + 4, cellID.length());
+								keepLooking = true;
+							}
+							else
+								keepLooking = false;
+							
+							break;
+						}
+					}
+					
+					if (keepLooking == false)
+						break;
+				}
 			}
 		}
 		
@@ -481,6 +509,16 @@ public class MovieScheme {
 		}
 	}
 	
+	/**
+	 * finds a grid species appearance near the location passed in.  this is used for expanding
+	 * grid appearances during dynamic resizing/expansion
+	 * 
+	 * @param row
+	 * @param col
+	 * @param gridSpeciesID
+	 * @param speciesTSData
+	 * @return the nearest grid appearance
+	 */
 	public MovieAppearance getNearestGridAppearance(int row, int col, 
 			String gridSpeciesID, HashMap<String, Double> speciesTSData) {
 		
@@ -501,18 +539,18 @@ public class MovieScheme {
 					closestRow = nRow;
 					closestCol = nCol;
 					nearestScheme = speciesSchemes.get(speciesID);
-				}				
+				}
 			}
 		}
 		
 		//add the scheme
-		if (nearestScheme != null) {			
+		if (nearestScheme != null) {
 			speciesSchemes.put(gridSpeciesID, nearestScheme);
 		}
 		else
 			return null;		
 		
-		return createAppearance(gridSpeciesID.split("__")[0], GlobalConstants.GRID_RECTANGLE, speciesTSData);
+		return createAppearance(gridSpeciesID.split("__")[0], GlobalConstants.GRID_RECTANGLE, speciesTSData, null);
 	}
 	
 	/**
