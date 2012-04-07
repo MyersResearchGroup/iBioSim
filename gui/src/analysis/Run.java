@@ -1091,10 +1091,15 @@ public class Run implements ActionListener {
 						return exitValue;
 					}
 					else if (biosimrc.get("biosim.sim.command", "").equals("")) {
+						
 						time1 = System.nanoTime();
 						log.addText("Executing:\nreb2sac --target.encoding=" + sim + " " + filename + "\n");
 						
-						Simulator.expandArrays(filename);
+						double stoichAmpValue = 
+							Double.parseDouble(properties.getProperty(
+									"reb2sac.diffusion.stoichiometry.amplification.value"));
+						
+						Simulator.expandArrays(filename, stoichAmpValue);
 						
 						reb2sac = exec.exec("reb2sac --target.encoding=" + sim + " " + theFile, null, work);
 					}
