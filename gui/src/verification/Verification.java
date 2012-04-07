@@ -2642,12 +2642,12 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				// If the file is larger than a given amount of megabytes,
 				// then give the user the chance to cancel the operation.
 				
-				int thresholdSize = 1;	// Specifies the threshold for giving the
+				int thresholdSize = 100;	// Specifies the threshold for giving the
 										// user the option to not attempt to open the file.
 				if(fileSize > thresholdSize)
 				{
 					int answer = JOptionPane.showConfirmDialog(Gui.frame,
-							"The size of the file exceeds " + thresholdSize + " MB."
+							"The size of the file exceeds " + thresholdSize + " kB."
 							+ "The file may not open. Do you want to continue?", 
 							"Do you want to continue?", JOptionPane.YES_NO_OPTION);
 					
