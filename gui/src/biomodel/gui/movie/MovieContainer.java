@@ -517,10 +517,18 @@ public class MovieContainer extends JPanel implements ActionListener {
 				schematic.getGraph().setComponentAnimationValue(componentID, compAppearance);
 		}
 		
-		int numRows = dynamicParser.getNumRowsAtFrame(frameIndex);
-		int numCols = dynamicParser.getNumColsAtFrame(frameIndex);
-		int minRow = dynamicParser.getMinRowAtFrame(frameIndex);
-		int minCol = dynamicParser.getMinColAtFrame(frameIndex);
+		int numRows = gcm.getGrid().getNumRows();
+		int numCols = gcm.getGrid().getNumCols();
+		int minRow = 0;
+		int minCol = 0;
+		
+		if (dynamic == true) {
+			
+			numRows = dynamicParser.getNumRowsAtFrame(frameIndex);
+			numCols = dynamicParser.getNumColsAtFrame(frameIndex);
+			minRow = dynamicParser.getMinRowAtFrame(frameIndex);
+			minCol = dynamicParser.getMinColAtFrame(frameIndex);
+		}
 			
 		//if there's a grid to set the appearance of
 		if (gcm.getGrid().isEnabled()) {
