@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.TreeMap;
 
+import javax.swing.JOptionPane;
+
 import lpn.parser.ExprTree;
 import lpn.parser.LhpnFile;
 import lpn.parser.Transition;
@@ -87,6 +89,9 @@ public class Zone {
 	
 	/* A lexicon between a transitions index and its name. */
 	private static HashMap<Integer, Transition> _indexToTransition;
+	
+	/* Set if a failure in the testSplit method has fired already. */
+	private static boolean _FAILURE = false;
 	
 	/**
 	 * Construct a zone that has the given timers.
@@ -592,7 +597,6 @@ public class Zone {
 		//result += "|";
 		
 		// Print the DBM.
-		// TODO: Fix this to print just the DBM.
 		for(int i=0; i<_indexToTimer.length; i++)
 		{
 			//result += " " + _matrix[i][0];
@@ -927,7 +931,7 @@ public class Zone {
 					continue;
 				}
 				int newIndexj = j==0 ? 0 : 
-					Arrays.binarySearch(newZone._indexToTimer, tempZone._indexToTimer[i]);
+					Arrays.binarySearch(newZone._indexToTimer, tempZone._indexToTimer[j]);
 				
 				newZone._matrix[newZone.dbmIndexToMatrixIndex(newIndexi)][newZone.dbmIndexToMatrixIndex(newIndexj)]
 				                                                            = tempZone.getDBMIndex(i, j);
@@ -944,7 +948,9 @@ public class Zone {
 				continue;
 			}
 			newZone.setLowerBoundbyTransitionIndex(tempZone._indexToTimer[i], 
-					tempZone.getLowerBoundbydbmIndex(i));
+					-1*tempZone.getLowerBoundbydbmIndex(i));
+			// The minus sign is because _matrix stores the negative of the lower bound.
+			
 			newZone.setUpperBoundbyTransitionIndex(tempZone._indexToTimer[i],
 					tempZone.getUpperBoundbydbmIndex(i));
 		}
@@ -1029,12 +1035,8 @@ public class Zone {
 		newZone.advance();
 		newZone.recononicalize();
 		
-		// If the splitting method fails, print an error message.
-		if(!testSplit(newZone))
-		{
-			System.err.print("The reduction does not work. In state" + state
-					+ "firing transition: " + index);
-		}
+		// Run the test method.
+		testSplit(newZone, true);
 		
 		return newZone;
 	}
@@ -1493,41 +1495,52 @@ public class Zone {
 			_index2 = index2;
 		}
 		
+		@SuppressWarnings("unused")
 		public Zone get_zone1() {
 			return _zone1;
 		}
 
+		@SuppressWarnings("unused")
 		public void set_zone1(Zone _zone1) {
 			this._zone1 = _zone1;
 		}
 
+		@SuppressWarnings("unused")
 		public int get_index1() {
 			return _index1;
 		}
 
+		@SuppressWarnings("unused")
 		public void set_index1(int _index1) {
 			this._index1 = _index1;
 		}
 
+		@SuppressWarnings("unused")
 		public Zone get_zone2() {
 			return _zone2;
 		}
 
+		@SuppressWarnings("unused")
 		public void set_zone2(Zone _zone2) {
 			this._zone2 = _zone2;
 		}
 
+		@SuppressWarnings("unused")
 		public int get_index2() {
 			return _index2;
 		}
 
+		@SuppressWarnings("unused")
 		public void set_index2(int _index2) {
 			this._index2 = _index2;
 		}
 
+		@SuppressWarnings("unused")
 		public int get_timer() {
 			return _timer;
 		}
+		
+		@SuppressWarnings("unused")
 		public void set_timer(int _timer) {
 			this._timer = _timer;
 		}
@@ -1570,10 +1583,10 @@ public class Zone {
 	 * Tests ways of splitting a zone.
 	 * @param z
 	 * 		The Zone to split.
-	 * @return
-	 * 		True if the splitting method preserved the Zone; false otherwise.
+	 * @param popUps
+	 * 		Enables pop up windows notifying that a zone failed.
 	 */
-	private boolean testSplit(Zone z)
+	private void testSplit(Zone z, boolean popUp)
 	{
 		// Get a new copy of the matrix to manipulate.
 		int[][] m = z._matrix;
@@ -1596,7 +1609,8 @@ public class Zone {
 		{
 			for(int j=2; j<m.length; j++, evenRow = !evenRow)
 			{
-				if(i != j && ((j+1 != i && evenRow) || (i+1 != j && !evenRow)))
+				//if(i != j && ((j+1 != i && evenRow) || (i+1 != j && !evenRow)))
+				if(i != j && j+1 != i && i+1 != j)
 				{
 					newMatrix[i][j] = INFINITY;
 				}
@@ -1607,7 +1621,37 @@ public class Zone {
 		
 		Zone newZone = new Zone(timers, newMatrix);
 		
-		return z.equals(newZone);
+		if(!z.equals(newZone))
+		{
+			if(!_FAILURE)
+			{
+				// This is the first failure.
+				_FAILURE = !_FAILURE;
+				
+				if(popUp)
+				{
+					JOptionPane.showMessageDialog(null, "A splitting failure occured." +
+							"See the standard error for more.");
+				}
+			}
+			
+			System.err.println("Method failed for zone:\n" + z);
+			System.err.println("The matrix was");
+			
+			String result = "";
+			
+			for(int i=0; i<newZone._matrix.length; i++)
+			{
+				result += "| " + newZone._matrix[i][0];
+				
+				for(int j=1; j<newZone._matrix.length; j++)
+				{
+					result += ", " + newZone._matrix[i][j];
+				}
+				
+				result += " |\n";
+			}
+		}
 	}
 	
 }
