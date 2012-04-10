@@ -78,6 +78,7 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.StandardChartTheme;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.LogarithmicAxis;
 import org.jfree.chart.axis.NumberTickUnit;
@@ -319,6 +320,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 */
 	private void graph(String printer_track_quantity, String label, XYSeriesCollection dataset, String time) {
 		chart = ChartFactory.createXYLineChart(label, time, printer_track_quantity, dataset, PlotOrientation.VERTICAL, true, true, false);
+		applyChartTheme(chart);
 		chart.setBackgroundPaint(new java.awt.Color(238, 238, 238));
 		chart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
 		chart.getXYPlot().setDomainGridlinePaint(java.awt.Color.LIGHT_GRAY);
@@ -6976,6 +6978,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private void probGraph(String label) {
 		chart = ChartFactory.createBarChart(label, "", "Percent", new DefaultCategoryDataset(), PlotOrientation.VERTICAL, true, true, false);
+		applyChartTheme(chart);
 		((BarRenderer) chart.getCategoryPlot().getRenderer()).setBarPainter(new StandardBarPainter());
 		chart.setBackgroundPaint(new java.awt.Color(238, 238, 238));
 		chart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
@@ -8224,6 +8227,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		Paint plotBackground = chart.getPlot().getBackgroundPaint();
 		Paint plotRangeGridLine = chart.getCategoryPlot().getRangeGridlinePaint();
 		chart = ChartFactory.createBarChart(label, xLabel, yLabel, dataset, PlotOrientation.VERTICAL, true, true, false);
+		applyChartTheme(chart);
 		chart.getCategoryPlot().setRenderer(rend);
 		chart.setBackgroundPaint(chartBackground);
 		chart.getPlot().setBackgroundPaint(plotBackground);
@@ -8523,6 +8527,28 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		icons.put("java", TextIcons.getIcon("java"));
 		icons.put("html", TextIcons.getIcon("html"));
 		return icons;
+	}
+	
+	public static void applyChartTheme(JFreeChart chart) {
+		final StandardChartTheme chartTheme = (StandardChartTheme) org.jfree.chart.StandardChartTheme
+				.createJFreeTheme();
+
+		final Font oldExtraLargeFont = chartTheme.getExtraLargeFont();
+		final Font oldLargeFont = chartTheme.getLargeFont();
+		final Font oldRegularFont = chartTheme.getRegularFont();
+		final Font oldSmallFont = chartTheme.getSmallFont();
+
+		final Font extraLargeFont = new Font("Sans-serif", oldExtraLargeFont.getStyle(), oldExtraLargeFont.getSize());
+		final Font largeFont = new Font("Sans-serif", oldLargeFont.getStyle(), oldLargeFont.getSize());
+		final Font regularFont = new Font("Sans-serif", oldRegularFont.getStyle(), oldRegularFont.getSize());
+		final Font smallFont = new Font("Sans-serif", oldSmallFont.getStyle(), oldSmallFont.getSize());
+
+		chartTheme.setExtraLargeFont(extraLargeFont);
+		chartTheme.setLargeFont(largeFont);
+		chartTheme.setRegularFont(regularFont);
+		chartTheme.setSmallFont(smallFont);
+
+		chartTheme.apply(chart);
 	}
 }
 
