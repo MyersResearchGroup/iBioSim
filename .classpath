@@ -34,8 +34,6 @@
 	<classpathentry kind="lib" path="gui/lib/activation.jar"/>
 	<classpathentry kind="lib" path="gui/lib/mail.jar"/>
 	<classpathentry kind="lib" path="gui/lib/iText-2.1.5.jar"/>
-	<classpathentry kind="lib" path="gui/lib/jcommon-1.0.16.jar"/>
-	<classpathentry kind="lib" path="gui/lib/jfreechart-1.0.13.jar"/>
 	<classpathentry kind="lib" path="gui/lib/biomodels-wslib_standalone-1.12.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jgraphx.jar"/>
 	<classpathentry kind="lib" path="gui/lib/libsbmlj.jar"/>
@@ -52,5 +50,7 @@
 	<classpathentry kind="lib" path="gui/lib/gson-2.0.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jsbml-0.8-rc1-with-dependencies.jar"/>
 	<classpathentry kind="lib" path="gui/src/antlrPackage/antlr-3.4-complete.jar"/>
+	<classpathentry kind="lib" path="gui/lib/jcommon-1.0.17.jar"/>
+	<classpathentry kind="lib" path="gui/lib/jfreechart-1.0.14.jar"/>
 	<classpathentry kind="output" path="gui/dist/classes"/>
 </classpath>
