@@ -186,8 +186,9 @@ public class Zone {
 			for(int j=0; j<dbmSize(); j++)
 			{
 				// Copy the passed in matrix to _matrix.
-				setDBMIndex(newIndex.get(i), newIndex.get(j), 
+				setdbm(newIndex.get(i), newIndex.get(j), 
 						matrix[dbmIndexToMatrixIndex(i)][dbmIndexToMatrixIndex(j)]);
+				// In the above, changed setDBMIndex to setdbm
 			}
 		}
 		
@@ -366,10 +367,10 @@ public class Zone {
 	 * @return 
 	 * 			The (i,j) element of the DBM.
 	 */
-	public int getDBMIndex(int i, int j)
-	{
-		return _matrix[i+1][j+1];
-	}
+//	public int getDBMIndex(int i, int j)
+//	{
+//		return _matrix[i+1][j+1];
+//	}
 	
 	/**
 	 * Logically the DBM is the sub-matrix of _matrix obtained by removing the zeroth
@@ -381,10 +382,10 @@ public class Zone {
 	 * @param value 
 	 * 			The value of the matrix.
 	 */
-	private void setDBMIndex(int i, int j, int value)
-	{
-		_matrix[i+1][j+1] = value;
-	}
+//	private void setDBMIndex(int i, int j, int value)
+//	{
+//		_matrix[i+1][j+1] = value;
+//	}
 	
 	/**
 	 * Get the value of the upper bound for the delay.
@@ -934,7 +935,8 @@ public class Zone {
 					Arrays.binarySearch(newZone._indexToTimer, tempZone._indexToTimer[j]);
 				
 				newZone._matrix[newZone.dbmIndexToMatrixIndex(newIndexi)][newZone.dbmIndexToMatrixIndex(newIndexj)]
-				                                                            = tempZone.getDBMIndex(i, j);
+				                                                            = tempZone.getdbm(i, j);
+				// In above, changed getDBMIndex to getdbm
 			}
 		}
 		
