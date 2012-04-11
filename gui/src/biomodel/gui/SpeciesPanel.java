@@ -811,12 +811,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 						else if (Utility.isValid(f.getValue(), Utility.CONCstring)) {
 							species.setInitialConcentration(Double.parseDouble(f.getValue().substring(1,f.getValue().length()-1)));
 						} else {
-							String speciesType = typeBox.getSelectedItem().toString();
-							if (!speciesType.equals(GlobalConstants.INTERNAL)) {
-								species.setAnnotation(GlobalConstants.TYPE + "=" + speciesType+","+GlobalConstants.INITIAL_STRING+"="+f.getValue());
-							} else {
-								species.setAnnotation(GlobalConstants.INITIAL_STRING+"="+f.getValue());
-							}
+							species.setAnnotation(GlobalConstants.INITIAL_STRING+"="+f.getValue());
 						}
 					} else {
 						if (refGCM.getSBMLDocument().getModel().getSpecies(selected).isSetInitialAmount()) {
@@ -829,6 +824,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				}
 			}
 			String speciesType = typeBox.getSelectedItem().toString();
+			gcm.setSpeciesType(species.getId(),speciesType);
 			
 			if (degradation != null && !specDegradable.isSelected()) {
 				gcm.removeReaction(degradation.getId());

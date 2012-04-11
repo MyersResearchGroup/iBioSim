@@ -2694,14 +2694,57 @@ public class BioModel {
 		return out;
 	}
 	
+	public void setSpeciesType(String speciesId,String type) {
+		long num = sbmlCompModel.getNumPorts();
+		for (long i = 0; i < num; i++) {
+			Port port = sbmlCompModel.getPort(i);
+			if (port.getId().equals(GlobalConstants.INPUT+"__"+speciesId)) {
+				sbmlCompModel.removePort(i);
+				break;
+			} else if (port.getId().equals(GlobalConstants.OUTPUT+"__"+speciesId)) {
+				sbmlCompModel.removePort(i);
+				break;
+			}
+		}
+		if (type.equals(GlobalConstants.INPUT)) {
+			Port port = sbmlCompModel.createPort();
+			port.setId(GlobalConstants.INPUT+"__"+speciesId);
+			port.setIdRef(speciesId);
+		} else if (type.equals(GlobalConstants.OUTPUT)) {
+			Port port = sbmlCompModel.createPort();
+			port.setId(GlobalConstants.OUTPUT+"__"+speciesId);
+			port.setIdRef(speciesId);
+		} 
+	}
+	
 	public static String getSpeciesType(SBMLDocument sbml,String speciesId) {
 		Species species = sbml.getModel().getSpecies(speciesId);
+		CompModelPlugin sbmlCompModel = (CompModelPlugin)sbml.getModel().getPlugin("comp");
+		if (sbmlCompModel!=null) {
+			if (sbmlCompModel.getPort(GlobalConstants.INPUT+"__"+speciesId)!=null) return GlobalConstants.INPUT;
+			if (sbmlCompModel.getPort(GlobalConstants.OUTPUT+"__"+speciesId)!=null) return GlobalConstants.OUTPUT;
+		}
 		if (species.isSetAnnotation()) {
 			String annotation = species.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
 			String [] annotations = annotation.split(",");
 			for (int i=0;i<annotations.length;i++) {
 				if (annotations[i].startsWith(GlobalConstants.TYPE)) {
 					String [] type = annotations[i].split("=");
+					if (sbmlCompModel!=null) {
+						if (type[1].equals(GlobalConstants.INPUT)) {
+							Port port = sbmlCompModel.createPort();
+							port.setId(GlobalConstants.INPUT+"__"+speciesId);
+							port.setIdRef(speciesId);
+							species.unsetAnnotation();
+						} else if (type[1].equals(GlobalConstants.OUTPUT)) {
+							Port port = sbmlCompModel.createPort();
+							port.setId(GlobalConstants.OUTPUT+"__"+speciesId);
+							port.setIdRef(speciesId);
+							species.unsetAnnotation();
+						} else if (type[1].equals(GlobalConstants.INTERNAL)) {
+							species.unsetAnnotation();
+						}
+					}
 					return type[1];
 				}
 			}

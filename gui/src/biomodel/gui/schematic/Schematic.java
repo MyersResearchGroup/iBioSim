@@ -502,12 +502,15 @@ public class Schematic extends JPanel implements ActionListener {
 				else 
 					gcm.setEnclosingCompartment("");
 			} else {
-				check.setSelected(false);
-				
-				JOptionPane.showMessageDialog(Gui.frame, 
+				if (!check.isSelected()) {
+					gcm.setEnclosingCompartment("");
+				} else { 
+					check.setSelected(false);
+					JOptionPane.showMessageDialog(Gui.frame, 
 						"A GCM cannot become a compartment with input and output species present.\n" +
 						"Diffusible species should be used to transport species across a compartment membrane.",
 						"Warning", JOptionPane.WARNING_MESSAGE);
+				}
 			}
 			/*
 			if (check.isSelected()) {
