@@ -10,6 +10,8 @@ import java.util.prefs.Preferences;
 
 import javax.swing.*;
 
+import org.sbml.libsbml.Model;
+
 
 import analysis.dynamicsim.DynamicGillespie;
 import analysis.dynamicsim.Simulator;
@@ -19,6 +21,7 @@ import analysis.markov.PerfromSteadyStateMarkovAnalysisThread;
 import analysis.markov.PerfromTransientMarkovAnalysisThread;
 import analysis.markov.StateGraph;
 import biomodel.gui.ModelEditor;
+import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.parser.BioModel;
 
 
@@ -495,6 +498,15 @@ public class Run implements ActionListener {
 				if (!lpnProperty.equals("")) {
 					prop = lpnProperty;
 				}
+				if (prop == null) {
+					Model m = gcm.getSBMLDocument().getModel();
+					for (int num = 0; num < m.getNumConstraints(); num ++) {
+						String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
+						if (constraint.contains("PG") || constraint.contains("PF") || constraint.contains("PU")) {
+							prop = constraint;
+						}
+					}
+				}
 				MutableString mutProp = new MutableString(prop);
 				LhpnFile lpnFile = gcm.convertToLHPN(specs, conLevel, mutProp);
 				prop = mutProp.getString();
@@ -600,6 +612,15 @@ public class Run implements ActionListener {
 							String prop = null;
 							if (!lpnProperty.equals("")) {
 								prop = lpnProperty;
+							}
+							if (prop == null) {
+								Model m = gcm.getSBMLDocument().getModel();
+								for (int num = 0; num < m.getNumConstraints(); num ++) {
+									String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
+									if (constraint.contains("PG") || constraint.contains("PF") || constraint.contains("PU")) {
+										prop = constraint;
+									}
+								}
 							}
 							MutableString mutProp = new MutableString(prop);
 							LhpnFile lpnFile = gcm.convertToLHPN(specs, conLevel, mutProp);
@@ -728,6 +749,15 @@ public class Run implements ActionListener {
 							if (!lpnProperty.equals("")) {
 								prop = lpnProperty;
 							}
+							if (prop == null) {
+								Model m = gcm.getSBMLDocument().getModel();
+								for (int num = 0; num < m.getNumConstraints(); num ++) {
+									String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
+									if (constraint.contains("PG") || constraint.contains("PF") || constraint.contains("PU")) {
+										prop = constraint;
+									}
+								}
+							}
 							MutableString mutProp = new MutableString(prop);
 							LhpnFile lhpnFile = gcm.convertToLHPN(specs, conLevel, mutProp);
 							prop = mutProp.getString();
@@ -820,6 +850,15 @@ public class Run implements ActionListener {
 							time1 = System.nanoTime();
 							if (!lpnProperty.equals("")) {
 								prop = lpnProperty;
+							}
+							if (prop == null) {
+								Model m = gcm.getSBMLDocument().getModel();
+								for (int num = 0; num < m.getNumConstraints(); num ++) {
+									String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
+									if (constraint.contains("PG") || constraint.contains("PF") || constraint.contains("PU")) {
+										prop = constraint;
+									}
+								}
 							}
 							MutableString mutProp = new MutableString(prop);
 							lhpnFile = gcm.convertToLHPN(specs, conLevel, mutProp);
