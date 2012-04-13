@@ -498,13 +498,21 @@ public class Run implements ActionListener {
 				if (!lpnProperty.equals("")) {
 					prop = lpnProperty;
 				}
+				ArrayList<String> propList = new ArrayList<String>();
 				if (prop == null) {
 					Model m = gcm.getSBMLDocument().getModel();
-					for (int num = 0; num < m.getNumConstraints(); num ++) {
+					for (int num = 0; num < m.getNumConstraints(); num++) {
 						String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
-						if (constraint.contains("PG") || constraint.contains("PF") || constraint.contains("PU")) {
-							prop = constraint;
+						if (constraint.startsWith("G") || constraint.startsWith("F") || constraint.startsWith("U")) {
+							propList.add(constraint);
 						}
+					}
+				}
+				if (propList.size() > 0) {
+					String s = (String) JOptionPane.showInputDialog(component, "Select a property:",
+							"Property Selection", JOptionPane.PLAIN_MESSAGE, null, propList.toArray(), null);
+					if ((s != null) && (s.length() > 0)) {
+						prop = s;
 					}
 				}
 				MutableString mutProp = new MutableString(prop);
@@ -613,13 +621,21 @@ public class Run implements ActionListener {
 							if (!lpnProperty.equals("")) {
 								prop = lpnProperty;
 							}
+							ArrayList<String> propList = new ArrayList<String>();
 							if (prop == null) {
 								Model m = gcm.getSBMLDocument().getModel();
-								for (int num = 0; num < m.getNumConstraints(); num ++) {
+								for (int num = 0; num < m.getNumConstraints(); num++) {
 									String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
-									if (constraint.contains("PG") || constraint.contains("PF") || constraint.contains("PU")) {
-										prop = constraint;
+									if (constraint.startsWith("G") || constraint.startsWith("F") || constraint.startsWith("U")) {
+										propList.add(constraint);
 									}
+								}
+							}
+							if (propList.size() > 0) {
+								String s = (String) JOptionPane.showInputDialog(component, "Select a property:",
+										"Property Selection", JOptionPane.PLAIN_MESSAGE, null, propList.toArray(), null);
+								if ((s != null) && (s.length() > 0)) {
+									prop = s;
 								}
 							}
 							MutableString mutProp = new MutableString(prop);
@@ -749,13 +765,21 @@ public class Run implements ActionListener {
 							if (!lpnProperty.equals("")) {
 								prop = lpnProperty;
 							}
+							ArrayList<String> propList = new ArrayList<String>();
 							if (prop == null) {
 								Model m = gcm.getSBMLDocument().getModel();
-								for (int num = 0; num < m.getNumConstraints(); num ++) {
+								for (int num = 0; num < m.getNumConstraints(); num++) {
 									String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
-									if (constraint.contains("PG") || constraint.contains("PF") || constraint.contains("PU")) {
-										prop = constraint;
+									if (constraint.startsWith("G") || constraint.startsWith("F") || constraint.startsWith("U")) {
+										propList.add(constraint);
 									}
+								}
+							}
+							if (propList.size() > 0) {
+								String s = (String) JOptionPane.showInputDialog(component, "Select a property:",
+										"Property Selection", JOptionPane.PLAIN_MESSAGE, null, propList.toArray(), null);
+								if ((s != null) && (s.length() > 0)) {
+									prop = s;
 								}
 							}
 							MutableString mutProp = new MutableString(prop);
@@ -851,13 +875,21 @@ public class Run implements ActionListener {
 							if (!lpnProperty.equals("")) {
 								prop = lpnProperty;
 							}
+							ArrayList<String> propList = new ArrayList<String>();
 							if (prop == null) {
 								Model m = gcm.getSBMLDocument().getModel();
-								for (int num = 0; num < m.getNumConstraints(); num ++) {
+								for (int num = 0; num < m.getNumConstraints(); num++) {
 									String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
-									if (constraint.contains("PG") || constraint.contains("PF") || constraint.contains("PU")) {
-										prop = constraint;
+									if (constraint.startsWith("G") || constraint.startsWith("F") || constraint.startsWith("U")) {
+										propList.add(constraint);
 									}
+								}
+							}
+							if (propList.size() > 0) {
+								String s = (String) JOptionPane.showInputDialog(component, "Select a property:",
+										"Property Selection", JOptionPane.PLAIN_MESSAGE, null, propList.toArray(), null);
+								if ((s != null) && (s.length() > 0)) {
+									prop = s;
 								}
 							}
 							MutableString mutProp = new MutableString(prop);
