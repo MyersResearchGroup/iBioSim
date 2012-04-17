@@ -51,14 +51,13 @@ public class SBOLAssociationPanel extends JPanel {
 	private void loadComponentIDs(HashSet<String> sbolFiles) {
 		uriToID = new HashMap<String, String>();
 		for (String filePath : sbolFiles) {
-			org.sbolstandard.core.Collection lib = SBOLUtility.loadXML(filePath);
-			if (lib != null) 
-				if (lib.getComponents() != null)
-					for (DnaComponent dnac : lib.getComponents()) 
-						if (dnac.getDisplayId() != null && !dnac.getDisplayId().equals(""))
-							uriToID.put(dnac.getURI().toString(), dnac.getDisplayId());
-						else
-							uriToID.put(dnac.getURI().toString(), "unidentified");	
+			SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
+			if (sbolDoc != null)
+				for (DnaComponent dnac : SBOLUtility.loadDNAComponents(sbolDoc)) 
+					if (dnac.getDisplayId() != null && !dnac.getDisplayId().equals(""))
+						uriToID.put(dnac.getURI().toString(), dnac.getDisplayId());
+					else
+						uriToID.put(dnac.getURI().toString(), "unidentified");	
 		}
 	}
 	

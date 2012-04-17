@@ -38,6 +38,9 @@ import org.sbml.libsbml.Rule;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.Submodel;
+import org.sbolstandard.core.DnaComponent;
+import org.sbolstandard.core.SBOLDocument;
+import org.sbolstandard.core.SBOLFactory;
 
 import analysis.ConstraintTermThread;
 import analysis.AnalysisView;
@@ -67,6 +70,7 @@ import biomodel.util.GlobalConstants;
 import biomodel.util.Utility;
 
 import sbol.SBOLSynthesizer;
+import sbol.SBOLUtility;
 
 /**
  * This is the GCM2SBMLEditor class. It takes in a gcm file and allows the user
@@ -470,10 +474,29 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			else {
 				lastFilePath = new File(biosimrc.get("biosim.general.export_dir", ""));
 			}
-			String targetFilePath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export DNA Component", -1);
+			int option;
+			String targetFilePath = "";
+			do {
+				option = JOptionPane.YES_OPTION;
+				targetFilePath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export SBOL", -1);
+				if (!targetFilePath.equals("") && new File(targetFilePath).exists()) {
+						String targetFileId = targetFilePath.substring(targetFilePath.lastIndexOf(File.separator) + 1);
+						String[] options = { "Replace", "Cancel" };
+						option = JOptionPane.showOptionDialog(Gui.frame, "A file named " + targetFileId + " already exists. Do you want to replace it?",
+								"Export SBOL", JOptionPane.YES_NO_OPTION,
+								JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+						if (option != JOptionPane.YES_OPTION)
+							lastFilePath = new File(targetFilePath);
+				} 
+			} while (option == JOptionPane.NO_OPTION);
 			if (!targetFilePath.equals("")) {
 				biosimrc.put("biosim.general.export_dir", targetFilePath);
-				synthesizer.exportSbol(targetFilePath);
+				DnaComponent synthComp = synthesizer.synthesizeDnaComponent();
+				if (synthComp != null) {
+					SBOLDocument sbolDoc = SBOLFactory.createDocument();
+					sbolDoc.addContent(synthComp);
+					SBOLUtility.exportSBOLDocument(targetFilePath, sbolDoc);
+				}
 			}
 		}
 	}

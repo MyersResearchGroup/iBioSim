@@ -74,20 +74,22 @@ public class SBOLField extends JPanel implements ActionListener {
 	public boolean isValidText() {
 		if (sbolText.getText().equals(""))
 			return true;
+		else if (sbolType.equals(GlobalConstants.SBOL_DNA_COMPONENT))
+			return true;
 		else {
 			String sourceCompURI = sbolText.getText();
 			for (String filePath : gcmEditor.getSbolFiles()) {
-				Collection lib = SBOLUtility.loadXML(filePath);
-				for (DnaComponent dnac : lib.getComponents())
-					if (sourceCompURI.equals(dnac.getURI().toString())) {
-						for (URI uri : dnac.getTypes())
-							if (sbolType.equals(GlobalConstants.SBOL_DNA_COMPONENT) || 
-									SBOLUtility.typeConverter(sbolType).contains(uri.getFragment()))
-								return true;
-						Utility.createErrorMessage("Invalid GCM to SBOL Association", "DNA component with URI " + sourceCompURI
-								+ " is not a " + sbolLabel.getText() + ".");
-						return false;
-					}
+				SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
+				if (sbolDoc != null)
+					for (DnaComponent dnac : SBOLUtility.loadDNAComponents(sbolDoc)) 
+						if (sourceCompURI.equals(dnac.getURI().toString())) {
+							for (URI uri : dnac.getTypes())
+								if (SBOLUtility.soSynonyms(sbolType).contains(uri.toString()))
+									return true;
+							Utility.createErrorMessage("Invalid GCM to SBOL Association", "DNA component with URI " + sourceCompURI
+									+ " is not a " + sbolLabel.getText() + ".");
+							return false;
+						}
 			}
 			Utility.createErrorMessage("DNA Component Not Found", "Component with URI " + sourceCompURI 
 					+ " is not found in project SBOL files.");
@@ -98,7 +100,7 @@ public class SBOLField extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("associateSBOL")) {
 			HashSet<String> sbolFiles = gcmEditor.getSbolFiles();
-			SBOLAssociationPanel associationPanel = new SBOLAssociationPanel(sbolFiles, sbolURIs, SBOLUtility.typeConverter(sbolType));
+			SBOLAssociationPanel associationPanel = new SBOLAssociationPanel(sbolFiles, sbolURIs, SBOLUtility.soSynonyms(sbolType));
 			sbolURIs = associationPanel.getCompURIs();
 			//			SBOLBrowser browser = new SBOLBrowser(sbolFiles, SBOLUtility.typeConverter(sbolType), sbolText.getText());
 //			sbolText.setText(browser.getSelection());
@@ -111,7 +113,7 @@ public class SBOLField extends JPanel implements ActionListener {
 				sbolLabel = new JLabel("SBOL DNA Component");
 			else
 				sbolLabel = new JLabel("SBOL DNA Component: ");
-		} else if (sbolType.equals(GlobalConstants.SBOL_ORF))
+		} else if (sbolType.equals(GlobalConstants.SBOL_CDS))
 			sbolLabel = new JLabel("SBOL Coding Sequence");
 		else if (sbolType.equals(GlobalConstants.SBOL_PROMOTER))
 			sbolLabel = new JLabel("SBOL Promoter");

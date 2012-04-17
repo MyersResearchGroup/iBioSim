@@ -720,16 +720,16 @@ public class BioModel {
 			species.setAnnotation(GlobalConstants.TYPE + "=" + GlobalConstants.INTERNAL);
 		}*/
 		if (property.containsKey(GlobalConstants.SBOL_RBS) &&
-				property.containsKey(GlobalConstants.SBOL_ORF)) {
+				property.containsKey(GlobalConstants.SBOL_CDS)) {
 			species.appendAnnotation("," + GlobalConstants.SBOL_RBS + "=" + 
 				property.getProperty(GlobalConstants.SBOL_RBS) + "," + 
-				GlobalConstants.SBOL_ORF + "=" + property.getProperty(GlobalConstants.SBOL_ORF));
+				GlobalConstants.SBOL_CDS + "=" + property.getProperty(GlobalConstants.SBOL_CDS));
 		} else if (property.containsKey(GlobalConstants.SBOL_RBS)) {
 			species.appendAnnotation("," + GlobalConstants.SBOL_RBS + "=" + 
 					property.getProperty(GlobalConstants.SBOL_RBS));
-		} else if (property.containsKey(GlobalConstants.SBOL_ORF)) {
-			species.appendAnnotation("," + GlobalConstants.SBOL_ORF + "=" + 
-					property.getProperty(GlobalConstants.SBOL_ORF));
+		} else if (property.containsKey(GlobalConstants.SBOL_CDS)) {
+			species.appendAnnotation("," + GlobalConstants.SBOL_CDS + "=" + 
+					property.getProperty(GlobalConstants.SBOL_CDS));
 		}
 		double kd = -1;
 		if (property.containsKey(GlobalConstants.KDECAY_STRING)) {

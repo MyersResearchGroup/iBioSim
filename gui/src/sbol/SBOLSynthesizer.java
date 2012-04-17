@@ -3,6 +3,7 @@ package sbol;
 
 import java.awt.GridLayout;
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Calendar;
@@ -11,8 +12,10 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.Collection;
+import java.util.prefs.Preferences;
 
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -21,7 +24,8 @@ import javax.swing.JTextField;
 import main.Gui;
 
 import org.sbolstandard.core.*;
-import org.sbolstandard.xml.*;
+import org.sbolstandard.core.impl.*;
+import org.sbolstandard.core.util.SequenceOntology;
 
 //import biomodel.network.Promoter;
 //import biomodel.network.SpeciesInterface;
@@ -31,19 +35,16 @@ import biomodel.util.Utility;
 
 public class SBOLSynthesizer {
 	
-//	private HashMap<String, Promoter> promoters;
 	private Collection<SynthesisNode> synNodes;
 	private HashSet<String> sbolFiles;
 	private HashMap<String, DnaComponent> compMap;
 	private HashSet<String> targetURISet;
 	private HashSet<String> sourceCompURISet;
-	private CollectionImpl targetLib;
+	private SBOLDocument targetDoc;
 	private boolean synthesizerOn;
 	private String time;
 	
-//	public SbolSynthesizer(HashMap<String, Promoter> promoters) {
 	public SBOLSynthesizer(Collection<SynthesisNode> synNodes) {
-//		this.promoters = promoters;
 		this.synNodes = synNodes;
 	}
 	
@@ -52,9 +53,9 @@ public class SBOLSynthesizer {
 		compMap = new HashMap<String, DnaComponent>();
 		for (String filePath : sbolFiles) {
 			this.sbolFiles.add(filePath.substring(filePath.lastIndexOf(File.separator) + 1));
-			org.sbolstandard.core.Collection lib = SBOLUtility.loadXML(filePath);
-			if (lib != null) 
-				for (DnaComponent dnac : lib.getComponents())
+			SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
+			if (sbolDoc != null) 
+				for (DnaComponent dnac : SBOLUtility.loadDNAComponents(sbolDoc))
 					if (dnac.getDisplayId() != null)
 						compMap.put(dnac.getURI().toString(), dnac);
 			else
@@ -69,50 +70,36 @@ public class SBOLSynthesizer {
 	}	
 	
 	public void saveSbol(String targetPath) {
-		setTime();
-		Object[] targets = sbolFiles.toArray();
-		synthesizeDnaComponent(targetPath, targets);
+//		Object[] targets = sbolFiles.toArray();
+//		synthesizeDnaComponent(targetPath, targets);
 	}
 	
-	public void exportSbol(String targetFilePath) {
-		setTime();
-		String targetFileId = targetFilePath.substring(targetFilePath.lastIndexOf(File.separator) + 1);
-		String targetPath = targetFilePath.substring(0, targetFilePath.lastIndexOf(File.separator));
-		Object[] targets = new Object[1];
-		targets[0] = targetFileId;
-		if (!new File(targetFilePath).exists()) {
-			CollectionImpl exportLib = new CollectionImpl();
-			exportLib.setDisplayId(targetFileId.substring(0, targetFileId.indexOf(".")));
-			try {
-				exportLib.setURI(new URI("http://www.async.ece.utah.edu#col" + time));
-			} catch (URISyntaxException e) {
-				e.printStackTrace();
-			}
-			SBOLUtility.exportLibrary(targetFilePath, exportLib);
-		}
-		synthesizeDnaComponent(targetPath, targets);
-	}
+//	public void exportSbol() {
+		
+//		if (!new File(targetFilePath).exists()) {
+//			SBOLDocument sbolExportDoc = SBOLFactory.createDocument();
+//			SBOLUtility.exportSBOLDocument(targetFilePath, sbolExportDoc);
+//		}
+//		synthesizeDnaComponent(targetPath, targets);
+//	}
 	
-	private void synthesizeDnaComponent(String targetPath, Object[] targets) {	
+	public DnaComponent synthesizeDnaComponent() {	
+		setTime();
 		synthesizerOn = true;
 		// Get user input
-		String[] input = getUserInput(targetPath, targets);
+		String[] input = getUserInput();
 		if (synthesizerOn) {
 			// Create DNA component
-			String targetFileId = input[0];
+//			String targetFileId = input[0];
 			DnaComponent synthComp = new DnaComponentImpl();
 			DnaSequence compSeq = new DnaSequenceImpl();
 			compSeq.setNucleotides("");
 			synthComp.setDnaSequence(compSeq);
-			synthComp.setDisplayId(input[1]);
-			synthComp.setName(input[2]);
-			synthComp.setDescription(input[3]);
+			synthComp.setDisplayId(input[0]);
+			synthComp.setName(input[1]);
+			synthComp.setDescription(input[2]);
 			// Set component type
-			try {
-				synthComp.addType(new URI("http://sbols.org/sbol.owl#SO_0000804"));
-			} catch (URISyntaxException e1) {
-				e1.printStackTrace();
-			}
+			synthComp.addType(SequenceOntology.type("SO_0000804"));
 			// Set component URI
 			try {
 				synthComp.setURI(new URI("http://www.async.ece.utah.edu#comp" + time));
@@ -138,28 +125,31 @@ public class SBOLSynthesizer {
 						addCount++;
 						position = addSubComponent(position, sourceCompURI, synthComp, addCount);
 					}
-				if (synthesizerOn) {
+				if (synthesizerOn) 
 					// Export DNA component
-					targetLib.addComponent(synthComp);
-					SBOLUtility.exportLibrary(targetPath + File.separator + targetFileId, targetLib);
-				}
+					return synthComp;
+//					targetDoc.addContent(synthComp);
+//					SBOLUtility.exportSBOLDocument(targetPath + File.separator + targetFileId, targetDoc);
+				
 			}
 		}
+		return null;
 	}
 	
-	private String[] getUserInput(String targetPath, Object[] targets) {
-		String[] input = new String[4];
+//	private String[] getUserInput(String targetPath, Object[] targets) {
+	private String[] getUserInput() {
+		String[] input = new String[3];
 		
 		JPanel inputPanel;
-		inputPanel = new JPanel(new GridLayout(4,2));
+		inputPanel = new JPanel(new GridLayout(3,2));
 		
-		JComboBox fileBox = new JComboBox(targets);
+//		JComboBox fileBox = new JComboBox(targets);
 		JTextField idText = new JTextField(20);
 		JTextField nameText = new JTextField(20);
 		JTextField descripText = new JTextField(20);
 
-		inputPanel.add(new JLabel("Save to File"));
-		inputPanel.add(fileBox);
+//		inputPanel.add(new JLabel("Save to File"));
+//		inputPanel.add(fileBox);
 		inputPanel.add(new JLabel("Display ID"));
 		inputPanel.add(idText);
 		inputPanel.add(new JLabel("Name"));
@@ -167,8 +157,8 @@ public class SBOLSynthesizer {
 		inputPanel.add(new JLabel("Description"));
 		inputPanel.add(descripText);
 
-		String targetFileId = "";
-		for (int i = 0; i < 4; i++)
+//		String targetFileId = "";
+		for (int i = 0; i < 3; i++)
 			input[i] = "";
 		String[] options = { "Ok", "Cancel" };
 		int option;
@@ -179,25 +169,28 @@ public class SBOLSynthesizer {
 			if (option != JOptionPane.YES_OPTION) {
 				break;
 			}
-			String userFileId = fileBox.getSelectedItem().toString();
-			if (!targetFileId.equals(userFileId)) {
-				targetFileId = userFileId;
-				targetLib = SBOLUtility.loadXML(targetPath + File.separator + targetFileId);
-				if (targetLib != null) {
-					targetURISet = new HashSet<String>();
-					for (DnaComponent dnac : targetLib.getComponents()) 
-						targetURISet.add(dnac.getURI().toString());
-				} else {
-					synthesizerOn = false;
-					break;
-				}
-			}
+//			String userFileId = fileBox.getSelectedItem().toString();
+//			if (!targetFileId.equals(userFileId)) {
+//				targetFileId = userFileId;
+//				targetDoc = SBOLUtility.loadSBOLFile(targetPath + File.separator + targetFileId);
+//				if (targetDoc != null) {
+//					targetURISet = new HashSet<String>();
+//					for (DnaComponent dnac : SBOLUtility.loadDNAComponents(targetDoc)) 
+//						targetURISet.add(dnac.getURI().toString());
+//				} 
+////				else
+////					targetDoc = SBOLFactory.createDocument();
+//				else {
+//					synthesizerOn = false;
+//					break;
+//				}
+//			}
 		} while (!isSourceIdValid(idText.getText()));
 		if (synthesizerOn && option == JOptionPane.YES_OPTION) {
-			input[0] = targetFileId;
-			input[1] = idText.getText();
-			input[2] = nameText.getText();
-			input[3] = descripText.getText();
+//			input[0] = targetFileId;
+			input[0] = idText.getText();
+			input[1] = nameText.getText();
+			input[2] = descripText.getText();
 		} else
 			synthesizerOn = false;
 		return input;
@@ -207,7 +200,7 @@ public class SBOLSynthesizer {
 	// Starts at synthesis nodes containing URIs for SBOL promoters
 	// Stops at nodes containing URIs for other promoters or previously visited nodes
 	private LinkedList<String> loadSourceCompURIs() {
-		Set<String> filter = SBOLUtility.typeConverter(GlobalConstants.SBOL_PROMOTER);
+		Set<String> filter = SBOLUtility.soSynonyms(GlobalConstants.SBOL_PROMOTER);
 		Set<SynthesisNode> promoterNodes = new HashSet<SynthesisNode>();
 		Set<String> promoterNodeIds = new HashSet<String>();
 		
@@ -217,7 +210,7 @@ public class SBOLSynthesizer {
 					if (compMap.containsKey(uri)) {
 						DnaComponent sourceComp = compMap.get(uri);
 						for (URI typeURI : sourceComp.getTypes())
-							if (filter.contains(typeURI.getFragment())) {
+							if (filter.contains(typeURI.toString())) {
 								promoterNodes.add(synNode);
 								promoterNodeIds.add(synNode.getId());
 							}
@@ -234,50 +227,6 @@ public class SBOLSynthesizer {
 			visitedNodeIds = new HashSet<String>(promoterNodeIds);
 			loadSourceCompURIsHelper(promoterNode, sourceCompURIs, visitedNodeIds);
 		}
-//		for (Promoter p : promoters.values()) {
-//			if (synthesizerOn) {
-//				String sbolPromoter = p.getSbolPromoter();
-//				if (sbolPromoter != null && !sbolPromoter.equals(""))
-//					sourceCompURIs.add(sbolPromoter);
-//				else {
-//					synthesizerOn = false;
-//					JOptionPane.showMessageDialog(Gui.frame, "Promoter " + p.getId() + " has no SBOL promoter assocation.",
-//							"Invalid GCM to SBOL Association", JOptionPane.ERROR_MESSAGE);
-//				}
-//				for (SpeciesInterface s : p.getOutputs()) {
-//					if (synthesizerOn) {
-//						String sbolRbs = s.getRBS();
-//						if (sbolRbs != null && !sbolRbs.equals(""))
-//							sourceCompURIs.add(sbolRbs);
-//						else {
-//							synthesizerOn = false;
-//							JOptionPane.showMessageDialog(Gui.frame, "Species " + s.getId() + " has no SBOL RBS assocation.",
-//									"Invalid GCM to SBOL Association", JOptionPane.ERROR_MESSAGE);
-//						}
-//					}
-//					if (synthesizerOn) {
-//						String sbolOrf = s.getORF();
-//						if (sbolOrf != null && !sbolOrf.equals(""))
-//							sourceCompURIs.add(sbolOrf);
-//						else {
-//							synthesizerOn = false;
-//							JOptionPane.showMessageDialog(Gui.frame, "Species " + s.getId() + " has no SBOL ORF assocation.",
-//									"Invalid GCM to SBOL Association", JOptionPane.ERROR_MESSAGE);
-//						}
-//					}
-//				}
-//				if (synthesizerOn) {
-//					String sbolTerminator = p.getTerminator();
-//					if (sbolTerminator != null && !sbolTerminator.equals(""))
-//						sourceCompURIs.add(sbolTerminator);
-//					else {
-//						synthesizerOn = false;
-//						JOptionPane.showMessageDialog(Gui.frame, "Promoter " + p.getId() + " has no SBOL terminator assocation.",
-//								"Invalid GCM to SBOL Association", JOptionPane.ERROR_MESSAGE);
-//					}
-//				}
-//			}
-//		}
 		return sourceCompURIs;
 	}
 	
@@ -301,8 +250,8 @@ public class SBOLSynthesizer {
 					"DNA Component Not Found", JOptionPane.ERROR_MESSAGE);
 		}
 		if (synthesizerOn) {
-			// Adds source component and all its subcomponents to target collection
-			addSubComponentHelper(sourceComp);
+			// Adds source component and all its subcomponents to target document
+//			addSubComponentHelper(sourceComp);
 			// Annotates newly synthesized DNA component with source component
 			if (sourceComp.getDnaSequence() != null && sourceComp.getDnaSequence().getNucleotides() != null 
 					&& sourceComp.getDnaSequence().getNucleotides().length() >= 1) {
@@ -310,7 +259,7 @@ public class SBOLSynthesizer {
 				annot.setBioStart(position);
 				position += sourceComp.getDnaSequence().getNucleotides().length() - 1;
 				annot.setBioEnd(position);
-				annot.setStrand("+");
+				annot.setStrand(StrandType.POSITIVE);
 				annot.setSubComponent(sourceComp);
 				synthComp.addAnnotation(annot);
 				position++;
@@ -330,16 +279,16 @@ public class SBOLSynthesizer {
 		return position;
 	}
 	
-	// Recursively adds DNA component and annotated subcomponents to the target collection
-	private void addSubComponentHelper(DnaComponent dnac) {
-		if (!targetURISet.contains(dnac.getURI().toString()))
-			targetLib.addComponent(dnac);
-		if (dnac.getAnnotations() != null) 
-			for (SequenceAnnotation sa : dnac.getAnnotations()) 
-				if (sa.getSubComponent() != null)
-					addSubComponentHelper(sa.getSubComponent());
-			
-	}
+	// Recursively adds DNA component and annotated subcomponents to the target document
+//	private void addSubComponentHelper(DnaComponent dnac) {
+//		if (!targetURISet.contains(dnac.getURI().toString()))
+//			targetDoc.addContent(dnac);
+//		if (dnac.getAnnotations() != null) 
+//			for (SequenceAnnotation sa : dnac.getAnnotations()) 
+//				if (sa.getSubComponent() != null)
+//					addSubComponentHelper(sa.getSubComponent());
+//			
+//	}
 	
 	private boolean isSourceIdValid(String sourceId) {
 		if (sourceId.equals("")) {
