@@ -12,6 +12,7 @@ import javax.swing.JOptionPane;
 import org.sbml.libsbml.Compartment;
 import org.sbml.libsbml.Constraint;
 //import org.sbml.libsbml.Delay;
+import org.sbml.libsbml.ASTNode;
 import org.sbml.libsbml.AssignmentRule;
 import org.sbml.libsbml.Event;
 import org.sbml.libsbml.EventAssignment;
@@ -972,6 +973,10 @@ public class Translator {
 			isHSF = true;
 		}		
 		return probprop;
+	}
+	
+	public static String convertProperty(ASTNode prop) {
+		return SBMLutilities.myFormulaToString(prop);
 	}
 	
 	// getProbpropParts extracts the expressions before and after the PU (after PG and PF)

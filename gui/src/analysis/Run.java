@@ -889,7 +889,13 @@ public class Run implements ActionListener {
 								String s = (String) JOptionPane.showInputDialog(component, "Select a property:",
 										"Property Selection", JOptionPane.PLAIN_MESSAGE, null, propList.toArray(), null);
 								if ((s != null) && (s.length() > 0)) {
-									prop = s;
+									Model m = gcm.getSBMLDocument().getModel();
+									for (int num = 0; num < m.getNumConstraints(); num++) {
+										String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
+										if (s.equals(constraint)) {
+											prop = Translator.convertProperty(m.getConstraint(num).getMath());
+										}
+									}
 								}
 							}
 							MutableString mutProp = new MutableString(prop);
