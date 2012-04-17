@@ -471,7 +471,7 @@ public class GCMParser {
 			String productMetaID = speciesMetaMap.get(sbmlReaction.getProduct(i).getSpecies());
 			synNode.addNextNode(synMap.get(productMetaID));
 		}
-		// Map global parameters to reactions in which they appear for later use in connecting synthesis nodes
+		// Map global parameters to reactions in which they appear
 		KineticLaw kl = sbmlReaction.getKineticLaw();
 		Set<String> localParams = new HashSet<String>();
 		for (long i = 0; i < kl.getNumParameters(); i++) {
@@ -600,6 +600,9 @@ public class GCMParser {
 		return buildTopLevelSbolSynthesizer(sbml);
 	}
 	
+	// Now uses meta IDs rather than plain IDs to build up synthesis node network 
+	// Done primarily because rules have plain IDs that match their output parameter
+	// This caused problems when connecting their synthesis nodes
 	public SBOLSynthesizer buildTopLevelSbolSynthesizer(SBMLDocument sbml) {
 		
 		synMap = new HashMap<String, SynthesisNode>(); // initialize map of model element IDs to synthesis nodes

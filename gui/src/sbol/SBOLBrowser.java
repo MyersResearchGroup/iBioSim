@@ -43,7 +43,7 @@ public class SBOLBrowser extends JPanel {
 		
 		constructBrowser(libURIs, libIds, libMap, compMap, annoMap, seqMap, new HashSet<String>());
 			
-		if (libMap.size() > 0) {
+//		if (libMap.size() > 0) {
 			JPanel browserPanel = new JPanel();
 			browserPanel.add(selectionPanel, "North");
 			browserPanel.add(viewScroll, "Center");
@@ -52,7 +52,7 @@ public class SBOLBrowser extends JPanel {
 			browserTab.add("SBOL Browser", browserPanel);
 			this.add(browserTab);
 			gui.addTab(filePath.substring(filePath.lastIndexOf(File.separator) + 1), this, null);
-		}
+//		}
 	}
 	
 	//Constructor when browsing RDF file subsets for SBOL to GCM association
@@ -70,7 +70,7 @@ public class SBOLBrowser extends JPanel {
 		
 		loadSbolFiles(sbolFiles, libURIs, libIds, libMap, compMap, annoMap, seqMap, "");
 		
-		if (libMap.size() > 0) {
+		if (compMap.size() > 0) {
 			constructBrowser(libURIs, libIds, libMap, compMap, annoMap, seqMap, filter);
 
 			this.add(selectionPanel);
@@ -80,7 +80,7 @@ public class SBOLBrowser extends JPanel {
 			while (display)
 				display = browserOpen();
 		} else {
-			JOptionPane.showMessageDialog(Gui.frame, "No SBOL files are found in project.", 
+			JOptionPane.showMessageDialog(Gui.frame, "No SBOL DNA components are found in project.", 
 					"File Not Found", JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -89,33 +89,33 @@ public class SBOLBrowser extends JPanel {
 			HashMap<String, org.sbolstandard.core.Collection> libMap, HashMap<String, DnaComponent> compMap, 
 			HashMap<String, SequenceAnnotation> annoMap, HashMap<String, DnaSequence> seqMap, String browsePath) {
 		for (String filePath : sbolFiles) {
-			org.sbolstandard.core.Collection lib = SBOLUtility.loadXML(filePath);
-			if (lib != null) {
-				if (lib.getDisplayId() != null && !lib.getDisplayId().equals("")) {
-					if ((browsePath.equals("") || browsePath.equals(filePath)) && !libURIs.contains(lib.getURI().toString())) {
-						libURIs.add(lib.getURI().toString());
-						libIds.add(lib.getDisplayId());
+			SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
+			if (sbolDoc != null) {
+				for (org.sbolstandard.core.Collection lib : SBOLUtility.loadCollections(sbolDoc))
+					if (lib.getDisplayId() != null && !lib.getDisplayId().equals("")) {
+						if ((browsePath.equals("") || browsePath.equals(filePath)) && !libURIs.contains(lib.getURI().toString())) {
+							libURIs.add(lib.getURI().toString());
+							libIds.add(lib.getDisplayId());
+						}
+						if (!libMap.containsKey(lib.getURI().toString()))
+							libMap.put(lib.getURI().toString(), lib);
 					}
-					if (!libMap.containsKey(lib.getURI().toString()))
-						libMap.put(lib.getURI().toString(), lib);
+				for (DnaComponent dnac : SBOLUtility.loadDNAComponents(sbolDoc)) {
+					if (dnac.getDisplayId() != null && !dnac.getDisplayId().equals("") 
+							&& !compMap.containsKey(dnac.getURI().toString()))
+						compMap.put(dnac.getURI().toString(), dnac);
+					if (dnac.getAnnotations() != null)
+						for (SequenceAnnotation sa : dnac.getAnnotations()) {
+							Integer start = Integer.valueOf(sa.getBioStart());
+							Integer end = Integer.valueOf(sa.getBioEnd());
+							if (start != null && end != null && !annoMap.containsKey(sa.getURI().toString()))
+								annoMap.put(sa.getURI().toString(), sa);
+						}
+					if (dnac.getDnaSequence() != null && dnac.getDnaSequence().getNucleotides() != null
+							&& !dnac.getDnaSequence().getNucleotides().equals("")
+							&& !seqMap.containsKey(dnac.getDnaSequence().getURI().toString()))
+						seqMap.put(dnac.getDnaSequence().getURI().toString(), dnac.getDnaSequence());
 				}
-				if (lib.getComponents() != null)
-					for (DnaComponent dnac : lib.getComponents()) {
-						if (dnac.getDisplayId() != null && !dnac.getDisplayId().equals("") 
-								&& !compMap.containsKey(dnac.getURI().toString()))
-							compMap.put(dnac.getURI().toString(), dnac);
-						if (dnac.getAnnotations() != null)
-							for (SequenceAnnotation sa : dnac.getAnnotations()) {
-								Integer start = Integer.valueOf(sa.getBioStart());
-								Integer end = Integer.valueOf(sa.getBioEnd());
-								if (start != null && end != null && !annoMap.containsKey(sa.getURI().toString()))
-									annoMap.put(sa.getURI().toString(), sa);
-							}
-						if (dnac.getDnaSequence() != null && dnac.getDnaSequence().getNucleotides() != null
-								&& !dnac.getDnaSequence().getNucleotides().equals("")
-								&& !seqMap.containsKey(dnac.getDnaSequence().getURI().toString()))
-							seqMap.put(dnac.getDnaSequence().getURI().toString(), dnac.getDnaSequence());
-					}
 			}
 		}
 	}

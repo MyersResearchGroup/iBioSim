@@ -89,12 +89,11 @@ public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 						viewArea.append(annotations + "\n");
 					} else 
 						viewArea.append("Annotations:  NA\n");
+					
 					viewArea.append("Types:  ");
 					String types = "";
-					for (URI uri : dnac.getTypes()) {
-//						if (!uri.getFragment().equals("SequenceFeature"))
-							types = types + uri.getFragment() + ", ";
-					}
+					for (URI uri : dnac.getTypes()) 
+						types = types + SBOLUtility.uriToSOTypeConverter(uri) + ", ";
 					if (types.length() > 0)
 						viewArea.append(types.substring(0, types.length() - 2) + "\n");
 					else
@@ -138,8 +137,8 @@ public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 				annotations = annotations + compMap.get(subComponent.getURI().toString()).getDisplayId();
 			else
 				annotations = annotations + "NA"; 
-			String sign = arraySA[k].getStrand();
-			annotations = annotations + " " + sign + arraySA[k].getBioStart() + " to " + sign + arraySA[k].getBioEnd() + ", "; 
+			String symbol = arraySA[k].getStrand().getSymbol();
+			annotations = annotations + " " + symbol + arraySA[k].getBioStart() + " to " + symbol + arraySA[k].getBioEnd() + ", "; 
 			
 		}
 		annotations = annotations.substring(0, annotations.length() - 2);

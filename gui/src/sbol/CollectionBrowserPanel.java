@@ -99,8 +99,8 @@ public class CollectionBrowserPanel extends JPanel implements MouseListener {
 					}
 				}
 		} else {  // Case when "all" is selected under Collections
-			for (String libURI : libURIs) 
-				for (DnaComponent dnac : libMap.get(libURI).getComponents()) 
+//			for (String libURI : libURIs) 
+				for (DnaComponent dnac : compMap.values()) 
 					if (!compURIs.contains(dnac.getURI().toString())) {
 						dnac = compMap.get(dnac.getURI().toString());
 						if (filter.size() == 0 || filterFeature(dnac, filter)) {
@@ -136,7 +136,7 @@ public class CollectionBrowserPanel extends JPanel implements MouseListener {
 	
 	private boolean filterFeature(DnaComponent dnac, Set<String> filter) {
  		for (URI uri : dnac.getTypes()) 
-			if (filter.contains(uri.getFragment()))
+			if (filter.contains(uri.toString()))
 				return true;
  		return false;
 	}
