@@ -187,20 +187,15 @@ public class SBMLutilities {
 						} else if (splitLaw[i].equals("bernoulli")) {
 							createFunction(model, "bernoulli", "Bernoulli distribution", "lambda(p,p)");
 						} else if (splitLaw[i].equals("PG")) {
-							createFunction(model, "G", "Globally Property", "lambda(t,x,or(not(t),x))");
-							createFunction(model, "PG", "Probabilistic Globally Property", "lambda(t,x,p,eq(G(t,x),p))");
+							createFunction(model, "PG", "Probabilistic Globally Property", "lambda(t,x,uniform(0,1))");
 						} else if (splitLaw[i].equals("G")) {
 							createFunction(model, "G", "Globally Property", "lambda(t,x,or(not(t),x))");
 						} else if (splitLaw[i].equals("PF")) {
-							createFunction(model, "F", "Eventually Property", "lambda(t,x,or(not(t),not(x)))");
-							createFunction(model, "PF", "Probabilistic Eventually Property", "lambda(t,x,p,eq(F(t,x),p))");
+							createFunction(model, "PF", "Probabilistic Eventually Property", "lambda(t,x,uniform(0,1))");
 						} else if (splitLaw[i].equals("F")) {
 							createFunction(model, "F", "Eventually Property", "lambda(t,x,or(not(t),not(x)))");
 						} else if (splitLaw[i].equals("PU")) {
-							createFunction(model, "G", "Globally Property", "lambda(t,x,or(not(t),x))");
-							createFunction(model, "F", "Eventually Property", "lambda(t,x,or(not(t),not(x)))");
-							createFunction(model, "U", "Until Property", "lambda(t,x,y,or(G(t,x),F(t,y)))");
-							createFunction(model, "PU", "Probabilistic Until Property", "lambda(t,x,y,p,eq(U(t,x,y),p))");
+							createFunction(model, "PU", "Probabilistic Until Property", "lambda(t,x,y,uniform(0,1))");
 						} else if (splitLaw[i].equals("U")) {
 							createFunction(model, "G", "Globally Property", "lambda(t,x,or(not(t),x))");
 							createFunction(model, "F", "Eventually Property", "lambda(t,x,or(not(t),not(x)))");

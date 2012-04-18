@@ -1274,11 +1274,14 @@ public class StateGraph implements Runnable {
 		private String transitionName;
 
 		private State state;
+		
+		private boolean enabled;
 
 		private StateTransitionPair(State state, double transition, String transitionName) {
 			this.state = state;
 			this.transition = transition;
 			this.transitionName = transitionName;
+			enabled = true;
 		}
 
 		private State getState() {
@@ -1291,6 +1294,14 @@ public class StateGraph implements Runnable {
 
 		private String getTransitionName() {
 			return transitionName;
+		}
+		
+		private boolean isEnabled() {
+			return enabled;
+		}
+		
+		private void setEnabled(boolean enabled) {
+			this.enabled = enabled;
 		}
 	}
 
