@@ -976,7 +976,155 @@ public class Translator {
 	}
 	
 	public static String convertProperty(ASTNode prop) {
-		return SBMLutilities.myFormulaToString(prop);
+		String property = "Pr=?{";
+		String operator = "";
+		if (prop.getName().equals("G")) {
+			operator += "PG";
+		}
+		else if (prop.getName().equals("F")) {
+			operator += "PF";
+		}
+		else if (prop.getName().equals("U")) {
+			operator += "PU";
+		}
+		ASTNode node = prop.getChild(0);
+		if (node.getName().equals("and")) {
+			String min = "";
+			String max = "";
+			ASTNode child;
+			for (int i = 0; i < node.getNumChildren(); i++) {
+				child = node.getChild(i);
+				if (child.getName().equals("lt")) {
+					if (child.getChild(0).isNumber()) {
+						max = SBMLutilities.myFormulaToString(child.getChild(0));
+					}
+					else if (child.getChild(1).isNumber()) {
+						min = SBMLutilities.myFormulaToString(child.getChild(1));
+					}
+				}
+				else if (child.getName().equals("leq")) {
+					if (child.getChild(0).isNumber()) {
+						max = SBMLutilities.myFormulaToString(child.getChild(0));
+					}
+					else if (child.getChild(1).isNumber()) {
+						min = SBMLutilities.myFormulaToString(child.getChild(1));
+					}
+				}
+				else if (child.getName().equals("gt")) {
+					if (child.getChild(0).isNumber()) {
+						min = SBMLutilities.myFormulaToString(child.getChild(0));
+					}
+					else if (child.getChild(1).isNumber()) {
+						max = SBMLutilities.myFormulaToString(child.getChild(1));
+					}
+				}
+				else if (child.getName().equals("geq")) {
+					if (child.getChild(0).isNumber()) {
+						min = SBMLutilities.myFormulaToString(child.getChild(0));
+					}
+					else if (child.getChild(1).isNumber()) {
+						max = SBMLutilities.myFormulaToString(child.getChild(1));
+					}
+				}
+			}
+			operator += "[" + min + "," + max + "]";
+		}
+		else if (node.getName().equals("lt")) {
+			if (node.getChild(0).isNumber()) {
+				operator += "[>" + SBMLutilities.myFormulaToString(node.getChild(0)) + "]";
+			}
+			else if (node.getChild(1).isNumber()) {
+				operator += "[<" + SBMLutilities.myFormulaToString(node.getChild(1)) + "]";
+			}
+		}
+		else if (node.getName().equals("leq")) {
+			if (node.getChild(0).isNumber()) {
+				operator += "[>=" + SBMLutilities.myFormulaToString(node.getChild(0)) + "]";
+			}
+			else if (node.getChild(1).isNumber()) {
+				operator += "[<=" + SBMLutilities.myFormulaToString(node.getChild(1)) + "]";
+			}
+		}
+		else if (node.getName().equals("gt")) {
+			if (node.getChild(0).isNumber()) {
+				operator += "[<" + SBMLutilities.myFormulaToString(node.getChild(0)) + "]";
+			}
+			else if (node.getChild(1).isNumber()) {
+				operator += "[>" + SBMLutilities.myFormulaToString(node.getChild(1)) + "]";
+			}
+		}
+		else if (node.getName().equals("geq")) {
+			if (node.getChild(0).isNumber()) {
+				operator += "[<=" + SBMLutilities.myFormulaToString(node.getChild(0)) + "]";
+			}
+			else if (node.getChild(1).isNumber()) {
+				operator += "[>=" + SBMLutilities.myFormulaToString(node.getChild(1)) + "]";
+			}
+		}
+		else if (node.getName().equals("eq")) {
+			if (node.getChild(0).isNumber()) {
+				operator += "[=" + SBMLutilities.myFormulaToString(node.getChild(0)) + "]";
+			}
+			else if (node.getChild(1).isNumber()) {
+				operator += "[=" + SBMLutilities.myFormulaToString(node.getChild(1)) + "]";
+			}
+		}
+		if (prop.getName().equals("G") || prop.getName().equals("F")) {
+			property += operator + convertHelper(prop.getChild(1));
+		}
+		else if (prop.getName().equals("U")) {
+			property += convertHelper(prop.getChild(1)) + operator + convertHelper(prop.getChild(2));
+		}
+		property += "}";
+		return property;
+	}
+
+	private static String convertHelper(ASTNode node) {
+		String convert = "";
+		if (node.getName() != null) {
+			if (node.getName().equals("and")) {
+				convert = "(" + convertHelper(node.getChild(0));
+				for (int i = 1; i < node.getNumChildren(); i++) {
+					convert += "&&" + convertHelper(node.getChild(i));
+				}
+				convert += ")";
+				return convert;
+			}
+			else if (node.getName().equals("or")) {
+				convert = "(" + convertHelper(node.getChild(0));
+				for (int i = 1; i < node.getNumChildren(); i++) {
+					convert += "||" + convertHelper(node.getChild(i));
+				}
+				convert += ")";
+				return convert;
+			}
+			else if (node.getName().equals("lt")) {
+				convert = "(" + convertHelper(node.getChild(0)) + "<" + convertHelper(node.getChild(1)) + ")";
+				return convert;
+			}
+			else if (node.getName().equals("leq")) {
+				convert = "(" + convertHelper(node.getChild(0)) + "<=" + convertHelper(node.getChild(1)) + ")";
+				return convert;
+			}
+			else if (node.getName().equals("gt")) {
+				convert = "(" + convertHelper(node.getChild(0)) + ">" + convertHelper(node.getChild(1)) + ")";
+				return convert;
+			}
+			else if (node.getName().equals("geq")) {
+				convert = "(" + convertHelper(node.getChild(0)) + ">=" + convertHelper(node.getChild(1)) + ")";
+				return convert;
+			}
+			else if (node.getName().equals("eq")) {
+				convert = "(" + convertHelper(node.getChild(0)) + "=" + convertHelper(node.getChild(1)) + ")";
+				return convert;
+			}
+			else {
+				return SBMLutilities.myFormulaToString(node);
+			}
+		}
+		else {
+			return SBMLutilities.myFormulaToString(node);
+		}
 	}
 	
 	// getProbpropParts extracts the expressions before and after the PU (after PG and PF)
