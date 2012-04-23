@@ -730,7 +730,9 @@ public class StateGraph implements Runnable {
 				State m = stateGraph.get(i);
 				double nextProb = m.getCurrentProb() * (1 - (m.getTransitionSum(0.0, null) / Gamma));
 				for (StateTransitionPair prev : m.getPrevStatesWithTrans()) {
-					nextProb += (prev.getState().getCurrentProb() * (prev.getTransition() / Gamma));
+					if (prev.isEnabled()) {
+						nextProb += (prev.getState().getCurrentProb() * (prev.getTransition() / Gamma));
+					}
 				}
 				m.setNextProb(nextProb * ((Gamma * timeLimit) / k));
 				m.setPiProb(m.getPiProb() + m.getNextProb());
@@ -789,18 +791,36 @@ public class StateGraph implements Runnable {
 			expr.intexpr_L(condition);
 			if (expr.evaluateExpr(m.getVariables()) == 1.0) {
 				for (State s : m.getNextStates()) {
-					ArrayList<StateTransitionPair> newTrans = new ArrayList<StateTransitionPair>();
+					//ArrayList<StateTransitionPair> newTrans = new ArrayList<StateTransitionPair>();
 					for (StateTransitionPair trans : s.getPrevStatesWithTrans()) {
-						if (trans.getState() != m) {
-							newTrans.add(trans);
+						if (trans.getState() == m) {
+							trans.setEnabled(false);
 						}
+						//if (trans.getState() != m) {
+						//	newTrans.add(trans);
+						//}
 					}
-					s.setPrevStatesWithTrans(newTrans.toArray(new StateTransitionPair[0]));
+					//s.setPrevStatesWithTrans(newTrans.toArray(new StateTransitionPair[0]));
 				}
-				m.setNextStatesWithTrans(new StateTransitionPair[0]);
+				for (StateTransitionPair trans : m.getNextStatesWithTrans()) {
+					trans.setEnabled(false);
+				}
+				//m.setNextStatesWithTrans(new StateTransitionPair[0]);
 			}
 			m.setTransitionSum(-1);
 			// }
+		}
+	}
+	
+	public void enableAllTransitions() {
+		for (State m : stateGraph) {
+			for (StateTransitionPair trans : m.getNextStatesWithTrans()) {
+				trans.setEnabled(true);
+			}
+			for (StateTransitionPair trans : m.getPrevStatesWithTrans()) {
+				trans.setEnabled(true);
+			}
+			m.setTransitionSum(-1);
 		}
 	}
 
@@ -830,44 +850,46 @@ public class StateGraph implements Runnable {
 							if (m.getColor() % period == step) {
 								double nextProb = 0.0;
 								for (StateTransitionPair prev : m.getPrevStatesWithTrans()) {
-									double transProb = 0.0;
-									transProb += prev.getTransition();
-									// if
-									// (lhpn.getTransitionRateTree(prev.getTransition())
-									// !=
-									// null) {
-									// if
-									// (lhpn.getTransitionRateTree(prev.getTransition())
-									// !=
-									// null) {
-									// if
-									// (!lhpn.isExpTransitionRateTree(prev
-									// .getTransition())
-									// &&
-									// lhpn.getDelayTree(prev.getTransition())
-									// .evaluateExpr(null) == 0) {
-									// transProb = 1.0;
-									// }
-									// else {
-									// transProb =
-									// lhpn.getTransitionRateTree(prev.getTransition()).evaluateExpr(
-									// prev.getState().getVariables());
-									// }
-									// }
-									// }
-									// else {
-									// transProb = 1.0;
-									// }
-									double transitionSum = prev.getState().getTransitionSum(1.0, m);
-									if (transitionSum != 0) {
-										transProb = (transProb / transitionSum);
-									}
-									else {
-										transProb = 0.0;
-									}
-									nextProb += (prev.getState().getCurrentProb() * transProb);
-									if (stop) {
-										return false;
+									if (prev.isEnabled()) {
+										double transProb = 0.0;
+										transProb += prev.getTransition();
+										// if
+										// (lhpn.getTransitionRateTree(prev.getTransition())
+										// !=
+										// null) {
+										// if
+										// (lhpn.getTransitionRateTree(prev.getTransition())
+										// !=
+										// null) {
+										// if
+										// (!lhpn.isExpTransitionRateTree(prev
+										// .getTransition())
+										// &&
+										// lhpn.getDelayTree(prev.getTransition())
+										// .evaluateExpr(null) == 0) {
+										// transProb = 1.0;
+										// }
+										// else {
+										// transProb =
+										// lhpn.getTransitionRateTree(prev.getTransition()).evaluateExpr(
+										// prev.getState().getVariables());
+										// }
+										// }
+										// }
+										// else {
+										// transProb = 1.0;
+										// }
+										double transitionSum = prev.getState().getTransitionSum(1.0, m);
+										if (transitionSum != 0) {
+											transProb = (transProb / transitionSum);
+										}
+										else {
+											transProb = 0.0;
+										}
+										nextProb += (prev.getState().getCurrentProb() * transProb);
+										if (stop) {
+											return false;
+										}
 									}
 								}
 								if (nextProb != 0.0) {
@@ -1201,8 +1223,10 @@ public class StateGraph implements Runnable {
 					 * System.out.println(lhpn.getTransitionRateTree(
 					 * next.getTransition ()).evaluateExpr(m.getVariables()));
 					 */
-					out.write(m.getID() + " -> " + next.getState().getID() + " [label=\"" + next.getTransitionName() + "\\n"
-							+ num.format(next.getTransition()) + "\"]\n");
+					if (next.isEnabled()) {
+						out.write(m.getID() + " -> " + next.getState().getID() + " [label=\""
+								+ next.getTransitionName() + "\\n" + num.format(next.getTransition()) + "\"]\n");
+					}
 					// if (lhpn.getTransitionRateTree(next.getTransition())
 					// != null) {
 					// out.write(m.getID()
@@ -1448,7 +1472,9 @@ public class StateGraph implements Runnable {
 			if (transitionSum == -1) {
 				transitionSum = 0;
 				for (StateTransitionPair next : nextStates) {
-					transitionSum += next.getTransition();
+					if (next.isEnabled()) {
+						transitionSum += next.getTransition();
+					}
 					// if (lhpn.getTransitionRateTree(next.getTransition()) !=
 					// null) {
 					// if
@@ -1487,17 +1513,21 @@ public class StateGraph implements Runnable {
 		public State[] getNextStates() {
 			ArrayList<State> next = new ArrayList<State>();
 			for (StateTransitionPair st : nextStates) {
-				next.add(st.getState());
+				if (st.isEnabled()) {
+					next.add(st.getState());
+				}
 			}
 			return next.toArray(new State[0]);
 		}
 
 		public State[] getPrevStates() {
-			ArrayList<State> next = new ArrayList<State>();
+			ArrayList<State> prev = new ArrayList<State>();
 			for (StateTransitionPair st : prevStates) {
-				next.add(st.getState());
+				if (st.isEnabled()) {
+					prev.add(st.getState());
+				}
 			}
-			return next.toArray(new State[0]);
+			return prev.toArray(new State[0]);
 		}
 
 		public int getColor() {
