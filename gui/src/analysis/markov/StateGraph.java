@@ -706,7 +706,7 @@ public class StateGraph implements Runnable {
 		String id = "Pr" + Math.abs(prop.hashCode());
 		if (!variables.contains(id)) {
 			variables.add(id);
-			lhpn.addContinuous(id);
+			lhpn.addInteger(id, id);
 		}
 		boolean globallyTrue = false;
 		if (prop.contains("PF")) {

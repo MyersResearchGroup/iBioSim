@@ -1069,6 +1069,9 @@ public class Translator {
 				operator += "[=" + SBMLutilities.myFormulaToString(node.getChild(1)) + "]";
 			}
 		}
+		else {
+			operator += "[0,inf]";
+		}
 		if (prop.getName().equals("G") || prop.getName().equals("F")) {
 			property += operator + convertHelper(prop.getChild(1));
 		}
@@ -1135,8 +1138,8 @@ public class Translator {
 				}
 				ASTNode node = op.getChild(0);
 				if (node.getName().equals("and")) {
-					String min = "";
-					String max = "";
+					String min = "0";
+					String max = "inf";
 					ASTNode child;
 					for (int i = 0; i < node.getNumChildren(); i++) {
 						child = node.getChild(i);
@@ -1214,6 +1217,9 @@ public class Translator {
 					else if (node.getChild(1).isNumber()) {
 						operator += "[=" + SBMLutilities.myFormulaToString(node.getChild(1)) + "]";
 					}
+				}
+				else {
+					operator += "[0,inf]";
 				}
 				if (op.getName().equals("PG") || op.getName().equals("PF")) {
 					return "Pr=?{" + operator + convertHelper(op.getChild(1)) + "}";
