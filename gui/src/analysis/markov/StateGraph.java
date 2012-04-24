@@ -703,7 +703,11 @@ public class StateGraph implements Runnable {
 			}
 		}
 		String[] condition = Translator.getProbpropParts(prop.substring(5, prop.length() - 1));
-		String id = "Pr" + prop.hashCode();
+		String id = "Pr" + Math.abs(prop.hashCode());
+		if (!variables.contains(id)) {
+			variables.add(id);
+			lhpn.addContinuous(id);
+		}
 		boolean globallyTrue = false;
 		if (prop.contains("PF")) {
 			condition[0] = "true";
