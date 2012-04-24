@@ -1359,11 +1359,15 @@ public class Translator {
 				}
 				if(PFFlag){
 					// Remove the outermost parentheses. At this point, probpropRight = (hsf)
-					probpropRight=probpropRight.substring(1,probpropRight.length()-1);
+					if (probpropRight.startsWith("(")) {
+						probpropRight=probpropRight.substring(1,probpropRight.length()-1);
+					}
 				}
 				if(PGFlag){
 					// Remove the outermost parentheses. At this point, probpropRight = (hsf)
-					probpropRight=probpropRight.substring(1,probpropRight.length()-1);
+					if (probpropRight.startsWith("(")) {
+						probpropRight=probpropRight.substring(1,probpropRight.length()-1);
+					}
 				}		
 			}
 			else { // isHSF = true	

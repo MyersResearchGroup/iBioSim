@@ -692,7 +692,7 @@ public class StateGraph implements Runnable {
 			}
 			if (braces == 1) {
 				if ((c == 'G' || c == 'F' || c == 'U') && property.charAt(i + 1) == '[') {
-					prop += 'P' + c;
+					prop += "P" + c;
 				}
 				else {
 					prop += c;
@@ -702,7 +702,7 @@ public class StateGraph implements Runnable {
 				prop += c;
 			}
 		}
-		String[] condition = Translator.getProbpropParts(prop);
+		String[] condition = Translator.getProbpropParts(prop.substring(5, prop.length() - 1));
 		String id = "Pr" + prop.hashCode();
 		boolean globallyTrue = false;
 		if (prop.contains("PF")) {
