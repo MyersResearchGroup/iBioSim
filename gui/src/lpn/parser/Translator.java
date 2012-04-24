@@ -960,12 +960,12 @@ public class Translator {
 			}
 			else if(property.startsWith("{")) { // shorthand version: Pr{Psi} and St{Psi}
 				property=property.substring(1);
-				property=property.replace("}", "");
+				property=property.substring(0,property.lastIndexOf('}')) + property.substring(property.lastIndexOf('}')+1);
 				probprop=property;
 			}
 			else if(property.startsWith("=") && property.contains("?")){ // full version: Pr=?{Psi} and St=?{Psi}
 				property=property.substring(3);
-				property=property.replace("}", "");
+				property=property.substring(0,property.lastIndexOf('}')) + property.substring(property.lastIndexOf('}')+1);
 				probprop=property;
 			}
 		}
