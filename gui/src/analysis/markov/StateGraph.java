@@ -327,7 +327,7 @@ public class StateGraph implements Runnable {
 				}
 			}
 			index++;
-			cond.substring(index);
+			cond = cond.substring(index);
 			String check = nest.substring(5, nest.length() - 1);
 			if (check.contains("Pr=?{")) {
 				nest = "Pr=?{" + removeNesting(error, timeStep, check) + "}";
