@@ -989,8 +989,8 @@ public class Translator {
 		}
 		ASTNode node = prop.getChild(0);
 		if (node.getName().equals("and")) {
-			String min = "";
-			String max = "";
+			String min = "0";
+			String max = "inf";
 			ASTNode child;
 			for (int i = 0; i < node.getNumChildren(); i++) {
 				child = node.getChild(i);
@@ -1285,6 +1285,16 @@ public class Translator {
 		boolean PUFlag = probprop.contains("PU");
 		boolean PFFlag = probprop.contains("PF");
 		boolean PGFlag = probprop.contains("PG");
+		String operator;
+		if (PUFlag) {
+			operator = "PU";
+		}
+		else if (PFFlag) {
+			operator = "PF";
+		}
+		else {
+			operator = "PG";
+		}
 		String probpropRight="";
 		String probpropLeft="";
 		String timeBound="";
@@ -1296,9 +1306,9 @@ public class Translator {
 			if (!probprop.equals("")){
 				// property should be in this format at this stage: probprop
 				// obtain the hsf AFTER bound
-				probpropRight= probprop.substring(probprop.indexOf("]")+1, probprop.length());			
+				probpropRight= probprop.substring(probprop.indexOf(operator)).substring(probprop.indexOf("]")+1, probprop.length());			
 				// obtain the time bound
-				timeBound= probprop.substring(probprop.indexOf("["), probprop.indexOf("]")+1);							 
+				timeBound= probprop.substring(probprop.indexOf(operator)).substring(probprop.indexOf("["), probprop.indexOf("]")+1);							 
 				// bound: [lower, upper]
 				if (timeBound.contains(",")){
 					relopType = "0";
@@ -1321,11 +1331,13 @@ public class Translator {
 				else if (timeBound.contains(">=")) {
 					relopType = "3";
 					lowerBound = timeBound.substring(timeBound.indexOf(">")+2, timeBound.indexOf("]"));
+					upperBound = "inf";
 				}
 				// bound: [>lower]
 				else if (timeBound.contains(">") && !timeBound.contains("=")){
 					relopType = "4";
 					lowerBound = timeBound.substring(timeBound.indexOf(">")+1, timeBound.indexOf("]"));
+					upperBound = "inf";
 				}
 				// bound: [=k] (k is treated as lowerBound)
 				else if (timeBound.contains("=") && !timeBound.contains("<") && !timeBound.contains(">")) {

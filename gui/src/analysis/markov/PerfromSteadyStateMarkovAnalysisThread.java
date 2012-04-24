@@ -23,6 +23,6 @@ public class PerfromSteadyStateMarkovAnalysisThread extends Thread {
 
 	@Override
 	public void run() {
-		sg.performSteadyStateMarkovianAnalysis(tolerance, conditions);
+		sg.performSteadyStateMarkovianAnalysis(tolerance, conditions, true);
 	}
 }
