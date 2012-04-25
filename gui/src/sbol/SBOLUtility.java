@@ -104,10 +104,18 @@ public class SBOLUtility {
 	
 	public static Set<DnaComponent> loadDNAComponents(SBOLDocument sbolDoc) {
 		HashSet<DnaComponent> dnacs = new HashSet<DnaComponent>();
-		for (SBOLRootObject sbolObj : sbolDoc.getContents()) 
-			if (sbolObj instanceof DnaComponent)
-				dnacs.add((DnaComponent) sbolObj);
+		for (SBOLRootObject sbolObj : sbolDoc.getContents()) // .getContents() only gets top-level components
+			if (sbolObj instanceof DnaComponent) {
+				loadDNAComponentsHelper(dnacs, (DnaComponent) sbolObj);
+			}
 		return dnacs;
+	}
+	
+	private static void loadDNAComponentsHelper(Set<DnaComponent> dnacs, DnaComponent dnac) {
+		dnacs.add(dnac);
+		for (SequenceAnnotation sa : dnac.getAnnotations()) {
+			loadDNAComponentsHelper(dnacs, sa.getSubComponent());
+		}
 	}
 	
 	public static Set<org.sbolstandard.core.Collection> loadCollections(SBOLDocument sbolDoc) {
