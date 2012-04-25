@@ -89,32 +89,34 @@ public class SBOLBrowser extends JPanel {
 			HashMap<String, org.sbolstandard.core.Collection> libMap, HashMap<String, DnaComponent> compMap, 
 			HashMap<String, SequenceAnnotation> annoMap, HashMap<String, DnaSequence> seqMap, String browsePath) {
 		for (String filePath : sbolFiles) {
-			SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
-			if (sbolDoc != null) {
-				for (org.sbolstandard.core.Collection lib : SBOLUtility.loadCollections(sbolDoc))
-					if (lib.getDisplayId() != null && !lib.getDisplayId().equals("")) {
-						if ((browsePath.equals("") || browsePath.equals(filePath)) && !libURIs.contains(lib.getURI().toString())) {
-							libURIs.add(lib.getURI().toString());
-							libIds.add(lib.getDisplayId());
+			if (browsePath.equals("") || browsePath.equals(filePath)) {
+				SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
+				if (sbolDoc != null) {
+					for (org.sbolstandard.core.Collection lib : SBOLUtility.loadCollections(sbolDoc))
+						if (lib.getDisplayId() != null && !lib.getDisplayId().equals("")) {
+							if (!libURIs.contains(lib.getURI().toString())) {
+								libURIs.add(lib.getURI().toString());
+								libIds.add(lib.getDisplayId());
+							}
+							if (!libMap.containsKey(lib.getURI().toString()))
+								libMap.put(lib.getURI().toString(), lib);
 						}
-						if (!libMap.containsKey(lib.getURI().toString()))
-							libMap.put(lib.getURI().toString(), lib);
+					for (DnaComponent dnac : SBOLUtility.loadDNAComponents(sbolDoc)) {
+						if (dnac.getDisplayId() != null && !dnac.getDisplayId().equals("") 
+								&& !compMap.containsKey(dnac.getURI().toString()))
+							compMap.put(dnac.getURI().toString(), dnac);
+						if (dnac.getAnnotations() != null)
+							for (SequenceAnnotation sa : dnac.getAnnotations()) {
+								Integer start = Integer.valueOf(sa.getBioStart());
+								Integer end = Integer.valueOf(sa.getBioEnd());
+								if (start != null && end != null && !annoMap.containsKey(sa.getURI().toString()))
+									annoMap.put(sa.getURI().toString(), sa);
+							}
+						if (dnac.getDnaSequence() != null && dnac.getDnaSequence().getNucleotides() != null
+								&& !dnac.getDnaSequence().getNucleotides().equals("")
+								&& !seqMap.containsKey(dnac.getDnaSequence().getURI().toString()))
+							seqMap.put(dnac.getDnaSequence().getURI().toString(), dnac.getDnaSequence());
 					}
-				for (DnaComponent dnac : SBOLUtility.loadDNAComponents(sbolDoc)) {
-					if (dnac.getDisplayId() != null && !dnac.getDisplayId().equals("") 
-							&& !compMap.containsKey(dnac.getURI().toString()))
-						compMap.put(dnac.getURI().toString(), dnac);
-					if (dnac.getAnnotations() != null)
-						for (SequenceAnnotation sa : dnac.getAnnotations()) {
-							Integer start = Integer.valueOf(sa.getBioStart());
-							Integer end = Integer.valueOf(sa.getBioEnd());
-							if (start != null && end != null && !annoMap.containsKey(sa.getURI().toString()))
-								annoMap.put(sa.getURI().toString(), sa);
-						}
-					if (dnac.getDnaSequence() != null && dnac.getDnaSequence().getNucleotides() != null
-							&& !dnac.getDnaSequence().getNucleotides().equals("")
-							&& !seqMap.containsKey(dnac.getDnaSequence().getURI().toString()))
-						seqMap.put(dnac.getDnaSequence().getURI().toString(), dnac.getDnaSequence());
 				}
 			}
 		}
