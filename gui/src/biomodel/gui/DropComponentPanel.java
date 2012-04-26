@@ -271,7 +271,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		BioModel compGCMFile = new BioModel(gcm.getPath());
 		compGCMFile.load(gcm.getPath() + File.separator + component);
 		
-		return gcm.addComponent(null, component, compGCMFile.IsWithinCompartment(), row, col, 
+		return gcm.addComponent(null, component, compGCMFile.IsWithinCompartment(), compGCMFile.getCompartmentPorts(), row, col, 
 				col * (width + padding) + padding, row * (height + padding) + padding);
 	}
 	
@@ -423,7 +423,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 					properties.setProperty("compartment","false");
 				}
 				
-				String id = gcm.addComponent(null, comp, compGCM.IsWithinCompartment(), -1, -1, 
+				String id = gcm.addComponent(null, comp, compGCM.IsWithinCompartment(), compGCM.getCompartmentPorts(), -1, -1, 
 						col * separationX + topleftX, row * separationY + topleftY);
 			}
 		}

@@ -15,6 +15,9 @@ import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.sbml.libsbml.Compartment;
+import org.sbml.libsbml.Port;
+
 import biomodel.util.GlobalConstants;
 
 
@@ -304,6 +307,7 @@ public class GCM2SBML {
 			Properties properties = new Properties();
 			while (propMatcher.find()) {
 				String prop = CompatibilityFixer.convertOLDName(checkCompabilityLoad(propMatcher.group(1)));
+				prop = prop.replace(" ","");
 				if (propMatcher.group(3) != null) {
 					properties.setProperty(prop, propMatcher.group(3));
 					if (propMatcher.group(1).equalsIgnoreCase(GlobalConstants.PROMOTER)
@@ -978,7 +982,17 @@ public class GCM2SBML {
 				} 
 			}
 			if (isWithinCompartment) {
-				gcm.setEnclosingCompartment(enclosingCompartment);
+				//gcm.setIsWithinCompartment(true);
+				//gcm.setDefaultCompartment(enclosingCompartment);
+			} else {
+				//gcm.setIsWithinCompartment(false);
+				//gcm.setDefaultCompartment("");
+				for (long j = 0; j < gcm.getSBMLDocument().getModel().getNumCompartments(); j++) {
+					Compartment compartment = gcm.getSBMLDocument().getModel().getCompartment(j);
+					Port port = gcm.getSBMLCompModel().createPort();
+					port.setId(GlobalConstants.COMPARTMENT+"__"+compartment.getId());
+					port.setIdRef(compartment.getId());
+				}
 			}
 			gcm.createLayout();
 			for (String s : species.keySet()) {
@@ -1083,9 +1097,9 @@ public class GCM2SBML {
 	
 	//private Grid grid = null;
 	
-	private boolean isWithinCompartment;
+	private boolean isWithinCompartment = false;
 	
-	private String enclosingCompartment;
+	private String enclosingCompartment = "";
 	
 	//private String path;
 	

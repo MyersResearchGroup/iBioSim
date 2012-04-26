@@ -47,7 +47,7 @@ public class GCMParser {
 	private String separator;
 
 	public GCMParser(String filename) {
-		//this(filename, false);
+		this(filename, false);
 	}
 
 	public GCMParser(String filename, boolean debug) {
@@ -88,7 +88,7 @@ public class GCMParser {
 	}
 
 	public GeneticNetwork buildNetwork() {
-		SBMLDocument sbml = gcm.flattenGCM();		
+		SBMLDocument sbml = gcm.flattenModel();		
 		if (sbml == null) return null;
 		return buildTopLevelNetwork(sbml);
 	}
@@ -149,10 +149,12 @@ public class GCMParser {
 		promoterList.put(promoter.getId(), p);
 		p.setInitialAmount(promoter.getInitialAmount());
 		String component = "";
+		String promoterId = promoter.getId();
 		if (promoter.getId().contains("__")) {
 			component = promoter.getId().substring(0,promoter.getId().lastIndexOf("__")+2);
+			promoterId = promoterId.substring(promoterId.lastIndexOf("__")+2);
 		}
-		Reaction production = sbml.getModel().getReaction(component+"Production_"+promoter.getId());
+		Reaction production = sbml.getModel().getReaction(component+"Production_"+promoterId);
 		if (production != null) {
 			if (production.getKineticLaw().getLocalParameter(GlobalConstants.ACTIVATED_STRING) != null) {
 				p.setKact(production.getKineticLaw().getLocalParameter(GlobalConstants.ACTIVATED_STRING).getValue());
@@ -277,13 +279,15 @@ public class GCMParser {
 		SpeciesInterface speciesIF = null;
 
 		String component = "";
+		String speciesId = species.getId();
 		if (species.getId().contains("__")) {
 			component = species.getId().substring(0,species.getId().lastIndexOf("__")+2);
+			speciesId = speciesId.substring(speciesId.lastIndexOf("__")+2);
 		}
-		Reaction degradation = sbml.getModel().getReaction(component+"Degradation_"+species.getId());
-		Reaction diffusion = sbml.getModel().getReaction(component+"MembraneDiffusion_"+species.getId());
-		Reaction constitutive = sbml.getModel().getReaction(component+"Constitutive_"+species.getId());
-		Reaction complex = sbml.getModel().getReaction(component+"Complex_"+species.getId());
+		Reaction degradation = sbml.getModel().getReaction(component+"Degradation_"+speciesId);
+		Reaction diffusion = sbml.getModel().getReaction(component+"MembraneDiffusion_"+speciesId);
+		Reaction constitutive = sbml.getModel().getReaction(component+"Constitutive_"+speciesId);
+		Reaction complex = sbml.getModel().getReaction(component+"Complex_"+speciesId);
 		
 		/*if (property.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.CONSTANT)) {
 			speciesIF = new ConstantSpecies();
@@ -436,12 +440,14 @@ public class GCMParser {
 		synMap.put(synNode.getId(), synNode);
 		// Determine if promoter belongs to a component
 		String component = "";
+		String promoterId = sbmlPromoter.getId();
 		if (sbmlPromoter.getId().contains("__")) {
 			component = sbmlPromoter.getId().substring(0, sbmlPromoter.getId().lastIndexOf("__")+2);
+			promoterId = promoterId.substring(promoterId.lastIndexOf("__")+2);
 		}
 		// Connect synthesis node for promoter to synthesis nodes for its products
 		// Remove promoter production reaction from sbml
-		Reaction production = sbmlModel.getModel().getReaction(component + "Production_" + sbmlPromoter.getId());
+		Reaction production = sbmlModel.getModel().getReaction(component + "Production_" + promoterId);
 		if (production != null) {
 			for (long i = 0; i < production.getNumProducts(); i++) {
 				String productMetaID = speciesMetaMap.get(production.getProduct(i).getSpecies());
@@ -543,24 +549,26 @@ public class GCMParser {
 		synMap.put(synNode.getId(), synNode);
 		// Determine if species belongs to a gcm component
 		String component = "";
+		String speciesId = sbmlSpecies.getId();
 		if (sbmlSpecies.getId().contains("__")) {
 			component = sbmlSpecies.getId().substring(0, sbmlSpecies.getId().lastIndexOf("__") + 2);
+			speciesId = speciesId.substring(speciesId.lastIndexOf("__")+2);
 		}
 		// Remove species degradation reaction from sbml
-		Reaction degradation = sbmlModel.getReaction(component + "Degradation_" + sbmlSpecies.getId());
+		Reaction degradation = sbmlModel.getReaction(component + "Degradation_" + speciesId);
 		if (degradation != null)
 			sbmlModel.removeReaction(degradation.getId());
 		// Remove species diffusion reaction from sbml
-		Reaction diffusion = sbmlModel.getReaction(component + "MembraneDiffusion_" + sbmlSpecies.getId());
+		Reaction diffusion = sbmlModel.getReaction(component + "MembraneDiffusion_" + speciesId);
 		if (diffusion != null)
 			sbmlModel.removeReaction(diffusion.getId());
 		// Remove species constitutive production reaction from sbml
-		Reaction constitutive = sbmlModel.getReaction(component + "Constitutive_" + sbmlSpecies.getId());
+		Reaction constitutive = sbmlModel.getReaction(component + "Constitutive_" + speciesId);
 		if (constitutive != null)
 			sbmlModel.removeReaction(constitutive.getId());
 		// Build complex map for use in connecting synthesis nodes
 		// Remove species complex formation reaction from sbml
-		Reaction complexFormation = sbmlModel.getReaction(component + "Complex_" + sbmlSpecies.getId());
+		Reaction complexFormation = sbmlModel.getReaction(component + "Complex_" + speciesId);
 		if (complexFormation != null) {
 			for (long i = 0; i < complexFormation.getNumReactants(); i++) {
 				Influence infl = new Influence();		
@@ -595,7 +603,7 @@ public class GCMParser {
 	}
 	
 	public SBOLSynthesizer buildSbolSynthesizer() {
-		SBMLDocument sbml = gcm.flattenGCM();		
+		SBMLDocument sbml = gcm.flattenModel();		
 		if (sbml == null) return null;
 		return buildTopLevelSbolSynthesizer(sbml);
 	}

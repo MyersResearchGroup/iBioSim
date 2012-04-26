@@ -159,7 +159,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			if (!constitutive.isSetAnnotation() || !constitutive.getAnnotationString().contains("Constitutive")) constitutive = null;
 		}
 		degradation = gcm.getDegradationReaction(selected);
-		complex = model.getReaction("Complex_"+selected);
+		complex = gcm.getComplexReaction(selected);
 		if (complex != null) {
 			if (!complex.isSetAnnotation() || !complex.getAnnotationString().contains("Complex")) complex = null;
 		}

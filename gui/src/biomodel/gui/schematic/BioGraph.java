@@ -17,6 +17,7 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
+import org.sbml.libsbml.CompModelPlugin;
 import org.sbml.libsbml.CompartmentGlyph;
 import org.sbml.libsbml.Layout;
 import org.sbml.libsbml.Model;
@@ -213,18 +214,33 @@ public class BioGraph extends mxGraph {
 		}
 
 		// add all components
-		for (long i = 0; i < layout.getNumCompartmentGlyphs(); i++) {
+		if (gcm.isGridEnabled()) {
+			for (long i = 0; i < layout.getNumCompartmentGlyphs(); i++) {
+				
+				String comp = layout.getCompartmentGlyph(i).getId();
+				
+				//these are not meant to be displayed
+				//if (comp.contains("GRID__"))
+				//	continue;
+				
+				if (createGraphComponentFromModel(comp))
+					needsPositioning = true;
+			}
+		} else {
+			CompModelPlugin sbmlCompModel = gcm.getSBMLCompModel();
+			for (long i = 0; i < sbmlCompModel.getNumSubmodels(); i++) {
 			
-			String comp = layout.getCompartmentGlyph(i).getId();
+				String comp = sbmlCompModel.getSubmodel(i).getId();
 			
-			//String comp = gcm.getSBMLCompModel().getSubmodel(i).getId();
+				//String comp = gcm.getSBMLCompModel().getSubmodel(i).getId();
 			
-			//these are not meant to be displayed
-			if (comp.contains("GRID__"))
-				continue;
-			
-			if (createGraphComponentFromModel(comp))
-				needsPositioning = true;
+				//these are not meant to be displayed
+				//if (comp.contains("GRID__"))
+				//	continue;
+
+				if (createGraphComponentFromModel(comp))
+					needsPositioning = true;
+			}
 		}
 		
 		// add all the drawn promoters
@@ -254,7 +270,7 @@ public class BioGraph extends mxGraph {
 					cell.setStyle(style);
 				}
 			} else if (BioModel.isProductionReaction(r)) {
-				String promoterId = r.getId().substring(r.getId().indexOf("_")+1);
+				String promoterId = r.getId().replace("Production_","");
 				if (gcm.isPromoterExplicit(promoterId)) {
 					for (int j = 0; j < r.getNumProducts(); j++) {
 						if (r.getProduct(j).getSpecies().endsWith("_mRNA")) continue;
@@ -611,7 +627,7 @@ public class BioGraph extends mxGraph {
 					edgeHash.get(key).add(cell);
 				}
 			} else if (BioModel.isProductionReaction(r)) {
-				String promoterId = r.getId().substring(r.getId().indexOf("_")+1);
+				String promoterId = r.getId().replace("Production_","");
 				if (!gcm.isPromoterExplicit(promoterId)) {
 					for (int j = 0; j < r.getNumModifiers(); j++) {
 						for (int k = 0; k < r.getNumProducts(); k++) {

@@ -209,7 +209,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			}
 			 */
 		}
-		modelPanel.setModelId(newName);
 		//GCMNameTextField.setText(newName);
 	}
 	
@@ -296,6 +295,14 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	public boolean isDirty() {
 		return dirty.booleanValue();
 	}
+
+	public MutableBoolean getDirty() {
+		return dirty;
+	}
+
+	public boolean isParamsOnly() {
+		return paramsOnly;
+	}
 	
 	public void setDirty(boolean dirty) {
 		this.dirty.setValue(dirty);
@@ -350,7 +357,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 
 		// Write out species and influences to a gcm file
-		gcm.getSBMLDocument().getModel().setName(modelPanel.getModelName());
+		//gcm.getSBMLDocument().getModel().setName(modelPanel.getModelName());
 		gcm.save(path + separator + gcmname + ".gcm");
 		//log.addText("Saving GCM file:\n" + path + separator + gcmname + ".gcm\n");
 		log.addText("Saving SBML file:\n" + path + separator + gcm.getSBMLFile() + "\n");
@@ -513,7 +520,24 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		String exportPath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export " + "SBML", -1);
 		if (!exportPath.equals("")) {
 			biosimrc.put("biosim.general.export_dir",exportPath);
-			GCMParser parser = new GCMParser(path + separator + gcmname + ".gcm");
+			gcm.exportSingleFile(exportPath);
+			log.addText("Saving GCM file as SBML file:\n" + exportPath + "\n");
+		}
+	}
+	
+	public void exportFlatSBML() {
+		File lastFilePath;
+		Preferences biosimrc = Preferences.userRoot();
+		if (biosimrc.get("biosim.general.export_dir", "").equals("")) {
+			lastFilePath = null;
+		}
+		else {
+			lastFilePath = new File(biosimrc.get("biosim.general.export_dir", ""));
+		}
+		String exportPath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export " + "SBML", -1);
+		if (!exportPath.equals("")) {
+			biosimrc.put("biosim.general.export_dir",exportPath);
+			GCMParser parser = new GCMParser(path + separator + gcmname + ".xml");
 			GeneticNetwork network = null;
 			network = parser.buildNetwork();
 			if (network==null) return;
@@ -833,7 +857,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 							}
 						}
 					} else if (prop.equals(GlobalConstants.KCOMPLEX_STRING)) {
-						Reaction reaction = gcm.getSBMLDocument().getModel().getReaction("Complex_"+id);
+						Reaction reaction = gcm.getComplexReaction(id);
 						if (reaction != null) {
 							LocalParameter kc_f = reaction.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING);
 							if (kc_f == null) {
@@ -884,7 +908,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 							}
 						}
 					} else if (prop.equals(GlobalConstants.RNAP_BINDING_STRING)) {
-						Reaction reaction = gcm.getSBMLDocument().getModel().getReaction("Production_"+id);
+						Reaction reaction = gcm.getProductionReaction(id);
 						if (reaction != null) {
 							LocalParameter ko_f = reaction.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING);
 							if (ko_f == null) {
@@ -905,7 +929,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 							}
 						}
 					} else if (prop.equals(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING)) {
-						Reaction reaction = gcm.getSBMLDocument().getModel().getReaction("Production_"+id);
+						Reaction reaction = gcm.getProductionReaction(id);
 						if (reaction != null) {
 							LocalParameter kao_f = reaction.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING);
 							if (kao_f == null) {
@@ -926,7 +950,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 							}
 						}
 					} else if (prop.equals(GlobalConstants.OCR_STRING)) {
-						Reaction reaction = gcm.getSBMLDocument().getModel().getReaction("Production_"+id);
+						Reaction reaction = gcm.getProductionReaction(id);
 						if (reaction != null) {
 							LocalParameter ko = reaction.getKineticLaw().getLocalParameter(GlobalConstants.OCR_STRING);
 							if (ko == null) {
@@ -940,7 +964,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 							}
 						}
 					} else if (prop.equals(GlobalConstants.KBASAL_STRING)) {
-						Reaction reaction = gcm.getSBMLDocument().getModel().getReaction("Production_"+id);
+						Reaction reaction = gcm.getProductionReaction(id);
 						if (reaction != null) {
 							LocalParameter kb = reaction.getKineticLaw().getLocalParameter(GlobalConstants.KBASAL_STRING);
 							if (kb == null) {
@@ -954,7 +978,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 							}
 						}
 					} else if (prop.equals(GlobalConstants.ACTIVATED_STRING)) {
-						Reaction reaction = gcm.getSBMLDocument().getModel().getReaction("Production_"+id);
+						Reaction reaction = gcm.getProductionReaction(id);
 						if (reaction != null) {
 							LocalParameter ka = reaction.getKineticLaw().getLocalParameter(GlobalConstants.ACTIVATED_STRING);
 							if (ka == null) {
@@ -968,7 +992,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 							}
 						}
 					} else if (prop.equals(GlobalConstants.STOICHIOMETRY_STRING)) {
-						Reaction reaction = gcm.getSBMLDocument().getModel().getReaction("Production_"+id);
+						Reaction reaction = gcm.getProductionReaction(id);
 						if (reaction != null) {
 							LocalParameter np = reaction.getKineticLaw().getLocalParameter(GlobalConstants.STOICHIOMETRY_STRING);
 							if (np == null) {
@@ -1008,7 +1032,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 						}
 						Reaction reaction = null;
 						if (complexId==null) {
-							reaction = gcm.getSBMLDocument().getModel().getReaction("Production_"+promoterId);
+							reaction = gcm.getProductionReaction(promoterId);
 							if (reaction != null) {
 								LocalParameter nc = null;
 								if (id.contains("|")) {
@@ -1033,7 +1057,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 								}
 							}
 						} else {
-							reaction = gcm.getSBMLDocument().getModel().getReaction("Complex_"+complexId);
+							reaction = gcm.getComplexReaction(complexId);
 							if (reaction != null) {
 								LocalParameter nc = null;
 								nc = reaction.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + sourceId); 
@@ -1058,7 +1082,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 						}
 						sourceId = id.substring(0,id.indexOf("-"));
 						Reaction reaction = null;
-						reaction = gcm.getSBMLDocument().getModel().getReaction("Production_"+promoterId);
+						reaction = gcm.getProductionReaction(promoterId);
 						if (reaction != null) {
 							LocalParameter ka_f = reaction.getKineticLaw()
 									.getLocalParameter(GlobalConstants.FORWARD_KACT_STRING.replace("_","_" + sourceId + "_")); 
@@ -1090,7 +1114,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 						}
 						sourceId = id.substring(0,id.indexOf("-"));
 						Reaction reaction = null;
-						reaction = gcm.getSBMLDocument().getModel().getReaction("Production_"+promoterId);
+						reaction = gcm.getProductionReaction(promoterId);
 						if (reaction != null) {
 							LocalParameter kr_f = reaction.getKineticLaw()
 									.getLocalParameter(GlobalConstants.FORWARD_KREP_STRING.replace("_","_" + sourceId + "_")); 
@@ -1405,7 +1429,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		//reloadFiles();
 		
 		// create the modelview2 (jgraph) panel
-		modelPanel = new ModelPanel(gcm,dirty,paramsOnly);
 		
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		mainPanel.setLayout(new BorderLayout());
@@ -1427,7 +1450,10 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		parametersPanel = new Parameters(biosim, gcm,usedIDs,dirty, paramsOnly,getParams,path + separator + file,parameterChanges);
 		
 		JPanel compPanel = new JPanel(new BorderLayout());
-		compPanel.add(modelPanel, "North");
+		if (textBased) {
+			modelPanel = new ModelPanel(gcm,dirty,paramsOnly);
+			compPanel.add(modelPanel, "North");
+		}
 		compPanel.add(compartmentPanel,"Center");
 
 		gcm.setSpeciesPanel(speciesPanel);
@@ -2232,8 +2258,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			}
 		}
 		if (comp != null && !comp.equals("")) {
-			BioModel getSpecs = new BioModel(path);
-			getSpecs.load(path + separator + comp);
+			BioModel subBioModel = new BioModel(path);
+			subBioModel.load(path + separator + comp);
 			String oldPort = null;
 			if (selected != null) {
 				oldPort = selected.substring(selected.split(" ")[0].length()
@@ -2241,8 +2267,10 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				selected = selected.split(" ")[0];
 			}
 
-			ArrayList<String> in = getSpecs.getInputSpecies();
-			ArrayList<String> out = getSpecs.getOutputSpecies();
+			ArrayList<String> compartments = subBioModel.getCompartmentPorts();
+			ArrayList<String> inputs = subBioModel.getInputSpecies();
+			ArrayList<String> outputs = subBioModel.getOutputSpecies();
+			/*
 			String[] inputs = in.toArray(new String[0]);
 			String[] outputs = out.toArray(new String[0]);
 			int i, j;
@@ -2265,18 +2293,31 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				}
 				outputs[j] = index;
 			}
-			
+			*/
 			if(createUsingDefaults){
 				// TODO: Is this correct?
-				outID = gcm.addComponent(null, comp, false, -1, -1, 0, 0);
+				outID = gcm.addComponent(null, comp, false, null, -1, -1, 0, 0);
 			}else{
-				new ComponentsPanel(selected, list, influences, gcm,
-						inputs, outputs, comp, oldPort, paramsOnly, this);
+				new ComponentsPanel(selected, list, gcm, inputs, outputs, compartments, comp, oldPort, paramsOnly, this);
 				outID = selected;
 			}
 
 		}
 		return outID;
+	}
+	
+	public void undo() {
+		gcm.undo();
+		schematic.refresh();
+		this.refresh();
+		this.setDirty(true);		
+	}
+	
+	public void redo() {
+		gcm.redo();
+		schematic.refresh();
+		this.refresh();
+		this.setDirty(true);		
 	}
 	
 	public void setElementsPanel(ElementsPanel elementsPanel) {

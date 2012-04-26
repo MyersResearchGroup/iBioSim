@@ -600,45 +600,26 @@ public class SBMLutilities {
 	public static void fillBlankMetaIDs (SBMLDocument document) {
 		int metaIDIndex = 1;
 		Model model = document.getModel();
-		Set<String> usedMetaIDs = createUsedMetaIDSet(document);
 		for (int i = 0; i < model.getNumSpecies(); i++) 
-			metaIDIndex = setDefaultMetaID(model.getSpecies(i), usedMetaIDs, metaIDIndex);
+			metaIDIndex = setDefaultMetaID(document, model.getSpecies(i), metaIDIndex);
 		for (int i = 0; i < model.getNumReactions(); i++) 
-			metaIDIndex = setDefaultMetaID(model.getReaction(i), usedMetaIDs, metaIDIndex);
+			metaIDIndex = setDefaultMetaID(document, model.getReaction(i), metaIDIndex);
 		for (int i = 0; i < model.getSBMLDocument().getModel().getNumRules(); i++) 
-			metaIDIndex = setDefaultMetaID(model.getRule(i), usedMetaIDs, metaIDIndex);
-		
+			metaIDIndex = setDefaultMetaID(document, model.getRule(i), metaIDIndex);
 	}
 	
-	public static int setDefaultMetaID(SBase sbmlObject, Set<String> usedMetaIDs, int metaIDIndex) {
+	public static int setDefaultMetaID(SBMLDocument document, SBase sbmlObject, int metaIDIndex) {
 		String metaID = sbmlObject.getMetaId();
 		if (metaID == null || metaID.equals("")) {
 			metaID = "iBioSim" + metaIDIndex;
-			while (usedMetaIDs.contains(metaID)) {
+			while (document.getElementByMetaId(metaID)!=null) {
 				metaIDIndex++;
 				metaID = "iBioSim" + metaIDIndex;
 			}
 			sbmlObject.setMetaId(metaID);
-			usedMetaIDs.add(metaID);
 			metaIDIndex++;
 		}
 		return metaIDIndex;
-	}
-	
-	public static Set<String> createUsedMetaIDSet(SBMLDocument document) {
-		Set<String> usedMetaIDs = new HashSet<String>();
-		Model model = document.getModel();
-		for (int i = 0; i < model.getNumSpecies(); i++) {
-			String metaID = model.getSpecies(i).getMetaId();
-			if (metaID != null && !metaID.equals(""))
-				usedMetaIDs.add(model.getSpecies(i).getMetaId());
-		}
-		for (int i = 0; i < model.getNumReactions(); i++) {
-			String metaID = model.getReaction(i).getMetaId();
-			if (metaID != null && !metaID.equals(""))
-				usedMetaIDs.add(model.getReaction(i).getMetaId());
-		}
-		return usedMetaIDs;
 	}
 	
 	public static ArrayList<String> CreateListOfUsedIDs(SBMLDocument document) {
@@ -1310,7 +1291,9 @@ public class SBMLutilities {
 					}
 				}
 			}
-			reaction.getKineticLaw().setMath(SBMLutilities.updateMathVar(reaction.getKineticLaw().getMath(), origId, newId));
+			if (reaction.isSetKineticLaw()) {
+				reaction.getKineticLaw().setMath(SBMLutilities.updateMathVar(reaction.getKineticLaw().getMath(), origId, newId));
+			}
 		}
 		if (document.getLevel() > 2) {
 			if (model.isSetConversionFactor() && origId.equals(model.getConversionFactor())) {

@@ -34,12 +34,10 @@ public class InfluencePanel extends JPanel implements ActionListener {
 	public InfluencePanel(String selection, PropertyList list, BioModel gcm, boolean paramsOnly, BioModel refGCM, ModelEditor gcmEditor) {
 		super(new GridLayout(5, 1));
 		this.selection = selection;
-		this.list = list;
 		this.gcm = gcm;
 		this.paramsOnly = paramsOnly;
 		this.gcmEditor = gcmEditor;
 		this.promoterNameChange = false;
-		this.promoterSetToNone = false;
 
 		fields = new HashMap<String, PropertyField>();
 
@@ -102,6 +100,10 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				promoterButton.setEnabled(false);
 			}
 		}
+		//System.out.println("selection=" + selection);
+		//System.out.println("regulator=" + regulator);
+		//System.out.println("product=" + product);
+		//System.out.println("promotorId=" + promoterId);
 		promoterBox.addActionListener(this);
 		tempPanel.setLayout(new GridLayout(1, 3));
 		tempPanel.add(tempLabel);
@@ -133,22 +135,21 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		//((DefaultComboBoxModel) (typeBox.getModel())).removeElement(types[4]);
 		production = null;
 		if (promoterId != null) {
-			production = gcm.getSBMLDocument().getModel().getReaction("Production_"+promoterId);
-			type = production.getModifier(regulator).getAnnotationString().replace("<annotation>","").replace("</annotation>","");
-			if (selection.contains("-|")) {
+			production = gcm.getProductionReaction(promoterId);
+			ModifierSpeciesReference modifier = production.getModifier(regulator);
+			if (BioModel.isRepressor(modifier)) {
 				typeBox.setSelectedItem(GlobalConstants.REPRESSION);
-			} else if (selection.contains("->")) {
+			} else if (BioModel.isActivator(modifier)) {
 				typeBox.setSelectedItem(GlobalConstants.ACTIVATION);
 			} else if (selection.contains("x>")) {
 				typeBox.setSelectedItem(GlobalConstants.NOINFLUENCE);
 			}
-			if (type.equals(GlobalConstants.REGULATION)) typeBox.setEnabled(false);
+			if (BioModel.isRegulator(modifier)) typeBox.setEnabled(false);
 			else if (!paramsOnly) typeBox.setEnabled(true);
 		} else {
-			production = gcm.getSBMLDocument().getModel().getReaction("Complex_"+product);
+			production = gcm.getComplexReaction(product);
 			typeBox.setSelectedItem(GlobalConstants.COMPLEX);
 			typeBox.setEnabled(false);
-			type = GlobalConstants.COMPLEX;
 		}
 		
 		// coop
@@ -339,7 +340,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				//production.removeModifier(regulator);
 				//gcm.createProductionKineticLaw(production);
 				gcm.removeInfluence(selection);
-				production = gcm.getSBMLDocument().getModel().getReaction("Production_"+promoterBox.getSelectedItem());
+				production = gcm.getProductionReaction(""+promoterBox.getSelectedItem());
 				SpeciesReference productSpecies = production.getProduct(product);
 				if (productSpecies==null) {
 					productSpecies = production.createProduct();
@@ -632,14 +633,11 @@ public class InfluencePanel extends JPanel implements ActionListener {
 	private JComboBox promoterBox = null;
 	private JComboBox typeBox = null;
 	private JButton promoterButton;
-	private PropertyList list = null;
 	private boolean paramsOnly;
 	private boolean promoterNameChange;
-	private boolean promoterSetToNone;
 	private ModelEditor gcmEditor = null;
 	private String promoterId = null;
 	private String regulator = null;
 	private String product = null;
-	private String type = null;
 	private Reaction production = null;
 }
