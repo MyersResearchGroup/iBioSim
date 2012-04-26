@@ -1723,14 +1723,6 @@ public class BioModel {
 		writer.writeSBML(sbml, filename.replace(".gcm",".xml"));
 	}
 
-	public void saveNoReplacements(String filename) {
-		//gcm2sbml.convertGCM2SBML(filename);
-		//updateCompartmentReplacements();
-		setGridSize(grid.getNumRows(),grid.getNumCols());
-		SBMLWriter writer = new SBMLWriter();
-		writer.writeSBML(sbml, filename.replace(".gcm",".xml"));
-	}
-
 	public StringBuffer saveToBuffer() {
 		setGridSize(grid.getNumRows(),grid.getNumCols());
 		SBMLWriter writer = new SBMLWriter();
