@@ -437,8 +437,9 @@ public class GeneticNetwork {
 			for (int submodelIndex = 0; submodelIndex < properties.getSBMLCompModel().getNumSubmodels(); ++submodelIndex) {
 				
 				SBMLReader sbmlReader = new SBMLReader();
-				Model submodel = sbmlReader.readSBMLFromFile(properties.getPath() + 
-						properties.getSBMLCompModel().getSubmodel(submodelIndex).getModelRef() + ".xml").getModel();
+				String extModel = properties.getSBMLComp().getExternalModelDefinition(properties.getSBMLCompModel().
+						getSubmodel(submodelIndex).getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
+				Model submodel = sbmlReader.readSBMLFromFile(properties.getPath() + extModel).getModel();
 				
 				if (submodel.getReaction(reactionID) != null)
 					validSubmodels.add(submodel.getId());				
@@ -500,8 +501,9 @@ public class GeneticNetwork {
 		++submodelIndex) {
 			
 			SBMLReader sbmlReader = new SBMLReader();
-			Model submodel = sbmlReader.readSBMLFromFile(properties.getPath() + 
-					properties.getSBMLCompModel().getSubmodel(submodelIndex).getModelRef() + ".xml").getModel();
+			String extModel = properties.getSBMLComp().getExternalModelDefinition(properties.getSBMLCompModel().
+					getSubmodel(submodelIndex).getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
+			Model submodel = sbmlReader.readSBMLFromFile(properties.getPath() + extModel).getModel();
 			
 			//find all individual dynamic events (within submodels)
 			for (int i = 0; i < submodel.getNumEvents(); ++i) {

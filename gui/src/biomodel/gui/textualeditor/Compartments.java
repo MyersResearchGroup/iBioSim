@@ -12,6 +12,7 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -32,12 +33,14 @@ import org.sbml.libsbml.InitialAssignment;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.Parameter;
+import org.sbml.libsbml.Port;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.UnitDefinition;
 
 import biomodel.parser.BioModel;
+import biomodel.util.GlobalConstants;
 
 
 /**
@@ -81,6 +84,8 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 	private Rules rulesPanel;
 	
 	private JComboBox compartmentList;
+	
+	private JCheckBox onPort;
 	
 	private Gui biosim;
 
@@ -177,18 +182,18 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		JPanel compPanel;
 		if (paramsOnly) {
 			if (gcm.getSBMLDocument().getLevel() < 3) {
-				compPanel = new JPanel(new GridLayout(10, 2));
+				compPanel = new JPanel(new GridLayout(11, 2));
 			}
 			else {
-				compPanel = new JPanel(new GridLayout(8, 2));
+				compPanel = new JPanel(new GridLayout(9, 2));
 			}
 		}
 		else {
 			if (gcm.getSBMLDocument().getLevel() < 3) {
-				compPanel = new JPanel(new GridLayout(8, 2));
+				compPanel = new JPanel(new GridLayout(9, 2));
 			}
 			else {
-				compPanel = new JPanel(new GridLayout(6, 2));
+				compPanel = new JPanel(new GridLayout(7, 2));
 			}
 		}
 		JLabel idLabel = new JLabel("ID:");
@@ -199,6 +204,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		JLabel constLabel = new JLabel("Constant:");
 		JLabel sizeLabel = new JLabel("Size:");
 		JLabel compUnitsLabel = new JLabel("Units:");
+		JLabel onPortLabel = new JLabel("Is Mapped to a Port:");
 		compID = new JTextField(12);
 		compName = new JTextField(12);
 		ListOf listOfCompTypes = gcm.getSBMLDocument().getModel().getListOfCompartmentTypes();
@@ -222,6 +228,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		String[] optionsTF = { "true", "false" };
 		compConstant = new JComboBox(optionsTF);
 		compConstant.setSelectedItem("true");
+		onPort = new JCheckBox();
 		String selected = "";
 		editComp = false;
 		String selectedID = "";
@@ -307,6 +314,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 			compOutside.setEnabled(false);
 			compConstant.setEnabled(false);
 			compSize.setEnabled(false);
+			onPort.setEnabled(false);
 			sweep.setEnabled(false);
 		}
 		if (option.equals("OK")) {
@@ -345,6 +353,11 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 				}
 				else {
 					compConstant.setSelectedItem("false");
+				}
+				if (gcm.getSBMLCompModel().getPort(GlobalConstants.COMPARTMENT+"__"+compartment.getId())!=null) {
+					onPort.setSelected(true);
+				} else {
+					onPort.setSelected(false);
 				}
 				if (paramsOnly
 						&& (((String) compartments.getSelectedValue()).contains("Modified")
@@ -426,6 +439,8 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		compPanel.add(compUnitsLabel);
 		compPanel.add(compUnits);
 		compartPanel.add(compPanel);
+		compPanel.add(onPortLabel);
+		compPanel.add(onPort);
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, compartPanel, "Compartment Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 				null, options, options[0]);
@@ -632,6 +647,21 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						else {
 							c.setConstant(false);
 						}
+						Port port = gcm.getSBMLCompModel().getPort(GlobalConstants.COMPARTMENT+"__"+val);
+						if (port!=null) {
+							if (onPort.isSelected()) {
+								port.setId(GlobalConstants.COMPARTMENT+"__"+c.getId());
+								port.setIdRef(c.getId());
+							} else {
+								port.removeFromParentAndDelete();
+							}
+						} else {
+							if (onPort.isSelected()) {
+								port = gcm.getSBMLCompModel().createPort();
+								port.setId(GlobalConstants.COMPARTMENT+"__"+c.getId());
+								port.setIdRef(c.getId());
+							}
+						}
 						for (int i = 0; i < usedIDs.size(); i++) {
 							if (usedIDs.get(i).equals(val)) {
 								usedIDs.set(i, compID.getText().trim());
@@ -710,6 +740,11 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						}
 						else {
 							c.setConstant(false);
+						}
+						if (onPort.isSelected()) {
+							Port port = gcm.getSBMLCompModel().createPort();
+							port.setId(GlobalConstants.COMPARTMENT+"__"+c.getId());
+							port.setIdRef(c.getId());
 						}
 						usedIDs.add(compID.getText().trim());
 						JList add = new JList();
@@ -1039,6 +1074,13 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 					for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumCompartments(); i++) {
 						if (((Compartment) c.get(i)).getId().equals(tempComp.getId())) {
 							c.remove(i);
+						}
+					}
+					for (long i = 0; i < gcm.getSBMLCompModel().getNumPorts(); i++) {
+						Port port = gcm.getSBMLCompModel().getPort(i);
+						if (port.getIdRef().equals(tempComp.getId())) {
+							gcm.getSBMLCompModel().removePort(i);
+							break;
 						}
 					}
 					usedIDs.remove(((String) compartments.getSelectedValue()).split(" ")[0]);

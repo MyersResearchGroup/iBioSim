@@ -621,7 +621,7 @@ public class Run implements ActionListener {
 						BioModel gcm = new BioModel(root);
 						gcm.load(root + separator + gcmEditor.getRefFile());
 						//gcm.getSBMLDocument().setModel(paramGCM.getSBMLDocument().getModel().cloneObject());
-						if (gcm.flattenGCM() != null) {
+						if (gcm.flattenModel() != null) {
 							time1 = System.nanoTime();
 							String prop = null;
 							if (!lpnProperty.equals("")) {
@@ -771,7 +771,7 @@ public class Run implements ActionListener {
 						BioModel gcm = new BioModel(root);
 						gcm.load(root + separator + gcmEditor.getRefFile());
 						//gcm.getSBMLDocument().setModel(paramGCM.getSBMLDocument().getModel().cloneObject());
-						if (gcm.flattenGCM() != null) {
+						if (gcm.flattenModel() != null) {
 							time1 = System.nanoTime();
 							String prop = null;
 							if (!lpnProperty.equals("")) {
@@ -888,7 +888,7 @@ public class Run implements ActionListener {
 						BioModel gcm = new BioModel(root);
 						gcm.load(root + separator + gcmEditor.getRefFile());
 						//gcm.getSBMLDocument().setModel(paramGCM.getSBMLDocument().getModel().cloneObject());
-						if (gcm.flattenGCM() != null) {
+						if (gcm.flattenModel() != null) {
 							time1 = System.nanoTime();
 							if (!lpnProperty.equals("")) {
 								prop = lpnProperty;

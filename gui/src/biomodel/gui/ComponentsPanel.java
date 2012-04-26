@@ -5,6 +5,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -13,6 +14,13 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import org.sbml.libsbml.CompSBasePlugin;
+import org.sbml.libsbml.Compartment;
+import org.sbml.libsbml.Port;
+import org.sbml.libsbml.ReplacedElement;
+import org.sbml.libsbml.Replacing;
+import org.sbml.libsbml.Species;
+
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 import biomodel.util.Utility;
@@ -20,7 +28,7 @@ import biomodel.util.Utility;
 import main.Gui;
 
 
-public class ComponentsPanel extends JPanel implements ActionListener {
+public class ComponentsPanel extends JPanel {
 	/**
 	 * 
 	 */
@@ -29,73 +37,78 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 	private String selected = "";
 
 	private String[] options = { "Ok", "Cancel" };
+	
+	private ArrayList<String> ports = null;
 
 	private ArrayList<JComboBox> portmapBox = null;
-	
-	private ArrayList<String> types = null;
+
+	private ArrayList<JComboBox> directionBox = null;
 
 	private BioModel gcm = null;
 
 	private PropertyList componentsList = null;
 
-	//private PropertyList influences = null;
-
 	private HashMap<String, PropertyField> fields = null;
-
-	private String[] species;
 
 	private String selectedComponent, oldPort;
 	
 	private ModelEditor gcmEditor;
 
-	public ComponentsPanel(String selected, PropertyList componentsList, PropertyList influences,
-			BioModel gcm, String[] inputs, String[] outputs, String selectedComponent, String oldPort,
-			boolean paramsOnly, ModelEditor gcmEditor) {
-		super(new GridLayout(inputs.length + outputs.length + 2, 1));
+	public ComponentsPanel(String selected, PropertyList componentsList, BioModel gcm, 
+			ArrayList<String> inputs, ArrayList<String> outputs, ArrayList<String> compartmentPorts,
+			String selectedComponent, String oldPort, boolean paramsOnly, ModelEditor gcmEditor) {
+		
+		super(new GridLayout(inputs.size() + outputs.size() + compartmentPorts.size() + 2, 1));
 		this.selected = selected;
 		this.componentsList = componentsList;
-		//this.influences = influences;
 		this.gcm = gcm;
 		this.gcmEditor = gcmEditor;
-		species = new String[inputs.length + outputs.length];
-		for(int i = 0; i < inputs.length; i++) {
-			species[i] = inputs[i];
-		}
-		for(int i = 0; i < outputs.length; i++) {
-			species[inputs.length + i] = outputs[i];
-		}
 		this.selectedComponent = selectedComponent;
 		this.oldPort = oldPort;
 
 		fields = new HashMap<String, PropertyField>();
+		ports = new ArrayList<String>();
 		portmapBox = new ArrayList<JComboBox>();
-		types = new ArrayList<String>();
-		String[] specs = gcm.getSpecies().toArray(new String[0]);
-		int j, k;
-		String index;
-		for (j = 1; j < specs.length; j++) {
-			index = specs[j];
-			k = j;
-			while ((k > 0) && specs[k - 1].compareToIgnoreCase(index) > 0) {
-				specs[k] = specs[k - 1];
-				k = k - 1;
-			}
-			specs[k] = index;
-		}
-		String[] specsWithNone = new String[specs.length + 1];
+		directionBox = new ArrayList<JComboBox>();
+		
+		ArrayList <String> speciesList = gcm.getSpecies();
+		Collections.sort(speciesList);
+		String[] specsWithNone = new String[speciesList.size() + 1];
 		specsWithNone[0] = "--none--";
-		for (int l = 1; l < specsWithNone.length; l++) {
-			specsWithNone[l] = specs[l - 1];
+		String[] directions = new String[2];
+		directions[0] = "<--";
+		directions[1] = "-->";
+ 		for (int l = 1; l < specsWithNone.length; l++) {
+			specsWithNone[l] = speciesList.get(l - 1);
 		}
-		for (int i = 0; i < inputs.length; i++) {
+		for (int i = 0; i < inputs.size(); i++) {
+			ports.add(GlobalConstants.INPUT+"__"+inputs.get(i));
 			JComboBox port = new JComboBox(specsWithNone);
-			port.addActionListener(this);
 			portmapBox.add(port);
+			JComboBox dirport = new JComboBox(directions);
+			directionBox.add(dirport);
 		}
-		for (int i = 0; i < outputs.length; i++) {
+		for (int i = 0; i < outputs.size(); i++) {
+			ports.add(GlobalConstants.OUTPUT+"__"+outputs.get(i));
 			JComboBox port = new JComboBox(specsWithNone);
-			port.addActionListener(this);
 			portmapBox.add(port);
+			JComboBox dirport = new JComboBox(directions);
+			directionBox.add(dirport);
+		}
+		
+		ArrayList <String> compartmentList = gcm.getCompartments();
+		Collections.sort(compartmentList);
+		String[] compsWithNone = new String[compartmentList.size() + 1];
+		compsWithNone[0] = "--none--";
+		for (int l = 1; l < compsWithNone.length; l++) {
+			compsWithNone[l] = compartmentList.get(l - 1);
+		}
+		for (int i = 0; i < compartmentPorts.size(); i++) {
+			ports.add(GlobalConstants.COMPARTMENT+"__"+compartmentPorts.get(i));
+			JComboBox port = new JComboBox(compsWithNone);
+			portmapBox.add(port);
+			JComboBox dirport = new JComboBox(directions);
+			directionBox.add(dirport);
 		}
 		
 		// ID field
@@ -105,50 +118,85 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 		add(field);
 		
 		// Port Map field
+		int i = 0;
 		add(new JLabel("Ports"));
-		for (String s : inputs) {
+		for (String s : ports) {
+			String type = s.substring(0,s.indexOf("__"));
+			String id = s.substring(s.indexOf("__")+2);
 			JPanel tempPanel = new JPanel();
-			JLabel tempLabel = new JLabel(s);
-			JLabel tempLabel2 = new JLabel("Input");
-			types.add("Input");
-			tempPanel.setLayout(new GridLayout(1, 2));
-			tempPanel.add(tempLabel);
+			JLabel tempLabel = new JLabel(id);
+			JLabel tempLabel2 = new JLabel(type);
+			tempPanel.setLayout(new GridLayout(1, 4));
 			tempPanel.add(tempLabel2);
+			tempPanel.add(tempLabel);
+			tempPanel.add(directionBox.get(i));
+			tempPanel.add(portmapBox.get(i));
+			i++;
 			add(tempPanel);
 		}
-		for (String s : outputs) {
-			JPanel tempPanel = new JPanel();
-			JLabel tempLabel = new JLabel(s);
-			JLabel tempLabel2 = new JLabel("Output");
-			types.add("Output");
-			tempPanel.setLayout(new GridLayout(1, 2));
-			tempPanel.add(tempLabel);
-			tempPanel.add(tempLabel2);
-			add(tempPanel);
+		for (long j = 0; j < gcm.getSBMLDocument().getModel().getNumSpecies(); j++) {
+			Species species = gcm.getSBMLDocument().getModel().getSpecies(j);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)species.getPlugin("comp");
+			for (long k = 0; k < sbmlSBase.getNumReplacedElements(); k++) {
+				ReplacedElement replacement = sbmlSBase.getReplacedElement(k);
+				if (replacement.getSubmodelRef().equals(selected)) {
+					if (replacement.isSetPortRef()) {
+						int l = ports.indexOf(replacement.getPortRef());
+						if (l >= 0) {
+							portmapBox.get(l).setSelectedItem(species.getId());
+							directionBox.get(l).setSelectedIndex(0);
+						} 
+					}
+				}
+			}
+			if (sbmlSBase.isSetReplacedBy()) {
+				Replacing replacement = sbmlSBase.getReplacedBy();
+				if (replacement.getSubmodelRef().equals(selected)) {
+					if (replacement.isSetPortRef()) {
+						int l = ports.indexOf(replacement.getPortRef());
+						if (l >= 0) {
+							portmapBox.get(l).setSelectedItem(species.getId());
+							directionBox.get(l).setSelectedIndex(1);
+						}
+					} 
+				}
+			}
+		}
+		for (long j = 0; j < gcm.getSBMLDocument().getModel().getNumCompartments(); j++) {
+			Compartment compartment = gcm.getSBMLDocument().getModel().getCompartment(j);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)compartment.getPlugin("comp");
+			for (long k = 0; k < sbmlSBase.getNumReplacedElements(); k++) {
+				ReplacedElement replacement = sbmlSBase.getReplacedElement(k);
+				if (replacement.getSubmodelRef().equals(selected)) {
+					if (replacement.isSetPortRef()) {
+						int l = ports.indexOf(replacement.getPortRef());
+						if (l >= 0) {
+							portmapBox.get(l).setSelectedItem(compartment.getId());
+							directionBox.get(l).setSelectedIndex(0);
+						}
+					} 
+				}
+			}
+			if (sbmlSBase.isSetReplacedBy()) {
+				Replacing replacement = sbmlSBase.getReplacedBy();
+				if (replacement.getSubmodelRef().equals(selected)) {
+					if (replacement.isSetPortRef()) {
+						int l = ports.indexOf(replacement.getPortRef());
+						if (l >= 0) {
+							portmapBox.get(l).setSelectedItem(compartment.getId());
+							directionBox.get(l).setSelectedIndex(1);
+						}
+					} 
+				}
+			}
 		}
 		
 		String oldName = null;
 		if (selected != null) {
 			oldName = selected;
 			fields.get(GlobalConstants.ID).setValue(selected);
-			/*
-			Properties prop = gcm.getComponents().get(selected);
-			i = 0;
-			for (String s : species) {
-				if (prop.containsKey(s)) {
-					portmapBox.get(i).setSelectedItem(prop.getProperty(s));
-				}
-				else {
-					portmapBox.get(i).setSelectedIndex(0);
-				}
-				i++;
-			}
-			// typeBox.setSelectedItem(prop.getProperty(GlobalConstants.TYPE));
-			loadProperties(prop);
-			*/
 		}
 
-		// setType(types[0]);
 		boolean display = false;
 		while (!display) {
 			display = openGui(oldName);
@@ -157,8 +205,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 
 	private boolean checkValues() {
 		for (PropertyField f : fields.values()) {
-			if (!f.isValidValue() /*|| f.getValue().equals("RNAP") || 
-					f.getValue().endsWith("_RNAP") || f.getValue().endsWith("_bound")*/) {
+			if (!f.isValidValue()) {
 				return false;
 			}
 		}
@@ -186,37 +233,6 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 				}
 			}
 			String id = fields.get(GlobalConstants.ID).getValue();
-
-			// Check to see if we need to add or edit
-			Properties property = new Properties();
-			
-			// copy the old positioning values.
-			/*
-			if(oldName != null){
-				for(Object s:gcm.getComponents().get(oldName).keySet()){
-					String k = s.toString();
-					String v = (gcm.getComponents().get(oldName).getProperty(k)).toString();
-					if (k.contains("graph") || k.contains("row") || k.contains("col")) {
-						property.put(k, v);
-					}	
-				}
-			}
-			*/
-			
-			for (PropertyField f : fields.values()) {
-				if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
-					property.put(f.getKey(), f.getValue());
-				}
-			}
-			int i = 0;
-			for (String s : species) {
-				if (!portmapBox.get(i).getSelectedItem().toString().equals("--none--")) {
-					property.put(s, portmapBox.get(i).getSelectedItem().toString());
-					property.put("type_" + s, types.get(i));
-				}
-				i++;
-			}
-			property.put("gcm", selectedComponent);
 			if (selected != null && !oldName.equals(id)) {
 				while (gcm.getUsedIDs().contains(selected)) {
 					gcm.getUsedIDs().remove(selected);
@@ -226,24 +242,81 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			if (!gcm.getUsedIDs().contains(id)) {
 				gcm.getUsedIDs().add(id);
 			}
-			String newPort = "(";
-			boolean added = false;
-			for (int j = 0; j < species.length; j++) {
-				if (!portmapBox.get(j).getSelectedItem().toString().equals("--none--")) {
-					newPort += species[j] + "->" + portmapBox.get(j).getSelectedItem() + ", ";
-					added = true;
+
+			for (long i = 0; i < gcm.getSBMLDocument().getModel().getNumCompartments(); i++) {
+				Compartment compartment = gcm.getSBMLDocument().getModel().getCompartment(i);
+				CompSBasePlugin sbmlSBase = (CompSBasePlugin)compartment.getPlugin("comp");
+				long j = 0;
+				while (j < sbmlSBase.getNumReplacedElements()) {
+					ReplacedElement replacement = sbmlSBase.getReplacedElement(j);
+					if (replacement.getSubmodelRef().equals(selected) && (replacement.isSetPortRef()) &&
+							(replacement.getPortRef().startsWith(GlobalConstants.COMPARTMENT+"__"))) {
+						replacement.removeFromParentAndDelete();
+					} else {
+						j++;
+					}
+				}
+				if (sbmlSBase.isSetReplacedBy()) {
+					Replacing replacement = sbmlSBase.getReplacedBy();
+					if (replacement.getSubmodelRef().equals(selected) && (replacement.isSetPortRef()) &&
+							(replacement.getPortRef().startsWith(GlobalConstants.COMPARTMENT+"__"))) {
+						replacement.removeFromParentAndDelete();
+					}
 				}
 			}
-			if (added) {
-				newPort = newPort.substring(0, newPort.length() - 2);
+			for (long i = 0; i < gcm.getSBMLDocument().getModel().getNumSpecies(); i++) {
+				Species species = gcm.getSBMLDocument().getModel().getSpecies(i);
+				CompSBasePlugin sbmlSBase = (CompSBasePlugin)species.getPlugin("comp");
+				long j = 0;
+				while (j < sbmlSBase.getNumReplacedElements()) {
+					ReplacedElement replacement = sbmlSBase.getReplacedElement(j);
+					if (replacement.getSubmodelRef().equals(selected) && (replacement.isSetPortRef()) &&
+							((replacement.getPortRef().startsWith(GlobalConstants.INPUT+"__"))||
+							 (replacement.getPortRef().startsWith(GlobalConstants.OUTPUT+"__")))) {
+						replacement.removeFromParentAndDelete();
+					} else {
+						j++;
+					}
+				}
+				if (sbmlSBase.isSetReplacedBy()) {
+					Replacing replacement = sbmlSBase.getReplacedBy();
+					if (replacement.getSubmodelRef().equals(selected) && (replacement.isSetPortRef()) &&
+							((replacement.getPortRef().startsWith(GlobalConstants.INPUT+"__"))||
+							 (replacement.getPortRef().startsWith(GlobalConstants.OUTPUT+"__")))) {
+						replacement.removeFromParentAndDelete();
+					}
+				}
 			}
-			newPort += ")";
-			componentsList.removeItem(oldName + " " + selectedComponent.replace(".gcm", "") + " "
-					+ oldPort);
-			componentsList
-					.addItem(id + " " + selectedComponent.replace(".gcm", "") + " " + newPort);
-			componentsList.setSelectedValue(id + " " + selectedComponent.replace(".gcm", "") + " "
-					+ newPort, true);
+			for (int i = 0; i < ports.size(); i++) {
+				String port = ports.get(i);
+				String portmapId = (String)portmapBox.get(i).getSelectedItem();
+				if (!portmapId.equals("--none--")) {
+					CompSBasePlugin sbmlSBase = null;
+					if (port.startsWith(GlobalConstants.COMPARTMENT+"__")) {
+						Compartment compartment = gcm.getSBMLDocument().getModel().getCompartment(portmapId);
+						sbmlSBase = (CompSBasePlugin)compartment.getPlugin("comp");
+					} else if ((port.startsWith(GlobalConstants.INPUT+"__")||
+							   (port.startsWith(GlobalConstants.OUTPUT+"__")))) {
+						Species species = gcm.getSBMLDocument().getModel().getSpecies(portmapId);
+						sbmlSBase = (CompSBasePlugin)species.getPlugin("comp");
+					}
+					if (sbmlSBase != null) {
+						if (directionBox.get(i).getSelectedIndex()==0) {
+							ReplacedElement replacement = sbmlSBase.createReplacedElement();
+							replacement.setSubmodelRef(id);
+							replacement.setPortRef(port);
+						} else {
+							Replacing replacement = sbmlSBase.createReplacedBy();
+							replacement.setSubmodelRef(id);
+							replacement.setPortRef(port);
+						}
+					}
+				}
+			}
+			String newPort = gcm.getComponentPortMap(id);
+			componentsList.removeItem(oldName + " " + selectedComponent.replace(".gcm", "") + " " + oldPort);
+			componentsList.addItem(id + " " + selectedComponent.replace(".gcm", "") + " " + newPort);
+			componentsList.setSelectedValue(id + " " + selectedComponent.replace(".gcm", "") + " " + newPort, true);
 			gcmEditor.setDirty(true);
 		}
 		else if (value == JOptionPane.NO_OPTION) {
@@ -252,10 +325,4 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 		return true;
 	}
 
-	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals("comboBoxChanged")) {
-			// setType(typeBox.getSelectedItem().toString());
-		}
-	}
-	
 }

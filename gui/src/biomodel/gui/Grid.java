@@ -126,7 +126,7 @@ public class Grid {
 	public void createGrid(int rows, int cols, BioModel gcm, String compGCM) {
 		
 		//if the grid size is 0 by 0, don't make it
-		if (rows == 0 && cols == 0) {
+		if (rows <= 0 || cols <= 0) {
 			
 			enabled = false; //should be false already, but whatever
 			return;
@@ -136,8 +136,8 @@ public class Grid {
 		numRows = rows;
 		numCols = cols;
 		
-		gcm.setIsWithinCompartment(true);
-		gcm.setEnclosingCompartment(gcm.getSBMLDocument().getModel().getCompartment(0).getId());
+		//gcm.setIsWithinCompartment(true);
+		gcm.setDefaultCompartment(gcm.getSBMLDocument().getModel().getCompartment(0).getId());
 		
 		for(int row = 0; row < numRows; ++row) {
 			
@@ -1127,7 +1127,7 @@ public class Grid {
 			BioModel compGCMFile = new BioModel(gcm.getPath());
 			compGCMFile.load(gcm.getPath() + File.separator + compGCM);
 			
-			gcm.addComponent(null, compGCM, compGCMFile.IsWithinCompartment(), row, col, 
+			gcm.addComponent(null, compGCM, compGCMFile.IsWithinCompartment(), compGCMFile.getCompartmentPorts(), row, col, 
 					col * (width + padding) + padding, row * (height + padding) + padding);
 		}
 	}

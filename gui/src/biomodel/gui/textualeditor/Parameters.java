@@ -147,12 +147,15 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		if (notIncludedParametersCount > 0)
 			params = new String[paramsCopy.length - notIncludedParametersCount];
 		
+		int j=0;
 		for (int i = 0; i < paramsCopy.length; ++i) {
 			
 			if (paramsCopy[i].contains("_locations") || paramsCopy[i].contains("_size"))
 				continue;
-			else				
-				params[i] = paramsCopy[i];
+			else {				
+				params[j] = paramsCopy[i];
+				j++;
+			}
 		}
 		
 		Utility.sort(params);

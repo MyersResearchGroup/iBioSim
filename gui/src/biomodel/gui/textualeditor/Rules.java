@@ -440,11 +440,10 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					Rule rPointer = null;
 					if (!error) {
 						SBMLDocument sbmlDoc = gcm.getSBMLDocument();
-						Set<String> usedMetaIDs = SBMLutilities.createUsedMetaIDSet(sbmlDoc);
 						if (ruleType.getSelectedItem().equals("Algebraic")) {
 							AlgebraicRule r = sbmlDoc.getModel().createAlgebraicRule();
 							r.setMath(SBMLutilities.myParseFormula(ruleMath.getText().trim()));
-							SBMLutilities.setDefaultMetaID(r, usedMetaIDs, 1);
+							SBMLutilities.setDefaultMetaID(sbmlDoc, r, 1);
 							SBMLutilities.checkOverDetermined(gcm.getSBMLDocument());
 							rPointer = r;
 						}
@@ -452,7 +451,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 							RateRule r = sbmlDoc.getModel().createRateRule();
 							r.setVariable(addVar);
 							r.setMath(SBMLutilities.myParseFormula(ruleMath.getText().trim()));
-							SBMLutilities.setDefaultMetaID(r, usedMetaIDs, 1);
+							SBMLutilities.setDefaultMetaID(sbmlDoc, r, 1);
 							error = checkRateRuleUnits(r);
 							rPointer = r;
 						}
@@ -460,7 +459,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 							AssignmentRule r = sbmlDoc.getModel().createAssignmentRule();
 							r.setVariable(addVar);
 							r.setMath(SBMLutilities.myParseFormula(ruleMath.getText().trim()));
-							SBMLutilities.setDefaultMetaID(r, usedMetaIDs, 1);
+							SBMLutilities.setDefaultMetaID(sbmlDoc, r, 1);
 							error = checkAssignmentRuleUnits(r);
 							rPointer = r;
 						}

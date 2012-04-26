@@ -73,6 +73,7 @@ public class GlobalConstants {
 	public static final String REACTION_EDGE = "Reaction_Edge";
 	public static final String GRID_RECTANGLE = "Grid Rectangle";
 	public static final String PORTMAP = "Port Map";
+	public static final String PORT = "port";
 	public static final String NAME = "Name";
 	public static final String CONSTANT = "boundary";
 	public static final String SPASTIC = "constitutive";
@@ -90,6 +91,9 @@ public class GlobalConstants {
 	public static final String SBMLFILE = "SBML file";
 	public static final String BIOABS = "Biochemical abstraction";
 	public static final String DIMABS = "Dimerization abstraction";
+	public static final String COMPARTMENT = "compartment";
+	public static final String ENCLOSING_COMPARTMENT = "enclosingCompartment";
+	public static final String DEFAULT_COMPARTMENT = "defaultCompartment";
 	
 	public static final String SBOL_PROMOTER = "sbolPromoter";
 	public static final String SBOL_TERMINATOR = "sbolTerminator";

@@ -164,7 +164,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private JMenuItem pref; // The preferences menu item
 	private JMenuItem graph; // The graph menu item
 	private JMenuItem probGraph, exportCsv, exportDat, exportEps, exportJpg, exportPdf, exportPng, exportSvg, exportTsd, 
-	exportSBML, exportSBOL, exportAvi, exportMp4;
+	exportSBML, exportFlatSBML, exportSBOL, exportAvi, exportMp4;
 	
 	private JMenu exportDataMenu, exportMovieMenu, exportImageMenu;
 
@@ -225,7 +225,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private String[] BioModelIds = null;
 
-	private JMenuItem copy, rename, delete, save, saveAs, saveSBOL, check, run, refresh, viewCircuit, viewRules, viewTrace, viewLog, viewCoverage,
+	private JMenuItem undo, redo, copy, rename, delete, save, saveAs, saveSBOL, check, run, refresh, viewCircuit, viewRules, viewTrace, viewLog, viewCoverage,
 			viewLHPN, saveModel, saveAsVerilog, viewSG, viewModGraph, viewLearnedModel, viewModBrowser, createAnal, createLearn, createSbml,
 			createSynth, createVer, close, closeAll;
 
@@ -423,9 +423,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		// view.addMouseListener(this);
 		// tools.addMouseListener(this);
 		// help.addMouseListener(this);
-		copy = new JMenuItem("Copy");
-		rename = new JMenuItem("Rename");
-		delete = new JMenuItem("Delete");
+		undo = new JMenuItem("Undo");
+		redo = new JMenuItem("Redo");
+		copy = new JMenuItem("Copy File");
+		rename = new JMenuItem("Rename File");
+		delete = new JMenuItem("Delete File");
 		manual = new JMenuItem("Manual");
 		about = new JMenuItem("About");
 		openProj = new JMenuItem("Open Project");
@@ -476,6 +478,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		 * JMenuItem("Time Series Data (tsd)");
 		 */
 		exportSBML = new JMenuItem("SBML");
+		exportFlatSBML = new JMenuItem("Flat SBML");
 		exportSBOL = new JMenuItem("SBOL");
 		exportCsv = new JMenuItem("CSV");
 		exportDat = new JMenuItem("DAT");
@@ -519,6 +522,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		createSynth = new JMenuItem("Synthesis Tool");
 		createVer = new JMenuItem("Verification Tool");
 		exit = new JMenuItem("Exit");
+		undo.addActionListener(this);
+		redo.addActionListener(this);
 		copy.addActionListener(this);
 		rename.addActionListener(this);
 		delete.addActionListener(this);
@@ -559,6 +564,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		importRsg.addActionListener(this);
 		importSpice.addActionListener(this);
 		exportSBML.addActionListener(this);
+		exportFlatSBML.addActionListener(this);
 		exportSBOL.addActionListener(this);
 		exportCsv.addActionListener(this);
 		exportDat.addActionListener(this);
@@ -637,6 +643,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		newLhpn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ShortCutKey));
 		graph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ShortCutKey));
 		probGraph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, ShortCutKey | KeyEvent.SHIFT_MASK));
+		undo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, ShortCutKey));
+		redo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, ShortCutKey | KeyEvent.SHIFT_MASK));
 		copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ShortCutKey | KeyEvent.SHIFT_MASK));
 		rename.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, ShortCutKey | KeyEvent.SHIFT_MASK));
 		delete.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ShortCutKey | KeyEvent.SHIFT_MASK));
@@ -729,6 +737,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		importSpice.setEnabled(false);
 		exportMenu.setEnabled(false);
 		exportSBML.setEnabled(false);
+		exportFlatSBML.setEnabled(false);
 		exportSBOL.setEnabled(false);
 		exportCsv.setEnabled(false);
 		exportDat.setEnabled(false);
@@ -763,6 +772,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		run.setEnabled(false);
 		check.setEnabled(false);
 		refresh.setEnabled(false);
+		undo.setEnabled(false);
+		redo.setEnabled(false);
 		copy.setEnabled(false);
 		rename.setEnabled(false);
 		delete.setEnabled(false);
@@ -782,6 +793,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		createSbml.setEnabled(false);
 		createSynth.setEnabled(false);
 		createVer.setEnabled(false);
+		edit.add(undo);
+		edit.add(redo);
+		edit.addSeparator();
 		edit.add(copy);
 		edit.add(rename);
 		edit.add(delete);
@@ -863,6 +877,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportMenu.add(exportDataMenu);
 		exportMenu.add(exportImageMenu);
 		exportMenu.add(exportMovieMenu);
+		exportMenu.add(exportFlatSBML);
 		exportMenu.add(exportSBML);
 		exportMenu.add(exportSBOL);
 		exportMenu.addSeparator();
@@ -2285,6 +2300,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			else if (comp.getName().equals("Synthesis")) {
 				Component[] array = ((JPanel) comp).getComponents();
 				((Synthesis) array[0]).viewTrace();
+			}
+		}
+		else if (e.getSource() == exportFlatSBML) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof ModelEditor) {
+				((ModelEditor) comp).exportFlatSBML();
 			}
 		}
 		else if (e.getSource() == exportSBML) {
@@ -3836,6 +3857,18 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		else if (e.getActionCommand().equals("viewModel")) {
 			viewModel();
 		}
+		else if (e.getSource() == undo) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof ModelEditor) {
+				((ModelEditor) comp).undo();
+			}
+		}
+		else if (e.getSource() == redo) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof ModelEditor) {
+				((ModelEditor) comp).redo();
+			}
+		}
 		else if (e.getActionCommand().equals("copy") || e.getSource() == copy) {
 			copy();
 		}
@@ -4576,6 +4609,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							int y = screenSize.height / 2 - frameSize.height / 2;
 							f.setLocation(x, y);
 							f.setVisible(true);
+						}
+						if (document != null) {
+							document.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
+							document.setPkgRequired("layout", false); 
+							document.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
+							document.setPkgRequired("comp", true); 
+							((CompSBMLDocumentPlugin)document.getPlugin("comp")).setRequired(true);
+							CompSBMLDocumentPlugin documentComp = (CompSBMLDocumentPlugin)document.getPlugin("comp");
+							CompModelPlugin documentCompModel = (CompModelPlugin)document.getModel().getPlugin("comp");
+							if (documentComp.getNumModelDefinitions() > 0 ||
+								documentComp.getNumExternalModelDefinitions() > 0) {
+								if (!extractModelDefinitions(documentComp,documentCompModel)) return;
+							}
 						}
 						SBMLWriter writer = new SBMLWriter();
 						String newFile = file[file.length - 1];
@@ -9085,6 +9131,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		check.setEnabled(false);
 		exportMenu.setEnabled(false);
 		exportSBML.setEnabled(false);
+		exportFlatSBML.setEnabled(false);
 		exportSBOL.setEnabled(false);
 		exportDataMenu.setEnabled(false);
 		exportImageMenu.setEnabled(false);
@@ -9106,6 +9153,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		viewCoverage.setEnabled(false);
 		viewLearnedModel.setEnabled(false);
 		refresh.setEnabled(false);
+		undo.setEnabled(false);
+		redo.setEnabled(false);
 		if (selectedTab != -1) {
 			tab.setSelectedIndex(selectedTab);
 		}
@@ -9119,8 +9168,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			saveAs.setEnabled(true);
 			saveSBOL.setEnabled(true);
 			check.setEnabled(true);
+			undo.setEnabled(true);
+			redo.setEnabled(true);
 			exportMenu.setEnabled(true);
 			exportSBML.setEnabled(true);
+			exportFlatSBML.setEnabled(true);
 			exportSBOL.setEnabled(true);
 			exportImageMenu.setEnabled(true);
 			exportJpg.setEnabled(true);
@@ -9136,6 +9188,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			viewCircuit.setEnabled(true);
 			exportMenu.setEnabled(true);
 			exportSBML.setEnabled(true);
+			exportFlatSBML.setEnabled(true);
 		}
 		/*
 		else if (comp instanceof SBML_Editor) {
@@ -9841,9 +9894,82 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		return button;
 	}
 
+	private boolean extractModelDefinitions(CompSBMLDocumentPlugin sbmlComp,CompModelPlugin sbmlCompModel) {
+		for (long i=0; i < sbmlComp.getNumModelDefinitions(); i++) {
+			ModelDefinition md = sbmlComp.getModelDefinition(i);
+			String extId = md.getId();
+			if (overwrite(root + separator + extId + ".xml",extId + ".xml")) {
+				Model model = new Model(md);
+				SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+				document.setModel(model);
+				document.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
+				document.setPkgRequired("layout", false); 
+				LayoutModelPlugin documentLayout = (LayoutModelPlugin)document.getModel().getPlugin("layout");
+				document.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
+				document.setPkgRequired("comp", true);
+				((CompSBMLDocumentPlugin)document.getPlugin("comp")).setRequired(true);
+				CompSBMLDocumentPlugin documentComp = (CompSBMLDocumentPlugin)document.getPlugin("comp");
+				CompModelPlugin documentCompModel = (CompModelPlugin)document.getModel().getPlugin("comp");
+				ArrayList<String> comps = new ArrayList<String>();
+				for (long j=0; j < documentCompModel.getNumSubmodels(); j++) {
+					String subModelType = documentCompModel.getSubmodel(j).getModelRef();
+					if (!comps.contains(subModelType)) {
+						ExternalModelDefinition extModel = documentComp.createExternalModelDefinition();
+						extModel.setId(subModelType);
+						extModel.setSource("file:" + subModelType + ".xml");
+						comps.add(subModelType);
+					}
+				}
+				// Make compartment enclosing
+				if (document.getModel().getNumCompartments()==0) {
+					Compartment c = document.getModel().createCompartment();
+					c.setId("default");
+					c.setSize(1);
+					c.setSpatialDimensions(3);
+					c.setConstant(true);
+				}
+				Port port = documentCompModel.createPort();
+				port.setId(GlobalConstants.ENCLOSING_COMPARTMENT);
+				port.setIdRef(document.getModel().getCompartment(0).getId());
+				SBMLWriter writer = new SBMLWriter();
+				writer.writeSBML(document, root + separator + extId + ".xml");
+				addToTree(extId+".xml");
+				if (sbmlComp.getExternalModelDefinition(extId) == null) {
+					for (long j=0; j < sbmlCompModel.getNumSubmodels(); j++) {
+						if (sbmlCompModel.getSubmodel(j).getModelRef().equals(extId)) {
+							ExternalModelDefinition extModel = sbmlComp.createExternalModelDefinition();
+							extModel.setId(extId);
+							extModel.setSource("file:" + extId + ".xml");
+							break;
+						}
+					}
+				}
+				/*
+			if (enclosed && extModel.getAnnotationString().contains("compartment") == false)
+				extModel.appendAnnotation("compartment");
+			else
+				extModel.setAnnotation(extModel.getAnnotationString().replace("compartment",""));
+				 */
+			} else {
+				return false;
+			}
+		}
+		while (sbmlComp.getNumModelDefinitions() > 0) {
+			sbmlComp.removeModelDefinition(0);
+		}
+		for (long i = 0; i < sbmlComp.getNumExternalModelDefinitions(); i++) {
+			ExternalModelDefinition extModel = sbmlComp.getExternalModelDefinition(i);
+			if (extModel.isSetModelRef()) {
+				extModel.setSource("file:" + extModel.getModelRef() + ".xml");
+			}
+		}
+		return true;
+	}
+	
 	public static SBMLDocument readSBML(String filename) {
 		SBMLReader reader = new SBMLReader();
 		SBMLDocument document = reader.readSBML(filename);
+		document.getModel().setId(document.getModel().getId().replace(".","_"));
 		JTextArea messageArea = new JTextArea();
 		messageArea.append("Conversion to SBML level " + SBML_LEVEL + " version " + SBML_VERSION + " produced the errors listed below. ");
 		messageArea.append("It is recommended that you fix them before using these models or you may get unexpected results.\n\n");
@@ -9907,7 +10033,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			f.setVisible(true);
 		}
 		if (document.getLevel() < SBML_LEVEL || document.getVersion() < SBML_VERSION) {
-			document.setLevelAndVersion(SBML_LEVEL, SBML_VERSION);
+			document.setLevelAndVersion(SBML_LEVEL, SBML_VERSION,false);
 			SBMLWriter writer = new SBMLWriter();
 			writer.writeSBML(document, filename);
 			document = reader.readSBML(filename);
