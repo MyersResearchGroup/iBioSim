@@ -1213,6 +1213,10 @@ public class BioModel {
 			}
 		}
 		if (species.isSetSBOTerm()) {
+			if (species.getSBOTerm()==GlobalConstants.SBO_OLD_PROMOTER_SPECIES) {
+				species.setSBOTerm(GlobalConstants.SBO_PROMOTER_SPECIES);
+				return true;
+			}
 			if (species.getSBOTerm()==GlobalConstants.SBO_PROMOTER_SPECIES) {
 				return true;
 			}
