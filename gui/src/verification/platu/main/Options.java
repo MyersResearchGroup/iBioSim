@@ -21,15 +21,55 @@ public class Options {
 	}
 	private static String timingAnalysisType = "off";
 	
+	// Hao's Partial Order reduction options.
+//	/*
+//	 * Partial order reduction options
+//	 */
+//	public static enum PorDef { 
+//		OFF,		// no POR 
+//		STATIC, 	// POR  based on dependency relation by static analysis
+//		BEHAVIORAL // POR based on dependency relation by behavioral analysis
+//		};
+//	private static String POR = "off";
+	
 	/*
-	 * Partial order reduction options
+	 * Partial order reduction options for ample set computation (not including ample compuation for cycle closing check).
 	 */
 	public static enum PorDef { 
-		OFF,		// no POR 
-		STATIC, 	// POR  based on dependency relation by static analysis
-		BEHAVIORAL // POR based on dependency relation by behavioral analysis
+		TRACEBACK, // normal POR
+		NO_TRACEBACK // POR without trace-back	
 		};
-	private static String POR = "off";
+	private static String POR = "traceback";
+	
+	/*
+	 * Cycle closing method for partial order reduction
+	 */
+	public static enum cycleClosingMethdDef{
+		BEHAVIORAL, // Improved behavioral analysis on cycle closing
+		STATE_SEARCH, // Improved behavioral analysis + state trace-back
+		NO_CYCLECLOSING, // no cycle closing
+		STRONG_CYCLECONDITION, // Strong cycle condition: for each cycle, at least one state has to fully expand.
+	}
+	private static String cycleClosingMethd = "behavioral";
+	
+	/*
+	 * Ample computation during cycle closing check.
+	 */
+	public static enum cycleClosingAmpleMethdDef { 
+		CC_TRACEBACK, // normal POR
+		CC_NOTRACEBACK // POR without trace-back	
+		};
+	private static String cycleClosingAmpleMethd = "traceback";
+	
+	/*
+	 * Output state graph (dot) flag
+	 */
+	private static boolean outputSgFlag = false;
+	
+	/*
+	 * Path for printing global state graph 
+	 */
+	private static String prjSgPath = null;
 	
 	/*
 	 * Search algorithm options:
@@ -196,5 +236,36 @@ public class Options {
 	
 	public static boolean getNewParser(){
 		return newParser;
+	}
+
+	public static void setCycleClosingMthd(String cycleclosing) {
+		cycleClosingMethd = cycleclosing;
+	}
+	
+	public static String getCycleClosingMthd() {
+		return cycleClosingMethd;
+	}
+	
+	public static void setOutputSgFlag(boolean outputSGflag) {
+		outputSgFlag = outputSGflag;
+	}
+	
+	public static boolean getOutputSgFlag() {
+		return outputSgFlag;
+	}
+
+	public static void setPrjSgPath(String path) {
+		prjSgPath = path;
+	}
+	public static String getPrjSgPath() {
+		return prjSgPath;
+	}
+
+	public static void setCycleClosingAmpleMethd(String method) {
+		cycleClosingAmpleMethd = method;		
+	}
+	
+	public static String getCycleClosigAmpleMethd() {
+		return cycleClosingAmpleMethd;
 	}
 }
