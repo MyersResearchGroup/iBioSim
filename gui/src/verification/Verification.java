@@ -579,7 +579,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				}
 			}
 			if (load.containsKey("verification.MultipleLPNs")) {
-				if (load.getProperty("verification.MultipleLPN").equals("true")) {
+				if (load.getProperty("verification.MultipleLPNs").equals("true")) {
 					multipleLPNs.setSelected(true);
 				}
 			}
@@ -1062,29 +1062,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				new File(directory + separator + selected).delete();
 			}
 		}
-//		else if (e.getSource() == divideLPN1) {
-//			if (lpnList.getSelectedValue() != null && lpnList.getSelectedValues().length == 1) {
-//				HashMap<Transition, Integer> allProcessTrans = new HashMap<Transition, Integer>();
-//				for (int i=0; i < lpnList.getSelectedValues().length; i++) {
-//					 String curLPNname = (String) lpnList.getSelectedValues()[i];
-//					 LhpnFile curLPN = new LhpnFile();
-//					 curLPN.load(directory + separator + curLPNname);
-//					 // create an Abstraction object to get all processes in one LPN
-//					 Abstraction abs = curLPN.abstractLhpn(this);
-//					 abs.divideProcesses();
-//					 allProcessTrans.putAll(
-//							 (HashMap<Transition, Integer>)abs.getProcessTrans().clone());
-//				}
-//				printAllProcesses(allProcessTrans);
-//				
-//			}
-//			else if (lpnList.getSelectedValue() != null && lpnList.getSelectedValues().length != 1) {
-//				JOptionPane.showMessageDialog(
-//						Gui.frame,
-//						"Only one LPN is allowed to be divided each time",
-//						"Error", JOptionPane.ERROR_MESSAGE);				
-//			}
-//		}
 	}
 
 	private void printAllProcesses(HashMap<Transition, Integer> allProcessTrans) {		
@@ -1112,67 +1089,119 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		if (untimedStateSearch.isSelected()) {
 			LhpnFile lpn = new LhpnFile();
 			lpn.load(directory + separator + lpnFile);
-			if (!decomposeLPN.isSelected() && !multipleLPNs.isSelected() && lpnList.getSelectedValue() == null) {			
-				Project untimedStateSearch = new Project(lpn);
+			if (!decomposeLPN.isSelected()) {
+				ArrayList<LhpnFile> selectedLPNs = new ArrayList<LhpnFile>();
+				selectedLPNs.add(lpn);
+				for (int i=0; i < lpnList.getSelectedValues().length; i++) {
+					 String curLPNname = (String) lpnList.getSelectedValues()[i];
+					 LhpnFile curLPN = new LhpnFile();
+					 curLPN.load(directory + separator + curLPNname);
+					 selectedLPNs.add(curLPN);
+				}
+				Project untimedDFS = new Project(selectedLPNs);
 				if (untimedPOR.isSelected()) {
+					// Options for using trace-back in ample calculation
+					String[] ampleMethds = {"Use trace-back for ample computation", "No trace-back for ample computation"};
+					JList ampleMethdsList = new JList(ampleMethds);
+					ampleMethdsList.setVisibleRowCount(2);
+					//cycleClosingList.addListSelectionListener(new ValueReporter());
+					JScrollPane ampleMethdsPane = new JScrollPane(ampleMethdsList);
+					JPanel mainPanel0 = new JPanel(new BorderLayout());
+					mainPanel0.add("North", new JLabel("Select an ample set computation method:"));
+					mainPanel0.add("Center", ampleMethdsPane);							
+					Object[] options0 = {"Run", "Cancel"};
+					int optionRtVal0 = JOptionPane.showOptionDialog(Gui.frame, mainPanel0, "Ample set computation methods selection", 
+								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options0, options0[0]);
+					if (optionRtVal0 == 1) {
+						// Cancel
+						return;
+					}
+					int ampleMethdsIndex = ampleMethdsList.getSelectedIndex();
+					if (ampleMethdsIndex == 0) 
+						Options.setPOR("traceback");
+					if (ampleMethdsIndex == 1)
+						Options.setPOR("no_traceback");					
 					// GUI for different cycle closing methods.
-					String[] entries = {"Use sticky transitions",
-										"Use behavioral analysis",
+					String[] entries = {"Use behavioral analysis",
 										"Use behavioral analysis and state trace-back",
 										"No cycle closing",
-										"Peled's cycle condition"};
+										"Strong cycle condition"};
 					JList cycleClosingList = new JList(entries);
-					cycleClosingList.setVisibleRowCount(5);
+					cycleClosingList.setVisibleRowCount(4);
 					//cycleClosingList.addListSelectionListener(new ValueReporter());
 					JScrollPane cycleClosingPane = new JScrollPane(cycleClosingList);
 					JPanel mainPanel = new JPanel(new BorderLayout());
 					mainPanel.add("North", new JLabel("Select a cycle closing method:"));
 					mainPanel.add("Center", cycleClosingPane);							
 					Object[] options = {"Run", "Cancel"};
-					int optionRtVal = JOptionPane.showOptionDialog(Gui.frame, mainPanel, "Cycle closing method selection", 
+					int optionRtVal = JOptionPane.showOptionDialog(Gui.frame, mainPanel, "Cycle closing methods selection", 
 								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 					if (optionRtVal == 1) {
 						// Cancel
 						return;
 					}
 					int cycleClosingMthdIndex = cycleClosingList.getSelectedIndex();
-					StateGraph stateGraph = untimedStateSearch.searchWithPOR(cycleClosingMthdIndex);
+					if (cycleClosingMthdIndex == 0) {
+						Options.setCycleClosingMthd("behavioral");
+						if (Options.getPOR().equals("traceback")) {
+							String[] cycleClosingAmpleMethds = {"Use trace-back", "No trace-back"};
+							JList cycleClosingAmpleList = new JList(cycleClosingAmpleMethds);
+							cycleClosingAmpleList.setVisibleRowCount(2);
+							JScrollPane cycleClosingAmpleMethdsPane = new JScrollPane(cycleClosingAmpleList);
+							JPanel mainPanel1 = new JPanel(new BorderLayout());
+							mainPanel1.add("North", new JLabel("Select a cycle closing ample computation method:"));
+							mainPanel1.add("Center", cycleClosingAmpleMethdsPane);							
+							Object[] options1 = {"Run", "Cancel"};
+							int optionRtVal1 = JOptionPane.showOptionDialog(Gui.frame, mainPanel1, "Cycle closing ample computation method selection", 
+										JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options1, options1[0]);
+							if (optionRtVal1 == 1) {
+								// Cancel
+								return;
+							}
+							int cycleClosingAmpleMethdIndex = cycleClosingAmpleList.getSelectedIndex();
+							if (cycleClosingAmpleMethdIndex == 0) 
+								Options.setCycleClosingAmpleMethd("cc_traceback");
+							if (cycleClosingAmpleMethdIndex == 1)
+								Options.setCycleClosingAmpleMethd("cc_notraceback");
+						}
+					}						
+					else if (cycleClosingMthdIndex == 1) 
+						Options.setCycleClosingMthd("state_search");
+					else if (cycleClosingMthdIndex == 2)
+						Options.setCycleClosingMthd("no_cycleclosing");
+					else if (cycleClosingMthdIndex == 3)
+						Options.setCycleClosingMthd("strong_cyclecondition");
 					if (dot.isSelected()) {
-						String graphFileName = null;
-						if (cycleClosingMthdIndex == 0)
-							graphFileName = verifyFile.replace(".lpn", "") + "POR_sticky_sg.dot";			
-						else if (cycleClosingMthdIndex == 1)
-							graphFileName = verifyFile.replace(".lpn", "") + "POR_behaveAnaly_sg.dot";
-						else if (cycleClosingMthdIndex == 2)
-							graphFileName = verifyFile.replace(".lpn", "") + "POR_stateTraceback_sg.dot";
-						else if (cycleClosingMthdIndex == 3)
-							graphFileName = verifyFile.replace(".lpn", "") + "POR_noCycleClosing_sg.dot";
-						else if (cycleClosingMthdIndex == 4)
-							graphFileName = verifyFile.replace(".lpn", "") + "POR_PeledsCycleClosing_sg.dot";
-						if (graphFileName != null)
-							stateGraph.outputStateGraph(directory + separator + graphFileName);				
+						Options.setOutputSgFlag(true);
+						Options.setPrjSgPath(directory + separator);
+					}
+					StateGraph[] stateGraphArray = untimedDFS.searchPOR();
+					if (dot.isSelected()) {
+						for (int i=0; i<stateGraphArray.length; i++) {
+							String graphFileName = stateGraphArray[i].getLpn().getLabel() + "POR_"+ Options.getCycleClosingMthd() + "_local_sg.dot";
+							stateGraphArray[i].outputLocalStateGraph(directory + separator + graphFileName);
+						}
+						// Code for producing global state graph is in search_dfsPOR in the Analysis class.						
 					}
 				}
-				else {
-					// The full state graph is created for only one LPN.
-					StateGraph[] stateGraphArray = untimedStateSearch.search();
-					String graphFileName = verifyFile.replace(".lpn", "") + "_sg.dot";
-					if (stateGraphArray.length > 1) {
-						JOptionPane.showMessageDialog(
-								Gui.frame,
-								"Mutiple state graphs should not be produced.",
-								"Error", JOptionPane.ERROR_MESSAGE);		
-						
+				else { // No POR
+					if (dot.isSelected()) {
+						Options.setOutputSgFlag(true);
+						Options.setPrjSgPath(directory + separator);
 					}
-					else {
-						if (dot.isSelected()) {
-							stateGraphArray[0].outputStateGraph(directory + separator + graphFileName);  
+					StateGraph[] stateGraphArray = untimedDFS.search();
+					if (dot.isSelected()) {
+						for (int i=0; i<stateGraphArray.length; i++) {
+							String graphFileName = stateGraphArray[i].getLpn().getLabel() + "_local_sg.dot";
+							stateGraphArray[i].outputLocalStateGraph(directory + separator + graphFileName);
 						}
+						// Code for producing global state graph is in search_dfsPOR in the Analysis class.
 					}
 				}
 				return;
 			}
-			else if (!untimedPOR.isSelected() && !multipleLPNs.isSelected() && decomposeLPN.isSelected() && verbose.isSelected() && lpnList.getSelectedValue() == null) {
+			else if (!untimedPOR.isSelected() && !multipleLPNs.isSelected() && decomposeLPN.isSelected() 
+					&& verbose.isSelected() && lpnList.getSelectedValue() == null) {
 				 HashMap<Transition, Integer> allProcessTrans = new HashMap<Transition, Integer>();
 				 // create an Abstraction object to get all processes in one LPN
 				 Abstraction abs = lpn.abstractLhpn(this);
@@ -1345,33 +1374,26 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				}	
 				return;
 			}
-			else if (!decomposeLPN.isSelected() && multipleLPNs.isSelected() && lpnList.getSelectedValues().length > 0) {
-				// User has already hand-picked the LPNs. Send the batch of LPNs to the dfs search. 
-				ArrayList<LhpnFile> selectedLPNs = new ArrayList<LhpnFile>();
-				selectedLPNs.add(lpn);
-				for (int i=0; i < lpnList.getSelectedValues().length; i++) {
-					 String curLPNname = (String) lpnList.getSelectedValues()[i];
-					 LhpnFile curLPN = new LhpnFile();
-					 curLPN.load(directory + separator + curLPNname);
-					 selectedLPNs.add(curLPN);
-				}
-				Project untimedStateSearch = new Project(selectedLPNs);
-				if (untimedPOR.isSelected()) {
-					JOptionPane.showMessageDialog(
-							Gui.frame,
-							"Partial order reductions can only be performed on a single LPN",
-							"Error", JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				StateGraph[] stateGraphArray = untimedStateSearch.search();
-				if (dot.isSelected()) {
-					for (int i=0; i<stateGraphArray.length; i++) {
-						String graphFileName = stateGraphArray[i].getLpn().getLabel() + "_sg.dot";
-						stateGraphArray[i].outputStateGraph(directory + separator + graphFileName);
-					}
-				}
-				return;
-			}
+//			else if (!decomposeLPN.isSelected() && multipleLPNs.isSelected() && lpnList.getSelectedValues().length > 0) {
+//				// User has already hand-picked the LPNs. Send the batch of LPNs to the dfs search. 
+//				ArrayList<LhpnFile> selectedLPNs = new ArrayList<LhpnFile>();
+//				selectedLPNs.add(lpn);
+//				for (int i=0; i < lpnList.getSelectedValues().length; i++) {
+//					 String curLPNname = (String) lpnList.getSelectedValues()[i];
+//					 LhpnFile curLPN = new LhpnFile();
+//					 curLPN.load(directory + separator + curLPNname);
+//					 selectedLPNs.add(curLPN);
+//				}
+//				Project untimedStateSearch = new Project(selectedLPNs);
+//				StateGraph[] stateGraphArray = untimedStateSearch.search();
+//				if (dot.isSelected()) {
+//					for (int i=0; i<stateGraphArray.length; i++) {
+//						String graphFileName = stateGraphArray[i].getLpn().getLabel() + "_sg.dot";
+//						stateGraphArray[i].outputLocalStateGraph(directory + separator + graphFileName);
+//					}
+//				}
+//				return;
+//			}
 			else if (!untimedPOR.isSelected() && !decomposeLPN.isSelected() && multipleLPNs.isSelected() && lpnList.getSelectedValues().length < 1) {
 				JOptionPane.showMessageDialog(
 						Gui.frame,
@@ -1470,7 +1492,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				}
 				else {
 					if (dot.isSelected()) {
-						stateGraphArray[0].outputStateGraph(directory + separator + graphFileName);  
+						stateGraphArray[0].outputLocalStateGraph(directory + separator + graphFileName);  
 					}
 					if(graph.isSelected()){
 						showGraph(directory + separator + graphFileName);
@@ -2191,6 +2213,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				prop.setProperty("verification.DecomposeLPN", "true");
 			} else {
 				prop.setProperty("verification.DecomposeLPN", "false");
+			}
+			if (multipleLPNs.isSelected()) {
+				prop.setProperty("verification.MultipleLPNs", "true");
+			} else {
+				prop.setProperty("verification.MultipleLPNs", "false");
 			}
 			if (verify.isSelected()) {
 				prop.setProperty("verification.algorithm", "verify");
