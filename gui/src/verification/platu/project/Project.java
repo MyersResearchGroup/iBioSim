@@ -162,8 +162,7 @@ public class Project {
 //			}
 			
 		}
-
-		// TODO: (future) Need to adjust the transition vector as well?
+		
 		// Adjust the value of the input variables in LPN in the initial state.
 		// Add the initial states into their respective LPN.
 		for (int index = 0; index < lpnCnt; index++) {
@@ -245,12 +244,11 @@ public class Project {
 	/**
 	 * Find the SG for the entire project where each project state is a tuple of
 	 * local states. Use partial order reduction during dfs search.
-	 * @param cycleClosingMthdIndex 
-	 * @param outputDotFile 
+	 * @param globalSGpath 
 	 * @return 
 	 * 
 	 */
-	public StateGraph searchWithPOR(int cycleClosingMthdIndex) {	
+	public StateGraph[] searchPOR() {	
 		validateInputs();
 //		
 //		if(Options.getSearchType().equals("compositional")){
@@ -304,23 +302,20 @@ public class Project {
 			
 		}		
 		
-		StateGraph stateGraph;
-		Analysis dfsStateExplorationWithPOR = new Analysis(sgArray);
-		// cycleClosingMthdIndex: 0 = Use sticky transitions
-		//						  1 = Use behavioral analysis
-		//						  2 = Use behavioral analysis with state trace-back
-		//                        3 = No cycle closing
-		//						  4 = Peled's cycle condition
-		if (cycleClosingMthdIndex == 0 || cycleClosingMthdIndex == 3) 
-			stateGraph = dfsStateExplorationWithPOR.search_dfsPOR(sgArray, initStateArray, cycleClosingMthdIndex);
-		else 
-			stateGraph = dfsStateExplorationWithPOR.search_dfsPORrefinedCycleRule(sgArray, initStateArray, cycleClosingMthdIndex);
+		Analysis dfsPOR = new Analysis(sgArray);
+		StateGraph[] stateGraphArray;
+//		if (cycleClosingMthdIndex == 0 || cycleClosingMthdIndex == 3) 
+//			stateGraphArray = dfsPOR.search_dfsPOR(sgArray, initStateArray, cycleClosingMthdIndex);
+//		else 
+//			stateGraphArray = dfsPOR.search_dfsPORrefinedCycleRule(sgArray, initStateArray, cycleClosingMthdIndex);
+		
+		stateGraphArray = dfsPOR.search_dfsPOR(sgArray, initStateArray);
 		
 		long elapsedTimeMillis = System.currentTimeMillis() - start; 
 		float elapsedTimeSec = elapsedTimeMillis/1000F;
 		
 		System.out.println("---> total runtime: " + elapsedTimeSec + " sec\n");
-		return stateGraph;
+		return stateGraphArray;
 	}
 	
 	public void readLpn(List<String> fileList) {		
