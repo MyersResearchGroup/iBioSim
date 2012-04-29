@@ -6,13 +6,17 @@ import lpn.parser.LhpnFile;
 import lpn.parser.Transition;
 
 import verification.platu.lpn.*;
+import verification.platu.main.Options;
 import verification.platu.stategraph.*;
 
 public class PrjState {
 	protected  State[] stateArray;
 	private PrjState father;
 	private PrjState child;
-	
+	// member variables below created for outputGlobalStateGraph in Analysis
+//	private DualHashMap<Transition, PrjState> prevStateMap;
+	private HashMap<Transition, PrjState> nextStateMap;
+
 	public PrjState() {
 		stateArray = null;
 		father = null;
@@ -23,6 +27,10 @@ public class PrjState {
 		stateArray = other;
 		father = null;
 		child = null;
+		if (Options.getOutputSgFlag()) {
+			//prevStateMap = new DualHashMap<Transition, PrjState>();
+			nextStateMap = new HashMap<Transition, PrjState>();
+		}
 	}
 	
 	public PrjState(final State[] other, Transition newFiredTran, int newTranFiringCnt) {
@@ -125,5 +133,33 @@ public class PrjState {
         }
         return arr;
     }
+
+	public void setTranOut(Transition tran, PrjState nextState) {
+		nextStateMap.put(tran, nextState);
+	}
+	
+//	public Transition getOutgoingTranToState(PrjState nextState) {
+//		return nextStateMap.getKey(nextState);
+//	}
+
+//	public void setTranIn(Transition tran, PrjState prevState) {
+//		prevStateMap.put(tran, prevState);
+//	}
+	
+//	public Transition getIncomingTranFromState(PrjState prevState) {
+//		return prevStateMap.getKey(prevState);
+//	}
+
+	public void setNextStateMap(HashMap<Transition, PrjState> map) {
+		this.nextStateMap = map;
+	}
+	
+	public HashMap<Transition, PrjState> getNextStateMap() {
+		return nextStateMap;
+	}
+
+	public State[] getStateArray() {
+		return stateArray;		
+	}
 }            
 
