@@ -67,6 +67,11 @@ public class Options {
 	private static boolean outputSgFlag = false;
 	
 	/*
+	 * Debug mode : options to print intermediate results during POR
+	 */
+	private static boolean debug = false;
+	
+	/*
 	 * Path for printing global state graph 
 	 */
 	private static String prjSgPath = null;
@@ -267,5 +272,13 @@ public class Options {
 	
 	public static String getCycleClosigAmpleMethd() {
 		return cycleClosingAmpleMethd;
+	}
+
+	public static void setDebugMode(boolean debugMode) {
+		debug = debugMode;	
+	}
+	
+	public static boolean getDebugMode() {
+		return debug;
 	}
 }
