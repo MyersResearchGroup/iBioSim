@@ -270,7 +270,7 @@ public class Options {
 		cycleClosingAmpleMethd = method;		
 	}
 	
-	public static String getCycleClosigAmpleMethd() {
+	public static String getCycleClosingAmpleMethd() {
 		return cycleClosingAmpleMethd;
 	}
 
