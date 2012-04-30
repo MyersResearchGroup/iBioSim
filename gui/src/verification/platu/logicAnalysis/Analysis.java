@@ -393,7 +393,7 @@ public class Analysis {
 			else {
 				fileName = Options.getPrjSgPath() + Options.getPOR().toLowerCase() + "_"
 						+ Options.getCycleClosingMthd().toLowerCase() + "_" 
-						+ Options.getCycleClosigAmpleMethd().toLowerCase() + "_sg.dot";
+						+ Options.getCycleClosingAmpleMethd().toLowerCase() + "_sg.dot";
 			}
 				
 			BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
@@ -588,15 +588,9 @@ public class Analysis {
 	@SuppressWarnings("unchecked")
 	public StateGraph[] search_dfsPOR(final StateGraph[] sgList, final State[] initStateArray) {
 		System.out.println("---> calling function search_dfsPOR");
-		String cycleClosingMthd = Options.getCycleClosingMthd();
-		if (cycleClosingMthd.toLowerCase().equals("behavioral"))
-			System.out.println("---> POR with behavioral analysis");
-		else if (cycleClosingMthd.toLowerCase().equals("state_search"))
-			System.out.println("---> POR with behavioral analysis with state trace-back");
-		else if (cycleClosingMthd.toLowerCase().equals("no_cycleclosing"))
-			System.out.println("---> POR without cycle closing");
-		else if (cycleClosingMthd.toLowerCase().equals("strong_cyclecondition"))
-			System.out.println("---> POR with strong cycle condition");
+		System.out.println("---> " + Options.getPOR());
+		System.out.println("---> " + Options.getCycleClosingMthd());
+		System.out.println("---> " + Options.getCycleClosingAmpleMethd());
 		
 		double peakUsedMem = 0;
 		double peakTotalMem = 0;
@@ -839,7 +833,7 @@ public class Analysis {
 					}
 //					System.out.println("-----------------------");
 				}
-				if (!cycleClosingMthd.toLowerCase().equals("no_cycleclosing")) {
+				if (!Options.getCycleClosingMthd().toLowerCase().equals("no_cycleclosing")) {
 					// Cycle closing check
 					if (prjStateSet.contains(nextPrjState) && stateStack.contains(nextPrjState)) {
 						if (Options.getDebugMode()) 
@@ -3631,7 +3625,7 @@ public class Analysis {
 			}
 			else if (!curEnabled.contains(tranCanBeDisabled)) {
 				if(Options.getPOR().toLowerCase().equals("no_traceback") 
-						|| (Options.getCycleClosigAmpleMethd().toLowerCase().equals("cc_notraceback") && isCycleClosingAmpleComputation)) {
+						|| (Options.getCycleClosingAmpleMethd().toLowerCase().equals("cc_notraceback") && isCycleClosingAmpleComputation)) {
 					dependent.addAll(curEnabled);
 					break;
 				}
