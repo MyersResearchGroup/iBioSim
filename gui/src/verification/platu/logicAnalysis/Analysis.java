@@ -335,11 +335,11 @@ public class Analysis {
 //				System.out.println("%%%%%%% Add global state to stateStack %%%%%%%%");
 //				printStateArray(stateStackTop.toStateArray());
 				stateStack.add(stateStackTop);
-				System.out.println("+++++++ Push trans onto lpnTranStack ++++++++");
-				printTransitionSet((LpnTranList) nextEnabledArray[0], "");
+//				System.out.println("+++++++ Push trans onto lpnTranStack ++++++++");
+//				printTransitionSet((LpnTranList) nextEnabledArray[0], "");
 				lpnTranStack.push((LpnTranList) nextEnabledArray[0].clone());
-				System.out.println("******** lpnTranStack ***********");
-				printLpnTranStack(lpnTranStack);
+//				System.out.println("******** lpnTranStack ***********");
+//				printLpnTranStack(lpnTranStack);
 				curIndexStack.push(0);
 				totalStates++;
 			}
