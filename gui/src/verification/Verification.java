@@ -1026,34 +1026,42 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			for (int i = 0; i < lpnFiles.length; i++) {
 				lpnFiles[i] = (String) tempFilesArray[i];
 			}
-			String filename = (String) JOptionPane.showInputDialog(this, "",
-					"Select LPN", JOptionPane.PLAIN_MESSAGE, null,
-					lpnFiles, lpnFiles[0]);
-			if (filename != null) {
-				String[] lpns = lpnList.getItems();
-				boolean contains = false;
-				for (int i = 0; i < lpns.length; i++) {
-					if (lpns[i].equals(filename)) {
-						contains = true;
+			JList lpnListInCurDir = new JList(lpnFiles);
+			JScrollPane scroll = new JScrollPane(lpnListInCurDir);
+			String[] options = new String[]{"OK", "Cancel"};
+			int selection = JOptionPane.showOptionDialog(this, scroll,
+					"Select LPN", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+					null, options, options[0]);
+			if (selection == JOptionPane.YES_OPTION) {
+				for (Object obj : lpnListInCurDir.getSelectedValues()) {
+					String filename = (String) obj;
+					if (filename != null) {
+						String[] lpns = lpnList.getItems();
+						boolean contains = false;
+						for (int i = 0; i < lpns.length; i++) {
+							if (lpns[i].equals(filename)) {
+								contains = true;
+							}
+						}
+						if (!filename.endsWith(".lpn")) {
+							JOptionPane.showMessageDialog(Gui.frame,
+									"You must select a valid LPN file.", "Error",
+									JOptionPane.ERROR_MESSAGE);
+							return;
+						} else if (new File(directory + separator + filename).exists()
+								|| filename.equals(sourceFileNoPath) || contains) {
+							JOptionPane
+									.showMessageDialog(
+											Gui.frame,
+											"This lpn is already contained in this tool.",
+											"Error", JOptionPane.ERROR_MESSAGE);
+							return;
+						}
+						lpnList.addItem(filename);
 					}
 				}
-				if (!filename.endsWith(".lpn")) {
-					JOptionPane.showMessageDialog(Gui.frame,
-							"You must select a valid LPN file.", "Error",
-							JOptionPane.ERROR_MESSAGE);
-					return;
-				} else if (new File(directory + separator + filename).exists()
-						|| filename.equals(sourceFileNoPath) || contains) {
-					JOptionPane
-							.showMessageDialog(
-									Gui.frame,
-									"This lpn is already contained in this tool.",
-									"Error", JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				lpnList.addItem(filename);
-				return;
 			}
+			return;
 		}
 		else if (e.getSource() == removeLPN) {
 			if (lpnList.getSelectedValue() != null) {
@@ -1380,26 +1388,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				}	
 				return;
 			}
-//			else if (!decomposeLPN.isSelected() && multipleLPNs.isSelected() && lpnList.getSelectedValues().length > 0) {
-//				// User has already hand-picked the LPNs. Send the batch of LPNs to the dfs search. 
-//				ArrayList<LhpnFile> selectedLPNs = new ArrayList<LhpnFile>();
-//				selectedLPNs.add(lpn);
-//				for (int i=0; i < lpnList.getSelectedValues().length; i++) {
-//					 String curLPNname = (String) lpnList.getSelectedValues()[i];
-//					 LhpnFile curLPN = new LhpnFile();
-//					 curLPN.load(directory + separator + curLPNname);
-//					 selectedLPNs.add(curLPN);
-//				}
-//				Project untimedStateSearch = new Project(selectedLPNs);
-//				StateGraph[] stateGraphArray = untimedStateSearch.search();
-//				if (dot.isSelected()) {
-//					for (int i=0; i<stateGraphArray.length; i++) {
-//						String graphFileName = stateGraphArray[i].getLpn().getLabel() + "_sg.dot";
-//						stateGraphArray[i].outputLocalStateGraph(directory + separator + graphFileName);
-//					}
-//				}
-//				return;
-//			}
 			else if (!untimedPOR.isSelected() && !decomposeLPN.isSelected() && multipleLPNs.isSelected() && lpnList.getSelectedValues().length < 1) {
 				JOptionPane.showMessageDialog(
 						Gui.frame,
