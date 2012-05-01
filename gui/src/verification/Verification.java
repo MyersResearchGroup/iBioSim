@@ -1101,8 +1101,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				Project untimedDFS = new Project(selectedLPNs);
 				if (untimedPOR.isSelected()) {
 					// Options for printing out intermediate result during POR
-					Options.setDebugMode(true);
-//					Options.setDebugMode(false);
+//					Options.setDebugMode(true);
+					Options.setDebugMode(false);
 					// Options for using trace-back in ample calculation
 					String[] ampleMethds = {"Use trace-back for ample computation", "No trace-back for ample computation"};
 					JList ampleMethdsList = new JList(ampleMethds);
@@ -1166,6 +1166,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 								Options.setCycleClosingAmpleMethd("cc_traceback");
 							if (cycleClosingAmpleMethdIndex == 1)
 								Options.setCycleClosingAmpleMethd("cc_notraceback");
+						}
+						else if (Options.getPOR().equals("no_traceback")) {
+							Options.setCycleClosingAmpleMethd("cc_notraceback");
 						}
 					}						
 					else if (cycleClosingMthdIndex == 1) 
