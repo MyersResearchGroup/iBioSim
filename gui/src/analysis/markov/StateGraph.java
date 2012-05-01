@@ -1117,7 +1117,12 @@ public class StateGraph implements Runnable {
 							// for (String state : stateGraph.keySet()) {
 							// for (State m : stateGraph.get(state)) {
 							if (m.getColor() % period == step) {
-								double nextProb = 0.0;
+								double nextProb = m.getCurrentProb();
+								for (StateTransitionPair next : m.getNextStatesWithTrans()) {
+									if (next.isEnabled() && next.transition > 0) {
+										nextProb = 0.0;
+									}
+								}
 								for (StateTransitionPair prev : m.getPrevStatesWithTrans()) {
 									if (prev.isEnabled()) {
 										double transProb = 0.0;
@@ -1161,9 +1166,7 @@ public class StateGraph implements Runnable {
 										}
 									}
 								}
-								if (nextProb != 0.0) {
-									m.setNextProb(nextProb);
-								}
+								m.setNextProb(nextProb);
 							}
 							if (stop) {
 								return false;
