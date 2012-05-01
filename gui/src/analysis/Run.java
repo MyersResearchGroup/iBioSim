@@ -20,6 +20,7 @@ import analysis.markov.BuildStateGraphThread;
 import analysis.markov.PerfromSteadyStateMarkovAnalysisThread;
 import analysis.markov.PerfromTransientMarkovAnalysisThread;
 import analysis.markov.StateGraph;
+import analysis.markov.StateGraph.Property;
 import biomodel.gui.ModelEditor;
 import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.parser.BioModel;
@@ -979,7 +980,7 @@ public class Run implements ActionListener {
 									performMarkovAnalysis.start(absError, null);
 								}
 								else {
-									ArrayList<String> conditions = new ArrayList<String>();
+									ArrayList<Property> conditions = new ArrayList<Property>();
 									// TODO: THIS NEEDS FIXING
 									/*
 									for (int i = 0; i < gcmEditor.getGCM().getConditions().size(); i++) {

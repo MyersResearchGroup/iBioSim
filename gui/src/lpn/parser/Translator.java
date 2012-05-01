@@ -1312,9 +1312,9 @@ public class Translator {
 			if (!probprop.equals("")){
 				// property should be in this format at this stage: probprop
 				// obtain the hsf AFTER bound
-				probpropRight= probprop.substring(probprop.indexOf(operator)).substring(probprop.indexOf("]")+1, probprop.length());			
+				probpropRight= probprop.substring(probprop.indexOf(operator)).substring(probprop.substring(probprop.indexOf(operator)).indexOf("]")+1, probprop.substring(probprop.indexOf(operator)).length());			
 				// obtain the time bound
-				timeBound= probprop.substring(probprop.indexOf(operator)).substring(probprop.indexOf("["), probprop.indexOf("]")+1);							 
+				timeBound= probprop.substring(probprop.indexOf(operator)).substring(probprop.substring(probprop.indexOf(operator)).indexOf("["), probprop.substring(probprop.indexOf(operator)).indexOf("]")+1);							 
 				// bound: [lower, upper]
 				if (timeBound.contains(",")){
 					relopType = "0";
