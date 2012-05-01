@@ -137,10 +137,12 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		typeBox = new JComboBox(types);
 		
 		//disallow input/output types for species in an enclosed GCM
+		/*
 		if (gcm.IsWithinCompartment()) {
 			typeBox.removeItem(GlobalConstants.INPUT);
 			typeBox.removeItem(GlobalConstants.OUTPUT);
 		}
+		*/
 		
 		typeBox.addActionListener(this);
 		tempPanel.setLayout(new GridLayout(1, 2));

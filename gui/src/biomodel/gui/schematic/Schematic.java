@@ -1605,7 +1605,7 @@ public class Schematic extends JPanel implements ActionListener {
 		String fullPath = gcm.getPath() + File.separator + gcm.getModelFileName(compId).replace(".xml", ".gcm");
 		BioModel compGCM = new BioModel(gcm.getPath());
 		compGCM.load(fullPath);
-		ArrayList<String> ports = compGCM.getPorts(type);
+		ArrayList<String> ports = compGCM.getSpeciesPorts(type);
 		return ports;
 	}
 	

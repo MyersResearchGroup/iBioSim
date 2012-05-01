@@ -214,6 +214,7 @@ public class SBMLutilities {
 	 * Convert ASTNodes into a string
 	 */
 	public static String myFormulaToString(ASTNode mathFormula) {
+		if (mathFormula==null) return "";
 		setTimeToT(mathFormula);
 		String formula = libsbml.formulaToString(mathFormula);
 		formula = formula.replaceAll("arccot", "acot");
@@ -240,6 +241,7 @@ public class SBMLutilities {
 	 * Recursive function to change time variable to t
 	 */
 	public static void setTimeToT(ASTNode node) {
+		if (node==null) return;
 		if (node.getType() == libsbml.AST_NAME_TIME) {
 			if (!node.getName().equals("t") || !node.getName().equals("time")) {
 				node.setName("t");

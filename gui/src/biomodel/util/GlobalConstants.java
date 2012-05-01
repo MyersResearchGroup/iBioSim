@@ -92,6 +92,16 @@ public class GlobalConstants {
 	public static final String BIOABS = "Biochemical abstraction";
 	public static final String DIMABS = "Dimerization abstraction";
 	public static final String COMPARTMENT = "compartment";
+	public static final String PARAMETER = "parameter";
+	public static final String SBMLSPECIES = "species";
+	public static final String SBMLREACTION = "reaction";
+	public static final String EVENT = "event";
+	public static final String CONSTRAINT = "constraint";
+	public static final String RULE = "rule";
+	public static final String ASSIGNMENT_RULE = "assignmentRule";
+	public static final String INITIAL_ASSIGNMENT = "initialAssignment";
+	public static final String RATE_RULE = "rateRule";
+	public static final String ALGEBRAIC_RULE = "algebraicRule";
 	public static final String ENCLOSING_COMPARTMENT = "enclosingCompartment";
 	public static final String DEFAULT_COMPARTMENT = "defaultCompartment";
 	

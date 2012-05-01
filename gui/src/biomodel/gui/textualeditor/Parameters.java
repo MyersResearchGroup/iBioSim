@@ -9,6 +9,7 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -26,6 +27,7 @@ import org.sbml.libsbml.InitialAssignment;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.Parameter;
+import org.sbml.libsbml.Port;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.Species;
@@ -55,6 +57,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	private JComboBox paramUnits;
 
 	private JComboBox paramConst;
+	
+	private JCheckBox onPort;
 
 	private BioModel gcm;
 
@@ -110,16 +114,9 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		
 		for (int i = 0; i < model.getNumParameters(); i++) {
 			Parameter parameter = (Parameter) listOfParameters.get(i);
-			
 			if (parameter.getId().contains("_locations") || parameter.getId().contains("_size"))
 				++notIncludedParametersCount;
-			
-			/*
-			 * if (parameter.isSetUnits()) { params[i] = parameter.getId() + " "
-			 * + parameter.getValue() + " " + parameter.getUnits(); } else {
-			 */
-			// }
-			params[i] = parameter.getId(); // + " " + parameter.getValue();
+			params[i] = parameter.getId(); 
 			if (paramsOnly) {
 				params[i] = parameter.getId() + " " + parameter.getValue();
 				for (int j = 0; j < getParams.size(); j++) {
@@ -214,21 +211,23 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		}
 		JPanel parametersPanel;
 		if (paramsOnly) {
-			parametersPanel = new JPanel(new GridLayout(7, 2));
+			parametersPanel = new JPanel(new GridLayout(8, 2));
 		}
 		else {
-			parametersPanel = new JPanel(new GridLayout(5, 2));
+			parametersPanel = new JPanel(new GridLayout(6, 2));
 		}
 		JLabel idLabel = new JLabel("ID:");
 		JLabel nameLabel = new JLabel("Name:");
 		JLabel valueLabel = new JLabel("Initial Value:");
 		JLabel unitLabel = new JLabel("Units:");
 		JLabel constLabel = new JLabel("Constant:");
+		JLabel onPortLabel = new JLabel("Is Mapped to a Port:");
 		paramID = new JTextField();
 		paramName = new JTextField();
 		paramValue = new JTextField();
 		paramUnits = new JComboBox();
 		paramUnits.addItem("( none )");
+		onPort = new JCheckBox();
 		Model model = gcm.getSBMLDocument().getModel();
 		ListOf listOfUnits = model.getListOfUnitDefinitions();
 		String[] units = new String[(int) model.getNumUnitDefinitions()];
@@ -309,6 +308,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			paramValue.setEnabled(false);
 			paramUnits.setEnabled(false);
 			paramConst.setEnabled(false);
+			onPort.setEnabled(false);
 			sweep.setEnabled(false);
 		}
 		String selectedID = "";
@@ -338,6 +338,11 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				}
 				if (paramet.isSetUnits()) {
 					paramUnits.setSelectedItem(paramet.getUnits());
+				}
+				if (gcm.getPortByIdRef(paramet.getId())!=null) {
+					onPort.setSelected(true);
+				} else {
+					onPort.setSelected(false);
 				}
 				if (paramsOnly && (((String) parameters.getSelectedValue()).contains("Modified"))
 						|| (((String) parameters.getSelectedValue()).contains("Custom"))
@@ -412,6 +417,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		parametersPanel.add(paramUnits);
 		parametersPanel.add(constLabel);
 		parametersPanel.add(paramConst);
+		parametersPanel.add(onPortLabel);
+		parametersPanel.add(onPort);
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, parametersPanel, "Parameter Editor", JOptionPane.YES_NO_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -517,6 +524,21 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							else {
 								paramet.setConstant(false);
 							}
+							Port port = gcm.getPortByIdRef(v);
+							if (port!=null) {
+								if (onPort.isSelected()) {
+									port.setId(GlobalConstants.PARAMETER+"__"+paramet.getId());
+									port.setIdRef(paramet.getId());
+								} else {
+									port.removeFromParentAndDelete();
+								}
+							} else {
+								if (onPort.isSelected()) {
+									port = gcm.getSBMLCompModel().createPort();
+									port.setId(GlobalConstants.PARAMETER+"__"+paramet.getId());
+									port.setIdRef(paramet.getId());
+								}
+							}
 							for (int i = 0; i < usedIDs.size(); i++) {
 								if (usedIDs.get(i).equals(v)) {
 									usedIDs.set(i, paramID.getText().trim());
@@ -595,6 +617,11 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							if (!unit.equals("( none )")) {
 								paramet.setUnits(unit);
 							}
+							if (onPort.isSelected()) {
+								Port port = gcm.getSBMLCompModel().createPort();
+								port.setId(GlobalConstants.PARAMETER+"__"+paramet.getId());
+								port.setIdRef(paramet.getId());
+							}
 							JList add = new JList();
 							Object[] adding = { param };
 							add.setListData(adding);
@@ -658,6 +685,13 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumParameters(); i++) {
 					if (((Parameter) p.get(i)).getId().equals(tempParameter.getId())) {
 						p.remove(i);
+					}
+				}
+				for (long i = 0; i < gcm.getSBMLCompModel().getNumPorts(); i++) {
+					Port port = gcm.getSBMLCompModel().getPort(i);
+					if (port.isSetIdRef() && port.getIdRef().equals(tempParameter.getId())) {
+						gcm.getSBMLCompModel().removePort(i);
+						break;
 					}
 				}
 				usedIDs.remove(tempParameter.getId());
