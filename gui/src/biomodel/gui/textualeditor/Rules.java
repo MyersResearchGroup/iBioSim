@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.Set;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -32,6 +33,7 @@ import org.sbml.libsbml.InitialAssignment;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.Parameter;
+import org.sbml.libsbml.Port;
 import org.sbml.libsbml.RateRule;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.Rule;
@@ -183,16 +185,21 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			JOptionPane.showMessageDialog(Gui.frame, "No rule selected.", "Must Select a Rule", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		JPanel rulePanel = new JPanel();
-		JPanel rulPanel = new JPanel();
+		JPanel rulePanel = new JPanel(new BorderLayout());
+		JPanel IDPanel = new JPanel();
+		JPanel mathPanel = new JPanel();
+		JLabel IDLabel = new JLabel("ID:");
 		JLabel typeLabel = new JLabel("Type:");
 		JLabel varLabel = new JLabel("Variable:");
 		JLabel ruleLabel = new JLabel("Rule:");
+		JLabel onPortLabel = new JLabel("Is Mapped to a Port:");
 		String[] list = { "Algebraic", "Assignment", "Rate" };
 		ruleType = new JComboBox(list);
 		ruleVar = new JComboBox();
+		JTextField id = new JTextField(12);
 		JTextField ruleMath = new JTextField(30);
 		ruleVar.setEnabled(false);
+		JCheckBox onPort = new JCheckBox();
 		ruleType.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (((String) ruleType.getSelectedItem()).equals("Assignment")) {
@@ -258,6 +265,22 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			LinkedList<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(rule);
 			if (sbolURIs.size() > 0)
 				sbolField.setSBOLURIs(sbolURIs);
+			if (gcm.getPortByMetaIdRef(rule.getMetaId())!=null) {
+				onPort.setSelected(true);
+			} else {
+				onPort.setSelected(false);
+			}
+			if (rule.isSetMetaId()) {
+				id.setText(rule.getMetaId());
+			} else {
+				String ruleId = "rule0";
+				int cn = 0;
+				while (gcm.getSBMLDocument().getElementByMetaId(ruleId)!=null) {
+					cn++;
+					ruleId = "rule" + cn;
+				}
+				id.setText(ruleId);
+			}
 		}
 		else {
 			if (!assignRuleVar("") && !rateRuleVar("")) {
@@ -272,15 +295,27 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				String[] list1 = { "Algebraic", "Assignment" };
 				ruleType = new JComboBox(list1);
 			}
+			String ruleId = "rule0";
+			int cn = 0;
+			while (gcm.getSBMLDocument().getElementByMetaId(ruleId)!=null) {
+				cn++;
+				ruleId = "rule" + cn;
+			}
+			id.setText(ruleId);
 		}
-		rulPanel.add(typeLabel);
-		rulPanel.add(ruleType);
-		rulPanel.add(varLabel);
-		rulPanel.add(ruleVar);
-		rulPanel.add(ruleLabel);
-		rulPanel.add(ruleMath);
-		rulePanel.add(rulPanel);
-		rulePanel.add(sbolField);
+		IDPanel.add(IDLabel);
+		IDPanel.add(id);
+		IDPanel.add(typeLabel);
+		IDPanel.add(ruleType);
+		IDPanel.add(onPortLabel);
+		IDPanel.add(onPort);
+		mathPanel.add(varLabel);
+		mathPanel.add(ruleVar);
+		mathPanel.add(ruleLabel);
+		mathPanel.add(ruleMath);
+		rulePanel.add(IDPanel,"North");
+		rulePanel.add(mathPanel,"Center");
+		rulePanel.add(sbolField,"South");
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, rulePanel, "Rule Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
 				options, options[0]);
@@ -344,6 +379,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					String[] oldRul = rul.clone();
 					rules.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					Rule r = (Rule) (gcm.getSBMLDocument().getModel().getListOfRules()).get(Rindex);
+					r.setMetaId(id.getText().trim());
 					String addStr;
 					String oldVar = "";
 					String oldMath = SBMLutilities.myFormulaToString(r.getMath());
@@ -396,6 +432,21 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 							AnnotationUtility.setSBOLAnnotation(r, sbolAnnot);
 						} else
 							AnnotationUtility.removeSBOLAnnotation(r);
+						Port port = gcm.getPortByMetaIdRef(r.getMetaId());
+						if (port!=null) {
+							if (onPort.isSelected()) {
+								port.setId(GlobalConstants.RULE+"__"+r.getMetaId());
+								port.setMetaIdRef(r.getMetaId());
+							} else {
+								port.removeFromParentAndDelete();
+							}
+						} else {
+							if (onPort.isSelected()) {
+								port = gcm.getSBMLCompModel().createPort();
+								port.setId(GlobalConstants.RULE+"__"+r.getMetaId());
+								port.setMetaIdRef(r.getMetaId());
+							}
+						}
 					}
 //					updateRules(rul);
 					rules.setListData(rul);
@@ -480,6 +531,12 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 							AnnotationUtility.setSBOLAnnotation(rPointer, sbolAnnot);
 						} else
 							AnnotationUtility.removeSBOLAnnotation(rPointer);
+						if (onPort.isSelected()) {
+							Port port = gcm.getSBMLCompModel().createPort();
+							port.setId(GlobalConstants.RULE+"__"+rPointer.getMetaId());
+							port.setMetaIdRef(rPointer.getMetaId());
+						}
+						rPointer.setMetaId(id.getText().trim());
 					}
 //					updateRules(rul);
 					rules.setListData(rul);
@@ -536,6 +593,13 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			ListOf r = gcm.getSBMLDocument().getModel().getListOfRules();
 			for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumRules(); i++) {
 				if ((((Rule) r.get(i)).isAlgebraic()) && SBMLutilities.myFormulaToString(((Rule) r.get(i)).getMath()).equals(tempMath)) {
+					for (long j = 0; j < gcm.getSBMLCompModel().getNumPorts(); j++) {
+						Port port = gcm.getSBMLCompModel().getPort(j);
+						if (port.isSetMetaIdRef() && port.getMetaIdRef().equals(r.get(i).getMetaId())) {
+							gcm.getSBMLCompModel().removePort(j);
+							break;
+						}
+					}
 					r.remove(i);
 				}
 			}
@@ -548,6 +612,13 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumRules(); i++) {
 				if ((((Rule) r.get(i)).isRate()) && SBMLutilities.myFormulaToString(((Rule) r.get(i)).getMath()).equals(tempMath)
 						&& ((Rule) r.get(i)).getVariable().equals(tempVar)) {
+					for (long j = 0; j < gcm.getSBMLCompModel().getNumPorts(); j++) {
+						Port port = gcm.getSBMLCompModel().getPort(j);
+						if (port.isSetMetaIdRef() && port.getMetaIdRef().equals(r.get(i).getMetaId())) {
+							gcm.getSBMLCompModel().removePort(j);
+							break;
+						}
+					}
 					r.remove(i);
 				}
 			}

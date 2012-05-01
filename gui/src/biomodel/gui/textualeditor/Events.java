@@ -28,6 +28,7 @@ import main.util.Utility;
 import org.sbml.libsbml.*;
 
 import biomodel.parser.BioModel;
+import biomodel.util.GlobalConstants;
 
 
 /**
@@ -117,7 +118,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		int index = events.getSelectedIndex();
 		JPanel eventPanel = new JPanel(new BorderLayout());
 		// JPanel evPanel = new JPanel(new GridLayout(2, 2));
-		JPanel evPanel = new JPanel(new GridLayout(9, 2));
+		JPanel evPanel = new JPanel(new GridLayout(10, 2));
 		JLabel IDLabel = new JLabel("ID:");
 		JLabel NameLabel = new JLabel("Name:");
 		JLabel triggerLabel = new JLabel("Trigger:");
@@ -127,6 +128,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		JLabel persistentTriggerLabel = new JLabel("Trigger is persistent:");
 		JLabel initialTriggerLabel = new JLabel("Trigger initially true:");
 		JLabel dynamicProcessLabel = new JLabel("Dynamic Process:");
+		JLabel onPortLabel = new JLabel("Is Mapped to a Port:");
 		
 		JTextField eventID = new JTextField(12);
 		JTextField eventName = new JTextField(12);
@@ -137,7 +139,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		JCheckBox persistentTrigger = new JCheckBox("");
 		JCheckBox initialTrigger = new JCheckBox("");
 		JComboBox dynamicProcess = new JComboBox(new String[] {"none","Division","Death"});
-		
+		JCheckBox onPort = new JCheckBox();
+
 		if (gcm != null && gcm.IsWithinCompartment() == false) {
 			dynamicProcess.setEnabled(false);
 			dynamicProcess.setSelectedItem("none");
@@ -216,6 +219,11 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					if (event.getTrigger().isSetInitialValue()) {
 						initialTrigger.setSelected(event.getTrigger().getInitialValue());
 					}
+					if (gcm.getPortByIdRef(event.getId())!=null) {
+						onPort.setSelected(true);
+					} else {
+						onPort.setSelected(false);
+					}
 
 					assign = new String[(int) event.getNumEventAssignments()];
 					origAssign = new String[(int) event.getNumEventAssignments()];
@@ -262,6 +270,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		evPanel.add(initialTrigger);
 		evPanel.add(dynamicProcessLabel);
 		evPanel.add(dynamicProcess);
+		evPanel.add(onPortLabel);
+		evPanel.add(onPort);
 		eventPanel.add(evPanel, "North");
 		eventPanel.add(eventAssignPanel, "South");
 		Object[] options = { option, "Cancel" };
@@ -487,6 +497,21 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 								usedIDs.set(i, eventID.getText().trim());
 							}
 						}
+						Port port = gcm.getPortByIdRef(selectedID);
+						if (port!=null) {
+							if (onPort.isSelected()) {
+								port.setId(GlobalConstants.EVENT+"__"+e.getId());
+								port.setIdRef(e.getId());
+							} else {
+								port.removeFromParentAndDelete();
+							}
+						} else {
+							if (onPort.isSelected()) {
+								port = gcm.getSBMLCompModel().createPort();
+								port.setId(GlobalConstants.EVENT+"__"+e.getId());
+								port.setIdRef(e.getId());
+							}
+						}
 						ev[index] = e.getId();
 						Utility.sort(ev);
 						events.setListData(ev);
@@ -557,6 +582,12 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						else if (((String)dynamicProcess.getSelectedItem()).equals("Death")) {
 							
 							e.setAnnotation("Death");
+						}
+
+						if (onPort.isSelected()) {
+							Port port = gcm.getSBMLCompModel().createPort();
+							port.setId(GlobalConstants.EVENT+"__"+e.getId());
+							port.setIdRef(e.getId());
 						}
 					}
 					
@@ -736,6 +767,13 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			org.sbml.libsbml.Event E = (org.sbml.libsbml.Event) EL.get(i);
 			if (E.getId().equals(selected)) {
 				EL.remove(i);
+			}
+		}
+		for (long i = 0; i < gcm.getSBMLCompModel().getNumPorts(); i++) {
+			Port port = gcm.getSBMLCompModel().getPort(i);
+			if (port.isSetIdRef() && port.getIdRef().equals(selected)) {
+				gcm.getSBMLCompModel().removePort(i);
+				break;
 			}
 		}
 	}

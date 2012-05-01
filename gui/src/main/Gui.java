@@ -4245,7 +4245,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 			}
 			catch (Exception e1) {
-				e1.printStackTrace();
 				JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -4508,6 +4507,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							}
 						}
 						catch (Exception e1) {
+							e1.printStackTrace();
 							JOptionPane.showMessageDialog(frame, "Unable to import files.", "Error", JOptionPane.ERROR_MESSAGE);
 						}
 					}
@@ -4610,7 +4610,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							f.setLocation(x, y);
 							f.setVisible(true);
 						}
+						String newFile = file[file.length - 1];
+						newFile = newFile.replaceAll("[^a-zA-Z0-9_.]+", "_");
 						if (document != null) {
+							document.getModel().setId(newFile.replace(".xml",""));
 							document.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
 							document.setPkgRequired("layout", false); 
 							document.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
@@ -4622,16 +4625,16 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								documentComp.getNumExternalModelDefinitions() > 0) {
 								if (!extractModelDefinitions(documentComp,documentCompModel)) return;
 							}
+							updateReplacementsDeletions(document, documentComp, documentCompModel);
 						}
 						SBMLWriter writer = new SBMLWriter();
-						String newFile = file[file.length - 1];
-						newFile = newFile.replaceAll("[^a-zA-Z0-9_.]+", "_");
 						writer.writeSBML(document, root + separator + newFile);
 						addToTree(newFile);
 						openSBML(root + separator + newFile);
 					}
 				}
 				catch (Exception e1) {
+					e1.printStackTrace();
 					JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
@@ -4674,6 +4677,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 			}
 			catch (Exception e1) {
+				e1.printStackTrace();
 				JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -9893,6 +9897,105 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		button.setIcon(new ImageIcon(imageName));
 		return button;
 	}
+	
+	private String changeIdToPortRef(SBaseRef sbaseRef,BioModel bioModel) {
+		String id = "";
+		if (sbaseRef.isSetSBaseRef()) {
+			BioModel subModel = new BioModel(root);
+			Submodel submodel = bioModel.getSBMLCompModel().getSubmodel(sbaseRef.getIdRef());
+			String extModel = bioModel.getSBMLComp().getExternalModelDefinition(submodel.getModelRef())
+					.getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
+			subModel.load(root + separator + extModel);
+			id += changeIdToPortRef(sbaseRef.getSBaseRef(),subModel);
+			subModel.save(root + separator + extModel);
+		}
+		if (sbaseRef.isSetIdRef()) {
+			Port port = bioModel.getPortBySBaseRef(sbaseRef);
+			SBase sbase = bioModel.getSBMLDocument().getElementBySId(sbaseRef.getIdRef());
+			if (id.equals("")) {
+				id = sbase.getElementName() + "__" + sbaseRef.getIdRef();
+			} else {
+				id = id + "__" + sbaseRef.getIdRef();
+			}
+			if (port == null) {
+				if (sbase!=null) { 
+					port = bioModel.getSBMLCompModel().createPort();
+					port.setId(id);
+					port.setIdRef(sbaseRef.getIdRef());
+					port.setSBaseRef(sbaseRef.getSBaseRef());
+				}
+			} 
+			sbaseRef.unsetIdRef();
+			sbaseRef.unsetSBaseRef();
+			sbaseRef.setPortRef(port.getId());
+			return id;
+		} 
+		return "";
+	}
+	
+	private void updatePortMap(CompSBMLDocumentPlugin sbmlComp,CompSBasePlugin sbmlSBase,BioModel subModel,String subModelId) {
+		for (long k = 0; k < sbmlSBase.getNumReplacedElements(); k++) {
+			ReplacedElement replacement = sbmlSBase.getReplacedElement(k);
+			if (replacement.getSubmodelRef().equals(subModelId)) {
+				changeIdToPortRef(replacement,subModel);
+			}
+		}
+		if (sbmlSBase.isSetReplacedBy()) {
+			Replacing replacement = sbmlSBase.getReplacedBy();
+			if (replacement.getSubmodelRef().equals(subModelId)) {
+				changeIdToPortRef(replacement,subModel);
+			}
+		}
+	}
+	
+	private boolean updateReplacementsDeletions(SBMLDocument document, CompSBMLDocumentPlugin sbmlComp, 
+			CompModelPlugin sbmlCompModel) {
+		for (long i = 0; i < sbmlCompModel.getNumSubmodels(); i++) {
+			BioModel subModel = new BioModel(root);
+			Submodel submodel = sbmlCompModel.getSubmodel(i);
+			String extModel = sbmlComp.getExternalModelDefinition(submodel.getModelRef())
+					.getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
+			subModel.load(root + separator + extModel);
+			/*
+			SBaseList elements = document.getModel().getListOfAllElements();
+			for (long j = 0; j < elements.getSize(); j++) {
+				SBase sbase = elements.get(j);
+				System.out.println(sbase.getElementName());
+				CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getPlugin("comp");
+				if (sbmlSBase!=null) {
+					updatePortMap(sbmlComp,sbmlSBase,subModel,submodel.getId());
+				}
+			}
+			*/
+			for (long j = 0; j < document.getModel().getNumCompartments(); j++) {
+				Compartment compartment = document.getModel().getCompartment(j);
+				CompSBasePlugin sbmlSBase = (CompSBasePlugin)compartment.getPlugin("comp");
+				updatePortMap(sbmlComp,sbmlSBase,subModel,submodel.getId());
+			}
+			for (long j = 0; j < document.getModel().getNumParameters(); j++) {
+				Parameter parameter = document.getModel().getParameter(j);
+				CompSBasePlugin sbmlSBase = (CompSBasePlugin)parameter.getPlugin("comp");
+				updatePortMap(sbmlComp,sbmlSBase,subModel,submodel.getId());
+			}
+			for (long j = 0; j < document.getModel().getNumSpecies(); j++) {
+				Species species = document.getModel().getSpecies(j);
+				CompSBasePlugin sbmlSBase = (CompSBasePlugin)species.getPlugin("comp");
+				updatePortMap(sbmlComp,sbmlSBase,subModel,submodel.getId());
+			}
+			for (long j = 0; j < document.getModel().getNumReactions(); j++) {
+				Reaction reaction = document.getModel().getReaction(j);
+				CompSBasePlugin sbmlSBase = (CompSBasePlugin)reaction.getPlugin("comp");
+				updatePortMap(sbmlComp,sbmlSBase,subModel,submodel.getId());
+			}
+			for (long j = 0; j < submodel.getNumDeletions(); j++) {
+				Deletion deletion = submodel.getDeletion(j);
+				changeIdToPortRef(deletion,subModel);
+			}
+			subModel.save(root + separator + extModel);
+		}
+		
+		return true;
+	}
 
 	private boolean extractModelDefinitions(CompSBMLDocumentPlugin sbmlComp,CompModelPlugin sbmlCompModel) {
 		for (long i=0; i < sbmlComp.getNumModelDefinitions(); i++) {
@@ -9928,18 +10031,17 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					c.setSpatialDimensions(3);
 					c.setConstant(true);
 				}
-				Port port = documentCompModel.createPort();
-				port.setId(GlobalConstants.ENCLOSING_COMPARTMENT);
-				port.setIdRef(document.getModel().getCompartment(0).getId());
+				updateReplacementsDeletions(document, documentComp, documentCompModel);
 				SBMLWriter writer = new SBMLWriter();
 				writer.writeSBML(document, root + separator + extId + ".xml");
 				addToTree(extId+".xml");
 				if (sbmlComp.getExternalModelDefinition(extId) == null) {
 					for (long j=0; j < sbmlCompModel.getNumSubmodels(); j++) {
-						if (sbmlCompModel.getSubmodel(j).getModelRef().equals(extId)) {
+						Submodel submodel = sbmlCompModel.getSubmodel(j);
+						if (submodel.getModelRef().equals(extId)) {
 							ExternalModelDefinition extModel = sbmlComp.createExternalModelDefinition();
-							extModel.setId(extId);
 							extModel.setSource("file:" + extId + ".xml");
+							extModel.setId(extId);
 							break;
 						}
 					}
@@ -9960,7 +10062,16 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		for (long i = 0; i < sbmlComp.getNumExternalModelDefinitions(); i++) {
 			ExternalModelDefinition extModel = sbmlComp.getExternalModelDefinition(i);
 			if (extModel.isSetModelRef()) {
+				String oldId = extModel.getId();
 				extModel.setSource("file:" + extModel.getModelRef() + ".xml");
+				extModel.setId(extModel.getModelRef());
+				extModel.unsetModelRef();
+				for (long j=0; j < sbmlCompModel.getNumSubmodels(); j++) {
+					Submodel submodel = sbmlCompModel.getSubmodel(j);
+					if (submodel.getModelRef().equals(oldId)) {
+						submodel.setModelRef(extModel.getId());
+					}
+				}
 			}
 		}
 		return true;

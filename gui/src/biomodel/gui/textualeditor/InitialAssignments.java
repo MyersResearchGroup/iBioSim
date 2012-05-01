@@ -28,6 +28,7 @@ import org.sbml.libsbml.InitialAssignment;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.Parameter;
+import org.sbml.libsbml.Port;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.Rule;
 import org.sbml.libsbml.SBMLDocument;
@@ -36,6 +37,7 @@ import org.sbml.libsbml.SpeciesReference;
 import org.sbml.libsbml.UnitDefinition;
 
 import biomodel.parser.BioModel;
+import biomodel.util.GlobalConstants;
 
 
 /**
@@ -138,6 +140,14 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 		ListOf r = gcm.getSBMLDocument().getModel().getListOfInitialAssignments();
 		for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumInitialAssignments(); i++) {
 			if (((InitialAssignment) r.get(i)).getSymbol().equals(variable)) {
+				for (long j = 0; j < gcm.getSBMLCompModel().getNumPorts(); j++) {
+					Port port = gcm.getSBMLCompModel().getPort(j);
+					System.out.println(port.getMetaIdRef());
+					if (port.isSetMetaIdRef() && port.getMetaIdRef().equals(r.get(i).getMetaId())) {
+						gcm.getSBMLCompModel().removePort(j);
+						break;
+					}
+				}
 				r.remove(i);
 			}
 		}
@@ -195,6 +205,8 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 		}
 		boolean error = false;
 		InitialAssignment r = gcm.getSBMLDocument().getModel().createInitialAssignment();
+		String initialId = "init__"+variable;
+		r.setMetaId(initialId);
 		r.setSymbol(variable);
 		r.setMath(SBMLutilities.myParseFormula(assignment.trim()));
 		if (checkInitialAssignmentUnits(biosim, gcm, r)) {
@@ -207,6 +219,12 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 		}
 		if (error) {
 			removeInitialAssignment(gcm, variable);
+		} else {
+			if (gcm.getPortByIdRef(variable)!=null) {
+				Port port = gcm.getSBMLCompModel().createPort();
+				port.setId(GlobalConstants.INITIAL_ASSIGNMENT+"__"+variable);
+				port.setMetaIdRef(initialId);
+			} 
 		}
 		return error;
 	}

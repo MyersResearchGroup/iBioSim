@@ -9,6 +9,7 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -25,11 +26,13 @@ import main.util.Utility;
 import org.sbml.libsbml.Constraint;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Model;
+import org.sbml.libsbml.Port;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.UnitDefinition;
 import org.sbml.libsbml.XMLNode;
 
 import biomodel.parser.BioModel;
+import biomodel.util.GlobalConstants;
 
 
 /**
@@ -116,6 +119,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		JLabel IDLabel = new JLabel("ID:");
 		JLabel mathLabel = new JLabel("Constraint:");
 		JLabel messageLabel = new JLabel("Messsage:");
+		JLabel onPortLabel = new JLabel("Is Mapped to a Port:");
 		JTextField consID = new JTextField(12);
 		
 		JTextArea consMath = new JTextArea(3,30);
@@ -133,6 +137,8 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		scroll2.setMinimumSize(new Dimension(100, 100));
 		scroll2.setPreferredSize(new Dimension(100, 100));
 		scroll2.setViewportView(consMessage);
+		
+		JCheckBox onPort = new JCheckBox();
 
 		String selectedID = "";
 		int Cindex = -1;
@@ -154,6 +160,11 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						message = message.substring(message.indexOf("xhtml\">") + 7, message.indexOf("</p>"));
 						consMessage.setText(message);
 					}
+					if (gcm.getPortByMetaIdRef(c.get(i).getMetaId())!=null) {
+						onPort.setSelected(true);
+					} else {
+						onPort.setSelected(false);
+					}
 				}
 			}
 		}
@@ -168,6 +179,8 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		}
 		IDPanel.add(IDLabel);
 		IDPanel.add(consID);
+		IDPanel.add(onPortLabel);
+		IDPanel.add(onPort);
 		mathPanel.add(mathLabel,"North");
 		mathPanel.add(scroll,"Center");
 		messagePanel.add(messageLabel,"North");
@@ -242,6 +255,21 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						else {
 							c.unsetMessage();
 						}
+						Port port = gcm.getPortByMetaIdRef(selectedID);
+						if (port!=null) {
+							if (onPort.isSelected()) {
+								port.setId(GlobalConstants.CONSTRAINT+"__"+c.getMetaId());
+								port.setMetaIdRef(c.getMetaId());
+							} else {
+								port.removeFromParentAndDelete();
+							}
+						} else {
+							if (onPort.isSelected()) {
+								port = gcm.getSBMLCompModel().createPort();
+								port.setId(GlobalConstants.CONSTRAINT+"__"+c.getMetaId());
+								port.setMetaIdRef(c.getMetaId());
+							}
+						}
 						for (int i = 0; i < usedIDs.size(); i++) {
 							if (usedIDs.get(i).equals(selectedID)) {
 								usedIDs.set(i, consID.getText().trim());
@@ -266,6 +294,11 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 							XMLNode xmlNode = XMLNode.convertStringToXMLNode("<message><p xmlns=\"http://www.w3.org/1999/xhtml\">"
 									+ consMessage.getText().trim() + "</p></message>");
 							c.setMessage(xmlNode);
+						}
+						if (onPort.isSelected()) {
+							Port port = gcm.getSBMLCompModel().createPort();
+							port.setId(GlobalConstants.CONSTRAINT+"__"+c.getMetaId());
+							port.setMetaIdRef(c.getMetaId());
 						}
 						usedIDs.add(consID.getText().trim());
 						Object[] adding = { c.getMetaId() };
@@ -339,6 +372,13 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 				if ((((Constraint) c.get(i)).getMetaId()).equals(selected)) {
 					usedIDs.remove(((Constraint) c.get(i)).getMetaId());
 					c.remove(i);
+					break;
+				}
+			}
+			for (long i = 0; i < gcm.getSBMLCompModel().getNumPorts(); i++) {
+				Port port = gcm.getSBMLCompModel().getPort(i);
+				if (port.isSetMetaIdRef() && port.getMetaIdRef().equals(selected)) {
+					gcm.getSBMLCompModel().removePort(i);
 					break;
 				}
 			}

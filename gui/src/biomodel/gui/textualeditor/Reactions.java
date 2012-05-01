@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -32,6 +33,7 @@ import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.ModifierSpeciesReference;
 import org.sbml.libsbml.Parameter;
+import org.sbml.libsbml.Port;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.Species;
@@ -90,6 +92,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	private JComboBox reacParamUnits;
 
 	private JTextField reacID, reacName; // reaction name and id text
+	
+	private JCheckBox onPort;
 
 	// fields
 
@@ -280,6 +284,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		else {
 			reacName = new JTextField(30);
 		}
+		JLabel onPortLabel = new JLabel("Is Mapped to a Port:");
+		onPort = new JCheckBox();
 		JLabel reactionCompLabel = new JLabel("Compartment:");
 		ListOf listOfCompartments = gcm.getSBMLDocument().getModel().getListOfCompartments();
 		String[] addC = new String[(int) gcm.getSBMLDocument().getModel().getNumCompartments()];
@@ -302,6 +308,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			reacID.setText(reac.getId());
 			selectedID = reac.getId();
 			reacName.setText(reac.getName());
+			if (gcm.getPortByIdRef(reac.getId())!=null) {
+				onPort.setSelected(true);
+			} else {
+				onPort.setSelected(false);
+			}
 			if (reac.getReversible()) {
 				reacReverse.setSelectedItem("true");
 			}
@@ -350,6 +361,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		thisReactionParams = new ArrayList<String>();
 		if (option.equals("OK")) {
 			Reaction reac = gcm.getSBMLDocument().getModel().getReaction(reactionId);
+			if (reac.getKineticLaw()==null) {
+				reac.createKineticLaw();
+			}
 			ListOf listOfParameters = reac.getKineticLaw().getListOfParameters();
 			reacParams = new String[(int) reac.getKineticLaw().getNumParameters()];
 			for (int i = 0; i < reac.getKineticLaw().getNumParameters(); i++) {
@@ -564,6 +578,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			reactionPanelNorth1.add(reacID);
 			reactionPanelNorth1.add(name);
 			reactionPanelNorth1.add(reacName);
+			reactionPanelNorth1.add(onPortLabel);
+			reactionPanelNorth1.add(onPort);
 			if (gcm.getSBMLDocument().getLevel() > 2) {
 				reactionPanelNorth1b.add(reactionCompLabel);
 				reactionPanelNorth1b.add(reactionComp);
@@ -638,6 +654,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			useMassAction.setEnabled(false);
 			clearKineticLaw.setEnabled(false);
 			reactionComp.setEnabled(false);
+			onPort.setEnabled(false);
 		}
 		Object[] options1 = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, reactionPanel, "Reaction Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
@@ -752,6 +769,21 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 					react.setId(reacID.getText().trim());
 					react.setName(reacName.getText().trim());
+					Port port = gcm.getPortByIdRef(val);
+					if (port!=null) {
+						if (onPort.isSelected()) {
+							port.setId(GlobalConstants.SBMLREACTION+"__"+react.getId());
+							port.setIdRef(react.getId());
+						} else {
+							port.removeFromParentAndDelete();
+						}
+					} else {
+						if (onPort.isSelected()) {
+							port = gcm.getSBMLCompModel().createPort();
+							port.setId(GlobalConstants.SBMLREACTION+"__"+react.getId());
+							port.setIdRef(react.getId());
+						}
+					}
 					react.getKineticLaw().setMath(SBMLutilities.myParseFormula(kineticLaw.getText().trim()));
 					error = checkKineticLawUnits(react.getKineticLaw());
 					if (!error) {
@@ -847,6 +879,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 					react.setId(reacID.getText().trim());
 					react.setName(reacName.getText().trim());
+					if (onPort.isSelected()) {
+						Port port = gcm.getSBMLCompModel().createPort();
+						port.setId(GlobalConstants.SBMLREACTION+"__"+react.getId());
+						port.setIdRef(react.getId());
+					}
 					react.getKineticLaw().setMath(SBMLutilities.myParseFormula(kineticLaw.getText().trim()));
 					error = checkKineticLawUnits(react.getKineticLaw());
 					if (!error) {
@@ -2140,6 +2177,13 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		if (index != -1) {
 			String selected = ((String) reactions.getSelectedValue()).split(" ")[0];
 			removeTheReaction(gcm, selected);
+			for (long i = 0; i < gcm.getSBMLCompModel().getNumPorts(); i++) {
+				Port port = gcm.getSBMLCompModel().getPort(i);
+				if (port.isSetIdRef() && port.getIdRef().equals(selected)) {
+					gcm.getSBMLCompModel().removePort(i);
+					break;
+				}
+			}
 			usedIDs.remove(selected);
 			reactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			reacts = (String[]) Utility.remove(reactions, reacts);

@@ -2260,6 +2260,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		if (comp != null && !comp.equals("")) {
 			BioModel subBioModel = new BioModel(path);
 			subBioModel.load(path + separator + comp);
+			subBioModel.flattenBioModel();
 			String oldPort = null;
 			if (selected != null) {
 				oldPort = selected.substring(selected.split(" ")[0].length()
@@ -2267,38 +2268,13 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				selected = selected.split(" ")[0];
 			}
 
-			ArrayList<String> compartments = subBioModel.getCompartmentPorts();
-			ArrayList<String> inputs = subBioModel.getInputSpecies();
-			ArrayList<String> outputs = subBioModel.getOutputSpecies();
-			/*
-			String[] inputs = in.toArray(new String[0]);
-			String[] outputs = out.toArray(new String[0]);
-			int i, j;
-			String index;
-			for (i = 1; i < inputs.length; i++) {
-				index = inputs[i];
-				j = i;
-				while ((j > 0) && inputs[j - 1].compareToIgnoreCase(index) > 0) {
-					inputs[j] = inputs[j - 1];
-					j = j - 1;
-				}
-				inputs[j] = index;
-			}
-			for (i = 1; i < outputs.length; i++) {
-				index = outputs[i];
-				j = i;
-				while ((j > 0) && outputs[j - 1].compareToIgnoreCase(index) > 0) {
-					outputs[j] = outputs[j - 1];
-					j = j - 1;
-				}
-				outputs[j] = index;
-			}
-			*/
+			ArrayList<String> ports = subBioModel.getPorts();
+
 			if(createUsingDefaults){
 				// TODO: Is this correct?
 				outID = gcm.addComponent(null, comp, false, null, -1, -1, 0, 0);
 			}else{
-				new ComponentsPanel(selected, list, gcm, inputs, outputs, compartments, comp, oldPort, paramsOnly, this);
+				new ComponentsPanel(selected, list, gcm, ports, comp, oldPort, paramsOnly, this);
 				outID = selected;
 			}
 

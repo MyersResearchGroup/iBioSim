@@ -114,22 +114,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		String[] comps = new String[(int) model.getNumCompartments()];
 		for (int i = 0; i < model.getNumCompartments(); i++) {
 			Compartment compartment = (Compartment) listOfCompartments.get(i);
-			/*
-			 * if (compartment.isSetCompartmentType()) { comps[i] =
-			 * compartment.getId() + " " + compartment.getCompartmentType(); }
-			 * else {
-			 */
 			comps[i] = compartment.getId();
-			// }
-			/*
-			if (compartment.isSetSize()) {
-				comps[i] += " " + compartment.getSize();
-			}
-			*/
-			/*
-			 * if (compartment.isSetUnits()) { comps[i] += " " +
-			 * compartment.getUnits(); }
-			 */
 			if (paramsOnly) {
 				for (int j = 0; j < getParams.size(); j++) {
 					if (getParams.get(j).split(" ")[0].equals(compartment.getId())) {
@@ -354,7 +339,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 				else {
 					compConstant.setSelectedItem("false");
 				}
-				if (gcm.getSBMLCompModel().getPort(GlobalConstants.COMPARTMENT+"__"+compartment.getId())!=null) {
+				if (gcm.getPortByIdRef(compartment.getId())!=null) {
 					onPort.setSelected(true);
 				} else {
 					onPort.setSelected(false);
@@ -647,7 +632,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						else {
 							c.setConstant(false);
 						}
-						Port port = gcm.getSBMLCompModel().getPort(GlobalConstants.COMPARTMENT+"__"+val);
+						Port port = gcm.getPortByIdRef(val);
 						if (port!=null) {
 							if (onPort.isSelected()) {
 								port.setId(GlobalConstants.COMPARTMENT+"__"+c.getId());
@@ -1078,7 +1063,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 					}
 					for (long i = 0; i < gcm.getSBMLCompModel().getNumPorts(); i++) {
 						Port port = gcm.getSBMLCompModel().getPort(i);
-						if (port.getIdRef().equals(tempComp.getId())) {
+						if (port.isSetIdRef() && port.getIdRef().equals(tempComp.getId())) {
 							gcm.getSBMLCompModel().removePort(i);
 							break;
 						}
