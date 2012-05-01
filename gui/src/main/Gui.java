@@ -9933,19 +9933,22 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		return "";
 	}
 	
-	private void updatePortMap(CompSBMLDocumentPlugin sbmlComp,CompSBasePlugin sbmlSBase,BioModel subModel,String subModelId) {
+	private boolean updatePortMap(CompSBMLDocumentPlugin sbmlComp,CompSBasePlugin sbmlSBase,BioModel subModel,String subModelId) {
 		for (long k = 0; k < sbmlSBase.getNumReplacedElements(); k++) {
 			ReplacedElement replacement = sbmlSBase.getReplacedElement(k);
 			if (replacement.getSubmodelRef().equals(subModelId)) {
 				changeIdToPortRef(replacement,subModel);
+				return true;
 			}
 		}
 		if (sbmlSBase.isSetReplacedBy()) {
 			Replacing replacement = sbmlSBase.getReplacedBy();
 			if (replacement.getSubmodelRef().equals(subModelId)) {
 				changeIdToPortRef(replacement,subModel);
+				return true;
 			}
 		}
+		return false;
 	}
 	
 	private boolean updateReplacementsDeletions(SBMLDocument document, CompSBMLDocumentPlugin sbmlComp, 
@@ -9956,17 +9959,17 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			String extModel = sbmlComp.getExternalModelDefinition(submodel.getModelRef())
 					.getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
 			subModel.load(root + separator + extModel);
-			/*
 			SBaseList elements = document.getModel().getListOfAllElements();
 			for (long j = 0; j < elements.getSize(); j++) {
 				SBase sbase = elements.get(j);
-				System.out.println(sbase.getElementName());
 				CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getPlugin("comp");
 				if (sbmlSBase!=null) {
-					updatePortMap(sbmlComp,sbmlSBase,subModel,submodel.getId());
+					if (updatePortMap(sbmlComp,sbmlSBase,subModel,submodel.getId())) {
+						elements = document.getModel().getListOfAllElements();
+					}
 				}
 			}
-			*/
+			/*
 			for (long j = 0; j < document.getModel().getNumCompartments(); j++) {
 				Compartment compartment = document.getModel().getCompartment(j);
 				CompSBasePlugin sbmlSBase = (CompSBasePlugin)compartment.getPlugin("comp");
@@ -9987,6 +9990,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				CompSBasePlugin sbmlSBase = (CompSBasePlugin)reaction.getPlugin("comp");
 				updatePortMap(sbmlComp,sbmlSBase,subModel,submodel.getId());
 			}
+			*/
 			for (long j = 0; j < submodel.getNumDeletions(); j++) {
 				Deletion deletion = submodel.getDeletion(j);
 				changeIdToPortRef(deletion,subModel);
