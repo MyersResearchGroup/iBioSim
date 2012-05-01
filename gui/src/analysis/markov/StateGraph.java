@@ -307,7 +307,7 @@ public class StateGraph implements Runnable {
 	
 	private String removeNesting(double error, double timeStep, String prop, JProgressBar progress) {
 		if (prop.contains("Pr=?{")) {
-			progress.setString("Determining the Sat sets.");
+			progress.setString("Determining Sat Sets.");
 			int index = prop.indexOf("Pr=?{");
 			String newProp = prop.substring(0, index);
 			String cond = prop.substring(index);
