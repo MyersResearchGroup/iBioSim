@@ -1843,21 +1843,25 @@ public class BioModel {
 				}
 			}
 		}
+		String baseId = newId;
+		if (newId.contains("__")) {
+			baseId = newId.substring(newId.lastIndexOf("__")+2);
+		}
 		if (isSpeciesConstitutive(oldId)) {
 			Reaction reaction = sbml.getModel().getReaction("Constitutive_"+oldId);
-			reaction.setId("Constitutive_"+newId.substring(newId.lastIndexOf("__")+2));
+			reaction.setId("Constitutive_"+baseId);
 		}
 		Reaction diffusion = getDiffusionReaction(oldId);
 		if (diffusion != null) {
-			diffusion.setId("MembraneDiffusion_"+newId.substring(newId.lastIndexOf("__")+2));
+			diffusion.setId("MembraneDiffusion_"+baseId);
 		}
 		Reaction degradation = getDegradationReaction(oldId);
 		if (degradation != null) {
-			degradation.setId("Degradation_"+newId.substring(newId.lastIndexOf("__")+2));
+			degradation.setId("Degradation_"+baseId);
 		}
 		if (isSpeciesComplex(oldId)) {
 			Reaction reaction = getComplexReaction(oldId);
-			reaction.setId("Complex_"+newId.substring(newId.lastIndexOf("__")+2));
+			reaction.setId("Complex_"+baseId);
 		}
 		for (int i=0;i<sbml.getModel().getNumReactions();i++) {
 			Reaction reaction = sbml.getModel().getReaction(i);
