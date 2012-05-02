@@ -1087,16 +1087,17 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		copyFile();
 		String[] array = directory.split(separator);
 		String tempDir = "";
-		String lpnFile = "";
+		String lpnFileName = "";
 		if (!verifyFile.endsWith("lpn")) {
 			String[] temp = verifyFile.split("\\.");
-			lpnFile = temp[0] + ".lpn";
+			lpnFileName = temp[0] + ".lpn";
 		} else {
-			lpnFile = verifyFile;
+			lpnFileName = verifyFile;
 		}
 		if (untimedStateSearch.isSelected()) {
 			LhpnFile lpn = new LhpnFile();
-			lpn.load(directory + separator + lpnFile);
+			lpn.load(directory + separator + lpnFileName);
+			Options.setLogName(lpn.getLabel());
 			if (!decomposeLPN.isSelected()) {
 				ArrayList<LhpnFile> selectedLPNs = new ArrayList<LhpnFile>();
 				selectedLPNs.add(lpn);
@@ -1106,15 +1107,12 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					 curLPN.load(directory + separator + curLPNname);
 					 selectedLPNs.add(curLPN);
 				}
-				Project untimedDFS = new Project(selectedLPNs);
+				Project untimed_dfs = new Project(selectedLPNs);
 				if (untimedPOR.isSelected()) {
 					// ------- Temporary Settings ------------
 					// Options for printing out intermediate results during POR
 //					Options.setDebugMode(true);
 					Options.setDebugMode(false);
-					// Options for printing the final numbers from search_dfs or search_dfsPOR. 
-					Options.setPrintLogToFile(true);
-//					Options.setPrintLogToFile(false);
 					// ----------------------------------------
 	
 					// Options for using trace-back in ample calculation
@@ -1135,9 +1133,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					}
 					int ampleMethdsIndex = ampleMethdsList.getSelectedIndex();
 					if (ampleMethdsIndex == 0) 
-						Options.setPOR("traceback");
+						Options.setPOR("tb");
 					if (ampleMethdsIndex == 1)
-						Options.setPOR("no_traceback");					
+						Options.setPOR("tboff");					
 					// GUI for different cycle closing methods.
 					String[] entries = {"Use behavioral analysis",
 										"Use behavioral analysis and state trace-back",
@@ -1160,7 +1158,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					int cycleClosingMthdIndex = cycleClosingList.getSelectedIndex();
 					if (cycleClosingMthdIndex == 0) {
 						Options.setCycleClosingMthd("behavioral");
-						if (Options.getPOR().equals("traceback")) {
+						if (Options.getPOR().equals("tb")) {
 							String[] cycleClosingAmpleMethds = {"Use trace-back", "No trace-back"};
 							JList cycleClosingAmpleList = new JList(cycleClosingAmpleMethds);
 							cycleClosingAmpleList.setVisibleRowCount(2);
@@ -1177,12 +1175,12 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 							}
 							int cycleClosingAmpleMethdIndex = cycleClosingAmpleList.getSelectedIndex();
 							if (cycleClosingAmpleMethdIndex == 0) 
-								Options.setCycleClosingAmpleMethd("cc_traceback");
+								Options.setCycleClosingAmpleMethd("cctb");
 							if (cycleClosingAmpleMethdIndex == 1)
-								Options.setCycleClosingAmpleMethd("cc_notraceback");
+								Options.setCycleClosingAmpleMethd("cctboff");
 						}
-						else if (Options.getPOR().equals("no_traceback")) {
-							Options.setCycleClosingAmpleMethd("cc_notraceback");
+						else if (Options.getPOR().equals("tboff")) {
+							Options.setCycleClosingAmpleMethd("cctboff");
 						}
 					}						
 					else if (cycleClosingMthdIndex == 1) 
@@ -1190,12 +1188,15 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					else if (cycleClosingMthdIndex == 2)
 						Options.setCycleClosingMthd("no_cycleclosing");
 					else if (cycleClosingMthdIndex == 3)
-						Options.setCycleClosingMthd("strong_cyclecondition");
+						Options.setCycleClosingMthd("strong");
 					if (dot.isSelected()) {
 						Options.setOutputSgFlag(true);
-						Options.setPrjSgPath(directory + separator);
 					}
-					StateGraph[] stateGraphArray = untimedDFS.searchPOR();
+					Options.setPrjSgPath(directory + separator);
+					// Options for printing the final numbers from search_dfs or search_dfsPOR. 
+					Options.setOutputLogFlag(true);
+//					Options.setPrintLogToFile(false);
+					StateGraph[] stateGraphArray = untimed_dfs.searchPOR();
 					if (dot.isSelected()) {
 						for (int i=0; i<stateGraphArray.length; i++) {
 							String graphFileName = stateGraphArray[i].getLpn().getLabel() + "POR_"+ Options.getCycleClosingMthd() + "_local_sg.dot";
@@ -1205,11 +1206,13 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					}
 				}
 				else { // No POR
-					if (dot.isSelected()) {
+					Options.setPrjSgPath(directory + separator);
+					// Options for printing the final numbers from search_dfs or search_dfsPOR. 
+					Options.setOutputLogFlag(true);
+//					Options.setPrintLogToFile(false);
+					if (dot.isSelected()) 
 						Options.setOutputSgFlag(true);
-						Options.setPrjSgPath(directory + separator);
-					}
-					StateGraph[] stateGraphArray = untimedDFS.search();
+					StateGraph[] stateGraphArray = untimed_dfs.search();
 					if (dot.isSelected()) {
 						for (int i=0; i<stateGraphArray.length; i++) {
 							String graphFileName = stateGraphArray[i].getLpn().getLabel() + "_local_sg.dot";
@@ -1441,13 +1444,13 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			tempDir = tempDir + array[i] + separator;
 		}
 		LhpnFile lhpnFile = new LhpnFile();
-		lhpnFile.load(directory + separator + lpnFile);
+		lhpnFile.load(directory + separator + lpnFileName);
 		Abstraction abstraction = lhpnFile.abstractLhpn(this);
 		String abstFilename;
 		if(dbm2.isSelected())
 		{
 			try {
-				verification.timed_state_exploration.dbm2.StateExploration.findStateGraph(lhpnFile, directory+separator, lpnFile);
+				verification.timed_state_exploration.dbm2.StateExploration.findStateGraph(lhpnFile, directory+separator, lpnFileName);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
@@ -1469,7 +1472,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			else
 			{
 				LhpnFile lpn = new LhpnFile();
-				lpn.load(directory + separator + lpnFile);
+				lpn.load(directory + separator + lpnFileName);
 
 				// The full state graph is created for only one LPN.
 
@@ -1518,7 +1521,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			}
 			}
 		} else {
-			abstFilename = lpnFile.replace(".lpn", "_abs.lpn");
+			abstFilename = lpnFileName.replace(".lpn", "_abs.lpn");
 		}
 		String sourceFile;
 		if (simplify.isSelected() || abstractLhpn.isSelected()) {
