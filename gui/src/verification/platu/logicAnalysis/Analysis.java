@@ -3,7 +3,6 @@ package verification.platu.logicAnalysis;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -11,11 +10,8 @@ import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Stack;
 
-import lpn.parser.Abstraction;
 import lpn.parser.LhpnFile;
-import lpn.parser.Place;
 import lpn.parser.Transition;
-import lpn.parser.LpnDecomposition.LpnProcess;
 import verification.platu.MDD.MDT;
 import verification.platu.MDD.Mdd;
 import verification.platu.MDD.mddNode;
@@ -156,6 +152,7 @@ public class Analysis {
 	 * An iterative implement of findsg_recursive().
 	 * 
 	 * @param sgList
+	 * @param start 
 	 * @param curLocalStateArray
 	 * @param enabledArray
 	 */
@@ -414,6 +411,9 @@ public class Analysis {
 				+ ", max_stack_depth: " + max_stack_depth 
 				+ ", peak total memory: " + peakTotalMem / 1000000 + " MB"
 				+ ", peak used memory: " + peakUsedMem / 1000000 + " MB");
+		
+		if (Options.getOutputLogFlag()) 
+			outputLogFile(false, tranFiringCnt, totalStateCnt, peakTotalMem / 1000000, peakUsedMem / 1000000);
 		if (Options.getOutputSgFlag())
 			outputGlobalStateGraph(sgList, prjStateSet, true);
 		return sgList;
@@ -423,7 +423,7 @@ public class Analysis {
 		try {
 			String fileName = null;
 			if (fullSG) {
-				fileName = Options.getPrjSgPath() + "noReduction_sg.dot";
+				fileName = Options.getPrjSgPath() + "full_sg.dot";
 			}
 			else {
 				fileName = Options.getPrjSgPath() + Options.getPOR().toLowerCase() + "_"
@@ -926,19 +926,34 @@ public class Analysis {
 				+ ", max_stack_depth: " + max_stack_depth 
 				+ ", peak total memory: " + peakTotalMem / 1000000 + " MB"
 				+ ", peak used memory: " + peakUsedMem / 1000000 + " MB");
-		if (Options.getPrintLogToFile()) {
-			printLogToFile(tranFiringCnt, totalStateCnt, peakTotalMem / 1000000, peakUsedMem / 1000000);
-		}
+		
+		if (Options.getOutputLogFlag()) 
+			outputLogFile(true, tranFiringCnt, totalStateCnt, peakTotalMem / 1000000, peakUsedMem / 1000000);
 		if (Options.getOutputSgFlag()) {
 			outputGlobalStateGraph(sgList, prjStateSet, false);
 		}
 		return sgList;
 	}
 
-	private void printLogToFile(int tranFiringCnt, double totalStateCnt,
+	private void outputLogFile(boolean isPOR, int tranFiringCnt, double totalStateCnt,
 			double peakTotalMem, double peakUsedMem) {
-		
-		
+		try {
+			String fileName = null;
+			if (isPOR)
+				fileName = Options.getPrjSgPath() + Options.getLogName() + "_" + Options.getPOR() + "_" 
+						+ Options.getCycleClosingMthd() + "_" + Options.getCycleClosingAmpleMethd() + ".log";
+			else
+				fileName = Options.getPrjSgPath() + Options.getLogName() + "_full" + ".log";
+			BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
+			out.write("tranFiringCnt prjStateCnt maxStackDepth peakTotalMem peakUsedMem \n");
+			out.write(tranFiringCnt + "\t" + totalStateCnt + "\t" + max_stack_depth + "\t" + peakTotalMem + "\t" 
+					+ peakTotalMem + "\n");
+			out.close();
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+			System.err.println("Error producing local state graph as dot file.");
+		}	
 	}
 
 	private void printLpnTranStack(Stack<LinkedList<Transition>> lpnTranStack) {
@@ -1010,7 +1025,7 @@ public class Analysis {
     		// Cycle closing on global state graph
     		if (Options.getDebugMode()) 
     			System.out.println("~~~~~~~ existing global state ~~~~~~~~");
-    		if (cycleClosingMthd.equals("strong_cyclecondition")) {
+    		if (cycleClosingMthd.equals("strong")) {
     			newNextAmple.addAll(getIntSetSubstraction(curEnabled, nextAmple));
     			updateLocalAmpleTbl(newNextAmple, sgList, nextStateArray);
     		}
@@ -1930,7 +1945,7 @@ public class Analysis {
 //						}
 //       	    		}
 //       			}
-//       			else if (cycleClosingMthd.toLowerCase().equals("strong_cyclecondition")) {
+//       			else if (cycleClosingMthd.toLowerCase().equals("strong")) {
 //       				LpnTranList ignoredTrans = getSetSubtraction(reducedLocalTrans, oldLocalNextAmpleTrans);
 //   	    			HashSet<LpnTransitionPair> ignored = new HashSet<LpnTransitionPair>();
 //   	    			for (int i=0; i<ignoredTrans.size(); i++) {
@@ -3668,8 +3683,8 @@ public class Analysis {
 					printIntegerSet(dependent, lpnList, "@ getDependentSet at 0 for transition " + lpnList[enabledLpnTran.getLpnIndex()].getTransition(enabledLpnTran.getTranIndex()));
 			}
 			else if (!curEnabled.contains(tranCanBeDisabled)) {
-				if(Options.getPOR().toLowerCase().equals("no_traceback") 
-						|| (Options.getCycleClosingAmpleMethd().toLowerCase().equals("cc_notraceback") && isCycleClosingAmpleComputation)) {
+				if(Options.getPOR().toLowerCase().equals("tboff")  // no trace-back
+						|| (Options.getCycleClosingAmpleMethd().toLowerCase().equals("cctboff") && isCycleClosingAmpleComputation)) {
 					dependent.addAll(curEnabled);
 					break;
 				}
