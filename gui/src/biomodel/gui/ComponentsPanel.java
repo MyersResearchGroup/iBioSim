@@ -303,11 +303,13 @@ public class ComponentsPanel extends JPanel {
 			getPortMap(sbmlSBase,event.getId());
 		}
 		Submodel instance = gcm.getSBMLCompModel().getSubmodel(selected);
-		for (long j = 0; j < instance.getNumDeletions(); j++) {
-			Deletion deletion = instance.getDeletion(j);
-			int l = portIds.indexOf(deletion.getPortRef());
-			if (l >= 0) {
-				portmapBox.get(l).setSelectedItem("--delete--");
+		if (instance!=null) {
+			for (long j = 0; j < instance.getNumDeletions(); j++) {
+				Deletion deletion = instance.getDeletion(j);
+				int l = portIds.indexOf(deletion.getPortRef());
+				if (l >= 0) {
+					portmapBox.get(l).setSelectedItem("--delete--");
+				}
 			}
 		}
 		
@@ -409,13 +411,15 @@ public class ComponentsPanel extends JPanel {
 			}
 
 			Submodel instance = gcm.getSBMLCompModel().getSubmodel(selected);
-			long k = 0;
-			while (k < instance.getNumDeletions()) {
-				Deletion deletion = instance.getDeletion(k);
-				if (deletion.isSetPortRef() && portIds.contains(deletion.getPortRef())) {
-					deletion.removeFromParentAndDelete();
-				} else {
-					k++;
+			if (instance != null) {
+				long k = 0;
+				while (k < instance.getNumDeletions()) {
+					Deletion deletion = instance.getDeletion(k);
+					if (deletion.isSetPortRef() && portIds.contains(deletion.getPortRef())) {
+						deletion.removeFromParentAndDelete();
+					} else {
+						k++;
+					}
 				}
 			}
 			for (long i = 0; i < gcm.getSBMLDocument().getModel().getNumCompartments(); i++) {

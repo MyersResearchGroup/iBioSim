@@ -343,7 +343,7 @@ public class GCMParser {
 				speciesIF.setDecay(sbml.getModel().getParameter(GlobalConstants.KDECAY_STRING).getValue());
 			}
 			
-			if (degradation.getAnnotationString().contains("Grid") == false)
+			if (degradation.getAnnotationString().contains("grid") == false)
 				sbml.getModel().removeReaction(degradation.getId());
 		} else {
 			speciesIF.setDecay(0.0);

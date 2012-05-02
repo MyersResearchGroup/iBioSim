@@ -129,8 +129,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private JMenu file, edit, view, tools, help, importMenu, exportMenu, newMenu, viewModel;
 	private JMenuItem newProj; // The new menu item
-	private JMenuItem newSBMLModel; // The new menu item
-	private JMenuItem newGCMModel; // The new menu item	
+	private JMenuItem newSBMLModel; // The new menu item	
 	private JMenuItem newGridModel;
 	private JMenuItem newVhdl; // The new vhdl menu item
 	private JMenuItem newS; // The new assembly file menu item
@@ -435,9 +434,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		closeAll = new JMenuItem("Close All");
 		pref = new JMenuItem("Preferences");
 		newProj = new JMenuItem("Project");
-		newGCMModel = new JMenuItem("SBML Model");
-		newGridModel = new JMenuItem("Grid Model");
 		newSBMLModel = new JMenuItem("SBML Model");
+		newGridModel = new JMenuItem("Grid Model");
 		newSpice = new JMenuItem("Spice Circuit");
 		newVhdl = new JMenuItem("VHDL Model");
 		newS = new JMenuItem("Assembly File");
@@ -533,9 +531,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		pref.addActionListener(this);
 		manual.addActionListener(this);
 		newProj.addActionListener(this);
-		newGCMModel.addActionListener(this);
-		newGridModel.addActionListener(this);
 		newSBMLModel.addActionListener(this);
+		newGridModel.addActionListener(this);
 		newVhdl.addActionListener(this);
 		newS.addActionListener(this);
 		newInst.addActionListener(this);
@@ -635,7 +632,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			check.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, ShortCutKey));
 			saveSBOL.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ShortCutKey | KeyEvent.ALT_MASK));
 			refresh.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0));
-			newGCMModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey));
+			newSBMLModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey));
 			newGridModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ShortCutKey | KeyEvent.ALT_MASK));
 			createAnal.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ShortCutKey | KeyEvent.SHIFT_MASK));
 			createLearn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ShortCutKey | KeyEvent.SHIFT_MASK));
@@ -691,7 +688,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		 * openProj.setMnemonic(KeyEvent.VK_O);
 		 * close.setMnemonic(KeyEvent.VK_W);
 		 * newGCMModel.setMnemonic(KeyEvent.VK_G);
-		 * newSBMLModel.setMnemonic(KeyEvent.VK_S);
 		 * newVhdl.setMnemonic(KeyEvent.VK_V);
 		 * newLhpn.setMnemonic(KeyEvent.VK_L); newG.setMnemonic(KeyEvent.VK_N);
 		 * //newSpice.setMnemonic(KeyEvent.VK_P);
@@ -749,9 +745,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportTsd.setEnabled(false);
 		exportAvi.setEnabled(false);
 		exportMp4.setEnabled(false);
-		newGCMModel.setEnabled(false);
-		newGridModel.setEnabled(false);
 		newSBMLModel.setEnabled(false);
+		newGridModel.setEnabled(false);
 		newVhdl.setEnabled(false);
 		newS.setEnabled(false);
 		newInst.setEnabled(false);
@@ -802,7 +797,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		file.add(newMenu);
 		newMenu.add(newProj);
 		if (!async) {
-			newMenu.add(newGCMModel);
+			newMenu.add(newSBMLModel);
 			newMenu.add(newGridModel);
 			newMenu.add(newLhpn);
 		}
@@ -3550,9 +3545,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				importUnc.setEnabled(true);
 				importRsg.setEnabled(true);
 				importSpice.setEnabled(true);
-				newGCMModel.setEnabled(true);
-				newGridModel.setEnabled(true);
 				newSBMLModel.setEnabled(true);
+				newGridModel.setEnabled(true);
 				newVhdl.setEnabled(true);
 				newProperty.setEnabled(true);   //DK
 				newS.setEnabled(true);
@@ -3677,9 +3671,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						importUnc.setEnabled(true);
 						importRsg.setEnabled(true);
 						importSpice.setEnabled(true);
-						newGCMModel.setEnabled(true);
-						newGridModel.setEnabled(true);
 						newSBMLModel.setEnabled(true);
+						newGridModel.setEnabled(true);
 						newVhdl.setEnabled(true);
 						newS.setEnabled(true);
 						newInst.setEnabled(true);
@@ -3704,18 +3697,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 		}
 		// if the new circuit model menu item is selected
-		else if (e.getSource() == newGCMModel) {
-			createGCM(false);
+		else if (e.getSource() == newSBMLModel) {
+			createModel(false);
 		}
 		else if (e.getSource() == newGridModel) {
-			createGCM(true);
+			createModel(true);
 		}
-		// if the new SBML model menu item is selected
-		/*
-		else if (e.getSource() == newSBMLModel) {
-			createSBML();
-		}
-		*/
 		// if the new vhdl menu item is selected
 		else if (e.getSource() == newVhdl) {
 			newModel("VHDL", ".vhd");
@@ -4381,11 +4368,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	}
 */
 	
-	private void createGCM(boolean grid) {
+	private void createModel(boolean grid) {
 		if (root != null) {
 			try {
 
-				String simName = null;
+				String modelId = null;
 
 				JTextField modelChooser = new JTextField("");
 				modelChooser.setColumns(20);
@@ -4403,54 +4390,42 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				// if the user clicks "ok" on the panel
 				if (okCancel == JOptionPane.OK_OPTION) {
 
-					simName = modelChooser.getText();
+					modelId = modelChooser.getText();
 				}
 				else
 					return;
 
 				// String simName = JOptionPane.showInputDialog(frame,
 				// "Enter Model ID:", "Model ID", JOptionPane.PLAIN_MESSAGE);
-				if (simName != null && !simName.trim().equals("")) {
-					simName = simName.trim();
-					if (simName.length() > 3) {
-						if (!simName.substring(simName.length() - 4).equals(".gcm")) {
-							simName += ".gcm";
+				if (modelId != null && !modelId.trim().equals("")) {
+					modelId = modelId.trim();
+					if (modelId.length() > 3) {
+						if (!modelId.substring(modelId.length() - 4).equals(".xml")) {
+							modelId += ".xml";
 						}
 					}
 					else {
-						simName += ".gcm";
+						modelId += ".xml";
 					}
-					String modelID = "";
-					if (simName.length() > 3) {
-						if (simName.substring(simName.length() - 4).equals(".gcm")) {
-							modelID = simName.substring(0, simName.length() - 4);
-						}
-						else {
-							modelID = simName.substring(0, simName.length() - 3);
-						}
-					}
-					if (!(IDpat.matcher(modelID).matches())) {
+					if (!(IDpat.matcher(modelId.replace(".xml","")).matches())) {
 						JOptionPane.showMessageDialog(frame, "A model ID can only contain letters, numbers, and underscores.", "Invalid ID",
 								JOptionPane.ERROR_MESSAGE);
 					}
 					else {
-						if (overwrite(root + separator + simName, simName)) {
-							File f = new File(root + separator + simName);
-							f.createNewFile();
+						if (overwrite(root + separator + modelId, modelId)) {
 							BioModel gcm = new BioModel(root);
-							gcm.createSBMLDocument(simName.replace(".gcm", ""));
-							gcm.save(f.getAbsolutePath());
-							int i = getTab(f.getName());
+							gcm.createSBMLDocument(modelId.replace(".xml", ""));
+							gcm.save(root + separator + modelId);
+							int i = getTab(modelId);
 							if (i != -1) {
 								tab.remove(i);
 							}
-							
-							ModelEditor gcm2sbml = new ModelEditor(root + separator, f.getName(), this, log, false, null, null, null, false);
-							addTab(f.getName().replace(".gcm",".xml"), gcm2sbml, "GCM Editor");
-							addToTree(f.getName().replace(".gcm",".xml"));
+							ModelEditor modelEditor = new ModelEditor(root + separator, modelId, this, log, false, null, null, null, false);
+							addTab(modelId, modelEditor, "GCM Editor");
+							addToTree(modelId);
 							if (grid == true) {
-								gcm2sbml.launchGridPanel();
-								gcm2sbml.rebuildGui();
+								modelEditor.launchGridPanel();
+								modelEditor.rebuildGui();
 							}
 						}
 					}
@@ -8354,9 +8329,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		public void actionPerformed(ActionEvent e) {
 			popup.add(newProj);
 			if (!async) {
-				popup.add(newGCMModel);
-				popup.add(newGridModel);
 				popup.add(newSBMLModel);
+				popup.add(newGridModel);
 			}
 			else if (atacs) {
 				popup.add(newVhdl);
