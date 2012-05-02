@@ -214,7 +214,8 @@ public class Project {
 		long elapsedTimeMillis = System.currentTimeMillis() - start; 
 		float elapsedTimeSec = elapsedTimeMillis/1000F;
 		System.out.println("---> total runtime: " + elapsedTimeSec + " sec\n");
-		outputRuntimToLog(false, elapsedTimeSec);
+		if (Options.getOutputLogFlag())
+			outputRuntimToLog(false, elapsedTimeSec);
 		return stateGraphArray;
 	}
 
@@ -309,7 +310,9 @@ public class Project {
 		long elapsedTimeMillis = System.currentTimeMillis() - start; 
 		float elapsedTimeSec = elapsedTimeMillis/1000F;	
 		System.out.println("---> total runtime: " + elapsedTimeSec + " sec\n");
-		outputRuntimToLog(true, elapsedTimeSec);
+		
+		if (Options.getOutputLogFlag())
+			outputRuntimToLog(true, elapsedTimeSec);
 		return stateGraphArray;
 	}
 	
