@@ -36,10 +36,10 @@ public class Options {
 	 * Partial order reduction options for ample set computation (not including ample compuation for cycle closing check).
 	 */
 	public static enum PorDef { 
-		TRACEBACK, // normal POR
-		NO_TRACEBACK // POR without trace-back	
+		TB, // POR with traceback
+		TBOFF // POR without trace-back	
 		};
-	private static String POR = "traceback";
+	private static String POR = "tb";
 	
 	/*
 	 * Cycle closing method for partial order reduction
@@ -48,7 +48,7 @@ public class Options {
 		BEHAVIORAL, // Improved behavioral analysis on cycle closing
 		STATE_SEARCH, // Improved behavioral analysis + state trace-back
 		NO_CYCLECLOSING, // no cycle closing
-		STRONG_CYCLECONDITION, // Strong cycle condition: for each cycle, at least one state has to fully expand.
+		STRONG, // Strong cycle condition: for each cycle, at least one state has to fully expand.
 	}
 	private static String cycleClosingMethd = "behavioral";
 	
@@ -56,10 +56,10 @@ public class Options {
 	 * Ample computation during cycle closing check.
 	 */
 	public static enum cycleClosingAmpleMethdDef { 
-		CC_TRACEBACK, // normal POR
-		CC_NOTRACEBACK // POR without trace-back	
+		CCTB, // cycle closing with trace-back
+		CCTBOFF // cycle closing without trace-back
 		};
-	private static String cycleClosingAmpleMethd = "traceback";
+	private static String cycleClosingAmpleMethd = "cctb";
 	
 	/*
 	 * Output state graph (dot) flag
@@ -72,9 +72,14 @@ public class Options {
 	private static boolean debug = false;
 	
 	/*
-	 * Options for printing the final numbers from search_dfs or search_dfsPOR.
+	 * Option for printing final numbers from search_dfs or search_dfsPOR.
 	 */
-	private static boolean printLogToFile = false;
+	private static boolean outputLogFlag = false;
+	
+	/*
+	 * Name of the LPN under verificaiton.
+	 */
+	private static String lpnName = null;
 	
 	/*
 	 * Path for printing global state graph 
@@ -287,11 +292,19 @@ public class Options {
 		return debug;
 	}
 
-	public static void setPrintLogToFile(boolean printLog) {
-		printLogToFile = printLog;
+	public static void setOutputLogFlag(boolean printLog) {
+		outputLogFlag = printLog;
 	}
 	
-	public static boolean getPrintLogToFile() {
-		return printLogToFile;
+	public static boolean getOutputLogFlag() {
+		return outputLogFlag;
+	}
+
+	public static void setLogName(String lpnFileName) {
+		lpnName = lpnFileName;
+	}
+	
+	public static String getLogName() {
+		return lpnName;
 	}
 }
