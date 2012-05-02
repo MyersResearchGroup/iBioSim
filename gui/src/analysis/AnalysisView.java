@@ -1233,6 +1233,15 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
 			}
+			else if (((String) simulators.getSelectedItem()).equals("Runge-Kutta-Fehlberg (Java)")) {
+				description.setText("Runge-Kutta-Fehlberg Method");
+				minStep.setEnabled(true);
+				minStepLabel.setEnabled(true);
+				step.setEnabled(true);
+				stepLabel.setEnabled(true);
+				errorLabel.setEnabled(false);
+				absErr.setEnabled(false);
+			}
 			else if (((String) simulators.getSelectedItem()).contains("gillespie")) {
 				description.setText("Gillespie's Direct method");
 				minStep.setEnabled(true);

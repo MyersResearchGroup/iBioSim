@@ -10,7 +10,7 @@ import javax.swing.JProgressBar;
 import main.Gui;
 
 
-public class DynamicGillespie {
+public class DynamicSimulation {
 	
 	//simulator type
 	private String simulatorType;
@@ -23,14 +23,14 @@ public class DynamicGillespie {
 	/**
 	 * constructor; sets the simulator type
 	 */
-	public DynamicGillespie(String type) {
+	public DynamicSimulation(String type) {
 		
 		simulatorType = type;
 	}	
 	
 	public void simulate(String SBMLFileName, String outputDirectory, double timeLimit, 
 			double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval, 
-			int runs, JLabel progressLabel, JFrame running, double stoichAmpValue) {
+			int runs, JLabel progressLabel, JFrame running, double stoichAmpValue, String[] interestingSpecies) {
 		
 		String progressText = progressLabel.getText();
 		
@@ -42,10 +42,16 @@ public class DynamicGillespie {
 			
 			if (simulatorType.equals("cr"))
 				simulator = new SimulatorSSACR(SBMLFileName, outputDirectory, timeLimit, 
-						maxTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running);
+						maxTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, 
+						interestingSpecies);
 			else if (simulatorType.equals("direct"))
 				simulator = new SimulatorSSADirect(SBMLFileName, outputDirectory, timeLimit, 
-						maxTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running);
+						maxTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, 
+						interestingSpecies);
+			else if (simulatorType.equals("rk"))
+				simulator = new SimulatorODERK(SBMLFileName, outputDirectory, timeLimit, 
+						maxTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, 
+						interestingSpecies);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -101,17 +107,3 @@ public class DynamicGillespie {
 		}
 	}
 }
-
-
-/*
-IMPLEMENTATION NOTES:
-	
-
-if the top node of a reversible reaction isn't a minus sign, then give an error and exit
-
-
-CONSTRAINTS:
-
-you need to display the message if it fails?
-
-*/

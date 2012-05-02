@@ -1028,8 +1028,12 @@ public class GCM2SBML {
 				}
 			}
 			gcm.updateLayoutDimensions();
-			gcm.buildGrid(numRows, numCols);
-			gcm.setGridSize(numRows,numCols);
+			
+			if (numRows > 0 || numCols > 0) {
+				gcm.buildGrid(numRows, numCols);
+				gcm.setGridSize(numRows,numCols);
+			}
+			
 			gcm.createCompPlugin();
 			for (String s : components.keySet()) {
 				gcm.createComponentFromGCM(s,components.get(s));

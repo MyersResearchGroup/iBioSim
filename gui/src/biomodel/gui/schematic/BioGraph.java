@@ -158,7 +158,7 @@ public class BioGraph extends mxGraph {
 		// add species
 		for(String sp : gcm.getSpecies()){
 			
-			if (gcm.getSBMLDocument().getModel().getSpecies(sp).getAnnotationString().contains("Type=Grid"))
+			if (gcm.getSBMLDocument().getModel().getSpecies(sp).getAnnotationString().contains("type=\"grid\""))
 				continue;
 			
 			if(createGraphSpeciesFromModel(sp))
@@ -180,7 +180,7 @@ public class BioGraph extends mxGraph {
 			if (BioModel.isProductionReaction(r)) continue;
 			if (r.getAnnotationString().contains("Complex")) continue;
 			if (r.getAnnotationString().contains("Constitutive")) continue;
-			if (r.getAnnotationString().contains("Grid")) continue;
+			if (r.getAnnotationString().contains("grid")) continue;
 			
 			if (layout.getReactionGlyph(r.getId()) != null || r.getId().startsWith("Production_")) {
 				if(!r.getId().startsWith("Production_") && createGraphReactionFromModel(r.getId()))
@@ -226,8 +226,10 @@ public class BioGraph extends mxGraph {
 				if (createGraphComponentFromModel(comp))
 					needsPositioning = true;
 			}
-		} else {
+		} 
+		else {
 			CompModelPlugin sbmlCompModel = gcm.getSBMLCompModel();
+			
 			for (long i = 0; i < sbmlCompModel.getNumSubmodels(); i++) {
 			
 				String comp = sbmlCompModel.getSubmodel(i).getId();
@@ -257,7 +259,7 @@ public class BioGraph extends mxGraph {
 		for (int i = 0; i < m.getNumReactions(); i++) {
 			
 			Reaction r = m.getReaction(i);
-			if (r.getAnnotationString().contains("Grid"))
+			if (r.getAnnotationString().contains("grid"))
 				continue;
 			
 			if (r.getAnnotationString().contains("Complex")) {
@@ -446,7 +448,7 @@ public class BioGraph extends mxGraph {
 			if (BioModel.isProductionReaction(r)) continue;
 			if (r.getAnnotationString().contains("Complex")) continue;
 			if (r.getAnnotationString().contains("Constitutive")) continue;
-			if (r.getAnnotationString().contains("Grid")) continue;
+			if (r.getAnnotationString().contains("grid")) continue;
 			
 			ReactionGlyph reactionGlyph = gcm.getSBMLLayout().getLayout("iBioSim").getReactionGlyph(r.getId());
 			if (reactionGlyph != null) {
@@ -878,6 +880,9 @@ public class BioGraph extends mxGraph {
 				
 				mxCell source = (mxCell)vec.get(0).getSource();
 				mxCell target = (mxCell)vec.get(0).getTarget(); 
+				
+				System.err.println(source.getId());
+				System.err.println(target.getId());
 				
 				// find the end and center points
 				mxGeometry t;

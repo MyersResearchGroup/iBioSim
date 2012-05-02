@@ -114,7 +114,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		
 		for (int i = 0; i < model.getNumParameters(); i++) {
 			Parameter parameter = (Parameter) listOfParameters.get(i);
-			if (parameter.getId().contains("_locations") || parameter.getId().contains("_size"))
+			
+			if (parameter.getId().contains("_locations"))
 				++notIncludedParametersCount;
 			params[i] = parameter.getId(); 
 			if (paramsOnly) {
@@ -147,7 +148,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		int j=0;
 		for (int i = 0; i < paramsCopy.length; ++i) {
 			
-			if (paramsCopy[i].contains("_locations") || paramsCopy[i].contains("_size"))
+			if (paramsCopy[i].contains("_locations"))
 				continue;
 			else {				
 				params[j] = paramsCopy[i];

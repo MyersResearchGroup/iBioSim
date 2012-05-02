@@ -1042,7 +1042,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				if (gcm.getSBMLDocument().getModel().getSpecies(((String)species.getModel().getElementAt(0)).split(" ")[0])
 						.getAnnotation() != null &&						
 						gcm.getSBMLDocument().getModel().getSpecies(((String)species.getModel().getElementAt(0)).split(" ")[0])
-						.getAnnotationString().contains("Type=Grid")) {
+						.getAnnotationString().contains("type=\"grid\"")) {
 					
 					openGridSpeciesEditor();
 				}

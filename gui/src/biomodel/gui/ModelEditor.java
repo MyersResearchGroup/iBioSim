@@ -1396,13 +1396,13 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 						.getParameter(submodel.getId().replace("GRID__","") + "__locations")
 						.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
 			
-				String[] compIDs = locationAnnotationString.split("=");
+				String[] compIDs = locationAnnotationString.replace("\"","").split("array:");
 				
-				for (int j = 0; j < compIDs.length; ++j) {
+				for (int j = 2; j < compIDs.length; ++j) {
 					
-					if (compIDs[j].contains("[[")) {
+					if (compIDs[j].contains("=(")) {
 						
-						compIDs[j] = compIDs[j].split(",")[0].replace("[[","").replace("]]","");
+						compIDs[j] = compIDs[j].split("=")[0].trim();
 						
 						components.addItem(compIDs[j] + " " + 
 								submodel.getModelRef() + " " + gcm.getComponentPortMap(compIDs[j]));

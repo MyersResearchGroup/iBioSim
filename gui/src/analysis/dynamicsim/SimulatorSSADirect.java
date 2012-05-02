@@ -22,11 +22,19 @@ public class SimulatorSSADirect extends Simulator {
 
 	public SimulatorSSADirect(String SBMLFileName, String outputDirectory, double timeLimit, 
 			double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval, 
-			double stoichAmpValue, JFrame running) 
+			double stoichAmpValue, JFrame running, String[] interestingSpecies) 
 	throws IOException, XMLStreamException {
 		
 		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, randomSeed,
-				progress, printInterval, initializationTime, stoichAmpValue, running);
+				progress, printInterval, initializationTime, stoichAmpValue, running, interestingSpecies);
+	
+		try {
+			initialize(randomSeed, 1);
+		} catch (IOException e2) {
+			e2.printStackTrace();
+		} catch (XMLStreamException e2) {
+			e2.printStackTrace();
+		}
 	}
 
 	public void simulate() {
@@ -35,14 +43,6 @@ public class SimulatorSSADirect extends Simulator {
 			return;
 		
 		long initTime2 = System.nanoTime();
-		
-		try {
-			initialize();
-		} catch (IOException e2) {
-			e2.printStackTrace();
-		} catch (XMLStreamException e2) {
-			e2.printStackTrace();
-		}
 		
 		final boolean noEventsFlag = (Boolean) eventsFlag.getValue();
 		final boolean noAssignmentRulesFlag = (Boolean) rulesFlag.getValue();
@@ -230,7 +230,7 @@ public class SimulatorSSADirect extends Simulator {
 	 * @throws IOException
 	 * @throws XMLStreamException
 	 */
-	private void initialize() 
+	private void initialize(long randomSeed, int runNumber) 
 	throws IOException, XMLStreamException {	
 		
 		setupArrays();
@@ -264,8 +264,13 @@ public class SimulatorSSADirect extends Simulator {
 		setupReactions();		
 		setupEvents();
 		
-		if (dynamicBoolean == true)
+		setupForOutput(randomSeed, runNumber);
+		
+		if (dynamicBoolean == true) {
+			
 			setupGrid();
+			createModelCopy();
+		}
 	}
 
 	protected void eraseComponentFurther(HashSet<String> reactionIDs) {

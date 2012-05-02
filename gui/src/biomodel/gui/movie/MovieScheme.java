@@ -233,21 +233,15 @@ public class MovieScheme {
 					//if it's a location parameter
 					if (parameter.getId().contains("__locations")) {
 						
-						if (parameter.getAnnotationString().contains("[[" + compID + "]]")) {
+						if (parameter.getAnnotationString().contains("array:" + compID + "=")) {
 							
 							String[] splitAnnotation = parameter.getAnnotationString().replace("<annotation>","")
-							.replace("</annotation>","").replace("]]","").replace("[[","").split("=");
+							.replace("</annotation>","").replace("\"","").split("array:");
 						
 							//loop through all components in the locations parameter array
-							for (int j = 1; j < splitAnnotation.length; ++j) {
+							for (int j = 2; j < splitAnnotation.length; ++j) {
 								
-								splitAnnotation[j] = splitAnnotation[j].trim();
-								int commaIndex = splitAnnotation[j].indexOf(',');
-								
-								if (commaIndex > 0)
-									splitAnnotation[j] = splitAnnotation[j].substring(0, splitAnnotation[j].indexOf(','));
-								
-								String submodelID = splitAnnotation[j];
+								String submodelID = splitAnnotation[j].split("=")[0].trim();
 								
 								speciesID = submodelID + "__" + speciesIDNoPrefix;
 																
