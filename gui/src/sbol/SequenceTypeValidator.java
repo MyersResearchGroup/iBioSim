@@ -6,85 +6,149 @@ import java.util.Set;
 import java.util.Stack;
 
 public class SequenceTypeValidator {
-	
-	private NFAState nfaStart;
-	private DFAState dfaStart;
-	private String regex;
-	private int regIndex;
+	private DFA dfa;
+	private int stateIndex;
 	
 	public SequenceTypeValidator (String regex, Set<String> terminals) {
-		this.regex = regex;
-		regIndex = 0;
-		nfaStart = new NFAState("S" + regIndex);
-		constructNFA(nfaStart);
+		Set<NFAState> nfaStartStates = constructNFA(regex);
+		this.dfa = new DFA();
+		dfa.setStartState(constructDFA(nfaStartStates));
+		dfa.print();
+	}
+	
+	private Set<NFAState> constructNFA(String regex) {
+		stateIndex = 0;
+		Set<NFAState> nfaStartStates = new HashSet<NFAState>();
+		nfaStartStates.add(new NFAState("S" + stateIndex));
+		stateIndex++;
+		Set<NFAState> acceptStates = constructNFAHelper(nfaStartStates, regex, "", new HashSet<String>());
+		for (NFAState nfaState : acceptStates)
+			nfaState.setAccepting(true);
+		return nfaStartStates;
+	}
+	
+	private Set<NFAState> constructNFAHelper(Set<NFAState> startStates, String regex, String quantifier, Set<String> localIds) { 
 		int i = 0;
+		Set<NFAState> currentStates = new HashSet<NFAState>();
+		currentStates.addAll(startStates);
 		do {
 			String input = regex.substring(i, i + 1);
 			if (input.equals("(")) {
-				int closeParen = 0;
-				int openParen = 1;
-				int j = i + 1;
-				do {
-					String lookAhead = regex.substring(j, j + 1);
-					if (lookAhead.equals("("))
-						openParen++;
-					else if (lookAhead.equals(")"))
-						closeParen++;
-					j++;
-				} while (openParen != closeParen && j < regex.length());
-				if (j < regex.length()) {
-					String modifier = regex.substring(j, j + 1);
-					if (modifier.equals("+"))
-						;
-					else if (modifier.equals("*"))
-						;
-				}
+				int j = findClosing(regex, i);
+				String subRegex = regex.substring(i + 1, j);
+				String subQuantifier = "";
+				if (j + 1 < regex.length()) {
+					subQuantifier = regex.substring(j + 1, j + 2);
+					i = j + 2;
+				} else
+					i = j + 1;
+				currentStates = constructNFAHelper(currentStates, subRegex, subQuantifier, localIds);
+			}  else {
+				String subQuantifier = "";
+				if (i + 1 < regex.length())
+					subQuantifier = regex.substring(i + 1, i + 2);
+				NFAState nextState = new NFAState("S" + stateIndex);
+				localIds.add("S" + stateIndex);
+				stateIndex++;
+				for (NFAState currentState : currentStates)
+					currentState.addTransition(input, nextState);
+				if (subQuantifier.equals("+") || subQuantifier.equals("*")) {
+					nextState.addTransition(input, nextState);
+					i = i + 2;
+				} else
+					i++;
+				if (!subQuantifier.equals("*"))
+					currentStates.clear();
+				currentStates.add(nextState);
 			}
 		} while (i < regex.length());
+		if (quantifier.equals("+") || quantifier.equals("*"))
+			for (NFAState startState : startStates) 
+				for (String input : startState.getTransitions().keySet()) 
+					for (NFAState destination : startState.transition(input)) 
+						if (localIds.contains(destination.getID()))
+							for (NFAState currentState : currentStates)
+								currentState.addTransition(input, destination);
+		if (quantifier.equals("*"))
+			currentStates.addAll(startStates);
+		return currentStates;
 	}
 	
-	public NFAState constructNFA(NFAState startState) { 
-		NFAState currentState = startState;
-		NFAState flaggedState = null;
-		String flaggedInput = null;
-		boolean flagged = false;
+	private int findClosing(String regex, int j) {
+		int openParen = 1;
+		int closeParen = 0;
 		do {
-			String input = regex.substring(regIndex, regIndex + 1);
-			String lookAhead1 = regex.substring(regIndex + 1, regIndex + 2);
-			if (input.equals("("))
-				constructNFA(currentState);
-			else if (lookAhead1.equals(")")) {
-				String lookAhead2 = regex.substring(regIndex + 2, regIndex + 3);
-				if (lookAhead2.equals("+"))
-					currentState.addTransition(flaggedInput, flaggedState);
-//				else if (lookAhead2.equals("*"))
-//					currentState.addTransition(, startState);
-			}
-			else {
-				NFAState nextState = new NFAState("S");
-				currentState.addTransition(input, nextState);
-				currentState = nextState;
-				if (!flagged) {
-					flaggedState = nextState;
-					flaggedInput = input;
-					flagged = true;
-				}
-			}
-		} while (regIndex < regex.length());
-		return currentState;
+			j++;
+			String token = regex.substring(j, j + 1);
+			if (token.equals("("))
+				openParen++;
+			else if (token.equals(")"))
+				closeParen++;
+		} while (openParen != closeParen && j < regex.length());
+		return j;
+	}
+	
+	private DFAState constructDFA(Set<NFAState> nfaStates) {
+		String dfaStateID = "";
+		HashMap<String, Set<NFAState>> combinedTransitions = new HashMap<String, Set<NFAState>>();
+		boolean accepting = false;
+		for (NFAState nfaState : nfaStates) {
+			dfaStateID = dfaStateID + nfaState.getID();
+			HashMap<String, Set<NFAState>> transitions = nfaState.getTransitions();
+			for (String input : transitions.keySet())
+				if (combinedTransitions.containsKey(input))
+					combinedTransitions.get(input).addAll(transitions.get(input));
+				else
+					combinedTransitions.put(input, transitions.get(input));
+			if (nfaState.isAccepting())
+				accepting = true;
+		}
+		DFAState dfaState = new DFAState(dfaStateID);
+		dfa.addState(dfaState);
+		for (String input : combinedTransitions.keySet()) {
+			Set<NFAState> nfaDestinations = combinedTransitions.get(input);
+			dfaStateID = "";
+			for (NFAState nfaDestination : nfaDestinations)
+				dfaStateID = dfaStateID + nfaDestination.getID();
+			DFAState dfaDestination;
+			if (dfa.hasState(dfaStateID))
+				dfaDestination = dfa.getState(dfaStateID);
+			else
+				dfaDestination = constructDFA(combinedTransitions.get(input));
+			dfaState.addTransition(input, dfaDestination);
+		}
+		dfaState.setAccepting(accepting);
+		return dfaState;
 	}
 	
 	private class NFAState {
 		
 		private HashMap<String, Set<NFAState>> transitions;
-		private String stateID;
+		private String id;
+		private boolean accepting;
 		
-		private NFAState (String stateID) {
-			this.stateID = stateID;
+		public NFAState (String id) {
+			this.id = id;
 			transitions = new HashMap<String, Set<NFAState>>();
 		}
 		
-		private void addTransition(String input, NFAState destination) {
+		public String getID() {
+			return id;
+		}
+		
+		public String toString() {
+			return id;
+		}
+		
+		public void setAccepting(boolean accepting) {
+			this.accepting = accepting;
+		}
+		
+		public boolean isAccepting() {
+			return accepting;
+		}
+		
+		public void addTransition(String input, NFAState destination) {
 			if (transitions.containsKey(input))
 				transitions.get(input).add(destination);
 			else {
@@ -93,8 +157,12 @@ public class SequenceTypeValidator {
 			}
 		}
 		
-		private Set<NFAState> transition(String input) {
+		public Set<NFAState> transition(String input) {
 			return transitions.get(input);
+		}
+		
+		public HashMap<String, Set<NFAState>> getTransitions() {
+			return transitions;
 		}
 		
 	}
@@ -102,32 +170,93 @@ public class SequenceTypeValidator {
 	private class DFAState {
 		
 		private HashMap<String, DFAState> transitions;
+		private String id;
+		private boolean accepting;
 		
-		private DFAState() {
+		public DFAState(String id) {
+			this.id = id;
 			transitions = new HashMap<String, DFAState>();
 		}
 		
-		private void addTransition(String input, DFAState destination) {
+		public String getID() {
+			return id;
+		}
+		
+		public String toString() {
+			return id;
+		}
+		
+		public void setAccepting(boolean accepting) {
+			this.accepting = accepting;
+		}
+		
+		public boolean isAccepting() {
+			return accepting;
+		}
+		
+		public void addTransition(String input, DFAState destination) {
 			transitions.put(input, destination);
 		}
 		
-		private DFAState transition(String input) {
+		public DFAState transition(String input) {
 			return transitions.get(input);
+		}
+		
+		public HashMap<String, DFAState> getTransitions() {
+			return transitions;
 		}
 	}
 	
-//	private class Transition {
-//		
-//		private char trigger;
-//		private State destination;
-//		
-//		private Transition(char trigger, State destination) {
-//			this.trigger = trigger;
-//			this.destination = destination;
-//		}
-//		
-//		private State getDestination() {
-//			return destination;
-//		}
-//	}
+	private class DFA {
+		private HashMap<String, DFAState> states;
+		private DFAState startState;
+		private Set<DFAState> acceptStates;
+		
+		public DFA() {
+			this.states = new HashMap<String, DFAState>();
+			this.acceptStates = new HashSet<DFAState>();
+		}
+		
+		public void setStartState(DFAState startState) {
+			this.startState = startState;
+		}
+		
+		public DFAState getStartState() {
+			return startState;
+		}
+		
+		public DFAState getState(String id) {
+			return states.get(id);
+		}
+		
+		public void addState(DFAState state) {
+			states.put(state.getID(), state);
+		}
+		
+		public boolean hasState(String id) {
+			return states.keySet().contains(id);
+		}
+		
+		public HashMap<String, DFAState> getStates() {
+			return states;
+		}
+		
+		public void print() {
+			printHelper(startState, new HashSet<String>());
+		}
+		
+		private void printHelper(DFAState currentState, Set<String> visitedIds) {
+			visitedIds.add(currentState.getID());
+			if (currentState.isAccepting())
+				System.out.println(currentState.getID() + " is accepting.");
+			for (String input : currentState.getTransitions().keySet()) {
+				DFAState destination = currentState.transition(input);
+				System.out.println(currentState.getID() + "-" + input + "->" + destination.getID());
+				if (!visitedIds.contains(destination.getID()))
+					printHelper(destination, visitedIds);
+			}
+			
+		}
+	}
+	
 }
