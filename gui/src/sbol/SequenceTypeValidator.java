@@ -2,6 +2,7 @@ package sbol;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 import java.util.Stack;
 
@@ -9,7 +10,7 @@ public class SequenceTypeValidator {
 	private DFA dfa;
 	private int stateIndex;
 	
-	public SequenceTypeValidator (String regex, Set<String> terminals) {
+	public SequenceTypeValidator (String regex) {
 		Set<NFAState> nfaStartStates = constructNFA(regex);
 		this.dfa = new DFA();
 		dfa.setStartState(constructDFA(nfaStartStates));
@@ -119,6 +120,13 @@ public class SequenceTypeValidator {
 		}
 		dfaState.setAccepting(accepting);
 		return dfaState;
+	}
+	
+	public boolean validateSequenceTypes(LinkedList<String> types) {
+		LinkedList<String> terminals = new LinkedList<String>();
+		for (String type : types)
+			terminals.add(SBOLUtility.soTypeToGrammarTerminal(type));
+		return dfa.run(terminals);
 	}
 	
 	private class NFAState {
@@ -256,6 +264,20 @@ public class SequenceTypeValidator {
 					printHelper(destination, visitedIds);
 			}
 			
+		}
+		
+		public boolean run(LinkedList<String> inputs) {
+			DFAState currentState = startState;
+			for (String input : inputs) {
+				if (currentState != null)
+					currentState = currentState.transition(input);
+				else
+					return false;
+			}
+			if (currentState.isAccepting())
+				return true;
+			else
+				return false;
 		}
 	}
 	

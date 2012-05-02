@@ -120,11 +120,21 @@ public class SBOLSynthesizer {
 					sourceCompURISet.add(sourceCompURI);
 				int position = 1;
 				int addCount = 0;
+				LinkedList<String> types = new LinkedList<String>();
 				for (String sourceCompURI : sourceCompURIs) 
 					if (synthesizerOn) {
 						addCount++;
-						position = addSubComponent(position, sourceCompURI, synthComp, addCount);
+						position = addSubComponent(position, sourceCompURI, synthComp, addCount, types);
 					}
+				SequenceTypeValidator validator = new SequenceTypeValidator("(p(rc)+t+)+");
+				if (!validator.validateSequenceTypes(types)) {
+					Object[] options = { "OK", "CANCEL" };
+					int choice = JOptionPane.showOptionDialog(null, 
+							"Ordering of SBOL DNA components associated to SBML does not match preferred grammar.  Proceed with synthesis?", 
+							"Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+					if (choice != JOptionPane.OK_OPTION)
+						synthesizerOn = false;
+				}
 				if (synthesizerOn) 
 					// Export DNA component
 					return synthComp;
@@ -240,7 +250,7 @@ public class SBOLSynthesizer {
 			}
 	}
 	
-	private int addSubComponent(int position, String sourceCompURI, DnaComponent synthComp, int addCount) {
+	private int addSubComponent(int position, String sourceCompURI, DnaComponent synthComp, int addCount, LinkedList<String> types) {
 		DnaComponent sourceComp = new DnaComponentImpl();
 		if (compMap.containsKey(sourceCompURI))
 			sourceComp = compMap.get(sourceCompURI);
@@ -253,6 +263,7 @@ public class SBOLSynthesizer {
 			// Adds source component and all its subcomponents to target document
 //			addSubComponentHelper(sourceComp);
 			// Annotates newly synthesized DNA component with source component
+			types.add(SBOLUtility.uriToSOTypeConverter(sourceComp.getTypes().iterator().next()));
 			if (sourceComp.getDnaSequence() != null && sourceComp.getDnaSequence().getNucleotides() != null 
 					&& sourceComp.getDnaSequence().getNucleotides().length() >= 1) {
 				SequenceAnnotation annot = new SequenceAnnotationImpl();

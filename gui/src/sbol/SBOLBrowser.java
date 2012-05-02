@@ -30,8 +30,6 @@ public class SBOLBrowser extends JPanel {
 	public SBOLBrowser(Gui gui, String filePath) {
 		super(new BorderLayout());
 		
-		SequenceTypeValidator testor = new SequenceTypeValidator("(p*r+)*", new HashSet<String>());
-		
 		HashMap<String, org.sbolstandard.core.Collection> libMap = new HashMap<String, org.sbolstandard.core.Collection>();
 		LinkedList<String> libURIs = new LinkedList<String>();
 		LinkedList<String> libIds = new LinkedList<String>();
