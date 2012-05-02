@@ -429,8 +429,10 @@ public class StateGraph {
             throw new NullPointerException();
         }   	
     	if(enabledSetTbl.containsKey(curState) == true){
-//    		System.out.println("~~~~~~~ existing state in enabledSetTbl for LPN" + curState.getLpn().getLabel() + ": S" + curState.getIndex() + "~~~~~~~~");
-//    		printTransitionSet((LpnTranList)enabledSetTbl.get(curState), "enabled trans at this state ");
+    		if (Options.getDebugMode()) {
+    			System.out.println("~~~~~~~ existing state in enabledSetTbl for LPN" + curState.getLpn().getLabel() + ": S" + curState.getIndex() + "~~~~~~~~");
+        		printTransitionSet((LpnTranList)enabledSetTbl.get(curState), "enabled trans at this state ");
+    		}
             return (LpnTranList)enabledSetTbl.get(curState).clone();
         }   	
         LpnTranList curEnabled = new LpnTranList();
@@ -438,7 +440,8 @@ public class StateGraph {
         if (init) {
         	for (Transition tran : this.lpn.getAllTransitions()) {
             	if (isEnabled(tran,curState)) {
-            		//System.out.println("Transition " + tran.getLpn().getLabel() + "(" + tran.getName() + ") is enabled");
+            		if (Options.getDebugMode())
+            			System.out.println("Transition " + tran.getLpn().getLabel() + "(" + tran.getName() + ") is enabled");
             		if(tran.local()==true)
             			curEnabled.addLast(tran);
                     else
@@ -458,8 +461,10 @@ public class StateGraph {
         	}
         }
         this.enabledSetTbl.put(curState, curEnabled);
-//        System.out.println("~~~~~~~~ State S" + curState.getIndex() + " does not exist in enabledSetTbl for LPN " + curState.getLpn().getLabel() + ". Add to enabledSetTbl.");
-//        printEnabledSetTbl();
+        if (Options.getDebugMode()) {
+        	System.out.println("~~~~~~~~ State S" + curState.getIndex() + " does not exist in enabledSetTbl for LPN " + curState.getLpn().getLabel() + ". Add to enabledSetTbl.");
+        	printEnabledSetTbl();
+        }
         return curEnabled;
     }
     
@@ -475,23 +480,27 @@ public class StateGraph {
 			int[] varValuesVector = curState.getVector();
 			String tranName = tran.getName();
 			int tranIndex = tran.getIndex();
-			//System.out.println("Checking " + tran);
+			if (Options.getDebugMode())
+				System.out.println("Checking " + tran);
 			if (this.lpn.getEnablingTree(tranName) != null 
 					&& this.lpn.getEnablingTree(tranName).evaluateExpr(this.lpn.getAllVarsAndValues(varValuesVector)) == 0.0
 					&& !(tran.isPersistent() && curState.getTranVector()[tranIndex])) {
-				//System.out.println(tran.getName() + " " + "Enabling condition is false");
+				if (Options.getDebugMode())
+					System.out.println(tran.getName() + " " + "Enabling condition is false");
 				return false;
 			}
 			if (this.lpn.getTransitionRateTree(tranName) != null 
 					&& this.lpn.getTransitionRateTree(tranName).evaluateExpr(this.lpn.getAllVarsAndValues(varValuesVector)) == 0.0) {
-				//System.out.println("Rate is zero");
+				if (Options.getDebugMode())
+					System.out.println("Rate is zero");
 				return false;
 			}
 			if (this.lpn.getPreset(tranName) != null && this.lpn.getPreset(tranName).length != 0) {
 				int[] curMarking = curState.getMarking();
 				for (int place : this.lpn.getPresetIndex(tranName)) {
 					if (curMarking[place]==0) {
-						//System.out.println(tran.getName() + " " + "Missing a preset token");
+						if (Options.getDebugMode())
+							System.out.println(tran.getName() + " " + "Missing a preset token");
 						return false;
 					}
 				}
