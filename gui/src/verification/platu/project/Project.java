@@ -1,7 +1,12 @@
 package verification.platu.project;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -11,23 +16,19 @@ import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.TokenStream;
-import verification.platu.lpn.DualHashMap;
-import verification.platu.lpn.io.Instance;
-import verification.platu.lpn.io.PlatuGrammarLexer;
-import verification.platu.lpn.io.PlatuInstLexer;
-import verification.platu.main.Options;
-import verification.platu.stategraph.*;
-import verification.platu.TimingAnalysis.*;
+
 import verification.platu.logicAnalysis.Analysis;
 import verification.platu.logicAnalysis.CompositionalAnalysis;
 import verification.platu.lpn.LPN;
 import verification.platu.lpn.LPNTranRelation;
+import verification.platu.lpn.io.Instance;
+import verification.platu.lpn.io.PlatuGrammarLexer;
 import verification.platu.lpn.io.PlatuGrammarParser;
+import verification.platu.lpn.io.PlatuInstLexer;
 import verification.platu.lpn.io.PlatuInstParser;
+import verification.platu.main.Options;
 import verification.platu.stategraph.State;
 import verification.platu.stategraph.StateGraph;
-import verification.timed_state_exploration.zone.Analysis_Timed;
-import verification.timed_state_exploration.zone.StateGraph_timed;
 
 public class Project {
 
@@ -212,9 +213,8 @@ public class Project {
 		
 		long elapsedTimeMillis = System.currentTimeMillis() - start; 
 		float elapsedTimeSec = elapsedTimeMillis/1000F;
-		
 		System.out.println("---> total runtime: " + elapsedTimeSec + " sec\n");
-		
+		outputRuntimToLog(false, elapsedTimeSec);
 		return stateGraphArray;
 	}
 
@@ -303,19 +303,33 @@ public class Project {
 		}		
 		
 		Analysis dfsPOR = new Analysis(sgArray);
-		StateGraph[] stateGraphArray;
-//		if (cycleClosingMthdIndex == 0 || cycleClosingMthdIndex == 3) 
-//			stateGraphArray = dfsPOR.search_dfsPOR(sgArray, initStateArray, cycleClosingMthdIndex);
-//		else 
-//			stateGraphArray = dfsPOR.search_dfsPORrefinedCycleRule(sgArray, initStateArray, cycleClosingMthdIndex);
-		
+		StateGraph[] stateGraphArray;	
 		stateGraphArray = dfsPOR.search_dfsPOR(sgArray, initStateArray);
 		
 		long elapsedTimeMillis = System.currentTimeMillis() - start; 
-		float elapsedTimeSec = elapsedTimeMillis/1000F;
-		
+		float elapsedTimeSec = elapsedTimeMillis/1000F;	
 		System.out.println("---> total runtime: " + elapsedTimeSec + " sec\n");
+		outputRuntimToLog(true, elapsedTimeSec);
 		return stateGraphArray;
+	}
+	
+	private void outputRuntimToLog(boolean isPOR, float runtime) {
+		try {
+			String fileName = null;
+			if (isPOR)
+				fileName = Options.getPrjSgPath() + Options.getLogName() + "_"
+						+ Options.getPOR() + "_" + Options.getCycleClosingMthd() + "_" 
+						+ Options.getCycleClosingAmpleMethd() +  "_runtime.log";
+			else
+				fileName = Options.getPrjSgPath() + Options.getLogName() + "_full_runtime.log";
+			BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
+			out.write(runtime + "\n");
+			out.close();
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+			System.err.println("Error producing local state graph as dot file.");
+		}	
 	}
 	
 	public void readLpn(List<String> fileList) {		
