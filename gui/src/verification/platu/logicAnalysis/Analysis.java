@@ -179,27 +179,32 @@ public class Analysis {
 		
 		PrjState initPrjState = new PrjState(initStateArray);
 		prjStateSet.add(initPrjState);
-		//initPrjState.print(getLpnList(sgList));
 		
 		PrjState stateStackTop = initPrjState;
-//		System.out.println("%%%%%%% stateStackTop %%%%%%%%");
-//		printStateArray(stateStackTop.toStateArray());
+		if (Options.getDebugMode()) {
+			System.out.println("%%%%%%% stateStackTop %%%%%%%%");
+			printStateArray(stateStackTop.toStateArray());
+		}
 		stateStack.add(stateStackTop);
 		
 		constructDstLpnList(sgList);
-//		printDstLpnList(sgList);
+		if (Options.getDebugMode())
+			printDstLpnList(sgList);
 		
 		boolean init = true;
 		LpnTranList initEnabled = sgList[0].getEnabled(initStateArray[0], init);
 		lpnTranStack.push(initEnabled.clone());
 		curIndexStack.push(0);
 		init = false;
-//		System.out.println("call getEnabled on initStateArray at 0: ");
-//		System.out.println("+++++++ Push trans onto lpnTranStack ++++++++");
-//		printTransitionSet(initEnabled, "");
+		if (Options.getDebugMode()) {
+			System.out.println("call getEnabled on initStateArray at 0: ");
+			System.out.println("+++++++ Push trans onto lpnTranStack ++++++++");
+			printTransitionSet(initEnabled, "");
+		}
 
 		main_while_loop: while (failure == false && stateStack.size() != 0) {
-//			System.out.println("$$$$$$$$$$$ loop begins $$$$$$$$$$");
+			if (Options.getDebugMode())
+				System.out.println("$$$$$$$$$$$ loop begins $$$$$$$$$$");
 			long curTotalMem = Runtime.getRuntime().totalMemory();
 			long curUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 
@@ -225,12 +230,13 @@ public class Analysis {
 
 			State[] curStateArray = stateStackTop.toStateArray(); //stateStack.peek();
 			int curIndex = curIndexStack.peek();
-//			System.out.println("curIndex = " + curIndex);
 			LinkedList<Transition> curEnabled = lpnTranStack.peek();
-//			System.out.println("------- curStateArray ----------");
-//			printStateArray(curStateArray);
-//			System.out.println("+++++++ curEnabled trans ++++++++");
-//			printTransLinkedList(curEnabled);
+			if (Options.getDebugMode()) {
+				System.out.println("------- curStateArray ----------");
+				printStateArray(curStateArray);
+				System.out.println("+++++++ curEnabled trans ++++++++");
+				printTransLinkedList(curEnabled);
+			}
 			
 			// If all enabled transitions of the current LPN are considered,
 			// then consider the next LPN
@@ -239,20 +245,25 @@ public class Analysis {
 			// then pop the stacks.
 			if (curEnabled.size() == 0) {
 				lpnTranStack.pop();
-//				System.out.println("+++++++ Pop trans off lpnTranStack ++++++++");
+				if (Options.getDebugMode()) {
+					System.out.println("+++++++ Pop trans off lpnTranStack ++++++++");
+					System.out.println("####### lpnTranStack #########");
+					printLpnTranStack(lpnTranStack);
+				}
 				curIndexStack.pop();
-//				System.out.println("+++++++ Pop index off curIndexStack ++++++++");
 				curIndex++;
-//				System.out.println("curIndex = " + curIndex);
 				while (curIndex < numLpns) {
 //					System.out.println("call getEnabled on curStateArray at 1: ");
 					curEnabled = (sgList[curIndex].getEnabled(curStateArray[curIndex], init)).clone();
 					if (curEnabled.size() > 0) {
-//						System.out.println("+++++++ Push trans onto lpnTranStack ++++++++");
-//						printTransLinkedList(curEnabled);
+						if (Options.getDebugMode()) {
+							System.out.println("+++++++ Push trans onto lpnTranStack ++++++++");
+							printTransLinkedList(curEnabled);
+						}				
 						lpnTranStack.push(curEnabled);
 						curIndexStack.push(curIndex);
-//						printIntegerStack("curIndexStack after push 1", curIndexStack);
+						if (Options.getDebugMode())
+							printIntegerStack("curIndexStack after push 1", curIndexStack);
 						break;
 					} 					
 					curIndex++;
@@ -260,17 +271,21 @@ public class Analysis {
 			}
 			if (curIndex == numLpns) {
 				prjStateSet.add(stateStackTop);
-//				System.out.println("%%%%%%% Remove stateStackTop from stateStack %%%%%%%%");
-//				printStateArray(stateStackTop.toStateArray());
+				if (Options.getDebugMode()) {
+					System.out.println("%%%%%%% Remove stateStackTop from stateStack %%%%%%%%");
+					printStateArray(stateStackTop.toStateArray());
+				}
 				stateStack.remove(stateStackTop);
 				stateStackTop = stateStackTop.getFather();
 				continue;
 			}
 
 			Transition firedTran = curEnabled.removeLast();	
-//			System.out.println("###################");			
-//			System.out.println("Fired transition: " + firedTran.getLpn().getLabel() + "(" + firedTran.getName() + ")");
-//			System.out.println("###################");
+			if (Options.getDebugMode()) {
+				System.out.println("###################");			
+				System.out.println("Fired transition: " + firedTran.getLpn().getLabel() + "(" + firedTran.getName() + ")");
+				System.out.println("###################");
+			}
 			State[] nextStateArray = sgList[curIndex].fire(sgList, curStateArray, firedTran);
 			tranFiringCnt++;
 
@@ -310,63 +325,83 @@ public class Analysis {
 				stateStackTop.setChild(nextPrjState);
 				nextPrjState.setFather(stateStackTop);
 				if (Options.getOutputSgFlag()) {
-//					System.out.println("******* curStateArray *******");
-//					printStateArray(curStateArray);
-//					System.out.println("******* nextStateArray *******");
-//					printStateArray(nextStateArray);			
-//					System.out.println("stateStackTop: ");
-//					printStateArray(stateStackTop.toStateArray());
-//					System.out.println("firedTran = " + firedTran.getName());
-//					System.out.println("***nextStateMap for stateStackTop before firedTran being added: ");
-//					printNextStateMap(stateStackTop.getNextStateMap());
+					if (Options.getDebugMode()) {
+						System.out.println("******* curStateArray *******");
+						printStateArray(curStateArray);
+						System.out.println("******* nextStateArray *******");
+						printStateArray(nextStateArray);			
+						System.out.println("stateStackTop: ");
+						printStateArray(stateStackTop.toStateArray());
+						System.out.println("firedTran = " + firedTran.getName());
+						System.out.println("***nextStateMap for stateStackTop before firedTran being added: ");
+						printNextStateMap(stateStackTop.getNextStateMap());
+					}
 					stateStackTop.setTranOut(firedTran, nextPrjState);
-//					System.out.println("***nextStateMap for stateStackTop after firedTran being added: ");
-//					printNextStateMap(stateStackTop.getNextStateMap());
+					if (Options.getDebugMode()) {
+						System.out.println("***nextStateMap for stateStackTop after firedTran being added: ");
+						printNextStateMap(stateStackTop.getNextStateMap());
+					}
 					for (PrjState prjState : prjStateSet) {
 						if (prjState.equals(stateStackTop)) {
 							prjState.setTranOut(firedTran, nextPrjState);
-//							System.out.println("***nextStateMap for prjState: ");
-//							printNextStateMap(prjState.getNextStateMap());
+							if (Options.getDebugMode()) {
+								System.out.println("***nextStateMap for prjState: ");
+								printNextStateMap(prjState.getNextStateMap());
+							}
 						}
 					}
 //					System.out.println("-----------------------");
 				}
 				stateStackTop = nextPrjState;
-//				System.out.println("%%%%%%% Add global state to stateStack %%%%%%%%");
-//				printStateArray(stateStackTop.toStateArray());
+				if (Options.getDebugMode()) {
+					System.out.println("%%%%%%% Add global state to stateStack %%%%%%%%");
+					printStateArray(stateStackTop.toStateArray());
+				}
 				stateStack.add(stateStackTop);
-//				System.out.println("+++++++ Push trans onto lpnTranStack ++++++++");
-//				printTransitionSet((LpnTranList) nextEnabledArray[0], "");
+				if (Options.getDebugMode()) {
+					System.out.println("+++++++ Push trans onto lpnTranStack ++++++++");
+					printTransitionSet((LpnTranList) nextEnabledArray[0], "");
+				}				
 				lpnTranStack.push((LpnTranList) nextEnabledArray[0].clone());
-//				System.out.println("******** lpnTranStack ***********");
-//				printLpnTranStack(lpnTranStack);
+				if (Options.getDebugMode()) {
+					System.out.println("******** lpnTranStack ***********");
+					printLpnTranStack(lpnTranStack);
+				}
 				curIndexStack.push(0);
 				totalStates++;
 			}
 			else {
 				if (Options.getOutputSgFlag()) {
-//					System.out.println("******* curStateArray *******");
-//					printStateArray(curStateArray);
-//					System.out.println("******* nextStateArray *******");
-//					printStateArray(nextStateArray);			
+					if (Options.getDebugMode()) {
+						System.out.println("******* curStateArray *******");
+						printStateArray(curStateArray);
+						System.out.println("******* nextStateArray *******");
+						printStateArray(nextStateArray);
+					}		
 					for (PrjState prjState : prjStateSet) {
 						if (prjState.equals(nextPrjState)) {
 							nextPrjState.setNextStateMap((HashMap<Transition, PrjState>) prjState.getNextStateMap().clone()); 
 						}							
 					}
-//					System.out.println("stateStackTop: ");
-//					printStateArray(stateStackTop.toStateArray());
-//					System.out.println("firedTran = " + firedTran.getName());
-//					System.out.println("nextStateMap for stateStackTop before firedTran being added: ");
-//					printNextStateMap(stateStackTop.getNextStateMap());
+					if (Options.getDebugMode()) {
+						System.out.println("stateStackTop: ");
+						printStateArray(stateStackTop.toStateArray());
+						System.out.println("firedTran = " + firedTran.getName());
+						System.out.println("nextStateMap for stateStackTop before firedTran being added: ");
+						printNextStateMap(stateStackTop.getNextStateMap());
+					}
 					stateStackTop.setTranOut(firedTran, nextPrjState);
-//					System.out.println("***nextStateMap for stateStackTop after firedTran being added: ");
-//					printNextStateMap(stateStackTop.getNextStateMap());
+					if (Options.getDebugMode()) {
+						System.out.println("***nextStateMap for stateStackTop after firedTran being added: ");
+						printNextStateMap(stateStackTop.getNextStateMap());
+					}
 					for (PrjState prjState : prjStateSet) {
 						if (prjState == stateStackTop) { 
 							prjState.setNextStateMap((HashMap<Transition, PrjState>) stateStackTop.getNextStateMap().clone());
-//							System.out.println("***nextStateMap for prjState: ");
-//							printNextStateMap(prjState.getNextStateMap());
+							if (Options.getDebugMode()) {
+								System.out.println("***nextStateMap for prjState: ");
+								printNextStateMap(prjState.getNextStateMap());
+							}						
 						}
 					}
 //					System.out.println("-----------------------");
@@ -891,10 +926,19 @@ public class Analysis {
 				+ ", max_stack_depth: " + max_stack_depth 
 				+ ", peak total memory: " + peakTotalMem / 1000000 + " MB"
 				+ ", peak used memory: " + peakUsedMem / 1000000 + " MB");
+		if (Options.getPrintLogToFile()) {
+			printLogToFile(tranFiringCnt, totalStateCnt, peakTotalMem / 1000000, peakUsedMem / 1000000);
+		}
 		if (Options.getOutputSgFlag()) {
 			outputGlobalStateGraph(sgList, prjStateSet, false);
 		}
 		return sgList;
+	}
+
+	private void printLogToFile(int tranFiringCnt, double totalStateCnt,
+			double peakTotalMem, double peakUsedMem) {
+		
+		
 	}
 
 	private void printLpnTranStack(Stack<LinkedList<Transition>> lpnTranStack) {
@@ -1018,7 +1062,7 @@ public class Analysis {
     			}
     			necessaryMap.clear();
     			if (!dependentSetQueue.isEmpty()) {
-    				System.out.println("depdentSetQueue is NOT empty.");
+//    				System.out.println("depdentSetQueue is NOT empty.");
 //    				newNextAmple = dependentSetQueue.poll().getDependent();
     				// **************************
         			// TODO: Will newNextAmpleTmp - oldNextAmple be safe?
