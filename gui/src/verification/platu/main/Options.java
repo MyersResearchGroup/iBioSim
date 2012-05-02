@@ -72,6 +72,11 @@ public class Options {
 	private static boolean debug = false;
 	
 	/*
+	 * Options for printing the final numbers from search_dfs or search_dfsPOR.
+	 */
+	private static boolean printLogToFile = false;
+	
+	/*
 	 * Path for printing global state graph 
 	 */
 	private static String prjSgPath = null;
@@ -280,5 +285,13 @@ public class Options {
 	
 	public static boolean getDebugMode() {
 		return debug;
+	}
+
+	public static void setPrintLogToFile(boolean printLog) {
+		printLogToFile = printLog;
+	}
+	
+	public static boolean getPrintLogToFile() {
+		return printLogToFile;
 	}
 }
