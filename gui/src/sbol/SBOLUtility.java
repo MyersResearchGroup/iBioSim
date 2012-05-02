@@ -213,4 +213,17 @@ public class SBOLUtility {
 			return "N/A";
 	}
 	
+	public static String soTypeToGrammarTerminal(String soType) {
+		if (soType.equals("promoter") || soType.equals("RNA polymerase promoter"))
+			return "p";
+		else if (soType.equals("ribosome entry site"))
+			return "r";
+		else if (soType.equals("coding sequence"))
+			return "c";
+		else if (soType.equals("terminator") || soType.equals("bacterial terminator"))
+			return "t";
+		else
+			return "x";
+	}
+	
 }
