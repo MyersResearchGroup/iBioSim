@@ -13,7 +13,7 @@ import javax.swing.*;
 import org.sbml.libsbml.Model;
 
 
-import analysis.dynamicsim.DynamicGillespie;
+import analysis.dynamicsim.DynamicSimulation;
 import analysis.dynamicsim.Simulator;
 import analysis.incrementalsim.GillespieSSAJavaSingleStep;
 import analysis.markov.BuildStateGraphThread;
@@ -52,7 +52,7 @@ public class Run implements ActionListener {
 
 	private AnalysisView r2s;
 	
-	DynamicGillespie dynSim = null;
+	DynamicSimulation dynSim = null;
 
 	StateGraph sg;
 
@@ -1162,11 +1162,11 @@ public class Run implements ActionListener {
 							Double.parseDouble(properties.getProperty(
 									"reb2sac.diffusion.stoichiometry.amplification.value"));
 						
-						dynSim = new DynamicGillespie("cr");
+						dynSim = new DynamicSimulation("cr");
 						String SBMLFileName = directory + separator + theFile;
 						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
 								timeStep, rndSeed, progress, printInterval, runs, progressLabel, running,
-								stoichAmpValue);						
+								stoichAmpValue, intSpecies);						
 						exitValue = 0;
 						
 						return exitValue;
@@ -1177,11 +1177,26 @@ public class Run implements ActionListener {
 							Double.parseDouble(properties.getProperty(
 									"reb2sac.diffusion.stoichiometry.amplification.value"));
 
-						dynSim = new DynamicGillespie("direct");					
+						dynSim = new DynamicSimulation("direct");					
 						String SBMLFileName = directory + separator + theFile;
 						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
 								timeStep, rndSeed, progress, printInterval, runs, progressLabel, running,
-								stoichAmpValue);						
+								stoichAmpValue, intSpecies);						
+						exitValue = 0;
+						
+						return exitValue;
+					}
+					else if (sim.equals("Runge-Kutta-Fehlberg (Java)")) {
+						
+						double stoichAmpValue = 
+							Double.parseDouble(properties.getProperty(
+									"reb2sac.diffusion.stoichiometry.amplification.value"));
+
+						dynSim = new DynamicSimulation("rk");					
+						String SBMLFileName = directory + separator + theFile;
+						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
+								timeStep, rndSeed, progress, printInterval, runs, progressLabel, running,
+								stoichAmpValue, intSpecies);				
 						exitValue = 0;
 						
 						return exitValue;

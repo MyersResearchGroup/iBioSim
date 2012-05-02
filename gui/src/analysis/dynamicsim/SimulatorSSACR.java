@@ -49,14 +49,13 @@ public class SimulatorSSACR extends Simulator {
 	MutableBoolean rulesFlag = new MutableBoolean(false);
 	MutableBoolean constraintsFlag = new MutableBoolean(false);
 	
-	
 	public SimulatorSSACR(String SBMLFileName, String outputDirectory, double timeLimit, 
 			double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval, 
-			double stoichAmpValue, JFrame running) 
+			double stoichAmpValue, JFrame running, String[] interestingSpecies) 
 	throws IOException, XMLStreamException {
 		
 		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, randomSeed,
-				progress, printInterval, initializationTime, stoichAmpValue, running);
+				progress, printInterval, initializationTime, stoichAmpValue, running, interestingSpecies);
 		
 		try {
 			initialize(randomSeed, 1);
@@ -107,7 +106,7 @@ public class SimulatorSSACR extends Simulator {
 			handleEvents(noAssignmentRulesFlag, noConstraintsFlag);
 		
 //		for (String reactionID : reactionToPropensityMap.keySet())
-//		System.err.println(reactionID + "   " + reactionToPropensityMap.get(reactionID));
+//			System.err.println(reactionID + "   " + reactionToPropensityMap.get(reactionID));
 		
 		while (currentTime < timeLimit && cancelFlag == false) {
 			
@@ -213,8 +212,6 @@ public class SimulatorSSACR extends Simulator {
 			performReaction(selectedReactionID, noAssignmentRulesFlag, noConstraintsFlag);
 			
 			//step4Time += System.nanoTime() - step4Initial;
-			
-			
 			
 			
 			//STEP 5: compute affected reactions' new propensities and update total propensity
@@ -383,37 +380,45 @@ public class SimulatorSSACR extends Simulator {
 		
 		bufferedTSDWriter.write("(" + "\"" + "time" + "\"");
 		
-		for (String speciesID : speciesIDSet) {
+		//if there's an interesting species, only those get printed
+		if (interestingSpecies.size() > 0) {
 			
-			bufferedTSDWriter.write(", \"" + speciesID + "\"");
+			for (String speciesID : interestingSpecies)
+				bufferedTSDWriter.write(", \"" + speciesID + "\"");
 		}
+		else {
 		
-		if (dynamicBoolean == true) {
-		
-			//print compartment location IDs
-			for (String componentLocationID : componentToLocationMap.keySet()) {
-				
-				String locationX = componentLocationID + "__locationX";
-				String locationY = componentLocationID + "__locationY";
-				
-				bufferedTSDWriter.write(", \"" + locationX + "\", \"" + locationY + "\"");
+			for (String speciesID : speciesIDSet) {				
+				bufferedTSDWriter.write(", \"" + speciesID + "\"");
 			}
-		}
-		
-		//print compartment IDs (for sizes)
-		for (String componentID : compartmentIDSet) {
 			
-			bufferedTSDWriter.write(", \"" + componentID + "\"");
-		}		
-		
-		//print nonconstant parameter IDs
-		for (String parameterID : nonconstantParameterIDSet) {
+			if (dynamicBoolean == true) {
 			
-			try {
-				bufferedTSDWriter.write(", \"" + parameterID + "\"");
-			} catch (IOException e) {
-				e.printStackTrace();
+				//print compartment location IDs
+				for (String componentLocationID : componentToLocationMap.keySet()) {
+					
+					String locationX = componentLocationID + "__locationX";
+					String locationY = componentLocationID + "__locationY";
+					
+					bufferedTSDWriter.write(", \"" + locationX + "\", \"" + locationY + "\"");
+				}
 			}
+			
+			//print compartment IDs (for sizes)
+			for (String componentID : compartmentIDSet) {
+				
+				bufferedTSDWriter.write(", \"" + componentID + "\"");
+			}		
+			
+			//print nonconstant parameter IDs
+			for (String parameterID : nonconstantParameterIDSet) {
+				
+				try {
+					bufferedTSDWriter.write(", \"" + parameterID + "\"");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}		
 		}
 		
 		bufferedTSDWriter.write("),\n");

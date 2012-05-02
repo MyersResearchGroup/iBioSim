@@ -449,22 +449,16 @@ public class MovieContainer extends JPanel implements ActionListener {
 				
 				if (gcm.getSBMLDocument().getModel().getParameter(i).getId().contains("__locations")) {
 					
-					String[] splitAnnotation = gcm.getSBMLDocument().getModel().getParameter(i)
-					.getAnnotationString().replace("<annotation>","")
-					.replace("</annotation>","").replace("]]","").replace("[[","").split("=");
-				
-					//loop through all components in the locations parameter array
-					for (int j = 1; j < splitAnnotation.length; ++j) {
+					String locationAnnotationString = gcm.getSBMLDocument().getModel().getParameter(i)
+					.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
+			
+					String[] compIDs = locationAnnotationString.replace("\"","").split("array:");
+					
+					for (int j = 2; j < compIDs.length; ++j) {
 						
-						splitAnnotation[j] = splitAnnotation[j].trim();
-						int commaIndex = splitAnnotation[j].indexOf(',');
-						
-						if (commaIndex > 0)
-							splitAnnotation[j] = splitAnnotation[j].substring(0, splitAnnotation[j].indexOf(','));
-						
-						String submodelID = splitAnnotation[j];
-						
-						componentList.add(submodelID);
+						if (compIDs[j].contains("=(")) {							
+							componentList.add(compIDs[j].split("=")[0].trim());
+						}
 					}
 				}
 				//if there isn't a locations parameter, look at the submodel IDs

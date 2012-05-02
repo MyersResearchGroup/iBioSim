@@ -918,22 +918,14 @@ public class Grid {
 			if (parameter.getId().contains("__locations")) {
 				
 				String[] splitAnnotation = parameter.getAnnotationString().replace("<annotation>","")
-				.replace("</annotation>","").replace("]]","").replace("[[","").split("=");
+				.replace("</annotation>","").replace("\"","").replace("http://www.fakeuri.com","").replace("/>","").split("array:");
 			
-				for (int j = 1; j < splitAnnotation.length; ++j) {
+				for (int j = 2; j < splitAnnotation.length; ++j) {
 					
 					splitAnnotation[j] = splitAnnotation[j].trim();
-					int commaIndex = splitAnnotation[j].indexOf(',');
 					
-					if (commaIndex > 0)
-						splitAnnotation[j] = splitAnnotation[j].substring(0, splitAnnotation[j].indexOf(','));
+					String submodelID = splitAnnotation[j].split("=")[0];
 					
-					String submodelID = splitAnnotation[j];
-					
-					if (submodelID.length() == 0)
-						continue;
-					
-					String gcmName = parameter.getId().replace("__locations","");
 					int row = gcm.getSubmodelRow(submodelID);
 					int col = gcm.getSubmodelCol(submodelID);
 					
@@ -1076,24 +1068,18 @@ public class Grid {
 			if (parameter.getId().contains("__locations")) {
 			
 				String[] splitAnnotation = parameter.getAnnotationString().replace("<annotation>","")
-				.replace("</annotation>","").replace("]]","").replace("[[","").split("=");
-				
-				for (int j = 1; j < splitAnnotation.length; ++j) {
+				.replace("</annotation>","").replace("\"","").replace("http://www.fakeuri.com","").replace("/>","").split("array:");
+			
+				for (int j = 2; j < splitAnnotation.length; ++j) {
 					
 					splitAnnotation[j] = splitAnnotation[j].trim();
-					int commaIndex = splitAnnotation[j].indexOf(',');
 					
-					if (commaIndex > 0)
-						splitAnnotation[j] = splitAnnotation[j].substring(0, splitAnnotation[j].indexOf(','));
+					String submodelID = splitAnnotation[j].split("=")[0];
 					
-					String submodelID = splitAnnotation[j];
-					
-					if (submodelID.length() == 0)
-						continue;
-					
-					String gcmName = parameter.getId().replace("__locations","");
 					int row = gcm.getSubmodelRow(submodelID);
 					int col = gcm.getSubmodelCol(submodelID);
+					
+					String gcmName = parameter.getId().replace("__locations","");
 					
 					//if adding blank components, don't set the component
 					if (gcmName.equals("none"))

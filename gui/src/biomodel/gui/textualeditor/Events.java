@@ -138,9 +138,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		JCheckBox assignTime = new JCheckBox("");
 		JCheckBox persistentTrigger = new JCheckBox("");
 		JCheckBox initialTrigger = new JCheckBox("");
-		JComboBox dynamicProcess = new JComboBox(new String[] {"none","Division","Death"});
+		JComboBox dynamicProcess = new JComboBox(new String[] {"none","Symmetric Division","Asymmetric Division","Death"});
 		JCheckBox onPort = new JCheckBox();
-
+		
 		if (gcm != null && gcm.IsWithinCompartment() == false) {
 			dynamicProcess.setEnabled(false);
 			dynamicProcess.setSelectedItem("none");
@@ -178,8 +178,12 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					eventName.setText(event.getName());
 					eventTrigger.setText(SBMLutilities.myFormulaToString(event.getTrigger().getMath()));
 					
-					if (event.getAnnotationString().contains("Division"))
-						dynamicProcess.setSelectedItem("Division");
+					if (event.getAnnotationString().contains("Symmetric Division"))
+						dynamicProcess.setSelectedItem("Symmetric Division");
+					else if (event.getAnnotationString().contains("Asymmetric Division"))
+						dynamicProcess.setSelectedItem("Asymmetric Division");
+					else if (event.getAnnotationString().contains("Division"))
+						dynamicProcess.setSelectedItem("Asymmetric Division");
 					else if (event.getAnnotationString().contains("Death"))
 						dynamicProcess.setSelectedItem("Death");
 					
@@ -517,6 +521,31 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						events.setListData(ev);
 						events.setSelectedIndex(index);
 					}
+					//edit dynamic process
+					if (!error) {
+						
+						if (((String)dynamicProcess.getSelectedItem()).equals("Asymmetric Division")) {		
+							XMLAttributes attr = new XMLAttributes();
+							attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
+							attr.add("ibiosim:type", "Asymmetric Division");
+							XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
+							e.setAnnotation(node);
+						}
+						else if (((String)dynamicProcess.getSelectedItem()).equals("Symmetric Division")) {		
+							XMLAttributes attr = new XMLAttributes();
+							attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
+							attr.add("ibiosim:type", "Symmetric Division");
+							XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
+							e.setAnnotation(node);
+						}
+						else if (((String)dynamicProcess.getSelectedItem()).equals("Death")) {	
+							XMLAttributes attr = new XMLAttributes();
+							attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
+							attr.add("ibiosim:type", "Death");
+							XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
+							e.setAnnotation(node);
+						}
+					}
 					else {
 						while (e.getNumEventAssignments() > 0) {
 							e.getListOfEventAssignments().remove(0);
@@ -527,7 +556,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							ea.setMath(SBMLutilities.myParseFormula(origAssign[i].split("=")[1].trim()));
 						}
 					}
-				}
+				} //end if option is "ok"
 				//add event
 				else {
 					JList add = new JList();
@@ -572,18 +601,31 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 								break;
 						}
 					}
-					//check for dynamic process
+					//add dynamic process
 					if (!error) {
 						
-						if (((String)dynamicProcess.getSelectedItem()).equals("Division")) {
+						if (((String)dynamicProcess.getSelectedItem()).equals("Asymmetric Division")) {		
+							XMLAttributes attr = new XMLAttributes();
+							attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
+							attr.add("ibiosim:type", "Asymmetric Division");
+							XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
+							e.setAnnotation(node);
+						}
+						else if (((String)dynamicProcess.getSelectedItem()).equals("Symmetric Division")) {		
+							XMLAttributes attr = new XMLAttributes();
+							attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
+							attr.add("ibiosim:type", "Symmetric Division");
+							XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
+							e.setAnnotation(node);
+						}
+						else if (((String)dynamicProcess.getSelectedItem()).equals("Death")) {	
+							XMLAttributes attr = new XMLAttributes();
+							attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
+							attr.add("ibiosim:type", "Death");
+							XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
+							e.setAnnotation(node);
+						}
 						
-							e.setAnnotation("Division");
-						}
-						else if (((String)dynamicProcess.getSelectedItem()).equals("Death")) {
-							
-							e.setAnnotation("Death");
-						}
-
 						if (onPort.isSelected()) {
 							Port port = gcm.getSBMLCompModel().createPort();
 							port.setId(GlobalConstants.EVENT+"__"+e.getId());

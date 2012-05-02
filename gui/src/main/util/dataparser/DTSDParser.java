@@ -375,7 +375,33 @@ public class DTSDParser {
 				}
 			}
 			
-			frameToRowColMap.put(dataIndex, new Point(maxRow - minRow + 1, maxCol - minCol + 1));
+			int newNumRows = maxRow - minRow + 1;
+			int newNumCols = maxCol - minCol + 1;
+			int oldNumRows = 0;
+			int oldNumCols = 0;
+			
+			if (dataIndex > 0) {
+				
+				//don't shrink the number of rows/cols
+				oldNumRows = (int) frameToRowColMap.get(dataIndex - 1).getX();
+				oldNumCols = (int) frameToRowColMap.get(dataIndex - 1).getY();
+				
+				if (oldNumRows > newNumRows)
+					newNumRows = oldNumRows;
+				if (oldNumCols > newNumCols)
+					newNumCols = oldNumCols;
+				
+				//don't increase the min row/col
+				int oldMinRow = (int) frameToMinRowColMap.get(dataIndex - 1).getX();
+				int oldMinCol = (int) frameToMinRowColMap.get(dataIndex - 1).getX();
+				
+				if (minRow > oldMinRow)
+					minRow = oldMinRow;
+				if (minCol > oldMinCol)
+					minCol = oldMinCol;
+			}
+			
+			frameToRowColMap.put(dataIndex, new Point(newNumRows, newNumCols));
 			frameToMinRowColMap.put(dataIndex, new Point(minRow, minCol));
 			frameToDataMapMap.put(dataIndex, frameDataMap);
 			
