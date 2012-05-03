@@ -1,4 +1,4 @@
-// $ANTLR 3.4 /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g 2012-03-27 17:20:20
+// $ANTLR 3.4 /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g 2012-05-02 21:08:50
 
   package antlrPackage;
   //import lpn.parser.LhpnFile;
@@ -81,7 +81,7 @@ public TreeAdaptor getTreeAdaptor() {
     return adaptor;
 }
     public String[] getTokenNames() { return PropertyParser.tokenNames; }
-    public String getGrammarFileName() { return "/Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g"; }
+    public String getGrammarFileName() { return "/Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g"; }
 
 
     public static class program_return extends ParserRuleReturnScope {
@@ -91,7 +91,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "program"
-    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:22:1: program : ( statement )* ;
+    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:22:1: program : ( statement )* ;
     public final PropertyParser.program_return program() throws RecognitionException {
         PropertyParser.program_return retval = new PropertyParser.program_return();
         retval.start = input.LT(1);
@@ -104,13 +104,13 @@ public TreeAdaptor getTreeAdaptor() {
 
 
         try {
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:23:2: ( ( statement )* )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:23:4: ( statement )*
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:23:2: ( ( statement )* )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:23:4: ( statement )*
             {
             root_0 = (CommonTree)adaptor.nil();
 
 
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:23:4: ( statement )*
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:23:4: ( statement )*
             loop1:
             do {
                 int alt1=2;
@@ -123,7 +123,7 @@ public TreeAdaptor getTreeAdaptor() {
 
                 switch (alt1) {
             	case 1 :
-            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:23:5: statement
+            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:23:5: statement
             	    {
             	    pushFollow(FOLLOW_statement_in_program63);
             	    statement1=statement();
@@ -172,7 +172,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "booleanNegationExpression"
-    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:211:1: booleanNegationExpression : ( NOT ^)* primitiveElement ;
+    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:211:1: booleanNegationExpression : ( NOT ^)* primitiveElement ;
     public final PropertyParser.booleanNegationExpression_return booleanNegationExpression() throws RecognitionException {
         PropertyParser.booleanNegationExpression_return retval = new PropertyParser.booleanNegationExpression_return();
         retval.start = input.LT(1);
@@ -187,13 +187,13 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree NOT2_tree=null;
 
         try {
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:212:3: ( ( NOT ^)* primitiveElement )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:212:5: ( NOT ^)* primitiveElement
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:212:3: ( ( NOT ^)* primitiveElement )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:212:5: ( NOT ^)* primitiveElement
             {
             root_0 = (CommonTree)adaptor.nil();
 
 
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:212:5: ( NOT ^)*
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:212:5: ( NOT ^)*
             loop2:
             do {
                 int alt2=2;
@@ -206,7 +206,7 @@ public TreeAdaptor getTreeAdaptor() {
 
                 switch (alt2) {
             	case 1 :
-            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:212:6: NOT ^
+            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:212:6: NOT ^
             	    {
             	    NOT2=(Token)match(input,NOT,FOLLOW_NOT_in_booleanNegationExpression851); 
             	    NOT2_tree = 
@@ -262,7 +262,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "signExpression"
-    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:215:1: signExpression : ( PLUS ^| MINUS ^)* booleanNegationExpression ;
+    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:215:1: signExpression : ( PLUS ^| MINUS ^)* booleanNegationExpression ;
     public final PropertyParser.signExpression_return signExpression() throws RecognitionException {
         PropertyParser.signExpression_return retval = new PropertyParser.signExpression_return();
         retval.start = input.LT(1);
@@ -279,13 +279,13 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree MINUS5_tree=null;
 
         try {
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:216:3: ( ( PLUS ^| MINUS ^)* booleanNegationExpression )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:216:5: ( PLUS ^| MINUS ^)* booleanNegationExpression
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:216:3: ( ( PLUS ^| MINUS ^)* booleanNegationExpression )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:216:5: ( PLUS ^| MINUS ^)* booleanNegationExpression
             {
             root_0 = (CommonTree)adaptor.nil();
 
 
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:216:5: ( PLUS ^| MINUS ^)*
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:216:5: ( PLUS ^| MINUS ^)*
             loop3:
             do {
                 int alt3=3;
@@ -301,7 +301,7 @@ public TreeAdaptor getTreeAdaptor() {
 
                 switch (alt3) {
             	case 1 :
-            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:216:6: PLUS ^
+            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:216:6: PLUS ^
             	    {
             	    PLUS4=(Token)match(input,PLUS,FOLLOW_PLUS_in_signExpression871); 
             	    PLUS4_tree = 
@@ -313,7 +313,7 @@ public TreeAdaptor getTreeAdaptor() {
             	    }
             	    break;
             	case 2 :
-            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:216:12: MINUS ^
+            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:216:12: MINUS ^
             	    {
             	    MINUS5=(Token)match(input,MINUS,FOLLOW_MINUS_in_signExpression874); 
             	    MINUS5_tree = 
@@ -369,7 +369,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "multiplyingExpression"
-    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:220:1: multiplyingExpression : signExpression ( ( MULT ^| DIV ^| MOD ^) signExpression )* ;
+    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:220:1: multiplyingExpression : signExpression ( ( MULT ^| DIV ^| MOD ^) signExpression )* ;
     public final PropertyParser.multiplyingExpression_return multiplyingExpression() throws RecognitionException {
         PropertyParser.multiplyingExpression_return retval = new PropertyParser.multiplyingExpression_return();
         retval.start = input.LT(1);
@@ -390,8 +390,8 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree MOD10_tree=null;
 
         try {
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:221:3: ( signExpression ( ( MULT ^| DIV ^| MOD ^) signExpression )* )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:221:5: signExpression ( ( MULT ^| DIV ^| MOD ^) signExpression )*
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:221:3: ( signExpression ( ( MULT ^| DIV ^| MOD ^) signExpression )* )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:221:5: signExpression ( ( MULT ^| DIV ^| MOD ^) signExpression )*
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -403,7 +403,7 @@ public TreeAdaptor getTreeAdaptor() {
 
             adaptor.addChild(root_0, signExpression7.getTree());
 
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:221:20: ( ( MULT ^| DIV ^| MOD ^) signExpression )*
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:221:20: ( ( MULT ^| DIV ^| MOD ^) signExpression )*
             loop5:
             do {
                 int alt5=2;
@@ -416,9 +416,9 @@ public TreeAdaptor getTreeAdaptor() {
 
                 switch (alt5) {
             	case 1 :
-            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:221:21: ( MULT ^| DIV ^| MOD ^) signExpression
+            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:221:21: ( MULT ^| DIV ^| MOD ^) signExpression
             	    {
-            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:221:21: ( MULT ^| DIV ^| MOD ^)
+            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:221:21: ( MULT ^| DIV ^| MOD ^)
             	    int alt4=3;
             	    switch ( input.LA(1) ) {
             	    case MULT:
@@ -446,7 +446,7 @@ public TreeAdaptor getTreeAdaptor() {
 
             	    switch (alt4) {
             	        case 1 :
-            	            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:221:22: MULT ^
+            	            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:221:22: MULT ^
             	            {
             	            MULT8=(Token)match(input,MULT,FOLLOW_MULT_in_multiplyingExpression899); 
             	            MULT8_tree = 
@@ -458,7 +458,7 @@ public TreeAdaptor getTreeAdaptor() {
             	            }
             	            break;
             	        case 2 :
-            	            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:221:28: DIV ^
+            	            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:221:28: DIV ^
             	            {
             	            DIV9=(Token)match(input,DIV,FOLLOW_DIV_in_multiplyingExpression902); 
             	            DIV9_tree = 
@@ -470,7 +470,7 @@ public TreeAdaptor getTreeAdaptor() {
             	            }
             	            break;
             	        case 3 :
-            	            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:221:33: MOD ^
+            	            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:221:33: MOD ^
             	            {
             	            MOD10=(Token)match(input,MOD,FOLLOW_MOD_in_multiplyingExpression905); 
             	            MOD10_tree = 
@@ -532,7 +532,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "addingExpression"
-    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:224:1: addingExpression : multiplyingExpression ( ( PLUS ^| MINUS ^) multiplyingExpression )* ;
+    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:224:1: addingExpression : multiplyingExpression ( ( PLUS ^| MINUS ^) multiplyingExpression )* ;
     public final PropertyParser.addingExpression_return addingExpression() throws RecognitionException {
         PropertyParser.addingExpression_return retval = new PropertyParser.addingExpression_return();
         retval.start = input.LT(1);
@@ -551,8 +551,8 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree MINUS14_tree=null;
 
         try {
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:225:3: ( multiplyingExpression ( ( PLUS ^| MINUS ^) multiplyingExpression )* )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:225:5: multiplyingExpression ( ( PLUS ^| MINUS ^) multiplyingExpression )*
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:225:3: ( multiplyingExpression ( ( PLUS ^| MINUS ^) multiplyingExpression )* )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:225:5: multiplyingExpression ( ( PLUS ^| MINUS ^) multiplyingExpression )*
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -564,7 +564,7 @@ public TreeAdaptor getTreeAdaptor() {
 
             adaptor.addChild(root_0, multiplyingExpression12.getTree());
 
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:225:27: ( ( PLUS ^| MINUS ^) multiplyingExpression )*
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:225:27: ( ( PLUS ^| MINUS ^) multiplyingExpression )*
             loop7:
             do {
                 int alt7=2;
@@ -577,9 +577,9 @@ public TreeAdaptor getTreeAdaptor() {
 
                 switch (alt7) {
             	case 1 :
-            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:225:28: ( PLUS ^| MINUS ^) multiplyingExpression
+            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:225:28: ( PLUS ^| MINUS ^) multiplyingExpression
             	    {
-            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:225:28: ( PLUS ^| MINUS ^)
+            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:225:28: ( PLUS ^| MINUS ^)
             	    int alt6=2;
             	    int LA6_0 = input.LA(1);
 
@@ -598,7 +598,7 @@ public TreeAdaptor getTreeAdaptor() {
             	    }
             	    switch (alt6) {
             	        case 1 :
-            	            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:225:29: PLUS ^
+            	            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:225:29: PLUS ^
             	            {
             	            PLUS13=(Token)match(input,PLUS,FOLLOW_PLUS_in_addingExpression928); 
             	            PLUS13_tree = 
@@ -610,7 +610,7 @@ public TreeAdaptor getTreeAdaptor() {
             	            }
             	            break;
             	        case 2 :
-            	            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:225:35: MINUS ^
+            	            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:225:35: MINUS ^
             	            {
             	            MINUS14=(Token)match(input,MINUS,FOLLOW_MINUS_in_addingExpression931); 
             	            MINUS14_tree = 
@@ -672,7 +672,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "relationalExpression"
-    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:229:1: relationalExpression : addingExpression ( ( EQUAL ^| NOT_EQUAL ^| GET ^| GETEQ ^| LET ^| LETEQ ^| SAMEAS ^) addingExpression )* ;
+    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:229:1: relationalExpression : addingExpression ( ( EQUAL ^| NOT_EQUAL ^| GET ^| GETEQ ^| LET ^| LETEQ ^| SAMEAS ^) addingExpression )* ;
     public final PropertyParser.relationalExpression_return relationalExpression() throws RecognitionException {
         PropertyParser.relationalExpression_return retval = new PropertyParser.relationalExpression_return();
         retval.start = input.LT(1);
@@ -701,8 +701,8 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree SAMEAS23_tree=null;
 
         try {
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:230:3: ( addingExpression ( ( EQUAL ^| NOT_EQUAL ^| GET ^| GETEQ ^| LET ^| LETEQ ^| SAMEAS ^) addingExpression )* )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:230:5: addingExpression ( ( EQUAL ^| NOT_EQUAL ^| GET ^| GETEQ ^| LET ^| LETEQ ^| SAMEAS ^) addingExpression )*
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:230:3: ( addingExpression ( ( EQUAL ^| NOT_EQUAL ^| GET ^| GETEQ ^| LET ^| LETEQ ^| SAMEAS ^) addingExpression )* )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:230:5: addingExpression ( ( EQUAL ^| NOT_EQUAL ^| GET ^| GETEQ ^| LET ^| LETEQ ^| SAMEAS ^) addingExpression )*
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -714,7 +714,7 @@ public TreeAdaptor getTreeAdaptor() {
 
             adaptor.addChild(root_0, addingExpression16.getTree());
 
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:230:22: ( ( EQUAL ^| NOT_EQUAL ^| GET ^| GETEQ ^| LET ^| LETEQ ^| SAMEAS ^) addingExpression )*
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:230:22: ( ( EQUAL ^| NOT_EQUAL ^| GET ^| GETEQ ^| LET ^| LETEQ ^| SAMEAS ^) addingExpression )*
             loop9:
             do {
                 int alt9=2;
@@ -727,9 +727,9 @@ public TreeAdaptor getTreeAdaptor() {
 
                 switch (alt9) {
             	case 1 :
-            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:230:23: ( EQUAL ^| NOT_EQUAL ^| GET ^| GETEQ ^| LET ^| LETEQ ^| SAMEAS ^) addingExpression
+            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:230:23: ( EQUAL ^| NOT_EQUAL ^| GET ^| GETEQ ^| LET ^| LETEQ ^| SAMEAS ^) addingExpression
             	    {
-            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:230:23: ( EQUAL ^| NOT_EQUAL ^| GET ^| GETEQ ^| LET ^| LETEQ ^| SAMEAS ^)
+            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:230:23: ( EQUAL ^| NOT_EQUAL ^| GET ^| GETEQ ^| LET ^| LETEQ ^| SAMEAS ^)
             	    int alt8=7;
             	    switch ( input.LA(1) ) {
             	    case EQUAL:
@@ -777,7 +777,7 @@ public TreeAdaptor getTreeAdaptor() {
 
             	    switch (alt8) {
             	        case 1 :
-            	            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:230:24: EQUAL ^
+            	            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:230:24: EQUAL ^
             	            {
             	            EQUAL17=(Token)match(input,EQUAL,FOLLOW_EQUAL_in_relationalExpression957); 
             	            EQUAL17_tree = 
@@ -789,7 +789,7 @@ public TreeAdaptor getTreeAdaptor() {
             	            }
             	            break;
             	        case 2 :
-            	            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:230:31: NOT_EQUAL ^
+            	            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:230:31: NOT_EQUAL ^
             	            {
             	            NOT_EQUAL18=(Token)match(input,NOT_EQUAL,FOLLOW_NOT_EQUAL_in_relationalExpression960); 
             	            NOT_EQUAL18_tree = 
@@ -801,7 +801,7 @@ public TreeAdaptor getTreeAdaptor() {
             	            }
             	            break;
             	        case 3 :
-            	            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:230:42: GET ^
+            	            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:230:42: GET ^
             	            {
             	            GET19=(Token)match(input,GET,FOLLOW_GET_in_relationalExpression963); 
             	            GET19_tree = 
@@ -813,7 +813,7 @@ public TreeAdaptor getTreeAdaptor() {
             	            }
             	            break;
             	        case 4 :
-            	            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:230:47: GETEQ ^
+            	            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:230:47: GETEQ ^
             	            {
             	            GETEQ20=(Token)match(input,GETEQ,FOLLOW_GETEQ_in_relationalExpression966); 
             	            GETEQ20_tree = 
@@ -825,7 +825,7 @@ public TreeAdaptor getTreeAdaptor() {
             	            }
             	            break;
             	        case 5 :
-            	            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:230:54: LET ^
+            	            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:230:54: LET ^
             	            {
             	            LET21=(Token)match(input,LET,FOLLOW_LET_in_relationalExpression969); 
             	            LET21_tree = 
@@ -837,7 +837,7 @@ public TreeAdaptor getTreeAdaptor() {
             	            }
             	            break;
             	        case 6 :
-            	            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:230:59: LETEQ ^
+            	            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:230:59: LETEQ ^
             	            {
             	            LETEQ22=(Token)match(input,LETEQ,FOLLOW_LETEQ_in_relationalExpression972); 
             	            LETEQ22_tree = 
@@ -849,7 +849,7 @@ public TreeAdaptor getTreeAdaptor() {
             	            }
             	            break;
             	        case 7 :
-            	            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:230:68: SAMEAS ^
+            	            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:230:68: SAMEAS ^
             	            {
             	            SAMEAS23=(Token)match(input,SAMEAS,FOLLOW_SAMEAS_in_relationalExpression977); 
             	            SAMEAS23_tree = 
@@ -911,7 +911,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "primitiveElement"
-    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:233:1: primitiveElement : constantValue ;
+    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:233:1: primitiveElement : constantValue ;
     public final PropertyParser.primitiveElement_return primitiveElement() throws RecognitionException {
         PropertyParser.primitiveElement_return retval = new PropertyParser.primitiveElement_return();
         retval.start = input.LT(1);
@@ -924,8 +924,8 @@ public TreeAdaptor getTreeAdaptor() {
 
 
         try {
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:234:2: ( constantValue )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:234:3: constantValue
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:234:2: ( constantValue )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:234:3: constantValue
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -968,7 +968,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "logicalExpression"
-    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:237:1: logicalExpression : relationalExpression ( ( AND ^| OR ^) relationalExpression )* ;
+    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:237:1: logicalExpression : relationalExpression ( ( AND ^| OR ^) relationalExpression )* ;
     public final PropertyParser.logicalExpression_return logicalExpression() throws RecognitionException {
         PropertyParser.logicalExpression_return retval = new PropertyParser.logicalExpression_return();
         retval.start = input.LT(1);
@@ -987,8 +987,8 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree OR28_tree=null;
 
         try {
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:238:4: ( relationalExpression ( ( AND ^| OR ^) relationalExpression )* )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:238:6: relationalExpression ( ( AND ^| OR ^) relationalExpression )*
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:238:4: ( relationalExpression ( ( AND ^| OR ^) relationalExpression )* )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:238:6: relationalExpression ( ( AND ^| OR ^) relationalExpression )*
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -1000,7 +1000,7 @@ public TreeAdaptor getTreeAdaptor() {
 
             adaptor.addChild(root_0, relationalExpression26.getTree());
 
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:238:27: ( ( AND ^| OR ^) relationalExpression )*
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:238:27: ( ( AND ^| OR ^) relationalExpression )*
             loop11:
             do {
                 int alt11=2;
@@ -1013,9 +1013,9 @@ public TreeAdaptor getTreeAdaptor() {
 
                 switch (alt11) {
             	case 1 :
-            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:238:28: ( AND ^| OR ^) relationalExpression
+            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:238:28: ( AND ^| OR ^) relationalExpression
             	    {
-            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:238:28: ( AND ^| OR ^)
+            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:238:28: ( AND ^| OR ^)
             	    int alt10=2;
             	    int LA10_0 = input.LA(1);
 
@@ -1034,7 +1034,7 @@ public TreeAdaptor getTreeAdaptor() {
             	    }
             	    switch (alt10) {
             	        case 1 :
-            	            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:238:29: AND ^
+            	            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:238:29: AND ^
             	            {
             	            AND27=(Token)match(input,AND,FOLLOW_AND_in_logicalExpression1015); 
             	            AND27_tree = 
@@ -1046,7 +1046,7 @@ public TreeAdaptor getTreeAdaptor() {
             	            }
             	            break;
             	        case 2 :
-            	            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:238:34: OR ^
+            	            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:238:34: OR ^
             	            {
             	            OR28=(Token)match(input,OR,FOLLOW_OR_in_logicalExpression1018); 
             	            OR28_tree = 
@@ -1108,7 +1108,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "unaryExpression"
-    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:241:1: unaryExpression : NOT ^ LPARA ! logicalExpression RPARA ! SEMICOL !;
+    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:241:1: unaryExpression : NOT ^ LPARA ! logicalExpression RPARA ! SEMICOL !;
     public final PropertyParser.unaryExpression_return unaryExpression() throws RecognitionException {
         PropertyParser.unaryExpression_return retval = new PropertyParser.unaryExpression_return();
         retval.start = input.LT(1);
@@ -1129,8 +1129,8 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree SEMICOL34_tree=null;
 
         try {
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:242:2: ( NOT ^ LPARA ! logicalExpression RPARA ! SEMICOL !)
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:242:4: NOT ^ LPARA ! logicalExpression RPARA ! SEMICOL !
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:242:2: ( NOT ^ LPARA ! logicalExpression RPARA ! SEMICOL !)
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:242:4: NOT ^ LPARA ! logicalExpression RPARA ! SEMICOL !
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -1186,7 +1186,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "expression"
-    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:246:1: expression : ( unaryExpression | logicalExpression );
+    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:246:1: expression : ( unaryExpression | logicalExpression );
     public final PropertyParser.expression_return expression() throws RecognitionException {
         PropertyParser.expression_return retval = new PropertyParser.expression_return();
         retval.start = input.LT(1);
@@ -1201,7 +1201,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
         try {
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:252:3: ( unaryExpression | logicalExpression )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:252:3: ( unaryExpression | logicalExpression )
             int alt12=2;
             int LA12_0 = input.LA(1);
 
@@ -1234,7 +1234,7 @@ public TreeAdaptor getTreeAdaptor() {
             }
             switch (alt12) {
                 case 1 :
-                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:252:5: unaryExpression
+                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:252:5: unaryExpression
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -1249,7 +1249,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 2 :
-                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:253:4: logicalExpression
+                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:253:4: logicalExpression
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -1294,7 +1294,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "constantValue"
-    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:258:1: constantValue : ( ID | INT );
+    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:258:1: constantValue : ( ID | INT );
     public final PropertyParser.constantValue_return constantValue() throws RecognitionException {
         PropertyParser.constantValue_return retval = new PropertyParser.constantValue_return();
         retval.start = input.LT(1);
@@ -1307,8 +1307,8 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree set37_tree=null;
 
         try {
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:259:2: ( ID | INT )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:259:2: ( ID | INT )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -1359,7 +1359,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "wait_statement"
-    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:262:1: wait_statement : ( WAIT ^ LPARA ! expression RPARA ! SEMICOL !| WAIT ^ LPARA ! expression COMMA ! expression RPARA ! SEMICOL !);
+    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:262:1: wait_statement : ( WAIT ^ LPARA ! expression RPARA ! SEMICOL !| WAIT ^ LPARA ! expression COMMA ! expression RPARA ! SEMICOL !);
     public final PropertyParser.wait_statement_return wait_statement() throws RecognitionException {
         PropertyParser.wait_statement_return retval = new PropertyParser.wait_statement_return();
         retval.start = input.LT(1);
@@ -1394,12 +1394,12 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree SEMICOL49_tree=null;
 
         try {
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:263:2: ( WAIT ^ LPARA ! expression RPARA ! SEMICOL !| WAIT ^ LPARA ! expression COMMA ! expression RPARA ! SEMICOL !)
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:263:2: ( WAIT ^ LPARA ! expression RPARA ! SEMICOL !| WAIT ^ LPARA ! expression COMMA ! expression RPARA ! SEMICOL !)
             int alt13=2;
             alt13 = dfa13.predict(input);
             switch (alt13) {
                 case 1 :
-                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:263:4: WAIT ^ LPARA ! expression RPARA ! SEMICOL !
+                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:263:4: WAIT ^ LPARA ! expression RPARA ! SEMICOL !
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -1427,7 +1427,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 2 :
-                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:264:4: WAIT ^ LPARA ! expression COMMA ! expression RPARA ! SEMICOL !
+                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:264:4: WAIT ^ LPARA ! expression COMMA ! expression RPARA ! SEMICOL !
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -1494,7 +1494,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "assert_statement"
-    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:269:1: assert_statement : ASSERT ^ LPARA ! expression COMMA ! expression RPARA ! SEMICOL !;
+    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:269:1: assert_statement : ASSERT ^ LPARA ! expression COMMA ! expression RPARA ! SEMICOL !;
     public final PropertyParser.assert_statement_return assert_statement() throws RecognitionException {
         PropertyParser.assert_statement_return retval = new PropertyParser.assert_statement_return();
         retval.start = input.LT(1);
@@ -1519,8 +1519,8 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree SEMICOL56_tree=null;
 
         try {
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:270:2: ( ASSERT ^ LPARA ! expression COMMA ! expression RPARA ! SEMICOL !)
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:270:4: ASSERT ^ LPARA ! expression COMMA ! expression RPARA ! SEMICOL !
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:270:2: ( ASSERT ^ LPARA ! expression COMMA ! expression RPARA ! SEMICOL !)
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:270:4: ASSERT ^ LPARA ! expression COMMA ! expression RPARA ! SEMICOL !
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -1585,7 +1585,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "if_statement"
-    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:273:1: if_statement : IF ^ if_part ;
+    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:273:1: if_statement : IF ^ if_part ;
     public final PropertyParser.if_statement_return if_statement() throws RecognitionException {
         PropertyParser.if_statement_return retval = new PropertyParser.if_statement_return();
         retval.start = input.LT(1);
@@ -1600,8 +1600,8 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree IF57_tree=null;
 
         try {
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:274:3: ( IF ^ if_part )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:274:5: IF ^ if_part
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:274:3: ( IF ^ if_part )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:274:5: IF ^ if_part
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -1651,7 +1651,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "if_part"
-    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:277:1: if_part : LPARA ! expression RPARA ! LCURL ! ( statement )* RCURL ! ( else_part )* ;
+    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:277:1: if_part : LPARA ! expression RPARA ! LCURL ! ( statement )* RCURL ! ( else_part )* ;
     public final PropertyParser.if_part_return if_part() throws RecognitionException {
         PropertyParser.if_part_return retval = new PropertyParser.if_part_return();
         retval.start = input.LT(1);
@@ -1676,8 +1676,8 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree RCURL64_tree=null;
 
         try {
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:278:3: ( LPARA ! expression RPARA ! LCURL ! ( statement )* RCURL ! ( else_part )* )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:278:5: LPARA ! expression RPARA ! LCURL ! ( statement )* RCURL ! ( else_part )*
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:278:3: ( LPARA ! expression RPARA ! LCURL ! ( statement )* RCURL ! ( else_part )* )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:278:5: LPARA ! expression RPARA ! LCURL ! ( statement )* RCURL ! ( else_part )*
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -1695,7 +1695,7 @@ public TreeAdaptor getTreeAdaptor() {
 
             LCURL62=(Token)match(input,LCURL,FOLLOW_LCURL_in_if_part1222); 
 
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:278:36: ( statement )*
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:278:36: ( statement )*
             loop14:
             do {
                 int alt14=2;
@@ -1708,7 +1708,7 @@ public TreeAdaptor getTreeAdaptor() {
 
                 switch (alt14) {
             	case 1 :
-            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:278:37: statement
+            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:278:37: statement
             	    {
             	    pushFollow(FOLLOW_statement_in_if_part1226);
             	    statement63=statement();
@@ -1728,7 +1728,7 @@ public TreeAdaptor getTreeAdaptor() {
 
             RCURL64=(Token)match(input,RCURL,FOLLOW_RCURL_in_if_part1230); 
 
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:278:56: ( else_part )*
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:278:56: ( else_part )*
             loop15:
             do {
                 int alt15=2;
@@ -1741,7 +1741,7 @@ public TreeAdaptor getTreeAdaptor() {
 
                 switch (alt15) {
             	case 1 :
-            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:278:57: else_part
+            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:278:57: else_part
             	    {
             	    pushFollow(FOLLOW_else_part_in_if_part1234);
             	    else_part65=else_part();
@@ -1790,7 +1790,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "else_part"
-    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:281:1: else_part : ELSEIF ^ LPARA ! expression RPARA ! LCURL ! ( statement )* RCURL !;
+    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:281:1: else_part : ELSEIF ^ LPARA ! expression RPARA ! LCURL ! ( statement )* RCURL !;
     public final PropertyParser.else_part_return else_part() throws RecognitionException {
         PropertyParser.else_part_return retval = new PropertyParser.else_part_return();
         retval.start = input.LT(1);
@@ -1815,8 +1815,8 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree RCURL72_tree=null;
 
         try {
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:282:2: ( ELSEIF ^ LPARA ! expression RPARA ! LCURL ! ( statement )* RCURL !)
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:282:4: ELSEIF ^ LPARA ! expression RPARA ! LCURL ! ( statement )* RCURL !
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:282:2: ( ELSEIF ^ LPARA ! expression RPARA ! LCURL ! ( statement )* RCURL !)
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:282:4: ELSEIF ^ LPARA ! expression RPARA ! LCURL ! ( statement )* RCURL !
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -1841,7 +1841,7 @@ public TreeAdaptor getTreeAdaptor() {
 
             LCURL70=(Token)match(input,LCURL,FOLLOW_LCURL_in_else_part1260); 
 
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:282:45: ( statement )*
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:282:45: ( statement )*
             loop16:
             do {
                 int alt16=2;
@@ -1854,7 +1854,7 @@ public TreeAdaptor getTreeAdaptor() {
 
                 switch (alt16) {
             	case 1 :
-            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:282:46: statement
+            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:282:46: statement
             	    {
             	    pushFollow(FOLLOW_statement_in_else_part1264);
             	    statement71=statement();
@@ -1905,7 +1905,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "statement"
-    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:284:1: statement : ( wait_statement | assert_statement | if_statement );
+    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:284:1: statement : ( wait_statement | assert_statement | if_statement );
     public final PropertyParser.statement_return statement() throws RecognitionException {
         PropertyParser.statement_return retval = new PropertyParser.statement_return();
         retval.start = input.LT(1);
@@ -1922,7 +1922,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
         try {
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:285:2: ( wait_statement | assert_statement | if_statement )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:285:2: ( wait_statement | assert_statement | if_statement )
             int alt17=3;
             switch ( input.LA(1) ) {
             case WAIT:
@@ -1950,7 +1950,7 @@ public TreeAdaptor getTreeAdaptor() {
 
             switch (alt17) {
                 case 1 :
-                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:285:4: wait_statement
+                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:285:4: wait_statement
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -1965,7 +1965,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 2 :
-                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:286:4: assert_statement
+                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:286:4: assert_statement
                     {
                     root_0 = (CommonTree)adaptor.nil();
 
@@ -1980,7 +1980,7 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 3 :
-                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:287:4: if_statement
+                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:287:4: if_statement
                     {
                     root_0 = (CommonTree)adaptor.nil();
 

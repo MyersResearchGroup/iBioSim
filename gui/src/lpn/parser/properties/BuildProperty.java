@@ -1,4 +1,4 @@
-package antlrPackage;
+package lpn.parser.properties;
 
 
 
@@ -11,10 +11,12 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import lpn.parser.LhpnFile;
+import lpn.parser.properties.PropertyParser.program_return;
 
 import org.antlr.runtime.*;
 import org.antlr.runtime.tree.*;
 import org.antlr.stringtemplate.language.Expr;
+
 
 import antlr.CommonAST;
 import antlr.Parser;
@@ -25,8 +27,6 @@ import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.TokenStream; */
 
 import antlr.collections.AST;
-import antlrPackage.PropertyLexer;
-import antlrPackage.PropertyParser;
 import antlr.Parser.*;
 
 public class BuildProperty {
@@ -111,7 +111,7 @@ public class BuildProperty {
 			
 			switch(t.getChild(i).getType())
 			{
-			case antlrPackage.PropertyLexer.ASSERT :
+			case lpn.parser.properties.PropertyLexer.ASSERT :
 				System.out.println("child is here assert, no of child: "+t.getChild(i)+t.getChildCount());
 				enablingCond= generateExpression((CommonTree)t.getChild(i).getChild(0));
 				delay= generateExpression((CommonTree)t.getChild(i).getChild(1));
@@ -139,43 +139,43 @@ public class BuildProperty {
 					numPlaces++;
 					lpn.addMovement( "t" +(numTransitions-1),"p"+(numPlaces-1));
 				break;
-			case antlrPackage.PropertyLexer.ID : 
+			case lpn.parser.properties.PropertyLexer.ID : 
 				
 				break;
-			case antlrPackage.PropertyLexer.INT :
+			case lpn.parser.properties.PropertyLexer.INT :
 				break;
-			case antlrPackage.PropertyLexer.NOT :
+			case lpn.parser.properties.PropertyLexer.NOT :
 				break;
-			case antlrPackage.PropertyLexer.PLUS :
+			case lpn.parser.properties.PropertyLexer.PLUS :
 				break;
-			case antlrPackage.PropertyLexer.MINUS :
+			case lpn.parser.properties.PropertyLexer.MINUS :
 				break;
-			case antlrPackage.PropertyLexer.MULT :
+			case lpn.parser.properties.PropertyLexer.MULT :
 				break;
-			case antlrPackage.PropertyLexer.DIV :
+			case lpn.parser.properties.PropertyLexer.DIV :
 				break;
-			case antlrPackage.PropertyLexer.MOD :
+			case lpn.parser.properties.PropertyLexer.MOD :
 				break;
-			case antlrPackage.PropertyLexer.EQUAL :
+			case lpn.parser.properties.PropertyLexer.EQUAL :
 				break;
-			case antlrPackage.PropertyLexer.NOT_EQUAL :
+			case lpn.parser.properties.PropertyLexer.NOT_EQUAL :
 				break;
-			case antlrPackage.PropertyLexer.GET :
+			case lpn.parser.properties.PropertyLexer.GET :
 				break;
-			case antlrPackage.PropertyLexer.LET :
+			case lpn.parser.properties.PropertyLexer.LET :
 				break;
-			case antlrPackage.PropertyLexer.GETEQ :
+			case lpn.parser.properties.PropertyLexer.GETEQ :
 				break;
-			case antlrPackage.PropertyLexer.LETEQ :
+			case lpn.parser.properties.PropertyLexer.LETEQ :
 				break;
 			
-			case antlrPackage.PropertyLexer.AND :
+			case lpn.parser.properties.PropertyLexer.AND :
 				break;
-			case antlrPackage.PropertyLexer.OR :
+			case lpn.parser.properties.PropertyLexer.OR :
 				break;
-			case antlrPackage.PropertyLexer.SAMEAS :
+			case lpn.parser.properties.PropertyLexer.SAMEAS :
 				break;
-			case antlrPackage.PropertyLexer.WAIT :
+			case lpn.parser.properties.PropertyLexer.WAIT :
 				System.out.println("child is here: "+t.getChild(i));
 				int count = t.getChild(i).getChildCount();
 				
@@ -218,7 +218,7 @@ public class BuildProperty {
 				
 				break;
 			
-			case antlrPackage.PropertyLexer.IF :
+			case lpn.parser.properties.PropertyLexer.IF :
 				System.out.println("child in IF **********: "+t.getChild(i).getChildCount());
 				for(int j=0;j<t.getChild(i).getChildCount();j++){
 					//int type= t.getChild(i).getChild(j).getType();
@@ -241,7 +241,7 @@ public class BuildProperty {
 						numPlaces++;
 						lpn.addMovement("t" +(numTransitions-1), "p"+(numPlaces-1));
 					}
-					else if(t.getChild(i).getChild(j).getType()==antlrPackage.PropertyLexer.ELSEIF){
+					else if(t.getChild(i).getChild(j).getType()==lpn.parser.properties.PropertyLexer.ELSEIF){
 						lpn=generateLPN((CommonTree)t.getChild(i).getChild(j), lpn);
 						
 					}
@@ -253,9 +253,9 @@ public class BuildProperty {
 				}
 				 
 				break;
-			case antlrPackage.PropertyLexer.END :
+			case lpn.parser.properties.PropertyLexer.END :
 				break;
-			case antlrPackage.PropertyLexer.ELSEIF :
+			case lpn.parser.properties.PropertyLexer.ELSEIF :
 				for(int j=0;j<t.getChild(i).getChildCount();j++){
 					//int type= t.getChild(i).getChild(j).getType();
 					System.out.println("child is : "+t.getChild(i).getChild(j));	
@@ -277,7 +277,7 @@ public class BuildProperty {
 						numPlaces++;
 						lpn.addMovement("t" +(numTransitions-1), "p"+(numPlaces-1));
 					}
-					else if(t.getChild(i).getChild(j).getType()==antlrPackage.PropertyLexer.ELSEIF){
+					else if(t.getChild(i).getChild(j).getType()==lpn.parser.properties.PropertyLexer.ELSEIF){
 						//lpn=generateLPN((CommonTree)t.getChild(i).getChild(j), lpn);
 						lpn=generateLPN((CommonTree)t.getChild(i).getChild(j), lpn);
 					}
@@ -303,27 +303,27 @@ public class BuildProperty {
 		if ( newChild != null ) {
 			//for ( int i = 0; i < newChild.getChildCount(); i++ ) {
 				switch (newChild.getType()) {
-				case antlrPackage.PropertyLexer.WAIT: 
+				case lpn.parser.properties.PropertyLexer.WAIT: 
 					System.out.println("new child *****"+newChild);
 					break;
-				case antlrPackage.PropertyLexer.IF: 
+				case lpn.parser.properties.PropertyLexer.IF: 
 					System.out.println("new child *****"+newChild);
 					break;
-				case antlrPackage.PropertyLexer.ID : 
+				case lpn.parser.properties.PropertyLexer.ID : 
 					result= newChild.toString();
 					System.out.println("result1"+result);
 					break;
-				case antlrPackage.PropertyLexer.FLOAT:
+				case lpn.parser.properties.PropertyLexer.FLOAT:
 					result=newChild.toString();
 					break;
-				case antlrPackage.PropertyLexer.INT	:
+				case lpn.parser.properties.PropertyLexer.INT	:
 					result=newChild.toString();
 					System.out.println("result1"+result);
 					break;
-				case antlrPackage.PropertyLexer.STRING	:
+				case lpn.parser.properties.PropertyLexer.STRING	:
 					result=newChild.toString();
 					break;
-				case antlrPackage.PropertyLexer.GET :
+				case lpn.parser.properties.PropertyLexer.GET :
 					//String string2= ">";
 					 string1= generateExpression((CommonTree)newChild.getChild(0));
 					 string2= generateExpression((CommonTree)newChild.getChild(1));
@@ -333,86 +333,86 @@ public class BuildProperty {
 					result= (string1 + ">" +string2);
 					System.out.println("result2 :"+result);
 					break;
-				case antlrPackage.PropertyLexer.AND :
+				case lpn.parser.properties.PropertyLexer.AND :
 					 string1= generateExpression((CommonTree)newChild.getChild(0));
 					 string2= generateExpression((CommonTree)newChild.getChild(1));
 					 result= (string1 + "&" +string2);
 					 System.out.println("result2 :"+result);
 					break;
-				case antlrPackage.PropertyLexer.DIV :
+				case lpn.parser.properties.PropertyLexer.DIV :
 					string1= generateExpression((CommonTree)newChild.getChild(0));
 					 string2= generateExpression((CommonTree)newChild.getChild(1));
 					 result= (string1 + "/" +string2);
 					 System.out.println("result2 :"+result);
 					break;
-				case antlrPackage.PropertyLexer.EQUAL :
+				case lpn.parser.properties.PropertyLexer.EQUAL :
 					string1= generateExpression((CommonTree)newChild.getChild(0));
 					 string2= generateExpression((CommonTree)newChild.getChild(1));
 					 result= (string1 + "=" +string2);
 					 System.out.println("result2 :"+result);
 					break;
-				case antlrPackage.PropertyLexer.GETEQ :
+				case lpn.parser.properties.PropertyLexer.GETEQ :
 					string1= generateExpression((CommonTree)newChild.getChild(0));
 					 string2= generateExpression((CommonTree)newChild.getChild(1));
 					 result= (string1 + ">=" +string2);
 					 System.out.println("result2 :"+result);
 					break;
-				case antlrPackage.PropertyLexer.LET :
+				case lpn.parser.properties.PropertyLexer.LET :
 					string1= generateExpression((CommonTree)newChild.getChild(0));
 					 string2= generateExpression((CommonTree)newChild.getChild(1));
 					 result= (string1 + "<" +string2);
 					 System.out.println("result2 :"+result);
 					break;
-				case antlrPackage.PropertyLexer.LETEQ :
+				case lpn.parser.properties.PropertyLexer.LETEQ :
 					string1= generateExpression((CommonTree)newChild.getChild(0));
 					 string2= generateExpression((CommonTree)newChild.getChild(1));
 					 result= (string1 + "<=" +string2);
 					 System.out.println("result2 :"+result);
 					break;
-				case antlrPackage.PropertyLexer.MINUS :
+				case lpn.parser.properties.PropertyLexer.MINUS :
 					string1= generateExpression((CommonTree)newChild.getChild(0));
 					 string2= generateExpression((CommonTree)newChild.getChild(1));
 					 result= (string1 + "-" +string2);
 					 System.out.println("result2 :"+result);
 					break;
-				case antlrPackage.PropertyLexer.MOD :
+				case lpn.parser.properties.PropertyLexer.MOD :
 					string1= generateExpression((CommonTree)newChild.getChild(0));
 					 string2= generateExpression((CommonTree)newChild.getChild(1));
 					 result= (string1 + "%" +string2);
 					 System.out.println("result2 :"+result);
 					break;
-				case antlrPackage.PropertyLexer.MULT :
+				case lpn.parser.properties.PropertyLexer.MULT :
 					string1= generateExpression((CommonTree)newChild.getChild(0));
 					 string2= generateExpression((CommonTree)newChild.getChild(1));
 					 result= (string1 + "*" +string2);
 					 System.out.println("result2 :"+result);
 					break;
 				
-				case antlrPackage.PropertyLexer.NOT :
+				case lpn.parser.properties.PropertyLexer.NOT :
 					string1= generateExpression((CommonTree)newChild.getChild(0));
 					 //string2= generateExpression((CommonTree)newChild.getChild(1));
 					 result= ("~" +string2);
 					 System.out.println("result2 :"+result);
 					break;
-				case antlrPackage.PropertyLexer.NOT_EQUAL :
+				case lpn.parser.properties.PropertyLexer.NOT_EQUAL :
 					string1= generateExpression((CommonTree)newChild.getChild(0));
 					 string2= generateExpression((CommonTree)newChild.getChild(1));
 					 result= (string1 + "!=" +string2);
 					 System.out.println("result2 :"+result);
 					break;
-				case antlrPackage.PropertyLexer.OR :
+				case lpn.parser.properties.PropertyLexer.OR :
 					string1= generateExpression((CommonTree)newChild.getChild(0));
 					 string2= generateExpression((CommonTree)newChild.getChild(1));
 					 result= (string1 + "|" +string2);
 					 System.out.println("result2 :"+result);
 					break;
-				case antlrPackage.PropertyLexer.PLUS :
+				case lpn.parser.properties.PropertyLexer.PLUS :
 					string1= generateExpression((CommonTree)newChild.getChild(0));
 					 string2= generateExpression((CommonTree)newChild.getChild(1));
 					 result= (string1 + " + " +string2);
 					 System.out.println("result2 :"+result);
 					break;
-				case antlrPackage.PropertyLexer.SAMEAS :
+				case lpn.parser.properties.PropertyLexer.SAMEAS :
 					string1= generateExpression((CommonTree)newChild.getChild(0));
 					 string2= generateExpression((CommonTree)newChild.getChild(1));
 					 result= (string1 + "==" +string2);

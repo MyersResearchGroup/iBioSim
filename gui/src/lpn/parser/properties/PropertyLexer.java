@@ -1,4 +1,4 @@
-// $ANTLR 3.4 /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g 2012-03-27 17:20:20
+// $ANTLR 3.4 /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g 2012-05-02 21:08:51
 
   package antlrPackage;
 
@@ -62,15 +62,15 @@ public class PropertyLexer extends Lexer {
     public PropertyLexer(CharStream input, RecognizerSharedState state) {
         super(input,state);
     }
-    public String getGrammarFileName() { return "/Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g"; }
+    public String getGrammarFileName() { return "/Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g"; }
 
     // $ANTLR start "WAIT"
     public final void mWAIT() throws RecognitionException {
         try {
             int _type = WAIT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:29:2: ( 'wait' )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:29:2: 'wait'
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:29:2: ( 'wait' )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:29:2: 'wait'
             {
             match("wait"); 
 
@@ -92,8 +92,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = NOT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:34:3: ( '~' )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:34:3: '~'
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:34:3: ( '~' )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:34:3: '~'
             {
             match('~'); 
 
@@ -113,8 +113,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = MOD;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:38:2: ( '%' )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:38:2: '%'
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:38:2: ( '%' )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:38:2: '%'
             {
             match('%'); 
 
@@ -134,8 +134,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = AND;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:43:2: ( '&' )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:43:2: '&'
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:43:2: ( '&' )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:43:2: '&'
             {
             match('&'); 
 
@@ -155,8 +155,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = OR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:47:2: ( '|' )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:47:2: '|'
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:47:2: ( '|' )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:47:2: '|'
             {
             match('|'); 
 
@@ -176,8 +176,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = ASSERT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:52:2: ( 'assert' )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:52:2: 'assert'
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:52:2: ( 'assert' )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:52:2: 'assert'
             {
             match("assert"); 
 
@@ -199,8 +199,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = IF;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:57:2: ( 'if' )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:57:2: 'if'
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:57:2: ( 'if' )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:57:2: 'if'
             {
             match("if"); 
 
@@ -222,8 +222,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = END;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:62:2: ( 'end' )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:62:2: 'end'
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:62:2: ( 'end' )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:62:2: 'end'
             {
             match("end"); 
 
@@ -245,8 +245,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = ELSEIF;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:67:2: ( 'else if' )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:67:2: 'else if'
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:67:2: ( 'else if' )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:67:2: 'else if'
             {
             match("else if"); 
 
@@ -268,8 +268,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:71:5: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )* )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:71:7: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )*
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:71:5: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )* )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:71:7: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )*
             {
             if ( (input.LA(1) >= 'A' && input.LA(1) <= 'Z')||input.LA(1)=='_'||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
                 input.consume();
@@ -281,7 +281,7 @@ public class PropertyLexer extends Lexer {
             }
 
 
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:71:31: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )*
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:71:31: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' )*
             loop1:
             do {
                 int alt1=2;
@@ -294,7 +294,7 @@ public class PropertyLexer extends Lexer {
 
                 switch (alt1) {
             	case 1 :
-            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:
+            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:
             	    {
             	    if ( (input.LA(1) >= '0' && input.LA(1) <= '9')||(input.LA(1) >= 'A' && input.LA(1) <= 'Z')||input.LA(1)=='_'||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
             	        input.consume();
@@ -331,10 +331,10 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = INT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:74:5: ( ( '0' .. '9' )+ )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:74:7: ( '0' .. '9' )+
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:74:5: ( ( '0' .. '9' )+ )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:74:7: ( '0' .. '9' )+
             {
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:74:7: ( '0' .. '9' )+
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:74:7: ( '0' .. '9' )+
             int cnt2=0;
             loop2:
             do {
@@ -348,7 +348,7 @@ public class PropertyLexer extends Lexer {
 
                 switch (alt2) {
             	case 1 :
-            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:
+            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:
             	    {
             	    if ( (input.LA(1) >= '0' && input.LA(1) <= '9') ) {
             	        input.consume();
@@ -389,14 +389,14 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = FLOAT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:78:5: ( ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( EXPONENT )? | '.' ( '0' .. '9' )+ ( EXPONENT )? | ( '0' .. '9' )+ EXPONENT )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:78:5: ( ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( EXPONENT )? | '.' ( '0' .. '9' )+ ( EXPONENT )? | ( '0' .. '9' )+ EXPONENT )
             int alt9=3;
             alt9 = dfa9.predict(input);
             switch (alt9) {
                 case 1 :
-                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:78:9: ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( EXPONENT )?
+                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:78:9: ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( EXPONENT )?
                     {
-                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:78:9: ( '0' .. '9' )+
+                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:78:9: ( '0' .. '9' )+
                     int cnt3=0;
                     loop3:
                     do {
@@ -410,7 +410,7 @@ public class PropertyLexer extends Lexer {
 
                         switch (alt3) {
                     	case 1 :
-                    	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:
+                    	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:
                     	    {
                     	    if ( (input.LA(1) >= '0' && input.LA(1) <= '9') ) {
                     	        input.consume();
@@ -437,7 +437,7 @@ public class PropertyLexer extends Lexer {
 
                     match('.'); 
 
-                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:78:25: ( '0' .. '9' )*
+                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:78:25: ( '0' .. '9' )*
                     loop4:
                     do {
                         int alt4=2;
@@ -450,7 +450,7 @@ public class PropertyLexer extends Lexer {
 
                         switch (alt4) {
                     	case 1 :
-                    	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:
+                    	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:
                     	    {
                     	    if ( (input.LA(1) >= '0' && input.LA(1) <= '9') ) {
                     	        input.consume();
@@ -471,7 +471,7 @@ public class PropertyLexer extends Lexer {
                     } while (true);
 
 
-                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:78:37: ( EXPONENT )?
+                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:78:37: ( EXPONENT )?
                     int alt5=2;
                     int LA5_0 = input.LA(1);
 
@@ -480,7 +480,7 @@ public class PropertyLexer extends Lexer {
                     }
                     switch (alt5) {
                         case 1 :
-                            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:78:37: EXPONENT
+                            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:78:37: EXPONENT
                             {
                             mEXPONENT(); 
 
@@ -494,11 +494,11 @@ public class PropertyLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:79:9: '.' ( '0' .. '9' )+ ( EXPONENT )?
+                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:79:9: '.' ( '0' .. '9' )+ ( EXPONENT )?
                     {
                     match('.'); 
 
-                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:79:13: ( '0' .. '9' )+
+                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:79:13: ( '0' .. '9' )+
                     int cnt6=0;
                     loop6:
                     do {
@@ -512,7 +512,7 @@ public class PropertyLexer extends Lexer {
 
                         switch (alt6) {
                     	case 1 :
-                    	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:
+                    	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:
                     	    {
                     	    if ( (input.LA(1) >= '0' && input.LA(1) <= '9') ) {
                     	        input.consume();
@@ -537,7 +537,7 @@ public class PropertyLexer extends Lexer {
                     } while (true);
 
 
-                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:79:25: ( EXPONENT )?
+                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:79:25: ( EXPONENT )?
                     int alt7=2;
                     int LA7_0 = input.LA(1);
 
@@ -546,7 +546,7 @@ public class PropertyLexer extends Lexer {
                     }
                     switch (alt7) {
                         case 1 :
-                            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:79:25: EXPONENT
+                            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:79:25: EXPONENT
                             {
                             mEXPONENT(); 
 
@@ -560,9 +560,9 @@ public class PropertyLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:80:9: ( '0' .. '9' )+ EXPONENT
+                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:80:9: ( '0' .. '9' )+ EXPONENT
                     {
-                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:80:9: ( '0' .. '9' )+
+                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:80:9: ( '0' .. '9' )+
                     int cnt8=0;
                     loop8:
                     do {
@@ -576,7 +576,7 @@ public class PropertyLexer extends Lexer {
 
                         switch (alt8) {
                     	case 1 :
-                    	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:
+                    	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:
                     	    {
                     	    if ( (input.LA(1) >= '0' && input.LA(1) <= '9') ) {
                     	        input.consume();
@@ -622,7 +622,7 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:84:5: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n' | '/*' ( options {greedy=false; } : . )* '*/' )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:84:5: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n' | '/*' ( options {greedy=false; } : . )* '*/' )
             int alt13=2;
             int LA13_0 = input.LA(1);
 
@@ -652,13 +652,13 @@ public class PropertyLexer extends Lexer {
             }
             switch (alt13) {
                 case 1 :
-                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:84:9: '//' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n'
+                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:84:9: '//' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n'
                     {
                     match("//"); 
 
 
 
-                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:84:14: (~ ( '\\n' | '\\r' ) )*
+                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:84:14: (~ ( '\\n' | '\\r' ) )*
                     loop10:
                     do {
                         int alt10=2;
@@ -671,7 +671,7 @@ public class PropertyLexer extends Lexer {
 
                         switch (alt10) {
                     	case 1 :
-                    	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:
+                    	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:
                     	    {
                     	    if ( (input.LA(1) >= '\u0000' && input.LA(1) <= '\t')||(input.LA(1) >= '\u000B' && input.LA(1) <= '\f')||(input.LA(1) >= '\u000E' && input.LA(1) <= '\uFFFF') ) {
                     	        input.consume();
@@ -692,7 +692,7 @@ public class PropertyLexer extends Lexer {
                     } while (true);
 
 
-                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:84:28: ( '\\r' )?
+                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:84:28: ( '\\r' )?
                     int alt11=2;
                     int LA11_0 = input.LA(1);
 
@@ -701,7 +701,7 @@ public class PropertyLexer extends Lexer {
                     }
                     switch (alt11) {
                         case 1 :
-                            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:84:28: '\\r'
+                            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:84:28: '\\r'
                             {
                             match('\r'); 
 
@@ -718,13 +718,13 @@ public class PropertyLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:85:9: '/*' ( options {greedy=false; } : . )* '*/'
+                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:85:9: '/*' ( options {greedy=false; } : . )* '*/'
                     {
                     match("/*"); 
 
 
 
-                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:85:14: ( options {greedy=false; } : . )*
+                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:85:14: ( options {greedy=false; } : . )*
                     loop12:
                     do {
                         int alt12=2;
@@ -749,7 +749,7 @@ public class PropertyLexer extends Lexer {
 
                         switch (alt12) {
                     	case 1 :
-                    	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:85:42: .
+                    	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:85:42: .
                     	    {
                     	    matchAny(); 
 
@@ -786,10 +786,10 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:88:5: ( ( ' ' | '\\t' | '\\r' | '\\n' | '\\r\\n' ) )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:88:9: ( ' ' | '\\t' | '\\r' | '\\n' | '\\r\\n' )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:88:5: ( ( ' ' | '\\t' | '\\r' | '\\n' | '\\r\\n' ) )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:88:9: ( ' ' | '\\t' | '\\r' | '\\n' | '\\r\\n' )
             {
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:88:9: ( ' ' | '\\t' | '\\r' | '\\n' | '\\r\\n' )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:88:9: ( ' ' | '\\t' | '\\r' | '\\n' | '\\r\\n' )
             int alt14=5;
             switch ( input.LA(1) ) {
             case ' ':
@@ -829,35 +829,35 @@ public class PropertyLexer extends Lexer {
 
             switch (alt14) {
                 case 1 :
-                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:88:11: ' '
+                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:88:11: ' '
                     {
                     match(' '); 
 
                     }
                     break;
                 case 2 :
-                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:89:11: '\\t'
+                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:89:11: '\\t'
                     {
                     match('\t'); 
 
                     }
                     break;
                 case 3 :
-                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:90:11: '\\r'
+                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:90:11: '\\r'
                     {
                     match('\r'); 
 
                     }
                     break;
                 case 4 :
-                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:91:11: '\\n'
+                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:91:11: '\\n'
                     {
                     match('\n'); 
 
                     }
                     break;
                 case 5 :
-                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:92:10: '\\r\\n'
+                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:92:10: '\\r\\n'
                     {
                     match("\r\n"); 
 
@@ -887,12 +887,12 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:99:5: ( '\\'' ( ESC_SEQ |~ ( '\\\\' | '\\'' ) )* '\\'' )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:99:8: '\\'' ( ESC_SEQ |~ ( '\\\\' | '\\'' ) )* '\\''
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:99:5: ( '\\'' ( ESC_SEQ |~ ( '\\\\' | '\\'' ) )* '\\'' )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:99:8: '\\'' ( ESC_SEQ |~ ( '\\\\' | '\\'' ) )* '\\''
             {
             match('\''); 
 
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:99:13: ( ESC_SEQ |~ ( '\\\\' | '\\'' ) )*
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:99:13: ( ESC_SEQ |~ ( '\\\\' | '\\'' ) )*
             loop15:
             do {
                 int alt15=3;
@@ -908,7 +908,7 @@ public class PropertyLexer extends Lexer {
 
                 switch (alt15) {
             	case 1 :
-            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:99:15: ESC_SEQ
+            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:99:15: ESC_SEQ
             	    {
             	    mESC_SEQ(); 
 
@@ -916,7 +916,7 @@ public class PropertyLexer extends Lexer {
             	    }
             	    break;
             	case 2 :
-            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:99:25: ~ ( '\\\\' | '\\'' )
+            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:99:25: ~ ( '\\\\' | '\\'' )
             	    {
             	    if ( (input.LA(1) >= '\u0000' && input.LA(1) <= '&')||(input.LA(1) >= '(' && input.LA(1) <= '[')||(input.LA(1) >= ']' && input.LA(1) <= '\uFFFF') ) {
             	        input.consume();
@@ -953,8 +953,8 @@ public class PropertyLexer extends Lexer {
     // $ANTLR start "EXPONENT"
     public final void mEXPONENT() throws RecognitionException {
         try {
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:105:10: ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:105:12: ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:105:10: ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:105:12: ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
             {
             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                 input.consume();
@@ -966,7 +966,7 @@ public class PropertyLexer extends Lexer {
             }
 
 
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:105:22: ( '+' | '-' )?
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:105:22: ( '+' | '-' )?
             int alt16=2;
             int LA16_0 = input.LA(1);
 
@@ -975,7 +975,7 @@ public class PropertyLexer extends Lexer {
             }
             switch (alt16) {
                 case 1 :
-                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:
+                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:
                     {
                     if ( input.LA(1)=='+'||input.LA(1)=='-' ) {
                         input.consume();
@@ -993,7 +993,7 @@ public class PropertyLexer extends Lexer {
             }
 
 
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:105:33: ( '0' .. '9' )+
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:105:33: ( '0' .. '9' )+
             int cnt17=0;
             loop17:
             do {
@@ -1007,7 +1007,7 @@ public class PropertyLexer extends Lexer {
 
                 switch (alt17) {
             	case 1 :
-            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:
+            	    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:
             	    {
             	    if ( (input.LA(1) >= '0' && input.LA(1) <= '9') ) {
             	        input.consume();
@@ -1045,8 +1045,8 @@ public class PropertyLexer extends Lexer {
     // $ANTLR start "HEX_DIGIT"
     public final void mHEX_DIGIT() throws RecognitionException {
         try {
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:108:11: ( ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' ) )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:108:11: ( ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' ) )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:
             {
             if ( (input.LA(1) >= '0' && input.LA(1) <= '9')||(input.LA(1) >= 'A' && input.LA(1) <= 'F')||(input.LA(1) >= 'a' && input.LA(1) <= 'f') ) {
                 input.consume();
@@ -1071,7 +1071,7 @@ public class PropertyLexer extends Lexer {
     // $ANTLR start "ESC_SEQ"
     public final void mESC_SEQ() throws RecognitionException {
         try {
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:112:5: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\\"' | '\\'' | '\\\\' ) | UNICODE_ESC | OCTAL_ESC )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:112:5: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\\"' | '\\'' | '\\\\' ) | UNICODE_ESC | OCTAL_ESC )
             int alt18=3;
             int LA18_0 = input.LA(1);
 
@@ -1124,7 +1124,7 @@ public class PropertyLexer extends Lexer {
             }
             switch (alt18) {
                 case 1 :
-                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:112:9: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\\"' | '\\'' | '\\\\' )
+                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:112:9: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\\"' | '\\'' | '\\\\' )
                     {
                     match('\\'); 
 
@@ -1141,7 +1141,7 @@ public class PropertyLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:113:9: UNICODE_ESC
+                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:113:9: UNICODE_ESC
                     {
                     mUNICODE_ESC(); 
 
@@ -1149,7 +1149,7 @@ public class PropertyLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:114:9: OCTAL_ESC
+                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:114:9: OCTAL_ESC
                     {
                     mOCTAL_ESC(); 
 
@@ -1169,7 +1169,7 @@ public class PropertyLexer extends Lexer {
     // $ANTLR start "OCTAL_ESC"
     public final void mOCTAL_ESC() throws RecognitionException {
         try {
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:119:5: ( '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:119:5: ( '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) )
             int alt19=3;
             int LA19_0 = input.LA(1);
 
@@ -1220,7 +1220,7 @@ public class PropertyLexer extends Lexer {
             }
             switch (alt19) {
                 case 1 :
-                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:119:9: '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' )
+                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:119:9: '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' )
                     {
                     match('\\'); 
 
@@ -1257,7 +1257,7 @@ public class PropertyLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:120:9: '\\\\' ( '0' .. '7' ) ( '0' .. '7' )
+                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:120:9: '\\\\' ( '0' .. '7' ) ( '0' .. '7' )
                     {
                     match('\\'); 
 
@@ -1284,7 +1284,7 @@ public class PropertyLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:121:9: '\\\\' ( '0' .. '7' )
+                    // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:121:9: '\\\\' ( '0' .. '7' )
                     {
                     match('\\'); 
 
@@ -1313,8 +1313,8 @@ public class PropertyLexer extends Lexer {
     // $ANTLR start "UNICODE_ESC"
     public final void mUNICODE_ESC() throws RecognitionException {
         try {
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:126:5: ( '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:126:9: '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:126:5: ( '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:126:9: '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
             {
             match('\\'); 
 
@@ -1347,8 +1347,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = PLUS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:132:2: ( '+' )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:132:2: '+'
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:132:2: ( '+' )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:132:2: '+'
             {
             match('+'); 
 
@@ -1368,8 +1368,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = MINUS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:136:3: ( '-' )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:136:3: '-'
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:136:3: ( '-' )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:136:3: '-'
             {
             match('-'); 
 
@@ -1389,8 +1389,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = MULT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:141:2: ( '*' )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:141:2: '*'
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:141:2: ( '*' )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:141:2: '*'
             {
             match('*'); 
 
@@ -1410,8 +1410,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = DIV;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:145:2: ( '/' )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:145:2: '/'
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:145:2: ( '/' )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:145:2: '/'
             {
             match('/'); 
 
@@ -1431,8 +1431,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = EQUAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:151:2: ( '=' )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:151:2: '='
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:151:2: ( '=' )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:151:2: '='
             {
             match('='); 
 
@@ -1452,8 +1452,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = NOT_EQUAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:156:2: ( '!=' )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:156:2: '!='
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:156:2: ( '!=' )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:156:2: '!='
             {
             match("!="); 
 
@@ -1475,8 +1475,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = GET;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:160:2: ( '>' )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:160:2: '>'
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:160:2: ( '>' )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:160:2: '>'
             {
             match('>'); 
 
@@ -1496,8 +1496,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = LET;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:164:2: ( '<' )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:164:2: '<'
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:164:2: ( '<' )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:164:2: '<'
             {
             match('<'); 
 
@@ -1517,8 +1517,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = GETEQ;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:168:2: ( '>=' )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:168:2: '>='
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:168:2: ( '>=' )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:168:2: '>='
             {
             match(">="); 
 
@@ -1540,8 +1540,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = LETEQ;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:171:2: ( '<=' )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:171:2: '<='
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:171:2: ( '<=' )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:171:2: '<='
             {
             match("<="); 
 
@@ -1563,8 +1563,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = SAMEAS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:176:2: ( '==' )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:176:2: '=='
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:176:2: ( '==' )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:176:2: '=='
             {
             match("=="); 
 
@@ -1586,8 +1586,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = LPARA;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:182:2: ( '(' )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:182:2: '('
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:182:2: ( '(' )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:182:2: '('
             {
             match('('); 
 
@@ -1607,8 +1607,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = RPARA;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:186:2: ( ')' )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:186:2: ')'
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:186:2: ( ')' )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:186:2: ')'
             {
             match(')'); 
 
@@ -1628,8 +1628,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = LCURL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:190:2: ( '{' )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:190:2: '{'
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:190:2: ( '{' )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:190:2: '{'
             {
             match('{'); 
 
@@ -1649,8 +1649,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = RCURL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:194:2: ( '}' )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:194:2: '}'
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:194:2: ( '}' )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:194:2: '}'
             {
             match('}'); 
 
@@ -1670,8 +1670,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = SEMICOL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:200:2: ( ';' )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:200:2: ';'
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:200:2: ( ';' )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:200:2: ';'
             {
             match(';'); 
 
@@ -1691,8 +1691,8 @@ public class PropertyLexer extends Lexer {
         try {
             int _type = COMMA;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:204:2: ( ',' )
-            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:204:2: ','
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:204:2: ( ',' )
+            // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:204:2: ','
             {
             match(','); 
 
@@ -1708,12 +1708,12 @@ public class PropertyLexer extends Lexer {
     // $ANTLR end "COMMA"
 
     public void mTokens() throws RecognitionException {
-        // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:1:8: ( WAIT | NOT | MOD | AND | OR | ASSERT | IF | END | ELSEIF | ID | INT | FLOAT | COMMENT | WS | STRING | PLUS | MINUS | MULT | DIV | EQUAL | NOT_EQUAL | GET | LET | GETEQ | LETEQ | SAMEAS | LPARA | RPARA | LCURL | RCURL | SEMICOL | COMMA )
+        // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:8: ( WAIT | NOT | MOD | AND | OR | ASSERT | IF | END | ELSEIF | ID | INT | FLOAT | COMMENT | WS | STRING | PLUS | MINUS | MULT | DIV | EQUAL | NOT_EQUAL | GET | LET | GETEQ | LETEQ | SAMEAS | LPARA | RPARA | LCURL | RCURL | SEMICOL | COMMA )
         int alt20=32;
         alt20 = dfa20.predict(input);
         switch (alt20) {
             case 1 :
-                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:1:10: WAIT
+                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:10: WAIT
                 {
                 mWAIT(); 
 
@@ -1721,7 +1721,7 @@ public class PropertyLexer extends Lexer {
                 }
                 break;
             case 2 :
-                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:1:15: NOT
+                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:15: NOT
                 {
                 mNOT(); 
 
@@ -1729,7 +1729,7 @@ public class PropertyLexer extends Lexer {
                 }
                 break;
             case 3 :
-                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:1:19: MOD
+                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:19: MOD
                 {
                 mMOD(); 
 
@@ -1737,7 +1737,7 @@ public class PropertyLexer extends Lexer {
                 }
                 break;
             case 4 :
-                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:1:23: AND
+                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:23: AND
                 {
                 mAND(); 
 
@@ -1745,7 +1745,7 @@ public class PropertyLexer extends Lexer {
                 }
                 break;
             case 5 :
-                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:1:27: OR
+                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:27: OR
                 {
                 mOR(); 
 
@@ -1753,7 +1753,7 @@ public class PropertyLexer extends Lexer {
                 }
                 break;
             case 6 :
-                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:1:30: ASSERT
+                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:30: ASSERT
                 {
                 mASSERT(); 
 
@@ -1761,7 +1761,7 @@ public class PropertyLexer extends Lexer {
                 }
                 break;
             case 7 :
-                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:1:37: IF
+                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:37: IF
                 {
                 mIF(); 
 
@@ -1769,7 +1769,7 @@ public class PropertyLexer extends Lexer {
                 }
                 break;
             case 8 :
-                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:1:40: END
+                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:40: END
                 {
                 mEND(); 
 
@@ -1777,7 +1777,7 @@ public class PropertyLexer extends Lexer {
                 }
                 break;
             case 9 :
-                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:1:44: ELSEIF
+                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:44: ELSEIF
                 {
                 mELSEIF(); 
 
@@ -1785,7 +1785,7 @@ public class PropertyLexer extends Lexer {
                 }
                 break;
             case 10 :
-                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:1:51: ID
+                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:51: ID
                 {
                 mID(); 
 
@@ -1793,7 +1793,7 @@ public class PropertyLexer extends Lexer {
                 }
                 break;
             case 11 :
-                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:1:54: INT
+                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:54: INT
                 {
                 mINT(); 
 
@@ -1801,7 +1801,7 @@ public class PropertyLexer extends Lexer {
                 }
                 break;
             case 12 :
-                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:1:58: FLOAT
+                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:58: FLOAT
                 {
                 mFLOAT(); 
 
@@ -1809,7 +1809,7 @@ public class PropertyLexer extends Lexer {
                 }
                 break;
             case 13 :
-                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:1:64: COMMENT
+                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:64: COMMENT
                 {
                 mCOMMENT(); 
 
@@ -1817,7 +1817,7 @@ public class PropertyLexer extends Lexer {
                 }
                 break;
             case 14 :
-                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:1:72: WS
+                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:72: WS
                 {
                 mWS(); 
 
@@ -1825,7 +1825,7 @@ public class PropertyLexer extends Lexer {
                 }
                 break;
             case 15 :
-                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:1:75: STRING
+                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:75: STRING
                 {
                 mSTRING(); 
 
@@ -1833,7 +1833,7 @@ public class PropertyLexer extends Lexer {
                 }
                 break;
             case 16 :
-                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:1:82: PLUS
+                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:82: PLUS
                 {
                 mPLUS(); 
 
@@ -1841,7 +1841,7 @@ public class PropertyLexer extends Lexer {
                 }
                 break;
             case 17 :
-                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:1:87: MINUS
+                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:87: MINUS
                 {
                 mMINUS(); 
 
@@ -1849,7 +1849,7 @@ public class PropertyLexer extends Lexer {
                 }
                 break;
             case 18 :
-                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:1:93: MULT
+                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:93: MULT
                 {
                 mMULT(); 
 
@@ -1857,7 +1857,7 @@ public class PropertyLexer extends Lexer {
                 }
                 break;
             case 19 :
-                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:1:98: DIV
+                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:98: DIV
                 {
                 mDIV(); 
 
@@ -1865,7 +1865,7 @@ public class PropertyLexer extends Lexer {
                 }
                 break;
             case 20 :
-                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:1:102: EQUAL
+                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:102: EQUAL
                 {
                 mEQUAL(); 
 
@@ -1873,7 +1873,7 @@ public class PropertyLexer extends Lexer {
                 }
                 break;
             case 21 :
-                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:1:108: NOT_EQUAL
+                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:108: NOT_EQUAL
                 {
                 mNOT_EQUAL(); 
 
@@ -1881,7 +1881,7 @@ public class PropertyLexer extends Lexer {
                 }
                 break;
             case 22 :
-                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:1:118: GET
+                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:118: GET
                 {
                 mGET(); 
 
@@ -1889,7 +1889,7 @@ public class PropertyLexer extends Lexer {
                 }
                 break;
             case 23 :
-                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:1:122: LET
+                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:122: LET
                 {
                 mLET(); 
 
@@ -1897,7 +1897,7 @@ public class PropertyLexer extends Lexer {
                 }
                 break;
             case 24 :
-                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:1:126: GETEQ
+                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:126: GETEQ
                 {
                 mGETEQ(); 
 
@@ -1905,7 +1905,7 @@ public class PropertyLexer extends Lexer {
                 }
                 break;
             case 25 :
-                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:1:132: LETEQ
+                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:132: LETEQ
                 {
                 mLETEQ(); 
 
@@ -1913,7 +1913,7 @@ public class PropertyLexer extends Lexer {
                 }
                 break;
             case 26 :
-                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:1:138: SAMEAS
+                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:138: SAMEAS
                 {
                 mSAMEAS(); 
 
@@ -1921,7 +1921,7 @@ public class PropertyLexer extends Lexer {
                 }
                 break;
             case 27 :
-                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:1:145: LPARA
+                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:145: LPARA
                 {
                 mLPARA(); 
 
@@ -1929,7 +1929,7 @@ public class PropertyLexer extends Lexer {
                 }
                 break;
             case 28 :
-                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:1:151: RPARA
+                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:151: RPARA
                 {
                 mRPARA(); 
 
@@ -1937,7 +1937,7 @@ public class PropertyLexer extends Lexer {
                 }
                 break;
             case 29 :
-                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:1:157: LCURL
+                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:157: LCURL
                 {
                 mLCURL(); 
 
@@ -1945,7 +1945,7 @@ public class PropertyLexer extends Lexer {
                 }
                 break;
             case 30 :
-                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:1:163: RCURL
+                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:163: RCURL
                 {
                 mRCURL(); 
 
@@ -1953,7 +1953,7 @@ public class PropertyLexer extends Lexer {
                 }
                 break;
             case 31 :
-                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:1:169: SEMICOL
+                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:169: SEMICOL
                 {
                 mSEMICOL(); 
 
@@ -1961,7 +1961,7 @@ public class PropertyLexer extends Lexer {
                 }
                 break;
             case 32 :
-                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/antlrPackage/Property.g:1:177: COMMA
+                // /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g:1:177: COMMA
                 {
                 mCOMMA(); 
 
