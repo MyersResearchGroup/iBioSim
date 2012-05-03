@@ -4498,11 +4498,12 @@ public class BioModel {
 	public SBMLDocument flattenModel() {
 		ArrayList<String> modelList = new ArrayList<String>();
 		modelList.add(filename);
-		save(filename + "_flat.xml");
+		String tempFile = filename.replace(".gcm","").replace(".xml","")+"_temp.xml";
+		save(tempFile);
 		ArrayList<String> comps = getListOfSubmodels();
 		
 		BioModel model = new BioModel(path);
-		model.load(filename + "_flat.xml");
+		model.load(tempFile);
 
 		// loop through the list of submodels
 		for (String subModelId : comps) {
@@ -4512,8 +4513,8 @@ public class BioModel {
 			ArrayList<String> modelListCopy = copyArray(modelList);
 			if (modelListCopy.contains(subModel.getFilename())) {
 				Utility.createErrorMessage("Loop Detected", "Cannot flatten model.\n" + "There is a loop in the components.");
-				load(filename + "_flat.xml");
-				new File(filename + "_flat.xml").delete();
+				load(tempFile);
+				new File(tempFile).delete();
 				return null;
 			}
 			modelListCopy.add(subModel.getFilename());
@@ -4524,21 +4525,21 @@ public class BioModel {
 					subModel.getParameter(GlobalConstants.RNAP_STRING));
 			if (model.getSBMLDocument() == null && modelListCopy.isEmpty()) {
 				Utility.createErrorMessage("Loop Detected", "Cannot flatten model.\n" + "There is a loop in the components.");
-				load(filename + "_flat.xml");
-				new File(filename + "_flat.xml").delete();
+				load(tempFile);
+				new File(tempFile).delete();
 				return null;
 			}
 			else if (model.getSBMLDocument() == null) {
 				Utility.createErrorMessage("Cannot Flatten Model", "Unable to flatten sbml files from components.");
-				load(filename + "_flat.xml");
-				new File(filename + "_flat.xml").delete();
+				load(tempFile);
+				new File(tempFile).delete();
 				return null;
 			}
 		}
 		model.getSBMLDocument().enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", false);
 		model.getSBMLDocument().enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", false);
 		checkModelConsistency(model.getSBMLDocument());
-		new File(filename + "_flat.xml").delete();
+		new File(tempFile).delete();
 		return model.getSBMLDocument();
 	}
 	

@@ -2071,8 +2071,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		if (lema) {
 			name = new JLabel("LEMA", JLabel.CENTER);
 			version = new JLabel("Version 1.9", JLabel.CENTER);
-			developers = "Satish Batchu\nKevin Jones\nScott Little\nCurtis Madsen\nChris Myers\nNicholas Seegmiller\n"
-					+ "Robert Thacker\nDavid Walter";
+			developers = "Satish Batchu\nAndrew Fisher\nKevin Jones\nDhanashree Kulkarni\nScott Little\nCurtis Madsen\nChris Myers\nNicholas Seegmiller\n"
+					+ "Robert Thacker\nDavid Walter\nZhen Zhang";
 		}
 		else if (atacs) {
 			name = new JLabel("ATACS", JLabel.CENTER);
@@ -2528,7 +2528,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			catch (Exception e1) {
 				e1.printStackTrace();
-				JOptionPane.showMessageDialog(frame, "You must select a valid gcm file for simulation.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "You must select a valid model file for simulation.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		// if the simulate popup menu is selected on an sbml file
@@ -3249,7 +3249,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				tab.setTitleAt(tab.getSelectedIndex(), newName);
 			}
 			else if (comp instanceof ModelEditor) {
-				String newName = JOptionPane.showInputDialog(frame, "Enter GCM name:", "GCM Name", JOptionPane.PLAIN_MESSAGE);
+				String newName = JOptionPane.showInputDialog(frame, "Enter model name:", "Model Name", JOptionPane.PLAIN_MESSAGE);
 				if (newName == null) {
 					return;
 				}
@@ -8242,7 +8242,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						// reb2sac.getProperties());
 						// simTab.getComponentAt(simTab.getComponents().length -
 						// 1).setName("");
-						if (gcmFile.contains(".gcm")) {
+						if (gcmFile.contains(".xml")||gcmFile.contains(".gcm")) {
 							/*
 							SBML_Editor sbml = new SBML_Editor(root + separator + gcmFile.replace(".gcm",".xml"), reb2sac, log, this, root + separator
 									+ split[split.length - 1].trim(), root + separator + split[split.length - 1].trim() + separator
