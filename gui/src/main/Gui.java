@@ -3915,7 +3915,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					String view = "";
 					String gcms = "";
 					for (int i = 0; i < views.length; i++) {
-						if (views[i].endsWith(".gcm")) {
+						if (views[i].endsWith(".xml")) {
 							gcms += views[i] + "\n";
 						}
 						else {
@@ -3928,12 +3928,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								+ "Delete these views first.";
 					}
 					else if (view.equals("")) {
-						message = "Unable to delete the selected file." + "\nIt is linked to the following gcms:\n" + gcms
-								+ "Delete these gcms first.";
+						message = "Unable to delete the selected file." + "\nIt is linked to the following models:\n" + gcms
+								+ "Delete these models first.";
 					}
 					else {
 						message = "Unable to delete the selected file." + "\nIt is linked to the following views:\n" + view
-								+ "It is also linked to the following gcms:\n" + gcms + "Delete these views and gcms first.";
+								+ "It is also linked to the following models:\n" + gcms + "Delete these views and models first.";
 					}
 					JTextArea messageArea = new JTextArea(message);
 					messageArea.setEditable(false);
@@ -9768,11 +9768,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						check = "";
 					}
 				}
+				check = check.replace(".gcm",".xml");
 				if (check.equals(filename)) {
 					views.add(s);
 				}
 			}
-			else if (s.endsWith(".gcm") && (filename.endsWith(".gcm") || filename.endsWith(".xml") || filename.endsWith(".sbml"))) {
+			else if (s.endsWith(".xml") && filename.endsWith(".xml")) {
 				BioModel gcm = new BioModel(root);
 				gcm.load(root + separator + s);
 				/*
@@ -9783,7 +9784,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				if (gcm.getSBMLComp()!=null) {
 					for (long i = 0; i < gcm.getSBMLComp().getNumExternalModelDefinitions(); i++) {
 						ExternalModelDefinition extModel = gcm.getSBMLComp().getExternalModelDefinition(i);
-						if (extModel.getSource().substring(7).equals(filename)) {
+						if (extModel.getSource().equals("file:"+ filename)) {
 							views.add(s);
 							break;
 						}

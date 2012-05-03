@@ -156,8 +156,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				Scanner scan = new Scanner(new File(paramFile));
 				if (scan.hasNextLine()) {
 					refFile = scan.nextLine();
-					if (refFile.contains(".xml"))
-						refFile = refFile.replace(".xml",".gcm");
 					getParams.add(refFile);
 				}
 				scan.close();
