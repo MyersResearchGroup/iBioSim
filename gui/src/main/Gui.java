@@ -108,7 +108,7 @@ import verification.*;
 import org.antlr.runtime.RecognitionException;
 import org.sbml.libsbml.*;
 
-import properties.*;
+import lpn.parser.properties.*;
 
 import sbol.SBOLBrowser;
 import java.net.*;
