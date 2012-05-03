@@ -6,7 +6,7 @@ import lpn.parser.Lpn2verilog;
 import lpn.parser.Translator;
 import graph.Graph;
 import lpn.parser.*;
-import antlrPackage.*;
+import lpn.parser.properties.BuildProperty;
 
 
 import java.awt.AWTError;
@@ -107,6 +107,8 @@ import verification.*;
 
 import org.antlr.runtime.RecognitionException;
 import org.sbml.libsbml.*;
+
+import properties.*;
 
 import sbol.SBOLBrowser;
 import java.net.*;
