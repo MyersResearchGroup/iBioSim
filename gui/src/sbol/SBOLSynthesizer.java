@@ -40,7 +40,6 @@ public class SBOLSynthesizer {
 	private HashMap<String, DnaComponent> compMap;
 	private HashSet<String> targetURISet;
 	private HashSet<String> sourceCompURISet;
-	private SBOLDocument targetDoc;
 	private boolean synthesizerOn;
 	private String time;
 	
@@ -83,7 +82,7 @@ public class SBOLSynthesizer {
 //		synthesizeDnaComponent(targetPath, targets);
 //	}
 	
-	public DnaComponent synthesizeDnaComponent() {	
+	public DnaComponent synthesizeDnaComponent(SBOLDocument targetDoc) {	
 		setTime();
 		synthesizerOn = true;
 		// Get user input
@@ -124,7 +123,7 @@ public class SBOLSynthesizer {
 				for (String sourceCompURI : sourceCompURIs) 
 					if (synthesizerOn) {
 						addCount++;
-						position = addSubComponent(position, sourceCompURI, synthComp, addCount, types);
+						position = addSubComponent(position, sourceCompURI, synthComp, addCount, types, targetDoc);
 					}
 				SequenceTypeValidator validator = new SequenceTypeValidator("(p(rc)+t+)+");
 				if (!validator.validateSequenceTypes(types)) {
@@ -250,7 +249,7 @@ public class SBOLSynthesizer {
 			}
 	}
 	
-	private int addSubComponent(int position, String sourceCompURI, DnaComponent synthComp, int addCount, LinkedList<String> types) {
+	private int addSubComponent(int position, String sourceCompURI, DnaComponent synthComp, int addCount, LinkedList<String> types, SBOLDocument targetDoc) {
 		DnaComponent sourceComp = new DnaComponentImpl();
 		if (compMap.containsKey(sourceCompURI))
 			sourceComp = compMap.get(sourceCompURI);
@@ -261,7 +260,7 @@ public class SBOLSynthesizer {
 		}
 		if (synthesizerOn) {
 			// Adds source component and all its subcomponents to target document
-//			addSubComponentHelper(sourceComp);
+			addSubComponentHelper(sourceComp, targetDoc);
 			// Annotates newly synthesized DNA component with source component
 			types.add(SBOLUtility.uriToSOTypeConverter(sourceComp.getTypes().iterator().next()));
 			if (sourceComp.getDnaSequence() != null && sourceComp.getDnaSequence().getNucleotides() != null 
@@ -290,16 +289,16 @@ public class SBOLSynthesizer {
 		return position;
 	}
 	
-	// Recursively adds DNA component and annotated subcomponents to the target document
-//	private void addSubComponentHelper(DnaComponent dnac) {
+//	 Recursively adds DNA component and annotated subcomponents to the target document
+	private void addSubComponentHelper(DnaComponent dnac, SBOLDocument targetDoc) {
 //		if (!targetURISet.contains(dnac.getURI().toString()))
-//			targetDoc.addContent(dnac);
-//		if (dnac.getAnnotations() != null) 
-//			for (SequenceAnnotation sa : dnac.getAnnotations()) 
-//				if (sa.getSubComponent() != null)
-//					addSubComponentHelper(sa.getSubComponent());
-//			
-//	}
+			targetDoc.addContent(dnac);
+		if (dnac.getAnnotations() != null) 
+			for (SequenceAnnotation sa : dnac.getAnnotations()) 
+				if (sa.getSubComponent() != null)
+					addSubComponentHelper(sa.getSubComponent(), targetDoc);
+			
+	}
 	
 	private boolean isSourceIdValid(String sourceId) {
 		if (sourceId.equals("")) {

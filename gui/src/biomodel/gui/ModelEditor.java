@@ -498,10 +498,13 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			} while (option == JOptionPane.NO_OPTION);
 			if (!targetFilePath.equals("")) {
 				biosimrc.put("biosim.general.export_dir", targetFilePath);
-				DnaComponent synthComp = synthesizer.synthesizeDnaComponent();
+				SBOLDocument sbolDoc = SBOLFactory.createDocument();
+				DnaComponent synthComp = synthesizer.synthesizeDnaComponent(sbolDoc);
 				if (synthComp != null) {
-					SBOLDocument sbolDoc = SBOLFactory.createDocument();
+					
 					sbolDoc.addContent(synthComp);
+//					DnaComponent test = synthComp.getAnnotations().iterator().next().getSubComponent();
+//					sbolDoc.addContent(test);
 					SBOLUtility.exportSBOLDocument(targetFilePath, sbolDoc);
 				}
 			}
