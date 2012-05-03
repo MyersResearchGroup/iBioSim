@@ -51,15 +51,12 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 
 	private BioModel gcm;
 
-	private ArrayList<String> usedIDs;
-
 	private MutableBoolean dirty;
 
 	/* Create initial assignment panel */
-	public Constraints(BioModel gcm, ArrayList<String> usedIDs, MutableBoolean dirty) {
+	public Constraints(BioModel gcm, MutableBoolean dirty) {
 		super(new BorderLayout());
 		this.gcm = gcm;
-		this.usedIDs = usedIDs;
 		this.dirty = dirty;
 		Model model = gcm.getSBMLDocument().getModel();
 		addConstraint = new JButton("Add Constraint");
@@ -73,11 +70,10 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 			if (!constraint.isSetMetaId()) {
 				String constraintId = "constraint0";
 				int cn = 0;
-				while (usedIDs.contains(constraintId)) {
+				while (gcm.isSIdInUse(constraintId)) {
 					cn++;
 					constraintId = "constraint" + cn;
 				}
-				usedIDs.add(constraintId);
 				constraint.setMetaId(constraintId);
 			}
 			cons[i] = constraint.getMetaId();
@@ -171,7 +167,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		else {
 			String constraintId = "constraint0";
 			int cn = 0;
-			while (usedIDs.contains(constraintId)) {
+			while (gcm.isSIdInUse(constraintId)) {
 				cn++;
 				constraintId = "constraint" + cn;
 			}
@@ -194,7 +190,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(gcm.getSBMLDocument(), usedIDs, consID.getText().trim(), selectedID, false);
+			error = SBMLutilities.checkID(gcm.getSBMLDocument(), consID.getText().trim(), selectedID, false);
 			if (!error) {
 				if (consMath.getText().trim().equals("") || SBMLutilities.myParseFormula(consMath.getText().trim()) == null) {
 					JOptionPane.showMessageDialog(Gui.frame, "Formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
@@ -270,11 +266,6 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 								port.setMetaIdRef(c.getMetaId());
 							}
 						}
-						for (int i = 0; i < usedIDs.size(); i++) {
-							if (usedIDs.get(i).equals(selectedID)) {
-								usedIDs.set(i, consID.getText().trim());
-							}
-						}
 						cons[index] = c.getMetaId();
 						Utility.sort(cons);
 						constraints.setListData(cons);
@@ -300,7 +291,6 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 							port.setId(GlobalConstants.CONSTRAINT+"__"+c.getMetaId());
 							port.setMetaIdRef(c.getMetaId());
 						}
-						usedIDs.add(consID.getText().trim());
 						Object[] adding = { c.getMetaId() };
 						add.setListData(adding);
 						add.setSelectedIndex(0);
@@ -346,11 +336,10 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 			if (!constraint.isSetMetaId()) {
 				String constraintId = "constraint0";
 				int cn = 0;
-				while (usedIDs.contains(constraintId)) {
+				while (gcm.isSIdInUse(constraintId)) {
 					cn++;
 					constraintId = "constraint" + cn;
 				}
-				usedIDs.add(constraintId);
 				constraint.setMetaId(constraintId);
 			}
 			cons[i] = constraint.getMetaId();
@@ -370,7 +359,6 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 			ListOf c = gcm.getSBMLDocument().getModel().getListOfConstraints();
 			for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumConstraints(); i++) {
 				if ((((Constraint) c.get(i)).getMetaId()).equals(selected)) {
-					usedIDs.remove(((Constraint) c.get(i)).getMetaId());
 					c.remove(i);
 					break;
 				}

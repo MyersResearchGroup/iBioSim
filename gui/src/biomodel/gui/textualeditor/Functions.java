@@ -49,8 +49,6 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 
 	private BioModel gcm;
 
-	private ArrayList<String> usedIDs;
-
 	private MutableBoolean dirty;
 
 	private InitialAssignments initialsPanel;
@@ -58,10 +56,9 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 	private Rules rulesPanel;
 
 	/* Create initial assignment panel */
-	public Functions(BioModel gcm, ArrayList<String> usedIDs, MutableBoolean dirty) {
+	public Functions(BioModel gcm, MutableBoolean dirty) {
 		super(new BorderLayout());
 		this.gcm = gcm;
-		this.usedIDs = usedIDs;
 		this.dirty = dirty;
 		Model model = gcm.getSBMLDocument().getModel();
 		addFunction = new JButton("Add Function");
@@ -227,7 +224,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 				null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(gcm.getSBMLDocument(), usedIDs, funcID.getText().trim(), selectedID, false);
+			error = SBMLutilities.checkID(gcm.getSBMLDocument(), funcID.getText().trim(), selectedID, false);
 			if (!error) {
 				String[] vars = eqn.getText().trim().split(" |\\(|\\)|\\,|\\*|\\+|\\/|\\-");
 				for (int i = 0; i < vars.length; i++) {
@@ -303,11 +300,6 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 					else {
 						f.setMath(libsbml.parseFormula("lambda(" + args.getText().trim() + "," + eqn.getText().trim() + ")"));
 					}
-					for (int i = 0; i < usedIDs.size(); i++) {
-						if (usedIDs.get(i).equals(val)) {
-							usedIDs.set(i, funcID.getText().trim());
-						}
-					}
 					String oldVal = funcs[index];
 					funcs[index] = funcID.getText().trim() + " ( " + args.getText().trim() + " ) = " + eqn.getText().trim();
 					try {
@@ -359,7 +351,6 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 						else {
 							f.setMath(libsbml.parseFormula("lambda(" + args.getText().trim() + "," + eqn.getText().trim() + ")"));
 						}
-						usedIDs.add(funcID.getText().trim());
 					}
 					functions.setListData(funcs);
 					functions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -397,7 +388,6 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 						f.remove(i);
 					}
 				}
-				usedIDs.remove(((String) functions.getSelectedValue()).split(" ")[0]);
 				functions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 				Utility.remove(functions);
 				functions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

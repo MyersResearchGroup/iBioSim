@@ -48,17 +48,14 @@ public class CompartmentTypes extends JPanel implements ActionListener, MouseLis
 
 	private BioModel gcm;
 
-	private ArrayList<String> usedIDs;
-
 	private MutableBoolean dirty;
 
 	private Gui biosim;
 
 	/* Create initial assignment panel */
-	public CompartmentTypes(Gui biosim, BioModel gcm, ArrayList<String> usedIDs, MutableBoolean dirty) {
+	public CompartmentTypes(Gui biosim, BioModel gcm, MutableBoolean dirty) {
 		super(new BorderLayout());
 		this.gcm = gcm;
-		this.usedIDs = usedIDs;
 		this.biosim = biosim;
 		this.dirty = dirty;
 		Model model = gcm.getSBMLDocument().getModel();
@@ -128,7 +125,7 @@ public class CompartmentTypes extends JPanel implements ActionListener, MouseLis
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(gcm.getSBMLDocument(), usedIDs, compTypeID.getText().trim(), selectedID, false);
+			error = SBMLutilities.checkID(gcm.getSBMLDocument(), compTypeID.getText().trim(), selectedID, false);
 			if (!error) {
 				if (option.equals("OK")) {
 					String[] cpTyp = new String[compTypes.getModel().getSize()];
@@ -143,11 +140,6 @@ public class CompartmentTypes extends JPanel implements ActionListener, MouseLis
 					CompartmentType c = gcm.getSBMLDocument().getModel().getCompartmentType(val);
 					c.setId(compTypeID.getText().trim());
 					c.setName(compTypeName.getText().trim());
-					for (int i = 0; i < usedIDs.size(); i++) {
-						if (usedIDs.get(i).equals(val)) {
-							usedIDs.set(i, compTypeID.getText().trim());
-						}
-					}
 					cpTyp[index] = compTypeID.getText().trim();
 					Utility.sort(cpTyp);
 					compTypes.setListData(cpTyp);
@@ -168,7 +160,6 @@ public class CompartmentTypes extends JPanel implements ActionListener, MouseLis
 					CompartmentType c = gcm.getSBMLDocument().getModel().createCompartmentType();
 					c.setId(compTypeID.getText().trim());
 					c.setName(compTypeName.getText().trim());
-					usedIDs.add(compTypeID.getText().trim());
 					JList add = new JList();
 					Object[] adding = { compTypeID.getText().trim() };
 					add.setListData(adding);
@@ -227,7 +218,6 @@ public class CompartmentTypes extends JPanel implements ActionListener, MouseLis
 						c.remove(i);
 					}
 				}
-				usedIDs.remove(((String) compTypes.getSelectedValue()).split(" ")[0]);
 				compTypes.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 				Utility.remove(compTypes);
 				compTypes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

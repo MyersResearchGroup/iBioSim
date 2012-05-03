@@ -23,6 +23,8 @@ import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.ReplacedElement;
 import org.sbml.libsbml.Replacing;
 import org.sbml.libsbml.Rule;
+import org.sbml.libsbml.SBase;
+import org.sbml.libsbml.SBaseList;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.Submodel;
 
@@ -262,6 +264,15 @@ public class ComponentsPanel extends JPanel {
 			tempPanel.add(portmapBox.get(i));
 			add(tempPanel);
 		}
+		SBaseList elements = gcm.getSBMLDocument().getModel().getListOfAllElements();
+		for (long j = 0; j < elements.getSize(); j++) {
+			SBase sbase = elements.get(j);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getPlugin("comp");
+			if (sbmlSBase!=null) {
+				getPortMap(sbmlSBase,sbase.getId());
+			}
+		}
+		/*
 		for (long j = 0; j < gcm.getSBMLDocument().getModel().getNumCompartments(); j++) {
 			Compartment compartment = gcm.getSBMLDocument().getModel().getCompartment(j);
 			CompSBasePlugin sbmlSBase = (CompSBasePlugin)compartment.getPlugin("comp");
@@ -302,6 +313,7 @@ public class ComponentsPanel extends JPanel {
 			CompSBasePlugin sbmlSBase = (CompSBasePlugin)event.getPlugin("comp");
 			getPortMap(sbmlSBase,event.getId());
 		}
+		*/
 		Submodel instance = gcm.getSBMLCompModel().getSubmodel(selected);
 		if (instance!=null) {
 			for (long j = 0; j < instance.getNumDeletions(); j++) {
@@ -388,26 +400,20 @@ public class ComponentsPanel extends JPanel {
 				return false;
 			}
 			if (oldName == null) {
-				if (gcm.getUsedIDs().contains((String)fields.get(GlobalConstants.ID).getValue())) {
+				if (gcm.isSIdInUse((String)fields.get(GlobalConstants.ID).getValue())) {
 					Utility.createErrorMessage("Error", "Id already exists.");
 					return false;
 				}
 			}
 			else if (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
-				if (gcm.getUsedIDs().contains((String)fields.get(GlobalConstants.ID).getValue())) {
+				if (gcm.isSIdInUse((String)fields.get(GlobalConstants.ID).getValue())) {
 					Utility.createErrorMessage("Error", "Id already exists.");
 					return false;
 				}
 			}
 			String id = fields.get(GlobalConstants.ID).getValue();
 			if (selected != null && !oldName.equals(id)) {
-				while (gcm.getUsedIDs().contains(selected)) {
-					gcm.getUsedIDs().remove(selected);
-				}
 				gcm.changeComponentName(oldName, id);
-			}
-			if (!gcm.getUsedIDs().contains(id)) {
-				gcm.getUsedIDs().add(id);
 			}
 
 			Submodel instance = gcm.getSBMLCompModel().getSubmodel(selected);

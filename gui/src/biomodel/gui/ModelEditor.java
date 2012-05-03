@@ -90,7 +90,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 	private String gcmname = "";
 
-	private BioModel gcm = null;
+	private BioModel biomodel = null;
 
 	private boolean paramsOnly;
 
@@ -172,9 +172,9 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			parameterChanges = new ArrayList<String>();
 			filename = refFile;
 		}
-		gcm = new BioModel(path);
+		biomodel = new BioModel(path);
 		if (filename != null) {
-			gcm.load(path + separator + filename);
+			biomodel.load(path + separator + filename);
 			this.filename = filename;
 			this.gcmname = filename.replace(".gcm", "").replace(".xml", "");
 		}
@@ -198,7 +198,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	public void reload(String newName) {
 		filename = newName + ".gcm";
 		gcmname = newName;
-		gcm.load(path + separator + newName + ".gcm");
+		biomodel.load(path + separator + newName + ".gcm");
 		if (paramsOnly) {
 			/*
 			GCMFile refGCM = new GCMFile(path);
@@ -213,23 +213,23 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	}
 	
 	public void renameComponents(String oldname, String newName) {
-		for (long i = 0; i < gcm.getSBMLComp().getNumExternalModelDefinitions(); i++) {
-			ExternalModelDefinition extModel = gcm.getSBMLComp().getExternalModelDefinition(i);
+		for (long i = 0; i < biomodel.getSBMLComp().getNumExternalModelDefinitions(); i++) {
+			ExternalModelDefinition extModel = biomodel.getSBMLComp().getExternalModelDefinition(i);
 			if (extModel.getId().equals(oldname)) {
 				extModel.setId(newName);
 				extModel.setSource("file://"+newName+".xml");
 			}
 		}
-		for (long i = 0; i < gcm.getSBMLCompModel().getNumSubmodels(); i++) {
-			Submodel submodel = gcm.getSBMLCompModel().getSubmodel(i);
+		for (long i = 0; i < biomodel.getSBMLCompModel().getNumSubmodels(); i++) {
+			Submodel submodel = biomodel.getSBMLCompModel().getSubmodel(i);
 			if (submodel.getModelRef().equals(oldname)) {
 				submodel.setModelRef(newName);
 			}
 		}
 		ArrayList<String> comps = new ArrayList<String>();
-		for (long i = 0; i < gcm.getSBMLCompModel().getNumSubmodels(); i++) {
-			Submodel submodel = gcm.getSBMLCompModel().getSubmodel(i);
-			comps.add(submodel.getId() + " " + submodel.getModelRef() + " " + gcm.getComponentPortMap(submodel.getId()));
+		for (long i = 0; i < biomodel.getSBMLCompModel().getNumSubmodels(); i++) {
+			Submodel submodel = biomodel.getSBMLCompModel().getSubmodel(i);
+			comps.add(submodel.getId() + " " + submodel.getModelRef() + " " + biomodel.getComponentPortMap(submodel.getId()));
 		}
 		components.removeAllItem();
 		components.addAllItem(comps);
@@ -247,14 +247,14 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			network.mergeSBML(path + separator + simName + separator + gcmname + ".xml");
 			*/
 			//reb2sac.updateSpeciesList();
-			gcm.reloadSBMLFile();
-			compartmentPanel.refreshCompartmentPanel(gcm);
-			speciesPanel.refreshSpeciesPanel(gcm);
-			parametersPanel.refreshParameterPanel(gcm);
-			reactionPanel.refreshReactionPanel(gcm);
+			biomodel.reloadSBMLFile();
+			compartmentPanel.refreshCompartmentPanel(biomodel);
+			speciesPanel.refreshSpeciesPanel(biomodel);
+			parametersPanel.refreshParameterPanel(biomodel);
+			reactionPanel.refreshReactionPanel(biomodel);
 		} else {
-			compartmentPanel.refreshCompartmentPanel(gcm);
-			parametersPanel.refreshParameterPanel(gcm);
+			compartmentPanel.refreshCompartmentPanel(biomodel);
+			parametersPanel.refreshParameterPanel(biomodel);
 			functionPanel.refreshFunctionsPanel();
 			unitPanel.refreshUnitsPanel();
 			rulesPanel.refreshRulesPanel();
@@ -309,7 +309,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	}
 
 	public BioModel getGCM() {
-		return gcm;
+		return biomodel;
 	}
 
 	public String getSBMLFile() {
@@ -331,7 +331,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		//log.addText("save");
 		dirty.setValue(false);	
 		
-		speciesPanel.refreshSpeciesPanel(gcm);
+		speciesPanel.refreshSpeciesPanel(biomodel);
 
 		/*
 		if (!sbmlFiles.getSelectedItem().equals(none)) {
@@ -358,11 +358,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 		// Write out species and influences to a gcm file
 		//gcm.getSBMLDocument().getModel().setName(modelPanel.getModelName());
-		gcm.save(path + separator + gcmname + ".gcm");
+		biomodel.save(path + separator + gcmname + ".gcm");
 		//log.addText("Saving GCM file:\n" + path + separator + gcmname + ".gcm\n");
-		log.addText("Saving SBML file:\n" + path + separator + gcm.getSBMLFile() + "\n");
+		log.addText("Saving SBML file:\n" + path + separator + biomodel.getSBMLFile() + "\n");
 		if (command.contains("Check")) {
-			SBMLutilities.check(path + separator + gcm.getSBMLFile());
+			SBMLutilities.check(path + separator + biomodel.getSBMLFile());
 		}	
 	
 		if (command.contains("template")) {
@@ -420,14 +420,14 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 						+ " already exists.  Overwrite file?", "Save file", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				if (value == JOptionPane.YES_OPTION) {
-					gcm.createLogicalModel(path + separator + lpnName, log, biosim, lpnName);
+					biomodel.createLogicalModel(path + separator + lpnName, log, biosim, lpnName);
 				}
 				else {
 					// Do nothing
 				}
 			}
 			else {
-				gcm.createLogicalModel(path + separator + lpnName, log, biosim, lpnName);
+				biomodel.createLogicalModel(path + separator + lpnName, log, biosim, lpnName);
 			}
 		}
 		else if (command.contains("SBML")) {
@@ -436,7 +436,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			GeneticNetwork network = null;
 			network = parser.buildNetwork();
 			if (network == null) return;
-			network.loadProperties(gcm);
+			network.loadProperties(biomodel);
 			// Finally, output to a file
 			if (new File(path + separator + gcmname + ".xml").exists()) {
 				int value = JOptionPane.showOptionDialog(Gui.frame, gcmname
@@ -463,14 +463,14 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	}
 
 	public void saveSBOL() {
-		GCMParser parser = new GCMParser(gcm, false);
+		GCMParser parser = new GCMParser(biomodel, false);
 		SBOLSynthesizer synthesizer = parser.buildSbolSynthesizer();
 		if (synthesizer.loadSbolFiles(getSbolFiles())) 
 			synthesizer.saveSbol(getPath());
 	}
 	
 	public void exportSBOL() {
-		GCMParser parser = new GCMParser(gcm, false);
+		GCMParser parser = new GCMParser(biomodel, false);
 		SBOLSynthesizer synthesizer = parser.buildSbolSynthesizer();
 		if (synthesizer.loadSbolFiles(getSbolFiles())) {
 			File lastFilePath;
@@ -520,7 +520,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		String exportPath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export " + "SBML", -1);
 		if (!exportPath.equals("")) {
 			biosimrc.put("biosim.general.export_dir",exportPath);
-			gcm.exportSingleFile(exportPath);
+			biomodel.exportSingleFile(exportPath);
 			log.addText("Saving GCM file as SBML file:\n" + exportPath + "\n");
 		}
 	}
@@ -541,7 +541,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			GeneticNetwork network = null;
 			network = parser.buildNetwork();
 			if (network==null) return;
-			network.loadProperties(gcm);
+			network.loadProperties(biomodel);
 			network.mergeSBML(exportPath);
 			log.addText("Saving GCM file as SBML file:\n" + exportPath + "\n");
 		}
@@ -553,7 +553,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 					+ " already exists.  Overwrite file?", "Save file", JOptionPane.YES_NO_OPTION,
 					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			if (value == JOptionPane.YES_OPTION) {
-				gcm.save(path + separator + newName + ".gcm");
+				biomodel.save(path + separator + newName + ".gcm");
 				log.addText("Saving SBML file as:\n" + path + separator + newName + ".xml\n");
 				biosim.addToTree(newName + ".xml");
 			}
@@ -563,7 +563,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			}
 		}
 		else {
-			gcm.save(path + separator + newName + ".gcm");
+			biomodel.save(path + separator + newName + ".gcm");
 			log.addText("Saving SBML file as:\n" + path + separator + newName + ".xml\n");
 			biosim.addToTree(newName + ".xml");
 		}
@@ -834,7 +834,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 					String prop = update.split("/")[1].substring(0, update.split("/")[1].indexOf(" ")).trim();
 					String value = update.split(" ")[update.split(" ").length - 1].trim();
 					if (prop.equals(GlobalConstants.INITIAL_STRING)) {
-						Species species = gcm.getSBMLDocument().getModel().getSpecies(id);
+						Species species = biomodel.getSBMLDocument().getModel().getSpecies(id);
 						if (species!=null) {
 							if (value.startsWith("(")) {
 								species.appendAnnotation(","+GlobalConstants.INITIAL_STRING + "=" + value);
@@ -843,7 +843,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 							}
 						}
 					} else if (prop.equals(GlobalConstants.KDECAY_STRING)) {
-						Reaction reaction = gcm.getSBMLDocument().getModel().getReaction("Degradation_"+id);
+						Reaction reaction = biomodel.getSBMLDocument().getModel().getReaction("Degradation_"+id);
 						if (reaction != null) {
 							LocalParameter kd = reaction.getKineticLaw().getLocalParameter(GlobalConstants.KDECAY_STRING);
 							if (kd == null) {
@@ -857,7 +857,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 							}
 						}
 					} else if (prop.equals(GlobalConstants.KCOMPLEX_STRING)) {
-						Reaction reaction = gcm.getComplexReaction(id);
+						Reaction reaction = biomodel.getComplexReaction(id);
 						if (reaction != null) {
 							LocalParameter kc_f = reaction.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING);
 							if (kc_f == null) {
@@ -878,7 +878,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 							}
 						}
 					} else if (prop.equals(GlobalConstants.MEMDIFF_STRING)) {
-						Reaction reaction = gcm.getSBMLDocument().getModel().getReaction("MembraneDiffusion_"+id);
+						Reaction reaction = biomodel.getSBMLDocument().getModel().getReaction("MembraneDiffusion_"+id);
 						if (reaction != null) {
 							LocalParameter kmdiff_f = reaction.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_MEMDIFF_STRING);
 							if (kmdiff_f == null) {
@@ -899,7 +899,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 							}
 						}
 					} else if (prop.equals(GlobalConstants.PROMOTER_COUNT_STRING)) {
-						Species species = gcm.getSBMLDocument().getModel().getSpecies(id);
+						Species species = biomodel.getSBMLDocument().getModel().getSpecies(id);
 						if (species!=null) {
 							if (value.startsWith("(")) {
 								species.appendAnnotation(","+GlobalConstants.PROMOTER_COUNT_STRING + "=" + value);
@@ -908,7 +908,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 							}
 						}
 					} else if (prop.equals(GlobalConstants.RNAP_BINDING_STRING)) {
-						Reaction reaction = gcm.getProductionReaction(id);
+						Reaction reaction = biomodel.getProductionReaction(id);
 						if (reaction != null) {
 							LocalParameter ko_f = reaction.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING);
 							if (ko_f == null) {
@@ -929,7 +929,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 							}
 						}
 					} else if (prop.equals(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING)) {
-						Reaction reaction = gcm.getProductionReaction(id);
+						Reaction reaction = biomodel.getProductionReaction(id);
 						if (reaction != null) {
 							LocalParameter kao_f = reaction.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING);
 							if (kao_f == null) {
@@ -950,7 +950,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 							}
 						}
 					} else if (prop.equals(GlobalConstants.OCR_STRING)) {
-						Reaction reaction = gcm.getProductionReaction(id);
+						Reaction reaction = biomodel.getProductionReaction(id);
 						if (reaction != null) {
 							LocalParameter ko = reaction.getKineticLaw().getLocalParameter(GlobalConstants.OCR_STRING);
 							if (ko == null) {
@@ -964,7 +964,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 							}
 						}
 					} else if (prop.equals(GlobalConstants.KBASAL_STRING)) {
-						Reaction reaction = gcm.getProductionReaction(id);
+						Reaction reaction = biomodel.getProductionReaction(id);
 						if (reaction != null) {
 							LocalParameter kb = reaction.getKineticLaw().getLocalParameter(GlobalConstants.KBASAL_STRING);
 							if (kb == null) {
@@ -978,7 +978,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 							}
 						}
 					} else if (prop.equals(GlobalConstants.ACTIVATED_STRING)) {
-						Reaction reaction = gcm.getProductionReaction(id);
+						Reaction reaction = biomodel.getProductionReaction(id);
 						if (reaction != null) {
 							LocalParameter ka = reaction.getKineticLaw().getLocalParameter(GlobalConstants.ACTIVATED_STRING);
 							if (ka == null) {
@@ -992,7 +992,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 							}
 						}
 					} else if (prop.equals(GlobalConstants.STOICHIOMETRY_STRING)) {
-						Reaction reaction = gcm.getProductionReaction(id);
+						Reaction reaction = biomodel.getProductionReaction(id);
 						if (reaction != null) {
 							LocalParameter np = reaction.getKineticLaw().getLocalParameter(GlobalConstants.STOICHIOMETRY_STRING);
 							if (np == null) {
@@ -1032,7 +1032,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 						}
 						Reaction reaction = null;
 						if (complexId==null) {
-							reaction = gcm.getProductionReaction(promoterId);
+							reaction = biomodel.getProductionReaction(promoterId);
 							if (reaction != null) {
 								LocalParameter nc = null;
 								if (id.contains("|")) {
@@ -1057,7 +1057,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 								}
 							}
 						} else {
-							reaction = gcm.getComplexReaction(complexId);
+							reaction = biomodel.getComplexReaction(complexId);
 							if (reaction != null) {
 								LocalParameter nc = null;
 								nc = reaction.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + sourceId); 
@@ -1082,7 +1082,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 						}
 						sourceId = id.substring(0,id.indexOf("-"));
 						Reaction reaction = null;
-						reaction = gcm.getProductionReaction(promoterId);
+						reaction = biomodel.getProductionReaction(promoterId);
 						if (reaction != null) {
 							LocalParameter ka_f = reaction.getKineticLaw()
 									.getLocalParameter(GlobalConstants.FORWARD_KACT_STRING.replace("_","_" + sourceId + "_")); 
@@ -1114,7 +1114,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 						}
 						sourceId = id.substring(0,id.indexOf("-"));
 						Reaction reaction = null;
-						reaction = gcm.getProductionReaction(promoterId);
+						reaction = biomodel.getProductionReaction(promoterId);
 						if (reaction != null) {
 							LocalParameter kr_f = reaction.getKineticLaw()
 									.getLocalParameter(GlobalConstants.FORWARD_KREP_STRING.replace("_","_" + sourceId + "_")); 
@@ -1143,9 +1143,9 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 					id = splits[0];
 					String value = splits[1].trim();
 					if (splits[splits.length - 2].equals("Sweep")) {
-						gcm.setParameter(id, value, splits[splits.length-1]);
+						biomodel.setParameter(id, value, splits[splits.length-1]);
 					} else {
-						gcm.setParameter(id, value, null);
+						biomodel.setParameter(id, value, null);
 					}
 				}
 			}
@@ -1209,14 +1209,14 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				direct = "";
 			}
 			
-			GCMParser parser = new GCMParser(gcm, false);
+			GCMParser parser = new GCMParser(biomodel, false);
 			GeneticNetwork network = null;
 			network = parser.buildNetwork();
 			if (network==null) return;
 			if (reb2sac != null)
-				network.loadProperties(gcm, reb2sac.getGcmAbstractions(), reb2sac.getInterestingSpecies(), reb2sac.getProperty());
+				network.loadProperties(biomodel, reb2sac.getGcmAbstractions(), reb2sac.getInterestingSpecies(), reb2sac.getProperty());
 			else
-				network.loadProperties(gcm);
+				network.loadProperties(biomodel);
 			SBMLDocument d = network.getSBML();
 			for (String s : elementsPanel.getElementChanges()) {
 				for (long i = d.getModel().getNumInitialAssignments() - 1; i >= 0; i--) {
@@ -1360,9 +1360,9 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			((Runnable) o).run();
 		}
 		else if (o instanceof JComboBox && !lock
-				&& !gcm.getSBMLFile().equals(sbmlFiles.getSelectedItem())) {
+				&& !biomodel.getSBMLFile().equals(sbmlFiles.getSelectedItem())) {
 			dirty.setValue(true);
-			gcm.makeUndoPoint();
+			biomodel.makeUndoPoint();
 		}
 		// System.out.println(o);
 	}
@@ -1383,16 +1383,16 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 	private void refreshComponentsList() {
 		components.removeAllItem();
-		for (long i = 0; i < gcm.getSBMLCompModel().getNumSubmodels(); i++) {
+		for (long i = 0; i < biomodel.getSBMLCompModel().getNumSubmodels(); i++) {
 			
-			Submodel submodel = gcm.getSBMLCompModel().getSubmodel(i);
+			Submodel submodel = biomodel.getSBMLCompModel().getSubmodel(i);
 			String locationAnnotationString = "";
 			
 			//if the submodel is gridded, then get the component names from the locations parameter
-			if (gcm.getSBMLDocument().getModel().getParameter(submodel.getId().replace("GRID__","") + "__locations") != null) {
+			if (biomodel.getSBMLDocument().getModel().getParameter(submodel.getId().replace("GRID__","") + "__locations") != null) {
 					
 				locationAnnotationString = 
-						gcm.getSBMLDocument().getModel()
+						biomodel.getSBMLDocument().getModel()
 						.getParameter(submodel.getId().replace("GRID__","") + "__locations")
 						.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
 			
@@ -1405,12 +1405,12 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 						compIDs[j] = compIDs[j].split("=")[0].trim();
 						
 						components.addItem(compIDs[j] + " " + 
-								submodel.getModelRef() + " " + gcm.getComponentPortMap(compIDs[j]));
+								submodel.getModelRef() + " " + biomodel.getComponentPortMap(compIDs[j]));
 					}
 				}
 			}
 			else			
-				components.addItem(submodel.getId() + " " + submodel.getModelRef() + " " + gcm.getComponentPortMap(submodel.getId()));
+				components.addItem(submodel.getId() + " " + submodel.getModelRef() + " " + biomodel.getComponentPortMap(submodel.getId()));
 		}	
 	}
 	
@@ -1438,26 +1438,25 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		propPanel.add(mainPanelNorth, "North");
 		mainPanel.add(mainPanelCenter, "Center");
 		JTabbedPane tab = new JTabbedPane();
-		ArrayList<String>usedIDs = gcm.getUsedIDs();
 		
 		String file = filename.replace(".gcm", ".xml");
 		
-		JComboBox compartmentList = MySpecies.createCompartmentChoices(gcm);
+		JComboBox compartmentList = MySpecies.createCompartmentChoices(biomodel);
 		
-		compartmentPanel = new Compartments(biosim,gcm,usedIDs,dirty, paramsOnly,getParams, path + separator + file,	parameterChanges,false,compartmentList);
-		reactionPanel = new Reactions(biosim,gcm,usedIDs,dirty, paramsOnly,getParams,path + separator + file,parameterChanges, this);
-		speciesPanel = new MySpecies(biosim,gcm,usedIDs,dirty, paramsOnly,getParams,path + separator + file,parameterChanges,gcm.getGrid().isEnabled());
-		parametersPanel = new Parameters(biosim, gcm,usedIDs,dirty, paramsOnly,getParams,path + separator + file,parameterChanges);
+		compartmentPanel = new Compartments(biosim,biomodel,dirty, paramsOnly,getParams, path + separator + file,	parameterChanges,false,compartmentList);
+		reactionPanel = new Reactions(biosim,biomodel,dirty, paramsOnly,getParams,path + separator + file,parameterChanges, this);
+		speciesPanel = new MySpecies(biosim,biomodel,dirty, paramsOnly,getParams,path + separator + file,parameterChanges,biomodel.getGrid().isEnabled());
+		parametersPanel = new Parameters(biosim, biomodel,dirty, paramsOnly,getParams,path + separator + file,parameterChanges);
 		
 		JPanel compPanel = new JPanel(new BorderLayout());
 		if (textBased) {
-			modelPanel = new ModelPanel(gcm,dirty,paramsOnly);
+			modelPanel = new ModelPanel(biomodel,dirty,paramsOnly);
 			compPanel.add(modelPanel, "North");
 		}
 		compPanel.add(compartmentPanel,"Center");
 
-		gcm.setSpeciesPanel(speciesPanel);
-		gcm.setReactionPanel(reactionPanel);
+		biomodel.setSpeciesPanel(speciesPanel);
+		biomodel.setReactionPanel(reactionPanel);
 		
 		/*
 		promoters = new PropertyList("Promoter List");
@@ -1522,14 +1521,14 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		
 		refreshComponentsList();
 		
-		this.getSpeciesPanel().refreshSpeciesPanel(gcm);
+		this.getSpeciesPanel().refreshSpeciesPanel(biomodel);
 		JPanel componentsPanel = Utility.createPanel(this, "Components", components, addInit, removeInit, editInit);
 		mainPanelCenterCenter.add(componentsPanel);
 		
 		if (textBased) {
 			tab.addTab("Compartments", compPanel);
 			
-			if (gcm.getGrid().isEnabled() == false) {
+			if (biomodel.getGrid().isEnabled() == false) {
 				tab.addTab("Species", speciesPanel);
 				tab.addTab("Reactions", reactionPanel);
 			} else {
@@ -1540,17 +1539,17 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			tab.addTab("Components", componentsPanel);
 		} 
 		else {
-			this.schematic = new Schematic(gcm, biosim, this, true, null,compartmentPanel,reactionPanel,compartmentList);
+			this.schematic = new Schematic(biomodel, biosim, this, true, null,compartmentPanel,reactionPanel,compartmentList);
 			tab.addTab("Schematic", schematic);
 			tab.addTab("Compartments", compPanel);
-			if (gcm.getGrid().isEnabled()) {
+			if (biomodel.getGrid().isEnabled()) {
 				tab.addTab("Grid Species", speciesPanel);
 			}
 			tab.addTab("Parameters", parametersPanel);
 		}
 		
-		functionPanel = new Functions(gcm,usedIDs,dirty);
-		unitPanel = new Units(biosim,gcm,usedIDs,dirty);
+		functionPanel = new Functions(biomodel,dirty);
+		unitPanel = new Units(biosim,biomodel,dirty);
 		//JPanel defnPanel = new JPanel(new BorderLayout());
 		//defnPanel.add(mainPanelNorth, "North");
 		//defnPanel.add(functionPanel,"Center");
@@ -1559,9 +1558,9 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		tab.addTab("Functions", functionPanel);
 		tab.addTab("Units", unitPanel);
 		
-		if (gcm.getSBMLDocument().getLevel() < 3) {
-			CompartmentTypes compTypePanel = new CompartmentTypes(biosim,gcm,usedIDs,dirty);
-			SpeciesTypes specTypePanel = new SpeciesTypes(biosim,gcm,usedIDs,dirty);
+		if (biomodel.getSBMLDocument().getLevel() < 3) {
+			CompartmentTypes compTypePanel = new CompartmentTypes(biosim,biomodel,dirty);
+			SpeciesTypes specTypePanel = new SpeciesTypes(biosim,biomodel,dirty);
 			JPanel typePanel = new JPanel(new BorderLayout());
 			typePanel.add(mainPanelNorth, "North");
 			typePanel.add(compTypePanel,"Center");
@@ -1569,15 +1568,15 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			tab.addTab("Types", typePanel);
 		}
 
-		InitialAssignments initialsPanel = new InitialAssignments(biosim,gcm,dirty);
-		rulesPanel = new Rules(biosim, gcm, this, dirty);
+		InitialAssignments initialsPanel = new InitialAssignments(biosim,biomodel,dirty);
+		rulesPanel = new Rules(biosim, biomodel, this, dirty);
 		compartmentPanel.setPanels(initialsPanel, rulesPanel);
 		functionPanel.setPanels(initialsPanel, rulesPanel);
 		speciesPanel.setPanels(initialsPanel, rulesPanel);
 		reactionPanel.setPanels(initialsPanel, rulesPanel);
 		tab.addTab("Rules", rulesPanel);
 		
-		eventPanel = new Events(biosim,gcm,usedIDs,dirty);
+		eventPanel = new Events(biosim,biomodel,dirty);
 		tab.addTab("Constraints", propPanel);
 		tab.addTab("Events", eventPanel);
 		setLayout(new BorderLayout());
@@ -1597,7 +1596,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 		editInit = new EditButton("Edit Species", species);
 		if (paramsOnly) {
-			ArrayList<String> specs = gcm.getSpecies();
+			ArrayList<String> specs = biomodel.getSpecies();
 			for (String s : getParams) {
 				if (s.contains("/") && specs.contains(s.split("/")[0].trim())) {
 					specs.remove(s.split("/")[0].trim());
@@ -1608,7 +1607,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			species.addAllItem(specs);
 		}
 		else {
-			species.addAllItem(gcm.getSpecies());
+			species.addAllItem(biomodel.getSpecies());
 		}
 		JPanel initPanel = Utility.createPanel(this, "Species", species, addInit, removeInit, editInit);
 		mainPanelCenterCenter.add(initPanel);
@@ -1617,7 +1616,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		editInit = new EditButton("Edit Parameter", parameters);
 		parameters.addAllItem(generateParameters());
 		parametersPanel.setPanels(initialsPanel, rulesPanel);
-		consPanel = new Constraints(gcm,usedIDs,dirty);
+		consPanel = new Constraints(biomodel,dirty);
 		propPanel.add(consPanel, "Center");
 		// parameters.addAllItem(gcm.getParameters().keySet());
 		//initPanel = Utility.createPanel(this, "Model Generation Parameters", parameters, null, null, editInit);
@@ -1789,7 +1788,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				if (!update.contains("/")) {
 					id = update.split(" ")[0];
 					String value = update.split(" ")[1].trim();
-					gcm.setParameter(id, value, null);
+					biomodel.setParameter(id, value, null);
 				}
 			}
 		}
@@ -1869,8 +1868,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				String name = null;
 				if (list.getSelectedValue() != null) {
 					name = list.getSelectedValue().toString();
-					if (gcm.removeInfluenceCheck(name)) {
-						gcm.removeInfluence(name);
+					if (biomodel.removeInfluenceCheck(name)) {
+						biomodel.removeInfluence(name);
 						list.removeItem(name);
 					}
 				}
@@ -1879,14 +1878,14 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				String name = null;
 				if (list.getSelectedValue() != null) {
 					name = list.getSelectedValue().toString();
-					gcm.removeSpecies(name);
+					biomodel.removeSpecies(name);
 				}
 			}
 			else if (getName().contains("Promoter")) {
 				String name = null;
 				if (list.getSelectedValue() != null) {
 					name = list.getSelectedValue().toString();
-					gcm.removePromoter(name);
+					biomodel.removePromoter(name);
 					list.removeItem(name);
 				}
 			}
@@ -1903,7 +1902,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				if (list.getSelectedValue() != null) {
 					name = list.getSelectedValue().toString();
 					String comp = name.split(" ")[0];
-					gcm.removeComponent(comp);
+					biomodel.removeComponent(comp);
 				}
 			}
 		}
@@ -2036,7 +2035,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			refGCM = new BioModel(path);
 			refGCM.load(path + separator + refFile);
 		}
-		PromoterPanel panel = new PromoterPanel(id, gcm, paramsOnly, refGCM, this);	
+		PromoterPanel panel = new PromoterPanel(id, biomodel, paramsOnly, refGCM, this);	
 		
 		if (paramsOnly) {
 			String updates = panel.updates();
@@ -2064,7 +2063,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			refGCM = new BioModel(path);
 			refGCM.load(path + separator + refFile);
 		}
-		SpeciesPanel panel = new SpeciesPanel(biosim, id, species, conditions, components, gcm, paramsOnly, refGCM, this, inTab);
+		SpeciesPanel panel = new SpeciesPanel(biosim, id, species, conditions, components, biomodel, paramsOnly, refGCM, this, inTab);
 		
 //		if (paramsOnly) {
 //			String updates = panel.updates();
@@ -2091,7 +2090,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			refGCM = new BioModel(path);
 			refGCM.load(path + separator + refFile);
 		}
-		InfluencePanel panel = new InfluencePanel(id, influences, gcm, paramsOnly, refGCM, this);
+		InfluencePanel panel = new InfluencePanel(id, influences, biomodel, paramsOnly, refGCM, this);
 		
 		if (paramsOnly) {
 			String updates = panel.updates();
@@ -2146,7 +2145,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		//static method that builds the grid panel
 		//the false field means to open the grid creation panel
 		//and not the grid editing panel
-		boolean created = GridPanel.showGridPanel(this, gcm, false);
+		boolean created = GridPanel.showGridPanel(this, biomodel, false);
 		
 		//if the grid is built, then draw it and so on
 		if (created) {
@@ -2155,7 +2154,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			this.refresh();
 			schematic.getGraph().buildGraph();
 			schematic.display();
-			gcm.makeUndoPoint();
+			biomodel.makeUndoPoint();
 		}
 	}
 	
@@ -2272,9 +2271,9 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 			if(createUsingDefaults){
 				// TODO: Is this correct?
-				outID = gcm.addComponent(null, comp, false, null, -1, -1, 0, 0);
+				outID = biomodel.addComponent(null, comp, false, null, -1, -1, 0, 0);
 			}else{
-				new ComponentsPanel(selected, list, gcm, ports, comp, oldPort, paramsOnly, this);
+				new ComponentsPanel(selected, list, biomodel, ports, comp, oldPort, paramsOnly, this);
 				outID = selected;
 			}
 
@@ -2283,14 +2282,14 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	}
 	
 	public void undo() {
-		gcm.undo();
+		biomodel.undo();
 		schematic.refresh();
 		this.refresh();
 		this.setDirty(true);		
 	}
 	
 	public void redo() {
-		gcm.redo();
+		biomodel.redo();
 		schematic.refresh();
 		this.refresh();
 		this.setDirty(true);		
