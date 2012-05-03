@@ -29,8 +29,8 @@ public class SBOLBrowser extends JPanel {
 	//Constructor when browsing a single RDF file from the main gui
 	public SBOLBrowser(Gui gui, String filePath) {
 		super(new BorderLayout());
-		String just = "cut";
-		SequenceTypeValidator validator = new SequenceTypeValidator("((rc)+p)*");
+
+		SequenceTypeValidator validator = new SequenceTypeValidator("(rc)*p*");
 		
 		HashMap<String, org.sbolstandard.core.Collection> libMap = new HashMap<String, org.sbolstandard.core.Collection>();
 		LinkedList<String> libURIs = new LinkedList<String>();

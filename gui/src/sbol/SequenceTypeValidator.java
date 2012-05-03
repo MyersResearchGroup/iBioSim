@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
-import java.util.Stack;
 
 public class SequenceTypeValidator {
 	private DFA dfa;
@@ -15,9 +14,25 @@ public class SequenceTypeValidator {
 		this.dfa = new DFA();
 		dfa.setStartState(constructDFA(nfaStartStates));
 		dfa.print();
+		
+		nfaStartStates = constructNFA2(regex);
+		this.dfa = new DFA();
+		dfa.setStartState(constructDFA(nfaStartStates));
+		dfa.print();
 	}
 	
 	private Set<NFAState> constructNFA(String regex) {
+		stateIndex = 0;
+		Set<NFAState> nfaStartStates = new HashSet<NFAState>();
+		nfaStartStates.add(new NFAState("S" + stateIndex));
+		stateIndex++;
+		Set<NFAState> acceptStates = constructNFAHelper(nfaStartStates, regex, "", new HashSet<String>());
+		for (NFAState nfaState : acceptStates)
+			nfaState.setAccepting(true);
+		return nfaStartStates;
+	}
+	
+	private Set<NFAState> constructNFA2(String regex) {
 		stateIndex = 0;
 		Set<NFAState> nfaStartStates = new HashSet<NFAState>();
 		nfaStartStates.add(new NFAState("S" + stateIndex));
@@ -77,14 +92,19 @@ public class SequenceTypeValidator {
 	
 	private Set<NFAState> constructNFAHelper2(Set<NFAState> startStates, String regex, String quantifier, Set<String> localIDs) { 
 		Set<NFAState> acceptStates = new HashSet<NFAState>();
+//		acceptStates.addAll(startStates);
 		if (regex.length() == 1) {
 			NFAState nextState = new NFAState("S" + stateIndex);
 			localIDs.add("S" + stateIndex);
+			stateIndex++;
 			for (NFAState startState : startStates)
 				startState.addTransition(regex, nextState);
+//			if (!quantifier.equals("*"))
+//				acceptStates.clear();
 			acceptStates.add(nextState);
 		} else {
 			int i = 0;
+			acceptStates.addAll(startStates);
 			do {
 				int j;
 				String subRegex;
@@ -103,9 +123,9 @@ public class SequenceTypeValidator {
 				}
 				acceptStates = constructNFAHelper2(acceptStates, subRegex, subQuantifier, localIDs);
 				if (subQuantifier.equals("+") || subQuantifier.equals("*")) {
-					i = i + 2;
+					i = j + 2;
 				} else
-					i++;
+					i = j + 1;
 			} while (i < regex.length());
 		}
 		if (quantifier.equals("+") || quantifier.equals("*"))
@@ -296,6 +316,7 @@ public class SequenceTypeValidator {
 		
 		public void print() {
 			printHelper(startState, new HashSet<String>());
+			System.out.println();
 		}
 		
 		private void printHelper(DFAState currentState, Set<String> visitedIds) {
