@@ -64,12 +64,6 @@ public class Utility {
 		return copy;
 	}
 
-	public static void print(boolean debug, String message) {
-		if (debug) {
-			System.out.println(message);
-		}
-	}
-
 	public static String makeBindingReaction(String name,
 			ArrayList<String> reactants, ArrayList<String> products) {
 		return "";
@@ -292,7 +286,7 @@ public class Utility {
 					double[] values = result.get(s);
 					double[] averages = average.get(s);
 					if (values.length != averages.length) {
-						System.out.println(folder+separator+files[i]);
+						//System.out.println(folder+separator+files[i]);
 					}
 					for (int j = 0; j < values.length; j++) {
 						averages[j] = averages[j] + values[j];

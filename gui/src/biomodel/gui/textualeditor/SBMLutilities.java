@@ -351,7 +351,6 @@ public class SBMLutilities {
 		case libsbml.AST_FUNCTION_FLOOR:
 		case libsbml.AST_FUNCTION_LN:
 			if (node.getNumChildren() != 1) {
-				System.out.println(node.getNumChildren());
 				JOptionPane.showMessageDialog(Gui.frame, "Expected 1 argument for " + node.getName() + " but found " + node.getNumChildren() + ".",
 						"Number of Arguments Incorrect", JOptionPane.ERROR_MESSAGE);
 				return true;

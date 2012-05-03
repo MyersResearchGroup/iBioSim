@@ -1734,7 +1734,6 @@ public class BioModel {
 			}
 			kineticLaw += ")";
 		}
-		//System.out.println(kineticLaw);
 		reaction.getKineticLaw().setMath(SBMLutilities.myParseFormula(kineticLaw));
  	}
 	
@@ -2967,7 +2966,6 @@ public class BioModel {
 			component = speciesId.substring(0,speciesId.lastIndexOf("__")+2);
 			speciesId = speciesId.substring(speciesId.lastIndexOf("__")+2);
 		}
-		//System.out.println("Reaction Id = " + component+"Production_"+speciesId);
 		Reaction production = sbml.getModel().getReaction(component+"Production_"+speciesId);
 		if (production != null) {
 			if (production.isSetSBOTerm()) {

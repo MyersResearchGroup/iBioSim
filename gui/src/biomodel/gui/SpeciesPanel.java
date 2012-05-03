@@ -911,7 +911,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 		// "Cancel"
 		if(options[value].equals(options[1])) {
-			// System.out.println();
 			return true;
 		}
 		return true;

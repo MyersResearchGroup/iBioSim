@@ -129,14 +129,12 @@ public class ParameterPanel extends JPanel {
 				}
 			}
 			*/
-			System.err.println(newItem);
 			
 			parameterList.removeItem(totalSelected);
 			parameterList.addItem(newItem);
 			parameterList.setSelectedValue(newItem, true);
 			gcmEditor.setDirty(true);
 		} else if (value == JOptionPane.NO_OPTION) {
-			// System.out.println();
 			return true;
 		}
 		return true;
