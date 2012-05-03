@@ -49,17 +49,14 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 
 	private BioModel gcm;
 
-	private ArrayList<String> usedIDs;
-
 	private MutableBoolean dirty;
 
 	private Gui biosim;
 
 	/* Create event panel */
-	public Events(Gui biosim, BioModel gcm, ArrayList<String> usedIDs, MutableBoolean dirty) {
+	public Events(Gui biosim, BioModel gcm, MutableBoolean dirty) {
 		super(new BorderLayout());
 		this.gcm = gcm;
-		this.usedIDs = usedIDs;
 		this.biosim = biosim;
 		this.dirty = dirty;
 		Model model = gcm.getSBMLDocument().getModel();
@@ -75,11 +72,10 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			if (!event.isSetId()) {
 				String eventId = "event0";
 				int en = 0;
-				while (usedIDs.contains(eventId)) {
+				while (gcm.isSIdInUse(eventId)) {
 					en++;
 					eventId = "event" + en;
 				}
-				usedIDs.add(eventId);
 				event.setId(eventId);
 			}
 			ev[i] = event.getId();
@@ -108,7 +104,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Creates a frame used to edit events or create new ones.
 	 */
-	private void eventEditor(Gui biosim, String option, JList events, BioModel gcm, ArrayList<String> usedIDs, JList eventAssign) {
+	private void eventEditor(Gui biosim, String option, JList events, BioModel gcm, JList eventAssign) {
 		String[] origAssign = null;
 		String[] assign = new String[0];
 		if (option.equals("OK") && events.getSelectedIndex() == -1) {
@@ -243,7 +239,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		else {
 			String eventId = "event0";
 			int en = 0;
-			while (usedIDs.contains(eventId)) {
+			while (gcm.isSIdInUse(eventId)) {
 				en++;
 				eventId = "event" + en;
 			}
@@ -287,7 +283,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			for (int i = 0; i < eventAssign.getModel().getSize(); i++) {
 				assign[i] = eventAssign.getModel().getElementAt(i).toString();
 			}
-			error = SBMLutilities.checkID(gcm.getSBMLDocument(), usedIDs, eventID.getText().trim(), selectedID, false);
+			error = SBMLutilities.checkID(gcm.getSBMLDocument(), eventID.getText().trim(), selectedID, false);
 			if (eventTrigger.getText().trim().equals("")) {
 				JOptionPane.showMessageDialog(Gui.frame, "Event must have a trigger formula.", "Enter Trigger Formula", JOptionPane.ERROR_MESSAGE);
 				error = true;
@@ -496,11 +492,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						else {
 							e.setName(eventName.getText().trim());
 						}
-						for (int i = 0; i < usedIDs.size(); i++) {
-							if (usedIDs.get(i).equals(selectedID)) {
-								usedIDs.set(i, eventID.getText().trim());
-							}
-						}
 						Port port = gcm.getPortByIdRef(selectedID);
 						if (port!=null) {
 							if (onPort.isSelected()) {
@@ -644,7 +635,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						ev[i] = events.getModel().getElementAt(i).toString();
 					}
 					adding = Utility.add(ev, events, add, null, null, null, null, null, Gui.frame);
-					usedIDs.add(eventID.getText().trim());
 					ev = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
 						ev[i] = (String) adding[i];
@@ -749,11 +739,10 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			if (!event.isSetId()) {
 				String eventId = "event0";
 				int en = 0;
-				while (usedIDs.contains(eventId)) {
+				while (gcm.isSIdInUse(eventId)) {
 					en++;
 					eventId = "event" + en;
 				}
-				usedIDs.add(eventId);
 				event.setId(eventId);
 			}
 			ev[i] = event.getId();
@@ -775,12 +764,11 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	 * @param ev
 	 *            an array of all events
 	 */
-	private void removeEvent(JList events, BioModel gcm, ArrayList<String> usedIDs) {
+	private void removeEvent(JList events, BioModel gcm) {
 		int index = events.getSelectedIndex();
 		if (index != -1) {
 			String selected = ((String) events.getSelectedValue());
 			removeTheEvent(gcm, selected);
-			usedIDs.remove(((String) events.getSelectedValue()).split(" ")[0]);
 			events.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			Utility.remove(events);
 			events.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -1049,15 +1037,15 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	public void actionPerformed(ActionEvent e) {
 		// if the add event button is clicked
 		if (e.getSource() == addEvent) {
-			eventEditor(biosim, "Add", events, gcm, usedIDs, eventAssign);
+			eventEditor(biosim, "Add", events, gcm, eventAssign);
 		}
 		// if the edit event button is clicked
 		else if (e.getSource() == editEvent) {
-			eventEditor(biosim, "OK", events, gcm, usedIDs, eventAssign);
+			eventEditor(biosim, "OK", events, gcm, eventAssign);
 		}
 		// if the remove event button is clicked
 		else if (e.getSource() == removeEvent) {
-			removeEvent(events, gcm, usedIDs);
+			removeEvent(events, gcm);
 		}
 		// if the add event assignment button is clicked
 		else if (((JButton) e.getSource()).getText().equals("Add Assignment")) {
@@ -1076,7 +1064,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2) {
 			if (e.getSource() == events) {
-				eventEditor(biosim, "OK", events, gcm, usedIDs, eventAssign);
+				eventEditor(biosim, "OK", events, gcm, eventAssign);
 			}
 			else if (e.getSource() == eventAssign) {
 				eventAssignEditor(gcm, eventAssign, "OK");

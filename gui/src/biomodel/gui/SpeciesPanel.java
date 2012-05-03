@@ -683,14 +683,14 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 			
 			if (selected == null) {
-				if (gcm.getUsedIDs().contains((String)fields.get(GlobalConstants.ID).getValue())) {
+				if (gcm.isSIdInUse((String)fields.get(GlobalConstants.ID).getValue())) {
 					Utility.createErrorMessage("Error", "ID already exists.");
 					return false;
 				}
 			}
 			else if (!selected.equals(fields.get(GlobalConstants.ID).getValue())) {
 				
-				if (gcm.getUsedIDs().contains((String)fields.get(GlobalConstants.ID).getValue())) {
+				if (gcm.isSIdInUse((String)fields.get(GlobalConstants.ID).getValue())) {
 					
 					Utility.createErrorMessage("Error", "ID already exists.");
 					return false;
@@ -877,11 +877,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 			
 			if (selected != null && !selected.equals(newSpeciesID)) {
-				
-				while (gcm.getUsedIDs().contains(selected)) {
-					gcm.getUsedIDs().remove(selected);
-				}
-				
 				gcm.changeSpeciesId(selected, newSpeciesID);
 				((DefaultListModel) components.getModel()).clear();
 
@@ -890,11 +885,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					components.addItem(submodel.getId() + " " + submodel.getModelRef() + " " + gcm.getComponentPortMap(submodel.getId()));
 				}
 			}
-			
-			if (!gcm.getUsedIDs().contains(newSpeciesID)) {
-				gcm.getUsedIDs().add(newSpeciesID);
-			}
-			
+
 			//gcm.addSpecies(newSpeciesID, property);
 			
 			if (paramsOnly) {

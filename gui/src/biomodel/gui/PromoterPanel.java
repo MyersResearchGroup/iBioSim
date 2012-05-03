@@ -352,13 +352,13 @@ public class PromoterPanel extends JPanel {
 			String id = selected;
 			if (!paramsOnly) {
 				if (oldName == null) {
-					if (gcm.getUsedIDs().contains((String)fields.get(GlobalConstants.ID).getValue())) {
+					if (gcm.isSIdInUse((String)fields.get(GlobalConstants.ID).getValue())) {
 						Utility.createErrorMessage("Error", "Id already exists.");
 						return false;
 					}
 				}
 				else if (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
-					if (gcm.getUsedIDs().contains((String)fields.get(GlobalConstants.ID).getValue())) {
+					if (gcm.isSIdInUse((String)fields.get(GlobalConstants.ID).getValue())) {
 						Utility.createErrorMessage("Error","Id already exists.");
 						return false;
 					}
@@ -425,15 +425,9 @@ public class PromoterPanel extends JPanel {
 
 				// rename all the influences that use this promoter if name was changed
 				if (selected != null && !oldName.equals(id)) {
-					while (gcm.getUsedIDs().contains(selected)) {
-						gcm.getUsedIDs().remove(selected);
-					}
 					gcm.changePromoterId(oldName, id);
 					this.secondToLastUsedPromoter = oldName;
 					promoterNameChange = true;
-				}
-				if (!gcm.getUsedIDs().contains(id)) {
-					gcm.getUsedIDs().add(id);
 				}
 				this.lastUsedPromoter = id;
 			}

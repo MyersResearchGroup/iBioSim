@@ -48,8 +48,6 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 
 	private BioModel gcm;
 
-	private ArrayList<String> usedIDs;
-
 	private MutableBoolean dirty;
 
 	private Boolean paramsOnly;
@@ -76,11 +74,10 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 
 	private Rules rulesPanel;
 
-	public MySpecies(Gui biosim, BioModel gcm, ArrayList<String> usedIDs, MutableBoolean dirty, Boolean paramsOnly,
+	public MySpecies(Gui biosim, BioModel gcm, MutableBoolean dirty, Boolean paramsOnly,
 			ArrayList<String> getParams, String file, ArrayList<String> parameterChanges, Boolean editOnly) {
 		super(new BorderLayout());
 		this.gcm = gcm;
-		this.usedIDs = usedIDs;
 		this.biosim = biosim;
 		this.dirty = dirty;
 		this.paramsOnly = paramsOnly;
@@ -448,7 +445,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(gcm.getSBMLDocument(), usedIDs, ID.getText().trim(), selectedID, false);
+			error = SBMLutilities.checkID(gcm.getSBMLDocument(), ID.getText().trim(), selectedID, false);
 			double initial = 0;
 			if (!error) {
 				if (init.getText().trim().startsWith("(") && init.getText().trim().endsWith(")")) {
@@ -598,11 +595,6 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						else {
 							specie.setHasOnlySubstanceUnits(false);
 						}
-						for (int i = 0; i < usedIDs.size(); i++) {
-							if (usedIDs.get(i).equals(val)) {
-								usedIDs.set(i, ID.getText().trim());
-							}
-						}
 						if (!selSpecType.equals("( none )")) {
 							specie.setSpeciesType(selSpecType);
 						}
@@ -685,7 +677,6 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						else {
 							specie.setHasOnlySubstanceUnits(false);
 						}
-						usedIDs.add(ID.getText().trim());
 						if (!selSpecType.equals("( none )")) {
 							specie.setSpeciesType(selSpecType);
 						}
@@ -1006,7 +997,6 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						s.remove(i);
 					}
 				}
-				usedIDs.remove(tempSpecies.getId());
 				species.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 				Utility.remove(species);
 				species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

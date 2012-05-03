@@ -62,8 +62,6 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 
 	private BioModel gcm;
 
-	private ArrayList<String> usedIDs;
-
 	private MutableBoolean dirty;
 
 	private Boolean paramsOnly;
@@ -78,11 +76,10 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 
 	private Gui biosim;
 
-	public Parameters(Gui biosim, BioModel gcm, ArrayList<String> usedIDs, MutableBoolean dirty, Boolean paramsOnly, ArrayList<String> getParams,
+	public Parameters(Gui biosim, BioModel gcm, MutableBoolean dirty, Boolean paramsOnly, ArrayList<String> getParams,
 			String file, ArrayList<String> parameterChanges) {
 		super(new BorderLayout());
 		this.gcm = gcm;
-		this.usedIDs = usedIDs;
 		this.dirty = dirty;
 		this.paramsOnly = paramsOnly;
 		this.file = file;
@@ -425,7 +422,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(gcm.getSBMLDocument(), usedIDs, paramID.getText().trim(), selectedID, false);
+			error = SBMLutilities.checkID(gcm.getSBMLDocument(), paramID.getText().trim(), selectedID, false);
 			if (!error) {
 				double val = 0.0;
 				if (paramValue.getText().trim().startsWith("(") && paramValue.getText().trim().endsWith(")")) {
@@ -540,11 +537,6 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 									port.setIdRef(paramet.getId());
 								}
 							}
-							for (int i = 0; i < usedIDs.size(); i++) {
-								if (usedIDs.get(i).equals(v)) {
-									usedIDs.set(i, paramID.getText().trim());
-								}
-							}
 							paramet.setValue(val);
 							if (unit.equals("( none )")) {
 								paramet.unsetUnits();
@@ -607,7 +599,6 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							Parameter paramet = gcm.getSBMLDocument().getModel().createParameter();
 							paramet.setId(paramID.getText().trim());
 							paramet.setName(paramName.getText().trim());
-							usedIDs.add(paramID.getText().trim());
 							if (paramConst.getSelectedItem().equals("true")) {
 								paramet.setConstant(true);
 							}
@@ -695,7 +686,6 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						break;
 					}
 				}
-				usedIDs.remove(tempParameter.getId());
 				parameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 				Utility.remove(parameters);
 				parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

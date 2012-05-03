@@ -40,7 +40,7 @@ public class SBMLutilities {
 	/**
 	 * Check that ID is valid and unique
 	 */
-	public static boolean checkID(SBMLDocument document, ArrayList<String> usedIDs, String ID, String selectedID, boolean isReacParam) {
+	public static boolean checkID(SBMLDocument document, String ID, String selectedID, boolean isReacParam) {
 		Pattern IDpat = Pattern.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
 		if (ID.equals("")) {
 			JOptionPane.showMessageDialog(Gui.frame, "An ID is required.", "Enter an ID", JOptionPane.ERROR_MESSAGE);
@@ -67,7 +67,7 @@ public class SBMLutilities {
 			JOptionPane.showMessageDialog(Gui.frame, "ID cannot be a reserved word.", "Illegal ID", JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
-		if (usedIDs.contains(ID) && !ID.equals(selectedID)) {
+		if (document.getElementBySId(ID)!=null && !ID.equals(selectedID)) {
 			if (isReacParam) {
 				JOptionPane.showMessageDialog(Gui.frame, "ID shadows a global ID.", "Not a Unique ID", JOptionPane.WARNING_MESSAGE);
 			}

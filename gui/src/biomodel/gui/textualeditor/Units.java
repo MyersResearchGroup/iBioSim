@@ -61,18 +61,15 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 
 	private BioModel gcm;
 
-	private ArrayList<String> usedIDs;
-
 	private MutableBoolean dirty;
 
 	private Gui biosim;
 
 	//private String[] uList;
 
-	public Units(Gui biosim, BioModel gcm, ArrayList<String> usedIDs, MutableBoolean dirty) {
+	public Units(Gui biosim, BioModel gcm, MutableBoolean dirty) {
 		super(new BorderLayout());
 		this.gcm = gcm;
-		this.usedIDs = usedIDs;
 		this.biosim = biosim;
 		this.dirty = dirty;
 		Model model = gcm.getSBMLDocument().getModel();
@@ -323,11 +320,6 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 						UnitDefinition uCopy = u.cloneObject();
 						u.setId(unitID.getText().trim());
 						u.setName(unitName.getText().trim());
-						for (int i = 0; i < usedIDs.size(); i++) {
-							if (usedIDs.get(i).equals(val)) {
-								usedIDs.set(i, addUnit);
-							}
-						}
 						while (u.getNumUnits() > 0) {
 							u.getListOfUnits().remove(0);
 						}
@@ -365,7 +357,6 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 						UnitDefinition u = gcm.getSBMLDocument().getModel().createUnitDefinition();
 						u.setId(unitID.getText().trim());
 						u.setName(unitName.getText().trim());
-						usedIDs.add(addUnit);
 						for (int i = 0; i < uList.length; i++) {
 							Unit unit = u.createUnit();
 							unit.setKind(libsbml.UnitKind_forName(extractUnitKind(uList[i])));
@@ -641,7 +632,6 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 						u.remove(i);
 					}
 				}
-				usedIDs.remove(((String) unitDefs.getSelectedValue()).split(" ")[0]);
 				unitDefs.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 				Utility.remove(unitDefs);
 				unitDefs.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

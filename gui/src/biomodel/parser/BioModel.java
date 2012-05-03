@@ -215,14 +215,6 @@ public class BioModel {
 		sbmlFile = file;
 	}
 
-	public void setUsedIDs(ArrayList<String >usedIDs) {
-		this.usedIDs = usedIDs;
-	}
-
-	public ArrayList<String> getUsedIDs() {
-		return usedIDs;
-	}
-
 	public MySpecies getSpeciesPanel() {
 		return speciesPanel;
 	}
@@ -257,7 +249,6 @@ public class BioModel {
 
 	public void setSBMLDocument(SBMLDocument sbmlDoc) {
 		sbml = sbmlDoc;
-		usedIDs = SBMLutilities.CreateListOfUsedIDs(sbml);
 		SBMLutilities.fillBlankMetaIDs(sbml);
 	}
 
@@ -2087,11 +2078,10 @@ public class BioModel {
 			Reaction r = m.createReaction();
 			String reactionId = "r0";
 			int i = 0;
-			while (usedIDs.contains(reactionId)) {
+			while (sbml.getElementBySId(reactionId)!=null) {
 				i++;
 				reactionId = "r" + i;
 			}
-			usedIDs.add(reactionId);
 			r.setId(reactionId);
 			r.setCompartment(getDefaultCompartment());
 			r.setReversible(false);
@@ -2333,8 +2323,6 @@ public class BioModel {
 		textGlyph.setText(submodelID);
 		textGlyph.setBoundingBox(compartmentGlyph.getBoundingBox());
 		
-		usedIDs.add(submodelID);
-		
 		return submodelID;
 	}
 
@@ -2363,7 +2351,7 @@ public class BioModel {
 			createdHighIds.put(prefix, createdHighIds.get(prefix) + 1);
 			name = prefix + String.valueOf(createdHighIds.get(prefix));
 		}
-		while (hash.containsKey(name) || usedIDs.contains(name));
+		while (hash.containsKey(name) || sbml.getElementBySId(name)!=null);
 
 		return name;
 	}
@@ -2417,9 +2405,6 @@ public class BioModel {
 			}
 			speciesPanel.refreshSpeciesPanel(this);
 		}
-		while (usedIDs.contains(id)) {
-			usedIDs.remove(id);
-		}	
 	}
 
 	public void removeReaction(String id) {
@@ -2439,7 +2424,10 @@ public class BioModel {
 				layout.removeTextGlyph(id);
 			}
 		}
-		usedIDs.remove(id);
+	}
+	
+	public boolean isSIdInUse(String id) {
+		return (sbml.getElementBySId(id)!=null);
 	}
 
 	public ArrayList<String> getCompartments() {
@@ -3240,9 +3228,6 @@ public class BioModel {
 				layout.removeTextGlyph(id);
 			}
 		}
-		while (usedIDs.contains(id)) {
-			usedIDs.remove(id);
-		}
 	}
 
 	/**
@@ -3366,10 +3351,6 @@ public class BioModel {
 			if (layout.getTextGlyph(name) != null) {
 				layout.removeTextGlyph(name);
 			}
-		}
-		
-		while (usedIDs.contains(name)) {
-			usedIDs.remove(name);
 		}
 	}
 	
@@ -3942,7 +3923,7 @@ public class BioModel {
 			do {
 				creatingSpeciesID++;
 				id = "S" + String.valueOf(creatingSpeciesID);
-			} while (usedIDs.contains(id));
+			} while (sbml.getElementBySId(id)!=null);
 		}
 		
 		Layout layout = null;
@@ -3973,7 +3954,6 @@ public class BioModel {
 			Model m = sbml.getModel();
 			Species species = m.createSpecies();
 			species.setId(id);
-			usedIDs.add(id);
 			
 			// Set default species metaID
 			metaIDIndex = SBMLutilities.setDefaultMetaID(sbml, species, metaIDIndex); 
@@ -3994,9 +3974,8 @@ public class BioModel {
 				creatingReactionID++;
 				id = "R" + String.valueOf(creatingReactionID);
 			}
-			while (usedIDs.contains(id));
+			while (sbml.getElementBySId(id)!=null);
 		}
-		usedIDs.add(id);
 		Layout layout = null;
 		if (sbmlLayout.getLayout("iBioSim") != null) {
 			layout = sbmlLayout.getLayout("iBioSim"); 
@@ -4047,14 +4026,12 @@ public class BioModel {
 				creatingPromoterID++;
 				id = "P" + String.valueOf(creatingPromoterID);
 			}
-			while (usedIDs.contains(id));
+			while (sbml.getElementBySId(id)!=null);
 		}
 		promoter.setId(id);
-		usedIDs.add(id);
 		// Set default promoter metaID
 		metaIDIndex = SBMLutilities.setDefaultMetaID(sbml, promoter, metaIDIndex); 
 		
-		if (usedIDs != null) usedIDs.add(id);
 		promoter.setId(id);
 		promoter.setSBOTerm(GlobalConstants.SBO_PROMOTER_SPECIES);
 		promoter.setInitialAmount(sbml.getModel().getParameter(GlobalConstants.PROMOTER_COUNT_STRING).getValue());
@@ -4358,13 +4335,7 @@ public class BioModel {
 		loadDefaultEnclosingCompartment();
 		updatePorts();
 		//updateCompartmentReplacements();
-		usedIDs = SBMLutilities.CreateListOfUsedIDs(sbml);
 		SBMLutilities.fillBlankMetaIDs(sbml);
-		if (sbmlCompModel != null) {
-			for (long i = 0; i < sbmlCompModel.getNumSubmodels(); i++) {
-				usedIDs.add(sbmlCompModel.getSubmodel(i).getId());
-			}
-		}
 		loadGridSize();
 	}
 
@@ -5434,8 +5405,6 @@ public class BioModel {
 	private boolean isWithinCompartment;
 	
 	private String defaultCompartment;
-
-	private ArrayList<String> usedIDs;
 	
 	private int creatingPromoterID = 0;
 	private int creatingSpeciesID = 0;

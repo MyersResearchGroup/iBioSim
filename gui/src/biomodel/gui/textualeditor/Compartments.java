@@ -69,8 +69,6 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 
 	private BioModel gcm;
 
-	private ArrayList<String> usedIDs;
-
 	private MutableBoolean dirty;
 
 	private Boolean paramsOnly;
@@ -89,12 +87,11 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 	
 	private Gui biosim;
 
-	public Compartments(Gui biosim, BioModel gcm, ArrayList<String> usedIDs, MutableBoolean dirty, Boolean paramsOnly, 
+	public Compartments(Gui biosim, BioModel gcm, MutableBoolean dirty, Boolean paramsOnly, 
 			ArrayList<String> getParams, String file, ArrayList<String> parameterChanges, Boolean editOnly, 
 			JComboBox compartmentList) {
 		super(new BorderLayout());
 		this.gcm = gcm;
-		this.usedIDs = usedIDs;
 		this.dirty = dirty;
 		this.paramsOnly = paramsOnly;
 		this.file = file;
@@ -431,7 +428,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 				null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(gcm.getSBMLDocument(), usedIDs, compID.getText().trim(), selectedID, false);
+			error = SBMLutilities.checkID(gcm.getSBMLDocument(), compID.getText().trim(), selectedID, false);
 			if (!error && option.equals("OK") && compConstant.getSelectedItem().equals("true")) {
 				String val = ((String) compartments.getSelectedValue()).split(" ")[0];
 				error = SBMLutilities.checkConstant(gcm.getSBMLDocument(), "Compartment", val);
@@ -647,11 +644,6 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 								port.setIdRef(c.getId());
 							}
 						}
-						for (int i = 0; i < usedIDs.size(); i++) {
-							if (usedIDs.get(i).equals(val)) {
-								usedIDs.set(i, compID.getText().trim());
-							}
-						}
 						comps[index] = addComp;
 						Utility.sort(comps);
 						compartments.setListData(comps);
@@ -731,7 +723,6 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 							port.setId(GlobalConstants.COMPARTMENT+"__"+c.getId());
 							port.setIdRef(c.getId());
 						}
-						usedIDs.add(compID.getText().trim());
 						JList add = new JList();
 						String addStr;
 						/*
@@ -1068,7 +1059,6 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 							break;
 						}
 					}
-					usedIDs.remove(((String) compartments.getSelectedValue()).split(" ")[0]);
 					compartments.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					Utility.remove(compartments);
 					compartments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

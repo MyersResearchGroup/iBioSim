@@ -48,16 +48,13 @@ public class SpeciesTypes extends JPanel implements ActionListener, MouseListene
 
 	private BioModel gcm;
 
-	private ArrayList<String> usedIDs;
-
 	private MutableBoolean dirty;
 
 	private Gui biosim;
 
-	public SpeciesTypes(Gui biosim, BioModel gcm, ArrayList<String> usedIDs, MutableBoolean dirty) {
+	public SpeciesTypes(Gui biosim, BioModel gcm, MutableBoolean dirty) {
 		super(new BorderLayout());
 		this.gcm = gcm;
-		this.usedIDs = usedIDs;
 		this.biosim = biosim;
 		this.dirty = dirty;
 		Model model = gcm.getSBMLDocument().getModel();
@@ -127,7 +124,7 @@ public class SpeciesTypes extends JPanel implements ActionListener, MouseListene
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(gcm.getSBMLDocument(), usedIDs, specTypeID.getText().trim(), selectedID, false);
+			error = SBMLutilities.checkID(gcm.getSBMLDocument(), specTypeID.getText().trim(), selectedID, false);
 			if (!error) {
 				if (option.equals("OK")) {
 					String[] spTyp = new String[specTypes.getModel().getSize()];
@@ -142,11 +139,6 @@ public class SpeciesTypes extends JPanel implements ActionListener, MouseListene
 					SpeciesType s = gcm.getSBMLDocument().getModel().getSpeciesType(val);
 					s.setId(specTypeID.getText().trim());
 					s.setName(specTypeName.getText().trim());
-					for (int i = 0; i < usedIDs.size(); i++) {
-						if (usedIDs.get(i).equals(val)) {
-							usedIDs.set(i, specTypeID.getText().trim());
-						}
-					}
 					spTyp[index] = specTypeID.getText().trim();
 					Utility.sort(spTyp);
 					specTypes.setListData(spTyp);
@@ -167,7 +159,6 @@ public class SpeciesTypes extends JPanel implements ActionListener, MouseListene
 					SpeciesType s = gcm.getSBMLDocument().getModel().createSpeciesType();
 					s.setId(specTypeID.getText().trim());
 					s.setName(specTypeName.getText().trim());
-					usedIDs.add(specTypeID.getText().trim());
 					JList add = new JList();
 					Object[] adding = { specTypeID.getText().trim() };
 					add.setListData(adding);
@@ -226,7 +217,6 @@ public class SpeciesTypes extends JPanel implements ActionListener, MouseListene
 						s.remove(i);
 					}
 				}
-				usedIDs.remove(((String) specTypes.getSelectedValue()).split(" ")[0]);
 				specTypes.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 				Utility.remove(specTypes);
 				specTypes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
