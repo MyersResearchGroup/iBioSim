@@ -208,7 +208,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private JCheckBox Undeclared, Units;
 
-	private JComboBox LevelVersion;
+	//private JComboBox LevelVersion;
 
 	private JTextField viewerField;
 
@@ -1020,16 +1020,16 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			// file.add(exit);
 			help.add(about);
 		}
-		if (biosimrc.get("biosim.sbml.level_version", "").equals("L2V4")) {
+		/*if (biosimrc.get("biosim.sbml.level_version", "").equals("L2V4")) {
 			SBMLLevelVersion = "L2V4";
 			SBML_LEVEL = 2;
 			SBML_VERSION = 4;
 		}
-		else {
-			SBMLLevelVersion = "L3V1";
-			SBML_LEVEL = 3;
-			SBML_VERSION = 1;
-		}
+		else {*/
+		SBMLLevelVersion = "L3V1";
+		SBML_LEVEL = 3;
+		SBML_VERSION = 1;
+		//}
 		if (biosimrc.get("biosim.check.undeclared", "").equals("false")) {
 			checkUndeclared = false;
 		}
@@ -1267,6 +1267,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		if (!async) {
 
 			// sbml preferences
+			/*
 			String[] Versions = { "L2V4", "L3V1" };
 			JLabel SBMLlabel = new JLabel("SBML Level/Version");
 			LevelVersion = new JComboBox(Versions);
@@ -1276,6 +1277,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			else {
 				LevelVersion.setSelectedItem("L3V1");
 			}
+			*/
 			Undeclared = new JCheckBox("Check for undeclared units in SBML");
 			if (checkUndeclared) {
 				Undeclared.setSelected(true);
@@ -1310,9 +1312,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 
 			// create sbml preferences panel
-			JPanel levelPrefs = new JPanel(new GridLayout(1, 2));
-			levelPrefs.add(SBMLlabel);
-			levelPrefs.add(LevelVersion);
+			//JPanel levelPrefs = new JPanel(new GridLayout(1, 2));
+			//levelPrefs.add(SBMLlabel);
+			//levelPrefs.add(LevelVersion);
 
 			// gcm preferences
 			final JTextField ACTIVED_VALUE = new JTextField(biosimrc.get("biosim.gcm.ACTIVED_VALUE", ""));
@@ -1338,8 +1340,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			final JTextField REVERSE_MEMDIFF_VALUE = new JTextField(biosimrc.get("biosim.gcm.REVERSE_MEMDIFF_VALUE", ""));
 			final JTextField KECDIFF_VALUE = new JTextField(biosimrc.get("biosim.gcm.KECDIFF_VALUE", ""));
 
-			JPanel labels = new JPanel(new GridLayout(19, 1));
-			labels.add(SBMLlabel);
+			JPanel labels = new JPanel(new GridLayout(18, 1));
+			//labels.add(SBMLlabel);
 			labels.add(Undeclared);
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.ACTIVATED_STRING) + " (" + GlobalConstants.ACTIVATED_STRING + "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KACT_STRING) + " (" + GlobalConstants.KACT_STRING + "):"));
@@ -1366,8 +1368,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.REVERSE_MEMDIFF_STRING) + " (" + GlobalConstants.REVERSE_MEMDIFF_STRING + "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KECDIFF_STRING) + " (" + GlobalConstants.KECDIFF_STRING + "):"));
 
-			JPanel fields = new JPanel(new GridLayout(19, 1));
-			fields.add(LevelVersion);
+			JPanel fields = new JPanel(new GridLayout(18, 1));
+			//fields.add(LevelVersion);
 			fields.add(Units);
 			fields.add(ACTIVED_VALUE);
 			fields.add(KACT_VALUE);
@@ -1676,18 +1678,18 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					biosimrc.put("biosim.general.tree_icons", "default");
 					tree.setExpandibleIcons(true);
 				}
-				if (LevelVersion.getSelectedItem().equals("L2V4")) {
+				/*if (LevelVersion.getSelectedItem().equals("L2V4")) {
 					SBMLLevelVersion = "L2V4";
 					SBML_LEVEL = 2;
 					SBML_VERSION = 4;
 					biosimrc.put("biosim.sbml.level_version", "L2V4");
 				}
-				else {
-					SBMLLevelVersion = "L3V1";
-					SBML_LEVEL = 3;
-					SBML_VERSION = 1;
-					biosimrc.put("biosim.sbml.level_version", "L3V1");
-				}
+				else {*/
+				SBMLLevelVersion = "L3V1";
+				SBML_LEVEL = 3;
+				SBML_VERSION = 1;
+				biosimrc.put("biosim.sbml.level_version", "L3V1");
+			//}
 				if (Undeclared.isSelected()) {
 					checkUndeclared = true;
 					biosimrc.put("biosim.check.undeclared", "true");
