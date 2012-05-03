@@ -1,6 +1,6 @@
-// $ANTLR 3.4 /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g 2012-05-02 21:17:52
+// $ANTLR 3.4 /Users/myers/research/nobackup/workspace/BioSim/gui/src/lpn/parser/properties/Property.g 2012-05-03 13:38:29
 
-package lpn.parser.properties;
+  package lpn.parser.properties;
 
 
 import org.antlr.runtime.*;
