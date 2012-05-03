@@ -1220,8 +1220,7 @@ public class Schematic extends JPanel implements ActionListener {
 			
 			//@Override
 			public void invoke(Object arg0, mxEventObject event) {
-				
-				//System.out.println(event.getName());
+
 			}
 		});
 		

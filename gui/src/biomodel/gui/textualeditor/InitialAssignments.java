@@ -142,7 +142,6 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			if (((InitialAssignment) r.get(i)).getSymbol().equals(variable)) {
 				for (long j = 0; j < gcm.getSBMLCompModel().getNumPorts(); j++) {
 					Port port = gcm.getSBMLCompModel().getPort(j);
-					System.out.println(port.getMetaIdRef());
 					if (port.isSetMetaIdRef() && port.getMetaIdRef().equals(r.get(i).getMetaId())) {
 						gcm.getSBMLCompModel().removePort(j);
 						break;
@@ -262,18 +261,6 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 						"Units Do Not Match", JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
-			// for (int i = 0; i < unitDef.getNumUnits(); i++) {
-			// Unit unit = unitDef.getUnit(i);
-			// System.out.println(unit.getKind() + " Exp = " +
-			// unit.getExponent() + "
-			// Mult = " + unit.getMultiplier() + " Scale = " + unit.getScale());
-			// }
-			// for (int i = 0; i < unitDefVar.getNumUnits(); i++) {
-			// Unit unit = unitDefVar.getUnit(i);
-			// System.out.println(unit.getKind() + " Exp = " +
-			// unit.getExponent() + "
-			// Mult = " + unit.getMultiplier() + " Scale = " + unit.getScale());
-			// }
 		}
 		return false;
 	}

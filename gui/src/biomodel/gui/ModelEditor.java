@@ -1367,7 +1367,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			dirty.setValue(true);
 			biomodel.makeUndoPoint();
 		}
-		// System.out.println(o);
 	}
 
 	public synchronized void lock() {

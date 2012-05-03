@@ -881,9 +881,6 @@ public class BioGraph extends mxGraph {
 				mxCell source = (mxCell)vec.get(0).getSource();
 				mxCell target = (mxCell)vec.get(0).getTarget(); 
 				
-				System.err.println(source.getId());
-				System.err.println(target.getId());
-				
 				// find the end and center points
 				mxGeometry t;
 				t = source.getGeometry();

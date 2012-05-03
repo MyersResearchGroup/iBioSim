@@ -100,10 +100,6 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				promoterButton.setEnabled(false);
 			}
 		}
-		//System.out.println("selection=" + selection);
-		//System.out.println("regulator=" + regulator);
-		//System.out.println("product=" + product);
-		//System.out.println("promotorId=" + promoterId);
 		promoterBox.addActionListener(this);
 		tempPanel.setLayout(new GridLayout(1, 3));
 		tempPanel.add(tempLabel);

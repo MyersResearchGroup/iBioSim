@@ -264,7 +264,6 @@ public class PropertyField extends JPanel implements ActionListener,
 			}
 		} else {
 			if (Utility.isValid(e.getActionCommand(), regExp)) {
-				// System.out.println();
 			} else {
 				JOptionPane.showMessageDialog(Gui.frame, "Illegal value entered.",
 						"Illegal value entered", JOptionPane.ERROR_MESSAGE);

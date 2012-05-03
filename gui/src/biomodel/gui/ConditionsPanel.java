@@ -113,7 +113,6 @@ public class ConditionsPanel extends JPanel {
 			*/
 		}
 		else if (value == JOptionPane.NO_OPTION) {
-			// System.out.println();
 			return true;
 		}
 		return true;

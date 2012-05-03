@@ -123,10 +123,6 @@ public class GCMParser {
 		return network;		
 	}
 
-	public void printFile() {
-		System.out.println(data.toString());
-	}
-
 	public HashMap<String, SpeciesInterface> getSpecies() {
 		return speciesList;
 	}

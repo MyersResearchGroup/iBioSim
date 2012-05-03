@@ -1119,22 +1119,6 @@ public class GeneticNetwork {
 				return true;
 		return false;
 	}
-
-	/**
-	 * Checks the consistancy of the document
-	 * 
-	 * @param doc
-	 *            the SBML document to check
-	 */
-	/*
-	private void checkConsistancy(SBMLDocument doc) {
-		if (doc.checkConsistency() > 0) {
-			for (int i = 0; i < doc.getNumErrors(); i++) {
-				System.out.println(doc.getError(i).getMessage());
-			}
-		}
-	}
-	*/
 	
 	private String sbmlDocument = "";
 	
