@@ -10,7 +10,7 @@ public class SequenceTypeValidator {
 	private DFA dfa;
 	private int stateIndex;
 	
-	public SequenceTypeValidator (String regex) {
+	public SequenceTypeValidator(String regex) {
 		Set<NFAState> nfaStartStates = constructNFA(regex);
 		this.dfa = new DFA();
 		dfa.setStartState(constructDFA(nfaStartStates));
@@ -22,7 +22,7 @@ public class SequenceTypeValidator {
 		Set<NFAState> nfaStartStates = new HashSet<NFAState>();
 		nfaStartStates.add(new NFAState("S" + stateIndex));
 		stateIndex++;
-		Set<NFAState> acceptStates = constructNFAHelper(nfaStartStates, regex, "", new HashSet<String>());
+		Set<NFAState> acceptStates = constructNFAHelper2(nfaStartStates, regex, "", new HashSet<String>());
 		for (NFAState nfaState : acceptStates)
 			nfaState.setAccepting(true);
 		return nfaStartStates;
@@ -73,6 +73,51 @@ public class SequenceTypeValidator {
 		if (quantifier.equals("*"))
 			currentStates.addAll(startStates);
 		return currentStates;
+	}
+	
+	private Set<NFAState> constructNFAHelper2(Set<NFAState> startStates, String regex, String quantifier, Set<String> localIDs) { 
+		Set<NFAState> acceptStates = new HashSet<NFAState>();
+		if (regex.length() == 1) {
+			NFAState nextState = new NFAState("S" + stateIndex);
+			localIDs.add("S" + stateIndex);
+			for (NFAState startState : startStates)
+				startState.addTransition(regex, nextState);
+			acceptStates.add(nextState);
+		} else {
+			int i = 0;
+			do {
+				int j;
+				String subRegex;
+				String subQuantifier;
+				if (regex.substring(i, i + 1).equals("(")) {
+					j = findClosing(regex, i);
+					subRegex = regex.substring(i + 1, j);
+					subQuantifier = regex.substring(j + 1, j + 2);
+				} else {
+					j = i;
+					subRegex = regex.substring(i, i + 1);
+					if (i + 1 < regex.length())
+						subQuantifier = regex.substring(i + 1, i + 2);
+					else
+						subQuantifier = "";
+				}
+				acceptStates = constructNFAHelper2(acceptStates, subRegex, subQuantifier, localIDs);
+				if (subQuantifier.equals("+") || subQuantifier.equals("*")) {
+					i = i + 2;
+				} else
+					i++;
+			} while (i < regex.length());
+		}
+		if (quantifier.equals("+") || quantifier.equals("*"))
+			for (NFAState startState : startStates) 
+				for (String label : startState.getTransitions().keySet()) 
+					for (NFAState destination : startState.transition(label)) 
+						if (localIDs.contains(destination.getID()))
+							for (NFAState acceptState : acceptStates)
+								acceptState.addTransition(label, destination);
+		if (quantifier.equals("*"))
+			acceptStates.addAll(startStates);
+		return acceptStates;
 	}
 	
 	private int findClosing(String regex, int j) {
