@@ -4627,20 +4627,22 @@ public class BioModel {
 			Deletion deletion = instance.getDeletion(i);
 			if (deletion.isSetPortRef()) {
 				Port port = subBioModel.getSBMLCompModel().getPort(deletion.getPortRef());
-				if (port.isSetIdRef()) {
-					if (subModel.getElementBySId(port.getIdRef())!=null) {
-						SBase sbase =  subModel.getElementBySId(port.getIdRef());
-						sbase.removeFromParentAndDelete();
-					}
-				} else if (port.isSetMetaIdRef()) {
-					if (subModel.getElementByMetaId(port.getMetaIdRef())!=null) {
-						SBase sbase =  subModel.getElementByMetaId(port.getMetaIdRef());
-						sbase.removeFromParentAndDelete();
-					}
-				} else if (port.isSetUnitRef()) {
-					if (subModel.getUnitDefinition(port.getUnitRef())!=null) {
-						SBase sbase = subModel.getUnitDefinition(port.getUnitRef());
-						sbase.removeFromParentAndDelete();
+				if (port!=null) {
+					if (port.isSetIdRef()) {
+						if (subModel.getElementBySId(port.getIdRef())!=null) {
+							SBase sbase =  subModel.getElementBySId(port.getIdRef());
+							sbase.removeFromParentAndDelete();
+						}
+					} else if (port.isSetMetaIdRef()) {
+						if (subModel.getElementByMetaId(port.getMetaIdRef())!=null) {
+							SBase sbase =  subModel.getElementByMetaId(port.getMetaIdRef());
+							sbase.removeFromParentAndDelete();
+						}
+					} else if (port.isSetUnitRef()) {
+						if (subModel.getUnitDefinition(port.getUnitRef())!=null) {
+							SBase sbase = subModel.getUnitDefinition(port.getUnitRef());
+							sbase.removeFromParentAndDelete();
+						}
 					}
 				}
 			} else if (deletion.isSetIdRef()) {
