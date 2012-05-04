@@ -65,8 +65,8 @@ public class ZoneTest {
 		// Set up fifth zone.
 		int[] timers5 = new int[]{1, 2, 3};
 		int[][] matrix5 = new int[][]{
-				{ 0, 0, 2, 3, Zone.INFINITY},
-				{ 0, 0, 2, 3, Zone.INFINITY},
+				{ 0, 0, 2, 3, ZoneType.INFINITY},
+				{ 0, 0, 2, 3, ZoneType.INFINITY},
 				{-1, 0, 0, 0,             0},
 				{-2, 0, 0, 0,             0},
 				{ 0, 0, 0, 0,             0}
@@ -80,8 +80,8 @@ public class ZoneTest {
 	{
 		int expected02 = 2;
 		int expected03 = 2;
-		int actual02 = zone5.getdbm(0, 2);
-		int actual03 = zone5.getdbm(0, 3);
+		int actual02 = zone5.getDbmEntry(0, 2);
+		int actual03 = zone5.getDbmEntry(0, 3);
 		
 		assertEquals(expected02, actual02);
 		assertEquals(expected03, actual03);
@@ -103,7 +103,7 @@ public class ZoneTest {
 	@Test
 	public void testGetdbm() {
 		int expected = 2;
-		int actual = zone1.getdbm(0, 1);
+		int actual = zone1.getDbmEntry(0, 1);
 		assertEquals(expected, actual);
 	}
 
@@ -184,7 +184,7 @@ public class ZoneTest {
 	
 	@Test
 	public void testMergeZone(){
-		Zone z = zone1.mergeZones(zone2);
+		ZoneType z = zone1.mergeZones(zone2);
 		
 		System.out.println("Merging zones 1 and 2 :");
 		System.out.println(z);
@@ -192,7 +192,7 @@ public class ZoneTest {
 	
 	@Test
 	public void testMergeZone2(){
-		Zone z = zone3.mergeZones(zone4);
+		ZoneType z = zone3.mergeZones(zone4);
 		
 		
 		System.out.println("Merging zones 3 and 4 :");
@@ -204,7 +204,7 @@ public class ZoneTest {
 		boolean exceptionThrown = false;
 		
 		try{
-			Zone z = zone3.mergeZones(zone1);
+			ZoneType z = zone3.mergeZones(zone1);
 		}
 		catch(Exception e)
 		{
@@ -222,7 +222,7 @@ public class ZoneTest {
 	 * 			An array of zones for testing.
 	 * 			
 	 */
-	private Zone[] readTestZones(File zoneFile)
+	private ZoneType[] readTestZones(File zoneFile)
 	{
 		try {
 			Scanner read = new Scanner(zoneFile);

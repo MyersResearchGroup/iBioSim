@@ -1,22 +1,18 @@
 package verification.timed_state_exploration.zone;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.TreeMap;
 
 import javax.swing.JOptionPane;
 
 import lpn.parser.ExprTree;
 import lpn.parser.LhpnFile;
 import lpn.parser.Transition;
-import lpn.parser.Variable;
 
-import com.sun.corba.se.spi.activation._InitialNameServiceImplBase;
-
-import verification.platu.lpn.DualHashMap;
 import verification.platu.stategraph.State;
 
 
@@ -41,7 +37,7 @@ import verification.platu.stategraph.State;
  * @author Andrew N. Fisher
  *
  */
-public class Zone {
+public class Zone implements ZoneType {
 	
 	// Abstraction Function : 
 	// The difference bound matrix is represented by int[][].
@@ -80,9 +76,6 @@ public class Zone {
 	 * Logically the zero timer is given index -1.
 	 *  */
 	private int[] _indexToTimer;		
-	
-	/* Infinity is represented by the maximum integer value. */
-	public static final int INFINITY = Integer.MAX_VALUE;
 	
 	/* The hash code. */
 	private int _hashCode;
@@ -186,7 +179,7 @@ public class Zone {
 			for(int j=0; j<dbmSize(); j++)
 			{
 				// Copy the passed in matrix to _matrix.
-				setdbm(newIndex.get(i), newIndex.get(j), 
+				setDbmEntry(newIndex.get(i), newIndex.get(j), 
 						matrix[dbmIndexToMatrixIndex(i)][dbmIndexToMatrixIndex(j)]);
 				// In the above, changed setDBMIndex to setdbm
 			}
@@ -387,24 +380,16 @@ public class Zone {
 //		_matrix[i+1][j+1] = value;
 //	}
 	
-	/**
-	 * Get the value of the upper bound for the delay.
-	 * @param timer
-	 * 			The timer's index.
-	 * @return
-	 * 			The upper bound on the transitions delay.
+	/* (non-Javadoc)
+	 * @see verification.timed_state_exploration.zone.ZoneType#getUpperBoundbyTransitionIndex(int)
 	 */
 	public int getUpperBoundbyTransitionIndex(int timer)
 	{
 		return getUpperBoundbydbmIndex(Arrays.binarySearch(_indexToTimer, timer));
 	}
 	
-	/**
-	 * Get the value of the upper bound for the delay.
-	 * @param index
-	 * 			The timer's row/column of the DBM matrix.
-	 * @return
-	 * 			The upper bound on the transitions delay.
+	/* (non-Javadoc)
+	 * @see verification.timed_state_exploration.zone.ZoneType#getUpperBoundbydbmIndex(int)
 	 */
 	public int getUpperBoundbydbmIndex(int index)
 	{
@@ -418,7 +403,7 @@ public class Zone {
 	 * @param value
 	 * 			The value of the upper bound.
 	 */
-	private void setUpperBoundbyTransitionIndex(int timer, int value)
+	public void setUpperBoundbyTransitionIndex(int timer, int value)
 	{
 		setUpperBoundbydbmIndex(Arrays.binarySearch(_indexToTimer, timer), value);
 	}
@@ -430,29 +415,21 @@ public class Zone {
 	 * @param value
 	 * 			The value of the upper bound.
 	 */
-	private void setUpperBoundbydbmIndex(int index, int value)
+	public void setUpperBoundbydbmIndex(int index, int value)
 	{
 		_matrix[0][dbmIndexToMatrixIndex(index)] = value;
 	}
 	
-	/**
-	 * Get the value of the lower bound for the delay.
-	 * @param timer
-	 * 			The timer's index.
-	 * @return
-	 * 			The value of the lower bound.
+	/* (non-Javadoc)
+	 * @see verification.timed_state_exploration.zone.ZoneType#getLowerBoundbyTransitionIndex(int)
 	 */
 	public int getLowerBoundbyTransitionIndex(int timer)
 	{
-		return getLowerBoundbydbmIndex(Arrays.binarySearch(_indexToTimer, timer));
+		return -1*getLowerBoundbydbmIndex(Arrays.binarySearch(_indexToTimer, timer));
 	}
 	
-	/**
-	 * Get the value of the lower bound for the delay.
-	 * @param index
-	 * 			The timer's row/column of the DBM matrix.
-	 * @return
-	 * 			The value of the lower bound.
+	/* (non-Javadoc)
+	 * @see verification.timed_state_exploration.zone.ZoneType#getLowerBoundbydbmIndex(int)
 	 */
 	public int getLowerBoundbydbmIndex(int index)
 	{
@@ -466,7 +443,7 @@ public class Zone {
 	 * @param value
 	 * 			The value of the lower bound.
 	 */
-	private void setLowerBoundbyTransitionIndex(int timer, int value)
+	public void setLowerBoundbyTransitionIndex(int timer, int value)
 	{
 		setLowerBoundbydbmIndex(Arrays.binarySearch(_indexToTimer,timer), value);
 	}
@@ -478,7 +455,7 @@ public class Zone {
 	 * @param value
 	 * 			The value of the lower bound.
 	 */
-	private void setLowerBoundbydbmIndex(int index, int value)
+	public void setLowerBoundbydbmIndex(int index, int value)
 	{
 		_matrix[dbmIndexToMatrixIndex(index)][0] = -1*value;
 	}
@@ -495,16 +472,10 @@ public class Zone {
 		return i+1;
 	}
 	
-	/**
-	 * Retrieves an entry of the DBM using the DBM's addressing.
-	 * @param i
-	 * 			The row of the DBM.
-	 * @param j
-	 * 			The column of the DBM.
-	 * @return
-	 * 			The value of the (i, j) element of the DBM.
+	/* (non-Javadoc)
+	 * @see verification.timed_state_exploration.zone.ZoneType#getdbm(int, int)
 	 */
-	public int getdbm(int i, int j)
+	public int getDbmEntry(int i, int j)
 	{
 		return _matrix[dbmIndexToMatrixIndex(i)][dbmIndexToMatrixIndex(j)];
 	}
@@ -518,7 +489,7 @@ public class Zone {
 	 * @param value
 	 * 			The new value for the entry.
 	 */
-	private void setdbm(int i, int j, int value)
+	private void setDbmEntry(int i, int j, int value)
 	{
 		_matrix[dbmIndexToMatrixIndex(i)][dbmIndexToMatrixIndex(j)] = value;
 	}
@@ -601,13 +572,13 @@ public class Zone {
 		for(int i=0; i<_indexToTimer.length; i++)
 		{
 			//result += " " + _matrix[i][0];
-			result += "| " + getdbm(i, 0);
+			result += "| " + getDbmEntry(i, 0);
 			
 			//for(int j=1; j<_indexToTimer.length; j++)
 			for(int j=1; j<_indexToTimer.length; j++)
 			{
 				//result += ", " + _matrix[i][j];
-				result += ", " + getdbm(i, j);
+				result += ", " + getDbmEntry(i, j);
 			}
 			
 			result += " |\n";
@@ -669,9 +640,19 @@ public class Zone {
 		}
 		
 		// Check if the timers are the same.
-		if(!Arrays.equals(this._indexToTimer, otherZone._indexToTimer))
-		{
+//		if(!Arrays.equals(this._indexToTimer, otherZone._indexToTimer))
+//		{
+//			return false;
+//		}
+		
+		if(this._indexToTimer.length != otherZone._indexToTimer.length){
 			return false;
+		}
+		
+		for(int i=0; i<this._indexToTimer.length; i++){
+			if(this._indexToTimer[i] != otherZone._indexToTimer[i]){
+				return false;
+			}
 		}
 		
 		// Check if the matrix is the same.
@@ -788,28 +769,24 @@ public class Zone {
 			{
 				for(int j=0; j<dbmSize(); j++)
 				{
-					if(getdbm(i, k) != INFINITY && getdbm(k, j) != INFINITY
-							&& getdbm(i, j) > getdbm(i, k) + getdbm(k, j))
+					if(getDbmEntry(i, k) != INFINITY && getDbmEntry(k, j) != INFINITY
+							&& getDbmEntry(i, j) > getDbmEntry(i, k) + getDbmEntry(k, j))
 					{
-						setdbm(i, j, getdbm(i, k) + getdbm(k, j));
+						setDbmEntry(i, j, getDbmEntry(i, k) + getDbmEntry(k, j));
 					}
 					
-					if( (i==j) && getdbm(i, j) != 0)
+					if( (i==j) && getDbmEntry(i, j) != 0)
 					{
 						throw new DiagonalNonZeroException("Entry (" + i + ", " + j + ")" +
-								" became " + getdbm(i, j) + ".");
+								" became " + getDbmEntry(i, j) + ".");
 					}
 				}
 			}
 		}
 	}
 	
-	/**
-	 * Determines if a timer has reached its lower bound.
-	 * @param timer
-	 * 			The timer's index.
-	 * @return
-	 * 			True if the timer has reached its lower bound, false otherwise.
+	/* (non-Javadoc)
+	 * @see verification.timed_state_exploration.zone.ZoneType#exceedsLowerBoundbyTransitionIndex(int)
 	 */
 	public boolean exceedsLowerBoundbyTransitionIndex(int timer)
 	{
@@ -817,12 +794,8 @@ public class Zone {
 		return exceedsLowerBoundbydbmIndex(Arrays.binarySearch(_indexToTimer, timer));
 	}
 	
-	/**
-	 * Determines if a timer has reached its lower bound.
-	 * @param index
-	 * 			The timer's row/column of the DBM.
-	 * @return
-	 * 			True if the timer has reached its lower bound, false otherwise.
+	/* (non-Javadoc)
+	 * @see verification.timed_state_exploration.zone.ZoneType#exceedsLowerBoundbydbmIndex(int)
 	 */
 	public boolean exceedsLowerBoundbydbmIndex(int index)
 	{
@@ -834,14 +807,10 @@ public class Zone {
 			_matrix[1][dbmIndexToMatrixIndex(index)];
 	}
 	
-	/**
-	 * Updates the Zone according to a transition firing.
-	 * @param timer
-	 * 			The index of the transition that fired.
-	 * @return
-	 * 			The updated Zone.
+	/* (non-Javadoc)
+	 * @see verification.timed_state_exploration.zone.ZoneType#fireTransitionbyTransitionIndex(int, int[], verification.platu.stategraph.State)
 	 */
-	public Zone fireTransitionbyTransitionIndex(int timer, int[] enabledTimers, 
+	public ZoneType fireTransitionbyTransitionIndex(int timer, int[] enabledTimers, 
 			State state)
 	{
 		// TODO: Check if finish.
@@ -849,14 +818,10 @@ public class Zone {
 				enabledTimers, state);
 	}
 	
-	/**
-	 * Updates the Zone according to the transition firing.
-	 * @param index
-	 * 			The index of the timer.
-	 * @return
-	 * 			The updated Zone.
+	/* (non-Javadoc)
+	 * @see verification.timed_state_exploration.zone.ZoneType#fireTransitionbydbmIndex(int, int[], verification.platu.stategraph.State)
 	 */
-	public Zone fireTransitionbydbmIndex(int index, int[] enabledTimers,
+	public ZoneType fireTransitionbydbmIndex(int index, int[] enabledTimers,
 			State state)
 	{
 		// TODO: Finish
@@ -935,7 +900,7 @@ public class Zone {
 					Arrays.binarySearch(newZone._indexToTimer, tempZone._indexToTimer[j]);
 				
 				newZone._matrix[newZone.dbmIndexToMatrixIndex(newIndexi)][newZone.dbmIndexToMatrixIndex(newIndexj)]
-				                                                            = tempZone.getdbm(i, j);
+				                                                            = tempZone.getDbmEntry(i, j);
 				// In above, changed getDBMIndex to getdbm
 			}
 		}
@@ -970,13 +935,13 @@ public class Zone {
 //						newZone.timerIndexToMatrixIndex(timerNew),
 //						tempZone.getdbm(timerOld, 0));
 				
-				newZone.setdbm(newZone.timerIndexToDBMIndex(timerNew),
+				newZone.setDbmEntry(newZone.timerIndexToDBMIndex(timerNew),
 						newZone.timerIndexToDBMIndex(timerOld),
-						 tempZone.getdbm(0, tempZone.timerIndexToDBMIndex(timerOld)));
+						 tempZone.getDbmEntry(0, tempZone.timerIndexToDBMIndex(timerOld)));
 				
-				newZone.setdbm(newZone.timerIndexToDBMIndex(timerOld),
+				newZone.setDbmEntry(newZone.timerIndexToDBMIndex(timerOld),
 						newZone.timerIndexToDBMIndex(timerNew),
-						tempZone.getdbm(tempZone.timerIndexToDBMIndex(timerOld), 0));
+						tempZone.getDbmEntry(tempZone.timerIndexToDBMIndex(timerOld), 0));
 			}
 		}
 		
@@ -1038,7 +1003,8 @@ public class Zone {
 		newZone.recononicalize();
 		
 		// Run the test method.
-		testSplit(newZone, true);
+		//testSplit(newZone, true);
+		//testZoneGraphMinimization(newZone, true);
 		
 		return newZone;
 	}
@@ -1050,7 +1016,7 @@ public class Zone {
 	 * @return
 	 * 			The merged Zone.
 	 */
-	public Zone mergeZones(Zone otherZone)
+	public ZoneType mergeZones(Zone otherZone)
 	{
 		// TODO: Finish.	
 		
@@ -1090,10 +1056,10 @@ public class Zone {
 				// then check if the values agree.
 				if(zoneAndIndex[i]._zone2 != null && zoneAndIndex[j]._zone2 != null)
 				{
-					int value1 = this.getdbm(zoneAndIndex[i]._index1,
+					int value1 = this.getDbmEntry(zoneAndIndex[i]._index1,
 							zoneAndIndex[j]._index1);
 					
-					int value2 = otherZone.getdbm(zoneAndIndex[i]._index2,
+					int value2 = otherZone.getDbmEntry(zoneAndIndex[i]._index2,
 							zoneAndIndex[j]._index2);
 					
 					if(value1 != value2)
@@ -1102,7 +1068,7 @@ public class Zone {
 					}
 					else
 					{
-						mergedZone.setdbm(i, j, value1);
+						mergedZone.setDbmEntry(i, j, value1);
 					}
 				}
 				
@@ -1111,7 +1077,7 @@ public class Zone {
 				{
 					int iIndex = 0;
 					int jIndex = 0;
-					Zone z;
+					ZoneType z;
 					
 					// Get the zone with both the timers.
 					if(zoneAndIndex[i]._zone2 != null && 
@@ -1154,7 +1120,7 @@ public class Zone {
 						jIndex = zoneAndIndex[j]._index1;
 					}
 					
-					mergedZone.setdbm(iIndex, j, z.getdbm(iIndex, jIndex));
+					mergedZone.setDbmEntry(iIndex, j, z.getDbmEntry(iIndex, jIndex));
 				}
 			}
 		}
@@ -1313,7 +1279,7 @@ public class Zone {
 	 * @return
 	 * 				The merged Zone.
 	 */
-	public static Zone mergeZones(Zone firstZone, Zone secondZone)
+	public static ZoneType mergeZones(Zone firstZone, Zone secondZone)
 	{
 		return firstZone.mergeZones(secondZone);
 	}
@@ -1357,8 +1323,8 @@ public class Zone {
 		}
 	}
 	
-	/**
-	 * Overrides the clone method from Object.
+	/* (non-Javadoc)
+	 * @see verification.timed_state_exploration.zone.ZoneType#clone()
 	 */
 	public Zone clone()
 	{
@@ -1397,6 +1363,9 @@ public class Zone {
 		                                            = getLowerBoundbydbmIndex(timer);
 	}
 	
+	/* (non-Javadoc)
+	 * @see verification.timed_state_exploration.zone.ZoneType#getEnabledTransitions()
+	 */
 	public List<Transition> getEnabledTransitions()
 	{
 		ArrayList<Transition> enabledTransitions = new ArrayList<Transition>();
@@ -1405,7 +1374,7 @@ public class Zone {
 		// timer.
 		for(int i=1; i<_indexToTimer.length; i++)
 		{
-			if(getdbm(0, i) >= -1 * getLowerBoundbydbmIndex(i))
+			if(getDbmEntry(0, i) >= -1 * getLowerBoundbydbmIndex(i))
 			{
 				enabledTransitions.add(_indexToTransition.get(_indexToTimer[i]));
 			}
@@ -1414,7 +1383,31 @@ public class Zone {
 		return enabledTransitions;
 	}
 	
+	/* (non-Javadoc)
+	 * @see verification.timed_state_exploration.zone.ZoneType#getLexicon()
+	 */
+	public HashMap<Integer, Transition> getLexicon(){
+		if(_indexToTransition == null){
+			return null;
+		}
+		
+		return new HashMap<Integer, Transition>(_indexToTransition);
+	}
 	
+	public void setLexicon(HashMap<Integer, Transition> lexicon){
+		_indexToTransition = lexicon;
+	}
+	
+	/**
+	 * Gives an array that maps the index of a timer in the DBM to the timer's index.
+	 * @return
+	 * 		The array that maps the index of a timer in the DBM to the timer's index.
+	 */
+	public int[] getIndexToTimer(){
+		return Arrays.copyOf(_indexToTimer, _indexToTimer.length);
+	}
+	
+	//----------------------Inner Classes-----------------------------------------------
 	/**
 	 * The DiagonalNonZeroException extends the java.lang.RuntimerExpcetion. 
 	 * The intention is for this exception to be thrown is a Zone has a non zero
@@ -1476,19 +1469,19 @@ public class Zone {
 		// in _zone1.
 		
 		private int _timer;
-		private Zone _zone1;
+		private ZoneType _zone1;
 		private int _index1;
-		private Zone _zone2;
+		private ZoneType _zone2;
 		private int _index2;
 		
-		public ZoneTriple (int timer, Zone zone, int index)
+		public ZoneTriple (int timer, ZoneType zone, int index)
 		{
 			_timer = timer;
 			_zone1 = zone;
 			_index1 = index;
 		}
 		
-		public ZoneTriple(int timer, Zone zone1, int index1, Zone zone2, int index2)
+		public ZoneTriple(int timer, ZoneType zone1, int index1, ZoneType zone2, int index2)
 		{
 			_timer = timer;
 			_zone1 = zone1;
@@ -1498,12 +1491,12 @@ public class Zone {
 		}
 		
 		@SuppressWarnings("unused")
-		public Zone get_zone1() {
+		public ZoneType get_zone1() {
 			return _zone1;
 		}
 
 		@SuppressWarnings("unused")
-		public void set_zone1(Zone _zone1) {
+		public void set_zone1(ZoneType _zone1) {
 			this._zone1 = _zone1;
 		}
 
@@ -1518,12 +1511,12 @@ public class Zone {
 		}
 
 		@SuppressWarnings("unused")
-		public Zone get_zone2() {
+		public ZoneType get_zone2() {
 			return _zone2;
 		}
 
 		@SuppressWarnings("unused")
-		public void set_zone2(Zone _zone2) {
+		public void set_zone2(ZoneType _zone2) {
 			this._zone2 = _zone2;
 		}
 
@@ -1653,7 +1646,78 @@ public class Zone {
 				
 				result += " |\n";
 			}
+			
+			System.err.println(result);
+		}
+	}	
+	
+	/**
+	 * Tests the ZoneGraph storage.
+	 * @param z
+	 * 		Zone to test.
+	 */
+	public void testZoneGraphMinimization(Zone z, boolean popUp){
+
+		ZoneGraph g = ZoneGraph.extractZoneGraph(z);
+		
+		Zone returnedZone = g.extractZone();
+		
+		
+		if(!z.equals(returnedZone)){
+			if(!_FAILURE)
+			{
+				// This is the first failure.
+				_FAILURE = !_FAILURE;
+
+				if(popUp)
+				{
+					JOptionPane.showMessageDialog(null, "A zone graph failure occured." +
+					"See the standard error for more.");
+				}
+			}
+
+			System.err.println("Method failed for zone:\n" + z);
 		}
 	}
 	
+	/**
+	 * Create a dot file for a graph representing a zone. The graph is a complement graph
+	 * on the number of timers. Each timer is a node and the edge from ti to tj is given
+	 * the weight x if the (i,j) entry of the DBM is x.
+	 * @param write
+	 */
+	public void toDot(PrintStream writer){
+		// Write the dot file header.
+		writer.println("digraph G {");
+		
+		// Print the edges.
+		for(int i=0; i<dbmSize(); i++){
+			for(int j=0; j<dbmSize(); j++){
+				
+				// No self loops.
+				if(i == j){
+					continue;
+				}
+				
+				String edge = "";
+				
+				edge += "\"t" + _indexToTimer[i] + "\"";
+
+				
+				writer.println("\"t" + _indexToTimer[i] + "\"" + " -> " + 
+						"\"t" + _indexToTimer[j] + "\"" + 
+						"[label=\"" + getDbmEntry(i,j) + "\"];");
+			}
+		}
+		
+		// Terminate the main block
+		writer.print("}");
+	}
+	
+	/**
+	 * Clears out the lexicon.
+	 */
+	public static void clearLexicon(){
+		_indexToTransition = null;
+	}
 }

@@ -67,11 +67,31 @@ public class StateGraph_timed extends StateGraph{
 				 j++;
 			 }
 			 
-			 Zone newZone = ((TimedState) curStateArray[i]).getZone()
-			 		.fireTransitionbyTransitionIndex(firedTran.getIndex(),
-			 				tranArray, newState[i]);
+			 TimedState ts = (TimedState) curStateArray[i];
 			 
-			 newTimedStates[i] = new TimedState(newState[i], newZone);
+			 
+			 if(ts.usingGraphs()){
+				 ZoneType newZone = ts.getZoneGraph().extractZone()
+				 		.fireTransitionbyTransitionIndex(firedTran.getIndex(),
+			 				tranArray, newState[i]);
+				 
+				 newTimedStates[i] = new TimedState(newState[i], newZone, true);
+				 
+			 }
+			 else{
+				 ZoneType newZone = ts.getZone()
+				 	.fireTransitionbyTransitionIndex(firedTran.getIndex(),
+			 				tranArray, newState[i]);
+				 
+				 newTimedStates[i] = new TimedState(newState[i], newZone, false);
+			 }
+//			 ZoneType newZone = ((TimedState) curStateArray[i]).getZone()
+//			 		.fireTransitionbyTransitionIndex(firedTran.getIndex(),
+//			 				tranArray, newState[i]);
+			 
+			 
+			 
+//			 newTimedStates[i] = new TimedState(newState[i], newZone);
 		 }
 		 
 		 
@@ -81,14 +101,18 @@ public class StateGraph_timed extends StateGraph{
 
 
 
-	public TimedState getInitStateTimed() {
+	public TimedState getInitStateTimed(boolean usegraph) {
 		
 		State initialStateNoTime = getInitState();
 		
 		// TODO Auto-generated method stub
 		// Adds the zone factor.
-		
-		return new TimedState(initialStateNoTime);
+		if(usegraph){
+			return new TimedState(initialStateNoTime, true);
+		}
+		else{
+			return new TimedState(initialStateNoTime, false);
+		}
 	}
 	 
 	

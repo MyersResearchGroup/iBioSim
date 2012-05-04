@@ -15,6 +15,7 @@ public class Project_Timed extends Project{
 
 	/* The list for timing analysis */
 	protected List<StateGraph_timed> designUnitTimedSet;
+	private boolean _useGraph;
 	
 	public Project_Timed() {
 		super();
@@ -39,8 +40,10 @@ public class Project_Timed extends Project{
 	 * 			True for timing analysis and false otherwise. The option should match
 	 * 			Options.getTimingAnalysisFlag().
 	 */
-	public Project_Timed(LhpnFile lpn, boolean OptionsFlag)
+	public Project_Timed(LhpnFile lpn, boolean OptionsFlag, boolean usegraph)
 	{
+		_useGraph = usegraph;
+		
 		if(Options.getTimingAnalysisFlag())
 		{
 			this.label = "";
@@ -112,7 +115,7 @@ public class Project_Timed extends Project{
 			StateGraph_timed curSg = sgArray[index];
 			
 			// TODO: Does this method need to be different than getInitState()
-			initStateArray[index] = curSg.getInitStateTimed(); //curLpn.getInitState();
+			initStateArray[index] = curSg.getInitStateTimed(_useGraph); //curLpn.getInitState();
 			int[] curStateVector = initStateArray[index].getVector();
 			varValMap = curLpn.getAllVarsWithValues(curStateVector);
 //			HashMap<String, String> vars = curLpn.getAllOutputs();//curLpn.getAllOutputs();
