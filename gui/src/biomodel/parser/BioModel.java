@@ -4665,12 +4665,12 @@ public class BioModel {
 		}
 	}
 	
-	private String prepareReplacement(String newName,BioModel subBioModel,String subModelId,CompSBasePlugin sbmlSBase,
-			String subId,String id) {
+	private String prepareReplacement(String newName,BioModel subBioModel,String subModelId,String replacementModelId,
+			CompSBasePlugin sbmlSBase,String subId,String id) {
 
 		for (long k = 0; k < sbmlSBase.getNumReplacedElements(); k++) {
 			ReplacedElement replacement = sbmlSBase.getReplacedElement(k);
-			if (replacement.getSubmodelRef().equals(subModelId)) {
+			if (replacement.getSubmodelRef().equals(replacementModelId)) {
 				if (replacement.isSetPortRef()) {
 					Port port = subBioModel.getSBMLCompModel().getPort(replacement.getPortRef());
 					if (port != null && subId.equals(port.getIdRef())) {
@@ -4686,7 +4686,7 @@ public class BioModel {
 		}
 		if (sbmlSBase.isSetReplacedBy()) {
 			Replacing replacement = sbmlSBase.getReplacedBy();
-			if (replacement.getSubmodelRef().equals(subModelId)) {
+			if (replacement.getSubmodelRef().equals(replacementModelId)) {
 				if (replacement.isSetPortRef()) {
 					Port port = subBioModel.getSBMLCompModel().getPort(replacement.getPortRef());
 					if (port != null && subId.equals(port.getIdRef())) {
@@ -4766,7 +4766,7 @@ public class BioModel {
 			String newName = subModelId + "__" + c.getId();
 			for (long j = 0; j < model.getNumCompartments(); j++) {
 				CompSBasePlugin sbmlSBase = (CompSBasePlugin)model.getCompartment(j).getPlugin("comp");
-				newName = prepareReplacement(newName,subBioModel,replacementModelId,sbmlSBase,c.getId(),
+				newName = prepareReplacement(newName,subBioModel,subModelId,replacementModelId,sbmlSBase,c.getId(),
 						model.getCompartment(j).getId());
 			}
 			updateVarId(false, c.getId(), newName, subBioModel);
@@ -4815,7 +4815,7 @@ public class BioModel {
 			String newName = subModelId + "__" + spec.getId();
 			for (long j = 0; j < model.getNumSpecies(); j++) {
 				CompSBasePlugin sbmlSBase = (CompSBasePlugin)model.getSpecies(j).getPlugin("comp");
-				newName = prepareReplacement(newName,subBioModel,replacementModelId,sbmlSBase,spec.getId(),
+				newName = prepareReplacement(newName,subBioModel,subModelId,replacementModelId,sbmlSBase,spec.getId(),
 						model.getSpecies(j).getId());
 			}
 			if (subBioModel.getPromoters().contains(spec.getId())) {
@@ -4865,7 +4865,7 @@ public class BioModel {
 			String newName = subModelId + "__" + p.getId();
 			for (long j = 0; j < model.getNumParameters(); j++) {
 				CompSBasePlugin sbmlSBase = (CompSBasePlugin)model.getParameter(j).getPlugin("comp");
-				newName = prepareReplacement(newName,subBioModel,replacementModelId,sbmlSBase,p.getId(),
+				newName = prepareReplacement(newName,subBioModel,subModelId,replacementModelId,sbmlSBase,p.getId(),
 						model.getParameter(j).getId());
 			}
 			updateVarId(false, p.getId(), newName, subBioModel);
@@ -4907,7 +4907,7 @@ public class BioModel {
 			String newName = subModelId + "__" + r.getId();
 			for (long j = 0; j < model.getNumReactions(); j++) {
 				CompSBasePlugin sbmlSBase = (CompSBasePlugin)model.getReaction(j).getPlugin("comp");
-				newName = prepareReplacement(newName,subBioModel,replacementModelId,sbmlSBase,r.getId(),
+				newName = prepareReplacement(newName,subBioModel,subModelId,replacementModelId,sbmlSBase,r.getId(),
 						model.getReaction(j).getId());
 			}
 			updateVarId(false, r.getId(), newName, subBioModel);
