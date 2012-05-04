@@ -2238,7 +2238,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		String comp = null;
 		if (list.getSelectedValue() != null && tryEdit) {
 			selected = list.getSelectedValue().toString();
-			comp = selected.split(" ")[1] + ".gcm";
+			comp = selected.split(" ")[1] + ".xml";
 		}
 		else {
 			ArrayList<String> components = getComponentsList();
@@ -2246,13 +2246,13 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			if (components.size() == 0) {
 				comp = null;
 				JOptionPane.showMessageDialog(Gui.frame,
-						"There aren't any other gcms to use as components."
-								+ "\nCreate a new gcm or import a gcm into the project first.",
-						"Add Another GCM To The Project", JOptionPane.ERROR_MESSAGE);
+						"There aren't any other models to use as components."
+								+ "\nCreate a new model or import a model into the project first.",
+						"Add Another Model To The Project", JOptionPane.ERROR_MESSAGE);
 			}
 			else {
 				comp = (String) JOptionPane.showInputDialog(Gui.frame,
-						"Choose a gcm to use as a component:", "Component Editor",
+						"Choose a model to use as a component:", "Component Editor",
 						JOptionPane.PLAIN_MESSAGE, null, components.toArray(new String[0]), null);
 			}
 		}

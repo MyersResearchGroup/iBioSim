@@ -13,16 +13,11 @@ import javax.swing.JPanel;
 
 import org.sbml.libsbml.CompSBasePlugin;
 import org.sbml.libsbml.Compartment;
-import org.sbml.libsbml.Constraint;
 import org.sbml.libsbml.Deletion;
-import org.sbml.libsbml.Event;
-import org.sbml.libsbml.InitialAssignment;
 import org.sbml.libsbml.Parameter;
-import org.sbml.libsbml.RateRule;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.ReplacedElement;
 import org.sbml.libsbml.Replacing;
-import org.sbml.libsbml.Rule;
 import org.sbml.libsbml.SBase;
 import org.sbml.libsbml.SBaseList;
 import org.sbml.libsbml.Species;
@@ -55,7 +50,7 @@ public class ComponentsPanel extends JPanel {
 
 	private ArrayList<JComboBox> directionBox = null;
 
-	private BioModel gcm = null;
+	private BioModel bioModel = null;
 
 	private PropertyList componentsList = null;
 
@@ -65,13 +60,13 @@ public class ComponentsPanel extends JPanel {
 	
 	private ModelEditor gcmEditor;
 
-	public ComponentsPanel(String selected, PropertyList componentsList, BioModel gcm, ArrayList<String> ports, 
+	public ComponentsPanel(String selected, PropertyList componentsList, BioModel bioModel, ArrayList<String> ports, 
 			String selectedComponent, String oldPort, boolean paramsOnly, ModelEditor gcmEditor) {
 		
 		super(new GridLayout(ports.size() + 2, 1));
 		this.selected = selected;
 		this.componentsList = componentsList;
-		this.gcm = gcm;
+		this.bioModel = bioModel;
 		this.gcmEditor = gcmEditor;
 		this.selectedComponent = selectedComponent;
 		this.oldPort = oldPort;
@@ -87,7 +82,7 @@ public class ComponentsPanel extends JPanel {
 		directions[0] = "<--";
 		directions[1] = "-->";
 		
-		ArrayList <String> compartmentList = gcm.getCompartments();
+		ArrayList <String> compartmentList = bioModel.getCompartments();
 		Collections.sort(compartmentList);
 		String[] compsWithNone = new String[compartmentList.size() + 2];
 		compsWithNone[0] = "--none--";
@@ -110,7 +105,7 @@ public class ComponentsPanel extends JPanel {
 			}
 		}
 		
-		ArrayList <String> parameterList = gcm.getParameters();
+		ArrayList <String> parameterList = bioModel.getParameters();
 		Collections.sort(parameterList);
 		String[] paramsWithNone = new String[parameterList.size() + 2];
 		paramsWithNone[0] = "--none--";
@@ -133,7 +128,7 @@ public class ComponentsPanel extends JPanel {
 			}
 		}
 		
-		ArrayList <String> speciesList = gcm.getSpecies();
+		ArrayList <String> speciesList = bioModel.getSpecies();
 		Collections.sort(speciesList);
 		String[] specsWithNone = new String[speciesList.size() + 2];
 		specsWithNone[0] = "--none--";
@@ -156,7 +151,7 @@ public class ComponentsPanel extends JPanel {
 			}
 		}
 		
-		ArrayList <String> reactionList = gcm.getReactions();
+		ArrayList <String> reactionList = bioModel.getReactions();
 		Collections.sort(reactionList);
 		String[] reactionsWithNone = new String[reactionList.size() + 2];
 		reactionsWithNone[0] = "--none--";
@@ -264,7 +259,7 @@ public class ComponentsPanel extends JPanel {
 			tempPanel.add(portmapBox.get(i));
 			add(tempPanel);
 		}
-		SBaseList elements = gcm.getSBMLDocument().getModel().getListOfAllElements();
+		SBaseList elements = bioModel.getSBMLDocument().getModel().getListOfAllElements();
 		for (long j = 0; j < elements.getSize(); j++) {
 			SBase sbase = elements.get(j);
 			CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getPlugin("comp");
@@ -314,7 +309,7 @@ public class ComponentsPanel extends JPanel {
 			getPortMap(sbmlSBase,event.getId());
 		}
 		*/
-		Submodel instance = gcm.getSBMLCompModel().getSubmodel(selected);
+		Submodel instance = bioModel.getSBMLCompModel().getSubmodel(selected);
 		if (instance!=null) {
 			for (long j = 0; j < instance.getNumDeletions(); j++) {
 				Deletion deletion = instance.getDeletion(j);
@@ -400,23 +395,23 @@ public class ComponentsPanel extends JPanel {
 				return false;
 			}
 			if (oldName == null) {
-				if (gcm.isSIdInUse((String)fields.get(GlobalConstants.ID).getValue())) {
+				if (bioModel.isSIdInUse((String)fields.get(GlobalConstants.ID).getValue())) {
 					Utility.createErrorMessage("Error", "Id already exists.");
 					return false;
 				}
 			}
 			else if (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
-				if (gcm.isSIdInUse((String)fields.get(GlobalConstants.ID).getValue())) {
+				if (bioModel.isSIdInUse((String)fields.get(GlobalConstants.ID).getValue())) {
 					Utility.createErrorMessage("Error", "Id already exists.");
 					return false;
 				}
 			}
 			String id = fields.get(GlobalConstants.ID).getValue();
 			if (selected != null && !oldName.equals(id)) {
-				gcm.changeComponentName(oldName, id);
+				bioModel.changeComponentName(oldName, id);
 			}
 
-			Submodel instance = gcm.getSBMLCompModel().getSubmodel(selected);
+			Submodel instance = bioModel.getSBMLCompModel().getSubmodel(selected);
 			if (instance != null) {
 				long k = 0;
 				while (k < instance.getNumDeletions()) {
@@ -428,23 +423,23 @@ public class ComponentsPanel extends JPanel {
 					}
 				}
 			}
-			for (long i = 0; i < gcm.getSBMLDocument().getModel().getNumCompartments(); i++) {
-				Compartment compartment = gcm.getSBMLDocument().getModel().getCompartment(i);
+			for (long i = 0; i < bioModel.getSBMLDocument().getModel().getNumCompartments(); i++) {
+				Compartment compartment = bioModel.getSBMLDocument().getModel().getCompartment(i);
 				CompSBasePlugin sbmlSBase = (CompSBasePlugin)compartment.getPlugin("comp");
 				removePortMaps(sbmlSBase);
 			}
-			for (long i = 0; i < gcm.getSBMLDocument().getModel().getNumParameters(); i++) {
-				Parameter parameter = gcm.getSBMLDocument().getModel().getParameter(i);
+			for (long i = 0; i < bioModel.getSBMLDocument().getModel().getNumParameters(); i++) {
+				Parameter parameter = bioModel.getSBMLDocument().getModel().getParameter(i);
 				CompSBasePlugin sbmlSBase = (CompSBasePlugin)parameter.getPlugin("comp");
 				removePortMaps(sbmlSBase);
 			}
-			for (long i = 0; i < gcm.getSBMLDocument().getModel().getNumSpecies(); i++) {
-				Species species = gcm.getSBMLDocument().getModel().getSpecies(i);
+			for (long i = 0; i < bioModel.getSBMLDocument().getModel().getNumSpecies(); i++) {
+				Species species = bioModel.getSBMLDocument().getModel().getSpecies(i);
 				CompSBasePlugin sbmlSBase = (CompSBasePlugin)species.getPlugin("comp");
 				removePortMaps(sbmlSBase);
 			}
-			for (long i = 0; i < gcm.getSBMLDocument().getModel().getNumReactions(); i++) {
-				Reaction reaction = gcm.getSBMLDocument().getModel().getReaction(i);
+			for (long i = 0; i < bioModel.getSBMLDocument().getModel().getNumReactions(); i++) {
+				Reaction reaction = bioModel.getSBMLDocument().getModel().getReaction(i);
 				CompSBasePlugin sbmlSBase = (CompSBasePlugin)reaction.getPlugin("comp");
 				removePortMaps(sbmlSBase);
 			}
@@ -455,16 +450,16 @@ public class ComponentsPanel extends JPanel {
 				if (!portmapId.equals("--none--")&&!portmapId.equals("--delete--")&&!portmapId.equals("--include--")) {
 					CompSBasePlugin sbmlSBase = null;
 					if (type.equals(GlobalConstants.COMPARTMENT)) {
-						Compartment compartment = gcm.getSBMLDocument().getModel().getCompartment(portmapId);
+						Compartment compartment = bioModel.getSBMLDocument().getModel().getCompartment(portmapId);
 						sbmlSBase = (CompSBasePlugin)compartment.getPlugin("comp");
 					} else if (type.equals(GlobalConstants.PARAMETER)) {
-						Parameter parameter = gcm.getSBMLDocument().getModel().getParameter(portmapId);
+						Parameter parameter = bioModel.getSBMLDocument().getModel().getParameter(portmapId);
 						sbmlSBase = (CompSBasePlugin)parameter.getPlugin("comp");
 					} else if (type.equals(GlobalConstants.SBMLSPECIES)) {
-						Species species = gcm.getSBMLDocument().getModel().getSpecies(portmapId);
+						Species species = bioModel.getSBMLDocument().getModel().getSpecies(portmapId);
 						sbmlSBase = (CompSBasePlugin)species.getPlugin("comp");
 					} else if (type.equals(GlobalConstants.SBMLREACTION)) {
-						Reaction reaction = gcm.getSBMLDocument().getModel().getReaction(portmapId);
+						Reaction reaction = bioModel.getSBMLDocument().getModel().getReaction(portmapId);
 						sbmlSBase = (CompSBasePlugin)reaction.getPlugin("comp");
 					}
 					if (sbmlSBase != null) {
@@ -479,15 +474,15 @@ public class ComponentsPanel extends JPanel {
 						}
 					}
 				} else if (portmapId.equals("--delete--")) {
-					Submodel submodel = gcm.getSBMLCompModel().getSubmodel(id);
+					Submodel submodel = bioModel.getSBMLCompModel().getSubmodel(id);
 					Deletion deletion = submodel.createDeletion();
 					deletion.setPortRef(portId);
 				}
 			}
-			String newPort = gcm.getComponentPortMap(id);
-			componentsList.removeItem(oldName + " " + selectedComponent.replace(".gcm", "") + " " + oldPort);
-			componentsList.addItem(id + " " + selectedComponent.replace(".gcm", "") + " " + newPort);
-			componentsList.setSelectedValue(id + " " + selectedComponent.replace(".gcm", "") + " " + newPort, true);
+			String newPort = bioModel.getComponentPortMap(id);
+			componentsList.removeItem(oldName + " " + selectedComponent.replace(".xml", "") + " " + oldPort);
+			componentsList.addItem(id + " " + selectedComponent.replace(".xml", "") + " " + newPort);
+			componentsList.setSelectedValue(id + " " + selectedComponent.replace(".xml", "") + " " + newPort, true);
 			gcmEditor.setDirty(true);
 		}
 		else if (value == JOptionPane.NO_OPTION) {
