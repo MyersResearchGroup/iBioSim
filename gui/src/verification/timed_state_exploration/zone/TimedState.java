@@ -27,7 +27,13 @@ public class TimedState extends State{
 	// adds a Zone for keeping track of timing relations.
 	
 	// A Zone for keeping track timing information.
-	private Zone _zone;
+	private ZoneType _zone;
+	
+	// A ZoneGraph for storing a zone.
+	private ZoneGraph _graph;
+	
+	// Variable that determines whether zones or graph are being used.
+	private boolean _useGraph;
 
 	// The state that this TimingState extends.
 	private State _state;
@@ -85,7 +91,12 @@ public class TimedState extends State{
 	@Override
 	public TimedState clone() {
 		// TODO: Ensure that the new TimedState contains its own copy of the zone.
-		return new TimedState(_state, _zone);
+		if(_useGraph){
+			return new TimedState(_state, _zone, true);
+		}
+		else{
+			return new TimedState(_state, _zone, false);
+		}
 	}
 
 	@Override
@@ -116,8 +127,12 @@ public class TimedState extends State{
 		
 		if(!_state.equals(other._state))
 			return false;
-		
-		return _zone.equals(other._zone);
+		if(_useGraph){
+			return _graph.equals(other._graph);
+		}
+		else{
+			return _zone.equals(other._zone);
+		}
 	}
 
 	@Override
@@ -201,13 +216,24 @@ public class TimedState extends State{
 	}
 
 	public TimedState(LhpnFile lpn, int[] new_marking, int[] new_vector,
-			boolean[] new_isTranEnabled) {
+			boolean[] new_isTranEnabled, boolean usegraph) {
 		super(lpn, new_marking, new_vector, new_isTranEnabled);
 		// TODO Find a way to remove the super call. 
 		
 		_state = new State(lpn, new_marking, new_vector, new_isTranEnabled);
 		
-		_zone = new Zone(new State(lpn, new_marking, new_vector, new_isTranEnabled));
+		_useGraph = usegraph;
+		
+		//_zone = new Zone(new State(lpn, new_marking, new_vector, new_isTranEnabled));
+		
+		Zone newZone = new Zone(new State(lpn, new_marking, new_vector, new_isTranEnabled));
+		
+		if(usegraph){
+			_graph = ZoneGraph.extractZoneGraph(newZone);
+		}
+		else{
+			_zone = newZone;
+		}
 		
 		_state.setTimeExtension(this);
 	}
@@ -217,38 +243,77 @@ public class TimedState extends State{
 	 * @param other
 	 * 			The current state.
 	 */
-	public TimedState(State other) {
+	public TimedState(State other, boolean usegraph) {
 		super(other);
 		// TODO Find a way to remove the super call.
 		
 		_state = other;
-		_zone = new Zone(other);
+		
+		_useGraph = usegraph;
+
+		//_zone = new Zone(other);
+		
+		Zone newZone = new Zone(other);
+		
+		if(usegraph){
+			_graph = ZoneGraph.extractZoneGraph(newZone);
+		}
+		else{
+			_zone = newZone;
+		}
 		
 		_state.setTimeExtension(this);
 	}
 	
-	public TimedState(State s, Zone z)
+	public TimedState(State s, ZoneType z, boolean usegraph)
 	{
 		super(s);
 		// TODO: Find a way to remove the super call.
 		_state = s;
-		_zone = z.clone();
+		
+		_useGraph = usegraph;
+		
+		if(usegraph && (z instanceof Zone)){
+			_graph = ZoneGraph.extractZoneGraph((Zone) z);
+		}
+		else{
+			_zone = z.clone();
+		}
 		_state.setTimeExtension(this);
 	}
 	
 	public String toString()
 	{
-		return _state.toString() + "\n" + _zone;
+		if(_useGraph){
+			return _state.toString() + "\n" + _graph;
+		}
+		else{
+			return _state.toString() + "\n" + _zone;
+		}
 	}
 	
 	public List<Transition> getEnabledTransitionByZone()
 	{
-		return _zone.getEnabledTransitions();
+		if(_useGraph){
+			return _graph.extractZone().getEnabledTransitions();
+		}
+		else{
+			return _zone.getEnabledTransitions();
+		}
 	}
 	
-	public Zone getZone()
+	public ZoneType getZone()
 	{
-		return _zone;
+		if(_useGraph){
+			return _graph.extractZone();
+		}
+		else{
+			return _zone;
+		}
+	}
+	
+	public ZoneGraph getZoneGraph(){
+		return _graph;
 	}
 
 	public State getState()
@@ -256,4 +321,8 @@ public class TimedState extends State{
 		return _state;
 	}
 	
+	
+	public boolean usingGraphs(){
+		return _useGraph;
+	}
 }
