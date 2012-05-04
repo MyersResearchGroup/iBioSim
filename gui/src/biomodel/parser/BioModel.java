@@ -1123,10 +1123,10 @@ public class BioModel {
 			product.setSpecies(s);
 			product.setStoichiometry(1);
 			product.setConstant(true);		
+			r.createKineticLaw();
 		}
-		r.createKineticLaw();
 		if (KcStr != null && KcStr.startsWith("(")) {
-			KineticLaw k = r.createKineticLaw();
+			KineticLaw k = r.getKineticLaw();
 			LocalParameter p = k.createLocalParameter();
 			p.setId(GlobalConstants.FORWARD_KCOMPLEX_STRING);
 			p.setValue(1.0);
@@ -1137,7 +1137,7 @@ public class BioModel {
 		} else {
 			double [] Kc = Utility.getEquilibrium(KcStr); 
 			if (Kc[0] >= 0) { 	
-				KineticLaw k = r.createKineticLaw();
+				KineticLaw k = r.getKineticLaw();
 				LocalParameter p = k.createLocalParameter();
 				p.setId(GlobalConstants.FORWARD_KCOMPLEX_STRING);
 				p.setValue(Kc[0]);
@@ -2885,7 +2885,10 @@ public class BioModel {
 				if (annotations[i].startsWith(GlobalConstants.TYPE)) {
 					String [] type = annotations[i].split("=");
 					if (sbmlCompModel!=null) {
-						if (type[1].equals(GlobalConstants.INPUT)) {
+						if (type.length < 2) {
+							species.unsetAnnotation();
+							return GlobalConstants.INTERNAL;
+						} else if (type[1].equals(GlobalConstants.INPUT)) {
 							Port port = sbmlCompModel.createPort();
 							port.setId(GlobalConstants.INPUT+"__"+speciesId);
 							port.setIdRef(speciesId);
