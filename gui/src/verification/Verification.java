@@ -66,6 +66,7 @@ import verification.platu.project.Project;
 import verification.platu.stategraph.StateGraph;
 import verification.timed_state_exploration.zone.Project_Timed;
 import verification.timed_state_exploration.zone.StateGraph_timed;
+import verification.timed_state_exploration.zone.Zone;
 import biomodel.gui.PropertyList;
 import biomodel.util.Utility;
 
@@ -98,7 +99,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	private JCheckBox abst, partialOrder, dot, verbose, graph, untimedPOR, decomposeLPN, multipleLPNs, genrg,
 			timsubset, superset, infopt, orbmatch, interleav, prune, disabling,
 			nofail, noproj, keepgoing, explpn, nochecks, reduction, newTab,
-			postProc, redCheck, xForm2, expandRate;
+			postProc, redCheck, xForm2, expandRate, useGraphs;
 
 	private JTextField bddSize, backgroundField, componentField;
 	
@@ -301,6 +302,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		noproj = new JCheckBox("No project");
 		keepgoing = new JCheckBox("Keep going");
 		explpn = new JCheckBox("Expand LPN");
+		useGraphs = new JCheckBox("Use Graph Storage");
 		genrg.addActionListener(this);
 		timsubset.addActionListener(this);
 		superset.addActionListener(this);
@@ -313,6 +315,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		noproj.addActionListener(this);
 		keepgoing.addActionListener(this);
 		explpn.addActionListener(this);
+		useGraphs.addActionListener(this);
 		// Other Advanced Options
 		nochecks = new JCheckBox("No checks");
 		reduction = new JCheckBox("Reduction");
@@ -446,6 +449,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		advTimingPanel.add(noproj);
 		advTimingPanel.add(keepgoing);
 		advTimingPanel.add(explpn);
+		advTimingPanel.add(useGraphs);
 
 		advancedPanel.add(otherOptions2);
 		advancedPanel.add(nochecks);
@@ -1483,7 +1487,12 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				 */
 				Options.setTimingAnalsysisType("zone");
 
-				Project_Timed timedStateSearch = new Project_Timed(lpn, Options.getTimingAnalysisFlag());
+				Project_Timed timedStateSearch = new Project_Timed(lpn, 
+						Options.getTimingAnalysisFlag(), false);
+				if(useGraphs.isSelected()){
+					timedStateSearch = new Project_Timed(lpn, 
+							Options.getTimingAnalysisFlag(), true);
+				}
 				StateGraph_timed[] stateGraphArray = timedStateSearch.search();
 				String graphFileName = verifyFile.replace(".lpn", "") + "_sg.dot";
 				if (stateGraphArray.length > 1) {
@@ -1503,6 +1512,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				}
 			
 				Options.setTimingAnalsysisType("off");
+				Zone.clearLexicon();
 			}
 			return;
 		}
