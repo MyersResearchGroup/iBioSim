@@ -945,9 +945,9 @@ public class Analysis {
 			else
 				fileName = Options.getPrjSgPath() + Options.getLogName() + "_full" + ".log";
 			BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
-			out.write("tranFiringCnt prjStateCnt maxStackDepth peakTotalMem peakUsedMem \n");
+			out.write("tranFiringCnt" + "\t" + "prjStateCnt" + "\t" + "maxStackDepth" + "\t" + "peakTotalMem(MB)" + "\t" + "peakUsedMem(MB)\n");
 			out.write(tranFiringCnt + "\t" + totalStateCnt + "\t" + max_stack_depth + "\t" + peakTotalMem + "\t" 
-					+ peakTotalMem + "\n");
+					+ peakUsedMem + "\n");
 			out.close();
 		} 
 		catch (Exception e) {
