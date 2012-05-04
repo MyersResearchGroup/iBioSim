@@ -4288,28 +4288,30 @@ public class BioModel {
 	*/
 	
 	private void updatePorts() {
-		for (long i = 0; i < sbmlCompModel.getNumSubmodels(); i++) {
-			Submodel submodel = sbmlCompModel.getSubmodel(i);
-			int j = 0;
-			while (j < sbmlCompModel.getNumPorts()) {
-				Port port = sbmlCompModel.getPort(j);
-				if (port.isSetIdRef() && port.getIdRef().equals(submodel.getId())) {
-					port.removeFromParentAndDelete();
-				} else {
-					j++;
-				}
+		int j = 0;
+		while (j < sbmlCompModel.getNumPorts()) {
+			Port port = sbmlCompModel.getPort(j);
+			if (port.isSetSBaseRef()) {
+				port.removeFromParentAndDelete();
+			} else {
+				j++;
 			}
-			BioModel subBioModel = new BioModel(path);		
-			String extModelFile = sbmlComp.getExternalModelDefinition(submodel.getModelRef())
-					.getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
-			subBioModel.load(path + separator + extModelFile);
-			for (j = 0; j < subBioModel.getSBMLCompModel().getNumPorts(); j++) {
-				Port subPort = subBioModel.getSBMLCompModel().getPort(j);
-				Port port = sbmlCompModel.createPort();
-				port.setId(subPort.getId()+"__"+submodel.getId());
-				port.setIdRef(submodel.getId());
-				SBaseRef sbaseRef = port.createSBaseRef();
-				sbaseRef.setPortRef(subPort.getId());
+		}
+		if (!this.isGridEnabled()) {
+			for (long i = 0; i < sbmlCompModel.getNumSubmodels(); i++) {
+				Submodel submodel = sbmlCompModel.getSubmodel(i);
+				BioModel subBioModel = new BioModel(path);		
+				String extModelFile = sbmlComp.getExternalModelDefinition(submodel.getModelRef())
+						.getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
+				subBioModel.load(path + separator + extModelFile);
+				for (j = 0; j < subBioModel.getSBMLCompModel().getNumPorts(); j++) {
+					Port subPort = subBioModel.getSBMLCompModel().getPort(j);
+					Port port = sbmlCompModel.createPort();
+					port.setId(subPort.getId()+"__"+submodel.getId());
+					port.setIdRef(submodel.getId());
+					SBaseRef sbaseRef = port.createSBaseRef();
+					sbaseRef.setPortRef(subPort.getId());
+				}
 			}
 		}
 	}
@@ -4331,10 +4333,10 @@ public class BioModel {
 			}
 		} 
 		loadDefaultEnclosingCompartment();
-		updatePorts();
 		//updateCompartmentReplacements();
 		SBMLutilities.fillBlankMetaIDs(sbml);
 		loadGridSize();
+		updatePorts();
 	}
 
 	private void loadSBMLFromBuffer(StringBuffer buffer) {	
@@ -4617,8 +4619,7 @@ public class BioModel {
 		SBMLDocument subDocument = subBioModel.getSBMLDocument();
 		Model subModel = subDocument.getModel();
 		
-		// Execute deletions
-		Submodel instance = bioModel.getSBMLCompModel().getSubmodel(subModelId);
+		Submodel instance = bioModel.getSBMLCompModel().getSubmodel(subModelId);			
 		
 		if (instance == null)
 			return;
@@ -4666,6 +4667,7 @@ public class BioModel {
 	
 	private String prepareReplacement(String newName,BioModel subBioModel,String subModelId,CompSBasePlugin sbmlSBase,
 			String subId,String id) {
+
 		for (long k = 0; k < sbmlSBase.getNumReplacedElements(); k++) {
 			ReplacedElement replacement = sbmlSBase.getReplacedElement(k);
 			if (replacement.getSubmodelRef().equals(subModelId)) {
@@ -4709,6 +4711,11 @@ public class BioModel {
 
 		Model model = document.getModel();
 		Model subModel = subDocument.getModel();
+		
+		String replacementModelId = subModelId;
+		if (bioModel.isGridEnabled()) {
+			replacementModelId = "GRID__" + subModel.getId();
+		} 	
 
 		for (int i = 0; i < bioModel.getSBMLCompModel().getNumPorts(); i++) {
 			Port p = bioModel.getSBMLCompModel().getPort(i);
@@ -4725,7 +4732,7 @@ public class BioModel {
 			} 
 		}
 		
-		performDeletions(bioModel,subBioModel,subModelId);
+		performDeletions(bioModel,subBioModel,replacementModelId);
 		
 		// Rename compartment types
 		for (int i = 0; i < subModel.getNumCompartmentTypes(); i++) {
@@ -4759,7 +4766,8 @@ public class BioModel {
 			String newName = subModelId + "__" + c.getId();
 			for (long j = 0; j < model.getNumCompartments(); j++) {
 				CompSBasePlugin sbmlSBase = (CompSBasePlugin)model.getCompartment(j).getPlugin("comp");
-				newName = prepareReplacement(newName,subBioModel,subModelId,sbmlSBase,c.getId(),model.getCompartment(j).getId());
+				newName = prepareReplacement(newName,subBioModel,replacementModelId,sbmlSBase,c.getId(),
+						model.getCompartment(j).getId());
 			}
 			updateVarId(false, c.getId(), newName, subBioModel);
 			compartments.remove(c.getId());
@@ -4807,7 +4815,8 @@ public class BioModel {
 			String newName = subModelId + "__" + spec.getId();
 			for (long j = 0; j < model.getNumSpecies(); j++) {
 				CompSBasePlugin sbmlSBase = (CompSBasePlugin)model.getSpecies(j).getPlugin("comp");
-				newName = prepareReplacement(newName,subBioModel,subModelId,sbmlSBase,spec.getId(),model.getSpecies(j).getId());
+				newName = prepareReplacement(newName,subBioModel,replacementModelId,sbmlSBase,spec.getId(),
+						model.getSpecies(j).getId());
 			}
 			if (subBioModel.getPromoters().contains(spec.getId())) {
 				subBioModel.changePromoterId(spec.getId(), newName);
@@ -4856,7 +4865,8 @@ public class BioModel {
 			String newName = subModelId + "__" + p.getId();
 			for (long j = 0; j < model.getNumParameters(); j++) {
 				CompSBasePlugin sbmlSBase = (CompSBasePlugin)model.getParameter(j).getPlugin("comp");
-				newName = prepareReplacement(newName,subBioModel,subModelId,sbmlSBase,p.getId(),model.getParameter(j).getId());
+				newName = prepareReplacement(newName,subBioModel,replacementModelId,sbmlSBase,p.getId(),
+						model.getParameter(j).getId());
 			}
 			updateVarId(false, p.getId(), newName, subBioModel);
 			p.setId(newName);
@@ -4897,7 +4907,8 @@ public class BioModel {
 			String newName = subModelId + "__" + r.getId();
 			for (long j = 0; j < model.getNumReactions(); j++) {
 				CompSBasePlugin sbmlSBase = (CompSBasePlugin)model.getReaction(j).getPlugin("comp");
-				newName = prepareReplacement(newName,subBioModel,subModelId,sbmlSBase,r.getId(),model.getReaction(j).getId());
+				newName = prepareReplacement(newName,subBioModel,replacementModelId,sbmlSBase,r.getId(),
+						model.getReaction(j).getId());
 			}
 			updateVarId(false, r.getId(), newName, subBioModel);
 			r.setId(newName);

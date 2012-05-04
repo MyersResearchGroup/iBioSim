@@ -59,6 +59,8 @@ public class ComponentsPanel extends JPanel {
 	private String selectedComponent, oldPort;
 	
 	private ModelEditor gcmEditor;
+	
+	private String subModelId;
 
 	public ComponentsPanel(String selected, PropertyList componentsList, BioModel bioModel, ArrayList<String> ports, 
 			String selectedComponent, String oldPort, boolean paramsOnly, ModelEditor gcmEditor) {
@@ -81,6 +83,13 @@ public class ComponentsPanel extends JPanel {
 		String[] directions = new String[2];
 		directions[0] = "<--";
 		directions[1] = "-->";
+		
+		
+		if (bioModel.isGridEnabled()) {
+			subModelId = "GRID__" + selectedComponent.replace(".xml","");
+		} else {
+			subModelId = selected;
+		}
 		
 		ArrayList <String> compartmentList = bioModel.getCompartments();
 		Collections.sort(compartmentList);
@@ -309,7 +318,7 @@ public class ComponentsPanel extends JPanel {
 			getPortMap(sbmlSBase,event.getId());
 		}
 		*/
-		Submodel instance = bioModel.getSBMLCompModel().getSubmodel(selected);
+		Submodel instance = bioModel.getSBMLCompModel().getSubmodel(subModelId);
 		if (instance!=null) {
 			for (long j = 0; j < instance.getNumDeletions(); j++) {
 				Deletion deletion = instance.getDeletion(j);
@@ -335,7 +344,7 @@ public class ComponentsPanel extends JPanel {
 	private void getPortMap(CompSBasePlugin sbmlSBase,String id) {
 		for (long k = 0; k < sbmlSBase.getNumReplacedElements(); k++) {
 			ReplacedElement replacement = sbmlSBase.getReplacedElement(k);
-			if (replacement.getSubmodelRef().equals(selected)) {
+			if (replacement.getSubmodelRef().equals(subModelId)) {
 				if (replacement.isSetPortRef()) {
 					int l = portIds.indexOf(replacement.getPortRef());
 					if (l >= 0) {
@@ -347,7 +356,7 @@ public class ComponentsPanel extends JPanel {
 		}
 		if (sbmlSBase.isSetReplacedBy()) {
 			Replacing replacement = sbmlSBase.getReplacedBy();
-			if (replacement.getSubmodelRef().equals(selected)) {
+			if (replacement.getSubmodelRef().equals(subModelId)) {
 				if (replacement.isSetPortRef()) {
 					int l = portIds.indexOf(replacement.getPortRef());
 					if (l >= 0) {
@@ -372,7 +381,7 @@ public class ComponentsPanel extends JPanel {
 		long j = 0;
 		while (j < sbmlSBase.getNumReplacedElements()) {
 			ReplacedElement replacement = sbmlSBase.getReplacedElement(j);
-			if (replacement.getSubmodelRef().equals(selected) && (replacement.isSetPortRef())) { 
+			if (replacement.getSubmodelRef().equals(subModelId) && (replacement.isSetPortRef())) { 
 				replacement.removeFromParentAndDelete();
 			} else {
 				j++;
@@ -380,7 +389,7 @@ public class ComponentsPanel extends JPanel {
 		}
 		if (sbmlSBase.isSetReplacedBy()) {
 			Replacing replacement = sbmlSBase.getReplacedBy();
-			if (replacement.getSubmodelRef().equals(selected) && (replacement.isSetPortRef())) {
+			if (replacement.getSubmodelRef().equals(subModelId) && (replacement.isSetPortRef())) {
 				replacement.removeFromParentAndDelete();
 			}
 		}
@@ -411,7 +420,7 @@ public class ComponentsPanel extends JPanel {
 				bioModel.changeComponentName(oldName, id);
 			}
 
-			Submodel instance = bioModel.getSBMLCompModel().getSubmodel(selected);
+			Submodel instance = bioModel.getSBMLCompModel().getSubmodel(subModelId);
 			if (instance != null) {
 				long k = 0;
 				while (k < instance.getNumDeletions()) {
@@ -444,6 +453,8 @@ public class ComponentsPanel extends JPanel {
 				removePortMaps(sbmlSBase);
 			}
 			for (int i = 0; i < portIds.size(); i++) {
+				String subId = id;
+				if (subModelId.startsWith("GRID__")) subId = subModelId;
 				String portId = portIds.get(i);
 				String type = types.get(i);
 				String portmapId = (String)portmapBox.get(i).getSelectedItem();
@@ -465,16 +476,16 @@ public class ComponentsPanel extends JPanel {
 					if (sbmlSBase != null) {
 						if (directionBox.get(i).getSelectedIndex()==0) {
 							ReplacedElement replacement = sbmlSBase.createReplacedElement();
-							replacement.setSubmodelRef(id);
+							replacement.setSubmodelRef(subId);
 							replacement.setPortRef(portId);
 						} else {
 							Replacing replacement = sbmlSBase.createReplacedBy();
-							replacement.setSubmodelRef(id);
+							replacement.setSubmodelRef(subId);
 							replacement.setPortRef(portId);
 						}
 					}
 				} else if (portmapId.equals("--delete--")) {
-					Submodel submodel = bioModel.getSBMLCompModel().getSubmodel(id);
+					Submodel submodel = bioModel.getSBMLCompModel().getSubmodel(subId);
 					Deletion deletion = submodel.createDeletion();
 					deletion.setPortRef(portId);
 				}
