@@ -265,11 +265,6 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			LinkedList<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(rule);
 			if (sbolURIs.size() > 0)
 				sbolField.setSBOLURIs(sbolURIs);
-			if (gcm.getPortByMetaIdRef(rule.getMetaId())!=null) {
-				onPort.setSelected(true);
-			} else {
-				onPort.setSelected(false);
-			}
 			if (rule.isSetMetaId()) {
 				id.setText(rule.getMetaId());
 			} else {
@@ -280,6 +275,11 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					ruleId = "rule" + cn;
 				}
 				id.setText(ruleId);
+			}
+			if (gcm.getPortByMetaIdRef(rule.getMetaId())!=null) {
+				onPort.setSelected(true);
+			} else {
+				onPort.setSelected(false);
 			}
 		}
 		else {
@@ -379,7 +379,6 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					String[] oldRul = rul.clone();
 					rules.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					Rule r = (Rule) (gcm.getSBMLDocument().getModel().getListOfRules()).get(Rindex);
-					r.setMetaId(id.getText().trim());
 					String addStr;
 					String oldVar = "";
 					String oldMath = SBMLutilities.myFormulaToString(r.getMath());
@@ -433,6 +432,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 						} else
 							AnnotationUtility.removeSBOLAnnotation(r);
 						Port port = gcm.getPortByMetaIdRef(r.getMetaId());
+						r.setMetaId(id.getText().trim());
 						if (port!=null) {
 							if (onPort.isSelected()) {
 								port.setId(GlobalConstants.RULE+"__"+r.getMetaId());
@@ -493,24 +493,24 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 						SBMLDocument sbmlDoc = gcm.getSBMLDocument();
 						if (ruleType.getSelectedItem().equals("Algebraic")) {
 							AlgebraicRule r = sbmlDoc.getModel().createAlgebraicRule();
+							r.setMetaId(id.getText().trim());
 							r.setMath(SBMLutilities.myParseFormula(ruleMath.getText().trim()));
-							SBMLutilities.setDefaultMetaID(sbmlDoc, r, 1);
 							SBMLutilities.checkOverDetermined(gcm.getSBMLDocument());
 							rPointer = r;
 						}
 						else if (ruleType.getSelectedItem().equals("Rate")) {
 							RateRule r = sbmlDoc.getModel().createRateRule();
+							r.setMetaId(id.getText().trim());
 							r.setVariable(addVar);
 							r.setMath(SBMLutilities.myParseFormula(ruleMath.getText().trim()));
-							SBMLutilities.setDefaultMetaID(sbmlDoc, r, 1);
 							error = checkRateRuleUnits(r);
 							rPointer = r;
 						}
 						else {
 							AssignmentRule r = sbmlDoc.getModel().createAssignmentRule();
+							r.setMetaId(id.getText().trim());
 							r.setVariable(addVar);
 							r.setMath(SBMLutilities.myParseFormula(ruleMath.getText().trim()));
-							SBMLutilities.setDefaultMetaID(sbmlDoc, r, 1);
 							error = checkAssignmentRuleUnits(r);
 							rPointer = r;
 						}
