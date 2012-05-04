@@ -215,7 +215,7 @@ public class Project {
 		float elapsedTimeSec = elapsedTimeMillis/1000F;
 		System.out.println("---> total runtime: " + elapsedTimeSec + " sec\n");
 		if (Options.getOutputLogFlag())
-			outputRuntimToLog(false, elapsedTimeSec);
+			outputRuntimeLog(false, elapsedTimeSec);
 		return stateGraphArray;
 	}
 
@@ -312,11 +312,11 @@ public class Project {
 		System.out.println("---> total runtime: " + elapsedTimeSec + " sec\n");
 		
 		if (Options.getOutputLogFlag())
-			outputRuntimToLog(true, elapsedTimeSec);
+			outputRuntimeLog(true, elapsedTimeSec);
 		return stateGraphArray;
 	}
 	
-	private void outputRuntimToLog(boolean isPOR, float runtime) {
+	private void outputRuntimeLog(boolean isPOR, float runtime) {
 		try {
 			String fileName = null;
 			if (isPOR)
@@ -326,6 +326,7 @@ public class Project {
 			else
 				fileName = Options.getPrjSgPath() + Options.getLogName() + "_full_runtime.log";
 			BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
+			out.write("runtime(sec)\n");
 			out.write(runtime + "\n");
 			out.close();
 		} 
