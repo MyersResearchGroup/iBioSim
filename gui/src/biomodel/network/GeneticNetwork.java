@@ -363,7 +363,7 @@ public class GeneticNetwork {
 		for (Promoter p : promoters.values()) {
 			// First setup RNAP binding
 			if (p.getOutputs().size()==0) continue;
-			String compartment = checkCompartments(p.getId());
+			String compartment = p.getCompartment();
 			String rnapName = "RNAP";
 			if (!compartment.equals(document.getModel().getCompartment(0).getId()))
 				rnapName = compartment + "__RNAP";
@@ -731,7 +731,7 @@ public class GeneticNetwork {
 	private void printPromoterProduction(SBMLDocument document) {
 		for (Promoter p : promoters.values()) {
 			if (p.getOutputs().size()==0) continue;
-			String compartment = checkCompartments(p.getId());
+			String compartment = p.getCompartment();
 			org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(Gui.SBML_LEVEL, Gui.SBML_VERSION);
 			r.setCompartment(compartment);
 			for (SpeciesInterface species : p.getOutputs()) {
@@ -814,7 +814,7 @@ public class GeneticNetwork {
 			if (p.getOutputs().size()==0) continue;
 			// First print out the promoter, and promoter bound to RNAP
 			// But first check if promoter belongs to a compartment other than default
-			String compartment = checkCompartments(p.getId());
+			String compartment = p.getCompartment();
 			Species s = Utility.makeSpecies(p.getId(), compartment,	p.getInitialAmount(), -1);
 			s.setHasOnlySubstanceUnits(true);
 			Utility.addSpecies(document, s);			

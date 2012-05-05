@@ -152,6 +152,7 @@ public class GCMParser {
 		}
 		Reaction production = sbml.getModel().getReaction(component+"Production_"+promoterId);
 		if (production != null) {
+			p.setCompartment(production.getCompartment());
 			if (production.getKineticLaw().getLocalParameter(GlobalConstants.ACTIVATED_STRING) != null) {
 				p.setKact(production.getKineticLaw().getLocalParameter(GlobalConstants.ACTIVATED_STRING).getValue());
 			} else {

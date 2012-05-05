@@ -12,15 +12,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.sbml.libsbml.CompSBasePlugin;
-import org.sbml.libsbml.Compartment;
 import org.sbml.libsbml.Deletion;
-import org.sbml.libsbml.Parameter;
-import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.ReplacedElement;
 import org.sbml.libsbml.Replacing;
 import org.sbml.libsbml.SBase;
 import org.sbml.libsbml.SBaseList;
-import org.sbml.libsbml.Species;
 import org.sbml.libsbml.Submodel;
 
 import biomodel.parser.BioModel;
@@ -84,7 +80,6 @@ public class ComponentsPanel extends JPanel {
 		directions[0] = "<--";
 		directions[1] = "-->";
 		
-		
 		if (bioModel.isGridEnabled()) {
 			subModelId = "GRID__" + selectedComponent.replace(".xml","");
 		} else {
@@ -100,9 +95,9 @@ public class ComponentsPanel extends JPanel {
 			compsWithNone[l] = compartmentList.get(l - 2);
 		}
 		for (int i = 0; i < ports.size(); i++) {
-			String portId = ports.get(i).split(":")[0];
-			String idRef = ports.get(i).split(":")[1];
-			String type = ports.get(i).split(":")[2];
+			String type = ports.get(i).split(":")[0];
+			String portId = ports.get(i).split(":")[1];
+			String idRef = ports.get(i).split(":")[2];
 			if (type.equals(GlobalConstants.COMPARTMENT)) {
 				portIds.add(portId);
 				idRefs.add(idRef);
@@ -123,9 +118,9 @@ public class ComponentsPanel extends JPanel {
 			paramsWithNone[l] = parameterList.get(l - 2);
 		}
 		for (int i = 0; i < ports.size(); i++) {
-			String portId = ports.get(i).split(":")[0];
-			String idRef = ports.get(i).split(":")[1];
-			String type = ports.get(i).split(":")[2];
+			String type = ports.get(i).split(":")[0];
+			String portId = ports.get(i).split(":")[1];
+			String idRef = ports.get(i).split(":")[2];
 			if (type.equals(GlobalConstants.PARAMETER)) {
 				portIds.add(portId);
 				idRefs.add(idRef);
@@ -146,9 +141,9 @@ public class ComponentsPanel extends JPanel {
 			specsWithNone[l] = speciesList.get(l - 2);
 		}
 		for (int i = 0; i < ports.size(); i++) {
-			String portId = ports.get(i).split(":")[0];
-			String idRef = ports.get(i).split(":")[1];
-			String type = ports.get(i).split(":")[2];
+			String type = ports.get(i).split(":")[0];
+			String portId = ports.get(i).split(":")[1];
+			String idRef = ports.get(i).split(":")[2];
 			if (type.equals(GlobalConstants.SBMLSPECIES)) {
 				portIds.add(portId);
 				idRefs.add(idRef);
@@ -169,9 +164,9 @@ public class ComponentsPanel extends JPanel {
 			reactionsWithNone[l] = reactionList.get(l - 2);
 		}
 		for (int i = 0; i < ports.size(); i++) {
-			String portId = ports.get(i).split(":")[0];
-			String idRef = ports.get(i).split(":")[1];
-			String type = ports.get(i).split(":")[2];
+			String type = ports.get(i).split(":")[0];
+			String portId = ports.get(i).split(":")[1];
+			String idRef = ports.get(i).split(":")[2];
 			if (type.equals(GlobalConstants.SBMLREACTION)) {
 				portIds.add(portId);
 				idRefs.add(idRef);
@@ -187,59 +182,13 @@ public class ComponentsPanel extends JPanel {
 		Choices[0] = "--include--";
 		Choices[1] = "--delete--";
 		for (int i = 0; i < ports.size(); i++) {
-			String portId = ports.get(i).split(":")[0];
-			String idRef = ports.get(i).split(":")[1];
-			String type = ports.get(i).split(":")[2];
-			if (type.equals(GlobalConstants.INITIAL_ASSIGNMENT)) {
+			String type = ports.get(i).split(":")[0];
+			String portId = ports.get(i).split(":")[1];
+			String idRef = ports.get(i).split(":")[2];
+			if (!type.equals(GlobalConstants.COMPARTMENT) && !type.equals(GlobalConstants.PARAMETER) &&
+				!type.equals(GlobalConstants.SBMLSPECIES) && !type.equals(GlobalConstants.SBMLREACTION)) {
 				portIds.add(portId);
 				idRefs.add(idRef.replace("init__",""));
-				types.add(type);
-				JComboBox port = new JComboBox(Choices);
-				portmapBox.add(port);
-				JComboBox dirport = new JComboBox(directions);
-				dirport.setEnabled(false);
-				directionBox.add(dirport);
-			}
-		}
-		for (int i = 0; i < ports.size(); i++) {
-			String portId = ports.get(i).split(":")[0];
-			String idRef = ports.get(i).split(":")[1];
-			String type = ports.get(i).split(":")[2];
-			if (type.equals(GlobalConstants.ASSIGNMENT_RULE) ||
-					type.equals(GlobalConstants.RATE_RULE) ||
-					type.equals(GlobalConstants.ALGEBRAIC_RULE)) {
-				portIds.add(portId);
-				idRefs.add(idRef);
-				types.add(type);
-				JComboBox port = new JComboBox(Choices);
-				portmapBox.add(port);
-				JComboBox dirport = new JComboBox(directions);
-				dirport.setEnabled(false);
-				directionBox.add(dirport);
-			}
-		}
-		for (int i = 0; i < ports.size(); i++) {
-			String portId = ports.get(i).split(":")[0];
-			String idRef = ports.get(i).split(":")[1];
-			String type = ports.get(i).split(":")[2];
-			if (type.equals(GlobalConstants.CONSTRAINT)) {
-				portIds.add(portId);
-				idRefs.add(idRef);
-				types.add(type);
-				JComboBox port = new JComboBox(Choices);
-				portmapBox.add(port);
-				JComboBox dirport = new JComboBox(directions);
-				dirport.setEnabled(false);
-				directionBox.add(dirport);
-			}
-		}
-		for (int i = 0; i < ports.size(); i++) {
-			String portId = ports.get(i).split(":")[0];
-			String idRef = ports.get(i).split(":")[1];
-			String type = ports.get(i).split(":")[2];
-			if (type.equals(GlobalConstants.EVENT)) {
-				portIds.add(portId);
-				idRefs.add(idRef);
 				types.add(type);
 				JComboBox port = new JComboBox(Choices);
 				portmapBox.add(port);
@@ -276,48 +225,6 @@ public class ComponentsPanel extends JPanel {
 				getPortMap(sbmlSBase,sbase.getId());
 			}
 		}
-		/*
-		for (long j = 0; j < gcm.getSBMLDocument().getModel().getNumCompartments(); j++) {
-			Compartment compartment = gcm.getSBMLDocument().getModel().getCompartment(j);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)compartment.getPlugin("comp");
-			getPortMap(sbmlSBase,compartment.getId());
-		}
-		for (long j = 0; j < gcm.getSBMLDocument().getModel().getNumParameters(); j++) {
-			Parameter parameter = gcm.getSBMLDocument().getModel().getParameter(j);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)parameter.getPlugin("comp");
-			getPortMap(sbmlSBase,parameter.getId());
-		}
-		for (long j = 0; j < gcm.getSBMLDocument().getModel().getNumSpecies(); j++) {
-			Species species = gcm.getSBMLDocument().getModel().getSpecies(j);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)species.getPlugin("comp");
-			getPortMap(sbmlSBase,species.getId());
-		}
-		for (long j = 0; j < gcm.getSBMLDocument().getModel().getNumReactions(); j++) {
-			Reaction reaction = gcm.getSBMLDocument().getModel().getReaction(j);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)reaction.getPlugin("comp");
-			getPortMap(sbmlSBase,reaction.getId());
-		}
-		for (long j = 0; j < gcm.getSBMLDocument().getModel().getNumInitialAssignments(); j++) {
-			InitialAssignment initial = gcm.getSBMLDocument().getModel().getInitialAssignment(j);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)initial.getPlugin("comp");
-			getPortMap(sbmlSBase,initial.getMetaId());
-		}
-		for (long j = 0; j < gcm.getSBMLDocument().getModel().getNumRules(); j++) {
-			Rule rule = gcm.getSBMLDocument().getModel().getRule(j);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)rule.getPlugin("comp");
-			getPortMap(sbmlSBase,rule.getMetaId());
-		}
-		for (long j = 0; j < gcm.getSBMLDocument().getModel().getNumConstraints(); j++) {
-			Constraint constraint = gcm.getSBMLDocument().getModel().getConstraint(j);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)constraint.getPlugin("comp");
-			getPortMap(sbmlSBase,constraint.getMetaId());
-		}
-		for (long j = 0; j < gcm.getSBMLDocument().getModel().getNumEvents(); j++) {
-			Event event = gcm.getSBMLDocument().getModel().getEvent(j);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)event.getPlugin("comp");
-			getPortMap(sbmlSBase,event.getId());
-		}
-		*/
 		Submodel instance = bioModel.getSBMLCompModel().getSubmodel(subModelId);
 		if (instance!=null) {
 			for (long j = 0; j < instance.getNumDeletions(); j++) {
@@ -349,6 +256,10 @@ public class ComponentsPanel extends JPanel {
 					int l = portIds.indexOf(replacement.getPortRef());
 					if (l >= 0) {
 						portmapBox.get(l).setSelectedItem(id);
+						if (!portmapBox.get(l).getSelectedItem().equals(id)) {
+							portmapBox.get(l).addItem(id);
+							portmapBox.get(l).setSelectedItem(id);
+						}
 						directionBox.get(l).setSelectedIndex(0);
 					}
 				} 
@@ -361,6 +272,10 @@ public class ComponentsPanel extends JPanel {
 					int l = portIds.indexOf(replacement.getPortRef());
 					if (l >= 0) {
 						portmapBox.get(l).setSelectedItem(id);
+						if (!portmapBox.get(l).getSelectedItem().equals(id)) {
+							portmapBox.get(l).addItem(id);
+							portmapBox.get(l).setSelectedItem(id);
+						}
 						directionBox.get(l).setSelectedIndex(1);
 					}
 				} 
@@ -377,12 +292,13 @@ public class ComponentsPanel extends JPanel {
 		return true;
 	}
 	
-	private void removePortMaps(CompSBasePlugin sbmlSBase) {
+	private boolean removePortMaps(CompSBasePlugin sbmlSBase) {
 		long j = 0;
 		while (j < sbmlSBase.getNumReplacedElements()) {
 			ReplacedElement replacement = sbmlSBase.getReplacedElement(j);
 			if (replacement.getSubmodelRef().equals(subModelId) && (replacement.isSetPortRef())) { 
 				replacement.removeFromParentAndDelete();
+				return true;
 			} else {
 				j++;
 			}
@@ -391,8 +307,10 @@ public class ComponentsPanel extends JPanel {
 			Replacing replacement = sbmlSBase.getReplacedBy();
 			if (replacement.getSubmodelRef().equals(subModelId) && (replacement.isSetPortRef())) {
 				replacement.removeFromParentAndDelete();
+				return true;
 			}
 		}
+		return false;
 	}
 
 	private boolean openGui(String oldName) {
@@ -432,47 +350,26 @@ public class ComponentsPanel extends JPanel {
 					}
 				}
 			}
-			for (long i = 0; i < bioModel.getSBMLDocument().getModel().getNumCompartments(); i++) {
-				Compartment compartment = bioModel.getSBMLDocument().getModel().getCompartment(i);
-				CompSBasePlugin sbmlSBase = (CompSBasePlugin)compartment.getPlugin("comp");
-				removePortMaps(sbmlSBase);
-			}
-			for (long i = 0; i < bioModel.getSBMLDocument().getModel().getNumParameters(); i++) {
-				Parameter parameter = bioModel.getSBMLDocument().getModel().getParameter(i);
-				CompSBasePlugin sbmlSBase = (CompSBasePlugin)parameter.getPlugin("comp");
-				removePortMaps(sbmlSBase);
-			}
-			for (long i = 0; i < bioModel.getSBMLDocument().getModel().getNumSpecies(); i++) {
-				Species species = bioModel.getSBMLDocument().getModel().getSpecies(i);
-				CompSBasePlugin sbmlSBase = (CompSBasePlugin)species.getPlugin("comp");
-				removePortMaps(sbmlSBase);
-			}
-			for (long i = 0; i < bioModel.getSBMLDocument().getModel().getNumReactions(); i++) {
-				Reaction reaction = bioModel.getSBMLDocument().getModel().getReaction(i);
-				CompSBasePlugin sbmlSBase = (CompSBasePlugin)reaction.getPlugin("comp");
-				removePortMaps(sbmlSBase);
+			SBaseList elements = bioModel.getSBMLDocument().getModel().getListOfAllElements();
+			for (long j = 0; j < elements.getSize(); j++) {
+				SBase sbase = elements.get(j);
+				CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getPlugin("comp");
+				if (sbmlSBase!=null) {
+					if (removePortMaps(sbmlSBase)) {
+						elements = bioModel.getSBMLDocument().getModel().getListOfAllElements();
+					}
+				}
 			}
 			for (int i = 0; i < portIds.size(); i++) {
 				String subId = id;
 				if (subModelId.startsWith("GRID__")) subId = subModelId;
 				String portId = portIds.get(i);
-				String type = types.get(i);
+				//String type = types.get(i);
 				String portmapId = (String)portmapBox.get(i).getSelectedItem();
 				if (!portmapId.equals("--none--")&&!portmapId.equals("--delete--")&&!portmapId.equals("--include--")) {
 					CompSBasePlugin sbmlSBase = null;
-					if (type.equals(GlobalConstants.COMPARTMENT)) {
-						Compartment compartment = bioModel.getSBMLDocument().getModel().getCompartment(portmapId);
-						sbmlSBase = (CompSBasePlugin)compartment.getPlugin("comp");
-					} else if (type.equals(GlobalConstants.PARAMETER)) {
-						Parameter parameter = bioModel.getSBMLDocument().getModel().getParameter(portmapId);
-						sbmlSBase = (CompSBasePlugin)parameter.getPlugin("comp");
-					} else if (type.equals(GlobalConstants.SBMLSPECIES)) {
-						Species species = bioModel.getSBMLDocument().getModel().getSpecies(portmapId);
-						sbmlSBase = (CompSBasePlugin)species.getPlugin("comp");
-					} else if (type.equals(GlobalConstants.SBMLREACTION)) {
-						Reaction reaction = bioModel.getSBMLDocument().getModel().getReaction(portmapId);
-						sbmlSBase = (CompSBasePlugin)reaction.getPlugin("comp");
-					}
+					SBase sbase = bioModel.getSBMLDocument().getModel().getElementBySId(portmapId);
+					sbmlSBase = (CompSBasePlugin)sbase.getPlugin("comp");
 					if (sbmlSBase != null) {
 						if (directionBox.get(i).getSelectedIndex()==0) {
 							ReplacedElement replacement = sbmlSBase.createReplacedElement();

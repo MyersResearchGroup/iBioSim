@@ -16,6 +16,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Set;
@@ -2536,6 +2537,16 @@ public class BioModel {
 		return null;
 	}
 	
+	public Port getPortByUnitRef(String unitIdRef) {
+		for (long i = 0; i < sbmlCompModel.getNumPorts(); i++) {
+			Port port = sbmlCompModel.getPort(i);
+			if (port.isSetUnitRef() && port.getUnitRef().equals(unitIdRef)) {
+				return port;
+			}
+		}
+		return null;
+	}
+	
 	public Port getPortBySBaseRef(SBaseRef sbaseRef) {
 		for (long i = 0; i < sbmlCompModel.getNumPorts(); i++) {
 			Port port = sbmlCompModel.getPort(i);
@@ -2569,17 +2580,25 @@ public class BioModel {
 				SBase sbase = sbml.getElementBySId(idRef);
 				if (sbase!=null) {
 					String type = sbml.getElementBySId(idRef).getElementName();
-					ports.add(id + ":" + idRef + ":" + type);
+					ports.add(type + ":" + id + ":" + idRef);
 				}
 			} else if (port.isSetMetaIdRef()) {
 				String idRef = port.getMetaIdRef();
 				SBase sbase = sbml.getElementByMetaId(idRef);
 				if (sbase!=null) {
 					String type = sbml.getElementByMetaId(idRef).getElementName();
-					ports.add(id + ":" + idRef + ":" + type);
+					ports.add(type + ":" + id + ":" + idRef);
+				}
+			} else if (port.isSetUnitRef()) {
+				String idRef = port.getUnitRef();
+				SBase sbase = sbml.getModel().getUnitDefinition(idRef);
+				if (sbase!=null) {
+					String type = sbml.getModel().getUnitDefinition(idRef).getElementName();
+					ports.add(type + ":" + id + ":" + idRef);
 				}
 			}
 		}
+		Collections.sort(ports);
 		return ports;
 	}
 	

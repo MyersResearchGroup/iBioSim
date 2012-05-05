@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -30,6 +31,7 @@ import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.Parameter;
+import org.sbml.libsbml.Port;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.Unit;
@@ -37,6 +39,7 @@ import org.sbml.libsbml.UnitDefinition;
 import org.sbml.libsbml.libsbml;
 
 import biomodel.parser.BioModel;
+import biomodel.util.GlobalConstants;
 
 
 /**
@@ -64,6 +67,8 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 	private MutableBoolean dirty;
 
 	private Gui biosim;
+	
+	private JCheckBox onPort;
 
 	//private String[] uList;
 
@@ -128,13 +133,15 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			kinds = kindsL3V1;
 		}
 		JPanel unitDefPanel = new JPanel(new BorderLayout());
-		JPanel unitPanel = new JPanel(new GridLayout(2, 2));
+		JPanel unitPanel = new JPanel(new GridLayout(3, 2));
 		JLabel idLabel = new JLabel("ID:");
 		JTextField unitID = new JTextField(12);
 		JLabel nameLabel = new JLabel("Name:");
 		JTextField unitName = new JTextField(12);
 		JPanel unitListPanel = new JPanel(new BorderLayout());
 		JPanel addUnitList = new JPanel();
+		JLabel onPortLabel = new JLabel("Is Mapped to a Port:");
+		onPort = new JCheckBox();
 		addList = new JButton("Add to List");
 		removeList = new JButton("Remove from List");
 		editList = new JButton("Edit List");
@@ -157,6 +164,11 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 				UnitDefinition unit = gcm.getSBMLDocument().getModel().getUnitDefinition((((String) unitDefs.getSelectedValue()).split(" ")[0]));
 				unitID.setText(unit.getId());
 				unitName.setText(unit.getName());
+				if (gcm.getPortByUnitRef(unit.getId())!=null) {
+					onPort.setSelected(true);
+				} else {
+					onPort.setSelected(false);
+				}
 				uList = new String[(int) unit.getNumUnits()];
 				for (int i = 0; i < unit.getNumUnits(); i++) {
 					uList[i] = "";
@@ -194,6 +206,8 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 		unitPanel.add(unitID);
 		unitPanel.add(nameLabel);
 		unitPanel.add(unitName);
+		unitPanel.add(onPortLabel);
+		unitPanel.add(onPort);
 		unitDefPanel.add(unitPanel, "North");
 		unitDefPanel.add(unitListPanel, "South");
 		Object[] options = { option, "Cancel" };
@@ -337,6 +351,21 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 						}
 						// error = checkUnits();
 						if (!error) {
+							Port port = gcm.getPortByUnitRef(val);
+							if (port!=null) {
+								if (onPort.isSelected()) {
+									port.setId(GlobalConstants.UNIT+"__"+u.getId());
+									port.setUnitRef(u.getId());
+								} else {
+									port.removeFromParentAndDelete();
+								}
+							} else {
+								if (onPort.isSelected()) {
+									port = gcm.getSBMLCompModel().createPort();
+									port.setId(GlobalConstants.UNIT+"__"+u.getId());
+									port.setUnitRef(u.getId());
+								}
+							}
 							units[index] = addUnit;
 							Utility.sort(units);
 							unitDefs.setListData(units);
@@ -378,6 +407,11 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 						units = new String[adding.length];
 						for (int i = 0; i < adding.length; i++) {
 							units[i] = (String) adding[i];
+						}
+						if (onPort.isSelected()) {
+							Port port = gcm.getSBMLCompModel().createPort();
+							port.setId(GlobalConstants.UNIT+"__"+u.getId());
+							port.setUnitRef(u.getId());
 						}
 						Utility.sort(units);
 						unitDefs.setListData(units);
@@ -630,6 +664,13 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 				for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumUnitDefinitions(); i++) {
 					if (((UnitDefinition) u.get(i)).getId().equals(tempUnit.getId())) {
 						u.remove(i);
+					}
+				}
+				for (long i = 0; i < gcm.getSBMLCompModel().getNumPorts(); i++) {
+					Port port = gcm.getSBMLCompModel().getPort(i);
+					if (port.isSetIdRef() && port.getIdRef().equals(tempUnit.getId())) {
+						gcm.getSBMLCompModel().removePort(i);
+						break;
 					}
 				}
 				unitDefs.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);

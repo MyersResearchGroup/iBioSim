@@ -840,7 +840,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 							if (value.startsWith("(")) {
 								species.appendAnnotation(","+GlobalConstants.INITIAL_STRING + "=" + value);
 							} else {
-								species.setInitialAmount(Double.parseDouble(value));
+								if (value.startsWith("[")) {
+									species.setInitialConcentration(Double.parseDouble(value.substring(1,value.length()-1)));
+								} else {
+									species.setInitialAmount(Double.parseDouble(value));
+								}
 							}
 						}
 					} else if (prop.equals(GlobalConstants.KDECAY_STRING)) {
