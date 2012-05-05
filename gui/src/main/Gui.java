@@ -9947,28 +9947,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 			}
-			/*
-			for (long j = 0; j < document.getModel().getNumCompartments(); j++) {
-				Compartment compartment = document.getModel().getCompartment(j);
-				CompSBasePlugin sbmlSBase = (CompSBasePlugin)compartment.getPlugin("comp");
-				updatePortMap(sbmlComp,sbmlSBase,subModel,submodel.getId());
-			}
-			for (long j = 0; j < document.getModel().getNumParameters(); j++) {
-				Parameter parameter = document.getModel().getParameter(j);
-				CompSBasePlugin sbmlSBase = (CompSBasePlugin)parameter.getPlugin("comp");
-				updatePortMap(sbmlComp,sbmlSBase,subModel,submodel.getId());
-			}
-			for (long j = 0; j < document.getModel().getNumSpecies(); j++) {
-				Species species = document.getModel().getSpecies(j);
-				CompSBasePlugin sbmlSBase = (CompSBasePlugin)species.getPlugin("comp");
-				updatePortMap(sbmlComp,sbmlSBase,subModel,submodel.getId());
-			}
-			for (long j = 0; j < document.getModel().getNumReactions(); j++) {
-				Reaction reaction = document.getModel().getReaction(j);
-				CompSBasePlugin sbmlSBase = (CompSBasePlugin)reaction.getPlugin("comp");
-				updatePortMap(sbmlComp,sbmlSBase,subModel,submodel.getId());
-			}
-			*/
 			for (long j = 0; j < submodel.getNumDeletions(); j++) {
 				Deletion deletion = submodel.getDeletion(j);
 				changeIdToPortRef(deletion,subModel);

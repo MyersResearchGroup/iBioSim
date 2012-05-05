@@ -10,6 +10,7 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -27,10 +28,12 @@ import org.sbml.libsbml.Compartment;
 import org.sbml.libsbml.FunctionDefinition;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Model;
+import org.sbml.libsbml.Port;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.libsbml;
 
 import biomodel.parser.BioModel;
+import biomodel.util.GlobalConstants;
 
 
 /**
@@ -54,6 +57,8 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 	private InitialAssignments initialsPanel;
 
 	private Rules rulesPanel;
+	
+	private JCheckBox onPort;
 
 	/* Create initial assignment panel */
 	public Functions(BioModel gcm, MutableBoolean dirty) {
@@ -176,15 +181,17 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 			return;
 		}
 		JPanel functionPanel = new JPanel();
-		JPanel funcPanel = new JPanel(new GridLayout(4, 2));
+		JPanel funcPanel = new JPanel(new GridLayout(5, 2));
 		JLabel idLabel = new JLabel("ID:");
 		JLabel nameLabel = new JLabel("Name:");
 		JLabel argLabel = new JLabel("Arguments:");
 		JLabel eqnLabel = new JLabel("Definition:");
+		JLabel onPortLabel = new JLabel("Is Mapped to a Port:");
 		JTextField funcID = new JTextField(12);
 		JTextField funcName = new JTextField(12);
 		JTextField args = new JTextField(12);
 		JTextField eqn = new JTextField(12);
+		onPort = new JCheckBox();
 		String selectedID = "";
 		if (option.equals("OK")) {
 			try {
@@ -192,6 +199,11 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 				funcID.setText(function.getId());
 				selectedID = function.getId();
 				funcName.setText(function.getName());
+				if (gcm.getPortByIdRef(function.getId())!=null) {
+					onPort.setSelected(true);
+				} else {
+					onPort.setSelected(false);
+				}
 				String argStr = "";
 				for (long j = 0; j < function.getNumArguments(); j++) {
 					if (j != 0) {
@@ -218,6 +230,8 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 		funcPanel.add(args);
 		funcPanel.add(eqnLabel);
 		funcPanel.add(eqn);
+		funcPanel.add(onPortLabel);
+		funcPanel.add(onPort);
 		functionPanel.add(funcPanel);
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, functionPanel, "Function Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
@@ -310,6 +324,21 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 						error = true;
 						funcs[index] = oldVal;
 					}
+					Port port = gcm.getPortByIdRef(val);
+					if (port!=null) {
+						if (onPort.isSelected()) {
+							port.setId(GlobalConstants.FUNCTION+"__"+f.getId());
+							port.setIdRef(f.getId());
+						} else {
+							port.removeFromParentAndDelete();
+						}
+					} else {
+						if (onPort.isSelected()) {
+							port = gcm.getSBMLCompModel().createPort();
+							port.setId(GlobalConstants.FUNCTION+"__"+f.getId());
+							port.setIdRef(f.getId());
+						}
+					}
 					functions.setListData(funcs);
 					functions.setSelectedIndex(index);
 					SBMLutilities.updateVarId(gcm.getSBMLDocument(), false, val, funcID.getText().trim());
@@ -351,6 +380,11 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 						else {
 							f.setMath(libsbml.parseFormula("lambda(" + args.getText().trim() + "," + eqn.getText().trim() + ")"));
 						}
+						if (onPort.isSelected()) {
+							Port port = gcm.getSBMLCompModel().createPort();
+							port.setId(GlobalConstants.FUNCTION+"__"+f.getId());
+							port.setIdRef(f.getId());
+						}
 					}
 					functions.setListData(funcs);
 					functions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -386,6 +420,13 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 				for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumFunctionDefinitions(); i++) {
 					if (((FunctionDefinition) f.get(i)).getId().equals(tempFunc.getId())) {
 						f.remove(i);
+					}
+				}
+				for (long i = 0; i < gcm.getSBMLCompModel().getNumPorts(); i++) {
+					Port port = gcm.getSBMLCompModel().getPort(i);
+					if (port.isSetIdRef() && port.getIdRef().equals(tempFunc.getId())) {
+						gcm.getSBMLCompModel().removePort(i);
+						break;
 					}
 				}
 				functions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);

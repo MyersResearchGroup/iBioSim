@@ -97,6 +97,8 @@ public class GlobalConstants {
 	public static final String SBMLREACTION = "reaction";
 	public static final String EVENT = "event";
 	public static final String CONSTRAINT = "constraint";
+	public static final String FUNCTION = "function";
+	public static final String UNIT = "unit";
 	public static final String RULE = "rule";
 	public static final String ASSIGNMENT_RULE = "assignmentRule";
 	public static final String INITIAL_ASSIGNMENT = "initialAssignment";

@@ -39,6 +39,21 @@ public class Promoter {
 	 * @param id
 	 *            The id to set.
 	 */
+	public void setCompartment(String compartment) {
+		this.compartment = compartment;
+	}
+	
+	/**
+	 * @return Returns the id.
+	 */
+	public String getCompartment() {
+		return compartment;
+	}
+
+	/**
+	 * @param id
+	 *            The id to set.
+	 */
 	public void setId(String id) {
 		this.id = id;
 	}
@@ -294,6 +309,8 @@ public class Promoter {
 
 	// id of promoter
 	protected String id = "";
+	
+	protected String compartment = "";
 	
 	protected double amount;
 	

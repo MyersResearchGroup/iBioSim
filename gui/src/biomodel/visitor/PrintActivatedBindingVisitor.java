@@ -68,7 +68,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 	public void visitComplex(ComplexSpecies specie) {
 		loadValues(specie);
 		r = Utility.Reaction(reactionId);
-		r.setCompartment(compartment);
+		r.setCompartment(promoter.getCompartment());
 		r.addReactant(Utility.SpeciesReference(rnapId, 1));
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
 		r.addProduct(Utility.SpeciesReference(boundId, 1));
@@ -105,7 +105,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 	public void visitBaseSpecies(BaseSpecies specie) {
 		loadValues(specie);
 		r = Utility.Reaction(reactionId);
-		r.setCompartment(compartment);
+		r.setCompartment(promoter.getCompartment());
 		r.addReactant(Utility.SpeciesReference(rnapId, 1));
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
 		r.addProduct(Utility.SpeciesReference(boundId, 1));
@@ -139,7 +139,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 	public void visitConstantSpecies(ConstantSpecies specie) {
 		loadValues(specie);
 		r = Utility.Reaction(reactionId);
-		r.setCompartment(compartment);
+		r.setCompartment(promoter.getCompartment());
 		r.addReactant(Utility.SpeciesReference(rnapId, 1));
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
 		r.addProduct(Utility.SpeciesReference(boundId, 1));
@@ -173,7 +173,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 	public void visitSpasticSpecies(SpasticSpecies specie) {
 		loadValues(specie);
 		r = Utility.Reaction(reactionId);
-		r.setCompartment(compartment);
+		r.setCompartment(promoter.getCompartment());
 		r.addReactant(Utility.SpeciesReference(rnapId, 1));
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
 		r.addProduct(Utility.SpeciesReference(boundId, 1));
@@ -207,7 +207,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		
 		loadValues(specie);
 		r = Utility.Reaction(reactionId);
-		r.setCompartment(compartment);
+		r.setCompartment(promoter.getCompartment());
 		r.addReactant(Utility.SpeciesReference(rnapId, 1));
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
 		r.addProduct(Utility.SpeciesReference(boundId, 1));
@@ -241,7 +241,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		
 		loadValues(specie);
 		r = Utility.Reaction(reactionId);
-		r.setCompartment(compartment);
+		r.setCompartment(promoter.getCompartment());
 		r.addReactant(Utility.SpeciesReference(rnapId, 1));
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
 		r.addProduct(Utility.SpeciesReference(boundId, 1));
