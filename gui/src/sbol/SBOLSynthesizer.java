@@ -125,11 +125,11 @@ public class SBOLSynthesizer {
 						addCount++;
 						position = addSubComponent(position, sourceCompURI, synthComp, addCount, types, targetDoc);
 					}
-				SequenceTypeValidator validator = new SequenceTypeValidator("(p(rc)+t+)+");
+				SequenceTypeValidator validator = new SequenceTypeValidator("(p(rc)+t+)*");
 				if (!validator.validateSequenceTypes(types)) {
 					Object[] options = { "OK", "CANCEL" };
 					int choice = JOptionPane.showOptionDialog(null, 
-							"Ordering of SBOL DNA components associated to SBML does not match preferred grammar.  Proceed with synthesis?", 
+							"Ordering of SBOL DNA components associated to SBML does not match preferred regular expression.  Proceed with synthesis?", 
 							"Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
 					if (choice != JOptionPane.OK_OPTION)
 						synthesizerOn = false;
