@@ -10,16 +10,27 @@ public class SequenceTypeValidator {
 	private int stateIndex;
 	
 	public SequenceTypeValidator(String regex) {
+//		Set<NFAState> nfaStartStates = constructNFA(regex);
+//		this.dfa = new DFA();
+//		dfa.setStartState(constructDFA(nfaStartStates));
+//		dfa.print();
+		
 		Set<NFAState> nfaStartStates = constructNFA(regex);
 		this.dfa = new DFA();
 		dfa.setStartState(constructDFA(nfaStartStates));
 		dfa.print();
-		
-		nfaStartStates = constructNFA2(regex);
-		this.dfa = new DFA();
-		dfa.setStartState(constructDFA(nfaStartStates));
-		dfa.print();
 	}
+	
+//	private Set<NFAState> constructNFA(String regex) {
+//		stateIndex = 0;
+//		Set<NFAState> nfaStartStates = new HashSet<NFAState>();
+//		nfaStartStates.add(new NFAState("S" + stateIndex));
+//		stateIndex++;
+//		Set<NFAState> acceptStates = constructNFAHelper(nfaStartStates, regex, "", new HashSet<String>());
+//		for (NFAState nfaState : acceptStates)
+//			nfaState.setAccepting(true);
+//		return nfaStartStates;
+//	}
 	
 	private Set<NFAState> constructNFA(String regex) {
 		stateIndex = 0;
@@ -32,75 +43,61 @@ public class SequenceTypeValidator {
 		return nfaStartStates;
 	}
 	
-	private Set<NFAState> constructNFA2(String regex) {
-		stateIndex = 0;
-		Set<NFAState> nfaStartStates = new HashSet<NFAState>();
-		nfaStartStates.add(new NFAState("S" + stateIndex));
-		stateIndex++;
-		Set<NFAState> acceptStates = constructNFAHelper2(nfaStartStates, regex, "", new HashSet<String>());
-		for (NFAState nfaState : acceptStates)
-			nfaState.setAccepting(true);
-		return nfaStartStates;
-	}
+//	private Set<NFAState> constructNFAHelper(Set<NFAState> startStates, String regex, String quantifier, Set<String> localIds) { 
+//		int i = 0;
+//		Set<NFAState> currentStates = new HashSet<NFAState>();
+//		currentStates.addAll(startStates);
+//		do {
+//			String input = regex.substring(i, i + 1);
+//			if (input.equals("(")) {
+//				int j = findClosing(regex, i);
+//				String subRegex = regex.substring(i + 1, j);
+//				String subQuantifier = "";
+//				if (j + 1 < regex.length()) {
+//					subQuantifier = regex.substring(j + 1, j + 2);
+//					i = j + 2;
+//				} else
+//					i = j + 1;
+//				currentStates = constructNFAHelper(currentStates, subRegex, subQuantifier, localIds);
+//			}  else {
+//				String subQuantifier = "";
+//				if (i + 1 < regex.length())
+//					subQuantifier = regex.substring(i + 1, i + 2);
+//				NFAState nextState = new NFAState("S" + stateIndex);
+//				localIds.add("S" + stateIndex);
+//				stateIndex++;
+//				for (NFAState currentState : currentStates)
+//					currentState.addTransition(input, nextState);
+//				if (subQuantifier.equals("+") || subQuantifier.equals("*")) {
+//					nextState.addTransition(input, nextState);
+//					i = i + 2;
+//				} else
+//					i++;
+//				if (!subQuantifier.equals("*"))
+//					currentStates.clear();
+//				currentStates.add(nextState);
+//			}
+//		} while (i < regex.length());
+//		if (quantifier.equals("+") || quantifier.equals("*"))
+//			for (NFAState startState : startStates) 
+//				for (String input : startState.getTransitions().keySet()) 
+//					for (NFAState destination : startState.transition(input)) 
+//						if (localIds.contains(destination.getID()))
+//							for (NFAState currentState : currentStates)
+//								currentState.addTransition(input, destination);
+//		if (quantifier.equals("*"))
+//			currentStates.addAll(startStates);
+//		return currentStates;
+//	}
 	
-	private Set<NFAState> constructNFAHelper(Set<NFAState> startStates, String regex, String quantifier, Set<String> localIds) { 
-		int i = 0;
-		Set<NFAState> currentStates = new HashSet<NFAState>();
-		currentStates.addAll(startStates);
-		do {
-			String input = regex.substring(i, i + 1);
-			if (input.equals("(")) {
-				int j = findClosing(regex, i);
-				String subRegex = regex.substring(i + 1, j);
-				String subQuantifier = "";
-				if (j + 1 < regex.length()) {
-					subQuantifier = regex.substring(j + 1, j + 2);
-					i = j + 2;
-				} else
-					i = j + 1;
-				currentStates = constructNFAHelper(currentStates, subRegex, subQuantifier, localIds);
-			}  else {
-				String subQuantifier = "";
-				if (i + 1 < regex.length())
-					subQuantifier = regex.substring(i + 1, i + 2);
-				NFAState nextState = new NFAState("S" + stateIndex);
-				localIds.add("S" + stateIndex);
-				stateIndex++;
-				for (NFAState currentState : currentStates)
-					currentState.addTransition(input, nextState);
-				if (subQuantifier.equals("+") || subQuantifier.equals("*")) {
-					nextState.addTransition(input, nextState);
-					i = i + 2;
-				} else
-					i++;
-				if (!subQuantifier.equals("*"))
-					currentStates.clear();
-				currentStates.add(nextState);
-			}
-		} while (i < regex.length());
-		if (quantifier.equals("+") || quantifier.equals("*"))
-			for (NFAState startState : startStates) 
-				for (String input : startState.getTransitions().keySet()) 
-					for (NFAState destination : startState.transition(input)) 
-						if (localIds.contains(destination.getID()))
-							for (NFAState currentState : currentStates)
-								currentState.addTransition(input, destination);
-		if (quantifier.equals("*"))
-			currentStates.addAll(startStates);
-		return currentStates;
-	}
-	
-	private Set<NFAState> constructNFAHelper2(Set<NFAState> startStates, String regex, String quantifier, Set<String> localIDs) { 
+	private Set<NFAState> constructNFAHelper(Set<NFAState> startStates, String regex, String quantifier, Set<String> localIDs) { 
 		Set<NFAState> acceptStates = new HashSet<NFAState>();
-//		acceptStates.addAll(startStates);
 		if (regex.length() == 1) {
 			NFAState nextState = new NFAState("S" + stateIndex);
 			localIDs.add("S" + stateIndex);
 			stateIndex++;
 			for (NFAState startState : startStates)
 				startState.addTransition(regex, nextState);
-//			if (!quantifier.equals("*"))
-//				acceptStates.clear();
 			acceptStates.add(nextState);
 		} else {
 			int i = 0;
@@ -121,7 +118,9 @@ public class SequenceTypeValidator {
 					else
 						subQuantifier = "";
 				}
-				acceptStates = constructNFAHelper2(acceptStates, subRegex, subQuantifier, localIDs);
+				Set<String> subIDs = new HashSet<String>();
+				acceptStates = constructNFAHelper(acceptStates, subRegex, subQuantifier, subIDs);
+				localIDs.addAll(subIDs);
 				if (subQuantifier.equals("+") || subQuantifier.equals("*")) {
 					i = j + 2;
 				} else
