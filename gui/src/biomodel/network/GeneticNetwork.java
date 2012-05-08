@@ -170,7 +170,7 @@ public class GeneticNetwork {
 			m.setName("Created from " + gcm);
 			m.setId(new File(filename).getName().replace(".xml", ""));	
 			m.setVolumeUnits("litre");
-			//m.setSubstanceUnits("mole");
+			m.setSubstanceUnits("mole");
 			p.print(writer.writeSBMLToString(document));
 			p.close();
 		} catch (FileNotFoundException e) {
@@ -258,7 +258,7 @@ public class GeneticNetwork {
 			m.setName("Created from " + new File(filename).getName().replace("xml", "gcm"));
 			m.setId(new File(filename).getName().replace(".xml", ""));			
 			m.setVolumeUnits("litre");
-			//m.setSubstanceUnits("mole");
+			m.setSubstanceUnits("mole");
 			if (property != null && !property.equals("")) {
 				ArrayList<String> species = new ArrayList<String>();
 				ArrayList<Object[]> levels = new ArrayList<Object[]>();
