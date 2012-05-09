@@ -601,6 +601,7 @@ public class SBMLutilities {
 	public static void fillBlankMetaIDs (SBMLDocument document) {
 		int metaIDIndex = 1;
 		Model model = document.getModel();
+		setDefaultMetaID(document, model, metaIDIndex);
 		for (int i = 0; i < model.getNumSpecies(); i++) 
 			metaIDIndex = setDefaultMetaID(document, model.getSpecies(i), metaIDIndex);
 		for (int i = 0; i < model.getNumReactions(); i++) 

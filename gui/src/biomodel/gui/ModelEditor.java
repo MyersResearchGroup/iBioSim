@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.prefs.Preferences;
@@ -32,6 +33,7 @@ import org.sbml.libsbml.ExternalModelDefinition;
 import org.sbml.libsbml.InitialAssignment;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.LocalParameter;
+import org.sbml.libsbml.Model;
 import org.sbml.libsbml.Parameter;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.Rule;
@@ -45,6 +47,8 @@ import org.sbolstandard.core.SBOLFactory;
 import analysis.ConstraintTermThread;
 import analysis.AnalysisView;
 import analysis.AnalysisThread;
+import biomodel.annotation.AnnotationUtility;
+import biomodel.annotation.SBOLAnnotation;
 import biomodel.gui.movie.MovieContainer;
 import biomodel.gui.movie.SchemeChooserPanel;
 import biomodel.gui.schematic.Schematic;
@@ -354,6 +358,9 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			return;
 		}
 
+		// Annotate SBML model with synthesized SBOL DNA component and save component to local SBOL file
+		saveSBOL();
+		
 		// Write out species and influences to a gcm file
 		//gcm.getSBMLDocument().getModel().setName(modelPanel.getModelName());
 		biomodel.save(path + separator + gcmname + ".gcm");
@@ -460,13 +467,24 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 	}
 
+	// Annotate SBML model with synthesized SBOL DNA component and save component to local SBOL file
 	public void saveSBOL() {
 		GCMParser parser = new GCMParser(biomodel, false);
 		SBOLSynthesizer synthesizer = parser.buildSbolSynthesizer();
-		if (synthesizer.loadSbolFiles(getSbolFiles())) 
-			synthesizer.saveSbol(getPath());
+		if (synthesizer != null && synthesizer.loadSbolFiles(getSbolFiles())) {
+			synthesizer.setLocalPath(path);
+			DnaComponent synthComp = synthesizer.synthesizeDnaComponent();
+			if (synthComp != null) {
+				LinkedList<String> sbolURIs = new LinkedList<String>();
+				sbolURIs.add(synthComp.getURI().toString());
+				Model sbmlModel = biomodel.getSBMLDocument().getModel();
+				SBOLAnnotation sbolAnnot = new SBOLAnnotation(sbmlModel.getMetaId(), sbolURIs);
+				AnnotationUtility.setSBOLAnnotation(sbmlModel, sbolAnnot);
+			}
+		}
 	}
 	
+	// Export SBOL DNA component to new SBOL file
 	public void exportSBOL() {
 		GCMParser parser = new GCMParser(biomodel, false);
 		SBOLSynthesizer synthesizer = parser.buildSbolSynthesizer();
@@ -496,13 +514,10 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			} while (option == JOptionPane.NO_OPTION);
 			if (!targetFilePath.equals("")) {
 				biosimrc.put("biosim.general.export_dir", targetFilePath);
-				SBOLDocument sbolDoc = SBOLFactory.createDocument();
-				DnaComponent synthComp = synthesizer.synthesizeDnaComponent(sbolDoc);
+				DnaComponent synthComp = synthesizer.synthesizeDnaComponent();
 				if (synthComp != null) {
-					
-					sbolDoc.addContent(synthComp);
-//					DnaComponent test = synthComp.getAnnotations().iterator().next().getSubComponent();
-//					sbolDoc.addContent(test);
+					SBOLDocument sbolDoc = SBOLFactory.createDocument();
+					SBOLUtility.addDNAComponent(synthComp, sbolDoc);
 					SBOLUtility.exportSBOLDocument(targetFilePath, sbolDoc);
 				}
 			}
