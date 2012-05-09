@@ -2670,7 +2670,6 @@ public class BioModel {
 				}				
 			}
 		}
-		
 		ExternalModelDefinition extModel = sbmlComp.getExternalModelDefinition(componentModelRef);
 		
 		return extModel.getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
