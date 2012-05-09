@@ -137,6 +137,7 @@ public class BioModel {
 	public void createSBMLDocument(String modelId) {
 		sbml = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
 		Model m = sbml.createModel();
+		metaIDIndex = SBMLutilities.setDefaultMetaID(sbml, m, metaIDIndex); 
 		sbml.setModel(m);
 		m.setId(modelId);
 		Compartment c = m.createCompartment();

@@ -103,7 +103,7 @@ public class SBOLBrowser extends JPanel {
 							if (!libMap.containsKey(lib.getURI().toString()))
 								libMap.put(lib.getURI().toString(), lib);
 						}
-					for (DnaComponent dnac : SBOLUtility.loadDNAComponents(sbolDoc)) {
+					for (DnaComponent dnac : SBOLUtility.loadDNAComponents(sbolDoc).values()) {
 						if (dnac.getDisplayId() != null && !dnac.getDisplayId().equals("") 
 								&& !compMap.containsKey(dnac.getURI().toString()))
 							compMap.put(dnac.getURI().toString(), dnac);
