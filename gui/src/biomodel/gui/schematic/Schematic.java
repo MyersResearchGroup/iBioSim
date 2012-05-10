@@ -996,12 +996,14 @@ public class Schematic extends JPanel implements ActionListener {
 							if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, true, false)) {
 								doNotRemove = true;
 							}
+							/*
 						} else if (type == GlobalConstants.RULE_EDGE){
 							doNotRemove = true;
 						} else if (type == GlobalConstants.CONSTRAINT_EDGE){
 							doNotRemove = true;
 						} else if (type == GlobalConstants.EVENT_EDGE){
 							doNotRemove = true;
+							*/
 						} else if(type == GlobalConstants.REACTION_EDGE) {
 							mxCell source = (mxCell)cell.getSource();
 							mxCell target = (mxCell)cell.getTarget();
