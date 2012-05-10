@@ -232,7 +232,27 @@ public class BioGraph extends mxGraph {
 					needsPositioning = true;			
 				}
 			} else {
-				// create layout for rule
+				ReactionGlyph reactionGlyph = gcm.getSBMLLayout().getLayout("iBioSim").createReactionGlyph();
+				reactionGlyph.setId(rule.getMetaId());
+				reactionGlyph.setReactionId(rule.getMetaId());
+				reactionGlyph.getBoundingBox().setX(x);
+				reactionGlyph.getBoundingBox().setY(y);
+				reactionGlyph.getBoundingBox().setWidth(GlobalConstants.DEFAULT_RULE_WIDTH);
+				reactionGlyph.getBoundingBox().setHeight(GlobalConstants.DEFAULT_RULE_HEIGHT);
+				TextGlyph textGlyph = null;
+				if (layout.getTextGlyph(rule.getMetaId())!=null) {
+					textGlyph = layout.getTextGlyph(rule.getMetaId());
+				} else {
+					textGlyph = layout.createTextGlyph();
+				}
+				textGlyph.setId(rule.getMetaId());
+				textGlyph.setGraphicalObjectId(rule.getMetaId());
+				textGlyph.setText(rule.getMetaId());
+				textGlyph.setBoundingBox(reactionGlyph.getBoundingBox());
+				x+=50;
+				y+=25;
+				if(createGraphRuleFromModel(rule.getMetaId()))
+					needsPositioning = true;			
 			}
 		}
 		

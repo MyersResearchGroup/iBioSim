@@ -1505,6 +1505,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			tab.addTab("Parameters", parametersPanel);
 			tab.addTab("Components", componentsPanel);
 			tab.addTab("Rules", rulesPanel);
+			tab.addTab("Constraints", propPanel);
+			tab.addTab("Events", eventPanel);
 		} 
 		else {
 			this.schematic = new Schematic(biomodel, biosim, this, true, null,compartmentPanel,reactionPanel,rulesPanel,
@@ -1543,8 +1545,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		speciesPanel.setPanels(initialsPanel, rulesPanel);
 		reactionPanel.setPanels(initialsPanel, rulesPanel);
 		
-		tab.addTab("Constraints", propPanel);
-		tab.addTab("Events", eventPanel);
 		setLayout(new BorderLayout());
 		if (paramsOnly) {
 			add(parametersPanel, BorderLayout.CENTER);
