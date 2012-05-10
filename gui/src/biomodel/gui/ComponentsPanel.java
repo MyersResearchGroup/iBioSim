@@ -178,6 +178,52 @@ public class ComponentsPanel extends JPanel {
 			}
 		}
 		
+		ArrayList <String> functionList = bioModel.getFunctions();
+		Collections.sort(functionList);
+		String[] functionsWithNone = new String[functionList.size() + 2];
+		functionsWithNone[0] = "--none--";
+		functionsWithNone[1] = "--delete--";
+ 		for (int l = 2; l < functionsWithNone.length; l++) {
+			functionsWithNone[l] = functionList.get(l - 2);
+		}
+		for (int i = 0; i < ports.size(); i++) {
+			String type = ports.get(i).split(":")[0];
+			String portId = ports.get(i).split(":")[1];
+			String idRef = ports.get(i).split(":")[2];
+			if (type.equals(GlobalConstants.FUNCTION)) {
+				portIds.add(portId);
+				idRefs.add(idRef);
+				types.add(type);
+				JComboBox port = new JComboBox(functionsWithNone);
+				portmapBox.add(port);
+				JComboBox dirport = new JComboBox(directions);
+				directionBox.add(dirport);
+			}
+		}
+		
+		ArrayList <String> unitList = bioModel.getUnits();
+		Collections.sort(unitList);
+		String[] unitsWithNone = new String[unitList.size() + 2];
+		unitsWithNone[0] = "--none--";
+		unitsWithNone[1] = "--delete--";
+ 		for (int l = 2; l < unitsWithNone.length; l++) {
+			unitsWithNone[l] = unitList.get(l - 2);
+		}
+		for (int i = 0; i < ports.size(); i++) {
+			String type = ports.get(i).split(":")[0];
+			String portId = ports.get(i).split(":")[1];
+			String idRef = ports.get(i).split(":")[2];
+			if (type.equals(GlobalConstants.UNIT)) {
+				portIds.add(portId);
+				idRefs.add(idRef);
+				types.add(type);
+				JComboBox port = new JComboBox(unitsWithNone);
+				portmapBox.add(port);
+				JComboBox dirport = new JComboBox(directions);
+				directionBox.add(dirport);
+			}
+		}
+		
 		String[] Choices = new String[2];
 		Choices[0] = "--include--";
 		Choices[1] = "--delete--";
@@ -186,7 +232,8 @@ public class ComponentsPanel extends JPanel {
 			String portId = ports.get(i).split(":")[1];
 			String idRef = ports.get(i).split(":")[2];
 			if (!type.equals(GlobalConstants.COMPARTMENT) && !type.equals(GlobalConstants.PARAMETER) &&
-				!type.equals(GlobalConstants.SBMLSPECIES) && !type.equals(GlobalConstants.SBMLREACTION)) {
+				!type.equals(GlobalConstants.SBMLSPECIES) && !type.equals(GlobalConstants.SBMLREACTION) && 
+				!type.equals(GlobalConstants.FUNCTION) && !type.equals(GlobalConstants.UNIT)) {
 				portIds.add(portId);
 				idRefs.add(idRef.replace("init__",""));
 				types.add(type);
