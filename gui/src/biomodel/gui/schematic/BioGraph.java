@@ -1748,7 +1748,7 @@ public class BioGraph extends mxGraph {
 		
 		//components
 		style = new Hashtable<String, Object>();
-		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
+		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_SWIMLANE);
 		style.put(mxConstants.STYLE_OPACITY, 50);
 		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
 		style.put(mxConstants.STYLE_ROUNDED, false);
