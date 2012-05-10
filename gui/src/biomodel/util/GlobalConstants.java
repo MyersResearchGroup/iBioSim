@@ -72,6 +72,8 @@ public class GlobalConstants {
 	public static final String MODIFIER = "Modifier";
 	public static final String REACTION_EDGE = "Reaction_Edge";
 	public static final String RULE_EDGE = "Rule_Edge";
+	public static final String CONSTRAINT_EDGE = "Constraint_Edge";
+	public static final String EVENT_EDGE = "Event_Edge";
 	public static final String GRID_RECTANGLE = "Grid Rectangle";
 	public static final String PORTMAP = "Port Map";
 	public static final String PORT = "port";
@@ -150,6 +152,10 @@ public class GlobalConstants {
 	public static final int DEFAULT_REACTION_HEIGHT = 30;
 	public static final int DEFAULT_RULE_WIDTH = 50;
 	public static final int DEFAULT_RULE_HEIGHT = 50;
+	public static final int DEFAULT_CONSTRAINT_WIDTH = 50;
+	public static final int DEFAULT_CONSTRAINT_HEIGHT = 40;
+	public static final int DEFAULT_EVENT_WIDTH = 75;
+	public static final int DEFAULT_EVENT_HEIGHT = 25;
 	public static final int DEFAULT_COMPONENT_WIDTH = 80;
 	public static final int DEFAULT_COMPONENT_HEIGHT = 40;
 	

@@ -1467,6 +1467,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		speciesPanel = new MySpecies(biosim,biomodel,dirty, paramsOnly,getParams,path + separator + file,parameterChanges,biomodel.getGrid().isEnabled());
 		parametersPanel = new Parameters(biosim, biomodel,dirty, paramsOnly,getParams,path + separator + file,parameterChanges);
 		rulesPanel = new Rules(biosim, biomodel, this, dirty);
+		consPanel = new Constraints(biomodel,dirty);
+		eventPanel = new Events(biosim,biomodel,dirty);
 
 		JPanel compPanel = new JPanel(new BorderLayout());
 		if (textBased) {
@@ -1506,7 +1508,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		} 
 		else {
 			this.schematic = new Schematic(biomodel, biosim, this, true, null,compartmentPanel,reactionPanel,rulesPanel,
-					compartmentList);
+					consPanel,eventPanel,compartmentList);
 			tab.addTab("Schematic", schematic);
 			tab.addTab("Compartments", compPanel);
 			if (biomodel.getGrid().isEnabled()) {
@@ -1541,7 +1543,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		speciesPanel.setPanels(initialsPanel, rulesPanel);
 		reactionPanel.setPanels(initialsPanel, rulesPanel);
 		
-		eventPanel = new Events(biosim,biomodel,dirty);
 		tab.addTab("Constraints", propPanel);
 		tab.addTab("Events", eventPanel);
 		setLayout(new BorderLayout());
@@ -1581,7 +1582,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		editInit = new EditButton("Edit Parameter", parameters);
 		parameters.addAllItem(generateParameters());
 		parametersPanel.setPanels(initialsPanel, rulesPanel);
-		consPanel = new Constraints(biomodel,dirty);
 		propPanel.add(consPanel, "Center");
 		// parameters.addAllItem(gcm.getParameters().keySet());
 		//initPanel = Utility.createPanel(this, "Model Generation Parameters", parameters, null, null, editInit);

@@ -102,11 +102,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 	/**
 	 * Creates a frame used to edit constraints or create new ones.
 	 */
-	private void constraintEditor(String option) {
-		if (option.equals("OK") && constraints.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(Gui.frame, "No constraint selected.", "Must Select a Constraint", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
+	public String constraintEditor(String option,String selected) {
 		JPanel constraintPanel = new JPanel();
 		JPanel consPanel = new JPanel(new BorderLayout());
 		JPanel IDPanel = new JPanel();
@@ -139,7 +135,6 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		String selectedID = "";
 		int Cindex = -1;
 		if (option.equals("OK")) {
-			String selected = ((String) constraints.getSelectedValue());
 			ListOf c = gcm.getSBMLDocument().getModel().getListOfConstraints();
 			for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumConstraints(); i++) {
 				if ((((Constraint) c.get(i)).getMetaId()).equals(selected)) {
@@ -320,8 +315,9 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 			}
 		}
 		if (value == JOptionPane.NO_OPTION) {
-			return;
+			return selected;
 		}
+		return consID.getText().trim();
 	}
 	
 	/**
@@ -352,57 +348,67 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 	/**
 	 * Remove a constraint
 	 */
-	private void removeConstraint() {
-		int index = constraints.getSelectedIndex();
-		if (index != -1) {
-			String selected = ((String) constraints.getSelectedValue());
-			ListOf c = gcm.getSBMLDocument().getModel().getListOfConstraints();
-			for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumConstraints(); i++) {
-				if ((((Constraint) c.get(i)).getMetaId()).equals(selected)) {
-					c.remove(i);
-					break;
-				}
+	public void removeConstraint(String selected) {
+		ListOf c = gcm.getSBMLDocument().getModel().getListOfConstraints();
+		for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumConstraints(); i++) {
+			if ((((Constraint) c.get(i)).getMetaId()).equals(selected)) {
+				c.remove(i);
+				break;
 			}
-			for (long i = 0; i < gcm.getSBMLCompModel().getNumPorts(); i++) {
-				Port port = gcm.getSBMLCompModel().getPort(i);
-				if (port.isSetMetaIdRef() && port.getMetaIdRef().equals(selected)) {
-					gcm.getSBMLCompModel().removePort(i);
-					break;
-				}
-			}
-			constraints.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-			Utility.remove(constraints);
-			constraints.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			if (index < constraints.getModel().getSize()) {
-				constraints.setSelectedIndex(index);
-			}
-			else {
-				constraints.setSelectedIndex(index - 1);
-			}
-			dirty.setValue(true);
-			gcm.makeUndoPoint();
 		}
+		for (long i = 0; i < gcm.getSBMLCompModel().getNumPorts(); i++) {
+			Port port = gcm.getSBMLCompModel().getPort(i);
+			if (port.isSetMetaIdRef() && port.getMetaIdRef().equals(selected)) {
+				gcm.getSBMLCompModel().removePort(i);
+				break;
+			}
+		}
+		dirty.setValue(true);
+		gcm.makeUndoPoint();
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		// if the add constraint button is clicked
 		if (e.getSource() == addConstraint) {
-			constraintEditor("Add");
+			constraintEditor("Add","");
 		}
 		// if the edit constraint button is clicked
 		else if (e.getSource() == editConstraint) {
-			constraintEditor("OK");
+			if (constraints.getSelectedIndex() == -1) {
+				JOptionPane.showMessageDialog(Gui.frame, "No constraint selected.", "Must Select a Constraint", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			String selected = ((String) constraints.getSelectedValue());
+			constraintEditor("OK",selected);
 		}
 		// if the remove constraint button is clicked
 		else if (e.getSource() == removeConstraint) {
-			removeConstraint();
+			int index = constraints.getSelectedIndex();
+			if (index != -1) {
+				String selected = ((String) constraints.getSelectedValue());
+				removeConstraint(selected);
+				constraints.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+				Utility.remove(constraints);
+				constraints.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+				if (index < constraints.getModel().getSize()) {
+					constraints.setSelectedIndex(index);
+				}
+				else {
+					constraints.setSelectedIndex(index - 1);
+				}
+			}
 		}
 	}
 
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2) {
 			if (e.getSource() == constraints) {
-				constraintEditor("OK");
+				if (constraints.getSelectedIndex() == -1) {
+					JOptionPane.showMessageDialog(Gui.frame, "No constraint selected.", "Must Select a Constraint", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				String selected = ((String) constraints.getSelectedValue());
+				constraintEditor("OK",selected);
 			}
 		}
 	}

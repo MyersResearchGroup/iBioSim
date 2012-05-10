@@ -19,6 +19,8 @@ import javax.swing.JOptionPane;
 
 import org.sbml.libsbml.CompModelPlugin;
 import org.sbml.libsbml.CompartmentGlyph;
+import org.sbml.libsbml.Constraint;
+import org.sbml.libsbml.Event;
 import org.sbml.libsbml.Layout;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.ModifierSpeciesReference;
@@ -63,6 +65,8 @@ public class BioGraph extends mxGraph {
 	private HashMap<String, mxCell> speciesToMxCellMap;
 	private HashMap<String, mxCell> reactionsToMxCellMap;
 	private HashMap<String, mxCell> rulesToMxCellMap;
+	private HashMap<String, mxCell> constraintsToMxCellMap;
+	private HashMap<String, mxCell> eventsToMxCellMap;
 	private HashMap<String, mxCell> influencesToMxCellMap;
 	private HashMap<String, mxCell> componentsToMxCellMap;
 	private HashMap<String, mxCell> componentsConnectionsToMxCellMap;
@@ -114,6 +118,8 @@ public class BioGraph extends mxGraph {
 		speciesToMxCellMap = new HashMap<String, mxCell>();
 		reactionsToMxCellMap = new HashMap<String, mxCell>();
 		rulesToMxCellMap = new HashMap<String, mxCell>();
+		constraintsToMxCellMap = new HashMap<String, mxCell>();
+		eventsToMxCellMap = new HashMap<String, mxCell>();
 		componentsToMxCellMap = new HashMap<String, mxCell>();
 		influencesToMxCellMap = new HashMap<String, mxCell>();
 		componentsConnectionsToMxCellMap = new HashMap<String, mxCell>();
@@ -227,6 +233,30 @@ public class BioGraph extends mxGraph {
 				}
 			} else {
 				// create layout for rule
+			}
+		}
+		
+		// add constraints
+		for (long i = 0; i < m.getNumConstraints(); i++) {
+			Constraint constraint = m.getConstraint(i);
+			if (layout.getReactionGlyph(constraint.getMetaId())!=null) {
+				if(createGraphConstraintFromModel(constraint.getMetaId())) {
+					needsPositioning = true;			
+				}
+			} else {
+				// create layout for constraints
+			}
+		}
+		
+		// add events
+		for (long i = 0; i < m.getNumEvents(); i++) {
+			Event event = m.getEvent(i);
+			if (layout.getReactionGlyph(event.getId())!=null) {
+				if(createGraphEventFromModel(event.getId())) {
+					needsPositioning = true;			
+				}
+			} else {
+				// create layout for events
 			}
 		}
 
@@ -586,6 +616,10 @@ public class BioGraph extends mxGraph {
 				}
 			} 
 		}
+		
+		// TODO: ADD CONSTRAINT EDGES
+		
+		// TODO: ADD EVENT EDGES
 		
 		addEdgeOffsets();
 		this.getModel().endUpdate();
@@ -1084,7 +1118,9 @@ public class BioGraph extends mxGraph {
 			textGlyph.setText((String)cell.getId());
 			textGlyph.setBoundingBox(speciesGlyph.getBoundingBox());
 		} else if (getCellType(cell).equals(GlobalConstants.REACTION)||
-				getCellType(cell).equals(GlobalConstants.RULE)) {
+				getCellType(cell).equals(GlobalConstants.RULE)||
+				getCellType(cell).equals(GlobalConstants.CONSTRAINT)||
+				getCellType(cell).equals(GlobalConstants.EVENT)) {
 			Layout layout = null;
 			if (gcm.getSBMLLayout().getLayout("iBioSim") != null) {
 				layout = gcm.getSBMLLayout().getLayout("iBioSim"); 
@@ -1187,7 +1223,9 @@ public class BioGraph extends mxGraph {
 				height = GlobalConstants.DEFAULT_SPECIES_HEIGHT;
 			}
 		} else if (getCellType(cell).equals(GlobalConstants.REACTION) ||
-				getCellType(cell).equals(GlobalConstants.RULE)) {
+				getCellType(cell).equals(GlobalConstants.RULE) ||
+				getCellType(cell).equals(GlobalConstants.CONSTRAINT) ||
+				getCellType(cell).equals(GlobalConstants.EVENT)) {
 			if (gcm.getSBMLLayout().getLayout("iBioSim") != null) {
 				Layout layout = gcm.getSBMLLayout().getLayout("iBioSim"); 
 				if (layout.getReactionGlyph((String)cell.getId())!=null) {
@@ -1337,6 +1375,12 @@ public class BioGraph extends mxGraph {
 			else if (sourceType == GlobalConstants.RULE || targetType == GlobalConstants.RULE) {
 				return GlobalConstants.RULE_EDGE;
 			}
+			else if (sourceType == GlobalConstants.CONSTRAINT || targetType == GlobalConstants.CONSTRAINT) {
+				return GlobalConstants.CONSTRAINT_EDGE;
+			}
+			else if (sourceType == GlobalConstants.EVENT || targetType == GlobalConstants.EVENT) {
+				return GlobalConstants.EVENT_EDGE;
+			}
 			else {
 				return GlobalConstants.INFLUENCE;
 			}
@@ -1355,6 +1399,10 @@ public class BioGraph extends mxGraph {
 				return GlobalConstants.REACTION;
 			else if(type.equals("Rule"))
 				return GlobalConstants.RULE;
+			else if(type.equals("Constraint"))
+				return GlobalConstants.CONSTRAINT;
+			else if(type.equals("Event"))
+				return GlobalConstants.EVENT;
 			else if (type.equals("Rectangle"))
 				return GlobalConstants.GRID_RECTANGLE;
 			else
@@ -1396,6 +1444,14 @@ public class BioGraph extends mxGraph {
 
 	public mxCell getRulesCell(String id){
 		return rulesToMxCellMap.get(id);
+	}
+
+	public mxCell getConstraintsCell(String id){
+		return constraintsToMxCellMap.get(id);
+	}
+
+	public mxCell getEventsCell(String id){
+		return eventsToMxCellMap.get(id);
 	}
 	
 	/**
@@ -1622,6 +1678,26 @@ public class BioGraph extends mxGraph {
 		return sizeAndPositionFromProperties((mxCell)insertedVertex);
 	}
 	
+	private boolean createGraphConstraintFromModel(String id){
+		CellValueObject cvo = new CellValueObject(id, "Constraint", null);
+		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
+		this.constraintsToMxCellMap.put(id, (mxCell)insertedVertex);
+		
+		this.setConstraintStyles(id);
+		
+		return sizeAndPositionFromProperties((mxCell)insertedVertex);
+	}
+	
+	private boolean createGraphEventFromModel(String id){
+		CellValueObject cvo = new CellValueObject(id, "Event", null);
+		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
+		this.eventsToMxCellMap.put(id, (mxCell)insertedVertex);
+		
+		this.setEventStyles(id);
+		
+		return sizeAndPositionFromProperties((mxCell)insertedVertex);
+	}
+	
 	/**
 	 * Creates a drawn promoter using the internal model
 	 * @param pname
@@ -1746,7 +1822,7 @@ public class BioGraph extends mxGraph {
 		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
 		stylesheet.putCellStyle("REACTION", style);
 		
-		//components
+		//rules
 		style = new Hashtable<String, Object>();
 		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_SWIMLANE);
 		style.put(mxConstants.STYLE_OPACITY, 50);
@@ -1755,6 +1831,26 @@ public class BioGraph extends mxGraph {
 		style.put(mxConstants.STYLE_FILLCOLOR, "#FFFF00");
 		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
 		stylesheet.putCellStyle("RULE", style);
+		
+		//constraints
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_HEXAGON);
+		style.put(mxConstants.STYLE_OPACITY, 50);
+		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
+		style.put(mxConstants.STYLE_ROUNDED, false);
+		style.put(mxConstants.STYLE_FILLCOLOR, "#FF0000");
+		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
+		stylesheet.putCellStyle("CONSTRAINT", style);
+		
+		//events
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
+		style.put(mxConstants.STYLE_OPACITY, 50);
+		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
+		style.put(mxConstants.STYLE_ROUNDED, false);
+		style.put(mxConstants.STYLE_FILLCOLOR, "#00FF00");
+		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
+		stylesheet.putCellStyle("EVENT", style);
 		
 		//components
 		style = new Hashtable<String, Object>();
@@ -1926,6 +2022,20 @@ public class BioGraph extends mxGraph {
 		mxCell cell = this.getRulesCell(id);
 		cell.setStyle(style);
 	}
+
+	private void setConstraintStyles(String id){
+		String style="CONSTRAINT;";
+		
+		mxCell cell = this.getConstraintsCell(id);
+		cell.setStyle(style);
+	}
+
+	private void setEventStyles(String id){
+		String style="EVENT;";
+		
+		mxCell cell = this.getEventsCell(id);
+		cell.setStyle(style);
+	}
 	
 	/**
 	 * 
@@ -2054,7 +2164,9 @@ public class BioGraph extends mxGraph {
 					height = GlobalConstants.DEFAULT_SPECIES_HEIGHT;
 				}
 			} else if (getCellType(cell).equals(GlobalConstants.REACTION)||
-					getCellType(cell).equals(GlobalConstants.RULE)) {
+					getCellType(cell).equals(GlobalConstants.RULE)||
+					getCellType(cell).equals(GlobalConstants.CONSTRAINT)||
+					getCellType(cell).equals(GlobalConstants.EVENT)) {
 				if (gcm.getSBMLLayout().getLayout("iBioSim") != null) {
 					Layout layout = gcm.getSBMLLayout().getLayout("iBioSim"); 
 					if (layout.getReactionGlyph((String)cell.getId())!=null) {
