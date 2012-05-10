@@ -71,6 +71,7 @@ public class GlobalConstants {
 	public static final String REACTION = "Reaction";
 	public static final String MODIFIER = "Modifier";
 	public static final String REACTION_EDGE = "Reaction_Edge";
+	public static final String RULE_EDGE = "Rule_Edge";
 	public static final String GRID_RECTANGLE = "Grid Rectangle";
 	public static final String PORTMAP = "Port Map";
 	public static final String PORT = "port";
@@ -97,8 +98,8 @@ public class GlobalConstants {
 	public static final String SBMLREACTION = "reaction";
 	public static final String EVENT = "event";
 	public static final String CONSTRAINT = "constraint";
-	public static final String FUNCTION = "function";
-	public static final String UNIT = "unit";
+	public static final String FUNCTION = "functionDefinition";
+	public static final String UNIT = "unitDefinition";
 	public static final String RULE = "rule";
 	public static final String ASSIGNMENT_RULE = "assignmentRule";
 	public static final String INITIAL_ASSIGNMENT = "initialAssignment";
@@ -147,6 +148,8 @@ public class GlobalConstants {
 	public static final int DEFAULT_SPECIES_HEIGHT = 30;
 	public static final int DEFAULT_REACTION_WIDTH = 30;
 	public static final int DEFAULT_REACTION_HEIGHT = 30;
+	public static final int DEFAULT_RULE_WIDTH = 50;
+	public static final int DEFAULT_RULE_HEIGHT = 50;
 	public static final int DEFAULT_COMPONENT_WIDTH = 80;
 	public static final int DEFAULT_COMPONENT_HEIGHT = 40;
 	

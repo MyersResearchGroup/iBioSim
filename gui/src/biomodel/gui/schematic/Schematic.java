@@ -69,6 +69,7 @@ import biomodel.gui.movie.SchemeChooserPanel;
 import biomodel.gui.textualeditor.Compartments;
 import biomodel.gui.textualeditor.ModelPanel;
 import biomodel.gui.textualeditor.Reactions;
+import biomodel.gui.textualeditor.Rules;
 import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
@@ -94,13 +95,14 @@ public class Schematic extends JPanel implements ActionListener {
 	private mxGraphComponent graphComponent;
 	private Rubberband rubberband;
 	
-	private BioModel gcm;
+	private BioModel bioModel;
 	private Gui biosim;
 	private ModelEditor modelEditor;
 	private boolean editable;
 	private MovieContainer movieContainer;
 	private Compartments compartments;
 	private Reactions reactions;
+	private Rules rules;
 	private JComboBox compartmentList;
 	private Grid grid;
 	private JTabbedPane tabbedPane;
@@ -110,7 +112,8 @@ public class Schematic extends JPanel implements ActionListener {
 	private AbstractButton addSpeciesButton;
 	private AbstractButton addReactionButton;
 	private AbstractButton addComponentButton;
-	private AbstractButton editPromoterButton;
+	private AbstractButton addPromoterButton;
+	private AbstractButton addRuleButton;
 	private AbstractButton selfInfluenceButton;
 	private AbstractButton activationButton;
 	private AbstractButton inhibitionButton;
@@ -131,7 +134,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 * @param internalModel
 	 */
 	public Schematic(BioModel gcm, Gui biosim, ModelEditor gcm2sbml, boolean editable, 
-			MovieContainer movieContainer2, Compartments compartments, Reactions reactions, 
+			MovieContainer movieContainer2, Compartments compartments, Reactions reactions, Rules rules,
 			JComboBox compartmentList){
 		
 		super(new BorderLayout());
@@ -139,13 +142,14 @@ public class Schematic extends JPanel implements ActionListener {
 		//sets how much of the cell, when dragged, results in moving vs. edge creation
 		mxConstants.DEFAULT_HOTSPOT = 0.5;
 		
-		this.gcm = gcm;
+		this.bioModel = gcm;
 		this.biosim = biosim;
 		this.modelEditor = gcm2sbml;
 		this.editable = editable;
 		this.movieContainer = movieContainer2;
 		this.compartments = compartments;
 		this.reactions = reactions;
+		this.rules = rules;
 		this.grid = gcm.getGrid();
 		this.compartmentList = compartmentList;
 		this.tabbedPane = biosim.getTab();
@@ -164,9 +168,9 @@ public class Schematic extends JPanel implements ActionListener {
 
 		if(graph == null){
 			
-			graph = new BioGraph(gcm);		
+			graph = new BioGraph(bioModel);		
 			addGraphListeners();
-			gcm.makeUndoPoint();
+			bioModel.makeUndoPoint();
 		}
 		
 		graph.buildGraph();
@@ -285,11 +289,11 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		toolBar.addSeparator();
 
-		ModelPanel modelPanel = new ModelPanel(gcm,modelEditor.getDirty(),modelEditor.isParamsOnly());
+		ModelPanel modelPanel = new ModelPanel(bioModel,modelEditor.getDirty(),modelEditor.isParamsOnly());
 		toolBar.add(modelPanel);
 		toolBar.setFloatable(false);
 		
-		compartmentList.setSelectedItem(gcm.getDefaultCompartment());
+		compartmentList.setSelectedItem(bioModel.getDefaultCompartment());
 		compartmentList.addActionListener(this);
 		
 		return toolBar;
@@ -313,8 +317,10 @@ public class Schematic extends JPanel implements ActionListener {
 		toolBar.add(addReactionButton);
 		addComponentButton = Utils.makeRadioToolButton("add_component.png", "", "Add Components", this, modeButtonGroup);
 		toolBar.add(addComponentButton);
-		editPromoterButton = Utils.makeRadioToolButton("promoter_mode.png", "", "Add Promoters", this, modeButtonGroup);
-		toolBar.add(editPromoterButton);
+		addPromoterButton = Utils.makeRadioToolButton("promoter_mode.png", "", "Add Promoters", this, modeButtonGroup);
+		toolBar.add(addPromoterButton);
+		addRuleButton = Utils.makeRadioToolButton("rule_mode.png", "", "Add Rules", this, modeButtonGroup);
+		toolBar.add(addRuleButton);
 		selfInfluenceButton = Utils.makeRadioToolButton("self_influence.png", "", "Add Self Influences", this, modeButtonGroup);
 		toolBar.add(selfInfluenceButton);
 
@@ -339,7 +345,7 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		//if (gcm.getSBMLDocument().getModel().getNumCompartments()==1) {
 		toolBar.addSeparator();
-		compartmentList.setSelectedItem(gcm.getDefaultCompartment());
+		compartmentList.setSelectedItem(bioModel.getDefaultCompartment());
 		compartmentList.addActionListener(this);
 		compartmentList.setToolTipText("Default Compartment");
 		/*
@@ -357,10 +363,10 @@ public class Schematic extends JPanel implements ActionListener {
 				
 				compartmentList.removeAllItems();
 				
-				ListOf listOfCompartments = gcm.getSBMLDocument().getModel().getListOfCompartments();
-				String[] add = new String[(int) gcm.getSBMLDocument().getModel().getNumCompartments()];
+				ListOf listOfCompartments = bioModel.getSBMLDocument().getModel().getListOfCompartments();
+				String[] add = new String[(int) bioModel.getSBMLDocument().getModel().getNumCompartments()];
 				
-				for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumCompartments(); i++) {
+				for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumCompartments(); i++) {
 					add[i] = ((Compartment) listOfCompartments.get(i)).getId();
 				}
 				try {
@@ -399,7 +405,7 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		toolBar.addSeparator();
 
-		ModelPanel modelPanel = new ModelPanel(gcm,modelEditor.getDirty(),modelEditor.isParamsOnly());
+		ModelPanel modelPanel = new ModelPanel(bioModel,modelEditor.getDirty(),modelEditor.isParamsOnly());
 		toolBar.add(modelPanel);
 
 		toolBar.setFloatable(false);
@@ -435,7 +441,7 @@ public class Schematic extends JPanel implements ActionListener {
 			graph.applyLayout(command, this.graphComponent);
 			graph.buildGraph(); // rebuild, quick way to clear out any edge midpoints.
 			modelEditor.setDirty(true);
-			gcm.makeUndoPoint();
+			bioModel.makeUndoPoint();
 		}
 		else if(command == "compartment"){
 			if (compartments != null) {
@@ -480,7 +486,7 @@ public class Schematic extends JPanel implements ActionListener {
 			
 			//static method that builds the grid editing panel
 			//the true field means to open the grid edit panel
-			boolean changed = GridPanel.showGridPanel(modelEditor, gcm, true);
+			boolean changed = GridPanel.showGridPanel(modelEditor, bioModel, true);
 			
 			//if the grid size is changed, then draw it and so on
 			if (changed) {
@@ -489,7 +495,7 @@ public class Schematic extends JPanel implements ActionListener {
 				modelEditor.refresh();
 				graph.buildGraph();
 				drawGrid();
-				gcm.makeUndoPoint();
+				bioModel.makeUndoPoint();
 			}
 		}
 		else if (command.equals("unZoom")) {
@@ -501,7 +507,7 @@ public class Schematic extends JPanel implements ActionListener {
 		}
 		else if(command == "comboBoxChanged") {
 			if (compartmentList.getSelectedItem()!=null)
-				gcm.setDefaultCompartment((String)compartmentList.getSelectedItem());
+				bioModel.setDefaultCompartment((String)compartmentList.getSelectedItem());
 		}
 		else{
 			throw(new Error("Invalid actionCommand: " + command));
@@ -510,7 +516,7 @@ public class Schematic extends JPanel implements ActionListener {
 	
 	public void refresh() {
 		if (grid.isEnabled()) {
-			grid = gcm.getGrid();
+			grid = bioModel.getGrid();
 			
 			//the new grid pointer may not have an accurate enabled state
 			//so make sure it's set to true
@@ -698,19 +704,19 @@ public class Schematic extends JPanel implements ActionListener {
 						else if(addSpeciesButton != null && addSpeciesButton.isSelected()) {
 							
 							// plop a species down with good default info at the mouse coordinates
-							gcm.createSpecies(null, e.getX(), e.getY());
+							bioModel.createSpecies(null, e.getX(), e.getY());
 							graph.buildGraph();
 							modelEditor.refresh();
 							modelEditor.setDirty(true);
-							gcm.makeUndoPoint();
+							bioModel.makeUndoPoint();
 						}
 						else if(addReactionButton != null && addReactionButton.isSelected()) {
 							
-							gcm.createReaction(null, e.getX(), e.getY());
+							bioModel.createReaction(null, e.getX(), e.getY());
 							graph.buildGraph();
 							modelEditor.refresh();
 							modelEditor.setDirty(true);
-							gcm.makeUndoPoint();
+							bioModel.makeUndoPoint();
 						}
 						else if(addComponentButton != null && addComponentButton.isSelected()) {
 							
@@ -721,13 +727,13 @@ public class Schematic extends JPanel implements ActionListener {
 
 								//the true is to indicate the dropping is happening on a grid
 								dropped = DropComponentPanel.dropComponent(
-										modelEditor, gcm, e.getX(), e.getY(), true);
+										modelEditor, bioModel, e.getX(), e.getY(), true);
 							}
 							else {
 								
 								//the false is to indicate the dropping isn't happening on a grid
 								dropped = DropComponentPanel.dropComponent(
-											modelEditor, gcm, e.getX(), e.getY(), false);
+											modelEditor, bioModel, e.getX(), e.getY(), false);
 							}
 							
 							//if the components dropped successfully
@@ -736,16 +742,23 @@ public class Schematic extends JPanel implements ActionListener {
 								modelEditor.setDirty(true);
 								graph.buildGraph();
 								modelEditor.refresh();
-								gcm.makeUndoPoint();
+								bioModel.makeUndoPoint();
 							}
 						}
-						else if(editPromoterButton != null && editPromoterButton.isSelected()) {
-							
-							gcm.createPromoter(null, e.getX(), e.getY(), true);
+						else if(addPromoterButton != null && addPromoterButton.isSelected()) {
+							bioModel.createPromoter(null, e.getX(), e.getY(), true);
 							modelEditor.refresh();
 							graph.buildGraph();
 							modelEditor.setDirty(true);
-							gcm.makeUndoPoint();
+							bioModel.makeUndoPoint();
+						}
+						else if(addRuleButton != null && addRuleButton.isSelected()) {
+							String id = rules.ruleEditor("Add", "");
+							bioModel.createRule(id, e.getX(), e.getY());
+							modelEditor.refresh();
+							graph.buildGraph();
+							modelEditor.setDirty(true);
+							bioModel.makeUndoPoint();
 						}
 					}
 					//if cell != null
@@ -760,7 +773,7 @@ public class Schematic extends JPanel implements ActionListener {
 
 								//the true is to indicate the dropping is happening on a grid
 								dropped = DropComponentPanel.dropComponent(
-										modelEditor, gcm, e.getX(), e.getY(), true);
+										modelEditor, bioModel, e.getX(), e.getY(), true);
 							}
 							
 							//if the components dropped successfully
@@ -769,7 +782,7 @@ public class Schematic extends JPanel implements ActionListener {
 								modelEditor.setDirty(true);
 								graph.buildGraph();
 								modelEditor.refresh();
-								gcm.makeUndoPoint();
+								bioModel.makeUndoPoint();
 							}
 						}
 						else if(selfInfluenceButton != null && selfInfluenceButton.isSelected()) {
@@ -825,7 +838,7 @@ public class Schematic extends JPanel implements ActionListener {
 						if (editable)
 							graph.buildGraph();
 						
-						gcm.makeUndoPoint();
+						bioModel.makeUndoPoint();
 					}
 				}
 				
@@ -878,7 +891,7 @@ public class Schematic extends JPanel implements ActionListener {
 							
 							//see if the component/cell can be moved
 							Boolean moved = grid.moveNode(cell.getId(), cell.getGeometry().getCenterX(), 
-									cell.getGeometry().getCenterY(), gcm);
+									cell.getGeometry().getCenterY(), bioModel);
 							
 							//if it can, update its position on the graph
 							//(moveComponent updates its grid position)
@@ -903,7 +916,7 @@ public class Schematic extends JPanel implements ActionListener {
 				
 				graph.buildGraph();
 				drawGrid();
-				gcm.makeUndoPoint();
+				bioModel.makeUndoPoint();
 				modelEditor.setDirty(true);
 			}
 		});
@@ -944,29 +957,31 @@ public class Schematic extends JPanel implements ActionListener {
 						String type = graph.getCellType(cell);
 
 						if(type == GlobalConstants.SPECIES){
-							if (SBMLutilities.variableInUse(gcm.getSBMLDocument(), cell.getId(), false, true, false)) {
+							if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, true, false)) {
 								doNotRemove = true;
 							}
 						} else if (type == GlobalConstants.PROMOTER){
-							if (SBMLutilities.variableInUse(gcm.getSBMLDocument(), cell.getId(), false, true, false)) {
+							if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, true, false)) {
 								doNotRemove = true;
 							}
 						} else if (type == GlobalConstants.REACTION){
-							if (SBMLutilities.variableInUse(gcm.getSBMLDocument(), cell.getId(), false, true, false)) {
+							if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, true, false)) {
 								doNotRemove = true;
 							}
+						} else if (type == GlobalConstants.RULE_EDGE){
+							doNotRemove = true;
 						} else if(type == GlobalConstants.REACTION_EDGE) {
 							mxCell source = (mxCell)cell.getSource();
 							mxCell target = (mxCell)cell.getTarget();
 							if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
 								(graph.getCellType(target) == GlobalConstants.SPECIES)) {
-								Reaction r = gcm.getSBMLDocument().getModel().getReaction((String)cell.getValue());
+								Reaction r = bioModel.getSBMLDocument().getModel().getReaction((String)cell.getValue());
 								ListOf reactants = r.getListOfReactants();
 								for (int i = 0; i < r.getNumReactants(); i++) {
 									SpeciesReference s = (SpeciesReference)reactants.get(i);
 									if (s.getSpecies().equals(source.getId())) {
 										if (s.isSetId() && 
-												SBMLutilities.variableInUse(gcm.getSBMLDocument(), s.getId(), false, true, false)) {
+												SBMLutilities.variableInUse(bioModel.getSBMLDocument(), s.getId(), false, true, false)) {
 											doNotRemove = true;
 										}
 										break;
@@ -977,7 +992,7 @@ public class Schematic extends JPanel implements ActionListener {
 									SpeciesReference s = (SpeciesReference)products.get(i);
 									if (s.getSpecies().equals(target.getId())) {
 										if (s.isSetId() && 
-												SBMLutilities.variableInUse(gcm.getSBMLDocument(), s.getId(), false, true, false)) {
+												SBMLutilities.variableInUse(bioModel.getSBMLDocument(), s.getId(), false, true, false)) {
 											doNotRemove = true;
 										}
 										break;
@@ -986,13 +1001,13 @@ public class Schematic extends JPanel implements ActionListener {
 							} 
 							else if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
 								(graph.getCellType(target) == GlobalConstants.REACTION)) {
-								Reaction r = gcm.getSBMLDocument().getModel().getReaction(target.getId());
+								Reaction r = bioModel.getSBMLDocument().getModel().getReaction(target.getId());
 								ListOf reactants = r.getListOfReactants();
 								for (int i = 0; i < r.getNumReactants(); i++) {
 									SpeciesReference s = (SpeciesReference)reactants.get(i);
 									if (s.getSpecies().equals(source.getId())) {
 										if (s.isSetId() && 
-												SBMLutilities.variableInUse(gcm.getSBMLDocument(), s.getId(), false, true, false)) {
+												SBMLutilities.variableInUse(bioModel.getSBMLDocument(), s.getId(), false, true, false)) {
 											doNotRemove = true;
 										}
 										break;
@@ -1001,13 +1016,13 @@ public class Schematic extends JPanel implements ActionListener {
 							} 
 							else if ((graph.getCellType(source) == GlobalConstants.REACTION) &&
 								(graph.getCellType(target) == GlobalConstants.SPECIES)) {
-								Reaction r = gcm.getSBMLDocument().getModel().getReaction(source.getId());
+								Reaction r = bioModel.getSBMLDocument().getModel().getReaction(source.getId());
 								ListOf products = r.getListOfProducts();
 								for (int i = 0; i < r.getNumProducts(); i++) {
 									SpeciesReference s = (SpeciesReference)products.get(i);
 									if (s.getSpecies().equals(target.getId())) {
 										if (s.isSetId() && 
-												SBMLutilities.variableInUse(gcm.getSBMLDocument(), s.getId(), false, true, false)) {
+												SBMLutilities.variableInUse(bioModel.getSBMLDocument(), s.getId(), false, true, false)) {
 											doNotRemove = true;
 										}
 										break;
@@ -1031,7 +1046,7 @@ public class Schematic extends JPanel implements ActionListener {
 						String type = graph.getCellType(cell);
 						
 						if(type == GlobalConstants.INFLUENCE || type == GlobalConstants.PRODUCTION){
-							gcm.removeInfluence(cell.getId());
+							bioModel.removeInfluence(cell.getId());
 						}
 						else if(type == GlobalConstants.REACTION_EDGE) {
 							
@@ -1041,10 +1056,10 @@ public class Schematic extends JPanel implements ActionListener {
 							if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
 									(graph.getCellType(target) == GlobalConstants.SPECIES)) {
 								
-								Reaction r = gcm.getSBMLDocument().getModel().getReaction((String)cell.getValue());
+								Reaction r = bioModel.getSBMLDocument().getModel().getReaction((String)cell.getValue());
 								
 								if (r.getNumReactants()==1 && r.getNumProducts()==1) {
-									reactions.removeTheReaction(gcm,(String)cell.getValue());
+									reactions.removeTheReaction(bioModel,(String)cell.getValue());
 								} 
 								else if (r.getNumReactants() > 1) {
 									
@@ -1078,7 +1093,7 @@ public class Schematic extends JPanel implements ActionListener {
 							else if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
 								(graph.getCellType(target) == GlobalConstants.REACTION)) {
 								
-								Reaction r = gcm.getSBMLDocument().getModel().getReaction(target.getId());
+								Reaction r = bioModel.getSBMLDocument().getModel().getReaction(target.getId());
 								boolean found = false;
 								ListOf reactants = r.getListOfReactants();
 								
@@ -1110,7 +1125,7 @@ public class Schematic extends JPanel implements ActionListener {
 							else if ((graph.getCellType(source) == GlobalConstants.REACTION) &&
 								(graph.getCellType(target) == GlobalConstants.SPECIES)) {
 								
-								Reaction r = gcm.getSBMLDocument().getModel().getReaction(source.getId());
+								Reaction r = bioModel.getSBMLDocument().getModel().getReaction(source.getId());
 								ListOf products = r.getListOfProducts();
 								
 								for (int i = 0; i < r.getNumProducts(); i++) {
@@ -1127,7 +1142,11 @@ public class Schematic extends JPanel implements ActionListener {
 						else if(type == GlobalConstants.REACTION) {
 							
 							//reactions.removeTheReaction(gcm.getSBMLDocument(),(String)cell.getId());
-							gcm.removeReaction(cell.getId());
+							bioModel.removeReaction(cell.getId());
+						}
+						else if(type == GlobalConstants.RULE) {
+							
+							rules.removeRuleByMetaId(cell.getId());
 						}
 						else if(type == GlobalConstants.SPECIES){
 							
@@ -1138,7 +1157,7 @@ public class Schematic extends JPanel implements ActionListener {
 							}
 							*/
 							//gcm.removeSpeciesAndAssociations(cell.getId());
-							gcm.removeSpecies(cell.getId());
+							bioModel.removeSpecies(cell.getId());
 							//graph.speciesRemoved(cell.getId());
 						}
 						else if(type == GlobalConstants.COMPONENT){
@@ -1146,14 +1165,14 @@ public class Schematic extends JPanel implements ActionListener {
 							//if there's a grid, remove the component from the grid as well
 							if (grid.isEnabled()) {
 								
-								grid.eraseNode(cell.getId(), gcm);
-								modelEditor.getSpeciesPanel().refreshSpeciesPanel(gcm);
+								grid.eraseNode(cell.getId(), bioModel);
+								modelEditor.getSpeciesPanel().refreshSpeciesPanel(bioModel);
 							}
 							else
-								gcm.removeComponent(cell.getId());
+								bioModel.removeComponent(cell.getId());
 						}
 						else if(type == GlobalConstants.PROMOTER){
-							gcm.removePromoter(cell.getId());
+							bioModel.removePromoter(cell.getId());
 						}
 						else if(type == GlobalConstants.COMPONENT_CONNECTION){
 							removeComponentConnection(cell);
@@ -1171,7 +1190,7 @@ public class Schematic extends JPanel implements ActionListener {
 					modelEditor.refresh();
 					graph.buildGraph();
 					drawGrid();
-					gcm.makeUndoPoint();
+					bioModel.makeUndoPoint();
 				}
 			}
 		});
@@ -1294,7 +1313,7 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		// Disallows user from connecting to a species that is an input
 		if (graph.getCellType(target).contains(GlobalConstants.SPECIES)) {
-			String specType = BioModel.getSpeciesType(gcm.getSBMLDocument(),targetID);
+			String specType = BioModel.getSpeciesType(bioModel.getSBMLDocument(),targetID);
 			if (specType.equals(GlobalConstants.INPUT)) {
 				// TOOD: REMOVED THIS || specType.contains(GlobalConstants.SPASTIC)) {
 				JOptionPane.showMessageDialog(Gui.frame, "You can't connect to a species that is an input or constitutive.");
@@ -1347,7 +1366,7 @@ public class Schematic extends JPanel implements ActionListener {
 			graph.updateComponentConnectionVisuals(edge, port);
 
 			graph.buildGraph();
-			gcm.makeUndoPoint();
+			bioModel.makeUndoPoint();
 			return;
 		} 
 		
@@ -1369,12 +1388,12 @@ public class Schematic extends JPanel implements ActionListener {
 			if ((graph.getCellType(source) == GlobalConstants.SPECIES) && 
 					(graph.getCellType(target) == GlobalConstants.SPECIES)) {
 				
-				gcm.addReaction(sourceID,targetID,false);
+				bioModel.addReaction(sourceID,targetID,false);
 			} 
 			else if ((graph.getCellType(source) == GlobalConstants.REACTION) && 
 					(graph.getCellType(target) == GlobalConstants.SPECIES)) {
 				
-				Reaction r = gcm.getSBMLDocument().getModel().getReaction(sourceID);
+				Reaction r = bioModel.getSBMLDocument().getModel().getReaction(sourceID);
 				SpeciesReference s = r.createProduct();
 				s.setSpecies(targetID);
 				s.setStoichiometry(1.0);
@@ -1383,7 +1402,7 @@ public class Schematic extends JPanel implements ActionListener {
 			else if ((graph.getCellType(source) == GlobalConstants.SPECIES) && 
 					(graph.getCellType(target) == GlobalConstants.REACTION)) {
 				
-				Reaction r = gcm.getSBMLDocument().getModel().getReaction(targetID);
+				Reaction r = bioModel.getSBMLDocument().getModel().getReaction(targetID);
 				SpeciesReference s = r.createReactant();
 				s.setSpecies(sourceID);
 				s.setStoichiometry(1.0);
@@ -1401,19 +1420,19 @@ public class Schematic extends JPanel implements ActionListener {
 			if ((graph.getCellType(source) == GlobalConstants.SPECIES) && 
 					(graph.getCellType(target) == GlobalConstants.SPECIES)) {
 				
-				gcm.addReaction(sourceID,targetID,true);
+				bioModel.addReaction(sourceID,targetID,true);
 			} 
 			else if ((graph.getCellType(source) == GlobalConstants.REACTION) && 
 				(graph.getCellType(target) == GlobalConstants.SPECIES)) {
 				
-				Reaction r = gcm.getSBMLDocument().getModel().getReaction(sourceID);
+				Reaction r = bioModel.getSBMLDocument().getModel().getReaction(sourceID);
 				ModifierSpeciesReference s = r.createModifier();
 				s.setSpecies(targetID);
 			} 
 			else if ((graph.getCellType(source) == GlobalConstants.SPECIES) && 
 				(graph.getCellType(target) == GlobalConstants.REACTION)) {
 				
-				Reaction r = gcm.getSBMLDocument().getModel().getReaction(targetID);
+				Reaction r = bioModel.getSBMLDocument().getModel().getReaction(targetID);
 				ModifierSpeciesReference s = r.createModifier();
 				s.setSpecies(sourceID);
 			} 
@@ -1439,16 +1458,16 @@ public class Schematic extends JPanel implements ActionListener {
 			if(numPromoters == 1){
 				if(graph.getCellType(source) == GlobalConstants.PROMOTER){
 					// source is a promoter
-					gcm.addActivatorToProductionReaction(sourceID, "none", targetID, null, null, null);
+					bioModel.addActivatorToProductionReaction(sourceID, "none", targetID, null, null, null);
 				}
 				else{
 					// target is a promoter
 					if (activationButton.isSelected()) {
-						gcm.addActivatorToProductionReaction(targetID, sourceID, "none", null, null, null);
+						bioModel.addActivatorToProductionReaction(targetID, sourceID, "none", null, null, null);
 					} else if (inhibitionButton.isSelected()) {
-						gcm.addRepressorToProductionReaction(targetID, sourceID, "none", null, null, null);
+						bioModel.addRepressorToProductionReaction(targetID, sourceID, "none", null, null, null);
 					} else if (noInfluenceButton.isSelected()) {
-						gcm.addNoInfluenceToProductionReaction(targetID, sourceID, "none");
+						bioModel.addNoInfluenceToProductionReaction(targetID, sourceID, "none");
 					}
 				}
 
@@ -1458,18 +1477,18 @@ public class Schematic extends JPanel implements ActionListener {
 				String newPromoterName = "";
 				
 				if (activationButton.isSelected() || inhibitionButton.isSelected() || noInfluenceButton.isSelected()) {
-					newPromoterName = gcm.createPromoter(null,0, 0, false);
-					gcm.createProductionReaction(newPromoterName,null,null,null,null,null,null);
+					newPromoterName = bioModel.createPromoter(null,0, 0, false);
+					bioModel.createProductionReaction(newPromoterName,null,null,null,null,null,null);
 					if (activationButton.isSelected()) {
-						gcm.addActivatorToProductionReaction(newPromoterName, sourceID, targetID, null, null, null);
+						bioModel.addActivatorToProductionReaction(newPromoterName, sourceID, targetID, null, null, null);
 					} else if (inhibitionButton.isSelected()) {
-						gcm.addRepressorToProductionReaction(newPromoterName, sourceID, targetID, null, null, null);
+						bioModel.addRepressorToProductionReaction(newPromoterName, sourceID, targetID, null, null, null);
 					} else if (noInfluenceButton.isSelected()) {
-						gcm.addNoInfluenceToProductionReaction(newPromoterName, sourceID, targetID);
+						bioModel.addNoInfluenceToProductionReaction(newPromoterName, sourceID, targetID);
 					}
 				}
 				else if (bioActivationButton.isSelected()) {
-					gcm.addReactantToComplexReaction(sourceID, targetID, null, null);
+					bioModel.addReactantToComplexReaction(sourceID, targetID, null, null);
 				}
 			}
 		}
@@ -1477,7 +1496,7 @@ public class Schematic extends JPanel implements ActionListener {
 		graph.buildGraph();
 		modelEditor.refresh();
 		modelEditor.setDirty(true);
-		gcm.makeUndoPoint();
+		bioModel.makeUndoPoint();
 	}
 	
 	/**
@@ -1495,8 +1514,8 @@ public class Schematic extends JPanel implements ActionListener {
 		if(port == null)
 			return null;
 		
-		String fullPath = gcm.getPath() + File.separator + gcm.getModelFileName(compID).replace(".xml", ".gcm");
-		BioModel compGCM = new BioModel(gcm.getPath());
+		String fullPath = bioModel.getPath() + File.separator + bioModel.getModelFileName(compID).replace(".xml", ".gcm");
+		BioModel compGCM = new BioModel(bioModel.getPath());
 		compGCM.load(fullPath);
 		
 		//make sure the types match up (sans the input/output bit)
@@ -1514,7 +1533,7 @@ public class Schematic extends JPanel implements ActionListener {
 		}
 		*/
 		
-		gcm.connectComponentAndSpecies(compID, port, specID, GlobalConstants.OUTPUT);
+		bioModel.connectComponentAndSpecies(compID, port, specID, GlobalConstants.OUTPUT);
 		
 		return port;
 	}
@@ -1535,8 +1554,8 @@ public class Schematic extends JPanel implements ActionListener {
 		if(port == null)
 			return null;
 		
-		String fullPath = gcm.getPath() + File.separator + gcm.getModelFileName(compID).replace(".xml",".gcm");
-		BioModel compGCM = new BioModel(gcm.getPath());
+		String fullPath = bioModel.getPath() + File.separator + bioModel.getModelFileName(compID).replace(".xml",".gcm");
+		BioModel compGCM = new BioModel(bioModel.getPath());
 		compGCM.load(fullPath);
 		
 		//make sure the types match up (sans the input/output bit)
@@ -1553,7 +1572,7 @@ public class Schematic extends JPanel implements ActionListener {
 		}
 		*/
 		
-		gcm.connectComponentAndSpecies(compID, port, specID, GlobalConstants.INPUT);
+		bioModel.connectComponentAndSpecies(compID, port, specID, GlobalConstants.INPUT);
 		return port;
 	}
 
@@ -1567,12 +1586,12 @@ public class Schematic extends JPanel implements ActionListener {
 		if(graph.getCellType(cell.getTarget()) == GlobalConstants.COMPONENT){
 			componentId = cell.getTarget().getId();
 			speciesId = cell.getSource().getId();
-			gcm.removeComponentConnection(speciesId, componentId, 
+			bioModel.removeComponentConnection(speciesId, componentId, 
 					GlobalConstants.INPUT+"__"+((String)cell.getValue()).replace("Port ",""));
 		}else if(graph.getCellType(cell.getSource()) == GlobalConstants.COMPONENT){
 			componentId = cell.getSource().getId();
 			speciesId = cell.getTarget().getId();
-			gcm.removeComponentConnection(speciesId, componentId, 
+			bioModel.removeComponentConnection(speciesId, componentId, 
 					GlobalConstants.OUTPUT+"__"+((String)cell.getValue()).replace("Port ",""));
 		}else
 			throw new Error("removeComponentConnection was called with a cell in which neither the source nor target was a component!");
@@ -1601,8 +1620,8 @@ public class Schematic extends JPanel implements ActionListener {
 	 * @return an array of the input/output ports for the component passed in
 	 */
 	private ArrayList<String> getGCMPorts(String compId, String type){
-		String fullPath = gcm.getPath() + File.separator + gcm.getModelFileName(compId).replace(".xml", ".gcm");
-		BioModel compGCM = new BioModel(gcm.getPath());
+		String fullPath = bioModel.getPath() + File.separator + bioModel.getModelFileName(compId).replace(".xml", ".gcm");
+		BioModel compGCM = new BioModel(bioModel.getPath());
 		compGCM.load(fullPath);
 		ArrayList<String> ports = compGCM.getSpeciesPorts(type);
 		return ports;
@@ -1688,6 +1707,9 @@ public class Schematic extends JPanel implements ActionListener {
 		else if(cellType == GlobalConstants.PRODUCTION){
 			// do nothing
 		}
+		else if(cellType == GlobalConstants.RULE_EDGE){
+			// do nothing
+		}
 		else if(cellType == GlobalConstants.REACTION_EDGE){
 			
 			mxCell source = (mxCell)cell.getSource();
@@ -1696,33 +1718,33 @@ public class Schematic extends JPanel implements ActionListener {
 			if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
 					(graph.getCellType(target) == GlobalConstants.SPECIES)) {
 				
-				reactions.reactionsEditor(gcm,"OK",(String)cell.getValue(),true);
+				reactions.reactionsEditor(bioModel,"OK",(String)cell.getValue(),true);
 			} 
 			else if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
 				(graph.getCellType(target) == GlobalConstants.REACTION)) {
 				
-				SpeciesReference reactant = gcm.getSBMLDocument().getModel().getReaction((String)target.getId()).
+				SpeciesReference reactant = bioModel.getSBMLDocument().getModel().getReaction((String)target.getId()).
 					getReactant((String)source.getId());
 				if (reactant != null) {
-					reactions.reactantsEditor(gcm,"OK",(String)source.getId(),reactant);
+					reactions.reactantsEditor(bioModel,"OK",(String)source.getId(),reactant);
 				} 
 			} 
 			else if ((graph.getCellType(source) == GlobalConstants.REACTION) &&
 				(graph.getCellType(target) == GlobalConstants.SPECIES)) {
 				
-				SpeciesReference product = gcm.getSBMLDocument().getModel().getReaction((String)source.getId()).
+				SpeciesReference product = bioModel.getSBMLDocument().getModel().getReaction((String)source.getId()).
 					getProduct((String)target.getId());
-				reactions.productsEditor(gcm,"OK",(String)target.getId(),product);
+				reactions.productsEditor(bioModel,"OK",(String)target.getId(),product);
 			}
 		}
 		else if(cellType == GlobalConstants.REACTION){
 			
-			Reaction r = gcm.getSBMLDocument().getModel().getReaction((String)cell.getId());
-			reactions.reactionsEditor(gcm,"OK",(String)cell.getId(),true);
+			Reaction r = bioModel.getSBMLDocument().getModel().getReaction((String)cell.getId());
+			reactions.reactionsEditor(bioModel,"OK",(String)cell.getId(),true);
 			
 			if (!cell.getId().equals(r.getId())) {
-				if (gcm.getSBMLLayout().getNumLayouts() != 0) {
-					Layout layout = gcm.getSBMLLayout().getLayout(0); 
+				if (bioModel.getSBMLLayout().getNumLayouts() != 0) {
+					Layout layout = bioModel.getSBMLLayout().getLayout(0); 
 					if (layout.getReactionGlyph(cell.getId())!=null) {
 						ReactionGlyph reactionGlyph = layout.getReactionGlyph(cell.getId());
 						reactionGlyph.setId(r.getId());
@@ -1736,6 +1758,28 @@ public class Schematic extends JPanel implements ActionListener {
 					}
 				}
 				cell.setId(r.getId());
+			}
+		}
+		else if(cellType == GlobalConstants.RULE){
+			
+			String id = rules.ruleEditor("OK",(String)cell.getId());
+			
+			if (!cell.getId().equals(id)) {
+				if (bioModel.getSBMLLayout().getNumLayouts() != 0) {
+					Layout layout = bioModel.getSBMLLayout().getLayout(0); 
+					if (layout.getReactionGlyph(cell.getId())!=null) {
+						ReactionGlyph reactionGlyph = layout.getReactionGlyph(cell.getId());
+						reactionGlyph.setId(id);
+						reactionGlyph.setReactionId(id);
+					}
+					if (layout.getTextGlyph(cell.getId())!=null) {
+						TextGlyph textGlyph = layout.getTextGlyph(cell.getId());
+						textGlyph.setId(id);
+						textGlyph.setGraphicalObjectId(id);
+						textGlyph.setText(id);
+					}
+				}
+				cell.setId(id);
 			}
 		}
 		else if(cellType == GlobalConstants.COMPONENT){
@@ -1796,7 +1840,7 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		//this reload grid call isn't necessary anymore
 		//gcm.reloadGrid();
-		grid = gcm.getGrid();
+		grid = bioModel.getGrid();
 	}
 	
 	/**
@@ -1870,7 +1914,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 * @return the gcm
 	 */
 	public BioModel getGCM() {
-		return gcm;
+		return bioModel;
 	}
 	
 	/**

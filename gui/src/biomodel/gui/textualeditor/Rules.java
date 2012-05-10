@@ -180,11 +180,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Creates a frame used to edit rules or create new ones.
 	 */
-	private void ruleEditor(String option) {
-		if (option.equals("OK") && rules.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(Gui.frame, "No rule selected.", "Must Select a Rule", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
+	public String ruleEditor(String option,String metaId) {
 		JPanel rulePanel = new JPanel(new BorderLayout());
 		JPanel IDPanel = new JPanel();
 		JPanel mathPanel = new JPanel();
@@ -217,51 +213,29 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			}
 		});
 		sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 1);
-		int Rindex = -1;
 		if (option.equals("OK")) {
 			ruleType.setEnabled(false);
-			String selected = ((String) rules.getSelectedValue());
-			// algebraic rule
-			if ((selected.split(" ")[0]).equals("0")) {
+			Rule rule = (Rule)gcm.getSBMLDocument().getModel().getElementByMetaId(metaId);
+			if (rule.getElementName().equals(GlobalConstants.ALGEBRAIC_RULE)) {
 				ruleType.setSelectedItem("Algebraic");
 				ruleVar.setEnabled(false);
-				ruleMath.setText(selected.substring(4));
-				ListOf r = gcm.getSBMLDocument().getModel().getListOfRules();
-				for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumRules(); i++) {
-					if ((((Rule) r.get(i)).isAlgebraic())
-							&& (SBMLutilities.myFormulaToString(((Rule) r.get(i)).getMath()).equals(ruleMath.getText()))) {
-						Rindex = i;
-					}
-				}
+				ruleMath.setText(SBMLutilities.myFormulaToString(rule.getMath()));
 			}
-			else if ((selected.split(" ")[0]).equals("d(")) {
+			else if  (rule.getElementName().equals(GlobalConstants.RATE_RULE)) {
 				ruleType.setSelectedItem("Rate");
-				rateRuleVar(selected.split(" ")[1]);
+				rateRuleVar(rule.getVariable());
 				ruleVar.setEnabled(true);
-				ruleVar.setSelectedItem(selected.split(" ")[1]);
-				ruleMath.setText(selected.substring(selected.indexOf('=') + 2));
-				ListOf r = gcm.getSBMLDocument().getModel().getListOfRules();
-				for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumRules(); i++) {
-					if ((((Rule) r.get(i)).isRate()) && ((Rule) r.get(i)).getVariable().equals(ruleVar.getSelectedItem())) {
-						Rindex = i;
-					}
-				}
+				ruleVar.setSelectedItem(rule.getVariable());
+				ruleMath.setText(SBMLutilities.myFormulaToString(rule.getMath()));
 			}
 			else {
 				ruleType.setSelectedItem("Assignment");
-				assignRuleVar(selected.split(" ")[0]);
+				assignRuleVar(rule.getVariable());
 				ruleVar.setEnabled(true);
-				ruleVar.setSelectedItem(selected.split(" ")[0]);
-				ruleMath.setText(selected.substring(selected.indexOf('=') + 2));
-				ListOf r = gcm.getSBMLDocument().getModel().getListOfRules();
-				for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumRules(); i++) {
-					if ((((Rule) r.get(i)).isAssignment()) && ((Rule) r.get(i)).getVariable().equals(ruleVar.getSelectedItem())) {
-						Rindex = i;
-					}
-				}
+				ruleVar.setSelectedItem(rule.getVariable());
+				ruleMath.setText(SBMLutilities.myFormulaToString(rule.getMath()));
 			}
 			//Parse out SBOL annotations and add to SBOL field
-			Rule rule = (Rule) (gcm.getSBMLDocument().getModel().getListOfRules()).get(Rindex);
 			LinkedList<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(rule);
 			if (sbolURIs.size() > 0)
 				sbolField.setSBOLURIs(sbolURIs);
@@ -378,7 +352,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					rul = Utility.getList(rul, rules);
 					String[] oldRul = rul.clone();
 					rules.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					Rule r = (Rule) (gcm.getSBMLDocument().getModel().getListOfRules()).get(Rindex);
+					Rule r = (Rule) (gcm.getSBMLDocument().getModel().getElementByMetaId(metaId));
 					String addStr;
 					String oldVar = "";
 					String oldMath = SBMLutilities.myFormulaToString(r.getMath());
@@ -557,8 +531,9 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			}
 		}
 		if (value == JOptionPane.NO_OPTION) {
-			return;
+			return metaId;
 		}
+		return id.getText().trim();
 	}
 	
 	/**
@@ -583,6 +558,20 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		}
 	}
 
+	public void removeRuleByMetaId(String metaId) {
+		SBase rule = gcm.getSBMLDocument().getModel().getElementByMetaId(metaId);
+		if (rule != null) {
+			rule.removeFromParentAndDelete();
+			for (long j = 0; j < gcm.getSBMLCompModel().getNumPorts(); j++) {
+				Port port = gcm.getSBMLCompModel().getPort(j);
+				if (port.isSetMetaIdRef() && port.getMetaIdRef().equals(metaId)) {
+					gcm.getSBMLCompModel().removePort(j);
+					break;
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Remove the rule
 	 */
@@ -631,6 +620,13 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumRules(); i++) {
 				if ((((Rule) r.get(i)).isAssignment()) && SBMLutilities.myFormulaToString(((Rule) r.get(i)).getMath()).equals(tempMath)
 						&& ((Rule) r.get(i)).getVariable().equals(tempVar)) {
+					for (long j = 0; j < gcm.getSBMLCompModel().getNumPorts(); j++) {
+						Port port = gcm.getSBMLCompModel().getPort(j);
+						if (port.isSetMetaIdRef() && port.getMetaIdRef().equals(r.get(i).getMetaId())) {
+							gcm.getSBMLCompModel().removePort(j);
+							break;
+						}
+					}
 					r.remove(i);
 				}
 			}
@@ -1004,11 +1000,45 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	public void actionPerformed(ActionEvent e) {
 		// if the add event button is clicked
 		if (e.getSource() == addRule) {
-			ruleEditor("Add");
+			ruleEditor("Add","");
 		}
 		// if the edit event button is clicked
 		else if (e.getSource() == editRule) {
-			ruleEditor("OK");
+			if (rules.getSelectedIndex() == -1) {
+				JOptionPane.showMessageDialog(Gui.frame, "No rule selected.", "Must Select a Rule", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			String metaId = "";
+			String selected = ((String) rules.getSelectedValue());
+			if ((selected.split(" ")[0]).equals("0")) {
+				String math = selected.substring(4);
+				ListOf r = gcm.getSBMLDocument().getModel().getListOfRules();
+				for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumRules(); i++) {
+					if ((((Rule) r.get(i)).isAlgebraic())
+							&& (SBMLutilities.myFormulaToString(((Rule) r.get(i)).getMath()).equals(math))) {
+						metaId = r.get(i).getMetaId();
+					}
+				}
+			}
+			else if ((selected.split(" ")[0]).equals("d(")) {
+				String var = selected.split(" ")[1];
+				ListOf r = gcm.getSBMLDocument().getModel().getListOfRules();
+				for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumRules(); i++) {
+					if ((((Rule) r.get(i)).isRate()) && ((Rule) r.get(i)).getVariable().equals(var)) {
+						metaId = r.get(i).getMetaId();
+					}
+				}
+			}
+			else {
+				String var = selected.split(" ")[0];
+				ListOf r = gcm.getSBMLDocument().getModel().getListOfRules();
+				for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumRules(); i++) {
+					if ((((Rule) r.get(i)).isAssignment()) && ((Rule) r.get(i)).getVariable().equals(var)) {
+						metaId = r.get(i).getMetaId();
+					}
+				}
+			}
+			ruleEditor("OK",metaId);
 		}
 		// if the remove event button is clicked
 		else if (e.getSource() == removeRule) {
@@ -1019,7 +1049,41 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2) {
 			if (e.getSource() == rules) {
-				ruleEditor("OK");
+				if (rules.getSelectedIndex() == -1) {
+					JOptionPane.showMessageDialog(Gui.frame, "No rule selected.", "Must Select a Rule", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				String metaId = "";
+				String selected = ((String) rules.getSelectedValue());
+				if ((selected.split(" ")[0]).equals("0")) {
+					String math = selected.substring(4);
+					ListOf r = gcm.getSBMLDocument().getModel().getListOfRules();
+					for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumRules(); i++) {
+						if ((((Rule) r.get(i)).isAlgebraic())
+								&& (SBMLutilities.myFormulaToString(((Rule) r.get(i)).getMath()).equals(math))) {
+							metaId = r.get(i).getMetaId();
+						}
+					}
+				}
+				else if ((selected.split(" ")[0]).equals("d(")) {
+					String var = selected.split(" ")[1];
+					ListOf r = gcm.getSBMLDocument().getModel().getListOfRules();
+					for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumRules(); i++) {
+						if ((((Rule) r.get(i)).isRate()) && ((Rule) r.get(i)).getVariable().equals(var)) {
+							metaId = r.get(i).getMetaId();
+						}
+					}
+				}
+				else {
+					String var = selected.split(" ")[0];
+					ListOf r = gcm.getSBMLDocument().getModel().getListOfRules();
+					for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumRules(); i++) {
+						if ((((Rule) r.get(i)).isAssignment()) && ((Rule) r.get(i)).getVariable().equals(var)) {
+							metaId = r.get(i).getMetaId();
+						}
+					}
+				}
+				ruleEditor("OK",metaId);
 			}
 		}
 	}

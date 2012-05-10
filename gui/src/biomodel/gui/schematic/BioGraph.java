@@ -24,6 +24,8 @@ import org.sbml.libsbml.Model;
 import org.sbml.libsbml.ModifierSpeciesReference;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.ReactionGlyph;
+import org.sbml.libsbml.Rule;
+import org.sbml.libsbml.Species;
 import org.sbml.libsbml.SpeciesGlyph;
 import org.sbml.libsbml.SpeciesReference;
 import org.sbml.libsbml.SpeciesReferenceGlyph;
@@ -36,6 +38,7 @@ import main.Gui;
 
 import biomodel.gui.Grid;
 import biomodel.gui.movie.MovieAppearance;
+import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 
@@ -59,6 +62,7 @@ public class BioGraph extends mxGraph {
 	
 	private HashMap<String, mxCell> speciesToMxCellMap;
 	private HashMap<String, mxCell> reactionsToMxCellMap;
+	private HashMap<String, mxCell> rulesToMxCellMap;
 	private HashMap<String, mxCell> influencesToMxCellMap;
 	private HashMap<String, mxCell> componentsToMxCellMap;
 	private HashMap<String, mxCell> componentsConnectionsToMxCellMap;
@@ -109,6 +113,7 @@ public class BioGraph extends mxGraph {
 		
 		speciesToMxCellMap = new HashMap<String, mxCell>();
 		reactionsToMxCellMap = new HashMap<String, mxCell>();
+		rulesToMxCellMap = new HashMap<String, mxCell>();
 		componentsToMxCellMap = new HashMap<String, mxCell>();
 		influencesToMxCellMap = new HashMap<String, mxCell>();
 		componentsConnectionsToMxCellMap = new HashMap<String, mxCell>();
@@ -210,6 +215,18 @@ public class BioGraph extends mxGraph {
 					if(createGraphReactionFromModel(r.getId()))
 						needsPositioning = true;			
 				}
+			}
+		}
+		
+		// add rules
+		for (long i = 0; i < m.getNumRules(); i++) {
+			Rule rule = m.getRule(i);
+			if (layout.getReactionGlyph(rule.getMetaId())!=null) {
+				if(createGraphRuleFromModel(rule.getMetaId())) {
+					needsPositioning = true;			
+				}
+			} else {
+				// create layout for rule
 			}
 		}
 
@@ -377,68 +394,7 @@ public class BioGraph extends mxGraph {
 				}
 			}
 		}
-		/*
- 		for(String inf : gcm.getInfluences().keySet()){
-			
-			String ins = GCMFile.getInput(inf);
-			String outs = GCMFile.getOutput(inf);
-		
-			if(ins.equals(GlobalConstants.NONE) || outs.equals(GlobalConstants.NONE)){
-				
-				// a drawn-promoter edge
-				Properties influence = gcm.getInfluences().get(inf);
-				String promName = influence.getProperty(GlobalConstants.PROMOTER, "");
-				
-				if(promName.equals("")){
-					
-					if(_badPromoters++ == 0)
-						JOptionPane.showMessageDialog(Gui.frame, "You have a default promoter that is connected to None. Because of this some edges are not being drawn in schematic. Please fix.\n");
-					
-					continue;
-				}
-				
-				// If an edge is found with a drawn promoter, 
-				// this is a recoverable error case. Flag the promoter as drawn, re-call this 
-				// function and bail. This will ensure that legacy gcm files and files
-				// created with the other interface get built correctly.
-				// make sure the promoter is set to be drawn. If not, set it and try this function again.
-				if(!gcm.isPromoterExplicit(promName)) {
-					needsRedrawn = true;
-					// we can't draw this edge because the promoter isn't drawn. 
-					// It will be drawn in the next pass.
-					continue;
-				}
-				
-				// now draw the edge to the promoter
-				if(ins.equals(GlobalConstants.NONE)){
-					// the output must be the species
-					mxCell production = (mxCell)this.insertEdge(this.getDefaultParent(), inf, "", 
-							this.getDrawnPromoterCell(promName), 
-							this.getSpeciesCell(outs));
-					//updateProductionVisuals(inf);
-					production.setStyle("PRODUCTION");
-				}
-				else{
-					// the input must be the species
-					this.insertEdge(this.getDefaultParent(), inf, "", 
-							this.getSpeciesCell(ins), 
-							this.getDrawnPromoterCell(promName));
-					
-					updateInfluenceVisuals(inf);
-				}
-			}
-			else{
-				// A normal, non-drawn promoter edge
-				this.insertEdge(this.getDefaultParent(), inf, "", 
-						this.getSpeciesCell(ins), 
-						this.getSpeciesCell(outs)
-						);
-				
-				updateInfluenceVisuals(inf);
-			}
-		}
-		*/
-		
+
 		//add reactions
 		for (int i = 0; i < m.getNumReactions(); i++) {
 			
@@ -576,6 +532,59 @@ public class BioGraph extends mxGraph {
 					}
 				}
 			}
+		}
+
+		//add rules
+		for (int i = 0; i < m.getNumRules(); i++) {
+			
+			Rule r = m.getRule(i);
+			ReactionGlyph reactionGlyph = gcm.getSBMLLayout().getLayout("iBioSim").getReactionGlyph(r.getMetaId());
+			if (reactionGlyph != null) {
+				while (reactionGlyph.getNumSpeciesReferenceGlyphs() > 0) 
+					reactionGlyph.removeSpeciesReferenceGlyph(0);
+				// Add support
+				String initStr = SBMLutilities.myFormulaToString(r.getMath());
+				String[] vars = initStr.split(" |\\(|\\)|\\,");
+				for (int j = 0; j < vars.length; j++) {
+					Species species = m.getSpecies(vars[j]);
+					if (species != null) {
+						mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
+								species.getId() + "__" + r.getMetaId(), "", 
+								this.getSpeciesCell(species.getId()), 
+								this.getRulesCell(r.getMetaId()));
+						cell.setStyle("RULE_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+						SpeciesReferenceGlyph speciesReferenceGlyph = reactionGlyph.createSpeciesReferenceGlyph();
+						speciesReferenceGlyph.setId(species.getId());
+						speciesReferenceGlyph.setSpeciesGlyphId(species.getId());
+						speciesReferenceGlyph.setRole("substrate");
+						/*
+						LineSegment lineSegment = speciesReferenceGlyph.createLineSegment();
+						lineSegment.setStart(cell.getSource().getGeometry().getCenterX(),cell.getSource().getGeometry().getCenterY());
+						lineSegment.setEnd(cell.getTarget().getGeometry().getCenterX(),cell.getTarget().getGeometry().getCenterY());
+						 */
+					}
+				}
+				// Add variable
+				if (r.isAssignment() || r.isRate()) {
+					Species species = m.getSpecies(r.getVariable());
+					if (species != null) {
+						mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
+								r.getMetaId() + "__" + species.getId(), "", 
+								this.getRulesCell(r.getMetaId()),
+								this.getSpeciesCell(species.getId()));
+						cell.setStyle("REACTION_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+						SpeciesReferenceGlyph speciesReferenceGlyph = reactionGlyph.createSpeciesReferenceGlyph();
+						speciesReferenceGlyph.setId(species.getId());
+						speciesReferenceGlyph.setSpeciesGlyphId(species.getId());
+						speciesReferenceGlyph.setRole("product");
+						/*
+						LineSegment lineSegment = speciesReferenceGlyph.createLineSegment();
+						lineSegment.setStart(cell.getSource().getGeometry().getCenterX(),cell.getSource().getGeometry().getCenterY());
+						lineSegment.setEnd(cell.getTarget().getGeometry().getCenterX(),cell.getTarget().getGeometry().getCenterY());
+						 */
+					}
+				}
+			} 
 		}
 		
 		addEdgeOffsets();
@@ -1074,7 +1083,8 @@ public class BioGraph extends mxGraph {
 			textGlyph.setGraphicalObjectId((String)cell.getId());
 			textGlyph.setText((String)cell.getId());
 			textGlyph.setBoundingBox(speciesGlyph.getBoundingBox());
-		} else if (getCellType(cell).equals(GlobalConstants.REACTION)) {
+		} else if (getCellType(cell).equals(GlobalConstants.REACTION)||
+				getCellType(cell).equals(GlobalConstants.RULE)) {
 			Layout layout = null;
 			if (gcm.getSBMLLayout().getLayout("iBioSim") != null) {
 				layout = gcm.getSBMLLayout().getLayout("iBioSim"); 
@@ -1176,7 +1186,8 @@ public class BioGraph extends mxGraph {
 				width = GlobalConstants.DEFAULT_SPECIES_WIDTH;
 				height = GlobalConstants.DEFAULT_SPECIES_HEIGHT;
 			}
-		} else if (getCellType(cell).equals(GlobalConstants.REACTION)) {
+		} else if (getCellType(cell).equals(GlobalConstants.REACTION) ||
+				getCellType(cell).equals(GlobalConstants.RULE)) {
 			if (gcm.getSBMLLayout().getLayout("iBioSim") != null) {
 				Layout layout = gcm.getSBMLLayout().getLayout("iBioSim"); 
 				if (layout.getReactionGlyph((String)cell.getId())!=null) {
@@ -1323,6 +1334,9 @@ public class BioGraph extends mxGraph {
 			else if (sourceType == GlobalConstants.REACTION || targetType == GlobalConstants.REACTION) {
 				return GlobalConstants.REACTION_EDGE;
 			}
+			else if (sourceType == GlobalConstants.RULE || targetType == GlobalConstants.RULE) {
+				return GlobalConstants.RULE_EDGE;
+			}
 			else {
 				return GlobalConstants.INFLUENCE;
 			}
@@ -1339,6 +1353,8 @@ public class BioGraph extends mxGraph {
 				return GlobalConstants.PROMOTER;
 			else if(type.equals("Reaction"))
 				return GlobalConstants.REACTION;
+			else if(type.equals("Rule"))
+				return GlobalConstants.RULE;
 			else if (type.equals("Rectangle"))
 				return GlobalConstants.GRID_RECTANGLE;
 			else
@@ -1376,6 +1392,10 @@ public class BioGraph extends mxGraph {
 	 */
 	public mxCell getReactionsCell(String id){
 		return reactionsToMxCellMap.get(id);
+	}
+
+	public mxCell getRulesCell(String id){
+		return rulesToMxCellMap.get(id);
 	}
 	
 	/**
@@ -1592,6 +1612,16 @@ public class BioGraph extends mxGraph {
 		return sizeAndPositionFromProperties((mxCell)insertedVertex);
 	}
 	
+	private boolean createGraphRuleFromModel(String id){
+		CellValueObject cvo = new CellValueObject(id, "Rule", null);
+		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
+		this.rulesToMxCellMap.put(id, (mxCell)insertedVertex);
+		
+		this.setRuleStyles(id);
+		
+		return sizeAndPositionFromProperties((mxCell)insertedVertex);
+	}
+	
 	/**
 	 * Creates a drawn promoter using the internal model
 	 * @param pname
@@ -1715,6 +1745,16 @@ public class BioGraph extends mxGraph {
 		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
 		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
 		stylesheet.putCellStyle("REACTION", style);
+		
+		//components
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
+		style.put(mxConstants.STYLE_OPACITY, 50);
+		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
+		style.put(mxConstants.STYLE_ROUNDED, false);
+		style.put(mxConstants.STYLE_FILLCOLOR, "#FFFF00");
+		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
+		stylesheet.putCellStyle("RULE", style);
 		
 		//components
 		style = new Hashtable<String, Object>();
@@ -1879,6 +1919,13 @@ public class BioGraph extends mxGraph {
 		mxCell cell = this.getReactionsCell(id);
 		cell.setStyle(style);
 	}
+
+	private void setRuleStyles(String id){
+		String style="RULE;";
+		
+		mxCell cell = this.getRulesCell(id);
+		cell.setStyle(style);
+	}
 	
 	/**
 	 * 
@@ -2006,7 +2053,8 @@ public class BioGraph extends mxGraph {
 					width = GlobalConstants.DEFAULT_SPECIES_WIDTH;
 					height = GlobalConstants.DEFAULT_SPECIES_HEIGHT;
 				}
-			} else if (getCellType(cell).equals(GlobalConstants.REACTION)) {
+			} else if (getCellType(cell).equals(GlobalConstants.REACTION)||
+					getCellType(cell).equals(GlobalConstants.RULE)) {
 				if (gcm.getSBMLLayout().getLayout("iBioSim") != null) {
 					Layout layout = gcm.getSBMLLayout().getLayout("iBioSim"); 
 					if (layout.getReactionGlyph((String)cell.getId())!=null) {

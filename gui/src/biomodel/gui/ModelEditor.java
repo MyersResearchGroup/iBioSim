@@ -1466,7 +1466,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		reactionPanel = new Reactions(biosim,biomodel,dirty, paramsOnly,getParams,path + separator + file,parameterChanges, this);
 		speciesPanel = new MySpecies(biosim,biomodel,dirty, paramsOnly,getParams,path + separator + file,parameterChanges,biomodel.getGrid().isEnabled());
 		parametersPanel = new Parameters(biosim, biomodel,dirty, paramsOnly,getParams,path + separator + file,parameterChanges);
-		
+		rulesPanel = new Rules(biosim, biomodel, this, dirty);
+
 		JPanel compPanel = new JPanel(new BorderLayout());
 		if (textBased) {
 			modelPanel = new ModelPanel(biomodel,dirty,paramsOnly);
@@ -1476,62 +1477,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 		biomodel.setSpeciesPanel(speciesPanel);
 		biomodel.setReactionPanel(reactionPanel);
-		
-		/*
-		promoters = new PropertyList("Promoter List");
-		EditButton addInit = new EditButton("Add Promoter", promoters);
-		RemoveButton removeInit = new RemoveButton("Remove Promoter", promoters);
-		if (paramsOnly) {
-			addInit.setEnabled(false);
-			removeInit.setEnabled(false);
-		}
-		EditButton editInit = new EditButton("Edit Promoter", promoters);
-		if (paramsOnly) {
-			ArrayList<String> proms = gcm.getPromoters();
-			for (String s : getParams) {
-				if (s.contains("/") && proms.contains(s.split("/")[0].trim())) {
-					proms.remove(s.split("/")[0].trim());
-					proms.add(s.split("/")[0].trim() + " Modified");
-					parameterChanges.add(s);
-				}
-			}
-			promoters.addAllItem(proms);
-		}
-		else {
-			promoters.addAllItem(gcm.getPromoters());
-		}
-		JPanel promoterPanel = Utility.createPanel(this, "Promoters", promoters, addInit, removeInit, editInit);
-		mainPanelCenterCenter.add(promoterPanel);
-
-		influences = new PropertyList("Influence List");
-		addInit = new EditButton("Add Influence", influences);
-		removeInit = new RemoveButton("Remove Influence", influences);
-		if (paramsOnly) {
-			addInit.setEnabled(false);
-			removeInit.setEnabled(false);
-		}
-		editInit = new EditButton("Edit Influence", influences);
-		if (paramsOnly) {
-			Set<String> influe = gcm.getInfluences().keySet();
-			ArrayList<String> influes = new ArrayList<String>();
-			for (String s : influe) {
-				influes.add(s);
-			}
-			for (String s : getParams) {
-				if (s.contains("\"") && influes.contains(s.split("\"")[1].trim())) {
-					influes.remove(s.split("\"")[1].trim());
-					influes.add(s.split("\"")[1].trim() + " Modified");
-					parameterChanges.add(s);
-				}
-			}
-			influences.addAllItem(influes);
-		}
-		else {
-			influences.addAllItem(gcm.getInfluences().keySet());
-		}
-		JPanel influencesPanel = Utility.createPanel(this, "Influences", influences, addInit, removeInit, editInit);
-		mainPanelCenterCenter.add(influencesPanel);
-	    */
+		biomodel.setRulePanel(rulesPanel);
 		
 		components = new PropertyList("Component List");
 		EditButton addInit = new EditButton("Add Component", components);
@@ -1556,9 +1502,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			
 			tab.addTab("Parameters", parametersPanel);
 			tab.addTab("Components", componentsPanel);
+			tab.addTab("Rules", rulesPanel);
 		} 
 		else {
-			this.schematic = new Schematic(biomodel, biosim, this, true, null,compartmentPanel,reactionPanel,compartmentList);
+			this.schematic = new Schematic(biomodel, biosim, this, true, null,compartmentPanel,reactionPanel,rulesPanel,
+					compartmentList);
 			tab.addTab("Schematic", schematic);
 			tab.addTab("Compartments", compPanel);
 			if (biomodel.getGrid().isEnabled()) {
@@ -1588,12 +1536,10 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 
 		InitialAssignments initialsPanel = new InitialAssignments(biosim,biomodel,dirty);
-		rulesPanel = new Rules(biosim, biomodel, this, dirty);
 		compartmentPanel.setPanels(initialsPanel, rulesPanel);
 		functionPanel.setPanels(initialsPanel, rulesPanel);
 		speciesPanel.setPanels(initialsPanel, rulesPanel);
 		reactionPanel.setPanels(initialsPanel, rulesPanel);
-		tab.addTab("Rules", rulesPanel);
 		
 		eventPanel = new Events(biosim,biomodel,dirty);
 		tab.addTab("Constraints", propPanel);
