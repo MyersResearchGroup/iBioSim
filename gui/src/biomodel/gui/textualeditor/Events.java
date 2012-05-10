@@ -104,14 +104,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Creates a frame used to edit events or create new ones.
 	 */
-	private void eventEditor(Gui biosim, String option, JList events, BioModel gcm, JList eventAssign) {
+	public String eventEditor(String option,String selected) {
 		String[] origAssign = null;
 		String[] assign = new String[0];
-		if (option.equals("OK") && events.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(Gui.frame, "No event selected.", "Must Select an Event", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-		int index = events.getSelectedIndex();
 		JPanel eventPanel = new JPanel(new BorderLayout());
 		// JPanel evPanel = new JPanel(new GridLayout(2, 2));
 		JPanel evPanel = new JPanel(new GridLayout(10, 2));
@@ -163,7 +158,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		int Eindex = -1;
 		String selectedID = "";
 		if (option.equals("OK")) {
-			String selected = ((String) events.getSelectedValue());
 			ListOf e = gcm.getSBMLDocument().getModel().getListOfEvents();
 			for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumEvents(); i++) {
 				org.sbml.libsbml.Event event = (org.sbml.libsbml.Event) e.get(i);
@@ -507,6 +501,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 								port.setIdRef(e.getId());
 							}
 						}
+						int index = events.getSelectedIndex();
 						ev[index] = e.getId();
 						Utility.sort(ev);
 						events.setListData(ev);
@@ -640,6 +635,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						ev[i] = (String) adding[i];
 					}
 					Utility.sort(ev);
+					int index = events.getSelectedIndex();
 					events.setListData(ev);
 					events.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					if (gcm.getSBMLDocument().getModel().getNumEvents() == 1) {
@@ -659,10 +655,11 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			}
 		}
 		if (value == JOptionPane.NO_OPTION) {
-			return;
+			return selected;
 		}
 		dirty.setValue(true);
 		gcm.makeUndoPoint();
+		return eventID.getText().trim();
 	}
 
 	/**
@@ -791,7 +788,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	 * @param selected
 	 *            the event Id to remove
 	 */
-	private void removeTheEvent(BioModel gcm, String selected) {
+	public void removeTheEvent(BioModel gcm, String selected) {
 		ListOf EL = gcm.getSBMLDocument().getModel().getListOfEvents();
 		for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumEvents(); i++) {
 			org.sbml.libsbml.Event E = (org.sbml.libsbml.Event) EL.get(i);
@@ -1037,11 +1034,16 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	public void actionPerformed(ActionEvent e) {
 		// if the add event button is clicked
 		if (e.getSource() == addEvent) {
-			eventEditor(biosim, "Add", events, gcm, eventAssign);
+			eventEditor("Add","");
 		}
 		// if the edit event button is clicked
 		else if (e.getSource() == editEvent) {
-			eventEditor(biosim, "OK", events, gcm, eventAssign);
+			if (events.getSelectedIndex() == -1) {
+				JOptionPane.showMessageDialog(Gui.frame, "No event selected.", "Must Select an Event", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			String selected = ((String) events.getSelectedValue());
+			eventEditor("OK",selected);
 		}
 		// if the remove event button is clicked
 		else if (e.getSource() == removeEvent) {
@@ -1064,7 +1066,12 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2) {
 			if (e.getSource() == events) {
-				eventEditor(biosim, "OK", events, gcm, eventAssign);
+				if (events.getSelectedIndex() == -1) {
+					JOptionPane.showMessageDialog(Gui.frame, "No event selected.", "Must Select an Event", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				String selected = ((String) events.getSelectedValue());
+				eventEditor("OK",selected);
 			}
 			else if (e.getSource() == eventAssign) {
 				eventAssignEditor(gcm, eventAssign, "OK");

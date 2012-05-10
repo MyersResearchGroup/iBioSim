@@ -67,6 +67,8 @@ import biomodel.gui.SpeciesPanel;
 import biomodel.gui.movie.MovieContainer;
 import biomodel.gui.movie.SchemeChooserPanel;
 import biomodel.gui.textualeditor.Compartments;
+import biomodel.gui.textualeditor.Constraints;
+import biomodel.gui.textualeditor.Events;
 import biomodel.gui.textualeditor.ModelPanel;
 import biomodel.gui.textualeditor.Reactions;
 import biomodel.gui.textualeditor.Rules;
@@ -103,6 +105,8 @@ public class Schematic extends JPanel implements ActionListener {
 	private Compartments compartments;
 	private Reactions reactions;
 	private Rules rules;
+	private Constraints constraints;
+	private Events events;
 	private JComboBox compartmentList;
 	private Grid grid;
 	private JTabbedPane tabbedPane;
@@ -114,6 +118,8 @@ public class Schematic extends JPanel implements ActionListener {
 	private AbstractButton addComponentButton;
 	private AbstractButton addPromoterButton;
 	private AbstractButton addRuleButton;
+	private AbstractButton addConstraintButton;
+	private AbstractButton addEventButton;
 	private AbstractButton selfInfluenceButton;
 	private AbstractButton activationButton;
 	private AbstractButton inhibitionButton;
@@ -135,7 +141,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 */
 	public Schematic(BioModel gcm, Gui biosim, ModelEditor gcm2sbml, boolean editable, 
 			MovieContainer movieContainer2, Compartments compartments, Reactions reactions, Rules rules,
-			JComboBox compartmentList){
+			Constraints constraints, Events events, JComboBox compartmentList){
 		
 		super(new BorderLayout());
 		
@@ -150,6 +156,8 @@ public class Schematic extends JPanel implements ActionListener {
 		this.compartments = compartments;
 		this.reactions = reactions;
 		this.rules = rules;
+		this.constraints = constraints;
+		this.events = events;
 		this.grid = gcm.getGrid();
 		this.compartmentList = compartmentList;
 		this.tabbedPane = biosim.getTab();
@@ -321,6 +329,10 @@ public class Schematic extends JPanel implements ActionListener {
 		toolBar.add(addPromoterButton);
 		addRuleButton = Utils.makeRadioToolButton("rule_mode.png", "", "Add Rules", this, modeButtonGroup);
 		toolBar.add(addRuleButton);
+		addConstraintButton = Utils.makeRadioToolButton("constraint_mode.png", "", "Add Constraints", this, modeButtonGroup);
+		toolBar.add(addConstraintButton);
+		addEventButton = Utils.makeRadioToolButton("event_mode.png", "", "Add Events", this, modeButtonGroup);
+		toolBar.add(addEventButton);
 		selfInfluenceButton = Utils.makeRadioToolButton("self_influence.png", "", "Add Self Influences", this, modeButtonGroup);
 		toolBar.add(selfInfluenceButton);
 
@@ -760,6 +772,22 @@ public class Schematic extends JPanel implements ActionListener {
 							modelEditor.setDirty(true);
 							bioModel.makeUndoPoint();
 						}
+						else if(addConstraintButton != null && addConstraintButton.isSelected()) {
+							String id = constraints.constraintEditor("Add", "");
+							bioModel.createConstraint(id, e.getX(), e.getY());
+							modelEditor.refresh();
+							graph.buildGraph();
+							modelEditor.setDirty(true);
+							bioModel.makeUndoPoint();
+						}
+						else if(addEventButton != null && addEventButton.isSelected()) {
+							String id = events.eventEditor("Add", "");
+							bioModel.createEvent(id, e.getX(), e.getY());
+							modelEditor.refresh();
+							graph.buildGraph();
+							modelEditor.setDirty(true);
+							bioModel.makeUndoPoint();
+						}
 					}
 					//if cell != null
 					else {
@@ -970,6 +998,10 @@ public class Schematic extends JPanel implements ActionListener {
 							}
 						} else if (type == GlobalConstants.RULE_EDGE){
 							doNotRemove = true;
+						} else if (type == GlobalConstants.CONSTRAINT_EDGE){
+							doNotRemove = true;
+						} else if (type == GlobalConstants.EVENT_EDGE){
+							doNotRemove = true;
 						} else if(type == GlobalConstants.REACTION_EDGE) {
 							mxCell source = (mxCell)cell.getSource();
 							mxCell target = (mxCell)cell.getTarget();
@@ -1140,13 +1172,20 @@ public class Schematic extends JPanel implements ActionListener {
 							}
 						}
 						else if(type == GlobalConstants.REACTION) {
-							
-							//reactions.removeTheReaction(gcm.getSBMLDocument(),(String)cell.getId());
+
 							bioModel.removeReaction(cell.getId());
 						}
 						else if(type == GlobalConstants.RULE) {
 							
 							rules.removeRuleByMetaId(cell.getId());
+						}
+						else if(type == GlobalConstants.CONSTRAINT) {
+							
+							constraints.removeConstraint(cell.getId());
+						}
+						else if(type == GlobalConstants.EVENT) {
+							
+							events.removeTheEvent(bioModel,cell.getId());
 						}
 						else if(type == GlobalConstants.SPECIES){
 							
@@ -1710,6 +1749,12 @@ public class Schematic extends JPanel implements ActionListener {
 		else if(cellType == GlobalConstants.RULE_EDGE){
 			// do nothing
 		}
+		else if(cellType == GlobalConstants.CONSTRAINT_EDGE){
+			// do nothing
+		}
+		else if(cellType == GlobalConstants.EVENT_EDGE){
+			// do nothing
+		}
 		else if(cellType == GlobalConstants.REACTION_EDGE){
 			
 			mxCell source = (mxCell)cell.getSource();
@@ -1763,6 +1808,50 @@ public class Schematic extends JPanel implements ActionListener {
 		else if(cellType == GlobalConstants.RULE){
 			
 			String id = rules.ruleEditor("OK",(String)cell.getId());
+			
+			if (!cell.getId().equals(id)) {
+				if (bioModel.getSBMLLayout().getNumLayouts() != 0) {
+					Layout layout = bioModel.getSBMLLayout().getLayout(0); 
+					if (layout.getReactionGlyph(cell.getId())!=null) {
+						ReactionGlyph reactionGlyph = layout.getReactionGlyph(cell.getId());
+						reactionGlyph.setId(id);
+						reactionGlyph.setReactionId(id);
+					}
+					if (layout.getTextGlyph(cell.getId())!=null) {
+						TextGlyph textGlyph = layout.getTextGlyph(cell.getId());
+						textGlyph.setId(id);
+						textGlyph.setGraphicalObjectId(id);
+						textGlyph.setText(id);
+					}
+				}
+				cell.setId(id);
+			}
+		}
+		else if(cellType == GlobalConstants.CONSTRAINT){
+			
+			String id = constraints.constraintEditor("OK",(String)cell.getId());
+			
+			if (!cell.getId().equals(id)) {
+				if (bioModel.getSBMLLayout().getNumLayouts() != 0) {
+					Layout layout = bioModel.getSBMLLayout().getLayout(0); 
+					if (layout.getReactionGlyph(cell.getId())!=null) {
+						ReactionGlyph reactionGlyph = layout.getReactionGlyph(cell.getId());
+						reactionGlyph.setId(id);
+						reactionGlyph.setReactionId(id);
+					}
+					if (layout.getTextGlyph(cell.getId())!=null) {
+						TextGlyph textGlyph = layout.getTextGlyph(cell.getId());
+						textGlyph.setId(id);
+						textGlyph.setGraphicalObjectId(id);
+						textGlyph.setText(id);
+					}
+				}
+				cell.setId(id);
+			}
+		}
+		else if(cellType == GlobalConstants.EVENT){
+			
+			String id = events.eventEditor("OK",(String)cell.getId());
 			
 			if (!cell.getId().equals(id)) {
 				if (bioModel.getSBMLLayout().getNumLayouts() != 0) {

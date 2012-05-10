@@ -85,6 +85,8 @@ import org.sbml.libsbml.XMLTriple;
 import org.sbml.libsbml.libsbml;
 
 import biomodel.gui.Grid;
+import biomodel.gui.textualeditor.Constraints;
+import biomodel.gui.textualeditor.Events;
 import biomodel.gui.textualeditor.MySpecies;
 import biomodel.gui.textualeditor.Reactions;
 import biomodel.gui.textualeditor.Rules;
@@ -240,6 +242,22 @@ public class BioModel {
 
 	public void setRulePanel(Rules rulePanel) {
 		this.rulePanel = rulePanel;
+	}
+
+	public Constraints getConstraintPanel() {
+		return constraintPanel;
+	}
+
+	public void setConstraintPanel(Constraints constraintPanel) {
+		this.constraintPanel = constraintPanel;
+	}
+
+	public Events getEventPanel() {
+		return eventPanel;
+	}
+
+	public void setEventPanel(Events eventPanel) {
+		this.eventPanel = eventPanel;
 	}
 
 	public SBMLDocument getSBMLDocument() {
@@ -4096,6 +4114,60 @@ public class BioModel {
 		textGlyph.setText(id);
 		textGlyph.setBoundingBox(reactionGlyph.getBoundingBox());
 	}
+
+	public void createConstraint(String id, float x, float y) {
+		Layout layout = null;
+		if (sbmlLayout.getLayout("iBioSim") != null) {
+			layout = sbmlLayout.getLayout("iBioSim"); 
+		} else {
+			layout = sbmlLayout.createLayout();
+			layout.setId("iBioSim");
+		}
+		ReactionGlyph reactionGlyph = null;
+		if (layout.getReactionGlyph(id)!=null) {
+			reactionGlyph = layout.getReactionGlyph(id);
+		} else {
+			reactionGlyph = layout.createReactionGlyph();
+			reactionGlyph.setId(id);
+			reactionGlyph.setReactionId(id);
+		}
+		reactionGlyph.getBoundingBox().setX(x);
+		reactionGlyph.getBoundingBox().setY(y);
+		reactionGlyph.getBoundingBox().setWidth(GlobalConstants.DEFAULT_CONSTRAINT_WIDTH);
+		reactionGlyph.getBoundingBox().setHeight(GlobalConstants.DEFAULT_CONSTRAINT_HEIGHT);
+		TextGlyph textGlyph = layout.createTextGlyph();
+		textGlyph.setId(id);
+		textGlyph.setGraphicalObjectId(id);
+		textGlyph.setText(id);
+		textGlyph.setBoundingBox(reactionGlyph.getBoundingBox());
+	}
+
+	public void createEvent(String id, float x, float y) {
+		Layout layout = null;
+		if (sbmlLayout.getLayout("iBioSim") != null) {
+			layout = sbmlLayout.getLayout("iBioSim"); 
+		} else {
+			layout = sbmlLayout.createLayout();
+			layout.setId("iBioSim");
+		}
+		ReactionGlyph reactionGlyph = null;
+		if (layout.getReactionGlyph(id)!=null) {
+			reactionGlyph = layout.getReactionGlyph(id);
+		} else {
+			reactionGlyph = layout.createReactionGlyph();
+			reactionGlyph.setId(id);
+			reactionGlyph.setReactionId(id);
+		}
+		reactionGlyph.getBoundingBox().setX(x);
+		reactionGlyph.getBoundingBox().setY(y);
+		reactionGlyph.getBoundingBox().setWidth(GlobalConstants.DEFAULT_EVENT_WIDTH);
+		reactionGlyph.getBoundingBox().setHeight(GlobalConstants.DEFAULT_EVENT_HEIGHT);
+		TextGlyph textGlyph = layout.createTextGlyph();
+		textGlyph.setId(id);
+		textGlyph.setGraphicalObjectId(id);
+		textGlyph.setText(id);
+		textGlyph.setBoundingBox(reactionGlyph.getBoundingBox());
+	}
 	
 	public String createPromoter(String id, float x, float y, boolean is_explicit) {
 		Species promoter = sbml.getModel().createSpecies();
@@ -5496,6 +5568,10 @@ public class BioModel {
 	private Reactions reactionPanel = null;
 	
 	private Rules rulePanel = null;
+	
+	private Constraints constraintPanel = null;
+	
+	private Events eventPanel = null;
 	
 	private Grid grid = null;
 	private boolean isWithinCompartment;
