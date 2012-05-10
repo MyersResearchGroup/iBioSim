@@ -21,6 +21,7 @@ import org.sbml.libsbml.CompModelPlugin;
 import org.sbml.libsbml.CompartmentGlyph;
 import org.sbml.libsbml.Constraint;
 import org.sbml.libsbml.Event;
+import org.sbml.libsbml.EventAssignment;
 import org.sbml.libsbml.Layout;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.ModifierSpeciesReference;
@@ -264,7 +265,27 @@ public class BioGraph extends mxGraph {
 					needsPositioning = true;			
 				}
 			} else {
-				// create layout for constraints
+				ReactionGlyph reactionGlyph = gcm.getSBMLLayout().getLayout("iBioSim").createReactionGlyph();
+				reactionGlyph.setId(constraint.getMetaId());
+				reactionGlyph.setReactionId(constraint.getMetaId());
+				reactionGlyph.getBoundingBox().setX(x);
+				reactionGlyph.getBoundingBox().setY(y);
+				reactionGlyph.getBoundingBox().setWidth(GlobalConstants.DEFAULT_CONSTRAINT_WIDTH);
+				reactionGlyph.getBoundingBox().setHeight(GlobalConstants.DEFAULT_CONSTRAINT_HEIGHT);
+				TextGlyph textGlyph = null;
+				if (layout.getTextGlyph(constraint.getMetaId())!=null) {
+					textGlyph = layout.getTextGlyph(constraint.getMetaId());
+				} else {
+					textGlyph = layout.createTextGlyph();
+				}
+				textGlyph.setId(constraint.getMetaId());
+				textGlyph.setGraphicalObjectId(constraint.getMetaId());
+				textGlyph.setText(constraint.getMetaId());
+				textGlyph.setBoundingBox(reactionGlyph.getBoundingBox());
+				x+=50;
+				y+=25;
+				if(createGraphConstraintFromModel(constraint.getMetaId()))
+					needsPositioning = true;
 			}
 		}
 		
@@ -276,7 +297,27 @@ public class BioGraph extends mxGraph {
 					needsPositioning = true;			
 				}
 			} else {
-				// create layout for events
+				ReactionGlyph reactionGlyph = gcm.getSBMLLayout().getLayout("iBioSim").createReactionGlyph();
+				reactionGlyph.setId(event.getId());
+				reactionGlyph.setReactionId(event.getId());
+				reactionGlyph.getBoundingBox().setX(x);
+				reactionGlyph.getBoundingBox().setY(y);
+				reactionGlyph.getBoundingBox().setWidth(GlobalConstants.DEFAULT_EVENT_WIDTH);
+				reactionGlyph.getBoundingBox().setHeight(GlobalConstants.DEFAULT_EVENT_HEIGHT);
+				TextGlyph textGlyph = null;
+				if (layout.getTextGlyph(event.getId())!=null) {
+					textGlyph = layout.getTextGlyph(event.getId());
+				} else {
+					textGlyph = layout.createTextGlyph();
+				}
+				textGlyph.setId(event.getId());
+				textGlyph.setGraphicalObjectId(event.getId());
+				textGlyph.setText(event.getId());
+				textGlyph.setBoundingBox(reactionGlyph.getBoundingBox());
+				x+=50;
+				y+=25;
+				if(createGraphEventFromModel(event.getId()))
+					needsPositioning = true;
 			}
 		}
 
@@ -586,13 +627,11 @@ public class BioGraph extends mxGraph {
 
 		//add rules
 		for (int i = 0; i < m.getNumRules(); i++) {
-			
 			Rule r = m.getRule(i);
 			ReactionGlyph reactionGlyph = gcm.getSBMLLayout().getLayout("iBioSim").getReactionGlyph(r.getMetaId());
 			if (reactionGlyph != null) {
 				while (reactionGlyph.getNumSpeciesReferenceGlyphs() > 0) 
 					reactionGlyph.removeSpeciesReferenceGlyph(0);
-				// Add support
 				String initStr = SBMLutilities.myFormulaToString(r.getMath());
 				String[] vars = initStr.split(" |\\(|\\)|\\,");
 				for (int j = 0; j < vars.length; j++) {
@@ -622,7 +661,7 @@ public class BioGraph extends mxGraph {
 								r.getMetaId() + "__" + species.getId(), "", 
 								this.getRulesCell(r.getMetaId()),
 								this.getSpeciesCell(species.getId()));
-						cell.setStyle("REACTION_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+						cell.setStyle("RULE_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
 						SpeciesReferenceGlyph speciesReferenceGlyph = reactionGlyph.createSpeciesReferenceGlyph();
 						speciesReferenceGlyph.setId(species.getId());
 						speciesReferenceGlyph.setSpeciesGlyphId(species.getId());
@@ -637,9 +676,157 @@ public class BioGraph extends mxGraph {
 			} 
 		}
 		
-		// TODO: ADD CONSTRAINT EDGES
+		// add constraints
+		for (int i = 0; i < m.getNumConstraints(); i++) {
+			Constraint c = m.getConstraint(i);
+			ReactionGlyph reactionGlyph = gcm.getSBMLLayout().getLayout("iBioSim").getReactionGlyph(c.getMetaId());
+			if (reactionGlyph != null) {
+				while (reactionGlyph.getNumSpeciesReferenceGlyphs() > 0) 
+					reactionGlyph.removeSpeciesReferenceGlyph(0);
+				String initStr = SBMLutilities.myFormulaToString(c.getMath());
+				String[] vars = initStr.split(" |\\(|\\)|\\,");
+				for (int j = 0; j < vars.length; j++) {
+					Species species = m.getSpecies(vars[j]);
+					if (species != null) {
+						mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
+								species.getId() + "__" + c.getMetaId(), "", 
+								this.getSpeciesCell(species.getId()), 
+								this.getConstraintsCell(c.getMetaId()));
+						cell.setStyle("CONSTRAINT_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+						SpeciesReferenceGlyph speciesReferenceGlyph = reactionGlyph.createSpeciesReferenceGlyph();
+						speciesReferenceGlyph.setId(species.getId());
+						speciesReferenceGlyph.setSpeciesGlyphId(species.getId());
+						speciesReferenceGlyph.setRole("substrate");
+						/*
+						LineSegment lineSegment = speciesReferenceGlyph.createLineSegment();
+						lineSegment.setStart(cell.getSource().getGeometry().getCenterX(),cell.getSource().getGeometry().getCenterY());
+						lineSegment.setEnd(cell.getTarget().getGeometry().getCenterX(),cell.getTarget().getGeometry().getCenterY());
+						 */
+					}
+				}
+			} 
+		}
 		
-		// TODO: ADD EVENT EDGES
+		// add event edges
+		for (int i = 0; i < m.getNumEvents(); i++) {
+			Event e = m.getEvent(i);
+			ReactionGlyph reactionGlyph = gcm.getSBMLLayout().getLayout("iBioSim").getReactionGlyph(e.getId());
+			if (reactionGlyph != null) {
+				while (reactionGlyph.getNumSpeciesReferenceGlyphs() > 0) 
+					reactionGlyph.removeSpeciesReferenceGlyph(0);
+				if (e.isSetTrigger()) {
+					String initStr = SBMLutilities.myFormulaToString(e.getTrigger().getMath());
+					String[] vars = initStr.split(" |\\(|\\)|\\,");
+					for (int j = 0; j < vars.length; j++) {
+						Species species = m.getSpecies(vars[j]);
+						if (species != null) {
+							mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
+									species.getId() + "__" + e.getId(), "", 
+									this.getSpeciesCell(species.getId()), 
+									this.getEventsCell(e.getId()));
+							cell.setStyle("EVENT_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+							SpeciesReferenceGlyph speciesReferenceGlyph = reactionGlyph.createSpeciesReferenceGlyph();
+							speciesReferenceGlyph.setId(species.getId());
+							speciesReferenceGlyph.setSpeciesGlyphId(species.getId());
+							speciesReferenceGlyph.setRole("substrate");
+							/*
+						LineSegment lineSegment = speciesReferenceGlyph.createLineSegment();
+						lineSegment.setStart(cell.getSource().getGeometry().getCenterX(),cell.getSource().getGeometry().getCenterY());
+						lineSegment.setEnd(cell.getTarget().getGeometry().getCenterX(),cell.getTarget().getGeometry().getCenterY());
+							 */
+						}
+					}
+				}
+				if (e.isSetDelay()) {
+					String initStr = SBMLutilities.myFormulaToString(e.getDelay().getMath());
+					String [] vars = initStr.split(" |\\(|\\)|\\,");
+					for (int j = 0; j < vars.length; j++) {
+						Species species = m.getSpecies(vars[j]);
+						if (species != null) {
+							mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
+									species.getId() + "__" + e.getId(), "", 
+									this.getSpeciesCell(species.getId()), 
+									this.getEventsCell(e.getId()));
+							cell.setStyle("EVENT_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+							SpeciesReferenceGlyph speciesReferenceGlyph = reactionGlyph.createSpeciesReferenceGlyph();
+							speciesReferenceGlyph.setId(species.getId());
+							speciesReferenceGlyph.setSpeciesGlyphId(species.getId());
+							speciesReferenceGlyph.setRole("substrate");
+							/*
+						LineSegment lineSegment = speciesReferenceGlyph.createLineSegment();
+						lineSegment.setStart(cell.getSource().getGeometry().getCenterX(),cell.getSource().getGeometry().getCenterY());
+						lineSegment.setEnd(cell.getTarget().getGeometry().getCenterX(),cell.getTarget().getGeometry().getCenterY());
+							 */
+						}
+					}
+				}
+				if (e.isSetPriority()) {
+					String initStr = SBMLutilities.myFormulaToString(e.getPriority().getMath());
+					String [] vars = initStr.split(" |\\(|\\)|\\,");
+					for (int j = 0; j < vars.length; j++) {
+						Species species = m.getSpecies(vars[j]);
+						if (species != null) {
+							mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
+									species.getId() + "__" + e.getId(), "", 
+									this.getSpeciesCell(species.getId()), 
+									this.getEventsCell(e.getId()));
+							cell.setStyle("EVENT_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+							SpeciesReferenceGlyph speciesReferenceGlyph = reactionGlyph.createSpeciesReferenceGlyph();
+							speciesReferenceGlyph.setId(species.getId());
+							speciesReferenceGlyph.setSpeciesGlyphId(species.getId());
+							speciesReferenceGlyph.setRole("substrate");
+							/*
+						LineSegment lineSegment = speciesReferenceGlyph.createLineSegment();
+						lineSegment.setStart(cell.getSource().getGeometry().getCenterX(),cell.getSource().getGeometry().getCenterY());
+						lineSegment.setEnd(cell.getTarget().getGeometry().getCenterX(),cell.getTarget().getGeometry().getCenterY());
+							 */
+						}
+					}
+				}
+				// Add variable
+				for (int k = 0; k < e.getNumEventAssignments(); k++) {
+					EventAssignment ea = e.getEventAssignment(k);
+					String initStr = SBMLutilities.myFormulaToString(ea.getMath());
+					String [] vars = initStr.split(" |\\(|\\)|\\,");
+					for (int j = 0; j < vars.length; j++) {
+						Species species = m.getSpecies(vars[j]);
+						if (species != null) {
+							mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
+									species.getId() + "__" + e.getId(), "", 
+									this.getSpeciesCell(species.getId()), 
+									this.getEventsCell(e.getId()));
+							cell.setStyle("EVENT_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+							SpeciesReferenceGlyph speciesReferenceGlyph = reactionGlyph.createSpeciesReferenceGlyph();
+							speciesReferenceGlyph.setId(species.getId());
+							speciesReferenceGlyph.setSpeciesGlyphId(species.getId());
+							speciesReferenceGlyph.setRole("substrate");
+							/*
+							LineSegment lineSegment = speciesReferenceGlyph.createLineSegment();
+							lineSegment.setStart(cell.getSource().getGeometry().getCenterX(),cell.getSource().getGeometry().getCenterY());
+							lineSegment.setEnd(cell.getTarget().getGeometry().getCenterX(),cell.getTarget().getGeometry().getCenterY());
+							 */
+						}
+					}
+					Species species = m.getSpecies(ea.getVariable());
+					if (species != null) {
+						mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
+								e.getId() + "__" + species.getId(), "", 
+								this.getEventsCell(e.getId()),
+								this.getSpeciesCell(species.getId()));
+						cell.setStyle("EVENT_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+						SpeciesReferenceGlyph speciesReferenceGlyph = reactionGlyph.createSpeciesReferenceGlyph();
+						speciesReferenceGlyph.setId(species.getId());
+						speciesReferenceGlyph.setSpeciesGlyphId(species.getId());
+						speciesReferenceGlyph.setRole("product");
+						/*
+						LineSegment lineSegment = speciesReferenceGlyph.createLineSegment();
+						lineSegment.setStart(cell.getSource().getGeometry().getCenterX(),cell.getSource().getGeometry().getCenterY());
+						lineSegment.setEnd(cell.getTarget().getGeometry().getCenterX(),cell.getTarget().getGeometry().getCenterY());
+						 */
+					}
+				}
+			} 
+		}
 		
 		addEdgeOffsets();
 		this.getModel().endUpdate();
@@ -1991,6 +2178,36 @@ public class BioGraph extends mxGraph {
 		style.put(mxConstants.STYLE_DASHED, "false");
 		stylesheet.putCellStyle("REACTION_EDGE", style);
 		
+		//rule edge
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_OPACITY, 100);
+		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
+		style.put(mxConstants.STYLE_FILLCOLOR, "#F2861B");
+		style.put(mxConstants.STYLE_STROKECOLOR, "#F2861B");
+		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_OPEN);
+		style.put(mxConstants.STYLE_DASHED, "false");
+		stylesheet.putCellStyle("RULE_EDGE", style);
+		
+		//constraint edge
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_OPACITY, 100);
+		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
+		style.put(mxConstants.STYLE_FILLCOLOR, "#F2861B");
+		style.put(mxConstants.STYLE_STROKECOLOR, "#F2861B");
+		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_OPEN);
+		style.put(mxConstants.STYLE_DASHED, "false");
+		stylesheet.putCellStyle("CONSTRAINT_EDGE", style);
+		
+		//event edge
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_OPACITY, 100);
+		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
+		style.put(mxConstants.STYLE_FILLCOLOR, "#F2861B");
+		style.put(mxConstants.STYLE_STROKECOLOR, "#F2861B");
+		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_OPEN);
+		style.put(mxConstants.STYLE_DASHED, "false");
+		stylesheet.putCellStyle("EVENT_EDGE", style);
+
 		//default edge
 		style = new Hashtable<String, Object>();
 		style.put(mxConstants.STYLE_OPACITY, 100);
