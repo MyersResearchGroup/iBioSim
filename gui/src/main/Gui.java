@@ -9623,7 +9623,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				scroll.setViewportView(messageArea);
 				value = JOptionPane.showOptionDialog(frame, scroll, "Overwrite", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
 						options[0]);
-				value = JOptionPane.NO_OPTION;
+				//value = JOptionPane.NO_OPTION;
 			}
 			if (value == JOptionPane.YES_OPTION) {
 				for (int i = 0; i < tab.getTabCount(); i++) {
