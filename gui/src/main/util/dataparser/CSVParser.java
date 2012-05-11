@@ -138,7 +138,7 @@ public class CSVParser extends DataParser {
 							insert = counter % species.size();
 						}
 						(data.get(insert)).add(Double.parseDouble(word));
-						counter++;
+						counter++;						
 						dataPoints++;
 						if (cha == '\n') {
 							if (dataPoints > species.size()) {

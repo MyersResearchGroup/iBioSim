@@ -107,7 +107,8 @@ public class DataParser {
 			out.close();
 		}
 		catch (Exception e) {
-			JOptionPane.showMessageDialog(component, "Error Outputting Data Into A CVS File!", "Error Outputting Data", JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(component, "Error Outputting Data Into A CSV File!", "Error Outputting Data", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 

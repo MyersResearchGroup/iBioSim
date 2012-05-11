@@ -51,11 +51,11 @@ public class SimulatorSSACR extends Simulator {
 	
 	public SimulatorSSACR(String SBMLFileName, String outputDirectory, double timeLimit, 
 			double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval, 
-			double stoichAmpValue, JFrame running, String[] interestingSpecies) 
+			double stoichAmpValue, JFrame running, String[] interestingSpecies, String quantityType) 
 	throws IOException, XMLStreamException {
 		
 		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, randomSeed,
-				progress, printInterval, initializationTime, stoichAmpValue, running, interestingSpecies);
+				progress, printInterval, initializationTime, stoichAmpValue, running, interestingSpecies, quantityType);
 		
 		try {
 			initialize(randomSeed, 1);
@@ -244,6 +244,10 @@ public class SimulatorSSACR extends Simulator {
 			//update time for next iteration
 			currentTime += delta_t;
 			
+			if (variableToIsInAssignmentRuleMap != null && 
+					variableToIsInAssignmentRuleMap.containsKey("time"))				
+				performAssignmentRules(variableToAffectedAssignmentRuleSetMap.get("time"));
+			
 			//add events to queue if they trigger
 			if (noEventsFlag == false) {
 				
@@ -339,8 +343,8 @@ public class SimulatorSSACR extends Simulator {
 		
 		setupArrays();
 		setupSpecies();
-		setupInitialAssignments();
 		setupParameters();
+		setupInitialAssignments();
 		setupRules();
 		setupConstraints();
 		

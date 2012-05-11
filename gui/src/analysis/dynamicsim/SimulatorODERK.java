@@ -10,6 +10,7 @@ import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.AssignmentRule;
 
 import flanagan.integration.RungeKutta;
 import flanagan.integration.DerivnFunction;
@@ -30,14 +31,23 @@ public class SimulatorODERK extends Simulator {
 	ASTNode[] dvariablesdtime;
 	HashMap<String, Integer> variableToIndexMap;
 	HashMap<Integer, String> indexToVariableMap;
+	
+	int numSteps;
+	double relativeError;
+	double absoluteError;
 
 	public SimulatorODERK(String SBMLFileName, String outputDirectory, double timeLimit, double maxTimeStep, long randomSeed,
 			JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running,
-			String[] interestingSpecies) throws IOException, XMLStreamException {
+			String[] interestingSpecies, int numSteps, double relError, double absError, String quantityType) 
+	throws IOException, XMLStreamException {
 		
 		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, randomSeed,
 				progress, printInterval, initializationTime, stoichAmpValue, running,
-				interestingSpecies);
+				interestingSpecies, quantityType);
+		
+		this.numSteps = numSteps;
+		relativeError = relError;
+		absoluteError = absError;
 		
 		try {
 			initialize(randomSeed, 1);
@@ -50,8 +60,8 @@ public class SimulatorODERK extends Simulator {
 	
 		setupArrays();
 		setupSpecies();
+		setupParameters();		
 		setupInitialAssignments();
-		setupParameters();
 		setupRules();
 		setupConstraints();
 		
@@ -77,7 +87,7 @@ public class SimulatorODERK extends Simulator {
 		
 		//STEP 0: calculate initial propensities (including the total)		
 		setupReactions();		
-//		setupEvents();
+		setupEvents();
 //		
 //		if (dynamicBoolean == true)
 //			setupGrid();
@@ -215,7 +225,7 @@ public class SimulatorODERK extends Simulator {
 		
 	}
 
-	protected void simulate() {
+	protected void simulate() {		
 		
 		if (sbmlHasErrorsFlag == true)
 			return;
@@ -225,15 +235,27 @@ public class SimulatorODERK extends Simulator {
 		final boolean noConstraintsFlag = (Boolean) constraintsFlag.getValue();
 		
 		double printTime = -0.0001;
-		double stepSize = 0.1;
+		double stepSize = 0.0001;
 		currentTime = 0.0;
+		
+		if (absoluteError == 0)
+			absoluteError = 1e-6;
+		if (relativeError == 0)
+			relativeError = 1e-3;
+		if (stepSize > Double.MAX_VALUE)
+			stepSize = 0.01;
+		if (numSteps == 0)
+			numSteps = 50;
 		
 		//create runge-kutta instance
 		DerivnFunc derivnFunction = new DerivnFunc();
 		RungeKutta rungeKutta = new RungeKutta();
 		
-		rungeKutta.setToleranceAdditionFactor(1e-9);
-		rungeKutta.setToleranceScalingFactor(1e-9);
+		//absolute error
+		rungeKutta.setToleranceAdditionFactor(absoluteError);
+		//relative error
+		rungeKutta.setToleranceScalingFactor(relativeError);
+		//rungeKutta.setMaximumIterations(numSteps);
 		
 		//add events to queue if they trigger
 		if (noEventsFlag == false)
@@ -253,7 +275,14 @@ public class SimulatorODERK extends Simulator {
 			//trigger and/or fire events, etc.
 			if (noEventsFlag == false) {
 				
+				//if events fired, then the affected species counts need to be updated in the values array
+				int sizeBefore = triggeredEventQueue.size();
 				fireEvents(noAssignmentRulesFlag, noConstraintsFlag);
+				int sizeAfter = triggeredEventQueue.size();
+					
+				if (sizeAfter != sizeBefore)
+					for (int i = 0; i < values.length; ++i)
+						values[i] = variableToValueMap.get(indexToVariableMap.get(i));
 			}
 			
 			//prints the initial (time == 0) data				
@@ -279,6 +308,17 @@ public class SimulatorODERK extends Simulator {
 			
 			currentTime += stepSize;
 			
+			if (variableToIsInAssignmentRuleMap != null &&
+					variableToIsInAssignmentRuleMap.containsKey("time")) {
+				
+				performAssignmentRules(variableToAffectedAssignmentRuleSetMap.get("time"));
+				
+				for (int i = 0; i < values.length; ++i)
+					values[i] = variableToValueMap.get(indexToVariableMap.get(i));
+			}
+			
+			//System.err.println(variableToValueMap);
+			
 			//call the rk algorithm
 			values = rungeKutta.fehlberg(derivnFunction);
 			
@@ -289,7 +329,9 @@ public class SimulatorODERK extends Simulator {
 				
 				try {
 					printToTSD(printTime);
-					bufferedTSDWriter.write(",\n");
+					
+					if (printTime < timeLimit)
+						bufferedTSDWriter.write(",\n");
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -305,12 +347,20 @@ public class SimulatorODERK extends Simulator {
 			if (noEventsFlag == false) {
 				
 				handleEvents(noAssignmentRulesFlag, noConstraintsFlag);
-			
+							
 				//step to the next event fire time if it comes before the next time step
 				if (!triggeredEventQueue.isEmpty() && triggeredEventQueue.peek().fireTime <= currentTime)
 					currentTime = triggeredEventQueue.peek().fireTime;
 			}			
 		} //end simulation loop
+		
+		try {
+			bufferedTSDWriter.write(')');
+			bufferedTSDWriter.flush();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -330,6 +380,7 @@ public class SimulatorODERK extends Simulator {
 		public double[] derivn(double x, double[] y) {
 			
 			double[] currValueChanges = new double[y.length];
+			HashSet<AssignmentRule> affectedAssignmentRuleSet = new HashSet<AssignmentRule>();
 			
 			for (int i = 0; i < y.length; ++i)
 				variableToValueMap.put(indexToVariableMap.get(i), y[i]);
@@ -338,8 +389,41 @@ public class SimulatorODERK extends Simulator {
 			//based on the ODE system			
 			for (int i = 0; i < currValueChanges.length; ++i) {
 				
-				currValueChanges[i] = evaluateExpressionRecursive(dvariablesdtime[i]);
+				String currentVar = indexToVariableMap.get(i);
+				
+				if ((speciesIDSet.contains(currentVar) && 
+						speciesToIsBoundaryConditionMap.get(currentVar) == false) &&
+						(variableToValueMap.contains(currentVar)) &&
+						variableToIsConstantMap.get(currentVar) == false) {
+					
+					currValueChanges[i] = evaluateExpressionRecursive(dvariablesdtime[i]);
+				}
+				else currValueChanges[i] = 0;
+				
+				if (variableToIsInAssignmentRuleMap != null && variableToIsInAssignmentRuleMap.containsKey(currentVar) &&
+						variableToValueMap.contains(currentVar) && 
+						variableToIsInAssignmentRuleMap.get(currentVar) == true)
+					affectedAssignmentRuleSet.addAll(variableToAffectedAssignmentRuleSetMap.get(currentVar));
+				
+//				if (variableToIsInConstraintMap.get(speciesID) == true)
+//					affectedConstraintSet.addAll(variableToAffectedConstraintSetMap.get(speciesID));
 			}
+		
+			//if assignment rules are performed, these changes need to be reflected in the currValueChanges
+			//that get passed back
+			if (affectedAssignmentRuleSet.size() > 0) {
+				
+				HashSet<String> affectedVariables = performAssignmentRules(affectedAssignmentRuleSet);
+				
+				for (String affectedVariable : affectedVariables) {
+					
+					int index = variableToIndexMap.get(affectedVariable);
+					currValueChanges[index] = variableToValueMap.get(affectedVariable) - y[index];
+				}
+			}
+			
+//			for (int i = 0; i < currValueChanges.length; ++i)
+//				System.err.println(currValueChanges[i]);
 			
 			return currValueChanges;
 		}
