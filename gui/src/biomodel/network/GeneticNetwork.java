@@ -132,7 +132,6 @@ public class GeneticNetwork {
 		this.complexMap = complexMap;
 		this.partsMap = partsMap;
 		this.properties = gcm;
-		// TODO: THIS IS BROKEN
 		this.compartments = new HashMap<String,Properties>(); 
 		for (long i=0; i < gcm.getSBMLDocument().getModel().getNumCompartments(); i++) {
 			compartments.put(gcm.getSBMLDocument().getModel().getCompartment(i).getId(), null);
@@ -875,6 +874,10 @@ public class GeneticNetwork {
 		s.setHasOnlySubstanceUnits(true);
 		Utility.addSpecies(document, s);
 		//Adds RNA polymerase for compartments other than default
+		this.compartments = new HashMap<String,Properties>(); 
+		for (long i=0; i < document.getModel().getNumCompartments(); i++) {
+			compartments.put(document.getModel().getCompartment(i).getId(), null);
+		}
 		for (String compartment : compartments.keySet()) {
 			Properties prop = compartments.get(compartment);
 			if (prop != null && prop.containsKey(GlobalConstants.RNAP_STRING)) {
