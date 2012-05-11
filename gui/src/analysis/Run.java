@@ -1166,7 +1166,7 @@ public class Run implements ActionListener {
 						String SBMLFileName = directory + separator + theFile;
 						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
 								timeStep, rndSeed, progress, printInterval, runs, progressLabel, running,
-								stoichAmpValue, intSpecies);						
+								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity);						
 						exitValue = 0;
 						
 						return exitValue;
@@ -1181,7 +1181,7 @@ public class Run implements ActionListener {
 						String SBMLFileName = directory + separator + theFile;
 						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
 								timeStep, rndSeed, progress, printInterval, runs, progressLabel, running,
-								stoichAmpValue, intSpecies);						
+								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity);						
 						exitValue = 0;
 						
 						return exitValue;
@@ -1191,12 +1191,11 @@ public class Run implements ActionListener {
 						double stoichAmpValue = 
 							Double.parseDouble(properties.getProperty(
 									"reb2sac.diffusion.stoichiometry.amplification.value"));
-
 						dynSim = new DynamicSimulation("rk");					
 						String SBMLFileName = directory + separator + theFile;
 						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
 								timeStep, rndSeed, progress, printInterval, runs, progressLabel, running,
-								stoichAmpValue, intSpecies);				
+								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity);				
 						exitValue = 0;
 						
 						return exitValue;
