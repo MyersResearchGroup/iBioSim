@@ -202,9 +202,8 @@ public class SimulatorSSACR extends Simulator {
 			String selectedReactionID = selectReaction(selectedGroup, r3, r4);
 			
 			//step3bTime += System.nanoTime() - step3bInitial;
-			
-			System.err.println(selectedGroup);
-			System.err.println(selectedReactionID + "  " + reactionToPropensityMap.get(selectedReactionID));
+
+			//System.err.println(selectedReactionID + "  " + reactionToPropensityMap.get(selectedReactionID));
 			
 			//STEP 4: perform selected reaction and update species counts
 			
@@ -368,13 +367,6 @@ public class SimulatorSSACR extends Simulator {
 		
 		//STEP 0A: calculate initial propensities (including the total)		
 		setupReactions();
-		
-		
-		for (String variableID : variableToValueMap.keySet()) {
-			
-			System.err.println(variableID + "  " + variableToValueMap.get(variableID));
-			System.err.println();
-		}
 		
 		//STEP OB: create and populate initial groups		
 		createAndPopulateInitialGroups();
