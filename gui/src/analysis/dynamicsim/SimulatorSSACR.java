@@ -203,7 +203,8 @@ public class SimulatorSSACR extends Simulator {
 			
 			//step3bTime += System.nanoTime() - step3bInitial;
 			
-			//System.err.println(selectedReactionID + "  " + reactionToPropensityMap.get(selectedReactionID));
+			System.err.println(selectedGroup);
+			System.err.println(selectedReactionID + "  " + reactionToPropensityMap.get(selectedReactionID));
 			
 			//STEP 4: perform selected reaction and update species counts
 			
@@ -347,6 +348,7 @@ public class SimulatorSSACR extends Simulator {
 		setupInitialAssignments();
 		setupRules();
 		setupConstraints();
+
 		
 		if (numEvents == 0)
 			eventsFlag.setValue(true);
@@ -366,6 +368,13 @@ public class SimulatorSSACR extends Simulator {
 		
 		//STEP 0A: calculate initial propensities (including the total)		
 		setupReactions();
+		
+		
+		for (String variableID : variableToValueMap.keySet()) {
+			
+			System.err.println(variableID + "  " + variableToValueMap.get(variableID));
+			System.err.println();
+		}
 		
 		//STEP OB: create and populate initial groups		
 		createAndPopulateInitialGroups();
@@ -431,15 +440,11 @@ public class SimulatorSSACR extends Simulator {
 //			
 //			if (reactionToPropensityMap.get(reactionID) > 0) {
 //			
-//				System.err.println(reactionID);
+//				System.err.println("ID: " + reactionID);
 //				
-//				try {
-//					System.err.println(ASTNode.formulaToString(reactionToFormulaMap.get(reactionID)));
-//				} catch (SBMLException e) {
-//					e.printStackTrace();
-//				}				
+//				System.err.println("formula " + reactionToFormulaMap.get(reactionID).toFormula());
 //				
-//				System.err.println(reactionToPropensityMap.get(reactionID));
+//				System.err.println("propensity " + reactionToPropensityMap.get(reactionID));
 //				
 //				System.err.println();
 //				System.err.println();
@@ -448,8 +453,8 @@ public class SimulatorSSACR extends Simulator {
 //		
 //		for (String variableID : variableToValueMap.keySet()) {
 //			
-//			System.err.println(variableID);
-//			System.err.println(variableToValueMap.get(variableID));
+//			System.err.println("id " + variableID);
+//			System.err.println("value " + variableToValueMap.get(variableID));
 //			System.err.println();
 //			System.err.println();
 //		}
