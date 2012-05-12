@@ -711,14 +711,14 @@ public class GeneticNetwork {
 		for (String rtr : reactionsToRemove)
 			document.getModel().removeReaction(rtr);
 		
-		SBMLWriter writer = new SBMLWriter();
-		PrintStream p;
-		try {
-			p = new PrintStream(new FileOutputStream(filename), true, "UTF-8");
-			p.print(writer.writeSBMLToString(document));
-		} catch (Exception e) {
-			//e.printStackTrace();
-		}
+//		SBMLWriter writer = new SBMLWriter();
+//		PrintStream p;
+//		try {
+//			p = new PrintStream(new FileOutputStream(filename), true, "UTF-8");
+//			p.print(writer.writeSBMLToString(document));
+//		} catch (Exception e) {
+//			//e.printStackTrace();
+//		}
 	}
 	
 	/**
