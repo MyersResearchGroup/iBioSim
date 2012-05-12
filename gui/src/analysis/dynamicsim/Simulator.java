@@ -4725,6 +4725,20 @@ public abstract class Simulator {
 				return -1;
 			else {
 				
+				if (eventToPriorityMap.get(event1.eventID) == null) {
+					if (eventToPriorityMap.get(event2.eventID) != null)
+						return -1;
+					else {
+						
+						if ((Math.random() * 100) > 50) {
+							return -1;
+						}
+						else {
+							return 1;
+						}
+					}
+				}
+				
 				if (evaluateExpressionRecursive(eventToPriorityMap.get(event1.eventID)) >  
 				evaluateExpressionRecursive(eventToPriorityMap.get(event2.eventID)))
 					return -1;
