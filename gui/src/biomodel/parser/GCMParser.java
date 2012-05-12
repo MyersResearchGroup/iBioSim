@@ -62,6 +62,7 @@ public class GCMParser {
 				- filename.split(separator)[filename.split(separator).length - 1]
 						.length()));
 		gcm.load(filename);
+		
 		data = new StringBuffer();
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(filename));

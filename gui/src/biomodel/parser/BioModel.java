@@ -4491,6 +4491,13 @@ public class BioModel {
 		SBMLutilities.fillBlankMetaIDs(sbml);
 		loadGridSize();
 		updatePorts();
+		
+		for (int i = 0; i < sbml.getModel().getNumParameters(); ++i)
+			if (sbml.getModel().getParameter(i).getId().contains("__locations"))
+				updateGridSpecies(sbml.getModel().getParameter(i).getId().replace("__locations",""));
+		
+		
+		
 	}
 
 	private void loadSBMLFromBuffer(StringBuffer buffer) {	
