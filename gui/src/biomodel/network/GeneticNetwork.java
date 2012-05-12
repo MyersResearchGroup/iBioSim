@@ -250,8 +250,6 @@ public class GeneticNetwork {
 				printPromoterBinding(document);
 			printComplexBinding(document);
 			
-			reformatArrayContent(document, filename);
-			
 			PrintStream p = new PrintStream(new FileOutputStream(filename),true,"UTF-8");
 
 			m.setName("Created from " + new File(filename).getName().replace("xml", "gcm"));
@@ -297,6 +295,9 @@ public class GeneticNetwork {
 							JOptionPane.ERROR_MESSAGE);
 				}
 			}
+			
+			reformatArrayContent(document, filename);
+			
 			p.print(writer.writeSBMLToString(document));
 
 			p.close();
@@ -711,14 +712,14 @@ public class GeneticNetwork {
 		for (String rtr : reactionsToRemove)
 			document.getModel().removeReaction(rtr);
 		
-//		SBMLWriter writer = new SBMLWriter();
-//		PrintStream p;
-//		try {
-//			p = new PrintStream(new FileOutputStream(filename), true, "UTF-8");
-//			p.print(writer.writeSBMLToString(document));
-//		} catch (Exception e) {
-//			//e.printStackTrace();
-//		}
+		SBMLWriter writer = new SBMLWriter();
+		PrintStream p;
+		try {
+			p = new PrintStream(new FileOutputStream(filename), true, "UTF-8");
+			p.print(writer.writeSBMLToString(document));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
