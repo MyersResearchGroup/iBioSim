@@ -1855,7 +1855,7 @@ public abstract class Simulator {
 			String speciesID = species.getId();
 			
 			//check to see if the species is arrayed			
-			if (species.getAnnotationString().isEmpty() == false) {
+			if (stripAnnotation(species.getAnnotationString()).isEmpty() == false) {
 				
 				speciesToIsArrayedMap.put(speciesID, true);
 				speciesToRemove.add(speciesID);
@@ -1865,7 +1865,7 @@ public abstract class Simulator {
 				int numRowsUpper = 0;
 				int numColsUpper = 0;
 				
-				String[] annotationString = species.getAnnotationString().split("=");
+				String[] annotationString = stripAnnotation(species.getAnnotationString()).split("=");
 				
 				numColsLower = Integer.valueOf(((String[])(annotationString[1].split(" ")))[0].replace("\"",""));
 				numColsUpper = Integer.valueOf(((String[])(annotationString[2].split(" ")))[0].replace("\"",""));
@@ -1908,11 +1908,11 @@ public abstract class Simulator {
 		
 		for (Event event : model.getListOfEvents()) {
 			
-			if (event.getAnnotationString().contains("array")) {
+			if (stripAnnotation(event.getAnnotationString()).contains("array")) {
 				
 				eventsToRemove.add(event.getId());
 				
-				String annotationString = event.getAnnotationString().replace("<annotation>","").
+				String annotationString = stripAnnotation(event.getAnnotationString()).replace("<annotation>","").
 				replace("</annotation>","").replace("\"","");
 				String[] splitAnnotation = annotationString.split("array:");
 				ArrayList<String> eventCompartments = new ArrayList<String>();
@@ -1979,7 +1979,7 @@ public abstract class Simulator {
 			String reactionID = reaction.getId();
 			
 			//if reaction itself is arrayed
-			if (reaction.getAnnotationString().isEmpty() == false) {				
+			if (stripAnnotation(reaction.getAnnotationString()).isEmpty() == false) {				
 			}
 			
 			ArrayList<Integer> membraneDiffusionRows = new ArrayList<Integer>();
@@ -1991,7 +1991,7 @@ public abstract class Simulator {
 			//so parse them and store them in the above arraylists
 			if (reactionID.contains("MembraneDiffusion")) {
 				
-				String annotationString = reaction.getAnnotationString().replace("<annotation>","").
+				String annotationString = stripAnnotation(reaction.getAnnotationString()).replace("<annotation>","").
 					replace("</annotation>","").replace("\"","");
 				String[] splitAnnotation = annotationString.split("array:");
 				
@@ -3183,7 +3183,7 @@ public abstract class Simulator {
 			String speciesID = species.getId();
 			
 			//check to see if the species is arrayed			
-			if (species.getAnnotationString().isEmpty() == false) {
+			if (stripAnnotation(species.getAnnotationString()).isEmpty() == false) {
 				
 				speciesToIsArrayedMap.put(speciesID, true);
 				speciesToRemove.add(speciesID);
@@ -3193,7 +3193,7 @@ public abstract class Simulator {
 				int numRowsUpper = 0;
 				int numColsUpper = 0;
 				
-				String[] annotationString = species.getAnnotationString().split("=");
+				String[] annotationString = stripAnnotation(species.getAnnotationString()).split("=");
 				
 				numColsLower = Integer.valueOf(((String[])(annotationString[1].split(" ")))[0].replace("\"",""));
 				numColsUpper = Integer.valueOf(((String[])(annotationString[2].split(" ")))[0].replace("\"",""));
@@ -3236,11 +3236,11 @@ public abstract class Simulator {
 		
 		for (Event event : model.getListOfEvents()) {
 			
-			if (event.getAnnotationString().contains("array")) {
+			if (stripAnnotation(event.getAnnotationString()).contains("array")) {
 				
 				eventsToRemove.add(event.getId());
 				
-				String annotationString = event.getAnnotationString().replace("<annotation>","").
+				String annotationString = stripAnnotation(event.getAnnotationString()).replace("<annotation>","").
 				replace("</annotation>","").replace("\"","");
 				String[] splitAnnotation = annotationString.split("array:");
 				ArrayList<String> eventCompartments = new ArrayList<String>();
@@ -3315,7 +3315,7 @@ public abstract class Simulator {
 			//so parse them and store them in the above arraylists
 			if (reactionID.contains("MembraneDiffusion")) {
 				
-				String annotationString = reaction.getAnnotationString().replace("<annotation>","").
+				String annotationString = stripAnnotation(reaction.getAnnotationString()).replace("<annotation>","").
 					replace("</annotation>","").replace("\"","");
 				String[] splitAnnotation = annotationString.split("array:");
 				
@@ -3693,7 +3693,7 @@ public abstract class Simulator {
 				
 				if (parameter.getId().contains("_locations"))
 					this.submodelIDToLocationsMap.put(
-							parameter.getId().replace("__locations",""), parameter.getAnnotationString());
+							parameter.getId().replace("__locations",""), stripAnnotation(parameter.getAnnotationString()));
 				
 				parametersToRemove.add(parameter.getId());
 			}
@@ -4599,6 +4599,57 @@ public abstract class Simulator {
 	 * each simulator needs a simulate method
 	 */
 	protected abstract void simulate();
+	
+	/**
+	 * returns an annotation with only array information remaining
+	 * 
+	 * @param annotation
+	 * @return
+	 */
+	public static String stripAnnotation(String annotation) {
+		
+		if (annotation.contains("array:array")) {
+			
+			//only leave the stuff in these two namespaces, which should appear mutually exclusively
+			annotation =  annotation.replace("<annotation>","").replace("</annotation>","");
+			
+			for (int i = 0; i < annotation.length() - 12; ++i) {
+				
+				if (annotation.substring(i, i + 12).equals("<array:array"))
+					annotation = annotation.substring(i);
+			}
+			
+			for (int i = 0; i < annotation.length() - 2; ++i) {
+				if (annotation.substring(i, i + 2).equals("/>")) {
+					annotation = annotation.substring(0, i + 2);
+					break;
+				}
+			}
+			
+			return "<annotation>" + annotation + "</annotation>";
+		}
+		else if (annotation.contains("ibiosim:ibiosim")) {
+		
+			//only leave the stuff in these two namespaces, which should appear mutually exclusively
+			annotation =  annotation.replace("<annotation>","").replace("</annotation>","");
+			
+			for (int i = 0; i < annotation.length() - 16; ++i) {
+				
+				if (annotation.substring(i, i + 16).equals("<ibiosim:ibiosim"))
+					annotation = annotation.substring(i);
+			}
+			
+			for (int i = 0; i < annotation.length() - 2; ++i) {
+				if (annotation.substring(i, i + 2).equals("/>")) {
+					annotation = annotation.substring(0, i + 2);
+					break;
+				}
+			}
+			
+			return "<annotation>" + annotation + "</annotation>";
+		}
+		else return new String("");
+	}
 	
 	/**
 	 * this evaluates a set of constraints that have been affected by an event or reaction firing
