@@ -29,8 +29,6 @@ public class SBOLBrowser extends JPanel {
 	//Constructor when browsing a single RDF file from the main gui
 	public SBOLBrowser(Gui gui, String filePath) {
 		super(new BorderLayout());
-
-		SequenceTypeValidator validator = new SequenceTypeValidator("((a*b)+c*)+");
 		
 		HashMap<String, org.sbolstandard.core.Collection> libMap = new HashMap<String, org.sbolstandard.core.Collection>();
 		LinkedList<String> libURIs = new LinkedList<String>();
@@ -83,7 +81,7 @@ public class SBOLBrowser extends JPanel {
 				display = browserOpen();
 		} else {
 			JOptionPane.showMessageDialog(Gui.frame, "No SBOL DNA components are found in project.", 
-					"File Not Found", JOptionPane.ERROR_MESSAGE);
+					"DNA Components Not Found", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	

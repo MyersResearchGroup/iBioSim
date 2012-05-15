@@ -9,6 +9,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.swing.JOptionPane;
+
+import main.Gui;
+
 import org.sbolstandard.core.*;
 
 import org.sbolstandard.core.util.*;
@@ -24,12 +28,18 @@ public class SBOLUtility {
 		} catch (SBOLValidationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			JOptionPane.showMessageDialog(Gui.frame, "SBOL file at " + filePath + " is invalid.", 
+					"Invalid SBOL", JOptionPane.ERROR_MESSAGE);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			JOptionPane.showMessageDialog(Gui.frame, "SBOL file not found at " + filePath + ".", 
+					"File Not Found", JOptionPane.ERROR_MESSAGE);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			JOptionPane.showMessageDialog(Gui.frame, "Error reading SBOL file at " + filePath + ".", 
+					"Input/Output Error", JOptionPane.ERROR_MESSAGE);
 		}
 		return sbolDoc;
 	}

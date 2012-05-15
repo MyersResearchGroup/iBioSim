@@ -8,6 +8,8 @@ import java.net.URISyntaxException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.Collection;
@@ -30,16 +32,16 @@ import biomodel.util.Utility;
 
 public class SBOLSynthesizer {
 	
-	private Collection<SynthesisNode> synNodes;
+	private LinkedHashMap<String, SynthesisNode> synMap;
 	private HashSet<String> sbolFiles;
 	private HashMap<String, DnaComponent> compMap;
-	private HashSet<String> sourceCompURISet;
 	private boolean synthesizerOn;
+	private String localMatchURI;
 	private String localPath;
 	private String time;
 	
-	public SBOLSynthesizer(Collection<SynthesisNode> synNodes) {
-		this.synNodes = synNodes;
+	public SBOLSynthesizer(LinkedHashMap<String, SynthesisNode> synMap) {
+		this.synMap = synMap;
 	}
 	
 	public void setLocalPath(String localPath) {
@@ -53,9 +55,7 @@ public class SBOLSynthesizer {
 			this.sbolFiles.add(filePath.substring(filePath.lastIndexOf(File.separator) + 1));
 			SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
 			if (sbolDoc != null) 
-				for (DnaComponent dnac : SBOLUtility.loadDNAComponents(sbolDoc).values())
-					if (dnac.getDisplayId() != null)
-						compMap.put(dnac.getURI().toString(), dnac);
+				compMap = SBOLUtility.loadDNAComponents(sbolDoc);
 			else
 				return false;
 		}
@@ -70,31 +70,36 @@ public class SBOLSynthesizer {
 	public DnaComponent synthesizeDnaComponent() {	
 		setTime();
 		synthesizerOn = true;
-		// Create DNA component for synthesis
-		DnaComponent synthComp = new DnaComponentImpl();
-		DnaSequence compSeq = new DnaSequenceImpl();
-		compSeq.setNucleotides("");
-		synthComp.setDnaSequence(compSeq);
-		// Set component type
-		synthComp.addType(SequenceOntology.type("SO_0000804"));
-		// Set component URI
-		try {
-			synthComp.setURI(new URI("http://www.async.ece.utah.edu#comp" + time));
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
-		// Set component sequence URI
-		try {
-			compSeq.setURI(new URI("http://www.async.ece.utah.edu#seq" + time));
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
 		// Assemble component annotations
 		LinkedList<String> sourceCompURIs = loadSourceCompURIs();
-		this.sourceCompURISet = new HashSet<String>();
+		// Create DNA component for synthesis
+		DnaComponent synthComp = new DnaComponentImpl();
+		if (localMatchURI != null) {
+			try {
+				synthComp.setURI(new URI(localMatchURI));
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			}
+		} else {
+			DnaSequence compSeq = new DnaSequenceImpl();
+			compSeq.setNucleotides("");
+			synthComp.setDnaSequence(compSeq);
+			// Set component type
+			synthComp.addType(SequenceOntology.type("SO_0000804"));
+			// Set component URI
+			try {
+				synthComp.setURI(new URI("http://www.async.ece.utah.edu#comp" + time));
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			}
+			// Set component sequence URI
+			try {
+				compSeq.setURI(new URI("http://www.async.ece.utah.edu#seq" + time));
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			}
+		}
 		if (synthesizerOn) {
-			for (String sourceCompURI : sourceCompURIs)
-				sourceCompURISet.add(sourceCompURI);
 			int position = 1;
 			int addCount = 0;
 			LinkedList<String> types = new LinkedList<String>();
@@ -114,15 +119,18 @@ public class SBOLSynthesizer {
 			}
 			if (synthesizerOn) {
 				// Label synthesized DNA component with user input and save locally if local file path set
-				if (localPath == null) 
-					labelWithUserInput(synthComp);
+				if (localPath != null) 
+					labelAndSaveLocally(synthComp);
 				else 
-					labelAndLocalSave(synthComp);
+					labelWithUserInput(synthComp);
 				if (synthesizerOn) 
 					return synthComp;
 			}	
 		}
-		return null;
+		if (localMatchURI != null)
+			return synthComp;
+		else
+			return null;
 	}
 	
 	private void labelWithUserInput(DnaComponent synthComp) {
@@ -146,10 +154,9 @@ public class SBOLSynthesizer {
 			option = JOptionPane.showOptionDialog(Gui.frame, inputPanel,
 					"Save DNA Component", JOptionPane.YES_NO_OPTION,
 					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-			if (option != JOptionPane.YES_OPTION) {
-				break;
-			}
-		} while (!isSourceIdValid(idText.getText()));
+			if (option != JOptionPane.YES_OPTION)
+				synthesizerOn = false;
+		} while (synthesizerOn && !isSourceIdValid(idText.getText(), new HashSet<String>()));
 		if (option == JOptionPane.YES_OPTION) {
 			
 			synthComp.setDisplayId(idText.getText());
@@ -159,7 +166,7 @@ public class SBOLSynthesizer {
 			synthesizerOn = false;
 	}
 	
-	private void labelAndLocalSave(DnaComponent synthComp) {
+	private void labelAndSaveLocally(DnaComponent synthComp) {
 		Object[] targets = sbolFiles.toArray();
 		
 		JPanel inputPanel;
@@ -181,34 +188,31 @@ public class SBOLSynthesizer {
 
 		String localFileId = "";
 		SBOLDocument localDoc = null;
-		Set<String> localURIs = null;
 		String[] options = { "Ok", "Cancel" };
 		int option;
+		Set<String> localIDSet = new HashSet<String>();
 		do {
 			option = JOptionPane.showOptionDialog(Gui.frame, inputPanel,
 					"Save SBOL DNA Component", JOptionPane.YES_NO_OPTION,
 					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-			if (option != JOptionPane.YES_OPTION) {
-				break;
-			}
+			if (option != JOptionPane.YES_OPTION) 
+				synthesizerOn = false;
 			String chosenFileId = fileBox.getSelectedItem().toString();
 			if (!localFileId.equals(chosenFileId)) {
 				localFileId = chosenFileId;
 				localDoc = SBOLUtility.loadSBOLFile(localPath + File.separator + localFileId);
-				if (localDoc == null) {
-					synthesizerOn = false;
-					break;
-				}
+				localIDSet = new HashSet<String>();
+				for (DnaComponent dnac : SBOLUtility.loadDNAComponents(localDoc).values())
+					localIDSet.add(dnac.getDisplayId());
 			}
-		} while (!isSourceIdValid(idText.getText()));
-		if (synthesizerOn && option == JOptionPane.YES_OPTION) {
+		} while (synthesizerOn && (localDoc == null || !isSourceIdValid(idText.getText(), localIDSet)));
+		if (synthesizerOn) {
 			synthComp.setDisplayId(idText.getText());
 			synthComp.setName(nameText.getText());
 			synthComp.setDescription(descripText.getText());
 			SBOLUtility.mergeDNAComponent(synthComp, localDoc, SBOLUtility.loadDNAComponents(localDoc));
 			SBOLUtility.exportSBOLDocument(localPath + File.separator + localFileId, localDoc);
-		} else
-			synthesizerOn = false;
+		} 
 	}
 	
 	// Recursively walks synthesis node graph and loads associated SBOL DNA component URIs (no preference when graph branches)
@@ -216,11 +220,11 @@ public class SBOLSynthesizer {
 	// Stops at nodes containing URIs for other promoters or previously visited nodes
 	private LinkedList<String> loadSourceCompURIs() {
 		Set<String> filter = SBOLUtility.soSynonyms(GlobalConstants.SBOL_PROMOTER);
-		Set<SynthesisNode> promoterNodes = new HashSet<SynthesisNode>();
+		LinkedHashSet<SynthesisNode> promoterNodes = new LinkedHashSet<SynthesisNode>();
 		Set<String> promoterNodeIds = new HashSet<String>();
 		
 		int nodesSBOL = 0;
-		for (SynthesisNode synNode : synNodes) {
+		for (SynthesisNode synNode : synMap.values()) {
 			LinkedList<String> sbolURIs = synNode.getSbolURIs();
 			if (sbolURIs.size() > 0) {
 				nodesSBOL++;
@@ -233,7 +237,7 @@ public class SBOLSynthesizer {
 									promoterNodes.add(synNode);
 									promoterNodeIds.add(synNode.getId());
 								}
-						} else if (uri != null) {
+						} else {
 							synthesizerOn = false;
 							JOptionPane.showMessageDialog(Gui.frame, "Component with URI " + uri +
 									" is not found in project SBOL files.", "DNA Component Not Found", JOptionPane.ERROR_MESSAGE);
@@ -254,9 +258,23 @@ public class SBOLSynthesizer {
 				int choice = JOptionPane.showOptionDialog(null, 
 						"Some SBOL DNA components are not connected to a promoter and will not be included in synthesis.  Proceed with synthesis?", 
 						"Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
-				if (choice != JOptionPane.OK_OPTION)
+				if (choice != JOptionPane.OK_OPTION) {
 					synthesizerOn = false;
+					return null;
+				}
 			}
+			if (localPath != null)
+				for (String uri : compMap.keySet()) {
+					LinkedList<String> subCompURIs = new LinkedList<String>();
+					for (SequenceAnnotation sa : compMap.get(uri).getAnnotations())
+						subCompURIs.add(sa.getSubComponent().getURI().toString());
+					if (subCompURIs.equals(sourceCompURIs)) {
+						localMatchURI = uri;
+						synthesizerOn = false;
+						return null;
+					}
+				}
+				
 		}
 		return sourceCompURIs;
 	}
@@ -279,13 +297,13 @@ public class SBOLSynthesizer {
 	
 	private int addSubComponent(int position, String sourceCompURI, DnaComponent synthComp, int addCount, LinkedList<String> types) {
 		DnaComponent sourceComp = new DnaComponentImpl();
-		if (compMap.containsKey(sourceCompURI))
+//		if (compMap.containsKey(sourceCompURI))
 			sourceComp = compMap.get(sourceCompURI);
-		else {
-			synthesizerOn = false;
-			JOptionPane.showMessageDialog(Gui.frame, "Component with URI " + sourceCompURI + " is not found in project SBOL files.",
-					"DNA Component Not Found", JOptionPane.ERROR_MESSAGE);
-		}
+//		else {
+//			synthesizerOn = false;
+//			JOptionPane.showMessageDialog(Gui.frame, "Component with URI " + sourceCompURI + " is not found in project SBOL files.",
+//					"DNA Component Not Found", JOptionPane.ERROR_MESSAGE);
+//		}
 		if (synthesizerOn) {
 			types.add(SBOLUtility.uriToSOTypeConverter(sourceComp.getTypes().iterator().next()));
 			if (sourceComp.getDnaSequence() != null && sourceComp.getDnaSequence().getNucleotides() != null 
@@ -314,14 +332,17 @@ public class SBOLSynthesizer {
 		return position;
 	}
 	
-	private boolean isSourceIdValid(String sourceId) {
-		if (sourceId.equals("")) {
+	private boolean isSourceIdValid(String sourceID, Set<String> targetIDSet) {
+		if (sourceID.equals("")) {
 			JOptionPane.showMessageDialog(Gui.frame, "Chosen ID is blank.", "Invalid ID", JOptionPane.ERROR_MESSAGE);
 			return false;
-		} else if (!Utility.isValid(sourceId, Utility.IDstring)) {
+		} else if (!Utility.isValid(sourceID, Utility.IDstring)) {
 			JOptionPane.showMessageDialog(Gui.frame, "Chosen ID is not alphanumeric.", "Invalid ID", JOptionPane.ERROR_MESSAGE);
 			return false;
-		} 
+		} else if (targetIDSet.contains(sourceID)) {
+			JOptionPane.showMessageDialog(Gui.frame, "Chosen SBOL file contains DNA component with chosen ID.", "Invalid ID", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
 		return true;
 	}
 	
