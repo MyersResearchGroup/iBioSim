@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Set;
 
@@ -615,7 +616,7 @@ public class GCMParser {
 	// This caused problems when connecting their synthesis nodes
 	public SBOLSynthesizer buildTopLevelSbolSynthesizer(SBMLDocument sbml) {
 		boolean sbolDetected = false;
-		synMap = new HashMap<String, SynthesisNode>(); // initialize map of model element IDs to synthesis nodes
+		synMap = new LinkedHashMap<String, SynthesisNode>(); // initialize map of model element IDs to synthesis nodes
 		complexMap = new HashMap<String, ArrayList<Influence>>();
 		paramInputMap = new HashMap<String, Set<String>>();  // initialize map of parameters to reactions in which they appear
 		paramOutputMap = new HashMap<String, Set<String>>(); // initialize map of parameters to rules for which they're outputs
@@ -654,7 +655,7 @@ public class GCMParser {
 		// Finishes connecting synthesis nodes in accordance with various maps (see above)
 		if (sbolDetected) {
 			connectMappedSynthesisNodes();
-			SBOLSynthesizer synthesizer = new SBOLSynthesizer(synMap.values());
+			SBOLSynthesizer synthesizer = new SBOLSynthesizer(synMap);
 			return synthesizer;
 		} else
 			return null;
@@ -673,7 +674,7 @@ public class GCMParser {
 	private HashMap<String, Promoter> promoterList;
 	private HashMap<String, ArrayList<Influence>> complexMap;
 	private HashMap<String, ArrayList<Influence>> partsMap;
-	private HashMap<String, SynthesisNode> synMap;
+	private LinkedHashMap<String, SynthesisNode> synMap;
 	private HashMap<String, Set<String>> paramInputMap;
 	private HashMap<String, Set<String>> paramOutputMap;
 	private HashMap<String, String> speciesMetaMap;
