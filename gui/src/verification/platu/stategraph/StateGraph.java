@@ -483,14 +483,14 @@ public class StateGraph {
 			if (Options.getDebugMode())
 				System.out.println("Checking " + tran);
 			if (this.lpn.getEnablingTree(tranName) != null 
-					&& this.lpn.getEnablingTree(tranName).evaluateExpr(this.lpn.getAllVarsAndValues(varValuesVector)) == 0.0
+					&& this.lpn.getEnablingTree(tranName).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(varValuesVector)) == 0.0
 					&& !(tran.isPersistent() && curState.getTranVector()[tranIndex])) {
 				if (Options.getDebugMode())
 					System.out.println(tran.getName() + " " + "Enabling condition is false");
 				return false;
 			}
 			if (this.lpn.getTransitionRateTree(tranName) != null 
-					&& this.lpn.getTransitionRateTree(tranName).evaluateExpr(this.lpn.getAllVarsAndValues(varValuesVector)) == 0.0) {
+					&& this.lpn.getTransitionRateTree(tranName).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(varValuesVector)) == 0.0) {
 				if (Options.getDebugMode())
 					System.out.println("Rate is zero");
 				return false;
@@ -668,19 +668,20 @@ public class StateGraph {
 		}
 		
         HashMap<String, Integer> vvSet = new HashMap<String, Integer>();
-        vvSet = this.lpn.getAllVarsWithValues(nextState.getVector());
-//        for (String key : this.lpn.getAllVarsAndValues(curVector).keySet()) {
+        vvSet = this.lpn.getAllVarsWithValuesAsInt(nextState.getVector());
+//        
+//        for (String key : this.lpn.getAllVarsWithValuesAsString(curState.getVector()).keySet()) {
 //        	if (this.lpn.getBoolAssignTree(firedTran.getName(), key) != null) {
-//        		int newValue = (int)this.lpn.getBoolAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsAndValues(curVector));
+//        		int newValue = (int)this.lpn.getBoolAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(curState.getVector()));
 //        		vvSet.put(key, newValue);
 //        	}
 //        	// TODO: (temp) type cast continuous variable to int.
 //        	if (this.lpn.getContAssignTree(firedTran.getName(), key) != null) {
-//        		int newValue = (int)this.lpn.getContAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsAndValues(curVector));
+//        		int newValue = (int)this.lpn.getContAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(curState.getVector()));
 //        		vvSet.put(key, newValue);
 //        	}
 //        	if (this.lpn.getIntAssignTree(firedTran.getName(), key) != null) {
-//        		int newValue = (int)this.lpn.getIntAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsAndValues(curVector));
+//        		int newValue = (int)this.lpn.getIntAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(curState.getVector()));
 //        		vvSet.put(key, newValue);
 //        	}
 //        }       
@@ -750,18 +751,18 @@ public class StateGraph {
         //  State vector update
         int[] newVectorArray = curState.getVector().clone();
         int[] curVector = curState.getVector();      
-        for (String key : this.lpn.getAllVarsAndValues(curVector).keySet()) {
+        for (String key : this.lpn.getAllVarsWithValuesAsString(curVector).keySet()) {
         	if (this.lpn.getBoolAssignTree(firedTran.getName(), key) != null) {
-        		int newValue = (int)this.lpn.getBoolAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsAndValues(curVector));
+        		int newValue = (int)this.lpn.getBoolAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(curVector));
         		newVectorArray[this.lpn.getVarIndexMap().get(key)] = newValue;
         	}
         	// TODO: (temp) type cast continuous variable to int.
         	if (this.lpn.getContAssignTree(firedTran.getName(), key) != null) {
-        		int newValue = (int)this.lpn.getContAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsAndValues(curVector));
+        		int newValue = (int)this.lpn.getContAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(curVector));
         		newVectorArray[this.lpn.getVarIndexMap().get(key)] = newValue;
         	}
         	if (this.lpn.getIntAssignTree(firedTran.getName(), key) != null) {
-        		int newValue = (int)this.lpn.getIntAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsAndValues(curVector));
+        		int newValue = (int)this.lpn.getIntAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(curVector));
         		newVectorArray[this.lpn.getVarIndexMap().get(key)] = newValue;
         	}
         } 
@@ -806,12 +807,12 @@ public class StateGraph {
     		int tranIndex = tran.getIndex();
     		//System.out.println("Checking " + tran);
     		if (this.lpn.getEnablingTree(tranName) != null 
-    				&& this.lpn.getEnablingTree(tranName).evaluateExpr(this.lpn.getAllVarsAndValues(newVectorArray)) == 0.0) {
+    				&& this.lpn.getEnablingTree(tranName).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(newVectorArray)) == 0.0) {
     			//System.out.println(tran.getName() + " " + "Enabling condition is false");
     			continue;
     		}
     		if (this.lpn.getTransitionRateTree(tranName) != null 
-    				&& this.lpn.getTransitionRateTree(tranName).evaluateExpr(this.lpn.getAllVarsAndValues(newVectorArray)) == 0.0) {
+    				&& this.lpn.getTransitionRateTree(tranName).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(newVectorArray)) == 0.0) {
     			//System.out.println("Rate is zero");
     			continue;
     		}
@@ -874,18 +875,18 @@ public class StateGraph {
         System.arraycopy(oldVector, 0, newVectorArray, 0, size);
         
         int[] curVector = curState.getVector();
-        for (String key : this.lpn.getAllVarsAndValues(curVector).keySet()) {
+        for (String key : this.lpn.getAllVarsWithValuesAsString(curVector).keySet()) {
         	if (this.lpn.getBoolAssignTree(firedTran.getName(), key) != null) {
-        		int newValue = (int)this.lpn.getBoolAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsAndValues(curVector));
+        		int newValue = (int)this.lpn.getBoolAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(curVector));
         		newVectorArray[this.lpn.getVarIndexMap().get(key)] = newValue;
         	}
         	// TODO: (temp) type cast continuous variable to int.
         	if (this.lpn.getContAssignTree(firedTran.getName(), key) != null) {
-        		int newValue = (int)this.lpn.getContAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsAndValues(curVector));
+        		int newValue = (int)this.lpn.getContAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(curVector));
         		newVectorArray[this.lpn.getVarIndexMap().get(key)] = newValue;
         	}
         	if (this.lpn.getIntAssignTree(firedTran.getName(), key) != null) {
-        		int newValue = (int)this.lpn.getIntAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsAndValues(curVector));
+        		int newValue = (int)this.lpn.getIntAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(curVector));
         		newVectorArray[this.lpn.getVarIndexMap().get(key)] = newValue;
         	}
         }       
