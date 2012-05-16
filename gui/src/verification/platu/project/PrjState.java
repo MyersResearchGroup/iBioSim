@@ -14,7 +14,6 @@ public class PrjState {
 	private PrjState father;
 	private PrjState child;
 	// member variables below created for outputGlobalStateGraph in Analysis
-//	private DualHashMap<Transition, PrjState> prevStateMap;
 	private HashMap<Transition, PrjState> nextStateMap;
 
 	public PrjState() {
@@ -28,7 +27,6 @@ public class PrjState {
 		father = null;
 		child = null;
 		if (Options.getOutputSgFlag()) {
-			//prevStateMap = new DualHashMap<Transition, PrjState>();
 			nextStateMap = new HashMap<Transition, PrjState>();
 		}
 	}
@@ -157,7 +155,7 @@ public class PrjState {
 	public HashMap<Transition, PrjState> getNextStateMap() {
 		return nextStateMap;
 	}
-
+ 
 	public State[] getStateArray() {
 		return stateArray;		
 	}
