@@ -310,7 +310,7 @@ public class Zone implements ZoneType {
 			
 			// Get the values of the variables for evaluating the ExprTree.
 			HashMap<String, String> varValues = 
-				lpn.getAllVarsAndValues(initialState.getVector());
+				lpn.getAllVarsWithValuesAsString(initialState.getVector());
 			
 			// Set the upper and lower bound.
 			int upper, lower;
@@ -975,7 +975,7 @@ public class Zone implements ZoneType {
 
 			// Get the values of the variables for evaluating the ExprTree.
 			HashMap<String, String> varValues = 
-				lpn.getAllVarsAndValues(state.getVector());
+				lpn.getAllVarsWithValuesAsString(state.getVector());
 
 			// Set the upper and lower bound.
 			int upper, lower;
