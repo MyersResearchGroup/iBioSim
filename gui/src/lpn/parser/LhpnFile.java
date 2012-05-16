@@ -969,19 +969,6 @@ public class LhpnFile {
 		return placeList;
 	}
 	
-	// TODO: (temp) Create a hash map between the names and index of all places
-	/*
-	public HashMap<String, Integer> createPlaceIndexList() {
-		HashMap<String, Integer> placeIndexList = new HashMap<String, Integer>();
-		int i = 0;
-		for (String placeName : places.keySet()) {
-			placeIndexList.put(placeName, i);
-			i++;
-		}
-		return placeIndexList;
-	}
-	*/
-	
 	public Place getPlace(String place) {
 		return places.get(place);
 	}
@@ -1108,11 +1095,11 @@ public class LhpnFile {
 				continue;
 			}
 			else {
-				if (getEnablingTree(tranName) != null && getEnablingTree(tranName).evaluateExpr(getAllVarsAndValues(initialVector)) == 0.0) {
+				if (getEnablingTree(tranName) != null && getEnablingTree(tranName).evaluateExpr(getAllVarsWithValuesAsString(initialVector)) == 0.0) {
 					initEnabledTrans[i] = false;
 					continue;
 				}
-				else if (getTransitionRateTree(tranName) != null && getTransitionRateTree(tranName).evaluateExpr(getAllVarsAndValues(initialVector)) == 0.0) {
+				else if (getTransitionRateTree(tranName) != null && getTransitionRateTree(tranName).evaluateExpr(getAllVarsWithValuesAsString(initialVector)) == 0.0) {
 					initEnabledTrans[i] = false;
 					continue;
 				}
@@ -1163,7 +1150,7 @@ public class LhpnFile {
 		return varIndexMap;
 	}
 	
-	public HashMap<String, String> getAllVarsAndValues(int[] varValueVector) {
+	public HashMap<String, String> getAllVarsWithValuesAsString(int[] varValueVector) {
 		DualHashMap<String, Integer> varIndexMap = this.getVarIndexMap();
 		HashMap<String, String> varToValueMap = new HashMap<String, String>();
 		// varValue is map between variable names and their values. 
@@ -1174,7 +1161,7 @@ public class LhpnFile {
 		return varToValueMap;
 	}
 	
-	public HashMap<String, Integer> getAllVarsWithValues(int[] varValueVector) {
+	public HashMap<String, Integer> getAllVarsWithValuesAsInt(int[] varValueVector) {
 		DualHashMap<String, Integer> varIndexMap = this.getVarIndexMap();
 		HashMap<String, Integer> varToValueMap = new HashMap<String, Integer>();
 		// varValue is map between variable names and their values. 
@@ -1218,31 +1205,62 @@ public class LhpnFile {
 	
 	public HashMap<String, String> getAllInputs() {
 		HashMap<String, String> inputs = new HashMap<String, String>();
-		for (Variable v : variables) {
+		for (Variable v : booleans.values()) {
 			if (v.isInput()) {
 				inputs.put(v.getName(), v.getInitValue());
 			}
 		}
+		for (Variable v : integers.values()) {
+			if (v.isInput()) {
+				inputs.put(v.getName(), v.getInitValue());
+			}
+		}
+		for (Variable v : continuous.values()) {
+			if (v.isInput()) {
+				inputs.put(v.getName(), v.getInitValue());
+			}
+		}
+		
 		return inputs;
 	}
 	
 	public HashMap<String, String> getAllInternals() {
 		HashMap<String, String> internals = new HashMap<String, String>();
-		for (Variable v : variables) {
-			if (!v.isInput() && !v.isOutput()) {
+		for (Variable v : booleans.values()) {
+			if (v.isInternal()) {
 				internals.put(v.getName(), v.getInitValue());
 			}
 		}
+		for (Variable v : integers.values()) {
+			if (v.isInternal()) {
+				internals.put(v.getName(), v.getInitValue());
+			}
+		}
+		for (Variable v : continuous.values()) {
+			if (v.isInternal()) {
+				internals.put(v.getName(), v.getInitValue());
+			}
+		}	
 		return internals;
 	}
 
 	public HashMap<String, String> getAllOutputs() {
 		HashMap<String, String> outputs = new HashMap<String, String>();
-		for (Variable v : variables) {
+		for (Variable v : booleans.values()) {
 			if (v.isOutput()) {
 				outputs.put(v.getName(), v.getInitValue());
 			}
 		}
+		for (Variable v : integers.values()) {
+			if (v.isOutput()) {
+				outputs.put(v.getName(), v.getInitValue());
+			}
+		}
+		for (Variable v : continuous.values()) {
+			if (v.isOutput()) {
+				outputs.put(v.getName(), v.getInitValue());
+			}
+		}		
 		return outputs;
 	}
 	
