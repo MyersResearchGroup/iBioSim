@@ -117,7 +117,7 @@ public class Project_Timed extends Project{
 			// TODO: Does this method need to be different than getInitState()
 			initStateArray[index] = curSg.getInitStateTimed(_useGraph); //curLpn.getInitState();
 			int[] curStateVector = initStateArray[index].getVector();
-			varValMap = curLpn.getAllVarsWithValues(curStateVector);
+			varValMap = curLpn.getAllVarsWithValuesAsInt(curStateVector);
 //			HashMap<String, String> vars = curLpn.getAllOutputs();//curLpn.getAllOutputs();
 //			DualHashMap<String, Integer> VarIndexMap = curLpn.getVarIndexMap();
 //			for(String var : vars.keySet()) {
