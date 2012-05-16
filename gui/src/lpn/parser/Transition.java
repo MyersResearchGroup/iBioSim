@@ -730,7 +730,6 @@ public class Transition {
 		name = newName;
 	}
 
-	// TODO: (Check) Methods below are copied from LPNTran.
     /**
      * @return LPN object containing this LPN transition.
      */
@@ -748,8 +747,8 @@ public class Transition {
 	public boolean local() {
 		// Returns true if LPNTran only modifies non-output variables.
 		boolean isLocal = true;
-		for (Iterator<String> assignVarsIter = this.getAssignments().keySet().iterator(); assignVarsIter.hasNext();) {
-			if (!this.getLpn().getAllInternals().keySet().contains(assignVarsIter.next())) {
+		for (String assignVar : this.getAssignments().keySet()) {
+			if (!this.getLpn().getAllInternals().keySet().contains(assignVar)) {
 				isLocal = false;
 				break;
 			}
