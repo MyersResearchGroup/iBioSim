@@ -155,7 +155,7 @@ public class Project {
 			StateGraph curSg = sgArray[index];
 			initStateArray[index] = curSg.getInitState(); //curLpn.getInitState();
 			int[] curStateVector = initStateArray[index].getVector();
-			varValMap = curLpn.getAllVarsWithValues(curStateVector);
+			varValMap = curLpn.getAllVarsWithValuesAsInt(curStateVector);
 //			HashMap<String, String> vars = curLpn.getAllOutputs();//curLpn.getAllOutputs();
 //			DualHashMap<String, Integer> VarIndexMap = curLpn.getVarIndexMap();
 //			for(String var : vars.keySet()) {
@@ -286,7 +286,7 @@ public class Project {
 			StateGraph curSg = sgArray[index];
 			initStateArray[index] = curSg.getInitState(); //curLpn.getInitState();
 			int[] curStateVector = initStateArray[index].getVector();
-			varValMap = curLpn.getAllVarsWithValues(curStateVector);
+			varValMap = curLpn.getAllVarsWithValuesAsInt(curStateVector);
 //			DualHashMap<String, Integer> VarIndexMap = curLpn.getVarIndexMap();
 //			HashMap<String, String> outVars = curLpn.getAllOutputs();		
 //			for(String var : outVars.keySet()) {
