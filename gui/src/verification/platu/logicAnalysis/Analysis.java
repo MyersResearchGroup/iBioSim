@@ -3701,7 +3701,7 @@ public class Analysis {
 				}
 				else
 					necessary = computeNecessary(curStateArray,tranCanBeDisabled,dependent,curEnabled, staticMap, lpnList, origTran);
-				if (necessary != null && !necessary.isEmpty()) {
+				if (/*necessary != null &&*/ !necessary.isEmpty()) {
 					if (Options.getDebugMode()) 
 						printIntegerSet(necessary, lpnList, "necessary set for transition " + lpnList[tranCanBeDisabled.getLpnIndex()].getLabel() 
 								+ "(" + lpnList[tranCanBeDisabled.getLpnIndex()].getTransition(tranCanBeDisabled.getTranIndex()) + ")");
@@ -3771,10 +3771,11 @@ public class Analysis {
 							nMarkingTemp = necessaryMap.get(presetTran);
 						}
 						if (curEnabledIndices.contains(presetTran)) {
-							if (Options.getDebugMode())
-								System.out.println("@ nMarking: curEnabled contains transition " + lpnList[presetTran.getLpnIndex()].getLabel() 
-										+ "(" + lpnList[presetTran.getLpnIndex()].getTransition(presetTran.getTranIndex()).getName() + "). Add to nMarkingTmp.");
-							nMarkingTemp = necessaryMap.get(presetTran);
+							if (Options.getDebugMode()) {
+								System.out.println("@ nMarking: curEnabled contains transition " + lpnList[presetTran.getLpnIndex()].getLabel()
+										+ "(" + lpnList[presetTran.getLpnIndex()].getTransition(presetTran.getTranIndex()).getName() + "). Add to nMarkingTmp.");								
+							}
+							nMarkingTemp.add(new LpnTransitionPair(tran.getLpnIndex(), presetTrans[j]));;
 						}					
 						continue;
 					}
@@ -3889,9 +3890,9 @@ public class Analysis {
 				printNecessaryMap(lpnList);
 			return nEnable;
 		}
-		else if (nMarking == null && nEnable == null) {
-			return null;
-		}
+//		else if (nMarking == null && nEnable == null) {
+//			return null;
+//		}
 		else {
 			if (!nMarking.isEmpty() && !nEnable.isEmpty()) {
 				if (getIntSetSubstraction(nMarking, dependent).size() < getIntSetSubstraction(nEnable, dependent).size()) {
@@ -3918,8 +3919,7 @@ public class Analysis {
 				if (Options.getDebugMode())
 					printNecessaryMap(lpnList);
 				return nMarking;
-			}
-				
+			}				
 		}
 	}
 
