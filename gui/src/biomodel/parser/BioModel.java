@@ -4658,6 +4658,14 @@ public class BioModel {
 		return true;
 	}
 	
+	public SBMLDocument newFlattenModel() {
+		SBMLDocument document = new SBMLDocument();
+		document.setModel(sbmlCompModel.flattenModel());
+		SBMLWriter writer = new SBMLWriter();
+		writer.writeSBML(document, "temp.xml");
+		return document;
+	}
+	
 	public SBMLDocument flattenModel() {
 		ArrayList<String> modelList = new ArrayList<String>();
 		modelList.add(filename);
