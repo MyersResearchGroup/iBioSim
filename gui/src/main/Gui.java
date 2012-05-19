@@ -9912,21 +9912,22 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	}
 	
 	private boolean updatePortMap(CompSBMLDocumentPlugin sbmlComp,CompSBasePlugin sbmlSBase,BioModel subModel,String subModelId) {
+		boolean updated = false;
 		for (long k = 0; k < sbmlSBase.getNumReplacedElements(); k++) {
 			ReplacedElement replacement = sbmlSBase.getReplacedElement(k);
 			if (replacement.getSubmodelRef().equals(subModelId)) {
 				changeIdToPortRef(replacement,subModel);
-				return true;
+				updated = true;
 			}
 		}
 		if (sbmlSBase.isSetReplacedBy()) {
 			Replacing replacement = sbmlSBase.getReplacedBy();
 			if (replacement.getSubmodelRef().equals(subModelId)) {
 				changeIdToPortRef(replacement,subModel);
-				return true;
+				updated = true;
 			}
 		}
-		return false;
+		return updated;
 	}
 	
 	private boolean updateReplacementsDeletions(SBMLDocument document, CompSBMLDocumentPlugin sbmlComp, 

@@ -4661,8 +4661,16 @@ public class BioModel {
 	public SBMLDocument newFlattenModel() {
 		SBMLDocument document = new SBMLDocument();
 		document.setModel(sbmlCompModel.flattenModel());
+		document.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
+		document.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
+		//CompModelPlugin documentCompModel = (CompModelPlugin)sbml.getModel().getPlugin("comp");
+		//while (documentCompModel.getNumPorts()>0) {
+		//	documentCompModel.getPort(0).removeFromParentAndDelete();
+		//}
+		document.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", false);
+		document.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", false);
 		SBMLWriter writer = new SBMLWriter();
-		writer.writeSBML(document, "temp.xml");
+		writer.writeSBML(document, path + separator + "_temp.xml");
 		return document;
 	}
 	
