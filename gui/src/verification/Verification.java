@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
-import java.util.Set;
 import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,7 +37,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -1076,15 +1074,15 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		}
 	}
 
-	private void printAllProcesses(HashMap<Transition, Integer> allProcessTrans) {		
-		System.out.println("~~~~~~~~~~Begin~~~~~~~~~");
-		Set<Transition> allTransitions = allProcessTrans.keySet();
-		for (Iterator<Transition> allTransIter = allTransitions.iterator(); allTransIter.hasNext();) {
-			Transition curTran = allTransIter.next();			
-			System.out.println(curTran.getName() + "\t" + allProcessTrans.get(curTran));
-		}
-		System.out.println("~~~~~~~~~~End~~~~~~~~~");
-	}
+//	private void printAllProcesses(HashMap<Transition, Integer> allProcessTrans) {		
+//		System.out.println("~~~~~~~~~~Begin~~~~~~~~~");
+//		Set<Transition> allTransitions = allProcessTrans.keySet();
+//		for (Iterator<Transition> allTransIter = allTransitions.iterator(); allTransIter.hasNext();) {
+//			Transition curTran = allTransIter.next();			
+//			System.out.println(curTran.getName() + "\t" + allProcessTrans.get(curTran));
+//		}
+//		System.out.println("~~~~~~~~~~End~~~~~~~~~");
+//	}
 
 	@SuppressWarnings("unchecked")
 	public void run() {
@@ -1110,15 +1108,108 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					 LhpnFile curLPN = new LhpnFile();
 					 curLPN.load(directory + separator + curLPNname);
 					 selectedLPNs.add(curLPN);
-				}
+				}				
+				// ------- Temporary Settings ------------
+				// Options for printing out intermediate results during POR
+				// Options.setDebugMode(true);
+				   Options.setDebugMode(false);
+				// ----------------------------------------
 				Project untimed_dfs = new Project(selectedLPNs);
+				//----------- POR and Cycle Closing Methods (FULL)--------------
+//				if (untimedPOR.isSelected()) {
+//					// Options for using trace-back in ample calculation
+//					String[] ampleMethds = {"Use trace-back for ample computation", "No trace-back for ample computation"};
+//					JList ampleMethdsList = new JList(ampleMethds);
+//					ampleMethdsList.setVisibleRowCount(2);
+//					//cycleClosingList.addListSelectionListener(new ValueReporter());
+//					JScrollPane ampleMethdsPane = new JScrollPane(ampleMethdsList);
+//					JPanel mainPanel0 = new JPanel(new BorderLayout());
+//					mainPanel0.add("North", new JLabel("Select an ample set computation method:"));
+//					mainPanel0.add("Center", ampleMethdsPane);							
+//					Object[] options0 = {"Run", "Cancel"};
+//					int optionRtVal0 = JOptionPane.showOptionDialog(Gui.frame, mainPanel0, "Ample set computation methods selection", 
+//								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options0, options0[0]);
+//					if (optionRtVal0 == 1) {
+//						// Cancel
+//						return;
+//					}
+//					int ampleMethdsIndex = ampleMethdsList.getSelectedIndex();
+//					if (ampleMethdsIndex == 0) 
+//						Options.setPOR("tb");
+//					if (ampleMethdsIndex == 1)
+//						Options.setPOR("tboff");					
+//					// GUI for different cycle closing methods.
+//					String[] entries = {"Use behavioral analysis",
+//										"Use behavioral analysis and state trace-back",
+//										"No cycle closing",
+//										"Strong cycle condition"};
+//					JList cycleClosingList = new JList(entries);
+//					cycleClosingList.setVisibleRowCount(4);
+//					//cycleClosingList.addListSelectionListener(new ValueReporter());
+//					JScrollPane cycleClosingPane = new JScrollPane(cycleClosingList);
+//					JPanel mainPanel = new JPanel(new BorderLayout());
+//					mainPanel.add("North", new JLabel("Select a cycle closing method:"));
+//					mainPanel.add("Center", cycleClosingPane);							
+//					Object[] options = {"Run", "Cancel"};
+//					int optionRtVal = JOptionPane.showOptionDialog(Gui.frame, mainPanel, "Cycle closing methods selection", 
+//								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+//					if (optionRtVal == 1) {
+//						// Cancel
+//						return;
+//					}
+//					int cycleClosingMthdIndex = cycleClosingList.getSelectedIndex();
+//					if (cycleClosingMthdIndex == 0) {
+//						Options.setCycleClosingMthd("behavioral");
+//						if (Options.getPOR().equals("tb")) {
+//							String[] cycleClosingAmpleMethds = {"Use trace-back", "No trace-back"};
+//							JList cycleClosingAmpleList = new JList(cycleClosingAmpleMethds);
+//							cycleClosingAmpleList.setVisibleRowCount(2);
+//							JScrollPane cycleClosingAmpleMethdsPane = new JScrollPane(cycleClosingAmpleList);
+//							JPanel mainPanel1 = new JPanel(new BorderLayout());
+//							mainPanel1.add("North", new JLabel("Select a cycle closing ample computation method:"));
+//							mainPanel1.add("Center", cycleClosingAmpleMethdsPane);							
+//							Object[] options1 = {"Run", "Cancel"};
+//							int optionRtVal1 = JOptionPane.showOptionDialog(Gui.frame, mainPanel1, "Cycle closing ample computation method selection", 
+//										JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options1, options1[0]);
+//							if (optionRtVal1 == 1) {
+//								// Cancel
+//								return;
+//							}
+//							int cycleClosingAmpleMethdIndex = cycleClosingAmpleList.getSelectedIndex();
+//							if (cycleClosingAmpleMethdIndex == 0) 
+//								Options.setCycleClosingAmpleMethd("cctb");
+//							if (cycleClosingAmpleMethdIndex == 1)
+//								Options.setCycleClosingAmpleMethd("cctboff");
+//						}
+//						else if (Options.getPOR().equals("tboff")) {
+//							Options.setCycleClosingAmpleMethd("cctboff");
+//						}
+//					}						
+//					else if (cycleClosingMthdIndex == 1) 
+//						Options.setCycleClosingMthd("state_search");
+//					else if (cycleClosingMthdIndex == 2)
+//						Options.setCycleClosingMthd("no_cycleclosing");
+//					else if (cycleClosingMthdIndex == 3)
+//						Options.setCycleClosingMthd("strong");
+//					if (dot.isSelected()) {
+//						Options.setOutputSgFlag(true);
+//					}
+//					Options.setPrjSgPath(directory + separator);
+//					// Options for printing the final numbers from search_dfs or search_dfsPOR. 
+//					Options.setOutputLogFlag(true);
+////					Options.setPrintLogToFile(false);
+//					StateGraph[] stateGraphArray = untimed_dfs.searchPOR();
+//					if (dot.isSelected()) {
+//						for (int i=0; i<stateGraphArray.length; i++) {
+//							String graphFileName = stateGraphArray[i].getLpn().getLabel() + "POR_"+ Options.getCycleClosingMthd() + "_local_sg.dot";
+//							stateGraphArray[i].outputLocalStateGraph(directory + separator + graphFileName);
+//						}
+//						// Code for producing global state graph is in search_dfsPOR in the Analysis class.						
+//					}
+//				}
+				// -------------------------------------				
+				//----------- POR and Cycle Closing Methods (Simple)--------------
 				if (untimedPOR.isSelected()) {
-					// ------- Temporary Settings ------------
-					// Options for printing out intermediate results during POR
-//					Options.setDebugMode(true);
-					Options.setDebugMode(false);
-					// ----------------------------------------
-	
 					// Options for using trace-back in ample calculation
 					String[] ampleMethds = {"Use trace-back for ample computation", "No trace-back for ample computation"};
 					JList ampleMethdsList = new JList(ampleMethds);
@@ -1136,63 +1227,16 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						return;
 					}
 					int ampleMethdsIndex = ampleMethdsList.getSelectedIndex();
-					if (ampleMethdsIndex == 0) 
+					if (ampleMethdsIndex == 0) {
 						Options.setPOR("tb");
-					if (ampleMethdsIndex == 1)
-						Options.setPOR("tboff");					
-					// GUI for different cycle closing methods.
-					String[] entries = {"Use behavioral analysis",
-										"Use behavioral analysis and state trace-back",
-										"No cycle closing",
-										"Strong cycle condition"};
-					JList cycleClosingList = new JList(entries);
-					cycleClosingList.setVisibleRowCount(4);
-					//cycleClosingList.addListSelectionListener(new ValueReporter());
-					JScrollPane cycleClosingPane = new JScrollPane(cycleClosingList);
-					JPanel mainPanel = new JPanel(new BorderLayout());
-					mainPanel.add("North", new JLabel("Select a cycle closing method:"));
-					mainPanel.add("Center", cycleClosingPane);							
-					Object[] options = {"Run", "Cancel"};
-					int optionRtVal = JOptionPane.showOptionDialog(Gui.frame, mainPanel, "Cycle closing methods selection", 
-								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-					if (optionRtVal == 1) {
-						// Cancel
-						return;
-					}
-					int cycleClosingMthdIndex = cycleClosingList.getSelectedIndex();
-					if (cycleClosingMthdIndex == 0) {
 						Options.setCycleClosingMthd("behavioral");
-						if (Options.getPOR().equals("tb")) {
-							String[] cycleClosingAmpleMethds = {"Use trace-back", "No trace-back"};
-							JList cycleClosingAmpleList = new JList(cycleClosingAmpleMethds);
-							cycleClosingAmpleList.setVisibleRowCount(2);
-							JScrollPane cycleClosingAmpleMethdsPane = new JScrollPane(cycleClosingAmpleList);
-							JPanel mainPanel1 = new JPanel(new BorderLayout());
-							mainPanel1.add("North", new JLabel("Select a cycle closing ample computation method:"));
-							mainPanel1.add("Center", cycleClosingAmpleMethdsPane);							
-							Object[] options1 = {"Run", "Cancel"};
-							int optionRtVal1 = JOptionPane.showOptionDialog(Gui.frame, mainPanel1, "Cycle closing ample computation method selection", 
-										JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options1, options1[0]);
-							if (optionRtVal1 == 1) {
-								// Cancel
-								return;
-							}
-							int cycleClosingAmpleMethdIndex = cycleClosingAmpleList.getSelectedIndex();
-							if (cycleClosingAmpleMethdIndex == 0) 
-								Options.setCycleClosingAmpleMethd("cctb");
-							if (cycleClosingAmpleMethdIndex == 1)
-								Options.setCycleClosingAmpleMethd("cctboff");
-						}
-						else if (Options.getPOR().equals("tboff")) {
-							Options.setCycleClosingAmpleMethd("cctboff");
-						}
-					}						
-					else if (cycleClosingMthdIndex == 1) 
-						Options.setCycleClosingMthd("state_search");
-					else if (cycleClosingMthdIndex == 2)
-						Options.setCycleClosingMthd("no_cycleclosing");
-					else if (cycleClosingMthdIndex == 3)
-						Options.setCycleClosingMthd("strong");
+						Options.setCycleClosingAmpleMethd("cctb");
+					}					
+					if (ampleMethdsIndex == 1) {
+						Options.setPOR("tboff");
+						Options.setCycleClosingMthd("behavioral");
+						Options.setCycleClosingAmpleMethd("cctboff");
+					}
 					if (dot.isSelected()) {
 						Options.setOutputSgFlag(true);
 					}
@@ -1208,7 +1252,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						}
 						// Code for producing global state graph is in search_dfsPOR in the Analysis class.						
 					}
-				}
+				}				
 				else { // No POR
 					Options.setPrjSgPath(directory + separator);
 					// Options for printing the final numbers from search_dfs or search_dfsPOR. 
@@ -1217,13 +1261,14 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					if (dot.isSelected()) 
 						Options.setOutputSgFlag(true);
 					StateGraph[] stateGraphArray = untimed_dfs.search();
-					if (dot.isSelected()) {
-						for (int i=0; i<stateGraphArray.length; i++) {
-							String graphFileName = stateGraphArray[i].getLpn().getLabel() + "_local_sg.dot";
-							stateGraphArray[i].outputLocalStateGraph(directory + separator + graphFileName);
+					if (stateGraphArray != null)
+						if (dot.isSelected()) {
+							for (int i=0; i<stateGraphArray.length; i++) {
+								String graphFileName = stateGraphArray[i].getLpn().getLabel() + "_local_sg.dot";
+								stateGraphArray[i].outputLocalStateGraph(directory + separator + graphFileName);
+							}
+							// Code for producing global state graph is in search_dfsPOR in the Analysis class.
 						}
-						// Code for producing global state graph is in search_dfsPOR in the Analysis class.
-					}
 				}
 				return;
 			}
@@ -1262,9 +1307,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				}
 				HashMap<String, ArrayList<Integer>> allProcessRead = abs.getProcessRead(); 
 				HashMap<String, ArrayList<Integer>> allProcessWrite = abs.getProcessWrite();
-				for (Iterator<String> processReadIter = allProcessRead.keySet().iterator(); 
-						processReadIter.hasNext();) {
-					String curRead = processReadIter.next();
+				for (String curRead : allProcessRead.keySet()) {
 					if (allProcessRead.get(curRead).size() == 1 
 							&& allProcessWrite.get(curRead).size() == 1) {
 						if (allProcessRead.get(curRead).equals(allProcessWrite.get(curRead))) {
@@ -1345,61 +1388,116 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 							}
 						}
 					}
-				}		
-				// Find the process with least number of variables, and record this number.
-				int leastNumVarsInOneProcess = lpn.getVariables().length;
-				for (Iterator<Integer> processMapIter = processMap.keySet().iterator(); processMapIter.hasNext();) {
-					Integer curProcId = processMapIter.next();
-					LpnProcess curProcess = processMap.get(curProcId);
-					if (curProcess.getProcessVarSize() < leastNumVarsInOneProcess) {
-						leastNumVarsInOneProcess = curProcess.getProcessVarSize();
-					}		
 				}
-				// Coalesce an array of processes into one LPN component.
-				JPanel mainPanel = new JPanel(new BorderLayout());
-				JPanel maxVarsPanel = new JPanel();
-				JTextField maxVarsText = new JTextField(3);
-				maxVarsText.setText("" + lpn.getVariables().length);
-				maxVarsPanel.add(new JLabel("Enter the maximal number of variables allowed in one component:"));
-				maxVarsPanel.add(maxVarsText);
-				mainPanel.add("North", new JLabel("number of variables in this LPN: " + lpn.getVariables().length));
-				mainPanel.add("Center", new JLabel("number of variables in the smallest process: " + leastNumVarsInOneProcess));
-				mainPanel.add("South", maxVarsPanel);
-				
-				Object[] options = {"Run", "Cancel"};
-				int optionRtVal = JOptionPane.showOptionDialog(Gui.frame, mainPanel, "Assign the maximal number of variables in one component", 
-							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-				if (optionRtVal == 1) {
+				// Options to get all possible decompositions or just one decomposition
+				String[] decomposition = {"Get ALL decompositions", "Get ONE decomposition"};
+				JList decompositionList = new JList(decomposition);
+				decompositionList.setVisibleRowCount(2);
+				JScrollPane decompMethdsPane = new JScrollPane(decompositionList);
+				JPanel mainPanel0 = new JPanel(new BorderLayout());
+				mainPanel0.add("North", new JLabel("Select a LPN decomposition method:"));
+				mainPanel0.add("Center", decompMethdsPane);							
+				Object[] options0 = {"Run", "Cancel"};
+				int optionRtVal0 = JOptionPane.showOptionDialog(Gui.frame, mainPanel0, "LPN decomposition methods selection", 
+							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options0, options0[0]);
+				if (optionRtVal0 == 1) {
 					// Cancel
 					return;
 				}
-				Integer maxNumVarsInOneComp = Integer.parseInt(maxVarsText.getText().trim());;
-				if (leastNumVarsInOneProcess >= maxNumVarsInOneComp) {
-					// The original LPN is decomposed into processes.
-					// Store each process as individual LPN.
-					for (Iterator<Integer> processMapIter = processMap.keySet().iterator(); processMapIter.hasNext();) {
-						Integer curProcId = processMapIter.next();
-						LpnProcess curProcess = processMap.get(curProcId);						
-						LhpnFile lpnProc = new LhpnFile();
-						lpnProc = curProcess.buildLPN(lpnProc);
-						lpnProc.save(root + separator + lpn.getLabel() + "_decomp" + maxNumVarsInOneComp + "vars" + curProcId + ".lpn");
-						//lpnProc.save(directory + separator + lpn.getLabel() + curProcId + ".lpn");
+				int decompMethdIndex = decompositionList.getSelectedIndex();
+				if (decompMethdIndex == 0) { // Automatically find all possible LPN partitions.
+					// Find the process with least number of variables
+					int leastNumVarsInOneProcess = lpn.getVariables().length;
+					for (Integer curProcId : processMap.keySet()) {
+						LpnProcess curProcess = processMap.get(curProcId);
+						if (curProcess.getProcessVarSize() < leastNumVarsInOneProcess) {
+							leastNumVarsInOneProcess = curProcess.getProcessVarSize();
+						}		
+					}					
+					Integer maxNumVarsInOneComp = leastNumVarsInOneProcess;
+					Integer tryNumDecomps = processMap.size(); // The maximal number of decomposed LPNs is the number of all processes in the LPN.
+					HashSet<Integer> possibleDecomps = new HashSet<Integer>();
+					//possibleDecomps.add(tryNumDecomps);
+					while(tryNumDecomps > 1) {
+						LpnComponentList componentList = new LpnComponentList(maxNumVarsInOneComp);					
+						componentList.buildComponents(processMap, directory, lpn.getLabel());
+						HashMap<Integer, Component> compMap = componentList.getComponentMap();
+						tryNumDecomps = compMap.size();
+						if (tryNumDecomps == 1)
+							break;
+						if (!possibleDecomps.contains(compMap.size())) {
+							possibleDecomps.add(compMap.size());
+							for (Component comp : compMap.values()) {
+								LhpnFile lpnComp = new LhpnFile();
+								lpnComp = comp.buildLPN(lpnComp);
+								lpnComp.save(root + separator + lpn.getLabel() + "_decomp" + maxNumVarsInOneComp + "vars" + comp.getComponentId() + ".lpn");		
+							}
+						}
+						maxNumVarsInOneComp++;
 					}
-					JOptionPane.showMessageDialog(
-							Gui.frame,
-							"The entered maximal number of variables in one component is too small. The LPN was decomposed into processes.",
-							"Warning", JOptionPane.WARNING_MESSAGE);
+					System.out.println("possible decompositions for " + lpn.getLabel() + ".lpn: ");
+					for (Integer i : possibleDecomps) {
+						System.out.print(i + ", ");
+					}
+					System.out.println();
 					return;
 				}
-				LpnComponentList componentList = new LpnComponentList(maxNumVarsInOneComp);					
-				componentList.buildComponents(processMap, directory, lpn.getLabel());
-				HashMap<Integer, Component> compMap = componentList.getComponentMap();
-				for (Component comp : compMap.values()) {
-					LhpnFile lpnComp = new LhpnFile();
-					lpnComp = comp.buildLPN(lpnComp);
-					lpnComp.save(root + separator + lpn.getLabel() + "_decomp" + maxNumVarsInOneComp + "vars" + comp.getComponentId() + ".lpn");		
-				}	
-				return;
+				if (decompMethdIndex ==1) { // User decides one LPN partition.
+					// Find the process with the least number of variables
+					int leastNumVarsInOneProcess = lpn.getVariables().length;
+					for (Iterator<Integer> processMapIter = processMap.keySet().iterator(); processMapIter.hasNext();) {
+						Integer curProcId = processMapIter.next();
+						LpnProcess curProcess = processMap.get(curProcId);
+						if (curProcess.getProcessVarSize() < leastNumVarsInOneProcess) {
+							leastNumVarsInOneProcess = curProcess.getProcessVarSize();
+						}		
+					}
+					// Coalesce an array of processes into one LPN component.
+					JPanel mainPanel = new JPanel(new BorderLayout());
+					JPanel maxVarsPanel = new JPanel();
+					JTextField maxVarsText = new JTextField(3);
+					maxVarsText.setText("" + lpn.getVariables().length);
+					maxVarsPanel.add(new JLabel("Enter the maximal number of variables allowed in one component:"));
+					maxVarsPanel.add(maxVarsText);
+					mainPanel.add("North", new JLabel("number of variables in this LPN: " + lpn.getVariables().length));
+					mainPanel.add("Center", new JLabel("number of variables in the smallest process: " + leastNumVarsInOneProcess));
+					mainPanel.add("South", maxVarsPanel);
+					
+					Object[] options = {"Run", "Cancel"};
+					int optionRtVal = JOptionPane.showOptionDialog(Gui.frame, mainPanel, "Assign the maximal number of variables in one component", 
+								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+					if (optionRtVal == 1) {
+						// Cancel
+						return;
+					}
+					Integer maxNumVarsInOneComp = Integer.parseInt(maxVarsText.getText().trim());;
+					if (leastNumVarsInOneProcess >= maxNumVarsInOneComp) {
+						// The original LPN is decomposed into processes.
+						// Store each process as individual LPN.
+						for (Iterator<Integer> processMapIter = processMap.keySet().iterator(); processMapIter.hasNext();) {
+							Integer curProcId = processMapIter.next();
+							LpnProcess curProcess = processMap.get(curProcId);	
+							LhpnFile lpnProc = new LhpnFile();
+							lpnProc = curProcess.buildLPN(lpnProc);
+							lpnProc.save(root + separator + lpn.getLabel() + "_decomp" + maxNumVarsInOneComp + "vars" + curProcId + ".lpn");
+							//lpnProc.save(directory + separator + lpn.getLabel() + curProcId + ".lpn");
+						}
+						JOptionPane.showMessageDialog(
+								Gui.frame,
+								"The entered maximal number of variables in one component is too small. The LPN was decomposed into processes.",
+								"Warning", JOptionPane.WARNING_MESSAGE);
+						return;
+					}
+					LpnComponentList componentList = new LpnComponentList(maxNumVarsInOneComp);					
+					componentList.buildComponents(processMap, directory, lpn.getLabel());
+					HashMap<Integer, Component> compMap = componentList.getComponentMap();
+					for (Component comp : compMap.values()) {
+						LhpnFile lpnComp = new LhpnFile();
+						lpnComp = comp.buildLPN(lpnComp);
+						lpnComp.save(root + separator + lpn.getLabel() + "_decomp" + maxNumVarsInOneComp + "vars" + comp.getComponentId() + ".lpn");		
+					}	
+					return;				
+				}
 			}
 			else if (!untimedPOR.isSelected() && !decomposeLPN.isSelected() && multipleLPNs.isSelected() && lpnList.getSelectedValues().length < 1) {
 				JOptionPane.showMessageDialog(
