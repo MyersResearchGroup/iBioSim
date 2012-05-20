@@ -1417,12 +1417,13 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					Integer maxNumVarsInOneComp = leastNumVarsInOneProcess;
 					Integer tryNumDecomps = processMap.size(); // The maximal number of decomposed LPNs is the number of all processes in the LPN.
 					HashSet<Integer> possibleDecomps = new HashSet<Integer>();
-					//possibleDecomps.add(tryNumDecomps);
-					while(tryNumDecomps > 1) {
+					//System.out.println("lpn.getVariables().length = " + lpn.getVariables().length);
+					while(tryNumDecomps > 1 && maxNumVarsInOneComp<=lpn.getVariables().length) {
 						LpnComponentList componentList = new LpnComponentList(maxNumVarsInOneComp);					
 						componentList.buildComponents(processMap, directory, lpn.getLabel());
 						HashMap<Integer, Component> compMap = componentList.getComponentMap();
 						tryNumDecomps = compMap.size();
+						//System.out.println("tryNumDecomps = " + tryNumDecomps);
 						if (tryNumDecomps == 1)
 							break;
 						if (!possibleDecomps.contains(compMap.size())) {
