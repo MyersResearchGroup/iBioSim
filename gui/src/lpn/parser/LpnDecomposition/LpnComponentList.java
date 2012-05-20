@@ -88,8 +88,10 @@ public class LpnComponentList extends LhpnFile{
 			if (Options.getDebugMode())
 				printNumProcesses();
 			LpnComponentGraph componentGraph = new LpnComponentGraph(sharedCompVarsMap, compMap, maxNumVarsInOneComp);
-			String graphFileName = lpnFileName + maxNumVarsInOneComp + "Vars" + "_compGraph" + iter + ".dot";
-			componentGraph.outputDotFile(directory + separator + graphFileName);	
+			if (Options.getDebugMode()) {
+				String graphFileName = lpnFileName + maxNumVarsInOneComp + "Vars" + "_compGraph" + iter + ".dot";
+				componentGraph.outputDotFile(directory + separator + graphFileName);
+			}
 			Vertex vertexToCoalesce = componentGraph.selectVerticesToCoalesce();
 			if (vertexToCoalesce != null) {
 				Component comp1 = compMap.get(vertexToCoalesce.componentID);
