@@ -10,8 +10,11 @@ import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Stack;
 
+import javax.swing.JOptionPane;
+
 import lpn.parser.LhpnFile;
 import lpn.parser.Transition;
+import main.Gui;
 import verification.platu.MDD.MDT;
 import verification.platu.MDD.Mdd;
 import verification.platu.MDD.mddNode;
@@ -39,7 +42,7 @@ public class Analysis {
 
 		if (method.equals("dfs")) {
 			//if (Options.getPOR().equals("off")) {
-				this.search_dfs(lpnList, initStateArray);
+				//this.search_dfs(lpnList, initStateArray);
 				//this.search_dfs_mdd_1(lpnList, initStateArray);
 				//this.search_dfs_mdd_2(lpnList, initStateArray);
 			//}
@@ -227,6 +230,9 @@ public class Analysis {
 			State[] curStateArray = stateStackTop.toStateArray(); //stateStack.peek();
 			int curIndex = curIndexStack.peek();
 			LinkedList<Transition> curEnabled = lpnTranStack.peek();
+			if (failureTranIsEnabled(curEnabled)) {
+				return null;
+			}
 			if (Options.getDebugMode()) {
 				System.out.println("------- curStateArray ----------");
 				printStateArray(curStateArray);
@@ -416,6 +422,20 @@ public class Analysis {
 		if (Options.getOutputSgFlag())
 			outputGlobalStateGraph(sgList, prjStateSet, true);
 		return sgList;
+	}
+
+	private boolean failureTranIsEnabled(LinkedList<Transition> curEnabled) {
+		boolean failureTranIsEnabled = false;
+		for (Transition tran : curEnabled) {
+			if (tran.isFail()) {
+				JOptionPane.showMessageDialog(Gui.frame,
+						"Failure transition " + tran.getName() + "is enabled.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+				failureTranIsEnabled = true;
+				break;
+			}
+		}
+		return failureTranIsEnabled;
 	}
 
 	private void outputGlobalStateGraph(StateGraph[] sgList, HashSet<PrjState> prjStateSet, boolean fullSG) {
@@ -724,6 +744,9 @@ public class Analysis {
 
 			State[] curStateArray = stateStackTop.toStateArray(); //stateStack.peek();
 			LinkedList<Transition> curAmpleTrans = lpnTranStack.peek();
+			if (failureTranIsEnabled(curAmpleTrans)) {
+				return null;
+			}
 			if (curAmpleTrans.size() == 0) {
 				lpnTranStack.pop();
 				prjStateSet.add(stateStackTop);
