@@ -138,16 +138,16 @@ public class LpnProcess extends LhpnFile {
 		while (numCycles > 0 && processTransCopy.size() > 0);
 	}
 
-	public void printProcWithStickyTrans() {
-		System.out.println("*******Sticky Transitions*******");
-		System.out.println("Process ID:" + this.getProcessId());
-		for (int i=0; i < this.processTrans.size(); i++) {
-			if (processTrans.get(i).isSticky()) {
-				System.out.println(processTrans.get(i).getName() + " " + processTrans.get(i).getIndex());
-			}
-		}
-		System.out.println("********************");
-	}
+//	public void printProcWithStickyTrans() {
+//		System.out.println("*******Sticky Transitions*******");
+//		System.out.println("Process ID:" + this.getProcessId());
+//		for (int i=0; i < this.processTrans.size(); i++) {
+//			if (processTrans.get(i).isSticky()) {
+//				System.out.println(processTrans.get(i).getName() + " " + processTrans.get(i).getIndex());
+//			}
+//		}
+//		System.out.println("********************");
+//	}
 
 	public void print() {
 		System.out.print("Process ID: " + this.getProcessId() + "\n");
