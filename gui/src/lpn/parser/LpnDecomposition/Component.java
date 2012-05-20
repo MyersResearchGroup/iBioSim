@@ -2,6 +2,8 @@ package lpn.parser.LpnDecomposition;
 
 import java.util.ArrayList;
 
+import verification.platu.main.Options;
+
 import lpn.parser.LhpnFile;
 import lpn.parser.Place;
 import lpn.parser.Transition;
@@ -113,20 +115,22 @@ public class Component extends LhpnFile{
 	
 	public int getNumVars() {
 		// return the number of variables in this component
-		System.out.println("+++++++ Vars in component " + this.getComponentId() + "+++++++");
-		System.out.println("compInputs:");
-		for (int i=0; i < compInputs.size(); i++) {
-			System.out.println(compInputs.get(i).getName());
+		if (Options.getDebugMode()) {
+			System.out.println("+++++++ Vars in component " + this.getComponentId() + "+++++++");
+			System.out.println("compInputs:");
+			for (int i=0; i < compInputs.size(); i++) {
+				System.out.println(compInputs.get(i).getName());
+			}
+			System.out.println("compOutputs:");
+			for (int i=0; i < compOutputs.size(); i++) {
+				System.out.println(compOutputs.get(i).getName());
+			}
+			System.out.println("compInternal:");
+			for (int i=0; i < compInternals.size(); i++) {
+				System.out.println(compInternals.get(i).getName());
+			}
+			System.out.println("++++++++++++++++++");
 		}
-		System.out.println("compOutputs:");
-		for (int i=0; i < compOutputs.size(); i++) {
-			System.out.println(compOutputs.get(i).getName());
-		}
-		System.out.println("compInternal:");
-		for (int i=0; i < compInternals.size(); i++) {
-			System.out.println(compInternals.get(i).getName());
-		}
-		System.out.println("++++++++++++++++++");
 		return compInputs.size() + compInternals.size() + compOutputs.size();
 	}
 	

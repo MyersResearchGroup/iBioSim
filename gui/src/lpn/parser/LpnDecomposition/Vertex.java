@@ -2,6 +2,8 @@ package lpn.parser.LpnDecomposition;
 
 import java.util.HashMap;
 
+import verification.platu.main.Options;
+
 
 public class Vertex {
 	public final Integer componentID;
@@ -34,13 +36,15 @@ public class Vertex {
 			Vertex targetVertex = e.target;
 			int numInternal = e.getWeight(); // e is the shared edge between this vertex and the target vertex.
 			if ((this.getNumVars() + targetVertex.getNumVars() - numInternal) > maxNumVarsInOneComp) {
-				System.out.println("^^^^^^^^^^^^^^^^^^^^^^^");
-				System.out.println("Component " + this.componentID + " has " + this.getNumVars() + " variable(s).");
-				System.out.println("Component " + targetVertex.componentID + " has " + targetVertex.getNumVars() + " variable(s).");
 				bestNetGain = MinusINF;
-				System.out.println("(" + this.componentID + " <- " 
-						+ targetVertex.componentID + ")" + " bestNetGain = " + bestNetGain);
-				System.out.println("vvvvvvvvvvvvvvvvvvvvvvv");
+				if (Options.getDebugMode()) {
+					System.out.println("^^^^^^^^^^^^^^^^^^^^^^^");
+					System.out.println("Component " + this.componentID + " has " + this.getNumVars() + " variable(s).");
+					System.out.println("Component " + targetVertex.componentID + " has " + targetVertex.getNumVars() + " variable(s).");			
+					System.out.println("(" + this.componentID + " <- " 
+							+ targetVertex.componentID + ")" + " bestNetGain = " + bestNetGain);
+					System.out.println("vvvvvvvvvvvvvvvvvvvvvvv");
+				}
 			}
 			else {
 				int numRemainGlobal = targetVertex.getAllEdgesWeights() - numInternal;
@@ -48,7 +52,8 @@ public class Vertex {
 					bestNetGain = numInternal - numRemainGlobal;
 					edgeToMostConnectedNeighbor = e; 
 				}
-				System.out.println("(" + this.componentID + " <- " 
+				if (Options.getDebugMode())
+					System.out.println("(" + this.componentID + " <- " 
 						+ targetVertex.componentID + ")" + " bestNetGain = " + bestNetGain);
 			}
 			

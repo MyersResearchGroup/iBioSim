@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
 
+import verification.platu.main.Options;
+
 import lpn.parser.LhpnFile;
 import lpn.parser.Place;
 import lpn.parser.Transition;
@@ -64,8 +66,10 @@ public class LpnComponentList extends LhpnFile{
 				}
 			}
 		}
-		printSharedProcessVarMap(sharedProcessVarsMap);
-		printProcessMap(processMap);
+		if (Options.getDebugMode()) {
+			printSharedProcessVarMap(sharedProcessVarsMap);
+			printProcessMap(processMap);
+		}
 		// Use wrappers to convert processMap to compMap, and sharedProcessVarsMap to sharedCompMap
 		for (Integer procID : processMap.keySet()) {
 			Component comp = new Component(processMap.get(procID));
@@ -81,7 +85,8 @@ public class LpnComponentList extends LhpnFile{
 		boolean quitCoalesing = false;
 		int iter = 0;
 		while (!quitCoalesing) {
-			printNumProcesses();
+			if (Options.getDebugMode())
+				printNumProcesses();
 			LpnComponentGraph componentGraph = new LpnComponentGraph(sharedCompVarsMap, compMap, maxNumVarsInOneComp);
 			String graphFileName = lpnFileName + maxNumVarsInOneComp + "Vars" + "_compGraph" + iter + ".dot";
 			componentGraph.outputDotFile(directory + separator + graphFileName);	
@@ -89,14 +94,17 @@ public class LpnComponentList extends LhpnFile{
 			if (vertexToCoalesce != null) {
 				Component comp1 = compMap.get(vertexToCoalesce.componentID);
 				Component comp2 = compMap.get(vertexToCoalesce.getMostConnectedNeighbor().componentID);
-				System.out.println("*****Coalescing results*******");
-				System.out.println("vertices to coalesce: " + vertexToCoalesce.componentID + ", " + vertexToCoalesce.getMostConnectedNeighbor().componentID);
-				System.out.println("best net gain = " + vertexToCoalesce.getBestNetGain());
-				System.out.println("**********************");
+				if (Options.getDebugMode()) {
+					System.out.println("*****Coalescing results*******");
+					System.out.println("vertices to coalesce: " + vertexToCoalesce.componentID + ", " + vertexToCoalesce.getMostConnectedNeighbor().componentID);
+					System.out.println("best net gain = " + vertexToCoalesce.getBestNetGain());
+					System.out.println("**********************");
+				}
 				coalesceComponents(comp1, comp2);
 			}
 			else {
-				System.out.println("No net gain of coalescing components.");
+				if (Options.getDebugMode())
+					System.out.println("No net gain of coalescing components.");
 				quitCoalesing = true;
 			}
 			iter++;
@@ -179,12 +187,14 @@ public class LpnComponentList extends LhpnFile{
 			sharedCompVarsMap.remove(v);
 		}
 		
-		printSharedCompVarMap();
+		if (Options.getDebugMode())
+			printSharedCompVarMap();
 		// Update the compMap: remove the merged components and add the resultant component
 		compMap.remove(comp1.getComponentId());
 		compMap.remove(comp2.getComponentId());
 		compMap.put(coalescedComp.getComponentId(), coalescedComp);	
-		printComponentMap();
+		if (Options.getDebugMode())
+			printComponentMap();
 	}
 
 	private ArrayList<Variable> getSharedVariables(Component comp1,
