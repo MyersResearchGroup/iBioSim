@@ -30,6 +30,8 @@ public class SBOLBrowser extends JPanel {
 	public SBOLBrowser(Gui gui, String filePath) {
 		super(new BorderLayout());
 		
+//		SequenceTypeValidator validator = new SequenceTypeValidator("ab?c");
+		
 		HashMap<String, org.sbolstandard.core.Collection> libMap = new HashMap<String, org.sbolstandard.core.Collection>();
 		LinkedList<String> libURIs = new LinkedList<String>();
 		LinkedList<String> libIds = new LinkedList<String>();
@@ -43,16 +45,14 @@ public class SBOLBrowser extends JPanel {
 		
 		constructBrowser(libURIs, libIds, libMap, compMap, annoMap, seqMap, new HashSet<String>());
 			
-//		if (libMap.size() > 0) {
-			JPanel browserPanel = new JPanel();
-			browserPanel.add(selectionPanel, "North");
-			browserPanel.add(viewScroll, "Center");
+		JPanel browserPanel = new JPanel();
+		browserPanel.add(selectionPanel, "North");
+		browserPanel.add(viewScroll, "Center");
 
-			JTabbedPane browserTab = new JTabbedPane();
-			browserTab.add("SBOL Browser", browserPanel);
-			this.add(browserTab);
-			gui.addTab(filePath.substring(filePath.lastIndexOf(File.separator) + 1), this, null);
-//		}
+		JTabbedPane browserTab = new JTabbedPane();
+		browserTab.add("SBOL Browser", browserPanel);
+		this.add(browserTab);
+		gui.addTab(filePath.substring(filePath.lastIndexOf(File.separator) + 1), this, null);
 	}
 	
 	//Constructor when browsing RDF file subsets for SBOL to GCM association
