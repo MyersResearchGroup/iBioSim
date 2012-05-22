@@ -209,6 +209,14 @@ public class AbstractionEngine {
 			else {
 				Ko = KoArray[0];
 			}
+			double[] KaoArray = promoter.getKArnap();
+			double Kao;
+			if (KaoArray.length == 2) {
+				Kao = KaoArray[0] / KaoArray[1];
+			}
+			else {
+				Kao = KaoArray[0];
+			}
 			if (sbmlMode) {
 				promRate += "(ng__" + promoter.getId() + ")*((kb__" + promoter.getId() + "*Ko__"
 						+ promoter.getId() + "*RNAP)";
@@ -217,6 +225,8 @@ public class AbstractionEngine {
 				kl.addParameter(Utility.Parameter("kb__" + promoter.getId(), kb, GeneticNetwork
 						.getMoleTimeParameter(1)));
 				kl.addParameter(Utility.Parameter("Ko__" + promoter.getId(), Ko, GeneticNetwork
+						.getMoleParameter(2)));
+				kl.addParameter(Utility.Parameter("Kao__" + promoter.getId(), Kao, GeneticNetwork
 						.getMoleParameter(2)));
 			}
 			else {
@@ -252,7 +262,7 @@ public class AbstractionEngine {
 							promRate += "+(ka__" + activator + "_" + promoter.getId() + "*RNAP*((Ka__"
 									+ activator + "_" + promoter.getId() + "*" + expression
 									+ ")^nc__" + activator + "_" + promoter.getId() + "))";
-							actBottom += "+(RNAP*(Ka__" + activator + "_" + promoter.getId() + "*"
+							actBottom += "+(Kao__" + promoter.getId() + "*RNAP*(Ka__" + activator + "_" + promoter.getId() + "*"
 									+ expression + ")^nc__" + activator + "_" + promoter.getId()
 									+ ")";
 							kl.addParameter(Utility.Parameter("nc__" + activator + "_"
@@ -264,9 +274,9 @@ public class AbstractionEngine {
 											.getMoleTimeParameter(1)));
 						}
 						else {
-							promRate += "+(" + ka + "*" + RNAP + "*((" + Ka + "*" + expression
+							promRate += "+(" + ka + "*" + Kao + "*" + RNAP + "*((" + Ka + "*" + expression
 									+ ")^" + nc + "))";
-							actBottom += "+(" + RNAP + "*" + "(" + Ka + "*" + expression + ")^" + nc
+							actBottom += "+(" + Kao + "*" + RNAP + "*" + "(" + Ka + "*" + expression + ")^" + nc
 									+ ")";
 						}
 					}
