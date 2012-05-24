@@ -830,6 +830,16 @@ public class Transition {
 		
 	}
 
+	public boolean isSticky() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public void setSticky(boolean b) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	/* Maybe copy method below is not needed.
 	public Transition copy(HashMap<String, VarNode> variables){
     	return new Transition(this.name, this.index, this.preset, this.postset, this.enablingGuard.copy(variables), 

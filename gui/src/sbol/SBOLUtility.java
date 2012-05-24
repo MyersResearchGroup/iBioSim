@@ -144,7 +144,7 @@ public class SBOLUtility {
 			return "terminator";
 		else if (temp.equals(SequenceOntology.type("SO_0000614").toString()))
 			return "bacterial terminator";
-		else if (temp.equals(SequenceOntology.type("SO_0000804")))
+		else if (temp.equals(SequenceOntology.type("SO_0000804").toString()))
 			return "engineered region";
 		else
 			return "N/A";
