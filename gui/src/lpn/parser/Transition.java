@@ -52,10 +52,6 @@ public class Transition {
 	
 	private int index;
 	
-	private boolean sticky;
-
-	private boolean local;
-	
 	// TODO: Sort LPNs that share variables in the assignedVarSet of this transition. 
 	private List<LhpnFile> dstLpnList = new ArrayList<LhpnFile>();
 
@@ -72,14 +68,12 @@ public class Transition {
 		contAssignTrees = new HashMap<String, ExprTree>();
 		rateAssignments = new HashMap<String, String>();
 		rateAssignTrees = new HashMap<String, ExprTree>();
-		sticky = false;
 	}
 	
 	public Transition(String name, int index, ArrayList<Variable> variables, LhpnFile lhpn, boolean local) {
 		this.name = name;
 		this.lhpn = lhpn;
 		this.index = index;
-		this.local = local;
 		preset = new ArrayList<Place>();
 		postset = new ArrayList<Place>();
 		boolAssignments = new HashMap<String, String>();
@@ -90,7 +84,6 @@ public class Transition {
 		contAssignTrees = new HashMap<String, ExprTree>();
 		rateAssignments = new HashMap<String, String>();
 		rateAssignTrees = new HashMap<String, ExprTree>();
-		sticky = false;
 	}
 
 	public Transition() {
@@ -812,14 +805,6 @@ public class Transition {
 			}
 		}
 		return null;
-	}
-
-	public void setSticky(boolean sticky) {
-		this.sticky = sticky;
-	}
-	
-	public boolean isSticky() {
-		return this.sticky;
 	}
 
 	public void setDstLpnList(LhpnFile curLPN) {
