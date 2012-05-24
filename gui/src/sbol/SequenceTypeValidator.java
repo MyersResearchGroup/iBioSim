@@ -42,21 +42,26 @@ public class SequenceTypeValidator {
 			do {
 				int j;
 				String subRegex;
-				String subQuantifier;
+				String subQuantifier = "";
+				boolean or = false;
+				if (regex.substring(i, i + 1).equals("|")) {
+					or = true;
+					i++;
+				} 
 				if (regex.substring(i, i + 1).equals("(")) {
 					j = findClosing(regex, i);
 					subRegex = regex.substring(i + 1, j);
-					subQuantifier = regex.substring(j + 1, j + 2);
 				} else {
 					j = i;
 					subRegex = regex.substring(i, i + 1);
-					if (i + 1 < regex.length())
-						subQuantifier = regex.substring(i + 1, i + 2);
-					else
-						subQuantifier = "";
 				}
+				if (j + 1 < regex.length())
+					subQuantifier = regex.substring(j + 1, j + 2);
 				Set<String> subIDs = new HashSet<String>();
-				acceptStates = constructNFAHelper(acceptStates, subRegex, subQuantifier, subIDs);
+				if (or)
+					acceptStates.addAll(constructNFAHelper(startStates, subRegex, subQuantifier, subIDs));
+				else
+					acceptStates = constructNFAHelper(acceptStates, subRegex, subQuantifier, subIDs);
 				localIDs.addAll(subIDs);
 				if (subQuantifier.equals("+") || subQuantifier.equals("*") || subQuantifier.equals("?")) {
 					i = j + 2;
@@ -276,7 +281,7 @@ public class SequenceTypeValidator {
 				else
 					return false;
 			}
-			if (currentState.isAccepting())
+			if (currentState != null && currentState.isAccepting())
 				return true;
 			else
 				return false;
