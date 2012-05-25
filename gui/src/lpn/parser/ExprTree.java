@@ -29,12 +29,17 @@ public class ExprTree {
 
 	private ExprTree newresult;
 
-	private ArrayList<String> signals;
+	private ArrayList<String> booleanSignals, integerSignals, continuousSignals;
 
 	private LhpnFile lhpn;
 
 	public ExprTree() {
 
+	}
+	
+	public ExprTree(String expression) {
+		intexpr_gettok(expression);
+		intexpr_L(expression);
 	}
 
 	public ExprTree(LhpnFile lhpn) {
@@ -42,15 +47,17 @@ public class ExprTree {
 		String[] bools = lhpn.getBooleanVars();
 		String[] conts = lhpn.getContVars();
 		String[] ints = lhpn.getIntVars();
-		signals = new ArrayList<String>();
+		booleanSignals = new ArrayList<String>();
+		integerSignals = new ArrayList<String>();
+		continuousSignals = new ArrayList<String>();
 		for (int j = 0; j < bools.length; j++) {
-			signals.add(bools[j]);
+			booleanSignals.add(bools[j]);
 		}
 		for (int j = 0; j < conts.length; j++) {
-			signals.add(conts[j]);
+			continuousSignals.add(conts[j]);
 		}
 		for (int j = 0; j < ints.length; j++) {
-			signals.add(ints[j]);
+			integerSignals.add(ints[j]);
 		}
 	}
 
@@ -59,15 +66,17 @@ public class ExprTree {
 		String[] bools = abstraction.getBooleanVars();
 		String[] conts = abstraction.getContVars();
 		String[] ints = abstraction.getIntVars();
-		signals = new ArrayList<String>();
+		booleanSignals = new ArrayList<String>();
+		integerSignals = new ArrayList<String>();
+		continuousSignals = new ArrayList<String>();
 		for (int j = 0; j < bools.length; j++) {
-			signals.add(bools[j]);
+			booleanSignals.add(bools[j]);
 		}
 		for (int j = 0; j < conts.length; j++) {
-			signals.add(conts[j]);
+			continuousSignals.add(conts[j]);
 		}
 		for (int j = 0; j < ints.length; j++) {
-			signals.add(ints[j]);
+			integerSignals.add(ints[j]);
 		}
 	}
 
@@ -132,8 +141,14 @@ public class ExprTree {
 		if (source.newresult != null) {
 			newresult = source.newresult;
 		}
-		if (source.signals != null) {
-			signals = source.signals;
+		if (source.booleanSignals != null) {
+			booleanSignals = source.booleanSignals;
+		}
+		if (source.integerSignals != null) {
+			integerSignals = source.integerSignals;
+		}
+		if (source.continuousSignals != null) {
+			continuousSignals = source.continuousSignals;
 		}
 		if (source.lhpn != null) {
 			lhpn = source.lhpn;
@@ -894,19 +909,28 @@ public class ExprTree {
 			} else if ((tokvalue.equals("true")) || tokvalue.equals("TRUE")) {
 				setVarValues('t', 1, 1, null);
 				(token) = intexpr_gettok(expr);
-			} else if (tokvalue.equals("t") && !signals.contains(tokvalue)) {
+			}
+			else if (tokvalue.equals("t") && !booleanSignals.contains(tokvalue) && !integerSignals.contains(tokvalue)
+					&& !continuousSignals.contains(tokvalue)) {
 				setVarValues('t', 1, 1, null);
 				(token) = intexpr_gettok(expr);
-			} else if (tokvalue.equals("T") && !signals.contains(tokvalue)) {
+			}
+			else if (tokvalue.equals("T") && !booleanSignals.contains(tokvalue) && !integerSignals.contains(tokvalue)
+					&& !continuousSignals.contains(tokvalue)) {
 				setVarValues('t', 1, 1, null);
 				(token) = intexpr_gettok(expr);
-			} else if ((tokvalue.equals("false")) || tokvalue.equals("FALSE")) {
+			}
+			else if ((tokvalue.equals("false")) || tokvalue.equals("FALSE")) {
 				setVarValues('t', 0, 0, null);
 				(token) = intexpr_gettok(expr);
-			} else if (tokvalue.equals("f") && !signals.contains(tokvalue)) {
+			}
+			else if (tokvalue.equals("f") && !booleanSignals.contains(tokvalue) && !integerSignals.contains(tokvalue)
+					&& !continuousSignals.contains(tokvalue)) {
 				setVarValues('t', 0, 0, null);
 				(token) = intexpr_gettok(expr);
-			} else if (tokvalue.equals("F") && !signals.contains(tokvalue)) {
+			}
+			else if (tokvalue.equals("F") && !booleanSignals.contains(tokvalue) && !integerSignals.contains(tokvalue)
+					&& !continuousSignals.contains(tokvalue)) {
 				setVarValues('t', 0, 0, null);
 				(token) = intexpr_gettok(expr);
 			} else if ((tokvalue.toLowerCase().equals("unknown"))) {
@@ -917,20 +941,20 @@ public class ExprTree {
 				token = intexpr_gettok(expr);
 			} else {
 				// do boolean lookup here!!!
-				if (signals.contains(tokvalue)) {
-					if (lhpn.isBoolean(tokvalue)) {
-						setVarValues('b', 0, 1, tokvalue);
-						(token) = intexpr_gettok(expr);
-						return true;
-					} else if (lhpn.isInteger(tokvalue)) {
-						setVarValues('i', -INFIN, INFIN, tokvalue);
-						(token) = intexpr_gettok(expr);
-						return true;
-					} else {
-						setVarValues('c', -INFIN, INFIN, tokvalue);
-						(token) = intexpr_gettok(expr);
-						return true;
-					}
+				if (booleanSignals.contains(tokvalue)) {
+					setVarValues('b', 0, 1, tokvalue);
+					(token) = intexpr_gettok(expr);
+					return true;
+				}
+				else if (integerSignals.contains(tokvalue)) {
+					setVarValues('i', -INFIN, INFIN, tokvalue);
+					(token) = intexpr_gettok(expr);
+					return true;
+				}
+				else if (continuousSignals.contains(tokvalue)) {
+					setVarValues('c', -INFIN, INFIN, tokvalue);
+					(token) = intexpr_gettok(expr);
+					return true;
 				}
 				if (tokvalue.equals("")) {
 					System.out.printf(
@@ -1300,14 +1324,14 @@ public class ExprTree {
 						ineq = ineq + expr.charAt(i);
 					}
 					comp += ineq;
-					if (signals.contains(comp)) {
+					if (booleanSignals.contains(comp)) {
 						this.isit = 'b';
 						this.variable = comp;
 						this.lvalue = 0;
 						this.uvalue = 1;
 						return true;
 					} else {
-						signals.add(comp);
+						booleanSignals.add(comp);
 						this.isit = 'b';
 						this.variable = comp;
 						this.lvalue = 0;
