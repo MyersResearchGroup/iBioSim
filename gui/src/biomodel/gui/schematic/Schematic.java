@@ -1207,15 +1207,15 @@ public class Schematic extends JPanel implements ActionListener {
 						}
 						else if(type == GlobalConstants.RULE) {
 							
-							rules.removeRuleByMetaId(cell.getId());
+							bioModel.removeByMetaId(cell.getId());
 						}
 						else if(type == GlobalConstants.CONSTRAINT) {
 							
-							constraints.removeConstraint(cell.getId());
+							bioModel.removeByMetaId(cell.getId());
 						}
 						else if(type == GlobalConstants.EVENT) {
 							
-							events.removeTheEvent(bioModel,cell.getId());
+							bioModel.removeById(cell.getId());
 						}
 						else if(type == GlobalConstants.SPECIES){
 							
@@ -1819,15 +1819,15 @@ public class Schematic extends JPanel implements ActionListener {
 			if (!cell.getId().equals(r.getId())) {
 				if (bioModel.getSBMLLayout().getNumLayouts() != 0) {
 					Layout layout = bioModel.getSBMLLayout().getLayout(0); 
-					if (layout.getReactionGlyph(cell.getId())!=null) {
-						ReactionGlyph reactionGlyph = layout.getReactionGlyph(cell.getId());
-						reactionGlyph.setId(r.getId());
+					if (layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
+						ReactionGlyph reactionGlyph = layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+cell.getId());
+						reactionGlyph.setId(GlobalConstants.GLYPH+"__"+r.getId());
 						reactionGlyph.setReactionId(r.getId());
 					}
-					if (layout.getTextGlyph(cell.getId())!=null) {
-						TextGlyph textGlyph = layout.getTextGlyph(cell.getId());
-						textGlyph.setId(r.getId());
-						textGlyph.setGraphicalObjectId(r.getId());
+					if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId())!=null) {
+						TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
+						textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+r.getId());
+						textGlyph.setGraphicalObjectId(GlobalConstants.GLYPH+"__"+r.getId());
 						textGlyph.setText(r.getId());
 					}
 				}
@@ -1841,15 +1841,15 @@ public class Schematic extends JPanel implements ActionListener {
 			if (!cell.getId().equals(id)) {
 				if (bioModel.getSBMLLayout().getNumLayouts() != 0) {
 					Layout layout = bioModel.getSBMLLayout().getLayout(0); 
-					if (layout.getReactionGlyph(cell.getId())!=null) {
-						ReactionGlyph reactionGlyph = layout.getReactionGlyph(cell.getId());
-						reactionGlyph.setId(id);
+					if (layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
+						ReactionGlyph reactionGlyph = layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+cell.getId());
+						reactionGlyph.setId(GlobalConstants.GLYPH+"__"+id);
 						reactionGlyph.setReactionId(id);
 					}
-					if (layout.getTextGlyph(cell.getId())!=null) {
-						TextGlyph textGlyph = layout.getTextGlyph(cell.getId());
-						textGlyph.setId(id);
-						textGlyph.setGraphicalObjectId(id);
+					if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId())!=null) {
+						TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
+						textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+id);
+						textGlyph.setGraphicalObjectId(GlobalConstants.GLYPH+"__"+id);
 						textGlyph.setText(id);
 					}
 				}
@@ -1863,15 +1863,15 @@ public class Schematic extends JPanel implements ActionListener {
 			if (!cell.getId().equals(id)) {
 				if (bioModel.getSBMLLayout().getNumLayouts() != 0) {
 					Layout layout = bioModel.getSBMLLayout().getLayout(0); 
-					if (layout.getReactionGlyph(cell.getId())!=null) {
-						ReactionGlyph reactionGlyph = layout.getReactionGlyph(cell.getId());
-						reactionGlyph.setId(id);
+					if (layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
+						ReactionGlyph reactionGlyph = layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+cell.getId());
+						reactionGlyph.setId(GlobalConstants.GLYPH+"__"+id);
 						reactionGlyph.setReactionId(id);
 					}
-					if (layout.getTextGlyph(cell.getId())!=null) {
-						TextGlyph textGlyph = layout.getTextGlyph(cell.getId());
-						textGlyph.setId(id);
-						textGlyph.setGraphicalObjectId(id);
+					if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId())!=null) {
+						TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
+						textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+id);
+						textGlyph.setGraphicalObjectId(GlobalConstants.GLYPH+"__"+id);
 						textGlyph.setText(id);
 					}
 				}
@@ -1885,15 +1885,15 @@ public class Schematic extends JPanel implements ActionListener {
 			if (!cell.getId().equals(id)) {
 				if (bioModel.getSBMLLayout().getNumLayouts() != 0) {
 					Layout layout = bioModel.getSBMLLayout().getLayout(0); 
-					if (layout.getReactionGlyph(cell.getId())!=null) {
-						ReactionGlyph reactionGlyph = layout.getReactionGlyph(cell.getId());
-						reactionGlyph.setId(id);
+					if (layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
+						ReactionGlyph reactionGlyph = layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+cell.getId());
+						reactionGlyph.setId(GlobalConstants.GLYPH+"__"+id);
 						reactionGlyph.setReactionId(id);
 					}
-					if (layout.getTextGlyph(cell.getId())!=null) {
-						TextGlyph textGlyph = layout.getTextGlyph(cell.getId());
-						textGlyph.setId(id);
-						textGlyph.setGraphicalObjectId(id);
+					if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId())!=null) {
+						TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
+						textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+id);
+						textGlyph.setGraphicalObjectId(GlobalConstants.GLYPH+"__"+id);
 						textGlyph.setText(id);
 					}
 				}

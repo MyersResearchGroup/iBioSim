@@ -445,7 +445,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(gcm.getSBMLDocument(), ID.getText().trim(), selectedID, false);
+			error = SBMLutilities.checkID(gcm.getSBMLDocument(), ID.getText().trim(), selectedID, false, false);
 			double initial = 0;
 			if (!error) {
 				if (init.getText().trim().startsWith("(") && init.getText().trim().endsWith(")")) {

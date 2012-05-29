@@ -107,6 +107,11 @@ public class GlobalConstants {
 	public static final String INITIAL_ASSIGNMENT = "initialAssignment";
 	public static final String RATE_RULE = "rateRule";
 	public static final String ALGEBRAIC_RULE = "algebraicRule";
+	public static final String GLYPH = "Glyph";
+	public static final String REACTANT_GLYPH = "ReactantGlyph";
+	public static final String PRODUCT_GLYPH = "ProductGlyph";
+	public static final String MODIFIER_GLYPH = "ModifierGlyph";
+	public static final String TEXT_GLYPH = "TextGlyph";
 	public static final String ENCLOSING_COMPARTMENT = "enclosingCompartment";
 	public static final String DEFAULT_COMPARTMENT = "defaultCompartment";
 	

@@ -288,7 +288,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			for (int i = 0; i < eventAssign.getModel().getSize(); i++) {
 				assign[i] = eventAssign.getModel().getElementAt(i).toString();
 			}
-			error = SBMLutilities.checkID(gcm.getSBMLDocument(), eventID.getText().trim(), selectedID, false);
+			error = SBMLutilities.checkID(gcm.getSBMLDocument(), eventID.getText().trim(), selectedID, false, false);
 			if (eventTrigger.getText().trim().equals("")) {
 				JOptionPane.showMessageDialog(Gui.frame, "Event must have a trigger formula.", "Enter Trigger Formula", JOptionPane.ERROR_MESSAGE);
 				error = true;
@@ -882,6 +882,15 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			if (port.isSetIdRef() && port.getIdRef().equals(selected)) {
 				gcm.getSBMLCompModel().removePort(i);
 				break;
+			}
+		}
+		if (gcm.getSBMLLayout().getLayout("iBioSim") != null) {
+			Layout layout = gcm.getSBMLLayout().getLayout("iBioSim"); 
+			if (layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+selected)!=null) {
+				layout.removeReactionGlyph(GlobalConstants.GLYPH+"__"+selected);
+			}
+			if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+selected) != null) {
+				layout.removeTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+selected);
 			}
 		}
 	}

@@ -30,6 +30,7 @@ import org.sbml.libsbml.AlgebraicRule;
 import org.sbml.libsbml.AssignmentRule;
 import org.sbml.libsbml.Compartment;
 import org.sbml.libsbml.InitialAssignment;
+import org.sbml.libsbml.Layout;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.Parameter;
@@ -298,6 +299,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			error = false;
 			String addVar = "";
 			addVar = (String) ruleVar.getSelectedItem();
+			error = SBMLutilities.checkID(gcm.getSBMLDocument(), id.getText().trim(), metaId, false, true);
 			if (ruleMath.getText().trim().equals("")) {
 				JOptionPane.showMessageDialog(Gui.frame, "Rule must have formula.", "Enter Rule Formula", JOptionPane.ERROR_MESSAGE);
 				error = true;
@@ -629,6 +631,15 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					}
 					r.remove(i);
 				}
+			}
+		}
+		if (gcm.getSBMLLayout().getLayout("iBioSim") != null) {
+			Layout layout = gcm.getSBMLLayout().getLayout("iBioSim"); 
+			if (layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+selected)!=null) {
+				layout.removeReactionGlyph(GlobalConstants.GLYPH+"__"+selected);
+			}
+			if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+selected) != null) {
+				layout.removeTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+selected);
 			}
 		}
 	}

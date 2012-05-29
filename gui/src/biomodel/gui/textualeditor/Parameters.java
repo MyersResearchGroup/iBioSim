@@ -422,7 +422,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(gcm.getSBMLDocument(), paramID.getText().trim(), selectedID, false);
+			error = SBMLutilities.checkID(gcm.getSBMLDocument(), paramID.getText().trim(), selectedID, false, false);
 			if (!error) {
 				double val = 0.0;
 				if (paramValue.getText().trim().startsWith("(") && paramValue.getText().trim().endsWith(")")) {

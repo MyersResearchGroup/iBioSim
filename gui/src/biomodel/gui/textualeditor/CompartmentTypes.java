@@ -125,7 +125,7 @@ public class CompartmentTypes extends JPanel implements ActionListener, MouseLis
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(gcm.getSBMLDocument(), compTypeID.getText().trim(), selectedID, false);
+			error = SBMLutilities.checkID(gcm.getSBMLDocument(), compTypeID.getText().trim(), selectedID, false, false);
 			if (!error) {
 				if (option.equals("OK")) {
 					String[] cpTyp = new String[compTypes.getModel().getSize()];
