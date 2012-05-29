@@ -129,7 +129,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		JCheckBox assignTime = new JCheckBox("");
 		JCheckBox persistentTrigger = new JCheckBox("");
 		JCheckBox initialTrigger = new JCheckBox("");
-		JComboBox dynamicProcess = new JComboBox(new String[] {"none","Symmetric Division","Asymmetric Division","Death"});
+		JComboBox dynamicProcess = new JComboBox(new String[] {"none",
+				"Symmetric Division","Asymmetric Division","Death", "Move Random", "Move Left", "Move Right", "Move Above", "Move Below"});
 		JCheckBox onPort = new JCheckBox();
 		
 		if (gcm != null && gcm.IsWithinCompartment() == false) {
@@ -176,6 +177,16 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						dynamicProcess.setSelectedItem("Asymmetric Division");
 					else if (event.getAnnotationString().contains("Death"))
 						dynamicProcess.setSelectedItem("Death");
+					else if (event.getAnnotationString().contains("Move Random"))
+						dynamicProcess.setSelectedItem("Move Random");
+					else if (event.getAnnotationString().contains("Move Left"))
+						dynamicProcess.setSelectedItem("Move Left");
+					else if (event.getAnnotationString().contains("Move Right"))
+						dynamicProcess.setSelectedItem("Move Right");
+					else if (event.getAnnotationString().contains("Move Above"))
+						dynamicProcess.setSelectedItem("Move Above");
+					else if (event.getAnnotationString().contains("Move Below"))
+						dynamicProcess.setSelectedItem("Move Below");
 					
 					if (event.isSetDelay()) {
 						ASTNode delay = event.getDelay().getMath();
@@ -531,6 +542,41 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
 							e.setAnnotation(node);
 						}
+						else if (((String)dynamicProcess.getSelectedItem()).equals("Move Random")) {	
+							XMLAttributes attr = new XMLAttributes();
+							attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
+							attr.add("ibiosim:type", "Move Random");
+							XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
+							e.setAnnotation(node);
+						}
+						else if (((String)dynamicProcess.getSelectedItem()).equals("Move Left")) {	
+							XMLAttributes attr = new XMLAttributes();
+							attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
+							attr.add("ibiosim:type", "Move Left");
+							XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
+							e.setAnnotation(node);
+						}
+						else if (((String)dynamicProcess.getSelectedItem()).equals("Move Right")) {	
+							XMLAttributes attr = new XMLAttributes();
+							attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
+							attr.add("ibiosim:type", "Move Right");
+							XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
+							e.setAnnotation(node);
+						}
+						else if (((String)dynamicProcess.getSelectedItem()).equals("Move Above")) {	
+							XMLAttributes attr = new XMLAttributes();
+							attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
+							attr.add("ibiosim:type", "Move Above");
+							XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
+							e.setAnnotation(node);
+						}
+						else if (((String)dynamicProcess.getSelectedItem()).equals("Move Below")) {	
+							XMLAttributes attr = new XMLAttributes();
+							attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
+							attr.add("ibiosim:type", "Move Below");
+							XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
+							e.setAnnotation(node);
+						}
 					}
 					else {
 						while (e.getNumEventAssignments() > 0) {
@@ -608,6 +654,41 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							XMLAttributes attr = new XMLAttributes();
 							attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
 							attr.add("ibiosim:type", "Death");
+							XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
+							e.setAnnotation(node);
+						}
+						else if (((String)dynamicProcess.getSelectedItem()).equals("MoveRandom")) {	
+							XMLAttributes attr = new XMLAttributes();
+							attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
+							attr.add("ibiosim:type", "Move Random");
+							XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
+							e.setAnnotation(node);
+						}
+						else if (((String)dynamicProcess.getSelectedItem()).equals("MoveLeft")) {	
+							XMLAttributes attr = new XMLAttributes();
+							attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
+							attr.add("ibiosim:type", "Move Left");
+							XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
+							e.setAnnotation(node);
+						}
+						else if (((String)dynamicProcess.getSelectedItem()).equals("MoveRight")) {	
+							XMLAttributes attr = new XMLAttributes();
+							attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
+							attr.add("ibiosim:type", "Move Right");
+							XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
+							e.setAnnotation(node);
+						}
+						else if (((String)dynamicProcess.getSelectedItem()).equals("MoveAbove")) {	
+							XMLAttributes attr = new XMLAttributes();
+							attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
+							attr.add("ibiosim:type", "Move Above");
+							XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
+							e.setAnnotation(node);
+						}
+						else if (((String)dynamicProcess.getSelectedItem()).equals("MoveBelow")) {	
+							XMLAttributes attr = new XMLAttributes();
+							attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
+							attr.add("ibiosim:type", "Move Below");
 							XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
 							e.setAnnotation(node);
 						}

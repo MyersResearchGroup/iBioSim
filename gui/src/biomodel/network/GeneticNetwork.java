@@ -532,14 +532,25 @@ public class GeneticNetwork {
 				
 				if (event.getAnnotationString().length() > 0 && (
 						event.getAnnotationString().contains("Division") ||
-						event.getAnnotationString().contains("Death"))) {
+						event.getAnnotationString().contains("Death") ||
+						event.getAnnotationString().contains("Move"))) {
 					
 					if (event.getAnnotationString().contains("Symmetric Division"))
 						event.setId(submodel.getId() + "__SymmetricDivision__" + event.getId());
-					if (event.getAnnotationString().contains("Asymmetric Division"))
+					else if (event.getAnnotationString().contains("Asymmetric Division"))
 						event.setId(submodel.getId() + "__AsymmetricDivision__" + event.getId());
 					else if (event.getAnnotationString().contains("Death"))
 						event.setId(submodel.getId() + "__Death__" + event.getId());
+					else if (event.getAnnotationString().contains("Move Random"))
+						event.setId(submodel.getId() + "__MoveRandom__" + event.getId());
+					else if (event.getAnnotationString().contains("Move Left"))
+						event.setId(submodel.getId() + "__MoveLeft__" + event.getId());
+					else if (event.getAnnotationString().contains("Move Right"))
+						event.setId(submodel.getId() + "__MoveRight__" + event.getId());
+					else if (event.getAnnotationString().contains("Move Above"))
+						event.setId(submodel.getId() + "__MoveAbove__" + event.getId());
+					else if (event.getAnnotationString().contains("Move Below"))
+						event.setId(submodel.getId() + "__MoveBelow__" + event.getId());
 					
 					dynamicEvents.add(event);
 				}

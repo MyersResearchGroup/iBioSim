@@ -13,12 +13,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -26,6 +31,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
@@ -50,9 +57,11 @@ import javax.swing.event.ChangeListener;
 import org.sbml.libsbml.Compartment;
 import org.sbml.libsbml.Layout;
 import org.sbml.libsbml.ListOf;
+import org.sbml.libsbml.Model;
 import org.sbml.libsbml.ModifierSpeciesReference;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.ReactionGlyph;
+import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.SpeciesReference;
 import org.sbml.libsbml.TextGlyph;
 
@@ -76,6 +85,7 @@ import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 
+import com.lowagie.text.Image;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.swing.mxGraphComponent;
@@ -132,6 +142,8 @@ public class Schematic extends JPanel implements ActionListener {
 	
 	private JPopupMenu layoutPopup;
 	
+	private boolean movieMode = false;
+	
 	
 	//CLASS METHODS
 	
@@ -172,9 +184,9 @@ public class Schematic extends JPanel implements ActionListener {
 	 * called when the user opens the gcm file
 	 * or when the user creates a grid
 	 */
-	public void display(){
+	public void display() {
 
-		if(graph == null){
+		if (graph == null) {
 			
 			graph = new BioGraph(bioModel);		
 			addGraphListeners();
@@ -184,11 +196,20 @@ public class Schematic extends JPanel implements ActionListener {
 		graph.buildGraph();
 		
 		// Create and plug in the graphComponent
-		if(graphComponent == null) {
+		if (graphComponent == null) {
 			
 			graphComponent = new mxGraphComponent(graph) {
 				
 				private static final long serialVersionUID = 1L;
+				
+				@Override
+				public void paint(Graphics g) {
+					
+					if (movieMode == true) 
+						return;
+					else 
+						super.paint(g);
+				}
 
 				@Override
 			   /**
@@ -836,38 +857,45 @@ public class Schematic extends JPanel implements ActionListener {
 						graph.getView().setScale(1.0);
 					}
 					
-					if (grid.isEnabled()) {
-						
-						//if the user clicks on the area outside of the component within the grid location
-						//bring up the appropriate panel
-						if (grid.clickedOnGridPadding(e.getPoint())) {
-							
-							//if we're in analysis view (ie, movie stuff)
-							//prompt the user for coloring species and whatnot for the movie
-							if (!editable) {
-								
-								//if there isn't a TSDParser, the user hasn't selected
-								//a TSD file to simulate
-								if (movieContainer.getTSDParser() == null && movieContainer.getDTSDParser() == null)
-									JOptionPane.showMessageDialog(Gui.frame, "You must choose a simulation file before editing component properties.");
-								else {
-									if (cell != null) {
-										SchemeChooserPanel.showSchemeChooserPanel(cell.getId(), movieContainer);
-									}
-								}
-							}
-						}
-					}
-
-					if (cell != null) {
-						
-						bringUpEditorForCell(cell);
-						
-						if (editable)
-							graph.buildGraph();
-						
-						bioModel.makeUndoPoint();
-					}
+					bringUpEditorForCell(cell);
+					
+					if (editable)
+						graph.buildGraph();
+					
+					bioModel.makeUndoPoint();
+					
+//					if (cell != null) {
+//						
+//						bringUpEditorForCell(cell);
+//						
+//						if (editable)
+//							graph.buildGraph();
+//						
+//						bioModel.makeUndoPoint();
+//					}			
+//					
+//					if (grid.isEnabled()) {
+//						
+//						//if the user clicks on the area outside of the component within the grid location
+//						//bring up the appropriate panel
+//						if (grid.clickedOnGridPadding(e.getPoint())) {
+//							
+//							//if we're in analysis view (ie, movie stuff)
+//							//prompt the user for coloring species and whatnot for the movie
+//							if (!editable) {
+//								
+//								//if there isn't a TSDParser, the user hasn't selected
+//								//a TSD file to simulate
+//								if (movieContainer.getTSDParser() == null && movieContainer.getDTSDParser() == null)
+//									JOptionPane.showMessageDialog(Gui.frame, "You must choose a simulation file before editing component properties.");
+//								else {
+//									if (cell != null) {
+//										SchemeChooserPanel.showSchemeChooserPanel(cell.getId(), movieContainer);
+//									}
+//								}
+//							}
+//						}
+//					}
 				}
 				
 				if (grid.isEnabled())
@@ -1280,7 +1308,6 @@ public class Schematic extends JPanel implements ActionListener {
 			
 			//@Override
 			public void invoke(Object arg0, mxEventObject event) {
-
 			}
 		});
 		
@@ -1675,7 +1702,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 * Given any type of cell, bring up an editor for it if supported.
 	 * @param cell
 	 */
-	public void bringUpEditorForCell(mxCell cell){
+	public void bringUpEditorForCell(mxCell cell) {
 		
 		String cellType = graph.getCellType(cell);
 		
@@ -1873,27 +1900,127 @@ public class Schematic extends JPanel implements ActionListener {
 				cell.setId(id);
 			}
 		}
-		else if(cellType == GlobalConstants.COMPONENT){
+		else if (cellType == GlobalConstants.COMPONENT) {
 			
-			//gcm2sbml.displayChooseComponentDialog(true, null, false, cell.getId());
 			if(movieContainer == null)
 				modelEditor.launchComponentPanel(cell.getId());
 			//if in analysis view, bring up the movie options
-			else{
+			else {
 				
-				if (movieContainer.getTSDParser() == null && movieContainer.getDTSDParser() == null)
-					JOptionPane.showMessageDialog(Gui.frame, 
-							"You must choose a simulation file before editing component properties.");
+				//if we're in analysis view, we need a tabbed pane
+				JTabbedPane speciesPane = new JTabbedPane();			
+				
+				SchemeChooserPanel scPanel = null;				
+				
+				BioModel flattenedModel = new BioModel(bioModel.getPath());
+				flattenedModel.load(bioModel.getFilename());
+				SBMLDocument flattenedDoc = flattenedModel.flattenBioModel();
+				Model flatModel = flattenedDoc.getModel();
+				
+				ArrayList<String> compSpecies = new ArrayList<String>();
+				
+				for (int i = 0; i < flatModel.getNumSpecies(); ++i) {
+					
+					if (flatModel.getSpecies(i).getId().split("__")[0].equals(cell.getId())) {
+						
+						compSpecies.add(flatModel.getSpecies(i).getId());
+					}
+				}
+				
+				JPanel speciesPanel = new JPanel(new GridLayout(compSpecies.size() + 1, 1));		
+				speciesPane.addTab("Species", speciesPanel);				
+				speciesPanel.add(new JLabel("Mark Interesting Species"));
+				HashMap<String, JCheckBox> checkboxes = new HashMap<String, JCheckBox>();
+				
+				ArrayList<String> interestingSpecies = modelEditor.getReb2Sac().getInterestingSpeciesAsArrayList();
+				
+				for (String compSpec : compSpecies) {
+					
+					String[] splitID = compSpec.split("__");
+					String noCompID = "";
+					
+					for (int i = 1; i < splitID.length; ++i) {
+						
+						noCompID += splitID[i];
+						
+						if (i < splitID.length - 1)
+							noCompID += "__";
+					}
+					
+					checkboxes.put(compSpec, new JCheckBox(noCompID));
+					
+					if (interestingSpecies.contains(compSpec))
+						checkboxes.get(compSpec).setSelected(true);
+					
+					speciesPanel.add(checkboxes.get(compSpec));
+				}
+				
+				//make sure a simulation file is selected before adding the appearance panel
+				if (movieContainer != null && (movieContainer.getTSDParser() != null || movieContainer.getDTSDParser() != null)) {
+					scPanel = modelEditor.getSchemeChooserPanel(cell.getId(), movieContainer, true);
+					speciesPane.addTab("Appearance", scPanel);
+				}
 				else {
-					SchemeChooserPanel.showSchemeChooserPanel(cell.getId(), movieContainer);
+					
+					 JPanel panel = new JPanel(false);
+				        JLabel text = new JLabel(
+				        		"To modify this submodel's appearances, please select a simulation file.");
+				        text.setHorizontalAlignment(JLabel.LEFT);
+				        text.setVerticalAlignment(JLabel.TOP);
+				        panel.setLayout(new GridLayout(1, 1));
+				        panel.add(text);
+				        
+					speciesPane.addTab("Appearance", panel);
+				}
+					
+				String[] options = {GlobalConstants.OK, GlobalConstants.CANCEL};
+				
+				int okCancel = JOptionPane.showOptionDialog(Gui.frame, speciesPane, "Edit Species",
+					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				
+				if (okCancel == JOptionPane.OK_OPTION) {
+					
+					if (scPanel !=null) 
+						scPanel.updateMovieScheme();
+					
+					//add interesting species to the list
+					for (Map.Entry<String, JCheckBox> checkbox : checkboxes.entrySet()) {
+						
+						if (checkbox.getValue().isSelected()) {							
+							modelEditor.getReb2Sac().addInterestingSpecies(checkbox.getKey());
+						}
+						else {
+							modelEditor.getReb2Sac().removeInterestingSpecies(checkbox.getKey());
+						}
+					}
+					
+					movieContainer.setIsDirty(true);
 				}
 			}
 		}
-		else if(cellType.equals(GlobalConstants.PROMOTER)){
+		else if (cellType.equals(GlobalConstants.PROMOTER)) {
 			
 			modelEditor.launchPromoterPanel(cell.getId());
 		}
-		else{
+		else if (cellType.equals(GlobalConstants.GRID_RECTANGLE)) {
+			
+			//if we're in analysis view (ie, movie stuff)
+			//prompt the user for coloring species and whatnot for the movie
+			if (!editable) {
+				
+				//if there isn't a TSDParser, the user hasn't selected
+				//a TSD file to simulate
+				if (movieContainer.getTSDParser() == null && movieContainer.getDTSDParser() == null)
+					JOptionPane.showMessageDialog(Gui.frame, "You must choose a simulation file " +
+							"before editing grid component properties.");
+				else {
+					if (cell != null) {
+						SchemeChooserPanel.showSchemeChooserPanel(cell.getId(), movieContainer);
+					}
+				}
+			}
+		}
+		else {
 			// it wasn't a type that has an editor.
 		}
 		
@@ -1954,22 +2081,25 @@ public class Schematic extends JPanel implements ActionListener {
 	 */
 	public void paintComponent(Graphics g) {
 				
-		super.paintComponent(g);
-		
-		if (grid.isEnabled()) {
+		if (movieMode == false) {
 			
-			Component[] comps = this.getComponents();
-			int height = 0;
+			super.paintComponent(g);
 			
-			//find the height of the toolbar
-			for (Component c : comps) {
+			if (grid.isEnabled()) {
 				
-				if (c.getSize() != null && c.getSize().getHeight() < 50)
-					height = (int) c.getSize().getHeight();
+				Component[] comps = this.getComponents();
+				int height = 0;
+				
+				//find the height of the toolbar
+				for (Component c : comps) {
+					
+					if (c.getSize() != null && c.getSize().getHeight() < 50)
+						height = (int) c.getSize().getHeight();
+				}
+				
+				grid.setVerticalOffset(height+1);			
+				grid.drawGrid(g, graph);
 			}
-			
-			grid.setVerticalOffset(height+1);			
-			grid.drawGrid(g, graph);
 		}
 	}
 	
@@ -2025,6 +2155,10 @@ public class Schematic extends JPanel implements ActionListener {
 		return modelEditor;
 	}
 	
+	public void setMovieMode(boolean mode) {
+		movieMode = mode;
+	}
+	
 	
 	//FRAME PRINTING
 	
@@ -2034,7 +2168,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 * 
 	 * @param filename the filename to print the frame to
 	 */
-	public void outputFrame(String filename) {
+	public void outputFrame(String filename, boolean scale) {
 
 		FileOutputStream out = null;		
 		String separator = "";
@@ -2079,11 +2213,48 @@ public class Schematic extends JPanel implements ActionListener {
 		paddedGraphBounds.setX(paddedGraphBounds.getX() + 40);
 		paddedGraphBounds.setY(paddedGraphBounds.getY() + 40);
 		
-		try {
-			ImageIO.write(image, "jpg", out);
-		} 
-		catch (IOException e) {
-			e.printStackTrace();
+		if (scale == true) {
+		
+			double newHeight = image.getHeight();
+			double newWidth = image.getWidth();
+			
+			//scale the image if it's too big (ie, > 1024 x 768)
+			//be sure to keep the ratio consistent
+			if (image.getHeight() > 768) {
+				
+				newWidth = newWidth * (768 / newHeight);
+				newHeight = 768;
+			}
+			
+			if (newWidth > 1024) {			
+				
+				newHeight = newHeight * (1024 / newWidth);
+				newWidth = 1024;
+			}
+	
+			int w = image.getWidth();
+			int h = image.getHeight();
+			BufferedImage after = new BufferedImage((int) newWidth, (int) newHeight, BufferedImage.TYPE_INT_RGB);
+			AffineTransform at = new AffineTransform();
+			at.scale(newHeight / (double) h, newWidth / (double) w);
+			AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+			after = scaleOp.filter(image, after);
+			
+			try {
+				ImageIO.write(after, "jpg", out);
+			} 
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		else {
+			
+			try {
+				ImageIO.write(image, "jpg", out);
+			} 
+			catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		try {

@@ -608,7 +608,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			
             File file = fc.getSelectedFile();
-            schematic.outputFrame(file.getAbsoluteFile().toString());
+            schematic.outputFrame(file.getAbsoluteFile().toString(), false);
         }
 	}
 	
@@ -2021,14 +2021,17 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		return panel;
 	}
 
-	public SpeciesPanel launchSpeciesPanel(String id, boolean inTab){
+	public SpeciesPanel launchSpeciesPanel(String id, boolean inTab) {
 		
 		BioModel refGCM = null;
+		
 		if (paramsOnly) {
 			refGCM = new BioModel(path);
 			refGCM.load(path + separator + refFile);
 		}
-		SpeciesPanel panel = new SpeciesPanel(biosim, id, species, conditions, components, biomodel, paramsOnly, refGCM, this, inTab);
+		
+		SpeciesPanel panel = new SpeciesPanel(biosim, id, species, conditions, 
+				components, biomodel, paramsOnly, refGCM, this, inTab);
 		
 //		if (paramsOnly) {
 //			String updates = panel.updates();

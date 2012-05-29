@@ -2360,7 +2360,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			else if (comp instanceof JTabbedPane) {
 				
 				if (((JTabbedPane) comp).getSelectedComponent().getName().equals("ModelViewMovie"))
-					((MovieContainer) ((JTabbedPane) comp).getSelectedComponent()).outputJPG(-1);
+					((MovieContainer) ((JTabbedPane) comp).getSelectedComponent()).outputJPG(-1, false);
 				else				
 					((Graph) ((JTabbedPane) comp).getSelectedComponent()).export(0);
 			}

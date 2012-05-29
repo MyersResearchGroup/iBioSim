@@ -49,6 +49,7 @@ import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SBMLDocument;
@@ -125,8 +126,9 @@ public abstract class Simulator {
 	//allows for access to the set of assignment rules that a variable (rhs) in an assignment rule affects
 	protected HashMap<String, HashSet<AssignmentRule> > variableToAffectedAssignmentRuleSetMap = null;
 	
-	//allows to access to whether or not a variable is in an assignment rule (RHS)
+	//allows to access to whether or not a variable is in an assignment or rate rule rule (RHS)
 	protected HashMap<String, Boolean> variableToIsInAssignmentRuleMap = null;
+	protected HashMap<String, Boolean> variableToIsInRateRuleMap = null;
 	
 	//allows for access to the set of constraints that a variable affects
 	protected HashMap<String, HashSet<ASTNode> > variableToAffectedConstraintSetMap = null;
@@ -165,6 +167,8 @@ public abstract class Simulator {
 	
 	protected ArrayList<String> interestingSpecies = new ArrayList<String>();
 	
+	protected HashMap<String, ASTNode> functionDefinitionMap = new HashMap<String, ASTNode>();
+	
 	//propensity variables
 	protected double totalPropensity = 0.0;
 	protected double minPropensity = Double.MAX_VALUE / 10.0;
@@ -196,6 +200,7 @@ public abstract class Simulator {
 	protected int numAssignmentRules;
 	protected long numConstraints;
 	protected int numInitialAssignments;
+	protected int numRateRules;
 	
 	protected int minRow = Integer.MAX_VALUE;
 	protected int minCol = Integer.MAX_VALUE;
@@ -337,6 +342,7 @@ public abstract class Simulator {
 			
 			variableToAffectedAssignmentRuleSetMap = new HashMap<String, HashSet<AssignmentRule> >((int) numRules);
 			variableToIsInAssignmentRuleMap = new HashMap<String, Boolean>((int) (numSpecies + numParameters));
+			variableToIsInRateRuleMap = new HashMap<String, Boolean>((int) (numSpecies + numParameters));
 		}
 		
 		if (numConstraints > 0) {
@@ -464,57 +470,15 @@ public abstract class Simulator {
 	}
 	
 	/**
-	 * uses an existing component to create a new component and update data structures and the simulation state
-	 * this is used for "birth" events in dynamic models
+	 * moves a component in a given direction
+	 * moves components out of the way if needed
+	 * creates grid reactions if the grid expands
 	 * 
 	 * @param parentComponentID
-	 * @param eventID the ID of the division event that just fired
+	 * @param direction
 	 */
-	protected void duplicateComponent(String parentComponentID, String eventID, String symmetry) {
-		
-		//determine new component ID
-		int componentNumber = componentToReactionSetMap.size() + 1;
-		String childComponentID = "C" + String.valueOf(componentNumber);
-		
-		while (componentToReactionSetMap.keySet().contains(childComponentID) == true ||
-				componentIDSet.contains(childComponentID) == true) {
-			
-			++componentNumber;
-			childComponentID = "C" + String.valueOf(componentNumber);
-		}
-		
-		//the component ID is just the child name with no ancestry information
-		//the compartment ID contains the ancestry information
-		componentIDSet.add(childComponentID);
-		
-		//only use the immediate parent for the new ID
-		childComponentID = childComponentID + "_of_" + parentComponentID.split("_of_")[0];
-		
-		Compartment childCompartment = model.createCompartment();
-		String compartID = "";
-		
-		//duplicate compartment
-		for (Compartment comp : model.getListOfCompartments()) {			
-			
-			if (comp.getId().contains(parentComponentID + "__")) {
-				
-				compartID = comp.getId();
-				childCompartment.setSize(comp.getSize());
-				childCompartment.setConstant(comp.getConstant());
-			}
-		}
-		
-		childCompartment.setId(childComponentID + "__" + compartID.split("__")[1]);
-		compartmentIDSet.add(childCompartment.getId());
-		variableToValueMap.put(childCompartment.getId(), childCompartment.getSize());
-		variableToIsConstantMap.put(childCompartment.getId(), childCompartment.getConstant());
-		
-		
-		//determine new component location
-		//choose a random direction and place the component adjacent to the parent
-		//if that space is occupied, all components get moved over to make room
-		Point parentLocation = componentToLocationMap.get(parentComponentID);
-		Point childLocation = (Point) parentLocation.clone();
+	protected void moveComponent(String parentComponentID, String childComponentID, Point parentLocation, Point childLocation,
+			int direction, HashSet<String> reactionsToAdjust) {
 		
 		HashSet<Integer> newRows = new HashSet<Integer>();
 		HashSet<Integer> newCols = new HashSet<Integer>();
@@ -535,11 +499,8 @@ public abstract class Simulator {
 				maxCol = (int) location.getY();
 			}
 		}
-		
-		//0 = left, 1 = right, 2 = above, 3 = below
-		int randomDirection = (int) (randomNumberGenerator.nextDouble() * 4.0);
 			
-		switch (randomDirection) {
+		switch (direction) {
 		
 			case 0: childLocation.y -= 1; break;
 			case 1: childLocation.y += 1; break;
@@ -561,7 +522,7 @@ public abstract class Simulator {
 				
 				locationsToMove.add((Point) emptyLocation.clone());
 				
-				switch (randomDirection) {
+				switch (direction) {
 				
 					case 0: emptyLocation.y -= 1; break;
 					case 1: emptyLocation.y += 1; break;
@@ -580,7 +541,7 @@ public abstract class Simulator {
 				
 				if (locationsToMove.contains(componentAndLocation.getValue())) {
 					
-					switch (randomDirection) {
+					switch (direction) {
 					
 						case 0: componentToLocationMap.get(compID).y -= 1; break;
 						case 1: componentToLocationMap.get(compID).y += 1; break;
@@ -610,7 +571,11 @@ public abstract class Simulator {
 		}
 		
 		//now that an empty space has been created (if necessary), put in the child component
-		componentToLocationMap.put(childComponentID, childLocation);
+		//or move the parent component (if the ID is "" then it's a pure move not a duplication)
+		if (childComponentID.equals(""))
+			componentToLocationMap.put(parentComponentID, childLocation);
+		else
+			componentToLocationMap.put(childComponentID, childLocation);
 		
 		//keep track of min row/col and max row/col so you know the bounds of the grid
 		//this set of ifs is necessary because locationsToMove might be empty (if nothing's in the way)
@@ -921,7 +886,155 @@ public abstract class Simulator {
 			setupLocalParameters(degReaction.getKineticLaw(), degReaction.getId());
 			setupSingleReaction(degReaction.getId(), degReaction.getKineticLaw().getMath(), false,
 					degReaction.getListOfReactants(), degReaction.getListOfProducts(), degReaction.getListOfModifiers());
+		}
+		
+		//MOVE MEMBRANE DIFFUSION REACTIONS FOR COMPONENTS THAT HAVE MOVED
+		if (locationsToMove.size() > 0) {
+			
+			for (Point locationToMove : locationsToMove) {
+				
+				//adjust these locations to their new, moved location
+				switch (direction) {
+				
+					case 0: locationToMove.y -= 1; break;
+					case 1: locationToMove.y += 1; break;
+					case 2: locationToMove.x -= 1; break;
+					case 3: locationToMove.x += 1; break;		
+				}
+			}
+			
+			//find the membrane diffusion reactions for these moved components and alter it
+			for (String compID : componentToLocationMap.keySet()) {
+				
+				int compX = (int) componentToLocationMap.get(compID).getX();
+				int compY = (int) componentToLocationMap.get(compID).getY();
+				
+				for (Point locationToMove : locationsToMove) {
+					
+					if (locationToMove.x == compX && locationToMove.y == compY) {
+						
+						for (String reactionID : componentToReactionSetMap.get(compID)) {
+							
+							//only need to change the rv membrane diffusion reaction
+							if (reactionID.contains("MembraneDiffusion")) {
+								
+								ASTNode formulaNode = reactionToFormulaMap.get(reactionID);
+								
+								//the right child is the one to alter
+								ASTNode speciesNode = formulaNode.getRightChild();
+
+								Point oldLocation = (Point) locationToMove.clone();
+								
+								switch (direction) {
+									
+									case 0: oldLocation.y = locationToMove.y + 1; break;
+									case 1: oldLocation.y = locationToMove.y - 1; break;
+									case 2: oldLocation.x = locationToMove.x + 1; break;
+									case 3: oldLocation.x = locationToMove.x - 1; break;		
+								}
+								
+								String oldRowCol = "ROW" + (int) oldLocation.x + "_COL" + (int) oldLocation.y;
+								oldRowCol = oldRowCol.replace("ROW-", "ROW_negative_");
+								oldRowCol = oldRowCol.replace("COL-", "COL_negative_");
+								
+								String newRowCol = "ROW" + (int) locationToMove.x + "_COL" + (int) locationToMove.y;
+								newRowCol = newRowCol.replace("ROW-", "ROW_negative_");
+								newRowCol = newRowCol.replace("COL-", "COL_negative_");
+								
+								//adjust kinetic law
+								speciesNode.setVariable(model.getSpecies(speciesNode.getName().replace(oldRowCol, newRowCol)));
+								
+								newRowCol = newRowCol.replace("ROW_negative_", "ROW-");
+								newRowCol = newRowCol.replace("COL_negative_", "COL-");
+								oldRowCol = oldRowCol.replace("ROW_negative_", "ROW-");
+								oldRowCol = oldRowCol.replace("COL_negative_", "COL-");
+								
+								//adjust reactants/products
+								for (StringDoublePair speciesAndStoichiometry : 
+									reactionToSpeciesAndStoichiometrySetMap.get(reactionID)) {
+									
+									speciesAndStoichiometry.string = 
+										speciesAndStoichiometry.string.replace(oldRowCol, newRowCol);
+								}
+								
+								for (StringDoublePair reactantAndStoichiometry : 
+									reactionToReactantStoichiometrySetMap.get(reactionID)) {
+									
+									reactantAndStoichiometry.string =
+										reactantAndStoichiometry.string.replace(oldRowCol, newRowCol);
+								}
+								
+								//adjust propensity
+								reactionsToAdjust.add(reactionID);
+							}		
+						}
+					}
+				}
+			}
 		}		
+	}
+	
+	/**
+	 * uses an existing component to create a new component and update data structures and the simulation state
+	 * this is used for "birth" events in dynamic models
+	 * 
+	 * @param parentComponentID
+	 * @param eventID the ID of the division event that just fired
+	 */
+	protected void duplicateComponent(String parentComponentID, String eventID, String symmetry) {
+		
+		//determine new component ID
+		int componentNumber = componentToReactionSetMap.size() + 1;
+		String childComponentID = "C" + String.valueOf(componentNumber);
+		
+		while (componentToReactionSetMap.keySet().contains(childComponentID) == true ||
+				componentIDSet.contains(childComponentID) == true) {
+			
+			++componentNumber;
+			childComponentID = "C" + String.valueOf(componentNumber);
+		}
+		
+		//the component ID is just the child name with no ancestry information
+		//the compartment ID contains the ancestry information
+		componentIDSet.add(childComponentID);
+		
+		//only use the immediate parent for the new ID
+		childComponentID = childComponentID + "_of_" + parentComponentID.split("_of_")[0];
+		
+		Compartment childCompartment = model.createCompartment();
+		String compartID = "";
+		
+		//duplicate compartment
+		for (Compartment comp : model.getListOfCompartments()) {			
+			
+			if (comp.getId().contains(parentComponentID + "__")) {
+				
+				compartID = comp.getId();
+				childCompartment.setSize(comp.getSize());
+				childCompartment.setConstant(comp.getConstant());
+			}
+		}
+		
+		childCompartment.setId(childComponentID + "__" + compartID.split("__")[1]);
+		compartmentIDSet.add(childCompartment.getId());
+		variableToValueMap.put(childCompartment.getId(), childCompartment.getSize());
+		variableToIsConstantMap.put(childCompartment.getId(), childCompartment.getConstant());
+		
+		//reactions that change and thus need their propensities re-evaluated
+		HashSet<String> reactionsToAdjust = new HashSet<String>();
+		
+		//determine new component location
+		//choose a random direction and place the component adjacent to the parent
+		//0 = left, 1 = right, 2 = above, 3 = below
+		int randomDirection = (int) (randomNumberGenerator.nextDouble() * 4.0);		
+
+		Point parentLocation = componentToLocationMap.get(parentComponentID);
+		Point childLocation = (Point) parentLocation.clone();
+				
+		//MOVE COMPONENTS
+		//this places the child and shuffles others around as needed
+		moveComponent(parentComponentID, childComponentID, parentLocation, childLocation, randomDirection, reactionsToAdjust);
+				
 		
 		//DUPLICATE VARIABLES and alter them to coincide with the new ID
 		
@@ -934,6 +1047,10 @@ public abstract class Simulator {
 			
 			//this means it's a species
 			if (speciesIDSet.contains(parentVariableID)) {
+				
+				//if it's a promoter, double it first, as it's a dna-based species
+				if (model.getSpecies(parentVariableID).getSBOTerm() == 354)
+					variableToValueMap.put(parentVariableID, variableToValueMap.get(parentVariableID) * 2);
 				
 				//duplicate species into the model
 				Species newSpecies = model.getSpecies(parentVariableID).clone();
@@ -1137,95 +1254,7 @@ public abstract class Simulator {
 		
 		componentToReactionSetMap.put(childComponentID, childReactionSet);
 		
-		HashSet<String> reactionsToAdjust = new HashSet<String>();
-		
-		reactionsToAdjust.addAll(componentToReactionSetMap.get(parentComponentID));	
-		
-		
-		//MOVE MEMBRANE DIFFUSION REACTIONS FOR COMPONENTS THAT HAVE MOVED
-		if (locationsToMove.size() > 0) {
-			
-			for (Point locationToMove : locationsToMove) {
-				
-				//adjust these locations to their new, moved location
-				switch (randomDirection) {
-				
-					case 0: locationToMove.y -= 1; break;
-					case 1: locationToMove.y += 1; break;
-					case 2: locationToMove.x -= 1; break;
-					case 3: locationToMove.x += 1; break;		
-				}
-			}
-			
-			//find the membrane diffusion reactions for these moved components and alter it
-			for (String compID : componentToLocationMap.keySet()) {
-				
-				int compX = (int) componentToLocationMap.get(compID).getX();
-				int compY = (int) componentToLocationMap.get(compID).getY();
-				
-				for (Point locationToMove : locationsToMove) {
-					
-					if (locationToMove.x == compX && locationToMove.y == compY) {
-						
-						for (String reactionID : componentToReactionSetMap.get(compID)) {
-							
-							//only need to change the rv membrane diffusion reaction
-							if (reactionID.contains("MembraneDiffusion")) {
-								
-								ASTNode formulaNode = reactionToFormulaMap.get(reactionID);
-								
-								//the right child is the one to alter
-								ASTNode speciesNode = formulaNode.getRightChild();
-
-								Point oldLocation = (Point) locationToMove.clone();
-								
-								switch (randomDirection) {
-									
-									case 0: oldLocation.y = locationToMove.y + 1; break;
-									case 1: oldLocation.y = locationToMove.y - 1; break;
-									case 2: oldLocation.x = locationToMove.x + 1; break;
-									case 3: oldLocation.x = locationToMove.x - 1; break;		
-								}
-								
-								String oldRowCol = "ROW" + (int) oldLocation.x + "_COL" + (int) oldLocation.y;
-								oldRowCol = oldRowCol.replace("ROW-", "ROW_negative_");
-								oldRowCol = oldRowCol.replace("COL-", "COL_negative_");
-								
-								String newRowCol = "ROW" + (int) locationToMove.x + "_COL" + (int) locationToMove.y;
-								newRowCol = newRowCol.replace("ROW-", "ROW_negative_");
-								newRowCol = newRowCol.replace("COL-", "COL_negative_");
-								
-								//adjust kinetic law
-								speciesNode.setVariable(model.getSpecies(speciesNode.getName().replace(oldRowCol, newRowCol)));
-								
-								newRowCol = newRowCol.replace("ROW_negative_", "ROW-");
-								newRowCol = newRowCol.replace("COL_negative_", "COL-");
-								oldRowCol = oldRowCol.replace("ROW_negative_", "ROW-");
-								oldRowCol = oldRowCol.replace("COL_negative_", "COL-");
-								
-								//adjust reactants/products
-								for (StringDoublePair speciesAndStoichiometry : 
-									reactionToSpeciesAndStoichiometrySetMap.get(reactionID)) {
-									
-									speciesAndStoichiometry.string = 
-										speciesAndStoichiometry.string.replace(oldRowCol, newRowCol);
-								}
-								
-								for (StringDoublePair reactantAndStoichiometry : 
-									reactionToReactantStoichiometrySetMap.get(reactionID)) {
-									
-									reactantAndStoichiometry.string =
-										reactantAndStoichiometry.string.replace(oldRowCol, newRowCol);
-								}
-								
-								//adjust propensity
-								reactionsToAdjust.add(reactionID);
-							}		
-						}
-					}
-				}
-			}
-		}
+		reactionsToAdjust.addAll(componentToReactionSetMap.get(parentComponentID));		
 		
 		//update propensities for the parent reactions, as their species values may have changed
 		updatePropensities(reactionsToAdjust);
@@ -1316,11 +1345,11 @@ public abstract class Simulator {
 		
 		componentToEventSetMap.put(childComponentID, childEventSet);
 		
-		double total = 0.0;
-		
-		for (double prop : reactionToPropensityMap.values())
-			total += prop;
-		
+//		double total = 0.0;
+//		
+//		for (double prop : reactionToPropensityMap.values())
+//			total += prop;
+//
 //		for (String reactionID : reactionToPropensityMap.keySet()) {
 //			
 //			if (reactionID.contains("_of_")) {
@@ -1610,7 +1639,6 @@ public abstract class Simulator {
 			case FUNCTION_POWER:
 				return (FastMath.pow(evaluateExpressionRecursive(leftChild), evaluateExpressionRecursive(rightChild)));
 				
-			//user-defined function
 			case FUNCTION: {
 				//use node name to determine function
 				//i'm not sure what to do with completely user-defined functions, though
@@ -1682,7 +1710,43 @@ public abstract class Simulator {
 //					if (variableToValueMap.containsKey(speciesName))
 //						return variableToValueMap.get(speciesName);
 				}
-				else 
+				else {
+					
+//					System.err.println(node.getType());
+//					System.err.println("passed in: " + node.getName() + "   " + node.toFormula());					
+					
+					ASTNode newNode = model.getFunctionDefinition(node.getName()).getBody().clone();
+					
+//					System.err.println(node.getName() + " has this funcdef: " + newNode.toFormula());
+					
+					if (functionDefinitionMap.containsKey(node.toFormula())) {
+//						System.err.println("found " + node.toFormula());
+//						System.err.println("as " + functionDefinitionMap.get(node.toFormula()));
+						return evaluateExpressionRecursive(functionDefinitionMap.get(node.toFormula()));
+					}
+					else {
+					
+						for (int i = 0; i < node.getChildCount(); ++i) {
+							
+							newNode.replaceArgument(model.getFunctionDefinition(node.getName()).getArgument(i).toFormula(),
+									node.getChild(i));
+							
+	//						System.err.println(model.getFunctionDefinition(node.getName()).getArgument(i));
+	//						System.err.println("to " + node.getChild(i));
+						}
+						
+//						System.err.println("after replacement: ");						
+//						System.err.println(newNode.toFormula());
+						
+						functionDefinitionMap.put(node.toFormula(), newNode);
+						
+//						System.err.println(functionDefinitionMap);
+						
+						//System.err.println(newNode.getType().toString());
+						
+						return evaluateExpressionRecursive(newNode);
+					}
+				}
 				
 				break;
 			}
@@ -2523,6 +2587,30 @@ public abstract class Simulator {
 					triggeredEventQueue = newTriggeredEventQueue;
 				}
 			}
+			else if (eventToFire.eventID.contains("__Move")) {
+				
+				int direction = (int) (randomNumberGenerator.nextDouble() * 4.0);
+				
+				if (eventToFire.eventID.contains("__MoveLeft__"))
+					direction = 0;
+				else if (eventToFire.eventID.contains("__MoveRight__"))
+					direction = 1;
+				else if (eventToFire.eventID.contains("__MoveAbove__"))
+					direction = 2;
+				else if (eventToFire.eventID.contains("__MoveBelow__"))
+					direction = 3;
+				
+				//reactions that change and thus need their propensities re-evaluated
+				HashSet<String> reactionsToAdjust = new HashSet<String>();
+				
+				String compartmentID = ((String[])eventToFire.eventID.split("__"))[0];
+				Point parentLocation = componentToLocationMap.get(compartmentID);
+				Point childLocation = (Point) parentLocation.clone();
+				moveComponent(compartmentID, "", new Point(), childLocation, direction, reactionsToAdjust);
+				
+				updatePropensities(reactionsToAdjust);
+				updateAfterDynamicChanges();
+			}
 			else {
 				
 				//execute all assignments for this event
@@ -2816,6 +2904,46 @@ public abstract class Simulator {
 				}
 				
 				affectedVariables.add(variable);
+			}
+		}
+		
+		return affectedVariables;
+	}
+	
+	/**
+	 * performs every rate rule using the current time step
+	 * 
+	 * @param delta_t
+	 * @return
+	 */
+	protected HashSet<String> performRateRules(double delta_t) {		
+		
+		HashSet<String> affectedVariables = new HashSet<String>();
+		
+		for (Rule rule : model.getListOfRules()) {
+			
+			if (rule.isRate()) {
+				
+				RateRule rateRule = (RateRule) rule;			
+				String variable = rateRule.getVariable();
+				
+				//update the species count (but only if the species isn't constant) (bound cond is fine)
+				if (variableToIsConstantMap.containsKey(variable) && variableToIsConstantMap.get(variable) == false) {
+					
+					if (speciesToHasOnlySubstanceUnitsMap.containsKey(variable) &&
+							speciesToHasOnlySubstanceUnitsMap.get(variable) == false) {
+						
+						variableToValueMap.adjustValue(variable, delta_t * (
+								evaluateExpressionRecursive(rateRule.getMath()) * 
+								variableToValueMap.get(speciesToCompartmentNameMap.get(variable))));
+					}
+					else {
+						variableToValueMap.adjustValue(variable, 
+								delta_t * evaluateExpressionRecursive(rateRule.getMath()));
+					}
+					
+					affectedVariables.add(variable);
+				}
 			}
 		}
 		
@@ -3906,6 +4034,8 @@ public abstract class Simulator {
 		
 		performAssignmentRules(allAssignmentRules);
 		
+		HashSet<String> affectedVariables = new HashSet<String>();
+		
 		//calculate initial assignments a lot of times in case there are dependencies
 		//running it the number of initial assignments times will avoid problems
 		//and all of them will be fully calculated and determined
@@ -3925,8 +4055,14 @@ public abstract class Simulator {
 				else {
 					variableToValueMap.put(variable, evaluateExpressionRecursive(initialAssignment.getMath()));
 				}			
+				
+				affectedVariables.add(variable);
 			}			
 		}
+		
+		//perform assignment rules again for variable that may have changed due to the initial assignments
+		//they aren't set up yet, so just perform them all
+		performAssignmentRules(allAssignmentRules);
 		
 		//this is kind of weird, but apparently if an initial assignment changes a compartment size
 		//i need to go back and update species amounts because they used the non-changed-by-assignment sizes
@@ -4055,6 +4191,7 @@ public abstract class Simulator {
 	protected void setupRules() {
 		
 		numAssignmentRules = 0;
+		numRateRules = 0;
 		
 		//loop through all assignment rules
 		//store which variables (RHS) affect the rule variable (LHS)
@@ -4088,6 +4225,35 @@ public abstract class Simulator {
 				}
 				
 				++numAssignmentRules;				
+			}
+			else if (rule.isRate()) {
+				
+				//Rules don't have a getVariable method, so this needs to be cast to an ExplicitRule
+				RateRule rateRule = (RateRule) rule;
+				
+				//list of all children of the assignmentRule math
+				ArrayList<ASTNode> formulaChildren = new ArrayList<ASTNode>();
+				
+				if (rateRule.getMath().getChildCount() == 0)
+					formulaChildren.add(rateRule.getMath());
+				else
+					getAllASTNodeChildren(rateRule.getMath(), formulaChildren);
+				
+				for (ASTNode ruleNode : formulaChildren) {
+					
+					if (ruleNode.isName()) {
+						
+						String nodeName = ruleNode.getName();
+						
+						//not sure these are needed, as they only evaluate with each time step
+						//not when other variable update
+//						variableToAffectedRateRuleSetMap.put(nodeName, new HashSet<AssignmentRule>());
+//						variableToAffectedRateRuleSetMap.get(nodeName).add(rateRule);
+						variableToIsInRateRuleMap.put(nodeName, true);
+					}
+				}
+				
+				++numRateRules;	
 			}
 		}
 	}
@@ -4125,7 +4291,7 @@ public abstract class Simulator {
 		String eventID = event.getId();
 		
 		//these events are what determines if a model is dynamic or not
-		if (eventID.contains("Division__") || eventID.contains("Death__"))
+		if (eventID.contains("Division__") || eventID.contains("Death__") || eventID.contains("__Move"))
 			dynamicBoolean = true;
 		
 		if (event.isSetPriority())
