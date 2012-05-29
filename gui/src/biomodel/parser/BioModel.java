@@ -3591,8 +3591,13 @@ public class BioModel {
 		SBMLReader reader = new SBMLReader();
 		SBMLDocument document = null;
 		
+		String path = this.getPath();
+		
+		if (this.getPath().charAt(this.getPath().length() - 1) != '/')
+			path += '/';
+		
 		//load the sbml file
-		document = reader.readSBML(this.getPath() + externalModelID);
+		document = reader.readSBML(path + externalModelID);
 		Model componentModel = document.getModel();
 		
 		ArrayList<String> speciesToRemove = new ArrayList<String>();
@@ -3621,7 +3626,7 @@ public class BioModel {
 				this.getSBMLComp().getExternalModelDefinition(componentModelRef).getSource().replace("file://","").replace("file:","");
 			
 			//load the sbml file
-			document = reader.readSBML(this.getPath() + externalModelID);
+			document = reader.readSBML(path + externalModelID);
 			componentModel = document.getModel();
 			
 			//check all species in the component for diffusibility
@@ -4493,11 +4498,9 @@ public class BioModel {
 		updatePorts();
 		
 		for (int i = 0; i < sbml.getModel().getNumParameters(); ++i)
-			if (sbml.getModel().getParameter(i).getId().contains("__locations"))
+			if (sbml.getModel().getParameter(i).getId().contains("__locations")) {
 				updateGridSpecies(sbml.getModel().getParameter(i).getId().replace("__locations",""));
-		
-		
-		
+			}
 	}
 
 	private void loadSBMLFromBuffer(StringBuffer buffer) {	
@@ -5156,7 +5159,8 @@ public class BioModel {
 			
 			if (event.getAnnotationString().length() > 0 && (
 					event.getAnnotationString().contains("Division") ||
-					event.getAnnotationString().contains("Death")))
+					event.getAnnotationString().contains("Death") ||
+					event.getAnnotationString().contains("Move")))
 				continue;
 			
 			String newName = subModelId + "__" + event.getId();
