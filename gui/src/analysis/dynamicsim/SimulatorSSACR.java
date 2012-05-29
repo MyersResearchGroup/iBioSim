@@ -168,7 +168,7 @@ public class SimulatorSSACR extends Simulator {
 			
 			
 			
-			//STEP 2: calculate delta_t, the time till the next reaction execution
+			//STEP 2A: calculate delta_t, the time till the next reaction execution
 			
 			//long step2Initial = System.nanoTime();
 			 
@@ -176,6 +176,25 @@ public class SimulatorSSACR extends Simulator {
 			
 			//step2Time += System.nanoTime() - step2Initial;
 			
+			
+			//STEP 2B: calculate rate rules using this time step
+			HashSet<String> affectedVariables = performRateRules(delta_t);
+			
+			//update stuff based on the rate rules altering values
+			for (String affectedVariable : affectedVariables) {
+				
+				if (speciesToAffectedReactionSetMap != null &&
+						speciesToAffectedReactionSetMap.containsKey(affectedVariable))
+					updatePropensities(speciesToAffectedReactionSetMap.get(affectedVariable));
+				
+				if (variableToAffectedAssignmentRuleSetMap != null &&
+						variableToAffectedAssignmentRuleSetMap.containsKey(affectedVariable))
+					performAssignmentRules(variableToAffectedAssignmentRuleSetMap.get(affectedVariable));
+				
+				if (variableToAffectedConstraintSetMap != null &&
+						variableToAffectedConstraintSetMap.containsKey(affectedVariable))
+					testConstraints(variableToAffectedConstraintSetMap.get(affectedVariable));
+			}
 			
 			
 			//STEP 3A: select a group
@@ -354,7 +373,7 @@ public class SimulatorSSACR extends Simulator {
 		else
 			eventsFlag.setValue(false);
 		
-		if (numAssignmentRules == 0)
+		if (numAssignmentRules == 0 && numRateRules == 0)
 			rulesFlag.setValue(true);
 		else
 			rulesFlag.setValue(false);
@@ -763,8 +782,8 @@ public class SimulatorSSACR extends Simulator {
 			e.printStackTrace();
 		}
 		
-		setupInitialAssignments();
 		setupParameters();
+		setupInitialAssignments();		
 		setupRules();
 		setupConstraints();
 		
@@ -778,7 +797,7 @@ public class SimulatorSSACR extends Simulator {
 		else
 			eventsFlag.setValue(false);
 		
-		if (numAssignmentRules == 0)
+		if (numAssignmentRules == 0 && numRateRules == 0)
 			rulesFlag.setValue(true);
 		else
 			rulesFlag.setValue(false);

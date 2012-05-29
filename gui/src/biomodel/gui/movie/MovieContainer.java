@@ -38,6 +38,7 @@ import java.util.HashSet;
 import java.util.Vector;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -596,14 +597,17 @@ public class MovieContainer extends JPanel implements ActionListener {
 			
 			int startFrame = 0;
 			int endFrame = numTimePoints - 1;
+			int skipFrame = 0;
 			
 			//get the start/end frames from the user
 			JPanel tilePanel;
 			JTextField startFrameChooser;
 			JTextField endFrameChooser;
+			JTextField printFrameChooser;
+			JCheckBox scaleChooser;
 			
 			//panel that contains grid size options
-			tilePanel = new JPanel(new GridLayout(3, 2));
+			tilePanel = new JPanel(new GridLayout(5, 2));
 			this.add(tilePanel, BorderLayout.SOUTH);
 
 			tilePanel.add(new JLabel("Start Frame"));
@@ -613,6 +617,13 @@ public class MovieContainer extends JPanel implements ActionListener {
 			tilePanel.add(new JLabel("End Frame"));
 			endFrameChooser = new JTextField(String.valueOf(numTimePoints - 1));
 			tilePanel.add(endFrameChooser);
+			
+			tilePanel.add(new JLabel("Print Frame"));
+			printFrameChooser = new JTextField("0"); 
+			tilePanel.add(printFrameChooser);
+			
+			scaleChooser = new JCheckBox("Scale");
+			tilePanel.add(scaleChooser);
 			
 			String[] options = {GlobalConstants.OK, GlobalConstants.CANCEL};
 			
@@ -628,6 +639,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 					
 					startFrame = Integer.valueOf(startFrameChooser.getText());
 					endFrame = Integer.valueOf(endFrameChooser.getText());
+					skipFrame = Integer.valueOf(printFrameChooser.getText());
 					
 					if (endFrame < numTimePoints && startFrame >= 0)
 						error = false;
@@ -647,10 +659,10 @@ public class MovieContainer extends JPanel implements ActionListener {
 			
 			JPanel button = new JPanel();
 			JPanel progressPanel = new JPanel(new BorderLayout());
-			JLabel label = new JLabel("Creating movie . . .");
+			final JLabel label = new JLabel("Creating movie . . .");
 			JPanel frameText = new JPanel();
 			JButton cancel = new JButton("Cancel");
-			JFrame progressFrame = new JFrame("Progress");
+			final JFrame progressFrame = new JFrame("Progress");
 			
 			JProgressBar movieProgress = new JProgressBar(0, 100);
 			movieProgress.setStringPainted(true);
@@ -668,16 +680,31 @@ public class MovieContainer extends JPanel implements ActionListener {
 			progressFrame.setVisible(true);
 			
 			MovieProgress printMovieFrames = 
-				new MovieProgress(movieProgress, startFrame, endFrame, movieFormat, progressFrame);
+				new MovieProgress(movieProgress, startFrame, endFrame, skipFrame, 
+						scaleChooser.isSelected(), movieFormat, progressFrame);
 			
-			new Thread(printMovieFrames).start();
+			final Thread printThread = new Thread(printMovieFrames);
+			
+			cancel.addActionListener(new ActionListener() {
+
+				public void actionPerformed(ActionEvent arg0) {
+					
+					label.setText("Canceling movie");					
+					progressFrame.dispose();
+					printThread.stop();
+					removeJPGs();
+					addPlayUI();
+				}
+			});
+			
+			printThread.start();
 		}
 	}
 	
 	/**
 	 * creates a JPG of the current graph frame
 	 */
-	public void outputJPG(int fileNumber) {
+	public void outputJPG(int fileNumber, boolean scale) {
 		
 		//this prompts to save the current frame somewhere
 		if (fileNumber == -1) {
@@ -698,7 +725,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				
 	            File file = fc.getSelectedFile();
-	            schematic.outputFrame(file.getAbsoluteFile().toString());
+	            schematic.outputFrame(file.getAbsoluteFile().toString(), scale);
 	        }
 		}
 		
@@ -710,7 +737,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 			separator = File.separator;
 		
 		String filenum = String.format("%09d", fileNumber);			
-		schematic.outputFrame(analysisView.getRootPath() + separator + filenum  + ".jpg");
+		schematic.outputFrame(analysisView.getRootPath() + separator + filenum  + ".jpg", scale);
 	}
 	
 	/**
@@ -736,6 +763,8 @@ public class MovieContainer extends JPanel implements ActionListener {
 		    if (jpgFile != null && jpgFile.exists() && jpgFile.canWrite())
 		    	jpgFile.delete();		    	
 	    }
+	    
+	    schematic.setMovieMode(false);
 	}
 	
 	
@@ -890,29 +919,45 @@ public class MovieContainer extends JPanel implements ActionListener {
 	private class MovieProgress implements Runnable {
 		
 		private JProgressBar progressBar;
-		private int startFrame, endFrame;
+		private int startFrame, endFrame, printFrame;
 		private String movieFormat;
 		private JFrame progressFrame;
+		private boolean scale;
 		
 		public MovieProgress(JProgressBar progressBar, 
-				int startFrame, int endFrame, String movieFormat, JFrame progressFrame) {
+				int startFrame, int endFrame, int printFrame, boolean scale, 
+				String movieFormat, JFrame progressFrame) {
 			
 			this.progressBar = progressBar;
 			this.startFrame = startFrame;
 			this.endFrame = endFrame;
+			this.printFrame = printFrame;
 			this.movieFormat = movieFormat;
 			this.progressFrame = progressFrame;
+			this.scale = scale;
 		}		
 		
 		public void run() {
 			
+			schematic.setMovieMode(true);
+			
+			int frameNumber = 0;
+			
 			//output all frames without updating the schematic's image
 			for (int currentFrame = startFrame; currentFrame < endFrame; ++currentFrame) {
 				
+				if (!(printFrame > 0 && (currentFrame % printFrame == 0)))
+					continue;
+				
 				updateVisuals(false, currentFrame);
 				
+				if (currentFrame - startFrame == 0)
+					frameNumber = currentFrame - startFrame;
+				
+				++frameNumber;
+				
 				//frame numbers need to start at 001
-				outputJPG(currentFrame - startFrame);
+				outputJPG(frameNumber, scale);				
 				
 				progressBar.setValue((int) (100 * (currentFrame - startFrame) / (endFrame - startFrame)));
 			}
@@ -993,6 +1038,8 @@ public class MovieContainer extends JPanel implements ActionListener {
 			slider.setEnabled(true);
 			
 			addPlayUI();
+			
+			schematic.setMovieMode(false);
 		}
 	}
 }

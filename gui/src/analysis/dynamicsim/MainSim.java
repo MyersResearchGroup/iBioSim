@@ -31,7 +31,7 @@ public class MainSim {
 		
 		if (args.length == 0) {
 			
-			String caseNum = "00977";
+			String caseNum = "00035";
 			
 			args = new String[3];
 			args[0] = "/home/beauregard/Desktop/cases/semantic/" + caseNum + "/" + caseNum + "-sbml-l3v1.xml";

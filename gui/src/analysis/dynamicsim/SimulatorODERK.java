@@ -308,6 +308,27 @@ public class SimulatorODERK extends Simulator {
 			
 			currentTime += stepSize;
 			
+			//STEP 2B: calculate rate rules using this time step
+			HashSet<String> affectedVariables = performRateRules(stepSize);
+			
+			//update stuff based on the rate rules altering values
+			for (String affectedVariable : affectedVariables) {
+				
+				if (variableToAffectedAssignmentRuleSetMap != null &&
+						variableToAffectedAssignmentRuleSetMap.containsKey(affectedVariable))
+					performAssignmentRules(variableToAffectedAssignmentRuleSetMap.get(affectedVariable));
+				
+				if (variableToAffectedConstraintSetMap != null &&
+						variableToAffectedConstraintSetMap.containsKey(affectedVariable))
+					testConstraints(variableToAffectedConstraintSetMap.get(affectedVariable));
+				
+				for (int i = 0; i < values.length; ++i) {
+					
+					if (affectedVariable.equals(indexToVariableMap.get(i)))
+							values[i] = variableToValueMap.get(indexToVariableMap.get(i));
+				}
+			}
+			
 			if (variableToIsInAssignmentRuleMap != null &&
 					variableToIsInAssignmentRuleMap.containsKey("time")) {
 				

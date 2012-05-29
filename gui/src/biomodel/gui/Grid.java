@@ -551,8 +551,9 @@ public class Grid {
 			clickPoint.y -= verticalOffset;
 		
 			//if the user didn't click within the component
-			if (!node.getZoomedSnapRectangle().contains(clickPoint) || node.isOccupied() == false)
+			if (!node.getZoomedSnapRectangle().contains(clickPoint) || node.isOccupied() == false) {
 				return true;
+			}
 			else 
 				return false;
 		}
@@ -781,78 +782,6 @@ public class Grid {
 	 * @param cols
 	 */
 	public void resetGrid(int rows, int cols) {
-		
-//		int currentNumRows = this.numRows;
-//		int currentNumCols = this.numCols;
-//		int newNumRows = rows;
-//		int newNumCols = cols;
-//		int numRowsToAdd = newNumRows - currentNumRows;
-//		int numColsToAdd = newNumCols - currentNumCols;
-//		
-//		//growing the grid rows
-//		if (numRowsToAdd > 0) {
-//			
-//			//add new rows up to the new number of columns
-//			for (int row = currentNumRows; row < newNumRows; ++row) {
-//				
-//				//allocate grid nodes for the new rows
-//				//note: this could be small than the old size
-//				//but that doesn't matter
-//				grid.add(new ArrayList<GridNode>(newNumCols));
-//				
-//				for (int col = 0; col < newNumCols; ++col) {
-//					
-//					grid.get(row).add(new GridNode());
-//					grid.get(row).get(col).setRow(row);
-//					grid.get(row).get(col).setCol(col);
-//				}
-//			}
-//		}
-//		//shrinking the grid rows
-//		else if (numRowsToAdd < 0) {
-//			
-//			//go from the new last row to the prior last row
-//			//erase all of the nodes (which clears them and erases the components from the gcm)
-//			for (int row = newNumRows; row < currentNumRows; ++row) {				
-//				for (int col = 0; col < currentNumCols; ++col) {
-//					
-//					grid.get(row).get(col).clear();
-//				}				
-//			}
-//			
-//			//change this so that the columns aren't added with length past the proper number of rows
-//			currentNumRows = newNumRows;
-//		}
-//		
-//		//growing the grid cols
-//		if (numColsToAdd > 0) {
-//			
-//			//add new columns up to the current number of rows
-//			for (int row = 0; row < currentNumRows; ++row) {
-//				
-//				//allocate grid nodes for the new columns
-//				grid.add(new ArrayList<GridNode>(numColsToAdd));
-//				
-//				for (int col = 0; col < newNumCols; ++col) {
-//					
-//					grid.get(row).add(new GridNode());
-//					grid.get(row).get(col).setRow(row);
-//					grid.get(row).get(col).setCol(col);
-//				}				
-//			}
-//		}
-//		//shrinking the grid cols
-//		else if (numColsToAdd < 0) {
-//			
-//			//go from the new last col to the prior last col
-//			//erase all of the nodes (which clears them and erases the components from the gcm)
-//			for (int row = 0; row < currentNumRows; ++row) {				
-//				for (int col = newNumCols; col < currentNumCols; ++col) {
-//					
-//					grid.get(row).get(col).clear();
-//				}				
-//			}
-//		}
 		
 		this.numRows = rows;
 		this.numCols = cols;

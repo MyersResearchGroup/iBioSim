@@ -319,7 +319,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					(gcmEditor.getGCM().getBiochemicalSpecies() != null &&
 					!gcmEditor.getGCM().getBiochemicalSpecies().contains(selected))) {
 				tempPanel.add(thresholdTextField);
-				specInteresting.setText("Mark as Interesting (Enter comma-separated thresholds");
+				specInteresting.setText("Mark as Interesting (Enter comma-separated thresholds)");
 			}
 			
 			grid.add(tempPanel);
