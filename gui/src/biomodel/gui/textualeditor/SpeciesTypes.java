@@ -124,7 +124,7 @@ public class SpeciesTypes extends JPanel implements ActionListener, MouseListene
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(gcm.getSBMLDocument(), specTypeID.getText().trim(), selectedID, false);
+			error = SBMLutilities.checkID(gcm.getSBMLDocument(), specTypeID.getText().trim(), selectedID, false, false);
 			if (!error) {
 				if (option.equals("OK")) {
 					String[] spTyp = new String[specTypes.getModel().getSize()];

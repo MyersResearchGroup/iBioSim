@@ -24,6 +24,7 @@ import main.util.MutableBoolean;
 import main.util.Utility;
 
 import org.sbml.libsbml.Constraint;
+import org.sbml.libsbml.Layout;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.Port;
@@ -162,7 +163,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		else {
 			String constraintId = "constraint0";
 			int cn = 0;
-			while (gcm.isSIdInUse(constraintId)) {
+			while (gcm.getSBMLDocument().getElementByMetaId(constraintId)!=null) {
 				cn++;
 				constraintId = "constraint" + cn;
 			}
@@ -185,7 +186,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(gcm.getSBMLDocument(), consID.getText().trim(), selectedID, false);
+			error = SBMLutilities.checkID(gcm.getSBMLDocument(), consID.getText().trim(), selectedID, false, true);
 			if (!error) {
 				if (consMath.getText().trim().equals("") || SBMLutilities.myParseFormula(consMath.getText().trim()) == null) {
 					JOptionPane.showMessageDialog(Gui.frame, "Formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
@@ -361,6 +362,15 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 			if (port.isSetMetaIdRef() && port.getMetaIdRef().equals(selected)) {
 				gcm.getSBMLCompModel().removePort(i);
 				break;
+			}
+		}
+		if (gcm.getSBMLLayout().getLayout("iBioSim") != null) {
+			Layout layout = gcm.getSBMLLayout().getLayout("iBioSim"); 
+			if (layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+selected)!=null) {
+				layout.removeReactionGlyph(GlobalConstants.GLYPH+"__"+selected);
+			}
+			if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+selected) != null) {
+				layout.removeTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+selected);
 			}
 		}
 		dirty.setValue(true);

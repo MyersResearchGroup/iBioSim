@@ -659,7 +659,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			String reac = reacID.getText().trim();
-			error = SBMLutilities.checkID(gcm.getSBMLDocument(), reac, selectedID, false);
+			error = SBMLutilities.checkID(gcm.getSBMLDocument(), reac, selectedID, false, false);
 			if (!error) {
 				if (kineticLaw.getText().trim().equals("")) {
 					JOptionPane.showMessageDialog(Gui.frame, "A reaction must have a kinetic law.", "Enter A Kinetic Law", JOptionPane.ERROR_MESSAGE);
@@ -830,12 +830,14 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						}
 					}
 					if (!error) {
-						LinkedList<String> sbolURIs = sbolField.getSBOLURIs();
-						if (sbolURIs.size() > 0) {
-							SBOLAnnotation sbolAnnot = new SBOLAnnotation(react.getMetaId(), sbolURIs);
-							AnnotationUtility.setSBOLAnnotation(react, sbolAnnot);
-						} else
-							AnnotationUtility.removeSBOLAnnotation(react);
+						if (sbolField != null) {
+							LinkedList<String> sbolURIs = sbolField.getSBOLURIs();
+							if (sbolURIs.size() > 0) {
+								SBOLAnnotation sbolAnnot = new SBOLAnnotation(react.getMetaId(), sbolURIs);
+								AnnotationUtility.setSBOLAnnotation(react, sbolAnnot);
+							} else
+								AnnotationUtility.removeSBOLAnnotation(react);
+						}
 					}
 				}
 				else {
@@ -1236,7 +1238,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(gcm.getSBMLDocument(), reacParamID.getText().trim(), selectedID, true);
+			error = SBMLutilities.checkID(gcm.getSBMLDocument(), reacParamID.getText().trim(), selectedID, true, false);
 			if (!error) {
 				if (thisReactionParams.contains(reacParamID.getText().trim()) && (!reacParamID.getText().trim().equals(selectedID))) {
 					JOptionPane.showMessageDialog(Gui.frame, "ID is not unique.", "ID Not Unique", JOptionPane.ERROR_MESSAGE);
@@ -1524,7 +1526,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				error = SBMLutilities.variableInUse(gcm.getSBMLDocument(), selectedID, false, true, true);
 			}
 			else {
-				error = SBMLutilities.checkID(gcm.getSBMLDocument(), productId.getText().trim(), selectedID, false);
+				error = SBMLutilities.checkID(gcm.getSBMLDocument(), productId.getText().trim(), selectedID, false, false);
 			}
 			if (!error) {
 				if (stoiciLabel.getSelectedItem().equals("Stoichiometry")) {
@@ -1953,7 +1955,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				error = SBMLutilities.variableInUse(gcm.getSBMLDocument(), selectedID, false, true, true);
 			}
 			else {
-				error = SBMLutilities.checkID(gcm.getSBMLDocument(), reactantId.getText().trim(), selectedID, false);
+				error = SBMLutilities.checkID(gcm.getSBMLDocument(), reactantId.getText().trim(), selectedID, false, false);
 			}
 			if (!error) {
 				if (stoiciLabel.getSelectedItem().equals("Stoichiometry")) {
@@ -2155,14 +2157,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		int index = reactions.getSelectedIndex();
 		if (index != -1) {
 			String selected = ((String) reactions.getSelectedValue()).split(" ")[0];
-			removeTheReaction(gcm, selected);
-			for (long i = 0; i < gcm.getSBMLCompModel().getNumPorts(); i++) {
-				Port port = gcm.getSBMLCompModel().getPort(i);
-				if (port.isSetIdRef() && port.getIdRef().equals(selected)) {
-					gcm.getSBMLCompModel().removePort(i);
-					break;
-				}
-			}
+			gcm.removeReaction(selected);
 			reactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			reacts = (String[]) Utility.remove(reactions, reacts);
 			reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

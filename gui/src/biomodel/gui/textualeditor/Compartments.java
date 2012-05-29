@@ -428,7 +428,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 				null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(gcm.getSBMLDocument(), compID.getText().trim(), selectedID, false);
+			error = SBMLutilities.checkID(gcm.getSBMLDocument(), compID.getText().trim(), selectedID, false, false);
 			if (!error && option.equals("OK") && compConstant.getSelectedItem().equals("true")) {
 				String val = ((String) compartments.getSelectedValue()).split(" ")[0];
 				error = SBMLutilities.checkConstant(gcm.getSBMLDocument(), "Compartment", val);

@@ -40,7 +40,7 @@ public class SBMLutilities {
 	/**
 	 * Check that ID is valid and unique
 	 */
-	public static boolean checkID(SBMLDocument document, String ID, String selectedID, boolean isReacParam) {
+	public static boolean checkID(SBMLDocument document, String ID, String selectedID, boolean isReacParam, boolean isMetaId) {
 		Pattern IDpat = Pattern.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
 		if (ID.equals("")) {
 			JOptionPane.showMessageDialog(Gui.frame, "An ID is required.", "Enter an ID", JOptionPane.ERROR_MESSAGE);
@@ -67,7 +67,7 @@ public class SBMLutilities {
 			JOptionPane.showMessageDialog(Gui.frame, "ID cannot be a reserved word.", "Illegal ID", JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
-		if (document.getElementBySId(ID)!=null && !ID.equals(selectedID)) {
+		if (!ID.equals(selectedID) && (document.getElementBySId(ID)!=null || document.getElementByMetaId(ID)!=null)) {	
 			if (isReacParam) {
 				JOptionPane.showMessageDialog(Gui.frame, "ID shadows a global ID.", "Not a Unique ID", JOptionPane.WARNING_MESSAGE);
 			}
@@ -258,7 +258,7 @@ public class SBMLutilities {
 	 * Convert String into ASTNodes
 	 */
 	public static ASTNode myParseFormula(String formula) {
-		ASTNode mathFormula = libsbml.parseL3Formula(formula);
+		ASTNode mathFormula = libsbml.parseFormula(formula);
 		if (mathFormula == null)
 			return null;
 		setTimeAndTrigVar(mathFormula);
