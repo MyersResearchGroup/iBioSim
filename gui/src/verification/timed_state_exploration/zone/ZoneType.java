@@ -6,11 +6,41 @@ import java.util.List;
 import lpn.parser.Transition;
 import verification.platu.stategraph.State;
 
-public interface ZoneType {
+public abstract class ZoneType {
 
 	/* Infinity is represented by the maximum integer value. */
 	public static final int INFINITY = Integer.MAX_VALUE;
 
+	/* 
+	 * Turns on and off subsets for the zones.
+	 * True means subset will be considered.
+	 * False means subsets will be considered.
+	 */
+	private static boolean _subsetFlag = true;
+	
+	public static boolean getSubsetFlag(){
+		return _subsetFlag;
+	}
+	
+	public static void setSubsetFlag(boolean useSubsets){
+		_subsetFlag = useSubsets;
+	}
+	
+	/* 
+	 * Turns on and off supersets for zones.
+	 * True means that supersets will be considered.
+	 * False means that supersets will not be considered.
+	 */
+	private static boolean _supersetFlag = true;
+	
+	public static boolean getSupersetFlag(){
+		return _supersetFlag;
+	}
+	
+	public static void setSupersetFlag(boolean useSupersets){
+		_supersetFlag = useSupersets;
+	}
+	
 	/**
 	 * Get the value of the upper bound for the delay.
 	 * @param timer
