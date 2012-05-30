@@ -65,6 +65,7 @@ import verification.platu.stategraph.StateGraph;
 import verification.timed_state_exploration.zone.Project_Timed;
 import verification.timed_state_exploration.zone.StateGraph_timed;
 import verification.timed_state_exploration.zone.Zone;
+import verification.timed_state_exploration.zone.ZoneType;
 import biomodel.gui.PropertyList;
 import biomodel.util.Utility;
 
@@ -1585,6 +1586,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				 * in the Options class that is queried by the search method.
 				 */
 				Options.setTimingAnalsysisType("zone");
+
+				ZoneType.setSubsetFlag(!timsubset.isSelected());
 
 				Project_Timed timedStateSearch = new Project_Timed(lpn, 
 						Options.getTimingAnalysisFlag(), false);
