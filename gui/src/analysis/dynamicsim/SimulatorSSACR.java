@@ -244,8 +244,6 @@ public class SimulatorSSACR extends Simulator {
 			
 			//step5Time += System.nanoTime() - step5Initial;
 			
-
-			
 			//STEP 6: re-assign affected reactions to appropriate groups
 			
 			//long step6Initial = System.nanoTime();
@@ -258,7 +256,6 @@ public class SimulatorSSACR extends Simulator {
 				updateGroups(affectedReactionSet);
 			
 			//step6Time += System.nanoTime() - step6Initial;
-
 			
 			//update time for next iteration
 			currentTime += delta_t;
@@ -658,7 +655,11 @@ public class SimulatorSSACR extends Simulator {
 			totalPropensity += propensity;
 			
 			//the zero-propensity group doesn't need altering
-			if (propensity == 0.0) continue;
+			if (propensity == 0.0) {
+				
+				reactionToGroupMap.put(reaction, 0);
+				groupToReactionSetList.get(0).add(reaction);
+			}
 			
 			org.openmali.FastMath.FRExpResultf frexpResult = org.openmali.FastMath.frexp((float) (propensity / minPropensity));
 			int group = frexpResult.exponent;
@@ -682,7 +683,7 @@ public class SimulatorSSACR extends Simulator {
 				continue;
 			
 			nonemptyGroupSet.add(groupNum);
-		}		
+		}
 	}
 	
 	/**
@@ -701,6 +702,12 @@ public class SimulatorSSACR extends Simulator {
 		double runningTotalGroupsPropensity = 0.0;
 		int selectedGroup = 1;
 		
+//		System.err.println(reactionToGroupMap);
+//		
+//		System.err.println(randomPropensity);
+//		System.err.println(totalPropensity);
+//		System.err.println();
+		
 		//finds the group that the random propensity lies in
 		//it keeps adding the next group's total propensity to a running total
 		//until the running total is greater than the random propensity
@@ -708,9 +715,19 @@ public class SimulatorSSACR extends Simulator {
 			
 			runningTotalGroupsPropensity += groupToTotalGroupPropensityMap.get(selectedGroup);
 			
+//			System.err.println(selectedGroup + "  " + nonemptyGroupSet.contains(selectedGroup)
+//					+ "   " + groupToTotalGroupPropensityMap.get(selectedGroup));
+//			System.err.println(runningTotalGroupsPropensity);
+			
 			if (randomPropensity < runningTotalGroupsPropensity && nonemptyGroupSet.contains(selectedGroup))
 				break;
-		}
+		}	
+		
+//		System.err.println(selectedGroup);
+//		System.err.println();
+		
+//		if (selectedGroup == 17)
+//			System.err.println(nonemptyGroupSet);
 		
 		return selectedGroup;
 	}
@@ -894,8 +911,9 @@ public class SimulatorSSACR extends Simulator {
 				reactionToGroupMap.put(affectedReactionID, 0);
 				groupToReactionSetList.get(0).add(affectedReactionID);
 				
-				if (oldReactionSet.size() == 0)
-					nonemptyGroupSet.remove(oldGroup);	
+				if (oldReactionSet.size() == 0) {
+					nonemptyGroupSet.remove(oldGroup);
+				}
 			}
 			//if the new propensity != 0.0 (ie, new group != 0)
 			else {
@@ -1023,6 +1041,18 @@ public class SimulatorSSACR extends Simulator {
 			
 			double oldPropensity = reactionToPropensityMap.get(affectedReactionID);
 			int oldGroup = reactionToGroupMap.get(affectedReactionID);
+			
+//			if (oldGroup == 15) {
+//				
+//				if (newPropensity == 0)
+//					System.err.println(affectedReactionID + "  NOW IS ZERO");
+//				
+//				if (oldPropensity == 0)
+//					System.err.println(affectedReactionID + "  still has propensity zero");
+//				
+//			System.err.println("oldgroup: " + oldGroup);
+//			System.err.println(groupToTotalGroupPropensityMap.get(oldGroup) + " - " + oldPropensity);
+//			}
 			
 			//remove the old propensity from the group's total
 			//later on, the new propensity is added to the (possibly new) group's total
