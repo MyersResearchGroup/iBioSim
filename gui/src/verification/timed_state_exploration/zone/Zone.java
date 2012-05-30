@@ -37,7 +37,7 @@ import verification.platu.stategraph.State;
  * @author Andrew N. Fisher
  *
  */
-public class Zone implements ZoneType {
+public class Zone extends ZoneType {
 	
 	// Abstraction Function : 
 	// The difference bound matrix is represented by int[][].
@@ -633,10 +633,13 @@ public class Zone implements ZoneType {
 			return true;
 		}
 		
-		// If the hash codes are different, then the objects are not equal. 
-		if(this.hashCode() != otherZone.hashCode())
-		{
-			return false;
+		// Check hash codes if not doing subsets.
+		if(!ZoneType.getSubsetFlag()){
+			// If the hash codes are different, then the objects are not equal. 
+			if(this.hashCode() != otherZone.hashCode())
+			{
+				return false;
+			}
 		}
 		
 		// Check if the timers are the same.
@@ -655,14 +658,27 @@ public class Zone implements ZoneType {
 			}
 		}
 		
-		// Check if the matrix is the same.
+		// Check if the matrix is the same if subsets are not being used.
+		// Check if the entries of other are less than or equal to this if
+		// subset are in use.
 		for(int i=0; i<_matrix.length; i++)
 		{
 			for(int j=0; j<_matrix[0].length; j++)
 			{
-				if(!(this._matrix[i][j] == otherZone._matrix[i][j]))
-				{
-					return false;
+				if(ZoneType.getSubsetFlag()){
+					
+					// Subsets are in use.
+					if(!(otherZone._matrix[i][j] <= this._matrix[i][j])){
+						return false;
+					}
+				}
+				else{
+					
+					// Subsets are not in use.
+					if(!(this._matrix[i][j] == otherZone._matrix[i][j]))
+					{
+						return false;
+					}
 				}
 			}
 		}
