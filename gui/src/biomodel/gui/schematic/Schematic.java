@@ -127,6 +127,7 @@ public class Schematic extends JPanel implements ActionListener {
 	private AbstractButton addReactionButton;
 	private AbstractButton addComponentButton;
 	private AbstractButton addPromoterButton;
+	private AbstractButton addVariableButton;
 	private AbstractButton addRuleButton;
 	private AbstractButton addConstraintButton;
 	private AbstractButton addEventButton;
@@ -348,6 +349,8 @@ public class Schematic extends JPanel implements ActionListener {
 		toolBar.add(addComponentButton);
 		addPromoterButton = Utils.makeRadioToolButton("promoter_mode.png", "", "Add Promoters", this, modeButtonGroup);
 		toolBar.add(addPromoterButton);
+		//addVariableButton = Utils.makeRadioToolButton("variable_mode.png", "", "Add Variables", this, modeButtonGroup);
+		//toolBar.add(addVariableButton);
 		addRuleButton = Utils.makeRadioToolButton("rule_mode.png", "", "Add Rules", this, modeButtonGroup);
 		toolBar.add(addRuleButton);
 		addConstraintButton = Utils.makeRadioToolButton("constraint_mode.png", "", "Add Constraints", this, modeButtonGroup);
@@ -780,6 +783,13 @@ public class Schematic extends JPanel implements ActionListener {
 						}
 						else if(addPromoterButton != null && addPromoterButton.isSelected()) {
 							bioModel.createPromoter(null, e.getX(), e.getY(), true);
+							modelEditor.refresh();
+							graph.buildGraph();
+							modelEditor.setDirty(true);
+							bioModel.makeUndoPoint();
+						}
+						else if(addPromoterButton != null && addPromoterButton.isSelected()) {
+							//bioModel.createVariable(null, e.getX(), e.getY(), true);
 							modelEditor.refresh();
 							graph.buildGraph();
 							modelEditor.setDirty(true);
@@ -1328,7 +1338,7 @@ public class Schematic extends JPanel implements ActionListener {
 		mxCell source = (mxCell)edge.getSource();
 		mxCell target = (mxCell)edge.getTarget();
 		//string source = edge.getSource().getValue();
-		
+		/*
 		if (source.getStyle().contains("COMPARTMENT") ||
  			target.getStyle().contains("COMPARTMENT")) {
 			JOptionPane.showMessageDialog(Gui.frame, 
@@ -1338,7 +1348,7 @@ public class Schematic extends JPanel implements ActionListener {
 			graph.buildGraph();
 			return;
 		}
-		
+		*/
 		// make sure there is at most 1 component
 		int numComponents = 0;
 		if(graph.getCellType(source)==GlobalConstants.COMPONENT)
