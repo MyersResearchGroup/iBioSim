@@ -69,6 +69,7 @@ import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.SBMLReader;
 import org.sbml.libsbml.SBMLWriter;
 import org.sbml.libsbml.SBase;
+import org.sbml.libsbml.SBaseList;
 import org.sbml.libsbml.SBaseRef;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.SpeciesGlyph;
@@ -4594,6 +4595,12 @@ public class BioModel {
 				comps.add(extModel);
 				SBMLDocument subDocument = Gui.readSBML(path + separator + extModel);
 				ModelDefinition md = new ModelDefinition(subDocument.getModel());
+				String id = subDocument.getModel().getId();
+				SBaseList elements = subDocument.getListOfAllElements();
+				for (long j = 0; j < elements.getSize(); j++) {
+					SBase sbase = elements.get(j);
+					sbase.setMetaId(id+"__"+sbase.getMetaId());
+				}
 				documentComp.addModelDefinition(md);
 				recurseExportSingleFile(comps,(CompModelPlugin)subDocument.getModel().getPlugin("comp"),
 						(CompSBMLDocumentPlugin)subDocument.getPlugin("comp"),documentComp);
@@ -4620,6 +4627,12 @@ public class BioModel {
 			if (!comps.contains((String)extModel)) {
 				comps.add(extModel);
 				SBMLDocument subDocument = Gui.readSBML(path + separator + extModel);
+				String id = subDocument.getModel().getId();
+				SBaseList elements = subDocument.getListOfAllElements();
+				for (long j = 0; j < elements.getSize(); j++) {
+					SBase sbase = elements.get(j);
+					sbase.setMetaId(id+"__"+sbase.getMetaId());
+				}
 				ModelDefinition md = new ModelDefinition(subDocument.getModel());
 				documentComp.addModelDefinition(md);
 				recurseExportSingleFile(comps,(CompModelPlugin)subDocument.getModel().getPlugin("comp"),
