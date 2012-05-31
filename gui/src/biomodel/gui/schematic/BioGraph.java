@@ -371,6 +371,11 @@ public class BioGraph extends mxGraph {
 			for (long i = 0; i < layout.getNumCompartmentGlyphs(); i++) {
 				
 				String comp = layout.getCompartmentGlyph(i).getId();
+				if (!comp.startsWith(GlobalConstants.GLYPH+"__")) {
+					layout.getCompartmentGlyph(i).setId(GlobalConstants.GLYPH+"__"+comp);
+				} else {
+					comp = comp.replace(GlobalConstants.GLYPH+"__","");
+				}
 				
 				//these are not meant to be displayed
 				//if (comp.contains("GRID__"))
