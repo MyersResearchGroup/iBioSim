@@ -24,6 +24,7 @@ import main.util.MutableBoolean;
 import main.util.Utility;
 
 import org.sbml.libsbml.InitialAssignment;
+import org.sbml.libsbml.Layout;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.Parameter;
@@ -202,11 +203,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	/**
 	 * Creates a frame used to edit parameters or create new ones.
 	 */
-	private void parametersEditor(String option) {
-		if (option.equals("OK") && parameters.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(Gui.frame, "No parameter selected.", "Must Select A Parameter", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
+	public String parametersEditor(String option,String selected) {
 		JPanel parametersPanel;
 		if (paramsOnly) {
 			parametersPanel = new JPanel(new GridLayout(8, 2));
@@ -312,7 +309,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		String selectedID = "";
 		if (option.equals("OK")) {
 			try {
-				Parameter paramet = gcm.getSBMLDocument().getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]);
+				Parameter paramet = gcm.getSBMLDocument().getModel().getParameter(selected);
 				paramID.setText(paramet.getId());
 				selectedID = paramet.getId();
 				paramName.setText(paramet.getName());
@@ -462,10 +459,11 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 					String param = "";
 					if (paramsOnly && !((String) type.getSelectedItem()).equals("Original")) {
 						String[] params = new String[parameters.getModel().getSize()];
+						int index = 0;
 						for (int i = 0; i < parameters.getModel().getSize(); i++) {
 							params[i] = parameters.getModel().getElementAt(i).toString();
+							if (params[i].equals(selected)) index = i;
 						}
-						int index = parameters.getSelectedIndex();
 						String[] splits = params[index].split(" ");
 						for (int i = 0; i < splits.length - 2; i++) {
 							param += splits[i] + " ";
@@ -495,22 +493,20 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						 */
 					}
 					if (!error && option.equals("OK") && paramConst.getSelectedItem().equals("true")) {
-						String v = ((String) parameters.getSelectedValue()).split(" ")[0];
-						error = SBMLutilities.checkConstant(gcm.getSBMLDocument(), "Parameters", v);
+						error = SBMLutilities.checkConstant(gcm.getSBMLDocument(), "Parameters", selected);
 					}
 					if (!error && option.equals("OK") && paramConst.getSelectedItem().equals("false")) {
-						String v = ((String) parameters.getSelectedValue()).split(" ")[0];
-						error = checkNotConstant(v);
+						error = checkNotConstant(selected);
 					}
 					if (!error) {
 						if (option.equals("OK")) {
+							int index = 0;
 							String[] params = new String[parameters.getModel().getSize()];
 							for (int i = 0; i < parameters.getModel().getSize(); i++) {
 								params[i] = parameters.getModel().getElementAt(i).toString();
+								if (params[i].equals(selected)) index = i;
 							}
-							int index = parameters.getSelectedIndex();
-							String v = ((String) parameters.getSelectedValue()).split(" ")[0];
-							Parameter paramet = gcm.getSBMLDocument().getModel().getParameter(v);
+							Parameter paramet = gcm.getSBMLDocument().getModel().getParameter(selected);
 							parameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 							params = Utility.getList(params, parameters);
 							parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -522,7 +518,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							else {
 								paramet.setConstant(false);
 							}
-							Port port = gcm.getPortByIdRef(v);
+							Port port = gcm.getPortByIdRef(selected);
 							if (port!=null) {
 								if (onPort.isSelected()) {
 									port.setId(GlobalConstants.PARAMETER+"__"+paramet.getId());
@@ -563,7 +559,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 								}
 							}
 							else {
-								SBMLutilities.updateVarId(gcm.getSBMLDocument(), false, v, paramID.getText().trim());
+								SBMLutilities.updateVarId(gcm.getSBMLDocument(), false, selected, paramID.getText().trim());
 							}
 							if (paramet.getId().equals(GlobalConstants.STOICHIOMETRY_STRING)) {
 								for (long i=0; i<model.getNumReactions(); i++) {
@@ -592,10 +588,11 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						}
 						else {
 							String[] params = new String[parameters.getModel().getSize()];
+							int index = 0;
 							for (int i = 0; i < parameters.getModel().getSize(); i++) {
 								params[i] = parameters.getModel().getElementAt(i).toString();
+								if (params[i].equals(selected)) index = i;
 							}
-							int index = parameters.getSelectedIndex();
 							Parameter paramet = gcm.getSBMLDocument().getModel().createParameter();
 							paramet.setId(paramID.getText().trim());
 							paramet.setName(paramName.getText().trim());
@@ -645,8 +642,9 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			}
 		}
 		if (value == JOptionPane.NO_OPTION) {
-			return;
+			return selected;
 		}
+		return paramID.getText().trim();
 	}
 
 	/**
@@ -668,37 +666,36 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	/**
 	 * Remove a global parameter
 	 */
-	private void removeParameter() {
-		int index = parameters.getSelectedIndex();
-		if (index != -1) {
-			if (!SBMLutilities.variableInUse(gcm.getSBMLDocument(), ((String) parameters.getSelectedValue()).split(" ")[0], false, true, true)) {
-				Parameter tempParameter = gcm.getSBMLDocument().getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]);
-				ListOf p = gcm.getSBMLDocument().getModel().getListOfParameters();
-				for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumParameters(); i++) {
-					if (((Parameter) p.get(i)).getId().equals(tempParameter.getId())) {
-						p.remove(i);
-					}
+	private boolean removeParameter(String selected) {
+		if (!SBMLutilities.variableInUse(gcm.getSBMLDocument(), selected, false, true, true)) {
+			Parameter tempParameter = gcm.getSBMLDocument().getModel().getParameter(selected);
+			ListOf p = gcm.getSBMLDocument().getModel().getListOfParameters();
+			for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumParameters(); i++) {
+				if (((Parameter) p.get(i)).getId().equals(tempParameter.getId())) {
+					p.remove(i);
 				}
-				for (long i = 0; i < gcm.getSBMLCompModel().getNumPorts(); i++) {
-					Port port = gcm.getSBMLCompModel().getPort(i);
-					if (port.isSetIdRef() && port.getIdRef().equals(tempParameter.getId())) {
-						gcm.getSBMLCompModel().removePort(i);
-						break;
-					}
-				}
-				parameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-				Utility.remove(parameters);
-				parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-				if (index < parameters.getModel().getSize()) {
-					parameters.setSelectedIndex(index);
-				}
-				else {
-					parameters.setSelectedIndex(index - 1);
-				}
-				dirty.setValue(true);
-				gcm.makeUndoPoint();
 			}
+			for (long i = 0; i < gcm.getSBMLCompModel().getNumPorts(); i++) {
+				Port port = gcm.getSBMLCompModel().getPort(i);
+				if (port.isSetIdRef() && port.getIdRef().equals(tempParameter.getId())) {
+					gcm.getSBMLCompModel().removePort(i);
+					break;
+				}
+			}
+			if (gcm.getSBMLLayout().getLayout("iBioSim") != null) {
+				Layout layout = gcm.getSBMLLayout().getLayout("iBioSim"); 
+				if (layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+selected)!=null) {
+					layout.removeSpeciesGlyph(GlobalConstants.GLYPH+"__"+selected);
+				}
+				if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+selected) != null) {
+					layout.removeTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+selected);
+				}
+			}
+			dirty.setValue(true);
+			gcm.makeUndoPoint();
+			return true;
 		}
+		return false;
 	}
 
 	public void setPanels(InitialAssignments initialsPanel, Rules rulesPanel) {
@@ -712,24 +709,47 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		// if the add compartment button is clicked
 		// if the add parameters button is clicked
 		if (e.getSource() == addParam) {
-			parametersEditor("Add");
+			parametersEditor("Add","");
 		}
 		// if the edit parameters button is clicked
 		else if (e.getSource() == editParam) {
-			parametersEditor("OK");
+			if (parameters.getSelectedIndex() == -1) {
+				JOptionPane.showMessageDialog(Gui.frame, "No parameter selected.", "Must Select A Parameter", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			String selected = ((String) parameters.getSelectedValue()).split(" ")[0];
+			parametersEditor("OK",selected);
 			initialsPanel.refreshInitialAssignmentPanel(gcm);
 			rulesPanel.refreshRulesPanel();
 		}
 		// if the remove parameters button is clicked
 		else if (e.getSource() == removeParam) {
-			removeParameter();
+			int index = parameters.getSelectedIndex();
+			if (index != -1) {
+				if (removeParameter(((String) parameters.getSelectedValue()).split(" ")[0])) {
+					parameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+					Utility.remove(parameters);
+					parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+					if (index < parameters.getModel().getSize()) {
+						parameters.setSelectedIndex(index);
+					}
+					else {
+						parameters.setSelectedIndex(index - 1);
+					}
+				}
+			}
 		}
 	}
 
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2) {
 			if (e.getSource() == parameters) {
-				parametersEditor("OK");
+				if (parameters.getSelectedIndex() == -1) {
+					JOptionPane.showMessageDialog(Gui.frame, "No parameter selected.", "Must Select A Parameter", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				String selected = ((String) parameters.getSelectedValue()).split(" ")[0];
+				parametersEditor("OK",selected);
 				initialsPanel.refreshInitialAssignmentPanel(gcm);
 				rulesPanel.refreshRulesPanel();
 			}

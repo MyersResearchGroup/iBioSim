@@ -89,6 +89,7 @@ import biomodel.gui.Grid;
 import biomodel.gui.textualeditor.Constraints;
 import biomodel.gui.textualeditor.Events;
 import biomodel.gui.textualeditor.MySpecies;
+import biomodel.gui.textualeditor.Parameters;
 import biomodel.gui.textualeditor.Reactions;
 import biomodel.gui.textualeditor.Rules;
 import biomodel.gui.textualeditor.SBMLutilities;
@@ -259,6 +260,14 @@ public class BioModel {
 
 	public void setEventPanel(Events eventPanel) {
 		this.eventPanel = eventPanel;
+	}
+
+	public Parameters getParameterPanel() {
+		return parameterPanel;
+	}
+
+	public void setParameterPanel(Parameters parameterPanel) {
+		this.parameterPanel = parameterPanel;
 	}
 
 	public SBMLDocument getSBMLDocument() {
@@ -4260,7 +4269,6 @@ public class BioModel {
 		// Set default promoter metaID
 		metaIDIndex = SBMLutilities.setDefaultMetaID(sbml, promoter, metaIDIndex); 
 		
-		promoter.setId(id);
 		promoter.setSBOTerm(GlobalConstants.SBO_PROMOTER_SPECIES);
 		promoter.setInitialAmount(sbml.getModel().getParameter(GlobalConstants.PROMOTER_COUNT_STRING).getValue());
 
@@ -4289,16 +4297,55 @@ public class BioModel {
 			speciesGlyph.getBoundingBox().setY(y);
 			speciesGlyph.getBoundingBox().setWidth(GlobalConstants.DEFAULT_SPECIES_WIDTH);
 			speciesGlyph.getBoundingBox().setHeight(GlobalConstants.DEFAULT_SPECIES_HEIGHT);
-			//prop.setProperty("graphwidth", String.valueOf(GlobalConstants.DEFAULT_SPECIES_WIDTH));
-			//prop.setProperty("graphheight", String.valueOf(GlobalConstants.DEFAULT_SPECIES_HEIGHT));
 			TextGlyph textGlyph = layout.createTextGlyph();
 			textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+id);
 			textGlyph.setGraphicalObjectId(GlobalConstants.GLYPH+"__"+id);
 			textGlyph.setText(id);
 			textGlyph.setBoundingBox(speciesGlyph.getBoundingBox());
-			//prop.setProperty(GlobalConstants.EXPLICIT_PROMOTER, GlobalConstants.TRUE);
-			//centerVertexOverPoint(prop, x, y);
 		}
+
+		return id;
+	}
+	public String createVariable(String id, float x, float y) {
+		Parameter parameter = sbml.getModel().createParameter();
+		// Set default species ID
+		if (id == null) {
+			do {
+				creatingVariableID++;
+				id = "V" + String.valueOf(creatingVariableID);
+			}
+			while ((sbml.getElementBySId(id)!=null)||(sbml.getElementByMetaId(id)!=null));
+		}
+		parameter.setId(id);
+		// Set default promoter metaID
+		metaIDIndex = SBMLutilities.setDefaultMetaID(sbml, parameter, metaIDIndex); 
+		parameter.setConstant(false);
+		parameter.setValue(0.0);
+
+		Layout layout = null;
+		if (sbmlLayout.getLayout("iBioSim") != null) {
+			layout = sbmlLayout.getLayout("iBioSim"); 
+		} else {
+			layout = sbmlLayout.createLayout();
+			layout.setId("iBioSim");
+		}
+		SpeciesGlyph speciesGlyph = null;
+		if (layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+id)!=null) {
+			speciesGlyph = layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+id);
+		} else {
+			speciesGlyph = layout.createSpeciesGlyph();
+			speciesGlyph.setId(GlobalConstants.GLYPH+"__"+id);
+			speciesGlyph.setSpeciesId(id);
+		}
+		speciesGlyph.getBoundingBox().setX(x);
+		speciesGlyph.getBoundingBox().setY(y);
+		speciesGlyph.getBoundingBox().setWidth(GlobalConstants.DEFAULT_VARIABLE_WIDTH);
+		speciesGlyph.getBoundingBox().setHeight(GlobalConstants.DEFAULT_VARIABLE_HEIGHT);
+		TextGlyph textGlyph = layout.createTextGlyph();
+		textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+id);
+		textGlyph.setGraphicalObjectId(GlobalConstants.GLYPH+"__"+id);
+		textGlyph.setText(id);
+		textGlyph.setBoundingBox(speciesGlyph.getBoundingBox());
 
 		return id;
 	}
@@ -5684,11 +5731,14 @@ public class BioModel {
 	
 	private Events eventPanel = null;
 	
+	private Parameters parameterPanel = null;
+	
 	private Grid grid = null;
 	private boolean isWithinCompartment;
 	
 	private String defaultCompartment;
 	
+	private int creatingVariableID = 0;
 	private int creatingPromoterID = 0;
 	private int creatingSpeciesID = 0;
 	private int metaIDIndex = 1;

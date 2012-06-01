@@ -62,6 +62,7 @@ import org.sbml.libsbml.ModifierSpeciesReference;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.ReactionGlyph;
 import org.sbml.libsbml.SBMLDocument;
+import org.sbml.libsbml.SpeciesGlyph;
 import org.sbml.libsbml.SpeciesReference;
 import org.sbml.libsbml.TextGlyph;
 
@@ -79,6 +80,7 @@ import biomodel.gui.textualeditor.Compartments;
 import biomodel.gui.textualeditor.Constraints;
 import biomodel.gui.textualeditor.Events;
 import biomodel.gui.textualeditor.ModelPanel;
+import biomodel.gui.textualeditor.Parameters;
 import biomodel.gui.textualeditor.Reactions;
 import biomodel.gui.textualeditor.Rules;
 import biomodel.gui.textualeditor.SBMLutilities;
@@ -116,6 +118,7 @@ public class Schematic extends JPanel implements ActionListener {
 	private Reactions reactions;
 	private Rules rules;
 	private Constraints constraints;
+	private Parameters parameters;
 	private Events events;
 	private JComboBox compartmentList;
 	private Grid grid;
@@ -154,7 +157,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 */
 	public Schematic(BioModel gcm, Gui biosim, ModelEditor gcm2sbml, boolean editable, 
 			MovieContainer movieContainer2, Compartments compartments, Reactions reactions, Rules rules,
-			Constraints constraints, Events events, JComboBox compartmentList){
+			Constraints constraints, Events events, Parameters parameters, JComboBox compartmentList){
 		
 		super(new BorderLayout());
 		
@@ -170,6 +173,7 @@ public class Schematic extends JPanel implements ActionListener {
 		this.reactions = reactions;
 		this.rules = rules;
 		this.constraints = constraints;
+		this.parameters = parameters;
 		this.events = events;
 		this.grid = gcm.getGrid();
 		this.compartmentList = compartmentList;
@@ -349,8 +353,8 @@ public class Schematic extends JPanel implements ActionListener {
 		toolBar.add(addComponentButton);
 		addPromoterButton = Utils.makeRadioToolButton("promoter_mode.png", "", "Add Promoters", this, modeButtonGroup);
 		toolBar.add(addPromoterButton);
-		//addVariableButton = Utils.makeRadioToolButton("variable_mode.png", "", "Add Variables", this, modeButtonGroup);
-		//toolBar.add(addVariableButton);
+		addVariableButton = Utils.makeRadioToolButton("variable_mode.png", "", "Add Variables", this, modeButtonGroup);
+		toolBar.add(addVariableButton);
 		addRuleButton = Utils.makeRadioToolButton("rule_mode.png", "", "Add Rules", this, modeButtonGroup);
 		toolBar.add(addRuleButton);
 		addConstraintButton = Utils.makeRadioToolButton("constraint_mode.png", "", "Add Constraints", this, modeButtonGroup);
@@ -788,8 +792,8 @@ public class Schematic extends JPanel implements ActionListener {
 							modelEditor.setDirty(true);
 							bioModel.makeUndoPoint();
 						}
-						else if(addPromoterButton != null && addPromoterButton.isSelected()) {
-							//bioModel.createVariable(null, e.getX(), e.getY(), true);
+						else if(addVariableButton != null && addVariableButton.isSelected()) {
+							bioModel.createVariable(null, e.getX(), e.getY());
 							modelEditor.refresh();
 							graph.buildGraph();
 							modelEditor.setDirty(true);
@@ -1227,6 +1231,10 @@ public class Schematic extends JPanel implements ActionListener {
 							
 							bioModel.removeById(cell.getId());
 						}
+						else if(type == GlobalConstants.VARIABLE) {
+							
+							bioModel.removeById(cell.getId());
+						}
 						else if(type == GlobalConstants.SPECIES){
 							
 							/*
@@ -1349,6 +1357,29 @@ public class Schematic extends JPanel implements ActionListener {
 			return;
 		}
 		*/
+		
+		if(graph.getCellType(source)==GlobalConstants.VARIABLE ||
+				graph.getCellType(target)==GlobalConstants.VARIABLE) {
+			JOptionPane.showMessageDialog(Gui.frame, "A variable cannot be explicitly connected to other objects.");
+			graph.buildGraph();
+			return;
+		} else if(graph.getCellType(source)==GlobalConstants.RULE ||
+				graph.getCellType(target)==GlobalConstants.RULE) {
+			JOptionPane.showMessageDialog(Gui.frame, "A rule cannot be explicitly connected to other objects.");
+			graph.buildGraph();
+			return;
+		} else if(graph.getCellType(source)==GlobalConstants.EVENT ||
+				graph.getCellType(target)==GlobalConstants.EVENT) {
+			JOptionPane.showMessageDialog(Gui.frame, "A event cannot be explicitly connected to other objects.");
+			graph.buildGraph();
+			return;
+		} else if(graph.getCellType(source)==GlobalConstants.CONSTRAINT ||
+				graph.getCellType(target)==GlobalConstants.CONSTRAINT) {
+			JOptionPane.showMessageDialog(Gui.frame, "A constraint cannot be explicitly connected to other objects.");
+			graph.buildGraph();
+			return;
+		}
+		
 		// make sure there is at most 1 component
 		int numComponents = 0;
 		if(graph.getCellType(source)==GlobalConstants.COMPONENT)
@@ -1358,7 +1389,6 @@ public class Schematic extends JPanel implements ActionListener {
 		// bail out if the user tries to connect two components.
 		if(numComponents == 2){
 			JOptionPane.showMessageDialog(Gui.frame, "You can't connect a component directly to another component. Please go through a species.");
-			//graph.removeCells(cells);
 			graph.buildGraph();
 			return;
 		}
@@ -1855,6 +1885,28 @@ public class Schematic extends JPanel implements ActionListener {
 						ReactionGlyph reactionGlyph = layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+cell.getId());
 						reactionGlyph.setId(GlobalConstants.GLYPH+"__"+id);
 						reactionGlyph.setReactionId(id);
+					}
+					if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId())!=null) {
+						TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
+						textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+id);
+						textGlyph.setGraphicalObjectId(GlobalConstants.GLYPH+"__"+id);
+						textGlyph.setText(id);
+					}
+				}
+				cell.setId(id);
+			}
+		}		
+		else if(cellType == GlobalConstants.VARIABLE){
+			
+			String id = parameters.parametersEditor("OK",(String)cell.getId());
+			
+			if (!cell.getId().equals(id)) {
+				if (bioModel.getSBMLLayout().getNumLayouts() != 0) {
+					Layout layout = bioModel.getSBMLLayout().getLayout(0); 
+					if (layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
+						SpeciesGlyph speciesGlyph = layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+cell.getId());
+						speciesGlyph.setId(GlobalConstants.GLYPH+"__"+id);
+						speciesGlyph.setSpeciesId(id);
 					}
 					if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId())!=null) {
 						TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
