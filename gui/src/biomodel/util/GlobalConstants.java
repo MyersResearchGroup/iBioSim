@@ -156,8 +156,8 @@ public class GlobalConstants {
 	public static final int DEFAULT_SPECIES_HEIGHT = 30;
 	public static final int DEFAULT_REACTION_WIDTH = 30;
 	public static final int DEFAULT_REACTION_HEIGHT = 30;
-	public static final int DEFAULT_VARIABLE_WIDTH = 40;
-	public static final int DEFAULT_VARIABLE_HEIGHT = 40;
+	public static final int DEFAULT_VARIABLE_WIDTH = 30;
+	public static final int DEFAULT_VARIABLE_HEIGHT = 30;
 	public static final int DEFAULT_RULE_WIDTH = 50;
 	public static final int DEFAULT_RULE_HEIGHT = 50;
 	public static final int DEFAULT_CONSTRAINT_WIDTH = 50;
