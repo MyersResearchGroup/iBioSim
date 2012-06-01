@@ -414,10 +414,12 @@ public class BioGraph extends mxGraph {
 			}
 		}
 		
-		for (long i = 0; i < m.getNumParameters(); i++) {
-			if (!m.getParameter(i).getConstant()) {
-				if(createGraphVariableFromModel(m.getParameter(i).getId()))
-					needsPositioning = true;
+		if (!gcm.isGridEnabled()) {
+			for (long i = 0; i < m.getNumParameters(); i++) {
+				if (!m.getParameter(i).getConstant()) {
+					if(createGraphVariableFromModel(m.getParameter(i).getId()))
+						needsPositioning = true;
+				}
 			}
 		}
 		
