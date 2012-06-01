@@ -22,6 +22,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.tree.TreeModel;
 
 import main.Gui;
@@ -86,7 +88,7 @@ import sbol.SBOLUtility;
  * 
  * @author Nam Nguyen
  */
-public class ModelEditor extends JPanel implements ActionListener, MouseListener {
+public class ModelEditor extends JPanel implements ActionListener, MouseListener, ChangeListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -268,7 +270,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	public String getGCMName() {
 		return gcmname;
 	}
-
+	
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2) {
 			Object o = e.getSource();
@@ -1456,7 +1458,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		JPanel propPanel = new JPanel(new BorderLayout());
 		propPanel.add(mainPanelNorth, "North");
 		mainPanel.add(mainPanelCenter, "Center");
-		JTabbedPane tab = new JTabbedPane();
+		tab = new JTabbedPane();
 		
 		String file = filename.replace(".gcm", ".xml");
 		
@@ -1480,6 +1482,9 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		biomodel.setSpeciesPanel(speciesPanel);
 		biomodel.setReactionPanel(reactionPanel);
 		biomodel.setRulePanel(rulesPanel);
+		biomodel.setEventPanel(eventPanel);
+		biomodel.setConstraintPanel(consPanel);
+		biomodel.setParameterPanel(parametersPanel);
 		
 		components = new PropertyList("Component List");
 		EditButton addInit = new EditButton("Add Component", components);
@@ -1510,13 +1515,16 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		} 
 		else {
 			this.schematic = new Schematic(biomodel, biosim, this, true, null,compartmentPanel,reactionPanel,rulesPanel,
-					consPanel,eventPanel,compartmentList);
+					consPanel,eventPanel,parametersPanel,compartmentList);
 			tab.addTab("Schematic", schematic);
 			tab.addTab("Compartments", compPanel);
 			if (biomodel.getGrid().isEnabled()) {
 				tab.addTab("Grid Species", speciesPanel);
 			}
 			tab.addTab("Parameters", parametersPanel);
+			
+			tab.addChangeListener(this);
+
 		}
 		
 		functionPanel = new Functions(biomodel,dirty);
@@ -2291,6 +2299,14 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	public void setTextBased(boolean textBased) {
 		this.textBased = textBased;
 	}
+
+	public void stateChanged(ChangeEvent arg0) {
+		if (tab.getSelectedIndex()==0) {
+			schematic.getGraph().buildGraph();
+		}
+	}
+	
+	private JTabbedPane tab = null;
 
 	private boolean lock = false;
 

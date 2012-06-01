@@ -89,6 +89,7 @@ public class GlobalConstants {
 	public static final String MAX_DIMER_STRING = "N-mer as trascription factor";
 	public static final String INITIAL_STRING = "ns";	
 	public static final String PROMOTER = "Promoter";
+	public static final String VARIABLE = "Variable";
 	public static final String MRNA = "mRNA";
 	public static final String EXPLICIT_PROMOTER = "ExplicitPromoter";
 	public static final String SBMLFILE = "SBML file";
@@ -155,6 +156,8 @@ public class GlobalConstants {
 	public static final int DEFAULT_SPECIES_HEIGHT = 30;
 	public static final int DEFAULT_REACTION_WIDTH = 30;
 	public static final int DEFAULT_REACTION_HEIGHT = 30;
+	public static final int DEFAULT_VARIABLE_WIDTH = 40;
+	public static final int DEFAULT_VARIABLE_HEIGHT = 40;
 	public static final int DEFAULT_RULE_WIDTH = 50;
 	public static final int DEFAULT_RULE_HEIGHT = 50;
 	public static final int DEFAULT_CONSTRAINT_WIDTH = 50;
