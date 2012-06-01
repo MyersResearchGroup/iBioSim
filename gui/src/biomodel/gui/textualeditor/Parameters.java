@@ -76,9 +76,11 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	private Rules rulesPanel;
 
 	private Gui biosim;
+	
+	private boolean constantsOnly;
 
 	public Parameters(Gui biosim, BioModel gcm, MutableBoolean dirty, Boolean paramsOnly, ArrayList<String> getParams,
-			String file, ArrayList<String> parameterChanges) {
+			String file, ArrayList<String> parameterChanges, boolean constantsOnly) {
 		super(new BorderLayout());
 		this.gcm = gcm;
 		this.dirty = dirty;
@@ -86,11 +88,18 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		this.file = file;
 		this.parameterChanges = parameterChanges;
 		this.biosim = biosim;
+		this.constantsOnly = constantsOnly;
 		Model model = gcm.getSBMLDocument().getModel();
 		JPanel addParams = new JPanel();
-		addParam = new JButton("Add Parameter");
-		removeParam = new JButton("Remove Parameter");
-		editParam = new JButton("Edit Parameter");
+		if (constantsOnly) {
+			addParam = new JButton("Add Constant");
+			removeParam = new JButton("Remove Constant");
+			editParam = new JButton("Edit Constant");
+		} else {
+			addParam = new JButton("Add Parameter");
+			removeParam = new JButton("Remove Parameter");
+			editParam = new JButton("Edit Parameter");
+		}
 		addParams.add(addParam);
 		addParams.add(removeParam);
 		addParams.add(editParam);
@@ -101,7 +110,12 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			addParam.setEnabled(false);
 			removeParam.setEnabled(false);
 		}
-		JLabel parametersLabel = new JLabel("List of Global Parameters:");
+		JLabel parametersLabel;
+		if (constantsOnly) {
+			parametersLabel = new JLabel("List of Global Parameters:");
+		} else {
+			parametersLabel = new JLabel("List of Global Parameters:");
+		}
 		parameters = new JList();
 		parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scroll3 = new JScrollPane();
@@ -113,9 +127,15 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		for (int i = 0; i < model.getNumParameters(); i++) {
 			Parameter parameter = (Parameter) listOfParameters.get(i);
 			
+			params[i] = parameter.getId(); 
+
 			if (parameter.getId().contains("_locations"))
 				++notIncludedParametersCount;
-			params[i] = parameter.getId(); 
+			if (constantsOnly && !parameter.getConstant()) {
+				++notIncludedParametersCount;
+				params[i] = params[i] + "__DELETE";
+			}
+			
 			if (paramsOnly) {
 				params[i] = parameter.getId() + " " + parameter.getValue();
 				for (int j = 0; j < getParams.size(); j++) {
@@ -146,7 +166,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		int j=0;
 		for (int i = 0; i < paramsCopy.length; ++i) {
 			
-			if (paramsCopy[i].contains("_locations"))
+			if (paramsCopy[i].contains("_locations")||paramsCopy[i].endsWith("__DELETE"))
 				continue;
 			else {				
 				params[j] = paramsCopy[i];
@@ -177,6 +197,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		String[] params = new String[(int) model.getNumParameters()];
 		for (int i = 0; i < model.getNumParameters(); i++) {
 			Parameter parameter = (Parameter) listOfParameters.get(i);
+			if (constantsOnly && !parameter.getConstant()) continue;
 			params[i] = parameter.getId();
 			if (paramsOnly) {
 				params[i] += " " + parameter.getValue();
@@ -500,16 +521,13 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 					}
 					if (!error) {
 						if (option.equals("OK")) {
-							int index = 0;
+							int index = -1;
 							String[] params = new String[parameters.getModel().getSize()];
 							for (int i = 0; i < parameters.getModel().getSize(); i++) {
 								params[i] = parameters.getModel().getElementAt(i).toString();
 								if (params[i].equals(selected)) index = i;
 							}
 							Parameter paramet = gcm.getSBMLDocument().getModel().getParameter(selected);
-							parameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-							params = Utility.getList(params, parameters);
-							parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 							paramet.setId(paramID.getText().trim());
 							paramet.setName(paramName.getText().trim());
 							if (paramConst.getSelectedItem().equals("true")) {
@@ -540,10 +558,55 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							else {
 								paramet.setUnits(unit);
 							}
-							params[index] = param;
-							Utility.sort(params);
-							parameters.setListData(params);
-							parameters.setSelectedIndex(index);
+							if (!constantsOnly || paramet.getConstant()) {
+								if (index >= 0) {
+									parameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+									params = Utility.getList(params, parameters);
+									parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+									params[index] = param;
+									Utility.sort(params);
+									parameters.setListData(params);
+									parameters.setSelectedIndex(index);
+								} else {
+									JList add = new JList();
+									Object[] adding = { param };
+									add.setListData(adding);
+									add.setSelectedIndex(0);
+									parameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+									adding = Utility.add(params, parameters, add, null, null, null, null, null, Gui.frame);
+									params = new String[adding.length];
+									for (int i = 0; i < adding.length; i++) {
+										params[i] = (String) adding[i];
+									}
+									Utility.sort(params);
+									parameters.setListData(params);
+									parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+									if (gcm.getSBMLDocument().getModel().getNumParameters() == 1) {
+										parameters.setSelectedIndex(0);
+									}
+									else {
+										parameters.setSelectedIndex(index);
+									}
+								}
+								if (paramet.getConstant()) {
+									if (gcm.getSBMLLayout().getLayout("iBioSim") != null) {
+										Layout layout = gcm.getSBMLLayout().getLayout("iBioSim"); 
+										if (layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+selected)!=null) {
+											layout.removeSpeciesGlyph(GlobalConstants.GLYPH+"__"+selected);
+										}
+										if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+selected) != null) {
+											layout.removeTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+selected);
+										}
+									}
+								}
+							} else if (constantsOnly) {
+								if (index >= 0) { 
+									parameters.setSelectedIndex(index);
+									parameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+									Utility.remove(parameters);
+									parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+								}
+							}
 							if (paramsOnly) {
 								int remove = -1;
 								for (int i = 0; i < parameterChanges.size(); i++) {
@@ -611,24 +674,26 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 								port.setId(GlobalConstants.PARAMETER+"__"+paramet.getId());
 								port.setIdRef(paramet.getId());
 							}
-							JList add = new JList();
-							Object[] adding = { param };
-							add.setListData(adding);
-							add.setSelectedIndex(0);
-							parameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-							adding = Utility.add(params, parameters, add, null, null, null, null, null, Gui.frame);
-							params = new String[adding.length];
-							for (int i = 0; i < adding.length; i++) {
-								params[i] = (String) adding[i];
-							}
-							Utility.sort(params);
-							parameters.setListData(params);
-							parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-							if (gcm.getSBMLDocument().getModel().getNumParameters() == 1) {
-								parameters.setSelectedIndex(0);
-							}
-							else {
-								parameters.setSelectedIndex(index);
+							if (!constantsOnly || paramet.getConstant()) {
+								JList add = new JList();
+								Object[] adding = { param };
+								add.setListData(adding);
+								add.setSelectedIndex(0);
+								parameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+								adding = Utility.add(params, parameters, add, null, null, null, null, null, Gui.frame);
+								params = new String[adding.length];
+								for (int i = 0; i < adding.length; i++) {
+									params[i] = (String) adding[i];
+								}
+								Utility.sort(params);
+								parameters.setListData(params);
+								parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+								if (gcm.getSBMLDocument().getModel().getNumParameters() == 1) {
+									parameters.setSelectedIndex(0);
+								}
+								else {
+									parameters.setSelectedIndex(index);
+								}
 							}
 						}
 						dirty.setValue(true);
