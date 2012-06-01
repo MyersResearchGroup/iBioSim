@@ -499,6 +499,7 @@ public abstract class Simulator {
 				maxCol = (int) location.getY();
 			}
 		}
+		
 			
 		switch (direction) {
 		

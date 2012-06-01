@@ -2224,22 +2224,24 @@ public class Schematic extends JPanel implements ActionListener {
 		paddedGraphBounds.setY(paddedGraphBounds.getY() + 40);
 		
 		if (scale == true) {
+			
+			double maxWidth = 4000;
 		
 			double newHeight = image.getHeight();
 			double newWidth = image.getWidth();
 			
-			//scale the image if it's too big (ie, > 1024 x 768)
-			//be sure to keep the ratio consistent
-			if (image.getHeight() > 768) {
-				
-				newWidth = newWidth * (768 / newHeight);
-				newHeight = 768;
-			}
+//			//scale the image if it's too big (ie, > 1024 x 768)
+//			//be sure to keep the ratio consistent
+//			if (image.getHeight() > 768) {
+//				
+//				newWidth = newWidth * (768 / newHeight);
+//				newHeight = 768;
+//			}
 			
-			if (newWidth > 1024) {			
+			if (newWidth > maxWidth) {			
 				
-				newHeight = newHeight * (1024 / newWidth);
-				newWidth = 1024;
+				newHeight = newHeight * (maxWidth / newWidth);
+				newWidth = maxWidth;
 			}
 	
 			int w = image.getWidth();

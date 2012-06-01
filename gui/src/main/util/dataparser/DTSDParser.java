@@ -393,7 +393,7 @@ public class DTSDParser {
 				
 				//don't increase the min row/col
 				int oldMinRow = (int) frameToMinRowColMap.get(dataIndex - 1).getX();
-				int oldMinCol = (int) frameToMinRowColMap.get(dataIndex - 1).getX();
+				int oldMinCol = (int) frameToMinRowColMap.get(dataIndex - 1).getY();
 				
 				if (minRow > oldMinRow)
 					minRow = oldMinRow;

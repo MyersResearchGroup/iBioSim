@@ -19,6 +19,7 @@ public class DynamicSimulation {
 	private Simulator simulator = null;
 	
 	private boolean cancelFlag = false;	
+	private boolean statisticsFlag = false;
 	
 	/**
 	 * constructor; sets the simulator type
@@ -78,7 +79,7 @@ public class DynamicSimulation {
 //				System.gc();
 		}
 		
-		if (cancelFlag == false) {
+		if (cancelFlag == false && statisticsFlag == true) {
 			
 			progressLabel.setText("Generating Statistics . . .");
 			running.setMinimumSize(new Dimension(200,100));
