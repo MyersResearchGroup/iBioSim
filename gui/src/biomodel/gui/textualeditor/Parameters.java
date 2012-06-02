@@ -194,21 +194,29 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		this.gcm = gcm;
 		Model model = gcm.getSBMLDocument().getModel();
 		ListOf listOfParameters = model.getListOfParameters();
-		String[] params = new String[(int) model.getNumParameters()];
+		
+		int skip = 0;
+		for (int i = 0; i < model.getNumParameters(); i++) {
+			Parameter parameter = (Parameter) listOfParameters.get(i);
+			if (constantsOnly && !parameter.getConstant()) skip++;
+		}
+		int k = 0;
+		String[] params = new String[(int) model.getNumParameters()-skip];
 		for (int i = 0; i < model.getNumParameters(); i++) {
 			Parameter parameter = (Parameter) listOfParameters.get(i);
 			if (constantsOnly && !parameter.getConstant()) continue;
-			params[i] = parameter.getId();
+			params[k] = parameter.getId();
 			if (paramsOnly) {
-				params[i] += " " + parameter.getValue();
+				params[k] += " " + parameter.getValue();
 				for (int j = 0; j < parameterChanges.size(); j++) {
-					if (parameterChanges.get(j).split(" ")[0].equals(params[i].split(" ")[0])) {
+					if (parameterChanges.get(j).split(" ")[0].equals(params[k].split(" ")[0])) {
 						parameterChanges.set(j,
-								params[i] + " " + parameterChanges.get(j).split(" ")[2] + " " + parameterChanges.get(j).split(" ")[3]);
-						params[i] = parameterChanges.get(j);
+								params[k] + " " + parameterChanges.get(j).split(" ")[2] + " " + parameterChanges.get(j).split(" ")[3]);
+						params[k] = parameterChanges.get(j);
 					}
 				}
 			}
+			k++;
 		}
 		Utility.sort(params);
 		int selected = 0;
