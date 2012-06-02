@@ -1521,8 +1521,10 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			tab.addTab("Compartments", compPanel);
 			if (biomodel.getGrid().isEnabled()) {
 				tab.addTab("Grid Species", speciesPanel);
+				tab.addTab("Parameters", parametersPanel);
+			} else {
+				tab.addTab("Constants", parametersPanel);
 			}
-			tab.addTab("Constants", parametersPanel);
 			
 			tab.addChangeListener(this);
 

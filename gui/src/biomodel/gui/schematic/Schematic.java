@@ -1287,13 +1287,8 @@ public class Schematic extends JPanel implements ActionListener {
 				Object cells[] = (Object [])event.getProperties().get("cells");
 
 				for(Object ocell:cells){
-
 					mxCell cell = (mxCell)ocell;
-					String type = graph.getCellType(cell);
-
-					if(type == GlobalConstants.SPECIES){
-				
-					}
+					graph.updateInternalPosition(cell);
 				}
 			}
 		});
