@@ -1282,6 +1282,22 @@ public class Schematic extends JPanel implements ActionListener {
 			}
 		});
 
+		graph.addListener(mxEvent.CELLS_RESIZED, new mxEventSource.mxIEventListener() {
+			public void invoke(Object arg0, mxEventObject event) {
+				Object cells[] = (Object [])event.getProperties().get("cells");
+
+				for(Object ocell:cells){
+
+					mxCell cell = (mxCell)ocell;
+					String type = graph.getCellType(cell);
+
+					if(type == GlobalConstants.SPECIES){
+				
+					}
+				}
+			}
+		});
+		
 		// listener for added influences
 		graph.addListener(mxEvent.CELLS_ADDED, new mxEventSource.mxIEventListener() {
 		
