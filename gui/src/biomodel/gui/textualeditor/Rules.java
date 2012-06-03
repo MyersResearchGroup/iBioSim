@@ -213,7 +213,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 		});
-		sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 1);
+		sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 2);
 		if (option.equals("OK")) {
 			ruleType.setEnabled(false);
 			Rule rule = (Rule)gcm.getSBMLDocument().getModel().getElementByMetaId(metaId);
@@ -501,6 +501,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 						rul = oldRul;
 						removeTheRule(addStr);
 					} else {
+						// Add SBOL annotation to rule
 						LinkedList<String> sbolURIs = sbolField.getSBOLURIs();
 						if (sbolURIs.size() > 0) {
 							SBOLAnnotation sbolAnnot = new SBOLAnnotation(rPointer.getMetaId(), sbolURIs);

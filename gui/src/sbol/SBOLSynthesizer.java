@@ -19,6 +19,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.text.html.HTMLDocument.Iterator;
 
 import main.Gui;
 
@@ -34,6 +35,7 @@ public class SBOLSynthesizer {
 	
 	private LinkedHashMap<String, SynthesisNode> synMap;
 	private HashSet<String> sbolFiles;
+	private HashSet<String> sbolFilePaths;
 	private HashMap<String, DnaComponent> compMap;
 	private boolean synthesizerOn;
 	private String localMatchURI;
@@ -48,10 +50,11 @@ public class SBOLSynthesizer {
 		this.localPath = localPath;
 	}
 	
-	public boolean loadSbolFiles(HashSet<String> sbolFiles) {
+	public boolean loadSbolFiles(HashSet<String> sbolFilePaths) {
 		this.sbolFiles = new HashSet<String>();
+		this.sbolFilePaths = sbolFilePaths;
 		compMap = new HashMap<String, DnaComponent>();
-		for (String filePath : sbolFiles) {
+		for (String filePath : sbolFilePaths) {
 			this.sbolFiles.add(filePath.substring(filePath.lastIndexOf(File.separator) + 1));
 			SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
 			if (sbolDoc != null) 
@@ -59,7 +62,7 @@ public class SBOLSynthesizer {
 			else
 				return false;
 		}
-		if (sbolFiles.size() == 0) {
+		if (sbolFilePaths.size() == 0) {
 			JOptionPane.showMessageDialog(Gui.frame, "No SBOL files are found in project.", 
 					"File Not Found", JOptionPane.ERROR_MESSAGE);
 			return false;
@@ -108,7 +111,7 @@ public class SBOLSynthesizer {
 					addCount++;
 					position = addSubComponent(position, sourceCompURI, synthComp, addCount, types);
 				}
-			SequenceTypeValidator validator = new SequenceTypeValidator("(p(rc)+t+)*");
+			SequenceTypeValidator validator = new SequenceTypeValidator("((p(rc)+t+)*)|(e*)");
 			if (!validator.validateSequenceTypes(types)) {
 				Object[] options = { "OK", "Cancel" };
 				int choice = JOptionPane.showOptionDialog(null, 
@@ -220,8 +223,10 @@ public class SBOLSynthesizer {
 	// Stops at nodes containing URIs for other promoters or previously visited nodes
 	private LinkedList<String> loadSourceCompURIs() {
 		Set<String> filter = SBOLUtility.soSynonyms(GlobalConstants.SBOL_PROMOTER);
-		LinkedHashSet<SynthesisNode> promoterNodes = new LinkedHashSet<SynthesisNode>();
-		Set<String> promoterNodeIds = new HashSet<String>();
+		// TO DO add engineered region to soSynonyms method or eliminate method
+		filter.add(SequenceOntology.type("SO_0000804").toString());
+		LinkedHashSet<SynthesisNode> startNodes = new LinkedHashSet<SynthesisNode>();
+		Set<String> startNodeIds = new HashSet<String>();
 		
 		int nodesSBOL = 0;
 		for (SynthesisNode synNode : synMap.values()) {
@@ -234,9 +239,13 @@ public class SBOLSynthesizer {
 							DnaComponent sourceComp = compMap.get(uri);
 							for (URI typeURI : sourceComp.getTypes())
 								if (filter.contains(typeURI.toString())) {
-									promoterNodes.add(synNode);
-									promoterNodeIds.add(synNode.getId());
+									startNodes.add(synNode);
+									startNodeIds.add(synNode.getId());
 								}
+//							if (checkStartCompType(sourceComp, filter)) {
+//								startNodes.add(synNode);
+//								startNodeIds.add(synNode.getId());
+//							}
 						} else {
 							synthesizerOn = false;
 							JOptionPane.showMessageDialog(Gui.frame, "Component with URI " + uri +
@@ -249,8 +258,8 @@ public class SBOLSynthesizer {
 		if (synthesizerOn) {
 			Set<String> visitedNodeIds;
 			int nodesSBOLVisited = 0;
-			for (SynthesisNode promoterNode : promoterNodes) {
-				visitedNodeIds = new HashSet<String>(promoterNodeIds);
+			for (SynthesisNode promoterNode : startNodes) {
+				visitedNodeIds = new HashSet<String>(startNodeIds);
 				nodesSBOLVisited = nodesSBOLVisited + loadSourceCompURIsHelper(promoterNode, sourceCompURIs, visitedNodeIds);
 			}
 			if (nodesSBOLVisited != nodesSBOL) {
@@ -263,6 +272,8 @@ public class SBOLSynthesizer {
 					return null;
 				}
 			}
+			// Check if DNA components to be assembled already exist as composite component in local SBOL files
+			//If so, turn off synthesizer and mark local composite component for return
 			if (localPath != null)
 				for (String uri : compMap.keySet()) {
 					LinkedList<String> subCompURIs = new LinkedList<String>();
@@ -279,10 +290,31 @@ public class SBOLSynthesizer {
 		return sourceCompURIs;
 	}
 	
+//	private boolean checkStartCompType(DnaComponent comp, Set<String> filter) {
+//		for (URI typeURI : comp.getTypes())
+//			if (filter.contains(typeURI.toString()))
+//				return true;
+//		if (comp.getAnnotations().size() > 0)
+//			return checkStartCompType(comp.getAnnotations().get(0).getSubComponent(), filter);
+//		else
+//			return false;
+//	}
+	
 	// Recursive helper method for walking synthesis node graph and loading associated SBOL DNA component URIs
 	private int loadSourceCompURIsHelper(SynthesisNode synNode, LinkedList<String> sourceCompURIs, Set<String> visitedNodeIds) {
 		int nodesSBOLVisited = 0;
+		SBOLSynthesizer subSynthesizer = synNode.getSynthesizer();
 		LinkedList<String> sbolURIs = synNode.getSbolURIs();
+		if (subSynthesizer != null) {
+			subSynthesizer.loadSbolFiles(sbolFilePaths);
+			if (localPath != null)
+				subSynthesizer.setLocalPath(localPath);
+			DnaComponent synthComp = subSynthesizer.synthesizeDnaComponent();
+			if (synthComp != null) {
+				sbolURIs.clear();
+				sbolURIs.add(synthComp.getURI().toString());
+			}
+		}
 		if (sbolURIs.size() > 0) {
 			nodesSBOLVisited++;
 			sourceCompURIs.addAll(sbolURIs);

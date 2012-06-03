@@ -110,7 +110,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		this.gcmEditor = gcmEditor;
 
 		fields = new HashMap<String, PropertyField>();
-		sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 0);
+		sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 3);
 
 		Model model = gcm.getSBMLDocument().getModel();
 		species = model.getSpecies(selected);
@@ -549,15 +549,14 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			// Parse out GCM and SBOL annotations and add to respective fields
 			String annotation = species.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
 			String [] annotations = annotation.split(",");
-			for (int i=0;i<annotations.length;i++) {
+			for (int i=0;i<annotations.length;i++) 
 				if (annotations[i].startsWith(GlobalConstants.TYPE)) {
 					String [] type = annotations[i].split("=");
 					typeBox.setSelectedItem(type[1]);
 				}
-				LinkedList<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(species);
-				if (sbolURIs.size() > 0)
-					sbolField.setSBOLURIs(sbolURIs);
-			}
+			LinkedList<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(species);
+			if (sbolURIs.size() > 0)
+				sbolField.setSBOLURIs(sbolURIs);
 		}
 			
 		/*
@@ -867,7 +866,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 			
 			if (!paramsOnly) {
-				// Add GCM and SBOL annotations to species
+				// Add SBOL annotation to species
 				LinkedList<String> sbolURIs = sbolField.getSBOLURIs();
 				if (sbolURIs.size() > 0) {
 					SBOLAnnotation sbolAnnot = new SBOLAnnotation(species.getMetaId(), sbolURIs);

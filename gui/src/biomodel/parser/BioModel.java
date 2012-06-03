@@ -4593,7 +4593,7 @@ public class BioModel {
 		}
 	}
 
-	private void loadSBMLFile(String sbmlFile) {
+	public void loadSBMLFile(String sbmlFile) {
 		if (!sbmlFile.equals("")) {
 			if (new File(path + separator + sbmlFile).exists()) {
 				sbml = Gui.readSBML(path + separator + sbmlFile);
@@ -5601,7 +5601,6 @@ public class BioModel {
 	public String getPath() {
 		return path;
 	}
-
 	
 	//UNDO-REDO METHODS
 	

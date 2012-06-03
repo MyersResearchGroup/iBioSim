@@ -13,7 +13,7 @@ public class SequenceTypeValidator {
 		Set<NFAState> nfaStartStates = constructNFA(regex);
 		this.dfa = new DFA();
 		dfa.setStartState(constructDFA(nfaStartStates));
-		dfa.print();
+//		dfa.print();
 	}
 	
 	private Set<NFAState> constructNFA(String regex) {

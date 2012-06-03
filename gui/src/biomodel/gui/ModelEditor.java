@@ -473,16 +473,19 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	public void saveSBOL() {
 		GCMParser parser = new GCMParser(biomodel, false);
 		SBOLSynthesizer synthesizer = parser.buildSbolSynthesizer();
+		Model sbmlModel = biomodel.getSBMLDocument().getModel();
+		LinkedList<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlModel);
 		if (synthesizer != null && synthesizer.loadSbolFiles(getSbolFiles())) {
 			synthesizer.setLocalPath(path);
 			DnaComponent synthComp = synthesizer.synthesizeDnaComponent();
 			if (synthComp != null) {
-				LinkedList<String> sbolURIs = new LinkedList<String>();
+				sbolURIs.clear();
 				sbolURIs.add(synthComp.getURI().toString());
-				Model sbmlModel = biomodel.getSBMLDocument().getModel();
-				SBOLAnnotation sbolAnnot = new SBOLAnnotation(sbmlModel.getMetaId(), sbolURIs);
-				AnnotationUtility.setSBOLAnnotation(sbmlModel, sbolAnnot);
 			}
+		}
+		if (sbolURIs.size() > 0) {
+			SBOLAnnotation sbolAnnot = new SBOLAnnotation(sbmlModel.getMetaId(), sbolURIs);
+			AnnotationUtility.setSBOLAnnotation(sbmlModel, sbolAnnot);
 		}
 	}
 	
@@ -490,7 +493,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	public void exportSBOL() {
 		GCMParser parser = new GCMParser(biomodel, false);
 		SBOLSynthesizer synthesizer = parser.buildSbolSynthesizer();
-		if (synthesizer.loadSbolFiles(getSbolFiles())) {
+		if (synthesizer != null && synthesizer.loadSbolFiles(getSbolFiles())) {
 			File lastFilePath;
 			Preferences biosimrc = Preferences.userRoot();
 			if (biosimrc.get("biosim.general.export_dir", "").equals("")) {
@@ -1475,7 +1478,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 		JPanel compPanel = new JPanel(new BorderLayout());
 		if (textBased) {
-			modelPanel = new ModelPanel(biomodel,dirty,paramsOnly);
+			modelPanel = new ModelPanel(biomodel, this);
 			compPanel.add(modelPanel, "North");
 		}
 		compPanel.add(compartmentPanel,"Center");
