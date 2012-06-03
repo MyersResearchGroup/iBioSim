@@ -31,16 +31,18 @@ public class SBOLField extends JPanel implements ActionListener {
 	private ModelEditor gcmEditor;
 	
 	public SBOLField(String sbolType, ModelEditor gcmEditor, int styleOption) {
-		super(new GridLayout(1, 2));
+		super(new GridLayout(1, styleOption));
 	
 		this.sbolType = sbolType;
 		this.styleOption = styleOption;
-		setLabel(sbolType);
+		if (styleOption == 2 || styleOption  == 3) {
+			setLabel(sbolType);
+			this.add(sbolLabel);
+		}
 		sbolButton.setActionCommand("associateSBOL");
 		sbolButton.addActionListener(this);
-		this.add(sbolLabel);
 		this.add(sbolButton);
-		if (styleOption == 0)
+		if (styleOption == 3)
 			this.add(sbolText);
 		sbolText.setVisible(false);
 		
@@ -109,7 +111,7 @@ public class SBOLField extends JPanel implements ActionListener {
 	
 	private void setLabel(String sbolType) {
 		if (sbolType.equals(GlobalConstants.SBOL_DNA_COMPONENT)) {
-			if (styleOption == 0)
+			if (styleOption == 3)
 				sbolLabel = new JLabel("SBOL DNA Component");
 			else
 				sbolLabel = new JLabel("SBOL DNA Component: ");

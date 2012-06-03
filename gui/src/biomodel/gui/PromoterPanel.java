@@ -47,7 +47,7 @@ public class PromoterPanel extends JPanel {
 		this.gcmEditor = gcmEditor;
 
 		fields = new HashMap<String, PropertyField>();
-		sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 0);
+		sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 3);
 
 		Model model = gcm.getSBMLDocument().getModel();
 		promoter = model.getSpecies(selected);
@@ -415,7 +415,7 @@ public class PromoterPanel extends JPanel {
 			gcm.createProductionReaction(selected,kaStr,npStr,koStr,kbStr,KoStr,KaoStr);
 
 			if (!paramsOnly) {
-				// Add GCM and SBOL annotations to promoter
+				// Add SBOL annotation to promoter
 				LinkedList<String> sbolURIs = sbolField.getSBOLURIs();
 				if (sbolURIs.size() > 0) {
 					SBOLAnnotation sbolAnnot = new SBOLAnnotation(promoter.getMetaId(), sbolURIs);

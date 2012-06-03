@@ -74,7 +74,7 @@ public class CollectionBrowserPanel extends JPanel implements MouseListener {
 	
 	private void displaySelected() {
 		String[] selectedURIs = getSelectedURIs();
-		LinkedList<String> compIds = new LinkedList<String>();
+		LinkedList<String> compIdNames = new LinkedList<String>();
 		LinkedList<String> compURIs = new LinkedList<String>();
 		int n = 0;
 		// Case when a specific collection(s) is selected
@@ -93,7 +93,10 @@ public class CollectionBrowserPanel extends JPanel implements MouseListener {
 				if (!compURIs.contains(dnac.getURI().toString())) {
 					dnac = compMap.get(dnac.getURI().toString());
 					if (filter.size() == 0 || filterFeature(dnac, filter)) {
-						compIds.add(dnac.getDisplayId());
+						if (dnac.getName() != null && !dnac.getName().equals(""))
+							compIdNames.add(dnac.getDisplayId() + " : " + dnac.getName());
+						else
+							compIdNames.add(dnac.getDisplayId());
 						compURIs.add(dnac.getURI().toString());
 						n++;
 					}
@@ -104,13 +107,16 @@ public class CollectionBrowserPanel extends JPanel implements MouseListener {
 					if (!compURIs.contains(dnac.getURI().toString())) {
 						dnac = compMap.get(dnac.getURI().toString());
 						if (filter.size() == 0 || filterFeature(dnac, filter)) {
-							compIds.add(dnac.getDisplayId());
+							if (dnac.getName() != null && !dnac.getName().equals(""))
+								compIdNames.add(dnac.getDisplayId() + " : " + dnac.getName());
+							else
+								compIdNames.add(dnac.getDisplayId());
 							compURIs.add(dnac.getURI().toString());
 							n++;
 						}
 					}
 		}
-		LinkedList<LinkedList<String>> sortedResult = lexoSort(compIds, compURIs, n);
+		LinkedList<LinkedList<String>> sortedResult = lexoSort(compIdNames, compURIs, n);
 		compPanel.setComponents(sortedResult.get(0), sortedResult.get(1));
 	}
 	

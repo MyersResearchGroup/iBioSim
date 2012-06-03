@@ -159,6 +159,8 @@ public class SBOLUtility {
 			return "c";
 		else if (soType.equals("terminator") || soType.equals("bacterial terminator"))
 			return "t";
+		else if (soType.equals("engineered region"))
+			return "e";
 		else
 			return "x";
 	}

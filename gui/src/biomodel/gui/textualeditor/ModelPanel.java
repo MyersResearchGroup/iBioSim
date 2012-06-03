@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.LinkedList;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -22,7 +23,12 @@ import org.sbml.libsbml.Parameter;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.UnitDefinition;
 
+import biomodel.annotation.AnnotationUtility;
+import biomodel.annotation.SBOLAnnotation;
+import biomodel.gui.ModelEditor;
+import biomodel.gui.SBOLField;
 import biomodel.parser.BioModel;
+import biomodel.util.GlobalConstants;
 
 
 public class ModelPanel extends JButton implements ActionListener, MouseListener {
@@ -37,17 +43,22 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 
 	private JComboBox substanceUnits, timeUnits, volumeUnits, areaUnits, lengthUnits, extentUnits, conversionFactor;
 
+	private SBOLField sbolField;
+	
 	private BioModel gcm;
+	
+	private ModelEditor gcmEditor;
 
 	private MutableBoolean dirty;
 
-	public ModelPanel(BioModel gcm, MutableBoolean dirty, boolean paramsOnly) {
+	public ModelPanel(BioModel gcm, ModelEditor gcmEditor) {
 		super();
 		this.gcm = gcm;
-		this.dirty = dirty;
+		this.gcmEditor = gcmEditor;
+		this.dirty = gcmEditor.getDirty();
 		this.setText("Edit Model Attributes");
 		this.addActionListener((ActionListener) this);
-		if (paramsOnly) {
+		if (gcmEditor.isParamsOnly()) {
 			this.setEnabled(false);
 		}
 	}
@@ -57,7 +68,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 	 */
 	private void modelEditor(String option) {
 		JPanel modelEditorPanel;
-		modelEditorPanel = new JPanel(new GridLayout(9, 2));
+		modelEditorPanel = new JPanel(new GridLayout(10, 2));
 		Model model = gcm.getSBMLDocument().getModel();
 		modelName = new JTextField(model.getName(), 50);
 		modelID = new JTextField(model.getId(), 16);
@@ -147,6 +158,10 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 				extentUnits.setSelectedItem(gcm.getSBMLDocument().getModel().getExtentUnits());
 				conversionFactor.setSelectedItem(gcm.getSBMLDocument().getModel().getConversionFactor());
 			}
+			sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 1);
+			LinkedList<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(gcm.getSBMLDocument().getModel());
+			if (sbolURIs.size() > 0)
+				sbolField.setSBOLURIs(sbolURIs);
 			modelEditorPanel.add(substanceUnitsLabel);
 			modelEditorPanel.add(substanceUnits);
 			modelEditorPanel.add(timeUnitsLabel);
@@ -161,6 +176,8 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			modelEditorPanel.add(extentUnits);
 			modelEditorPanel.add(conversionFactorLabel);
 			modelEditorPanel.add(conversionFactor);
+			modelEditorPanel.add(new JLabel("SBOL DNA Component: "));
+			modelEditorPanel.add(sbolField);
 		}
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, modelEditorPanel, "Model Editor", JOptionPane.YES_NO_OPTION,
@@ -219,6 +236,15 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 				value = JOptionPane.showOptionDialog(Gui.frame, modelEditorPanel, "Model Units Editor", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			}
+		}
+		// Add SBOL annotation to promoter
+		if (value == JOptionPane.YES_OPTION) {
+			LinkedList<String> sbolURIs = sbolField.getSBOLURIs();
+			if (sbolURIs.size() > 0) {
+				SBOLAnnotation sbolAnnot = new SBOLAnnotation(gcm.getSBMLDocument().getModel().getMetaId(), sbolURIs);
+				AnnotationUtility.setSBOLAnnotation(gcm.getSBMLDocument().getModel(), sbolAnnot);
+			} else
+				AnnotationUtility.removeSBOLAnnotation(gcm.getSBMLDocument().getModel());
 		}
 		if (value == JOptionPane.NO_OPTION) {
 			return;
