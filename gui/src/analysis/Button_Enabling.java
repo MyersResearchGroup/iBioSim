@@ -273,10 +273,13 @@ public class Button_Enabling {
 			simulators.addItem("Gillespie SSA-Direct (Java)");
 			simulators.addItem("mpde");
 			simulators.addItem("mp");
+			simulators.addItem("mp-median");
 			simulators.addItem("mp-bifurcation");
 			simulators.addItem("mp-adaptive");
+			simulators.addItem("mp-adaptive-median");
 			simulators.addItem("mp-adaptive-bifurcation");
 			simulators.addItem("mp-event");
+			simulators.addItem("mp-event-median");
 			simulators.addItem("mp-event-bifurcation");
 			simulators.addItem("emc-sim");
 			simulators.addItem("bunker");
@@ -402,10 +405,13 @@ public class Button_Enabling {
 		//simulators.addItem("Gillespie SSA-Direct (Java)");
 		simulators.addItem("mpde");
 		simulators.addItem("mp");
+		simulators.addItem("mp-median");
 		simulators.addItem("mp-bifurcation");
 		simulators.addItem("mp-adaptive");
+		simulators.addItem("mp-adaptive-median");
 		simulators.addItem("mp-adaptive-bifurcation");
 		simulators.addItem("mp-event");
+		simulators.addItem("mp-event-median");
 		simulators.addItem("mp-event-bifurcation");
 		simulators.addItem("emc-sim");
 		simulators.addItem("bunker");
