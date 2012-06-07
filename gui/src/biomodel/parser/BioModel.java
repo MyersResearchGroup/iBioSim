@@ -4593,7 +4593,7 @@ public class BioModel {
 		}
 	}
 
-	public void loadSBMLFile(String sbmlFile) {
+	private void loadSBMLFile(String sbmlFile) {
 		if (!sbmlFile.equals("")) {
 			if (new File(path + separator + sbmlFile).exists()) {
 				sbml = Gui.readSBML(path + separator + sbmlFile);
