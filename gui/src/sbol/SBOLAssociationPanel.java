@@ -57,9 +57,13 @@ public class SBOLAssociationPanel extends JPanel {
 			SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
 			if (sbolDoc != null)
 				for (DnaComponent dnac : SBOLUtility.loadDNAComponents(sbolDoc).values()) 
-					if (dnac.getDisplayId() != null && !dnac.getDisplayId().equals(""))
-						uriToID.put(dnac.getURI().toString(), dnac.getDisplayId());
-					else
+					if (dnac.getDisplayId() != null && !dnac.getDisplayId().equals("")) 
+						if (dnac.getName() != null && !dnac.getName().equals(""))
+							uriToID.put(dnac.getURI().toString(), dnac.getDisplayId() + " : " 
+									+ dnac.getName());
+						else
+							uriToID.put(dnac.getURI().toString(), dnac.getDisplayId());
+					 else
 						uriToID.put(dnac.getURI().toString(), "unidentified");	
 		}
 	}

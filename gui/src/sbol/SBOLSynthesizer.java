@@ -111,7 +111,7 @@ public class SBOLSynthesizer {
 					addCount++;
 					position = addSubComponent(position, sourceCompURI, synthComp, addCount, types);
 				}
-			SequenceTypeValidator validator = new SequenceTypeValidator("((p(rc)+t+)*)|(e*)");
+			SequenceTypeValidator validator = new SequenceTypeValidator("((p(rc)+t+)|e)+");
 			if (!validator.validateSequenceTypes(types)) {
 				Object[] options = { "OK", "Cancel" };
 				int choice = JOptionPane.showOptionDialog(null, 
