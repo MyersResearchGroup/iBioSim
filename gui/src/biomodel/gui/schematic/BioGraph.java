@@ -67,7 +67,6 @@ public class BioGraph extends mxGraph {
 	private double DIS_BETWEEN_NEIGHBORING_EDGES = 35.0;
 	private double SECOND_SELF_INFLUENCE_DISTANCE = 20;
 	
-	private HashMap<String, BoundingBox> compartmentPositionMap;
 	private HashMap<String, mxCell> speciesToMxCellMap;
 	private HashMap<String, mxCell> reactionsToMxCellMap;
 	private HashMap<String, mxCell> compartmentsToMxCellMap;
@@ -123,7 +122,6 @@ public class BioGraph extends mxGraph {
 	 */
 	private void initializeMaps(){
 		
-		compartmentPositionMap = new HashMap<String, BoundingBox>();
 		speciesToMxCellMap = new HashMap<String, mxCell>();
 		reactionsToMxCellMap = new HashMap<String, mxCell>();
 		compartmentsToMxCellMap = new HashMap<String, mxCell>();
@@ -1296,13 +1294,29 @@ public class BioGraph extends mxGraph {
 	 * Updates the gcm's postitioning using the
 	 * positioning on the graph.
 	 */
-	public void updateAllSpeciesPosition(){
-		
+	public void updateAllInternalPosition(){
+
+		for(mxCell cell:this.compartmentsToMxCellMap.values()){
+			updateInternalPosition(cell);
+		}
+
 		for(mxCell cell:this.speciesToMxCellMap.values()){
 			updateInternalPosition(cell);
 		}
 		
 		for(mxCell cell:this.reactionsToMxCellMap.values()){
+			updateInternalPosition(cell);
+		}
+		
+		for(mxCell cell:this.rulesToMxCellMap.values()){
+			updateInternalPosition(cell);
+		}
+		
+		for(mxCell cell:this.constraintsToMxCellMap.values()){
+			updateInternalPosition(cell);
+		}
+		
+		for(mxCell cell:this.eventsToMxCellMap.values()){
 			updateInternalPosition(cell);
 		}
 		
@@ -1346,7 +1360,8 @@ public class BioGraph extends mxGraph {
 				speciesGlyph.setSpeciesId((String)cell.getId());
 			}
 			if (!getCellType(cell).equals(GlobalConstants.VARIABLE)) {
-				String compartment = bioModel.getCompartmentByLocation((float)geom.getX(),(float)geom.getY());
+				String compartment = bioModel.getCompartmentByLocation((float)geom.getX(),(float)geom.getY(),
+						(float)geom.getWidth(),(float)geom.getHeight());
 				if (compartment.equals("")) {
 					geom.setX(speciesGlyph.getBoundingBox().x());
 					geom.setY(speciesGlyph.getBoundingBox().y());
@@ -1391,7 +1406,8 @@ public class BioGraph extends mxGraph {
 				reactionGlyph.setReactionId((String)cell.getId());
 			}
 			if (getCellType(cell).equals(GlobalConstants.REACTION)) {
-				String compartment = bioModel.getCompartmentByLocation((float)geom.getX(),(float)geom.getY());
+				String compartment = bioModel.getCompartmentByLocation((float)geom.getX(),(float)geom.getY(),
+						(float)geom.getWidth(),(float)geom.getHeight());
 				if (compartment.equals("")) {
 					geom.setX(reactionGlyph.getBoundingBox().x());
 					geom.setY(reactionGlyph.getBoundingBox().y());
@@ -1459,13 +1475,13 @@ public class BioGraph extends mxGraph {
 					compGlyph.getBoundingBox().setY(y);
 					compGlyph.getBoundingBox().setWidth(width);
 					compGlyph.getBoundingBox().setHeight(height);
-					geom.setX(x);
-					geom.setY(y);
-					geom.setWidth(width);
-					geom.setHeight(height);
 					Utility.createErrorMessage("Missing Compartment", "All species and reactions must be within a compartment.");
 				}
 			}
+			geom.setX(compGlyph.getBoundingBox().x());
+			geom.setY(compGlyph.getBoundingBox().y());
+			geom.setWidth(compGlyph.getBoundingBox().width());
+			geom.setHeight(compGlyph.getBoundingBox().height());
 			TextGlyph textGlyph = null;
 			if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+(String)cell.getId())!=null) {
 				textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+(String)cell.getId());
@@ -1507,10 +1523,10 @@ public class BioGraph extends mxGraph {
 					y = (unpositionedElementCount%10) * (height + 10);
 					if (bioModel.getSBMLDocument().getModel().getSpecies((String)cell.getId())!=null) {
 						String compartment = bioModel.getSBMLDocument().getModel().getSpecies((String)cell.getId()).getCompartment();
-						if (!bioModel.getCompartmentByLocation((float)x, (float)y).equals(compartment)) {
+						if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
 							CompartmentGlyph compartmentGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+compartment);
 							x = x + compartmentGlyph.getBoundingBox().x();
-							if (!bioModel.getCompartmentByLocation((float)x, (float)y).equals(compartment)) {
+							if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
 								x = compartmentGlyph.getBoundingBox().x() + 10;
 							}
 
@@ -1538,10 +1554,10 @@ public class BioGraph extends mxGraph {
 					y = (unpositionedElementCount%10) * (height + 10);
 					if (bioModel.getSBMLDocument().getModel().getReaction((String)cell.getId())!=null) {
 						String compartment = bioModel.getSBMLDocument().getModel().getReaction((String)cell.getId()).getCompartment();
-						if (!bioModel.getCompartmentByLocation((float)x, (float)y).equals(compartment)) {
+						if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
 							CompartmentGlyph compartmentGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+compartment);
 							x = x + compartmentGlyph.getBoundingBox().x();
-							if (!bioModel.getCompartmentByLocation((float)x, (float)y).equals(compartment)) {
+							if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
 								x = compartmentGlyph.getBoundingBox().x() + 10;
 							}
 

@@ -4121,8 +4121,37 @@ public class BioModel {
 				if (layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+s.getId())!=null) {
 					speciesGlyph = layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+s.getId());
 					String compartment = getCompartmentByLocation((float)speciesGlyph.getBoundingBox().x(),
-							(float)speciesGlyph.getBoundingBox().y());
-					if (compartment.equals("")) return false;
+							(float)speciesGlyph.getBoundingBox().y(),(float)speciesGlyph.getBoundingBox().width(),
+							(float)speciesGlyph.getBoundingBox().height());
+					if (compartment.equals("")) {
+						if (sbml.getModel().getNumCompartments()>1) {
+							return false;
+						} else {
+							CompartmentGlyph compartmentGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+s.getCompartment());
+							double x = speciesGlyph.getBoundingBox().x();
+							double y = speciesGlyph.getBoundingBox().y();
+							double w = speciesGlyph.getBoundingBox().width();
+							double h = speciesGlyph.getBoundingBox().height();
+							double cx = compartmentGlyph.getBoundingBox().x();
+							double cy = compartmentGlyph.getBoundingBox().y();
+							double cw = compartmentGlyph.getBoundingBox().width();
+							double ch = compartmentGlyph.getBoundingBox().height();
+							if (x < cx) {
+								compartmentGlyph.getBoundingBox().setX(x);
+								compartmentGlyph.getBoundingBox().setWidth(cw + cx - x);
+							}
+							if (y < cy) {
+								compartmentGlyph.getBoundingBox().setY(y);
+								compartmentGlyph.getBoundingBox().setHeight(ch + cy - y);
+							}
+							if (x + w > cx + cw) {
+								compartmentGlyph.getBoundingBox().setWidth(x + w - cx);
+							}
+							if (y + h > cy + ch) {
+								compartmentGlyph.getBoundingBox().setHeight(y + h - cy);
+							}
+						}
+					}
 					if (!checkOnly)	s.setCompartment(compartment);
 				}
 			}
@@ -4132,8 +4161,37 @@ public class BioModel {
 				if (layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+r.getId())!=null) {
 					reactionGlyph = layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+r.getId());
 					String compartment = getCompartmentByLocation((float)reactionGlyph.getBoundingBox().x(),
-						(float)reactionGlyph.getBoundingBox().y());
-					if (compartment.equals("")) return false;
+						(float)reactionGlyph.getBoundingBox().y(),(float)reactionGlyph.getBoundingBox().width(),
+						(float)reactionGlyph.getBoundingBox().height());
+					if (compartment.equals("")) {
+						if (sbml.getModel().getNumCompartments()>1) {
+							return false;
+						} else {
+							CompartmentGlyph compartmentGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+r.getCompartment());
+							double x = reactionGlyph.getBoundingBox().x();
+							double y = reactionGlyph.getBoundingBox().y();
+							double w = reactionGlyph.getBoundingBox().width();
+							double h = reactionGlyph.getBoundingBox().height();
+							double cx = compartmentGlyph.getBoundingBox().x();
+							double cy = compartmentGlyph.getBoundingBox().y();
+							double cw = compartmentGlyph.getBoundingBox().width();
+							double ch = compartmentGlyph.getBoundingBox().height();
+							if (x < cx) {
+								compartmentGlyph.getBoundingBox().setX(x);
+								compartmentGlyph.getBoundingBox().setWidth(cw + cx - x);
+							}
+							if (y < cy) {
+								compartmentGlyph.getBoundingBox().setY(y);
+								compartmentGlyph.getBoundingBox().setHeight(ch + cy - y);
+							}
+							if (x + w > cx + cw) {
+								compartmentGlyph.getBoundingBox().setWidth(x + w - cx);
+							}
+							if (y + h > cy + ch) {
+								compartmentGlyph.getBoundingBox().setHeight(y + h - cy);
+							}
+						}
+					}
 					if (!checkOnly) r.setCompartment(compartment);
 				}
 			}
@@ -4141,7 +4199,7 @@ public class BioModel {
 		return true;
 	}
 	
-	public String getCompartmentByLocation(float x, float y) {
+	public String getCompartmentByLocation(float x, float y, float w, float h) {
 		String compartment = "";
 		double distance = -1;
 		for (long i = 0; i < sbml.getModel().getNumCompartments(); i++) {
@@ -4158,7 +4216,7 @@ public class BioModel {
 			double cy = compartmentGlyph.getBoundingBox().y();
 			double cw = compartmentGlyph.getBoundingBox().width();
 			double ch = compartmentGlyph.getBoundingBox().height();
-			if (x >= cx && y >= cy && x <= cx+cw && y <= cy+ch) {
+			if (x >= cx && y >= cy && x + w <= cx+cw && y + h <= cy+ch) {
 				double calcDist = (x - cx) + (y - cy);
 				if (distance==-1 || distance > calcDist) {
 					compartment = compartmentGlyph.getCompartmentId();
@@ -4169,7 +4227,8 @@ public class BioModel {
 	}
 
 	public void createSpecies(String id, float x, float y) {
-		String compartment = getCompartmentByLocation(x,y);
+		String compartment = getCompartmentByLocation(x,y, GlobalConstants.DEFAULT_SPECIES_WIDTH, 
+				GlobalConstants.DEFAULT_SPECIES_HEIGHT);
 		if (compartment.equals("")) {
 			Utility.createErrorMessage("Compartment Required", "Species must be placed within a compartment.");
 			return;
@@ -4224,7 +4283,8 @@ public class BioModel {
 	}
 
 	public void createReaction(String id, float x, float y) {
-		String compartment = getCompartmentByLocation(x,y);
+		String compartment = getCompartmentByLocation(x,y, GlobalConstants.DEFAULT_REACTION_WIDTH, 
+				GlobalConstants.DEFAULT_REACTION_HEIGHT);
 		if (compartment.equals("")) {
 			Utility.createErrorMessage("Compartment Required", "Reactions must be placed within a compartment.");
 			return;
@@ -4361,7 +4421,7 @@ public class BioModel {
 	
 	public String createPromoter(String id, float x, float y, boolean is_explicit) {
 		String compartment;
-		compartment = getCompartmentByLocation(x,y);
+		compartment = getCompartmentByLocation(x,y,GlobalConstants.DEFAULT_SPECIES_WIDTH,GlobalConstants.DEFAULT_SPECIES_HEIGHT);
 		if (compartment.equals("")) {
 			Utility.createErrorMessage("Compartement Required", "Promoter must be placed within a compartment.");
 			return "";
