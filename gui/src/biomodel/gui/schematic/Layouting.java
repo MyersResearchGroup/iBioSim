@@ -168,7 +168,7 @@ public class Layouting {
 
 		Object cell = graph.getDefaultParent();
 		layout.execute(cell);
-		graph.updateAllSpeciesPosition();
+		graph.updateAllInternalPosition();
 		
 	}
 }

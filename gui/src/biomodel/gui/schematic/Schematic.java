@@ -81,6 +81,7 @@ import biomodel.gui.textualeditor.Rules;
 import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
+import biomodel.util.Utility;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
@@ -468,6 +469,10 @@ public class Schematic extends JPanel implements ActionListener {
 		}
 		else if(command.indexOf("layout_") == 0){
 			// Layout actioncommands are prepended with "_"
+			if (bioModel.getSBMLDocument().getModel().getNumCompartments() > 1) {
+				Utility.createErrorMessage("Error Applying Layout", "Automatic layout routines cannot be used with multi-compartment models.");
+				return;
+			}
 			command = command.substring(command.indexOf('_')+1);
 			graph.applyLayout(command, this.graphComponent);
 			graph.buildGraph(); // rebuild, quick way to clear out any edge midpoints.
