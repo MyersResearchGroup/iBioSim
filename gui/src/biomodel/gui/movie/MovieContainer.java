@@ -116,9 +116,9 @@ public class MovieContainer extends JPanel implements ActionListener {
 		
 		super(new BorderLayout());
 		
-		JComboBox compartmentList = MySpecies.createCompartmentChoices(gcm);
+		//JComboBox compartmentList = MySpecies.createCompartmentChoices(gcm);
 		schematic = new Schematic(gcm, biosim, gcm2sbml, false, this, null, gcm.getReactionPanel(), gcm.getRulePanel(),
-				gcm.getConstraintPanel(),  gcm.getEventPanel(), gcm.getParameterPanel(), compartmentList);
+				gcm.getConstraintPanel(),  gcm.getEventPanel(), gcm.getParameterPanel());
 		this.add(schematic, BorderLayout.CENTER);
 		
 		this.gcm = gcm;

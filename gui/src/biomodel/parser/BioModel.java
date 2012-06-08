@@ -146,7 +146,7 @@ public class BioModel {
 		sbml.setModel(m);
 		m.setId(modelId);
 		Compartment c = m.createCompartment();
-		c.setId("default");
+		c.setId("Cell");
 		c.setSize(1);
 		c.setSpatialDimensions(3);
 		c.setConstant(true);
@@ -2526,6 +2526,12 @@ public class BioModel {
 		}
 		if (sbmlLayout.getLayout("iBioSim") != null) {
 			Layout layout = sbmlLayout.getLayout("iBioSim"); 
+			if (layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+id)!=null) {
+				layout.removeCompartmentGlyph(GlobalConstants.GLYPH+"__"+id);
+			}
+			if (layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+id)!=null) {
+				layout.removeSpeciesGlyph(GlobalConstants.GLYPH+"__"+id);
+			}
 			if (layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+id)!=null) {
 				layout.removeReactionGlyph(GlobalConstants.GLYPH+"__"+id);
 			}
@@ -2790,7 +2796,8 @@ public class BioModel {
 				//if it's a location parameter
 				if (parameter.getId().contains("__locations")) {
 					
-					if (parameter.getAnnotationString().contains("array:" + id + "=")) {
+					if (parameter.getAnnotationString().contains("array:" + id + "=") ||
+							(parameter.getAnnotationString().contains("[[" + id + "]]"))) {
 						
 						componentModelRef = parameter.getId().replace("__locations","");
 						
@@ -2803,7 +2810,9 @@ public class BioModel {
 			}
 		}
 		ExternalModelDefinition extModel = sbmlComp.getExternalModelDefinition(componentModelRef);
-		
+		if (extModel==null) {
+			return "";
+		}		
 		return extModel.getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
 	}
 
@@ -3589,6 +3598,7 @@ public class BioModel {
 				if (reaction.getNumProducts()==0) {
 					Species mRNA = sbml.getModel().createSpecies();
 					mRNA.setId(promoterId+"_mRNA");
+					mRNA.setSBOTerm(GlobalConstants.SBO_MRNA);
 					mRNA.setInitialAmount(0.0);
 					mRNA.setBoundaryCondition(false);
 					mRNA.setConstant(false);
@@ -4073,8 +4083,97 @@ public class BioModel {
 			}
 		}
 	}
+	
+	public boolean checkCompartmentLocation(String id,double x, double y, double w, double h) {
+		for (long i = 0; i < sbml.getModel().getNumCompartments(); i++) {
+			Compartment c = sbml.getModel().getCompartment(i);
+			if (c.getId().equals(id)) continue;
+			Layout layout = null;
+			if (sbmlLayout.getLayout("iBioSim") != null) {
+				layout = sbmlLayout.getLayout("iBioSim"); 
+			} else {
+				layout = sbmlLayout.createLayout();
+				layout.setId("iBioSim");
+			}
+			CompartmentGlyph compartmentGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+c.getId());
+			double cx = compartmentGlyph.getBoundingBox().x();
+			double cy = compartmentGlyph.getBoundingBox().y();
+			double cw = compartmentGlyph.getBoundingBox().width();
+			double ch = compartmentGlyph.getBoundingBox().height();
+			if (x >= cx && y >= cy && x+w <= cx+cw && y+h <= cy+ch) continue;
+			if (x <= cx && y <= cy && x+w >= cx+cw && y+h >= cy+ch) continue;
+			if (x+w <= cx) continue;
+			if (x >= cx+cw) continue;
+			if (y+h <= cy) continue;
+			if (y >= cy+ch) continue;
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean updateCompartmentsByLocation(boolean checkOnly) {
+		Layout layout = null;
+		if (sbmlLayout.getLayout("iBioSim") != null) {
+			layout = sbmlLayout.getLayout("iBioSim"); 
+			for (long i = 0; i < sbml.getModel().getNumSpecies(); i++) {
+				Species s = sbml.getModel().getSpecies(i);
+				SpeciesGlyph speciesGlyph = null;
+				if (layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+s.getId())!=null) {
+					speciesGlyph = layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+s.getId());
+					String compartment = getCompartmentByLocation((float)speciesGlyph.getBoundingBox().x(),
+							(float)speciesGlyph.getBoundingBox().y());
+					if (compartment.equals("")) return false;
+					if (!checkOnly)	s.setCompartment(compartment);
+				}
+			}
+			for (long i = 0; i < sbml.getModel().getNumReactions(); i++) {
+				Reaction r = sbml.getModel().getReaction(i);
+				ReactionGlyph reactionGlyph = null;
+				if (layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+r.getId())!=null) {
+					reactionGlyph = layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+r.getId());
+					String compartment = getCompartmentByLocation((float)reactionGlyph.getBoundingBox().x(),
+						(float)reactionGlyph.getBoundingBox().y());
+					if (compartment.equals("")) return false;
+					if (!checkOnly) r.setCompartment(compartment);
+				}
+			}
+		}
+		return true;
+	}
+	
+	public String getCompartmentByLocation(float x, float y) {
+		String compartment = "";
+		double distance = -1;
+		for (long i = 0; i < sbml.getModel().getNumCompartments(); i++) {
+			Compartment c = sbml.getModel().getCompartment(i);
+			Layout layout = null;
+			if (sbmlLayout.getLayout("iBioSim") != null) {
+				layout = sbmlLayout.getLayout("iBioSim"); 
+			} else {
+				layout = sbmlLayout.createLayout();
+				layout.setId("iBioSim");
+			}
+			CompartmentGlyph compartmentGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+c.getId());
+			double cx = compartmentGlyph.getBoundingBox().x();
+			double cy = compartmentGlyph.getBoundingBox().y();
+			double cw = compartmentGlyph.getBoundingBox().width();
+			double ch = compartmentGlyph.getBoundingBox().height();
+			if (x >= cx && y >= cy && x <= cx+cw && y <= cy+ch) {
+				double calcDist = (x - cx) + (y - cy);
+				if (distance==-1 || distance > calcDist) {
+					compartment = compartmentGlyph.getCompartmentId();
+				}
+			}
+		}
+		return compartment;
+	}
 
 	public void createSpecies(String id, float x, float y) {
+		String compartment = getCompartmentByLocation(x,y);
+		if (compartment.equals("")) {
+			Utility.createErrorMessage("Compartment Required", "Species must be placed within a compartment.");
+			return;
+		}
 		if (id == null) {
 			do {
 				creatingSpeciesID++;
@@ -4114,7 +4213,7 @@ public class BioModel {
 			// Set default species metaID
 			metaIDIndex = SBMLutilities.setDefaultMetaID(sbml, species, metaIDIndex); 
 			
-			species.setCompartment(getDefaultCompartment());
+			species.setCompartment(compartment);
 			species.setBoundaryCondition(false);
 			species.setConstant(false);
 			species.setInitialAmount(0);
@@ -4125,6 +4224,11 @@ public class BioModel {
 	}
 
 	public void createReaction(String id, float x, float y) {
+		String compartment = getCompartmentByLocation(x,y);
+		if (compartment.equals("")) {
+			Utility.createErrorMessage("Compartment Required", "Reactions must be placed within a compartment.");
+			return;
+		}
 		if (id == null) {
 			do {
 				creatingReactionID++;
@@ -4161,7 +4265,7 @@ public class BioModel {
 		r.setId(id);
 		// Set default reaction metaID
 		metaIDIndex = SBMLutilities.setDefaultMetaID(sbml, r, metaIDIndex); 
-		r.setCompartment(getDefaultCompartment());
+		r.setCompartment(compartment);
 		r.setReversible(false);
 		r.setFast(false);
 		KineticLaw k = r.createKineticLaw();
@@ -4256,6 +4360,12 @@ public class BioModel {
 	}
 	
 	public String createPromoter(String id, float x, float y, boolean is_explicit) {
+		String compartment;
+		compartment = getCompartmentByLocation(x,y);
+		if (compartment.equals("")) {
+			Utility.createErrorMessage("Compartement Required", "Promoter must be placed within a compartment.");
+			return "";
+		}
 		Species promoter = sbml.getModel().createSpecies();
 		// Set default species ID
 		if (id == null) {
@@ -4272,7 +4382,7 @@ public class BioModel {
 		promoter.setSBOTerm(GlobalConstants.SBO_PROMOTER_SPECIES);
 		promoter.setInitialAmount(sbml.getModel().getParameter(GlobalConstants.PROMOTER_COUNT_STRING).getValue());
 
-		promoter.setCompartment(getDefaultCompartment());
+		promoter.setCompartment(compartment);
 		promoter.setBoundaryCondition(false);
 		promoter.setConstant(false);
 		promoter.setHasOnlySubstanceUnits(true);
@@ -4306,6 +4416,7 @@ public class BioModel {
 
 		return id;
 	}
+	
 	public String createVariable(String id, float x, float y) {
 		Parameter parameter = sbml.getModel().createParameter();
 		// Set default species ID
@@ -4346,6 +4457,55 @@ public class BioModel {
 		textGlyph.setGraphicalObjectId(GlobalConstants.GLYPH+"__"+id);
 		textGlyph.setText(id);
 		textGlyph.setBoundingBox(speciesGlyph.getBoundingBox());
+
+		return id;
+	}
+	
+	public String createCompartment(String id, float x, float y) {
+		if (!checkCompartmentLocation(id,(double)x,(double)y,
+				(double)GlobalConstants.DEFAULT_COMPARTMENT_WIDTH,(double)GlobalConstants.DEFAULT_COMPARTMENT_HEIGHT)) {
+			Utility.createErrorMessage("Compartment Overlap", "Compartments must not overlap.");
+			return "";
+		}
+		Compartment compartment = sbml.getModel().createCompartment();
+		if (id == null) {
+			do {
+				creatingCompartmentID++;
+				id = "Comp" + String.valueOf(creatingCompartmentID);
+			}
+			while ((sbml.getElementBySId(id)!=null)||(sbml.getElementByMetaId(id)!=null));
+		}
+		compartment.setId(id);
+		// Set default promoter metaID
+		metaIDIndex = SBMLutilities.setDefaultMetaID(sbml, compartment, metaIDIndex); 
+		compartment.setConstant(true);
+		compartment.setSize(1);
+		compartment.setSpatialDimensions(3);
+
+		Layout layout = null;
+		if (sbmlLayout.getLayout("iBioSim") != null) {
+			layout = sbmlLayout.getLayout("iBioSim"); 
+		} else {
+			layout = sbmlLayout.createLayout();
+			layout.setId("iBioSim");
+		}
+		CompartmentGlyph compartmentGlyph = null;
+		if (layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+id)!=null) {
+			compartmentGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+id);
+		} else {
+			compartmentGlyph = layout.createCompartmentGlyph();
+			compartmentGlyph.setId(GlobalConstants.GLYPH+"__"+id);
+			compartmentGlyph.setCompartmentId(id);
+		}
+		compartmentGlyph.getBoundingBox().setX(x);
+		compartmentGlyph.getBoundingBox().setY(y);
+		compartmentGlyph.getBoundingBox().setWidth(GlobalConstants.DEFAULT_COMPARTMENT_WIDTH);
+		compartmentGlyph.getBoundingBox().setHeight(GlobalConstants.DEFAULT_COMPARTMENT_HEIGHT);
+		TextGlyph textGlyph = layout.createTextGlyph();
+		textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+id);
+		textGlyph.setGraphicalObjectId(GlobalConstants.GLYPH+"__"+id);
+		textGlyph.setText(id);
+		textGlyph.setBoundingBox(compartmentGlyph.getBoundingBox());
 
 		return id;
 	}
@@ -4484,7 +4644,7 @@ public class BioModel {
 		if (sbml != null) {
 			if (sbml.getModel().getNumCompartments()==0) {
 				Compartment c = sbml.getModel().createCompartment();
-				c.setId("default");
+				c.setId("Cell");
 				c.setSize(1);
 				c.setSpatialDimensions(3);
 				c.setConstant(true);
@@ -5737,6 +5897,7 @@ public class BioModel {
 	
 	private String defaultCompartment;
 	
+	private int creatingCompartmentID = 0;
 	private int creatingVariableID = 0;
 	private int creatingPromoterID = 0;
 	private int creatingSpeciesID = 0;
