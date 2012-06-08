@@ -156,9 +156,9 @@ public class GeneticNetwork {
 		currentDocument = document;
 		Model m = document.createModel();
 		document.setModel(m);
-		Utility.addCompartments(document, "default");
-		document.getModel().getCompartment("default").setSize(1);
-		document.getModel().getCompartment("default").setConstant(true);
+		Utility.addCompartments(document, "Cell");
+		document.getModel().getCompartment("Cell").setSize(1);
+		document.getModel().getCompartment("Cell").setConstant(true);
 		
 		SBMLWriter writer = new SBMLWriter();
 		printSpecies(document);
@@ -227,8 +227,8 @@ public class GeneticNetwork {
 		currentDocument = document;
 		Model m = document.createModel();
 		document.setModel(m);
-		Utility.addCompartments(document, "default");
-		document.getModel().getCompartment("default").setSize(1);
+		Utility.addCompartments(document, "Cell");
+		document.getModel().getCompartment("Cell").setSize(1);
 		return outputSBML(filename, document);
 	}
 

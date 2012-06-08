@@ -917,7 +917,94 @@ public class SBMLutilities {
 		String s = updateFormulaVar(myFormulaToString(math), origVar, newVar);
 		return myParseFormula(s);
 	}
-
+	
+	/**
+	 * Check if compartment is in use.
+	 */
+	public static boolean compartmentInUse(SBMLDocument document, String compartmentId) {
+		boolean remove = true;
+		ArrayList<String> speciesUsing = new ArrayList<String>();
+		for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
+			Species species = (Species) document.getModel().getListOfSpecies().get(i);
+			if (species.isSetCompartment()) {
+				if (species.getCompartment().equals(compartmentId)) {
+					remove = false;
+					speciesUsing.add(species.getId());
+				}
+			}
+		}
+		ArrayList<String> reactionsUsing = new ArrayList<String>();
+		for (int i = 0; i < document.getModel().getNumReactions(); i++) {
+			Reaction reaction = document.getModel().getReaction(i);
+			if (reaction.isSetCompartment()) {
+				if (reaction.getCompartment().equals(compartmentId)){
+					remove = false;
+					reactionsUsing.add(reaction.getId());
+				}
+			}
+		}
+		ArrayList<String> outsideUsing = new ArrayList<String>();
+		for (int i = 0; i < document.getModel().getNumCompartments(); i++) {
+			Compartment compartment = document.getModel().getCompartment(i);
+			if (compartment.isSetOutside()) {
+				if (compartment.getOutside().equals(compartmentId)) {
+					remove = false;
+					outsideUsing.add(compartment.getId());
+				}
+			}
+		}
+		if (!remove) {
+			String message = "Unable to remove the selected compartment.";
+			if (speciesUsing.size() != 0) {
+				message += "\n\nIt contains the following species:\n";
+				String[] vars = speciesUsing.toArray(new String[0]);
+				Utility.sort(vars);
+				for (int i = 0; i < vars.length; i++) {
+					if (i == vars.length - 1) {
+						message += vars[i];
+					}
+					else {
+						message += vars[i] + "\n";
+					}
+				}
+			}
+			if (reactionsUsing.size() != 0) {
+				message += "\n\nIt contains the following reactions:\n";
+				String[] vars = reactionsUsing.toArray(new String[0]);
+				Utility.sort(vars);
+				for (int i = 0; i < vars.length; i++) {
+					if (i == vars.length - 1) {
+						message += vars[i];
+					}
+					else {
+						message += vars[i] + "\n";
+					}
+				}
+			}
+			if (outsideUsing.size() != 0) {
+				message += "\n\nIt outside the following compartments:\n";
+				String[] vars = outsideUsing.toArray(new String[0]);
+				Utility.sort(vars);
+				for (int i = 0; i < vars.length; i++) {
+					if (i == vars.length - 1) {
+						message += vars[i];
+					}
+					else {
+						message += vars[i] + "\n";
+					}
+				}
+			}
+			JTextArea messageArea = new JTextArea(message);
+			messageArea.setEditable(false);
+			JScrollPane scroll = new JScrollPane();
+			scroll.setMinimumSize(new Dimension(300, 300));
+			scroll.setPreferredSize(new Dimension(300, 300));
+			scroll.setViewportView(messageArea);
+			JOptionPane.showMessageDialog(Gui.frame, scroll, "Unable To Remove Compartment", JOptionPane.ERROR_MESSAGE);
+		}
+		return !remove;
+	}
+	
 	/**
 	 * Check if a variable is in use.
 	 */

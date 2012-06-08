@@ -4,7 +4,6 @@ package biomodel.gui.schematic;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Point;
@@ -13,8 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
@@ -23,7 +20,6 @@ import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.awt.image.Raster;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -40,7 +36,6 @@ import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -54,7 +49,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.sbml.libsbml.Compartment;
+import org.sbml.libsbml.CompartmentGlyph;
 import org.sbml.libsbml.Layout;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Model;
@@ -87,7 +82,6 @@ import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 
-import com.lowagie.text.Image;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.swing.mxGraphComponent;
@@ -120,12 +114,13 @@ public class Schematic extends JPanel implements ActionListener {
 	private Constraints constraints;
 	private Parameters parameters;
 	private Events events;
-	private JComboBox compartmentList;
+	//private JComboBox compartmentList;
 	private Grid grid;
 	private JTabbedPane tabbedPane;
 	
 	//toolbar buttons
 	private AbstractButton selectButton;
+	private AbstractButton addCompartmentButton;
 	private AbstractButton addSpeciesButton;
 	private AbstractButton addReactionButton;
 	private AbstractButton addComponentButton;
@@ -157,7 +152,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 */
 	public Schematic(BioModel gcm, Gui biosim, ModelEditor gcm2sbml, boolean editable, 
 			MovieContainer movieContainer2, Compartments compartments, Reactions reactions, Rules rules,
-			Constraints constraints, Events events, Parameters parameters, JComboBox compartmentList){
+			Constraints constraints, Events events, Parameters parameters) {
 		
 		super(new BorderLayout());
 		
@@ -176,7 +171,7 @@ public class Schematic extends JPanel implements ActionListener {
 		this.parameters = parameters;
 		this.events = events;
 		this.grid = gcm.getGrid();
-		this.compartmentList = compartmentList;
+		//this.compartmentList = compartmentList;
 		this.tabbedPane = biosim.getTab();
 		
 		// initialize everything on creation.
@@ -327,8 +322,10 @@ public class Schematic extends JPanel implements ActionListener {
 		toolBar.add(modelPanel);
 		toolBar.setFloatable(false);
 		
+		/*
 		compartmentList.setSelectedItem(bioModel.getDefaultCompartment());
 		compartmentList.addActionListener(this);
+		*/
 		
 		return toolBar;
 	}
@@ -345,6 +342,8 @@ public class Schematic extends JPanel implements ActionListener {
 		selectButton =Utils.makeRadioToolButton("select_mode.png", "", "Select", this, modeButtonGroup); 
 		toolBar.add(selectButton);
 		selectButton.setSelected(true);
+		addCompartmentButton = Utils.makeRadioToolButton("add_compartment.png", "", "Add Compartment", this, modeButtonGroup);
+		toolBar.add(addCompartmentButton);
 		addSpeciesButton = Utils.makeRadioToolButton("add_species.png", "", "Add Species", this, modeButtonGroup);
 		toolBar.add(addSpeciesButton);
 		addReactionButton = Utils.makeRadioToolButton("add_reaction.png", "", "Add Reactions", this, modeButtonGroup);
@@ -382,19 +381,12 @@ public class Schematic extends JPanel implements ActionListener {
 		toolBar.add(modifierButton);
 		//bioInhibitionButton = Utils.makeRadioToolButton("bio_inhibition.png", "", "Create Biological Repression Influences", this, influenceButtonGroup);
 		//toolBar.add(bioInhibitionButton);
-		
-		//if (gcm.getSBMLDocument().getModel().getNumCompartments()==1) {
+
+		/*
 		toolBar.addSeparator();
 		compartmentList.setSelectedItem(bioModel.getDefaultCompartment());
 		compartmentList.addActionListener(this);
 		compartmentList.setToolTipText("Default Compartment");
-		/*
-		if (gcm.getIsWithinCompartment()) {
-			compartmentList.setEnabled(true);
-		} else {
-			compartmentList.setEnabled(false);
-		}
-		*/
 		compartmentList.setMaximumSize(new Dimension(200, (int)compartmentList.getPreferredSize().getHeight()));
 		compartmentList.addMouseListener(new MouseAdapter(){
 			
@@ -422,8 +414,7 @@ public class Schematic extends JPanel implements ActionListener {
 			}			
 		});
 		toolBar.add(compartmentList);
-		//toolBar.add(Utils.makeToolButton("", "compartment", "Compartment", this));
-		//}
+		*/
 		toolBar.addSeparator();
 		toolBar.add(Utils.makeToolButton("choose_layout.png", "showLayouts", "Apply Layout", this));
 		
@@ -483,11 +474,13 @@ public class Schematic extends JPanel implements ActionListener {
 			modelEditor.setDirty(true);
 			bioModel.makeUndoPoint();
 		}
+		/*
 		else if(command == "compartment"){
 			if (compartments != null) {
 				compartments.compartEditor("OK");
 			}
 		}
+		*/
 		/*
 		else if(command == "checkCompartment") {
 			
@@ -545,10 +538,12 @@ public class Schematic extends JPanel implements ActionListener {
 		else if(command == ""){
 			// radio buttons don't have to do anything and have an action command of "".
 		}
+		/*
 		else if(command == "comboBoxChanged") {
 			if (compartmentList.getSelectedItem()!=null)
 				bioModel.setDefaultCompartment((String)compartmentList.getSelectedItem());
 		}
+		*/
 		else{
 			throw(new Error("Invalid actionCommand: " + command));
 		}
@@ -736,14 +731,21 @@ public class Schematic extends JPanel implements ActionListener {
 				else if(e.getClickCount() == 1 && editable && SwingUtilities.isLeftMouseButton(e)) {
 					
 					// First check and if the user clicked on a component, let the graph lib take care of it.
-					if(cell == null) {
+					if(selectButton == null || !selectButton.isSelected()) {
 						
 						//user clicked with select button
+						/*
 						if(selectButton != null && selectButton.isSelected()){
 						}
+						else*/ 
+						if(addCompartmentButton != null && addCompartmentButton.isSelected()) {
+							bioModel.createCompartment(null, e.getX(), e.getY());
+							graph.buildGraph();
+							modelEditor.refresh();
+							modelEditor.setDirty(true);
+							bioModel.makeUndoPoint();
+						}
 						else if(addSpeciesButton != null && addSpeciesButton.isSelected()) {
-							
-							// plop a species down with good default info at the mouse coordinates
 							bioModel.createSpecies(null, e.getX(), e.getY());
 							graph.buildGraph();
 							modelEditor.refresh();
@@ -751,7 +753,6 @@ public class Schematic extends JPanel implements ActionListener {
 							bioModel.makeUndoPoint();
 						}
 						else if(addReactionButton != null && addReactionButton.isSelected()) {
-							
 							bioModel.createReaction(null, e.getX(), e.getY());
 							graph.buildGraph();
 							modelEditor.refresh();
@@ -1027,11 +1028,21 @@ public class Schematic extends JPanel implements ActionListener {
 						String type = graph.getCellType(cell);
 
 						if(type == GlobalConstants.SPECIES){
-							if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, true, false)) {
+							if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, true, true)) {
 								doNotRemove = true;
 							}
 						} else if (type == GlobalConstants.PROMOTER){
 							if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, true, false)) {
+								doNotRemove = true;
+							}
+						} else if(type == GlobalConstants.VARIABLE) {
+							if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, true, true)) {
+								doNotRemove = true;
+							}
+						} else if(type == GlobalConstants.COMPARTMENT) {
+							if (SBMLutilities.compartmentInUse(bioModel.getSBMLDocument(), cell.getId())) {
+								doNotRemove = true; 
+							} else if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, true, true)) {
 								doNotRemove = true;
 							}
 						} else if (type == GlobalConstants.REACTION){
@@ -1232,7 +1243,9 @@ public class Schematic extends JPanel implements ActionListener {
 							bioModel.removeById(cell.getId());
 						}
 						else if(type == GlobalConstants.VARIABLE) {
-							
+							bioModel.removeById(cell.getId());
+						}
+						else if(type == GlobalConstants.COMPARTMENT) {
 							bioModel.removeById(cell.getId());
 						}
 						else if(type == GlobalConstants.SPECIES){
@@ -1290,6 +1303,10 @@ public class Schematic extends JPanel implements ActionListener {
 					mxCell cell = (mxCell)ocell;
 					graph.updateInternalPosition(cell);
 				}
+				graph.buildGraph();
+				drawGrid();
+				bioModel.makeUndoPoint();
+				modelEditor.setDirty(true);
 			}
 		});
 		
@@ -1372,6 +1389,11 @@ public class Schematic extends JPanel implements ActionListener {
 		if(graph.getCellType(source)==GlobalConstants.VARIABLE ||
 				graph.getCellType(target)==GlobalConstants.VARIABLE) {
 			JOptionPane.showMessageDialog(Gui.frame, "A variable cannot be explicitly connected to other objects.");
+			graph.buildGraph();
+			return;
+		} else if(graph.getCellType(source)==GlobalConstants.COMPARTMENT ||
+				graph.getCellType(target)==GlobalConstants.COMPARTMENT) {
+			JOptionPane.showMessageDialog(Gui.frame, "A compartment cannot be connected to other objects.");
 			graph.buildGraph();
 			return;
 		} else if(graph.getCellType(source)==GlobalConstants.RULE ||
@@ -1596,7 +1618,8 @@ public class Schematic extends JPanel implements ActionListener {
 				String newPromoterName = "";
 				
 				if (activationButton.isSelected() || inhibitionButton.isSelected() || noInfluenceButton.isSelected()) {
-					newPromoterName = bioModel.createPromoter(null,0, 0, false);
+					mxGeometry geom = target.getGeometry();
+					newPromoterName = bioModel.createPromoter(null, (float)geom.getX(), (float)geom.getY(), false);
 					bioModel.createProductionReaction(newPromoterName,null,null,null,null,null,null);
 					if (activationButton.isSelected()) {
 						bioModel.addActivatorToProductionReaction(newPromoterName, sourceID, targetID, null, null, null);
@@ -1962,6 +1985,26 @@ public class Schematic extends JPanel implements ActionListener {
 						ReactionGlyph reactionGlyph = layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+cell.getId());
 						reactionGlyph.setId(GlobalConstants.GLYPH+"__"+id);
 						reactionGlyph.setReactionId(id);
+					}
+					if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId())!=null) {
+						TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
+						textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+id);
+						textGlyph.setGraphicalObjectId(GlobalConstants.GLYPH+"__"+id);
+						textGlyph.setText(id);
+					}
+				}
+				cell.setId(id);
+			}
+		}
+		else if(cellType == GlobalConstants.COMPARTMENT){
+			String id = compartments.compartEditor("OK",(String)cell.getId());
+			if (!cell.getId().equals(id)) {
+				if (bioModel.getSBMLLayout().getNumLayouts() != 0) {
+					Layout layout = bioModel.getSBMLLayout().getLayout(0); 
+					if (layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
+						CompartmentGlyph compartmentGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+cell.getId());
+						compartmentGlyph.setId(GlobalConstants.GLYPH+"__"+id);
+						compartmentGlyph.setCompartmentId(id);
 					}
 					if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId())!=null) {
 						TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());

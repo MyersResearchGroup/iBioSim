@@ -166,6 +166,10 @@ public class GlobalConstants {
 	public static final int DEFAULT_EVENT_HEIGHT = 25;
 	public static final int DEFAULT_COMPONENT_WIDTH = 80;
 	public static final int DEFAULT_COMPONENT_HEIGHT = 40;
+	public static final int DEFAULT_COMPARTMENT_WIDTH = 250;
+	public static final int DEFAULT_COMPARTMENT_HEIGHT = 250;
+	public static final int DEFAULT_TEXT_WIDTH = 40;
+	public static final int DEFAULT_TEXT_HEIGHT = 10;
 	
 	
 }

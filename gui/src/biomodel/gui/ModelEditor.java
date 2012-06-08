@@ -1465,9 +1465,9 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		
 		String file = filename.replace(".gcm", ".xml");
 		
-		JComboBox compartmentList = MySpecies.createCompartmentChoices(biomodel);
+		//JComboBox compartmentList = MySpecies.createCompartmentChoices(biomodel);
 		
-		compartmentPanel = new Compartments(biosim,biomodel,dirty, paramsOnly,getParams, path + separator + file,	parameterChanges,false,compartmentList);
+		compartmentPanel = new Compartments(biosim,biomodel,dirty, paramsOnly,getParams, path + separator + file,	parameterChanges,false);
 		reactionPanel = new Reactions(biosim,biomodel,dirty, paramsOnly,getParams,path + separator + file,parameterChanges, this);
 		speciesPanel = new MySpecies(biosim,biomodel,dirty, paramsOnly,getParams,path + separator + file,parameterChanges,biomodel.getGrid().isEnabled());
 		parametersPanel = new Parameters(biosim, biomodel,dirty, paramsOnly,getParams,path + separator + file,parameterChanges, 
@@ -1519,9 +1519,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		} 
 		else {
 			this.schematic = new Schematic(biomodel, biosim, this, true, null,compartmentPanel,reactionPanel,rulesPanel,
-					consPanel,eventPanel,parametersPanel,compartmentList);
+					consPanel,eventPanel,parametersPanel);
 			tab.addTab("Schematic", schematic);
-			tab.addTab("Compartments", compPanel);
 			if (biomodel.getGrid().isEnabled()) {
 				tab.addTab("Grid Species", speciesPanel);
 				tab.addTab("Parameters", parametersPanel);
