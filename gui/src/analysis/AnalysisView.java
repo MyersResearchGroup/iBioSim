@@ -1260,7 +1260,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
 			}
-			else if (simulators.getSelectedItem().equals("mp")) {
+			else if (simulators.getSelectedItem().equals("mean_path")) {
 				description.setText("iSSA (Mean Path)");
 				minStep.setEnabled(true);
 				minStepLabel.setEnabled(true);
@@ -1269,7 +1269,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
 			}
-			else if (simulators.getSelectedItem().equals("mp-median")) {
+			else if (simulators.getSelectedItem().equals("median_path")) {
 				description.setText("iSSA (Median Path)");
 				minStep.setEnabled(true);
 				minStepLabel.setEnabled(true);
@@ -1278,7 +1278,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
 			}
-			else if (simulators.getSelectedItem().equals("mp-bifurcation")) {
+			else if (simulators.getSelectedItem().equals("mean_path-bifurcation")) {
 				description.setText("iSSA (Mean Path) with Bifurcation Detection");
 				minStep.setEnabled(true);
 				minStepLabel.setEnabled(true);
@@ -1287,7 +1287,16 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
 			}
-			else if (simulators.getSelectedItem().equals("mp-adaptive")) {
+			else if (simulators.getSelectedItem().equals("median_path-bifurcation")) {
+				description.setText("iSSA (Median Path) with Bifurcation Detection");
+				minStep.setEnabled(true);
+				minStepLabel.setEnabled(true);
+				step.setEnabled(true);
+				stepLabel.setEnabled(true);
+				errorLabel.setEnabled(false);
+				absErr.setEnabled(false);
+			}
+			else if (simulators.getSelectedItem().equals("mean_path-adaptive")) {
 				description.setText("iSSA (Mean Path Adaptive)");
 				minStep.setEnabled(true);
 				minStepLabel.setEnabled(true);
@@ -1296,7 +1305,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
 			}
-			else if (simulators.getSelectedItem().equals("mp-adaptive-median")) {
+			else if (simulators.getSelectedItem().equals("median_path-adaptive")) {
 				description.setText("iSSA (Median Path Adaptive)");
 				minStep.setEnabled(true);
 				minStepLabel.setEnabled(true);
@@ -1305,7 +1314,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
 			}
-			else if (simulators.getSelectedItem().equals("mp-adaptive-bifurcation")) {
+			else if (simulators.getSelectedItem().equals("mean_path-adaptive-bifurcation")) {
 				description.setText("iSSA (Mean Path Adaptive) with Bifurcation Detection");
 				minStep.setEnabled(true);
 				minStepLabel.setEnabled(true);
@@ -1314,7 +1323,16 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
 			}
-			else if (simulators.getSelectedItem().equals("mp-event")) {
+			else if (simulators.getSelectedItem().equals("median_path-adaptive-bifurcation")) {
+				description.setText("iSSA (Median Path Adaptive) with Bifurcation Detection");
+				minStep.setEnabled(true);
+				minStepLabel.setEnabled(true);
+				step.setEnabled(true);
+				stepLabel.setEnabled(true);
+				errorLabel.setEnabled(false);
+				absErr.setEnabled(false);
+			}
+			else if (simulators.getSelectedItem().equals("mean_path-event")) {
 				description.setText("iSSA (Mean Path Event)");
 				minStep.setEnabled(true);
 				minStepLabel.setEnabled(true);
@@ -1323,7 +1341,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
 			}
-			else if (simulators.getSelectedItem().equals("mp-event-median")) {
+			else if (simulators.getSelectedItem().equals("median_path-event")) {
 				description.setText("iSSA (Median Path Event)");
 				minStep.setEnabled(true);
 				minStepLabel.setEnabled(true);
@@ -1332,8 +1350,17 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
 			}
-			else if (simulators.getSelectedItem().equals("mp-event-bifurcation")) {
+			else if (simulators.getSelectedItem().equals("mean_path-event-bifurcation")) {
 				description.setText("iSSA (Mean Path Event) with Bifurcation Detection");
+				minStep.setEnabled(true);
+				minStepLabel.setEnabled(true);
+				step.setEnabled(true);
+				stepLabel.setEnabled(true);
+				errorLabel.setEnabled(false);
+				absErr.setEnabled(false);
+			}
+			else if (simulators.getSelectedItem().equals("median_path-event-bifurcation")) {
+				description.setText("iSSA (Median Path Event) with Bifurcation Detection");
 				minStep.setEnabled(true);
 				minStepLabel.setEnabled(true);
 				step.setEnabled(true);
@@ -2458,15 +2485,18 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		// int steps;
 		double runTime;
 		if (((String) intervalLabel.getSelectedItem()).contains("Print Interval")) {
-			if (simulators.getSelectedItem().equals("mpde") || simulators.getSelectedItem().equals("mp")
-					|| simulators.getSelectedItem().equals("mp-median")
-					|| simulators.getSelectedItem().equals("mp-bifurcation")
-					|| simulators.getSelectedItem().equals("mp-adaptive")
-					|| simulators.getSelectedItem().equals("mp-adaptive-median")
-					|| simulators.getSelectedItem().equals("mp-adaptive-bifurcation")
-					|| simulators.getSelectedItem().equals("mp-event")
-					|| simulators.getSelectedItem().equals("mp-event-median")
-					|| simulators.getSelectedItem().equals("mp-event-bifurcation")) {
+			if (simulators.getSelectedItem().equals("mpde") || simulators.getSelectedItem().equals("mean_path")
+					|| simulators.getSelectedItem().equals("median_path")
+					|| simulators.getSelectedItem().equals("mean_path-bifurcation")
+					|| simulators.getSelectedItem().equals("median_path-bifurcation")
+					|| simulators.getSelectedItem().equals("mean_path-adaptive")
+					|| simulators.getSelectedItem().equals("median_path-adaptive")
+					|| simulators.getSelectedItem().equals("mean_path-adaptive-bifurcation")
+					|| simulators.getSelectedItem().equals("median_path-adaptive-bifurcation")
+					|| simulators.getSelectedItem().equals("mean_path-event")
+					|| simulators.getSelectedItem().equals("median_path-event")
+					|| simulators.getSelectedItem().equals("mean_path-event-bifurcation")
+					|| simulators.getSelectedItem().equals("median_path-event-bifurcation")) {
 				// double test = printInterval / timeStep;
 				// double error = test - ((int) test);
 				// if (error > 0.0001) {
@@ -2505,15 +2535,18 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			}
 		}
 		else {
-			if (simulators.getSelectedItem().equals("mpde") || simulators.getSelectedItem().equals("mp")
-					|| simulators.getSelectedItem().equals("mp-median")
-					|| simulators.getSelectedItem().equals("mp-bifurcation")
-					|| simulators.getSelectedItem().equals("mp-adaptive")
-					|| simulators.getSelectedItem().equals("mp-adaptive-median")
-					|| simulators.getSelectedItem().equals("mp-adaptive-bifurcation")
-					|| simulators.getSelectedItem().equals("mp-event")
-					|| simulators.getSelectedItem().equals("mp-event-median")
-					|| simulators.getSelectedItem().equals("mp-event-bifurcation")) {
+			if (simulators.getSelectedItem().equals("mpde") || simulators.getSelectedItem().equals("mean_path")
+					|| simulators.getSelectedItem().equals("median_path")
+					|| simulators.getSelectedItem().equals("mean_path-bifurcation")
+					|| simulators.getSelectedItem().equals("median_path-bifurcation")
+					|| simulators.getSelectedItem().equals("mean_path-adaptive")
+					|| simulators.getSelectedItem().equals("median_path-adaptive")
+					|| simulators.getSelectedItem().equals("mean_path-adaptive-bifurcation")
+					|| simulators.getSelectedItem().equals("median_path-adaptive-bifurcation")
+					|| simulators.getSelectedItem().equals("mean_path-event")
+					|| simulators.getSelectedItem().equals("median_path-event")
+					|| simulators.getSelectedItem().equals("mean_path-event-bifurcation")
+					|| simulators.getSelectedItem().equals("median_path-event-bifurcation")) {
 				// steps = (int) (printInterval);
 				runTime = timeLimit;
 				// progress = new JProgressBar(0, (int) timeLimit);

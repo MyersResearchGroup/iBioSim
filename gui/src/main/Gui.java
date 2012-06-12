@@ -1419,7 +1419,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				choices = new String[] { "euler", "gear1", "gear2", "rk4imp", "rk8pd", "rkf45" };
 			}
 			else if (type.getSelectedItem().equals("Monte Carlo")) {
-				choices = new String[] { "gillespie", "gillespieJava", "Gillespie SSA-CR (Java)", "Gillespie SSA-Direct (Java)", "mpde", "mp", "mp-median", "mp-bifurcation", "mp-adaptive", "mp-adaptive-median", "mp-adaptive-bifurcation", "mp-event", "mp-event-median", "mp-event-bifurcation", "emc-sim", "bunker", "nmc"};
+				choices = new String[] { "gillespie", "gillespieJava", "Gillespie SSA-CR (Java)", "Gillespie SSA-Direct (Java)", "mpde", "mean_path", "mean_path-bifurcation", "median_path", "median_path-bifurcation", "mean_path-adaptive", "mean_path-adaptive-bifurcation", "median_path-adaptive", "median_path-adaptive-bifurcation", "mean_path-event", "mean_path-event-bifurcation", "median_path-event", "median_path-event-bifurcation", "emc-sim", "bunker", "nmc"};
 			}
 			else if (type.getSelectedItem().equals("Markov")) {
 				choices = new String[] { "steady-state-markov-chain-analysis", "transient-markov-chain-analysis", "reachability-analysis", "atacs",
@@ -1491,15 +1491,18 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						sim.addItem("Gillespie SSA-CR (Java)");
 						sim.addItem("Gillespie SSA-Direct (Java)");
 						sim.addItem("mpde");
-						sim.addItem("mp");
-						sim.addItem("mp-median");
-						sim.addItem("mp-bifurcation");
-						sim.addItem("mp-adaptive");
-						sim.addItem("mp-adaptive-median");
-						sim.addItem("mp-adaptive-bifurcation");
-						sim.addItem("mp-event");
-						sim.addItem("mp-event-median");
-						sim.addItem("mp-event-bifurcation");
+						sim.addItem("mean_path");
+						sim.addItem("mean_path-bifurcation");
+						sim.addItem("median_path");
+						sim.addItem("median_path-bifurcation");
+						sim.addItem("mean_path-adaptive");
+						sim.addItem("mean_path-adaptive-bifurcation");
+						sim.addItem("median_path-adaptive");
+						sim.addItem("median_path-adaptive-bifurcation");
+						sim.addItem("mean_path-event");
+						sim.addItem("mean_path-event-bifurcation");
+						sim.addItem("median_path-event");
+						sim.addItem("median_path-event-bifurcation");
 						sim.addItem("emc-sim");
 						sim.addItem("bunker");
 						sim.addItem("nmc");
