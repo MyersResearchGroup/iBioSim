@@ -1588,6 +1588,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				Options.setTimingAnalsysisType("zone");
 
 				ZoneType.setSubsetFlag(!timsubset.isSelected());
+				ZoneType.setSupersetFlag(!superset.isSelected());
 
 				Project_Timed timedStateSearch = new Project_Timed(lpn, 
 						Options.getTimingAnalysisFlag(), false);
