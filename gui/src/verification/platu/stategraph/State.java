@@ -31,8 +31,11 @@ public class State extends PlatuObj {
     protected boolean failure = false;
     
  // The TimingState that extends this state with a zone. Null if untimed.
-    protected TimedState timeExtension;
-
+    //protected TimedState timeExtension;
+    
+    // A list of all the TimedStates that are time extensions of this state.
+    private ArrayList<TimedState> timeExtensions;
+    
     @Override
     public String toString() {
 //        String ret=Arrays.toString(marking)+""+
@@ -474,8 +477,8 @@ public class State extends PlatuObj {
 	 * @return
 	 * 		The TimingState that extends this state if it has been set. Null, otherwise.
 	 */
-	public TimedState getTimeExtension(){
-		return timeExtension;
+	public ArrayList<TimedState> getTimeExtension(){
+		return timeExtensions;
 	}
 	
 	/**
@@ -483,7 +486,15 @@ public class State extends PlatuObj {
 	 * @param s
 	 * 		The TimingState that extends this state.
 	 */
-	public void setTimeExtension(TimedState s){
-		timeExtension = s;
+	public void setTimeExtension(ArrayList<TimedState> s){
+		timeExtensions = s;
+	}
+	
+	public void addTimeExtension(TimedState s){
+		if(timeExtensions == null){
+			timeExtensions = new ArrayList<TimedState>();
+		}
+		
+		timeExtensions.add(s);
 	}
 }
