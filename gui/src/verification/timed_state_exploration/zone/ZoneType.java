@@ -14,14 +14,25 @@ public abstract class ZoneType {
 	/* 
 	 * Turns on and off subsets for the zones.
 	 * True means subset will be considered.
-	 * False means subsets will be considered.
+	 * False means subsets will not be considered.
 	 */
 	private static boolean _subsetFlag = true;
 	
+	/**
+	 * Gets the value of the subset flag.
+	 * @return
+	 * 		True if subsets are requested, false otherwise.
+	 */
 	public static boolean getSubsetFlag(){
 		return _subsetFlag;
 	}
 	
+	/**
+	 * Sets the value of the subset flag.
+	 * @param useSubsets
+	 * 			The value for the subset flag. Set to true if
+	 * 			supersets are to be considered, false otherwise.
+	 */
 	public static void setSubsetFlag(boolean useSubsets){
 		_subsetFlag = useSubsets;
 	}
@@ -33,10 +44,21 @@ public abstract class ZoneType {
 	 */
 	private static boolean _supersetFlag = true;
 	
+	/**
+	 * Gets the value of the superset flag.
+	 * @return
+	 * 		True if supersets are to be considered, false otherwise.
+	 */
 	public static boolean getSupersetFlag(){
 		return _supersetFlag;
 	}
 	
+	/**
+	 * Sets the superset flag.
+	 * @param useSupersets
+	 * 		The value of the superset flag. Set to true if
+	 * 		supersets are to be considered, false otherwise.
+	 */
 	public static void setSupersetFlag(boolean useSupersets){
 		_supersetFlag = useSupersets;
 	}
@@ -144,5 +166,14 @@ public abstract class ZoneType {
 	 * 		The lexicon.
 	 */
 	public abstract HashMap<Integer, Transition> getLexicon();
+	
+	/**
+	 * Determines if this zone is a subset of Zone otherZone.
+	 * @param otherZone 
+	 * 		The zone to compare against.
+	 * @return
+	 * 		True if this is a subset of other; false otherwise.
+	 */
+	public abstract boolean subset(ZoneType otherZone);
 
 }
