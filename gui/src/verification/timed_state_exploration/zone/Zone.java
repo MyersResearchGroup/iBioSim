@@ -86,6 +86,9 @@ public class Zone extends ZoneType {
 	/* Set if a failure in the testSplit method has fired already. */
 	private static boolean _FAILURE = false;
 	
+	/* Hack to pass a parameter to the equals method though a variable */
+	private boolean subsetting = false;
+	
 	/**
 	 * Construct a zone that has the given timers.
 	 * @param timers 
@@ -481,7 +484,7 @@ public class Zone extends ZoneType {
 	}
 	
 	/**
-	 * Sets an entry of the DBM using the DBM's adressing.
+	 * Sets an entry of the DBM using the DBM's addressing.
 	 * @param i
 	 * 			The row of the DBM.
 	 * @param j
@@ -634,13 +637,14 @@ public class Zone extends ZoneType {
 		}
 		
 		// Check hash codes if not doing subsets.
-		if(!ZoneType.getSubsetFlag()){
+		//if(!ZoneType.getSubsetFlag()){
+		//if(!subsetting){
 			// If the hash codes are different, then the objects are not equal. 
 			if(this.hashCode() != otherZone.hashCode())
 			{
 				return false;
 			}
-		}
+		//}
 		
 		// Check if the timers are the same.
 //		if(!Arrays.equals(this._indexToTimer, otherZone._indexToTimer))
@@ -665,26 +669,79 @@ public class Zone extends ZoneType {
 		{
 			for(int j=0; j<_matrix[0].length; j++)
 			{
-				if(ZoneType.getSubsetFlag()){
-					
-					// Subsets are in use.
-					if(!(otherZone._matrix[i][j] <= this._matrix[i][j])){
-						return false;
-					}
-				}
-				else{
+//				if(ZoneType.getSubsetFlag()){
+//				//if(subsetting){
+//					// Subsets are in use.
+//					if(!(otherZone._matrix[i][j] <= this._matrix[i][j])){
+//						return false;
+//					}
+//				}
+//				else{
 					
 					// Subsets are not in use.
 					if(!(this._matrix[i][j] == otherZone._matrix[i][j]))
 					{
 						return false;
 					}
-				}
+				//}
 			}
 		}
 		
 		
 		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see verification.timed_state_exploration.zone.ZoneType#subset(Zone)
+	 */
+	public boolean subset(ZoneType otherZone){
+		// Check if the reference is null first.
+				if(otherZone == null)
+				{
+					return false;
+				}
+				
+				// Check for reference equality.
+				if(this == otherZone)
+				{
+					return true;
+				}
+				
+				Zone oZ;
+				
+				if( !(otherZone instanceof Zone)){
+					throw new UnsupportedOperationException("Tried subset with Zone and other" +
+							"ZoneType");
+				}
+				else{
+					oZ = (Zone) otherZone;
+				}
+				
+				if(this._indexToTimer.length != oZ._indexToTimer.length){
+					return false;
+				}
+				
+				for(int i=0; i<this._indexToTimer.length; i++){
+					if(this._indexToTimer[i] != oZ._indexToTimer[i]){
+						return false;
+					}
+				}
+				
+				// Check if the matrix is the same if subsets are not being used.
+				// Check if the entries of other are less than or equal to this if
+				// subset are in use.
+				for(int i=0; i<_matrix.length; i++)
+				{
+					for(int j=0; j<_matrix[0].length; j++)
+					{
+						if(!(this._matrix[i][j] <= oZ._matrix[i][j])){
+							return false;
+						}
+					}
+				}
+				
+				
+				return true;
 	}
 	
 	/**
@@ -727,7 +784,7 @@ public class Zone extends ZoneType {
 	 */
 	private boolean checkSquare(int[][] array)
 	{
-		boolean result = true; 
+		//boolean result = true; 
 		
 		if(array == null )
 		{
