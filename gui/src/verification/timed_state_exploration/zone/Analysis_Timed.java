@@ -1,6 +1,7 @@
 package verification.timed_state_exploration.zone;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Stack;
 
@@ -159,7 +160,13 @@ public class Analysis_Timed extends Analysis{
 
 			PrjState nextPrjState = new PrjState(nextStateArray);
 			//nextPrjState.print(getLpnList(sgList));
-			Boolean	existingState = prjStateSet.contains(nextPrjState) || stateStack.contains(nextPrjState);
+			//Boolean	existingState = prjStateSet.contains(nextPrjState) || stateStack.contains(nextPrjState);
+			
+			Boolean existingState = checkStateSet(prjStateSet, nextPrjState, 
+					ZoneType.getSubsetFlag(), ZoneType.getSupersetFlag())
+					| checkStack(nextPrjState, stateStackTop, lpnTranStack,
+							curIndexStack, stateStack, prjStateSet,
+							ZoneType.getSubsetFlag(), ZoneType.getSupersetFlag());
 			
 			
 			if (existingState == false) {
@@ -215,6 +222,140 @@ public class Analysis_Timed extends Analysis{
 			System.out.println("----------------");
 		}
 		System.out.println("++++++++++++++++++++");
+	}
+	
+	private boolean projectUntimedEquals(PrjState left, PrjState right){
+		State[] leftArray = left.toStateArray();
+		State[] rightArray = right.toStateArray();
+		
+		Boolean equals = true;
+		
+		for(int i=0; i<leftArray.length; i++){	
+			equals &= ((TimedState)leftArray[i]).untimedStateEquals(rightArray[i]);
+		}
+		
+		return equals;
+	}
+	
+	private boolean checkStack(PrjState nextPrjState, PrjState stateStackTop,
+			Stack<LinkedList<Transition>> lpnTranStack, Stack<Integer> curIndexStack,
+			HashSet<PrjState> stateStack, HashSet<PrjState> prjStateSet,
+			boolean subsets, boolean supersets){
+		
+		boolean existingState = false;
+		
+		if(!subsets && !supersets){
+			return stateStack.contains(nextPrjState);
+		}
+		
+		ZoneType nextZone = ((TimedState) nextPrjState.get(0)).getZone();
+		
+		PrjState stackStateIterator = stateStackTop;
+		int stackDepth = 1;
+		while(stackStateIterator != null){
+			
+			if(!projectUntimedEquals(nextPrjState, stackStateIterator)){
+				stackStateIterator = stackStateIterator.getFather();
+				stackDepth++;
+				continue;
+			}
+			
+			ZoneType iteratorZone = ((TimedState) stackStateIterator.get(0)).getZone();
+			
+			// Check for subset.
+			if(subsets && nextZone.subset(iteratorZone) 
+					|| (nextZone.equals(iteratorZone))){
+				
+//				if(supersets){
+//					existingState |= true;
+//				}
+//				else{
+				existingState = true;
+				break;
+				//}
+			}
+			
+			if(!supersets){
+				stackStateIterator = stackStateIterator.getFather();
+				stackDepth++;
+				continue;
+			}
+
+			// Check for the superset.
+			if(iteratorZone.subset(nextZone)){
+				PrjState father = stackStateIterator.getFather();
+				PrjState child = stackStateIterator.getChild();
+
+				if(child != null){
+					child.setFather(father);
+				}
+				if(father != null){
+					father.setChild(child);
+				}
+
+
+				// Remove the corresponding items on the stacks and state set.
+				lpnTranStack.remove(lpnTranStack.size() - stackDepth);
+				curIndexStack.remove(curIndexStack.size() - stackDepth);
+				stateStack.remove(stackStateIterator);
+				
+				stackStateIterator = stackStateIterator.getFather();
+				continue;
+			}
+
+			stackStateIterator = stackStateIterator.getFather();
+			stackDepth++;
+		}
+		
+		
+		return existingState;
+	}
+	
+	private boolean checkStateSet(HashSet<PrjState> prjStateSet, PrjState nextPrjState,
+			boolean subsets, boolean supersets){
+		
+		if(!subsets && !supersets){
+			return prjStateSet.contains(nextPrjState);
+		}
+		
+		// Extract the zone.
+		ZoneType nextZone = ((TimedState) nextPrjState.get(0)).getZone();
+		
+		Iterator<PrjState> stateSetIterator = prjStateSet.iterator();
+		while(stateSetIterator.hasNext()){
+
+			PrjState nextSetState = stateSetIterator.next();
+
+			if(!projectUntimedEquals(nextPrjState, nextSetState)){
+				continue;
+			}
+			
+			// Check for the subsets.
+			ZoneType iteratorZone = ((TimedState) nextSetState.get(0)).getZone();
+			
+			if(subsets){
+				//stateSetIterator.remove();
+				//if(supersets && nextZone != iteratorZone){
+				if(supersets){
+					if(nextZone.subset(iteratorZone)){
+						return true;
+					}
+					else if(iteratorZone.subset(nextZone)){
+						stateSetIterator.remove();
+					}
+				}
+				else if (nextZone.subset(iteratorZone)){
+					//return nextZone.subset(iteratorZone);
+					return true;
+				}
+			}
+			else if (nextZone.equals(iteratorZone)){
+				//return nextZone.equals(iteratorZone);
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 }
