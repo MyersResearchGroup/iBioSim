@@ -3,6 +3,7 @@ package verification.timed_state_exploration.zone;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
@@ -206,13 +207,21 @@ public class TimedState extends State{
 	}
 
 	@Override
-	public TimedState getTimeExtension() {
-		return super.getTimeExtension();
+	public ArrayList<TimedState> getTimeExtension() {
+		//return super.getTimeExtension();
+		return _state.getTimeExtension();
 	}
 
 	@Override
-	public void setTimeExtension(TimedState s) {
-		super.setTimeExtension(s);
+	public void setTimeExtension(ArrayList<TimedState> s) {
+		//super.setTimeExtension(s);
+		_state.setTimeExtension(s);
+	}
+	
+	@Override
+	public void addTimeExtension(TimedState s){
+		//super.addTimeExtension(s);
+		_state.addTimeExtension(s);
 	}
 
 	public TimedState(LhpnFile lpn, int[] new_marking, int[] new_vector,
@@ -235,7 +244,8 @@ public class TimedState extends State{
 			_zone = newZone;
 		}
 		
-		_state.setTimeExtension(this);
+		//_state.setTimeExtension(this);
+		_state.addTimeExtension(this);
 	}
 
 	/**
@@ -262,7 +272,8 @@ public class TimedState extends State{
 			_zone = newZone;
 		}
 		
-		_state.setTimeExtension(this);
+		//_state.setTimeExtension(this);
+		_state.addTimeExtension(this);
 	}
 	
 	public TimedState(State s, ZoneType z, boolean usegraph)
@@ -279,7 +290,8 @@ public class TimedState extends State{
 		else{
 			_zone = z.clone();
 		}
-		_state.setTimeExtension(this);
+		//_state.setTimeExtension(this);
+		_state.addTimeExtension(this);
 	}
 	
 	public String toString()
@@ -324,5 +336,17 @@ public class TimedState extends State{
 	
 	public boolean usingGraphs(){
 		return _useGraph;
+	}
+	
+	public boolean untimedStateEquals(TimedState s){
+		return this._state.equals(s._state);
+	}
+	
+	public boolean untimedStateEquals(State s){
+		if(s instanceof TimedState){
+			TimedState t = (TimedState) s;
+			return untimedStateEquals(t);
+		}
+		return this._state.equals(s);
 	}
 }
