@@ -588,7 +588,7 @@ public class GCMParser {
 			SynthesisNode modelSynNode = synMap.get(replaced.getSubmodelRef());
 			if (replaced.getPortRef().startsWith("input"))
 				synNode.addNextNode(modelSynNode);
-			else if (replaced.getPortRef().startsWith("output"))
+			else if (modelSynNode != null && replaced.getPortRef().startsWith("output"))
 				modelSynNode.addNextNode(synNode);
 		}
 		return sbolURIs.size() > 0;
