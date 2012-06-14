@@ -2337,17 +2337,22 @@ public class Schematic extends JPanel implements ActionListener {
 		if (scale == true) {
 			
 			double maxWidth = 4000;
+			double maxHeight = 4000;
 		
 			double newHeight = image.getHeight();
 			double newWidth = image.getWidth();
 			
-//			//scale the image if it's too big (ie, > 1024 x 768)
-//			//be sure to keep the ratio consistent
-//			if (image.getHeight() > 768) {
-//				
-//				newWidth = newWidth * (768 / newHeight);
-//				newHeight = 768;
-//			}
+			System.err.println(newWidth + "  " + newHeight);
+			
+			//scale the image if it's too big (ie, > 1024 x 768)
+			//be sure to keep the ratio consistent
+			if (image.getHeight() > maxHeight) {
+				
+				newWidth = newWidth * (maxHeight / newHeight);
+				newHeight = maxHeight;
+			}
+			
+			System.err.println(newWidth + "  " + newHeight);
 			
 			if (newWidth > maxWidth) {			
 				

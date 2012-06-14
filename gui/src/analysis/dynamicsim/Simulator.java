@@ -507,6 +507,11 @@ public abstract class Simulator {
 			case 1: childLocation.y += 1; break;
 			case 2: childLocation.x -= 1; break;
 			case 3: childLocation.x += 1; break;
+			
+//			case 4: {childLocation.x += 1; childLocation.y -= 1; break;}
+//			case 5: {childLocation.x -= 1; childLocation.y += 1; break;}
+//			case 6: {childLocation.x -= 1; childLocation.y -= 1; break;}
+//			case 7: {childLocation.x += 1; childLocation.y += 1; break;}
 		}
 		
 		HashSet<Point> locationsToMove = new HashSet<Point>();
@@ -2829,8 +2834,6 @@ public abstract class Simulator {
 				//switch from false to true must happen
 				if (eventToPreviousTriggerValueMap.get(untriggeredEventID) == true)
 					continue;
-				
-				//System.err.print(untriggeredEventID);
 				
 				triggeredEvents.add(untriggeredEventID);
 				

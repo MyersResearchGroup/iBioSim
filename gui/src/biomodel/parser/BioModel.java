@@ -3842,6 +3842,7 @@ public class BioModel {
 			
 			Reaction r = sbml.getModel().createReaction();
 			r.setId("Degradation_" + speciesID);
+			r.setMetaId(r.getId());
 			r.setCompartment(sbml.getModel().getCompartment(0).getId());
 			r.setReversible(false);
 			r.setFast(false);
@@ -3925,6 +3926,7 @@ public class BioModel {
 				//this is the diffusion across the "medium" if you will
 				r = sbml.getModel().createReaction();
 				r.setId("Diffusion_" + speciesID + "_" + direction);
+				r.setMetaId(r.getId());
 				r.setCompartment(diffComp);
 				r.setReversible(true);
 				r.setFast(false);
@@ -3993,6 +3995,7 @@ public class BioModel {
 			
 			r = sbml.getModel().createReaction();
 			r.setId("MembraneDiffusion_" + speciesID);
+			r.setMetaId(r.getId());
 			r.setCompartment(membraneDiffusionComp);
 			r.setReversible(true);
 			r.setFast(false);
