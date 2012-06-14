@@ -199,8 +199,6 @@ public class SimulatorSSACR extends Simulator {
 					testConstraints(variableToAffectedConstraintSetMap.get(affectedVariable));
 			}
 			
-			System.err.println("hi: " + numEvents +  "  " + noEventsFlag);
-			
 			//STEP 3A: select a group
 			
 			//long step3aInitial = System.nanoTime();
