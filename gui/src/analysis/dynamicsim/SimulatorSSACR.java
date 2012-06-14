@@ -174,6 +174,9 @@ public class SimulatorSSACR extends Simulator {
 			 
 			double delta_t = FastMath.log(1 / r1) / totalPropensity;
 			
+			if (delta_t > maxTimeStep)
+				delta_t = maxTimeStep;
+			
 			//step2Time += System.nanoTime() - step2Initial;
 			
 			
