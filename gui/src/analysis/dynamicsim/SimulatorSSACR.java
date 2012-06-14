@@ -199,6 +199,7 @@ public class SimulatorSSACR extends Simulator {
 					testConstraints(variableToAffectedConstraintSetMap.get(affectedVariable));
 			}
 			
+			System.err.println("hi: " + numEvents +  "  " + noEventsFlag);
 			
 			//STEP 3A: select a group
 			
@@ -209,7 +210,43 @@ public class SimulatorSSACR extends Simulator {
 			//this happens when there aren't any nonempty groups
 			if (selectedGroup == 0) {
 				
-				currentTime = printTime + printInterval/2;
+				//update time for next iteration
+				currentTime += delta_t;
+				
+				if (variableToIsInAssignmentRuleMap != null && 
+						variableToIsInAssignmentRuleMap.containsKey("time"))				
+					performAssignmentRules(variableToAffectedAssignmentRuleSetMap.get("time"));
+				
+				//add events to queue if they trigger
+				if (noEventsFlag == false) {
+					
+					handleEvents(noAssignmentRulesFlag, noConstraintsFlag);
+				
+					if (!triggeredEventQueue.isEmpty() && (triggeredEventQueue.peek().fireTime <= currentTime))
+						currentTime = triggeredEventQueue.peek().fireTime;
+				}
+				
+				while ((currentTime > printTime) && (printTime < timeLimit)) {
+					
+					try {
+						printToTSD(printTime);
+						bufferedTSDWriter.write(",\n");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					
+//					for (String speciesID : speciesIDSet)
+//						if (speciesID.contains("ROW"))
+//							System.err.println(speciesID + "   " + variableToValueMap.get(speciesID));
+//					
+//					System.err.println();
+//					System.err.println();
+					
+					printTime += printInterval;
+					running.setTitle("Progress (" + (int)((currentTime / timeLimit) * 100.0) + "%)");
+				}
+				
+				//currentTime = printTime + printInterval/2;
 				continue;
 			}
 		
@@ -366,7 +403,6 @@ public class SimulatorSSACR extends Simulator {
 		setupInitialAssignments();
 		setupRules();
 		setupConstraints();
-
 		
 		if (numEvents == 0)
 			eventsFlag.setValue(true);
