@@ -59,9 +59,9 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 
 	private JTextField compID, compSize, compName; // compartment fields;
 
-	private JComboBox compUnits, compOutside, compConstant; // compartment units
+	private JComboBox compUnits, compConstant; // compartment units
 
-	private JComboBox compTypeBox, dimBox; // compartment type combo box
+	private JComboBox compTypeBox; // compartment type combo box
 
 	private JTextField dimText;
 
@@ -191,14 +191,11 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		Object[] choices = compTypeList;
 		compTypeBox = new JComboBox(choices);
 		Object[] dims = { "0", "1", "2", "3" };
-		dimBox = new JComboBox(dims);
-		dimBox.setSelectedItem("3");
 		dimText = new JTextField(12);
 		dimText.setText("3.0");
 		compSize = new JTextField(12);
 		compSize.setText("1.0");
 		compUnits = new JComboBox();
-		compOutside = new JComboBox();
 		String[] optionsTF = { "true", "false" };
 		compConstant = new JComboBox(optionsTF);
 		compConstant.setSelectedItem("true");
@@ -206,20 +203,9 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		editComp = false;
 		String selectedID = "";
 		if (option.equals("OK")) {
-			selected = ((String) compartments.getSelectedValue()).split(" ")[0];
 			editComp = true;
 		}
-		setCompartOptions(selected, "3");
-		dimBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (editComp) {
-					setCompartOptions(((String) compartments.getSelectedValue()).split(" ")[0], (String) dimBox.getSelectedItem());
-				}
-				else {
-					setCompartOptions("", (String) dimBox.getSelectedItem());
-				}
-			}
-		});
+		setCompartOptions("3");
 		dimText.addKeyListener(new KeyListener() {
 			public void keyTyped(KeyEvent e) {
 			}
@@ -229,10 +215,10 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 
 			public void keyReleased(KeyEvent e) {
 				if (editComp) {
-					setCompartOptions(((String) compartments.getSelectedValue()).split(" ")[0], dimText.getText());
+					setCompartOptions(dimText.getText());
 				}
 				else {
-					setCompartOptions("", (String) dimText.getText());
+					setCompartOptions(dimText.getText());
 				}
 			}
 		});
@@ -281,10 +267,8 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 			compID.setEnabled(false);
 			compName.setEnabled(false);
 			compTypeBox.setEnabled(false);
-			dimBox.setEnabled(false);
 			dimText.setEnabled(false);
 			compUnits.setEnabled(false);
-			compOutside.setEnabled(false);
 			compConstant.setEnabled(false);
 			compSize.setEnabled(false);
 			onPort.setEnabled(false);
@@ -292,17 +276,15 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		}
 		if (option.equals("OK")) {
 			try {
-				Compartment compartment = bioModel.getSBMLDocument().getModel().getCompartment((((String) compartments.getSelectedValue()).split(" ")[0]));
+				Compartment compartment = bioModel.getSBMLDocument().getModel().getCompartment(selected);
 				compID.setText(compartment.getId());
 				selectedID = compartment.getId();
 				compName.setText(compartment.getName());
 				if (compartment.isSetCompartmentType()) {
 					compTypeBox.setSelectedItem(compartment.getCompartmentType());
 				}
-				dimBox.setSelectedItem(String.valueOf(compartment.getSpatialDimensions()));
 				dimText.setText(String.valueOf(compartment.getSpatialDimensionsAsDouble()));
-				setCompartOptions(((String) compartments.getSelectedValue()).split(" ")[0],
-						String.valueOf(compartment.getSpatialDimensionsAsDouble()));
+				setCompartOptions(String.valueOf(compartment.getSpatialDimensionsAsDouble()));
 				InitialAssignment init = bioModel.getSBMLDocument().getModel().getInitialAssignment(selectedID);
 				if (init!=null) {
 					compSize.setText(SBMLutilities.myFormulaToString(init.getMath()));
@@ -314,12 +296,6 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 				}
 				else {
 					compUnits.setSelectedItem("( none )");
-				}
-				if (compartment.isSetOutside()) {
-					compOutside.setSelectedItem(compartment.getOutside());
-				}
-				else {
-					compOutside.setSelectedItem("( none )");
 				}
 				if (compartment.getConstant()) {
 					compConstant.setSelectedItem("true");
@@ -370,16 +346,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 			compPanel.add(compTypeBox);
 		}
 		compPanel.add(dimLabel);
-		if (bioModel.getSBMLDocument().getLevel() < 3) {
-			compPanel.add(dimBox);
-		}
-		else {
-			compPanel.add(dimText);
-		}
-		if (bioModel.getSBMLDocument().getLevel() < 3) {
-			compPanel.add(outsideLabel);
-			compPanel.add(compOutside);
-		}
+		compPanel.add(dimText);
 		compPanel.add(constLabel);
 		compPanel.add(compConstant);
 		if (paramsOnly) {
@@ -421,35 +388,11 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), compID.getText().trim(), selectedID, false, false);
 			if (!error && option.equals("OK") && compConstant.getSelectedItem().equals("true")) {
-				String val = ((String) compartments.getSelectedValue()).split(" ")[0];
+				String val = selected;
 				error = SBMLutilities.checkConstant(bioModel.getSBMLDocument(), "Compartment", val);
 			}
-			if (!error && bioModel.getSBMLDocument().getLevel() < 3 && option.equals("OK") && dimBox.getSelectedItem().equals("0")) {
-				String val = ((String) compartments.getSelectedValue()).split(" ")[0];
-				for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumSpecies(); i++) {
-					Species species = bioModel.getSBMLDocument().getModel().getSpecies(i);
-					if ((species.getCompartment().equals(val)) && (species.isSetInitialConcentration())) {
-						JOptionPane.showMessageDialog(Gui.frame,
-								"Compartment with 0-dimensions cannot contain species with an initial concentration.", "Cannot be 0 Dimensions",
-								JOptionPane.ERROR_MESSAGE);
-						error = true;
-						break;
-					}
-				}
-				if (!error) {
-					for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumCompartments(); i++) {
-						Compartment compartment = bioModel.getSBMLDocument().getModel().getCompartment(i);
-						if (compartment.getOutside().equals(val)) {
-							JOptionPane.showMessageDialog(Gui.frame, "Compartment with 0-dimensions cannot be outside another compartment.",
-									"Cannot be 0 Dimensions", JOptionPane.ERROR_MESSAGE);
-							error = true;
-							break;
-						}
-					}
-				}
-			}
 			Double addCompSize = 1.0;
-			if ((!error) && (Integer.parseInt((String) dimBox.getSelectedItem()) != 0)) {
+			if ((!error)) {
 				if (compSize.getText().trim().startsWith("(") && compSize.getText().trim().endsWith(")")) {
 					try {
 						Double.parseDouble((compSize.getText().trim()).split(",")[0].substring(1).trim());
@@ -483,33 +426,10 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 					}
 				}
 			}
-			if (!error) {
-				if (bioModel.getSBMLDocument().getLevel() < 3) {
-					if (!compOutside.getSelectedItem().equals("( none )")) {
-						if (checkOutsideCycle(compID.getText().trim(), (String) compOutside.getSelectedItem(), 0)) {
-							JOptionPane.showMessageDialog(Gui.frame, "Compartment contains itself through outside references.",
-									"Cycle in Outside References", JOptionPane.ERROR_MESSAGE);
-							error = true;
-						}
-					}
-				}
-			}
-			if (!error) {
-				if (bioModel.getSBMLDocument().getLevel() < 3) {
-					if (((String) dimBox.getSelectedItem()).equals("0") && (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), selected, true, true, true))) {
-						error = true;
-					}
-				}
-			}
 			double dim = 3;
 			if (!error) {
 				try {
-					if (bioModel.getSBMLDocument().getLevel() < 3) {
-						dim = Integer.parseInt((String) dimBox.getSelectedItem());
-					}
-					else {
-						dim = Double.parseDouble((String) dimText.getText());
-					}
+					dim = Double.parseDouble((String) dimText.getText());
 				}
 				catch (Exception e1) {
 					JOptionPane.showMessageDialog(Gui.frame, "Compartment spatial dimensions must be a real number.", "Invalid Spatial Dimensions",
@@ -568,7 +488,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 							comps[i] = compartments.getModel().getElementAt(i).toString();
 						}
 						int index = compartments.getSelectedIndex();
-						String val = ((String) compartments.getSelectedValue()).split(" ")[0];
+						String val = selected;
 						compartments.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 						comps = Utility.getList(comps, compartments);
 						compartments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -599,12 +519,6 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						}
 						else {
 							c.setUnits((String) compUnits.getSelectedItem());
-						}
-						if (compOutside.getSelectedItem().equals("( none )")) {
-							c.unsetOutside();
-						}
-						else {
-							c.setOutside((String) compOutside.getSelectedItem());
 						}
 						if (compConstant.getSelectedItem().equals("true")) {
 							c.setConstant(true);
@@ -691,9 +605,6 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						if (!compUnits.getSelectedItem().equals("( none )")) {
 							c.setUnits((String) compUnits.getSelectedItem());
 						}
-						if (!compOutside.getSelectedItem().equals("( none )")) {
-							c.setOutside((String) compOutside.getSelectedItem());
-						}
 						if (compConstant.getSelectedItem().equals("true")) {
 							c.setConstant(true);
 						}
@@ -772,7 +683,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 	/**
 	 * Set compartment options based on number of dimensions
 	 */
-	private void setCompartOptions(String selected, String dimStr) {
+	private void setCompartOptions(String dimStr) {
 		double dim = 3;
 		try {
 			dim = Double.parseDouble(dimStr);
@@ -798,15 +709,6 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 			}
 			compUnits.addItem("litre");
 			compUnits.addItem("dimensionless");
-			compOutside.removeAllItems();
-			compOutside.addItem("( none )");
-			ListOf listOfComps = bioModel.getSBMLDocument().getModel().getListOfCompartments();
-			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumCompartments(); i++) {
-				Compartment compartment = (Compartment) listOfComps.get(i);
-				if (!compartment.getId().equals(selected) && compartment.getSpatialDimensions() != 0) {
-					compOutside.addItem(compartment.getId());
-				}
-			}
 			if (!paramsOnly) {
 				compConstant.setEnabled(true);
 				compSize.setEnabled(true);
@@ -828,15 +730,6 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 				compUnits.addItem("area");
 			}
 			compUnits.addItem("dimensionless");
-			compOutside.removeAllItems();
-			compOutside.addItem("( none )");
-			ListOf listOfComps = bioModel.getSBMLDocument().getModel().getListOfCompartments();
-			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumCompartments(); i++) {
-				Compartment compartment = (Compartment) listOfComps.get(i);
-				if (!compartment.getId().equals(selected) && compartment.getSpatialDimensions() != 0) {
-					compOutside.addItem(compartment.getId());
-				}
-			}
 			if (!paramsOnly) {
 				compConstant.setEnabled(true);
 				compSize.setEnabled(true);
@@ -859,15 +752,6 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 			}
 			compUnits.addItem("metre");
 			compUnits.addItem("dimensionless");
-			compOutside.removeAllItems();
-			compOutside.addItem("( none )");
-			ListOf listOfComps = bioModel.getSBMLDocument().getModel().getListOfCompartments();
-			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumCompartments(); i++) {
-				Compartment compartment = (Compartment) listOfComps.get(i);
-				if (!compartment.getId().equals(selected) && compartment.getSpatialDimensions() != 0) {
-					compOutside.addItem(compartment.getId());
-				}
-			}
 			if (!paramsOnly) {
 				compConstant.setEnabled(true);
 				compSize.setEnabled(true);
@@ -880,15 +764,6 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 				compSize.setText("");
 				compConstant.setEnabled(false);
 				compSize.setEnabled(false);
-				compOutside.removeAllItems();
-				compOutside.addItem("( none )");
-				ListOf listOfComps = bioModel.getSBMLDocument().getModel().getListOfCompartments();
-				for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumCompartments(); i++) {
-					Compartment compartment = (Compartment) listOfComps.get(i);
-					if (!compartment.getId().equals(selected)) {
-						compOutside.addItem(compartment.getId());
-					}
-				}
 			}
 		}
 		else {
@@ -905,15 +780,6 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 			if (!paramsOnly) {
 				compConstant.setEnabled(true);
 				compSize.setEnabled(true);
-			}
-		}
-		if (!selected.equals("")) {
-			Compartment compartment = bioModel.getSBMLDocument().getModel().getCompartment(selected);
-			if (compartment.isSetOutside()) {
-				compOutside.setSelectedItem(compartment.getOutside());
-			}
-			if (compartment.isSetUnits()) {
-				compUnits.setSelectedItem(compartment.getUnits());
 			}
 		}
 	}
