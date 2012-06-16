@@ -7513,6 +7513,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	}
 
 	private void simulate(int fileType) throws Exception {
+		String modelId = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1].replace(".xml","");
 		for (int i = 0; i < tab.getTabCount(); i++) {
 			if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 				tab.setSelectedIndex(i);
@@ -7525,7 +7526,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		if (fileType == 0) {
 			readSBML(tree.getFile());
 		}
-		String simName = JOptionPane.showInputDialog(frame, "Enter analysis id:", "Analysis ID", JOptionPane.PLAIN_MESSAGE);
+		String simName = JOptionPane.showInputDialog(frame, "Enter analysis ID (default=" + modelId + "):", 
+				"Analysis ID", JOptionPane.PLAIN_MESSAGE);
+		if (simName.equals("")) simName = modelId;
 		if (simName != null && !simName.trim().equals("")) {
 			simName = simName.trim();
 			if (overwrite(root + separator + simName, simName)) {
