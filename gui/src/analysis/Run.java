@@ -1368,7 +1368,7 @@ public class Run implements ActionListener {
 						if (!biomodelsim.updateOpenGCM(gcmName)) {
 							try {
 								ModelEditor gcm = new ModelEditor(root + separator, gcmName, biomodelsim, log, false, null, null,
-										null, false);
+										null, false, false);
 								biomodelsim.addTab(gcmName, gcm, "GCM Editor");
 								biomodelsim.addToTree(gcmName);
 							}

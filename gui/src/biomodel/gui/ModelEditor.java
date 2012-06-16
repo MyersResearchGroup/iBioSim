@@ -135,11 +135,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	private Constraints consPanel;
 	
 	public ModelEditor(String path) throws Exception {
-		this(path, null, null, null, false, null, null, null, false);
+		this(path, null, null, null, false, null, null, null, false, false);
 	}
 
 	public ModelEditor(String path, String filename, Gui biosim, Log log, boolean paramsOnly,
-			String simName, String paramFile, AnalysisView reb2sac, boolean textBased) throws Exception {
+			String simName, String paramFile, AnalysisView reb2sac, boolean textBased, boolean grid) throws Exception {
 		super();
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
@@ -188,7 +188,12 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		if (paramsOnly) {
 			loadParams();
 		}
-		buildGui();
+		if (grid) {
+			launchGridPanel();
+			rebuildGui();
+		} else {
+			buildGui();
+		}
 	}
 
 	public String getFilename() {
@@ -314,10 +319,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 	public BioModel getGCM() {
 		return biomodel;
-	}
-
-	public String getSBMLFile() {
-		return (String) sbmlFiles.getSelectedItem();
 	}
 	
 	public HashSet<String> getSbolFiles() {
@@ -1384,11 +1385,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		if (o instanceof Runnable) {
 			((Runnable) o).run();
 		}
-		else if (o instanceof JComboBox && !lock
-				&& !biomodel.getSBMLFile().equals(sbmlFiles.getSelectedItem())) {
-			dirty.setValue(true);
-			biomodel.makeUndoPoint();
-		}
 	}
 
 	public synchronized void lock() {
@@ -1444,28 +1440,19 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		JPanel mainPanelCenter = new JPanel(new BorderLayout());
 		JPanel mainPanelCenterUp = new JPanel();
 		JPanel mainPanelCenterCenter = new JPanel(new GridLayout(2, 2));
-		//JPanel mainPanelCenterDown = new JPanel(new BorderLayout());
 		mainPanelCenter.add(mainPanelCenterUp, BorderLayout.NORTH);
 		mainPanelCenter.add(mainPanelCenterCenter, BorderLayout.CENTER);
 			
-		sbmlFiles = new JComboBox();
-		sbmlFiles.addActionListener(this);
-		//reloadFiles();
-		
 		// create the modelview2 (jgraph) panel
 		
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		mainPanel.setLayout(new BorderLayout());
-		//JPanel paramPanel = new JPanel(new BorderLayout());
-		//paramPanel.add(modelPanel, "North");
 		JPanel propPanel = new JPanel(new BorderLayout());
 		propPanel.add(mainPanelNorth, "North");
 		mainPanel.add(mainPanelCenter, "Center");
 		tab = new JTabbedPane();
 		
 		String file = filename.replace(".gcm", ".xml");
-		
-		//JComboBox compartmentList = MySpecies.createCompartmentChoices(biomodel);
 		
 		compartmentPanel = new Compartments(biosim,biomodel,dirty, paramsOnly,getParams, path + separator + file,	parameterChanges,false);
 		reactionPanel = new Reactions(biosim,biomodel,dirty, paramsOnly,getParams,path + separator + file,parameterChanges, this);
@@ -1590,28 +1577,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		parameters.addAllItem(generateParameters());
 		parametersPanel.setPanels(initialsPanel, rulesPanel);
 		propPanel.add(consPanel, "Center");
-		// parameters.addAllItem(gcm.getParameters().keySet());
-		//initPanel = Utility.createPanel(this, "Model Generation Parameters", parameters, null, null, editInit);
-		//paramPanel.add(initPanel, "Center");
-		//paramPanel.add(parametersPanel, "South");
-		
-		/*
-		conditions = new PropertyList("Property List");
-		addInit = new EditButton("Add Property", conditions);
-		removeInit = new RemoveButton("Remove Property", conditions);
-		editInit = new EditButton("Edit Property", conditions);
-		if (paramsOnly) {
-			addInit.setEnabled(false);
-			removeInit.setEnabled(false);
-			editInit.setEnabled(false);
-		}
-		for (String s : gcm.getConditions()) {
-			conditions.addItem(s);
-		}
-		initPanel = Utility.createPanel(this, "CSL Properties", conditions, addInit, removeInit, editInit);
-		propPanel.add(initPanel, "Center");
-		*/
-		//propPanel.add(consPanel, "South");
 	}
 
 	/*
@@ -2121,15 +2086,15 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		//the false field means to open the grid creation panel
 		//and not the grid editing panel
 		boolean created = GridPanel.showGridPanel(this, biomodel, false);
-		
+
 		//if the grid is built, then draw it and so on
 		if (created) {
 			
 			this.setDirty(true);
-			this.refresh();
-			schematic.getGraph().buildGraph();
-			schematic.display();
-			biomodel.makeUndoPoint();
+			//this.refresh();
+			//schematic.getGraph().buildGraph();
+			//schematic.display();
+			//biomodel.makeUndoPoint();
 		}
 	}
 	
@@ -2322,8 +2287,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	private PropertyList components = null;
 	
 	private PropertyList conditions = null;
-
-	private JComboBox sbmlFiles = null;
 
 	private String path = null;
 

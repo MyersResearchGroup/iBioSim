@@ -1426,7 +1426,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Creates a frame used to edit products or create new ones.
 	 */
-	public void productsEditor(BioModel gcm, String option, String selectedProductId, SpeciesReference product) {
+	public void productsEditor(BioModel gcm, String option, String selectedProductId, SpeciesReference product,
+			boolean inSchematic) {
 		JPanel productsPanel;
 		if (gcm.getSBMLDocument().getLevel() < 3) {
 			productsPanel = new JPanel(new GridLayout(4, 2));
@@ -1450,7 +1451,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		Utility.sort(speciesList);
 		productSpecies = new JComboBox();
-		productSpecies.setEnabled(false);
+		if (inSchematic) {
+			productSpecies.setEnabled(false);
+		} else {
+			productSpecies.setEnabled(true);
+		}
 		for (int i = 0; i < speciesList.length; i++) {
 			Species species = gcm.getSBMLDocument().getModel().getSpecies(speciesList[i]);
 			if (species.getBoundaryCondition() || (!species.getConstant() && Rules.keepVarRateRule(gcm, "", speciesList[i]))) {
@@ -1467,7 +1472,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		String selectedID = "";
 		if (option.equals("OK")) {
 			String v = selectedProductId;
-			if (product == null) {
+			if (product == null || !inSchematic) {
 				for (SpeciesReference p : changedProducts) {
 					if (p.getSpecies().equals(v)) {
 						product = p;
@@ -1552,7 +1557,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			int index = -1;
 			if (!error) {
-				if (product == null) {
+				if (product == null || !inSchematic) {
 					if (option.equals("OK")) {
 						index = products.getSelectedIndex();
 					}
@@ -1633,7 +1638,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				if (option.equals("OK")) {
 					String v = selectedProductId;
 					SpeciesReference produ = product;
-					if (produ == null) {
+					if (product == null || !inSchematic) {
 						for (SpeciesReference p : changedProducts) {
 							if (p.getSpecies().equals(v)) {
 								produ = p;
@@ -1661,14 +1666,14 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					else {
 						produ.setConstant(false);
 					}
-					if (product == null) {
+					if (product == null || !inSchematic) {
 						proda[index] = prod;
 						Utility.sort(proda);
 						products.setListData(proda);
 						products.setSelectedIndex(index);
 					}
 					SBMLutilities.updateVarId(gcm.getSBMLDocument(), false, selectedID, productId.getText().trim());
-					if (product == null) {
+					if (product == null || !inSchematic) {
 						kineticLaw.setText(SBMLutilities.updateFormulaVar(kineticLaw.getText().trim(), selectedID, productId.getText().trim()));
 					}
 				}
@@ -1724,7 +1729,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Creates a frame used to edit modifiers or create new ones.
 	 */
-	public void modifiersEditor(String option) {
+	public void modifiersEditor(String option,boolean inSchematic) {
 		if (option.equals("OK") && modifiers.getSelectedIndex() == -1) {
 			JOptionPane.showMessageDialog(Gui.frame, "No modifier selected.", "Must Select A Modifier", JOptionPane.ERROR_MESSAGE);
 			return;
@@ -1739,6 +1744,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		Utility.sort(speciesList);
 		Object[] choices = speciesList;
 		modifierSpecies = new JComboBox(choices);
+		if (inSchematic) {
+			modifierSpecies.setEnabled(false);
+		} else {
+			modifierSpecies.setEnabled(true);
+		}
 		if (option.equals("OK")) {
 			String v = ((String) modifiers.getSelectedValue()).split(" ")[0];
 			ModifierSpeciesReference modifier = null;
@@ -1859,7 +1869,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Creates a frame used to edit reactants or create new ones.
 	 */
-	public void reactantsEditor(BioModel gcm, String option, String selectedReactantId, SpeciesReference reactant) {
+	public void reactantsEditor(BioModel gcm, String option, String selectedReactantId, SpeciesReference reactant, 
+			boolean inSchematic) {
 		JPanel reactantsPanel;
 		if (gcm.getSBMLDocument().getLevel() < 3) {
 			reactantsPanel = new JPanel(new GridLayout(4, 2));
@@ -1883,7 +1894,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		Utility.sort(speciesList);
 		reactantSpecies = new JComboBox();
-		reactantSpecies.setEnabled(false);
+		if (inSchematic) {
+			reactantSpecies.setEnabled(false);
+		} else {
+			reactantSpecies.setEnabled(true);
+		}
 		for (int i = 0; i < speciesList.length; i++) {
 			Species species = gcm.getSBMLDocument().getModel().getSpecies(speciesList[i]);
 			if (species.getBoundaryCondition() || (!species.getConstant() && Rules.keepVarRateRule(gcm, "", speciesList[i]))) {
@@ -1981,7 +1996,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			int index = -1;
 			if (!error) {
-				if (reactant == null) {
+				if (reactant == null || !inSchematic) {
 					if (option.equals("OK")) {
 						index = reactants.getSelectedIndex();
 					}
@@ -2062,7 +2077,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				if (option.equals("OK")) {
 					String v = selectedReactantId;
 					SpeciesReference reactan = reactant;
-					if (reactant == null) {
+					if (reactant == null || !inSchematic) {
 						for (SpeciesReference r : changedReactants) {
 							if (r.getSpecies().equals(v)) {
 								reactan = r;
@@ -2090,14 +2105,14 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					else {
 						reactan.setConstant(false);
 					}
-					if (reactant == null) {
+					if (reactant == null || !inSchematic) {
 						reacta[index] = react;
 						Utility.sort(reacta);
 						reactants.setListData(reacta);
 						reactants.setSelectedIndex(index);
 					}
 					SBMLutilities.updateVarId(gcm.getSBMLDocument(), false, selectedID, reactantId.getText().trim());
-					if (reactant == null) {
+					if (reactant == null || !inSchematic) {
 						kineticLaw.setText(SBMLutilities.updateFormulaVar(kineticLaw.getText().trim(), selectedID, reactantId.getText().trim()));
 					}
 				}
@@ -2542,7 +2557,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		// if the add reactants button is clicked
 		else if (e.getSource() == addReactant) {
-			reactantsEditor(gcm, "Add", "", null);
+			reactantsEditor(gcm, "Add", "", null, false);
 		}
 		// if the edit reactants button is clicked
 		else if (e.getSource() == editReactant) {
@@ -2550,7 +2565,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				JOptionPane.showMessageDialog(Gui.frame, "No reactant selected.", "Must Select A Reactant", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			reactantsEditor(gcm, "OK", ((String) reactants.getSelectedValue()).split(" ")[0], null);
+			reactantsEditor(gcm, "OK", ((String) reactants.getSelectedValue()).split(" ")[0], null, false);
 			initialsPanel.refreshInitialAssignmentPanel(gcm);
 			rulesPanel.refreshRulesPanel();
 		}
@@ -2560,7 +2575,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		// if the add products button is clicked
 		else if (e.getSource() == addProduct) {
-			productsEditor(gcm, "Add", "", null);
+			productsEditor(gcm, "Add", "", null, false);
 		}
 		// if the edit products button is clicked
 		else if (e.getSource() == editProduct) {
@@ -2568,7 +2583,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				JOptionPane.showMessageDialog(Gui.frame, "No product selected.", "Must Select A Product", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			productsEditor(gcm, "OK", ((String) products.getSelectedValue()).split(" ")[0], null);
+			productsEditor(gcm, "OK", ((String) products.getSelectedValue()).split(" ")[0], null, false);
 			initialsPanel.refreshInitialAssignmentPanel(gcm);
 			rulesPanel.refreshRulesPanel();
 		}
@@ -2578,11 +2593,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		// if the add modifiers button is clicked
 		else if (e.getSource() == addModifier) {
-			modifiersEditor("Add");
+			modifiersEditor("Add", false);
 		}
 		// if the edit modifiers button is clicked
 		else if (e.getSource() == editModifier) {
-			modifiersEditor("OK");
+			modifiersEditor("OK", false);
 		}
 		// if the remove modifiers button is clicked
 		else if (e.getSource() == removeModifier) {
@@ -2620,7 +2635,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						JOptionPane.showMessageDialog(Gui.frame, "No reactant selected.", "Must Select A Reactant", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
-					reactantsEditor(gcm, "OK", ((String) reactants.getSelectedValue()).split(" ")[0], null);
+					reactantsEditor(gcm, "OK", ((String) reactants.getSelectedValue()).split(" ")[0], null, false);
 					initialsPanel.refreshInitialAssignmentPanel(gcm);
 					rulesPanel.refreshRulesPanel();
 				}
@@ -2631,14 +2646,14 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						JOptionPane.showMessageDialog(Gui.frame, "No product selected.", "Must Select A Product", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
-					productsEditor(gcm, "OK", ((String) products.getSelectedValue()).split(" ")[0], null);
+					productsEditor(gcm, "OK", ((String) products.getSelectedValue()).split(" ")[0], null, false);
 					initialsPanel.refreshInitialAssignmentPanel(gcm);
 					rulesPanel.refreshRulesPanel();
 				}
 			}
 			else if (e.getSource() == modifiers) {
 				if (!paramsOnly) {
-					modifiersEditor("OK");
+					modifiersEditor("OK", false);
 				}
 			}
 		}
