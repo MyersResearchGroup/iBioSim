@@ -1879,7 +1879,7 @@ public class Schematic extends JPanel implements ActionListener {
 				SpeciesReference reactant = bioModel.getSBMLDocument().getModel().getReaction((String)target.getId()).
 					getReactant((String)source.getId());
 				if (reactant != null) {
-					reactions.reactantsEditor(bioModel,"OK",(String)source.getId(),reactant);
+					reactions.reactantsEditor(bioModel,"OK",(String)source.getId(),reactant, true);
 				} 
 			} 
 			else if ((graph.getCellType(source) == GlobalConstants.REACTION) &&
@@ -1887,7 +1887,7 @@ public class Schematic extends JPanel implements ActionListener {
 				
 				SpeciesReference product = bioModel.getSBMLDocument().getModel().getReaction((String)source.getId()).
 					getProduct((String)target.getId());
-				reactions.productsEditor(bioModel,"OK",(String)target.getId(),product);
+				reactions.productsEditor(bioModel,"OK",(String)target.getId(),product, true);
 			}
 		}
 		else if(cellType == GlobalConstants.REACTION){

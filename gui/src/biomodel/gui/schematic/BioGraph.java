@@ -1433,7 +1433,7 @@ public class BioGraph extends mxGraph {
 			textGlyph.setText((String)cell.getId());
 			textGlyph.setBoundingBox(reactionGlyph.getBoundingBox());
 		} else if (getCellType(cell).equals(GlobalConstants.COMPONENT)||
-				getCellType(cell).equals(GlobalConstants.COMPARTMENT)) {
+				(!bioModel.isGridEnabled() && getCellType(cell).equals(GlobalConstants.COMPARTMENT))) {
 			Layout layout = null;
 			if (bioModel.getSBMLLayout().getLayout("iBioSim") != null) {
 				layout = bioModel.getSBMLLayout().getLayout("iBioSim"); 
@@ -1567,7 +1567,7 @@ public class BioGraph extends mxGraph {
 				} 
 			} 
 		} else if (getCellType(cell).equals(GlobalConstants.COMPONENT)||
-				getCellType(cell).equals(GlobalConstants.COMPARTMENT)) {
+				(!bioModel.isGridEnabled() && getCellType(cell).equals(GlobalConstants.COMPARTMENT))) {
 			if (bioModel.getSBMLLayout().getLayout("iBioSim") != null) {
 				Layout layout = bioModel.getSBMLLayout().getLayout("iBioSim"); 
 				if (layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+(String)cell.getId())!=null) {

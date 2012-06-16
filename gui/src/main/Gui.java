@@ -4423,20 +4423,16 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 					else {
 						if (overwrite(root + separator + modelId, modelId)) {
-							BioModel gcm = new BioModel(root);
-							gcm.createSBMLDocument(modelId.replace(".xml", ""));
-							gcm.save(root + separator + modelId);
+							BioModel bioModel = new BioModel(root);
+							bioModel.createSBMLDocument(modelId.replace(".xml", ""),grid);
+							bioModel.save(root + separator + modelId);
 							int i = getTab(modelId);
 							if (i != -1) {
 								tab.remove(i);
 							}
-							ModelEditor modelEditor = new ModelEditor(root + separator, modelId, this, log, false, null, null, null, false);
+							ModelEditor modelEditor = new ModelEditor(root + separator, modelId, this, log, false, null, null, null, false, grid);
 							addTab(modelId, modelEditor, "GCM Editor");
 							addToTree(modelId);
-							if (grid == true) {
-								modelEditor.launchGridPanel();
-								modelEditor.rebuildGui();
-							}
 						}
 					}
 				}
@@ -5690,7 +5686,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				 * else {
 				 */
 				try {
-					ModelEditor gcm = new ModelEditor(path, filename, this, log, false, null, null, null, textBased);
+					ModelEditor gcm = new ModelEditor(path, filename, this, log, false, null, null, null, textBased, false);
 					addTab(filename, gcm, "GCM Editor");
 				}
 				catch (Exception e) {
@@ -5719,7 +5715,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			if (!done) {
 				//createGCMFromSBML(root, fullPath, theSBMLFile, theGCMFile, false);
 				//addToTree(theGCMFile);
-				ModelEditor gcm = new ModelEditor(root + separator, theGCMFile, this, log, false, null, null, null, false);
+				ModelEditor gcm = new ModelEditor(root + separator, theGCMFile, this, log, false, null, null, null, false, false);
 				addTab(theSBMLFile, gcm, "GCM Editor");
 			}
 		}
@@ -7613,7 +7609,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							+ simName.trim(), root + separator + simName.trim() + separator + simName.trim() + ".sim");
 							*/
 					ModelEditor gcm = new ModelEditor(root + separator, gcmFile, this, log, true, simName.trim(), root
-							+ separator + simName.trim() + separator + simName.trim() + ".sim", reb2sac, false);
+							+ separator + simName.trim() + separator + simName.trim() + ".sim", reb2sac, false, false);
 					reb2sac.setGcm(gcm);
 					addModelViewTab(reb2sac, simTab, gcm);
 					simTab.addTab("Parameters", gcm);
@@ -7627,7 +7623,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				else if (sbml1[sbml1.length - 1].contains(".sbml") || sbml1[sbml1.length - 1].contains(".xml")) {
 					String gcmFile = sbml1[sbml1.length - 1].replace(".xml", ".gcm");
 					ModelEditor gcm = new ModelEditor(root + separator, gcmFile, this, log, true, simName.trim(), root
-							+ separator + simName.trim() + separator + simName.trim() + ".sim", reb2sac, false);
+							+ separator + simName.trim() + separator + simName.trim() + ".sim", reb2sac, false, false);
 					reb2sac.setGcm(gcm);
 					addModelViewTab(reb2sac, simTab, gcm);
 					simTab.addTab("Parameters", gcm);
@@ -8256,7 +8252,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									*/
 							ModelEditor gcm = new ModelEditor(root + separator, gcmFile, this, log, true, split[split.length - 1].trim(), root
 									+ separator + split[split.length - 1].trim() + separator + split[split.length - 1].trim() + ".sim", reb2sac,
-									false);
+									false, false);
 							reb2sac.setGcm(gcm);
 							// sbml.addMouseListener(this);
 							addModelViewTab(reb2sac, simTab, gcm);
@@ -8671,7 +8667,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						+ separator + newSim + separator + newSim + ".sim");
 						*/
 				ModelEditor gcm = new ModelEditor(root + separator, gcmFile, this, log, true, newSim, root + separator + newSim + separator
-						+ newSim + ".sim", reb2sac, false);
+						+ newSim + ".sim", reb2sac, false, false);
 				reb2sac.setGcm(gcm);
 				// sbml.addMouseListener(this);
 				addModelViewTab(reb2sac, simTab, gcm);
@@ -9781,20 +9777,18 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			else if (s.endsWith(".xml") && filename.endsWith(".xml")) {
 				BioModel gcm = new BioModel(root);
-				gcm.load(root + separator + s);
-				/*
-				if (gcm.getSBMLFile().equals(filename)) {
-					views.add(s);
-				}
-				*/
-				if (gcm.getSBMLComp()!=null) {
-					for (long i = 0; i < gcm.getSBMLComp().getNumExternalModelDefinitions(); i++) {
-						ExternalModelDefinition extModel = gcm.getSBMLComp().getExternalModelDefinition(i);
-						if (extModel.getSource().equals("file:"+ filename)) {
-							views.add(s);
-							break;
+				try {
+					gcm.load(root + separator + s);
+					if (gcm.getSBMLComp()!=null) {
+						for (long i = 0; i < gcm.getSBMLComp().getNumExternalModelDefinitions(); i++) {
+							ExternalModelDefinition extModel = gcm.getSBMLComp().getExternalModelDefinition(i);
+							if (extModel.getSource().equals("file:"+ filename)) {
+								views.add(s);
+								break;
+							}
 						}
 					}
+				} catch (Exception e) {
 				}
 			}
 		}

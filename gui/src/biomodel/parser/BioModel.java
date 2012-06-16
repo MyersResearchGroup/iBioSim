@@ -139,14 +139,18 @@ public class BioModel {
 		compartments = new HashMap<String, Properties>();
 	}
 	
-	public void createSBMLDocument(String modelId) {
+	public void createSBMLDocument(String modelId,boolean grid) {
 		sbml = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
 		Model m = sbml.createModel();
 		metaIDIndex = SBMLutilities.setDefaultMetaID(sbml, m, metaIDIndex); 
 		sbml.setModel(m);
 		m.setId(modelId);
 		Compartment c = m.createCompartment();
-		c.setId("Cell");
+		if (grid) {
+			c.setId("Grid");
+		} else {
+			c.setId("Cell");
+		}
 		c.setSize(1);
 		c.setSpatialDimensions(3);
 		c.setConstant(true);
@@ -4545,31 +4549,32 @@ public class BioModel {
 		compartment.setSize(1);
 		compartment.setSpatialDimensions(3);
 
-		Layout layout = null;
-		if (sbmlLayout.getLayout("iBioSim") != null) {
-			layout = sbmlLayout.getLayout("iBioSim"); 
-		} else {
-			layout = sbmlLayout.createLayout();
-			layout.setId("iBioSim");
+		if (!isGridEnabled()) {
+			Layout layout = null;
+			if (sbmlLayout.getLayout("iBioSim") != null) {
+				layout = sbmlLayout.getLayout("iBioSim"); 
+			} else {
+				layout = sbmlLayout.createLayout();
+				layout.setId("iBioSim");
+			}
+			CompartmentGlyph compartmentGlyph = null;
+			if (layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+id)!=null) {
+				compartmentGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+id);
+			} else {
+				compartmentGlyph = layout.createCompartmentGlyph();
+				compartmentGlyph.setId(GlobalConstants.GLYPH+"__"+id);
+				compartmentGlyph.setCompartmentId(id);
+			}
+			compartmentGlyph.getBoundingBox().setX(x);
+			compartmentGlyph.getBoundingBox().setY(y);
+			compartmentGlyph.getBoundingBox().setWidth(GlobalConstants.DEFAULT_COMPARTMENT_WIDTH);
+			compartmentGlyph.getBoundingBox().setHeight(GlobalConstants.DEFAULT_COMPARTMENT_HEIGHT);
+			TextGlyph textGlyph = layout.createTextGlyph();
+			textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+id);
+			textGlyph.setGraphicalObjectId(GlobalConstants.GLYPH+"__"+id);
+			textGlyph.setText(id);
+			textGlyph.setBoundingBox(compartmentGlyph.getBoundingBox());
 		}
-		CompartmentGlyph compartmentGlyph = null;
-		if (layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+id)!=null) {
-			compartmentGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+id);
-		} else {
-			compartmentGlyph = layout.createCompartmentGlyph();
-			compartmentGlyph.setId(GlobalConstants.GLYPH+"__"+id);
-			compartmentGlyph.setCompartmentId(id);
-		}
-		compartmentGlyph.getBoundingBox().setX(x);
-		compartmentGlyph.getBoundingBox().setY(y);
-		compartmentGlyph.getBoundingBox().setWidth(GlobalConstants.DEFAULT_COMPARTMENT_WIDTH);
-		compartmentGlyph.getBoundingBox().setHeight(GlobalConstants.DEFAULT_COMPARTMENT_HEIGHT);
-		TextGlyph textGlyph = layout.createTextGlyph();
-		textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+id);
-		textGlyph.setGraphicalObjectId(GlobalConstants.GLYPH+"__"+id);
-		textGlyph.setText(id);
-		textGlyph.setBoundingBox(compartmentGlyph.getBoundingBox());
-
 		return id;
 	}
 
@@ -4829,7 +4834,7 @@ public class BioModel {
 				sbmlComp = (CompSBMLDocumentPlugin)sbml.getPlugin("comp");
 				sbmlCompModel = (CompModelPlugin)sbml.getModel().getPlugin("comp");
 			} else {
-				createSBMLDocument(sbmlFile.replace(".xml",""));
+				createSBMLDocument(sbmlFile.replace(".xml",""),false);
 			}
 		} 
 		loadDefaultParameters();
