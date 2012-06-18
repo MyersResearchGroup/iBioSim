@@ -74,13 +74,13 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	 * @param influencesList
 	 * @param conditionsList
 	 * @param componentsList
-	 * @param gcm
+	 * @param bioModel
 	 * @param paramsOnly
 	 * @param refGCM
 	 * @param gcmEditor
 	 */
 	private void constructor(String selected, PropertyList speciesList, PropertyList conditionsList, 
-			PropertyList componentsList, BioModel gcm, boolean paramsOnly,
+			PropertyList componentsList, BioModel bioModel, boolean paramsOnly,
 			BioModel refGCM,  ModelEditor gcmEditor, boolean inTab) {
 
 		JPanel grid;
@@ -90,7 +90,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			grid = new JPanel(new GridLayout(5,1));
 		else {
 			
-			if (gcm.getSBMLDocument().getLevel() > 2) {
+			if (bioModel.getSBMLDocument().getLevel() > 2) {
 				grid = new JPanel(new GridLayout(15,1));
 			} 
 			else {
@@ -104,7 +104,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		this.speciesList = speciesList;
 		this.conditions = conditionsList;
 		this.components = componentsList;
-		this.gcm = gcm;
+		this.gcm = bioModel;
 		this.refGCM = refGCM;
 		this.paramsOnly = paramsOnly;
 		this.gcmEditor = gcmEditor;
@@ -112,7 +112,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		fields = new HashMap<String, PropertyField>();
 		sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 3);
 
-		Model model = gcm.getSBMLDocument().getModel();
+		Model model = bioModel.getSBMLDocument().getModel();
 		species = model.getSpecies(selected);
 
 		String origString = "default";
@@ -155,16 +155,10 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		tempPanel = new JPanel(new GridLayout(1,2));
 		tempPanel.add(new JLabel(""));
 
-		diffusion = gcm.getDiffusionReaction(selected);
-		constitutive = model.getReaction("Constitutive_"+selected);
-		if (constitutive != null) {
-			if (!constitutive.isSetAnnotation() || !constitutive.getAnnotationString().contains("Constitutive")) constitutive = null;
-		}
-		degradation = gcm.getDegradationReaction(selected);
-		complex = gcm.getComplexReaction(selected);
-		if (complex != null) {
-			if (!complex.isSetAnnotation() || !complex.getAnnotationString().contains("Complex")) complex = null;
-		}
+		diffusion = bioModel.getDiffusionReaction(selected);
+		constitutive = bioModel.getConstitutiveReaction(selected);
+		degradation = bioModel.getDegradationReaction(selected);
+		complex = bioModel.getComplexReaction(selected);
 		
 		JPanel constDiff = new JPanel(new GridLayout(1,3));
 		specDiffusible = new JCheckBox("diffusible");
@@ -191,7 +185,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		// compartment field
 		tempPanel = new JPanel();
 		tempLabel = new JLabel("Compartment");
-		compartBox = MySpecies.createCompartmentChoices(gcm);		
+		compartBox = MySpecies.createCompartmentChoices(bioModel);		
 		compartBox.setSelectedItem(species.getCompartment());
 		compartBox.addActionListener(this);
 		tempPanel.setLayout(new GridLayout(1, 2));
@@ -259,7 +253,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		// Units field
 		tempPanel = new JPanel();
 		tempLabel = new JLabel("Units");
-		unitsBox = MySpecies.createUnitsChoices(gcm);
+		unitsBox = MySpecies.createUnitsChoices(bioModel);
 		
 		if (species.isSetUnits()) {
 			
@@ -273,11 +267,11 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		if (!paramsOnly) grid.add(tempPanel);
 		
 		// Conversion factor field
-		if (gcm.getSBMLDocument().getLevel() > 2) {
+		if (bioModel.getSBMLDocument().getLevel() > 2) {
 			
 			tempPanel = new JPanel();
 			tempLabel = new JLabel("Conversion Factor");
-			convBox = MySpecies.createConversionFactorChoices(gcm);
+			convBox = MySpecies.createConversionFactorChoices(bioModel);
 			
 			if (species.isSetConversionFactor()) {
 				convBox.setSelectedItem(species.getConversionFactor());
@@ -315,7 +309,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			tempPanel.add(specInteresting);
 			thresholdTextField = new JTextField(thresholdText);
 			
-			if (!BioModel.getSpeciesType(gcm.getSBMLDocument(),selected).equals(GlobalConstants.INPUT) &&
+			if (!BioModel.getSpeciesType(bioModel.getSBMLDocument(),selected).equals(GlobalConstants.INPUT) &&
 					(gcmEditor.getGCM().getBiochemicalSpecies() != null &&
 					!gcmEditor.getGCM().getBiochemicalSpecies().contains(selected))) {
 				tempPanel.add(thresholdTextField);
@@ -334,7 +328,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				defaultValue = "[" + refGCM.getSBMLDocument().getModel().getSpecies(selected).getInitialConcentration() + "]";
 			}
 			field = new PropertyField(GlobalConstants.INITIAL_STRING, 
-					gcm.getParameter(GlobalConstants.INITIAL_STRING), origString, defaultValue,
+					bioModel.getParameter(GlobalConstants.INITIAL_STRING), origString, defaultValue,
 					Utility.SWEEPstring + "|" + Utility.CONCstring, paramsOnly, origString, false);
 			fields.put(GlobalConstants.INITIAL_STRING, field);
 			if (species.isSetAnnotation() && species.getAnnotationString().contains(GlobalConstants.INITIAL_STRING)) {
@@ -355,7 +349,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			tempPanel = new JPanel();
 			tempLabel = new JLabel("Initial Amount/Concentration");
 			initialField = new JTextField("");
-			InitialAssignment init = gcm.getSBMLDocument().getModel().getInitialAssignment(species.getId());
+			InitialAssignment init = bioModel.getSBMLDocument().getModel().getInitialAssignment(species.getId());
 			if (init!=null) {
 				initialField.setText(SBMLutilities.myFormulaToString(init.getMath()));
 			} else if (species.isSetInitialAmount()) {
@@ -371,7 +365,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		
 		// Decay field
 		origString = "default";
-		String defaultValue = gcm.getParameter(GlobalConstants.KDECAY_STRING);
+		String defaultValue = bioModel.getParameter(GlobalConstants.KDECAY_STRING);
 		String formatString = Utility.NUMstring;
 		if (paramsOnly) {
 			if (degradation != null) {
@@ -385,7 +379,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			formatString = Utility.SWEEPstring;
 		}
 		field = new PropertyField(GlobalConstants.KDECAY_STRING, 
-				gcm.getParameter(GlobalConstants.KDECAY_STRING), origString, defaultValue,
+				bioModel.getParameter(GlobalConstants.KDECAY_STRING), origString, defaultValue,
 				formatString, paramsOnly, origString, false);
 		if (degradation != null) {
 			LocalParameter kd = degradation.getKineticLaw().getLocalParameter(GlobalConstants.KDECAY_STRING);
@@ -436,8 +430,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		
 		// Complex Equilibrium Constant Field
 		origString = "default";
-		defaultValue = gcm.getParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING) + "/" + 
-				gcm.getParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING); 
+		defaultValue = bioModel.getParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING) + "/" + 
+				bioModel.getParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING); 
 		formatString = Utility.SLASHstring;
 		if (paramsOnly) {
 			if (complex != null) {
@@ -452,7 +446,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			formatString = Utility.SLASHSWEEPstring;
 		}
 		field = new PropertyField(GlobalConstants.KCOMPLEX_STRING, 
-				gcm.getParameter(GlobalConstants.KCOMPLEX_STRING), origString, defaultValue,
+				bioModel.getParameter(GlobalConstants.KCOMPLEX_STRING), origString, defaultValue,
 				formatString, paramsOnly, origString, false);
 		if (complex != null) {
 			LocalParameter kc_f = complex.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING);
@@ -473,8 +467,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 		// Membrane Diffusible Field
 		origString = "default";
-		defaultValue = gcm.getParameter(GlobalConstants.FORWARD_MEMDIFF_STRING) + "/" + 
-				gcm.getParameter(GlobalConstants.REVERSE_MEMDIFF_STRING); 
+		defaultValue = bioModel.getParameter(GlobalConstants.FORWARD_MEMDIFF_STRING) + "/" + 
+				bioModel.getParameter(GlobalConstants.REVERSE_MEMDIFF_STRING); 
 		formatString = Utility.SLASHstring;
 		if (paramsOnly) {
 			if (diffusion != null) {
@@ -488,7 +482,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 			formatString = Utility.SLASHSWEEPstring;
 		}
-		field = new PropertyField(GlobalConstants.MEMDIFF_STRING, gcm
+		field = new PropertyField(GlobalConstants.MEMDIFF_STRING, bioModel
 				.getParameter(GlobalConstants.MEMDIFF_STRING), origString, defaultValue,
 				formatString, paramsOnly, origString, false);
 		if (diffusion != null) {
@@ -545,7 +539,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			// Field for annotating species with SBOL DNA components
 			grid.add(sbolField);
 
-			typeBox.setSelectedItem(BioModel.getSpeciesType(gcm.getSBMLDocument(),species.getId()));
+			typeBox.setSelectedItem(BioModel.getSpeciesType(bioModel.getSBMLDocument(),species.getId()));
 			// Parse out GCM and SBOL annotations and add to respective fields
 			String annotation = species.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
 			String [] annotations = annotation.split(",");

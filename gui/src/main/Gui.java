@@ -7513,7 +7513,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	}
 
 	private void simulate(int fileType) throws Exception {
-		String modelId = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1].replace(".xml","");
+		String modelId = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
+				.replace(".xml","").replace(".lpn","");
 		for (int i = 0; i < tab.getTabCount(); i++) {
 			if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 				tab.setSelectedIndex(i);
@@ -9302,6 +9303,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				exportMp4.setEnabled(true);
 				exportImageMenu.setEnabled(true);
 				exportJpg.setEnabled(true);
+				saveButton.setEnabled(true);
+				runButton.setEnabled(true);
+				save.setEnabled(true);
+				run.setEnabled(true);
 			}
 			else if (component instanceof ModelEditor) {
 				saveButton.setEnabled(true);

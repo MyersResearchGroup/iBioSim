@@ -10,16 +10,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Properties;
-import java.util.Set;
 import java.util.prefs.Preferences;
 
 import javax.swing.JButton;
@@ -134,7 +131,6 @@ public class BioModel {
 		}
 		this.path = path;
 		isWithinCompartment = false;
-		defaultCompartment = "";
 		grid = new Grid();
 		compartments = new HashMap<String, Properties>();
 	}
@@ -158,10 +154,10 @@ public class BioModel {
 		loadDefaultParameters();
 		sbmlFile = modelId + ".xml";
 		sbml.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
-		sbml.setPkgRequired("layout", false); 
+		sbml.setPackageRequired("layout", false); 
 		sbmlLayout = (LayoutModelPlugin)sbml.getModel().getPlugin("layout");
 		sbml.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
-		sbml.setPkgRequired("comp", true);
+		sbml.setPackageRequired("comp", true);
 		((CompSBMLDocumentPlugin)sbml.getPlugin("comp")).setRequired(true);
 		sbmlComp = (CompSBMLDocumentPlugin)sbml.getPlugin("comp");
 		sbmlCompModel = (CompModelPlugin)sbml.getModel().getPlugin("comp");
@@ -310,10 +306,10 @@ public class BioModel {
 	public void reloadSBMLFile() {
 		sbml = Gui.readSBML(path + separator + sbmlFile);
 		sbml.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
-		sbml.setPkgRequired("layout", false); 
+		sbml.setPackageRequired("layout", false); 
 		sbmlLayout = (LayoutModelPlugin)sbml.getModel().getPlugin("layout");
 		sbml.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
-		sbml.setPkgRequired("comp", true); 
+		sbml.setPackageRequired("comp", true); 
 		((CompSBMLDocumentPlugin)sbml.getPlugin("comp")).setRequired(true);
 		sbmlComp = (CompSBMLDocumentPlugin)sbml.getPlugin("comp");
 		sbmlCompModel = (CompModelPlugin)sbml.getModel().getPlugin("comp");
@@ -720,7 +716,7 @@ public class BioModel {
 	}
 	
 	public String getDefaultCompartment() {
-		return defaultCompartment;
+		return sbml.getModel().getCompartment(0).getId();
 	}
 	
 	// Note this doesn't appear to be used anywhere
@@ -825,7 +821,7 @@ public class BioModel {
 	public Layout createLayout() {
 		if (sbmlLayout==null) {
 			sbml.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
-			sbml.setPkgRequired("layout", false); 
+			sbml.setPackageRequired("layout", false); 
 			sbmlLayout = (LayoutModelPlugin)sbml.getModel().getPlugin("layout");
 		}
 		Layout layout;
@@ -1008,9 +1004,9 @@ public class BioModel {
 			
 			layout.setAnnotation(node);
 		} 
-		/*else {
+		else {
 			layout.unsetAnnotation();
-		}*/
+		}
 	}
 	
 	public void createComponentFromGCM(String s,Properties prop) {
@@ -1164,7 +1160,7 @@ public class BioModel {
 	public void createCompPlugin() {
 		if (sbmlComp==null) {
 			sbml.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
-			sbml.setPkgRequired("comp", true); 
+			sbml.setPackageRequired("comp", true); 
 			((CompSBMLDocumentPlugin)sbml.getPlugin("comp")).setRequired(true);
 			sbmlComp = (CompSBMLDocumentPlugin)sbml.getPlugin("comp");
 			sbmlCompModel = (CompModelPlugin)sbml.getModel().getPlugin("comp");
@@ -1176,8 +1172,8 @@ public class BioModel {
 		if (r==null) {
 			r = sbml.getModel().createReaction();
 			r.setId("Complex_"+s);
-			r.setAnnotation("Complex");
-			r.setCompartment(getDefaultCompartment());
+			r.setSBOTerm(GlobalConstants.SBO_COMPLEX);
+			r.setCompartment(sbml.getModel().getSpecies(s).getCompartment());
 			r.setReversible(true);
 			r.setFast(false);
 			SpeciesReference product = r.createProduct();
@@ -1234,6 +1230,32 @@ public class BioModel {
 		return r;
 	}
 	
+	public static boolean isComplexReaction(Reaction reaction) {
+		if (reaction.isSetSBOTerm()) {
+			if (reaction.getSBOTerm()==GlobalConstants.SBO_COMPLEX) return true;
+		} else if (reaction.isSetAnnotation()) {
+			if (reaction.getAnnotationString().contains("Complex")) {
+				reaction.setSBOTerm(GlobalConstants.SBO_COMPLEX);
+				reaction.unsetAnnotation();
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static boolean isConstitutiveReaction(Reaction reaction) {
+		if (reaction.isSetSBOTerm()) {
+			if (reaction.getSBOTerm()==GlobalConstants.SBO_CONSTITUTIVE) return true;
+		} else if (reaction.isSetAnnotation()) {
+			if (reaction.getAnnotationString().contains("Constitutive")) {
+				reaction.setSBOTerm(GlobalConstants.SBO_CONSTITUTIVE);
+				reaction.unsetAnnotation();
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public static boolean isDegradationReaction(Reaction reaction) {
 		if (reaction.isSetSBOTerm()) {
 			if (reaction.getSBOTerm()==GlobalConstants.SBO_DEGRADATION) return true;
@@ -1282,7 +1304,8 @@ public class BioModel {
 			}
 		}
 		if (species.isSetSBOTerm()) {
-			if (species.getSBOTerm()==GlobalConstants.SBO_MRNA) {
+			if (species.getSBOTerm()==GlobalConstants.SBO_MRNA || species.getSBOTerm()==GlobalConstants.SBO_MRNA_OLD) {
+				species.setSBOTerm(GlobalConstants.SBO_MRNA);
 				return true;
 			}
 		}
@@ -1362,6 +1385,9 @@ public class BioModel {
 					modifier.setSBOTerm(GlobalConstants.SBO_REGULATION);
 					modifier.unsetAnnotation();
 					return true;
+				} else if (modifier.getAnnotationString().contains("promoter")) {
+					modifier.unsetAnnotation();
+					return false;
 				}
 			}
 			if (modifier.isSetSBOTerm()) {
@@ -1494,7 +1520,7 @@ public class BioModel {
 			reaction = sbml.getModel().createReaction();
 			reaction.setId("MembraneDiffusion_"+s);
 			reaction.setSBOTerm(GlobalConstants.SBO_DIFFUSION);
-			reaction.setCompartment(getDefaultCompartment());
+			reaction.setCompartment(sbml.getModel().getSpecies(s).getCompartment());
 			reaction.setReversible(true);
 			reaction.setFast(false);
 			SpeciesReference reactant = reaction.createReactant();
@@ -1532,8 +1558,8 @@ public class BioModel {
 		if (reaction==null) {
 			reaction = sbml.getModel().createReaction();
 			reaction.setId("Constitutive_"+s);
-			reaction.setAnnotation("Constitutive");
-			reaction.setCompartment(getDefaultCompartment());
+			reaction.setSBOTerm(GlobalConstants.SBO_CONSTITUTIVE);
+			reaction.setCompartment(sbml.getModel().getSpecies(s).getCompartment());
 			reaction.setReversible(false);
 			reaction.setFast(false);
 			SpeciesReference product = reaction.createProduct();
@@ -1553,7 +1579,7 @@ public class BioModel {
 			reaction = sbml.getModel().createReaction();
 			reaction.setId("Degradation_"+s);
 			reaction.setSBOTerm(GlobalConstants.SBO_DEGRADATION);
-			reaction.setCompartment(getDefaultCompartment());
+			reaction.setCompartment(sbml.getModel().getSpecies(s).getCompartment());
 			reaction.setReversible(false);
 			reaction.setFast(false);
 			SpeciesReference reactant = reaction.createReactant();
@@ -1582,7 +1608,7 @@ public class BioModel {
 			r = sbml.getModel().createReaction();
 			r.setId("Production_" + s);
 			r.setSBOTerm(GlobalConstants.SBO_PRODUCTION);
-			r.setCompartment(getDefaultCompartment());
+			r.setCompartment(sbml.getModel().getSpecies(s).getCompartment());
 			r.setReversible(false);
 			r.setFast(false);
 			ModifierSpeciesReference modifier = r.createModifier();
@@ -1590,6 +1616,7 @@ public class BioModel {
 			modifier.setSBOTerm(GlobalConstants.SBO_PROMOTER);
 			Species mRNA = sbml.getModel().createSpecies();
 			mRNA.setId(s+"_mRNA");
+			mRNA.setCompartment(r.getCompartment());
 			mRNA.setInitialAmount(0.0);
 			mRNA.setBoundaryCondition(false);
 			mRNA.setConstant(false);
@@ -1807,6 +1834,7 @@ public class BioModel {
 		//gcm2sbml.convertGCM2SBML(filename);
 		//updateCompartmentReplacements();
 		setGridSize(grid.getNumRows(),grid.getNumCols());
+		SBMLutilities.pruneUnusedSpecialFunctions(sbml);
 		SBMLWriter writer = new SBMLWriter();
 		writer.writeSBML(sbml, filename.replace(".gcm",".xml"));
 	}
@@ -1916,7 +1944,7 @@ public class BioModel {
 		}
 		for (int i=0;i<sbml.getModel().getNumReactions();i++) {
 			Reaction reaction = sbml.getModel().getReaction(i);
-			if (reaction.getAnnotationString().contains("Complex")) {
+			if (isComplexReaction(reaction)) {
 				KineticLaw k = reaction.getKineticLaw();
 				for (int j=0;j<k.getNumLocalParameters();j++) {
 					LocalParameter param = k.getLocalParameter(j);
@@ -2092,6 +2120,13 @@ public class BioModel {
 		choices.add("Create a new reaction");
 		for (int i=0; i < m.getNumReactions(); i++) {
 			Reaction r = m.getReaction(i);
+			if (isDegradationReaction(r)) continue;
+			if (isDiffusionReaction(r)) continue;
+			if (isProductionReaction(r)) continue;
+			if (isComplexReaction(r)) continue;
+			if (isConstitutiveReaction(r)) continue;
+			if (r.getAnnotationString().contains("grid")) continue;
+			
 			if (!isModifier && r.getReactant(sourceID) != null) {
 				choices.add("Add " + targetID + " as a product of reaction " + r.getId());
 			}
@@ -2143,22 +2178,35 @@ public class BioModel {
 				reactionId = "r" + i;
 			}
 			r.setId(reactionId);
-			r.setCompartment(getDefaultCompartment());
 			r.setReversible(false);
 			r.setFast(false);
+			ArrayList<String> CompChoices = new ArrayList<String>();
 			if (isModifier) { 
 				ModifierSpeciesReference source = r.createModifier();
 				source.setSpecies(sourceID);
+				CompChoices.add(sbml.getModel().getSpecies(sourceID).getCompartment());
+				r.setCompartment(sbml.getModel().getSpecies(sourceID).getCompartment());
 			} else {
 				SpeciesReference source = r.createReactant();
 				source.setSpecies(sourceID);
 				source.setConstant(true);
 				source.setStoichiometry(1.0);
+				CompChoices.add(sbml.getModel().getSpecies(sourceID).getCompartment());
+				r.setCompartment(sbml.getModel().getSpecies(sourceID).getCompartment());
 			}
 			SpeciesReference target = r.createProduct();
 			target.setSpecies(targetID);
 			target.setConstant(true);
 			target.setStoichiometry(1.0);
+			if (!r.getCompartment().equals(sbml.getModel().getSpecies(targetID).getCompartment())) {
+				CompChoices.add(sbml.getModel().getSpecies(targetID).getCompartment());
+				JComboBox compartmentList = new JComboBox(CompChoices.toArray());
+				JPanel compartmentListPanel = new JPanel(new GridLayout(1, 1));
+				compartmentListPanel.add(compartmentList);
+				JOptionPane.showOptionDialog(Gui.frame, compartmentListPanel, "Compartment Choice",
+						JOptionPane.YES_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				r.setCompartment((String)compartmentList.getSelectedItem());
+			}
 			KineticLaw k = r.createKineticLaw();
 			LocalParameter p = k.createLocalParameter();
 			p.setId("kf");
@@ -2245,7 +2293,8 @@ public class BioModel {
 			}			
 		}
 		
-		Compartment compartment = sbml.getModel().getCompartment(defaultCompartment);
+		Compartment compartment = sbml.getModel().getCompartment(getCompartmentByLocation((float)x,(float)y,(float)GlobalConstants.DEFAULT_COMPONENT_WIDTH,
+				(float)GlobalConstants.DEFAULT_COMPONENT_HEIGHT));
 		if (compartment!=null) {
 			CompSBasePlugin sbmlSBase = (CompSBasePlugin)compartment.getPlugin("comp");
 			for (String compartmentPort : compartmentPorts) {
@@ -2821,7 +2870,7 @@ public class BioModel {
 	}
 
 	public HashMap<String, String> getInputs(String id) {
-		HashMap<String, String> inputs = new HashMap();
+		HashMap<String, String> inputs = new HashMap<String, String>();
 		for (long i = 0; i < sbml.getModel().getNumSpecies(); i++) {
 			CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbml.getModel().getSpecies(i).getPlugin("comp");
 			for (long j = 0; j < sbmlSBase.getNumReplacedElements(); j++) {
@@ -2853,7 +2902,7 @@ public class BioModel {
 	}
 
 	public HashMap<String, String> getOutputs(String id) {
-		HashMap<String, String> outputs = new HashMap();
+		HashMap<String, String> outputs = new HashMap<String, String>();
 		for (long i = 0; i < sbml.getModel().getNumSpecies(); i++) {
 			CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbml.getModel().getSpecies(i).getPlugin("comp");
 			for (long j = 0; j < sbmlSBase.getNumReplacedElements(); j++) {
@@ -3083,7 +3132,7 @@ public class BioModel {
 	public boolean isSpeciesConstitutive(String speciesId) {
 		Reaction constitutive = sbml.getModel().getReaction("Constitutive_"+speciesId);
 		if (constitutive != null) {
-			if (constitutive.isSetAnnotation() && constitutive.getAnnotationString().contains("Constitutive")) return true;
+			if (isConstitutiveReaction(constitutive)) return true;
 		}
 		return false;
 	}
@@ -3147,6 +3196,14 @@ public class BioModel {
 		return null;
 	}
 	
+	public Reaction getConstitutiveReaction(String speciesId) {
+		Reaction constitutive = sbml.getModel().getReaction("Constitutive_"+speciesId);
+		if (constitutive != null) {
+			if (BioModel.isConstitutiveReaction(constitutive)) return constitutive;
+		}
+		return null;
+	}
+	
 	public Reaction getComplexReaction(String speciesId) {
 		String component = "";
 		if (speciesId.contains("__")) {
@@ -3155,18 +3212,7 @@ public class BioModel {
 		}
 		Reaction complex = sbml.getModel().getReaction(component+"Complex_"+speciesId);
 		if (complex != null) {
-			if (complex.isSetAnnotation() && complex.getAnnotationString().contains("Complex")) return complex;
-			/*
-			if (production.isSetSBOTerm()) {
-				if (production.getSBOTerm()==GlobalConstants.SBO_PRODUCTION) return production;
-			} else if (production.isSetAnnotation()) {
-				if (production.getAnnotationString().contains("Production")) {
-					production.setSBOTerm(GlobalConstants.SBO_PRODUCTION);
-					production.unsetAnnotation();
-					return production;
-				}
-			}
-			*/
+			if (isComplexReaction(complex)) return complex;
 		}
 		return null;
 	}
@@ -3380,7 +3426,7 @@ public class BioModel {
     */
 
 	public void removePromoter(String id) {
-		Species species = sbml.getModel().removeSpecies(id);
+		sbml.getModel().removeSpecies(id);
 		sbml.getModel().removeSpecies(id+"_mRNA");
 		removeReaction("Production_"+id);
 		if (sbmlLayout.getLayout("iBioSim") != null) {
@@ -3602,6 +3648,7 @@ public class BioModel {
 				if (reaction.getNumProducts()==0) {
 					Species mRNA = sbml.getModel().createSpecies();
 					mRNA.setId(promoterId+"_mRNA");
+					mRNA.setCompartment(reaction.getCompartment());
 					mRNA.setSBOTerm(GlobalConstants.SBO_MRNA);
 					mRNA.setInitialAmount(0.0);
 					mRNA.setBoundaryCondition(false);
@@ -4716,11 +4763,9 @@ public class BioModel {
 				c.setSize(1);
 				c.setSpatialDimensions(3);
 				c.setConstant(true);
-				defaultCompartment = sbml.getModel().getCompartment(0).getId();
 				isWithinCompartment = true;
 				return;
 			}
-			defaultCompartment = sbml.getModel().getCompartment(0).getId();
 			for (long i = 0; i < sbml.getModel().getNumCompartments(); i++) {
 				Compartment compartment = sbml.getModel().getCompartment(i);
 				if (compartment.isSetAnnotation() &&
@@ -4826,10 +4871,10 @@ public class BioModel {
 			if (new File(path + separator + sbmlFile).exists()) {
 				sbml = Gui.readSBML(path + separator + sbmlFile);
 				sbml.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
-				sbml.setPkgRequired("layout", false); 
+				sbml.setPackageRequired("layout", false); 
 				sbmlLayout = (LayoutModelPlugin)sbml.getModel().getPlugin("layout");
 				sbml.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
-				sbml.setPkgRequired("comp", true); 
+				sbml.setPackageRequired("comp", true); 
 				((CompSBMLDocumentPlugin)sbml.getPlugin("comp")).setRequired(true);
 				sbmlComp = (CompSBMLDocumentPlugin)sbml.getPlugin("comp");
 				sbmlCompModel = (CompModelPlugin)sbml.getModel().getPlugin("comp");
@@ -4888,13 +4933,13 @@ public class BioModel {
 		SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
 		document.setModel(sbml.getModel());
 		document.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
-		document.setPkgRequired("layout", false); 
-		LayoutModelPlugin documentLayout = (LayoutModelPlugin)document.getModel().getPlugin("layout");
+		document.setPackageRequired("layout", false); 
+		//LayoutModelPlugin documentLayout = (LayoutModelPlugin)document.getModel().getPlugin("layout");
 		document.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
-		document.setPkgRequired("comp", true);
+		document.setPackageRequired("comp", true);
 		((CompSBMLDocumentPlugin)document.getPlugin("comp")).setRequired(true);
 		CompSBMLDocumentPlugin documentComp = (CompSBMLDocumentPlugin)document.getPlugin("comp");
-		CompModelPlugin documentCompModel = (CompModelPlugin)document.getModel().getPlugin("comp");
+		//CompModelPlugin documentCompModel = (CompModelPlugin)document.getModel().getPlugin("comp");
 		for (long i = 0; i < sbmlCompModel.getNumSubmodels(); i++) {
 			String subModelId = sbmlCompModel.getSubmodel(i).getId();
 			String extModel = sbmlComp.getExternalModelDefinition(sbmlCompModel.getSubmodel(subModelId)
@@ -5911,34 +5956,6 @@ public class BioModel {
 			return false;
 			*/
 	}
-
-	public void setDefaultCompartment(String defaultCompartment) {
-		/*
-		if (defaultCompartment == null || defaultCompartment.equals("")) {
-			defaultCompartment = sbml.getModel().getCompartment(0).getId();
-		}
-		if (this.defaultCompartment != null && !this.defaultCompartment.equals("")) {
-			if (isWithinCompartment) {
-				sbmlCompModel.getPort(GlobalConstants.ENCLOSING_COMPARTMENT).
-				setId(GlobalConstants.COMPARTMENT+"__"+this.defaultCompartment);
-		} else {
-			sbmlCompModel.getPort(GlobalConstants.DEFAULT_COMPARTMENT).
-				setId(GlobalConstants.COMPARTMENT+"__"+this.defaultCompartment);
-			}
-		}
-		Port port = sbmlCompModel.getPort(GlobalConstants.COMPARTMENT+"__"+defaultCompartment);
-		if (port == null) {
-			port = sbmlCompModel.createPort();
-		}
-		if (isWithinCompartment) {
-			port.setId(GlobalConstants.ENCLOSING_COMPARTMENT);
-		} else {
-			port.setId(GlobalConstants.DEFAULT_COMPARTMENT);
-		}
-		port.setIdRef(defaultCompartment);
-		*/
-		this.defaultCompartment = defaultCompartment;
-	}
 	
 	private SBMLDocument sbml = null;
 	
@@ -5962,8 +5979,6 @@ public class BioModel {
 	
 	private Grid grid = null;
 	private boolean isWithinCompartment;
-	
-	private String defaultCompartment;
 	
 	private int creatingCompartmentID = 0;
 	private int creatingVariableID = 0;

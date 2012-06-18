@@ -17,9 +17,12 @@ import org.sbml.libsbml.ASTNode;
 import org.sbml.libsbml.Compartment;
 import org.sbml.libsbml.CompartmentType;
 import org.sbml.libsbml.Constraint;
+import org.sbml.libsbml.Delay;
+import org.sbml.libsbml.Event;
 import org.sbml.libsbml.EventAssignment;
 import org.sbml.libsbml.FunctionDefinition;
 import org.sbml.libsbml.InitialAssignment;
+import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.ModifierSpeciesReference;
@@ -31,6 +34,7 @@ import org.sbml.libsbml.SBase;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.SpeciesReference;
 import org.sbml.libsbml.SpeciesType;
+import org.sbml.libsbml.Unit;
 import org.sbml.libsbml.UnitDefinition;
 import org.sbml.libsbml.libsbml;
 
@@ -180,6 +184,8 @@ public class SBMLutilities {
 							createFunction(model, "laplace", "Laplace distribution", "lambda(a,0)");
 						} else if (splitLaw[i].equals("cauchy")) {
 							createFunction(model, "cauchy", "Cauchy distribution", "lambda(a,a)");
+						} else if (splitLaw[i].equals("rayleigh")) {
+							createFunction(model, "rayleigh", "Rayleigh distribution","lambda(s,s*sqrt(pi/2))");
 						} else if (splitLaw[i].equals("poisson")) {
 							createFunction(model, "poisson", "Poisson distribution", "lambda(mu,mu)");
 						} else if (splitLaw[i].equals("binomial")) {
@@ -200,6 +206,20 @@ public class SBMLutilities {
 							createFunction(model, "G", "Globally Property", "lambda(t,x,or(not(t),x))");
 							createFunction(model, "F", "Eventually Property", "lambda(t,x,or(not(t),not(x)))");
 							createFunction(model, "U", "Until Property", "lambda(t,x,y,or(G(t,x),F(t,y)))");
+						} else if (splitLaw[i].equals("rate")) {
+							createFunction(model, "rate", "Rate", "lambda(a,a)");
+						} else if (splitLaw[i].equals("BIT")) {
+							createFunction(model, "BIT", "bit selection", "lambda(a,b,a*b)");
+						} else if (splitLaw[i].equals("BITAND")) {
+							createFunction(model, "BITAND", "Bitwise AND", "lambda(a,b,a*b)");
+						} else if (splitLaw[i].equals("BITOR")) {
+							createFunction(model, "BITOR", "Bitwise OR", "lambda(a,b,a*b)");
+						} else if (splitLaw[i].equals("BITNOT")) {
+							createFunction(model, "BITNOT", "Bitwise NOT", "lambda(a,b,a*b)");
+						} else if (splitLaw[i].equals("BITXOR")) {
+							createFunction(model, "BITXOR", "Bitwise XOR", "lambda(a,b,a*b)");
+						} else if (splitLaw[i].equals("mod")) {
+							createFunction(model, "mod", "Modular", "lambda(a,b,a-floor(a/b)*b)");
 						} else {
 							invalidVars.add(splitLaw[i]);
 						}
@@ -208,6 +228,134 @@ public class SBMLutilities {
 			}
 		}
 		return invalidVars;
+	}
+	
+	public static void pruneUnusedSpecialFunctions(SBMLDocument document) {
+		if (document.getModel().getFunctionDefinition("uniform")!=null) {
+			if (!variableInUse(document, "uniform", false, false, true)) {
+				document.getModel().removeFunctionDefinition("uniform");
+			}
+		}
+		if (document.getModel().getFunctionDefinition("normal")!=null) {
+			if (!variableInUse(document, "normal", false, false, true)) {
+				document.getModel().removeFunctionDefinition("normal");
+			}
+		}
+		if (document.getModel().getFunctionDefinition("exponential")!=null) {
+			if (!variableInUse(document, "exponential", false, false, true)) {
+				document.getModel().removeFunctionDefinition("exponential");
+			}
+		}
+		if (document.getModel().getFunctionDefinition("gamma")!=null) {
+			if (!variableInUse(document, "gamma", false, false, true)) {
+				document.getModel().removeFunctionDefinition("gamma");
+			}
+		}
+		if (document.getModel().getFunctionDefinition("lognormal")!=null) {
+			if (!variableInUse(document, "lognormal", false, false, true)) {
+				document.getModel().removeFunctionDefinition("lognormal");
+			}
+		}
+		if (document.getModel().getFunctionDefinition("chisq")!=null) {
+			if (!variableInUse(document, "chisq", false, false, true)) {
+				document.getModel().removeFunctionDefinition("chisq");
+			}
+		}
+		if (document.getModel().getFunctionDefinition("laplace")!=null) {
+			if (!variableInUse(document, "laplace", false, false, true)) {
+				document.getModel().removeFunctionDefinition("laplace");
+			}
+		}
+		if (document.getModel().getFunctionDefinition("cauchy")!=null) {
+			if (!variableInUse(document, "cauchy", false, false, true)) {
+				document.getModel().removeFunctionDefinition("cauchy");
+			}
+		}
+		if (document.getModel().getFunctionDefinition("rayleigh")!=null) {
+			if (!variableInUse(document, "rayleigh", false, false, true)) {
+				document.getModel().removeFunctionDefinition("rayleigh");
+			}
+		}
+		if (document.getModel().getFunctionDefinition("poisson")!=null) {
+			if (!variableInUse(document, "poisson", false, false, true)) {
+				document.getModel().removeFunctionDefinition("poisson");
+			}
+		}
+		if (document.getModel().getFunctionDefinition("binomial")!=null) {
+			if (!variableInUse(document, "binomial", false, false, true)) {
+				document.getModel().removeFunctionDefinition("binomial");
+			}
+		}
+		if (document.getModel().getFunctionDefinition("bernoulli")!=null) {
+			if (!variableInUse(document, "bernoulli", false, false, true)) {
+				document.getModel().removeFunctionDefinition("bernoulli");
+			}
+		}
+		if (document.getModel().getFunctionDefinition("PG")!=null) {
+			if (!variableInUse(document, "PG", false, false, true)) {
+				document.getModel().removeFunctionDefinition("PG");
+			}
+		}
+		if (document.getModel().getFunctionDefinition("PF")!=null) {
+			if (!variableInUse(document, "PF", false, false, true)) {
+				document.getModel().removeFunctionDefinition("PF");
+			}
+		}
+		if (document.getModel().getFunctionDefinition("PU")!=null) {
+			if (!variableInUse(document, "PU", false, false, true)) {
+				document.getModel().removeFunctionDefinition("PU");
+			}
+		}
+		if (document.getModel().getFunctionDefinition("G")!=null) {
+			if (!variableInUse(document, "G", false, false, true)) {
+				document.getModel().removeFunctionDefinition("G");
+			}
+		}
+		if (document.getModel().getFunctionDefinition("F")!=null) {
+			if (!variableInUse(document, "F", false, false, true)) {
+				document.getModel().removeFunctionDefinition("F");
+			}
+		}
+		if (document.getModel().getFunctionDefinition("U")!=null) {
+			if (!variableInUse(document, "U", false, false, true)) {
+				document.getModel().removeFunctionDefinition("U");
+			}
+		}
+		if (document.getModel().getFunctionDefinition("rate")!=null) {
+			if (!variableInUse(document, "rate", false, false, true)) {
+				document.getModel().removeFunctionDefinition("rate");
+			}
+		}
+		if (document.getModel().getFunctionDefinition("mod")!=null) {
+			if (!variableInUse(document, "mod", false, false, true)) {
+				document.getModel().removeFunctionDefinition("mod");
+			}
+		}
+		if (document.getModel().getFunctionDefinition("BIT")!=null) {
+			if (!variableInUse(document, "BIT", false, false, true)) {
+				document.getModel().removeFunctionDefinition("BIT");
+			}
+		}
+		if (document.getModel().getFunctionDefinition("BITOR")!=null) {
+			if (!variableInUse(document, "BITOR", false, false, true)) {
+				document.getModel().removeFunctionDefinition("BITOR");
+			}
+		}
+		if (document.getModel().getFunctionDefinition("BITXOR")!=null) {
+			if (!variableInUse(document, "BITXOR", false, false, true)) {
+				document.getModel().removeFunctionDefinition("BITXOR");
+			}
+		}
+		if (document.getModel().getFunctionDefinition("BITNOT")!=null) {
+			if (!variableInUse(document, "BITNOT", false, false, true)) {
+				document.getModel().removeFunctionDefinition("BITNOT");
+			}
+		}
+		if (document.getModel().getFunctionDefinition("BITAND")!=null) {
+			if (!variableInUse(document, "BITAND", false, false, true)) {
+				document.getModel().removeFunctionDefinition("BITAND");
+			}
+		}
 	}
 
 	/**
@@ -1522,11 +1670,225 @@ public class SBMLutilities {
 			JOptionPane.showMessageDialog(Gui.frame, scroll, "SBML Errors and Warnings", JOptionPane.ERROR_MESSAGE);
 		}
 	}
+	
+	public static boolean checkUnitsInAssignmentRule(SBMLDocument document,Rule rule) {
+		UnitDefinition unitDef = rule.getDerivedUnitDefinition();
+		UnitDefinition unitDefVar;
+		Species species = document.getModel().getSpecies(rule.getVariable());
+		Compartment compartment = document.getModel().getCompartment(rule.getVariable());
+		Parameter parameter = document.getModel().getParameter(rule.getVariable());
+		if (species != null) {
+			unitDefVar = species.getDerivedUnitDefinition();
+		}
+		else if (compartment != null) {
+			unitDefVar = compartment.getDerivedUnitDefinition();
+		}
+		else {
+			unitDefVar = parameter.getDerivedUnitDefinition();
+		}
+		if (!UnitDefinition.areEquivalent(unitDef, unitDefVar)) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static boolean checkUnitsInRateRule(SBMLDocument document,Rule rule) {
+		UnitDefinition unitDef = rule.getDerivedUnitDefinition();
+		UnitDefinition unitDefVar;
+		Species species = document.getModel().getSpecies(rule.getVariable());
+		Compartment compartment = document.getModel().getCompartment(rule.getVariable());
+		Parameter parameter = document.getModel().getParameter(rule.getVariable());
+		if (species != null) {
+			unitDefVar = species.getDerivedUnitDefinition();
+		}
+		else if (compartment != null) {
+			unitDefVar = compartment.getDerivedUnitDefinition();
+		}
+		else {
+			unitDefVar = parameter.getDerivedUnitDefinition();
+		}
+		if (document.getModel().getUnitDefinition("time") != null) {
+			UnitDefinition timeUnitDef = document.getModel().getUnitDefinition("time");
+			for (int i = 0; i < timeUnitDef.getNumUnits(); i++) {
+				Unit timeUnit = timeUnitDef.getUnit(i);
+				Unit recTimeUnit = unitDefVar.createUnit();
+				recTimeUnit.setKind(timeUnit.getKind());
+				if (document.getLevel() < 3) {
+					recTimeUnit.setExponent(timeUnit.getExponent() * (-1));
+				}
+				else {
+					recTimeUnit.setExponent(timeUnit.getExponentAsDouble() * (-1));
+				}
+				recTimeUnit.setScale(timeUnit.getScale());
+				recTimeUnit.setMultiplier(timeUnit.getMultiplier());
+			}
+		}
+		else {
+			Unit unit = unitDefVar.createUnit();
+			unit.setKind(libsbml.UnitKind_forName("second"));
+			unit.setExponent(-1);
+			unit.setScale(0);
+			unit.setMultiplier(1.0);
+		}
+		if (!UnitDefinition.areEquivalent(unitDef, unitDefVar)) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static boolean checkUnitsInInitialAssignment(SBMLDocument document,InitialAssignment init) {
+		UnitDefinition unitDef = init.getDerivedUnitDefinition();
+		UnitDefinition unitDefVar;
+		Species species = document.getModel().getSpecies(init.getSymbol());
+		Compartment compartment = document.getModel().getCompartment(init.getSymbol());
+		Parameter parameter = document.getModel().getParameter(init.getSymbol());
+		if (species != null) {
+			unitDefVar = species.getDerivedUnitDefinition();
+		}
+		else if (compartment != null) {
+			unitDefVar = compartment.getDerivedUnitDefinition();
+		}
+		else {
+			unitDefVar = parameter.getDerivedUnitDefinition();
+		}
+		if (!UnitDefinition.areEquivalent(unitDef, unitDefVar)) {
+			return true;
+		}
+		return false;
+	}	
+	
+	public static boolean checkUnitsInKineticLaw(SBMLDocument document,KineticLaw law) {
+		UnitDefinition unitDef = law.getDerivedUnitDefinition();
+		UnitDefinition unitDefLaw = new UnitDefinition(document.getLevel(), document.getVersion());
+		if (document.getModel().getUnitDefinition("substance") != null) {
+			UnitDefinition subUnitDef = document.getModel().getUnitDefinition("substance");
+			for (int i = 0; i < subUnitDef.getNumUnits(); i++) {
+				Unit subUnit = subUnitDef.getUnit(i);
+				unitDefLaw.addUnit(subUnit);
+			}
+		}
+		else {
+			Unit unit = unitDefLaw.createUnit();
+			unit.setKind(libsbml.UnitKind_forName("mole"));
+			unit.setExponent(1);
+			unit.setScale(0);
+			unit.setMultiplier(1.0);
+		}
+		if (document.getModel().getUnitDefinition("time") != null) {
+			UnitDefinition timeUnitDef = document.getModel().getUnitDefinition("time");
+			for (int i = 0; i < timeUnitDef.getNumUnits(); i++) {
+				Unit timeUnit = timeUnitDef.getUnit(i);
+				Unit recTimeUnit = unitDefLaw.createUnit();
+				recTimeUnit.setKind(timeUnit.getKind());
+				if (document.getLevel() < 3) {
+					recTimeUnit.setExponent(timeUnit.getExponent() * (-1));
+				}
+				else {
+					recTimeUnit.setExponent(timeUnit.getExponentAsDouble() * (-1));
+				}
+				recTimeUnit.setScale(timeUnit.getScale());
+				recTimeUnit.setMultiplier(timeUnit.getMultiplier());
+			}
+		}
+		else {
+			Unit unit = unitDefLaw.createUnit();
+			unit.setKind(libsbml.UnitKind_forName("second"));
+			unit.setExponent(-1);
+			unit.setScale(0);
+			unit.setMultiplier(1.0);
+		}
+		if (!UnitDefinition.areEquivalent(unitDef, unitDefLaw)) {
+			return true;
+		}
+		return false;
+	}
 
+	public static boolean checkUnitsInEventDelay(SBMLDocument document,Delay delay) {
+		UnitDefinition unitDef = delay.getDerivedUnitDefinition();
+		if (unitDef != null && !(unitDef.isVariantOfTime())) {
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean checkUnitsInEventAssignment(SBMLDocument document,EventAssignment assign) {
+		UnitDefinition unitDef = assign.getDerivedUnitDefinition();
+		UnitDefinition unitDefVar;
+		Species species = document.getModel().getSpecies(assign.getVariable());
+		Compartment compartment = document.getModel().getCompartment(assign.getVariable());
+		Parameter parameter = document.getModel().getParameter(assign.getVariable());
+		if (species != null) {
+			unitDefVar = species.getDerivedUnitDefinition();
+		}
+		else if (compartment != null) {
+			unitDefVar = compartment.getDerivedUnitDefinition();
+		}
+		else {
+			unitDefVar = parameter.getDerivedUnitDefinition();
+		}
+		if (!UnitDefinition.areEquivalent(unitDef, unitDefVar)) {
+			return true;
+		}
+		return false;
+	}
+	
 	/**
 	 * Checks consistency of the sbml file.
 	 */
 	public static boolean checkUnits(SBMLDocument document) {
+		document.getModel().populateListFormulaUnitsData();
+		long numErrors = 0;
+		String message = "Change in unit definition causes unit errors in the following elements:\n";
+		for (long i = 0; i < document.getModel().getNumReactions(); i++) {
+			Reaction reaction = document.getModel().getReaction(i);
+			KineticLaw law = reaction.getKineticLaw();
+			if (law != null) {
+				if (checkUnitsInKineticLaw(document,law)) {
+					message += "Reaction: " + reaction.getId() + "\n";
+					numErrors++;
+				} 
+			}
+		}
+		for (long i = 0; i < document.getModel().getNumInitialAssignments(); i++) {
+			InitialAssignment init = document.getModel().getInitialAssignment(i);
+			if (checkUnitsInInitialAssignment(document,init)) {
+				message += "Initial assignment on variable: " + init.getSymbol() + "\n";
+				numErrors++;
+			} 
+		}
+		for (long i = 0; i < document.getModel().getNumRules(); i++) {
+			Rule rule = document.getModel().getRule(i);
+			if (rule.isAssignment()) {
+				if (checkUnitsInAssignmentRule(document,rule)) {
+					message += "Assignment rule on variable: " + rule.getVariable() + "\n";
+					numErrors++;
+				}
+			} else if (rule.isRate()) {
+				if (checkUnitsInRateRule(document,rule)) {
+					message += "Rate rule on variable: " + rule.getVariable() + "\n";
+					numErrors++;
+				}
+			}
+		}
+		for (long i = 0; i < document.getModel().getNumEvents(); i++) {
+			Event event = document.getModel().getEvent(i);
+			Delay delay = event.getDelay();
+			if (delay != null) {
+				if (checkUnitsInEventDelay(document,delay)) {
+					message += "Delay on event: " + event.getId() + "\n";
+					numErrors++;
+				}
+			}
+			for (long j = 0; j < event.getNumEventAssignments(); j++) {
+				EventAssignment assign = event.getEventAssignment(j);
+				if (checkUnitsInEventAssignment(document,assign)) {
+					message += "Event assignment for event " + event.getId() + " on variable: " + assign.getVariable() + "\n";
+					numErrors++;
+				}
+			}
+		}
+		
+		/*
 		document.setConsistencyChecks(libsbml.LIBSBML_CAT_GENERAL_CONSISTENCY, false);
 		document.setConsistencyChecks(libsbml.LIBSBML_CAT_IDENTIFIER_CONSISTENCY, false);
 		document.setConsistencyChecks(libsbml.LIBSBML_CAT_UNITS_CONSISTENCY, true);
@@ -1535,15 +1897,14 @@ public class SBMLutilities {
 		document.setConsistencyChecks(libsbml.LIBSBML_CAT_MODELING_PRACTICE, false);
 		document.setConsistencyChecks(libsbml.LIBSBML_CAT_OVERDETERMINED_MODEL, false);
 		long numErrorsWarnings = document.checkConsistency();
-		long numErrors = 0;
-		String message = "Change in unit definition causes the following unit errors:\n";
 		for (long i = 0; i < numErrorsWarnings; i++) {
-			// if (document.getError(i).isWarning()) {
-			String error = document.getError(i).getMessage();
-			message += i + ":" + error + "\n";
-			numErrors++;
-			// }
+			if (!document.getError(i).isWarning()) {
+				String error = document.getError(i).getMessage();
+				message += i + ":" + error + "\n";
+				numErrors++;
+			}
 		}
+		*/
 		if (numErrors > 0) {
 			JTextArea messageArea = new JTextArea(message);
 			messageArea.setLineWrap(true);
@@ -1568,8 +1929,7 @@ public class SBMLutilities {
 		createFunction(model, "chisq", "Chi-squared distribution", "lambda(nu,nu)");
 		createFunction(model, "laplace", "Laplace distribution", "lambda(a,0)");
 		createFunction(model, "cauchy", "Cauchy distribution", "lambda(a,a)");
-		// createFunction(model, "rayleigh", "Rayleigh distribution",
-		// "lambda(s,s*sqrt(pi/2))");
+		createFunction(model, "rayleigh", "Rayleigh distribution","lambda(s,s*sqrt(pi/2))");
 		createFunction(model, "poisson", "Poisson distribution", "lambda(mu,mu)");
 		createFunction(model, "binomial", "Binomial distribution", "lambda(p,n,p*n)");
 		createFunction(model, "bernoulli", "Bernoulli distribution", "lambda(p,p)");

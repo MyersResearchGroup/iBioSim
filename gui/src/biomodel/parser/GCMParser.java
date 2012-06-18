@@ -651,8 +651,8 @@ public class GCMParser {
 			if (BioModel.isDegradationReaction(r)) continue;
 			if (BioModel.isDiffusionReaction(r)) continue;
 			if (BioModel.isProductionReaction(r)) continue;
-			if (r.getAnnotationString().contains("Complex")) continue;
-			if (r.getAnnotationString().contains("Constitutive")) continue;
+			if (BioModel.isComplexReaction(r)) continue;
+			if (BioModel.isConstitutiveReaction(r)) continue;
 			if (r.getAnnotationString().contains("grid")) continue;
 			if (parseReactionSbol(r))
 				sbolDetected = true;
