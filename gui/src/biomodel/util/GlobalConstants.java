@@ -133,11 +133,14 @@ public class GlobalConstants {
 	public static final int SBO_PROMOTER = 535;
 	public static final int SBO_OLD_PROMOTER_SPECIES = 369;
 	public static final int SBO_PROMOTER_SPECIES = 354;
-	public static final int SBO_MRNA = 278;
+	public static final int SBO_MRNA_OLD = 278;
+	public static final int SBO_MRNA = 250;
 
 	public static final int SBO_DEGRADATION = 179;
 	public static final int SBO_DIFFUSION = 185;
 	public static final int SBO_PRODUCTION = 183;
+	public static final int SBO_COMPLEX = 526;
+	public static final int SBO_CONSTITUTIVE = 396;
 	
 	public static final String TRUE = "true";
 	public static final String FALSE = "false";

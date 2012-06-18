@@ -231,8 +231,8 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 	/**
 	 * Check the units of an initial assignment
 	 */
-	public static boolean checkInitialAssignmentUnits(Gui biosim, BioModel gcm, InitialAssignment init) {
-		gcm.getSBMLDocument().getModel().populateListFormulaUnitsData();
+	public static boolean checkInitialAssignmentUnits(Gui biosim, BioModel bioModel, InitialAssignment init) {
+		bioModel.getSBMLDocument().getModel().populateListFormulaUnitsData();
 		if (init.containsUndeclaredUnits()) {
 			if (biosim.checkUndeclared) {
 				JOptionPane.showMessageDialog(Gui.frame, "Initial assignment contains literals numbers or parameters with undeclared units.\n"
@@ -242,21 +242,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			return false;
 		}
 		else if (biosim.checkUnits) {
-			UnitDefinition unitDef = init.getDerivedUnitDefinition();
-			UnitDefinition unitDefVar;
-			Species species = gcm.getSBMLDocument().getModel().getSpecies(init.getSymbol());
-			Compartment compartment = gcm.getSBMLDocument().getModel().getCompartment(init.getSymbol());
-			Parameter parameter = gcm.getSBMLDocument().getModel().getParameter(init.getSymbol());
-			if (species != null) {
-				unitDefVar = species.getDerivedUnitDefinition();
-			}
-			else if (compartment != null) {
-				unitDefVar = compartment.getDerivedUnitDefinition();
-			}
-			else {
-				unitDefVar = parameter.getDerivedUnitDefinition();
-			}
-			if (!UnitDefinition.areEquivalent(unitDef, unitDefVar)) {
+			if (SBMLutilities.checkUnitsInInitialAssignment(bioModel.getSBMLDocument(), init)) {
 				JOptionPane.showMessageDialog(Gui.frame, "Units on the left and right-hand side of the initial assignment do not agree.",
 						"Units Do Not Match", JOptionPane.ERROR_MESSAGE);
 				return true;

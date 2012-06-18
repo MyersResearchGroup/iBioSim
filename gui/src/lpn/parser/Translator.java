@@ -69,11 +69,11 @@ public class Translator {
 		createFunction(m, "rate", "Rate", "lambda(a,a)");
 		createFunction(m, "BIT", "bit selection", "lambda(a,b,a*b)");
 		createFunction(m, "BITAND", "Bitwise AND", "lambda(a,b,a*b)");
-		createFunction(m, "BITOR", "Bitwise AND", "lambda(a,b,a*b)");
-		createFunction(m, "BITNOT", "Bitwise AND", "lambda(a,b,a*b)");
-		createFunction(m, "BITXOR", "Bitwise AND", "lambda(a,b,a*b)");
+		createFunction(m, "BITOR", "Bitwise OR", "lambda(a,b,a*b)");
+		createFunction(m, "BITNOT", "Bitwise NOT", "lambda(a,b,a*b)");
+		createFunction(m, "BITXOR", "Bitwise XOR", "lambda(a,b,a*b)");
 		createFunction(m, "mod", "Modular", "lambda(a,b,a-floor(a/b)*b)");
-		createFunction(m, "and", "Logical AND", "lambda(a,b,a*b)");
+		//createFunction(m, "and", "Logical AND", "lambda(a,b,a*b)");
 		createFunction(m, "uniform", "Uniform distribution", "lambda(a,b,(a+b)/2)");
 		createFunction(m, "normal", "Normal distribution", "lambda(m,s,m)");
 		createFunction(m, "exponential", "Exponential distribution", "lambda(l,1/l)");
@@ -712,6 +712,7 @@ public class Translator {
 }
 
 	public void outputSBML() {
+		SBMLutilities.pruneUnusedSpecialFunctions(document);
 		SBMLWriter writer = new SBMLWriter();
 		writer.writeSBML(document, filename);
 	}

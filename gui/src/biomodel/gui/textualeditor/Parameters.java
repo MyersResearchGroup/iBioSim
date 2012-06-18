@@ -646,7 +646,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							} else if (paramet.getId().equals(GlobalConstants.COOPERATIVITY_STRING)) {
 								for (long i=0; i<model.getNumReactions(); i++) {
 									Reaction r = model.getReaction(i);
-									if (r.getAnnotationString().contains("Complex")) {
+									if (BioModel.isComplexReaction(r)) {
 										for (long j=0; j<r.getNumReactants(); j++) {
 											SpeciesReference reactant = r.getReactant(j);
 											if (r.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + reactant.getSpecies())==null) {

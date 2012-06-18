@@ -262,8 +262,8 @@ public class BioGraph extends mxGraph {
 			if (BioModel.isDegradationReaction(r)) continue;
 			if (BioModel.isDiffusionReaction(r)) continue;
 			if (BioModel.isProductionReaction(r)) continue;
-			if (r.getAnnotationString().contains("Complex")) continue;
-			if (r.getAnnotationString().contains("Constitutive")) continue;
+			if (BioModel.isComplexReaction(r)) continue;
+			if (BioModel.isConstitutiveReaction(r)) continue;
 			if (r.getAnnotationString().contains("grid")) continue;
 			
 			if (layout.getReactionGlyph(r.getId()) != null) {
@@ -374,7 +374,7 @@ public class BioGraph extends mxGraph {
 			if (r.getAnnotationString().contains("grid"))
 				continue;
 			
-			if (r.getAnnotationString().contains("Complex")) {
+			if (BioModel.isComplexReaction(r)) {
 				for (int j = 0; j < r.getNumReactants(); j++) {
 					String reactant = r.getReactant(j).getSpecies();
 					String product = r.getProduct(0).getSpecies();
@@ -417,15 +417,6 @@ public class BioGraph extends mxGraph {
 							mxCell cell = this.getInfluence(id);
 							cell.setStyle(style);
 							createLayoutConnection(layout,activator,promoterId,GlobalConstants.ACTIVATION);
-						} else if (r.getModifier(j).getAnnotationString().contains(GlobalConstants.NOINFLUENCE)) {
-							String regulator = r.getModifier(j).getSpecies();
-							String id = regulator + "x>" + promoterId;
-							this.insertEdge(this.getDefaultParent(), id, "", 
-									this.getSpeciesCell(regulator),this.getDrawnPromoterCell(promoterId));
-							String style = "NOINFLUENCE";
-							mxCell cell = this.getInfluence(id);
-							cell.setStyle(style);
-							createLayoutConnection(layout,regulator,promoterId,GlobalConstants.NOINFLUENCE);
 						} else if (BioModel.isRegulator(r.getModifier(j))) {
 							String regulator = r.getModifier(j).getSpecies();
 							String id = regulator + "-|" + promoterId;
@@ -442,7 +433,15 @@ public class BioGraph extends mxGraph {
 							cell.setStyle(style);
 							createLayoutConnection(layout,regulator,promoterId,GlobalConstants.REPRESSION);
 							createLayoutConnection(layout,regulator,promoterId,GlobalConstants.ACTIVATION);
-						}
+						} else if (r.getModifier(j).getAnnotationString().contains(GlobalConstants.NOINFLUENCE)) {
+							String regulator = r.getModifier(j).getSpecies();
+							String id = regulator + "x>" + promoterId;
+							this.insertEdge(this.getDefaultParent(), id, "", 
+									this.getSpeciesCell(regulator),this.getDrawnPromoterCell(promoterId));
+							String style = "NOINFLUENCE";
+							mxCell cell = this.getInfluence(id);
+							cell.setStyle(style);
+							createLayoutConnection(layout,regulator,promoterId,GlobalConstants.NOINFLUENCE);						}
 					}
 				} else {
 					for (int j = 0; j < r.getNumModifiers(); j++) {
@@ -513,8 +512,8 @@ public class BioGraph extends mxGraph {
 			if (BioModel.isDegradationReaction(r)) continue;
 			if (BioModel.isDiffusionReaction(r)) continue;
 			if (BioModel.isProductionReaction(r)) continue;
-			if (r.getAnnotationString().contains("Complex")) continue;
-			if (r.getAnnotationString().contains("Constitutive")) continue;
+			if (BioModel.isComplexReaction(r)) continue;
+			if (BioModel.isConstitutiveReaction(r)) continue;
 			if (r.getAnnotationString().contains("grid")) continue;
 			
 			ReactionGlyph reactionGlyph = layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+r.getId());
@@ -889,7 +888,7 @@ public class BioGraph extends mxGraph {
 		Model m = bioModel.getSBMLDocument().getModel();
 		for (int i = 0; i < m.getNumReactions(); i++) {
 			Reaction r = m.getReaction(i);
-			if (r.getAnnotationString().contains("Complex")) {
+			if (BioModel.isComplexReaction(r)) {
 				for (int j = 0; j < r.getNumReactants(); j++) {
 					String endA = r.getReactant(j).getSpecies();
 					String endB = r.getProduct(0).getSpecies();
@@ -1021,8 +1020,8 @@ public class BioGraph extends mxGraph {
 			if (BioModel.isDegradationReaction(r)) continue;
 			if (BioModel.isDiffusionReaction(r)) continue;
 			if (BioModel.isProductionReaction(r)) continue;
-			if (r.getAnnotationString().contains("Complex")) continue;
-			if (r.getAnnotationString().contains("Constitutive")) continue;
+			if (BioModel.isComplexReaction(r)) continue;
+			if (BioModel.isConstitutiveReaction(r)) continue;
 			
 			if (bioModel.getSBMLLayout().getLayout("iBioSim").getReactionGlyph(GlobalConstants.GLYPH+"__"+r.getId()) != null) {
 				
@@ -1556,11 +1555,12 @@ public class BioGraph extends mxGraph {
 						String compartment = bioModel.getSBMLDocument().getModel().getReaction((String)cell.getId()).getCompartment();
 						if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
 							CompartmentGlyph compartmentGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+compartment);
-							x = x + compartmentGlyph.getBoundingBox().x();
-							if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
-								x = compartmentGlyph.getBoundingBox().x() + 10;
+							if (compartmentGlyph!=null) {
+								x = x + compartmentGlyph.getBoundingBox().x();
+								if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
+									x = compartmentGlyph.getBoundingBox().x() + 10;
+								}
 							}
-
 						}
 					}
 					bioModel.placeReaction((String)cell.getId(), x, y, height, width);

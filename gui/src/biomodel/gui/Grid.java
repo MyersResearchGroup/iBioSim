@@ -137,8 +137,6 @@ public class Grid {
 		numCols = cols;
 		
 		//gcm.setIsWithinCompartment(true);
-		gcm.setDefaultCompartment(gcm.getSBMLDocument().getModel().getCompartment(0).getId());
-		
 		for(int row = 0; row < numRows; ++row) {
 			
 			grid.add(new ArrayList<GridNode>(numCols));
