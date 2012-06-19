@@ -1981,8 +1981,12 @@ public class BioGraph extends mxGraph {
 		CellValueObject cvo = new CellValueObject(id, "Compartment", null);
 		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
 		this.compartmentsToMxCellMap.put(id, (mxCell)insertedVertex);
-		
-		this.setCompartmentStyles(id);
+
+		if (bioModel.getSBMLCompModel().getPort(GlobalConstants.COMPARTMENT + "__" + id) != null) {
+			this.setCompartmentStyles(id,false);
+		} else {
+			this.setCompartmentStyles(id,true);
+		}
 		
 		return sizeAndPositionFromProperties((mxCell)insertedVertex,
 				GlobalConstants.DEFAULT_COMPARTMENT_WIDTH,GlobalConstants.DEFAULT_COMPARTMENT_HEIGHT);
@@ -2159,7 +2163,17 @@ public class BioGraph extends mxGraph {
 		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
 		style.put(mxConstants.STYLE_ROUNDED, true);
 		stylesheet.putCellStyle("SBMLCOMPARTMENT", style);
-		
+	
+		//compartment
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
+		style.put(mxConstants.STYLE_OPACITY, 30);
+		style.put(mxConstants.STYLE_FILLCOLOR, "#FFFFFF");
+		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
+		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
+		style.put(mxConstants.STYLE_ROUNDED, false);
+		stylesheet.putCellStyle("SBMLCOMPONENT", style);		
+
 		//species
 		style = new Hashtable<String, Object>();
 		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
@@ -2412,8 +2426,13 @@ public class BioGraph extends mxGraph {
 		cell.setStyle(style);
 	}
 
-	private void setCompartmentStyles(String id){
-		String style="SBMLCOMPARTMENT;";
+	private void setCompartmentStyles(String id, boolean compart){
+		String style;
+		if (compart) {
+			style="SBMLCOMPARTMENT;";
+		} else {
+			style="SBMLCOMPONENT;";
+		}
 		
 		mxCell cell = this.getCompartmentsCell(id);
 		cell.setStyle(style);
