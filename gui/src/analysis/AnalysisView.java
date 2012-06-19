@@ -2443,7 +2443,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		 * "Unable to add properties to property file.", "Error",
 		 * JOptionPane.ERROR_MESSAGE); }
 		 */
-		log.addText("Creating properties file:\n" + propName + "\n");
+		log.addText("Creating properties file2:\n" + propName + "\n");
 		final JButton cancel = new JButton("Cancel");
 		final JFrame running = new JFrame("Progress");
 		WindowListener w = new WindowListener() {
@@ -3134,7 +3134,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		// "Unable to add properties to property file.", "Error",
 		// JOptionPane.ERROR_MESSAGE);
 		// }
-		log.addText("Creating properties file:\n" + propName + "\n");
+		log.addText("Creating properties file1:\n" + propName + "\n");
 		// saveSAD(simName);
 		runProgram.createProperties(timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval,
 				minTimeStep, timeStep, absError, ".", rndSeed, run, intSpecies, printer_id, printer_track_quantity,

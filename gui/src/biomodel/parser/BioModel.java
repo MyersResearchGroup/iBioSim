@@ -1865,7 +1865,11 @@ public class BioModel {
 			}
 		}
 		Reaction reaction = getProductionReaction(oldId);
-		reaction.setId("Production_"+newId.substring(newId.lastIndexOf("__")+2));
+		if (newId.contains("__")) {
+			reaction.setId("Production_"+newId.substring(newId.lastIndexOf("__")+2));
+		} else {
+			reaction.setId("Production_"+newId);
+		}
 		SpeciesReference product = reaction.getProduct(oldId+"_mRNA");
 		if (product!=null) {
 			sbml.getModel().getSpecies(oldId+"_mRNA").setId(newId+"_mRNA");

@@ -367,6 +367,7 @@ public class Utility {
 			} else if (species.isSetInitialConcentration() && species.getInitialConcentration() >= 0){
 				s.setInitialConcentration(species.getInitialConcentration());
 			}
+			s.unsetSBOTerm();
 			return true;
 			//Give warning
 		}

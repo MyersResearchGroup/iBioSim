@@ -205,9 +205,9 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	}
 
 	public void reload(String newName) {
-		filename = newName + ".gcm";
+		filename = newName + ".xml";
 		gcmname = newName;
-		biomodel.load(path + separator + newName + ".gcm");
+		biomodel.load(path + separator + newName + ".xml");
 		if (paramsOnly) {
 			/*
 			GCMFile refGCM = new GCMFile(path);
@@ -466,7 +466,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				biosim.addToTree(gcmname + ".xml");
 			}
 		}
-		biosim.updateViews(gcmname + ".gcm");
+		biosim.updateViews(gcmname + ".xml");
 
 	}
 
