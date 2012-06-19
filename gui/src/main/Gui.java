@@ -8142,7 +8142,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									sbmlLoadFile = s.nextLine();
 									sbmlLoadFile = sbmlLoadFile.split(separator)[sbmlLoadFile.split(separator).length - 1];
 									gcmFile = sbmlLoadFile;
-									if (sbmlLoadFile.contains(".gcm"))
+									if (sbmlLoadFile.endsWith(".gcm"))
 										sbmlLoadFile = sbmlLoadFile.replace(".gcm", ".xml");
 									if (sbmlLoadFile.equals("")) {
 										JOptionPane.showMessageDialog(frame, "Unable to open view because "

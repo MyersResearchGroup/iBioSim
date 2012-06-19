@@ -32,7 +32,7 @@ public class PromoterPanel extends JPanel {
 	private HashMap<String, PropertyField> fields = null;
 	private SBOLField sbolField;
 	private String selected = "";
-	private BioModel gcm = null;
+	private BioModel bioModel = null;
 	private boolean paramsOnly;
 	private ModelEditor gcmEditor = null;
 	private Species promoter = null;
@@ -42,7 +42,7 @@ public class PromoterPanel extends JPanel {
 			ModelEditor gcmEditor) {
 		super(new GridLayout(paramsOnly?7:10, 1));
 		this.selected = selected;
-		this.gcm = gcm;
+		this.bioModel = gcm;
 		this.paramsOnly = paramsOnly;
 		this.gcmEditor = gcmEditor;
 
@@ -352,13 +352,13 @@ public class PromoterPanel extends JPanel {
 			String id = selected;
 			if (!paramsOnly) {
 				if (oldName == null) {
-					if (gcm.isSIdInUse((String)fields.get(GlobalConstants.ID).getValue())) {
+					if (bioModel.isSIdInUse((String)fields.get(GlobalConstants.ID).getValue())) {
 						Utility.createErrorMessage("Error", "Id already exists.");
 						return false;
 					}
 				}
 				else if (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
-					if (gcm.isSIdInUse((String)fields.get(GlobalConstants.ID).getValue())) {
+					if (bioModel.isSIdInUse((String)fields.get(GlobalConstants.ID).getValue())) {
 						Utility.createErrorMessage("Error","Id already exists.");
 						return false;
 					}
@@ -412,7 +412,7 @@ public class PromoterPanel extends JPanel {
 			if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
 				KaoStr = f.getValue();
 			}
-			gcm.createProductionReaction(selected,kaStr,npStr,koStr,kbStr,KoStr,KaoStr);
+			bioModel.createProductionReaction(selected,kaStr,npStr,koStr,kbStr,KoStr,KaoStr);
 
 			if (!paramsOnly) {
 				// Add SBOL annotation to promoter
@@ -425,7 +425,7 @@ public class PromoterPanel extends JPanel {
 
 				// rename all the influences that use this promoter if name was changed
 				if (selected != null && !oldName.equals(id)) {
-					gcm.changePromoterId(oldName, id);
+					bioModel.changePromoterId(oldName, id);
 					this.secondToLastUsedPromoter = oldName;
 					promoterNameChange = true;
 				}

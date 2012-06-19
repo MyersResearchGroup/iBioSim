@@ -554,13 +554,7 @@ public class Run implements ActionListener {
 				sbmlName = JOptionPane.showInputDialog(component, "Enter Model ID:", "Model ID", JOptionPane.PLAIN_MESSAGE);
 				if (sbmlName != null && !sbmlName.trim().equals("")) {
 					sbmlName = sbmlName.trim();
-					if (sbmlName.length() > 4) {
-						if (!sbmlName.substring(sbmlName.length() - 3).equals(".xml")
-								|| !sbmlName.substring(sbmlName.length() - 4).equals(".sbml")) {
-							sbmlName += ".xml";
-						}
-					}
-					else {
+					if (!sbmlName.endsWith(".xml")) {
 						sbmlName += ".xml";
 					}
 					File f = new File(root + separator + sbmlName);
@@ -1363,21 +1357,20 @@ public class Run implements ActionListener {
 				}
 				else if (sbml.isSelected()) {
 					if (sbmlName != null && !sbmlName.trim().equals("")) {
-						String gcmName = sbmlName.replace(".xml", ".gcm");
 						//Gui.createGCMFromSBML(root, root + separator + sbmlName, sbmlName, gcmName, true);
-						if (!biomodelsim.updateOpenGCM(gcmName)) {
+						if (!biomodelsim.updateOpenGCM(sbmlName)) {
 							try {
-								ModelEditor gcm = new ModelEditor(root + separator, gcmName, biomodelsim, log, false, null, null,
+								ModelEditor gcm = new ModelEditor(root + separator, sbmlName, biomodelsim, log, false, null, null,
 										null, false, false);
-								biomodelsim.addTab(gcmName, gcm, "GCM Editor");
-								biomodelsim.addToTree(gcmName);
+								biomodelsim.addTab(sbmlName, gcm, "GCM Editor");
+								biomodelsim.addToTree(sbmlName);
 							}
 							catch (Exception e) {
 								e.printStackTrace();
 							}
 						}
 						else {
-							biomodelsim.getTab().setSelectedIndex(biomodelsim.getTab(gcmName));
+							biomodelsim.getTab().setSelectedIndex(biomodelsim.getTab(sbmlName));
 						}
 						biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
 					}
