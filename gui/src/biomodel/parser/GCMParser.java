@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -64,10 +65,10 @@ public class GCMParser {
 			separator = File.separator;
 		}
 		//this.debug = debug;
-		gcm = new BioModel(filename.substring(0, filename.length()
+		biomodel = new BioModel(filename.substring(0, filename.length()
 				- filename.split(separator)[filename.split(separator).length - 1]
 						.length()));
-		gcm.load(filename);
+		biomodel.load(filename);
 		
 		data = new StringBuffer();
 		try {
@@ -91,11 +92,11 @@ public class GCMParser {
 			separator = File.separator;
 		}
 		//this.debug = debug;
-		this.gcm = gcm;
+		this.biomodel = gcm;
 	}
 
 	public GeneticNetwork buildNetwork() {
-		SBMLDocument sbml = gcm.flattenModel();		
+		SBMLDocument sbml = biomodel.flattenModel();		
 		if (sbml == null) return null;
 		return buildTopLevelNetwork(sbml);
 	}
@@ -120,9 +121,9 @@ public class GCMParser {
 				parsePromoterData(sbml,species);
 		}
 		
-		GeneticNetwork network = new GeneticNetwork(speciesList, complexMap, partsMap, promoterList, gcm);
+		GeneticNetwork network = new GeneticNetwork(speciesList, complexMap, partsMap, promoterList, biomodel);
 		
-		network.setSBMLFile(gcm.getSBMLFile());
+		network.setSBMLFile(biomodel.getSBMLFile());
 		if (sbml != null) {
 			network.setSBML(sbml);
 		}
@@ -438,7 +439,7 @@ public class GCMParser {
 	
 	public boolean parsePromoterSbol(Model sbmlModel, Species sbmlPromoter) {
 		// Create synthesis node corresponding to sbml promoter 
-		LinkedList<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlPromoter);
+		LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlPromoter);
 		SynthesisNode synNode = new SynthesisNode(sbmlPromoter.getMetaId(), sbolURIs);
 
 		synMap.put(synNode.getId(), synNode);
@@ -463,7 +464,7 @@ public class GCMParser {
 	
 	public boolean parseReactionSbol(Reaction sbmlReaction) {
 		// Create synthesis node corresponding to sbml reaction
-		LinkedList<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlReaction);
+		LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlReaction);
 		SynthesisNode synNode = new SynthesisNode(sbmlReaction.getMetaId(), sbolURIs);
 		
 		synMap.put(synNode.getId(), synNode);
@@ -506,7 +507,7 @@ public class GCMParser {
 	
 	public boolean parseRuleSbol(Rule sbmlRule) {
 		// Create synthesis node corresponding to sbml rule
-		LinkedList<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlRule);
+		LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlRule);
 		SynthesisNode synNode = new SynthesisNode(sbmlRule.getMetaId(), sbolURIs);
 		
 		synMap.put(synNode.getId(), synNode);
@@ -549,7 +550,7 @@ public class GCMParser {
 	
 	public boolean parseSpeciesSbol(Model sbmlModel, Species sbmlSpecies) {
 		// Create synthesis node corresponding to sbml species
-		LinkedList<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlSpecies);
+		LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlSpecies);
 		SynthesisNode synNode = new SynthesisNode(sbmlSpecies.getMetaId(), sbolURIs);
 		
 		synMap.put(synNode.getId(), synNode);
@@ -618,7 +619,7 @@ public class GCMParser {
 		paramInputMap = new HashMap<String, Set<String>>(); // initialize map of parameters to meta IDs for reactions in which they appear
 		paramOutputMap = new HashMap<String, Set<String>>(); // initialize map of parameters to meta IDs for rules in which they're outputs
 		speciesMetaMap = new HashMap<String, String>(); // initialize map of species IDs to meta IDs
-		Model sbmlModel = gcm.getSBMLDocument().getModel();
+		Model sbmlModel = biomodel.getSBMLDocument().getModel();
 		
 		for (long i = 0; i < sbmlModel.getNumSpecies(); i++) {
 			Species sbmlSpecies = sbmlModel.getSpecies(i);
@@ -666,20 +667,20 @@ public class GCMParser {
 		// Finishes connecting synthesis nodes in accordance with various maps (see above)
 		if (sbolDetected) {
 			connectMappedSynthesisNodes();
-			SBOLSynthesizer synthesizer = new SBOLSynthesizer(synMap);
+			SBOLSynthesizer synthesizer = new SBOLSynthesizer(biomodel, synMap);
 			return synthesizer;
 		} else
 			return null;
 	}
 	
 	public boolean parseSubModelSBOL() {
-		CompModelPlugin sbmlCompModel = gcm.getSBMLCompModel();
-		CompSBMLDocumentPlugin sbmlCompDoc = gcm.getSBMLComp();
+		CompModelPlugin sbmlCompModel = biomodel.getSBMLCompModel();
+		CompSBMLDocumentPlugin sbmlCompDoc = biomodel.getSBMLComp();
 		boolean sbolDetected = false;
 		for (long i = 0; i < sbmlCompModel.getNumSubmodels(); i++) {
 			Submodel sbmlCompSubModel = sbmlCompModel.getSubmodel(i);
 			String sbmlFileID = sbmlCompDoc.getExternalModelDefinition(sbmlCompModel.getSubmodel(i).getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
-			BioModel gcmComponent = new BioModel(gcm.getPath());
+			BioModel gcmComponent = new BioModel(biomodel.getPath());
 			gcmComponent.load(sbmlFileID);
 			
 			Model sbmlSubModel = gcmComponent.getSBMLDocument().getModel();
@@ -687,7 +688,7 @@ public class GCMParser {
 			GCMParser subParser = new GCMParser(gcmComponent, false);
 			SBOLSynthesizer sbolSynth = subParser.buildSbolSynthesizer();
 			SynthesisNode synNode;
-			LinkedList<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlSubModel);
+			LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlSubModel);
 			if (sbolSynth != null) {
 				synNode = new SynthesisNode(sbmlCompSubModel.getId(), sbolURIs, sbolSynth);
 				sbolDetected = true;
@@ -704,53 +705,53 @@ public class GCMParser {
 	// Now uses meta IDs rather than plain IDs to build up synthesis node network 
 	// Done primarily because rules have plain IDs that match their output parameter
 	// This caused problems when connecting rule nodes to reaction nodes based on shared parameters
-	public SBOLSynthesizer buildTopLevelSbolSynthesizer(SBMLDocument sbml) {
-		boolean sbolDetected = false;
-		synMap = new LinkedHashMap<String, SynthesisNode>(); // initialize map of model element IDs to synthesis nodes
-		complexMap = new HashMap<String, ArrayList<Influence>>();
-		paramInputMap = new HashMap<String, Set<String>>();  // initialize map of parameters to reactions in which they appear
-		paramOutputMap = new HashMap<String, Set<String>>(); // initialize map of parameters to rules for which they're outputs
-		speciesMetaMap = new HashMap<String, String>();
-		
-		Model sbmlModel = sbml.getModel();
-		
-		for (long i = 0; i < sbmlModel.getNumSpecies(); i++) {
-			Species sbmlSpecies = sbmlModel.getSpecies(i);
-			speciesMetaMap.put(sbmlSpecies.getId(), sbmlSpecies.getMetaId());
-		}
-
-		// Create and connect synthesis nodes for species and promoters
-		// Note that all non-promoter species must be parsed first since parsePromoterSbol may refer to them
-		// when connecting synthesis nodes
-		for (long i = 0 ; i < sbmlModel.getNumSpecies(); i++) {
-			Species sbmlSpecies = sbmlModel.getSpecies(i);
-			if (!BioModel.isPromoterSpecies(sbmlSpecies)) 
-				if (parseSpeciesSbol(sbmlModel, sbmlSpecies))
-					sbolDetected = true;
-		}
-		for (long i = 0 ; i < sbmlModel.getNumSpecies(); i++) {
-			Species sbmlSpecies = sbmlModel.getSpecies(i);
-			if (BioModel.isPromoterSpecies(sbmlSpecies)) 
-				if (parsePromoterSbol(sbmlModel, sbmlSpecies))
-					sbolDetected = true;
-		}
-		// Create and connect synthesis nodes for reactions not auto-generated by iBioSim
-		for (long i = 0 ; i < sbmlModel.getNumReactions(); i++) {
-			if (parseReactionSbol(sbmlModel.getReaction(i)))
-				sbolDetected = true;
-		}
-		for (long i = 0; i < sbmlModel.getNumRules(); i++) {
-			if (parseRuleSbol(sbmlModel.getRule(i)))
-				sbolDetected = true;
-		}
-		// Finishes connecting synthesis nodes in accordance with various maps (see above)
-		if (sbolDetected) {
-			connectMappedSynthesisNodes();
-			SBOLSynthesizer synthesizer = new SBOLSynthesizer(synMap);
-			return synthesizer;
-		} else
-			return null;
-	}
+//	public SBOLSynthesizer buildTopLevelSbolSynthesizer(SBMLDocument sbml) {
+//		boolean sbolDetected = false;
+//		synMap = new LinkedHashMap<String, SynthesisNode>(); // initialize map of model element IDs to synthesis nodes
+//		complexMap = new HashMap<String, ArrayList<Influence>>();
+//		paramInputMap = new HashMap<String, Set<String>>();  // initialize map of parameters to reactions in which they appear
+//		paramOutputMap = new HashMap<String, Set<String>>(); // initialize map of parameters to rules for which they're outputs
+//		speciesMetaMap = new HashMap<String, String>();
+//		
+//		Model sbmlModel = sbml.getModel();
+//		
+//		for (long i = 0; i < sbmlModel.getNumSpecies(); i++) {
+//			Species sbmlSpecies = sbmlModel.getSpecies(i);
+//			speciesMetaMap.put(sbmlSpecies.getId(), sbmlSpecies.getMetaId());
+//		}
+//
+//		// Create and connect synthesis nodes for species and promoters
+//		// Note that all non-promoter species must be parsed first since parsePromoterSbol may refer to them
+//		// when connecting synthesis nodes
+//		for (long i = 0 ; i < sbmlModel.getNumSpecies(); i++) {
+//			Species sbmlSpecies = sbmlModel.getSpecies(i);
+//			if (!BioModel.isPromoterSpecies(sbmlSpecies)) 
+//				if (parseSpeciesSbol(sbmlModel, sbmlSpecies))
+//					sbolDetected = true;
+//		}
+//		for (long i = 0 ; i < sbmlModel.getNumSpecies(); i++) {
+//			Species sbmlSpecies = sbmlModel.getSpecies(i);
+//			if (BioModel.isPromoterSpecies(sbmlSpecies)) 
+//				if (parsePromoterSbol(sbmlModel, sbmlSpecies))
+//					sbolDetected = true;
+//		}
+//		// Create and connect synthesis nodes for reactions not auto-generated by iBioSim
+//		for (long i = 0 ; i < sbmlModel.getNumReactions(); i++) {
+//			if (parseReactionSbol(sbmlModel.getReaction(i)))
+//				sbolDetected = true;
+//		}
+//		for (long i = 0; i < sbmlModel.getNumRules(); i++) {
+//			if (parseRuleSbol(sbmlModel.getRule(i)))
+//				sbolDetected = true;
+//		}
+//		// Finishes connecting synthesis nodes in accordance with various maps (see above)
+//		if (sbolDetected) {
+//			connectMappedSynthesisNodes();
+//			SBOLSynthesizer synthesizer = new SBOLSynthesizer(synMap);
+//			return synthesizer;
+//		} else
+//			return null;
+//	}
 
 	/*
 	public void setParameters(HashMap<String, String> parameters) {
@@ -770,7 +771,7 @@ public class GCMParser {
 	private HashMap<String, Set<String>> paramOutputMap;
 	private HashMap<String, String> speciesMetaMap;
 
-	private BioModel gcm = null;
+	private BioModel biomodel = null;
 
 	// A regex that matches information
 	//private static final String STATE = "(^|\\n) *([^- \\n]*) *\\[(.*)\\]";

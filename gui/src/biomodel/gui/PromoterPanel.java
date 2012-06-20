@@ -2,6 +2,7 @@ package biomodel.gui;
 
 
 import java.awt.GridLayout;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -308,7 +309,7 @@ public class PromoterPanel extends JPanel {
 			// Field for annotating promoter with SBOL DNA components
 			add(sbolField);
 			//Parse out SBOL annotations and add to SBOL field
-			LinkedList<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(promoter);
+			LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(promoter);
 			if (sbolURIs.size() > 0)
 				sbolField.setSBOLURIs(sbolURIs);
 		}
@@ -416,7 +417,7 @@ public class PromoterPanel extends JPanel {
 
 			if (!paramsOnly) {
 				// Add SBOL annotation to promoter
-				LinkedList<String> sbolURIs = sbolField.getSBOLURIs();
+				LinkedList<URI> sbolURIs = sbolField.getSBOLURIs();
 				if (sbolURIs.size() > 0) {
 					SBOLAnnotation sbolAnnot = new SBOLAnnotation(promoter.getMetaId(), sbolURIs);
 					AnnotationUtility.setSBOLAnnotation(promoter, sbolAnnot);

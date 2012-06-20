@@ -4,6 +4,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.LinkedList;
 
@@ -13,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.sbolstandard.core.*;
+import org.sbolstandard.core.impl.SBOLDocumentImpl;
 
 import biomodel.util.GlobalConstants;
 import biomodel.util.Utility;
@@ -26,7 +28,7 @@ public class SBOLField extends JPanel implements ActionListener {
 	private int styleOption;
 	private JLabel sbolLabel;
 	private JTextField sbolText = new JTextField(20);
-	private LinkedList<String> sbolURIs = new LinkedList<String>();
+	private LinkedList<URI> sbolURIs = new LinkedList<URI>();
 	private JButton sbolButton = new JButton("Associate SBOL");
 	private ModelEditor gcmEditor;
 	
@@ -61,15 +63,15 @@ public class SBOLField extends JPanel implements ActionListener {
 		sbolText.setText(text);
 	}
 	
-	public LinkedList<String> getSBOLURIs() {
+	public LinkedList<URI> getSBOLURIs() {
 		return sbolURIs;
 	}
 	
-	public void setSBOLURIs(LinkedList<String> sbolURIs) {
+	public void setSBOLURIs(LinkedList<URI> sbolURIs) {
 		this.sbolURIs = sbolURIs;
 	}
 	
-	public void addSBOLURI(String uri) {
+	public void addSBOLURI(URI uri) {
 		sbolURIs.add(uri);
 	}
 	
@@ -79,19 +81,26 @@ public class SBOLField extends JPanel implements ActionListener {
 		else if (sbolType.equals(GlobalConstants.SBOL_DNA_COMPONENT))
 			return true;
 		else {
-			String sourceCompURI = sbolText.getText();
+			URI sourceCompURI = null;
+			try {
+				sourceCompURI = new URI(sbolText.getText());
+			} catch (URISyntaxException e) {
+				Utility.createErrorMessage("Invalid URI", "SBOL association text could not be parsed as URI.");
+				return false;
+			}
 			for (String filePath : gcmEditor.getSbolFiles()) {
-				SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
-				if (sbolDoc != null)
-					for (DnaComponent dnac : SBOLUtility.loadDNAComponents(sbolDoc).values()) 
-						if (sourceCompURI.equals(dnac.getURI().toString())) {
-							for (URI uri : dnac.getTypes())
-								if (SBOLUtility.soSynonyms(sbolType).contains(uri.toString()))
-									return true;
-							Utility.createErrorMessage("Invalid GCM to SBOL Association", "DNA component with URI " + sourceCompURI
-									+ " is not a " + sbolLabel.getText() + ".");
-							return false;
-						}
+				SBOLDocumentImpl sbolDoc = (SBOLDocumentImpl) SBOLUtility.loadSBOLFile(filePath);
+				if (sbolDoc != null) {
+					DnaComponent resolvedDnac = sbolDoc.getComponentUriResolver().resolve(sourceCompURI);
+					if (resolvedDnac != null) {
+						for (URI uri : resolvedDnac.getTypes())
+							if (SBOLUtility.soSynonyms(sbolType).contains(uri.toString()))
+								return true;
+						Utility.createErrorMessage("Invalid GCM to SBOL Association", "DNA component with URI " + sourceCompURI
+								+ " is not a " + sbolLabel.getText() + ".");
+						return false;
+					}
+				}
 			}
 			Utility.createErrorMessage("DNA Component Not Found", "Component with URI " + sourceCompURI 
 					+ " is not found in project SBOL files.");
@@ -100,13 +109,11 @@ public class SBOLField extends JPanel implements ActionListener {
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals("associateSBOL")) {
-			HashSet<String> sbolFiles = gcmEditor.getSbolFiles();
-			SBOLAssociationPanel associationPanel = new SBOLAssociationPanel(sbolFiles, sbolURIs, SBOLUtility.soSynonyms(sbolType));
-			sbolURIs = associationPanel.getCompURIs();
-			//			SBOLBrowser browser = new SBOLBrowser(sbolFiles, SBOLUtility.typeConverter(sbolType), sbolText.getText());
-//			sbolText.setText(browser.getSelection());
-		} 
+//		if (e.getActionCommand().equals("associateSBOL")) {
+//			HashSet<String> sbolFiles = gcmEditor.getSbolFiles();
+//			SBOLAssociationPanel associationPanel = new SBOLAssociationPanel(sbolFiles, sbolURIs, SBOLUtility.soSynonyms(sbolType));
+//			sbolURIs = associationPanel.getCompURIs();
+//		} 
 	}
 	
 	private void setLabel(String sbolType) {

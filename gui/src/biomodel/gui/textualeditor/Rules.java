@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Set;
@@ -237,7 +238,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				ruleMath.setText(SBMLutilities.myFormulaToString(rule.getMath()));
 			}
 			//Parse out SBOL annotations and add to SBOL field
-			LinkedList<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(rule);
+			LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(rule);
 			if (sbolURIs.size() > 0)
 				sbolField.setSBOLURIs(sbolURIs);
 			if (rule.isSetMetaId()) {
@@ -401,7 +402,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 						rul = oldRul;
 //						rul[index] = oldVal;
 					} else {
-						LinkedList<String> sbolURIs = sbolField.getSBOLURIs();
+						LinkedList<URI> sbolURIs = sbolField.getSBOLURIs();
 						if (sbolURIs.size() > 0) {
 							SBOLAnnotation sbolAnnot = new SBOLAnnotation(r.getMetaId(), sbolURIs);
 							AnnotationUtility.setSBOLAnnotation(r, sbolAnnot);
@@ -502,7 +503,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 						removeTheRule(addStr);
 					} else {
 						// Add SBOL annotation to rule
-						LinkedList<String> sbolURIs = sbolField.getSBOLURIs();
+						LinkedList<URI> sbolURIs = sbolField.getSBOLURIs();
 						if (sbolURIs.size() > 0) {
 							SBOLAnnotation sbolAnnot = new SBOLAnnotation(rPointer.getMetaId(), sbolURIs);
 							AnnotationUtility.setSBOLAnnotation(rPointer, sbolAnnot);

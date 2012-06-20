@@ -5758,16 +5758,16 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	*/
 
 	private void openSBOL() {
-		String filePath = tree.getFile();
-		String fileName = "";
-		fileName = filePath.substring(filePath.lastIndexOf(File.separator) + 1);
-		int i = getTab(fileName);
-		if (i != -1) {
-			tab.setSelectedIndex(i);
-		}
-		else {
-			SBOLBrowser browser = new SBOLBrowser(this, filePath);
-		}
+//		String filePath = tree.getFile();
+//		String fileName = "";
+//		fileName = filePath.substring(filePath.lastIndexOf(File.separator) + 1);
+//		int i = getTab(fileName);
+//		if (i != -1) {
+//			tab.setSelectedIndex(i);
+//		}
+//		else {
+//			SBOLBrowser browser = new SBOLBrowser(this, filePath);
+//		}
 	}
 	
 	public HashSet<String> getSbolFiles() {

@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -588,7 +589,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 2);
 			//Parse out SBOL annotations and add to SBOL field
 			Reaction reac = gcm.getSBMLDocument().getModel().getReaction(reactionId);
-			LinkedList<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(reac);
+			LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(reac);
 			if (sbolURIs.size() > 0)
 				sbolField.setSBOLURIs(sbolURIs);
 			reactionPanelNorth1b.add(sbolField);
@@ -832,7 +833,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					if (!error) {
 						// Add SBOL annotation to reaction
 						if (sbolField != null) {
-							LinkedList<String> sbolURIs = sbolField.getSBOLURIs();
+							LinkedList<URI> sbolURIs = sbolField.getSBOLURIs();
 							if (sbolURIs.size() > 0) {
 								SBOLAnnotation sbolAnnot = new SBOLAnnotation(react.getMetaId(), sbolURIs);
 								AnnotationUtility.setSBOLAnnotation(react, sbolAnnot);

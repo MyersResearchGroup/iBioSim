@@ -6,25 +6,32 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import org.sbolstandard.core.*;
+import org.sbolstandard.core.impl.AggregatingResolver.UseFirstFound;
 
 import java.net.URI;
 import java.util.*;
 
 public class CollectionBrowserPanel extends JPanel implements MouseListener {
 
-	private LinkedList<String> libURIs;
-	private HashMap<String, org.sbolstandard.core.Collection> libMap;
-	private HashMap<String, DnaComponent> compMap;
+	private LinkedList<URI> localLibURIs;
+	private LinkedList<URI> localCompURIs;
+//	private HashMap<String, org.sbolstandard.core.Collection> libMap;
+//	private HashMap<String, DnaComponent> compMap;
+	private UseFirstFound<org.sbolstandard.core.Collection, URI> aggregateLibResolver;
+	private UseFirstFound<DnaComponent, URI> aggregateCompResolver;
 	private JTextArea viewArea;
 	private DNAComponentBrowserPanel compPanel;
 	private JList libList = new JList();
 	private Set<String> filter;
 	
-	public CollectionBrowserPanel(HashMap<String, org.sbolstandard.core.Collection> libMap, HashMap<String, DnaComponent> compMap, 
-			JTextArea viewArea, DNAComponentBrowserPanel compPanel, Set<String> filter) {
+	public CollectionBrowserPanel(UseFirstFound<org.sbolstandard.core.Collection, URI> aggregateLibResolver, 
+			UseFirstFound<DnaComponent, URI> aggregateCompResolver, JTextArea viewArea, DNAComponentBrowserPanel compPanel, 
+			Set<String> filter) {
 		super(new BorderLayout());
-		this.libMap = libMap;
-		this.compMap = compMap;
+//		this.libMap = libMap;
+//		this.compMap = compMap;
+		this.aggregateLibResolver = aggregateLibResolver;
+		this.aggregateCompResolver = aggregateCompResolver;
 		this.viewArea = viewArea;
 		this.compPanel = compPanel;
 		this.filter = filter;
@@ -44,23 +51,24 @@ public class CollectionBrowserPanel extends JPanel implements MouseListener {
 		this.add(libraryScroll, "Center");
 	}
 	
-	public void setLibraries(LinkedList<String> libIds, LinkedList<String> libURIs) {
-		this.libURIs = libURIs;
-		libIds.addFirst("all");
-		Object[] idObjects = libIds.toArray();
+	public void setLocalLibsComps(LinkedList<String> localLibIds, LinkedList<URI> localLibURIs, LinkedList<URI> localCompURIs) {
+		this.localLibURIs = localLibURIs;
+		this.localCompURIs = localCompURIs;
+		localLibIds.addFirst("all");
+		Object[] idObjects = localLibIds.toArray();
 		libList.setListData(idObjects);
 		libList.setSelectedIndex(0);
 		displaySelected();
 	}
 	
-	private String[] getSelectedURIs() {
+	private URI[] getSelectedURIs() {
 		int[] selectedIndices = libList.getSelectedIndices();
-		String[] selectedURIs = new String[selectedIndices.length];
+		URI[] selectedURIs = new URI[selectedIndices.length];
 		for (int i = 0; i < selectedURIs.length; i++) {
 			int index = selectedIndices[i];
 			// Leave first entry in selectedURIs null if "all" was selected under Collections (see displaySelected())
 			if (index != 0)
-				selectedURIs[i] = libURIs.get(index - 1);
+				selectedURIs[i] = localLibURIs.get(index - 1);
 		}
 		return selectedURIs;
 	}
@@ -73,13 +81,13 @@ public class CollectionBrowserPanel extends JPanel implements MouseListener {
 	}
 	
 	private void displaySelected() {
-		String[] selectedURIs = getSelectedURIs();
+		URI[] selectedURIs = getSelectedURIs();
 		LinkedList<String> compIdNames = new LinkedList<String>();
-		LinkedList<String> compURIs = new LinkedList<String>();
+		LinkedList<URI> compURIs = new LinkedList<URI>();
 		int n = 0;
 		// Case when a specific collection(s) is selected
 		if (selectedURIs[0] != null) {
-			org.sbolstandard.core.Collection lib = libMap.get(selectedURIs[0]);
+			org.sbolstandard.core.Collection lib = aggregateLibResolver.resolve(selectedURIs[0]);
 			if (lib.getName() != null)
 				viewArea.append("Name:  " + lib.getName() + "\n");
 			else
@@ -89,42 +97,62 @@ public class CollectionBrowserPanel extends JPanel implements MouseListener {
 			else
 				viewArea.append("Description:  NA\n\n");
 
-			for (DnaComponent dnac : lib.getComponents()) 
-				if (!compURIs.contains(dnac.getURI().toString())) {
-					dnac = compMap.get(dnac.getURI().toString());
-					if (filter.size() == 0 || filterFeature(dnac, filter)) {
-						if (dnac.getName() != null && !dnac.getName().equals(""))
-							compIdNames.add(dnac.getDisplayId() + " : " + dnac.getName());
-						else
-							compIdNames.add(dnac.getDisplayId());
-						compURIs.add(dnac.getURI().toString());
-						n++;
-					}
-				}
+			for (DnaComponent dnac : lib.getComponents()) {
+				DnaComponent resolvedDnac = aggregateCompResolver.resolve(dnac.getURI());
+				if ((resolvedDnac != null && processDNAComponent(resolvedDnac, compIdNames, compURIs)) 
+						|| processDNAComponent(dnac, compIdNames, compURIs))
+					n++;
+			}
 		} else {  // Case when "all" is selected under Collections
 //			for (String libURI : libURIs) 
-				for (DnaComponent dnac : compMap.values()) 
-					if (!compURIs.contains(dnac.getURI().toString())) {
-						dnac = compMap.get(dnac.getURI().toString());
-						if (filter.size() == 0 || filterFeature(dnac, filter)) {
-							if (dnac.getName() != null && !dnac.getName().equals(""))
-								compIdNames.add(dnac.getDisplayId() + " : " + dnac.getName());
-							else
-								compIdNames.add(dnac.getDisplayId());
-							compURIs.add(dnac.getURI().toString());
-							n++;
-						}
-					}
+//			for (DnaComponent dnac : compMap.values()) 
+//				if (!compURIs.contains(dnac.getURI().toString())) {
+//					dnac = compMap.get(dnac.getURI().toString());
+//					if (filter.size() == 0 || filterFeature(dnac, filter)) {
+//						if (dnac.getName() != null && !dnac.getName().equals(""))
+//							compIdNames.add(dnac.getDisplayId() + " : " + dnac.getName());
+//						else
+//							compIdNames.add(dnac.getDisplayId());
+//						compURIs.add(dnac.getURI());
+//						n++;
+//					}
+//				}
+			for (URI uri : localCompURIs) {
+				DnaComponent resolvedDnac = aggregateCompResolver.resolve(uri);
+				if (resolvedDnac != null && processDNAComponent(resolvedDnac, compIdNames, compURIs)) 
+					n++;
+			}
 		}
-		LinkedList<LinkedList<String>> sortedResult = lexoSort(compIdNames, compURIs, n);
-		compPanel.setComponents(sortedResult.get(0), sortedResult.get(1));
+		lexoSort(compIdNames, compURIs, n);
+		compPanel.setComponents(compIdNames, compURIs);
+	}
+	
+	private boolean processDNAComponent(DnaComponent dnac, LinkedList<String> compIdNames, LinkedList<URI> compURIs) {
+		if (filterFeature(dnac)) {
+			if (dnac.getName() != null && !dnac.getName().equals(""))
+				compIdNames.add(dnac.getDisplayId() + " : " + dnac.getName());
+			else
+				compIdNames.add(dnac.getDisplayId());
+			compURIs.add(dnac.getURI());
+			return true;
+		} else
+			return false;
+	}
+	
+	private boolean filterFeature(DnaComponent dnac) {
+ 		if (filter.size() == 0)
+ 			return true;
+		for (URI uri : dnac.getTypes()) 
+			if (filter.contains(uri.toString()))
+				return true;
+ 		return false;
 	}
 	
 	//Sorts first m entries of string array lexographically
-	private LinkedList<LinkedList<String>> lexoSort(LinkedList<String> sortingList, LinkedList<String> companionList, int m) {
+	private void lexoSort(LinkedList<String> sortingList, LinkedList<URI> companionList, int m) {
 		for (int j = 1; j < m; j++) {
 			String key = sortingList.get(j);
-			String companionKey = companionList.get(j);
+			URI companionKey = companionList.get(j);
 			int i = j - 1;
 			while (i >= 0 && sortingList.get(i).compareTo(key) > 0) {
 				sortingList.set(i + 1, sortingList.get(i));
@@ -134,17 +162,10 @@ public class CollectionBrowserPanel extends JPanel implements MouseListener {
 			sortingList.set(i + 1, key);
 			companionList.set(i + 1, companionKey);
 		}
-		LinkedList<LinkedList<String>> sortedResult = new LinkedList<LinkedList<String>>();
-		sortedResult.add(sortingList);
-		sortedResult.add(companionList);
-		return sortedResult;
-	}
-	
-	private boolean filterFeature(DnaComponent dnac, Set<String> filter) {
- 		for (URI uri : dnac.getTypes()) 
-			if (filter.contains(uri.toString()))
-				return true;
- 		return false;
+//		LinkedList<LinkedList<String>> sortedResult = new LinkedList<LinkedList<String>>();
+//		sortedResult.add(sortingList);
+//		sortedResult.add(companionList);
+//		return sortedResult;
 	}
 
 	public void mouseEntered(MouseEvent e) {
