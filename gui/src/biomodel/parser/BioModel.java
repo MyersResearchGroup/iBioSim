@@ -130,7 +130,6 @@ public class BioModel {
 			separator = File.separator;
 		}
 		this.path = path;
-		isWithinCompartment = false;
 		grid = new Grid();
 		compartments = new HashMap<String, Properties>();
 	}
@@ -198,9 +197,11 @@ public class BioModel {
 	}
 	
 	public boolean IsWithinCompartment() {
-		return isWithinCompartment;
-		//if (sbmlCompModel.getPort(GlobalConstants.ENCLOSING_COMPARTMENT)!=null) return true;
-		//return false;
+		for (long i = 0; i < sbml.getModel().getNumCompartments(); i++) {
+			Compartment compartment = sbml.getModel().getCompartment(i);
+			if (sbmlCompModel.getPort(GlobalConstants.COMPARTMENT + "__" + compartment.getId()) != null) return false;
+		}
+		return true;
 	}
 	
 	/*
@@ -2301,8 +2302,11 @@ public class BioModel {
 			}			
 		}
 		
-		Compartment compartment = sbml.getModel().getCompartment(getCompartmentByLocation((float)x,(float)y,(float)GlobalConstants.DEFAULT_COMPONENT_WIDTH,
-				(float)GlobalConstants.DEFAULT_COMPONENT_HEIGHT));
+		Compartment compartment = sbml.getModel().getCompartment(getDefaultCompartment());
+		if (!isGridEnabled()) {
+			sbml.getModel().getCompartment(getCompartmentByLocation((float)x,(float)y,(float)GlobalConstants.DEFAULT_COMPONENT_WIDTH,
+					(float)GlobalConstants.DEFAULT_COMPONENT_HEIGHT));
+		}
 		if (compartment!=null) {
 			CompSBasePlugin sbmlSBase = (CompSBasePlugin)compartment.getPlugin("comp");
 			for (String compartmentPort : compartmentPorts) {
@@ -4762,9 +4766,8 @@ public class BioModel {
 		globalParameters.remove(parameter);
 	}
 	*/
-	
+
 	private void loadDefaultEnclosingCompartment() {
-		isWithinCompartment = false;
 		if (sbml != null) {
 			if (sbml.getModel().getNumCompartments()==0) {
 				Compartment c = sbml.getModel().createCompartment();
@@ -4772,21 +4775,18 @@ public class BioModel {
 				c.setSize(1);
 				c.setSpatialDimensions(3);
 				c.setConstant(true);
-				isWithinCompartment = true;
 				return;
 			}
 			for (long i = 0; i < sbml.getModel().getNumCompartments(); i++) {
 				Compartment compartment = sbml.getModel().getCompartment(i);
 				if (compartment.isSetAnnotation() &&
 					(compartment.getAnnotation().toXMLString().contains("EnclosingCompartment"))) {
-					isWithinCompartment = true;
 					compartment.unsetAnnotation();
 					return;
 				} 
 			}
 			Port port = sbmlCompModel.getPort(GlobalConstants.ENCLOSING_COMPARTMENT);
 			if (port!=null) {
-				isWithinCompartment = true;
 				port.removeFromParentAndDelete();
 				return;
 			} 
@@ -4795,11 +4795,6 @@ public class BioModel {
 				port.setId(GlobalConstants.COMPARTMENT + "__" + port.getIdRef());
 				return;
 			} 
-			for (long i = 0; i < sbml.getModel().getNumCompartments(); i++) {
-				Compartment compartment = sbml.getModel().getCompartment(i);
-				if (sbmlCompModel.getPort(GlobalConstants.COMPARTMENT + "__" + compartment.getId()) != null) return;
-			}
-			isWithinCompartment = true;
 		}
 	}
 
@@ -5987,7 +5982,6 @@ public class BioModel {
 	private Parameters parameterPanel = null;
 	
 	private Grid grid = null;
-	private boolean isWithinCompartment;
 	
 	private int creatingCompartmentID = 0;
 	private int creatingVariableID = 0;
