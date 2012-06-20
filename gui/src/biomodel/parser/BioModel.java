@@ -800,6 +800,7 @@ public class BioModel {
 		promoter.setConstant(false);
 		promoter.setHasOnlySubstanceUnits(true);
 		promoter.setSBOTerm(GlobalConstants.SBO_PROMOTER_SPECIES);
+		/*
 		if (property.containsKey(GlobalConstants.SBOL_PROMOTER) &&
 				property.containsKey(GlobalConstants.SBOL_TERMINATOR)) {
 			promoter.appendAnnotation(GlobalConstants.SBOL_PROMOTER + "=" + 
@@ -812,6 +813,7 @@ public class BioModel {
 			promoter.appendAnnotation(GlobalConstants.SBOL_TERMINATOR + "=" + 
 					property.getProperty(GlobalConstants.SBOL_TERMINATOR));
 		}
+		*/
 		createProductionReaction(s,property.getProperty(GlobalConstants.ACTIVATED_STRING),
 				property.getProperty(GlobalConstants.STOICHIOMETRY_STRING),
 				property.getProperty(GlobalConstants.OCR_STRING),
