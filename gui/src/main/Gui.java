@@ -7529,7 +7529,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		String simName = JOptionPane.showInputDialog(frame, "Enter analysis ID (default=" + modelId + "):", 
 				"Analysis ID", JOptionPane.PLAIN_MESSAGE);
-		if (simName.equals("")) simName = modelId;
+		if (simName != null && simName.equals("")) simName = modelId;
 		if (simName != null && !simName.trim().equals("")) {
 			simName = simName.trim();
 			if (overwrite(root + separator + simName, simName)) {
