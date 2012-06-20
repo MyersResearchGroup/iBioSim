@@ -752,6 +752,7 @@ public class BioModel {
 		} /*else {
 			species.setAnnotation(GlobalConstants.TYPE + "=" + GlobalConstants.INTERNAL);
 		}*/
+		/*
 		if (property.containsKey(GlobalConstants.SBOL_RBS) &&
 				property.containsKey(GlobalConstants.SBOL_CDS)) {
 			species.appendAnnotation("," + GlobalConstants.SBOL_RBS + "=" + 
@@ -764,6 +765,7 @@ public class BioModel {
 			species.appendAnnotation("," + GlobalConstants.SBOL_CDS + "=" + 
 					property.getProperty(GlobalConstants.SBOL_CDS));
 		}
+		*/
 		double kd = -1;
 		if (property.containsKey(GlobalConstants.KDECAY_STRING)) {
 			kd = Double.parseDouble(property.getProperty(GlobalConstants.KDECAY_STRING));
