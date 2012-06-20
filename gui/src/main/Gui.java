@@ -8919,7 +8919,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							try {
 								boolean dirty = ((ModelEditor) (sim.getComponentAt(j))).isDirty();
 								((ModelEditor) (sim.getComponentAt(j))).saveParams(false, "", true);
-								((ModelEditor) (sim.getComponentAt(j))).reload(check.replace(".gcm", ""));
+								((ModelEditor) (sim.getComponentAt(j))).reload(check.replace(".gcm", "").replace(".xml", ""));
 								((ModelEditor) (sim.getComponentAt(j))).refresh();
 								((ModelEditor) (sim.getComponentAt(j))).loadParams();
 								((ModelEditor) (sim.getComponentAt(j))).setDirty(dirty);
