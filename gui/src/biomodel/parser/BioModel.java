@@ -3048,7 +3048,8 @@ public class BioModel {
 		
 		String locationParameterString = componentModelRefID + "__locations";
 		
-		sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).removeAttr("array:" + submodelID);		
+		sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).removeAttr(
+				sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).getAttrIndex("array:" + submodelID));
 		sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0)
 		.addAttr("array:" + submodelID, "(" + row + "," + col + ")");
 	}
@@ -3473,8 +3474,7 @@ public class BioModel {
 					
 					if (parameter.getAnnotationString().contains("array:" + name + "=")) {
 						
-						componentModelRef = parameter.getId().replace("__locations","");
-						
+						componentModelRef = parameter.getId().replace("__locations","");						
 						break;
 					}					
 				}				
@@ -3486,7 +3486,8 @@ public class BioModel {
 		if (sbml.getModel().getParameter(locationParameterString) != null) {
 		
 			//get rid of the component from the location-lookup array and the modelref array
-			sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).removeAttr("array:" + name);
+			sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).removeAttr(
+					sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).getAttrIndex("array:" + name));
 			
 			if (sbml.getModel().getParameter(locationParameterString).getAnnotationString().length() < 1)
 				sbml.getModel().removeParameter(locationParameterString);

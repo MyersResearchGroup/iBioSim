@@ -846,6 +846,13 @@ public class Run implements ActionListener {
 			else if (xhtml.isSelected()) {
 				log.addText("Executing:\nreb2sac --target.encoding=xhtml --out=" + out + ".xhtml " + filename + "\n");
 				time1 = System.nanoTime();
+				
+//				double stoichAmpValue = 
+//					Double.parseDouble(properties.getProperty(
+//							"reb2sac.diffusion.stoichiometry.amplification.value"));
+				
+				Simulator.expandArrays(filename, 1);
+				
 				reb2sac = exec.exec("reb2sac --target.encoding=xhtml --out=" + out + ".xhtml " + theFile, null, work);
 			}
 			else {
