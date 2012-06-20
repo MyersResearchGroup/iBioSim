@@ -1,5 +1,7 @@
 package biomodel.annotation;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,9 +32,9 @@ public class AnnotationUtility {
 		sbmlObject.setAnnotation(annotation);
 	}
 	
-	public static LinkedList<String> parseSBOLAnnotation(SBase sbmlObject) {
+	public static LinkedList<URI> parseSBOLAnnotation(SBase sbmlObject) {
 		String annotation = sbmlObject.getAnnotationString();
-		LinkedList<String> sbolURIs = new LinkedList<String>();
+		LinkedList<URI> sbolURIs = new LinkedList<URI>();
 		Pattern sbolPattern = Pattern.compile(SBOL_ANNOTATION);
 		Matcher sbolMatcher = sbolPattern.matcher(annotation);
 		Pattern componentPattern = Pattern.compile(DNA_COMPONENT_ANNOTATION);
@@ -40,7 +42,12 @@ public class AnnotationUtility {
 		while (sbolMatcher.find()) {
 			annotation = sbolMatcher.group(0);
 			while (componentMatcher.find()) 
-				sbolURIs.add(componentMatcher.group(1));
+				try {
+					sbolURIs.add(new URI(componentMatcher.group(1)));
+				} catch (URISyntaxException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 		}
 		return sbolURIs;
 	}

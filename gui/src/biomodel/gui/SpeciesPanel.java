@@ -5,6 +5,7 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -548,7 +549,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					String [] type = annotations[i].split("=");
 					typeBox.setSelectedItem(type[1]);
 				}
-			LinkedList<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(species);
+			LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(species);
 			if (sbolURIs.size() > 0)
 				sbolField.setSBOLURIs(sbolURIs);
 		}
@@ -861,7 +862,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			
 			if (!paramsOnly) {
 				// Add SBOL annotation to species
-				LinkedList<String> sbolURIs = sbolField.getSBOLURIs();
+				LinkedList<URI> sbolURIs = sbolField.getSBOLURIs();
 				if (sbolURIs.size() > 0) {
 					SBOLAnnotation sbolAnnot = new SBOLAnnotation(species.getMetaId(), sbolURIs);
 					AnnotationUtility.setSBOLAnnotation(species, sbolAnnot);

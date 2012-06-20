@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.net.URI;
 import java.util.LinkedList;
 
 import javax.swing.JButton;
@@ -159,7 +160,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 				conversionFactor.setSelectedItem(gcm.getSBMLDocument().getModel().getConversionFactor());
 			}
 			sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 1);
-			LinkedList<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(gcm.getSBMLDocument().getModel());
+			LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(gcm.getSBMLDocument().getModel());
 			if (sbolURIs.size() > 0)
 				sbolField.setSBOLURIs(sbolURIs);
 			modelEditorPanel.add(substanceUnitsLabel);
@@ -239,7 +240,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 		}
 		// Add SBOL annotation to promoter
 		if (value == JOptionPane.YES_OPTION) {
-			LinkedList<String> sbolURIs = sbolField.getSBOLURIs();
+			LinkedList<URI> sbolURIs = sbolField.getSBOLURIs();
 			if (sbolURIs.size() > 0) {
 				SBOLAnnotation sbolAnnot = new SBOLAnnotation(gcm.getSBMLDocument().getModel().getMetaId(), sbolURIs);
 				AnnotationUtility.setSBOLAnnotation(gcm.getSBMLDocument().getModel(), sbolAnnot);

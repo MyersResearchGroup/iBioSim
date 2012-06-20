@@ -6,11 +6,16 @@ import java.awt.*;
 import javax.swing.*;
 
 import org.sbolstandard.core.*;
+import org.sbolstandard.core.impl.AggregatingResolver.UseFirstFound;
+import org.sbolstandard.core.impl.AggregatingResolver;
+import org.sbolstandard.core.impl.DnaComponentImpl;
+import org.sbolstandard.core.impl.SBOLDocumentImpl;
 
 import biomodel.util.Utility;
 
 import java.io.*;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import java.util.*;
 
@@ -24,26 +29,31 @@ public class SBOLBrowser extends JPanel {
 	private JScrollPane viewScroll = new JScrollPane();
 	private CollectionBrowserPanel libPanel;
 	private DNAComponentBrowserPanel compPanel;
-	private LinkedList<String> selectedCompURIs;
+	private LinkedList<URI> selectedCompURIs;
+	
+	private UseFirstFound<DnaComponent, URI> aggregateCompResolver = new AggregatingResolver.UseFirstFound<DnaComponent, URI>();
+	private UseFirstFound<SequenceAnnotation, URI> aggregateAnnoResolver = new AggregatingResolver.UseFirstFound<SequenceAnnotation, URI>();
+	private UseFirstFound<DnaSequence, URI> aggregateSeqResolver = new AggregatingResolver.UseFirstFound<DnaSequence, URI>();
+	private UseFirstFound<org.sbolstandard.core.Collection, URI> aggregateLibResolver = new AggregatingResolver.UseFirstFound<org.sbolstandard.core.Collection, URI>();
+	
+	private LinkedList<URI> localLibURIs = new LinkedList<URI>();
+	private LinkedList<String> localLibIds = new LinkedList<String>();
+	private LinkedList<URI> localCompURIs = new LinkedList<URI>();
 	
 	//Constructor when browsing a single RDF file from the main gui
 	public SBOLBrowser(Gui gui, String filePath) {
 		super(new BorderLayout());
 		
-//		SequenceTypeValidator validator = new SequenceTypeValidator("((a+b)|(cd*))*e");
-		
-		HashMap<String, org.sbolstandard.core.Collection> libMap = new HashMap<String, org.sbolstandard.core.Collection>();
-		LinkedList<String> libURIs = new LinkedList<String>();
-		LinkedList<String> libIds = new LinkedList<String>();
-		HashMap<String, DnaComponent> compMap = new HashMap<String, DnaComponent>();
-		HashMap<String, SequenceAnnotation> annoMap = new HashMap<String, SequenceAnnotation>();
-		HashMap<String, DnaSequence> seqMap = new HashMap<String, DnaSequence>();
+//		HashMap<String, org.sbolstandard.core.Collection> libMap = new HashMap<String, org.sbolstandard.core.Collection>();
+//		HashMap<String, DnaComponent> compMap = new HashMap<String, DnaComponent>();
+//		HashMap<String, SequenceAnnotation> annoMap = new HashMap<String, SequenceAnnotation>();
+//		HashMap<String, DnaSequence> seqMap = new HashMap<String, DnaSequence>();
 		
 		filePath = filePath.replace("\\\\", "\\");
 		
-		loadSbolFiles(gui.getSbolFiles(), libURIs, libIds, libMap, compMap, annoMap, seqMap, filePath);
+		loadSbolFiles(gui.getSbolFiles(), filePath);
 		
-		constructBrowser(libURIs, libIds, libMap, compMap, annoMap, seqMap, new HashSet<String>());
+		constructBrowser(new HashSet<String>());
 			
 		JPanel browserPanel = new JPanel();
 		browserPanel.add(selectionPanel, "North");
@@ -56,22 +66,20 @@ public class SBOLBrowser extends JPanel {
 	}
 	
 	//Constructor when browsing RDF file subsets for SBOL to GCM association
-	public SBOLBrowser(HashSet<String> sbolFiles, Set<String> filter, LinkedList<String> defaultSelectedCompURIs) {
+	public SBOLBrowser(HashSet<String> sbolFiles, Set<String> filter, LinkedList<URI> defaultSelectedCompURIs) {
 		super(new GridLayout(2,1));
 		
-		selectedCompURIs = new LinkedList<String>();
+		selectedCompURIs = new LinkedList<URI>();
 		
-		HashMap<String, org.sbolstandard.core.Collection> libMap = new HashMap<String, org.sbolstandard.core.Collection>();
-		LinkedList<String> libURIs = new LinkedList<String>();
-		LinkedList<String> libIds = new LinkedList<String>();
-		HashMap<String, DnaComponent> compMap = new HashMap<String, DnaComponent>();
-		HashMap<String, SequenceAnnotation> annoMap = new HashMap<String, SequenceAnnotation>();
-		HashMap<String, DnaSequence> seqMap = new HashMap<String, DnaSequence>();
+//		HashMap<String, org.sbolstandard.core.Collection> libMap = new HashMap<String, org.sbolstandard.core.Collection>();
+//		HashMap<String, DnaComponent> compMap = new HashMap<String, DnaComponent>();
+//		HashMap<String, SequenceAnnotation> annoMap = new HashMap<String, SequenceAnnotation>();
+//		HashMap<String, DnaSequence> seqMap = new HashMap<String, DnaSequence>();
 		
-		loadSbolFiles(sbolFiles, libURIs, libIds, libMap, compMap, annoMap, seqMap, "");
+		loadSbolFiles(sbolFiles, "");
 		
-		if (compMap.size() > 0) {
-			constructBrowser(libURIs, libIds, libMap, compMap, annoMap, seqMap, filter);
+//		if (compMap.size() > 0) {
+			constructBrowser(filter);
 
 			this.add(selectionPanel);
 			this.add(viewScroll);
@@ -79,47 +87,45 @@ public class SBOLBrowser extends JPanel {
 			boolean display = true;
 			while (display)
 				display = browserOpen();
-		} else {
-			JOptionPane.showMessageDialog(Gui.frame, "No SBOL DNA components are found in project.", 
-					"DNA Components Not Found", JOptionPane.ERROR_MESSAGE);
-		}
+//		} else {
+//			JOptionPane.showMessageDialog(Gui.frame, "No SBOL DNA components are found in project.", 
+//					"DNA Components Not Found", JOptionPane.ERROR_MESSAGE);
+//		}
 	}
 	
-	private void loadSbolFiles(HashSet<String> sbolFiles, LinkedList<String> libURIs, LinkedList<String> libIds, 
-			HashMap<String, org.sbolstandard.core.Collection> libMap, HashMap<String, DnaComponent> compMap, 
-			HashMap<String, SequenceAnnotation> annoMap, HashMap<String, DnaSequence> seqMap, String browsePath) {
+	private void loadSbolFiles(HashSet<String> sbolFiles, String browsePath) {
+		LinkedList<Resolver<DnaComponent, URI>> compResolvers = new LinkedList<Resolver<DnaComponent, URI>>();
+		LinkedList<Resolver<SequenceAnnotation, URI>> annoResolvers = new LinkedList<Resolver<SequenceAnnotation, URI>>();
+		LinkedList<Resolver<DnaSequence, URI>> seqResolvers = new LinkedList<Resolver<DnaSequence, URI>>();
+		LinkedList<Resolver<org.sbolstandard.core.Collection, URI>> libResolvers = new LinkedList<Resolver<org.sbolstandard.core.Collection, URI>>();
 		for (String filePath : sbolFiles) {
 			if (browsePath.equals("") || browsePath.equals(filePath)) {
-				SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
+				SBOLDocumentImpl sbolDoc = (SBOLDocumentImpl) SBOLUtility.loadSBOLFile(filePath);
 				if (sbolDoc != null) {
-					for (org.sbolstandard.core.Collection lib : SBOLUtility.loadCollections(sbolDoc))
-						if (lib.getDisplayId() != null && !lib.getDisplayId().equals("")) {
-							if (!libURIs.contains(lib.getURI().toString())) {
-								libURIs.add(lib.getURI().toString());
-								libIds.add(lib.getDisplayId());
+					SBOLDocumentImpl flattenedDoc = (SBOLDocumentImpl) SBOLUtility.flattenDocument(sbolDoc);
+					compResolvers.add(flattenedDoc.getComponentUriResolver());
+					annoResolvers.add(flattenedDoc.getAnnotationUriResolver());
+					seqResolvers.add(flattenedDoc.getSequenceUriResolver());
+					libResolvers.add(flattenedDoc.getCollectionUriResolver());
+					for (SBOLRootObject sbolObj : flattenedDoc.getContents()) {
+						if (sbolObj instanceof org.sbolstandard.core.Collection) {
+							org.sbolstandard.core.Collection lib = (org.sbolstandard.core.Collection) sbolObj;
+							if (lib.getDisplayId() != null && !lib.getDisplayId().equals("") && 
+									!localLibURIs.contains(lib.getURI().toString())) {
+								localLibURIs.add(lib.getURI());
+								localLibIds.add(lib.getDisplayId());
 							}
-							if (!libMap.containsKey(lib.getURI().toString()))
-								libMap.put(lib.getURI().toString(), lib);
-						}
-					for (DnaComponent dnac : SBOLUtility.loadDNAComponents(sbolDoc).values()) {
-						if (dnac.getDisplayId() != null && !dnac.getDisplayId().equals("") 
-								&& !compMap.containsKey(dnac.getURI().toString()))
-							compMap.put(dnac.getURI().toString(), dnac);
-						if (dnac.getAnnotations() != null)
-							for (SequenceAnnotation sa : dnac.getAnnotations()) {
-								Integer start = Integer.valueOf(sa.getBioStart());
-								Integer end = Integer.valueOf(sa.getBioEnd());
-								if (start != null && end != null && !annoMap.containsKey(sa.getURI().toString()))
-									annoMap.put(sa.getURI().toString(), sa);
-							}
-						if (dnac.getDnaSequence() != null && dnac.getDnaSequence().getNucleotides() != null
-								&& !dnac.getDnaSequence().getNucleotides().equals("")
-								&& !seqMap.containsKey(dnac.getDnaSequence().getURI().toString()))
-							seqMap.put(dnac.getDnaSequence().getURI().toString(), dnac.getDnaSequence());
+						} else if (sbolObj instanceof DnaComponent) 
+							localCompURIs.add(((DnaComponent) sbolObj).getURI());
 					}
 				}
 			}
 		}
+		aggregateCompResolver.setResolvers(compResolvers);
+		aggregateAnnoResolver.setResolvers(annoResolvers);
+		aggregateSeqResolver.setResolvers(seqResolvers);
+		aggregateLibResolver.setResolvers(libResolvers);
+		
 	}
 	
 	private boolean browserOpen() {
@@ -137,26 +143,22 @@ public class SBOLBrowser extends JPanel {
 		return false;
 	}
 	
-	private void constructBrowser(LinkedList<String> libURIs, LinkedList<String> libIds, 
-			HashMap<String, org.sbolstandard.core.Collection> libMap, HashMap<String, DnaComponent> compMap, 
-			HashMap<String, SequenceAnnotation> annoMap, HashMap<String, DnaSequence> seqMap, Set<String> filter) {
+	private void constructBrowser(Set<String> filter) {
 		viewScroll.setMinimumSize(new Dimension(780, 400));
 		viewScroll.setPreferredSize(new Dimension(828, 264));
-//		viewScroll.setMinimumSize(new Dimension(552, 80));
-//		viewScroll.setPreferredSize(new Dimension(552, 80));
 		viewScroll.setViewportView(viewArea);
 		viewArea.setLineWrap(true);
 		viewArea.setEditable(false);
 		
-		compPanel = new DNAComponentBrowserPanel(compMap, annoMap, seqMap, viewArea);
-		libPanel = new CollectionBrowserPanel(libMap, compMap, viewArea, compPanel, filter);
-		libPanel.setLibraries(libIds, libURIs);
+		compPanel = new DNAComponentBrowserPanel(aggregateCompResolver, aggregateAnnoResolver, aggregateSeqResolver, viewArea);
+		libPanel = new CollectionBrowserPanel(aggregateLibResolver, aggregateCompResolver, viewArea, compPanel, filter);
+		libPanel.setLocalLibsComps(localLibIds, localLibURIs, localCompURIs);
 		
 		selectionPanel.add(libPanel);
 		selectionPanel.add(compPanel);
 	}
 	
-	public LinkedList<String> getSelection() {
+	public LinkedList<URI> getSelection() {
 		return selectedCompURIs;
 	}
 }

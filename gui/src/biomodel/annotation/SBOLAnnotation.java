@@ -1,12 +1,13 @@
 package biomodel.annotation;
 
+import java.net.URI;
 import java.util.LinkedList;
 
 public class SBOLAnnotation {
 	
 	private AnnotationElement modelToSbol;
 	
-	public SBOLAnnotation(String sbmlMetaId, LinkedList<String> sbolURIs) {
+	public SBOLAnnotation(String sbmlMetaId, LinkedList<URI> sbolURIs) {
 		modelToSbol = new AnnotationElement("ModelToSBOL");
 		modelToSbol.addNamespace(new AnnotationNamespace("http://sbolstandard.org/modeltosbol/1.0#"));
 		
@@ -25,9 +26,9 @@ public class SBOLAnnotation {
 		AnnotationElement seq = new AnnotationElement("rdf", "Seq");
 		dnaComponents.addChild(seq);
 		
-		for (String uri : sbolURIs) {
+		for (URI uri : sbolURIs) {
 			AnnotationElement li = new AnnotationElement("rdf", "li");
-			li.addAttribute(new AnnotationAttribute("rdf", "resource", uri));
+			li.addAttribute(new AnnotationAttribute("rdf", "resource", uri.toString()));
 			seq.addChild(li);
 		}
 	}

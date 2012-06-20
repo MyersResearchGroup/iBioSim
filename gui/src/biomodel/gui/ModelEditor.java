@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -468,62 +469,47 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 	// Annotate SBML model with synthesized SBOL DNA component and save component to local SBOL file
 	public void saveSBOL() {
-		GCMParser parser = new GCMParser(biomodel, false);
-		SBOLSynthesizer synthesizer = parser.buildSbolSynthesizer();
-		Model sbmlModel = biomodel.getSBMLDocument().getModel();
-		LinkedList<String> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlModel);
-		if (synthesizer != null && synthesizer.loadSbolFiles(getSbolFiles())) {
-			synthesizer.setLocalPath(path);
-			DnaComponent synthComp = synthesizer.synthesizeDnaComponent();
-			if (synthComp != null) {
-				sbolURIs.clear();
-				sbolURIs.add(synthComp.getURI().toString());
-			}
-		}
-		if (sbolURIs.size() > 0) {
-			SBOLAnnotation sbolAnnot = new SBOLAnnotation(sbmlModel.getMetaId(), sbolURIs);
-			AnnotationUtility.setSBOLAnnotation(sbmlModel, sbolAnnot);
-		}
+//		GCMParser parser = new GCMParser(biomodel, false);
+//		SBOLSynthesizer synthesizer = parser.buildSbolSynthesizer();
+//		if (synthesizer != null && synthesizer.loadSbolFiles(getSbolFiles())) {
+//			synthesizer.saveDnaComponent(path, false);
+//		}
+		
 	}
 	
 	// Export SBOL DNA component to new SBOL file
 	public void exportSBOL() {
-		GCMParser parser = new GCMParser(biomodel, false);
-		SBOLSynthesizer synthesizer = parser.buildSbolSynthesizer();
-		if (synthesizer != null && synthesizer.loadSbolFiles(getSbolFiles())) {
-			File lastFilePath;
-			Preferences biosimrc = Preferences.userRoot();
-			if (biosimrc.get("biosim.general.export_dir", "").equals("")) {
-				lastFilePath = null;
-			}
-			else {
-				lastFilePath = new File(biosimrc.get("biosim.general.export_dir", ""));
-			}
-			int option;
-			String targetFilePath = "";
-			do {
-				option = JOptionPane.YES_OPTION;
-				targetFilePath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export SBOL", -1);
-				if (!targetFilePath.equals("") && new File(targetFilePath).exists()) {
-						String targetFileId = targetFilePath.substring(targetFilePath.lastIndexOf(File.separator) + 1);
-						String[] options = { "Replace", "Cancel" };
-						option = JOptionPane.showOptionDialog(Gui.frame, "A file named " + targetFileId + " already exists. Do you want to replace it?",
-								"Export SBOL", JOptionPane.YES_NO_OPTION,
-								JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-						if (option != JOptionPane.YES_OPTION)
-							lastFilePath = new File(targetFilePath);
-				} 
-			} while (option == JOptionPane.NO_OPTION);
-			if (!targetFilePath.equals("")) {
-				biosimrc.put("biosim.general.export_dir", targetFilePath);
-				DnaComponent synthComp = synthesizer.synthesizeDnaComponent();
-				if (synthComp != null) {
-					SBOLDocument sbolDoc = SBOLFactory.createDocument();
-					SBOLUtility.addDNAComponent(synthComp, sbolDoc);
-					SBOLUtility.exportSBOLDocument(targetFilePath, sbolDoc);
-				}
-			}
-		}
+//		GCMParser parser = new GCMParser(biomodel, false);
+//		SBOLSynthesizer synthesizer = parser.buildSbolSynthesizer();
+//		if (synthesizer != null && synthesizer.loadSbolFiles(getSbolFiles())) {
+//			File lastFilePath;
+//			Preferences biosimrc = Preferences.userRoot();
+//			if (biosimrc.get("biosim.general.export_dir", "").equals("")) {
+//				lastFilePath = null;
+//			}
+//			else {
+//				lastFilePath = new File(biosimrc.get("biosim.general.export_dir", ""));
+//			}
+//			int option;
+//			String targetFilePath = "";
+//			do {
+//				option = JOptionPane.YES_OPTION;
+//				targetFilePath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export SBOL", -1);
+//				if (!targetFilePath.equals("") && new File(targetFilePath).exists()) {
+//						String targetFileId = targetFilePath.substring(targetFilePath.lastIndexOf(File.separator) + 1);
+//						String[] options = { "Replace", "Cancel" };
+//						option = JOptionPane.showOptionDialog(Gui.frame, "A file named " + targetFileId + " already exists. Do you want to replace it?",
+//								"Export SBOL", JOptionPane.YES_NO_OPTION,
+//								JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+//						if (option != JOptionPane.YES_OPTION)
+//							lastFilePath = new File(targetFilePath);
+//				} 
+//			} while (option == JOptionPane.NO_OPTION);
+//			if (!targetFilePath.equals("")) {
+//				biosimrc.put("biosim.general.export_dir", targetFilePath);
+//				synthesizer.exportDnaComponent(targetFilePath);
+//			}
+//		}
 	}
 	
 	public void exportSBML() {

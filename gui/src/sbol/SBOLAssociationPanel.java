@@ -7,26 +7,30 @@ import javax.swing.*;
 import main.Gui;
 
 import org.sbolstandard.core.*;
+import org.sbolstandard.core.impl.AggregatingResolver;
+import org.sbolstandard.core.impl.SBOLDocumentImpl;
+import org.sbolstandard.core.impl.AggregatingResolver.UseFirstFound;
 
 import sbol.SBOLUtility;
 
+import java.net.URI;
 import java.util.*;
 
 public class SBOLAssociationPanel extends JPanel {
 
 	private HashSet<String> sbolFiles;
-	private LinkedList<String> compURIs;
-	private LinkedList<String> defaultCompURIs;
+	private LinkedList<URI> compURIs;
+	private LinkedList<URI> defaultCompURIs;
 	private Set<String> soTypes;
-	HashMap<String, String> uriToID;
+	private UseFirstFound<DnaComponent, URI> aggregateCompResolver;
 	private JList compList = new JList();
 	private String[] options = {"Add", "Remove", "Ok", "Cancel"};
 	
-	public SBOLAssociationPanel(HashSet<String> sbolFiles, LinkedList<String> defaultCompURIs, Set<String> soTypes) {
+	public SBOLAssociationPanel(HashSet<String> sbolFiles, LinkedList<URI> defaultCompURIs, Set<String> soTypes) {
 		super(new BorderLayout());
 		
 		this.sbolFiles = sbolFiles;
-		compURIs = new LinkedList<String>(defaultCompURIs);
+		compURIs = new LinkedList<URI>(defaultCompURIs);
 		this.defaultCompURIs = defaultCompURIs;
 	
 		this.soTypes = soTypes;
@@ -41,49 +45,50 @@ public class SBOLAssociationPanel extends JPanel {
 		this.add(associationLabel, "North");
 		this.add(componentScroll, "Center");
 		
-		loadSBOLFiles(sbolFiles);
-		boolean set = setComponentIDList();
-		
-		if (set) {
+		if (loadSBOLFiles(sbolFiles)) {
+			setComponentIDList();
 			boolean display = true;
 			while (display)
 				display = panelOpen();
 		}
 	}
 	
-	private void loadSBOLFiles(HashSet<String> sbolFiles) {
-		uriToID = new HashMap<String, String>();
+	private boolean loadSBOLFiles(HashSet<String> sbolFiles) {
+		LinkedList<Resolver<DnaComponent, URI>> compResolvers = new LinkedList<Resolver<DnaComponent, URI>>();
 		for (String filePath : sbolFiles) {
-			SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
-			if (sbolDoc != null)
-				for (DnaComponent dnac : SBOLUtility.loadDNAComponents(sbolDoc).values()) 
-					if (dnac.getDisplayId() != null && !dnac.getDisplayId().equals("")) 
-						if (dnac.getName() != null && !dnac.getName().equals(""))
-							uriToID.put(dnac.getURI().toString(), dnac.getDisplayId() + " : " 
-									+ dnac.getName());
-						else
-							uriToID.put(dnac.getURI().toString(), dnac.getDisplayId());
-					 else
-						uriToID.put(dnac.getURI().toString(), "unidentified");	
+			SBOLDocumentImpl sbolDoc = (SBOLDocumentImpl) SBOLUtility.loadSBOLFile(filePath);
+			if (sbolDoc != null) {
+				SBOLDocumentImpl flattenedDoc = (SBOLDocumentImpl) SBOLUtility.flattenDocument(sbolDoc);
+				compResolvers.add(flattenedDoc.getComponentUriResolver());
+			} else
+				return false;
 		}
+		aggregateCompResolver = new AggregatingResolver.UseFirstFound<DnaComponent, URI>();
+		aggregateCompResolver.setResolvers(compResolvers);
+		if (sbolFiles.size() == 0) {
+			JOptionPane.showMessageDialog(Gui.frame, "No SBOL files are found in project.", 
+					"File Not Found", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		return true;
 	}
 	
-	private boolean setComponentIDList() {
-		LinkedList<String> compIDs = new LinkedList<String>();
+	private void setComponentIDList() {
+		LinkedList<String> compIdNames = new LinkedList<String>();
 		for (int i = 0; i < compURIs.size(); i++) {
-			String uri = compURIs.get(i);
-			if (uriToID.containsKey(uri))
-				compIDs.add(uriToID.get(uri));
-			else {
-				JOptionPane.showMessageDialog(Gui.frame, "Currently associated component with URI " + uri +
+			URI uri = compURIs.get(i);
+			DnaComponent resolvedComp = aggregateCompResolver.resolve(uri);
+			if (resolvedComp != null) {
+				if (resolvedComp.getName() != null && !resolvedComp.getName().equals(""))
+					compIdNames.add(resolvedComp.getDisplayId() + " : " + resolvedComp.getName());
+				else
+					compIdNames.add(resolvedComp.getDisplayId());
+			} else 
+				JOptionPane.showMessageDialog(Gui.frame, "Currently associated component with URI " + uri.toString() +
 						" is not found in project SBOL files and could not be loaded.", "DNA Component Not Found", JOptionPane.ERROR_MESSAGE);
-				compURIs = defaultCompURIs;
-				return false;
-			}
 		}
-		Object[] idObjects = compIDs.toArray();
+		Object[] idObjects = compIdNames.toArray();
 		compList.setListData(idObjects);
-		return true;
 	}
 	
 	private boolean panelOpen() {
@@ -92,24 +97,29 @@ public class SBOLAssociationPanel extends JPanel {
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (option == 0) {
 			SBOLBrowser browser = new SBOLBrowser(sbolFiles, soTypes, getSelectedURIs());
-			return insertComponents(browser.getSelection());
+			insertComponents(browser.getSelection());
+			return true;
 		} else if (option == 1) {
 			removeSelectedURIs();
-			return setComponentIDList();
-		} else if (option > 2) 
+			setComponentIDList();
+			return true;
+		} else if (option == 2) 
+			return false;
+		else {
 			compURIs = defaultCompURIs;
-		return false;
+			return false;
+		}
 	}
 	
-	private LinkedList<String> getSelectedURIs() {
-		LinkedList<String> selectedURIs = new LinkedList<String>();
+	private LinkedList<URI> getSelectedURIs() {
+		LinkedList<URI> selectedURIs = new LinkedList<URI>();
 		int[] selectedIndices = compList.getSelectedIndices();
 		for (int i = 0; i < selectedIndices.length; i++)
 			selectedURIs.add(compURIs.get(selectedIndices[i]));
 		return selectedURIs;
 	}
 	
-	private boolean insertComponents(LinkedList<String> insertionURIs) {
+	private void insertComponents(LinkedList<URI> insertionURIs) {
 		int[] selectedIndices = compList.getSelectedIndices();
 		int insertionIndex;
 		if (selectedIndices.length == 0)
@@ -117,7 +127,7 @@ public class SBOLAssociationPanel extends JPanel {
 		else
 			insertionIndex = selectedIndices[selectedIndices.length - 1] + 1;
 		compURIs.addAll(insertionIndex, insertionURIs);
-		return setComponentIDList();
+		setComponentIDList();
 	}
 	
 	private void removeSelectedURIs() {
@@ -127,7 +137,7 @@ public class SBOLAssociationPanel extends JPanel {
 		setComponentIDList();
 	}
 	
-	public LinkedList<String> getCompURIs() {
+	public LinkedList<URI> getCompURIs() {
 		return compURIs;
 	}
 }

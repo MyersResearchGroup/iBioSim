@@ -15,6 +15,7 @@ import main.Gui;
 
 import org.sbolstandard.core.*;
 
+import org.sbolstandard.core.impl.SBOLDocumentImpl;
 import org.sbolstandard.core.util.*;
 
 import biomodel.util.GlobalConstants;
@@ -44,7 +45,7 @@ public class SBOLUtility {
 		return sbolDoc;
 	}
 	
-	public static void exportSBOLDocument(String filePath, SBOLDocument sbolDoc) {
+	public static void writeSBOLDocument(String filePath, SBOLDocument sbolDoc) {
 		try {
 			SBOLFactory.write(sbolDoc, new FileOutputStream(filePath));
 		} catch (SBOLValidationException e) {
@@ -59,58 +60,77 @@ public class SBOLUtility {
 		}
 	}
 	
-	// Recursively adds DNA component and all its sub components to SBOL document
-	public static void addDNAComponent(DnaComponent dnac, SBOLDocument sbolDoc) {
-		sbolDoc.addContent(dnac);
-		if (dnac.getAnnotations() != null) 
-			for (SequenceAnnotation sa : dnac.getAnnotations()) 
-				if (sa.getSubComponent() != null)
-					addDNAComponent(sa.getSubComponent(), sbolDoc);
+	// Adds DNA component and all its subcomponents to top level of SBOL Document (if not already present)
+	public static void addDNAComponent(DnaComponent dnac, SBOLDocumentImpl sbolDoc) {
+		SBOLDocumentImpl flattenedDoc = (SBOLDocumentImpl) SBOLUtility.flattenDocument(sbolDoc);
+		UriResolver<DnaComponent> flattenedResolver = flattenedDoc.getComponentUriResolver();
+		UriResolver<DnaComponent> resolver = sbolDoc.getComponentUriResolver();
+		DnaComponent resolvedDnac = flattenedResolver.resolve(dnac.getURI());
+		if (resolvedDnac != null) {
+			addSubComponents(resolvedDnac, sbolDoc, resolver);
+			if (resolver.resolve(dnac.getURI()) == null)
+				sbolDoc.addContent(resolvedDnac);
+		} else {
+			mergeSubComponents(dnac, sbolDoc, resolver, flattenedResolver);
+			if (resolver.resolve(dnac.getURI()) == null)
+				sbolDoc.addContent(dnac);
+		}
 	}
 	
-	// Adds DNA component to SBOL document and recursively merges all subcomponents,
-	// i.e. replaces them with DNA component of identical URI in SBOL document if present
-	public static void mergeDNAComponent(DnaComponent dnac, SBOLDocument sbolDoc, HashMap<String, DnaComponent> compMap) {
-		sbolDoc.addContent(dnac);
+	// Creates SBOL document in which every DNA component is accessible from the top level
+	public static SBOLDocument flattenDocument(SBOLDocument sbolDoc) {
+		SBOLDocumentImpl flattenedDoc = (SBOLDocumentImpl) SBOLFactory.createDocument();
+		UriResolver<DnaComponent> resolver = flattenedDoc.getComponentUriResolver();
+		for (SBOLRootObject sbolObj : sbolDoc.getContents()) // note getContents() only returns top-level SBOL objects
+			if (sbolObj instanceof DnaComponent) {
+				addSubComponents((DnaComponent) sbolObj, flattenedDoc, resolver);
+				if (resolver.resolve(sbolObj.getURI()) == null)
+					flattenedDoc.addContent(sbolObj);
+			} else if (sbolObj instanceof org.sbolstandard.core.Collection) {
+				flattenedDoc.addContent((org.sbolstandard.core.Collection) sbolObj);
+				for (DnaComponent dnac : ((org.sbolstandard.core.Collection) sbolObj).getComponents()) {
+					addSubComponents(dnac, flattenedDoc, resolver);
+					if (resolver.resolve(dnac.getURI()) == null)
+						flattenedDoc.addContent(dnac);
+				}
+			}
+		return flattenedDoc;
+	}
+	
+	// Recursively adds subcomponents to top level of SBOL document (if not already present)
+	public static void addSubComponents(DnaComponent dnac, SBOLDocument sbolDoc, UriResolver<DnaComponent> resolver) {
 		if (dnac.getAnnotations() != null) 
 			for (SequenceAnnotation sa : dnac.getAnnotations()) {
 				DnaComponent subDnac = sa.getSubComponent();
-				if (subDnac != null) {
-					String subURI = subDnac.getURI().toString();
-					if (compMap.containsKey(subURI))
-						sa.setSubComponent(compMap.get(subURI));
-					else
-						addDNAComponent(sa.getSubComponent(), sbolDoc);
+				if (sa.getSubComponent() != null) {
+					addSubComponents(subDnac, sbolDoc, resolver);
+					if (resolver.resolve(subDnac.getURI()) == null)
+						sbolDoc.addContent(subDnac);
 				}
 			}
 	}
 	
-	public static HashMap<String, DnaComponent> loadDNAComponents(SBOLDocument sbolDoc) {
-		HashMap<String, DnaComponent> dnacs = new HashMap<String, DnaComponent>();
-		for (SBOLRootObject sbolObj : sbolDoc.getContents()) // note getContents() only returns top-level SBOL objects
-			if (sbolObj instanceof DnaComponent) {
-				loadDNAComponentsHelper(dnacs, (DnaComponent) sbolObj);
-			} else if (sbolObj instanceof org.sbolstandard.core.Collection) {
-				org.sbolstandard.core.Collection collect = (org.sbolstandard.core.Collection) sbolObj;
-				for (DnaComponent dnac : collect.getComponents())
-					loadDNAComponentsHelper(dnacs, dnac);
+	// Recursively adds subcomponents to top level of SBOL document but also replaces them with DNA components from SBOL document
+	// when they share an URI (avoids conflict of multiple data structures with same URI)
+	public static void mergeSubComponents(DnaComponent dnac, SBOLDocument sbolDoc, UriResolver<DnaComponent> resolver, 
+			UriResolver<DnaComponent> flattenedResolver) {
+		if (dnac.getAnnotations() != null) 
+			for (SequenceAnnotation sa : dnac.getAnnotations()) {
+				DnaComponent subDnac = sa.getSubComponent();
+				if (sa.getSubComponent() != null) {
+					DnaComponent resolvedSubDnac = flattenedResolver.resolve(subDnac.getURI());
+					if (resolvedSubDnac != null) {
+						sa.setSubComponent(resolvedSubDnac);
+						addSubComponents(resolvedSubDnac, sbolDoc, resolver);
+						if (resolver.resolve(subDnac.getURI()) == null)
+							sbolDoc.addContent(resolvedSubDnac);
+					} else {
+						mergeSubComponents(subDnac, sbolDoc, resolver, flattenedResolver);
+						if (resolver.resolve(subDnac.getURI()) == null)
+							sbolDoc.addContent(subDnac);
+					}
+				}
 			}
-		return dnacs;
-	}
-	
-	private static void loadDNAComponentsHelper(HashMap<String, DnaComponent> dnacs, DnaComponent dnac) {
-		dnacs.put(dnac.getURI().toString(), dnac);
-		for (SequenceAnnotation sa : dnac.getAnnotations()) {
-			loadDNAComponentsHelper(dnacs, sa.getSubComponent());
-		}
-	}
-	
-	public static Set<org.sbolstandard.core.Collection> loadCollections(SBOLDocument sbolDoc) {
-		HashSet<org.sbolstandard.core.Collection> collections = new HashSet<org.sbolstandard.core.Collection>();
-		for (SBOLRootObject sbolObj : sbolDoc.getContents()) 
-			if (sbolObj instanceof org.sbolstandard.core.Collection)
-				collections.add((org.sbolstandard.core.Collection) sbolObj);
-		return collections;
 	}
 	
 	// Converts global constant SBOL type to corresponding set of SO types

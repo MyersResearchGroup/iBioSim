@@ -6,25 +6,30 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import org.sbolstandard.core.*;
+import org.sbolstandard.core.impl.AggregatingResolver.UseFirstFound;
 
 import java.net.URI;
 import java.util.*;
 
 public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 
-	private LinkedList<String> compURIs;
-	private HashMap<String, DnaComponent> compMap;
-	private HashMap<String, SequenceAnnotation> annoMap;
-	private HashMap<String, DnaSequence> seqMap;
+	private LinkedList<URI> compURIs;
+//	private HashMap<String, DnaComponent> compMap;
+//	private HashMap<String, SequenceAnnotation> annoMap;
+//	private HashMap<String, DnaSequence> seqMap;
+	private UseFirstFound<DnaComponent, URI> aggregateCompResolver;
+	private UseFirstFound<SequenceAnnotation, URI> aggregateAnnoResolver;
+	private UseFirstFound<DnaSequence, URI> aggregateSeqResolver;
+	
 	private JTextArea viewArea;
 	private JList compList = new JList();
 	
-	public DNAComponentBrowserPanel(HashMap<String, DnaComponent> compMap, HashMap<String, SequenceAnnotation> annoMap, 
-			HashMap<String, DnaSequence> seqMap, JTextArea viewArea) {
+	public DNAComponentBrowserPanel(UseFirstFound<DnaComponent, URI> aggregateCompResolver, UseFirstFound<SequenceAnnotation, URI> aggregateAnnoResolver, 
+			UseFirstFound<DnaSequence, URI> aggregateSeqResolver, JTextArea viewArea) {
 		super(new BorderLayout());
-		this.compMap = compMap;
-		this.annoMap = annoMap;
-		this.seqMap = seqMap;
+		this.aggregateCompResolver = aggregateCompResolver;
+		this.aggregateAnnoResolver = aggregateAnnoResolver;
+		this.aggregateSeqResolver = aggregateSeqResolver;
 		this.viewArea = viewArea;
 		
 		compList.addMouseListener(this);
@@ -42,14 +47,14 @@ public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 		this.add(componentScroll, "Center");
 	}
 	
-	public void setComponents(LinkedList<String> compIds, LinkedList<String> compURIs) {
+	public void setComponents(LinkedList<String> compIds, LinkedList<URI> compURIs) {
 		this.compURIs = compURIs;
 		Object[] idObjects = compIds.toArray();
 		compList.setListData(idObjects);
 	}
 	
-	public LinkedList<String> getSelectedURIs() {
-		LinkedList<String> selectedURIs = new LinkedList<String>();
+	public LinkedList<URI> getSelectedURIs() {
+		LinkedList<URI> selectedURIs = new LinkedList<URI>();
 		int[] selectedIndices = compList.getSelectedIndices();
 		for (int i = 0; i < selectedIndices.length; i++)
 			selectedURIs.add(compURIs.get(selectedIndices[i]));
@@ -59,10 +64,11 @@ public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 	public void mouseClicked(MouseEvent e) {
 		if (e.getSource() == compList) {
 			viewArea.setText("");
-			LinkedList<String> selectedURIs = getSelectedURIs();
-			for (String compURI : selectedURIs) {
-				if (compMap.containsKey(compURI)) {
-					DnaComponent dnac = compMap.get(compURI);
+			LinkedList<URI> selectedURIs = getSelectedURIs();
+			for (URI compURI : selectedURIs) {
+				DnaComponent dnac = aggregateCompResolver.resolve(compURI);
+				if (dnac != null) {
+//					DnaComponent dnac = compMap.get(compURI);
 					
 					viewArea.append("Display ID:  " + dnac.getDisplayId() + "\n");
 					
@@ -78,9 +84,14 @@ public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 					
 					LinkedList<SequenceAnnotation> unsortedSA = new LinkedList<SequenceAnnotation>();
 					if (dnac.getAnnotations() != null) {
-						for (SequenceAnnotation sa : dnac.getAnnotations())
-							if (annoMap.containsKey(sa.getURI().toString()))
-								unsortedSA.add(annoMap.get(sa.getURI().toString()));
+						for (SequenceAnnotation sa : dnac.getAnnotations()) {
+							SequenceAnnotation resolvedSA = aggregateAnnoResolver.resolve(sa.getURI());
+							if (resolvedSA != null)
+//								unsortedSA.add(annoMap.get(sa.getURI().toString()));
+								unsortedSA.add(resolvedSA);
+							else
+								unsortedSA.add(sa);
+						}
 					}
 					if (unsortedSA.size() > 0) {
 						SequenceAnnotation[] sortedSA = sortAnnotations(unsortedSA);
@@ -98,10 +109,14 @@ public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 						viewArea.append(types.substring(0, types.length() - 2) + "\n");
 					else
 						viewArea.append("NA\n");
-					
-					if (dnac.getDnaSequence() != null && seqMap.containsKey(dnac.getDnaSequence().getURI().toString()))
-						viewArea.append("DNA Sequence:  " + dnac.getDnaSequence().getNucleotides() + "\n\n");
-					else
+					DnaSequence seq = dnac.getDnaSequence();
+					if (seq != null) {
+						DnaSequence resolvedSeq = aggregateSeqResolver.resolve(seq.getURI());
+						if (resolvedSeq != null)
+							viewArea.append("DNA Sequence:  " + resolvedSeq.getNucleotides() + "\n\n");
+						else 
+							viewArea.append("DNA Sequence:  " + seq.getNucleotides() + "\n\n");
+					} else
 						viewArea.append("DNA Sequence:  NA\n\n");
 				}
 			}
@@ -133,9 +148,13 @@ public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 		String annotations = "";
 		for (int k = 0; k < arraySA.length; k++) {
 			DnaComponent subComponent = arraySA[k].getSubComponent();
-			if (subComponent != null) 
-				annotations = annotations + compMap.get(subComponent.getURI().toString()).getDisplayId();
-			else
+			if (subComponent != null) {
+				DnaComponent resolvedSubComponent = aggregateCompResolver.resolve(subComponent.getURI());
+				if (resolvedSubComponent != null)
+					annotations = annotations + resolvedSubComponent.getDisplayId();
+				else
+					annotations = annotations + subComponent.getDisplayId();
+			} else
 				annotations = annotations + "NA"; 
 			String symbol = arraySA[k].getStrand().getSymbol();
 			annotations = annotations + " " + symbol + arraySA[k].getBioStart() + " to " + symbol + arraySA[k].getBioEnd() + ", "; 
