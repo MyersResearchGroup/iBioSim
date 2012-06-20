@@ -225,7 +225,7 @@ public class SimulatorODERK extends Simulator {
 		
 	}
 
-	protected void simulate() {		
+	protected void simulate() {
 		
 		if (sbmlHasErrorsFlag == true)
 			return;

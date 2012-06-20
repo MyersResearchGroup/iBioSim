@@ -142,29 +142,30 @@ public class SimulatorSSADirect extends Simulator {
 			
 			//step3Time += System.nanoTime() - step3Initial;
 			
-		
+			//if its length isn't positive then there aren't any reactions
+			if (selectedReactionID.isEmpty() == false) {
 			
-			//STEP 4: perform selected reaction and update species counts
-			
-			//long step4Initial = System.nanoTime();
-			
-			performReaction(selectedReactionID, noAssignmentRulesFlag, noConstraintsFlag);
-			
-			//step4Time += System.nanoTime() - step4Initial;
-			
-			
-			
-			//STEP 5: compute affected reactions' new propensities and update total propensity
-			
-			//long step5Initial = System.nanoTime();
-			
-			//create a set (precludes duplicates) of reactions that the selected reaction's species affect
-			HashSet<String> affectedReactionSet = getAffectedReactionSet(selectedReactionID, noAssignmentRulesFlag);
-			
-			updatePropensities(affectedReactionSet);
-			
-			//step5Time += System.nanoTime() - step5Initial;
-			
+				//STEP 4: perform selected reaction and update species counts
+				
+				//long step4Initial = System.nanoTime();
+				
+				performReaction(selectedReactionID, noAssignmentRulesFlag, noConstraintsFlag);
+				
+				//step4Time += System.nanoTime() - step4Initial;
+				
+				
+				
+				//STEP 5: compute affected reactions' new propensities and update total propensity
+				
+				//long step5Initial = System.nanoTime();
+				
+				//create a set (precludes duplicates) of reactions that the selected reaction's species affect
+				HashSet<String> affectedReactionSet = getAffectedReactionSet(selectedReactionID, noAssignmentRulesFlag);
+				
+				updatePropensities(affectedReactionSet);
+				
+				//step5Time += System.nanoTime() - step5Initial;
+			}
 			
 			//update time for next iteration
 			currentTime += delta_t;

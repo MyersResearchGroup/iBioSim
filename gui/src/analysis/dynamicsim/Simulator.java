@@ -1289,8 +1289,8 @@ public abstract class Simulator {
 			eventToTriggerInitiallyTrueMap.put(childEventID, eventToTriggerInitiallyTrueMap.get(parentEventID));
 			eventToPreviousTriggerValueMap.put(childEventID, eventToTriggerInitiallyTrueMap.get(childEventID));
 			
-			//the parent event should be reset as well, as symmetric division creates two new things
-			//essentially, there are two children, not a parent and child
+			//symmetric division creates two new things essentially: there are two children, not a parent and child
+			//untrigger the parent division event
 			if (symmetry.equals("symmetric")) {
 				
 				//untrigger the event
@@ -1316,6 +1316,7 @@ public abstract class Simulator {
 			
 			HashSet<Object> assignmentSetMap = new HashSet<Object>();
 			
+			//copy event assignments for the new child event
 			for (Object assignment : eventToAssignmentSetMap.get(parentEventID)) {
 				
 				String variableID = ((EventAssignment) assignment).getVariable();
@@ -1716,43 +1717,26 @@ public abstract class Simulator {
 //					if (variableToValueMap.containsKey(speciesName))
 //						return variableToValueMap.get(speciesName);
 				}
-				else {
-					
-//					System.err.println(node.getType());
-//					System.err.println("passed in: " + node.getName() + "   " + node.toFormula());					
-					
-					ASTNode newNode = model.getFunctionDefinition(node.getName()).getBody().clone();
-					
-//					System.err.println(node.getName() + " has this funcdef: " + newNode.toFormula());
-					
-					if (functionDefinitionMap.containsKey(node.toFormula())) {
-//						System.err.println("found " + node.toFormula());
-//						System.err.println("as " + functionDefinitionMap.get(node.toFormula()));
-						return evaluateExpressionRecursive(functionDefinitionMap.get(node.toFormula()));
-					}
-					else {
-					
-						for (int i = 0; i < node.getChildCount(); ++i) {
-							
-							newNode.replaceArgument(model.getFunctionDefinition(node.getName()).getArgument(i).toFormula(),
-									node.getChild(i));
-							
-	//						System.err.println(model.getFunctionDefinition(node.getName()).getArgument(i));
-	//						System.err.println("to " + node.getChild(i));
-						}
-						
-//						System.err.println("after replacement: ");						
-//						System.err.println(newNode.toFormula());
-						
-						functionDefinitionMap.put(node.toFormula(), newNode);
-						
-//						System.err.println(functionDefinitionMap);
-						
-						//System.err.println(newNode.getType().toString());
-						
-						return evaluateExpressionRecursive(newNode);
-					}
-				}
+//				else {
+//					
+//					ASTNode newNode = model.getFunctionDefinition(node.getName()).getBody().clone();
+//					
+//					if (functionDefinitionMap.containsKey(node.toFormula())) {
+//						return evaluateExpressionRecursive(functionDefinitionMap.get(node.toFormula()));
+//					}
+//					else {
+//					
+//						for (int i = 0; i < node.getChildCount(); ++i) {
+//							
+//							newNode.replaceArgument(model.getFunctionDefinition(node.getName()).getArgument(i).toFormula(),
+//									node.getChild(i));
+//						}
+//						
+//						functionDefinitionMap.put(node.toFormula(), newNode);
+//						
+//						return evaluateExpressionRecursive(newNode);
+//					}
+//				}
 				
 				break;
 			}
@@ -2002,6 +1986,7 @@ public abstract class Simulator {
 					newEvent.setVersion(event.getVersion());
 					newEvent.setLevel(event.getLevel());
 					newEvent.setId(compartmentID + "__" + event.getId());
+					newEvent.setMetaId(compartmentID + "__" + event.getId());
 					newEvent.setTrigger(event.getTrigger().clone());
 					
 					if (event.isSetPriority())
@@ -2099,6 +2084,7 @@ public abstract class Simulator {
 					newReaction.setListOfProducts(new ListOf<SpeciesReference>());
 					newReaction.setListOfModifiers(new ListOf<ModifierSpeciesReference>());
 					newReaction.setId(compartmentID  + "__" + reactionID);
+					newReaction.setMetaId(compartmentID  + "__" + reactionID);
 					newReaction.setReversible(true);
 					newReaction.setFast(false);
 					newReaction.setCompartment(reaction.getCompartment());
@@ -2235,7 +2221,8 @@ public abstract class Simulator {
 					newReaction.setListOfReactants(new ListOf<SpeciesReference>());
 					newReaction.setListOfProducts(new ListOf<SpeciesReference>());
 					newReaction.setListOfModifiers(new ListOf<ModifierSpeciesReference>());
-					newReaction.setId("ROW" + row + "_COL" + col + "_" + reactionID);					
+					newReaction.setId("ROW" + row + "_COL" + col + "_" + reactionID);	
+					newReaction.setMetaId("ROW" + row + "_COL" + col + "_" + reactionID);
 					newReaction.setReversible(false);					
 					newReaction.setFast(false);
 					newReaction.setCompartment(reaction.getCompartment());
@@ -2720,14 +2707,22 @@ public abstract class Simulator {
 		return affectedReactionSet;
 	}
 	
+	/**
+	 * recursively puts every astnode child into the arraylist passed in
+	 * 
+	 * @param node
+	 * @param nodeChildrenList
+	 */
 	protected void getAllASTNodeChildren(ASTNode node, ArrayList<ASTNode> nodeChildrenList) {
 		
 		for (ASTNode child : node.getChildren()) {
 			
 			if (child.getChildCount() == 0)
 				nodeChildrenList.add(child);
-			else
+			else {
+				nodeChildrenList.add(child);
 				getAllASTNodeChildren(child, nodeChildrenList);
+			}
 		}			
 	}
 	
@@ -2920,7 +2915,7 @@ public abstract class Simulator {
 	 * @param delta_t
 	 * @return
 	 */
-	protected HashSet<String> performRateRules(double delta_t) {		
+	protected HashSet<String> performRateRules(double delta_t) {
 		
 		HashSet<String> affectedVariables = new HashSet<String>();
 		
@@ -3392,6 +3387,7 @@ public abstract class Simulator {
 					newEvent.setVersion(event.getVersion());
 					newEvent.setLevel(event.getLevel());
 					newEvent.setId(compartmentID + "__" + event.getId());
+					newEvent.setMetaId(compartmentID + "__" + event.getId());
 					newEvent.setTrigger(event.getTrigger().clone());
 					
 					if (event.isSetPriority())
@@ -3486,6 +3482,7 @@ public abstract class Simulator {
 					newReaction.setListOfProducts(new ListOf<SpeciesReference>());
 					newReaction.setListOfModifiers(new ListOf<ModifierSpeciesReference>());
 					newReaction.setId(compartmentID  + "__" + reactionID);
+					newReaction.setMetaId(compartmentID  + "__" + reactionID);
 					newReaction.setReversible(true);
 					newReaction.setFast(false);
 					newReaction.setCompartment(reaction.getCompartment());
@@ -3622,7 +3619,8 @@ public abstract class Simulator {
 					newReaction.setListOfReactants(new ListOf<SpeciesReference>());
 					newReaction.setListOfProducts(new ListOf<SpeciesReference>());
 					newReaction.setListOfModifiers(new ListOf<ModifierSpeciesReference>());
-					newReaction.setId("ROW" + row + "_COL" + col + "_" + reactionID);					
+					newReaction.setId("ROW" + row + "_COL" + col + "_" + reactionID);
+					newReaction.setMetaId("ROW" + row + "_COL" + col + "_" + reactionID);
 					newReaction.setReversible(false);					
 					newReaction.setFast(false);
 					newReaction.setCompartment(reaction.getCompartment());
@@ -4114,8 +4112,10 @@ public abstract class Simulator {
 			variableToValueMap.put(parameterID, localParameter.getValue());
 						
 			//alter the local parameter ID so that it goes to the local and not global value
-			if (localParameter.getId() != parameterID)
+			if (localParameter.getId() != parameterID) {
 				localParameter.setId(parameterID);
+				localParameter.setMetaId(parameterID);
+			}
 			
 			//for some reason, changing the local parameter sometimes changes the kinetic law instances
 			//of that parameter id (and sometimes doesn't), so those ones are fine and ignore them
@@ -4206,6 +4206,7 @@ public abstract class Simulator {
 			if (rule.isAssignment()) {
 				
 				//Rules don't have a getVariable method, so this needs to be cast to an ExplicitRule
+				rule.setMath(inlineFormula(rule.getMath()));
 				AssignmentRule assignmentRule = (AssignmentRule) rule;
 				
 				//list of all children of the assignmentRule math
@@ -4233,6 +4234,7 @@ public abstract class Simulator {
 			else if (rule.isRate()) {
 				
 				//Rules don't have a getVariable method, so this needs to be cast to an ExplicitRule
+				rule.setMath(inlineFormula(rule.getMath()));
 				RateRule rateRule = (RateRule) rule;
 				
 				//list of all children of the assignmentRule math
@@ -4260,6 +4262,38 @@ public abstract class Simulator {
 				++numRateRules;	
 			}
 		}
+		
+		//loop through the formulas and inline any user-defined functions
+		for (Rule rule : model.getListOfRules()) {
+			
+			if (rule.isAssignment() || rule.isRate()) {
+				rule.setMath(inlineFormula(rule.getMath()));
+			}
+		}		
+	}
+	
+	protected ASTNode inlineFormula(ASTNode formula) {
+		
+		if (formula.isFunction() && model.getFunctionDefinition(formula.getName()) != null) {
+			
+			ASTNode inlinedFormula = model.getFunctionDefinition(formula.getName()).getBody().clone();
+			ASTNode oldFormula = formula.clone();
+			
+			ArrayList<ASTNode> inlinedChildren = new ArrayList<ASTNode>();
+			this.getAllASTNodeChildren(inlinedFormula, inlinedChildren);
+			
+			ArrayList<ASTNode> oldChildren = new ArrayList<ASTNode>();
+			this.getAllASTNodeChildren(oldFormula, oldChildren);
+			
+			for (int i = 0; i < inlinedChildren.size(); ++i) {
+				
+				inlinedFormula.replaceArgument(inlinedChildren.get(i).toFormula(), oldFormula.getChild(i));
+			}
+			
+			return inlinedFormula;
+		}
+		else
+			return formula;
 	}
 	
 	/**
@@ -4275,7 +4309,8 @@ public abstract class Simulator {
 				
 				if (constraintNode.isName()) {
 					
-					String nodeName = constraintNode.getName();
+					String nodeName = constraintNode.getName();					
+					constraint.setMath(inlineFormula(constraint.getMath()));
 					
 					variableToAffectedConstraintSetMap.put(nodeName, new HashSet<ASTNode>());
 					variableToAffectedConstraintSetMap.get(nodeName).add(constraint.getMath());
@@ -4308,6 +4343,8 @@ public abstract class Simulator {
 		}
 		else
 			eventToHasDelayMap.put(eventID, false);
+		
+		event.getTrigger().setMath(inlineFormula(event.getTrigger().getMath()));
 		
 		eventToTriggerMap.put(eventID, event.getTrigger().getMath());
 		eventToTriggerInitiallyTrueMap.put(eventID, event.getTrigger().isInitialValue());
