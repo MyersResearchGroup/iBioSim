@@ -94,7 +94,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 	private String filename = "";
 
-	private String gcmname = "";
+	private String modelId = "";
 
 	private BioModel biomodel = null;
 
@@ -180,7 +180,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		if (filename != null) {
 			biomodel.load(path + separator + filename);
 			this.filename = filename;
-			this.gcmname = filename.replace(".gcm", "").replace(".xml", "");
+			this.modelId = filename.replace(".gcm", "").replace(".xml", "");
 		}
 		else {
 			this.filename = "";
@@ -206,7 +206,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 	public void reload(String newName) {
 		filename = newName + ".xml";
-		gcmname = newName;
+		modelId = newName;
 		biomodel.load(path + separator + newName + ".xml");
 		if (paramsOnly) {
 			/*
@@ -270,10 +270,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			consPanel.refreshConstraintsPanel();
 			eventPanel.refreshEventsPanel();
 		}
-	}
-
-	public String getGCMName() {
-		return gcmname;
 	}
 	
 	public void mouseClicked(MouseEvent e) {
@@ -366,7 +362,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		
 		// Write out species and influences to a gcm file
 		//gcm.getSBMLDocument().getModel().setName(modelPanel.getModelName());
-		biomodel.save(path + separator + gcmname + ".gcm");
+		biomodel.save(path + separator + modelId + ".xml");
 		//log.addText("Saving GCM file:\n" + path + separator + gcmname + ".gcm\n");
 		log.addText("Saving SBML file:\n" + path + separator + biomodel.getSBMLFile() + "\n");
 		if (command.contains("Check")) {
@@ -374,7 +370,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}	
 	
 		if (command.contains("template")) {
-			GCMParser parser = new GCMParser(path + separator + gcmname + ".gcm");
+			GCMParser parser = new GCMParser(path + separator + modelId + ".gcm");
 			try {
 				parser.buildTopLevelNetwork(null);
 			}
@@ -397,7 +393,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
 							options[0]);
 					if (value == JOptionPane.YES_OPTION) {
-						network.buildTemplate(parser.getSpecies(), parser.getPromoters(), gcmname
+						network.buildTemplate(parser.getSpecies(), parser.getPromoters(), modelId
 								+ ".gcm", path + separator + templateName);
 						log.addText("Saving GCM file as SBML template:\n" + path + separator
 								+ templateName + "\n");
@@ -409,7 +405,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 					}
 				}
 				else {
-					network.buildTemplate(parser.getSpecies(), parser.getPromoters(), gcmname
+					network.buildTemplate(parser.getSpecies(), parser.getPromoters(), modelId
 							+ ".gcm", path + separator + templateName);
 					log.addText("Saving GCM file as SBML template:\n" + path + separator
 							+ templateName + "\n");
@@ -440,20 +436,20 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 		else if (command.contains("SBML")) {
 			// Then read in the file with the GCMParser
-			GCMParser parser = new GCMParser(path + separator + gcmname + ".gcm");
+			GCMParser parser = new GCMParser(path + separator + modelId + ".gcm");
 			GeneticNetwork network = null;
 			network = parser.buildNetwork();
 			if (network == null) return;
 			network.loadProperties(biomodel);
 			// Finally, output to a file
-			if (new File(path + separator + gcmname + ".xml").exists()) {
-				int value = JOptionPane.showOptionDialog(Gui.frame, gcmname
+			if (new File(path + separator + modelId + ".xml").exists()) {
+				int value = JOptionPane.showOptionDialog(Gui.frame, modelId
 						+ ".xml already exists.  Overwrite file?", "Save file", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				if (value == JOptionPane.YES_OPTION) {
-					network.mergeSBML(path + separator + gcmname + ".xml");
-					log.addText("Saving GCM file as SBML file:\n" + path + separator + gcmname + ".xml\n");
-					biosim.addToTree(gcmname + ".xml");
+					network.mergeSBML(path + separator + modelId + ".xml");
+					log.addText("Saving GCM file as SBML file:\n" + path + separator + modelId + ".xml\n");
+					biosim.addToTree(modelId + ".xml");
 					//biosim.updateOpenSBML(gcmname + ".xml");
 				}
 				else {
@@ -461,12 +457,12 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				}
 			}
 			else {
-				network.mergeSBML(path + separator + gcmname + ".xml");
-				log.addText("Saving GCM file as SBML file:\n" + path + separator + gcmname + ".xml\n");
-				biosim.addToTree(gcmname + ".xml");
+				network.mergeSBML(path + separator + modelId + ".xml");
+				log.addText("Saving GCM file as SBML file:\n" + path + separator + modelId + ".xml\n");
+				biosim.addToTree(modelId + ".xml");
 			}
 		}
-		biosim.updateViews(gcmname + ".xml");
+		biosim.updateViews(modelId + ".xml");
 
 	}
 
@@ -559,7 +555,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		String exportPath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export " + "SBML", -1);
 		if (!exportPath.equals("")) {
 			biosimrc.put("biosim.general.export_dir",exportPath);
-			GCMParser parser = new GCMParser(path + separator + gcmname + ".xml");
+			GCMParser parser = new GCMParser(path + separator + modelId + ".xml");
 			GeneticNetwork network = null;
 			network = parser.buildNetwork();
 			if (network==null) return;
@@ -589,7 +585,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			log.addText("Saving SBML file as:\n" + path + separator + newName + ".xml\n");
 			biosim.addToTree(newName + ".xml");
 		}
-		biosim.updateTabName(gcmname + ".xml", newName + ".xml");
+		biosim.updateTabName(modelId + ".xml", newName + ".xml");
 		reload(newName);
 	}
 
@@ -1366,7 +1362,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				}
 			}
 			network.markAbstractable();
-			network.mergeSBML(path + separator + simName + separator + stem + direct + separator + gcmname + ".xml", d);
+			network.mergeSBML(path + separator + simName + separator + stem + direct + separator + modelId + ".xml", d);
 		}
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(Gui.frame, "Unable to create sbml file.",
