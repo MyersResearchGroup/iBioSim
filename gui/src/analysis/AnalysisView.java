@@ -184,7 +184,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
 	// private JRadioButton amounts, concentrations;
 
-	private JCheckBox concentrations, genRuns;
+	private JCheckBox concentrations, genRuns, genStats;
 
 	// private JLabel choose3;
 
@@ -655,6 +655,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		append.setEnabled(true);
 		reportPanel.add(append);
 		append.addActionListener(this);
+		
+		genStats = new JCheckBox("Generate Statistics");
+		genStats.setEnabled(true);
+		reportPanel.add(genStats);
+		genStats.addActionListener(this);
 
 		// Puts all the radio buttons in a panel
 		JPanel radioButtonPanel = new JPanel(new BorderLayout());
@@ -963,6 +968,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				append.setEnabled(true);
 				concentrations.setEnabled(true);
 				genRuns.setEnabled(true);
+				genStats.setEnabled(true);
 				report.setEnabled(true);
 				if (append.isSelected()) {
 					limit.setEnabled(false);
@@ -1021,6 +1027,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				append.setEnabled(true);
 				concentrations.setEnabled(true);
 				genRuns.setEnabled(true);
+				genStats.setEnabled(true);
 				report.setEnabled(true);
 				if (append.isSelected()) {
 					limit.setEnabled(false);
@@ -1044,6 +1051,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			append.setEnabled(true);
 			concentrations.setEnabled(true);
 			genRuns.setEnabled(true);
+			genStats.setEnabled(true);
 			report.setEnabled(true);
 		}
 		// if the monteCarlo Radio Button is selected
@@ -1054,6 +1062,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			if (runFiles) {
 				append.setEnabled(true);
 				concentrations.setEnabled(true);
+				genRuns.setEnabled(true);
 				genRuns.setEnabled(true);
 				report.setEnabled(true);
 				if (append.isSelected()) {
@@ -1078,6 +1087,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			append.setEnabled(false);
 			concentrations.setEnabled(false);
 			genRuns.setEnabled(false);
+			genStats.setEnabled(false);
 			report.setEnabled(false);
 		}
 		// if the sbml Radio Button is selected
@@ -1088,6 +1098,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			append.setEnabled(false);
 			concentrations.setEnabled(false);
 			genRuns.setEnabled(false);
+			genStats.setEnabled(false);
 			report.setEnabled(false);
 			absErr.setEnabled(false);
 		}
@@ -1099,6 +1110,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			append.setEnabled(false);
 			concentrations.setEnabled(false);
 			genRuns.setEnabled(false);
+			genStats.setEnabled(false);
 			report.setEnabled(false);
 			absErr.setEnabled(false);
 		}
@@ -1110,6 +1122,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			append.setEnabled(false);
 			concentrations.setEnabled(false);
 			genRuns.setEnabled(false);
+			genStats.setEnabled(false);
 			report.setEnabled(false);
 			absErr.setEnabled(false);
 		}
@@ -1121,6 +1134,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			append.setEnabled(false);
 			concentrations.setEnabled(false);
 			genRuns.setEnabled(false);
+			genStats.setEnabled(false);
 			report.setEnabled(false);
 			absErr.setEnabled(false);
 		}
@@ -2767,6 +2781,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			append.setEnabled(true);
 			concentrations.setEnabled(true);
 			genRuns.setEnabled(true);
+			genStats.setEnabled(true);
 			report.setEnabled(true);
 			if (append.isSelected()) {
 				limit.setEnabled(false);

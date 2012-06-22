@@ -3166,6 +3166,22 @@ public class BioModel {
 		return null;
 	}
 	
+	public Reaction getDegradationReaction(String speciesId, Model model) {
+		Reaction degradation = model.getReaction("Degradation_"+speciesId);
+		if (degradation != null) {
+			if (degradation.isSetSBOTerm()) {
+				if (degradation.getSBOTerm()==GlobalConstants.SBO_DEGRADATION) return degradation;
+			} else if (degradation.isSetAnnotation()) {
+				if (degradation.getAnnotationString().contains("Degradation")) {
+					degradation.setSBOTerm(GlobalConstants.SBO_DEGRADATION);
+					degradation.unsetAnnotation();
+					return degradation;
+				}
+			}
+		}
+		return null;
+	}
+	
 	public Reaction getDiffusionReaction(String speciesId) {
 		Reaction diffusion = sbml.getModel().getReaction("MembraneDiffusion_"+speciesId);
 		if (diffusion == null) {
@@ -3723,6 +3739,8 @@ public class BioModel {
 	 */
 	public void updateGridSpecies(String componentModelRef) {
 		
+		componentModelRef = componentModelRef.replace(".xml", "");
+		
 		//loop through all components of this model ref
 		if (sbml.getModel().getParameter(componentModelRef + "__locations") != null) {
 				
@@ -3766,8 +3784,18 @@ public class BioModel {
 			Reaction diffusionReaction = componentModel.getReaction("MembraneDiffusion_" + speciesID);
 			
 			if (diffusionReaction != null && isDiffusionReaction(diffusionReaction)
-					|| sbml.getModel().getSpecies(speciesID) != null)
+					|| sbml.getModel().getSpecies(speciesID) != null) {
+				
 				speciesToRemove.add(speciesID);
+				
+				//see if the species is degradable.  if this status changes, then the degradation reactions
+				//need to be updated.
+				Reaction degradationReaction = getDegradationReaction(speciesID, componentModel);
+				
+				if (degradationReaction == null) {
+					sbml.getModel().removeReaction("Degradation_" + speciesID);
+				}
+			}
 		}
 		
 		//check all other submodels to make sure the species really should be removed
@@ -3834,6 +3862,8 @@ public class BioModel {
 		
 		ArrayList<Species> speciesToAdd = new ArrayList<Species>();
 		
+		System.err.println("creating grid species for " + submodelID);
+		
 		//check all species in the component for diffusibility
 		//if they're diffusible, they're candidates for being added as a grid species
 		for (int speciesIndex = 0; speciesIndex < componentModel.getNumSpecies(); ++speciesIndex) {
@@ -3841,8 +3871,16 @@ public class BioModel {
 			String speciesID = componentModel.getListOfSpecies().get(speciesIndex).getId();			
 			Reaction diffusionReaction = componentModel.getReaction("MembraneDiffusion_" + speciesID);
 			
-			if (diffusionReaction != null && isDiffusionReaction(diffusionReaction))
+			if (diffusionReaction != null && isDiffusionReaction(diffusionReaction)) {
+				
 				speciesToAdd.add(componentModel.getListOfSpecies().get(speciesIndex));
+				
+				//if it's degradable and there's no degradation reaction, add one
+				if (getDegradationReaction(speciesID) == null &&
+						getDegradationReaction(speciesID, componentModel) != null) {
+					createGridDegradationReaction(componentModel.getListOfSpecies().get(speciesIndex), sbml.getModel());
+				}				
+			}
 		}
 		
 		//add diffusible species as grid species if they don't already exist
@@ -3866,26 +3904,24 @@ public class BioModel {
 			}
 		}
 		
-		//if new grid species were added, create diffusion reactions for them
+		//if new grid species were added, create diffusion/degradation reactions for them
 		if (speciesToAdd.size() > 0)
-			createGridSpeciesReactions(speciesToAdd);
+			createGridSpeciesReactions(speciesToAdd, componentModel);
 	}
 	
-	/**
-	 * create grid species reactions for the new grid species
-	 * 
-	 * @param newGridSpecies
-	 */
-	public void createGridSpeciesReactions(ArrayList<Species> newGridSpecies) {
+	public void createGridDegradationReaction(Species species, Model compModel) {
 		
-		//create functions for getting an array element
-		SBMLutilities.createFunction(
-				sbml.getModel(), "get2DArrayElement", "get2DArrayElement", "lambda(a,b,c,a)");
+		String speciesID = species.getId();
+		Boolean speciesDegrades = false;			
+		Reaction degradation = this.getDegradationReaction(speciesID, compModel);
 		
-		for (Species newSpecies : newGridSpecies) {
-			
-			String speciesID = newSpecies.getId();
-			
+		//fix the sbo term/annotation stuff if it's not correct
+		if (degradation != null)
+			speciesDegrades = true;
+		
+		//only make grid degradation reactions if the species is degradable
+		if (speciesDegrades) {
+		
 			//create array of grid degradation reactions
 			String decayString = GlobalConstants.KECDECAY_STRING;
 			double decayRate = sbml.getModel().getParameter("kecd").getValue();
@@ -3960,7 +3996,25 @@ public class BioModel {
 				
 				Utility.addReaction(sbml, r);
 			}
+		}		
+	}
+	
+	/**
+	 * create grid species reactions for the new grid species
+	 * 
+	 * @param newGridSpecies
+	 */
+	public void createGridSpeciesReactions(ArrayList<Species> newGridSpecies, Model compModel) {
+		
+		//create functions for getting an array element
+		SBMLutilities.createFunction(
+				sbml.getModel(), "get2DArrayElement", "get2DArrayElement", "lambda(a,b,c,a)");
+		
+		for (Species newSpecies : newGridSpecies) {
 			
+			createGridDegradationReaction(newSpecies, compModel);
+			
+			String speciesID = newSpecies.getId();
 			
 			//create array of grid diffusion reactions
 			//NOTE: does not do diffusion with component species
@@ -3988,20 +4042,20 @@ public class BioModel {
 				
 				//reversible between neighboring "outer" species
 				//this is the diffusion across the "medium" if you will
-				r = sbml.getModel().createReaction();
+				Reaction r = sbml.getModel().createReaction();
 				r.setId("Diffusion_" + speciesID + "_" + direction);
 				r.setMetaId(r.getId());
 				r.setCompartment(diffComp);
 				r.setReversible(true);
 				r.setFast(false);
 				
-				attr = new XMLAttributes();
+				XMLAttributes attr = new XMLAttributes();
 				attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
 				attr.add("ibiosim:type", "grid");
-				node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
+				XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
 				
 				r.setAnnotation(node);
-				kl = r.createKineticLaw();
+				KineticLaw kl = r.createKineticLaw();
 				
 				if (kecdiff > 0) {
 				
@@ -4057,21 +4111,21 @@ public class BioModel {
 			
 			String membraneDiffusionComp = sbml.getModel().getCompartment(0).getId();
 			
-			r = sbml.getModel().createReaction();
+			Reaction r = sbml.getModel().createReaction();
 			r.setId("MembraneDiffusion_" + speciesID);
 			r.setMetaId(r.getId());
 			r.setCompartment(membraneDiffusionComp);
 			r.setReversible(true);
 			r.setFast(false);
 			
-			attr = new XMLAttributes();
+			XMLAttributes attr = new XMLAttributes();
 			attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
 			attr.add("ibiosim:type", "grid");
-			node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
+			XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
 			
 			r.setAnnotation(node);
 			
-			kl = r.createKineticLaw();
+			KineticLaw kl = r.createKineticLaw();
 			
 			//this is the rate times the inner species minus the rate times the outer species
 			String membraneDiffusionExpression = "get2DArrayElement(kmdiff_f, i, j) * get2DArrayElement(" 

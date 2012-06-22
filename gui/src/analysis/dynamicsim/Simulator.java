@@ -508,10 +508,10 @@ public abstract class Simulator {
 			case 2: childLocation.x -= 1; break;
 			case 3: childLocation.x += 1; break;
 			
-//			case 4: {childLocation.x += 1; childLocation.y -= 1; break;}
-//			case 5: {childLocation.x -= 1; childLocation.y += 1; break;}
-//			case 6: {childLocation.x -= 1; childLocation.y -= 1; break;}
-//			case 7: {childLocation.x += 1; childLocation.y += 1; break;}
+			case 4: {childLocation.x += 1; childLocation.y -= 1; break;}
+			case 5: {childLocation.x -= 1; childLocation.y += 1; break;}
+			case 6: {childLocation.x -= 1; childLocation.y -= 1; break;}
+			case 7: {childLocation.x += 1; childLocation.y += 1; break;}
 		}
 		
 		HashSet<Point> locationsToMove = new HashSet<Point>();
@@ -533,7 +533,12 @@ public abstract class Simulator {
 					case 0: emptyLocation.y -= 1; break;
 					case 1: emptyLocation.y += 1; break;
 					case 2: emptyLocation.x -= 1; break;
-					case 3: emptyLocation.x += 1; break;		
+					case 3: emptyLocation.x += 1; break;
+					
+					case 4: {emptyLocation.x += 1; emptyLocation.y -= 1; break;}
+					case 5: {emptyLocation.x -= 1; emptyLocation.y += 1; break;}
+					case 6: {emptyLocation.x -= 1; emptyLocation.y -= 1; break;}
+					case 7: {emptyLocation.x += 1; emptyLocation.y += 1; break;}
 				}
 			}
 			
@@ -552,7 +557,12 @@ public abstract class Simulator {
 						case 0: componentToLocationMap.get(compID).y -= 1; break;
 						case 1: componentToLocationMap.get(compID).y += 1; break;
 						case 2: componentToLocationMap.get(compID).x -= 1; break;
-						case 3: componentToLocationMap.get(compID).x += 1; break;		
+						case 3: componentToLocationMap.get(compID).x += 1; break;
+						
+						case 4: {componentToLocationMap.get(compID).x += 1; componentToLocationMap.get(compID).y -= 1; break;}
+						case 5: {componentToLocationMap.get(compID).x -= 1; componentToLocationMap.get(compID).y += 1; break;}
+						case 6: {componentToLocationMap.get(compID).x -= 1; componentToLocationMap.get(compID).y -= 1; break;}
+						case 7: {componentToLocationMap.get(compID).x += 1; componentToLocationMap.get(compID).y += 1; break;}
 					}
 										
 					//keep track of min row/col and max row/col so you know the bounds of the grid
@@ -905,7 +915,12 @@ public abstract class Simulator {
 					case 0: locationToMove.y -= 1; break;
 					case 1: locationToMove.y += 1; break;
 					case 2: locationToMove.x -= 1; break;
-					case 3: locationToMove.x += 1; break;		
+					case 3: locationToMove.x += 1; break;
+					
+					case 4: {locationToMove.x += 1; locationToMove.y -= 1; break;}
+					case 5: {locationToMove.x -= 1; locationToMove.y += 1; break;}
+					case 6: {locationToMove.x -= 1; locationToMove.y -= 1; break;}
+					case 7: {locationToMove.x += 1; locationToMove.y += 1; break;}
 				}
 			}
 			
@@ -936,7 +951,12 @@ public abstract class Simulator {
 									case 0: oldLocation.y = locationToMove.y + 1; break;
 									case 1: oldLocation.y = locationToMove.y - 1; break;
 									case 2: oldLocation.x = locationToMove.x + 1; break;
-									case 3: oldLocation.x = locationToMove.x - 1; break;		
+									case 3: oldLocation.x = locationToMove.x - 1; break;
+									
+									case 4: {oldLocation.x = locationToMove.x - 1; oldLocation.y = locationToMove.y + 1; break;}
+									case 5: {oldLocation.x = locationToMove.x + 1; oldLocation.y = locationToMove.y - 1; break;}
+									case 6: {oldLocation.x = locationToMove.x + 1; oldLocation.y = locationToMove.y + 1; break;}
+									case 7: {oldLocation.x = locationToMove.x - 1; oldLocation.y = locationToMove.y - 1; break;}
 								}
 								
 								String oldRowCol = "ROW" + (int) oldLocation.x + "_COL" + (int) oldLocation.y;
@@ -1032,7 +1052,7 @@ public abstract class Simulator {
 		//determine new component location
 		//choose a random direction and place the component adjacent to the parent
 		//0 = left, 1 = right, 2 = above, 3 = below
-		int randomDirection = (int) (randomNumberGenerator.nextDouble() * 4.0);		
+		int randomDirection = (int) (randomNumberGenerator.nextDouble() * 8.0);		
 
 		Point parentLocation = componentToLocationMap.get(parentComponentID);
 		Point childLocation = (Point) parentLocation.clone();
