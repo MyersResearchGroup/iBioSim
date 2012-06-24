@@ -109,11 +109,11 @@ public class SBOLField extends JPanel implements ActionListener {
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-//		if (e.getActionCommand().equals("associateSBOL")) {
-//			HashSet<String> sbolFiles = gcmEditor.getSbolFiles();
-//			SBOLAssociationPanel associationPanel = new SBOLAssociationPanel(sbolFiles, sbolURIs, SBOLUtility.soSynonyms(sbolType));
-//			sbolURIs = associationPanel.getCompURIs();
-//		} 
+		if (e.getActionCommand().equals("associateSBOL")) {
+			HashSet<String> sbolFiles = gcmEditor.getSbolFiles();
+			SBOLAssociationPanel associationPanel = new SBOLAssociationPanel(sbolFiles, sbolURIs, SBOLUtility.soSynonyms(sbolType));
+			sbolURIs = associationPanel.getCompURIs();
+		} 
 	}
 	
 	private void setLabel(String sbolType) {
