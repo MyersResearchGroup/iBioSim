@@ -254,6 +254,7 @@ public abstract class Simulator {
 		this.printInterval = printInterval;
 		this.outputDirectory = outputDirectory;
 		this.running = running;
+		this.interestingSpecies.clear();
 		
 		for (int i = 0; i < interestingSpecies.length; ++i)
 			this.interestingSpecies.add(interestingSpecies[i]);
@@ -844,7 +845,7 @@ public abstract class Simulator {
 //				System.err.println();
 //			}
 //		}
-//		
+//	
 //		for (String variableID : variableToValueMap.keySet()) {
 //			
 //			System.err.println(variableID);
@@ -3441,8 +3442,9 @@ public abstract class Simulator {
 		} //end species for loop
 		
 		//add new row/col species to the model
-		for (Species species : speciesToAdd)
+		for (Species species : speciesToAdd) {
 			model.addSpecies(species);
+		}
 		
 		//ARRAYED EVENTS BUSINESS
 		
@@ -4706,6 +4708,8 @@ public abstract class Simulator {
 //					.add(new StringStringPair(productID, product.getId()));
 //					variableToValueMap.put(product.getId(), productStoichiometry);
 //				}
+				
+				System.err.println(productID);
 				
 				//as a product, this species affects the reaction's propensity in the reverse direction
 				speciesToAffectedReactionSetMap.get(productID).add(reactionID + "_rv");

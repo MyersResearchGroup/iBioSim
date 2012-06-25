@@ -2104,6 +2104,12 @@ public class BioModel {
 			if (value.equals("-1") == false)
 				param.getAnnotation().getChild(0).addAttr("array:" + newName, value);
 			
+			value = param.getAnnotation().getChild(0).getAttrValue("array:" + oldName);
+			param.getAnnotation().getChild(0).removeAttr(value);
+			
+			if (value.equals("-1") == false)
+				param.getAnnotation().getChild(0).addAttr("array:" + newName, value);
+			
 			if (param.getId().contains(oldName))
 				param.setId(param.getId().replace(oldName, newName));
 		}
@@ -2427,7 +2433,7 @@ public class BioModel {
 				attr.add("xmlns:array", "http://www.fakeuri.com");
 				attr.add("array:" + submodelID, "(" + row + "," + col + ")");
 				
-				XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);
+				XMLNode node = new XMLNode(new XMLTriple("array","http://www.fakeuri.com","array"), attr);
 				
 				locationParameter.setAnnotation(node);
 			}
@@ -3100,9 +3106,14 @@ public class BioModel {
 		String locationParameterString = componentModelRefID + "__locations";
 		
 		sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).removeAttr(
-				sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).getAttrIndex("array:" + submodelID, "http://www.fakeuri.com"));
+				sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).getAttrIndex(
+						"array:" + submodelID));
 		sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).removeAttr(
-				sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).getAttrIndex(submodelID, "http://www.fakeuri.com"));
+				sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).getAttrIndex(
+						"array:" + submodelID, "http://www.fakeuri.com"));
+		sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).removeAttr(
+				sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).getAttrIndex(
+						submodelID, "http://www.fakeuri.com"));
 		sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0)
 		.addAttr("array:" + submodelID, "(" + row + "," + col + ")");
 	}
@@ -3556,9 +3567,14 @@ public class BioModel {
 			
 			//get rid of the component from the location-lookup array and the modelref array
 			sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).removeAttr(
-					sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).getAttrIndex("array:" + name, "http://www.fakeuri.com"));
+					sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).getAttrIndex(
+							"array:" + name));
 			sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).removeAttr(
-					sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).getAttrIndex(name, "http://www.fakeuri.com"));
+					sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).getAttrIndex(
+							"array:" + name, "http://www.fakeuri.com"));
+			sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).removeAttr(
+					sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).getAttrIndex(
+							name, "http://www.fakeuri.com"));
 			
 			if (sbml.getModel().getParameter(locationParameterString).getAnnotationString().length() < 1)
 				sbml.getModel().removeParameter(locationParameterString);
@@ -3634,7 +3650,7 @@ public class BioModel {
 		}
 		
 		if (sbmlLayout.getLayout("iBioSim") != null) {
-			Layout layout = sbmlLayout.getLayout("iBioSim"); 
+			Layout layout = sbmlLayout.getLayout("iBioSim");
 			if (layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+name)!=null) {
 				layout.removeCompartmentGlyph(GlobalConstants.GLYPH+"__"+name);
 			}
