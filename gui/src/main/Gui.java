@@ -2011,7 +2011,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						((ModelEditor) tab.getComponentAt(i)).reloadParameters();
 					}
 				}
-				biosimrc.put("biosim.synthesis.uri", uriField.getText().trim());
+				if (!uriField.getText().trim().equals(""))
+					biosimrc.put("biosim.synthesis.uri", uriField.getText().trim());
+				else
+					biosimrc.put("biosim.synthesis.uri", "http://www.async.ece.utah.edu");
 			}
 			// if user clicks "cancel"
 			else {
