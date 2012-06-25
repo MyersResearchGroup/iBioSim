@@ -1000,6 +1000,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				append.setEnabled(true);
 				concentrations.setEnabled(true);
 				genRuns.setEnabled(true);
+				genStats.setEnabled(true);
 				report.setEnabled(true);
 				if (append.isSelected()) {
 					limit.setEnabled(false);
@@ -1063,7 +1064,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				append.setEnabled(true);
 				concentrations.setEnabled(true);
 				genRuns.setEnabled(true);
-				genRuns.setEnabled(true);
+				genStats.setEnabled(true);
 				report.setEnabled(true);
 				if (append.isSelected()) {
 					limit.setEnabled(false);
@@ -2277,6 +2278,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				}
 			}
 		}
+		
 		String printer_id;
 		if (genRuns.isSelected()) {
 			printer_id = "null.printer";
@@ -2284,10 +2286,17 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		else {
 			printer_id = "tsd.printer";
 		}
+		
 		String printer_track_quantity = "amount";
 		if (concentrations.isSelected()) {
 			printer_track_quantity = "concentration";
 		}
+		
+		String generate_statistics = "false";
+		if (genStats.isSelected()) {
+			generate_statistics = "true";
+		}
+		
 		String[] intSpecies = getInterestingSpecies();
 		String selectedButtons = "";
 		double rap1 = 0.1;
@@ -2620,9 +2629,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		biomodelsim.getExitButton().addActionListener(runProgram);
 		// saveSAD(outDir);
 		runProgram.createProperties(timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval,
-				minTimeStep, timeStep, absError, ".", rndSeed, run, intSpecies, printer_id, printer_track_quantity,
-				simProp.split(separator), selectedButtons, this, simProp, rap1, rap2, qss, con, stoichAmp, preAbs, loopAbs,
-				postAbs, lhpnAbstraction);
+				minTimeStep, timeStep, absError, ".", rndSeed, run, intSpecies, printer_id, printer_track_quantity, 
+				generate_statistics, simProp.split(separator), selectedButtons, this, simProp, rap1, rap2, qss, con, 
+				stoichAmp, preAbs, loopAbs, postAbs, lhpnAbstraction);
 		// int[] indecies = properties.getSelectedIndices();
 		// props = Utility.getList(props, properties);
 		// properties.setSelectedIndices(indecies);
@@ -2974,6 +2983,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		if (concentrations.isSelected()) {
 			printer_track_quantity = "concentration";
 		}
+		
+		String generate_statistics = "false";
+		if (genStats.isSelected())
+			generate_statistics = "true";
 		// int[] index = terminations.getSelectedIndices();
 		// String[] termCond = Utility.getList(termConditions, terminations);
 		// terminations.setSelectedIndices(index);
@@ -3152,9 +3165,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		log.addText("Creating properties file1:\n" + propName + "\n");
 		// saveSAD(simName);
 		runProgram.createProperties(timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval,
-				minTimeStep, timeStep, absError, ".", rndSeed, run, intSpecies, printer_id, printer_track_quantity,
-				sbmlProp.split(separator), selectedButtons, this, sbmlProp, rap1, rap2, qss, con, stoichAmp, preAbs, loopAbs,
-				postAbs, lhpnAbstraction);
+				minTimeStep, timeStep, absError, ".", rndSeed, run, intSpecies, printer_id, printer_track_quantity, 
+				generate_statistics, sbmlProp.split(separator), selectedButtons, this, sbmlProp, rap1, rap2, qss, con, 
+				stoichAmp, preAbs, loopAbs, postAbs, lhpnAbstraction);
 		// int[] indecies = properties.getSelectedIndices();
 		// props = Utility.getList(props, properties);
 		// properties.setSelectedIndices(indecies);

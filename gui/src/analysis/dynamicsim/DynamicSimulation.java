@@ -30,11 +30,13 @@ public class DynamicSimulation {
 	}	
 	
 	public void simulate(String SBMLFileName, String outputDirectory, double timeLimit, 
-			double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval, 
+			double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, 
 			int runs, JLabel progressLabel, JFrame running, double stoichAmpValue, 
-			String[] interestingSpecies, int numSteps, double relError, double absError, String quantityType) {
+			String[] interestingSpecies, int numSteps, double relError, double absError, 
+			String quantityType, Boolean genStats) {
 		
 		String progressText = progressLabel.getText();
+		statisticsFlag = genStats;
 		
 		try {
 			
@@ -44,11 +46,11 @@ public class DynamicSimulation {
 			
 			if (simulatorType.equals("cr"))
 				simulator = new SimulatorSSACR(SBMLFileName, outputDirectory, timeLimit, 
-						maxTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, 
+						maxTimeStep, minTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, 
 						interestingSpecies, quantityType);
 			else if (simulatorType.equals("direct"))
 				simulator = new SimulatorSSADirect(SBMLFileName, outputDirectory, timeLimit, 
-						maxTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, 
+						maxTimeStep, minTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, 
 						interestingSpecies, quantityType);
 			else if (simulatorType.equals("rk"))
 				simulator = new SimulatorODERK(SBMLFileName, outputDirectory, timeLimit, 

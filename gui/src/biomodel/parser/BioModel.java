@@ -998,7 +998,23 @@ public class BioModel {
 	
 	public void setGridSize(int rows, int cols) {
 		
-		Layout layout = createLayout();
+//		Layout layout = createLayout();
+//		
+//		if (rows > 0 && cols > 0) {
+//			
+//			XMLAttributes attr = new XMLAttributes();
+//			attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
+//			attr.add("ibiosim:grid", "(" + rows + "," + cols + ")");
+//			XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
+//			
+//			layout.setAnnotation(node);
+//		} 
+//		else {
+//			layout.unsetAnnotation();
+//		}
+		
+		//get the grid compartment
+		Compartment gridComp = sbml.getModel().getCompartment(0);
 		
 		if (rows > 0 && cols > 0) {
 			
@@ -1007,10 +1023,10 @@ public class BioModel {
 			attr.add("ibiosim:grid", "(" + rows + "," + cols + ")");
 			XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
 			
-			layout.setAnnotation(node);
+			gridComp.setAnnotation(node);
 		} 
 		else {
-			layout.unsetAnnotation();
+			gridComp.unsetAnnotation();
 		}
 	}
 	
@@ -2076,9 +2092,17 @@ public class BioModel {
 			
 			Parameter param = sbml.getModel().getParameter(subModel.getId().replace("GRID__","") + "__locations");
 			
-			String value = param.getAnnotation().getChild(0).getAttrValue("array:" + oldName);			
-			param.getAnnotation().getChild(0).removeAttr("array:" + oldName);
-			param.getAnnotation().getChild(0).addAttr("array:" + newName, value);
+			String value = param.getAnnotation().getChild(0).getAttrValue("array:" + oldName, "http://www.fakeuri.com");			
+			param.getAnnotation().getChild(0).removeAttr(value);
+			
+			if (value.equals("-1") == false)
+				param.getAnnotation().getChild(0).addAttr("array:" + newName, value);
+			
+			value = param.getAnnotation().getChild(0).getAttrValue(oldName, "http://www.fakeuri.com");
+			param.getAnnotation().getChild(0).removeAttr(value);
+			
+			if (value.equals("-1") == false)
+				param.getAnnotation().getChild(0).addAttr("array:" + newName, value);
 			
 			if (param.getId().contains(oldName))
 				param.setId(param.getId().replace(oldName, newName));
@@ -2483,17 +2507,40 @@ public class BioModel {
 	 * @param data string data from a gcm file
 	 */
 	private void loadGridSize() {
-		if (sbmlLayout != null) {
-			if (sbmlLayout.getLayout("iBioSim")!=null && sbmlLayout.getLayout("iBioSim").isSetAnnotation()) {
-				String annotation = sbmlLayout.getLayout("iBioSim").getAnnotation().toXMLString();
-				int first = annotation.indexOf("(");
-				int middle = annotation.indexOf(",");
-				int last = annotation.indexOf(")");
-				int row = Integer.valueOf(annotation.substring(first+1,middle));
-				int col = Integer.valueOf(annotation.substring(middle+1,last));
-				buildGrid(row, col);
-				return;
+		
+		if (sbml.getModel().getCompartment(0) != null && sbml.getModel().getCompartment(0).isSetAnnotation()) {
+			
+			if (sbmlLayout != null) {
+				if (sbmlLayout.getLayout("iBioSim")!=null && sbmlLayout.getLayout("iBioSim").isSetAnnotation())
+					sbmlLayout.getLayout("iBioSim").unsetAnnotation();
 			}
+			
+			String annotation = sbml.getModel().getCompartment(0).getAnnotation().toXMLString();
+			int first = annotation.indexOf("(");
+			int middle = annotation.indexOf(",");
+			int last = annotation.indexOf(")");
+			int row = Integer.valueOf(annotation.substring(first+1,middle));
+			int col = Integer.valueOf(annotation.substring(middle+1,last));
+			
+			buildGrid(row, col);
+			
+			return;
+		}
+		//for backwards compatibility
+		else {
+			
+			if (sbmlLayout != null) {
+				if (sbmlLayout.getLayout("iBioSim")!=null && sbmlLayout.getLayout("iBioSim").isSetAnnotation()) {
+					String annotation = sbmlLayout.getLayout("iBioSim").getAnnotation().toXMLString();
+					int first = annotation.indexOf("(");
+					int middle = annotation.indexOf(",");
+					int last = annotation.indexOf(")");
+					int row = Integer.valueOf(annotation.substring(first+1,middle));
+					int col = Integer.valueOf(annotation.substring(middle+1,last));
+					buildGrid(row, col);
+					return;
+				}
+			}			
 		}
 	}
 
@@ -3053,7 +3100,9 @@ public class BioModel {
 		String locationParameterString = componentModelRefID + "__locations";
 		
 		sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).removeAttr(
-				sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).getAttrIndex("array:" + submodelID));
+				sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).getAttrIndex("array:" + submodelID, "http://www.fakeuri.com"));
+		sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).removeAttr(
+				sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).getAttrIndex(submodelID, "http://www.fakeuri.com"));
 		sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0)
 		.addAttr("array:" + submodelID, "(" + row + "," + col + ")");
 	}
@@ -3504,10 +3553,12 @@ public class BioModel {
 		String locationParameterString = componentModelRef + "__locations";
 		
 		if (sbml.getModel().getParameter(locationParameterString) != null) {
-		
+			
 			//get rid of the component from the location-lookup array and the modelref array
 			sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).removeAttr(
-					sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).getAttrIndex("array:" + name));
+					sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).getAttrIndex("array:" + name, "http://www.fakeuri.com"));
+			sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).removeAttr(
+					sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).getAttrIndex(name, "http://www.fakeuri.com"));
 			
 			if (sbml.getModel().getParameter(locationParameterString).getAnnotationString().length() < 1)
 				sbml.getModel().removeParameter(locationParameterString);
@@ -3862,8 +3913,6 @@ public class BioModel {
 		
 		ArrayList<Species> speciesToAdd = new ArrayList<Species>();
 		
-		System.err.println("creating grid species for " + submodelID);
-		
 		//check all species in the component for diffusibility
 		//if they're diffusible, they're candidates for being added as a grid species
 		for (int speciesIndex = 0; speciesIndex < componentModel.getNumSpecies(); ++speciesIndex) {
@@ -4008,7 +4057,7 @@ public class BioModel {
 		
 		//create functions for getting an array element
 		SBMLutilities.createFunction(
-				sbml.getModel(), "get2DArrayElement", "get2DArrayElement", "lambda(a,b,c,a)");
+				sbml.getModel(), "get2DArrayElement", "get2DArrayElement", "lambda(a,b,c,a)");		
 		
 		for (Species newSpecies : newGridSpecies) {
 			
@@ -4947,10 +4996,33 @@ public class BioModel {
 		loadGridSize();
 		updatePorts();
 		
-		for (int i = 0; i < sbml.getModel().getNumParameters(); ++i)
+		for (int i = 0; i < sbml.getModel().getNumParameters(); ++i) {
 			if (sbml.getModel().getParameter(i).getId().contains("__locations")) {
 				updateGridSpecies(sbml.getModel().getParameter(i).getId().replace("__locations",""));
 			}
+		}
+		
+		//these should probably go someplace else?
+		SBMLutilities.createFunction(
+				sbml.getModel(), "neighborQuantityLeft", "neighborQuantityLeft", "lambda(a,0)");
+		SBMLutilities.createFunction(
+				sbml.getModel(), "neighborQuantityRight", "neighborQuantityRight", "lambda(a,0)");
+		SBMLutilities.createFunction(
+				sbml.getModel(), "neighborQuantityAbove", "neighborQuantityAbove", "lambda(a,0)");
+		SBMLutilities.createFunction(
+				sbml.getModel(), "neighborQuantityBelow", "neighborQuantityBelow", "lambda(a,0)");
+//		SBMLutilities.createFunction(
+//				sbml.getModel(), "neighborQuantityLeft", "neighborQuantityLeft", "lambda(a,b,c,0)");
+//		SBMLutilities.createFunction(
+//				sbml.getModel(), "neighborQuantityRight", "neighborQuantityRight", "lambda(a,b,c,0)");
+//		SBMLutilities.createFunction(
+//				sbml.getModel(), "neighborQuantityAbove", "neighborQuantityAbove", "lambda(a,b,c,0)");
+//		SBMLutilities.createFunction(
+//				sbml.getModel(), "neighborQuantityBelow", "neighborQuantityBelow", "lambda(a,b,c,0)");
+		SBMLutilities.createFunction(
+				sbml.getModel(), "getCompartmentLocationX", "getCompartmentLocationX", "lambda(a,0)");
+		SBMLutilities.createFunction(
+				sbml.getModel(), "getCompartmentLocationY", "getCompartmentLocationY", "lambda(a,0)");
 	}
 
 	private void loadSBMLFromBuffer(StringBuffer buffer) {	
@@ -5186,7 +5258,6 @@ public class BioModel {
 		new File(tempFile).delete();
 		return model.getSBMLDocument();
 	}
-	
 	
 	public SBMLDocument flattenBioModel() {
 		ArrayList<String> modelList = new ArrayList<String>();

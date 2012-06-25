@@ -581,30 +581,6 @@ public class GeneticNetwork {
 					properties.getSBMLDocument().getModel().getParameter(submodelID + "__locations").getAnnotationString()
 					.replace("<annotation>","").replace("</annotation>","").trim());
 			}
-		
-//			String reactionAnnotation = dynamicEvent.getAnnotationString();
-//			ArrayList<String> components = new ArrayList<String>();
-//			
-//			String[] splitAnnotation = reactionAnnotation.replace("\"","").split("array:");
-//			
-//			//find all components in the annotation
-//			for (int j = 2; j < splitAnnotation.length; ++j) {
-//					
-//				components.add(splitAnnotation[j].split("=")[0].trim());
-//			}
-//			
-//			//replace the annotation with a better-formatted version (for jsbml)				
-//			XMLAttributes attr = new XMLAttributes();				
-//			attr.add("xmlns:array", "http://www.fakeuri.com");
-//			
-//			for (String componentID : components)
-//				attr.add("array:" + componentID, "(" + properties.getSubmodelRow(componentID) + "," +
-//						properties.getSubmodelCol(componentID) + ")");
-//			
-//			XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);
-//			
-//			if (isGrid)
-//				dynamicEvent.setAnnotation(node);
 		}
 		
 		//replace all Type=Grid occurences with more complete information
@@ -651,33 +627,8 @@ public class GeneticNetwork {
 				for (int j = 2; j < splitAnnotation.length; ++j) {
 					allComponents.add(splitAnnotation[j].split("=")[0].trim());
 				}
-				
-//				//replace the locations arrays with correctly-formated versions				
-//				XMLAttributes attr = new XMLAttributes();				
-//				attr.add("xmlns:array", "http://www.fakeuri.com");
-//				
-//				for (String componentID : components)
-//					attr.add("array:" + componentID, "(" + properties.getSubmodelRow(componentID) + "," +
-//							properties.getSubmodelCol(componentID) + ")");
-//				
-//				XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);
-//				parameter.setAnnotation(node);
 			}
-		}
-		
-//		//convert the compartment annotations so that they can be preserved in jsbml
-//		for (int i = 0; i < document.getModel().getNumCompartments(); ++i) {
-//			
-//			if (document.getModel().getCompartment(i).getAnnotationString() != null &&
-//					document.getModel().getCompartment(i).getAnnotationString().contains("EnclosingCompartment")) {
-//								
-//				XMLAttributes attr = new XMLAttributes();				
-//				attr.add("xmlns:compartment", "http://www.fakeuri.com");				
-//				attr.add("compartment:type", "enclosing");				
-//				XMLNode node = new XMLNode(new XMLTriple("compartment","","compartment"), attr);
-//				document.getModel().getCompartment(i).setAnnotation(node);
-//			}		
-//		}		
+		}	
 		
 		for (String componentID : allComponents) {
 			

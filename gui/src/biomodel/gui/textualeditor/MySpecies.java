@@ -23,6 +23,7 @@ import main.util.MutableBoolean;
 import main.util.Utility;
 
 import org.sbml.libsbml.Compartment;
+import org.sbml.libsbml.InitialAssignment;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.Parameter;
@@ -754,7 +755,6 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		Name = new JTextField();
 		
 		init = new JTextField("0.0");
-		init.setEditable(false);
 		
 		JTextField kecdiff = new JTextField("0.0");
 		JTextField kecd = new JTextField("0.0");		
@@ -850,6 +850,30 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 			selectedSpecies.setBoundaryCondition(Boolean.valueOf((String) specBoundary.getModel().getSelectedItem()));
 			selectedSpecies.setHasOnlySubstanceUnits(Boolean.valueOf((String) specHasOnly.getModel().getSelectedItem()));
 			selectedSpecies.setConstant(Boolean.valueOf((String) specConstant.getModel().getSelectedItem()));
+			
+			//initial amount
+			if (initLabel.getSelectedIndex() == 0) {
+				
+				double amount = Double.parseDouble(init.getText());				
+				selectedSpecies.setInitialAmount(amount);
+			}
+			//initial concentration
+			else if (initLabel.getSelectedIndex() == 1) {
+				
+				double conc = Double.parseDouble(init.getText());
+				selectedSpecies.setInitialConcentration(conc);
+			}
+			//initial assignment
+			else {
+				
+				Model model = gcm.getSBMLDocument().getModel();
+				String formula = init.getText();
+				InitialAssignment initialAssignment = new InitialAssignment(model.getLevel(), model.getVersion());
+				initialAssignment.setSymbol(selectedSpecies.getId());
+				initialAssignment.setMath(SBMLutilities.myParseFormula(formula));				
+				
+				model.addInitialAssignment(initialAssignment);
+			}
 			
 			//set the local parameters in the diffusion/degredation reactions
 			double kecdiffRate = Double.parseDouble(kecdiff.getText());

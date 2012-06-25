@@ -313,22 +313,42 @@ public class BioGraph extends mxGraph {
 
 		// add all components
 		if (bioModel.isGridEnabled()) {
-			for (long i = 0; i < layout.getNumCompartmentGlyphs(); i++) {
+			
+			for (long i = 0; i < m.getNumParameters(); ++i) {
 				
-				String comp = layout.getCompartmentGlyph(i).getId();
-				if (!comp.startsWith(GlobalConstants.GLYPH+"__")) {
-					layout.getCompartmentGlyph(i).setId(GlobalConstants.GLYPH+"__"+comp);
-				} else {
-					comp = comp.replace(GlobalConstants.GLYPH+"__","");
-				}
+				if (m.getParameter(i).getId().contains("__locations")) {
+					
+					String[] splitAnnotation = m.getParameter(i).getAnnotationString().replace("<annotation>","")
+					.replace("</annotation>","").replace("\"","").replace("http://www.fakeuri.com","").replace("/>","").split("array:");
 				
-				//these are not meant to be displayed
-				//if (comp.contains("GRID__"))
-				//	continue;
-				
-				if (createGraphComponentFromModel(comp))
-					needsPositioning = true;
+					for (int j = 2; j < splitAnnotation.length; ++j) {
+						
+						splitAnnotation[j] = splitAnnotation[j].trim();						
+						String submodelID = splitAnnotation[j].split("=")[0];
+						
+						if (createGraphComponentFromModel(submodelID))
+							needsPositioning = true;
+					}					
+				}				
 			}
+			
+//			for (long i = 0; i < layout.getNumCompartmentGlyphs(); i++) {
+//				
+//				String comp = layout.getCompartmentGlyph(i).getId();
+//				
+//				if (!comp.startsWith(GlobalConstants.GLYPH+"__")) {
+//					layout.getCompartmentGlyph(i).setId(GlobalConstants.GLYPH+"__"+comp);
+//				} else {
+//					comp = comp.replace(GlobalConstants.GLYPH+"__","");
+//				}
+//				
+//				//these are not meant to be displayed
+//				//if (comp.contains("GRID__"))
+//				//	continue;
+//				
+//				if (createGraphComponentFromModel(comp))
+//					needsPositioning = true;
+//			}
 		} 
 		else {
 			CompModelPlugin sbmlCompModel = bioModel.getSBMLCompModel();

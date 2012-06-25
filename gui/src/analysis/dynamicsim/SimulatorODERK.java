@@ -41,7 +41,7 @@ public class SimulatorODERK extends Simulator {
 			String[] interestingSpecies, int numSteps, double relError, double absError, String quantityType) 
 	throws IOException, XMLStreamException {
 		
-		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, randomSeed,
+		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, 0.0, randomSeed,
 				progress, printInterval, initializationTime, stoichAmpValue, running,
 				interestingSpecies, quantityType);
 		

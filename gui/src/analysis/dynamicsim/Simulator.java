@@ -187,6 +187,7 @@ public abstract class Simulator {
 	protected String SBMLFileName;
 	protected double timeLimit;
 	protected double maxTimeStep;
+	protected double minTimeStep;
 	protected JProgressBar progress;
 	protected double printInterval;
 	protected int currentRun;
@@ -238,8 +239,9 @@ public abstract class Simulator {
 	 * @throws XMLStreamException
 	 */
 	public Simulator(String SBMLFileName, String outputDirectory, double timeLimit, 
-			double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval, Long initializationTime,
-			double stoichAmpValue, JFrame running, String[] interestingSpecies, String quantityType) 
+			double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, 
+			Long initializationTime, double stoichAmpValue, JFrame running, String[] interestingSpecies, 
+			String quantityType) 
 	throws IOException, XMLStreamException {
 		
 		long initTime1 = System.nanoTime();
@@ -247,6 +249,7 @@ public abstract class Simulator {
 		this.SBMLFileName = SBMLFileName;
 		this.timeLimit = timeLimit;
 		this.maxTimeStep = maxTimeStep;
+		this.minTimeStep = minTimeStep;
 		this.progress = progress;
 		this.printInterval = printInterval;
 		this.outputDirectory = outputDirectory;
@@ -396,29 +399,6 @@ public abstract class Simulator {
 	}
 	
 	/**
-	 * recursively finds all variable nodes and prepends a string to the variable
-	 * static version
-	 * 
-	 * @param node
-	 * @param toPrepend
-	 */
-	private static void prependToVariableNodes(ASTNode node, String toPrepend, Model model) {
-		
-		if (node.isName()) {
-			
-			//only prepend to species and parameters
-			if (model.getSpecies(toPrepend + node.getName()) != null)
-				node.setVariable(model.getSpecies(toPrepend + node.getName()));
-			else if (model.getParameter(toPrepend + node.getName()) != null)
-				node.setVariable(model.getParameter(toPrepend + node.getName()));
-		}
-		else {
-			for (ASTNode childNode : node.getChildren())
-				prependToVariableNodes(childNode, toPrepend, model);
-		}
-	}
-	
-	/**
 	 * alters the kinetic laws and stoichiometries of grid diffusion reactions
 	 * in accordance with the stoichiometry amplification parameters specified by the user
 	 * 
@@ -467,537 +447,6 @@ public abstract class Simulator {
 		initialEvents = model.getListOfEvents().clone();
 		initialParameters = model.getListOfParameters().clone();
 		initialCompartments = model.getListOfCompartments().clone();
-	}
-	
-	/**
-	 * moves a component in a given direction
-	 * moves components out of the way if needed
-	 * creates grid reactions if the grid expands
-	 * 
-	 * @param parentComponentID
-	 * @param direction
-	 */
-	protected void moveComponent(String parentComponentID, String childComponentID, Point parentLocation, Point childLocation,
-			int direction, HashSet<String> reactionsToAdjust) {
-		
-		HashSet<Integer> newRows = new HashSet<Integer>();
-		HashSet<Integer> newCols = new HashSet<Integer>();
-		
-		//find the grid bounds
-		for (Point location : componentToLocationMap.values()) {
-			
-			if ((int) location.getX() < minRow) {
-				minRow = (int) location.getX();
-			}
-			else if ((int) location.getX() > maxRow) {
-				maxRow = (int) location.getX();
-			}
-			if ((int) location.getY() < minCol) {
-				minCol = (int) location.getY();
-			}
-			else if ((int) location.getY() > maxCol) {
-				maxCol = (int) location.getY();
-			}
-		}
-		
-			
-		switch (direction) {
-		
-			case 0: childLocation.y -= 1; break;
-			case 1: childLocation.y += 1; break;
-			case 2: childLocation.x -= 1; break;
-			case 3: childLocation.x += 1; break;
-			
-			case 4: {childLocation.x += 1; childLocation.y -= 1; break;}
-			case 5: {childLocation.x -= 1; childLocation.y += 1; break;}
-			case 6: {childLocation.x -= 1; childLocation.y -= 1; break;}
-			case 7: {childLocation.x += 1; childLocation.y += 1; break;}
-		}
-		
-		HashSet<Point> locationsToMove = new HashSet<Point>();
-		
-		//if this place is taken, make room by moving the cells in the way
-		if (componentToLocationMap.containsValue(childLocation)) {
-			
-			//empty location is the location that needs to become empty so the child can go there
-			Point emptyLocation = (Point) childLocation.clone();
-			
-			//find all of the locations that are in the way and put them in the hashset
-			//this is done my moving in the direction chosen until an empty space is found
-			while (componentToLocationMap.containsValue(emptyLocation) == true) {
-				
-				locationsToMove.add((Point) emptyLocation.clone());
-				
-				switch (direction) {
-				
-					case 0: emptyLocation.y -= 1; break;
-					case 1: emptyLocation.y += 1; break;
-					case 2: emptyLocation.x -= 1; break;
-					case 3: emptyLocation.x += 1; break;
-					
-					case 4: {emptyLocation.x += 1; emptyLocation.y -= 1; break;}
-					case 5: {emptyLocation.x -= 1; emptyLocation.y += 1; break;}
-					case 6: {emptyLocation.x -= 1; emptyLocation.y -= 1; break;}
-					case 7: {emptyLocation.x += 1; emptyLocation.y += 1; break;}
-				}
-			}
-			
-			LinkedHashMap<String, Point> componentToLocationMapCopy = 
-				(LinkedHashMap<String, Point>) componentToLocationMap.clone();
-			
-			//move the cells that are in the way
-			for (Map.Entry<String, Point> componentAndLocation : componentToLocationMapCopy.entrySet()) {
-				
-				String compID = componentAndLocation.getKey();
-				
-				if (locationsToMove.contains(componentAndLocation.getValue())) {
-					
-					switch (direction) {
-					
-						case 0: componentToLocationMap.get(compID).y -= 1; break;
-						case 1: componentToLocationMap.get(compID).y += 1; break;
-						case 2: componentToLocationMap.get(compID).x -= 1; break;
-						case 3: componentToLocationMap.get(compID).x += 1; break;
-						
-						case 4: {componentToLocationMap.get(compID).x += 1; componentToLocationMap.get(compID).y -= 1; break;}
-						case 5: {componentToLocationMap.get(compID).x -= 1; componentToLocationMap.get(compID).y += 1; break;}
-						case 6: {componentToLocationMap.get(compID).x -= 1; componentToLocationMap.get(compID).y -= 1; break;}
-						case 7: {componentToLocationMap.get(compID).x += 1; componentToLocationMap.get(compID).y += 1; break;}
-					}
-										
-					//keep track of min row/col and max row/col so you know the bounds of the grid
-					if ((int) componentToLocationMap.get(compID).getX() < minRow) {
-						minRow = (int) componentToLocationMap.get(compID).getX();
-						newRows.add(minRow);
-					}
-					else if ((int) componentToLocationMap.get(compID).getX() > maxRow) {
-						maxRow = (int) componentToLocationMap.get(compID).getX();
-						newRows.add(maxRow);
-					}
-					if ((int) componentToLocationMap.get(compID).getY() < minCol) {
-						minCol = (int) componentToLocationMap.get(compID).getY();
-						newCols.add(minCol);
-					}
-					else if ((int) componentToLocationMap.get(compID).getY() > maxCol) {
-						maxCol = (int) componentToLocationMap.get(compID).getY();
-						newCols.add(maxCol);
-					}
-				}
-			}
-		}
-		
-		//now that an empty space has been created (if necessary), put in the child component
-		//or move the parent component (if the ID is "" then it's a pure move not a duplication)
-		if (childComponentID.equals(""))
-			componentToLocationMap.put(parentComponentID, childLocation);
-		else
-			componentToLocationMap.put(childComponentID, childLocation);
-		
-		//keep track of min row/col and max row/col so you know the bounds of the grid
-		//this set of ifs is necessary because locationsToMove might be empty (if nothing's in the way)
-		if ((int) childLocation.getX() < minRow) {
-			minRow = (int) childLocation.getX();
-			newRows.add(minRow);
-		}
-		else if ((int) childLocation.getX() > maxRow) {
-			maxRow = (int) childLocation.getX();
-			newRows.add(maxRow);
-		}
-		if ((int) childLocation.getY() < minCol) {
-			minCol = (int) childLocation.getY();
-			newCols.add(minCol);
-		}
-		else if ((int) childLocation.getY() > maxCol) {
-			maxCol = (int) childLocation.getY();
-			newCols.add(maxCol);
-		}
-		
-		HashSet<String> underlyingSpeciesIDs = new HashSet<String>();
-		HashSet<String> newGridSpeciesIDs = new HashSet<String>();
-		HashMap<String, String> newGridSpeciesIDToOldRowSubstring = new HashMap<String, String>();
-		HashMap<String, String> newGridSpeciesIDToOldColSubstring = new HashMap<String, String>();
-		HashMap<String, String> newGridSpeciesIDToNewRowSubstring = new HashMap<String, String>();
-		HashMap<String, String> newGridSpeciesIDToNewColSubstring = new HashMap<String, String>();
-
-		
-		for (String speciesID : speciesIDSet) {
-		
-			//find the grid species
-			if (speciesID.contains("ROW") && speciesID.contains("COL") && speciesID.contains("__")) {
-				underlyingSpeciesIDs.add(speciesID.split("__")[1]);
-			}
-		}
-
-		//if there are new rows or cols added to the grid
-		//add new grid species
-		if (newRows.size() > 0) {
-			
-			for (int newRow : newRows) {
-			
-				//create new grid species for this new row
-				for (int col = minCol; col <= maxCol; ++col) {
-					
-					for (String underlyingSpeciesID : underlyingSpeciesIDs) {
-						
-						String nonnegRow = Integer.toString(newRow);
-						String nonnegCol = Integer.toString(col);
-						
-						if (newRow < 0)
-							nonnegRow = nonnegRow.replace("-", "_negative_");
-						if (col < 0)
-							nonnegCol = nonnegCol.replace("-", "_negative_");	
-						
-						String newID = "ROW" + nonnegRow + "_COL" + nonnegCol + "__" + underlyingSpeciesID;
-						String newIDWithNegatives = "ROW" + newRow + "_COL" + col + "__" + underlyingSpeciesID;
-						
-						if (model.getSpecies(newID) != null)
-							continue;
-						
-						newGridSpeciesIDs.add(newIDWithNegatives);
-						newGridSpeciesIDToOldRowSubstring.put(newIDWithNegatives, "ROW" + newRow);
-						newGridSpeciesIDToOldColSubstring.put(newIDWithNegatives, "COL" + col);
-						newGridSpeciesIDToNewRowSubstring.put(newIDWithNegatives, "ROW" + nonnegRow);
-						newGridSpeciesIDToNewColSubstring.put(newIDWithNegatives, "COL" + nonnegCol);
-						
-						Species gridSpecies = null;
-						
-						//find a grid species to take values from
-						for (Species species : model.getListOfSpecies()) {
-							
-							if (species.getId().contains("__" + underlyingSpeciesID) && species.getId().contains("ROW") 
-									&& species.getId().contains("COL"))
-								gridSpecies = species;
-						}
-						
-						Species newSpecies = gridSpecies.clone();
-						newSpecies.setId(newID);
-						newSpecies.setMetaId(newID);
-						
-						//add new grid species to the model (so that altering the kinetic law through jsbml can work)
-						model.addSpecies(newSpecies);
-						
-						//add a new species to the simulation data structures
-						setupSingleSpecies(gridSpecies, newIDWithNegatives);
-						variableToValueMap.put(newID.replace("_negative_","-"), 0);
-					}
-				}
-			}
-		}
-		
-		if (newCols.size() > 0) {
-			
-			for (int newCol : newCols) {
-			
-				//create new grid species for this new col
-				for (int row = minRow; row <= maxRow; ++row) {
-					
-					for (String underlyingSpeciesID : underlyingSpeciesIDs) {
-						
-						String nonnegRow = Integer.toString(row);
-						String nonnegCol = Integer.toString(newCol);
-						
-						if (row < 0)
-							nonnegRow = nonnegRow.replace("-", "_negative_");
-						if (newCol < 0)
-							nonnegCol = nonnegCol.replace("-", "_negative_");
-						
-						String newID = "ROW" + nonnegRow + "_COL" + nonnegCol + "__" + underlyingSpeciesID;
-						String newIDWithNegatives = "ROW" + row + "_COL" + newCol + "__" + underlyingSpeciesID;
-						newGridSpeciesIDs.add(newIDWithNegatives);
-						newGridSpeciesIDToOldRowSubstring.put(newIDWithNegatives, "ROW" + row);
-						newGridSpeciesIDToOldColSubstring.put(newIDWithNegatives, "COL" + newCol);
-						newGridSpeciesIDToNewRowSubstring.put(newIDWithNegatives, "ROW" + nonnegRow);
-						newGridSpeciesIDToNewColSubstring.put(newIDWithNegatives, "COL" + nonnegCol);
-						
-						if (model.getSpecies(newID) != null)
-							continue;
-						
-						Species gridSpecies = null;
-						
-						//find a grid species to take values from
-						for (Species species : model.getListOfSpecies()) {
-							
-							if (species.getId().contains("__" + underlyingSpeciesID) && species.getId().contains("ROW") 
-									&& species.getId().contains("COL"))
-								gridSpecies = species;
-						}
-						
-						Species newSpecies = gridSpecies.clone();
-						newSpecies.setId(newID);
-						newSpecies.setMetaId(newID);
-						
-						//add new grid species to the model (so that altering the kinetic law through jsbml can work)
-						model.addSpecies(newSpecies);
-						
-						//add a new species to the simulation data structures
-						setupSingleSpecies(gridSpecies, newIDWithNegatives);
-						variableToValueMap.put(newID.replace("_negative_","-"), 0);
-					}
-				}
-			}
-		}
-		
-		//create new grid diffusion and degradation reactions for the new grid species
-		for (String speciesID : newGridSpeciesIDs) {
-			
-			String newGridSpeciesID = speciesID.replace(
-					newGridSpeciesIDToOldRowSubstring.get(speciesID), newGridSpeciesIDToNewRowSubstring.get(speciesID)).replace(
-							newGridSpeciesIDToOldColSubstring.get(speciesID), newGridSpeciesIDToNewColSubstring.get(speciesID));
-			
-			String[] splitID = speciesID.split("_");
-			
-			int row = Integer.valueOf(splitID[0].replace("ROW",""));
-			int col = Integer.valueOf(splitID[1].replace("COL",""));
-			
-			ArrayList<Point> neighborLocations = new ArrayList<Point>();
-			
-			neighborLocations.add(new Point(row+1,col)); //right
-			neighborLocations.add(new Point(row,col+1)); //below
-			neighborLocations.add(new Point(row-1,col)); //left
-			neighborLocations.add(new Point(row,col-1)); //above
-			
-			String underlyingSpeciesID = speciesID.split("__")[1];
-			ASTNode newNode = new ASTNode();
-			
-			//find a grid diffusion reaction with this underlying species to take values from
-			for (Map.Entry<String, ASTNode> reactionAndFormula : reactionToFormulaMap.entrySet()) {
-				
-				String reactionID = reactionAndFormula.getKey();
-				
-				if (reactionID.contains("Diffusion_" + underlyingSpeciesID + "_Below") 
-						|| reactionID.contains("Diffusion_" + underlyingSpeciesID + "_Above")
-						|| reactionID.contains("Diffusion_" + underlyingSpeciesID + "_Left")
-						|| reactionID.contains("Diffusion_" + underlyingSpeciesID + "_Right")) {
-					
-					newNode = reactionAndFormula.getValue().clone();
-				}
-			}
-			
-			int directionIndex = 0;
-			
-			for (Point neighborLocation : neighborLocations) {
-				
-				int nRow = (int) neighborLocation.getX();
-				int nCol = (int) neighborLocation.getY();
-				String neighborID = "ROW" + nRow + "_COL" + nCol + "__" + underlyingSpeciesID;
-				
-				String fdString = "", rvString = "";
-				
-				switch (directionIndex) {				
-
-				case 0: fdString = "Below"; rvString = "Above"; break;
-				case 1: fdString = "Right"; rvString = "Left"; break;
-				case 2: fdString = "Above"; rvString = "Below"; break;		
-				case 3: fdString = "Left"; rvString = "Right"; break;
-				}
-				
-				//make sure that the neighbor exists (ie, is a species contained on the current grid size)
-				if (speciesIDSet.contains(neighborID)) {
-					
-					if (nRow < 0)
-						neighborID = neighborID.replace("ROW" + nRow, "ROW" + "_negative_" + (-1 * nRow));
-					if (nCol < 0)
-						neighborID = neighborID.replace("COL" + nCol, "COL" + "_negative_" + (-1 * nCol));
-					
-					//create forward reaction (to the neighbor) if it doesn't exist already
-					if (reactionToPropensityMap.containsKey("ROW" + row + "_COL" + col 
-							+ "_Diffusion_" + underlyingSpeciesID + "_" + fdString) == false) {
-						
-						//alter kinetic law for forward reaction
-						newNode.getRightChild().setVariable(model.getSpecies(newGridSpeciesID));						
-						
-						String newReactionID = "ROW" + row + "_COL" + col + "_Diffusion_" 
-						+ underlyingSpeciesID + "_" + fdString;
-						
-						if (row < 0)
-							newReactionID = newReactionID.replace("ROW" + row, "ROW" + "_negative_" + (-1 * row));
-						if (col < 0)
-							newReactionID = newReactionID.replace("COL" + col, "COL" + "_negative_" + (-1 * col));
-						
-						Reaction fdReaction = model.createReaction(newReactionID);
-						KineticLaw fdKineticLaw = model.createKineticLaw();
-						fdKineticLaw.setMath(newNode.clone());
-						fdReaction.setKineticLaw(fdKineticLaw);						
-						SpeciesReference reactant = new SpeciesReference(model.getSpecies(newGridSpeciesID));
-						reactant.setStoichiometry(1);
-						fdReaction.addReactant(reactant);
-						SpeciesReference product = new SpeciesReference(model.getSpecies(neighborID));
-						product.setStoichiometry(1);
-						fdReaction.addProduct(product);
-						
-						setupLocalParameters(fdReaction.getKineticLaw(), fdReaction.getId());						
-						
-						setupSingleReaction(fdReaction.getId(), fdReaction.getKineticLaw().getMath(), false,
-								fdReaction.getListOfReactants(), fdReaction.getListOfProducts(), fdReaction.getListOfModifiers());
-					}
-					
-					//create the reverse reaction (from the neighbor) if it doesn't already exist
-					if (reactionToPropensityMap.containsKey("ROW" + nRow + "_COL" + nCol 
-							+ "_Diffusion_" + underlyingSpeciesID + "_" + rvString) == false) {
-						
-						//alter kinetic law for reverse reaction
-						newNode.getRightChild().setVariable(model.getSpecies(neighborID));
-						
-						String newReactionID = "ROW" + nRow + "_COL" + nCol + "_Diffusion_"
-						+ underlyingSpeciesID + "_" + rvString;
-						
-						if (nRow < 0)
-							newReactionID = newReactionID.replace("ROW" + nRow, "ROW" + "_negative_" + (-1 * nRow));
-						if (nCol < 0)
-							newReactionID = newReactionID.replace("COL" + nCol, "COL" + "_negative_" + (-1 * nCol));
-						
-						//create reverse reaction
-						Reaction rvReaction = model.createReaction(newReactionID);
-						KineticLaw rvKineticLaw = model.createKineticLaw();
-						rvKineticLaw.setMath(newNode.clone());
-						rvReaction.setKineticLaw(rvKineticLaw);						
-						SpeciesReference reactant = new SpeciesReference(model.getSpecies(neighborID));
-						reactant.setStoichiometry(1);
-						rvReaction.addReactant(reactant);
-						SpeciesReference product = new SpeciesReference(model.getSpecies(newGridSpeciesID));
-						product.setStoichiometry(1);
-						rvReaction.addProduct(product);
-	
-						setupLocalParameters(rvReaction.getKineticLaw(), rvReaction.getId());
-						
-						setupSingleReaction(rvReaction.getId(), rvReaction.getKineticLaw().getMath(), false,
-								rvReaction.getListOfReactants(), rvReaction.getListOfProducts(), rvReaction.getListOfModifiers());
-					}
-				}
-				
-				++directionIndex;
-			}
-			
-			ASTNode degradationNode = new ASTNode();
-
-			//create degradation reaction for each grid species
-			//find a grid degradation reaction to copy from
-			for (Map.Entry<String, ASTNode> reactionAndFormula : reactionToFormulaMap.entrySet()) {
-				
-				String reactionID = reactionAndFormula.getKey();
-				
-				if (reactionID.contains("Degradation_" + underlyingSpeciesID)) {
-					
-					degradationNode = reactionAndFormula.getValue().clone();
-					degradationNode.getRightChild().setVariable(model.getSpecies(newGridSpeciesID));
-					break;
-				}
-			}
-			
-			String newDegReactionID = "ROW" + row + "_COL" + col + "_Degradation_" + underlyingSpeciesID;
-			
-			if (row < 0)
-				newDegReactionID = newDegReactionID.replace("ROW" + row, "ROW" + "_negative_" + (-1 * row));
-			if (col < 0)
-				newDegReactionID = newDegReactionID.replace("COL" + col, "COL" + "_negative_" + (-1 * col));
-			
-			Reaction degReaction = model.createReaction(newDegReactionID);
-			KineticLaw degKineticLaw = model.createKineticLaw();
-			degKineticLaw.setMath(degradationNode.clone());
-			degReaction.setKineticLaw(degKineticLaw);
-			SpeciesReference reactant = new SpeciesReference(model.getSpecies(newGridSpeciesID));
-			reactant.setStoichiometry(1);
-			degReaction.addReactant(reactant);
-			
-			setupLocalParameters(degReaction.getKineticLaw(), degReaction.getId());
-			setupSingleReaction(degReaction.getId(), degReaction.getKineticLaw().getMath(), false,
-					degReaction.getListOfReactants(), degReaction.getListOfProducts(), degReaction.getListOfModifiers());
-		}
-		
-		//MOVE MEMBRANE DIFFUSION REACTIONS FOR COMPONENTS THAT HAVE MOVED
-		if (locationsToMove.size() > 0) {
-			
-			for (Point locationToMove : locationsToMove) {
-				
-				//adjust these locations to their new, moved location
-				switch (direction) {
-				
-					case 0: locationToMove.y -= 1; break;
-					case 1: locationToMove.y += 1; break;
-					case 2: locationToMove.x -= 1; break;
-					case 3: locationToMove.x += 1; break;
-					
-					case 4: {locationToMove.x += 1; locationToMove.y -= 1; break;}
-					case 5: {locationToMove.x -= 1; locationToMove.y += 1; break;}
-					case 6: {locationToMove.x -= 1; locationToMove.y -= 1; break;}
-					case 7: {locationToMove.x += 1; locationToMove.y += 1; break;}
-				}
-			}
-			
-			//find the membrane diffusion reactions for these moved components and alter it
-			for (String compID : componentToLocationMap.keySet()) {
-				
-				int compX = (int) componentToLocationMap.get(compID).getX();
-				int compY = (int) componentToLocationMap.get(compID).getY();
-				
-				for (Point locationToMove : locationsToMove) {
-					
-					if (locationToMove.x == compX && locationToMove.y == compY) {
-						
-						for (String reactionID : componentToReactionSetMap.get(compID)) {
-							
-							//only need to change the rv membrane diffusion reaction
-							if (reactionID.contains("MembraneDiffusion")) {
-								
-								ASTNode formulaNode = reactionToFormulaMap.get(reactionID);
-								
-								//the right child is the one to alter
-								ASTNode speciesNode = formulaNode.getRightChild();
-
-								Point oldLocation = (Point) locationToMove.clone();
-								
-								switch (direction) {
-									
-									case 0: oldLocation.y = locationToMove.y + 1; break;
-									case 1: oldLocation.y = locationToMove.y - 1; break;
-									case 2: oldLocation.x = locationToMove.x + 1; break;
-									case 3: oldLocation.x = locationToMove.x - 1; break;
-									
-									case 4: {oldLocation.x = locationToMove.x - 1; oldLocation.y = locationToMove.y + 1; break;}
-									case 5: {oldLocation.x = locationToMove.x + 1; oldLocation.y = locationToMove.y - 1; break;}
-									case 6: {oldLocation.x = locationToMove.x + 1; oldLocation.y = locationToMove.y + 1; break;}
-									case 7: {oldLocation.x = locationToMove.x - 1; oldLocation.y = locationToMove.y - 1; break;}
-								}
-								
-								String oldRowCol = "ROW" + (int) oldLocation.x + "_COL" + (int) oldLocation.y;
-								oldRowCol = oldRowCol.replace("ROW-", "ROW_negative_");
-								oldRowCol = oldRowCol.replace("COL-", "COL_negative_");
-								
-								String newRowCol = "ROW" + (int) locationToMove.x + "_COL" + (int) locationToMove.y;
-								newRowCol = newRowCol.replace("ROW-", "ROW_negative_");
-								newRowCol = newRowCol.replace("COL-", "COL_negative_");
-								
-								//adjust kinetic law
-								speciesNode.setVariable(model.getSpecies(speciesNode.getName().replace(oldRowCol, newRowCol)));
-								
-								newRowCol = newRowCol.replace("ROW_negative_", "ROW-");
-								newRowCol = newRowCol.replace("COL_negative_", "COL-");
-								oldRowCol = oldRowCol.replace("ROW_negative_", "ROW-");
-								oldRowCol = oldRowCol.replace("COL_negative_", "COL-");
-								
-								//adjust reactants/products
-								for (StringDoublePair speciesAndStoichiometry : 
-									reactionToSpeciesAndStoichiometrySetMap.get(reactionID)) {
-									
-									speciesAndStoichiometry.string = 
-										speciesAndStoichiometry.string.replace(oldRowCol, newRowCol);
-								}
-								
-								for (StringDoublePair reactantAndStoichiometry : 
-									reactionToReactantStoichiometrySetMap.get(reactionID)) {
-									
-									reactantAndStoichiometry.string =
-										reactantAndStoichiometry.string.replace(oldRowCol, newRowCol);
-								}
-								
-								//adjust propensity
-								reactionsToAdjust.add(reactionID);
-							}		
-						}
-					}
-				}
-			}
-		}		
 	}
 	
 	/**
@@ -1736,6 +1185,57 @@ public abstract class Simulator {
 //					//if species exists, return its value/amount
 //					if (variableToValueMap.containsKey(speciesName))
 //						return variableToValueMap.get(speciesName);
+				}
+				else if (nodeName.equals("neighborQuantityLeft")) {
+					
+//					System.err.println("here");
+//					System.err.println(node.toFormula());
+					
+					int leftIndex = (int) evaluateExpressionRecursive(node.getChild(1));
+					int rightIndex = (int) evaluateExpressionRecursive(node.getChild(2));
+					String speciesName = "ROW" + leftIndex + "_COL" + (rightIndex - 1) + "__" + node.getChild(0).getName();
+					
+					if (variableToValueMap.containsKey(speciesName))
+						return variableToValueMap.get(speciesName);	
+				}
+				else if (nodeName.equals("neighborQuantityRight")) {
+					
+					int leftIndex = (int) evaluateExpressionRecursive(node.getChild(1));
+					int rightIndex = (int) evaluateExpressionRecursive(node.getChild(2));
+					String speciesName = "ROW" + leftIndex + "_COL" + (rightIndex + 1) + "__" + node.getChild(0).getName();
+					
+					if (variableToValueMap.containsKey(speciesName))
+						return variableToValueMap.get(speciesName);					
+				}
+				else if (nodeName.equals("neighborQuantityAbove")) {
+					
+					int leftIndex = (int) evaluateExpressionRecursive(node.getChild(1));
+					int rightIndex = (int) evaluateExpressionRecursive(node.getChild(2));
+					String speciesName = "ROW" + (leftIndex - 1) + "_COL" + rightIndex + "__" + node.getChild(0).getName();
+					
+					if (variableToValueMap.containsKey(speciesName))
+						return variableToValueMap.get(speciesName);
+				}
+				else if (nodeName.equals("neighborQuantityBelow")) {
+					
+					int leftIndex = (int) evaluateExpressionRecursive(node.getChild(1));
+					int rightIndex = (int) evaluateExpressionRecursive(node.getChild(2));
+					String speciesName = "ROW" + (leftIndex + 1) + "_COL" + rightIndex + "__" + node.getChild(0).getName();
+					
+					if (variableToValueMap.containsKey(speciesName))
+						return variableToValueMap.get(speciesName);
+				}
+				else if (nodeName.equals("getCompartmentLocationX")) {
+					
+					//System.err.println(node.getChild(0).getName().split("__")[0]);
+					
+					return this.componentToLocationMap.get(node.getChild(0).getName().split("__")[0]).getX();
+				}
+				else if (nodeName.equals("getCompartmentLocationY")) {
+					
+					//System.err.println(node.getChild(0).getName().split("__")[0]);
+					
+					return this.componentToLocationMap.get(node.getChild(0).getName().split("__")[0]).getY();
 				}
 //				else {
 //					
@@ -2895,6 +2395,551 @@ public abstract class Simulator {
 		untriggeredEventSet.removeAll(triggeredEvents);
 	}
 		
+	protected void handleNeighborQuantityFunctions(ASTNode node, String compID, ASTNode child1, ASTNode child2) {
+		
+		if (node.isFunction() &&
+				node.getName().contains("neighborQuantity")) {
+			
+			node.addChild(child1);
+			node.addChild(child2);
+		}
+		else {
+			for (ASTNode childNode : node.getChildren())
+				handleNeighborQuantityFunctions(childNode, compID, child1, child2);
+		}
+	}
+	
+	/**
+	 * moves a component in a given direction
+	 * moves components out of the way if needed
+	 * creates grid reactions if the grid expands
+	 * 
+	 * @param parentComponentID
+	 * @param direction
+	 */
+	protected void moveComponent(String parentComponentID, String childComponentID, Point parentLocation, Point childLocation,
+			int direction, HashSet<String> reactionsToAdjust) {
+		
+		HashSet<Integer> newRows = new HashSet<Integer>();
+		HashSet<Integer> newCols = new HashSet<Integer>();
+		
+		//find the grid bounds
+		for (Point location : componentToLocationMap.values()) {
+			
+			if ((int) location.getX() < minRow) {
+				minRow = (int) location.getX();
+			}
+			else if ((int) location.getX() > maxRow) {
+				maxRow = (int) location.getX();
+			}
+			if ((int) location.getY() < minCol) {
+				minCol = (int) location.getY();
+			}
+			else if ((int) location.getY() > maxCol) {
+				maxCol = (int) location.getY();
+			}
+		}
+		
+			
+		switch (direction) {
+		
+			case 0: childLocation.y -= 1; break;
+			case 1: childLocation.y += 1; break;
+			case 2: childLocation.x -= 1; break;
+			case 3: childLocation.x += 1; break;
+			
+			case 4: {childLocation.x += 1; childLocation.y -= 1; break;}
+			case 5: {childLocation.x -= 1; childLocation.y += 1; break;}
+			case 6: {childLocation.x -= 1; childLocation.y -= 1; break;}
+			case 7: {childLocation.x += 1; childLocation.y += 1; break;}
+		}
+		
+		HashSet<Point> locationsToMove = new HashSet<Point>();
+		
+		//if this place is taken, make room by moving the cells in the way
+		if (componentToLocationMap.containsValue(childLocation)) {
+			
+			//empty location is the location that needs to become empty so the child can go there
+			Point emptyLocation = (Point) childLocation.clone();
+			
+			//find all of the locations that are in the way and put them in the hashset
+			//this is done my moving in the direction chosen until an empty space is found
+			while (componentToLocationMap.containsValue(emptyLocation) == true) {
+				
+				locationsToMove.add((Point) emptyLocation.clone());
+				
+				switch (direction) {
+				
+					case 0: emptyLocation.y -= 1; break;
+					case 1: emptyLocation.y += 1; break;
+					case 2: emptyLocation.x -= 1; break;
+					case 3: emptyLocation.x += 1; break;
+					
+					case 4: {emptyLocation.x += 1; emptyLocation.y -= 1; break;}
+					case 5: {emptyLocation.x -= 1; emptyLocation.y += 1; break;}
+					case 6: {emptyLocation.x -= 1; emptyLocation.y -= 1; break;}
+					case 7: {emptyLocation.x += 1; emptyLocation.y += 1; break;}
+				}
+			}
+			
+			LinkedHashMap<String, Point> componentToLocationMapCopy = 
+				(LinkedHashMap<String, Point>) componentToLocationMap.clone();
+			
+			//move the cells that are in the way
+			for (Map.Entry<String, Point> componentAndLocation : componentToLocationMapCopy.entrySet()) {
+				
+				String compID = componentAndLocation.getKey();
+				
+				if (locationsToMove.contains(componentAndLocation.getValue())) {
+					
+					switch (direction) {
+					
+						case 0: componentToLocationMap.get(compID).y -= 1; break;
+						case 1: componentToLocationMap.get(compID).y += 1; break;
+						case 2: componentToLocationMap.get(compID).x -= 1; break;
+						case 3: componentToLocationMap.get(compID).x += 1; break;
+						
+						case 4: {componentToLocationMap.get(compID).x += 1; componentToLocationMap.get(compID).y -= 1; break;}
+						case 5: {componentToLocationMap.get(compID).x -= 1; componentToLocationMap.get(compID).y += 1; break;}
+						case 6: {componentToLocationMap.get(compID).x -= 1; componentToLocationMap.get(compID).y -= 1; break;}
+						case 7: {componentToLocationMap.get(compID).x += 1; componentToLocationMap.get(compID).y += 1; break;}
+					}
+										
+					//keep track of min row/col and max row/col so you know the bounds of the grid
+					if ((int) componentToLocationMap.get(compID).getX() < minRow) {
+						minRow = (int) componentToLocationMap.get(compID).getX();
+						newRows.add(minRow);
+					}
+					else if ((int) componentToLocationMap.get(compID).getX() > maxRow) {
+						maxRow = (int) componentToLocationMap.get(compID).getX();
+						newRows.add(maxRow);
+					}
+					if ((int) componentToLocationMap.get(compID).getY() < minCol) {
+						minCol = (int) componentToLocationMap.get(compID).getY();
+						newCols.add(minCol);
+					}
+					else if ((int) componentToLocationMap.get(compID).getY() > maxCol) {
+						maxCol = (int) componentToLocationMap.get(compID).getY();
+						newCols.add(maxCol);
+					}
+				}
+			}
+		}
+		
+		//now that an empty space has been created (if necessary), put in the child component
+		//or move the parent component (if the ID is "" then it's a pure move not a duplication)
+		if (childComponentID.equals(""))
+			componentToLocationMap.put(parentComponentID, childLocation);
+		else
+			componentToLocationMap.put(childComponentID, childLocation);
+		
+		//keep track of min row/col and max row/col so you know the bounds of the grid
+		//this set of ifs is necessary because locationsToMove might be empty (if nothing's in the way)
+		if ((int) childLocation.getX() < minRow) {
+			minRow = (int) childLocation.getX();
+			newRows.add(minRow);
+		}
+		else if ((int) childLocation.getX() > maxRow) {
+			maxRow = (int) childLocation.getX();
+			newRows.add(maxRow);
+		}
+		if ((int) childLocation.getY() < minCol) {
+			minCol = (int) childLocation.getY();
+			newCols.add(minCol);
+		}
+		else if ((int) childLocation.getY() > maxCol) {
+			maxCol = (int) childLocation.getY();
+			newCols.add(maxCol);
+		}
+		
+		HashSet<String> underlyingSpeciesIDs = new HashSet<String>();
+		HashSet<String> newGridSpeciesIDs = new HashSet<String>();
+		HashMap<String, String> newGridSpeciesIDToOldRowSubstring = new HashMap<String, String>();
+		HashMap<String, String> newGridSpeciesIDToOldColSubstring = new HashMap<String, String>();
+		HashMap<String, String> newGridSpeciesIDToNewRowSubstring = new HashMap<String, String>();
+		HashMap<String, String> newGridSpeciesIDToNewColSubstring = new HashMap<String, String>();
+
+		
+		for (String speciesID : speciesIDSet) {
+		
+			//find the grid species
+			if (speciesID.contains("ROW") && speciesID.contains("COL") && speciesID.contains("__")) {
+				underlyingSpeciesIDs.add(speciesID.split("__")[1]);
+			}
+		}
+
+		//if there are new rows or cols added to the grid
+		//add new grid species
+		if (newRows.size() > 0) {
+			
+			for (int newRow : newRows) {
+			
+				//create new grid species for this new row
+				for (int col = minCol; col <= maxCol; ++col) {
+					
+					for (String underlyingSpeciesID : underlyingSpeciesIDs) {
+						
+						String nonnegRow = Integer.toString(newRow);
+						String nonnegCol = Integer.toString(col);
+						
+						if (newRow < 0)
+							nonnegRow = nonnegRow.replace("-", "_negative_");
+						if (col < 0)
+							nonnegCol = nonnegCol.replace("-", "_negative_");	
+						
+						String newID = "ROW" + nonnegRow + "_COL" + nonnegCol + "__" + underlyingSpeciesID;
+						String newIDWithNegatives = "ROW" + newRow + "_COL" + col + "__" + underlyingSpeciesID;
+						
+						if (model.getSpecies(newID) != null)
+							continue;
+						
+						newGridSpeciesIDs.add(newIDWithNegatives);
+						newGridSpeciesIDToOldRowSubstring.put(newIDWithNegatives, "ROW" + newRow);
+						newGridSpeciesIDToOldColSubstring.put(newIDWithNegatives, "COL" + col);
+						newGridSpeciesIDToNewRowSubstring.put(newIDWithNegatives, "ROW" + nonnegRow);
+						newGridSpeciesIDToNewColSubstring.put(newIDWithNegatives, "COL" + nonnegCol);
+						
+						Species gridSpecies = null;
+						
+						//find a grid species to take values from
+						for (Species species : model.getListOfSpecies()) {
+							
+							if (species.getId().contains("__" + underlyingSpeciesID) && species.getId().contains("ROW") 
+									&& species.getId().contains("COL"))
+								gridSpecies = species;
+						}
+						
+						Species newSpecies = gridSpecies.clone();
+						newSpecies.setId(newID);
+						newSpecies.setMetaId(newID);
+						
+						//add new grid species to the model (so that altering the kinetic law through jsbml can work)
+						model.addSpecies(newSpecies);
+						
+						//add a new species to the simulation data structures
+						setupSingleSpecies(gridSpecies, newIDWithNegatives);
+						variableToValueMap.put(newID.replace("_negative_","-"), 0);
+					}
+				}
+			}
+		}
+		
+		if (newCols.size() > 0) {
+			
+			for (int newCol : newCols) {
+			
+				//create new grid species for this new col
+				for (int row = minRow; row <= maxRow; ++row) {
+					
+					for (String underlyingSpeciesID : underlyingSpeciesIDs) {
+						
+						String nonnegRow = Integer.toString(row);
+						String nonnegCol = Integer.toString(newCol);
+						
+						if (row < 0)
+							nonnegRow = nonnegRow.replace("-", "_negative_");
+						if (newCol < 0)
+							nonnegCol = nonnegCol.replace("-", "_negative_");
+						
+						String newID = "ROW" + nonnegRow + "_COL" + nonnegCol + "__" + underlyingSpeciesID;
+						String newIDWithNegatives = "ROW" + row + "_COL" + newCol + "__" + underlyingSpeciesID;
+						newGridSpeciesIDs.add(newIDWithNegatives);
+						newGridSpeciesIDToOldRowSubstring.put(newIDWithNegatives, "ROW" + row);
+						newGridSpeciesIDToOldColSubstring.put(newIDWithNegatives, "COL" + newCol);
+						newGridSpeciesIDToNewRowSubstring.put(newIDWithNegatives, "ROW" + nonnegRow);
+						newGridSpeciesIDToNewColSubstring.put(newIDWithNegatives, "COL" + nonnegCol);
+						
+						if (model.getSpecies(newID) != null)
+							continue;
+						
+						Species gridSpecies = null;
+						
+						//find a grid species to take values from
+						for (Species species : model.getListOfSpecies()) {
+							
+							if (species.getId().contains("__" + underlyingSpeciesID) && species.getId().contains("ROW") 
+									&& species.getId().contains("COL"))
+								gridSpecies = species;
+						}
+						
+						Species newSpecies = gridSpecies.clone();
+						newSpecies.setId(newID);
+						newSpecies.setMetaId(newID);
+						
+						//add new grid species to the model (so that altering the kinetic law through jsbml can work)
+						model.addSpecies(newSpecies);
+						
+						//add a new species to the simulation data structures
+						setupSingleSpecies(gridSpecies, newIDWithNegatives);
+						variableToValueMap.put(newID.replace("_negative_","-"), 0);
+					}
+				}
+			}
+		}
+		
+		//create new grid diffusion and degradation reactions for the new grid species
+		for (String speciesID : newGridSpeciesIDs) {
+			
+			String newGridSpeciesID = speciesID.replace(
+					newGridSpeciesIDToOldRowSubstring.get(speciesID), newGridSpeciesIDToNewRowSubstring.get(speciesID)).replace(
+							newGridSpeciesIDToOldColSubstring.get(speciesID), newGridSpeciesIDToNewColSubstring.get(speciesID));
+			
+			String[] splitID = speciesID.split("_");
+			
+			int row = Integer.valueOf(splitID[0].replace("ROW",""));
+			int col = Integer.valueOf(splitID[1].replace("COL",""));
+			
+			ArrayList<Point> neighborLocations = new ArrayList<Point>();
+			
+			neighborLocations.add(new Point(row+1,col)); //right
+			neighborLocations.add(new Point(row,col+1)); //below
+			neighborLocations.add(new Point(row-1,col)); //left
+			neighborLocations.add(new Point(row,col-1)); //above
+			
+			String underlyingSpeciesID = speciesID.split("__")[1];
+			ASTNode newNode = new ASTNode();
+			
+			//find a grid diffusion reaction with this underlying species to take values from
+			for (Map.Entry<String, ASTNode> reactionAndFormula : reactionToFormulaMap.entrySet()) {
+				
+				String reactionID = reactionAndFormula.getKey();
+				
+				if (reactionID.contains("Diffusion_" + underlyingSpeciesID + "_Below") 
+						|| reactionID.contains("Diffusion_" + underlyingSpeciesID + "_Above")
+						|| reactionID.contains("Diffusion_" + underlyingSpeciesID + "_Left")
+						|| reactionID.contains("Diffusion_" + underlyingSpeciesID + "_Right")) {
+					
+					newNode = reactionAndFormula.getValue().clone();
+				}
+			}
+			
+			int directionIndex = 0;
+			
+			for (Point neighborLocation : neighborLocations) {
+				
+				int nRow = (int) neighborLocation.getX();
+				int nCol = (int) neighborLocation.getY();
+				String neighborID = "ROW" + nRow + "_COL" + nCol + "__" + underlyingSpeciesID;
+				
+				String fdString = "", rvString = "";
+				
+				switch (directionIndex) {				
+
+				case 0: fdString = "Below"; rvString = "Above"; break;
+				case 1: fdString = "Right"; rvString = "Left"; break;
+				case 2: fdString = "Above"; rvString = "Below"; break;		
+				case 3: fdString = "Left"; rvString = "Right"; break;
+				}
+				
+				//make sure that the neighbor exists (ie, is a species contained on the current grid size)
+				if (speciesIDSet.contains(neighborID)) {
+					
+					if (nRow < 0)
+						neighborID = neighborID.replace("ROW" + nRow, "ROW" + "_negative_" + (-1 * nRow));
+					if (nCol < 0)
+						neighborID = neighborID.replace("COL" + nCol, "COL" + "_negative_" + (-1 * nCol));
+					
+					//create forward reaction (to the neighbor) if it doesn't exist already
+					if (reactionToPropensityMap.containsKey("ROW" + row + "_COL" + col 
+							+ "_Diffusion_" + underlyingSpeciesID + "_" + fdString) == false) {
+						
+						//alter kinetic law for forward reaction
+						newNode.getRightChild().setVariable(model.getSpecies(newGridSpeciesID));						
+						
+						String newReactionID = "ROW" + row + "_COL" + col + "_Diffusion_" 
+						+ underlyingSpeciesID + "_" + fdString;
+						
+						if (row < 0)
+							newReactionID = newReactionID.replace("ROW" + row, "ROW" + "_negative_" + (-1 * row));
+						if (col < 0)
+							newReactionID = newReactionID.replace("COL" + col, "COL" + "_negative_" + (-1 * col));
+						
+						Reaction fdReaction = model.createReaction(newReactionID);
+						KineticLaw fdKineticLaw = model.createKineticLaw();
+						fdKineticLaw.setMath(newNode.clone());
+						fdReaction.setKineticLaw(fdKineticLaw);						
+						SpeciesReference reactant = new SpeciesReference(model.getSpecies(newGridSpeciesID));
+						reactant.setStoichiometry(1);
+						fdReaction.addReactant(reactant);
+						SpeciesReference product = new SpeciesReference(model.getSpecies(neighborID));
+						product.setStoichiometry(1);
+						fdReaction.addProduct(product);
+						
+						setupLocalParameters(fdReaction.getKineticLaw(), fdReaction.getId());						
+						
+						setupSingleReaction(fdReaction.getId(), fdReaction.getKineticLaw().getMath(), false,
+								fdReaction.getListOfReactants(), fdReaction.getListOfProducts(), fdReaction.getListOfModifiers());
+					}
+					
+					//create the reverse reaction (from the neighbor) if it doesn't already exist
+					if (reactionToPropensityMap.containsKey("ROW" + nRow + "_COL" + nCol 
+							+ "_Diffusion_" + underlyingSpeciesID + "_" + rvString) == false) {
+						
+						//alter kinetic law for reverse reaction
+						newNode.getRightChild().setVariable(model.getSpecies(neighborID));
+						
+						String newReactionID = "ROW" + nRow + "_COL" + nCol + "_Diffusion_"
+						+ underlyingSpeciesID + "_" + rvString;
+						
+						if (nRow < 0)
+							newReactionID = newReactionID.replace("ROW" + nRow, "ROW" + "_negative_" + (-1 * nRow));
+						if (nCol < 0)
+							newReactionID = newReactionID.replace("COL" + nCol, "COL" + "_negative_" + (-1 * nCol));
+						
+						//create reverse reaction
+						Reaction rvReaction = model.createReaction(newReactionID);
+						KineticLaw rvKineticLaw = model.createKineticLaw();
+						rvKineticLaw.setMath(newNode.clone());
+						rvReaction.setKineticLaw(rvKineticLaw);						
+						SpeciesReference reactant = new SpeciesReference(model.getSpecies(neighborID));
+						reactant.setStoichiometry(1);
+						rvReaction.addReactant(reactant);
+						SpeciesReference product = new SpeciesReference(model.getSpecies(newGridSpeciesID));
+						product.setStoichiometry(1);
+						rvReaction.addProduct(product);
+	
+						setupLocalParameters(rvReaction.getKineticLaw(), rvReaction.getId());
+						
+						setupSingleReaction(rvReaction.getId(), rvReaction.getKineticLaw().getMath(), false,
+								rvReaction.getListOfReactants(), rvReaction.getListOfProducts(), rvReaction.getListOfModifiers());
+					}
+				}
+				
+				++directionIndex;
+			}
+			
+			ASTNode degradationNode = new ASTNode();
+
+			//create degradation reaction for each grid species
+			//find a grid degradation reaction to copy from
+			for (Map.Entry<String, ASTNode> reactionAndFormula : reactionToFormulaMap.entrySet()) {
+				
+				String reactionID = reactionAndFormula.getKey();
+				
+				if (reactionID.contains("Degradation_" + underlyingSpeciesID)) {
+					
+					degradationNode = reactionAndFormula.getValue().clone();
+					degradationNode.getRightChild().setVariable(model.getSpecies(newGridSpeciesID));
+					break;
+				}
+			}
+			
+			String newDegReactionID = "ROW" + row + "_COL" + col + "_Degradation_" + underlyingSpeciesID;
+			
+			if (row < 0)
+				newDegReactionID = newDegReactionID.replace("ROW" + row, "ROW" + "_negative_" + (-1 * row));
+			if (col < 0)
+				newDegReactionID = newDegReactionID.replace("COL" + col, "COL" + "_negative_" + (-1 * col));
+			
+			Reaction degReaction = model.createReaction(newDegReactionID);
+			KineticLaw degKineticLaw = model.createKineticLaw();
+			degKineticLaw.setMath(degradationNode.clone());
+			degReaction.setKineticLaw(degKineticLaw);
+			SpeciesReference reactant = new SpeciesReference(model.getSpecies(newGridSpeciesID));
+			reactant.setStoichiometry(1);
+			degReaction.addReactant(reactant);
+			
+			setupLocalParameters(degReaction.getKineticLaw(), degReaction.getId());
+			setupSingleReaction(degReaction.getId(), degReaction.getKineticLaw().getMath(), false,
+					degReaction.getListOfReactants(), degReaction.getListOfProducts(), degReaction.getListOfModifiers());
+		}
+		
+		//MOVE MEMBRANE DIFFUSION REACTIONS FOR COMPONENTS THAT HAVE MOVED
+		if (locationsToMove.size() > 0) {
+			
+			for (Point locationToMove : locationsToMove) {
+				
+				//adjust these locations to their new, moved location
+				switch (direction) {
+				
+					case 0: locationToMove.y -= 1; break;
+					case 1: locationToMove.y += 1; break;
+					case 2: locationToMove.x -= 1; break;
+					case 3: locationToMove.x += 1; break;
+					
+					case 4: {locationToMove.x += 1; locationToMove.y -= 1; break;}
+					case 5: {locationToMove.x -= 1; locationToMove.y += 1; break;}
+					case 6: {locationToMove.x -= 1; locationToMove.y -= 1; break;}
+					case 7: {locationToMove.x += 1; locationToMove.y += 1; break;}
+				}
+			}
+			
+			//find the membrane diffusion reactions for these moved components and alter it
+			for (String compID : componentToLocationMap.keySet()) {
+				
+				int compX = (int) componentToLocationMap.get(compID).getX();
+				int compY = (int) componentToLocationMap.get(compID).getY();
+				
+				for (Point locationToMove : locationsToMove) {
+					
+					if (locationToMove.x == compX && locationToMove.y == compY) {
+						
+						for (String reactionID : componentToReactionSetMap.get(compID)) {
+							
+							//only need to change the rv membrane diffusion reaction
+							if (reactionID.contains("MembraneDiffusion")) {
+								
+								ASTNode formulaNode = reactionToFormulaMap.get(reactionID);
+								
+								//the right child is the one to alter
+								ASTNode speciesNode = formulaNode.getRightChild();
+
+								Point oldLocation = (Point) locationToMove.clone();
+								
+								switch (direction) {
+									
+									case 0: oldLocation.y = locationToMove.y + 1; break;
+									case 1: oldLocation.y = locationToMove.y - 1; break;
+									case 2: oldLocation.x = locationToMove.x + 1; break;
+									case 3: oldLocation.x = locationToMove.x - 1; break;
+									
+									case 4: {oldLocation.x = locationToMove.x - 1; oldLocation.y = locationToMove.y + 1; break;}
+									case 5: {oldLocation.x = locationToMove.x + 1; oldLocation.y = locationToMove.y - 1; break;}
+									case 6: {oldLocation.x = locationToMove.x + 1; oldLocation.y = locationToMove.y + 1; break;}
+									case 7: {oldLocation.x = locationToMove.x - 1; oldLocation.y = locationToMove.y - 1; break;}
+								}
+								
+								String oldRowCol = "ROW" + (int) oldLocation.x + "_COL" + (int) oldLocation.y;
+								oldRowCol = oldRowCol.replace("ROW-", "ROW_negative_");
+								oldRowCol = oldRowCol.replace("COL-", "COL_negative_");
+								
+								String newRowCol = "ROW" + (int) locationToMove.x + "_COL" + (int) locationToMove.y;
+								newRowCol = newRowCol.replace("ROW-", "ROW_negative_");
+								newRowCol = newRowCol.replace("COL-", "COL_negative_");
+								
+								//adjust kinetic law
+								speciesNode.setVariable(model.getSpecies(speciesNode.getName().replace(oldRowCol, newRowCol)));
+								
+								newRowCol = newRowCol.replace("ROW_negative_", "ROW-");
+								newRowCol = newRowCol.replace("COL_negative_", "COL-");
+								oldRowCol = oldRowCol.replace("ROW_negative_", "ROW-");
+								oldRowCol = oldRowCol.replace("COL_negative_", "COL-");
+								
+								//adjust reactants/products
+								for (StringDoublePair speciesAndStoichiometry : 
+									reactionToSpeciesAndStoichiometrySetMap.get(reactionID)) {
+									
+									speciesAndStoichiometry.string = 
+										speciesAndStoichiometry.string.replace(oldRowCol, newRowCol);
+								}
+								
+								for (StringDoublePair reactantAndStoichiometry : 
+									reactionToReactantStoichiometrySetMap.get(reactionID)) {
+									
+									reactantAndStoichiometry.string =
+										reactantAndStoichiometry.string.replace(oldRowCol, newRowCol);
+								}
+								
+								//adjust propensity
+								reactionsToAdjust.add(reactionID);
+							}		
+						}
+					}
+				}
+			}
+		}		
+	}
+	
 	/**
 	 * performs assignment rules that may have changed due to events or reactions firing
 	 * 
@@ -3041,6 +3086,29 @@ public abstract class Simulator {
 			
 			if (testConstraints(affectedConstraintSet) == false)
 				constraintFailureFlag = true;
+		}
+	}
+	
+	/**
+	 * recursively finds all variable nodes and prepends a string to the variable
+	 * static version
+	 * 
+	 * @param node
+	 * @param toPrepend
+	 */
+	private static void prependToVariableNodes(ASTNode node, String toPrepend, Model model) {
+		
+		if (node.isName()) {
+			
+			//only prepend to species and parameters
+			if (model.getSpecies(toPrepend + node.getName()) != null)
+				node.setVariable(model.getSpecies(toPrepend + node.getName()));
+			else if (model.getParameter(toPrepend + node.getName()) != null)
+				node.setVariable(model.getParameter(toPrepend + node.getName()));
+		}
+		else {
+			for (ASTNode childNode : node.getChildren())
+				prependToVariableNodes(childNode, toPrepend, model);
 		}
 	}
 	
@@ -3410,6 +3478,35 @@ public abstract class Simulator {
 					newEvent.setMetaId(compartmentID + "__" + event.getId());
 					newEvent.setTrigger(event.getTrigger().clone());
 					
+					if (newEvent.getTrigger().getMath().toFormula().contains("neighborQuantity")) {
+						
+//						ASTNode child1 = new ASTNode();
+//						ASTNode child2 = new ASTNode();
+//						ASTNode child3 = new ASTNode();
+//						ASTNode child4 = new ASTNode();
+//						
+////						child3.setVariable(model.getCompartment(compartmentID+"__default"));						
+////						FunctionDefinition fdX = new FunctionDefinition("compartmentLocationX", null, model.getLevel(), model.getVersion());
+////						
+////						child4.setVariable(model.getCompartment(compartmentID+"__default"));
+////						FunctionDefinition fdY = new FunctionDefinition("compartmentLocationY", null, model.getLevel(), model.getVersion());
+//						
+//						try {
+//							child1.
+//							child1.setVariable("compartmentLocationX");
+//							child1.getChild(0).setVariable(model.getCompartment(compartmentID+"__default"));
+////							child1.setVariable(fdX);
+////							child2.setVariable(fdY);
+////							child2 = ASTNode.parseFormula("compartmentLocationY(" + compartmentID + ")");
+////							child2.getChild(0).setVariable(model.getCompartment(compartmentID+"__default"));
+//						} 
+//						catch (ParseException e) {
+//							e.printStackTrace();
+//						}
+//						
+//						handleNeighborQuantityFunctions(newEvent.getTrigger().getMath(), compartmentID, child1, child2);
+					}
+					
 					if (event.isSetPriority())
 						newEvent.setPriority(event.getPriority().clone());
 					
@@ -3439,8 +3536,10 @@ public abstract class Simulator {
 			}
 		}
 		
-		for (Event eventToAdd : eventsToAdd)
+		for (Event eventToAdd : eventsToAdd) {
 			model.addEvent(eventToAdd);
+		}
+		
 		
 		
 		//ARRAYED REACTION BUSINESS
@@ -3838,7 +3937,7 @@ public abstract class Simulator {
 		ArrayList<String> parametersToRemove = new ArrayList<String>();
 		
 		//get rid of the locations parameters
-		for (Parameter parameter : model.getListOfParameters())
+		for (Parameter parameter : model.getListOfParameters()) {
 			if (parameter.getId().contains("_locations")) {
 				
 				if (parameter.getId().contains("_locations"))
@@ -3847,6 +3946,7 @@ public abstract class Simulator {
 				
 				parametersToRemove.add(parameter.getId());
 			}
+		}
 		
 		for (String parameterID : parametersToRemove)
 			model.removeParameter(parameterID);
@@ -4364,7 +4464,8 @@ public abstract class Simulator {
 		else
 			eventToHasDelayMap.put(eventID, false);
 		
-		event.getTrigger().setMath(inlineFormula(event.getTrigger().getMath()));
+		if (event.getTrigger().getMath().toFormula().contains("neighborQuantity") == false)
+			event.getTrigger().setMath(inlineFormula(event.getTrigger().getMath()));
 		
 		eventToTriggerMap.put(eventID, event.getTrigger().getMath());
 		eventToTriggerInitiallyTrueMap.put(eventID, event.getTrigger().isInitialValue());
