@@ -1192,6 +1192,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		if (biosimrc.get("biosim.learn.findbaseprob", "").equals("")) {
 			biosimrc.put("biosim.learn.findbaseprob", "False");
 		}
+		if (biosimrc.get("biosim.synthesis.uri", "").equals("")) {
+			biosimrc.put("biosim.synthesis.uri", "http://www.async.ece.utah.edu");
+		}
 
 		// Open .biosimrc here
 
@@ -1648,6 +1651,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			JPanel learnPrefs = new JPanel(new GridLayout(1, 2));
 			learnPrefs.add(learnLabels);
 			learnPrefs.add(learnFields);
+			
+			// synthesis preferences
+			JPanel synthesisLabels = new JPanel(new GridLayout(13, 1));
+			synthesisLabels.add(new JLabel("URI Authority"));
+			
+			JPanel synthesisFields = new JPanel(new GridLayout(13 ,1));
+			JTextField uriField = new JTextField(biosimrc.get("biosim.synthesis.uri", ""));
+			synthesisFields.add(uriField);
+			
+			// create synthesis preferences panel
+			JPanel synthesisPrefs = new JPanel(new GridLayout(1, 2));
+			synthesisPrefs.add(synthesisLabels);
+			synthesisPrefs.add(synthesisFields);
 
 			// create general preferences panel
 			JPanel generalPrefsBordered = new JPanel(new BorderLayout());
@@ -1660,6 +1676,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			// create tabs
 			JTabbedPane prefTabs = new JTabbedPane();
 			prefTabs.addTab("General Preferences", generalPrefs);
+			prefTabs.addTab("Synthesis Preferences", synthesisPrefs);
 			prefTabs.addTab("Model Preferences", gcmPrefs);
 			prefTabs.addTab("Analysis Preferences", analysisPrefs);
 			prefTabs.addTab("Learn Preferences", learnPrefs);
@@ -1994,6 +2011,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						((ModelEditor) tab.getComponentAt(i)).reloadParameters();
 					}
 				}
+				biosimrc.put("biosim.synthesis.uri", uriField.getText().trim());
 			}
 			// if user clicks "cancel"
 			else {

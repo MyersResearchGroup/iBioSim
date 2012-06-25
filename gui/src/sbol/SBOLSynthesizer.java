@@ -13,6 +13,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.prefs.Preferences;
 
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -44,6 +45,7 @@ public class SBOLSynthesizer {
 	private UseFirstFound<DnaComponent, URI> aggregateCompResolver = new AggregatingResolver.UseFirstFound<DnaComponent, URI>();
 	private Set<DnaComponent> localComps;
 	private boolean localMatch;
+	private String uriAuthority;
 	private String time;
 	
 	public SBOLSynthesizer(BioModel biomodel, LinkedHashMap<String, SynthesisNode> synMap) {
@@ -189,7 +191,7 @@ public class SBOLSynthesizer {
 	
 	public DnaComponent synthesizeDnaComponent() {	
 		DnaComponent synthComp = new DnaComponentImpl();
-		setTime();
+		setAuthorityAndTime();
 		// Orders list of subcomponents (to be assembled into composite component) by walking synthesis nodes
 		LinkedList<DnaComponent> subComps = orderSubComponents();
 		if (subComps == null)
@@ -207,13 +209,13 @@ public class SBOLSynthesizer {
 			synthComp.addType(SequenceOntology.type("SO_0000804"));
 			// Set component URI
 			try {
-				synthComp.setURI(new URI("http://www.async.ece.utah.edu#comp" + time));
+				synthComp.setURI(new URI(uriAuthority + "#comp" + time));
 			} catch (URISyntaxException e) {
 				e.printStackTrace();
 			}
 			// Set component sequence URI
 			try {
-				compSeq.setURI(new URI("http://www.async.ece.utah.edu#seq" + time));
+				compSeq.setURI(new URI(uriAuthority + "#seq" + time));
 			} catch (URISyntaxException e) {
 				e.printStackTrace();
 			}
@@ -358,7 +360,7 @@ public class SBOLSynthesizer {
 			synthComp.addAnnotation(annot);
 			position++;
 			try {
-				annot.setURI(new URI("http://www.async.ece.utah.edu#anno" + addCount + time));
+				annot.setURI(new URI(uriAuthority + "#anno" + addCount + time));
 			} catch (URISyntaxException e) {
 				e.printStackTrace();
 			}
@@ -439,7 +441,7 @@ public class SBOLSynthesizer {
 		inputPanel.add(new JLabel("Description"));
 		inputPanel.add(descripText);
 
-		SBOLDocumentImpl localDoc = null;
+		SBOLDocument localDoc = null;
 		String[] options = { "Ok", "Cancel" };
 		int option;
 		do {
@@ -450,7 +452,7 @@ public class SBOLSynthesizer {
 			String chosenFileId = fileBox.getSelectedItem().toString();
 			if (!descriptors[3].equals(chosenFileId)) {
 				descriptors[3] = chosenFileId;
-				localDoc = (SBOLDocumentImpl) SBOLUtility.loadSBOLFile(filePath + File.separator + chosenFileId);
+				localDoc = SBOLUtility.loadSBOLFile(filePath + File.separator + chosenFileId);
 			}
 		} while (localDoc == null || !isSourceIdValid(idText.getText(), localDoc));
 		descriptors[0] = idText.getText();
@@ -459,22 +461,25 @@ public class SBOLSynthesizer {
 		return descriptors;
 	}
 	
-	private boolean isSourceIdValid(String sourceID, SBOLDocumentImpl targetDoc) {
+	private boolean isSourceIdValid(String sourceID, SBOLDocument targetDoc) {
 		if (sourceID.equals("")) {
 			JOptionPane.showMessageDialog(Gui.frame, "Chosen ID is blank.", "Invalid ID", JOptionPane.ERROR_MESSAGE);
 			return false;
 		} else if (!Utility.isValid(sourceID, Utility.IDstring)) {
 			JOptionPane.showMessageDialog(Gui.frame, "Chosen ID is not alphanumeric.", "Invalid ID", JOptionPane.ERROR_MESSAGE);
 			return false;
-		// Hrm won't check components in doc other than those at top level...
-		} else if (targetDoc != null && targetDoc.getComponentDisplayIdResolver().resolve(sourceID) != null) {
-			JOptionPane.showMessageDialog(Gui.frame, "Chosen SBOL file contains DNA component with chosen ID.", "Invalid ID", JOptionPane.ERROR_MESSAGE);
-			return false;
+		} else if (targetDoc != null) {
+			SBOLDocumentImpl flattenedDoc = (SBOLDocumentImpl) SBOLUtility.flattenDocument(targetDoc);
+			if (flattenedDoc.getComponentDisplayIdResolver().resolve(sourceID) != null) {
+				JOptionPane.showMessageDialog(Gui.frame, "Chosen SBOL file contains DNA component with chosen ID.", "Invalid ID", JOptionPane.ERROR_MESSAGE);
+				return false;
+			}
 		}
 		return true;
 	}
 	
-	private void setTime() {
+	private void setAuthorityAndTime() {
+		uriAuthority = Preferences.userRoot().get("biosim.synthesis.uri", "");
 		Calendar now = Calendar.getInstance();
 		time = "_" + now.get(Calendar.MONTH) + "_" 
 				+ now.get(Calendar.DATE) + "_" + now.get(Calendar.YEAR) + "_" + now.get(Calendar.HOUR_OF_DAY) + "_" 
