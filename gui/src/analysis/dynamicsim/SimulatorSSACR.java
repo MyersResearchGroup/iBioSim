@@ -50,11 +50,11 @@ public class SimulatorSSACR extends Simulator {
 	MutableBoolean constraintsFlag = new MutableBoolean(false);
 	
 	public SimulatorSSACR(String SBMLFileName, String outputDirectory, double timeLimit, 
-			double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval, 
+			double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, 
 			double stoichAmpValue, JFrame running, String[] interestingSpecies, String quantityType) 
 	throws IOException, XMLStreamException {
 		
-		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, randomSeed,
+		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed,
 				progress, printInterval, initializationTime, stoichAmpValue, running, interestingSpecies, quantityType);
 		
 		try {
@@ -176,6 +176,9 @@ public class SimulatorSSACR extends Simulator {
 			
 			if (delta_t > maxTimeStep)
 				delta_t = maxTimeStep;
+			
+			if (delta_t < minTimeStep)
+				delta_t = minTimeStep;
 			
 			//step2Time += System.nanoTime() - step2Initial;
 			

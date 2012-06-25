@@ -2814,7 +2814,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JCheckBox dummy = new JCheckBox();
 				dummy.setSelected(false);
 				JList empty = new JList();
-				run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1, new String[0], "tsd.printer", "amount",
+				run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1, new String[0], "tsd.printer", "amount", "false",
 						(directory + theFile).split(separator), "none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, null);
 				log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + directory + out + ".dot " + directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
@@ -3001,7 +3001,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JCheckBox dummy = new JCheckBox();
 				dummy.setSelected(false);
 				JList empty = new JList();
-				run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1, new String[0], "tsd.printer", "amount",
+				run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1, new String[0], "tsd.printer", "amount", "false",
 						(directory + theFile).split(separator), "none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, null);
 				log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + directory + out + ".dot " + directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
@@ -3098,7 +3098,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JCheckBox dummy = new JCheckBox();
 				JList empty = new JList();
 				dummy.setSelected(false);
-				run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1, new String[0], "tsd.printer", "amount",
+				run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1, new String[0], "tsd.printer", "amount", "false",
 						(directory + theFile).split(separator), "none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, null);
 
 				log.addText("Executing:\nreb2sac --target.encoding=xhtml --out=" + directory + out + ".xhtml " + directory + theFile + "\n");

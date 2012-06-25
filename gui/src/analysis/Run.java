@@ -76,7 +76,7 @@ public class Run implements ActionListener {
 	 */
 	public void createProperties(double timeLimit, String useInterval, double printInterval, double minTimeStep,
 			double timeStep, double absError, String outDir, long rndSeed, int run, String[] intSpecies,
-			String printer_id, String printer_track_quantity, String[] getFilename, String selectedButtons,
+			String printer_id, String printer_track_quantity, String genStats, String[] getFilename, String selectedButtons,
 			Component component, String filename, double rap1, double rap2, double qss, int con, double stoichAmp,
 			JList preAbs, JList loopAbs, JList postAbs, AbstPane abstPane) {
 		Properties abs = new Properties();
@@ -173,6 +173,7 @@ public class Run implements ActionListener {
 		abs.setProperty("reb2sac.qssa.condition.1", "" + qss);
 		abs.setProperty("reb2sac.operator.max.concentration.threshold", "" + con);
 		abs.setProperty("reb2sac.diffusion.stoichiometry.amplification.value", "" + stoichAmp);
+		abs.setProperty("reb2sac.generate.statistics", genStats);
 		if (selectedButtons.contains("none")) {
 			abs.setProperty("reb2sac.abstraction.method", "none");
 		}
@@ -1163,11 +1164,17 @@ public class Run implements ActionListener {
 							Double.parseDouble(properties.getProperty(
 									"reb2sac.diffusion.stoichiometry.amplification.value"));
 						
+						boolean genStats = Boolean.parseBoolean(properties.getProperty(
+								"reb2sac.generate.statistics"));
+						
+						double minTimeStep = 
+							Double.valueOf(properties.getProperty("monte.carlo.simulation.min.time.step"));
+						
 						dynSim = new DynamicSimulation("cr");
 						String SBMLFileName = directory + separator + theFile;
 						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
-								timeStep, rndSeed, progress, printInterval, runs, progressLabel, running,
-								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity);						
+								timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running,
+								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats);						
 						exitValue = 0;
 						
 						return exitValue;
@@ -1177,12 +1184,18 @@ public class Run implements ActionListener {
 						double stoichAmpValue = 
 							Double.parseDouble(properties.getProperty(
 									"reb2sac.diffusion.stoichiometry.amplification.value"));
+						
+						double minTimeStep = 
+							Double.valueOf(properties.getProperty("monte.carlo.simulation.min.time.step"));
+						
+						boolean genStats = Boolean.parseBoolean(properties.getProperty(
+						"reb2sac.generate.statistics"));
 
 						dynSim = new DynamicSimulation("direct");					
 						String SBMLFileName = directory + separator + theFile;
 						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
-								timeStep, rndSeed, progress, printInterval, runs, progressLabel, running,
-								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity);						
+								timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running,
+								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats);						
 						exitValue = 0;
 						
 						return exitValue;
@@ -1192,11 +1205,15 @@ public class Run implements ActionListener {
 						double stoichAmpValue = 
 							Double.parseDouble(properties.getProperty(
 									"reb2sac.diffusion.stoichiometry.amplification.value"));
+						
+						boolean genStats = Boolean.parseBoolean(properties.getProperty(
+						"reb2sac.generate.statistics"));
+						
 						dynSim = new DynamicSimulation("rk");					
 						String SBMLFileName = directory + separator + theFile;
 						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
-								timeStep, rndSeed, progress, printInterval, runs, progressLabel, running,
-								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity);				
+								timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running,
+								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats);				
 						exitValue = 0;
 						
 						return exitValue;
