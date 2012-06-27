@@ -77,7 +77,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 
 	private JComboBox ruleType, ruleVar;
 	
-	private ModelEditor gcmEditor;
+	private ModelEditor modelEditor;
 	
 	private SBOLField sbolField;
 
@@ -86,7 +86,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		super(new BorderLayout());
 		this.bioModel = gcm;
 		this.biosim = biosim;
-		this.gcmEditor = gcmEditor;
+		this.modelEditor = gcmEditor;
 		this.dirty = dirty;
 
 		/* Create rule panel */
@@ -214,7 +214,6 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 		});
-		sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 2);
 		if (option.equals("OK")) {
 			ruleType.setEnabled(false);
 			Rule rule = (Rule)bioModel.getSBMLDocument().getModel().getElementByMetaId(metaId);
@@ -238,9 +237,13 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				ruleMath.setText(SBMLutilities.myFormulaToString(rule.getMath()));
 			}
 			//Parse out SBOL annotations and add to SBOL field
-			LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(rule);
-			if (sbolURIs.size() > 0)
-				sbolField.setSBOLURIs(sbolURIs);
+			if (!modelEditor.isParamsOnly()) {
+				// Field for annotating rules with SBOL DNA components
+				sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 2);
+				LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(rule);
+				if (sbolURIs.size() > 0)
+					sbolField.setSBOLURIs(sbolURIs);
+			}
 			if (rule.isSetMetaId()) {
 				id.setText(rule.getMetaId());
 			} else {
@@ -291,7 +294,8 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		mathPanel.add(ruleMath);
 		rulePanel.add(IDPanel,"North");
 		rulePanel.add(mathPanel,"Center");
-		rulePanel.add(sbolField,"South");
+		if (option.equals("OK") && !modelEditor.isParamsOnly())
+			rulePanel.add(sbolField,"South");
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, rulePanel, "Rule Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
 				options, options[0]);
@@ -401,7 +405,8 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 						r.setMath(SBMLutilities.myParseFormula(oldMath));
 						rul = oldRul;
 //						rul[index] = oldVal;
-					} else {
+					} else if (!modelEditor.isParamsOnly()) {
+						// Add SBOL annotation to rule
 						LinkedList<URI> sbolURIs = sbolField.getSBOLURIs();
 						if (sbolURIs.size() > 0) {
 							SBOLAnnotation sbolAnnot = new SBOLAnnotation(r.getMetaId(), sbolURIs);

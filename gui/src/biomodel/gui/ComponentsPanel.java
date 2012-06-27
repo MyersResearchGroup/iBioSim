@@ -2,9 +2,11 @@ package biomodel.gui;
 
 
 import java.awt.GridLayout;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -19,6 +21,8 @@ import org.sbml.libsbml.SBase;
 import org.sbml.libsbml.SBaseList;
 import org.sbml.libsbml.Submodel;
 
+import biomodel.annotation.AnnotationUtility;
+import biomodel.annotation.SBOLAnnotation;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 import biomodel.util.Utility;
@@ -51,23 +55,28 @@ public class ComponentsPanel extends JPanel {
 	private PropertyList componentsList = null;
 
 	private HashMap<String, PropertyField> fields = null;
+	
+	private SBOLField sbolField;
 
 	private String selectedComponent, oldPort;
 	
 	private ModelEditor gcmEditor;
 	
 	private String subModelId;
+	
+	private boolean paramsOnly;
 
 	public ComponentsPanel(String selected, PropertyList componentsList, BioModel bioModel, ArrayList<String> ports, 
 			String selectedComponent, String oldPort, boolean paramsOnly, ModelEditor gcmEditor) {
 		
-		super(new GridLayout(ports.size() + 2, 1));
+		super(new GridLayout(ports.size() + 3, 1));
 		this.selected = selected;
 		this.componentsList = componentsList;
 		this.bioModel = bioModel;
 		this.gcmEditor = gcmEditor;
 		this.selectedComponent = selectedComponent;
 		this.oldPort = oldPort;
+		this.paramsOnly = paramsOnly;
 
 		fields = new HashMap<String, PropertyField>();
 		portIds = new ArrayList<String>();
@@ -288,6 +297,15 @@ public class ComponentsPanel extends JPanel {
 			oldName = selected;
 			fields.get(GlobalConstants.ID).setValue(selected);
 		}
+		// Parse out SBOL annotations and add to SBOL field
+		if(!paramsOnly) {
+			// Field for annotating submodel with SBOL DNA components
+			sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 2);
+			add(sbolField);
+			LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(instance);
+			if (sbolURIs.size() > 0)
+				sbolField.setSBOLURIs(sbolURIs);
+		}
 
 		boolean display = false;
 		while (!display) {
@@ -438,6 +456,15 @@ public class ComponentsPanel extends JPanel {
 			componentsList.removeItem(oldName + " " + selectedComponent.replace(".xml", "") + " " + oldPort);
 			componentsList.addItem(id + " " + selectedComponent.replace(".xml", "") + " " + newPort);
 			componentsList.setSelectedValue(id + " " + selectedComponent.replace(".xml", "") + " " + newPort, true);
+			if (!paramsOnly) {
+				// Add SBOL annotation to submodel
+				LinkedList<URI> sbolURIs = sbolField.getSBOLURIs();
+				if (sbolURIs.size() > 0) {
+					SBOLAnnotation sbolAnnot = new SBOLAnnotation(instance.getMetaId(), sbolURIs);
+					AnnotationUtility.setSBOLAnnotation(instance, sbolAnnot);
+				} else
+					AnnotationUtility.removeSBOLAnnotation(instance);
+			}
 			gcmEditor.setDirty(true);
 		}
 		else if (value == JOptionPane.NO_OPTION) {

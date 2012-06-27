@@ -111,7 +111,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		this.gcmEditor = gcmEditor;
 
 		fields = new HashMap<String, PropertyField>();
-		sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 3);
 
 		Model model = bioModel.getSBMLDocument().getModel();
 		species = model.getSpecies(selected);
@@ -536,12 +535,13 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		*/
 		setFieldEnablings();
 		
+		// Parse out GCM and SBOL annotations and add to respective fields
 		if (!paramsOnly) {
 			// Field for annotating species with SBOL DNA components
+			sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 3);
 			grid.add(sbolField);
 
 			typeBox.setSelectedItem(BioModel.getSpeciesType(bioModel.getSBMLDocument(),species.getId()));
-			// Parse out GCM and SBOL annotations and add to respective fields
 			String annotation = species.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
 			String [] annotations = annotation.split(",");
 			for (int i=0;i<annotations.length;i++) 

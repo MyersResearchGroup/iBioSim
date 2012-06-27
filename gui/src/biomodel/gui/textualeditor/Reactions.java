@@ -586,13 +586,16 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			reactionPanelNorth1b.add(reacReverse);
 			reactionPanelNorth1b.add(fast);
 			reactionPanelNorth1b.add(reacFast);
-			sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 2);
-			//Parse out SBOL annotations and add to SBOL field
-			Reaction reac = gcm.getSBMLDocument().getModel().getReaction(reactionId);
-			LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(reac);
-			if (sbolURIs.size() > 0)
-				sbolField.setSBOLURIs(sbolURIs);
-			reactionPanelNorth1b.add(sbolField);
+			// Parse out SBOL annotations and add to SBOL field
+			if (!paramsOnly) {
+				// Field for annotating reaction with SBOL DNA components
+				sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 2);
+				Reaction reac = gcm.getSBMLDocument().getModel().getReaction(reactionId);
+				LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(reac);
+				if (sbolURIs.size() > 0)
+					sbolField.setSBOLURIs(sbolURIs);
+				reactionPanelNorth1b.add(sbolField);
+			}
 			reactionPanelNorth.add(reactionPanelNorth1);
 			reactionPanelNorth.add(reactionPanelNorth1b);
 			
@@ -830,16 +833,14 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							changedModifiers.add(modifier);
 						}
 					}
-					if (!error) {
+					if (!error && inSchematic && !paramsOnly) {
 						// Add SBOL annotation to reaction
-						if (sbolField != null) {
-							LinkedList<URI> sbolURIs = sbolField.getSBOLURIs();
-							if (sbolURIs.size() > 0) {
-								SBOLAnnotation sbolAnnot = new SBOLAnnotation(react.getMetaId(), sbolURIs);
-								AnnotationUtility.setSBOLAnnotation(react, sbolAnnot);
-							} else
-								AnnotationUtility.removeSBOLAnnotation(react);
-						}
+						LinkedList<URI> sbolURIs = sbolField.getSBOLURIs();
+						if (sbolURIs.size() > 0) {
+							SBOLAnnotation sbolAnnot = new SBOLAnnotation(react.getMetaId(), sbolURIs);
+							AnnotationUtility.setSBOLAnnotation(react, sbolAnnot);
+						} else
+							AnnotationUtility.removeSBOLAnnotation(react);
 					}
 				}
 				else {
