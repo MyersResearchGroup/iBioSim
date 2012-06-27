@@ -1564,7 +1564,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			analysisLabels.add(new JLabel("Random Seed:"));
 			analysisLabels.add(new JLabel("Runs:"));
 			analysisLabels.add(new JLabel("Rapid Equilibrium Condition 1:"));
-			analysisLabels.add(new JLabel("Rapid Equilibrium Cojdition 2:"));
+			analysisLabels.add(new JLabel("Rapid Equilibrium Condition 2:"));
 			analysisLabels.add(new JLabel("QSSA Condition:"));
 			analysisLabels.add(new JLabel("Max Concentration Threshold:"));
 

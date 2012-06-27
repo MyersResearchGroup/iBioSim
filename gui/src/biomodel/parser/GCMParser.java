@@ -673,29 +673,36 @@ public class GCMParser {
 			return null;
 	}
 	
+	// Uses SBOL associated to submodel instantiation if present
+	// Otherwise constructs SBOL synthesizer for submodel or uses SBOL associated to submodel itself
 	public boolean parseSubModelSBOL() {
 		CompModelPlugin sbmlCompModel = biomodel.getSBMLCompModel();
 		CompSBMLDocumentPlugin sbmlCompDoc = biomodel.getSBMLComp();
 		boolean sbolDetected = false;
 		for (long i = 0; i < sbmlCompModel.getNumSubmodels(); i++) {
-			Submodel sbmlCompSubModel = sbmlCompModel.getSubmodel(i);
+			Submodel instantiation = sbmlCompModel.getSubmodel(i);
 			String sbmlFileID = sbmlCompDoc.getExternalModelDefinition(sbmlCompModel.getSubmodel(i).getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
-			BioModel gcmComponent = new BioModel(biomodel.getPath());
-			gcmComponent.load(sbmlFileID);
+			BioModel bioModelComponent = new BioModel(biomodel.getPath());
+			bioModelComponent.load(sbmlFileID);
+			Model sbmlSubModel = bioModelComponent.getSBMLDocument().getModel();
 			
-			Model sbmlSubModel = gcmComponent.getSBMLDocument().getModel();
-			
-			GCMParser subParser = new GCMParser(gcmComponent, false);
-			SBOLSynthesizer sbolSynth = subParser.buildSbolSynthesizer();
 			SynthesisNode synNode;
-			LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlSubModel);
-			if (sbolSynth != null) {
-				synNode = new SynthesisNode(sbmlCompSubModel.getId(), sbolURIs, sbolSynth);
+			LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(instantiation);
+			if (sbolURIs.size() > 0) {
+				synNode = new SynthesisNode(instantiation.getId(), sbolURIs);
 				sbolDetected = true;
 			} else {
-				synNode = new SynthesisNode(sbmlCompSubModel.getId(), sbolURIs);
-				if (sbolURIs.size() > 0)
+				GCMParser subParser = new GCMParser(bioModelComponent, false);
+				SBOLSynthesizer sbolSynth = subParser.buildSbolSynthesizer();
+				if (sbolSynth != null) {
+					synNode = new SynthesisNode(instantiation.getId(), sbolURIs, sbolSynth);
 					sbolDetected = true;
+				} else {
+					sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlSubModel);
+					synNode = new SynthesisNode(instantiation.getId(), sbolURIs);
+					if (sbolURIs.size() > 0)
+						sbolDetected = true;
+				}
 			}
 			synMap.put(synNode.getId(), synNode);
 		}

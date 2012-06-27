@@ -2407,7 +2407,9 @@ public class BioModel {
 					submodel = sbmlCompModel.getSubmodel(submodelID);
 				
 				submodel.setId(submodelID);
-				submodel.setModelRef(extId);				
+				submodel.setModelRef(extId);
+				// Set default submodel metaID
+				metaIDIndex = SBMLutilities.setDefaultMetaID(sbml, submodel, metaIDIndex); 
 			}
 		}
 		

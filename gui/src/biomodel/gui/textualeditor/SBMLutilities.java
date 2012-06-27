@@ -14,6 +14,8 @@ import main.Gui;
 import main.util.Utility;
 
 import org.sbml.libsbml.ASTNode;
+import org.sbml.libsbml.CompModelPlugin;
+import org.sbml.libsbml.CompSBMLDocumentPlugin;
 import org.sbml.libsbml.Compartment;
 import org.sbml.libsbml.CompartmentType;
 import org.sbml.libsbml.Constraint;
@@ -754,15 +756,20 @@ public class SBMLutilities {
 			metaIDIndex = setDefaultMetaID(document, model.getSpecies(i), metaIDIndex);
 		for (int i = 0; i < model.getNumReactions(); i++) 
 			metaIDIndex = setDefaultMetaID(document, model.getReaction(i), metaIDIndex);
-		for (int i = 0; i < model.getSBMLDocument().getModel().getNumRules(); i++) 
+		for (int i = 0; i < model.getNumRules(); i++) 
 			metaIDIndex = setDefaultMetaID(document, model.getRule(i), metaIDIndex);
+		CompModelPlugin compModel = (CompModelPlugin) document.getModel().getPlugin("comp");
+		for (int i = 0; i < compModel.getNumSubmodels(); i++)
+			metaIDIndex = setDefaultMetaID(document, compModel.getSubmodel(i), metaIDIndex);
 	}
 	
 	public static int setDefaultMetaID(SBMLDocument document, SBase sbmlObject, int metaIDIndex) {
+		CompSBMLDocumentPlugin compDocument = (CompSBMLDocumentPlugin) document.getPlugin("comp");
 		String metaID = sbmlObject.getMetaId();
 		if (metaID == null || metaID.equals("")) {
 			metaID = "iBioSim" + metaIDIndex;
-			while (document.getElementByMetaId(metaID)!=null) {
+			while (document.getElementByMetaId(metaID) != null
+					|| (compDocument != null && compDocument.getElementByMetaId(metaID) != null)) {
 				metaIDIndex++;
 				metaID = "iBioSim" + metaIDIndex;
 			}

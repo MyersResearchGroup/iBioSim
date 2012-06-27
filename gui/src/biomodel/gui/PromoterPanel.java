@@ -48,7 +48,7 @@ public class PromoterPanel extends JPanel {
 		this.gcmEditor = gcmEditor;
 
 		fields = new HashMap<String, PropertyField>();
-		sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 3);
+		
 
 		Model model = gcm.getSBMLDocument().getModel();
 		promoter = model.getSpecies(selected);
@@ -304,11 +304,11 @@ public class PromoterPanel extends JPanel {
 		fields.put(GlobalConstants.STOICHIOMETRY_STRING, field);
 		add(field);		
 		
-		
+		// Parse out SBOL annotations and add to SBOL field
 		if (!paramsOnly) {
 			// Field for annotating promoter with SBOL DNA components
+			sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 3);
 			add(sbolField);
-			//Parse out SBOL annotations and add to SBOL field
 			LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(promoter);
 			if (sbolURIs.size() > 0)
 				sbolField.setSBOLURIs(sbolURIs);
