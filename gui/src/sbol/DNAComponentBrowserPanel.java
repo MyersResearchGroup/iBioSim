@@ -104,7 +104,7 @@ public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 					viewArea.append("Types:  ");
 					String types = "";
 					for (URI uri : dnac.getTypes()) 
-						types = types + SBOLUtility.uriToSOTypeConverter(uri) + ", ";
+						types = types + SBOLUtility.uriToTypeConverter(uri) + ", ";
 					if (types.length() > 0)
 						viewArea.append(types.substring(0, types.length() - 2) + "\n");
 					else

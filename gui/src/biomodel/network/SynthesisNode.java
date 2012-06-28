@@ -16,23 +16,26 @@ public class SynthesisNode {
 	private String id;
 	private Set<SynthesisNode> nextNodes = new HashSet<SynthesisNode>();
 	private SBOLSynthesizer sbolSynth;
+	private boolean visited;
 	
 	public SynthesisNode(String id, LinkedList<URI> sbolURIs) {
 		this.id = id;
 		this.sbolURIs = sbolURIs;
+		visited = false;
 	}
 	
 	public SynthesisNode(String id, LinkedList<URI> sbolURIs, SBOLSynthesizer sbolSynth) {
 		this.id = id;
 		this.sbolURIs = sbolURIs;
 		this.sbolSynth = sbolSynth;
+		visited = false;
 	}
 	
-	public String getId() {
+	public String getID() {
 		return id;
 	}
 	
-	public void setId(String id) {
+	public void setID(String id) {
 		this.id = id;
 	}
 	
@@ -70,6 +73,14 @@ public class SynthesisNode {
 	
 	public Set<SynthesisNode> getNextNodes() {
 		return nextNodes;
+	}
+	
+	public boolean isVisited() {
+		return visited;
+	}
+	
+	public void setVisited(boolean visited) {
+		this.visited = visited;
 	}
 	
 

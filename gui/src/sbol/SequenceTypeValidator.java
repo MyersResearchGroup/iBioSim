@@ -29,12 +29,13 @@ public class SequenceTypeValidator {
 	
 	private Set<NFAState> constructNFAHelper(Set<NFAState> startStates, String regex, String quantifier, Set<String> localIDs) { 
 		Set<NFAState> acceptStates = new HashSet<NFAState>();
-		if (regex.length() == 1) {
+		if (!regex.contains("(") && !regex.contains(")") && !regex.contains("+") && !regex.contains("*")
+				&& !regex.contains("|") && !regex.contains("?") && !regex.contains(",")) {
 			NFAState nextState = new NFAState("S" + stateIndex);
 			localIDs.add("S" + stateIndex);
 			stateIndex++;
 			for (NFAState startState : startStates)
-				startState.addTransition(regex, nextState);
+				startState.addTransition(regex.trim(), nextState);
 			acceptStates.add(nextState);
 		} else {
 			int i = 0;
@@ -44,16 +45,17 @@ public class SequenceTypeValidator {
 				String subRegex;
 				String subQuantifier = "";
 				boolean or = false;
-				if (regex.substring(i, i + 1).equals("|")) {
-					or = true;
+				while (regex.substring(i, i + 1).equals("|") || regex.substring(i, i + 1).equals(",")) {
+					if (regex.substring(i, i + 1).equals("|"))
+						or = true;
 					i++;
-				} 
+				}
 				if (regex.substring(i, i + 1).equals("(")) {
-					j = findClosing(regex, i);
+					j = findClosingParen(regex, i);
 					subRegex = regex.substring(i + 1, j);
 				} else {
-					j = i;
-					subRegex = regex.substring(i, i + 1);
+					j = findClosingLetter(regex, i);
+					subRegex = regex.substring(i, j + 1);
 				}
 				if (j + 1 < regex.length())
 					subQuantifier = regex.substring(j + 1, j + 2);
@@ -81,7 +83,7 @@ public class SequenceTypeValidator {
 		return acceptStates;
 	}
 	
-	private int findClosing(String regex, int j) {
+	private int findClosingParen(String regex, int j) {
 		int openParen = 1;
 		int closeParen = 0;
 		do {
@@ -93,6 +95,20 @@ public class SequenceTypeValidator {
 				closeParen++;
 		} while (openParen != closeParen && j < regex.length());
 		return j;
+	}
+	
+	private int findClosingLetter(String regex, int j) {
+		while (true) {
+			if (j + 1 < regex.length()) {
+				String token = regex.substring(j + 1, j + 2);
+				if (token.equals("(") || token.equals(")") || token.equals("+") || token.equals("*")
+						|| token.equals("|") || token.equals("?") || token.equals(","))
+					return j;
+				else
+					j++;
+			} else 
+				return j;
+		}
 	}
 	
 	private DFAState constructDFA(Set<NFAState> nfaStates) {
@@ -129,10 +145,16 @@ public class SequenceTypeValidator {
 	}
 	
 	public boolean validateSequenceTypes(LinkedList<String> types) {
-		LinkedList<String> terminals = new LinkedList<String>();
-		for (String type : types)
-			terminals.add(SBOLUtility.soTypeToGrammarTerminal(type));
-		return dfa.run(terminals);
+//		LinkedList<String> terminals = new LinkedList<String>();
+//		for (String type : types)
+//			terminals.add(SBOLUtility.soTypeToGrammarTerminal(type));
+		return dfa.run(types);
+	}
+	
+	public Set<String> getStartTypes() {
+		Set<String> startTypes = new HashSet<String>();
+		startTypes.addAll(dfa.getStartState().getTransitions().keySet());
+		return startTypes;
 	}
 	
 	private class NFAState {

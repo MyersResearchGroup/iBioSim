@@ -1195,6 +1195,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		if (biosimrc.get("biosim.synthesis.uri", "").equals("")) {
 			biosimrc.put("biosim.synthesis.uri", "http://www.async.ece.utah.edu");
 		}
+		if (biosimrc.get("biosim.synthesis.regex", "").equals("")) {
+			biosimrc.put("biosim.synthesis.regex", "((promoter(ribosome entry site,coding sequence)+terminator+)|engineered region)+");
+		}
 
 		// Open .biosimrc here
 
@@ -1655,10 +1658,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			// synthesis preferences
 			JPanel synthesisLabels = new JPanel(new GridLayout(13, 1));
 			synthesisLabels.add(new JLabel("URI Authority"));
+			synthesisLabels.add(new JLabel("Validation Regex"));
 			
 			JPanel synthesisFields = new JPanel(new GridLayout(13 ,1));
 			JTextField uriField = new JTextField(biosimrc.get("biosim.synthesis.uri", ""));
 			synthesisFields.add(uriField);
+			JTextField regexField = new JTextField(biosimrc.get("biosim.synthesis.regex", ""));
+			synthesisFields.add(regexField);
 			
 			// create synthesis preferences panel
 			JPanel synthesisPrefs = new JPanel(new GridLayout(1, 2));
@@ -1681,344 +1687,359 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			prefTabs.addTab("Analysis Preferences", analysisPrefs);
 			prefTabs.addTab("Learn Preferences", learnPrefs);
 
-			Object[] options = { "Save", "Cancel" };
-			int value = JOptionPane.showOptionDialog(frame, prefTabs, "Preferences", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-					options, options[0]);
+			boolean problem;
+			int value;
+			do {
+				problem = false;
+				Object[] options = { "Save", "Cancel" };
+				value = JOptionPane.showOptionDialog(frame, prefTabs, "Preferences", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+						options, options[0]);
 
-			// if user hits "save", store and/or check new data
-			if (value == JOptionPane.YES_OPTION) {
-				if (dialog.isSelected()) {
-					biosimrc.put("biosim.general.file_browser", "FileDialog");
-				}
-				else {
-					biosimrc.put("biosim.general.file_browser", "JFileChooser");
-				}
-				if (icons.isSelected()) {
-					biosimrc.put("biosim.general.tree_icons", "plus_minus");
-					tree.setExpandibleIcons(false);
-				}
-				else {
-					biosimrc.put("biosim.general.tree_icons", "default");
-					tree.setExpandibleIcons(true);
-				}
-				/*if (LevelVersion.getSelectedItem().equals("L2V4")) {
+				// if user hits "save", store and/or check new data
+				if (value == JOptionPane.YES_OPTION) {
+					if (dialog.isSelected()) {
+						biosimrc.put("biosim.general.file_browser", "FileDialog");
+					}
+					else {
+						biosimrc.put("biosim.general.file_browser", "JFileChooser");
+					}
+					if (icons.isSelected()) {
+						biosimrc.put("biosim.general.tree_icons", "plus_minus");
+						tree.setExpandibleIcons(false);
+					}
+					else {
+						biosimrc.put("biosim.general.tree_icons", "default");
+						tree.setExpandibleIcons(true);
+					}
+					/*if (LevelVersion.getSelectedItem().equals("L2V4")) {
 					SBMLLevelVersion = "L2V4";
 					SBML_LEVEL = 2;
 					SBML_VERSION = 4;
 					biosimrc.put("biosim.sbml.level_version", "L2V4");
 				}
 				else {*/
-				SBMLLevelVersion = "L3V1";
-				SBML_LEVEL = 3;
-				SBML_VERSION = 1;
-				biosimrc.put("biosim.sbml.level_version", "L3V1");
-			//}
-				if (Undeclared.isSelected()) {
-					checkUndeclared = true;
-					biosimrc.put("biosim.check.undeclared", "true");
-				}
-				else {
-					checkUndeclared = false;
-					biosimrc.put("biosim.check.undeclared", "false");
-				}
-				if (Units.isSelected()) {
-					checkUnits = true;
-					biosimrc.put("biosim.check.units", "true");
-				}
-				else {
-					checkUnits = false;
-					biosimrc.put("biosim.check.units", "false");
-				}
-
-				try {
-					Double.parseDouble(KREP_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.KREP_VALUE", KREP_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(KACT_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.KACT_VALUE", KACT_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(KBIO_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.KBIO_VALUE", KBIO_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(PROMOTER_COUNT_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.PROMOTER_COUNT_VALUE", PROMOTER_COUNT_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(KASSOCIATION_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.KASSOCIATION_VALUE", KASSOCIATION_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(KBASAL_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.KBASAL_VALUE", KBASAL_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(OCR_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.OCR_VALUE", OCR_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(KDECAY_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.KDECAY_VALUE", KDECAY_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(KECDECAY_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.KECDECAY_VALUE", KECDECAY_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(RNAP_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.RNAP_VALUE", RNAP_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(RNAP_BINDING_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.RNAP_BINDING_VALUE", RNAP_BINDING_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(ACTIVATED_RNAP_BINDING_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE", ACTIVATED_RNAP_BINDING_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(STOICHIOMETRY_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.STOICHIOMETRY_VALUE", STOICHIOMETRY_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(KCOMPLEX_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.KCOMPLEX_VALUE", KCOMPLEX_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(COOPERATIVITY_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.COOPERATIVITY_VALUE", COOPERATIVITY_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(ACTIVED_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.ACTIVED_VALUE", ACTIVED_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(MAX_DIMER_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.MAX_DIMER_VALUE", MAX_DIMER_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(INITIAL_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.INITIAL_VALUE", INITIAL_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					String[] fdrv = FORWARD_MEMDIFF_VALUE.getText().trim().split("/");
-
-					// if the user specifies a forward and reverse rate
-					if (fdrv.length == 2) {
-
-						biosimrc.put("biosim.gcm.FORWARD_MEMDIFF_VALUE", fdrv[0]);
-					}
-					else if (fdrv.length == 1) {
-
-						Double.parseDouble(FORWARD_MEMDIFF_VALUE.getText().trim());
-						biosimrc.put("biosim.gcm.FORWARD_MEMDIFF_VALUE", FORWARD_MEMDIFF_VALUE.getText().trim());
-					}
-				}
-				catch (Exception e1) {
-				}
-				try {
-					String[] fdrv = REVERSE_MEMDIFF_VALUE.getText().trim().split("/");
-
-					// if the user specifies a forward and reverse rate
-					if (fdrv.length == 2) {
-
-						biosimrc.put("biosim.gcm.MEMDIFF_VALUE", fdrv[1]);
-					}
-					else if (fdrv.length == 1) {
-
-						Double.parseDouble(REVERSE_MEMDIFF_VALUE.getText().trim());
-						biosimrc.put("biosim.gcm.MEMDIFF_VALUE", REVERSE_MEMDIFF_VALUE.getText().trim());
-					}
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(KECDIFF_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.KECDIFF_VALUE", KECDIFF_VALUE.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					biosimrc.put("biosim.sim.command", simCommand.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(limit.getText().trim());
-					biosimrc.put("biosim.sim.limit", limit.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(interval.getText().trim());
-					biosimrc.put("biosim.sim.interval", interval.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(minStep.getText().trim());
-					biosimrc.put("biosim.min.sim.step", minStep.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					if (step.getText().trim().equals("inf")) {
-						biosimrc.put("biosim.sim.step", step.getText().trim());
+					SBMLLevelVersion = "L3V1";
+					SBML_LEVEL = 3;
+					SBML_VERSION = 1;
+					biosimrc.put("biosim.sbml.level_version", "L3V1");
+					//}
+					if (Undeclared.isSelected()) {
+						checkUndeclared = true;
+						biosimrc.put("biosim.check.undeclared", "true");
 					}
 					else {
-						Double.parseDouble(step.getText().trim());
-						biosimrc.put("biosim.sim.step", step.getText().trim());
+						checkUndeclared = false;
+						biosimrc.put("biosim.check.undeclared", "false");
 					}
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(error.getText().trim());
-					biosimrc.put("biosim.sim.error", error.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Long.parseLong(seed.getText().trim());
-					biosimrc.put("biosim.sim.seed", seed.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Integer.parseInt(runs.getText().trim());
-					biosimrc.put("biosim.sim.runs", runs.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(rapid1.getText().trim());
-					biosimrc.put("biosim.sim.rapid1", rapid1.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(rapid2.getText().trim());
-					biosimrc.put("biosim.sim.rapid2", rapid2.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(qssa.getText().trim());
-					biosimrc.put("biosim.sim.qssa", qssa.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Integer.parseInt(concentration.getText().trim());
-					biosimrc.put("biosim.sim.concentration", concentration.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				biosimrc.put("biosim.sim.useInterval", (String) useInterval.getSelectedItem());
-				biosimrc.put("biosim.sim.abs", (String) abs.getSelectedItem());
-				biosimrc.put("biosim.sim.type", (String) type.getSelectedItem());
-				biosimrc.put("biosim.sim.sim", (String) sim.getSelectedItem());
-				try {
-					Integer.parseInt(tn.getText().trim());
-					biosimrc.put("biosim.learn.tn", tn.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Integer.parseInt(tj.getText().trim());
-					biosimrc.put("biosim.learn.tj", tj.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(ti.getText().trim());
-					biosimrc.put("biosim.learn.ti", ti.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				biosimrc.put("biosim.learn.bins", (String) bins.getSelectedItem());
-				biosimrc.put("biosim.learn.equaldata", (String) equaldata.getSelectedItem());
-				biosimrc.put("biosim.learn.autolevels", (String) autolevels.getSelectedItem());
-				try {
-					Double.parseDouble(ta.getText().trim());
-					biosimrc.put("biosim.learn.ta", ta.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(tr.getText().trim());
-					biosimrc.put("biosim.learn.tr", tr.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(tm.getText().trim());
-					biosimrc.put("biosim.learn.tm", tm.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				try {
-					Double.parseDouble(tt.getText().trim());
-					biosimrc.put("biosim.learn.tt", tt.getText().trim());
-				}
-				catch (Exception e1) {
-				}
-				biosimrc.put("biosim.learn.debug", (String) debug.getSelectedItem());
-				biosimrc.put("biosim.learn.succpred", (String) succpred.getSelectedItem());
-				biosimrc.put("biosim.learn.findbaseprob", (String) findbaseprob.getSelectedItem());
-				for (int i = 0; i < tab.getTabCount(); i++) {
-					if (tab.getTitleAt(i).contains(".gcm")) {
-						// TODO: REMOVED NOT SURE IF PROBLEM
-						//((ModelEditor) tab.getComponentAt(i)).getGCM().loadDefaultParameters();
-						((ModelEditor) tab.getComponentAt(i)).reloadParameters();
+					if (Units.isSelected()) {
+						checkUnits = true;
+						biosimrc.put("biosim.check.units", "true");
 					}
+					else {
+						checkUnits = false;
+						biosimrc.put("biosim.check.units", "false");
+					}
+
+					try {
+						Double.parseDouble(KREP_VALUE.getText().trim());
+						biosimrc.put("biosim.gcm.KREP_VALUE", KREP_VALUE.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						Double.parseDouble(KACT_VALUE.getText().trim());
+						biosimrc.put("biosim.gcm.KACT_VALUE", KACT_VALUE.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						Double.parseDouble(KBIO_VALUE.getText().trim());
+						biosimrc.put("biosim.gcm.KBIO_VALUE", KBIO_VALUE.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						Double.parseDouble(PROMOTER_COUNT_VALUE.getText().trim());
+						biosimrc.put("biosim.gcm.PROMOTER_COUNT_VALUE", PROMOTER_COUNT_VALUE.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						Double.parseDouble(KASSOCIATION_VALUE.getText().trim());
+						biosimrc.put("biosim.gcm.KASSOCIATION_VALUE", KASSOCIATION_VALUE.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						Double.parseDouble(KBASAL_VALUE.getText().trim());
+						biosimrc.put("biosim.gcm.KBASAL_VALUE", KBASAL_VALUE.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						Double.parseDouble(OCR_VALUE.getText().trim());
+						biosimrc.put("biosim.gcm.OCR_VALUE", OCR_VALUE.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						Double.parseDouble(KDECAY_VALUE.getText().trim());
+						biosimrc.put("biosim.gcm.KDECAY_VALUE", KDECAY_VALUE.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						Double.parseDouble(KECDECAY_VALUE.getText().trim());
+						biosimrc.put("biosim.gcm.KECDECAY_VALUE", KECDECAY_VALUE.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						Double.parseDouble(RNAP_VALUE.getText().trim());
+						biosimrc.put("biosim.gcm.RNAP_VALUE", RNAP_VALUE.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						Double.parseDouble(RNAP_BINDING_VALUE.getText().trim());
+						biosimrc.put("biosim.gcm.RNAP_BINDING_VALUE", RNAP_BINDING_VALUE.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						Double.parseDouble(ACTIVATED_RNAP_BINDING_VALUE.getText().trim());
+						biosimrc.put("biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE", ACTIVATED_RNAP_BINDING_VALUE.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						Double.parseDouble(STOICHIOMETRY_VALUE.getText().trim());
+						biosimrc.put("biosim.gcm.STOICHIOMETRY_VALUE", STOICHIOMETRY_VALUE.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						Double.parseDouble(KCOMPLEX_VALUE.getText().trim());
+						biosimrc.put("biosim.gcm.KCOMPLEX_VALUE", KCOMPLEX_VALUE.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						Double.parseDouble(COOPERATIVITY_VALUE.getText().trim());
+						biosimrc.put("biosim.gcm.COOPERATIVITY_VALUE", COOPERATIVITY_VALUE.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						Double.parseDouble(ACTIVED_VALUE.getText().trim());
+						biosimrc.put("biosim.gcm.ACTIVED_VALUE", ACTIVED_VALUE.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						Double.parseDouble(MAX_DIMER_VALUE.getText().trim());
+						biosimrc.put("biosim.gcm.MAX_DIMER_VALUE", MAX_DIMER_VALUE.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						Double.parseDouble(INITIAL_VALUE.getText().trim());
+						biosimrc.put("biosim.gcm.INITIAL_VALUE", INITIAL_VALUE.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						String[] fdrv = FORWARD_MEMDIFF_VALUE.getText().trim().split("/");
+
+						// if the user specifies a forward and reverse rate
+						if (fdrv.length == 2) {
+
+							biosimrc.put("biosim.gcm.FORWARD_MEMDIFF_VALUE", fdrv[0]);
+						}
+						else if (fdrv.length == 1) {
+
+							Double.parseDouble(FORWARD_MEMDIFF_VALUE.getText().trim());
+							biosimrc.put("biosim.gcm.FORWARD_MEMDIFF_VALUE", FORWARD_MEMDIFF_VALUE.getText().trim());
+						}
+					}
+					catch (Exception e1) {
+					}
+					try {
+						String[] fdrv = REVERSE_MEMDIFF_VALUE.getText().trim().split("/");
+
+						// if the user specifies a forward and reverse rate
+						if (fdrv.length == 2) {
+
+							biosimrc.put("biosim.gcm.MEMDIFF_VALUE", fdrv[1]);
+						}
+						else if (fdrv.length == 1) {
+
+							Double.parseDouble(REVERSE_MEMDIFF_VALUE.getText().trim());
+							biosimrc.put("biosim.gcm.MEMDIFF_VALUE", REVERSE_MEMDIFF_VALUE.getText().trim());
+						}
+					}
+					catch (Exception e1) {
+					}
+					try {
+						Double.parseDouble(KECDIFF_VALUE.getText().trim());
+						biosimrc.put("biosim.gcm.KECDIFF_VALUE", KECDIFF_VALUE.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						biosimrc.put("biosim.sim.command", simCommand.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						Double.parseDouble(limit.getText().trim());
+						biosimrc.put("biosim.sim.limit", limit.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						Double.parseDouble(interval.getText().trim());
+						biosimrc.put("biosim.sim.interval", interval.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						Double.parseDouble(minStep.getText().trim());
+						biosimrc.put("biosim.min.sim.step", minStep.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						if (step.getText().trim().equals("inf")) {
+							biosimrc.put("biosim.sim.step", step.getText().trim());
+						}
+						else {
+							Double.parseDouble(step.getText().trim());
+							biosimrc.put("biosim.sim.step", step.getText().trim());
+						}
+					}
+					catch (Exception e1) {
+					}
+					try {
+						Double.parseDouble(error.getText().trim());
+						biosimrc.put("biosim.sim.error", error.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						Long.parseLong(seed.getText().trim());
+						biosimrc.put("biosim.sim.seed", seed.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						Integer.parseInt(runs.getText().trim());
+						biosimrc.put("biosim.sim.runs", runs.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						Double.parseDouble(rapid1.getText().trim());
+						biosimrc.put("biosim.sim.rapid1", rapid1.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						Double.parseDouble(rapid2.getText().trim());
+						biosimrc.put("biosim.sim.rapid2", rapid2.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						Double.parseDouble(qssa.getText().trim());
+						biosimrc.put("biosim.sim.qssa", qssa.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						Integer.parseInt(concentration.getText().trim());
+						biosimrc.put("biosim.sim.concentration", concentration.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					biosimrc.put("biosim.sim.useInterval", (String) useInterval.getSelectedItem());
+					biosimrc.put("biosim.sim.abs", (String) abs.getSelectedItem());
+					biosimrc.put("biosim.sim.type", (String) type.getSelectedItem());
+					biosimrc.put("biosim.sim.sim", (String) sim.getSelectedItem());
+					try {
+						Integer.parseInt(tn.getText().trim());
+						biosimrc.put("biosim.learn.tn", tn.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						Integer.parseInt(tj.getText().trim());
+						biosimrc.put("biosim.learn.tj", tj.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						Double.parseDouble(ti.getText().trim());
+						biosimrc.put("biosim.learn.ti", ti.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					biosimrc.put("biosim.learn.bins", (String) bins.getSelectedItem());
+					biosimrc.put("biosim.learn.equaldata", (String) equaldata.getSelectedItem());
+					biosimrc.put("biosim.learn.autolevels", (String) autolevels.getSelectedItem());
+					try {
+						Double.parseDouble(ta.getText().trim());
+						biosimrc.put("biosim.learn.ta", ta.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						Double.parseDouble(tr.getText().trim());
+						biosimrc.put("biosim.learn.tr", tr.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						Double.parseDouble(tm.getText().trim());
+						biosimrc.put("biosim.learn.tm", tm.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					try {
+						Double.parseDouble(tt.getText().trim());
+						biosimrc.put("biosim.learn.tt", tt.getText().trim());
+					}
+					catch (Exception e1) {
+					}
+					biosimrc.put("biosim.learn.debug", (String) debug.getSelectedItem());
+					biosimrc.put("biosim.learn.succpred", (String) succpred.getSelectedItem());
+					biosimrc.put("biosim.learn.findbaseprob", (String) findbaseprob.getSelectedItem());
+					for (int i = 0; i < tab.getTabCount(); i++) {
+						if (tab.getTitleAt(i).contains(".gcm")) {
+							// TODO: REMOVED NOT SURE IF PROBLEM
+							//((ModelEditor) tab.getComponentAt(i)).getGCM().loadDefaultParameters();
+							((ModelEditor) tab.getComponentAt(i)).reloadParameters();
+						}
+					}
+					if (!uriField.getText().trim().equals(""))
+						biosimrc.put("biosim.synthesis.uri", uriField.getText().trim());
+					else {
+						JOptionPane.showMessageDialog(Gui.frame, "URI authority cannot be blank.", 
+								"Invalid Preference", JOptionPane.ERROR_MESSAGE);
+						uriField.setText(biosimrc.get("biosim.synthesis.uri", ""));
+						problem = true;
+					}
+					if (!regexField.getText().trim().equals(""))
+						biosimrc.put("biosim.synthesis.regex", regexField.getText().trim());
+					else {
+						JOptionPane.showMessageDialog(Gui.frame, "Validation regex cannot be blank.", 
+								"Invalid Preference", JOptionPane.ERROR_MESSAGE);
+						regexField.setText(biosimrc.get("biosim.synthesis.regex", ""));
+						problem = true;
+					}
+
 				}
-				if (!uriField.getText().trim().equals(""))
-					biosimrc.put("biosim.synthesis.uri", uriField.getText().trim());
-				else
-					biosimrc.put("biosim.synthesis.uri", "http://www.async.ece.utah.edu");
-			}
-			// if user clicks "cancel"
-			else {
-			}
+			} while (value == JOptionPane.YES_OPTION && problem);
 		}
 
 		// if (async)
