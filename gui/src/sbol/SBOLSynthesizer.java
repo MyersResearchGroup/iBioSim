@@ -192,8 +192,15 @@ public class SBOLSynthesizer {
 	public DnaComponent synthesizeDnaComponent() {	
 		DnaComponent synthComp = new DnaComponentImpl();
 		setAuthorityAndTime();
+		String regex = Preferences.userRoot().get("biosim.synthesis.regex", "");
+		SequenceTypeValidator validator = new SequenceTypeValidator(regex);
+		Set<String> startTypes = new HashSet<String>();
+		if (validator != null)
+			startTypes.addAll(validator.getStartTypes());
+		else
+			startTypes.add("promoter");
 		// Orders list of subcomponents (to be assembled into composite component) by walking synthesis nodes
-		LinkedList<DnaComponent> subComps = orderSubComponents();
+		LinkedList<DnaComponent> subComps = orderSubComponents(startTypes);
 		if (subComps == null)
 			return null;
 		DnaComponent localMatchComp = checkForLocalMatch(subComps);
@@ -230,8 +237,8 @@ public class SBOLSynthesizer {
 //				types.add(SBOLUtility.uriToSOTypeConverter(subComp.getTypes().iterator().next()));
 				types.addAll(getLowestSequenceTypes(subComp));
 			}
-			SequenceTypeValidator validator = new SequenceTypeValidator("((p(rc)+t+)|e)+");
-			if (!validator.validateSequenceTypes(types)) {
+			
+			if (validator != null && !validator.validateSequenceTypes(types)) {
 				Object[] options = { "OK", "Cancel" };
 				int choice = JOptionPane.showOptionDialog(null, 
 						"Ordering of SBOL DNA components associated to SBML does not match preferred regular expression.  Proceed with synthesis?", 
@@ -243,6 +250,7 @@ public class SBOLSynthesizer {
 		}
 	}
 	
+	// Gets sequence ontology types for DNA components at the lowest level in the hierarchy of components
 	private LinkedList<String> getLowestSequenceTypes(DnaComponent comp) {
 		LinkedList<String> types = new LinkedList<String>();
 		List<SequenceAnnotation> annots = comp.getAnnotations();
@@ -250,37 +258,30 @@ public class SBOLSynthesizer {
 			for (SequenceAnnotation anno : annots)
 				types.addAll(getLowestSequenceTypes(anno.getSubComponent()));
 		else
-			types.add(SBOLUtility.uriToSOTypeConverter(comp.getTypes().iterator().next()));
+			types.add(SBOLUtility.uriToTypeConverter(comp.getTypes().iterator().next()));
 		return types;
 	}
 	
 	// Recursively walks synthesis node graph and orders associated SBOL DNA components (no preference when graph branches)
 	// Starts at synthesis nodes with DNA components of the SO type "promoter"
 	// Stops at nodes with other promoters or previously visited nodes
-	private LinkedList<DnaComponent> orderSubComponents() {
-		Set<String> filter = SBOLUtility.soSynonyms(GlobalConstants.SBOL_PROMOTER);
+	private LinkedList<DnaComponent> orderSubComponents(Set<String> startTypes) {
 		LinkedHashSet<SynthesisNode> startNodes = new LinkedHashSet<SynthesisNode>();
-		Set<String> startNodeIDs = new HashSet<String>();
+//		Set<String> startNodeIDs = new HashSet<String>();
 		
 		// Determines start nodes and counts total number of nodes with DNA components
-		int nodesSBOL = determineStartNodes(startNodes, startNodeIDs, filter);
+		int nodesSBOL = determineStartNodes(startNodes, startTypes);
 
-		// Walk and order subcomponents
+		// Walks and orders subcomponents
 		LinkedList<DnaComponent> subComps = new LinkedList<DnaComponent>();
-		Set<String> visitedNodeIds;
 		int nodesSBOLVisited = 0;
 		for (SynthesisNode startNode : startNodes) {
-			visitedNodeIds = new HashSet<String>(startNodeIDs);
-			nodesSBOLVisited = nodesSBOLVisited + walkSynthesisNodes(startNode, subComps, visitedNodeIds);
+			nodesSBOLVisited = nodesSBOLVisited + walkSynthesisNodes(startNode, subComps);
 		}
-		// Check if nodes with DNA components weren't walked
+		
+		// Orders leftover subcomponents that did not follow the subcomponents matching the beginning of the regex
 		if (nodesSBOLVisited != nodesSBOL) {
-			Object[] options = { "OK", "Cancel" };
-			int choice = JOptionPane.showOptionDialog(null, 
-					"Some SBOL DNA components are not connected to a promoter and will not be included in synthesis.  Proceed with synthesis?", 
-					"Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
-			if (choice != JOptionPane.OK_OPTION)
-				return null;
+			subComps.addAll(orderLeftoverSubComponents());
 		}
 		return subComps;
 	}
@@ -288,16 +289,16 @@ public class SBOLSynthesizer {
 	// Populates sets of start nodes and their IDs (1st URI of start node is for DNA component of SO type specified by filter
 	// or for DNA component whose recursively 1st subcomponent is of the correct type)
 	// Returns total number of nodes visited that had URIs (start nodes or not)
-	private int determineStartNodes(LinkedHashSet<SynthesisNode> startNodes, Set<String> startNodeIDs, Set<String> filter) {
+	private int determineStartNodes(LinkedHashSet<SynthesisNode> startNodes, Set<String> startTypes) {
 		int nodesSBOL = 0;
 		for (SynthesisNode synNode : synMap.values()) {
 			LinkedList<DnaComponent> dnaComps = synNode.getDNAComponents();
 			if (dnaComps.size() > 0) {
 				nodesSBOL++;
 				DnaComponent startComp = dnaComps.get(0);
-				if (checkStartCompType(startComp, filter)) {
+				if (checkStartCompType(startComp, startTypes)) {
+					synNode.setVisited(true);
 					startNodes.add(synNode);
-					startNodeIDs.add(synNode.getId());	
 				}
 			}
 		}
@@ -305,19 +306,56 @@ public class SBOLSynthesizer {
 	}
 	
 	// Recursively checks whether DNA component or its 1st subcomponent has SO type in filter
-	private boolean checkStartCompType(DnaComponent startComp, Set<String> filter) {
-		for (URI typeURI : startComp.getTypes())
-			if (filter.contains(typeURI.toString()))
+	private boolean checkStartCompType(DnaComponent startComp, Set<String> startTypes) {
+		for (URI uri : startComp.getTypes())
+			if (startTypes.contains(SBOLUtility.uriToTypeConverter(uri)))
 				return true;
 		if (startComp.getAnnotations().size() > 0)
-			return checkStartCompType(startComp.getAnnotations().get(0).getSubComponent(), filter);
+			return checkStartCompType(startComp.getAnnotations().get(0).getSubComponent(), startTypes);
 		else
 			return false;
 	}
 	
+	// Recursive helper method for walking synthesis node graph and loading associated SBOL DNA component URIs
+	private int walkSynthesisNodes(SynthesisNode synNode, LinkedList<DnaComponent> subComps) {
+		int nodesSBOLVisited = 0;
+		LinkedList<DnaComponent> dnaComps = synNode.getDNAComponents();
+		if (dnaComps.size() > 0) {
+			nodesSBOLVisited++;
+			subComps.addAll(dnaComps);
+		}
+		for (SynthesisNode nextNode : synNode.getNextNodes())
+			if (!nextNode.isVisited()) {
+				nextNode.setVisited(true);
+				nodesSBOLVisited = nodesSBOLVisited + walkSynthesisNodes(nextNode, subComps);
+			}
+		return nodesSBOLVisited;
+	}
+	
+	// Orders leftover subcomponents that did not follow the subcomponents matching the beginning of the regex
+	private LinkedList<DnaComponent> orderLeftoverSubComponents() {
+		LinkedList<DnaComponent> leftoverSubComponents = new LinkedList<DnaComponent>();
+		Set<SynthesisNode> startNodes = new HashSet<SynthesisNode>();
+		Set<SynthesisNode> leftoverNodes = new HashSet<SynthesisNode>();
+		Set<String> nextIDs = new HashSet<String>();
+		for (SynthesisNode synNode : synMap.values())
+			if (!synNode.isVisited()) {
+				leftoverNodes.add(synNode);
+				for (SynthesisNode nextNode : synNode.getNextNodes())
+					nextIDs.add(nextNode.getID());
+			}
+		for (SynthesisNode leftover : leftoverNodes)
+			if (!nextIDs.contains(leftover.getID()))
+				startNodes.add(leftover);
+		for (SynthesisNode startNode : startNodes) {
+			walkSynthesisNodes(startNode, leftoverSubComponents);
+		}
+		return leftoverSubComponents;
+	}
+	
 	// Check if DNA components to be assembled already exist as composite component in local SBOL files
 	private DnaComponent checkForLocalMatch(LinkedList<DnaComponent> subComps) {
-		
+
 		LinkedList<URI> subCompURIs = new LinkedList<URI>();
 		for (DnaComponent subComp : subComps)
 			subCompURIs.add(subComp.getURI());
@@ -330,22 +368,6 @@ public class SBOLSynthesizer {
 			}
 		}
 		return null;
-	}
-	
-	// Recursive helper method for walking synthesis node graph and loading associated SBOL DNA component URIs
-	private int walkSynthesisNodes(SynthesisNode synNode, LinkedList<DnaComponent> subComps, Set<String> visitedNodeIds) {
-		int nodesSBOLVisited = 0;
-		LinkedList<DnaComponent> dnaComps = synNode.getDNAComponents();
-		if (dnaComps.size() > 0) {
-			nodesSBOLVisited++;
-			subComps.addAll(dnaComps);
-		}
-		for (SynthesisNode nextNode : synNode.getNextNodes())
-			if (!visitedNodeIds.contains(nextNode.getId())) {
-				visitedNodeIds.add(nextNode.getId());
-				nodesSBOLVisited = nodesSBOLVisited + walkSynthesisNodes(nextNode, subComps, visitedNodeIds);
-			}
-		return nodesSBOLVisited;
 	}
 	
 	private int addSubComponent(int position, DnaComponent subComp, DnaComponent synthComp, int addCount) {	

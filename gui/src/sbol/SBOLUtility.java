@@ -150,7 +150,7 @@ public class SBOLUtility {
 		return types;
 	}
 	
-	public static String uriToSOTypeConverter(URI uri) {
+	public static String uriToTypeConverter(URI uri) {
 		String temp = uri.toString();
 		if (temp.equals(SequenceOntology.PROMOTER.toString()))
 			return "promoter";
@@ -169,6 +169,26 @@ public class SBOLUtility {
 		else
 			return "N/A";
 	}
+	
+	public static String typeToNumConverter(String type) {
+		if (type.equals("promoter"))
+			return "SO_0000167";
+		else if (type.equals("RNA polymerase promoter"))
+			return "SO_0001203";
+		else if (type.equals("ribosome entry site"))
+			return "SO_0000139";
+		else if (type.equals("coding sequence"))
+			return "SO_0000316";
+		else if (type.equals("terminator"))
+			return "SO_0000141";
+		else if (type.equals("bacterial terminator"))
+			return "SO_0000614";
+		else if (type.equals("engineered region"))
+			return "SO_0000804";
+		else
+			return "N/A";
+	}
+	
 	
 	public static String soTypeToGrammarTerminal(String soType) {
 		if (soType.equals("promoter") || soType.equals("RNA polymerase promoter"))

@@ -442,7 +442,7 @@ public class GCMParser {
 		LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlPromoter);
 		SynthesisNode synNode = new SynthesisNode(sbmlPromoter.getMetaId(), sbolURIs);
 
-		synMap.put(synNode.getId(), synNode);
+		synMap.put(synNode.getID(), synNode);
 		// Determine if promoter belongs to a component
 		String component = "";
 		String promoterId = sbmlPromoter.getId();
@@ -467,7 +467,7 @@ public class GCMParser {
 		LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlReaction);
 		SynthesisNode synNode = new SynthesisNode(sbmlReaction.getMetaId(), sbolURIs);
 		
-		synMap.put(synNode.getId(), synNode);
+		synMap.put(synNode.getID(), synNode);
 		// Connect synthesis nodes for reactants, modifiers to synthesis node for reaction
 		for (long i = 0; i < sbmlReaction.getNumReactants(); i++) {
 			String reactantMetaID = speciesMetaMap.get(sbmlReaction.getReactant(i).getSpecies());
@@ -510,7 +510,7 @@ public class GCMParser {
 		LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlRule);
 		SynthesisNode synNode = new SynthesisNode(sbmlRule.getMetaId(), sbolURIs);
 		
-		synMap.put(synNode.getId(), synNode);
+		synMap.put(synNode.getID(), synNode);
 		// Connect synthesis nodes for input species to synthesis node for rule
 		// or maps input parameters to rules
 		for (String input : parseInputHelper(sbmlRule.getMath())) {
@@ -553,7 +553,7 @@ public class GCMParser {
 		LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlSpecies);
 		SynthesisNode synNode = new SynthesisNode(sbmlSpecies.getMetaId(), sbolURIs);
 		
-		synMap.put(synNode.getId(), synNode);
+		synMap.put(synNode.getID(), synNode);
 		// Determine if species belongs to a gcm component
 		String component = "";
 		String speciesId = sbmlSpecies.getId();
@@ -704,7 +704,7 @@ public class GCMParser {
 						sbolDetected = true;
 				}
 			}
-			synMap.put(synNode.getId(), synNode);
+			synMap.put(synNode.getID(), synNode);
 		}
 		return sbolDetected; 
 	}
