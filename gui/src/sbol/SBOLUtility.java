@@ -150,7 +150,7 @@ public class SBOLUtility {
 		return types;
 	}
 	
-	public static String uriToTypeConverter(URI uri) {
+	public static String convertURIToSOType(URI uri) {
 		String temp = uri.toString();
 		if (temp.equals(SequenceOntology.PROMOTER.toString()))
 			return "promoter";
@@ -170,7 +170,7 @@ public class SBOLUtility {
 			return "N/A";
 	}
 	
-	public static String typeToNumConverter(String type) {
+	public static String convertSOTypeToNum(String type) {
 		if (type.equals("promoter"))
 			return "SO_0000167";
 		else if (type.equals("RNA polymerase promoter"))

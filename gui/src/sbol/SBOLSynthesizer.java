@@ -258,7 +258,7 @@ public class SBOLSynthesizer {
 			for (SequenceAnnotation anno : annots)
 				types.addAll(getLowestSequenceTypes(anno.getSubComponent()));
 		else
-			types.add(SBOLUtility.uriToTypeConverter(comp.getTypes().iterator().next()));
+			types.add(SBOLUtility.convertURIToSOType(comp.getTypes().iterator().next()));
 		return types;
 	}
 	
@@ -308,7 +308,7 @@ public class SBOLSynthesizer {
 	// Recursively checks whether DNA component or its 1st subcomponent has SO type in filter
 	private boolean checkStartCompType(DnaComponent startComp, Set<String> startTypes) {
 		for (URI uri : startComp.getTypes())
-			if (startTypes.contains(SBOLUtility.uriToTypeConverter(uri)))
+			if (startTypes.contains(SBOLUtility.convertURIToSOType(uri)))
 				return true;
 		if (startComp.getAnnotations().size() > 0)
 			return checkStartCompType(startComp.getAnnotations().get(0).getSubComponent(), startTypes);

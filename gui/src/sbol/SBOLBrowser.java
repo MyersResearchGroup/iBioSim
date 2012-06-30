@@ -2,6 +2,8 @@ package sbol;
 
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
@@ -21,10 +23,12 @@ import java.util.*;
 
 import main.Gui;
 
-public class SBOLBrowser extends JPanel {
+public class SBOLBrowser extends JPanel implements ActionListener {
 	
 	private String[] options = {"Ok", "Cancel"};
 	private JPanel selectionPanel = new JPanel(new GridLayout(1,2));
+	private JPanel filterPanel = new JPanel(new GridLayout(1,5));
+	private JTextField filterText = new JTextField();
 	private JTextArea viewArea = new JTextArea();
 	private JScrollPane viewScroll = new JScrollPane();
 	private CollectionBrowserPanel libPanel;
@@ -44,21 +48,21 @@ public class SBOLBrowser extends JPanel {
 	public SBOLBrowser(Gui gui, String filePath) {
 		super(new BorderLayout());
 		
-//		HashMap<String, org.sbolstandard.core.Collection> libMap = new HashMap<String, org.sbolstandard.core.Collection>();
-//		HashMap<String, DnaComponent> compMap = new HashMap<String, DnaComponent>();
-//		HashMap<String, SequenceAnnotation> annoMap = new HashMap<String, SequenceAnnotation>();
-//		HashMap<String, DnaSequence> seqMap = new HashMap<String, DnaSequence>();
-		
 		filePath = filePath.replace("\\\\", "\\");
 		
 		loadSbolFiles(gui.getSbolFiles(), filePath);
 		
 		constructBrowser(new HashSet<String>());
 			
-		JPanel browserPanel = new JPanel();
-		browserPanel.add(selectionPanel, "North");
-		browserPanel.add(viewScroll, "Center");
-
+//		JPanel browserPanel = new JPanel(new GridLayout(3,1));
+//		browserPanel.add(selectionPanel);
+//		browserPanel.add(viewScroll);
+//		browserPanel.add(filterPanel);
+		JPanel browserPanel = new JPanel(new BorderLayout());
+		browserPanel.add(filterPanel, BorderLayout.NORTH);
+		browserPanel.add(selectionPanel, BorderLayout.CENTER);
+		browserPanel.add(viewScroll, BorderLayout.SOUTH);
+		
 		JTabbedPane browserTab = new JTabbedPane();
 		browserTab.add("SBOL Browser", browserPanel);
 		this.add(browserTab);
@@ -67,30 +71,25 @@ public class SBOLBrowser extends JPanel {
 	
 	//Constructor when browsing RDF file subsets for SBOL to GCM association
 	public SBOLBrowser(HashSet<String> sbolFiles, Set<String> filter, LinkedList<URI> defaultSelectedCompURIs) {
-		super(new GridLayout(2,1));
+//		super(new GridLayout(3,1));
+		super(new BorderLayout());
 		
 		selectedCompURIs = new LinkedList<URI>();
 		
-//		HashMap<String, org.sbolstandard.core.Collection> libMap = new HashMap<String, org.sbolstandard.core.Collection>();
-//		HashMap<String, DnaComponent> compMap = new HashMap<String, DnaComponent>();
-//		HashMap<String, SequenceAnnotation> annoMap = new HashMap<String, SequenceAnnotation>();
-//		HashMap<String, DnaSequence> seqMap = new HashMap<String, DnaSequence>();
-		
 		loadSbolFiles(sbolFiles, "");
-		
-//		if (compMap.size() > 0) {
-			constructBrowser(filter);
+	
+		constructBrowser(filter);
 
-			this.add(selectionPanel);
-			this.add(viewScroll);
+		this.add(filterPanel, BorderLayout.NORTH);
+		this.add(selectionPanel, BorderLayout.CENTER);
+		this.add(viewScroll, BorderLayout.SOUTH);
+//		this.add(selectionPanel);
+//		this.add(viewScroll);
+//		this.add(filterPanel);
 
-			boolean display = true;
-			while (display)
-				display = browserOpen();
-//		} else {
-//			JOptionPane.showMessageDialog(Gui.frame, "No SBOL DNA components are found in project.", 
-//					"DNA Components Not Found", JOptionPane.ERROR_MESSAGE);
-//		}
+		boolean display = true;
+		while (display)
+			display = browserOpen();
 	}
 	
 	private void loadSbolFiles(HashSet<String> sbolFiles, String browsePath) {
@@ -156,9 +155,26 @@ public class SBOLBrowser extends JPanel {
 		
 		selectionPanel.add(libPanel);
 		selectionPanel.add(compPanel);
+		
+		JButton filterButton = new JButton("Filter");
+		filterButton.setActionCommand("filterSBOL");
+		filterButton.addActionListener(this);
+		JLabel filterLabel = new JLabel("Filter by Type:  ");
+		filterLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		filterPanel.add(filterLabel);
+		filterPanel.add(filterText);
+		filterPanel.add(filterButton);
+		filterPanel.add(new JLabel());
 	}
 	
 	public LinkedList<URI> getSelection() {
 		return selectedCompURIs;
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		if (e.getActionCommand().equals("filterSBOL")) {
+			compPanel.filterComponents(filterText.getText());
+		} 
+		
 	}
 }
