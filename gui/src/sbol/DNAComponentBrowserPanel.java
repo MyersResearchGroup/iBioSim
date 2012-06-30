@@ -14,6 +14,7 @@ import java.util.*;
 public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 
 	private LinkedList<URI> compURIs;
+	private LinkedList<String> compIDs;
 //	private HashMap<String, DnaComponent> compMap;
 //	private HashMap<String, SequenceAnnotation> annoMap;
 //	private HashMap<String, DnaSequence> seqMap;
@@ -47,10 +48,25 @@ public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 		this.add(componentScroll, "Center");
 	}
 	
-	public void setComponents(LinkedList<String> compIds, LinkedList<URI> compURIs) {
+	public void setComponents(LinkedList<String> compIDs, LinkedList<URI> compURIs) {
 		this.compURIs = compURIs;
-		Object[] idObjects = compIds.toArray();
+		this.compIDs = compIDs;
+		Object[] idObjects = compIDs.toArray();
 		compList.setListData(idObjects);
+	}
+	
+	public void filterComponents(String filterType) {
+		viewArea.setText("");
+		LinkedList<URI> filteredURIs = new LinkedList<URI>();
+		LinkedList<String> filteredIDs = new LinkedList<String>();
+		for (int i = 0; i < compURIs.size(); i++) {
+			DnaComponent dnac = aggregateCompResolver.resolve(compURIs.get(i));
+			if (SBOLUtility.convertURIToSOType(dnac.getTypes().iterator().next()).equals(filterType)) {
+				filteredURIs.add(compURIs.get(i));
+				filteredIDs.add(compIDs.get(i));
+			}
+		}
+		setComponents(filteredIDs, filteredURIs);
 	}
 	
 	public LinkedList<URI> getSelectedURIs() {
@@ -104,7 +120,7 @@ public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 					viewArea.append("Types:  ");
 					String types = "";
 					for (URI uri : dnac.getTypes()) 
-						types = types + SBOLUtility.uriToTypeConverter(uri) + ", ";
+						types = types + SBOLUtility.convertURIToSOType(uri) + ", ";
 					if (types.length() > 0)
 						viewArea.append(types.substring(0, types.length() - 2) + "\n");
 					else
