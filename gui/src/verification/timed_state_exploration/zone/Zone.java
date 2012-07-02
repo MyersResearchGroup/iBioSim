@@ -887,8 +887,17 @@ public class Zone extends ZoneType {
 			State state)
 	{
 		// TODO: Check if finish.
-		return fireTransitionbydbmIndex(Arrays.binarySearch(_indexToTimer, timer), 
-				enabledTimers, state);
+		int index = Arrays.binarySearch(_indexToTimer, timer);
+		
+		//return fireTransitionbydbmIndex(Arrays.binarySearch(_indexToTimer, timer), 
+				//enabledTimers, state);
+		
+		// Check if the value is in this zone to fire.
+		if(index < 0){
+			return this;
+		}
+		
+		return fireTransitionbydbmIndex(index, enabledTimers, state);
 	}
 	
 	/* (non-Javadoc)
