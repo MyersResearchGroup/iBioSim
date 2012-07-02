@@ -175,5 +175,17 @@ public abstract class ZoneType {
 	 * 		True if this is a subset of other; false otherwise.
 	 */
 	public abstract boolean subset(ZoneType otherZone);
+	
+	/**
+	 * Determines if this zone is a superset of Zone otherZone.
+	 * @param otherZone 
+	 * 		The zone to compare against.
+	 * @return
+	 * 		True if this is a subset of other; false otherwise. More specifically it
+	 *		gives the result of otherZone.subset(this). Thus it agrees with the subset method.
+	 */
+	public boolean superset(ZoneType otherZone){
+		return otherZone.subset(this);
+	}
 
 }
