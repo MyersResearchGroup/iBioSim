@@ -29,6 +29,9 @@ import verification.platu.partialOrders.StaticSets;
 import verification.platu.project.PrjState;
 import verification.platu.stategraph.State;
 import verification.platu.stategraph.StateGraph;
+import verification.timed_state_exploration.zone.ZoneType;
+import verification.timed_state_exploration.zoneProject.StateSet;
+import verification.timed_state_exploration.zoneProject.TimedPrjState;
 
 public class Analysis {
 
@@ -174,9 +177,24 @@ public class Analysis {
 		HashSet<PrjState> stateStack = new HashSet<PrjState>();
 		Stack<LinkedList<Transition>> lpnTranStack = new Stack<LinkedList<Transition>>();
 		Stack<Integer> curIndexStack = new Stack<Integer>();
-		HashSet<PrjState> prjStateSet = new HashSet<PrjState>();
+		//HashSet<PrjState> prjStateSet = new HashSet<PrjState>();
 		
-		PrjState initPrjState = new PrjState(initStateArray);
+		// Set of PrjStates that have been seen before. Set class documentation
+		// for how it behaves. Timing Change.
+		StateSet prjStateSet = new StateSet();
+		
+		PrjState initPrjState;
+		
+		// Create the appropriate type for the PrjState depending on whether timing is 
+		// being used or not. Timing Change.
+		if(!Options.getTimingAnalysisFlag()){
+			// If not doing timing.
+			initPrjState = new PrjState(initStateArray);
+		}
+		else{
+			// If timing is enabled.
+			initPrjState = new TimedPrjState(initStateArray);
+		}
 		prjStateSet.add(initPrjState);
 		
 		PrjState stateStackTop = initPrjState;
@@ -191,7 +209,16 @@ public class Analysis {
 			printDstLpnList(sgList);
 		
 		boolean init = true;
-		LpnTranList initEnabled = sgList[0].getEnabled(initStateArray[0], init);
+		LpnTranList initEnabled;
+		if(!Options.getTimingAnalysisFlag()){ // Timing Change.
+			initEnabled = sgList[0].getEnabled(initStateArray[0], init);
+		}
+		else
+		{
+			// When timing is enabled, it is the project state that will determine
+			// what is enabled since it contains the zone.
+			initEnabled = ((TimedPrjState) stateStackTop).getEnabled(0);
+		}
 		lpnTranStack.push(initEnabled.clone());
 		curIndexStack.push(0);
 		init = false;
@@ -256,7 +283,12 @@ public class Analysis {
 				curIndex++;
 				while (curIndex < numLpns) {
 //					System.out.println("call getEnabled on curStateArray at 1: ");
-					curEnabled = (sgList[curIndex].getEnabled(curStateArray[curIndex], init)).clone();
+					if(!Options.getTimingAnalysisFlag()){ // Timing Change
+						curEnabled = (sgList[curIndex].getEnabled(curStateArray[curIndex], init)).clone();
+					}
+					else{
+						curEnabled = ((TimedPrjState) stateStackTop).getEnabled(curIndex);
+					}
 					if (curEnabled.size() > 0) {
 						if (Options.getDebugMode()) {
 							System.out.println("+++++++ Push trans onto lpnTranStack ++++++++");
@@ -272,7 +304,7 @@ public class Analysis {
 				}
 			}
 			if (curIndex == numLpns) {
-				prjStateSet.add(stateStackTop);
+//				prjStateSet.add(stateStackTop);
 				if (Options.getDebugMode()) {
 					System.out.println("%%%%%%% Remove stateStackTop from stateStack %%%%%%%%");
 					printStateArray(stateStackTop.toStateArray());
@@ -288,7 +320,22 @@ public class Analysis {
 				System.out.println("Fired transition: " + firedTran.getLpn().getLabel() + "(" + firedTran.getName() + ")");
 				System.out.println("###################");
 			}
-			State[] nextStateArray = sgList[curIndex].fire(sgList, curStateArray, firedTran);
+			
+			State[] nextStateArray;
+			PrjState nextPrjState; // Moved this definition up. Timing Change.
+			
+			// The next state depends on whether timing is in use or not. 
+			// Timing Change.
+			if(!Options.getTimingAnalysisFlag()){
+				// Get the next states from the fire method and define the next project state.				
+				nextStateArray = sgList[curIndex].fire(sgList, curStateArray, firedTran);
+				nextPrjState = new PrjState(nextStateArray);
+			}
+			else{
+				// Get the next timed state and extract the next un-timed states.
+				nextPrjState = sgList[curIndex].fire(sgList, stateStackTop, firedTran);
+				nextStateArray = nextPrjState.toStateArray();
+			}
 			tranFiringCnt++;
 
 			// Check if the firedTran causes disabling error or deadlock.
@@ -299,10 +346,21 @@ public class Analysis {
 			for (int i = 0; i < numLpns; i++) {
 				StateGraph sg = sgList[i];
 //				System.out.println("call getEnabled on curStateArray at 2: ");
-				LinkedList<Transition> enabledList = sg.getEnabled(curStateArray[i], init);
+				LinkedList<Transition> enabledList;
+				if(!Options.getTimingAnalysisFlag()){ // Timing Change.
+					enabledList = sg.getEnabled(curStateArray[i], init);
+				}
+				else{
+					enabledList = ((TimedPrjState) stateStackTop).getEnabled(i);
+				}
 				curEnabledArray[i] = enabledList;
 //				System.out.println("call getEnabled on nextStateArray at 3: ");
-				enabledList = sg.getEnabled(nextStateArray[i], init);
+				if(!Options.getTimingAnalysisFlag()){ // Timing Change.
+					enabledList = sg.getEnabled(nextStateArray[i], init);
+				}
+				else{
+					enabledList = ((TimedPrjState) nextPrjState).getEnabled(i);
+				}
 				nextEnabledArray[i] = enabledList;
 				Transition disabledTran = firedTran.disablingError(
 						curEnabledArray[i], nextEnabledArray[i]);
@@ -321,9 +379,10 @@ public class Analysis {
 				break main_while_loop;
 			}
 			
-			PrjState nextPrjState = new PrjState(nextStateArray);
-			Boolean	existingState = prjStateSet.contains(nextPrjState) || stateStack.contains(nextPrjState);		
+			//PrjState nextPrjState = new PrjState(nextStateArray); // Moved earlier. Timing Change.
+			Boolean	existingState = prjStateSet.contains(nextPrjState); //|| stateStack.contains(nextPrjState);		
 			if (existingState == false) {
+				prjStateSet.add(nextPrjState);
 				stateStackTop.setChild(nextPrjState);
 				nextPrjState.setFather(stateStackTop);
 				if (Options.getOutputSgFlag()) {
@@ -420,7 +479,7 @@ public class Analysis {
 		if (Options.getOutputLogFlag()) 
 			outputLogFile(false, tranFiringCnt, totalStateCnt, peakTotalMem / 1000000, peakUsedMem / 1000000);
 		if (Options.getOutputSgFlag())
-			outputGlobalStateGraph(sgList, prjStateSet, true);
+			outputGlobalStateGraph(sgList, prjStateSet.toHashSet(), true);
 		return sgList;
 	}
 
