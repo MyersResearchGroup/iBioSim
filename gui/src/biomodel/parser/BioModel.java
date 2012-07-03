@@ -612,12 +612,63 @@ public class BioModel {
 							}
 						}
 						if (!rate.equals("")) {
+							rate = "(" + np + "*(" + rate + "))";
+						}
+						String reactionProductions = "";
+						String reactionDegradations = "";
+						ListOf reactions = sbml.getModel().getListOfReactions();
+						for (int j = 0; j < sbml.getModel().getNumReactions(); j++) {
+							Reaction r = (Reaction) reactions.get(j);
+							for (int k = 0; k < r.getNumReactants(); k++) {
+								if (r.getReactant(k).getSpecies().equals(specs.get(i))) {
+									KineticLaw law = r.getKineticLaw();
+									if (r.isSetReversible() && law.getMath().getCharacter() == '-') {
+										reactionDegradations += "((" + myFormulaToString(law.getMath().getLeftChild())
+												+ ")/" + r.getReactant(k).getStoichiometry() + ") + ";
+										reactionProductions += "((" + myFormulaToString(law.getMath().getRightChild())
+												+ ")/" + r.getReactant(k).getStoichiometry() + ") + ";
+									}
+									else {
+										reactionDegradations += "((" + law.getFormula() + ")/"
+												+ r.getReactant(k).getStoichiometry() + ") + ";
+									}
+								}
+							}
+							for (int k = 0; k < r.getNumProducts(); k++) {
+								if (r.getProduct(k).getSpecies().equals(specs.get(i))) {
+									KineticLaw law = r.getKineticLaw();
+									if (r.isSetReversible() && law.getMath().getCharacter() == '-') {
+										reactionProductions += "((" + myFormulaToString(law.getMath().getLeftChild())
+												+ ")/" + r.getProduct(k).getStoichiometry() + ") + ";
+										reactionDegradations += "((" + myFormulaToString(law.getMath().getRightChild())
+												+ ")/" + r.getProduct(k).getStoichiometry() + ") + ";
+									}
+									else {
+										reactionProductions += "((" + law.getFormula() + ")/"
+												+ r.getProduct(k).getStoichiometry() + ") + ";
+									}
+								}
+							}
+						}
+						if (!reactionProductions.equals("")) {
+							reactionProductions = reactionProductions.substring(0, reactionProductions.length() - 3);
+						}
+						if (!reactionDegradations.equals("")) {
+							reactionDegradations = reactionDegradations.substring(0, reactionDegradations.length() - 3);
+						}
+						if (!rate.equals("") || !reactionProductions.equals("")) {
+							if (rate.equals("")) {
+								rate = "(" + reactionProductions + ")";
+							}
+							else if (!reactionProductions.equals("")) {
+								rate = "(" + rate + "+" + reactionProductions + ")";
+							}
 							LHPN.addTransition(specs.get(i) + "_trans" + transNum);
 							LHPN.addMovement(previousPlaceName, specs.get(i) + "_trans" + transNum);
 							LHPN.addMovement(specs.get(i) + "_trans" + transNum, specs.get(i) + placeNum);
 							LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i), (String) threshold);
-							LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, np + "*((" + rate + ")/" + "(" + threshold + "-" + number
-									+ "))");
+							LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, rate + "/" + "(" + threshold
+									+ "-" + number + "))");
 							transNum++;
 						}
 						LHPN.addTransition(specs.get(i) + "_trans" + transNum);
@@ -637,13 +688,20 @@ public class BioModel {
 						kd = global_kd;
 						Reaction reaction = getDegradationReaction(specs.get(i));
 						if (reaction != null) {
-							LocalParameter param = reaction.getKineticLaw().getLocalParameter(GlobalConstants.KDECAY_STRING);
+							LocalParameter param = reaction.getKineticLaw().getLocalParameter(
+									GlobalConstants.KDECAY_STRING);
 							if (param != null) {
 								kd = param.getValue();
 							}
 						}
-						LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" + specExpr + "*" + kd + ")/" + "(" + threshold + "-" + number
-								+ ")");
+						if (!reactionDegradations.equals("")) {
+							LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "((" + specExpr + "*" + kd + ")"
+									+ "+" + reactionDegradations + ")/" + "(" + threshold + "-" + number + ")");
+						}
+						else {
+							LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" + specExpr + "*" + kd + ")/"
+									+ "(" + threshold + "-" + number + ")");
+						}
 						transNum++;
 					}
 					previousPlaceName = specs.get(i) + placeNum;
