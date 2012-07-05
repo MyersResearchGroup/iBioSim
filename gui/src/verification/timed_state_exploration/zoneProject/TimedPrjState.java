@@ -5,13 +5,11 @@ import java.util.Arrays;
 import verification.platu.lpn.LpnTranList;
 import verification.platu.project.PrjState;
 import verification.platu.stategraph.State;
-import verification.timed_state_exploration.zone.Zone;
-import verification.timed_state_exploration.zone.ZoneType;
 
 public class TimedPrjState extends PrjState{
-	protected ZoneType[] _zones;
+	protected Zone[] _zones;
 	
-	public TimedPrjState(final State[] other, final ZoneType[] otherZones){
+	public TimedPrjState(final State[] other, final Zone[] otherZones){
 		super(other);
 		this._zones = otherZones;
 	}
@@ -19,13 +17,15 @@ public class TimedPrjState extends PrjState{
 	public TimedPrjState(State[] initStateArray) {
 		super(initStateArray);
 		_zones = new Zone[initStateArray.length];
-		for(int i=0; i<_zones.length; i++){
-			_zones[i] = new Zone(initStateArray[i]);
-		}
+//		for(int i=0; i<_zones.length; i++){
+//			_zones[i] = new Zone(initStateArray[i]);
+//		}
+		
+		_zones[0] = new Zone(initStateArray);
 	}
 
 
-	public ZoneType[] toZoneArray(){
+	public Zone[] toZoneArray(){
 		return _zones;
 	}
 	
@@ -56,7 +56,7 @@ public class TimedPrjState extends PrjState{
 		
 		result += "\nZones: \n";
 		
-		for(ZoneType z : _zones){
+		for(Zone z : _zones){
 			result += z.toString() + "\n";
 		}
 		
@@ -65,8 +65,8 @@ public class TimedPrjState extends PrjState{
 	
 	public LpnTranList getEnabled(int zoneNumber){
 		
-		// ZoneType to consider
-		ZoneType z = _zones[zoneNumber];
+		// Zone to consider
+		Zone z = _zones[zoneNumber];
 		
 		return new LpnTranList(z.getEnabledTransitions());
 	}
