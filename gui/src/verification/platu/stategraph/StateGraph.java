@@ -23,9 +23,8 @@ import verification.platu.lpn.LpnTranList;
 import verification.platu.main.Main;
 import verification.platu.main.Options;
 import verification.platu.project.PrjState;
-import verification.timed_state_exploration.zone.TimedState;
-import verification.timed_state_exploration.zone.ZoneType;
 import verification.timed_state_exploration.zoneProject.TimedPrjState;
+import verification.timed_state_exploration.zoneProject.Zone;
 
 public class StateGraph {
     protected State init = null;
@@ -1055,7 +1054,6 @@ public class StateGraph {
 	
 	public TimedPrjState fire(final StateGraph[] curSgArray, 
 			final PrjState currentPrjState, Transition firedTran){
-		// TODO Do lots of cool stuff to complete this method.
 		 
 		TimedPrjState currentTimedPrjState;
 		
@@ -1068,29 +1066,18 @@ public class StateGraph {
 		
 		// Extract relevant information from the current project state.
 		State[] curStateArray = currentTimedPrjState.toStateArray();
-		ZoneType[] currentZones = currentTimedPrjState.toZoneArray();
+		Zone[] currentZones = currentTimedPrjState.toZoneArray();
 		
-		ZoneType[] newZones = new ZoneType[curStateArray.length];
+		Zone[] newZones = new Zone[curStateArray.length];
 		
 		State[] newStates = fire(curSgArray, curStateArray, firedTran);
 
 		for(int i=0; i<newStates.length; i++)
 		{
 			LpnTranList enabledTransitions = getEnabled(newStates[i]);
-			int[] tranArray = new int[enabledTransitions.size()];
-
-			int j=0;
-
-			// TODO: Might be able to change the signature of the fire method
-			// for zones so that this translation step is not necessary.
-			for(Transition T : enabledTransitions)
-			{
-				tranArray[j] = T.getIndex();
-				j++;
-			}
 			
-			newZones[i] = currentZones[i].fireTransitionbyTransitionIndex(firedTran.getIndex(),
-					tranArray, newStates[i]);
+			newZones[i] = currentZones[i].fire(firedTran,
+					enabledTransitions, newStates);
 			
 		}
 		 
