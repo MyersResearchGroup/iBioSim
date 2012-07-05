@@ -416,6 +416,25 @@ public class StateSet implements Iterable<PrjState>{
 		}
 	}
 	
+	public String stateString(){
+		
+		String result = "";
+		
+		if(_singletonList != null){
+			result += "# of prjStates found: " + size();
+		}
+		
+		if(_setList != null){
+			// Report the total number of project states found.
+			result += "# of timedPrjStates found: " + size();
+			
+			// Report the number of un-timed states.
+			result += ", # of untimed states found: " + _setList.size();
+		}
+		
+		return result;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Iterable#iterator()
