@@ -29,9 +29,8 @@ import verification.platu.partialOrders.StaticSets;
 import verification.platu.project.PrjState;
 import verification.platu.stategraph.State;
 import verification.platu.stategraph.StateGraph;
-import verification.timed_state_exploration.zone.ZoneType;
-import verification.timed_state_exploration.zoneProject.StateSet;
 import verification.timed_state_exploration.zoneProject.TimedPrjState;
+import verification.timed_state_exploration.zoneProject.StateSet;
 
 public class Analysis {
 
@@ -471,7 +470,8 @@ public class Analysis {
 		}
 		double totalStateCnt = prjStateSet.size();		
 		System.out.println("---> final numbers: # LPN transition firings: "	+ tranFiringCnt 
-				+ ", # of prjStates found: " + totalStateCnt 
+				//+ ", # of prjStates found: " + totalStateCnt 
+				+ ", " + prjStateSet.stateString()
 				+ ", max_stack_depth: " + max_stack_depth 
 				+ ", peak total memory: " + peakTotalMem / 1000000 + " MB"
 				+ ", peak used memory: " + peakUsedMem / 1000000 + " MB");
