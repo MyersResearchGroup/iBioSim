@@ -4,11 +4,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.NoSuchElementException;
 
 import verification.platu.main.Options;
 import verification.platu.project.PrjState;
-import verification.timed_state_exploration.zone.ZoneType;
 
 /**
  * A StateSet object operates like a hash set of PrjState objects. It operates in one
@@ -80,8 +78,8 @@ public class StateSet implements Iterable<PrjState>{
 		
 		// Store that status when StateSet is initialized to avoid unexpected behavior.
 		timed = Options.getTimingAnalysisFlag();
-		subsets = ZoneType.getSubsetFlag();
-		supersets = ZoneType.getSupersetFlag();
+		subsets = Zone.getSubsetFlag();
+		supersets = Zone.getSupersetFlag();
 		
 		if(timed && (subsets || supersets)){
 			_setList = new HashMap<PrjState, LinkedList<TimedPrjState>>();
