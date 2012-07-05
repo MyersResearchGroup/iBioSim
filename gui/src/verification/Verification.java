@@ -62,10 +62,7 @@ import main.Log;
 import verification.platu.main.Options;
 import verification.platu.project.Project;
 import verification.platu.stategraph.StateGraph;
-import verification.timed_state_exploration.zone.Project_Timed;
-import verification.timed_state_exploration.zone.StateGraph_timed;
-import verification.timed_state_exploration.zone.Zone;
-import verification.timed_state_exploration.zone.ZoneType;
+import verification.timed_state_exploration.zoneProject.Zone;
 import biomodel.gui.PropertyList;
 import biomodel.util.Utility;
 
@@ -1621,12 +1618,57 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 //			}
 //			return;
 			
+			
+			// This is the code before the revision for allowing multiple LPNs
+//			// Uses the timed_state_exploration.zoneProject infrastructure.
+//			LhpnFile lpn = new LhpnFile();
+//			lpn.load(directory + separator + lpnFileName);
+//
+//			// The full state graph is created for only one LPN.
+//			
+//			/**
+//			 * This is what selects the timing analysis.
+//			 * The method setTimingAnalysisType sets a static variable
+//			 * in the Options class that is queried by the search method.
+//			 */
+//			Options.setTimingAnalsysisType("zone");
+//
+//			ZoneType.setSubsetFlag(!timsubset.isSelected());
+//			ZoneType.setSupersetFlag(!superset.isSelected());
+//			
+//			Project timedStateSearch = new Project(lpn);
+//			
+//			StateGraph[] stateGraphArray = timedStateSearch.search();
+//			String graphFileName = verifyFile.replace(".lpn", "") + "_sg.dot";
+//			
+//			if (dot.isSelected()) {
+//				stateGraphArray[0].outputLocalStateGraph(directory + separator + graphFileName);  
+//			}
+//			
+//			if(graph.isSelected()){
+//				showGraph(directory + separator + graphFileName);
+//			}
+//		
+//			Options.setTimingAnalsysisType("off");
+//			Zone.clearLexicon();
+//			
+//			return;
+			
 			// Uses the timed_state_exploration.zoneProject infrastructure.
 			LhpnFile lpn = new LhpnFile();
 			lpn.load(directory + separator + lpnFileName);
 
-			// The full state graph is created for only one LPN.
-			
+			// Load any other listed LPNs.
+			ArrayList<LhpnFile> selectedLPNs = new ArrayList<LhpnFile>();
+			// Add the current LPN to the list.
+			selectedLPNs.add(lpn);
+			for (int i=0; i < lpnList.getSelectedValues().length; i++) {
+				 String curLPNname = (String) lpnList.getSelectedValues()[i];
+				 LhpnFile curLPN = new LhpnFile();
+				 curLPN.load(directory + separator + curLPNname);
+				 selectedLPNs.add(curLPN);
+			}
+
 			/**
 			 * This is what selects the timing analysis.
 			 * The method setTimingAnalysisType sets a static variable
@@ -1634,10 +1676,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			 */
 			Options.setTimingAnalsysisType("zone");
 
-			ZoneType.setSubsetFlag(!timsubset.isSelected());
-			ZoneType.setSupersetFlag(!superset.isSelected());
+			Zone.setSubsetFlag(!timsubset.isSelected());
+			Zone.setSupersetFlag(!superset.isSelected());
 			
-			Project timedStateSearch = new Project(lpn);
+			Project timedStateSearch = new Project(selectedLPNs);
 			
 			StateGraph[] stateGraphArray = timedStateSearch.search();
 			String graphFileName = verifyFile.replace(".lpn", "") + "_sg.dot";
@@ -1651,7 +1693,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			}
 		
 			Options.setTimingAnalsysisType("off");
-			Zone.clearLexicon();
 			
 			return;
 
