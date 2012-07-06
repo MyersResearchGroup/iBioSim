@@ -551,6 +551,22 @@ public class BioModel {
 			}
 			LHPN.addInteger(input, "" + value);
 		}
+		for (String species : getSpecies()) {
+			if (!specs.contains(species) && !getInputSpecies().contains(species)) {
+				double value;
+				try {
+					if (sbml.getModel().getSpecies(species).isSetInitialAmount()) {
+						value = sbml.getModel().getSpecies(species).getInitialAmount();
+					} else {
+						value = sbml.getModel().getSpecies(species).getInitialConcentration();
+					}
+				}
+				catch (Exception e) {
+					value = 0;
+				}
+				LHPN.addInteger(species, "" + value);				
+			}
+		}
 		for (int i = 0; i < specs.size(); i++) {
 			if (!biochemical.contains(specs.get(i)) && !getInputSpecies().contains(specs.get(i))) {
 				int placeNum = 0;
@@ -588,22 +604,22 @@ public class BioModel {
 						String rate = "";
 						for (String promoter : proms) {
 							String promRate = abs.abstractOperatorSite(network.getPromoters().get(promoter));
-							for (String species : getSpecies()) {
-								if (promRate.contains(species) && !LHPN.getIntegers().keySet().contains(species)) {
-									double value;
-									try {
-										if (sbml.getModel().getSpecies(species).isSetInitialAmount()) {
-											value = sbml.getModel().getSpecies(species).getInitialAmount();
-										} else {
-											value = sbml.getModel().getSpecies(species).getInitialConcentration();
-										}
-									}
-									catch (Exception e) {
-										value = 0;
-									}
-									LHPN.addInteger(species, "" + value);
-								}
-							}
+//							for (String species : getSpecies()) {
+//								if (promRate.contains(species) && !LHPN.getIntegers().keySet().contains(species)) {
+//									double value;
+//									try {
+//										if (sbml.getModel().getSpecies(species).isSetInitialAmount()) {
+//											value = sbml.getModel().getSpecies(species).getInitialAmount();
+//										} else {
+//											value = sbml.getModel().getSpecies(species).getInitialConcentration();
+//										}
+//									}
+//									catch (Exception e) {
+//										value = 0;
+//									}
+//									LHPN.addInteger(species, "" + value);
+//								}
+//							}
 							if (rate.equals("")) {
 								rate = "(" + promRate + ")";
 							}
@@ -619,69 +635,73 @@ public class BioModel {
 						ListOf reactions = sbml.getModel().getListOfReactions();
 						for (int j = 0; j < sbml.getModel().getNumReactions(); j++) {
 							Reaction r = (Reaction) reactions.get(j);
-							for (int k = 0; k < r.getNumReactants(); k++) {
-								if (r.getReactant(k).getSpecies().equals(specs.get(i))) {
-									KineticLaw law = r.getKineticLaw();
-									HashMap<String,String> parameters = new HashMap<String,String>();
-									for (String parameter : getParameters()) {
-										parameters.put(parameter, getParameter(parameter));
-									}
-									for (int l = 0; l < law.getNumParameters(); l++) {
-										parameters
-												.put(law.getParameter(l).getId(), "" + law.getParameter(l).getValue());
-									}
-									if (r.isSetReversible() && law.getMath().getCharacter() == '-') {
-										reactionDegradations += "(("
-												+ myFormulaToString(replaceParams(law.getMath().getLeftChild(),
-														parameters)) + ")/" + r.getReactant(k).getStoichiometry()
-												+ ") + ";
-										reactionProductions += "(("
-												+ myFormulaToString(replaceParams(law.getMath().getRightChild(),
-														parameters)) + ")/" + r.getReactant(k).getStoichiometry()
-												+ ") + ";
-									}
-									else {
-										reactionDegradations += "(("
-												+ myFormulaToString(replaceParams(law.getMath(), parameters)) + ")/"
-												+ r.getReactant(k).getStoichiometry() + ") + ";
+							if (!r.getId().contains("Production_")) {
+								for (int k = 0; k < r.getNumReactants(); k++) {
+									if (r.getReactant(k).getSpecies().equals(specs.get(i))) {
+										KineticLaw law = r.getKineticLaw();
+										HashMap<String, String> parameters = new HashMap<String, String>();
+										for (String parameter : getParameters()) {
+											parameters.put(parameter, getParameter(parameter));
+										}
+										for (int l = 0; l < law.getNumParameters(); l++) {
+											parameters.put(law.getParameter(l).getId(), ""
+													+ law.getParameter(l).getValue());
+										}
+										if (r.isSetReversible() && law.getMath().getCharacter() == '-') {
+											reactionDegradations += "(("
+													+ myFormulaToString(replaceParams(law.getMath().getLeftChild(),
+															parameters)) + ")/" + r.getReactant(k).getStoichiometry()
+													+ ") + ";
+											reactionProductions += "(("
+													+ myFormulaToString(replaceParams(law.getMath().getRightChild(),
+															parameters)) + ")/" + r.getReactant(k).getStoichiometry()
+													+ ") + ";
+										}
+										else {
+											reactionDegradations += "(("
+													+ myFormulaToString(replaceParams(law.getMath(), parameters))
+													+ ")/" + r.getReactant(k).getStoichiometry() + ") + ";
+										}
 									}
 								}
-							}
-							for (int k = 0; k < r.getNumProducts(); k++) {
-								if (r.getProduct(k).getSpecies().equals(specs.get(i))) {
-									KineticLaw law = r.getKineticLaw();
-									HashMap<String, String> parameters = new HashMap<String, String>();
-									for (String parameter : getParameters()) {
-										parameters.put(parameter, getParameter(parameter));
-									}
-									for (int l = 0; l < law.getNumParameters(); l++) {
-										parameters
-												.put(law.getParameter(l).getId(), "" + law.getParameter(l).getValue());
-									}
-									if (r.isSetReversible() && law.getMath().getCharacter() == '-') {
-										reactionProductions += "(("
-												+ myFormulaToString(replaceParams(law.getMath().getLeftChild(),
-														parameters)) + ")/" + r.getProduct(k).getStoichiometry()
-												+ ") + ";
-										reactionDegradations += "(("
-												+ myFormulaToString(replaceParams(law.getMath().getRightChild(),
-														parameters)) + ")/" + r.getProduct(k).getStoichiometry()
-												+ ") + ";
-									}
-									else {
-										reactionProductions += "(("
-												+ myFormulaToString(replaceParams(law.getMath().getLeftChild(),
-														parameters)) + ")/" + r.getProduct(k).getStoichiometry()
-												+ ") + ";
+								for (int k = 0; k < r.getNumProducts(); k++) {
+									if (r.getProduct(k).getSpecies().equals(specs.get(i))) {
+										KineticLaw law = r.getKineticLaw();
+										HashMap<String, String> parameters = new HashMap<String, String>();
+										for (String parameter : getParameters()) {
+											parameters.put(parameter, getParameter(parameter));
+										}
+										for (int l = 0; l < law.getNumParameters(); l++) {
+											parameters.put(law.getParameter(l).getId(), ""
+													+ law.getParameter(l).getValue());
+										}
+										if (r.isSetReversible() && law.getMath().getCharacter() == '-') {
+											reactionProductions += "(("
+													+ myFormulaToString(replaceParams(law.getMath().getLeftChild(),
+															parameters)) + ")/" + r.getProduct(k).getStoichiometry()
+													+ ") + ";
+											reactionDegradations += "(("
+													+ myFormulaToString(replaceParams(law.getMath().getRightChild(),
+															parameters)) + ")/" + r.getProduct(k).getStoichiometry()
+													+ ") + ";
+										}
+										else {
+											reactionProductions += "(("
+													+ myFormulaToString(replaceParams(law.getMath().getLeftChild(),
+															parameters)) + ")/" + r.getProduct(k).getStoichiometry()
+													+ ") + ";
+										}
 									}
 								}
 							}
 						}
 						if (!reactionProductions.equals("")) {
 							reactionProductions = reactionProductions.substring(0, reactionProductions.length() - 3);
+							reactionProductions = reactionProductions.replaceAll(" ", "");
 						}
 						if (!reactionDegradations.equals("")) {
 							reactionDegradations = reactionDegradations.substring(0, reactionDegradations.length() - 3);
+							reactionDegradations = reactionDegradations.replaceAll(" ", "");
 						}
 						if (!rate.equals("") || !reactionProductions.equals("")) {
 							if (rate.equals("")) {
