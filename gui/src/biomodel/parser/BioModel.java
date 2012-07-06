@@ -622,14 +622,27 @@ public class BioModel {
 							for (int k = 0; k < r.getNumReactants(); k++) {
 								if (r.getReactant(k).getSpecies().equals(specs.get(i))) {
 									KineticLaw law = r.getKineticLaw();
+									HashMap<String,String> parameters = new HashMap<String,String>();
+									for (String parameter : getParameters()) {
+										parameters.put(parameter, getParameter(parameter));
+									}
+									for (int l = 0; l < law.getNumParameters(); l++) {
+										parameters
+												.put(law.getParameter(l).getId(), "" + law.getParameter(l).getValue());
+									}
 									if (r.isSetReversible() && law.getMath().getCharacter() == '-') {
-										reactionDegradations += "((" + myFormulaToString(law.getMath().getLeftChild())
-												+ ")/" + r.getReactant(k).getStoichiometry() + ") + ";
-										reactionProductions += "((" + myFormulaToString(law.getMath().getRightChild())
-												+ ")/" + r.getReactant(k).getStoichiometry() + ") + ";
+										reactionDegradations += "(("
+												+ myFormulaToString(replaceParams(law.getMath().getLeftChild(),
+														parameters)) + ")/" + r.getReactant(k).getStoichiometry()
+												+ ") + ";
+										reactionProductions += "(("
+												+ myFormulaToString(replaceParams(law.getMath().getRightChild(),
+														parameters)) + ")/" + r.getReactant(k).getStoichiometry()
+												+ ") + ";
 									}
 									else {
-										reactionDegradations += "((" + law.getFormula() + ")/"
+										reactionDegradations += "(("
+												+ myFormulaToString(replaceParams(law.getMath(), parameters)) + ")/"
 												+ r.getReactant(k).getStoichiometry() + ") + ";
 									}
 								}
@@ -637,15 +650,29 @@ public class BioModel {
 							for (int k = 0; k < r.getNumProducts(); k++) {
 								if (r.getProduct(k).getSpecies().equals(specs.get(i))) {
 									KineticLaw law = r.getKineticLaw();
+									HashMap<String, String> parameters = new HashMap<String, String>();
+									for (String parameter : getParameters()) {
+										parameters.put(parameter, getParameter(parameter));
+									}
+									for (int l = 0; l < law.getNumParameters(); l++) {
+										parameters
+												.put(law.getParameter(l).getId(), "" + law.getParameter(l).getValue());
+									}
 									if (r.isSetReversible() && law.getMath().getCharacter() == '-') {
-										reactionProductions += "((" + myFormulaToString(law.getMath().getLeftChild())
-												+ ")/" + r.getProduct(k).getStoichiometry() + ") + ";
-										reactionDegradations += "((" + myFormulaToString(law.getMath().getRightChild())
-												+ ")/" + r.getProduct(k).getStoichiometry() + ") + ";
+										reactionProductions += "(("
+												+ myFormulaToString(replaceParams(law.getMath().getLeftChild(),
+														parameters)) + ")/" + r.getProduct(k).getStoichiometry()
+												+ ") + ";
+										reactionDegradations += "(("
+												+ myFormulaToString(replaceParams(law.getMath().getRightChild(),
+														parameters)) + ")/" + r.getProduct(k).getStoichiometry()
+												+ ") + ";
 									}
 									else {
-										reactionProductions += "((" + law.getFormula() + ")/"
-												+ r.getProduct(k).getStoichiometry() + ") + ";
+										reactionProductions += "(("
+												+ myFormulaToString(replaceParams(law.getMath().getLeftChild(),
+														parameters)) + ")/" + r.getProduct(k).getStoichiometry()
+												+ ") + ";
 									}
 								}
 							}
@@ -742,6 +769,18 @@ public class BioModel {
 			LHPN.addProperty(lpnProperty.getString());
 		}
 		return LHPN;
+	}
+	
+	private ASTNode replaceParams(ASTNode formula, HashMap<String,String> parameters) {
+		if (formula.getNumChildren() > 0) {
+			for (int i = 0; i < formula.getNumChildren(); i ++) {
+				formula.replaceChild(i, replaceParams(formula.getChild(i), parameters));
+			}
+		}
+		else if (parameters.keySet().contains(formula.getName())) {
+			return myParseFormula(parameters.get(formula.getName()));
+		}
+		return formula;
 	}
 
 	public void createCondition(String s,int condition) {
