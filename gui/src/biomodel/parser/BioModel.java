@@ -635,7 +635,8 @@ public class BioModel {
 						ListOf reactions = sbml.getModel().getListOfReactions();
 						for (int j = 0; j < sbml.getModel().getNumReactions(); j++) {
 							Reaction r = (Reaction) reactions.get(j);
-							if (!r.getId().contains("Production_")) {
+							if (!r.getId().contains("Production_") && !r.getId().contains("Degradation_")
+									&& !r.getId().contains("Complex_")) {
 								for (int k = 0; k < r.getNumReactants(); k++) {
 									if (r.getReactant(k).getSpecies().equals(specs.get(i))) {
 										KineticLaw law = r.getKineticLaw();
