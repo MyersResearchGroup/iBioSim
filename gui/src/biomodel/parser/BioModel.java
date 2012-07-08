@@ -651,17 +651,17 @@ public class BioModel {
 										if (r.isSetReversible() && law.getMath().getCharacter() == '-') {
 											reactionDegradations += "(("
 													+ myFormulaToString(replaceParams(law.getMath().getLeftChild(),
-															parameters)) + ")/" + r.getReactant(k).getStoichiometry()
+															parameters)) + ")*" + r.getReactant(k).getStoichiometry()
 													+ ") + ";
 											reactionProductions += "(("
 													+ myFormulaToString(replaceParams(law.getMath().getRightChild(),
-															parameters)) + ")/" + r.getReactant(k).getStoichiometry()
+															parameters)) + ")*" + r.getReactant(k).getStoichiometry()
 													+ ") + ";
 										}
 										else {
 											reactionDegradations += "(("
 													+ myFormulaToString(replaceParams(law.getMath(), parameters))
-													+ ")/" + r.getReactant(k).getStoichiometry() + ") + ";
+													+ ")*" + r.getReactant(k).getStoichiometry() + ") + ";
 										}
 									}
 								}
@@ -679,17 +679,17 @@ public class BioModel {
 										if (r.isSetReversible() && law.getMath().getCharacter() == '-') {
 											reactionProductions += "(("
 													+ myFormulaToString(replaceParams(law.getMath().getLeftChild(),
-															parameters)) + ")/" + r.getProduct(k).getStoichiometry()
+															parameters)) + ")*" + r.getProduct(k).getStoichiometry()
 													+ ") + ";
 											reactionDegradations += "(("
 													+ myFormulaToString(replaceParams(law.getMath().getRightChild(),
-															parameters)) + ")/" + r.getProduct(k).getStoichiometry()
+															parameters)) + ")*" + r.getProduct(k).getStoichiometry()
 													+ ") + ";
 										}
 										else {
 											reactionProductions += "(("
 													+ myFormulaToString(replaceParams(law.getMath().getLeftChild(),
-															parameters)) + ")/" + r.getProduct(k).getStoichiometry()
+															parameters)) + ")*" + r.getProduct(k).getStoichiometry()
 													+ ") + ";
 										}
 									}
