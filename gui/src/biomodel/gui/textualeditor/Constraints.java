@@ -188,6 +188,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = SBMLutilities.checkID(gcm.getSBMLDocument(), consID.getText().trim(), selectedID, false, true);
 			if (!error) {
+				ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(gcm.getSBMLDocument(), consMath.getText().trim(), "", false);
 				if (consMath.getText().trim().equals("") || SBMLutilities.myParseFormula(consMath.getText().trim()) == null) {
 					JOptionPane.showMessageDialog(Gui.frame, "Formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 					error = true;
@@ -201,7 +202,6 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 					error = true;
 				}
 				else {
-					ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(gcm.getSBMLDocument(), consMath.getText().trim(), "", false);
 					if (invalidVars.size() > 0) {
 						String invalid = "";
 						for (int i = 0; i < invalidVars.size(); i++) {
