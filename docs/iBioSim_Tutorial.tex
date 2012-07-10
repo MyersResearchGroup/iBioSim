@@ -79,7 +79,7 @@ After you have created a project, you can create a new model to add to the proje
 \includegraphics[height=80mm]{screenshots/ModelEditor}
 \end{center}
 
-To add a chemical species, select the Add Species icon \includegraphics{../gui/icons/modelview/add_species_selected} and click on the schematic canvas.  This will drop a new species with default ID and other values.  You may change these defaults by double-clicking on the species to open the Species Editor.  In this case, let us change the ID to CI and units to mole.  We will leave all other values at their default values.  One thing that is important to note is that when this model is analyzed a default degradation reaction will be created which has a rate of 0.0075.  If you do not want a degradation reaction, you must change ``default'' to ``custom'' and change the degradation rate to 0.
+To add a chemical species, select the Add Species icon \includegraphics{../gui/icons/modelview/add_species_selected} and click on the schematic canvas.  This will drop a new species with default ID and other values.  You may change these defaults by double-clicking on the species to open the Species Editor.  In this case, let us change the ID to CI.  We will leave all other values at their default values.  One thing that is important to note is that when this model is analyzed a default degradation reaction will be created which has a rate of 0.0075.  If you do not want a degradation reaction, you must change ``default'' to ``custom'' and change the degradation rate to 0.
 
 %% TODO: remove mole setting
 \begin{center}
@@ -234,7 +234,7 @@ Now, go back to the simulation options tab.  Here, change the simulation type ba
 After the simulation completes, click on the TSD Graph tab.  Double-click on the graph to bring up the graph editor.
 Open the {\tt ode} simulation, highlight Average, select CI\_total and CII, change the Title to ``ODE Simulation Results'', change the X-Axis Label to ``Time (seconds)'', and change the Y-Axis Label to ``Number of Molecules''.  
 Press the OK button.  
- 
+
 \begin{center}
 \includegraphics[height=90mm]{screenshots/odeResults}\\
 \includegraphics[height=80mm]{screenshots/odeSimResults}
@@ -242,14 +242,14 @@ Press the OK button.
 
 Graphs can be exported in a variety of formats including:
 \begin{itemize}
-\item Time series data format (TSD).
-\item Comma separated value (CSV).
-\item Column separated data (DAT).
-\item Encapsulated postscript (EPS). 
-\item Joint Photographic Experts Group (JPG). 
-\item Portable document format (PDF).
-\item Portable network graphics (PNG). 
-\item Scalable vector graphics (SVG).
+\item Time series data format (tsd).
+\item Comma separated value (csv).
+\item Column separated data (dat).
+\item Encapsulated postscript (eps). 
+\item Joint Photographic Experts Group (jpg). 
+\item Portable document format (pdf).
+\item Portable network graphics (png). 
+\item Scalable vector graphics (svg).
 \end{itemize}
 In order to export a graph, you can either click on the Export icon \includegraphics{../gui/icons/export} or select one of the graph export options from the File menu.  When using the Export icon, the type of file exported will depend on the extension provided to the file name.  Click on the Export icon, browse to a location on your file system, and enter the file name of {\tt ode.pdf} to create a PDF file for your graph.
 
@@ -308,7 +308,7 @@ One way to understand why abstraction is so much faster is by looking at the com
 \includegraphics[height=80mm]{screenshots/viewNetworkAbs}
 \end{center}
 
-Next, let's try checking some properties.  To do this, go to the SBML Elements tab and check the boxes next to the constraints.  Recall that these constraints terminate simulation whenever CI goes above 25 molecules and CII goes above 35 molecules.  Go back to the Simulation Options tab and change the Simulation ID to prob, then press the Save and Run icon.  Now, let's plot the results on a histogram by clicking on the Histogram tab and then double-clicking on the graph to bring up the histogram graph editor shown below.  Open the prob folder, select the sim-rep file, and check the Use check box to get all fields.  
+Next, let's try checking some properties.  To do this, go to the SBML Elements tab and check the boxes next to the constraints.  Recall that these constraints terminate simulation whenever CI goes above 25 molecules or CII goes above 35 molecules.  Go back to the Simulation Options tab and change the Simulation ID to prob, then press the Save and Run icon.  Now, let's plot the results on a histogram by clicking on the Histogram tab and then double-clicking on the graph to bring up the histogram graph editor shown below.  Open the prob folder, select the sim-rep file, and check the Use check box to get all fields.  
 
 \begin{center}
 \includegraphics[height=80mm]{screenshots/editProbGraph}
