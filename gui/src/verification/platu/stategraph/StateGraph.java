@@ -1057,6 +1057,7 @@ public class StateGraph {
 		 
 		TimedPrjState currentTimedPrjState;
 		
+		// Check that this is a timed state.
 		if(currentPrjState instanceof TimedPrjState){
 			currentTimedPrjState = (TimedPrjState) currentPrjState;
 		}
@@ -1068,19 +1069,34 @@ public class StateGraph {
 		State[] curStateArray = currentTimedPrjState.toStateArray();
 		Zone[] currentZones = currentTimedPrjState.toZoneArray();
 		
-		Zone[] newZones = new Zone[curStateArray.length];
+//		Zone[] newZones = new Zone[curStateArray.length];
 		
+		Zone[] newZones = new Zone[1];
+		
+		// Get the new un-timed local states.
 		State[] newStates = fire(curSgArray, curStateArray, firedTran);
 
+		LpnTranList enabledTransitions = new LpnTranList();
+		
 		for(int i=0; i<newStates.length; i++)
 		{
-			LpnTranList enabledTransitions = getEnabled(newStates[i]);
+//			enabledTransitions = getEnabled(newStates[i]);
 			
-			newZones[i] = currentZones[i].fire(firedTran,
-					enabledTransitions, newStates);
+			// TODO : The stategraph has to be used to call getEnabled
+			// since it is being passed implicitly.
+			LpnTranList localEnabledTransitions = curSgArray[i].getEnabled(newStates[i]);
+			
+			for(int j=0; j<localEnabledTransitions.size(); j++){
+				enabledTransitions.add(localEnabledTransitions.get(j));
+			}
+			
+//			newZones[i] = currentZones[i].fire(firedTran,
+//					enabledTransitions, newStates);
 			
 		}
 		 
+		newZones[0] = currentZones[0].fire(firedTran,
+				enabledTransitions, newStates);
 		
 		return new TimedPrjState(newStates, newZones);
 	}
