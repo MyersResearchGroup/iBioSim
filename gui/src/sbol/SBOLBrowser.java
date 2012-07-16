@@ -98,7 +98,7 @@ public class SBOLBrowser extends JPanel implements ActionListener {
 		LinkedList<Resolver<DnaSequence, URI>> seqResolvers = new LinkedList<Resolver<DnaSequence, URI>>();
 		LinkedList<Resolver<org.sbolstandard.core.Collection, URI>> libResolvers = new LinkedList<Resolver<org.sbolstandard.core.Collection, URI>>();
 		for (String filePath : sbolFiles) {
-			if (browsePath.equals("") || browsePath.equals(filePath)) {
+			if (browsePath.equals("") || browsePath.substring(browsePath.lastIndexOf(File.separator) + 1).equals(filePath.substring(filePath.lastIndexOf(File.separator) + 1))) {
 				SBOLDocumentImpl sbolDoc = (SBOLDocumentImpl) SBOLUtility.loadSBOLFile(filePath);
 				if (sbolDoc != null) {
 					SBOLDocumentImpl flattenedDoc = (SBOLDocumentImpl) SBOLUtility.flattenDocument(sbolDoc);
