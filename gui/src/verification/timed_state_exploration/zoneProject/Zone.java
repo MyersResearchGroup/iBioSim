@@ -1211,6 +1211,10 @@ public class Zone{
 				newZone.setDbmEntry(newZone.timerIndexToDBMIndex(timerNew),
 						newZone.timerIndexToDBMIndex(timerOld),
 						 tempZone.getDbmEntry(0, tempZone.timerIndexToDBMIndex(timerOld)));
+//				
+//				int newTimeIndex = newZone.timerIndexToDBMIndex(timerNew);
+//				int oldTimeIndex = newZone.timerIndexToDBMIndex(timerOld);
+//				int value = tempZone.getDbmEntry(0, oldTimeIndex);
 				
 				newZone.setDbmEntry(newZone.timerIndexToDBMIndex(timerOld),
 						newZone.timerIndexToDBMIndex(timerNew),
@@ -1329,6 +1333,35 @@ public class Zone{
 			{
 				enabledTransitions.add(_lpnList[_indexToTimerPair[i].get_lpnIndex()]
 						.getTransition(_indexToTimerPair[i].get_transitionIndex()));
+			}
+		}
+		
+		return enabledTransitions;
+	}
+	
+	/**
+	 * Gives the list of enabled transitions associated with a particular LPN.
+	 * @param LpnIndex
+	 * 			The Index of the LPN the Transitions are a part of.
+	 * @return
+	 * 			A List of the Transitions that are enabled in the LPN given by the index.
+	 */
+	public List<Transition> getEnabledTransitions(int LpnIndex){
+		ArrayList<Transition> enabledTransitions = new ArrayList<Transition>();
+
+		// Check if the timer exceeds its lower bound staring with the first nonzero
+		// timer.
+		for(int i=1; i<_indexToTimerPair.length; i++)
+		{
+			if(getDbmEntry(0, i) >= -1 * getLowerBoundbydbmIndex(i))
+			{
+				LPNTransitionPair ltPair = _indexToTimerPair[i];
+				
+				if( ltPair.get_lpnIndex() == LpnIndex){
+
+					enabledTransitions.add(_lpnList[ltPair.get_lpnIndex()]
+							.getTransition(ltPair.get_transitionIndex()));
+				}
 			}
 		}
 		
