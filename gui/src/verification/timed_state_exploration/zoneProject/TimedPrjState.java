@@ -16,10 +16,12 @@ public class TimedPrjState extends PrjState{
 	
 	public TimedPrjState(State[] initStateArray) {
 		super(initStateArray);
-		_zones = new Zone[initStateArray.length];
+//		_zones = new Zone[initStateArray.length];
 //		for(int i=0; i<_zones.length; i++){
 //			_zones[i] = new Zone(initStateArray[i]);
 //		}
+		
+		_zones = new Zone[1];
 		
 		_zones[0] = new Zone(initStateArray);
 	}
@@ -63,12 +65,38 @@ public class TimedPrjState extends PrjState{
 		return result;
 	}
 	
+	/**
+	 * Gives the currently enabled transitions according to the given zone.
+	 * @param zoneNumber
+	 * 			The index of the Zone to consider.
+	 * @return
+	 * 			The Transitions that are enabled when considering the zone at index zoneNumber.
+	 */
 	public LpnTranList getEnabled(int zoneNumber){
 		
 		// Zone to consider
 		Zone z = _zones[zoneNumber];
 		
 		return new LpnTranList(z.getEnabledTransitions());
+	}
+	
+	/**
+	 * Gives the Transitions belonging to a particular LPN that are enabled according to a given
+	 * zone.
+	 * @param zoneNumber
+	 * 			The index of the zone to consider for determining the enabled transitions.
+	 * @param lpnIndex
+	 * 			The index of the LPN to which the Transitions belong.
+	 * @return
+	 * 			The Transitions in the LPN with index lpnIndex that are enabled according to the Zone
+	 * 			at index zoneNumber.
+	 */
+	public LpnTranList getEnabled(int zoneNumber, int lpnIndex){
+		// TODO : Check if finished and propagate to the necessary calls.
+		
+		Zone z = _zones[zoneNumber];
+		
+		return new LpnTranList(z.getEnabledTransitions(lpnIndex));
 	}
 	
 	/**
