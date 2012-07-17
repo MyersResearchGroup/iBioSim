@@ -9,7 +9,6 @@ public class ExprTree {
 	String op;
 
 	char isit; // b=Boolean, i=Integer, c=Continuous, n=Number, t=Truth value,
-
 	// w=bitWise, a=Arithmetic, r=Relational, l=Logical
 	double lvalue, uvalue;
 
@@ -98,7 +97,7 @@ public class ExprTree {
 		real = 0;
 	}
 
-	ExprTree(ExprTree nr1, ExprTree nr2, String nop, char willbe) {
+	public ExprTree(ExprTree nr1, ExprTree nr2, String nop, char willbe) {
 		op = nop;
 		r1 = nr1;
 		r2 = nr2;
@@ -115,7 +114,7 @@ public class ExprTree {
 		variable = null;
 	}
 
-	ExprTree(ExprTree source) {
+	public ExprTree(ExprTree source) {
 		if (source.op != null) {
 			op = source.op;
 		}
