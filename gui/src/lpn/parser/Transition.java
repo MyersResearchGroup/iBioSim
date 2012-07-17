@@ -52,28 +52,31 @@ public class Transition {
 	
 	private int index;
 	
+	private boolean local;
+	
 	// TODO: Sort LPNs that share variables in the assignedVarSet of this transition. 
 	private List<LhpnFile> dstLpnList = new ArrayList<LhpnFile>();
 
-	public Transition(String name, ArrayList<Variable> variables, LhpnFile lhpn) {
-		this.name = name;
-		this.lhpn = lhpn;
-		preset = new ArrayList<Place>();
-		postset = new ArrayList<Place>();
-		boolAssignments = new HashMap<String, String>();
-		boolAssignTrees = new HashMap<String, ExprTree>();
-		intAssignments = new HashMap<String, String>();
-		intAssignTrees = new HashMap<String, ExprTree>();
-		contAssignments = new HashMap<String, String>();
-		contAssignTrees = new HashMap<String, ExprTree>();
-		rateAssignments = new HashMap<String, String>();
-		rateAssignTrees = new HashMap<String, ExprTree>();
-	}
+//	public Transition(String name, ArrayList<Variable> variables, LhpnFile lhpn) {
+//		this.name = name;
+//		this.lhpn = lhpn;
+//		preset = new ArrayList<Place>();
+//		postset = new ArrayList<Place>();
+//		boolAssignments = new HashMap<String, String>();
+//		boolAssignTrees = new HashMap<String, ExprTree>();
+//		intAssignments = new HashMap<String, String>();
+//		intAssignTrees = new HashMap<String, ExprTree>();
+//		contAssignments = new HashMap<String, String>();
+//		contAssignTrees = new HashMap<String, ExprTree>();
+//		rateAssignments = new HashMap<String, String>();
+//		rateAssignTrees = new HashMap<String, ExprTree>();
+//	}
 	
-	public Transition(String name, int index, ArrayList<Variable> variables, LhpnFile lhpn, boolean local) {
+	public Transition(String name, int index, LhpnFile lhpn, boolean local) {
 		this.name = name;
 		this.lhpn = lhpn;
 		this.index = index;
+		this.local = local;
 		preset = new ArrayList<Place>();
 		postset = new ArrayList<Place>();
 		boolAssignments = new HashMap<String, String>();
@@ -737,7 +740,7 @@ public class Transition {
         this.lhpn = lpn;
     }
 
-	public boolean local() {
+	public boolean isLocal() {
 		// Returns true if LPNTran only modifies non-output variables.
 		boolean isLocal = true;
 		for (String assignVar : this.getAssignments().keySet()) {
@@ -747,6 +750,10 @@ public class Transition {
 			}
 		}
 		return isLocal;
+	}
+	
+	public void setLocal(boolean local) {
+		this.local = local;
 	}
 	
 	public List<LhpnFile> getDstLpnList(){
