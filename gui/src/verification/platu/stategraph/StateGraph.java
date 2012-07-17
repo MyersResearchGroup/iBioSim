@@ -101,7 +101,7 @@ public class StateGraph {
             		this.addStateTran(currentState, firedTran, nextState);
             		newTransitions++;
             		// TODO: (original) check that a variable was changed before creating a constraint
-	            	if(!firedTran.local()){
+	            	if(!firedTran.isLocal()){
 	            		for(LhpnFile lpn : firedTran.getDstLpnList()){
 	            			// TODO: (temp) Hack here.
 	                  		Constraint c = null; //new Constraint(currentState, nextState, firedTran, lpn);
@@ -174,7 +174,7 @@ public class StateGraph {
             	if(nextState != currentState){
 	        		newTransitions++;
 	        		
-	            	if(!firedTran.local()){
+	            	if(!firedTran.isLocal()){
 	            		// TODO: (original) check that a variable was changed before creating a constraint
 	            		for(LhpnFile lpn : firedTran.getDstLpnList()){
 	            			// TODO: (temp) Hack here. 
@@ -411,7 +411,7 @@ public class StateGraph {
         LpnTranList curEnabled = new LpnTranList();
         for (Transition tran : this.lpn.getAllTransitions()) {
         	if (isEnabled(tran,curState)) {
-        		if(tran.local()==true)
+        		if(tran.isLocal()==true)
         			curEnabled.addLast(tran);
                 else
                 	curEnabled.addFirst(tran);
@@ -444,7 +444,7 @@ public class StateGraph {
             	if (isEnabled(tran,curState)) {
             		if (Options.getDebugMode())
             			System.out.println("Transition " + tran.getLpn().getLabel() + "(" + tran.getName() + ") is enabled");
-            		if(tran.local()==true)
+            		if(tran.isLocal()==true)
             			curEnabled.addLast(tran);
                     else
                     	curEnabled.addFirst(tran);
@@ -455,7 +455,7 @@ public class StateGraph {
         	for (int i=0; i < this.lpn.getAllTransitions().length; i++) {
         		Transition tran = this.lpn.getAllTransitions()[i];
         		if (curState.getTranVector()[i])
-        			if(tran.local()==true)
+        			if(tran.isLocal()==true)
             			curEnabled.addLast(tran);
                     else
                     	curEnabled.addFirst(tran);
@@ -664,7 +664,7 @@ public class StateGraph {
 		}
 		*/
 		nextStateArray[thisLpnIndex] = nextState;
-		if(firedTran.local()==true) {
+		if(firedTran.isLocal()==true) {
 //    		nextStateArray[thisLpnIndex] = curSgArray[thisLpnIndex].addState(nextState);
         	return nextStateArray;
 		}
@@ -811,6 +811,8 @@ public class StateGraph {
     		if (this.lpn.getEnablingTree(tranName) != null 
     				&& this.lpn.getEnablingTree(tranName).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(newVectorArray)) == 0.0) {
     			//System.out.println(tran.getName() + " " + "Enabling condition is false");
+    			if (enabledTranAfterFiring[tranIndex] && !tran.isPersistent())
+    				enabledTranAfterFiring[tranIndex] = false;
     			continue;
     		}
     		if (this.lpn.getTransitionRateTree(tranName) != null 
