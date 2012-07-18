@@ -2536,7 +2536,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else if (e.getActionCommand().equals("convertToSBML")) {
 			Translator t1 = new Translator();
-			t1.BuildTemplate(tree.getFile(), "");
+			t1.buildTemplate(tree.getFile(), "");
 			t1.outputSBML();
 			String theFile = "";
 			if (tree.getFile().lastIndexOf('/') >= 0) {
@@ -7600,7 +7600,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				else if (fileType == 2) {
 					sbmlFile = (sbml1[sbml1.length - 1].substring(0, sbml1[sbml1.length - 1].length() - 3) + "xml");
 					Translator t1 = new Translator();
-					t1.BuildTemplate(tree.getFile(), "");
+					t1.buildTemplate(tree.getFile(), "");
 					t1.setFilename(root + separator + simName + separator + sbmlFile);
 					t1.outputSBML();
 					sbmlFileProp = root + separator + simName + separator
