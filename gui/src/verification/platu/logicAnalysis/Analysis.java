@@ -3063,12 +3063,12 @@ public class Analysis {
 				StateGraph curLpn = lpnList[index];
 				LinkedList<Transition> curLocalEnabled = curLpn.getEnabled(curStateArray[index]);
 
-				if (curLocalEnabled.size() == 0 || curLocalEnabled.getFirst().local() == true)
+				if (curLocalEnabled.size() == 0 || curLocalEnabled.getFirst().isLocal() == true)
 					continue;
 
 				for (Transition firedTran : curLocalEnabled) {
 
-					if (firedTran.local() == true)
+					if (firedTran.isLocal() == true)
 						continue;
 					// TODO: (check) Not sure if curLpn.fire is correct.
 					State[] nextStateArray = curLpn.fire(lpnList, curStateArray, firedTran);

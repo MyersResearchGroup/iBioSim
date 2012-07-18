@@ -972,7 +972,7 @@ public class CompositionalAnalysis {
 				}
 				
 				CompositeStateTran newStateTran = compositeSG.addStateTran(currentState, newCompositeState, lpnTran);
-				if(!lpnTran.local()){
+				if(!lpnTran.isLocal()){
 					newStateTran.setVisibility();
 //					System.out.println(newStateTran);
 				}
@@ -1004,7 +1004,7 @@ public class CompositionalAnalysis {
 				}
 
 				CompositeStateTran newStateTran = compositeSG.addStateTran(currentState, newCompositeState, lpnTran);
-				if(!lpnTran.local()){
+				if(!lpnTran.isLocal()){
 					newStateTran.setVisibility();
 //					System.out.println(newStateTran);
 				}
@@ -1320,7 +1320,7 @@ public class CompositionalAnalysis {
 				}
 				
 				CompositeStateTran newStateTran = compositeSG.addStateTran(currentState, newCompositeState, lpnTran);
-				if(!lpnTran.local()){
+				if(!lpnTran.isLocal()){
 					newStateTran.setVisibility();
 //					System.out.println(newStateTran);
 				}
@@ -1352,7 +1352,7 @@ public class CompositionalAnalysis {
 				}
 
 				CompositeStateTran newStateTran = compositeSG.addStateTran(currentState, newCompositeState, lpnTran);
-				if(!lpnTran.local()){
+				if(!lpnTran.isLocal()){
 					newStateTran.setVisibility();
 //					System.out.println(newStateTran);
 				}
