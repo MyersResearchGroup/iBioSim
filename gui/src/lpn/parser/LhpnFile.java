@@ -617,21 +617,20 @@ public class LhpnFile {
 
 	public void addTransition(String name) {
 		//Transition trans = new Transition(name, variables, this);
-		// TODO: (temp) Set the local flag to true
-		Transition trans = new Transition(name, tranIndex++, variables, this, true);
+		Transition trans = new Transition(name, tranIndex++, this, true);
 		transitions.put(name, trans);
 	}
 
-	public void addTransition(String name, Properties prop) {
-		Transition trans = new Transition(name, variables, this);
-		for (String p : prop.getProperty("preset").split("\\s")) {
-			trans.addPreset(places.get(p));
-		}
-		for (String p : prop.getProperty("postset").split("\\s")) {
-			trans.addPostset(places.get(p));
-		}
-		transitions.put(name, trans);
-	}
+//	public void addTransition(String name, Properties prop) {
+//		Transition trans = new Transition(name, variables, this);
+//		for (String p : prop.getProperty("preset").split("\\s")) {
+//			trans.addPreset(places.get(p));
+//		}
+//		for (String p : prop.getProperty("postset").split("\\s")) {
+//			trans.addPostset(places.get(p));
+//		}
+//		transitions.put(name, trans);
+//	}
 	
 	public void addTransition(Transition t) {
 		transitions.put(t.getName(), t);
