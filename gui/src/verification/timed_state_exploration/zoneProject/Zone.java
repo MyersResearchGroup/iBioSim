@@ -19,8 +19,8 @@ import verification.timed_state_exploration.zone.TimedPrjState;
 
 /**
  * This class is for storing and manipulating timing zones via difference bound matrices.
- * The underlying structure is backed by linked lists which yields the name
- * DBMLL (difference bound matrix linked list). A difference bound matrix has the form
+ * The underlying structure is backed by a two dimensional array. A difference bound 
+ * matrix has the form
  *     t0  t1  t2  t3
  * t0 m00 m01 m02 m03
  * t1 m10 m11 m12 m13
@@ -68,9 +68,9 @@ public class Zone{
 	// A negative hash code indicates that the hash code has not been set.
 	// The index of the timer in _indexToTimer is the index in the DBM and should contain
 	// 	the zeroth timer.
-	// The array _indexToTimer should always be sorted.
+	// The array _indexToTimerPair should always be sorted.
 	// The index of the LPN should match where it is in the _lpnList, that is, if lpn is
-	// and LhpnFile object in _lpnList, then _lpnList[getLpnIndex()] == lpn.
+	// 	and LhpnFile object in _lpnList, then _lpnList[getLpnIndex()] == lpn.
 	
 	public static final int INFINITY = Integer.MAX_VALUE;
 	
@@ -1301,6 +1301,8 @@ public class Zone{
 		
 		clonedZone._hashCode = this._hashCode;
 		
+		clonedZone._lpnList = Arrays.copyOf(this._lpnList, this._lpnList.length);
+		
 		return clonedZone;
 	}
 	
@@ -1391,6 +1393,26 @@ public class Zone{
 //	public int[] getIndexToTimer(){
 //		return Arrays.copyOf(_indexToTimerPair, _indexToTimerPair.length);
 //	}
+	
+	/**
+	 * Calculates a warping value needed to warp a Zone. When a zone is being warped the form
+	 * r1*z2 - r1*z1 + r2*z1 becomes important in finding the new values of the zone. For example,
+	 * 
+	 * @param z1
+	 * 		Upper bound or negative lower bound.
+	 * @param z2
+	 * 		Relative value.
+	 * @param r1
+	 * 		First ratio.
+	 * @param r2
+	 * 		Second ratio.
+	 * @return
+	 * 		r1*z2 - r1*z1 + r2*z1
+	 */
+	public int warp(int z1, int z2, int r1, int r2){
+		return r1*z2 - r1*z1 + r2*z1;
+	}
+	
 	
 	//----------------------Inner Classes-----------------------------------------------
 	/**
