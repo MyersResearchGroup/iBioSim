@@ -537,10 +537,10 @@ public class Run implements ActionListener {
 					Abstraction abst = new Abstraction(lhpnFile, abstPane);
 					abst.abstractSTG(false);
 					abst.save(root + separator + simName + separator + lpnName + ".temp");
-					t1.BuildTemplate(root + separator + simName + separator + lpnName + ".temp", prop);
+					t1.buildTemplate(root + separator + simName + separator + lpnName + ".temp", prop);
 				}
 				else {
-					t1.BuildTemplate(root + separator + simName + separator + lpnName, prop);
+					t1.buildTemplate(root + separator + simName + separator + lpnName, prop);
 				}
 				t1.setFilename(root + separator + simName + separator + lpnName.replace(".lpn", ".xml"));
 				t1.outputSBML();
@@ -587,10 +587,10 @@ public class Run implements ActionListener {
 							Abstraction abst = new Abstraction(lhpnFile, abstPane);
 							abst.abstractSTG(false);
 							abst.save(root + separator + simName + separator + modelFile);
-							t1.BuildTemplate(root + separator + simName + separator + modelFile, lpnProperty);
+							t1.buildTemplate(root + separator + simName + separator + modelFile, lpnProperty);
 						}
 						else {
-							t1.BuildTemplate(root + separator + modelFile, lpnProperty);
+							t1.buildTemplate(root + separator + modelFile, lpnProperty);
 						}
 						t1.setFilename(root + separator + sbmlName);
 						t1.outputSBML();
@@ -660,10 +660,10 @@ public class Run implements ActionListener {
 								Abstraction abst = new Abstraction(lhpnFile, abstPane);
 								abst.abstractSTG(false);
 								abst.save(root + separator + simName + separator + lpnName + ".temp");
-								t1.BuildTemplate(root + separator + simName + separator + lpnName + ".temp", prop);
+								t1.buildTemplate(root + separator + simName + separator + lpnName + ".temp", prop);
 							}
 							else {
-								t1.BuildTemplate(root + separator + simName + separator + lpnName, prop);
+								t1.buildTemplate(root + separator + simName + separator + lpnName, prop);
 							}
 							t1.setFilename(root + separator + sbmlName);
 							t1.outputSBML();
