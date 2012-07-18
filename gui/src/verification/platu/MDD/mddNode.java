@@ -440,7 +440,7 @@ public class mddNode {
 		LinkedList<Transition> localTranSet = new LinkedList<Transition>();
 		if(curEnabled != null) {
 			for(Transition firedTran : curEnabled) 
-				if(firedTran.local()==true) 
+				if(firedTran.isLocal()==true) 
 					localTranSet.addLast(firedTran);
 		}
 		
@@ -498,7 +498,7 @@ public class mddNode {
 				LinkedList<Transition> nextLocalEnabled = new LinkedList<Transition>();
 				boolean nonLocalNext = false;
 				for(Transition tran : nextEnabled) {
-					if(tran.local()==true)
+					if(tran.isLocal()==true)
 						nextLocalEnabled.addLast(tran);
 					else
 						nonLocalNext = true;
