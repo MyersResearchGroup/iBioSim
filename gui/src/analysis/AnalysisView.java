@@ -1602,19 +1602,19 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					abst.abstractSTG(false);
 					abst.save(root + separator + simName + separator + modelFile);
 					if (transientProperties != null && !((String) transientProperties.getSelectedItem()).equals("none")) {
-						t1.BuildTemplate(root + separator + simName + separator + modelFile,
+						t1.buildTemplate(root + separator + simName + separator + modelFile,
 								((String) transientProperties.getSelectedItem()));
 					}
 					else {
-						t1.BuildTemplate(root + separator + simName + separator + modelFile, "");
+						t1.buildTemplate(root + separator + simName + separator + modelFile, "");
 					}
 				}
 				else {
 					if (transientProperties != null && !((String) transientProperties.getSelectedItem()).equals("none")) {
-						t1.BuildTemplate(root + separator + modelFile, ((String) transientProperties.getSelectedItem()));
+						t1.buildTemplate(root + separator + modelFile, ((String) transientProperties.getSelectedItem()));
 					}
 					else {
-						t1.BuildTemplate(root + separator + modelFile, "");
+						t1.buildTemplate(root + separator + modelFile, "");
 					}
 				}
 				t1.setFilename(root + separator + simName + separator + stem + separator
