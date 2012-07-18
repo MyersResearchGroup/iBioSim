@@ -48,7 +48,7 @@ public class Translator {
 	public static boolean isSteadyState = false;
 	public static boolean isHSF = false;
 	
-	public void BuildTemplate(String lhpnFilename, String property) {
+	public void buildTemplate(String lhpnFilename, String property) {
 		this.filename = lhpnFilename.replace(".lpn", ".xml");
 		// load lhpn file
 		LhpnFile lhpn = new LhpnFile();
