@@ -207,7 +207,7 @@ public class CompositeStateGraph {
 				
 				CompositeStateTran newStateTran = new CompositeStateTran(currentCompositeState, nextCompositeState, lpnTran);
 				this.addStateTran(newStateTran);
-				if(!lpnTran.local()){
+				if(!lpnTran.isLocal()){
 					newStateTran.setVisibility();
 				}
 			}
