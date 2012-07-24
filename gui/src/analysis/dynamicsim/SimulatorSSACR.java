@@ -105,9 +105,6 @@ public class SimulatorSSACR extends Simulator {
 		if (noEventsFlag == false)
 			handleEvents(noAssignmentRulesFlag, noConstraintsFlag);
 		
-//		for (String reactionID : reactionToPropensityMap.keySet())
-//			System.err.println(reactionID + "   " + reactionToPropensityMap.get(reactionID));
-		
 		while (currentTime < timeLimit && cancelFlag == false) {
 			
 			//if a constraint fails
@@ -405,6 +402,18 @@ public class SimulatorSSACR extends Simulator {
 			
 			for (String speciesID : interestingSpecies)
 				bufferedTSDWriter.write(", \"" + speciesID + "\"");
+			
+			if (dynamicBoolean == true) {
+				
+				//always print compartment location IDs
+				for (String componentLocationID : componentToLocationMap.keySet()) {
+					
+					String locationX = componentLocationID + "__locationX";
+					String locationY = componentLocationID + "__locationY";
+					
+					bufferedTSDWriter.write(", \"" + locationX + "\", \"" + locationY + "\"");
+				}
+			}
 		}
 		else {
 		
@@ -849,23 +858,26 @@ public class SimulatorSSACR extends Simulator {
 				}
 			}
 			
-			//print compartment IDs (for sizes)
-			for (String componentID : compartmentIDSet) {
-				
-				try {
-					bufferedTSDWriter.write(", \"" + componentID + "\"");
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+			if (interestingSpecies.size() <= 0) {
 			
-			//print nonconstant parameter IDs
-			for (String parameterID : nonconstantParameterIDSet) {
+				//print compartment IDs (for sizes)
+				for (String componentID : compartmentIDSet) {
+					
+					try {
+						bufferedTSDWriter.write(", \"" + componentID + "\"");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
 				
-				try {
-					bufferedTSDWriter.write(", \"" + parameterID + "\"");
-				} catch (IOException e) {
-					e.printStackTrace();
+				//print nonconstant parameter IDs
+				for (String parameterID : nonconstantParameterIDSet) {
+					
+					try {
+						bufferedTSDWriter.write(", \"" + parameterID + "\"");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 			

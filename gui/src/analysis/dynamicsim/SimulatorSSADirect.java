@@ -467,13 +467,16 @@ public class SimulatorSSADirect extends Simulator {
 				}
 			}
 			
-			//print compartment IDs (for sizes)
-			for (String componentID : compartmentIDSet) {
-				
-				try {
-					bufferedTSDWriter.write(", \"" + componentID + "\"");
-				} catch (IOException e) {
-					e.printStackTrace();
+			if (interestingSpecies.size() <= 0) {
+			
+				//print compartment IDs (for sizes)
+				for (String componentID : compartmentIDSet) {
+					
+					try {
+						bufferedTSDWriter.write(", \"" + componentID + "\"");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 			
