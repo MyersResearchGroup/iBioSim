@@ -2410,6 +2410,30 @@ public abstract class Simulator {
 		}
 	}
 	
+	protected ASTNode inlineFormula(ASTNode formula) {
+		
+		if (formula.isFunction() && model.getFunctionDefinition(formula.getName()) != null) {
+			
+			ASTNode inlinedFormula = model.getFunctionDefinition(formula.getName()).getBody().clone();
+			ASTNode oldFormula = formula.clone();
+			
+			ArrayList<ASTNode> inlinedChildren = new ArrayList<ASTNode>();
+			this.getAllASTNodeChildren(inlinedFormula, inlinedChildren);
+			
+			ArrayList<ASTNode> oldChildren = new ArrayList<ASTNode>();
+			this.getAllASTNodeChildren(oldFormula, oldChildren);
+			
+			for (int i = 0; i < inlinedChildren.size(); ++i) {
+				
+				inlinedFormula.replaceArgument(inlinedChildren.get(i).toFormula(), oldFormula.getChild(i));
+			}
+			
+			return inlinedFormula;
+		}
+		else
+			return formula;
+	}
+	
 	/**
 	 * moves a component in a given direction
 	 * moves components out of the way if needed
@@ -2559,7 +2583,6 @@ public abstract class Simulator {
 		HashMap<String, String> newGridSpeciesIDToOldColSubstring = new HashMap<String, String>();
 		HashMap<String, String> newGridSpeciesIDToNewRowSubstring = new HashMap<String, String>();
 		HashMap<String, String> newGridSpeciesIDToNewColSubstring = new HashMap<String, String>();
-
 		
 		for (String speciesID : speciesIDSet) {
 		
@@ -2810,6 +2833,13 @@ public abstract class Simulator {
 			}
 			
 			ASTNode degradationNode = new ASTNode();
+			
+			for (Map.Entry<String, ASTNode> reactionAndFormula : reactionToFormulaMap.entrySet()) {
+							
+				String reactionID = reactionAndFormula.getKey();
+			}
+			
+			Boolean isDegradable = false;
 
 			//create degradation reaction for each grid species
 			//find a grid degradation reaction to copy from
@@ -2819,30 +2849,34 @@ public abstract class Simulator {
 				
 				if (reactionID.contains("Degradation_" + underlyingSpeciesID)) {
 					
-					degradationNode = reactionAndFormula.getValue().clone();
+					degradationNode = reactionAndFormula.getValue().clone();					
 					degradationNode.getRightChild().setVariable(model.getSpecies(newGridSpeciesID));
+					isDegradable = true;
 					break;
-				}
+				} 
 			}
 			
-			String newDegReactionID = "ROW" + row + "_COL" + col + "_Degradation_" + underlyingSpeciesID;
+			if (isDegradable) {
 			
-			if (row < 0)
-				newDegReactionID = newDegReactionID.replace("ROW" + row, "ROW" + "_negative_" + (-1 * row));
-			if (col < 0)
-				newDegReactionID = newDegReactionID.replace("COL" + col, "COL" + "_negative_" + (-1 * col));
-			
-			Reaction degReaction = model.createReaction(newDegReactionID);
-			KineticLaw degKineticLaw = model.createKineticLaw();
-			degKineticLaw.setMath(degradationNode.clone());
-			degReaction.setKineticLaw(degKineticLaw);
-			SpeciesReference reactant = new SpeciesReference(model.getSpecies(newGridSpeciesID));
-			reactant.setStoichiometry(1);
-			degReaction.addReactant(reactant);
-			
-			setupLocalParameters(degReaction.getKineticLaw(), degReaction.getId());
-			setupSingleReaction(degReaction.getId(), degReaction.getKineticLaw().getMath(), false,
-					degReaction.getListOfReactants(), degReaction.getListOfProducts(), degReaction.getListOfModifiers());
+				String newDegReactionID = "ROW" + row + "_COL" + col + "_Degradation_" + underlyingSpeciesID;
+				
+				if (row < 0)
+					newDegReactionID = newDegReactionID.replace("ROW" + row, "ROW" + "_negative_" + (-1 * row));
+				if (col < 0)
+					newDegReactionID = newDegReactionID.replace("COL" + col, "COL" + "_negative_" + (-1 * col));
+				
+				Reaction degReaction = model.createReaction(newDegReactionID);
+				KineticLaw degKineticLaw = model.createKineticLaw();
+				degKineticLaw.setMath(degradationNode.clone());
+				degReaction.setKineticLaw(degKineticLaw);
+				SpeciesReference reactant = new SpeciesReference(model.getSpecies(newGridSpeciesID));
+				reactant.setStoichiometry(1);
+				degReaction.addReactant(reactant);
+				
+				setupLocalParameters(degReaction.getKineticLaw(), degReaction.getId());
+				setupSingleReaction(degReaction.getId(), degReaction.getKineticLaw().getMath(), false,
+						degReaction.getListOfReactants(), degReaction.getListOfProducts(), degReaction.getListOfModifiers());
+			}
 		}
 		
 		//MOVE MEMBRANE DIFFUSION REACTIONS FOR COMPONENTS THAT HAVE MOVED
@@ -3134,6 +3168,15 @@ public abstract class Simulator {
 				
 				for (String speciesID : interestingSpecies)
 					bufferedTSDWriter.write(commaSpace + "\"" + speciesID + "\"");
+				
+				//always print compartment location IDs
+				for (String componentLocationID : componentToLocationMap.keySet()) {
+					
+					String locationX = componentLocationID + "__locationX";
+					String locationY = componentLocationID + "__locationY";
+					
+					bufferedTSDWriter.write(commaSpace + "\"" + locationX + "\", \"" + locationY + "\"");
+				}
 			}
 			else {
 			
@@ -3195,6 +3238,12 @@ public abstract class Simulator {
 					bufferedTSDWriter.write(commaSpace + variableToValueMap.get(speciesID));
 					
 				commaSpace = ", ";
+			}
+			
+			//always print component location values
+			for (String componentID : componentToLocationMap.keySet()) {
+				bufferedTSDWriter.write(commaSpace + (int) componentToLocationMap.get(componentID).getX());
+				bufferedTSDWriter.write(commaSpace + (int) componentToLocationMap.get(componentID).getY());
 			}
 		}
 		else {
@@ -4394,30 +4443,6 @@ public abstract class Simulator {
 		}		
 	}
 	
-	protected ASTNode inlineFormula(ASTNode formula) {
-		
-		if (formula.isFunction() && model.getFunctionDefinition(formula.getName()) != null) {
-			
-			ASTNode inlinedFormula = model.getFunctionDefinition(formula.getName()).getBody().clone();
-			ASTNode oldFormula = formula.clone();
-			
-			ArrayList<ASTNode> inlinedChildren = new ArrayList<ASTNode>();
-			this.getAllASTNodeChildren(inlinedFormula, inlinedChildren);
-			
-			ArrayList<ASTNode> oldChildren = new ArrayList<ASTNode>();
-			this.getAllASTNodeChildren(oldFormula, oldChildren);
-			
-			for (int i = 0; i < inlinedChildren.size(); ++i) {
-				
-				inlinedFormula.replaceArgument(inlinedChildren.get(i).toFormula(), oldFormula.getChild(i));
-			}
-			
-			return inlinedFormula;
-		}
-		else
-			return formula;
-	}
-	
 	/**
 	 * puts constraint-related information into data structures
 	 */
@@ -4548,29 +4573,43 @@ public abstract class Simulator {
 			
 				bufferedTSDWriter.write("(" + "\"" + "time" + "\"");
 				
-				for (String speciesID : speciesIDSet) {
+				//if there's an interesting species, only those get printed
+				if (interestingSpecies.size() > 0) {
 					
-					bufferedTSDWriter.write(", \"" + speciesID + "\"");
+					for (String speciesID : interestingSpecies)
+						bufferedTSDWriter.write(", \"" + speciesID + "\"");
+					
+					if (dynamicBoolean == false)						
+						bufferedTSDWriter.write("),\n");
 				}
+				else {
 				
-				if (dynamicBoolean == false) {
-					//print compartment IDs (for sizes)
-					for (String componentID : compartmentIDSet) {
+					for (String speciesID : speciesIDSet) {
 						
-						bufferedTSDWriter.write(", \"" + componentID + "\"");
+						bufferedTSDWriter.write(", \"" + speciesID + "\"");
 					}
 					
-					//print nonconstant parameter IDs
-					for (String parameterID : nonconstantParameterIDSet) {
-						
-						try {
-							bufferedTSDWriter.write(", \"" + parameterID + "\"");
-						} catch (IOException e) {
-							e.printStackTrace();
+					//for dynamicBoolean == true, that's handled in setupForNewRun
+					//as it's different for the simulators
+					if (dynamicBoolean == false) {
+						//print compartment IDs (for sizes)
+						for (String componentID : compartmentIDSet) {
+							
+							bufferedTSDWriter.write(", \"" + componentID + "\"");
 						}
+						
+						//print nonconstant parameter IDs
+						for (String parameterID : nonconstantParameterIDSet) {
+							
+							try {
+								bufferedTSDWriter.write(", \"" + parameterID + "\"");
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+						
+						bufferedTSDWriter.write("),\n");
 					}
-					
-					bufferedTSDWriter.write("),\n");
 				}
 			}
 		} catch (IOException e) {
@@ -4708,8 +4747,6 @@ public abstract class Simulator {
 //					.add(new StringStringPair(productID, product.getId()));
 //					variableToValueMap.put(product.getId(), productStoichiometry);
 //				}
-				
-				System.err.println(productID);
 				
 				//as a product, this species affects the reaction's propensity in the reverse direction
 				speciesToAffectedReactionSetMap.get(productID).add(reactionID + "_rv");

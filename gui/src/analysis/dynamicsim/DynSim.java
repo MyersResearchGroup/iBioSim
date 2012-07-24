@@ -84,11 +84,18 @@ public class DynSim {
 				simulator = new DynamicSimulation("rk");
 		}
 		
+		String[] intSpecies = new String[interestingSpecies.size()];
+		int i = 0;
+		
+		for (String intSpec : interestingSpecies) {
+			intSpecies[i] = intSpec; ++i;
+		}
+		
 		simulator.simulate(filename, outputDirectory, timeLimit, maxTimeStep, minTimeStep, 
 				randomSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, 
-				(String[]) interestingSpecies.toArray(), numSteps, relativeError, absoluteError, quantityType, genStats);
+				intSpecies, numSteps, relativeError, absoluteError, quantityType, genStats);
 		
-		TSDParser tsdp = new TSDParser(outputDirectory + "run-1.tsd", true);
+		TSDParser tsdp = new TSDParser(outputDirectory + "run-1.tsd", true);		
 		tsdp.outputCSV(outputDirectory + "run-1.csv");
 	}
 	

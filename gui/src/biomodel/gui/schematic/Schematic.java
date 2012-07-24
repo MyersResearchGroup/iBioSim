@@ -2031,24 +2031,29 @@ public class Schematic extends JPanel implements ActionListener {
 				//if we're in analysis view, we need a tabbed pane
 				JTabbedPane speciesPane = new JTabbedPane();			
 				
-				SchemeChooserPanel scPanel = null;				
+				SchemeChooserPanel scPanel = null;
 				
-				BioModel flattenedModel = new BioModel(bioModel.getPath());
-				flattenedModel.load(bioModel.getFilename());
-				SBMLDocument flattenedDoc = flattenedModel.flattenBioModel();
-				Model flatModel = flattenedDoc.getModel();
+				String compModelName = 
+					graph.getModelFileName(cell.getId()).replace(".gcm","").replace(".xml","");
 				
 				ArrayList<String> compSpecies = new ArrayList<String>();
 				
-				for (int i = 0; i < flatModel.getNumSpecies(); ++i) {
+				for (int i = 0; i < bioModel.getSBMLCompModel().getNumSubmodels(); ++i) {
 					
-					if (flatModel.getSpecies(i).getId().split("__")[0].equals(cell.getId())) {
+					if (bioModel.getSBMLCompModel().getSubmodel(i).getId().replace("GRID__","").equals(
+							compModelName)) {
 						
-						compSpecies.add(flatModel.getSpecies(i).getId());
+						Model submodel = 
+							bioModel.getSBMLCompModel().getSubmodel(i).getInstantiation();
+						
+						for (int j = 0; j < submodel.getNumSpecies(); ++j)
+							compSpecies.add(cell.getId() + "__" + submodel.getSpecies(j).getId());
+						
+						break;						
 					}
 				}
 				
-				JPanel speciesPanel = new JPanel(new GridLayout(compSpecies.size() + 1, 1));		
+				JPanel speciesPanel = new JPanel(new GridLayout(compSpecies.size() + 3, 1));		
 				speciesPane.addTab("Species", speciesPanel);				
 				speciesPanel.add(new JLabel("Mark Interesting Species"));
 				HashMap<String, JCheckBox> checkboxes = new HashMap<String, JCheckBox>();
@@ -2076,6 +2081,10 @@ public class Schematic extends JPanel implements ActionListener {
 					speciesPanel.add(checkboxes.get(compSpec));
 				}
 				
+				JCheckBox copyIntSpecies = new JCheckBox("Apply to all components with this model");
+				speciesPanel.add(new JLabel(""));
+				speciesPanel.add(copyIntSpecies);
+				
 				//make sure a simulation file is selected before adding the appearance panel
 				if (movieContainer != null && (movieContainer.getTSDParser() != null || movieContainer.getDTSDParser() != null)) {
 					scPanel = modelEditor.getSchemeChooserPanel(cell.getId(), movieContainer, true);
@@ -2083,13 +2092,13 @@ public class Schematic extends JPanel implements ActionListener {
 				}
 				else {
 					
-					 JPanel panel = new JPanel(false);
-				        JLabel text = new JLabel(
-				        		"To modify this submodel's appearances, please select a simulation file.");
-				        text.setHorizontalAlignment(JLabel.LEFT);
-				        text.setVerticalAlignment(JLabel.TOP);
-				        panel.setLayout(new GridLayout(1, 1));
-				        panel.add(text);
+					JPanel panel = new JPanel(false);
+			        JLabel text = new JLabel(
+			        		"To modify this submodel's appearances, please select a simulation file.");
+			        text.setHorizontalAlignment(JLabel.LEFT);
+			        text.setVerticalAlignment(JLabel.TOP);
+			        panel.setLayout(new GridLayout(1, 1));
+			        panel.add(text);
 				        
 					speciesPane.addTab("Appearance", panel);
 				}
@@ -2101,17 +2110,78 @@ public class Schematic extends JPanel implements ActionListener {
 				
 				if (okCancel == JOptionPane.OK_OPTION) {
 					
+					ArrayList<String> submodelComps = new ArrayList<String>();
+					
 					if (scPanel !=null) 
 						scPanel.updateMovieScheme();
+					
+					if (copyIntSpecies.isSelected()) {
+					
+						//get all of the components with the same model as the selected one
+						String locationAnnotationString = 
+							bioModel.getSBMLDocument().getModel()
+							.getParameter(compModelName + "__locations")
+							.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
+				
+						String[] compIDs = locationAnnotationString.replace("\"","").split("array:");
+						
+						for (int j = 2; j < compIDs.length; ++j) {
+							
+							if (compIDs[j].contains("=(")) {
+								
+								compIDs[j] = compIDs[j].split("=")[0].trim();						
+								submodelComps.add(compIDs[j]);
+							}
+						}
+					}
 					
 					//add interesting species to the list
 					for (Map.Entry<String, JCheckBox> checkbox : checkboxes.entrySet()) {
 						
-						if (checkbox.getValue().isSelected()) {							
+						//take off the top-level component from the name
+						//this will get added on for all of the components with the
+						//same model if the checkbox is selected
+						String[] splitID = checkbox.getKey().split("__");
+						String noCompID = "";
+						
+						for (int i = 1; i < splitID.length; ++i) {
+							
+							noCompID += splitID[i];
+							
+							if (i < splitID.length - 1)
+								noCompID += "__";
+						}
+						
+						if (checkbox.getValue().isSelected()) {
+							
 							modelEditor.getReb2Sac().addInterestingSpecies(checkbox.getKey());
+							
+							//loop through submodels and add them to the int species list
+							if (copyIntSpecies.isSelected()) {
+								
+								for (String submodelComp : submodelComps) {
+									
+									String newID = submodelComp + "__" + noCompID;
+									
+									if (newID.equals(checkbox.getKey()) == false)
+										modelEditor.getReb2Sac().addInterestingSpecies(newID);
+								}
+							}
 						}
 						else {
+							
 							modelEditor.getReb2Sac().removeInterestingSpecies(checkbox.getKey());
+							
+							if (copyIntSpecies.isSelected()) {
+								
+								for (String submodelComp : submodelComps) {
+									
+									String newID = submodelComp + "__" + noCompID;
+									
+									if (newID.equals(checkbox.getKey()) == false)
+										modelEditor.getReb2Sac().removeInterestingSpecies(newID);
+								}
+							}
 						}
 					}
 					
@@ -2342,8 +2412,6 @@ public class Schematic extends JPanel implements ActionListener {
 			double newHeight = image.getHeight();
 			double newWidth = image.getWidth();
 			
-			System.err.println(newWidth + "  " + newHeight);
-			
 			//scale the image if it's too big (ie, > 1024 x 768)
 			//be sure to keep the ratio consistent
 			if (image.getHeight() > maxHeight) {
@@ -2351,8 +2419,6 @@ public class Schematic extends JPanel implements ActionListener {
 				newWidth = newWidth * (maxHeight / newHeight);
 				newHeight = maxHeight;
 			}
-			
-			System.err.println(newWidth + "  " + newHeight);
 			
 			if (newWidth > maxWidth) {			
 				
