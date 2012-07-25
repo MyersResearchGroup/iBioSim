@@ -72,6 +72,12 @@ public class Zone{
 	// The index of the LPN should match where it is in the _lpnList, that is, if lpn is
 	// 	and LhpnFile object in _lpnList, then _lpnList[getLpnIndex()] == lpn.
 	
+	/*
+	 * Resource List :
+	 * TODO : Create a list reference where the algorithms can be found that this class
+	 * depends on.
+	 */
+	
 	public static final int INFINITY = Integer.MAX_VALUE;
 	
 	/* The lower and upper bounds of the times as well as the dbm. */
@@ -1449,7 +1455,30 @@ public class Zone{
 	 * 		r1*z2 - r1*z1 + r2*z1
 	 */
 	public int warp(int z1, int z2, int r1, int r2){
+		/*
+		 *  See "Verification of Analog/Mixed-Signal Circuits Using Labeled Hybrid Petri Nets"
+		 *  by S. Little, D. Walter, C. Myers, R. Thacker, S. Batchu, and T. Yoneda
+		 *  Section III.C for details on how this function is used and where it comes
+		 *  from.
+		 */
+		
 		return r1*z2 - r1*z1 + r2*z1;
+	}
+	
+	/**
+	 * Warps a Zone.
+	 * @return
+	 * 		The warped Zone.
+	 */
+	public Zone dmbWarp(){
+		/*
+		 *  See "Verification of Analog/Mixed-Signal Circuits Using Labeled Hybrid Petri Nets"
+		 *  by S. Little, D. Walter, C. Myers, R. Thacker, S. Batchu, and T. Yoneda
+		 *  Section III.C for details on how this function is used and where it comes
+		 *  from.
+		 */
+		
+		return null;
 	}
 	
 	
@@ -1487,22 +1516,22 @@ public class Zone{
 	 * @author Andrew N. Fisher
 	 *
 	 */
-	public class IncompatibleZoneException extends java.lang.RuntimeException
-	{
-
-		// TODO : Check if this class can be removed.
-		
-		/**
-		 * Generated serialVersionUID
-		 */
-		private static final long serialVersionUID = -2453680267411313227L;
-		
-		
-		public IncompatibleZoneException(String Message)
-		{
-			super(Message);
-		}
-	}
+//	public class IncompatibleZoneException extends java.lang.RuntimeException
+//	{
+//
+//		// TODO : Check if this class can be removed.
+//		
+//		/**
+//		 * Generated serialVersionUID
+//		 */
+//		private static final long serialVersionUID = -2453680267411313227L;
+//		
+//		
+//		public IncompatibleZoneException(String Message)
+//		{
+//			super(Message);
+//		}
+//	}
 	
 	
 	/**
