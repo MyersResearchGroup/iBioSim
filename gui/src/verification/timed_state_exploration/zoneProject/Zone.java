@@ -195,7 +195,7 @@ public class Zone{
 		_indexToTimerPair = new LPNTransitionPair[timers.length];
 		for(int i=0; i<timers.length; i++){
 			_indexToTimerPair[i] = new LPNTransitionPair(LPNTransitionPair.SINGLE_LPN,
-					timers[i]);
+					timers[i], true);
 		}
 		
 		// Sorting the array.
@@ -227,7 +227,7 @@ public class Zone{
 			}
 			
 			_indexToTimerPair = newIndexToTimerPair;
-			_indexToTimerPair[0] = new LPNTransitionPair(LPNTransitionPair.SINGLE_LPN, -1);
+			_indexToTimerPair[0] = new LPNTransitionPair(LPNTransitionPair.SINGLE_LPN, -1, true);
 		}
 		
 //		if(_indexToTimer[0] < 0)
@@ -255,7 +255,7 @@ public class Zone{
 			// in the timers array.
 			//newIndex.put(i+1, Arrays.binarySearch(_indexToTimer, timers[i]));
 			LPNTransitionPair searchValue =
-					new LPNTransitionPair(LPNTransitionPair.SINGLE_LPN, timers[i]);
+					new LPNTransitionPair(LPNTransitionPair.SINGLE_LPN, timers[i], true);
 			newIndex.put(i+1, Arrays.binarySearch(_indexToTimerPair, searchValue));
 		}
 		
@@ -336,7 +336,7 @@ public class Zone{
 		ArrayList<LPNTransitionPair> enabledTransitionsArrayList =
 				new ArrayList<LPNTransitionPair>();
 		
-		LPNTransitionPair zeroPair = new LPNTransitionPair(LPNTransitionPair.ZERO_TIMER, -1);
+		LPNTransitionPair zeroPair = new LPNTransitionPair(LPNTransitionPair.ZERO_TIMER, -1, true);
 		
 		// Add the zero timer first.
 		enabledTransitionsArrayList.add(zeroPair);
@@ -344,7 +344,7 @@ public class Zone{
 		// The index of the boolean value corresponds to the index of the Transition.
 		for(int i=0; i<enabledTran.length; i++){
 			if(enabledTran[i]){
-				enabledTransitionsArrayList.add(new LPNTransitionPair(LPNIndex, i));
+				enabledTransitionsArrayList.add(new LPNTransitionPair(LPNIndex, i, true));
 			}
 		}
 		
@@ -390,6 +390,11 @@ public class Zone{
 		
 	}
 	
+	/**
+	 * Creates a Zone based on the local states.
+	 * @param localStates
+	 * 			The current state (or initial) of the LPNs.
+	 */
 	public Zone(State[] localStates){
 		
 		// Extract the local states.
@@ -472,7 +477,7 @@ public class Zone{
 				
 		// Put in the zero timer.
 		enabledTransitionsArrayList
-			.add(new LPNTransitionPair(LPNTransitionPair.ZERO_TIMER, -1));
+			.add(new LPNTransitionPair(LPNTransitionPair.ZERO_TIMER, -1, true));
 		
 		// Get the rest of the transitions.
 		for(int i=0; i<localStates.length; i++){
@@ -487,7 +492,7 @@ public class Zone{
 			for(int j=0; j<enabledTran.length; j++){
 				if(enabledTran[j]){
 					// Add the transition pair.
-					singleLPN.add(new LPNTransitionPair(i, j));
+					singleLPN.add(new LPNTransitionPair(i, j, true));
 				}
 			}
 			
@@ -577,13 +582,17 @@ public class Zone{
 		int transitionIndex = t.getIndex();
 		
 		LPNTransitionPair ltPair = 
-				new LPNTransitionPair(lpnIndex, transitionIndex);
+				new LPNTransitionPair(lpnIndex, transitionIndex, true);
 		
 		return getUpperBoundbydbmIndex(Arrays.binarySearch(_indexToTimerPair, ltPair));
 	}
 	
-	/* (non-Javadoc)
-	 * @see verification.timed_state_exploration.zone.Zone#getUpperBoundbydbmIndex(int)
+	/**
+	 * Get the value of the upper bound for the delay.
+	 * @param index
+	 * 			The timer's row/column of the DBM matrix.
+	 * @return
+	 * 			The upper bound on the transitions delay.
 	 */
 	public int getUpperBoundbydbmIndex(int index)
 	{
@@ -605,7 +614,7 @@ public class Zone{
 		
 		int transitionIndex = t.getIndex();
 		
-		LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, transitionIndex);
+		LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, transitionIndex, true);
 		
 		setUpperBoundbydbmIndex(Arrays.binarySearch(_indexToTimerPair, ltPair), value);
 	}
@@ -650,14 +659,18 @@ public class Zone{
 		
 		int transitionIndex = t.getIndex();
 		
-		LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, transitionIndex);
+		LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, transitionIndex, true);
 		
 		return -1*getLowerBoundbydbmIndex(
 				Arrays.binarySearch(_indexToTimerPair, ltPair));
 	}
 	
-	/* (non-Javadoc)
-	 * @see verification.timed_state_exploration.zone.Zone#getLowerBoundbydbmIndex(int)
+	/**
+	 * Get the value of the lower bound for the delay.
+	 * @param index
+	 * 			The timer's row/column of the DBM matrix.
+	 * @return
+	 * 			The value of the lower bound.
 	 */
 	public int getLowerBoundbydbmIndex(int index)
 	{
@@ -679,7 +692,7 @@ public class Zone{
 		
 		int transitionIndex = t.getIndex();
 		
-		LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, transitionIndex);
+		LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, transitionIndex, true);
 		
 		setLowerBoundbydbmIndex(Arrays.binarySearch(_indexToTimerPair,ltPair), value);
 	}
@@ -719,8 +732,14 @@ public class Zone{
 		return i+1;
 	}
 	
-	/* (non-Javadoc)
-	 * @see verification.timed_state_exploration.zone.Zone#getdbm(int, int)
+	/**
+	 * Retrieves an entry of the DBM using the DBM's addressing.
+	 * @param i
+	 * 			The row of the DBM.
+	 * @param j
+	 * 			The column of the DBM.
+	 * @return
+	 * 			The value of the (i, j) element of the DBM.
 	 */
 	public int getDbmEntry(int i, int j)
 	{
@@ -889,8 +908,12 @@ public class Zone{
 		return true;
 	}
 	
-	/* (non-Javadoc)
-	 * @see verification.timed_state_exploration.zone.Zone#subset(Zone)
+	/**
+	 * Determines if this zone is a subset of Zone otherZone.
+	 * @param otherZone 
+	 * 		The zone to compare against.
+	 * @return
+	 * 		True if this is a subset of other; false otherwise.
 	 */
 	public boolean subset(Zone otherZone){
 		// Check if the reference is null first.
@@ -1038,18 +1061,21 @@ public class Zone{
 		
 		int transitionIndex = t.getIndex();
 		
-		LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, transitionIndex);
+		LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, transitionIndex, true);
 		
 		return exceedsLowerBoundbydbmIndex(Arrays.binarySearch(_indexToTimerPair, ltPair));
 	}
 	
-	/* (non-Javadoc)
-	 * @see verification.timed_state_exploration.zone.Zone#exceedsLowerBoundbydbmIndex(int)
+	/**
+	 * Determines if a timer has reached its lower bound.
+	 * @param timer
+	 * 			The timer's index.
+	 * @return
+	 * 			True if the timer has reached its lower bound, false otherwise.
 	 */
 	public boolean exceedsLowerBoundbydbmIndex(int index)
 	{
-		// TODO: Check if finished.
-		
+
 		// Note : Make sure that the lower bound is stored as a negative number
 		// and that the inequality is correct.
 		return _matrix[0][dbmIndexToMatrixIndex(index)] <=
@@ -1076,11 +1102,19 @@ public class Zone{
 //		return fireTransitionbydbmIndex(index, enabledTimers, state);
 //	}
 	
+	/**
+	 * Gives the Zone obtained by firing a given Transitions.
+	 * @param t
+	 * 		The transitions being fired.
+	 * @param enabledTran
+	 * 		The list of currently enabled Transitions.
+	 * @param localStates
+	 * 		The current local states.
+	 * @return
+	 * 		The Zone obtained by firing Transition t with enabled Transitions enabled
+	 * 		enabledTran when the current state is localStates.
+	 */
 	public Zone fire(Transition t, LpnTranList enabledTran, State[] localStates){
-		
-		// TODO : Finish this method. It uses the fireTransitionbydbmIndex.
-		// However, change the signature of the fireTransitionbydbmIndex to a more
-		// appropriate one, namely take into account the need for the LPN.
 		
 		// Create the LPNTransitionPair to check if the Transitions is in the zone and to 
 		// find the index.
@@ -1090,7 +1124,7 @@ public class Zone{
 		
 		int transitionIndex = t.getIndex();
 		
-		LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, transitionIndex);
+		LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, transitionIndex, true);
 		
 		int dbmIndex = Arrays.binarySearch(_indexToTimerPair, ltPair);
 		
@@ -1101,14 +1135,17 @@ public class Zone{
 		return fireTransitionbydbmIndex(dbmIndex, enabledTran, localStates);
 	}
 	
-	/* (non-Javadoc)
-	 * @see verification.timed_state_exploration.zone.Zone#fireTransitionbydbmIndex(int, int[], verification.platu.stategraph.State)
+	/**
+	 * Updates the Zone according to the transition firing.
+	 * @param index
+	 * 			The index of the timer.
+	 * @return
+	 * 			The updated Zone.
 	 */
 	public Zone fireTransitionbydbmIndex(int index, LpnTranList enabledTimers,
 			State[] localStates)
 	{
 		
-		// TODO: Check for correctness.
 		Zone newZone = new Zone();
 		
 		// Copy the LPNs over.
@@ -1123,10 +1160,10 @@ public class Zone{
 		newZone._indexToTimerPair = new LPNTransitionPair[enabledTimers.size() + 1];
 		int count = 0;
 		newZone._indexToTimerPair[count++] = 
-				new LPNTransitionPair(LPNTransitionPair.ZERO_TIMER, -1);
+				new LPNTransitionPair(LPNTransitionPair.ZERO_TIMER, -1, true);
 		for(Transition t : enabledTimers){
 			newZone._indexToTimerPair[count++] = 
-					new LPNTransitionPair(t.getLpn().getLpnIndex(), t.getIndex());
+					new LPNTransitionPair(t.getLpn().getLpnIndex(), t.getIndex(), true);
 		}
 		
 		Arrays.sort(newZone._indexToTimerPair);
@@ -1279,7 +1316,7 @@ public class Zone{
 	}
 	
 	/* (non-Javadoc)
-	 * @see verification.timed_state_exploration.zone.Zone#clone()
+	 * @see java.lang.Object#clone()
 	 */
 	public Zone clone()
 	{
@@ -1320,8 +1357,10 @@ public class Zone{
 		                                            = getLowerBoundbydbmIndex(timer);
 	}
 	
-	/* (non-Javadoc)
-	 * @see verification.timed_state_exploration.zone.Zone#getEnabledTransitions()
+	/**
+	 * The list of enabled timers.
+	 * @return
+	 * 		The list of all timers that have reached their lower bounds.
 	 */
 	public List<Transition> getEnabledTransitions()
 	{
@@ -1451,6 +1490,8 @@ public class Zone{
 	public class IncompatibleZoneException extends java.lang.RuntimeException
 	{
 
+		// TODO : Check if this class can be removed.
+		
 		/**
 		 * Generated serialVersionUID
 		 */
