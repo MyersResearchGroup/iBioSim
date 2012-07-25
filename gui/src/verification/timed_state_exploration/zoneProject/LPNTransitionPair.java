@@ -20,6 +20,10 @@ package verification.timed_state_exploration.zoneProject;
 public class LPNTransitionPair implements Comparable<LPNTransitionPair>{
 	
 	/*
+	 * 
+	 * TODO : This will need to be changed to reflect the introduction of the continuous
+	 * variables. 
+	 * 
 	 * Abstraction Function : Given a Transition with index t in an LPN that has
 	 * 		index l, the LPNTransitionPair represents the pairing (t, l). The
 	 * 		index of the transition (t) is stored in _transitionIndex and the index
@@ -31,13 +35,14 @@ public class LPNTransitionPair implements Comparable<LPNTransitionPair>{
 	 */
 	
 	// Value for indicating a single LPN is in use.
-	public static final int SINGLE_LPN = -2;
+	public static final int SINGLE_LPN = -3;
 	
 	// Value for indicating the zero timer.
 	public static final int ZERO_TIMER = -1;
 	
 	private int _lpnIndex;
 	private int _transitionIndex;
+	private boolean _isTimer;
 	
 	
 	/* (non-Javadoc)
@@ -49,6 +54,11 @@ public class LPNTransitionPair implements Comparable<LPNTransitionPair>{
 		int result = 1;
 		result = prime * result + _lpnIndex;
 		result = prime * result + _transitionIndex;
+		
+		int boolValue = _isTimer ? 1 : 0;
+		
+		result += prime *result*boolValue;
+		
 		return result;
 	}
 
@@ -64,6 +74,8 @@ public class LPNTransitionPair implements Comparable<LPNTransitionPair>{
 		if (!(obj instanceof LPNTransitionPair))
 			return false;
 		LPNTransitionPair other = (LPNTransitionPair) obj;
+		if(_isTimer != other._isTimer)
+			return false;
 		if (_lpnIndex != other._lpnIndex)
 			return false;
 		if (_transitionIndex != other._transitionIndex)
@@ -77,6 +89,7 @@ public class LPNTransitionPair implements Comparable<LPNTransitionPair>{
 	public LPNTransitionPair(){
 		_lpnIndex = 0;
 		_transitionIndex = 0;
+		_isTimer = false;
 	}
 	
 	/**
@@ -86,9 +99,10 @@ public class LPNTransitionPair implements Comparable<LPNTransitionPair>{
 	 * @param transitionIndex
 	 * 			The index of the transition.
 	 */
-	public LPNTransitionPair(int lpnIndex, int transitionIndex){
+	public LPNTransitionPair(int lpnIndex, int transitionIndex, boolean isTimer){
 		this._lpnIndex = lpnIndex;
 		this._transitionIndex = transitionIndex;
+		this._isTimer = isTimer;
 	}
 	
 	/**
@@ -127,10 +141,40 @@ public class LPNTransitionPair implements Comparable<LPNTransitionPair>{
 		this._transitionIndex = transitionIndex;
 	}
 	
-	public String toString(){	
-		String result = "(LPN Index, Transition Index) = (";
+	/**
+	 * Gets a boolean value that indicates whether this pair is storing a timer
+	 * or a continuous variable.
+	 * @return
+	 * 		True if the pair is to be interpreted as a timer, false if it is to be
+	 * 		interpreted as a continuous variable.
+	 */
+	public boolean get_isTimer(){
+		return _isTimer;
+	}
+	
+	/**
+	 * Sets the boolean that's used to determine if the pairing should be treated
+	 * as a continuous variable or a timer.
+	 * @param isTimer
+	 * 		True indicates a timer, false indicates a continuous variables.
+	 */
+	public void set_isTimer(boolean isTimer){
+		this._isTimer = isTimer;
+	}
+	
+	public String toString(){
+		String result = "";
 		
-		result += _lpnIndex + ", " + _transitionIndex + ")";
+		if(_isTimer){
+			result = "(LPN Index, Transition Index) = (";
+
+			result += _lpnIndex + ", " + _transitionIndex + ")";
+		}
+		else{
+			result = "(LPN Index, Continuous Variable) = (";
+			
+			result += _lpnIndex + ", " + _transitionIndex + ")";
+		}
 		
 		return result;
 	}
@@ -145,6 +189,7 @@ public class LPNTransitionPair implements Comparable<LPNTransitionPair>{
 		
 		newPair._lpnIndex = this._lpnIndex;
 		newPair._transitionIndex = this._transitionIndex;
+		newPair._isTimer = this._isTimer;
 		
 		return newPair;
 	}
@@ -153,7 +198,8 @@ public class LPNTransitionPair implements Comparable<LPNTransitionPair>{
 	 * Determines whether this LPNTransitionPair is less than the otherPair
 	 * LPNTransitionPair. The ordering is the dictionary ordering on pairs
 	 * (l,t) where t is the index of the Transition and l is the index of the
-	 * LPN that the Transition is in.
+	 * LPN that the Transition is in. All continuous variables come before all
+	 * timers.
 	 * @param otherValue
 	 * 		The value to determine whether this LPNTransitionPair is less than.
 	 * @return
@@ -180,6 +226,14 @@ public class LPNTransitionPair implements Comparable<LPNTransitionPair>{
 		 * we could do the dictionary ordering of the reversed pair). But the problem
 		 * still remains and this ordering would be much less intuitive.
 		 */
+		
+		if(this._isTimer != otherPair._isTimer){
+			// If one pair represents a continuous variable and the other represents a timer
+			// then already one is less than the other. If this._isTimer is false, then 
+			// otherPair._isTimer is true and this comes before otherPair. Else this._isTimer
+			// is true and otherPair._isTimer is false. So this comes after otherPair.
+			return this._isTimer ? 1 : -1;
+		}
 		
 		int dlpnIndex = this._lpnIndex - otherPair._lpnIndex;
 		
