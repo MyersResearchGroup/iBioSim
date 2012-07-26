@@ -1309,19 +1309,15 @@ public abstract class Simulator {
 				
 			case FUNCTION_PIECEWISE: {
 				
-				//loop through child pairs
+				//loop through child triples
 				//if child 1 is true, return child 0, else return child 2				
 				for (int childIter = 0; childIter < node.getChildCount(); childIter += 3) {
 					
 					if ((childIter + 1) < node.getChildCount() && 
 							getBooleanFromDouble(evaluateExpressionRecursive(node.getChild(childIter + 1)))) {
-						
-						//System.err.println("if  " + node.getChild(childIter + 1).toFormula());
 						return evaluateExpressionRecursive(node.getChild(childIter));
 					}
 					else if ((childIter + 2) < node.getChildCount()) {
-						
-						//System.err.println("else if " + node.getChild(childIter + 2).toFormula());
 						return evaluateExpressionRecursive(node.getChild(childIter + 2));
 					}
 				}
@@ -2410,7 +2406,19 @@ public abstract class Simulator {
 		}
 	}
 	
+	/**
+	 * inlines a formula with function definitions
+	 * 
+	 * @param formula
+	 * @return
+	 */
 	protected ASTNode inlineFormula(ASTNode formula) {
+		
+		if (formula.isFunction() == false || formula.isLeaf() == false) {
+			
+			for (int i = 0; i < formula.getChildCount(); ++i)
+				formula.replaceChild(i, inlineFormula(formula.getChild(i).clone()));
+		}
 		
 		if (formula.isFunction() && model.getFunctionDefinition(formula.getName()) != null) {
 			
@@ -2420,18 +2428,34 @@ public abstract class Simulator {
 			ArrayList<ASTNode> inlinedChildren = new ArrayList<ASTNode>();
 			this.getAllASTNodeChildren(inlinedFormula, inlinedChildren);
 			
-			ArrayList<ASTNode> oldChildren = new ArrayList<ASTNode>();
-			this.getAllASTNodeChildren(oldFormula, oldChildren);
+			if (inlinedChildren.size() == 0)
+				inlinedChildren.add(inlinedFormula);
+			
+			HashMap<String, Integer> inlinedChildToOldIndexMap = new HashMap<String, Integer>();
+			
+			for (int i = 0; i < model.getFunctionDefinition(formula.getName()).getNumArguments(); ++i) {
+				inlinedChildToOldIndexMap.put(model.getFunctionDefinition(formula.getName()).getArgument(i).getName(), i);
+			}
 			
 			for (int i = 0; i < inlinedChildren.size(); ++i) {
 				
-				inlinedFormula.replaceArgument(inlinedChildren.get(i).toFormula(), oldFormula.getChild(i));
+				ASTNode child = inlinedChildren.get(i);
+				
+				if (child.isLeaf() && child.isName()) {
+					
+					int index = inlinedChildToOldIndexMap.get(child.getName());
+					inlinedFormula.replaceArgument(child.toFormula(), oldFormula.getChild(index));
+					
+					if (inlinedFormula.getChildCount() == 0)
+						inlinedFormula = oldFormula.getChild(index);
+				}
 			}
 			
 			return inlinedFormula;
 		}
-		else
+		else {
 			return formula;
+		}
 	}
 	
 	/**
@@ -4216,7 +4240,8 @@ public abstract class Simulator {
 			
 			for (InitialAssignment initialAssignment : model.getListOfInitialAssignments()) {
 				
-				String variable = initialAssignment.getVariable().replace("_negative_","-");
+				String variable = initialAssignment.getVariable().replace("_negative_","-");				
+				initialAssignment.setMath(inlineFormula(initialAssignment.getMath()));
 				
 				if (speciesToHasOnlySubstanceUnitsMap.containsKey(variable) &&
 						speciesToHasOnlySubstanceUnitsMap.get(variable) == false) {
@@ -4423,7 +4448,7 @@ public abstract class Simulator {
 						String nodeName = ruleNode.getName();
 						
 						//not sure these are needed, as they only evaluate with each time step
-						//not when other variable update
+						//not when other variables update
 //						variableToAffectedRateRuleSetMap.put(nodeName, new HashSet<AssignmentRule>());
 //						variableToAffectedRateRuleSetMap.get(nodeName).add(rateRule);
 						variableToIsInRateRuleMap.put(nodeName, true);
@@ -4434,13 +4459,15 @@ public abstract class Simulator {
 			}
 		}
 		
-		//loop through the formulas and inline any user-defined functions
-		for (Rule rule : model.getListOfRules()) {
-			
-			if (rule.isAssignment() || rule.isRate()) {
-				rule.setMath(inlineFormula(rule.getMath()));
-			}
-		}		
+		//don't think this is necessary
+//		//loop through the formulas and inline any user-defined functions
+//		for (Rule rule : model.getListOfRules()) {
+//			
+//			if (rule.isAssignment() || rule.isRate()) {
+//				rule.setMath(inlineFormula(rule.getMath()));
+//				System.err.println(rule.getMath());
+//			}
+//		}		
 	}
 	
 	/**
@@ -4481,11 +4508,11 @@ public abstract class Simulator {
 			dynamicBoolean = true;
 		
 		if (event.isSetPriority())
-			eventToPriorityMap.put(eventID, event.getPriority().getMath());
+			eventToPriorityMap.put(eventID, inlineFormula(event.getPriority().getMath()));
 		
 		if (event.isSetDelay()) {
 			
-			eventToDelayMap.put(eventID, event.getDelay().getMath());
+			eventToDelayMap.put(eventID, inlineFormula(event.getDelay().getMath()));
 			eventToHasDelayMap.put(eventID, true);
 		}
 		else
@@ -4494,7 +4521,7 @@ public abstract class Simulator {
 		if (event.getTrigger().getMath().toFormula().contains("neighborQuantity") == false)
 			event.getTrigger().setMath(inlineFormula(event.getTrigger().getMath()));
 		
-		eventToTriggerMap.put(eventID, event.getTrigger().getMath());
+		eventToTriggerMap.put(eventID, inlineFormula(event.getTrigger().getMath()));
 		eventToTriggerInitiallyTrueMap.put(eventID, event.getTrigger().isInitialValue());
 		eventToPreviousTriggerValueMap.put(eventID, event.getTrigger().isInitialValue());
 		eventToTriggerPersistenceMap.put(eventID, event.getTrigger().getPersistent());
@@ -4507,6 +4534,8 @@ public abstract class Simulator {
 		for (EventAssignment assignment : event.getListOfEventAssignments()) {
 			
 			String variableID = assignment.getVariable();
+			
+			assignment.setMath(inlineFormula(assignment.getMath()));
 			
 			eventToAssignmentSetMap.get(eventID).add(assignment);
 			
@@ -4647,12 +4676,22 @@ public abstract class Simulator {
 			if (reactionFormula.getType().equals(ASTNode.Type.TIMES)) {
 				
 				ASTNode distributedNode = new ASTNode();
-				distributedNode = ASTNode.sum(
-						ASTNode.times(reactionFormula.getLeftChild().clone(), reactionFormula.getRightChild().getLeftChild().clone()), 
-						ASTNode.times(new ASTNode(-1), reactionFormula.getLeftChild().clone(), reactionFormula.getRightChild().getRightChild().clone()));
+				
+				reactionFormula = inlineFormula(reactionFormula);
+				
+				if (reactionFormula.getChildCount() >= 2 &&
+						reactionFormula.getChild(1).getType().equals(ASTNode.Type.PLUS))
+					distributedNode = ASTNode.sum(
+							ASTNode.times(reactionFormula.getLeftChild().clone(), reactionFormula.getRightChild().getLeftChild().clone()), 
+							ASTNode.times(new ASTNode(-1), reactionFormula.getLeftChild().clone(), reactionFormula.getRightChild().getRightChild().clone()));
+				else if (reactionFormula.getChildCount() >= 2 &&
+						reactionFormula.getChild(1).getType().equals(ASTNode.Type.MINUS))
+					distributedNode = ASTNode.diff(
+							ASTNode.times(reactionFormula.getLeftChild().clone(), reactionFormula.getRightChild().getLeftChild().clone()), 
+							ASTNode.times(reactionFormula.getLeftChild().clone(), reactionFormula.getRightChild().getRightChild().clone()));
 				
 				reactionFormula = distributedNode;
-			}			
+			}
 			
 			reactionToSpeciesAndStoichiometrySetMap.put(reactionID + "_fd", new HashSet<StringDoublePair>());
 			reactionToSpeciesAndStoichiometrySetMap.put(reactionID + "_rv", new HashSet<StringDoublePair>());
@@ -4782,15 +4821,18 @@ public abstract class Simulator {
 			
 			double propensity;
 			
-			reactionToFormulaMap.put(reactionID + "_rv", reactionFormula.getRightChild());
-			reactionToFormulaMap.put(reactionID + "_fd", reactionFormula.getLeftChild());
+			reactionToFormulaMap.put(reactionID + "_rv", inlineFormula(reactionFormula.getRightChild()));
+			reactionToFormulaMap.put(reactionID + "_fd", inlineFormula(reactionFormula.getLeftChild()));
+			
+			System.err.println(reactionID + "_rv    " + inlineFormula(reactionFormula.getRightChild()));
+			System.err.println(reactionID + "_fd    " + inlineFormula(reactionFormula.getLeftChild()));
 			
 			//calculate forward reaction propensity
 			if (notEnoughMoleculesFlagFd == true)
 				propensity = 0.0;
 			else {
 				//the left child is what's left of the minus sign
-				propensity = evaluateExpressionRecursive(reactionFormula.getLeftChild());
+				propensity = evaluateExpressionRecursive(inlineFormula(reactionFormula.getLeftChild()));
 				
 				//stoichiometry amplification -- alter the propensity
 				if (reactionID.contains("_Diffusion_") && stoichAmpBoolean == true)
@@ -4812,7 +4854,7 @@ public abstract class Simulator {
 				propensity = 0.0;
 			else {
 				//the right child is what's right of the minus sign
-				propensity = evaluateExpressionRecursive(reactionFormula.getRightChild());
+				propensity = evaluateExpressionRecursive(inlineFormula(reactionFormula.getRightChild()));
 				
 				//stoichiometry amplification -- alter the propensity
 				if (reactionID.contains("_Diffusion_") && stoichAmpBoolean == true)
@@ -4918,7 +4960,7 @@ public abstract class Simulator {
 				speciesToAffectedReactionSetMap.get(modifierID).add(reactionID);
 			}
 			
-			reactionToFormulaMap.put(reactionID, reactionFormula);
+			reactionToFormulaMap.put(reactionID, inlineFormula(reactionFormula));
 			
 			double propensity;
 			
@@ -4927,7 +4969,7 @@ public abstract class Simulator {
 			else {
 			
 				//calculate propensity
-				propensity = evaluateExpressionRecursive(reactionFormula);
+				propensity = evaluateExpressionRecursive(inlineFormula(reactionFormula));
 				
 				//stoichiometry amplification -- alter the propensity
 				if (reactionID.contains("_Diffusion_") && stoichAmpBoolean == true)

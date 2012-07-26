@@ -15,6 +15,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
+import org.sbml.jsbml.AssignmentRule;
+import org.sbml.jsbml.Rule;
+
 import main.Gui;
 import main.util.MutableBoolean;
 import odk.lang.FastMath;
@@ -357,8 +360,8 @@ public class SimulatorSSACR extends Simulator {
 		setupArrays();
 		setupSpecies();
 		setupParameters();
-		setupInitialAssignments();
 		setupRules();
+		setupInitialAssignments();
 		setupConstraints();
 		
 		if (numEvents == 0)
