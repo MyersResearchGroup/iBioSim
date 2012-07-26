@@ -148,9 +148,9 @@ public class FileTree extends JPanel implements MouseListener {
 					while (node != null) {
 						if (node.getParent() != null) {
 							fileLocation = separator + node + fileLocation;
-							String parentNode = node.getParent().toString();
+							String parentNode = node.getParent().toString();   //DK
 							if (parentNode.endsWith(".xml") || parentNode.endsWith(".sbml") || parentNode.endsWith(".gcm")
-									|| parentNode.endsWith(".vhd") || parentNode.endsWith(".s") || parentNode.endsWith(".inst")
+									|| parentNode.endsWith(".vhd") ||  parentNode.endsWith(".prop") || parentNode.endsWith(".s") || parentNode.endsWith(".inst")
 									|| parentNode.endsWith(".g") || parentNode.endsWith(".lpn") || parentNode.endsWith(".csp")
 									|| parentNode.endsWith(".hse") || parentNode.endsWith(".unc") || parentNode.endsWith(".csp")
 									|| parentNode.endsWith(".rsg") || parentNode.endsWith(".vams") || parentNode.endsWith(".sv")
@@ -298,6 +298,10 @@ public class FileTree extends JPanel implements MouseListener {
 						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".vhd")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_VHDL, null, files.get(fnum)));
 				}
+				else if (async && files.get(fnum).toString().length() > 4  //DK
+						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5).equals(".prop")) {
+					file = new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum)));
+				}
 				else if (lema && files.get(fnum).toString().length() > 1
 						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 2).equals(".s")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_S, null, files.get(fnum)));
@@ -366,6 +370,10 @@ public class FileTree extends JPanel implements MouseListener {
 				else if (async && files.get(fnum).toString().length() > 3
 						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".vhd")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_VHDL, null, files.get(fnum)));
+				}  
+				else if (async && files.get(fnum).toString().length() > 4  //DK
+						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5).equals(".prop")) {
+					file = new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum)));
 				}
 				else if (lema && files.get(fnum).toString().length() > 1
 						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 2).equals(".s")) {
@@ -685,6 +693,10 @@ public class FileTree extends JPanel implements MouseListener {
 			*/
 			else if (async && item.endsWith(".vhd")) {
 				node = new DefaultMutableTreeNode(new IconData(ICON_VHDL, null, item));
+			} 
+			
+			else if (async && item.endsWith(".prop")) {  //DK
+				node = new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, item));
 			}
 			else if (lema && item.endsWith(".s")) {
 				node = new DefaultMutableTreeNode(new IconData(ICON_S, null, item));
@@ -875,7 +887,7 @@ public class FileTree extends JPanel implements MouseListener {
 				for (int i = 0; i < parent.getChildCount(); i++) {
 					if (parent.getChildAt(i).toString().compareToIgnoreCase(current.toString()) > 0) {
 						break;
-					}
+					}  //DK
 					if (parent.getChildAt(i).toString().contains(".sbml") || parent.getChildAt(i).toString().contains(".xml")
 							|| parent.getChildAt(i).toString().contains(".gcm") || parent.getChildAt(i).toString().contains(".vhd")
 							|| parent.getChildAt(i).toString().contains(".s") || parent.getChildAt(i).toString().contains(".inst")
@@ -883,7 +895,7 @@ public class FileTree extends JPanel implements MouseListener {
 							|| parent.getChildAt(i).toString().contains(".csp") || parent.getChildAt(i).toString().contains(".hse")
 							|| parent.getChildAt(i).toString().contains(".unc") || parent.getChildAt(i).toString().contains(".rsg")
 							|| parent.getChildAt(i).toString().contains(".grf") || parent.getChildAt(i).toString().contains(".vams")
-							|| parent.getChildAt(i).toString().contains(".sv")) { // SB
+							|| parent.getChildAt(i).toString().contains(".sv") || parent.getChildAt(i).toString().contains(".prop")) { // SB
 						break;
 					}
 					insert++;
@@ -946,11 +958,11 @@ public class FileTree extends JPanel implements MouseListener {
 			if (doAdd) {
 				DefaultMutableTreeNode file = null;
 				int insert = -1;
-				if (parent == null) {
+				if (parent == null) {  //DK
 					insert = 0;
 					for (int i = 0; i < current.getChildCount(); i++) {
 						if (!current.getChildAt(i).toString().contains(".sbml") && !current.getChildAt(i).toString().contains(".xml")
-								&& !current.getChildAt(i).toString().contains(".gcm") && !current.getChildAt(i).toString().contains(".vhd")
+								&& !current.getChildAt(i).toString().contains(".gcm") && !current.getChildAt(i).toString().contains(".vhd") && !current.getChildAt(i).toString().contains(".prop")
 								&& !current.getChildAt(i).toString().contains(".s") && !current.getChildAt(i).toString().contains(".inst")
 								&& !current.getChildAt(i).toString().contains(".g") && !current.getChildAt(i).toString().contains(".lpn")
 								&& !current.getChildAt(i).toString().contains(".csp") && !current.getChildAt(i).toString().contains(".hse")
@@ -981,6 +993,10 @@ public class FileTree extends JPanel implements MouseListener {
 					else if (async && files.get(fnum).toString().length() > 3
 							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".vhd")) {
 						file = new DefaultMutableTreeNode(new IconData(ICON_VHDL, null, files.get(fnum)));
+					}
+					else if (async && files.get(fnum).toString().length() > 4    //DK
+							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5).equals(".prop")) {
+						file = new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum)));
 					}
 					else if (lema && files.get(fnum).toString().length() > 1
 							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 2).equals(".s")) {
@@ -1033,9 +1049,9 @@ public class FileTree extends JPanel implements MouseListener {
 				}
 				else if (!(parent.toString().equals(root.toString()))) {
 					insert = 0;
-					for (int i = 0; i < current.getChildCount(); i++) {
+					for (int i = 0; i < current.getChildCount(); i++) { //DK
 						if (!current.getChildAt(i).toString().contains(".sbml") && !current.getChildAt(i).toString().contains(".xml")
-								&& !current.getChildAt(i).toString().contains(".gcm") && !current.getChildAt(i).toString().contains(".vhd")
+								&& !current.getChildAt(i).toString().contains(".gcm") && !current.getChildAt(i).toString().contains(".vhd") && !!current.getChildAt(i).toString().contains(".prop")
 								&& !current.getChildAt(i).toString().contains(".s") && !current.getChildAt(i).toString().contains(".inst")
 								&& !current.getChildAt(i).toString().contains(".g") && !current.getChildAt(i).toString().contains(".lpn")
 								&& !current.getChildAt(i).toString().contains(".csp") && !current.getChildAt(i).toString().contains(".hse")
@@ -1063,6 +1079,10 @@ public class FileTree extends JPanel implements MouseListener {
 					else if (async && files.get(fnum).toString().length() > 3
 							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".vhd")) {
 						file = new DefaultMutableTreeNode(new IconData(ICON_VHDL, null, files.get(fnum)));
+					}
+					else if (async && files.get(fnum).toString().length() > 4   //DK
+							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5).equals(".prop")) {
+						file = new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum)));
 					}
 					else if (lema && files.get(fnum).toString().length() > 1
 							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 2).equals(".s")) {
@@ -1118,9 +1138,9 @@ public class FileTree extends JPanel implements MouseListener {
 					nodes.add(file);
 				}
 			}
-			for (DefaultMutableTreeNode file : nodes) {
+			for (DefaultMutableTreeNode file : nodes) {  //DK
 				String fileNode = file.toString();
-				if (fileNode.endsWith(".xml") || fileNode.endsWith(".sbml") || fileNode.endsWith(".gcm") || fileNode.endsWith(".vhd")
+				if (fileNode.endsWith(".xml") || fileNode.endsWith(".sbml") || fileNode.endsWith(".gcm") || fileNode.endsWith(".vhd") || fileNode.endsWith(".prop")
 						|| fileNode.endsWith(".s") || fileNode.endsWith(".inst") || fileNode.endsWith(".g") || fileNode.endsWith(".lpn")
 						|| fileNode.endsWith(".csp") || fileNode.endsWith(".hse") || fileNode.endsWith(".unc") || fileNode.endsWith(".csp")
 						|| fileNode.endsWith(".rsg") || fileNode.endsWith(".vams") || fileNode.endsWith(".sv") || fileNode.endsWith(".grf")
