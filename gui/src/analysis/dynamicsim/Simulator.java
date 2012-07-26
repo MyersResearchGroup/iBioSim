@@ -4824,9 +4824,6 @@ public abstract class Simulator {
 			reactionToFormulaMap.put(reactionID + "_rv", inlineFormula(reactionFormula.getRightChild()));
 			reactionToFormulaMap.put(reactionID + "_fd", inlineFormula(reactionFormula.getLeftChild()));
 			
-			System.err.println(reactionID + "_rv    " + inlineFormula(reactionFormula.getRightChild()));
-			System.err.println(reactionID + "_fd    " + inlineFormula(reactionFormula.getLeftChild()));
-			
 			//calculate forward reaction propensity
 			if (notEnoughMoleculesFlagFd == true)
 				propensity = 0.0;
