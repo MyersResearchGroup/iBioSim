@@ -247,8 +247,8 @@ public class SimulatorSSADirect extends Simulator {
 		setupArrays();
 		setupSpecies();
 		setupParameters();
-		setupInitialAssignments();
 		setupRules();
+		setupInitialAssignments();
 		setupConstraints();
 		
 		eventsFlag = new MutableBoolean(false);

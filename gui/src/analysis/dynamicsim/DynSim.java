@@ -44,7 +44,7 @@ public class DynSim {
 			
 			//this is for the sbml test suite
 			
-			String caseNum = "00625";
+			String caseNum = "00834";
 			
 			args = new String[3];
 			

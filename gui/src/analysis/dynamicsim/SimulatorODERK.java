@@ -11,6 +11,7 @@ import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AssignmentRule;
+import org.sbml.jsbml.Rule;
 
 import flanagan.integration.RungeKutta;
 import flanagan.integration.DerivnFunction;
@@ -61,9 +62,22 @@ public class SimulatorODERK extends Simulator {
 		setupArrays();
 		setupSpecies();
 		setupParameters();		
-		setupInitialAssignments();
 		setupRules();
+		setupInitialAssignments();
 		setupConstraints();
+		
+//		HashSet<AssignmentRule> allAssignmentRules = new HashSet<AssignmentRule>();
+//		
+//		//perform all assignment rules
+//		for (Rule rule : model.getListOfRules()) {
+//			
+//			if (rule.isAssignment()) {
+//				System.err.println(rule.getMath().toFormula());
+//				allAssignmentRules.add((AssignmentRule)rule);
+//			}
+//		}
+//		
+//		performAssignmentRules(allAssignmentRules);
 		
 		eventsFlag = new MutableBoolean(false);
 		rulesFlag = new MutableBoolean(false);
