@@ -468,6 +468,7 @@ public class Run implements ActionListener {
 				theFile = filename.substring(filename.lastIndexOf('\\') + 1);
 			}
 			File work = new File(directory);
+			new FileWriter(new File(directory + separator + "running")).close();
 			String out = theFile;
 			if (out.length() > 4 && out.substring(out.length() - 5, out.length()).equals(".sbml")) {
 				out = out.substring(0, out.length() - 5);
@@ -527,6 +528,7 @@ public class Run implements ActionListener {
 				LhpnFile lpnFile = gcm.convertToLHPN(specs, conLevel, mutProp);
 				prop = mutProp.getString();
 				if (lpnFile == null) {
+					new File(directory + separator + "running").delete();
 					return 0;
 				}
 				lpnFile.save(root + separator + simName + separator + lpnName);
@@ -574,6 +576,7 @@ public class Run implements ActionListener {
 							}
 						}
 						else {
+							new File(directory + separator + "running").delete();
 							return 0;
 						}
 					}
@@ -650,6 +653,7 @@ public class Run implements ActionListener {
 							LhpnFile lpnFile = gcm.convertToLHPN(specs, conLevel, mutProp);
 							prop = mutProp.getString();
 							if (lpnFile == null) {
+								new File(directory + separator + "running").delete();
 								return 0;
 							}
 							lpnFile.save(root + separator + simName + separator + lpnName);
@@ -670,6 +674,7 @@ public class Run implements ActionListener {
 						}
 						else {
 							time1 = System.nanoTime();
+							new File(directory + separator + "running").delete();
 							return 0;
 						}
 						exitValue = 0;
@@ -730,6 +735,7 @@ public class Run implements ActionListener {
 							}
 						}
 						else {
+							new File(directory + separator + "running").delete();
 							return 0;
 						}
 					}
@@ -800,12 +806,14 @@ public class Run implements ActionListener {
 							LhpnFile lhpnFile = gcm.convertToLHPN(specs, conLevel, mutProp);
 							prop = mutProp.getString();
 							if (lhpnFile == null) {
+								new File(directory + separator + "running").delete();
 								return 0;
 							}
 							lhpnFile.save(root + separator + lhpnName);
 							log.addText("Saving GCM file as LHPN:\n" + root + separator + lhpnName + "\n");
 						}
 						else {
+							new File(directory + separator + "running").delete();
 							return 0;
 						}
 						exitValue = 0;
@@ -923,6 +931,7 @@ public class Run implements ActionListener {
 							lhpnFile = gcm.convertToLHPN(specs, conLevel, mutProp);
 							prop = mutProp.getString();
 							if (lhpnFile == null) {
+								new File(directory + separator + "running").delete();
 								return 0;
 							}
 							lhpnFile.save(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn");
@@ -930,6 +939,7 @@ public class Run implements ActionListener {
 									+ filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn" + "\n");
 						}
 						else {
+							new File(directory + separator + "running").delete();
 							return 0;
 						}
 					}
@@ -1156,6 +1166,7 @@ public class Run implements ActionListener {
 						javaSim.PerformSim(SBMLFileName, outDir, timeLimit, timeStep, rndSeed,
 								((Graph) simTab.getComponentAt(index)));
 						exitValue = 0;
+						new File(directory + separator + "running").delete();
 						return exitValue;
 					}
 					else if (sim.equals("Gillespie SSA-CR (Java)")) {
@@ -1176,7 +1187,7 @@ public class Run implements ActionListener {
 								timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running,
 								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats);						
 						exitValue = 0;
-						
+						new File(directory + separator + "running").delete();
 						return exitValue;
 					}
 					else if (sim.equals("Gillespie SSA-Direct (Java)")) {
@@ -1197,7 +1208,7 @@ public class Run implements ActionListener {
 								timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running,
 								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats);						
 						exitValue = 0;
-						
+						new File(directory + separator + "running").delete();
 						return exitValue;
 					}
 					else if (sim.equals("Runge-Kutta-Fehlberg (Java)")) {
@@ -1215,7 +1226,7 @@ public class Run implements ActionListener {
 								timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running,
 								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats);				
 						exitValue = 0;
-						
+						new File(directory + separator + "running").delete();
 						return exitValue;
 					}
 					else if (biosimrc.get("biosim.sim.command", "").equals("")) {
@@ -1476,33 +1487,34 @@ public class Run implements ActionListener {
 						for (int i = 0; i < simTab.getComponentCount(); i++) {
 							if (simTab.getComponentAt(i).getName().equals("TSD Graph")) {
 								if (simTab.getComponentAt(i) instanceof Graph) {
-									boolean outputM = true;
-									boolean outputV = true;
-									boolean outputS = true;
+//									boolean outputM = true;
+//									boolean outputV = true;
+//									boolean outputS = true;
 									boolean outputTerm = false;
 									boolean warning = false;
 									ArrayList<String> run = new ArrayList<String>();
 									for (String f : work.list()) {
-										if (f.contains("mean")) {
-											outputM = false;
-										}
-										else if (f.contains("variance")) {
-											outputV = false;
-										}
-										else if (f.contains("standard_deviation")) {
-											outputS = false;
-										}
-										else if (f.contains("run-") && f.endsWith("." + printer_id.substring(0, printer_id.length() - 8))) {
+//										if (f.contains("mean")) {
+//											outputM = false;
+//										}
+//										else if (f.contains("variance")) {
+//											outputV = false;
+//										}
+//										else if (f.contains("standard_deviation")) {
+//											outputS = false;
+//										}
+										if (f.contains("run-") && f.endsWith("." + printer_id.substring(0, printer_id.length() - 8))) {
 											run.add(f);
 										}
 										else if (f.equals("term-time.txt")) {
 											outputTerm = true;
 										}
 									}
-									if (outputM || outputV || outputS) {
-										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-										((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
-									}
+//									if (outputM || outputV || outputS) {
+//										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
+//										((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
+//									}
+									new File(directory + separator + "running").delete();
 									if (outputTerm) {
 										ArrayList<String> dataLabels = new ArrayList<String>();
 										dataLabels.add("time");
@@ -1584,33 +1596,34 @@ public class Run implements ActionListener {
 											new Graph(r2s, printer_track_quantity,
 													outDir.split(separator)[outDir.split(separator).length - 1] + " simulation results",
 													printer_id, outDir, "time", biomodelsim, null, log, null, true, false));
-									boolean outputM = true;
-									boolean outputV = true;
-									boolean outputS = true;
+//									boolean outputM = true;
+//									boolean outputV = true;
+//									boolean outputS = true;
 									boolean outputTerm = false;
 									boolean warning = false;
 									ArrayList<String> run = new ArrayList<String>();
 									for (String f : work.list()) {
-										if (f.contains("mean")) {
-											outputM = false;
-										}
-										else if (f.contains("variance")) {
-											outputV = false;
-										}
-										else if (f.contains("standard_deviation")) {
-											outputS = false;
-										}
-										else if (f.contains("run-") && f.endsWith("." + printer_id.substring(0, printer_id.length() - 8))) {
+//										if (f.contains("mean")) {
+//											outputM = false;
+//										}
+//										else if (f.contains("variance")) {
+//											outputV = false;
+//										}
+//										else if (f.contains("standard_deviation")) {
+//											outputS = false;
+//										}
+										if (f.contains("run-") && f.endsWith("." + printer_id.substring(0, printer_id.length() - 8))) {
 											run.add(f);
 										}
 										else if (f.equals("term-time.txt")) {
 											outputTerm = true;
 										}
 									}
-									if (outputM || outputV || outputS) {
-										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-										((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
-									}
+//									if (outputM || outputV || outputS) {
+//										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
+//										((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
+//									}
+									new File(directory + separator + "running").delete();
 									if (outputTerm) {
 										ArrayList<String> dataLabels = new ArrayList<String>();
 										dataLabels.add("time");
@@ -1710,33 +1723,34 @@ public class Run implements ActionListener {
 						for (int i = 0; i < simTab.getComponentCount(); i++) {
 							if (simTab.getComponentAt(i).getName().equals("TSD Graph")) {
 								if (simTab.getComponentAt(i) instanceof Graph) {
-									boolean outputM = true;
-									boolean outputV = true;
-									boolean outputS = true;
+//									boolean outputM = true;
+//									boolean outputV = true;
+//									boolean outputS = true;
 									boolean outputTerm = false;
 									boolean warning = false;
 									ArrayList<String> run = new ArrayList<String>();
 									for (String f : work.list()) {
-										if (f.contains("mean")) {
-											outputM = false;
-										}
-										else if (f.contains("variance")) {
-											outputV = false;
-										}
-										else if (f.contains("standard_deviation")) {
-											outputS = false;
-										}
-										else if (f.contains("run-") && f.endsWith("." + printer_id.substring(0, printer_id.length() - 8))) {
+//										if (f.contains("mean")) {
+//											outputM = false;
+//										}
+//										else if (f.contains("variance")) {
+//											outputV = false;
+//										}
+//										else if (f.contains("standard_deviation")) {
+//											outputS = false;
+//										}
+										if (f.contains("run-") && f.endsWith("." + printer_id.substring(0, printer_id.length() - 8))) {
 											run.add(f);
 										}
 										else if (f.equals("term-time.txt")) {
 											outputTerm = true;
 										}
 									}
-									if (outputM || outputV || outputS) {
-										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-										((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
-									}
+//									if (outputM || outputV || outputS) {
+//										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
+//										((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
+//									}
+									new File(directory + separator + "running").delete();
 									if (outputTerm) {
 										ArrayList<String> dataLabels = new ArrayList<String>();
 										dataLabels.add("time");
@@ -1818,33 +1832,34 @@ public class Run implements ActionListener {
 											new Graph(r2s, printer_track_quantity,
 													outDir.split(separator)[outDir.split(separator).length - 1] + " simulation results",
 													printer_id, outDir, "time", biomodelsim, null, log, null, true, false));
-									boolean outputM = true;
-									boolean outputV = true;
-									boolean outputS = true;
+//									boolean outputM = true;
+//									boolean outputV = true;
+//									boolean outputS = true;
 									boolean outputTerm = false;
 									boolean warning = false;
 									ArrayList<String> run = new ArrayList<String>();
 									for (String f : work.list()) {
-										if (f.contains("mean")) {
-											outputM = false;
-										}
-										else if (f.contains("variance")) {
-											outputV = false;
-										}
-										else if (f.contains("standard_deviation")) {
-											outputS = false;
-										}
-										else if (f.contains("run-") && f.endsWith("." + printer_id.substring(0, printer_id.length() - 8))) {
+//										if (f.contains("mean")) {
+//											outputM = false;
+//										}
+//										else if (f.contains("variance")) {
+//											outputV = false;
+//										}
+//										else if (f.contains("standard_deviation")) {
+//											outputS = false;
+//										}
+										if (f.contains("run-") && f.endsWith("." + printer_id.substring(0, printer_id.length() - 8))) {
 											run.add(f);
 										}
 										else if (f.equals("term-time.txt")) {
 											outputTerm = true;
 										}
 									}
-									if (outputM || outputV || outputS) {
-										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-										((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
-									}
+//									if (outputM || outputV || outputS) {
+//										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
+//										((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
+//									}
+									new File(directory + separator + "running").delete();
 									if (outputTerm) {
 										ArrayList<String> dataLabels = new ArrayList<String>();
 										dataLabels.add("time");
@@ -1943,6 +1958,7 @@ public class Run implements ActionListener {
 				}
 			}
 			// }
+			new File(directory + separator + "running").delete();
 		}
 		catch (InterruptedException e1) {
 			JOptionPane.showMessageDialog(Gui.frame, "Error In Execution!", "Error In Execution", JOptionPane.ERROR_MESSAGE);
