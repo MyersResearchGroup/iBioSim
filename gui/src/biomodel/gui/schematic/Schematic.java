@@ -43,6 +43,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
@@ -2053,10 +2054,12 @@ public class Schematic extends JPanel implements ActionListener {
 					}
 				}
 				
-				JPanel speciesPanel = new JPanel(new GridLayout(compSpecies.size() + 3, 1));		
+				JPanel speciesPanel = new JPanel(new GridLayout(compSpecies.size() + 3, 2));		
 				speciesPane.addTab("Species", speciesPanel);				
 				speciesPanel.add(new JLabel("Mark Interesting Species"));
+				speciesPanel.add(new JLabel(""));
 				HashMap<String, JCheckBox> checkboxes = new HashMap<String, JCheckBox>();
+				HashMap<String, JTextField> thresholds = new HashMap<String, JTextField>();
 				
 				ArrayList<String> interestingSpecies = modelEditor.getReb2Sac().getInterestingSpeciesAsArrayList();
 				
@@ -2074,11 +2077,23 @@ public class Schematic extends JPanel implements ActionListener {
 					}
 					
 					checkboxes.put(compSpec, new JCheckBox(noCompID));
+					thresholds.put(compSpec, new JTextField(""));
 					
-					if (interestingSpecies.contains(compSpec))
-						checkboxes.get(compSpec).setSelected(true);
+					//get saved information
+					for (String intSpecies : interestingSpecies) {
+						
+						//get saved information
+						if (intSpecies.split(" ")[0].equals(compSpec)) {
+							
+							checkboxes.get(compSpec).setSelected(true);
+							
+							if (intSpecies.split(" ").length > 1)
+								thresholds.get(compSpec).setText(intSpecies.split(" ")[1]);
+						}
+					}
 					
 					speciesPanel.add(checkboxes.get(compSpec));
+					speciesPanel.add(thresholds.get(compSpec));
 				}
 				
 				JCheckBox copyIntSpecies = new JCheckBox("Apply to all components with this model");
@@ -2154,7 +2169,12 @@ public class Schematic extends JPanel implements ActionListener {
 						
 						if (checkbox.getValue().isSelected()) {
 							
-							modelEditor.getReb2Sac().addInterestingSpecies(checkbox.getKey());
+							String thresholdText = thresholds.get(checkbox.getKey()).getText();
+							
+							if (thresholdText.isEmpty() == false)
+								modelEditor.getReb2Sac().addInterestingSpecies(checkbox.getKey() + " " + thresholdText);
+							else							
+								modelEditor.getReb2Sac().addInterestingSpecies(checkbox.getKey());
 							
 							//loop through submodels and add them to the int species list
 							if (copyIntSpecies.isSelected()) {
@@ -2163,14 +2183,24 @@ public class Schematic extends JPanel implements ActionListener {
 									
 									String newID = submodelComp + "__" + noCompID;
 									
-									if (newID.equals(checkbox.getKey()) == false)
-										modelEditor.getReb2Sac().addInterestingSpecies(newID);
+									//checkbox.getkey() was already added, so skip it
+									if (newID.equals(checkbox.getKey()) == false) {
+										
+										if (thresholdText.isEmpty() == false)
+											modelEditor.getReb2Sac().addInterestingSpecies(newID + " " + thresholdText);
+										else							
+											modelEditor.getReb2Sac().addInterestingSpecies(newID);
+									}
 								}
 							}
 						}
 						else {
 							
-							modelEditor.getReb2Sac().removeInterestingSpecies(checkbox.getKey());
+							for (String intSpecies : modelEditor.getReb2Sac().getInterestingSpeciesAsArrayList()) {
+								
+								if (intSpecies.split(" ")[0].equals(checkbox.getKey()))
+									modelEditor.getReb2Sac().removeInterestingSpecies(intSpecies);
+							}
 							
 							if (copyIntSpecies.isSelected()) {
 								
@@ -2178,12 +2208,24 @@ public class Schematic extends JPanel implements ActionListener {
 									
 									String newID = submodelComp + "__" + noCompID;
 									
-									if (newID.equals(checkbox.getKey()) == false)
-										modelEditor.getReb2Sac().removeInterestingSpecies(newID);
+									if (newID.equals(checkbox.getKey()) == false) {
+										
+										for (String intSpecies : modelEditor.getReb2Sac().getInterestingSpeciesAsArrayList()) {
+											
+											if (intSpecies.split(" ")[0].equals(newID))
+												modelEditor.getReb2Sac().removeInterestingSpecies(intSpecies);
+										}
+									}
 								}
 							}
 						}
 					}
+					
+					for (String intspec : modelEditor.getReb2Sac().getInterestingSpeciesAsArrayList())
+						System.err.println(intspec);
+					
+					System.err.println("");
+						
 					
 					movieContainer.setIsDirty(true);
 				}
