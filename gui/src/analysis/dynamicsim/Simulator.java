@@ -167,8 +167,6 @@ public abstract class Simulator {
 	
 	protected ArrayList<String> interestingSpecies = new ArrayList<String>();
 	
-	protected HashMap<String, ASTNode> functionDefinitionMap = new HashMap<String, ASTNode>();
-	
 	//propensity variables
 	protected double totalPropensity = 0.0;
 	protected double minPropensity = Double.MAX_VALUE / 10.0;
@@ -801,6 +799,8 @@ public abstract class Simulator {
 						.replace(parentComponentID, childComponentID));
 				
 				try {					
+//					ea.setMath(ASTNode.parseFormula(((EventAssignment)assignment).getMath().toFormula()
+//							.replace(parentComponentID, childComponentID)));
 					ea.setFormula(((EventAssignment)assignment).getMath().toFormula()
 							.replace(parentComponentID, childComponentID));
 				} catch (ParseException e) {
@@ -822,40 +822,37 @@ public abstract class Simulator {
 		
 		componentToEventSetMap.put(childComponentID, childEventSet);
 		
-//		double total = 0.0;
-//		
-//		for (double prop : reactionToPropensityMap.values())
-//			total += prop;
+		
+//		System.err.println("REACTIONS");
 //
 //		for (String reactionID : reactionToPropensityMap.keySet()) {
 //			
-//			if (reactionID.contains("_of_")) {
+//			if (//reactionID.contains("_of_") ||
+//					reactionID.contains("Diffusion")
+//					) {
 //			
 //				System.err.println(reactionID);
-//				
-//				try {
-//					System.err.println(ASTNode.formulaToString(reactionToFormulaMap.get(reactionID)));
-//				} catch (SBMLException e) {
-//					e.printStackTrace();
-//				}				
-//				
-//				System.err.println(reactionToPropensityMap.get(reactionID));
-//				
-//				System.err.println();
-//				System.err.println();
 //			}
 //		}
+//		
+//		System.err.println();
+//		System.err.println("VARIABLES");
 //	
-//		for (String variableID : variableToValueMap.keySet()) {
-//			
-//			System.err.println(variableID);
-//			System.err.println(variableToValueMap.get(variableID));
-//			System.err.println();
-//			System.err.println();
+//		for (String variableID : this.speciesIDSet) {
+////			if (//variableID.contains("_of_") || 
+////					variableID.contains("ROW")
+////					)
+//			System.err.println(variableID + "          " + variableToValueMap.get(variableID));		
 //		}
-		
+//		
+//		for (String event : this.eventToAssignmentSetMap.keySet()) {
+//			
+//			System.err.println(event);
+//			System.err.println(this.eventToAssignmentSetMap.get(event));
+//		}
+//		
+//		System.err.println();		
 //		System.err.println("duplicate finished");
-//		System.err.println("num reactions: " + reactionToPropensityMap.size());
 	}
 	
 	/**

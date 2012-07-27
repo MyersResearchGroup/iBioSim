@@ -336,41 +336,47 @@ public class DTSDParser {
 				
 				for (Map.Entry<String, Double> dataIterator : frameDataMap.entrySet()) {
 				
-					//find the min/max row/col and also create a map from componentID to location
-					
-					if (dataIterator.getKey().contains("__locationX")) {
+					//find the min/max row/col
+					//the grid size will be reflected in the existant grid species and therefore their IDs
+					if (dataIterator.getKey().contains("ROW") && dataIterator.getKey().contains("COL")) {
 						
-						int row = (int) dataIterator.getValue().doubleValue();				
-						//String compID = dataIterator.getKey().split("__")[0];
-						String compID = dataIterator.getKey().replace("__locationX","");						
-						
-						if (componentToLocationMap.get(compID) == null)
-							componentToLocationMap.put(compID, new Point());
-						
-						componentToLocationMap.get(compID).x = row;
+						String rowCol = dataIterator.getKey().split("__")[0];
+						int row = Integer.parseInt(rowCol.split("_")[0].replace("ROW",""));
+						int col = Integer.parseInt(rowCol.split("_")[1].replace("COL",""));
 						
 						if (row < minRow)
 							minRow = row;
-						
+					
 						if (row > maxRow)
-							maxRow = row;
-					}				
-					else if (dataIterator.getKey().contains("__locationY")) {
-						
-						int col = (int) dataIterator.getValue().doubleValue();
-						//String compID = dataIterator.getKey().split("__")[0];
-						String compID = dataIterator.getKey().replace("__locationY","");
-						
-						if (componentToLocationMap.get(compID) == null)
-							componentToLocationMap.put(compID, new Point());
-						
-						componentToLocationMap.get(compID).y = col;
+							maxRow = row;	
 						
 						if (col < minCol)
 							minCol = col;
 						
 						if (col > maxCol)
 							maxCol = col;
+					}
+					
+					//create a map from componentID to location
+					if (dataIterator.getKey().contains("__locationX")) {
+						
+						int row = (int) dataIterator.getValue().doubleValue();
+						String compID = dataIterator.getKey().replace("__locationX","");						
+						
+						if (componentToLocationMap.get(compID) == null)
+							componentToLocationMap.put(compID, new Point());
+						
+						componentToLocationMap.get(compID).x = row;
+					}				
+					else if (dataIterator.getKey().contains("__locationY")) {
+						
+						int col = (int) dataIterator.getValue().doubleValue();
+						String compID = dataIterator.getKey().replace("__locationY","");
+						
+						if (componentToLocationMap.get(compID) == null)
+							componentToLocationMap.put(compID, new Point());
+						
+						componentToLocationMap.get(compID).y = col;
 					}
 				}
 			}
