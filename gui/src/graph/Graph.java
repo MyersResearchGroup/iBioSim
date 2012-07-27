@@ -543,14 +543,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					}
 				}
 			}
+			boolean outputFile = !(new File(directory + separator + "running").exists()) && !(new File(file).exists());
 			if (label.contains("average")) {
-				return calculateAverageVarianceDeviation(runs, 0, directory, warn, false);
+				return calculateAverageVarianceDeviation(runs, 0, directory, warn, outputFile);
 			}
 			else if (label.contains("variance")) {
-				return calculateAverageVarianceDeviation(runs, 1, directory, warn, false);
+				return calculateAverageVarianceDeviation(runs, 1, directory, warn, outputFile);
 			}
 			else {
-				return calculateAverageVarianceDeviation(runs, 2, directory, warn, false);
+				return calculateAverageVarianceDeviation(runs, 2, directory, warn, outputFile);
 			}
 		}
 		//if it's not a stats file
