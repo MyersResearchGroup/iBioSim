@@ -66,19 +66,6 @@ public class SimulatorODERK extends Simulator {
 		setupInitialAssignments();
 		setupConstraints();
 		
-//		HashSet<AssignmentRule> allAssignmentRules = new HashSet<AssignmentRule>();
-//		
-//		//perform all assignment rules
-//		for (Rule rule : model.getListOfRules()) {
-//			
-//			if (rule.isAssignment()) {
-//				System.err.println(rule.getMath().toFormula());
-//				allAssignmentRules.add((AssignmentRule)rule);
-//			}
-//		}
-//		
-//		performAssignmentRules(allAssignmentRules);
-		
 		eventsFlag = new MutableBoolean(false);
 		rulesFlag = new MutableBoolean(false);
 		constraintsFlag = new MutableBoolean(false);
@@ -102,7 +89,7 @@ public class SimulatorODERK extends Simulator {
 		//STEP 0: calculate initial propensities (including the total)		
 		setupReactions();		
 		setupEvents();
-//		
+
 //		if (dynamicBoolean == true)
 //			setupGrid();
 		
@@ -166,7 +153,7 @@ public class SimulatorODERK extends Simulator {
 					dvariablesdtime[varIndex] = ASTNode.sum(dvariablesdtime[varIndex], formula.clone().multiplyWith(stoichNode));
 				}
 			}			
-		}	
+		}
 		
 		
 		HashSet<String> comps = new HashSet<String>();
@@ -352,7 +339,7 @@ public class SimulatorODERK extends Simulator {
 					values[i] = variableToValueMap.get(indexToVariableMap.get(i));
 			}
 			
-			//System.err.println(variableToValueMap);
+			System.err.println(variableToValueMap);
 			
 			//call the rk algorithm
 			values = rungeKutta.fehlberg(derivnFunction);

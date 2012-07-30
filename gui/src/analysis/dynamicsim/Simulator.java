@@ -3010,7 +3010,8 @@ public abstract class Simulator {
 			String variable = assignmentRule.getVariable();
 			
 			//update the species count (but only if the species isn't constant) (bound cond is fine)
-			if (variableToIsConstantMap.containsKey(variable) && variableToIsConstantMap.get(variable) == false) {
+			if (variableToIsConstantMap.containsKey(variable) && variableToIsConstantMap.get(variable) == false
+					|| variableToIsConstantMap.containsKey(variable) == false) {
 				
 				if (speciesToHasOnlySubstanceUnitsMap.containsKey(variable) &&
 						speciesToHasOnlySubstanceUnitsMap.get(variable) == false) {
@@ -3077,13 +3078,6 @@ public abstract class Simulator {
 	 */
 	protected void performReaction(String selectedReactionID, final boolean noAssignmentRulesFlag, final boolean noConstraintsFlag) {
 		
-//		if (selectedReactionID.contains("_Diffusion_"))
-//			++diffCount;
-//		else if (selectedReactionID.contains("MembraneDiffusion"))
-//			++memCount;
-//		
-//		++totalCount;
-		
 		//these are sets of things that need to be re-evaluated or tested due to the reaction firing
 		HashSet<AssignmentRule> affectedAssignmentRuleSet = new HashSet<AssignmentRule>();
 		HashSet<ASTNode> affectedConstraintSet = new HashSet<ASTNode>();
@@ -3094,23 +3088,23 @@ public abstract class Simulator {
 			double stoichiometry = speciesAndStoichiometry.doub;
 			String speciesID = speciesAndStoichiometry.string;
 			
-//			//this means the stoichiometry isn't constant, so look to the variableToValue map
-//			if (reactionToNonconstantStoichiometriesSetMap.containsKey(selectedReactionID)) {
-//				
-//				for (StringStringPair doubleID : reactionToNonconstantStoichiometriesSetMap.get(selectedReactionID)) {
-//					
-//					//string1 is the species ID; string2 is the speciesReference ID
-//					if (doubleID.string1.equals(speciesID)) {
-//						
-//						stoichiometry = variableToValueMap.get(doubleID.string2);
-//						
-//						//this is to get the plus/minus correct, as the variableToValueMap has
-//						//a stoichiometry without the reactant/product plus/minus data
-//						stoichiometry *= (int)(speciesAndStoichiometry.doub/Math.abs(speciesAndStoichiometry.doub));
-//						break;
-//					}
-//				}
-//			}
+			//this means the stoichiometry isn't constant, so look to the variableToValue map
+			if (reactionToNonconstantStoichiometriesSetMap.containsKey(selectedReactionID)) {
+				
+				for (StringStringPair doubleID : reactionToNonconstantStoichiometriesSetMap.get(selectedReactionID)) {
+					
+					//string1 is the species ID; string2 is the speciesReference ID
+					if (doubleID.string1.equals(speciesID)) {
+						
+						stoichiometry = variableToValueMap.get(doubleID.string2);
+						
+						//this is to get the plus/minus correct, as the variableToValueMap has
+						//a stoichiometry without the reactant/product plus/minus data
+						stoichiometry *= (int)(speciesAndStoichiometry.doub/Math.abs(speciesAndStoichiometry.doub));
+						break;
+					}
+				}
+			}
 			
 			//update the species count if the species isn't a boundary condition or constant
 			//note that the stoichiometries are earlier modified with the correct +/- sign
@@ -4390,6 +4384,8 @@ public abstract class Simulator {
 		numAssignmentRules = 0;
 		numRateRules = 0;
 		
+		//NOTE: assignmentrules are performed in setupinitialassignments
+		
 		//loop through all assignment rules
 		//store which variables (RHS) affect the rule variable (LHS)
 		//so when those RHS variables change, we know to re-evaluate the rule
@@ -4707,9 +4703,9 @@ public abstract class Simulator {
 				
 				//if there was an initial assignment for the reactant
 				//this applies regardless of constancy of the reactant
-//				if (variableToValueMap.containsKey(reactant.getId()))
-//					reactantStoichiometry = variableToValueMap.get(reactant.getId());
-//				else
+				if (variableToValueMap.containsKey(reactant.getId()))
+					reactantStoichiometry = variableToValueMap.get(reactant.getId());
+				else
 					reactantStoichiometry = reactant.getStoichiometry();				
 					
 				reactionToSpeciesAndStoichiometrySetMap.get(reactionID + "_fd").add(
@@ -4721,22 +4717,22 @@ public abstract class Simulator {
 				reactionToReactantStoichiometrySetMap.get(reactionID + "_fd").add(
 						new StringDoublePair(reactantID, reactantStoichiometry));
 					
-//				//if there was not initial assignment for the reactant
-//				if (reactant.getConstant() == false &&
-//						variableToValueMap.containsKey(reactant.getId()) == false) {
-//					
-//					if (reactionToNonconstantStoichiometriesSetMap.containsKey(reactionID + "_fd") == false)
-//						reactionToNonconstantStoichiometriesSetMap.put(reactionID + "_fd", new HashSet<StringStringPair>());
-//					if (reactionToNonconstantStoichiometriesSetMap.containsKey(reactionID + "_rv") == false)
-//						reactionToNonconstantStoichiometriesSetMap.put(reactionID + "_rv", new HashSet<StringStringPair>());
-//					
-//					reactionToNonconstantStoichiometriesSetMap.get(reactionID + "_fd")
-//					.add(new StringStringPair(reactantID + "_fd", reactant.getId()));
-//					reactionToNonconstantStoichiometriesSetMap.get(reactionID + "_rv")
-//					.add(new StringStringPair(reactantID + "_rv", reactant.getId()));
-//					
-//					variableToValueMap.put(reactant.getId(), reactantStoichiometry);
-//				}
+				//if there was not initial assignment for the reactant
+				if (reactant.getConstant() == false &&
+						variableToValueMap.containsKey(reactant.getId()) == false) {
+					
+					if (reactionToNonconstantStoichiometriesSetMap.containsKey(reactionID + "_fd") == false)
+						reactionToNonconstantStoichiometriesSetMap.put(reactionID + "_fd", new HashSet<StringStringPair>());
+					if (reactionToNonconstantStoichiometriesSetMap.containsKey(reactionID + "_rv") == false)
+						reactionToNonconstantStoichiometriesSetMap.put(reactionID + "_rv", new HashSet<StringStringPair>());
+					
+					reactionToNonconstantStoichiometriesSetMap.get(reactionID + "_fd")
+					.add(new StringStringPair(reactantID + "_fd", reactant.getId()));
+					reactionToNonconstantStoichiometriesSetMap.get(reactionID + "_rv")
+					.add(new StringStringPair(reactantID + "_rv", reactant.getId()));
+					
+					variableToValueMap.put(reactant.getId(), reactantStoichiometry);
+				}
 				
 				//as a reactant, this species affects the reaction's propensity in the forward direction
 				speciesToAffectedReactionSetMap.get(reactantID).add(reactionID + "_fd");
@@ -4758,9 +4754,9 @@ public abstract class Simulator {
 				double productStoichiometry;
 				
 				//if there was an initial assignment
-//				if (variableToValueMap.containsKey(product.getId()))
-//					productStoichiometry = variableToValueMap.get(product.getId());
-//				else
+				if (variableToValueMap.containsKey(product.getId()))
+					productStoichiometry = variableToValueMap.get(product.getId());
+				else
 					productStoichiometry = product.getStoichiometry();
 				
 				reactionToSpeciesAndStoichiometrySetMap.get(reactionID + "_fd").add(
@@ -4772,17 +4768,17 @@ public abstract class Simulator {
 				reactionToReactantStoichiometrySetMap.get(reactionID + "_rv").add(
 						new StringDoublePair(productID, productStoichiometry));
 					
-//				//if there wasn't an initial assignment
-//				if (product.getConstant() == false &&
-//						variableToValueMap.containsKey(product.getId()) == false) {
-//					
-//					if (reactionToNonconstantStoichiometriesSetMap.containsKey(reactionID) == false)
-//						reactionToNonconstantStoichiometriesSetMap.put(reactionID, new HashSet<StringStringPair>());
-//					
-//					reactionToNonconstantStoichiometriesSetMap.get(reactionID)
-//					.add(new StringStringPair(productID, product.getId()));
-//					variableToValueMap.put(product.getId(), productStoichiometry);
-//				}
+				//if there wasn't an initial assignment
+				if (product.getConstant() == false &&
+						variableToValueMap.containsKey(product.getId()) == false) {
+					
+					if (reactionToNonconstantStoichiometriesSetMap.containsKey(reactionID) == false)
+						reactionToNonconstantStoichiometriesSetMap.put(reactionID, new HashSet<StringStringPair>());
+					
+					reactionToNonconstantStoichiometriesSetMap.get(reactionID)
+					.add(new StringStringPair(productID, product.getId()));
+					variableToValueMap.put(product.getId(), productStoichiometry);
+				}
 				
 				//as a product, this species affects the reaction's propensity in the reverse direction
 				speciesToAffectedReactionSetMap.get(productID).add(reactionID + "_rv");
@@ -4882,10 +4878,10 @@ public abstract class Simulator {
 				
 				double reactantStoichiometry;
 				
-//				//if there was an initial assignment
-//				if (variableToValueMap.containsKey(reactant.getId()))
-//					reactantStoichiometry = variableToValueMap.get(reactant.getId());
-//				else
+				//if there was an initial assignment for the speciesref id
+				if (variableToValueMap.containsKey(reactant.getId()))
+					reactantStoichiometry = variableToValueMap.get(reactant.getId());
+				else
 					reactantStoichiometry = reactant.getStoichiometry();
 				
 				reactionToSpeciesAndStoichiometrySetMap.get(reactionID).add(
@@ -4893,17 +4889,17 @@ public abstract class Simulator {
 				reactionToReactantStoichiometrySetMap.get(reactionID).add(
 						new StringDoublePair(reactantID, reactantStoichiometry));
 					
-//				//if there wasn't an initial assignment
-//				if (reactant.getConstant() == false &&
-//						variableToValueMap.containsKey(reactant.getId()) == false) {
-//					
-//					if (reactionToNonconstantStoichiometriesSetMap.containsKey(reactionID) == false)
-//						reactionToNonconstantStoichiometriesSetMap.put(reactionID, new HashSet<StringStringPair>());
-//					
-//					reactionToNonconstantStoichiometriesSetMap.get(reactionID)
-//					.add(new StringStringPair(reactantID, reactant.getId()));
-//					variableToValueMap.put(reactant.getId(), reactantStoichiometry);
-//				}
+				//if there wasn't an initial assignment
+				if (reactant.getConstant() == false &&
+						variableToValueMap.containsKey(reactant.getId()) == false) {
+					
+					if (reactionToNonconstantStoichiometriesSetMap.containsKey(reactionID) == false)
+						reactionToNonconstantStoichiometriesSetMap.put(reactionID, new HashSet<StringStringPair>());
+					
+					reactionToNonconstantStoichiometriesSetMap.get(reactionID)
+					.add(new StringStringPair(reactantID, reactant.getId()));
+					variableToValueMap.put(reactant.getId(), reactantStoichiometry);
+				}
 				
 				//as a reactant, this species affects the reaction's propensity
 				speciesToAffectedReactionSetMap.get(reactantID).add(reactionID);
@@ -4922,25 +4918,25 @@ public abstract class Simulator {
 				String productID = product.getSpecies().replace("_negative_","-");
 				double productStoichiometry;
 				
-//				//if there was an initial assignment
-//				if (variableToValueMap.containsKey(product.getId()))
-//					productStoichiometry = variableToValueMap.get(product.getId());
-//				else
+				//if there was an initial assignment for the speciesref id
+				if (variableToValueMap.containsKey(product.getId()))
+					productStoichiometry = variableToValueMap.get(product.getId());
+				else
 					productStoichiometry = product.getStoichiometry();
 				
 				reactionToSpeciesAndStoichiometrySetMap.get(reactionID).add(
 						new StringDoublePair(productID, productStoichiometry));
 				
-//				if (product.getConstant() == false && 
-//						variableToValueMap.containsKey(product.getId()) == false) {
-//					
-//					if (reactionToNonconstantStoichiometriesSetMap.containsKey(reactionID) == false)
-//						reactionToNonconstantStoichiometriesSetMap.put(reactionID, new HashSet<StringStringPair>());
-//					
-//					reactionToNonconstantStoichiometriesSetMap.get(reactionID)
-//					.add(new StringStringPair(productID, product.getId()));
-//					variableToValueMap.put(product.getId(), productStoichiometry);
-//				}
+				if (product.getConstant() == false && 
+						variableToValueMap.containsKey(product.getId()) == false) {
+					
+					if (reactionToNonconstantStoichiometriesSetMap.containsKey(reactionID) == false)
+						reactionToNonconstantStoichiometriesSetMap.put(reactionID, new HashSet<StringStringPair>());
+					
+					reactionToNonconstantStoichiometriesSetMap.get(reactionID)
+					.add(new StringStringPair(productID, product.getId()));
+					variableToValueMap.put(product.getId(), productStoichiometry);
+				}
 				
 				//don't need to check if there are enough, because products are added
 			}
@@ -5101,17 +5097,17 @@ public abstract class Simulator {
 				String speciesID = speciesAndStoichiometry.string;
 				double stoichiometry = speciesAndStoichiometry.doub;
 				
-//				if (reactionToNonconstantStoichiometriesSetMap.containsKey(reactionID)) {
-//					
-//					for (StringStringPair doubleID : reactionToNonconstantStoichiometriesSetMap.get(reactionID)) {
-//						
-//						//string1 is the species ID; string2 is the speciesReference ID
-//						if (doubleID.string1.equals(speciesID)) {
-//							stoichiometry = variableToValueMap.get(doubleID.string2);
-//							break;
-//						}
-//					}
-//				}
+				if (reactionToNonconstantStoichiometriesSetMap.containsKey(reactionID)) {
+					
+					for (StringStringPair doubleID : reactionToNonconstantStoichiometriesSetMap.get(reactionID)) {
+						
+						//string1 is the species ID; string2 is the speciesReference ID
+						if (doubleID.string1.equals(speciesID)) {
+							stoichiometry = variableToValueMap.get(doubleID.string2);
+							break;
+						}
+					}
+				}
 				
 				//if there aren't enough molecules to satisfy the stoichiometry
 				if (variableToValueMap.get(speciesID) < stoichiometry) {
