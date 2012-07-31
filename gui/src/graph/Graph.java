@@ -543,14 +543,42 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					}
 				}
 			}
-			boolean outputFile = !(new File(directory + separator + "running").exists()) && !(new File(file).exists());
+			boolean outputFile;
+			if (directory == null) {
+				outputFile = !(new File(outDir + separator + "running").exists());
+			}
+			else {
+				outputFile = !(new File(outDir + separator + directory + separator + "running").exists());
+			}
 			if (label.contains("average")) {
+				if (directory == null) {
+					outputFile = outputFile && !(new File(outDir + separator + "mean.tsd").exists());
+				}
+				else {
+					outputFile = outputFile
+							&& !(new File(outDir + separator + directory + separator + "mean.tsd").exists());
+				}
 				return calculateAverageVarianceDeviation(runs, 0, directory, warn, outputFile);
 			}
 			else if (label.contains("variance")) {
+				if (directory == null) {
+					outputFile = outputFile && !(new File(outDir + separator + "variance.tsd").exists());
+				}
+				else {
+					outputFile = outputFile
+							&& !(new File(outDir + separator + directory + separator + "variance.tsd").exists());
+				}
 				return calculateAverageVarianceDeviation(runs, 1, directory, warn, outputFile);
 			}
 			else {
+				if (directory == null) {
+					outputFile = outputFile && !(new File(outDir + separator + "standard_deviation.tsd").exists());
+				}
+				else {
+					outputFile = outputFile
+							&& !(new File(outDir + separator + directory + separator + "standard_deviation.tsd")
+									.exists());
+				}
 				return calculateAverageVarianceDeviation(runs, 2, directory, warn, outputFile);
 			}
 		}
