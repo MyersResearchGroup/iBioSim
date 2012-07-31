@@ -469,6 +469,11 @@ public class Run implements ActionListener {
 			}
 			File work = new File(directory);
 			new FileWriter(new File(directory + separator + "running")).close();
+			Properties properties = new Properties();
+			properties.load(new FileInputStream(directory + separator + 
+					theFile.replace(".xml","") + ".properties"));
+			boolean genStats = Boolean.parseBoolean(properties.getProperty(
+					"reb2sac.generate.statistics"));
 			String out = theFile;
 			if (out.length() > 4 && out.substring(out.length() - 5, out.length()).equals(".sbml")) {
 				out = out.substring(0, out.length() - 5);
@@ -1148,9 +1153,6 @@ public class Run implements ActionListener {
 				}
 				else {
 					Preferences biosimrc = Preferences.userRoot();
-					Properties properties = new Properties();
-					properties.load(new FileInputStream(directory + separator + 
-							theFile.replace(".xml","") + ".properties"));
 					
 					if (sim.equals("gillespieJava")) {
 						time1 = System.nanoTime();
@@ -1175,8 +1177,6 @@ public class Run implements ActionListener {
 							Double.parseDouble(properties.getProperty(
 									"reb2sac.diffusion.stoichiometry.amplification.value"));
 						
-						boolean genStats = Boolean.parseBoolean(properties.getProperty(
-								"reb2sac.generate.statistics"));
 						
 						double minTimeStep = 
 							Double.valueOf(properties.getProperty("monte.carlo.simulation.min.time.step"));
@@ -1198,9 +1198,6 @@ public class Run implements ActionListener {
 						
 						double minTimeStep = 
 							Double.valueOf(properties.getProperty("monte.carlo.simulation.min.time.step"));
-						
-						boolean genStats = Boolean.parseBoolean(properties.getProperty(
-						"reb2sac.generate.statistics"));
 
 						dynSim = new DynamicSimulation("direct");					
 						String SBMLFileName = directory + separator + theFile;
@@ -1216,9 +1213,6 @@ public class Run implements ActionListener {
 						double stoichAmpValue = 
 							Double.parseDouble(properties.getProperty(
 									"reb2sac.diffusion.stoichiometry.amplification.value"));
-						
-						boolean genStats = Boolean.parseBoolean(properties.getProperty(
-						"reb2sac.generate.statistics"));
 						
 						dynSim = new DynamicSimulation("rk");					
 						String SBMLFileName = directory + separator + theFile;
@@ -1487,22 +1481,22 @@ public class Run implements ActionListener {
 						for (int i = 0; i < simTab.getComponentCount(); i++) {
 							if (simTab.getComponentAt(i).getName().equals("TSD Graph")) {
 								if (simTab.getComponentAt(i) instanceof Graph) {
-//									boolean outputM = true;
-//									boolean outputV = true;
-//									boolean outputS = true;
+									boolean outputM = true;
+									boolean outputV = true;
+									boolean outputS = true;
 									boolean outputTerm = false;
 									boolean warning = false;
 									ArrayList<String> run = new ArrayList<String>();
 									for (String f : work.list()) {
-//										if (f.contains("mean")) {
-//											outputM = false;
-//										}
-//										else if (f.contains("variance")) {
-//											outputV = false;
-//										}
-//										else if (f.contains("standard_deviation")) {
-//											outputS = false;
-//										}
+										if (f.contains("mean")) {
+											outputM = false;
+										}
+										else if (f.contains("variance")) {
+											outputV = false;
+										}
+										else if (f.contains("standard_deviation")) {
+											outputS = false;
+										}
 										if (f.contains("run-") && f.endsWith("." + printer_id.substring(0, printer_id.length() - 8))) {
 											run.add(f);
 										}
@@ -1510,10 +1504,10 @@ public class Run implements ActionListener {
 											outputTerm = true;
 										}
 									}
-//									if (outputM || outputV || outputS) {
-//										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-//										((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
-//									}
+									if (genStats && (outputM || outputV || outputS)) {
+										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
+										((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
+									}
 									new File(directory + separator + "running").delete();
 									if (outputTerm) {
 										ArrayList<String> dataLabels = new ArrayList<String>();
@@ -1596,22 +1590,22 @@ public class Run implements ActionListener {
 											new Graph(r2s, printer_track_quantity,
 													outDir.split(separator)[outDir.split(separator).length - 1] + " simulation results",
 													printer_id, outDir, "time", biomodelsim, null, log, null, true, false));
-//									boolean outputM = true;
-//									boolean outputV = true;
-//									boolean outputS = true;
+									boolean outputM = true;
+									boolean outputV = true;
+									boolean outputS = true;
 									boolean outputTerm = false;
 									boolean warning = false;
 									ArrayList<String> run = new ArrayList<String>();
 									for (String f : work.list()) {
-//										if (f.contains("mean")) {
-//											outputM = false;
-//										}
-//										else if (f.contains("variance")) {
-//											outputV = false;
-//										}
-//										else if (f.contains("standard_deviation")) {
-//											outputS = false;
-//										}
+										if (f.contains("mean")) {
+											outputM = false;
+										}
+										else if (f.contains("variance")) {
+											outputV = false;
+										}
+										else if (f.contains("standard_deviation")) {
+											outputS = false;
+										}
 										if (f.contains("run-") && f.endsWith("." + printer_id.substring(0, printer_id.length() - 8))) {
 											run.add(f);
 										}
@@ -1619,10 +1613,10 @@ public class Run implements ActionListener {
 											outputTerm = true;
 										}
 									}
-//									if (outputM || outputV || outputS) {
-//										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-//										((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
-//									}
+									if (genStats && (outputM || outputV || outputS)) {
+										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
+										((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
+									}
 									new File(directory + separator + "running").delete();
 									if (outputTerm) {
 										ArrayList<String> dataLabels = new ArrayList<String>();
@@ -1723,22 +1717,22 @@ public class Run implements ActionListener {
 						for (int i = 0; i < simTab.getComponentCount(); i++) {
 							if (simTab.getComponentAt(i).getName().equals("TSD Graph")) {
 								if (simTab.getComponentAt(i) instanceof Graph) {
-//									boolean outputM = true;
-//									boolean outputV = true;
-//									boolean outputS = true;
+									boolean outputM = true;
+									boolean outputV = true;
+									boolean outputS = true;
 									boolean outputTerm = false;
 									boolean warning = false;
 									ArrayList<String> run = new ArrayList<String>();
 									for (String f : work.list()) {
-//										if (f.contains("mean")) {
-//											outputM = false;
-//										}
-//										else if (f.contains("variance")) {
-//											outputV = false;
-//										}
-//										else if (f.contains("standard_deviation")) {
-//											outputS = false;
-//										}
+										if (f.contains("mean")) {
+											outputM = false;
+										}
+										else if (f.contains("variance")) {
+											outputV = false;
+										}
+										else if (f.contains("standard_deviation")) {
+											outputS = false;
+										}
 										if (f.contains("run-") && f.endsWith("." + printer_id.substring(0, printer_id.length() - 8))) {
 											run.add(f);
 										}
@@ -1746,10 +1740,10 @@ public class Run implements ActionListener {
 											outputTerm = true;
 										}
 									}
-//									if (outputM || outputV || outputS) {
-//										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-//										((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
-//									}
+									if (genStats && (outputM || outputV || outputS)) {
+										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
+										((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
+									}
 									new File(directory + separator + "running").delete();
 									if (outputTerm) {
 										ArrayList<String> dataLabels = new ArrayList<String>();
@@ -1832,22 +1826,22 @@ public class Run implements ActionListener {
 											new Graph(r2s, printer_track_quantity,
 													outDir.split(separator)[outDir.split(separator).length - 1] + " simulation results",
 													printer_id, outDir, "time", biomodelsim, null, log, null, true, false));
-//									boolean outputM = true;
-//									boolean outputV = true;
-//									boolean outputS = true;
+									boolean outputM = true;
+									boolean outputV = true;
+									boolean outputS = true;
 									boolean outputTerm = false;
 									boolean warning = false;
 									ArrayList<String> run = new ArrayList<String>();
 									for (String f : work.list()) {
-//										if (f.contains("mean")) {
-//											outputM = false;
-//										}
-//										else if (f.contains("variance")) {
-//											outputV = false;
-//										}
-//										else if (f.contains("standard_deviation")) {
-//											outputS = false;
-//										}
+										if (f.contains("mean")) {
+											outputM = false;
+										}
+										else if (f.contains("variance")) {
+											outputV = false;
+										}
+										else if (f.contains("standard_deviation")) {
+											outputS = false;
+										}
 										if (f.contains("run-") && f.endsWith("." + printer_id.substring(0, printer_id.length() - 8))) {
 											run.add(f);
 										}
@@ -1855,10 +1849,10 @@ public class Run implements ActionListener {
 											outputTerm = true;
 										}
 									}
-//									if (outputM || outputV || outputS) {
-//										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-//										((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
-//									}
+									if (genStats && (outputM || outputV || outputS)) {
+										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
+										((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
+									}
 									new File(directory + separator + "running").delete();
 									if (outputTerm) {
 										ArrayList<String> dataLabels = new ArrayList<String>();
