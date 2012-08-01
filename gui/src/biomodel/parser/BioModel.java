@@ -567,6 +567,12 @@ public class BioModel {
 				LHPN.addInteger(species, "" + value);				
 			}
 		}
+		for (String compSpecies : getCompSpecies()) {
+			String[] split = compSpecies.split(" ");
+			if(!LHPN.getIntegers().keySet().contains(split[0])) {
+				LHPN.addInteger(split[0], split[1]);
+			}
+		}
 		for (int i = 0; i < specs.size(); i++) {
 			if (!biochemical.contains(specs.get(i)) && !getInputSpecies().contains(specs.get(i))) {
 				int placeNum = 0;
@@ -3278,6 +3284,9 @@ public class BioModel {
 	
 	public static String getSpeciesType(SBMLDocument sbml,String speciesId) {
 		Species species = sbml.getModel().getSpecies(speciesId);
+		if (species == null) {
+			return "unknown";
+		}
 		CompModelPlugin sbmlCompModel = (CompModelPlugin)sbml.getModel().getPlugin("comp");
 		if (sbmlCompModel!=null) {
 			if (sbmlCompModel.getPort(GlobalConstants.INPUT+"__"+speciesId)!=null) return GlobalConstants.INPUT;
@@ -6165,6 +6174,29 @@ public class BioModel {
 
 	public Grid getGrid() {
 		return grid;
+	}
+	
+	public ArrayList<String> getCompSpecies() {
+		ArrayList<String> compSpecies = new ArrayList<String>();
+		for (int i = 0; i < getSBMLCompModel().getNumSubmodels(); ++i) {
+			Model submodel = getSBMLCompModel().getSubmodel(i).getInstantiation();
+			for (int j = 0; j < submodel.getNumSpecies(); ++j) {
+				Species spec = submodel.getSpecies(j);
+				double initial;
+				if (spec.isSetInitialAmount()) {
+					initial = spec.getInitialAmount();
+				}
+				else {
+					initial = spec.getInitialConcentration();
+				}
+				for (String comp : compartments.keySet()) {
+					if (comp.contains("Cell")) {
+						compSpecies.add(comp.replace("Cell", "") + spec.getId() + " " + initial);
+					}
+				}
+			}
+		}
+		return compSpecies;
 	}
 	
 	/*
