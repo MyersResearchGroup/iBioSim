@@ -428,6 +428,9 @@ public class StateSet implements Iterable<PrjState>{
 			
 			// Report the number of un-timed states.
 			result += ", # of untimed states found: " + _setList.size();
+			
+			// Report the largest Zone used.
+			result += ", Largest zone: " + Zone.ZoneSize;
 		}
 		
 		return result;
