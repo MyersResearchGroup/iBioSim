@@ -19,7 +19,6 @@ public class Conolse7_26_2012 {
 	public static void main(String[] args) {
 
 		String lpnFileDirectory = "";
-		File f = new File(lpnFileDirectory);
 		boolean subset = true;
 		boolean superset = true;
 
