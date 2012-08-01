@@ -102,7 +102,14 @@ public class Zone{
 	/* Hack to pass a parameter to the equals method though a variable */
 	//private boolean subsetting = false;
 	
+	/* Records the largest zone that occurs. */
+	public static int ZoneSize = 0;
 	
+	private void checkZoneMaxSize(){
+		if(dbmSize() > ZoneSize){
+			ZoneSize = dbmSize();
+		}
+	}
 	
 	private LhpnFile[] _lpnList;
 	
@@ -394,6 +401,7 @@ public class Zone{
 		advance();
 		recononicalize();
 		
+		checkZoneMaxSize();
 	}
 	
 	/**
@@ -427,6 +435,9 @@ public class Zone{
 		
 		// Re-canonicalize
 		recononicalize();
+		
+		// Check the size of the dbm.
+		checkZoneMaxSize();
 	}
 	
 	/**
@@ -1305,6 +1316,7 @@ public class Zone{
 		newZone.advance();
 		newZone.recononicalize();
 		
+		newZone.checkZoneMaxSize();
 		
 		return newZone;
 	}
