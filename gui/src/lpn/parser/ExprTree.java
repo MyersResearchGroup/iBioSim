@@ -2,6 +2,7 @@ package lpn.parser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 import java.lang.Math;
 
 public class ExprTree {
@@ -31,14 +32,24 @@ public class ExprTree {
 	private ArrayList<String> booleanSignals, integerSignals, continuousSignals;
 
 	private LhpnFile lhpn;
+	
+	public String expression;
 
 	public ExprTree() {
 
 	}
-	
+	/**
+	 * This constructor is used in PlatuGrammar.g to convert LPNs from USF to LhpnFile.
+	 * All LPNs from USF use integer variables only. So only integer signals are dealt with here.
+	 * @param expression
+	 */
 	public ExprTree(String expression) {
-		intexpr_gettok(expression);
-		intexpr_L(expression);
+		this.expression = expression;
+		booleanSignals = new ArrayList<String>();
+		integerSignals = new ArrayList<String>();
+		continuousSignals = new ArrayList<String>();
+//		intexpr_gettok(expression);
+//		intexpr_L(expression);
 	}
 
 	public ExprTree(LhpnFile lhpn) {
@@ -1314,14 +1325,14 @@ public class ExprTree {
 				if ((this).isit == 'c') {
 					comp = variable;
 					comp += "=";
-					int paren = 0;
-					for (i = spos; i < position; i++) {
-						if (expr.charAt(i) == '(')
-							paren++;
-						if (expr.charAt(i) == ')')
-							paren--;
-						ineq = ineq + expr.charAt(i);
-					}
+//					int paren = 0;
+//					for (i = spos; i < position; i++) {
+//						if (expr.charAt(i) == '(')
+//							paren++;
+//						if (expr.charAt(i) == ')')
+//							paren--;
+//						ineq = ineq + expr.charAt(i);
+//					}
 					comp += ineq;
 					if (booleanSignals.contains(comp)) {
 						this.isit = 'b';
@@ -4447,6 +4458,17 @@ public class ExprTree {
 	public ExprTree getRightChild()
 	{
 		return r2;
+	}
+
+	public ExprTree getExprTree() {
+		token = this.intexpr_gettok(expression);
+		this.intexpr_L(expression);
+		return this;
+	}
+	public void setIntegerSignals(Set<String> signalSet) {
+		for (String s : signalSet) {
+			integerSignals.add(s);
+		}	
 	}
 
 }
