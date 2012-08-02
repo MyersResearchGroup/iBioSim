@@ -701,7 +701,7 @@ public class Analysis {
 	}
 	
 	/**
-	 * This method performs first-depth search on a single LPN and applies partial order reduction technique with the traceback. 
+	 * This method performs first-depth search on an array of LPNs and applies partial order reduction technique with the traceback. 
 	 * @param sgList
 	 * @param initStateArray
 	 * @param cycleClosingMthdIndex 
