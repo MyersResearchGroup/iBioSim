@@ -228,11 +228,11 @@ public class Project {
 				System.exit(1);
 			}
 
-			ANTLRFileStream input = new ANTLRFileStream(src_file);
-			PlatuGrammarLexer lexer = new PlatuGrammarLexer(input);
-			TokenStream tokenStream = new CommonTokenStream(lexer);
-			PlatuGrammarParser parser = new PlatuGrammarParser(tokenStream);
-			lpnSet = parser.lpn(this);
+//			ANTLRFileStream input = new ANTLRFileStream(src_file);
+//			PlatuGrammarLexer lexer = new PlatuGrammarLexer(input);
+//			TokenStream tokenStream = new CommonTokenStream(lexer);
+//			PlatuGrammarParser parser = new PlatuGrammarParser(tokenStream);
+//			lpnSet = parser.lpn(this);
 			
 		} catch (Exception ex) {
 			Logger.getLogger(Project.class.getName()).log(Level.SEVERE, null,
