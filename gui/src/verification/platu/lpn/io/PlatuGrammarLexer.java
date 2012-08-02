@@ -1,4 +1,4 @@
-// $ANTLR 3.3 Nov 30, 2010 12:50:56 /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g 2011-09-05 15:36:21
+// $ANTLR 3.4 /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g 2012-08-02 02:17:15
 
     package verification.platu.lpn.io;
 
@@ -8,6 +8,7 @@ import java.util.Stack;
 import java.util.List;
 import java.util.ArrayList;
 
+@SuppressWarnings({"all", "warnings", "unchecked"})
 public class PlatuGrammarLexer extends Lexer {
     public static final int EOF=-1;
     public static final int T__57=57;
@@ -17,122 +18,82 @@ public class PlatuGrammarLexer extends Lexer {
     public static final int T__61=61;
     public static final int T__62=62;
     public static final int T__63=63;
-    public static final int ID=4;
-    public static final int INT=5;
-    public static final int LPAREN=6;
-    public static final int RPAREN=7;
-    public static final int TRUE=8;
-    public static final int FALSE=9;
-    public static final int QMARK=10;
+    public static final int AND=4;
+    public static final int BITWISE_AND=5;
+    public static final int BITWISE_LSHIFT=6;
+    public static final int BITWISE_NEGATION=7;
+    public static final int BITWISE_OR=8;
+    public static final int BITWISE_RSHIFT=9;
+    public static final int BITWISE_XOR=10;
     public static final int COLON=11;
-    public static final int SEMICOLON=12;
-    public static final int PERIOD=13;
-    public static final int UNDERSCORE=14;
-    public static final int COMMA=15;
-    public static final int QUOTE=16;
-    public static final int MODULE=17;
-    public static final int NAME=18;
-    public static final int INPUT=19;
-    public static final int OUTPUT=20;
-    public static final int INTERNAL=21;
-    public static final int MARKING=22;
-    public static final int STATE_VECTOR=23;
-    public static final int TRANSITION=24;
-    public static final int LABEL=25;
-    public static final int PRESET=26;
-    public static final int POSTSET=27;
-    public static final int PLUS=28;
-    public static final int MINUS=29;
-    public static final int TIMES=30;
-    public static final int DIV=31;
-    public static final int MOD=32;
-    public static final int EQUALS=33;
-    public static final int GREATER=34;
-    public static final int LESS=35;
-    public static final int GREATER_EQUAL=36;
-    public static final int LESS_EQUAL=37;
-    public static final int EQUIV=38;
+    public static final int COMMA=12;
+    public static final int COMMENT=13;
+    public static final int DIGIT=14;
+    public static final int DIV=15;
+    public static final int EQUALS=16;
+    public static final int EQUIV=17;
+    public static final int FALSE=18;
+    public static final int GREATER=19;
+    public static final int GREATER_EQUAL=20;
+    public static final int ID=21;
+    public static final int IGNORE=22;
+    public static final int IMPLICATION=23;
+    public static final int INPUT=24;
+    public static final int INT=25;
+    public static final int INTERNAL=26;
+    public static final int LABEL=27;
+    public static final int LESS=28;
+    public static final int LESS_EQUAL=29;
+    public static final int LETTER=30;
+    public static final int LPAREN=31;
+    public static final int MARKING=32;
+    public static final int MINUS=33;
+    public static final int MOD=34;
+    public static final int MODULE=35;
+    public static final int MULTILINECOMMENT=36;
+    public static final int NAME=37;
+    public static final int NEGATION=38;
     public static final int NOT_EQUIV=39;
-    public static final int NEGATION=40;
-    public static final int AND=41;
-    public static final int OR=42;
-    public static final int IMPLICATION=43;
-    public static final int BITWISE_NEGATION=44;
-    public static final int BITWISE_AND=45;
-    public static final int BITWISE_OR=46;
-    public static final int BITWISE_XOR=47;
-    public static final int BITWISE_LSHIFT=48;
-    public static final int BITWISE_RSHIFT=49;
-    public static final int LETTER=50;
-    public static final int DIGIT=51;
-    public static final int WS=52;
-    public static final int COMMENT=53;
-    public static final int MULTILINECOMMENT=54;
-    public static final int XMLCOMMENT=55;
-    public static final int IGNORE=56;
+    public static final int OR=40;
+    public static final int OUTPUT=41;
+    public static final int PERIOD=42;
+    public static final int PLUS=43;
+    public static final int POSTSET=44;
+    public static final int PRESET=45;
+    public static final int QMARK=46;
+    public static final int QUOTE=47;
+    public static final int RPAREN=48;
+    public static final int SEMICOLON=49;
+    public static final int STATE_VECTOR=50;
+    public static final int TIMES=51;
+    public static final int TRANSITION=52;
+    public static final int TRUE=53;
+    public static final int UNDERSCORE=54;
+    public static final int WS=55;
+    public static final int XMLCOMMENT=56;
 
     // delegates
     // delegators
+    public Lexer[] getDelegates() {
+        return new Lexer[] {};
+    }
 
-    public PlatuGrammarLexer() {;} 
+    public PlatuGrammarLexer() {} 
     public PlatuGrammarLexer(CharStream input) {
         this(input, new RecognizerSharedState());
     }
     public PlatuGrammarLexer(CharStream input, RecognizerSharedState state) {
         super(input,state);
-
     }
-    public String getGrammarFileName() { return "/Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g"; }
+    public String getGrammarFileName() { return "/Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g"; }
 
     // $ANTLR start "T__57"
     public final void mT__57() throws RecognitionException {
         try {
             int _type = T__57;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:11:7: ( 'main' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:11:9: 'main'
-            {
-            match("main"); 
-
-
-            }
-
-            state.type = _type;
-            state.channel = _channel;
-        }
-        finally {
-        }
-    }
-    // $ANTLR end "T__57"
-
-    // $ANTLR start "T__58"
-    public final void mT__58() throws RecognitionException {
-        try {
-            int _type = T__58;
-            int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:12:7: ( 'const' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:12:9: 'const'
-            {
-            match("const"); 
-
-
-            }
-
-            state.type = _type;
-            state.channel = _channel;
-        }
-        finally {
-        }
-    }
-    // $ANTLR end "T__58"
-
-    // $ANTLR start "T__59"
-    public final void mT__59() throws RecognitionException {
-        try {
-            int _type = T__59;
-            int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:13:7: ( '[' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:13:9: '['
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:11:7: ( '[' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:11:9: '['
             {
             match('['); 
 
@@ -142,17 +103,18 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
-    // $ANTLR end "T__59"
+    // $ANTLR end "T__57"
 
-    // $ANTLR start "T__60"
-    public final void mT__60() throws RecognitionException {
+    // $ANTLR start "T__58"
+    public final void mT__58() throws RecognitionException {
         try {
-            int _type = T__60;
+            int _type = T__58;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:14:7: ( ']' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:14:9: ']'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:12:7: ( ']' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:12:9: ']'
             {
             match(']'); 
 
@@ -162,6 +124,53 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
+        }
+    }
+    // $ANTLR end "T__58"
+
+    // $ANTLR start "T__59"
+    public final void mT__59() throws RecognitionException {
+        try {
+            int _type = T__59;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:13:7: ( 'assert' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:13:9: 'assert'
+            {
+            match("assert"); 
+
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        	// do for sure before leaving
+        }
+    }
+    // $ANTLR end "T__59"
+
+    // $ANTLR start "T__60"
+    public final void mT__60() throws RecognitionException {
+        try {
+            int _type = T__60;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:14:7: ( 'const' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:14:9: 'const'
+            {
+            match("const"); 
+
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "T__60"
@@ -171,10 +180,11 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = T__61;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:15:7: ( 'inst' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:15:9: 'inst'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:15:7: ( 'inf' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:15:9: 'inf'
             {
-            match("inst"); 
+            match("inf"); 
+
 
 
             }
@@ -183,6 +193,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "T__61"
@@ -192,10 +203,11 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = T__62;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:16:7: ( 'assert' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:16:9: 'assert'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:16:7: ( 'inst' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:16:9: 'inst'
             {
-            match("assert"); 
+            match("inst"); 
+
 
 
             }
@@ -204,6 +216,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "T__62"
@@ -213,10 +226,11 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = T__63;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:17:7: ( 'inf' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:17:9: 'inf'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:17:7: ( 'main' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:17:9: 'main'
             {
-            match("inf"); 
+            match("main"); 
+
 
 
             }
@@ -225,6 +239,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "T__63"
@@ -234,8 +249,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = LPAREN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1022:7: ( '(' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1022:9: '('
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1343:7: ( '(' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1343:9: '('
             {
             match('('); 
 
@@ -245,6 +260,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "LPAREN"
@@ -254,8 +270,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = RPAREN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1023:7: ( ')' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1023:9: ')'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1344:7: ( ')' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1344:9: ')'
             {
             match(')'); 
 
@@ -265,6 +281,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "RPAREN"
@@ -274,8 +291,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = QMARK;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1024:6: ( '?' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1024:8: '?'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1345:6: ( '?' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1345:8: '?'
             {
             match('?'); 
 
@@ -285,6 +302,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "QMARK"
@@ -294,8 +312,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = COLON;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1025:6: ( ':' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1025:8: ':'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1346:6: ( ':' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1346:8: ':'
             {
             match(':'); 
 
@@ -305,6 +323,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "COLON"
@@ -314,8 +333,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = SEMICOLON;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1026:10: ( ';' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1026:12: ';'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1347:10: ( ';' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1347:12: ';'
             {
             match(';'); 
 
@@ -325,6 +344,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "SEMICOLON"
@@ -334,8 +354,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = PERIOD;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1027:7: ( '.' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1027:9: '.'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1348:7: ( '.' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1348:9: '.'
             {
             match('.'); 
 
@@ -345,6 +365,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "PERIOD"
@@ -354,8 +375,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = UNDERSCORE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1028:11: ( '_' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1028:13: '_'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1349:11: ( '_' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1349:13: '_'
             {
             match('_'); 
 
@@ -365,6 +386,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "UNDERSCORE"
@@ -374,8 +396,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = COMMA;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1029:6: ( ',' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1029:8: ','
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1350:6: ( ',' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1350:8: ','
             {
             match(','); 
 
@@ -385,6 +407,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "COMMA"
@@ -394,8 +417,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = QUOTE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1030:6: ( '\"' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1030:8: '\"'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1351:6: ( '\"' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1351:8: '\"'
             {
             match('\"'); 
 
@@ -405,6 +428,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "QUOTE"
@@ -414,10 +438,11 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = MODULE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1033:7: ( 'mod' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1033:9: 'mod'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1354:7: ( 'mod' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1354:9: 'mod'
             {
             match("mod"); 
+
 
 
             }
@@ -426,6 +451,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "MODULE"
@@ -435,10 +461,11 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = NAME;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1034:5: ( 'name' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1034:7: 'name'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1355:5: ( 'name' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1355:7: 'name'
             {
             match("name"); 
+
 
 
             }
@@ -447,6 +474,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "NAME"
@@ -456,10 +484,11 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = INPUT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1035:6: ( 'input' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1035:8: 'input'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1356:6: ( 'input' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1356:8: 'input'
             {
             match("input"); 
+
 
 
             }
@@ -468,6 +497,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "INPUT"
@@ -477,10 +507,11 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = OUTPUT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1036:7: ( 'output' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1036:9: 'output'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1357:7: ( 'output' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1357:9: 'output'
             {
             match("output"); 
+
 
 
             }
@@ -489,6 +520,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "OUTPUT"
@@ -498,10 +530,11 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = INTERNAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1037:9: ( 'var' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1037:11: 'var'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1358:9: ( 'var' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1358:11: 'var'
             {
             match("var"); 
+
 
 
             }
@@ -510,6 +543,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "INTERNAL"
@@ -519,10 +553,11 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = MARKING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1038:8: ( 'marking' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1038:10: 'marking'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1359:8: ( 'marking' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1359:10: 'marking'
             {
             match("marking"); 
+
 
 
             }
@@ -531,6 +566,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "MARKING"
@@ -540,10 +576,11 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = STATE_VECTOR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1039:13: ( 'statevector' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1039:15: 'statevector'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1360:13: ( 'statevector' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1360:15: 'statevector'
             {
             match("statevector"); 
+
 
 
             }
@@ -552,6 +589,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "STATE_VECTOR"
@@ -561,10 +599,11 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = TRANSITION;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1040:11: ( 'transition' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1040:13: 'transition'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1361:11: ( 'transition' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1361:13: 'transition'
             {
             match("transition"); 
+
 
 
             }
@@ -573,6 +612,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "TRANSITION"
@@ -582,10 +622,11 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = LABEL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1041:6: ( 'label' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1041:8: 'label'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1362:6: ( 'label' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1362:8: 'label'
             {
             match("label"); 
+
 
 
             }
@@ -594,6 +635,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "LABEL"
@@ -603,10 +645,11 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = PRESET;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1042:7: ( 'preset' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1042:9: 'preset'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1363:7: ( 'preset' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1363:9: 'preset'
             {
             match("preset"); 
+
 
 
             }
@@ -615,6 +658,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "PRESET"
@@ -624,10 +668,11 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = POSTSET;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1043:8: ( 'postset' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1043:10: 'postset'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1364:8: ( 'postset' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1364:10: 'postset'
             {
             match("postset"); 
+
 
 
             }
@@ -636,6 +681,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "POSTSET"
@@ -645,10 +691,11 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = TRUE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1044:5: ( 'true' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1044:7: 'true'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1365:5: ( 'true' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1365:7: 'true'
             {
             match("true"); 
+
 
 
             }
@@ -657,6 +704,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "TRUE"
@@ -666,10 +714,11 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = FALSE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1045:6: ( 'false' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1045:8: 'false'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1366:6: ( 'false' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1366:8: 'false'
             {
             match("false"); 
+
 
 
             }
@@ -678,6 +727,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "FALSE"
@@ -687,8 +737,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = PLUS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1048:5: ( '+' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1048:7: '+'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1369:5: ( '+' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1369:7: '+'
             {
             match('+'); 
 
@@ -698,6 +748,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "PLUS"
@@ -707,8 +758,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = MINUS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1049:6: ( '-' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1049:8: '-'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1370:6: ( '-' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1370:8: '-'
             {
             match('-'); 
 
@@ -718,6 +769,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "MINUS"
@@ -727,8 +779,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = TIMES;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1050:6: ( '*' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1050:8: '*'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1371:6: ( '*' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1371:8: '*'
             {
             match('*'); 
 
@@ -738,6 +790,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "TIMES"
@@ -747,8 +800,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = DIV;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1051:4: ( '/' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1051:6: '/'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1372:4: ( '/' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1372:6: '/'
             {
             match('/'); 
 
@@ -758,6 +811,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "DIV"
@@ -767,8 +821,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = MOD;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1052:4: ( '%' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1052:6: '%'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1373:4: ( '%' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1373:6: '%'
             {
             match('%'); 
 
@@ -778,6 +832,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "MOD"
@@ -787,8 +842,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = EQUALS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1053:7: ( '=' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1053:9: '='
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1374:7: ( '=' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1374:9: '='
             {
             match('='); 
 
@@ -798,6 +853,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "EQUALS"
@@ -807,8 +863,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = GREATER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1056:8: ( '>' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1056:10: '>'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1377:8: ( '>' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1377:10: '>'
             {
             match('>'); 
 
@@ -818,6 +874,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "GREATER"
@@ -827,8 +884,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = LESS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1057:5: ( '<' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1057:7: '<'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1378:5: ( '<' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1378:7: '<'
             {
             match('<'); 
 
@@ -838,6 +895,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "LESS"
@@ -847,10 +905,11 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = GREATER_EQUAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1058:14: ( '>=' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1058:16: '>='
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1379:14: ( '>=' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1379:16: '>='
             {
             match(">="); 
+
 
 
             }
@@ -859,6 +918,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "GREATER_EQUAL"
@@ -868,10 +928,11 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = LESS_EQUAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1059:11: ( '<=' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1059:13: '<='
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1380:11: ( '<=' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1380:13: '<='
             {
             match("<="); 
+
 
 
             }
@@ -880,6 +941,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "LESS_EQUAL"
@@ -889,10 +951,11 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = EQUIV;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1060:6: ( '==' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1060:8: '=='
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1381:6: ( '==' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1381:8: '=='
             {
             match("=="); 
+
 
 
             }
@@ -901,6 +964,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "EQUIV"
@@ -910,10 +974,11 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = NOT_EQUIV;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1061:10: ( '!=' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1061:12: '!='
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1382:10: ( '!=' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1382:12: '!='
             {
             match("!="); 
+
 
 
             }
@@ -922,6 +987,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "NOT_EQUIV"
@@ -931,8 +997,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = NEGATION;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1064:9: ( '!' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1064:11: '!'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1385:9: ( '!' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1385:11: '!'
             {
             match('!'); 
 
@@ -942,6 +1008,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "NEGATION"
@@ -951,10 +1018,11 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = AND;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1065:4: ( '&&' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1065:6: '&&'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1386:4: ( '&&' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1386:6: '&&'
             {
             match("&&"); 
+
 
 
             }
@@ -963,6 +1031,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "AND"
@@ -972,10 +1041,11 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = OR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1066:3: ( '||' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1066:5: '||'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1387:3: ( '||' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1387:5: '||'
             {
             match("||"); 
+
 
 
             }
@@ -984,6 +1054,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "OR"
@@ -993,10 +1064,11 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = IMPLICATION;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1067:12: ( '->' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1067:14: '->'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1388:12: ( '->' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1388:14: '->'
             {
             match("->"); 
+
 
 
             }
@@ -1005,6 +1077,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "IMPLICATION"
@@ -1014,8 +1087,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = BITWISE_NEGATION;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1070:17: ( '~' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1070:19: '~'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1391:17: ( '~' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1391:19: '~'
             {
             match('~'); 
 
@@ -1025,6 +1098,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "BITWISE_NEGATION"
@@ -1034,8 +1108,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = BITWISE_AND;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1071:12: ( '&' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1071:14: '&'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1392:12: ( '&' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1392:14: '&'
             {
             match('&'); 
 
@@ -1045,6 +1119,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "BITWISE_AND"
@@ -1054,8 +1129,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = BITWISE_OR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1072:11: ( '|' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1072:13: '|'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1393:11: ( '|' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1393:13: '|'
             {
             match('|'); 
 
@@ -1065,6 +1140,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "BITWISE_OR"
@@ -1074,8 +1150,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = BITWISE_XOR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1073:12: ( '^' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1073:14: '^'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1394:12: ( '^' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1394:14: '^'
             {
             match('^'); 
 
@@ -1085,6 +1161,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "BITWISE_XOR"
@@ -1094,10 +1171,11 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = BITWISE_LSHIFT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1074:15: ( '<<' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1074:17: '<<'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1395:15: ( '<<' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1395:17: '<<'
             {
             match("<<"); 
+
 
 
             }
@@ -1106,6 +1184,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "BITWISE_LSHIFT"
@@ -1115,10 +1194,11 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = BITWISE_RSHIFT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1075:15: ( '>>' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1075:17: '>>'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1396:15: ( '>>' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1396:17: '>>'
             {
             match(">>"); 
+
 
 
             }
@@ -1127,6 +1207,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "BITWISE_RSHIFT"
@@ -1134,23 +1215,25 @@ public class PlatuGrammarLexer extends Lexer {
     // $ANTLR start "LETTER"
     public final void mLETTER() throws RecognitionException {
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1077:16: ( ( 'a' .. 'z' | 'A' .. 'Z' ) )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1077:18: ( 'a' .. 'z' | 'A' .. 'Z' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1398:16: ( ( 'a' .. 'z' | 'A' .. 'Z' ) )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:
             {
-            if ( (input.LA(1)>='A' && input.LA(1)<='Z')||(input.LA(1)>='a' && input.LA(1)<='z') ) {
+            if ( (input.LA(1) >= 'A' && input.LA(1) <= 'Z')||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
 
 
             }
 
+
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "LETTER"
@@ -1158,15 +1241,25 @@ public class PlatuGrammarLexer extends Lexer {
     // $ANTLR start "DIGIT"
     public final void mDIGIT() throws RecognitionException {
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1078:15: ( '0' .. '9' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1078:17: '0' .. '9'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1399:15: ( '0' .. '9' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:
             {
-            matchRange('0','9'); 
+            if ( (input.LA(1) >= '0' && input.LA(1) <= '9') ) {
+                input.consume();
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;
+            }
+
 
             }
 
+
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "DIGIT"
@@ -1176,10 +1269,10 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = INT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1079:4: ( ( '-' )? ( DIGIT )+ )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1079:6: ( '-' )? ( DIGIT )+
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1400:4: ( ( '-' )? ( DIGIT )+ )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1400:6: ( '-' )? ( DIGIT )+
             {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1079:6: ( '-' )?
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1400:6: ( '-' )?
             int alt1=2;
             int LA1_0 = input.LA(1);
 
@@ -1188,7 +1281,7 @@ public class PlatuGrammarLexer extends Lexer {
             }
             switch (alt1) {
                 case 1 :
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1079:6: '-'
+                    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1400:6: '-'
                     {
                     match('-'); 
 
@@ -1197,23 +1290,32 @@ public class PlatuGrammarLexer extends Lexer {
 
             }
 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1079:11: ( DIGIT )+
+
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1400:11: ( DIGIT )+
             int cnt2=0;
             loop2:
             do {
                 int alt2=2;
                 int LA2_0 = input.LA(1);
 
-                if ( ((LA2_0>='0' && LA2_0<='9')) ) {
+                if ( ((LA2_0 >= '0' && LA2_0 <= '9')) ) {
                     alt2=1;
                 }
 
 
                 switch (alt2) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1079:11: DIGIT
+            	    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:
             	    {
-            	    mDIGIT(); 
+            	    if ( (input.LA(1) >= '0' && input.LA(1) <= '9') ) {
+            	        input.consume();
+            	    }
+            	    else {
+            	        MismatchedSetException mse = new MismatchedSetException(null,input);
+            	        recover(mse);
+            	        throw mse;
+            	    }
+
 
             	    }
             	    break;
@@ -1234,6 +1336,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "INT"
@@ -1243,26 +1346,28 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1080:3: ( LETTER ( ( UNDERSCORE | PERIOD )? ( LETTER | DIGIT ) )* )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1080:5: LETTER ( ( UNDERSCORE | PERIOD )? ( LETTER | DIGIT ) )*
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1401:3: ( LETTER ( ( UNDERSCORE | PERIOD )? ( LETTER | DIGIT ) )* )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1401:5: LETTER ( ( UNDERSCORE | PERIOD )? ( LETTER | DIGIT ) )*
             {
             mLETTER(); 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1080:12: ( ( UNDERSCORE | PERIOD )? ( LETTER | DIGIT ) )*
+
+
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1401:12: ( ( UNDERSCORE | PERIOD )? ( LETTER | DIGIT ) )*
             loop4:
             do {
                 int alt4=2;
                 int LA4_0 = input.LA(1);
 
-                if ( (LA4_0=='.'||(LA4_0>='0' && LA4_0<='9')||(LA4_0>='A' && LA4_0<='Z')||LA4_0=='_'||(LA4_0>='a' && LA4_0<='z')) ) {
+                if ( (LA4_0=='.'||(LA4_0 >= '0' && LA4_0 <= '9')||(LA4_0 >= 'A' && LA4_0 <= 'Z')||LA4_0=='_'||(LA4_0 >= 'a' && LA4_0 <= 'z')) ) {
                     alt4=1;
                 }
 
 
                 switch (alt4) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1080:13: ( UNDERSCORE | PERIOD )? ( LETTER | DIGIT )
+            	    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1401:13: ( UNDERSCORE | PERIOD )? ( LETTER | DIGIT )
             	    {
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1080:13: ( UNDERSCORE | PERIOD )?
+            	    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1401:13: ( UNDERSCORE | PERIOD )?
             	    int alt3=2;
             	    int LA3_0 = input.LA(1);
 
@@ -1271,16 +1376,16 @@ public class PlatuGrammarLexer extends Lexer {
             	    }
             	    switch (alt3) {
             	        case 1 :
-            	            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:
+            	            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:
             	            {
             	            if ( input.LA(1)=='.'||input.LA(1)=='_' ) {
             	                input.consume();
-
             	            }
             	            else {
             	                MismatchedSetException mse = new MismatchedSetException(null,input);
             	                recover(mse);
-            	                throw mse;}
+            	                throw mse;
+            	            }
 
 
             	            }
@@ -1288,14 +1393,15 @@ public class PlatuGrammarLexer extends Lexer {
 
             	    }
 
-            	    if ( (input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='Z')||(input.LA(1)>='a' && input.LA(1)<='z') ) {
-            	        input.consume();
 
+            	    if ( (input.LA(1) >= '0' && input.LA(1) <= '9')||(input.LA(1) >= 'A' && input.LA(1) <= 'Z')||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
+            	        input.consume();
             	    }
             	    else {
             	        MismatchedSetException mse = new MismatchedSetException(null,input);
             	        recover(mse);
-            	        throw mse;}
+            	        throw mse;
+            	    }
 
 
             	    }
@@ -1313,6 +1419,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "ID"
@@ -1322,33 +1429,33 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1081:3: ( ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' )+ )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1081:5: ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' )+
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1402:3: ( ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' )+ )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1402:5: ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' )+
             {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1081:5: ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' )+
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1402:5: ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' )+
             int cnt5=0;
             loop5:
             do {
                 int alt5=2;
                 int LA5_0 = input.LA(1);
 
-                if ( ((LA5_0>='\t' && LA5_0<='\n')||(LA5_0>='\f' && LA5_0<='\r')||LA5_0==' ') ) {
+                if ( ((LA5_0 >= '\t' && LA5_0 <= '\n')||(LA5_0 >= '\f' && LA5_0 <= '\r')||LA5_0==' ') ) {
                     alt5=1;
                 }
 
 
                 switch (alt5) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:
+            	    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:
             	    {
-            	    if ( (input.LA(1)>='\t' && input.LA(1)<='\n')||(input.LA(1)>='\f' && input.LA(1)<='\r')||input.LA(1)==' ' ) {
+            	    if ( (input.LA(1) >= '\t' && input.LA(1) <= '\n')||(input.LA(1) >= '\f' && input.LA(1) <= '\r')||input.LA(1)==' ' ) {
             	        input.consume();
-
             	    }
             	    else {
             	        MismatchedSetException mse = new MismatchedSetException(null,input);
             	        recover(mse);
-            	        throw mse;}
+            	        throw mse;
+            	    }
 
 
             	    }
@@ -1363,6 +1470,7 @@ public class PlatuGrammarLexer extends Lexer {
                 cnt5++;
             } while (true);
 
+
             _channel = HIDDEN;
 
             }
@@ -1371,6 +1479,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "WS"
@@ -1380,12 +1489,14 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1082:8: ( '//' ( . )* ( '\\n' | '\\r' ) )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1082:10: '//' ( . )* ( '\\n' | '\\r' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1403:8: ( '//' ( . )* ( '\\n' | '\\r' ) )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1403:10: '//' ( . )* ( '\\n' | '\\r' )
             {
             match("//"); 
 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1082:15: ( . )*
+
+
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1403:15: ( . )*
             loop6:
             do {
                 int alt6=2;
@@ -1394,14 +1505,14 @@ public class PlatuGrammarLexer extends Lexer {
                 if ( (LA6_0=='\n'||LA6_0=='\r') ) {
                     alt6=2;
                 }
-                else if ( ((LA6_0>='\u0000' && LA6_0<='\t')||(LA6_0>='\u000B' && LA6_0<='\f')||(LA6_0>='\u000E' && LA6_0<='\uFFFF')) ) {
+                else if ( ((LA6_0 >= '\u0000' && LA6_0 <= '\t')||(LA6_0 >= '\u000B' && LA6_0 <= '\f')||(LA6_0 >= '\u000E' && LA6_0 <= '\uFFFF')) ) {
                     alt6=1;
                 }
 
 
                 switch (alt6) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1082:15: .
+            	    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1403:15: .
             	    {
             	    matchAny(); 
 
@@ -1413,14 +1524,16 @@ public class PlatuGrammarLexer extends Lexer {
                 }
             } while (true);
 
+
             if ( input.LA(1)=='\n'||input.LA(1)=='\r' ) {
                 input.consume();
-
             }
             else {
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 recover(mse);
-                throw mse;}
+                throw mse;
+            }
+
 
             _channel = HIDDEN;
 
@@ -1430,6 +1543,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "COMMENT"
@@ -1439,12 +1553,14 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = MULTILINECOMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1083:17: ( '/*' ( . )* '*/' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1083:19: '/*' ( . )* '*/'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1404:17: ( '/*' ( . )* '*/' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1404:19: '/*' ( . )* '*/'
             {
             match("/*"); 
 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1083:24: ( . )*
+
+
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1404:24: ( . )*
             loop7:
             do {
                 int alt7=2;
@@ -1456,20 +1572,20 @@ public class PlatuGrammarLexer extends Lexer {
                     if ( (LA7_1=='/') ) {
                         alt7=2;
                     }
-                    else if ( ((LA7_1>='\u0000' && LA7_1<='.')||(LA7_1>='0' && LA7_1<='\uFFFF')) ) {
+                    else if ( ((LA7_1 >= '\u0000' && LA7_1 <= '.')||(LA7_1 >= '0' && LA7_1 <= '\uFFFF')) ) {
                         alt7=1;
                     }
 
 
                 }
-                else if ( ((LA7_0>='\u0000' && LA7_0<=')')||(LA7_0>='+' && LA7_0<='\uFFFF')) ) {
+                else if ( ((LA7_0 >= '\u0000' && LA7_0 <= ')')||(LA7_0 >= '+' && LA7_0 <= '\uFFFF')) ) {
                     alt7=1;
                 }
 
 
                 switch (alt7) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1083:24: .
+            	    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1404:24: .
             	    {
             	    matchAny(); 
 
@@ -1481,7 +1597,10 @@ public class PlatuGrammarLexer extends Lexer {
                 }
             } while (true);
 
+
             match("*/"); 
+
+
 
             _channel = HIDDEN;
 
@@ -1491,6 +1610,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "MULTILINECOMMENT"
@@ -1500,20 +1620,24 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = XMLCOMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1084:11: ( ( '<' '!' '-' '-' ) ( . )* ( '-' '-' '>' ) )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1084:13: ( '<' '!' '-' '-' ) ( . )* ( '-' '-' '>' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1405:11: ( ( '<' '!' '-' '-' ) ( . )* ( '-' '-' '>' ) )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1405:13: ( '<' '!' '-' '-' ) ( . )* ( '-' '-' '>' )
             {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1084:13: ( '<' '!' '-' '-' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1084:14: '<' '!' '-' '-'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1405:13: ( '<' '!' '-' '-' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1405:14: '<' '!' '-' '-'
             {
             match('<'); 
+
             match('!'); 
+
             match('-'); 
+
             match('-'); 
 
             }
 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1084:31: ( . )*
+
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1405:31: ( . )*
             loop8:
             do {
                 int alt8=2;
@@ -1528,26 +1652,26 @@ public class PlatuGrammarLexer extends Lexer {
                         if ( (LA8_3=='>') ) {
                             alt8=2;
                         }
-                        else if ( ((LA8_3>='\u0000' && LA8_3<='=')||(LA8_3>='?' && LA8_3<='\uFFFF')) ) {
+                        else if ( ((LA8_3 >= '\u0000' && LA8_3 <= '=')||(LA8_3 >= '?' && LA8_3 <= '\uFFFF')) ) {
                             alt8=1;
                         }
 
 
                     }
-                    else if ( ((LA8_1>='\u0000' && LA8_1<=',')||(LA8_1>='.' && LA8_1<='\uFFFF')) ) {
+                    else if ( ((LA8_1 >= '\u0000' && LA8_1 <= ',')||(LA8_1 >= '.' && LA8_1 <= '\uFFFF')) ) {
                         alt8=1;
                     }
 
 
                 }
-                else if ( ((LA8_0>='\u0000' && LA8_0<=',')||(LA8_0>='.' && LA8_0<='\uFFFF')) ) {
+                else if ( ((LA8_0 >= '\u0000' && LA8_0 <= ',')||(LA8_0 >= '.' && LA8_0 <= '\uFFFF')) ) {
                     alt8=1;
                 }
 
 
                 switch (alt8) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1084:31: .
+            	    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1405:31: .
             	    {
             	    matchAny(); 
 
@@ -1559,14 +1683,18 @@ public class PlatuGrammarLexer extends Lexer {
                 }
             } while (true);
 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1084:34: ( '-' '-' '>' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1084:35: '-' '-' '>'
+
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1405:34: ( '-' '-' '>' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1405:35: '-' '-' '>'
             {
             match('-'); 
+
             match('-'); 
+
             match('>'); 
 
             }
+
 
             _channel = HIDDEN;
 
@@ -1576,6 +1704,7 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "XMLCOMMENT"
@@ -1585,12 +1714,14 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = IGNORE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1085:7: ( '<' '?' ( . )* '?' '>' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1085:9: '<' '?' ( . )* '?' '>'
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1406:7: ( '<' '?' ( . )* '?' '>' )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1406:9: '<' '?' ( . )* '?' '>'
             {
             match('<'); 
+
             match('?'); 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1085:17: ( . )*
+
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1406:17: ( . )*
             loop9:
             do {
                 int alt9=2;
@@ -1602,20 +1733,20 @@ public class PlatuGrammarLexer extends Lexer {
                     if ( (LA9_1=='>') ) {
                         alt9=2;
                     }
-                    else if ( ((LA9_1>='\u0000' && LA9_1<='=')||(LA9_1>='?' && LA9_1<='\uFFFF')) ) {
+                    else if ( ((LA9_1 >= '\u0000' && LA9_1 <= '=')||(LA9_1 >= '?' && LA9_1 <= '\uFFFF')) ) {
                         alt9=1;
                     }
 
 
                 }
-                else if ( ((LA9_0>='\u0000' && LA9_0<='>')||(LA9_0>='@' && LA9_0<='\uFFFF')) ) {
+                else if ( ((LA9_0 >= '\u0000' && LA9_0 <= '>')||(LA9_0 >= '@' && LA9_0 <= '\uFFFF')) ) {
                     alt9=1;
                 }
 
 
                 switch (alt9) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1085:17: .
+            	    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1406:17: .
             	    {
             	    matchAny(); 
 
@@ -1627,8 +1758,11 @@ public class PlatuGrammarLexer extends Lexer {
                 }
             } while (true);
 
+
             match('?'); 
+
             match('>'); 
+
             _channel = HIDDEN;
 
             }
@@ -1637,418 +1771,477 @@ public class PlatuGrammarLexer extends Lexer {
             state.channel = _channel;
         }
         finally {
+        	// do for sure before leaving
         }
     }
     // $ANTLR end "IGNORE"
 
     public void mTokens() throws RecognitionException {
-        // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:8: ( T__57 | T__58 | T__59 | T__60 | T__61 | T__62 | T__63 | LPAREN | RPAREN | QMARK | COLON | SEMICOLON | PERIOD | UNDERSCORE | COMMA | QUOTE | MODULE | NAME | INPUT | OUTPUT | INTERNAL | MARKING | STATE_VECTOR | TRANSITION | LABEL | PRESET | POSTSET | TRUE | FALSE | PLUS | MINUS | TIMES | DIV | MOD | EQUALS | GREATER | LESS | GREATER_EQUAL | LESS_EQUAL | EQUIV | NOT_EQUIV | NEGATION | AND | OR | IMPLICATION | BITWISE_NEGATION | BITWISE_AND | BITWISE_OR | BITWISE_XOR | BITWISE_LSHIFT | BITWISE_RSHIFT | INT | ID | WS | COMMENT | MULTILINECOMMENT | XMLCOMMENT | IGNORE )
+        // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:8: ( T__57 | T__58 | T__59 | T__60 | T__61 | T__62 | T__63 | LPAREN | RPAREN | QMARK | COLON | SEMICOLON | PERIOD | UNDERSCORE | COMMA | QUOTE | MODULE | NAME | INPUT | OUTPUT | INTERNAL | MARKING | STATE_VECTOR | TRANSITION | LABEL | PRESET | POSTSET | TRUE | FALSE | PLUS | MINUS | TIMES | DIV | MOD | EQUALS | GREATER | LESS | GREATER_EQUAL | LESS_EQUAL | EQUIV | NOT_EQUIV | NEGATION | AND | OR | IMPLICATION | BITWISE_NEGATION | BITWISE_AND | BITWISE_OR | BITWISE_XOR | BITWISE_LSHIFT | BITWISE_RSHIFT | INT | ID | WS | COMMENT | MULTILINECOMMENT | XMLCOMMENT | IGNORE )
         int alt10=58;
         alt10 = dfa10.predict(input);
         switch (alt10) {
             case 1 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:10: T__57
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:10: T__57
                 {
                 mT__57(); 
+
 
                 }
                 break;
             case 2 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:16: T__58
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:16: T__58
                 {
                 mT__58(); 
+
 
                 }
                 break;
             case 3 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:22: T__59
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:22: T__59
                 {
                 mT__59(); 
+
 
                 }
                 break;
             case 4 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:28: T__60
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:28: T__60
                 {
                 mT__60(); 
+
 
                 }
                 break;
             case 5 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:34: T__61
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:34: T__61
                 {
                 mT__61(); 
+
 
                 }
                 break;
             case 6 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:40: T__62
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:40: T__62
                 {
                 mT__62(); 
+
 
                 }
                 break;
             case 7 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:46: T__63
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:46: T__63
                 {
                 mT__63(); 
+
 
                 }
                 break;
             case 8 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:52: LPAREN
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:52: LPAREN
                 {
                 mLPAREN(); 
+
 
                 }
                 break;
             case 9 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:59: RPAREN
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:59: RPAREN
                 {
                 mRPAREN(); 
+
 
                 }
                 break;
             case 10 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:66: QMARK
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:66: QMARK
                 {
                 mQMARK(); 
+
 
                 }
                 break;
             case 11 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:72: COLON
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:72: COLON
                 {
                 mCOLON(); 
+
 
                 }
                 break;
             case 12 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:78: SEMICOLON
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:78: SEMICOLON
                 {
                 mSEMICOLON(); 
+
 
                 }
                 break;
             case 13 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:88: PERIOD
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:88: PERIOD
                 {
                 mPERIOD(); 
+
 
                 }
                 break;
             case 14 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:95: UNDERSCORE
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:95: UNDERSCORE
                 {
                 mUNDERSCORE(); 
+
 
                 }
                 break;
             case 15 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:106: COMMA
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:106: COMMA
                 {
                 mCOMMA(); 
+
 
                 }
                 break;
             case 16 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:112: QUOTE
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:112: QUOTE
                 {
                 mQUOTE(); 
+
 
                 }
                 break;
             case 17 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:118: MODULE
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:118: MODULE
                 {
                 mMODULE(); 
+
 
                 }
                 break;
             case 18 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:125: NAME
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:125: NAME
                 {
                 mNAME(); 
+
 
                 }
                 break;
             case 19 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:130: INPUT
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:130: INPUT
                 {
                 mINPUT(); 
+
 
                 }
                 break;
             case 20 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:136: OUTPUT
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:136: OUTPUT
                 {
                 mOUTPUT(); 
+
 
                 }
                 break;
             case 21 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:143: INTERNAL
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:143: INTERNAL
                 {
                 mINTERNAL(); 
+
 
                 }
                 break;
             case 22 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:152: MARKING
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:152: MARKING
                 {
                 mMARKING(); 
+
 
                 }
                 break;
             case 23 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:160: STATE_VECTOR
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:160: STATE_VECTOR
                 {
                 mSTATE_VECTOR(); 
+
 
                 }
                 break;
             case 24 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:173: TRANSITION
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:173: TRANSITION
                 {
                 mTRANSITION(); 
+
 
                 }
                 break;
             case 25 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:184: LABEL
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:184: LABEL
                 {
                 mLABEL(); 
+
 
                 }
                 break;
             case 26 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:190: PRESET
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:190: PRESET
                 {
                 mPRESET(); 
+
 
                 }
                 break;
             case 27 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:197: POSTSET
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:197: POSTSET
                 {
                 mPOSTSET(); 
+
 
                 }
                 break;
             case 28 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:205: TRUE
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:205: TRUE
                 {
                 mTRUE(); 
+
 
                 }
                 break;
             case 29 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:210: FALSE
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:210: FALSE
                 {
                 mFALSE(); 
+
 
                 }
                 break;
             case 30 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:216: PLUS
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:216: PLUS
                 {
                 mPLUS(); 
+
 
                 }
                 break;
             case 31 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:221: MINUS
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:221: MINUS
                 {
                 mMINUS(); 
+
 
                 }
                 break;
             case 32 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:227: TIMES
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:227: TIMES
                 {
                 mTIMES(); 
+
 
                 }
                 break;
             case 33 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:233: DIV
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:233: DIV
                 {
                 mDIV(); 
+
 
                 }
                 break;
             case 34 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:237: MOD
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:237: MOD
                 {
                 mMOD(); 
+
 
                 }
                 break;
             case 35 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:241: EQUALS
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:241: EQUALS
                 {
                 mEQUALS(); 
+
 
                 }
                 break;
             case 36 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:248: GREATER
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:248: GREATER
                 {
                 mGREATER(); 
+
 
                 }
                 break;
             case 37 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:256: LESS
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:256: LESS
                 {
                 mLESS(); 
+
 
                 }
                 break;
             case 38 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:261: GREATER_EQUAL
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:261: GREATER_EQUAL
                 {
                 mGREATER_EQUAL(); 
+
 
                 }
                 break;
             case 39 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:275: LESS_EQUAL
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:275: LESS_EQUAL
                 {
                 mLESS_EQUAL(); 
+
 
                 }
                 break;
             case 40 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:286: EQUIV
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:286: EQUIV
                 {
                 mEQUIV(); 
+
 
                 }
                 break;
             case 41 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:292: NOT_EQUIV
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:292: NOT_EQUIV
                 {
                 mNOT_EQUIV(); 
+
 
                 }
                 break;
             case 42 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:302: NEGATION
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:302: NEGATION
                 {
                 mNEGATION(); 
+
 
                 }
                 break;
             case 43 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:311: AND
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:311: AND
                 {
                 mAND(); 
+
 
                 }
                 break;
             case 44 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:315: OR
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:315: OR
                 {
                 mOR(); 
+
 
                 }
                 break;
             case 45 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:318: IMPLICATION
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:318: IMPLICATION
                 {
                 mIMPLICATION(); 
+
 
                 }
                 break;
             case 46 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:330: BITWISE_NEGATION
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:330: BITWISE_NEGATION
                 {
                 mBITWISE_NEGATION(); 
+
 
                 }
                 break;
             case 47 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:347: BITWISE_AND
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:347: BITWISE_AND
                 {
                 mBITWISE_AND(); 
+
 
                 }
                 break;
             case 48 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:359: BITWISE_OR
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:359: BITWISE_OR
                 {
                 mBITWISE_OR(); 
+
 
                 }
                 break;
             case 49 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:370: BITWISE_XOR
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:370: BITWISE_XOR
                 {
                 mBITWISE_XOR(); 
+
 
                 }
                 break;
             case 50 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:382: BITWISE_LSHIFT
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:382: BITWISE_LSHIFT
                 {
                 mBITWISE_LSHIFT(); 
+
 
                 }
                 break;
             case 51 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:397: BITWISE_RSHIFT
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:397: BITWISE_RSHIFT
                 {
                 mBITWISE_RSHIFT(); 
+
 
                 }
                 break;
             case 52 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:412: INT
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:412: INT
                 {
                 mINT(); 
+
 
                 }
                 break;
             case 53 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:416: ID
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:416: ID
                 {
                 mID(); 
+
 
                 }
                 break;
             case 54 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:419: WS
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:419: WS
                 {
                 mWS(); 
+
 
                 }
                 break;
             case 55 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:422: COMMENT
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:422: COMMENT
                 {
                 mCOMMENT(); 
+
 
                 }
                 break;
             case 56 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:430: MULTILINECOMMENT
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:430: MULTILINECOMMENT
                 {
                 mMULTILINECOMMENT(); 
+
 
                 }
                 break;
             case 57 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:447: XMLCOMMENT
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:447: XMLCOMMENT
                 {
                 mXMLCOMMENT(); 
+
 
                 }
                 break;
             case 58 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1:458: IGNORE
+                // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1:458: IGNORE
                 {
                 mIGNORE(); 
+
 
                 }
                 break;
@@ -2060,65 +2253,66 @@ public class PlatuGrammarLexer extends Lexer {
 
     protected DFA10 dfa10 = new DFA10(this);
     static final String DFA10_eotS =
-        "\1\uffff\2\46\2\uffff\2\46\11\uffff\10\46\1\uffff\1\67\1\uffff\1"+
-        "\72\1\uffff\1\74\1\77\1\104\1\106\1\110\1\112\5\uffff\16\46\25\uffff"+
-        "\2\46\1\137\2\46\1\142\4\46\1\147\7\46\1\157\1\46\1\uffff\1\46\1"+
-        "\162\1\uffff\2\46\1\165\1\46\1\uffff\2\46\1\171\4\46\1\uffff\1\46"+
-        "\1\177\1\uffff\1\u0080\1\46\1\uffff\3\46\1\uffff\1\u0085\2\46\1"+
-        "\u0088\1\46\2\uffff\1\u008a\1\u008b\2\46\1\uffff\1\u008e\1\46\1"+
-        "\uffff\1\u0090\2\uffff\2\46\1\uffff\1\u0093\1\uffff\2\46\1\uffff"+
-        "\3\46\1\u0099\1\u009a\2\uffff";
+        "\3\uffff\4\46\11\uffff\10\46\1\uffff\1\67\1\uffff\1\72\1\uffff\1"+
+        "\74\1\77\1\104\1\106\1\110\1\112\5\uffff\16\46\25\uffff\2\46\1\137"+
+        "\4\46\1\144\2\46\1\147\11\46\1\uffff\1\161\1\46\1\163\1\46\1\uffff"+
+        "\1\165\1\46\1\uffff\2\46\1\171\5\46\1\177\1\uffff\1\u0080\1\uffff"+
+        "\1\46\1\uffff\3\46\1\uffff\1\u0085\2\46\1\u0088\1\u0089\2\uffff"+
+        "\1\46\1\u008b\2\46\1\uffff\1\u008e\1\46\2\uffff\1\u0090\1\uffff"+
+        "\2\46\1\uffff\1\u0093\1\uffff\2\46\1\uffff\3\46\1\u0099\1\u009a"+
+        "\2\uffff";
     static final String DFA10_eofS =
         "\u009b\uffff";
     static final String DFA10_minS =
-        "\1\11\1\141\1\157\2\uffff\1\156\1\163\11\uffff\1\141\1\165\1\141"+
+        "\1\11\2\uffff\1\163\1\157\1\156\1\141\11\uffff\1\141\1\165\1\141"+
         "\1\164\1\162\1\141\1\157\1\141\1\uffff\1\60\1\uffff\1\52\1\uffff"+
-        "\2\75\1\41\1\75\1\46\1\174\5\uffff\1\151\1\144\1\156\1\146\1\163"+
-        "\1\155\1\164\1\162\2\141\1\142\1\145\1\163\1\154\25\uffff\1\156"+
-        "\1\153\1\56\1\163\1\164\1\56\1\165\2\145\1\160\1\56\1\164\1\156"+
-        "\2\145\1\163\1\164\1\163\1\56\1\151\1\uffff\1\164\1\56\1\uffff\1"+
-        "\164\1\162\1\56\1\165\1\uffff\1\145\1\163\1\56\1\154\1\145\1\163"+
-        "\1\145\1\uffff\1\156\1\56\1\uffff\1\56\1\164\1\uffff\1\164\1\166"+
-        "\1\151\1\uffff\1\56\1\164\1\145\1\56\1\147\2\uffff\2\56\1\145\1"+
-        "\164\1\uffff\1\56\1\164\1\uffff\1\56\2\uffff\1\143\1\151\1\uffff"+
-        "\1\56\1\uffff\1\164\1\157\1\uffff\1\157\1\156\1\162\2\56\2\uffff";
+        "\2\75\1\41\1\75\1\46\1\174\5\uffff\1\163\1\156\1\146\1\151\1\144"+
+        "\1\155\1\164\1\162\2\141\1\142\1\145\1\163\1\154\25\uffff\1\145"+
+        "\1\163\1\56\1\164\1\165\1\156\1\153\1\56\1\145\1\160\1\56\1\164"+
+        "\1\156\2\145\1\163\1\164\1\163\1\162\1\164\1\uffff\1\56\1\164\1"+
+        "\56\1\151\1\uffff\1\56\1\165\1\uffff\1\145\1\163\1\56\1\154\1\145"+
+        "\1\163\1\145\1\164\1\56\1\uffff\1\56\1\uffff\1\156\1\uffff\1\164"+
+        "\1\166\1\151\1\uffff\1\56\1\164\1\145\2\56\2\uffff\1\147\1\56\1"+
+        "\145\1\164\1\uffff\1\56\1\164\2\uffff\1\56\1\uffff\1\143\1\151\1"+
+        "\uffff\1\56\1\uffff\1\164\1\157\1\uffff\1\157\1\156\1\162\2\56\2"+
+        "\uffff";
     static final String DFA10_maxS =
-        "\1\176\2\157\2\uffff\1\156\1\163\11\uffff\1\141\1\165\1\141\1\164"+
-        "\1\162\1\141\1\162\1\141\1\uffff\1\76\1\uffff\1\57\1\uffff\1\75"+
-        "\1\76\1\77\1\75\1\46\1\174\5\uffff\1\162\1\144\1\156\2\163\1\155"+
-        "\1\164\1\162\1\141\1\165\1\142\1\145\1\163\1\154\25\uffff\1\156"+
-        "\1\153\1\172\1\163\1\164\1\172\1\165\2\145\1\160\1\172\1\164\1\156"+
-        "\2\145\1\163\1\164\1\163\1\172\1\151\1\uffff\1\164\1\172\1\uffff"+
-        "\1\164\1\162\1\172\1\165\1\uffff\1\145\1\163\1\172\1\154\1\145\1"+
-        "\163\1\145\1\uffff\1\156\1\172\1\uffff\1\172\1\164\1\uffff\1\164"+
-        "\1\166\1\151\1\uffff\1\172\1\164\1\145\1\172\1\147\2\uffff\2\172"+
-        "\1\145\1\164\1\uffff\1\172\1\164\1\uffff\1\172\2\uffff\1\143\1\151"+
-        "\1\uffff\1\172\1\uffff\1\164\1\157\1\uffff\1\157\1\156\1\162\2\172"+
-        "\2\uffff";
+        "\1\176\2\uffff\1\163\1\157\1\156\1\157\11\uffff\1\141\1\165\1\141"+
+        "\1\164\1\162\1\141\1\162\1\141\1\uffff\1\76\1\uffff\1\57\1\uffff"+
+        "\1\75\1\76\1\77\1\75\1\46\1\174\5\uffff\1\163\1\156\1\163\1\162"+
+        "\1\144\1\155\1\164\1\162\1\141\1\165\1\142\1\145\1\163\1\154\25"+
+        "\uffff\1\145\1\163\1\172\1\164\1\165\1\156\1\153\1\172\1\145\1\160"+
+        "\1\172\1\164\1\156\2\145\1\163\1\164\1\163\1\162\1\164\1\uffff\1"+
+        "\172\1\164\1\172\1\151\1\uffff\1\172\1\165\1\uffff\1\145\1\163\1"+
+        "\172\1\154\1\145\1\163\1\145\1\164\1\172\1\uffff\1\172\1\uffff\1"+
+        "\156\1\uffff\1\164\1\166\1\151\1\uffff\1\172\1\164\1\145\2\172\2"+
+        "\uffff\1\147\1\172\1\145\1\164\1\uffff\1\172\1\164\2\uffff\1\172"+
+        "\1\uffff\1\143\1\151\1\uffff\1\172\1\uffff\1\164\1\157\1\uffff\1"+
+        "\157\1\156\1\162\2\172\2\uffff";
     static final String DFA10_acceptS =
-        "\3\uffff\1\3\1\4\2\uffff\1\10\1\11\1\12\1\13\1\14\1\15\1\16\1\17"+
+        "\1\uffff\1\1\1\2\4\uffff\1\10\1\11\1\12\1\13\1\14\1\15\1\16\1\17"+
         "\1\20\10\uffff\1\36\1\uffff\1\40\1\uffff\1\42\6\uffff\1\56\1\61"+
         "\1\64\1\65\1\66\16\uffff\1\55\1\37\1\67\1\70\1\41\1\50\1\43\1\46"+
         "\1\63\1\44\1\47\1\62\1\71\1\72\1\45\1\51\1\52\1\53\1\57\1\54\1\60"+
-        "\24\uffff\1\21\2\uffff\1\7\4\uffff\1\25\7\uffff\1\1\2\uffff\1\5"+
-        "\2\uffff\1\22\3\uffff\1\34\5\uffff\1\2\1\23\4\uffff\1\31\2\uffff"+
-        "\1\35\1\uffff\1\6\1\24\2\uffff\1\32\1\uffff\1\26\2\uffff\1\33\5"+
+        "\24\uffff\1\5\4\uffff\1\21\2\uffff\1\25\11\uffff\1\6\1\uffff\1\7"+
+        "\1\uffff\1\22\3\uffff\1\34\5\uffff\1\4\1\23\4\uffff\1\31\2\uffff"+
+        "\1\35\1\3\1\uffff\1\24\2\uffff\1\32\1\uffff\1\26\2\uffff\1\33\5"+
         "\uffff\1\30\1\27";
     static final String DFA10_specialS =
         "\u009b\uffff}>";
     static final String[] DFA10_transitionS = {
             "\2\47\1\uffff\2\47\22\uffff\1\47\1\40\1\17\2\uffff\1\34\1\41"+
             "\1\uffff\1\7\1\10\1\32\1\30\1\16\1\31\1\14\1\33\12\45\1\12\1"+
-            "\13\1\37\1\35\1\36\1\11\1\uffff\32\46\1\3\1\uffff\1\4\1\44\1"+
-            "\15\1\uffff\1\6\1\46\1\2\2\46\1\27\2\46\1\5\2\46\1\25\1\1\1"+
+            "\13\1\37\1\35\1\36\1\11\1\uffff\32\46\1\1\1\uffff\1\2\1\44\1"+
+            "\15\1\uffff\1\3\1\46\1\4\2\46\1\27\2\46\1\5\2\46\1\25\1\6\1"+
             "\20\1\21\1\26\2\46\1\23\1\24\1\46\1\22\4\46\1\uffff\1\42\1\uffff"+
             "\1\43",
-            "\1\50\15\uffff\1\51",
+            "",
+            "",
+            "\1\50",
+            "\1\51",
             "\1\52",
-            "",
-            "",
-            "\1\53",
-            "\1\54",
+            "\1\53\15\uffff\1\54",
             "",
             "",
             "",
@@ -2152,10 +2346,10 @@ public class PlatuGrammarLexer extends Lexer {
             "",
             "",
             "",
-            "\1\113\10\uffff\1\114",
-            "\1\115",
-            "\1\116",
-            "\1\120\11\uffff\1\121\2\uffff\1\117",
+            "\1\113",
+            "\1\114",
+            "\1\115\11\uffff\1\117\2\uffff\1\116",
+            "\1\120\10\uffff\1\121",
             "\1\122",
             "\1\123",
             "\1\124",
@@ -2192,9 +2386,9 @@ public class PlatuGrammarLexer extends Lexer {
             "\1\46\1\uffff\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
             "\1\140",
             "\1\141",
-            "\1\46\1\uffff\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
+            "\1\142",
             "\1\143",
-            "\1\144",
+            "\1\46\1\uffff\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
             "\1\145",
             "\1\146",
             "\1\46\1\uffff\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
@@ -2205,14 +2399,14 @@ public class PlatuGrammarLexer extends Lexer {
             "\1\154",
             "\1\155",
             "\1\156",
-            "\1\46\1\uffff\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
+            "\1\157",
             "\1\160",
             "",
-            "\1\161",
             "\1\46\1\uffff\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
-            "",
-            "\1\163",
+            "\1\162",
+            "\1\46\1\uffff\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
             "\1\164",
+            "",
             "\1\46\1\uffff\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
             "\1\166",
             "",
@@ -2223,11 +2417,11 @@ public class PlatuGrammarLexer extends Lexer {
             "\1\173",
             "\1\174",
             "\1\175",
-            "",
             "\1\176",
             "\1\46\1\uffff\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
             "",
             "\1\46\1\uffff\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
+            "",
             "\1\u0081",
             "",
             "\1\u0082",
@@ -2238,10 +2432,10 @@ public class PlatuGrammarLexer extends Lexer {
             "\1\u0086",
             "\1\u0087",
             "\1\46\1\uffff\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
-            "\1\u0089",
-            "",
-            "",
             "\1\46\1\uffff\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
+            "",
+            "",
+            "\1\u008a",
             "\1\46\1\uffff\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
             "\1\u008c",
             "\1\u008d",
@@ -2249,8 +2443,8 @@ public class PlatuGrammarLexer extends Lexer {
             "\1\46\1\uffff\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
             "\1\u008f",
             "",
-            "\1\46\1\uffff\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
             "",
+            "\1\46\1\uffff\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
             "",
             "\1\u0091",
             "\1\u0092",
