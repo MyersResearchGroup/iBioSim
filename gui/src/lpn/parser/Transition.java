@@ -52,9 +52,8 @@ public class Transition {
 	
 	private int index;
 	
-	private boolean local;
+	//private boolean local;
 	
-	// TODO: Sort LPNs that share variables in the assignedVarSet of this transition. 
 	private List<LhpnFile> dstLpnList = new ArrayList<LhpnFile>();
 
 //	public Transition(String name, ArrayList<Variable> variables, LhpnFile lhpn) {
@@ -72,11 +71,11 @@ public class Transition {
 //		rateAssignTrees = new HashMap<String, ExprTree>();
 //	}
 	
-	public Transition(String name, int index, LhpnFile lhpn, boolean local) {
+	public Transition(String name, int index, LhpnFile lhpn) {
 		this.name = name;
 		this.lhpn = lhpn;
 		this.index = index;
-		this.local = local;
+		//this.local = local;
 		preset = new ArrayList<Place>();
 		postset = new ArrayList<Place>();
 		boolAssignments = new HashMap<String, String>();
@@ -90,14 +89,34 @@ public class Transition {
 	}
 
 	public Transition() {
+		preset = new ArrayList<Place>();
+		postset = new ArrayList<Place>();
+		boolAssignments = new HashMap<String, String>();
+		boolAssignTrees = new HashMap<String, ExprTree>();
+		intAssignments = new HashMap<String, String>();
+		intAssignTrees = new HashMap<String, ExprTree>();
+		contAssignments = new HashMap<String, String>();
+		contAssignTrees = new HashMap<String, ExprTree>();
+		rateAssignments = new HashMap<String, String>();
+		rateAssignTrees = new HashMap<String, ExprTree>();
 	}
 
 	public void addPostset(Place place) {
-		postset.add(place);
+		if (postset != null)
+			postset.add(place);
+		else {
+			postset = new ArrayList<Place>();
+			postset.add(place);
+		}
 	}
 
 	public void addPreset(Place place) {
-		preset.add(place);
+		if (preset != null)
+			preset.add(place);
+		else {
+			preset = new ArrayList<Place>();
+			preset.add(place);
+		}
 	}
 
 	public boolean addEnabling(String newEnab) {
@@ -121,6 +140,13 @@ public class Transition {
 		}
 		return retVal;
 	}
+	
+	public void addEnablingWithoutLPN(ExprTree newEnab) {
+		if (newEnab != null)
+			enablingTree = newEnab;
+			enabling = newEnab.toString();
+			
+	}
 
 	public boolean addIntAssign(String variable, String assignment) {
 		boolean retVal;
@@ -132,6 +158,29 @@ public class Transition {
 			intAssignments.put(variable, assignment);
 		}
 		return retVal;
+	}
+	
+	public void addIntAssign(String variable, ExprTree assignment) {
+		if (intAssignTrees == null && intAssignments == null) {
+			intAssignTrees = new HashMap<String, ExprTree>();
+			intAssignments = new HashMap<String, String>();
+			intAssignTrees.put(variable, assignment);
+			intAssignments.put(variable, assignment.toString());
+		}
+		else if (intAssignTrees == null && intAssignments != null){
+			intAssignTrees = new HashMap<String, ExprTree>();
+			intAssignTrees.put(variable, assignment);
+			intAssignments.put(variable, assignment.toString());
+		}
+		else if (intAssignments == null && intAssignTrees != null) {
+			intAssignments = new HashMap<String, String>();
+			intAssignTrees.put(variable, assignment);
+			intAssignments.put(variable, assignment.toString());
+		}
+		else {
+			intAssignTrees.put(variable, assignment);
+			intAssignments.put(variable, assignment.toString());
+		}
 	}
 
 	public boolean addContAssign(String variable, String assignment) {
@@ -752,17 +801,17 @@ public class Transition {
 		return isLocal;
 	}
 	
-	public void setLocal(boolean local) {
-		this.local = local;
-	}
+//	public void setLocal(boolean local) {
+//		this.local = local;
+//	}
 	
 	public List<LhpnFile> getDstLpnList(){
     	return this.dstLpnList;
     }
     
-    public void addDstLpn(LhpnFile lpn){
-    	this.dstLpnList.add(lpn);
-    }
+//    public void addDstLpn(LhpnFile lpn){
+//    	this.dstLpnList.add(lpn);
+//    }
     
     public String getFullLabel() {
     	return this.lhpn.getLabel() + ":" + this.name;
