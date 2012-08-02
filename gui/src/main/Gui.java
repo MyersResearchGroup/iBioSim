@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -105,8 +106,14 @@ import main.util.tabs.CloseAndMaxTabbedPane;
 import synthesis.Synthesis;
 
 import verification.*;
+import verification.platu.lpn.io.PlatuGrammarLexer;
+import verification.platu.lpn.io.PlatuGrammarParser;
 
+import org.antlr.runtime.ANTLRFileStream;
+import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.TokenStream;
+//import org.antlr.runtime.TokenStream;
 import org.sbml.libsbml.*;
 
 //import lpn.parser.properties.*;
@@ -4286,17 +4293,48 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					file[file.length - 1] = file[file.length - 1].replaceAll("[^a-zA-Z0-9_.]+", "_");
 					if (checkFiles(root + separator + file[file.length - 1], filename.trim())) {
 						if (overwrite(root + separator + file[file.length - 1], file[file.length - 1])) {
-							FileOutputStream out = new FileOutputStream(new File(root + separator + file[file.length - 1]));
-							FileInputStream in = new FileInputStream(new File(filename));
-							// log.addText(filename);
-							int read = in.read();
-							while (read != -1) {
-								out.write(read);
-								read = in.read();
+							// Identify which LPN format is imported.
+							BufferedReader input = new BufferedReader(new FileReader(filename));
+							String str;
+							boolean lpnUSF = false;
+							while ((str = input.readLine()) != null) {
+								if (str.startsWith(".")) {
+									break;
+								}
+								else if (str.startsWith("<")) {
+									lpnUSF = true;
+									break;
+								}
+								else {
+									JOptionPane.showMessageDialog(frame, "LPN file format is not valid.", "Error", JOptionPane.ERROR_MESSAGE);
+									break;
+								}
+									
 							}
-							in.close();
-							out.close();
-							addToTree(file[file.length - 1]);
+							if (!lpnUSF) {
+								FileOutputStream out = new FileOutputStream(new File(root + separator + file[file.length - 1]));
+								FileInputStream in = new FileInputStream(new File(filename));
+								// log.addText(filename);
+								int read = in.read();							
+								while (read != -1) {
+									out.write(read);
+									read = in.read();
+								}
+								in.close();
+								out.close();
+								addToTree(file[file.length - 1]);
+							}
+							else {
+								ANTLRFileStream in = new ANTLRFileStream(filename);
+								PlatuGrammarLexer lexer = new PlatuGrammarLexer(in);
+								TokenStream tokenStream = new CommonTokenStream(lexer);
+								PlatuGrammarParser antlrParser = new PlatuGrammarParser(tokenStream);
+								Set<LhpnFile> lpnSet = antlrParser.lpn();
+								for (LhpnFile lpn : lpnSet) {
+									lpn.save(root + separator + lpn.getLabel() + ".lpn");
+									addToTree(lpn.getLabel() + ".lpn");
+								}
+							}
 						}
 					}
 				}
