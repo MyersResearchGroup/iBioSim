@@ -616,8 +616,7 @@ public class LhpnFile {
 	}
 
 	public void addTransition(String name) {
-		//Transition trans = new Transition(name, variables, this);
-		Transition trans = new Transition(name, tranIndex++, this, true);
+		Transition trans = new Transition(name, tranIndex++, this);
 		transitions.put(name, trans);
 	}
 
