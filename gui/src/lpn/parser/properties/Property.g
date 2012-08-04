@@ -9,20 +9,47 @@ options {
 }
 
 @header {
-  package antlrPackage;
-  //import lpn.parser.LhpnFile;
+  package lpn.parser.properties;
+  
+ // package antlrPackage;
 }
 
-@lexer::header {
-  package antlrPackage;
+@lexer::header { 
+  package lpn.parser.properties;
+  //package antlrPackage;
 }
 
 
 
 program
-	: (statement)*
+	:property
 	;
+	
+property
+: 'property'^ ID LCURL! (declaration)* (statement)* RCURL!
+;
+	
+declaration
+  :BOOLEAN^ ID (COMMA! ID)* SEMICOL!
+  | REAL^ ID (COMMA! ID)* SEMICOL!
+  | INT^ ID (COMMA! ID)* SEMICOL!
+  ;
+  
+ALWAYS
+: 'always'
+;
 
+BOOLEAN
+:'boolean'
+;
+
+REAL
+:'real'
+;
+
+INTEGER
+:'int'
+;
 
 
 WAIT
@@ -65,6 +92,26 @@ END
 
 ELSEIF
 :'else if'
+;
+
+ELSE
+:'else'
+;
+
+WAIT_STABLE
+:'waitStable'
+;
+
+ASSERT_STABLE
+:'assertStable'
+;
+
+ASSERT_UNTIL
+:'assertUntil'
+;
+
+POSEDGE
+: 'posedge'
 ;
 
 
@@ -206,17 +253,16 @@ COMMA
 
 
 
-
-
-booleanNegationExpression 
-  : (NOT^)* primitiveElement
-   ;
-
-signExpression
-  : (PLUS^|MINUS^)* booleanNegationExpression
-  ;
+booleanNegationExpression
+: (NOT^)* constantValue
+;
   
-
+always_statement
+: ALWAYS^  SEMICOL!
+;
+signExpression
+:(PLUS^|MINUS^)*  booleanNegationExpression
+;
 multiplyingExpression
   : signExpression ((MULT^|DIV^|MOD^) signExpression)*
   ;
@@ -227,12 +273,9 @@ addingExpression
   
 
 relationalExpression
-  : addingExpression ((EQUAL^|NOT_EQUAL^|GET^|GETEQ^|LET^|LETEQ^ | SAMEAS^) addingExpression)*
+  : addingExpression ((EQUAL^|NOT_EQUAL^|GET^|GETEQ^|LET^|LETEQ^|SAMEAS^) addingExpression)*
   ;
-  
-primitiveElement
-	:constantValue
-	;  
+
 
 logicalExpression
    : relationalExpression ((AND^|OR^) relationalExpression)*
@@ -251,12 +294,12 @@ expression
   //|multiplyingExpression
   : unaryExpression
   |logicalExpression
-//  |signExpression
-  //|booleanNegationExpression
+  |edge_expression
   ;
 
+
 constantValue
-	:ID | INT
+	: INT | ID
 	;
 
 wait_statement
@@ -275,18 +318,40 @@ if_statement
   ;
   
 if_part
- 	: LPARA!expression RPARA! LCURL! (statement)* RCURL! (else_part)*
+ 	: LPARA!expression RPARA! LCURL! (statement)* RCURL! (else_if)* (else_part)*
   ;
 
-else_part
-	: ELSEIF^  LPARA!expression RPARA!  LCURL! (statement)*  RCURL!
+else_if
+	: ELSEIF^  LPARA!expression RPARA!  LCURL! (statement)*  RCURL! 
 	;
+	
+else_part
+	:ELSE^  LCURL! (statement)*  RCURL!
+	;	
+	
+waitStable_statement
+:WAIT_STABLE^ LPARA! expression COMMA! expression RPARA! SEMICOL!
+;
+assertUntil_statement
+:ASSERT_UNTIL^ LPARA! expression COMMA! expression RPARA! SEMICOL!
+;
+
+edge_expression
+: POSEDGE^ ID
+;
+assertStable_statement
+:ASSERT_STABLE^ LPARA! expression COMMA! expression RPARA! SEMICOL!
+;
+
 statement
-	: wait_statement
-	| assert_statement
-	| if_statement
-	//|assignment
-	; 
+	:wait_statement
+	|assert_statement
+	|if_statement
+	|waitStable_statement
+	|assertUntil_statement
+	|always_statement
+	|assertStable_statement
+  ; 
 	
 //assignment
 //	: variable EQUAL^ expression
