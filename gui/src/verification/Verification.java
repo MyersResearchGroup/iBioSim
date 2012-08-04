@@ -1109,8 +1109,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				}				
 				// ------- Temporary Settings ------------
 				// Options for printing out intermediate results during POR
-				// Options.setDebugMode(true);
-				   Options.setDebugMode(false);
+				   Options.setDebugMode(true);
+				// Options.setDebugMode(false);
 				// ----------------------------------------
 				Project untimed_dfs = new Project(selectedLPNs);
 				//----------- POR and Cycle Closing Methods (FULL)--------------
@@ -1225,16 +1225,64 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						return;
 					}
 					int ampleMethdsIndex = ampleMethdsList.getSelectedIndex();
-					if (ampleMethdsIndex == 0) {
+					if (ampleMethdsIndex == 0) 
 						Options.setPOR("tb");
-						Options.setCycleClosingMthd("behavioral");
-						Options.setCycleClosingAmpleMethd("cctb");
-					}					
-					if (ampleMethdsIndex == 1) {
+					if (ampleMethdsIndex == 1) 
 						Options.setPOR("tboff");
-						Options.setCycleClosingMthd("behavioral");
-						Options.setCycleClosingAmpleMethd("cctboff");
+					// GUI for different cycle closing methods.
+					String[] entries = {"Use behavioral analysis",
+										"Use behavioral analysis and state trace-back",
+										"No cycle closing",
+										"Strong cycle condition"};
+					JList cycleClosingList = new JList(entries);
+					cycleClosingList.setVisibleRowCount(4);
+					//cycleClosingList.addListSelectionListener(new ValueReporter());
+					JScrollPane cycleClosingPane = new JScrollPane(cycleClosingList);
+					JPanel mainPanel = new JPanel(new BorderLayout());
+					mainPanel.add("North", new JLabel("Select a cycle closing method:"));
+					mainPanel.add("Center", cycleClosingPane);							
+					Object[] options = {"Run", "Cancel"};
+					int optionRtVal = JOptionPane.showOptionDialog(Gui.frame, mainPanel, "Cycle closing methods selection", 
+								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+					if (optionRtVal == 1) {
+						// Cancel
+						return;
 					}
+					int cycleClosingMthdIndex = cycleClosingList.getSelectedIndex();
+					if (cycleClosingMthdIndex == 0) {
+						Options.setCycleClosingMthd("behavioral");
+						if (Options.getPOR().equals("tb")) {
+							String[] cycleClosingAmpleMethds = {"Use trace-back", "No trace-back"};
+							JList cycleClosingAmpleList = new JList(cycleClosingAmpleMethds);
+							cycleClosingAmpleList.setVisibleRowCount(2);
+							JScrollPane cycleClosingAmpleMethdsPane = new JScrollPane(cycleClosingAmpleList);
+							JPanel mainPanel1 = new JPanel(new BorderLayout());
+							mainPanel1.add("North", new JLabel("Select a cycle closing ample computation method:"));
+							mainPanel1.add("Center", cycleClosingAmpleMethdsPane);							
+							Object[] options1 = {"Run", "Cancel"};
+							int optionRtVal1 = JOptionPane.showOptionDialog(Gui.frame, mainPanel1, "Cycle closing ample computation method selection", 
+										JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options1, options1[0]);
+							if (optionRtVal1 == 1) {
+								// Cancel
+								return;
+							}
+							int cycleClosingAmpleMethdIndex = cycleClosingAmpleList.getSelectedIndex();
+							if (cycleClosingAmpleMethdIndex == 0) 
+								Options.setCycleClosingAmpleMethd("cctb");
+							if (cycleClosingAmpleMethdIndex == 1)
+								Options.setCycleClosingAmpleMethd("cctboff");
+						}
+						else if (Options.getPOR().equals("tboff")) {
+							Options.setCycleClosingAmpleMethd("cctboff");
+						}
+					}						
+					else if (cycleClosingMthdIndex == 1) 
+						Options.setCycleClosingMthd("state_search");
+					else if (cycleClosingMthdIndex == 2)
+						Options.setCycleClosingMthd("no_cycleclosing");
+					else if (cycleClosingMthdIndex == 3)
+						Options.setCycleClosingMthd("strong");
+
 					if (dot.isSelected()) {
 						Options.setOutputSgFlag(true);
 					}
@@ -1416,12 +1464,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					Integer tryNumDecomps = processMap.size(); // The maximal number of decomposed LPNs is the number of all processes in the LPN.
 					HashSet<Integer> possibleDecomps = new HashSet<Integer>();
 					//System.out.println("lpn.getVariables().length = " + lpn.getVariables().length);
-					while(tryNumDecomps > 1 && maxNumVarsInOneComp<=lpn.getVariables().length) {
+					while(tryNumDecomps > 1) {
 						LpnComponentList componentList = new LpnComponentList(maxNumVarsInOneComp);					
 						componentList.buildComponents(processMap, directory, lpn.getLabel());
 						HashMap<Integer, Component> compMap = componentList.getComponentMap();
-						tryNumDecomps = compMap.size();
-						//System.out.println("tryNumDecomps = " + tryNumDecomps);
+						tryNumDecomps = compMap.size();						
 						if (tryNumDecomps == 1)
 							break;
 						if (!possibleDecomps.contains(compMap.size())) {
