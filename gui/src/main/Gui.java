@@ -82,7 +82,7 @@ import javax.swing.tree.TreeModel;
 
 import analysis.AnalysisView;
 import analysis.Run;
-import antlrPackage.BuildProperty;
+import lpn.parser.properties.BuildProperty;
 import biomodel.gui.ModelEditor;
 import biomodel.gui.movie.MovieContainer;
 import biomodel.gui.textualeditor.ElementsPanel;
@@ -4730,11 +4730,16 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								if (!extractModelDefinitions(documentComp,documentCompModel)) return;
 							}
 							updateReplacementsDeletions(document, documentComp, documentCompModel);
+							SBMLWriter writer = new SBMLWriter();
+							if (document.getModel().getId()==null||document.getModel().getId().equals("")) {
+								document.setId(newFile.replace(".xml",""));
+							} else {
+								newFile = document.getModel().getId()+".xml";
+							}
+							writer.writeSBML(document, root + separator + newFile);
+							addToTree(newFile);
+							openSBML(root + separator + newFile);
 						}
-						SBMLWriter writer = new SBMLWriter();
-						writer.writeSBML(document, root + separator + newFile);
-						addToTree(newFile);
-						openSBML(root + separator + newFile);
 					}
 				}
 				catch (Exception e1) {
@@ -5448,6 +5453,44 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private void rename() {
 		if (!tree.getFile().equals(root)) {
+			
+			if (!new File(tree.getFile()).isDirectory()) {
+				String[] views = canDelete(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]);
+				if (views.length != 0) {
+					String view = "";
+					String gcms = "";
+					for (int i = 0; i < views.length; i++) {
+						if (views[i].endsWith(".xml")) {
+							gcms += views[i] + "\n";
+						}
+						else {
+							view += views[i] + "\n";
+						}
+					}
+					String message;
+					if (gcms.equals("")) {
+						message = "Unable to rename the selected file." + "\nIt is linked to the following views:\n" + view
+								+ "Delete these views first.";
+					}
+					else if (view.equals("")) {
+						message = "Unable to rename the selected file." + "\nIt is linked to the following models:\n" + gcms
+								+ "Delete these models first.";
+					}
+					else {
+						message = "Unable to rename the selected file." + "\nIt is linked to the following views:\n" + view
+								+ "It is also linked to the following models:\n" + gcms + "Delete these views and models first.";
+					}
+					JTextArea messageArea = new JTextArea(message);
+					messageArea.setEditable(false);
+					JScrollPane scroll = new JScrollPane();
+					scroll.setMinimumSize(new Dimension(300, 300));
+					scroll.setPreferredSize(new Dimension(300, 300));
+					scroll.setViewportView(messageArea);
+					JOptionPane.showMessageDialog(frame, scroll, "Unable To Rename File", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+			}
+			
 			String oldName = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
 			for (int i = 0; i < tab.getTabCount(); i++) {
 				if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
@@ -10293,6 +10336,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			int y = screenSize.height / 2 - frameSize.height / 2;
 			f.setLocation(x, y);
 			f.setVisible(true);
+			Object[] options = { "Dismiss" };
+			JOptionPane.showOptionDialog(frame, scroll, "SBML Conversion Errors and Warnings", JOptionPane.YES_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+					options[0]);
 		}
 		if (document.getLevel() < SBML_LEVEL || document.getVersion() < SBML_VERSION) {
 			document.setLevelAndVersion(SBML_LEVEL, SBML_VERSION,false);
