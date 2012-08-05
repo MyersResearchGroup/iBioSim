@@ -160,6 +160,9 @@ public class BioModel {
 		((CompSBMLDocumentPlugin)sbml.getPlugin("comp")).setRequired(true);
 		sbmlComp = (CompSBMLDocumentPlugin)sbml.getPlugin("comp");
 		sbmlCompModel = (CompModelPlugin)sbml.getModel().getPlugin("comp");
+		Port port = sbmlCompModel.createPort();
+		port.setId(GlobalConstants.COMPARTMENT+"__"+c.getId());
+		port.setIdRef(c.getId());
 	}
 
 	private void loadDefaultParameters() {
@@ -194,6 +197,34 @@ public class BioModel {
 		createGlobalParameter(GlobalConstants.STOICHIOMETRY_STRING, biosimrc.get("biosim.gcm.STOICHIOMETRY_VALUE", ""));
 		createGlobalParameter(GlobalConstants.ACTIVATED_STRING, biosimrc.get("biosim.gcm.ACTIVED_VALUE", ""));
 		createGlobalParameter(GlobalConstants.KECDIFF_STRING, biosimrc.get("biosim.gcm.KECDIFF_VALUE", ""));
+	}
+	
+	public boolean IsDefaultParameter(String paramId) {
+		if (paramId.equals(GlobalConstants.FORWARD_KREP_STRING) ||
+			paramId.equals(GlobalConstants.REVERSE_KREP_STRING) ||
+			paramId.equals(GlobalConstants.FORWARD_KACT_STRING) ||
+			paramId.equals(GlobalConstants.REVERSE_KACT_STRING) ||
+			paramId.equals(GlobalConstants.FORWARD_KCOMPLEX_STRING) ||
+			paramId.equals(GlobalConstants.REVERSE_KCOMPLEX_STRING) ||
+			paramId.equals(GlobalConstants.FORWARD_RNAP_BINDING_STRING) ||
+			paramId.equals(GlobalConstants.REVERSE_RNAP_BINDING_STRING) ||
+			paramId.equals(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING) || 
+			paramId.equals(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING) ||
+			paramId.equals(GlobalConstants.FORWARD_MEMDIFF_STRING) ||
+			paramId.equals(GlobalConstants.REVERSE_MEMDIFF_STRING) ||
+			paramId.equals(GlobalConstants.KDECAY_STRING) ||
+			paramId.equals(GlobalConstants.KECDECAY_STRING) ||
+			paramId.equals(GlobalConstants.COOPERATIVITY_STRING) ||
+			paramId.equals(GlobalConstants.RNAP_STRING) ||
+			paramId.equals(GlobalConstants.OCR_STRING) ||
+			paramId.equals(GlobalConstants.KBASAL_STRING) ||
+			paramId.equals(GlobalConstants.PROMOTER_COUNT_STRING) ||
+			paramId.equals(GlobalConstants.STOICHIOMETRY_STRING) ||
+			paramId.equals(GlobalConstants.ACTIVATED_STRING) ||
+			paramId.equals(GlobalConstants.KECDIFF_STRING)) {
+			return true;
+		}
+		return false;
 	}
 	
 	public boolean IsWithinCompartment() {
@@ -565,12 +596,6 @@ public class BioModel {
 					value = 0;
 				}
 				LHPN.addInteger(species, "" + value);				
-			}
-		}
-		for (String compSpecies : getCompSpecies()) {
-			String[] split = compSpecies.split(" ");
-			if(!LHPN.getIntegers().keySet().contains(split[0])) {
-				LHPN.addInteger(split[0], split[1]);
 			}
 		}
 		for (int i = 0; i < specs.size(); i++) {
@@ -3284,9 +3309,6 @@ public class BioModel {
 	
 	public static String getSpeciesType(SBMLDocument sbml,String speciesId) {
 		Species species = sbml.getModel().getSpecies(speciesId);
-		if (species == null) {
-			return "unknown";
-		}
 		CompModelPlugin sbmlCompModel = (CompModelPlugin)sbml.getModel().getPlugin("comp");
 		if (sbmlCompModel!=null) {
 			if (sbmlCompModel.getPort(GlobalConstants.INPUT+"__"+speciesId)!=null) return GlobalConstants.INPUT;
@@ -6174,29 +6196,6 @@ public class BioModel {
 
 	public Grid getGrid() {
 		return grid;
-	}
-	
-	public ArrayList<String> getCompSpecies() {
-		ArrayList<String> compSpecies = new ArrayList<String>();
-		for (int i = 0; i < getSBMLCompModel().getNumSubmodels(); ++i) {
-			Model submodel = getSBMLCompModel().getSubmodel(i).getInstantiation();
-			for (int j = 0; j < submodel.getNumSpecies(); ++j) {
-				Species spec = submodel.getSpecies(j);
-				double initial;
-				if (spec.isSetInitialAmount()) {
-					initial = spec.getInitialAmount();
-				}
-				else {
-					initial = spec.getInitialConcentration();
-				}
-				for (String comp : compartments.keySet()) {
-					if (comp.contains("Cell")) {
-						compSpecies.add(comp.replace("Cell", "") + spec.getId() + " " + initial);
-					}
-				}
-			}
-		}
-		return compSpecies;
 	}
 	
 	/*
