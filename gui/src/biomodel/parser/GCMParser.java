@@ -485,14 +485,16 @@ public class GCMParser {
 		// Map global parameters to reactions in which they appear
 		KineticLaw kl = sbmlReaction.getKineticLaw();
 		Set<String> localParams = new HashSet<String>();
-		for (long i = 0; i < kl.getNumParameters(); i++) {
-			localParams.add(kl.getParameter(i).getId());
-		}
-		for (String input : parseInputHelper(kl.getMath())) {
-			if (!speciesMetaMap.containsKey(input) && !localParams.contains(input)) {
-				if (!paramInputMap.containsKey(input))
-					paramInputMap.put(input, new HashSet<String>());;
-				paramInputMap.get(input).add(sbmlReaction.getMetaId());
+		if (kl != null) {
+			for (long i = 0; i < kl.getNumParameters(); i++) {
+				localParams.add(kl.getParameter(i).getId());
+			}
+			for (String input : parseInputHelper(kl.getMath())) {
+				if (!speciesMetaMap.containsKey(input) && !localParams.contains(input)) {
+					if (!paramInputMap.containsKey(input))
+						paramInputMap.put(input, new HashSet<String>());;
+						paramInputMap.get(input).add(sbmlReaction.getMetaId());
+				}
 			}
 		}
 //		for (long i = 0; i < kl.getNumParameters(); i++) {
