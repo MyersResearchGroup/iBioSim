@@ -2871,6 +2871,19 @@ public class BioModel {
 		return parameterSet;
 	}
 
+	public ArrayList<String> getConstantUserParameters() {
+		ArrayList<String> parameterSet = new ArrayList<String>();
+		if (sbml!=null) {
+			for (int i = 0; i < sbml.getModel().getNumParameters(); i++) {
+				Parameter parameter = sbml.getModel().getParameter(i);
+				if (parameter.getConstant() && !IsDefaultParameter(parameter.getId())) {
+					parameterSet.add(parameter.getId());
+				}
+			}
+		}
+		return parameterSet;
+	}
+	
 	public ArrayList<String> getSpecies() {
 		ArrayList<String> speciesSet = new ArrayList<String>();
 		if (sbml!=null) {

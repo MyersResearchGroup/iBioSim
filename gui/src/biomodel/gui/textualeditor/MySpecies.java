@@ -933,14 +933,14 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		return specUnits;
 	}
 
-	public static JComboBox createConversionFactorChoices(BioModel gcm) {
+	public static JComboBox createConversionFactorChoices(BioModel bioModel) {
 		JComboBox specConv;
 		specConv = new JComboBox();
 		specConv.addItem("( none )");
-		ListOf listOfParameters = gcm.getSBMLDocument().getModel().getListOfParameters();
-		for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumParameters(); i++) {
+		ListOf listOfParameters = bioModel.getSBMLDocument().getModel().getListOfParameters();
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumParameters(); i++) {
 			Parameter param = (Parameter) listOfParameters.get(i);
-			if (param.getConstant()) {
+			if (param.getConstant() && !bioModel.IsDefaultParameter(param.getId())) {
 				specConv.addItem(param.getId());
 			}
 		}
