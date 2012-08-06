@@ -97,6 +97,7 @@ public class GlobalConstants {
 	public static final String DIMABS = "Dimerization abstraction";
 	public static final String COMPARTMENT = "compartment";
 	public static final String PARAMETER = "parameter";
+	public static final String LOCALPARAMETER = "localParameter";
 	public static final String SBMLSPECIES = "species";
 	public static final String SBMLREACTION = "reaction";
 	public static final String EVENT = "event";
