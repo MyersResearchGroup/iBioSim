@@ -1,6 +1,4 @@
-// $ANTLR 3.4 /home/chou/dhanashree/research/workspace/BioSim/gui/src/lpn/parser/properties/Property.g 2012-08-04 11:31:51
- 
-  package lpn.parser.properties;
+package lpn.parser.properties;
   //package antlrPackage;
 
 
