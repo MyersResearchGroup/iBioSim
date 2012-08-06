@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 
 import org.sbml.libsbml.CompSBasePlugin;
 import org.sbml.libsbml.Deletion;
+import org.sbml.libsbml.Model;
 import org.sbml.libsbml.ReplacedElement;
 import org.sbml.libsbml.Replacing;
 import org.sbml.libsbml.SBase;
@@ -50,6 +51,8 @@ public class ComponentsPanel extends JPanel {
 
 	private ArrayList<JComboBox> directionBox = null;
 
+	private ArrayList<JComboBox> convBox = null;
+
 	private BioModel bioModel = null;
 
 	private PropertyList componentsList = null;
@@ -64,12 +67,16 @@ public class ComponentsPanel extends JPanel {
 	
 	private String subModelId;
 	
+	private JComboBox timeConvFactorBox;
+	
+	private JComboBox extentConvFactorBox;
+	
 	private boolean paramsOnly;
 
 	public ComponentsPanel(String selected, PropertyList componentsList, BioModel bioModel, ArrayList<String> ports, 
 			String selectedComponent, String oldPort, boolean paramsOnly, ModelEditor gcmEditor) {
 		
-		super(new GridLayout(ports.size() + 3, 1));
+		super(new GridLayout(ports.size() + 5, 1));
 		this.selected = selected;
 		this.componentsList = componentsList;
 		this.bioModel = bioModel;
@@ -84,6 +91,7 @@ public class ComponentsPanel extends JPanel {
 		types = new ArrayList<String>();
 		portmapBox = new ArrayList<JComboBox>();
 		directionBox = new ArrayList<JComboBox>();
+		convBox = new ArrayList<JComboBox>();
 
 		String[] directions = new String[2];
 		directions[0] = "<--";
@@ -94,6 +102,16 @@ public class ComponentsPanel extends JPanel {
 		} else {
 			subModelId = selected;
 		}
+		
+		ArrayList <String> parameterList = bioModel.getParameters();
+		Collections.sort(parameterList);
+		String[] parameters = new String[parameterList.size()+1];
+		parameters[0] = "(none)";
+		for (int l = 1; l < parameters.length; l++) {
+			parameters[l] = parameterList.get(l-1);
+		}
+		timeConvFactorBox = new JComboBox(parameters);
+		extentConvFactorBox = new JComboBox(parameters);
 		
 		ArrayList <String> compartmentList = bioModel.getCompartments();
 		Collections.sort(compartmentList);
@@ -115,11 +133,11 @@ public class ComponentsPanel extends JPanel {
 				portmapBox.add(port);
 				JComboBox dirport = new JComboBox(directions);
 				directionBox.add(dirport);
+				JComboBox convFactor = new JComboBox(parameters);
+				convBox.add(convFactor);
 			}
 		}
 		
-		ArrayList <String> parameterList = bioModel.getParameters();
-		Collections.sort(parameterList);
 		String[] paramsWithNone = new String[parameterList.size() + 2];
 		paramsWithNone[0] = "--none--";
 		paramsWithNone[1] = "--delete--";
@@ -130,7 +148,7 @@ public class ComponentsPanel extends JPanel {
 			String type = ports.get(i).split(":")[0];
 			String portId = ports.get(i).split(":")[1];
 			String idRef = ports.get(i).split(":")[2];
-			if (type.equals(GlobalConstants.PARAMETER)) {
+			if (type.equals(GlobalConstants.PARAMETER) || type.equals(GlobalConstants.LOCALPARAMETER)) {
 				portIds.add(portId);
 				idRefs.add(idRef);
 				types.add(type);
@@ -138,6 +156,8 @@ public class ComponentsPanel extends JPanel {
 				portmapBox.add(port);
 				JComboBox dirport = new JComboBox(directions);
 				directionBox.add(dirport);
+				JComboBox convFactor = new JComboBox(parameters);
+				convBox.add(convFactor);
 			}
 		}
 		
@@ -161,6 +181,8 @@ public class ComponentsPanel extends JPanel {
 				portmapBox.add(port);
 				JComboBox dirport = new JComboBox(directions);
 				directionBox.add(dirport);
+				JComboBox convFactor = new JComboBox(parameters);
+				convBox.add(convFactor);
 			}
 		}
 		
@@ -184,6 +206,8 @@ public class ComponentsPanel extends JPanel {
 				portmapBox.add(port);
 				JComboBox dirport = new JComboBox(directions);
 				directionBox.add(dirport);
+				JComboBox convFactor = new JComboBox(parameters);
+				convBox.add(convFactor);
 			}
 		}
 		
@@ -207,6 +231,8 @@ public class ComponentsPanel extends JPanel {
 				portmapBox.add(port);
 				JComboBox dirport = new JComboBox(directions);
 				directionBox.add(dirport);
+				JComboBox convFactor = new JComboBox(parameters);
+				convBox.add(convFactor);
 			}
 		}
 		
@@ -230,6 +256,8 @@ public class ComponentsPanel extends JPanel {
 				portmapBox.add(port);
 				JComboBox dirport = new JComboBox(directions);
 				directionBox.add(dirport);
+				JComboBox convFactor = new JComboBox(parameters);
+				convBox.add(convFactor);
 			}
 		}
 		
@@ -241,6 +269,7 @@ public class ComponentsPanel extends JPanel {
 			String portId = ports.get(i).split(":")[1];
 			String idRef = ports.get(i).split(":")[2];
 			if (!type.equals(GlobalConstants.COMPARTMENT) && !type.equals(GlobalConstants.PARAMETER) &&
+				!type.equals(GlobalConstants.LOCALPARAMETER) &&
 				!type.equals(GlobalConstants.SBMLSPECIES) && !type.equals(GlobalConstants.SBMLREACTION) && 
 				!type.equals(GlobalConstants.FUNCTION) && !type.equals(GlobalConstants.UNIT)) {
 				portIds.add(portId);
@@ -251,6 +280,8 @@ public class ComponentsPanel extends JPanel {
 				JComboBox dirport = new JComboBox(directions);
 				dirport.setEnabled(false);
 				directionBox.add(dirport);
+				JComboBox convFactor = new JComboBox(parameters);
+				convBox.add(convFactor);
 			}
 		}
 		
@@ -261,16 +292,30 @@ public class ComponentsPanel extends JPanel {
 		add(field);
 		
 		// Port Map field
-		add(new JLabel("Ports"));
+		JPanel headingPanel = new JPanel();
+		JLabel typeLabel = new JLabel("Type");
+		JLabel portLabel = new JLabel("Port");
+		JLabel dirLabel = new JLabel("Direction");
+		JLabel replLabel = new JLabel("Replacement");
+		JLabel convLabel = new JLabel("Conversion");
+		headingPanel.setLayout(new GridLayout(1, 5));
+		headingPanel.add(typeLabel);
+		headingPanel.add(portLabel);
+		headingPanel.add(dirLabel);
+		headingPanel.add(replLabel);
+		headingPanel.add(convLabel);
+		add(headingPanel);
+		//add(new JLabel("Ports"));
 		for (int i = 0; i < portIds.size(); i++) {
 			JPanel tempPanel = new JPanel();
 			JLabel tempLabel = new JLabel(idRefs.get(i));
 			JLabel tempLabel2 = new JLabel(types.get(i));
-			tempPanel.setLayout(new GridLayout(1, 4));
+			tempPanel.setLayout(new GridLayout(1, 5));
 			tempPanel.add(tempLabel2);
 			tempPanel.add(tempLabel);
 			tempPanel.add(directionBox.get(i));
 			tempPanel.add(portmapBox.get(i));
+			tempPanel.add(convBox.get(i));
 			add(tempPanel);
 		}
 		SBaseList elements = bioModel.getSBMLDocument().getModel().getListOfAllElements();
@@ -291,6 +336,8 @@ public class ComponentsPanel extends JPanel {
 				}
 			}
 		}
+		timeConvFactorBox.setSelectedItem(instance.getTimeConversionFactor());
+		extentConvFactorBox.setSelectedItem(instance.getExtentConversionFactor());
 		
 		String oldName = null;
 		if (selected != null) {
@@ -306,7 +353,19 @@ public class ComponentsPanel extends JPanel {
 			if (sbolURIs.size() > 0)
 				sbolField.setSBOLURIs(sbolURIs);
 		}
-
+		JLabel timeConvFactorLabel = new JLabel("Time Conversion Factor");
+		JLabel extentConvFactorLabel = new JLabel("Extent Conversion Factor");
+		JPanel timePanel = new JPanel();
+		timePanel.setLayout(new GridLayout(1, 2));
+		JPanel extentPanel = new JPanel();
+		extentPanel.setLayout(new GridLayout(1, 2));
+		timePanel.add(timeConvFactorLabel);
+		timePanel.add(timeConvFactorBox);
+		extentPanel.add(extentConvFactorLabel);
+		extentPanel.add(extentConvFactorBox);
+		add(timePanel);
+		add(extentPanel);
+		
 		boolean display = false;
 		while (!display) {
 			display = openGui(oldName);
@@ -326,6 +385,10 @@ public class ComponentsPanel extends JPanel {
 							portmapBox.get(l).setSelectedItem(id);
 						}
 						directionBox.get(l).setSelectedIndex(0);
+						convBox.get(l).setSelectedIndex(0);
+						if (replacement.isSetConversionFactor()) {
+							convBox.get(l).setSelectedItem(replacement.getConversionFactor());
+						}
 					}
 				} 
 			}
@@ -342,6 +405,7 @@ public class ComponentsPanel extends JPanel {
 							portmapBox.get(l).setSelectedItem(id);
 						}
 						directionBox.get(l).setSelectedIndex(1);
+						convBox.get(l).setSelectedIndex(0);
 					}
 				} 
 			}
@@ -415,6 +479,16 @@ public class ComponentsPanel extends JPanel {
 					}
 				}
 			}
+			if (timeConvFactorBox.getSelectedItem().equals("(none)")) {
+				instance.unsetTimeConversionFactor();
+			} else {
+				instance.setTimeConversionFactor((String)timeConvFactorBox.getSelectedItem());
+			}
+			if (extentConvFactorBox.getSelectedItem().equals("(none)")) {
+				instance.unsetExtentConversionFactor();
+			} else {
+				instance.setExtentConversionFactor((String)extentConvFactorBox.getSelectedItem());
+			}
 			SBaseList elements = bioModel.getSBMLDocument().getModel().getListOfAllElements();
 			for (long j = 0; j < elements.getSize(); j++) {
 				SBase sbase = elements.get(j);
@@ -440,6 +514,9 @@ public class ComponentsPanel extends JPanel {
 							ReplacedElement replacement = sbmlSBase.createReplacedElement();
 							replacement.setSubmodelRef(subId);
 							replacement.setPortRef(portId);
+							if (!convBox.get(i).getSelectedItem().equals("(none)")) {
+								replacement.setConversionFactor((String)convBox.get(i).getSelectedItem());
+							}
 						} else {
 							Replacing replacement = sbmlSBase.createReplacedBy();
 							replacement.setSubmodelRef(subId);

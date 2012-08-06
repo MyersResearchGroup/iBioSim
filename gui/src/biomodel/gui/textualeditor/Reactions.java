@@ -94,7 +94,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 
 	private JTextField reacID, reacName; // reaction name and id text
 	
-	private JCheckBox onPort;
+	private JCheckBox onPort, paramOnPort;
 
 	// fields
 
@@ -372,6 +372,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				Parameter pp = (Parameter) listOfParameters.get(i);
 				Parameter parameter = new Parameter(gcm.getSBMLDocument().getLevel(), gcm.getSBMLDocument().getVersion());
 				parameter.setId(pp.getId());
+				parameter.setMetaId(pp.getMetaId());
 				parameter.setName(pp.getName());
 				parameter.setValue(pp.getValue());
 				parameter.setUnits(pp.getUnits());
@@ -1044,22 +1045,24 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Creates a frame used to edit reactions parameters or create new ones.
 	 */
-	private void reacParametersEditor(String option) {
+	private void reacParametersEditor(BioModel gcm,String option) {
 		if (option.equals("OK") && reacParameters.getSelectedIndex() == -1) {
 			JOptionPane.showMessageDialog(Gui.frame, "No parameter selected.", "Must Select A Parameter", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		JPanel parametersPanel;
 		if (paramsOnly) {
-			parametersPanel = new JPanel(new GridLayout(6, 2));
+			parametersPanel = new JPanel(new GridLayout(7, 2));
 		}
 		else {
-			parametersPanel = new JPanel(new GridLayout(4, 2));
+			parametersPanel = new JPanel(new GridLayout(5, 2));
 		}
 		JLabel idLabel = new JLabel("ID:");
 		JLabel nameLabel = new JLabel("Name:");
 		JLabel valueLabel = new JLabel("Value:");
 		JLabel unitsLabel = new JLabel("Units:");
+		JLabel onPortLabel = new JLabel("Is Mapped to a Port:");
+		paramOnPort = new JCheckBox();
 		reacParamID = new JTextField();
 		reacParamName = new JTextField();
 		reacParamValue = new JTextField();
@@ -1143,6 +1146,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			reacParamValue.setEnabled(false);
 			reacParamUnits.setEnabled(false);
 			sweep.setEnabled(false);
+			paramOnPort.setEnabled(false);
 		}
 		String selectedID = "";
 		if (option.equals("OK")) {
@@ -1159,6 +1163,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			reacParamValue.setText("" + paramet.getValue());
 			if (paramet.isSetUnits()) {
 				reacParamUnits.setSelectedItem(paramet.getUnits());
+			}
+			if (gcm.getPortByMetaIdRef(paramet.getMetaId())!=null) {
+				paramOnPort.setSelected(true);
+			} else {
+				paramOnPort.setSelected(false);
 			}
 			if (paramsOnly && (((String) reacParameters.getSelectedValue()).contains("Modified"))
 					|| (((String) reacParameters.getSelectedValue()).contains("Custom"))
@@ -1236,6 +1245,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		parametersPanel.add(unitsLabel);
 		parametersPanel.add(reacParamUnits);
+		parametersPanel.add(onPortLabel);
+		parametersPanel.add(paramOnPort);
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, parametersPanel, "Parameter Editor", JOptionPane.YES_NO_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -1322,6 +1333,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						reacParameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						paramet.setId(reacParamID.getText().trim());
 						paramet.setName(reacParamName.getText().trim());
+						paramet.setMetaId(reacID.getText()+"___"+reacParamID.getText().trim());
 						for (int i = 0; i < thisReactionParams.size(); i++) {
 							if (thisReactionParams.get(i).equals(v)) {
 								thisReactionParams.set(i, reacParamID.getText().trim());
@@ -1371,6 +1383,21 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						else {
 							kineticLaw.setText(SBMLutilities.updateFormulaVar(kineticLaw.getText().trim(), v, reacParamID.getText().trim()));
 						}
+						Port port = gcm.getPortByMetaIdRef(paramet.getMetaId());
+						if (port!=null) {
+							if (paramOnPort.isSelected()) {
+								port.setId(GlobalConstants.LOCALPARAMETER+"__"+paramet.getMetaId());
+								port.setMetaIdRef(paramet.getMetaId());
+							} else {
+								port.removeFromParentAndDelete();
+							}
+						} else {
+							if (paramOnPort.isSelected()) {
+								port = gcm.getSBMLCompModel().createPort();
+								port.setId(GlobalConstants.LOCALPARAMETER+"__"+paramet.getMetaId());
+								port.setMetaIdRef(paramet.getMetaId());
+							}
+						}
 					}
 					else {
 						int index = reacParameters.getSelectedIndex();
@@ -1380,10 +1407,16 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						changedParameters.add(paramet);
 						paramet.setId(reacParamID.getText().trim());
 						paramet.setName(reacParamName.getText().trim());
+						paramet.setMetaId(reacID.getText()+"___"+reacParamID.getText().trim());
 						thisReactionParams.add(reacParamID.getText().trim());
 						paramet.setValue(val);
 						if (!unit.equals("( none )")) {
 							paramet.setUnits(unit);
+						}
+						if (paramOnPort.isSelected()) {
+							Port port = gcm.getSBMLCompModel().createPort();
+							port.setId(GlobalConstants.LOCALPARAMETER+"__"+paramet.getMetaId());
+							port.setMetaIdRef(paramet.getMetaId());
 						}
 						JList add = new JList();
 						Object[] adding = { param };
@@ -2506,11 +2539,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		// if the add reactions parameters button is clicked
 		else if (e.getSource() == reacAddParam) {
-			reacParametersEditor("Add");
+			reacParametersEditor(bioModel,"Add");
 		}
 		// if the edit reactions parameters button is clicked
 		else if (e.getSource() == reacEditParam) {
-			reacParametersEditor("OK");
+			reacParametersEditor(bioModel,"OK");
 		}
 		// if the remove reactions parameters button is clicked
 		else if (e.getSource() == reacRemoveParam) {
@@ -2588,7 +2621,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				rulesPanel.refreshRulesPanel();
 			}
 			else if (e.getSource() == reacParameters) {
-				reacParametersEditor("OK");
+				reacParametersEditor(bioModel,"OK");
 			}
 			else if (e.getSource() == reactants) {
 				if (!paramsOnly) {
