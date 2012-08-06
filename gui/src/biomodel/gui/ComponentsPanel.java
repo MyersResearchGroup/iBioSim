@@ -2,6 +2,8 @@ package biomodel.gui;
 
 
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,7 +33,7 @@ import biomodel.util.Utility;
 import main.Gui;
 
 
-public class ComponentsPanel extends JPanel {
+public class ComponentsPanel extends JPanel implements ActionListener {
 	/**
 	 * 
 	 */
@@ -103,12 +105,12 @@ public class ComponentsPanel extends JPanel {
 			subModelId = selected;
 		}
 		
-		ArrayList <String> parameterList = bioModel.getParameters();
-		Collections.sort(parameterList);
-		String[] parameters = new String[parameterList.size()+1];
+		ArrayList <String> constParameterList = bioModel.getConstantUserParameters();
+		Collections.sort(constParameterList);
+		String[] parameters = new String[constParameterList.size()+1];
 		parameters[0] = "(none)";
 		for (int l = 1; l < parameters.length; l++) {
-			parameters[l] = parameterList.get(l-1);
+			parameters[l] = constParameterList.get(l-1);
 		}
 		timeConvFactorBox = new JComboBox(parameters);
 		extentConvFactorBox = new JComboBox(parameters);
@@ -138,6 +140,8 @@ public class ComponentsPanel extends JPanel {
 			}
 		}
 		
+		ArrayList <String> parameterList = bioModel.getParameters();
+		Collections.sort(parameterList);
 		String[] paramsWithNone = new String[parameterList.size() + 2];
 		paramsWithNone[0] = "--none--";
 		paramsWithNone[1] = "--delete--";
@@ -317,6 +321,8 @@ public class ComponentsPanel extends JPanel {
 			tempPanel.add(portmapBox.get(i));
 			tempPanel.add(convBox.get(i));
 			add(tempPanel);
+			directionBox.get(i).addActionListener(this);
+			portmapBox.get(i).addActionListener(this);
 		}
 		SBaseList elements = bioModel.getSBMLDocument().getModel().getListOfAllElements();
 		for (long j = 0; j < elements.getSize(); j++) {
@@ -336,6 +342,7 @@ public class ComponentsPanel extends JPanel {
 				}
 			}
 		}
+		updateComboBoxEnabling();
 		timeConvFactorBox.setSelectedItem(instance.getTimeConversionFactor());
 		extentConvFactorBox.setSelectedItem(instance.getExtentConversionFactor());
 		
@@ -369,6 +376,18 @@ public class ComponentsPanel extends JPanel {
 		boolean display = false;
 		while (!display) {
 			display = openGui(oldName);
+		}
+	}
+	
+	private void updateComboBoxEnabling() {
+		for (int i = 0; i < portmapBox.size(); i++) {
+			if (portmapBox.get(i).getSelectedIndex()==0 ||
+				directionBox.get(i).getSelectedIndex()==1) {
+				convBox.get(i).setSelectedIndex(0);
+				convBox.get(i).setEnabled(false);
+			} else {
+				convBox.get(i).setEnabled(true);
+			}
 		}
 	}
 	
@@ -548,6 +567,12 @@ public class ComponentsPanel extends JPanel {
 			return true;
 		}
 		return true;
+	}
+	
+	public void actionPerformed(ActionEvent e) {
+		if (e.getActionCommand().equals("comboBoxChanged")) {
+			updateComboBoxEnabling();
+		}
 	}
 
 }
