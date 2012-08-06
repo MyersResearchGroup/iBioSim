@@ -381,11 +381,17 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 	
 	private void updateComboBoxEnabling() {
 		for (int i = 0; i < portmapBox.size(); i++) {
-			if (portmapBox.get(i).getSelectedIndex()==0 ||
-				directionBox.get(i).getSelectedIndex()==1) {
+			if (portmapBox.get(i).getSelectedIndex()<2) {
+				directionBox.get(i).setSelectedIndex(0);
+				directionBox.get(i).setEnabled(false);
+				convBox.get(i).setSelectedIndex(0);
+				convBox.get(i).setEnabled(false);
+			} else if (directionBox.get(i).getSelectedIndex()==1) {
+				directionBox.get(i).setEnabled(true);
 				convBox.get(i).setSelectedIndex(0);
 				convBox.get(i).setEnabled(false);
 			} else {
+				directionBox.get(i).setEnabled(true);
 				convBox.get(i).setEnabled(true);
 			}
 		}
