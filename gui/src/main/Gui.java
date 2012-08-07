@@ -10141,6 +10141,27 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			sbaseRef.setPortRef(port.getId());
 			return id;
 		} 
+		if (sbaseRef.isSetMetaIdRef()) {
+			Port port = bioModel.getPortBySBaseRef(sbaseRef);
+			SBase sbase = bioModel.getSBMLDocument().getElementByMetaId(sbaseRef.getMetaIdRef());
+			if (id.equals("")) {
+				id = sbase.getElementName() + "__" + sbaseRef.getMetaIdRef();
+			} else {
+				id = id + "__" + sbaseRef.getMetaIdRef();
+			}
+			if (port == null) {
+				if (sbase!=null) { 
+					port = bioModel.getSBMLCompModel().createPort();
+					port.setId(id);
+					port.setMetaIdRef(sbaseRef.getMetaIdRef());
+					port.setSBaseRef(sbaseRef.getSBaseRef());
+				}
+			} 
+			sbaseRef.unsetMetaIdRef();
+			sbaseRef.unsetSBaseRef();
+			sbaseRef.setPortRef(port.getId());
+			return id;
+		} 
 		return "";
 	}
 	
