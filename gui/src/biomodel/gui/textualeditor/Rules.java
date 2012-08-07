@@ -214,6 +214,10 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 		});
+		if (!modelEditor.isParamsOnly()) {
+			// Field for annotating rules with SBOL DNA components
+			sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 2);
+		}
 		if (option.equals("OK")) {
 			ruleType.setEnabled(false);
 			Rule rule = (Rule)bioModel.getSBMLDocument().getModel().getElementByMetaId(metaId);
@@ -239,7 +243,6 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			//Parse out SBOL annotations and add to SBOL field
 			if (!modelEditor.isParamsOnly()) {
 				// Field for annotating rules with SBOL DNA components
-				sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 2);
 				LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(rule);
 				if (sbolURIs.size() > 0)
 					sbolField.setSBOLURIs(sbolURIs);
