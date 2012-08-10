@@ -1060,6 +1060,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		if (biosimrc.get("biosim.general.file_browser", "").equals("")) {
 			biosimrc.put("biosim.general.file_browser", "JFileChooser");
 		}
+		if (biosimrc.get("biosim.general.flatten", "").equals("")) {
+			biosimrc.put("biosim.general.flatten", "default");
+		}
 		if (biosimrc.get("biosim.gcm.KREP_VALUE", "").equals("")) {
 			biosimrc.put("biosim.gcm.KREP_VALUE", ".5");
 		}
@@ -1330,6 +1333,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			else {
 				icons.setSelected(true);
+			}
+			JCheckBox libsbmlFlatten = new JCheckBox("Use libsbml to Flatten Models");
+			if (biosimrc.get("biosim.general.flatten", "").equals("default")) {
+				libsbmlFlatten.setSelected(false);
+			}
+			else {
+				libsbmlFlatten.setSelected(true);
 			}
 
 			// create sbml preferences panel
@@ -1691,6 +1701,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			JPanel generalPrefs = new JPanel();
 			generalPrefsBordered.add(dialog, "North");
 			generalPrefsBordered.add(icons, "Center");
+			generalPrefsBordered.add(libsbmlFlatten, "South");
 			generalPrefs.add(generalPrefsBordered);
 			((FlowLayout) generalPrefs.getLayout()).setAlignment(FlowLayout.LEFT);
 
@@ -1725,6 +1736,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					else {
 						biosimrc.put("biosim.general.tree_icons", "default");
 						tree.setExpandibleIcons(true);
+					}
+					if (libsbmlFlatten.isSelected()) {
+						biosimrc.put("biosim.general.flatten", "libsbml");
+					}
+					else {
+						biosimrc.put("biosim.general.flatten", "default");
 					}
 					/*if (LevelVersion.getSelectedItem().equals("L2V4")) {
 					SBMLLevelVersion = "L2V4";
@@ -2089,6 +2106,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			else {
 				icons.setSelected(true);
 			}
+			JCheckBox libsbmlFlatten = new JCheckBox("Use libsbml to Flatten Models");
+			if (biosimrc.get("biosim.general.flatten", "").equals("default")) {
+				libsbmlFlatten.setSelected(false);
+			}
+			else {
+				libsbmlFlatten.setSelected(true);
+			}
 			JPanel generalPrefsBordered = new JPanel(new BorderLayout());
 			JPanel generalPrefs = new JPanel();
 			generalPrefsBordered.add(dialog, "North");
@@ -2116,6 +2140,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				else {
 					biosimrc.put("biosim.general.tree_icons", "default");
 					tree.setExpandibleIcons(true);
+				}
+				if (libsbmlFlatten.isSelected()) {
+					biosimrc.put("biosim.general.flatten", "libsbml");
+				}
+				else {
+					biosimrc.put("biosim.general.flatten", "default");
 				}
 			}
 		}
