@@ -673,7 +673,7 @@ public abstract class Simulator {
 				reactionToSpeciesAndStoichiometrySetMap.get(childReactionID)
 				.add(new StringDoublePair(childSpeciesID, childStoichiometry));
 				
-				if (speciesToAffectedReactionSetMap.containsKey(parentSpeciesAndStoichiometry.string))						
+				if (speciesToAffectedReactionSetMap.containsKey(parentSpeciesAndStoichiometry.string))
 					speciesToAffectedReactionSetMap.get(childSpeciesID).add(childReactionID);
 				
 				//make sure there are enough molecules for this species
@@ -1235,26 +1235,6 @@ public abstract class Simulator {
 					
 					return this.componentToLocationMap.get(node.getChild(0).getName().split("__")[0]).getY();
 				}
-//				else {
-//					
-//					ASTNode newNode = model.getFunctionDefinition(node.getName()).getBody().clone();
-//					
-//					if (functionDefinitionMap.containsKey(node.toFormula())) {
-//						return evaluateExpressionRecursive(functionDefinitionMap.get(node.toFormula()));
-//					}
-//					else {
-//					
-//						for (int i = 0; i < node.getChildCount(); ++i) {
-//							
-//							newNode.replaceArgument(model.getFunctionDefinition(node.getName()).getArgument(i).toFormula(),
-//									node.getChild(i));
-//						}
-//						
-//						functionDefinitionMap.put(node.toFormula(), newNode);
-//						
-//						return evaluateExpressionRecursive(newNode);
-//					}
-//				}
 				
 				break;
 			}
@@ -2664,6 +2644,7 @@ public abstract class Simulator {
 						//add a new species to the simulation data structures
 						setupSingleSpecies(gridSpecies, newIDWithNegatives);
 						variableToValueMap.put(newID.replace("_negative_","-"), 0);
+						speciesToAffectedReactionSetMap.put(newID.replace("_negative_","-"), new HashSet<String>());
 					}
 				}
 			}
@@ -2717,6 +2698,7 @@ public abstract class Simulator {
 						//add a new species to the simulation data structures
 						setupSingleSpecies(gridSpecies, newIDWithNegatives);
 						variableToValueMap.put(newID.replace("_negative_","-"), 0);
+						speciesToAffectedReactionSetMap.put(newID.replace("_negative_","-"), new HashSet<String>());
 					}
 				}
 			}
@@ -2976,7 +2958,7 @@ public abstract class Simulator {
 									reactionToSpeciesAndStoichiometrySetMap.get(reactionID)) {
 									
 									speciesAndStoichiometry.string = 
-										speciesAndStoichiometry.string.replace(oldRowCol, newRowCol);
+										speciesAndStoichiometry.string.replace(oldRowCol, newRowCol);									
 								}
 								
 								for (StringDoublePair reactantAndStoichiometry : 
@@ -2984,6 +2966,29 @@ public abstract class Simulator {
 									
 									reactantAndStoichiometry.string =
 										reactantAndStoichiometry.string.replace(oldRowCol, newRowCol);
+								}
+								
+								//remove the old, now out-dated species to affected reaction pairs
+								//put in the new up-to-date pairs
+								for (String speciesID : speciesToAffectedReactionSetMap.keySet()) {
+									
+									if (speciesID.contains(oldRowCol + "_")) {
+										
+										HashSet<String> reactionsToRemove = new HashSet<String>();
+										
+										for (String reaction : speciesToAffectedReactionSetMap.get(speciesID)) {
+											if (reaction.contains("MembraneDiffusion"))
+												reactionsToRemove.add(reaction);
+										}
+										
+										for (String reactionToRemove : reactionsToRemove)
+											speciesToAffectedReactionSetMap.get(speciesID).remove(reactionToRemove);
+									}
+									
+									if (speciesID.contains(newRowCol + "_")) {
+										
+										speciesToAffectedReactionSetMap.get(speciesID).add(reactionID);
+									}
 								}
 								
 								//adjust propensity
