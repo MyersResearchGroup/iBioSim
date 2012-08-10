@@ -5126,8 +5126,9 @@ public abstract class Simulator {
 				newPropensity = evaluateExpressionRecursive(reactionToFormulaMap.get(reactionID));
 			
 			//stoichiometry amplification -- alter the propensity
-			if (reactionID.contains("_Diffusion_") && stoichAmpBoolean == true)
+			if (reactionID.contains("_Diffusion_") && stoichAmpBoolean == true) {
 				newPropensity *= (1.0 / stoichAmpGridValue);
+			}
 			
 			if (newPropensity > 0.0 && newPropensity < minPropensity)
 				minPropensity = newPropensity;
