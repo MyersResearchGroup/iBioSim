@@ -526,7 +526,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		qssa = new JTextField(biosimrc.get("biosim.sim.qssa", ""), 15);
 		maxConLabel = new JLabel("Max Concentration Threshold:");
 		maxCon = new JTextField(biosimrc.get("biosim.sim.concentration", ""), 15);
-		diffStoichAmp = new JTextField("2.0", 15);
+		diffStoichAmp = new JTextField("1.0", 15);
 		diffStoichAmpLabel = new JLabel("Grid Diffusion Stoichiometry Amplification:");
 		
 		maxConLabel.setEnabled(false);
@@ -2303,7 +2303,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		double rap2 = 0.1;
 		double qss = 0.1;
 		int con = 15;
-		double stoichAmp = 2.0;
+		double stoichAmp = 1.0;
 		
 		try {
 			// if (rapid1.isEnabled()) {
@@ -2346,11 +2346,14 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			return;
 		}
 		try {
-			stoichAmp = Double.parseDouble(diffStoichAmp.getText().trim());
+			if (abstraction.isSelected())
+				stoichAmp = Double.parseDouble(diffStoichAmp.getText().trim());
+			else
+				stoichAmp = 1;
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Double Into the Stoich."
-					+ " Amp. Field.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "You must enter a double into the shoich."
+					+ " amp. field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		if (none.isSelected() && ODE.isSelected()) {
@@ -3007,7 +3010,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		double rap2 = 0.1;
 		double qss = 0.1;
 		int con = 15;
-		double stoichAmp = 2.0;
+		double stoichAmp = 1.0;
 		
 		try {
 			// if (rapid1.isEnabled()) {
@@ -3050,7 +3053,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			return;
 		}
 		try {
-			stoichAmp = Double.parseDouble(diffStoichAmp.getText().trim());
+			if (abstraction.isSelected())
+				stoichAmp = Double.parseDouble(diffStoichAmp.getText().trim());
+			else
+				stoichAmp = 1;
 		}
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(Gui.frame, "Must Enter a Double Into the Stoich."
