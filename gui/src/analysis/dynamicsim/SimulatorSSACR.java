@@ -108,6 +108,8 @@ public class SimulatorSSACR extends Simulator {
 		if (noEventsFlag == false)
 			handleEvents(noAssignmentRulesFlag, noConstraintsFlag);
 		
+		System.err.println(reactionToPropensityMap.size());
+		
 		while (currentTime < timeLimit && cancelFlag == false) {
 			
 			//if a constraint fails
@@ -295,8 +297,8 @@ public class SimulatorSSACR extends Simulator {
 		} //end simulation loop
 		
 		
-//		System.err.println("total time: " + String.valueOf((initializationTime + System.nanoTime() - 
-//				initTime2 - initTime3) / 1e9f));
+		System.err.println("total time: " + String.valueOf((initializationTime + System.nanoTime() - 
+				initTime2 - initTime3) / 1e9f));
 //		System.err.println("total step 1 time: " + String.valueOf(step1Time / 1e9f));
 //		System.err.println("total step 2 time: " + String.valueOf(step2Time / 1e9f));
 //		System.err.println("total step 3a time: " + String.valueOf(step3aTime / 1e9f));
