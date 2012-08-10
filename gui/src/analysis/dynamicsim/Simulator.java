@@ -4706,7 +4706,7 @@ public abstract class Simulator {
 				if (variableToValueMap.containsKey(reactant.getId()))
 					reactantStoichiometry = variableToValueMap.get(reactant.getId());
 				else
-					reactantStoichiometry = reactant.getStoichiometry();				
+					reactantStoichiometry = reactant.getStoichiometry();
 					
 				reactionToSpeciesAndStoichiometrySetMap.get(reactionID + "_fd").add(
 						new StringDoublePair(reactantID, -reactantStoichiometry));
@@ -4719,7 +4719,8 @@ public abstract class Simulator {
 					
 				//if there was not initial assignment for the reactant
 				if (reactant.getConstant() == false &&
-						variableToValueMap.containsKey(reactant.getId()) == false) {
+						variableToValueMap.containsKey(reactant.getId()) == false &&
+						reactant.getId().length() > 0) {
 					
 					if (reactionToNonconstantStoichiometriesSetMap.containsKey(reactionID + "_fd") == false)
 						reactionToNonconstantStoichiometriesSetMap.put(reactionID + "_fd", new HashSet<StringStringPair>());
@@ -4770,7 +4771,8 @@ public abstract class Simulator {
 					
 				//if there wasn't an initial assignment
 				if (product.getConstant() == false &&
-						variableToValueMap.containsKey(product.getId()) == false) {
+						variableToValueMap.containsKey(product.getId()) == false &&
+						product.getId().length() > 0) {
 					
 					if (reactionToNonconstantStoichiometriesSetMap.containsKey(reactionID) == false)
 						reactionToNonconstantStoichiometriesSetMap.put(reactionID, new HashSet<StringStringPair>());
@@ -4891,7 +4893,8 @@ public abstract class Simulator {
 					
 				//if there wasn't an initial assignment
 				if (reactant.getConstant() == false &&
-						variableToValueMap.containsKey(reactant.getId()) == false) {
+						variableToValueMap.containsKey(reactant.getId()) == false &&
+						reactant.getId().length() > 0) {
 					
 					if (reactionToNonconstantStoichiometriesSetMap.containsKey(reactionID) == false)
 						reactionToNonconstantStoichiometriesSetMap.put(reactionID, new HashSet<StringStringPair>());
@@ -4928,7 +4931,8 @@ public abstract class Simulator {
 						new StringDoublePair(productID, productStoichiometry));
 				
 				if (product.getConstant() == false && 
-						variableToValueMap.containsKey(product.getId()) == false) {
+						variableToValueMap.containsKey(product.getId()) == false &&
+						product.getId().length() > 0) {
 					
 					if (reactionToNonconstantStoichiometriesSetMap.containsKey(reactionID) == false)
 						reactionToNonconstantStoichiometriesSetMap.put(reactionID, new HashSet<StringStringPair>());
