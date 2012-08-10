@@ -1517,7 +1517,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		InitialAssignments initialsPanel = new InitialAssignments(biosim,biomodel,dirty);
 		compartmentPanel.setPanels(initialsPanel, rulesPanel);
 		functionPanel.setPanels(initialsPanel, rulesPanel);
-		speciesPanel.setPanels(initialsPanel, rulesPanel);
+		speciesPanel.setPanels(initialsPanel, rulesPanel,parametersPanel);
 		reactionPanel.setPanels(initialsPanel, rulesPanel);
 		
 		setLayout(new BorderLayout());

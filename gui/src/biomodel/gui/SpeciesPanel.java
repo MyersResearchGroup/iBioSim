@@ -56,15 +56,15 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	 * @param gcm
 	 * @param paramsOnly
 	 * @param refGCM
-	 * @param gcmEditor
+	 * @param modelEditor
 	 */
 	public SpeciesPanel(Gui biosim, String selected, PropertyList speciesList, 
 			PropertyList conditionsList, PropertyList componentsList, BioModel gcm, boolean paramsOnly,
-			BioModel refGCM, ModelEditor gcmEditor, boolean inTab){
+			BioModel refGCM, ModelEditor modelEditor, boolean inTab){
 
 		super(new BorderLayout());
 		this.biosim = biosim;
-		constructor(selected, speciesList, conditionsList, componentsList, gcm, paramsOnly, refGCM, gcmEditor, inTab);
+		constructor(selected, speciesList, conditionsList, componentsList, gcm, paramsOnly, refGCM, modelEditor, inTab);
 	}
 	
 	/**
@@ -82,7 +82,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	 */
 	private void constructor(String selected, PropertyList speciesList, PropertyList conditionsList, 
 			PropertyList componentsList, BioModel bioModel, boolean paramsOnly,
-			BioModel refGCM,  ModelEditor gcmEditor, boolean inTab) {
+			BioModel refGCM,  ModelEditor modelEditor, boolean inTab) {
 
 		JPanel grid;
 		
@@ -108,7 +108,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		this.gcm = bioModel;
 		this.refGCM = refGCM;
 		this.paramsOnly = paramsOnly;
-		this.gcmEditor = gcmEditor;
+		this.modelEditor = modelEditor;
 
 		fields = new HashMap<String, PropertyField>();
 
@@ -290,7 +290,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			String thresholdText = "";
 			boolean speciesMarked = false;
 			
-			ArrayList<String> interestingSpecies = gcmEditor.getReb2Sac().getInterestingSpeciesAsArrayList();				
+			ArrayList<String> interestingSpecies = modelEditor.getReb2Sac().getInterestingSpeciesAsArrayList();				
 			
 			//look for the selected species among the already-interesting
 			//if it is interesting, populate the field with its data
@@ -310,8 +310,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			thresholdTextField = new JTextField(thresholdText);
 			
 			if (!BioModel.getSpeciesType(bioModel.getSBMLDocument(),selected).equals(GlobalConstants.INPUT) &&
-					(gcmEditor.getGCM().getBiochemicalSpecies() != null &&
-					!gcmEditor.getGCM().getBiochemicalSpecies().contains(selected))) {
+					(modelEditor.getGCM().getBiochemicalSpecies() != null &&
+					!modelEditor.getGCM().getBiochemicalSpecies().contains(selected))) {
 				tempPanel.add(thresholdTextField);
 				specInteresting.setText("Mark as Interesting (Enter comma-separated thresholds)");
 			}
@@ -538,7 +538,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		// Parse out GCM and SBOL annotations and add to respective fields
 		if (!paramsOnly) {
 			// Field for annotating species with SBOL DNA components
-			sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 3);
+			sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 3);
 			grid.add(sbolField);
 
 			typeBox.setSelectedItem(BioModel.getSpeciesType(bioModel.getSBMLDocument(),species.getId()));
@@ -638,10 +638,10 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 
 			// everything is okay, so add the interesting species to the list
-			gcmEditor.getReb2Sac().addInterestingSpecies(selected + " " + thresholdText);
+			modelEditor.getReb2Sac().addInterestingSpecies(selected + " " + thresholdText);
 		}
 		else {
-			gcmEditor.getReb2Sac().removeInterestingSpecies(selected);
+			modelEditor.getReb2Sac().removeInterestingSpecies(selected);
 		}
 		return true;
 	}
@@ -900,7 +900,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			speciesList.addItem(newSpeciesID);
 			speciesList.setSelectedValue(newSpeciesID, true);
 			
-			gcmEditor.setDirty(true);
+			modelEditor.refresh();
+			modelEditor.setDirty(true);
 		}
 
 		// "Cancel"
@@ -1050,7 +1051,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 	private boolean paramsOnly;
 	
-	private ModelEditor gcmEditor;
+	private ModelEditor modelEditor;
 	
 	private Gui biosim;
 }

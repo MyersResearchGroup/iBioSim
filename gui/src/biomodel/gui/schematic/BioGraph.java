@@ -1544,11 +1544,12 @@ public class BioGraph extends mxGraph {
 						String compartment = bioModel.getSBMLDocument().getModel().getSpecies((String)cell.getId()).getCompartment();
 						if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
 							CompartmentGlyph compartmentGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+compartment);
-							x = x + compartmentGlyph.getBoundingBox().x();
-							if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
-								x = compartmentGlyph.getBoundingBox().x() + 10;
+							if (compartmentGlyph!=null) {
+								x = x + compartmentGlyph.getBoundingBox().x();
+								if (!bioModel.getCompartmentByLocation((float)x, (float)y, (float)width, (float)height).equals(compartment)) {
+									x = compartmentGlyph.getBoundingBox().x() + 10;
+								}
 							}
-
 						}
 					}
 					bioModel.placeSpecies((String)cell.getId(), x, y, height, width);
@@ -2002,10 +2003,10 @@ public class BioGraph extends mxGraph {
 		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
 		this.compartmentsToMxCellMap.put(id, (mxCell)insertedVertex);
 
-		if (bioModel.getSBMLCompModel().getPort(GlobalConstants.COMPARTMENT + "__" + id) != null) {
-			this.setCompartmentStyles(id,false);
-		} else {
+		if (bioModel.IsWithinCompartment()) {
 			this.setCompartmentStyles(id,true);
+		} else {
+			this.setCompartmentStyles(id,false);
 		}
 		
 		return sizeAndPositionFromProperties((mxCell)insertedVertex,

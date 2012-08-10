@@ -59,6 +59,7 @@ import org.sbml.libsbml.Parameter;
 import org.sbml.libsbml.Port;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.ReactionGlyph;
+import org.sbml.libsbml.ReplacedBy;
 import org.sbml.libsbml.ReplacedElement;
 import org.sbml.libsbml.Replacing;
 import org.sbml.libsbml.Rule;
@@ -150,7 +151,7 @@ public class BioModel {
 		c.setSpatialDimensions(3);
 		c.setConstant(true);
 		//SBMLutilities.addRandomFunctions(sbml);
-		loadDefaultParameters();
+		//loadDefaultParameters();
 		sbmlFile = modelId + ".xml";
 		sbml.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
 		sbml.setPackageRequired("layout", false); 
@@ -174,15 +175,15 @@ public class BioModel {
 		createGlobalParameter(GlobalConstants.FORWARD_KACT_STRING, biosimrc.get("biosim.gcm.KACT_VALUE", ""));
 		createGlobalParameter(GlobalConstants.REVERSE_KACT_STRING, "1");
 
-		createGlobalParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING, biosimrc.get("biosim.gcm.KCOMPLEX_VALUE", ""));
-		createGlobalParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING, "1");
-
 		createGlobalParameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING, biosimrc.get("biosim.gcm.RNAP_BINDING_VALUE", ""));
 		createGlobalParameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING, "1");
 
 		createGlobalParameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING, 
 				biosimrc.get("biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE", ""));
 		createGlobalParameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING, "1");
+
+		createGlobalParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING, biosimrc.get("biosim.gcm.KCOMPLEX_VALUE", ""));
+		createGlobalParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING, "1");
 
 		createGlobalParameter(GlobalConstants.FORWARD_MEMDIFF_STRING, biosimrc.get("biosim.gcm.FORWARD_MEMDIFF_VALUE", ""));
 		createGlobalParameter(GlobalConstants.REVERSE_MEMDIFF_STRING, biosimrc.get("biosim.gcm.REVERSE_MEMDIFF_VALUE", ""));
@@ -197,6 +198,54 @@ public class BioModel {
 		createGlobalParameter(GlobalConstants.STOICHIOMETRY_STRING, biosimrc.get("biosim.gcm.STOICHIOMETRY_VALUE", ""));
 		createGlobalParameter(GlobalConstants.ACTIVATED_STRING, biosimrc.get("biosim.gcm.ACTIVED_VALUE", ""));
 		createGlobalParameter(GlobalConstants.KECDIFF_STRING, biosimrc.get("biosim.gcm.KECDIFF_VALUE", ""));
+	}
+
+	private void createDegradationDefaultParameters() {
+		Preferences biosimrc = Preferences.userRoot();
+
+		createGlobalParameter(GlobalConstants.KDECAY_STRING, biosimrc.get("biosim.gcm.KDECAY_VALUE", ""));
+	}
+
+	private void createDiffusionDefaultParameters() {
+		Preferences biosimrc = Preferences.userRoot();
+
+		createGlobalParameter(GlobalConstants.FORWARD_MEMDIFF_STRING, biosimrc.get("biosim.gcm.FORWARD_MEMDIFF_VALUE", ""));
+		createGlobalParameter(GlobalConstants.REVERSE_MEMDIFF_STRING, biosimrc.get("biosim.gcm.REVERSE_MEMDIFF_VALUE", ""));
+		createGlobalParameter(GlobalConstants.KECDECAY_STRING, biosimrc.get("biosim.gcm.KECDECAY_VALUE", ""));
+		createGlobalParameter(GlobalConstants.KECDIFF_STRING, biosimrc.get("biosim.gcm.KECDIFF_VALUE", ""));
+	}
+
+	private void createComplexDefaultParameters() {
+		Preferences biosimrc = Preferences.userRoot();
+
+		createGlobalParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING, biosimrc.get("biosim.gcm.KCOMPLEX_VALUE", ""));
+		createGlobalParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING, "1");
+		createGlobalParameter(GlobalConstants.COOPERATIVITY_STRING, biosimrc.get("biosim.gcm.COOPERATIVITY_VALUE", ""));
+	}
+	
+	private void createProductionDefaultParameters() {
+		Preferences biosimrc = Preferences.userRoot();
+
+		createGlobalParameter(GlobalConstants.FORWARD_KREP_STRING, biosimrc.get("biosim.gcm.KREP_VALUE", ""));
+		createGlobalParameter(GlobalConstants.REVERSE_KREP_STRING, "1");
+		
+		createGlobalParameter(GlobalConstants.FORWARD_KACT_STRING, biosimrc.get("biosim.gcm.KACT_VALUE", ""));
+		createGlobalParameter(GlobalConstants.REVERSE_KACT_STRING, "1");
+
+		createGlobalParameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING, biosimrc.get("biosim.gcm.RNAP_BINDING_VALUE", ""));
+		createGlobalParameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING, "1");
+
+		createGlobalParameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING, 
+				biosimrc.get("biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE", ""));
+		createGlobalParameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING, "1");
+
+		createGlobalParameter(GlobalConstants.COOPERATIVITY_STRING, biosimrc.get("biosim.gcm.COOPERATIVITY_VALUE", ""));
+		createGlobalParameter(GlobalConstants.RNAP_STRING, biosimrc.get("biosim.gcm.RNAP_VALUE", ""));
+		createGlobalParameter(GlobalConstants.OCR_STRING, biosimrc.get("biosim.gcm.OCR_VALUE", ""));
+		createGlobalParameter(GlobalConstants.KBASAL_STRING, biosimrc.get("biosim.gcm.KBASAL_VALUE", ""));
+		createGlobalParameter(GlobalConstants.PROMOTER_COUNT_STRING, biosimrc.get("biosim.gcm.PROMOTER_COUNT_VALUE", ""));
+		createGlobalParameter(GlobalConstants.STOICHIOMETRY_STRING, biosimrc.get("biosim.gcm.STOICHIOMETRY_VALUE", ""));
+		createGlobalParameter(GlobalConstants.ACTIVATED_STRING, biosimrc.get("biosim.gcm.ACTIVED_VALUE", ""));
 	}
 	
 	public boolean IsDefaultParameter(String paramId) {
@@ -230,7 +279,8 @@ public class BioModel {
 	public boolean IsWithinCompartment() {
 		for (long i = 0; i < sbml.getModel().getNumCompartments(); i++) {
 			Compartment compartment = sbml.getModel().getCompartment(i);
-			if (sbmlCompModel.getPort(GlobalConstants.COMPARTMENT + "__" + compartment.getId()) != null) return false;
+			if (getPortByIdRef(compartment.getId())!=null) return false;
+			//if (sbmlCompModel.getPort(GlobalConstants.COMPARTMENT + "__" + compartment.getId()) != null) return false;
 		}
 		return true;
 	}
@@ -1338,6 +1388,7 @@ public class BioModel {
 	}
 
 	public Reaction createComplexReaction(String s,String KcStr) {
+		createComplexDefaultParameters();
 		Reaction r = getComplexReaction(s);
 		if (r==null) {
 			r = sbml.getModel().createReaction();
@@ -1685,6 +1736,7 @@ public class BioModel {
 	}
 	
 	public Reaction createDiffusionReaction(String s,String kmdiffStr) {
+		createDiffusionDefaultParameters();
 		Reaction reaction = sbml.getModel().getReaction("MembraneDiffusion_"+s);		
 		if (reaction==null) {
 			reaction = sbml.getModel().createReaction();
@@ -1744,6 +1796,7 @@ public class BioModel {
 	}
 	
 	public Reaction createDegradationReaction(String s,double kd,String sweep) {
+		createDegradationDefaultParameters();
 		Reaction reaction = sbml.getModel().getReaction("Degradation_"+s);
 		if (reaction==null) {
 			reaction = sbml.getModel().createReaction();
@@ -3145,7 +3198,7 @@ public class BioModel {
 					outputs.put(replacement.getPortRef().replace(GlobalConstants.OUTPUT+"__",""),
 							sbml.getModel().getSpecies(i).getId());
 				} else if  (replacement.getSubmodelRef().equals(id) && replacement.isSetPortRef() &&
-				    replacement.getPortRef().startsWith(GlobalConstants.OUTPUT+"__")) {
+				    !replacement.getPortRef().startsWith(GlobalConstants.INPUT+"__")) {
 					outputs.put(replacement.getPortRef().replace(GlobalConstants.OUTPUT+"__",""),
 							sbml.getModel().getSpecies(i).getId());
 				}
@@ -3153,7 +3206,7 @@ public class BioModel {
 			if (sbmlSBase.isSetReplacedBy()) {
 				Replacing replacement = sbmlSBase.getReplacedBy();
 				if (replacement.getSubmodelRef().equals(id) && (replacement.isSetPortRef()) &&
-				   (replacement.getPortRef().startsWith(GlobalConstants.OUTPUT+"__"))) {
+				   (!replacement.getPortRef().startsWith(GlobalConstants.INPUT+"__"))) {
 					outputs.put(replacement.getPortRef().replace(GlobalConstants.OUTPUT+"__",""),
 							sbml.getModel().getSpecies(i).getId());
 				}
@@ -3802,13 +3855,26 @@ public class BioModel {
 			}
 		}
 		
-		for (long i = 0; i < sbml.getModel().getNumSpecies(); i++) {
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbml.getModel().getSpecies(i).getPlugin("comp");
-			ReplacedElement replacement = null;
-			for (long j = 0; j < sbmlSBase.getNumReplacedElements(); j++) {
-				replacement = sbmlSBase.getReplacedElement(j);
-				if (replacement.getSubmodelRef().equals(name)) {
-					sbmlSBase.removeReplacedElement(j);
+		SBaseList elements = sbml.getModel().getListOfAllElements();
+		for (long i = 0; i < elements.getSize(); i++) {
+			SBase sbase = elements.get(i);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getPlugin("comp");
+			if (sbmlSBase!=null) {
+				for (long j = 0; j < sbmlSBase.getNumReplacedElements(); j++) {
+					ReplacedElement replacement = sbmlSBase.getReplacedElement(j);
+					if (replacement.getSubmodelRef().equals(name)) {
+						sbmlSBase.removeReplacedElement(j);
+						elements = sbml.getModel().getListOfAllElements();
+						i--;
+					}
+				}
+				if (sbmlSBase.isSetReplacedBy()) {
+					ReplacedBy replacement = sbmlSBase.getReplacedBy();
+					if (replacement.getSubmodelRef().equals(name)) {
+						sbmlSBase.unsetReplacedBy();
+						elements = sbml.getModel().getListOfAllElements();
+						i--;
+					}
 				}
 			}
 		}
@@ -4786,6 +4852,7 @@ public class BioModel {
 	}
 	
 	public String createPromoter(String id, float x, float y, boolean is_explicit) {
+		createProductionDefaultParameters();
 		String compartment;
 		compartment = getCompartmentByLocation(x,y,GlobalConstants.DEFAULT_SPECIES_WIDTH,GlobalConstants.DEFAULT_SPECIES_HEIGHT);
 		if (compartment.equals("")) {
@@ -5185,7 +5252,7 @@ public class BioModel {
 				createSBMLDocument(sbmlFile.replace(".xml",""),false);
 			}
 		} 
-		loadDefaultParameters();
+		//loadDefaultParameters();
 		loadDefaultEnclosingCompartment();
 		//updateCompartmentReplacements();
 		SBMLutilities.fillBlankMetaIDs(sbml);
@@ -5240,12 +5307,21 @@ public class BioModel {
 			if (!comps.contains((String)extModel)) {
 				comps.add(extModel);
 				SBMLDocument subDocument = Gui.readSBML(path + separator + extModel);
+				CompModelPlugin subDocumentCompModel = (CompModelPlugin)subDocument.getModel().getPlugin("comp");
 				ModelDefinition md = new ModelDefinition(subDocument.getModel());
 				String id = subDocument.getModel().getId();
 				SBaseList elements = subDocument.getListOfAllElements();
 				for (long j = 0; j < elements.getSize(); j++) {
 					SBase sbase = elements.get(j);
-					sbase.setMetaId(id+"__"+sbase.getMetaId());
+					if (sbase.isSetMetaId()) {
+						for (long k = 0; k < subDocumentCompModel.getNumPorts(); k++) {
+							Port port = subDocumentCompModel.getPort(k);
+							if (port.isSetMetaIdRef() && port.getMetaIdRef().equals(sbase.getMetaId())) {
+								port.setMetaIdRef(id+"__"+sbase.getMetaId());
+							}
+						}
+						sbase.setMetaId(id+"__"+sbase.getMetaId());
+					}
 				}
 				documentComp.addModelDefinition(md);
 				recurseExportSingleFile(comps,(CompModelPlugin)subDocument.getModel().getPlugin("comp"),
@@ -5273,11 +5349,20 @@ public class BioModel {
 			if (!comps.contains((String)extModel)) {
 				comps.add(extModel);
 				SBMLDocument subDocument = Gui.readSBML(path + separator + extModel);
+				CompModelPlugin subDocumentCompModel = (CompModelPlugin)subDocument.getModel().getPlugin("comp");
 				String id = subDocument.getModel().getId();
 				SBaseList elements = subDocument.getListOfAllElements();
 				for (long j = 0; j < elements.getSize(); j++) {
 					SBase sbase = elements.get(j);
-					sbase.setMetaId(id+"__"+sbase.getMetaId());
+					if (sbase.isSetMetaId()) {
+						for (long k = 0; k < subDocumentCompModel.getNumPorts(); k++) {
+							Port port = subDocumentCompModel.getPort(k);
+							if (port.isSetMetaIdRef() && port.getMetaIdRef().equals(sbase.getMetaId())) {
+								port.setMetaIdRef(id+"__"+sbase.getMetaId());
+							}
+						}
+						sbase.setMetaId(id+"__"+sbase.getMetaId());
+					}
 				}
 				ModelDefinition md = new ModelDefinition(subDocument.getModel());
 				documentComp.addModelDefinition(md);
