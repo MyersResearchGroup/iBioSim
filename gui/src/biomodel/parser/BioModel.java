@@ -523,7 +523,7 @@ public class BioModel {
 			public void actionPerformed(ActionEvent e) {
 				flattenModel();
 				convertToLHPN(specs, conLevel, new MutableString()).save(filename);
-				log.addText("Saving GCM file as LPN:\n" + path + separator + lpnName + "\n");
+				log.addText("Saving model as LPN:\n" + path + separator + lpnName + "\n");
 				biosim.addToTree(lpnName);
 				naryFrame.dispose();
 				new File(filename + ".temp").delete();
@@ -5493,6 +5493,10 @@ public class BioModel {
 	}
 	
 	public SBMLDocument flattenModel() {
+		Preferences biosimrc = Preferences.userRoot();
+		if (biosimrc.get("biosim.general.flatten", "").equals("libsbml")) {
+			return newFlattenModel();
+		}
 		ArrayList<String> modelList = new ArrayList<String>();
 		modelList.add(filename);
 		String tempFile = filename.replace(".gcm","").replace(".xml","")+"_temp.xml";
