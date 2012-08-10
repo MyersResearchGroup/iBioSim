@@ -4251,6 +4251,19 @@ public class BioModel {
 			//implicitly, these will be arrays of reactions
 			
 			String diffusionUnitString = "u_1_second_n1";
+			
+			if (sbml.getModel().getUnitDefinition(diffusionUnitString) == null) {
+				
+				UnitDefinition ud = sbml.getModel().createUnitDefinition();
+				Unit unit = ud.createUnit();
+				unit.setExponent(-1);
+				unit.setKind(libsbml.UnitKind_forName("second"));
+				unit.setScale(0);
+				unit.setMultiplier(1);
+				ud.setId(diffusionUnitString);
+				sbml.getModel().addUnitDefinition(ud);
+			}
+			
 			String diffusionString = GlobalConstants.KECDIFF_STRING;
 			String diffComp = sbml.getModel().getCompartment(0).getId();
 			double kecdiff = sbml.getModel().getParameter("kecdiff").getValue();
@@ -4328,8 +4341,11 @@ public class BioModel {
 					i.setId("i");
 					j.setId("j");
 					
-					//parameters: id="kecdiff" value=kecdiff units="u_1_second_n1" (inverse seconds)
-					kl.addParameter(Utility.Parameter(diffusionString, kecdiff, diffusionUnitString));					
+					LocalParameter kecdiffParam = kl.createLocalParameter();
+					kecdiffParam.setId(diffusionString);
+					kecdiffParam.setValue(kecdiff);
+					kecdiffParam.setUnits(diffusionUnitString);
+									
 					kl.setFormula(diffusionExpression);
 					
 					Utility.addReaction(sbml, r);
