@@ -1028,6 +1028,9 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 	 * Update unit Id
 	 */
 	private void updateUnitId(String origId, String newId) {
+		
+		System.err.println("update unit id");
+		
 		if (origId.equals(newId))
 			return;
 		Model model = bioModel.getSBMLDocument().getModel();
