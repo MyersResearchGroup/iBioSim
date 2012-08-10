@@ -830,33 +830,8 @@ public class Schematic extends JPanel implements ActionListener {
 							modelEditor.setDirty(true);
 							bioModel.makeUndoPoint();
 						}
-					}
-					//if cell != null
-					else {
-						
-						if(addComponentButton != null && addComponentButton.isSelected()) {
-							
-							boolean dropped = false;
-							
-							//if there's a grid, bring up the add-component-to-grid panel
-							if (grid.isEnabled()) {
-
-								//the true is to indicate the dropping is happening on a grid
-								dropped = DropComponentPanel.dropComponent(
-										modelEditor, bioModel, e.getX(), e.getY(), true);
-							}
-							
-							//if the components dropped successfully
-							if(dropped){
-								
-								modelEditor.setDirty(true);
-								graph.buildGraph();
-								modelEditor.refresh();
-								bioModel.makeUndoPoint();
-							}
-						}
 						else if(selfInfluenceButton != null && selfInfluenceButton.isSelected()) {
-						
+							
 							if(cell.isEdge() == false) {
 								
 								// the user clicked to add a self-influence to a component.
@@ -869,6 +844,7 @@ public class Schematic extends JPanel implements ActionListener {
 							}
 						}
 					}
+					//if cell != null
 				}
 				//double-click with left mouse button
 				else if(e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {

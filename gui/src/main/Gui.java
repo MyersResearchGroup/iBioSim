@@ -10123,23 +10123,27 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		if (sbaseRef.isSetIdRef()) {
 			Port port = bioModel.getPortBySBaseRef(sbaseRef);
 			SBase sbase = bioModel.getSBMLDocument().getElementBySId(sbaseRef.getIdRef());
-			if (id.equals("")) {
-				id = sbase.getElementName() + "__" + sbaseRef.getIdRef();
-			} else {
-				id = id + "__" + sbaseRef.getIdRef();
-			}
-			if (port == null) {
-				if (sbase!=null) { 
-					port = bioModel.getSBMLCompModel().createPort();
-					port.setId(id);
-					port.setIdRef(sbaseRef.getIdRef());
-					port.setSBaseRef(sbaseRef.getSBaseRef());
+			if (sbase!=null) {
+				if (id.equals("")) {
+					id = sbase.getElementName() + "__" + sbaseRef.getIdRef();
+				} else {
+					id = id + "__" + sbaseRef.getIdRef();
 				}
-			} 
-			sbaseRef.unsetIdRef();
-			sbaseRef.unsetSBaseRef();
-			sbaseRef.setPortRef(port.getId());
-			return id;
+				if (port == null) {
+					if (sbase!=null) { 
+						port = bioModel.getSBMLCompModel().createPort();
+						port.setId(id);
+						port.setIdRef(sbaseRef.getIdRef());
+						port.setSBaseRef(sbaseRef.getSBaseRef());
+					}
+				} 
+				sbaseRef.unsetIdRef();
+				sbaseRef.unsetSBaseRef();
+				sbaseRef.setPortRef(port.getId());
+				return id;
+			} else {
+				return "";
+			}
 		} 
 		if (sbaseRef.isSetMetaIdRef()) {
 			Port port = bioModel.getPortBySBaseRef(sbaseRef);

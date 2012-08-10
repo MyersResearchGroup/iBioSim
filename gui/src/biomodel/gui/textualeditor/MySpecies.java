@@ -74,6 +74,8 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 	private InitialAssignments initialsPanel;
 
 	private Rules rulesPanel;
+	
+	private Parameters parametersPanel;
 
 	public MySpecies(Gui biosim, BioModel gcm, MutableBoolean dirty, Boolean paramsOnly,
 			ArrayList<String> getParams, String file, ArrayList<String> parameterChanges, Boolean editOnly) {
@@ -1036,15 +1038,17 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		}
 	}
 
-	public void setPanels(InitialAssignments initialsPanel, Rules rulesPanel) {
+	public void setPanels(InitialAssignments initialsPanel, Rules rulesPanel, Parameters parametersPanel) {
 		this.initialsPanel = initialsPanel;
 		this.rulesPanel = rulesPanel;
+		this.parametersPanel = parametersPanel;
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		// if the add species button is clicked
 		if (e.getSource() == addSpec) {
 			speciesEditor("Add");
+			parametersPanel.refreshParameterPanel(gcm);
 		}
 		// if the edit species button is clicked
 		else if (e.getSource() == editSpec) {
@@ -1065,6 +1069,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 					speciesEditor("OK");
 					initialsPanel.refreshInitialAssignmentPanel(gcm);
 					rulesPanel.refreshRulesPanel();
+					parametersPanel.refreshParameterPanel(gcm);
 				}
 			}
 			else {
@@ -1085,6 +1090,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				speciesEditor("OK");
 				initialsPanel.refreshInitialAssignmentPanel(gcm);
 				rulesPanel.refreshRulesPanel();
+				parametersPanel.refreshParameterPanel(gcm);
 			}
 		}
 	}
