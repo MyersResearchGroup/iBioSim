@@ -2056,6 +2056,7 @@ public class BioModel {
 	public void save(String filename) {
 		//gcm2sbml.convertGCM2SBML(filename);
 		//updateCompartmentReplacements();
+		updatePorts();
 		setGridSize(grid.getNumRows(),grid.getNumCols());
 		SBMLutilities.pruneUnusedSpecialFunctions(sbml);
 		SBMLWriter writer = new SBMLWriter();
@@ -5226,14 +5227,47 @@ public class BioModel {
 				subBioModel.load(path + separator + extModelFile);
 				for (j = 0; j < subBioModel.getSBMLCompModel().getNumPorts(); j++) {
 					Port subPort = subBioModel.getSBMLCompModel().getPort(j);
-					Port port = sbmlCompModel.createPort();
-					port.setId(subPort.getId()+"__"+submodel.getId());
-					port.setIdRef(submodel.getId());
-					SBaseRef sbaseRef = port.createSBaseRef();
-					sbaseRef.setPortRef(subPort.getId());
+					if (!isPortRemoved(submodel,subPort.getId())) {
+						Port port = sbmlCompModel.createPort();
+						port.setId(subPort.getId()+"__"+submodel.getId());
+						port.setIdRef(submodel.getId());
+						SBaseRef sbaseRef = port.createSBaseRef();
+						sbaseRef.setPortRef(subPort.getId());
+					}
 				}
 			}
 		}
+	}
+	
+	private boolean isPortRemoved(Submodel submodel,String portId) {
+		for (long i = 0; i < submodel.getNumDeletions(); i++) {
+			Deletion deletion = submodel.getDeletion(i);
+			if (deletion.isSetPortRef() && deletion.getPortRef().equals(portId)) {
+				return true;
+			}
+		}
+		SBaseList elements = sbml.getModel().getListOfAllElements();
+		for (long i = 0; i < elements.getSize(); i++) {
+			SBase sbase = elements.get(i);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getPlugin("comp");
+			if (sbmlSBase!=null) {
+				for (long j = 0; j < sbmlSBase.getNumReplacedElements(); j++) {
+					ReplacedElement replacement = sbmlSBase.getReplacedElement(j);
+					if (replacement.getSubmodelRef().equals(submodel.getId()) &&
+							replacement.isSetPortRef() && replacement.getPortRef().equals(portId)) {
+							return true;
+						}
+				}
+				if (sbmlSBase.isSetReplacedBy()) {
+					ReplacedBy replacement = sbmlSBase.getReplacedBy();
+					if (replacement.getSubmodelRef().equals(submodel.getId()) &&
+							replacement.isSetPortRef() && replacement.getPortRef().equals(portId)) {
+							return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	private void loadSBMLFile(String sbmlFile) {
@@ -5478,7 +5512,9 @@ public class BioModel {
 	
 	public SBMLDocument newFlattenModel() {
 		SBMLDocument document = new SBMLDocument();
-		document.setModel(sbmlCompModel.flattenModel());
+		Model model = sbmlCompModel.flattenModel();
+		if (model==null) return null;
+		document.setModel(model);
 		document.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
 		document.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
 		//CompModelPlugin documentCompModel = (CompModelPlugin)sbml.getModel().getPlugin("comp");
@@ -5489,6 +5525,14 @@ public class BioModel {
 		document.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", false);
 		SBMLWriter writer = new SBMLWriter();
 		writer.writeSBML(document, path + separator + "_temp.xml");
+		SBaseList elements = sbml.getModel().getListOfAllElements();
+		// THIS IS A WORKAROUND A FLATTEN BUG WHICH DOES NOT RENAME METAIDs
+		long metaIdNum = 0;
+		for (long i = 0; i < elements.getSize(); i++) {
+			SBase sbase = elements.get(i);
+			sbase.setMetaId("iBioSim"+metaIdNum);
+			metaIdNum++;
+		}
 		return document;
 	}
 	
