@@ -1382,7 +1382,8 @@ public abstract class Simulator {
 		try {
 			document = reader.readSBML(filename);
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			return;
 		}
 		
 		Model model = document.getModel();
