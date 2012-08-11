@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
@@ -408,7 +409,13 @@ public class SBMLutilities {
 	 * Convert String into ASTNodes
 	 */
 	public static ASTNode myParseFormula(String formula) {
-		ASTNode mathFormula = libsbml.parseFormula(formula);
+		ASTNode mathFormula;
+		Preferences biosimrc = Preferences.userRoot();
+		if (biosimrc.get("biosim.general.infix", "").equals("infix")) {
+			mathFormula = libsbml.parseL3Formula(formula);
+		} else {
+			mathFormula = libsbml.parseFormula(formula);
+		}
 		if (mathFormula == null)
 			return null;
 		setTimeAndTrigVar(mathFormula);
@@ -1956,7 +1963,6 @@ public class SBMLutilities {
 		}
 	}
 	
-
 	public static boolean isBoolean(SBMLDocument document, ASTNode node) {
 	  if (node == null) {
 	    return false;

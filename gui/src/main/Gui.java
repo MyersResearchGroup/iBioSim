@@ -1063,6 +1063,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		if (biosimrc.get("biosim.general.flatten", "").equals("")) {
 			biosimrc.put("biosim.general.flatten", "default");
 		}
+		if (biosimrc.get("biosim.general.infix", "").equals("")) {
+			biosimrc.put("biosim.general.infix", "default");
+		}
 		if (biosimrc.get("biosim.gcm.KREP_VALUE", "").equals("")) {
 			biosimrc.put("biosim.gcm.KREP_VALUE", ".5");
 		}
@@ -1340,6 +1343,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			else {
 				libsbmlFlatten.setSelected(true);
+			}
+			JCheckBox infix = new JCheckBox("Use Infix Expression Parser");
+			if (biosimrc.get("biosim.general.infix", "").equals("default")) {
+				infix.setSelected(false);
+			}
+			else {
+				infix.setSelected(true);
 			}
 
 			// create sbml preferences panel
@@ -1697,11 +1707,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			synthesisPrefs.add(synthesisFields);
 
 			// create general preferences panel
-			JPanel generalPrefsBordered = new JPanel(new BorderLayout());
+			JPanel generalPrefsBordered = new JPanel(new GridLayout(4,1));
 			JPanel generalPrefs = new JPanel();
-			generalPrefsBordered.add(dialog, "North");
-			generalPrefsBordered.add(icons, "Center");
-			generalPrefsBordered.add(libsbmlFlatten, "South");
+			generalPrefsBordered.add(dialog);
+			generalPrefsBordered.add(icons);
+			generalPrefsBordered.add(libsbmlFlatten);
+			generalPrefsBordered.add(infix);
 			generalPrefs.add(generalPrefsBordered);
 			((FlowLayout) generalPrefs.getLayout()).setAlignment(FlowLayout.LEFT);
 
@@ -1742,6 +1753,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 					else {
 						biosimrc.put("biosim.general.flatten", "default");
+					}
+					if (infix.isSelected()) {
+						biosimrc.put("biosim.general.infix", "infix");
+					}
+					else {
+						biosimrc.put("biosim.general.infix", "default");
 					}
 					/*if (LevelVersion.getSelectedItem().equals("L2V4")) {
 					SBMLLevelVersion = "L2V4";
@@ -2113,6 +2130,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			else {
 				libsbmlFlatten.setSelected(true);
 			}
+			JCheckBox infix = new JCheckBox("Use Infix Expression Parser");
+			if (biosimrc.get("biosim.general.infix", "").equals("default")) {
+				infix.setSelected(false);
+			}
+			else {
+				infix.setSelected(true);
+			}
 			JPanel generalPrefsBordered = new JPanel(new BorderLayout());
 			JPanel generalPrefs = new JPanel();
 			generalPrefsBordered.add(dialog, "North");
@@ -2146,6 +2170,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				else {
 					biosimrc.put("biosim.general.flatten", "default");
+				}
+				if (infix.isSelected()) {
+					biosimrc.put("biosim.general.infix", "infix");
+				}
+				else {
+					biosimrc.put("biosim.general.infix", "default");
 				}
 			}
 		}
