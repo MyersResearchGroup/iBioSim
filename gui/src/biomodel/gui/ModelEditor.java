@@ -359,7 +359,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 
 		// Annotate SBML model with synthesized SBOL DNA component and save component to local SBOL file
-		saveSBOL();
+		if (command.contains("Check")) {
+			saveSBOL(true);
+		} else {
+			saveSBOL(false);
+		}
 		
 		// Write out species and influences to a gcm file
 		//gcm.getSBMLDocument().getModel().setName(modelPanel.getModelName());
@@ -468,11 +472,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	}
 
 	// Annotate SBML model with synthesized SBOL DNA component and save component to local SBOL file
-	public void saveSBOL() {
+	public void saveSBOL(boolean check) {
 		GCMParser parser = new GCMParser(biomodel, false);
 		SBOLSynthesizer synthesizer = parser.buildSbolSynthesizer();
 		if (synthesizer != null && synthesizer.loadSbolFiles(getSbolFiles())) {
-			synthesizer.saveDnaComponent(path, false);
+			synthesizer.saveDnaComponent(path, false, check);
 		}
 	}
 	

@@ -2445,7 +2445,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		else if (e.getSource() == saveSBOL) {
 			Component comp = tab.getSelectedComponent();
 			if (comp instanceof ModelEditor) {
-				((ModelEditor) comp).saveSBOL();
+				((ModelEditor) comp).saveSBOL(false);
 			}
 		}
 		else if (e.getSource() == exportCsv) {
