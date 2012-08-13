@@ -195,7 +195,7 @@ public class SBOLSynthesizer {
 		String regex = Preferences.userRoot().get("biosim.synthesis.regex", "");
 		SequenceTypeValidator validator = new SequenceTypeValidator(regex);
 		Set<String> startTypes = new HashSet<String>();
-		if (validator != null)
+		if (validator.getStartTypes().size() > 0)
 			startTypes.addAll(validator.getStartTypes());
 		else
 			startTypes.add("promoter");

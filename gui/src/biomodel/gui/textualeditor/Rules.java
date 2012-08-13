@@ -297,7 +297,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		mathPanel.add(ruleMath);
 		rulePanel.add(IDPanel,"North");
 		rulePanel.add(mathPanel,"Center");
-		if (option.equals("OK") && !modelEditor.isParamsOnly())
+		if (!modelEditor.isParamsOnly())
 			rulePanel.add(sbolField,"South");
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, rulePanel, "Rule Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
