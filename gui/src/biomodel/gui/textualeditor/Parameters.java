@@ -599,8 +599,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 								if (paramet.getConstant()) {
 									if (gcm.getSBMLLayout().getLayout("iBioSim") != null) {
 										Layout layout = gcm.getSBMLLayout().getLayout("iBioSim"); 
-										if (layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+selected)!=null) {
-											layout.removeSpeciesGlyph(GlobalConstants.GLYPH+"__"+selected);
+										if (layout.getAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+selected)!=null) {
+											layout.removeAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+selected);
 										}
 										if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+selected) != null) {
 											layout.removeTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+selected);
@@ -757,8 +757,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			}
 			if (gcm.getSBMLLayout().getLayout("iBioSim") != null) {
 				Layout layout = gcm.getSBMLLayout().getLayout("iBioSim"); 
-				if (layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+selected)!=null) {
-					layout.removeSpeciesGlyph(GlobalConstants.GLYPH+"__"+selected);
+				if (layout.getAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+selected)!=null) {
+					layout.removeAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+selected);
 				}
 				if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+selected) != null) {
 					layout.removeTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+selected);
