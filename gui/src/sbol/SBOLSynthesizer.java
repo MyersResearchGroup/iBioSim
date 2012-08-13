@@ -85,7 +85,7 @@ public class SBOLSynthesizer {
 	public DnaComponent exportDnaComponent(String filePath) {
 		DnaComponent synthComp = null;
 		if (loadNodeDNAComponents("export", filePath)) {
-			synthComp = synthesizeDnaComponent();
+			synthComp = synthesizeDnaComponent(false);
 			if (synthComp != null) {
 				if (!localMatch) {
 					String[] descriptors = getDescriptorsFromUser();
@@ -105,10 +105,10 @@ public class SBOLSynthesizer {
 	}
 	
 	// Saves synthesized DNA component to local SBOL file and annotates SBML model
-	public DnaComponent saveDnaComponent(String filePath, boolean saveModel) {
+	public DnaComponent saveDnaComponent(String filePath, boolean saveModel, boolean check) {
 		DnaComponent synthComp = null;
 		if (loadNodeDNAComponents("save", filePath)) {
-			synthComp = synthesizeDnaComponent();
+			synthComp = synthesizeDnaComponent(check);
 			if (synthComp != null) {
 				if (!localMatch) {
 					String[] descriptors = getDescriptorsFromUser(filePath);
@@ -147,7 +147,7 @@ public class SBOLSynthesizer {
 				subSynthesizer.loadSbolFiles(sbolFilePaths);
 				DnaComponent subSynthComp = null;
 				if (subCommand.equals("save"))
-					subSynthComp = subSynthesizer.saveDnaComponent(filePath, true);
+					subSynthComp = subSynthesizer.saveDnaComponent(filePath, true, false);
 				else if (subCommand.equals("export"))
 					subSynthComp = subSynthesizer.exportDnaComponent(filePath);
 				if (subSynthComp != null) {
@@ -189,7 +189,7 @@ public class SBOLSynthesizer {
 		return true;
 	}
 	
-	public DnaComponent synthesizeDnaComponent() {	
+	public DnaComponent synthesizeDnaComponent(boolean check) {	
 		DnaComponent synthComp = new DnaComponentImpl();
 		setAuthorityAndTime();
 		String regex = Preferences.userRoot().get("biosim.synthesis.regex", "");
@@ -238,7 +238,7 @@ public class SBOLSynthesizer {
 				types.addAll(getLowestSequenceTypes(subComp));
 			}
 			
-			if (validator != null && !validator.validateSequenceTypes(types)) {
+			if (validator != null && !validator.validateSequenceTypes(types) && check) {
 				Object[] options = { "OK", "Cancel" };
 				int choice = JOptionPane.showOptionDialog(null, 
 						"Ordering of SBOL DNA components associated to SBML does not match preferred regular expression.  Proceed with synthesis?", 
