@@ -26,6 +26,7 @@ import org.sbml.libsbml.EventAssignment;
 import org.sbml.libsbml.FunctionDefinition;
 import org.sbml.libsbml.InitialAssignment;
 import org.sbml.libsbml.KineticLaw;
+import org.sbml.libsbml.Layout;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.ModifierSpeciesReference;

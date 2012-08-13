@@ -51,6 +51,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.sbml.libsbml.CompartmentGlyph;
+import org.sbml.libsbml.GeneralGlyph;
 import org.sbml.libsbml.Layout;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Model;
@@ -1897,10 +1898,12 @@ public class Schematic extends JPanel implements ActionListener {
 			if (!cell.getId().equals(id)) {
 				if (bioModel.getSBMLLayout().getNumLayouts() != 0) {
 					Layout layout = bioModel.getSBMLLayout().getLayout(0); 
-					if (layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
-						ReactionGlyph reactionGlyph = layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+cell.getId());
-						reactionGlyph.setId(GlobalConstants.GLYPH+"__"+id);
-						reactionGlyph.setReactionId(id);
+					if (layout.getAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
+						GeneralGlyph generalGlyph = (GeneralGlyph)
+								layout.getAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+cell.getId());
+						generalGlyph.setId(GlobalConstants.GLYPH+"__"+id);
+						generalGlyph.unsetMetaIdRef();
+						generalGlyph.setReferenceId(id);
 					}
 					if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId())!=null) {
 						TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
@@ -1919,10 +1922,11 @@ public class Schematic extends JPanel implements ActionListener {
 			if (!cell.getId().equals(id)) {
 				if (bioModel.getSBMLLayout().getNumLayouts() != 0) {
 					Layout layout = bioModel.getSBMLLayout().getLayout(0); 
-					if (layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
-						SpeciesGlyph speciesGlyph = layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+cell.getId());
-						speciesGlyph.setId(GlobalConstants.GLYPH+"__"+id);
-						speciesGlyph.setSpeciesId(id);
+					if (layout.getAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
+						GeneralGlyph generalGlyph = (GeneralGlyph)
+								layout.getAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+cell.getId());
+						generalGlyph.setId(GlobalConstants.GLYPH+"__"+id);
+						generalGlyph.setReferenceId(id);
 					}
 					if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId())!=null) {
 						TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
@@ -1941,10 +1945,12 @@ public class Schematic extends JPanel implements ActionListener {
 			if (!cell.getId().equals(id)) {
 				if (bioModel.getSBMLLayout().getNumLayouts() != 0) {
 					Layout layout = bioModel.getSBMLLayout().getLayout(0); 
-					if (layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
-						ReactionGlyph reactionGlyph = layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+cell.getId());
-						reactionGlyph.setId(GlobalConstants.GLYPH+"__"+id);
-						reactionGlyph.setReactionId(id);
+					if (layout.getAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
+						GeneralGlyph generalGlyph = (GeneralGlyph)
+								layout.getAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+cell.getId());
+						generalGlyph.setId(GlobalConstants.GLYPH+"__"+id);
+						generalGlyph.unsetMetaIdRef();
+						generalGlyph.setReferenceId(id);
 					}
 					if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId())!=null) {
 						TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
@@ -1963,10 +1969,12 @@ public class Schematic extends JPanel implements ActionListener {
 			if (!cell.getId().equals(id)) {
 				if (bioModel.getSBMLLayout().getNumLayouts() != 0) {
 					Layout layout = bioModel.getSBMLLayout().getLayout(0); 
-					if (layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
-						ReactionGlyph reactionGlyph = layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+cell.getId());
-						reactionGlyph.setId(GlobalConstants.GLYPH+"__"+id);
-						reactionGlyph.setReactionId(id);
+					if (layout.getAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+cell.getId())!=null) {
+						GeneralGlyph generalGlyph = (GeneralGlyph)
+								layout.getAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+cell.getId());
+						generalGlyph.setId(GlobalConstants.GLYPH+"__"+id);
+						generalGlyph.unsetMetaIdRef();
+						generalGlyph.setReferenceId(id);
 					}
 					if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId())!=null) {
 						TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
