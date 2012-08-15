@@ -1480,7 +1480,7 @@ public class BioGraph extends mxGraph {
 				layout.setId("iBioSim");
 			}
 			GeneralGlyph generalGlyph = null;
-			if (layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+(String)cell.getId())!=null) {
+			if (layout.getAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+(String)cell.getId())!=null) {
 				generalGlyph = (GeneralGlyph)layout.getAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+(String)cell.getId());
 			} else {
 				generalGlyph = layout.createGeneralGlyph();
@@ -1555,7 +1555,7 @@ public class BioGraph extends mxGraph {
 				layout.setId("iBioSim");
 			}
 			GeneralGlyph generalGlyph = null;
-			if (layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+(String)cell.getId())!=null) {
+			if (layout.getAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+(String)cell.getId())!=null) {
 				generalGlyph = (GeneralGlyph)
 						layout.getAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+(String)cell.getId());
 			} else {
