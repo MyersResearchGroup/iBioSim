@@ -7,7 +7,6 @@ public class LpnTransitionPair {
 	private Integer tranIndex;
 	private HashSet<LpnTransitionPair> transVisited;
 	private int hashVal;
-	private int firingCount;
 	
 	public LpnTransitionPair(Integer lpnIndex, Integer tranIndex) {
 		this.lpnIndex = lpnIndex;
