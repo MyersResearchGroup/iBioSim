@@ -1215,18 +1215,19 @@ public class BioModel {
 		
 		//get the grid compartment
 		Compartment gridComp = sbml.getModel().getCompartment(0);
-		
-		if (rows > 0 && cols > 0) {
-			
-			XMLAttributes attr = new XMLAttributes();
-			attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
-			attr.add("ibiosim:grid", "(" + rows + "," + cols + ")");
-			XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
-			
-			gridComp.setAnnotation(node);
-		} 
-		else {
-			gridComp.unsetAnnotation();
+		if (gridComp != null) {
+			if (rows > 0 && cols > 0) {
+
+				XMLAttributes attr = new XMLAttributes();
+				attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
+				attr.add("ibiosim:grid", "(" + rows + "," + cols + ")");
+				XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
+
+				gridComp.setAnnotation(node);
+			} 
+			else {
+				gridComp.unsetAnnotation();
+			}
 		}
 	}
 	
