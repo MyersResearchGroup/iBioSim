@@ -14,6 +14,8 @@ import main.Log;
 import verification.Verification;
 import verification.platu.lpn.DualHashMap;
 
+import verification.timed_state_exploration.zoneProject.InequalityVariable;
+
 
 public class LhpnFile {
 
@@ -2187,6 +2189,153 @@ public class LhpnFile {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * This method extracts the boolean variables associated with inequalities 
+	 * involved in the boolean assignments and the enabling conditions on
+	 * transitions. 
+	 */
+	public void parseBooleanInequalities(){
+		/*
+		 *  The expression trees for the boolean assignment and the enabling 
+		 *  conditions are contained in the Transitions.
+		 */
+		for(Transition T : transitions.values()){
+			// Extract the inequalities from the boolean expression.
+			for(ExprTree E : T.getBoolAssignTrees().values()){
+				parseBooleanInequalities(E);
+			}
+			
+			// Extract the inequalities from the enabling condition.
+			parseBooleanInequalities(T.getEnablingTree());
+		}
+	}
+	
+	/**
+	 * Extracts the boolean variables associated with inequalities from a 
+	 * single ExprTree.
+	 * @param ET
+	 * 		The expression tree for which the inequalities are extracted.
+	 */
+	private void parseBooleanInequalities(ExprTree ET){
+		/*
+		 *  This method servers as a driver method for a recursive like search.
+		 *  The basic idea is to explore the tree until an inequality is found,
+		 *  create a new variable for the inequality including the subtree rooted
+		 *  at that node, and replace the node with a boolean variable.
+		 */
+		
+		// Create a list of operators to match.
+		String[] operators = new String[]{"<", "<=", ">", ">="};
+		
+		// Get the nodes containing inequalities.
+		ArrayList<ExprTree> inequalities = new ArrayList<ExprTree>();
+		findInequalityNodes(ET, operators, inequalities);
+		
+		parseBooleanInequalities(inequalities);
+		
+	}
+	
+	/**
+	 * Extracts boolean inequalities at the nodes of relational operators provided.
+	 * @param inequalities
+	 * 		An ExprTree array containing nodes whose roots are a relational
+	 * 		operator.
+	 */
+	private void parseBooleanInequalities(ArrayList<ExprTree> inequalities){
+		// For each node, create an InequalityVariable, add it to the variables,
+		// and replace the current node of the ExprTree with the InequaltiyVariable.
+		
+		for(ExprTree ET : inequalities){
+			
+			// Extract the expression for naming the new InequalityVariable.
+			String booleanName = "$" + ET.toString();
+			
+			// Create the InequalityVariable.
+			InequalityVariable newVariable = new InequalityVariable(booleanName, "false",
+					ET);
+			
+			// Check if the Variable is present already.
+			Variable v = booleans.get(booleanName);
+			
+			if(v != null){
+				// Check if it is an InequalityVariable.
+				if(!(v instanceof InequalityVariable)){
+					throw new IllegalStateException("Name collision. The extracted "
+							+ "name for an InequalityVariable matches a name already "
+							+ "given to a boolean variable.");
+				}
+				else{
+					InequalityVariable iv = (InequalityVariable) v;
+					iv.increaseCount();
+				}
+			}
+			else{
+				// Register variable with the continuous variable.
+				// TODO : finish.
+
+				// Add the variable
+				booleans.put(booleanName, newVariable);
+			}
+			
+			// Replace the node into a boolean value.
+			// The the type.
+			ET.isit = 'b';
+			ET.logical = true;
+			
+			// Change the name.
+			ET.variable = booleanName;
+			
+			// Change the op.
+			ET.op = "";
+			
+			// Remove the branches.
+			ET.r1 = null;
+			ET.r2 = null;
+		}
+	}
+	
+	/**
+	 * Searches an expression tree and finds the nodes that contain an operator.
+	 * @param ET
+	 * 		The ExprTree to search.
+	 * @param operators
+	 * 		The operators to find.
+	 * @param nodes
+	 * 		The list to add the found nodes to.
+	 */
+	private void findInequalityNodes(ExprTree ET, String[] operators,
+			ArrayList<ExprTree> nodes){
+		
+		// Check if ET node is null, if so return. (Base case 1 for recursion.)
+		if(ET == null){
+			return;
+		}
+		
+		// Check if ET is a node we want. (Base case 2 for recursion.
+		// Relations cannot be nested.)
+		for(int i=0; i<operators.length; i++){
+			
+			// Extract the operators to check.
+			String op = ET.getOp();
+			String oplist = operators[i];
+			
+			// Avoid issue of leading and trailing spaces.
+			op = op.trim();
+			oplist = oplist.trim();
+			
+			if(oplist.equals(op)){
+				// If the two are equal, then this node is an inequality.
+				// So add it to the list and return.
+				nodes.add(ET);
+				return;
+			}
+		}
+		
+		// The node is not an inequality so search the children trees.
+		findInequalityNodes(ET.getLeftChild(), operators, nodes);
+		findInequalityNodes(ET.getRightChild(), operators, nodes);
 	}
 	
 	private static final String PROPERTY = "#@\\.property ([^@]*)\\n";
