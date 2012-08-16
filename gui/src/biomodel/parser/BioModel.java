@@ -145,6 +145,7 @@ public class BioModel {
 		Compartment c = m.createCompartment();
 		if (grid) {
 			c.setId("Grid");
+			createDiffusionDefaultParameters();
 		} else {
 			c.setId("Cell");
 		}
