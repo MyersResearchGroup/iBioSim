@@ -1,16 +1,11 @@
 package verification;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Scanner;
-
-
 import verification.platu.main.Options;
 import verification.platu.project.Project;
 
 import lpn.parser.LhpnFile;
-
 
 
 
@@ -46,14 +41,28 @@ public class VerificationNoGui {
 				Options.setCycleClosingAmpleMethd("cctboff");
 				poroff = false;
 			}
-			else if (args[i].contains("-dir:")) { // Directory should be provided as an argument starting with -dir:
+			else if (args[i].contains("-dir=")) { // Directory should be provided as an argument starting with -dir:
 				directory = args[i].trim().substring(5);
 			}
-			else if (args[i].contains("-log:")) { // Runtime, memory usage, and state count etc are written in the log file specified here.
+			else if (args[i].contains("-log=")) { // Runtime, memory usage, and state count etc are written in the log file specified here.
 				Options.setLogName(args[i].trim().substring(5));
 			}
+			else if (args[i].contains("-memlim=")) {
+				Options.setMemoryUpperBoundFlag();
+				String memUpperBound = args[i].trim().replace("-memlim=", "");
+				if(memUpperBound.contains("G")) {
+					memUpperBound = memUpperBound.replace("G", "");					
+					Options.setMemoryUpperBound((long)(Float.parseFloat(memUpperBound) * 1000000000));
+				}
+				if(memUpperBound.contains("M")) {
+					memUpperBound = memUpperBound.replace("M", "");
+					Options.setMemoryUpperBound((long)(Float.parseFloat(memUpperBound) * 1000000));
+				}
+			}
+			else if (args[i].contains("-disableDeadlock")) {
+				Options.disablePORdeadlockPreserve();
+			}
 		}
-		
 		if (directory.trim().equals("") || directory == null) {
 			System.out.println("Direcotry provided is empty. Exit.");
 			System.exit(0);
