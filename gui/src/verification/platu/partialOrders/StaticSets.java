@@ -29,14 +29,12 @@ public class StaticSets {
 	}
 		
 	/**
-	 * Build a set of transitions that can be disabled by curTran.
+	 * Build a set of transitions that curTran can disable.
 	 * @param curLpnIndex 
 	 */
-	public void buildDisableSet(int curLpnIndex) {
+	public void buildCurTranDisableOtherTransSet(int curLpnIndex) {
 		// Test if curTran can disable other transitions by stealing their tokens.
 		if (curTran.hasConflictSet()) {
-//			if (curTran.getPreset().length==1 && curTran.getPostset().length==1 && curTran.getPreset()[0] == curTran.getPostset()[0]) {				
-//			}
 			if (!tranFormsSelfLoop()) {
 				Set<Integer> conflictSet = curTran.getConflictSetTransIndices();
 				conflictSet.remove(curTran.getIndex());
@@ -46,7 +44,7 @@ public class StaticSets {
 				}
 			}
 		}
-		// Test if curTran can disable other transitions by firing its assignments
+		// Test if curTran can disable other transitions by executing its assignments
 		for (Integer lpnIndex : allTransitions.keySet()) {
 			Transition[] allTransInOneLpn = allTransitions.get(lpnIndex);
 			for (int i = 0; i < allTransInOneLpn.length; i++) {
@@ -67,7 +65,6 @@ public class StaticSets {
 			disableSet.addAll(modifyAssignment);
 //			printIntegerSet(disableByStealingToken, "disableByStealingToken");
 //			printIntegerSet(disableByFailingEnableCond, "disableByFailingEnableCond");
-
 		}
 	}
 	
@@ -86,6 +83,44 @@ public class StaticSets {
 				break;
 		}
 		return isSelfLoop;
+	}
+	
+	/**
+	 * Build a set of transitions that disable curTran.
+	 * @param curLpnIndex 
+	 */
+	public void buildOtherTransDisableCurTranSet(int curLpnIndex) {
+		// Test if other transition(s) can disable curTran by stealing their tokens.
+				if (curTran.hasConflictSet()) {
+					if (!tranFormsSelfLoop()) {
+						Set<Integer> conflictSet = curTran.getConflictSetTransIndices();
+						conflictSet.remove(curTran.getIndex());
+						for (Integer i : conflictSet) {
+							LpnTransitionPair lpnTranPair = new LpnTransitionPair(curLpnIndex, i);
+							disableByStealingToken.add(lpnTranPair);
+						}
+					}
+				}
+				// Test if other transitions can disable curTran by executing their assignments
+				for (Integer lpnIndex : allTransitions.keySet()) {
+					Transition[] allTransInOneLpn = allTransitions.get(lpnIndex);
+					for (int i = 0; i < allTransInOneLpn.length; i++) {
+						if (curTran.equals(allTransInOneLpn[i]))
+							continue;
+						Transition anotherTran = allTransInOneLpn[i];
+						ExprTree curTranEnablingTree = curTran.getEnablingTree();
+						if (curTranEnablingTree != null
+								&& (curTranEnablingTree.getChange(anotherTran.getAssignments())=='F'
+								 || curTranEnablingTree.getChange(anotherTran.getAssignments())=='f'
+								 || curTranEnablingTree.getChange(anotherTran.getAssignments())=='X')) {
+							disableByFailingEnableCond.add(new LpnTransitionPair(lpnIndex, anotherTran.getIndex()));
+						}
+					}
+					disableSet.addAll(disableByStealingToken);
+					disableSet.addAll(disableByFailingEnableCond);
+					buildModifyAssignSet();
+//					disableSet.addAll(modifyAssignment);
+				}
 	}
 
 	/**
@@ -152,7 +187,7 @@ public class StaticSets {
 		return modifyAssignment;
 	}
 	
-	public HashSet<LpnTransitionPair> getDisabled() {
+	public HashSet<LpnTransitionPair> getDisableSet() {
 		return disableSet;
 	}
 
