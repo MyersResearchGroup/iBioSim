@@ -62,6 +62,16 @@ public class Options {
 	private static String cycleClosingAmpleMethd = "cctb";
 	
 	/*
+	 * Deadlock preserving option during partial order reduction
+	 */
+	private static boolean porDeadlockPreserve = true;
+	
+	/*
+	 * Report disabling error flag
+	 */
+	private static boolean reportDisablingError = false;
+	
+	/*
 	 * Output state graph (dot) flag
 	 */
 	private static boolean outputSgFlag = false;
@@ -77,7 +87,7 @@ public class Options {
 	private static boolean outputLogFlag = false;
 	
 	/*
-	 * Name of the LPN under verificaiton.
+	 * Name of the LPN under verification.
 	 */
 	private static String lpnName = null;
 	
@@ -85,6 +95,16 @@ public class Options {
 	 * Path for printing global state graph 
 	 */
 	private static String prjSgPath = null;
+	
+	/*
+	 * Flag indate if there is a user specified memory upper bound
+	 */
+	private static boolean memoryUpperBoundFlag;
+	
+	/*
+	 * User specified memory upper bound
+	 */
+	private static long memoryUpperBound;
 	
 	/*
 	 * Search algorithm options:
@@ -306,5 +326,36 @@ public class Options {
 	
 	public static String getLogName() {
 		return lpnName;
+	}
+
+	public static void disablePORdeadlockPreserve() {
+		porDeadlockPreserve = false;
+	}
+	public static boolean getPORdeadlockPreserve() {
+		return porDeadlockPreserve;
+	}
+	
+	public static void setReportDisablingError() {
+		reportDisablingError = true;
+	}
+ 
+	public static boolean getReportDisablingError() {
+		return reportDisablingError;
+	}
+
+	public static void setMemoryUpperBound(long value) {
+		memoryUpperBound = value;
+	}
+	public static float getMemoryUpperBound() {
+		return memoryUpperBound;
+		
+	}
+	
+	public static void setMemoryUpperBoundFlag() {
+		memoryUpperBoundFlag = true;
+	}
+	
+	public static boolean getMemoryUpperBoundFlag() {
+		return memoryUpperBoundFlag;
 	}
 }
