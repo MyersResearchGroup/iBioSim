@@ -6,15 +6,14 @@ import java.util.HashMap;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-
 import lpn.parser.ExprTree;
 import lpn.parser.LhpnFile;
 import lpn.parser.Transition;
+import lpn.parser.Variable;
 
+import verification.platu.lpn.DualHashMap;
 import verification.platu.lpn.LpnTranList;
 import verification.platu.stategraph.State;
-import verification.platu.stategraph.StateGraph;
-import verification.timed_state_exploration.zone.TimedPrjState;
 
 
 /**
@@ -313,7 +312,7 @@ public class Zone{
 	 */
 	public Zone(State initialState)
 	{
-		
+		// Extract the associated LPN.
 		LhpnFile lpn = initialState.getLpn();
 		
 		int LPNIndex = lpn.getLpnIndex();
@@ -342,8 +341,11 @@ public class Zone{
 			_lpnList[LPNIndex] = lpn;
 		}
 		
+		// Default value for the hash code indicating that the hash code has not
+		// been set yet.
 		_hashCode = -1;
 		
+		// Get the list of currently enabled Transitions by their index.
 		boolean[] enabledTran = initialState.getTranVector();
 		
 		ArrayList<LPNTransitionPair> enabledTransitionsArrayList =
@@ -436,14 +438,16 @@ public class Zone{
 		// Re-canonicalize
 		recononicalize();
 		
-		// Check the size of the dbm.
+		// Check the size of the DBM.
 		checkZoneMaxSize();
 	}
 	
 	/**
-	 * Gives the names of all the transitions that are represented by the zone.
+	 * Gives the names of all the transitions and continuous variables that 
+	 * are represented by the zone.
 	 * @return
-	 * 		The names of the transitions that are represented by the zone.
+	 * 		The names of the transitions and continuous variables that are 
+	 * 		represented by the zone.
 	 */
 	public String[] getTransitionNames(){
 
@@ -488,7 +492,21 @@ public class Zone{
 	 */
 	private void initialize_indexToTimerPair(State[] localStates){
 		
-		// This list accumulates the transition pairs.
+		/*
+		 * The populating of the _indexToTimerPair is done in three stages.
+		 * The first is to add the zero timer which is at the beginning of the zone.
+		 * The second is to add the continuous variables. And the third is to add
+		 * the other timers. Since the continuous variables are added before the
+		 * timers and the variables and timers are added in the order of the LPNs,
+		 * the elements in an accumulating list (enabledTransitionsArrayList) are
+		 * already in order up to the elements added for a particular LPN. Thus the
+		 * only sorting that needs to take place is the sorting for a particular LPN.
+		 * Correspondingly, elements are first found for an LPN and sort, then added
+		 * to the main list.
+		 */
+		
+		// This list accumulates the transition pairs (ie timers) and the continuous
+		// variables.
 		ArrayList<LPNTransitionPair> enabledTransitionsArrayList =
 				new ArrayList<LPNTransitionPair>();
 				
@@ -496,7 +514,63 @@ public class Zone{
 		enabledTransitionsArrayList
 			.add(new LPNTransitionPair(LPNTransitionPair.ZERO_TIMER, -1, true));
 		
-		// Get the rest of the transitions.
+		// Get the continuous variables.
+		for(int i=0; i<localStates.length; i++){
+			
+			// Accumulates the changing continuous variables for a single LPN.
+			ArrayList<LPNTransitionPair> singleLPN = 
+								new ArrayList<LPNTransitionPair>();
+			
+			// Get the associated LPN.
+			LhpnFile lpn = localStates[i].getLpn();
+			
+			// Get the continuous variables for this LPN.
+			String[] continuousVariables = lpn.getContVars();
+			
+			// Get the variable, index map.
+			DualHashMap<String, Integer> variableIndex = lpn.getVarIndexMap();
+			
+			// Find which have a nonzero rate.
+			for(int j=0; j<continuousVariables.length; j++){
+				// Get the Variables with this name.
+				Variable contVar = lpn.getVariable(continuousVariables[j]);
+				
+				// Get the rate.
+				int rate = (int) Double.parseDouble(contVar.getInitRate());
+				
+				// If the rate is non-zero, then the variables needs to be tracked
+				// by the zone.
+				if(rate !=0){
+					// Temporary exception guaranteeing only unit rates.
+					if(rate != -1 || rate != 1){
+						throw new IllegalArgumentException("Current development " +
+								"only supports unit rates. The variable " + contVar +
+								" has a rate of " + rate);
+					}
+					
+					// Get the LPN index for the variable
+					int lpnIndex = lpn.getLpnIndex();
+					
+					// Get the index as a variable for the LPN. This index matches
+					// the index in the vector stored by platu.State.
+					int contVariableIndex = variableIndex.get(continuousVariables[j]);
+					
+					// The continuous variable reference.
+					singleLPN.add(
+							new LPNTransitionPair(lpnIndex, contVariableIndex, false));
+				}
+			}
+			
+			// Sort the list.
+			Collections.sort(singleLPN);
+			
+			// Add the list to the total accumulating list.
+			for(int j=0; j<singleLPN.size(); j++){
+				enabledTransitionsArrayList.add(singleLPN.get(j));
+			}
+		}
+		
+		// Get the transitions.
 		for(int i=0; i<localStates.length; i++){
 			
 			// Extract the enabled transition vector.
