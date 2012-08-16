@@ -1715,6 +1715,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				 curLPN.load(directory + separator + curLPNname);
 				 selectedLPNs.add(curLPN);
 			}
+			
+			// Extract boolean variables from continuous variable inequalities.
+			for(int i=0; i<selectedLPNs.size(); i++){
+				selectedLPNs.get(i).parseBooleanInequalities();
+			}
 
 			/**
 			 * This is what selects the timing analysis.
