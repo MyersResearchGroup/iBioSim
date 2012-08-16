@@ -162,6 +162,15 @@ public class LPNTransitionPair implements Comparable<LPNTransitionPair>{
 		this._isTimer = isTimer;
 	}
 	
+	/**
+	 * Creates a string representation of the LPNTransitionsPair object. If
+	 * the pairing is representing a timer then the format is in the form
+	 * "(LPN Index, Transition Index) = (x, y)" where x and y are the LPNIndex
+	 * and Transition Index, respectively. If the pairing is representing a
+	 * continuous variable the format is in the form
+	 * "(LPN Index, Continuous Variable) = (x, y)" where x and y are the LPNIndex
+	 * and the index of the continuous variable, respectively.
+	 */
 	public String toString(){
 		String result = "";
 		
@@ -227,7 +236,16 @@ public class LPNTransitionPair implements Comparable<LPNTransitionPair>{
 		 * still remains and this ordering would be much less intuitive.
 		 */
 		
-		if(this._isTimer != otherPair._isTimer){
+		/*
+		 * This block ensures that all continuous variables (ie _isTimer is false)
+		 * come before the timers. However, if one of the timers is the zero timer,
+		 * then we want o skip this block. The the reason is that the zero timer
+		 * comes before any continuous variable or timer and this will already be 
+		 * enforced if this block is skipped due to the _lpnIndex field of the zero
+		 * timer is smaller than the possible indicies of any other variable.
+		 */
+		if(this._isTimer != otherPair._isTimer &&
+				!(this._lpnIndex == ZERO_TIMER || otherPair._lpnIndex == ZERO_TIMER)){
 			// If one pair represents a continuous variable and the other represents a timer
 			// then already one is less than the other. If this._isTimer is false, then 
 			// otherPair._isTimer is true and this comes before otherPair. Else this._isTimer
