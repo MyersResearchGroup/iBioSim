@@ -145,7 +145,8 @@ public class BioModel {
 		Compartment c = m.createCompartment();
 		if (grid) {
 			c.setId("Grid");
-			createDiffusionDefaultParameters();
+			loadDefaultParameters();
+			//createDiffusionDefaultParameters();
 		} else {
 			c.setId("Cell");
 		}
@@ -2544,20 +2545,27 @@ public class BioModel {
 			sbml.getModel().getCompartment(getCompartmentByLocation((float)x,(float)y,(float)GlobalConstants.DEFAULT_COMPONENT_WIDTH,
 					(float)GlobalConstants.DEFAULT_COMPONENT_HEIGHT));
 		}
-		if (compartment!=null) {
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)compartment.getPlugin("comp");
-			for (String compartmentPort : compartmentPorts) {
-				ReplacedElement replacement = sbmlSBase.createReplacedElement();
-				replacement.setSubmodelRef(submodelID);
-				replacement.setPortRef(GlobalConstants.COMPARTMENT+"__"+compartmentPort);
-			}
-		}
 			
 		int numRows = grid.getNumRows();
 		int numCols = grid.getNumCols();
 		
 		//if a gridded/arrayed submodel exists, it'll have this ID
 		String gridSubmodelID = "GRID__" + extId;
+		if (compartment!=null) {
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)compartment.getPlugin("comp");
+			boolean foundIt = false;
+			for (long i=0;i<sbmlSBase.getNumReplacedElements();i++) {
+				ReplacedElement replacement = sbmlSBase.getReplacedElement(i);
+				if (replacement.getSubmodelRef().equals(gridSubmodelID)) foundIt = true;
+			}
+			if (!foundIt) {
+				for (String compartmentPort : compartmentPorts) {
+					ReplacedElement replacement = sbmlSBase.createReplacedElement();
+					replacement.setSubmodelRef(gridSubmodelID);
+					replacement.setPortRef(GlobalConstants.COMPARTMENT+"__"+compartmentPort);
+				}
+			}
+		}
 		
 		Submodel potentialGridSubmodel = sbmlCompModel.getSubmodel(gridSubmodelID);
 		
@@ -5548,6 +5556,8 @@ public class BioModel {
 	public SBMLDocument flattenModel() {
 		Preferences biosimrc = Preferences.userRoot();
 		if (biosimrc.get("biosim.general.flatten", "").equals("libsbml")) {
+			//String tempFile = filename.replace(".gcm","").replace(".xml","")+"_temp.xml";
+			//save(tempFile);
 			return newFlattenModel();
 		}
 		ArrayList<String> modelList = new ArrayList<String>();
