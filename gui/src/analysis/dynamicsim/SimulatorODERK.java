@@ -339,7 +339,7 @@ public class SimulatorODERK extends Simulator {
 					values[i] = variableToValueMap.get(indexToVariableMap.get(i));
 			}
 			
-			System.err.println(variableToValueMap);
+			//System.err.println(variableToValueMap);
 			
 			//call the rk algorithm
 			values = rungeKutta.fehlberg(derivnFunction);
