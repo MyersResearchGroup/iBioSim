@@ -430,7 +430,7 @@ public class Zone{
 		_matrix = new int[matrixSize()][matrixSize()];
 		
 		// Set the lower bound/ upper bounds.
-		initializeLowerUpperBounds(getTransitionNames(), localStates);
+		initializeLowerUpperBounds(getAllNames(), localStates);
 		
 		// Advance Time
 		advance();
@@ -449,20 +449,106 @@ public class Zone{
 	 * 		The names of the transitions and continuous variables that are 
 	 * 		represented by the zone.
 	 */
-	public String[] getTransitionNames(){
+	public String[] getAllNames(){
 
-		String[] transitionNames = new String[_indexToTimerPair.length];
+//		String[] transitionNames = new String[_indexToTimerPair.length];
+//		
+//		transitionNames[0] = "The zero timer.";
+//		
+//		for(int i=1; i<transitionNames.length; i++){
+//			
+//			LPNTransitionPair ltPair = _indexToTimerPair[i];
+//			
+//			transitionNames[i] = _lpnList[ltPair.get_lpnIndex()]
+//					.getTransition(ltPair.get_transitionIndex()).getName();
+//		}
+//		return transitionNames;
 		
-		transitionNames[0] = "The zero timer.";
+		// Get the continuous variable names.
+		String[] contVar = getContVarNames();
 		
-		for(int i=1; i<transitionNames.length; i++){
+		// Get the transition names.
+		String[] trans = getTranNames();
+		
+		// Create an array large enough for all the names.
+		String[] names = new String[contVar.length + trans.length + 1];
+		
+		// Add the zero timer.
+		names[0] = "The zero timer.";
+		
+		// Add the continuous variables.
+		for(int i=0; i<contVar.length; i++){
+			names[i+1] = contVar[i];
+		}
+		
+		// Add the timers.
+		for(int i=0; i<trans.length; i++){
+			// Already the zero timer has been added and the elements of contVar.
+			// That's a total of 'contVar.length + 1' elements. The last index was
+			// thus 'contVar.length' So the first index to add to is 
+			// 'contVar.length +1'.
+			names[1+contVar.length + i] = trans[i];
+		}
+		
+		return names;
+	}
+	
+	/**
+	 * Get the names of the continuous variables that this zone uses.
+	 * @return
+	 * 		The names of the continuous variables that are part of this zone.
+	 */
+	public String[] getContVarNames(){
+		
+		// List for accumulating the names.
+		ArrayList<String> contNames = new ArrayList<String>();
+		
+		// Find the pairs that represent the continuous variables. Loop starts at
+		// i=1 since the i=0 is the zero timer.
+		for(int i=1; i<_indexToTimerPair.length; i++){
 			
 			LPNTransitionPair ltPair = _indexToTimerPair[i];
 			
-			transitionNames[i] = _lpnList[ltPair.get_lpnIndex()]
-					.getTransition(ltPair.get_transitionIndex()).getName();
+			// If the isTimer value is false, then this pair represents a continuous
+			// variable.
+			if(!ltPair.get_isTimer()){
+				// Get the LPN that this pairing references and find the name of
+				// the continuous variable whose index is given by this pairing.
+				contNames.add(_lpnList[ltPair.get_lpnIndex()]
+						.getVariable(ltPair.get_transitionIndex()).getName());
+			}
 		}
-		return transitionNames;
+		
+		return contNames.toArray(new String[0]);
+	}
+	
+	/**
+	 * Gets the names of the transitions that are associated with the timers in the
+	 * zone. Does not return the zero timer.
+	 * @return
+	 * 		The names of the transitions whose timers are in the zone except the zero
+	 * 		timer.
+	 */
+	public String[] getTranNames(){
+		
+		// List for accumulating the names.
+		ArrayList<String> transitionNames = new ArrayList<String>();
+		
+		// Find the pairs that represent the transition timers.
+		for(int i=1; i<_indexToTimerPair.length; i++){
+			
+			LPNTransitionPair ltPair = _indexToTimerPair[i];
+			
+			// If the isTimer value is true, then this pair represents a timer.
+			if(ltPair.get_isTimer()){
+				// Get the LPN that this pairing references and find the name of the
+				// transition whose index is given by this pairing.
+				transitionNames.add(_lpnList[ltPair.get_lpnIndex()]
+						.getTransition(ltPair.get_transitionIndex()).getName());
+			}
+		}
+		
+		return transitionNames.toArray(new String[0]);
 	}
 	
 	/**
@@ -542,7 +628,7 @@ public class Zone{
 				// by the zone.
 				if(rate !=0){
 					// Temporary exception guaranteeing only unit rates.
-					if(rate != -1 || rate != 1){
+					if(rate != -1 && rate != 1){
 						throw new IllegalArgumentException("Current development " +
 								"only supports unit rates. The variable " + contVar +
 								" has a rate of " + rate);
@@ -601,44 +687,64 @@ public class Zone{
 	}
 	
 	/**
-	 * Sets the lower and upper bounds for the transitions.
-	 * @param transitionNames
+	 * Sets the lower and upper bounds for the transitions and continuous variables.
+	 * @param varNames
 	 * 			The names of the transitions in _indexToTimerPair.
 	 */
-	private void initializeLowerUpperBounds(String[] transitionNames, State[] localStates){
+	private void initializeLowerUpperBounds(String[] varNames, State[] localStates){
 		
-		// Traverse the entire length of the DBM submatrix except the zero row/column.
+		// Traverse the entire length of the DBM sub-matrix except the zero row/column.
 		// This is the same length as the _indexToTimerPair.length-1. The DBM is used to
 		// match the idea of setting the value for each row.
 		for(int i=1; i<dbmSize(); i++){
 			// Get the current LPN and transition pairing.
 			LPNTransitionPair ltPair = _indexToTimerPair[i];
 			
-			// Get the expression tree.
-			ExprTree delay = _lpnList[ltPair.get_lpnIndex()].getDelayTree(transitionNames[i]);
-			
-			// Get the values of the variables for evaluating the ExprTree.
-			HashMap<String, String> varValues = 
-					_lpnList[ltPair.get_lpnIndex()]
-					.getAllVarsWithValuesAsString(localStates[ltPair.get_lpnIndex()].getVector());
-			
-			// Set the upper and lower bound.
 			int upper, lower;
-			if(delay.getOp().equals("uniform"))
-			{
-				ExprTree lowerDelay = delay.getLeftChild();
-				ExprTree upperDelay = delay.getRightChild();
-				
-				lower = (int) lowerDelay.evaluateExpr(varValues);
-				upper = (int) upperDelay.evaluateExpr(varValues);
-			}
-			else
-			{
-				lower = (int) delay.evaluateExpr(varValues);
-				
-				upper = lower;
-			}
 			
+			if(!ltPair.get_isTimer()){
+				// If the pairing represents a continuous variable, then the 
+				// upper and lower bound are the initial value or infinity depending
+				// on whether the initial rate is positive or negative.
+				
+				// If the value is a constant, then assign the upper and lower bounds
+				// to be constant. If the value is a range then assign the upper and
+				// lower bounds to be a range.
+				Variable v = _lpnList[ltPair.get_lpnIndex()]
+						.getVariable(ltPair.get_transitionIndex());
+				// TODO : For now, I'm assuming that the initial rate is constant. This
+				// will need to change later.
+				int initialRate = (int) Double.parseDouble(v.getInitRate());
+				upper = initialRate;
+				lower = initialRate;
+			}
+			else{
+			
+				// Get the expression tree.
+				ExprTree delay = _lpnList[ltPair.get_lpnIndex()].getDelayTree(varNames[i]);
+
+				// Get the values of the variables for evaluating the ExprTree.
+				HashMap<String, String> varValues = 
+						_lpnList[ltPair.get_lpnIndex()]
+								.getAllVarsWithValuesAsString(localStates[ltPair.get_lpnIndex()].getVector());
+
+				// Set the upper and lower bound.
+//				int upper, lower;
+				if(delay.getOp().equals("uniform"))
+				{
+					ExprTree lowerDelay = delay.getLeftChild();
+					ExprTree upperDelay = delay.getRightChild();
+
+					lower = (int) lowerDelay.evaluateExpr(varValues);
+					upper = (int) upperDelay.evaluateExpr(varValues);
+				}
+				else
+				{
+					lower = (int) delay.evaluateExpr(varValues);
+
+					upper = lower;
+				}
+			}
 			setLowerBoundbydbmIndex(i, lower);
 			setUpperBoundbydbmIndex(i, upper);
 		}
@@ -885,11 +991,30 @@ public class Zone{
 			}
 			else
 			{
-				// Get the name of the transition.
-				Transition tran = _lpnList[_indexToTimerPair[i].get_lpnIndex()].
-						getTransition(_indexToTimerPair[i].get_transitionIndex());
+				String name;
 				
-				result += " " +  tran.getName() + ":";
+				// If the current LPNTransitionPair is a timer, get the name
+				// from the transitions.
+				if(_indexToTimerPair[i].get_isTimer()){
+				
+					// Get the name of the transition.
+					Transition tran = _lpnList[_indexToTimerPair[i].get_lpnIndex()].
+							getTransition(_indexToTimerPair[i].get_transitionIndex());
+					
+					name = tran.getName();
+				}
+				else{
+					// If the current LPNTransitionPair is not a timer, get the
+					// name as a continuous variable.
+					Variable var = _lpnList[_indexToTimerPair[i].get_lpnIndex()]
+							.getVariable(_indexToTimerPair[i].get_transitionIndex());
+					
+					name = var.getName();
+				}
+				
+//				result += " " +  tran.getName() + ":";
+				
+				result += " " + name + ":";
 			}
 			result += "[ " + -1*getLowerBoundbydbmIndex(i) + ", " + getUpperBoundbydbmIndex(i) + " ]";
 			
