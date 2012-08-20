@@ -1182,6 +1182,23 @@ public class LhpnFile {
 		}
 		return null;
 	}
+	
+	public Variable getVariable(int index){
+//		return variables.get(index);
+		
+		/*
+		 *  For a continuous variable, the variable is not contained in 
+		 *  the 'variables' member variable, only a variable with the same name.
+		 *  
+		 *  This is a temporary hack to get the correct variable from the continuous
+		 *  variables instead of the more obvious method of getting the variable from
+		 *  the variables field.
+		 */
+		
+		String variableName = variables.get(index).getName();
+		
+		return continuous.get(variableName);
+	}
 
 	public HashMap<String, String> getBoolInputs() {
 		HashMap<String, String> inputs = new HashMap<String, String>();
