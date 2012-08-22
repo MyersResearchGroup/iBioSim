@@ -400,85 +400,42 @@ public class SimulatorSSACR extends Simulator {
 		HashSet<String> comps = new HashSet<String>();
 		comps.addAll(componentToLocationMap.keySet());
 		
-		bufferedTSDWriter.write("(" + "\"" + "time" + "\"");
+		if (dynamicBoolean == false) {
 		
-		//if there's an interesting species, only those get printed
-		if (interestingSpecies.size() > 0) {
+			bufferedTSDWriter.write("(" + "\"" + "time" + "\"");
 			
-			for (String speciesID : interestingSpecies)
-				bufferedTSDWriter.write(", \"" + speciesID + "\"");
-			
-			if (dynamicBoolean == true) {
+			//if there's an interesting species, only those get printed
+			if (interestingSpecies.size() > 0) {
 				
-				//always print compartment location IDs
-				for (String componentLocationID : componentToLocationMap.keySet()) {
-					
-					String locationX = componentLocationID + "__locationX";
-					String locationY = componentLocationID + "__locationY";
-					
-					bufferedTSDWriter.write(", \"" + locationX + "\", \"" + locationY + "\"");
-				}
+				for (String speciesID : interestingSpecies)
+					bufferedTSDWriter.write(", \"" + speciesID + "\"");
 			}
+			else {
+			
+				for (String speciesID : speciesIDSet) {				
+					bufferedTSDWriter.write(", \"" + speciesID + "\"");
+				}
+				
+				//print compartment IDs (for sizes)
+				for (String componentID : compartmentIDSet) {
+					
+					bufferedTSDWriter.write(", \"" + componentID + "\"");
+				}		
+				
+				//print nonconstant parameter IDs
+				for (String parameterID : nonconstantParameterIDSet) {
+					
+					try {
+						bufferedTSDWriter.write(", \"" + parameterID + "\"");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}		
+			}
+			
+			bufferedTSDWriter.write("),\n");
+		
 		}
-		else {
-		
-			for (String speciesID : speciesIDSet) {				
-				bufferedTSDWriter.write(", \"" + speciesID + "\"");
-			}
-			
-			if (dynamicBoolean == true) {
-			
-				//print compartment location IDs
-				for (String componentLocationID : componentToLocationMap.keySet()) {
-					
-					String locationX = componentLocationID + "__locationX";
-					String locationY = componentLocationID + "__locationY";
-					
-					bufferedTSDWriter.write(", \"" + locationX + "\", \"" + locationY + "\"");
-				}
-			}
-			
-			//print compartment IDs (for sizes)
-			for (String componentID : compartmentIDSet) {
-				
-				bufferedTSDWriter.write(", \"" + componentID + "\"");
-			}		
-			
-			//print nonconstant parameter IDs
-			for (String parameterID : nonconstantParameterIDSet) {
-				
-				try {
-					bufferedTSDWriter.write(", \"" + parameterID + "\"");
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}		
-		}
-		
-		bufferedTSDWriter.write("),\n");
-		
-//		for (String reactionID : reactionToPropensityMap.keySet()) {
-//			
-//			if (reactionToPropensityMap.get(reactionID) > 0) {
-//			
-//				System.err.println("ID: " + reactionID);
-//				
-//				System.err.println("formula " + reactionToFormulaMap.get(reactionID).toFormula());
-//				
-//				System.err.println("propensity " + reactionToPropensityMap.get(reactionID));
-//				
-//				System.err.println();
-//				System.err.println();
-//			}
-//		}
-//		
-//		for (String variableID : variableToValueMap.keySet()) {
-//			
-//			System.err.println("id " + variableID);
-//			System.err.println("value " + variableToValueMap.get(variableID));
-//			System.err.println();
-//			System.err.println();
-//		}
 	}
 	
 	/**
@@ -849,48 +806,6 @@ public class SimulatorSSACR extends Simulator {
 		if (dynamicBoolean == true) {
 			
 			setupGrid();
-			
-			//print compartment location IDs
-			for (String componentLocationID : componentToLocationMap.keySet()) {
-				
-				String locationX = componentLocationID + "__locationX";
-				String locationY = componentLocationID + "__locationY";
-				
-				try {
-					bufferedTSDWriter.write(", \"" + locationX + "\", \"" + locationY + "\"");
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			
-			if (interestingSpecies.size() <= 0) {
-			
-				//print compartment IDs (for sizes)
-				for (String componentID : compartmentIDSet) {
-					
-					try {
-						bufferedTSDWriter.write(", \"" + componentID + "\"");
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-				
-				//print nonconstant parameter IDs
-				for (String parameterID : nonconstantParameterIDSet) {
-					
-					try {
-						bufferedTSDWriter.write(", \"" + parameterID + "\"");
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-			
-			try {
-				bufferedTSDWriter.write("),\n");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 	

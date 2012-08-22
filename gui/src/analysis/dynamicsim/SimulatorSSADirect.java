@@ -453,38 +453,6 @@ public class SimulatorSSADirect extends Simulator {
 		if (dynamicBoolean == true) {
 			
 			setupGrid();
-			
-			//print compartment location IDs
-			for (String componentLocationID : componentToLocationMap.keySet()) {
-				
-				String locationX = componentLocationID + "__locationX";
-				String locationY = componentLocationID + "__locationY";
-				
-				try {
-					bufferedTSDWriter.write(", \"" + locationX + "\", \"" + locationY + "\"");
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			
-			if (interestingSpecies.size() <= 0) {
-			
-				//print compartment IDs (for sizes)
-				for (String componentID : compartmentIDSet) {
-					
-					try {
-						bufferedTSDWriter.write(", \"" + componentID + "\"");
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-			
-			try {
-				bufferedTSDWriter.write("),\n");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 	
