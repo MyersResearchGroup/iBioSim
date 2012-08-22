@@ -36,6 +36,7 @@ import odk.lang.FastMath;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
 import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.AbstractMathContainer;
 import org.sbml.jsbml.Annotation;
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.Compartment;
@@ -275,16 +276,16 @@ public abstract class Simulator {
 		SBMLErrorLog errors = document.getListOfErrors();
 		
 		//if the sbml document has errors, tell the user and don't simulate
-		if (document.getNumErrors() > 0) {
+		if (document.getErrorCount() > 0) {
 			
 			String errorString = "";
 			
-			for (int i = 0; i < errors.getNumErrors(); i++) {
+			for (int i = 0; i < errors.getErrorCount(); i++) {
 				errorString += errors.getError(i);
 			}
 			
 			JOptionPane.showMessageDialog(Gui.frame, 
-			"The SBML file contains " + document.getNumErrors() + " error(s):\n" + errorString,
+			"The SBML file contains " + document.getErrorCount() + " error(s):\n" + errorString,
 			"SBML Error", JOptionPane.ERROR_MESSAGE);
 			
 			sbmlHasErrorsFlag = true;
@@ -292,13 +293,13 @@ public abstract class Simulator {
 		
 		model = document.getModel();
 		
-		numSpecies = model.getNumSpecies();
-		numParameters = model.getNumParameters();
-		numReactions = model.getNumReactions();
-		numEvents = model.getNumEvents();
-		numRules = model.getNumRules();
-		numConstraints = model.getNumConstraints();
-		numInitialAssignments = model.getNumInitialAssignments();
+		numSpecies = model.getSpeciesCount();
+		numParameters = model.getParameterCount();
+		numReactions = model.getReactionCount();
+		numEvents = model.getEventCount();
+		numRules = model.getRuleCount();
+		numConstraints = model.getConstraintCount();
+		numInitialAssignments = model.getInitialAssignmentCount();
 		
 		//set initial capacities for collections (1.5 is used to multiply numReactions due to reversible reactions)
 		speciesToAffectedReactionSetMap = new HashMap<String, HashSet<String> >((int) numSpecies);
@@ -1117,7 +1118,7 @@ public abstract class Simulator {
 				//use node name to determine function
 				//i'm not sure what to do with completely user-defined functions, though
 				String nodeName = node.getName();
-				
+								
 				//generates a uniform random number between the upper and lower bound
 				if (nodeName.equals("uniform")) {
 					
@@ -1184,54 +1185,56 @@ public abstract class Simulator {
 //					if (variableToValueMap.containsKey(speciesName))
 //						return variableToValueMap.get(speciesName);
 				}
-				else if (nodeName.equals("neighborQuantityLeft")) {
-					
-//					System.err.println("here");
-//					System.err.println(node.toFormula());
+				else if (nodeName.equals("neighborQuantityLeftFull")) {
 					
 					int leftIndex = (int) evaluateExpressionRecursive(node.getChild(1));
 					int rightIndex = (int) evaluateExpressionRecursive(node.getChild(2));
-					String speciesName = "ROW" + leftIndex + "_COL" + (rightIndex - 1) + "__" + node.getChild(0).getName();
-					
-					if (variableToValueMap.containsKey(speciesName))
-						return variableToValueMap.get(speciesName);	
-				}
-				else if (nodeName.equals("neighborQuantityRight")) {
-					
-					int leftIndex = (int) evaluateExpressionRecursive(node.getChild(1));
-					int rightIndex = (int) evaluateExpressionRecursive(node.getChild(2));
-					String speciesName = "ROW" + leftIndex + "_COL" + (rightIndex + 1) + "__" + node.getChild(0).getName();
-					
-					if (variableToValueMap.containsKey(speciesName))
-						return variableToValueMap.get(speciesName);					
-				}
-				else if (nodeName.equals("neighborQuantityAbove")) {
-					
-					int leftIndex = (int) evaluateExpressionRecursive(node.getChild(1));
-					int rightIndex = (int) evaluateExpressionRecursive(node.getChild(2));
-					String speciesName = "ROW" + (leftIndex - 1) + "_COL" + rightIndex + "__" + node.getChild(0).getName();
+					String specName = node.getChild(0).getName().split("__")[node.getChild(0).getName().split("__").length - 1];
+					String speciesName = "ROW" + leftIndex + "_COL" + (rightIndex - 1) + "__" + specName;
 					
 					if (variableToValueMap.containsKey(speciesName))
 						return variableToValueMap.get(speciesName);
+					else return 1;
 				}
-				else if (nodeName.equals("neighborQuantityBelow")) {
+				else if (nodeName.equals("neighborQuantityRightFull")) {
 					
 					int leftIndex = (int) evaluateExpressionRecursive(node.getChild(1));
 					int rightIndex = (int) evaluateExpressionRecursive(node.getChild(2));
-					String speciesName = "ROW" + (leftIndex + 1) + "_COL" + rightIndex + "__" + node.getChild(0).getName();
+					String specName = node.getChild(0).getName().split("__")[node.getChild(0).getName().split("__").length - 1];
+					String speciesName = "ROW" + leftIndex + "_COL" + (rightIndex + 1) + "__" + specName;
+					
+					if (variableToValueMap.containsKey(speciesName)) {
+						return variableToValueMap.get(speciesName);
+					}
+					else return 1;
+				}
+				else if (nodeName.equals("neighborQuantityAboveFull")) {
+					
+					int leftIndex = (int) evaluateExpressionRecursive(node.getChild(1));
+					int rightIndex = (int) evaluateExpressionRecursive(node.getChild(2));
+					String specName = node.getChild(0).getName().split("__")[node.getChild(0).getName().split("__").length - 1];
+					String speciesName = "ROW" + (leftIndex - 1) + "_COL" + rightIndex + "__" + specName;
 					
 					if (variableToValueMap.containsKey(speciesName))
 						return variableToValueMap.get(speciesName);
+					else return 1;
+				}
+				else if (nodeName.equals("neighborQuantityBelowFull")) {
+					
+					int leftIndex = (int) evaluateExpressionRecursive(node.getChild(1));
+					int rightIndex = (int) evaluateExpressionRecursive(node.getChild(2));
+					String specName = node.getChild(0).getName().split("__")[node.getChild(0).getName().split("__").length - 1];
+					String speciesName = "ROW" + (leftIndex + 1) + "_COL" + rightIndex + "__" + specName;
+					
+					if (variableToValueMap.containsKey(speciesName))
+						return variableToValueMap.get(speciesName);
+					else return 1;
 				}
 				else if (nodeName.equals("getCompartmentLocationX")) {
-					
-					//System.err.println(node.getChild(0).getName().split("__")[0]);
 					
 					return this.componentToLocationMap.get(node.getChild(0).getName().split("__")[0]).getX();
 				}
 				else if (nodeName.equals("getCompartmentLocationY")) {
-					
-					//System.err.println(node.getChild(0).getName().split("__")[0]);
 					
 					return this.componentToLocationMap.get(node.getChild(0).getName().split("__")[0]).getY();
 				}
@@ -2303,6 +2306,27 @@ public abstract class Simulator {
 	}
 	
 	/**
+	 * recursively puts the nodes that have the same name as the quarry string passed in into the arraylist passed in
+	 * so, the entire tree is searched through, which i don't think is possible with the jsbml methods
+	 * the lax version uses contains instead of equals
+	 * 
+	 * @param node node to search through
+	 * @param quarry string to search for
+	 * @param satisfyingNodes list of nodes that satisfy the condition
+	 */
+	void getSatisfyingNodesLax(ASTNode node, String quarry, ArrayList<ASTNode> satisfyingNodes) {
+		
+		if (node.isName() && node.getName().contains(quarry))
+			satisfyingNodes.add(node);
+		else if (node.isFunction() && node.getName().contains(quarry))
+			satisfyingNodes.add(node);
+		else {
+			for (ASTNode childNode : node.getChildren())
+				getSatisfyingNodesLax(childNode, quarry, satisfyingNodes);
+		}		
+	}
+	
+	/**
 	 * updates the event queue and fires events and so on
 	 * @param currentTime the current time in the simulation
 	 */
@@ -2313,6 +2337,9 @@ public abstract class Simulator {
 		//loop through all untriggered events
 		//if any trigger, evaluate the fire time(s) and add them to the queue
 		for (String untriggeredEventID : untriggeredEventSet) {
+			
+//			System.err.println(untriggeredEventID);
+//			System.err.println(eventToTriggerMap.get(untriggeredEventID));
 			
 			//if the trigger evaluates to true
 			if (getBooleanFromDouble(evaluateExpressionRecursive(eventToTriggerMap.get(untriggeredEventID))) == true) {
@@ -2368,20 +2395,6 @@ public abstract class Simulator {
 		//remove recently triggered events from the untriggered set
 		//when they're fired, they get put back into the untriggered set
 		untriggeredEventSet.removeAll(triggeredEvents);
-	}
-		
-	protected void handleNeighborQuantityFunctions(ASTNode node, String compID, ASTNode child1, ASTNode child2) {
-		
-		if (node.isFunction() &&
-				node.getName().contains("neighborQuantity")) {
-			
-			node.addChild(child1);
-			node.addChild(child2);
-		}
-		else {
-			for (ASTNode childNode : node.getChildren())
-				handleNeighborQuantityFunctions(childNode, compID, child1, child2);
-		}
 	}
 	
 	/**
@@ -2838,10 +2851,10 @@ public abstract class Simulator {
 			
 			ASTNode degradationNode = new ASTNode();
 			
-			for (Map.Entry<String, ASTNode> reactionAndFormula : reactionToFormulaMap.entrySet()) {
-							
-				String reactionID = reactionAndFormula.getKey();
-			}
+//			for (Map.Entry<String, ASTNode> reactionAndFormula : reactionToFormulaMap.entrySet()) {
+//							
+//				String reactionID = reactionAndFormula.getKey();
+//			}
 			
 			Boolean isDegradable = false;
 
@@ -3178,7 +3191,7 @@ public abstract class Simulator {
 		String commaSpace = "";
 		
 		//dynamic printing requires re-printing the species values each time step
-		if (printTime > 0.0 && dynamicBoolean == true) {
+		if (dynamicBoolean == true) {
 		
 			bufferedTSDWriter.write("(\"time\"");
 			
@@ -3548,35 +3561,55 @@ public abstract class Simulator {
 					newEvent.setLevel(event.getLevel());
 					newEvent.setId(compartmentID + "__" + event.getId());
 					newEvent.setMetaId(compartmentID + "__" + event.getId());
+					event.getTrigger().getMath().updateVariables();
 					newEvent.setTrigger(event.getTrigger().clone());
 					
+					//at this point, the formula has something like neighborQuantity(Species1)
+					//this needs to become neighborQuantity(Species1, CompartmentLocationX(Comp1), CompartmentLocationY(Comp1))
 					if (newEvent.getTrigger().getMath().toFormula().contains("neighborQuantity")) {
 						
-//						ASTNode child1 = new ASTNode();
-//						ASTNode child2 = new ASTNode();
-//						ASTNode child3 = new ASTNode();
-//						ASTNode child4 = new ASTNode();
-//						
-////						child3.setVariable(model.getCompartment(compartmentID+"__default"));						
-////						FunctionDefinition fdX = new FunctionDefinition("compartmentLocationX", null, model.getLevel(), model.getVersion());
-////						
-////						child4.setVariable(model.getCompartment(compartmentID+"__default"));
-////						FunctionDefinition fdY = new FunctionDefinition("compartmentLocationY", null, model.getLevel(), model.getVersion());
-//						
-//						try {
-//							child1.
-//							child1.setVariable("compartmentLocationX");
-//							child1.getChild(0).setVariable(model.getCompartment(compartmentID+"__default"));
-////							child1.setVariable(fdX);
-////							child2.setVariable(fdY);
-////							child2 = ASTNode.parseFormula("compartmentLocationY(" + compartmentID + ")");
-////							child2.getChild(0).setVariable(model.getCompartment(compartmentID+"__default"));
-//						} 
-//						catch (ParseException e) {
-//							e.printStackTrace();
-//						}
-//						
-//						handleNeighborQuantityFunctions(newEvent.getTrigger().getMath(), compartmentID, child1, child2);
+						String triggerMath = newEvent.getTrigger().getMath().toFormula();						
+						ArrayList<ASTNode> nqNodes = new ArrayList<ASTNode>();
+						
+						this.getSatisfyingNodesLax(newEvent.getTrigger().getMath(), "neighborQuantity", nqNodes);
+						
+						//loop through all neighbor quantity nodes in the trigger formula
+						for (ASTNode nqNode : nqNodes) {
+							
+							String direction = "";
+							
+							if (triggerMath.contains("QuantityLeft"))
+								direction = "Left";
+							else if (triggerMath.contains("QuantityRight"))
+								direction = "Right";
+							else if (triggerMath.contains("QuantityAbove"))
+								direction = "Above";
+							else
+								direction = "Below";
+							
+							String speciesID = nqNode.toFormula().split(
+									"neighborQuantity" + direction)[1].replace("(","").replace(")","");							
+							
+							try {
+								ASTNode newFormula = ASTNode.parseFormula(
+										"neighborQuantity" + direction + "Full(" + compartmentID + "__" + speciesID + 
+										", getCompartmentLocationX(" + compartmentID + "__Cell" +
+										"), getCompartmentLocationY(" + compartmentID + "__Cell" + "))");
+								
+								for (int i = 0; i < ((ASTNode) nqNode.getParent()).getChildCount(); ++i) {
+									
+									if (((ASTNode) nqNode.getParent().getChildAt(i)).isFunction() &&
+											((ASTNode) nqNode.getParent().getChildAt(i)).getVariable().toString()
+											.contains("neighborQuantity" + direction)) {
+										
+										((ASTNode) nqNode.getParent()).replaceChild(i, newFormula);
+										break;
+									}										
+								}
+							} catch (ParseException e) {
+								e.printStackTrace();
+							}
+						}
 					}
 					
 					if (event.isSetPriority())
@@ -4520,7 +4553,7 @@ public abstract class Simulator {
 		if (event.getTrigger().getMath().toFormula().contains("neighborQuantity") == false)
 			event.getTrigger().setMath(inlineFormula(event.getTrigger().getMath()));
 		
-		eventToTriggerMap.put(eventID, inlineFormula(event.getTrigger().getMath()));
+		eventToTriggerMap.put(eventID, event.getTrigger().getMath());
 		eventToTriggerInitiallyTrueMap.put(eventID, event.getTrigger().isInitialValue());
 		eventToPreviousTriggerValueMap.put(eventID, event.getTrigger().isInitialValue());
 		eventToTriggerPersistenceMap.put(eventID, event.getTrigger().getPersistent());
@@ -4597,7 +4630,7 @@ public abstract class Simulator {
 			bufferedTSDWriter = new BufferedWriter(TSDWriter);
 			bufferedTSDWriter.write('(');
 			
-			if (currentRun > 1) {
+			if (currentRun > 1 && dynamicBoolean == false) {
 			
 				bufferedTSDWriter.write("(" + "\"" + "time" + "\"");
 				
@@ -4617,27 +4650,23 @@ public abstract class Simulator {
 						bufferedTSDWriter.write(", \"" + speciesID + "\"");
 					}
 					
-					//for dynamicBoolean == true, that's handled in setupForNewRun
-					//as it's different for the simulators
-					if (dynamicBoolean == false) {
-						//print compartment IDs (for sizes)
-						for (String componentID : compartmentIDSet) {
-							
-							bufferedTSDWriter.write(", \"" + componentID + "\"");
-						}
+					//print compartment IDs (for sizes)
+					for (String componentID : compartmentIDSet) {
 						
-						//print nonconstant parameter IDs
-						for (String parameterID : nonconstantParameterIDSet) {
-							
-							try {
-								bufferedTSDWriter.write(", \"" + parameterID + "\"");
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-						}
-						
-						bufferedTSDWriter.write("),\n");
+						bufferedTSDWriter.write(", \"" + componentID + "\"");
 					}
+					
+					//print nonconstant parameter IDs
+					for (String parameterID : nonconstantParameterIDSet) {
+						
+						try {
+							bufferedTSDWriter.write(", \"" + parameterID + "\"");
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+					
+					bufferedTSDWriter.write("),\n");
 				}
 			}
 		} catch (IOException e) {

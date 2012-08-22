@@ -5315,28 +5315,6 @@ public class BioModel {
 				updateGridSpecies(sbml.getModel().getParameter(i).getId().replace("__locations",""));
 			}
 		}
-		
-		//these should probably go someplace else?
-//		SBMLutilities.createFunction(
-//				sbml.getModel(), "neighborQuantityLeft", "neighborQuantityLeft", "lambda(a,0)");
-//		SBMLutilities.createFunction(
-//				sbml.getModel(), "neighborQuantityRight", "neighborQuantityRight", "lambda(a,0)");
-//		SBMLutilities.createFunction(
-//				sbml.getModel(), "neighborQuantityAbove", "neighborQuantityAbove", "lambda(a,0)");
-//		SBMLutilities.createFunction(
-//				sbml.getModel(), "neighborQuantityBelow", "neighborQuantityBelow", "lambda(a,0)");
-//		SBMLutilities.createFunction(
-//				sbml.getModel(), "neighborQuantityLeft", "neighborQuantityLeft", "lambda(a,b,c,0)");
-//		SBMLutilities.createFunction(
-//				sbml.getModel(), "neighborQuantityRight", "neighborQuantityRight", "lambda(a,b,c,0)");
-//		SBMLutilities.createFunction(
-//				sbml.getModel(), "neighborQuantityAbove", "neighborQuantityAbove", "lambda(a,b,c,0)");
-//		SBMLutilities.createFunction(
-//				sbml.getModel(), "neighborQuantityBelow", "neighborQuantityBelow", "lambda(a,b,c,0)");
-//		SBMLutilities.createFunction(
-//				sbml.getModel(), "getCompartmentLocationX", "getCompartmentLocationX", "lambda(a,0)");
-//		SBMLutilities.createFunction(
-//				sbml.getModel(), "getCompartmentLocationY", "getCompartmentLocationY", "lambda(a,0)");
 	}
 
 	private void loadSBMLFromBuffer(StringBuffer buffer) {	

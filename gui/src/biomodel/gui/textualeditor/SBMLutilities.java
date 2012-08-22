@@ -224,8 +224,26 @@ public class SBMLutilities {
 							createFunction(model, "BITXOR", "Bitwise XOR", "lambda(a,b,a*b)");
 						} else if (splitLaw[i].equals("mod")) {
 							createFunction(model, "mod", "Modular", "lambda(a,b,a-floor(a/b)*b)");
-						} else {
+						} else if (splitLaw[i].equals("neighborQuantityLeft")) {
+							createFunction(sbml.getModel(), "neighborQuantityLeft", "neighborQuantityLeft", "lambda(a,0)");
+							createFunction(sbml.getModel(), "neighborQuantityLeftFull", "neighborQuantityLeftFull", "lambda(a,b,c,0)");
+						} else if (splitLaw[i].equals("neighborQuantityRight")) {
+							createFunction(sbml.getModel(), "neighborQuantityRight", "neighborQuantityRight", "lambda(a,0)");
+							createFunction(sbml.getModel(), "neighborQuantityRightFull", "neighborQuantityRightFull", "lambda(a,b,c,0)");
+						} else if (splitLaw[i].equals("neighborQuantityAbove")) {
+							createFunction(sbml.getModel(), "neighborQuantityAbove", "neighborQuantityAbove", "lambda(a,0)");
+							createFunction(sbml.getModel(), "neighborQuantityAboveFull", "neighborQuantityAboveFull", "lambda(a,b,c,0)");
+						} else if (splitLaw[i].equals("neighborQuantityBelow")) {
+							createFunction(sbml.getModel(), "neighborQuantityBelow", "neighborQuantityBelow", "lambda(a,0)");
+							createFunction(sbml.getModel(), "neighborQuantityBelowFull", "neighborQuantityBelowFull", "lambda(a,b,c,0)");
+						}
+						else {
 							invalidVars.add(splitLaw[i]);
+						}
+						
+						if (splitLaw[i].contains("neighborQuantity")) {
+							createFunction(sbml.getModel(), "getCompartmentLocationX", "getCompartmentLocationX", "lambda(a,0)");
+							createFunction(sbml.getModel(), "getCompartmentLocationY", "getCompartmentLocationY", "lambda(a,0)");
 						}
 					}
 				}
@@ -360,6 +378,57 @@ public class SBMLutilities {
 				document.getModel().removeFunctionDefinition("BITAND");
 			}
 		}
+//		if (document.getModel().getFunctionDefinition("neighborQuantityLeft") != null) {
+//			if (!variableInUse(document, "neighborQuantityLeft", false, false, true)) {
+//				document.getModel().removeFunctionDefinition("neighborQuantityLeft");
+//			}
+//		}
+//		if (document.getModel().getFunctionDefinition("neighborQuantityRight") != null) {
+//			if (!variableInUse(document, "neighborQuantityRight", false, false, true)) {
+//				document.getModel().removeFunctionDefinition("neighborQuantityRight");
+//			}
+//		}
+//		if (document.getModel().getFunctionDefinition("neighborQuantityAbove") != null) {
+//			if (!variableInUse(document, "neighborQuantityAbove", false, false, true)) {
+//				document.getModel().removeFunctionDefinition("neighborQuantityAbove");
+//			}
+//		}
+//		if (document.getModel().getFunctionDefinition("neighborQuantityBelow") != null) {
+//			if (!variableInUse(document, "neighborQuantityBelow", false, false, true)) {
+//				document.getModel().removeFunctionDefinition("neighborQuantityBelow");
+//			}
+//		}
+//		if (document.getModel().getFunctionDefinition("neighborQuantityLeftFull") != null) {
+//			if (!variableInUse(document, "neighborQuantityLeftFull", false, false, true)) {
+//				document.getModel().removeFunctionDefinition("neighborQuantityLeftFull");
+//			}
+//		}
+//		if (document.getModel().getFunctionDefinition("neighborQuantityRightFull") != null) {
+//			if (!variableInUse(document, "neighborQuantityRightFull", false, false, true)) {
+//				document.getModel().removeFunctionDefinition("neighborQuantityRightFull");
+//			}
+//		}
+//		if (document.getModel().getFunctionDefinition("neighborQuantityAboveFull") != null) {
+//			if (!variableInUse(document, "neighborQuantityAboveFull", false, false, true)) {
+//				document.getModel().removeFunctionDefinition("neighborQuantityAboveFull");
+//			}
+//		}
+//		if (document.getModel().getFunctionDefinition("neighborQuantityBelowFull") != null) {
+//			if (!variableInUse(document, "neighborQuantityBelowFull", false, false, true)) {
+//				document.getModel().removeFunctionDefinition("neighborQuantityBelowFull");
+//			}
+//		}
+//		if (document.getModel().getFunctionDefinition("getCompartmentLocationX") != null) {
+//			if (!variableInUse(document, "getCompartmentLocationX", false, false, true)) {
+//				document.getModel().removeFunctionDefinition("getCompartmentLocationX");
+//			}
+//		}
+//		if (document.getModel().getFunctionDefinition("getCompartmentLocationY") != null) {
+//			if (!variableInUse(document, "getCompartmentLocationY", false, false, true)) {
+//				document.getModel().removeFunctionDefinition("getCompartmentLocationY");
+//			}
+//		}
+	
 	}
 
 	/**
