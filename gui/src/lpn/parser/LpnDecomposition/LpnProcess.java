@@ -39,7 +39,7 @@ public class LpnProcess extends LhpnFile {
 //	/**
 //	 * This method assigns at least one sticky transition to each process. Transitions whose preset places are marked are considered to be sticky
 //	 * for each process. The purpose of assigning sticky transitions is to break all cycles in each process. In general, one sticky transition is
-//	 * sufficient to break the cycle. However, FloydÕs all-pairs shortest-path algorithm (binary) is used to find additional transition(s) that can
+//	 * sufficient to break the cycle. However, Floyd's all-pairs shortest-path algorithm (binary) is used to find additional transition(s) that can
 //	 * help to cut the cycle(s).
 //	 */
 //	@SuppressWarnings("unchecked")
@@ -152,7 +152,7 @@ public class LpnProcess extends LhpnFile {
 	/**
 	 * This method assigns at least one sticky transition to each process. Transitions whose preset places are marked are considered to be sticky
 	 * for each process. The purpose of assigning sticky transitions is to break all cycles in each process. In general, one sticky transition is
-	 * sufficient to break the cycle. However, FloydÕs all-pairs shortest-path algorithm (binary) is used to find additional transition(s) that can
+	 * sufficient to break the cycle. However, Floydï¿½s all-pairs shortest-path algorithm (binary) is used to find additional transition(s) that can
 	 * help to cut the cycle(s).
 	 */
 	@SuppressWarnings("unchecked")
