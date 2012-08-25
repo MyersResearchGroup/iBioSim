@@ -62,7 +62,7 @@
 	       destdir="${build.classes}"
                debug="${debug.flag}"
                deprecation="on"
-               classpathref="classpath">
+		   classpathref="classpath">
           <src path="${src.dir}"/>
 	  </javac>	
         <!--<jar jarfile="${build.lib}/gui.jar" basedir="${build.classes}">
