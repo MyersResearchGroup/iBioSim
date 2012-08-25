@@ -56,14 +56,15 @@
     
     <!-- Build the GUI -->
     <target name="build" depends="init">
-        <javac source="1.6"
-	       target="1.6"
+        <javac source="1.5"
+	       target="1.5"
                nowarn="on"
 	       destdir="${build.classes}"
                debug="${debug.flag}"
                deprecation="on"
 		   classpathref="classpath">
           <src path="${src.dir}"/>
+        	<exclude name="**/SBML_Editor.java"/>
 	  </javac>	
         <!--<jar jarfile="${build.lib}/gui.jar" basedir="${build.classes}">
 	    <manifest>
