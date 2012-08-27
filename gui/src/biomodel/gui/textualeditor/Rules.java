@@ -214,10 +214,6 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 		});
-		if (!modelEditor.isParamsOnly()) {
-			// Field for annotating rules with SBOL DNA components
-			sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 2);
-		}
 		if (option.equals("OK")) {
 			ruleType.setEnabled(false);
 			Rule rule = (Rule)bioModel.getSBMLDocument().getModel().getElementByMetaId(metaId);
@@ -240,12 +236,11 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				ruleVar.setSelectedItem(rule.getVariable());
 				ruleMath.setText(SBMLutilities.myFormulaToString(rule.getMath()));
 			}
-			//Parse out SBOL annotations and add to SBOL field
 			if (!modelEditor.isParamsOnly()) {
-				// Field for annotating rules with SBOL DNA components
+				//Parse out SBOL annotations and add to SBOL field
 				LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(rule);
-				if (sbolURIs.size() > 0)
-					sbolField.setSBOLURIs(sbolURIs);
+				// Field for annotating rules with SBOL DNA components
+				sbolField = new SBOLField(sbolURIs, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 2, false);
 			}
 			if (rule.isSetMetaId()) {
 				id.setText(rule.getMetaId());
@@ -265,6 +260,8 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			}
 		}
 		else {
+			// Field for annotating rules with SBOL DNA components
+			sbolField = new SBOLField(new LinkedList<URI>(), GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 2, false);
 			if (!assignRuleVar("") && !rateRuleVar("")) {
 				String[] list1 = { "Algebraic" };
 				ruleType = new JComboBox(list1);
@@ -308,6 +305,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			String addVar = "";
 			addVar = (String) ruleVar.getSelectedItem();
 			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), id.getText().trim(), metaId, false, true);
+			
 			if (ruleMath.getText().trim().equals("")) {
 				JOptionPane.showMessageDialog(Gui.frame, "Rule must have formula.", "Enter Rule Formula", JOptionPane.ERROR_MESSAGE);
 				error = true;
@@ -401,6 +399,60 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 								"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
+					if (!error && !modelEditor.isParamsOnly()) {
+						// Handle SBOL data
+						// Checks whether SBOL annotation on model needs to be deleted later when annotating rule with SBOL
+//						boolean removeModelSBOLAnnotationFlag = false;
+//						LinkedList<URI> sbolURIs = sbolField.getSBOLURIs();
+//						if (sbolField.getSBOLURIs().size() > 0 && 
+//								bioModel.getElementSBOLCount() == 0 && bioModel.getModelSBOLAnnotationFlag()) {
+//							Object[] sbolOptions = { "OK", "Cancel" };
+//							int choice = JOptionPane.showOptionDialog(null, 
+//									"SBOL associated to model elements can't coexist with SBOL associated to model itself unless" +
+//											" the latter was previously generated from the former.  Remove SBOL associated to model?", 
+//											"Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, sbolOptions, sbolOptions[0]);
+//							if (choice == JOptionPane.OK_OPTION)
+//								removeModelSBOLAnnotationFlag = true;
+//							else
+//								error = true;
+//						}
+						if (!error) {
+							// Add SBOL annotation to rule
+							LinkedList<URI> sbolURIs = sbolField.getSBOLURIs();
+							if (sbolURIs.size() > 0) {
+								SBOLAnnotation sbolAnnot = new SBOLAnnotation(r.getMetaId(), sbolURIs);
+								AnnotationUtility.setSBOLAnnotation(r, sbolAnnot);
+								if (sbolField.wasInitiallyBlank())
+									bioModel.setElementSBOLCount(bioModel.getElementSBOLCount() + 1);
+//								if (removeModelSBOLAnnotationFlag) {
+//									AnnotationUtility.removeSBOLAnnotation(bioModel.getSBMLDocument().getModel());
+//									bioModel.setModelSBOLAnnotationFlag(false);
+//									modelEditor.getSchematic().getSBOLDescriptorsButton().setEnabled(true);
+//								}
+							} else {
+								AnnotationUtility.removeSBOLAnnotation(r);
+								if (!sbolField.wasInitiallyBlank())
+									bioModel.setElementSBOLCount(bioModel.getElementSBOLCount() - 1);
+							}
+
+							Port port = bioModel.getPortByMetaIdRef(r.getMetaId());
+							r.setMetaId(id.getText().trim());
+							if (port!=null) {
+								if (onPort.isSelected()) {
+									port.setId(GlobalConstants.RULE+"__"+r.getMetaId());
+									port.setMetaIdRef(r.getMetaId());
+								} else {
+									port.removeFromParentAndDelete();
+								}
+							} else {
+								if (onPort.isSelected()) {
+									port = bioModel.getSBMLCompModel().createPort();
+									port.setId(GlobalConstants.RULE+"__"+r.getMetaId());
+									port.setMetaIdRef(r.getMetaId());
+								}
+							}
+						}
+					}
 					if (error) {
 						if (!oldVar.equals("")) {
 							r.setVariable(oldVar);
@@ -408,30 +460,6 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 						r.setMath(SBMLutilities.myParseFormula(oldMath));
 						rul = oldRul;
 //						rul[index] = oldVal;
-					} else if (!modelEditor.isParamsOnly()) {
-						// Add SBOL annotation to rule
-						LinkedList<URI> sbolURIs = sbolField.getSBOLURIs();
-						if (sbolURIs.size() > 0) {
-							SBOLAnnotation sbolAnnot = new SBOLAnnotation(r.getMetaId(), sbolURIs);
-							AnnotationUtility.setSBOLAnnotation(r, sbolAnnot);
-						} else
-							AnnotationUtility.removeSBOLAnnotation(r);
-						Port port = bioModel.getPortByMetaIdRef(r.getMetaId());
-						r.setMetaId(id.getText().trim());
-						if (port!=null) {
-							if (onPort.isSelected()) {
-								port.setId(GlobalConstants.RULE+"__"+r.getMetaId());
-								port.setMetaIdRef(r.getMetaId());
-							} else {
-								port.removeFromParentAndDelete();
-							}
-						} else {
-							if (onPort.isSelected()) {
-								port = bioModel.getSBMLCompModel().createPort();
-								port.setId(GlobalConstants.RULE+"__"+r.getMetaId());
-								port.setMetaIdRef(r.getMetaId());
-							}
-						}
 					}
 //					updateRules(rul);
 					rules.setListData(rul);
@@ -510,13 +538,6 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 						rul = oldRul;
 						removeTheRule(addStr);
 					} else {
-						// Add SBOL annotation to rule
-						LinkedList<URI> sbolURIs = sbolField.getSBOLURIs();
-						if (sbolURIs.size() > 0) {
-							SBOLAnnotation sbolAnnot = new SBOLAnnotation(rPointer.getMetaId(), sbolURIs);
-							AnnotationUtility.setSBOLAnnotation(rPointer, sbolAnnot);
-						} else
-							AnnotationUtility.removeSBOLAnnotation(rPointer);
 						if (onPort.isSelected()) {
 							Port port = bioModel.getSBMLCompModel().createPort();
 							port.setId(GlobalConstants.RULE+"__"+rPointer.getMetaId());

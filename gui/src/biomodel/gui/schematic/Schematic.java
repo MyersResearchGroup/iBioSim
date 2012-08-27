@@ -24,10 +24,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
@@ -35,6 +39,7 @@ import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -63,9 +68,12 @@ import org.sbml.libsbml.SpeciesGlyph;
 import org.sbml.libsbml.SpeciesReference;
 import org.sbml.libsbml.TextGlyph;
 
+import sbol.SBOLDescriptorPanel;
+
 
 import main.Gui;
 
+import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.DropComponentPanel;
 import biomodel.gui.Grid;
 import biomodel.gui.GridPanel;
@@ -141,6 +149,7 @@ public class Schematic extends JPanel implements ActionListener {
 	private AbstractButton noInfluenceButton;
 	private AbstractButton zoomButton;
 	private AbstractButton panButton;
+	private JButton sbolDescriptorsButton;
 	
 	private JPopupMenu layoutPopup;
 	
@@ -441,6 +450,13 @@ public class Schematic extends JPanel implements ActionListener {
 
 		ModelPanel modelPanel = new ModelPanel(bioModel, modelEditor);
 		toolBar.add(modelPanel);
+		
+		sbolDescriptorsButton = new JButton("Edit Composite SBOL Descriptors");
+		sbolDescriptorsButton.setActionCommand("editSBOLDescriptors");
+		sbolDescriptorsButton.addActionListener(this);
+		toolBar.add(sbolDescriptorsButton);
+//		if (bioModel.getElementSBOLCount() == 0 && bioModel.getModelSBOLAnnotationFlag())
+//			sbolDescriptorsButton.setEnabled(false);
 
 		toolBar.setFloatable(false);
 		
@@ -541,6 +557,23 @@ public class Schematic extends JPanel implements ActionListener {
 		else if (command.equals("unZoom")) {
 			
 			graph.getView().setScale(1.0);
+		}
+		else if (command.equals("editSBOLDescriptors")) {
+			Gui gui = modelEditor.getGui();
+//			HashSet<String> sbolFiles = gui.getSbolFiles();
+			URI modelURI = null;
+			if (bioModel.getSBOLDescriptors() == null) {
+				LinkedList<URI> modelURIs = AnnotationUtility.parseSBOLAnnotation(bioModel.getSBMLDocument().getModel());
+				Iterator<URI> uriIterator = modelURIs.iterator();
+				while (uriIterator.hasNext() && (modelURI == null || !modelURI.toString().endsWith("iBioSim"))) {
+					modelURI = uriIterator.next();
+				}
+			}
+			if (modelURI != null && modelURI.toString().endsWith("iBioSim")) {
+				SBOLDescriptorPanel descriptorPanel = new SBOLDescriptorPanel(modelURI, gui.getRoot(), gui.getSbolFiles(), bioModel);
+			} else {
+				SBOLDescriptorPanel descriptorPanel = new SBOLDescriptorPanel(gui.getRoot(), gui.getSbolFiles(), bioModel);
+			}
 		}
 		else if(command == ""){
 			// radio buttons don't have to do anything and have an action command of "".
@@ -2374,6 +2407,10 @@ public class Schematic extends JPanel implements ActionListener {
 	
 	public void setMovieMode(boolean mode) {
 		movieMode = mode;
+	}
+	
+	public JButton getSBOLDescriptorsButton() {
+		return sbolDescriptorsButton;
 	}
 	
 	
