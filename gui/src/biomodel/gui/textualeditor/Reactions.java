@@ -193,7 +193,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	
 	private String selectedReaction;
 	
-	private ModelEditor gcmEditor;
+	private ModelEditor modelEditor;
 
 	public Reactions(Gui biosim, BioModel gcm, MutableBoolean dirty, Boolean paramsOnly,
 			ArrayList<String> getParams, String file, ArrayList<String> parameterChanges, ModelEditor gcmEditor) {
@@ -204,7 +204,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		this.paramsOnly = paramsOnly;
 		this.file = file;
 		this.parameterChanges = parameterChanges;
-		this.gcmEditor = gcmEditor;
+		this.modelEditor = gcmEditor;
 		Model model = gcm.getSBMLDocument().getModel();
 		JPanel addReacs = new JPanel();
 		addReac = new JButton("Add Reaction");
@@ -590,11 +590,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			// Parse out SBOL annotations and add to SBOL field
 			if (!paramsOnly) {
 				// Field for annotating reaction with SBOL DNA components
-				sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 2);
 				Reaction reac = gcm.getSBMLDocument().getModel().getReaction(reactionId);
 				LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(reac);
-				if (sbolURIs.size() > 0)
-					sbolField.setSBOLURIs(sbolURIs);
+				sbolField = new SBOLField(sbolURIs, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 2, false);
 				reactionPanelNorth1b.add(sbolField);
 			}
 			reactionPanelNorth.add(reactionPanelNorth1);
@@ -665,6 +663,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		while (error && value == JOptionPane.YES_OPTION) {
 			String reac = reacID.getText().trim();
 			error = SBMLutilities.checkID(gcm.getSBMLDocument(), reac, selectedID, false, false);
+			
 			if (!error) {
 				if (kineticLaw.getText().trim().equals("")) {
 					JOptionPane.showMessageDialog(Gui.frame, "A reaction must have a kinetic law.", "Enter A Kinetic Law", JOptionPane.ERROR_MESSAGE);
@@ -834,14 +833,42 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							changedModifiers.add(modifier);
 						}
 					}
+					// Handle SBOL data
 					if (!error && inSchematic && !paramsOnly) {
-						// Add SBOL annotation to reaction
-						LinkedList<URI> sbolURIs = sbolField.getSBOLURIs();
-						if (sbolURIs.size() > 0) {
-							SBOLAnnotation sbolAnnot = new SBOLAnnotation(react.getMetaId(), sbolURIs);
-							AnnotationUtility.setSBOLAnnotation(react, sbolAnnot);
-						} else
-							AnnotationUtility.removeSBOLAnnotation(react);
+						// Checks whether SBOL annotation on model needs to be deleted later when annotating rxn with SBOL
+//						boolean removeModelSBOLAnnotationFlag = false;
+//						LinkedList<URI> sbolURIs = sbolField.getSBOLURIs();
+//						if (sbolURIs.size() > 0 && bioModel.getElementSBOLCount() == 0 
+//								&& bioModel.getModelSBOLAnnotationFlag()) {
+//							Object[] sbolOptions = { "OK", "Cancel" };
+//							int choice = JOptionPane.showOptionDialog(null, 
+//									"SBOL associated to model elements can't coexist with SBOL associated to model itself unless" +
+//											" the latter was previously generated from the former.  Remove SBOL associated to model?", 
+//											"Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, sbolOptions, sbolOptions[0]);
+//							if (choice == JOptionPane.OK_OPTION)
+//								removeModelSBOLAnnotationFlag = true;
+//							else
+//								error = true;
+//						}
+						if (!error) {
+							// Add SBOL annotation to reaction
+							LinkedList<URI> sbolURIs = sbolField.getSBOLURIs();
+							if (sbolURIs.size() > 0) {
+								SBOLAnnotation sbolAnnot = new SBOLAnnotation(react.getMetaId(), sbolURIs);
+								AnnotationUtility.setSBOLAnnotation(react, sbolAnnot);
+								if (sbolField.wasInitiallyBlank())
+									bioModel.setElementSBOLCount(bioModel.getElementSBOLCount() + 1);
+//								if (removeModelSBOLAnnotationFlag) {
+//									AnnotationUtility.removeSBOLAnnotation(bioModel.getSBMLDocument().getModel());
+//									bioModel.setModelSBOLAnnotationFlag(false);
+//									modelEditor.getSchematic().getSBOLDescriptorsButton().setEnabled(true);
+//								}
+							} else {
+								AnnotationUtility.removeSBOLAnnotation(react);
+								if (!sbolField.wasInitiallyBlank())
+									bioModel.setElementSBOLCount(bioModel.getElementSBOLCount() - 1);
+							}
+						}
 					}
 				}
 				else {

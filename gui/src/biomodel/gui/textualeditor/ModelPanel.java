@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URI;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 import javax.swing.JButton;
@@ -18,11 +19,23 @@ import javax.swing.JTextField;
 import main.Gui;
 import main.util.MutableBoolean;
 
+import org.sbml.libsbml.CompModelPlugin;
+import org.sbml.libsbml.CompSBMLDocumentPlugin;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.Parameter;
 import org.sbml.libsbml.SBMLDocument;
+import org.sbml.libsbml.SBaseList;
+import org.sbml.libsbml.Submodel;
 import org.sbml.libsbml.UnitDefinition;
+import org.sbolstandard.core.DnaComponent;
+import org.sbolstandard.core.Resolver;
+import org.sbolstandard.core.SBOLDocument;
+import org.sbolstandard.core.impl.AggregatingResolver;
+import org.sbolstandard.core.impl.SBOLDocumentImpl;
+import org.sbolstandard.core.impl.AggregatingResolver.UseFirstFound;
+
+import sbol.SBOLUtility;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
@@ -43,12 +56,14 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 	private JButton modelEditor;
 
 	private JComboBox substanceUnits, timeUnits, volumeUnits, areaUnits, lengthUnits, extentUnits, conversionFactor;
-
+	
 	private SBOLField sbolField;
 	
 	private BioModel bioModel;
 	
 	private ModelEditor gcmEditor;
+	
+	private Model sbmlModel;
 
 	private MutableBoolean dirty;
 
@@ -56,6 +71,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 		super();
 		this.bioModel = gcm;
 		this.gcmEditor = gcmEditor;
+		this.sbmlModel = gcm.getSBMLDocument().getModel();
 		this.dirty = gcmEditor.getDirty();
 		this.setText("Edit Model Attributes");
 		this.addActionListener((ActionListener) this);
@@ -103,6 +119,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			extentUnits.addItem("( none )");
 			conversionFactor = new JComboBox();
 			conversionFactor.addItem("( none )");
+
 			ListOf listOfUnits = bioModel.getSBMLDocument().getModel().getListOfUnitDefinitions();
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumUnitDefinitions(); i++) {
 				UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
@@ -143,6 +160,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			extentUnits.addItem("item");
 			extentUnits.addItem("kilogram");
 			extentUnits.addItem("mole");
+
 			ListOf listOfParameters = bioModel.getSBMLDocument().getModel().getListOfParameters();
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumParameters(); i++) {
 				Parameter param = (Parameter) listOfParameters.get(i);
@@ -159,10 +177,9 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 				extentUnits.setSelectedItem(bioModel.getSBMLDocument().getModel().getExtentUnits());
 				conversionFactor.setSelectedItem(bioModel.getSBMLDocument().getModel().getConversionFactor());
 			}
-			sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 1);
-			LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(bioModel.getSBMLDocument().getModel());
-			if (sbolURIs.size() > 0)
-				sbolField.setSBOLURIs(sbolURIs);
+			LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlModel);
+			sbolField = new SBOLField(sbolURIs, GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 1, true);
+
 			modelEditorPanel.add(substanceUnitsLabel);
 			modelEditorPanel.add(substanceUnits);
 			modelEditorPanel.add(timeUnitsLabel);
@@ -177,78 +194,113 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			modelEditorPanel.add(extentUnits);
 			modelEditorPanel.add(conversionFactorLabel);
 			modelEditorPanel.add(conversionFactor);
-			modelEditorPanel.add(new JLabel("SBOL DNA Component: "));
+			modelEditorPanel.add(new JLabel("SBOL DNA Component:"));
 			modelEditorPanel.add(sbolField);
 		}
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, modelEditorPanel, "Model Editor", JOptionPane.YES_NO_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
+//		boolean removeElementSBOLAnnotationFlag = false;
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = false;
-			if (bioModel.getSBMLDocument().getLevel() > 2) {
-				if (substanceUnits.getSelectedItem().equals("( none )")) {
-					bioModel.getSBMLDocument().getModel().unsetSubstanceUnits();
+			// Checks whether SBOL annotations on model elements need to be deleted later when annotating model with SBOL
+//			if (bioModel.getElementSBOLCount() > 0 && sbolField.getSBOLURIs().size() > 0 
+//					&& !sbolField.getSBOLURIs().equals(sbolField.getInitialURIs())) {
+//				Object[] sbolOptions = { "OK", "Cancel" };
+//				int choice = JOptionPane.showOptionDialog(null, 
+//						"SBOL associated to model elements can't coexist with SBOL associated to model itself unless" +
+//								" the latter was previously generated from the former.  Remove SBOL associated to model elements and models associated to SBOL?", 
+//								"Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, sbolOptions, sbolOptions[0]);
+//				if (choice == JOptionPane.OK_OPTION)
+//					removeElementSBOLAnnotationFlag = true;
+//				else 
+//					error = true;
+//			}
+			// Add SBOL annotation to SBML model itself
+			if (!error) {
+				LinkedList<URI> sbolURIs = sbolField.getSBOLURIs();
+				if (sbolURIs.size() > 0) {
+					SBOLAnnotation sbolAnnot = new SBOLAnnotation(sbmlModel.getMetaId(), sbolURIs);
+					AnnotationUtility.setSBOLAnnotation(sbmlModel, sbolAnnot);
+					bioModel.setModelSBOLAnnotationFlag(true);
+//					gcmEditor.getSchematic().getSBOLDescriptorsButton().setEnabled(false);
+//					if (removeElementSBOLAnnotationFlag) {
+//						SBaseList modelElements = bioModel.getSBMLDocument().getModel().getListOfAllElements();
+//						for (long i = 0; i < modelElements.getSize(); i++)
+//							AnnotationUtility.removeSBOLAnnotation(modelElements.get(i));
+//						gcmEditor.getSchematic().refresh();
+//						bioModel.setElementSBOLCount(0);
+//
+//					}
+				} else {
+					AnnotationUtility.removeSBOLAnnotation(sbmlModel);
+					bioModel.setModelSBOLAnnotationFlag(false);
+//					gcmEditor.getSchematic().getSBOLDescriptorsButton().setEnabled(true);
 				}
-				else {
-					bioModel.getSBMLDocument().getModel().setSubstanceUnits((String) substanceUnits.getSelectedItem());
-				}
-				if (timeUnits.getSelectedItem().equals("( none )")) {
-					bioModel.getSBMLDocument().getModel().unsetTimeUnits();
-				}
-				else {
-					bioModel.getSBMLDocument().getModel().setTimeUnits((String) timeUnits.getSelectedItem());
-				}
-				if (volumeUnits.getSelectedItem().equals("( none )")) {
-					bioModel.getSBMLDocument().getModel().unsetVolumeUnits();
-				}
-				else {
-					bioModel.getSBMLDocument().getModel().setVolumeUnits((String) volumeUnits.getSelectedItem());
-				}
-				if (areaUnits.getSelectedItem().equals("( none )")) {
-					bioModel.getSBMLDocument().getModel().unsetAreaUnits();
-				}
-				else {
-					bioModel.getSBMLDocument().getModel().setAreaUnits((String) areaUnits.getSelectedItem());
-				}
-				if (lengthUnits.getSelectedItem().equals("( none )")) {
-					bioModel.getSBMLDocument().getModel().unsetLengthUnits();
-				}
-				else {
-					bioModel.getSBMLDocument().getModel().setLengthUnits((String) lengthUnits.getSelectedItem());
-				}
-				if (extentUnits.getSelectedItem().equals("( none )")) {
-					bioModel.getSBMLDocument().getModel().unsetExtentUnits();
-				}
-				else {
-					bioModel.getSBMLDocument().getModel().setExtentUnits((String) extentUnits.getSelectedItem());
-				}
-				if (conversionFactor.getSelectedItem().equals("( none )")) {
-					bioModel.getSBMLDocument().getModel().unsetConversionFactor();
-				}
-				else {
-					bioModel.getSBMLDocument().getModel().setConversionFactor((String) conversionFactor.getSelectedItem());
-				}
+				// Deletes iBioSim composite components that have been removed from association panel
+				URI deletionURI = sbolField.getDeletionURI();
+				if (deletionURI != null)
+					for (String filePath : gcmEditor.getGui().getFilePaths(".sbol")) {
+						SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
+						SBOLUtility.deleteDNAComponent(deletionURI, sbolDoc);
+						SBOLUtility.writeSBOLDocument(filePath, sbolDoc);
+					}
 			}
-			bioModel.getSBMLDocument().getModel().setName(modelName.getText());
-			dirty.setValue(true);
-			bioModel.makeUndoPoint();
+			if (!error) {
+				if (bioModel.getSBMLDocument().getLevel() > 2) {
+					if (substanceUnits.getSelectedItem().equals("( none )")) {
+						bioModel.getSBMLDocument().getModel().unsetSubstanceUnits();
+					}
+					else {
+						bioModel.getSBMLDocument().getModel().setSubstanceUnits((String) substanceUnits.getSelectedItem());
+					}
+					if (timeUnits.getSelectedItem().equals("( none )")) {
+						bioModel.getSBMLDocument().getModel().unsetTimeUnits();
+					}
+					else {
+						bioModel.getSBMLDocument().getModel().setTimeUnits((String) timeUnits.getSelectedItem());
+					}
+					if (volumeUnits.getSelectedItem().equals("( none )")) {
+						bioModel.getSBMLDocument().getModel().unsetVolumeUnits();
+					}
+					else {
+						bioModel.getSBMLDocument().getModel().setVolumeUnits((String) volumeUnits.getSelectedItem());
+					}
+					if (areaUnits.getSelectedItem().equals("( none )")) {
+						bioModel.getSBMLDocument().getModel().unsetAreaUnits();
+					}
+					else {
+						bioModel.getSBMLDocument().getModel().setAreaUnits((String) areaUnits.getSelectedItem());
+					}
+					if (lengthUnits.getSelectedItem().equals("( none )")) {
+						bioModel.getSBMLDocument().getModel().unsetLengthUnits();
+					}
+					else {
+						bioModel.getSBMLDocument().getModel().setLengthUnits((String) lengthUnits.getSelectedItem());
+					}
+					if (extentUnits.getSelectedItem().equals("( none )")) {
+						bioModel.getSBMLDocument().getModel().unsetExtentUnits();
+					}
+					else {
+						bioModel.getSBMLDocument().getModel().setExtentUnits((String) extentUnits.getSelectedItem());
+					}
+					if (conversionFactor.getSelectedItem().equals("( none )")) {
+						bioModel.getSBMLDocument().getModel().unsetConversionFactor();
+					}
+					else {
+						bioModel.getSBMLDocument().getModel().setConversionFactor((String) conversionFactor.getSelectedItem());
+
+					}
+					bioModel.getSBMLDocument().getModel().setName(modelName.getText());
+				}
+				dirty.setValue(true);
+				bioModel.makeUndoPoint();
+			}
 			if (error) {
 				value = JOptionPane.showOptionDialog(Gui.frame, modelEditorPanel, "Model Units Editor", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			}
-		}
-		// Add SBOL annotation to promoter
-		if (value == JOptionPane.YES_OPTION) {
-			LinkedList<URI> sbolURIs = sbolField.getSBOLURIs();
-			if (sbolURIs.size() > 0) {
-				SBOLAnnotation sbolAnnot = new SBOLAnnotation(bioModel.getSBMLDocument().getModel().getMetaId(), sbolURIs);
-				AnnotationUtility.setSBOLAnnotation(bioModel.getSBMLDocument().getModel(), sbolAnnot);
-			} else
-				AnnotationUtility.removeSBOLAnnotation(bioModel.getSBMLDocument().getModel());
-		}
-		if (value == JOptionPane.NO_OPTION) {
-			return;
 		}
 	}
 
@@ -257,6 +309,9 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 		// if the add function button is clicked
 		if (e.getSource() == this) {
 			modelEditor("OK");
+		} else if (e.getActionCommand().equals("editDescriptors")) {
+//			if (bioModel.getSBOLDescriptors() != null)
+//				SBOLDescriptorPanel descriptorPanel = new SBOLDescriptorPanel(sbolField.getSBOLURIs().get(0))
 		}
 
 	}
