@@ -6002,15 +6002,26 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 	}
 	
-	public HashSet<String> getSbolFiles() {
+	public HashSet<String> getFilePaths(String fileExtension) {
 		HashSet<String> filePaths = new HashSet<String>();
 		TreeModel tree = getFileTree().tree.getModel();
 		for (int i = 0; i < tree.getChildCount(tree.getRoot()); i++) {
 			String fileName = tree.getChild(tree.getRoot(), i).toString();
-			if (fileName.endsWith(".sbol"))
+			if (fileName.endsWith(fileExtension))
 				filePaths.add(getRoot() + File.separator + fileName);
 		}
 		return filePaths;
+	}
+	
+	public HashSet<String> getSbolFiles() {
+		HashSet<String> sbolFiles = new HashSet<String>();
+		TreeModel tree = getFileTree().tree.getModel();
+		for (int i = 0; i < tree.getChildCount(tree.getRoot()); i++) {
+			String fileName = tree.getChild(tree.getRoot(), i).toString();
+			if (fileName.endsWith(".sbol"))
+				sbolFiles.add(fileName);
+		}
+		return sbolFiles;
 	}
 
 	private void openGraph() {

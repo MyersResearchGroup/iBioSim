@@ -6,9 +6,13 @@ import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.sbml.libsbml.CompSBMLDocumentPlugin;
+import org.sbml.libsbml.Model;
 import org.sbml.libsbml.SBase;
+import org.sbml.libsbml.Submodel;
 import org.sbml.libsbml.libsbml;
 
+import biomodel.parser.BioModel;
 import biomodel.util.Utility;
 
 public class AnnotationUtility {
@@ -51,6 +55,15 @@ public class AnnotationUtility {
 		}
 		return sbolURIs;
 	}
+	
+//	public static LinkedList<URI> parseSubSBOLAnnotation(Submodel instantiation, BioModel bioModel) {
+//		CompSBMLDocumentPlugin sbmlCompDoc = bioModel.getSBMLComp();
+//		String sbmlSubFileID = sbmlCompDoc.getExternalModelDefinition(instantiation.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
+//		BioModel bioSubModel = new BioModel(bioModel.getPath());
+//		bioSubModel.load(sbmlSubFileID);
+//		Model sbmlSubModel = bioSubModel.getSBMLDocument().getModel();
+//		return AnnotationUtility.parseSBOLAnnotation(sbmlSubModel);
+//	}
 	
 	private static final String XML_NAME_START_CHAR = "[:[A-Z]_[a-z][\\u00C0-\\u00D6][\\u00D8-\\u00F6]" +
 			"[\\u00F8-\\u02FF][\\u0370-\\u037D][\\u037F-\\u1FFF][\\u200C-\\u200D][\\u2070-\\u218F][\\u2C00-\\u2FEF]" +

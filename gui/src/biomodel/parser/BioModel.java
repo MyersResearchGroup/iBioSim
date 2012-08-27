@@ -12,10 +12,12 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Properties;
 import java.util.prefs.Preferences;
 
@@ -52,6 +54,7 @@ import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.LayoutExtension;
 import org.sbml.libsbml.LayoutModelPlugin;
 import org.sbml.libsbml.ListOf;
+import org.sbml.libsbml.ListOfRules;
 import org.sbml.libsbml.LocalParameter;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.ModelDefinition;
@@ -84,6 +87,7 @@ import org.sbml.libsbml.XMLNode;
 import org.sbml.libsbml.XMLTriple;
 import org.sbml.libsbml.libsbml;
 
+import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.Grid;
 import biomodel.gui.textualeditor.Constraints;
 import biomodel.gui.textualeditor.Events;
@@ -2081,6 +2085,75 @@ public class BioModel {
 		String[] splitPath = filename.split(separator);
 		sbmlFile = splitPath[splitPath.length-1].replace(".gcm",".xml");
 		loadSBMLFile(sbmlFile);
+		setElementSBOLCount();
+		setModelSBOLAnnotationFlag();
+	}
+	
+	public void setElementSBOLCount() {
+		elementSBOLCount = 0;
+		SBaseList modelElements = sbml.getModel().getListOfAllElements();
+		for (long i = 0; i < modelElements.getSize(); i++) {
+			LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(modelElements.get(i));
+			if (sbolURIs.size() > 0)
+				elementSBOLCount++;
+		}
+		for (long i = 0; i < sbmlCompModel.getNumSubmodels(); i++) {
+			Submodel instantiation = sbmlCompModel.getSubmodel(i);
+			LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(instantiation);
+			if (sbolURIs.size() > 0)
+				elementSBOLCount++;
+//			else {
+//				String sbmlSubFileID = sbmlComp.getExternalModelDefinition(instantiation.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
+//				BioModel bioSubModel = new BioModel(path);
+//				bioSubModel.load(sbmlSubFileID);
+//				Model sbmlSubModel = bioSubModel.getSBMLDocument().getModel();
+//				sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlSubModel);
+//				if (sbolURIs.size() > 0)
+//					elementSBOLCount++;
+//			}
+		}
+	}
+	
+	public void setModelSBOLAnnotationFlag() {
+		modelSBOLAnnotationFlag = false;
+		Model sbmlModel = sbml.getModel();
+		LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlModel);
+		if (sbolURIs.size() > 0)
+			modelSBOLAnnotationFlag = true;
+	}
+	
+	public void setElementSBOLCount(int set) {
+		elementSBOLCount = set;
+	}
+	
+	public void setModelSBOLAnnotationFlag(boolean set) {
+		modelSBOLAnnotationFlag = set;
+	}
+	
+	// Descriptor array should be size 4 and contain DNA component ID, name, description, and
+	// file save destination in that order
+	public void setSBOLDescriptors(String[] descriptors) {
+		sbolDescriptors = descriptors;
+	}
+	
+	public int getElementSBOLCount() {
+		return elementSBOLCount;
+	}
+	
+	public boolean getModelSBOLAnnotationFlag() {
+		return modelSBOLAnnotationFlag;
+	}
+	
+	public String[] getSBOLDescriptors() {
+		return sbolDescriptors;
+	}
+	
+	public int getPlaceHolderIndex() {
+		return placeHolderIndex;
+	}
+	
+	public void setPlaceHolderIndex(int set) {
+		placeHolderIndex = set;
 	}
 
 	public void changePromoterId(String oldId, String newId) {
@@ -3546,19 +3619,6 @@ public class BioModel {
 		}
 		return false;
 	}
-	
-	public String getSpeciesSBOLAnnotation(String speciesId,String SBOLelement) {
-		String annotation = sbml.getModel().getSpecies(speciesId).getAnnotationString().replace("<annotation>","")
-				.replace("</annotation>","");
-		String [] annotations = annotation.split(",");
-		for (int i=0;i<annotations.length;i++) {
-			if (annotations[i].startsWith(SBOLelement)) {
-				String [] type = annotations[i].split("=");
-				return type[1];
-			}
-		}
-		return "";
-	}
 
 	public void connectComponentAndSpecies(String compId, String port, String specId, String type) {
 		CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbml.getModel().getSpecies(specId).getPlugin("comp");
@@ -3865,9 +3925,9 @@ public class BioModel {
 		else {
 			
 			for (int i = 0; i < sbmlCompModel.getNumSubmodels(); ++i) {
-				
-				if (sbmlCompModel.getSubmodel(i).getId().equals(name))
+				if (sbmlCompModel.getSubmodel(i).getId().equals(name)) {
 					sbmlCompModel.removeSubmodel(i);
+				}
 			}
 		}
 		
@@ -6448,4 +6508,9 @@ public class BioModel {
 	//private GCM2SBML gcm2sbml = null;
 
 	private HashMap<String, Properties> compartments;
+	
+	private int elementSBOLCount;
+	private boolean modelSBOLAnnotationFlag;
+	private String[] sbolDescriptors;
+	private int placeHolderIndex;
 }

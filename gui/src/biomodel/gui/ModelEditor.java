@@ -12,6 +12,7 @@ import java.io.FileOutputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.Set;
@@ -318,16 +319,16 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		return biomodel;
 	}
 	
-	public HashSet<String> getSbolFiles() {
-		HashSet<String> filePaths = new HashSet<String>();
-		TreeModel tree = getGui().getFileTree().tree.getModel();
-		for (int i = 0; i < tree.getChildCount(tree.getRoot()); i++) {
-			String fileName = tree.getChild(tree.getRoot(), i).toString();
-			if (fileName.endsWith(".sbol"))
-				filePaths.add(getGui().getRoot() + File.separator + fileName);
-		}
-		return filePaths;
-	}
+//	public HashSet<String> getSbolFiles() {
+//		HashSet<String> filePaths = new HashSet<String>();
+//		TreeModel tree = getGui().getFileTree().tree.getModel();
+//		for (int i = 0; i < tree.getChildCount(tree.getRoot()); i++) {
+//			String fileName = tree.getChild(tree.getRoot(), i).toString();
+//			if (fileName.endsWith(".sbol"))
+//				filePaths.add(getGui().getRoot() + File.separator + fileName);
+//		}
+//		return filePaths;
+//	}
 
 	public void save(String command) {
 		//log.addText("save");
@@ -475,8 +476,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	public void saveSBOL(boolean check) {
 		GCMParser parser = new GCMParser(biomodel, false);
 		SBOLSynthesizer synthesizer = parser.buildSbolSynthesizer();
-		if (synthesizer != null && synthesizer.loadSbolFiles(getSbolFiles())) {
-			synthesizer.saveDnaComponent(path, false, check);
+		if (synthesizer != null && synthesizer.loadSbolFiles(getGui().getFilePaths(".sbol"))) {
+			synthesizer.saveDnaComponent(path, false);
 		}
 	}
 	
@@ -484,7 +485,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	public void exportSBOL() {
 		GCMParser parser = new GCMParser(biomodel, false);
 		SBOLSynthesizer synthesizer = parser.buildSbolSynthesizer();
-		if (synthesizer != null && synthesizer.loadSbolFiles(getSbolFiles())) {
+		if (synthesizer != null && synthesizer.loadSbolFiles(getGui().getFilePaths(".sbol"))) {
 			File lastFilePath;
 			Preferences biosimrc = Preferences.userRoot();
 			if (biosimrc.get("biosim.general.export_dir", "").equals("")) {
@@ -510,7 +511,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			} while (option == JOptionPane.NO_OPTION);
 			if (!targetFilePath.equals("")) {
 				biosimrc.put("biosim.general.export_dir", targetFilePath);
-				synthesizer.exportDnaComponent(targetFilePath);
+				synthesizer.exportDnaComponent(targetFilePath, path);
 			}
 		}
 	}

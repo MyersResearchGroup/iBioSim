@@ -22,11 +22,11 @@ public class CollectionBrowserPanel extends JPanel implements MouseListener {
 	private JTextArea viewArea;
 	private DNAComponentBrowserPanel compPanel;
 	private JList libList = new JList();
-	private Set<String> filter;
+	private Set<String> filter = new HashSet<String>();
+	private boolean isAssociationBrowser = false;
 	
 	public CollectionBrowserPanel(UseFirstFound<org.sbolstandard.core.Collection, URI> aggregateLibResolver, 
-			UseFirstFound<DnaComponent, URI> aggregateCompResolver, JTextArea viewArea, DNAComponentBrowserPanel compPanel, 
-			Set<String> filter) {
+			UseFirstFound<DnaComponent, URI> aggregateCompResolver, JTextArea viewArea, DNAComponentBrowserPanel compPanel) {
 		super(new BorderLayout());
 //		this.libMap = libMap;
 //		this.compMap = compMap;
@@ -34,7 +34,6 @@ public class CollectionBrowserPanel extends JPanel implements MouseListener {
 		this.aggregateCompResolver = aggregateCompResolver;
 		this.viewArea = viewArea;
 		this.compPanel = compPanel;
-		this.filter = filter;
 		
 		libList.addMouseListener(this);
 		
@@ -59,6 +58,14 @@ public class CollectionBrowserPanel extends JPanel implements MouseListener {
 		libList.setListData(idObjects);
 		libList.setSelectedIndex(0);
 		displaySelected();
+	}
+	
+	public void setFilter(Set<String> filter) {
+		this.filter = filter;
+	}
+	
+	public void setIsAssociationBrowser(boolean set) {
+		isAssociationBrowser = set;
 	}
 	
 	private URI[] getSelectedURIs() {
@@ -98,10 +105,13 @@ public class CollectionBrowserPanel extends JPanel implements MouseListener {
 				viewArea.append("Description:  NA\n\n");
 
 			for (DnaComponent dnac : lib.getComponents()) {
-				DnaComponent resolvedDnac = aggregateCompResolver.resolve(dnac.getURI());
-				if ((resolvedDnac != null && processDNAComponent(resolvedDnac, compIdNames, compURIs)) 
-						|| processDNAComponent(dnac, compIdNames, compURIs))
-					n++;
+				URI compURI = dnac.getURI();
+				if (!isAssociationBrowser || !compURI.toString().endsWith("iBioSim")) {
+					DnaComponent resolvedDnac = aggregateCompResolver.resolve(dnac.getURI());
+					if ((resolvedDnac != null && processDNAComponent(resolvedDnac, compIdNames, compURIs)) 
+							|| processDNAComponent(dnac, compIdNames, compURIs))
+						n++;
+				}
 			}
 		} else {  // Case when "all" is selected under Collections
 //			for (String libURI : libURIs) 
@@ -117,11 +127,13 @@ public class CollectionBrowserPanel extends JPanel implements MouseListener {
 //						n++;
 //					}
 //				}
-			for (URI uri : localCompURIs) {
-				DnaComponent resolvedDnac = aggregateCompResolver.resolve(uri);
-				if (resolvedDnac != null && processDNAComponent(resolvedDnac, compIdNames, compURIs)) 
-					n++;
-			}
+			for (URI compURI : localCompURIs) 
+				if (!isAssociationBrowser || !compURI.toString().endsWith("iBioSim")) {
+					DnaComponent resolvedDnac = aggregateCompResolver.resolve(compURI);
+					if (resolvedDnac != null && processDNAComponent(resolvedDnac, compIdNames, compURIs)) 
+						n++;
+				}
+			
 		}
 		lexoSort(compIdNames, compURIs, n);
 		compPanel.setComponents(compIdNames, compURIs);

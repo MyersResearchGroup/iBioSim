@@ -43,14 +43,15 @@ public class SBOLBrowser extends JPanel implements ActionListener {
 	private LinkedList<URI> localLibURIs = new LinkedList<URI>();
 	private LinkedList<String> localLibIds = new LinkedList<String>();
 	private LinkedList<URI> localCompURIs = new LinkedList<URI>();
+	private boolean isAssociationBrowser = false;
 	
 	//Constructor when browsing a single RDF file from the main gui
-	public SBOLBrowser(Gui gui, String filePath) {
+	public SBOLBrowser(Gui gui, String browsePath) {
 		super(new BorderLayout());
 		
-		filePath = filePath.replace("\\\\", "\\");
+		browsePath = browsePath.replace("\\\\", "\\");
 		
-		loadSbolFiles(gui.getSbolFiles(), filePath);
+		loadSbolFiles(gui.getFilePaths(".sbol"), browsePath);
 		
 		constructBrowser(new HashSet<String>());
 			
@@ -66,17 +67,17 @@ public class SBOLBrowser extends JPanel implements ActionListener {
 		JTabbedPane browserTab = new JTabbedPane();
 		browserTab.add("SBOL Browser", browserPanel);
 		this.add(browserTab);
-		gui.addTab(filePath.substring(filePath.lastIndexOf(File.separator) + 1), this, null);
+		gui.addTab(browsePath.substring(browsePath.lastIndexOf(File.separator) + 1), this, null);
 	}
 	
 	//Constructor when browsing RDF file subsets for SBOL to GCM association
-	public SBOLBrowser(HashSet<String> sbolFiles, Set<String> filter, LinkedList<URI> defaultSelectedCompURIs) {
+	public SBOLBrowser(HashSet<String> sbolFilePaths, Set<String> filter, LinkedList<URI> defaultSelectedCompURIs) {
 //		super(new GridLayout(3,1));
 		super(new BorderLayout());
-		
+		isAssociationBrowser = true;
 		selectedCompURIs = new LinkedList<URI>();
 		
-		loadSbolFiles(sbolFiles, "");
+		loadSbolFiles(sbolFilePaths, "");
 	
 		constructBrowser(filter);
 
@@ -92,21 +93,23 @@ public class SBOLBrowser extends JPanel implements ActionListener {
 			display = browserOpen();
 	}
 	
-	private void loadSbolFiles(HashSet<String> sbolFiles, String browsePath) {
+	private void loadSbolFiles(HashSet<String> sbolFilePaths, String browsePath) {
 		LinkedList<Resolver<DnaComponent, URI>> compResolvers = new LinkedList<Resolver<DnaComponent, URI>>();
 		LinkedList<Resolver<SequenceAnnotation, URI>> annoResolvers = new LinkedList<Resolver<SequenceAnnotation, URI>>();
 		LinkedList<Resolver<DnaSequence, URI>> seqResolvers = new LinkedList<Resolver<DnaSequence, URI>>();
 		LinkedList<Resolver<org.sbolstandard.core.Collection, URI>> libResolvers = new LinkedList<Resolver<org.sbolstandard.core.Collection, URI>>();
-		for (String filePath : sbolFiles) {
-			if (browsePath.equals("") || browsePath.substring(browsePath.lastIndexOf(File.separator) + 1).equals(filePath.substring(filePath.lastIndexOf(File.separator) + 1))) {
-				SBOLDocumentImpl sbolDoc = (SBOLDocumentImpl) SBOLUtility.loadSBOLFile(filePath);
+		String browseFile = browsePath.substring(browsePath.lastIndexOf(File.separator) + 1);
+		for (String filePath : sbolFilePaths) {
+			String file = filePath.substring(filePath.lastIndexOf(File.separator) + 1);
+			if (browsePath.equals("") || browseFile.equals(file)) {
+				SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
 				if (sbolDoc != null) {
-					SBOLDocumentImpl flattenedDoc = (SBOLDocumentImpl) SBOLUtility.flattenDocument(sbolDoc);
+					SBOLDocumentImpl flattenedDoc = SBOLUtility.flattenDocument(sbolDoc);
 					compResolvers.add(flattenedDoc.getComponentUriResolver());
 					annoResolvers.add(flattenedDoc.getAnnotationUriResolver());
 					seqResolvers.add(flattenedDoc.getSequenceUriResolver());
 					libResolvers.add(flattenedDoc.getCollectionUriResolver());
-					for (SBOLRootObject sbolObj : flattenedDoc.getContents()) {
+					for (SBOLRootObject sbolObj : flattenedDoc.getContents())
 						if (sbolObj instanceof org.sbolstandard.core.Collection) {
 							org.sbolstandard.core.Collection lib = (org.sbolstandard.core.Collection) sbolObj;
 							if (lib.getDisplayId() != null && !lib.getDisplayId().equals("") && 
@@ -114,9 +117,11 @@ public class SBOLBrowser extends JPanel implements ActionListener {
 								localLibURIs.add(lib.getURI());
 								localLibIds.add(lib.getDisplayId());
 							}
-						} else if (sbolObj instanceof DnaComponent) 
-							localCompURIs.add(((DnaComponent) sbolObj).getURI());
-					}
+						} else if (sbolObj instanceof DnaComponent) {
+							URI compURI = sbolObj.getURI();
+							if (!isAssociationBrowser || !compURI.toString().endsWith("iBioSim"))
+								localCompURIs.add(sbolObj.getURI());
+						}
 				}
 			}
 		}
@@ -150,8 +155,10 @@ public class SBOLBrowser extends JPanel implements ActionListener {
 		viewArea.setEditable(false);
 		
 		compPanel = new DNAComponentBrowserPanel(aggregateCompResolver, aggregateAnnoResolver, aggregateSeqResolver, viewArea);
-		libPanel = new CollectionBrowserPanel(aggregateLibResolver, aggregateCompResolver, viewArea, compPanel, filter);
+		libPanel = new CollectionBrowserPanel(aggregateLibResolver, aggregateCompResolver, viewArea, compPanel);
+		libPanel.setFilter(filter);
 		libPanel.setLocalLibsComps(localLibIds, localLibURIs, localCompURIs);
+		libPanel.setIsAssociationBrowser(isAssociationBrowser);
 		
 		selectionPanel.add(libPanel);
 		selectionPanel.add(compPanel);

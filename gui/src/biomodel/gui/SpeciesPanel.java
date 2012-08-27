@@ -23,6 +23,7 @@ import org.sbml.libsbml.InitialAssignment;
 import org.sbml.libsbml.LocalParameter;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.Reaction;
+import org.sbml.libsbml.SBaseList;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.Submodel;
 
@@ -105,10 +106,12 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		this.speciesList = speciesList;
 		this.conditions = conditionsList;
 		this.components = componentsList;
-		this.gcm = bioModel;
+		this.bioModel = bioModel;
 		this.refGCM = refGCM;
 		this.paramsOnly = paramsOnly;
+
 		this.modelEditor = modelEditor;
+
 
 		fields = new HashMap<String, PropertyField>();
 
@@ -538,7 +541,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		// Parse out GCM and SBOL annotations and add to respective fields
 		if (!paramsOnly) {
 			// Field for annotating species with SBOL DNA components
-			sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 3);
+			LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(species);
+			sbolField = new SBOLField(sbolURIs, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 3, false);
+
 			grid.add(sbolField);
 
 			typeBox.setSelectedItem(BioModel.getSpeciesType(bioModel.getSBMLDocument(),species.getId()));
@@ -549,9 +554,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					String [] type = annotations[i].split("=");
 					typeBox.setSelectedItem(type[1]);
 				}
-			LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(species);
-			if (sbolURIs.size() > 0)
-				sbolField.setSBOLURIs(sbolURIs);
 		}
 			
 		/*
@@ -677,14 +679,14 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 			
 			if (selected == null) {
-				if (gcm.isSIdInUse((String)fields.get(GlobalConstants.ID).getValue())) {
+				if (bioModel.isSIdInUse((String)fields.get(GlobalConstants.ID).getValue())) {
 					Utility.createErrorMessage("Error", "ID already exists.");
 					return false;
 				}
 			}
 			else if (!selected.equals(fields.get(GlobalConstants.ID).getValue())) {
 				
-				if (gcm.isSIdInUse((String)fields.get(GlobalConstants.ID).getValue())) {
+				if (bioModel.isSIdInUse((String)fields.get(GlobalConstants.ID).getValue())) {
 					
 					Utility.createErrorMessage("Error", "ID already exists.");
 					return false;
@@ -713,7 +715,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			newSpeciesID = fields.get(GlobalConstants.ID).getValue();
 
 			//Properties property = new Properties();
-
+//			boolean removeModelSBOLAnnotationFlag = false;
 			if (selected != null) {			
 				
 				//check and add interesting species information
@@ -737,10 +739,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				*/
 				
 				if (!paramsOnly) {
-	
-					species.setName(fields.get(GlobalConstants.NAME).getValue());
 					
-					InitialAssignments.removeInitialAssignment(gcm, selected);
+					InitialAssignments.removeInitialAssignment(bioModel, selected);
 					if (Utility.isValid(initialField.getText(), Utility.NUMstring)) {
 						species.setInitialAmount(Double.parseDouble(initialField.getText()));
 					} 
@@ -748,11 +748,32 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 						//String conc = fields.get(GlobalConstants.INITIAL_STRING).getValue();
 						species.setInitialConcentration(Double.parseDouble(initialField.getText().substring(1,initialField.getText().length()-1)));
 					} else {
-						boolean error = InitialAssignments.addInitialAssignment(biosim, gcm, species.getId(), 
+						boolean error = InitialAssignments.addInitialAssignment(biosim, bioModel, species.getId(), 
 								initialField.getText().trim());
 						if (error) return false;
 						species.setInitialAmount(Double.parseDouble("0.0"));
 					}
+					
+					// Checks whether SBOL annotation on model needs to be deleted later when annotating species with SBOL
+//					if (sbolField.getSBOLURIs().size() > 0 && 
+//							bioModel.getElementSBOLCount() == 0 && bioModel.getModelSBOLAnnotationFlag()) {
+//						Object[] options = { "OK", "Cancel" };
+//						int choice = JOptionPane.showOptionDialog(null, 
+//								"SBOL associated to model elements can't coexist with SBOL associated to model itself unless" +
+//								" the latter was previously generated from the former.  Remove SBOL associated to model?", 
+//								"Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+//						if (choice == JOptionPane.OK_OPTION)
+//							removeModelSBOLAnnotationFlag = true;
+//						else {
+//							if (species.isSetInitialAmount())
+//								species.unsetInitialAmount();
+//							else if (species.isSetInitialConcentration())
+//								species.unsetInitialConcentration();
+//							return false;
+//						}
+//					}
+					
+					species.setName(fields.get(GlobalConstants.NAME).getValue());
 					
 					if (specBoundary.getSelectedItem().equals("true")) {
 						species.setBoundaryCondition(true);
@@ -788,7 +809,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					
 					String convFactor = null;
 					
-					if (gcm.getSBMLDocument().getLevel() > 2) {
+					if (bioModel.getSBMLDocument().getLevel() > 2) {
 						convFactor = (String) convBox.getSelectedItem();
 						
 						if (convFactor.equals("( none )")) {
@@ -820,36 +841,36 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				}
 			}
 			String speciesType = typeBox.getSelectedItem().toString();
-			gcm.setSpeciesType(species.getId(),speciesType);
+			bioModel.setSpeciesType(species.getId(),speciesType);
 			
 			if (degradation != null && !specDegradable.isSelected()) {
-				gcm.removeReaction(degradation.getId());
+				bioModel.removeReaction(degradation.getId());
 			} else if (specDegradable.isSelected()) {
 				PropertyField f = fields.get(GlobalConstants.KDECAY_STRING);
 				if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
 					if (f.getValue().startsWith("(")) {
-						gcm.createDegradationReaction(selected, 1.0, f.getValue());		
+						bioModel.createDegradationReaction(selected, 1.0, f.getValue());		
 					} else {
-						gcm.createDegradationReaction(selected, Double.parseDouble(f.getValue()), null);		
+						bioModel.createDegradationReaction(selected, Double.parseDouble(f.getValue()), null);		
 					}
 				} else {
-					gcm.createDegradationReaction(selected, -1, null);		
+					bioModel.createDegradationReaction(selected, -1, null);		
 				}
 			} 
 			if (diffusion != null && !specDiffusible.isSelected()) {
-				gcm.removeReaction(diffusion.getId());
+				bioModel.removeReaction(diffusion.getId());
 			} else if (specDiffusible.isSelected()) {
 				String kmdiffStr = null;
 				PropertyField f = fields.get(GlobalConstants.MEMDIFF_STRING);
 				if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
 					kmdiffStr = f.getValue();
 				}
-				gcm.createDiffusionReaction(selected, kmdiffStr);		
+				bioModel.createDiffusionReaction(selected, kmdiffStr);		
 			} 
 			if (constitutive != null && !specConstitutive.isSelected()) {
-				gcm.removeReaction(constitutive.getId());
+				bioModel.removeReaction(constitutive.getId());
 			} else if (specConstitutive.isSelected()) {
-				gcm.createConstitutiveReaction(selected);		
+				bioModel.createConstitutiveReaction(selected);		
 			} 
 			if (complex != null) {
 				String KcStr = null;
@@ -857,7 +878,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
 					KcStr = f.getValue();
 				}
-				gcm.createComplexReaction(selected, KcStr);
+				bioModel.createComplexReaction(selected, KcStr);
 			}
 			
 			if (!paramsOnly) {
@@ -866,17 +887,27 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				if (sbolURIs.size() > 0) {
 					SBOLAnnotation sbolAnnot = new SBOLAnnotation(species.getMetaId(), sbolURIs);
 					AnnotationUtility.setSBOLAnnotation(species, sbolAnnot);
-				} else
+					if (sbolField.wasInitiallyBlank())
+						bioModel.setElementSBOLCount(bioModel.getElementSBOLCount() + 1);
+//					if (removeModelSBOLAnnotationFlag) {
+//						AnnotationUtility.removeSBOLAnnotation(bioModel.getSBMLDocument().getModel());
+//						bioModel.setModelSBOLAnnotationFlag(false);
+//						modelEditor.getSchematic().getSBOLDescriptorsButton().setEnabled(true);
+//					}
+				} else {
 					AnnotationUtility.removeSBOLAnnotation(species);
+					if (!sbolField.wasInitiallyBlank())
+						bioModel.setElementSBOLCount(bioModel.getElementSBOLCount() - 1);
+				}
 			}
 			
 			if (selected != null && !selected.equals(newSpeciesID)) {
-				gcm.changeSpeciesId(selected, newSpeciesID);
+				bioModel.changeSpeciesId(selected, newSpeciesID);
 				((DefaultListModel) components.getModel()).clear();
 
-				for (long i = 0; i < gcm.getSBMLCompModel().getNumSubmodels(); i++) {
-					Submodel submodel = gcm.getSBMLCompModel().getSubmodel(i);
-					components.addItem(submodel.getId() + " " + submodel.getModelRef() + " " + gcm.getComponentPortMap(submodel.getId()));
+				for (long i = 0; i < bioModel.getSBMLCompModel().getNumSubmodels(); i++) {
+					Submodel submodel = bioModel.getSBMLCompModel().getSubmodel(i);
+					components.addItem(submodel.getId() + " " + submodel.getModelRef() + " " + bioModel.getComponentPortMap(submodel.getId()));
 				}
 			}
 
@@ -899,7 +930,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			speciesList.removeItem(selected + " Modified");
 			speciesList.addItem(newSpeciesID);
 			speciesList.setSelectedValue(newSpeciesID, true);
-			
+	
 			modelEditor.refresh();
 			modelEditor.setDirty(true);
 		}
@@ -1017,7 +1048,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 	private String[] options = { "Ok", "Cancel" };
 
-	private BioModel gcm = null;
+	private BioModel bioModel = null;
 	private BioModel refGCM = null;
 
 	private JComboBox typeBox = null;
@@ -1048,7 +1079,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	private HashMap<String, PropertyField> fields = null;
 	
 	private SBOLField sbolField;
-
+	
 	private boolean paramsOnly;
 	
 	private ModelEditor modelEditor;

@@ -14,29 +14,70 @@ import org.sbolstandard.core.impl.AggregatingResolver.UseFirstFound;
 import sbol.SBOLUtility;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 
 public class SBOLAssociationPanel extends JPanel {
 
-	private HashSet<String> sbolFiles;
+	private HashSet<String> sbolFilePaths;
+//	private HashMap<String, SBOLDocument> sbolFileDocMap = new HashMap<String, SBOLDocument>();
 	private LinkedList<URI> compURIs;
 	private LinkedList<URI> defaultCompURIs;
 	private Set<String> soTypes;
+	private String modelID;
 	private UseFirstFound<DnaComponent, URI> aggregateCompResolver;
 	private JList compList = new JList();
-	private String[] options = {"Add", "Remove", "Ok", "Cancel"};
+	private String[] options;
+	private boolean iBioSimURIPresent = false;
+	private URI deletionURI;
 	
-	public SBOLAssociationPanel(HashSet<String> sbolFiles, LinkedList<URI> defaultCompURIs, Set<String> soTypes) {
+	public SBOLAssociationPanel(HashSet<String> sbolFilePaths, LinkedList<URI> defaultCompURIs, Set<String> soTypes, String modelID) {
 		super(new BorderLayout());
 		
-		this.sbolFiles = sbolFiles;
+		this.sbolFilePaths = sbolFilePaths;
+		
+		if (defaultCompURIs.size() == 0) {
+			compURIs = new LinkedList<URI>();
+			try {
+				compURIs.add(new URI("http://www.async.ece.utah.edu#iBioSimPlaceHolder"));
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			}
+			iBioSimURIPresent = true;
+		} else {
+			compURIs = new LinkedList<URI>(defaultCompURIs);
+			Iterator<URI> uriIterator = compURIs.iterator();
+			do {
+				URI compURI = uriIterator.next();
+				if (compURI.toString().endsWith("iBioSim") || compURI.toString().endsWith("iBioSimPlaceHolder"))
+					iBioSimURIPresent = true;
+			} while (uriIterator.hasNext() && !iBioSimURIPresent);
+		}
+		this.defaultCompURIs = defaultCompURIs;
+		this.soTypes = soTypes;
+		this.modelID = modelID;
+		
+		
+		options = new String[]{"Add/Move Composite", "Add", "Remove", "Ok", "Cancel"};
+		constructPanel();
+	}
+	
+	public SBOLAssociationPanel(HashSet<String> sbolFilePaths, LinkedList<URI> defaultCompURIs, Set<String> soTypes) {
+		super(new BorderLayout());
+		
+		this.sbolFilePaths = sbolFilePaths;
+			
 		compURIs = new LinkedList<URI>(defaultCompURIs);
 		this.defaultCompURIs = defaultCompURIs;
-	
 		this.soTypes = soTypes;
 		
-		JLabel associationLabel = new JLabel("Associated DNA Components:");
+		options = new String[]{"Add", "Remove", "Ok", "Cancel"};
+		constructPanel();
+	}
 	
+	public void constructPanel() {
+		JLabel associationLabel = new JLabel("Associated DNA Components:");
+		
 		JScrollPane componentScroll = new JScrollPane();
 		componentScroll.setMinimumSize(new Dimension(260, 200));
 		componentScroll.setPreferredSize(new Dimension(276, 132));
@@ -45,7 +86,7 @@ public class SBOLAssociationPanel extends JPanel {
 		this.add(associationLabel, "North");
 		this.add(componentScroll, "Center");
 		
-		if (loadSBOLFiles(sbolFiles)) {
+		if (loadSBOLFiles(sbolFilePaths)) {
 			setComponentIDList();
 			boolean display = true;
 			while (display)
@@ -53,19 +94,22 @@ public class SBOLAssociationPanel extends JPanel {
 		}
 	}
 	
-	private boolean loadSBOLFiles(HashSet<String> sbolFiles) {
+	
+	
+	private boolean loadSBOLFiles(HashSet<String> sbolFilePaths) {
 		LinkedList<Resolver<DnaComponent, URI>> compResolvers = new LinkedList<Resolver<DnaComponent, URI>>();
-		for (String filePath : sbolFiles) {
-			SBOLDocumentImpl sbolDoc = (SBOLDocumentImpl) SBOLUtility.loadSBOLFile(filePath);
+		for (String filePath : sbolFilePaths) {
+			SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
+//			sbolFileDocMap.put(filePath, sbolDoc);
 			if (sbolDoc != null) {
-				SBOLDocumentImpl flattenedDoc = (SBOLDocumentImpl) SBOLUtility.flattenDocument(sbolDoc);
+				SBOLDocumentImpl flattenedDoc = SBOLUtility.flattenDocument(sbolDoc);
 				compResolvers.add(flattenedDoc.getComponentUriResolver());
 			} else
 				return false;
 		}
 		aggregateCompResolver = new AggregatingResolver.UseFirstFound<DnaComponent, URI>();
 		aggregateCompResolver.setResolvers(compResolvers);
-		if (sbolFiles.size() == 0) {
+		if (sbolFilePaths.size() == 0) {
 			JOptionPane.showMessageDialog(Gui.frame, "No SBOL files are found in project.", 
 					"File Not Found", JOptionPane.ERROR_MESSAGE);
 			return false;
@@ -77,38 +121,78 @@ public class SBOLAssociationPanel extends JPanel {
 		LinkedList<String> compIdNames = new LinkedList<String>();
 		for (int i = 0; i < compURIs.size(); i++) {
 			URI uri = compURIs.get(i);
-			DnaComponent resolvedComp = aggregateCompResolver.resolve(uri);
-			if (resolvedComp != null) {
-				if (resolvedComp.getName() != null && !resolvedComp.getName().equals(""))
-					compIdNames.add(resolvedComp.getDisplayId() + " : " + resolvedComp.getName());
-				else
-					compIdNames.add(resolvedComp.getDisplayId());
-			} else 
-				JOptionPane.showMessageDialog(Gui.frame, "Currently associated component with URI " + uri.toString() +
-						" is not found in project SBOL files and could not be loaded.", "DNA Component Not Found", JOptionPane.ERROR_MESSAGE);
+			String compIdName = "";
+			if (uri.toString().endsWith("iBioSimPlaceHolder")) 
+				compIdName = modelID + " (Placeholder for iBioSim Composite DNA Component)";
+			else {
+				DnaComponent resolvedComp = aggregateCompResolver.resolve(uri);
+				if (resolvedComp != null) {
+					compIdName = resolvedComp.getDisplayId();
+					if (resolvedComp.getName() != null && !resolvedComp.getName().equals(""))
+						compIdName = compIdName + " : " + resolvedComp.getName();
+					if (uri.toString().endsWith("iBioSim"))
+						compIdName = compIdName + " (iBioSim Composite DNA Component)";
+				} else 
+					JOptionPane.showMessageDialog(Gui.frame, "Currently associated component with URI " + uri.toString() +
+							" is not found in project SBOL files and could not be loaded.", "DNA Component Not Found", JOptionPane.ERROR_MESSAGE);
+			}
+			compIdNames.add(compIdName);
 		}
 		Object[] idObjects = compIdNames.toArray();
 		compList.setListData(idObjects);
 	}
 	
 	private boolean panelOpen() {
-		int option = JOptionPane.showOptionDialog(Gui.frame, this,
-				"SBOL ", JOptionPane.YES_NO_CANCEL_OPTION,
+		int mode = 5 - options.length;
+		int choice = JOptionPane.showOptionDialog(Gui.frame, this,
+				"SBOL Association", JOptionPane.YES_NO_CANCEL_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-		if (option == 0) {
-			SBOLBrowser browser = new SBOLBrowser(sbolFiles, soTypes, getSelectedURIs());
+		if (choice >= 0)
+			choice += mode;
+		if (choice == 0) {
+			if (iBioSimURIPresent) {
+				moveIBioSimURI();
+			} else {
+				try {
+					insertPlaceHolder(new URI("http://www.async.ece.utah.edu#iBioSimPlaceHolder"));
+				} catch (URISyntaxException e) {
+					e.printStackTrace();
+				}
+			}
+			return true;
+		} else if (choice == 1) {
+			SBOLBrowser browser = new SBOLBrowser(sbolFilePaths, soTypes, getSelectedURIs());
 			insertComponents(browser.getSelection());
 			return true;
-		} else if (option == 1) {
+		} else if (choice == 2) {
 			removeSelectedURIs();
-			setComponentIDList();
+//			setComponentIDList();
 			return true;
-		} else if (option == 2) 
+		} else if (choice == 3) 
 			return false;
 		else {
 			compURIs = defaultCompURIs;
 			return false;
 		}
+	}
+	
+	private void moveIBioSimURI() {
+		int[] selectedIndices = compList.getSelectedIndices();
+		int destinationIndex;
+		if (selectedIndices.length == 0)
+			destinationIndex = compURIs.size();
+		else
+			destinationIndex = selectedIndices[selectedIndices.length - 1];
+		int originIndex = -1;
+		do {
+			originIndex++;
+		} while (!compURIs.get(originIndex).toString().endsWith("iBioSim") 
+				&& !compURIs.get(originIndex).toString().endsWith("iBioSimPlaceHolder"));
+		URI compURI = compURIs.remove(originIndex);
+		if (destinationIndex > originIndex)
+			destinationIndex--;
+		compURIs.add(destinationIndex, compURI);
+		setComponentIDList();
 	}
 	
 	private LinkedList<URI> getSelectedURIs() {
@@ -125,19 +209,35 @@ public class SBOLAssociationPanel extends JPanel {
 		if (selectedIndices.length == 0)
 			insertionIndex = compURIs.size();
 		else
-			insertionIndex = selectedIndices[selectedIndices.length - 1] + 1;
+			insertionIndex = selectedIndices[selectedIndices.length - 1];
 		compURIs.addAll(insertionIndex, insertionURIs);
 		setComponentIDList();
 	}
 	
+	private void insertPlaceHolder(URI placeHolderURI) {
+		LinkedList<URI> tempList = new LinkedList<URI>();
+		tempList.add(placeHolderURI);
+		insertComponents(tempList);
+	}
+	
 	private void removeSelectedURIs() {
 		int[] selectedIndices = compList.getSelectedIndices();
-		for (int i = selectedIndices.length; i > 0; i--)
-			compURIs.remove(selectedIndices[i - 1]);
+		for (int i = selectedIndices.length; i > 0; i--) {
+			URI compURI = compURIs.remove(selectedIndices[i - 1]);
+			if (compURI.toString().endsWith("iBioSim") || compURI.toString().endsWith("iBioSimPlaceHolder")) 
+				iBioSimURIPresent = false;
+			if (compURI.toString().endsWith("iBioSim"))	
+				deletionURI = compURI;
+			
+		}
 		setComponentIDList();
 	}
 	
 	public LinkedList<URI> getCompURIs() {
 		return compURIs;
+	}
+	
+	public URI getDeletionURI() {
+		return deletionURI;
 	}
 }

@@ -13,9 +13,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.sbml.libsbml.Model;
+import org.sbml.libsbml.SBaseList;
 import org.sbolstandard.core.*;
 import org.sbolstandard.core.impl.SBOLDocumentImpl;
 
+import biomodel.annotation.AnnotationUtility;
 import biomodel.util.GlobalConstants;
 import biomodel.util.Utility;
 
@@ -28,13 +31,20 @@ public class SBOLField extends JPanel implements ActionListener {
 	private int styleOption;
 	private JLabel sbolLabel;
 	private JTextField sbolText = new JTextField(20);
-	private LinkedList<URI> sbolURIs = new LinkedList<URI>();
+	private LinkedList<URI> sbolURIs;
+	private LinkedList<URI> initialURIs;
+	private boolean initiallyBlank;
 	private JButton sbolButton = new JButton("Associate SBOL");
 	private ModelEditor gcmEditor;
+	private boolean isModelPanelField;
+	private URI deletionURI;
 	
-	public SBOLField(String sbolType, ModelEditor gcmEditor, int styleOption) {
+	public SBOLField(LinkedList<URI> sbolURIs, String sbolType, ModelEditor gcmEditor, int styleOption, boolean isModelPanelField) {
 		super(new GridLayout(1, styleOption));
 	
+		this.sbolURIs = sbolURIs;
+		this.initialURIs = new LinkedList<URI>(sbolURIs);
+		initiallyBlank = sbolURIs.size() == 0;
 		this.sbolType = sbolType;
 		this.styleOption = styleOption;
 		if (styleOption == 2 || styleOption  == 3) {
@@ -49,6 +59,19 @@ public class SBOLField extends JPanel implements ActionListener {
 		sbolText.setVisible(false);
 		
 		this.gcmEditor = gcmEditor;
+		this.isModelPanelField = isModelPanelField;
+	}
+	
+	public boolean wasInitiallyBlank() {
+		return initiallyBlank;
+	}
+	
+	public LinkedList<URI> getInitialURIs() {
+		return initialURIs;
+	}
+	
+	public URI getDeletionURI() {
+		return deletionURI;
 	}
 	
 	public String getType() {
@@ -88,10 +111,11 @@ public class SBOLField extends JPanel implements ActionListener {
 				Utility.createErrorMessage("Invalid URI", "SBOL association text could not be parsed as URI.");
 				return false;
 			}
-			for (String filePath : gcmEditor.getSbolFiles()) {
-				SBOLDocumentImpl sbolDoc = (SBOLDocumentImpl) SBOLUtility.loadSBOLFile(filePath);
+			for (String filePath : gcmEditor.getGui().getFilePaths(".sbol")) {
+				SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
 				if (sbolDoc != null) {
-					DnaComponent resolvedDnac = sbolDoc.getComponentUriResolver().resolve(sourceCompURI);
+					SBOLDocumentImpl flattenedDoc = SBOLUtility.flattenDocument(sbolDoc);
+					DnaComponent resolvedDnac = flattenedDoc.getComponentUriResolver().resolve(sourceCompURI);
 					if (resolvedDnac != null) {
 						for (URI uri : resolvedDnac.getTypes())
 							if (SBOLUtility.soSynonyms(sbolType).contains(uri.toString()))
@@ -110,8 +134,14 @@ public class SBOLField extends JPanel implements ActionListener {
 	
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("associateSBOL")) {
-			HashSet<String> sbolFiles = gcmEditor.getSbolFiles();
-			SBOLAssociationPanel associationPanel = new SBOLAssociationPanel(sbolFiles, sbolURIs, SBOLUtility.soSynonyms(sbolType));
+			HashSet<String> sbolFilePaths = gcmEditor.getGui().getFilePaths(".sbol");
+			SBOLAssociationPanel  associationPanel;
+			if (isModelPanelField) {
+				associationPanel = new SBOLAssociationPanel(sbolFilePaths, sbolURIs, 
+						SBOLUtility.soSynonyms(sbolType), gcmEditor.getGCM().getSBMLDocument().getModel().getId());
+				deletionURI = associationPanel.getDeletionURI();
+			} else
+				associationPanel = new SBOLAssociationPanel(sbolFilePaths, sbolURIs, SBOLUtility.soSynonyms(sbolType));
 			sbolURIs = associationPanel.getCompURIs();
 		} 
 	}
