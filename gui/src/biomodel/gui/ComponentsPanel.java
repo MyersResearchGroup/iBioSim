@@ -65,7 +65,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 
 	private String selectedComponent, oldPort;
 	
-	private ModelEditor gcmEditor;
+	private ModelEditor modelEditor;
 	
 	private String subModelId;
 	
@@ -82,7 +82,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 		this.selected = selected;
 		this.componentsList = componentsList;
 		this.bioModel = bioModel;
-		this.gcmEditor = gcmEditor;
+		this.modelEditor = gcmEditor;
 		this.selectedComponent = selectedComponent;
 		this.oldPort = oldPort;
 		this.paramsOnly = paramsOnly;
@@ -354,11 +354,9 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 		// Parse out SBOL annotations and add to SBOL field
 		if(!paramsOnly) {
 			// Field for annotating submodel with SBOL DNA components
-			sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 2);
-			add(sbolField);
 			LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(instance);
-			if (sbolURIs.size() > 0)
-				sbolField.setSBOLURIs(sbolURIs);
+			sbolField = new SBOLField(sbolURIs, GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 2, false);
+			add(sbolField);
 		}
 		JLabel timeConvFactorLabel = new JLabel("Time Conversion Factor");
 		JLabel extentConvFactorLabel = new JLabel("Extent Conversion Factor");
@@ -474,6 +472,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 		int value = JOptionPane.showOptionDialog(Gui.frame, this, "Component Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
+			
 			if (!checkValues()) {
 				Utility.createErrorMessage("Error", "Illegal values entered.");
 				return false;
@@ -490,11 +489,27 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 					return false;
 				}
 			}
+			
+			// Checks whether SBOL annotation on model needs to be deleted later when annotating component with SBOL
+//			boolean removeModelSBOLAnnotationFlag = false;
+//			if (!paramsOnly && sbolField.getSBOLURIs().size() > 0 && 
+//					bioModel.getElementSBOLCount() == 0 && bioModel.getModelSBOLAnnotationFlag()) {
+//				Object[] options = { "OK", "Cancel" };
+//				int choice = JOptionPane.showOptionDialog(null, 
+//						"SBOL associated to model elements can't coexist with SBOL associated to model itself unless" +
+//						" the latter was previously generated from the former.  Remove SBOL associated to model?", 
+//						"Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+//				if (choice == JOptionPane.OK_OPTION)
+//					removeModelSBOLAnnotationFlag = true;
+//				else
+//					return false;
+//			}
+			
 			String id = fields.get(GlobalConstants.ID).getValue();
 			if (selected != null && !oldName.equals(id)) {
 				bioModel.changeComponentName(oldName, id);
 			}
-
+			
 			Submodel instance = bioModel.getSBMLCompModel().getSubmodel(subModelId);
 			if (instance != null) {
 				long k = 0;
@@ -567,10 +582,20 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 				if (sbolURIs.size() > 0) {
 					SBOLAnnotation sbolAnnot = new SBOLAnnotation(instance.getMetaId(), sbolURIs);
 					AnnotationUtility.setSBOLAnnotation(instance, sbolAnnot);
-				} else
+					if (sbolField.wasInitiallyBlank())
+						bioModel.setElementSBOLCount(bioModel.getElementSBOLCount() + 1);
+//					if (removeModelSBOLAnnotationFlag) {
+//						AnnotationUtility.removeSBOLAnnotation(bioModel.getSBMLDocument().getModel());
+//						bioModel.setModelSBOLAnnotationFlag(false);
+//						modelEditor.getSchematic().getSBOLDescriptorsButton().setEnabled(true);
+//					}
+				} else {
 					AnnotationUtility.removeSBOLAnnotation(instance);
+					if (!sbolField.wasInitiallyBlank())
+						bioModel.setElementSBOLCount(bioModel.getElementSBOLCount() - 1);
+				}
 			}
-			gcmEditor.setDirty(true);
+			modelEditor.setDirty(true);
 		}
 		else if (value == JOptionPane.NO_OPTION) {
 			return true;

@@ -35,7 +35,7 @@ public class PromoterPanel extends JPanel {
 	private String selected = "";
 	private BioModel bioModel = null;
 	private boolean paramsOnly;
-	private ModelEditor gcmEditor = null;
+	private ModelEditor modelEditor = null;
 	private Species promoter = null;
 	private Reaction production = null;
 	
@@ -45,7 +45,7 @@ public class PromoterPanel extends JPanel {
 		this.selected = selected;
 		this.bioModel = gcm;
 		this.paramsOnly = paramsOnly;
-		this.gcmEditor = gcmEditor;
+		this.modelEditor = gcmEditor;
 
 		fields = new HashMap<String, PropertyField>();
 		
@@ -307,11 +307,9 @@ public class PromoterPanel extends JPanel {
 		// Parse out SBOL annotations and add to SBOL field
 		if (!paramsOnly) {
 			// Field for annotating promoter with SBOL DNA components
-			sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 3);
-			add(sbolField);
 			LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(promoter);
-			if (sbolURIs.size() > 0)
-				sbolField.setSBOLURIs(sbolURIs);
+			sbolField = new SBOLField(sbolURIs, GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 3, false);
+			add(sbolField);
 		}
 
 		String oldName = null;
@@ -345,12 +343,14 @@ public class PromoterPanel extends JPanel {
 				"Promoter Editor", JOptionPane.YES_NO_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
+			
 			boolean valueCheck = checkValues();
 			if (!valueCheck) {
 				Utility.createErrorMessage("Error", "Illegal values entered.");
 				return false;
 			}
 			String id = selected;
+//			boolean removeModelSBOLAnnotationFlag = false;
 			if (!paramsOnly) {
 				if (oldName == null) {
 					if (bioModel.isSIdInUse((String)fields.get(GlobalConstants.ID).getValue())) {
@@ -364,6 +364,19 @@ public class PromoterPanel extends JPanel {
 						return false;
 					}
 				}
+				// Checks whether SBOL annotation on model needs to be deleted later when annotating promoter with SBOL
+//				if (sbolField.getSBOLURIs().size() > 0 && 
+//						bioModel.getElementSBOLCount() == 0 && bioModel.getModelSBOLAnnotationFlag()) {
+//					Object[] options = { "OK", "Cancel" };
+//					int choice = JOptionPane.showOptionDialog(null, 
+//							"SBOL associated to model elements can't coexist with SBOL associated to model itself unless" +
+//							" the latter was previously generated from the former.  Remove SBOL associated to model?", 
+//							"Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+//					if (choice == JOptionPane.OK_OPTION)
+//						removeModelSBOLAnnotationFlag = true;
+//					else
+//						return false;
+//				}
 				id = fields.get(GlobalConstants.ID).getValue();
 				promoter.setName(fields.get(GlobalConstants.NAME).getValue());
 			}
@@ -421,8 +434,18 @@ public class PromoterPanel extends JPanel {
 				if (sbolURIs.size() > 0) {
 					SBOLAnnotation sbolAnnot = new SBOLAnnotation(promoter.getMetaId(), sbolURIs);
 					AnnotationUtility.setSBOLAnnotation(promoter, sbolAnnot);
-				} else
+					if (sbolField.wasInitiallyBlank())
+						bioModel.setElementSBOLCount(bioModel.getElementSBOLCount() + 1);
+//					if (removeModelSBOLAnnotationFlag) {
+//						AnnotationUtility.removeSBOLAnnotation(bioModel.getSBMLDocument().getModel());
+//						bioModel.setModelSBOLAnnotationFlag(false);
+//						modelEditor.getSchematic().getSBOLDescriptorsButton().setEnabled(true);
+//					}
+				} else {
 					AnnotationUtility.removeSBOLAnnotation(promoter);
+					if (!sbolField.wasInitiallyBlank())
+						bioModel.setElementSBOLCount(bioModel.getElementSBOLCount() - 1);
+				}
 
 				// rename all the influences that use this promoter if name was changed
 				if (selected != null && !oldName.equals(id)) {
@@ -432,7 +455,7 @@ public class PromoterPanel extends JPanel {
 				}
 				this.lastUsedPromoter = id;
 			}
-			gcmEditor.setDirty(true);
+			modelEditor.setDirty(true);
 		} else if (value == JOptionPane.NO_OPTION) {
 			return true;
 		}
