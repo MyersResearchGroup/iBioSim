@@ -3763,9 +3763,10 @@ public class Analysis {
     private HashSet<LpnTransitionPair> computeDependent(State[] curStateArray,
 			LpnTransitionPair enabledLpnTran, HashSet<LpnTransitionPair> dependent, HashSet<LpnTransitionPair> curEnabled, 
 			HashMap<LpnTransitionPair, StaticSets> staticMap, LhpnFile[] lpnList, boolean isCycleClosingAmpleComputation) {
-		// canDisable is the set of transitions that can be disabled by firing tranIndex.
+		// disableSet is the set of transitions that can be disabled by firing enabledLpnTran, or can disable enabledLpnTran.
 		HashSet<LpnTransitionPair> disableSet = staticMap.get(enabledLpnTran).getDisableSet(); 
-		HashSet<LpnTransitionPair> transCanLoseToken = staticMap.get(enabledLpnTran).getDisableByStealingToken();
+		HashSet<LpnTransitionPair> otherTransDisableEnabledTran = staticMap.get(enabledLpnTran).getOtherTransDisableCurTranSet();
+//		HashSet<LpnTransitionPair> transCanLoseToken = staticMap.get(enabledLpnTran).getDisableByStealingToken();
 		HashSet<LpnTransitionPair> canModifyAssign = staticMap.get(enabledLpnTran).getModifyAssignSet();
 		if (Options.getDebugMode()) {
 			System.out.println("@ getDependentSet, consider transition " + lpnList[enabledLpnTran.getLpnIndex()].getTransition(enabledLpnTran.getTranIndex()).getName());
@@ -3779,39 +3780,41 @@ public class Analysis {
 		}
 		if (Options.getDebugMode()) 
 			printIntegerSet(dependent, lpnList, "@ getDependentSet, before canBeDisabled, dependent " + lpnList[enabledLpnTran.getLpnIndex()].getTransition(enabledLpnTran.getTranIndex()));
-		for (LpnTransitionPair tranCanBeDisabled : disableSet) {
+		for (LpnTransitionPair tranInDisableSet : disableSet) {
 			if (Options.getDebugMode()) 
-				System.out.println("tranCanBeDisabled = " + lpnList[tranCanBeDisabled.getLpnIndex()].getLabel()  
-						+ "(" + lpnList[tranCanBeDisabled.getLpnIndex()].getTransition(tranCanBeDisabled.getTranIndex()) + ")");
-			boolean tranCanBeDisabledPersistent = lpnList[tranCanBeDisabled.getLpnIndex()].getTransition(tranCanBeDisabled.getTranIndex()).isPersistent();
-			if (curEnabled.contains(tranCanBeDisabled) && !dependent.contains(tranCanBeDisabled)
-					&& (transCanLoseToken.contains(tranCanBeDisabled) || !tranCanBeDisabledPersistent)) {
-				dependent.addAll(computeDependent(curStateArray,tranCanBeDisabled,dependent,curEnabled,staticMap, lpnList, isCycleClosingAmpleComputation));
+				System.out.println("tranInDisableSet = " + lpnList[tranInDisableSet.getLpnIndex()].getLabel()  
+						+ "(" + lpnList[tranInDisableSet.getLpnIndex()].getTransition(tranInDisableSet.getTranIndex()) + ")");
+			boolean tranInDisableSetIsPersistent = lpnList[tranInDisableSet.getLpnIndex()].getTransition(tranInDisableSet.getTranIndex()).isPersistent();
+//			if (curEnabled.contains(tranInDisableSet) && !dependent.contains(tranInDisableSet)
+//					&& (transCanLoseToken.contains(tranInDisableSet) || !tranInDisableSetIsPersistent)) {
+			if (curEnabled.contains(tranInDisableSet) && !dependent.contains(tranInDisableSet)
+					&& (!tranInDisableSetIsPersistent || otherTransDisableEnabledTran.contains(tranInDisableSet))) {
+				dependent.addAll(computeDependent(curStateArray,tranInDisableSet,dependent,curEnabled,staticMap, lpnList, isCycleClosingAmpleComputation));
 				if (Options.getDebugMode()) 
 					printIntegerSet(dependent, lpnList, "@ getDependentSet at 0 for transition " + lpnList[enabledLpnTran.getLpnIndex()].getTransition(enabledLpnTran.getTranIndex()));
 			}
-			else if (!curEnabled.contains(tranCanBeDisabled)) {
+			else if (!curEnabled.contains(tranInDisableSet)) {
 				if(Options.getPOR().toLowerCase().equals("tboff")  // no trace-back
 						|| (Options.getCycleClosingAmpleMethd().toLowerCase().equals("cctboff") && isCycleClosingAmpleComputation)) {
 					dependent.addAll(curEnabled);
 					break;
 				}
-				LpnTransitionPair origTran = new LpnTransitionPair(tranCanBeDisabled.getLpnIndex(), tranCanBeDisabled.getTranIndex());
+				LpnTransitionPair origTran = new LpnTransitionPair(tranInDisableSet.getLpnIndex(), tranInDisableSet.getTranIndex());
 				HashSet<LpnTransitionPair> necessary = null;
 				if (Options.getDebugMode()) 
 					printNecessaryMap(lpnList);
-				if (necessaryMap.containsKey(tranCanBeDisabled)) {
+				if (necessaryMap.containsKey(tranInDisableSet)) {
 					if (Options.getDebugMode()) 
-						System.out.println("Found transition " + lpnList[tranCanBeDisabled.getLpnIndex()].getLabel() + "("
-							+ lpnList[tranCanBeDisabled.getLpnIndex()].getTransition(tranCanBeDisabled.getTranIndex()).getName() + ") in ncessaryMap.");
-					necessary = necessaryMap.get(tranCanBeDisabled);
+						System.out.println("Found transition " + lpnList[tranInDisableSet.getLpnIndex()].getLabel() + "("
+							+ lpnList[tranInDisableSet.getLpnIndex()].getTransition(tranInDisableSet.getTranIndex()).getName() + ") in ncessaryMap.");
+					necessary = necessaryMap.get(tranInDisableSet);
 				}
 				else
-					necessary = computeNecessary(curStateArray,tranCanBeDisabled,dependent,curEnabled, staticMap, lpnList, origTran);
+					necessary = computeNecessary(curStateArray,tranInDisableSet,dependent,curEnabled, staticMap, lpnList, origTran);
 				if (/*necessary != null &&*/ !necessary.isEmpty()) {
 					if (Options.getDebugMode()) 
-						printIntegerSet(necessary, lpnList, "necessary set for transition " + lpnList[tranCanBeDisabled.getLpnIndex()].getLabel() 
-								+ "(" + lpnList[tranCanBeDisabled.getLpnIndex()].getTransition(tranCanBeDisabled.getTranIndex()) + ")");
+						printIntegerSet(necessary, lpnList, "necessary set for transition " + lpnList[tranInDisableSet.getLpnIndex()].getLabel() 
+								+ "(" + lpnList[tranInDisableSet.getLpnIndex()].getTransition(tranInDisableSet.getTranIndex()) + ")");
 					for (LpnTransitionPair tranNecessary : necessary) {
 						if (!dependent.contains(tranNecessary)) {
 							if (Options.getDebugMode()) {
