@@ -2298,11 +2298,9 @@ public class ExprTree {
 		switch (isit) {
 		case 'b': // Boolean
 			if (variables.containsKey(variable)) {
-				if (variables.get(variable).toString().toLowerCase().equals(
-						"false"))
+				if (variables.get(variable).toString().toLowerCase().equals("false"))
 					return 'F';
-				if (variables.get(variable).toString().toLowerCase().equals(
-						"true"))
+				if (variables.get(variable).toString().toLowerCase().equals("true"))
 					return 'T';
 				else {
 					return 'X';
@@ -2311,10 +2309,12 @@ public class ExprTree {
 				return 'U';
 			}
 		case 't': // Truth value
+			/*
 			if (uvalue == 0)
-				return 'T';
-			else if (lvalue == 1)
 				return 'F';
+			else if (lvalue == 1)
+				return 'T';
+				*/
 			return 'U';
 		case 'l': // Logical
 			if (op.equals("||")) {
