@@ -67,8 +67,15 @@ public class Utility {
 					fd = new FileDialog(frame, approve, FileDialog.LOAD);
 					fd.setFilenameFilter(new FilenameFilter() {
 						public boolean accept(File dir, String name) {
-//							return name.endsWith(".sbol");
 							return name.endsWith(".xml") || name.endsWith(".sbol");
+						}
+					});
+				}
+				else if (approve.equals("Import SED-ML") || approve.equals("Export SED-ML")) {
+					fd = new FileDialog(frame, approve, FileDialog.LOAD);
+					fd.setFilenameFilter(new FilenameFilter() {
+						public boolean accept(File dir, String name) {
+							return name.endsWith("-sedml.xml");
 						}
 					});
 				}
@@ -167,6 +174,10 @@ public class Utility {
 					else if (approve.equals("Import SBOL") || approve.equals("Export DNA Component")) {
 						if (!selectedFile.endsWith(".sbol") && !selectedFile.endsWith(".xml"))
 							selectedFile += ".xml";
+					}
+					else if (approve.equals("Import SED-ML") || approve.equals("Export SED-ML")) {
+						if (!selectedFile.endsWith("-sedml.xml"))
+							selectedFile += "-sedml.xml";
 					}
 					else if (approve.equals("Import SBML") || (approve.equals("Export SMBL"))) {
 						if (!selectedFile.endsWith(".sbml") && !selectedFile.endsWith(".xml")) {
@@ -295,6 +306,9 @@ public class Utility {
 			ExampleFileFilter sbolFilter = new ExampleFileFilter();
 			sbolFilter.addExtension("sbol");
 			sbolFilter.setDescription("Synthetic Biology Open Language");
+			ExampleFileFilter sedmlFilter = new ExampleFileFilter();
+			sedmlFilter.addExtension("xml");
+			sedmlFilter.setDescription("Simulation Experiment Description");
 			ExampleFileFilter sbmlFilter = new ExampleFileFilter();
 			sbmlFilter.addExtension("sbml");
 			sbmlFilter.setDescription("Systems Biology Markup Language");
@@ -383,6 +397,13 @@ public class Utility {
 			}
 			else if (approve.equals("Import SBOL") || approve.equals("Export DNA Component")) {
 				fc.addChoosableFileFilter(sbolFilter);
+				fc.addChoosableFileFilter(xmlFilter);
+				fc.setAcceptAllFileFilterUsed(false);
+				fc.setFileFilter(xmlFilter);
+				retValue = fc.showDialog(frame, approve);
+			}
+			else if (approve.equals("Import SED-ML") || approve.equals("Export SED-ML")) {
+				fc.addChoosableFileFilter(sedmlFilter);
 				fc.addChoosableFileFilter(xmlFilter);
 				fc.setAcceptAllFileFilterUsed(false);
 				fc.setFileFilter(xmlFilter);
@@ -512,6 +533,10 @@ public class Utility {
 				else if (approve.equals("Import SBOL") || approve.equals("Export DNA Component")) {
 					if (!filename.endsWith(".sbol") && !filename.endsWith(".xml"))
 						filename += ".xml";
+				}
+				else if (approve.equals("Import SED-ML") || approve.equals("Export SED-ML")) {
+					if (!filename.endsWith("-sedml.xml"))
+						filename += "-sedml.xml";
 				}
 			}
 			return filename;
