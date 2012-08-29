@@ -79,8 +79,6 @@ public class StaticSets {
 		}
 		disableSet.addAll(disableByStealingToken);
 		disableSet.addAll(curTranDisableOtherTranFailEnablingCond);
-		//buildModifyAssignSet();
-		disableSet.addAll(modifyAssignment);
 //		printIntegerSet(disableByStealingToken, "disableByStealingToken");
 //		printIntegerSet(disableByFailingEnableCond, "disableByFailingEnableCond");
 	}
@@ -134,6 +132,9 @@ public class StaticSets {
 				}
 				disableSet.addAll(disableByStealingToken);
 				disableSet.addAll(otherTranDisableCurTranFailEnablingCond);
+				buildModifyAssignSet();
+				disableSet.addAll(modifyAssignment);
+				otherTranDisableCurTranFailEnablingCond.addAll(modifyAssignment);
 	}
 	
 	private boolean tranFormsSelfLoop() {
