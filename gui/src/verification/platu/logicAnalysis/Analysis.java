@@ -3767,17 +3767,17 @@ public class Analysis {
 		HashSet<LpnTransitionPair> disableSet = staticMap.get(enabledLpnTran).getDisableSet(); 
 		HashSet<LpnTransitionPair> otherTransDisableEnabledTran = staticMap.get(enabledLpnTran).getOtherTransDisableCurTranSet();
 //		HashSet<LpnTransitionPair> transCanLoseToken = staticMap.get(enabledLpnTran).getDisableByStealingToken();
-		HashSet<LpnTransitionPair> canModifyAssign = staticMap.get(enabledLpnTran).getModifyAssignSet();
+//		HashSet<LpnTransitionPair> canModifyAssign = staticMap.get(enabledLpnTran).getModifyAssignSet();
 		if (Options.getDebugMode()) {
 			System.out.println("@ getDependentSet, consider transition " + lpnList[enabledLpnTran.getLpnIndex()].getTransition(enabledLpnTran.getTranIndex()).getName());
-			printIntegerSet(canModifyAssign, lpnList, lpnList[enabledLpnTran.getLpnIndex()].getTransition(enabledLpnTran.getTranIndex()) + " can modify assignments");
+			//printIntegerSet(canModifyAssign, lpnList, lpnList[enabledLpnTran.getLpnIndex()].getTransition(enabledLpnTran.getTranIndex()) + " can modify assignments");
 			printIntegerSet(disableSet, lpnList, lpnList[enabledLpnTran.getLpnIndex()].getTransition(enabledLpnTran.getTranIndex()) + " can disable");
 		}
 		dependent.add(enabledLpnTran);
-		for (LpnTransitionPair lpnTranPair : canModifyAssign) {
-			if (curEnabled.contains(lpnTranPair))
-				dependent.add(lpnTranPair);
-		}
+//		for (LpnTransitionPair lpnTranPair : canModifyAssign) {
+//			if (curEnabled.contains(lpnTranPair))
+//				dependent.add(lpnTranPair);
+//		}
 		if (Options.getDebugMode()) 
 			printIntegerSet(dependent, lpnList, "@ getDependentSet, before canBeDisabled, dependent " + lpnList[enabledLpnTran.getLpnIndex()].getTransition(enabledLpnTran.getTranIndex()));
 		for (LpnTransitionPair tranInDisableSet : disableSet) {
