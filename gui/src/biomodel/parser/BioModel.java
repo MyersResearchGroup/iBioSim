@@ -45,6 +45,7 @@ import org.sbml.libsbml.CompartmentType;
 import org.sbml.libsbml.Constraint;
 import org.sbml.libsbml.Deletion;
 import org.sbml.libsbml.Dimensions;
+import org.sbml.libsbml.Event;
 import org.sbml.libsbml.EventAssignment;
 import org.sbml.libsbml.ExternalModelDefinition;
 import org.sbml.libsbml.FunctionDefinition;
@@ -2547,8 +2548,8 @@ public class BioModel {
 	 * 
 	 * @return: the id of the created component.
 	 */
-	public String addComponent(String submodelID, String modelFile, 
-			boolean enclosed, ArrayList<String> compartmentPorts, int row, int col, double x, double y) {
+	public String addComponent(String submodelID, String modelFile, boolean enclosed, ArrayList<String> compartmentPorts, 
+			int row, int col, double x, double y, String md5) {
 		
 		ExternalModelDefinition extModel = null;
 		String extId = modelFile.replace(".gcm","").replace(".xml","");
@@ -2560,6 +2561,7 @@ public class BioModel {
 		
 		extModel.setId(extId);
 		extModel.setSource("file:" + modelFile.replace(".gcm",".xml"));
+		extModel.setMd5(md5);
 		
 //		if (enclosed && extModel.getAnnotationString().contains("compartment") == false) {	
 //			
@@ -2988,6 +2990,67 @@ public class BioModel {
 			}
 		}
 		return unitSet;
+	}
+	
+	public ArrayList<String> getAlgebraicRules() {
+		ArrayList<String> ruleSet = new ArrayList<String>();
+		if (sbml!=null) {
+			for (int i = 0; i < sbml.getModel().getNumRules(); i++) {
+				Rule rule = sbml.getModel().getRule(i);
+				if (rule.isAlgebraic()) {
+					ruleSet.add(rule.getMetaId());
+				}
+			}
+		}
+		return ruleSet;
+	}
+	
+	public ArrayList<String> getAssignmentRules() {
+		ArrayList<String> ruleSet = new ArrayList<String>();
+		if (sbml!=null) {
+			for (int i = 0; i < sbml.getModel().getNumRules(); i++) {
+				Rule rule = sbml.getModel().getRule(i);
+				if (rule.isAssignment()) {
+					ruleSet.add(rule.getMetaId());
+				}
+			}
+		}
+		return ruleSet;
+	}
+	
+	public ArrayList<String> getRateRules() {
+		ArrayList<String> ruleSet = new ArrayList<String>();
+		if (sbml!=null) {
+			for (int i = 0; i < sbml.getModel().getNumRules(); i++) {
+				Rule rule = sbml.getModel().getRule(i);
+				if (rule.isRate()) {
+					ruleSet.add(rule.getMetaId());
+				}
+			}
+		}
+		return ruleSet;
+	}
+	
+	public ArrayList<String> getConstraints() {
+		ArrayList<String> constraintSet = new ArrayList<String>();
+		if (sbml!=null) {
+			for (int i = 0; i < sbml.getModel().getNumConstraints(); i++) {
+				Constraint constraint = sbml.getModel().getConstraint(i);
+				constraintSet.add(constraint.getMetaId());
+			}
+		}
+		return constraintSet;
+	}
+	
+	public ArrayList<String> getEvents() {
+		ArrayList<String> eventSet = new ArrayList<String>();
+		if (sbml!=null) {
+			for (int i = 0; i < sbml.getModel().getNumEvents(); i++) {
+				Event event = sbml.getModel().getEvent(i);
+				eventSet.add(event.getId());
+			}
+		}
+		return eventSet;
 	}
 
 	// TODO: remove special reactions
@@ -5302,6 +5365,14 @@ public class BioModel {
 				String extModelFile = sbmlComp.getExternalModelDefinition(submodel.getModelRef())
 						.getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
 				subBioModel.load(path + separator + extModelFile);
+				SBMLWriter writer = new SBMLWriter();
+				String SBMLstr = writer.writeSBMLToString(subBioModel.getSBMLDocument());
+				String md5 = Utility.MD5(SBMLstr);
+				if (!sbmlComp.getExternalModelDefinition(submodel.getModelRef()).getMd5().equals("") &&
+					!sbmlComp.getExternalModelDefinition(submodel.getModelRef()).getMd5().equals(md5)) {
+					//System.out.println("MD5 DOES NOT MATCH");
+					sbmlComp.getExternalModelDefinition(submodel.getModelRef()).setMd5(md5);
+				}
 				for (j = 0; j < subBioModel.getSBMLCompModel().getNumPorts(); j++) {
 					Port subPort = subBioModel.getSBMLCompModel().getPort(j);
 					if (!isPortRemoved(submodel,subPort.getId())) {

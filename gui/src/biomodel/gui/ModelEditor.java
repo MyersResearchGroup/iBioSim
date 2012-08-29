@@ -42,6 +42,7 @@ import org.sbml.libsbml.Parameter;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.Rule;
 import org.sbml.libsbml.SBMLDocument;
+import org.sbml.libsbml.SBMLWriter;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.Submodel;
 import org.sbolstandard.core.DnaComponent;
@@ -336,14 +337,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		
 		speciesPanel.refreshSpeciesPanel(biomodel);
 
-		/*
-		if (!sbmlFiles.getSelectedItem().equals(none)) {
-			gcm.setSBMLFile(sbmlFiles.getSelectedItem().toString());
-		}
-		else {
-			gcm.setSBMLFile("");
-		}
-		*/
 		GeneticNetwork.setRoot(path + separator);
 
 		if (command.contains("GCM as")) {
@@ -2196,8 +2189,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			ArrayList<String> ports = subBioModel.getPorts();
 
 			if(createUsingDefaults){
+				SBMLWriter writer = new SBMLWriter();
+				String SBMLstr = writer.writeSBMLToString(subBioModel.getSBMLDocument());
+				String md5 = Utility.MD5(SBMLstr);
 				// TODO: Is this correct?
-				outID = biomodel.addComponent(null, comp, false, null, -1, -1, 0, 0);
+				outID = biomodel.addComponent(null, comp, false, null, -1, -1, 0, 0, md5);
 			}else{
 				new ComponentsPanel(selected, list, biomodel, ports, comp, oldPort, paramsOnly, this);
 				outID = selected;
