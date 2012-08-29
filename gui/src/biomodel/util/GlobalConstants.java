@@ -143,6 +143,14 @@ public class GlobalConstants {
 	public static final int SBO_COMPLEX = 526;
 	public static final int SBO_CONSTITUTIVE = 396;
 	
+	public static final String KISAO_GENERIC = "KISAO:0000000";
+	public static final String KISAO_MONTE_CARLO = "KISAO:0000319";
+	public static final String KISAO_GILLESPIE_DIRECT = "KISAO:0000029";
+	public static final String KISAO_SSA_CR = "KISAO:0000329";
+	public static final String KISAO_EULER = "KISAO:0000030";
+	public static final String KISAO_RUNGE_KUTTA_FEHLBERG = "KISAO:0000086";
+	public static final String KISAO_RUNGE_KUTTA_PRINCE_DORMAND = "KISAO:0000087";
+	
 	public static final String TRUE = "true";
 	public static final String FALSE = "false";
 	public static final String NONE = "none";

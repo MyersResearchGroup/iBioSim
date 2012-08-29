@@ -1283,6 +1283,7 @@ public class Run implements ActionListener {
 						// }
 					}
 					catch (Exception e) {
+						e.printStackTrace();
 					}
 					progress.setValue(prog);
 					// if (steps > 0) {
@@ -1303,6 +1304,7 @@ public class Run implements ActionListener {
 				reb2.close();
 			}
 			catch (Exception e) {
+				e.printStackTrace();
 			}
 			if (reb2sac != null) {
 				exitValue = reb2sac.waitFor();
@@ -1533,6 +1535,7 @@ public class Run implements ActionListener {
 												}
 											}
 											catch (Exception e) {
+												e.printStackTrace();
 											}
 										}
 										Scanner scan = new Scanner(new File(directory + separator + "term-time.txt"));
@@ -1642,6 +1645,7 @@ public class Run implements ActionListener {
 												}
 											}
 											catch (Exception e) {
+												e.printStackTrace();
 											}
 										}
 										Scanner scan = new Scanner(new File(directory + separator + "term-time.txt"));
@@ -1769,6 +1773,7 @@ public class Run implements ActionListener {
 												}
 											}
 											catch (Exception e) {
+												e.printStackTrace();
 											}
 										}
 										Scanner scan = new Scanner(new File(directory + separator + "term-time.txt"));
@@ -1878,6 +1883,7 @@ public class Run implements ActionListener {
 												}
 											}
 											catch (Exception e) {
+												e.printStackTrace();
 											}
 										}
 										Scanner scan = new Scanner(new File(directory + separator + "term-time.txt"));

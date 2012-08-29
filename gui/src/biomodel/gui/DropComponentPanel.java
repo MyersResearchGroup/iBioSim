@@ -6,6 +6,9 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -23,11 +26,13 @@ import org.sbml.libsbml.CompModelPlugin;
 import org.sbml.libsbml.CompSBMLDocumentPlugin;
 import org.sbml.libsbml.CompartmentGlyph;
 import org.sbml.libsbml.Layout;
+import org.sbml.libsbml.SBMLWriter;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.SpeciesGlyph;
 import org.sbml.libsbml.Submodel;
 
 import biomodel.util.GlobalConstants;
+import biomodel.util.Utility;
 import biomodel.parser.BioModel;
 
 import main.Gui;
@@ -270,9 +275,11 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		
 		BioModel compGCMFile = new BioModel(gcm.getPath());
 		compGCMFile.load(gcm.getPath() + File.separator + component);
-		
+		SBMLWriter writer = new SBMLWriter();
+		String SBMLstr = writer.writeSBMLToString(compGCMFile.getSBMLDocument());
+		String md5 = Utility.MD5(SBMLstr);
 		return gcm.addComponent(null, component, compGCMFile.IsWithinCompartment(), compGCMFile.getCompartmentPorts(), row, col, 
-				col * (width + padding) + padding, row * (height + padding) + padding);
+				col * (width + padding) + padding, row * (height + padding) + padding,md5);
 	}
 	
 	/**
@@ -422,9 +429,11 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 				else {
 					properties.setProperty("compartment","false");
 				}
-				
+				SBMLWriter writer = new SBMLWriter();
+				String SBMLstr = writer.writeSBMLToString(compGCM.getSBMLDocument());
+				String md5 = Utility.MD5(SBMLstr);
 				String id = gcm.addComponent(null, comp, compGCM.IsWithinCompartment(), compGCM.getCompartmentPorts(), -1, -1, 
-						col * separationX + topleftX, row * separationY + topleftY);
+						col * separationX + topleftX, row * separationY + topleftY,md5);
 			}
 		}
 		

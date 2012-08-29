@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.sbml.libsbml.Parameter;
+import org.sbml.libsbml.SBMLWriter;
 
 import biomodel.gui.schematic.BioGraph;
 import biomodel.parser.BioModel;
@@ -18,6 +19,7 @@ import biomodel.parser.BioModel;
 import com.mxgraph.model.mxCell;
 
 import biomodel.util.GlobalConstants;
+import biomodel.util.Utility;
 
 
 /**
@@ -1039,9 +1041,11 @@ public class Grid {
 		if (!compGCM.equals("none")) {
 			BioModel compGCMFile = new BioModel(gcm.getPath());
 			compGCMFile.load(gcm.getPath() + File.separator + compGCM);
-			
+			SBMLWriter writer = new SBMLWriter();
+			String SBMLstr = writer.writeSBMLToString(compGCMFile.getSBMLDocument());
+			String md5 = Utility.MD5(SBMLstr);
 			gcm.addComponent(null, compGCM, compGCMFile.IsWithinCompartment(), compGCMFile.getCompartmentPorts(), row, col, 
-					col * (width + padding) + padding, row * (height + padding) + padding);
+					col * (width + padding) + padding, row * (height + padding) + padding, md5);
 		}
 	}
 	
