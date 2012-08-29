@@ -42,7 +42,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
@@ -80,6 +82,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.tree.TreeModel;
 
+import analysis.AnalysisThread;
 import analysis.AnalysisView;
 import analysis.Run;
 import lpn.parser.properties.BuildProperty;
@@ -113,6 +116,15 @@ import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.TokenStream;
+import org.jlibsedml.Curve;
+import org.jlibsedml.Libsedml;
+import org.jlibsedml.Model;
+import org.jlibsedml.Output;
+import org.jlibsedml.Plot2D;
+import org.jlibsedml.SEDMLDocument;
+import org.jlibsedml.SedML;
+import org.jlibsedml.SedMLError;
+import org.jlibsedml.Task;
 //import org.antlr.runtime.TokenStream;
 import org.sbml.libsbml.*;
 
@@ -154,6 +166,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private JMenuItem newSpice; // The new spice circuit item
 	private JMenuItem exit; // The exit menu item
 	private JMenuItem importSbol;
+	private JMenuItem importSedml;
 	private JMenuItem importSbml; // The import sbml menu item
 	private JMenuItem importBioModel; // The import sbml menu item
 	//private JMenuItem importDot; // The import dot menu item
@@ -460,6 +473,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		graph = new JMenuItem("TSD Graph");
 		probGraph = new JMenuItem("Histogram");
 		importSbol = new JMenuItem("SBOL File");
+		importSedml = new JMenuItem("SED-ML File");
 		importSbml = new JMenuItem("SBML Model");
 		importBioModel = new JMenuItem("BioModel");
 		convertToLPN= new JMenuItem("Convert To LPN");   //convert
@@ -559,6 +573,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exit.addActionListener(this);
 		about.addActionListener(this);
 		importSbol.addActionListener(this);
+		importSedml.addActionListener(this);
 		importSbml.addActionListener(this);
 		importBioModel.addActionListener(this);
 		//importDot.addActionListener(this);
@@ -731,6 +746,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 		//importDot.setEnabled(false);
 		importSbol.setEnabled(false);
+		importSedml.setEnabled(false);
 		importSbml.setEnabled(false);
 		importBioModel.setEnabled(false);
 		importVhdl.setEnabled(false);
@@ -867,6 +883,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			importMenu.add(importBioModel);
 			importMenu.add(importLpn);
 			importMenu.add(importSbol);
+			importMenu.add(importSedml);
 		}
 		else if (atacs) {
 			importMenu.add(importVhdl);
@@ -2658,7 +2675,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		
 		else if (e.getActionCommand().equals("createAnalysis")) {
 			try {
-				simulate(2);
+				createAnalysisView(2);
 			}
 			catch (Exception e1) {
 				e1.printStackTrace();
@@ -2669,7 +2686,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		// if the create simulation popup menu is selected on a dot file
 		else if (e.getActionCommand().equals("createSim")) {
 			try {
-				simulate(1);
+				createAnalysisView(1);
 			}
 			catch (Exception e1) {
 				e1.printStackTrace();
@@ -2679,7 +2696,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		// if the simulate popup menu is selected on an sbml file
 		else if (e.getActionCommand().equals("simulate")) {
 			try {
-				simulate(0);
+				createAnalysisView(0);
 			}
 			catch (Exception e1) {
 				e1.printStackTrace();
@@ -3691,6 +3708,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 				//importDot.setEnabled(true);
 				importSbol.setEnabled(true);
+				importSedml.setEnabled(true);
 				importSbml.setEnabled(true);
 				importBioModel.setEnabled(true);
 				importVhdl.setEnabled(true);
@@ -3817,6 +3835,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						addRecentProject(projDir);
 						//importDot.setEnabled(true);
 						importSbol.setEnabled(true);
+						importSedml.setEnabled(true);
 						importSbml.setEnabled(true);
 						importBioModel.setEnabled(true);
 						importVhdl.setEnabled(true);
@@ -3943,6 +3962,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else if (e.getSource().equals(importSbol)) {
 			importFile("SBOL", ".sbol", ".xml");
+		}
+		else if (e.getSource().equals(importSedml)) {
+			importSEDML();
 		}
 		// if the import sbml menu item is selected
 		else if (e.getSource() == importSbml) {
@@ -4627,7 +4649,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 	}
 
-	private void importSBML(String filename) {
+	private String importSBML(String filename) {
+		String newFile = null;
 		Preferences biosimrc = Preferences.userRoot();
 		if (filename == null) {
 			File importFile;
@@ -4774,7 +4797,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							f.setLocation(x, y);
 							f.setVisible(true);
 						}
-						String newFile = file[file.length - 1];
+						newFile = file[file.length - 1];
 						newFile = newFile.replaceAll("[^a-zA-Z0-9_.]+", "_");
 						if (document != null) {
 							document.getModel().setId(newFile.replace(".xml",""));
@@ -4787,7 +4810,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							CompModelPlugin documentCompModel = (CompModelPlugin)document.getModel().getPlugin("comp");
 							if (documentComp.getNumModelDefinitions() > 0 ||
 								documentComp.getNumExternalModelDefinitions() > 0) {
-								if (!extractModelDefinitions(documentComp,documentCompModel)) return;
+								if (!extractModelDefinitions(documentComp,documentCompModel)) return null;
 							}
 							updateReplacementsDeletions(document, documentComp, documentCompModel);
 							SBMLWriter writer = new SBMLWriter();
@@ -4806,6 +4829,205 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					e1.printStackTrace();
 					JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
+			}
+		}
+		return newFile;
+	}
+	
+	private void performAnalysis(String modelId, String simName, SEDMLDocument sedmlDoc) throws Exception {
+		String sbmlFile = root + separator + modelId + ".xml";
+		String[] sbml1 = null;
+		File sedmlFile = new File(root + separator + simName + separator + modelId + "-sedml.xml");
+		sedmlDoc.writeDocument(sedmlFile);
+		sbml1 = sbmlFile.split(separator);
+		String sbmlFileProp;
+		sbmlFileProp = root + separator + simName + separator + sbml1[sbml1.length - 1];
+		new FileOutputStream(new File(sbmlFileProp)).close();
+		try {
+			FileOutputStream out = new FileOutputStream(new File(root + separator + simName.trim() + separator + simName.trim() + ".sim"));
+			out.write((sbml1[sbml1.length - 1] + "\n").getBytes());
+			out.close();
+		}
+		catch (IOException e1) {
+			JOptionPane.showMessageDialog(frame, "Unable to save parameter file!", "Error Saving File", JOptionPane.ERROR_MESSAGE);
+		}
+		addToTree(simName);
+		JTabbedPane simTab = new JTabbedPane();
+		simTab.addMouseListener(this);
+		AnalysisView reb2sac = new AnalysisView(sbmlFile, sbmlFileProp, root, this, simName.trim(), log, simTab, null, sbml1[sbml1.length - 1], null,
+				null);
+		simTab.addTab("Simulation Options", reb2sac);
+		simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
+		simTab.addTab("Abstraction Options", reb2sac.getAdvanced());
+		simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
+		String gcmFile = sbml1[sbml1.length - 1].replace(".xml", ".gcm");
+		ModelEditor gcm = new ModelEditor(root + separator, gcmFile, this, log, true, simName.trim(), root
+				+ separator + simName.trim() + separator + simName.trim() + ".sim", reb2sac, false, false);
+		reb2sac.setGcm(gcm);
+		addModelViewTab(reb2sac, simTab, gcm);
+		simTab.addTab("Parameters", gcm);
+		simTab.getComponentAt(simTab.getComponents().length - 1).setName("GCM Editor");
+		ElementsPanel elementsPanel = new ElementsPanel(gcm.getGCM().getSBMLDocument(),
+				root + separator + simName.trim() + separator + simName.trim() + ".sim");
+		simTab.addTab("SBML Elements", elementsPanel);
+		simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
+		gcm.setElementsPanel(elementsPanel);
+		gcm.createSBML("",".");
+		reb2sac.run(".", true);
+		Graph tsdGraph;
+		tsdGraph = reb2sac.createGraph(root + separator + simName + separator + simName + ".grf");
+		simTab.addTab("TSD Graph", tsdGraph);
+		simTab.getComponentAt(simTab.getComponents().length - 1).setName("TSD Graph");
+		Graph probGraph = reb2sac.createProbGraph(null);
+		simTab.addTab("Histogram", probGraph);
+		simTab.getComponentAt(simTab.getComponents().length - 1).setName("ProbGraph");
+		addTab(simName, simTab, null);
+	}
+
+	private void importSEDML() {
+		Preferences biosimrc = Preferences.userRoot();
+		File importFile;
+		if (biosimrc.get("biosim.general.import_dir", "").equals("")) {
+			importFile = null;
+		}
+		else {
+			importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
+		}
+		String filename = Utility.browse(frame, importFile, null, JFileChooser.FILES_ONLY, "Import SED-ML", -1);
+		if (!filename.trim().equals("")) {
+			biosimrc.put("biosim.general.import_dir", filename.trim());
+			String[] file = filename.trim().split(separator);
+			try {
+				File sedmlFile = new File(filename.trim());
+				SEDMLDocument sedmlDoc = Libsedml.readDocument(sedmlFile);
+				sedmlDoc.validate();
+				if(sedmlDoc.hasErrors()) {
+					List<SedMLError> errors = sedmlDoc.getErrors();
+					final JFrame f = new JFrame("SED-ML Errors and Warnings");
+					JTextArea messageArea = new JTextArea();
+					messageArea.append("Imported SED-ML file contains the errors listed below. ");
+					messageArea.append("It is recommended that you fix them before performing this analysis or you may get unexpected results.\n\n");
+					for (int i = 0; i < errors.size(); i++) {
+						SedMLError error = errors.get(i);
+						messageArea.append(i + ":" + error.getMessage() + "\n");
+					}
+					messageArea.setLineWrap(true);
+					messageArea.setEditable(false);
+					messageArea.setSelectionStart(0);
+					messageArea.setSelectionEnd(0);
+					JScrollPane scroll = new JScrollPane();
+					scroll.setMinimumSize(new Dimension(600, 600));
+					scroll.setPreferredSize(new Dimension(600, 600));
+					scroll.setViewportView(messageArea);
+					JButton close = new JButton("Dismiss");
+					close.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+							f.dispose();
+						}
+					});
+					JPanel consistencyPanel = new JPanel(new BorderLayout());
+					consistencyPanel.add(scroll, "Center");
+					consistencyPanel.add(close, "South");
+					f.setContentPane(consistencyPanel);
+					f.pack();
+					Dimension screenSize;
+					try {
+						Toolkit tk = Toolkit.getDefaultToolkit();
+						screenSize = tk.getScreenSize();
+					}
+					catch (AWTError awe) {
+						screenSize = new Dimension(640, 480);
+					}
+					Dimension frameSize = f.getSize();
+					if (frameSize.height > screenSize.height) {
+						frameSize.height = screenSize.height;
+					}
+					if (frameSize.width > screenSize.width) {
+						frameSize.width = screenSize.width;
+					}
+					int x = screenSize.width / 2 - frameSize.width / 2;
+					int y = screenSize.height / 2 - frameSize.height / 2;
+					f.setLocation(x, y);
+					f.setVisible(true);
+				}
+				SedML sedml = sedmlDoc.getSedMLModel();
+				List<Model> models = sedml.getModels();
+				HashMap<String,String> modelMap = new HashMap<String,String>();
+				for (int i = 0; i < models.size(); i++) {
+					Model model = models.get(i);
+					String sbmlFile = filename.substring(0,filename.lastIndexOf(separator)) + model.getSource();
+					String newFile = importSBML(sbmlFile);
+					model.setSource(newFile);
+					modelMap.put(model.getId(), newFile);
+				}
+				List<Task> tasks = sedml.getTasks();
+				for (int i = 0; i < tasks.size(); i++) {
+					Task task = tasks.get(i);
+					if (modelMap.containsKey(task.getModelReference())) {
+						String modelId = modelMap.get(task.getModelReference()).replace(".xml", "");
+						String analysisId = modelId;
+						if (tasks.size()>1) {
+							analysisId += "_" + task.getId();
+						}
+						if (overwrite(root + separator + analysisId, analysisId)) {
+							new File(root + separator + analysisId).mkdir();
+							String newFile = file[file.length - 1];
+							newFile = newFile.replaceAll("[^a-zA-Z0-9_.]+", "_");
+							List<Output> outputs = sedml.getOutputs();
+							if (outputs.size() > 0 && outputs.get(0).isPlot2d()) {
+								Plot2D plot = (Plot2D)outputs.get(0);
+								Properties graph = new Properties();
+								graph.setProperty("title", plot.getName());
+								graph.setProperty("chart.background.paint", "" + new java.awt.Color(238, 238, 238).getRGB());
+								graph.setProperty("plot.background.paint", "" + java.awt.Color.WHITE.getRGB());
+								graph.setProperty("plot.domain.grid.line.paint", "" + java.awt.Color.LIGHT_GRAY.getRGB());
+								graph.setProperty("plot.range.grid.line.paint", "" + java.awt.Color.LIGHT_GRAY.getRGB());
+								graph.setProperty("x.axis", "");
+								graph.setProperty("y.axis", "");
+								graph.setProperty("x.min", "0.0");
+								graph.setProperty("x.max", "1.0");
+								graph.setProperty("x.scale", "0.1");
+								graph.setProperty("y.min", "0.0");
+								graph.setProperty("y.max", "1.0");
+								graph.setProperty("y.scale", "0.1");
+								graph.setProperty("auto.resize", "true");
+								graph.setProperty("LogX", "false");
+								graph.setProperty("LogY", "false");
+								graph.setProperty("visibleLegend", "true");
+								List<Curve> curves = plot.getListOfCurves();
+								for (int j = 0; j < curves.size(); j++) {
+									Curve curve = curves.get(j);
+									graph.setProperty("species.connected." + j, "true");
+									graph.setProperty("species.filled." + j, "true");
+									graph.setProperty("species.xnumber." + j, "0");
+									graph.setProperty("species.number." + j, "" + j);
+									graph.setProperty("species.run.number." + j, "run-" + 1);
+									graph.setProperty("species.name." + j, curve.getName() + " (1)");
+									graph.setProperty("species.id." + j, curve.getName() + " (1)");
+									graph.setProperty("species.visible." + j, "true");
+									graph.setProperty("species.paint." + j, "Black");
+									graph.setProperty("species.shape." + j, "Circle");
+									graph.setProperty("species.directory." + j, "");
+								}
+								try {
+									FileOutputStream store = new FileOutputStream(new 
+											File(root + separator + analysisId + separator + analysisId + ".grf"));
+									graph.store(store, "Graph Data");
+									store.close();
+									log.addText("Creating graph file:\n" + root + separator + analysisId + separator + analysisId + ".grf" + "\n");
+								}
+								catch (Exception except) {
+									JOptionPane.showMessageDialog(Gui.frame, "Unable To Save Graph!", "Error", JOptionPane.ERROR_MESSAGE);
+								}
+							}
+							performAnalysis(modelId,analysisId,sedmlDoc);
+						}
+					}
+				}
+			}
+			catch (Exception e1) {
+				e1.printStackTrace();
+				JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
@@ -7808,9 +8030,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 	}
 
-	private void simulate(int fileType) throws Exception {
-		String modelId = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
-				.replace(".xml","").replace(".lpn","");
+	private void createAnalysisView(int fileType) throws Exception {
+		String sbmlFile;
+		String modelId = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1].replace(".xml","").replace(".lpn","");
 		for (int i = 0; i < tab.getTabCount(); i++) {
 			if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 				tab.setSelectedIndex(i);
@@ -7823,153 +8045,96 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		if (fileType == 0) {
 			readSBML(tree.getFile());
 		}
+		sbmlFile = tree.getFile();
+		String[] sbml1 = null;
 		String simName = JOptionPane.showInputDialog(frame, "Enter analysis ID (default=" + modelId + "):", 
 				"Analysis ID", JOptionPane.PLAIN_MESSAGE);
-		if (simName != null && simName.equals("")) simName = modelId;
-		if (simName != null && !simName.trim().equals("")) {
-			simName = simName.trim();
-			if (overwrite(root + separator + simName, simName)) {
-				new File(root + separator + simName).mkdir();
-				// new FileWriter(new File(root + separator + simName +
-				// separator +
-				// ".sim")).close();
-				String sbmlFile = tree.getFile();
-				String[] sbml1 = tree.getFile().split(separator);
-				String sbmlFileProp;
-				// ArrayList<String> interestingSpecies = new
-				// ArrayList<String>();
-				if (fileType == 1) {
-					sbmlFile = (sbml1[sbml1.length - 1].substring(0, sbml1[sbml1.length - 1].length() - 3) + "xml");
-					// GCMParser parser = new GCMParser(tree.getFile());
-					// GeneticNetwork network = parser.buildNetwork();
-					// interestingSpecies.addAll(network.getInterestingSpecies());
-					// GeneticNetwork.setRoot(root + separator);
-					// network.mergeSBML(root + separator + simName + separator
-					// + sbmlFile);
-					new File(root + separator + simName + separator + sbmlFile).createNewFile();
-					sbmlFileProp = root + separator + simName + separator
-							+ (sbml1[sbml1.length - 1].substring(0, sbml1[sbml1.length - 1].length() - 3) + "xml");
-					sbmlFile = sbmlFileProp;
-				}
-				else if (fileType == 2) {
-					sbmlFile = (sbml1[sbml1.length - 1].substring(0, sbml1[sbml1.length - 1].length() - 3) + "xml");
-					Translator t1 = new Translator();
-					t1.buildTemplate(tree.getFile(), "");
-					t1.setFilename(root + separator + simName + separator + sbmlFile);
-					t1.outputSBML();
-					sbmlFileProp = root + separator + simName + separator
-							+ (sbml1[sbml1.length - 1].substring(0, sbml1[sbml1.length - 1].length() - 3) + "xml");
-					sbmlFile = sbmlFileProp;
-				}
-				else {
-					sbmlFileProp = root + separator + simName + separator + sbml1[sbml1.length - 1];
-					new FileOutputStream(new File(sbmlFileProp)).close();
-				}
-				try {
-					FileOutputStream out = new FileOutputStream(new File(root + separator + simName.trim() + separator + simName.trim() + ".sim"));
-					out.write((sbml1[sbml1.length - 1] + "\n").getBytes());
-					out.close();
-				}
-				catch (IOException e1) {
-					JOptionPane.showMessageDialog(frame, "Unable to save parameter file!", "Error Saving File", JOptionPane.ERROR_MESSAGE);
-				}
-				/*
-				 * try { FileOutputStream out = new FileOutputStream(new
-				 * File(sbmlFile)); SBMLWriter writer = new SBMLWriter(); String
-				 * doc = writer.writeToString(document); byte[] output =
-				 * doc.getBytes(); out.write(output); out.close(); } catch
-				 * (Exception e1) { JOptionPane.showMessageDialog(frame, "Unable
-				 * to copy sbml file to output location.", "Error",
-				 * JOptionPane.ERROR_MESSAGE); }
-				 */
-				addToTree(simName);
-				JTabbedPane simTab = new JTabbedPane();
-				simTab.addMouseListener(this);
-				AnalysisView reb2sac = new AnalysisView(sbmlFile, sbmlFileProp, root, this, simName.trim(), log, simTab, null, sbml1[sbml1.length - 1], null,
-						null);
-				// reb2sac.addMouseListener(this);
-				simTab.addTab("Simulation Options", reb2sac);
-				simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
-				// abstraction.addMouseListener(this);
-				if (fileType == 2) {
-					simTab.addTab("Abstraction Options", new AbstPane(root, sbml1[sbml1.length - 1], log, this, false, false));
-				}
-				else {
-					simTab.addTab("Abstraction Options", reb2sac.getAdvanced());
-				}
-				simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-				// simTab.addTab("Advanced Options",
-				// reb2sac.getProperties());
-				// simTab.getComponentAt(simTab.getComponents().length -
-				// 1).setName("");boolean
-				if (sbml1[sbml1.length - 1].contains(".gcm")) {
-					String gcmFile = sbml1[sbml1.length - 1];
-					/*
-					SBML_Editor sbml = new SBML_Editor(root + separator + gcmFile.replace(".gcm",".xml"), reb2sac, log, this, root + separator
-							+ simName.trim(), root + separator + simName.trim() + separator + simName.trim() + ".sim");
-							*/
-					ModelEditor gcm = new ModelEditor(root + separator, gcmFile, this, log, true, simName.trim(), root
-							+ separator + simName.trim() + separator + simName.trim() + ".sim", reb2sac, false, false);
-					reb2sac.setGcm(gcm);
-					addModelViewTab(reb2sac, simTab, gcm);
-					simTab.addTab("Parameters", gcm);
-					simTab.getComponentAt(simTab.getComponents().length - 1).setName("GCM Editor");
-					ElementsPanel elementsPanel = new ElementsPanel(gcm.getGCM().getSBMLDocument(),
-							root + separator + simName.trim() + separator + simName.trim() + ".sim");
-					simTab.addTab("SBML Elements", elementsPanel);
-					simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-					gcm.setElementsPanel(elementsPanel);
-				}
-				else if (sbml1[sbml1.length - 1].contains(".sbml") || sbml1[sbml1.length - 1].contains(".xml")) {
-					String gcmFile = sbml1[sbml1.length - 1].replace(".xml", ".gcm");
-					ModelEditor gcm = new ModelEditor(root + separator, gcmFile, this, log, true, simName.trim(), root
-							+ separator + simName.trim() + separator + simName.trim() + ".sim", reb2sac, false, false);
-					reb2sac.setGcm(gcm);
-					addModelViewTab(reb2sac, simTab, gcm);
-					simTab.addTab("Parameters", gcm);
-					simTab.getComponentAt(simTab.getComponents().length - 1).setName("GCM Editor");
-					ElementsPanel elementsPanel = new ElementsPanel(gcm.getGCM().getSBMLDocument(),
-							root + separator + simName.trim() + separator + simName.trim() + ".sim");
-					simTab.addTab("SBML Elements", elementsPanel);
-					simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-					gcm.setElementsPanel(elementsPanel);
-					/*
-					SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac, log, this, root + separator + simName.trim(), root + separator
-							+ simName.trim() + separator + simName.trim() + ".sim");
-					reb2sac.setSbml(sbml);
-					simTab.addTab("Parameter Editor", sbml);
-					simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
-					simTab.addTab("SBML Elements", sbml.getElementsPanel());
-					simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-					*/
-				}
-				Graph tsdGraph = reb2sac.createGraph(null);
-				// tsdGraph.addMouseListener(this);
-				simTab.addTab("TSD Graph", tsdGraph);
-				simTab.getComponentAt(simTab.getComponents().length - 1).setName("TSD Graph");
-				Graph probGraph = reb2sac.createProbGraph(null);
-				// probGraph.addMouseListener(this);
-				simTab.addTab("Histogram", probGraph);
-				simTab.getComponentAt(simTab.getComponents().length - 1).setName("ProbGraph");
-				/*
-				 * JLabel noData = new JLabel("No data available"); Font font =
-				 * noData.getFont(); font = font.deriveFont(Font.BOLD, 42.0f);
-				 * noData.setFont(font);
-				 * noData.setHorizontalAlignment(SwingConstants.CENTER);
-				 * simTab.addTab("TSD Graph", noData);
-				 * simTab.getComponentAt(simTab.getComponents().length -
-				 * 1).setName("TSD Graph"); JLabel noData1 = new JLabel("No data
-				 * available"); Font font1 = noData1.getFont(); font1 =
-				 * font1.deriveFont(Font.BOLD, 42.0f); noData1.setFont(font1);
-				 * noData1.setHorizontalAlignment(SwingConstants.CENTER);
-				 * simTab.addTab("Histogram", noData1);
-				 * simTab.getComponentAt(simTab.getComponents().length -
-				 * 1).setName("ProbGraph");
-				 */
-				addTab(simName, simTab, null);
-			}
+		if (simName == null) return;
+		if (simName.equals("")) simName = modelId;
+		simName = simName.trim();
+		if (!overwrite(root + separator + simName, simName)) return;
+		new File(root + separator + simName).mkdir();
+		sbml1 = tree.getFile().split(separator);
+		String sbmlFileProp;
+		if (fileType == 1) {
+			sbmlFile = (sbml1[sbml1.length - 1].substring(0, sbml1[sbml1.length - 1].length() - 3) + "xml");
+			new File(root + separator + simName + separator + sbmlFile).createNewFile();
+			sbmlFileProp = root + separator + simName + separator
+					+ (sbml1[sbml1.length - 1].substring(0, sbml1[sbml1.length - 1].length() - 3) + "xml");
+			sbmlFile = sbmlFileProp;
 		}
-		// }
+		else if (fileType == 2) {
+			sbmlFile = (sbml1[sbml1.length - 1].substring(0, sbml1[sbml1.length - 1].length() - 3) + "xml");
+			Translator t1 = new Translator();
+			t1.buildTemplate(tree.getFile(), "");
+			t1.setFilename(root + separator + simName + separator + sbmlFile);
+			t1.outputSBML();
+			sbmlFileProp = root + separator + simName + separator
+					+ (sbml1[sbml1.length - 1].substring(0, sbml1[sbml1.length - 1].length() - 3) + "xml");
+			sbmlFile = sbmlFileProp;
+		}
+		else {
+			sbmlFileProp = root + separator + simName + separator + sbml1[sbml1.length - 1];
+			new FileOutputStream(new File(sbmlFileProp)).close();
+		}
+		try {
+			FileOutputStream out = new FileOutputStream(new File(root + separator + simName.trim() + separator + simName.trim() + ".sim"));
+			out.write((sbml1[sbml1.length - 1] + "\n").getBytes());
+			out.close();
+		}
+		catch (IOException e1) {
+			JOptionPane.showMessageDialog(frame, "Unable to save parameter file!", "Error Saving File", JOptionPane.ERROR_MESSAGE);
+		}
+		addToTree(simName);
+		JTabbedPane simTab = new JTabbedPane();
+		simTab.addMouseListener(this);
+		AnalysisView reb2sac = new AnalysisView(sbmlFile, sbmlFileProp, root, this, simName.trim(), log, simTab, null, sbml1[sbml1.length - 1], null,
+				null);
+		simTab.addTab("Simulation Options", reb2sac);
+		simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
+		if (fileType == 2) {
+			simTab.addTab("Abstraction Options", new AbstPane(root, sbml1[sbml1.length - 1], log, this, false, false));
+		}
+		else {
+			simTab.addTab("Abstraction Options", reb2sac.getAdvanced());
+		}
+		simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
+		if (sbml1[sbml1.length - 1].contains(".gcm")) {
+			String gcmFile = sbml1[sbml1.length - 1];
+			ModelEditor gcm = new ModelEditor(root + separator, gcmFile, this, log, true, simName.trim(), root
+					+ separator + simName.trim() + separator + simName.trim() + ".sim", reb2sac, false, false);
+			reb2sac.setGcm(gcm);
+			addModelViewTab(reb2sac, simTab, gcm);
+			simTab.addTab("Parameters", gcm);
+			simTab.getComponentAt(simTab.getComponents().length - 1).setName("GCM Editor");
+			ElementsPanel elementsPanel = new ElementsPanel(gcm.getGCM().getSBMLDocument(),
+					root + separator + simName.trim() + separator + simName.trim() + ".sim");
+			simTab.addTab("SBML Elements", elementsPanel);
+			simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
+			gcm.setElementsPanel(elementsPanel);
+		}
+		else if (sbml1[sbml1.length - 1].contains(".sbml") || sbml1[sbml1.length - 1].contains(".xml")) {
+			String gcmFile = sbml1[sbml1.length - 1].replace(".xml", ".gcm");
+			ModelEditor gcm = new ModelEditor(root + separator, gcmFile, this, log, true, simName.trim(), root
+					+ separator + simName.trim() + separator + simName.trim() + ".sim", reb2sac, false, false);
+			reb2sac.setGcm(gcm);
+			addModelViewTab(reb2sac, simTab, gcm);
+			simTab.addTab("Parameters", gcm);
+			simTab.getComponentAt(simTab.getComponents().length - 1).setName("GCM Editor");
+			ElementsPanel elementsPanel = new ElementsPanel(gcm.getGCM().getSBMLDocument(),
+					root + separator + simName.trim() + separator + simName.trim() + ".sim");
+			simTab.addTab("SBML Elements", elementsPanel);
+			simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
+			gcm.setElementsPanel(elementsPanel);
+		}
+		Graph tsdGraph;
+		tsdGraph = reb2sac.createGraph(null);
+		simTab.addTab("TSD Graph", tsdGraph);
+		simTab.getComponentAt(simTab.getComponents().length - 1).setName("TSD Graph");
+		Graph probGraph = reb2sac.createProbGraph(null);
+		simTab.addTab("Histogram", probGraph);
+		simTab.getComponentAt(simTab.getComponents().length - 1).setName("ProbGraph");
+		addTab(simName, simTab, null);
 	}
 
 	private void openLearn() {
@@ -8673,6 +8838,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			if (!lema) {
 				//popup.add(importDot);
 				popup.add(importSbol);
+				popup.add(importSedml);
 				popup.add(importSbml);
 				popup.add(importBioModel);
 			}
@@ -10292,7 +10458,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			ModelDefinition md = sbmlComp.getModelDefinition(i);
 			String extId = md.getId();
 			if (overwrite(root + separator + extId + ".xml",extId + ".xml")) {
-				Model model = new Model(md);
+				org.sbml.libsbml.Model model = new org.sbml.libsbml.Model(md);
 				SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
 				document.setModel(model);
 				document.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
@@ -10449,7 +10615,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		JTextArea messageArea = new JTextArea();
 		messageArea.append("Model is incomplete.  Cannot be simulated until the following information is provided.\n");
 		boolean display = false;
-		Model model = document.getModel();
+		org.sbml.libsbml.Model model = document.getModel();
 		ListOf list = model.getListOfCompartments();
 		for (int i = 0; i < model.getNumCompartments(); i++) {
 			Compartment compartment = (Compartment) list.get(i);
