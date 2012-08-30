@@ -2202,5 +2202,29 @@ public class SBMLutilities {
 		return "";
 	}
 
+	public static ArrayList<String> getPreset(SBMLDocument doc,Event event) {
+		ArrayList<String> preset = new ArrayList<String>();
+		for (long i = 0; i < event.getNumEventAssignments(); i++) {
+			EventAssignment ea = event.getEventAssignment(i);
+			Parameter p = doc.getModel().getParameter(ea.getVariable());
+			if (p != null && SBMLutilities.isPlace(p) && SBMLutilities.myFormulaToString(ea.getMath()).equals("0")) {
+				preset.add(p.getId());
+			}
+		}
+		return preset;
+	}
+
+	public static ArrayList<String> getPostset(SBMLDocument doc,Event event) {
+		ArrayList<String> postset = new ArrayList<String>();
+		for (long i = 0; i < event.getNumEventAssignments(); i++) {
+			EventAssignment ea = event.getEventAssignment(i);
+			Parameter p = doc.getModel().getParameter(ea.getVariable());
+			if (p != null && SBMLutilities.isPlace(p) && SBMLutilities.myFormulaToString(ea.getMath()).equals("1")) {
+				postset.add(p.getId());
+			}
+		}
+		return postset;
+	}
+	
 
 }

@@ -286,6 +286,7 @@ public class BioModel {
 	}
 	
 	public boolean IsWithinCompartment() {
+		if (sbml.getModel().getNumCompartments()==0) return false;
 		for (long i = 0; i < sbml.getModel().getNumCompartments(); i++) {
 			Compartment compartment = sbml.getModel().getCompartment(i);
 			if (getPortByIdRef(compartment.getId())!=null) return false;
@@ -925,7 +926,11 @@ public class BioModel {
 	}
 	
 	public String getDefaultCompartment() {
-		return sbml.getModel().getCompartment(0).getId();
+		if (sbml.getModel().getNumCompartments() > 0) {
+			return sbml.getModel().getCompartment(0).getId();
+		} else {
+			return "";
+		}	
 	}
 	
 	// Note this doesn't appear to be used anywhere
@@ -2074,36 +2079,37 @@ public class BioModel {
 	}
 	
 	public boolean saveAsLPN(String filename) {
+		SBMLDocument flatSBML = flattenModel();
 		LhpnFile lpn = new LhpnFile();
-		for (long i = 0; i < sbml.getModel().getNumParameters(); i++) {
-			Parameter p = sbml.getModel().getParameter(i);
+		for (long i = 0; i < flatSBML.getModel().getNumParameters(); i++) {
+			Parameter p = flatSBML.getModel().getParameter(i);
 			if (SBMLutilities.isPlace(p)) {
 				lpn.addPlace(p.getId(), (p.getValue()==1));
 			} else {
 				lpn.addInteger(p.getId(), ""+p.getValue());
 			}
 		}
-		for (long i = 0; i < sbml.getModel().getNumEvents(); i++) {
-			Event e = sbml.getModel().getEvent(i);
+		for (long i = 0; i < flatSBML.getModel().getNumEvents(); i++) {
+			Event e = flatSBML.getModel().getEvent(i);
 			if (SBMLutilities.isTransition(e)) {
 				Transition t = new Transition();
 				t.setLpn(lpn);
 				t.setName(e.getId());
 				t.setPersistent(e.getTrigger().getPersistent());
 				lpn.addTransition(t);
-				ArrayList<String> preset = getPreset(e);
+				ArrayList<String> preset = SBMLutilities.getPreset(flatSBML,e);
 				for (int j = 0; j < preset.size(); j++) {
 					t.addPreset(lpn.getPlace(preset.get(j)));
 				}
-				ArrayList<String> postset = getPostset(e);
+				ArrayList<String> postset = SBMLutilities.getPostset(flatSBML,e);
 				for (int j = 0; j < postset.size(); j++) {
 					t.addPostset(lpn.getPlace(postset.get(j)));
 				}
 				if (e.isSetTrigger()) {
 					ASTNode triggerMath = e.getTrigger().getMath();
 					String trigger = SBMLutilities.myFormulaToString(triggerMath);
-					for (int j = 0; j < sbml.getModel().getNumParameters(); j++) {
-						Parameter parameter = sbml.getSBMLDocument().getModel().getParameter(j);
+					for (int j = 0; j < flatSBML.getModel().getNumParameters(); j++) {
+						Parameter parameter = flatSBML.getSBMLDocument().getModel().getParameter(j);
 						if (parameter!=null && SBMLutilities.isPlace(parameter)) {
 							if (trigger.contains("eq("+parameter.getId()+", 1)")) {
 								triggerMath = SBMLutilities.removePreset(triggerMath, parameter.getId());
@@ -2120,7 +2126,7 @@ public class BioModel {
 				}
 				for (long j = 0; j < e.getNumEventAssignments(); j++) {
 					EventAssignment ea = e.getEventAssignment(j);
-					Parameter p = sbml.getModel().getParameter(ea.getVariable());
+					Parameter p = flatSBML.getModel().getParameter(ea.getVariable());
 					if (p != null && !SBMLutilities.isPlace(p)) {
 						t.addIntAssign(ea.getVariable(), SBMLutilities.SBMLMathToLPNString(ea.getMath()));
 					}
@@ -3101,30 +3107,6 @@ public class BioModel {
 		return constraintSet;
 	}
 
-	public ArrayList<String> getPreset(Event event) {
-		ArrayList<String> preset = new ArrayList<String>();
-		for (long i = 0; i < event.getNumEventAssignments(); i++) {
-			EventAssignment ea = event.getEventAssignment(i);
-			Parameter p = sbml.getModel().getParameter(ea.getVariable());
-			if (p != null && SBMLutilities.isPlace(p) && SBMLutilities.myFormulaToString(ea.getMath()).equals("0")) {
-				preset.add(p.getId());
-			}
-		}
-		return preset;
-	}
-
-	public ArrayList<String> getPostset(Event event) {
-		ArrayList<String> postset = new ArrayList<String>();
-		for (long i = 0; i < event.getNumEventAssignments(); i++) {
-			EventAssignment ea = event.getEventAssignment(i);
-			Parameter p = sbml.getModel().getParameter(ea.getVariable());
-			if (p != null && SBMLutilities.isPlace(p) && SBMLutilities.myFormulaToString(ea.getMath()).equals("1")) {
-				postset.add(p.getId());
-			}
-		}
-		return postset;
-	}
-	
 	public ArrayList<String> getEvents() {
 		ArrayList<String> eventSet = new ArrayList<String>();
 		if (sbml!=null) {
@@ -3449,6 +3431,29 @@ public class BioModel {
 		}
 		return outputs;
 	}
+	
+	public HashMap<String, String> getVariableReplacements(String id) {
+		HashMap<String, String> variables = new HashMap<String, String>();
+		for (long i = 0; i < sbml.getModel().getNumParameters(); i++) {
+			Parameter p = sbml.getModel().getParameter(i);
+			if (!p.getConstant()) {
+				CompSBasePlugin sbmlSBase = (CompSBasePlugin)p.getPlugin("comp");
+				for (long j = 0; j < sbmlSBase.getNumReplacedElements(); j++) {
+					ReplacedElement replacement = sbmlSBase.getReplacedElement(j);
+					if  (replacement.getSubmodelRef().equals(id) && replacement.isSetPortRef()) {
+						variables.put(replacement.getPortRef().replace(GlobalConstants.PARAMETER+"__",""),p.getId());
+					}
+				}
+				if (sbmlSBase.isSetReplacedBy()) {
+					Replacing replacement = sbmlSBase.getReplacedBy();
+					if (replacement.getSubmodelRef().equals(id) && (replacement.isSetPortRef())) {
+						variables.put(replacement.getPortRef().replace(GlobalConstants.PARAMETER+"__",""),p.getId());
+					}
+				}
+			}
+		}
+		return variables;
+	}
 /*	
 	public HashMap<String, Properties> getComponents() {
 		return components;
@@ -3577,11 +3582,27 @@ public class BioModel {
 	 * @param type
 	 * @return
 	 */
-	public ArrayList<String> getSpeciesPorts(String type) {
+	public ArrayList<String> getPortsByType(String type) {
 		ArrayList<String> out = new ArrayList<String>();
-		for (String speciesId : this.getSpecies()) {
-			if (getSpeciesType(sbml,speciesId).equals(type)) {
-				out.add(speciesId);
+		for (String port : this.getPorts()) {
+			String portType = port.split(":")[0];
+			String portId = port.split(":")[1];
+			String idRef = port.split(":")[2];
+			if (type.equals(GlobalConstants.INPUT)) {
+				if (portType.equals(GlobalConstants.SBMLSPECIES) && (portId.startsWith(GlobalConstants.INPUT+"__"))) {
+					out.add(idRef);
+				}
+			} else if (type.equals(GlobalConstants.OUTPUT)) {
+				if (portType.equals(GlobalConstants.SBMLSPECIES)) {
+					out.add(idRef);
+				}
+			} else if (type.equals(GlobalConstants.PARAMETER)) {
+				Parameter p = sbml.getModel().getParameter(idRef);
+				if (p != null && !p.getConstant()) {
+					out.add(idRef);
+				}
+			} else if (type.equals(portType)) {
+				out.add(idRef);
 			}
 		}
 		return out;
@@ -3784,6 +3805,24 @@ public class BioModel {
 		return;
 	}
 
+	public void connectComponentAndVariable(String compId, String port, String varId, String type) {
+		CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbml.getModel().getParameter(varId).getPlugin("comp");
+		boolean found = false;
+		ReplacedElement replacement = null;
+		for (long i = 0; i < sbmlSBase.getNumReplacedElements(); i++) {
+			replacement = sbmlSBase.getReplacedElement(i);
+			if (replacement.getSubmodelRef().equals(compId) && 
+				replacement.getPortRef().equals(type+"__"+port)) {
+				found = true;
+				break;
+			}
+		}
+		if (!found) replacement = sbmlSBase.createReplacedElement();
+		replacement.setSubmodelRef(compId);
+		replacement.setPortRef(type+"__"+port);
+		return;
+	}
+	
 	/**
 	 * Given a component and the name of a species, return true if that species
 	 * is connected to that component. Optionally disconnect them as well.
@@ -4114,12 +4153,14 @@ public class BioModel {
 	
 	public void removeComponentConnection(String speciesId,String componentId,String portId) {
 		Species species = sbml.getModel().getSpecies(speciesId);
-		CompSBasePlugin sbmlSBase = (CompSBasePlugin)species.getPlugin("comp");
-		ReplacedElement replacement = null;
-		for (long j = 0; j < sbmlSBase.getNumReplacedElements(); j++) {
-			replacement = sbmlSBase.getReplacedElement(j);
-			if (replacement.getSubmodelRef().equals(componentId) && replacement.getPortRef().equals(portId)) {
-				sbmlSBase.removeReplacedElement(j);
+		if (species!=null) {
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)species.getPlugin("comp");
+			ReplacedElement replacement = null;
+			for (long j = 0; j < sbmlSBase.getNumReplacedElements(); j++) {
+				replacement = sbmlSBase.getReplacedElement(j);
+				if (replacement.getSubmodelRef().equals(componentId) && replacement.getPortRef().equals(portId)) {
+					sbmlSBase.removeReplacedElement(j);
+				}
 			}
 		}
 	}		

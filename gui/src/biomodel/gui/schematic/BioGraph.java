@@ -354,6 +354,30 @@ public class BioGraph extends mxGraph {
 			}
 		}
 
+		// add all variables
+		if (!bioModel.isGridEnabled()) {
+			for (long i = 0; i < m.getNumParameters(); i++) {
+				if (!m.getParameter(i).getConstant()) {
+					String id = m.getParameter(i).getId();
+					if (layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+id)!=null) {
+						SpeciesGlyph speciesGlyph = layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+id);
+						GeneralGlyph generalGlyph = layout.createGeneralGlyph();
+						generalGlyph.setId(speciesGlyph.getId());
+						generalGlyph.setReferenceId(speciesGlyph.getSpeciesId());
+						generalGlyph.setBoundingBox(speciesGlyph.getBoundingBox());
+						layout.removeSpeciesGlyph(GlobalConstants.GLYPH+"__"+id);
+					}
+					if (SBMLutilities.isPlace(m.getParameter(i))) {
+						if(createGraphPlaceFromModel(m.getParameter(i).getId(),m.getParameter(i).getValue()==1.0))
+							needsPositioning = true;
+					} else {
+						if(createGraphVariableFromModel(m.getParameter(i).getId()))
+							needsPositioning = true;
+					}
+				}
+			}
+		}
+		
 		// add all components
 		if (bioModel.isGridEnabled()) {
 			
@@ -434,29 +458,6 @@ public class BioGraph extends mxGraph {
 			if (bioModel.isPromoterExplicit(prom)) {
 				if(createGraphDrawnPromoterFromModel(prom))
 					needsPositioning = true;
-			}
-		}
-		
-		if (!bioModel.isGridEnabled()) {
-			for (long i = 0; i < m.getNumParameters(); i++) {
-				if (!m.getParameter(i).getConstant()) {
-					String id = m.getParameter(i).getId();
-					if (layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+id)!=null) {
-						SpeciesGlyph speciesGlyph = layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+id);
-						GeneralGlyph generalGlyph = layout.createGeneralGlyph();
-						generalGlyph.setId(speciesGlyph.getId());
-						generalGlyph.setReferenceId(speciesGlyph.getSpeciesId());
-						generalGlyph.setBoundingBox(speciesGlyph.getBoundingBox());
-						layout.removeSpeciesGlyph(GlobalConstants.GLYPH+"__"+id);
-					}
-					if (SBMLutilities.isPlace(m.getParameter(i))) {
-						if(createGraphPlaceFromModel(m.getParameter(i).getId(),m.getParameter(i).getValue()==1.0))
-							needsPositioning = true;
-					} else {
-						if(createGraphVariableFromModel(m.getParameter(i).getId()))
-							needsPositioning = true;
-					}
-				}
 			}
 		}
 		
@@ -2226,7 +2227,18 @@ public class BioGraph extends mxGraph {
 			componentsConnectionsToMxCellMap.put(key, (mxCell)createdEdge);
 			this.updateComponentConnectionVisuals((mxCell)createdEdge, propName);
 		}
-		
+
+		// now draw the edges that connect variables to the component
+		HashMap<String,String> variables = bioModel.getVariableReplacements(id);
+		for (String propName : variables.keySet()) {
+			String topSpecies = variables.get(propName);
+			Object createdEdge = this.insertEdge(this.getDefaultParent(), "", "",
+					this.getVariableCell(topSpecies), insertedVertex);
+			String key = id + " Variable " + topSpecies;
+			componentsConnectionsToMxCellMap.put(key, (mxCell)createdEdge);
+			this.updateComponentConnectionVisuals((mxCell)createdEdge, propName);
+		}
+				
 		return needsPositioning;
 	}
 	
