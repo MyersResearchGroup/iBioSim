@@ -20,6 +20,7 @@ import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 
 import com.google.gson.Gson;
+import com.mxgraph.model.mxCell;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
@@ -489,14 +490,23 @@ public class MovieContainer extends JPanel implements ActionListener {
 					MovieAppearance speciesAppearance = null;
 					
 					//get the species' appearance and send it to the graph for updating
-					if (speciesTSData.get(speciesID) != null) {
+					if (schematic.getGraph().getSpeciesCell(speciesID)!=null &&	speciesTSData.get(speciesID) != null) {
 						
 						speciesAppearance = 
 							movieScheme.createAppearance(speciesID, GlobalConstants.SPECIES, speciesTSData, null);
-					}
-					
-					if (speciesAppearance != null) {
-						schematic.getGraph().setSpeciesAnimationValue(speciesID, speciesAppearance);
+						
+						if (speciesAppearance != null) {
+							schematic.getGraph().setSpeciesAnimationValue(speciesID, speciesAppearance);
+						}
+					} else if (schematic.getGraph().getVariableCell(speciesID)!=null &&	speciesTSData.get(speciesID) != null) {
+						mxCell cell = schematic.getGraph().getVariableCell(speciesID);
+						if (schematic.getGraph().getCellType(cell).equals(GlobalConstants.PLACE)) {
+							speciesAppearance = 
+									movieScheme.createAppearance(speciesID, GlobalConstants.PLACE, speciesTSData, null);
+							if (speciesAppearance != null) {
+								schematic.getGraph().setParameterAnimationValue(speciesID, speciesAppearance);
+							}
+						}
 					}
 				}
 			}
