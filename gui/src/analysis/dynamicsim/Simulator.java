@@ -168,6 +168,8 @@ public abstract class Simulator {
 	
 	protected ArrayList<String> interestingSpecies = new ArrayList<String>();
 	
+	protected HashSet<String> ibiosimFunctionDefinitions = new HashSet<String>();
+	
 	//propensity variables
 	protected double totalPropensity = 0.0;
 	protected double minPropensity = Double.MAX_VALUE / 10.0;
@@ -276,16 +278,16 @@ public abstract class Simulator {
 		SBMLErrorLog errors = document.getListOfErrors();
 		
 		//if the sbml document has errors, tell the user and don't simulate
-		if (document.getErrorCount() > 0) {
+		if (document.getNumErrors() > 0) {
 			
 			String errorString = "";
 			
-			for (int i = 0; i < errors.getErrorCount(); i++) {
+			for (int i = 0; i < errors.getNumErrors(); i++) {
 				errorString += errors.getError(i);
 			}
 			
 			JOptionPane.showMessageDialog(Gui.frame, 
-			"The SBML file contains " + document.getErrorCount() + " error(s):\n" + errorString,
+			"The SBML file contains " + document.getNumErrors() + " error(s):\n" + errorString,
 			"SBML Error", JOptionPane.ERROR_MESSAGE);
 			
 			sbmlHasErrorsFlag = true;
@@ -293,13 +295,13 @@ public abstract class Simulator {
 		
 		model = document.getModel();
 		
-		numSpecies = model.getSpeciesCount();
-		numParameters = model.getParameterCount();
-		numReactions = model.getReactionCount();
-		numEvents = model.getEventCount();
-		numRules = model.getRuleCount();
-		numConstraints = model.getConstraintCount();
-		numInitialAssignments = model.getInitialAssignmentCount();
+		numSpecies = model.getNumSpecies();
+		numParameters = model.getNumParameters();
+		numReactions = model.getNumReactions();
+		numEvents = model.getNumEvents();
+		numRules = model.getNumRules();
+		numConstraints = model.getNumConstraints();
+		numInitialAssignments = model.getNumInitialAssignments();
 		
 		//set initial capacities for collections (1.5 is used to multiply numReactions due to reversible reactions)
 		speciesToAffectedReactionSetMap = new HashMap<String, HashSet<String> >((int) numSpecies);
@@ -353,6 +355,18 @@ public abstract class Simulator {
 			variableToAffectedConstraintSetMap = new HashMap<String, HashSet<ASTNode> >((int) numConstraints);		
 			variableToIsInConstraintMap = new HashMap<String, Boolean>((int) (numSpecies + numParameters));
 		}
+		
+		ibiosimFunctionDefinitions.add("uniform");
+		ibiosimFunctionDefinitions.add("exponential");
+		ibiosimFunctionDefinitions.add("gamma");
+		ibiosimFunctionDefinitions.add("chisq");
+		ibiosimFunctionDefinitions.add("lognormal");
+		ibiosimFunctionDefinitions.add("laplace");
+		ibiosimFunctionDefinitions.add("cauchy");
+		ibiosimFunctionDefinitions.add("poisson");
+		ibiosimFunctionDefinitions.add("binomial");
+		ibiosimFunctionDefinitions.add("bernoulli");
+		ibiosimFunctionDefinitions.add("normal");
 		
 		initializationTime = System.nanoTime() - initTime1;
 	}
@@ -1385,11 +1399,13 @@ public abstract class Simulator {
 		try {
 			document = reader.readSBML(filename);
 		} catch (Exception e) {
-			//e.printStackTrace();
+			e.printStackTrace();
 			return;
 		}
 		
 		Model model = document.getModel();
+		
+		boolean arraysExist = false;
 		
 				
 		//ARRAYED SPECIES BUSINESS
@@ -1408,6 +1424,8 @@ public abstract class Simulator {
 			
 			//check to see if the species is arrayed			
 			if (stripAnnotation(species.getAnnotationString()).isEmpty() == false) {
+				
+				arraysExist = true;
 				
 				speciesToIsArrayedMap.put(speciesID, true);
 				speciesToRemove.add(speciesID);
@@ -1450,8 +1468,9 @@ public abstract class Simulator {
 		} //end species for loop
 		
 		//add new row/col species to the model
-		for (Species species : speciesToAdd)
+		for (Species species : speciesToAdd) {
 			model.addSpecies(species);
+		}
 		
 		//ARRAYED EVENTS BUSINESS
 		
@@ -1461,6 +1480,8 @@ public abstract class Simulator {
 		for (Event event : model.getListOfEvents()) {
 			
 			if (stripAnnotation(event.getAnnotationString()).contains("array")) {
+				
+				arraysExist = true;
 				
 				eventsToRemove.add(event.getId());
 				
@@ -1485,13 +1506,63 @@ public abstract class Simulator {
 					newEvent.setLevel(event.getLevel());
 					newEvent.setId(compartmentID + "__" + event.getId());
 					newEvent.setMetaId(compartmentID + "__" + event.getId());
+					event.getTrigger().getMath().updateVariables();
 					newEvent.setTrigger(event.getTrigger().clone());
+					
+//					//at this point, the formula has something like neighborQuantity(Species1)
+//					//this needs to become neighborQuantity(Species1, CompartmentLocationX(Comp1), CompartmentLocationY(Comp1))
+//					if (newEvent.getTrigger().getMath().toFormula().contains("neighborQuantity")) {
+//						
+//						String triggerMath = newEvent.getTrigger().getMath().toFormula();						
+//						ArrayList<ASTNode> nqNodes = new ArrayList<ASTNode>();
+//						
+//						this.getSatisfyingNodesLax(newEvent.getTrigger().getMath(), "neighborQuantity", nqNodes);
+//						
+//						//loop through all neighbor quantity nodes in the trigger formula
+//						for (ASTNode nqNode : nqNodes) {
+//							
+//							String direction = "";
+//							
+//							if (triggerMath.contains("QuantityLeft"))
+//								direction = "Left";
+//							else if (triggerMath.contains("QuantityRight"))
+//								direction = "Right";
+//							else if (triggerMath.contains("QuantityAbove"))
+//								direction = "Above";
+//							else
+//								direction = "Below";
+//							
+//							String speciesID = nqNode.toFormula().split(
+//									"neighborQuantity" + direction)[1].replace("(","").replace(")","");							
+//							
+//							try {
+//								ASTNode newFormula = ASTNode.parseFormula(
+//										"neighborQuantity" + direction + "Full(" + compartmentID + "__" + speciesID + 
+//										", getCompartmentLocationX(" + compartmentID + "__Cell" +
+//										"), getCompartmentLocationY(" + compartmentID + "__Cell" + "))");
+//								
+//								for (int i = 0; i < ((ASTNode) nqNode.getParent()).getChildCount(); ++i) {
+//									
+//									if (((ASTNode) nqNode.getParent().getChildAt(i)).isFunction() &&
+//											((ASTNode) nqNode.getParent().getChildAt(i)).getVariable().toString()
+//											.contains("neighborQuantity" + direction)) {
+//										
+//										((ASTNode) nqNode.getParent()).replaceChild(i, newFormula);
+//										break;
+//									}										
+//								}
+//							} catch (ParseException e) {
+//								e.printStackTrace();
+//							}
+//						}
+//					}
 					
 					if (event.isSetPriority())
 						newEvent.setPriority(event.getPriority().clone());
 					
-					if (event.isSetDelay())
+					if (event.isSetDelay()) {
 						newEvent.setDelay(event.getDelay().clone());
+					}
 					
 					newEvent.setUseValuesFromTriggerTime(event.getUseValuesFromTriggerTime());
 					
@@ -1516,8 +1587,9 @@ public abstract class Simulator {
 			}
 		}
 		
-		for (Event eventToAdd : eventsToAdd)
+		for (Event eventToAdd : eventsToAdd) {
 			model.addEvent(eventToAdd);
+		}		
 		
 		
 		//ARRAYED REACTION BUSINESS
@@ -1531,10 +1603,6 @@ public abstract class Simulator {
 			
 			String reactionID = reaction.getId();
 			
-			//if reaction itself is arrayed
-			if (stripAnnotation(reaction.getAnnotationString()).isEmpty() == false) {				
-			}
-			
 			ArrayList<Integer> membraneDiffusionRows = new ArrayList<Integer>();
 			ArrayList<Integer> membraneDiffusionCols = new ArrayList<Integer>();
 			ArrayList<String> membraneDiffusionCompartments = new ArrayList<String>();
@@ -1544,12 +1612,15 @@ public abstract class Simulator {
 			//so parse them and store them in the above arraylists
 			if (reactionID.contains("MembraneDiffusion")) {
 				
+				arraysExist = true;
+				
 				String annotationString = stripAnnotation(reaction.getAnnotationString()).replace("<annotation>","").
 					replace("</annotation>","").replace("\"","");
 				String[] splitAnnotation = annotationString.split("array:");
 				
-				if (splitAnnotation.length <= 1)
+				if (splitAnnotation.length <= 1) {
 					continue;
+				}
 				
 				splitAnnotation[splitAnnotation.length - 2] = ((String[])splitAnnotation[splitAnnotation.length - 2].split("xmlns:"))[0];
 				
@@ -1692,7 +1763,7 @@ public abstract class Simulator {
 					
 					++membraneDiffusionIndex;
 				}
-			}
+			} //end if membrane diffusion
 			
 			//NON-MEMBRANE DIFFUSION REACTIONS
 			//check to see if the (non-membrane-diffusion) reaction has arrayed species
@@ -1700,6 +1771,8 @@ public abstract class Simulator {
 			//about the homogeneity of the arrayed reaction (ie, if one species is arrayed, they all are)
 			else if (reaction.getNumReactants() > 0 &&
 					speciesToIsArrayedMap.get(reaction.getReactant(0).getSpeciesInstance().getId()) == true) {
+				
+				arraysExist = true;
 				
 				reactionsToRemove.add(reaction.getId());
 				
@@ -1719,7 +1792,7 @@ public abstract class Simulator {
 					newReaction.setListOfReactants(new ListOf<SpeciesReference>());
 					newReaction.setListOfProducts(new ListOf<SpeciesReference>());
 					newReaction.setListOfModifiers(new ListOf<ModifierSpeciesReference>());
-					newReaction.setId("ROW" + row + "_COL" + col + "_" + reactionID);	
+					newReaction.setId("ROW" + row + "_COL" + col + "_" + reactionID);
 					newReaction.setMetaId("ROW" + row + "_COL" + col + "_" + reactionID);
 					newReaction.setReversible(false);					
 					newReaction.setFast(false);
@@ -1918,24 +1991,33 @@ public abstract class Simulator {
 		ArrayList<String> parametersToRemove = new ArrayList<String>();
 		
 		//get rid of the locations parameters
-		for (Parameter parameter : model.getListOfParameters())
-			if (parameter.getId().contains("_locations")) {				
+		for (Parameter parameter : model.getListOfParameters()) {
+			if (parameter.getId().contains("_locations")) {
+				
+//				if (parameter.getId().contains("_locations"))
+//					this.submodelIDToLocationsMap.put(
+//							parameter.getId().replace("__locations",""), stripAnnotation(parameter.getAnnotationString()));
+				
 				parametersToRemove.add(parameter.getId());
 			}
+		}
 		
 		for (String parameterID : parametersToRemove)
 			model.removeParameter(parameterID);
 		
 		applyStoichiometryAmplification(model, stoichAmpValue);
 		
-		SBMLWriter writer = new SBMLWriter();
-		PrintStream p;
-		
-		try {
-			p = new PrintStream(new FileOutputStream(filename), true, "UTF-8");
-			p.print(writer.writeSBMLToString(model.getSBMLDocument()));
-		} catch (Exception e) {
-			//e.printStackTrace();
+		if (arraysExist) {
+			
+			SBMLWriter writer = new SBMLWriter();
+			PrintStream p;
+			
+			try {
+				p = new PrintStream(new FileOutputStream(filename), true, "UTF-8");
+				p.print(writer.writeSBMLToString(model.getSBMLDocument()));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -2412,6 +2494,9 @@ public abstract class Simulator {
 		}
 		
 		if (formula.isFunction() && model.getFunctionDefinition(formula.getName()) != null) {
+			
+			if (ibiosimFunctionDefinitions.contains(formula.getName()))
+				return formula;
 			
 			ASTNode inlinedFormula = model.getFunctionDefinition(formula.getName()).getBody().clone();
 			ASTNode oldFormula = formula.clone();
@@ -3470,6 +3555,8 @@ public abstract class Simulator {
 	 */
 	protected void setupArrays() {
 		
+		boolean arraysExist = false;
+		
 		//ARRAYED SPECIES BUSINESS
 		//create all new species that are implicit in the arrays and put them into the model		
 		
@@ -3486,6 +3573,8 @@ public abstract class Simulator {
 			
 			//check to see if the species is arrayed			
 			if (stripAnnotation(species.getAnnotationString()).isEmpty() == false) {
+				
+				arraysExist = true;
 				
 				speciesToIsArrayedMap.put(speciesID, true);
 				speciesToRemove.add(speciesID);
@@ -3540,6 +3629,8 @@ public abstract class Simulator {
 		for (Event event : model.getListOfEvents()) {
 			
 			if (stripAnnotation(event.getAnnotationString()).contains("array")) {
+				
+				arraysExist = true;
 				
 				eventsToRemove.add(event.getId());
 				
@@ -3669,6 +3760,8 @@ public abstract class Simulator {
 			//if it's a membrane diffusion reaction it'll have the appropriate locations as an annotation
 			//so parse them and store them in the above arraylists
 			if (reactionID.contains("MembraneDiffusion")) {
+				
+				arraysExist = true;
 				
 				String annotationString = stripAnnotation(reaction.getAnnotationString()).replace("<annotation>","").
 					replace("</annotation>","").replace("\"","");
@@ -3827,6 +3920,8 @@ public abstract class Simulator {
 			//about the homogeneity of the arrayed reaction (ie, if one species is arrayed, they all are)
 			else if (reaction.getNumReactants() > 0 &&
 					speciesToIsArrayedMap.get(reaction.getReactant(0).getSpeciesInstance().getId()) == true) {
+				
+				arraysExist = true;
 				
 				reactionsToRemove.add(reaction.getId());
 				
@@ -4059,14 +4154,17 @@ public abstract class Simulator {
 		for (String parameterID : parametersToRemove)
 			model.removeParameter(parameterID);
 		
-		SBMLWriter writer = new SBMLWriter();
-		PrintStream p;
-		
-		try {
-			p = new PrintStream(new FileOutputStream(SBMLFileName), true, "UTF-8");
-			p.print(writer.writeSBMLToString(model.getSBMLDocument()));
-		} catch (Exception e) {
-			//e.printStackTrace();
+		if (arraysExist) {
+			
+			SBMLWriter writer = new SBMLWriter();
+			PrintStream p;
+			
+			try {
+				p = new PrintStream(new FileOutputStream(SBMLFileName), true, "UTF-8");
+				p.print(writer.writeSBMLToString(model.getSBMLDocument()));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
