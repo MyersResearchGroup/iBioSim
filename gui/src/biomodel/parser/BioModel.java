@@ -107,6 +107,7 @@ import biomodel.util.Utility;
 
 
 import lpn.parser.LhpnFile;
+import lpn.parser.Transition;
 import main.Gui;
 import main.Log;
 import main.util.MutableString;
@@ -2071,6 +2072,64 @@ public class BioModel {
 		SBMLWriter writer = new SBMLWriter();
 		writer.writeSBML(sbml, filename.replace(".gcm",".xml"));
 	}
+	
+	public boolean saveAsLPN(String filename) {
+		LhpnFile lpn = new LhpnFile();
+		for (long i = 0; i < sbml.getModel().getNumParameters(); i++) {
+			Parameter p = sbml.getModel().getParameter(i);
+			if (SBMLutilities.isPlace(p)) {
+				lpn.addPlace(p.getId(), (p.getValue()==1));
+			} else {
+				lpn.addInteger(p.getId(), ""+p.getValue());
+			}
+		}
+		for (long i = 0; i < sbml.getModel().getNumEvents(); i++) {
+			Event e = sbml.getModel().getEvent(i);
+			if (SBMLutilities.isTransition(e)) {
+				Transition t = new Transition();
+				t.setLpn(lpn);
+				t.setName(e.getId());
+				t.setPersistent(e.getTrigger().getPersistent());
+				lpn.addTransition(t);
+				ArrayList<String> preset = getPreset(e);
+				for (int j = 0; j < preset.size(); j++) {
+					t.addPreset(lpn.getPlace(preset.get(j)));
+				}
+				ArrayList<String> postset = getPostset(e);
+				for (int j = 0; j < postset.size(); j++) {
+					t.addPostset(lpn.getPlace(postset.get(j)));
+				}
+				if (e.isSetTrigger()) {
+					ASTNode triggerMath = e.getTrigger().getMath();
+					String trigger = SBMLutilities.myFormulaToString(triggerMath);
+					for (int j = 0; j < sbml.getModel().getNumParameters(); j++) {
+						Parameter parameter = sbml.getSBMLDocument().getModel().getParameter(j);
+						if (parameter!=null && SBMLutilities.isPlace(parameter)) {
+							if (trigger.contains("eq("+parameter.getId()+", 1)")) {
+								triggerMath = SBMLutilities.removePreset(triggerMath, parameter.getId());
+							}
+						}						
+					}
+					t.addEnabling(SBMLutilities.SBMLMathToLPNString(triggerMath));
+				}
+				if (e.isSetDelay()) {
+					t.addDelay(SBMLutilities.SBMLMathToLPNString(e.getDelay().getMath()));
+				}
+				if (e.isSetPriority()) {
+					t.addPriority(SBMLutilities.SBMLMathToLPNString(e.getPriority().getMath()));
+				}
+				for (long j = 0; j < e.getNumEventAssignments(); j++) {
+					EventAssignment ea = e.getEventAssignment(j);
+					Parameter p = sbml.getModel().getParameter(ea.getVariable());
+					if (p != null && !SBMLutilities.isPlace(p)) {
+						t.addIntAssign(ea.getVariable(), SBMLutilities.SBMLMathToLPNString(ea.getMath()));
+					}
+				}
+			}
+		}
+		lpn.save(filename);
+		return true;
+	}
 
 	public StringBuffer saveToBuffer() {
 		setGridSize(grid.getNumRows(),grid.getNumCols());
@@ -3040,6 +3099,30 @@ public class BioModel {
 			}
 		}
 		return constraintSet;
+	}
+
+	public ArrayList<String> getPreset(Event event) {
+		ArrayList<String> preset = new ArrayList<String>();
+		for (long i = 0; i < event.getNumEventAssignments(); i++) {
+			EventAssignment ea = event.getEventAssignment(i);
+			Parameter p = sbml.getModel().getParameter(ea.getVariable());
+			if (p != null && SBMLutilities.isPlace(p) && SBMLutilities.myFormulaToString(ea.getMath()).equals("0")) {
+				preset.add(p.getId());
+			}
+		}
+		return preset;
+	}
+
+	public ArrayList<String> getPostset(Event event) {
+		ArrayList<String> postset = new ArrayList<String>();
+		for (long i = 0; i < event.getNumEventAssignments(); i++) {
+			EventAssignment ea = event.getEventAssignment(i);
+			Parameter p = sbml.getModel().getParameter(ea.getVariable());
+			if (p != null && SBMLutilities.isPlace(p) && SBMLutilities.myFormulaToString(ea.getMath()).equals("1")) {
+				postset.add(p.getId());
+			}
+		}
+		return postset;
 	}
 	
 	public ArrayList<String> getEvents() {

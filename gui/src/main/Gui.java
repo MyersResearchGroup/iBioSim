@@ -3418,7 +3418,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				if (newName.contains(".gcm")) {
 					newName = newName.replace(".gcm", "");
 				}
-				((ModelEditor) comp).saveAs(newName);
+				if (newName.contains(".xml")) {
+					newName = newName.replace(".xml", "");
+				}
+				if (newName.endsWith(".lpn")) {
+					((ModelEditor) comp).saveAsLPN(newName);
+				} else {
+					((ModelEditor) comp).saveAs(newName);
+				}
 			}
 			/*
 			else if (comp instanceof SBML_Editor) {
@@ -7508,7 +7515,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				if (lema) {
 					popup.add(createLearn);
 					popup.addSeparator();
-					popup.add(viewModel);
 				}
 				// popup.add(createAnalysis); // TODO
 				// popup.add(viewStateGraph);
@@ -7520,6 +7526,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					popup.add(convertToVerilog);
 				}
 				// popup.add(markovAnalysis);
+				popup.add(viewModel);
 				popup.addSeparator();
 				popup.add(view);
 				popup.add(copy);

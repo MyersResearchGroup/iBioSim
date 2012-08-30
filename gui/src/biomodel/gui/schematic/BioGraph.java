@@ -347,7 +347,7 @@ public class BioGraph extends mxGraph {
 				generalGlyph.setBoundingBox(reactionGlyph.getBoundingBox());
 				layout.removeReactionGlyph(GlobalConstants.GLYPH+"__"+event.getId());
 			}
-			if (event.isSetSBOTerm() && event.getSBOTerm()==GlobalConstants.SBO_TRANSITION) { 
+			if (SBMLutilities.isTransition(event)) {
 				if(createGraphTransitionFromModel(event.getId())) needsPositioning = true;			
 			} else {
 				if(createGraphEventFromModel(event.getId())) needsPositioning = true;		
@@ -449,7 +449,7 @@ public class BioGraph extends mxGraph {
 						generalGlyph.setBoundingBox(speciesGlyph.getBoundingBox());
 						layout.removeSpeciesGlyph(GlobalConstants.GLYPH+"__"+id);
 					}
-					if (m.getParameter(i).isSetSBOTerm() && m.getParameter(i).getSBOTerm()==GlobalConstants.SBO_PLACE) {
+					if (SBMLutilities.isPlace(m.getParameter(i))) {
 						if(createGraphPlaceFromModel(m.getParameter(i).getId(),m.getParameter(i).getValue()==1.0))
 							needsPositioning = true;
 					} else {
@@ -824,7 +824,7 @@ public class BioGraph extends mxGraph {
 		// add event edges
 		for (int i = 0; i < m.getNumEvents(); i++) {
 			Event e = m.getEvent(i);
-			boolean isTransition = (e.isSetSBOTerm() && (e.getSBOTerm()==GlobalConstants.SBO_TRANSITION));
+			boolean isTransition = SBMLutilities.isTransition(e);
 			GeneralGlyph generalGlyph = (GeneralGlyph)
 					layout.getAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+e.getId());
 			if (generalGlyph != null) {
@@ -944,7 +944,7 @@ public class BioGraph extends mxGraph {
 					} else if (species==null){
 						Parameter parameter = m.getParameter(ea.getVariable());
 						if (parameter != null) {
-							boolean isPlace = (parameter.isSetSBOTerm() && parameter.getSBOTerm()==GlobalConstants.SBO_PLACE);
+							boolean isPlace = SBMLutilities.isPlace(parameter);
 							if (!isTransition || (isPlace && initStr.equals("1"))) {
 								if (parameter != null && this.getVariableCell(parameter.getId())!=null) {
 									mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 

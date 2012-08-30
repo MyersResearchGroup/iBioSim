@@ -168,7 +168,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumEvents(); i++) {
 				org.sbml.libsbml.Event event = (org.sbml.libsbml.Event) e.get(i);
 				if (event.getId().equals(selected)) {
-					isTransition = (event.isSetSBOTerm() && event.getSBOTerm()==GlobalConstants.SBO_TRANSITION);
+					isTransition = SBMLutilities.isTransition(event);
 					if (isTransition) {
 						evPanel.setLayout(new GridLayout(7, 2));
 					}
@@ -180,7 +180,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					ASTNode triggerMath = event.getTrigger().getMath();
 					for (int j = 0; j < bioModel.getSBMLDocument().getModel().getNumParameters(); j++) {
 						Parameter parameter = bioModel.getSBMLDocument().getModel().getParameter(j);
-						if (parameter!=null && parameter.isSetSBOTerm() && parameter.getSBOTerm()==GlobalConstants.SBO_PLACE) {
+						if (parameter!=null && SBMLutilities.isPlace(parameter)) {
 							if (trigger.contains("eq("+parameter.getId()+", 1)")) {
 								triggerMath = SBMLutilities.removePreset(triggerMath, parameter.getId());
 								presetPlaces.add(parameter.getId());
@@ -253,7 +253,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					for (int j = 0; j < event.getNumEventAssignments(); j++) {
 						Parameter parameter = 
 								bioModel.getSBMLDocument().getModel().getParameter(event.getEventAssignment(j).getVariable());
-						if (parameter!=null && parameter.isSetSBOTerm() && parameter.getSBOTerm()==GlobalConstants.SBO_PLACE) {
+						if (parameter!=null && SBMLutilities.isPlace(parameter)) {
 							numPlaces++;
 						}
 					}
@@ -265,7 +265,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					for (int j = 0; j < event.getNumEventAssignments(); j++) {
 						Parameter parameter = 
 								bioModel.getSBMLDocument().getModel().getParameter(event.getEventAssignment(j).getVariable());
-						if (parameter!=null && parameter.isSetSBOTerm() && parameter.getSBOTerm()==GlobalConstants.SBO_PLACE) {
+						if (parameter!=null && SBMLutilities.isPlace(parameter)) {
 							placeAssign[k] = event.getEventAssignment(j).getVariable() + " = "
 									+ SBMLutilities.myFormulaToString(event.getEventAssignment(j).getMath());
 							k++;
@@ -980,7 +980,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		ids = model.getListOfParameters();
 		for (int i = 0; i < model.getNumParameters(); i++) {
 			Parameter p = (Parameter)ids.get(i);
-			if (p.isSetSBOTerm() && p.getSBOTerm()==GlobalConstants.SBO_PLACE) continue;
+			if (SBMLutilities.isPlace(p)) continue;
 			String id = ((Parameter) ids.get(i)).getId();
 			if (!((Parameter) ids.get(i)).getConstant()) {
 				if (keepVarEvent(gcm, assign, selected, id)) {
