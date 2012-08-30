@@ -346,7 +346,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		if (option.equals("OK")) {
 			try {
 				Parameter paramet = gcm.getSBMLDocument().getModel().getParameter(selected);
-				if (paramet.isSetSBOTerm() && paramet.getSBOTerm()==GlobalConstants.SBO_PLACE) {
+				if (SBMLutilities.isPlace(paramet)) {
 					isPlace = true;
 					valueLabel.setText("Initial marking");
 					if (paramsOnly) {

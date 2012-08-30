@@ -548,13 +548,30 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 	}
 	
+	public void saveAsLPN(String newName) {
+		if (new File(path + separator + newName).exists()) {
+			int value = JOptionPane.showOptionDialog(Gui.frame, newName
+					+ " already exists.  Overwrite file?", "Save file", JOptionPane.YES_NO_OPTION,
+					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			if (value == JOptionPane.NO_OPTION) {
+				return;
+			}
+		}
+		log.addText("Saving SBML file as LPN file:\n" + path + separator + newName + "\n");
+		if (biomodel.saveAsLPN(path + separator + newName)) {
+			biosim.addToTree(newName);
+		}
+		//biosim.updateTabName(modelId + ".xml", newName + ".xml");
+		//reload(newName);
+	}		
+	
 	public void saveAs(String newName) {
 		if (new File(path + separator + newName + ".xml").exists()) {
 			int value = JOptionPane.showOptionDialog(Gui.frame, newName
 					+ " already exists.  Overwrite file?", "Save file", JOptionPane.YES_NO_OPTION,
 					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			if (value == JOptionPane.YES_OPTION) {
-				biomodel.save(path + separator + newName + ".gcm");
+				biomodel.save(path + separator + newName + ".xml");
 				log.addText("Saving SBML file as:\n" + path + separator + newName + ".xml\n");
 				biosim.addToTree(newName + ".xml");
 			}
@@ -564,7 +581,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			}
 		}
 		else {
-			biomodel.save(path + separator + newName + ".gcm");
+			biomodel.save(path + separator + newName + ".xml");
 			log.addText("Saving SBML file as:\n" + path + separator + newName + ".xml\n");
 			biosim.addToTree(newName + ".xml");
 		}
