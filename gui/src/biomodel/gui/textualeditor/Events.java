@@ -979,6 +979,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		}
 		ids = model.getListOfParameters();
 		for (int i = 0; i < model.getNumParameters(); i++) {
+			Parameter p = (Parameter)ids.get(i);
+			if (p.isSetSBOTerm() && p.getSBOTerm()==GlobalConstants.SBO_PLACE) continue;
 			String id = ((Parameter) ids.get(i)).getId();
 			if (!((Parameter) ids.get(i)).getConstant()) {
 				if (keepVarEvent(gcm, assign, selected, id)) {

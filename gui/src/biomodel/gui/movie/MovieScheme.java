@@ -463,6 +463,19 @@ public class MovieScheme {
 		//don't use the ancestor's appearance, only its scheme
 		cellID = oldCellID;
 		
+		if (cellType.equals(GlobalConstants.PLACE)) {
+			if (speciesTSData.containsKey(cellID)) {
+				double variableValue = speciesTSData.get(cellID);
+				if (variableValue == 0.0) {
+					return new MovieAppearance(new Color(255,255,255));
+				} else {
+					return new MovieAppearance(new Color(128,128,128));
+				}
+			}
+			//cellAppearance.add(getIntermediateAppearance(
+				//	colorGradient, gradientValue, opacityState, sizeState, cellType));
+		}
+		
 		if (cellSchemes.size() <= 0) 
 			return null;
 		else {

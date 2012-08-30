@@ -830,7 +830,7 @@ public class BioGraph extends mxGraph {
 			if (generalGlyph != null) {
 				while (generalGlyph.getNumReferenceGlyphs() > 0) 
 					generalGlyph.removeReferenceGlyph(0);
-				if (e.isSetTrigger()) {
+				if (!isTransition && e.isSetTrigger()) {
 					String initStr = SBMLutilities.myFormulaToString(e.getTrigger().getMath());
 					String[] vars = initStr.split(" |\\(|\\)|\\,");
 					for (int j = 0; j < vars.length; j++) {
@@ -855,7 +855,7 @@ public class BioGraph extends mxGraph {
 						}
 					}
 				}
-				if (e.isSetDelay()) {
+				if (!isTransition && e.isSetDelay()) {
 					String initStr = SBMLutilities.myFormulaToString(e.getDelay().getMath());
 					String [] vars = initStr.split(" |\\(|\\)|\\,");
 					for (int j = 0; j < vars.length; j++) {
@@ -880,7 +880,7 @@ public class BioGraph extends mxGraph {
 						}
 					}
 				}
-				if (e.isSetPriority()) {
+				if (!isTransition && e.isSetPriority()) {
 					String initStr = SBMLutilities.myFormulaToString(e.getPriority().getMath());
 					String [] vars = initStr.split(" |\\(|\\)|\\,");
 					for (int j = 0; j < vars.length; j++) {
@@ -909,61 +909,65 @@ public class BioGraph extends mxGraph {
 				for (int k = 0; k < e.getNumEventAssignments(); k++) {
 					EventAssignment ea = e.getEventAssignment(k);
 					String initStr = SBMLutilities.myFormulaToString(ea.getMath());
-					String [] vars = initStr.split(" |\\(|\\)|\\,");
-					for (int j = 0; j < vars.length; j++) {
-						Species species = m.getSpecies(vars[j]);
-						if (species != null) {
-							mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
-									species.getId() + "__" + e.getId(), "", 
-									this.getSpeciesOrPromoterCell(species.getId()), 
-									this.getEventsCell(e.getId()));
-							cell.setStyle("EVENT_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
-							addReferenceGlyph(cell,generalGlyph,e.getId(),species.getId(),"substrate");
-						}else {
-							Parameter parameter = m.getParameter(vars[j]);
-							if (parameter != null && this.getVariableCell(parameter.getId())!=null) {
+					if (!isTransition) {
+						String [] vars = initStr.split(" |\\(|\\)|\\,");
+						for (int j = 0; j < vars.length; j++) {
+							Species species = m.getSpecies(vars[j]);
+							if (species != null) {
 								mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
-										parameter.getId() + "__" + e.getId(), "", 
-										this.getVariableCell(parameter.getId()), 
+										species.getId() + "__" + e.getId(), "", 
+										this.getSpeciesOrPromoterCell(species.getId()), 
 										this.getEventsCell(e.getId()));
 								cell.setStyle("EVENT_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
-								addReferenceGlyph(cell,generalGlyph,e.getId(),parameter.getId(),"substrate");
+								addReferenceGlyph(cell,generalGlyph,e.getId(),species.getId(),"substrate");
+							}else {
+								Parameter parameter = m.getParameter(vars[j]);
+								if (parameter != null && this.getVariableCell(parameter.getId())!=null) {
+									mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
+											parameter.getId() + "__" + e.getId(), "", 
+											this.getVariableCell(parameter.getId()), 
+											this.getEventsCell(e.getId()));
+									cell.setStyle("EVENT_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+									addReferenceGlyph(cell,generalGlyph,e.getId(),parameter.getId(),"substrate");
+								}
 							}
 						}
 					}
 					Species species = m.getSpecies(ea.getVariable());
-					if (species != null) {
+					if (!isTransition && species != null) {
 						mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
 								e.getId() + "__" + species.getId(), "", 
 								this.getEventsCell(e.getId()),
 								this.getSpeciesOrPromoterCell(species.getId()));
 						cell.setStyle("EVENT_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
 						addReferenceGlyph(cell,generalGlyph,e.getId(),species.getId(),"product");
-					} else {
+					} else if (species==null){
 						Parameter parameter = m.getParameter(ea.getVariable());
-						boolean isPlace = (parameter.isSetSBOTerm() && parameter.getSBOTerm()==GlobalConstants.SBO_PLACE);
-						if (!isTransition || !isPlace || initStr.equals("1")) {
-							if (parameter != null && this.getVariableCell(parameter.getId())!=null) {
-								mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
-										e.getId() + "__" + parameter.getId(), "", 
-										this.getEventsCell(e.getId()),
-										this.getVariableCell(parameter.getId()));
-								if (isTransition && isPlace) {
-									cell.setStyle("TRANSITION_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
-								} else {
-									cell.setStyle("EVENT_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+						if (parameter != null) {
+							boolean isPlace = (parameter.isSetSBOTerm() && parameter.getSBOTerm()==GlobalConstants.SBO_PLACE);
+							if (!isTransition || (isPlace && initStr.equals("1"))) {
+								if (parameter != null && this.getVariableCell(parameter.getId())!=null) {
+									mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
+											e.getId() + "__" + parameter.getId(), "", 
+											this.getEventsCell(e.getId()),
+											this.getVariableCell(parameter.getId()));
+									if (isTransition && isPlace) {
+										cell.setStyle("TRANSITION_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+									} else {
+										cell.setStyle("EVENT_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+									}
+									addReferenceGlyph(cell,generalGlyph,e.getId(),parameter.getId(),"product");
 								}
-								addReferenceGlyph(cell,generalGlyph,e.getId(),parameter.getId(),"product");
+							} else if (isPlace && initStr.equals("0")) {
+								if (parameter != null && this.getVariableCell(parameter.getId())!=null) {
+									mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
+											e.getId() + "__" + parameter.getId(), "", 
+											this.getVariableCell(parameter.getId()),
+											this.getEventsCell(e.getId()));
+									cell.setStyle("TRANSITION_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+									addReferenceGlyph(cell,generalGlyph,e.getId(),parameter.getId(),"substrate");
+								}							
 							}
-						} else {
-							if (parameter != null && this.getVariableCell(parameter.getId())!=null) {
-								mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
-										e.getId() + "__" + parameter.getId(), "", 
-										this.getVariableCell(parameter.getId()),
-										this.getEventsCell(e.getId()));
-								cell.setStyle("TRANSITION_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
-								addReferenceGlyph(cell,generalGlyph,e.getId(),parameter.getId(),"substrate");
-							}							
 						}
 					}
 				}
@@ -2758,7 +2762,7 @@ public class BioGraph extends mxGraph {
 		style = new Hashtable<String, Object>();
 		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_ELLIPSE);
 		style.put(mxConstants.STYLE_OPACITY, 50);
-		style.put(mxConstants.STYLE_FILLCOLOR, "#888888");
+		style.put(mxConstants.STYLE_FILLCOLOR, "#808080");
 		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
 		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
 		stylesheet.putCellStyle("MARKED_PLACE", style);
@@ -2906,6 +2910,17 @@ public class BioGraph extends mxGraph {
 	public void setSpeciesAnimationValue(String species, MovieAppearance appearance) {
 		
 		mxCell cell = this.speciesToMxCellMap.get(species);
+		if (cell != null) {
+			setCellAnimationValue(cell, appearance);
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	public void setParameterAnimationValue(String parameter, MovieAppearance appearance) {
+		
+		mxCell cell = this.variableToMxCellMap.get(parameter);
 		if (cell != null) {
 			setCellAnimationValue(cell, appearance);
 		}
