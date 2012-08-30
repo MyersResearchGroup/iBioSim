@@ -347,7 +347,11 @@ public class BioGraph extends mxGraph {
 				generalGlyph.setBoundingBox(reactionGlyph.getBoundingBox());
 				layout.removeReactionGlyph(GlobalConstants.GLYPH+"__"+event.getId());
 			}
-			if(createGraphEventFromModel(event.getId())) needsPositioning = true;			
+			if (event.isSetSBOTerm() && event.getSBOTerm()==GlobalConstants.SBO_TRANSITION) { 
+				if(createGraphTransitionFromModel(event.getId())) needsPositioning = true;			
+			} else {
+				if(createGraphEventFromModel(event.getId())) needsPositioning = true;		
+			}
 		}
 
 		// add all components
@@ -445,8 +449,13 @@ public class BioGraph extends mxGraph {
 						generalGlyph.setBoundingBox(speciesGlyph.getBoundingBox());
 						layout.removeSpeciesGlyph(GlobalConstants.GLYPH+"__"+id);
 					}
-					if(createGraphVariableFromModel(m.getParameter(i).getId()))
-						needsPositioning = true;
+					if (m.getParameter(i).isSetSBOTerm() && m.getParameter(i).getSBOTerm()==GlobalConstants.SBO_PLACE) {
+						if(createGraphPlaceFromModel(m.getParameter(i).getId(),m.getParameter(i).getValue()==1.0))
+							needsPositioning = true;
+					} else {
+						if(createGraphVariableFromModel(m.getParameter(i).getId()))
+							needsPositioning = true;
+					}
 				}
 			}
 		}
@@ -815,6 +824,7 @@ public class BioGraph extends mxGraph {
 		// add event edges
 		for (int i = 0; i < m.getNumEvents(); i++) {
 			Event e = m.getEvent(i);
+			boolean isTransition = (e.isSetSBOTerm() && (e.getSBOTerm()==GlobalConstants.SBO_TRANSITION));
 			GeneralGlyph generalGlyph = (GeneralGlyph)
 					layout.getAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+e.getId());
 			if (generalGlyph != null) {
@@ -931,13 +941,29 @@ public class BioGraph extends mxGraph {
 						addReferenceGlyph(cell,generalGlyph,e.getId(),species.getId(),"product");
 					} else {
 						Parameter parameter = m.getParameter(ea.getVariable());
-						if (parameter != null && this.getVariableCell(parameter.getId())!=null) {
-							mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
-									e.getId() + "__" + parameter.getId(), "", 
-									this.getEventsCell(e.getId()),
-									this.getVariableCell(parameter.getId()));
-							cell.setStyle("EVENT_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
-							addReferenceGlyph(cell,generalGlyph,e.getId(),parameter.getId(),"product");
+						boolean isPlace = (parameter.isSetSBOTerm() && parameter.getSBOTerm()==GlobalConstants.SBO_PLACE);
+						if (!isTransition || !isPlace || initStr.equals("1")) {
+							if (parameter != null && this.getVariableCell(parameter.getId())!=null) {
+								mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
+										e.getId() + "__" + parameter.getId(), "", 
+										this.getEventsCell(e.getId()),
+										this.getVariableCell(parameter.getId()));
+								if (isTransition && isPlace) {
+									cell.setStyle("TRANSITION_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+								} else {
+									cell.setStyle("EVENT_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+								}
+								addReferenceGlyph(cell,generalGlyph,e.getId(),parameter.getId(),"product");
+							}
+						} else {
+							if (parameter != null && this.getVariableCell(parameter.getId())!=null) {
+								mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
+										e.getId() + "__" + parameter.getId(), "", 
+										this.getVariableCell(parameter.getId()),
+										this.getEventsCell(e.getId()));
+								cell.setStyle("TRANSITION_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+								addReferenceGlyph(cell,generalGlyph,e.getId(),parameter.getId(),"substrate");
+							}							
 						}
 					}
 				}
@@ -1471,7 +1497,8 @@ public class BioGraph extends mxGraph {
 			textGlyph.setGraphicalObjectId(GlobalConstants.GLYPH+"__"+(String)cell.getId());
 			textGlyph.setText((String)cell.getId());
 			textGlyph.setBoundingBox(speciesGlyph.getBoundingBox());
-		} else if (getCellType(cell).equals(GlobalConstants.VARIABLE)) {
+		} else if (getCellType(cell).equals(GlobalConstants.VARIABLE) || 
+				getCellType(cell).equals(GlobalConstants.PLACE)) {
 			Layout layout = null;
 			if (bioModel.getSBMLLayout().getLayout("iBioSim") != null) {
 				layout = bioModel.getSBMLLayout().getLayout("iBioSim"); 
@@ -1546,7 +1573,8 @@ public class BioGraph extends mxGraph {
 			textGlyph.setBoundingBox(reactionGlyph.getBoundingBox());
 		} else if (getCellType(cell).equals(GlobalConstants.RULE)||
 				getCellType(cell).equals(GlobalConstants.CONSTRAINT)||
-				getCellType(cell).equals(GlobalConstants.EVENT)) {
+				getCellType(cell).equals(GlobalConstants.EVENT)||
+				getCellType(cell).equals(GlobalConstants.TRANSITION)) {
 			Layout layout = null;
 			if (bioModel.getSBMLLayout().getLayout("iBioSim") != null) {
 				layout = bioModel.getSBMLLayout().getLayout("iBioSim"); 
@@ -1719,7 +1747,8 @@ public class BioGraph extends mxGraph {
 					bioModel.placeSpecies((String)cell.getId(), x, y, height, width);
 				}
 			} 
-		} else if (getCellType(cell).equals(GlobalConstants.VARIABLE)) {
+		} else if (getCellType(cell).equals(GlobalConstants.VARIABLE)||
+				getCellType(cell).equals(GlobalConstants.PLACE)) {
 			if (bioModel.getSBMLLayout().getLayout("iBioSim") != null) {
 				Layout layout = bioModel.getSBMLLayout().getLayout("iBioSim"); 
 				if (layout.getAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+(String)cell.getId())!=null) {
@@ -1780,7 +1809,8 @@ public class BioGraph extends mxGraph {
 			} 
 		} else if (getCellType(cell).equals(GlobalConstants.RULE) ||
 				getCellType(cell).equals(GlobalConstants.CONSTRAINT) ||
-				getCellType(cell).equals(GlobalConstants.EVENT)) {
+				getCellType(cell).equals(GlobalConstants.EVENT) ||
+				getCellType(cell).equals(GlobalConstants.TRANSITION)) {
 			if (bioModel.getSBMLLayout().getLayout("iBioSim") != null) {
 				Layout layout = bioModel.getSBMLLayout().getLayout("iBioSim"); 
 				if (layout.getAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+(String)cell.getId())!=null) {
@@ -1949,6 +1979,8 @@ public class BioGraph extends mxGraph {
 			else if (sourceType == GlobalConstants.EVENT || targetType == GlobalConstants.EVENT) {
 				return GlobalConstants.EVENT_EDGE;
 			}
+			else if (sourceType == GlobalConstants.TRANSITION || targetType == GlobalConstants.TRANSITION) {
+				return GlobalConstants.PETRI_NET_EDGE;			}
 			else {
 				return GlobalConstants.INFLUENCE;
 			}
@@ -1965,6 +1997,8 @@ public class BioGraph extends mxGraph {
 				return GlobalConstants.PROMOTER;
 			else if(type.equals("Variable"))
 				return GlobalConstants.VARIABLE;
+			else if(type.equals("Place"))
+				return GlobalConstants.PLACE;
 			else if(type.equals("Reaction"))
 				return GlobalConstants.REACTION;
 			else if(type.equals("Rule"))
@@ -1973,6 +2007,8 @@ public class BioGraph extends mxGraph {
 				return GlobalConstants.CONSTRAINT;
 			else if(type.equals("Event"))
 				return GlobalConstants.EVENT;
+			else if(type.equals("Transition"))
+				return GlobalConstants.TRANSITION;
 			else if(type.equals("Compartment"))
 				return GlobalConstants.COMPARTMENT;
 			else if (type.equals("Rectangle"))
@@ -2286,6 +2322,17 @@ public class BioGraph extends mxGraph {
 				GlobalConstants.DEFAULT_EVENT_WIDTH,GlobalConstants.DEFAULT_EVENT_HEIGHT);
 	}
 	
+	private boolean createGraphTransitionFromModel(String id){
+		CellValueObject cvo = new CellValueObject(id, "Transition", null);
+		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
+		this.eventsToMxCellMap.put(id, (mxCell)insertedVertex);
+		
+		this.setTransitionStyles(id);
+		
+		return sizeAndPositionFromProperties((mxCell)insertedVertex,
+				GlobalConstants.DEFAULT_TRANSITION_WIDTH,GlobalConstants.DEFAULT_TRANSITION_HEIGHT);
+	}
+	
 	/**
 	 * Creates a drawn promoter using the internal model
 	 * @param pname
@@ -2327,6 +2374,33 @@ public class BioGraph extends mxGraph {
 		this.variableToMxCellMap.put(id, (mxCell)insertedVertex);
 		
 		this.setVariableStyles(id);
+		
+		return sizeAndPositionFromProperties((mxCell)insertedVertex,
+				GlobalConstants.DEFAULT_VARIABLE_WIDTH,GlobalConstants.DEFAULT_VARIABLE_HEIGHT);
+	}
+	
+	/**
+	 * Creates a variable using the internal model
+	 * @param pname
+	 * @return
+	 */
+	private boolean createGraphPlaceFromModel(String id,boolean marked){
+		
+		String truncID;
+		
+		if (id.length() > 8)
+			truncID = id.substring(0, 7) + "...";
+		else truncID = id;
+
+		CellValueObject cvo = new CellValueObject(truncID, "Place", null);
+		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
+		this.variableToMxCellMap.put(id, (mxCell)insertedVertex);
+		
+		if (marked) {
+			this.setMarkedPlaceStyles(id);
+		} else {
+			this.setPlaceStyles(id);
+		}
 		
 		return sizeAndPositionFromProperties((mxCell)insertedVertex,
 				GlobalConstants.DEFAULT_VARIABLE_WIDTH,GlobalConstants.DEFAULT_VARIABLE_HEIGHT);
@@ -2483,6 +2557,16 @@ public class BioGraph extends mxGraph {
 		style.put(mxConstants.STYLE_FILLCOLOR, "#00FF00");
 		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
 		stylesheet.putCellStyle("EVENT", style);
+		
+		//events
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
+		style.put(mxConstants.STYLE_OPACITY, 50);
+		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
+		style.put(mxConstants.STYLE_ROUNDED, false);
+		style.put(mxConstants.STYLE_FILLCOLOR, "#FFFFFF");
+		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
+		stylesheet.putCellStyle("TRANSITION", style);
 		
 		//components
 		style = new Hashtable<String, Object>();
@@ -2660,6 +2744,24 @@ public class BioGraph extends mxGraph {
 		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
 		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
 		stylesheet.putCellStyle("VARIABLE", style);
+
+		//place
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_ELLIPSE);
+		style.put(mxConstants.STYLE_OPACITY, 50);
+		style.put(mxConstants.STYLE_FILLCOLOR, "#FFFFFF");
+		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
+		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
+		stylesheet.putCellStyle("PLACE", style);
+
+		//marked place
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_ELLIPSE);
+		style.put(mxConstants.STYLE_OPACITY, 50);
+		style.put(mxConstants.STYLE_FILLCOLOR, "#888888");
+		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
+		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
+		stylesheet.putCellStyle("MARKED_PLACE", style);
 	}
 	
 	
@@ -2719,6 +2821,13 @@ public class BioGraph extends mxGraph {
 		mxCell cell = this.getEventsCell(id);
 		cell.setStyle(style);
 	}
+
+	private void setTransitionStyles(String id){
+		String style="TRANSITION;";
+		
+		mxCell cell = this.getEventsCell(id);
+		cell.setStyle(style);
+	}
 	
 	/**
 	 * 
@@ -2761,6 +2870,28 @@ public class BioGraph extends mxGraph {
 	 */
 	private void setVariableStyles(String id){
 		String style="VARIABLE";
+		
+		mxCell cell = this.getVariableCell(id);
+		cell.setStyle(style);
+	}
+	
+	/**
+	 * 
+	 * @param id
+	 */
+	private void setPlaceStyles(String id){
+		String style="PLACE";
+		
+		mxCell cell = this.getVariableCell(id);
+		cell.setStyle(style);
+	}
+	
+	/**
+	 * 
+	 * @param id
+	 */
+	private void setMarkedPlaceStyles(String id){
+		String style="MARKED_PLACE";
 		
 		mxCell cell = this.getVariableCell(id);
 		cell.setStyle(style);
@@ -2857,7 +2988,8 @@ public class BioGraph extends mxGraph {
 					width = GlobalConstants.DEFAULT_SPECIES_WIDTH;
 					height = GlobalConstants.DEFAULT_SPECIES_HEIGHT;
 				}
-			} else if (getCellType(cell).equals(GlobalConstants.VARIABLE)) {
+			} else if (getCellType(cell).equals(GlobalConstants.VARIABLE) || 
+					getCellType(cell).equals(GlobalConstants.PLACE)) {
 				if (bioModel.getSBMLLayout().getLayout("iBioSim") != null) {
 					Layout layout = bioModel.getSBMLLayout().getLayout("iBioSim"); 
 					if (layout.getAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+(String)cell.getId())!=null) {
@@ -2902,7 +3034,8 @@ public class BioGraph extends mxGraph {
 				}
 			} else if (getCellType(cell).equals(GlobalConstants.RULE)||
 					getCellType(cell).equals(GlobalConstants.CONSTRAINT)||
-					getCellType(cell).equals(GlobalConstants.EVENT)) {
+					getCellType(cell).equals(GlobalConstants.EVENT)||
+					getCellType(cell).equals(GlobalConstants.TRANSITION)) {
 				if (bioModel.getSBMLLayout().getLayout("iBioSim") != null) {
 					Layout layout = bioModel.getSBMLLayout().getLayout("iBioSim"); 
 					if (layout.getAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+(String)cell.getId())!=null) {

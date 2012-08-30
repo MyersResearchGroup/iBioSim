@@ -2054,4 +2054,24 @@ public class SBMLutilities {
 	  return false;
 	}
 
+	public static ASTNode addPreset(ASTNode math,String place) {
+		return myParseFormula("and("+myFormulaToString(math)+",eq("+place+","+"1))");
+	}
+	
+	public static ASTNode removePreset(ASTNode math,String place) {
+		if (math.getType() == libsbml.AST_LOGICAL_AND) {
+			ASTNode rightChild = math.getRightChild();
+			if (rightChild.getType() == libsbml.AST_RELATIONAL_EQ && 
+				rightChild.getLeftChild().getName().equals(place)) {
+				return math.getLeftChild().deepCopy();
+			}
+		}
+		for (long i = 0; i < math.getNumChildren(); i++) {
+			ASTNode child = removePreset(math.getChild(i),place);
+			math.replaceChild(i, child);
+		}
+		return math.deepCopy();
+	}
+
+
 }

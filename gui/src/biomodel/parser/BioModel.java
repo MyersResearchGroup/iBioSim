@@ -4965,7 +4965,7 @@ public class BioModel {
 		textGlyph.setBoundingBox(generalGlyph.getBoundingBox());
 	}
 
-	public void createEvent(String id, float x, float y) {
+	public void createEvent(String id, float x, float y,boolean isTransition) {
 		Layout layout = null;
 		if (sbmlLayout.getLayout("iBioSim") != null) {
 			layout = sbmlLayout.getLayout("iBioSim"); 
@@ -4983,8 +4983,13 @@ public class BioModel {
 		}
 		generalGlyph.getBoundingBox().setX(x);
 		generalGlyph.getBoundingBox().setY(y);
-		generalGlyph.getBoundingBox().setWidth(GlobalConstants.DEFAULT_EVENT_WIDTH);
-		generalGlyph.getBoundingBox().setHeight(GlobalConstants.DEFAULT_EVENT_HEIGHT);
+		if (isTransition) {
+			generalGlyph.getBoundingBox().setWidth(GlobalConstants.DEFAULT_TRANSITION_WIDTH);
+			generalGlyph.getBoundingBox().setHeight(GlobalConstants.DEFAULT_TRANSITION_HEIGHT);
+		} else {
+			generalGlyph.getBoundingBox().setWidth(GlobalConstants.DEFAULT_EVENT_WIDTH);
+			generalGlyph.getBoundingBox().setHeight(GlobalConstants.DEFAULT_EVENT_HEIGHT);
+		}
 		TextGlyph textGlyph = layout.createTextGlyph();
 		textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+id);
 		textGlyph.setGraphicalObjectId(GlobalConstants.GLYPH+"__"+id);
@@ -5051,21 +5056,34 @@ public class BioModel {
 		return id;
 	}
 	
-	public String createVariable(String id, float x, float y) {
+	public String createVariable(String id, float x, float y, boolean isPlace) {
 		Parameter parameter = sbml.getModel().createParameter();
 		// Set default species ID
-		if (id == null) {
-			do {
-				creatingVariableID++;
-				id = "V" + String.valueOf(creatingVariableID);
+		if (isPlace) {
+			if (id == null) {
+				do {
+					creatingPlaceID++;
+					id = "p" + String.valueOf(creatingPlaceID);
+				}
+				while ((sbml.getElementBySId(id)!=null)||(sbml.getElementByMetaId(id)!=null));
+			}			
+		} else {
+			if (id == null) {
+				do {
+					creatingVariableID++;
+					id = "V" + String.valueOf(creatingVariableID);
+				}
+				while ((sbml.getElementBySId(id)!=null)||(sbml.getElementByMetaId(id)!=null));
 			}
-			while ((sbml.getElementBySId(id)!=null)||(sbml.getElementByMetaId(id)!=null));
 		}
 		parameter.setId(id);
 		// Set default promoter metaID
 		metaIDIndex = SBMLutilities.setDefaultMetaID(sbml, parameter, metaIDIndex); 
 		parameter.setConstant(false);
 		parameter.setValue(0.0);
+		if (isPlace) {
+			parameter.setSBOTerm(GlobalConstants.SBO_PLACE);
+		}
 
 		Layout layout = null;
 		if (sbmlLayout.getLayout("iBioSim") != null) {
@@ -5277,11 +5295,13 @@ public class BioModel {
 	private void loadDefaultEnclosingCompartment() {
 		if (sbml != null) {
 			if (sbml.getModel().getNumCompartments()==0) {
+				/*
 				Compartment c = sbml.getModel().createCompartment();
 				c.setId("Cell");
 				c.setSize(1);
 				c.setSpatialDimensions(3);
 				c.setConstant(true);
+				*/
 				return;
 			}
 			for (long i = 0; i < sbml.getModel().getNumCompartments(); i++) {
@@ -6565,12 +6585,13 @@ public class BioModel {
 	
 	private Grid grid = null;
 	
-	private int creatingCompartmentID = 0;
-	private int creatingVariableID = 0;
-	private int creatingPromoterID = 0;
-	private int creatingSpeciesID = 0;
+	private int creatingCompartmentID = -1;
+	private int creatingVariableID = -1;
+	private int creatingPlaceID = -1;
+	private int creatingPromoterID = -1;
+	private int creatingSpeciesID = -1;
 	private int metaIDIndex = 1;
-	private int creatingReactionID = 0;
+	private int creatingReactionID = -1;
 	
 	private String path;
 

@@ -74,6 +74,7 @@ public class GlobalConstants {
 	public static final String RULE_EDGE = "Rule_Edge";
 	public static final String CONSTRAINT_EDGE = "Constraint_Edge";
 	public static final String EVENT_EDGE = "Event_Edge";
+	public static final String PETRI_NET_EDGE = "Petri_Net_Edge";
 	public static final String GRID_RECTANGLE = "Grid Rectangle";
 	public static final String PORTMAP = "Port Map";
 	public static final String PORT = "port";
@@ -90,6 +91,7 @@ public class GlobalConstants {
 	public static final String INITIAL_STRING = "ns";	
 	public static final String PROMOTER = "Promoter";
 	public static final String VARIABLE = "Variable";
+	public static final String PLACE = "Place";
 	public static final String MRNA = "mRNA";
 	public static final String EXPLICIT_PROMOTER = "ExplicitPromoter";
 	public static final String SBMLFILE = "SBML file";
@@ -101,6 +103,7 @@ public class GlobalConstants {
 	public static final String SBMLSPECIES = "species";
 	public static final String SBMLREACTION = "reaction";
 	public static final String EVENT = "event";
+	public static final String TRANSITION = "transition";
 	public static final String CONSTRAINT = "constraint";
 	public static final String FUNCTION = "functionDefinition";
 	public static final String UNIT = "unitDefinition";
@@ -136,6 +139,8 @@ public class GlobalConstants {
 	public static final int SBO_PROMOTER_SPECIES = 354;
 	public static final int SBO_MRNA_OLD = 278;
 	public static final int SBO_MRNA = 250;
+	public static final int SBO_PLACE = 546;
+	public static final int SBO_TRANSITION= 464;
 
 	public static final int SBO_DEGRADATION = 179;
 	public static final int SBO_DIFFUSION = 185;
@@ -176,6 +181,8 @@ public class GlobalConstants {
 	public static final int DEFAULT_CONSTRAINT_HEIGHT = 40;
 	public static final int DEFAULT_EVENT_WIDTH = 75;
 	public static final int DEFAULT_EVENT_HEIGHT = 25;
+	public static final int DEFAULT_TRANSITION_WIDTH = 50;
+	public static final int DEFAULT_TRANSITION_HEIGHT = 20;
 	public static final int DEFAULT_COMPONENT_WIDTH = 80;
 	public static final int DEFAULT_COMPONENT_HEIGHT = 40;
 	public static final int DEFAULT_COMPARTMENT_WIDTH = 250;

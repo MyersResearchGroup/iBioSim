@@ -73,7 +73,8 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 		this.gcmEditor = gcmEditor;
 		this.sbmlModel = gcm.getSBMLDocument().getModel();
 		this.dirty = gcmEditor.getDirty();
-		this.setText("Edit Model Attributes");
+		this.setText("Model");
+		this.setToolTipText("Edit Model Attributes");
 		this.addActionListener((ActionListener) this);
 		if (gcmEditor.isParamsOnly()) {
 			this.setEnabled(false);
