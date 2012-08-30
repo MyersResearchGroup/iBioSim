@@ -3292,17 +3292,20 @@ public abstract class Simulator {
 			//print component location values
 			for (String componentID : componentToLocationMap.keySet()) {
 				bufferedTSDWriter.write(commaSpace + (int) componentToLocationMap.get(componentID).getX());
+				commaSpace = ", ";
 				bufferedTSDWriter.write(commaSpace + (int) componentToLocationMap.get(componentID).getY());
 			}
 			
 			//print compartment sizes
 			for (String componentID : compartmentIDSet) {
 				bufferedTSDWriter.write(commaSpace + variableToValueMap.get(componentID));
+				commaSpace = ", ";
 			}
 			
 			//print nonconstant parameter values
 			for (String parameterID : nonconstantParameterIDSet) {
 				bufferedTSDWriter.write(commaSpace + variableToValueMap.get(parameterID));
+				commaSpace = ", ";
 			}
 		}
 		
