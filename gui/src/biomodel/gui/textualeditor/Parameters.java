@@ -58,6 +58,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	private JComboBox paramUnits;
 
 	private JComboBox paramConst;
+
+	private JComboBox placeMarking;
 	
 	private JCheckBox onPort;
 
@@ -249,6 +251,9 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		paramID = new JTextField();
 		paramName = new JTextField();
 		paramValue = new JTextField();
+		placeMarking = new JComboBox();
+		placeMarking.addItem("false");
+		placeMarking.addItem("true");
 		paramUnits = new JComboBox();
 		paramUnits.addItem("( none )");
 		onPort = new JCheckBox();
@@ -330,15 +335,31 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			paramID.setEditable(false);
 			paramName.setEditable(false);
 			paramValue.setEnabled(false);
+			placeMarking.setEnabled(false);
 			paramUnits.setEnabled(false);
 			paramConst.setEnabled(false);
 			onPort.setEnabled(false);
 			sweep.setEnabled(false);
 		}
 		String selectedID = "";
+		boolean isPlace = false;
 		if (option.equals("OK")) {
 			try {
 				Parameter paramet = gcm.getSBMLDocument().getModel().getParameter(selected);
+				if (paramet.isSetSBOTerm() && paramet.getSBOTerm()==GlobalConstants.SBO_PLACE) {
+					isPlace = true;
+					valueLabel.setText("Initial marking");
+					if (paramsOnly) {
+						parametersPanel.setLayout(new GridLayout(6, 2));
+					} else {
+						parametersPanel.setLayout(new GridLayout(4, 2));
+					}
+					if (paramet.getValue()==0) {
+						placeMarking.setSelectedIndex(0);
+					} else {
+						placeMarking.setSelectedIndex(1);
+					}
+				}
 				paramID.setText(paramet.getId());
 				selectedID = paramet.getId();
 				paramName.setText(paramet.getName());
@@ -368,34 +389,39 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				} else {
 					onPort.setSelected(false);
 				}
-				if (paramsOnly && (((String) parameters.getSelectedValue()).contains("Modified"))
+				if (paramsOnly && parameters.getSelectedValue()!=null) {
+					if (((String) parameters.getSelectedValue()).contains("Modified")
 						|| (((String) parameters.getSelectedValue()).contains("Custom"))
 						|| (((String) parameters.getSelectedValue()).contains("Sweep"))) {
-					type.setSelectedItem("Modified");
-					sweep.setEnabled(true);
-					paramValue
-							.setText(((String) parameters.getSelectedValue()).split(" ")[((String) parameters.getSelectedValue()).split(" ").length - 1]);
-					paramValue.setEnabled(true);
-					paramUnits.setEnabled(false);
-					if (paramValue.getText().trim().startsWith("(")) {
-						try {
-							start.setText((paramValue.getText().trim()).split(",")[0].substring(1).trim());
-							stop.setText((paramValue.getText().trim()).split(",")[1].trim());
-							step.setText((paramValue.getText().trim()).split(",")[2].trim());
-							int lev = Integer.parseInt((paramValue.getText().trim()).split(",")[3].replace(")", "").trim());
-							if (lev == 1) {
-								level.setSelectedIndex(0);
+						type.setSelectedItem("Modified");
+						sweep.setEnabled(true);
+						paramValue
+						.setText(((String) parameters.getSelectedValue()).split(" ")[((String) parameters.getSelectedValue()).split(" ").length - 1]);
+						paramValue.setEnabled(true);
+						placeMarking.setEnabled(true);
+						paramUnits.setEnabled(false);
+						if (paramValue.getText().trim().startsWith("(")) {
+							try {
+								start.setText((paramValue.getText().trim()).split(",")[0].substring(1).trim());
+								stop.setText((paramValue.getText().trim()).split(",")[1].trim());
+								step.setText((paramValue.getText().trim()).split(",")[2].trim());
+								int lev = Integer.parseInt((paramValue.getText().trim()).split(",")[3].replace(")", "").trim());
+								if (lev == 1) {
+									level.setSelectedIndex(0);
+								}
+								else {
+									level.setSelectedIndex(1);
+								}
 							}
-							else {
-								level.setSelectedIndex(1);
+							catch (Exception e1) {
+								e1.printStackTrace();
 							}
-						}
-						catch (Exception e1) {
 						}
 					}
 				}
 			}
 			catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 		parametersPanel.add(idLabel);
@@ -409,11 +435,13 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 					if (!((String) type.getSelectedItem()).equals("Original")) {
 						sweep.setEnabled(true);
 						paramValue.setEnabled(true);
+						placeMarking.setEnabled(true);
 						paramUnits.setEnabled(false);
 					}
 					else {
 						sweep.setEnabled(false);
 						paramValue.setEnabled(false);
+						placeMarking.setEnabled(false);
 						paramUnits.setEnabled(false);
 						SBMLDocument d = Gui.readSBML(file);
 						if (d.getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]).isSetValue()) {
@@ -425,6 +453,12 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						if (d.getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]).isSetUnits()) {
 							paramUnits.setSelectedItem(d.getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]).getUnits()	+ "");
 						}
+						if (paramValue.getText().equals(0)) {
+							placeMarking.setSelectedIndex(0);
+						} else {
+							placeMarking.setSelectedIndex(1);
+						}
+
 					}
 				}
 			});
@@ -432,24 +466,41 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			parametersPanel.add(type);
 		}
 		parametersPanel.add(valueLabel);
-		parametersPanel.add(paramValue);
+		if (isPlace) {
+			parametersPanel.add(placeMarking);
+		} else {
+			parametersPanel.add(paramValue);
+		}
 		if (paramsOnly) {
 			parametersPanel.add(new JLabel());
 			parametersPanel.add(sweep);
 		}
-		parametersPanel.add(unitLabel);
-		parametersPanel.add(paramUnits);
-		parametersPanel.add(constLabel);
-		parametersPanel.add(paramConst);
+		if (!isPlace) {
+			parametersPanel.add(unitLabel);
+			parametersPanel.add(paramUnits);
+			parametersPanel.add(constLabel);
+			parametersPanel.add(paramConst);
+		}
 		parametersPanel.add(onPortLabel);
 		parametersPanel.add(onPort);
 		Object[] options = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(Gui.frame, parametersPanel, "Parameter Editor", JOptionPane.YES_NO_OPTION,
+		String editorTitle = "Parameter Editor";
+		if (isPlace) {
+			editorTitle = "Place Editor";
+		}
+		int value = JOptionPane.showOptionDialog(Gui.frame, parametersPanel, editorTitle, JOptionPane.YES_NO_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = SBMLutilities.checkID(gcm.getSBMLDocument(), paramID.getText().trim(), selectedID, false, false);
 			if (!error) {
+				if (isPlace) {
+					if (placeMarking.getSelectedIndex()==0) {
+						paramValue.setText("0.0");
+					} else {
+						paramValue.setText("1.0");
+					}
+				}
 				double val = 0.0;
 				if (paramValue.getText().trim().startsWith("(") && paramValue.getText().trim().endsWith(")")) {
 					try {
@@ -710,7 +761,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				}
 			}
 			if (error) {
-				value = JOptionPane.showOptionDialog(Gui.frame, parametersPanel, "Parameter Editor", JOptionPane.YES_NO_OPTION,
+				value = JOptionPane.showOptionDialog(Gui.frame, parametersPanel, editorTitle, JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			}
 		}

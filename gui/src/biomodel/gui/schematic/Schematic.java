@@ -55,7 +55,10 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.sbml.libsbml.ASTNode;
 import org.sbml.libsbml.CompartmentGlyph;
+import org.sbml.libsbml.Event;
+import org.sbml.libsbml.EventAssignment;
 import org.sbml.libsbml.GeneralGlyph;
 import org.sbml.libsbml.Layout;
 import org.sbml.libsbml.ListOf;
@@ -67,6 +70,8 @@ import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.SpeciesGlyph;
 import org.sbml.libsbml.SpeciesReference;
 import org.sbml.libsbml.TextGlyph;
+import org.sbml.libsbml.Trigger;
+import org.sbml.libsbml.libsbml;
 
 import sbol.SBOLDescriptorPanel;
 
@@ -137,6 +142,8 @@ public class Schematic extends JPanel implements ActionListener {
 	private AbstractButton addComponentButton;
 	private AbstractButton addPromoterButton;
 	private AbstractButton addVariableButton;
+	private AbstractButton addPlaceButton;
+	private AbstractButton addTransitionButton;
 	private AbstractButton addRuleButton;
 	private AbstractButton addConstraintButton;
 	private AbstractButton addEventButton;
@@ -366,6 +373,10 @@ public class Schematic extends JPanel implements ActionListener {
 		toolBar.add(addPromoterButton);
 		addVariableButton = Utils.makeRadioToolButton("variable_mode.png", "", "Add Variables", this, modeButtonGroup);
 		toolBar.add(addVariableButton);
+		addPlaceButton = Utils.makeRadioToolButton("add_place.png", "", "Add Places", this, modeButtonGroup);
+		toolBar.add(addPlaceButton);
+		addTransitionButton = Utils.makeRadioToolButton("add_transition.png", "", "Add Transitions", this, modeButtonGroup);
+		toolBar.add(addTransitionButton);
 		addRuleButton = Utils.makeRadioToolButton("rule_mode.png", "", "Add Rules", this, modeButtonGroup);
 		toolBar.add(addRuleButton);
 		addConstraintButton = Utils.makeRadioToolButton("constraint_mode.png", "", "Add Constraints", this, modeButtonGroup);
@@ -451,7 +462,8 @@ public class Schematic extends JPanel implements ActionListener {
 		ModelPanel modelPanel = new ModelPanel(bioModel, modelEditor);
 		toolBar.add(modelPanel);
 		
-		sbolDescriptorsButton = new JButton("Edit Composite SBOL Descriptors");
+		sbolDescriptorsButton = new JButton("SBOL");
+		sbolDescriptorsButton.setToolTipText("Edit Composite SBOL Descriptors");
 		sbolDescriptorsButton.setActionCommand("editSBOLDescriptors");
 		sbolDescriptorsButton.addActionListener(this);
 		toolBar.add(sbolDescriptorsButton);
@@ -834,7 +846,14 @@ public class Schematic extends JPanel implements ActionListener {
 							bioModel.makeUndoPoint();
 						}
 						else if(addVariableButton != null && addVariableButton.isSelected()) {
-							bioModel.createVariable(null, e.getX(), e.getY());
+							bioModel.createVariable(null, e.getX(), e.getY(),false);
+							modelEditor.refresh();
+							graph.buildGraph();
+							modelEditor.setDirty(true);
+							bioModel.makeUndoPoint();
+						}
+						else if(addPlaceButton != null && addPlaceButton.isSelected()) {
+							bioModel.createVariable(null, e.getX(), e.getY(),true);
 							modelEditor.refresh();
 							graph.buildGraph();
 							modelEditor.setDirty(true);
@@ -857,8 +876,16 @@ public class Schematic extends JPanel implements ActionListener {
 							bioModel.makeUndoPoint();
 						}
 						else if(addEventButton != null && addEventButton.isSelected()) {
-							String id = events.eventEditor("Add", "");
-							bioModel.createEvent(id, e.getX(), e.getY());
+							String id = events.eventEditor("Add", "",false);
+							bioModel.createEvent(id, e.getX(), e.getY(),false);
+							modelEditor.refresh();
+							graph.buildGraph();
+							modelEditor.setDirty(true);
+							bioModel.makeUndoPoint();
+						}
+						else if(addTransitionButton != null && addTransitionButton.isSelected()) {
+							String id = events.eventEditor("Add", "",true);
+							bioModel.createEvent(id, e.getX(), e.getY(),true);
 							modelEditor.refresh();
 							graph.buildGraph();
 							modelEditor.setDirty(true);
@@ -1051,7 +1078,7 @@ public class Schematic extends JPanel implements ActionListener {
 							if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, true, false)) {
 								doNotRemove = true;
 							}
-						} else if(type == GlobalConstants.VARIABLE) {
+						} else if(type == GlobalConstants.VARIABLE || type == GlobalConstants.PLACE) {
 							if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, true, true)) {
 								doNotRemove = true;
 							}
@@ -1254,11 +1281,11 @@ public class Schematic extends JPanel implements ActionListener {
 							
 							bioModel.removeByMetaId(cell.getId());
 						}
-						else if(type == GlobalConstants.EVENT) {
+						else if(type == GlobalConstants.EVENT || type == GlobalConstants.TRANSITION) {
 							
 							bioModel.removeById(cell.getId());
 						}
-						else if(type == GlobalConstants.VARIABLE) {
+						else if(type == GlobalConstants.VARIABLE || type == GlobalConstants.PLACE) {
 							bioModel.removeById(cell.getId());
 						}
 						else if(type == GlobalConstants.COMPARTMENT) {
@@ -1289,6 +1316,25 @@ public class Schematic extends JPanel implements ActionListener {
 						}
 						else if(type == GlobalConstants.PROMOTER){
 							bioModel.removePromoter(cell.getId());
+						}
+						else if(type == GlobalConstants.PETRI_NET_EDGE){
+							mxCell source = (mxCell)cell.getSource();
+							mxCell target = (mxCell)cell.getTarget();
+							if (graph.getCellType(source) == GlobalConstants.PLACE) {
+								Event e = bioModel.getSBMLDocument().getModel().getEvent(target.getId());
+								Trigger t = e.getTrigger();
+								t.setMath(SBMLutilities.removePreset(t.getMath(),source.getId()));
+								EventAssignment ea = e.getEventAssignment(source.getId());
+								if (ea!=null) {
+									ea.removeFromParentAndDelete();
+								}
+							} else if (graph.getCellType(target) == GlobalConstants.PLACE) {
+								Event e = bioModel.getSBMLDocument().getModel().getEvent(source.getId());
+								EventAssignment ea = e.getEventAssignment(target.getId());
+								if (ea!=null) {
+									ea.removeFromParentAndDelete();
+								}
+							}
 						}
 						else if(type == GlobalConstants.COMPONENT_CONNECTION){
 							removeComponentConnection(cell);
@@ -1374,8 +1420,7 @@ public class Schematic extends JPanel implements ActionListener {
 		});
 		
 	}
-    
-    
+        
 	//INPUT/OUTPUT AND CONNECTION METHODS
 	
 	/**
@@ -1425,6 +1470,26 @@ public class Schematic extends JPanel implements ActionListener {
 		} else if(graph.getCellType(source)==GlobalConstants.CONSTRAINT ||
 				graph.getCellType(target)==GlobalConstants.CONSTRAINT) {
 			JOptionPane.showMessageDialog(Gui.frame, "A constraint cannot be explicitly connected to other objects.");
+			graph.buildGraph();
+			return;
+		} else if(graph.getCellType(source)==GlobalConstants.PLACE &&
+				!(graph.getCellType(target)==GlobalConstants.TRANSITION)) {
+			JOptionPane.showMessageDialog(Gui.frame, "A place can only be connected to transitions.");
+			graph.buildGraph();
+			return;
+		} else if(graph.getCellType(target)==GlobalConstants.PLACE &&
+				!(graph.getCellType(source)==GlobalConstants.TRANSITION)) {
+			JOptionPane.showMessageDialog(Gui.frame, "A place can only be connected to transitions.");
+			graph.buildGraph();
+			return;
+		} else if(graph.getCellType(source)==GlobalConstants.TRANSITION &&
+				!(graph.getCellType(target)==GlobalConstants.PLACE)) {
+			JOptionPane.showMessageDialog(Gui.frame, "A transition can only be connected to places.");
+			graph.buildGraph();
+			return;
+		} else if(graph.getCellType(target)==GlobalConstants.TRANSITION &&
+				!(graph.getCellType(source)==GlobalConstants.PLACE)) {
+			JOptionPane.showMessageDialog(Gui.frame, "A transition can only be connected to places.");
 			graph.buildGraph();
 			return;
 		}
@@ -1527,6 +1592,46 @@ public class Schematic extends JPanel implements ActionListener {
 			return;
 		} 
 		
+		if (graph.getCellType(source) == GlobalConstants.PLACE) {
+
+			Event e = bioModel.getSBMLDocument().getModel().getEvent(targetID);
+			Trigger trigger = e.getTrigger();
+			trigger.setMath(SBMLutilities.addPreset(trigger.getMath(),sourceID));
+			EventAssignment ea = e.getEventAssignment(sourceID);
+			if (ea == null) {
+				ea = e.createEventAssignment();
+				ea.setVariable(sourceID);
+				ea.setMath(SBMLutilities.myParseFormula("0"));
+			} else {
+				if (SBMLutilities.myFormulaToString(ea.getMath()).equals("1")) {
+					JOptionPane.showMessageDialog(Gui.frame, "Self-loops not currently supported.");
+				}
+			}
+			modelEditor.refresh();
+			modelEditor.setDirty(true);
+			graph.buildGraph();
+			bioModel.makeUndoPoint();
+			return;
+		} 
+		if (graph.getCellType(target) == GlobalConstants.PLACE) {
+
+			Event e = bioModel.getSBMLDocument().getModel().getEvent(sourceID);
+			EventAssignment ea = e.getEventAssignment(targetID);
+			if (ea == null) {
+				ea = e.createEventAssignment();
+				ea.setVariable(targetID);
+				ea.setMath(SBMLutilities.myParseFormula("1"));
+			} else {
+				if (SBMLutilities.myFormulaToString(ea.getMath()).equals("0")) {
+					JOptionPane.showMessageDialog(Gui.frame, "Self-loops not currently supported.");
+				}
+			}
+			modelEditor.refresh();
+			modelEditor.setDirty(true);
+			graph.buildGraph();
+			bioModel.makeUndoPoint();
+			return;
+		} 
 		// make sure the species name is valid
 		// TODO: FIX ME
 		/*
@@ -1874,6 +1979,9 @@ public class Schematic extends JPanel implements ActionListener {
 		else if(cellType == GlobalConstants.EVENT_EDGE){
 			// do nothing
 		}
+		else if(cellType == GlobalConstants.PETRI_NET_EDGE){
+			// do nothing
+		}
 		else if(cellType == GlobalConstants.REACTION_EDGE){
 			
 			mxCell source = (mxCell)cell.getSource();
@@ -1948,7 +2056,7 @@ public class Schematic extends JPanel implements ActionListener {
 				cell.setId(id);
 			}
 		}		
-		else if(cellType == GlobalConstants.VARIABLE){
+		else if(cellType == GlobalConstants.VARIABLE || cellType == GlobalConstants.PLACE){
 			
 			String id = parameters.parametersEditor("OK",(String)cell.getId());
 			
@@ -1995,9 +2103,9 @@ public class Schematic extends JPanel implements ActionListener {
 				cell.setId(id);
 			}
 		}
-		else if(cellType == GlobalConstants.EVENT){
+		else if(cellType == GlobalConstants.EVENT || cellType == GlobalConstants.TRANSITION){
 			
-			String id = events.eventEditor("OK",(String)cell.getId());
+			String id = events.eventEditor("OK",(String)cell.getId(),false);
 			
 			if (!cell.getId().equals(id)) {
 				if (bioModel.getSBMLLayout().getNumLayouts() != 0) {
