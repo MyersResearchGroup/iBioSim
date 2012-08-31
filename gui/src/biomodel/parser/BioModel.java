@@ -142,23 +142,12 @@ public class BioModel {
 		compartments = new HashMap<String, Properties>();
 	}
 	
-	public void createSBMLDocument(String modelId,boolean grid) {
+	public void createSBMLDocument(String modelId,boolean grid,boolean lema) {
 		sbml = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
 		Model m = sbml.createModel();
 		metaIDIndex = SBMLutilities.setDefaultMetaID(sbml, m, metaIDIndex); 
 		sbml.setModel(m);
 		m.setId(modelId);
-		Compartment c = m.createCompartment();
-		if (grid) {
-			c.setId("Grid");
-			loadDefaultParameters();
-			//createDiffusionDefaultParameters();
-		} else {
-			c.setId("Cell");
-		}
-		c.setSize(1);
-		c.setSpatialDimensions(3);
-		c.setConstant(true);
 		//SBMLutilities.addRandomFunctions(sbml);
 		//loadDefaultParameters();
 		sbmlFile = modelId + ".xml";
@@ -170,9 +159,22 @@ public class BioModel {
 		((CompSBMLDocumentPlugin)sbml.getPlugin("comp")).setRequired(true);
 		sbmlComp = (CompSBMLDocumentPlugin)sbml.getPlugin("comp");
 		sbmlCompModel = (CompModelPlugin)sbml.getModel().getPlugin("comp");
-		Port port = sbmlCompModel.createPort();
-		port.setId(GlobalConstants.COMPARTMENT+"__"+c.getId());
-		port.setIdRef(c.getId());
+		if (!lema) {
+			Compartment c = m.createCompartment();
+			if (grid) {
+				c.setId("Grid");
+				loadDefaultParameters();
+				//createDiffusionDefaultParameters();
+			} else {
+				c.setId("Cell");
+			}
+			c.setSize(1);
+			c.setSpatialDimensions(3);
+			c.setConstant(true);
+			Port port = sbmlCompModel.createPort();
+			port.setId(GlobalConstants.COMPARTMENT+"__"+c.getId());
+			port.setIdRef(c.getId());
+		}
 	}
 
 	private void loadDefaultParameters() {
@@ -5575,7 +5577,7 @@ public class BioModel {
 				sbmlComp = (CompSBMLDocumentPlugin)sbml.getPlugin("comp");
 				sbmlCompModel = (CompModelPlugin)sbml.getModel().getPlugin("comp");
 			} else {
-				createSBMLDocument(sbmlFile.replace(".xml",""),false);
+				createSBMLDocument(sbmlFile.replace(".xml",""),false,false);
 			}
 		} 
 		//loadDefaultParameters();
