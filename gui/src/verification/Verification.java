@@ -343,7 +343,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		none.setSelected(true);
 		if (lema) {
 			dbm.setSelected(true);
-		} else {
+		} else if (atacs) {
 			untimed.setSelected(true);
 		}
 		verify.setSelected(true);
@@ -384,20 +384,20 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		abstractionPanel.add(simplify);
 		abstractionPanel.add(abstractLhpn);
 		timingRadioPanel.add(timingMethod);
-		if (lema) {
-			timingRadioPanel.add(untimedStateSearch);
-			timingRadioPanel.add(splitZone);
-			timingRadioPanel.add(bdd);
-			timingRadioPanel.add(dbm);
-			timingRadioPanel.add(smt);
-			timingRadioPanel.add(dbm2);
-		} else {
+		if (atacs) {
 			timingRadioPanel.add(untimed);
 			timingRadioPanel.add(geometric);
 			timingRadioPanel.add(posets);
 			timingRadioPanel.add(bag);
 			timingRadioPanel.add(bap);
 			timingRadioPanel.add(baptdc);
+		} else {
+			timingRadioPanel.add(untimedStateSearch);
+			timingRadioPanel.add(splitZone);
+			timingRadioPanel.add(bdd);
+			timingRadioPanel.add(dbm);
+			timingRadioPanel.add(smt);
+			timingRadioPanel.add(dbm2);
 		}
 		timingRadioPanel.add(lhpn);
 		timingRadioPanel.add(view);

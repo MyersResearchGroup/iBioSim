@@ -162,6 +162,7 @@ public class Schematic extends JPanel implements ActionListener {
 	
 	private boolean movieMode = false;
 	
+	private boolean lema = false;
 	
 	//CLASS METHODS
 	
@@ -171,7 +172,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 */
 	public Schematic(BioModel gcm, Gui biosim, ModelEditor gcm2sbml, boolean editable, 
 			MovieContainer movieContainer2, Compartments compartments, Reactions reactions, Rules rules,
-			Constraints constraints, Events events, Parameters parameters) {
+			Constraints constraints, Events events, Parameters parameters, boolean lema) {
 		
 		super(new BorderLayout());
 		
@@ -190,6 +191,7 @@ public class Schematic extends JPanel implements ActionListener {
 		this.parameters = parameters;
 		this.events = events;
 		this.grid = gcm.getGrid();
+		this.lema = lema;
 		//this.compartmentList = compartmentList;
 		this.tabbedPane = biosim.getTab();
 		
@@ -295,9 +297,12 @@ public class Schematic extends JPanel implements ActionListener {
 		}
 		//if there's no grid, draw the usual toolbar
 		else {
-
-			toolbar = buildToolBar();
-
+			if (lema) {
+				toolbar = buildLEMAToolBar();
+			} else {
+				toolbar = buildToolBar();
+			}
+			
 			//if we're in a non-analysis schematic
 			if(this.editable)
 				this.add(toolbar, BorderLayout.NORTH);
@@ -402,42 +407,7 @@ public class Schematic extends JPanel implements ActionListener {
 		toolBar.add(reactionButton);
 		modifierButton = Utils.makeRadioToolButton("modifier.png", "", "Modifier", this, influenceButtonGroup);
 		toolBar.add(modifierButton);
-		//bioInhibitionButton = Utils.makeRadioToolButton("bio_inhibition.png", "", "Create Biological Repression Influences", this, influenceButtonGroup);
-		//toolBar.add(bioInhibitionButton);
 
-		/*
-		toolBar.addSeparator();
-		compartmentList.setSelectedItem(bioModel.getDefaultCompartment());
-		compartmentList.addActionListener(this);
-		compartmentList.setToolTipText("Default Compartment");
-		compartmentList.setMaximumSize(new Dimension(200, (int)compartmentList.getPreferredSize().getHeight()));
-		compartmentList.addMouseListener(new MouseAdapter(){
-			
-			//updates whenever the mouse clicks (namely on the drop-down arrow)
-			public void mouseClicked(MouseEvent event) {
-				
-				compartmentList.removeAllItems();
-				
-				ListOf listOfCompartments = bioModel.getSBMLDocument().getModel().getListOfCompartments();
-				String[] add = new String[(int) bioModel.getSBMLDocument().getModel().getNumCompartments()];
-				
-				for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumCompartments(); i++) {
-					add[i] = ((Compartment) listOfCompartments.get(i)).getId();
-				}
-				try {
-					add[0].getBytes();
-				}
-				catch (Exception e) {
-					add = new String[1];
-					add[0] = "default";
-				}
-				
-				for (int i = 0; i < add.length; ++i)
-					compartmentList.addItem(add[i]);
-			}			
-		});
-		toolBar.add(compartmentList);
-		*/
 		toolBar.addSeparator();
 		toolBar.add(Utils.makeToolButton("choose_layout.png", "showLayouts", "Apply Layout", this));
 		
@@ -469,6 +439,69 @@ public class Schematic extends JPanel implements ActionListener {
 		toolBar.add(sbolDescriptorsButton);
 //		if (bioModel.getElementSBOLCount() == 0 && bioModel.getModelSBOLAnnotationFlag())
 //			sbolDescriptorsButton.setEnabled(false);
+
+		toolBar.setFloatable(false);
+		
+		return toolBar;
+	}
+	
+	/**
+	 * create the toolbar.
+	 * @return
+	 */
+	private JToolBar buildLEMAToolBar(){
+
+		JToolBar toolBar = new JToolBar();
+		
+		ButtonGroup modeButtonGroup = new ButtonGroup();
+		selectButton =Utils.makeRadioToolButton("select_mode.png", "", "Select", this, modeButtonGroup); 
+		toolBar.add(selectButton);
+		selectButton.setSelected(true);
+		addComponentButton = Utils.makeRadioToolButton("add_component.png", "", "Add Components", this, modeButtonGroup);
+		toolBar.add(addComponentButton);
+		addVariableButton = Utils.makeRadioToolButton("variable_mode.png", "", "Add Variables", this, modeButtonGroup);
+		toolBar.add(addVariableButton);
+		addPlaceButton = Utils.makeRadioToolButton("add_place.png", "", "Add Places", this, modeButtonGroup);
+		toolBar.add(addPlaceButton);
+		addTransitionButton = Utils.makeRadioToolButton("add_transition.png", "", "Add Transitions", this, modeButtonGroup);
+		toolBar.add(addTransitionButton);
+		addRuleButton = Utils.makeRadioToolButton("rule_mode.png", "", "Add Rules", this, modeButtonGroup);
+		toolBar.add(addRuleButton);
+		addConstraintButton = Utils.makeRadioToolButton("constraint_mode.png", "", "Add Constraints", this, modeButtonGroup);
+		toolBar.add(addConstraintButton);
+		//addEventButton = Utils.makeRadioToolButton("event_mode.png", "", "Add Events", this, modeButtonGroup);
+		//toolBar.add(addEventButton);
+
+		toolBar.addSeparator();
+		ButtonGroup influenceButtonGroup = new ButtonGroup();
+		
+		activationButton = Utils.makeRadioToolButton("activation.png", "", "Activation", this, influenceButtonGroup);
+		activationButton.setSelected(true);
+		//toolBar.add(activationButton);
+
+		toolBar.addSeparator();
+		toolBar.add(Utils.makeToolButton("choose_layout.png", "showLayouts", "Apply Layout", this));
+		
+		toolBar.addSeparator();
+		
+		zoomButton = new JToggleButton();
+		zoomButton.setText("Zoom");
+		zoomButton.setToolTipText("Use the mouse wheel to zoom");
+		
+		panButton = new JToggleButton();
+		panButton.setText("Pan");
+		panButton.setToolTipText("Use mouse dragging to pan");
+		
+		toolBar.add(zoomButton);
+		toolBar.add(Utils.makeToolButton("", "unZoom", "Un-Zoom", this));
+		toolBar.add(panButton);
+		//toolBar.add(Utils.makeToolButton("", "saveSBOL", "Save SBOL", this));
+		//toolBar.add(Utils.makeToolButton("", "exportSBOL", "Export SBOL", this));
+		
+		//toolBar.addSeparator();
+
+		//ModelPanel modelPanel = new ModelPanel(bioModel, modelEditor);
+		//toolBar.add(modelPanel);
 
 		toolBar.setFloatable(false);
 		

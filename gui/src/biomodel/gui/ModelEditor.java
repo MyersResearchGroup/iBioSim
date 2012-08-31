@@ -137,12 +137,14 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	
 	private Constraints consPanel;
 	
+	private boolean lema;
+	
 	public ModelEditor(String path) throws Exception {
-		this(path, null, null, null, false, null, null, null, false, false);
+		this(path, null, null, null, false, null, null, null, false, false, false);
 	}
 
 	public ModelEditor(String path, String filename, Gui biosim, Log log, boolean paramsOnly,
-			String simName, String paramFile, AnalysisView reb2sac, boolean textBased, boolean grid) throws Exception {
+			String simName, String paramFile, AnalysisView reb2sac, boolean textBased, boolean grid, boolean lema) throws Exception {
 		super();
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
@@ -158,6 +160,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		this.simName = simName;
 		this.reb2sac = reb2sac;
 		this.textBased = textBased;
+		this.lema = lema;
 		elementsPanel = null;
 		getParams = new ArrayList<String>();
 		if (paramFile != null) {
@@ -1496,7 +1499,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		} 
 		else {
 			this.schematic = new Schematic(biomodel, biosim, this, true, null,compartmentPanel,reactionPanel,rulesPanel,
-					consPanel,eventPanel,parametersPanel);
+					consPanel,eventPanel,parametersPanel,lema);
 			tab.addTab("Schematic", schematic);
 			if (biomodel.getGrid().isEnabled()) {
 				tab.addTab("Grid Species", speciesPanel);
