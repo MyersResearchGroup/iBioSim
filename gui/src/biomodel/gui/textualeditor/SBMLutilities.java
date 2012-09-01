@@ -449,8 +449,13 @@ public class SBMLutilities {
 	public static String myFormulaToString(ASTNode mathFormula) {
 		if (mathFormula==null) return "";
 		setTimeToT(mathFormula);
-		//String formula = libsbml.formulaToString(mathFormula);
-		String formula = myFormulaToStringInfix(mathFormula);
+		String formula;
+		Preferences biosimrc = Preferences.userRoot();
+		if (biosimrc.get("biosim.general.infix", "").equals("infix")) {
+			formula = myFormulaToStringInfix(mathFormula);
+		} else {
+			formula = libsbml.formulaToString(mathFormula);
+		}
 		formula = formula.replaceAll("arccot", "acot");
 		formula = formula.replaceAll("arccoth", "acoth");
 		formula = formula.replaceAll("arccsc", "acsc");
