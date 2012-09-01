@@ -2375,6 +2375,9 @@ public class SBMLutilities {
 			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants);
 			return "(" + leftStr + "+" + rightStr + ")";
 		} else if (math.getType() == libsbml.AST_MINUS) {
+			if (math.getNumChildren()==1) {
+				return "-" + SBMLMathToLPNString(math.getChild(0),constants);
+			} 
 			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants);
 			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants);
 			return "(" + leftStr + "-" + rightStr + ")";
