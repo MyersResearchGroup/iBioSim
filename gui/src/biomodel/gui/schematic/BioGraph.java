@@ -2229,11 +2229,22 @@ public class BioGraph extends mxGraph {
 		}
 
 		// now draw the edges that connect variables to the component
-		HashMap<String,String> variables = bioModel.getVariableReplacements(id);
+		HashMap<String,String> variables = bioModel.getVariableInputs(id);
 		for (String propName : variables.keySet()) {
 			String topSpecies = variables.get(propName);
 			Object createdEdge = this.insertEdge(this.getDefaultParent(), "", "",
 					this.getVariableCell(topSpecies), insertedVertex);
+			String key = id + " Variable " + topSpecies;
+			componentsConnectionsToMxCellMap.put(key, (mxCell)createdEdge);
+			this.updateComponentConnectionVisuals((mxCell)createdEdge, propName);
+		}
+
+		// now draw the edges that connect variables to the component
+		variables = bioModel.getVariableOutputs(id);
+		for (String propName : variables.keySet()) {
+			String topSpecies = variables.get(propName);
+			Object createdEdge = this.insertEdge(this.getDefaultParent(), "", "", insertedVertex,
+					this.getVariableCell(topSpecies));
 			String key = id + " Variable " + topSpecies;
 			componentsConnectionsToMxCellMap.put(key, (mxCell)createdEdge);
 			this.updateComponentConnectionVisuals((mxCell)createdEdge, propName);

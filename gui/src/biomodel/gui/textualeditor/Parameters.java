@@ -61,9 +61,9 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 
 	private JComboBox placeMarking;
 	
-	private JCheckBox onPort;
+	private JComboBox portDir;
 
-	private BioModel gcm;
+	private BioModel bioModel;
 
 	private MutableBoolean dirty;
 
@@ -84,7 +84,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	public Parameters(Gui biosim, BioModel gcm, MutableBoolean dirty, Boolean paramsOnly, ArrayList<String> getParams,
 			String file, ArrayList<String> parameterChanges, boolean constantsOnly) {
 		super(new BorderLayout());
-		this.gcm = gcm;
+		this.bioModel = gcm;
 		this.dirty = dirty;
 		this.paramsOnly = paramsOnly;
 		this.file = file;
@@ -193,7 +193,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		if (!parameters.isSelectionEmpty()) {
 			selectedParameter = ((String) parameters.getSelectedValue()).split(" ")[0];
 		}
-		this.gcm = gcm;
+		this.bioModel = gcm;
 		Model model = gcm.getSBMLDocument().getModel();
 		ListOf listOfParameters = model.getListOfParameters();
 		
@@ -247,7 +247,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		JLabel valueLabel = new JLabel("Initial Value:");
 		JLabel unitLabel = new JLabel("Units:");
 		JLabel constLabel = new JLabel("Constant:");
-		JLabel onPortLabel = new JLabel("Is Mapped to a Port:");
+		JLabel onPortLabel = new JLabel("Port Type:");
 		paramID = new JTextField();
 		paramName = new JTextField();
 		paramValue = new JTextField();
@@ -256,8 +256,12 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		placeMarking.addItem("true");
 		paramUnits = new JComboBox();
 		paramUnits.addItem("( none )");
-		onPort = new JCheckBox();
-		Model model = gcm.getSBMLDocument().getModel();
+		portDir = new JComboBox();
+		portDir.addItem(GlobalConstants.INPUT);
+		portDir.addItem(GlobalConstants.INTERNAL);
+		portDir.addItem(GlobalConstants.OUTPUT);
+		portDir.setSelectedItem(GlobalConstants.INTERNAL);
+		Model model = bioModel.getSBMLDocument().getModel();
 		ListOf listOfUnits = model.getListOfUnitDefinitions();
 		String[] units = new String[(int) model.getNumUnitDefinitions()];
 		for (int i = 0; i < model.getNumUnitDefinitions(); i++) {
@@ -265,7 +269,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			units[i] = unit.getId();
 		}
 		for (int i = 0; i < units.length; i++) {
-			if (gcm.getSBMLDocument().getLevel() > 2
+			if (bioModel.getSBMLDocument().getLevel() > 2
 					|| (!units[i].equals("substance") && !units[i].equals("volume") && !units[i].equals("area") && !units[i].equals("length") && !units[i]
 							.equals("time"))) {
 				paramUnits.addItem(units[i]);
@@ -278,7 +282,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				"henry", "hertz", "item", "joule", "katal", "kelvin", "kilogram", "litre", "lumen", "lux", "metre", "mole", "newton", "ohm",
 				"pascal", "radian", "second", "siemens", "sievert", "steradian", "tesla", "volt", "watt", "weber" };
 		String[] unitIds;
-		if (gcm.getSBMLDocument().getLevel() < 3) {
+		if (bioModel.getSBMLDocument().getLevel() < 3) {
 			unitIds = unitIdsL2V4;
 		}
 		else {
@@ -338,14 +342,14 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			placeMarking.setEnabled(false);
 			paramUnits.setEnabled(false);
 			paramConst.setEnabled(false);
-			onPort.setEnabled(false);
+			portDir.setEnabled(false);
 			sweep.setEnabled(false);
 		}
 		String selectedID = "";
 		boolean isPlace = false;
 		if (option.equals("OK")) {
 			try {
-				Parameter paramet = gcm.getSBMLDocument().getModel().getParameter(selected);
+				Parameter paramet = bioModel.getSBMLDocument().getModel().getParameter(selected);
 				if (SBMLutilities.isPlace(paramet)) {
 					isPlace = true;
 					valueLabel.setText("Initial marking");
@@ -374,7 +378,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						paramValue.setText("" + paramet.getValue());
 					}
 				} else {
-					InitialAssignment init = gcm.getSBMLDocument().getModel().getInitialAssignment(selectedID);
+					InitialAssignment init = bioModel.getSBMLDocument().getModel().getInitialAssignment(selectedID);
 					if (init!=null) {
 						paramValue.setText(SBMLutilities.myFormulaToString(init.getMath()));
 					} else if (paramet.isSetValue()) {
@@ -384,10 +388,15 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				if (paramet.isSetUnits()) {
 					paramUnits.setSelectedItem(paramet.getUnits());
 				}
-				if (gcm.getPortByIdRef(paramet.getId())!=null) {
-					onPort.setSelected(true);
+				if (bioModel.getPortByIdRef(paramet.getId())!=null) {
+					Port port = bioModel.getPortByIdRef(paramet.getId());
+					if (port.getId().startsWith(GlobalConstants.INPUT+"__")) {
+						portDir.setSelectedItem(GlobalConstants.INPUT); 
+					} else {
+						portDir.setSelectedItem(GlobalConstants.OUTPUT); 
+					}
 				} else {
-					onPort.setSelected(false);
+					portDir.setSelectedItem(GlobalConstants.INTERNAL);
 				}
 				if (paramsOnly && parameters.getSelectedValue()!=null) {
 					if (((String) parameters.getSelectedValue()).contains("Modified")
@@ -482,7 +491,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			parametersPanel.add(paramConst);
 		}
 		parametersPanel.add(onPortLabel);
-		parametersPanel.add(onPort);
+		parametersPanel.add(portDir);
 		Object[] options = { option, "Cancel" };
 		String editorTitle = "Parameter Editor";
 		if (isPlace) {
@@ -492,7 +501,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(gcm.getSBMLDocument(), paramID.getText().trim(), selectedID, false, false);
+			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), paramID.getText().trim(), selectedID, false, false);
 			if (!error) {
 				if (isPlace) {
 					if (placeMarking.getSelectedIndex()==0) {
@@ -519,12 +528,12 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 					}
 				}
 				else {
-					InitialAssignments.removeInitialAssignment(gcm, selectedID);
+					InitialAssignments.removeInitialAssignment(bioModel, selectedID);
 					try {
 						val = Double.parseDouble(paramValue.getText().trim());
 					}
 					catch (Exception e1) {
-						error = InitialAssignments.addInitialAssignment(biosim, gcm, paramID.getText().trim(), 
+						error = InitialAssignments.addInitialAssignment(biosim, bioModel, paramID.getText().trim(), 
 								paramValue.getText().trim());
 						val = 0.0;
 						/*
@@ -573,7 +582,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						 */
 					}
 					if (!error && option.equals("OK") && paramConst.getSelectedItem().equals("true")) {
-						error = SBMLutilities.checkConstant(gcm.getSBMLDocument(), "Parameters", selected);
+						error = SBMLutilities.checkConstant(bioModel.getSBMLDocument(), "Parameters", selected);
 					}
 					if (!error && option.equals("OK") && paramConst.getSelectedItem().equals("false")) {
 						error = checkNotConstant(selected);
@@ -586,7 +595,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 								params[i] = parameters.getModel().getElementAt(i).toString();
 								if (params[i].equals(selected)) index = i;
 							}
-							Parameter paramet = gcm.getSBMLDocument().getModel().getParameter(selected);
+							Parameter paramet = bioModel.getSBMLDocument().getModel().getParameter(selected);
 							paramet.setId(paramID.getText().trim());
 							paramet.setName(paramName.getText().trim());
 							if (paramConst.getSelectedItem().equals("true")) {
@@ -595,18 +604,18 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							else {
 								paramet.setConstant(false);
 							}
-							Port port = gcm.getPortByIdRef(selected);
+							Port port = bioModel.getPortByIdRef(selected);
 							if (port!=null) {
-								if (onPort.isSelected()) {
-									port.setId(GlobalConstants.PARAMETER+"__"+paramet.getId());
-									port.setIdRef(paramet.getId());
-								} else {
+								if (portDir.getSelectedItem().equals(GlobalConstants.INTERNAL)) {
 									port.removeFromParentAndDelete();
+								} else {
+									port.setId(portDir.getSelectedItem()+"__"+paramet.getId());
+									port.setIdRef(paramet.getId());
 								}
 							} else {
-								if (onPort.isSelected()) {
-									port = gcm.getSBMLCompModel().createPort();
-									port.setId(GlobalConstants.PARAMETER+"__"+paramet.getId());
+								if (!portDir.getSelectedItem().equals(GlobalConstants.INTERNAL)) {
+									port = bioModel.getSBMLCompModel().createPort();
+									port.setId(portDir.getSelectedItem()+"__"+paramet.getId());
 									port.setIdRef(paramet.getId());
 								}
 							}
@@ -640,7 +649,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 									Utility.sort(params);
 									parameters.setListData(params);
 									parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-									if (gcm.getSBMLDocument().getModel().getNumParameters() == 1) {
+									if (bioModel.getSBMLDocument().getModel().getNumParameters() == 1) {
 										parameters.setSelectedIndex(0);
 									}
 									else {
@@ -648,8 +657,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 									}
 								}
 								if (paramet.getConstant()) {
-									if (gcm.getSBMLLayout().getLayout("iBioSim") != null) {
-										Layout layout = gcm.getSBMLLayout().getLayout("iBioSim"); 
+									if (bioModel.getSBMLLayout().getLayout("iBioSim") != null) {
+										Layout layout = bioModel.getSBMLLayout().getLayout("iBioSim"); 
 										if (layout.getAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+selected)!=null) {
 											layout.removeAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+selected);
 										}
@@ -681,7 +690,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 								}
 							}
 							else {
-								SBMLutilities.updateVarId(gcm.getSBMLDocument(), false, selected, paramID.getText().trim());
+								SBMLutilities.updateVarId(bioModel.getSBMLDocument(), false, selected, paramID.getText().trim());
 							}
 							if (paramet.getId().equals(GlobalConstants.STOICHIOMETRY_STRING)) {
 								for (long i=0; i<model.getNumReactions(); i++) {
@@ -715,7 +724,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 								params[i] = parameters.getModel().getElementAt(i).toString();
 								if (params[i].equals(selected)) index = i;
 							}
-							Parameter paramet = gcm.getSBMLDocument().getModel().createParameter();
+							Parameter paramet = bioModel.getSBMLDocument().getModel().createParameter();
 							paramet.setId(paramID.getText().trim());
 							paramet.setName(paramName.getText().trim());
 							if (paramConst.getSelectedItem().equals("true")) {
@@ -728,9 +737,9 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							if (!unit.equals("( none )")) {
 								paramet.setUnits(unit);
 							}
-							if (onPort.isSelected()) {
-								Port port = gcm.getSBMLCompModel().createPort();
-								port.setId(GlobalConstants.PARAMETER+"__"+paramet.getId());
+							if (!portDir.getSelectedItem().equals(GlobalConstants.INTERNAL)) {
+								Port port = bioModel.getSBMLCompModel().createPort();
+								port.setId(portDir.getSelectedItem()+"__"+paramet.getId());
 								port.setIdRef(paramet.getId());
 							}
 							if (!constantsOnly || paramet.getConstant()) {
@@ -747,7 +756,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 								Utility.sort(params);
 								parameters.setListData(params);
 								parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-								if (gcm.getSBMLDocument().getModel().getNumParameters() == 1) {
+								if (bioModel.getSBMLDocument().getModel().getNumParameters() == 1) {
 									parameters.setSelectedIndex(0);
 								}
 								else {
@@ -756,7 +765,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							}
 						}
 						dirty.setValue(true);
-						gcm.makeUndoPoint();
+						bioModel.makeUndoPoint();
 					}
 				}
 			}
@@ -775,8 +784,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	 * Parameter that is used in a conversion factor must be constant.
 	 */
 	private boolean checkNotConstant(String val) {
-		for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumSpecies(); i++) {
-			Species species = gcm.getSBMLDocument().getModel().getSpecies(i);
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumSpecies(); i++) {
+			Species species = bioModel.getSBMLDocument().getModel().getSpecies(i);
 			if (species.getConversionFactor().equals(val)) {
 				JOptionPane.showMessageDialog(Gui.frame,
 						"Parameter must be constant because it is used as a conversion factor for " + species.getId() + ".",
@@ -791,23 +800,23 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	 * Remove a global parameter
 	 */
 	private boolean removeParameter(String selected) {
-		if (!SBMLutilities.variableInUse(gcm.getSBMLDocument(), selected, false, true, true)) {
-			Parameter tempParameter = gcm.getSBMLDocument().getModel().getParameter(selected);
-			ListOf p = gcm.getSBMLDocument().getModel().getListOfParameters();
-			for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumParameters(); i++) {
+		if (!SBMLutilities.variableInUse(bioModel.getSBMLDocument(), selected, false, true, true)) {
+			Parameter tempParameter = bioModel.getSBMLDocument().getModel().getParameter(selected);
+			ListOf p = bioModel.getSBMLDocument().getModel().getListOfParameters();
+			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumParameters(); i++) {
 				if (((Parameter) p.get(i)).getId().equals(tempParameter.getId())) {
 					p.remove(i);
 				}
 			}
-			for (long i = 0; i < gcm.getSBMLCompModel().getNumPorts(); i++) {
-				Port port = gcm.getSBMLCompModel().getPort(i);
+			for (long i = 0; i < bioModel.getSBMLCompModel().getNumPorts(); i++) {
+				Port port = bioModel.getSBMLCompModel().getPort(i);
 				if (port.isSetIdRef() && port.getIdRef().equals(tempParameter.getId())) {
-					gcm.getSBMLCompModel().removePort(i);
+					bioModel.getSBMLCompModel().removePort(i);
 					break;
 				}
 			}
-			if (gcm.getSBMLLayout().getLayout("iBioSim") != null) {
-				Layout layout = gcm.getSBMLLayout().getLayout("iBioSim"); 
+			if (bioModel.getSBMLLayout().getLayout("iBioSim") != null) {
+				Layout layout = bioModel.getSBMLLayout().getLayout("iBioSim"); 
 				if (layout.getAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+selected)!=null) {
 					layout.removeAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+selected);
 				}
@@ -816,7 +825,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				}
 			}
 			dirty.setValue(true);
-			gcm.makeUndoPoint();
+			bioModel.makeUndoPoint();
 			return true;
 		}
 		return false;
@@ -843,7 +852,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			}
 			String selected = ((String) parameters.getSelectedValue()).split(" ")[0];
 			parametersEditor("OK",selected);
-			initialsPanel.refreshInitialAssignmentPanel(gcm);
+			initialsPanel.refreshInitialAssignmentPanel(bioModel);
 			rulesPanel.refreshRulesPanel();
 		}
 		// if the remove parameters button is clicked
@@ -874,7 +883,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				}
 				String selected = ((String) parameters.getSelectedValue()).split(" ")[0];
 				parametersEditor("OK",selected);
-				initialsPanel.refreshInitialAssignmentPanel(gcm);
+				initialsPanel.refreshInitialAssignmentPanel(bioModel);
 				rulesPanel.refreshRulesPanel();
 			}
 		}

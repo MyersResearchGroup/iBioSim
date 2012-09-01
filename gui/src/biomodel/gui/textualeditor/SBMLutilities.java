@@ -2,6 +2,7 @@ package biomodel.gui.textualeditor;
 
 import java.awt.Dimension;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.prefs.Preferences;
@@ -141,6 +142,15 @@ public class SBMLutilities {
 						validVars.add(product.getId());
 					}
 				}
+			}
+			String[] kindsL3V1 = { "ampere", "avogadro", "becquerel", "candela", "celsius", "coulomb", "dimensionless", "farad", "gram", "gray", "henry",
+					"hertz", "item", "joule", "katal", "kelvin", "kilogram", "litre", "lumen", "lux", "metre", "mole", "newton", "ohm", "pascal",
+					"radian", "second", "siemens", "sievert", "steradian", "tesla", "volt", "watt", "weber" };
+			for (int i = 0; i < kindsL3V1.length; i++) {
+				validVars.add(kindsL3V1[i]);
+			}
+			for (long i = 0; i < model.getNumUnitDefinitions(); i++) {
+				validVars.add(model.getUnitDefinition(i).getId());
 			}
 		}
 		String[] splitLaw = formula.split(" |\\(|\\)|\\,|\\*|\\+|\\/|\\-|>|=|<|&|\\||!");
@@ -439,7 +449,8 @@ public class SBMLutilities {
 	public static String myFormulaToString(ASTNode mathFormula) {
 		if (mathFormula==null) return "";
 		setTimeToT(mathFormula);
-		String formula = libsbml.formulaToString(mathFormula);
+		//String formula = libsbml.formulaToString(mathFormula);
+		String formula = myFormulaToStringInfix(mathFormula);
 		formula = formula.replaceAll("arccot", "acot");
 		formula = formula.replaceAll("arccoth", "acoth");
 		formula = formula.replaceAll("arccsc", "acsc");
@@ -2083,7 +2094,253 @@ public class SBMLutilities {
 		return math.deepCopy();
 	}
 	
-	public static String SBMLMathToLPNString(ASTNode math) {
+	
+	public static String myFormulaToStringInfix(ASTNode math) {
+		if (math.getType() == libsbml.AST_CONSTANT_E) {
+			return "exponentiale";
+		} else if (math.getType() == libsbml.AST_CONSTANT_FALSE) {
+			return "false";
+		} else if (math.getType() == libsbml.AST_CONSTANT_PI) {
+			return "pi";
+		} else if (math.getType() == libsbml.AST_CONSTANT_TRUE) {
+			return "true";
+		} else if (math.getType() == libsbml.AST_DIVIDE) {
+			String leftStr = myFormulaToStringInfix(math.getLeftChild());
+			String rightStr = myFormulaToStringInfix(math.getRightChild());
+			return "(" + leftStr + " / " + rightStr + ")";
+		} else if (math.getType() == libsbml.AST_FUNCTION) {
+			String result = math.getName() + "(";
+			for (long i = 0; i < math.getNumChildren(); i++) {
+				String child = myFormulaToStringInfix(math.getChild(i));
+				result += child;
+				if (i+1 < math.getNumChildren()) {
+					result += ",";
+				}
+			}
+			result += ")";
+			return result;
+		} else if (math.getType() == libsbml.AST_FUNCTION_ABS) {
+			return "abs(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+		} else if (math.getType() == libsbml.AST_FUNCTION_ARCCOS) {
+			return "acos(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+		} else if (math.getType() == libsbml.AST_FUNCTION_ARCCOSH) {
+			return "acosh(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+		} else if (math.getType() == libsbml.AST_FUNCTION_ARCCOT) {
+			return "acot(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+		} else if (math.getType() == libsbml.AST_FUNCTION_ARCCOTH) {
+			return "acoth(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+		} else if (math.getType() == libsbml.AST_FUNCTION_ARCCSC) {
+			return "acsc(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+		} else if (math.getType() == libsbml.AST_FUNCTION_ARCCSCH) {
+			return "acsch(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+		} else if (math.getType() == libsbml.AST_FUNCTION_ARCSEC) {
+			return "asec(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+		} else if (math.getType() == libsbml.AST_FUNCTION_ARCSECH) {
+			return "asech(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+		} else if (math.getType() == libsbml.AST_FUNCTION_ARCSIN) {
+			return "asin(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+		} else if (math.getType() == libsbml.AST_FUNCTION_ARCSINH) {
+			return "asinh(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+		} else if (math.getType() == libsbml.AST_FUNCTION_ARCTAN) {
+			return "atan(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+		} else if (math.getType() == libsbml.AST_FUNCTION_ARCTANH) {
+			return "atanh(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+		} else if (math.getType() == libsbml.AST_FUNCTION_CEILING) {
+			return "ceil(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+		} else if (math.getType() == libsbml.AST_FUNCTION_COS) {
+			return "cos(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+		} else if (math.getType() == libsbml.AST_FUNCTION_COSH) {
+			return "cosh(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+		} else if (math.getType() == libsbml.AST_FUNCTION_COT) {
+			return "cot(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+		} else if (math.getType() == libsbml.AST_FUNCTION_COTH) {
+			return "coth(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+		} else if (math.getType() == libsbml.AST_FUNCTION_CSC) {
+			return "csc(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+		} else if (math.getType() == libsbml.AST_FUNCTION_CSCH) {
+			return "csch(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+		} else if (math.getType() == libsbml.AST_FUNCTION_DELAY) {
+			String leftStr = myFormulaToStringInfix(math.getLeftChild());
+			String rightStr = myFormulaToStringInfix(math.getRightChild());
+			return "delay(" + leftStr + " , " + rightStr + ")";
+		} else if (math.getType() == libsbml.AST_FUNCTION_EXP) {
+			return "exp(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+		} else if (math.getType() == libsbml.AST_FUNCTION_FACTORIAL) {
+			return "factorial(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+		} else if (math.getType() == libsbml.AST_FUNCTION_FLOOR) {
+			return "floor(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+		} else if (math.getType() == libsbml.AST_FUNCTION_LN) {
+			return "ln(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+		} else if (math.getType() == libsbml.AST_FUNCTION_LOG) {
+			String result = "log(";
+			for (long i = 0; i < math.getNumChildren(); i++) {
+				String child = myFormulaToStringInfix(math.getChild(i));
+				result += child;
+				if (i+1 < math.getNumChildren()) {
+					result += ",";
+				}
+			}
+			result += ")";
+			return result;
+		} else if (math.getType() == libsbml.AST_FUNCTION_PIECEWISE) {
+			String result = "piecewise(";
+			for (long i = 0; i < math.getNumChildren(); i++) {
+				String child = myFormulaToStringInfix(math.getChild(i));
+				result += child;
+				if (i+1 < math.getNumChildren()) {
+					result += ",";
+				}
+			}
+			result += ")";
+			return result;
+		} else if (math.getType() == libsbml.AST_FUNCTION_POWER) {
+			String leftStr = myFormulaToStringInfix(math.getLeftChild());
+			String rightStr = myFormulaToStringInfix(math.getRightChild());
+			return "pow(" + leftStr + " , " + rightStr + ")";
+		} else if (math.getType() == libsbml.AST_FUNCTION_ROOT) {
+			String leftStr = myFormulaToStringInfix(math.getLeftChild());
+			String rightStr = myFormulaToStringInfix(math.getRightChild());
+			return "root(" + leftStr + " , " + rightStr + ")";
+		} else if (math.getType() == libsbml.AST_FUNCTION_SEC) {
+			return "sec(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+		} else if (math.getType() == libsbml.AST_FUNCTION_SECH) {
+			return "sech(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+		} else if (math.getType() == libsbml.AST_FUNCTION_SIN) {
+			return "sin(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+		} else if (math.getType() == libsbml.AST_FUNCTION_SINH) {
+			return "sinh(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+		} else if (math.getType() == libsbml.AST_FUNCTION_TAN) {
+			return "tan(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+		} else if (math.getType() == libsbml.AST_FUNCTION_TANH) {
+			return "tanh(" + myFormulaToStringInfix(math.getChild(0)) + ")";
+		} else if (math.getType() == libsbml.AST_INTEGER) {
+			if (math.hasUnits()) {
+				return "" + math.getInteger() + " " + math.getUnits();
+			} else {
+				return "" + math.getInteger();
+			}
+		} else if (math.getType() == libsbml.AST_LOGICAL_AND) {
+			if (math.getNumChildren()==0) return "";
+			String result = "(";
+			for (long i = 0; i < math.getNumChildren(); i++) {
+				String child = myFormulaToStringInfix(math.getChild(i));
+				result += child;
+				if (i+1 < math.getNumChildren()) {
+					result += " && ";
+				}
+			}
+			result += ")";
+			return result;
+		} else if (math.getType() == libsbml.AST_LOGICAL_NOT) {
+			if (math.getNumChildren()==0) return "";
+			String result = "!(";
+			String child = myFormulaToStringInfix(math.getChild(0));
+			result += child;
+			result += ")";
+			return result;
+		} else if (math.getType() == libsbml.AST_LOGICAL_OR) {
+			if (math.getNumChildren()==0) return "";
+			String result = "(";
+			for (long i = 0; i < math.getNumChildren(); i++) {
+				String child = myFormulaToStringInfix(math.getChild(i));
+				result += child;
+				if (i+1 < math.getNumChildren()) {
+					result += " || ";
+				}
+			}
+			result += ")";
+			return result;
+		} else if (math.getType() == libsbml.AST_LOGICAL_XOR) {
+			if (math.getNumChildren()==0) return "";
+			String result = "xor(";
+			for (long i = 0; i < math.getNumChildren(); i++) {
+				String child = myFormulaToStringInfix(math.getChild(i));
+				result += child;
+				if (i+1 < math.getNumChildren()) {
+					result += ",";
+				}
+			}
+			result += ")";
+			return result;
+		} else if (math.getType() == libsbml.AST_MINUS) {
+			if (math.getNumChildren()==1) { 
+				return "-" + myFormulaToStringInfix(math.getChild(0));
+			} else {
+				String leftStr = myFormulaToStringInfix(math.getLeftChild());
+				String rightStr = myFormulaToStringInfix(math.getRightChild());
+				return "(" + leftStr + " - " + rightStr + ")";
+			}
+		} else if (math.getType() == libsbml.AST_NAME) {
+ 			return math.getName();
+		} else if (math.getType() == libsbml.AST_NAME_AVOGADRO) {
+ 			return "avogadro";
+		} else if (math.getType() == libsbml.AST_NAME_TIME) {
+ 			return "t";
+		} else if (math.getType() == libsbml.AST_PLUS) {
+			String leftStr = myFormulaToStringInfix(math.getLeftChild());
+			String rightStr = myFormulaToStringInfix(math.getRightChild());
+			return "(" + leftStr + " + " + rightStr + ")";
+		} else if (math.getType() == libsbml.AST_POWER) {
+			String leftStr = myFormulaToStringInfix(math.getLeftChild());
+			String rightStr = myFormulaToStringInfix(math.getRightChild());
+			return "(" + leftStr + " ^ " + rightStr + ")";
+		} else if (math.getType() == libsbml.AST_RATIONAL) {
+			if (math.hasUnits()) {
+				return math.getNumerator() + "/" + math.getDenominator() + " " + math.getUnits();
+			} else {
+				return math.getNumerator() + "/" + math.getDenominator();
+			}
+		} else if (math.getType() == libsbml.AST_REAL) {
+			if (math.hasUnits()) {
+				return "" + math.getReal() + " " + math.getUnits();
+			} else {
+				return "" + math.getReal();
+			}
+		} else if (math.getType() == libsbml.AST_REAL_E) {
+			if (math.hasUnits()) {
+				return math.getMantissa() + "e" + math.getExponent() + " " + math.getUnits();
+			} else {
+				return math.getMantissa() + "e" + math.getExponent();
+			}
+		} else if (math.getType() == libsbml.AST_RELATIONAL_EQ) {
+			String leftStr = myFormulaToStringInfix(math.getLeftChild());
+			String rightStr = myFormulaToStringInfix(math.getRightChild());
+			return "(" + leftStr + " == " + rightStr + ")";
+		} else if (math.getType() == libsbml.AST_RELATIONAL_GEQ) {
+			String leftStr = myFormulaToStringInfix(math.getLeftChild());
+			String rightStr = myFormulaToStringInfix(math.getRightChild());
+			return "(" + leftStr + " >= " + rightStr + ")";
+		} else if (math.getType() == libsbml.AST_RELATIONAL_GT) {
+			String leftStr = myFormulaToStringInfix(math.getLeftChild());
+			String rightStr = myFormulaToStringInfix(math.getRightChild());
+			return "(" + leftStr + " > " + rightStr + ")";
+		} else if (math.getType() == libsbml.AST_RELATIONAL_LEQ) {
+			String leftStr = myFormulaToStringInfix(math.getLeftChild());
+			String rightStr = myFormulaToStringInfix(math.getRightChild());
+			return "(" + leftStr + " <= " + rightStr + ")";
+		} else if (math.getType() == libsbml.AST_RELATIONAL_LT) {
+			String leftStr = myFormulaToStringInfix(math.getLeftChild());
+			String rightStr = myFormulaToStringInfix(math.getRightChild());
+			return "(" + leftStr + " <= " + rightStr + ")";
+		} else if (math.getType() == libsbml.AST_RELATIONAL_NEQ) {
+			String leftStr = myFormulaToStringInfix(math.getLeftChild());
+			String rightStr = myFormulaToStringInfix(math.getRightChild());
+			return "(" + leftStr + " != " + rightStr + ")";
+		} else if (math.getType() == libsbml.AST_TIMES) {
+			String leftStr = myFormulaToStringInfix(math.getLeftChild());
+			String rightStr = myFormulaToStringInfix(math.getRightChild());
+			return "(" + leftStr + " * " + rightStr + ")";
+		} else {
+			if (math.isOperator()) {
+				System.out.println("Operator " + math.getOperatorName() + " is not currently supported.");
+			} else {
+				System.out.println(math.getName() + " is not currently supported.");
+			} 
+		}
+		return "";
+	}
+	
+	public static String SBMLMathToLPNString(ASTNode math,HashMap<String,Integer> constants) {
 		if (math.getType() == libsbml.AST_CONSTANT_FALSE) {
 			return "false";
 		} else if (math.getType() == libsbml.AST_CONSTANT_TRUE) {
@@ -2093,11 +2350,14 @@ public class SBMLutilities {
 		} else if (math.getType() == libsbml.AST_INTEGER) {
 			return "" + math.getInteger();
 		} else if (math.getType() == libsbml.AST_NAME) {
-			return math.getName();
+			if (constants.containsKey(math.getName())) {
+				return "" + constants.get(math.getName());
+			} 
+ 			return math.getName();
 		} else if (math.getType() == libsbml.AST_FUNCTION) {
 			String result = math.getName() + "(";
 			for (long i = 0; i < math.getNumChildren(); i++) {
-				String child = SBMLMathToLPNString(math.getChild(i));
+				String child = SBMLMathToLPNString(math.getChild(i),constants);
 				result += child;
 				if (i+1 < math.getNumChildren()) {
 					result += ",";
@@ -2106,53 +2366,53 @@ public class SBMLutilities {
 			result += ")";
 			return result;
 		} else if (math.getType() == libsbml.AST_PLUS) {
-			String leftStr = SBMLMathToLPNString(math.getLeftChild());
-			String rightStr = SBMLMathToLPNString(math.getRightChild());
+			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants);
+			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants);
 			return "(" + leftStr + "+" + rightStr + ")";
 		} else if (math.getType() == libsbml.AST_MINUS) {
-			String leftStr = SBMLMathToLPNString(math.getLeftChild());
-			String rightStr = SBMLMathToLPNString(math.getRightChild());
+			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants);
+			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants);
 			return "(" + leftStr + "-" + rightStr + ")";
 		} else if (math.getType() == libsbml.AST_TIMES) {
-			String leftStr = SBMLMathToLPNString(math.getLeftChild());
-			String rightStr = SBMLMathToLPNString(math.getRightChild());
+			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants);
+			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants);
 			return "(" + leftStr + "*" + rightStr + ")";
 		} else if (math.getType() == libsbml.AST_DIVIDE) {
-			String leftStr = SBMLMathToLPNString(math.getLeftChild());
-			String rightStr = SBMLMathToLPNString(math.getRightChild());
+			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants);
+			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants);
 			return "(" + leftStr + "/" + rightStr + ")";
 		} else if (math.getType() == libsbml.AST_POWER) {
-			String leftStr = SBMLMathToLPNString(math.getLeftChild());
-			String rightStr = SBMLMathToLPNString(math.getRightChild());
+			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants);
+			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants);
 			return "(" + leftStr + "^" + rightStr + ")";
 		} else if (math.getType() == libsbml.AST_RELATIONAL_EQ) {
-			String leftStr = SBMLMathToLPNString(math.getLeftChild());
-			String rightStr = SBMLMathToLPNString(math.getRightChild());
+			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants);
+			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants);
 			return "(" + leftStr + "=" + rightStr + ")";
 		} else if (math.getType() == libsbml.AST_RELATIONAL_GEQ) {
-			String leftStr = SBMLMathToLPNString(math.getLeftChild());
-			String rightStr = SBMLMathToLPNString(math.getRightChild());
+			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants);
+			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants);
 			return "(" + leftStr + ">=" + rightStr + ")";
 		} else if (math.getType() == libsbml.AST_RELATIONAL_GT) {
-			String leftStr = SBMLMathToLPNString(math.getLeftChild());
-			String rightStr = SBMLMathToLPNString(math.getRightChild());
+			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants);
+			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants);
 			return "(" + leftStr + ">" + rightStr + ")";
 		} else if (math.getType() == libsbml.AST_RELATIONAL_LEQ) {
-			String leftStr = SBMLMathToLPNString(math.getLeftChild());
-			String rightStr = SBMLMathToLPNString(math.getRightChild());
+			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants);
+			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants);
 			return "(" + leftStr + "<=" + rightStr + ")";
 		} else if (math.getType() == libsbml.AST_RELATIONAL_LT) {
-			String leftStr = SBMLMathToLPNString(math.getLeftChild());
-			String rightStr = SBMLMathToLPNString(math.getRightChild());
+			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants);
+			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants);
 			return "(" + leftStr + "<" + rightStr + ")";
 		} else if (math.getType() == libsbml.AST_RELATIONAL_NEQ) {
-			String leftStr = SBMLMathToLPNString(math.getLeftChild());
-			String rightStr = SBMLMathToLPNString(math.getRightChild());
+			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants);
+			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants);
 			return "(" + leftStr + "!=" + rightStr + ")";
 		} else if (math.getType() == libsbml.AST_LOGICAL_NOT) {
 			if (math.getNumChildren()==0) return "";
 			String result = "~(";
-			String child = SBMLMathToLPNString(math.getChild(0));
+			String child = SBMLMathToLPNString(math.getChild(0),constants);
 			result += child;
 			result += ")";
 			return result;
@@ -2160,7 +2420,7 @@ public class SBMLutilities {
 			if (math.getNumChildren()==0) return "";
 			String result = "(";
 			for (long i = 0; i < math.getNumChildren(); i++) {
-				String child = SBMLMathToLPNString(math.getChild(i));
+				String child = SBMLMathToLPNString(math.getChild(i),constants);
 				result += child;
 				if (i+1 < math.getNumChildren()) {
 					result += "&";
@@ -2172,7 +2432,7 @@ public class SBMLutilities {
 			if (math.getNumChildren()==0) return "";
 			String result = "(";
 			for (long i = 0; i < math.getNumChildren(); i++) {
-				String child = SBMLMathToLPNString(math.getChild(i));
+				String child = SBMLMathToLPNString(math.getChild(i),constants);
 				result += child;
 				if (i+1 < math.getNumChildren()) {
 					result += "|";
@@ -2184,7 +2444,7 @@ public class SBMLutilities {
 			if (math.getNumChildren()==0) return "";
 			String result = "exor(";
 			for (long i = 0; i < math.getNumChildren(); i++) {
-				String child = SBMLMathToLPNString(math.getChild(i));
+				String child = SBMLMathToLPNString(math.getChild(i),constants);
 				result += child;
 				if (i+1 < math.getNumChildren()) {
 					result += ",";

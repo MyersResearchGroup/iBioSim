@@ -1825,7 +1825,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 */
 	public String connectComponentToSpecies(String compID, String specID) throws ListChooser.EmptyListException{
 
-		ArrayList<String> portNames = getPorts(compID, GlobalConstants.OUTPUT);
+		ArrayList<String> portNames = getPorts(compID, GlobalConstants.SBMLSPECIES, GlobalConstants.OUTPUT);
 		
 		String port = ListChooser.selectFromList(Gui.frame, portNames.toArray(), "Please Choose an Output Port");
 		
@@ -1848,7 +1848,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 */
 	public String connectSpeciesToComponent(String specID, String compID) throws ListChooser.EmptyListException{
 
-		ArrayList<String> portNames = getPorts(compID, GlobalConstants.INPUT);
+		ArrayList<String> portNames = getPorts(compID, GlobalConstants.SBMLSPECIES, GlobalConstants.INPUT);
 		
 		String port = ListChooser.selectFromList(Gui.frame, portNames.toArray(), 
 				"Please Choose an Input Port");
@@ -1871,7 +1871,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 */
 	public String connectComponentToVariable(String compID, String specID) throws ListChooser.EmptyListException{
 
-		ArrayList<String> portNames = getPorts(compID, GlobalConstants.PARAMETER);
+		ArrayList<String> portNames = getPorts(compID, GlobalConstants.PARAMETER, GlobalConstants.OUTPUT);
 		
 		String port = ListChooser.selectFromList(Gui.frame, portNames.toArray(), "Please Choose a Variable");
 		
@@ -1881,7 +1881,7 @@ public class Schematic extends JPanel implements ActionListener {
 		String fullPath = bioModel.getPath() + File.separator + bioModel.getModelFileName(compID);
 		BioModel compBioModel = new BioModel(bioModel.getPath());
 		compBioModel.load(fullPath);
-		bioModel.connectComponentAndVariable(compID, port, specID, GlobalConstants.PARAMETER);
+		bioModel.connectComponentAndVariable(compID, port, specID, GlobalConstants.OUTPUT);
 		
 		return port;
 	}
@@ -1894,7 +1894,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 */
 	public String connectVariableToComponent(String specID, String compID) throws ListChooser.EmptyListException{
 
-		ArrayList<String> portNames = getPorts(compID, GlobalConstants.PARAMETER);
+		ArrayList<String> portNames = getPorts(compID, GlobalConstants.PARAMETER, GlobalConstants.INPUT);
 		
 		String port = ListChooser.selectFromList(Gui.frame, portNames.toArray(), "Please Choose a Variable Port");
 		
@@ -1904,7 +1904,7 @@ public class Schematic extends JPanel implements ActionListener {
 		String fullPath = bioModel.getPath() + File.separator + bioModel.getModelFileName(compID);
 		BioModel compGCM = new BioModel(bioModel.getPath());
 		compGCM.load(fullPath);		
-		bioModel.connectComponentAndVariable(compID, port, specID, GlobalConstants.PARAMETER);
+		bioModel.connectComponentAndVariable(compID, port, specID, GlobalConstants.INPUT);
 		return port;
 	}
 	/**
@@ -1950,11 +1950,11 @@ public class Schematic extends JPanel implements ActionListener {
 	/**
 	 * @return an array of the input/output ports for the component passed in
 	 */
-	private ArrayList<String> getPorts(String compId, String type){
+	private ArrayList<String> getPorts(String compId, String type, String dir){
 		String fullPath = bioModel.getPath() + File.separator + bioModel.getModelFileName(compId);
 		BioModel compBioModel = new BioModel(bioModel.getPath());
 		compBioModel.load(fullPath);
-		ArrayList<String> ports = compBioModel.getPortsByType(type);
+		ArrayList<String> ports = compBioModel.getPortsByType(type,dir);
 		return ports;
 	}
 	
