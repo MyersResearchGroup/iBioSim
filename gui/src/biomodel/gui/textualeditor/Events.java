@@ -181,7 +181,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					for (int j = 0; j < bioModel.getSBMLDocument().getModel().getNumParameters(); j++) {
 						Parameter parameter = bioModel.getSBMLDocument().getModel().getParameter(j);
 						if (parameter!=null && SBMLutilities.isPlace(parameter)) {
-							if (trigger.contains("eq("+parameter.getId()+", 1)")) {
+							if (trigger.contains("eq("+parameter.getId()+", 1)")||
+									trigger.contains("("+parameter.getId()+" == 1)")){
 								triggerMath = SBMLutilities.removePreset(triggerMath, parameter.getId());
 								presetPlaces.add(parameter.getId());
 							}
