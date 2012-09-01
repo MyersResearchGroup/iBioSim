@@ -2082,25 +2082,47 @@ public class BioModel {
 	
 	public boolean saveAsLPN(String filename) {
 		HashMap<String,Integer> constants = new HashMap<String,Integer>();
+		HashMap<String,String> rates = new HashMap<String,String>();
 		SBMLDocument flatSBML = flattenModel();
 		//flatSBML.expandFunctionDefinitions();
 		flatSBML.expandInitialAssignments();
 		LhpnFile lpn = new LhpnFile();
+		for (long i = 0; i < flatSBML.getModel().getNumRules(); i++) {
+			Rule r = flatSBML.getModel().getRule(i);
+			if (r.isRate()) {
+				if (r.getMath().isName()) {
+					rates.put(r.getMath().getName(),r.getVariable());
+				}
+			}
+ 		}
 		for (long i = 0; i < flatSBML.getModel().getNumParameters(); i++) {
 			Parameter p = flatSBML.getModel().getParameter(i);
 			if (SBMLutilities.isPlace(p)) {
 				lpn.addPlace(p.getId(), (p.getValue()==1));
 			} else {
+				if (rates.containsKey(p.getId())) continue;
 				if (!p.getConstant()) {
+					String type = "integer";
+					if (rates.containsValue(p.getId())) type = "continuous"; 
 					Port port = getPortByIdRef(p.getId());
 					if (port != null) {
 						if (port.getId().startsWith(GlobalConstants.INPUT)) {
-							lpn.addInput(p.getId(), "integer", ""+(int)p.getValue());
+							lpn.addInput(p.getId(), type, ""+(int)p.getValue());
 						} else {
-							lpn.addOutput(p.getId(), "integer", ""+(int)p.getValue());
+							lpn.addOutput(p.getId(), type, ""+(int)p.getValue());
 						}
 					} else {
-						lpn.addInteger(p.getId(), ""+(int)p.getValue());
+						if (type.equals("integer")) {
+							lpn.addInteger(p.getId(), ""+(int)p.getValue());
+						} else {
+						    for (String key : rates.keySet()) {
+						        if (rates.get(key).equals(p.getId())) {
+						        	Parameter rp = flatSBML.getModel().getParameter(key);
+									lpn.addContinuous(p.getId(), ""+(int)p.getValue(),""+(int)rp.getValue());
+									break;
+						        }
+						    }
+						}
 					}
 				} else {
 					constants.put(p.getId(),(int)p.getValue());
@@ -2147,7 +2169,13 @@ public class BioModel {
 					EventAssignment ea = e.getEventAssignment(j);
 					Parameter p = flatSBML.getModel().getParameter(ea.getVariable());
 					if (p != null && !SBMLutilities.isPlace(p)) {
-						t.addIntAssign(ea.getVariable(), SBMLutilities.SBMLMathToLPNString(ea.getMath(),constants));
+						if (rates.containsKey(ea.getVariable())) {
+							t.addRateAssign(rates.get(ea.getVariable()), SBMLutilities.SBMLMathToLPNString(ea.getMath(),constants));
+						} else if (rates.containsValue(ea.getVariable())) {
+							t.addContAssign(ea.getVariable(), SBMLutilities.SBMLMathToLPNString(ea.getMath(),constants));
+						} else {
+							t.addIntAssign(ea.getVariable(), SBMLutilities.SBMLMathToLPNString(ea.getMath(),constants));
+						}
 					}
 				}
 			}
