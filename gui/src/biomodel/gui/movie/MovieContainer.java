@@ -506,6 +506,12 @@ public class MovieContainer extends JPanel implements ActionListener {
 							if (speciesAppearance != null) {
 								schematic.getGraph().setParameterAnimationValue(speciesID, speciesAppearance);
 							}
+						} else if (schematic.getGraph().getCellType(cell).equals(GlobalConstants.BOOLEAN)) {
+							speciesAppearance = 
+									movieScheme.createAppearance(speciesID, GlobalConstants.BOOLEAN, speciesTSData, null);
+							if (speciesAppearance != null) {
+								schematic.getGraph().setParameterAnimationValue(speciesID, speciesAppearance);
+							}
 						}
 					}
 				}

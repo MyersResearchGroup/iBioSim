@@ -474,6 +474,15 @@ public class MovieScheme {
 			}
 			//cellAppearance.add(getIntermediateAppearance(
 				//	colorGradient, gradientValue, opacityState, sizeState, cellType));
+		} else if (cellType.equals(GlobalConstants.BOOLEAN)) {
+			if (speciesTSData.containsKey(cellID)) {
+				double variableValue = speciesTSData.get(cellID);
+				if (variableValue == 0.0) {
+					return new MovieAppearance(new Color(255,255,255));
+				} else {
+					return new MovieAppearance(new Color(128,128,128));
+				}
+			}
 		}
 		
 		if (cellSchemes.size() <= 0) 

@@ -530,7 +530,7 @@ public class BioGraph extends mxGraph {
 							cell.setStyle(style);
 							createLayoutConnection(layout,regulator,promoterId,GlobalConstants.REPRESSION);
 							createLayoutConnection(layout,regulator,promoterId,GlobalConstants.ACTIVATION);
-						} else if (r.getModifier(j).getAnnotationString().contains(GlobalConstants.NOINFLUENCE)) {
+						} else if (BioModel.isNeutral(r.getModifier(j))) {
 							String regulator = r.getModifier(j).getSpecies();
 							String id = regulator + "x>" + promoterId;
 							this.insertEdge(this.getDefaultParent(), id, "", 
@@ -565,7 +565,7 @@ public class BioGraph extends mxGraph {
 								cell.setStyle(style);
 								cell.setValue(promoterId);
 								createLayoutConnection(layout,activator,product,GlobalConstants.REPRESSION);
-							} else if (r.getModifier(j).getAnnotationString().contains(GlobalConstants.NOINFLUENCE)) {
+							} else if (BioModel.isNeutral(r.getModifier(j))) {
 								String regulator = r.getModifier(j).getSpecies();
 								String product = r.getProduct(k).getSpecies();
 								String id = regulator + "x>" + product + "," + promoterId;
@@ -1059,7 +1059,7 @@ public class BioGraph extends mxGraph {
 								if(edgeHash.containsKey(key) == false)
 									edgeHash.put(key, new Vector<mxCell>());
 								edgeHash.get(key).add(cell);
-							} else if (r.getModifier(j).getAnnotationString().contains(GlobalConstants.NOINFLUENCE)) {
+							} else if (BioModel.isNeutral(r.getModifier(j))) {
 								String id = r.getModifier(j).getSpecies() + "x>" + r.getProduct(k).getSpecies() + "," + promoterId;
 								if(endA.compareTo(endB) > 0){
 									// swap the strings
