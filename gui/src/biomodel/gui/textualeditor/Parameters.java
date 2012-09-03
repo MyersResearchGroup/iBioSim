@@ -350,9 +350,12 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		if (option.equals("OK")) {
 			try {
 				Parameter paramet = bioModel.getSBMLDocument().getModel().getParameter(selected);
-				if (SBMLutilities.isPlace(paramet)) {
+				if (SBMLutilities.isPlace(paramet) || SBMLutilities.isBoolean(paramet)) {
 					isPlace = true;
 					valueLabel.setText("Initial marking");
+					if (SBMLutilities.isBoolean(paramet)) {
+						valueLabel.setText("Initial value");
+					}
 					if (paramsOnly) {
 						parametersPanel.setLayout(new GridLayout(6, 2));
 					} else {
