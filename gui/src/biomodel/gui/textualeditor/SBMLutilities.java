@@ -2104,21 +2104,21 @@ public class SBMLutilities {
 	}
 	
 	public static String addBoolean(String formula,String boolVar) {
-		formula = formula.replace(" "+boolVar+" ", " ("+boolVar+"==1) ");
-		formula = formula.replace(","+boolVar+",",",("+boolVar+"==1),");
-		formula = formula.replace("("+boolVar+",", "(("+boolVar+"==1),");
-		formula = formula.replace(","+boolVar+")", ",("+boolVar+"==1))");
-		formula = formula.replace("("+boolVar+" ", "(("+boolVar+"==1) ");
-		formula = formula.replace(" "+boolVar+")", " ("+boolVar+"==1))");
-		formula = formula.replace("("+boolVar+")", " ("+boolVar+"==1)");
+		formula = formula.replace(" "+boolVar+" ", " eq("+boolVar+",1) ");
+		formula = formula.replace(","+boolVar+",",",eq("+boolVar+",1),");
+		formula = formula.replace("("+boolVar+",", "(eq("+boolVar+",1),");
+		formula = formula.replace(","+boolVar+")", ",eq("+boolVar+",1))");
+		formula = formula.replace("("+boolVar+" ", "(eq("+boolVar+",1) ");
+		formula = formula.replace(" "+boolVar+")", " eq("+boolVar+",1))");
+		formula = formula.replace("("+boolVar+")", " eq("+boolVar+",1)");
 		if (formula.startsWith(boolVar+" ")) {
-			formula = formula.replaceFirst(boolVar+" ", "(" + boolVar + "==1)");
+			formula = formula.replaceFirst(boolVar+" ", "eq(" + boolVar + ",1)");
 		}
 		if (formula.endsWith(" " + boolVar)) {
-			formula = formula.replaceFirst(" " + boolVar, "(" + boolVar + "==1)");
+			formula = formula.replaceFirst(" " + boolVar, "eq(" + boolVar + ",1)");
 		}
 		if (formula.equals(boolVar)) {
-			formula = formula.replace(boolVar, "(" + boolVar + "==1)");
+			formula = formula.replace(boolVar, "eq(" + boolVar + ",1)");
 		}
 		return formula;
 	}
