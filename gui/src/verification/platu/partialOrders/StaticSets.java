@@ -46,6 +46,13 @@ public class StaticSets {
 					LpnTransitionPair lpnTranPair = new LpnTransitionPair(curLpnIndex, i);
 					disableByStealingToken.add(lpnTranPair);
 				}
+				if (Options.getDebugMode()) {
+					System.out.println(curTran.getName() + " can steal tokens from these transitions:");
+					for (Transition t : curTran.getConflictSet()) {
+						System.out.print(t.getName() + ", ");
+					}
+					System.out.println();
+				}
 			}
 		}
 		// Test if curTran can disable other transitions by executing its assignments
@@ -96,6 +103,13 @@ public class StaticSets {
 						for (Integer i : conflictSet) {
 							LpnTransitionPair lpnTranPair = new LpnTransitionPair(curLpnIndex, i);
 							disableByStealingToken.add(lpnTranPair);
+						}
+						if (Options.getDebugMode()) {
+							System.out.println(curTran.getName() + " can steal tokens from these transitions:");
+							for (Transition t : curTran.getConflictSet()) {
+								System.out.print(t.getName() + ", ");
+							}
+							System.out.println();
 						}
 					}
 				}
@@ -171,18 +185,30 @@ public class StaticSets {
 						|| curTranEnablingTree.getChange(anotherTran.getAssignments())=='t'
 						|| curTranEnablingTree.getChange(anotherTran.getAssignments())=='X')) {
 					enableSet.add(new LpnTransitionPair(lpnIndex, anotherTran.getIndex()));
+					if (Options.getDebugMode()) {
+						System.out.println(curTran.getName() + " can be enabled by " + anotherTran.getName() + ". " 
+					                       + curTran.getName() + "'s enabling condition, which is " + curTranEnablingTree +  ", may become true due to firing of " 
+								           + anotherTran.getName() + ".");
+						if (curTranEnablingTree.getChange(anotherTran.getAssignments())=='T') 
+							System.out.println("Reason is " + curTran.getName() + "_enablingTree.getChange(" + anotherTran.getName() + ".getAssignments()) = T.");
+						if (curTranEnablingTree.getChange(anotherTran.getAssignments())=='t') 
+							System.out.println("Reason is " + curTran.getName() + "_enablingTree.getChange(" + anotherTran.getName() + ".getAssignments()) = t.");
+						if (curTranEnablingTree.getChange(anotherTran.getAssignments())=='X') 
+							System.out.println("Reason is " + curTran.getName() + "_enablingTree.getChange(" + anotherTran.getName() + ".getAssignments()) = X.");					
+					}
 				}			
 			}
 		}
 	}
 	
 	public void buildModifyAssignSet() {
-		// modifyAssignment contains transitions (T) that satisfy at least one of the conditions below: for every t in T, 
-	    // (1) intersection(VA(curTran), supportA(t)) != empty
-		// (2) intersection(VA(t), supportA(curTran)) != empty
-		// (3) intersection(VA(t), VA(curTran) != empty
-		// VA(t) : set of variables being assigned in transition t.
-		// supportA(t): set of variables appearing in the expressions assigned to the variables of t (r.h.s of the assignment).
+//		for every transition curTran in T, where T is the set of all transitions, we check t (t != curTran) in T, 
+//		(1) intersection(VA(curTran), supportA(t)) != empty
+//		(2) intersection(VA(t), supportA(curTran)) != empty
+//		(3) intersection(VA(t), VA(curTran) != empty
+//
+//		VA(t0) : set of variables being assigned to (left hand side of the assignment) in transition t0.
+//		supportA(t0): set of variables appearing in the expressions assigned to the variables of t0 (right hand side of the assignment).		
 		for (Integer lpnIndex : allTransitions.keySet()) {
 			Transition[] allTransInOneLpn = allTransitions.get(lpnIndex);
 			for (int i = 0; i < allTransInOneLpn.length; i++) {
@@ -193,13 +219,21 @@ public class StaticSets {
 					for (ExprTree anotherTranAssignTree : anotherTran.getAssignTrees().values()) {
 						if (anotherTranAssignTree != null && anotherTranAssignTree.containsVar(v)) {
 							modifyAssignment.add(new LpnTransitionPair(lpnIndex, anotherTran.getIndex()));
+							if (Options.getDebugMode()) {
+								System.out.println("Variable " + v + " in " + curTran.getName()
+										+ " may change the right hand side of assignment " + anotherTranAssignTree + " in " + anotherTran.getName());
+							}
 						}					
 					}
 				}
-				for (ExprTree exprTree : curTran.getAssignTrees().values()) {
+				for (ExprTree curTranAssignTree : curTran.getAssignTrees().values()) {
 					for (String v : anotherTran.getAssignTrees().keySet()) {
-						if (exprTree != null && exprTree.containsVar(v)) {
+						if (curTranAssignTree != null && curTranAssignTree.containsVar(v)) {
 							modifyAssignment.add(new LpnTransitionPair(lpnIndex, anotherTran.getIndex()));
+							if (Options.getDebugMode()) {
+								System.out.println("Variable " + v + " in " + anotherTran.getName() 
+										+ " may change the right hand side of assignment " + curTranAssignTree +  " in " + anotherTran.getName());
+							}
 						}
 					}
 				}
@@ -207,6 +241,9 @@ public class StaticSets {
 					for (String v2 : anotherTran.getAssignTrees().keySet()) {
 						if (v1.equals(v2)) {
 							modifyAssignment.add(new LpnTransitionPair(lpnIndex, anotherTran.getIndex()));
+							if (Options.getDebugMode()) {
+								System.out.println("Variable " + v1 + " are assigned in " + curTran.getName() + " and " + anotherTran.getName()); 
+							}
 						}					
 					}
 				}
