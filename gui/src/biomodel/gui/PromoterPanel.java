@@ -380,7 +380,7 @@ public class PromoterPanel extends JPanel {
 				id = fields.get(GlobalConstants.ID).getValue();
 				promoter.setName(fields.get(GlobalConstants.NAME).getValue());
 			}
-			promoter.setSBOTerm(GlobalConstants.SBO_PROMOTER_SPECIES);
+			promoter.setSBOTerm(GlobalConstants.SBO_PROMOTER_BINDING_REGION);
 			PropertyField f = fields.get(GlobalConstants.PROMOTER_COUNT_STRING);
 			if (f.getValue().startsWith("(")) {
 				promoter.setInitialAmount(1.0);

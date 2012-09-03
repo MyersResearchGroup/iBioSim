@@ -1015,7 +1015,7 @@ public class BioModel {
 		promoter.setBoundaryCondition(false);
 		promoter.setConstant(false);
 		promoter.setHasOnlySubstanceUnits(true);
-		promoter.setSBOTerm(GlobalConstants.SBO_PROMOTER_SPECIES);
+		promoter.setSBOTerm(GlobalConstants.SBO_PROMOTER_BINDING_REGION);
 		/*
 		if (property.containsKey(GlobalConstants.SBOL_PROMOTER) &&
 				property.containsKey(GlobalConstants.SBOL_TERMINATOR)) {
@@ -1410,7 +1410,7 @@ public class BioModel {
 		if (r==null) {
 			r = sbml.getModel().createReaction();
 			r.setId("Complex_"+s);
-			r.setSBOTerm(GlobalConstants.SBO_COMPLEX);
+			r.setSBOTerm(GlobalConstants.SBO_ASSOCIATION);
 			r.setCompartment(sbml.getModel().getSpecies(s).getCompartment());
 			r.setReversible(true);
 			r.setFast(false);
@@ -1451,7 +1451,7 @@ public class BioModel {
 		if (!activatorId.equals("none") && modifier==null) {
 			modifier = r.createModifier();
 			modifier.setSpecies(activatorId);
-			modifier.setAnnotation(GlobalConstants.NOINFLUENCE);
+			modifier.setSBOTerm(GlobalConstants.SBO_NEUTRAL);
 		} else if (modifier != null) {
 			return r;
 		}
@@ -1470,10 +1470,13 @@ public class BioModel {
 	
 	public static boolean isComplexReaction(Reaction reaction) {
 		if (reaction.isSetSBOTerm()) {
-			if (reaction.getSBOTerm()==GlobalConstants.SBO_COMPLEX) return true;
+			if (reaction.getSBOTerm()==GlobalConstants.SBO_COMPLEX) {
+				reaction.setSBOTerm(GlobalConstants.SBO_ASSOCIATION);
+				return true;
+			}
 		} else if (reaction.isSetAnnotation()) {
 			if (reaction.getAnnotationString().contains("Complex")) {
-				reaction.setSBOTerm(GlobalConstants.SBO_COMPLEX);
+				reaction.setSBOTerm(GlobalConstants.SBO_ASSOCIATION);
 				reaction.unsetAnnotation();
 				return true;
 			}
@@ -1522,10 +1525,15 @@ public class BioModel {
 	
 	public static boolean isProductionReaction(Reaction reaction) {
 		if (reaction.isSetSBOTerm()) {
-			if (reaction.getSBOTerm()==GlobalConstants.SBO_PRODUCTION) return true;
+			if (reaction.getSBOTerm()==GlobalConstants.SBO_PRODUCTION) {
+				reaction.setSBOTerm(GlobalConstants.SBO_GENETIC_PRODUCTION);
+				return true;
+			} else if (reaction.getSBOTerm()==GlobalConstants.SBO_GENETIC_PRODUCTION) {
+				return true;
+			}
 		} else if (reaction.isSetAnnotation()) {
 			if (reaction.getAnnotationString().contains("Production")) {
-				reaction.setSBOTerm(GlobalConstants.SBO_PRODUCTION);
+				reaction.setSBOTerm(GlobalConstants.SBO_GENETIC_PRODUCTION);
 				reaction.unsetAnnotation();
 				return true;
 			}
@@ -1553,17 +1561,20 @@ public class BioModel {
 	public static boolean isPromoterSpecies(Species species) {
 		if (species.isSetAnnotation()) {
 			if (species.getAnnotationString().contains(GlobalConstants.TYPE+"="+GlobalConstants.PROMOTER)) {
-				species.setSBOTerm(GlobalConstants.SBO_PROMOTER_SPECIES);
+				species.setSBOTerm(GlobalConstants.SBO_PROMOTER_BINDING_REGION);
 				species.unsetAnnotation();
 				return true;
 			}
 		}
 		if (species.isSetSBOTerm()) {
 			if (species.getSBOTerm()==GlobalConstants.SBO_OLD_PROMOTER_SPECIES) {
-				species.setSBOTerm(GlobalConstants.SBO_PROMOTER_SPECIES);
+				species.setSBOTerm(GlobalConstants.SBO_PROMOTER_BINDING_REGION);
 				return true;
 			}
 			if (species.getSBOTerm()==GlobalConstants.SBO_PROMOTER_SPECIES) {
+				species.setSBOTerm(GlobalConstants.SBO_PROMOTER_BINDING_REGION);
+				return true;
+			} else if (species.getSBOTerm()==GlobalConstants.SBO_PROMOTER_BINDING_REGION) {
 				return true;
 			}
 		}
@@ -1573,15 +1584,16 @@ public class BioModel {
 	public static boolean isPromoter(ModifierSpeciesReference modifier) {
 		if (modifier.isSetAnnotation()) {
 			if (modifier.getAnnotationString().contains("promoter")) {
-				modifier.setSBOTerm(GlobalConstants.SBO_PROMOTER);
+				modifier.setSBOTerm(GlobalConstants.SBO_PROMOTER_MODIFIER);
 				modifier.unsetAnnotation();
 				return true;
 			}
 		}
 		if (modifier.isSetSBOTerm()) {
-			if ((modifier.getSBOTerm()!=GlobalConstants.SBO_ACTIVATION) &&
-				(modifier.getSBOTerm()!=GlobalConstants.SBO_REPRESSION) &&
-				(modifier.getSBOTerm()!=GlobalConstants.SBO_REGULATION)) { 
+			if (modifier.getSBOTerm()==GlobalConstants.SBO_PROMOTER) {
+				modifier.setSBOTerm(GlobalConstants.SBO_PROMOTER_MODIFIER);
+				return true;
+			} else if (modifier.getSBOTerm()==GlobalConstants.SBO_PROMOTER_MODIFIER) {
 				return true;
 			}
 		}
@@ -1616,11 +1628,25 @@ public class BioModel {
 		return false;
 	}
 	
+	public static boolean isNeutral(ModifierSpeciesReference modifier) {
+		if (modifier.isSetAnnotation()) {
+			if (modifier.getAnnotationString().contains(GlobalConstants.NOINFLUENCE)) {
+				modifier.setSBOTerm(GlobalConstants.SBO_NEUTRAL);
+				modifier.unsetAnnotation();
+				return true;
+			}
+		}
+		if (modifier.isSetSBOTerm()) {
+			if (modifier.getSBOTerm()==GlobalConstants.SBO_NEUTRAL) return true;
+		}
+		return false;
+	}
+	
 	public static boolean isRegulator(ModifierSpeciesReference modifier) {
 		if (modifier!=null) {
 			if (modifier.isSetAnnotation()) {
 				if (modifier.getAnnotationString().contains(GlobalConstants.REGULATION)) {
-					modifier.setSBOTerm(GlobalConstants.SBO_REGULATION);
+					modifier.setSBOTerm(GlobalConstants.SBO_DUAL_ACTIVITY);
 					modifier.unsetAnnotation();
 					return true;
 				} else if (modifier.getAnnotationString().contains("promoter")) {
@@ -1629,7 +1655,12 @@ public class BioModel {
 				}
 			}
 			if (modifier.isSetSBOTerm()) {
-				if (modifier.getSBOTerm()==GlobalConstants.SBO_REGULATION) return true;
+				if (modifier.getSBOTerm()==GlobalConstants.SBO_REGULATION) {
+					modifier.setSBOTerm(GlobalConstants.SBO_DUAL_ACTIVITY);
+					return true;
+				} else if (modifier.getSBOTerm()==GlobalConstants.SBO_DUAL_ACTIVITY) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -1644,7 +1675,7 @@ public class BioModel {
 			modifier.setSpecies(activatorId);
 			modifier.setSBOTerm(GlobalConstants.SBO_ACTIVATION);
 		} else if (modifier != null && isRepressor(modifier)) {
-			modifier.setSBOTerm(GlobalConstants.SBO_REGULATION);
+			modifier.setSBOTerm(GlobalConstants.SBO_DUAL_ACTIVITY);
 		}
 		if (!productId.equals("none") && r.getProduct(productId)==null) {
 			SpeciesReference product = r.createProduct();
@@ -1688,7 +1719,7 @@ public class BioModel {
 			modifier.setSpecies(repressorId);
 			modifier.setSBOTerm(GlobalConstants.SBO_REPRESSION);
 		} else if (modifier != null && isActivator(modifier)) {
-			modifier.setSBOTerm(GlobalConstants.SBO_REGULATION);
+			modifier.setSBOTerm(GlobalConstants.SBO_DUAL_ACTIVITY);
 		}
 		if (!productId.equals("none") && r.getProduct(productId)==null) {
 			SpeciesReference product = r.createProduct();
@@ -1847,13 +1878,13 @@ public class BioModel {
 		if (r == null) {
 			r = sbml.getModel().createReaction();
 			r.setId("Production_" + s);
-			r.setSBOTerm(GlobalConstants.SBO_PRODUCTION);
+			r.setSBOTerm(GlobalConstants.SBO_GENETIC_PRODUCTION);
 			r.setCompartment(sbml.getModel().getSpecies(s).getCompartment());
 			r.setReversible(false);
 			r.setFast(false);
 			ModifierSpeciesReference modifier = r.createModifier();
 			modifier.setSpecies(s);
-			modifier.setSBOTerm(GlobalConstants.SBO_PROMOTER);
+			modifier.setSBOTerm(GlobalConstants.SBO_PROMOTER_MODIFIER);
 			Species mRNA = sbml.getModel().createSpecies();
 			mRNA.setId(s+"_mRNA");
 			mRNA.setCompartment(r.getCompartment());
@@ -3826,10 +3857,15 @@ public class BioModel {
 		Reaction production = sbml.getModel().getReaction(component+"Production_"+speciesId);
 		if (production != null) {
 			if (production.isSetSBOTerm()) {
-				if (production.getSBOTerm()==GlobalConstants.SBO_PRODUCTION) return production;
+				if (production.getSBOTerm()==GlobalConstants.SBO_PRODUCTION) {
+					production.setSBOTerm(GlobalConstants.SBO_GENETIC_PRODUCTION);
+					return production;
+				} else if  (production.getSBOTerm()==GlobalConstants.SBO_GENETIC_PRODUCTION) {
+					return production;
+				}
 			} else if (production.isSetAnnotation()) {
 				if (production.getAnnotationString().contains("Production")) {
-					production.setSBOTerm(GlobalConstants.SBO_PRODUCTION);
+					production.setSBOTerm(GlobalConstants.SBO_GENETIC_PRODUCTION);
 					production.unsetAnnotation();
 					return production;
 				}
@@ -5222,7 +5258,7 @@ public class BioModel {
 		// Set default promoter metaID
 		metaIDIndex = SBMLutilities.setDefaultMetaID(sbml, promoter, metaIDIndex); 
 		
-		promoter.setSBOTerm(GlobalConstants.SBO_PROMOTER_SPECIES);
+		promoter.setSBOTerm(GlobalConstants.SBO_PROMOTER_BINDING_REGION);
 		promoter.setInitialAmount(sbml.getModel().getParameter(GlobalConstants.PROMOTER_COUNT_STRING).getValue());
 
 		promoter.setCompartment(compartment);
@@ -5286,7 +5322,7 @@ public class BioModel {
 		parameter.setConstant(false);
 		parameter.setValue(0.0);
 		if (isPlace) {
-			parameter.setSBOTerm(GlobalConstants.SBO_PLACE);
+			parameter.setSBOTerm(GlobalConstants.SBO_PETRI_NET_PLACE);
 		} else if (isBoolean) {
 			parameter.setSBOTerm(GlobalConstants.SBO_BOOLEAN);
 		}

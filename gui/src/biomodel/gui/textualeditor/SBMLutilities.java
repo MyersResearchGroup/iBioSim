@@ -2077,11 +2077,27 @@ public class SBMLutilities {
 	}
 
 	public static boolean isPlace(Parameter parameter) {
-		return (parameter.isSetSBOTerm() && parameter.getSBOTerm()==GlobalConstants.SBO_PLACE);
+		if (parameter.isSetSBOTerm()) {
+			if (parameter.getSBOTerm()==GlobalConstants.SBO_PLACE) {
+				parameter.setSBOTerm(GlobalConstants.SBO_PETRI_NET_PLACE);
+				return true;
+			} else if (parameter.getSBOTerm()==GlobalConstants.SBO_PETRI_NET_PLACE) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public static boolean isTransition(Event event) {
-		return (event.isSetSBOTerm() && event.getSBOTerm()==GlobalConstants.SBO_TRANSITION);
+		if (event.isSetSBOTerm()) {
+			if (event.getSBOTerm()==GlobalConstants.SBO_TRANSITION) {
+				event.setSBOTerm(GlobalConstants.SBO_PETRI_NET_TRANSITION);
+				return true;
+			} else if (event.getSBOTerm()==GlobalConstants.SBO_PETRI_NET_TRANSITION) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public static ASTNode addPreset(ASTNode math,String place) {

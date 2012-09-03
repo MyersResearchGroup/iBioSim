@@ -676,7 +676,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					JList add = new JList();
 					org.sbml.libsbml.Event e = bioModel.getSBMLDocument().getModel().createEvent();
 					if (isTransition) {
-						e.setSBOTerm(GlobalConstants.SBO_TRANSITION);
+						e.setSBOTerm(GlobalConstants.SBO_PETRI_NET_TRANSITION);
 					}
 					e.setUseValuesFromTriggerTime(assignTime.isSelected());
 					e.createTrigger();
