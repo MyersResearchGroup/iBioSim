@@ -16,7 +16,6 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
-import org.sbml.libsbml.BoundingBox;
 import org.sbml.libsbml.CompModelPlugin;
 import org.sbml.libsbml.Compartment;
 import org.sbml.libsbml.CompartmentGlyph;
@@ -33,7 +32,6 @@ import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.ReactionGlyph;
 import org.sbml.libsbml.ReferenceGlyph;
 import org.sbml.libsbml.Rule;
-import org.sbml.libsbml.SBase;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.SpeciesGlyph;
 import org.sbml.libsbml.SpeciesReference;
@@ -369,6 +367,9 @@ public class BioGraph extends mxGraph {
 					}
 					if (SBMLutilities.isPlace(m.getParameter(i))) {
 						if(createGraphPlaceFromModel(m.getParameter(i).getId(),m.getParameter(i).getValue()==1.0))
+							needsPositioning = true;
+					} else if (SBMLutilities.isBoolean(m.getParameter(i))) {
+						if(createGraphBooleanFromModel(m.getParameter(i).getId(),m.getParameter(i).getValue()==1.0))
 							needsPositioning = true;
 					} else {
 						if(createGraphVariableFromModel(m.getParameter(i).getId()))
@@ -1503,7 +1504,8 @@ public class BioGraph extends mxGraph {
 			textGlyph.setText((String)cell.getId());
 			textGlyph.setBoundingBox(speciesGlyph.getBoundingBox());
 		} else if (getCellType(cell).equals(GlobalConstants.VARIABLE) || 
-				getCellType(cell).equals(GlobalConstants.PLACE)) {
+				getCellType(cell).equals(GlobalConstants.PLACE) || 
+				getCellType(cell).equals(GlobalConstants.BOOLEAN)) {
 			Layout layout = null;
 			if (bioModel.getSBMLLayout().getLayout("iBioSim") != null) {
 				layout = bioModel.getSBMLLayout().getLayout("iBioSim"); 
@@ -1753,7 +1755,8 @@ public class BioGraph extends mxGraph {
 				}
 			} 
 		} else if (getCellType(cell).equals(GlobalConstants.VARIABLE)||
-				getCellType(cell).equals(GlobalConstants.PLACE)) {
+				getCellType(cell).equals(GlobalConstants.PLACE)||
+				getCellType(cell).equals(GlobalConstants.BOOLEAN)) {
 			if (bioModel.getSBMLLayout().getLayout("iBioSim") != null) {
 				Layout layout = bioModel.getSBMLLayout().getLayout("iBioSim"); 
 				if (layout.getAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+(String)cell.getId())!=null) {
@@ -2004,6 +2007,8 @@ public class BioGraph extends mxGraph {
 				return GlobalConstants.VARIABLE;
 			else if(type.equals("Place"))
 				return GlobalConstants.PLACE;
+			else if(type.equals("Boolean"))
+				return GlobalConstants.BOOLEAN;
 			else if(type.equals("Reaction"))
 				return GlobalConstants.REACTION;
 			else if(type.equals("Rule"))
@@ -2434,6 +2439,33 @@ public class BioGraph extends mxGraph {
 	}
 	
 	/**
+	 * Creates a variable using the internal model
+	 * @param pname
+	 * @return
+	 */
+	private boolean createGraphBooleanFromModel(String id,boolean initial){
+		
+		String truncID;
+		
+		if (id.length() > 8)
+			truncID = id.substring(0, 7) + "...";
+		else truncID = id;
+
+		CellValueObject cvo = new CellValueObject(truncID, "Boolean", null);
+		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
+		this.variableToMxCellMap.put(id, (mxCell)insertedVertex);
+
+		if (initial) {
+			this.setTrueBooleanStyles(id);
+		} else {
+			this.setBooleanStyles(id);
+		}
+		
+		return sizeAndPositionFromProperties((mxCell)insertedVertex,
+				GlobalConstants.DEFAULT_VARIABLE_WIDTH,GlobalConstants.DEFAULT_VARIABLE_HEIGHT);
+	}
+	
+	/**
 	 * creates an edge between two graph entities
 	 */
 	@Override
@@ -2774,6 +2806,24 @@ public class BioGraph extends mxGraph {
 
 		//place
 		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
+		style.put(mxConstants.STYLE_OPACITY, 50);
+		style.put(mxConstants.STYLE_FILLCOLOR, "#FFFFFF");
+		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
+		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
+		stylesheet.putCellStyle("BOOLEAN", style);
+
+		//place
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
+		style.put(mxConstants.STYLE_OPACITY, 50);
+		style.put(mxConstants.STYLE_FILLCOLOR, "#808080");
+		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
+		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
+		stylesheet.putCellStyle("TRUE_BOOLEAN", style);
+
+		//place
+		style = new Hashtable<String, Object>();
 		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_ELLIPSE);
 		style.put(mxConstants.STYLE_OPACITY, 50);
 		style.put(mxConstants.STYLE_FILLCOLOR, "#FFFFFF");
@@ -2906,6 +2956,28 @@ public class BioGraph extends mxGraph {
 	 * 
 	 * @param id
 	 */
+	private void setBooleanStyles(String id){
+		String style="BOOLEAN";
+		
+		mxCell cell = this.getVariableCell(id);
+		cell.setStyle(style);
+	}
+	
+	/**
+	 * 
+	 * @param id
+	 */
+	private void setTrueBooleanStyles(String id){
+		String style="TRUE_BOOLEAN";
+		
+		mxCell cell = this.getVariableCell(id);
+		cell.setStyle(style);
+	}
+	
+	/**
+	 * 
+	 * @param id
+	 */
 	private void setPlaceStyles(String id){
 		String style="PLACE";
 		
@@ -3027,7 +3099,8 @@ public class BioGraph extends mxGraph {
 					height = GlobalConstants.DEFAULT_SPECIES_HEIGHT;
 				}
 			} else if (getCellType(cell).equals(GlobalConstants.VARIABLE) || 
-					getCellType(cell).equals(GlobalConstants.PLACE)) {
+					getCellType(cell).equals(GlobalConstants.PLACE) || 
+					getCellType(cell).equals(GlobalConstants.BOOLEAN)) {
 				if (bioModel.getSBMLLayout().getLayout("iBioSim") != null) {
 					Layout layout = bioModel.getSBMLLayout().getLayout("iBioSim"); 
 					if (layout.getAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+(String)cell.getId())!=null) {

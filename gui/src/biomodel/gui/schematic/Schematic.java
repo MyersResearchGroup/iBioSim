@@ -141,6 +141,7 @@ public class Schematic extends JPanel implements ActionListener {
 	private AbstractButton addReactionButton;
 	private AbstractButton addComponentButton;
 	private AbstractButton addPromoterButton;
+	private AbstractButton addBooleanButton;
 	private AbstractButton addVariableButton;
 	private AbstractButton addPlaceButton;
 	private AbstractButton addTransitionButton;
@@ -378,6 +379,8 @@ public class Schematic extends JPanel implements ActionListener {
 		toolBar.add(addPromoterButton);
 		addVariableButton = Utils.makeRadioToolButton("variable_mode.png", "", "Add Variables", this, modeButtonGroup);
 		toolBar.add(addVariableButton);
+		addBooleanButton = Utils.makeRadioToolButton("boolean_mode.png", "", "Add Booleans", this, modeButtonGroup);
+		toolBar.add(addBooleanButton);
 		addPlaceButton = Utils.makeRadioToolButton("add_place.png", "", "Add Places", this, modeButtonGroup);
 		toolBar.add(addPlaceButton);
 		addTransitionButton = Utils.makeRadioToolButton("add_transition.png", "", "Add Transitions", this, modeButtonGroup);
@@ -459,6 +462,8 @@ public class Schematic extends JPanel implements ActionListener {
 		selectButton.setSelected(true);
 		addComponentButton = Utils.makeRadioToolButton("add_component.png", "", "Add Components", this, modeButtonGroup);
 		toolBar.add(addComponentButton);
+		addBooleanButton = Utils.makeRadioToolButton("boolean_mode.png", "", "Add Booleans", this, modeButtonGroup);
+		toolBar.add(addBooleanButton);
 		addVariableButton = Utils.makeRadioToolButton("variable_mode.png", "", "Add Variables", this, modeButtonGroup);
 		toolBar.add(addVariableButton);
 		addPlaceButton = Utils.makeRadioToolButton("add_place.png", "", "Add Places", this, modeButtonGroup);
@@ -879,14 +884,21 @@ public class Schematic extends JPanel implements ActionListener {
 							bioModel.makeUndoPoint();
 						}
 						else if(addVariableButton != null && addVariableButton.isSelected()) {
-							bioModel.createVariable(null, e.getX(), e.getY(),false);
+							bioModel.createVariable(null, e.getX(), e.getY(),false, false);
+							modelEditor.refresh();
+							graph.buildGraph();
+							modelEditor.setDirty(true);
+							bioModel.makeUndoPoint();
+						}
+						else if(addBooleanButton != null && addBooleanButton.isSelected()) {
+							bioModel.createVariable(null, e.getX(), e.getY(),false, true);
 							modelEditor.refresh();
 							graph.buildGraph();
 							modelEditor.setDirty(true);
 							bioModel.makeUndoPoint();
 						}
 						else if(addPlaceButton != null && addPlaceButton.isSelected()) {
-							bioModel.createVariable(null, e.getX(), e.getY(),true);
+							bioModel.createVariable(null, e.getX(), e.getY(),true, false);
 							modelEditor.refresh();
 							graph.buildGraph();
 							modelEditor.setDirty(true);
@@ -1111,7 +1123,7 @@ public class Schematic extends JPanel implements ActionListener {
 							if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, true, false)) {
 								doNotRemove = true;
 							}
-						} else if(type == GlobalConstants.VARIABLE || type == GlobalConstants.PLACE) {
+						} else if(type == GlobalConstants.VARIABLE || type == GlobalConstants.PLACE || type == GlobalConstants.BOOLEAN) {
 							if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, true, true)) {
 								doNotRemove = true;
 							}
@@ -1318,7 +1330,7 @@ public class Schematic extends JPanel implements ActionListener {
 							
 							bioModel.removeById(cell.getId());
 						}
-						else if(type == GlobalConstants.VARIABLE || type == GlobalConstants.PLACE) {
+						else if(type == GlobalConstants.VARIABLE || type == GlobalConstants.PLACE || type == GlobalConstants.BOOLEAN) {
 							bioModel.removeById(cell.getId());
 						}
 						else if(type == GlobalConstants.COMPARTMENT) {
@@ -1497,6 +1509,11 @@ public class Schematic extends JPanel implements ActionListener {
 			JOptionPane.showMessageDialog(Gui.frame, "A variable can only be explicitly connected to components.");
 			graph.buildGraph();
 			return;
+		} else if((numComponents==0) && (graph.getCellType(source)==GlobalConstants.BOOLEAN ||
+				graph.getCellType(target)==GlobalConstants.BOOLEAN)) {
+			JOptionPane.showMessageDialog(Gui.frame, "A Boolean variable can only be explicitly connected to components.");
+			graph.buildGraph();
+			return;
 		} else if(graph.getCellType(source)==GlobalConstants.COMPARTMENT ||
 				graph.getCellType(target)==GlobalConstants.COMPARTMENT) {
 			JOptionPane.showMessageDialog(Gui.frame, "A compartment cannot be connected to other objects.");
@@ -1602,6 +1619,15 @@ public class Schematic extends JPanel implements ActionListener {
 						graph.buildGraph();
 						return;
 					}
+				} else if(graph.getCellType(target) == GlobalConstants.BOOLEAN){
+					try{
+						port = connectComponentToVariable(sourceID, targetID);
+					}
+					catch(ListChooser.EmptyListException e){
+						JOptionPane.showMessageDialog(Gui.frame, "This component has no variable ports.");
+						graph.buildGraph();
+						return;
+					}
 				} else {
 					graph.buildGraph();
 					return;
@@ -1619,6 +1645,15 @@ public class Schematic extends JPanel implements ActionListener {
 						return;
 					}
 				} else if(graph.getCellType(source) == GlobalConstants.VARIABLE){
+					try{
+						port = connectVariableToComponent(sourceID, targetID);
+					}
+					catch(ListChooser.EmptyListException e){
+						JOptionPane.showMessageDialog(Gui.frame, "This component has no variable ports.");
+						graph.buildGraph();
+						return;
+					}
+				}  else if(graph.getCellType(source) == GlobalConstants.BOOLEAN){
 					try{
 						port = connectVariableToComponent(sourceID, targetID);
 					}
@@ -2124,7 +2159,7 @@ public class Schematic extends JPanel implements ActionListener {
 				cell.setId(id);
 			}
 		}		
-		else if(cellType == GlobalConstants.VARIABLE || cellType == GlobalConstants.PLACE){
+		else if(cellType == GlobalConstants.VARIABLE || cellType == GlobalConstants.PLACE || cellType == GlobalConstants.BOOLEAN){
 			
 			String id = parameters.parametersEditor("OK",(String)cell.getId());
 			

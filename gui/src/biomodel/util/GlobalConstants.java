@@ -92,6 +92,7 @@ public class GlobalConstants {
 	public static final String PROMOTER = "Promoter";
 	public static final String VARIABLE = "Variable";
 	public static final String PLACE = "Place";
+	public static final String BOOLEAN = "Boolean";
 	public static final String MRNA = "mRNA";
 	public static final String EXPLICIT_PROMOTER = "ExplicitPromoter";
 	public static final String SBMLFILE = "SBML file";
@@ -140,6 +141,7 @@ public class GlobalConstants {
 	public static final int SBO_MRNA_OLD = 278;
 	public static final int SBO_MRNA = 250;
 	public static final int SBO_PLACE = 546;
+	public static final int SBO_BOOLEAN = 547;
 	public static final int SBO_TRANSITION= 464;
 
 	public static final int SBO_DEGRADATION = 179;

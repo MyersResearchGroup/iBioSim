@@ -2072,6 +2072,10 @@ public class SBMLutilities {
 	  return false;
 	}
 
+	public static boolean isBoolean(Parameter parameter) {
+		return (parameter.isSetSBOTerm() && parameter.getSBOTerm()==GlobalConstants.SBO_BOOLEAN);
+	}
+
 	public static boolean isPlace(Parameter parameter) {
 		return (parameter.isSetSBOTerm() && parameter.getSBOTerm()==GlobalConstants.SBO_PLACE);
 	}
@@ -2099,6 +2103,74 @@ public class SBMLutilities {
 		return math.deepCopy();
 	}
 	
+	public static String addBoolean(String formula,String boolVar) {
+		formula = formula.replace(" "+boolVar+" ", " ("+boolVar+"==1) ");
+		formula = formula.replace(","+boolVar+",",",("+boolVar+"==1),");
+		formula = formula.replace("("+boolVar+",", "(("+boolVar+"==1),");
+		formula = formula.replace(","+boolVar+")", ",("+boolVar+"==1))");
+		formula = formula.replace("("+boolVar+" ", "(("+boolVar+"==1) ");
+		formula = formula.replace(" "+boolVar+")", " ("+boolVar+"==1))");
+		formula = formula.replace("("+boolVar+")", " ("+boolVar+"==1)");
+		if (formula.startsWith(boolVar+" ")) {
+			formula = formula.replaceFirst(boolVar+" ", "(" + boolVar + "==1)");
+		}
+		if (formula.endsWith(" " + boolVar)) {
+			formula = formula.replaceFirst(" " + boolVar, "(" + boolVar + "==1)");
+		}
+		if (formula.equals(boolVar)) {
+			formula = formula.replace(boolVar, "(" + boolVar + "==1)");
+		}
+		return formula;
+	}
+	
+	public static ASTNode addBooleans(String formula,ArrayList<String> booleans) {
+		formula = myFormulaToString(myParseFormula(formula));
+		for (int i = 0; i < booleans.size(); i++) {
+			formula = addBoolean(formula,booleans.get(i));
+		}
+		return myParseFormula(formula);
+	}
+	
+	public static ASTNode addBooleanAssign(String formula,ArrayList<String> booleans) {
+		formula = myFormulaToString(myParseFormula(formula));
+		for (int i = 0; i < booleans.size(); i++) {
+			formula = addBoolean(formula,booleans.get(i));
+		}
+		formula = "piecewise(1," + formula + ",0)";
+		
+		return myParseFormula(formula);
+	}
+	
+	public static ASTNode removeBoolean(ASTNode math,String boolVar) {
+		if (math.getType() == libsbml.AST_RELATIONAL_EQ) {
+			if (math.getLeftChild().getName().equals(boolVar)) {
+				return math.getLeftChild().deepCopy();
+			}
+		}
+		for (long i = 0; i < math.getNumChildren(); i++) {
+			ASTNode child = removeBoolean(math.getChild(i),boolVar);
+			math.replaceChild(i, child);
+		}
+		return math.deepCopy();
+	}
+	
+	public static ASTNode removeBooleans(ASTNode math,ArrayList<String> booleans) {
+		for (int i = 0; i < booleans.size(); i++) {
+			math = removeBoolean(math,booleans.get(i));
+		}
+		return math;
+	}
+
+	public static ASTNode removeBooleanAssign(ASTNode math,ArrayList<String> booleans) {
+		if (math.getType() == libsbml.AST_FUNCTION_PIECEWISE && math.getNumChildren() > 1) {
+			ASTNode result = math.getChild(1);
+			for (int i = 0; i < booleans.size(); i++) {
+				result = removeBoolean(result,booleans.get(i));
+			}
+			return result;
+		}
+		return math.deepCopy();
+	}
 	
 	public static String myFormulaToStringInfix(ASTNode math) {
 		if (math.getType() == libsbml.AST_CONSTANT_E) {
@@ -2345,7 +2417,14 @@ public class SBMLutilities {
 		return "";
 	}
 	
-	public static String SBMLMathToLPNString(ASTNode math,HashMap<String,Integer> constants) {
+	public static String SBMLMathToBoolLPNString(ASTNode math,HashMap<String,Integer> constants,ArrayList<String> booleans) {
+		if (math.getType() == libsbml.AST_FUNCTION_PIECEWISE && math.getNumChildren() > 1) {
+			return SBMLMathToLPNString(math.getChild(1),constants,booleans);
+		}
+		return SBMLMathToLPNString(math,constants,booleans);
+	}
+	
+	public static String SBMLMathToLPNString(ASTNode math,HashMap<String,Integer> constants,ArrayList<String> booleans) {
 		if (math.getType() == libsbml.AST_CONSTANT_FALSE) {
 			return "false";
 		} else if (math.getType() == libsbml.AST_CONSTANT_TRUE) {
@@ -2362,7 +2441,7 @@ public class SBMLutilities {
 		} else if (math.getType() == libsbml.AST_FUNCTION) {
 			String result = math.getName() + "(";
 			for (long i = 0; i < math.getNumChildren(); i++) {
-				String child = SBMLMathToLPNString(math.getChild(i),constants);
+				String child = SBMLMathToLPNString(math.getChild(i),constants,booleans);
 				result += child;
 				if (i+1 < math.getNumChildren()) {
 					result += ",";
@@ -2371,56 +2450,60 @@ public class SBMLutilities {
 			result += ")";
 			return result;
 		} else if (math.getType() == libsbml.AST_PLUS) {
-			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants);
-			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants);
+			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants,booleans);
+			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants,booleans);
 			return "(" + leftStr + "+" + rightStr + ")";
 		} else if (math.getType() == libsbml.AST_MINUS) {
 			if (math.getNumChildren()==1) {
-				return "-" + SBMLMathToLPNString(math.getChild(0),constants);
+				return "-" + SBMLMathToLPNString(math.getChild(0),constants,booleans);
 			} 
-			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants);
-			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants);
+			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants,booleans);
+			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants,booleans);
 			return "(" + leftStr + "-" + rightStr + ")";
 		} else if (math.getType() == libsbml.AST_TIMES) {
-			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants);
-			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants);
+			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants,booleans);
+			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants,booleans);
 			return "(" + leftStr + "*" + rightStr + ")";
 		} else if (math.getType() == libsbml.AST_DIVIDE) {
-			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants);
-			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants);
+			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants,booleans);
+			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants,booleans);
 			return "(" + leftStr + "/" + rightStr + ")";
 		} else if (math.getType() == libsbml.AST_POWER) {
-			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants);
-			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants);
+			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants,booleans);
+			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants,booleans);
 			return "(" + leftStr + "^" + rightStr + ")";
 		} else if (math.getType() == libsbml.AST_RELATIONAL_EQ) {
-			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants);
-			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants);
-			return "(" + leftStr + "=" + rightStr + ")";
+			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants,booleans);
+			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants,booleans);
+			if (booleans.contains(leftStr) && rightStr.equals("1")) {
+				return leftStr;
+			} else {
+				return "(" + leftStr + "=" + rightStr + ")";
+			}
 		} else if (math.getType() == libsbml.AST_RELATIONAL_GEQ) {
-			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants);
-			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants);
+			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants,booleans);
+			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants,booleans);
 			return "(" + leftStr + ">=" + rightStr + ")";
 		} else if (math.getType() == libsbml.AST_RELATIONAL_GT) {
-			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants);
-			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants);
+			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants,booleans);
+			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants,booleans);
 			return "(" + leftStr + ">" + rightStr + ")";
 		} else if (math.getType() == libsbml.AST_RELATIONAL_LEQ) {
-			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants);
-			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants);
+			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants,booleans);
+			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants,booleans);
 			return "(" + leftStr + "<=" + rightStr + ")";
 		} else if (math.getType() == libsbml.AST_RELATIONAL_LT) {
-			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants);
-			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants);
+			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants,booleans);
+			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants,booleans);
 			return "(" + leftStr + "<" + rightStr + ")";
 		} else if (math.getType() == libsbml.AST_RELATIONAL_NEQ) {
-			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants);
-			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants);
+			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants,booleans);
+			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants,booleans);
 			return "(" + leftStr + "!=" + rightStr + ")";
 		} else if (math.getType() == libsbml.AST_LOGICAL_NOT) {
 			if (math.getNumChildren()==0) return "";
 			String result = "~(";
-			String child = SBMLMathToLPNString(math.getChild(0),constants);
+			String child = SBMLMathToLPNString(math.getChild(0),constants,booleans);
 			result += child;
 			result += ")";
 			return result;
@@ -2428,7 +2511,7 @@ public class SBMLutilities {
 			if (math.getNumChildren()==0) return "";
 			String result = "(";
 			for (long i = 0; i < math.getNumChildren(); i++) {
-				String child = SBMLMathToLPNString(math.getChild(i),constants);
+				String child = SBMLMathToLPNString(math.getChild(i),constants,booleans);
 				result += child;
 				if (i+1 < math.getNumChildren()) {
 					result += "&";
@@ -2440,7 +2523,7 @@ public class SBMLutilities {
 			if (math.getNumChildren()==0) return "";
 			String result = "(";
 			for (long i = 0; i < math.getNumChildren(); i++) {
-				String child = SBMLMathToLPNString(math.getChild(i),constants);
+				String child = SBMLMathToLPNString(math.getChild(i),constants,booleans);
 				result += child;
 				if (i+1 < math.getNumChildren()) {
 					result += "|";
@@ -2452,7 +2535,7 @@ public class SBMLutilities {
 			if (math.getNumChildren()==0) return "";
 			String result = "exor(";
 			for (long i = 0; i < math.getNumChildren(); i++) {
-				String child = SBMLMathToLPNString(math.getChild(i),constants);
+				String child = SBMLMathToLPNString(math.getChild(i),constants,booleans);
 				result += child;
 				if (i+1 < math.getNumChildren()) {
 					result += ",";

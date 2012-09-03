@@ -2082,6 +2082,7 @@ public class BioModel {
 	
 	public boolean saveAsLPN(String filename) {
 		HashMap<String,Integer> constants = new HashMap<String,Integer>();
+		ArrayList<String> booleans = new ArrayList<String>();
 		HashMap<String,String> rates = new HashMap<String,String>();
 		SBMLDocument flatSBML = flattenModel();
 		//flatSBML.expandFunctionDefinitions();
@@ -2099,6 +2100,13 @@ public class BioModel {
 			Parameter p = flatSBML.getModel().getParameter(i);
 			if (SBMLutilities.isPlace(p)) {
 				lpn.addPlace(p.getId(), (p.getValue()==1));
+			} else if (SBMLutilities.isBoolean(p)){
+				booleans.add(p.getId());
+				if (p.getValue()==0) {	
+					lpn.addBoolean(p.getId(), "false");
+				} else {
+					lpn.addBoolean(p.getId(), "true");
+				}
 			} else {
 				if (rates.containsKey(p.getId())) continue;
 				if (!p.getConstant()) {
@@ -2157,24 +2165,26 @@ public class BioModel {
 							}
 						}						
 					}
-					t.addEnabling(SBMLutilities.SBMLMathToLPNString(triggerMath,constants));
+					t.addEnabling(SBMLutilities.SBMLMathToLPNString(triggerMath,constants,booleans));
 				}
 				if (e.isSetDelay()) {
-					t.addDelay(SBMLutilities.SBMLMathToLPNString(e.getDelay().getMath(),constants));
+					t.addDelay(SBMLutilities.SBMLMathToLPNString(e.getDelay().getMath(),constants,booleans));
 				}
 				if (e.isSetPriority()) {
-					t.addPriority(SBMLutilities.SBMLMathToLPNString(e.getPriority().getMath(),constants));
+					t.addPriority(SBMLutilities.SBMLMathToLPNString(e.getPriority().getMath(),constants,booleans));
 				}
 				for (long j = 0; j < e.getNumEventAssignments(); j++) {
 					EventAssignment ea = e.getEventAssignment(j);
 					Parameter p = flatSBML.getModel().getParameter(ea.getVariable());
 					if (p != null && !SBMLutilities.isPlace(p)) {
 						if (rates.containsKey(ea.getVariable())) {
-							t.addRateAssign(rates.get(ea.getVariable()), SBMLutilities.SBMLMathToLPNString(ea.getMath(),constants));
+							t.addRateAssign(rates.get(ea.getVariable()), SBMLutilities.SBMLMathToLPNString(ea.getMath(),constants,booleans));
 						} else if (rates.containsValue(ea.getVariable())) {
-							t.addContAssign(ea.getVariable(), SBMLutilities.SBMLMathToLPNString(ea.getMath(),constants));
+							t.addContAssign(ea.getVariable(), SBMLutilities.SBMLMathToLPNString(ea.getMath(),constants,booleans));
+						} else if (booleans.contains(ea.getVariable())){
+							t.addBoolAssign(ea.getVariable(), SBMLutilities.SBMLMathToBoolLPNString(ea.getMath(),constants,booleans));
 						} else {
-							t.addIntAssign(ea.getVariable(), SBMLutilities.SBMLMathToLPNString(ea.getMath(),constants));
+							t.addIntAssign(ea.getVariable(), SBMLutilities.SBMLMathToLPNString(ea.getMath(),constants,booleans));
 						}
 					}
 				}
@@ -5250,7 +5260,7 @@ public class BioModel {
 		return id;
 	}
 	
-	public String createVariable(String id, float x, float y, boolean isPlace) {
+	public String createVariable(String id, float x, float y, boolean isPlace, boolean isBoolean) {
 		Parameter parameter = sbml.getModel().createParameter();
 		// Set default species ID
 		if (isPlace) {
@@ -5277,6 +5287,8 @@ public class BioModel {
 		parameter.setValue(0.0);
 		if (isPlace) {
 			parameter.setSBOTerm(GlobalConstants.SBO_PLACE);
+		} else if (isBoolean) {
+			parameter.setSBOTerm(GlobalConstants.SBO_BOOLEAN);
 		}
 
 		Layout layout = null;
