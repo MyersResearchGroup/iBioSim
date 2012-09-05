@@ -2,6 +2,8 @@ package verification.timed_state_exploration.zoneProject;
 
 import java.util.Arrays;
 
+import lpn.parser.LhpnFile;
+
 import verification.platu.lpn.LpnTranList;
 import verification.platu.project.PrjState;
 import verification.platu.stategraph.State;
@@ -198,5 +200,40 @@ public class TimedPrjState extends PrjState{
 		}
 		
 		return result;
+	}
+	
+	/**
+	 * Updates all the IneqaulityVariables according to the current state and Zone.
+	 */
+	public void updateInequalityVariables(){
+		
+		// Iterate through the InequalityVariables of each state and update the result.
+		
+		for(State s : this.stateArray){
+			// Extract the LPN.
+			LhpnFile lpn = s.getLpn();
+			
+			// Get the state vector to update.
+			int[] vector = s.getVector();
+			
+			// The variables are not stored in the state, so get them from the LPN.
+			String[] variables = lpn.getVariables();
+			
+			// Find the inequality variables.
+			for(int i=0; i<variables.length; i++){
+				
+				// A name starting with '$' indicates a name of an InequalityVariable.
+				if(variables[i].startsWith("$")){
+					
+					// Get the variable for using its evaluator.
+					InequalityVariable var = (InequalityVariable) lpn.getVariable(variables[i]);
+					//vector[i] = var.evaluateInequality(s, this._zones[0]);
+					
+					// Get the new value.
+					vector[i] = var.evaluateInequality(s, _zones[0]).equals("true") ? 1 : 0;
+				}
+			}
+			
+		}
 	}
 }
