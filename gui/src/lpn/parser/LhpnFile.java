@@ -729,19 +729,71 @@ public class LhpnFile {
 	}
 
 	public void addContinuous(String name) {
-		Variable var = new Variable(name, "continuous");
-		continuous.put(name, var);
-		if (!variables.contains(var)) {
-			variables.add(var);
+		// Check if the name is already present. If not, add the variable.
+		
+		if(!continuous.containsKey(name)){
+			Variable var = new Variable(name, "continuous");
+			continuous.put(name, var);
 		}
+		
+//		Variable var = new Variable(name, "continuous");
+//		continuous.put(name, var);
+//		if (!variables.contains(var)) {
+//			variables.add(var);
+//		}
 	}
 
 	public void addContinuous(String name, Properties initCond) {
-		Variable var = new Variable(name, "continuous", initCond);
-		continuous.put(name, var);
-		if (!variables.contains(var)) {
-			variables.add(var);
+//		Variable var = new Variable(name, "continuous", initCond);
+//		continuous.put(name, var);
+//		if (!variables.contains(var)) {
+//			variables.add(var);
+//		}
+		
+		// First check if this variable has already been introduced.
+		// If the variable has already been added, then just change the
+		// values of the variable.
+//		if(variables.contains(var)){
+//			// Find the index of the previous added variable.
+//			int index = variables.indexOf(var);
+//			
+//			// Get the previous created variable.
+//			Variable contVar = variables.get(index);
+//			
+//			// Set the values of the variable.
+//			contVar.addInitCond(initCond);
+//			
+//		}
+//		if(continuous.containsValue(var)){
+//			
+//		}
+//		else{
+//			// Since the variable has not already been added, then add the
+//			// variable to the fields 'continuous' and 'variables'.
+//			
+//			continuous.put(name, var);
+//			
+//			variables.add(var);
+//		}
+		
+		// Holds the Variable if it was created before.
+		Variable contVar = null;
+		
+		// Search for the Variable.
+		for(Variable var : continuous.values()){
+			if(var.getName().equals(name)){
+				contVar = var;
+			}
 		}
+		
+		// If contVar contains null, then a previous existing Variable was not found.
+		if(contVar != null){
+			contVar.addInitCond(initCond);
+		}
+		else{
+			continuous.put(name, new Variable(name, "continuous", initCond));
+		}
+			
 	}
 
 	public void addContinuous(String name, String initVal, String initRate) {
@@ -750,9 +802,9 @@ public class LhpnFile {
 		initCond.setProperty("rate", initRate);
 		Variable var = new Variable(name, "continuous", initCond);
 		continuous.put(name, var);
-		if (!variables.contains(var)) {
-			variables.add(var);
-		}
+//		if (!variables.contains(var)) {
+//			variables.add(var);
+//		}
 	}
 
 	public void addInteger(String name, String ic) {
@@ -1148,6 +1200,23 @@ public class LhpnFile {
 		}
 		DualHashMap<String, Integer> varIndexMap = new DualHashMap<String, Integer>(varIndexHashMap, variables.size());
 		return varIndexMap;
+	}
+	
+	/**
+	 * Gives a map that associates the name of a continuous variable to its index.
+	 * @return
+	 * 		The map that associates the continuous variable and name.
+	 */
+	public DualHashMap<String, Integer> getContinuousIndexMap(){
+		int i=0;
+		HashMap<String, Integer> contVarIndexHashMap = new HashMap<String, Integer>();
+		for(Variable v : continuous.values()){
+			contVarIndexHashMap.put(v.getName(), i);
+			i++;
+		}
+		DualHashMap<String, Integer> contIndexMap = 
+				new DualHashMap<String, Integer> (contVarIndexHashMap, variables.size());
+		return contIndexMap;
 	}
 	
 	public HashMap<String, String> getAllVarsWithValuesAsString(int[] varValueVector) {
@@ -2264,14 +2333,14 @@ public class LhpnFile {
 		// For each node, create an InequalityVariable, add it to the variables,
 		// and replace the current node of the ExprTree with the InequaltiyVariable.
 		
-		for(ExprTree ET : inequalities){
+		for(ExprTree ET : inequalities){ // ET phone home.
 			
 			// Extract the expression for naming the new InequalityVariable.
 			String booleanName = "$" + ET.toString();
 			
 			// Create the InequalityVariable.
 			InequalityVariable newVariable = new InequalityVariable(booleanName, "false",
-					ET);
+					ET.clone(), this);
 			
 			// Check if the Variable is present already.
 			Variable v = booleans.get(booleanName);
@@ -2285,7 +2354,12 @@ public class LhpnFile {
 				}
 				else{
 					InequalityVariable iv = (InequalityVariable) v;
-					iv.increaseCount();
+					
+//					
+//					Not needed anymore since the list is not dynamically change
+//					anymore.
+//					
+//					iv.increaseCount();
 				}
 			}
 			else{
@@ -2294,6 +2368,7 @@ public class LhpnFile {
 
 				// Add the variable
 				booleans.put(booleanName, newVariable);
+				variables.add(newVariable);
 			}
 			
 			// Replace the node into a boolean value.
