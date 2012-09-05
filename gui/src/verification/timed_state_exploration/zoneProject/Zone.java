@@ -1844,4 +1844,5 @@ public class Zone{
 		return new IntervalPair(Integer.parseInt(lowerString),
 				Integer.parseInt(upperString));
 	}	
+
 }
