@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Set;
 import java.lang.Math;
 
+import verification.timed_state_exploration.zoneProject.IntervalPair;
+
 public class ExprTree {
 
 	String op;
@@ -4459,6 +4461,52 @@ public class ExprTree {
 	{
 		return r2;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public ExprTree clone(){
+		
+		ExprTree ET = new ExprTree(); // ET phone home.
+		
+		ET.op = op;
+
+		ET.isit = isit;
+
+		ET.lvalue = lvalue;
+		
+		ET.uvalue = uvalue;
+		
+		ET.variable = variable;
+
+		ET.real = real;
+
+		ET.logical = logical;
+
+		ET.r1 = r1 != null ? r1.clone() : null;
+		
+		ET.r2 = r2 != null ? r2.clone() : null;
+		
+		ET.tokvalue = tokvalue;
+
+		ET.position = position;
+
+		ET.token = token;
+
+		ET.newresult = newresult != null ? newresult.clone() : null;
+
+		//private ArrayList<String> booleanSignals, integerSignals, continuousSignals;
+
+		ET.booleanSignals = (ArrayList<String>) booleanSignals.clone();
+		
+		ET.integerSignals = (ArrayList<String>) integerSignals.clone();
+		
+		ET.continuousSignals = (ArrayList<String>) continuousSignals;
+		
+		ET.lhpn = lhpn;
+		
+		ET.expression = expression;
+		
+		return ET;
+	}
 
 	public ExprTree getExprTree() {
 		token = this.intexpr_gettok(expression);
@@ -4470,5 +4518,9 @@ public class ExprTree {
 			integerSignals.add(s);
 		}	
 	}
-
+	
+	
+	public IntervalPair evaluateExprBound(HashMap<String, String> variables){
+		return null;
+	}
 }
