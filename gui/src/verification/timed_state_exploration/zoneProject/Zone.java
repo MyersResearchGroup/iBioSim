@@ -101,6 +101,10 @@ public class Zone{
 	/* Hack to pass a parameter to the equals method though a variable */
 	//private boolean subsetting = false;
 	
+	/* Stores the continuous variables that have rate zero */
+//	HashMap<LPNTransitionPair, Variable> _rateZeroContinuous;
+	DualHashMap<RangeAndPairing, Variable> _rateZeroContinuous;
+	
 	/* Records the largest zone that occurs. */
 	public static int ZoneSize = 0;
 	
@@ -417,7 +421,7 @@ public class Zone{
 		//State[] localStates = tps.toStateArray();
 		
 		// Initialize hash code to -1 (indicating nothing cached).
-		_hashCode = -1; 
+		_hashCode = -1;
 		
 		// Initialize the LPN list.
 		initialize_lpnList(localStates);
@@ -570,7 +574,8 @@ public class Zone{
 	}
 	
 	/**
-	 * Initializes the _indexToTimerPair from the local states.
+	 * Initializes the _indexToTimerPair from the local states. (Add more detail.
+	 * This method also initializes the rate zero variables.)
 	 * @param localStates
 	 * 		The local states.
 	 * @return
@@ -590,6 +595,9 @@ public class Zone{
 		 * Correspondingly, elements are first found for an LPN and sort, then added
 		 * to the main list.
 		 */
+		
+		// This method will also initialize the _rateZeroContinuous
+		_rateZeroContinuous = new DualHashMap<RangeAndPairing, Variable>();
 		
 		// This list accumulates the transition pairs (ie timers) and the continuous
 		// variables.
@@ -614,7 +622,7 @@ public class Zone{
 			String[] continuousVariables = lpn.getContVars();
 			
 			// Get the variable, index map.
-			DualHashMap<String, Integer> variableIndex = lpn.getVarIndexMap();
+			DualHashMap<String, Integer> variableIndex = lpn.getContinuousIndexMap();
 			
 			// Find which have a nonzero rate.
 			for(int j=0; j<continuousVariables.length; j++){
@@ -624,8 +632,18 @@ public class Zone{
 				// Get the rate.
 				int rate = (int) Double.parseDouble(contVar.getInitRate());
 				
+				// Get the LPN index for the variable
+				int lpnIndex = lpn.getLpnIndex();
+				
+				// Get the index as a variable for the LPN. This index matches
+				// the index in the vector stored by platu.State.
+				int contVariableIndex = variableIndex.get(continuousVariables[j]);
+				
+				LPNTransitionPair newPair = 
+						new LPNTransitionPair(lpnIndex, contVariableIndex, false);
+				
 				// If the rate is non-zero, then the variables needs to be tracked
-				// by the zone.
+				// by matrix part of the Zone.
 				if(rate !=0){
 					// Temporary exception guaranteeing only unit rates.
 					if(rate != -1 && rate != 1){
@@ -634,16 +652,26 @@ public class Zone{
 								" has a rate of " + rate);
 					}
 					
-					// Get the LPN index for the variable
-					int lpnIndex = lpn.getLpnIndex();
-					
-					// Get the index as a variable for the LPN. This index matches
-					// the index in the vector stored by platu.State.
-					int contVariableIndex = variableIndex.get(continuousVariables[j]);
+//					// Get the LPN index for the variable
+//					int lpnIndex = lpn.getLpnIndex();
+//					
+//					// Get the index as a variable for the LPN. This index matches
+//					// the index in the vector stored by platu.State.
+//					int contVariableIndex = variableIndex.get(continuousVariables[j]);
 					
 					// The continuous variable reference.
-					singleLPN.add(
-							new LPNTransitionPair(lpnIndex, contVariableIndex, false));
+//					singleLPN.add(
+//							new LPNTransitionPair(lpnIndex, contVariableIndex, false));
+					
+					singleLPN.add(newPair);
+				}
+				else{
+					// If the rate is zero, then the Zone keeps track of this variable
+					// in a list.
+//					_rateZeroContinuous.put(newPair, cpontVar);
+					_rateZeroContinuous.
+						put(new RangeAndPairing(newPair, parseRate(contVar.getInitValue())),
+								contVar);
 				}
 			}
 			
@@ -714,9 +742,18 @@ public class Zone{
 						.getVariable(ltPair.get_transitionIndex());
 				// TODO : For now, I'm assuming that the initial rate is constant. This
 				// will need to change later.
-				int initialRate = (int) Double.parseDouble(v.getInitRate());
-				upper = initialRate;
-				lower = initialRate;
+//				int initialRate = (int) Double.parseDouble(v.getInitRate());
+//				upper = initialRate;
+//				lower = initialRate;
+				String rate = v.getInitRate();
+				
+				// Parse the rate. Should be in the form of [x,y] where x
+				// and y are integers.
+				IntervalPair range = parseRate(rate);
+				
+				lower = range.get_LowerBound();
+				upper = range.get_UpperBound();
+				
 			}
 			else{
 			
@@ -782,6 +819,42 @@ public class Zone{
 				new LPNTransitionPair(lpnIndex, transitionIndex, true);
 		
 		return getUpperBoundbydbmIndex(Arrays.binarySearch(_indexToTimerPair, ltPair));
+	}
+	
+	/**
+	 * Returns the upper bound of the continuous variable.
+	 * @param var
+	 * 		The variable of interest.
+	 * @return
+	 * 		The upper bound of var.
+	 */
+	public int getUpperBoundbyContinuousVariable(Variable var){
+		
+		// TODO : Finish.
+		
+		// Determine whether the variable is in the zone or rate zero.
+		RangeAndPairing indexAndRange = _rateZeroContinuous.getKey(var);
+		
+		// If a RangeAndPairing is returned, then get the information from here.
+		if(indexAndRange != null){
+			return indexAndRange.get_range().get_UpperBound();
+		}
+		
+		// If indexAndRange is null, then try to get the value from the zone.
+		int i=-1;
+		for(i=0; i<_indexToTimerPair.length; i++){
+			if(_indexToTimerPair[i].equals(var)){
+				break;
+			}
+		}
+		
+		if(i < 0){
+			throw new IllegalStateException("Atempted to find the upper bound for "
+					+ "a non-rate zero continuous variable that was not found in the "
+					+ "zone.");
+		}
+		
+		return getUpperBoundbydbmIndex(i);
 	}
 	
 	/**
@@ -860,6 +933,12 @@ public class Zone{
 		
 		return -1*getLowerBoundbydbmIndex(
 				Arrays.binarySearch(_indexToTimerPair, ltPair));
+	}
+	
+	public int getLowerBoundbyContinuousVariable(Variable var){
+		// TODO : Finish.
+		
+		return 0;
 	}
 	
 	/**
@@ -1751,4 +1830,18 @@ public class Zone{
 //	public static void clearLexicon(){
 //		_indexToTransition = null;
 //	}
+	
+	private IntervalPair parseRate(String rate){
+		
+		String rateNoSpaces = rate.trim();
+		
+		int commaIndex = rateNoSpaces.indexOf(",");
+		
+		String lowerString = rateNoSpaces.substring(1, commaIndex).trim();
+		String upperString = rateNoSpaces.substring(commaIndex+1, 
+				rateNoSpaces.length()-1).trim();
+		
+		return new IntervalPair(Integer.parseInt(lowerString),
+				Integer.parseInt(upperString));
+	}	
 }
