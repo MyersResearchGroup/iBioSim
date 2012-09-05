@@ -1,8 +1,12 @@
 package verification.timed_state_exploration.zoneProject;
 
+import java.util.HashMap;
 import java.util.Properties;
 
+import verification.platu.stategraph.State;
+
 import lpn.parser.ExprTree;
+import lpn.parser.LhpnFile;
 import lpn.parser.Variable;
 
 
@@ -26,11 +30,24 @@ public class InequalityVariable extends Variable {
 	/* Holds the defining expression for a boolean value derived from an inequality. */
 	private ExprTree _inequalityExprTree;
 	
-	/* 
-	 * Keeps track of the Transitions that currently reference this InequalityVariable.
-	 */
-	//HashSet<Transition> referencingTransitions;
-	int _referenceCount;
+	/* The continuous variable that this InequalityVariable depends on.*/
+	//String _variable;
+	Variable _variable;
+	
+	
+	/* The LhpnFile object that this InequalityVariable belongs to. */
+	LhpnFile _lpn;
+	
+	
+//	
+//	Not needed anymore since the list of InequalityVariables is not dynamically
+//	changing.
+//	
+//	/* 
+//	 * Keeps track of the Transitions that currently reference this InequalityVariable.
+//	 */
+//	//HashSet<Transition> referencingTransitions;
+//	int _referenceCount;
 	
 	/**
 	 * 
@@ -71,7 +88,7 @@ public class InequalityVariable extends Variable {
 	 * 		An expression tree that defines the boolean value. This tree should
 	 * 		represent a relational operator.
 	 */
-	public InequalityVariable(String name, String initValue, ExprTree ET) {
+	public InequalityVariable(String name, String initValue, ExprTree ET, LhpnFile lpn) {
 		super(name, BOOLEAN, initValue);
 		
 		// Check if the name starts with a '$'. If not, yell.
@@ -86,8 +103,27 @@ public class InequalityVariable extends Variable {
 		// Set the defining expression.
 		_inequalityExprTree = ET;
 		
-		// When created, an expression refers to this variable.
-		_referenceCount = 1;
+		// Set the containing LPN.
+		_lpn = lpn;
+		
+		// Extract the variable.
+		String contVariableName = "";
+		
+		if(ET.getLeftChild().containsCont()){
+			contVariableName = ET.getLeftChild().toString();
+		}
+		else{
+			contVariableName = ET.getRightChild().toString();
+		}
+		
+		_variable = lpn.getVariable(contVariableName);
+//		
+//		
+//		Reference counts are not needed anymore since the set of 
+//		Boolean variables is not dynamically changing.
+//		
+//		// When created, an expression refers to this variable.
+//		_referenceCount = 1;
 	}
 	
 	
@@ -111,29 +147,32 @@ public class InequalityVariable extends Variable {
 		return "Inequality Variable : " + getName().substring(1);
 	}
 	
-	/**
-	 * Increase the count of how many expressions refer to this InequalityVariable.
-	 */
-	public void increaseCount(){
-		_referenceCount++;
-	}
-	
-	/**
-	 * Decreases the count of how many expressions refer to this InequalityVariable.
-	 */
-	public void decreaseCount(){
-		_referenceCount--;
-	}
-
-	/**
-	 * Returns the count of the number of expressions referring to this
-	 * InequalityVariable.
-	 * @return
-	 * 		The count recorded for how many expressions refer to this InequalityVariable.
-	 */
-	public int getCount(){
-		return _referenceCount;
-	}
+//	
+//	This is no longer needed since variables will not dynamically change.
+//	
+//	/**
+//	 * Increase the count of how many expressions refer to this InequalityVariable.
+//	 */
+//	public void increaseCount(){
+//		_referenceCount++;
+//	}
+//	
+//	/**
+//	 * Decreases the count of how many expressions refer to this InequalityVariable.
+//	 */
+//	public void decreaseCount(){
+//		_referenceCount--;
+//	}
+//
+//	/**
+//	 * Returns the count of the number of expressions referring to this
+//	 * InequalityVariable.
+//	 * @return
+//	 * 		The count recorded for how many expressions refer to this InequalityVariable.
+//	 */
+//	public int getCount(){
+//		return _referenceCount;
+//	}
 	
 	/**
 	 * Returns false. InequalityVaribles are dealt with separately.
@@ -155,4 +194,114 @@ public class InequalityVariable extends Variable {
 	public boolean isInternal() { 
 		return false;
 	}
+	
+	/**
+	 * Evaluates the inequality according to the current state and zone.
+	 * @param localState
+	 * 		The current state.
+	 * @param z
+	 * 		The zone containing the value of the continuous variable.
+	 */
+	//public void update(Zone z){
+	public String evaluateInequality(State localState, Zone z){
+		
+		// TODO : This method ignores the case where the range of the continuous variable
+		// stradles the bound.
+		
+		//
+		String result = "";
+		
+		/*
+		 *  Extract the current values of the (Boolean and Integer) variables to be able
+		 *  to obtain the value of the expression side of the inequality. This
+		 *  may need to be changed when the bound evaluator is created and ranges are
+		 *  allowed for the Integer variables.
+		 */
+		HashMap<String, String> variableValues = _lpn.getAllVarsWithValuesAsString(localState.getVector());
+		
+		// Determine which side of the expression tree has the continuous variable.
+		if(_inequalityExprTree.getLeftChild().containsVar(_variable.getName())){
+			// Extract the value of the expression side of the inequality.
+			int expressionValue = (int) _inequalityExprTree.getRightChild().evaluateExpr(variableValues);
+			
+			// Determine which type of inequality.
+			String op = _inequalityExprTree.getOp();
+			
+			if(op.equals("<") || op.equals("<=")){
+//				if(z.getUpperBoundbyContinuousVariable(_variable) <= expressionValue){
+//					this.initValue = "true";
+//				}
+//				else
+//				{
+//					this.initValue = "false";
+//				}
+
+//				this.initValue = z.getUpperBoundbyContinuousVariable(_variable) <= expressionValue
+//						? "true" : "false"; 
+				
+				result = z.getUpperBoundbyContinuousVariable(_variable) <= expressionValue
+						? "true" : "false";
+			}
+			else{
+//				this.initValue = z.getLowerBoundbyContinuousVariable(_variable) >= expressionValue
+//						? "true" : "false";
+				
+				result = z.getLowerBoundbyContinuousVariable(_variable) >= expressionValue
+						? "true" : "false";
+			}
+			
+		}
+		else{
+			// Extract the value of the expression side of the inequality.
+			int expressionValue = (int) _inequalityExprTree.getLeftChild().evaluateExpr(variableValues);
+			
+			// Determine which type of inequality.
+
+			String op = _inequalityExprTree.getOp();
+			
+			if(op.equals("<") || op.equals("<=")){
+//				if(expressionValue <= z.getLowerBoundbyContinuousVariable(_variable)){
+//					this.initValue = "true";
+//				}
+//				else
+//				{
+//					this.initValue = "false";
+//				}
+				
+//				this.initValue = expressionValue <= z.getLowerBoundbyContinuousVariable(_variable)
+//						? "true" : "false"; 
+				
+				result = expressionValue <= z.getLowerBoundbyContinuousVariable(_variable)
+						? "true" : "false"; 
+			}
+			else{
+//				this.initValue = expressionValue >= z.getUpperBoundbyContinuousVariable(_variable)
+//						? "true" : "false";
+				
+				result = expressionValue >= z.getUpperBoundbyContinuousVariable(_variable)
+						? "true" : "false";
+			}
+			
+		}
+		
+		return result;
+		
+	}
+	
+//	/**
+//	 * Finds which child node of the defining ExprTree that contains the
+//	 * continuous variable.
+//	 * @return
+//	 * 		The ExrTree node of the defining ExprTree containing the continuous
+//	 * 		variable.
+//	 */
+//	private ExprTree findContinuous(){
+//		
+//		
+//		if(_inequalityExprTree.getLeftChild().containsVar(_variable.getName())){
+//			
+//		}
+//			
+//		return null;
+//	}
 }
