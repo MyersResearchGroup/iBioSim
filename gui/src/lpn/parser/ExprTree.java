@@ -4521,6 +4521,467 @@ public class ExprTree {
 	
 	
 	public IntervalPair evaluateExprBound(HashMap<String, String> variables){
+		
+//		void exprsn::eval(lhpnStateADT cur_state,int nevents){
+//			  char log_val;
+//			  int tl1,tl2,tu1,tu2,i,j,k;
+//			  int preciser = 1;
+//
+//			  if (op!=""){
+//			    //printf("%s, eval left child\n",op.c_str());
+//			    r1->eval(cur_state,nevents);
+//			    if ((r1->lvalue == -INFIN)||(r1->uvalue == INFIN)){
+//			      lvalue = -INFIN;
+//			      uvalue = INFIN;
+//			      return;
+//			    }
+//			    if (r2){
+//			      //printf("eval right child\n");
+//			      r2->eval(cur_state,nevents);
+//			      if ((r2->lvalue == -INFIN)||(r2->uvalue == INFIN)){
+//			      lvalue = -INFIN;
+//			      uvalue = INFIN;
+//			      return;
+//			    }
+//			    }
+//			    if (op=="||"){
+//			      // logical OR
+//			      if (r1->logical){
+//				tl1 = r1->lvalue;
+//				tu1 = r1->uvalue;
+//			      }
+//			      else{//convert numeric r1 to boolean
+//				if ((r1->lvalue == 0)&&(r1->uvalue == 0)){//false
+//				  tl1 = tu1 = 0;
+//				}
+//				else if ((r1->lvalue < 0)&&(r1->uvalue < 0)||
+//					 (r1->lvalue > 0)&&(r1->uvalue > 0)){//true
+//				  tl1 = tu1 = 1;
+//				}
+//				else{
+//				  tl1 = 0;
+//				  tu1 = 1;
+//				}
+//			      }
+//			      if (r2->logical){
+//				tl2 = r2->lvalue;
+//				tu2 = r2->uvalue;
+//			      }
+//			      else{//convert numeric r2 to boolean
+//				if ((r2->lvalue == 0)&&(r2->uvalue == 0)){//false
+//				  tl2 = tu2 = 0;
+//				}
+//				else if ((r2->lvalue < 0)&&(r2->uvalue < 0)||
+//					 (r2->lvalue > 0)&&(r2->uvalue > 0)){//true
+//				  tl2 = tu2 = 1;
+//				}
+//				else{
+//				  tl2 = 0;
+//				  tu2 = 1;
+//				}
+//			      }
+//			      lvalue = tl1 || tl2;
+//			      uvalue = tu1 || tu2;
+//			    }else if(op=="&&"){
+//			      // logical AND
+//			      if (r1->logical){
+//				tl1 = r1->lvalue;
+//				tu1 = r1->uvalue;
+//			      }
+//			      else{//convert numeric r1 to boolean
+//				if ((r1->lvalue == 0)&&(r1->uvalue == 0)){//false
+//				  tl1 = tu1 = 0;
+//				}
+//				else if ((r1->lvalue < 0)&&(r1->uvalue < 0)||
+//					 (r1->lvalue > 0)&&(r1->uvalue > 0)){//true
+//				  tl1 = tu1 = 1;
+//				}
+//				else{
+//				  tl1 = 0;
+//				  tu1 = 1;
+//				}
+//			      }
+//			      if (r2->logical){
+//				tl2 = r2->lvalue;
+//				tu2 = r2->uvalue;
+//			      }
+//			      else{//convert numeric r2 to boolean
+//				if ((r2->lvalue == 0)&&(r2->uvalue == 0)){//false
+//				  tl2 = tu2 = 0;
+//				}
+//				else if ((r2->lvalue < 0)&&(r2->uvalue < 0)||
+//					 (r2->lvalue > 0)&&(r2->uvalue > 0)){//true
+//				  tl2 = tu2 = 1;
+//				}
+//				else{
+//				  tl2 = 0;
+//				  tu2 = 1;
+//				}
+//			      }
+//			      lvalue = tl1 && tl2;
+//			      uvalue = tu1 && tu2;
+//			#ifdef __LHPN_EVAL__
+//			      printf("and: [%d,%d](%c)&[%d,%d](%c) = [%d,%d]\n",r1->lvalue,
+//				     r1->uvalue,r1->isit,r2->lvalue,r2->uvalue,r2->isit,lvalue,uvalue);
+//			#endif
+//			    }else if(op=="->"){
+//			      // implication operator
+//			      if (r1->logical){
+//				tl1 = r1->lvalue;
+//				tu1 = r1->uvalue;
+//			      }
+//			      else{//convert numeric r1 to boolean
+//				if ((r1->lvalue == 0)&&(r1->uvalue == 0)){//false
+//				  tl1 = tu1 = 0;
+//				}
+//				else if ((r1->lvalue < 0)&&(r1->uvalue < 0)||
+//					 (r1->lvalue > 0)&&(r1->uvalue > 0)){//true
+//				  tl1 = tu1 = 1;
+//				}
+//				else{
+//				  tl1 = 0;
+//				  tu1 = 1;
+//				}
+//			      }
+//			      if (r2->logical){
+//				tl2 = r2->lvalue;
+//				tu2 = r2->uvalue;
+//			      }
+//			      else{//convert numeric r2 to boolean
+//				if ((r2->lvalue == 0)&&(r2->uvalue == 0)){//false
+//				  tl2 = tu2 = 0;
+//				}
+//				else if ((r2->lvalue < 0)&&(r2->uvalue < 0)||
+//					 (r2->lvalue > 0)&&(r2->uvalue > 0)){//true
+//				  tl2 = tu2 = 1;
+//				}
+//				else{
+//				  tl2 = 0;
+//				  tu2 = 1;
+//				}
+//			      }
+//			      lvalue = tl1 || !tl2;
+//			      uvalue = tu1 || !tu2;
+//			    }else if(op=="!"){
+//			      // logical NOT
+//			      if (r1->logical){
+//				tl1 = r1->lvalue;
+//				tu1 = r1->uvalue;
+//			      }
+//			      else{//convert numeric r1 to boolean
+//				if ((r1->lvalue == 0)&&(r1->uvalue == 0)){//false
+//				  tl1 = tu1 = 0;
+//				}
+//				else if ((r1->lvalue < 0)&&(r1->uvalue < 0)||
+//					 (r1->lvalue > 0)&&(r1->uvalue > 0)){//true
+//				  tl1 = tu1 = 1;
+//				}
+//				else{
+//				  tl1 = 0;
+//				  tu1 = 1;
+//				}
+//			      }
+//			      if (tl1 == tu1){
+//				lvalue = 1- tl1;
+//				uvalue = 1- tl1;
+//			      }
+//			#ifdef __LHPN_EVAL__
+//			      printf("not: [%d,%d](%c) = [%d,%d]\n",r1->lvalue,
+//				     r1->uvalue,r1->isit,lvalue,uvalue);
+//			#endif
+//			      //printf("negation: ~[%d,%d] = [%d,%d]\n",r1->lvalue,r1->uvalue,
+//			      // lvalue,uvalue);
+//			    }else if(op=="=="){
+//			      // "equality" operator
+//			      // true if same point value
+//			      if ((r1->lvalue == r1->uvalue) && (r2->lvalue == r2->uvalue) &&
+//				  (r1->lvalue == r2->uvalue))
+//				lvalue = uvalue = 1;
+//			      // false if no overlap
+//			      else if ((r1->lvalue > r2->uvalue)||(r2->lvalue > r1->uvalue))
+//				lvalue = uvalue = 0;
+//			      // maybe if overlap
+//			      else{
+//				lvalue = 0;
+//				uvalue = 1;
+//			      }
+//			#ifdef __LHPN_EVAL__
+//			      printf("[%d,%d]==[%d,%d]=[%d,%d]\n",r1->lvalue,r1->uvalue ,r2->lvalue,r2->uvalue,lvalue,uvalue);  
+//			#endif   
+//			    }else if(op==">"){
+//			      // "greater than" operator
+//			      //true if lower1 > upper2
+//			      if (r1->lvalue > r2->uvalue)
+//				lvalue = uvalue = 1;
+//			      //false if lower2 >= upper1
+//			      else if (r2->lvalue >= r1->uvalue)
+//				lvalue = uvalue = 0;
+//			      // maybe if overlap
+//			      else{
+//				lvalue = 0;
+//				uvalue = 1;
+//			      }
+//			    }else if(op==">="){
+//			      // "greater than or equal" operator
+//			      //true if lower1 >= upper2
+//			      if (r1->lvalue >= r2->uvalue)
+//				lvalue = uvalue = 1;
+//			      //false if lower2 > upper1
+//			      else if (r2->lvalue > r1->uvalue)
+//				lvalue = uvalue = 0;
+//			      // maybe if overlap
+//			      else{
+//				lvalue = 0;
+//				uvalue = 1;
+//			      }
+//			    }else if(op=="<"){
+//			      // "less than" operator
+//			      //true if lower2 > upper1
+//			      if (r2->lvalue > r1->uvalue)
+//				lvalue = uvalue = 1;
+//			      //false if lower1 >= upper2
+//			      else if (r1->lvalue >= r2->uvalue)
+//				lvalue = uvalue = 0;
+//			      // maybe if overlap
+//			      else{
+//				lvalue = 0;
+//				uvalue = 1;
+//			      }
+//			    }else if(op=="<="){
+//			      // "less than or equal" operator
+//			      //true if lower2 >= upper1
+//			      if (r2->lvalue >= r1->uvalue)
+//				lvalue = uvalue = 1;
+//			      //false if lower1 > upper2
+//			      else if (r1->lvalue > r2->uvalue)
+//				lvalue = uvalue = 0;
+//			      // maybe if overlap
+//			      else{
+//				lvalue = 0;
+//				uvalue = 1;
+//			      }
+//			#ifdef __LHPN_EVAL__
+//			      printf("[%d,%d]<=[%d,%d]=[%d,%d]\n",r1->lvalue,r1->uvalue ,r2->lvalue,r2->uvalue,lvalue,uvalue);  
+//			#endif   
+//			    }else if(op=="[]"){//NEEDS WORK
+//			      // bit extraction operator
+//			      // Only extract if both are point values.  
+//			      if ((r1->lvalue == r1->uvalue)&&(r2->lvalue == r2->uvalue)){
+//				lvalue = uvalue = (r1->lvalue >> r2->uvalue) & 1;
+//			      }
+//			      else {
+//				if (!preciser)
+//				  {
+//				    lvalue = 0;
+//				    uvalue = 1;
+//				  }
+//				else {
+//				  uvalue = 0;
+//				  lvalue = 1;
+//				  for (i = r1->lvalue;i<=r1->uvalue;i++)
+//				    for (j = r2->lvalue;j<=r2->uvalue;j++){
+//				      k = (i >> j) & 1;
+//				      lvalue &= k;
+//				      uvalue |= k;
+//				      if (lvalue < uvalue)
+//					return;
+//				    }
+//				}
+//			      }
+//			    }else if(op=="+"){
+//			      lvalue = r1->lvalue + r2->lvalue;
+//			      uvalue = r1->uvalue + r2->uvalue;
+//			    }else if(op=="-"){
+//			      lvalue = r1->lvalue - r2->uvalue;
+//			      uvalue = r1->uvalue - r2->lvalue;
+//			    }else if(op=="*"){
+//			      tl1 = r1->lvalue * r2->lvalue;
+//			      tl2 = r1->uvalue * r2->uvalue;
+//			      tu1 = r1->lvalue * r2->uvalue;
+//			      tu2 = r1->uvalue * r2->lvalue;
+//			      lvalue = min(min(min(tl1,tl2),tu1),tu2);
+//			      uvalue = max(max(max(tl1,tl2),tu1),tu2);
+//			    }else if(op=="^"){
+//			      tl1 = pow((double)r1->lvalue,(double)r2->lvalue);
+//			      tl2 = pow((double)r1->uvalue,(double)r2->uvalue);
+//			      tu1 = pow((double)r1->lvalue,(double)r2->uvalue);
+//			      tu2 = pow((double)r1->uvalue,(double)r2->lvalue);
+//			      lvalue = min(min(min(tl1,tl2),tu1),tu2);
+//			      uvalue = max(max(max(tl1,tl2),tu1),tu2);
+//			    }else if(op=="u"){
+//			      lvalue = r1->lvalue;
+//			      uvalue = r2->uvalue;
+//			    }else if(op=="/"){
+//			      //ropughly integer division.  
+//			      //DON"T KNOW WHAT FLOATING POINT PART IS!!!!!
+//			      tl1 = floor(r1->lvalue / r2->lvalue);
+//			      tl2 = floor(r1->uvalue / r2->uvalue);
+//			      tu1 = floor(r1->lvalue / r2->uvalue);
+//			      tu2 = floor(r1->uvalue / r2->lvalue);
+//			      lvalue = min(min(min(tl1,tl2),tu1),tu2);
+//			      tl1 = ceil(r1->lvalue / r2->lvalue);
+//			      tl2 = ceil(r1->uvalue / r2->uvalue);
+//			      tu1 = ceil(r1->lvalue / r2->uvalue);
+//			      tu2 = ceil(r1->uvalue / r2->lvalue);
+//			      uvalue = max(max(max(tl1,tl2),tu1),tu2);
+//			    }else if(op=="%"){//NEEDS WORK
+//			      if (!preciser){
+//				// Only calculate if both are point values.  
+//				if ((r1->lvalue == r1->uvalue)&&(r2->lvalue == r2->uvalue)){
+//				  lvalue = uvalue = r1->lvalue % r2->uvalue;
+//				}
+//				else{
+//				  lvalue = min(0,max(-(max(abs(r2->lvalue),abs(r2->lvalue))-1),r1->lvalue));
+//				  uvalue = max(0,min(max(abs(r2->lvalue),abs(r2->uvalue))-1,r1->uvalue));
+//				}
+//			      }
+//			      else{
+//				uvalue = -INFIN;
+//				lvalue = INFIN;
+//				for (i = r1->lvalue;i<=r1->uvalue;i++)
+//				  for (j = r2->lvalue;j<=r2->uvalue;j++){
+//				    k = i%j;
+//				    if (k < lvalue)
+//				      lvalue = k;
+//				    if (k > uvalue)
+//				      uvalue = k;
+//				  }
+//			      }
+//			    }else if(op=="U-"){
+//			      lvalue = -(r1->uvalue);
+//			      uvalue = -(r1->lvalue);
+//			    }else if(op=="INT"){
+//			      lvalue = r1->uvalue;
+//			      uvalue = r1->lvalue;
+//			    }else if(op=="BOOL"){
+//			      if ((r1->lvalue == 0)&& (r1->uvalue == 0))
+//				lvalue = uvalue = 0;
+//			      else if (((r1->lvalue > 0) && (r1->uvalue > 0))||
+//				       ((r1->lvalue < 0) && (r1->uvalue < 0)))
+//				lvalue = uvalue = 1;
+//			      else {
+//				lvalue = 0;
+//				uvalue = 1;
+//			      }
+//			    }else if(op=="&"){
+//			      if ((r1->lvalue!=r1->uvalue)||(r2->lvalue!=r2->uvalue)) {
+//				if (!preciser){
+//				  lvalue = min(r1->lvalue+r2->lvalue,0);
+//				  uvalue = max((r1->uvalue),(r2->uvalue));
+//				}
+//				else{
+//				  uvalue = -INFIN;
+//				  lvalue = INFIN;
+//				  for (i = r1->lvalue;i<=r1->uvalue;i++)
+//				    for (j = r2->lvalue;j<=r2->uvalue;j++){
+//				      k = i&j;
+//				      if (k < lvalue)
+//					lvalue = k;
+//				      if (k > uvalue)
+//					uvalue = k;
+//				    }
+//				}
+//			      }
+//			      else {
+//				lvalue = (r1->lvalue & r2->lvalue);
+//				uvalue = (r1->lvalue & r2->lvalue);
+//			      }
+//			#ifdef __LHPN_EVAL__
+//			      printf("BITWISE AND: [%d,%d](%c)&[%d,%d](%c) = [%d,%d]\n",r1->lvalue,
+//				     r1->uvalue,r1->isit,r2->lvalue,r2->uvalue,r2->isit,lvalue,uvalue);
+//			#endif
+//			    }else if(op=="|"){
+//			      if ((r1->lvalue!=r1->uvalue)||(r2->lvalue!=r2->uvalue)) {
+//				lvalue = min(r1->lvalue,r2->lvalue);
+//				uvalue = max(r1->uvalue + r2->uvalue,-1);
+//			      } else {
+//				lvalue = (r1->lvalue | r2->lvalue);
+//				uvalue = (r1->lvalue | r2->lvalue);
+//			      }
+//			    }else if(op=="m"){
+//			      lvalue = min(r1->lvalue,r2->lvalue);
+//			      uvalue = min(r1->uvalue,r2->uvalue);
+//			    }else if(op=="M"){
+//			      lvalue = max(r1->lvalue,r2->lvalue);
+//			      uvalue = max(r1->uvalue,r2->uvalue);
+//			    }else if(op=="i"){
+//			      tl1 = r1->lvalue / r2->lvalue;
+//			      tl2 = r1->uvalue / r2->uvalue;
+//			      tu1 = r1->lvalue / r2->uvalue;
+//			      tu2 = r1->uvalue / r2->lvalue;
+//			      lvalue = min(min(min(tl1,tl2),tu1),tu2);
+//			      uvalue = max(max(max(tl1,tl2),tu1),tu2);
+//			    }else if(op=="X"){
+//			      lvalue = min(min(r1->lvalue-r2->uvalue,r2->lvalue-r1->uvalue),0);
+//			      uvalue = max(max(r1->uvalue + r2->uvalue,-(r1->lvalue + r2->lvalue)),-1);
+////			     }else if(op=="floor"){
+////			       lvalue = floor(r1->lvalue);
+////			       uvalue = floor(r1->uvalue);
+////			     }else if(op=="round"){
+////			       lvalue = round(r1->lvalue);
+////			       uvalue = round(r1->uvalue);
+////			     }else if(op=="ceil"){
+////			       lvalue = ceil(r1->lvalue);
+////			       uvalue = ceil(r1->uvalue);
+//			    }else if(op=="~"){
+//			      //bitwise negation operator (1's complement)
+//			      lvalue = -((r1->uvalue)+1);
+//			      uvalue = -((r1->lvalue)+1);
+//			     }
+//			  }else if(isit == 'd'){
+//			      for (i = 1;i<cur_state->z->size;i++){
+//				if (cur_state->z->curClocks[i].enabled == index){
+//				  lvalue = cur_state->r->bound[cur_state->z->curClocks[i].enabled-nevents].lower;
+//				  uvalue = cur_state->r->bound[cur_state->z->curClocks[i].enabled-nevents].upper;
+//			#ifdef __LHPN_EVAL__
+//				  printf("lv=%d,uv=%d,index=%d,i=%d\n",lvalue, uvalue,index,i);
+//			#endif
+//				  break;
+//				}
+//			      }
+//			  }else{
+//			    if ((isit == 'i')||(isit == 'c')){
+//			      for (i = 1;i<cur_state->z->size;i++){
+//				if (cur_state->z->curClocks[i].enabled == index){
+//				  if (i>=cur_state->z->dbmEnd){
+//				    lvalue = -1*(cur_state->z->matrix[0][i]);
+//				    uvalue = cur_state->z->matrix[i][0];
+//				  }
+//				  else{// uses lower rate bound for both????
+//				    lvalue = -1*(cur_state->z->matrix[0][i])*
+//				      cur_state->r->bound[cur_state->z->curClocks[i].enabled-nevents].current;
+//				    uvalue = cur_state->z->matrix[i][0]*
+//				      cur_state->r->bound[cur_state->z->curClocks[i].enabled-nevents].current;
+//				  }
+//			#ifdef __LHPN_EVAL__
+//				  printf("lv=%d,uv=%d,index=%d,i=%d\n",lvalue, uvalue,index,i);
+//			#endif
+//				  break;
+//				}
+//			      }
+//			    }else if (isit == 'b'){
+//			      log_val = cur_state->m->state[index];
+//			      if (log_val == '1'){
+//				lvalue = 1;
+//				uvalue = 1;
+//			      } else if (log_val == 'X'){
+//				lvalue = 0;
+//				uvalue = 1;
+//			      } else if (log_val == '0'){
+//				lvalue = 0;
+//				uvalue = 0;
+//			      }
+//			#ifdef __LHPN_EVAL__
+//			      printf("successful lookup of boolean %d,%c[%d,%d]\n",index,
+//				     cur_state->m->state[index],lvalue,uvalue);
+//			#endif
+//			    }else if ((isit == 'n')||(isit == 't')){
+//			      // values already stored, no need to evaluate!
+//			    }
+//			  }    
+//			};
+
+
 		return null;
 	}
 }
