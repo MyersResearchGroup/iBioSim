@@ -193,6 +193,9 @@ public class Analysis {
 		else{
 			// If timing is enabled.
 			initPrjState = new TimedPrjState(initStateArray);
+			
+			// Set the initial values of the inequality variables.
+			((TimedPrjState) initPrjState).updateInequalityVariables();
 		}
 		prjStateSet.add(initPrjState);
 		
