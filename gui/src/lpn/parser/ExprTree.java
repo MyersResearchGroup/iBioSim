@@ -6,6 +6,7 @@ import java.util.Set;
 import java.lang.Math;
 
 import verification.timed_state_exploration.zoneProject.IntervalPair;
+import verification.timed_state_exploration.zoneProject.Zone;
 
 public class ExprTree {
 
@@ -4520,13 +4521,25 @@ public class ExprTree {
 	}
 	
 	
-	public IntervalPair evaluateExprBound(HashMap<String, String> variables){
+	public IntervalPair evaluateExprBound(HashMap<String, String> variables, Zone Z){
+		
+		
+		/*
+		 * The code for this method was modified from atacs/src/lhpnrsg.c.
+		 */
 		
 //		void exprsn::eval(lhpnStateADT cur_state,int nevents){
 //			  char log_val;
 //			  int tl1,tl2,tu1,tu2,i,j,k;
 //			  int preciser = 1;
 //
+		char log_val;
+//		int tl1,tl2,tu1,tu2,i,j,k;
+		int lBound, uBound;
+		
+		IntervalPair r1Range,r2Range = null;
+		
+		if(!op.equals("")){
 //			  if (op!=""){
 //			    //printf("%s, eval left child\n",op.c_str());
 //			    r1->eval(cur_state,nevents);
@@ -4535,6 +4548,12 @@ public class ExprTree {
 //			      uvalue = INFIN;
 //			      return;
 //			    }
+			r1Range = r1.evaluateExprBound(variables, Z);
+			if ((r1Range.get_LowerBound() == -INFIN) || (r1Range.get_UpperBound() == INFIN)){
+				
+				return new IntervalPair(-INFIN, INFIN);
+			}
+			
 //			    if (r2){
 //			      //printf("eval right child\n");
 //			      r2->eval(cur_state,nevents);
@@ -4542,46 +4561,107 @@ public class ExprTree {
 //			      lvalue = -INFIN;
 //			      uvalue = INFIN;
 //			      return;
-//			    }
-//			    }
+//			      }
+//		        }
+			if(r2 != null){
+				r2Range = r2.evaluateExprBound(variables, Z);
+				if ((r2Range.get_LowerBound() == - INFIN) || (r1Range.get_UpperBound() == INFIN)){
+					return new IntervalPair(-INFIN, INFIN);
+				}
+			}
+			
 //			    if (op=="||"){
 //			      // logical OR
 //			      if (r1->logical){
 //				tl1 = r1->lvalue;
 //				tu1 = r1->uvalue;
 //			      }
+			
+			if( op.equals("||")){
+				Boolean tl1, tu1, tl2, tu2;
+				// logical OR
+				if(r1.logical){
+					tl1 = r1Range.get_LowerBound() != 0; // false if value is zero and true otherwise
+					tu1 = r1Range.get_UpperBound() != 0; // false if value is zero and true otherwise
+				}
+			
+				else{ // convert numeric r1 to boolean
 //			      else{//convert numeric r1 to boolean
 //				if ((r1->lvalue == 0)&&(r1->uvalue == 0)){//false
 //				  tl1 = tu1 = 0;
 //				}
+				
+					if((r1Range.get_LowerBound() == 0) && (r1Range.get_UpperBound() == 0)){ // false
+						tl1 = tu1 = false;
+					}
+				
 //				else if ((r1->lvalue < 0)&&(r1->uvalue < 0)||
 //					 (r1->lvalue > 0)&&(r1->uvalue > 0)){//true
 //				  tl1 = tu1 = 1;
 //				}
+					else if (((r1Range.get_LowerBound() < 0) && (r1Range.get_UpperBound() < 0)) ||
+							((r1Range.get_LowerBound() > 0) && (r1Range.get_UpperBound() > 0))){ // true
+						tl1 = tu1 = true;
+					}
+				
 //				else{
 //				  tl1 = 0;
 //				  tu1 = 1;
 //				}
 //			      }
+				
+					else{
+						tl1 = false;
+						tu1 = true;
+					}
+				}
+			
 //			      if (r2->logical){
 //				tl2 = r2->lvalue;
 //				tu2 = r2->uvalue;
 //			      }
+			
+				if( r2Range != null && r2.logical){ // Note : r2Range can only be set if r2 was non-null.
+					tl2 = r2Range.get_LowerBound() != 0; // False if value is zero and true otherwise.
+					tu2 = r2Range.get_UpperBound() != 0; // False if value is zero and true otherwise.
+				}
+				else{// convert numeric r2 to boolean
 //			      else{//convert numeric r2 to boolean
 //				if ((r2->lvalue == 0)&&(r2->uvalue == 0)){//false
 //				  tl2 = tu2 = 0;
 //				}
+					if((r2Range.get_LowerBound() == 0) && (r2Range.get_UpperBound() == 0)){// false
+						tl2 = tu2 = false;
+					}
+					
 //				else if ((r2->lvalue < 0)&&(r2->uvalue < 0)||
 //					 (r2->lvalue > 0)&&(r2->uvalue > 0)){//true
 //				  tl2 = tu2 = 1;
 //				}
+					else if (((r2Range.get_LowerBound() < 0) && (r2Range.get_UpperBound() < 0)) ||
+							((r2Range.get_LowerBound() > 0) && (r2Range.get_UpperBound() > 0))){ // true
+						tl2 = tu2 = true;
+					}
 //				else{
 //				  tl2 = 0;
 //				  tu2 = 1;
 //				}
 //			      }
+					else{
+						tl2 = false;
+						tu2 = true;
+					}
+				}
 //			      lvalue = tl1 || tl2;
 //			      uvalue = tu1 || tu2;
+				
+//				lBound = tl1 || lt2;
+//				uBound = tu1 || tu2;
+				
+				lBound = (tl1 || tl2) ? 1 : 0; // Poor man casting from boolean to int.
+				uBound = (tu1 || tu2) ? 1 : 0;
+				
+			}
 //			    }else if(op=="&&"){
 //			      // logical AND
 //			      if (r1->logical){
@@ -4980,7 +5060,7 @@ public class ExprTree {
 //			    }
 //			  }    
 //			};
-
+		}
 
 		return null;
 	}
