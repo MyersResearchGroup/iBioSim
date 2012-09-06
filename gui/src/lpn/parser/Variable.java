@@ -8,7 +8,7 @@ public class Variable {
 	
 	private String type;
 	
-	private String initValue;
+	protected String initValue;
 	
 	private String initRate;
 	
