@@ -4664,46 +4664,99 @@ public class ExprTree {
 			}
 //			    }else if(op=="&&"){
 //			      // logical AND
+			
+			else if (op.equals("&&")){ // logical AND
+				Boolean tl1, tu1, tl2, tu2;
 //			      if (r1->logical){
 //				tl1 = r1->lvalue;
 //				tu1 = r1->uvalue;
 //			      }
+				if(r1.logical){
+					tl1 = r1Range.get_LowerBound() != 0; // false if value is zero and true otherwise
+					tu1 = r1Range.get_UpperBound() != 0; // false if value is zero and true otherwise
+				}
+				
 //			      else{//convert numeric r1 to boolean
 //				if ((r1->lvalue == 0)&&(r1->uvalue == 0)){//false
 //				  tl1 = tu1 = 0;
 //				}
+				
+				else{ // convert number r1 to boolean
+					if((r1Range.get_LowerBound() == 0) && (r1Range.get_UpperBound() == 0)){ // false
+						tl1 = tu1 = false;
+					}
+				
+				
 //				else if ((r1->lvalue < 0)&&(r1->uvalue < 0)||
 //					 (r1->lvalue > 0)&&(r1->uvalue > 0)){//true
 //				  tl1 = tu1 = 1;
 //				}
+				
+					else if (((r1Range.get_LowerBound() < 0) && (r1Range.get_UpperBound() < 0)) ||
+							((r1Range.get_LowerBound() > 0) && (r1Range.get_UpperBound() > 0))){ // true
+						tl1 = tu1 = true;
+					}
+				
 //				else{
 //				  tl1 = 0;
 //				  tu1 = 1;
 //				}
 //			      }
+				
+					else{
+						tl1 = false;
+						tu1 = true;
+					}
+				}
 //			      if (r2->logical){
 //				tl2 = r2->lvalue;
 //				tu2 = r2->uvalue;
 //			      }
 //			      else{//convert numeric r2 to boolean
+				if( r2Range != null && r2.logical){ // Note : r2Range can only be set if r2 was non-null.
+					tl2 = r2Range.get_LowerBound() != 0; // False if value is zero and true otherwise.
+					tu2 = r2Range.get_UpperBound() != 0; // False if value is zero and true otherwise.
+				}
+				else{// convert numeric r2 to boolean
+				
 //				if ((r2->lvalue == 0)&&(r2->uvalue == 0)){//false
 //				  tl2 = tu2 = 0;
 //				}
+					
+					if((r2Range.get_LowerBound() == 0) && (r2Range.get_UpperBound() == 0)){// false
+						tl2 = tu2 = false;
+					}
 //				else if ((r2->lvalue < 0)&&(r2->uvalue < 0)||
 //					 (r2->lvalue > 0)&&(r2->uvalue > 0)){//true
 //				  tl2 = tu2 = 1;
 //				}
+					
+					else if (((r2Range.get_LowerBound() < 0) && (r2Range.get_UpperBound() < 0)) ||
+							((r2Range.get_LowerBound() > 0) && (r2Range.get_UpperBound() > 0))){ // true
+						tl2 = tu2 = true;
+					}
+					
 //				else{
 //				  tl2 = 0;
 //				  tu2 = 1;
 //				}
 //			      }
+					else{
+						tl2 = false;
+						tu2 = true;
+					}
+				}
 //			      lvalue = tl1 && tl2;
 //			      uvalue = tu1 && tu2;
+				
+				lBound = (tl1 || tl2) ? 1 : 0; // Poor man casting from boolean to int.
+				uBound = (tu1 || tu2) ? 1 : 0; // Or clever way; depends on how you look at it.
 //			#ifdef __LHPN_EVAL__
 //			      printf("and: [%d,%d](%c)&[%d,%d](%c) = [%d,%d]\n",r1->lvalue,
 //				     r1->uvalue,r1->isit,r2->lvalue,r2->uvalue,r2->isit,lvalue,uvalue);
 //			#endif
+				
+			}
 //			    }else if(op=="->"){
 //			      // implication operator
 //			      if (r1->logical){
