@@ -4749,8 +4749,8 @@ public class ExprTree {
 //			      lvalue = tl1 && tl2;
 //			      uvalue = tu1 && tu2;
 				
-				lBound = (tl1 || tl2) ? 1 : 0; // Poor man casting from boolean to int.
-				uBound = (tu1 || tu2) ? 1 : 0; // Or clever way; depends on how you look at it.
+				lBound = (tl1 && tl2) ? 1 : 0; // Poor man casting from boolean to int.
+				uBound = (tu1 && tu2) ? 1 : 0; // Or clever way; depends on how you look at it.
 //			#ifdef __LHPN_EVAL__
 //			      printf("and: [%d,%d](%c)&[%d,%d](%c) = [%d,%d]\n",r1->lvalue,
 //				     r1->uvalue,r1->isit,r2->lvalue,r2->uvalue,r2->isit,lvalue,uvalue);
@@ -4759,6 +4759,8 @@ public class ExprTree {
 			}
 //			    }else if(op=="->"){
 //			      // implication operator
+			else if(op.equals("->")){ // Implication operator.
+				Boolean tl1, tu1, tl2, tu2;
 //			      if (r1->logical){
 //				tl1 = r1->lvalue;
 //				tu1 = r1->uvalue;
@@ -4776,6 +4778,10 @@ public class ExprTree {
 //				  tu1 = 1;
 //				}
 //			      }
+				
+				BooleanPair lowerBounds = logicalConversion(r1, r1Range);
+				tl1 = lowerBounds.get_lower();
+				tu1 = lowerBounds.get_upper();
 //			      if (r2->logical){
 //				tl2 = r2->lvalue;
 //				tu2 = r2->uvalue;
@@ -4795,8 +4801,22 @@ public class ExprTree {
 //			      }
 //			      lvalue = tl1 || !tl2;
 //			      uvalue = tu1 || !tu2;
+				BooleanPair upperBounds = logicalConversion(r2, r2Range);
+				tl2 = upperBounds.get_lower();
+				tu2 = upperBounds.get_upper();
+				
+
+				lBound = (tl1 || !tl2) ? 1 : 0; // Poor man casting from boolean to int.
+				uBound = (tu1 || !tu2) ? 1 : 0; // Or clever way; depends on how you look at it.
+			}
 //			    }else if(op=="!"){
 //			      // logical NOT
+			else if(op.equals("!")){
+				Boolean tl1, tu1;
+				
+				BooleanPair bounds = logicalConversion(r1, r1Range);
+				tl1 = bounds.get_lower();
+				tu1 = bounds.get_upper();
 //			      if (r1->logical){
 //				tl1 = r1->lvalue;
 //				tu1 = r1->uvalue;
@@ -4818,90 +4838,210 @@ public class ExprTree {
 //				lvalue = 1- tl1;
 //				uvalue = 1- tl1;
 //			      }
+				if(tl1 == tu1){
+					lBound = !tl1 ? 1 : 0;
+					uBound = !tl1 ? 1 : 0;
+				}
+				
 //			#ifdef __LHPN_EVAL__
 //			      printf("not: [%d,%d](%c) = [%d,%d]\n",r1->lvalue,
 //				     r1->uvalue,r1->isit,lvalue,uvalue);
 //			#endif
 //			      //printf("negation: ~[%d,%d] = [%d,%d]\n",r1->lvalue,r1->uvalue,
 //			      // lvalue,uvalue);
+				
+			}
 //			    }else if(op=="=="){
 //			      // "equality" operator
+			else if (op.equals("==")){ //"equality" operator.
 //			      // true if same point value
 //			      if ((r1->lvalue == r1->uvalue) && (r2->lvalue == r2->uvalue) &&
 //				  (r1->lvalue == r2->uvalue))
 //				lvalue = uvalue = 1;
+				
+				// true if same point value.
+				if((r1Range.get_LowerBound() == r1Range.get_UpperBound()) &&
+						(r2Range.get_LowerBound() == r2Range.get_UpperBound()) && 
+						(r1Range.get_LowerBound() == r2Range.get_UpperBound())){
+					lBound = uBound = 1;
+				}
+				
 //			      // false if no overlap
 //			      else if ((r1->lvalue > r2->uvalue)||(r2->lvalue > r1->uvalue))
 //				lvalue = uvalue = 0;
+				
+				// false if no overlap
+				else if ((r1Range.get_LowerBound() > r2Range.get_UpperBound()) ||
+						(r2Range.get_LowerBound() > r1Range.get_UpperBound())){
+					lBound = uBound = 0;
+				}
+				
 //			      // maybe if overlap
 //			      else{
 //				lvalue = 0;
 //				uvalue = 1;
 //			      }
+				
+				// maybe if overlap
+				else{
+					lBound = 0;
+					uBound = 1;
+				}
+				
 //			#ifdef __LHPN_EVAL__
 //			      printf("[%d,%d]==[%d,%d]=[%d,%d]\n",r1->lvalue,r1->uvalue ,r2->lvalue,r2->uvalue,lvalue,uvalue);  
 //			#endif   
+			}
+			else if(op.equals(">")){// "greater than" operator
 //			    }else if(op==">"){
 //			      // "greater than" operator
 //			      //true if lower1 > upper2
 //			      if (r1->lvalue > r2->uvalue)
 //				lvalue = uvalue = 1;
+				
+				// true if lower1 > upper2
+				if( r1Range.get_LowerBound() > r2Range.get_UpperBound()){
+					lBound = uBound = 1;
+				}
+				
 //			      //false if lower2 >= upper1
 //			      else if (r2->lvalue >= r1->uvalue)
 //				lvalue = uvalue = 0;
+				
+				// false if lower 2 >= upper1
+				else if (r2Range.get_LowerBound() >= r1Range.get_UpperBound()){
+					lBound = uBound = 0;
+				}
+				
 //			      // maybe if overlap
 //			      else{
 //				lvalue = 0;
 //				uvalue = 1;
 //			      }
+				
+				// maybe, if overlap
+				else {
+					lBound = 0;
+					uBound = 1;
+				}
+			}
 //			    }else if(op==">="){
 //			      // "greater than or equal" operator
+			else if (op.equals(">=")){
 //			      //true if lower1 >= upper2
 //			      if (r1->lvalue >= r2->uvalue)
 //				lvalue = uvalue = 1;
+					
+					// true if lower1 >= upper2
+				if(r1Range.get_LowerBound() >= r2Range.get_UpperBound()){
+					lBound = uBound = 1;
+				}
+					
 //			      //false if lower2 > upper1
 //			      else if (r2->lvalue > r1->uvalue)
 //				lvalue = uvalue = 0;
+
+				// false if lower2 > upper1
+				if (r2Range.get_LowerBound() > r1Range.get_UpperBound()){
+					lBound = uBound = 0;
+				}
+					
 //			      // maybe if overlap
 //			      else{
 //				lvalue = 0;
 //				uvalue = 1;
 //			      }
+					
+					// maybe if overlap
+				else {
+					lBound = 0;
+					uBound = 1;
+				}
+			}
 //			    }else if(op=="<"){
 //			      // "less than" operator
+
+			else if (op.equals("<")){// "less than" operator.
 //			      //true if lower2 > upper1
 //			      if (r2->lvalue > r1->uvalue)
 //				lvalue = uvalue = 1;
+				
+				// true if lower2 > upper1
+				if(r2Range.get_LowerBound() > r1Range.get_UpperBound()){
+					lBound = uBound = 1;
+				}
 //			      //false if lower1 >= upper2
 //			      else if (r1->lvalue >= r2->uvalue)
 //				lvalue = uvalue = 0;
+				
+				// false if lower1 >= upper2
+				else if (r1Range.get_LowerBound() >= r2Range.get_UpperBound()){
+					lBound = uBound = 0;
+				}
+				
 //			      // maybe if overlap
 //			      else{
 //				lvalue = 0;
 //				uvalue = 1;
 //			      }
+				
+				// maybe if overlap
+				else{
+					lBound = 0;
+					uBound = 1;
+				}
+			}
 //			    }else if(op=="<="){
 //			      // "less than or equal" operator
+				
+			else if (op.equals("<=")){// "less than or equal" operator
 //			      //true if lower2 >= upper1
 //			      if (r2->lvalue >= r1->uvalue)
 //				lvalue = uvalue = 1;
+				
+				// true if lower2 >= upper1
+				if(r2Range.get_LowerBound() >= r1Range.get_UpperBound()){
+					lBound = uBound = 1;
+				}
+				
 //			      //false if lower1 > upper2
 //			      else if (r1->lvalue > r2->uvalue)
 //				lvalue = uvalue = 0;
+				
+				// false if lower1 > upper2
+				else if (r1Range.get_LowerBound() > r2Range.get_UpperBound()){
+					lBound = uBound =0;
+				}
+				
 //			      // maybe if overlap
 //			      else{
 //				lvalue = 0;
 //				uvalue = 1;
 //			      }
+				
+				// maybe if overlap
+				else {
+					lBound = 0;
+					uBound = 1;
+				}
+				
 //			#ifdef __LHPN_EVAL__
 //			      printf("[%d,%d]<=[%d,%d]=[%d,%d]\n",r1->lvalue,r1->uvalue ,r2->lvalue,r2->uvalue,lvalue,uvalue);  
 //			#endif   
+			}
 //			    }else if(op=="[]"){//NEEDS WORK
 //			      // bit extraction operator
+
+			else if (op.equals("[]")){ // Apparently needs work.
 //			      // Only extract if both are point values.  
 //			      if ((r1->lvalue == r1->uvalue)&&(r2->lvalue == r2->uvalue)){
 //				lvalue = uvalue = (r1->lvalue >> r2->uvalue) & 1;
 //			      }
+				if( (r1Range.get_LowerBound() == r1Range.get_UpperBound()) && 
+						(r2Range.get_LowerBound() == r2Range.get_UpperBound())){
+					lvalue = uvalue = 
+							(r1Range.get_LowerBound() >> r2Range.get_UpperBound()) & 1;
+				}
 //			      else {
 //				if (!preciser)
 //				  {
@@ -4921,6 +5061,22 @@ public class ExprTree {
 //				    }
 //				}
 //			      }
+				
+				else{
+					uvalue = 0;
+					lvalue = 1;
+					for (int i = r1Range.get_LowerBound(); i<r1Range.get_UpperBound();
+							i++){
+						for (int j = r2Range.get_LowerBound();
+								j<r2Range.get_UpperBound(); j++){
+							int k = (i >> j) & 1;
+							//lvalue &= k;
+						}
+					}
+						
+				}
+				
+			}
 //			    }else if(op=="+"){
 //			      lvalue = r1->lvalue + r2->lvalue;
 //			      uvalue = r1->uvalue + r2->uvalue;
@@ -5116,5 +5272,97 @@ public class ExprTree {
 		}
 
 		return null;
+	}
+	
+	private BooleanPair logicalConversion(ExprTree expr, IntervalPair range){
+		Boolean lower, upper;
+
+		if( range != null && expr.logical){ // Note : r2Range can only be set if r2 was non-null.
+			lower = range.get_LowerBound() != 0; // False if value is zero and true otherwise.
+			upper = range.get_UpperBound() != 0; // False if value is zero and true otherwise.
+		}
+		else{// convert numeric r2 to boolean
+		
+			
+			if((range.get_LowerBound() == 0) && (range.get_UpperBound() == 0)){// false
+				lower = upper = false;
+			}	
+			else if (((range.get_LowerBound() < 0) && (range.get_UpperBound() < 0)) ||
+					((range.get_LowerBound() > 0) && (range.get_UpperBound() > 0))){ // true
+				lower = upper = true;
+			}
+			
+			else{
+				lower = false;
+				upper = true;
+			}
+		}
+		return new BooleanPair(lower, upper);
+	}
+	
+//------------------------------- Inner Class -------------------------------------	
+	private class BooleanPair {
+
+		private Boolean _lower;
+		private Boolean _upper;
+		
+		public BooleanPair(Boolean lower, Boolean upper) {
+			super();
+			this._lower = lower;
+			this._upper = upper;
+		}
+
+		public Boolean get_lower() {
+			return _lower;
+		}
+
+		public void set_lower(Boolean lower) {
+			this._lower = lower;
+		}
+
+		public Boolean get_upper() {
+			return _upper;
+		}
+
+		public void set_upper(Boolean upper) {
+			this._upper = upper;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((_lower == null) ? 0 : _lower.hashCode());
+			result = prime * result + ((_upper == null) ? 0 : _upper.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (!(obj instanceof BooleanPair))
+				return false;
+			BooleanPair other = (BooleanPair) obj;
+			if (_lower == null) {
+				if (other._lower != null)
+					return false;
+			} else if (!_lower.equals(other._lower))
+				return false;
+			if (_upper == null) {
+				if (other._upper != null)
+					return false;
+			} else if (!_upper.equals(other._upper))
+				return false;
+			return true;
+		}
+
+		@Override
+		public String toString() {
+			return "BooleanPair [lower=" + _lower + ", upper=" + _upper + "]";
+		}
+		
 	}
 }
