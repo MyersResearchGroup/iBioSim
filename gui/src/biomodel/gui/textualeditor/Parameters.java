@@ -393,7 +393,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				}
 				if (bioModel.getPortByIdRef(paramet.getId())!=null) {
 					Port port = bioModel.getPortByIdRef(paramet.getId());
-					if (port.getId().startsWith(GlobalConstants.INPUT+"__")) {
+					if (BioModel.isInputPort(port)) {
 						portDir.setSelectedItem(GlobalConstants.INPUT); 
 					} else {
 						portDir.setSelectedItem(GlobalConstants.OUTPUT); 
@@ -607,21 +607,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							else {
 								paramet.setConstant(false);
 							}
-							Port port = bioModel.getPortByIdRef(selected);
-							if (port!=null) {
-								if (portDir.getSelectedItem().equals(GlobalConstants.INTERNAL)) {
-									port.removeFromParentAndDelete();
-								} else {
-									port.setId(portDir.getSelectedItem()+"__"+paramet.getId());
-									port.setIdRef(paramet.getId());
-								}
-							} else {
-								if (!portDir.getSelectedItem().equals(GlobalConstants.INTERNAL)) {
-									port = bioModel.getSBMLCompModel().createPort();
-									port.setId(portDir.getSelectedItem()+"__"+paramet.getId());
-									port.setIdRef(paramet.getId());
-								}
-							}
+							bioModel.createDirPort(paramet.getId(),(String)portDir.getSelectedItem());
 							paramet.setValue(val);
 							if (unit.equals("( none )")) {
 								paramet.unsetUnits();
@@ -740,11 +726,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							if (!unit.equals("( none )")) {
 								paramet.setUnits(unit);
 							}
-							if (!portDir.getSelectedItem().equals(GlobalConstants.INTERNAL)) {
-								Port port = bioModel.getSBMLCompModel().createPort();
-								port.setId(portDir.getSelectedItem()+"__"+paramet.getId());
-								port.setIdRef(paramet.getId());
-							}
+							bioModel.createDirPort(paramet.getId(),(String)portDir.getSelectedItem());
 							if (!constantsOnly || paramet.getConstant()) {
 								JList add = new JList();
 								Object[] adding = { param };

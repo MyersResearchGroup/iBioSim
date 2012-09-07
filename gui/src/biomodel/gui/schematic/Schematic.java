@@ -477,7 +477,7 @@ public class Schematic extends JPanel implements ActionListener {
 		//addEventButton = Utils.makeRadioToolButton("event_mode.png", "", "Add Events", this, modeButtonGroup);
 		//toolBar.add(addEventButton);
 
-		toolBar.addSeparator();
+		//toolBar.addSeparator();
 		ButtonGroup influenceButtonGroup = new ButtonGroup();
 		
 		activationButton = Utils.makeRadioToolButton("activation.png", "", "Activation", this, influenceButtonGroup);
@@ -1584,8 +1584,7 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		// Disallows user from connecting to a species that is an input
 		if (graph.getCellType(target).contains(GlobalConstants.SPECIES)) {
-			String specType = BioModel.getSpeciesType(bioModel.getSBMLDocument(),targetID);
-			if (specType.equals(GlobalConstants.INPUT)) {
+			if (bioModel.isInput(targetID)) {
 				// TOOD: REMOVED THIS || specType.contains(GlobalConstants.SPASTIC)) {
 				JOptionPane.showMessageDialog(Gui.frame, "You can't connect to a species that is an input or constitutive.");
 				graph.buildGraph();
@@ -1606,7 +1605,7 @@ public class Schematic extends JPanel implements ActionListener {
 						port = connectComponentToSpecies(sourceID, targetID);
 					}
 					catch(ListChooser.EmptyListException e){
-						JOptionPane.showMessageDialog(Gui.frame, "This component has no output ports.");
+						JOptionPane.showMessageDialog(Gui.frame, "This component has no speices output ports.");
 						graph.buildGraph();
 						return;
 					}
@@ -1615,7 +1614,7 @@ public class Schematic extends JPanel implements ActionListener {
 						port = connectComponentToVariable(sourceID, targetID);
 					}
 					catch(ListChooser.EmptyListException e){
-						JOptionPane.showMessageDialog(Gui.frame, "This component has no variable ports.");
+						JOptionPane.showMessageDialog(Gui.frame, "This component has no variable output ports.");
 						graph.buildGraph();
 						return;
 					}
@@ -1624,7 +1623,7 @@ public class Schematic extends JPanel implements ActionListener {
 						port = connectComponentToVariable(sourceID, targetID);
 					}
 					catch(ListChooser.EmptyListException e){
-						JOptionPane.showMessageDialog(Gui.frame, "This component has no variable ports.");
+						JOptionPane.showMessageDialog(Gui.frame, "This component has no Boolean output ports.");
 						graph.buildGraph();
 						return;
 					}
@@ -1640,7 +1639,7 @@ public class Schematic extends JPanel implements ActionListener {
 						port = connectSpeciesToComponent(sourceID, targetID);
 					}
 					catch(ListChooser.EmptyListException e){
-						JOptionPane.showMessageDialog(Gui.frame, "This component has no input ports.");	
+						JOptionPane.showMessageDialog(Gui.frame, "This component has no species input ports.");	
 						graph.buildGraph();
 						return;
 					}
@@ -1649,7 +1648,7 @@ public class Schematic extends JPanel implements ActionListener {
 						port = connectVariableToComponent(sourceID, targetID);
 					}
 					catch(ListChooser.EmptyListException e){
-						JOptionPane.showMessageDialog(Gui.frame, "This component has no variable ports.");
+						JOptionPane.showMessageDialog(Gui.frame, "This component has no variable input ports.");
 						graph.buildGraph();
 						return;
 					}
@@ -1658,7 +1657,7 @@ public class Schematic extends JPanel implements ActionListener {
 						port = connectVariableToComponent(sourceID, targetID);
 					}
 					catch(ListChooser.EmptyListException e){
-						JOptionPane.showMessageDialog(Gui.frame, "This component has no variable ports.");
+						JOptionPane.showMessageDialog(Gui.frame, "This component has no Boolean input ports.");
 						graph.buildGraph();
 						return;
 					}
@@ -1859,19 +1858,14 @@ public class Schematic extends JPanel implements ActionListener {
 	 * @return: A boolean representing success or failure. True means it worked, false, means there was no output in the component.
 	 */
 	public String connectComponentToSpecies(String compID, String specID) throws ListChooser.EmptyListException{
-
-		ArrayList<String> portNames = getPorts(compID, GlobalConstants.SBMLSPECIES, GlobalConstants.OUTPUT);
-		
-		String port = ListChooser.selectFromList(Gui.frame, portNames.toArray(), "Please Choose an Output Port");
-		
-		if(port == null)
-			return null;
-		
 		String fullPath = bioModel.getPath() + File.separator + bioModel.getModelFileName(compID);
 		BioModel compBioModel = new BioModel(bioModel.getPath());
 		compBioModel.load(fullPath);
-		bioModel.connectComponentAndSpecies(compID, port, specID, GlobalConstants.OUTPUT);
-		
+		ArrayList<String> ports = compBioModel.getOutputPorts(GlobalConstants.SBMLSPECIES);
+		String port = ListChooser.selectFromList(Gui.frame, ports.toArray(), "Please Choose an Output Port");
+		if(port == null)
+			return null;
+		bioModel.connectComponentAndSpecies(compID, compBioModel.getPortByIdRef(port).getId(), specID);
 		return port;
 	}
 	
@@ -1882,19 +1876,14 @@ public class Schematic extends JPanel implements ActionListener {
 	 * @return a boolean representing success or failure.
 	 */
 	public String connectSpeciesToComponent(String specID, String compID) throws ListChooser.EmptyListException{
-
-		ArrayList<String> portNames = getPorts(compID, GlobalConstants.SBMLSPECIES, GlobalConstants.INPUT);
-		
-		String port = ListChooser.selectFromList(Gui.frame, portNames.toArray(), 
-				"Please Choose an Input Port");
-		
+		String fullPath = bioModel.getPath() + File.separator + bioModel.getModelFileName(compID);
+		BioModel compBioModel = new BioModel(bioModel.getPath());
+		compBioModel.load(fullPath);	
+		ArrayList<String> ports = compBioModel.getInputPorts(GlobalConstants.SBMLSPECIES);
+		String port = ListChooser.selectFromList(Gui.frame, ports.toArray(), "Please Choose an Input Port");
 		if(port == null)
 			return null;
-		
-		String fullPath = bioModel.getPath() + File.separator + bioModel.getModelFileName(compID).replace(".xml",".gcm");
-		BioModel compGCM = new BioModel(bioModel.getPath());
-		compGCM.load(fullPath);		
-		bioModel.connectComponentAndSpecies(compID, port, specID, GlobalConstants.INPUT);
+		bioModel.connectComponentAndSpecies(compID, compBioModel.getPortByIdRef(port).getId(), specID);
 		return port;
 	}
 	
@@ -1905,19 +1894,14 @@ public class Schematic extends JPanel implements ActionListener {
 	 * @return: A boolean representing success or failure. True means it worked, false, means there was no output in the component.
 	 */
 	public String connectComponentToVariable(String compID, String specID) throws ListChooser.EmptyListException{
-
-		ArrayList<String> portNames = getPorts(compID, GlobalConstants.PARAMETER, GlobalConstants.OUTPUT);
-		
-		String port = ListChooser.selectFromList(Gui.frame, portNames.toArray(), "Please Choose a Variable");
-		
-		if(port == null)
-			return null;
-		
 		String fullPath = bioModel.getPath() + File.separator + bioModel.getModelFileName(compID);
 		BioModel compBioModel = new BioModel(bioModel.getPath());
 		compBioModel.load(fullPath);
-		bioModel.connectComponentAndVariable(compID, port, specID, GlobalConstants.OUTPUT);
-		
+		ArrayList<String> ports = compBioModel.getOutputPorts(GlobalConstants.PARAMETER);
+		String port = ListChooser.selectFromList(Gui.frame, ports.toArray(), "Please Choose an Output Port");
+		if(port == null)
+			return null;
+		bioModel.connectComponentAndVariable(compID, compBioModel.getPortByIdRef(port).getId(), specID);
 		return port;
 	}
 	
@@ -1928,20 +1912,17 @@ public class Schematic extends JPanel implements ActionListener {
 	 * @return a boolean representing success or failure.
 	 */
 	public String connectVariableToComponent(String specID, String compID) throws ListChooser.EmptyListException{
-
-		ArrayList<String> portNames = getPorts(compID, GlobalConstants.PARAMETER, GlobalConstants.INPUT);
-		
-		String port = ListChooser.selectFromList(Gui.frame, portNames.toArray(), "Please Choose a Variable Port");
-		
+		String fullPath = bioModel.getPath() + File.separator + bioModel.getModelFileName(compID);
+		BioModel compBioModel = new BioModel(bioModel.getPath());
+		compBioModel.load(fullPath);		
+		ArrayList<String> ports = compBioModel.getInputPorts(GlobalConstants.PARAMETER);
+		String port = ListChooser.selectFromList(Gui.frame, ports.toArray(), "Please Choose an Input Port");
 		if(port == null)
 			return null;
-		
-		String fullPath = bioModel.getPath() + File.separator + bioModel.getModelFileName(compID);
-		BioModel compGCM = new BioModel(bioModel.getPath());
-		compGCM.load(fullPath);		
-		bioModel.connectComponentAndVariable(compID, port, specID, GlobalConstants.INPUT);
+		bioModel.connectComponentAndVariable(compID, compBioModel.getPortByIdRef(port).getId(), specID);
 		return port;
 	}
+
 	/**
 	 * given an mxCell where either the source or target is a component, 
 	 * remove the connection.
@@ -1980,19 +1961,6 @@ public class Schematic extends JPanel implements ActionListener {
 			throw new Error("Species was not connected to the given component!");
 	}
 	*/
-	
-	// TODO: This should probably be moved to GCMFile.java, maybe as a static method?
-	/**
-	 * @return an array of the input/output ports for the component passed in
-	 */
-	private ArrayList<String> getPorts(String compId, String type, String dir){
-		String fullPath = bioModel.getPath() + File.separator + bioModel.getModelFileName(compId);
-		BioModel compBioModel = new BioModel(bioModel.getPath());
-		compBioModel.load(fullPath);
-		ArrayList<String> ports = compBioModel.getPortsByType(type,dir);
-		return ports;
-	}
-	
 	
 	//MENUS
 	

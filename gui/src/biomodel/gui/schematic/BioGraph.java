@@ -1248,27 +1248,55 @@ public class BioGraph extends mxGraph {
 		
 		// map components edges
 		for (long i = 0; i < bioModel.getSBMLCompModel().getNumSubmodels(); i++) {
-			String compName = bioModel.getSBMLCompModel().getSubmodel(i).getId();
-			for (String propName : bioModel.getInputs(compName).keySet()) {
-				String targetName = bioModel.getInputs(compName).get(propName);
+			String id = bioModel.getSBMLCompModel().getSubmodel(i).getId();
+			BioModel compBioModel = new BioModel(bioModel.getPath());
+			String modelFileName = bioModel.getModelFileName(id);
+			File compFile = new File(bioModel.getPath() + File.separator + modelFileName);
+			compBioModel.load(bioModel.getPath() + File.separator + modelFileName);
+			HashMap<String,String> connections = bioModel.getInputConnections(compBioModel,id);
+			for (String propName : connections.keySet()) {
+				String targetName = connections.get(propName);
 				String type = "Input";
-				String key = compName + " "+type+" " + targetName;
+				String key = id + " "+type+" " + targetName;
 				mxCell cell = componentsConnectionsToMxCellMap.get(key);
-				String simpleKey = compName + " " + targetName;
+				String simpleKey = id + " " + targetName;
 				if(edgeHash.containsKey(simpleKey) == false)
 					edgeHash.put(simpleKey, new Vector<mxCell>());
 				edgeHash.get(simpleKey).add(cell);
 			}
-			for (String propName : bioModel.getOutputs(compName).keySet()) {
-				String targetName = bioModel.getOutputs(compName).get(propName);
+			connections = bioModel.getOutputConnections(compBioModel,id);
+			for (String propName : connections.keySet()) {
+				String targetName = connections.get(propName);
 				String type = "Output";
-				String key = compName + " "+type+" " + targetName;
+				String key = id + " "+type+" " + targetName;
 				mxCell cell = componentsConnectionsToMxCellMap.get(key);
-				String simpleKey = compName + " " + targetName;
+				String simpleKey = id + " " + targetName;
 				if(edgeHash.containsKey(simpleKey) == false)
 					edgeHash.put(simpleKey, new Vector<mxCell>());
 				edgeHash.get(simpleKey).add(cell);
 			}
+			connections = bioModel.getVariableInputConnections(compBioModel,id);
+			for (String propName : connections.keySet()) {
+				String targetName = connections.get(propName);
+				String type = "Input";
+				String key = id + " "+type+" " + targetName;
+				mxCell cell = componentsConnectionsToMxCellMap.get(key);
+				String simpleKey = id + " " + targetName;
+				if(edgeHash.containsKey(simpleKey) == false)
+					edgeHash.put(simpleKey, new Vector<mxCell>());
+				edgeHash.get(simpleKey).add(cell);
+			}
+			connections = bioModel.getVariableOutputConnections(compBioModel,id);
+			for (String propName : connections.keySet()) {
+				String targetName = connections.get(propName);
+				String type = "Output";
+				String key = id + " "+type+" " + targetName;
+				mxCell cell = componentsConnectionsToMxCellMap.get(key);
+				String simpleKey = id + " " + targetName;
+				if(edgeHash.containsKey(simpleKey) == false)
+					edgeHash.put(simpleKey, new Vector<mxCell>());
+				edgeHash.get(simpleKey).add(cell);
+			}		
 		}
 		
 		// loop through every set of edge endpoints and then move them if needed.
@@ -2169,7 +2197,7 @@ public class BioGraph extends mxGraph {
 		boolean needsPositioning = false;
 				
 		//set the correct compartment status
-		BioModel compGCMFile = new BioModel(bioModel.getPath());
+		BioModel compBioModel = new BioModel(bioModel.getPath());
 		boolean compart = false;
 		//String modelFileName = gcm.getModelFileName(id).replace(".xml", ".gcm");
 		String modelFileName = bioModel.getModelFileName(id);
@@ -2178,9 +2206,9 @@ public class BioGraph extends mxGraph {
 		}
 		File compFile = new File(bioModel.getPath() + File.separator + modelFileName);
 		
-		if (compGCMFile != null && compFile.exists()) {
-			compGCMFile.load(bioModel.getPath() + File.separator + modelFileName);
-			compart = compGCMFile.IsWithinCompartment();
+		if (compBioModel != null && compFile.exists()) {
+			compBioModel.load(bioModel.getPath() + File.separator + modelFileName);
+			compart = compBioModel.IsWithinCompartment();
 		} else {
 			JOptionPane.showMessageDialog(Gui.frame, 
 					"A model definition cannot be found for " + modelFileName + 
@@ -2212,9 +2240,10 @@ public class BioGraph extends mxGraph {
 				GlobalConstants.DEFAULT_COMPONENT_WIDTH,GlobalConstants.DEFAULT_COMPONENT_HEIGHT);
 
 		// now draw the edges that connect the component
-		for (String propName : bioModel.getInputs(id).keySet()) {
+		HashMap<String,String> connections = bioModel.getInputConnections(compBioModel,id);
+		for (String propName : connections.keySet()) {
 			// input, the arrow should point in from the species
-			String topSpecies = bioModel.getInputs(id).get(propName);
+			String topSpecies = connections.get(propName);
 			Object createdEdge = this.insertEdge(this.getDefaultParent(), "", "", 
 					this.getSpeciesCell(topSpecies),insertedVertex);
 			String key = id + " Input " + topSpecies;
@@ -2223,9 +2252,10 @@ public class BioGraph extends mxGraph {
 		}
 
 		// now draw the edges that connect the component
-		for (String propName : bioModel.getOutputs(id).keySet()) {
+		connections = bioModel.getOutputConnections(compBioModel,id);
+		for (String propName : connections.keySet()) {
 			// output, the arrow should point out to the species
-			String topSpecies = bioModel.getOutputs(id).get(propName);
+			String topSpecies = connections.get(propName);
 			Object createdEdge = this.insertEdge(this.getDefaultParent(), "", "", insertedVertex, 
 					this.getSpeciesCell(topSpecies));
 			String key = id + " Output " + topSpecies;
@@ -2234,23 +2264,23 @@ public class BioGraph extends mxGraph {
 		}
 
 		// now draw the edges that connect variables to the component
-		HashMap<String,String> variables = bioModel.getVariableInputs(id);
-		for (String propName : variables.keySet()) {
-			String topSpecies = variables.get(propName);
+		connections = bioModel.getVariableInputConnections(compBioModel,id);
+		for (String propName : connections.keySet()) {
+			String topSpecies = connections.get(propName);
 			Object createdEdge = this.insertEdge(this.getDefaultParent(), "", "",
 					this.getVariableCell(topSpecies), insertedVertex);
-			String key = id + " Variable " + topSpecies;
+			String key = id + " Input " + topSpecies;
 			componentsConnectionsToMxCellMap.put(key, (mxCell)createdEdge);
 			this.updateComponentConnectionVisuals((mxCell)createdEdge, propName);
 		}
 
 		// now draw the edges that connect variables to the component
-		variables = bioModel.getVariableOutputs(id);
-		for (String propName : variables.keySet()) {
-			String topSpecies = variables.get(propName);
+		connections = bioModel.getVariableOutputConnections(compBioModel,id);
+		for (String propName : connections.keySet()) {
+			String topSpecies = connections.get(propName);
 			Object createdEdge = this.insertEdge(this.getDefaultParent(), "", "", insertedVertex,
 					this.getVariableCell(topSpecies));
-			String key = id + " Variable " + topSpecies;
+			String key = id + " Output " + topSpecies;
 			componentsConnectionsToMxCellMap.put(key, (mxCell)createdEdge);
 			this.updateComponentConnectionVisuals((mxCell)createdEdge, propName);
 		}
@@ -2266,10 +2296,7 @@ public class BioGraph extends mxGraph {
 	 */
 	private boolean createGraphSpeciesFromModel(String sp){
 		
-		String type = BioModel.getSpeciesType(bioModel.getSBMLDocument(),sp);
-		if (bioModel.getDiffusionReaction(sp)!=null) type += " (D)";
-		if (bioModel.isSpeciesConstitutive(sp)) type += " (C)";
-		if (type.equals(GlobalConstants.MRNA)) return false; 
+		if (BioModel.isMRNASpecies(bioModel.getSBMLDocument().getModel().getSpecies(sp))) return false; 
 		
 		String truncID = "";
 		
@@ -2277,8 +2304,17 @@ public class BioGraph extends mxGraph {
 			truncID = sp.substring(0, 11) + "...";
 		else truncID = sp;
 		
-		String label = truncID + '\n' + type;
-
+		String label = truncID;
+		if (bioModel.getDiffusionReaction(sp)!=null) label += " (D)";
+		if (bioModel.isSpeciesConstitutive(sp)) label += " (C)";
+		if (bioModel.isInput(sp)) {
+			label += '\n' + GlobalConstants.INPUT;
+		} else if (bioModel.isOutput(sp)) {
+			label += '\n' + GlobalConstants.OUTPUT;
+		} else {
+			label += '\n' + GlobalConstants.INTERNAL;
+		}
+		
 		CellValueObject cvo = new CellValueObject(label, "Species", null);
 		Object insertedVertex = this.insertVertex(this.getDefaultParent(), sp, cvo, 1, 1, 1, 1);
 		this.speciesToMxCellMap.put(sp, (mxCell)insertedVertex);

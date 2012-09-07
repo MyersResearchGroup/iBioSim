@@ -147,8 +147,11 @@ public class GlobalConstants {
 	public static final int SBO_PLACE = 546;
 	public static final int SBO_PETRI_NET_PLACE = 593;
 	public static final int SBO_BOOLEAN = 547;
+	public static final int SBO_LOGICAL = 602;
 	public static final int SBO_TRANSITION = 464;
 	public static final int SBO_PETRI_NET_TRANSITION = 591;
+	public static final int SBO_INPUT_PORT = 600;
+	public static final int SBO_OUTPUT_PORT = 601;
 
 	public static final int SBO_DEGRADATION = 179;
 	public static final int SBO_DIFFUSION = 185;
