@@ -4533,9 +4533,12 @@ public class ExprTree {
 //			  int tl1,tl2,tu1,tu2,i,j,k;
 //			  int preciser = 1;
 //
-		char log_val;
-//		int tl1,tl2,tu1,tu2,i,j,k;
+
 		int lBound, uBound;
+		
+		// If lBound and uBound are never set, then return "don't know".
+		lBound = -INFIN;
+		uBound = INFIN;
 		
 		IntervalPair r1Range,r2Range = null;
 		
@@ -5039,7 +5042,7 @@ public class ExprTree {
 //			      }
 				if( (r1Range.get_LowerBound() == r1Range.get_UpperBound()) && 
 						(r2Range.get_LowerBound() == r2Range.get_UpperBound())){
-					lvalue = uvalue = 
+					lBound = uBound = 
 							(r1Range.get_LowerBound() >> r2Range.get_UpperBound()) & 1;
 				}
 //			      else {
@@ -5063,14 +5066,19 @@ public class ExprTree {
 //			      }
 				
 				else{
-					uvalue = 0;
-					lvalue = 1;
+					// Not doing the !preciser part.
+					uBound = 0;
+					lBound = 1;
 					for (int i = r1Range.get_LowerBound(); i<r1Range.get_UpperBound();
 							i++){
 						for (int j = r2Range.get_LowerBound();
 								j<r2Range.get_UpperBound(); j++){
 							int k = (i >> j) & 1;
-							//lvalue &= k;
+							lBound &= k;
+							uBound |= k;
+							if(lBound < uBound){
+								return new IntervalPair(lBound, uBound);
+							}
 						}
 					}
 						
@@ -5080,9 +5088,21 @@ public class ExprTree {
 //			    }else if(op=="+"){
 //			      lvalue = r1->lvalue + r2->lvalue;
 //			      uvalue = r1->uvalue + r2->uvalue;
+			
+			else if (op.equals("+")){
+				lBound = r1Range.get_LowerBound() + r2Range.get_LowerBound();
+				uBound = r1Range.get_UpperBound() + r2Range.get_UpperBound();
+			}
+			
 //			    }else if(op=="-"){
 //			      lvalue = r1->lvalue - r2->uvalue;
 //			      uvalue = r1->uvalue - r2->lvalue;
+			
+			else if (op.equals("-")){
+				lBound = r1Range.get_LowerBound() - r2Range.get_LowerBound();
+				uBound = r1Range.get_UpperBound() - r2Range.get_UpperBound();
+			}
+			
 //			    }else if(op=="*"){
 //			      tl1 = r1->lvalue * r2->lvalue;
 //			      tl2 = r1->uvalue * r2->uvalue;
@@ -5090,6 +5110,17 @@ public class ExprTree {
 //			      tu2 = r1->uvalue * r2->lvalue;
 //			      lvalue = min(min(min(tl1,tl2),tu1),tu2);
 //			      uvalue = max(max(max(tl1,tl2),tu1),tu2);
+			
+			else if (op.equals("*")){
+				int tl1, tl2, tu1, tu2;
+				tl1 = r1Range.get_LowerBound() * r2Range.get_LowerBound();
+				tl2 = r1Range.get_UpperBound() * r2Range.get_UpperBound();
+				tu1 = r1Range.get_LowerBound() * r2Range.get_UpperBound();
+				tu2 = r1Range.get_UpperBound() * r2Range.get_LowerBound();
+				lBound = Math.min(Math.min(Math.min(tl1, tl2), tu1), tu2);
+				uBound = Math.max(Math.max(Math.max(tl1, tl2), tu1), tu2);
+			}
+			
 //			    }else if(op=="^"){
 //			      tl1 = pow((double)r1->lvalue,(double)r2->lvalue);
 //			      tl2 = pow((double)r1->uvalue,(double)r2->uvalue);
@@ -5097,10 +5128,26 @@ public class ExprTree {
 //			      tu2 = pow((double)r1->uvalue,(double)r2->lvalue);
 //			      lvalue = min(min(min(tl1,tl2),tu1),tu2);
 //			      uvalue = max(max(max(tl1,tl2),tu1),tu2);
+			
+			else if (op.equals("^")){
+				double tl1, tl2, tu1, tu2;
+				tl1 = Math.pow(r1Range.get_LowerBound(), r2Range.get_LowerBound());
+				tl2 = Math.pow(r1Range.get_UpperBound(), r2Range.get_UpperBound());
+				tu1 = Math.pow(r1Range.get_LowerBound(), r2Range.get_UpperBound());
+				tu2 = Math.pow(r1Range.get_UpperBound(), r2Range.get_LowerBound());
+				lBound = (int) Math.min(Math.min(Math.min(tl1, tl2), tu1), tu2);
+				uBound = (int) Math.max(Math.max(Math.max(tl1, tl2), tu1), tu2);
+			}
+			
 //			    }else if(op=="u"){
 //			      lvalue = r1->lvalue;
 //			      uvalue = r2->uvalue;
-//			    }else if(op=="/"){
+
+			else if (op.equals("u")){
+				lBound = r1Range.get_LowerBound();
+				uBound = r2Range.get_UpperBound();
+			}
+//		    }else if(op=="/"){			
 //			      //ropughly integer division.  
 //			      //DON"T KNOW WHAT FLOATING POINT PART IS!!!!!
 //			      tl1 = floor(r1->lvalue / r2->lvalue);
@@ -5113,7 +5160,26 @@ public class ExprTree {
 //			      tu1 = ceil(r1->lvalue / r2->uvalue);
 //			      tu2 = ceil(r1->uvalue / r2->lvalue);
 //			      uvalue = max(max(max(tl1,tl2),tu1),tu2);
+			
+			else if (op.equals("/")){ // roughly integer division.
+				// STILL DON'T KNOW WHAT FLOATING POINT PART IS !!!! :) !!!!
+				double tl1, tl2, tu1, tu2;
+				tl1 = Math.floor(r1Range.get_LowerBound() / r2Range.get_LowerBound());
+				tl2 = Math.floor(r1Range.get_UpperBound() / r2Range.get_UpperBound());
+				tu1 = Math.floor(r1Range.get_LowerBound() / r2Range.get_UpperBound());
+				tu2 = Math.floor(r1Range.get_UpperBound() / r2Range.get_LowerBound());
+				lBound = (int) Math.min(Math.min(Math.min(tl1, tl2), tu1), tu2);
+				tl1 = Math.ceil(r1Range.get_LowerBound() / r2Range.get_LowerBound());
+				tl2 = Math.ceil(r1Range.get_UpperBound() / r2Range.get_UpperBound());
+				tu1 = Math.ceil(r1Range.get_LowerBound() / r2Range.get_UpperBound());
+				tu2 = Math.ceil(r1Range.get_UpperBound() / r2Range.get_LowerBound());
+				uBound = (int) Math.max(Math.max(Math.max(tl1, tl2), tu1), tu2);
+			}
+			
 //			    }else if(op=="%"){//NEEDS WORK
+			
+			else if (op.equals("%")){// STILL NEEDS WORK.
+			
 //			      if (!preciser){
 //				// Only calculate if both are point values.  
 //				if ((r1->lvalue == r1->uvalue)&&(r2->lvalue == r2->uvalue)){
@@ -5136,12 +5202,44 @@ public class ExprTree {
 //				      uvalue = k;
 //				  }
 //			      }
+			
+				// Not doing the !precier part.
+				
+				lBound = -INFIN;
+				uBound = INFIN;
+				for (int i = r1Range.get_LowerBound(); i <= r1Range.get_UpperBound(); i++){
+					for ( int j = r2Range.get_LowerBound(); j <= r2Range.get_UpperBound(); j++){
+						int k = i%j;
+						if(k < lBound){
+							lBound = k;
+						}
+						if( k > uBound){
+							uBound = k;
+						}
+					}
+				}
+				
+			}
+			
 //			    }else if(op=="U-"){
 //			      lvalue = -(r1->uvalue);
 //			      uvalue = -(r1->lvalue);
+			
+			else if (op.equals("U-")){
+				lBound = -1 * r1Range.get_UpperBound();
+				uBound = -1 * (r1Range.get_LowerBound());
+			}
+			
 //			    }else if(op=="INT"){
 //			      lvalue = r1->uvalue;
 //			      uvalue = r1->lvalue;
+			
+			else if (op.equals("INT")){
+				// TODO : 	Check logic with Chris.
+				lBound = r1Range.get_UpperBound();
+				uBound = r1Range.get_LowerBound();
+			}
+			
 //			    }else if(op=="BOOL"){
 //			      if ((r1->lvalue == 0)&& (r1->uvalue == 0))
 //				lvalue = uvalue = 0;
@@ -5152,8 +5250,29 @@ public class ExprTree {
 //				lvalue = 0;
 //				uvalue = 1;
 //			      }
+			
+			else if(op.equals("BOOL")){
+				if( (r1Range.get_LowerBound() == 0) && (r1Range.get_UpperBound() == 0)){
+					lBound = uBound =0;
+				}
+				else if ((r1Range.get_LowerBound() > 0) && (r1Range.get_UpperBound() > 0) ||
+						(r1Range.get_LowerBound() < 0) && (r1Range.get_UpperBound() < 0)){
+					lBound = uBound =1 ;
+				}
+				else{
+					lBound = 0;
+					uBound = 1;
+				}
+			}
+			
 //			    }else if(op=="&"){
+			
+			else if(op.equals("&")){
 //			      if ((r1->lvalue!=r1->uvalue)||(r2->lvalue!=r2->uvalue)) {
+				
+				if((r1Range.get_LowerBound() != r1Range.get_UpperBound()) ||
+						(r2Range.get_LowerBound() != r2Range.get_UpperBound())){
+				
 //				if (!preciser){
 //				  lvalue = min(r1->lvalue+r2->lvalue,0);
 //				  uvalue = max((r1->uvalue),(r2->uvalue));
@@ -5171,15 +5290,41 @@ public class ExprTree {
 //				    }
 //				}
 //			      }
+				
+					// Not doing the !preciser part.
+					uBound = -INFIN;
+					lBound = INFIN;
+					for( int i=r1Range.get_LowerBound(); i<=r1Range.get_UpperBound(); i++){
+						for(int j=r2Range.get_LowerBound(); j<=r2Range.get_UpperBound(); j++){
+							int k = i&j;
+							if (k < lBound){
+								lBound =k;
+							}
+							if( k > uBound){
+								uBound = k;
+							}
+						}
+					}
+					
+					
+				}
 //			      else {
 //				lvalue = (r1->lvalue & r2->lvalue);
 //				uvalue = (r1->lvalue & r2->lvalue);
 //			      }
+				
+				else {
+					lBound = (r1Range.get_LowerBound() & r2Range.get_LowerBound());
+					uBound = (r1Range.get_LowerBound() & r2Range.get_LowerBound());
+				}
 //			#ifdef __LHPN_EVAL__
 //			      printf("BITWISE AND: [%d,%d](%c)&[%d,%d](%c) = [%d,%d]\n",r1->lvalue,
 //				     r1->uvalue,r1->isit,r2->lvalue,r2->uvalue,r2->isit,lvalue,uvalue);
 //			#endif
+			}
+			
 //			    }else if(op=="|"){
+			else if (op.equals("|")){
 //			      if ((r1->lvalue!=r1->uvalue)||(r2->lvalue!=r2->uvalue)) {
 //				lvalue = min(r1->lvalue,r2->lvalue);
 //				uvalue = max(r1->uvalue + r2->uvalue,-1);
@@ -5187,12 +5332,37 @@ public class ExprTree {
 //				lvalue = (r1->lvalue | r2->lvalue);
 //				uvalue = (r1->lvalue | r2->lvalue);
 //			      }
+				
+				if((r1Range.get_LowerBound() != r1Range.get_UpperBound()) ||
+						(r2Range.get_LowerBound() != r2Range.get_UpperBound())){
+					
+					// TODO : Check it this is correct.
+					lBound = Math.max(r1Range.get_LowerBound(), r2Range.get_LowerBound());
+					uBound = Math.max(r1Range.get_UpperBound() + r2Range.get_UpperBound(), -1);
+				}
+				else {
+					lBound = (r1Range.get_LowerBound() | r2Range.get_LowerBound());
+					uBound = (r1Range.get_LowerBound() | r2Range.get_LowerBound());
+				}
+				
+			}
 //			    }else if(op=="m"){
 //			      lvalue = min(r1->lvalue,r2->lvalue);
 //			      uvalue = min(r1->uvalue,r2->uvalue);
+			else if(op.equals("m")){
+				lBound = Math.min(r1Range.get_LowerBound(), r2Range.get_LowerBound());
+				uBound = Math.min(r1Range.get_UpperBound(), r2Range.get_UpperBound());
+			}
+			
 //			    }else if(op=="M"){
 //			      lvalue = max(r1->lvalue,r2->lvalue);
 //			      uvalue = max(r1->uvalue,r2->uvalue);
+			else if (op.equals("M")){
+				lBound = Math.max(r1Range.get_LowerBound(), r2Range.get_LowerBound());
+				uBound = Math.max(r1Range.get_UpperBound(), r2Range.get_UpperBound());
+				
+			}
+			
 //			    }else if(op=="i"){
 //			      tl1 = r1->lvalue / r2->lvalue;
 //			      tl2 = r1->uvalue / r2->uvalue;
@@ -5200,9 +5370,28 @@ public class ExprTree {
 //			      tu2 = r1->uvalue / r2->lvalue;
 //			      lvalue = min(min(min(tl1,tl2),tu1),tu2);
 //			      uvalue = max(max(max(tl1,tl2),tu1),tu2);
+			
+			else if (op.equals("i")){
+				//TODO : Check if integer or double division is what is wanted.
+				
+				int tl1, tl2, tu1, tu2;
+				tl1 = r1Range.get_LowerBound() / r2Range.get_LowerBound();
+				tl2 = r1Range.get_UpperBound() / r2Range.get_UpperBound();
+				tu1 = r1Range.get_LowerBound() / r2Range.get_UpperBound();
+				tu2 = r1Range.get_UpperBound() / r2Range.get_LowerBound();
+				lBound = (int) Math.min(Math.min(Math.min(tl1, tl2), tu1), tu2);
+				uBound = (int) Math.max(Math.max(Math.max(tl1, tl2), tu1), tu2);
+			}
+			
 //			    }else if(op=="X"){
 //			      lvalue = min(min(r1->lvalue-r2->uvalue,r2->lvalue-r1->uvalue),0);
 //			      uvalue = max(max(r1->uvalue + r2->uvalue,-(r1->lvalue + r2->lvalue)),-1);
+			else if(op.equals("X")){
+				lBound = Math.min(Math.min(r1Range.get_LowerBound()-r2Range.get_UpperBound(), 
+						r2Range.get_LowerBound()-r1Range.get_UpperBound()), 0);
+				uBound = Math.max(Math.max(r1Range.get_UpperBound()+r2Range.get_UpperBound(), 
+						r2Range.get_LowerBound()+r1Range.get_LowerBound()), -1);
+			}
 ////			     }else if(op=="floor"){
 ////			       lvalue = floor(r1->lvalue);
 ////			       uvalue = floor(r1->uvalue);
@@ -5212,11 +5401,19 @@ public class ExprTree {
 ////			     }else if(op=="ceil"){
 ////			       lvalue = ceil(r1->lvalue);
 ////			       uvalue = ceil(r1->uvalue);
+			
+			
 //			    }else if(op=="~"){
 //			      //bitwise negation operator (1's complement)
 //			      lvalue = -((r1->uvalue)+1);
 //			      uvalue = -((r1->lvalue)+1);
 //			     }
+			
+			else if (op.equals("~")){
+				// bitwise negation operator (1's complement)
+				// TODO : Check what this is doint first.
+				
+			}
 //			  }else if(isit == 'd'){
 //			      for (i = 1;i<cur_state->z->size;i++){
 //				if (cur_state->z->curClocks[i].enabled == index){
@@ -5228,14 +5425,28 @@ public class ExprTree {
 //				  break;
 //				}
 //			      }
+			
+			else if (isit == 'd'){
+				// TODO : Check what this is before doing it.
+			}
+			
 //			  }else{
+			
+			else{
 //			    if ((isit == 'i')||(isit == 'c')){
+				
+				if(isit == 'i'){
+					
 //			      for (i = 1;i<cur_state->z->size;i++){
 //				if (cur_state->z->curClocks[i].enabled == index){
 //				  if (i>=cur_state->z->dbmEnd){
 //				    lvalue = -1*(cur_state->z->matrix[0][i]);
 //				    uvalue = cur_state->z->matrix[i][0];
 //				  }
+					
+					// TODO : How do you solve a problem like an integer. (Think Sound of Music.)
+					
+					
 //				  else{// uses lower rate bound for both????
 //				    lvalue = -1*(cur_state->z->matrix[0][i])*
 //				      cur_state->r->bound[cur_state->z->curClocks[i].enabled-nevents].current;
@@ -5248,6 +5459,14 @@ public class ExprTree {
 //				  break;
 //				}
 //			      }
+				}
+			
+				else if(isit == 'c'){
+					Variable contVar = lhpn.continuous.get(variable);
+					
+				}
+				
+				else if (isit == 'b'){
 //			    }else if (isit == 'b'){
 //			      log_val = cur_state->m->state[index];
 //			      if (log_val == '1'){
@@ -5264,14 +5483,63 @@ public class ExprTree {
 //			      printf("successful lookup of boolean %d,%c[%d,%d]\n",index,
 //				     cur_state->m->state[index],lvalue,uvalue);
 //			#endif
+				
+					// Get the value of the variable from the passed HashMap and convert it as appropriate.
+					String sV = variables.get(variable); // sV for "string value"
+
+					if(sV != null){
+						int tmp = (sV.toLowerCase().equals("true") || sV.equals("1")) ? 1 : 0; 
+
+						// Currently the platu.state does not support boolean ranges.
+						lBound = uBound = tmp;
+					}
+					else{
+						lBound = 0;
+						uBound = 1;
+					}
+
+				}
+			
+				else if(isit == 'n'){
+			
 //			    }else if ((isit == 'n')||(isit == 't')){
 //			      // values already stored, no need to evaluate!
 //			    }
-//			  }    
+//			  }
+					
+					// TODO : Check how this should behave.
+					
+//					if (uvalue == lvalue) {
+//						return uvalue;
+//					} else {
+//						return ((uvalue - lvalue) * new java.util.Random().nextDouble())
+//								+ lvalue;
+//					}
+					
+				}
+				
+				else if ((isit == 't')){
+					
+					// TODO : Check what's to be done if the name doesn't exist. Probably complain.
+
+					// Get the value of the variable from the passed HashMap and convert it as appropriate.
+					String sV = variables.get(variable); // sV for "string value"
+					
+					if(sV != null){
+						lBound = uBound = 1;
+					}
+					else{
+						lBound = 0;
+						uBound = 1;
+					}
+				}
+				
 //			};
+			}
 		}
 
-		return null;
+		// TODO : need to return an appropriate value when the operation is "".
+		return new IntervalPair(lBound, uBound);
 	}
 	
 	private BooleanPair logicalConversion(ExprTree expr, IntervalPair range){
@@ -5316,17 +5584,17 @@ public class ExprTree {
 			return _lower;
 		}
 
-		public void set_lower(Boolean lower) {
-			this._lower = lower;
-		}
+//		public void set_lower(Boolean lower) {
+//			this._lower = lower;
+//		}
 
 		public Boolean get_upper() {
 			return _upper;
 		}
 
-		public void set_upper(Boolean upper) {
-			this._upper = upper;
-		}
+//		public void set_upper(Boolean upper) {
+//			this._upper = upper;
+//		}
 
 		@Override
 		public int hashCode() {
