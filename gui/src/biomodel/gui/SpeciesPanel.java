@@ -312,7 +312,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			tempPanel.add(specInteresting);
 			thresholdTextField = new JTextField(thresholdText);
 			
-			if (!BioModel.getSpeciesType(bioModel.getSBMLDocument(),selected).equals(GlobalConstants.INPUT) &&
+			if (!bioModel.isInput(selected) &&
 					(modelEditor.getGCM().getBiochemicalSpecies() != null &&
 					!modelEditor.getGCM().getBiochemicalSpecies().contains(selected))) {
 				tempPanel.add(thresholdTextField);
@@ -546,7 +546,13 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 			grid.add(sbolField);
 
-			typeBox.setSelectedItem(BioModel.getSpeciesType(bioModel.getSBMLDocument(),species.getId()));
+			if (bioModel.isInput(species.getId())) {
+				typeBox.setSelectedItem(GlobalConstants.INPUT);
+			} else if (bioModel.isOutput(species.getId())) {
+				typeBox.setSelectedItem(GlobalConstants.OUTPUT);
+			} else {
+				typeBox.setSelectedItem(GlobalConstants.INTERNAL);
+			}
 			String annotation = species.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
 			String [] annotations = annotation.split(",");
 			for (int i=0;i<annotations.length;i++) 
@@ -841,7 +847,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				}
 			}
 			String speciesType = typeBox.getSelectedItem().toString();
-			bioModel.setSpeciesType(species.getId(),speciesType);
+			bioModel.createDirPort(species.getId(),speciesType);
 			
 			if (degradation != null && !specDegradable.isSelected()) {
 				bioModel.removeReaction(degradation.getId());
