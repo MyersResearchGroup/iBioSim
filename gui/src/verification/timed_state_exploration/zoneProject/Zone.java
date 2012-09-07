@@ -997,6 +997,33 @@ public class Zone{
 	}
 	
 	/**
+	 * Give the upper and lower bounds for a continuous variable.
+	 * @param contVar
+	 * 		The variable of interest.
+	 * @return
+	 * 		The upper and lower bounds according to the Zone.
+	 */
+	public IntervalPair getContinuousBounds(String contVar, LhpnFile lpn){
+		
+		/*
+		 * Need to determine whether this is suppose to be a rate zero variable or a non-zero 
+		 * rate variable. One method is to check the rate of the passed variable. The other is
+		 * to just check if the variable is present in either place.
+		 */
+		
+		// Extract the necessary indecies.
+		int lpnIndex = lpn.getLpnIndex();
+		
+		//int contVarIndex = lpn.get
+		DualHashMap<String, Integer> variableIndecies = lpn.getContinuousIndexMap();
+		int contIndex = variableIndecies.get(contVar);
+		
+		
+		
+		return null;
+	}
+	
+	/**
 	 * Converts the index of the DBM to the index of _matrix.
 	 * @param i
 	 * 			The row/column index of the DBM.
