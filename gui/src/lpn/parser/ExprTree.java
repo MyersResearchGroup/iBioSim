@@ -4521,7 +4521,7 @@ public class ExprTree {
 	}
 	
 	
-	public IntervalPair evaluateExprBound(HashMap<String, String> variables, Zone Z){
+	public IntervalPair evaluateExprBound(HashMap<String, String> variables, Zone z){
 		
 		
 		/*
@@ -4551,7 +4551,7 @@ public class ExprTree {
 //			      uvalue = INFIN;
 //			      return;
 //			    }
-			r1Range = r1.evaluateExprBound(variables, Z);
+			r1Range = r1.evaluateExprBound(variables, z);
 			if ((r1Range.get_LowerBound() == -INFIN) || (r1Range.get_UpperBound() == INFIN)){
 				
 				return new IntervalPair(-INFIN, INFIN);
@@ -4567,7 +4567,7 @@ public class ExprTree {
 //			      }
 //		        }
 			if(r2 != null){
-				r2Range = r2.evaluateExprBound(variables, Z);
+				r2Range = r2.evaluateExprBound(variables, z);
 				if ((r2Range.get_LowerBound() == - INFIN) || (r1Range.get_UpperBound() == INFIN)){
 					return new IntervalPair(-INFIN, INFIN);
 				}
@@ -5431,7 +5431,7 @@ public class ExprTree {
 			}
 			
 //			  }else{
-			
+		}
 			else{
 //			    if ((isit == 'i')||(isit == 'c')){
 				
@@ -5462,8 +5462,7 @@ public class ExprTree {
 				}
 			
 				else if(isit == 'c'){
-					Variable contVar = lhpn.continuous.get(variable);
-					
+					return z.getContinuousBounds(variable, lhpn);
 				}
 				
 				else if (isit == 'b'){
@@ -5507,7 +5506,8 @@ public class ExprTree {
 //			    }
 //			  }
 					
-					// TODO : Check how this should behave.
+					lBound = uBound = (int) lvalue;
+					
 					
 //					if (uvalue == lvalue) {
 //						return uvalue;
@@ -5536,7 +5536,7 @@ public class ExprTree {
 				
 //			};
 			}
-		}
+		
 
 		// TODO : need to return an appropriate value when the operation is "".
 		return new IntervalPair(lBound, uBound);
