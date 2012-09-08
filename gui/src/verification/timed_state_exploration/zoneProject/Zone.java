@@ -103,7 +103,8 @@ public class Zone{
 	
 	/* Stores the continuous variables that have rate zero */
 //	HashMap<LPNTransitionPair, Variable> _rateZeroContinuous;
-	DualHashMap<RangeAndPairing, Variable> _rateZeroContinuous;
+	//DualHashMap<RangeAndPairing, Variable> _rateZeroContinuous;
+	DualHashMap<LPNTransitionPair, VariableRangePair> _rateZeroContinuous;
 	
 	/* Records the largest zone that occurs. */
 	public static int ZoneSize = 0;
@@ -428,6 +429,7 @@ public class Zone{
 		
 		// Get the enabled transitions. This initializes the _indexTotimerPair
 		// which stores the relevant information.
+		// This method will also initialize the _rateZeroContinuous
 		initialize_indexToTimerPair(localStates);
 		
 		// Initialize the matrix.
@@ -597,7 +599,9 @@ public class Zone{
 		 */
 		
 		// This method will also initialize the _rateZeroContinuous
-		_rateZeroContinuous = new DualHashMap<RangeAndPairing, Variable>();
+		//_rateZeroContinuous = new DualHashMap<RangeAndPairing, Variable>();
+		_rateZeroContinuous = 
+				new DualHashMap<LPNTransitionPair, VariableRangePair>();
 		
 		// This list accumulates the transition pairs (ie timers) and the continuous
 		// variables.
@@ -669,9 +673,12 @@ public class Zone{
 					// If the rate is zero, then the Zone keeps track of this variable
 					// in a list.
 //					_rateZeroContinuous.put(newPair, cpontVar);
+//					_rateZeroContinuous.
+//						put(new RangeAndPairing(newPair, parseRate(contVar.getInitValue())),
+//								contVar);
 					_rateZeroContinuous.
-						put(new RangeAndPairing(newPair, parseRate(contVar.getInitValue())),
-								contVar);
+						put(newPair, new VariableRangePair(contVar,
+								parseRate(contVar.getInitValue())));
 				}
 			}
 			
@@ -828,32 +835,63 @@ public class Zone{
 	 * @return
 	 * 		The upper bound of var.
 	 */
-	public int getUpperBoundbyContinuousVariable(Variable var){
+	public int getUpperBoundbyContinuousVariable(String contVar, LhpnFile lpn){
 		
 		// TODO : Finish.
 		
-		// Determine whether the variable is in the zone or rate zero.
-		RangeAndPairing indexAndRange = _rateZeroContinuous.getKey(var);
-		
-		// If a RangeAndPairing is returned, then get the information from here.
-		if(indexAndRange != null){
-			return indexAndRange.get_range().get_UpperBound();
+//		// Determine whether the variable is in the zone or rate zero.
+//		RangeAndPairing indexAndRange = _rateZeroContinuous.getKey(var);
+//		
+//		
+//		// If a RangeAndPairing is returned, then get the information from here.
+//		if(indexAndRange != null){
+//			return indexAndRange.get_range().get_UpperBound();
+//		}
+//		
+//		// If indexAndRange is null, then try to get the value from the zone.
+//		int i=-1;
+//		for(i=0; i<_indexToTimerPair.length; i++){
+//			if(_indexToTimerPair[i].equals(var)){
+//				break;
+//			}
+//		}
+//		
+//		if(i < 0){
+//			throw new IllegalStateException("Atempted to find the upper bound for "
+//					+ "a non-rate zero continuous variable that was not found in the "
+//					+ "zone.");
+//		}
+//		
+//		return getUpperBoundbydbmIndex(i);
+		// Extract the necessary indecies.
+		int lpnIndex = lpn.getLpnIndex();
+
+		//int contVarIndex = lpn.get
+		DualHashMap<String, Integer> variableIndecies = lpn.getContinuousIndexMap();
+		int contIndex = variableIndecies.get(contVar);
+
+		// Package the indecies with false indicating not a timer.
+		LPNTransitionPair index = new LPNTransitionPair(lpnIndex, contIndex, false);
+
+		//Search for the continuous variable in the rate zero variables.
+		VariableRangePair pairing = _rateZeroContinuous.get(index);
+
+		// If Pairing is not null, the variable was found and return the result.
+		if(pairing != null){
+			return pairing.get_range().get_UpperBound();
 		}
-		
-		// If indexAndRange is null, then try to get the value from the zone.
-		int i=-1;
-		for(i=0; i<_indexToTimerPair.length; i++){
-			if(_indexToTimerPair[i].equals(var)){
-				break;
-			}
-		}
-		
+
+		// If Pairing was null, the variable was not found. Search for the variable
+		// in the zone portion.
+		int i = Arrays.binarySearch(_indexToTimerPair, index);
+
+		// If i < 0, the search was unsuccessful, so scream.
 		if(i < 0){
-			throw new IllegalStateException("Atempted to find the upper bound for "
+			throw new IllegalArgumentException("Atempted to find the lower bound for "
 					+ "a non-rate zero continuous variable that was not found in the "
 					+ "zone.");
 		}
-		
+
 		return getUpperBoundbydbmIndex(i);
 	}
 	
@@ -935,10 +973,38 @@ public class Zone{
 				Arrays.binarySearch(_indexToTimerPair, ltPair));
 	}
 	
-	public int getLowerBoundbyContinuousVariable(Variable var){
-		// TODO : Finish.
+	public int getLowerBoundbyContinuousVariable(String contVar, LhpnFile lpn){
+
+		// Extract the necessary indecies.
+		int lpnIndex = lpn.getLpnIndex();
 		
-		return 0;
+		//int contVarIndex = lpn.get
+		DualHashMap<String, Integer> variableIndecies = lpn.getContinuousIndexMap();
+		int contIndex = variableIndecies.get(contVar);
+		
+		// Package the indecies with false indicating not a timer.
+		LPNTransitionPair index = new LPNTransitionPair(lpnIndex, contIndex, false);
+		
+		//Search for the continuous variable in the rate zero variables.
+		VariableRangePair pairing = _rateZeroContinuous.get(index);
+		
+		// If Pairing is not null, the variable was found and return the result.
+		if(pairing != null){
+			return pairing.get_range().get_LowerBound();
+		}
+		
+		// If Pairing was null, the variable was not found. Search for the variable
+		// in the zone portion.
+		int i = Arrays.binarySearch(_indexToTimerPair, index);
+		
+		// If i < 0, the search was unsuccessful, so scream.
+		if(i < 0){
+			throw new IllegalArgumentException("Atempted to find the lower bound for "
+					+ "a non-rate zero continuous variable that was not found in the "
+					+ "zone.");
+		}
+		
+		return getLowerBoundbydbmIndex(i);
 	}
 	
 	/**
@@ -1018,9 +1084,33 @@ public class Zone{
 		DualHashMap<String, Integer> variableIndecies = lpn.getContinuousIndexMap();
 		int contIndex = variableIndecies.get(contVar);
 		
+		// Package the indecies with false indicating not a timer.
+		LPNTransitionPair index = new LPNTransitionPair(lpnIndex, contIndex, false);
 		
+		//Search for the continuous variable in the rate zero variables.
+		VariableRangePair pairing = _rateZeroContinuous.get(index);
 		
-		return null;
+		// If Pairing is not null, the variable was found and return the result.
+		if(pairing != null){
+			return pairing.get_range();
+		}
+		
+		// If Pairing was null, the variable was not found. Search for the variable
+		// in the zone portion.
+		int i = Arrays.binarySearch(_indexToTimerPair, index);
+		
+		// If i < 0, the search was unsuccessful, so scream.
+		if(i < 0){
+			throw new IllegalArgumentException("Atempted to find the bounds for "
+					+ "a non-rate zero continuous variable that was not found in the "
+					+ "zone.");
+		}
+		
+		// Else find the upper and lower bounds.
+		int lower = getLowerBoundbydbmIndex(i);
+		int upper = getUpperBoundbydbmIndex(i);
+		
+		return new IntervalPair(lower, upper);
 	}
 	
 	/**
