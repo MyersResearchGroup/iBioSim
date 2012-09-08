@@ -120,6 +120,9 @@ public class GlobalConstants {
 	public static final String TEXT_GLYPH = "TextGlyph";
 	public static final String ENCLOSING_COMPARTMENT = "enclosingCompartment";
 	public static final String DEFAULT_COMPARTMENT = "defaultCompartment";
+	public static final String FAIL = "fail";
+	public static final String FAIL_TRANSITION = "failTransition";
+	public static final String RATE = "rate";
 	
 	public static final String SBOL_PROMOTER = "sbolPromoter";
 	public static final String SBOL_TERMINATOR = "sbolTerminator";

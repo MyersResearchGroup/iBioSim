@@ -2166,7 +2166,7 @@ public class BioModel {
 				lpn.addPlace(p.getId(), (p.getValue()==1));
 			} else if (SBMLutilities.isBoolean(p)){
 				booleans.add(p.getId());
-				if (p.getId().equals("fail")) continue;
+				if (p.getId().equals(GlobalConstants.FAIL)) continue;
 				Port port = getPortByIdRef(p.getId());
 				if (port != null) {
 					if (isInputPort(port)) {
@@ -2236,7 +2236,7 @@ public class BioModel {
 					if (child.getType()==libsbml.AST_RELATIONAL_EQ) {
 						left = child.getLeftChild();
 						right = child.getRightChild();
-						if (left.getType()==libsbml.AST_NAME && left.getName().equals("fail") &&
+						if (left.getType()==libsbml.AST_NAME && left.getName().equals(GlobalConstants.FAIL) &&
 							right.getType()==libsbml.AST_INTEGER && right.getInteger()==1) {
 							foundFail = true;
 							continue;
@@ -2293,7 +2293,7 @@ public class BioModel {
 						} else if (rates.containsValue(ea.getVariable())) {
 							t.addContAssign(ea.getVariable(), SBMLutilities.SBMLMathToLPNString(ea.getMath(),constants,booleans));
 						} else if (booleans.contains(ea.getVariable())){
-							if (ea.getVariable().equals("fail") && foundFail) {
+							if (ea.getVariable().equals(GlobalConstants.FAIL) && foundFail) {
 								t.setFail(true);
 							} else {
 								t.addBoolAssign(ea.getVariable(), SBMLutilities.SBMLMathToBoolLPNString(ea.getMath(),constants,booleans));
