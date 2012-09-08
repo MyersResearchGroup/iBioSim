@@ -239,15 +239,15 @@ public class InequalityVariable extends Variable {
 //				this.initValue = z.getUpperBoundbyContinuousVariable(_variable) <= expressionValue
 //						? "true" : "false"; 
 				
-				result = z.getUpperBoundbyContinuousVariable(_variable) <= expressionValue
-						? "true" : "false";
+				result = z.getUpperBoundbyContinuousVariable(_variable.getName(), _lpn)
+						<= expressionValue ? "true" : "false";
 			}
 			else{
 //				this.initValue = z.getLowerBoundbyContinuousVariable(_variable) >= expressionValue
 //						? "true" : "false";
 				
-				result = z.getLowerBoundbyContinuousVariable(_variable) >= expressionValue
-						? "true" : "false";
+				result = z.getLowerBoundbyContinuousVariable(_variable.getName(), _lpn) 
+						>= expressionValue ? "true" : "false";
 			}
 			
 		}
@@ -271,14 +271,16 @@ public class InequalityVariable extends Variable {
 //				this.initValue = expressionValue <= z.getLowerBoundbyContinuousVariable(_variable)
 //						? "true" : "false"; 
 				
-				result = expressionValue <= z.getLowerBoundbyContinuousVariable(_variable)
+				result = expressionValue <= 
+						z.getLowerBoundbyContinuousVariable(_variable.getName(), _lpn)
 						? "true" : "false"; 
 			}
 			else{
 //				this.initValue = expressionValue >= z.getUpperBoundbyContinuousVariable(_variable)
 //						? "true" : "false";
 				
-				result = expressionValue >= z.getUpperBoundbyContinuousVariable(_variable)
+				result = expressionValue >= 
+						z.getUpperBoundbyContinuousVariable(_variable.getName(), _lpn)
 						? "true" : "false";
 			}
 			
@@ -286,6 +288,47 @@ public class InequalityVariable extends Variable {
 		
 		return result;
 		
+	}
+	
+	/**
+	 * Evaluates the inequality based on the current state and zone.
+	 * @param localState
+	 * 			The current (local) state.
+	 * @param z
+	 * 			The current zone.
+	 * @return
+	 * 			Zero if the inequality is false, a non-zero number if the
+	 * 			inequality is true.
+	 * @throws
+	 * 			IllegalStateException if the inequality cannot be evaulated to
+	 * 			true or false.
+	 */
+	public int evaluate(State localState, Zone z){
+	
+		// From the (local) state, extract the current values to use in the 
+		// evaluator.
+		HashMap<String, String> values =
+				_lpn.getAllVarsWithValuesAsString(localState.getVector());
+		
+		// Evaluate the defining expression tree.
+		IntervalPair range = _inequalityExprTree.evaluateExprBound(values, z);
+		
+		// Check that the upper and lower bounds agree (indicating that a single
+		// value was return instead of "don't know").
+		if(range.get_LowerBound() != range.get_UpperBound()){
+			// If a range of values (indicating a don't know condition) was
+			// returned, yell.
+			throw new IllegalStateException("When evaluating " + this +
+					 " on the local state " + localState +
+					 " with the zone " + z +
+					 " the result was \"don't know\", that is the " +
+					 " upper and lower bounds of the returned boolean " +
+					 " do not agree.");
+		}
+		
+		// If the upper and lower bounds agreed, then return that value.
+		
+		return range.get_LowerBound();
 	}
 	
 //	/**
