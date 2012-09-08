@@ -111,6 +111,20 @@ public class Variable {
 		return name.equals(var.toString());
 	}
 	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((initRate == null) ? 0 : initRate.hashCode());
+		result = prime * result
+				+ ((initValue == null) ? 0 : initValue.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((port == null) ? 0 : port.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		return result;
+	}
+	
 	public static final String BOOLEAN = "boolean";
 	
 	public static final String INTEGER = "integer";
