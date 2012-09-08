@@ -230,7 +230,8 @@ public class TimedPrjState extends PrjState{
 					//vector[i] = var.evaluateInequality(s, this._zones[0]);
 					
 					// Get the new value.
-					vector[i] = var.evaluateInequality(s, _zones[0]).equals("true") ? 1 : 0;
+					//vector[i] = var.evaluateInequality(s, _zones[0]).equals("true") ? 1 : 0;
+					vector[i] = var.evaluate(s, _zones[0]);
 				}
 			}
 			
