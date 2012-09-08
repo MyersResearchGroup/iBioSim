@@ -47,7 +47,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 
 	private static final long serialVersionUID = 1L;
 
-	private BioModel gcm;
+	private BioModel bioModel;
 
 	private MutableBoolean dirty;
 
@@ -77,10 +77,10 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 	
 	private Parameters parametersPanel;
 
-	public MySpecies(Gui biosim, BioModel gcm, MutableBoolean dirty, Boolean paramsOnly,
+	public MySpecies(Gui biosim, BioModel bioModel, MutableBoolean dirty, Boolean paramsOnly,
 			ArrayList<String> getParams, String file, ArrayList<String> parameterChanges, Boolean editOnly) {
 		super(new BorderLayout());
-		this.gcm = gcm;
+		this.bioModel = bioModel;
 		this.biosim = biosim;
 		this.dirty = dirty;
 		this.paramsOnly = paramsOnly;
@@ -105,7 +105,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scroll1 = new JScrollPane();
 		scroll1.setViewportView(species);
-		Model model = gcm.getSBMLDocument().getModel();
+		Model model = bioModel.getSBMLDocument().getModel();
 		ListOf listOfSpecies = model.getListOfSpecies();
 		String[] specs = new String[(int) model.getNumSpecies()];
 		for (int i = 0; i < model.getNumSpecies(); i++) {
@@ -173,7 +173,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		if (!species.isSelectionEmpty()) {
 			selectedSpecies = ((String) species.getSelectedValue()).split(" ")[0];
 		}
-		this.gcm = gcm;
+		this.bioModel = gcm;
 		Model model = gcm.getSBMLDocument().getModel();
 		ListOf listOfSpecies = model.getListOfSpecies();
 		String[] specs = new String[(int) model.getNumSpecies()];
@@ -237,9 +237,9 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		Name = new JTextField();
 		init = new JTextField("0.0");
 		String origAssign = "";
-		specUnits = createUnitsChoices(gcm);
-		if (gcm.getSBMLDocument().getLevel() > 2) {
-			specConv = createConversionFactorChoices(gcm);
+		specUnits = createUnitsChoices(bioModel);
+		if (bioModel.getSBMLDocument().getLevel() > 2) {
+			specConv = createConversionFactorChoices(bioModel);
 		}
 		String[] optionsTF = { "true", "false" };
 		specBoundary = new JComboBox(optionsTF);
@@ -248,16 +248,16 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		specConstant.setSelectedItem("false");
 		specHasOnly = new JComboBox(optionsTF);
 		specHasOnly.setSelectedItem("false");
-		ListOf listOfSpecTypes = gcm.getSBMLDocument().getModel().getListOfSpeciesTypes();
-		String[] specTypeList = new String[(int) gcm.getSBMLDocument().getModel().getNumSpeciesTypes() + 1];
+		ListOf listOfSpecTypes = bioModel.getSBMLDocument().getModel().getListOfSpeciesTypes();
+		String[] specTypeList = new String[(int) bioModel.getSBMLDocument().getModel().getNumSpeciesTypes() + 1];
 		specTypeList[0] = "( none )";
-		for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumSpeciesTypes(); i++) {
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumSpeciesTypes(); i++) {
 			specTypeList[i + 1] = ((SpeciesType) listOfSpecTypes.get(i)).getId();
 		}
 		Utility.sort(specTypeList);
 		Object[] choices = specTypeList;
 		specTypeBox = new JComboBox(choices);
-		comp = createCompartmentChoices(gcm);
+		comp = createCompartmentChoices(bioModel);
 		String[] list = { "Original", "Modified" };
 		String[] list1 = { "1", "2" };
 		final JComboBox type = new JComboBox(list);
@@ -315,7 +315,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		}
 		if (option.equals("OK")) {
 			try {
-				Species specie = gcm.getSBMLDocument().getModel().getSpecies(((String) species.getSelectedValue()).split(" ")[0]);
+				Species specie = bioModel.getSBMLDocument().getModel().getSpecies(((String) species.getSelectedValue()).split(" ")[0]);
 				ID.setText(specie.getId());
 				selectedID = specie.getId();
 				Name.setText(specie.getName());
@@ -338,8 +338,8 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				else {
 					specHasOnly.setSelectedItem("false");
 				}
-				if (gcm.getSBMLDocument().getModel().getInitialAssignment(specie.getId()) != null) {
-					origAssign = SBMLutilities.myFormulaToString(gcm.getSBMLDocument().getModel().getInitialAssignment(specie.getId()).getMath());
+				if (bioModel.getSBMLDocument().getModel().getInitialAssignment(specie.getId()) != null) {
+					origAssign = bioModel.removeBooleans(bioModel.getSBMLDocument().getModel().getInitialAssignment(specie.getId()).getMath());
 					init.setText(origAssign);
 					initLabel.setSelectedItem("Initial Assignment");
 				}
@@ -391,7 +391,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		speciesPanel.add(ID);
 		speciesPanel.add(nameLabel);
 		speciesPanel.add(Name);
-		if (gcm.getSBMLDocument().getLevel() < 3) {
+		if (bioModel.getSBMLDocument().getLevel() < 3) {
 			speciesPanel.add(specTypeLabel);
 			speciesPanel.add(specTypeBox);
 		}
@@ -439,7 +439,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		}
 		speciesPanel.add(unitLabel);
 		speciesPanel.add(specUnits);
-		if (gcm.getSBMLDocument().getLevel() > 2) {
+		if (bioModel.getSBMLDocument().getLevel() > 2) {
 			speciesPanel.add(convLabel);
 			speciesPanel.add(specConv);
 		}
@@ -448,7 +448,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(gcm.getSBMLDocument(), ID.getText().trim(), selectedID, false, false);
+			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), ID.getText().trim(), selectedID, false, false);
 			double initial = 0;
 			if (!error) {
 				if (init.getText().trim().startsWith("(") && init.getText().trim().endsWith(")")) {
@@ -469,13 +469,13 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				}
 				else {
 					if (initLabel.getSelectedItem().equals("Initial Assignment")) {
-						InitialAssignments.removeInitialAssignment(gcm, selectedID);
-						error = InitialAssignments.addInitialAssignment(biosim, gcm, ID.getText().trim(), init.getText().trim());
+						InitialAssignments.removeInitialAssignment(bioModel, selectedID);
+						error = InitialAssignments.addInitialAssignment(biosim, bioModel, ID.getText().trim(), init.getText().trim());
 						initial = 0.0;
 					}
 					else {
 						if (!selectedID.equals("")) {
-							InitialAssignments.removeInitialAssignment(gcm, selectedID);
+							InitialAssignments.removeInitialAssignment(bioModel, selectedID);
 						}
 						try {
 							initial = Double.parseDouble(init.getText().trim());
@@ -489,7 +489,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				}
 				String unit = (String) specUnits.getSelectedItem();
 				String convFactor = null;
-				if (gcm.getSBMLDocument().getLevel() > 2) {
+				if (bioModel.getSBMLDocument().getLevel() > 2) {
 					convFactor = (String) specConv.getSelectedItem();
 				}
 				String addSpec = "";
@@ -531,12 +531,12 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 					 */
 				}
 				if (!error) {
-					ListOf listOfSpecies = gcm.getSBMLDocument().getModel().getListOfSpecies();
+					ListOf listOfSpecies = bioModel.getSBMLDocument().getModel().getListOfSpecies();
 					String selected = "";
 					if (option.equals("OK")) {
 						selected = ((String) species.getSelectedValue()).split(" ")[0];
 					}
-					for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumSpecies(); i++) {
+					for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumSpecies(); i++) {
 						if (!((Species) listOfSpecies.get(i)).getId().equals(selected)) {
 							if (((Species) listOfSpecies.get(i)).getCompartment().equals((String) comp.getSelectedItem())
 									&& ((Species) listOfSpecies.get(i)).getSpeciesType().equals(selSpecType)) {
@@ -548,8 +548,8 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 					}
 				}
 				if (!error) {
-					Compartment compartment = gcm.getSBMLDocument().getModel().getCompartment((String) comp.getSelectedItem());
-					if (initLabel.getSelectedItem().equals("Initial Concentration") && gcm.getSBMLDocument().getLevel() < 3
+					Compartment compartment = bioModel.getSBMLDocument().getModel().getCompartment((String) comp.getSelectedItem());
+					if (initLabel.getSelectedItem().equals("Initial Concentration") && bioModel.getSBMLDocument().getLevel() < 3
 							&& compartment.getSpatialDimensions() == 0) {
 						JOptionPane.showMessageDialog(Gui.frame, "Species in a 0 dimensional compartment cannot have an initial concentration.",
 								"Concentration Not Possible", JOptionPane.ERROR_MESSAGE);
@@ -558,7 +558,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				}
 				if (!error && option.equals("OK") && specConstant.getSelectedItem().equals("true")) {
 					String val = ((String) species.getSelectedValue()).split(" ")[0];
-					error = SBMLutilities.checkConstant(gcm.getSBMLDocument(), "Species", val);
+					error = SBMLutilities.checkConstant(bioModel.getSBMLDocument(), "Species", val);
 				}
 				if (!error && option.equals("OK") && specBoundary.getSelectedItem().equals("false")) {
 					String val = ((String) species.getSelectedValue()).split(" ")[0];
@@ -575,7 +575,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						species.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 						specs = Utility.getList(specs, species);
 						species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-						Species specie = gcm.getSBMLDocument().getModel().getSpecies(val);
+						Species specie = bioModel.getSBMLDocument().getModel().getSpecies(val);
 						String speciesName = specie.getId();
 						specie.setCompartment((String) comp.getSelectedItem());
 						specie.setId(ID.getText().trim());
@@ -622,7 +622,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						else {
 							specie.setUnits(unit);
 						}
-						if (gcm.getSBMLDocument().getLevel() > 2) {
+						if (bioModel.getSBMLDocument().getLevel() > 2) {
 							if (convFactor.equals("( none )")) {
 								specie.unsetConversionFactor();
 							}
@@ -649,7 +649,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 							}
 						}
 						else {
-							SBMLutilities.updateVarId(gcm.getSBMLDocument(), true, speciesName, specie.getId());
+							SBMLutilities.updateVarId(bioModel.getSBMLDocument(), true, speciesName, specie.getId());
 						}
 					}
 					else {
@@ -658,7 +658,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 							specs[i] = species.getModel().getElementAt(i).toString();
 						}
 						int index1 = species.getSelectedIndex();
-						Species specie = gcm.getSBMLDocument().getModel().createSpecies();
+						Species specie = bioModel.getSBMLDocument().getModel().createSpecies();
 						specie.setCompartment((String) comp.getSelectedItem());
 						specie.setId(ID.getText().trim());
 						specie.setName(Name.getText().trim());
@@ -695,7 +695,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						if (!unit.equals("( none )")) {
 							specie.setUnits(unit);
 						}
-						if (gcm.getSBMLDocument().getLevel() > 2) {
+						if (bioModel.getSBMLDocument().getLevel() > 2) {
 							if (convFactor.equals("( none )")) {
 								specie.unsetConversionFactor();
 							}
@@ -716,7 +716,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						Utility.sort(specs);
 						species.setListData(specs);
 						species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-						if (gcm.getSBMLDocument().getModel().getNumSpecies() == 1) {
+						if (bioModel.getSBMLDocument().getModel().getNumSpecies() == 1) {
 							species.setSelectedIndex(0);
 						}
 						else {
@@ -724,7 +724,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						}
 					}
 					dirty.setValue(true);
-					gcm.makeUndoPoint();
+					bioModel.makeUndoPoint();
 				}
 			}
 			if (error) {
@@ -734,8 +734,8 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		}
 		if (value == JOptionPane.NO_OPTION) {
 			if (!origAssign.equals("")) {
-				InitialAssignments.removeInitialAssignment(gcm, selectedID);
-				error = InitialAssignments.addInitialAssignment(biosim, gcm, selectedID, origAssign);
+				InitialAssignments.removeInitialAssignment(bioModel, selectedID);
+				error = InitialAssignments.addInitialAssignment(biosim, bioModel, selectedID, origAssign);
 			}
 			return;
 		}
@@ -792,7 +792,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		//set the values of the species fields using the sbml gcm.getSBMLDocument()
 		try {
 			
-			Species selectedSpecies = gcm.getSBMLDocument().getModel().getSpecies(((String)species.getSelectedValue()).split(" ")[0]);
+			Species selectedSpecies = bioModel.getSBMLDocument().getModel().getSpecies(((String)species.getSelectedValue()).split(" ")[0]);
 			
 			ID.setText(selectedSpecies.getId());
 			ID.setEditable(false);
@@ -813,10 +813,10 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 			else
 				specHasOnly.setSelectedItem("false");
 			
-			if (gcm.getSBMLDocument().getModel().getInitialAssignment(selectedSpecies.getId()) != null) {
+			if (bioModel.getSBMLDocument().getModel().getInitialAssignment(selectedSpecies.getId()) != null) {
 				
-				init.setText(SBMLutilities.myFormulaToString(
-						gcm.getSBMLDocument().getModel().getInitialAssignment(selectedSpecies.getId()).getMath()));
+				init.setText(bioModel.removeBooleans(
+						bioModel.getSBMLDocument().getModel().getInitialAssignment(selectedSpecies.getId()).getMath()));
 				initLabel.setSelectedItem("Initial Assignment");
 			}
 			else if (selectedSpecies.isSetInitialAmount()) {
@@ -830,9 +830,9 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				initLabel.setSelectedItem("Initial Concentration");
 			}
 			
-			kecdiff.setText(String.valueOf(gcm.getSBMLDocument().getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Above")
+			kecdiff.setText(String.valueOf(bioModel.getSBMLDocument().getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Above")
 					.getKineticLaw().getParameter("kecdiff").getValue()));
-			kecd.setText(String.valueOf(gcm.getSBMLDocument().getModel().getReaction("Degradation_" + selectedSpecies.getId())
+			kecd.setText(String.valueOf(bioModel.getSBMLDocument().getModel().getReaction("Degradation_" + selectedSpecies.getId())
 					.getKineticLaw().getParameter("kecd").getValue()));			
 		}
 		catch (Exception e) {			
@@ -846,7 +846,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		
 		if (value == JOptionPane.YES_OPTION) {
 			
-			Species selectedSpecies = gcm.getSBMLDocument().getModel().getSpecies(((String)species.getSelectedValue()).split(" ")[0]);
+			Species selectedSpecies = bioModel.getSBMLDocument().getModel().getSpecies(((String)species.getSelectedValue()).split(" ")[0]);
 			
 			//set the species settings in the sbml model
 			selectedSpecies.setBoundaryCondition(Boolean.valueOf((String) specBoundary.getModel().getSelectedItem()));
@@ -868,11 +868,11 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 			//initial assignment
 			else {
 				
-				Model model = gcm.getSBMLDocument().getModel();
+				Model model = bioModel.getSBMLDocument().getModel();
 				String formula = init.getText();
 				InitialAssignment initialAssignment = new InitialAssignment(model.getLevel(), model.getVersion());
 				initialAssignment.setSymbol(selectedSpecies.getId());
-				initialAssignment.setMath(SBMLutilities.myParseFormula(formula));				
+				initialAssignment.setMath(bioModel.addBooleans(formula));				
 				
 				model.addInitialAssignment(initialAssignment);
 			}
@@ -881,15 +881,15 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 			double kecdiffRate = Double.parseDouble(kecdiff.getText());
 			double kecdRate = Double.parseDouble(kecd.getText());
 			
-			gcm.getSBMLDocument().getModel().getReaction("Degradation_" + selectedSpecies.getId())
+			bioModel.getSBMLDocument().getModel().getReaction("Degradation_" + selectedSpecies.getId())
 				.getKineticLaw().getParameter("kecd").setValue(kecdRate);			
-			gcm.getSBMLDocument().getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Above")
+			bioModel.getSBMLDocument().getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Above")
 				.getKineticLaw().getParameter("kecdiff").setValue(kecdiffRate);			
-			gcm.getSBMLDocument().getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Below")
+			bioModel.getSBMLDocument().getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Below")
 				.getKineticLaw().getParameter("kecdiff").setValue(kecdiffRate);
-			gcm.getSBMLDocument().getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Left")
+			bioModel.getSBMLDocument().getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Left")
 				.getKineticLaw().getParameter("kecdiff").setValue(kecdiffRate);
-			gcm.getSBMLDocument().getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Right")
+			bioModel.getSBMLDocument().getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Right")
 				.getKineticLaw().getParameter("kecdiff").setValue(kecdiffRate);		
 		}
 	}
@@ -954,7 +954,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 	 * boundary condition
 	 */
 	private boolean checkBoundary(String val, boolean checkRule) {
-		Model model = gcm.getSBMLDocument().getModel();
+		Model model = bioModel.getSBMLDocument().getModel();
 		boolean inRule = false;
 		if (checkRule) {
 			if (model.getNumRules() > 0) {
@@ -1015,10 +1015,10 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 	private void removeSpecies() {
 		int index = species.getSelectedIndex();
 		if (index != -1) {
-			if (!SBMLutilities.variableInUse(gcm.getSBMLDocument(), ((String) species.getSelectedValue()).split(" ")[0], false, true, true)) {
-				Species tempSpecies = gcm.getSBMLDocument().getModel().getSpecies(((String) species.getSelectedValue()).split(" ")[0]);
-				ListOf s = gcm.getSBMLDocument().getModel().getListOfSpecies();
-				for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumSpecies(); i++) {
+			if (!SBMLutilities.variableInUse(bioModel.getSBMLDocument(), ((String) species.getSelectedValue()).split(" ")[0], false, true, true)) {
+				Species tempSpecies = bioModel.getSBMLDocument().getModel().getSpecies(((String) species.getSelectedValue()).split(" ")[0]);
+				ListOf s = bioModel.getSBMLDocument().getModel().getListOfSpecies();
+				for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumSpecies(); i++) {
 					if (((Species) s.get(i)).getId().equals(tempSpecies.getId())) {
 						s.remove(i);
 					}
@@ -1033,7 +1033,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 					species.setSelectedIndex(index - 1);
 				}
 				dirty.setValue(true);
-				gcm.makeUndoPoint();
+				bioModel.makeUndoPoint();
 			}
 		}
 	}
@@ -1048,7 +1048,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		// if the add species button is clicked
 		if (e.getSource() == addSpec) {
 			speciesEditor("Add");
-			parametersPanel.refreshParameterPanel(gcm);
+			parametersPanel.refreshParameterPanel(bioModel);
 		}
 		// if the edit species button is clicked
 		else if (e.getSource() == editSpec) {
@@ -1057,9 +1057,9 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 			if (species.getModel().getSize() > 0) {
 								
 				//if we're dealing with grid species, use a different species editor
-				if (gcm.getSBMLDocument().getModel().getSpecies(((String)species.getModel().getElementAt(0)).split(" ")[0])
+				if (bioModel.getSBMLDocument().getModel().getSpecies(((String)species.getModel().getElementAt(0)).split(" ")[0])
 						.getAnnotation() != null &&						
-						gcm.getSBMLDocument().getModel().getSpecies(((String)species.getModel().getElementAt(0)).split(" ")[0])
+						bioModel.getSBMLDocument().getModel().getSpecies(((String)species.getModel().getElementAt(0)).split(" ")[0])
 						.getAnnotationString().contains("type=\"grid\"")) {
 					
 					openGridSpeciesEditor();
@@ -1067,9 +1067,9 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				else {
 					
 					speciesEditor("OK");
-					initialsPanel.refreshInitialAssignmentPanel(gcm);
+					initialsPanel.refreshInitialAssignmentPanel(bioModel);
 					rulesPanel.refreshRulesPanel();
-					parametersPanel.refreshParameterPanel(gcm);
+					parametersPanel.refreshParameterPanel(bioModel);
 				}
 			}
 			else {
@@ -1088,9 +1088,9 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		if (e.getClickCount() == 2) {
 			if (e.getSource() == species) {
 				speciesEditor("OK");
-				initialsPanel.refreshInitialAssignmentPanel(gcm);
+				initialsPanel.refreshInitialAssignmentPanel(bioModel);
 				rulesPanel.refreshRulesPanel();
-				parametersPanel.refreshParameterPanel(gcm);
+				parametersPanel.refreshParameterPanel(bioModel);
 			}
 		}
 	}

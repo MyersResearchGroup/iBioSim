@@ -52,8 +52,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	private MutableBoolean dirty;
 
 	private Gui biosim;
-	
-	private ArrayList<String> booleans;
 
 	/* Create event panel */
 	public Events(Gui biosim, BioModel bioModel, MutableBoolean dirty) {
@@ -111,7 +109,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		String[] assign = new String[0];
 		String[] placeAssign = new String[0];
 		ArrayList<String> presetPlaces = new ArrayList<String>();
-		booleans = new ArrayList<String>();
 		JPanel eventPanel = new JPanel(new BorderLayout());
 		// JPanel evPanel = new JPanel(new GridLayout(2, 2));
 		JPanel evPanel = new JPanel(new GridLayout(10, 2));
@@ -166,12 +163,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		scroll.setViewportView(eventAssign);
 		int Eindex = -1;
 		String selectedID = "";
-		for (int j = 0; j < bioModel.getSBMLDocument().getModel().getNumParameters(); j++) {
-			Parameter parameter = bioModel.getSBMLDocument().getModel().getParameter(j);
-			if (SBMLutilities.isBoolean(parameter)) {
-				booleans.add(parameter.getId());
-			}
-		}
 		if (option.equals("OK")) {
 			ListOf e = bioModel.getSBMLDocument().getModel().getListOfEvents();
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumEvents(); i++) {
@@ -197,8 +188,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							}
 						} 
 					}
-					triggerMath = SBMLutilities.removeBooleans(triggerMath,booleans);
-					eventTrigger.setText(SBMLutilities.myFormulaToString(triggerMath));
+					eventTrigger.setText(bioModel.removeBooleans(triggerMath));
 					
 					if (event.getAnnotationString().contains("Symmetric Division"))
 						dynamicProcess.setSelectedItem("Symmetric Division");
@@ -226,7 +216,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							eventPriority.setText(SBMLutilities.myFormulaToString(delay.getRightChild()));
 						}
 						else {
-							eventDelay.setText(SBMLutilities.myFormulaToString(SBMLutilities.removeBooleans(delay, booleans)));
+							eventDelay.setText(bioModel.removeBooleans(delay));
 						}
 					}
 					if (event.getUseValuesFromTriggerTime()) {
@@ -245,8 +235,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						initialTrigger.setSelected(true);
 					}
 					if (event.isSetPriority()) {
-						eventPriority.setText(SBMLutilities
-								.myFormulaToString(SBMLutilities.removeBooleans(event.getPriority().getMath(),booleans)));
+						eventPriority.setText(bioModel.removeBooleans(event.getPriority().getMath()));
 					}
 					if (event.getTrigger().isSetPersistent()) {
 						persistentTrigger.setSelected(event.getTrigger().getPersistent());
@@ -282,8 +271,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						} else {
 							String assignMath = SBMLutilities.myFormulaToString(event.getEventAssignment(j).getMath());
 							if (SBMLutilities.isBoolean(parameter)) {
-								assignMath = SBMLutilities.myFormulaToString(
-										SBMLutilities.removeBooleanAssign(event.getEventAssignment(j).getMath(),booleans));
+								assignMath = bioModel.removeBooleanAssign(event.getEventAssignment(j).getMath());
 							} 
 							assign[l] = event.getEventAssignment(j).getVariable() + " := " + assignMath;
 							l++;
@@ -360,7 +348,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				JOptionPane.showMessageDialog(Gui.frame, "Trigger formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 				error = true;
 			}
-			else if (!SBMLutilities.addBooleans(eventTrigger.getText().trim(),booleans).isBoolean()) {
+			else if (!bioModel.addBooleans(eventTrigger.getText().trim()).isBoolean()) {
 				JOptionPane.showMessageDialog(Gui.frame, "Trigger formula must be of type Boolean.", 
 						"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 				error = true;
@@ -457,13 +445,13 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				}
 				if (!error) {
 					error = SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), 
-							SBMLutilities.addBooleans(eventTrigger.getText().trim(),booleans));
+							bioModel.addBooleans(eventTrigger.getText().trim()));
 				}
 				if ((!error) && (!eventDelay.getText().trim().equals(""))) {
 					error = SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), 
-							SBMLutilities.addBooleans(eventDelay.getText().trim(),booleans));
+							bioModel.addBooleans(eventDelay.getText().trim()));
 					if (!error) {
-						if (SBMLutilities.addBooleans(eventDelay.getText().trim(),booleans).isBoolean()) {
+						if (bioModel.addBooleans(eventDelay.getText().trim()).isBoolean()) {
 							JOptionPane.showMessageDialog(Gui.frame, "Event delay must evaluate to a number.", "Number Expected",
 									JOptionPane.ERROR_MESSAGE);
 							error = true;
@@ -472,9 +460,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				}
 				if ((!error) && (!eventPriority.getText().trim().equals(""))) {
 					error = SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), 
-							SBMLutilities.addBooleans(eventPriority.getText().trim(),booleans));
+							bioModel.addBooleans(eventPriority.getText().trim()));
 					if (!error) {
-						if (SBMLutilities.addBooleans(eventPriority.getText().trim(),booleans).isBoolean()) {
+						if (bioModel.addBooleans(eventPriority.getText().trim()).isBoolean()) {
 							JOptionPane.showMessageDialog(Gui.frame, "Event priority must evaluate to a number.", "Number Expected",
 									JOptionPane.ERROR_MESSAGE);
 							error = true;
@@ -501,7 +489,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						ea.setVariable(assign[i].split(" ")[0]);
 						Parameter p = bioModel.getSBMLDocument().getModel().getParameter(assign[i].split(" ")[0]);
 						if (p != null && SBMLutilities.isBoolean(p)) {
-							ea.setMath(SBMLutilities.addBooleanAssign(assign[i].split(":=")[1].trim(),booleans));
+							ea.setMath(bioModel.addBooleanAssign(assign[i].split(":=")[1].trim()));
 						} else {
 							ea.setMath(SBMLutilities.myParseFormula(assign[i].split(":=")[1].trim()));
 						}
@@ -525,7 +513,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 								oldDelayStr = SBMLutilities.myFormulaToString(e.getDelay().getMath());
 							}
 							e.createDelay();
-							e.getDelay().setMath(SBMLutilities.addBooleans(eventDelay.getText().trim(),booleans));
+							e.getDelay().setMath(bioModel.addBooleans(eventDelay.getText().trim()));
 							error = checkEventDelayUnits(e.getDelay());
 							if (error) {
 								if (oldDelayStr.equals("")) {
@@ -544,7 +532,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						}
 						else {
 							e.createPriority();
-							e.getPriority().setMath(SBMLutilities.addBooleans(eventPriority.getText().trim(),booleans));
+							e.getPriority().setMath(bioModel.addBooleans(eventPriority.getText().trim()));
 						}
 					}
 					if (!error) {
@@ -562,7 +550,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							e.getTrigger().setInitialValue(true);
 						}
 						
-						ASTNode triggerMath = SBMLutilities.addBooleans(eventTrigger.getText().trim(),booleans);
+						ASTNode triggerMath = bioModel.addBooleans(eventTrigger.getText().trim());
 						for (int j = 0; j < presetPlaces.size(); j++) {
 							triggerMath = SBMLutilities.addPreset(triggerMath, presetPlaces.get(j));
 						}
@@ -698,14 +686,14 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					else {
 						e.getTrigger().setInitialValue(true);
 					}
-					e.getTrigger().setMath(SBMLutilities.addBooleans(eventTrigger.getText().trim(),booleans));
+					e.getTrigger().setMath(bioModel.addBooleans(eventTrigger.getText().trim()));
 					if (!eventPriority.getText().trim().equals("")) {
 						e.createPriority();
-						e.getPriority().setMath(SBMLutilities.addBooleans(eventPriority.getText().trim(),booleans));
+						e.getPriority().setMath(bioModel.addBooleans(eventPriority.getText().trim()));
 					}
 					if (!eventDelay.getText().trim().equals("")) {
 						e.createDelay();
-						e.getDelay().setMath(SBMLutilities.addBooleans(eventDelay.getText().trim(),booleans));
+						e.getDelay().setMath(bioModel.addBooleans(eventDelay.getText().trim()));
 						error = checkEventDelayUnits(e.getDelay());
 					}
 					if (!error) {
@@ -714,7 +702,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							ea.setVariable(assign[i].split(" ")[0]);
 							Parameter p = bioModel.getSBMLDocument().getModel().getParameter(assign[i].split(" ")[0]);
 							if (p != null && SBMLutilities.isBoolean(p)) {
-								ea.setMath(SBMLutilities.addBooleanAssign(assign[i].split(":=")[1].trim(),booleans));
+								ea.setMath(bioModel.addBooleanAssign(assign[i].split(":=")[1].trim()));
 							} else {
 								ea.setMath(SBMLutilities.myParseFormula(assign[i].split(":=")[1].trim()));
 							}
@@ -1103,7 +1091,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					Parameter p = bioModel.getSBMLDocument().getModel().getParameter((String)eaID.getSelectedItem());
 					ASTNode assignMath = SBMLutilities.myParseFormula(eqn.getText().trim());
 					if (p != null && SBMLutilities.isBoolean(p)) {
-						assignMath = SBMLutilities.addBooleanAssign(eqn.getText().trim(),booleans);
+						assignMath = bioModel.addBooleanAssign(eqn.getText().trim());
 					} 
 					error = SBMLutilities.checkNumFunctionArguments(gcm.getSBMLDocument(), assignMath);
 					if (!error) {

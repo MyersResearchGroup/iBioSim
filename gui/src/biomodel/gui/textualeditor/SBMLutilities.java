@@ -2147,24 +2147,6 @@ public class SBMLutilities {
 		return formula;
 	}
 	
-	public static ASTNode addBooleans(String formula,ArrayList<String> booleans) {
-		formula = myFormulaToString(myParseFormula(formula));
-		for (int i = 0; i < booleans.size(); i++) {
-			formula = addBoolean(formula,booleans.get(i));
-		}
-		return myParseFormula(formula);
-	}
-	
-	public static ASTNode addBooleanAssign(String formula,ArrayList<String> booleans) {
-		formula = myFormulaToString(myParseFormula(formula));
-		for (int i = 0; i < booleans.size(); i++) {
-			formula = addBoolean(formula,booleans.get(i));
-		}
-		formula = "piecewise(1," + formula + ",0)";
-		
-		return myParseFormula(formula);
-	}
-	
 	public static ASTNode removeBoolean(ASTNode math,String boolVar) {
 		if (math.getType() == libsbml.AST_RELATIONAL_EQ) {
 			if (math.getLeftChild().getName().equals(boolVar)) {
@@ -2174,24 +2156,6 @@ public class SBMLutilities {
 		for (long i = 0; i < math.getNumChildren(); i++) {
 			ASTNode child = removeBoolean(math.getChild(i),boolVar);
 			math.replaceChild(i, child);
-		}
-		return math.deepCopy();
-	}
-	
-	public static ASTNode removeBooleans(ASTNode math,ArrayList<String> booleans) {
-		for (int i = 0; i < booleans.size(); i++) {
-			math = removeBoolean(math,booleans.get(i));
-		}
-		return math;
-	}
-
-	public static ASTNode removeBooleanAssign(ASTNode math,ArrayList<String> booleans) {
-		if (math.getType() == libsbml.AST_FUNCTION_PIECEWISE && math.getNumChildren() > 1) {
-			ASTNode result = math.getChild(1);
-			for (int i = 0; i < booleans.size(); i++) {
-				result = removeBoolean(result,booleans.get(i));
-			}
-			return result;
 		}
 		return math.deepCopy();
 	}

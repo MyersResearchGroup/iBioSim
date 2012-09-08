@@ -64,6 +64,7 @@ import org.sbml.libsbml.Layout;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.ModifierSpeciesReference;
+import org.sbml.libsbml.Parameter;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.ReactionGlyph;
 import org.sbml.libsbml.SBMLDocument;
@@ -1893,15 +1894,21 @@ public class Schematic extends JPanel implements ActionListener {
 	 * @param spec_id
 	 * @return: A boolean representing success or failure. True means it worked, false, means there was no output in the component.
 	 */
-	public String connectComponentToVariable(String compID, String specID) throws ListChooser.EmptyListException{
+	public String connectComponentToVariable(String compID, String varID) throws ListChooser.EmptyListException{
+		Parameter p = bioModel.getSBMLDocument().getModel().getParameter(varID);
 		String fullPath = bioModel.getPath() + File.separator + bioModel.getModelFileName(compID);
 		BioModel compBioModel = new BioModel(bioModel.getPath());
 		compBioModel.load(fullPath);
-		ArrayList<String> ports = compBioModel.getOutputPorts(GlobalConstants.PARAMETER);
+		ArrayList<String> ports;
+		if (SBMLutilities.isBoolean(p)) {
+			ports = compBioModel.getOutputPorts(GlobalConstants.BOOLEAN);
+		} else {
+			ports = compBioModel.getOutputPorts(GlobalConstants.VARIABLE);
+		}
 		String port = ListChooser.selectFromList(Gui.frame, ports.toArray(), "Please Choose an Output Port");
 		if(port == null)
 			return null;
-		bioModel.connectComponentAndVariable(compID, compBioModel.getPortByIdRef(port).getId(), specID);
+		bioModel.connectComponentAndVariable(compID, compBioModel.getPortByIdRef(port).getId(), varID);
 		return port;
 	}
 	
@@ -1911,15 +1918,21 @@ public class Schematic extends JPanel implements ActionListener {
 	 * @param comp_id
 	 * @return a boolean representing success or failure.
 	 */
-	public String connectVariableToComponent(String specID, String compID) throws ListChooser.EmptyListException{
+	public String connectVariableToComponent(String varID, String compID) throws ListChooser.EmptyListException{
+		Parameter p = bioModel.getSBMLDocument().getModel().getParameter(varID);
 		String fullPath = bioModel.getPath() + File.separator + bioModel.getModelFileName(compID);
 		BioModel compBioModel = new BioModel(bioModel.getPath());
-		compBioModel.load(fullPath);		
-		ArrayList<String> ports = compBioModel.getInputPorts(GlobalConstants.PARAMETER);
+		compBioModel.load(fullPath);	
+		ArrayList<String> ports;
+		if (SBMLutilities.isBoolean(p)) {
+			ports = compBioModel.getOutputPorts(GlobalConstants.BOOLEAN);
+		} else {
+			ports = compBioModel.getOutputPorts(GlobalConstants.VARIABLE);
+		}
 		String port = ListChooser.selectFromList(Gui.frame, ports.toArray(), "Please Choose an Input Port");
 		if(port == null)
 			return null;
-		bioModel.connectComponentAndVariable(compID, compBioModel.getPortByIdRef(port).getId(), specID);
+		bioModel.connectComponentAndVariable(compID, compBioModel.getPortByIdRef(port).getId(), varID);
 		return port;
 	}
 

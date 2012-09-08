@@ -562,7 +562,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		scroll4.setPreferredSize(new Dimension(100, 100));
 		scroll4.setViewportView(kineticLaw);
 		if (option.equals("OK")) {
-			kineticLaw.setText(SBMLutilities.myFormulaToString(gcm.getSBMLDocument().getModel().getReaction(reactionId).getKineticLaw().getMath()));
+			kineticLaw.setText(bioModel.removeBooleans(gcm.getSBMLDocument().getModel().getReaction(reactionId).getKineticLaw().getMath()));
 		}
 		JPanel kineticPanel = new JPanel(new BorderLayout());
 		kineticPanel.add(kineticLabel, "North");
@@ -709,7 +709,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 			if (!error) {
-				if (SBMLutilities.myParseFormula(kineticLaw.getText().trim()).isBoolean()) {
+				if (bioModel.addBooleans(kineticLaw.getText().trim()).isBoolean()) {
 					JOptionPane.showMessageDialog(Gui.frame, "Kinetic law must evaluate to a number.", "Number Expected", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
@@ -785,7 +785,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							port.setIdRef(react.getId());
 						}
 					}
-					react.getKineticLaw().setMath(SBMLutilities.myParseFormula(kineticLaw.getText().trim()));
+					react.getKineticLaw().setMath(bioModel.addBooleans(kineticLaw.getText().trim()));
 					error = checkKineticLawUnits(react.getKineticLaw());
 					if (!error) {
 						error = SBMLutilities.checkCycles(gcm.getSBMLDocument());
@@ -909,7 +909,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						port.setId(GlobalConstants.SBMLREACTION+"__"+react.getId());
 						port.setIdRef(react.getId());
 					}
-					react.getKineticLaw().setMath(SBMLutilities.myParseFormula(kineticLaw.getText().trim()));
+					react.getKineticLaw().setMath(bioModel.addBooleans(kineticLaw.getText().trim()));
 					error = checkKineticLawUnits(react.getKineticLaw());
 					if (!error) {
 						error = SBMLutilities.checkCycles(gcm.getSBMLDocument());

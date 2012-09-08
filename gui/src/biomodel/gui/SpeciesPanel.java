@@ -354,7 +354,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			initialField = new JTextField("");
 			InitialAssignment init = bioModel.getSBMLDocument().getModel().getInitialAssignment(species.getId());
 			if (init!=null) {
-				initialField.setText(SBMLutilities.myFormulaToString(init.getMath()));
+				initialField.setText(bioModel.removeBooleans(init.getMath()));
 			} else if (species.isSetInitialAmount()) {
 				initialField.setText("" + species.getInitialAmount());
 			} else if (species.isSetInitialConcentration()) {

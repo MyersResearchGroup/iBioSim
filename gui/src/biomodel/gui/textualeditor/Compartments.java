@@ -287,7 +287,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 				setCompartOptions(String.valueOf(compartment.getSpatialDimensionsAsDouble()));
 				InitialAssignment init = bioModel.getSBMLDocument().getModel().getInitialAssignment(selectedID);
 				if (init!=null) {
-					compSize.setText(SBMLutilities.myFormulaToString(init.getMath()));
+					compSize.setText(bioModel.removeBooleans(init.getMath()));
 				} else if (compartment.isSetSize()) {
 					compSize.setText("" + compartment.getSize());
 				}

@@ -750,17 +750,17 @@ public class BioModel {
 										}
 										if (r.isSetReversible() && law.getMath().getCharacter() == '-') {
 											reactionDegradations += "(("
-													+ myFormulaToString(replaceParams(law.getMath().getLeftChild(),
+													+ SBMLutilities.myFormulaToString(replaceParams(law.getMath().getLeftChild(),
 															parameters)) + ")*" + r.getReactant(k).getStoichiometry()
 													+ ") + ";
 											reactionProductions += "(("
-													+ myFormulaToString(replaceParams(law.getMath().getRightChild(),
+													+ SBMLutilities.myFormulaToString(replaceParams(law.getMath().getRightChild(),
 															parameters)) + ")*" + r.getReactant(k).getStoichiometry()
 													+ ") + ";
 										}
 										else {
 											reactionDegradations += "(("
-													+ myFormulaToString(replaceParams(law.getMath(), parameters))
+													+ SBMLutilities.myFormulaToString(replaceParams(law.getMath(), parameters))
 													+ ")*" + r.getReactant(k).getStoichiometry() + ") + ";
 										}
 									}
@@ -778,17 +778,17 @@ public class BioModel {
 										}
 										if (r.isSetReversible() && law.getMath().getCharacter() == '-') {
 											reactionProductions += "(("
-													+ myFormulaToString(replaceParams(law.getMath().getLeftChild(),
+													+ SBMLutilities.myFormulaToString(replaceParams(law.getMath().getLeftChild(),
 															parameters)) + ")*" + r.getProduct(k).getStoichiometry()
 													+ ") + ";
 											reactionDegradations += "(("
-													+ myFormulaToString(replaceParams(law.getMath().getRightChild(),
+													+ SBMLutilities.myFormulaToString(replaceParams(law.getMath().getRightChild(),
 															parameters)) + ")*" + r.getProduct(k).getStoichiometry()
 													+ ") + ";
 										}
 										else {
 											reactionProductions += "(("
-													+ myFormulaToString(replaceParams(law.getMath().getLeftChild(),
+													+ SBMLutilities.myFormulaToString(replaceParams(law.getMath().getLeftChild(),
 															parameters)) + ")*" + r.getProduct(k).getStoichiometry()
 													+ ") + ";
 										}
@@ -899,7 +899,7 @@ public class BioModel {
 			}
 		}
 		else if (parameters.keySet().contains(formula.getName())) {
-			return myParseFormula(parameters.get(formula.getName()));
+			return SBMLutilities.myParseFormula(parameters.get(formula.getName()));
 		}
 		return formula;
 	}
@@ -2125,13 +2125,40 @@ public class BioModel {
 		//flatSBML.expandFunctionDefinitions();
 		flatSBML.expandInitialAssignments();
 		LhpnFile lpn = new LhpnFile();
+		String message = "The following items cannot be converted to an LPN:\n";
+		boolean error = false;
+		if (flatSBML.getModel().getNumCompartments()>0) {
+			message += "Compartments: ";
+			for (long i = 0; i < flatSBML.getModel().getNumCompartments(); i++) {
+				message += flatSBML.getModel().getCompartment(i).getId() + " ";
+			}
+			message += "\n";
+			error = true;
+		}
+		if (flatSBML.getModel().getNumSpecies()>0) {
+			message += "Species: ";
+			for (long i = 0; i < flatSBML.getModel().getNumSpecies(); i++) {
+				message += flatSBML.getModel().getSpecies(i).getId() + " ";
+			}
+			message += "\n";
+			error = true;
+		}
 		for (long i = 0; i < flatSBML.getModel().getNumRules(); i++) {
 			Rule r = flatSBML.getModel().getRule(i);
 			if (r.isRate()) {
 				if (r.getMath().isName()) {
 					rates.put(r.getMath().getName(),r.getVariable());
+				} else {
+					error = true;
+					message += "Rate rule: d(" + r.getVariable() + ")/dt := " + SBMLutilities.myFormulaToString(r.getMath()) + "\n";
 				}
-			}
+ 			} else if (r.isAssignment()) {
+				error = true;
+ 				message += "Assignment rule: " + r.getVariable() + " := " + SBMLutilities.myFormulaToString(r.getMath()) + "\n";
+ 			} else {
+				error = true;
+ 				message += "Algebraic rule: 0 := " + SBMLutilities.myFormulaToString(r.getMath()) + "\n";
+ 			}
  		}
 		for (long i = 0; i < flatSBML.getModel().getNumParameters(); i++) {
 			Parameter p = flatSBML.getModel().getParameter(i);
@@ -2139,6 +2166,7 @@ public class BioModel {
 				lpn.addPlace(p.getId(), (p.getValue()==1));
 			} else if (SBMLutilities.isBoolean(p)){
 				booleans.add(p.getId());
+				if (p.getId().equals("fail")) continue;
 				Port port = getPortByIdRef(p.getId());
 				if (port != null) {
 					if (isInputPort(port)) {
@@ -2196,6 +2224,30 @@ public class BioModel {
 				}
 			}
 		}
+		boolean foundFail = false;
+		for (long i = 0; i < flatSBML.getModel().getNumConstraints(); i++) {
+			Constraint c = flatSBML.getModel().getConstraint(i);
+			ASTNode math = c.getMath();
+			if (math.getType()==libsbml.AST_FUNCTION && math.getName().equals("G") && math.getNumChildren()==2) {
+				ASTNode left = c.getMath().getLeftChild();
+				ASTNode right = c.getMath().getRightChild();
+				if (left.getType()==libsbml.AST_CONSTANT_TRUE && right.getType()==libsbml.AST_LOGICAL_NOT) {
+					ASTNode child = right.getChild(0);
+					if (child.getType()==libsbml.AST_RELATIONAL_EQ) {
+						left = child.getLeftChild();
+						right = child.getRightChild();
+						if (left.getType()==libsbml.AST_NAME && left.getName().equals("fail") &&
+							right.getType()==libsbml.AST_INTEGER && right.getInteger()==1) {
+							foundFail = true;
+							continue;
+						}
+					}
+				}
+			} 
+			error = true;
+			message += "Constraint: " + SBMLutilities.myFormulaToString(math) + "\n";
+			//lpn.addProperty(SBMLutilities.SBMLMathToLPNString(c.getMath(), constants, booleans));
+		}
 		for (long i = 0; i < flatSBML.getModel().getNumEvents(); i++) {
 			Event e = flatSBML.getModel().getEvent(i);
 			if (SBMLutilities.isTransition(e)) {
@@ -2241,13 +2293,32 @@ public class BioModel {
 						} else if (rates.containsValue(ea.getVariable())) {
 							t.addContAssign(ea.getVariable(), SBMLutilities.SBMLMathToLPNString(ea.getMath(),constants,booleans));
 						} else if (booleans.contains(ea.getVariable())){
-							t.addBoolAssign(ea.getVariable(), SBMLutilities.SBMLMathToBoolLPNString(ea.getMath(),constants,booleans));
+							if (ea.getVariable().equals("fail") && foundFail) {
+								t.setFail(true);
+							} else {
+								t.addBoolAssign(ea.getVariable(), SBMLutilities.SBMLMathToBoolLPNString(ea.getMath(),constants,booleans));
+							}
 						} else {
 							t.addIntAssign(ea.getVariable(), SBMLutilities.SBMLMathToLPNString(ea.getMath(),constants,booleans));
 						}
 					}
 				}
+			} else {
+				error = true;
+				message += "Event: " + e.getId() + "\n";
 			}
+		}
+		if (error) {
+			JTextArea messageArea = new JTextArea(message);
+			messageArea.setEditable(false);
+			JScrollPane scroll = new JScrollPane();
+			scroll.setMinimumSize(new Dimension(400, 400));
+			scroll.setPreferredSize(new Dimension(400, 400));
+			scroll.setViewportView(messageArea);		
+			Object[] options = { "OK", "Cancel" };
+			int value = JOptionPane.showOptionDialog(Gui.frame, scroll, "Conversion Errors",
+					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			if (value == JOptionPane.NO_OPTION) return false;
 		}
 		lpn.save(filename);
 		return true;
@@ -3795,8 +3866,21 @@ public class BioModel {
 				String idRef = port.getIdRef();
 				SBase sbase = sbml.getElementBySId(idRef);
 				if (sbase!=null) {
-					if (sbml.getElementBySId(idRef).getElementName().equals(type)) {
-						ports.add(idRef);
+					if (sbase.getElementName().equals(GlobalConstants.SPECIES)) {
+						if (type.equals(GlobalConstants.SPECIES)) {
+							ports.add(idRef);
+						}
+					} else if (sbase.getElementName().equals(GlobalConstants.PARAMETER)) {
+						Parameter p = sbml.getModel().getParameter(idRef);
+						if (type.equals(GlobalConstants.BOOLEAN)) {
+							if (SBMLutilities.isBoolean(p)) {
+								ports.add(idRef);
+							}
+						} else if (type.equals(GlobalConstants.VARIABLE)) {
+							if (!SBMLutilities.isBoolean(p) && !SBMLutilities.isPlace(p)) {
+								ports.add(idRef);
+							}
+						}
 					}
 				}
 			}
@@ -3813,8 +3897,21 @@ public class BioModel {
 				String idRef = port.getIdRef();
 				SBase sbase = sbml.getElementBySId(idRef);
 				if (sbase!=null) {
-					if (sbml.getElementBySId(idRef).getElementName().equals(type)) {
-						ports.add(idRef);
+					if (sbase.getElementName().equals(GlobalConstants.SPECIES)) {
+						if (type.equals(GlobalConstants.SPECIES)) {
+							ports.add(idRef);
+						}
+					} else if (sbase.getElementName().equals(GlobalConstants.PARAMETER)) {
+						Parameter p = sbml.getModel().getParameter(idRef);
+						if (type.equals(GlobalConstants.BOOLEAN)) {
+							if (SBMLutilities.isBoolean(p)) {
+								ports.add(idRef);
+							}
+						} else if (type.equals(GlobalConstants.VARIABLE)) {
+							if (!SBMLutilities.isBoolean(p) && !SBMLutilities.isPlace(p)) {
+								ports.add(idRef);
+							}
+						}
 					}
 				}
 			}
@@ -6657,6 +6754,7 @@ public class BioModel {
 		return bioModel;
 	}
 
+	/*
 	private String myFormulaToString(ASTNode mathFormula) {
 		String formula = libsbml.formulaToString(mathFormula);
 		formula = formula.replaceAll("arccot", "acot");
@@ -6686,6 +6784,7 @@ public class BioModel {
 		setTimeAndTrigVar(mathFormula);
 		return mathFormula;
 	}
+	*/
 
 	private String updateFormulaVar(String s, String origVar, String newVar) {
 		s = " " + s + " ";
@@ -6700,8 +6799,8 @@ public class BioModel {
 	}
 
 	private ASTNode updateMathVar(ASTNode math, String origVar, String newVar) {
-		String s = updateFormulaVar(myFormulaToString(math), origVar, newVar);
-		return myParseFormula(s);
+		String s = updateFormulaVar(SBMLutilities.myFormulaToString(math), origVar, newVar);
+		return SBMLutilities.myParseFormula(s);
 	}
 
 	private void updateVarId(boolean isSpecies, String origId, String newId, BioModel bioModel) {
@@ -6957,6 +7056,55 @@ public class BioModel {
 		else
 			return false;
 			*/
+	}
+	
+	
+	public ASTNode addBooleans(String formula) {
+		formula = SBMLutilities.myFormulaToString(SBMLutilities.myParseFormula(formula));
+		for (int j = 0; j < sbml.getModel().getNumParameters(); j++) {
+			Parameter parameter = sbml.getModel().getParameter(j);
+			if (SBMLutilities.isBoolean(parameter)) {
+				formula = SBMLutilities.addBoolean(formula,parameter.getId());
+			}
+		}		
+		return SBMLutilities.myParseFormula(formula);
+	}
+	
+	public ASTNode addBooleanAssign(String formula) {
+		formula = SBMLutilities.myFormulaToString(SBMLutilities.myParseFormula(formula));
+		for (int j = 0; j < sbml.getModel().getNumParameters(); j++) {
+			Parameter parameter = sbml.getModel().getParameter(j);
+			if (SBMLutilities.isBoolean(parameter)) {
+				formula = SBMLutilities.addBoolean(formula,parameter.getId());
+			}
+		}		
+		formula = "piecewise(1," + formula + ",0)";
+		return SBMLutilities.myParseFormula(formula);
+	}
+	
+	public String removeBooleans(ASTNode math) {
+		for (int j = 0; j < sbml.getModel().getNumParameters(); j++) {
+			Parameter parameter = sbml.getModel().getParameter(j);
+			if (SBMLutilities.isBoolean(parameter)) {
+				math = SBMLutilities.removeBoolean(math,parameter.getId());
+			}
+		}
+		return SBMLutilities.myFormulaToString(math);
+	}
+	
+
+	public String removeBooleanAssign(ASTNode math) {
+		if (math.getType() == libsbml.AST_FUNCTION_PIECEWISE && math.getNumChildren() > 1) {
+			ASTNode result = math.getChild(1);
+			for (int j = 0; j < sbml.getModel().getNumParameters(); j++) {
+				Parameter parameter = sbml.getModel().getParameter(j);
+				if (SBMLutilities.isBoolean(parameter)) {
+					result = SBMLutilities.removeBoolean(result,parameter.getId());
+				}
+			}
+			return SBMLutilities.myFormulaToString(result);
+		}
+		return SBMLutilities.myFormulaToString(math);
 	}
 	
 	private SBMLDocument sbml = null;
