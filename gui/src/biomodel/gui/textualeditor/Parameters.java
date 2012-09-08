@@ -383,7 +383,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				} else {
 					InitialAssignment init = bioModel.getSBMLDocument().getModel().getInitialAssignment(selectedID);
 					if (init!=null) {
-						paramValue.setText(SBMLutilities.myFormulaToString(init.getMath()));
+						paramValue.setText(bioModel.removeBooleans(init.getMath()));
 					} else if (paramet.isSetValue()) {
 						paramValue.setText("" + paramet.getValue());
 					}

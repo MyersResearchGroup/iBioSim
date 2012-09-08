@@ -155,7 +155,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 	/**
 	 * Try to add or edit initial assignments
 	 */
-	public static boolean addInitialAssignment(Gui biosim, BioModel gcm, String variable, String assignment) {
+	public static boolean addInitialAssignment(Gui biosim, BioModel bioModel, String variable, String assignment) {
 		if (assignment.trim().equals("")) {
 			JOptionPane.showMessageDialog(Gui.frame, "Initial assignment is empty.", "Enter Assignment", JOptionPane.ERROR_MESSAGE);
 			return true;
@@ -164,14 +164,14 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			JOptionPane.showMessageDialog(Gui.frame, "Initial assignment is not valid.", "Enter Valid Assignment", JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
-		Rule rule = gcm.getSBMLDocument().getModel().getRule(variable);
+		Rule rule = bioModel.getSBMLDocument().getModel().getRule(variable);
 		if (rule != null && rule.isAssignment()) {
 			JOptionPane.showMessageDialog(Gui.frame, 
 					"Cannot have both an assignment rule and an initial assignment on the same variable.", 
 					"Multiple Assignment", JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
-		ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(gcm.getSBMLDocument(), assignment.trim(), "", false);
+		ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(bioModel.getSBMLDocument(), assignment.trim(), "", false);
 		if (invalidVars.size() > 0) {
 			String invalid = "";
 			for (int i = 0; i < invalidVars.size(); i++) {
@@ -195,32 +195,32 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			JOptionPane.showMessageDialog(Gui.frame, scrolls, "Unknown Variables", JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
-		if (SBMLutilities.checkNumFunctionArguments(gcm.getSBMLDocument(), SBMLutilities.myParseFormula(assignment.trim()))) {
+		if (SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), bioModel.addBooleans(assignment.trim()))) {
 			return true;
 		}
-		if (SBMLutilities.myParseFormula(assignment.trim()).isBoolean()) {
+		if (bioModel.addBooleans(assignment.trim()).isBoolean()) {
 			JOptionPane.showMessageDialog(Gui.frame, "Initial assignment must evaluate to a number.", "Number Expected", JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
 		boolean error = false;
-		InitialAssignment r = gcm.getSBMLDocument().getModel().createInitialAssignment();
+		InitialAssignment r = bioModel.getSBMLDocument().getModel().createInitialAssignment();
 		String initialId = "init__"+variable;
 		r.setMetaId(initialId);
 		r.setSymbol(variable);
-		r.setMath(SBMLutilities.myParseFormula(assignment.trim()));
-		if (checkInitialAssignmentUnits(biosim, gcm, r)) {
+		r.setMath(bioModel.addBooleans(assignment.trim()));
+		if (checkInitialAssignmentUnits(biosim, bioModel, r)) {
 			error = true;
 		}
-		if (!error && SBMLutilities.checkCycles(gcm.getSBMLDocument())) {
+		if (!error && SBMLutilities.checkCycles(bioModel.getSBMLDocument())) {
 			JOptionPane.showMessageDialog(Gui.frame, "Cycle detected within initial assignments, assignment rules, and rate laws.", "Cycle Detected",
 					JOptionPane.ERROR_MESSAGE);
 			error = true;
 		}
 		if (error) {
-			removeInitialAssignment(gcm, variable);
+			removeInitialAssignment(bioModel, variable);
 		} else {
-			if (gcm.getPortByIdRef(variable)!=null) {
-				Port port = gcm.getSBMLCompModel().createPort();
+			if (bioModel.getPortByIdRef(variable)!=null) {
+				Port port = bioModel.getSBMLCompModel().createPort();
 				port.setId(GlobalConstants.INITIAL_ASSIGNMENT+"__"+variable);
 				port.setMetaIdRef(initialId);
 			} 

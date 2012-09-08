@@ -50,16 +50,16 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 
 	private JList constraints; // JList of initial assignments
 
-	private BioModel gcm;
+	private BioModel bioModel;
 
 	private MutableBoolean dirty;
 
 	/* Create initial assignment panel */
-	public Constraints(BioModel gcm, MutableBoolean dirty) {
+	public Constraints(BioModel bioModel, MutableBoolean dirty) {
 		super(new BorderLayout());
-		this.gcm = gcm;
+		this.bioModel = bioModel;
 		this.dirty = dirty;
-		Model model = gcm.getSBMLDocument().getModel();
+		Model model = bioModel.getSBMLDocument().getModel();
 		addConstraint = new JButton("Add Constraint");
 		removeConstraint = new JButton("Remove Constraint");
 		editConstraint = new JButton("Edit Constraint");
@@ -71,7 +71,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 			if (!constraint.isSetMetaId()) {
 				String constraintId = "constraint0";
 				int cn = 0;
-				while (gcm.isSIdInUse(constraintId)) {
+				while (bioModel.isSIdInUse(constraintId)) {
 					cn++;
 					constraintId = "constraint" + cn;
 				}
@@ -136,11 +136,11 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		String selectedID = "";
 		int Cindex = -1;
 		if (option.equals("OK")) {
-			ListOf c = gcm.getSBMLDocument().getModel().getListOfConstraints();
-			for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumConstraints(); i++) {
+			ListOf c = bioModel.getSBMLDocument().getModel().getListOfConstraints();
+			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumConstraints(); i++) {
 				if ((((Constraint) c.get(i)).getMetaId()).equals(selected)) {
 					Cindex = i;
-					consMath.setText(SBMLutilities.myFormulaToString(((Constraint) c.get(i)).getMath()));
+					consMath.setText(bioModel.removeBooleans(((Constraint) c.get(i)).getMath()));
 					if (((Constraint) c.get(i)).isSetMetaId()) {
 						selectedID = ((Constraint) c.get(i)).getMetaId();
 						consID.setText(selectedID);
@@ -152,7 +152,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						message = message.substring(message.indexOf("xhtml\">") + 7, message.indexOf("</p>"));
 						consMessage.setText(message);
 					}
-					if (gcm.getPortByMetaIdRef(c.get(i).getMetaId())!=null) {
+					if (bioModel.getPortByMetaIdRef(c.get(i).getMetaId())!=null) {
 						onPort.setSelected(true);
 					} else {
 						onPort.setSelected(false);
@@ -163,7 +163,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		else {
 			String constraintId = "constraint0";
 			int cn = 0;
-			while (gcm.getSBMLDocument().getElementByMetaId(constraintId)!=null) {
+			while (bioModel.getSBMLDocument().getElementByMetaId(constraintId)!=null) {
 				cn++;
 				constraintId = "constraint" + cn;
 			}
@@ -186,19 +186,19 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(gcm.getSBMLDocument(), consID.getText().trim(), selectedID, false, true);
+			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), consID.getText().trim(), selectedID, false, true);
 			if (!error) {
-				ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(gcm.getSBMLDocument(), consMath.getText().trim(), "", false);
+				ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(bioModel.getSBMLDocument(), consMath.getText().trim(), "", false);
 				if (consMath.getText().trim().equals("") || SBMLutilities.myParseFormula(consMath.getText().trim()) == null) {
 					JOptionPane.showMessageDialog(Gui.frame, "Formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
-				else if (!SBMLutilities.isBoolean(gcm.getSBMLDocument(), SBMLutilities.myParseFormula(consMath.getText().trim()))) {
+				else if (!SBMLutilities.isBoolean(bioModel.getSBMLDocument(), bioModel.addBooleans(consMath.getText().trim()))) {
 					JOptionPane.showMessageDialog(Gui.frame, "Constraint formula must be of type Boolean.", "Enter Valid Formula",
 							JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
-				else if (SBMLutilities.checkNumFunctionArguments(gcm.getSBMLDocument(), SBMLutilities.myParseFormula(consMath.getText().trim()))) {
+				else if (SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), bioModel.addBooleans(consMath.getText().trim()))) {
 					error = true;
 				}
 				else {
@@ -236,8 +236,8 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						constraints.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 						cons = Utility.getList(cons, constraints);
 						constraints.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-						Constraint c = (Constraint) (gcm.getSBMLDocument().getModel().getListOfConstraints()).get(Cindex);
-						c.setMath(SBMLutilities.myParseFormula(consMath.getText().trim()));
+						Constraint c = (Constraint) (bioModel.getSBMLDocument().getModel().getListOfConstraints()).get(Cindex);
+						c.setMath(bioModel.addBooleans(consMath.getText().trim()));
 						c.setMetaId(consID.getText().trim());
 						if (!consMessage.getText().trim().equals("")) {
 							XMLNode xmlNode = XMLNode.convertStringToXMLNode("<message><p xmlns=\"http://www.w3.org/1999/xhtml\">"
@@ -247,7 +247,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						else {
 							c.unsetMessage();
 						}
-						Port port = gcm.getPortByMetaIdRef(selectedID);
+						Port port = bioModel.getPortByMetaIdRef(selectedID);
 						if (port!=null) {
 							if (onPort.isSelected()) {
 								port.setId(GlobalConstants.CONSTRAINT+"__"+c.getMetaId());
@@ -257,7 +257,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 							}
 						} else {
 							if (onPort.isSelected()) {
-								port = gcm.getSBMLCompModel().createPort();
+								port = bioModel.getSBMLCompModel().createPort();
 								port.setId(GlobalConstants.CONSTRAINT+"__"+c.getMetaId());
 								port.setMetaIdRef(c.getMetaId());
 							}
@@ -274,8 +274,8 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						}
 						JList add = new JList();
 						int index = constraints.getSelectedIndex();
-						Constraint c = gcm.getSBMLDocument().getModel().createConstraint();
-						c.setMath(SBMLutilities.myParseFormula(consMath.getText().trim()));
+						Constraint c = bioModel.getSBMLDocument().getModel().createConstraint();
+						c.setMath(bioModel.addBooleans(consMath.getText().trim()));
 						c.setMetaId(consID.getText().trim());
 						if (!consMessage.getText().trim().equals("")) {
 							XMLNode xmlNode = XMLNode.convertStringToXMLNode("<message><p xmlns=\"http://www.w3.org/1999/xhtml\">"
@@ -283,7 +283,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 							c.setMessage(xmlNode);
 						}
 						if (onPort.isSelected()) {
-							Port port = gcm.getSBMLCompModel().createPort();
+							Port port = bioModel.getSBMLCompModel().createPort();
 							port.setId(GlobalConstants.CONSTRAINT+"__"+c.getMetaId());
 							port.setMetaIdRef(c.getMetaId());
 						}
@@ -299,7 +299,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						Utility.sort(cons);
 						constraints.setListData(cons);
 						constraints.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-						if (gcm.getSBMLDocument().getModel().getNumConstraints() == 1) {
+						if (bioModel.getSBMLDocument().getModel().getNumConstraints() == 1) {
 							constraints.setSelectedIndex(0);
 						}
 						else {
@@ -307,7 +307,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						}
 					}
 					dirty.setValue(true);
-					gcm.makeUndoPoint();
+					bioModel.makeUndoPoint();
 				}
 			}
 			if (error) {
@@ -325,7 +325,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 	 * Refresh constraints panel
 	 */
 	public void refreshConstraintsPanel() {
-		Model model = gcm.getSBMLDocument().getModel();
+		Model model = bioModel.getSBMLDocument().getModel();
 		ListOf listOfConstraints = model.getListOfConstraints();
 		String[] cons = new String[(int) model.getNumConstraints()];
 		for (int i = 0; i < model.getNumConstraints(); i++) {
@@ -333,7 +333,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 			if (!constraint.isSetMetaId()) {
 				String constraintId = "constraint0";
 				int cn = 0;
-				while (gcm.isSIdInUse(constraintId)) {
+				while (bioModel.isSIdInUse(constraintId)) {
 					cn++;
 					constraintId = "constraint" + cn;
 				}
@@ -350,22 +350,22 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 	 * Remove a constraint
 	 */
 	public void removeConstraint(String selected) {
-		ListOf c = gcm.getSBMLDocument().getModel().getListOfConstraints();
-		for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumConstraints(); i++) {
+		ListOf c = bioModel.getSBMLDocument().getModel().getListOfConstraints();
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumConstraints(); i++) {
 			if ((((Constraint) c.get(i)).getMetaId()).equals(selected)) {
 				c.remove(i);
 				break;
 			}
 		}
-		for (long i = 0; i < gcm.getSBMLCompModel().getNumPorts(); i++) {
-			Port port = gcm.getSBMLCompModel().getPort(i);
+		for (long i = 0; i < bioModel.getSBMLCompModel().getNumPorts(); i++) {
+			Port port = bioModel.getSBMLCompModel().getPort(i);
 			if (port.isSetMetaIdRef() && port.getMetaIdRef().equals(selected)) {
-				gcm.getSBMLCompModel().removePort(i);
+				bioModel.getSBMLCompModel().removePort(i);
 				break;
 			}
 		}
-		if (gcm.getSBMLLayout().getLayout("iBioSim") != null) {
-			Layout layout = gcm.getSBMLLayout().getLayout("iBioSim"); 
+		if (bioModel.getSBMLLayout().getLayout("iBioSim") != null) {
+			Layout layout = bioModel.getSBMLLayout().getLayout("iBioSim"); 
 			if (layout.getAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+selected)!=null) {
 				layout.removeAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+selected);
 			}
@@ -374,7 +374,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 			}
 		}
 		dirty.setValue(true);
-		gcm.makeUndoPoint();
+		bioModel.makeUndoPoint();
 	}
 
 	public void actionPerformed(ActionEvent e) {
