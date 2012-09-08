@@ -295,6 +295,7 @@ public class BioGraph extends mxGraph {
 		// add rules
 		for (long i = 0; i < m.getNumRules(); i++) {
 			Rule rule = m.getRule(i);
+			if (rule.getMetaId().endsWith("_"+GlobalConstants.RATE)) continue;
 			if (layout.getReactionGlyph(rule.getMetaId()) != null) {
 				layout.getReactionGlyph(rule.getMetaId()).setId(GlobalConstants.GLYPH+"__"+rule.getMetaId());
 				layout.getTextGlyph(rule.getMetaId()).setId(GlobalConstants.TEXT_GLYPH+"__"+rule.getMetaId());
@@ -314,6 +315,7 @@ public class BioGraph extends mxGraph {
 		// add constraints
 		for (long i = 0; i < m.getNumConstraints(); i++) {
 			Constraint constraint = m.getConstraint(i);
+			if (constraint.getMetaId().equals(GlobalConstants.FAIL_TRANSITION)) continue;
 			if (layout.getReactionGlyph(constraint.getMetaId()) != null) {
 				layout.getReactionGlyph(constraint.getMetaId()).setId(GlobalConstants.GLYPH+"__"+constraint.getMetaId());
 				layout.getTextGlyph(constraint.getMetaId()).setId(GlobalConstants.TEXT_GLYPH+"__"+constraint.getMetaId());
@@ -355,8 +357,11 @@ public class BioGraph extends mxGraph {
 		// add all variables
 		if (!bioModel.isGridEnabled()) {
 			for (long i = 0; i < m.getNumParameters(); i++) {
-				if (!m.getParameter(i).getConstant()) {
-					String id = m.getParameter(i).getId();
+				Parameter p = m.getParameter(i);
+				if (p.getId().equals(GlobalConstants.FAIL)) continue;
+				if (p.getId().endsWith("_" + GlobalConstants.RATE)) continue;
+				if (!p.getConstant()) {
+					String id = p.getId();
 					if (layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+id)!=null) {
 						SpeciesGlyph speciesGlyph = layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+id);
 						GeneralGlyph generalGlyph = layout.createGeneralGlyph();
@@ -365,14 +370,14 @@ public class BioGraph extends mxGraph {
 						generalGlyph.setBoundingBox(speciesGlyph.getBoundingBox());
 						layout.removeSpeciesGlyph(GlobalConstants.GLYPH+"__"+id);
 					}
-					if (SBMLutilities.isPlace(m.getParameter(i))) {
-						if(createGraphPlaceFromModel(m.getParameter(i).getId(),m.getParameter(i).getValue()==1.0))
+					if (SBMLutilities.isPlace(p)) {
+						if(createGraphPlaceFromModel(p.getId(),p.getValue()==1.0))
 							needsPositioning = true;
-					} else if (SBMLutilities.isBoolean(m.getParameter(i))) {
-						if(createGraphBooleanFromModel(m.getParameter(i).getId(),m.getParameter(i).getValue()==1.0))
+					} else if (SBMLutilities.isBoolean(p)) {
+						if(createGraphBooleanFromModel(p.getId(),p.getValue()==1.0))
 							needsPositioning = true;
 					} else {
-						if(createGraphVariableFromModel(m.getParameter(i).getId()))
+						if(createGraphVariableFromModel(p.getId()))
 							needsPositioning = true;
 					}
 				}
@@ -736,6 +741,7 @@ public class BioGraph extends mxGraph {
 		//add rules
 		for (int i = 0; i < m.getNumRules(); i++) {
 			Rule r = m.getRule(i);
+			if (r.getMetaId().endsWith("_"+GlobalConstants.RATE)) continue;
 			GeneralGlyph generalGlyph = (GeneralGlyph)
 					layout.getAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+r.getMetaId());
 			if (generalGlyph != null) {
@@ -792,6 +798,7 @@ public class BioGraph extends mxGraph {
 		// add constraints
 		for (int i = 0; i < m.getNumConstraints(); i++) {
 			Constraint c = m.getConstraint(i);
+			if (m.getMetaId().equals(GlobalConstants.FAIL_TRANSITION)) continue;
 			GeneralGlyph generalGlyph = (GeneralGlyph)
 					layout.getAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+c.getMetaId());
 			if (generalGlyph != null) {

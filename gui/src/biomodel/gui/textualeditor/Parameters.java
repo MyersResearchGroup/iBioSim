@@ -53,7 +53,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 
 	private JButton addParam, removeParam, editParam; // parameters buttons
 
-	private JTextField paramID, paramName, paramValue;
+	private JTextField paramID, paramName, paramValue, rateValue;
 
 	private JComboBox paramUnits;
 
@@ -245,12 +245,14 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		JLabel idLabel = new JLabel("ID:");
 		JLabel nameLabel = new JLabel("Name:");
 		JLabel valueLabel = new JLabel("Initial Value:");
+		JLabel rateLabel = new JLabel("Initial Rate:");
 		JLabel unitLabel = new JLabel("Units:");
 		JLabel constLabel = new JLabel("Constant:");
 		JLabel onPortLabel = new JLabel("Port Type:");
 		paramID = new JTextField();
 		paramName = new JTextField();
 		paramValue = new JTextField();
+		rateValue = new JTextField();
 		placeMarking = new JComboBox();
 		placeMarking.addItem("false");
 		placeMarking.addItem("true");
@@ -339,6 +341,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			paramID.setEditable(false);
 			paramName.setEditable(false);
 			paramValue.setEnabled(false);
+			rateValue.setEnabled(false);
 			placeMarking.setEnabled(false);
 			paramUnits.setEnabled(false);
 			paramConst.setEnabled(false);
@@ -347,6 +350,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		}
 		String selectedID = "";
 		boolean isPlace = false;
+		Parameter rateParam = null;
 		if (option.equals("OK")) {
 			try {
 				Parameter paramet = bioModel.getSBMLDocument().getModel().getParameter(selected);
@@ -365,6 +369,28 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						placeMarking.setSelectedIndex(0);
 					} else {
 						placeMarking.setSelectedIndex(1);
+					}
+				} else {
+					rateParam = bioModel.getSBMLDocument().getModel().getParameter(selected + "_" + GlobalConstants.RATE);
+					if (rateParam!=null) {
+						if (paramsOnly) {
+							parametersPanel = new JPanel(new GridLayout(9, 2));
+						} else {
+							parametersPanel = new JPanel(new GridLayout(7, 2));
+						}
+						if (paramsOnly) {
+							if (rateParam.isSetValue()) {
+								rateValue.setText("" + rateParam.getValue());
+							}
+						} else {
+							InitialAssignment init = bioModel.getSBMLDocument().getModel()
+									.getInitialAssignment(selectedID+"_"+GlobalConstants.RATE);
+							if (init!=null) {
+								rateValue.setText(bioModel.removeBooleans(init.getMath()));
+							} else if (rateParam.isSetValue()) {
+								rateValue.setText("" + rateParam.getValue());
+							}
+						}			
 					}
 				}
 				paramID.setText(paramet.getId());
@@ -483,6 +509,10 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		} else {
 			parametersPanel.add(paramValue);
 		}
+		if (rateParam!=null) {
+			parametersPanel.add(rateLabel);
+			parametersPanel.add(rateValue);
+		}
 		if (paramsOnly) {
 			parametersPanel.add(new JLabel());
 			parametersPanel.add(sweep);
@@ -514,7 +544,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 					}
 				}
 				double val = 0.0;
-				if (paramValue.getText().trim().startsWith("(") && paramValue.getText().trim().endsWith(")")) {
+				double rateVal = 0.0;
+				if (paramsOnly && paramValue.getText().trim().startsWith("(") && paramValue.getText().trim().endsWith(")")) {
 					try {
 						Double.parseDouble((paramValue.getText().trim()).split(",")[0].substring(1).trim());
 						Double.parseDouble((paramValue.getText().trim()).split(",")[1].trim());
@@ -539,11 +570,16 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						error = InitialAssignments.addInitialAssignment(biosim, bioModel, paramID.getText().trim(), 
 								paramValue.getText().trim());
 						val = 0.0;
-						/*
-						JOptionPane.showMessageDialog(Gui.frame, 
-								"The value must be a real number.", "Enter A Valid Value", JOptionPane.ERROR_MESSAGE);
-						error = true;
-						*/
+					}
+					if (rateParam!=null) {
+						try {
+							rateVal = Double.parseDouble(rateValue.getText().trim());
+						}
+						catch (Exception e1) {
+							error = InitialAssignments.addInitialAssignment(biosim, bioModel, paramID.getText().trim() + "_" + GlobalConstants.RATE, 
+									rateValue.getText().trim());
+							rateVal = 0.0;
+						}
 					}
 				}
 				if (!error) {
@@ -609,6 +645,10 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							}
 							bioModel.createDirPort(paramet.getId(),(String)portDir.getSelectedItem());
 							paramet.setValue(val);
+							if (rateParam!=null) {
+								rateParam.setId(paramID.getText().trim()+"_"+GlobalConstants.RATE);
+								rateParam.setValue(rateVal);
+							}
 							if (unit.equals("( none )")) {
 								paramet.unsetUnits();
 							}
@@ -680,6 +720,10 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							}
 							else {
 								SBMLutilities.updateVarId(bioModel.getSBMLDocument(), false, selected, paramID.getText().trim());
+								if (rateParam!=null) {
+									SBMLutilities.updateVarId(bioModel.getSBMLDocument(), false, selected+"_"+GlobalConstants.RATE, 
+											paramID.getText().trim()+"_"+GlobalConstants.RATE);
+								}
 							}
 							if (paramet.getId().equals(GlobalConstants.STOICHIOMETRY_STRING)) {
 								for (long i=0; i<model.getNumReactions(); i++) {

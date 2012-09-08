@@ -113,7 +113,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		// JPanel evPanel = new JPanel(new GridLayout(2, 2));
 		JPanel evPanel = new JPanel(new GridLayout(10, 2));
 		if (isTransition) {
-			evPanel.setLayout(new GridLayout(7, 2));
+			evPanel.setLayout(new GridLayout(8, 2));
 		}
 		JLabel IDLabel = new JLabel("ID:");
 		JLabel NameLabel = new JLabel("Name:");
@@ -125,6 +125,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		JLabel initialTriggerLabel = new JLabel("Trigger initially true:");
 		JLabel dynamicProcessLabel = new JLabel("Dynamic Process:");
 		JLabel onPortLabel = new JLabel("Is Mapped to a Port:");
+		JLabel failTransitionLabel = new JLabel("Fail transition:");
 		
 		JTextField eventID = new JTextField(12);
 		JTextField eventName = new JTextField(12);
@@ -134,6 +135,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		JCheckBox assignTime = new JCheckBox("");
 		JCheckBox persistentTrigger = new JCheckBox("");
 		JCheckBox initialTrigger = new JCheckBox("");
+		JCheckBox failTransition = new JCheckBox("");
 		JComboBox dynamicProcess = new JComboBox(new String[] {"none",
 				"Symmetric Division","Asymmetric Division","Death", "Move Random", "Move Left", "Move Right", "Move Above", "Move Below"});
 		JCheckBox onPort = new JCheckBox();
@@ -170,7 +172,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				if (event.getId().equals(selected)) {
 					isTransition = SBMLutilities.isTransition(event);
 					if (isTransition) {
-						evPanel.setLayout(new GridLayout(7, 2));
+						evPanel.setLayout(new GridLayout(8, 2));
 					}
 					Eindex = i;
 					eventID.setText(event.getId());
@@ -249,14 +251,17 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						onPort.setSelected(false);
 					}
 					int numPlaces=0;
+					int numFail=0;
 					for (int j = 0; j < event.getNumEventAssignments(); j++) {
-						Parameter parameter = 
-								bioModel.getSBMLDocument().getModel().getParameter(event.getEventAssignment(j).getVariable());
+						EventAssignment ea = event.getEventAssignment(j);
+						Parameter parameter = bioModel.getSBMLDocument().getModel().getParameter(ea.getVariable());
 						if (parameter!=null && SBMLutilities.isPlace(parameter)) {
 							numPlaces++;
+						} else if (ea.getVariable().equals(GlobalConstants.FAIL)) {
+							numFail++;
 						}
 					}
-					assign = new String[(int) event.getNumEventAssignments()-numPlaces];
+					assign = new String[(int) event.getNumEventAssignments()-(numPlaces+numFail)];
 					placeAssign = new String[numPlaces];
 					origAssign = new String[(int) event.getNumEventAssignments()];
 					int k=0;
@@ -264,20 +269,21 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					for (int j = 0; j < event.getNumEventAssignments(); j++) {
 						Parameter parameter = 
 								bioModel.getSBMLDocument().getModel().getParameter(event.getEventAssignment(j).getVariable());
+						EventAssignment ea = event.getEventAssignment(j);
 						if (parameter!=null && SBMLutilities.isPlace(parameter)) {
-							placeAssign[k] = event.getEventAssignment(j).getVariable() + " := "
-									+ SBMLutilities.myFormulaToString(event.getEventAssignment(j).getMath());
+							placeAssign[k] = ea.getVariable() + " := " + SBMLutilities.myFormulaToString(ea.getMath());
 							k++;
+						} else if (ea.getVariable().equals(GlobalConstants.FAIL)){
+							failTransition.setSelected(true);
 						} else {
-							String assignMath = SBMLutilities.myFormulaToString(event.getEventAssignment(j).getMath());
-							if (SBMLutilities.isBoolean(parameter)) {
+							String assignMath = SBMLutilities.myFormulaToString(ea.getMath());
+							if (parameter!=null && SBMLutilities.isBoolean(parameter)) {
 								assignMath = bioModel.removeBooleanAssign(event.getEventAssignment(j).getMath());
 							} 
-							assign[l] = event.getEventAssignment(j).getVariable() + " := " + assignMath;
+							assign[l] = ea.getVariable() + " := " + assignMath;
 							l++;
 						}
-						origAssign[j] = event.getEventAssignment(j).getVariable() + " := "
-								+ SBMLutilities.myFormulaToString(event.getEventAssignment(j).getMath());
+						origAssign[j] = ea.getVariable() + " := " + SBMLutilities.myFormulaToString(ea.getMath());
 					}
 				}
 			}
@@ -321,6 +327,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			evPanel.add(initialTrigger);
 			evPanel.add(dynamicProcessLabel);
 			evPanel.add(dynamicProcess);
+		} else {
+			evPanel.add(failTransitionLabel);
+			evPanel.add(failTransition);
 		}
 		evPanel.add(onPortLabel);
 		evPanel.add(onPort);
@@ -486,12 +495,23 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					}
 					for (int i = 0; i < assign.length; i++) {
 						EventAssignment ea = e.createEventAssignment();
-						ea.setVariable(assign[i].split(" ")[0]);
-						Parameter p = bioModel.getSBMLDocument().getModel().getParameter(assign[i].split(" ")[0]);
+						String var = assign[i].split(" ")[0];
+						ea.setVariable(var);
+						Parameter p = bioModel.getSBMLDocument().getModel().getParameter(var);
 						if (p != null && SBMLutilities.isBoolean(p)) {
 							ea.setMath(bioModel.addBooleanAssign(assign[i].split(":=")[1].trim()));
 						} else {
 							ea.setMath(SBMLutilities.myParseFormula(assign[i].split(":=")[1].trim()));
+						}
+						if (p == null && var.endsWith("_"+GlobalConstants.RATE)) {
+							p = bioModel.getSBMLDocument().getModel().createParameter();
+							p.setId(var);
+							p.setConstant(false);
+							p.setValue(0);
+							RateRule r = bioModel.getSBMLDocument().getModel().createRateRule();
+							r.setMetaId(GlobalConstants.RULE+"_" + var);
+							r.setVariable(var.replace("_" + GlobalConstants.RATE,""));
+							r.setMath(SBMLutilities.myParseFormula(var));
 						}
 						error = checkEventAssignmentUnits(ea);
 						if (error) break;
@@ -566,6 +586,32 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						}
 						else {
 							e.setName(eventName.getText().trim());
+						}
+						if (failTransition.isSelected()) {
+							Parameter p = bioModel.getSBMLDocument().getModel().getParameter(GlobalConstants.FAIL);
+							if (p==null) {
+								p = bioModel.getSBMLDocument().getModel().createParameter();
+								p.setId(GlobalConstants.FAIL);
+								p.setSBOTerm(GlobalConstants.SBO_BOOLEAN);
+								p.setConstant(false);
+								p.setValue(0);
+								Constraint c = bioModel.getSBMLDocument().getModel().createConstraint();
+								c.setMetaId(GlobalConstants.FAIL_TRANSITION);
+								SBMLutilities.createFunction(bioModel.getSBMLDocument().getModel(), "G", "Globally Property", 
+										"lambda(t,x,or(not(t),x))");
+								c.setMath(SBMLutilities.myParseFormula("G(true,!(eq(fail,1)))"));
+							}
+							EventAssignment ea = e.getEventAssignment(GlobalConstants.FAIL);
+							if (ea==null) {
+								ea = e.createEventAssignment();
+								ea.setVariable(GlobalConstants.FAIL);
+								ea.setMath(SBMLutilities.myParseFormula("piecewise(1,true,0)"));
+							}
+						} else {
+							EventAssignment ea = e.getEventAssignment(GlobalConstants.FAIL);
+							if (ea != null) {
+								ea.removeFromParentAndDelete();
+							}
 						}
 						Port port = bioModel.getPortByIdRef(selectedID);
 						if (port!=null) {
@@ -699,12 +745,26 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					if (!error) {
 						for (int i = 0; i < assign.length; i++) {
 							EventAssignment ea = e.createEventAssignment();
-							ea.setVariable(assign[i].split(" ")[0]);
-							Parameter p = bioModel.getSBMLDocument().getModel().getParameter(assign[i].split(" ")[0]);
+							String var = assign[i].split(" ")[0];
+							if (var.endsWith("\'")) {
+								var = "rate_" + var.replace("\'","");
+							}
+							ea.setVariable(var);
+							Parameter p = bioModel.getSBMLDocument().getModel().getParameter(var);
 							if (p != null && SBMLutilities.isBoolean(p)) {
 								ea.setMath(bioModel.addBooleanAssign(assign[i].split(":=")[1].trim()));
 							} else {
 								ea.setMath(SBMLutilities.myParseFormula(assign[i].split(":=")[1].trim()));
+							}
+							if (p == null && var.endsWith("_" + GlobalConstants.RATE)) {
+								p = bioModel.getSBMLDocument().getModel().createParameter();
+								p.setId(var);
+								p.setConstant(false);
+								p.setValue(0);
+								RateRule r = bioModel.getSBMLDocument().getModel().createRateRule();
+								r.setMetaId(GlobalConstants.RULE+"_" + var);
+								r.setVariable(var.replace("_"+GlobalConstants.RATE,""));
+								r.setMath(SBMLutilities.myParseFormula(var));
 							}
 							error = checkEventAssignmentUnits(ea);
 							if (error)
@@ -770,7 +830,32 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
 							e.setAnnotation(node);
 						}
-						
+						if (failTransition.isSelected()) {
+							Parameter p = bioModel.getSBMLDocument().getModel().getParameter(GlobalConstants.FAIL);
+							if (p==null) {
+								p = bioModel.getSBMLDocument().getModel().createParameter();
+								p.setId(GlobalConstants.FAIL);
+								p.setSBOTerm(GlobalConstants.SBO_BOOLEAN);
+								p.setConstant(false);
+								p.setValue(0);
+								Constraint c = bioModel.getSBMLDocument().getModel().createConstraint();
+								c.setMetaId(GlobalConstants.FAIL_TRANSITION);
+								SBMLutilities.createFunction(bioModel.getSBMLDocument().getModel(), "G", "Globally Property", 
+										"lambda(t,x,or(not(t),x))");
+								c.setMath(SBMLutilities.myParseFormula("G(true,!(eq(fail,1)))"));
+							}
+							EventAssignment ea = e.getEventAssignment(GlobalConstants.FAIL);
+							if (ea==null) {
+								ea = e.createEventAssignment();
+								ea.setVariable(GlobalConstants.FAIL);
+								ea.setMath(SBMLutilities.myParseFormula("piecewise(1,true,0)"));
+							}
+						} else {
+							EventAssignment ea = e.getEventAssignment(GlobalConstants.FAIL);
+							if (ea != null) {
+								ea.removeFromParentAndDelete();
+							}
+						}
 						if (onPort.isSelected()) {
 							Port port = bioModel.getSBMLCompModel().createPort();
 							port.setId(GlobalConstants.EVENT+"__"+e.getId());
@@ -993,14 +1078,16 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 		}
-		ids = model.getListOfParameters();
 		for (int i = 0; i < model.getNumParameters(); i++) {
-			Parameter p = (Parameter)ids.get(i);
-			if (SBMLutilities.isPlace(p)) continue;
-			String id = ((Parameter) ids.get(i)).getId();
-			if (!((Parameter) ids.get(i)).getConstant()) {
+			Parameter p = model.getParameter(i);
+			if (SBMLutilities.isPlace(p)||p.getId().endsWith("_"+GlobalConstants.RATE)) continue;
+			String id = p.getId();
+			if (!p.getConstant()) {
 				if (keepVarEvent(gcm, assign, selected, id)) {
 					eaID.addItem(id);
+					if (!SBMLutilities.isBoolean(p)) {
+						eaID.addItem(id+"_"+GlobalConstants.RATE);
+					}
 				}
 			}
 		}
