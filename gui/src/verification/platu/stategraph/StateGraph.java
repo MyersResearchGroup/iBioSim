@@ -759,10 +759,13 @@ public class StateGraph {
         		newVectorArray[this.lpn.getVarIndexMap().get(key)] = newValue;
         	}
         	// TODO: (temp) type cast continuous variable to int.
-        	if (this.lpn.getContAssignTree(firedTran.getName(), key) != null) {
-        		int newValue = (int)this.lpn.getContAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(curVector));
-        		newVectorArray[this.lpn.getVarIndexMap().get(key)] = newValue;
-        	}
+        	// Continuous variables will be handled by the
+        	// fire(StateGraph,PrjState,Transition) method in the timing.
+        	
+//        	if (this.lpn.getContAssignTree(firedTran.getName(), key) != null) {
+//        		int newValue = (int)this.lpn.getContAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(curVector));
+//        		newVectorArray[this.lpn.getVarIndexMap().get(key)] = newValue;
+//        	}
         	if (this.lpn.getIntAssignTree(firedTran.getName(), key) != null) {
         		int newValue = (int)this.lpn.getIntAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(curVector));
         		newVectorArray[this.lpn.getVarIndexMap().get(key)] = newValue;
@@ -1071,7 +1074,10 @@ public class StateGraph {
 			currentTimedPrjState = (TimedPrjState) currentPrjState;
 		}
 		else{
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Attempted to use the " +
+					"fire(StateGraph[],PrjState,Transition)" +
+					"without a TimedPrjState stored in the PrjState " +
+					"variable. This method is meant for TimedPrjStates.");
 		}
 		
 		// Extract relevant information from the current project state.
@@ -1091,7 +1097,7 @@ public class StateGraph {
 		{
 //			enabledTransitions = getEnabled(newStates[i]);
 			
-			// TODO : The stategraph has to be used to call getEnabled
+			// The stategraph has to be used to call getEnabled
 			// since it is being passed implicitly.
 			LpnTranList localEnabledTransitions = curSgArray[i].getEnabled(newStates[i]);
 			
@@ -1102,6 +1108,20 @@ public class StateGraph {
 //			newZones[i] = currentZones[i].fire(firedTran,
 //					enabledTransitions, newStates);
 			
+			// Update any continuous variable assignments.
+//			for (this.lpn.get) {
+//
+//				if (this.lpn.getContAssignTree(firedTran.getName(), key) != null) {
+////					int newValue = (int)this.lpn.getContAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(curVector));
+////					newVectorArray[this.lpn.getVarIndexMap().get(key)] = newValue;
+//					
+//				}
+//			for(String contVar : this.lpn.getContVars()){
+//				// Get the new range.
+//				InveralRange range = 
+//						this.lpn.getContAssignTree(firedTran.getName(), contVar)
+//						.evaluateExprBound(this.lpn.getAllVarsWithValuesAsString(curVector), z)
+//			}
 		}
 		 
 		newZones[0] = currentZones[0].fire(firedTran,
