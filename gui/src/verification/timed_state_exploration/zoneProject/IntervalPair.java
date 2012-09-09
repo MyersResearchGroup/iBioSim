@@ -23,6 +23,15 @@ public class IntervalPair {
 		this._upperBound = upperBound;
 	}
 	
+	/**
+	 * Determines whether this IntervalPair represents a single value.
+	 * @return
+	 * 		True if lower bound is equal to upper bound.
+	 */
+	public boolean singleValue(){
+		return _lowerBound == _upperBound;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
