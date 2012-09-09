@@ -735,7 +735,9 @@ public class Zone{
 			// Get the current LPN and transition pairing.
 			LPNTransitionPair ltPair = _indexToTimerPair[i];
 			
-			int upper, lower;
+			//int upper, lower;
+			
+			IntervalPair range;
 			
 			if(!ltPair.get_isTimer()){
 				// If the pairing represents a continuous variable, then the 
@@ -747,8 +749,7 @@ public class Zone{
 				// lower bounds to be a range.
 				Variable v = _lpnList[ltPair.get_lpnIndex()]
 						.getVariable(ltPair.get_transitionIndex());
-				// TODO : For now, I'm assuming that the initial rate is constant. This
-				// will need to change later.
+				
 //				int initialRate = (int) Double.parseDouble(v.getInitRate());
 //				upper = initialRate;
 //				lower = initialRate;
@@ -756,10 +757,12 @@ public class Zone{
 				
 				// Parse the rate. Should be in the form of [x,y] where x
 				// and y are integers.
-				IntervalPair range = parseRate(rate);
+				//IntervalPair range = parseRate(rate);
+				range = parseRate(rate);
 				
-				lower = range.get_LowerBound();
-				upper = range.get_UpperBound();
+				
+//				lower = range.get_LowerBound();
+//				upper = range.get_UpperBound();
 				
 			}
 			else{
@@ -773,24 +776,50 @@ public class Zone{
 								.getAllVarsWithValuesAsString(localStates[ltPair.get_lpnIndex()].getVector());
 
 				// Set the upper and lower bound.
+				// Passing the zone as null since it should not be needed.
+				if(delay.getOp().equals("uniform")){
+					IntervalPair lowerRange = delay.getLeftChild()
+							.evaluateExprBound(varValues, null);
+					IntervalPair upperRange = delay.getRightChild()
+							.evaluateExprBound(varValues, null);
+					
+					// The lower and upper bounds should evaluate to a single
+					// value. Yell if they don't.
+					if(!lowerRange.singleValue() || !upperRange.singleValue()){
+						throw new IllegalStateException("When evaulating the delay, " +
+								"the lower or the upper bound evaluated to a range " +
+								"instead of a single value.");
+					}
+					
+					range = new IntervalPair(lowerRange.get_LowerBound(),
+							upperRange.get_UpperBound());
+					
+				}
+				else{
+					range = delay.evaluateExprBound(varValues, null);
+				}
+				
 //				int upper, lower;
-				if(delay.getOp().equals("uniform"))
-				{
-					ExprTree lowerDelay = delay.getLeftChild();
-					ExprTree upperDelay = delay.getRightChild();
-
-					lower = (int) lowerDelay.evaluateExpr(varValues);
-					upper = (int) upperDelay.evaluateExpr(varValues);
-				}
-				else
-				{
-					lower = (int) delay.evaluateExpr(varValues);
-
-					upper = lower;
-				}
+//				if(delay.getOp().equals("uniform"))
+//				{
+//					ExprTree lowerDelay = delay.getLeftChild();
+//					ExprTree upperDelay = delay.getRightChild();
+//
+//					lower = (int) lowerDelay.evaluateExpr(varValues);
+//					upper = (int) upperDelay.evaluateExpr(varValues);
+//				}
+//				else
+//				{
+//					lower = (int) delay.evaluateExpr(varValues);
+//
+//					upper = lower;
+//				}
 			}
-			setLowerBoundbydbmIndex(i, lower);
-			setUpperBoundbydbmIndex(i, upper);
+//			setLowerBoundbydbmIndex(i, lower);
+//			setUpperBoundbydbmIndex(i, upper);
+			
+			setLowerBoundbydbmIndex(i, range.get_LowerBound());
+			setUpperBoundbydbmIndex(i, range.get_UpperBound());
 		}
 		
 	}
@@ -1751,17 +1780,39 @@ public class Zone{
 			int upper, lower;
 			if(delay.getOp().equals("uniform"))
 			{
-				ExprTree lowerDelay = delay.getLeftChild();
-				ExprTree upperDelay = delay.getRightChild();
+//				ExprTree lowerDelay = delay.getLeftChild();
+//				ExprTree upperDelay = delay.getRightChild();
 
-				lower = (int) lowerDelay.evaluateExpr(varValues);
-				upper = (int) upperDelay.evaluateExpr(varValues);
+//				lower = (int) lowerDelay.evaluateExpr(varValues);
+//				upper = (int) upperDelay.evaluateExpr(varValues);
+				
+				IntervalPair lowerRange = delay.getLeftChild()
+						.evaluateExprBound(varValues, null);
+				IntervalPair upperRange = delay.getRightChild()
+						.evaluateExprBound(varValues, null);
+				
+				// The lower and upper bounds should evaluate to a single
+				// value. Yell if they don't.
+				if(!lowerRange.singleValue() || !upperRange.singleValue()){
+					throw new IllegalStateException("When evaulating the delay, " +
+							"the lower or the upper bound evaluated to a range " +
+							"instead of a single value.");
+				}
+				
+				lower = lowerRange.get_LowerBound();
+				upper = upperRange.get_UpperBound();
+				
 			}
 			else
 			{
-				lower = (int) delay.evaluateExpr(varValues);
-
-				upper = lower;
+//				lower = (int) delay.evaluateExpr(varValues);
+//
+//				upper = lower;
+				
+				IntervalPair range = delay.evaluateExprBound(varValues, this);
+				
+				lower = range.get_LowerBound();
+				upper = range.get_UpperBound();
 			}
 
 			newZone.setLowerBoundByLPNTransitionPair(pair, lower);
