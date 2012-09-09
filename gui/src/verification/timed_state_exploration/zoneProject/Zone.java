@@ -805,6 +805,7 @@ public class Zone{
 		_indexToTimerPair = new LPNTransitionPair[0];
 		_hashCode = -1;
 		_lpnList = new LhpnFile[0];
+		_rateZeroContinuous = new DualHashMap<LPNTransitionPair, VariableRangePair>();
 	}
 	
 	/**
@@ -1080,14 +1081,14 @@ public class Zone{
 		// Extract the necessary indecies.
 		int lpnIndex = lpn.getLpnIndex();
 		
-		//int contVarIndex = lpn.get
+		// Get the index of the continuous variable.
 		DualHashMap<String, Integer> variableIndecies = lpn.getContinuousIndexMap();
 		int contIndex = variableIndecies.get(contVar);
 		
 		// Package the indecies with false indicating not a timer.
 		LPNTransitionPair index = new LPNTransitionPair(lpnIndex, contIndex, false);
 		
-		//Search for the continuous variable in the rate zero variables.
+		// Search for the continuous variable in the rate zero variables.
 		VariableRangePair pairing = _rateZeroContinuous.get(index);
 		
 		// If Pairing is not null, the variable was found and return the result.
@@ -1111,6 +1112,53 @@ public class Zone{
 		int upper = getUpperBoundbydbmIndex(i);
 		
 		return new IntervalPair(lower, upper);
+	}
+	
+	/** 
+	 * Sets the bounds for a continuous variable.
+	 * @param contVar
+	 * 		The continuous variable to set the bounds on.
+	 * @param lpn
+	 * 		The LhpnFile object that contains the variable.
+	 * @param range
+	 * 		The new range of the continuous variable.
+	 */
+	public void setContinuousBounds(String contVar, LhpnFile lpn,
+			IntervalPair range){
+
+		// Extract the necessary indecies.
+		int lpnIndex = lpn.getLpnIndex();
+
+		// Get the index of the continuous variable.
+		DualHashMap<String, Integer> variableIndecies = lpn.getContinuousIndexMap();
+		int contIndex = variableIndecies.get(contVar);
+
+		// Package the indecies with false indicating not a timer.
+		LPNTransitionPair index = new LPNTransitionPair(lpnIndex, contIndex, false);
+
+		// Search for the continuous variable in the rate zero variables.
+		VariableRangePair pairing = _rateZeroContinuous.get(index);
+
+		// If Pairing is not null, the variable was found and make the new assignment.
+		if(pairing != null){
+			pairing.set_range(range);
+			return;
+		}
+
+		// If Pairing was null, the variable was not found. Search for the variable
+		// in the zone portion.
+		int i = Arrays.binarySearch(_indexToTimerPair, index);
+
+		// If i < 0, the search was unsuccessful, so scream.
+		if(i < 0){
+			throw new IllegalArgumentException("Atempted to find the bounds for "
+					+ "a non-rate zero continuous variable that was not found in the "
+					+ "zone.");
+		}
+		
+		// Else find the upper and lower bounds.
+		setLowerBoundbydbmIndex(i, range.get_LowerBound());
+		setUpperBoundbydbmIndex(i, range.get_UpperBound());
 	}
 	
 	/**
@@ -1544,7 +1592,17 @@ public class Zone{
 			return this;
 		}
 		
-		return fireTransitionbydbmIndex(dbmIndex, enabledTran, localStates);
+		// Get the new zone portion.
+		Zone newZone = fireTransitionbydbmIndex(dbmIndex, enabledTran, localStates);
+		
+		// Update any assigned continuous variables.
+		newZone.updateContinuousAssignment(t, localStates[lpnIndex]);
+		
+		
+		//return fireTransitionbydbmIndex(dbmIndex, enabledTran, localStates);
+		
+		
+		return newZone;
 	}
 	
 	/**
@@ -1565,6 +1623,9 @@ public class Zone{
 		for(int i=0; i<this._lpnList.length; i++){
 			newZone._lpnList[i] = this._lpnList[i];
 		}
+		
+		// Copy the continuous variables over.
+		newZone._rateZeroContinuous = this._rateZeroContinuous.clone();
 		
 		// Extract the pairing information for the enabled timers.
 		// Using the enabledTimersList should be faster than calling the get method
@@ -1753,6 +1814,8 @@ public class Zone{
 		
 		clonedZone._lpnList = Arrays.copyOf(this._lpnList, this._lpnList.length);
 		
+		clonedZone._rateZeroContinuous = this._rateZeroContinuous.clone();
+		
 		return clonedZone;
 	}
 	
@@ -1820,6 +1883,37 @@ public class Zone{
 		}
 		
 		return enabledTransitions;
+	}
+	
+	/**
+	 * Updates the continuous variables that are set by firing a transition.
+	 * @param firedTran
+	 * 		The transition that fired.
+	 * @param s
+	 * 		The current (local) state.
+	 */
+	public void updateContinuousAssignment(Transition firedTran, State s){
+
+		// Get the LPN.
+		LhpnFile lpn = _lpnList[firedTran.getLpn().getLpnIndex()];
+		
+		// Get the current values of the (local) state.
+		HashMap<String,String> currentValues = 
+				lpn.getAllVarsWithValuesAsString(s.getVector());
+		
+		// Get all the continuous variable assignments.
+		HashMap<String, ExprTree> assignTrees = firedTran.getContAssignTrees();
+		
+		for(String contVar : assignTrees.keySet()){
+			
+			// Get the bounds to assign the continuous variables.
+			IntervalPair assignment = 
+					assignTrees.get(contVar).evaluateExprBound(currentValues, this);
+			
+			// Make the assignment.
+			setContinuousBounds(contVar, lpn, assignment);
+		}
+		
 	}
 	
 	/* (non-Javadoc)
@@ -1952,7 +2046,22 @@ public class Zone{
 		
 		String rateNoSpaces = rate.trim();
 		
+		// First check if the string is a single number.
+//		Integer i = Integer.parseInt(rate);
+//		if(i != null){
+//			// The string is a number, so set the upper and lower bounds equal.
+//			return new IntervalPair(i,i);
+//		}
+		
+		// First check for a comma (representing an interval input).
 		int commaIndex = rateNoSpaces.indexOf(",");
+		
+		if(commaIndex < 0){
+			// Assume that the string is a constant. A NumberFormatException
+			// will be thrown otherwise.
+			int i = Integer.parseInt(rate);
+			return new IntervalPair(i,i);
+		}
 		
 		String lowerString = rateNoSpaces.substring(1, commaIndex).trim();
 		String upperString = rateNoSpaces.substring(commaIndex+1, 
