@@ -1697,12 +1697,21 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			ArrayList<LhpnFile> selectedLPNs = new ArrayList<LhpnFile>();
 			// Add the current LPN to the list.
 			selectedLPNs.add(lpn);
-			for (int i=0; i < lpnList.getSelectedValues().length; i++) {
-				 String curLPNname = (String) lpnList.getSelectedValues()[i];
+//			for (int i=0; i < lpnList.getSelectedValues().length; i++) {
+//				 String curLPNname = (String) lpnList.getSelectedValues()[i];
+//				 LhpnFile curLPN = new LhpnFile();
+//				 curLPN.load(directory + separator + curLPNname);
+//				 selectedLPNs.add(curLPN);
+//			}
+			
+			String[] guiLPNList = lpnList.getItems();
+			for (int i=0; i < guiLPNList.length; i++) {
+				 String curLPNname = guiLPNList[i];
 				 LhpnFile curLPN = new LhpnFile();
 				 curLPN.load(directory + separator + curLPNname);
 				 selectedLPNs.add(curLPN);
 			}
+			
 			
 			// Extract boolean variables from continuous variable inequalities.
 			for(int i=0; i<selectedLPNs.size(); i++){
