@@ -5143,7 +5143,7 @@ public class ExprTree {
 //			      lvalue = r1->lvalue;
 //			      uvalue = r2->uvalue;
 
-			else if (op.equals("u")){
+			else if (op.equals("uniform")){
 				lBound = r1Range.get_LowerBound();
 				uBound = r2Range.get_UpperBound();
 			}
