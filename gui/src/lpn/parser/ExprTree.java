@@ -5164,15 +5164,15 @@ public class ExprTree {
 			else if (op.equals("/")){ // roughly integer division.
 				// STILL DON'T KNOW WHAT FLOATING POINT PART IS !!!! :) !!!!
 				double tl1, tl2, tu1, tu2;
-				tl1 = Math.floor(r1Range.get_LowerBound() / r2Range.get_LowerBound());
-				tl2 = Math.floor(r1Range.get_UpperBound() / r2Range.get_UpperBound());
-				tu1 = Math.floor(r1Range.get_LowerBound() / r2Range.get_UpperBound());
-				tu2 = Math.floor(r1Range.get_UpperBound() / r2Range.get_LowerBound());
+				tl1 = Math.floor(((double)r1Range.get_LowerBound()) / r2Range.get_LowerBound());
+				tl2 = Math.floor(((double)r1Range.get_UpperBound()) / r2Range.get_UpperBound());
+				tu1 = Math.floor(((double)r1Range.get_LowerBound()) / r2Range.get_UpperBound());
+				tu2 = Math.floor(((double)r1Range.get_UpperBound()) / r2Range.get_LowerBound());
 				lBound = (int) Math.min(Math.min(Math.min(tl1, tl2), tu1), tu2);
-				tl1 = Math.ceil(r1Range.get_LowerBound() / r2Range.get_LowerBound());
-				tl2 = Math.ceil(r1Range.get_UpperBound() / r2Range.get_UpperBound());
-				tu1 = Math.ceil(r1Range.get_LowerBound() / r2Range.get_UpperBound());
-				tu2 = Math.ceil(r1Range.get_UpperBound() / r2Range.get_LowerBound());
+				tl1 = Math.ceil(((double)r1Range.get_LowerBound()) / r2Range.get_LowerBound());
+				tl2 = Math.ceil(((double)r1Range.get_UpperBound()) / r2Range.get_UpperBound());
+				tu1 = Math.ceil(((double)r1Range.get_LowerBound()) / r2Range.get_UpperBound());
+				tu2 = Math.ceil(((double)r1Range.get_UpperBound()) / r2Range.get_LowerBound());
 				uBound = (int) Math.max(Math.max(Math.max(tl1, tl2), tu1), tu2);
 			}
 			
@@ -5231,13 +5231,12 @@ public class ExprTree {
 			}
 			
 //			    }else if(op=="INT"){
-//			      lvalue = r1->uvalue;
-//			      uvalue = r1->lvalue;
+//			      lvalue = r1->lvalue;
+//			      uvalue = r1->uvalue;
 			
 			else if (op.equals("INT")){
-				// TODO : 	Check logic with Chris.
-				lBound = r1Range.get_UpperBound();
-				uBound = r1Range.get_LowerBound();
+				lBound = r1Range.get_LowerBound();
+				uBound = r1Range.get_UpperBound();
 			}
 			
 //			    }else if(op=="BOOL"){
@@ -5336,8 +5335,7 @@ public class ExprTree {
 				if((r1Range.get_LowerBound() != r1Range.get_UpperBound()) ||
 						(r2Range.get_LowerBound() != r2Range.get_UpperBound())){
 					
-					// TODO : Check it this is correct.
-					lBound = Math.max(r1Range.get_LowerBound(), r2Range.get_LowerBound());
+					lBound = Math.min(r1Range.get_LowerBound(), r2Range.get_LowerBound());
 					uBound = Math.max(r1Range.get_UpperBound() + r2Range.get_UpperBound(), -1);
 				}
 				else {
@@ -5372,7 +5370,6 @@ public class ExprTree {
 //			      uvalue = max(max(max(tl1,tl2),tu1),tu2);
 			
 			else if (op.equals("i")){
-				//TODO : Check if integer or double division is what is wanted.
 				
 				int tl1, tl2, tu1, tu2;
 				tl1 = r1Range.get_LowerBound() / r2Range.get_LowerBound();
@@ -5411,7 +5408,8 @@ public class ExprTree {
 			
 			else if (op.equals("~")){
 				// bitwise negation operator (1's complement)
-				// TODO : Check what this is doint first.
+				lBound = -1*(r1Range.get_LowerBound());
+				uBound = -1*(r1Range.get_UpperBound());
 				
 			}
 //			  }else if(isit == 'd'){
@@ -5520,18 +5518,22 @@ public class ExprTree {
 				
 				else if ((isit == 't')){
 					
-					// TODO : Check what's to be done if the name doesn't exist. Probably complain.
+					// Should be fine to use the lvalue and uvalue.
 
-					// Get the value of the variable from the passed HashMap and convert it as appropriate.
-					String sV = variables.get(variable); // sV for "string value"
+					lBound = (int) lvalue;
+					uBound = (int) uvalue;
 					
-					if(sV != null){
-						lBound = uBound = 1;
-					}
-					else{
-						lBound = 0;
-						uBound = 1;
-					}
+					
+//					// Get the value of the variable from the passed HashMap and convert it as appropriate.
+//					String sV = variables.get(variable); // sV for "string value"
+//					
+//					if(sV != null){
+//						lBound = uBound = 1;
+//					}
+//					else{
+//						lBound = 0;
+//						uBound = 1;
+//					}
 				}
 				
 //			};
