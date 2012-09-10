@@ -1253,20 +1253,31 @@ public class LhpnFile {
 	}
 	
 	public Variable getVariable(int index){
-//		return variables.get(index);
+		return variables.get(index);
+	}
+	
+	public String getContVarName(int index){
+		int counter = 0;
 		
-		/*
-		 *  For a continuous variable, the variable is not contained in 
-		 *  the 'variables' member variable, only a variable with the same name.
-		 *  
-		 *  This is a temporary hack to get the correct variable from the continuous
-		 *  variables instead of the more obvious method of getting the variable from
-		 *  the variables field.
-		 */
+		// The index of the continuous variable is determined by
+		// the order it is returned by the 'continuous' fields
+		// iterator.
+		for(String name : continuous.keySet()){
+			if(counter == index){
+				return name;
+			}
+			counter++;
+		}
 		
-		String variableName = variables.get(index).getName();
+		return null;
+	}
+	
+	public Variable getContVar(int index){
 		
-		return continuous.get(variableName);
+		// Convert the index into a name.
+		String name = getContVarName(index);
+		
+		return continuous.get(name);
 	}
 
 	public HashMap<String, String> getBoolInputs() {
