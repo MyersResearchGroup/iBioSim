@@ -521,7 +521,7 @@ public class Zone{
 				// Get the LPN that this pairing references and find the name of
 				// the continuous variable whose index is given by this pairing.
 				contNames.add(_lpnList[ltPair.get_lpnIndex()]
-						.getVariable(ltPair.get_transitionIndex()).getName());
+						.getContVarName(ltPair.get_transitionIndex()));
 			}
 		}
 		
@@ -748,7 +748,7 @@ public class Zone{
 				// to be constant. If the value is a range then assign the upper and
 				// lower bounds to be a range.
 				Variable v = _lpnList[ltPair.get_lpnIndex()]
-						.getVariable(ltPair.get_transitionIndex());
+						.getContVar(ltPair.get_transitionIndex());
 				
 //				int initialRate = (int) Double.parseDouble(v.getInitRate());
 //				upper = initialRate;
@@ -777,27 +777,29 @@ public class Zone{
 
 				// Set the upper and lower bound.
 				// Passing the zone as null since it should not be needed.
-				if(delay.getOp().equals("uniform")){
-					IntervalPair lowerRange = delay.getLeftChild()
-							.evaluateExprBound(varValues, null);
-					IntervalPair upperRange = delay.getRightChild()
-							.evaluateExprBound(varValues, null);
-					
-					// The lower and upper bounds should evaluate to a single
-					// value. Yell if they don't.
-					if(!lowerRange.singleValue() || !upperRange.singleValue()){
-						throw new IllegalStateException("When evaulating the delay, " +
-								"the lower or the upper bound evaluated to a range " +
-								"instead of a single value.");
-					}
-					
-					range = new IntervalPair(lowerRange.get_LowerBound(),
-							upperRange.get_UpperBound());
-					
-				}
-				else{
-					range = delay.evaluateExprBound(varValues, null);
-				}
+//				if(delay.getOp().equals("uniform")){
+//					IntervalPair lowerRange = delay.getLeftChild()
+//							.evaluateExprBound(varValues, null);
+//					IntervalPair upperRange = delay.getRightChild()
+//							.evaluateExprBound(varValues, null);
+//					
+//					// The lower and upper bounds should evaluate to a single
+//					// value. Yell if they don't.
+//					if(!lowerRange.singleValue() || !upperRange.singleValue()){
+//						throw new IllegalStateException("When evaulating the delay, " +
+//								"the lower or the upper bound evaluated to a range " +
+//								"instead of a single value.");
+//					}
+//					
+//					range = new IntervalPair(lowerRange.get_LowerBound(),
+//							upperRange.get_UpperBound());
+//					
+//				}
+//				else{
+//					range = delay.evaluateExprBound(varValues, null);
+//				}
+				
+				range = delay.evaluateExprBound(varValues, this);
 				
 //				int upper, lower;
 //				if(delay.getOp().equals("uniform"))
