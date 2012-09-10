@@ -591,8 +591,8 @@ public abstract class Simulator {
 				
 					if (setInAssignment == false) {
 						
-						variableToValueMap.put(childVariableID, variableToValueMap.get(parentVariableID) / 2);
-						variableToValueMap.put(parentVariableID, variableToValueMap.get(parentVariableID) / 2);
+						variableToValueMap.put(childVariableID, (int) ((variableToValueMap.get(parentVariableID) / 2) + 1));
+						variableToValueMap.put(parentVariableID, (int) ((variableToValueMap.get(parentVariableID) / 2) + 1));
 					}
 				}
 			}
@@ -2967,17 +2967,20 @@ public abstract class Simulator {
 				if (col < 0)
 					newDegReactionID = newDegReactionID.replace("COL" + col, "COL" + "_negative_" + (-1 * col));
 				
-				Reaction degReaction = model.createReaction(newDegReactionID);
-				KineticLaw degKineticLaw = model.createKineticLaw();
-				degKineticLaw.setMath(degradationNode.clone());
-				degReaction.setKineticLaw(degKineticLaw);
-				SpeciesReference reactant = new SpeciesReference(model.getSpecies(newGridSpeciesID));
-				reactant.setStoichiometry(1);
-				degReaction.addReactant(reactant);
-				
-				setupLocalParameters(degReaction.getKineticLaw(), degReaction.getId());
-				setupSingleReaction(degReaction.getId(), degReaction.getKineticLaw().getMath(), false,
-						degReaction.getListOfReactants(), degReaction.getListOfProducts(), degReaction.getListOfModifiers());
+				if (reactionToPropensityMap.containsKey(newDegReactionID) == false) {
+					
+					Reaction degReaction = model.createReaction(newDegReactionID);
+					KineticLaw degKineticLaw = model.createKineticLaw();
+					degKineticLaw.setMath(degradationNode.clone());
+					degReaction.setKineticLaw(degKineticLaw);
+					SpeciesReference reactant = new SpeciesReference(model.getSpecies(newGridSpeciesID));
+					reactant.setStoichiometry(1);
+					degReaction.addReactant(reactant);
+					
+					setupLocalParameters(degReaction.getKineticLaw(), degReaction.getId());
+					setupSingleReaction(degReaction.getId(), degReaction.getKineticLaw().getMath(), false,
+							degReaction.getListOfReactants(), degReaction.getListOfProducts(), degReaction.getListOfModifiers());
+				}
 			}
 		}
 		
