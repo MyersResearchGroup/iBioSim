@@ -759,6 +759,15 @@ public class Zone{
 				// and y are integers.
 				//IntervalPair range = parseRate(rate);
 				range = parseRate(rate);
+			
+				// Set the upper and lower bound (in the matrix) for the 
+				// continuous variables.
+				
+				// TODO : Check if correct.
+				String contValue = v.getInitValue();
+				IntervalPair bound = parseRate(contValue);
+				setDbmEntry(0, ltPair.get_transitionIndex(), -1*bound.get_LowerBound());
+				setDbmEntry(ltPair.get_transitionIndex(), 0, bound.get_UpperBound());
 				
 				
 //				lower = range.get_LowerBound();
@@ -823,6 +832,10 @@ public class Zone{
 			setLowerBoundbydbmIndex(i, range.get_LowerBound());
 			setUpperBoundbydbmIndex(i, range.get_UpperBound());
 		}
+		
+	}
+	
+	private void populateContinuousEntries(){
 		
 	}
 	
