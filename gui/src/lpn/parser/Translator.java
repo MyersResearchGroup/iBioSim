@@ -32,6 +32,7 @@ import org.sbml.libsbml.Trigger;
 import org.sbml.libsbml.libsbml;
 
 import biomodel.gui.textualeditor.SBMLutilities;
+import biomodel.util.GlobalConstants;
 
 import lpn.parser.ExprTree;
 import main.Gui;
@@ -48,7 +49,7 @@ public class Translator {
 	public static boolean isSteadyState = false;
 	public static boolean isHSF = false;
 	
-	public void buildTemplate(String lhpnFilename, String property) {
+	public void oldBuildTemplate(String lhpnFilename, String property) {
 		this.filename = lhpnFilename.replace(".lpn", ".xml");
 		// load lhpn file
 		LhpnFile lhpn = new LhpnFile();
@@ -207,301 +208,301 @@ public class Translator {
 		// ----convert transitions -----
 		// if transition rate is not null, use reaction and event;
 		// else use event only
-			int counter = lhpn.getTransitionList().length - 1;
-			for (String t : lhpn.getTransitionList()) {
-				if(lhpn.getTransition(t).getTransitionRate()!=null){
-					Species spT = m.createSpecies();
-					spT.setId(t);
-					spT.setCompartment("default");
-					spT.setBoundaryCondition(false);
-					spT.setConstant(false);
-					spT.setHasOnlySubstanceUnits(false);
-					spT.setInitialAmount(0);
-					spT.setUnits("");
-					
-					Reaction r = m.createReaction();
-					r.setReversible(false);
-					r.setFast(false);
-					r.setId("r" + counter);
-					
-					//test En(t)
-					String EnablingTestNull = lhpn.getTransition(t).getEnabling();
-					String Enabling;
-					String EnablingBool = null;
-					if (EnablingTestNull == null){
-						EnablingBool = "true";
-						Enabling = "1"; // Enabling is true
+		int counter = lhpn.getTransitionList().length - 1;
+		for (String t : lhpn.getTransitionList()) {
+			if(lhpn.getTransition(t).getTransitionRate()!=null){
+				Species spT = m.createSpecies();
+				spT.setId("Event_"+t);
+				spT.setCompartment("default");
+				spT.setBoundaryCondition(false);
+				spT.setConstant(false);
+				spT.setHasOnlySubstanceUnits(false);
+				spT.setInitialAmount(0);
+				spT.setUnits("");
+
+				Reaction r = m.createReaction();
+				r.setReversible(false);
+				r.setFast(false);
+				r.setId("r" + counter);
+
+				//test En(t)
+				String EnablingTestNull = lhpn.getTransition(t).getEnabling();
+				String Enabling;
+				String EnablingBool = null;
+				if (EnablingTestNull == null){
+					EnablingBool = "true";
+					Enabling = "1"; // Enabling is true
+				}
+				else {
+					EnablingBool = lhpn.getEnablingTree(t).getElement("SBML");
+					Enabling = "piecewise(1, " + EnablingBool + ", 0)";
+				}
+
+				//test Preset(t)
+				String CheckPreset = null;
+				int indexPreset = 0;
+
+				// Check if all the presets of transition t are marked
+				// Transition t can fire only when all its preset are marked.
+				for (String x:lhpn.getPreset(t)){
+					if (indexPreset == 0){
+						CheckPreset = "eq(" + x + ",1)";
 					}
 					else {
-						EnablingBool = lhpn.getEnablingTree(t).getElement("SBML");
-						Enabling = "piecewise(1, " + EnablingBool + ", 0)";
-					}
-					
-					//test Preset(t)
-					String CheckPreset = null;
-					int indexPreset = 0;
-					
-					// Check if all the presets of transition t are marked
-					// Transition t can fire only when all its preset are marked.
-					for (String x:lhpn.getPreset(t)){
-						if (indexPreset == 0){
-							CheckPreset = "eq(" + x + ",1)";
-						}
-						else {
-							CheckPreset = "and(" + CheckPreset + "," + "eq(" + x + ",1)" + ")";
-						}	
-						indexPreset ++;
-					}
-				
-					String modifierStr = "";
-					String reactantStr = "";
-					for (String x : lhpn.getPreset(t)){
-						// Is transition persistent?
-						if (lhpn.getTransition(t).isPersistent()){
-							// transition is persistent
-							// Create a rule for the persistent transition t. 
-							AssignmentRule rulePersis = m.createAssignmentRule();
-							String rulePersisSpeciesStr = "rPersis_" + t + x;
-							// Create a parameter (id = rulePersisTriggName). 
-							Species rulePersisSpecies = m.createSpecies();
-							rulePersisSpecies.setId(rulePersisSpeciesStr);
-							rulePersisSpecies.setCompartment("default");
-							rulePersisSpecies.setBoundaryCondition(false);
-							rulePersisSpecies.setConstant(false);
-							rulePersisSpecies.setHasOnlySubstanceUnits(false);
-							rulePersisSpecies.setUnits("");
-							
-							String ruleExpBool = "or(and(" + CheckPreset + "," + EnablingBool + "), and(" + CheckPreset + "," + "eq(" + rulePersisSpeciesStr + ", 1)" +"))";
-							String ruleExpReal = "piecewise(1, " + ruleExpBool + ", 0)";
-							rulePersis.setVariable(rulePersisSpeciesStr);
-							rulePersis.setMath(SBMLutilities.myParseFormula(ruleExpReal));
-							rulePersisSpecies.setInitialAmount(0);
-							ModifierSpeciesReference modifier = r.createModifier();
-							modifier.setSpecies(rulePersisSpeciesStr);
-							// create the part of Kinetic law expression involving modifiers 
-							modifierStr = modifierStr + modifier.getSpecies().toString() + "*";
-						}
-						else {
-							// get the preset of a transition and set each as a reactant
-							SpeciesReference reactant = r.createReactant();
-							reactant.setSpecies(x);
-							reactant.setStoichiometry(1.0);
-							reactant.setConstant(true);
-							reactantStr =  reactantStr + reactant.getSpecies().toString() + "*";
-						}
-					}
+						CheckPreset = "and(" + CheckPreset + "," + "eq(" + x + ",1)" + ")";
+					}	
+					indexPreset ++;
+				}
 
-					
-					SpeciesReference product  = r.createProduct();
-					product.setSpecies(t);
-					product.setStoichiometry(1.0);
-					product.setConstant(true);
-						
-					KineticLaw rateReaction = r.createKineticLaw(); // rate of reaction
-					//Parameter p_local = rateReaction.createParameter();
-					//p_local.setConstant(false);
-					//p_local.setId("rate" + counter);
-					// get the transition rate from LHPN
-					//System.out.println("transition rate = " + lhpn.getTransitionRate(t));
-					//double tRate = Double.parseDouble(lhpn.getTransitionRate(t));	
-					//p_local.setValue(tRate);
-					//lhpn.getTransitionRateTree(t)
-					
-					// create exp for KineticLaw
-					if (lhpn.getTransition(t).isPersistent())
-						rateReaction.setFormula("(" + modifierStr + Enabling + "*" + lhpn.getTransitionRateTree(t).getElement("SBML") + ")"); 
-					else
-						rateReaction.setFormula("(" + reactantStr + Enabling + "*" + lhpn.getTransitionRateTree(t).getElement("SBML") + ")"); 
-					
-					Event e = m.createEvent();
-//					e.setId("event" + counter);		
-					e.setId("Event_"+t);
-					Trigger trigger = e.createTrigger();
-					trigger.setMath(SBMLutilities.myParseFormula("eq(" + product.getSpecies() + ",1)"));
-					// For persistent transition, it does not matter whether the trigger is persistent or not, because the delay is set to 0. 
-					trigger.setPersistent(false);
-					e.setUseValuesFromTriggerTime(false);
-					trigger.setInitialValue(false);
-				
-					// t_postSet = 1
-					for (String x : lhpn.getPostset(t)){
-						EventAssignment assign0 = e.createEventAssignment();
-						assign0.setVariable(x);
-						assign0.setMath(SBMLutilities.myParseFormula("1"));
-		//				System.out.println("transition: " + t + " postset: " + x);
+				String modifierStr = "";
+				String reactantStr = "";
+				for (String x : lhpn.getPreset(t)){
+					// Is transition persistent?
+					if (lhpn.getTransition(t).isPersistent()){
+						// transition is persistent
+						// Create a rule for the persistent transition t. 
+						AssignmentRule rulePersis = m.createAssignmentRule();
+						String rulePersisSpeciesStr = "rPersis_" + t + x;
+						// Create a parameter (id = rulePersisTriggName). 
+						Species rulePersisSpecies = m.createSpecies();
+						rulePersisSpecies.setId(rulePersisSpeciesStr);
+						rulePersisSpecies.setCompartment("default");
+						rulePersisSpecies.setBoundaryCondition(false);
+						rulePersisSpecies.setConstant(false);
+						rulePersisSpecies.setHasOnlySubstanceUnits(false);
+						rulePersisSpecies.setUnits("");
+
+						String ruleExpBool = "or(and(" + CheckPreset + "," + EnablingBool + "), and(" + CheckPreset + "," + "eq(" + rulePersisSpeciesStr + ", 1)" +"))";
+						String ruleExpReal = "piecewise(1, " + ruleExpBool + ", 0)";
+						rulePersis.setVariable(rulePersisSpeciesStr);
+						rulePersis.setMath(SBMLutilities.myParseFormula(ruleExpReal));
+						rulePersisSpecies.setInitialAmount(0);
+						ModifierSpeciesReference modifier = r.createModifier();
+						modifier.setSpecies(rulePersisSpeciesStr);
+						// create the part of Kinetic law expression involving modifiers 
+						modifierStr = modifierStr + modifier.getSpecies().toString() + "*";
 					}
-					
-					// product = 0
-					EventAssignment assign1 = e.createEventAssignment();
-					assign1.setVariable(product.getSpecies());
-					assign1.setMath(SBMLutilities.myParseFormula("0"));
-					
-//					if (lhpn.getTransition(t).isPersistent()){
-//						// t_preSet = 0
-//						for (String x : lhpn.getPreset(t)){
-//							EventAssignment assign0 = e.createEventAssignment();
-//							assign0.setVariable(x);
-//							assign0.setMath(SBMLutilities.myParseFormula("0"));
-//			//				System.out.println("transition: " + t + " preset: " + x);
-//						}
-//					}
-					
-					// assignment <A>
-					// continuous assignment
-					if (lhpn.getContVars(t) != null){
-						for (String var : lhpn.getContVars(t)){
-							if (lhpn.getContAssign(t, var) != null) {
-								ExprTree assignContTree = lhpn.getContAssignTree(t, var);	
-								String assignCont = assignContTree.toString("SBML");
-//								System.out.println("continuous assign: "+ assignCont);
-								EventAssignment assign2 = e.createEventAssignment();
-								assign2.setVariable(var);
-								assign2.setMath(SBMLutilities.myParseFormula(assignCont));
-							}
-						}
-					}
-					
-					// integer assignment
-					if (lhpn.getIntVars()!= null){
-						for (String var : lhpn.getIntVars()){
-							if (lhpn.getIntAssign(t, var) != null) {
-								ExprTree assignIntTree = lhpn.getIntAssignTree(t, var);
-								String assignInt = assignIntTree.toString("SBML");
-//								System.out.println("integer assignment from LHPN: " + var + " := " + assignInt);
-								EventAssignment assign3 = e.createEventAssignment();
-								assign3.setVariable(var);
-								assign3.setMath(SBMLutilities.myParseFormula(assignInt));
-							}
-						}
-					}
-					
-					// boolean assignment
-					if (lhpn.getBooleanVars(t)!= null){
-						for (String var :lhpn.getBooleanVars(t)){
-							if (lhpn.getBoolAssign(t, var) != null) {
-								ExprTree assignBoolTree = lhpn.getBoolAssignTree(t, var);
-								String assignBool_tmp = assignBoolTree.toString("SBML");
-								String assignBool = "piecewise(1," + assignBool_tmp + ",0)";
-//								System.out.println("boolean assignment from LHPN: " + var + " := " + assignBool);
-								EventAssignment assign4 = e.createEventAssignment();
-								assign4.setVariable(var);
-								assign4.setMath(SBMLutilities.myParseFormula(assignBool));
-							}
-						}
-					}
-					
-					// rate assignment
-					if (lhpn.getRateVars(t)!= null){
-						for (String var : lhpn.getRateVars(t)){
-//							 System.out.println("rate var: "+ var);
-							if (lhpn.getRateAssign(t, var) != null) {
-								ExprTree assignRateTree = lhpn.getRateAssignTree(t, var);
-								String assignRate = assignRateTree.toString("SBML");
-		//						System.out.println("rate assign: "+ assignRate);
-								
-								EventAssignment assign5 = e.createEventAssignment();
-								assign5.setVariable(var + "_rate");
-								assign5.setMath(SBMLutilities.myParseFormula(assignRate));
-							}
-						}
-					}
-					// When translating a fail transition into an event, that event should assign to a special "fail" variable a value of 1.  
-					// This "fail" variable should have initial value of 0.  The SBML model should have a constraint "eq(fail,0)".
-					if (lhpn.getTransition(t).isFail()){
-						Parameter failVar = m.createParameter();
-						failVar.setConstant(false);
-						failVar.setId("failvar_" + t);
-						failVar.setValue(0);
-						EventAssignment assign6 = e.createEventAssignment();
-						assign6.setVariable(failVar.getId());
-						assign6.setMath(SBMLutilities.myParseFormula("1"));
-						Constraint failVarConstraint = m.createConstraint();
-						failVarConstraint.setMetaId("failtrans_" + t);
-						failVarConstraint.setMath(SBMLutilities.myParseFormula("eq(" + failVar.getId() + ", 0)"));
+					else {
+						// get the preset of a transition and set each as a reactant
+						SpeciesReference reactant = r.createReactant();
+						reactant.setSpecies(x);
+						reactant.setStoichiometry(1.0);
+						reactant.setConstant(true);
+						reactantStr =  reactantStr + reactant.getSpecies().toString() + "*";
 					}
 				}
-				
-				else {			// Transition rate = null. Only use event. Transitions only have ranges.
-//					System.out.println("Event Only");
-					Event e = m.createEvent();
-//					e.setId("event" + counter);	
-					e.setId("Event_"+t);
-					Trigger trigger = e.createTrigger();
 
-					//trigger = CheckPreset(t) && En(t);
-					//test En(t)
-					String EnablingTestNull = lhpn.getTransition(t).getEnabling();
-					String Enabling;
-					if (EnablingTestNull == null){
-						Enabling = "true"; // Enabling is true (Boolean)
+
+				SpeciesReference product  = r.createProduct();
+				product.setSpecies(t);
+				product.setStoichiometry(1.0);
+				product.setConstant(true);
+
+				KineticLaw rateReaction = r.createKineticLaw(); // rate of reaction
+				//Parameter p_local = rateReaction.createParameter();
+				//p_local.setConstant(false);
+				//p_local.setId("rate" + counter);
+				// get the transition rate from LHPN
+				//System.out.println("transition rate = " + lhpn.getTransitionRate(t));
+				//double tRate = Double.parseDouble(lhpn.getTransitionRate(t));	
+				//p_local.setValue(tRate);
+				//lhpn.getTransitionRateTree(t)
+
+				// create exp for KineticLaw
+				if (lhpn.getTransition(t).isPersistent())
+					rateReaction.setFormula("(" + modifierStr + Enabling + "*" + lhpn.getTransitionRateTree(t).getElement("SBML") + ")"); 
+				else
+					rateReaction.setFormula("(" + reactantStr + Enabling + "*" + lhpn.getTransitionRateTree(t).getElement("SBML") + ")"); 
+
+				Event e = m.createEvent();
+				//					e.setId("event" + counter);		
+				e.setId("Event_"+t);
+				Trigger trigger = e.createTrigger();
+				trigger.setMath(SBMLutilities.myParseFormula("eq(" + product.getSpecies() + ",1)"));
+				// For persistent transition, it does not matter whether the trigger is persistent or not, because the delay is set to 0. 
+				trigger.setPersistent(false);
+				e.setUseValuesFromTriggerTime(false);
+				trigger.setInitialValue(false);
+
+				// t_postSet = 1
+				for (String x : lhpn.getPostset(t)){
+					EventAssignment assign0 = e.createEventAssignment();
+					assign0.setVariable(x);
+					assign0.setMath(SBMLutilities.myParseFormula("1"));
+					//				System.out.println("transition: " + t + " postset: " + x);
+				}
+
+				// product = 0
+				EventAssignment assign1 = e.createEventAssignment();
+				assign1.setVariable(product.getSpecies());
+				assign1.setMath(SBMLutilities.myParseFormula("0"));
+
+				//					if (lhpn.getTransition(t).isPersistent()){
+				//						// t_preSet = 0
+				//						for (String x : lhpn.getPreset(t)){
+				//							EventAssignment assign0 = e.createEventAssignment();
+				//							assign0.setVariable(x);
+				//							assign0.setMath(SBMLutilities.myParseFormula("0"));
+				//			//				System.out.println("transition: " + t + " preset: " + x);
+				//						}
+				//					}
+
+				// assignment <A>
+				// continuous assignment
+				if (lhpn.getContVars(t) != null){
+					for (String var : lhpn.getContVars(t)){
+						if (lhpn.getContAssign(t, var) != null) {
+							ExprTree assignContTree = lhpn.getContAssignTree(t, var);	
+							String assignCont = assignContTree.toString("SBML");
+							//								System.out.println("continuous assign: "+ assignCont);
+							EventAssignment assign2 = e.createEventAssignment();
+							assign2.setVariable(var);
+							assign2.setMath(SBMLutilities.myParseFormula(assignCont));
+						}
+					}
+				}
+
+				// integer assignment
+				if (lhpn.getIntVars()!= null){
+					for (String var : lhpn.getIntVars()){
+						if (lhpn.getIntAssign(t, var) != null) {
+							ExprTree assignIntTree = lhpn.getIntAssignTree(t, var);
+							String assignInt = assignIntTree.toString("SBML");
+							//								System.out.println("integer assignment from LHPN: " + var + " := " + assignInt);
+							EventAssignment assign3 = e.createEventAssignment();
+							assign3.setVariable(var);
+							assign3.setMath(SBMLutilities.myParseFormula(assignInt));
+						}
+					}
+				}
+
+				// boolean assignment
+				if (lhpn.getBooleanVars(t)!= null){
+					for (String var :lhpn.getBooleanVars(t)){
+						if (lhpn.getBoolAssign(t, var) != null) {
+							ExprTree assignBoolTree = lhpn.getBoolAssignTree(t, var);
+							String assignBool_tmp = assignBoolTree.toString("SBML");
+							String assignBool = "piecewise(1," + assignBool_tmp + ",0)";
+							//								System.out.println("boolean assignment from LHPN: " + var + " := " + assignBool);
+							EventAssignment assign4 = e.createEventAssignment();
+							assign4.setVariable(var);
+							assign4.setMath(SBMLutilities.myParseFormula(assignBool));
+						}
+					}
+				}
+
+				// rate assignment
+				if (lhpn.getRateVars(t)!= null){
+					for (String var : lhpn.getRateVars(t)){
+						//							 System.out.println("rate var: "+ var);
+						if (lhpn.getRateAssign(t, var) != null) {
+							ExprTree assignRateTree = lhpn.getRateAssignTree(t, var);
+							String assignRate = assignRateTree.toString("SBML");
+							//						System.out.println("rate assign: "+ assignRate);
+
+							EventAssignment assign5 = e.createEventAssignment();
+							assign5.setVariable(var + "_rate");
+							assign5.setMath(SBMLutilities.myParseFormula(assignRate));
+						}
+					}
+				}
+				// When translating a fail transition into an event, that event should assign to a special "fail" variable a value of 1.  
+				// This "fail" variable should have initial value of 0.  The SBML model should have a constraint "eq(fail,0)".
+				if (lhpn.getTransition(t).isFail()){
+					Parameter failVar = m.createParameter();
+					failVar.setConstant(false);
+					failVar.setId("failvar_" + t);
+					failVar.setValue(0);
+					EventAssignment assign6 = e.createEventAssignment();
+					assign6.setVariable(failVar.getId());
+					assign6.setMath(SBMLutilities.myParseFormula("1"));
+					Constraint failVarConstraint = m.createConstraint();
+					failVarConstraint.setMetaId("failtrans_" + t);
+					failVarConstraint.setMath(SBMLutilities.myParseFormula("eq(" + failVar.getId() + ", 0)"));
+				}
+			}
+
+			else {			// Transition rate = null. Only use event. Transitions only have ranges.
+				//					System.out.println("Event Only");
+				Event e = m.createEvent();
+				//					e.setId("event" + counter);	
+				e.setId("Event_"+t);
+				Trigger trigger = e.createTrigger();
+
+				//trigger = CheckPreset(t) && En(t);
+				//test En(t)
+				String EnablingTestNull = lhpn.getTransition(t).getEnabling();
+				String Enabling;
+				if (EnablingTestNull == null){
+					Enabling = "true"; // Enabling is true (Boolean)
+				}
+				else {
+					Enabling = lhpn.getEnablingTree(t).getElement("SBML");
+				}
+				//					System.out.println("Enabling = " + Enabling);
+
+				//test Preset(t)
+				String CheckPreset = null;
+				int indexPreset = 0;
+
+				// Check if all the presets of transition t are marked
+				// Transition t can fire only when all its preset are marked.
+				for (String x:lhpn.getPreset(t)){
+					if (indexPreset == 0){
+						CheckPreset = "eq(" + x + ",1)";
 					}
 					else {
-						Enabling = lhpn.getEnablingTree(t).getElement("SBML");
-					}
-//					System.out.println("Enabling = " + Enabling);
-					
-					//test Preset(t)
-					String CheckPreset = null;
-					int indexPreset = 0;
-					
-					// Check if all the presets of transition t are marked
-					// Transition t can fire only when all its preset are marked.
-					for (String x:lhpn.getPreset(t)){
-						if (indexPreset == 0){
-							CheckPreset = "eq(" + x + ",1)";
-						}
-						else {
-							CheckPreset = "and(" + CheckPreset + "," + "eq(" + x + ",1)" + ")";
-						}	
-						indexPreset ++;
-					}
-					
-					// Is transition persistent?
-					if (!lhpn.getTransition(t).isPersistent() || (lhpn.getTransition(t).isPersistent() && !lhpn.getTransition(t).hasConflictSet())){
-						if (!lhpn.getTransition(t).isPersistent()) {
-							trigger.setPersistent(false);
-						}
-						else {
-							trigger.setPersistent(true);
-						}
-						
-						trigger.setMath(SBMLutilities.myParseFormula("and(" + CheckPreset + "," + Enabling + ")"));
-					}
-					else { // transition is persistent
-						// Create a rule for the persistent transition t. 
-						AssignmentRule rulePersisTrigg = m.createAssignmentRule();
-						String rulePersisTriggName = "trigg_" + t;
-						// Create a parameter (id = rulePersisTriggName). 
-						Parameter rulePersisParam = m.createParameter();
-						rulePersisParam.setId(rulePersisTriggName);
-						rulePersisParam.setValue(0);
-						rulePersisParam.setConstant(false);
-						rulePersisParam.setUnits("");
-						String ruleExpBool = "or(and(" + CheckPreset + "," + Enabling + "), and(" + CheckPreset + "," + "eq(" + rulePersisTriggName + ", 1)" +"))";
-						String ruleExpReal = "piecewise(1, " + ruleExpBool + ", 0)";
-						rulePersisTrigg.setVariable(rulePersisTriggName);
-						rulePersisTrigg.setMath(SBMLutilities.myParseFormula(ruleExpReal));
+						CheckPreset = "and(" + CheckPreset + "," + "eq(" + x + ",1)" + ")";
+					}	
+					indexPreset ++;
+				}
+
+				// Is transition persistent?
+				if (!lhpn.getTransition(t).isPersistent() || (lhpn.getTransition(t).isPersistent() && !lhpn.getTransition(t).hasConflictSet())){
+					if (!lhpn.getTransition(t).isPersistent()) {
 						trigger.setPersistent(false);
-						trigger.setMath(SBMLutilities.myParseFormula("eq(" + rulePersisTriggName + ", 1)"));
 					}
-										
-					// TriggerInitiallyFalse
-//					trigger.setAnnotation("<TriggerInitiallyFalse/>");
-					trigger.setInitialValue(false);
-					
-					// use values at trigger time = false
-					e.setUseValuesFromTriggerTime(false);
-				    					
-					// Priority and delay
-					if (lhpn.getTransition(t).getDelay()!=null) {
-						e.createDelay();
-						e.getDelay().setMath(SBMLutilities.myParseFormula(lhpn.getTransition(t).getDelay()));
+					else {
+						trigger.setPersistent(true);
 					}
-					if (lhpn.getTransition(t).getPriority()!=null) {
-						e.createPriority();
-						e.getPriority().setMath(SBMLutilities.myParseFormula(lhpn.getTransition(t).getPriority()));
-					}
-					/*
+
+					trigger.setMath(SBMLutilities.myParseFormula("and(" + CheckPreset + "," + Enabling + ")"));
+				}
+				else { // transition is persistent
+					// Create a rule for the persistent transition t. 
+					AssignmentRule rulePersisTrigg = m.createAssignmentRule();
+					String rulePersisTriggName = "trigg_" + t;
+					// Create a parameter (id = rulePersisTriggName). 
+					Parameter rulePersisParam = m.createParameter();
+					rulePersisParam.setId(rulePersisTriggName);
+					rulePersisParam.setValue(0);
+					rulePersisParam.setConstant(false);
+					rulePersisParam.setUnits("");
+					String ruleExpBool = "or(and(" + CheckPreset + "," + Enabling + "), and(" + CheckPreset + "," + "eq(" + rulePersisTriggName + ", 1)" +"))";
+					String ruleExpReal = "piecewise(1, " + ruleExpBool + ", 0)";
+					rulePersisTrigg.setVariable(rulePersisTriggName);
+					rulePersisTrigg.setMath(SBMLutilities.myParseFormula(ruleExpReal));
+					trigger.setPersistent(false);
+					trigger.setMath(SBMLutilities.myParseFormula("eq(" + rulePersisTriggName + ", 1)"));
+				}
+
+				// TriggerInitiallyFalse
+				//					trigger.setAnnotation("<TriggerInitiallyFalse/>");
+				trigger.setInitialValue(false);
+
+				// use values at trigger time = false
+				e.setUseValuesFromTriggerTime(false);
+
+				// Priority and delay
+				if (lhpn.getTransition(t).getDelay()!=null) {
+					e.createDelay();
+					e.getDelay().setMath(SBMLutilities.myParseFormula(lhpn.getTransition(t).getDelay()));
+				}
+				if (lhpn.getTransition(t).getPriority()!=null) {
+					e.createPriority();
+					e.getPriority().setMath(SBMLutilities.myParseFormula(lhpn.getTransition(t).getPriority()));
+				}
+				/*
 					if (lhpn.getTransition(t).getPriority()==null) {
 						if (lhpn.getTransition(t).getDelay()!=null) {
 							e.createDelay();
@@ -518,182 +519,182 @@ public class Translator {
 						e.getDelay().setMath(SBMLutilities.myParseFormula("priority(0," + lhpn.getTransition(t).getPriority() + ")"));
 						}
 					}
-					*/
-					
-					// Check if there is any self-loop. If the intersection between lhpn.getPreset(t) and lhpn.getPostset(t)
-					// is not empty, self-loop exists. 
-					List<String> t_postset = Arrays.asList(lhpn.getPostset(t));
-					List<String> t_intersect = new ArrayList<String>(); // intersection of t_preset and t_postset
-					List<String> t_NoIntersect = new ArrayList<String>(); // t_NoIntersect = t_postset - t_preset
-					Boolean selfLoopFlag = false;
-					
-					// Check if there is intersection between the preset and postset. 
-					for (String x : lhpn.getPreset(t)){
-						if (t_postset.contains(x)){
-							selfLoopFlag = true;
-							t_intersect.add(x);
-						}
-					}
-					if (selfLoopFlag) {
-						t_NoIntersect.removeAll(t_intersect);
-						// t_preset = 0
-						for (String x : lhpn.getPreset(t)){
-							EventAssignment assign0 = e.createEventAssignment();
-							assign0.setVariable(x);
-							assign0.setMath(SBMLutilities.myParseFormula("0"));
-			//				System.out.println("transition: " + t + " preset: " + x);
-						}
-								
-						// t_NoIntersect  = 1
-						for (String x : t_NoIntersect){
-							EventAssignment assign1 = e.createEventAssignment();
-							assign1.setVariable(x);
-							assign1.setMath(SBMLutilities.myParseFormula("1"));
-			//				System.out.println("transition: " + t + " postset: " + x);
-						}
-						
-					}
-					else {			// no self-loop 
-						// t_preSet = 0
-						for (String x : lhpn.getPreset(t)){
-							EventAssignment assign0 = e.createEventAssignment();
-							assign0.setVariable(x);
-							assign0.setMath(SBMLutilities.myParseFormula("0"));
-			//				System.out.println("transition: " + t + " preset: " + x);
-						}
-								
-						// t_postSet = 1
-						for (String x : lhpn.getPostset(t)){
-							EventAssignment assign1 = e.createEventAssignment();
-							assign1.setVariable(x);
-							assign1.setMath(SBMLutilities.myParseFormula("1"));
-			//				System.out.println("transition: " + t + " postset: " + x);
-						}
-					}
+				 */
 
-					// assignment <A>
-					// continuous assignment
-					if (lhpn.getContVars(t) != null){
-						for (String var : lhpn.getContVars(t)){
-							if (lhpn.getContAssign(t, var) != null) {
-								ExprTree assignContTree = lhpn.getContAssignTree(t, var);	
-								String assignCont = assignContTree.toString("SBML");
-//								System.out.println("continuous assign: "+ assignCont);
-								EventAssignment assign2 = e.createEventAssignment();
-								assign2.setVariable(var);
-								assign2.setMath(SBMLutilities.myParseFormula(assignCont));
-							}
-						}
-					}
-			
-					// integer assignment
-					if (lhpn.getIntVars()!= null){
-						for (String var : lhpn.getIntVars()){
-							if (lhpn.getIntAssign(t, var) != null) {
-								ExprTree assignIntTree = lhpn.getIntAssignTree(t, var);
-								String assignInt = assignIntTree.toString("SBML");
-//							    System.out.println("integer assignment from LHPN: " + var + " := " + assignInt);
-								EventAssignment assign3 = e.createEventAssignment();
-								assign3.setVariable(var);
-								assign3.setMath(SBMLutilities.myParseFormula(assignInt));
-							}
-						}
-					}
-					
-					// boolean assignment
-					if (selfLoopFlag) {
-						// if self-loop exists, create a new variable, extraVar, and a new event
-						String extraVar = t.concat("_extraVar");
-						Parameter p = m.createParameter(); 
-						p.setConstant(false);
-						p.setId(extraVar);
-						p.setValue(0);
-						
-						EventAssignment assign4ex = e.createEventAssignment();
-						assign4ex.setVariable(extraVar);
-						assign4ex.setMath(SBMLutilities.myParseFormula("1"));
-						
-						// Create other boolean assignments
-						if (lhpn.getBooleanVars(t)!= null){
-							for (String var :lhpn.getBooleanVars(t)){
-								if (lhpn.getBoolAssign(t, var) != null) {
-									ExprTree assignBoolTree = lhpn.getBoolAssignTree(t, var);
-									String assignBool_tmp = assignBoolTree.toString("SBML");
-									String assignBool = "piecewise(1," + assignBool_tmp + ",0)";
-									//System.out.println("boolean assignment from LHPN: " + var + " := " + assignBool);
-									EventAssignment assign4 = e.createEventAssignment();
-									assign4.setVariable(var);
-									assign4.setMath(SBMLutilities.myParseFormula(assignBool));
-								}
-							}
-						}
-						
-					   // create a new event 
-						Event extraEvent = m.createEvent();
-						extraEvent.setId("extra_" + t);	
-						Trigger triggerExtra = extraEvent.createTrigger();
-						//triggerExtra.setMath(SBMLutilities.myParseFormula("and(gt(t,0),eq(" + extraVar + ",1))"));
-						triggerExtra.setMath(SBMLutilities.myParseFormula("eq(" + extraVar + ",1)"));
-						//triggerExtra.setAnnotation("<TriggerInitiallyFalse/>");
-						triggerExtra.setPersistent(true);
-						triggerExtra.setInitialValue(false);
-						extraEvent.setUseValuesFromTriggerTime(false);
-						// assignments
-						EventAssignment assign5ex2 = extraEvent.createEventAssignment();
-						for (String var : t_intersect){
-							EventAssignment assign5ex1 = extraEvent.createEventAssignment();
-							assign5ex1.setVariable(var);
-							assign5ex1.setMath(SBMLutilities.myParseFormula("1"));
-						}
-						assign5ex2.setVariable(extraVar);
-						assign5ex2.setMath(SBMLutilities.myParseFormula("0"));
-					}
-					else {
-						if (lhpn.getBooleanVars(t)!= null){
-							for (String var :lhpn.getBooleanVars(t)){
-								if (lhpn.getBoolAssign(t, var) != null) {
-									ExprTree assignBoolTree = lhpn.getBoolAssignTree(t, var);
-									String assignBool_tmp = assignBoolTree.toString("SBML");
-									String assignBool = "piecewise(1," + assignBool_tmp + ",0)";
-									//System.out.println("boolean assignment from LHPN: " + var + " := " + assignBool);
-									EventAssignment assign4 = e.createEventAssignment();
-									assign4.setVariable(var);
-									assign4.setMath(SBMLutilities.myParseFormula(assignBool));
-								}
-							}
-						}
-					}
+				// Check if there is any self-loop. If the intersection between lhpn.getPreset(t) and lhpn.getPostset(t)
+				// is not empty, self-loop exists. 
+				List<String> t_postset = Arrays.asList(lhpn.getPostset(t));
+				List<String> t_intersect = new ArrayList<String>(); // intersection of t_preset and t_postset
+				List<String> t_NoIntersect = new ArrayList<String>(); // t_NoIntersect = t_postset - t_preset
+				Boolean selfLoopFlag = false;
 
-					// rate assignment
-					if (lhpn.getRateVars(t)!= null){
-						for (String var : lhpn.getRateVars(t)){
-//							 System.out.println("rate var: "+ var);
-							if (lhpn.getRateAssign(t, var) != null) {
-								ExprTree assignRateTree = lhpn.getRateAssignTree(t, var);
-								String assignRate = assignRateTree.toString("SBML");
-		//						System.out.println("rate assign: "+ assignRate);
-								
-								EventAssignment assign5 = e.createEventAssignment();
-								assign5.setVariable(var + "_rate");
-								assign5.setMath(SBMLutilities.myParseFormula(assignRate));
-							}
-						}
-					}
-					// When translating a fail transition into an event, that event should assign to a special "fail" variable a value of 1.  
-					// This "fail" variable should have initial value of 0.  The SBML model should have a constraint "eq(fail,0)".
-					if (lhpn.getTransition(t).isFail()){
-						Parameter failVar = m.createParameter();
-						failVar.setConstant(false);
-						failVar.setId("failvar_" + t);
-						failVar.setValue(0);
-						EventAssignment assign6 = e.createEventAssignment();
-						assign6.setVariable(failVar.getId());
-						assign6.setMath(SBMLutilities.myParseFormula("1"));
-						Constraint failVarConstraint = m.createConstraint();
-						failVarConstraint.setMetaId("failtrans_" + t);
-						failVarConstraint.setMath(SBMLutilities.myParseFormula("eq(" + failVar.getId() + ", 0)"));
+				// Check if there is intersection between the preset and postset. 
+				for (String x : lhpn.getPreset(t)){
+					if (t_postset.contains(x)){
+						selfLoopFlag = true;
+						t_intersect.add(x);
 					}
 				}
+				if (selfLoopFlag) {
+					t_NoIntersect.removeAll(t_intersect);
+					// t_preset = 0
+					for (String x : lhpn.getPreset(t)){
+						EventAssignment assign0 = e.createEventAssignment();
+						assign0.setVariable(x);
+						assign0.setMath(SBMLutilities.myParseFormula("0"));
+						//				System.out.println("transition: " + t + " preset: " + x);
+					}
+
+					// t_NoIntersect  = 1
+					for (String x : t_NoIntersect){
+						EventAssignment assign1 = e.createEventAssignment();
+						assign1.setVariable(x);
+						assign1.setMath(SBMLutilities.myParseFormula("1"));
+						//				System.out.println("transition: " + t + " postset: " + x);
+					}
+
+				}
+				else {			// no self-loop 
+					// t_preSet = 0
+					for (String x : lhpn.getPreset(t)){
+						EventAssignment assign0 = e.createEventAssignment();
+						assign0.setVariable(x);
+						assign0.setMath(SBMLutilities.myParseFormula("0"));
+						//				System.out.println("transition: " + t + " preset: " + x);
+					}
+
+					// t_postSet = 1
+					for (String x : lhpn.getPostset(t)){
+						EventAssignment assign1 = e.createEventAssignment();
+						assign1.setVariable(x);
+						assign1.setMath(SBMLutilities.myParseFormula("1"));
+						//				System.out.println("transition: " + t + " postset: " + x);
+					}
+				}
+
+				// assignment <A>
+				// continuous assignment
+				if (lhpn.getContVars(t) != null){
+					for (String var : lhpn.getContVars(t)){
+						if (lhpn.getContAssign(t, var) != null) {
+							ExprTree assignContTree = lhpn.getContAssignTree(t, var);	
+							String assignCont = assignContTree.toString("SBML");
+							//								System.out.println("continuous assign: "+ assignCont);
+							EventAssignment assign2 = e.createEventAssignment();
+							assign2.setVariable(var);
+							assign2.setMath(SBMLutilities.myParseFormula(assignCont));
+						}
+					}
+				}
+
+				// integer assignment
+				if (lhpn.getIntVars()!= null){
+					for (String var : lhpn.getIntVars()){
+						if (lhpn.getIntAssign(t, var) != null) {
+							ExprTree assignIntTree = lhpn.getIntAssignTree(t, var);
+							String assignInt = assignIntTree.toString("SBML");
+							//							    System.out.println("integer assignment from LHPN: " + var + " := " + assignInt);
+							EventAssignment assign3 = e.createEventAssignment();
+							assign3.setVariable(var);
+							assign3.setMath(SBMLutilities.myParseFormula(assignInt));
+						}
+					}
+				}
+
+				// boolean assignment
+				if (selfLoopFlag) {
+					// if self-loop exists, create a new variable, extraVar, and a new event
+					String extraVar = t.concat("_extraVar");
+					Parameter p = m.createParameter(); 
+					p.setConstant(false);
+					p.setId(extraVar);
+					p.setValue(0);
+
+					EventAssignment assign4ex = e.createEventAssignment();
+					assign4ex.setVariable(extraVar);
+					assign4ex.setMath(SBMLutilities.myParseFormula("1"));
+
+					// Create other boolean assignments
+					if (lhpn.getBooleanVars(t)!= null){
+						for (String var :lhpn.getBooleanVars(t)){
+							if (lhpn.getBoolAssign(t, var) != null) {
+								ExprTree assignBoolTree = lhpn.getBoolAssignTree(t, var);
+								String assignBool_tmp = assignBoolTree.toString("SBML");
+								String assignBool = "piecewise(1," + assignBool_tmp + ",0)";
+								//System.out.println("boolean assignment from LHPN: " + var + " := " + assignBool);
+								EventAssignment assign4 = e.createEventAssignment();
+								assign4.setVariable(var);
+								assign4.setMath(SBMLutilities.myParseFormula(assignBool));
+							}
+						}
+					}
+
+					// create a new event 
+					Event extraEvent = m.createEvent();
+					extraEvent.setId("extra_" + t);	
+					Trigger triggerExtra = extraEvent.createTrigger();
+					//triggerExtra.setMath(SBMLutilities.myParseFormula("and(gt(t,0),eq(" + extraVar + ",1))"));
+					triggerExtra.setMath(SBMLutilities.myParseFormula("eq(" + extraVar + ",1)"));
+					//triggerExtra.setAnnotation("<TriggerInitiallyFalse/>");
+					triggerExtra.setPersistent(true);
+					triggerExtra.setInitialValue(false);
+					extraEvent.setUseValuesFromTriggerTime(false);
+					// assignments
+					EventAssignment assign5ex2 = extraEvent.createEventAssignment();
+					for (String var : t_intersect){
+						EventAssignment assign5ex1 = extraEvent.createEventAssignment();
+						assign5ex1.setVariable(var);
+						assign5ex1.setMath(SBMLutilities.myParseFormula("1"));
+					}
+					assign5ex2.setVariable(extraVar);
+					assign5ex2.setMath(SBMLutilities.myParseFormula("0"));
+				}
+				else {
+					if (lhpn.getBooleanVars(t)!= null){
+						for (String var :lhpn.getBooleanVars(t)){
+							if (lhpn.getBoolAssign(t, var) != null) {
+								ExprTree assignBoolTree = lhpn.getBoolAssignTree(t, var);
+								String assignBool_tmp = assignBoolTree.toString("SBML");
+								String assignBool = "piecewise(1," + assignBool_tmp + ",0)";
+								//System.out.println("boolean assignment from LHPN: " + var + " := " + assignBool);
+								EventAssignment assign4 = e.createEventAssignment();
+								assign4.setVariable(var);
+								assign4.setMath(SBMLutilities.myParseFormula(assignBool));
+							}
+						}
+					}
+				}
+
+				// rate assignment
+				if (lhpn.getRateVars(t)!= null){
+					for (String var : lhpn.getRateVars(t)){
+						//							 System.out.println("rate var: "+ var);
+						if (lhpn.getRateAssign(t, var) != null) {
+							ExprTree assignRateTree = lhpn.getRateAssignTree(t, var);
+							String assignRate = assignRateTree.toString("SBML");
+							//						System.out.println("rate assign: "+ assignRate);
+
+							EventAssignment assign5 = e.createEventAssignment();
+							assign5.setVariable(var + "_rate");
+							assign5.setMath(SBMLutilities.myParseFormula(assignRate));
+						}
+					}
+				}
+				// When translating a fail transition into an event, that event should assign to a special "fail" variable a value of 1.  
+				// This "fail" variable should have initial value of 0.  The SBML model should have a constraint "eq(fail,0)".
+				if (lhpn.getTransition(t).isFail()){
+					Parameter failVar = m.createParameter();
+					failVar.setConstant(false);
+					failVar.setId("failvar_" + t);
+					failVar.setValue(0);
+					EventAssignment assign6 = e.createEventAssignment();
+					assign6.setVariable(failVar.getId());
+					assign6.setMath(SBMLutilities.myParseFormula("1"));
+					Constraint failVarConstraint = m.createConstraint();
+					failVarConstraint.setMetaId("failtrans_" + t);
+					failVarConstraint.setMath(SBMLutilities.myParseFormula("eq(" + failVar.getId() + ", 0)"));
+				}
+			}
 			counter --;
 		}
 
@@ -701,7 +702,427 @@ public class Translator {
 		// translate the LPN property to SBML constraints
 		document = generateSBMLConstraints(document, property, lhpn);
 	}
-			
+	
+	public void convertLPN2SBML(String lhpnFilename, String property) {
+		this.filename = lhpnFilename.replace(".lpn", ".xml");
+		// load lhpn file
+		LhpnFile lhpn = new LhpnFile();
+		lhpn.load(lhpnFilename);
+		
+		// create sbml file
+		//document = new SBMLDocument(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+		document = new SBMLDocument(3,1);
+		Model m = document.createModel();
+		m.setId(filename.replace(".xml", ""));
+		
+		// Create bitwise operators for sbml
+		createFunction(m, "rate", "Rate", "lambda(a,a)");
+		createFunction(m, "BIT", "bit selection", "lambda(a,b,a*b)");
+		createFunction(m, "BITAND", "Bitwise AND", "lambda(a,b,a*b)");
+		createFunction(m, "BITOR", "Bitwise OR", "lambda(a,b,a*b)");
+		createFunction(m, "BITNOT", "Bitwise NOT", "lambda(a,b,a*b)");
+		createFunction(m, "BITXOR", "Bitwise XOR", "lambda(a,b,a*b)");
+		createFunction(m, "mod", "Modular", "lambda(a,b,a-floor(a/b)*b)");
+		//createFunction(m, "and", "Logical AND", "lambda(a,b,a*b)");
+		createFunction(m, "uniform", "Uniform distribution", "lambda(a,b,(a+b)/2)");
+		createFunction(m, "normal", "Normal distribution", "lambda(m,s,m)");
+		createFunction(m, "exponential", "Exponential distribution", "lambda(l,1/l)");
+		createFunction(m, "gamma", "Gamma distribution", "lambda(a,b,a*b)");
+		createFunction(m, "lognormal", "Lognormal distribution", "lambda(z,s,exp(z+s^2/2))");
+		createFunction(m, "chisq", "Chi-squared distribution", "lambda(nu,nu)");
+		createFunction(m, "laplace", "Laplace distribution", "lambda(a,0)");
+		createFunction(m, "cauchy", "Cauchy distribution", "lambda(a,a)");
+		createFunction(m, "rayleigh", "Rayleigh distribution", "lambda(s,s*sqrt(pi/2))");
+		createFunction(m, "poisson", "Poisson distribution", "lambda(mu,mu)");
+		createFunction(m, "binomial", "Binomial distribution", "lambda(p,n,p*n)");
+		createFunction(m, "bernoulli", "Bernoulli distribution", "lambda(p,p)");
+		
+		// translate from lhpn to sbml
+		// ----variables -> parameters-----	
+		for (String v: lhpn.getVariables()){
+			if (v != null){
+				String initVal = lhpn.getInitialVal(v);
+				if (lhpn.isInteger(v)){
+					Parameter var = m.createParameter(); 
+					var.setConstant(false);
+					var.setId(v);				
+					Pattern initVarIsIntPattern = Pattern.compile(Int);
+					Matcher initVarIsIntMatcher = initVarIsIntPattern.matcher(initVal);
+					boolean initVarIsInt = initVarIsIntMatcher.matches();
+					Pattern initVarIsRangePattern = Pattern.compile(Range);
+					Matcher initVarIsRangeMatcher = initVarIsRangePattern.matcher(initVal);
+					boolean initVarIsRange = initVarIsRangeMatcher.matches();
+					Pattern initRangeBoundPattern = Pattern.compile(Range);
+					Matcher initRangeBoundMatcher = initRangeBoundPattern.matcher(initVal); 
+					boolean initVarRangeFound = initRangeBoundMatcher.find();
+					if (initVarIsInt && !initVarIsRange) {
+						double initValDouble = Double.parseDouble(initVal);
+						var.setValue(initValDouble);
+					}
+					if (!initVarIsInt && initVarIsRange && initVarRangeFound) {
+						var.setValue(0);
+						InitialAssignment initAssign = m.createInitialAssignment();
+						initAssign.setSymbol(var.getId());
+						String initVarAssignRHS = "uniform(";
+						for (int i=1; i<=initRangeBoundMatcher.groupCount();i++) {
+							initVarAssignRHS = initVarAssignRHS + initRangeBoundMatcher.group(i);
+							if (i==1)
+								initVarAssignRHS = initVarAssignRHS + ",";
+						}
+						initVarAssignRHS = initVarAssignRHS + ")";
+						initAssign.setMath(SBMLutilities.myParseFormula(initVarAssignRHS));
+					}
+				} else { // boolean variable 
+					Parameter p = m.createParameter(); 
+					p.setConstant(false);
+					p.setId(v);
+					p.setSBOTerm(GlobalConstants.SBO_BOOLEAN);
+					String initValue = lhpn.getInitialVal(v);
+					// check initValue type; if boolean, set parameter value as 0 or 1.
+					if (initValue.equals("true")){
+						p.setValue(1);
+					}
+					else {
+						p.setValue(0);
+					}
+				}			
+			}
+		}
+		
+		for (String v: lhpn.getContinuous().keySet()){
+			String initVal = lhpn.getInitialVal(v);
+			Parameter var = m.createParameter(); 
+			var.setConstant(false);
+			var.setId(v);				
+			Pattern initVarIsIntPattern = Pattern.compile(Int);
+			Matcher initVarIsIntMatcher = initVarIsIntPattern.matcher(initVal);
+			boolean initVarIsInt = initVarIsIntMatcher.matches();
+			Pattern initVarIsRangePattern = Pattern.compile(Range);
+			Matcher initVarIsRangeMatcher = initVarIsRangePattern.matcher(initVal);
+			boolean initVarIsRange = initVarIsRangeMatcher.matches();
+			Pattern initRangeBoundPattern = Pattern.compile(Range);
+			Matcher initRangeBoundMatcher = initRangeBoundPattern.matcher(initVal); 
+			boolean initVarRangeFound = initRangeBoundMatcher.find();
+			if (initVarIsInt && !initVarIsRange) {
+				double initValDouble = Double.parseDouble(initVal);
+				var.setValue(initValDouble);
+			}
+			if (!initVarIsInt && initVarIsRange && initVarRangeFound) {
+				var.setValue(0);
+				InitialAssignment initAssign = m.createInitialAssignment();
+				initAssign.setSymbol(var.getId());
+				String initVarAssignRHS = "uniform(";
+				for (int i=1; i<=initRangeBoundMatcher.groupCount();i++) {
+					initVarAssignRHS = initVarAssignRHS + initRangeBoundMatcher.group(i);
+					if (i==1)
+						initVarAssignRHS = initVarAssignRHS + ",";
+				}
+				initVarAssignRHS = initVarAssignRHS + ")";
+				initAssign.setMath(SBMLutilities.myParseFormula(initVarAssignRHS));
+			}
+			Parameter rateVar = m.createParameter();
+			rateVar.setConstant(false);
+			rateVar.setId(v + "_" + GlobalConstants.RATE);
+			RateRule rateRule = m.createRateRule();
+			rateRule.setMetaId(GlobalConstants.RULE+"_"+v+"_"+GlobalConstants.RATE);
+			rateRule.setVariable(v);
+			rateRule.setMath(SBMLutilities.myParseFormula(rateVar.getId()));
+			String initRate= lhpn.getInitialRate(v);
+			boolean initRateIsInt = Pattern.matches(Int, initRate);
+			boolean initRateIsRange = Pattern.matches(Range, initRate);
+			Pattern initRateRangePattern = Pattern.compile(Range);
+			Matcher initRateRangeMatcher = initRateRangePattern.matcher(initRate); 
+			boolean initRateRangeFound = initRateRangeMatcher.find();
+			if (initRateIsInt && !initRateIsRange) {
+				double initRateDouble = Double.parseDouble(initRate);
+				rateVar.setValue(initRateDouble);
+			}
+			if (!initRateIsInt && initRateIsRange && initRateRangeFound) {
+				rateVar.setValue(0);
+				InitialAssignment initAssign = m.createInitialAssignment();
+				initAssign.setSymbol(rateVar.getId());
+				initAssign.setMath(SBMLutilities.myParseFormula(initRate));
+				String initRateAssignRHS = "uniform(";
+				for (int i=1; i<=initRateRangeMatcher.groupCount();i++) {
+					initRateAssignRHS = initRateAssignRHS + initRateRangeMatcher.group(i);
+					if (i==1)
+						initRateAssignRHS = initRateAssignRHS + ",";
+				}
+				initRateAssignRHS = initRateAssignRHS + ")";
+				initAssign.setMath(SBMLutilities.myParseFormula(initRateAssignRHS));
+			}
+		}
+		
+		// ----places -> species-----	
+		for (String p: lhpn.getPlaceList()){
+			Boolean initMarking = lhpn.getPlace(p).isMarked();
+//			System.out.println(p + "=" + initMarking);
+			Parameter v = m.createParameter();
+			v.setId(p);
+			v.setSBOTerm(GlobalConstants.SBO_PLACE);
+			v.setConstant(false);
+			if (initMarking){
+				v.setValue(1);
+			} else {
+				v.setValue(0);
+			}
+		}
+		
+		// ----convert transitions -----
+		for (String t : lhpn.getTransitionList()) {
+			Event e = m.createEvent();
+			e.setId(t);
+			e.setSBOTerm(GlobalConstants.SBO_TRANSITION);
+			Trigger trigger = e.createTrigger();
+			String EnablingTestNull = lhpn.getTransition(t).getEnabling();
+			String Enabling;
+			if (EnablingTestNull == null){
+				Enabling = "true"; // Enabling is true (Boolean)
+			} else {
+				Enabling = lhpn.getEnablingTree(t).getElement("SBML");
+			}
+
+			//test Preset(t)
+			String CheckPreset = null;
+			int indexPreset = 0;
+
+			// Check if all the presets of transition t are marked
+			// Transition t can fire only when all its preset are marked.
+			for (String x:lhpn.getPreset(t)){
+				if (indexPreset == 0){
+					CheckPreset = "eq(" + x + ",1)";
+				}
+				else {
+					CheckPreset = "and(" + CheckPreset + "," + "eq(" + x + ",1)" + ")";
+				}	
+				indexPreset ++;
+			}
+
+			// Is transition persistent?
+			if (!lhpn.getTransition(t).isPersistent() || (lhpn.getTransition(t).isPersistent() && !lhpn.getTransition(t).hasConflictSet())){
+				if (!lhpn.getTransition(t).isPersistent()) {
+					trigger.setPersistent(false);
+				}
+				else {
+					trigger.setPersistent(true);
+				}
+
+				trigger.setMath(SBMLutilities.myParseFormula("and(" + Enabling + "," + CheckPreset + ")"));
+			}
+			else { // transition is persistent
+				// Create a rule for the persistent transition t. 
+				AssignmentRule rulePersisTrigg = m.createAssignmentRule();
+				String rulePersisTriggName = "trigg_" + t;
+				// Create a parameter (id = rulePersisTriggName). 
+				Parameter rulePersisParam = m.createParameter();
+				rulePersisParam.setId(rulePersisTriggName);
+				rulePersisParam.setValue(0);
+				rulePersisParam.setConstant(false);
+				rulePersisParam.setUnits("");
+				String ruleExpBool = "or(and(" + CheckPreset + "," + Enabling + "), and(" + CheckPreset + "," + "eq(" + rulePersisTriggName + ", 1)" +"))";
+				String ruleExpReal = "piecewise(1, " + ruleExpBool + ", 0)";
+				rulePersisTrigg.setVariable(rulePersisTriggName);
+				rulePersisTrigg.setMath(SBMLutilities.myParseFormula(ruleExpReal));
+				trigger.setPersistent(false);
+				trigger.setMath(SBMLutilities.myParseFormula("eq(" + rulePersisTriggName + ", 1)"));
+			}
+
+			// TriggerInitiallyFalse
+			//					trigger.setAnnotation("<TriggerInitiallyFalse/>");
+			trigger.setInitialValue(false);
+
+			// use values at trigger time = false
+			e.setUseValuesFromTriggerTime(false);
+
+			// Priority and delay
+			if (lhpn.getTransition(t).getDelay()!=null) {
+				e.createDelay();
+				e.getDelay().setMath(SBMLutilities.myParseFormula(lhpn.getTransition(t).getDelay()));
+			}
+			if (lhpn.getTransition(t).getPriority()!=null) {
+				e.createPriority();
+				e.getPriority().setMath(SBMLutilities.myParseFormula(lhpn.getTransition(t).getPriority()));
+			}
+
+			// Check if there is any self-loop. If the intersection between lhpn.getPreset(t) and lhpn.getPostset(t)
+			// is not empty, self-loop exists. 
+			List<String> t_postset = Arrays.asList(lhpn.getPostset(t));
+			List<String> t_intersect = new ArrayList<String>(); // intersection of t_preset and t_postset
+			List<String> t_NoIntersect = new ArrayList<String>(); // t_NoIntersect = t_postset - t_preset
+			Boolean selfLoopFlag = false;
+
+			// Check if there is intersection between the preset and postset. 
+			for (String x : lhpn.getPreset(t)){
+				if (t_postset.contains(x)){
+					selfLoopFlag = true;
+					t_intersect.add(x);
+				}
+			}
+			if (selfLoopFlag) {
+				t_NoIntersect.removeAll(t_intersect);
+				// t_preset = 0
+				for (String x : lhpn.getPreset(t)){
+					EventAssignment assign0 = e.createEventAssignment();
+					assign0.setVariable(x);
+					assign0.setMath(SBMLutilities.myParseFormula("0"));
+					//				System.out.println("transition: " + t + " preset: " + x);
+				}
+
+				// t_NoIntersect  = 1
+				for (String x : t_NoIntersect){
+					EventAssignment assign1 = e.createEventAssignment();
+					assign1.setVariable(x);
+					assign1.setMath(SBMLutilities.myParseFormula("1"));
+					//				System.out.println("transition: " + t + " postset: " + x);
+				}
+
+			}
+			else {			// no self-loop 
+				// t_preSet = 0
+				for (String x : lhpn.getPreset(t)){
+					EventAssignment assign0 = e.createEventAssignment();
+					assign0.setVariable(x);
+					assign0.setMath(SBMLutilities.myParseFormula("0"));
+					//				System.out.println("transition: " + t + " preset: " + x);
+				}
+
+				// t_postSet = 1
+				for (String x : lhpn.getPostset(t)){
+					EventAssignment assign1 = e.createEventAssignment();
+					assign1.setVariable(x);
+					assign1.setMath(SBMLutilities.myParseFormula("1"));
+					//				System.out.println("transition: " + t + " postset: " + x);
+				}
+			}
+
+			// assignment <A>
+			// continuous assignment
+			if (lhpn.getContVars(t) != null){
+				for (String var : lhpn.getContVars(t)){
+					if (lhpn.getContAssign(t, var) != null) {
+						ExprTree assignContTree = lhpn.getContAssignTree(t, var);	
+						String assignCont = assignContTree.toString("SBML");
+						//								System.out.println("continuous assign: "+ assignCont);
+						EventAssignment assign2 = e.createEventAssignment();
+						assign2.setVariable(var);
+						assign2.setMath(SBMLutilities.myParseFormula(assignCont));
+					}
+				}
+			}
+
+			// integer assignment
+			if (lhpn.getIntVars()!= null){
+				for (String var : lhpn.getIntVars()){
+					if (lhpn.getIntAssign(t, var) != null) {
+						ExprTree assignIntTree = lhpn.getIntAssignTree(t, var);
+						String assignInt = assignIntTree.toString("SBML");
+						//							    System.out.println("integer assignment from LHPN: " + var + " := " + assignInt);
+						EventAssignment assign3 = e.createEventAssignment();
+						assign3.setVariable(var);
+						assign3.setMath(SBMLutilities.myParseFormula(assignInt));
+					}
+				}
+			}
+
+			// boolean assignment
+			if (selfLoopFlag) {
+				// if self-loop exists, create a new variable, extraVar, and a new event
+				String extraVar = t.concat("_extraVar");
+				Parameter p = m.createParameter(); 
+				p.setConstant(false);
+				p.setId(extraVar);
+				p.setValue(0);
+
+				EventAssignment assign4ex = e.createEventAssignment();
+				assign4ex.setVariable(extraVar);
+				assign4ex.setMath(SBMLutilities.myParseFormula("1"));
+
+				// Create other boolean assignments
+				if (lhpn.getBooleanVars(t)!= null){
+					for (String var :lhpn.getBooleanVars(t)){
+						if (lhpn.getBoolAssign(t, var) != null) {
+							ExprTree assignBoolTree = lhpn.getBoolAssignTree(t, var);
+							String assignBool_tmp = assignBoolTree.toString("SBML");
+							String assignBool = "piecewise(1," + assignBool_tmp + ",0)";
+							//System.out.println("boolean assignment from LHPN: " + var + " := " + assignBool);
+							EventAssignment assign4 = e.createEventAssignment();
+							assign4.setVariable(var);
+							assign4.setMath(SBMLutilities.myParseFormula(assignBool));
+						}
+					}
+				}
+
+				// create a new event 
+				Event extraEvent = m.createEvent();
+				extraEvent.setId("extra_" + t);	
+				Trigger triggerExtra = extraEvent.createTrigger();
+				//triggerExtra.setMath(SBMLutilities.myParseFormula("and(gt(t,0),eq(" + extraVar + ",1))"));
+				triggerExtra.setMath(SBMLutilities.myParseFormula("eq(" + extraVar + ",1)"));
+				//triggerExtra.setAnnotation("<TriggerInitiallyFalse/>");
+				triggerExtra.setPersistent(true);
+				triggerExtra.setInitialValue(false);
+				extraEvent.setUseValuesFromTriggerTime(false);
+				// assignments
+				EventAssignment assign5ex2 = extraEvent.createEventAssignment();
+				for (String var : t_intersect){
+					EventAssignment assign5ex1 = extraEvent.createEventAssignment();
+					assign5ex1.setVariable(var);
+					assign5ex1.setMath(SBMLutilities.myParseFormula("1"));
+				}
+				assign5ex2.setVariable(extraVar);
+				assign5ex2.setMath(SBMLutilities.myParseFormula("0"));
+			}
+			else {
+				if (lhpn.getBooleanVars(t)!= null){
+					for (String var :lhpn.getBooleanVars(t)){
+						if (lhpn.getBoolAssign(t, var) != null) {
+							ExprTree assignBoolTree = lhpn.getBoolAssignTree(t, var);
+							String assignBool_tmp = assignBoolTree.toString("SBML");
+							String assignBool = "piecewise(1," + assignBool_tmp + ",0)";
+							//System.out.println("boolean assignment from LHPN: " + var + " := " + assignBool);
+							EventAssignment assign4 = e.createEventAssignment();
+							assign4.setVariable(var);
+							assign4.setMath(SBMLutilities.myParseFormula(assignBool));
+						}
+					}
+				}
+			}
+
+			// rate assignment
+			if (lhpn.getRateVars(t)!= null){
+				for (String var : lhpn.getRateVars(t)){
+					//							 System.out.println("rate var: "+ var);
+					if (lhpn.getRateAssign(t, var) != null) {
+						ExprTree assignRateTree = lhpn.getRateAssignTree(t, var);
+						String assignRate = assignRateTree.toString("SBML");
+						//						System.out.println("rate assign: "+ assignRate);
+
+						EventAssignment assign5 = e.createEventAssignment();
+						assign5.setVariable(var + "_" + GlobalConstants.RATE);
+						assign5.setMath(SBMLutilities.myParseFormula(assignRate));
+					}
+				}
+			}
+			// When translating a fail transition into an event, that event should assign to a special "fail" variable a value of 1.  
+			// This "fail" variable should have initial value of 0.  The SBML model should have a constraint "eq(fail,0)".
+			if (lhpn.getTransition(t).isFail()){
+				Parameter failVar = m.createParameter();
+				failVar.setConstant(false);
+				failVar.setId(GlobalConstants.FAIL);
+				failVar.setValue(0);
+				EventAssignment assign6 = e.createEventAssignment();
+				assign6.setVariable(failVar.getId());
+				assign6.setMath(SBMLutilities.myParseFormula("1"));
+				Constraint failVarConstraint = m.createConstraint();
+				failVarConstraint.setMetaId(GlobalConstants.FAIL_TRANSITION);
+				failVarConstraint.setMath(SBMLutilities.myParseFormula("eq(" + failVar.getId() + ", 0)"));
+			}
+		}
+		// Property parsing is dealt with in PropertyPanel.java
+		// translate the LPN property to SBML constraints
+		document = generateSBMLConstraints(document, property, lhpn);
+	}
+	
 	private void createFunction(Model model, String id, String name, String formula) {
 	if (document.getModel().getFunctionDefinition(id) == null) {
 		FunctionDefinition f = model.createFunctionDefinition();
