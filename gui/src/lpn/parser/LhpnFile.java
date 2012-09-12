@@ -1183,11 +1183,16 @@ public class LhpnFile {
 	}
 	
 	public String[] getVariables() {
-		String[] vars = new String[variables.size()];
+		String[] vars = new String[variables.size()+continuous.keySet().size()];
 		int i = 0;
 		for (Variable v : variables) {
 			vars[i++] = v.getName();
 		}
+		
+		for(String contName : continuous.keySet()){
+			vars[i++] = contName;
+		}
+		
 		return vars;
 	}
 	
