@@ -544,10 +544,10 @@ public class Run implements ActionListener {
 					Abstraction abst = new Abstraction(lhpnFile, abstPane);
 					abst.abstractSTG(false);
 					abst.save(root + separator + simName + separator + lpnName + ".temp");
-					t1.buildTemplate(root + separator + simName + separator + lpnName + ".temp", prop);
+					t1.convertLPN2SBML(root + separator + simName + separator + lpnName + ".temp", prop);
 				}
 				else {
-					t1.buildTemplate(root + separator + simName + separator + lpnName, prop);
+					t1.convertLPN2SBML(root + separator + simName + separator + lpnName, prop);
 				}
 				t1.setFilename(root + separator + simName + separator + lpnName.replace(".lpn", ".xml"));
 				t1.outputSBML();
@@ -595,14 +595,15 @@ public class Run implements ActionListener {
 							Abstraction abst = new Abstraction(lhpnFile, abstPane);
 							abst.abstractSTG(false);
 							abst.save(root + separator + simName + separator + modelFile);
-							t1.buildTemplate(root + separator + simName + separator + modelFile, lpnProperty);
+							t1.convertLPN2SBML(root + separator + simName + separator + modelFile, lpnProperty);
 						}
 						else {
-							t1.buildTemplate(root + separator + modelFile, lpnProperty);
+							t1.convertLPN2SBML(root + separator + modelFile, lpnProperty);
 						}
 						t1.setFilename(root + separator + sbmlName);
 						t1.outputSBML();
 						exitValue = 0;
+						return exitValue;
 					}
 					else if (gcmEditor != null && nary.isSelected()) {
 						String lpnName = modelFile.replace(".sbml", "").replace(".gcm", "").replace(".xml", "") + ".lpn";
@@ -669,10 +670,10 @@ public class Run implements ActionListener {
 								Abstraction abst = new Abstraction(lhpnFile, abstPane);
 								abst.abstractSTG(false);
 								abst.save(root + separator + simName + separator + lpnName + ".temp");
-								t1.buildTemplate(root + separator + simName + separator + lpnName + ".temp", prop);
+								t1.convertLPN2SBML(root + separator + simName + separator + lpnName + ".temp", prop);
 							}
 							else {
-								t1.buildTemplate(root + separator + simName + separator + lpnName, prop);
+								t1.convertLPN2SBML(root + separator + simName + separator + lpnName, prop);
 							}
 							t1.setFilename(root + separator + sbmlName);
 							t1.outputSBML();
@@ -757,6 +758,7 @@ public class Run implements ActionListener {
 						}
 						time1 = System.nanoTime();
 						exitValue = 0;
+						return exitValue;
 					}
 					else {
 						ArrayList<String> specs = new ArrayList<String>();
