@@ -772,7 +772,7 @@ public class Translator {
 						initVarAssignRHS = initVarAssignRHS + ")";
 						initAssign.setMath(SBMLutilities.myParseFormula(initVarAssignRHS));
 					}
-				} else { // boolean variable 
+				} else if (lhpn.isBoolean(v)) { // boolean variable 
 					Parameter p = m.createParameter(); 
 					p.setConstant(false);
 					p.setId(v);
