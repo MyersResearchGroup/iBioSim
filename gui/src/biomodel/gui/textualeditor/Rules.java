@@ -979,7 +979,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			ListOf r = gcm.getSBMLDocument().getModel().getListOfRules();
 			for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumRules(); i++) {
 				Rule rule = (Rule) r.get(i);
-				if (rule.isRate() && rule.getVariable().equals(id))
+				if ((rule.isRate()||rule.isAssignment()) && rule.getVariable().equals(id))
 					return false;
 			}
 		}

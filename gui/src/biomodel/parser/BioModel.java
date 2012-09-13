@@ -2153,8 +2153,10 @@ public class BioModel {
 					message += "Rate rule: d(" + r.getVariable() + ")/dt := " + SBMLutilities.myFormulaToString(r.getMath()) + "\n";
 				}
  			} else if (r.isAssignment()) {
-				error = true;
- 				message += "Assignment rule: " + r.getVariable() + " := " + SBMLutilities.myFormulaToString(r.getMath()) + "\n";
+ 				if (!r.getVariable().startsWith(GlobalConstants.TRIGGER+"_")) {
+ 					error = true;
+ 					message += "Assignment rule: " + r.getVariable() + " := " + SBMLutilities.myFormulaToString(r.getMath()) + "\n";
+ 				}
  			} else {
 				error = true;
  				message += "Algebraic rule: 0 := " + SBMLutilities.myFormulaToString(r.getMath()) + "\n";
@@ -2254,7 +2256,7 @@ public class BioModel {
 				Transition t = new Transition();
 				t.setLpn(lpn);
 				t.setName(e.getId());
-				t.setPersistent(e.getTrigger().getPersistent());
+				t.setPersistent(false);
 				lpn.addTransition(t);
 				ArrayList<String> preset = SBMLutilities.getPreset(flatSBML,e);
 				for (int j = 0; j < preset.size(); j++) {
@@ -2264,7 +2266,28 @@ public class BioModel {
 				for (int j = 0; j < postset.size(); j++) {
 					t.addPostset(lpn.getPlace(postset.get(j)));
 				}
-				if (e.isSetTrigger()) {
+				Rule r = sbml.getModel().getRule(GlobalConstants.TRIGGER + "_" + e.getId());
+				if (r != null) {
+					t.setPersistent(true);
+					ASTNode triggerMath = r.getMath();
+					String trigger = SBMLutilities.myFormulaToString(triggerMath);
+					if (triggerMath.getType()==libsbml.AST_FUNCTION_PIECEWISE && triggerMath.getNumChildren() > 2) {
+						triggerMath = triggerMath.getChild(1);
+						if (triggerMath.getType()==libsbml.AST_LOGICAL_OR) {
+							triggerMath = triggerMath.getLeftChild();
+							for (int j = 0; j < sbml.getModel().getNumParameters(); j++) {
+								Parameter parameter = sbml.getModel().getParameter(j);
+								if (parameter!=null && SBMLutilities.isPlace(parameter)) {
+									if (trigger.contains("eq("+parameter.getId()+", 1)")||
+											trigger.contains("("+parameter.getId()+" == 1)")){
+										triggerMath = SBMLutilities.removePreset(triggerMath, parameter.getId());
+									}
+								} 
+							}
+						}
+					}
+					t.addEnabling(SBMLutilities.SBMLMathToLPNString(triggerMath,constants,booleans));
+				} else if (e.isSetTrigger()) {
 					ASTNode triggerMath = e.getTrigger().getMath();
 					String trigger = SBMLutilities.myFormulaToString(triggerMath);
 					for (int j = 0; j < flatSBML.getModel().getNumParameters(); j++) {
