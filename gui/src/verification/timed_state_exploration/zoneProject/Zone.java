@@ -435,8 +435,11 @@ public class Zone{
 		// Initialize the matrix.
 		_matrix = new int[matrixSize()][matrixSize()];
 		
-		// Set the lower bound/ upper bounds.
+		// Set the lower bound/ upper bounds of the timers and the rates.
 		initializeLowerUpperBounds(getAllNames(), localStates);
+		
+		// Initialize the row and column entries for the continuous variables.
+		initializeRowColumnContVar();
 		
 		// Advance Time
 		advance();
@@ -634,13 +637,13 @@ public class Zone{
 				Variable contVar = lpn.getVariable(continuousVariables[j]);
 				
 				// Get the rate.
-				int rate = (int) Double.parseDouble(contVar.getInitRate());
+				//int rate = (int) Double.parseDouble(contVar.getInitRate());
+				IntervalPair rate = parseRate(contVar.getInitRate());
 				
 				// Get the LPN index for the variable
 				int lpnIndex = lpn.getLpnIndex();
 				
-				// Get the index as a variable for the LPN. This index matches
-				// the index in the vector stored by platu.State.
+				// Get the index as a variable for the LPN.
 				int contVariableIndex = variableIndex.get(continuousVariables[j]);
 				
 				LPNTransitionPair newPair = 
@@ -648,11 +651,13 @@ public class Zone{
 				
 				// If the rate is non-zero, then the variables needs to be tracked
 				// by matrix part of the Zone.
-				if(rate !=0){
+				//if(rate !=0){
+				if(!rate.equals(new IntervalPair(0,0))){
 					// Temporary exception guaranteeing only unit rates.
-					if(rate != -1 && rate != 1){
+					//if(rate != -1 && rate != 1){
+					if(rate.get_LowerBound() != 1 && rate.get_UpperBound() != 1){
 						throw new IllegalArgumentException("Current development " +
-								"only supports unit rates. The variable " + contVar +
+								"only supports positive unit rates. The variable " + contVar +
 								" has a rate of " + rate);
 					}
 					
@@ -766,8 +771,12 @@ public class Zone{
 				// TODO : Check if correct.
 				String contValue = v.getInitValue();
 				IntervalPair bound = parseRate(contValue);
-				setDbmEntry(0, ltPair.get_transitionIndex(), -1*bound.get_LowerBound());
-				setDbmEntry(ltPair.get_transitionIndex(), 0, bound.get_UpperBound());
+				// Set upper bound (DBM entry (0, x) where x is the index of the variable v).
+				setDbmEntryByPair(LPNTransitionPair.ZERO_TIMER_PAIR, ltPair, bound.get_UpperBound());
+				
+				// Set lower bound (DBM entry (x, 0) where x is the index of the variable v).
+				setDbmEntryByPair(ltPair, LPNTransitionPair.ZERO_TIMER_PAIR, -1*bound.get_LowerBound());
+				
 				
 				
 //				lower = range.get_LowerBound();
@@ -835,8 +844,77 @@ public class Zone{
 		
 	}
 	
-	private void populateContinuousEntries(){
+	/**
+	 * Initialize the rows and columns for the continuous variables.
+	 */
+	private void initializeRowColumnContVar(){
 		
+		/*
+		 * TODO : Describe the idea behind the following algorithm.
+		 */
+		
+//		for(int row=2; row<_indexToTimerPair.length; row++){
+//			// Note: row is indexing the row of the DBM matrix.
+//			
+//			LPNTransitionPair ltRowPair = _indexToTimerPair[row];
+//			
+//			if(ltRowPair.get_isTimer()){
+//				// If we reached the timers, stop.
+//				break;
+//			}
+//			
+//			for(int col=1; col<row; col++){
+//				// Note: col is indexing the column of the DBM matrix. 
+//				
+//				// The new (row, col) entry. The entry is given by col-row<= m_(row,col). Since 
+//				// col <= m_(0,col) (its upper bound) and -row <= m_(row,0) (the negative of its lower
+//				// bound), the entry is given by col-row <= m(0,col) + m_(row,0) = m_(row,col);
+//				int rowCol = getDbmEntry(row,0) + getDbmEntry(0, col);
+//				
+//				// The new (col, row) entry.
+//				int colRow = getDbmEntry(col, 0) + getDbmEntry(0, row);
+//						
+//				setDbmEntry(row, col, rowCol);
+//				setDbmEntry(col, row, colRow);
+//			}
+//		}
+		
+		// The only entries that do not need to be checked are the ones where both variables 
+		// represent timers.
+		
+		for(int row=2; row<_indexToTimerPair.length; row++){
+			// Note: row is indexing the row of the DBM matrix.
+			
+			LPNTransitionPair ltRowPair = _indexToTimerPair[row];
+			
+//			if(ltRowPair.get_isTimer()){
+//				// If we reached the timers, stop.
+//				break;
+//			}
+			
+			for(int col=1; col<row; col++){
+				// Note: col is indexing the column of the DBM matrix. 
+				
+				LPNTransitionPair ltColPair = _indexToTimerPair[col];
+				
+				// If we've reached the part of the zone involving only timers, then break out
+				// of this row.
+				if(ltRowPair.get_isTimer() && ltColPair.get_isTimer()){
+					break;
+				}
+				
+				// The new (row, col) entry. The entry is given by col-row<= m_(row,col). Since 
+				// col <= m_(0,col) (its upper bound) and -row <= m_(row,0) (the negative of its lower
+				// bound), the entry is given by col-row <= m(0,col) + m_(row,0) = m_(row,col);
+				int rowCol = getDbmEntry(row,0) + getDbmEntry(0, col);
+				
+				// The new (col, row) entry.
+				int colRow = getDbmEntry(col, 0) + getDbmEntry(0, row);
+						
+				setDbmEntry(row, col, rowCol);
+				setDbmEntry(col, row, colRow);
+			}
+		}
 	}
 	
 	/**
@@ -1246,6 +1324,26 @@ public class Zone{
 	}
 	
 	/**
+	 * Sets the entry in the DBM using the LPNTransitionPair indexing.
+	 * @param row
+	 * 			The LPNTransitionPair for the row.
+	 * @param col
+	 * 			The LPNTransitionPair for the column.
+	 * @param value
+	 * 			The value to set the entry to.
+	 */
+	private void setDbmEntryByPair(LPNTransitionPair row, LPNTransitionPair col, int value){
+		
+		// The row index.
+		int i = timerIndexToDBMIndex(row);
+		
+		// The column index.
+		int j = timerIndexToDBMIndex(col);
+		
+		setDbmEntry(i, j, value);
+	}
+	
+	/**
 	 * Returns the index of the the transition in the DBM given a LPNTransitionPair pairing
 	 * the transition index and associated LPN index.
 	 * @param ltPair
@@ -1265,6 +1363,8 @@ public class Zone{
 	 */
 	public String toString()
 	{
+		// TODO : Add the rate zero continuous variables.
+		
 		String result = "Timer and delay.\n";
 		
 		int count = 0;
@@ -1295,9 +1395,9 @@ public class Zone{
 					// If the current LPNTransitionPair is not a timer, get the
 					// name as a continuous variable.
 					Variable var = _lpnList[_indexToTimerPair[i].get_lpnIndex()]
-							.getVariable(_indexToTimerPair[i].get_transitionIndex());
+							.getContVar(_indexToTimerPair[i].get_transitionIndex());
 					
-					name = var.getName();
+					name = var.getName() + "rate";
 				}
 				
 //				result += " " +  tran.getName() + ":";
@@ -1853,6 +1953,16 @@ public class Zone{
 			_matrix[dbmIndexToMatrixIndex(0)][dbmIndexToMatrixIndex(i)] = 
 				getUpperBoundbydbmIndex(i);
 		}
+	}
+	
+	/**
+	 * Finds the maximum amount that time cam advance.
+	 * @return
+	 * 		value.
+	 * 		The maximum amount that time can advance before a timer expires or an inequality changes
+	 */
+	private int maxAdvance(){
+		return 0;
 	}
 	
 	/* (non-Javadoc)
