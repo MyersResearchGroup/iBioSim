@@ -296,6 +296,7 @@ public class BioGraph extends mxGraph {
 		for (long i = 0; i < m.getNumRules(); i++) {
 			Rule rule = m.getRule(i);
 			if (rule.getMetaId().endsWith("_"+GlobalConstants.RATE)) continue;
+			if (rule.getVariable().startsWith(GlobalConstants.TRIGGER + "_")) continue;
 			if (layout.getReactionGlyph(rule.getMetaId()) != null) {
 				layout.getReactionGlyph(rule.getMetaId()).setId(GlobalConstants.GLYPH+"__"+rule.getMetaId());
 				layout.getTextGlyph(rule.getMetaId()).setId(GlobalConstants.TEXT_GLYPH+"__"+rule.getMetaId());
@@ -360,6 +361,7 @@ public class BioGraph extends mxGraph {
 				Parameter p = m.getParameter(i);
 				if (p.getId().equals(GlobalConstants.FAIL)) continue;
 				if (p.getId().endsWith("_" + GlobalConstants.RATE)) continue;
+				if (p.getId().startsWith(GlobalConstants.TRIGGER + "_")) continue;
 				if (!p.getConstant()) {
 					String id = p.getId();
 					if (layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+id)!=null) {
@@ -742,6 +744,7 @@ public class BioGraph extends mxGraph {
 		for (int i = 0; i < m.getNumRules(); i++) {
 			Rule r = m.getRule(i);
 			if (r.getMetaId().endsWith("_"+GlobalConstants.RATE)) continue;
+			if (r.getVariable().startsWith(GlobalConstants.TRIGGER+"_")) continue;
 			GeneralGlyph generalGlyph = (GeneralGlyph)
 					layout.getAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+r.getMetaId());
 			if (generalGlyph != null) {

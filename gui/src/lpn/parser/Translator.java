@@ -471,7 +471,7 @@ public class Translator {
 				else { // transition is persistent
 					// Create a rule for the persistent transition t. 
 					AssignmentRule rulePersisTrigg = m.createAssignmentRule();
-					String rulePersisTriggName = "trigg_" + t;
+					String rulePersisTriggName = GlobalConstants.TRIGGER + "_" + t;
 					// Create a parameter (id = rulePersisTriggName). 
 					Parameter rulePersisParam = m.createParameter();
 					rulePersisParam.setId(rulePersisTriggName);
@@ -912,14 +912,15 @@ public class Translator {
 			else { // transition is persistent
 				// Create a rule for the persistent transition t. 
 				AssignmentRule rulePersisTrigg = m.createAssignmentRule();
-				String rulePersisTriggName = "trigg_" + t;
+				rulePersisTrigg.setMetaId(GlobalConstants.TRIGGER+"_"+GlobalConstants.RULE+"_"+t);
+				String rulePersisTriggName = GlobalConstants.TRIGGER + "_" + t;
 				// Create a parameter (id = rulePersisTriggName). 
 				Parameter rulePersisParam = m.createParameter();
 				rulePersisParam.setId(rulePersisTriggName);
 				rulePersisParam.setValue(0);
 				rulePersisParam.setConstant(false);
 				rulePersisParam.setUnits("");
-				String ruleExpBool = "or(and(" + CheckPreset + "," + Enabling + "), and(" + CheckPreset + "," + "eq(" + rulePersisTriggName + ", 1)" +"))";
+				String ruleExpBool = "or(and(" + Enabling + "," + CheckPreset + "), and(" + "eq(" + rulePersisTriggName + ", 1)," + CheckPreset + "))";
 				String ruleExpReal = "piecewise(1, " + ruleExpBool + ", 0)";
 				rulePersisTrigg.setVariable(rulePersisTriggName);
 				rulePersisTrigg.setMath(SBMLutilities.myParseFormula(ruleExpReal));

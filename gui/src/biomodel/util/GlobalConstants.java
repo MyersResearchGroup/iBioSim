@@ -123,6 +123,7 @@ public class GlobalConstants {
 	public static final String FAIL = "fail";
 	public static final String FAIL_TRANSITION = "failTransition";
 	public static final String RATE = "rate";
+	public static final String TRIGGER = "trigger";
 	
 	public static final String SBOL_PROMOTER = "sbolPromoter";
 	public static final String SBOL_TERMINATOR = "sbolTerminator";
