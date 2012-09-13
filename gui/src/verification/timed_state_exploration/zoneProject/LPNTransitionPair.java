@@ -40,6 +40,8 @@ public class LPNTransitionPair implements Comparable<LPNTransitionPair>{
 	// Value for indicating the zero timer.
 	public static final int ZERO_TIMER = -1;
 	
+	public static final LPNTransitionPair ZERO_TIMER_PAIR = new LPNTransitionPair(ZERO_TIMER,ZERO_TIMER,true);
+	
 	private int _lpnIndex;
 	private int _transitionIndex;
 	private boolean _isTimer;
@@ -175,9 +177,15 @@ public class LPNTransitionPair implements Comparable<LPNTransitionPair>{
 		String result = "";
 		
 		if(_isTimer){
-			result = "(LPN Index, Transition Index) = (";
+			
+			if(this.equals(ZERO_TIMER_PAIR)){
+				result += "Zero timer";
+			}else
+			{
+				result += "(LPN Index, Transition Index) = (";
 
-			result += _lpnIndex + ", " + _transitionIndex + ")";
+				result += _lpnIndex + ", " + _transitionIndex + ")";
+			}
 		}
 		else{
 			result = "(LPN Index, Continuous Variable) = (";
