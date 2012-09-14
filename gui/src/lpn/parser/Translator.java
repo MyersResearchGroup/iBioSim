@@ -1062,7 +1062,7 @@ public class Translator {
 				//triggerExtra.setMath(SBMLutilities.myParseFormula("and(gt(t,0),eq(" + extraVar + ",1))"));
 				triggerExtra.setMath(SBMLutilities.myParseFormula("and(true,eq(" + extraVar + ",1))"));
 				//triggerExtra.setAnnotation("<TriggerInitiallyFalse/>");
-				triggerExtra.setPersistent(true);
+				triggerExtra.setPersistent(false);
 				triggerExtra.setInitialValue(false);
 				extraEvent.setUseValuesFromTriggerTime(false);
 				// assignments
