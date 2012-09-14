@@ -5838,6 +5838,76 @@ public class BioModel {
 	}
 	*/
 	
+	private boolean isPortRemoved(Submodel submodel,String portId) {
+		for (long i = 0; i < submodel.getNumDeletions(); i++) {
+			Deletion deletion = submodel.getDeletion(i);
+			if (deletion.isSetPortRef() && deletion.getPortRef().equals(portId)) {
+				return true;
+			}
+		}
+		SBaseList elements = sbml.getModel().getListOfAllElements();
+		for (long i = 0; i < elements.getSize(); i++) {
+			SBase sbase = elements.get(i);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getPlugin("comp");
+			if (sbmlSBase!=null) {
+				for (long j = 0; j < sbmlSBase.getNumReplacedElements(); j++) {
+					ReplacedElement replacement = sbmlSBase.getReplacedElement(j);
+					if (replacement.getSubmodelRef().equals(submodel.getId()) &&
+							replacement.isSetPortRef() && replacement.getPortRef().equals(portId)) {
+							return true;
+						}
+				}
+				if (sbmlSBase.isSetReplacedBy()) {
+					ReplacedBy replacement = sbmlSBase.getReplacedBy();
+					if (replacement.getSubmodelRef().equals(submodel.getId()) &&
+							replacement.isSetPortRef() && replacement.getPortRef().equals(portId)) {
+							return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	private void removeStaleReplacementsDeletions(CompModelPlugin subCompModel,Submodel submodel) {
+		for (long i = 0; i < submodel.getNumDeletions(); i++) {
+			Deletion deletion = submodel.getDeletion(i);
+			if (deletion.isSetPortRef()) {
+				if (subCompModel.getPort(deletion.getPortRef())==null) {
+					deletion.removeFromParentAndDelete();
+					i--;
+				}
+			}
+		}
+		SBaseList elements = sbml.getModel().getListOfAllElements();
+		for (long i = 0; i < elements.getSize(); i++) {
+			SBase sbase = elements.get(i);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getPlugin("comp");
+			if (sbmlSBase!=null) {
+				for (long j = 0; j < sbmlSBase.getNumReplacedElements(); j++) {
+					ReplacedElement replacement = sbmlSBase.getReplacedElement(j);
+					if (replacement.getSubmodelRef().equals(submodel.getId()) && replacement.isSetPortRef()) {
+						if (subCompModel.getPort(replacement.getPortRef())==null) {
+							replacement.removeFromParentAndDelete();
+							elements = sbml.getModel().getListOfAllElements();
+							i--;
+						}
+					}
+				}
+				if (sbmlSBase.isSetReplacedBy()) {
+					ReplacedBy replacement = sbmlSBase.getReplacedBy();
+					if (replacement.getSubmodelRef().equals(submodel.getId()) && replacement.isSetPortRef()) {
+						if (subCompModel.getPort(replacement.getPortRef())==null) {
+							replacement.removeFromParentAndDelete();
+							elements = sbml.getModel().getListOfAllElements();
+							i--;
+						}
+					}
+				}
+			}
+		}
+	}
+	
 	private void updatePorts() {
 		int j = 0;
 		while (j < sbmlCompModel.getNumPorts()) {
@@ -5866,6 +5936,7 @@ public class BioModel {
 					//System.out.println("MD5 DOES NOT MATCH");
 					sbmlComp.getExternalModelDefinition(submodel.getModelRef()).setMd5(md5);
 				}
+				removeStaleReplacementsDeletions(subBioModel.getSBMLCompModel(),submodel);
 				for (j = 0; j < subBioModel.getSBMLCompModel().getNumPorts(); j++) {
 					Port subPort = subBioModel.getSBMLCompModel().getPort(j);
 					if (!isPortRemoved(submodel,subPort.getId())) {
@@ -5921,37 +5992,6 @@ public class BioModel {
 		}
 		port.setSBOTerm(GlobalConstants.SBO_OUTPUT_PORT);
 		return true;
-	}
-	
-	private boolean isPortRemoved(Submodel submodel,String portId) {
-		for (long i = 0; i < submodel.getNumDeletions(); i++) {
-			Deletion deletion = submodel.getDeletion(i);
-			if (deletion.isSetPortRef() && deletion.getPortRef().equals(portId)) {
-				return true;
-			}
-		}
-		SBaseList elements = sbml.getModel().getListOfAllElements();
-		for (long i = 0; i < elements.getSize(); i++) {
-			SBase sbase = elements.get(i);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getPlugin("comp");
-			if (sbmlSBase!=null) {
-				for (long j = 0; j < sbmlSBase.getNumReplacedElements(); j++) {
-					ReplacedElement replacement = sbmlSBase.getReplacedElement(j);
-					if (replacement.getSubmodelRef().equals(submodel.getId()) &&
-							replacement.isSetPortRef() && replacement.getPortRef().equals(portId)) {
-							return true;
-						}
-				}
-				if (sbmlSBase.isSetReplacedBy()) {
-					ReplacedBy replacement = sbmlSBase.getReplacedBy();
-					if (replacement.getSubmodelRef().equals(submodel.getId()) &&
-							replacement.isSetPortRef() && replacement.getPortRef().equals(portId)) {
-							return true;
-					}
-				}
-			}
-		}
-		return false;
 	}
 
 	private void loadSBMLFile(String sbmlFile) {
