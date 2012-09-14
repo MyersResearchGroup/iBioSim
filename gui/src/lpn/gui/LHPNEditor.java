@@ -231,13 +231,21 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		dirty = false;
 		biosim.updateAsyncViews(filename);
 	}
-
+	
 	public void saveAs(String newName) {
-		dirty = false;
-		lhpnFile.save(directory + separator + newName);
-		reload(newName);
-		biosim.addToTree(newName);
-		biosim.updateAsyncViews(newName);
+		if (newName.endsWith(".xml")) {
+			Translator t1 = new Translator();
+			t1.convertLPN2SBML(directory + separator + filename, "");
+			t1.setFilename(directory + separator + newName);
+			t1.outputSBML();
+			biosim.addToTree(newName);
+		} else {
+			dirty = false;
+			lhpnFile.save(directory + separator + newName);
+			reload(newName);
+			biosim.addToTree(newName);
+			biosim.updateAsyncViews(newName);
+		}
 	}
 
 	public void viewLhpn() {

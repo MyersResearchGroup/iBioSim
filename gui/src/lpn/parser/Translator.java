@@ -1033,6 +1033,7 @@ public class Translator {
 				p.setConstant(false);
 				p.setId(extraVar);
 				p.setValue(0);
+				p.setSBOTerm(GlobalConstants.SBO_PLACE);
 
 				EventAssignment assign4ex = e.createEventAssignment();
 				assign4ex.setVariable(extraVar);
@@ -1056,9 +1057,10 @@ public class Translator {
 				// create a new event 
 				Event extraEvent = m.createEvent();
 				extraEvent.setId("extra_" + t);	
+				extraEvent.setSBOTerm(GlobalConstants.SBO_TRANSITION);
 				Trigger triggerExtra = extraEvent.createTrigger();
 				//triggerExtra.setMath(SBMLutilities.myParseFormula("and(gt(t,0),eq(" + extraVar + ",1))"));
-				triggerExtra.setMath(SBMLutilities.myParseFormula("eq(" + extraVar + ",1)"));
+				triggerExtra.setMath(SBMLutilities.myParseFormula("and(true,eq(" + extraVar + ",1))"));
 				//triggerExtra.setAnnotation("<TriggerInitiallyFalse/>");
 				triggerExtra.setPersistent(true);
 				triggerExtra.setInitialValue(false);
