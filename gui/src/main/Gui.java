@@ -3403,11 +3403,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				if (newName == null) {
 					return;
 				}
-				if (!newName.endsWith(".lpn")) {
+				if (!newName.endsWith(".lpn") && !newName.endsWith(".xml")) {
 					newName = newName + ".lpn";
 				}
 				((LHPNEditor) comp).saveAs(newName);
-				tab.setTitleAt(tab.getSelectedIndex(), newName);
+				if (newName.endsWith(".lpn")) {
+					tab.setTitleAt(tab.getSelectedIndex(), newName);
+				}
 			}
 			else if (comp instanceof ModelEditor) {
 				String newName = JOptionPane.showInputDialog(frame, "Enter model name:", "Model Name", JOptionPane.PLAIN_MESSAGE);
