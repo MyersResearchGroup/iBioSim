@@ -3333,8 +3333,14 @@ public class BioModel {
 		ArrayList<String> reactionSet = new ArrayList<String>();
 		if (sbml!=null) {
 			for (int i = 0; i < sbml.getModel().getNumReactions(); i++) {
-				Reaction reaction = sbml.getModel().getReaction(i);
-				reactionSet.add(reaction.getId());
+				Reaction r = sbml.getModel().getReaction(i);
+				if (isDegradationReaction(r)) continue;
+				if (isDiffusionReaction(r)) continue;
+				if (isProductionReaction(r)) continue;
+				if (isComplexReaction(r)) continue;
+				if (isConstitutiveReaction(r)) continue;
+				if (r.getAnnotationString().contains("grid")) continue;
+				reactionSet.add(r.getId());
 			}
 		}
 		return reactionSet;
@@ -3889,8 +3895,8 @@ public class BioModel {
 				String idRef = port.getIdRef();
 				SBase sbase = sbml.getElementBySId(idRef);
 				if (sbase!=null) {
-					if (sbase.getElementName().equals(GlobalConstants.SPECIES)) {
-						if (type.equals(GlobalConstants.SPECIES)) {
+					if (sbase.getElementName().equals(GlobalConstants.SBMLSPECIES)) {
+						if (type.equals(GlobalConstants.SBMLSPECIES)) {
 							ports.add(idRef);
 						}
 					} else if (sbase.getElementName().equals(GlobalConstants.PARAMETER)) {
@@ -3920,8 +3926,8 @@ public class BioModel {
 				String idRef = port.getIdRef();
 				SBase sbase = sbml.getElementBySId(idRef);
 				if (sbase!=null) {
-					if (sbase.getElementName().equals(GlobalConstants.SPECIES)) {
-						if (type.equals(GlobalConstants.SPECIES)) {
+					if (sbase.getElementName().equals(GlobalConstants.SBMLSPECIES)) {
+						if (type.equals(GlobalConstants.SBMLSPECIES)) {
 							ports.add(idRef);
 						}
 					} else if (sbase.getElementName().equals(GlobalConstants.PARAMETER)) {
@@ -5967,7 +5973,7 @@ public class BioModel {
 			return true;
 		} else if (port.isSetSBOTerm() && port.getSBOTerm()==GlobalConstants.SBO_OUTPUT_PORT) {
 			return false;
-		} else if (port.getId().startsWith(GlobalConstants.INPUT)){
+		} else if (port.getId().startsWith(GlobalConstants.INPUT + "__")){
 			port.setSBOTerm(GlobalConstants.SBO_INPUT_PORT);
 			return true;
 		}
@@ -5987,7 +5993,7 @@ public class BioModel {
 			return true;
 		} else if (port.isSetSBOTerm() && port.getSBOTerm()==GlobalConstants.SBO_INPUT_PORT) {
 			return false;
-		} else if (port.getId().startsWith(GlobalConstants.INPUT)){
+		} else if (port.getId().startsWith(GlobalConstants.INPUT + "__")){
 			return false;
 		}
 		port.setSBOTerm(GlobalConstants.SBO_OUTPUT_PORT);

@@ -748,16 +748,15 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 						sbmlSBase = (CompSBasePlugin)sbase.getPlugin("comp");
 						if (sbmlSBase != null) {
 							if (directionBox.get(i).getSelectedIndex()==0) {
-								/* Code below uses just a replacement */
-								/*
+								/* TODO: Code below uses just a replacement */
 								ReplacedElement replacement = sbmlSBase.createReplacedElement();
 								replacement.setSubmodelRef(subId);
 								replacement.setPortRef(portId);
 								if (!convBox.get(i).getSelectedItem().equals("(none)")) {
 									replacement.setConversionFactor((String)convBox.get(i).getSelectedItem());
 								}
-								*/
 								/* Code below using replacement and deletion */
+								/*
 								ReplacedElement replacement = sbmlSBase.createReplacedElement();
 								replacement.setSubmodelRef(subId);
 								Submodel submodel = bioModel.getSBMLCompModel().getSubmodel(subId);
@@ -765,6 +764,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 								deletion.setPortRef(portId);
 								deletion.setId("delete_"+portId);
 								replacement.setDeletion("delete_"+portId);
+								*/
 							} else {
 								Replacing replacement = sbmlSBase.createReplacedBy();
 								replacement.setSubmodelRef(subId);
