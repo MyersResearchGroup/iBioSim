@@ -5,7 +5,6 @@ import lpn.parser.LhpnFile;
 import lpn.parser.Lpn2verilog;
 import lpn.parser.Translator;
 import graph.Graph;
-import lpn.parser.*;
 //import lpn.parser.properties.BuildProperty;
 
 
@@ -82,7 +81,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.tree.TreeModel;
 
-import analysis.AnalysisThread;
 import analysis.AnalysisView;
 import analysis.Run;
 import lpn.parser.properties.BuildProperty;
@@ -250,7 +248,64 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private JMenuItem undo, redo, copy, rename, delete, save, saveAs, saveSBOL, check, run, refresh, viewCircuit, viewRules, viewTrace, viewLog, viewCoverage,
 			viewLHPN, saveModel, saveAsVerilog, viewSG, viewModGraph, viewLearnedModel, viewModBrowser, createAnal, createLearn, createSbml,
 			createSynth, createVer, close, closeAll, convertToLPN;
-
+	
+	private JCheckBox dialog;
+	private JCheckBox icons;
+	private JCheckBox libsbmlFlatten;
+	private JCheckBox infix;
+	
+	private JTextField ACTIVED_VALUE;
+	private JTextField KACT_VALUE;
+	private JTextField KBASAL_VALUE;
+	private JTextField KDECAY_VALUE;
+	private JTextField KECDECAY_VALUE;
+	private JTextField COOPERATIVITY_VALUE;
+	private JTextField RNAP_VALUE;
+	private JTextField PROMOTER_COUNT_VALUE;
+	private JTextField OCR_VALUE;
+	private JTextField RNAP_BINDING_VALUE;
+	private JTextField ACTIVATED_RNAP_BINDING_VALUE;
+	private JTextField KREP_VALUE;
+	private JTextField STOICHIOMETRY_VALUE;
+	private JTextField KCOMPLEX_VALUE;
+	private JTextField FORWARD_MEMDIFF_VALUE;
+	private JTextField REVERSE_MEMDIFF_VALUE;
+	private JTextField KECDIFF_VALUE;
+	
+	private JTextField uriField;
+	private JTextField regexField;
+	
+	private JTextField limit;
+	private JTextField interval;
+	private JTextField minStep;
+	private JTextField step;
+	private JTextField error;
+	private JTextField seed;
+	private JTextField runs;
+	private JTextField rapid1;
+	private JTextField rapid2;
+	private JTextField qssa;
+	private JTextField concentration;
+	private JComboBox useInterval;
+	private JTextField simCommand;
+	private JComboBox sim;
+	private JComboBox abs;
+	private JComboBox type;
+	
+	private JTextField tn;
+	private JTextField tj;
+	private JTextField ti;
+	private JComboBox bins;
+	private JComboBox equaldata;
+	private JComboBox autolevels;
+	private JTextField ta;
+	private JTextField tr;
+	private JTextField tm;
+	private JTextField tt;
+	private JComboBox debug;
+	private JComboBox succpred;
+	private JComboBox findbaseprob;
+	
 	public String ENVVAR;
 
 	public static int SBML_LEVEL = 3;
@@ -438,13 +493,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		menuBar.add(tools);
 		menuBar.add(help);
-		// menuBar.addFocusListener(this);
-		// menuBar.addMouseListener(this);
-		// file.addMouseListener(this);
-		// edit.addMouseListener(this);
-		// view.addMouseListener(this);
-		// tools.addMouseListener(this);
-		// help.addMouseListener(this);
 		undo = new JMenuItem("Undo");
 		redo = new JMenuItem("Redo");
 		copy = new JMenuItem("Copy File");
@@ -488,18 +536,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		importHse = new JMenuItem("Handshaking Expansion");
 		importUnc = new JMenuItem("Extended Burst Mode Machine");
 		importRsg = new JMenuItem("Reduced State Graph");
-		/*
-		 * exportSBML = new JMenuItem("Systems Biology Markup Language (SBML)");
-		 * exportSBOL = new JMenuItem("Synthetic Biology Open Language (SBOL)");
-		 * exportCsv = new JMenuItem("Comma Separated Values (csv)"); exportDat
-		 * = new JMenuItem("Tab Delimited Data (dat)"); exportEps = new
-		 * JMenuItem("Encapsulated Postscript (eps)"); exportJpg = new
-		 * JMenuItem("JPEG (jpg)"); exportPdf = new
-		 * JMenuItem("Portable Document Format (pdf)"); exportPng = new
-		 * JMenuItem("Portable Network Graphics (png)"); exportSvg = new
-		 * JMenuItem("Scalable Vector Graphics (svg)"); exportTsd = new
-		 * JMenuItem("Time Series Data (tsd)");
-		 */
 		exportSBML = new JMenuItem("SBML");
 		exportFlatSBML = new JMenuItem("Flat SBML");
 		exportSBOL = new JMenuItem("SBOL");
@@ -675,76 +711,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		manual.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey | KeyEvent.SHIFT_MASK));
 		exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ShortCutKey));
 		pref.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, ShortCutKey));
-		/*
-		 * if (lema) {
-		 * viewLHPN.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
-		 * viewTrace.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0));
-		 * } else {
-		 * viewCircuit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1,
-		 * 0)); refresh.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5,
-		 * 0)); } viewLog.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F3,
-		 * 0));
-		 * 
-		 * Action newAction = new NewAction(); Action importAction = new
-		 * ImportAction(); Action exportAction = new ExportAction(); Action
-		 * modelAction = new ModelAction();
-		 * newMenu.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-		 * .put(KeyStroke.getKeyStroke(KeyEvent.VK_N, ShortCutKey |
-		 * KeyEvent.ALT_DOWN_MASK), "new"); newMenu.getActionMap().put("new",
-		 * newAction);
-		 * importMenu.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).
-		 * put(KeyStroke.getKeyStroke(KeyEvent.VK_I, ShortCutKey |
-		 * KeyEvent.ALT_DOWN_MASK), "import");
-		 * importMenu.getActionMap().put("import", importAction);
-		 * exportMenu.getInputMap
-		 * (JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke
-		 * .getKeyStroke(KeyEvent.VK_E, ShortCutKey | KeyEvent.ALT_DOWN_MASK),
-		 * "export"); exportMenu.getActionMap().put("export", exportAction);
-		 * viewModel
-		 * .getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke
-		 * .getKeyStroke(KeyEvent.VK_M, ShortCutKey | KeyEvent.ALT_DOWN_MASK),
-		 * "model"); viewModel.getActionMap().put("model", modelAction);
-		 * 
-		 * newMenu.setMnemonic(KeyEvent.VK_N);
-		 * importMenu.setMnemonic(KeyEvent.VK_I);
-		 * exportMenu.setMnemonic(KeyEvent.VK_E);
-		 * viewModel.setMnemonic(KeyEvent.VK_M);
-		 * copy.setMnemonic(KeyEvent.VK_C); rename.setMnemonic(KeyEvent.VK_R);
-		 * delete.setMnemonic(KeyEvent.VK_D); exit.setMnemonic(KeyEvent.VK_X);
-		 * newProj.setMnemonic(KeyEvent.VK_P);
-		 * openProj.setMnemonic(KeyEvent.VK_O);
-		 * close.setMnemonic(KeyEvent.VK_W);
-		 * newGCMModel.setMnemonic(KeyEvent.VK_G);
-		 * newVhdl.setMnemonic(KeyEvent.VK_V);
-		 * newLhpn.setMnemonic(KeyEvent.VK_L); newG.setMnemonic(KeyEvent.VK_N);
-		 * //newSpice.setMnemonic(KeyEvent.VK_P);
-		 * about.setMnemonic(KeyEvent.VK_A); manual.setMnemonic(KeyEvent.VK_M);
-		 * graph.setMnemonic(KeyEvent.VK_T);
-		 * probGraph.setMnemonic(KeyEvent.VK_H); if (!async) {
-		 * importDot.setMnemonic(KeyEvent.VK_G); } else {
-		 * importLpn.setMnemonic(KeyEvent.VK_L); }
-		 * //importSbol.setMnemonic(KeyEvent.VK_O);
-		 * importSbml.setMnemonic(KeyEvent.VK_S);
-		 * importVhdl.setMnemonic(KeyEvent.VK_V);
-		 * //importSpice.setMnemonic(KeyEvent.VK_P);
-		 * save.setMnemonic(KeyEvent.VK_S); run.setMnemonic(KeyEvent.VK_R);
-		 * check.setMnemonic(KeyEvent.VK_K);
-		 * exportCsv.setMnemonic(KeyEvent.VK_C);
-		 * exportEps.setMnemonic(KeyEvent.VK_E);
-		 * exportDat.setMnemonic(KeyEvent.VK_D);
-		 * exportJpg.setMnemonic(KeyEvent.VK_J);
-		 * exportPdf.setMnemonic(KeyEvent.VK_F);
-		 * exportPng.setMnemonic(KeyEvent.VK_G);
-		 * exportSvg.setMnemonic(KeyEvent.VK_S);
-		 * exportTsd.setMnemonic(KeyEvent.VK_T);
-		 * //pref.setMnemonic(KeyEvent.VK_P);
-		 * viewModGraph.setMnemonic(KeyEvent.VK_G);
-		 * viewModBrowser.setMnemonic(KeyEvent.VK_B);
-		 * createAnal.setMnemonic(KeyEvent.VK_A);
-		 * createLearn.setMnemonic(KeyEvent.VK_L);
-		 */
 
-		//importDot.setEnabled(false);
 		importSbol.setEnabled(false);
 		importSedml.setEnabled(false);
 		importSbml.setEnabled(false);
@@ -1088,14 +1055,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		if (biosimrc.get("biosim.gcm.KACT_VALUE", "").equals("")) {
 			biosimrc.put("biosim.gcm.KACT_VALUE", ".0033");
 		}
-		if (biosimrc.get("biosim.gcm.KBIO_VALUE", "").equals("")) {
-			biosimrc.put("biosim.gcm.KBIO_VALUE", ".05");
-		}
 		if (biosimrc.get("biosim.gcm.PROMOTER_COUNT_VALUE", "").equals("")) {
 			biosimrc.put("biosim.gcm.PROMOTER_COUNT_VALUE", "2");
-		}
-		if (biosimrc.get("biosim.gcm.KASSOCIATION_VALUE", "").equals("")) {
-			biosimrc.put("biosim.gcm.KASSOCIATION_VALUE", ".05");
 		}
 		if (biosimrc.get("biosim.gcm.KBASAL_VALUE", "").equals("")) {
 			biosimrc.put("biosim.gcm.KBASAL_VALUE", ".0001");
@@ -1129,12 +1090,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		if (biosimrc.get("biosim.gcm.ACTIVED_VALUE", "").equals("")) {
 			biosimrc.put("biosim.gcm.ACTIVED_VALUE", ".25");
-		}
-		if (biosimrc.get("biosim.gcm.MAX_DIMER_VALUE", "").equals("")) {
-			biosimrc.put("biosim.gcm.MAX_DIMER_VALUE", "1");
-		}
-		if (biosimrc.get("biosim.gcm.INITIAL_VALUE", "").equals("")) {
-			biosimrc.put("biosim.gcm.INITIAL_VALUE", "0");
 		}
 		if (biosimrc.get("biosim.gcm.FORWARD_MEMDIFF_VALUE", "").equals("")) {
 			biosimrc.put("biosim.gcm.FORWARD_MEMDIFF_VALUE", "1.0");
@@ -1304,433 +1259,519 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		};
 		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(dispatcher);
 	}
+	
+	private JPanel generalPreferences(Preferences biosimrc) {
+		// general preferences
+		dialog = new JCheckBox("Use File Dialog");
+		if (biosimrc.get("biosim.general.file_browser", "").equals("FileDialog")) {
+			dialog.setSelected(true);
+		}
+		else {
+			dialog.setSelected(false);
+		}
+		icons = new JCheckBox("Use Plus/Minus For Expanding/Collapsing File Tree");
+		if (biosimrc.get("biosim.general.tree_icons", "").equals("default")) {
+			icons.setSelected(false);
+		}
+		else {
+			icons.setSelected(true);
+		}
+		libsbmlFlatten = new JCheckBox("Use libsbml to Flatten Models");
+		if (biosimrc.get("biosim.general.flatten", "").equals("default")) {
+			libsbmlFlatten.setSelected(false);
+		}
+		else {
+			libsbmlFlatten.setSelected(true);
+		}
+		infix = new JCheckBox("Use Infix Expression Parser");
+		if (biosimrc.get("biosim.general.infix", "").equals("default")) {
+			infix.setSelected(false);
+		}
+		else {
+			infix.setSelected(true);
+		}
+		JButton restoreGen = new JButton("Restore Defaults");
+		restoreGen.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dialog.setSelected(false);
+				icons.setSelected(false);
+				libsbmlFlatten.setSelected(false);
+				infix.setSelected(false);
+			}
+		});	
 
+		// create general preferences panel
+		JPanel generalPrefsBordered = new JPanel(new GridLayout(5,1));
+		JPanel generalPrefs = new JPanel();
+		generalPrefsBordered.add(dialog);
+		generalPrefsBordered.add(icons);
+		generalPrefsBordered.add(libsbmlFlatten);
+		generalPrefsBordered.add(infix);
+		generalPrefsBordered.add(restoreGen);
+		generalPrefs.add(generalPrefsBordered);
+		((FlowLayout) generalPrefs.getLayout()).setAlignment(FlowLayout.LEFT);
+		return generalPrefs;
+	}
+	
+	private JPanel modelPreferences(Preferences biosimrc) {
+		// model preferences
+		Undeclared = new JCheckBox("Check for undeclared units in SBML");
+		if (checkUndeclared) {
+			Undeclared.setSelected(true);
+		}
+		else {
+			Undeclared.setSelected(false);
+		}
+		Units = new JCheckBox("Check units in SBML");
+		if (checkUnits) {
+			Units.setSelected(true);
+		}
+		else {
+			Units.setSelected(false);
+		}
+		final JTextField ACTIVED_VALUE = new JTextField(biosimrc.get("biosim.gcm.ACTIVED_VALUE", ""));
+		final JTextField KACT_VALUE = new JTextField(biosimrc.get("biosim.gcm.KACT_VALUE", ""));
+		final JTextField KBASAL_VALUE = new JTextField(biosimrc.get("biosim.gcm.KBASAL_VALUE", ""));
+		final JTextField KDECAY_VALUE = new JTextField(biosimrc.get("biosim.gcm.KDECAY_VALUE", ""));
+		final JTextField KECDECAY_VALUE = new JTextField(biosimrc.get("biosim.gcm.KECDECAY_VALUE", ""));
+		final JTextField COOPERATIVITY_VALUE = new JTextField(biosimrc.get("biosim.gcm.COOPERATIVITY_VALUE", ""));
+		final JTextField RNAP_VALUE = new JTextField(biosimrc.get("biosim.gcm.RNAP_VALUE", ""));
+		final JTextField PROMOTER_COUNT_VALUE = new JTextField(biosimrc.get("biosim.gcm.PROMOTER_COUNT_VALUE", ""));
+		final JTextField OCR_VALUE = new JTextField(biosimrc.get("biosim.gcm.OCR_VALUE", ""));
+		final JTextField RNAP_BINDING_VALUE = new JTextField(biosimrc.get("biosim.gcm.RNAP_BINDING_VALUE", ""));
+		final JTextField ACTIVATED_RNAP_BINDING_VALUE = new JTextField(biosimrc.get("biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE", ""));
+		final JTextField KREP_VALUE = new JTextField(biosimrc.get("biosim.gcm.KREP_VALUE", ""));
+		final JTextField STOICHIOMETRY_VALUE = new JTextField(biosimrc.get("biosim.gcm.STOICHIOMETRY_VALUE", ""));
+		final JTextField KCOMPLEX_VALUE = new JTextField(biosimrc.get("biosim.gcm.KCOMPLEX_VALUE", ""));
+		final JTextField FORWARD_MEMDIFF_VALUE = new JTextField(biosimrc.get("biosim.gcm.FORWARD_MEMDIFF_VALUE", ""));
+		final JTextField REVERSE_MEMDIFF_VALUE = new JTextField(biosimrc.get("biosim.gcm.REVERSE_MEMDIFF_VALUE", ""));
+		final JTextField KECDIFF_VALUE = new JTextField(biosimrc.get("biosim.gcm.KECDIFF_VALUE", ""));
+
+		JPanel labels = new JPanel(new GridLayout(18, 1));
+		labels.add(Undeclared);
+		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.ACTIVATED_STRING) + " (" + GlobalConstants.ACTIVATED_STRING + "):"));
+		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KACT_STRING) + " (" + GlobalConstants.KACT_STRING + "):"));
+		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KBASAL_STRING) + " (" + GlobalConstants.KBASAL_STRING + "):"));
+		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KDECAY_STRING) + " (" + GlobalConstants.KDECAY_STRING + "):"));
+		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KECDECAY_STRING) + " (" + GlobalConstants.KECDECAY_STRING + "):"));
+		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.COOPERATIVITY_STRING) + " (" + GlobalConstants.COOPERATIVITY_STRING
+				+ "):"));
+		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.RNAP_STRING) + " (" + GlobalConstants.RNAP_STRING + "):"));
+		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.PROMOTER_COUNT_STRING) + " (" + GlobalConstants.PROMOTER_COUNT_STRING
+				+ "):"));
+		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.OCR_STRING) + " (" + GlobalConstants.OCR_STRING + "):"));
+		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.RNAP_BINDING_STRING) + " (" + GlobalConstants.RNAP_BINDING_STRING
+				+ "):"));
+		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING) + " ("
+				+ GlobalConstants.ACTIVATED_RNAP_BINDING_STRING + "):"));
+		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KREP_STRING) + " (" + GlobalConstants.KREP_STRING + "):"));
+		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.STOICHIOMETRY_STRING) + " (" + GlobalConstants.STOICHIOMETRY_STRING
+				+ "):"));
+		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KCOMPLEX_STRING) + " (" + GlobalConstants.KCOMPLEX_STRING + "):"));
+		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.FORWARD_MEMDIFF_STRING) + " (" + GlobalConstants.FORWARD_MEMDIFF_STRING + "):"));
+		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.REVERSE_MEMDIFF_STRING) + " (" + GlobalConstants.REVERSE_MEMDIFF_STRING + "):"));
+		labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KECDIFF_STRING) + " (" + GlobalConstants.KECDIFF_STRING + "):"));
+
+		JPanel fields = new JPanel(new GridLayout(18, 1));
+		fields.add(Units);
+		fields.add(ACTIVED_VALUE);
+		fields.add(KACT_VALUE);
+		fields.add(KBASAL_VALUE);
+		fields.add(KDECAY_VALUE);
+		fields.add(KECDECAY_VALUE);
+		fields.add(COOPERATIVITY_VALUE);
+		fields.add(RNAP_VALUE);
+		fields.add(PROMOTER_COUNT_VALUE);
+		fields.add(OCR_VALUE);
+		fields.add(RNAP_BINDING_VALUE);
+		fields.add(ACTIVATED_RNAP_BINDING_VALUE);
+		fields.add(KREP_VALUE);
+		fields.add(STOICHIOMETRY_VALUE);
+		fields.add(KCOMPLEX_VALUE);
+		fields.add(FORWARD_MEMDIFF_VALUE);
+		fields.add(REVERSE_MEMDIFF_VALUE);
+		fields.add(KECDIFF_VALUE);
+		
+		JButton restoreModel = new JButton("Restore Defaults");
+		restoreModel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Undeclared.setSelected(true);
+				Units.setSelected(true);
+				KREP_VALUE.setText(".5");
+				KACT_VALUE.setText(".0033");
+				PROMOTER_COUNT_VALUE.setText("2");
+				KBASAL_VALUE.setText(".0001");
+				OCR_VALUE.setText(".05");
+				KDECAY_VALUE.setText(".0075");
+				KECDECAY_VALUE.setText(".005");
+				RNAP_VALUE.setText("30");
+				RNAP_BINDING_VALUE.setText(".033");
+				ACTIVATED_RNAP_BINDING_VALUE.setText("1");
+				STOICHIOMETRY_VALUE.setText("10");
+				KCOMPLEX_VALUE.setText("0.05");
+				COOPERATIVITY_VALUE.setText("2");
+				ACTIVED_VALUE.setText(".25");
+				FORWARD_MEMDIFF_VALUE.setText("1.0");
+				REVERSE_MEMDIFF_VALUE.setText("0.01");
+				KECDIFF_VALUE.setText("1.0");
+			}
+		});	
+		// create model preferences panel
+		JPanel modelPrefs = new JPanel(new GridLayout(1, 2));
+		modelPrefs.add(labels);
+		modelPrefs.add(fields);
+		JPanel modelPrefsFinal = new JPanel(new BorderLayout());
+		modelPrefsFinal.add(modelPrefs,"North");
+		modelPrefsFinal.add(restoreModel,"South");
+		return modelPrefsFinal;
+	}
+	
+	private JPanel synthesisPreferences(Preferences biosimrc) {	
+		// synthesis preferences
+		JPanel synthesisLabels = new JPanel(new GridLayout(13, 1));
+		synthesisLabels.add(new JLabel("URI Authority"));
+		synthesisLabels.add(new JLabel("Validation Regex"));
+		
+		JPanel synthesisFields = new JPanel(new GridLayout(13 ,1));
+		uriField = new JTextField(biosimrc.get("biosim.synthesis.uri", ""));
+		regexField = new JTextField(biosimrc.get("biosim.synthesis.regex", ""));
+		synthesisFields.add(uriField);
+		synthesisFields.add(regexField);
+		
+		JButton restoreSyn = new JButton("Restore Defaults");
+		restoreSyn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				uriField.setText("http://www.async.ece.utah.edu");
+				regexField.setText("((promoter(ribosome entry site,coding sequence)+terminator+)|engineered region)+");
+			}
+		});	
+		
+		// create synthesis preferences panel
+		JPanel synthesisPrefs = new JPanel(new GridLayout(1, 2));
+		synthesisPrefs.add(synthesisLabels);
+		synthesisPrefs.add(synthesisFields);
+		JPanel synthesisPrefsFinal = new JPanel(new BorderLayout());
+		synthesisPrefsFinal.add(synthesisPrefs,"North");
+		synthesisPrefsFinal.add(restoreSyn,"South");
+		return synthesisPrefsFinal;
+	}
+
+	private JPanel analysisPreferences(Preferences biosimrc) {	
+		// analysis preferences
+		String[] choices = { "None", "Abstraction", "Logical Abstraction" };
+		simCommand = new JTextField(biosimrc.get("biosim.sim.command", ""));
+		abs = new JComboBox(choices);
+		abs.setSelectedItem(biosimrc.get("biosim.sim.abs", ""));
+
+		if (abs.getSelectedItem().equals("None")) {
+			choices = new String[] { "ODE", "Monte Carlo", "SBML", "Network", "Browser" };
+		}
+		else if (abs.getSelectedItem().equals("Abstraction")) {
+			choices = new String[] { "ODE", "Monte Carlo", "SBML", "Network", "Browser" };
+		}
+		else {
+			choices = new String[] { "Monte Carlo", "Markov", "SBML", "Network", "Browser", "LPN" };
+		}
+
+		type = new JComboBox(choices);
+		type.setSelectedItem(biosimrc.get("biosim.sim.type", ""));
+
+		if (type.getSelectedItem().equals("ODE")) {
+			choices = new String[] { "euler", "gear1", "gear2", "rk4imp", "rk8pd", "rkf45" };
+		}
+		else if (type.getSelectedItem().equals("Monte Carlo")) {
+			choices = new String[] { "gillespie", "gillespieJava", "Gillespie SSA-CR (Java)", "Gillespie SSA-Direct (Java)", "mpde", "mean_path", "mean_path-bifurcation", "median_path", "median_path-bifurcation", "mean_path-adaptive", "mean_path-adaptive-bifurcation", "median_path-adaptive", "median_path-adaptive-bifurcation", "mean_path-event", "mean_path-event-bifurcation", "median_path-event", "median_path-event-bifurcation", "emc-sim", "bunker", "nmc"};
+		}
+		else if (type.getSelectedItem().equals("Markov")) {
+			choices = new String[] { "steady-state-markov-chain-analysis", "transient-markov-chain-analysis", "reachability-analysis", "atacs",
+					"ctmc-transient" };
+		}
+		else {
+			choices = new String[] { "euler", "gear1", "gear2", "rk4imp", "rk8pd", "rkf45" };
+		}
+
+		sim = new JComboBox(choices);
+		sim.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
+		abs.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (abs.getSelectedItem().equals("None")) {
+					Object o = type.getSelectedItem();
+					type.removeAllItems();
+					type.addItem("ODE");
+					type.addItem("Monte Carlo");
+					type.addItem("Model");
+					type.addItem("Network");
+					type.addItem("Browser");
+					type.setSelectedItem(o);
+				}
+				else if (abs.getSelectedItem().equals("Abstraction")) {
+					Object o = type.getSelectedItem();
+					type.removeAllItems();
+					type.addItem("ODE");
+					type.addItem("Monte Carlo");
+					type.addItem("Model");
+					type.addItem("Network");
+					type.addItem("Browser");
+					type.setSelectedItem(o);
+				}
+				else {
+					Object o = type.getSelectedItem();
+					type.removeAllItems();
+					type.addItem("Monte Carlo");
+					type.addItem("Markov");
+					type.addItem("Model");
+					type.addItem("Network");
+					type.addItem("Browser");
+					type.addItem("LPN");
+					type.setSelectedItem(o);
+				}
+			}
+		});
+
+		type.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (type.getSelectedItem() == null) {
+				}
+				else if (type.getSelectedItem().equals("ODE")) {
+					Object o = sim.getSelectedItem();
+					sim.removeAllItems();
+					sim.addItem("euler");
+					sim.addItem("gear1");
+					sim.addItem("gear2");
+					sim.addItem("rk4imp");
+					sim.addItem("rk8pd");
+					sim.addItem("rkf45");
+					sim.setSelectedIndex(5);
+					sim.setSelectedItem(o);
+				}
+				else if (type.getSelectedItem().equals("Monte Carlo")) {
+					Object o = sim.getSelectedItem();
+					sim.removeAllItems();
+					sim.addItem("gillespie");
+					sim.addItem("gillespieJava");
+					sim.addItem("Gillespie SSA-CR (Java)");
+					sim.addItem("Gillespie SSA-Direct (Java)");
+					sim.addItem("mpde");
+					sim.addItem("mean_path");
+					sim.addItem("mean_path-bifurcation");
+					sim.addItem("median_path");
+					sim.addItem("median_path-bifurcation");
+					sim.addItem("mean_path-adaptive");
+					sim.addItem("mean_path-adaptive-bifurcation");
+					sim.addItem("median_path-adaptive");
+					sim.addItem("median_path-adaptive-bifurcation");
+					sim.addItem("mean_path-event");
+					sim.addItem("mean_path-event-bifurcation");
+					sim.addItem("median_path-event");
+					sim.addItem("median_path-event-bifurcation");
+					sim.addItem("emc-sim");
+					sim.addItem("bunker");
+					sim.addItem("nmc");
+					sim.setSelectedItem(o);
+				}
+				else if (type.getSelectedItem().equals("Markov")) {
+					Object o = sim.getSelectedItem();
+					sim.removeAllItems();
+					sim.addItem("steady-state-markov-chain-analysis");
+					sim.addItem("transient-markov-chain-analysis");
+					sim.addItem("reachability-analysis");
+					sim.addItem("atacs");
+					sim.addItem("ctmc-transient");
+					sim.setSelectedItem(o);
+				}
+				else {
+					Object o = sim.getSelectedItem();
+					sim.removeAllItems();
+					sim.addItem("euler");
+					sim.addItem("gear1");
+					sim.addItem("gear2");
+					sim.addItem("rk4imp");
+					sim.addItem("rk8pd");
+					sim.addItem("rkf45");
+					sim.setSelectedIndex(5);
+					sim.setSelectedItem(o);
+				}
+			}
+		});
+
+		limit = new JTextField(biosimrc.get("biosim.sim.limit", ""));
+		interval = new JTextField(biosimrc.get("biosim.sim.interval", ""));
+		minStep = new JTextField(biosimrc.get("biosim.sim.min.step", ""));
+		step = new JTextField(biosimrc.get("biosim.sim.step", ""));
+		error = new JTextField(biosimrc.get("biosim.sim.error", ""));
+		seed = new JTextField(biosimrc.get("biosim.sim.seed", ""));
+		runs = new JTextField(biosimrc.get("biosim.sim.runs", ""));
+		rapid1 = new JTextField(biosimrc.get("biosim.sim.rapid1", ""));
+		rapid2 = new JTextField(biosimrc.get("biosim.sim.rapid2", ""));
+		qssa = new JTextField(biosimrc.get("biosim.sim.qssa", ""));
+		concentration = new JTextField(biosimrc.get("biosim.sim.concentration", ""));
+		
+		choices = new String[] { "Print Interval", "Minimum Print Interval", "Number Of Steps" };
+		useInterval = new JComboBox(choices);
+		useInterval.setSelectedItem(biosimrc.get("biosim.sim.useInterval", ""));
+
+		JPanel analysisLabels = new JPanel(new GridLayout(15, 1));
+		analysisLabels.add(new JLabel("Simulation Command:"));
+		analysisLabels.add(new JLabel("Abstraction:"));
+		analysisLabels.add(new JLabel("Simulation Type:"));
+		analysisLabels.add(new JLabel("Possible Simulators/Analyzers:"));
+		analysisLabels.add(new JLabel("Time Limit:"));
+		analysisLabels.add(useInterval);
+		analysisLabels.add(new JLabel("Minimum Time Step:"));
+		analysisLabels.add(new JLabel("Maximum Time Step:"));
+		analysisLabels.add(new JLabel("Absolute Error:"));
+		analysisLabels.add(new JLabel("Random Seed:"));
+		analysisLabels.add(new JLabel("Runs:"));
+		analysisLabels.add(new JLabel("Rapid Equilibrium Condition 1:"));
+		analysisLabels.add(new JLabel("Rapid Equilibrium Condition 2:"));
+		analysisLabels.add(new JLabel("QSSA Condition:"));
+		analysisLabels.add(new JLabel("Max Concentration Threshold:"));
+
+		JPanel analysisFields = new JPanel(new GridLayout(15, 1));
+		analysisFields.add(simCommand);
+		analysisFields.add(abs);
+		analysisFields.add(type);
+		analysisFields.add(sim);
+		analysisFields.add(limit);
+		analysisFields.add(interval);
+		analysisFields.add(minStep);
+		analysisFields.add(step);
+		analysisFields.add(error);
+		analysisFields.add(seed);
+		analysisFields.add(runs);
+		analysisFields.add(rapid1);
+		analysisFields.add(rapid2);
+		analysisFields.add(qssa);
+		analysisFields.add(concentration);
+		
+		JButton restoreAn = new JButton("Restore Defaults");
+		restoreAn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				simCommand.setText("");
+				abs.setSelectedItem("None");
+				type.setSelectedItem("ODE");
+				sim.setSelectedItem("rkf45");
+				limit.setText("100.0");
+				useInterval.setSelectedItem("Print Interval");
+				interval.setText("1.0");
+				step.setText("inf");
+				minStep.setText("0");
+				error.setText("1.0E-9");
+				seed.setText("314159");
+				runs.setText("1");
+				rapid1.setText("0.1");
+				rapid2.setText("0.1");
+				qssa.setText("0.1");
+				concentration.setText("15");
+			}
+		});	
+
+		// create analysis preferences panel
+		JPanel analysisPrefs = new JPanel(new GridLayout(1, 2));
+		analysisPrefs.add(analysisLabels);
+		analysisPrefs.add(analysisFields);
+		JPanel analysisPrefsFinal = new JPanel(new BorderLayout());
+		analysisPrefsFinal.add(analysisPrefs,"North");
+		analysisPrefsFinal.add(restoreAn,"South");
+		return analysisPrefsFinal;
+	}
+	
+	private JPanel learnPreferences(Preferences biosimrc) {
+		// learning preferences
+		tn = new JTextField(biosimrc.get("biosim.learn.tn", ""));
+		tj = new JTextField(biosimrc.get("biosim.learn.tj", ""));
+		ti = new JTextField(biosimrc.get("biosim.learn.ti", ""));
+		String[] choices = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+		bins = new JComboBox(choices);
+		bins.setSelectedItem(biosimrc.get("biosim.learn.bins", ""));
+		choices = new String[] { "Equal Data Per Bins", "Equal Spacing Of Bins" };
+		equaldata = new JComboBox(choices);
+		equaldata.setSelectedItem(biosimrc.get("biosim.learn.equaldata", ""));
+		choices = new String[] { "Auto", "User" };
+		autolevels = new JComboBox(choices);
+		autolevels.setSelectedItem(biosimrc.get("biosim.learn.autolevels", ""));
+		ta = new JTextField(biosimrc.get("biosim.learn.ta", ""));
+		tr = new JTextField(biosimrc.get("biosim.learn.tr", ""));
+		tm = new JTextField(biosimrc.get("biosim.learn.tm", ""));
+		tt = new JTextField(biosimrc.get("biosim.learn.tt", ""));
+		choices = new String[] { "0", "1", "2", "3" };
+		debug = new JComboBox(choices);
+		debug.setSelectedItem(biosimrc.get("biosim.learn.debug", ""));
+		choices = new String[] { "Successors", "Predecessors", "Both" };
+		succpred = new JComboBox(choices);
+		succpred.setSelectedItem(biosimrc.get("biosim.learn.succpred", ""));
+		choices = new String[] { "True", "False" };
+		findbaseprob = new JComboBox(choices);
+		findbaseprob.setSelectedItem(biosimrc.get("biosim.learn.findbaseprob", ""));
+
+		JPanel learnLabels = new JPanel(new GridLayout(13, 1));
+		learnLabels.add(new JLabel("Minimum Number Of Initial Vectors (Tn):"));
+		learnLabels.add(new JLabel("Maximum Influence Vector Size (Tj):"));
+		learnLabels.add(new JLabel("Score For Empty Influence Vector (Ti):"));
+		learnLabels.add(new JLabel("Number Of Bins:"));
+		learnLabels.add(new JLabel("Divide Bins:"));
+		learnLabels.add(new JLabel("Generate Levels:"));
+		learnLabels.add(new JLabel("Ratio For Activation (Ta):"));
+		learnLabels.add(new JLabel("Ratio For Repression (Tr):"));
+		learnLabels.add(new JLabel("Merge Influence Vectors Delta (Tm):"));
+		learnLabels.add(new JLabel("Relax Thresholds Delta (Tt):"));
+		learnLabels.add(new JLabel("Debug Level:"));
+		learnLabels.add(new JLabel("Successors Or Predecessors:"));
+		learnLabels.add(new JLabel("Basic FindBaseProb:"));
+
+		JPanel learnFields = new JPanel(new GridLayout(13, 1));
+		learnFields.add(tn);
+		learnFields.add(tj);
+		learnFields.add(ti);
+		learnFields.add(bins);
+		learnFields.add(equaldata);
+		learnFields.add(autolevels);
+		learnFields.add(ta);
+		learnFields.add(tr);
+		learnFields.add(tm);
+		learnFields.add(tt);
+		learnFields.add(debug);
+		learnFields.add(succpred);
+		learnFields.add(findbaseprob);
+		
+		JButton restoreLearn = new JButton("Restore Defaults");
+		restoreLearn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				tn.setText("2");
+				tj.setText("2");
+				ti.setText("0.5");
+				bins.setSelectedItem("4");
+				equaldata.setSelectedItem("Equal Data Per Bins");
+				autolevels.setSelectedItem("Auto");
+				ta.setText("1.15");
+				tr.setText("0.75");
+				tm.setText("0.0");
+				tt.setText("0.025");
+				debug.setSelectedItem("0");
+				succpred.setSelectedItem("Successors");
+				findbaseprob.setSelectedItem("False");
+			}
+		});	
+		
+		// create learning preferences panel
+		JPanel learnPrefs = new JPanel(new GridLayout(1, 2));
+		learnPrefs.add(learnLabels);
+		learnPrefs.add(learnFields);
+		JPanel learnPrefsFinal = new JPanel(new BorderLayout());
+		learnPrefsFinal.add(learnPrefs,"North");
+		learnPrefsFinal.add(restoreLearn,"South");
+		return learnPrefsFinal;
+	}
+	
 	// builds the edit>preferences panel
 	public void preferences() {
 		if (!async) {
-
-			// sbml preferences
-			/*
-			String[] Versions = { "L2V4", "L3V1" };
-			JLabel SBMLlabel = new JLabel("SBML Level/Version");
-			LevelVersion = new JComboBox(Versions);
-			if (SBMLLevelVersion.equals("L2V4")) {
-				LevelVersion.setSelectedItem("L2V4");
-			}
-			else {
-				LevelVersion.setSelectedItem("L3V1");
-			}
-			*/
-			Undeclared = new JCheckBox("Check for undeclared units in SBML");
-			if (checkUndeclared) {
-				Undeclared.setSelected(true);
-			}
-			else {
-				Undeclared.setSelected(false);
-			}
-			Units = new JCheckBox("Check units in SBML");
-			if (checkUnits) {
-				Units.setSelected(true);
-			}
-			else {
-				Units.setSelected(false);
-			}
-
 			Preferences biosimrc = Preferences.userRoot();
-
-			// general preferences
-			JCheckBox dialog = new JCheckBox("Use File Dialog");
-			if (biosimrc.get("biosim.general.file_browser", "").equals("FileDialog")) {
-				dialog.setSelected(true);
-			}
-			else {
-				dialog.setSelected(false);
-			}
-			JCheckBox icons = new JCheckBox("Use Plus/Minus For Expanding/Collapsing File Tree");
-			if (biosimrc.get("biosim.general.tree_icons", "").equals("default")) {
-				icons.setSelected(false);
-			}
-			else {
-				icons.setSelected(true);
-			}
-			JCheckBox libsbmlFlatten = new JCheckBox("Use libsbml to Flatten Models");
-			if (biosimrc.get("biosim.general.flatten", "").equals("default")) {
-				libsbmlFlatten.setSelected(false);
-			}
-			else {
-				libsbmlFlatten.setSelected(true);
-			}
-			JCheckBox infix = new JCheckBox("Use Infix Expression Parser");
-			if (biosimrc.get("biosim.general.infix", "").equals("default")) {
-				infix.setSelected(false);
-			}
-			else {
-				infix.setSelected(true);
-			}
-
-			// create sbml preferences panel
-			//JPanel levelPrefs = new JPanel(new GridLayout(1, 2));
-			//levelPrefs.add(SBMLlabel);
-			//levelPrefs.add(LevelVersion);
-
-			// gcm preferences
-			final JTextField ACTIVED_VALUE = new JTextField(biosimrc.get("biosim.gcm.ACTIVED_VALUE", ""));
-			final JTextField KACT_VALUE = new JTextField(biosimrc.get("biosim.gcm.KACT_VALUE", ""));
-			final JTextField KBASAL_VALUE = new JTextField(biosimrc.get("biosim.gcm.KBASAL_VALUE", ""));
-			final JTextField KBIO_VALUE = new JTextField(biosimrc.get("biosim.gcm.KBIO_VALUE", ""));
-			final JTextField KDECAY_VALUE = new JTextField(biosimrc.get("biosim.gcm.KDECAY_VALUE", ""));
-			final JTextField KECDECAY_VALUE = new JTextField(biosimrc.get("biosim.gcm.KECDECAY_VALUE", ""));
-			final JTextField COOPERATIVITY_VALUE = new JTextField(biosimrc.get("biosim.gcm.COOPERATIVITY_VALUE", ""));
-			final JTextField KASSOCIATION_VALUE = new JTextField(biosimrc.get("biosim.gcm.KASSOCIATION_VALUE", ""));
-			final JTextField RNAP_VALUE = new JTextField(biosimrc.get("biosim.gcm.RNAP_VALUE", ""));
-			final JTextField PROMOTER_COUNT_VALUE = new JTextField(biosimrc.get("biosim.gcm.PROMOTER_COUNT_VALUE", ""));
-			final JTextField INITIAL_VALUE = new JTextField(biosimrc.get("biosim.gcm.INITIAL_VALUE", ""));
-			final JTextField MAX_DIMER_VALUE = new JTextField(biosimrc.get("biosim.gcm.MAX_DIMER_VALUE", ""));
-			final JTextField OCR_VALUE = new JTextField(biosimrc.get("biosim.gcm.OCR_VALUE", ""));
-			final JTextField RNAP_BINDING_VALUE = new JTextField(biosimrc.get("biosim.gcm.RNAP_BINDING_VALUE", ""));
-			final JTextField ACTIVATED_RNAP_BINDING_VALUE = new JTextField(biosimrc.get("biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE", ""));
-			final JTextField KREP_VALUE = new JTextField(biosimrc.get("biosim.gcm.KREP_VALUE", ""));
-			final JTextField STOICHIOMETRY_VALUE = new JTextField(biosimrc.get("biosim.gcm.STOICHIOMETRY_VALUE", ""));
-			final JTextField KCOMPLEX_VALUE = new JTextField(biosimrc.get("biosim.gcm.KCOMPLEX_VALUE", ""));
-//			final JTextField MEMDIFF_VALUE = new JTextField(biosimrc.get("biosim.gcm.MEMDIFF_VALUE", ""));
-			final JTextField FORWARD_MEMDIFF_VALUE = new JTextField(biosimrc.get("biosim.gcm.FORWARD_MEMDIFF_VALUE", ""));
-			final JTextField REVERSE_MEMDIFF_VALUE = new JTextField(biosimrc.get("biosim.gcm.REVERSE_MEMDIFF_VALUE", ""));
-			final JTextField KECDIFF_VALUE = new JTextField(biosimrc.get("biosim.gcm.KECDIFF_VALUE", ""));
-
-			JPanel labels = new JPanel(new GridLayout(18, 1));
-			//labels.add(SBMLlabel);
-			labels.add(Undeclared);
-			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.ACTIVATED_STRING) + " (" + GlobalConstants.ACTIVATED_STRING + "):"));
-			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KACT_STRING) + " (" + GlobalConstants.KACT_STRING + "):"));
-			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KBASAL_STRING) + " (" + GlobalConstants.KBASAL_STRING + "):"));
-			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KDECAY_STRING) + " (" + GlobalConstants.KDECAY_STRING + "):"));
-			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KECDECAY_STRING) + " (" + GlobalConstants.KECDECAY_STRING + "):"));
-			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.COOPERATIVITY_STRING) + " (" + GlobalConstants.COOPERATIVITY_STRING
-					+ "):"));
-			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.RNAP_STRING) + " (" + GlobalConstants.RNAP_STRING + "):"));
-			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.PROMOTER_COUNT_STRING) + " (" + GlobalConstants.PROMOTER_COUNT_STRING
-					+ "):"));
-			//labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.INITIAL_STRING) + " (" + GlobalConstants.INITIAL_STRING + "):"));
-			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.OCR_STRING) + " (" + GlobalConstants.OCR_STRING + "):"));
-			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.RNAP_BINDING_STRING) + " (" + GlobalConstants.RNAP_BINDING_STRING
-					+ "):"));
-			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING) + " ("
-					+ GlobalConstants.ACTIVATED_RNAP_BINDING_STRING + "):"));
-			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KREP_STRING) + " (" + GlobalConstants.KREP_STRING + "):"));
-			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.STOICHIOMETRY_STRING) + " (" + GlobalConstants.STOICHIOMETRY_STRING
-					+ "):"));
-			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KCOMPLEX_STRING) + " (" + GlobalConstants.KCOMPLEX_STRING + "):"));
-			//labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.MEMDIFF_STRING) + " (" + GlobalConstants.MEMDIFF_STRING + "):"));
-			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.FORWARD_MEMDIFF_STRING) + " (" + GlobalConstants.FORWARD_MEMDIFF_STRING + "):"));
-			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.REVERSE_MEMDIFF_STRING) + " (" + GlobalConstants.REVERSE_MEMDIFF_STRING + "):"));
-			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KECDIFF_STRING) + " (" + GlobalConstants.KECDIFF_STRING + "):"));
-
-			JPanel fields = new JPanel(new GridLayout(18, 1));
-			//fields.add(LevelVersion);
-			fields.add(Units);
-			fields.add(ACTIVED_VALUE);
-			fields.add(KACT_VALUE);
-			fields.add(KBASAL_VALUE);
-			fields.add(KDECAY_VALUE);
-			fields.add(KECDECAY_VALUE);
-			fields.add(COOPERATIVITY_VALUE);
-			fields.add(RNAP_VALUE);
-			fields.add(PROMOTER_COUNT_VALUE);
-			//fields.add(INITIAL_VALUE);
-			fields.add(OCR_VALUE);
-			fields.add(RNAP_BINDING_VALUE);
-			fields.add(ACTIVATED_RNAP_BINDING_VALUE);
-			fields.add(KREP_VALUE);
-			fields.add(STOICHIOMETRY_VALUE);
-			fields.add(KCOMPLEX_VALUE);
-//			fields.add(MEMDIFF_VALUE);
-			fields.add(FORWARD_MEMDIFF_VALUE);
-			fields.add(REVERSE_MEMDIFF_VALUE);
-			fields.add(KECDIFF_VALUE);
-
-			// create gcm preferences panel
-			JPanel gcmPrefs = new JPanel(new GridLayout(1, 2));
-			gcmPrefs.add(labels);
-			gcmPrefs.add(fields);
-
-			// analysis preferences
-			String[] choices = { "None", "Abstraction", "Logical Abstraction" };
-			JTextField simCommand = new JTextField(biosimrc.get("biosim.sim.command", ""));
-			final JComboBox abs = new JComboBox(choices);
-			abs.setSelectedItem(biosimrc.get("biosim.sim.abs", ""));
-
-			if (abs.getSelectedItem().equals("None")) {
-				choices = new String[] { "ODE", "Monte Carlo", "SBML", "Network", "Browser" };
-			}
-			else if (abs.getSelectedItem().equals("Abstraction")) {
-				choices = new String[] { "ODE", "Monte Carlo", "SBML", "Network", "Browser" };
-			}
-			else {
-				choices = new String[] { "Monte Carlo", "Markov", "SBML", "Network", "Browser", "LPN" };
-			}
-
-			final JComboBox type = new JComboBox(choices);
-			type.setSelectedItem(biosimrc.get("biosim.sim.type", ""));
-
-			if (type.getSelectedItem().equals("ODE")) {
-				choices = new String[] { "euler", "gear1", "gear2", "rk4imp", "rk8pd", "rkf45" };
-			}
-			else if (type.getSelectedItem().equals("Monte Carlo")) {
-				choices = new String[] { "gillespie", "gillespieJava", "Gillespie SSA-CR (Java)", "Gillespie SSA-Direct (Java)", "mpde", "mean_path", "mean_path-bifurcation", "median_path", "median_path-bifurcation", "mean_path-adaptive", "mean_path-adaptive-bifurcation", "median_path-adaptive", "median_path-adaptive-bifurcation", "mean_path-event", "mean_path-event-bifurcation", "median_path-event", "median_path-event-bifurcation", "emc-sim", "bunker", "nmc"};
-			}
-			else if (type.getSelectedItem().equals("Markov")) {
-				choices = new String[] { "steady-state-markov-chain-analysis", "transient-markov-chain-analysis", "reachability-analysis", "atacs",
-						"ctmc-transient" };
-			}
-			else {
-				choices = new String[] { "euler", "gear1", "gear2", "rk4imp", "rk8pd", "rkf45" };
-			}
-
-			final JComboBox sim = new JComboBox(choices);
-			sim.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
-			abs.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					if (abs.getSelectedItem().equals("None")) {
-						Object o = type.getSelectedItem();
-						type.removeAllItems();
-						type.addItem("ODE");
-						type.addItem("Monte Carlo");
-						type.addItem("Model");
-						type.addItem("Network");
-						type.addItem("Browser");
-						type.setSelectedItem(o);
-					}
-					else if (abs.getSelectedItem().equals("Abstraction")) {
-						Object o = type.getSelectedItem();
-						type.removeAllItems();
-						type.addItem("ODE");
-						type.addItem("Monte Carlo");
-						type.addItem("Model");
-						type.addItem("Network");
-						type.addItem("Browser");
-						type.setSelectedItem(o);
-					}
-					else {
-						Object o = type.getSelectedItem();
-						type.removeAllItems();
-						type.addItem("Monte Carlo");
-						type.addItem("Markov");
-						type.addItem("Model");
-						type.addItem("Network");
-						type.addItem("Browser");
-						type.addItem("LPN");
-						type.setSelectedItem(o);
-					}
-				}
-			});
-
-			type.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					if (type.getSelectedItem() == null) {
-					}
-					else if (type.getSelectedItem().equals("ODE")) {
-						Object o = sim.getSelectedItem();
-						sim.removeAllItems();
-						sim.addItem("euler");
-						sim.addItem("gear1");
-						sim.addItem("gear2");
-						sim.addItem("rk4imp");
-						sim.addItem("rk8pd");
-						sim.addItem("rkf45");
-						sim.setSelectedIndex(5);
-						sim.setSelectedItem(o);
-					}
-					else if (type.getSelectedItem().equals("Monte Carlo")) {
-						Object o = sim.getSelectedItem();
-						sim.removeAllItems();
-						sim.addItem("gillespie");
-						sim.addItem("gillespieJava");
-						sim.addItem("Gillespie SSA-CR (Java)");
-						sim.addItem("Gillespie SSA-Direct (Java)");
-						sim.addItem("mpde");
-						sim.addItem("mean_path");
-						sim.addItem("mean_path-bifurcation");
-						sim.addItem("median_path");
-						sim.addItem("median_path-bifurcation");
-						sim.addItem("mean_path-adaptive");
-						sim.addItem("mean_path-adaptive-bifurcation");
-						sim.addItem("median_path-adaptive");
-						sim.addItem("median_path-adaptive-bifurcation");
-						sim.addItem("mean_path-event");
-						sim.addItem("mean_path-event-bifurcation");
-						sim.addItem("median_path-event");
-						sim.addItem("median_path-event-bifurcation");
-						sim.addItem("emc-sim");
-						sim.addItem("bunker");
-						sim.addItem("nmc");
-						sim.setSelectedItem(o);
-					}
-					else if (type.getSelectedItem().equals("Markov")) {
-						Object o = sim.getSelectedItem();
-						sim.removeAllItems();
-						sim.addItem("steady-state-markov-chain-analysis");
-						sim.addItem("transient-markov-chain-analysis");
-						sim.addItem("reachability-analysis");
-						sim.addItem("atacs");
-						sim.addItem("ctmc-transient");
-						sim.setSelectedItem(o);
-					}
-					else {
-						Object o = sim.getSelectedItem();
-						sim.removeAllItems();
-						sim.addItem("euler");
-						sim.addItem("gear1");
-						sim.addItem("gear2");
-						sim.addItem("rk4imp");
-						sim.addItem("rk8pd");
-						sim.addItem("rkf45");
-						sim.setSelectedIndex(5);
-						sim.setSelectedItem(o);
-					}
-				}
-			});
-
-			JTextField limit = new JTextField(biosimrc.get("biosim.sim.limit", ""));
-			JTextField interval = new JTextField(biosimrc.get("biosim.sim.interval", ""));
-			JTextField minStep = new JTextField(biosimrc.get("biosim.sim.min.step", ""));
-			JTextField step = new JTextField(biosimrc.get("biosim.sim.step", ""));
-			JTextField error = new JTextField(biosimrc.get("biosim.sim.error", ""));
-			JTextField seed = new JTextField(biosimrc.get("biosim.sim.seed", ""));
-			JTextField runs = new JTextField(biosimrc.get("biosim.sim.runs", ""));
-			JTextField rapid1 = new JTextField(biosimrc.get("biosim.sim.rapid1", ""));
-			JTextField rapid2 = new JTextField(biosimrc.get("biosim.sim.rapid2", ""));
-			JTextField qssa = new JTextField(biosimrc.get("biosim.sim.qssa", ""));
-			JTextField concentration = new JTextField(biosimrc.get("biosim.sim.concentration", ""));
-			choices = new String[] { "Print Interval", "Minimum Print Interval", "Number Of Steps" };
-			JComboBox useInterval = new JComboBox(choices);
-			useInterval.setSelectedItem(biosimrc.get("biosim.sim.useInterval", ""));
-
-			JPanel analysisLabels = new JPanel(new GridLayout(15, 1));
-			analysisLabels.add(new JLabel("Simulation Command:"));
-			analysisLabels.add(new JLabel("Abstraction:"));
-			analysisLabels.add(new JLabel("Simulation Type:"));
-			analysisLabels.add(new JLabel("Possible Simulators/Analyzers:"));
-			analysisLabels.add(new JLabel("Time Limit:"));
-			analysisLabels.add(useInterval);
-			analysisLabels.add(new JLabel("Minimum Time Step:"));
-			analysisLabels.add(new JLabel("Maximum Time Step:"));
-			analysisLabels.add(new JLabel("Absolute Error:"));
-			analysisLabels.add(new JLabel("Random Seed:"));
-			analysisLabels.add(new JLabel("Runs:"));
-			analysisLabels.add(new JLabel("Rapid Equilibrium Condition 1:"));
-			analysisLabels.add(new JLabel("Rapid Equilibrium Condition 2:"));
-			analysisLabels.add(new JLabel("QSSA Condition:"));
-			analysisLabels.add(new JLabel("Max Concentration Threshold:"));
-
-			JPanel analysisFields = new JPanel(new GridLayout(15, 1));
-			analysisFields.add(simCommand);
-			analysisFields.add(abs);
-			analysisFields.add(type);
-			analysisFields.add(sim);
-			analysisFields.add(limit);
-			analysisFields.add(interval);
-			analysisFields.add(minStep);
-			analysisFields.add(step);
-			analysisFields.add(error);
-			analysisFields.add(seed);
-			analysisFields.add(runs);
-			analysisFields.add(rapid1);
-			analysisFields.add(rapid2);
-			analysisFields.add(qssa);
-			analysisFields.add(concentration);
-
-			// create analysis preferences panel
-			JPanel analysisPrefs = new JPanel(new GridLayout(1, 2));
-			analysisPrefs.add(analysisLabels);
-			analysisPrefs.add(analysisFields);
-
-			// learning preferences
-			final JTextField tn = new JTextField(biosimrc.get("biosim.learn.tn", ""));
-			final JTextField tj = new JTextField(biosimrc.get("biosim.learn.tj", ""));
-			final JTextField ti = new JTextField(biosimrc.get("biosim.learn.ti", ""));
-			choices = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
-			final JComboBox bins = new JComboBox(choices);
-			bins.setSelectedItem(biosimrc.get("biosim.learn.bins", ""));
-			choices = new String[] { "Equal Data Per Bins", "Equal Spacing Of Bins" };
-			final JComboBox equaldata = new JComboBox(choices);
-			equaldata.setSelectedItem(biosimrc.get("biosim.learn.equaldata", ""));
-			choices = new String[] { "Auto", "User" };
-			final JComboBox autolevels = new JComboBox(choices);
-			autolevels.setSelectedItem(biosimrc.get("biosim.learn.autolevels", ""));
-			final JTextField ta = new JTextField(biosimrc.get("biosim.learn.ta", ""));
-			final JTextField tr = new JTextField(biosimrc.get("biosim.learn.tr", ""));
-			final JTextField tm = new JTextField(biosimrc.get("biosim.learn.tm", ""));
-			final JTextField tt = new JTextField(biosimrc.get("biosim.learn.tt", ""));
-			choices = new String[] { "0", "1", "2", "3" };
-			final JComboBox debug = new JComboBox(choices);
-			debug.setSelectedItem(biosimrc.get("biosim.learn.debug", ""));
-			choices = new String[] { "Successors", "Predecessors", "Both" };
-			final JComboBox succpred = new JComboBox(choices);
-			succpred.setSelectedItem(biosimrc.get("biosim.learn.succpred", ""));
-			choices = new String[] { "True", "False" };
-			final JComboBox findbaseprob = new JComboBox(choices);
-			findbaseprob.setSelectedItem(biosimrc.get("biosim.learn.findbaseprob", ""));
-
-			JPanel learnLabels = new JPanel(new GridLayout(13, 1));
-			learnLabels.add(new JLabel("Minimum Number Of Initial Vectors (Tn):"));
-			learnLabels.add(new JLabel("Maximum Influence Vector Size (Tj):"));
-			learnLabels.add(new JLabel("Score For Empty Influence Vector (Ti):"));
-			learnLabels.add(new JLabel("Number Of Bins:"));
-			learnLabels.add(new JLabel("Divide Bins:"));
-			learnLabels.add(new JLabel("Generate Levels:"));
-			learnLabels.add(new JLabel("Ratio For Activation (Ta):"));
-			learnLabels.add(new JLabel("Ratio For Repression (Tr):"));
-			learnLabels.add(new JLabel("Merge Influence Vectors Delta (Tm):"));
-			learnLabels.add(new JLabel("Relax Thresholds Delta (Tt):"));
-			learnLabels.add(new JLabel("Debug Level:"));
-			learnLabels.add(new JLabel("Successors Or Predecessors:"));
-			learnLabels.add(new JLabel("Basic FindBaseProb:"));
-
-			JPanel learnFields = new JPanel(new GridLayout(13, 1));
-			learnFields.add(tn);
-			learnFields.add(tj);
-			learnFields.add(ti);
-			learnFields.add(bins);
-			learnFields.add(equaldata);
-			learnFields.add(autolevels);
-			learnFields.add(ta);
-			learnFields.add(tr);
-			learnFields.add(tm);
-			learnFields.add(tt);
-			learnFields.add(debug);
-			learnFields.add(succpred);
-			learnFields.add(findbaseprob);
-
-			// create learning preferences panel
-			JPanel learnPrefs = new JPanel(new GridLayout(1, 2));
-			learnPrefs.add(learnLabels);
-			learnPrefs.add(learnFields);
-			
-			// synthesis preferences
-			JPanel synthesisLabels = new JPanel(new GridLayout(13, 1));
-			synthesisLabels.add(new JLabel("URI Authority"));
-			synthesisLabels.add(new JLabel("Validation Regex"));
-			
-			JPanel synthesisFields = new JPanel(new GridLayout(13 ,1));
-			JTextField uriField = new JTextField(biosimrc.get("biosim.synthesis.uri", ""));
-			synthesisFields.add(uriField);
-			JTextField regexField = new JTextField(biosimrc.get("biosim.synthesis.regex", ""));
-			synthesisFields.add(regexField);
-			
-			// create synthesis preferences panel
-			JPanel synthesisPrefs = new JPanel(new GridLayout(1, 2));
-			synthesisPrefs.add(synthesisLabels);
-			synthesisPrefs.add(synthesisFields);
-
-			// create general preferences panel
-			JPanel generalPrefsBordered = new JPanel(new GridLayout(4,1));
-			JPanel generalPrefs = new JPanel();
-			generalPrefsBordered.add(dialog);
-			generalPrefsBordered.add(icons);
-			generalPrefsBordered.add(libsbmlFlatten);
-			generalPrefsBordered.add(infix);
-			generalPrefs.add(generalPrefsBordered);
-			((FlowLayout) generalPrefs.getLayout()).setAlignment(FlowLayout.LEFT);
+			JPanel generalPrefs = generalPreferences(biosimrc);
+			JPanel gcmPrefs = modelPreferences(biosimrc);
+			JPanel synthesisPrefs = synthesisPreferences(biosimrc);
+			JPanel analysisPrefs = analysisPreferences(biosimrc);
+			JPanel learnPrefs = learnPreferences(biosimrc);
 
 			// create tabs
 			JTabbedPane prefTabs = new JTabbedPane();
@@ -1776,13 +1817,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					else {
 						biosimrc.put("biosim.general.infix", "default");
 					}
-					/*if (LevelVersion.getSelectedItem().equals("L2V4")) {
-					SBMLLevelVersion = "L2V4";
-					SBML_LEVEL = 2;
-					SBML_VERSION = 4;
-					biosimrc.put("biosim.sbml.level_version", "L2V4");
-				}
-				else {*/
 					SBMLLevelVersion = "L3V1";
 					SBML_LEVEL = 3;
 					SBML_VERSION = 1;
@@ -1818,20 +1852,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					catch (Exception e1) {
 					}
 					try {
-						Double.parseDouble(KBIO_VALUE.getText().trim());
-						biosimrc.put("biosim.gcm.KBIO_VALUE", KBIO_VALUE.getText().trim());
-					}
-					catch (Exception e1) {
-					}
-					try {
 						Double.parseDouble(PROMOTER_COUNT_VALUE.getText().trim());
 						biosimrc.put("biosim.gcm.PROMOTER_COUNT_VALUE", PROMOTER_COUNT_VALUE.getText().trim());
-					}
-					catch (Exception e1) {
-					}
-					try {
-						Double.parseDouble(KASSOCIATION_VALUE.getText().trim());
-						biosimrc.put("biosim.gcm.KASSOCIATION_VALUE", KASSOCIATION_VALUE.getText().trim());
 					}
 					catch (Exception e1) {
 					}
@@ -1898,18 +1920,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					try {
 						Double.parseDouble(ACTIVED_VALUE.getText().trim());
 						biosimrc.put("biosim.gcm.ACTIVED_VALUE", ACTIVED_VALUE.getText().trim());
-					}
-					catch (Exception e1) {
-					}
-					try {
-						Double.parseDouble(MAX_DIMER_VALUE.getText().trim());
-						biosimrc.put("biosim.gcm.MAX_DIMER_VALUE", MAX_DIMER_VALUE.getText().trim());
-					}
-					catch (Exception e1) {
-					}
-					try {
-						Double.parseDouble(INITIAL_VALUE.getText().trim());
-						biosimrc.put("biosim.gcm.INITIAL_VALUE", INITIAL_VALUE.getText().trim());
 					}
 					catch (Exception e1) {
 					}
@@ -2119,12 +2129,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			prefPanel.add(verCmd);
 			prefPanel.add(viewerLabel);
 			prefPanel.add(viewerField);
-			// Preferences biosimrc = Preferences.userRoot();
-			// JPanel vhdlPrefs = new JPanel();
-			// JPanel lhpnPrefs = new JPanel();
-			// JTabbedPane prefTabsNoLema = new JTabbedPane();
-			// prefTabsNoLema.addTab("VHDL Preferences", vhdlPrefs);
-			// prefTabsNoLema.addTab("LPN Preferences", lhpnPrefs);
 			JCheckBox dialog = new JCheckBox("Use File Dialog");
 			if (biosimrc.get("biosim.general.file_browser", "").equals("FileDialog")) {
 				dialog.setSelected(true);
