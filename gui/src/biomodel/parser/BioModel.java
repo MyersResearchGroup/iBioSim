@@ -211,6 +211,41 @@ public class BioModel {
 		createGlobalParameter(GlobalConstants.KECDIFF_STRING, biosimrc.get("biosim.gcm.KECDIFF_VALUE", ""));
 	}
 
+	private void loadDefaultParameterMap() {
+		Preferences biosimrc = Preferences.userRoot();
+		defaultParameters = new HashMap<String,String>();
+
+		defaultParameters.put(GlobalConstants.FORWARD_KREP_STRING, biosimrc.get("biosim.gcm.KREP_VALUE", ""));
+		defaultParameters.put(GlobalConstants.REVERSE_KREP_STRING, "1");
+		
+		defaultParameters.put(GlobalConstants.FORWARD_KACT_STRING, biosimrc.get("biosim.gcm.KACT_VALUE", ""));
+		defaultParameters.put(GlobalConstants.REVERSE_KACT_STRING, "1");
+
+		defaultParameters.put(GlobalConstants.FORWARD_RNAP_BINDING_STRING, biosimrc.get("biosim.gcm.RNAP_BINDING_VALUE", ""));
+		defaultParameters.put(GlobalConstants.REVERSE_RNAP_BINDING_STRING, "1");
+
+		defaultParameters.put(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING, 
+				biosimrc.get("biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE", ""));
+		defaultParameters.put(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING, "1");
+
+		defaultParameters.put(GlobalConstants.FORWARD_KCOMPLEX_STRING, biosimrc.get("biosim.gcm.KCOMPLEX_VALUE", ""));
+		defaultParameters.put(GlobalConstants.REVERSE_KCOMPLEX_STRING, "1");
+
+		defaultParameters.put(GlobalConstants.FORWARD_MEMDIFF_STRING, biosimrc.get("biosim.gcm.FORWARD_MEMDIFF_VALUE", ""));
+		defaultParameters.put(GlobalConstants.REVERSE_MEMDIFF_STRING, biosimrc.get("biosim.gcm.REVERSE_MEMDIFF_VALUE", ""));
+
+		defaultParameters.put(GlobalConstants.KDECAY_STRING, biosimrc.get("biosim.gcm.KDECAY_VALUE", ""));
+		defaultParameters.put(GlobalConstants.KECDECAY_STRING, biosimrc.get("biosim.gcm.KECDECAY_VALUE", ""));
+		defaultParameters.put(GlobalConstants.COOPERATIVITY_STRING, biosimrc.get("biosim.gcm.COOPERATIVITY_VALUE", ""));
+		defaultParameters.put(GlobalConstants.RNAP_STRING, biosimrc.get("biosim.gcm.RNAP_VALUE", ""));
+		defaultParameters.put(GlobalConstants.OCR_STRING, biosimrc.get("biosim.gcm.OCR_VALUE", ""));
+		defaultParameters.put(GlobalConstants.KBASAL_STRING, biosimrc.get("biosim.gcm.KBASAL_VALUE", ""));
+		defaultParameters.put(GlobalConstants.PROMOTER_COUNT_STRING, biosimrc.get("biosim.gcm.PROMOTER_COUNT_VALUE", ""));
+		defaultParameters.put(GlobalConstants.STOICHIOMETRY_STRING, biosimrc.get("biosim.gcm.STOICHIOMETRY_VALUE", ""));
+		defaultParameters.put(GlobalConstants.ACTIVATED_STRING, biosimrc.get("biosim.gcm.ACTIVED_VALUE", ""));
+		defaultParameters.put(GlobalConstants.KECDIFF_STRING, biosimrc.get("biosim.gcm.KECDIFF_VALUE", ""));
+	}
+
 	private void createDegradationDefaultParameters() {
 		Preferences biosimrc = Preferences.userRoot();
 
@@ -5732,7 +5767,7 @@ public class BioModel {
 		} else if (sbml != null && sbml.getModel().getParameter(parameter)!=null){
 			return ""+sbml.getModel().getParameter(parameter).getValue();
 		} else {
-			return "1";
+			return defaultParameters.get(parameter);
 		}
 		/*
 		if (globalParameters.containsKey(parameter)) {
@@ -6016,6 +6051,7 @@ public class BioModel {
 				createSBMLDocument(sbmlFile.replace(".xml",""),false,false);
 			}
 		} 
+		loadDefaultParameterMap();
 		//loadDefaultParameters();
 		loadDefaultEnclosingCompartment();
 		//updateCompartmentReplacements();
@@ -7197,6 +7233,8 @@ public class BioModel {
 	private Parameters parameterPanel = null;
 	
 	private Grid grid = null;
+	
+	private HashMap<String,String> defaultParameters = null;
 	
 	private int creatingCompartmentID = -1;
 	private int creatingVariableID = -1;
