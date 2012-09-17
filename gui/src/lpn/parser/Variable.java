@@ -1,6 +1,9 @@
 package lpn.parser;
 
+import java.util.ArrayList;
 import java.util.Properties;
+
+import verification.timed_state_exploration.zoneProject.InequalityVariable;
 
 public class Variable {
 	
@@ -13,6 +16,10 @@ public class Variable {
 	private String initRate;
 	
 	private String port;
+	
+	// For continuous variables, a list of inequality variables
+	// that contain this continuous variable.
+	protected ArrayList<InequalityVariable> inequalities;
 	
 	public Variable(String name, String type) {
 		this.name = name;
@@ -123,6 +130,26 @@ public class Variable {
 		result = prime * result + ((port == null) ? 0 : port.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
+	}
+	
+	/**
+	 * Get the list of inequality variables that reference this continuous
+	 * variable.
+	 * @return
+	 * 		A list of all the inequality variables that reference this continuous
+	 * 		variable.
+	 */
+	public ArrayList<InequalityVariable> getInequalities(){
+		return inequalities;
+	}
+	
+	/**
+	 * Add an inequality variable that references this continuous variable.
+	 * @param inVar
+	 * 		The InequalityVariable to add.
+	 */
+	public void addInequalityVariable(InequalityVariable inVar){
+		inequalities.add(inVar);
 	}
 	
 	public static final String BOOLEAN = "boolean";
