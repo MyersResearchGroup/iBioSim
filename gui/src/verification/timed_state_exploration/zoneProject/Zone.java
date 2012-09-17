@@ -2403,6 +2403,13 @@ public class Zone{
 //#endif
 //           newMin = s->z->matrix[zoneP][0];
 //         }
+						
+						else if((-1)*getDbmEntry(0, contVar.get_transitionIndex())
+								< (-1)*ineq.getConstant()){
+							// CP: case 8b.
+							newMin = getDbmEntry(0, contVar.get_transitionIndex());
+						}
+						
 //         else {
 //           /* straddle case */
 //#ifdef __LHPN_PRED_DEBUG__
@@ -2411,6 +2418,11 @@ public class Zone{
 //           newMin = chkDiv(events[p]->lrange,
 //                           s->r->bound[p-nevents].current,'F');
 //         }
+						else {
+							// straddle case
+							// CP: case 9b.
+							newMin = 0;
+						}
 //       }
 						
 					}
@@ -2431,6 +2443,13 @@ public class Zone{
 //#endif
 //           newMin = s->z->matrix[zoneP][0];
 //         }
+						
+						if(getDbmEntry(0, contVar.get_transitionIndex())
+								< (-1)*ineq.getConstant()){
+							// CP: case 10b.
+							newMin = getDbmEntry(contVar.get_transitionIndex(), 0);
+						}
+						
 //         else if((-1)*s->z->matrix[zoneP][0] >
 //                 (-1)*chkDiv(ineqL[i]->constant,
 //                             s->r->bound[p-nevents].current,'F')) {
@@ -2440,6 +2459,13 @@ public class Zone{
 //           newMin = chkDiv(ineqL[i]->constant,
 //                           s->r->bound[p-nevents].current,'F');
 //         }
+						else if((-10)*getDbmEntry(contVar.get_transitionIndex(), 0)
+								< (-1)*ineq.getConstant()){
+							// CP: case 7b.
+							newMin = ineq.getConstant();
+						}
+						
+						
 //         else {
 //           /* straddle case */
 //#ifdef __LHPN_PRED_DEBUG__
@@ -2447,6 +2473,14 @@ public class Zone{
 //#endif
 //           newMin = s->z->matrix[zoneP][0];
 //         }
+						
+						
+						else {
+							// straddle case
+							// CP : case 12b
+							newMin = getDbmEntry(0, contVar.get_transitionIndex());
+						}
+						
 //       }
 //     }
 //   }
@@ -2454,6 +2488,7 @@ public class Zone{
 // if(newMin < min) {
 //   min = newMin;
 // }
+						
 					}
 				}	
 			}
