@@ -331,6 +331,21 @@ public class InequalityVariable extends Variable {
 		return range.get_LowerBound();
 	}
 	
+	/**
+	 * Get the type of inequality this variable represents.
+	 * @return
+	 * 		Strings "<", "<=", ">", ">=" depending on the type of inequality
+	 * 		variable that this represents.
+	 */
+	public String get_op(){
+		return _inequalityExprTree.getOp();
+	}
+	
+	public int getConstant(){
+		// TODO : finish
+		return 0;
+	}
+	
 //	/**
 //	 * Finds which child node of the defining ExprTree that contains the
 //	 * continuous variable.
