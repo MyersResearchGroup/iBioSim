@@ -1018,6 +1018,12 @@ public class Zone{
 		return getUpperBoundbydbmIndex(i);
 	}
 	
+	public int getUpperBoundForRate(LPNTransitionPair contVar){
+		// TODO : finish. Also note that for non-zero rate continuous
+		// variables, the method getUpperBoundbyContinuous variable does this.
+		return 0;
+	}
+	
 	/**
 	 * Get the value of the upper bound for the delay.
 	 * @param index
@@ -1961,8 +1967,510 @@ public class Zone{
 	 * 		value.
 	 * 		The maximum amount that time can advance before a timer expires or an inequality changes
 	 */
-	private int maxAdvance(){
-		return 0;
+	private int maxAdvance(LPNTransitionPair contVar, State[] localStates){
+		/*
+		 * Several comments in this function may look like C code. That's because,
+		 * well it is C code from atacs/src/lhpnrsg.c.
+		 */
+		
+		// Get the continuous variable in question.
+		int lpnIndex = contVar.get_lpnIndex();
+		int varIndex = contVar.get_transitionIndex();
+		
+		Variable variable = _lpnList[lpnIndex].getContVar(varIndex);
+		
+//		int lhpnCheckPreds(int p,ineqList &ineqL,lhpnStateADT s,ruleADT **rules,
+//                int nevents,eventADT *events)
+//{
+//#ifdef __LHPN_TRACE__
+//printf("lhpnCheckPreds:begin()\n");
+//#endif
+//int min = INFIN;
+//int newMin = INFIN;
+		
+		int min = INFINITY;
+		int newMin = INFINITY;
+		
+//int zoneP = getIndexZ(s->z,-2,p);
+//for(unsigned i=0;i<ineqL.size();i++) {
+// if(ineqL[i]->type > 4) {
+//   continue;
+// }
+//#ifdef __LHPN_PRED_DEBUG__
+// printf("Zone to check...\n");
+// printZ(s->z,events,nevents,s->r);
+// printf("Checking ...");
+// printI(ineqL[i],events);
+// printf("\n");
+//#endif
+// if(ineqL[i]->place == p) {
+		
+		// Get all the inequalities that reference the variable of interest.
+		ArrayList<InequalityVariable> inequalities = variable.getInequalities();
+		
+		for(InequalityVariable ineq : inequalities){
+		
+//   ineq_update(ineqL[i],s,nevents);
+			
+			// Update the inequality variable.
+			int ineqValue = ineq.evaluate(localStates[varIndex], this);
+			
+//   if(ineqL[i]->type <= 1) {
+//     /* Working on a > or >= ineq */
+			
+			if(ineq.get_op().equals(">") || ineq.get_op().equals(">=")){
+				// Working on a > or >= ineq
+			
+//     if(s->r->bound[p-nevents].current > 0) {
+				
+				// If the rate is positive.
+				if(getUpperBoundForRate(contVar) > 0){
+				
+//       if(s->m->state[ineqL[i]->signal]=='1') {
+					if(ineqValue != 0){
+//         if(s->z->matrix[zoneP][0] <
+//            chkDiv(ineqL[i]->constant,
+//                   s->r->bound[p-nevents].current,'F')) {
+//#ifdef __LHPN_PRED_DEBUG__
+//           printf("CP:case 1a\n");
+//#endif
+//           
+//#ifdef __LHPN_WARN__
+//           warn("checkPreds: Impossible case 1.\n");
+//#endif
+//           newMin = s->z->matrix[zoneP][0];
+						if(getDbmEntry(0, contVar.get_transitionIndex())
+								< ineq.getConstant()){
+							// CP: case 1a.
+							newMin = getDbmEntry(0, contVar.get_transitionIndex());
+						}
+							
+//         }
+//         else if((-1)*s->z->matrix[0][zoneP] >
+//                 chkDiv(ineqL[i]->constant,
+//                        s->r->bound[p-nevents].current,'F')) {
+//#ifdef __LHPN_PRED_DEBUG__
+//           printf("CP:case 2a\n");
+//#endif
+//           newMin = chkDiv(events[p]->urange,
+//                           s->r->bound[p-nevents].current,'F');
+//         }
+						else if ((-1)*getDbmEntry(contVar.get_transitionIndex(),0)
+								> ineq.getConstant()){
+							// CP : case 2a
+							newMin = 0;
+							
+						}
+							
+//         else {
+//           /* straddle case */
+//#ifdef __LHPN_PRED_DEBUG__
+//           printf("CP:case 3a\n");
+//#endif
+//           newMin = chkDiv(events[p]->urange,
+//                           s->r->bound[p-nevents].current,'F');
+//         }
+//       }
+						else{
+							// Straddle case
+							// CP : case 3a
+							newMin = 0;
+						}
+					}
+					else{
+//       else {
+//         if(s->z->matrix[zoneP][0] <
+//            chkDiv(ineqL[i]->constant,
+//                   s->r->bound[p-nevents].current,'F')) {
+//#ifdef __LHPN_PRED_DEBUG__
+//           printf("CP:case 4a -- min: %d\n",chkDiv(ineqL[i]->constant,s->r->bound[p-nevents].current,'F'));
+//#endif
+//           newMin = chkDiv(ineqL[i]->constant,
+//                           s->r->bound[p-nevents].current,'F');
+//         }
+						if(getDbmEntry(contVar.get_transitionIndex(), 0)
+						< ineq.getConstant()){
+							// CP: case 4a -- min
+							newMin = ineq.getConstant();
+						}
+						
+//         else if((-1)*s->z->matrix[0][zoneP] >
+//                 chkDiv(ineqL[i]->constant,
+//                        s->r->bound[p-nevents].current,'F')) {
+//#ifdef __LHPN_PRED_DEBUG__
+//           printf("CP:case 5a\n");
+//#endif
+//#ifdef __LHPN_WARN__
+//           warn("checkPreds: Impossible case 3.\n");
+//#endif
+//           newMin = s->z->matrix[zoneP][0];
+//         }
+						else if((-1)*getDbmEntry(contVar.get_transitionIndex(),0)
+								< ineq.getConstant()){
+							// Impossible case 3.
+							newMin = getDbmEntry(contVar.get_transitionIndex(),0);
+						}
+						
+//         else {
+//#ifdef __LHPN_PRED_DEBUG__
+//           printf("CP:case 6a -- min: %d\n",s->z->matrix[zoneP][0]);
+//#endif
+//           /* straddle case */
+//           newMin = s->z->matrix[zoneP][0];
+//         }
+//       }
+//     }
+						else{
+							// CP : cas 6a
+							// straddle case
+							newMin = getDbmEntry(contVar.get_transitionIndex(),0);
+						}
+					}
+				}
+					
+//     else {
+//       /* warp <= 0 */
+				
+				else{
+					// warp <= 0.
+				
+//       if(s->m->state[ineqL[i]->signal]=='1') {
+					
+					if( ineqValue != 1){
+						
+//         if(s->z->matrix[0][zoneP] <
+//            (-1)*chkDiv(ineqL[i]->constant,
+//                        s->r->bound[p-nevents].current,'F')) {
+//#ifdef __LHPN_PRED_DEBUG__
+//           printf("CP:case 7a\n");
+//#endif
+//#ifdef __LHPN_WARN__
+//           warn("checkPreds: Impossible case 2.\n");
+//#endif
+//           newMin = s->z->matrix[zoneP][0];
+//         }
+						
+						if(getDbmEntry(0, contVar.get_transitionIndex())
+								< (-1) * ineq.getConstant()){
+							// CP: case 7a.
+							newMin = getDbmEntry(contVar.get_transitionIndex(),0);
+						}
+						
+//         else if((-1)*s->z->matrix[zoneP][0] >
+//                 (-1)*chkDiv(ineqL[i]->constant,
+//                             s->r->bound[p-nevents].current,'F')) {
+//#ifdef __LHPN_PRED_DEBUG__
+//           printf("CP:case 8a\n");
+//#endif
+//           newMin = chkDiv(ineqL[i]->constant,
+//                           s->r->bound[p-nevents].current,'F');
+//         }
+						
+						else if((-1)*getDbmEntry(0, contVar.get_transitionIndex())
+								< (-1)*ineq.getConstant()){
+							// Impossible case 8a.
+							newMin = ineq.getConstant();
+						}
+						
+//         else {
+//#ifdef __LHPN_PRED_DEBUG__
+//           printf("CP:case 9a\n");
+//#endif
+//           /* straddle case */
+//           newMin = s->z->matrix[zoneP][0];
+//         }
+//       }
+						
+						else{
+							// straddle case
+							newMin = getDbmEntry(0, contVar.get_transitionIndex());
+						}
+						
+					}
+//       else {
+					
+					else{
+					
+//         if(s->z->matrix[0][zoneP] <
+//            (-1)*chkDiv(ineqL[i]->constant,
+//                        s->r->bound[p-nevents].current,'F')) {
+//#ifdef __LHPN_PRED_DEBUG__
+//           printf("CP:case 10a\n");
+//#endif
+//           newMin = chkDiv(events[p]->lrange,
+//                           s->r->bound[p-nevents].current,'F');
+//         }
+						
+						if(getDbmEntry(contVar.get_transitionIndex(),0)
+								< (-1) * ineq.getConstant()){
+							// CP: case 10a.
+							newMin = 0;
+						}
+						
+						
+//         else if((-1)*s->z->matrix[zoneP][0] >
+//                 (-1)*chkDiv(ineqL[i]->constant,
+//                             s->r->bound[p-nevents].current,'F')) {
+//#ifdef __LHPN_PRED_DEBUG__
+//           printf("CP:case 11a\n");
+//	      printf("z=%d c=%d b=%d\n",
+//		     s->z->matrix[zoneP][0],
+//		     ineqL[i]->constant,
+//		     s->r->bound[p-nevents].current);
+//		     
+//#endif
+//#ifdef __LHPN_WARN__
+//           warn("checkPreds: Impossible case 4.\n");
+//#endif
+//           newMin = s->z->matrix[zoneP][0];
+//         }
+						
+						else if((-1)*getDbmEntry(0, contVar.get_transitionIndex())
+								< (-1) * ineq.getConstant()){
+							// CP: case 7a.
+							newMin = getDbmEntry(0, contVar.get_transitionIndex());
+						}
+						
+//         else {
+//           /* straddle case */
+//#ifdef __LHPN_PRED_DEBUG__
+//           printf("CP:case 12a\n");
+//#endif
+//           newMin = chkDiv(events[p]->lrange,
+//                           s->r->bound[p-nevents].current,'F');
+//         }
+//       }
+//     }
+//   }
+						else{
+							// straddle case
+							newMin = 0;
+						}
+					}
+				}	
+			}
+//   else {
+//     /* Working on a < or <= ineq */
+			else{
+				// Working on a < or <= ineq
+			
+//     if(s->r->bound[p-nevents].current > 0) {
+				
+				if(getUpperBoundForRate(contVar) > 0){
+				
+//       if(s->m->state[ineqL[i]->signal]=='1') {
+					
+					if(ineqValue != 0){
+					
+//         if(s->z->matrix[zoneP][0] <
+//            chkDiv(ineqL[i]->constant,
+//                   s->r->bound[p-nevents].current,'F')) {
+//#ifdef __LHPN_PRED_DEBUG__
+//           printf("CP:case 1b -- min: %d\n",chkDiv(ineqL[i]->constant,s->r->bound[p-nevents].current,'F'));
+//#endif
+//           newMin = chkDiv(ineqL[i]->constant,
+//                           s->r->bound[p-nevents].current,'F');
+//         }
+						
+						if(getDbmEntry(0, contVar.get_transitionIndex())
+								< (-1) * ineq.getConstant()){
+							// CP: case 1b -- min.
+							newMin = ineq.getConstant();
+						}
+						
+						
+//         else if((-1)*s->z->matrix[0][zoneP] >
+//                 chkDiv(ineqL[i]->constant,
+//                        s->r->bound[p-nevents].current,'F')) {
+//#ifdef __LHPN_PRED_DEBUG__
+//           printf("CP:case 2b\n");
+//#endif
+//#ifdef __LHPN_WARN__
+//           warn("checkPreds: Impossible case 5.\n");
+//#endif
+//           newMin = chkDiv(events[p]->urange,
+//                           s->r->bound[p-nevents].current,'F');
+//         }
+						
+						if((-1)*getDbmEntry(contVar.get_transitionIndex(), 0)
+								< ineq.getConstant()){
+							// CP: case 2b.
+							newMin = 0;
+						}
+						
+//         else {
+//           /* straddle case */
+//#ifdef __LHPN_PRED_DEBUG__
+//           printf("CP:case 3b -- min: %d\n",s->z->matrix[zoneP][0]);
+//#endif
+//           newMin = s->z->matrix[zoneP][0];
+//         }
+//       }
+						else{
+							//straddle case
+							newMin = getDbmEntry(0,contVar.get_transitionIndex());
+						}
+						
+					}
+//       else {
+					
+					else{
+						
+//         if(s->z->matrix[zoneP][0] <
+//            chkDiv(ineqL[i]->constant,
+//                   s->r->bound[p-nevents].current,'F')) {
+//#ifdef __LHPN_PRED_DEBUG__
+//           printf("CP:case 4b\n");
+//#endif
+//#ifdef __LHPN_WARN__
+//           warn("checkPreds: Impossible case 7.\n");
+//#endif
+//           newMin = s->z->matrix[zoneP][0];
+//         }
+						
+						if(getDbmEntry(0, contVar.get_transitionIndex())
+								< ineq.getConstant()){
+							// CP: case 4b.
+							newMin = getDbmEntry(0, contVar.get_transitionIndex());
+						}
+						
+//         else if((-1)*s->z->matrix[0][zoneP] >
+//                 chkDiv(ineqL[i]->constant,
+//                        s->r->bound[p-nevents].current,'F')) {
+//#ifdef __LHPN_PRED_DEBUG__
+//           printf("CP:case 5b\n");
+//#endif
+//           newMin = chkDiv(events[p]->urange,
+//                           s->r->bound[p-nevents].current,'F');
+//         }
+						
+						else if((-1)*getDbmEntry(contVar.get_transitionIndex(), 0)
+								< ineq.getConstant()){
+							// CP: case 5b.
+							newMin = 0;
+						}
+//         else {
+//           /* straddle case */
+//#ifdef __LHPN_PRED_DEBUG__
+//           printf("CP:case 6b\n");
+//#endif
+//           newMin = chkDiv(events[p]->urange,
+//                           s->r->bound[p-nevents].current,'F');
+//         }
+//       }
+//     }
+						else{
+							// straddle case
+							// CP : case 6b
+							newMin = 0;
+						}
+					}	
+					
+				}
+//     else {
+//       /* warp <= 0 */
+				
+				else {
+					// warp <=0 
+					
+//       if(s->m->state[ineqL[i]->signal]=='1') {
+					if(ineqValue != 0){
+					
+//         if(s->z->matrix[0][zoneP] <
+//            (-1)*chkDiv(ineqL[i]->constant,
+//                        s->r->bound[p-nevents].current,'F')) {
+//#ifdef __LHPN_PRED_DEBUG__
+//           printf("CP:case 7b\n");
+//#endif
+//           newMin = chkDiv(events[p]->lrange,
+//                           s->r->bound[p-nevents].current,'F');
+//         }
+						
+						if(getDbmEntry(contVar.get_transitionIndex(), 0)
+								< ineq.getConstant()){
+							// CP: case 7b.
+							newMin = getDbmEntry(0, contVar.get_transitionIndex());
+						}
+						
+//         else if((-1)*s->z->matrix[zoneP][0] >
+//                 (-1)*chkDiv(ineqL[i]->constant,
+//                             s->r->bound[p-nevents].current,'F')) {
+//#ifdef __LHPN_PRED_DEBUG__
+//           printf("CP:case 8b\n");
+//#endif
+//#ifdef __LHPN_WARN__
+//           warn("checkPreds: Impossible case 8.\n");
+//#endif
+//           newMin = s->z->matrix[zoneP][0];
+//         }
+//         else {
+//           /* straddle case */
+//#ifdef __LHPN_PRED_DEBUG__
+//           printf("CP:case 9b\n");
+//#endif
+//           newMin = chkDiv(events[p]->lrange,
+//                           s->r->bound[p-nevents].current,'F');
+//         }
+//       }
+						
+					}
+					
+//       else {
+					
+					else {
+					
+//         if(s->z->matrix[0][zoneP] <
+//            chkDiv((-1)*ineqL[i]->constant,
+//                        s->r->bound[p-nevents].current,'F')) {
+//#ifdef __LHPN_PRED_DEBUG__
+//           printf("CP:case 10b\n");
+//           printf("zone: %d const: %d warp: %d chkDiv: %d\n",s->z->matrix[0][zoneP],ineqL[i]->constant,s->r->bound[p-nevents].current,chkDiv((-1)*ineqL[i]->constant,s->r->bound[p-nevents].current,'F'));
+//#endif
+//#ifdef __LHPN_WARN__
+//           warn("checkPreds: Impossible case 6.\n");
+//#endif
+//           newMin = s->z->matrix[zoneP][0];
+//         }
+//         else if((-1)*s->z->matrix[zoneP][0] >
+//                 (-1)*chkDiv(ineqL[i]->constant,
+//                             s->r->bound[p-nevents].current,'F')) {
+//#ifdef __LHPN_PRED_DEBUG__
+//           printf("CP:case 11b\n");
+//#endif
+//           newMin = chkDiv(ineqL[i]->constant,
+//                           s->r->bound[p-nevents].current,'F');
+//         }
+//         else {
+//           /* straddle case */
+//#ifdef __LHPN_PRED_DEBUG__
+//           printf("CP:case 12b\n");
+//#endif
+//           newMin = s->z->matrix[zoneP][0];
+//         }
+//       }
+//     }
+//   }
+// }
+// if(newMin < min) {
+//   min = newMin;
+// }
+					}
+				}	
+			}
+			// Check if the value can be lowered.
+			if(newMin < min){
+				min = newMin;
+			}
+		}
+//}
+//
+//#ifdef __LHPN_PRED_DEBUG__
+//printf("Min leaving checkPreds for %s: %d\n",events[p]->event,min);
+//#endif
+//return min;
+//}
+
+		return min;
 	}
 	
 	/* (non-Javadoc)
