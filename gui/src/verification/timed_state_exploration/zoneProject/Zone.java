@@ -987,6 +987,7 @@ public class Zone{
 //		}
 //		
 //		return getUpperBoundbydbmIndex(i);
+		
 		// Extract the necessary indecies.
 		int lpnIndex = lpn.getLpnIndex();
 
@@ -2086,10 +2087,12 @@ public class Zone{
 //           warn("checkPreds: Impossible case 1.\n");
 //#endif
 //           newMin = s->z->matrix[zoneP][0];
+						
 						if(getDbmEntry(0, contVar.get_transitionIndex())
-								< ineq.getConstant()){
+								< chkDiv(ineq.getConstant(), getCurrentRate(contVar), false)){
 							// CP: case 1a.
 							newMin = getDbmEntry(0, contVar.get_transitionIndex());
+							System.out.println("maxAdvance: Impossible case.");
 						}
 							
 //         }
@@ -2103,9 +2106,10 @@ public class Zone{
 //                           s->r->bound[p-nevents].current,'F');
 //         }
 						else if ((-1)*getDbmEntry(contVar.get_transitionIndex(),0)
-								> ineq.getConstant()){
+								> chkDiv(ineq.getConstant(),
+										getCurrentRate(contVar), false)){
 							// CP : case 2a
-							newMin = 0;
+							newMin = INFINITY;
 							
 						}
 							
@@ -2121,7 +2125,7 @@ public class Zone{
 						else{
 							// Straddle case
 							// CP : case 3a
-							newMin = 0;
+							newMin = INFINITY;
 						}
 					}
 					else{
@@ -2136,9 +2140,10 @@ public class Zone{
 //                           s->r->bound[p-nevents].current,'F');
 //         }
 						if(getDbmEntry(contVar.get_transitionIndex(), 0)
-						< ineq.getConstant()){
+								< chkDiv(ineq.getConstant(), getCurrentRate(contVar), false)){
 							// CP: case 4a -- min
-							newMin = ineq.getConstant();
+							newMin = chkDiv(ineq.getConstant(), 
+									getCurrentRate(contVar), false);
 						}
 						
 //         else if((-1)*s->z->matrix[0][zoneP] >
@@ -2153,9 +2158,10 @@ public class Zone{
 //           newMin = s->z->matrix[zoneP][0];
 //         }
 						else if((-1)*getDbmEntry(contVar.get_transitionIndex(),0)
-								< ineq.getConstant()){
+								< chkDiv(ineq.getConstant(), getCurrentRate(contVar), false)){
 							// Impossible case 3.
-							newMin = getDbmEntry(contVar.get_transitionIndex(),0);
+							newMin = getDbmEntry(0, contVar.get_transitionIndex());
+							System.out.print("maxAdvance : Impossible case");
 						}
 						
 //         else {
@@ -2170,7 +2176,7 @@ public class Zone{
 						else{
 							// CP : cas 6a
 							// straddle case
-							newMin = getDbmEntry(contVar.get_transitionIndex(),0);
+							newMin = getDbmEntry(0,contVar.get_transitionIndex());
 						}
 					}
 				}
@@ -2197,10 +2203,11 @@ public class Zone{
 //           newMin = s->z->matrix[zoneP][0];
 //         }
 						
-						if(getDbmEntry(0, contVar.get_transitionIndex())
-								< (-1) * ineq.getConstant()){
+						if(getDbmEntry(contVar.get_transitionIndex(),0)
+							< (-1)*chkDiv(ineq.getConstant(),
+									getCurrentRate(contVar), false)){
 							// CP: case 7a.
-							newMin = getDbmEntry(contVar.get_transitionIndex(),0);
+							newMin = getDbmEntry(0,contVar.get_transitionIndex());
 						}
 						
 //         else if((-1)*s->z->matrix[zoneP][0] >
@@ -2214,9 +2221,11 @@ public class Zone{
 //         }
 						
 						else if((-1)*getDbmEntry(0, contVar.get_transitionIndex())
-								< (-1)*ineq.getConstant()){
+								< (-1)*chkDiv(ineq.getConstant(),
+										getCurrentRate(contVar), false)){
 							// Impossible case 8a.
-							newMin = ineq.getConstant();
+							newMin = chkDiv(ineq.getConstant(), 
+									getCurrentRate(contVar), false);
 						}
 						
 //         else {
@@ -2249,9 +2258,10 @@ public class Zone{
 //         }
 						
 						if(getDbmEntry(contVar.get_transitionIndex(),0)
-								< (-1) * ineq.getConstant()){
+								< (-1)*chkDiv(ineq.getConstant(),
+										getCurrentRate(contVar), false)){
 							// CP: case 10a.
-							newMin = 0;
+							newMin = INFINITY;
 						}
 						
 						
@@ -2273,9 +2283,11 @@ public class Zone{
 //         }
 						
 						else if((-1)*getDbmEntry(0, contVar.get_transitionIndex())
-								< (-1) * ineq.getConstant()){
+								< (-1)*chkDiv(ineq.getConstant(),
+										getCurrentRate(contVar), false)){
 							// CP: case 7a.
-							newMin = getDbmEntry(0, contVar.get_transitionIndex());
+							newMin = getDbmEntry(0,contVar.get_transitionIndex());
+							System.out.println("maxAdvance : Impossible case 4.");
 						}
 						
 //         else {
@@ -2291,7 +2303,7 @@ public class Zone{
 //   }
 						else{
 							// straddle case
-							newMin = 0;
+							newMin = INFINITY;
 						}
 					}
 				}	
@@ -2320,9 +2332,11 @@ public class Zone{
 //         }
 						
 						if(getDbmEntry(0, contVar.get_transitionIndex())
-								< (-1) * ineq.getConstant()){
+								< (-1)*chkDiv(ineq.getConstant(), 
+										getCurrentRate(contVar), false)){
 							// CP: case 1b -- min.
-							newMin = ineq.getConstant();
+							newMin = chkDiv(ineq.getConstant(),
+									getCurrentRate(contVar), false);
 						}
 						
 						
@@ -2340,9 +2354,9 @@ public class Zone{
 //         }
 						
 						if((-1)*getDbmEntry(contVar.get_transitionIndex(), 0)
-								< ineq.getConstant()){
+								< chkDiv(ineq.getConstant(), getCurrentRate(contVar),false)){
 							// CP: case 2b.
-							newMin = 0;
+							newMin = INFINITY;
 						}
 						
 //         else {
@@ -2376,9 +2390,11 @@ public class Zone{
 //         }
 						
 						if(getDbmEntry(0, contVar.get_transitionIndex())
-								< ineq.getConstant()){
+								< chkDiv(ineq.getConstant(), 
+										getCurrentRate(contVar), false)){
 							// CP: case 4b.
 							newMin = getDbmEntry(0, contVar.get_transitionIndex());
+							System.out.println("maxAdvance : Impossible case 7.");
 						}
 						
 //         else if((-1)*s->z->matrix[0][zoneP] >
@@ -2392,9 +2408,10 @@ public class Zone{
 //         }
 						
 						else if((-1)*getDbmEntry(contVar.get_transitionIndex(), 0)
-								< ineq.getConstant()){
+								< chkDiv(ineq.getConstant(), 
+										getCurrentRate(contVar), false)){
 							// CP: case 5b.
-							newMin = 0;
+							newMin = INFINITY;
 						}
 //         else {
 //           /* straddle case */
@@ -2409,7 +2426,7 @@ public class Zone{
 						else{
 							// straddle case
 							// CP : case 6b
-							newMin = 0;
+							newMin = INFINITY;
 						}
 					}	
 					
@@ -2434,9 +2451,10 @@ public class Zone{
 //         }
 						
 						if(getDbmEntry(contVar.get_transitionIndex(), 0)
-								< ineq.getConstant()){
+								< (-1)*chkDiv(ineq.getConstant(), 
+										getCurrentRate(contVar), false)){
 							// CP: case 7b.
-							newMin = getDbmEntry(0, contVar.get_transitionIndex());
+							newMin = INFINITY;
 						}
 						
 //         else if((-1)*s->z->matrix[zoneP][0] >
@@ -2452,7 +2470,8 @@ public class Zone{
 //         }
 						
 						else if((-1)*getDbmEntry(0, contVar.get_transitionIndex())
-								< (-1)*ineq.getConstant()){
+								< (-1)*chkDiv(ineq.getConstant(),
+										getCurrentRate(contVar), false)){
 							// CP: case 8b.
 							newMin = getDbmEntry(0, contVar.get_transitionIndex());
 						}
@@ -2468,7 +2487,7 @@ public class Zone{
 						else {
 							// straddle case
 							// CP: case 9b.
-							newMin = 0;
+							newMin = INFINITY;
 						}
 //       }
 						
@@ -2491,10 +2510,11 @@ public class Zone{
 //           newMin = s->z->matrix[zoneP][0];
 //         }
 						
-						if(getDbmEntry(0, contVar.get_transitionIndex())
-								< (-1)*ineq.getConstant()){
+						if(getDbmEntry(contVar.get_transitionIndex(),0)
+								< (-1)*chkDiv(ineq.getConstant(),
+										getCurrentRate(contVar), false)){
 							// CP: case 10b.
-							newMin = getDbmEntry(contVar.get_transitionIndex(), 0);
+							newMin = getDbmEntry(0,contVar.get_transitionIndex());
 						}
 						
 //         else if((-1)*s->z->matrix[zoneP][0] >
@@ -2506,10 +2526,11 @@ public class Zone{
 //           newMin = chkDiv(ineqL[i]->constant,
 //                           s->r->bound[p-nevents].current,'F');
 //         }
-						else if((-10)*getDbmEntry(contVar.get_transitionIndex(), 0)
-								< (-1)*ineq.getConstant()){
+						else if((-1)*getDbmEntry(0,contVar.get_transitionIndex())
+								< (-1)*chkDiv(ineq.getConstant(),
+										getCurrentRate(contVar),false)){
 							// CP: case 7b.
-							newMin = ineq.getConstant();
+							newMin = chkDiv(ineq.getConstant(), getCurrentRate(contVar),false);
 						}
 						
 						
