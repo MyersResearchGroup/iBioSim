@@ -956,7 +956,8 @@ public class Zone{
 	 * @param var
 	 * 		The variable of interest.
 	 * @return
-	 * 		The upper bound of var.
+	 * 		The (0,var) entry of the zone, that is the maximum as recored by
+	 * 		the zone.
 	 */
 	public int getUpperBoundbyContinuousVariable(String contVar, LhpnFile lpn){
 		
@@ -1015,12 +1016,27 @@ public class Zone{
 					+ "zone.");
 		}
 
-		return getUpperBoundbydbmIndex(i);
+		//return getUpperBoundbydbmIndex(i);
+		return getDbmEntry(0, i);
 	}
 	
 	public int getUpperBoundForRate(LPNTransitionPair contVar){
-		// TODO : finish. Also note that for non-zero rate continuous
-		// variables, the method getUpperBoundbyContinuous variable does this.
+		// TODO : finish.
+		
+		// Check if the contVar is in the zone.
+		int i = Arrays.binarySearch(_indexToTimerPair, contVar);
+		
+		if(i > 0){
+			// The continuous variable is in the zone.
+			// The upper and lower bounds are stored in the same
+			// place as the delays, so the same method of 
+			// retrieval will work.
+			return getUpperBoundbydbmIndex(contVar.get_transitionIndex());
+		}
+		
+		
+		// Assume the rate is zero. This covers the case if conVar
+		// is in the rate zero as well as if its not in the state at all.
 		return 0;
 	}
 	
@@ -1102,6 +1118,14 @@ public class Zone{
 				Arrays.binarySearch(_indexToTimerPair, ltPair));
 	}
 	
+	/**
+	 * Returns the lower bound of the continuous variable.
+	 * @param var
+	 * 		The variable of interest.
+	 * @return
+	 * 		The (0,var) entry of the zone, that is the minimum as recored by
+	 * 		the zone.
+	 */
 	public int getLowerBoundbyContinuousVariable(String contVar, LhpnFile lpn){
 
 		// Extract the necessary indecies.
@@ -1133,7 +1157,8 @@ public class Zone{
 					+ "zone.");
 		}
 		
-		return getLowerBoundbydbmIndex(i);
+		//return getLowerBoundbydbmIndex(i);
+		return getDbmEntry(i, 0);
 	}
 	
 	/**
@@ -1146,6 +1171,27 @@ public class Zone{
 	public int getLowerBoundbydbmIndex(int index)
 	{
 		return _matrix[dbmIndexToMatrixIndex(index)][0];
+	}
+	
+	public int getLowerBoundForRate(LPNTransitionPair contVar){
+		// TODO : finish. 
+		
+		
+		// Check if the contVar is in the zone.
+		int i = Arrays.binarySearch(_indexToTimerPair, contVar);
+
+		if(i > 0){
+			// The continuous variable is in the zone.
+			// The upper and lower bounds are stored in the same
+			// place as the delays, so the same method of 
+			// retrieval will work.
+			return getLowerBoundbydbmIndex(contVar.get_transitionIndex());
+		}
+
+
+		// Assume the rate is zero. This covers the case if conVar
+		// is in the rate zero as well as if its not in the state at all.
+		return 0;
 	}
 	
 	/**
@@ -1970,7 +2016,8 @@ public class Zone{
 	private int maxAdvance(LPNTransitionPair contVar, State[] localStates){
 		/*
 		 * Several comments in this function may look like C code. That's because,
-		 * well it is C code from atacs/src/lhpnrsg.c.
+		 * well it is C code from atacs/src/lhpnrsg.c. In particular the
+		 * lhpnCheckPreds method.
 		 */
 		
 		// Get the continuous variable in question.
@@ -2024,7 +2071,7 @@ public class Zone{
 //     if(s->r->bound[p-nevents].current > 0) {
 				
 				// If the rate is positive.
-				if(getUpperBoundForRate(contVar) > 0){
+				if(getCurrentRate(contVar) > 0){
 				
 //       if(s->m->state[ineqL[i]->signal]=='1') {
 					if(ineqValue != 0){
@@ -2789,5 +2836,43 @@ public class Zone{
 		return new IntervalPair(Integer.parseInt(lowerString),
 				Integer.parseInt(upperString));
 	}	
+	
+	public int chkDiv(int top, int bottom, Boolean ceil){
+		/*
+		 * This method was taken from atacs/src/hpnrsg.c
+		 */
+		int res = 0;
+		  if(top == INFINITY ||
+		     top == INFINITY * -1) {
+		    if(bottom < 0) {
+		      return top * -1;
+		    }
+		    return top;
+		  }
+		  if(bottom == INFINITY) {
+			  return 0;
+		  }
+		  if(bottom == 0) {
+			  System.out.println("Warning: Divided by zero.");
+			  bottom = 1;
+		  }
+
+		  double Dres,Dtop,Dbottom;
+		  Dtop = top;
+		  Dbottom = bottom;
+		  Dres = Dtop/Dbottom;
+		  if(ceil) {
+			  res = (int)Math.ceil(Dres);
+		  }
+		  else if(!ceil) {
+			  res = (int)Math.floor(Dres);
+		  }
+		  return res;
+	}
+	
+	public int getCurrentRate(LPNTransitionPair contVar){
+		// TODO : Finish.
+		return 0;
+	}
 
 }
