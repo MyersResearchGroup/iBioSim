@@ -1885,6 +1885,39 @@ public class ExprTree {
 		}
 		return vars;
 	}
+	
+	/**
+	 * Returns a list of the continuous variable's names that are
+	 * contained in this ExprTree.
+	 * @return
+	 * 		The list of name of the continuous variables in this
+	 * 		ExprTree.
+	 */
+	public ArrayList<String> getContVars() {
+		ArrayList<String> vars = new ArrayList<String>();
+		switch (isit) {
+		//case 'b': // Boolean
+		//case 'i': // Integer
+		case 'c': // Continuous
+			if (!vars.contains(variable))
+				vars.add(variable);
+			break;
+		case 'r': // Relational
+		case 'l': // Logical
+		case 'a': // Arithmetic
+		case 'w': // bitWise
+			if (r1 != null)
+				vars.addAll(r1.getVars());
+			if (r2 != null)
+				vars.addAll(r2.getVars());
+			break;
+		case 'n': // Number
+		case 't': // Truth value
+		default:
+			break;
+		}
+		return vars;
+	}
 
 	public void scaleVals(Double scaleFactor) { // SB
 		switch (isit) {
