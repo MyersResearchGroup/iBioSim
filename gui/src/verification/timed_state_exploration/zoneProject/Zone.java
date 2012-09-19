@@ -2092,7 +2092,7 @@ public class Zone{
 								< chkDiv(ineq.getConstant(), getCurrentRate(contVar), false)){
 							// CP: case 1a.
 							newMin = getDbmEntry(0, contVar.get_transitionIndex());
-							System.out.println("maxAdvance: Impossible case.");
+							System.err.println("maxAdvance: Impossible case 1.");
 						}
 							
 //         }
@@ -2161,7 +2161,7 @@ public class Zone{
 								< chkDiv(ineq.getConstant(), getCurrentRate(contVar), false)){
 							// Impossible case 3.
 							newMin = getDbmEntry(0, contVar.get_transitionIndex());
-							System.out.print("maxAdvance : Impossible case");
+							System.err.print("maxAdvance : Impossible case 3.");
 						}
 						
 //         else {
@@ -2208,6 +2208,7 @@ public class Zone{
 									getCurrentRate(contVar), false)){
 							// CP: case 7a.
 							newMin = getDbmEntry(0,contVar.get_transitionIndex());
+							System.err.println("Warining: impossible case 2a found.");
 						}
 						
 //         else if((-1)*s->z->matrix[zoneP][0] >
@@ -2287,7 +2288,7 @@ public class Zone{
 										getCurrentRate(contVar), false)){
 							// CP: case 7a.
 							newMin = getDbmEntry(0,contVar.get_transitionIndex());
-							System.out.println("maxAdvance : Impossible case 4.");
+							System.err.println("maxAdvance : Impossible case 4.");
 						}
 						
 //         else {
@@ -2357,6 +2358,7 @@ public class Zone{
 								< chkDiv(ineq.getConstant(), getCurrentRate(contVar),false)){
 							// CP: case 2b.
 							newMin = INFINITY;
+							System.err.println("Warning : Impossible case 5.");
 						}
 						
 //         else {
@@ -2394,7 +2396,7 @@ public class Zone{
 										getCurrentRate(contVar), false)){
 							// CP: case 4b.
 							newMin = getDbmEntry(0, contVar.get_transitionIndex());
-							System.out.println("maxAdvance : Impossible case 7.");
+							System.err.println("maxAdvance : Impossible case 7.");
 						}
 						
 //         else if((-1)*s->z->matrix[0][zoneP] >
@@ -2474,6 +2476,7 @@ public class Zone{
 										getCurrentRate(contVar), false)){
 							// CP: case 8b.
 							newMin = getDbmEntry(0, contVar.get_transitionIndex());
+							System.err.println("Warning : Impossible case 8.");
 						}
 						
 //         else {
@@ -2515,6 +2518,7 @@ public class Zone{
 										getCurrentRate(contVar), false)){
 							// CP: case 10b.
 							newMin = getDbmEntry(0,contVar.get_transitionIndex());
+							System.err.println("Warning : Impossible case 6");
 						}
 						
 //         else if((-1)*s->z->matrix[zoneP][0] >
