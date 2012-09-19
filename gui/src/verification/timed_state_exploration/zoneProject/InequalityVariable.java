@@ -1,5 +1,6 @@
 package verification.timed_state_exploration.zoneProject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -32,8 +33,8 @@ public class InequalityVariable extends Variable {
 	
 	/* The continuous variable that this InequalityVariable depends on.*/
 	//String _variable;
-	Variable _variable;
-	
+	//Variable _variable;
+	ArrayList<Variable> _variables;
 	
 	/* The LhpnFile object that this InequalityVariable belongs to. */
 	LhpnFile _lpn;
@@ -107,16 +108,18 @@ public class InequalityVariable extends Variable {
 		_lpn = lpn;
 		
 		// Extract the variable.
-		String contVariableName = "";
+//		String contVariableName = "";
+//		
+//		if(ET.getLeftChild().containsCont()){
+//			contVariableName = ET.getLeftChild().toString();
+//		}
+//		else{
+//			contVariableName = ET.getRightChild().toString();
+//		}
+//		
+//		_variable = lpn.getVariable(contVariableName);
 		
-		if(ET.getLeftChild().containsCont()){
-			contVariableName = ET.getLeftChild().toString();
-		}
-		else{
-			contVariableName = ET.getRightChild().toString();
-		}
-		
-		_variable = lpn.getVariable(contVariableName);
+		// Register this Inequality with the continuous variable.
 //		
 //		
 //		Reference counts are not needed anymore since the set of 
@@ -124,6 +127,12 @@ public class InequalityVariable extends Variable {
 //		
 //		// When created, an expression refers to this variable.
 //		_referenceCount = 1;
+		
+		// Populate the variables member field and register the 
+		// this InequalityVariable with the continuous variables
+		// it references.
+		initializeContinuous();
+		
 	}
 	
 	
@@ -203,92 +212,92 @@ public class InequalityVariable extends Variable {
 	 * 		The zone containing the value of the continuous variable.
 	 */
 	//public void update(Zone z){
-	public String evaluateInequality(State localState, Zone z){
-		
-		// TODO : This method ignores the case where the range of the continuous variable
-		// stradles the bound.
-		
-		//
-		String result = "";
-		
-		/*
-		 *  Extract the current values of the (Boolean and Integer) variables to be able
-		 *  to obtain the value of the expression side of the inequality. This
-		 *  may need to be changed when the bound evaluator is created and ranges are
-		 *  allowed for the Integer variables.
-		 */
-		HashMap<String, String> variableValues = _lpn.getAllVarsWithValuesAsString(localState.getVector());
-		
-		// Determine which side of the expression tree has the continuous variable.
-		if(_inequalityExprTree.getLeftChild().containsVar(_variable.getName())){
-			// Extract the value of the expression side of the inequality.
-			int expressionValue = (int) _inequalityExprTree.getRightChild().evaluateExpr(variableValues);
-			
-			// Determine which type of inequality.
-			String op = _inequalityExprTree.getOp();
-			
-			if(op.equals("<") || op.equals("<=")){
-//				if(z.getUpperBoundbyContinuousVariable(_variable) <= expressionValue){
-//					this.initValue = "true";
-//				}
-//				else
-//				{
-//					this.initValue = "false";
-//				}
-
-//				this.initValue = z.getUpperBoundbyContinuousVariable(_variable) <= expressionValue
+//	public String evaluateInequality(State localState, Zone z){
+//		
+//		// TODO : This method ignores the case where the range of the continuous variable
+//		// stradles the bound.
+//		
+//		//
+//		String result = "";
+//		
+//		/*
+//		 *  Extract the current values of the (Boolean and Integer) variables to be able
+//		 *  to obtain the value of the expression side of the inequality. This
+//		 *  may need to be changed when the bound evaluator is created and ranges are
+//		 *  allowed for the Integer variables.
+//		 */
+//		HashMap<String, String> variableValues = _lpn.getAllVarsWithValuesAsString(localState.getVector());
+//		
+//		// Determine which side of the expression tree has the continuous variable.
+//		if(_inequalityExprTree.getLeftChild().containsVar(_variable.getName())){
+//			// Extract the value of the expression side of the inequality.
+//			int expressionValue = (int) _inequalityExprTree.getRightChild().evaluateExpr(variableValues);
+//			
+//			// Determine which type of inequality.
+//			String op = _inequalityExprTree.getOp();
+//			
+//			if(op.equals("<") || op.equals("<=")){
+////				if(z.getUpperBoundbyContinuousVariable(_variable) <= expressionValue){
+////					this.initValue = "true";
+////				}
+////				else
+////				{
+////					this.initValue = "false";
+////				}
+//
+////				this.initValue = z.getUpperBoundbyContinuousVariable(_variable) <= expressionValue
+////						? "true" : "false"; 
+//				
+//				result = z.getUpperBoundbyContinuousVariable(_variable.getName(), _lpn)
+//						<= expressionValue ? "true" : "false";
+//			}
+//			else{
+////				this.initValue = z.getLowerBoundbyContinuousVariable(_variable) >= expressionValue
+////						? "true" : "false";
+//				
+//				result = z.getLowerBoundbyContinuousVariable(_variable.getName(), _lpn) 
+//						>= expressionValue ? "true" : "false";
+//			}
+//			
+//		}
+//		else{
+//			// Extract the value of the expression side of the inequality.
+//			int expressionValue = (int) _inequalityExprTree.getLeftChild().evaluateExpr(variableValues);
+//			
+//			// Determine which type of inequality.
+//
+//			String op = _inequalityExprTree.getOp();
+//			
+//			if(op.equals("<") || op.equals("<=")){
+////				if(expressionValue <= z.getLowerBoundbyContinuousVariable(_variable)){
+////					this.initValue = "true";
+////				}
+////				else
+////				{
+////					this.initValue = "false";
+////				}
+//				
+////				this.initValue = expressionValue <= z.getLowerBoundbyContinuousVariable(_variable)
+////						? "true" : "false"; 
+//				
+//				result = expressionValue <= 
+//						z.getLowerBoundbyContinuousVariable(_variable.getName(), _lpn)
 //						? "true" : "false"; 
-				
-				result = z.getUpperBoundbyContinuousVariable(_variable.getName(), _lpn)
-						<= expressionValue ? "true" : "false";
-			}
-			else{
-//				this.initValue = z.getLowerBoundbyContinuousVariable(_variable) >= expressionValue
+//			}
+//			else{
+////				this.initValue = expressionValue >= z.getUpperBoundbyContinuousVariable(_variable)
+////						? "true" : "false";
+//				
+//				result = expressionValue >= 
+//						z.getUpperBoundbyContinuousVariable(_variable.getName(), _lpn)
 //						? "true" : "false";
-				
-				result = z.getLowerBoundbyContinuousVariable(_variable.getName(), _lpn) 
-						>= expressionValue ? "true" : "false";
-			}
-			
-		}
-		else{
-			// Extract the value of the expression side of the inequality.
-			int expressionValue = (int) _inequalityExprTree.getLeftChild().evaluateExpr(variableValues);
-			
-			// Determine which type of inequality.
-
-			String op = _inequalityExprTree.getOp();
-			
-			if(op.equals("<") || op.equals("<=")){
-//				if(expressionValue <= z.getLowerBoundbyContinuousVariable(_variable)){
-//					this.initValue = "true";
-//				}
-//				else
-//				{
-//					this.initValue = "false";
-//				}
-				
-//				this.initValue = expressionValue <= z.getLowerBoundbyContinuousVariable(_variable)
-//						? "true" : "false"; 
-				
-				result = expressionValue <= 
-						z.getLowerBoundbyContinuousVariable(_variable.getName(), _lpn)
-						? "true" : "false"; 
-			}
-			else{
-//				this.initValue = expressionValue >= z.getUpperBoundbyContinuousVariable(_variable)
-//						? "true" : "false";
-				
-				result = expressionValue >= 
-						z.getUpperBoundbyContinuousVariable(_variable.getName(), _lpn)
-						? "true" : "false";
-			}
-			
-		}
-		
-		return result;
-		
-	}
+//			}
+//			
+//		}
+//		
+//		return result;
+//		
+//	}
 	
 	/**
 	 * Evaluates the inequality based on the current state and zone.
@@ -341,8 +350,39 @@ public class InequalityVariable extends Variable {
 		return _inequalityExprTree.getOp();
 	}
 	
+	/**
+	 * This method returns the constant of an inequality where one side
+	 * evaluates to only a constant.
+	 * @return
+	 * 		The constant on one side of the inequality.
+	 */
 	public int getConstant(){
-		// TODO : finish
+		
+		// Find which side has the variable.
+		if(_inequalityExprTree.getLeftChild().containsCont()){
+			// Evaluate the other side. Note : since the assumption
+			// is that one side evaluates to a constant, no
+			// HashMap<String, String> should be needed for the 
+			// evaluation, nor a zone.
+			
+			IntervalPair result = _inequalityExprTree.getRightChild()
+					.evaluateExprBound(null, null);
+			
+			// Check that the bounds are the same.
+		}
+		else if(_inequalityExprTree.getRightChild().containsCont()){
+			// Evaluate the other side. Note : since the assumption
+			// is that one side evaluates to a constant, no
+			// HashMap<String, String> should be needed for the 
+			// evaluation.
+			
+			
+			// Check that the bounds are the same.
+		}
+		
+		System.err.println("Warning: the inequaltiy " + this +
+				"does not have one side equal to a constant. For no good reason " +
+				"I'm assuming it is 0.");
 		return 0;
 	}
 	
@@ -362,4 +402,26 @@ public class InequalityVariable extends Variable {
 //			
 //		return null;
 //	}
+	
+	/**
+	 * Adds the continuous variables that this InequalityVariable depends on
+	 * and registers this InqualityVariable with these continuous variables.
+	 */
+	private void initializeContinuous(){
+		
+		// Get the continuous variables named in the inequality.
+		ArrayList<String> variableNames = _inequalityExprTree.getContVars();
+		
+		for(String name : variableNames){
+			// Get variable.
+			Variable v = _lpn.getVariable(name);
+			
+			// Added each variable to the member variable.
+			_variables.add(v);
+			
+			// Register this inequality variable with the continuous variable.
+			v.addInequalityVariable(this);
+		}
+		
+	}
 }
