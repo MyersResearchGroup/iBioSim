@@ -23,7 +23,6 @@ import org.sbml.libsbml.InitialAssignment;
 import org.sbml.libsbml.LocalParameter;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.Reaction;
-import org.sbml.libsbml.SBaseList;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.Submodel;
 
@@ -31,7 +30,6 @@ import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
 import biomodel.gui.textualeditor.InitialAssignments;
 import biomodel.gui.textualeditor.MySpecies;
-import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 import biomodel.util.Utility;
@@ -60,12 +58,12 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	 * @param modelEditor
 	 */
 	public SpeciesPanel(Gui biosim, String selected, PropertyList speciesList, 
-			PropertyList conditionsList, PropertyList componentsList, BioModel gcm, boolean paramsOnly,
+			PropertyList componentsList, BioModel gcm, boolean paramsOnly,
 			BioModel refGCM, ModelEditor modelEditor, boolean inTab){
 
 		super(new BorderLayout());
 		this.biosim = biosim;
-		constructor(selected, speciesList, conditionsList, componentsList, gcm, paramsOnly, refGCM, modelEditor, inTab);
+		constructor(selected, speciesList, componentsList, gcm, paramsOnly, refGCM, modelEditor, inTab);
 	}
 	
 	/**
@@ -81,7 +79,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	 * @param refGCM
 	 * @param gcmEditor
 	 */
-	private void constructor(String selected, PropertyList speciesList, PropertyList conditionsList, 
+	private void constructor(String selected, PropertyList speciesList, 
 			PropertyList componentsList, BioModel bioModel, boolean paramsOnly,
 			BioModel refGCM,  ModelEditor modelEditor, boolean inTab) {
 
@@ -104,7 +102,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 		this.selected = selected;
 		this.speciesList = speciesList;
-		this.conditions = conditionsList;
 		this.components = componentsList;
 		this.bioModel = bioModel;
 		this.refGCM = refGCM;
@@ -138,15 +135,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		JPanel tempPanel = new JPanel();
 		JLabel tempLabel = new JLabel(GlobalConstants.TYPE);
 		typeBox = new JComboBox(types);
-		
-		//disallow input/output types for species in an enclosed GCM
-		/*
-		if (gcm.IsWithinCompartment()) {
-			typeBox.removeItem(GlobalConstants.INPUT);
-			typeBox.removeItem(GlobalConstants.OUTPUT);
-		}
-		*/
-		
 		typeBox.addActionListener(this);
 		tempPanel.setLayout(new GridLayout(1, 2));
 		tempPanel.add(tempLabel);
@@ -553,6 +541,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			} else {
 				typeBox.setSelectedItem(GlobalConstants.INTERNAL);
 			}
+			/*
 			String annotation = species.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
 			String [] annotations = annotation.split(",");
 			for (int i=0;i<annotations.length;i++) 
@@ -560,6 +549,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					String [] type = annotations[i].split("=");
 					typeBox.setSelectedItem(type[1]);
 				}
+				*/
 		}
 			
 		/*
@@ -848,6 +838,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 			String speciesType = typeBox.getSelectedItem().toString();
 			bioModel.createDirPort(species.getId(),speciesType);
+			boolean onPort = (speciesType.equals(GlobalConstants.INPUT)||speciesType.equals(GlobalConstants.OUTPUT));
 			
 			if (degradation != null && !specDegradable.isSelected()) {
 				bioModel.removeReaction(degradation.getId());
@@ -855,12 +846,12 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				PropertyField f = fields.get(GlobalConstants.KDECAY_STRING);
 				if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
 					if (f.getValue().startsWith("(")) {
-						bioModel.createDegradationReaction(selected, 1.0, f.getValue());		
+						bioModel.createDegradationReaction(selected, 1.0, f.getValue(),onPort);		
 					} else {
-						bioModel.createDegradationReaction(selected, Double.parseDouble(f.getValue()), null);		
+						bioModel.createDegradationReaction(selected, Double.parseDouble(f.getValue()), null,onPort);		
 					}
 				} else {
-					bioModel.createDegradationReaction(selected, -1, null);		
+					bioModel.createDegradationReaction(selected, -1, null,onPort);		
 				}
 			} 
 			if (diffusion != null && !specDiffusible.isSelected()) {
@@ -871,12 +862,12 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
 					kmdiffStr = f.getValue();
 				}
-				bioModel.createDiffusionReaction(selected, kmdiffStr);		
+				bioModel.createDiffusionReaction(selected, kmdiffStr,onPort);		
 			} 
 			if (constitutive != null && !specConstitutive.isSelected()) {
 				bioModel.removeReaction(constitutive.getId());
 			} else if (specConstitutive.isSelected()) {
-				bioModel.createConstitutiveReaction(selected);		
+				bioModel.createConstitutiveReaction(selected,onPort);		
 			} 
 			if (complex != null) {
 				String KcStr = null;
@@ -884,7 +875,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
 					KcStr = f.getValue();
 				}
-				bioModel.createComplexReaction(selected, KcStr);
+				bioModel.createComplexReaction(selected, KcStr,onPort);
 			}
 			
 			if (!paramsOnly) {
@@ -1047,8 +1038,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	private String selected = "";
 
 	private PropertyList speciesList = null;
-	
-	private PropertyList conditions = null;
 	
 	private PropertyList components = null;
 

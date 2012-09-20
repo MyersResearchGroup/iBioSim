@@ -15,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import org.sbml.libsbml.CompModelPlugin;
 import org.sbml.libsbml.CompSBasePlugin;
 import org.sbml.libsbml.Deletion;
 import org.sbml.libsbml.Model;
@@ -74,9 +75,11 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 	private JComboBox extentConvFactorBox;
 	
 	private boolean paramsOnly;
+	
+	private BioModel subBioModel;
 
-	public ComponentsPanel(String selected, PropertyList componentsList, BioModel bioModel, ArrayList<String> ports, 
-			String selectedComponent, String oldPort, boolean paramsOnly, ModelEditor gcmEditor) {
+	public ComponentsPanel(String selected, PropertyList componentsList, BioModel bioModel, BioModel subBioModel,
+			ArrayList<String> ports, String selectedComponent, String oldPort, boolean paramsOnly, ModelEditor gcmEditor) {
 		
 		super(new GridLayout(ports.size() + 6, 1));
 		this.selected = selected;
@@ -86,6 +89,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 		this.selectedComponent = selectedComponent;
 		this.oldPort = oldPort;
 		this.paramsOnly = paramsOnly;
+		this.subBioModel = subBioModel;
 
 		fields = new HashMap<String, PropertyField>();
 		portIds = new ArrayList<String>();
@@ -182,6 +186,31 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 				idRefs.add(idRef);
 				types.add(type);
 				JComboBox port = new JComboBox(specsWithNone);
+				portmapBox.add(port);
+				JComboBox dirport = new JComboBox(directions);
+				directionBox.add(dirport);
+				JComboBox convFactor = new JComboBox(parameters);
+				convBox.add(convFactor);
+			}
+		}
+		
+		ArrayList <String> promoterList = bioModel.getPromoters();
+		Collections.sort(promoterList);
+		String[] promsWithNone = new String[promoterList.size() + 2];
+		promsWithNone[0] = "--none--";
+		promsWithNone[1] = "--delete--";
+ 		for (int l = 2; l < promsWithNone.length; l++) {
+			promsWithNone[l] = promoterList.get(l - 2);
+		}
+		for (int i = 0; i < ports.size(); i++) {
+			String type = ports.get(i).split(":")[0];
+			String portId = ports.get(i).split(":")[1];
+			String idRef = ports.get(i).split(":")[2];
+			if (type.equals(GlobalConstants.PROMOTER)) {
+				portIds.add(portId);
+				idRefs.add(idRef);
+				types.add(type);
+				JComboBox port = new JComboBox(promsWithNone);
 				portmapBox.add(port);
 				JComboBox dirport = new JComboBox(directions);
 				directionBox.add(dirport);
@@ -407,7 +436,8 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 				!type.equals(GlobalConstants.SBMLSPECIES) && !type.equals(GlobalConstants.SBMLREACTION) && 
 				!type.equals(GlobalConstants.FUNCTION) && !type.equals(GlobalConstants.UNIT) &&
 				!type.equals(GlobalConstants.ASSIGNMENT_RULE) && !type.equals(GlobalConstants.RATE_RULE) &&
-				!type.equals(GlobalConstants.ALGEBRAIC_RULE) && !type.equals(GlobalConstants.CONSTRAINT)) {
+				!type.equals(GlobalConstants.ALGEBRAIC_RULE) && !type.equals(GlobalConstants.CONSTRAINT)  && 
+				!type.equals(GlobalConstants.PROMOTER)) {
 				portIds.add(portId);
 				idRefs.add(idRef.replace("init__",""));
 				types.add(type);
@@ -688,14 +718,16 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			Submodel instance = bioModel.getSBMLCompModel().getSubmodel(subModelId);
 			instance.setName(fields.get(GlobalConstants.NAME).getValue());
 			if (instance != null) {
-				long k = 0;
-				while (k < instance.getNumDeletions()) {
-					Deletion deletion = instance.getDeletion(k);
+				//long k = 0;
+				while (instance.getNumDeletions()>0) {
+					Deletion deletion = instance.getDeletion(0);
+					deletion.removeFromParentAndDelete();
+					/*
 					if (deletion.isSetPortRef() && portIds.contains(deletion.getPortRef())) {
-						deletion.removeFromParentAndDelete();
 					} else {
 						k++;
 					}
+					*/
 				}
 			}
 			if (timeConvFactorBox.getSelectedItem().equals("(none)")) {
@@ -755,6 +787,10 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 								if (!convBox.get(i).getSelectedItem().equals("(none)")) {
 									replacement.setConversionFactor((String)convBox.get(i).getSelectedItem());
 								}
+								String speciesId = portId.replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "");
+								CompModelPlugin subCompModel = subBioModel.getSBMLCompModel();
+								Submodel submodel = bioModel.getSBMLCompModel().getSubmodel(subId);
+								bioModel.addImplicitDeletions(subCompModel, submodel, speciesId);
 								/* Code below using replacement and deletion */
 								/*
 								ReplacedElement replacement = sbmlSBase.createReplacedElement();
@@ -769,6 +805,10 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 								Replacing replacement = sbmlSBase.createReplacedBy();
 								replacement.setSubmodelRef(subId);
 								replacement.setPortRef(portId);
+								String speciesId = portId.replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "");
+								CompModelPlugin subCompModel = subBioModel.getSBMLCompModel();
+								Submodel submodel = bioModel.getSBMLCompModel().getSubmodel(subId);
+								bioModel.addImplicitReplacedBys(subCompModel,submodel,speciesId,sbase.getId());
 							}
 						}
 					}
@@ -776,6 +816,9 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 					Submodel submodel = bioModel.getSBMLCompModel().getSubmodel(subId);
 					Deletion deletion = submodel.createDeletion();
 					deletion.setPortRef(portId);
+					String speciesId = portId.replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "");
+					CompModelPlugin subCompModel = subBioModel.getSBMLCompModel();
+					bioModel.addImplicitDeletions(subCompModel, submodel, speciesId);
 				}
 			}
 			String newPort = bioModel.getComponentPortMap(id);

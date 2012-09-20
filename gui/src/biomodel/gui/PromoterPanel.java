@@ -6,6 +6,8 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -41,7 +43,7 @@ public class PromoterPanel extends JPanel {
 	
 	public PromoterPanel(String selected, BioModel gcm, boolean paramsOnly, BioModel refGCM, 
 			ModelEditor gcmEditor) {
-		super(new GridLayout(paramsOnly?7:10, 1));
+		super(new GridLayout(paramsOnly?7:11, 1));
 		this.selected = selected;
 		this.bioModel = gcm;
 		this.paramsOnly = paramsOnly;
@@ -62,7 +64,24 @@ public class PromoterPanel extends JPanel {
 			// Name field
 			field = new PropertyField(GlobalConstants.NAME, promoter.getName(), null, null, Utility.NAMEstring, paramsOnly, "default", false);
 			fields.put(GlobalConstants.NAME, field);
-			add(field);		
+			add(field);	
+			
+			// Type field
+			JPanel tempPanel = new JPanel();
+			JLabel tempLabel = new JLabel(GlobalConstants.TYPE);
+			typeBox = new JComboBox(types);
+			//typeBox.addActionListener(this);
+			tempPanel.setLayout(new GridLayout(1, 2));
+			tempPanel.add(tempLabel);
+			tempPanel.add(typeBox);
+			add(tempPanel);
+			if (bioModel.isInput(promoter.getId())) {
+				typeBox.setSelectedItem(GlobalConstants.INPUT);
+			} else if (bioModel.isOutput(promoter.getId())) {
+				typeBox.setSelectedItem(GlobalConstants.OUTPUT);
+			} else {
+				typeBox.setSelectedItem(GlobalConstants.INTERNAL);
+			}
 		}
 		production = gcm.getProductionReaction(selected);
 		
@@ -380,6 +399,10 @@ public class PromoterPanel extends JPanel {
 				id = fields.get(GlobalConstants.ID).getValue();
 				promoter.setName(fields.get(GlobalConstants.NAME).getValue());
 			}
+			String speciesType = typeBox.getSelectedItem().toString();
+			bioModel.createDirPort(promoter.getId(),speciesType);
+			boolean onPort = (speciesType.equals(GlobalConstants.INPUT)||speciesType.equals(GlobalConstants.OUTPUT));
+			
 			promoter.setSBOTerm(GlobalConstants.SBO_PROMOTER_BINDING_REGION);
 			PropertyField f = fields.get(GlobalConstants.PROMOTER_COUNT_STRING);
 			if (f.getValue().startsWith("(")) {
@@ -426,7 +449,7 @@ public class PromoterPanel extends JPanel {
 			if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
 				KaoStr = f.getValue();
 			}
-			bioModel.createProductionReaction(selected,kaStr,npStr,koStr,kbStr,KoStr,KaoStr);
+			bioModel.createProductionReaction(selected,kaStr,npStr,koStr,kbStr,KoStr,KaoStr,onPort);
 
 			if (!paramsOnly) {
 				// Add SBOL annotation to promoter
@@ -529,5 +552,10 @@ public class PromoterPanel extends JPanel {
 	
 	private boolean promoterNameChange = false;
 	public boolean wasPromoterNameChanged(){return promoterNameChange;}
+	
+	private static final String[] types = new String[] { GlobalConstants.INPUT, GlobalConstants.INTERNAL, 
+		GlobalConstants.OUTPUT};
+
+	private JComboBox typeBox = null;
 	
 }
