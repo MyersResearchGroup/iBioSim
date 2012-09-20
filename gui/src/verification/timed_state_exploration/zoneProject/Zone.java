@@ -2676,6 +2676,12 @@ public class Zone{
 		return enabledTransitions;
 	}
 	
+	public ArrayList<Transition> getPossibleEvent(){
+		ArrayList<Transition> result = new ArrayList<Transition>();
+		
+		return result;
+	}
+	
 	/**
 	 * Updates the continuous variables that are set by firing a transition.
 	 * @param firedTran
