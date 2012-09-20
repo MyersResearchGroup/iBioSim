@@ -998,6 +998,7 @@ public class BioModel {
 				species.setInitialConcentration(Double.parseDouble(initialString.substring(1,initialString.length()-1)));
 			} 
 		}
+		boolean onPort = false;
 		if (property.containsKey(GlobalConstants.TYPE)) {
 			/*
 			species.setAnnotation(GlobalConstants.TYPE + "=" + property.getProperty(GlobalConstants.TYPE)
@@ -1005,6 +1006,7 @@ public class BioModel {
 					*/
 			String type = property.getProperty(GlobalConstants.TYPE).replace("diffusible","").replace("constitutive","");
 			createDirPort(species.getId(),type);
+			onPort = (type.equals(GlobalConstants.INPUT)||type.equals(GlobalConstants.OUTPUT));
 		} /*else {
 			species.setAnnotation(GlobalConstants.TYPE + "=" + GlobalConstants.INTERNAL);
 		}*/
@@ -1027,15 +1029,15 @@ public class BioModel {
 			kd = Double.parseDouble(property.getProperty(GlobalConstants.KDECAY_STRING));
 		} 
 		if (kd != 0) {
-			createDegradationReaction(s,kd,null);
+			createDegradationReaction(s,kd,null,onPort);
 		} 
 		if (property.containsKey(GlobalConstants.TYPE) && 
 			property.getProperty(GlobalConstants.TYPE).contains("diffusible")) {
-			createDiffusionReaction(s,property.getProperty(GlobalConstants.MEMDIFF_STRING));
+			createDiffusionReaction(s,property.getProperty(GlobalConstants.MEMDIFF_STRING),onPort);
 		}
 		if (property.containsKey(GlobalConstants.TYPE) && 
 				property.getProperty(GlobalConstants.TYPE).contains("constitutive")) {
-			createConstitutiveReaction(s);
+			createConstitutiveReaction(s,onPort);
 		}
 	}
 	
@@ -1075,7 +1077,7 @@ public class BioModel {
 				property.getProperty(GlobalConstants.OCR_STRING),
 				property.getProperty(GlobalConstants.KBASAL_STRING),
 				property.getProperty(GlobalConstants.RNAP_BINDING_STRING),
-				property.getProperty(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING));
+				property.getProperty(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING),false);
 	}
 	
 	public Layout createLayout() {
@@ -1444,7 +1446,7 @@ public class BioModel {
 		}
 	}
 
-	public Reaction createComplexReaction(String s,String KcStr) {
+	public Reaction createComplexReaction(String s,String KcStr,boolean onPort) {
 		createComplexDefaultParameters();
 		Reaction r = getComplexReaction(s);
 		if (r==null) {
@@ -1482,6 +1484,21 @@ public class BioModel {
 			}
 		}
 		createComplexKineticLaw(r);
+		Port port = getPortByIdRef(r.getId());
+		if (port!=null) {
+			if (onPort) {
+				port.setId(r.getId());
+				port.setIdRef(r.getId());
+			} else {
+				port.removeFromParentAndDelete();
+			}
+		} else {
+			if (onPort) {
+				port = sbmlCompModel.createPort();
+				port.setId(r.getId());
+				port.setIdRef(r.getId());
+			}
+		}
 		return r;
 	}
 
@@ -1795,7 +1812,8 @@ public class BioModel {
 	}
 
 	public Reaction addReactantToComplexReaction(String reactantId,String productId,String KcStr,String CoopStr) {
-		Reaction r = createComplexReaction(productId,KcStr);
+		boolean onPort = (getPortByIdRef(productId)!=null);
+		Reaction r = createComplexReaction(productId,KcStr,onPort);
 		SpeciesReference reactant = r.getReactant(reactantId);
 		if (reactant==null) {
 			reactant = r.createReactant();
@@ -1823,7 +1841,7 @@ public class BioModel {
 		return r;
 	}
 	
-	public Reaction createDiffusionReaction(String s,String kmdiffStr) {
+	public Reaction createDiffusionReaction(String s,String kmdiffStr,boolean onPort) {
 		createDiffusionDefaultParameters();
 		Reaction reaction = sbml.getModel().getReaction("MembraneDiffusion_"+s);		
 		if (reaction==null) {
@@ -1860,10 +1878,25 @@ public class BioModel {
 		}
 		k.setMath(SBMLutilities.myParseFormula(GlobalConstants.FORWARD_MEMDIFF_STRING+"*"+s+"-"+
 				GlobalConstants.REVERSE_MEMDIFF_STRING));
+		Port port = getPortByIdRef(reaction.getId());
+		if (port!=null) {
+			if (onPort) {
+				port.setId(reaction.getId());
+				port.setIdRef(reaction.getId());
+			} else {
+				port.removeFromParentAndDelete();
+			}
+		} else {
+			if (onPort) {
+				port = sbmlCompModel.createPort();
+				port.setId(reaction.getId());
+				port.setIdRef(reaction.getId());
+			}
+		}
 		return reaction;
 	}
 
-	public Reaction createConstitutiveReaction(String s) {
+	public Reaction createConstitutiveReaction(String s,boolean onPort) {
 		Reaction reaction = sbml.getModel().getReaction("Constitutive_"+s);
 		if (reaction==null) {
 			createConstitutiveDefaultParameters();
@@ -1881,10 +1914,25 @@ public class BioModel {
 			KineticLaw k = reaction.createKineticLaw();
 			k.setMath(SBMLutilities.myParseFormula(GlobalConstants.OCR_STRING));
 		}
+		Port port = getPortByIdRef(reaction.getId());
+		if (port!=null) {
+			if (onPort) {
+				port.setId(reaction.getId());
+				port.setIdRef(reaction.getId());
+			} else {
+				port.removeFromParentAndDelete();
+			}
+		} else {
+			if (onPort) {
+				port = sbmlCompModel.createPort();
+				port.setId(reaction.getId());
+				port.setIdRef(reaction.getId());
+			}
+		}
 		return reaction;
 	}
 	
-	public Reaction createDegradationReaction(String s,double kd,String sweep) {
+	public Reaction createDegradationReaction(String s,double kd,String sweep,boolean onPort) {
 		createDegradationDefaultParameters();
 		Reaction reaction = sbml.getModel().getReaction("Degradation_"+s);
 		if (reaction==null) {
@@ -1909,11 +1957,26 @@ public class BioModel {
 			} 
 		}
 		k.setMath(SBMLutilities.myParseFormula("kd*"+s));
-
+		Port port = getPortByIdRef(reaction.getId());
+		if (port!=null) {
+			if (onPort) {
+				port.setId(reaction.getId());
+				port.setIdRef(reaction.getId());
+			} else {
+				port.removeFromParentAndDelete();
+			}
+		} else {
+			if (onPort) {
+				port = sbmlCompModel.createPort();
+				port.setId(reaction.getId());
+				port.setIdRef(reaction.getId());
+			}
+		}
 		return reaction;
 	}
 
-	public Reaction createProductionReaction(String s,String ka,String np,String ko,String kb, String KoStr, String KaoStr) {
+	public Reaction createProductionReaction(String s,String ka,String np,String ko,String kb, String KoStr, String KaoStr,
+			boolean onPort) {
 		Reaction r = getProductionReaction(s);
 		KineticLaw k = null;
 		if (r == null) {
@@ -2021,6 +2084,21 @@ public class BioModel {
 			p.setValue(Kao[1]);
 		} 
 		createProductionKineticLaw(r);
+		Port port = getPortByIdRef(r.getId());
+		if (port!=null) {
+			if (onPort) {
+				port.setId(r.getId());
+				port.setIdRef(r.getId());
+			} else {
+				port.removeFromParentAndDelete();
+			}
+		} else {
+			if (onPort) {
+				port = sbmlCompModel.createPort();
+				port.setId(r.getId());
+				port.setIdRef(r.getId());
+			}
+		}
 		return r;
 	}
 
@@ -2038,6 +2116,7 @@ public class BioModel {
 		}
 		kineticLaw += "-" + GlobalConstants.REVERSE_KCOMPLEX_STRING + "*" + reaction.getProduct(0).getSpecies();
 		reaction.getKineticLaw().setMath(SBMLutilities.myParseFormula(kineticLaw));
+		
 	}
 
 	public void createProductionKineticLaw(Reaction reaction) {
@@ -3410,7 +3489,7 @@ public class BioModel {
 		if (sbml!=null) {
 			for (int i = 0; i < sbml.getModel().getNumSpecies(); i++) {
 				Species species = sbml.getModel().getSpecies(i);
-				if (!isPromoterSpecies(species)) {
+				if (!isPromoterSpecies(species) && !isMRNASpecies(species)) {
 					speciesSet.add(species.getId());
 				}
 			}
@@ -3521,6 +3600,18 @@ public class BioModel {
 				SBase sbase = sbml.getElementBySId(idRef);
 				if (sbase!=null) {
 					String type = sbml.getElementBySId(idRef).getElementName();
+					if (type.equals(GlobalConstants.SBMLREACTION)) {
+						Reaction r = sbml.getModel().getReaction(idRef);
+						if (isDegradationReaction(r)) continue;
+						if (isDiffusionReaction(r)) continue;
+						if (isProductionReaction(r)) continue;
+						if (isComplexReaction(r)) continue;
+						if (isConstitutiveReaction(r)) continue;
+						if (r.getAnnotationString().contains("grid")) continue;						
+					}
+					if (sbase.isSetSBOTerm() && sbase.getSBOTerm()==GlobalConstants.SBO_PROMOTER_BINDING_REGION) {
+						type = GlobalConstants.PROMOTER;
+					}
 					ports.add(type + ":" + id + ":" + idRef);
 				}
 			} else if (port.isSetMetaIdRef()) {
@@ -4540,12 +4631,17 @@ public class BioModel {
 		SBase variable = sbml.getModel().getElementBySId(variableId);
 		if (variable!=null) {
 			CompSBasePlugin sbmlSBase = (CompSBasePlugin)variable.getPlugin("comp");
-			ReplacedElement replacement = null;
 			for (long j = 0; j < sbmlSBase.getNumReplacedElements(); j++) {
-				replacement = sbmlSBase.getReplacedElement(j);
+				ReplacedElement replacement = sbmlSBase.getReplacedElement(j);
 				if (replacement.getSubmodelRef().equals(componentId) && replacement.getPortRef().equals(portId)) {
 					sbmlSBase.removeReplacedElement(j);
 				}
+			}
+			if (sbmlSBase.isSetReplacedBy()) {
+				ReplacedBy replacement = sbmlSBase.getReplacedBy();
+				if (replacement.getSubmodelRef().equals(componentId) && replacement.getPortRef().equals(portId)) {
+					replacement.removeFromParentAndDelete();
+				}				
 			}
 		}
 	}		
@@ -5534,7 +5630,7 @@ public class BioModel {
 		promoter.setBoundaryCondition(false);
 		promoter.setConstant(false);
 		promoter.setHasOnlySubstanceUnits(true);
-		createProductionReaction(id,null,null,null,null,null,null);
+		createProductionReaction(id,null,null,null,null,null,null,false);
 		if (is_explicit) {
 			Layout layout = null;
 			if (sbmlLayout.getLayout("iBioSim") != null) {
@@ -5910,15 +6006,104 @@ public class BioModel {
 		return false;
 	}
 	
-	private void removeStaleReplacementsDeletions(CompModelPlugin subCompModel,Submodel submodel) {
+	private Deletion getDeletionByPortRef(Submodel submodel,String portRef) {
+		for (long i = 0; i < submodel.getNumDeletions(); i++) {
+			Deletion d = submodel.getDeletion(i);
+			if (d.getPortRef().equals(portRef)) {
+				return d;
+			}
+		}
+		return null;
+	}
+	
+	private void addImplicitDeletion(CompModelPlugin subCompModel,Submodel submodel,String speciesId,String prefix) {
+		if (subCompModel.getPort(prefix + "_"+ speciesId)!=null && 
+				getDeletionByPortRef(submodel,prefix + "_"+speciesId)==null) {
+			Deletion d = submodel.createDeletion();
+			d.setPortRef(prefix + "_"+speciesId);
+		}
+	}
+	
+	public void addImplicitDeletions(CompModelPlugin subCompModel,Submodel submodel,String speciesId) {
+		addImplicitDeletion(subCompModel,submodel,speciesId,"Degradation");
+		addImplicitDeletion(subCompModel,submodel,speciesId,"Diffusion");
+		addImplicitDeletion(subCompModel,submodel,speciesId,"Constitutive");
+		addImplicitDeletion(subCompModel,submodel,speciesId,"Complex");
+		addImplicitDeletion(subCompModel,submodel,speciesId,"Production");
+	}
+
+	public void addImplicitReplacedBy(CompModelPlugin subCompModel,Submodel submodel,String speciesId,String topSpeciesId,
+			String prefix) {
+		Reaction r = sbml.getModel().getReaction(prefix+"_"+topSpeciesId);
+		if (r!=null) {
+			if (subCompModel.getPort(prefix+"_"+speciesId)!=null && 
+					getDeletionByPortRef(submodel,prefix+"_"+speciesId)==null) {
+				CompSBasePlugin sbmlSBase = (CompSBasePlugin)r.getPlugin("comp");
+				if (sbmlSBase != null) {
+					ReplacedBy replacement = sbmlSBase.createReplacedBy();
+					replacement.setSubmodelRef(submodel.getId());
+					replacement.setPortRef(prefix+"_"+speciesId);
+				}
+			} 
+		} 
+	}
+	
+	public void addImplicitReplacedBys(CompModelPlugin subCompModel,Submodel submodel,String speciesId,String topSpeciesId) {
+		addImplicitReplacedBy(subCompModel,submodel,speciesId,topSpeciesId,"Degradation");
+		addImplicitReplacedBy(subCompModel,submodel,speciesId,topSpeciesId,"Diffusion");
+		addImplicitReplacedBy(subCompModel,submodel,speciesId,topSpeciesId,"Constitutive");
+		addImplicitReplacedBy(subCompModel,submodel,speciesId,topSpeciesId,"Complex");
+		addImplicitReplacedBy(subCompModel,submodel,speciesId,topSpeciesId,"Production");
+	}
+	
+	private void addImplicitReplacementsDeletions(BioModel subBioModel,Submodel submodel) {
+		CompModelPlugin subCompModel = subBioModel.getSBMLCompModel();
+		for (long i = 0; i < submodel.getNumDeletions(); i++) {
+			Deletion deletion = submodel.getDeletion(i);
+			if (deletion.isSetPortRef()) {
+				String speciesId = deletion.getPortRef().replace(GlobalConstants.INPUT+"__", "")
+						.replace(GlobalConstants.OUTPUT+"__", "");
+				addImplicitDeletions(subCompModel,submodel,speciesId);
+			}
+		}
+		SBaseList elements = sbml.getModel().getListOfAllElements();
+		for (long i = 0; i < elements.getSize(); i++) {
+			SBase sbase = elements.get(i);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getPlugin("comp");
+			if (sbmlSBase!=null) {
+				for (long j = 0; j < sbmlSBase.getNumReplacedElements(); j++) {
+					ReplacedElement replacement = sbmlSBase.getReplacedElement(j);
+					if (replacement.getSubmodelRef().equals(submodel.getId()) && replacement.isSetPortRef()) {
+						String speciesId = replacement.getPortRef().replace(GlobalConstants.INPUT+"__", "")
+								.replace(GlobalConstants.OUTPUT+"__", "");
+						addImplicitDeletions(subCompModel,submodel,speciesId);
+					}
+				}
+				if (sbmlSBase.isSetReplacedBy()) {
+					ReplacedBy replacement = sbmlSBase.getReplacedBy();
+					if (replacement.getSubmodelRef().equals(submodel.getId()) && replacement.isSetPortRef()) {
+						if (sbase.getElementName().equals(GlobalConstants.SBMLSPECIES)) {
+							String speciesId = replacement.getPortRef().replace(GlobalConstants.INPUT+"__", "")
+									.replace(GlobalConstants.OUTPUT+"__", "");
+							addImplicitReplacedBys(subCompModel,submodel,speciesId,sbase.getId());
+							elements = sbml.getModel().getListOfAllElements();
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	private void removeStaleReplacementsDeletions(BioModel subBioModel,Submodel submodel) {
+		CompModelPlugin subCompModel = subBioModel.getSBMLCompModel();
 		for (long i = 0; i < submodel.getNumDeletions(); i++) {
 			Deletion deletion = submodel.getDeletion(i);
 			if (deletion.isSetPortRef()) {
 				if (subCompModel.getPort(deletion.getPortRef())==null) {
 					deletion.removeFromParentAndDelete();
 					i--;
-				}
-			}
+				} 
+			} 
 		}
 		SBaseList elements = sbml.getModel().getListOfAllElements();
 		for (long i = 0; i < elements.getSize(); i++) {
@@ -5977,7 +6162,8 @@ public class BioModel {
 					//System.out.println("MD5 DOES NOT MATCH");
 					sbmlComp.getExternalModelDefinition(submodel.getModelRef()).setMd5(md5);
 				}
-				removeStaleReplacementsDeletions(subBioModel.getSBMLCompModel(),submodel);
+				removeStaleReplacementsDeletions(subBioModel,submodel);
+				addImplicitReplacementsDeletions(subBioModel,submodel);
 				for (j = 0; j < subBioModel.getSBMLCompModel().getNumPorts(); j++) {
 					Port subPort = subBioModel.getSBMLCompModel().getPort(j);
 					if (!isPortRemoved(submodel,subPort.getId())) {
@@ -6269,9 +6455,10 @@ public class BioModel {
 		document.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", false);
 		SBMLWriter writer = new SBMLWriter();
 		writer.writeSBML(document, path + separator + "_temp.xml");
-		SBaseList elements = sbml.getModel().getListOfAllElements();
+		SBaseList elements = document.getModel().getListOfAllElements();
 		// THIS IS A WORKAROUND A FLATTEN BUG WHICH DOES NOT RENAME METAIDs
-		long metaIdNum = 0;
+		document.getModel().setMetaId("iBioSim"+0);
+		long metaIdNum = 1;
 		for (long i = 0; i < elements.getSize(); i++) {
 			SBase sbase = elements.get(i);
 			sbase.setMetaId("iBioSim"+metaIdNum);
@@ -6473,7 +6660,7 @@ public class BioModel {
 			}
 		}
 		if (sbmlSBase.isSetReplacedBy()) {
-			Replacing replacement = sbmlSBase.getReplacedBy();
+			ReplacedBy replacement = sbmlSBase.getReplacedBy();
 			if (replacement.getSubmodelRef().equals(replacementModelId)) {
 				if (replacement.isSetPortRef()) {
 					Port port = subBioModel.getSBMLCompModel().getPort(replacement.getPortRef());
@@ -6606,28 +6793,40 @@ public class BioModel {
 				newName = prepareReplacement(newName,subBioModel,subModelId,replacementModelId,sbmlSBase,spec.getId(),
 						model.getSpecies(j).getId());
 			}
+			/*
 			if (subBioModel.getPromoters().contains(spec.getId())) {
 				subBioModel.changePromoterId(spec.getId(), newName);
 			} else {
 				subBioModel.changeSpeciesId(spec.getId(), newName);
 			}
+			*/
+			updateVarId(true, spec.getId(), newName, subBioModel);
+			spec.setId(newName);
 			if (spec.isSetMetaId()) spec.setMetaId(subModelId + "__" + spec.getMetaId());
 		}
 		for (int i = 0; i < subModel.getNumSpecies(); i++) {
 			Species spec = subModel.getSpecies(i);
 			if (spec.getId().startsWith("_" + subModelId + "__")) {
+				/*
 				if (subBioModel.getPromoters().contains(spec.getId())) {
 					subBioModel.changePromoterId(spec.getId(), spec.getId().substring(3 + subModelId.length()));
 				} else {
 					subBioModel.changeSpeciesId(spec.getId(), spec.getId().substring(3 + subModelId.length()));
 				}
+				*/
+				updateVarId(true, spec.getId(), spec.getId().substring(3 + subModelId.length()), subBioModel);
+				spec.setId(spec.getId().substring(3 + subModelId.length()));
 			} else if (spec.getId().startsWith("__" + subModelId + "__")) {
 				String topId = spec.getId().substring(4 + subModelId.length());
+				/*
 				if (subBioModel.getPromoters().contains(spec.getId())) {
 					subBioModel.changePromoterId(spec.getId(), topId);
 				} else {
 					subBioModel.changeSpeciesId(spec.getId(), topId);
 				}
+				*/
+				updateVarId(true, spec.getId(), topId, subBioModel);
+				spec.setId(topId);
 				CompSBasePlugin SbmlSBase = (CompSBasePlugin)model.getSpecies(topId).getPlugin("comp");
 				ArrayList<ReplacedElement> replacements = new ArrayList<ReplacedElement>();
 				for (long j = 0; j < SbmlSBase.getNumReplacedElements(); j++) {
@@ -6708,7 +6907,7 @@ public class BioModel {
 				updateVarId(false, r.getId(), r.getId().substring(3 + subModelId.length()), subBioModel);
 				r.setId(r.getId().substring(3 + subModelId.length()));
 			} else if (r.getId().startsWith("__" + subModelId + "__")) {
-				String topId = r.getId().substring(3 + subModelId.length());
+				String topId = r.getId().substring(4 + subModelId.length());
 				updateVarId(false, r.getId(), topId, subBioModel);
 				r.setId(topId);
 				CompSBasePlugin SbmlSBase = (CompSBasePlugin)model.getReaction(topId).getPlugin("comp");
@@ -6718,7 +6917,7 @@ public class BioModel {
 				}
 				model.removeReaction(topId);
 				model.addReaction(r);
-				SbmlSBase = (CompSBasePlugin)model.getParameter(r.getId()).getPlugin("comp");
+				SbmlSBase = (CompSBasePlugin)model.getReaction(r.getId()).getPlugin("comp");
 				for (ReplacedElement repl : replacements) {
 					SbmlSBase.addReplacedElement(repl);
 				}

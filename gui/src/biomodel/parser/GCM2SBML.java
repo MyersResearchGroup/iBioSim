@@ -968,7 +968,7 @@ public class GCM2SBML {
 				else if (prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.NOINFLUENCE)) {
 					if (promoter==null) {
 						promoter = gcm.createPromoter(null,0, 0, false);
-						gcm.createProductionReaction(promoter,null,null,null,null,null,null);
+						gcm.createProductionReaction(promoter,null,null,null,null,null,null,false);
 					}
 					gcm.addNoInfluenceToProductionReaction(promoter,getInput(s),getOutput(s));
 				}

@@ -2001,8 +2001,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			refGCM.load(path + separator + refFile);
 		}
 		
-		SpeciesPanel panel = new SpeciesPanel(biosim, id, species, conditions, 
-				components, biomodel, paramsOnly, refGCM, this, inTab);
+		SpeciesPanel panel = new SpeciesPanel(biosim, id, species, components, biomodel, paramsOnly, refGCM, this, inTab);
 		
 //		if (paramsOnly) {
 //			String updates = panel.updates();
@@ -2215,7 +2214,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				// TODO: Is this correct?
 				outID = biomodel.addComponent(null, comp, false, null, -1, -1, 0, 0, md5);
 			}else{
-				new ComponentsPanel(selected, list, biomodel, ports, comp, oldPort, paramsOnly, this);
+				new ComponentsPanel(selected, list, biomodel, subBioModel, ports, comp, oldPort, paramsOnly, this);
 				outID = selected;
 			}
 
