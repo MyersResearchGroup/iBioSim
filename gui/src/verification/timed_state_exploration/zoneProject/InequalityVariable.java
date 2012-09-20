@@ -369,6 +369,14 @@ public class InequalityVariable extends Variable {
 					.evaluateExprBound(null, null);
 			
 			// Check that the bounds are the same.
+			if(!result.singleValue()){
+				// Scream! Something has gone wrong.
+				throw new IllegalArgumentException("The InequalityVariable." +
+						"getConstant() method evaluated to a non-trivial range.");
+			}
+			
+			// Either the lower or upper bound will be fine to return.
+			return result.get_LowerBound();
 		}
 		else if(_inequalityExprTree.getRightChild().containsCont()){
 			// Evaluate the other side. Note : since the assumption
@@ -376,14 +384,27 @@ public class InequalityVariable extends Variable {
 			// HashMap<String, String> should be needed for the 
 			// evaluation.
 			
+			IntervalPair result = _inequalityExprTree.getLeftChild()
+					.evaluateExprBound(null, null);
 			
 			// Check that the bounds are the same.
+			if(!result.singleValue()){
+				// Scream! Something has gone wrong.
+				throw new IllegalArgumentException("The InequalityVariable." +
+						"getConstant() method evaluated to a non-trivial range.");
+			}
+			
+			// Either the lower or upper bound will be fine to return.
+			return result.get_UpperBound();
 		}
 		
-		System.err.println("Warning: the inequaltiy " + this +
-				"does not have one side equal to a constant. For no good reason " +
-				"I'm assuming it is 0.");
-		return 0;
+//		System.err.println("Warning: the inequaltiy " + this +
+//				"does not have one side equal to a constant. For no good reason " +
+//				"I'm assuming it is 0.");
+		//return 0;
+		
+		throw new IllegalStateException("The inequality " + this + " does" +
+				"not have one side equal to a constant.");
 	}
 	
 //	/**
