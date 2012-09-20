@@ -1042,7 +1042,9 @@ public class Zone{
 	}
 	
 	/**
-	 * Get the value of the upper bound for the delay.
+	 * Get the value of the upper bound for the delay. If the index refers
+	 * to a timer, otherwise get the upper bound for the continuous 
+	 * variables rate.
 	 * @param index
 	 * 			The timer's row/column of the DBM matrix.
 	 * @return
@@ -1163,7 +1165,9 @@ public class Zone{
 	}
 	
 	/**
-	 * Get the value of the lower bound for the delay.
+	 * Get the value of the lower bound for the delay if the index refers
+	 * to a timer, otherwise get the lower bound for the continuous variables
+	 * rate.
 	 * @param index
 	 * 			The timer's row/column of the DBM matrix.
 	 * @return
@@ -2006,6 +2010,30 @@ public class Zone{
 			_matrix[dbmIndexToMatrixIndex(0)][dbmIndexToMatrixIndex(i)] = 
 				getUpperBoundbydbmIndex(i);
 		}
+		
+	}
+	
+	/**
+	 * Advances time. (This method should replace advance().)
+	 * @param localStates
+	 */
+	private void advance(State[] localStates){
+			
+		for(LPNTransitionPair ltPair : _indexToTimerPair){
+
+			// For ease, extract the index.
+			int index = ltPair.get_transitionIndex();
+
+			// Get the new value.
+			int newValue = 0;
+
+			if(ltPair.get_isTimer()){
+				newValue = getUpperBoundbydbmIndex(index);
+			}
+			else{
+				//newValue = maxAdvance(ltPair, localStates);
+			}
+		}
 	}
 	
 	/**
@@ -2676,8 +2704,21 @@ public class Zone{
 		return enabledTransitions;
 	}
 	
+	/**
+	 * Find the next possible events.
+	 * @return
+	 * 		The ArrayList<Transition> is populated with a list of 
+	 * 		EventSets. An EventSet can either contain a transition to
+	 * 		fire or set of inequalities to change sign.
+	 */
 	public ArrayList<Transition> getPossibleEvent(){
 		ArrayList<Transition> result = new ArrayList<Transition>();
+		
+		// Look through the timers and continuous variables in the
+		// zone and determine which are enabled to fire.
+		for(LPNTransitionPair ltPair : _indexToTimerPair){
+			
+		}
 		
 		return result;
 	}
@@ -2905,5 +2946,4 @@ public class Zone{
 		// TODO : Finish.
 		return 0;
 	}
-
 }
