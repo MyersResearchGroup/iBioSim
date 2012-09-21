@@ -2311,25 +2311,49 @@ public class BioModel {
 					String type = "integer";
 					if (rates.containsValue(p.getId())) type = "continuous"; 
 					Port port = getPortByIdRef(p.getId());
+					int lower = (int)Math.floor(p.getValue());
+					int upper = (int)Math.ceil(p.getValue());
+					InitialAssignment ia = flatSBML.getModel().getInitialAssignment(p.getId());
+					if (ia != null) {
+						ASTNode math = ia.getMath();
+						if (math.getType()==libsbml.AST_FUNCTION && math.getName().equals("uniform")) {
+							ASTNode left = math.getLeftChild();
+							ASTNode right = math.getRightChild();
+							if (left.getType()==libsbml.AST_INTEGER && right.getType()==libsbml.AST_INTEGER) {
+								lower = left.getInteger();
+								upper = right.getInteger();
+							}
+						}
+					}
 					if (port != null) {
 						if (isInputPort(port)) {
-							lpn.addInput(p.getId(),type,"[" + (int)Math.floor(p.getValue()) + "," + 
-									(int)Math.ceil(p.getValue()) + "]");
+							lpn.addInput(p.getId(),type,"[" + lower + "," +  upper + "]");
 						} else {
-							lpn.addOutput(p.getId(),type,"[" + (int)Math.floor(p.getValue()) + "," +
-									(int)Math.ceil(p.getValue()) + "]");
+							lpn.addOutput(p.getId(),type,"[" + lower + "," + upper + "]");
 						}
 					} else {
 						if (type.equals("integer")) {
-							lpn.addInteger(p.getId(),"[" + (int)Math.floor(p.getValue()) + "," + 
-									(int)Math.ceil(p.getValue()) + "]");
+							lpn.addInteger(p.getId(),"[" + lower + "," + upper + "]");
 						} else {
 						    for (String key : rates.keySet()) {
 						        if (rates.get(key).equals(p.getId())) {
 						        	Parameter rp = flatSBML.getModel().getParameter(key);
-									lpn.addContinuous(p.getId(), "[" + (int)Math.floor(p.getValue()) + "," + 
-											(int)Math.ceil(p.getValue()) + "]",	"["+ (int)Math.floor(rp.getValue()) + "," + 
-											(int)Math.ceil(rp.getValue()) + "]");
+						        	int lrate = (int)Math.floor(rp.getValue());
+						        	int urate = (int)Math.ceil(rp.getValue());
+									ia = flatSBML.getModel().getInitialAssignment(rp.getId());
+									if (ia != null) {
+										ASTNode math = ia.getMath();
+										if (math.getType()==libsbml.AST_FUNCTION && math.getName().equals("uniform")) {
+											ASTNode left = math.getLeftChild();
+											ASTNode right = math.getRightChild();
+											if (left.getType()==libsbml.AST_INTEGER && right.getType()==libsbml.AST_INTEGER) {
+												lrate = left.getInteger();
+												urate = right.getInteger();
+											}
+										}
+									}
+									lpn.addContinuous(p.getId(), "[" + lower + "," + upper + "]",	
+											"["+ lrate + "," + urate + "]");
 									break;
 						        }
 						    }
