@@ -1037,7 +1037,7 @@ public class BioModel {
 		}
 		if (property.containsKey(GlobalConstants.TYPE) && 
 				property.getProperty(GlobalConstants.TYPE).contains("constitutive")) {
-			createConstitutiveReaction(s,onPort);
+			createConstitutiveReaction(s,null, null, onPort);
 		}
 	}
 	
@@ -1896,40 +1896,77 @@ public class BioModel {
 		return reaction;
 	}
 
-	public Reaction createConstitutiveReaction(String s,boolean onPort) {
-		Reaction reaction = sbml.getModel().getReaction("Constitutive_"+s);
-		if (reaction==null) {
+	public Reaction createConstitutiveReaction(String s,String ko,String np,boolean onPort) {
+		Reaction r = sbml.getModel().getReaction("Constitutive_"+s);
+		KineticLaw k = null;
+		if (r==null) {
 			createConstitutiveDefaultParameters();
-			reaction = sbml.getModel().createReaction();
-			reaction.setId("Constitutive_"+s);
-			reaction.setSBOTerm(GlobalConstants.SBO_CONSTITUTIVE);
-			reaction.setCompartment(sbml.getModel().getSpecies(s).getCompartment());
-			reaction.setReversible(false);
-			reaction.setFast(false);
-			SpeciesReference product = reaction.createProduct();
+			r = sbml.getModel().createReaction();
+			r.setId("Constitutive_"+s);
+			r.setSBOTerm(GlobalConstants.SBO_CONSTITUTIVE);
+			r.setCompartment(sbml.getModel().getSpecies(s).getCompartment());
+			r.setReversible(false);
+			r.setFast(false);
+			SpeciesReference product = r.createProduct();
 			product.setSpecies(s);
-			double np = sbml.getModel().getParameter(GlobalConstants.STOICHIOMETRY_STRING).getValue();
-			product.setStoichiometry(np);
+			//double np = sbml.getModel().getParameter(GlobalConstants.STOICHIOMETRY_STRING).getValue();
+			//product.setStoichiometry(np);
 			product.setConstant(true);
-			KineticLaw k = reaction.createKineticLaw();
+			k = r.createKineticLaw();
 			k.setMath(SBMLutilities.myParseFormula(GlobalConstants.OCR_STRING));
+		} else {
+			k = r.getKineticLaw();
 		}
-		Port port = getPortByIdRef(reaction.getId());
+		if (np != null) {
+			LocalParameter p = k.getLocalParameter(GlobalConstants.STOICHIOMETRY_STRING);
+			if (p==null) {
+				p = k.createLocalParameter();
+				p.setId(GlobalConstants.STOICHIOMETRY_STRING);
+			}
+			double npVal = 1.0;
+			if (np.startsWith("(")) {
+				p.setAnnotation(GlobalConstants.STOICHIOMETRY_STRING+"="+np);
+			} else {
+				npVal = Double.parseDouble(np);
+			}
+			p.setValue(npVal);
+			for (long i = 0; i < r.getNumProducts(); i++) {
+				r.getProduct(i).setStoichiometry(npVal);
+			}
+		} else {
+			for (long i = 0; i < r.getNumProducts(); i++) {
+				r.getProduct(i).setStoichiometry(sbml.getModel().getParameter(GlobalConstants.STOICHIOMETRY_STRING).getValue());
+			}
+		}
+		if (ko != null) {
+			LocalParameter p = k.getLocalParameter(GlobalConstants.OCR_STRING);
+			if (p==null) {	
+				p = k.createLocalParameter();
+				p.setId(GlobalConstants.OCR_STRING);
+			}
+			if (ko.startsWith("(")) {
+				p.setAnnotation(GlobalConstants.OCR_STRING+"="+ko);
+				p.setValue(1.0);
+			} else {
+				p.setValue(Double.parseDouble(ko));
+			}
+		} 		
+		Port port = getPortByIdRef(r.getId());
 		if (port!=null) {
 			if (onPort) {
-				port.setId(reaction.getId());
-				port.setIdRef(reaction.getId());
+				port.setId(r.getId());
+				port.setIdRef(r.getId());
 			} else {
 				port.removeFromParentAndDelete();
 			}
 		} else {
 			if (onPort) {
 				port = sbmlCompModel.createPort();
-				port.setId(reaction.getId());
-				port.setIdRef(reaction.getId());
+				port.setId(r.getId());
+				port.setIdRef(r.getId());
 			}
 		}
-		return reaction;
+		return r;
 	}
 	
 	public Reaction createDegradationReaction(String s,double kd,String sweep,boolean onPort) {
