@@ -316,9 +316,6 @@ public class GCMParser {
 			speciesIF.setDiffusible(false);
 		}
 		speciesList.put(species.getId(), speciesIF);
-		if (constitutive != null) {
-			sbml.getModel().removeReaction(constitutive.getId());
-		}
 		
 		speciesIF.setType(BioModel.getSpeciesType(sbml,species.getId()));
 //		String annotation = species.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
@@ -341,6 +338,23 @@ public class GCMParser {
 		} else if (species.isSetInitialConcentration()) {
 			speciesIF.setInitialConcentration(species.getInitialConcentration());
 		}  
+		
+		if (constitutive != null) {
+			if (constitutive.getKineticLaw().getLocalParameter(GlobalConstants.OCR_STRING)!=null) {
+				speciesIF.setKo(constitutive.getKineticLaw().getLocalParameter(GlobalConstants.OCR_STRING).getValue());
+			} else {
+				speciesIF.setKo(sbml.getModel().getParameter(GlobalConstants.OCR_STRING).getValue());
+			}
+			if (constitutive.getKineticLaw().getLocalParameter(GlobalConstants.STOICHIOMETRY_STRING)!=null) {
+				speciesIF.setnp(constitutive.getKineticLaw().getLocalParameter(GlobalConstants.STOICHIOMETRY_STRING).getValue());
+			} else {
+				speciesIF.setnp(sbml.getModel().getParameter(GlobalConstants.STOICHIOMETRY_STRING).getValue());
+			}
+			sbml.getModel().removeReaction(constitutive.getId());
+		} else {
+			speciesIF.setKo(0.0);
+			speciesIF.setnp(0.0);
+		}
 		
 		if (degradation != null) {
 			if (degradation.getKineticLaw().getLocalParameter(GlobalConstants.KDECAY_STRING)!=null) {

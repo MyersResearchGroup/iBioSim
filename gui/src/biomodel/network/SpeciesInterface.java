@@ -104,6 +104,14 @@ public interface SpeciesInterface extends VisitableSpecies {
 	
 	public void setDecay(double kd);
 	
+	public double getKo();
+	
+	public void setKo(double ko);
+	
+	public double getnp();
+	
+	public void setnp(double np);
+	
 	public double[] getKc();
 	
 	public void setKc(double kc_f,double kc_r);

@@ -91,10 +91,10 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		else {
 			
 			if (bioModel.getSBMLDocument().getLevel() > 2) {
-				grid = new JPanel(new GridLayout(15,1));
+				grid = new JPanel(new GridLayout(17,1));
 			} 
 			else {
-				grid = new JPanel(new GridLayout(14,1));
+				grid = new JPanel(new GridLayout(16,1));
 			}
 		}
 		
@@ -165,9 +165,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		specDegradable.addActionListener(this);
 		specDegradable.setActionCommand("constdiffChanged");
 		
-		constDiff.add(specDiffusible);
 		constDiff.add(specConstitutive);
 		constDiff.add(specDegradable);
+		constDiff.add(specDiffusible);
 
 		tempPanel.add(constDiff);
 		
@@ -354,10 +354,77 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			grid.add(tempPanel);
 		}
 		
+		// kocr
+		origString = "default";
+		String defaultValue = bioModel.getParameter(GlobalConstants.OCR_STRING);
+		String formatString = Utility.NUMstring;
+		if (paramsOnly) {
+			//defaultValue = refGCM.getParameter(GlobalConstants.OCR_STRING);
+			if (constitutive != null) {
+				Reaction refProd = refGCM.getSBMLDocument().getModel().getReaction(constitutive.getId());
+				LocalParameter ko = refProd.getKineticLaw().getLocalParameter(GlobalConstants.OCR_STRING);
+				if (ko != null) {
+					defaultValue = ko.getValue()+"";
+					origString = "custom";
+				}
+			}
+			formatString = Utility.SWEEPstring;
+		}
+		field = new PropertyField(GlobalConstants.OCR_STRING, bioModel.getParameter(GlobalConstants.OCR_STRING),
+				origString, defaultValue, formatString, paramsOnly, origString, false);
+		if (constitutive != null) {
+			LocalParameter ko = constitutive.getKineticLaw().getLocalParameter(GlobalConstants.OCR_STRING);
+			if (ko != null && ko.isSetAnnotation() && 
+					ko.getAnnotationString().contains(GlobalConstants.OCR_STRING)) {
+				String sweep = ko.getAnnotationString().replace("<annotation>"+GlobalConstants.OCR_STRING+"=","")
+						.replace("</annotation>","");
+				field.setValue(sweep);
+				field.setCustom();
+			} else if (ko != null && !defaultValue.equals(ko.getValue()+"")) {
+				field.setValue(ko.getValue()+"");
+				field.setCustom();
+			}	
+		}
+		fields.put(GlobalConstants.OCR_STRING, field);
+		grid.add(field);
+		
+		// stoichiometry
+		origString = "default";
+		defaultValue = bioModel.getParameter(GlobalConstants.STOICHIOMETRY_STRING);
+		formatString = Utility.NUMstring;
+		if (paramsOnly) {
+			if (constitutive != null) {
+				Reaction refProd = refGCM.getSBMLDocument().getModel().getReaction(constitutive.getId());
+				LocalParameter np = refProd.getKineticLaw().getLocalParameter(GlobalConstants.STOICHIOMETRY_STRING);
+				if (np != null) {
+					defaultValue = np.getValue()+"";
+					origString = "custom";
+				}
+			}
+			formatString = Utility.SWEEPstring;
+		}
+		field = new PropertyField(GlobalConstants.STOICHIOMETRY_STRING, bioModel.getParameter(GlobalConstants.STOICHIOMETRY_STRING),
+				origString, defaultValue, formatString, paramsOnly, origString, false);
+		if (constitutive != null) {
+			LocalParameter np = constitutive.getKineticLaw().getLocalParameter(GlobalConstants.STOICHIOMETRY_STRING);
+			if (np != null && np.isSetAnnotation() && 
+					np.getAnnotationString().contains(GlobalConstants.STOICHIOMETRY_STRING)) {
+				String sweep = np.getAnnotationString().replace("<annotation>"+GlobalConstants.STOICHIOMETRY_STRING+"=","")
+						.replace("</annotation>","");
+				field.setValue(sweep);
+				field.setCustom();
+			} else if (np != null && !defaultValue.equals(np.getValue()+"")) {
+				field.setValue(np.getValue()+"");
+				field.setCustom();
+			}	
+		}
+		fields.put(GlobalConstants.STOICHIOMETRY_STRING, field);
+		grid.add(field);		
+		
 		// Decay field
 		origString = "default";
-		String defaultValue = bioModel.getParameter(GlobalConstants.KDECAY_STRING);
-		String formatString = Utility.NUMstring;
+		defaultValue = bioModel.getParameter(GlobalConstants.KDECAY_STRING);
+		formatString = Utility.NUMstring;
 		if (paramsOnly) {
 			if (degradation != null) {
 				Reaction refDeg = refGCM.getSBMLDocument().getModel().getReaction(degradation.getId());
@@ -867,7 +934,17 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			if (constitutive != null && !specConstitutive.isSelected()) {
 				bioModel.removeReaction(constitutive.getId());
 			} else if (specConstitutive.isSelected()) {
-				bioModel.createConstitutiveReaction(selected,onPort);		
+				String npStr = null;
+				PropertyField f = fields.get(GlobalConstants.STOICHIOMETRY_STRING);
+				if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
+					npStr = f.getValue();
+				}
+				String koStr = null;
+				f = fields.get(GlobalConstants.OCR_STRING);
+				if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
+					koStr = f.getValue();
+				}				
+				bioModel.createConstitutiveReaction(selected, koStr, npStr, onPort);		
 			} 
 			if (complex != null) {
 				String KcStr = null;
@@ -917,6 +994,10 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 								fields.get(GlobalConstants.KCOMPLEX_STRING).getStates()[1])
 						|| fields.get(GlobalConstants.KDECAY_STRING).getState().equals(
 								fields.get(GlobalConstants.KDECAY_STRING).getStates()[1])
+						|| fields.get(GlobalConstants.OCR_STRING).getState().equals(
+								fields.get(GlobalConstants.OCR_STRING).getStates()[1])
+						|| fields.get(GlobalConstants.STOICHIOMETRY_STRING).getState().equals(
+								fields.get(GlobalConstants.STOICHIOMETRY_STRING).getStates()[1])
 						|| fields.get(GlobalConstants.MEMDIFF_STRING).getState().equals(
 								fields.get(GlobalConstants.MEMDIFF_STRING).getStates()[1])) {
 					newSpeciesID += " Modified";
@@ -964,6 +1045,30 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 						+ GlobalConstants.KDECAY_STRING + " "
 						+ fields.get(GlobalConstants.KDECAY_STRING).getValue();
 			}
+
+			if (fields.get(GlobalConstants.OCR_STRING).getState().equals(
+					fields.get(GlobalConstants.OCR_STRING).getStates()[1])) {
+				
+				if (!updates.equals("")) {
+					updates += "\n";
+				}
+				
+				updates += fields.get(GlobalConstants.ID).getValue() + "/"
+						+ GlobalConstants.OCR_STRING + " "
+						+ fields.get(GlobalConstants.OCR_STRING).getValue();
+			}
+
+			if (fields.get(GlobalConstants.STOICHIOMETRY_STRING).getState().equals(
+					fields.get(GlobalConstants.STOICHIOMETRY_STRING).getStates()[1])) {
+				
+				if (!updates.equals("")) {
+					updates += "\n";
+				}
+				
+				updates += fields.get(GlobalConstants.ID).getValue() + "/"
+						+ GlobalConstants.STOICHIOMETRY_STRING + " "
+						+ fields.get(GlobalConstants.STOICHIOMETRY_STRING).getValue();
+			}
 			
 			if (fields.get(GlobalConstants.KCOMPLEX_STRING).getState().equals(
 					fields.get(GlobalConstants.KCOMPLEX_STRING).getStates()[1])) {
@@ -1000,7 +1105,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				e.getActionCommand().equals("constdiffChanged")) {
 			
 			//disallow constant == true if diffusible or constitutive are selected
-			if (specConstitutive.isSelected() || specDiffusible.isSelected()) {
+			if (specConstitutive.isSelected() || specDiffusible.isSelected() || specDegradable.isSelected()) {
 				specConstant.setEnabled(false);
 				specConstant.setSelectedItem("false");
 			}
@@ -1019,11 +1124,17 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	 * @param type
 	 */
 	private void setFieldEnablings() {
+		fields.get(GlobalConstants.OCR_STRING).setEnabled(false);
+		fields.get(GlobalConstants.STOICHIOMETRY_STRING).setEnabled(false);
 		fields.get(GlobalConstants.KDECAY_STRING).setEnabled(false);
 		fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(false);
 		fields.get(GlobalConstants.MEMDIFF_STRING).setEnabled(false);
 		
 		//diffusible
+		if (specConstitutive.isSelected()) {
+			fields.get(GlobalConstants.OCR_STRING).setEnabled(true);
+			fields.get(GlobalConstants.STOICHIOMETRY_STRING).setEnabled(true);
+		} 
 		if (specDiffusible.isSelected()) {
 			fields.get(GlobalConstants.MEMDIFF_STRING).setEnabled(true);
 		} 

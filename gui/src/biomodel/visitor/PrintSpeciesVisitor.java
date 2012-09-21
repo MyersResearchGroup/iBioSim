@@ -86,13 +86,12 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		r = new org.sbml.libsbml.Reaction(Gui.SBML_LEVEL, Gui.SBML_VERSION);
 		r.setId("Constitutive_production_" + s.getId());
 		r.setCompartment(compartment);
-		r.addProduct(Utility.SpeciesReference(s.getId(), Double.parseDouble(parameters.getParameter(GlobalConstants.STOICHIOMETRY_STRING))));
+		r.addProduct(Utility.SpeciesReference(s.getId(), specie.getnp()));
 		
 		r.setReversible(false);
 		r.setFast(false);
 		kl = r.createKineticLaw();
-		kl.addParameter(Utility.Parameter("kp", Double.parseDouble(parameters
-					.getParameter((GlobalConstants.OCR_STRING)))));	
+		kl.addParameter(Utility.Parameter("kp", specie.getKo()));
 		kl.setFormula("kp");
 		Utility.addReaction(document, r);		
 	}

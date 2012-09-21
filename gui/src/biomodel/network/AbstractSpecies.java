@@ -177,6 +177,22 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 		this.kd = kd;
 	}
 	
+	public double getKo() {
+		return ko;
+	}
+	
+	public void setKo(double ko) {
+		this.ko = ko;
+	}
+	
+	public double getnp() {
+		return np;
+	}
+	
+	public void setnp(double np) {
+		this.np = np;
+	}
+		
 	public double[] getKmdiff() {
 		/*
 		if (getProperty(GlobalConstants.MEMDIFF_STRING)==null) {
@@ -318,6 +334,10 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 	protected double[] Kc;
 	
 	protected double kd;
+	
+	protected double ko;
+	
+	protected double np;
 	
 	protected double[] Kmdiff;
 
