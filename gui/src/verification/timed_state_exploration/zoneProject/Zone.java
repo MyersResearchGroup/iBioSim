@@ -2724,6 +2724,221 @@ public class Zone{
 	}
 	
 	/**
+	 * Addes or removes items as appropriate to update the current
+	 * lsit of possible events. Note the type LpnTranList extends
+	 * LinkedList<Transition>. The type EventSet extends transition
+	 * specifically so that objects of EventSet type can be place in
+	 * this list.
+	 * @param EventList
+	 * 			The list of possible events.
+	 */
+	private void addSetItem(LpnTranList EventList){
+//		void lhpnAddSetItem(eventSets &E,lhpnEventADT e,ineqList &ineqL,lhpnZoneADT z,
+//                lhpnRateADT r,eventADT *events,int nevents,
+//	    lhpnStateADT cur_state)
+//{
+//int rv1l,rv1u,rv2l,rv2u,iZ,jZ;
+//
+//#ifdef __LHPN_TRACE__
+//printf("lhpnAddSetItem:begin()\n");
+//#endif
+//#ifdef __LHPN_ADD_ACTION__
+//printf("Event sets entering:\n");
+//printEventSets(E,events,ineqL);
+//printf("Examining event: ");
+//printLhpnEvent(e,events,ineqL);
+//#endif
+//eventSet* eSet = new eventSet();
+//eventSets* newE = new eventSets();
+//bool done = false;
+//bool possible = true;
+//eventSets::iterator i;
+		
+		// Create the new LpnTranlist for holding the events.
+		LpnTranList newE;
+		
+//
+//if ((e->t == -1) && (e->ineq == -1)) {
+//eSet->insert(e);
+//newE->push_back(*eSet);
+//E.clear();
+//E = *newE;
+//#ifdef __LHPN_ADD_ACTION__
+//printf("Event sets leaving:\n");
+//printEventSets(E,events,ineqL);
+//#endif
+//#ifdef __LHPN_TRACE__
+//printf("lhpnAddSetItem:end()\n");
+//#endif
+//return;
+//}
+//if (e->t == -1) {
+//ineq_update(ineqL[e->ineq],cur_state,nevents);
+//rv2l = chkDiv(-1 * ineqL[e->ineq]->constant,
+//              r->bound[ineqL[e->ineq]->place-nevents].current,'C');
+//rv2u = chkDiv(ineqL[e->ineq]->constant,
+//              r->bound[ineqL[e->ineq]->place-nevents].current,'C');
+//iZ = getIndexZ(z,-2,ineqL[e->ineq]->place);
+//} else {
+//iZ = getIndexZ(z,-1,e->t);
+//}
+//for(i=E.begin();i!=E.end()&&!done;i++) {
+//eventSet* workSet = new eventSet();
+//*workSet = copyEventSet(*i,events,ineqL);
+//for(eventSet::iterator j=workSet->begin();j!=workSet->end();j++) {
+//  if (((*j)->t == -1) && ((*j)->ineq == -1)) continue;
+//  if ((*j)->t == -1) {
+//ineq_update(ineqL[(*j)->ineq],cur_state,nevents);
+//    rv1l = chkDiv(-1 * ineqL[(*j)->ineq]->constant,
+//                  r->bound[ineqL[(*j)->ineq]->place-nevents].current,'C');
+//    rv1u = chkDiv(ineqL[(*j)->ineq]->constant,
+//                  r->bound[ineqL[(*j)->ineq]->place-nevents].current,'C');
+//    jZ = getIndexZ(z,-2,ineqL[(*j)->ineq]->place);
+//  } else {
+//    jZ = getIndexZ(z,-1,(*j)->t);
+//  }
+//  /* Both actions are predicate changes */
+//  if((e->t == -1) && ((*j)->t == -1)) {
+//    /* Both predicates are on the same variable */
+//    if(ineqL[(*j)->ineq]->place == ineqL[e->ineq]->place) {
+//      if (rv1l > rv2l) {
+//#ifdef __LHPN_ADD_ACTION__
+//        printf("Add action case 1a\n");
+//#endif
+//        possible = false;
+//      } else if (rv2l > rv1l) {
+//#ifdef __LHPN_ADD_ACTION__
+//        printf("Add action case 1b\n");
+//        printf("Adding to erase list: \n");
+//        printLhpnEvent(*j,events,ineqL);
+//#endif
+//        workSet->erase(*j);
+//      } else if (rv1u > rv2u) {
+//#ifdef __LHPN_ADD_ACTION__
+//        printf("Add action case 1c\n");
+//        printf("Adding to erase list: \n");
+//        printLhpnEvent(*j,events,ineqL);
+//#endif
+//        workSet->erase(*j);
+//      } else {
+//#ifdef __LHPN_ADD_ACTION__
+//        printf("Add action case 1d\n");
+//#endif
+//        workSet->insert(e);
+//        done = true;
+//      }
+//
+//    } 
+//    /* Predicates are on different variables */
+//    else {
+//      if(rv1l > rv2l + z->matrix[iZ][jZ]) {
+//#ifdef __LHPN_ADD_ACTION__
+//        printf("Add action case 2\n");
+//#endif
+//        possible = false;
+//      }
+//      else if(rv2l > rv1l + z->matrix[jZ][iZ]) {
+//#ifdef __LHPN_ADD_ACTION__
+//        printf("Add action case 3\n");
+//        printf("Adding to erase list: ");
+//        printLhpnEvent(*j,events,ineqL);
+//#endif
+//        workSet->erase(*j);
+//        //	    workSet->insert(e);
+//      }
+//      else if(rv1u > z->matrix[iZ][0] + z->matrix[jZ][iZ]) {
+//#ifdef __LHPN_ADD_ACTION__
+//        printf("Add action case 4\n");
+//        printf("Adding to erase list: \n");
+//        printLhpnEvent(*j,events,ineqL);
+//#endif
+//        workSet->erase(*j);
+//        //workSet->insert(e);
+//      }
+//      else if(rv2u > z->matrix[jZ][0] + z->matrix[iZ][jZ]) {
+//#ifdef __LHPN_ADD_ACTION__
+//        printf("Add action case 5\n");
+//#endif
+//        possible = false;
+//      }
+//      else if((rv1l == rv2l + z->matrix[iZ][jZ]) &&
+//              (rv2l == rv1l + z->matrix[jZ][iZ]) &&
+//              (rv1u == rv2u + z->matrix[jZ][iZ]) &&
+//              (rv2u == rv1u + z->matrix[iZ][jZ])) {
+//        workSet->insert(e);
+//        done = true;
+//#ifdef __LHPN_ADD_ACTION__
+//        printf("Add action case 6\n");
+//#endif
+//      }
+//    }
+//    /* New action is predicate change, old is transition firing (case 3) */
+//  } else if((e->t == -1) && ((*j)->t != -1)) {
+//    if (rv2l > -events[(*j)->t]->lower + z->matrix[jZ][iZ]) {
+//#ifdef __LHPN_ADD_ACTION__
+//      printf("Add action case 6\n");
+//      printf("Adding to erase list: \n");
+//      printLhpnEvent(*j,events,ineqL);
+//#endif
+//      workSet->erase(*j);
+//    } else if (rv2u > z->matrix[jZ][0] + z->matrix[iZ][jZ]) {
+//#ifdef __LHPN_ADD_ACTION__
+//      printf("Add action case 7\n");
+//#endif
+//      possible = false;
+//    }
+//    /* TODO: One more ugly case, is it needed? */
+//    /* New action is transition firing, old is predicate change (case 4) */
+//  } else if((e->t != -1) && ((*j)->t == -1)) {
+//    if (rv1l > (((-1)*(events[e->t]->lower)) + z->matrix[iZ][jZ])) {
+//#ifdef __LHPN_ADD_ACTION__
+//      printf("Add action case 8\n");
+//#endif
+//      possible = false;
+//    } else if (rv1u > z->matrix[iZ][0] + z->matrix[jZ][iZ]) {
+//#ifdef __LHPN_ADD_ACTION__
+//      printf("Add action case 9\n");
+//      printf("Adding to erase list: \n");
+//      printLhpnEvent(*j,events,ineqL);
+//#endif
+//      workSet->erase(*j);
+//    } 
+//    /* TODO: one more ugly case, is it needed? */
+//  }
+//}
+//if (!(workSet->empty())) {
+//  newE->push_back(*workSet);
+//}
+//}
+//#ifdef __LHPN_ADD_ACTION__
+//printf("At new for loop...\n");
+//#endif
+//for(;i!=E.end();i++) {
+//eventSet* addSet = new eventSet();
+//*addSet = copyEventSet(*i,events,ineqL);
+//newE->push_back(*addSet);
+//}
+//#ifdef __LHPN_ADD_ACTION__
+//printf("At done & possible...\n");
+//#endif
+//if(!done && possible) {
+//eSet->insert(e);
+//newE->push_back(*eSet);
+//}
+//E.clear();
+//E = *newE;
+//#ifdef __LHPN_ADD_ACTION__
+//printf("Event sets leaving:\n");
+//printEventSets(E,events,ineqL);
+//#endif
+//#ifdef __LHPN_TRACE__
+//printf("lhpnAddSetItem:end()\n");
+//#endif
+//}
+
+	}
+	
+	/**
 	 * Updates the continuous variables that are set by firing a transition.
 	 * @param firedTran
 	 * 		The transition that fired.
