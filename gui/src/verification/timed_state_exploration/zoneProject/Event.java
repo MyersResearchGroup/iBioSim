@@ -23,4 +23,8 @@ public class Event {
 		return false;
 	}
 	
+	
+	public InequalityVariable getInequalityVariable(){
+		return null;
+	}
 }
