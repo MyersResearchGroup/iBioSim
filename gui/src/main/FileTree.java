@@ -137,7 +137,7 @@ public class FileTree extends JPanel implements MouseListener {
 		this.dir = dir;
 		// Make a tree list with all the nodes, and make it a JTree
 		if (dir != null) {
-			tree = new JTree(addNodes(null, dir, true, false));
+			tree = new JTree(addNodes(null, dir, true, false),true);
 			TreeCellRenderer renderer = new IconCellRenderer();
 			tree.setCellRenderer(renderer);
 			// Add a listener
@@ -169,6 +169,7 @@ public class FileTree extends JPanel implements MouseListener {
 		else {
 			tree = new JTree(new DefaultMutableTreeNode());
 		}
+
 
 		// Lastly, put the JTree into a JScrollPane.
 		JScrollPane scrollpane = new JScrollPane();
