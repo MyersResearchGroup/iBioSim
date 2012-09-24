@@ -34,10 +34,10 @@ public class InequalityVariable extends Variable {
 	/* The continuous variable that this InequalityVariable depends on.*/
 	//String _variable;
 	//Variable _variable;
-	ArrayList<Variable> _variables;
+	private ArrayList<Variable> _variables;
 	
 	/* The LhpnFile object that this InequalityVariable belongs to. */
-	LhpnFile _lpn;
+	private LhpnFile _lpn;
 	
 	
 //	
@@ -444,5 +444,26 @@ public class InequalityVariable extends Variable {
 			v.addInequalityVariable(this);
 		}
 		
+	}
+	
+	/**
+	 * Get the LPN that contains this variable.
+	 * @return
+	 * 		The LPN that contains this variable.
+	 */
+	public LhpnFile get_lpn(){
+		return _lpn;
+	}
+	
+	/**
+	 * Get the continuous variables that this inequality variable
+	 * depends on.
+	 * 
+	 * @return
+	 * 		The continuous variables that this inequality variable
+	 * 		depends on.
+	 */
+	public ArrayList<Variable> getContVariables(){
+		return _variables;
 	}
 }
