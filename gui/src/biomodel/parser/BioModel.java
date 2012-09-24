@@ -1530,6 +1530,8 @@ public class BioModel {
 			if (reaction.getSBOTerm()==GlobalConstants.SBO_COMPLEX) {
 				reaction.setSBOTerm(GlobalConstants.SBO_ASSOCIATION);
 				return true;
+			} else if (reaction.getSBOTerm()==GlobalConstants.SBO_ASSOCIATION) {
+				return true;
 			}
 		} else if (reaction.isSetAnnotation()) {
 			if (reaction.getAnnotationString().contains("Complex")) {
