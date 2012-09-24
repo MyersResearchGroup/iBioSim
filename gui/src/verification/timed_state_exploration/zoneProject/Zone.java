@@ -2732,12 +2732,15 @@ public class Zone{
 	 * @param EventList
 	 * 			The list of possible events.
 	 */
-	private void addSetItem(LpnTranList E, Event e){
+	private LpnTranList addSetItem(LpnTranList E, Event e, State s){
 //		void lhpnAddSetItem(eventSets &E,lhpnEventADT e,ineqList &ineqL,lhpnZoneADT z,
 //                lhpnRateADT r,eventADT *events,int nevents,
 //	    lhpnStateADT cur_state)
 //{
 //int rv1l,rv1u,rv2l,rv2u,iZ,jZ;
+		
+		int rv1l, rv1u, rv2l, rv2u, iZ, jZ;
+		
 //
 //#ifdef __LHPN_TRACE__
 //printf("lhpnAddSetItem:begin()\n");
@@ -2764,9 +2767,16 @@ public class Zone{
 //if ((e->t == -1) && (e->ineq == -1)) {
 		if(!e.isTransition() && !e.isRate()){
 //eSet->insert(e);
+			eSet.insert(e);
 //newE->push_back(*eSet);
+			newE.addLast(eSet);
 //E.clear();
 //E = *newE;
+			
+			// The previous two commands act to pass the changes of E 
+			// back out of the functions. So returning the new object
+			// is suficient.
+			
 //#ifdef __LHPN_ADD_ACTION__
 //printf("Event sets leaving:\n");
 //printEventSets(E,events,ineqL);
@@ -2776,15 +2786,40 @@ public class Zone{
 //#endif
 //return;
 //}
+			return newE;
+			
 		}
 //if (e->t == -1) {
 		if(!e.isTransition()){
 //ineq_update(ineqL[e->ineq],cur_state,nevents);
+			
+			// Is this necessary, or even correct to update the inequalities.
+			
+			// In this case the Event e represents an inequality.
+			InequalityVariable ineq = e.getInequalityVariable();
+			
 //rv2l = chkDiv(-1 * ineqL[e->ineq]->constant,
 //              r->bound[ineqL[e->ineq]->place-nevents].current,'C');
 //rv2u = chkDiv(ineqL[e->ineq]->constant,
 //              r->bound[ineqL[e->ineq]->place-nevents].current,'C');
 //iZ = getIndexZ(z,-2,ineqL[e->ineq]->place);
+			
+			// Need to extract the rate.
+			// To do this, I'll create the indexing object.
+			Variable v = ineq.getContVariables().get(0);
+			// Find the LPN.
+			int lpnIndex = ineq.get_lpn().getLpnIndex();
+			
+			int varIndex = _lpnList[lpnIndex].
+					getContinuousIndexMap().getValue(v.getName());
+			
+			// Package it all up.
+			LPNTransitionPair ltPair = 
+					new LPNTransitionPair(lpnIndex, varIndex, false);
+			
+			rv2l = chkDiv(-1*ineq.getConstant(), getCurrentRate(ltPair), true);
+			rv2u = chkDiv(ineq.getConstant(), getCurrentRate(ltPair), true);
+			iZ = Arrays.binarySearch(_indexToTimerPair, ltPair);
 //} else {
 		}
 		else{
@@ -2952,7 +2987,7 @@ public class Zone{
 //printf("lhpnAddSetItem:end()\n");
 //#endif
 //}
-
+		return E;
 	}
 	
 	/**
