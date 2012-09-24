@@ -1,6 +1,7 @@
 package verification.timed_state_exploration.zoneProject;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import lpn.parser.Transition;
 
@@ -11,7 +12,7 @@ import lpn.parser.Transition;
  * @author Andrew N. Fisher
  *
  */
-public class EventSet extends Transition {
+public class EventSet extends Transition implements Iterable{
 
 	/*
 	 * Abstraction Function : 
@@ -38,12 +39,28 @@ public class EventSet extends Transition {
 	ArrayList<InequalityVariable> _inequalities;
 	
 	/**
-	 * Determines whether this EventSet represents a Transition or a set of
-	 * inequalities.
+	 * Determines whether this EventSet represents a Transition.
 	 * @return
 	 * 		True if this EventSet represents a Transition; false otherwise.
 	 */
 	public boolean isTransition(){
 		return _transition != null;
+	}
+	
+	/**
+	 * Determines whether the EventSet represents a rate event.
+	 * @return
+	 * 		True if this EventSet represents a rate event; flase otherwise.
+	 */
+	public boolean isRate(){
+		return false;
+	}
+	
+	public void insert(Event e){
+		
+	}
+	
+	public Iterator<Event> iterator(){
+		return null;
 	}
 }
