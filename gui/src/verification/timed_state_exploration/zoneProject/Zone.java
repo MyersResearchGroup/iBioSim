@@ -2732,7 +2732,7 @@ public class Zone{
 	 * @param EventList
 	 * 			The list of possible events.
 	 */
-	private void addSetItem(LpnTranList EventList){
+	private void addSetItem(LpnTranList E, Event e){
 //		void lhpnAddSetItem(eventSets &E,lhpnEventADT e,ineqList &ineqL,lhpnZoneADT z,
 //                lhpnRateADT r,eventADT *events,int nevents,
 //	    lhpnStateADT cur_state)
@@ -2755,10 +2755,14 @@ public class Zone{
 //eventSets::iterator i;
 		
 		// Create the new LpnTranlist for holding the events.
-		LpnTranList newE;
+		EventSet eSet = new EventSet();
+		LpnTranList newE = new LpnTranList();
+		boolean done = false;
+		boolean possible = true;
 		
 //
 //if ((e->t == -1) && (e->ineq == -1)) {
+		if(!e.isTransition() && !e.isRate()){
 //eSet->insert(e);
 //newE->push_back(*eSet);
 //E.clear();
@@ -2772,7 +2776,9 @@ public class Zone{
 //#endif
 //return;
 //}
+		}
 //if (e->t == -1) {
+		if(!e.isTransition()){
 //ineq_update(ineqL[e->ineq],cur_state,nevents);
 //rv2l = chkDiv(-1 * ineqL[e->ineq]->constant,
 //              r->bound[ineqL[e->ineq]->place-nevents].current,'C');
@@ -2780,9 +2786,18 @@ public class Zone{
 //              r->bound[ineqL[e->ineq]->place-nevents].current,'C');
 //iZ = getIndexZ(z,-2,ineqL[e->ineq]->place);
 //} else {
+		}
+		else{
 //iZ = getIndexZ(z,-1,e->t);
 //}
+			
+		}
+		
+		
 //for(i=E.begin();i!=E.end()&&!done;i++) {
+		
+		for(Transition event : E){
+		
 //eventSet* workSet = new eventSet();
 //*workSet = copyEventSet(*i,events,ineqL);
 //for(eventSet::iterator j=workSet->begin();j!=workSet->end();j++) {
@@ -2910,6 +2925,8 @@ public class Zone{
 //  newE->push_back(*workSet);
 //}
 //}
+		}
+			
 //#ifdef __LHPN_ADD_ACTION__
 //printf("At new for loop...\n");
 //#endif
