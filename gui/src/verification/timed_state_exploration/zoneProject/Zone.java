@@ -2936,6 +2936,23 @@ public class Zone{
 				
 //    /* Both predicates are on the same variable */
 //    if(ineqL[(*j)->ineq]->place == ineqL[e->ineq]->place) {
+					
+					// Extract the variable lists.
+					ArrayList<Variable> newList = e.getInequalityVariable()
+							.getContVariables();
+					ArrayList<Variable> oldList = oldEvent.getInequalityVariable()
+							.getContVariables();
+					
+					// Issue a warning if one of the lists has more than a single
+					// variable.
+					if(newList.size() > 1 && oldList.size() > 1){
+						System.err.println("Warning: One of the inequalities " + e +
+								" " + oldEvent + " refers to more than one variable");
+					}
+					
+					// Both inequalities are on the same varaibles.
+					if(newList.get(0).equals(oldList.get(0))){
+						
 //      if (rv1l > rv2l) {
 //#ifdef __LHPN_ADD_ACTION__
 //        printf("Add action case 1a\n");
@@ -2964,8 +2981,14 @@ public class Zone{
 //      }
 //
 //    } 
+						
+					}
+					
 //    /* Predicates are on different variables */
 //    else {
+					
+					else {
+					
 //      if(rv1l > rv2l + z->matrix[iZ][jZ]) {
 //#ifdef __LHPN_ADD_ACTION__
 //        printf("Add action case 2\n");
@@ -3007,6 +3030,9 @@ public class Zone{
 //#endif
 //      }
 //    }
+						
+					}
+						
 //    /* New action is predicate change, old is transition firing (case 3) */
 //  } else if((e->t == -1) && ((*j)->t != -1)) {
 					
