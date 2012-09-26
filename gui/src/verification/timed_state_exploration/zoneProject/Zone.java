@@ -2739,6 +2739,8 @@ public class Zone{
 //{
 //int rv1l,rv1u,rv2l,rv2u,iZ,jZ;
 		
+		// Note the LPNTranList plays the role of the eventSets.
+		
 		int rv1l, rv1u, rv2l, rv2u, iZ, jZ;
 		
 //
@@ -2765,7 +2767,7 @@ public class Zone{
 		
 //
 //if ((e->t == -1) && (e->ineq == -1)) {
-		if(!e.isTransition() && !e.isRate()){
+		if(e.isRate()){
 //eSet->insert(e);
 			eSet.insert(e);
 //newE->push_back(*eSet);
@@ -2790,10 +2792,11 @@ public class Zone{
 			
 		}
 //if (e->t == -1) {
-		if(!e.isTransition()){
+		if(e.isInequality()){
 //ineq_update(ineqL[e->ineq],cur_state,nevents);
 			
 			// Is this necessary, or even correct to update the inequalities.
+			System.out.println("Note the inequality is not being updated before in addSetItem");
 			
 			// In this case the Event e represents an inequality.
 			InequalityVariable ineq = e.getInequalityVariable();
@@ -2825,19 +2828,53 @@ public class Zone{
 		else{
 //iZ = getIndexZ(z,-1,e->t);
 //}
+			// In this case, the event is a transition.
+			Transition t = e.getTransition();
 			
+			int lpnIndex = t.getLpn().getLpnIndex();
+			
+			int tranIndex = t.getIndex();
+			
+			// Package the results.
+			LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, tranIndex, true);
+			
+			iZ = Arrays.binarySearch(_indexToTimerPair, ltPair);
 		}
 		
 		
 //for(i=E.begin();i!=E.end()&&!done;i++) {
 		
-		for(Transition event : E){
+		for(Transition es : E){
+			
+			if(!(es instanceof EventSet)){
+				// This collection should contain event sets, not transitions.
+				throw new IllegalArgumentException("The eventSet was a Transition object not an EventSet object.");
+			}
 		
+			EventSet eventSet = (EventSet) es;
+			
 //eventSet* workSet = new eventSet();
 //*workSet = copyEventSet(*i,events,ineqL);
+			
+			EventSet workSet = eventSet.clone();
+			
 //for(eventSet::iterator j=workSet->begin();j!=workSet->end();j++) {
+
+
+			for(Event oldEvent : workSet){
+			
 //  if (((*j)->t == -1) && ((*j)->ineq == -1)) continue;
+				
+				// For matching code with atacs, note that oldEvent is 'j'.
+				if(oldEvent.isRate()){
+					continue;
+				}
+				
 //  if ((*j)->t == -1) {
+				
+				if(oldEvent.isInequality()){
+				
+				
 //ineq_update(ineqL[(*j)->ineq],cur_state,nevents);
 //    rv1l = chkDiv(-1 * ineqL[(*j)->ineq]->constant,
 //                  r->bound[ineqL[(*j)->ineq]->place-nevents].current,'C');
@@ -2845,10 +2882,58 @@ public class Zone{
 //                  r->bound[ineqL[(*j)->ineq]->place-nevents].current,'C');
 //    jZ = getIndexZ(z,-2,ineqL[(*j)->ineq]->place);
 //  } else {
+					
+					// Again, is it necessary to do an update here?
+					System.out.println("Note the inequality is not being updated before in addSetItem");
+					
+					// In this case the Event oldEvent represents an inequality.
+					InequalityVariable ineq = oldEvent.getInequalityVariable();
+					
+					//Extract variable.
+					Variable v = ineq.getContVariables().get(0);
+					// Find the LPN.
+					int lpnIndex = ineq.get_lpn().getLpnIndex();
+					
+					int varIndex = _lpnList[lpnIndex].
+							getContinuousIndexMap().getValue(v.getName());
+					
+					// Package it all up.
+					LPNTransitionPair ltPair = 
+							new LPNTransitionPair(lpnIndex, varIndex, false);
+					
+					rv1l = chkDiv(-1 * oldEvent.getInequalityVariable().getConstant(), 
+							getCurrentRate(ltPair), true);
+					rv2u = chkDiv(oldEvent.getInequalityVariable().getConstant(), 
+							getCurrentRate(ltPair), true);
+					
+					jZ = Arrays.binarySearch(_indexToTimerPair, ltPair);
+					
+				}
+				else{
+					
 //    jZ = getIndexZ(z,-1,(*j)->t);
 //  }
+					// In this case, the event is a transition.
+					Transition t = oldEvent.getTransition();
+					
+					// Create the indexing object. (See the Abstraction Function protion at the
+					// top of the class for more details.)
+					int lpnIndex = t.getLpn().getLpnIndex();
+					
+					int tranIndex = t.getIndex();
+					
+					// Package the results.
+					LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, tranIndex, true);
+					
+					jZ = Arrays.binarySearch(_indexToTimerPair, ltPair);
+				}
+					
 //  /* Both actions are predicate changes */
 //  if((e->t == -1) && ((*j)->t == -1)) {
+				
+				// Both actions are predicate changes.
+				if(e.isInequality() && oldEvent.isInequality()){
+				
 //    /* Both predicates are on the same variable */
 //    if(ineqL[(*j)->ineq]->place == ineqL[e->ineq]->place) {
 //      if (rv1l > rv2l) {
@@ -2924,6 +3009,10 @@ public class Zone{
 //    }
 //    /* New action is predicate change, old is transition firing (case 3) */
 //  } else if((e->t == -1) && ((*j)->t != -1)) {
+					
+				}
+				// New action is an inequality and the old even tis a transition (case 3).
+				else if (e.isInequality() && oldEvent.isTransition()){
 //    if (rv2l > -events[(*j)->t]->lower + z->matrix[jZ][iZ]) {
 //#ifdef __LHPN_ADD_ACTION__
 //      printf("Add action case 6\n");
@@ -2940,6 +3029,12 @@ public class Zone{
 //    /* TODO: One more ugly case, is it needed? */
 //    /* New action is transition firing, old is predicate change (case 4) */
 //  } else if((e->t != -1) && ((*j)->t == -1)) {
+					
+				} 
+				
+				// New event is a transition firing, old event is an inequality change (case 4).
+				else if(e.isTransition() && oldEvent.isInequality()){
+					
 //    if (rv1l > (((-1)*(events[e->t]->lower)) + z->matrix[iZ][jZ])) {
 //#ifdef __LHPN_ADD_ACTION__
 //      printf("Add action case 8\n");
@@ -2956,6 +3051,9 @@ public class Zone{
 //    /* TODO: one more ugly case, is it needed? */
 //  }
 //}
+				}			
+			}
+				
 //if (!(workSet->empty())) {
 //  newE->push_back(*workSet);
 //}
@@ -3176,6 +3274,19 @@ public class Zone{
 				Integer.parseInt(upperString));
 	}	
 	
+	/**
+	 * Performs a division of two integers and either takes the ceiling or the floor. Note :
+	 * The integers are converted to doubles for the division so the choice of ceiling or floor is
+	 * meaningful.
+	 * @param top
+	 * 		The numerator.
+	 * @param bottom
+	 * 		The denominator.
+	 * @param ceil
+	 * 		True indicates return the ceiling and false indicates return the floor.
+	 * @return
+	 * 		Returns the ceiling of top/bottom if ceil is true and the floor of top/bottom otherwise.
+	 */
 	public int chkDiv(int top, int bottom, Boolean ceil){
 		/*
 		 * This method was taken from atacs/src/hpnrsg.c
