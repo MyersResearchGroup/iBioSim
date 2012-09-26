@@ -2741,7 +2741,7 @@ public class Zone{
 		
 		// Note the LPNTranList plays the role of the eventSets.
 		
-		int rv1l, rv1u, rv2l, rv2u, iZ, jZ;
+		int rv1l=0, rv1u=0, rv2l=0, rv2u=0, iZ, jZ;
 		
 //
 //#ifdef __LHPN_TRACE__
@@ -2958,6 +2958,12 @@ public class Zone{
 //        printf("Add action case 1a\n");
 //#endif
 //        possible = false;
+						
+						if(rv1l > rv2l){
+							possible = false;
+						}
+						
+						
 //      } else if (rv2l > rv1l) {
 //#ifdef __LHPN_ADD_ACTION__
 //        printf("Add action case 1b\n");
@@ -2965,6 +2971,11 @@ public class Zone{
 //        printLhpnEvent(*j,events,ineqL);
 //#endif
 //        workSet->erase(*j);
+						
+						else if (rv2l > rv1l){
+							workSet.remove(oldEvent);
+						}
+						
 //      } else if (rv1u > rv2u) {
 //#ifdef __LHPN_ADD_ACTION__
 //        printf("Add action case 1c\n");
@@ -2972,12 +2983,23 @@ public class Zone{
 //        printLhpnEvent(*j,events,ineqL);
 //#endif
 //        workSet->erase(*j);
+						
+						else if(rv1u > rv2u){
+							workSet.remove(oldEvent);
+						}
+						
 //      } else {
 //#ifdef __LHPN_ADD_ACTION__
 //        printf("Add action case 1d\n");
 //#endif
 //        workSet->insert(e);
 //        done = true;
+						
+						else{
+							workSet.add(e);
+							done = true;
+						}
+						
 //      }
 //
 //    } 
@@ -2987,13 +3009,23 @@ public class Zone{
 //    /* Predicates are on different variables */
 //    else {
 					
+					// Inequalities are on different variables.
 					else {
+						
+						// TODO : Check that the indecies must be reversed. I believe
+						// they do since I think my representation is the transpose
+						// of atacs. This will affect all the following statements.
+						
 					
 //      if(rv1l > rv2l + z->matrix[iZ][jZ]) {
 //#ifdef __LHPN_ADD_ACTION__
 //        printf("Add action case 2\n");
 //#endif
 //        possible = false;
+						
+						if(rv1l > rv2l + getDbmEntry(jZ, iZ)){
+							possible = false;
+						}
 //      }
 //      else if(rv2l > rv1l + z->matrix[jZ][iZ]) {
 //#ifdef __LHPN_ADD_ACTION__
@@ -3003,6 +3035,12 @@ public class Zone{
 //#endif
 //        workSet->erase(*j);
 //        //	    workSet->insert(e);
+						
+						
+						else if(rv2l > rv1l + getDbmEntry(iZ, jZ)){
+							workSet.remove(oldEvent);
+						}
+						
 //      }
 //      else if(rv1u > z->matrix[iZ][0] + z->matrix[jZ][iZ]) {
 //#ifdef __LHPN_ADD_ACTION__
@@ -3012,12 +3050,22 @@ public class Zone{
 //#endif
 //        workSet->erase(*j);
 //        //workSet->insert(e);
+						
+						else if(rv1u > getDbmEntry(0, iZ) + getDbmEntry(iZ, jZ)){
+							workSet.remove(oldEvent);
+						}
+						
 //      }
 //      else if(rv2u > z->matrix[jZ][0] + z->matrix[iZ][jZ]) {
 //#ifdef __LHPN_ADD_ACTION__
 //        printf("Add action case 5\n");
 //#endif
 //        possible = false;
+						
+						else if (rv2u > getDbmEntry(0, jZ) + getDbmEntry(jZ, iZ)){
+							possible = false;
+						}
+						
 //      }
 //      else if((rv1l == rv2l + z->matrix[iZ][jZ]) &&
 //              (rv2l == rv1l + z->matrix[jZ][iZ]) &&
@@ -3027,18 +3075,29 @@ public class Zone{
 //        done = true;
 //#ifdef __LHPN_ADD_ACTION__
 //        printf("Add action case 6\n");
+						
+						else if(rv1l == rv2l + getDbmEntry(jZ, iZ) &&
+								rv2l == rv1l + getDbmEntry(iZ, jZ) &&
+								rv1u == rv2u + getDbmEntry(iZ, jZ) &&
+								rv2u == rv1u + getDbmEntry(jZ, iZ)){
+							
+							workSet.add(e);
+							
+						}
+						
 //#endif
 //      }
 //    }
 						
 					}
-						
+					
+				}
 //    /* New action is predicate change, old is transition firing (case 3) */
 //  } else if((e->t == -1) && ((*j)->t != -1)) {
 					
-				}
 				// New action is an inequality and the old even tis a transition (case 3).
 				else if (e.isInequality() && oldEvent.isTransition()){
+
 //    if (rv2l > -events[(*j)->t]->lower + z->matrix[jZ][iZ]) {
 //#ifdef __LHPN_ADD_ACTION__
 //      printf("Add action case 6\n");
@@ -3046,17 +3105,29 @@ public class Zone{
 //      printLhpnEvent(*j,events,ineqL);
 //#endif
 //      workSet->erase(*j);
+					
+					if(rv2l > -1* getLowerBoundbyTransition(e.getTransition()) + getDbmEntry(iZ, jZ)){
+						//Probably can change this to refer directly to the zone.
+						workSet.remove(oldEvent);
+					}
+					
 //    } else if (rv2u > z->matrix[jZ][0] + z->matrix[iZ][jZ]) {
 //#ifdef __LHPN_ADD_ACTION__
 //      printf("Add action case 7\n");
 //#endif
 //      possible = false;
+					
+					else if(rv2u > getDbmEntry(0, jZ) + getDbmEntry(jZ, iZ)){
+						possible = false;
+					}
+					
 //    }
+				}
+				
+				
 //    /* TODO: One more ugly case, is it needed? */
 //    /* New action is transition firing, old is predicate change (case 4) */
 //  } else if((e->t != -1) && ((*j)->t == -1)) {
-					
-				} 
 				
 				// New event is a transition firing, old event is an inequality change (case 4).
 				else if(e.isTransition() && oldEvent.isInequality()){
@@ -3066,6 +3137,11 @@ public class Zone{
 //      printf("Add action case 8\n");
 //#endif
 //      possible = false;
+					
+					if(rv1l > (-1) * getLowerBoundbyTransition(e.getTransition()) + getDbmEntry(jZ, iZ)){
+						possible = false;
+					}
+					
 //    } else if (rv1u > z->matrix[iZ][0] + z->matrix[jZ][iZ]) {
 //#ifdef __LHPN_ADD_ACTION__
 //      printf("Add action case 9\n");
@@ -3073,10 +3149,18 @@ public class Zone{
 //      printLhpnEvent(*j,events,ineqL);
 //#endif
 //      workSet->erase(*j);
+					
+					
+					else if (rv1u > getDbmEntry(0, jZ) + getDbmEntry(iZ, jZ)){
+						workSet.remove(oldEvent);
+					}
+					
 //    } 
 //    /* TODO: one more ugly case, is it needed? */
 //  }
 //}
+					// I guess this one wasn't needed since it is not found in atacs.
+					
 				}			
 			}
 				
@@ -3084,6 +3168,11 @@ public class Zone{
 //  newE->push_back(*workSet);
 //}
 //}
+			
+			if(!(workSet.isEmpty())){
+				newE.add(workSet);
+			}
+			
 		}
 			
 //#ifdef __LHPN_ADD_ACTION__
@@ -3094,6 +3183,20 @@ public class Zone{
 //*addSet = copyEventSet(*i,events,ineqL);
 //newE->push_back(*addSet);
 //}
+		
+		// This part of the code is essentially copying the all the old event set into the new event set.
+		// There might be a way around doing this by working directly on the set to begin with.
+		for(Transition T : E){
+			if(!(T instanceof EventSet)){
+				// This collection should contain event sets, not transitions.
+				throw new IllegalArgumentException("The eventSet was a Transition object not an EventSet object.");
+			}
+			EventSet es = (EventSet) T;
+			
+			newE.add(es.clone());
+		}
+		
+		
 //#ifdef __LHPN_ADD_ACTION__
 //printf("At done & possible...\n");
 //#endif
@@ -3101,8 +3204,17 @@ public class Zone{
 //eSet->insert(e);
 //newE->push_back(*eSet);
 //}
+		
+		if(!done && possible){
+			eSet.add(e);
+			newE.add(eSet);
+		}
+		
 //E.clear();
 //E = *newE;
+		
+		E = newE;
+		
 //#ifdef __LHPN_ADD_ACTION__
 //printf("Event sets leaving:\n");
 //printEventSets(E,events,ineqL);
