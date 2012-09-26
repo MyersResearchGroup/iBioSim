@@ -1,5 +1,7 @@
 package verification.timed_state_exploration.zoneProject;
 
+import lpn.parser.Transition;
+
 public class Event {
 
 	/**
@@ -23,8 +25,16 @@ public class Event {
 		return false;
 	}
 	
+	public boolean isInequality(){
+		return false;
+	}
+	
 	
 	public InequalityVariable getInequalityVariable(){
+		return null;
+	}
+	
+	public Transition getTransition(){
 		return null;
 	}
 }
