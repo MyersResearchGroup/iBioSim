@@ -1420,9 +1420,10 @@ public class Zone{
 	 */
 	public String toString()
 	{
-		// TODO : Add the rate zero continuous variables.
+		// TODO : Fix the handling of continuous variables in the 
+		// _lpnList == 0 case.
 		
-		String result = "Timer and delay.\n";
+		String result = "Timer and delay or continuous and ranges.\n";
 		
 		int count = 0;
 		
@@ -1454,7 +1455,9 @@ public class Zone{
 					Variable var = _lpnList[_indexToTimerPair[i].get_lpnIndex()]
 							.getContVar(_indexToTimerPair[i].get_transitionIndex());
 					
-					name = var.getName() + "rate";
+					name = var.getName() + 
+							":[" + -1*getDbmEntry(0, i) + "," + getDbmEntry(i, 0) +
+							"rate:";
 				}
 				
 //				result += " " +  tran.getName() + ":";
@@ -1467,6 +1470,13 @@ public class Zone{
 			{
 				result += "\n";
 				count = 0;
+			}
+		}
+		
+		if(!_rateZeroContinuous.isEmpty()){
+			result += "Rate Zero Continuous : \n";
+			for (LPNTransitionPair ltPair : _rateZeroContinuous.keySet()){
+				result += "" + _rateZeroContinuous.get(ltPair);
 			}
 		}
 		
