@@ -67,4 +67,20 @@ public class EventSet extends Transition implements Iterable<Event>{
 	public EventSet clone(){
 		return null;
 	}
+	
+	public void remove(Event e){
+		
+	}
+	
+	public void add(Event e){
+		
+	}
+	
+	public int size(){
+		return 0;
+	}
+	
+	public boolean isEmpty(){
+		return false;
+	}
 }
