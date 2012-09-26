@@ -12,7 +12,7 @@ import lpn.parser.Transition;
  * @author Andrew N. Fisher
  *
  */
-public class EventSet extends Transition implements Iterable{
+public class EventSet extends Transition implements Iterable<Event>{
 
 	/*
 	 * Abstraction Function : 
@@ -61,6 +61,10 @@ public class EventSet extends Transition implements Iterable{
 	}
 	
 	public Iterator<Event> iterator(){
+		return null;
+	}
+	
+	public EventSet clone(){
 		return null;
 	}
 }
