@@ -5475,8 +5475,22 @@ public class ExprTree {
 //				    uvalue = cur_state->z->matrix[i][0];
 //				  }
 					
-					// TODO : How do you solve a problem like an integer. (Think Sound of Music.)
 					
+					// Get the value of the variable from the passed HashMap and convert it as appropriate.
+					String sV = variables.get(variable); // sV for "string value"
+
+					if(sV != null){
+						
+						int tmp = Integer.parseInt(sV);
+
+						// Currently the platu.state does not support integer ranges.
+						lBound = uBound = tmp;
+					}
+					else{
+						lBound = -INFIN;
+						uBound = INFIN;
+					}
+
 					
 //				  else{// uses lower rate bound for both????
 //				    lvalue = -1*(cur_state->z->matrix[0][i])*
