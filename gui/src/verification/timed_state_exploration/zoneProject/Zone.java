@@ -1287,9 +1287,12 @@ public class Zone{
 		}
 		
 		// Else find the upper and lower bounds.
-		int lower = getLowerBoundbydbmIndex(i);
-		int upper = getUpperBoundbydbmIndex(i);
+//		int lower = getLowerBoundbydbmIndex(i);
+//		int upper = getUpperBoundbydbmIndex(i);
 		
+		int lower = (-1)*getDbmEntry(i, 0);
+		int upper = getDbmEntry(0, i);
+				
 		return new IntervalPair(lower, upper);
 	}
 	
@@ -1336,8 +1339,11 @@ public class Zone{
 		}
 		
 		// Else find the upper and lower bounds.
-		setLowerBoundbydbmIndex(i, range.get_LowerBound());
-		setUpperBoundbydbmIndex(i, range.get_UpperBound());
+//		setLowerBoundbydbmIndex(i, range.get_LowerBound());
+//		setUpperBoundbydbmIndex(i, range.get_UpperBound());
+		setDbmEntry(i, 0, (-1)*range.get_LowerBound());
+		setDbmEntry(0, i, range.get_UpperBound());
+		
 	}
 	
 	/**
@@ -2038,11 +2044,19 @@ public class Zone{
 			int newValue = 0;
 
 			if(ltPair.get_isTimer()){
+				// If the pair is a timer, then simply get the stored largest value.
 				newValue = getUpperBoundbydbmIndex(index);
 			}
 			else{
-				//newValue = maxAdvance(ltPair, localStates);
+				// I fthe pair is a continuous variable, then need to find the 
+				// possible largest bound governed by the inequalities.
+				newValue = maxAdvance(ltPair, localStates);
 			}
+			
+			
+			// In either case (timer or continuous), set the upper bound portion
+			// of the DBM to the new value.
+			setDbmEntryByPair(ltPair, LPNTransitionPair.ZERO_TIMER_PAIR, newValue);
 		}
 	}
 	
