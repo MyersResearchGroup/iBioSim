@@ -1,6 +1,7 @@
 package verification.timed_state_exploration.zoneProject;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -8,7 +9,9 @@ import lpn.parser.Transition;
 
 /**
  * An EventSet represents a transition to fire or a set of inequalities that must
- * fire together. 
+ * fire together. When the EventSet represents a single transition, it is said to be in
+ * Transition mode. When the EventSet represents a list of inequalities, it is said to be in
+ * Inequality mode.
  * 
  * @author Andrew N. Fisher
  *
@@ -16,13 +19,17 @@ import lpn.parser.Transition;
 public class EventSet extends Transition implements Iterable<Event>{
 
 	/*
-	 * Abstraction Function : 
+	 * Abstraction Function : An EventSet is either singleton set containing a Transition or
+	 * is a set of IneqaulityVariables (but not both). Accordingly, an EventSet is said to operate in one
+	 * of two modes: a Transition mode and an Inequality mode. When the EventSet contains a single Transition
+	 * it is stored as the _transition variable. When the EventSet contains a set InequalityVariables,
+	 * they are stored in _inequalities. 
 	 */
 	
 	
 	/*
 	 * Representation Invariant :
-	 * Exactly one of the fields '_transition' or '_inequalities' should be non-null.
+	 * Exactly one of the fields '_transition' or '_inequalities' should be non-null (no more no less).
 	 * Testing for null is how this class determines whether it represents a 
 	 * Transition or a set of inequalities.
 	 */
@@ -40,6 +47,34 @@ public class EventSet extends Transition implements Iterable<Event>{
 	ArrayList<InequalityVariable> _inequalities;
 	
 	/**
+	 * Creates an uninitialized EventSet. The mode of the EventSet is determined by the first use
+	 * of the insert method. If a Transition event is added, then the EventSet will be in the Transition mode.
+	 * If an inequality event is added, then the EventSet will be in the Inequality mode.
+	 */
+	public EventSet(){
+		// The mode will be determined by the first element added into the EventSet.
+	}
+	
+	/**
+	 * Creates an EventSet in the Transition mode.
+	 * @param transition
+	 * 		The transition the EventSet should contain.
+	 */
+	public EventSet(Transition transition){
+		_transition = transition;
+	}
+	
+	/**
+	 * Creates an EventSet in the Inequality mode.
+	 * @param inequalities
+	 * 		The list of inequalities that the EventSet should contain.
+	 */
+	public EventSet(Collection<? extends Event> inequalities){
+		_inequalities = new ArrayList<InequalityVariable>();
+		_inequalities.addAll(_inequalities);
+	}
+	
+	/**
 	 * Determines whether this EventSet represents a Transition.
 	 * @return
 	 * 		True if this EventSet represents a Transition; false otherwise.
@@ -51,22 +86,55 @@ public class EventSet extends Transition implements Iterable<Event>{
 	/**
 	 * Determines whether the EventSet represents a rate event.
 	 * @return
-	 * 		True if this EventSet represents a rate event; flase otherwise.
+	 * 		True if this EventSet represents a rate event; false otherwise.
 	 */
 	public boolean isRate(){
 		return false;
 	}
 	
+	/**
+	 * Inserts an inequality event into the set of IneqaulityVariables when the EventSet is in
+	 * the Inequality mode.
+	 * @param e
+	 * 
+	 * @throws UnsupportedOperationException
+	 * 		Throws an UnsuportedOperationException when in the Transition mode.
+	 */
 	public void insert(Event e){
-		
+		if(_transition == null){
+			throw new UnsupportedOperationException("Insert is not supported when EventSet is in Transition mode.");
+		}
 	}
 	
+	/**
+	 * Returns an iterator that returns the elements in the set as Event objects.
+	 */
 	public Iterator<Event> iterator(){
 		return new EventSetIterator();
 	}
 	
+	/**
+	 * Clones the EventSet. Copies the internal objects by copying their reference. It does not make new instances
+	 * of the contained objects.
+	 */
 	public EventSet clone(){
-		return null;
+		
+		// Create a new EventSet instance.
+		EventSet newSet = new EventSet();
+		
+		// Determine whether or not the EventSet is in the Inequalty mode.
+		if(_inequalities != null){
+			// In the Inequality mode, we need to make a new ArrayList and copy the elements references over.
+			newSet._inequalities = new ArrayList<InequalityVariable>();
+			newSet._inequalities.addAll(this._inequalities);
+		}
+		
+		else{
+			// In this case we are in the Transition mode. Simple copy the transition over.
+			newSet._transition = this._transition;
+		}
+		
+		return newSet;
 	}
 	
 	public void remove(Event e){
