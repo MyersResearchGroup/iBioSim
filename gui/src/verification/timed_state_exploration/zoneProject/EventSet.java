@@ -99,7 +99,7 @@ public class EventSet extends Transition implements Iterable<Event>{
 
 		/*
 		 * Abstraction Function : The Iterator operates in one of two modes: the
-		 * Transition mode and the Inequality mode. If the _tran variable
+		 * Transition mode and the Inequality mode. If the _inequal variable
 		 * is null, then the mode is the Transition mode, otherwise it is the
 		 * Inequality mode.
 		 */
@@ -107,7 +107,7 @@ public class EventSet extends Transition implements Iterable<Event>{
 		/*
 		 * Representation Invariant : If the Iterator is created in a given mode,
 		 * then it should stay in that mode. The mode is determined by whether
-		 * the _tran variable is null or not.
+		 * the _ineq variable is null or not.
 		 */
 		
 		// Stores the single transition if the Iterator is in the Transition mode.
@@ -127,30 +127,42 @@ public class EventSet extends Transition implements Iterable<Event>{
 						" and a set of inequalities.");
 			}
 			
-			if(EventSet.this._transition != null){
-				_tran = EventSet.this._transition;
+			if(EventSet.this._inequalities != null){
+				_inequal = EventSet.this._inequalities.iterator();
 			}
 			else{
-				_inequal = EventSet.this._inequalities.iterator();
+				_tran = EventSet.this._transition;
 			}
 		}
 		
 		@Override
 		public boolean hasNext() {
-			// TODO Auto-generated method stub
-			return false;
+			
+			if(_inequal != null){
+				return _inequal.hasNext();
+			}
+			
+			return _tran != null;
 		}
 
 		@Override
 		public Event next() {
-			// TODO Auto-generated method stub
-			return null;
+			if(_inequal != null){
+				return new Event(_inequal.next());
+			}
+			
+			if(_tran == null){
+				throw new IllegalStateException("No more elements to return.");
+			}
+			
+			return new Event(_tran);
 		}
 
 		@Override
 		public void remove() {
-			// TODO Auto-generated method stub
 			
+			throw new UnsupportedOperationException("Remove is not supported by" +
+					" the EventSet's iterator.");
 		}
 		
 	}
