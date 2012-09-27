@@ -61,7 +61,7 @@ public class EventSet extends Transition implements Iterable<Event>{
 	}
 	
 	public Iterator<Event> iterator(){
-		return null;
+		return new EventSetIterator();
 	}
 	
 	public EventSet clone(){
@@ -83,4 +83,76 @@ public class EventSet extends Transition implements Iterable<Event>{
 	public boolean isEmpty(){
 		return false;
 	}
+	
+	/*
+	 * -------------------------------------------------------------------------------------
+	 *                                      Inner Class
+	 * -------------------------------------------------------------------------------------
+	 */
+	
+	/**
+	 * This is the custom iterator for the EventSet class.
+	 * @author Andrew N. Fisher
+	 *
+	 */
+	private class EventSetIterator implements Iterator<Event>{
+
+		/*
+		 * Abstraction Function : The Iterator operates in one of two modes: the
+		 * Transition mode and the Inequality mode. If the _tran variable
+		 * is null, then the mode is the Transition mode, otherwise it is the
+		 * Inequality mode.
+		 */
+		
+		/*
+		 * Representation Invariant : If the Iterator is created in a given mode,
+		 * then it should stay in that mode. The mode is determined by whether
+		 * the _tran variable is null or not.
+		 */
+		
+		// Stores the single transition if the Iterator is in the Transition mode.
+		Transition _tran;
+		
+		// Stores the ArrayList<Inequality> objects iterator if the Iterator is in the
+		// Inequality mode.
+		Iterator<InequalityVariable> _inequal;
+		
+		/**
+		 * The constructor initializes an Iterator in one of two modes : the Transition
+		 * mode or the the Inequality mode. This mode is set once the Iterator is created.
+		 */
+		public EventSetIterator(){
+			if(_transition == null && _inequalities == null){
+				throw new IllegalStateException("The EventSet has both a transition" +
+						" and a set of inequalities.");
+			}
+			
+			if(EventSet.this._transition != null){
+				_tran = EventSet.this._transition;
+			}
+			else{
+				_inequal = EventSet.this._inequalities.iterator();
+			}
+		}
+		
+		@Override
+		public boolean hasNext() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public Event next() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void remove() {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
+	
 }
