@@ -2,6 +2,7 @@ package verification.timed_state_exploration.zoneProject;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import lpn.parser.Transition;
 
@@ -91,7 +92,11 @@ public class EventSet extends Transition implements Iterable<Event>{
 	 */
 	
 	/**
-	 * This is the custom iterator for the EventSet class.
+	 * This is the custom iterator for the EventSet class. It operates in one of two modes :
+	 * the Transition mode or the Inequality mode depending on whether the EventSet that created
+	 * it holds a Transition or a list of Inequalities. In the Transition mode the iterator
+	 * will return the single Transition. In the Inequality mode, the Iterator will iterate
+	 * through the Ineqaulity variables. All elements are returned packaged as Event objects.
 	 * @author Andrew N. Fisher
 	 *
 	 */
@@ -122,42 +127,75 @@ public class EventSet extends Transition implements Iterable<Event>{
 		 * mode or the the Inequality mode. This mode is set once the Iterator is created.
 		 */
 		public EventSetIterator(){
+			
+			// Check to see in the EventSet is in a consitant state. It should only contain
+			// A Transition or a list of InequalityVariables. It should not include both.
 			if(_transition == null && _inequalities == null){
 				throw new IllegalStateException("The EventSet has both a transition" +
 						" and a set of inequalities.");
 			}
 			
 			if(EventSet.this._inequalities != null){
+				// The EventSet contains inequalities. So initialize the EventSetIterator in Inequality mode.
 				_inequal = EventSet.this._inequalities.iterator();
 			}
 			else{
+				// The EventSet contains a transition. So initialize the EventSetIterator in Transition mode.
 				_tran = EventSet.this._transition;
 			}
 		}
 		
+		/*
+		 * (non-Javadoc)
+		 * @see java.util.Iterator#hasNext()
+		 */
 		@Override
 		public boolean hasNext() {
 			
+			// Determine the mode the EventSetIterator is in. 
 			if(_inequal != null){
+				//A non-null _inequal variable indicates it is in the
+				// Inequality mode, so pass the action to the _inequal iterator.
 				return _inequal.hasNext();
 			}
 			
+			// The Iterator is in the Transition mode. So determine if there is still a transition to return.
 			return _tran != null;
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * @see java.util.Iterator#next()
+		 */
 		@Override
 		public Event next() {
+			
+			//Determine the mode the EventSetIterator is in.			
 			if(_inequal != null){
+				// The Iterator is in the Inequality mode, so pass the action to th _ineqaulities iterator.
 				return new Event(_inequal.next());
 			}
 			
+			// The Iterator is in the Transition mode. 
 			if(_tran == null){
-				throw new IllegalStateException("No more elements to return.");
+				// The transition has already been returned so complain.
+				throw new NoSuchElementException("No more elements to return.");
 			}
 			
-			return new Event(_tran);
+			// The Iterator is in the Transition mode and the transition has not be removed.
+			// Remove the transition and return it.
+			
+			Transition tmpTran = _tran;
+			
+			_tran = null;
+			
+			return new Event(tmpTran);
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * @see java.util.Iterator#remove()
+		 */
 		@Override
 		public void remove() {
 			
