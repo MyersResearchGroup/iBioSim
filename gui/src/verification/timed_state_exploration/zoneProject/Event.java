@@ -4,6 +4,17 @@ import lpn.parser.Transition;
 
 public class Event {
 
+	
+	
+	public Event(Transition t){
+		
+	}
+	
+	
+	public Event(InequalityVariable v){
+		
+	}
+	
 	/**
 	 * Determines whether this Event represents a Transition.
 	 * @return
