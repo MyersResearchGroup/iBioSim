@@ -181,9 +181,21 @@ public class EventSet extends Transition implements Iterable<Event>{
 	/**
 	 * Removes an element from the EventSet.
 	 * @param e
+	 * 		The event to remove.
 	 */
 	public void remove(Event e){
+		// If the event is a transition and is equal to the store transition
+		// remove the stored transition.
+		if(e.isTransition() && e.equals(_transition)){
+			_transition = null;
+			return;
+		}
 		
+		// If the event is an inequality and the EventSet contains inequalities,
+		// attempt to remove the event.
+		if(_inequalities != null && e.isInequality()){
+			_inequalities.remove(e.getInequalityVariable());
+		}
 	}
 	
 	/**
