@@ -2793,7 +2793,7 @@ public class Zone{
 //if ((e->t == -1) && (e->ineq == -1)) {
 		if(e.isRate()){
 //eSet->insert(e);
-			eSet.insert(e);
+			eSet.add(e);
 //newE->push_back(*eSet);
 			newE.addLast(eSet);
 //E.clear();
