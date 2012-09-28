@@ -5591,14 +5591,24 @@ public class ExprTree {
 		return new IntervalPair(lBound, uBound);
 	}
 	
+	/**
+	 * Converts an integer range for an expression tree representing a logical into
+	 * a boolean pair.
+	 * @param expr
+	 * 			An expression tree.
+	 * @param range
+	 * 			The integer range.
+	 * @return
+	 * 		The range converted to a boolean pair if expr.logical is true and range is non-null.
+	 */
 	private BooleanPair logicalConversion(ExprTree expr, IntervalPair range){
 		Boolean lower, upper;
 
-		if( range != null && expr.logical){ // Note : r2Range can only be set if r2 was non-null.
+		if( range != null && expr.logical){ // Note : range can only be set if range is non-null.
 			lower = range.get_LowerBound() != 0; // False if value is zero and true otherwise.
 			upper = range.get_UpperBound() != 0; // False if value is zero and true otherwise.
 		}
-		else{// convert numeric r2 to boolean
+		else{
 		
 			
 			if((range.get_LowerBound() == 0) && (range.get_UpperBound() == 0)){// false
