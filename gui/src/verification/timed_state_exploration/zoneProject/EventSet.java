@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import com.sun.corba.se.spi.activation._InitialNameServiceImplBase;
+
 import lpn.parser.Transition;
 
 /**
@@ -21,17 +23,18 @@ public class EventSet extends Transition implements Iterable<Event>{
 	/*
 	 * Abstraction Function : An EventSet is either singleton set containing a Transition or
 	 * is a set of IneqaulityVariables (but not both). Accordingly, an EventSet is said to operate in one
-	 * of two modes: a Transition mode and an Inequality mode. When the EventSet contains a single Transition
-	 * it is stored as the _transition variable. When the EventSet contains a set InequalityVariables,
-	 * they are stored in _inequalities. 
+	 * of two modes: a Transition mode and an Inequality mode. When the EventSet contains no elements it
+	 * is said to have No Mode. When the EventSet contains a single Transition it is stored as the
+	 * _transition variable. When the EventSet contains a set InequalityVariables, they are stored in
+	 * _inequalities.
 	 */
 	
 	
 	/*
 	 * Representation Invariant :
-	 * Exactly one of the fields '_transition' or '_inequalities' should be non-null (no more no less).
+	 * Exactly one of the fields '_transition' or '_inequalities' should be non-null.
 	 * Testing for null is how this class determines whether it represents a 
-	 * Transition or a set of inequalities.
+	 * Transition or a set of inequalities. Both variables can be null in which
 	 */
 	
 	// A variable indicating whether we are a transition or a set of inequalities
@@ -97,13 +100,51 @@ public class EventSet extends Transition implements Iterable<Event>{
 	 * the Inequality mode.
 	 * @param e
 	 * 
-	 * @throws UnsupportedOperationException
-	 * 		Throws an UnsuportedOperationException when in the Transition mode.
+	 * @throws IllegalArgumentException
+	 * 		Throws an IllegalArgumentException if in the Inequality mode and e
+	 * 		is not an inequality event or if the EventSet is in the Transition mode.
 	 */
-	public void insert(Event e){
-		if(_transition == null){
-			throw new UnsupportedOperationException("Insert is not supported when EventSet is in Transition mode.");
+	public void add(Event e){
+		// Determine if the mode is the Inequality mode
+		if(_inequalities != null){
+			// We are in the inequality mode, now determine if the Event passed
+			// is and inequality.
+			if(e.isInequality()){
+				// It is an inequality, so add it.
+				_inequalities.add(e.getInequalityVariable());
+			}
+			else{
+				// Tried to insert something other than an inequality into an
+				// inequality list, so complain.
+				throw new IllegalArgumentException("Cannot insert a non-inequality" +
+						" into an EventSet of inequalities.");
+			}
+			return;
 		}
+		
+		// We are not in the Inequality mode.
+		// If we are also not in the Transition mode, then the new event determines
+		// the mode.
+		if(_transition == null){
+			if(e.isInequality()){
+				// The event is an inequality, so add it to the inequalities.
+				// This also implies that the mode is the Inequality mode.
+				_inequalities = new ArrayList<InequalityVariable>();
+				_inequalities.add(e.getInequalityVariable());
+			}
+			else{
+				// The event is a Transition, so store it. This also implies the
+				// mode is the Transition mode.
+				_transition = e.getTransition();
+			}
+			
+			return;
+		}
+		
+		// We are in the Transition mode. Nothing can be added in the transition mode.
+		// yell.
+		throw new IllegalArgumentException("Another event was attempted to be added" +
+				"to an EventSet that already had a transition in it.");
 	}
 	
 	/**
@@ -137,20 +178,45 @@ public class EventSet extends Transition implements Iterable<Event>{
 		return newSet;
 	}
 	
+	/**
+	 * Removes an element from the EventSet.
+	 * @param e
+	 */
 	public void remove(Event e){
 		
 	}
 	
-	public void add(Event e){
-		
-	}
-	
+	/**
+	 * Determines the number of elements in the EventSet.
+	 * @return
+	 * 		The number of elements in the EventSet.
+	 */
 	public int size(){
-		return 0;
+		if(_transition != null){
+			// If we are in the Transition mode, the size is 1.
+			return 1;
+		}
+		else{
+			// If we are in the Inequality mode, the size is the 
+			// number of inequalities.
+			return _inequalities.size();
+		}
 	}
 	
+	/**
+	 * Determines whether any elements are in the set.
+	 * @return
+	 * 		True if there is a least one element, false otherwise.
+	 */
 	public boolean isEmpty(){
-		return false;
+		
+		// If one of the member variables is not null (and contains elements),
+		// the set is not empty.
+		if(_transition != null || 
+				(_inequalities != null && _inequalities.size() != 0)){
+			return false;
+		}
+		return true;
 	}
 	
 	/*
@@ -180,7 +246,9 @@ public class EventSet extends Transition implements Iterable<Event>{
 		/*
 		 * Representation Invariant : If the Iterator is created in a given mode,
 		 * then it should stay in that mode. The mode is determined by whether
-		 * the _ineq variable is null or not.
+		 * the _ineq variable is null or not. Do not use the _tran variable to
+		 * determine the mode. The _tran variable will be null in the Transition
+		 * mode after returning it.
 		 */
 		
 		// Stores the single transition if the Iterator is in the Transition mode.
