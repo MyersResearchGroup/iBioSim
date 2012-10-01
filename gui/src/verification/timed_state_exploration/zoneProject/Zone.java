@@ -3600,7 +3600,192 @@ public class Zone{
 		}
 	}
 	
-	private boolean inequalityCanchange(){
+	private boolean inequalityCanChange(InequalityVariable ineq, State[] localStates){
+		
+		
+		// Find the index of the continuous variable this inequality refers to.
+		// I'm assuming there is a single variable.
+		LhpnFile lpn = ineq.get_lpn();
+		Variable contVar = ineq.getInequalities().get(0);
+		DualHashMap<String, Integer> variableIndecies = lpn.getContinuousIndexMap();
+		int contIndex = variableIndecies.get(contVar);
+
+		// Package up the information into a the index. Note the current rate doesn't matter.
+		LPNContinuousPair index = new LPNContinuousPair(lpn.getLpnIndex(), contIndex, 0);
+
+		// Get the current rate.
+		int currentRate = getCurrentRate(index);
+
+		// Get the current value of the inequality. This requires looking into the current state.
+		int currentValue = localStates[lpn.getLpnIndex()].getCurrentValue(contIndex);
+
+		// Get the Zone index of the variable.
+		int zoneIndex = Arrays.binarySearch(_indexToTimerPair, index);
+		
+//		bool lhpnPredCanChange(ineqADT ineq,lhpnZoneADT z,lhpnRateADT r,
+//                lhpnMarkingADT m,eventADT *events,int nevents,
+//	       lhpnStateADT s)
+//{
+//ineq_update(ineq,s,nevents);
+//
+//
+//#ifdef __LHPN_TRACE__
+//printf("lhpnPredCanChange:begin()\n");
+//#endif
+//#ifdef __LHPN_PRED_DEBUG__
+//printf("lhpnPredCanChange Examining: ");
+//printI(ineq,events);
+//printf("signal = %c, %d",s->m->state[ineq->signal],r->bound[ineq->place-nevents].current);
+//printf("\n");
+//if (r->bound[ineq->place-nevents].current != 0)
+//printf("divRes: %d\n",chkDiv(ineq->constant,
+//			 r->bound[ineq->place-nevents].current,'F'));
+//#endif
+///* > or >= */
+//if(ineq->type == 0 || ineq->type == 1) {
+		
+		// > or >=
+		if(ineq.get_op().contains(">")){
+		
+//int zoneP = getIndexZ(z,-2,ineq->place);
+//if(zoneP == -1) {
+//warn("An inequality produced a place not in the zone.");
+//return false;
+//}
+			
+//if(r->bound[ineq->place-nevents].current < 0 &&
+//m->state[ineq->signal] == '1') {
+			
+			// First check cases when the rate is negative.
+			if(currentRate < 0 && currentValue != 0){
+			
+//if((-1)*z->matrix[zoneP][0] <=
+//  (-1)*chkDiv(ineq->constant,r->bound[ineq->place-nevents].current,'F')) {
+//#ifdef __LHPN_PRED_DEBUG__
+// printf("predCanChange:1\n");
+// printf("rate: %d state: %c\n",r->bound[ineq->place-nevents].current,
+//      m->state[ineq->signal]);
+//#endif
+// return true;
+				
+				if((-1) * getDbmEntry(0, zoneIndex) <= 
+						(-1)*chkDiv(ineq.getConstant(), currentRate, false)){
+					return true;
+				}
+				
+//} else {
+//#ifdef __LHPN_PRED_DEBUG__
+// printf("predCannotChange:1\n");
+// printf("rate: %d state: %c\n",r->bound[ineq->place-nevents].current,
+//      m->state[ineq->signal]);
+//#endif
+// return false;
+//}
+//}
+				else{
+					return false;
+				}
+			}
+//else if(r->bound[ineq->place-nevents].current > 0 &&
+//     m->state[ineq->signal] == '0') {
+			
+			else if(currentRate > 0 && currentValue == 0){
+				
+				
+//if(z->matrix[zoneP][0] >=
+//  chkDiv(ineq->constant,r->bound[ineq->place-nevents].current,'F')) {
+//#ifdef __LHPN_PRED_DEBUG__
+// printf("predCanChange:2\n");
+// printf("rate: %d state: %c\n",r->bound[ineq->place-nevents].current,
+//      m->state[ineq->signal]);
+//#endif
+// return true;
+				
+
+				
+				
+//} else {
+//#ifdef __LHPN_PRED_DEBUG__
+// printf("predCannotChange:2\n");
+// printf("rate: %d state: %c\n",r->bound[ineq->place-nevents].current,
+//      m->state[ineq->signal]);
+//#endif
+//return false;
+//}
+//}
+				
+			}
+//else {
+//#ifdef __LHPN_PRED_DEBUG__
+//printf("predCannotChange:3\n");
+//printf("rate: %d state: %c\n",r->bound[ineq->place-nevents].current,
+//      m->state[ineq->signal]);
+//#endif
+//return false;
+//}
+//}
+		}
+///* < or <= */
+//else if(ineq->type == 2 || ineq->type == 3) {
+//int zoneP = getIndexZ(z,-2,ineq->place);
+//if(zoneP == -1) {
+//warn("An inequality produced a place not in the zone.");
+//return false;
+//}
+//if(r->bound[ineq->place-nevents].current < 0 &&
+//m->state[ineq->signal] == '0') {
+//if((-1)*z->matrix[zoneP][0] <=
+//  (-1)*chkDiv(ineq->constant,r->bound[ineq->place-nevents].current,'F')) {
+//#ifdef __LHPN_PRED_DEBUG__
+// printf("predCanChange:4\n");
+// printf("rate: %d state: %c\n",r->bound[ineq->place-nevents].current,
+//      m->state[ineq->signal]);
+//#endif
+// return true;
+//} else {
+//#ifdef __LHPN_PRED_DEBUG__
+// printf("predCannotChange:4\n");
+// printf("rate: %d state: %c\n",r->bound[ineq->place-nevents].current,
+//      m->state[ineq->signal]);
+//#endif
+// return false;
+//}
+//}
+//else if(r->bound[ineq->place-nevents].current > 0 &&
+//     m->state[ineq->signal] == '1') {
+//if(z->matrix[zoneP][0] >=
+//  chkDiv(ineq->constant,r->bound[ineq->place-nevents].current,'F')) {
+//#ifdef __LHPN_PRED_DEBUG__
+// printf("predCanChange:5\n");
+// printf("rate: %d state: %c\n",r->bound[ineq->place-nevents].current,
+//      m->state[ineq->signal]);
+//#endif
+// return true;
+//} else {
+//#ifdef __LHPN_PRED_DEBUG__
+// printf("predCannotChange:5\n");
+// printf("rate: %d state: %c\n",r->bound[ineq->place-nevents].current,
+//      m->state[ineq->signal]);
+//#endif
+// return false;
+//}
+//}
+//else {
+//#ifdef __LHPN_PRED_DEBUG__
+//printf("predCanChange:6\n");
+//printf("rate: %d state: %c\n",r->bound[ineq->place-nevents].current,
+//      m->state[ineq->signal]);
+//#endif
+//return false;
+//}
+//}
+//#ifdef __LHPN_PRED_DEBUG__
+//printf("predCanChange:7\n");
+//printf("rate: %d state: %c\n",r->bound[ineq->place-nevents].current,
+//  m->state[ineq->signal]);
+//#endif
+//return false;
+//}
 		return false;
 	}
 }
