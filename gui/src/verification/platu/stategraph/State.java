@@ -497,4 +497,30 @@ public class State extends PlatuObj {
 		
 		timeExtensions.add(s);
 	}
+	
+	/**
+	 * Get the current value of the variable according to the state.
+	 * @param variable
+	 * 		The variable of interest.
+	 * @return
+	 * 		The value of the variable as stored in the state.
+	 */
+	public int getCurrentValue(String variable){
+		
+		// Get the index of the variable according to the LPN.
+		int index = lpn.getVarIndexMap().getValue(variable);
+		
+		return getCurrentValue(index);
+	}
+	
+	/**
+	 * Get the current value of the variable according to the state.
+	 * @param variableIndex
+	 * 		The index of the variable of interest.
+	 * @return
+	 * 		The value of the variable as stored in the state.
+	 */
+	public int getCurrentValue(int variableIndex){
+		return vector[variableIndex];
+	}
 }
