@@ -55,9 +55,10 @@ public class LPNContinuousPair extends LPNTransitionPair {
 			return false;
 		}
 		
-		LPNContinuousPair lcPair = (LPNContinuousPair) obj;
+		//LPNContinuousPair lcPair = (LPNContinuousPair) obj;
 		
-		return this._currentRate == lcPair._currentRate;
+		//return this._currentRate == lcPair._currentRate;
+		return true;
 	}
 
 	@Override
