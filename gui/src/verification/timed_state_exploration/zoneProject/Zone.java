@@ -663,7 +663,8 @@ public class Zone{
 //						new LPNTransitionPair(lpnIndex, contVariableIndex, false);
 
 				LPNContinuousPair newPair = 
-						new LPNContinuousPair(lpnIndex, contVariableIndex, 0);
+						new LPNContinuousPair(lpnIndex, contVariableIndex,
+								rate.get_LowerBound());
 				
 				// If the rate is non-zero, then the variables needs to be tracked
 				// by matrix part of the Zone.
@@ -1019,6 +1020,8 @@ public class Zone{
 
 		// Package the indecies with false indicating not a timer.
 //		LPNTransitionPair index = new LPNTransitionPair(lpnIndex, contIndex, false);
+		// Note : setting the rate is not necessary here since this is only 
+		// being used as an index.
 		LPNContinuousPair index = new LPNContinuousPair(lpnIndex, contIndex, 0);
 
 		//Search for the continuous variable in the rate zero variables.
@@ -1165,6 +1168,8 @@ public class Zone{
 		
 		// Package the indecies with false indicating not a timer.
 //		LPNTransitionPair index = new LPNTransitionPair(lpnIndex, contIndex, false);
+		// Note: Setting the rate is not necessary since this is only being used
+		// as an index.
 		LPNContinuousPair index = new LPNContinuousPair(lpnIndex, contIndex, 0);
 		
 		//Search for the continuous variable in the rate zero variables.
@@ -1293,6 +1298,8 @@ public class Zone{
 		
 		// Package the indecies with false indicating not a timer.
 //		LPNTransitionPair index = new LPNTransitionPair(lpnIndex, contIndex, false);
+		// Note: setting the current rate is not necessary here since the
+		// LPNContinuousPair is only being used as an index.
 		LPNContinuousPair index = new LPNContinuousPair(lpnIndex, contIndex, 0);
 		
 		// Search for the continuous variable in the rate zero variables.
@@ -1345,6 +1352,8 @@ public class Zone{
 
 		// Package the indecies with false indicating not a timer.
 //		LPNTransitionPair index = new LPNTransitionPair(lpnIndex, contIndex, false);
+		//Note : Setting the rate is not necessary since this only being used
+		// as an index.
 		LPNContinuousPair index = new LPNContinuousPair(lpnIndex, contIndex, 0);
 
 		// Search for the continuous variable in the rate zero variables.
@@ -2881,6 +2890,8 @@ public class Zone{
 			// Package it all up.
 //			LPNTransitionPair ltPair = 
 //					new LPNTransitionPair(lpnIndex, varIndex, false);
+			// Note : setting the rate is not necessary since 
+			// this is only being used as aan index.
 			LPNContinuousPair ltPair = 
 					new LPNContinuousPair(lpnIndex, varIndex, 0);
 			
@@ -2965,6 +2976,8 @@ public class Zone{
 					// Package it all up.
 //					LPNTransitionPair ltPair = 
 //							new LPNTransitionPair(lpnIndex, varIndex, false);
+					// Note : setting the rate is not necessary since this is
+					// only being used as an index.
 					LPNContinuousPair ltPair = 
 							new LPNContinuousPair(lpnIndex, varIndex, 0);
 					
@@ -3546,5 +3559,9 @@ public class Zone{
 		LPNContinuousPair cV = (LPNContinuousPair) contVar;
 		
 		return cV.getCurrentRate();
+	}
+	
+	private boolean inequalityCanchange(){
+		return false;
 	}
 }
