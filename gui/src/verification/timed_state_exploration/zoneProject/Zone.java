@@ -211,8 +211,10 @@ public class Zone{
 		// Make a copy to reorder the timers.
 		_indexToTimerPair = new LPNTransitionPair[timers.length];
 		for(int i=0; i<timers.length; i++){
+//			_indexToTimerPair[i] = new LPNTransitionPair(LPNTransitionPair.SINGLE_LPN,
+//					timers[i], true);
 			_indexToTimerPair[i] = new LPNTransitionPair(LPNTransitionPair.SINGLE_LPN,
-					timers[i], true);
+					timers[i]);
 		}
 		
 		// Sorting the array.
@@ -244,7 +246,8 @@ public class Zone{
 			}
 			
 			_indexToTimerPair = newIndexToTimerPair;
-			_indexToTimerPair[0] = new LPNTransitionPair(LPNTransitionPair.SINGLE_LPN, -1, true);
+//			_indexToTimerPair[0] = new LPNTransitionPair(LPNTransitionPair.SINGLE_LPN, -1, true);
+			_indexToTimerPair[0] = new LPNTransitionPair(LPNTransitionPair.SINGLE_LPN, -1);
 		}
 		
 //		if(_indexToTimer[0] < 0)
@@ -271,8 +274,10 @@ public class Zone{
 			// to the index in the DBM is 1 more than the index of the timer
 			// in the timers array.
 			//newIndex.put(i+1, Arrays.binarySearch(_indexToTimer, timers[i]));
+//			LPNTransitionPair searchValue =
+//					new LPNTransitionPair(LPNTransitionPair.SINGLE_LPN, timers[i], true);
 			LPNTransitionPair searchValue =
-					new LPNTransitionPair(LPNTransitionPair.SINGLE_LPN, timers[i], true);
+					new LPNTransitionPair(LPNTransitionPair.SINGLE_LPN, timers[i]);
 			newIndex.put(i+1, Arrays.binarySearch(_indexToTimerPair, searchValue));
 		}
 		
@@ -356,7 +361,8 @@ public class Zone{
 		ArrayList<LPNTransitionPair> enabledTransitionsArrayList =
 				new ArrayList<LPNTransitionPair>();
 		
-		LPNTransitionPair zeroPair = new LPNTransitionPair(LPNTransitionPair.ZERO_TIMER, -1, true);
+//		LPNTransitionPair zeroPair = new LPNTransitionPair(LPNTransitionPair.ZERO_TIMER, -1, true);
+		LPNTransitionPair zeroPair = new LPNTransitionPair(LPNTransitionPair.ZERO_TIMER, -1);
 		
 		// Add the zero timer first.
 		enabledTransitionsArrayList.add(zeroPair);
@@ -364,7 +370,8 @@ public class Zone{
 		// The index of the boolean value corresponds to the index of the Transition.
 		for(int i=0; i<enabledTran.length; i++){
 			if(enabledTran[i]){
-				enabledTransitionsArrayList.add(new LPNTransitionPair(LPNIndex, i, true));
+//				enabledTransitionsArrayList.add(new LPNTransitionPair(LPNIndex, i, true));
+				enabledTransitionsArrayList.add(new LPNTransitionPair(LPNIndex, i));
 			}
 		}
 		
@@ -520,7 +527,9 @@ public class Zone{
 			
 			// If the isTimer value is false, then this pair represents a continuous
 			// variable.
-			if(!ltPair.get_isTimer()){
+			//if(!ltPair.get_isTimer()){
+			// If pair is LPNContinuousPair.
+			if(ltPair instanceof LPNContinuousPair){
 				// Get the LPN that this pairing references and find the name of
 				// the continuous variable whose index is given by this pairing.
 				contNames.add(_lpnList[ltPair.get_lpnIndex()]
@@ -549,7 +558,9 @@ public class Zone{
 			LPNTransitionPair ltPair = _indexToTimerPair[i];
 			
 			// If the isTimer value is true, then this pair represents a timer.
-			if(ltPair.get_isTimer()){
+			//if(ltPair.get_isTimer()){
+			// If this is an LPNTransitionPair and not an LPNContinuousPair
+			if(!(ltPair instanceof LPNContinuousPair)){
 				// Get the LPN that this pairing references and find the name of the
 				// transition whose index is given by this pairing.
 				transitionNames.add(_lpnList[ltPair.get_lpnIndex()]
@@ -612,8 +623,10 @@ public class Zone{
 				new ArrayList<LPNTransitionPair>();
 				
 		// Put in the zero timer.
+//		enabledTransitionsArrayList
+//			.add(new LPNTransitionPair(LPNTransitionPair.ZERO_TIMER, -1, true));
 		enabledTransitionsArrayList
-			.add(new LPNTransitionPair(LPNTransitionPair.ZERO_TIMER, -1, true));
+			.add(new LPNTransitionPair(LPNTransitionPair.ZERO_TIMER, -1));
 		
 		// Get the continuous variables.
 		for(int i=0; i<localStates.length; i++){
@@ -645,9 +658,12 @@ public class Zone{
 				
 				// Get the index as a variable for the LPN.
 				int contVariableIndex = variableIndex.get(continuousVariables[j]);
-				
-				LPNTransitionPair newPair = 
-						new LPNTransitionPair(lpnIndex, contVariableIndex, false);
+//				
+//				LPNTransitionPair newPair = 
+//						new LPNTransitionPair(lpnIndex, contVariableIndex, false);
+
+				LPNContinuousPair newPair = 
+						new LPNContinuousPair(lpnIndex, contVariableIndex, 0);
 				
 				// If the rate is non-zero, then the variables needs to be tracked
 				// by matrix part of the Zone.
@@ -709,7 +725,8 @@ public class Zone{
 			for(int j=0; j<enabledTran.length; j++){
 				if(enabledTran[j]){
 					// Add the transition pair.
-					singleLPN.add(new LPNTransitionPair(i, j, true));
+//					singleLPN.add(new LPNTransitionPair(i, j, true));
+					singleLPN.add(new LPNTransitionPair(i, j));
 				}
 			}
 			
@@ -744,7 +761,8 @@ public class Zone{
 			
 			IntervalPair range;
 			
-			if(!ltPair.get_isTimer()){
+//			if(!ltPair.get_isTimer()){
+			if(ltPair instanceof LPNContinuousPair){
 				// If the pairing represents a continuous variable, then the 
 				// upper and lower bound are the initial value or infinity depending
 				// on whether the initial rate is positive or negative.
@@ -899,7 +917,9 @@ public class Zone{
 				
 				// If we've reached the part of the zone involving only timers, then break out
 				// of this row.
-				if(ltRowPair.get_isTimer() && ltColPair.get_isTimer()){
+//				if(ltRowPair.get_isTimer() && ltColPair.get_isTimer()){
+				if(!(ltRowPair instanceof LPNContinuousPair) && 
+						!(ltColPair instanceof LPNContinuousPair)){
 					break;
 				}
 				
@@ -945,8 +965,10 @@ public class Zone{
 		
 		int transitionIndex = t.getIndex();
 		
+//		LPNTransitionPair ltPair = 
+//				new LPNTransitionPair(lpnIndex, transitionIndex, true);
 		LPNTransitionPair ltPair = 
-				new LPNTransitionPair(lpnIndex, transitionIndex, true);
+				new LPNTransitionPair(lpnIndex, transitionIndex);
 		
 		return getUpperBoundbydbmIndex(Arrays.binarySearch(_indexToTimerPair, ltPair));
 	}
@@ -996,7 +1018,8 @@ public class Zone{
 		int contIndex = variableIndecies.get(contVar);
 
 		// Package the indecies with false indicating not a timer.
-		LPNTransitionPair index = new LPNTransitionPair(lpnIndex, contIndex, false);
+//		LPNTransitionPair index = new LPNTransitionPair(lpnIndex, contIndex, false);
+		LPNContinuousPair index = new LPNContinuousPair(lpnIndex, contIndex, 0);
 
 		//Search for the continuous variable in the rate zero variables.
 		VariableRangePair pairing = _rateZeroContinuous.get(index);
@@ -1070,7 +1093,8 @@ public class Zone{
 		
 		int transitionIndex = t.getIndex();
 		
-		LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, transitionIndex, true);
+//		LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, transitionIndex, true);
+		LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, transitionIndex);
 		
 		setUpperBoundbydbmIndex(Arrays.binarySearch(_indexToTimerPair, ltPair), value);
 	}
@@ -1115,7 +1139,8 @@ public class Zone{
 		
 		int transitionIndex = t.getIndex();
 		
-		LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, transitionIndex, true);
+//		LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, transitionIndex, true);
+		LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, transitionIndex);
 		
 		return -1*getLowerBoundbydbmIndex(
 				Arrays.binarySearch(_indexToTimerPair, ltPair));
@@ -1139,7 +1164,8 @@ public class Zone{
 		int contIndex = variableIndecies.get(contVar);
 		
 		// Package the indecies with false indicating not a timer.
-		LPNTransitionPair index = new LPNTransitionPair(lpnIndex, contIndex, false);
+//		LPNTransitionPair index = new LPNTransitionPair(lpnIndex, contIndex, false);
+		LPNContinuousPair index = new LPNContinuousPair(lpnIndex, contIndex, 0);
 		
 		//Search for the continuous variable in the rate zero variables.
 		VariableRangePair pairing = _rateZeroContinuous.get(index);
@@ -1214,7 +1240,8 @@ public class Zone{
 		
 		int transitionIndex = t.getIndex();
 		
-		LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, transitionIndex, true);
+//		LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, transitionIndex, true);
+		LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, transitionIndex);
 		
 		setLowerBoundbydbmIndex(Arrays.binarySearch(_indexToTimerPair,ltPair), value);
 	}
@@ -1265,7 +1292,8 @@ public class Zone{
 		int contIndex = variableIndecies.get(contVar);
 		
 		// Package the indecies with false indicating not a timer.
-		LPNTransitionPair index = new LPNTransitionPair(lpnIndex, contIndex, false);
+//		LPNTransitionPair index = new LPNTransitionPair(lpnIndex, contIndex, false);
+		LPNContinuousPair index = new LPNContinuousPair(lpnIndex, contIndex, 0);
 		
 		// Search for the continuous variable in the rate zero variables.
 		VariableRangePair pairing = _rateZeroContinuous.get(index);
@@ -1316,7 +1344,8 @@ public class Zone{
 		int contIndex = variableIndecies.get(contVar);
 
 		// Package the indecies with false indicating not a timer.
-		LPNTransitionPair index = new LPNTransitionPair(lpnIndex, contIndex, false);
+//		LPNTransitionPair index = new LPNTransitionPair(lpnIndex, contIndex, false);
+		LPNContinuousPair index = new LPNContinuousPair(lpnIndex, contIndex, 0);
 
 		// Search for the continuous variable in the rate zero variables.
 		VariableRangePair pairing = _rateZeroContinuous.get(index);
@@ -1447,7 +1476,9 @@ public class Zone{
 				
 				// If the current LPNTransitionPair is a timer, get the name
 				// from the transitions.
-				if(_indexToTimerPair[i].get_isTimer()){
+//				if(_indexToTimerPair[i].get_isTimer()){
+				// If the current timer is an LPNTransitionPair and not an LPNContinuousPair
+				if(!(_indexToTimerPair[i] instanceof LPNContinuousPair)){
 				
 					// Get the name of the transition.
 					Transition tran = _lpnList[_indexToTimerPair[i].get_lpnIndex()].
@@ -1738,7 +1769,8 @@ public class Zone{
 		
 		int transitionIndex = t.getIndex();
 		
-		LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, transitionIndex, true);
+//		LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, transitionIndex, true);
+		LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, transitionIndex);
 		
 		return exceedsLowerBoundbydbmIndex(Arrays.binarySearch(_indexToTimerPair, ltPair));
 	}
@@ -1801,7 +1833,8 @@ public class Zone{
 		
 		int transitionIndex = t.getIndex();
 		
-		LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, transitionIndex, true);
+//		LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, transitionIndex, true);
+		LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, transitionIndex);
 		
 		int dbmIndex = Arrays.binarySearch(_indexToTimerPair, ltPair);
 		
@@ -1849,11 +1882,15 @@ public class Zone{
 		// several times.
 		newZone._indexToTimerPair = new LPNTransitionPair[enabledTimers.size() + 1];
 		int count = 0;
+//		newZone._indexToTimerPair[count++] = 
+//				new LPNTransitionPair(LPNTransitionPair.ZERO_TIMER, -1, true);
 		newZone._indexToTimerPair[count++] = 
-				new LPNTransitionPair(LPNTransitionPair.ZERO_TIMER, -1, true);
+				new LPNTransitionPair(LPNTransitionPair.ZERO_TIMER, -1);
 		for(Transition t : enabledTimers){
+//			newZone._indexToTimerPair[count++] = 
+//					new LPNTransitionPair(t.getLpn().getLpnIndex(), t.getIndex(), true);
 			newZone._indexToTimerPair[count++] = 
-					new LPNTransitionPair(t.getLpn().getLpnIndex(), t.getIndex(), true);
+					new LPNTransitionPair(t.getLpn().getLpnIndex(), t.getIndex());
 		}
 		
 		Arrays.sort(newZone._indexToTimerPair);
@@ -2043,7 +2080,8 @@ public class Zone{
 			// Get the new value.
 			int newValue = 0;
 
-			if(ltPair.get_isTimer()){
+//			if(ltPair.get_isTimer()){
+			if(ltPair instanceof LPNContinuousPair){
 				// If the pair is a timer, then simply get the stored largest value.
 				newValue = getUpperBoundbydbmIndex(index);
 			}
@@ -2841,8 +2879,10 @@ public class Zone{
 					getContinuousIndexMap().getValue(v.getName());
 			
 			// Package it all up.
-			LPNTransitionPair ltPair = 
-					new LPNTransitionPair(lpnIndex, varIndex, false);
+//			LPNTransitionPair ltPair = 
+//					new LPNTransitionPair(lpnIndex, varIndex, false);
+			LPNContinuousPair ltPair = 
+					new LPNContinuousPair(lpnIndex, varIndex, 0);
 			
 			rv2l = chkDiv(-1*ineq.getConstant(), getCurrentRate(ltPair), true);
 			rv2u = chkDiv(ineq.getConstant(), getCurrentRate(ltPair), true);
@@ -2860,7 +2900,8 @@ public class Zone{
 			int tranIndex = t.getIndex();
 			
 			// Package the results.
-			LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, tranIndex, true);
+//			LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, tranIndex, true);
+			LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, tranIndex);
 			
 			iZ = Arrays.binarySearch(_indexToTimerPair, ltPair);
 		}
@@ -2922,8 +2963,10 @@ public class Zone{
 							getContinuousIndexMap().getValue(v.getName());
 					
 					// Package it all up.
-					LPNTransitionPair ltPair = 
-							new LPNTransitionPair(lpnIndex, varIndex, false);
+//					LPNTransitionPair ltPair = 
+//							new LPNTransitionPair(lpnIndex, varIndex, false);
+					LPNContinuousPair ltPair = 
+							new LPNContinuousPair(lpnIndex, varIndex, 0);
 					
 					rv1l = chkDiv(-1 * oldEvent.getInequalityVariable().getConstant(), 
 							getCurrentRate(ltPair), true);
@@ -2947,7 +2990,8 @@ public class Zone{
 					int tranIndex = t.getIndex();
 					
 					// Package the results.
-					LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, tranIndex, true);
+//					LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, tranIndex, true);
+					LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, tranIndex);
 					
 					jZ = Arrays.binarySearch(_indexToTimerPair, ltPair);
 				}
@@ -3482,8 +3526,25 @@ public class Zone{
 		  return res;
 	}
 	
+	/**
+	 * Returns the current rate of the variable.
+	 * @param contVar
+	 * 		The LPNTransitionPair referring to a continuous variable.
+	 * @return
+	 * 		The current rate of the continuous variable refenced by the LPNTransitionPair.
+	 * @throws IllegalArgumentException
+	 * 		If the LPNTransitionPair is not an instance of an LPNContinuousPair.
+	 */
 	public int getCurrentRate(LPNTransitionPair contVar){
-		// TODO : Finish.
-		return 0;
+		
+		if(!(contVar instanceof LPNContinuousPair)){
+			// The LPNTransitionsPair does not refer to a continuous variable, so yell.
+			throw new IllegalArgumentException("Zone.getCurrentRate was called" +
+					" on an LPNTransitionPair that was not an LPNContinuousPair.");
+		}
+			
+		LPNContinuousPair cV = (LPNContinuousPair) contVar;
+		
+		return cV.getCurrentRate();
 	}
 }
