@@ -3561,6 +3561,45 @@ public class Zone{
 		return cV.getCurrentRate();
 	}
 	
+	/**
+	 * Sets the current rate for a continuous variable. It sets the rate regardless of 
+	 * whether the variable is in the rate zero portion of the Zone or not.
+	 * @param contVar
+	 * 		The index of the variable whose rate is going to be set.
+	 * @param currentRate
+	 * 		The value of the rate.
+	 */
+	public void setCurrentRate(LPNTransitionPair contVar, int currentRate){
+		
+		if(!(contVar instanceof LPNContinuousPair)){
+			// The LPNTransitionsPair does not refer to a continuous variable, so yell.
+			throw new IllegalArgumentException("Zone.getCurrentRate was called" +
+					" on an LPNTransitionPair that was not an LPNContinuousPair.");
+		}
+		
+		
+		LPNContinuousPair cV = (LPNContinuousPair) contVar;
+		
+		// Check for the current variable in the rate zero variables.
+		
+		VariableRangePair variableRange = _rateZeroContinuous.getValue(contVar);
+		
+		if(variableRange != null){
+			LPNContinuousPair lcPair = (LPNContinuousPair)_rateZeroContinuous.getKey(variableRange);
+			lcPair.setCurrentRate(currentRate);
+			return;
+		}
+		
+		// Check for the current variable in the Zone varaibles.
+		int index = Arrays.binarySearch(_indexToTimerPair, contVar);
+		
+		if(index >= 0){
+			// The variable was found, set the rate.
+			LPNContinuousPair lcPair = (LPNContinuousPair) _indexToTimerPair[index];
+			lcPair.setCurrentRate(currentRate);
+		}
+	}
+	
 	private boolean inequalityCanchange(){
 		return false;
 	}
