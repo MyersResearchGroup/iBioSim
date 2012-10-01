@@ -3702,7 +3702,10 @@ public class Zone{
 // return true;
 				
 
-				
+				if(getDbmEntry(0, zoneIndex) <= 
+						chkDiv(ineq.getConstant(), currentRate, false)){
+					return true;
+				}
 				
 //} else {
 //#ifdef __LHPN_PRED_DEBUG__
@@ -3711,6 +3714,11 @@ public class Zone{
 //      m->state[ineq->signal]);
 //#endif
 //return false;
+				
+				else{
+					return false;
+				}
+				
 //}
 //}
 				
@@ -3727,6 +3735,9 @@ public class Zone{
 		}
 ///* < or <= */
 //else if(ineq->type == 2 || ineq->type == 3) {
+		
+		else if(ineq.get_op().contains("<")){
+		
 //int zoneP = getIndexZ(z,-2,ineq->place);
 //if(zoneP == -1) {
 //warn("An inequality produced a place not in the zone.");
@@ -3734,6 +3745,9 @@ public class Zone{
 //}
 //if(r->bound[ineq->place-nevents].current < 0 &&
 //m->state[ineq->signal] == '0') {
+			
+			if(currentRate < 0 && currentValue == 0){
+			
 //if((-1)*z->matrix[zoneP][0] <=
 //  (-1)*chkDiv(ineq->constant,r->bound[ineq->place-nevents].current,'F')) {
 //#ifdef __LHPN_PRED_DEBUG__
@@ -3742,6 +3756,13 @@ public class Zone{
 //      m->state[ineq->signal]);
 //#endif
 // return true;
+				
+				if((-1) * getDbmEntry(0, zoneIndex) <= 
+						(-1)*chkDiv(ineq.getConstant(), currentRate, false)){
+					return true;
+				}
+				
+				
 //} else {
 //#ifdef __LHPN_PRED_DEBUG__
 // printf("predCannotChange:4\n");
@@ -3749,10 +3770,21 @@ public class Zone{
 //      m->state[ineq->signal]);
 //#endif
 // return false;
+				
+				
+				else{
+					return false;
+				}
 //}
 //}
+			}
 //else if(r->bound[ineq->place-nevents].current > 0 &&
 //     m->state[ineq->signal] == '1') {
+			
+			else if (currentRate > 0 && 
+					currentValue != 0){
+			
+			
 //if(z->matrix[zoneP][0] >=
 //  chkDiv(ineq->constant,r->bound[ineq->place-nevents].current,'F')) {
 //#ifdef __LHPN_PRED_DEBUG__
@@ -3761,6 +3793,13 @@ public class Zone{
 //      m->state[ineq->signal]);
 //#endif
 // return true;
+				
+				
+				if(getDbmEntry(0, zoneIndex) >= 
+						chkDiv(ineq.getConstant(), currentRate, false)){
+					return true;
+				}
+				
 //} else {
 //#ifdef __LHPN_PRED_DEBUG__
 // printf("predCannotChange:5\n");
@@ -3768,8 +3807,14 @@ public class Zone{
 //      m->state[ineq->signal]);
 //#endif
 // return false;
+				
+				
+				else {
+					return false;
+				}
 //}
 //}
+			}
 //else {
 //#ifdef __LHPN_PRED_DEBUG__
 //printf("predCanChange:6\n");
@@ -3778,7 +3823,13 @@ public class Zone{
 //#endif
 //return false;
 //}
+			
+			else {
+				return false;
+			}
+			
 //}
+		}
 //#ifdef __LHPN_PRED_DEBUG__
 //printf("predCanChange:7\n");
 //printf("rate: %d state: %c\n",r->bound[ineq->place-nevents].current,
