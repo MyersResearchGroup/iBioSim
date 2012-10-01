@@ -292,12 +292,12 @@ public class LPNTransitionPair implements Comparable<LPNTransitionPair>{
 	}
 	
 	
-	public LPNTransitionPair (int a, int b, boolean c){
-		// TODO : remove when Zones dependency have been addressed.
-	}
+//	public LPNTransitionPair (int a, int b, boolean c){
+//		//  remove when Zones dependency have been addressed.
+//	}
 	
-	public boolean get_isTimer(){
-		// TODO : remove when Zones dependency have been addressed.
-		return false;
-	}
+//	public boolean get_isTimer(){
+//		// remove when Zones dependency have been addressed.
+//		return false;
+//	}
 }
