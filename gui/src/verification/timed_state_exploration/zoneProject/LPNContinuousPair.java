@@ -97,11 +97,31 @@ public class LPNContinuousPair extends LPNTransitionPair {
 	}
 	
 	/**
+	 * Sets the continuous variables index. This method is simply a wrapper for the
+	 * inherited set_transitionIndex provided to give that method a more approriate
+	 * name.
+	 * @param continuousIndex
+	 * 		The index of the continuous variable in the associated LPN.
+	 */
+	public void set_ContinuousIndex(int continuousIndex){
+		set_transitionIndex(continuousIndex);
+	}
+	
+	/**
 	 * Get the current rate of the continuous variable.
 	 * @return
 	 * 		The current rate of the continuous variable.
 	 */
 	public int getCurrentRate(){
 		return _currentRate;
+	}
+	
+	/**
+	 * Sets the current rate of the continuous variable.
+	 * @param currentRate
+	 * 		The current rate of the continuous variable this index refers to.
+	 */
+	public void setCurrentRate(int currentRate){
+		_currentRate = currentRate;
 	}
 }
