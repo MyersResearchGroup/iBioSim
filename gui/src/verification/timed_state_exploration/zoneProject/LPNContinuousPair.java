@@ -18,8 +18,17 @@ public class LPNContinuousPair extends LPNTransitionPair {
 		_currentRate = 0;
 	}
 
-	public LPNContinuousPair(int lpnIndex, int transitionIndex, int currentRate) {
-		super(lpnIndex, transitionIndex);
+	/**
+	 * Creates an LPNContinuousPair with the given indecies and current rate.
+	 * @param lpnIndex
+	 * 		The index of the LPN associate with this variable.
+	 * @param continuousIndex
+	 * 		The index of the continuous variable in the LPN.
+	 * @param currentRate
+	 * 		The current rate of the continuous variable.
+	 */
+	public LPNContinuousPair(int lpnIndex, int continuousIndex, int currentRate) {
+		super(lpnIndex, continuousIndex);
 		_currentRate = currentRate;
 	}
 
@@ -75,7 +84,23 @@ public class LPNContinuousPair extends LPNTransitionPair {
 		return newPair;
 	}
 	
+	/**
+	 * Returns the continuous variable's index. This method is simply a wrapper
+	 * for the inherited get_transitionIndex provided to give that method a 
+	 * more appropriate name.
+	 * @return
+	 * 		The index of the continuous variable.
+	 */
 	public int get_ContinuousIndex(){
-		return get_lpnIndex();
+		return get_transitionIndex();
+	}
+	
+	/**
+	 * Get the current rate of the continuous variable.
+	 * @return
+	 * 		The current rate of the continuous variable.
+	 */
+	public int getCurrentRate(){
+		return _currentRate;
 	}
 }
