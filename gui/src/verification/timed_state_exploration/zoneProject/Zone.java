@@ -3875,4 +3875,50 @@ public class Zone{
 //}
 		return false;
 	}
+	
+	/**
+	 * Gives the Zone obtained by firing a given Transitions.
+	 * @param t
+	 * 		The transitions being fired.
+	 * @param enabledTran
+	 * 		The list of currently enabled Transitions.
+	 * @param localStates
+	 * 		The current local states.
+	 * @return
+	 * 		The Zone obtained by firing Transition t with enabled Transitions enabled
+	 * 		enabledTran when the current state is localStates.
+	 */
+	public Zone fire(Event event, LpnTranList enabledTran, State[] localStates){
+		
+//		// Create the LPNTransitionPair to check if the Transitions is in the zone and to 
+//		// find the index.
+//		LhpnFile lpn = t.getLpn();
+//		
+//		int lpnIndex = lpn.getLpnIndex();
+//		
+//		int transitionIndex = t.getIndex();
+//		
+////		LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, transitionIndex, true);
+//		LPNTransitionPair ltPair = new LPNTransitionPair(lpnIndex, transitionIndex);
+//		
+//		int dbmIndex = Arrays.binarySearch(_indexToTimerPair, ltPair);
+//		
+//		if(dbmIndex <= 0){
+//			return this;
+//		}
+//		
+//		// Get the new zone portion.
+//		Zone newZone = fireTransitionbydbmIndex(dbmIndex, enabledTran, localStates);
+//		
+//		// Update any assigned continuous variables.
+//		newZone.updateContinuousAssignment(t, localStates[lpnIndex]);
+//		
+//		
+//		//return fireTransitionbydbmIndex(dbmIndex, enabledTran, localStates);
+//		
+//		
+//		return newZone;
+		
+		return null;
+	}
 }
