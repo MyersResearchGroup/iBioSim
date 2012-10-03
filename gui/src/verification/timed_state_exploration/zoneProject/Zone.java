@@ -2777,12 +2777,18 @@ public class Zone{
 	
 	/**
 	 * Find the next possible events.
+	 * 
+	 * @param LpnIndex
+	 * 		The index of the LPN that is of interest.
+	 * @param localState
+	 * 		The state associated with the LPN indexed by LpnIndex.
 	 * @return
-	 * 		The ArrayList<Transition> is populated with a list of 
-	 * 		EventSets. An EventSet can either contain a transition to
-	 * 		fire or set of inequalities to change sign.
+	 * 		LpnTranList is populated with a list of 
+	 * 		EventSets pertaining to the LPN with index LpnIndex. An EventSet can
+	 * 		either contain a transition to
+	 * 		fire or set of inequalities to change sign. 
 	 */
-	public LpnTranList getPossibleEvent(State[] localStates){
+	public LpnTranList getPossibleEvents(int LpnIndex, State localState){
 		LpnTranList result = new LpnTranList();
 		
 		// Look through the timers and continuous variables. For the timers
@@ -2797,19 +2803,26 @@ public class Zone{
 		for(int i=0; i<_indexToTimerPair.length; i++){
 			LPNTransitionPair ltPair = _indexToTimerPair[i];
 			
+			// The enabled events are grouped with the LPN that they affect. So if 
+			// this pair does not belong to the current LPN under consideration, skip
+			// processing it.
+			if(ltPair.get_lpnIndex() != LpnIndex){
+				continue;
+			}
+			
 			// If the index refers to a timer (and not a continuous variable) and has exceeded its lower bound,
 			// then add the transition.
 			if(!(ltPair instanceof LPNContinuousPair) && getDbmEntry(0, i) >= -1 * getLowerBoundbydbmIndex(i)){
 					//result.add(_lpnList[ltPair.get_lpnIndex()].getTransition(ltPair.get_transitionIndex()));
 				Event e = new Event(_lpnList[ltPair.get_lpnIndex()].getTransition(ltPair.get_transitionIndex()));
-				addSetItem(result, e, localStates[ltPair.get_lpnIndex()]);
+				addSetItem(result, e, localState);
 			}
 			
 			else{
 				// The index refers to a continuous variable. So check all the inequalities for inclusion.
 				Variable contVar = _lpnList[ltPair.get_lpnIndex()].getContVar(ltPair.get_transitionIndex());
 				for(InequalityVariable iv : contVar.getInequalities()){
-					addSetItem(result, new Event(iv), localStates[ltPair.get_lpnIndex()]);
+					addSetItem(result, new Event(iv), localState);
 				}
 			}
 		}
