@@ -94,7 +94,6 @@ public class TimedPrjState extends PrjState{
 	 * 			at index zoneNumber.
 	 */
 	public LpnTranList getEnabled(int zoneNumber, int lpnIndex){
-		// TODO : Check if finished and propagate to the necessary calls.
 		
 		Zone z = _zones[zoneNumber];
 		
@@ -236,5 +235,21 @@ public class TimedPrjState extends PrjState{
 			}
 			
 		}
+	}
+	
+	/**
+	 * Gets the sets of possible events that can occur for a given LPN.
+	 * @param zoneNumber
+	 * 		The Zone to use to determine what can be fired.
+	 * @param lpnIndex
+	 * 		The index of the LPN of interest.
+	 * @return
+	 * 		An LpnTranList populated with EvenSet objects giving the events that can fire.
+	 */
+	public LpnTranList getPossibleEvents(int zoneNumber, int lpnIndex){
+		
+		Zone z = _zones[zoneNumber];
+		
+		return new LpnTranList(z.getPossibleEvents(lpnIndex, this.getStateArray()[lpnIndex]));
 	}
 }
