@@ -220,7 +220,7 @@ public class Analysis {
 			// When timing is enabled, it is the project state that will determine
 			// what is enabled since it contains the zone. This indicates the zeroth zone
 			// contained in the project and the zeroth LPN to get the transitions from.
-			initEnabled = ((TimedPrjState) stateStackTop).getEnabled(0, 0);
+			initEnabled = ((TimedPrjState) stateStackTop).getPossibleEvents(0, 0);
 		}
 		lpnTranStack.push(initEnabled.clone());
 		curIndexStack.push(0);
@@ -300,7 +300,7 @@ public class Analysis {
 					else{
 						// Get the enabled transitions from the zone that are associated with
 						// the current LPN.
-						curEnabled = ((TimedPrjState) stateStackTop).getEnabled(0, curIndex);
+						curEnabled = ((TimedPrjState) stateStackTop).getPossibleEvents(0, curIndex);
 					}
 					if (curEnabled.size() > 0) {
 						if (Options.getDebugMode()) {
@@ -366,7 +366,7 @@ public class Analysis {
 					// Get the enabled transitions from the Zone for the appropriate
 					// LPN.
 					//enabledList = ((TimedPrjState) stateStackTop).getEnabled(i);
-					enabledList = ((TimedPrjState) stateStackTop).getEnabled(0, i);
+					enabledList = ((TimedPrjState) stateStackTop).getPossibleEvents(0, i);
 				}
 				curEnabledArray[i] = enabledList;
 				if(!Options.getTimingAnalysisFlag()){ // Timing Change.
@@ -374,7 +374,7 @@ public class Analysis {
 				}
 				else{
 					//enabledList = ((TimedPrjState) nextPrjState).getEnabled(i);
-					enabledList = ((TimedPrjState) nextPrjState).getEnabled(0, i);
+					enabledList = ((TimedPrjState) nextPrjState).getPossibleEvents(0, i);
 				}
 				nextEnabledArray[i] = enabledList;
 				if (Options.getReportDisablingError()) {
