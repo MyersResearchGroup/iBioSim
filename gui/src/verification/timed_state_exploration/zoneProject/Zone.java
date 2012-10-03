@@ -2782,13 +2782,36 @@ public class Zone{
 	 * 		EventSets. An EventSet can either contain a transition to
 	 * 		fire or set of inequalities to change sign.
 	 */
-	public ArrayList<Transition> getPossibleEvent(){
-		ArrayList<Transition> result = new ArrayList<Transition>();
+	public LpnTranList getPossibleEvent(State[] localStates){
+		LpnTranList result = new LpnTranList();
 		
-		// Look through the timers and continuous variables in the
-		// zone and determine which are enabled to fire.
-		for(LPNTransitionPair ltPair : _indexToTimerPair){
+		// Look through the timers and continuous variables. For the timers
+		// determine if they are ready to fire. For the continuous variables,
+		// look up the associated inequalities and see if any of them are ready
+		// to fire.
+//		for(LPNTransitionPair ltPair : _indexToTimerPair){
+//			
+//		}
+		
+		
+		for(int i=0; i<_indexToTimerPair.length; i++){
+			LPNTransitionPair ltPair = _indexToTimerPair[i];
 			
+			// If the index refers to a timer (and not a continuous variable) and has exceeded its lower bound,
+			// then add the transition.
+			if(!(ltPair instanceof LPNContinuousPair) && getDbmEntry(0, i) >= -1 * getLowerBoundbydbmIndex(i)){
+					//result.add(_lpnList[ltPair.get_lpnIndex()].getTransition(ltPair.get_transitionIndex()));
+				Event e = new Event(_lpnList[ltPair.get_lpnIndex()].getTransition(ltPair.get_transitionIndex()));
+				addSetItem(result, e, localStates[ltPair.get_lpnIndex()]);
+			}
+			
+			else{
+				// The index refers to a continuous variable. So check all the inequalities for inclusion.
+				Variable contVar = _lpnList[ltPair.get_lpnIndex()].getContVar(ltPair.get_transitionIndex());
+				for(InequalityVariable iv : contVar.getInequalities()){
+					addSetItem(result, new Event(iv), localStates[ltPair.get_lpnIndex()]);
+				}
+			}
 		}
 		
 		return result;
