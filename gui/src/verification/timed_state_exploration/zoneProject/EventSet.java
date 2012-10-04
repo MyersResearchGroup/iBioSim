@@ -87,6 +87,15 @@ public class EventSet extends Transition implements Iterable<Event>{
 	}
 	
 	/**
+	 * Determines whether this EventSet represents a set of Inequalities.
+	 * @return
+	 * 		True if this EventSet represents a set of inequalities; false otherwise.
+	 */
+	public boolean isInequalities(){
+		return _inequalities != null;
+	}
+	
+	/**
 	 * Determines whether the EventSet represents a rate event.
 	 * @return
 	 * 		True if this EventSet represents a rate event; false otherwise.
