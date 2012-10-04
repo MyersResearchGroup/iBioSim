@@ -3888,7 +3888,7 @@ public class Zone{
 	 * 		The Zone obtained by firing Transition t with enabled Transitions enabled
 	 * 		enabledTran when the current state is localStates.
 	 */
-	public Zone fire(Event event, LpnTranList enabledTran, State[] localStates){
+	public Zone fire(EventSet eventset, LpnTranList enabledTran, State[] localStates){
 		
 //		// Create the LPNTransitionPair to check if the Transitions is in the zone and to 
 //		// find the index.
@@ -3918,6 +3918,12 @@ public class Zone{
 //		
 //		
 //		return newZone;
+		
+		// Determine whether the event set is a set of inequalities or a transition.
+		if(eventset.isInequalities()){
+			
+		}
+		
 		
 		return null;
 	}
