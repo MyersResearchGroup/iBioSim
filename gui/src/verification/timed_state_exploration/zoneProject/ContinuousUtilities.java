@@ -81,17 +81,27 @@ public class ContinuousUtilities {
 		 * part of the zone, the inequality is true and for the other part the
 		 * inequality is false.
 		 * 
+		 * For the following, let zu be the DBM(0, i) entry where i is the 
+		 * index of the continuous variable x. Also let zl be the DBM(i,0) entry
+		 * where i is the index of the continuous variable x.
 		 * 
 		 * x>a
 		 * 		r > 0
 		 * 			i=1
-		 * 				if(upper bound < a){
+		 * 				if(zu < a/r){
+		 * 					zu < a/r implies (upper bound)/r < a/r. Thus
+		 * 					upper bound < a.
 		 * 					The inequality has been erroneously marked true since
-		 * 					lower bound < upper bound < a. The variable is already
-		 * 					bigger than it should be so, let
+		 * 					lower bound < upper bound < a. To match atacs let
 		 * 					newMin = upper bound.
+		 * 					It doesn't matter what I set this value to since
+		 * 					this cas should never happen. in these cases, atacs
+		 * 					tends to take the path of setting the value to what it
+		 * 					is already.
+		 * 					This case should not happen.
 		 * 				}
-		 * 				else if (lower bound > a){
+		 * 				else if (-1 * zl > a/r){
+		 * 					
 		 * 					Since the lower bound is greater than the constant
 		 * 					every value in the range of x is greater than the 
 		 * 					constant. With the rate positive, x will be able
@@ -105,25 +115,43 @@ public class ContinuousUtilities {
 		 * 					This is the straddle case. Since the upper bound of
 		 * 					x is greater than a, it can be increase with out bound
 		 * 					and the inequality would still be true (as far as the
-		 * 					portion of the Zone above a is concerned).
+		 * 					portion of the Zone above a is concerned). The upper
+		 * 					bound is still unconstrained, so set the minimum to 
+		 * 					newMin = INFINITY.
+		 * 					This case should not happen.
 		 * 				}
 		 * 
 		 * 			i=0
-		 * 				if(upper bound < a){
+		 * 				if(upper bound/r < a/r){
 		 * 					Again, lower bound < upper bound < a. So the values
 		 * 					of x match marking the inequality as false. the 
 		 * 					value of x can then continue to increase until it
 		 * 					reaches the constant. Thus the new minimum is
 		 * 					newMin = a
 		 * 				}
-		 * 				else if (lower bound > a){
+		 * 				else if (lower bound/r > a/r){
 		 * 					In this case, a < lower bound < upper bound. Thus 
 		 * 					the inequality is true but has been erroneously marked
-		 * 					false.
-		 * 					
+		 * 					false. Again, the upper bound is larger than it should
+		 * 					be since the inequality is false. So set the minimum to
+		 * 					newMin = upperBound.
+		 * 					This case should not happen.
 		 * 				}
 		 * 				else{
-		 * 					
+		 * 					This is again the straddle case. In this case atacs
+		 * 					sets the value to
+		 * 					newMin = upper bound.
+		 * 					Again, it doesn't matter since
+		 * 					This case should not happen.
+		 * 				}
+		 * 
+		 * 		r<0 (Note these are warped space below here.)
+		 * 			i=1
+		 * 				if(-1 * lower bound/r < -1 * a/r){
+		 * 					OK, in this case x > a, x is decreasing, and 
+		 * 					the inequality is true.
+		 * 					Since the rate is negative, the test inequality implies
+		 * 					lower bound < a.
 		 * 				}
 		 */
 				
