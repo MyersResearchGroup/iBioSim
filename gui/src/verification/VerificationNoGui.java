@@ -48,7 +48,7 @@ public class VerificationNoGui {
 				Options.setLogName(args[i].trim().substring(5));
 			}
 			else if (args[i].contains("-memlim=")) {
-				Options.setMemoryUpperBoundFlag();
+				Options.setMemUpperBoundFlag();
 				String memUpperBound = args[i].trim().replace("-memlim=", "");
 				if(memUpperBound.contains("G")) {
 					memUpperBound = memUpperBound.replace("G", "");					

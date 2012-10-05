@@ -2,7 +2,6 @@ package verification.platu.MDD;
 
 import java.util.*;
 
-import verification.platu.common.Common;
 import verification.platu.stategraph.*;
 
 public class Mdd {
