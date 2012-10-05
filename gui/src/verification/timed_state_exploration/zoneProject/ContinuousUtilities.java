@@ -120,6 +120,7 @@ public class ContinuousUtilities {
 		 * 					In this case, a < lower bound < upper bound. Thus 
 		 * 					the inequality is true but has been erroneously marked
 		 * 					false.
+		 * 					
 		 * 				}
 		 * 				else{
 		 * 					
