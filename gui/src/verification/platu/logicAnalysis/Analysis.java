@@ -258,9 +258,9 @@ public class Analysis {
 						+ (float) Runtime.getRuntime().freeMemory() / 1000000);
 			}
 			
-			if (!memExceedsLimit && Options.getMemoryUpperBoundFlag() && iterations % 100 == 0) {
-				if (curUsedMem > Options.getMemoryUpperBound()) {
-					System.out.println("******* Used memory exceeds memory upper bound (" + (float)Options.getMemoryUpperBound()/1000000 + "MB) *******");
+			if (!memExceedsLimit && Options.getMemUpperBoundFlag() && iterations % 100 == 0) {
+				if (curUsedMem > Options.getMemUpperBound()) {
+					System.out.println("******* Used memory exceeds memory upper bound (" + (float)Options.getMemUpperBound()/1000000 + "MB) *******");
 					System.out.println("******* Used memory = " + (float)curUsedMem/1000000 + "MB *******");
 					memExceedsLimit = true;
 				}
@@ -821,9 +821,9 @@ public class Analysis {
 						+ " free memory: "
 						+ (float) Runtime.getRuntime().freeMemory() / 1000000);
 			}
-			if (!memExceedsLimit && Options.getMemoryUpperBoundFlag() && iterations % 100 == 0) {
-				if (curUsedMem > Options.getMemoryUpperBound()) {
-					System.out.println("******* Used memory exceeds memory upper bound (" + (float)Options.getMemoryUpperBound()/1000000 + "MB) *******");
+			if (!memExceedsLimit && Options.getMemUpperBoundFlag() && iterations % 100 == 0) {
+				if (curUsedMem > Options.getMemUpperBound()) {
+					System.out.println("******* Used memory exceeds memory upper bound (" + (float)Options.getMemUpperBound()/1000000 + "MB) *******");
 					System.out.println("******* Used memory = " + (float)curUsedMem/1000000 + "MB *******");
 					memExceedsLimit = true;
 				}

@@ -173,7 +173,6 @@ public class Interpretor {
                 || command.compareToIgnoreCase(mapCMD.get(enCMD.quit)) == 0) {
             return 1;
         } else if (command.compareToIgnoreCase(mapCMD.get(enCMD.readlpn)) == 0) {
-            if(Options.getNewParser()){
 	        	if(!readFlag){
 		        	readFlag = true;
 		        	
@@ -184,11 +183,6 @@ public class Interpretor {
 		        	}
 		        	
 		        	prj.readLpn(fileList);
-		        }
-		        else{
-		        	System.err.println("error: only one readLpn command is allowed");
-		        	System.exit(1);
-		        }
             }
             else{
             	File f = new File(argument1);

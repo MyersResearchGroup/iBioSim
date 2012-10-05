@@ -121,10 +121,14 @@ public class Options {
 	 * Options on how reachable states are stored.
 	 */
 	public static enum StateFormatDef {
-		EXPLICIT,	// hash tables
+		EXPLICIT,	// hash tables in java
+		MDDBUF,		// Mutli-Value DD
 		MDD,		// Mutli-Value DD
 		BDD, 		// BDD
-		AIG			// AIG
+		AIG,			// AIG
+		BINARY_TREE,		// Binary tree
+		DECOMPOSED, 	// decompose a global state into a set of triples of global vectors and two local states sharing variables.
+		NATIVE_HASH			// hash table in C/C++
 	}
 	private static String stateFormat = "explicit";
 	
@@ -132,6 +136,17 @@ public class Options {
 	 * Use multi-threading when set to true.
 	 */
 	private static boolean parallelFlag = false;
+	
+	/*
+	 * Memory upper bound for a verification run. The unit is MB.
+	 */
+	public static int MemUpperBound = 1800;
+	
+	/*
+	 * Upper bound on the total runtime for a run.  The unit is in seconds.
+	 */
+	public static int TimeUpperBound = 1500;
+
 	
 	/*
 	 * Option for compositional minimization type.
@@ -247,6 +262,9 @@ public class Options {
     	}
     	else if (format.equals("mdd")){
     		stateFormat = format;
+    	}    	
+    	else if (format.equals("mddbuf")){
+    		stateFormat = format;
     	}
     	else{
     		System.out.println("warning: invalid STATE_FORMAT option - default is \"explicit\"");
@@ -346,16 +364,16 @@ public class Options {
 	public static void setMemoryUpperBound(long value) {
 		memoryUpperBound = value;
 	}
-	public static float getMemoryUpperBound() {
+	public static float getMemUpperBound() {
 		return memoryUpperBound;
 		
 	}
 	
-	public static void setMemoryUpperBoundFlag() {
+	public static void setMemUpperBoundFlag() {
 		memoryUpperBoundFlag = true;
 	}
 	
-	public static boolean getMemoryUpperBoundFlag() {
+	public static boolean getMemUpperBoundFlag() {
 		return memoryUpperBoundFlag;
 	}
 }
