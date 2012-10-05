@@ -49,7 +49,22 @@ public class ContinuousUtilities {
 		 * the Variable, so the first this is to extract that Variable
 		 * followed by extracting the list.
 		 * 
-		 * Next the main work is done. The checks occur in several stages.
+		 * Next the main work is done. The basic idea is to find how far
+		 * the variable can be advanced without changing the truth value of 
+		 * inequality. This is accomplished by seeing which inequalities put a constraint
+		 * on how far the variable can be advance, then taking the minimum of all
+		 * these constraints.
+		 * 
+		 * To determine whether the inequality does provide a constraint, the 
+		 * algorithm determines whether the entire range of the variable lies below
+		 * the constant, lies above the constant, or contains the constant. The third
+		 * case is referred to as the 'straddle' case. Then it is determined if there is
+		 * a constraint by taking into account three things: the specifically inequality
+		 * in question ('<', '>'), the rate of the variable, and the current truth value of 
+		 * the inequality.
+		 * 
+		 * In each of these cases is structured as an if-else block. The order is as follows.
+		 * 
 		 * The first bifurcation is whether the inequality is 
 		 * 'variable' < 'constant' or 'variable' > 'constant' ('<=' is treated
 		 * in the same case as '<' and '>=' is treated in the same case as '>').
@@ -61,13 +76,9 @@ public class ContinuousUtilities {
 		 * all the way through the method. I will refer to these cases as 
 		 * 'r>0', 'r<0' and 'r=0', respectively.
 		 * 
-		 * The next bifurcation is whether the inequality is true or false. I 
+		 * The last bifurcation is whether the inequality is true or false. I 
 		 * will refer to this bifurcation as i=1 or i=0, for true and false,
 		 * respectively.
-		 * 
-		 * And finally, the last question is what the upper bound is in relation
-		 * to the constant. This will determine how far the upper bound can be
-		 * set. These will be stated explicitly.
 		 * 
 		 * The method also checks for some types of inconsistencies To illustrate
 		 * these checks, suppose I have the inequality x>3. The first check is 
@@ -76,14 +87,16 @@ public class ContinuousUtilities {
 		 * inconsistency since the lower bound being 5 means the inequality would
 		 * have to be true. For the second type of check, I will consider again the
 		 * situation where x>3. Further I will suppose that the lower bound is 1
-		 * and the upper bound is 5. This is the so called 'straddle' case
-		 * listed in the atacs code. This leads to an inconsistency since for
+		 * and the upper bound is 5. This leads to an inconsistency since for
 		 * part of the zone, the inequality is true and for the other part the
 		 * inequality is false.
 		 * 
 		 * For the following, let zu be the DBM(0, i) entry where i is the 
 		 * index of the continuous variable x. Also let zl be the DBM(i,0) entry
-		 * where i is the index of the continuous variable x.
+		 * where i is the index of the continuous variable x. Note that since
+		 * the zone is warped, zu = (upper bound)/r and zl = -1*(lower bound)/r when
+		 * r > 0. When r<0, the upper and lower bounds are swapped. Thus 
+		 * zu = (lower bound)/r and zl = -1*(upper bound)/r.
 		 * 
 		 * x>a
 		 * 		r > 0
@@ -101,7 +114,8 @@ public class ContinuousUtilities {
 		 * 					This case should not happen.
 		 * 				}
 		 * 				else if (-1 * zl > a/r){
-		 * 					
+		 * 					Since zl = -1* lower bound this inequality implies
+		 * 					lower bound > a.
 		 * 					Since the lower bound is greater than the constant
 		 * 					every value in the range of x is greater than the 
 		 * 					constant. With the rate positive, x will be able
@@ -122,37 +136,107 @@ public class ContinuousUtilities {
 		 * 				}
 		 * 
 		 * 			i=0
-		 * 				if(upper bound/r < a/r){
+		 * 				if(zu < a/r){
+		 * 					zu < a/r implies that 
+		 * 					upper bound < a.
 		 * 					Again, lower bound < upper bound < a. So the values
 		 * 					of x match marking the inequality as false. the 
 		 * 					value of x can then continue to increase until it
 		 * 					reaches the constant. Thus the new minimum is
-		 * 					newMin = a
+		 * 					newMin = a/r
 		 * 				}
-		 * 				else if (lower bound/r > a/r){
+		 * 				else if (-1 * zl > a/r){
+		 * 					Since zl = -1*lower bound this inequality implies
+		 * 					lower bound > a.
 		 * 					In this case, a < lower bound < upper bound. Thus 
 		 * 					the inequality is true but has been erroneously marked
 		 * 					false. Again, the upper bound is larger than it should
-		 * 					be since the inequality is false. So set the minimum to
-		 * 					newMin = upperBound.
+		 * 					be since the inequality is false. So the variable should not
+		 * 					be allowed to advance further than it has. So set the minimum to
+		 * 					newMin = zu.
 		 * 					This case should not happen.
 		 * 				}
 		 * 				else{
 		 * 					This is again the straddle case. In this case atacs
 		 * 					sets the value to
-		 * 					newMin = upper bound.
-		 * 					Again, it doesn't matter since
+		 * 					newMin = zu.
+		 * 					Again, it doesn't matter what we set this to, but we will set it
+		 * 					so the variable cannot advance any further.
 		 * 					This case should not happen.
 		 * 				}
 		 * 
 		 * 		r<0 (Note these are warped space below here.)
 		 * 			i=1
-		 * 				if(-1 * lower bound/r < -1 * a/r){
+		 * 				if(zl < -1 * a/r){
 		 * 					OK, in this case x > a, x is decreasing, and 
-		 * 					the inequality is true.
-		 * 					Since the rate is negative, the test inequality implies
-		 * 					lower bound < a.
+		 * 					the inequality is true. Further more recall that zl = -1*(upper bound)/r.
+		 * 					So we have -1*(upper bound)/r < -1 * a/r which implies
+		 * 					upper bound < a.
+		 * 					So the inequality should be false and it isn't. We set the variables to it's
+		 * 					current (warped) upper bound to stop it from advancing. So the new minimum is
+		 * 					newMin = zu.
+		 * 					This case should not happen.
 		 * 				}
+		 * 				else if(-1*zu > -1 *a/r){
+		 * 					Since zu = (lower bound)/r, the inequality becomes
+		 * 					lower bound > a.
+		 * 					Thus the entire range of the variable is above a and since x is decreasing, x
+		 * 					is constrained by a. Thus set the new minimum to the (warped version) of a.
+		 * 					newMin = a/r
+		 * 				}
+		 * 				else{
+		 * 					This is again the straddle case and the new minimum is set to the current largest
+		 * 					value to stop the variable from advancing. So
+		 * 					newMin = zu.
+		 * 				}
+		 * x<a
+		 * 		r>0
+		 * 			i=1
+		 * 				if(zu < a/r){
+		 * 					Since zu = upper bound /r, the inequality is becomes
+		 * 					upper bound < a.
+		 * 					Thus the whole range of x is less than a, which is consistent with the 
+		 * 					x<a being currently marked true. Now x is increasing so it is constrained by 
+		 * 					(the warped value) of a. So the new minimum is 
+		 * 					newMin = a/r
+		 * 				}
+		 * 				else if(-1*zl > a/r){
+		 * 					Since zl = -1 * (lower bound)/r, the inequality becomes
+		 * 					lower bound > a.
+		 * 					Thus the entire range of x is above a which implies x<a is false. But it has
+		 * 					been erroneously marked 'true'. Thus something has already gone wrong. In this
+		 * 					case atacs let the variable continue as if it were unconstrained.
+		 * 					newMin = INFINITY.
+		 * 					This case should not happen.
+		 * 				else{
+		 * 					The straddle case again. Again something has gone wrong and the variable is not allowed
+		 * 					to advance. Set the new minimum to
+		 * 					newMin = zu.
+		 * 				}
+		 * 			i=0
+		 * 				if(zu < a/r){
+		 * 					Since zu = (upper bound)/r, this is the same as 
+		 * 					upper bound < a.
+		 * 					Thus the entire range is below the constant. So the inequality is true,
+		 *                  but it is erroneously marked false. Constrain the varaible from moving any further.
+		 *                  newMIn = zu.
+		 *                  This case should not happen.
+		 *                  }
+		 *                  
+		 * 				else if (-1 * zl > a/r){
+		 * 					Since zl = -1* lower bound, the inequality is
+		 * 					lower bound > a.
+		 * 					Thus the entire range lies above the constant. The inequality x<a is false and since
+		 * 					x is increasing, the inequality will always remain false. So there is no constraInt.
+		 * 					newMin = INFINITY.
+		 * 				}
+		 * 				else{
+		 * 					This is the straddle case again. This time atacs sets the value to
+		 * 					newMin = INFINITY.
+		 * 				}
+		 * 		r<0 (Note these are the warped cases.)
+		 * 			i=1
+		 * 				if(
 		 */
 				
 		return 0;
