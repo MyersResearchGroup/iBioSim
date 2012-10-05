@@ -61,12 +61,69 @@ public class ContinuousUtilities {
 		 * all the way through the method. I will refer to these cases as 
 		 * 'r>0', 'r<0' and 'r=0', respectively.
 		 * 
-		 * The method also checks for two types of inconsistencies pertaining
-		 * to the relationship of the lower bound and the inequality. 
+		 * The next bifurcation is whether the inequality is true or false. I 
+		 * will refer to this bifurcation as i=1 or i=0, for true and false,
+		 * respectively.
 		 * 
-		 * when x>a
-		 * 		
+		 * And finally, the last question is what the upper bound is in relation
+		 * to the constant. This will determine how far the upper bound can be
+		 * set. These will be stated explicitly.
 		 * 
+		 * The method also checks for some types of inconsistencies To illustrate
+		 * these checks, suppose I have the inequality x>3. The first check is 
+		 * illustrated by supposing that the inequality is marked 'false' by
+		 * the state and that the lower bound on x is 5. This leads to an
+		 * inconsistency since the lower bound being 5 means the inequality would
+		 * have to be true. For the second type of check, I will consider again the
+		 * situation where x>3. Further I will suppose that the lower bound is 1
+		 * and the upper bound is 5. This is the so called 'straddle' case
+		 * listed in the atacs code. This leads to an inconsistency since for
+		 * part of the zone, the inequality is true and for the other part the
+		 * inequality is false.
+		 * 
+		 * 
+		 * x>a
+		 * 		r > 0
+		 * 			i=1
+		 * 				if(upper bound < a){
+		 * 					The inequality has been erroneously marked true since
+		 * 					lower bound < upper bound < a. The variable is already
+		 * 					bigger than it should be so, let
+		 * 					newMin = upper bound.
+		 * 				}
+		 * 				else if (lower bound > a){
+		 * 					Since the lower bound is greater than the constant
+		 * 					every value in the range of x is greater than the 
+		 * 					constant. With the rate positive, x will be able
+		 * 					to continue to increase without the inequality changing.
+		 * 					Thus the inequality puts no constraints on the variable
+		 * 					and the upper bound can be anything (bigger than the lower
+		 * 					bound of course). So the new minimum is 
+		 * 					newMin = INFINITY
+		 * 				}
+		 * 				else{
+		 * 					This is the straddle case. Since the upper bound of
+		 * 					x is greater than a, it can be increase with out bound
+		 * 					and the inequality would still be true (as far as the
+		 * 					portion of the Zone above a is concerned).
+		 * 				}
+		 * 
+		 * 			i=0
+		 * 				if(upper bound < a){
+		 * 					Again, lower bound < upper bound < a. So the values
+		 * 					of x match marking the inequality as false. the 
+		 * 					value of x can then continue to increase until it
+		 * 					reaches the constant. Thus the new minimum is
+		 * 					newMin = a
+		 * 				}
+		 * 				else if (lower bound > a){
+		 * 					In this case, a < lower bound < upper bound. Thus 
+		 * 					the inequality is true but has been erroneously marked
+		 * 					false.
+		 * 				}
+		 * 				else{
+		 * 					
+		 * 				}
 		 */
 				
 		return 0;
