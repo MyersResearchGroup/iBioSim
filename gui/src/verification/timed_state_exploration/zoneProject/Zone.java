@@ -3527,7 +3527,16 @@ public class Zone{
 		
 		return new IntervalPair(Integer.parseInt(lowerString),
 				Integer.parseInt(upperString));
-	}	
+	}
+	
+	/**
+	 * Get the list of LhpnFile objects that this Zone depends on.
+	 * @return
+	 * 		The lits of LhpnFile objects that this Zone depends on.
+	 */
+	public LhpnFile[] get_lpnList(){
+		return _lpnList;
+	}
 	
 	/**
 	 * Performs a division of two integers and either takes the ceiling or the floor. Note :
