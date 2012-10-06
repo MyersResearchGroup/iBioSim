@@ -23,6 +23,7 @@ import verification.platu.lpn.LpnTranList;
 import verification.platu.main.Main;
 import verification.platu.main.Options;
 import verification.platu.project.PrjState;
+import verification.timed_state_exploration.zoneProject.EventSet;
 import verification.timed_state_exploration.zoneProject.TimedPrjState;
 import verification.timed_state_exploration.zoneProject.Zone;
 
@@ -1064,6 +1065,17 @@ public class StateGraph {
 		return this.nextStateMap;
 	}
 	
+	/**
+	 * Fires a transition.
+	 * @param curSgArray
+	 * 			The current information on the all local states.
+	 * @param currentPrjState
+	 * 			The current state.
+	 * @param firedTran
+	 * 			The transition to fire.
+	 * @return
+	 * 			The new states.
+	 */
 	public TimedPrjState fire(final StateGraph[] curSgArray, 
 			final PrjState currentPrjState, Transition firedTran){
 		 
@@ -1128,5 +1140,22 @@ public class StateGraph {
 				enabledTransitions, newStates);
 		
 		return new TimedPrjState(newStates, newZones);
+	}
+	
+	/**
+	 * Fires a list of events. This list can either contain a single transition
+	 * or a set of inequalities.
+	 * @param curSgArray
+	 * 			The current information on the all local states.
+	 * @param currentPrjState
+	 * 			The current state.
+	 * @param listOfEvents
+	 * 			The list of events to fire.
+	 * @return
+	 * 			The new state.
+	 */
+	public TimedPrjState fire(final StateGraph[] curSgArray, 
+			final PrjState currentPrjState, LpnTranList listOfEvents){
+		return null;
 	}
 }
