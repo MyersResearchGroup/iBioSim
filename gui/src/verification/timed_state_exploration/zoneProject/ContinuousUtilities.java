@@ -1,5 +1,8 @@
 package verification.timed_state_exploration.zoneProject;
 
+import java.util.ArrayList;
+
+import lpn.parser.Variable;
 import verification.platu.stategraph.State;
 
 /**
@@ -236,9 +239,342 @@ public class ContinuousUtilities {
 		 * 				}
 		 * 		r<0 (Note these are the warped cases.)
 		 * 			i=1
-		 * 				if(
+		 * 				if(zl < -1 *a/r){
+		 * 					When r<0, zl = -1 * (upper bound)/r. Thus the inequality
+		 * 					becomes -1*(upper bound)/r < -1*a/r. This implies that
+		 * 					upper bound < a.
+		 * 					So the entire range is less than 'a'. Since the variable
+		 * 					is decreasing, it will always remain below 'a'. Thus
+		 * 					the inequality does not constrain the variable. So
+		 * 					the minimum value would be -INIFINITY; however, taking
+		 * 					into account warping, the new minimum is
+		 * 					newMin = INFINITY.
+		 * 					Another way to look at it is a decreasing variable 
+		 * 					corresponds to an increasing variable in the warped
+		 * 					space since we are dividing by a negative value.
+		 * 				}
+		 * 				else if (-1*zu > -1*a/r){
+		 * 					When the rate is negative, zu=(upper bound)/r. Thus the
+		 * 					inequality becomes -1*(lower bound)/r > -1*a/r or
+		 * 					lower bound > a.
+		 * 					So the entire range is greater than the constant. But
+		 * 					then the inequality is false and has been erroneously
+		 * 					marked 'true'. The value has already advanced too far.
+		 * 					newMin = zu.
+		 * 					This case should not happen.
+		 * 				}
+		 * 				else{
+		 * 					This is the straddle case. Here atacs has decided to
+		 * 					set the to the largest it can be.
+		 * 					newMin = INFINITY.
+		 * 					This case should not happen.
+		 * 				}
+		 * 			i=0
+		 * 				if(zl < -1 * a/r){
+		 * 					Again when the rate is negative, zl=-1*(upper bound)/r.
+		 * 					So the inequality becomes -1*(upper bound)/r < -1 a/r or
+		 * 					upper bound < a.
+		 * 					So the entire range of the variable is below 'a' which
+		 * 					makes the inequality true; however, it has been 
+		 * 					erroneously marked false. So freeze the variable at
+		 * 					its current largest value
+		 * 					newMin = zu.
+		 * 					This case should not happen.
+		 * 				}
+		 * 				else if(-1*zu > -1 * a/r){
+		 * 					When the rate is negative, zu = (lower bound)/r. The 
+		 * 					inequality then becomes -1*(lower bound)/r > -1 * a/r or
+		 * 					lower bound > a.
+		 * 					So the entire range of the continuous variable is
+		 * 					above the constant 'a'. Thus the variable can decrease
+		 * 					until it reaches the constant. When we divide by the 
+		 * 					a negative rate, this corresponds to increasing to 
+		 * 					a/r. Thus the new minimum value is
+		 * 					newMin = a/r.
+		 * 				}
+		 * 				else{
+		 * 					This is the final straddle case. The freeze the variable.
+		 * 					newMin = zu.
+		 * 					This case should not happen.
+		 * 				}
 		 */
 				
-		return 0;
+		
+		// Get the continuous variable in question.
+		int lpnIndex = contVar.get_lpnIndex();
+		int varIndex = contVar.get_transitionIndex();
+
+		Variable variable = z.get_lpnList()[lpnIndex].getContVar(varIndex);
+
+
+		// Initially set the value time to advance at INFINITY. This will
+		// be lowered if any inequalities force a lower value.
+		int min = Zone.INFINITY;
+		int newMin = Zone.INFINITY;
+
+
+
+
+		// Get all the inequalities that reference the variable of interest.
+		ArrayList<InequalityVariable> inequalities = variable.getInequalities();
+
+		for(InequalityVariable ineq : inequalities){
+			
+			// Update the inequality variable.
+			int ineqValue = ineq.evaluate(localStates[varIndex], z);
+
+
+			/* Working on a > or >= ineq */
+			if(ineq.get_op().equals(">") || ineq.get_op().equals(">=")){
+
+				// If the rate is positive.
+				if(z.getCurrentRate(contVar) > 0){
+
+					// If the inequality is marked true.
+					if(ineqValue != 0){
+						
+						// Check if the entire range lies above the constant.
+						if(z.getDbmEntry(0, contVar.get_transitionIndex())
+								< z.chkDiv(ineq.getConstant(), z.getCurrentRate(contVar), false)){
+							newMin = z.getDbmEntry(0, contVar.get_transitionIndex());
+							System.err.println("maxAdvance: Impossible case 1.");
+						}
+
+						// Check if the entire range lies below the constant.
+						else if ((-1)*z.getDbmEntry(contVar.get_transitionIndex(),0)
+								> z.chkDiv(ineq.getConstant(),
+										z.getCurrentRate(contVar), false)){
+							
+							newMin = Zone.INFINITY;
+
+						}
+
+						else{
+							// Straddle case
+							newMin = Zone.INFINITY;
+						}
+					}
+					else{
+						// The inequality is marked false.
+						
+						// Check if the entire range lies above the constant.
+						if(z.getDbmEntry(contVar.get_transitionIndex(), 0)
+								< z.chkDiv(ineq.getConstant(), z.getCurrentRate(contVar), false)){
+							
+							newMin = z.chkDiv(ineq.getConstant(), 
+									z.getCurrentRate(contVar), false);
+						}
+						
+						// Check if the entire range lies below the constant.
+						else if((-1)*z.getDbmEntry(contVar.get_transitionIndex(),0)
+								< z.chkDiv(ineq.getConstant(), z.getCurrentRate(contVar), false)){
+							
+							newMin = z.getDbmEntry(0, contVar.get_transitionIndex());
+							System.err.print("maxAdvance : Impossible case 3.");
+						}
+
+						else{
+							// straddle case
+							newMin = z.getDbmEntry(0,contVar.get_transitionIndex());
+						}
+					}
+				}
+
+				else{
+					// The rate is negative.
+					// warp <= 0.
+					
+					if( ineqValue != 0){
+						// The inequality is marked true.
+
+						// Check if the entire range lies above the constant.
+						if(z.getDbmEntry(contVar.get_transitionIndex(),0)
+								< (-1)*z.chkDiv(ineq.getConstant(),
+										z.getCurrentRate(contVar), false)){
+							
+							newMin = z.getDbmEntry(0,contVar.get_transitionIndex());
+							
+						}
+
+						// Check if the entire range lies below the constant.
+						else if((-1)*z.getDbmEntry(0, contVar.get_transitionIndex())
+								< (-1)*z.chkDiv(ineq.getConstant(),
+										z.getCurrentRate(contVar), false)){
+							
+							newMin = z.chkDiv(ineq.getConstant(), 
+									z.getCurrentRate(contVar), false);
+							System.err.println("Warining: impossible case 8a found.");
+						}
+
+						else{
+							// straddle case
+							newMin = z.getDbmEntry(0, contVar.get_transitionIndex());
+						}
+
+					}
+					
+					else{
+						// The inequality is marked false.
+						
+						// Check if the entire range lies above the constant.
+						if(z.getDbmEntry(contVar.get_transitionIndex(),0)
+								< (-1)*z.chkDiv(ineq.getConstant(),
+										z.getCurrentRate(contVar), false)){
+							
+							newMin = Zone.INFINITY;
+						}
+
+						// Check if the entire range lies below the constant.
+						else if((-1)*z.getDbmEntry(0, contVar.get_transitionIndex())
+								< (-1)*z.chkDiv(ineq.getConstant(),
+										z.getCurrentRate(contVar), false)){
+							
+							newMin = z.getDbmEntry(0,contVar.get_transitionIndex());
+							System.err.println("maxAdvance : Impossible case 4.");
+						}
+
+						else{
+							// straddle case
+							newMin = Zone.INFINITY;
+						}
+					}
+				}	
+			}
+
+			else{
+				// Working on a < or <= ineq
+
+				// Check if the rate is positive.
+				if(z.getUpperBoundForRate(contVar) > 0){
+
+					if(ineqValue != 0){
+						// The inequality is marked true.
+
+						// Check if the entire range lies above the constant.
+						if(z.getDbmEntry(0, contVar.get_transitionIndex())
+								< (-1)*z.chkDiv(ineq.getConstant(), 
+										z.getCurrentRate(contVar), false)){
+							
+							newMin = z.chkDiv(ineq.getConstant(),
+									z.getCurrentRate(contVar), false);
+						}
+
+						// Check if the entire range lies below the constant.
+						else if((-1)*z.getDbmEntry(contVar.get_transitionIndex(), 0)
+								< z.chkDiv(ineq.getConstant(), z.getCurrentRate(contVar),false)){
+							
+							newMin = Zone.INFINITY;
+							System.err.println("Warning : Impossible case 5.");
+						}
+
+						else{
+							//straddle case
+							newMin = z.getDbmEntry(0,contVar.get_transitionIndex());
+						}
+
+					}
+
+					else{
+						// The inequality is marked false.
+						
+						// Check if the entire range lies above the constant.
+						if(z.getDbmEntry(0, contVar.get_transitionIndex())
+								< z.chkDiv(ineq.getConstant(), 
+										z.getCurrentRate(contVar), false)){
+							
+							newMin = z.getDbmEntry(0, contVar.get_transitionIndex());
+							System.err.println("maxAdvance : Impossible case 7.");
+						}
+
+						// Check if the entire range lies below the constant.
+						else if((-1)*z.getDbmEntry(contVar.get_transitionIndex(), 0)
+								< z.chkDiv(ineq.getConstant(), 
+										z.getCurrentRate(contVar), false)){
+							
+							newMin = Zone.INFINITY;
+						}
+
+						else{
+							// straddle case
+							
+							newMin = Zone.INFINITY;
+						}
+					}	
+
+				}
+
+				else {
+					// The rate is negative.
+					// warp <=0 
+
+					if(ineqValue != 0){
+						// The inequality is marked true.
+
+						// Check if the entire range lies above the constant.
+						if(z.getDbmEntry(contVar.get_transitionIndex(), 0)
+								< (-1)*z.chkDiv(ineq.getConstant(), 
+										z.getCurrentRate(contVar), false)){
+							
+							newMin = Zone.INFINITY;
+						}
+						
+						// Check if the entire range lies below the constant.
+						else if((-1)*z.getDbmEntry(0, contVar.get_transitionIndex())
+								< (-1)*z.chkDiv(ineq.getConstant(),
+										z.getCurrentRate(contVar), false)){
+							
+							newMin = z.getDbmEntry(0, contVar.get_transitionIndex());
+							System.err.println("Warning : Impossible case 8.");
+						}
+
+
+						else {
+							// straddle case
+							newMin = Zone.INFINITY;
+						}
+
+					}
+
+
+					else {
+						// The inequality is marked false.
+
+						// Check if the entire range lies above the constant.
+						if(z.getDbmEntry(contVar.get_transitionIndex(),0)
+								< (-1)*z.chkDiv(ineq.getConstant(),
+										z.getCurrentRate(contVar), false)){
+							
+							newMin = z.getDbmEntry(0,contVar.get_transitionIndex());
+							System.err.println("Warning : Impossible case 6");
+						}
+
+						// Check if the entire range lies below the constant.
+						else if((-1)*z.getDbmEntry(0,contVar.get_transitionIndex())
+								< (-1)*z.chkDiv(ineq.getConstant(),
+										z.getCurrentRate(contVar),false)){
+							
+							newMin = z.chkDiv(ineq.getConstant(), z.getCurrentRate(contVar),false);
+						}
+
+
+
+						else {
+							// straddle case
+							
+							newMin = z.getDbmEntry(0, contVar.get_transitionIndex());
+						}
+
+
+					}
+				}	
+			}
+			// Check if the value can be lowered.
+			if(newMin < min){
+				min = newMin;
+			}
+		}
+
+
+		return min;
 	}
 }
