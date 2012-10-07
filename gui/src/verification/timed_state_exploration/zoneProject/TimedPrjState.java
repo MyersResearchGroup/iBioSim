@@ -252,4 +252,13 @@ public class TimedPrjState extends PrjState{
 		
 		return new LpnTranList(z.getPossibleEvents(lpnIndex, this.getStateArray()[lpnIndex]));
 	}
+	
+	/**
+	 * Get the Zones this (global) state contains.
+	 * @return
+	 * 		The Zones this (gloabl) state contains.
+	 */
+	public Zone[] get_zones(){
+		return _zones;
+	}
 }
