@@ -24,6 +24,8 @@ import verification.platu.main.Main;
 import verification.platu.main.Options;
 import verification.platu.project.PrjState;
 import verification.timed_state_exploration.zoneProject.EventSet;
+import verification.timed_state_exploration.zoneProject.InequalityVariable;
+import verification.timed_state_exploration.zoneProject.Event;
 import verification.timed_state_exploration.zoneProject.TimedPrjState;
 import verification.timed_state_exploration.zoneProject.Zone;
 
@@ -1149,13 +1151,54 @@ public class StateGraph {
 	 * 			The current information on the all local states.
 	 * @param currentPrjState
 	 * 			The current state.
-	 * @param listOfEvents
-	 * 			The list of events to fire.
+	 * @param eventSets
+	 * 			The set of events to fire.
 	 * @return
 	 * 			The new state.
 	 */
 	public TimedPrjState fire(final StateGraph[] curSgArray, 
-			final PrjState currentPrjState, LpnTranList listOfEvents){
-		return null;
+			final PrjState currentPrjState, EventSet eventSet){
+		
+		TimedPrjState currentTimedPrjState;
+		
+		// Check that this is a timed state.
+		if(currentPrjState instanceof TimedPrjState){
+			currentTimedPrjState = (TimedPrjState) currentPrjState;
+		}
+		else{
+			throw new IllegalArgumentException("Attempted to use the " +
+					"fire(StateGraph[],PrjState,Transition)" +
+					"without a TimedPrjState stored in the PrjState " +
+					"variable. This method is meant for TimedPrjStates.");
+		}
+		
+		// Determine if the list of events represents a list of inequalities.
+		if(eventSet.isInequalities()){
+			
+			// Create a copy of the current states.
+			State[] states = currentTimedPrjState.getStateArray().clone();
+			
+			// Get the variable index map of getting the indecies
+			// of the variables.
+			DualHashMap<String, Integer> map = lpn.getVarIndexMap();
+			
+			for(Event e : eventSet){
+								
+				// Extract inequality variable.
+				InequalityVariable iv = e.getInequalityVariable();
+				
+				// Get the index to change the value.
+				int variableIndex = map.getValue(iv.getName());
+				
+				// Flip the value of the inequality.
+				int[] vector = states[this.lpn.getLpnIndex()].getVector();
+				vector[variableIndex] = 
+						vector[variableIndex] == 1 ? 1 : 0;
+				
+				return new TimedPrjState(states, currentTimedPrjState.get_zones());
+			}
+		}
+		
+		return fire(curSgArray, currentPrjState, eventSet.getTransition());
 	}
 }
