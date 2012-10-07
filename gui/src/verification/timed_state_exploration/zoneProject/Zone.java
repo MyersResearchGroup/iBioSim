@@ -39,37 +39,61 @@ import verification.platu.stategraph.State;
  */
 public class Zone{
 	
-	// Abstraction Function : 
-	// The difference bound matrix is represented by int[][].
-	// In order to keep track of the upper and lower bounds of timers from when they are first
-	// enabled, the matrix will be augmented by a row and a column. The first row will contain
-	// the upper bounds and the first column will contain the negative of the lower bounds.
-	// For one timer t1 that is between 2 and 3, we might have
-	//    lb t0 t1
-	// ub  x  0  3
-	// t0  0  m  m
-	// t1  -2 m  m
-	// where x is not important (and will be given a zero value), 3 is the upper bound on t1
-	// and -2 is the negative of the lower bound. The m values represent the actual difference
-	// bound matrix. Also note that the column heading are not part of the stored representation
-	// lb stands for lower bound while ub stands for upper bound.
-	// This upper and lower bound information is called the Delay for a Transition object.
-	// Since a timer is tied directly to a Transition, the timers are index by the corresponding
-	// Transition's index in a LPNTranslator.
-	// The timers are named by an integer referred to as the index. The _indexToTimer array
-	// connects the index in the DBM sub-matrix to the index of the timer. For example,
-	// a the timer t1
+	/*Abstraction Function : 
+	* The difference bound matrix is represented by int[][].
+	*
+	* In order to keep track of the upper and lower bounds of timers from when they are first
+	* enabled, the matrix will be augmented by a row and a column. The first row will contain
+	* the upper bounds and the first column will contain the negative of the lower bounds.
+	* For one timer t1 that is between 2 and 3, we might have
+	*    lb t0 t1
+	* ub  x  0  3
+	* t0  0  m  m
+	* t1  -2 m  m
+	* where x is not important (and will be given a zero value), 3 is the upper bound on t1
+	* and -2 is the negative of the lower bound. The m values represent the actual difference
+	* bound matrix. They are stored according to tj-ti <= mij.
+	* Also note that the column heading are not part of the stored representation
+	* lb stands for lower bound while ub stands for upper bound.
+	* This upper and lower bound information is called the Delay for a Transition object.
+	* Since a timer is tied directly to a Transition, the timers are index by the corresponding
+	* Transition's index in a LPNTranslator.
+	* The timers are named by an integer referred to as the index. The _indexToTimer array
+	* connects the index in the DBM sub-matrix to the index of the timer. It does this
+	* via the use of LPNTransitionPair objects. These objects store the index of the LPN
+	* the transition is from as well as the index of the transition in that LPN.
+	* 
+	* The zone also stores the continuous variables. Continuous variables are
+	* referenced by an LPNContinuousPair that stores the index of the LPN
+	* that the continuous variable is apart of as well as the index of the 
+	* continuous variable. The current rate of the continuous variable is
+	* also stored in the LPNContinuousPair. When the rate of the continuous
+	* variable is zero, it is stored in the _rateZeroContinuous member field along
+	* with a VariableRangePair that gives the range of the continuous variable.
+	* When the rate is nonzero, the continuous variable is store in the DBM.
+	* A continuous variable is stored in the zone in the same way. The current
+	* upper bounds are stored in the zeroth row and the negative of the current
+	* lower bounds are stored in the zeroth column of the DBM. The upper and
+	* lower bounds of the rate are stored in the ub and lb columns (where the 
+	* upper and lower bounds of the timers are stored).
+	*/ 
 	
-	// Representation invariant :
-	// Zones are immutable.
-	// Integer.MAX_VALUE is used to logically represent infinity.
-	// The lb and ub values for a timer should be set when the timer is enabled.
-	// A negative hash code indicates that the hash code has not been set.
-	// The index of the timer in _indexToTimer is the index in the DBM and should contain
-	// 	the zeroth timer.
-	// The array _indexToTimerPair should always be sorted.
-	// The index of the LPN should match where it is in the _lpnList, that is, if lpn is
-	// 	and LhpnFile object in _lpnList, then _lpnList[getLpnIndex()] == lpn.
+	/* Representation invariant :
+	* Zones are immutable.
+	* Integer.MAX_VALUE is used to logically represent infinity.
+	* The lb and ub values for a timer should be set when the timer is enabled.
+	* A negative hash code indicates that the hash code has not been set.
+	* The index of the timer in _indexToTimer is the index in the DBM and should contain
+	* 	the zeroth timer.
+	* The array _indexToTimerPair should always be sorted.
+	* The index of the LPN should match where it is in the _lpnList, that is, if lpn is
+	* 	and LhpnFile object in _lpnList, then _lpnList[getLpnIndex()] == lpn.
+	* The LPNTransitionPair in the _indexToTimer array should be an LPNContinuousPair
+	*   when it stores the index to a continuous variable. Testing that the index
+	*   is an LPNContinuousPair is used to determined if the indexing object points
+	*   to a continuous variable.
+	* 
+	*/
 	
 	/*
 	 * Resource List :
