@@ -2822,7 +2822,11 @@ public class Zone{
 				// The index refers to a continuous variable. So check all the inequalities for inclusion.
 				Variable contVar = _lpnList[ltPair.get_lpnIndex()].getContVar(ltPair.get_transitionIndex());
 				for(InequalityVariable iv : contVar.getInequalities()){
-					addSetItem(result, new Event(iv), localState);
+					
+					// Check if the inequality can change.
+					if(inequalityCanChange(iv, localState)){
+						addSetItem(result, new Event(iv), localState);
+					}
 				}
 			}
 		}
@@ -3645,8 +3649,18 @@ public class Zone{
 		}
 	}
 	
-	private boolean inequalityCanChange(InequalityVariable ineq, State[] localStates){
-		
+	/**
+	 * Determines whether time has advanced far enough for an inequality to change
+	 * truth value.
+	 * @param ineq
+	 * 		The inequality to test whether its truth value can change.
+	 * @param localState
+	 * 		The state associated with the inequality.
+	 * @return
+	 * 		True if the inequality can change truth value, fasle otherwise.
+	 */
+//	private boolean inequalityCanChange(InequalityVariable ineq, State[] localStates){
+	private boolean inequalityCanChange(InequalityVariable ineq, State localState){
 		
 		// Find the index of the continuous variable this inequality refers to.
 		// I'm assuming there is a single variable.
@@ -3662,8 +3676,9 @@ public class Zone{
 		int currentRate = getCurrentRate(index);
 
 		// Get the current value of the inequality. This requires looking into the current state.
-		int currentValue = localStates[lpn.getLpnIndex()].getCurrentValue(contIndex);
-
+//		int currentValue = localStates[lpn.getLpnIndex()].getCurrentValue(contIndex);
+		int currentValue = localState.getCurrentValue(contIndex);
+		
 		// Get the Zone index of the variable.
 		int zoneIndex = Arrays.binarySearch(_indexToTimerPair, index);
 		
