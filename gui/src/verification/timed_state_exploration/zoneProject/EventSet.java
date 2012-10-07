@@ -5,8 +5,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import com.sun.corba.se.spi.activation._InitialNameServiceImplBase;
-
 import lpn.parser.Transition;
 
 /**
@@ -238,6 +236,16 @@ public class EventSet extends Transition implements Iterable<Event>{
 			return false;
 		}
 		return true;
+	}
+	
+	/**
+	 * Retrieve the transition that this EventSet represents.
+	 * @return
+	 * 		The transition that this EventSet represents or null if
+	 * 		this EventSet does not represent a transition.
+	 */
+	public Transition getTransition(){
+		return _transition;
 	}
 	
 	/*
