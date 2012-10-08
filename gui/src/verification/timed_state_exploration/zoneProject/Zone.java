@@ -2753,11 +2753,12 @@ public class Zone{
 	 * is usually used as a result of an event firing.
 	 * @param ltContPair
 	 * 		The index of the continuous variable to restrict.
-	 * @param warpValue
-	 * 		The warp value of the inequality event that is being used to update
+	 * @param constant
+	 * 		The constant value of the inequality event that is being used to update
 	 * 		the variable indexed by ltContPair.
+	 * 
 	 */
-	private void restrictContinuous(LPNContinuousPair ltContPair, int warpValue){
+	private void restrictContinuous(LPNContinuousPair ltContPair, int constant){
 		
 		// It will be quicker to get the DBM index for the ltContPair one time.
 		int variableIndex = timerIndexToDBMIndex(ltContPair);
@@ -2766,13 +2767,13 @@ public class Zone{
 		// Set the lower bound the variable (which is the DBM[variabl][0] entry.
 		// Note : the lower bound in the zone is actually the negative of the lower
 		// bound hence the -1 on the warpValue.
-		setDbmEntry(variableIndex, zeroIndex, -1*warpValue);
+		setDbmEntry(variableIndex, zeroIndex, ContinuousUtilities.chkDiv(-1*constant, ltContPair.getCurrentRate(), true));
 		
 		// Check if the upper bound needs to be advanced and advance it if necessary.
-		if(getDbmEntry(zeroIndex, variableIndex) < warpValue){
+		if(getDbmEntry(zeroIndex, variableIndex) < ContinuousUtilities.chkDiv(constant, ltContPair.getCurrentRate(), true)){
 			// If the upper bound in the zones is less than the new restricting value, we
 			// must advance it for the zone to remain consistent.
-			setDbmEntry(zeroIndex, variableIndex, warpValue);
+			setDbmEntry(zeroIndex, variableIndex, ContinuousUtilities.chkDiv(constant, ltContPair.getCurrentRate(), true));
 		}
 	}
 	
@@ -2788,7 +2789,7 @@ public class Zone{
 			return;
 		}
 		
-		// Restrict the variables according to each of the inequalityes in the evenSet.
+		// Restrict the variables according to each of the inequalities in the eventSet.
 		for(Event e : eventSet){
 			// Get the inequality.
 			InequalityVariable iv = e.getInequalityVariable();
@@ -2800,6 +2801,15 @@ public class Zone{
 			// Extract the index.
 			int lpnIndex = iv.get_lpn().getLpnIndex();
 			
+			// Extract the variable index.
+			DualHashMap<String, Integer> variableIndexMap = _lpnList[lpnIndex].getVarIndexMap();
+			int  variableIndex = variableIndexMap.getValue(iv.getName());
+			
+			// Package it up for referencing.
+			LPNContinuousPair ltContPair = new LPNContinuousPair(lpnIndex, variableIndex, 0);
+			
+			// Need the current rate for the varaible, grab the stored LPNContinuousPair.
+
 			
 		}
 	}
