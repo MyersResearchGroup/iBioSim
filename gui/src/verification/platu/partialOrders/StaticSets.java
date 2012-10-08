@@ -16,10 +16,12 @@ public class StaticSets {
 	private HashMap<Integer, Transition[]> allTransitions;
 	private HashSet<LpnTransitionPair> disableSet; 
 	private HashSet<LpnTransitionPair> disableByStealingToken;
-	private HashSet<LpnTransitionPair> enableSet;
+	private HashSet<LpnTransitionPair> enableByBringingToken;
+	private HashSet<LpnTransitionPair> enableBySettingEnablingTrue;
 	private HashSet<LpnTransitionPair> curTranDisableOtherTranFailEnablingCond; // A set of transitions (with associated LPNs) whose enabling condition can become false due to executing curTran's assignments. 
 	private HashSet<LpnTransitionPair> otherTranDisableCurTranFailEnablingCond; // A set of transitions (with associated LPNs) whose enabling condition can become false due to executing curTran's assignments.
 	private HashSet<LpnTransitionPair> modifyAssignment;
+	//private HashSet<LpnTransitionPair> enableSet;
 	
 	public StaticSets(Transition curTran, HashMap<Integer,Transition[]> allTransitions) {
 		this.curTran = curTran;
@@ -28,7 +30,7 @@ public class StaticSets {
 		disableByStealingToken = new HashSet<LpnTransitionPair>();
 		curTranDisableOtherTranFailEnablingCond = new HashSet<LpnTransitionPair>();
 		otherTranDisableCurTranFailEnablingCond = new HashSet<LpnTransitionPair>();
-		enableSet = new HashSet<LpnTransitionPair>();
+		enableBySettingEnablingTrue = new HashSet<LpnTransitionPair>();
 		modifyAssignment = new HashSet<LpnTransitionPair>();
 	}
 		
@@ -169,10 +171,9 @@ public class StaticSets {
 	}
 
 	/**
-	 * Construct a set of transitions that can make the enabling condition of curTran true, by firing their assignments.
-	 * @param lpnIndex 
+	 * Construct a set of transitions that can make the enabling condition of curTran true, by executing their assignments.
 	 */
-	public void buildEnableSet() {
+	public void buildEnableBySettingEnablingTrue() {
 		for (Integer lpnIndex : allTransitions.keySet()) {
 			Transition[] allTransInOneLpn = allTransitions.get(lpnIndex);
 			for (int i = 0; i < allTransInOneLpn.length; i++) {
@@ -184,7 +185,7 @@ public class StaticSets {
 						&& (curTranEnablingTree.getChange(anotherTran.getAssignments())=='T'
 						|| curTranEnablingTree.getChange(anotherTran.getAssignments())=='t'
 						|| curTranEnablingTree.getChange(anotherTran.getAssignments())=='X')) {
-					enableSet.add(new LpnTransitionPair(lpnIndex, anotherTran.getIndex()));
+					enableBySettingEnablingTrue.add(new LpnTransitionPair(lpnIndex, anotherTran.getIndex()));
 					if (Options.getDebugMode()) {
 						System.out.println(curTran.getName() + " can be enabled by " + anotherTran.getName() + ". " 
 					                       + curTran.getName() + "'s enabling condition, which is " + curTranEnablingTree +  ", may become true due to firing of " 
@@ -200,6 +201,19 @@ public class StaticSets {
 			}
 		}
 	}
+	
+	/**
+	 * Construct a set of transitions that can bring a token to curTran.
+	 */
+	public void buildEnableByBringingToken() {
+		for (Place p : curTran.getPreset()) {
+			for (Transition presetTran : p.getPreset()) {
+				int lpnIndex = presetTran.getLpn().getLpnIndex();
+				enableByBringingToken.add(new LpnTransitionPair(lpnIndex, presetTran.getIndex()));
+			}
+		}
+	}
+	
 	
 	public void buildModifyAssignSet() {
 //		for every transition curTran in T, where T is the set of all transitions, we check t (t != curTran) in T, 
@@ -267,8 +281,11 @@ public class StaticSets {
 		return disableByStealingToken;
 	}
 
-	public HashSet<LpnTransitionPair> getEnable() {
-		return enableSet;
+	public HashSet<LpnTransitionPair> getEnableByBringingToken() {
+		return enableByBringingToken;
+	}
+	public HashSet<LpnTransitionPair> getEnableBySettingEnablingTrue() {
+		return enableBySettingEnablingTrue;
 	}
 	
 	public Transition getTran() {
