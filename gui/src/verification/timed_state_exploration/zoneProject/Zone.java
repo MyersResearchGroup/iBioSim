@@ -1477,7 +1477,7 @@ public class Zone{
 	 * @return
 	 * 		The row/column of the DBM associated with the ltPair.
 	 */
-	private int timerIndexToDBMIndex(LPNTransitionPair ltPair)
+	public int timerIndexToDBMIndex(LPNTransitionPair ltPair)
 	{
 		return Arrays.binarySearch(_indexToTimerPair, ltPair);
 	}
@@ -3681,7 +3681,7 @@ public class Zone{
 	 * @param localState
 	 * 		The state associated with the inequality.
 	 * @return
-	 * 		True if the inequality can change truth value, fasle otherwise.
+	 * 		True if the inequality can change truth value, false otherwise.
 	 */
 //	private boolean inequalityCanChange(InequalityVariable ineq, State[] localStates){
 	private boolean inequalityCanChange(InequalityVariable ineq, State localState){
