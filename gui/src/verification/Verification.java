@@ -1109,8 +1109,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				}				
 				// ------- Temporary Settings ------------
 				// Options for printing out intermediate results during POR
-				// Options.setDebugMode(true);
-				   Options.setDebugMode(false);
+				//Options.setDebugMode(true);
+				Options.setDebugMode(false);
+				Options.setNewNecessaryComputation();
 				// ----------------------------------------
 				Project untimed_dfs = new Project(selectedLPNs);
 				//----------- POR and Cycle Closing Methods (FULL)--------------
