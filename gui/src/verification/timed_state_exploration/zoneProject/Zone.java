@@ -2752,10 +2752,28 @@ public class Zone{
 	 * the upper bound to be at least as large if needed. This method
 	 * is usually used as a result of an event firing.
 	 * @param ltContPair
-	 * 			The index of the continuous variable to restrict.
+	 * 		The index of the continuous variable to restrict.
+	 * @param warpValue
+	 * 		The warp value of the inequality event that is being used to update
+	 * 		the variable indexed by ltContPair.
 	 */
-	public void restrictContinuous(LPNContinuousPair ltContPair){
+	public void restrictContinuous(LPNContinuousPair ltContPair, int warpValue){
 		
+		// It will be quicker to get the DBM index for the ltContPair one time.
+		int variableIndex = timerIndexToDBMIndex(ltContPair);
+		int zeroIndex = timerIndexToDBMIndex(LPNTransitionPair.ZERO_TIMER_PAIR);
+		
+		// Set the lower bound the variable (which is the DBM[variabl][0] entry.
+		// Note : the lower bound in the zone is actually the negative of the lower
+		// bound hence the -1 on the warpValue.
+		setDbmEntry(variableIndex, zeroIndex, -1*warpValue);
+		
+		// Check if the upper bound needs to be advanced and advance it if necessary.
+		if(getDbmEntry(zeroIndex, variableIndex) < warpValue){
+			// If the upper bound in the zones is less than the new restricting value, we
+			// must advance it for the zone to remain consistent.
+			setDbmEntry(zeroIndex, variableIndex, warpValue);
+		}
 	}
 	
 	/**
