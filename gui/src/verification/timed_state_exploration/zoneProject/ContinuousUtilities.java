@@ -752,7 +752,7 @@ public class ContinuousUtilities {
 	 * @return
 	 * 		Returns the ceiling of top/bottom if ceil is true and the floor of top/bottom otherwise.
 	 */
-	public int chkDiv(int top, int bottom, Boolean ceil){
+	public static int chkDiv(int top, int bottom, Boolean ceil){
 		/*
 		 * This method was taken from atacs/src/hpnrsg.c
 		 */
