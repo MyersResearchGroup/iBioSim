@@ -1,8 +1,9 @@
 package verification.timed_state_exploration.zoneProject;
 
 import java.util.ArrayList;
-
+import lpn.parser.LhpnFile;
 import lpn.parser.Variable;
+import verification.platu.lpn.DualHashMap;
 import verification.platu.stategraph.State;
 
 /**
@@ -100,6 +101,7 @@ public class ContinuousUtilities {
 		 * the zone is warped, zu = (upper bound)/r and zl = -1*(lower bound)/r when
 		 * r > 0. When r<0, the upper and lower bounds are swapped. Thus 
 		 * zu = (lower bound)/r and zl = -1*(upper bound)/r.
+		 * 
 		 * 
 		 * x>a
 		 * 		r > 0
@@ -306,14 +308,10 @@ public class ContinuousUtilities {
 
 		Variable variable = z.get_lpnList()[lpnIndex].getContVar(varIndex);
 
-
 		// Initially set the value time to advance at INFINITY. This will
 		// be lowered if any inequalities force a lower value.
 		int min = Zone.INFINITY;
 		int newMin = Zone.INFINITY;
-
-
-
 
 		// Get all the inequalities that reference the variable of interest.
 		ArrayList<InequalityVariable> inequalities = variable.getInequalities();
@@ -576,5 +574,214 @@ public class ContinuousUtilities {
 
 
 		return min;
+	}
+	
+	/**
+	 * Determines whether time has advanced far enough for an inequality to change
+	 * truth value.
+	 * @param ineq
+	 * 		The inequality to test whether its truth value can change.
+	 * @param localState
+	 * 		The state associated with the inequality.
+	 * @return
+	 * 		True if the inequality can change truth value, false otherwise.
+	 */
+	public boolean inequalityCanChange(Zone z, InequalityVariable ineq, State localState){
+		
+		/*
+		 * The Inequality is assumed to be of the form 
+		 * (expression with variable) inequality (expression evaluating to constant).
+		 * Let the inequality be expression as x>a or x<a. (The case '<=' is
+		 * considered the same as '>' and '>=' is considered the same as '>'.)
+		 * An inequality can change sign in four ways. One way for both positive
+		 * and negative rates for each type of inequality x>a and x<a.
+		 * 
+		 * For the following, let zu be the DBM(0, i) entry where i is the 
+		 * index of the continuous variable x. Also let zl be the DBM(i,0) entry
+		 * where i is the index of the continuous variable x. Note that since
+		 * the zone is warped, zu = (upper bound)/r and zl = -1*(lower bound)/r when
+		 * r > 0. When r<0, the upper and lower bounds are swapped. Thus 
+		 * zu = (lower bound)/r and zl = -1*(upper bound)/r.
+		 * 
+		 * 
+		 * x > a
+		 * 		r < 0
+		 * 			if(-1* zu < -1*a/r && inequality true){
+		 * 				This case covers the situation where the variable x
+		 * 				starts above the constant and decreases until it crosses
+		 * 				the constant turnin the inequality from true to false.
+		 * 				Since zu = -1*(lower bound)/r, the inequality becomes
+		 * 				-1*(lower bound)/r < -1*a/r or
+		 * 				lower bound < a.
+		 * 				Since the lower bound exceeds the constant, the inequality
+		 * 				can change.
+		 * 			}
+		 * 		r > 0
+		 * 			if(zu > a/r && inequality false){
+		 * 				This is the case where the variable x is below the constant
+		 * 				and the variable then exceeds the constant.
+		 * 				Since zu = (upper bound)/r the inequality becomes
+		 * 				upper bound > a.
+		 * 				Since the upper bound exceeds the constant, the inequality
+		 * 				can change.
+		 * 			}
+		 * x < a
+		 * 		r < 0
+		 * 			if(-1*zu < -1*a/r && inequality false){
+		 * 				This case again has the variable x above is again above the
+		 * 				constant 'a' and is going to cross it, but this time the 
+		 * 				the inequality becomes true when it was false.
+		 * 				Since zu = -1*(lower bound)/r, the inequality becomes
+		 * 				-1*(lower bound)/r < -1*a/r or
+		 * 				lower bound < a.
+		 * 				Since the lower bound exceeds the constant, the inequality
+		 * 				can change.
+		 * 			}
+		 * 		r > 0
+		 * 			if(zu > a/r && inequality true){
+		 * 				This case has the variable x below the constant and the
+		 * 				variable reaches the point where it will exceed the constant
+		 * 				thus turing the truth value of the inequality from 
+		 * 				true to false.
+		 * 				Since zu = (upper bound)/r the inequality becomes
+		 * 				upper bound > a.
+		 * 				Since the upper bound exceeds the constant, the inequality
+		 * 				can change.
+		 * 			}
+		 */
+		
+		// Find the index of the continuous variable this inequality refers to.
+		// I'm assuming there is a single variable.
+		LhpnFile lpn = ineq.get_lpn();
+		Variable contVar = ineq.getInequalities().get(0);
+		DualHashMap<String, Integer> variableIndecies = lpn.getContinuousIndexMap();
+		int contIndex = variableIndecies.get(contVar);
+
+		// Package up the information into a the index. Note the current rate doesn't matter.
+		LPNContinuousPair index = new LPNContinuousPair(lpn.getLpnIndex(), contIndex, 0);
+
+		// Get the current rate.
+		int currentRate = z.getCurrentRate(index);
+
+		// Get the current value of the inequality. This requires looking into the current state.
+		int currentValue = localState.getCurrentValue(contIndex);
+		
+		// Get the Zone index of the variable.
+		int zoneIndex = z.timerIndexToDBMIndex(index);
+
+		// > or >=
+		if(ineq.get_op().contains(">")){
+			
+			// First checking cases when the rate is negative.
+			if(currentRate < 0 && currentValue != 0){
+				
+				// Inequality is x>a. This is the case
+				// x lies above the and decreases below it making
+				// the inequality turn from true to false.
+				if((-1) * z.getDbmEntry(0, zoneIndex) <= 
+						(-1)*chkDiv(ineq.getConstant(), currentRate, false)){	
+					return true;
+				}
+				else{
+					return false;
+				}
+			}
+			
+			// Inequality is x>a. This is the case
+			// x lies below the constant and rises until it exceeds
+			// the constant thus causing the inequality to go from
+			// false to true.
+			else if(currentRate > 0 && currentValue == 0){
+				if(z.getDbmEntry(0, zoneIndex) <= 
+						chkDiv(ineq.getConstant(), currentRate, false)){
+					return true;
+				}
+				else{
+					return false;
+				}
+			}
+		}
+		/* < or <= */
+		else if(ineq.get_op().contains("<")){
+			
+			// Inequality is x<a. This is the case where
+			// the variable is above the constant and decreases until
+			// it is below the constant thus causing the constant to
+			// go from false to true.
+			if(currentRate < 0 && currentValue == 0){
+				if((-1) * z.getDbmEntry(0, zoneIndex) <= 
+						(-1)*chkDiv(ineq.getConstant(), currentRate, false)){
+					return true;
+				}
+				else{
+					return false;
+				}
+			}
+			
+			// Inequality is x<a. This is the case where the variable
+			// is below the constant and rises until it exceeds the constant
+			// thus changing the inequality from true to false.
+			else if (currentRate > 0 && 
+					currentValue != 0){
+				if(z.getDbmEntry(0, zoneIndex) >= 
+						chkDiv(ineq.getConstant(), currentRate, false)){
+					return true;
+				}
+				else {
+					return false;
+				}
+			}
+		
+			else {
+				return false;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Performs a division of two integers and either takes the ceiling or the floor. Note :
+	 * The integers are converted to doubles for the division so the choice of ceiling or floor is
+	 * meaningful.
+	 * @param top
+	 * 		The numerator.
+	 * @param bottom
+	 * 		The denominator.
+	 * @param ceil
+	 * 		True indicates return the ceiling and false indicates return the floor.
+	 * @return
+	 * 		Returns the ceiling of top/bottom if ceil is true and the floor of top/bottom otherwise.
+	 */
+	public int chkDiv(int top, int bottom, Boolean ceil){
+		/*
+		 * This method was taken from atacs/src/hpnrsg.c
+		 */
+		int res = 0;
+		  if(top == Zone.INFINITY ||
+		     top == Zone.INFINITY * -1) {
+		    if(bottom < 0) {
+		      return top * -1;
+		    }
+		    return top;
+		  }
+		  if(bottom == Zone.INFINITY) {
+			  return 0;
+		  }
+		  if(bottom == 0) {
+			  System.out.println("Warning: Divided by zero.");
+			  bottom = 1;
+		  }
+
+		  double Dres,Dtop,Dbottom;
+		  Dtop = top;
+		  Dbottom = bottom;
+		  Dres = Dtop/Dbottom;
+		  if(ceil) {
+			  res = (int)Math.ceil(Dres);
+		  }
+		  else if(!ceil) {
+			  res = (int)Math.floor(Dres);
+		  }
+		  return res;
 	}
 }
