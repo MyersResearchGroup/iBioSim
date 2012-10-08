@@ -67,6 +67,11 @@ public class Options {
 	private static boolean porDeadlockPreserve = true;
 	
 	/*
+	 * Flag to use new necessary computation
+	 */
+	private static boolean newNecessaryCompuatation = false;
+	
+	/*
 	 * Report disabling error flag
 	 */
 	private static boolean reportDisablingError = false;
@@ -375,5 +380,13 @@ public class Options {
 	
 	public static boolean getMemUpperBoundFlag() {
 		return memoryUpperBoundFlag;
+	}
+	
+	public static void setNewNecessaryComputation() {
+		newNecessaryCompuatation = true;
+	}
+
+	public static boolean getNewNecessaryComputation() {
+		return newNecessaryCompuatation;
 	}
 }
