@@ -1956,7 +1956,7 @@ public class Zone{
 		
 		Zone tempZone = this.clone();
 		
-		tempZone.restrict(index);
+		tempZone.restrictTimer(index);
 		tempZone.recononicalize();
 		
 		// Copy the tempZone to the new zone.
@@ -2739,12 +2739,23 @@ public class Zone{
 	 * @param timer
 	 * 			The timer to tighten the lower bound.
 	 */
-	private void restrict(int timer)
+	private void restrictTimer(int timer)
 	{
 		//int dbmIndex = Arrays.binarySearch(_indexToTimer, timer);
 		
 		_matrix[dbmIndexToMatrixIndex(timer)][dbmIndexToMatrixIndex(0)]
 		                                            = getLowerBoundbydbmIndex(timer);
+	}
+	
+	/**
+	 * Restricts the lower bound of a continuous variable. Also checks fixes
+	 * the upper bound to be at least as large if needed. This method
+	 * is usually used as a result of an event firing.
+	 * @param ltContPair
+	 * 			The index of the continuous variable to restrict.
+	 */
+	public void restrictContinuous(LPNContinuousPair ltContPair){
+		
 	}
 	
 	/**
