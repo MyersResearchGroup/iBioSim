@@ -2757,7 +2757,7 @@ public class Zone{
 	 * 		The warp value of the inequality event that is being used to update
 	 * 		the variable indexed by ltContPair.
 	 */
-	public void restrictContinuous(LPNContinuousPair ltContPair, int warpValue){
+	private void restrictContinuous(LPNContinuousPair ltContPair, int warpValue){
 		
 		// It will be quicker to get the DBM index for the ltContPair one time.
 		int variableIndex = timerIndexToDBMIndex(ltContPair);
@@ -2773,6 +2773,34 @@ public class Zone{
 			// If the upper bound in the zones is less than the new restricting value, we
 			// must advance it for the zone to remain consistent.
 			setDbmEntry(zeroIndex, variableIndex, warpValue);
+		}
+	}
+	
+	/**
+	 * Restricts the continuous variables in the zone according to the inequalities in a set of events.
+	 * @param eventSet
+	 * 			A set of inequality events. Does nothing if the event set does not contian inequalities.
+	 */
+	public void restrictContinuous(EventSet eventSet){
+		// Check that the eventSet is a set of Inequality events.
+		if(!eventSet.isInequalities()){
+			// If the eventSet is not a set of inequalities, do nothing.
+			return;
+		}
+		
+		// Restrict the variables according to each of the inequalityes in the evenSet.
+		for(Event e : eventSet){
+			// Get the inequality.
+			InequalityVariable iv = e.getInequalityVariable();
+			
+			// Extract the variable. I will assume the inequality only depends on a single 
+			// variable.
+			Variable x = iv.getContVariables().get(0);
+			
+			// Extract the index.
+			int lpnIndex = iv.get_lpn().getLpnIndex();
+			
+			
 		}
 	}
 	
