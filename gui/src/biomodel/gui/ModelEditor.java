@@ -1488,9 +1488,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		mainPanelCenterCenter.add(componentsPanel);
 		
 		if (textBased) {
-			tab.addTab("Compartments", compPanel);
-			tab.addTab("Species", speciesPanel);
-			tab.addTab("Reactions", reactionPanel);
+			if (!biosim.lema) {
+				tab.addTab("Compartments", compPanel);
+				tab.addTab("Species", speciesPanel);
+				tab.addTab("Reactions", reactionPanel);
+			}
 			tab.addTab("Parameters", parametersPanel);
 			tab.addTab("Components", componentsPanel);
 			tab.addTab("Rules", rulesPanel);
