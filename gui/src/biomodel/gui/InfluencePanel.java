@@ -353,11 +353,11 @@ public class InfluencePanel extends JPanel implements ActionListener {
 					} else if (typeBox.getSelectedItem().equals(GlobalConstants.ACTIVATION)) {
 						modifier.setSBOTerm(GlobalConstants.SBO_ACTIVATION);
 					} else if (typeBox.getSelectedItem().equals(GlobalConstants.NOINFLUENCE)) {
-						modifier.setAnnotation(GlobalConstants.NOINFLUENCE);
+						modifier.setSBOTerm(GlobalConstants.SBO_NEUTRAL);
 					}
 				} else {
 					if (typeBox.getSelectedItem().equals(GlobalConstants.REPRESSION) && 
-							modifier.getAnnotationString().contains(GlobalConstants.ACTIVATION)) {
+							BioModel.isActivator(modifier)) {
 						modifier.setSBOTerm(GlobalConstants.SBO_REGULATION);
 					} else if (typeBox.getSelectedItem().equals(GlobalConstants.ACTIVATION) && 
 								BioModel.isRepressor(modifier)) {
@@ -368,14 +368,14 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			
 			if (typeBox.getSelectedItem().equals(GlobalConstants.REPRESSION) &&
 					(BioModel.isActivator(production.getModifier(regulator)) ||
-							production.getModifier(regulator).getAnnotationString().contains(GlobalConstants.NOINFLUENCE))) {
+							BioModel.isNeutral(production.getModifier(regulator)))) {
 				production.getModifier(regulator).setSBOTerm(GlobalConstants.SBO_REPRESSION);
 			} else if (typeBox.getSelectedItem().equals(GlobalConstants.ACTIVATION) &&
 					(BioModel.isRepressor(production.getModifier(regulator)) ||
-					production.getModifier(regulator).getAnnotationString().contains(GlobalConstants.NOINFLUENCE))) {
+							BioModel.isNeutral(production.getModifier(regulator)))) {
 				production.getModifier(regulator).setSBOTerm(GlobalConstants.SBO_ACTIVATION);
 			} else if (typeBox.getSelectedItem().equals(GlobalConstants.NOINFLUENCE)) {
-				production.getModifier(regulator).setAnnotation(GlobalConstants.NOINFLUENCE);
+				production.getModifier(regulator).setSBOTerm(GlobalConstants.SBO_NEUTRAL);
 			}
 			PropertyField f = fields.get(GlobalConstants.COOPERATIVITY_STRING);
 			String CoopStr = null;
