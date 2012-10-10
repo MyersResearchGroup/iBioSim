@@ -211,7 +211,7 @@ public class Schematic extends JPanel implements ActionListener {
 
 		if (graph == null) {
 			
-			graph = new BioGraph(bioModel);		
+			graph = new BioGraph(bioModel,biosim.lema);		
 			addGraphListeners();
 			bioModel.makeUndoPoint();
 		}
@@ -2189,7 +2189,7 @@ public class Schematic extends JPanel implements ActionListener {
 		}
 		else if(cellType == GlobalConstants.EVENT || cellType == GlobalConstants.TRANSITION){
 			
-			String id = events.eventEditor("OK",(String)cell.getId(),false);
+			String id = events.eventEditor("OK",(String)cell.getId(),cellType == GlobalConstants.TRANSITION);
 			
 			if (!cell.getId().equals(id)) {
 				if (bioModel.getSBMLLayout().getNumLayouts() != 0) {

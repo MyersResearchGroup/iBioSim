@@ -2519,14 +2519,14 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	public boolean checkKineticLawUnits(KineticLaw law) {
 		bioModel.getSBMLDocument().getModel().populateListFormulaUnitsData();
 		if (law.containsUndeclaredUnits()) {
-			if (biosim.checkUndeclared) {
+			if (biosim.getCheckUndeclared()) {
 				JOptionPane.showMessageDialog(Gui.frame, "Kinetic law contains literals numbers or parameters with undeclared units.\n"
 						+ "Therefore, it is not possible to completely verify the consistency of the units.", "Contains Undeclared Units",
 						JOptionPane.WARNING_MESSAGE);
 			}
 			return false;
 		}
-		else if (biosim.checkUnits) {
+		else if (biosim.getCheckUnits()) {
 			if (SBMLutilities.checkUnitsInKineticLaw(bioModel.getSBMLDocument(), law)) {
 				JOptionPane.showMessageDialog(Gui.frame, "Kinetic law units should be substance / time.", "Units Do Not Match",
 						JOptionPane.ERROR_MESSAGE);

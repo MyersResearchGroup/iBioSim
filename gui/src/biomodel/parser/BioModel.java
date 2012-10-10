@@ -4721,7 +4721,12 @@ public class BioModel {
 		} else if (name.contains(",")) {
 			Reaction reaction = getProductionReaction(name.substring(name.indexOf(",")+1));
 			if (reaction!=null) {
-				ModifierSpeciesReference modifier = reaction.getModifier(name.substring(0,name.indexOf("-")));
+				ModifierSpeciesReference modifier;
+				if (name.contains("x>")) {
+					modifier = reaction.getModifier(name.substring(0,name.indexOf(">")-1));
+				} else {
+					modifier = reaction.getModifier(name.substring(0,name.indexOf("-")));
+				}
 				if (isRegulator(modifier)) {
 					if (name.contains("|")) {
 						modifier.setSBOTerm(GlobalConstants.SBO_ACTIVATION);

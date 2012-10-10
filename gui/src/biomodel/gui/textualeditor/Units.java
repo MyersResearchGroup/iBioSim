@@ -349,7 +349,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 							unit.setScale(Integer.valueOf(extractUnitScale(uList[i])).intValue());
 							unit.setMultiplier(Double.valueOf(extractUnitMult(uList[i])).doubleValue());
 						}
-						if (biosim.checkUnits) {
+						if (biosim.getCheckUnits()) {
 							error = SBMLutilities.checkUnits(bioModel.getSBMLDocument());
 						}
 						if (!error) {
