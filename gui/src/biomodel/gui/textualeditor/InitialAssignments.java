@@ -234,14 +234,14 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 	public static boolean checkInitialAssignmentUnits(Gui biosim, BioModel bioModel, InitialAssignment init) {
 		bioModel.getSBMLDocument().getModel().populateListFormulaUnitsData();
 		if (init.containsUndeclaredUnits()) {
-			if (biosim.checkUndeclared) {
+			if (biosim.getCheckUndeclared()) {
 				JOptionPane.showMessageDialog(Gui.frame, "Initial assignment contains literals numbers or parameters with undeclared units.\n"
 						+ "Therefore, it is not possible to completely verify the consistency of the units.", "Contains Undeclared Units",
 						JOptionPane.WARNING_MESSAGE);
 			}
 			return false;
 		}
-		else if (biosim.checkUnits) {
+		else if (biosim.getCheckUnits()) {
 			if (SBMLutilities.checkUnitsInInitialAssignment(bioModel.getSBMLDocument(), init)) {
 				JOptionPane.showMessageDialog(Gui.frame, "Units on the left and right-hand side of the initial assignment do not agree.",
 						"Units Do Not Match", JOptionPane.ERROR_MESSAGE);

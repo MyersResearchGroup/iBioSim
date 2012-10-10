@@ -117,11 +117,21 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		}
 		JLabel IDLabel = new JLabel("ID:");
 		JLabel NameLabel = new JLabel("Name:");
-		JLabel triggerLabel = new JLabel("Trigger:");
+		JLabel triggerLabel;
+		if (isTransition) {
+			triggerLabel = new JLabel("Enabling condition:");
+		} else {
+			triggerLabel = new JLabel("Trigger:");
+		}
 		JLabel delayLabel = new JLabel("Delay:");
 		JLabel priorityLabel = new JLabel("Priority:");
 		JLabel assignTimeLabel = new JLabel("Use values at trigger time:");
-		JLabel persistentTriggerLabel = new JLabel("Trigger is persistent:");
+		JLabel persistentTriggerLabel;
+		if (isTransition) {
+			persistentTriggerLabel = new JLabel("Enabling is persistent:");
+		} else {
+			persistentTriggerLabel = new JLabel("Trigger is persistent:");
+		}
 		JLabel initialTriggerLabel = new JLabel("Trigger initially true:");
 		JLabel dynamicProcessLabel = new JLabel("Dynamic Process:");
 		JLabel onPortLabel = new JLabel("Is Mapped to a Port:");
@@ -1020,14 +1030,14 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	private boolean checkEventDelayUnits(Delay delay) {
 		bioModel.getSBMLDocument().getModel().populateListFormulaUnitsData();
 		if (delay.containsUndeclaredUnits()) {
-			if (biosim.checkUndeclared) {
+			if (biosim.getCheckUndeclared()) {
 				JOptionPane.showMessageDialog(Gui.frame, "Event assignment delay contains literals numbers or parameters with undeclared units.\n"
 						+ "Therefore, it is not possible to completely verify the consistency of the units.", "Contains Undeclared Units",
 						JOptionPane.WARNING_MESSAGE);
 			}
 			return false;
 		}
-		else if (biosim.checkUnits) {
+		else if (biosim.getCheckUnits()) {
 			if (SBMLutilities.checkUnitsInEventDelay(bioModel.getSBMLDocument(), delay)) {
 				JOptionPane.showMessageDialog(Gui.frame, "Event delay should be units of time.", "Event Delay Not Time Units",
 						JOptionPane.ERROR_MESSAGE);
@@ -1043,7 +1053,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	private boolean checkEventAssignmentUnits(EventAssignment assign) {
 		bioModel.getSBMLDocument().getModel().populateListFormulaUnitsData();
 		if (assign.containsUndeclaredUnits()) {
-			if (biosim.checkUndeclared) {
+			if (biosim.getCheckUndeclared()) {
 				JOptionPane.showMessageDialog(Gui.frame, "Event assignment to " + assign.getVariable()
 						+ " contains literals numbers or parameters with undeclared units.\n"
 						+ "Therefore, it is not possible to completely verify the consistency of the units.", "Contains Undeclared Units",
@@ -1051,7 +1061,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			}
 			return false;
 		}
-		else if (biosim.checkUnits) {
+		else if (biosim.getCheckUnits()) {
 			if (SBMLutilities.checkUnitsInEventAssignment(bioModel.getSBMLDocument(), assign)) {
 				JOptionPane.showMessageDialog(Gui.frame, "Units on the left and right-hand side for the event assignment " + assign.getVariable()
 						+ " do not agree.", "Units Do Not Match", JOptionPane.ERROR_MESSAGE);

@@ -872,14 +872,14 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	public boolean checkRateRuleUnits(Rule rule) {
 		bioModel.getSBMLDocument().getModel().populateListFormulaUnitsData();
 		if (rule.containsUndeclaredUnits()) {
-			if (biosim.checkUndeclared) {
+			if (biosim.getCheckUndeclared()) {
 				JOptionPane.showMessageDialog(Gui.frame, "Rate rule contains literals numbers or parameters with undeclared units.\n"
 						+ "Therefore, it is not possible to completely verify the consistency of the units.", "Contains Undeclared Units",
 						JOptionPane.WARNING_MESSAGE);
 			}
 			return false;
 		}
-		else if (biosim.checkUnits) {
+		else if (biosim.getCheckUnits()) {
 			if (SBMLutilities.checkUnitsInRateRule(bioModel.getSBMLDocument(), rule)) {
 				JOptionPane.showMessageDialog(Gui.frame, "Units on the left and right-hand side of the rate rule do not agree.",
 						"Units Do Not Match", JOptionPane.ERROR_MESSAGE);
@@ -895,14 +895,14 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	public boolean checkAssignmentRuleUnits(Rule rule) {
 		bioModel.getSBMLDocument().getModel().populateListFormulaUnitsData();
 		if (rule.containsUndeclaredUnits()) {
-			if (biosim.checkUndeclared) {
+			if (biosim.getCheckUndeclared()) {
 				JOptionPane.showMessageDialog(Gui.frame, "Assignment rule contains literals numbers or parameters with undeclared units.\n"
 						+ "Therefore, it is not possible to completely verify the consistency of the units.", "Contains Undeclared Units",
 						JOptionPane.WARNING_MESSAGE);
 			}
 			return false;
 		}
-		else if (biosim.checkUnits) {
+		else if (biosim.getCheckUnits()) {
 			if (SBMLutilities.checkUnitsInAssignmentRule(bioModel.getSBMLDocument(), rule)) {
 				JOptionPane.showMessageDialog(Gui.frame, "Units on the left and right-hand side of the assignment rule do not agree.",
 						"Units Do Not Match", JOptionPane.ERROR_MESSAGE);

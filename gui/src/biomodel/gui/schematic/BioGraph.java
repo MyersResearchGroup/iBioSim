@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Vector;
+import java.util.prefs.Preferences;
 
 import javax.swing.JOptionPane;
 
@@ -98,12 +99,14 @@ public class BioGraph extends mxGraph {
 	// are positioned by the user or a layout algorithm.
 	int unpositionedElementCount = 0;
 	
+	private boolean lema;
+	
 	
 	/**
 	 * constructor
-	 * @param gcm
+	 * @param bioModel
 	 */
-	public BioGraph(BioModel gcm) {
+	public BioGraph(BioModel bioModel,boolean lema) {
 		
 		super();
 		
@@ -111,7 +114,9 @@ public class BioGraph extends mxGraph {
 		// label on the cell. We want to do this using the property windows.
 		this.setCellsEditable(false);
 		
-		this.bioModel = gcm;
+		this.bioModel = bioModel;
+		
+		this.lema = lema;
 		
 		this.initializeMaps();
 	
@@ -639,14 +644,13 @@ public class BioGraph extends mxGraph {
 						else 
 							cell.setValue("r");
 						
-						cell.setStyle("REACTION_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN +
-								";" + mxConstants.STYLE_STARTARROW + "=" + mxConstants.ARROW_OPEN);
+						cell.setStyle("REV_REACTION_EDGE");
 					} 
 					else {
 						if (s.getStoichiometry() != 1.0)
 							cell.setValue(s.getStoichiometry());
 						
-						cell.setStyle("REACTION_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+						cell.setStyle("REACTION_EDGE");
 					}
 					String reactant = s.getSpecies();
 					addSpeciesReferenceGlyph(cell,reactionGlyph,r.getId(),reactant,"substrate");
@@ -663,7 +667,7 @@ public class BioGraph extends mxGraph {
 					if (r.getReversible())
 						cell.setValue("m");
 					
-					cell.setStyle("REACTION_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.NONE);
+					cell.setStyle("MODIFIER_REACTION_EDGE");
 					String modifier = s.getSpecies();
 					addSpeciesReferenceGlyph(cell,reactionGlyph,r.getId(),modifier,"modifier");
 				}
@@ -683,15 +687,14 @@ public class BioGraph extends mxGraph {
 						else 
 							cell.setValue("p");
 						
-						cell.setStyle("REACTION_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN +
-								";" + mxConstants.STYLE_STARTARROW + "=" + mxConstants.ARROW_OPEN);
+						cell.setStyle("REV_REACTION_EDGE");
 					} 
 					else {
 						
 						if (s.getStoichiometry() != 1.0)
 							cell.setValue(s.getStoichiometry());
 						
-						cell.setStyle("REACTION_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+						cell.setStyle("REACTION_EDGE");
 					}
 					String product = s.getSpecies();
 					addSpeciesReferenceGlyph(cell,reactionGlyph,r.getId(),product,"product");
@@ -707,7 +710,7 @@ public class BioGraph extends mxGraph {
 									parameter.getId() + "__" + r.getId(), "", 
 									this.getVariableCell(parameter.getId()), 
 									this.getReactionsCell(r.getId()));
-							cell.setStyle("REACTION_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+							cell.setStyle("REACTION_EDGE");
 							addSpeciesReferenceGlyph(cell,reactionGlyph,r.getId(),parameter.getId(),"substrate");
 						}
 					}
@@ -729,11 +732,10 @@ public class BioGraph extends mxGraph {
 						cell.setValue(r.getId());
 						
 						if (r.getReversible()) {
-							cell.setStyle("REACTION_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN +
-									";" + mxConstants.STYLE_STARTARROW + "=" + mxConstants.ARROW_OPEN);
+							cell.setStyle("REV_REACTION_EDGE");
 						} 
 						else {
-							cell.setStyle("REACTION_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+							cell.setStyle("REACTION_EDGE");
 						}
 					}
 				}
@@ -759,7 +761,7 @@ public class BioGraph extends mxGraph {
 								species.getId() + "__" + r.getMetaId(), "", 
 								this.getSpeciesOrPromoterCell(species.getId()), 
 								this.getRulesCell(r.getMetaId()));
-						cell.setStyle("RULE_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+						cell.setStyle("RULE_EDGE");
 						addReferenceGlyph(cell,generalGlyph,r.getMetaId(),species.getId(),"substrate");
 					} else {
 						Parameter parameter = m.getParameter(vars[j]);
@@ -768,7 +770,7 @@ public class BioGraph extends mxGraph {
 									parameter.getId() + "__" + r.getMetaId(), "", 
 									this.getVariableCell(parameter.getId()), 
 									this.getRulesCell(r.getMetaId()));
-							cell.setStyle("RULE_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+							cell.setStyle("RULE_EDGE");
 							addReferenceGlyph(cell,generalGlyph,r.getMetaId(),parameter.getId(),"substrate");
 						}
 					}
@@ -781,7 +783,7 @@ public class BioGraph extends mxGraph {
 								r.getMetaId() + "__" + species.getId(), "", 
 								this.getRulesCell(r.getMetaId()),
 								this.getSpeciesOrPromoterCell(species.getId()));
-						cell.setStyle("RULE_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+						cell.setStyle("RULE_EDGE");
 						addReferenceGlyph(cell,generalGlyph,r.getMetaId(),species.getId(),"product");
 					} else {
 						Parameter parameter = m.getParameter(r.getVariable());
@@ -790,7 +792,7 @@ public class BioGraph extends mxGraph {
 									r.getMetaId() + "__" + parameter.getId(), "", 
 									this.getRulesCell(r.getMetaId()),
 									this.getVariableCell(parameter.getId()));
-							cell.setStyle("RULE_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+							cell.setStyle("RULE_EDGE");
 							addReferenceGlyph(cell,generalGlyph,r.getMetaId(),parameter.getId(),"product");
 						}
 					}
@@ -816,7 +818,7 @@ public class BioGraph extends mxGraph {
 								species.getId() + "__" + c.getMetaId(), "", 
 								this.getSpeciesOrPromoterCell(species.getId()), 
 								this.getConstraintsCell(c.getMetaId()));
-						cell.setStyle("CONSTRAINT_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+						cell.setStyle("CONSTRAINT_EDGE");
 						addReferenceGlyph(cell,generalGlyph,c.getMetaId(),species.getId(),"substrate");
 					} else {
 						Parameter parameter = m.getParameter(vars[j]);
@@ -825,7 +827,7 @@ public class BioGraph extends mxGraph {
 									parameter.getId() + "__" + c.getMetaId(), "", 
 									this.getVariableCell(parameter.getId()), 
 									this.getConstraintsCell(c.getMetaId()));
-							cell.setStyle("CONSTRAINT_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+							cell.setStyle("CONSTRAINT_EDGE");
 							addReferenceGlyph(cell,generalGlyph,c.getMetaId(),parameter.getId(),"substrate");
 						}
 					}
@@ -852,7 +854,7 @@ public class BioGraph extends mxGraph {
 									species.getId() + "__" + e.getId(), "", 
 									this.getSpeciesOrPromoterCell(species.getId()), 
 									this.getEventsCell(e.getId()));
-							cell.setStyle("EVENT_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+							cell.setStyle("EVENT_EDGE");
 							addReferenceGlyph(cell,generalGlyph,e.getId(),species.getId(),"substrate");
 						} else {
 							Parameter parameter = m.getParameter(vars[j]);
@@ -861,7 +863,7 @@ public class BioGraph extends mxGraph {
 										parameter.getId() + "__" + e.getId(), "", 
 										this.getVariableCell(parameter.getId()), 
 										this.getEventsCell(e.getId()));
-								cell.setStyle("EVENT_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+								cell.setStyle("EVENT_EDGE");
 								addReferenceGlyph(cell,generalGlyph,e.getId(),parameter.getId(),"substrate");
 							}
 						}
@@ -877,7 +879,7 @@ public class BioGraph extends mxGraph {
 									species.getId() + "__" + e.getId(), "", 
 									this.getSpeciesOrPromoterCell(species.getId()), 
 									this.getEventsCell(e.getId()));
-							cell.setStyle("EVENT_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+							cell.setStyle("EVENT_EDGE");
 							addReferenceGlyph(cell,generalGlyph,e.getId(),species.getId(),"substrate");
 						} else {
 							Parameter parameter = m.getParameter(vars[j]);
@@ -886,7 +888,7 @@ public class BioGraph extends mxGraph {
 										parameter.getId() + "__" + e.getId(), "", 
 										this.getVariableCell(parameter.getId()), 
 										this.getEventsCell(e.getId()));
-								cell.setStyle("EVENT_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+								cell.setStyle("EVENT_EDGE");
 								addReferenceGlyph(cell,generalGlyph,e.getId(),parameter.getId(),"substrate");
 							}
 						}
@@ -902,7 +904,7 @@ public class BioGraph extends mxGraph {
 									species.getId() + "__" + e.getId(), "", 
 									this.getSpeciesOrPromoterCell(species.getId()), 
 									this.getEventsCell(e.getId()));
-							cell.setStyle("EVENT_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+							cell.setStyle("EVENT_EDGE");
 							addReferenceGlyph(cell,generalGlyph,e.getId(),species.getId(),"substrate");
 						} else {
 							Parameter parameter = m.getParameter(vars[j]);
@@ -911,7 +913,7 @@ public class BioGraph extends mxGraph {
 										parameter.getId() + "__" + e.getId(), "", 
 										this.getVariableCell(parameter.getId()), 
 										this.getEventsCell(e.getId()));
-								cell.setStyle("EVENT_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+								cell.setStyle("EVENT_EDGE");
 								addReferenceGlyph(cell,generalGlyph,e.getId(),parameter.getId(),"substrate");
 							}
 						}
@@ -930,7 +932,7 @@ public class BioGraph extends mxGraph {
 										species.getId() + "__" + e.getId(), "", 
 										this.getSpeciesOrPromoterCell(species.getId()), 
 										this.getEventsCell(e.getId()));
-								cell.setStyle("EVENT_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+								cell.setStyle("EVENT_EDGE");
 								addReferenceGlyph(cell,generalGlyph,e.getId(),species.getId(),"substrate");
 							}else {
 								Parameter parameter = m.getParameter(vars[j]);
@@ -939,7 +941,7 @@ public class BioGraph extends mxGraph {
 											parameter.getId() + "__" + e.getId(), "", 
 											this.getVariableCell(parameter.getId()), 
 											this.getEventsCell(e.getId()));
-									cell.setStyle("EVENT_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+									cell.setStyle("EVENT_EDGE");
 									addReferenceGlyph(cell,generalGlyph,e.getId(),parameter.getId(),"substrate");
 								}
 							}
@@ -951,7 +953,7 @@ public class BioGraph extends mxGraph {
 								e.getId() + "__" + species.getId(), "", 
 								this.getEventsCell(e.getId()),
 								this.getSpeciesOrPromoterCell(species.getId()));
-						cell.setStyle("EVENT_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+						cell.setStyle("EVENT_EDGE");
 						addReferenceGlyph(cell,generalGlyph,e.getId(),species.getId(),"product");
 					} else if (species==null){
 						Parameter parameter = m.getParameter(ea.getVariable());
@@ -964,9 +966,9 @@ public class BioGraph extends mxGraph {
 											this.getEventsCell(e.getId()),
 											this.getVariableCell(parameter.getId()));
 									if (isTransition && isPlace) {
-										cell.setStyle("TRANSITION_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+										cell.setStyle("TRANSITION_EDGE");
 									} else {
-										cell.setStyle("EVENT_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+										cell.setStyle("EVENT_EDGE");
 									}
 									addReferenceGlyph(cell,generalGlyph,e.getId(),parameter.getId(),"product");
 								}
@@ -976,7 +978,7 @@ public class BioGraph extends mxGraph {
 											e.getId() + "__" + parameter.getId(), "", 
 											this.getVariableCell(parameter.getId()),
 											this.getEventsCell(e.getId()));
-									cell.setStyle("TRANSITION_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+									cell.setStyle("TRANSITION_EDGE");
 									addReferenceGlyph(cell,generalGlyph,e.getId(),parameter.getId(),"substrate");
 								}							
 							}
@@ -2591,300 +2593,340 @@ public class BioGraph extends mxGraph {
 	 * Builds the style sheets that will be used by the graph.
 	 */
 	public void createStyleSheets(){
-		
+		Preferences biosimrc = Preferences.userRoot();
 		mxStylesheet stylesheet = this.getStylesheet();
+			
+		String prefix;
+		if (lema) {
+			prefix = "lema";
+		} else {
+			prefix = "biosim";
+		}
 		
 		//compartment
 		Hashtable<String, Object> style = new Hashtable<String, Object>();
-		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
-		style.put(mxConstants.STYLE_OPACITY, 30);
-		style.put(mxConstants.STYLE_FILLCOLOR, "#FFFFFF");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
-		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-		style.put(mxConstants.STYLE_ROUNDED, true);
+		style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.Compartment", mxConstants.SHAPE_RECTANGLE));
+		style.put(mxConstants.STYLE_ROUNDED, biosimrc.get(prefix+".schematic.rounded.Compartment", "true").equals("true"));
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Compartment", "#FFFFFF"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Compartment", "#000000"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.Compartment", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Compartment", "50")));
 		stylesheet.putCellStyle("SBMLCOMPARTMENT", style);
 	
 		//compartment
 		style = new Hashtable<String, Object>();
-		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
-		style.put(mxConstants.STYLE_OPACITY, 30);
-		style.put(mxConstants.STYLE_FILLCOLOR, "#FFFFFF");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
-		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-		style.put(mxConstants.STYLE_ROUNDED, false);
+		style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.Component", mxConstants.SHAPE_RECTANGLE));
+		style.put(mxConstants.STYLE_ROUNDED, biosimrc.get(prefix+".schematic.rounded.Component", "false").equals("true"));
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Component", "#FFFFFF"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Component", "#000000"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.Component", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Component", "50")));
 		stylesheet.putCellStyle("SBMLCOMPONENT", style);		
 
 		//species
 		style = new Hashtable<String, Object>();
-		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
-		style.put(mxConstants.STYLE_OPACITY, 50);
-		style.put(mxConstants.STYLE_FILLCOLOR, "#5CB4F2");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
-		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-		style.put(mxConstants.STYLE_ROUNDED, true);
+		style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.Species", mxConstants.SHAPE_RECTANGLE));
+		style.put(mxConstants.STYLE_ROUNDED, biosimrc.get(prefix+".schematic.rounded.Species", "true").equals("true"));
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Species", "#5CB4F2"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Species", "#000000"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.Species", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Species", "50")));
 		stylesheet.putCellStyle("SPECIES", style);
 		
 		//reactions
 		style = new Hashtable<String, Object>();
-		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_ELLIPSE);
-		style.put(mxConstants.STYLE_OPACITY, 50);
-		style.put(mxConstants.STYLE_FILLCOLOR, "#C7007B");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
-		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
+		style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.Reaction", mxConstants.SHAPE_ELLIPSE));
+		style.put(mxConstants.STYLE_ROUNDED, biosimrc.get(prefix+".schematic.rounded.Reaction", "false").equals("true"));
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Reaction", "#C7007B"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Reaction", "#000000"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.Reaction", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Reaction", "50")));
 		stylesheet.putCellStyle("REACTION", style);
 		
 		//rules
 		style = new Hashtable<String, Object>();
-		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_SWIMLANE);
-		style.put(mxConstants.STYLE_OPACITY, 50);
-		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-		style.put(mxConstants.STYLE_ROUNDED, false);
-		style.put(mxConstants.STYLE_FILLCOLOR, "#FFFF00");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
+		style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.Rule", mxConstants.SHAPE_SWIMLANE));
+		style.put(mxConstants.STYLE_ROUNDED, biosimrc.get(prefix+".schematic.rounded.Rule", "false").equals("true"));
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Rule", "#FFFF00"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Rule", "#000000"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.Rule", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Rule", "50")));
 		stylesheet.putCellStyle("RULE", style);
 		
 		//constraints
 		style = new Hashtable<String, Object>();
-		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_HEXAGON);
-		style.put(mxConstants.STYLE_OPACITY, 50);
-		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-		style.put(mxConstants.STYLE_ROUNDED, false);
-		style.put(mxConstants.STYLE_FILLCOLOR, "#FF0000");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
+		style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.Constraint", mxConstants.SHAPE_HEXAGON));
+		style.put(mxConstants.STYLE_ROUNDED, biosimrc.get(prefix+".schematic.rounded.Constraint", "false").equals("true"));
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Constraint", "#FF0000"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Constraint", "#000000"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.Constraint", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Constraint", "50")));
 		stylesheet.putCellStyle("CONSTRAINT", style);
 		
 		//events
 		style = new Hashtable<String, Object>();
-		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
-		style.put(mxConstants.STYLE_OPACITY, 50);
-		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-		style.put(mxConstants.STYLE_ROUNDED, false);
-		style.put(mxConstants.STYLE_FILLCOLOR, "#00FF00");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
+		style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.Event", mxConstants.SHAPE_RECTANGLE));
+		style.put(mxConstants.STYLE_ROUNDED, biosimrc.get(prefix+".schematic.rounded.Event", "false").equals("true"));
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Event", "#00FF00"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Event", "#000000"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.Event", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Event", "50")));
 		stylesheet.putCellStyle("EVENT", style);
 		
-		//events
+		//explicit promoter
 		style = new Hashtable<String, Object>();
-		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
-		style.put(mxConstants.STYLE_OPACITY, 50);
-		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-		style.put(mxConstants.STYLE_ROUNDED, false);
-		style.put(mxConstants.STYLE_FILLCOLOR, "#FFFFFF");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
+		style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.Promoter", mxConstants.SHAPE_RHOMBUS));
+		style.put(mxConstants.STYLE_ROUNDED, biosimrc.get(prefix+".schematic.rounded.Promoter", "false").equals("true"));
+		//style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_IMAGE);
+		//style.put(mxConstants.STYLE_IMAGE,"file:/Users/myers/Downloads/SBOL/Symbols/promoter.png");
+		//style.put(mxConstants.STYLE_VERTICAL_LABEL_POSITION, mxConstants.ALIGN_BOTTOM);
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Promoter", "#F00E0E"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Promoter", "#000000"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.Promoter", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Promoter", "50")));
+		stylesheet.putCellStyle("EXPLICIT_PROMOTER", style);
+		
+		//variable
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.Variable", mxConstants.SHAPE_RECTANGLE));
+		style.put(mxConstants.STYLE_ROUNDED, biosimrc.get(prefix+".schematic.rounded.Variable", "false").equals("true"));
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Variable", "#0000FF"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Variable", "#000000"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.Variable", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Variable", "50")));
+		stylesheet.putCellStyle("VARIABLE", style);
+
+		//boolean (false)
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.Boolean_False", mxConstants.SHAPE_RECTANGLE));
+		style.put(mxConstants.STYLE_ROUNDED, biosimrc.get(prefix+".schematic.rounded.Boolean_False", "false").equals("true"));
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Boolean_False", "#FFFFFF"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Boolean_False", "#000000"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.Boolean_False", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Boolean_False", "50")));
+		stylesheet.putCellStyle("BOOLEAN", style);
+
+		//boolean (true)
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.Boolean_True", mxConstants.SHAPE_RECTANGLE));
+		style.put(mxConstants.STYLE_ROUNDED, biosimrc.get(prefix+".schematic.rounded.Boolean_True", "false").equals("true"));
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Boolean_True", "#808080"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Boolean_True", "#000000"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.Boolean_True", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Boolean_True", "50")));
+		stylesheet.putCellStyle("TRUE_BOOLEAN", style);
+
+		//place (not marked)
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.Place_NotMarked", mxConstants.SHAPE_ELLIPSE));
+		style.put(mxConstants.STYLE_ROUNDED, biosimrc.get(prefix+".schematic.rounded.Place_NotMarked", "false").equals("true"));
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Place_NotMarked", "#FFFFFF"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Place_NotMarked", "#000000"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.Place_NotMarked", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Place_NotMarked", "50")));
+		stylesheet.putCellStyle("PLACE", style);
+
+		//marked place (marked)
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.Place_Marked", mxConstants.SHAPE_DOUBLE_ELLIPSE));
+		style.put(mxConstants.STYLE_ROUNDED, biosimrc.get(prefix+".schematic.rounded.Place_Marked", "false").equals("true"));
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Place_Marked", "#808080"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Place_Marked", "#000000"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.Place_Marked", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Place_Marked", "50")));
+		stylesheet.putCellStyle("MARKED_PLACE", style);
+		
+		//transitions
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.Transition", mxConstants.SHAPE_RECTANGLE));
+		style.put(mxConstants.STYLE_ROUNDED, biosimrc.get(prefix+".schematic.rounded.Transition", "false").equals("true"));
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Transition", "#FFFFFF"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Transition", "#000000"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.Transition", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Transition", "50")));
 		stylesheet.putCellStyle("TRANSITION", style);
 		
 		//components
 		style = new Hashtable<String, Object>();
-		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
-		style.put(mxConstants.STYLE_OPACITY, 50);
-		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-		style.put(mxConstants.STYLE_ROUNDED, false);
-		style.put(mxConstants.STYLE_FILLCOLOR, "#87F274");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
+		style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.subComponent", mxConstants.SHAPE_RECTANGLE));
+		style.put(mxConstants.STYLE_ROUNDED, biosimrc.get(prefix+".schematic.rounded.subComponent", "false").equals("true"));
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.subComponent", "#87F274"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.subComponent", "#000000"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.subComponent", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.subComponent", "50")));
 		stylesheet.putCellStyle("COMPONENT", style);
-		
-		//grid components
-		style = new Hashtable<String, Object>();
-		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
-		style.put(mxConstants.STYLE_OPACITY, 100);
-		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-		style.put(mxConstants.STYLE_ROUNDED, false);
-		style.put(mxConstants.STYLE_FILLCOLOR, "#87F274");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
-		stylesheet.putCellStyle("GRIDCOMPONENT", style);
 		
 		//compartments
 		style = new Hashtable<String, Object>();
-		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
-		style.put(mxConstants.STYLE_OPACITY, 50);
-		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-		style.put(mxConstants.STYLE_ROUNDED, true);
-		style.put(mxConstants.STYLE_FILLCOLOR, "#87F274");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
+		style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.subCompartment", mxConstants.SHAPE_RECTANGLE));
+		style.put(mxConstants.STYLE_ROUNDED, biosimrc.get(prefix+".schematic.rounded.subCompartment", "true").equals("true"));
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.subCompartment", "#87F274"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.subCompartment", "#000000"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.subCompartment", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.subCompartment", "50")));
 		stylesheet.putCellStyle("COMPARTMENT", style);
+		
+		//grid components
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.subComponent", mxConstants.SHAPE_RECTANGLE));
+		style.put(mxConstants.STYLE_ROUNDED, biosimrc.get(prefix+".schematic.rounded.subComponent", "false").equals("true"));
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.subComponent", "#87F274"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.subComponent", "#000000"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.subComponent", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.subComponent", "50")));
+		stylesheet.putCellStyle("GRIDCOMPONENT", style);
 		
 		//grid compartments
 		style = new Hashtable<String, Object>();
-		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
-		style.put(mxConstants.STYLE_OPACITY, 100);
-		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-		style.put(mxConstants.STYLE_ROUNDED, true);
-		style.put(mxConstants.STYLE_FILLCOLOR, "#87F274");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
+		style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.subCompartment", mxConstants.SHAPE_RECTANGLE));
+		style.put(mxConstants.STYLE_ROUNDED, biosimrc.get(prefix+".schematic.rounded.subCompartment", "true").equals("true"));
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.subCompartment", "#87F274"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.subCompartment", "#000000"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.subCompartment", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.subCompartment", "50")));
 		stylesheet.putCellStyle("GRIDCOMPARTMENT", style);
 		
 		//grid rectangle
 		style = new Hashtable<String, Object>();
 		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
-		style.put(mxConstants.STYLE_OPACITY, 100);
-		style.put(mxConstants.STYLE_ROUNDED, false);
 		style.put(mxConstants.STYLE_FILLCOLOR, "none");
 		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
+		style.put(mxConstants.STYLE_OPACITY, 100);
+		style.put(mxConstants.STYLE_ROUNDED, false);
 		style.put(mxConstants.STYLE_MOVABLE, false);
 		style.put(mxConstants.STYLE_RESIZABLE, false);
 		style.put(mxConstants.STYLE_NOLABEL, true);
 		stylesheet.putCellStyle("GRID_RECTANGLE", style);
-		
-		//component edge
-		style = new Hashtable<String, Object>();
-		style.put(mxConstants.STYLE_OPACITY, 100);
-		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-		style.put(mxConstants.STYLE_FILLCOLOR, "#FFAA00");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
-		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_OPEN);
-		stylesheet.putCellStyle("COMPONENT_EDGE", style);	
 
 		//production edge (promoter to species)
 		style = new Hashtable<String, Object>();
-		style.put(mxConstants.STYLE_OPACITY, 100);
-		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-		style.put(mxConstants.STYLE_FILLCOLOR, "#34BA04");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#34BA04");
-		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_OPEN);
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Production_Edge", "#000000"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Production_Edge", "#34BA04"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.Production_Edge", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Production_Edge", "100")));
+		style.put(mxConstants.STYLE_ENDARROW, biosimrc.get(prefix+".schematic.shape.Production_Edge", mxConstants.ARROW_OPEN));
 		style.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ENTITY_RELATION);
 		stylesheet.putCellStyle("PRODUCTION", style);
 		
 		//activation edge (species to species)
 		style = new Hashtable<String, Object>();
-		style.put(mxConstants.STYLE_OPACITY, 100);
-		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-		style.put(mxConstants.STYLE_FILLCOLOR, "#34BA04");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#34BA04");
-		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_BLOCK);
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Activation_Edge", "#000000"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Activation_Edge", "#34BA04"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.Activation_Edge", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Activation_Edge", "100")));
+		style.put(mxConstants.STYLE_ENDARROW, biosimrc.get(prefix+".schematic.shape.Activation_Edge", mxConstants.ARROW_BLOCK));
 		stylesheet.putCellStyle("ACTIVATION", style);
 		
 		//repression edge (species to species)
 		style = new Hashtable<String, Object>();
-		style.put(mxConstants.STYLE_OPACITY, 100);
-		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-		style.put(mxConstants.STYLE_FILLCOLOR, "#FA2A2A");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#FA2A2A");
-		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_OVAL);
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Repression_Edge", "#000000"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Repression_Edge", "#FA2A2A"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.Repression_Edge", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Repression_Edge", "100")));
+		style.put(mxConstants.STYLE_ENDARROW, biosimrc.get(prefix+".schematic.shape.Repression_Edge", mxConstants.ARROW_OVAL));
 		stylesheet.putCellStyle("REPRESSION", style);
 		
 		//no influence (species to species)
 		style = new Hashtable<String, Object>();
-		style.put(mxConstants.STYLE_OPACITY, 100);
-		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-		style.put(mxConstants.STYLE_FILLCOLOR, "#000000");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
-		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_DIAMOND);
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.NoInfluence_Edge", "#000000"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.NoInfluence_Edge", "#000000"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.NoInfluence_Edge", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.NoInfluence_Edge", "100")));
+		style.put(mxConstants.STYLE_ENDARROW, biosimrc.get(prefix+".schematic.shape.NoInfluence_Edge", mxConstants.ARROW_DIAMOND));
 		style.put(mxConstants.STYLE_DASHED, "true");
 		stylesheet.putCellStyle("NOINFLUENCE", style);
 		
 		//complex formation edge (species to species)
 		style = new Hashtable<String, Object>();
-		style.put(mxConstants.STYLE_OPACITY, 100);
-		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-		style.put(mxConstants.STYLE_FILLCOLOR, "#4E5D9C");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#4E5D9C");
-		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_OPEN);
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Complex_Edge", "#000000"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Complex_Edge", "#4E5D9C"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.Complex_Edge", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Complex_Edge", "100")));
+		style.put(mxConstants.STYLE_ENDARROW, biosimrc.get(prefix+".schematic.shape.Complex_Edge", mxConstants.ARROW_OPEN));
 		style.put(mxConstants.STYLE_DASHED, "true");
 		stylesheet.putCellStyle("COMPLEX", style);
 		
+		//component edge
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Default_Edge", "#000000"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Default_Edge", "#000000"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.Default_Edge", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Default_Edge", "100")));
+		style.put(mxConstants.STYLE_ENDARROW, biosimrc.get(prefix+".schematic.shape.Default_Edge", mxConstants.ARROW_OPEN));
+		style.put(mxConstants.STYLE_DASHED, "false");
+		stylesheet.putCellStyle("COMPONENT_EDGE", style);	
+	
 		//reaction edge
 		style = new Hashtable<String, Object>();
-		style.put(mxConstants.STYLE_OPACITY, 100);
-		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-		style.put(mxConstants.STYLE_FILLCOLOR, "#F2861B");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#F2861B");
-		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_OPEN);
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Default_Edge", "#000000"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Default_Edge", "#000000"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.Default_Edge", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Default_Edge", "100")));
+		style.put(mxConstants.STYLE_ENDARROW, biosimrc.get(prefix+".schematic.shape.Default_Edge", mxConstants.ARROW_OPEN));
 		style.put(mxConstants.STYLE_DASHED, "false");
 		stylesheet.putCellStyle("REACTION_EDGE", style);
+
+		//reversible reaction edge
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Default_Edge", "#000000"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Default_Edge", "#000000"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.Default_Edge", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Default_Edge", "100")));
+		style.put(mxConstants.STYLE_STARTARROW, biosimrc.get(prefix+".schematic.shape.Default_Edge", mxConstants.ARROW_OPEN));
+		style.put(mxConstants.STYLE_ENDARROW, biosimrc.get(prefix+".schematic.shape.Default_Edge", mxConstants.ARROW_OPEN));
+		style.put(mxConstants.STYLE_DASHED, "false");
+		stylesheet.putCellStyle("REV_REACTION_EDGE", style);
+
+		//reversible reaction edge
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Default_Edge", "#000000"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Default_Edge", "#000000"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.Default_Edge", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Default_Edge", "100")));
+		style.put(mxConstants.STYLE_STARTARROW, mxConstants.NONE);
+		style.put(mxConstants.STYLE_ENDARROW, mxConstants.NONE);
+		style.put(mxConstants.STYLE_DASHED, "false");
+		stylesheet.putCellStyle("MODIFIER_REACTION_EDGE", style);
 		
 		//rule edge
 		style = new Hashtable<String, Object>();
-		style.put(mxConstants.STYLE_OPACITY, 100);
-		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-		style.put(mxConstants.STYLE_FILLCOLOR, "#F2861B");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#F2861B");
-		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_OPEN);
+		style.put(mxConstants.STYLE_ENDARROW, biosimrc.get(prefix+".schematic.shape.Default_Edge", mxConstants.ARROW_OPEN));
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Default_Edge", "#000000"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Default_Edge", "#000000"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.Default_Edge", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Default_Edge", "100")));
 		style.put(mxConstants.STYLE_DASHED, "false");
 		stylesheet.putCellStyle("RULE_EDGE", style);
 		
 		//constraint edge
 		style = new Hashtable<String, Object>();
-		style.put(mxConstants.STYLE_OPACITY, 100);
-		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-		style.put(mxConstants.STYLE_FILLCOLOR, "#F2861B");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#F2861B");
-		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_OPEN);
+		style.put(mxConstants.STYLE_ENDARROW, biosimrc.get(prefix+".schematic.shape.Default_Edge", mxConstants.ARROW_OPEN));
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Default_Edge", "#000000"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Default_Edge", "#000000"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.Default_Edge", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Default_Edge", "100")));
 		style.put(mxConstants.STYLE_DASHED, "false");
 		stylesheet.putCellStyle("CONSTRAINT_EDGE", style);
 		
 		//event edge
 		style = new Hashtable<String, Object>();
-		style.put(mxConstants.STYLE_OPACITY, 100);
-		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-		style.put(mxConstants.STYLE_FILLCOLOR, "#F2861B");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#F2861B");
-		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_OPEN);
+		style.put(mxConstants.STYLE_ENDARROW, biosimrc.get(prefix+".schematic.shape.Default_Edge", mxConstants.ARROW_OPEN));
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Default_Edge", "#000000"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Default_Edge", "#000000"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.Default_Edge", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Default_Edge", "100")));
 		style.put(mxConstants.STYLE_DASHED, "false");
 		stylesheet.putCellStyle("EVENT_EDGE", style);
 
 		//default edge
 		style = new Hashtable<String, Object>();
-		style.put(mxConstants.STYLE_OPACITY, 100);
-		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-		style.put(mxConstants.STYLE_FILLCOLOR, "#000000");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
-		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_CLASSIC);
+		style.put(mxConstants.STYLE_ENDARROW, biosimrc.get(prefix+".schematic.shape.Default_Edge", mxConstants.ARROW_OPEN));
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Default_Edge", "#000000"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Default_Edge", "#000000"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.Default_Edge", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Default_Edge", "100")));
 		style.put(mxConstants.STYLE_DASHED, "false");
 		stylesheet.putCellStyle("DEFAULT", style);
-		
-		//explicit promoter
-		style = new Hashtable<String, Object>();
-		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RHOMBUS);
-		style.put(mxConstants.STYLE_OPACITY, 50);
-		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-		style.put(mxConstants.STYLE_FILLCOLOR, "#F00E0E");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
-		stylesheet.putCellStyle("EXPLICIT_PROMOTER", style);
-		
-		//variable
-		style = new Hashtable<String, Object>();
-		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
-		style.put(mxConstants.STYLE_OPACITY, 50);
-		style.put(mxConstants.STYLE_FILLCOLOR, "#0000FF");
-		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
-		stylesheet.putCellStyle("VARIABLE", style);
-
-		//place
-		style = new Hashtable<String, Object>();
-		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
-		style.put(mxConstants.STYLE_OPACITY, 50);
-		style.put(mxConstants.STYLE_FILLCOLOR, "#FFFFFF");
-		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
-		stylesheet.putCellStyle("BOOLEAN", style);
-
-		//place
-		style = new Hashtable<String, Object>();
-		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
-		style.put(mxConstants.STYLE_OPACITY, 50);
-		style.put(mxConstants.STYLE_FILLCOLOR, "#808080");
-		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
-		stylesheet.putCellStyle("TRUE_BOOLEAN", style);
-
-		//place
-		style = new Hashtable<String, Object>();
-		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_ELLIPSE);
-		style.put(mxConstants.STYLE_OPACITY, 50);
-		style.put(mxConstants.STYLE_FILLCOLOR, "#FFFFFF");
-		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
-		stylesheet.putCellStyle("PLACE", style);
-
-		//marked place
-		style = new Hashtable<String, Object>();
-		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_ELLIPSE);
-		style.put(mxConstants.STYLE_OPACITY, 50);
-		style.put(mxConstants.STYLE_FILLCOLOR, "#808080");
-		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
-		stylesheet.putCellStyle("MARKED_PLACE", style);
 	}
 	
 	
