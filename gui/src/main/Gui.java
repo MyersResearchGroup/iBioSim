@@ -144,7 +144,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private JMenuBar menuBar;
 
-	private JMenu file, edit, view, tools, help, importMenu, exportMenu, newMenu, viewModel;
+	private JMenu file, openRecent, edit, view, tools, help, importMenu, exportMenu, newMenu, viewModel;
 	private JMenuItem newProj; // The new menu item
 	private JMenuItem newSBMLModel; // The new menu item	
 	private JMenuItem newGridModel;
@@ -178,6 +178,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private JMenuItem manual; // The manual menu item
 	private JMenuItem about; // The about menu item
 	private JMenuItem openProj; // The open menu item
+	private JMenuItem clearRecent; // Clear recent project list
 	private JMenuItem pref; // The preferences menu item
 	private JMenuItem graph; // The graph menu item
 	private JMenuItem probGraph, exportCsv, exportDat, exportEps, exportJpg, exportPdf, exportPng, exportSvg, exportTsd, 
@@ -408,6 +409,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		file = new JMenu("File");
 		help = new JMenu("Help");
 		edit = new JMenu("Edit");
+		openRecent = new JMenu("Open Recent");
 		importMenu = new JMenu("Import");
 		exportMenu = new JMenu("Export");
 		exportDataMenu = new JMenu("Data");
@@ -432,6 +434,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		manual = new JMenuItem("Manual");
 		about = new JMenuItem("About");
 		openProj = new JMenuItem("Open Project");
+		clearRecent = new JMenuItem("Clear Recent");
 		close = new JMenuItem("Close");
 		closeAll = new JMenuItem("Close All");
 		pref = new JMenuItem("Preferences");
@@ -518,6 +521,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		rename.addActionListener(this);
 		delete.addActionListener(this);
 		openProj.addActionListener(this);
+		clearRecent.addActionListener(this);
 		close.addActionListener(this);
 		closeAll.addActionListener(this);
 		pref.addActionListener(this);
@@ -750,6 +754,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		newMenu.add(graph);
 		newMenu.add(probGraph);
 		file.add(openProj);
+		file.add(openRecent);
 		// openMenu.add(openProj);
 		file.addSeparator();
 		file.add(close);
@@ -817,7 +822,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportImageMenu.add(exportSvg);
 		exportMovieMenu.add(exportAvi);
 		exportMovieMenu.add(exportMp4);
-		file.addSeparator();
+		//file.addSeparator();
 		help.add(manual);
 		if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
 			new MacOSAboutHandler();
@@ -831,7 +836,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			edit.addSeparator();
 			edit.add(pref);
 			file.add(exit);
-			file.addSeparator();
+			//file.addSeparator();
 			help.add(about);
 		}
 		if (lema) {
@@ -916,27 +921,35 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				recentProjects[i].setText(biosimrc.get("atacs.recent.project." + i, ""));
 				recentProjectPaths[i] = biosimrc.get("atacs.recent.project.path." + i, "");
 				if (!recentProjectPaths[i].equals("")) {
-					file.add(recentProjects[i]);
+					openRecent.add(recentProjects[i]);
 					numberRecentProj = i + 1;
+				} else {
+					break;
 				}
 			}
 			else if (lema) {
 				recentProjects[i].setText(biosimrc.get("lema.recent.project." + i, ""));
 				recentProjectPaths[i] = biosimrc.get("lema.recent.project.path." + i, "");
 				if (!recentProjectPaths[i].equals("")) {
-					file.add(recentProjects[i]);
+					openRecent.add(recentProjects[i]);
 					numberRecentProj = i + 1;
+				} else {
+					break;
 				}
 			}
 			else {
 				recentProjects[i].setText(biosimrc.get("biosim.recent.project." + i, ""));
 				recentProjectPaths[i] = biosimrc.get("biosim.recent.project.path." + i, "");
 				if (!recentProjectPaths[i].equals("")) {
-					file.add(recentProjects[i]);
+					openRecent.add(recentProjects[i]);
 					numberRecentProj = i + 1;
+				} else {
+					break;
 				}
 			}
 		}
+		openRecent.addSeparator();
+		openRecent.add(clearRecent);
 		if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
 			new MacOSAboutHandler();
 			new MacOSPreferencesHandler();
@@ -1167,6 +1180,18 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			else {
 				biosimrc.put("biosim.recent.project." + i, recentProjects[i].getText());
 				biosimrc.put("biosim.recent.project.path." + i, recentProjectPaths[i]);
+			}
+		}
+		for (int i = numberRecentProj; i < 10 ; i++) {
+			if (atacs) {
+				biosimrc.put("atacs.recent.project." + i,"");
+				biosimrc.put("atacs.recent.project.path." + i,"");
+			} else if (lema) {
+				biosimrc.put("lema.recent.project." + i,"");
+				biosimrc.put("lema.recent.project.path." + i,"");
+			} else {
+				biosimrc.put("biosim.recent.project." + i,"");
+				biosimrc.put("biosim.recent.project.path," + i,"");
 			}
 		}
 		System.exit(1);
@@ -2601,6 +2626,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			EditPreferences editPreferences = new EditPreferences(frame,async,tree);
 			editPreferences.preferences();
 		}
+		else if (e.getSource() == clearRecent) {
+			removeAllRecentProjects();
+		}
 		else if ((e.getSource() == openProj) || (e.getSource() == recentProjects[0]) || (e.getSource() == recentProjects[1])
 				|| (e.getSource() == recentProjects[2]) || (e.getSource() == recentProjects[3]) || (e.getSource() == recentProjects[4])
 				|| (e.getSource() == recentProjects[5]) || (e.getSource() == recentProjects[6]) || (e.getSource() == recentProjects[7])
@@ -2725,10 +2753,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 					else {
 						JOptionPane.showMessageDialog(frame, "You must select a valid project.", "Error", JOptionPane.ERROR_MESSAGE);
+						removeRecentProject(projDir);
 					}
 				}
 				else {
 					JOptionPane.showMessageDialog(frame, "You must select a valid project.", "Error", JOptionPane.ERROR_MESSAGE);
+					removeRecentProject(projDir);
 				}
 			}
 		}
@@ -5311,22 +5341,28 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				for (int j = 0; j <= i; j++) {
 					String save = recentProjectPaths[j];
 					recentProjects[j].setText(projDir.split(separator)[projDir.split(separator).length - 1]);
-					if (file.getItem(file.getItemCount() - 1) == exit) {
-						file.insert(recentProjects[j], file.getItemCount() - 3 - numberRecentProj);
+					openRecent.insert(recentProjects[j], j);
+					/*
+					if (openRecent.getItem(openRecent.getItemCount() - 1) == exit) {
+						openRecent.insert(recentProjects[j], openRecent.getItemCount() - 3 - numberRecentProj);
 					}
 					else {
-						file.add(recentProjects[j]);
+						openRecent.add(recentProjects[j]);
 					}
+					*/
 					recentProjectPaths[j] = projDir;
 					projDir = save;
 				}
 				for (int j = i + 1; j < numberRecentProj; j++) {
-					if (file.getItem(file.getItemCount() - 1) == exit) {
-						file.insert(recentProjects[j], file.getItemCount() - 3 - numberRecentProj);
+					openRecent.insert(recentProjects[j], j);
+					/*
+					if (openRecent.getItem(openRecent.getItemCount() - 1) == exit) {
+						openRecent.insert(recentProjects[j], openRecent.getItemCount() - 3 - numberRecentProj);
 					}
 					else {
-						file.add(recentProjects[j]);
+						openRecent.add(recentProjects[j]);
 					}
+					*/
 				}
 				return;
 			}
@@ -5337,17 +5373,49 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		for (int i = 0; i < numberRecentProj; i++) {
 			String save = recentProjectPaths[i];
 			recentProjects[i].setText(projDir.split(separator)[projDir.split(separator).length - 1]);
-			if (file.getItem(file.getItemCount() - 1) == exit) {
-				file.insert(recentProjects[i], file.getItemCount() - 3 - numberRecentProj);
+			openRecent.insert(recentProjects[i], i);
+			/*
+			if (openRecent.getItem(openRecent.getItemCount() - 1) == exit) {
+				openRecent.insert(recentProjects[i], openRecent.getItemCount() - 3 - numberRecentProj);
 			}
 			else {
-				file.add(recentProjects[i]);
+				openRecent.add(recentProjects[i]);
 			}
+			*/
 			recentProjectPaths[i] = projDir;
 			projDir = save;
 		}
 	}
 
+	/**
+	 * This method removes a project from the recent list
+	 */
+	public void removeRecentProject(String projDir) {
+		for (int i = 0; i < numberRecentProj; i++) {
+			if (recentProjectPaths[i].equals(projDir)) {
+				for (int j = i; j < numberRecentProj-1; j++) {
+					recentProjects[j].setText(recentProjects[j+1].getText());
+					recentProjectPaths[j] = recentProjectPaths[j+1];
+				}
+				openRecent.remove(recentProjects[numberRecentProj-1]);
+				recentProjectPaths[numberRecentProj-1]="";
+				numberRecentProj--;
+				return;
+			}
+		}
+	}
+
+	/**
+	 * This method removes all projects from the recent list
+	 */
+	public void removeAllRecentProjects() {
+		for (int i = 0; i < numberRecentProj; i++) {
+			openRecent.remove(recentProjects[i]);
+			recentProjectPaths[i]="";
+		}
+		numberRecentProj=0;
+	}
+	
 	/**
 	 * This method refreshes the menu.
 	 */
