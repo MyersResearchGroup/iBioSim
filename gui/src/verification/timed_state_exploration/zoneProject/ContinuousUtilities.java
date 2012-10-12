@@ -333,14 +333,14 @@ public class ContinuousUtilities {
 						
 						// Check if the entire range lies above the constant.
 						if(z.getDbmEntry(0, contVar.get_transitionIndex())
-								< z.chkDiv(ineq.getConstant(), z.getCurrentRate(contVar), false)){
+								< chkDiv(ineq.getConstant(), z.getCurrentRate(contVar), false)){
 							newMin = z.getDbmEntry(0, contVar.get_transitionIndex());
 							System.err.println("maxAdvance: Impossible case 1.");
 						}
 
 						// Check if the entire range lies below the constant.
 						else if ((-1)*z.getDbmEntry(contVar.get_transitionIndex(),0)
-								> z.chkDiv(ineq.getConstant(),
+								> chkDiv(ineq.getConstant(),
 										z.getCurrentRate(contVar), false)){
 							
 							newMin = Zone.INFINITY;
@@ -357,15 +357,15 @@ public class ContinuousUtilities {
 						
 						// Check if the entire range lies above the constant.
 						if(z.getDbmEntry(contVar.get_transitionIndex(), 0)
-								< z.chkDiv(ineq.getConstant(), z.getCurrentRate(contVar), false)){
+								< chkDiv(ineq.getConstant(), z.getCurrentRate(contVar), false)){
 							
-							newMin = z.chkDiv(ineq.getConstant(), 
+							newMin = chkDiv(ineq.getConstant(), 
 									z.getCurrentRate(contVar), false);
 						}
 						
 						// Check if the entire range lies below the constant.
 						else if((-1)*z.getDbmEntry(contVar.get_transitionIndex(),0)
-								< z.chkDiv(ineq.getConstant(), z.getCurrentRate(contVar), false)){
+								< chkDiv(ineq.getConstant(), z.getCurrentRate(contVar), false)){
 							
 							newMin = z.getDbmEntry(0, contVar.get_transitionIndex());
 							System.err.print("maxAdvance : Impossible case 3.");
@@ -387,7 +387,7 @@ public class ContinuousUtilities {
 
 						// Check if the entire range lies above the constant.
 						if(z.getDbmEntry(contVar.get_transitionIndex(),0)
-								< (-1)*z.chkDiv(ineq.getConstant(),
+								< (-1)*chkDiv(ineq.getConstant(),
 										z.getCurrentRate(contVar), false)){
 							
 							newMin = z.getDbmEntry(0,contVar.get_transitionIndex());
@@ -396,10 +396,10 @@ public class ContinuousUtilities {
 
 						// Check if the entire range lies below the constant.
 						else if((-1)*z.getDbmEntry(0, contVar.get_transitionIndex())
-								< (-1)*z.chkDiv(ineq.getConstant(),
+								< (-1)*chkDiv(ineq.getConstant(),
 										z.getCurrentRate(contVar), false)){
 							
-							newMin = z.chkDiv(ineq.getConstant(), 
+							newMin = chkDiv(ineq.getConstant(), 
 									z.getCurrentRate(contVar), false);
 							System.err.println("Warining: impossible case 8a found.");
 						}
@@ -416,7 +416,7 @@ public class ContinuousUtilities {
 						
 						// Check if the entire range lies above the constant.
 						if(z.getDbmEntry(contVar.get_transitionIndex(),0)
-								< (-1)*z.chkDiv(ineq.getConstant(),
+								< (-1)*chkDiv(ineq.getConstant(),
 										z.getCurrentRate(contVar), false)){
 							
 							newMin = Zone.INFINITY;
@@ -424,7 +424,7 @@ public class ContinuousUtilities {
 
 						// Check if the entire range lies below the constant.
 						else if((-1)*z.getDbmEntry(0, contVar.get_transitionIndex())
-								< (-1)*z.chkDiv(ineq.getConstant(),
+								< (-1)*chkDiv(ineq.getConstant(),
 										z.getCurrentRate(contVar), false)){
 							
 							newMin = z.getDbmEntry(0,contVar.get_transitionIndex());
@@ -450,16 +450,16 @@ public class ContinuousUtilities {
 
 						// Check if the entire range lies above the constant.
 						if(z.getDbmEntry(0, contVar.get_transitionIndex())
-								< (-1)*z.chkDiv(ineq.getConstant(), 
+								< (-1)*chkDiv(ineq.getConstant(), 
 										z.getCurrentRate(contVar), false)){
 							
-							newMin = z.chkDiv(ineq.getConstant(),
+							newMin = chkDiv(ineq.getConstant(),
 									z.getCurrentRate(contVar), false);
 						}
 
 						// Check if the entire range lies below the constant.
 						else if((-1)*z.getDbmEntry(contVar.get_transitionIndex(), 0)
-								< z.chkDiv(ineq.getConstant(), z.getCurrentRate(contVar),false)){
+								< chkDiv(ineq.getConstant(), z.getCurrentRate(contVar),false)){
 							
 							newMin = Zone.INFINITY;
 							System.err.println("Warning : Impossible case 5.");
@@ -477,7 +477,7 @@ public class ContinuousUtilities {
 						
 						// Check if the entire range lies above the constant.
 						if(z.getDbmEntry(0, contVar.get_transitionIndex())
-								< z.chkDiv(ineq.getConstant(), 
+								< chkDiv(ineq.getConstant(), 
 										z.getCurrentRate(contVar), false)){
 							
 							newMin = z.getDbmEntry(0, contVar.get_transitionIndex());
@@ -486,7 +486,7 @@ public class ContinuousUtilities {
 
 						// Check if the entire range lies below the constant.
 						else if((-1)*z.getDbmEntry(contVar.get_transitionIndex(), 0)
-								< z.chkDiv(ineq.getConstant(), 
+								< chkDiv(ineq.getConstant(), 
 										z.getCurrentRate(contVar), false)){
 							
 							newMin = Zone.INFINITY;
@@ -510,7 +510,7 @@ public class ContinuousUtilities {
 
 						// Check if the entire range lies above the constant.
 						if(z.getDbmEntry(contVar.get_transitionIndex(), 0)
-								< (-1)*z.chkDiv(ineq.getConstant(), 
+								< (-1)*chkDiv(ineq.getConstant(), 
 										z.getCurrentRate(contVar), false)){
 							
 							newMin = Zone.INFINITY;
@@ -518,7 +518,7 @@ public class ContinuousUtilities {
 						
 						// Check if the entire range lies below the constant.
 						else if((-1)*z.getDbmEntry(0, contVar.get_transitionIndex())
-								< (-1)*z.chkDiv(ineq.getConstant(),
+								< (-1)*chkDiv(ineq.getConstant(),
 										z.getCurrentRate(contVar), false)){
 							
 							newMin = z.getDbmEntry(0, contVar.get_transitionIndex());
@@ -539,7 +539,7 @@ public class ContinuousUtilities {
 
 						// Check if the entire range lies above the constant.
 						if(z.getDbmEntry(contVar.get_transitionIndex(),0)
-								< (-1)*z.chkDiv(ineq.getConstant(),
+								< (-1)*chkDiv(ineq.getConstant(),
 										z.getCurrentRate(contVar), false)){
 							
 							newMin = z.getDbmEntry(0,contVar.get_transitionIndex());
@@ -548,10 +548,10 @@ public class ContinuousUtilities {
 
 						// Check if the entire range lies below the constant.
 						else if((-1)*z.getDbmEntry(0,contVar.get_transitionIndex())
-								< (-1)*z.chkDiv(ineq.getConstant(),
+								< (-1)*chkDiv(ineq.getConstant(),
 										z.getCurrentRate(contVar),false)){
 							
-							newMin = z.chkDiv(ineq.getConstant(), z.getCurrentRate(contVar),false);
+							newMin = chkDiv(ineq.getConstant(), z.getCurrentRate(contVar),false);
 						}
 
 
@@ -586,7 +586,7 @@ public class ContinuousUtilities {
 	 * @return
 	 * 		True if the inequality can change truth value, false otherwise.
 	 */
-	public boolean inequalityCanChange(Zone z, InequalityVariable ineq, State localState){
+	public static boolean inequalityCanChange(Zone z, InequalityVariable ineq, State localState){
 		
 		/*
 		 * The Inequality is assumed to be of the form 
