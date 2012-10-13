@@ -263,6 +263,9 @@ public class EventSet extends Transition implements Iterable<Event>{
 		else if (_inequalities != null){
 			result += "Inequality Event Set = [" + _inequalities;
 		}
+		else{
+			result += "Event Set = [";
+		}
 		
 		result += "]";
 		
