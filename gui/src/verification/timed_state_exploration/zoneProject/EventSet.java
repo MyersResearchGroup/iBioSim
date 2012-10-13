@@ -272,6 +272,10 @@ public class EventSet extends Transition implements Iterable<Event>{
 		return result;
 	}
 	
+	public String getName(){
+		return toString();
+	}
+	
 	/*
 	 * -------------------------------------------------------------------------------------
 	 *                                      Inner Class
