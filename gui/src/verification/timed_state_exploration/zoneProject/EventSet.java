@@ -249,6 +249,27 @@ public class EventSet extends Transition implements Iterable<Event>{
 	}
 	
 	/*
+	 * (non-Javadoc)
+	 * @see lpn.parser.Transition#toString()
+	 */
+	public String toString(){
+		String result = "";
+		
+		// Check what type of events are contained in this event set.
+		if(_transition != null){
+			// This is a set of a singleton transition.
+			result += "Transition Event Set = [" + _transition.getName();
+		}
+		else if (_inequalities != null){
+			result += "Inequality Event Set = [" + _inequalities;
+		}
+		
+		result += "]";
+		
+		return result;
+	}
+	
+	/*
 	 * -------------------------------------------------------------------------------------
 	 *                                      Inner Class
 	 * -------------------------------------------------------------------------------------
