@@ -88,4 +88,27 @@ public class Event {
 	public Transition getTransition(){
 		return _transition;
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString(){
+		String result = "";
+		
+		// Test if this event is a transition or is an inequality.
+		if(_transition != null){
+			// This event represents a transition.
+			result += "Transition Event : " + _transition.getName();
+		}
+		else if(_inequality != null){
+			// This event represents an inequality.
+			result += "Inequality Event : + " + _inequality;
+		}
+		else{
+			// The event is not initialized.
+			result += "Event not initialized";
+		}
+		return result;
+	}
 }
