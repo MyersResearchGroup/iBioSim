@@ -2890,8 +2890,9 @@ public class Zone{
 //			
 //		}
 		
-		
-		for(int i=0; i<_indexToTimerPair.length; i++){
+		// We do not need to consider the zero timer, so start the 
+		// for loop at i=1 and not i=0.
+		for(int i=1; i<_indexToTimerPair.length; i++){
 			LPNTransitionPair ltPair = _indexToTimerPair[i];
 			
 			// The enabled events are grouped with the LPN that they affect. So if 
@@ -2906,7 +2907,7 @@ public class Zone{
 			if(!(ltPair instanceof LPNContinuousPair) && getDbmEntry(0, i) >= -1 * getLowerBoundbydbmIndex(i)){
 					//result.add(_lpnList[ltPair.get_lpnIndex()].getTransition(ltPair.get_transitionIndex()));
 				Event e = new Event(_lpnList[ltPair.get_lpnIndex()].getTransition(ltPair.get_transitionIndex()));
-				addSetItem(result, e, localState);
+				result = addSetItem(result, e, localState);
 			}
 			
 			else{
@@ -2916,7 +2917,7 @@ public class Zone{
 					
 					// Check if the inequality can change.
 					if(ContinuousUtilities.inequalityCanChange(this, iv, localState)){
-						addSetItem(result, new Event(iv), localState);
+						result = addSetItem(result, new Event(iv), localState);
 					}
 				}
 			}
@@ -3054,6 +3055,10 @@ public class Zone{
 //for(i=E.begin();i!=E.end()&&!done;i++) {
 		
 		for(Transition es : E){
+			
+			if(done){
+				break;
+			}
 			
 			if(!(es instanceof EventSet)){
 				// This collection should contain event sets, not transitions.
@@ -3423,7 +3428,7 @@ public class Zone{
 		
 		if(!done && possible){
 			eSet.add(e);
-			newE.add(eSet);
+			newE.add((Transition) eSet);
 		}
 		
 //E.clear();
