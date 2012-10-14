@@ -1109,9 +1109,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				}				
 				// ------- Temporary Settings ------------
 				// Options for printing out intermediate results during POR
-				//Options.setDebugMode(true);
-				Options.setDebugMode(false);
-				Options.setNewNecessaryComputation();
+				Options.setDebugMode(true);
+				//Options.setDebugMode(false);
+				Options.setNecessaryUsingDependencyGraphs(true);
+				//Options.setNecessaryUsingDependencyGraphs(false);
 				// ----------------------------------------
 				Project untimed_dfs = new Project(selectedLPNs);
 				//----------- POR and Cycle Closing Methods (FULL)--------------
@@ -1210,9 +1211,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				//----------- POR and Cycle Closing Methods (Simple)--------------
 				if (untimedPOR.isSelected()) {
 					// Options for using trace-back in ample calculation
-					String[] ampleMethds = {"Use trace-back for ample computation", "No trace-back for ample computation"};
+					String[] ampleMethds = {"Trace-back", "Trace-back with dependency graphs","No trace-back for ample computation"};
 					JList ampleMethdsList = new JList(ampleMethds);
-					ampleMethdsList.setVisibleRowCount(2);
+					ampleMethdsList.setVisibleRowCount(3);
 					//cycleClosingList.addListSelectionListener(new ValueReporter());
 					JScrollPane ampleMethdsPane = new JScrollPane(ampleMethdsList);
 					JPanel mainPanel0 = new JPanel(new BorderLayout());
@@ -1230,8 +1231,13 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						Options.setPOR("tb");
 						Options.setCycleClosingMthd("behavioral");
 						Options.setCycleClosingAmpleMethd("cctb");
-					}					
-					if (ampleMethdsIndex == 1) {
+					}
+					if (ampleMethdsIndex == 1) { 
+						Options.setPOR("tbdg");
+						Options.setCycleClosingMthd("behavioral");
+						Options.setCycleClosingAmpleMethd("cctbdg");
+					}		
+					if (ampleMethdsIndex == 2) {
 						Options.setPOR("tboff");
 						Options.setCycleClosingMthd("behavioral");
 						Options.setCycleClosingAmpleMethd("cctboff");
