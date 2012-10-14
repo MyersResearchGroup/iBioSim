@@ -137,7 +137,6 @@ public class ContinuousUtilities {
 		 * 					portion of the Zone above a is concerned). The upper
 		 * 					bound is still unconstrained, so set the minimum to 
 		 * 					newMin = INFINITY.
-		 * 					This case should not happen.
 		 * 				}
 		 * 
 		 * 			i=0
@@ -162,12 +161,10 @@ public class ContinuousUtilities {
 		 * 					This case should not happen.
 		 * 				}
 		 * 				else{
-		 * 					This is again the straddle case. In this case atacs
-		 * 					sets the value to
+		 * 					This is again the straddle case. Since the inequality
+		 * 					is false, the variable should not be allowed to advance
+		 * 					any further. In this case atacs sets the value to
 		 * 					newMin = zu.
-		 * 					Again, it doesn't matter what we set this to, but we will set it
-		 * 					so the variable cannot advance any further.
-		 * 					This case should not happen.
 		 * 				}
 		 * 
 		 * 		r<0 (Note these are warped space below here.)
@@ -194,6 +191,30 @@ public class ContinuousUtilities {
 		 * 					value to stop the variable from advancing. So
 		 * 					newMin = zu.
 		 * 				}
+		 * 			i=0
+		 * 				if(zl < -1 * a/r){
+		 * 					Since r<0, zl = -1*(upper bound)/r. The inequality thus become
+		 * 					-1*(upper bound)/r < -1*a/r which implies
+		 * 					upper bound < a.
+		 * 					The entire range of x lies below the inequality since 
+		 * 					lower bound < upper bound < a. Since the variable is
+		 * 					decreasing, it is unconstrained. The new minimum is then
+		 * 					newMin = INFINITY.
+		 * 				}
+		 * 				else if (-1*zu > -1*a/r){
+		 * 					Since r<0, zu = (lower bound)/r, the inequality becomes
+		 * 					lower bound > a.
+		 * 					Thus the entire range of the variable is above a. This
+		 * 					means the inequality is true and has been erroneously 
+		 * 					marked false so let's not let it advance any further.
+		 * 					newMin = zu.
+		 * 				}
+		 * 				else{
+		 * 					This is the straddle case. Since decreasing the variable does
+		 * 					not change the inequality, the variable is left unconstrained.
+		 * 					So set
+		 * 					newMin = INFINITY;
+		 * 				}
 		 * x<a
 		 * 		r>0
 		 * 			i=1
@@ -214,8 +235,9 @@ public class ContinuousUtilities {
 		 * 					newMin = INFINITY.
 		 * 					This case should not happen.
 		 * 				else{
-		 * 					The straddle case again. Again something has gone wrong and the variable is not allowed
-		 * 					to advance. Set the new minimum to
+		 * 					The straddle case again. Letting the variable increase past a changes the sign
+		 * 					of the inequality, so don't let the variable advance any further. Set the 
+		 * 					new minimum to
 		 * 					newMin = zu.
 		 * 				}
 		 * 			i=0
@@ -236,7 +258,8 @@ public class ContinuousUtilities {
 		 * 					newMin = INFINITY.
 		 * 				}
 		 * 				else{
-		 * 					This is the straddle case again. This time atacs sets the value to
+		 * 					This is the straddle case again. Allowing the inequality to decrease further
+		 * 					does not change the inequality. So set the new minimum to
 		 * 					newMin = INFINITY.
 		 * 				}
 		 * 		r<0 (Note these are the warped cases.)
@@ -266,10 +289,10 @@ public class ContinuousUtilities {
 		 * 					This case should not happen.
 		 * 				}
 		 * 				else{
-		 * 					This is the straddle case. Here atacs has decided to
-		 * 					set the to the largest it can be.
+		 * 					This is the straddle case. Letting the inequality continue to
+		 * 					decrease does not change the sign of the inequality, so 
+		 * 					we do not constrain the variable. Thus set the new minimum to
 		 * 					newMin = INFINITY.
-		 * 					This case should not happen.
 		 * 				}
 		 * 			i=0
 		 * 				if(zl < -1 * a/r){
@@ -295,9 +318,10 @@ public class ContinuousUtilities {
 		 * 					newMin = a/r.
 		 * 				}
 		 * 				else{
-		 * 					This is the final straddle case. The freeze the variable.
+		 * 					This is the final straddle case. Since the variable decreasing
+		 * 					changes the sign the variable, the inequality constrains the variable.
+		 * 					So freeze the variable at
 		 * 					newMin = zu.
-		 * 					This case should not happen.
 		 * 				}
 		 */
 				
