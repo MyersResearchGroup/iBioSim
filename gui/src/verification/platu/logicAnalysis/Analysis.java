@@ -3962,9 +3962,10 @@ public class Analysis {
 //			if (curEnabled.contains(lpnTranPair))
 //				dependent.add(lpnTranPair);
 //		}
-		if (Options.getDebugMode()) 
+		if (Options.getDebugMode()) {
 			printIntegerSet(dependent, lpnList, "@ getDependentSet at 0, dependent set for " + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()));
 			writeIntegerSetToPORDebugFile(dependent, lpnList, "@ getDependentSet at 0, dependent set for " + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()));
+		}
 //		// dependent is equal to enabled. Terminate.
 //		if (dependent.size() == curEnabled.size()) {
 //			if (Options.getDebugMode()) 
@@ -3972,17 +3973,18 @@ public class Analysis {
 //			return dependent;
 //		}
 		for (LpnTransitionPair tranInDisableSet : disableSet) {
-			if (Options.getDebugMode()) 
+			if (Options.getDebugMode()) {
 				System.out.println("Consider transition in the disable set of "  
-									+ lpnList[seedTran.getLpnIndex()].getLabel()  
-									+ "(" + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()) + "): "
-									+ lpnList[tranInDisableSet.getLpnIndex()].getLabel() 
-									+"(" + lpnList[tranInDisableSet.getLpnIndex()].getTransition(tranInDisableSet.getTranIndex()) + ")");
+						+ lpnList[seedTran.getLpnIndex()].getLabel()  
+						+ "(" + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()) + "): "
+						+ lpnList[tranInDisableSet.getLpnIndex()].getLabel() 
+						+"(" + lpnList[tranInDisableSet.getLpnIndex()].getTransition(tranInDisableSet.getTranIndex()) + ")");
 				writeStringWithNewLineToPORDebugFile("Consider transition in the disable set of "  
 						+ lpnList[seedTran.getLpnIndex()].getLabel()  
 						+ "(" + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()) + "): "
 						+ lpnList[tranInDisableSet.getLpnIndex()].getLabel() 
 						+"(" + lpnList[tranInDisableSet.getLpnIndex()].getTransition(tranInDisableSet.getTranIndex()) + ")");
+			}
 									
 			boolean tranInDisableSetIsPersistent = lpnList[tranInDisableSet.getLpnIndex()].getTransition(tranInDisableSet.getTranIndex()).isPersistent();
 			if (curEnabled.contains(tranInDisableSet) && !dependent.contains(tranInDisableSet)
