@@ -30,6 +30,7 @@ public class StaticSets {
 		disableByStealingToken = new HashSet<LpnTransitionPair>();
 		curTranDisableOtherTranFailEnablingCond = new HashSet<LpnTransitionPair>();
 		otherTranDisableCurTranFailEnablingCond = new HashSet<LpnTransitionPair>();
+		//enableByBringingToken = new HashSet<LpnTransitionPair>();
 		enableBySettingEnablingTrue = new HashSet<LpnTransitionPair>();
 		modifyAssignment = new HashSet<LpnTransitionPair>();
 	}
@@ -284,6 +285,7 @@ public class StaticSets {
 	public HashSet<LpnTransitionPair> getEnableByBringingToken() {
 		return enableByBringingToken;
 	}
+	
 	public HashSet<LpnTransitionPair> getEnableBySettingEnablingTrue() {
 		return enableBySettingEnablingTrue;
 	}
@@ -291,6 +293,13 @@ public class StaticSets {
 	public Transition getTran() {
 		return curTran;
 	}
+//	public HashSet<LpnTransitionPair> getEnableSet() {
+//		HashSet<LpnTransitionPair> enableSet = new HashSet<LpnTransitionPair>();
+//		enableSet.addAll(enableByBringingToken);
+//		enableSet.addAll(enableBySettingEnablingTrue);
+//		return enableSet;
+//	}
+	
 //	private void printIntegerSet(HashSet<Integer> integerSet, String setName) {
 //		if (!setName.isEmpty())
 //			System.out.print(setName + ": ");
