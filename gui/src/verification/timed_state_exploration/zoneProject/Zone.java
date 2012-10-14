@@ -2904,10 +2904,16 @@ public class Zone{
 			
 			// If the index refers to a timer (and not a continuous variable) and has exceeded its lower bound,
 			// then add the transition.
-			if(!(ltPair instanceof LPNContinuousPair) && getDbmEntry(0, i) >= -1 * getLowerBoundbydbmIndex(i)){
+			if(!(ltPair instanceof LPNContinuousPair)){
 					//result.add(_lpnList[ltPair.get_lpnIndex()].getTransition(ltPair.get_transitionIndex()));
-				Event e = new Event(_lpnList[ltPair.get_lpnIndex()].getTransition(ltPair.get_transitionIndex()));
-				result = addSetItem(result, e, localState);
+				
+				// The index refers to a timer. Now check if time has advanced
+				// far enough for the transition to fire.
+				if(getDbmEntry(0, i) >= -1 * getLowerBoundbydbmIndex(i)){
+
+					Event e = new Event(_lpnList[ltPair.get_lpnIndex()].getTransition(ltPair.get_transitionIndex()));
+					result = addSetItem(result, e, localState);
+				}
 			}
 			
 			else{
