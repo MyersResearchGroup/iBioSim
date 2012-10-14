@@ -37,7 +37,9 @@ public class Options {
 	 */
 	public static enum PorDef { 
 		TB, // POR with traceback
+		TBDG, // POR with traceback using dependency graphs
 		TBOFF // POR without trace-back	
+		
 		};
 	private static String POR = "tb";
 	
@@ -57,6 +59,7 @@ public class Options {
 	 */
 	public static enum cycleClosingAmpleMethdDef { 
 		CCTB, // cycle closing with trace-back
+		CCTBDG, // cycle closing with trace-back using dependency graphs
 		CCTBOFF // cycle closing without trace-back
 		};
 	private static String cycleClosingAmpleMethd = "cctb";
@@ -69,7 +72,7 @@ public class Options {
 	/*
 	 * Flag to use new necessary computation
 	 */
-	private static boolean newNecessaryCompuatation = false;
+	private static boolean necessaryUsingDependencyGraphs = false;
 	
 	/*
 	 * Report disabling error flag
@@ -382,11 +385,11 @@ public class Options {
 		return memoryUpperBoundFlag;
 	}
 	
-	public static void setNewNecessaryComputation() {
-		newNecessaryCompuatation = true;
+	public static void setNecessaryUsingDependencyGraphs(boolean flag) {
+		necessaryUsingDependencyGraphs = flag;
 	}
 
-	public static boolean getNewNecessaryComputation() {
-		return newNecessaryCompuatation;
+	public static boolean getNecessaryUsingDependencyGraphs() {
+		return necessaryUsingDependencyGraphs;
 	}
 }
