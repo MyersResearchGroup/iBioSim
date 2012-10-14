@@ -30,6 +30,7 @@ import verification.platu.partialOrders.StaticSets;
 import verification.platu.project.PrjState;
 import verification.platu.stategraph.State;
 import verification.platu.stategraph.StateGraph;
+import verification.timed_state_exploration.zoneProject.EventSet;
 import verification.timed_state_exploration.zoneProject.TimedPrjState;
 import verification.timed_state_exploration.zoneProject.StateSet;
 
@@ -347,7 +348,8 @@ public class Analysis {
 			}
 			else{
 				// Get the next timed state and extract the next un-timed states.
-				nextPrjState = sgList[curIndex].fire(sgList, stateStackTop, firedTran);
+				nextPrjState = sgList[curIndex].fire(sgList, stateStackTop,
+						(EventSet) firedTran);
 				nextStateArray = nextPrjState.toStateArray();
 			}
 			tranFiringCnt++;
