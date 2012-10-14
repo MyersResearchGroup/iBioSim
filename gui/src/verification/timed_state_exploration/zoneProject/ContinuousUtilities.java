@@ -102,6 +102,9 @@ public class ContinuousUtilities {
 		 * r > 0. When r<0, the upper and lower bounds are swapped. Thus 
 		 * zu = (lower bound)/r and zl = -1*(upper bound)/r.
 		 * 
+		 * Note : in the warped zone, raising the upper bound on a variable with
+		 * r<0 corresponds to lowering the lower bound of the variable when the 
+		 * variable is not warped.
 		 * 
 		 * x>a
 		 * 		r > 0
