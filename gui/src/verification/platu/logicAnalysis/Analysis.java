@@ -3990,9 +3990,10 @@ public class Analysis {
 			if (curEnabled.contains(tranInDisableSet) && !dependent.contains(tranInDisableSet)
 					&& (!tranInDisableSetIsPersistent || otherTransDisableEnabledTran.contains(tranInDisableSet))) {
 				dependent.addAll(computeDependent(curStateArray,tranInDisableSet,dependent,curEnabled,staticMap, lpnList, isCycleClosingAmpleComputation));
-				if (Options.getDebugMode()) 
+				if (Options.getDebugMode()) {
 					printIntegerSet(dependent, lpnList, "@ getDependentSet at 1 for transition " + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()));
 					writeIntegerSetToPORDebugFile(dependent, lpnList, "@ getDependentSet at 1 for transition " + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()));
+				}
 			}
 			else if (!curEnabled.contains(tranInDisableSet)) {
 				if(Options.getPOR().toLowerCase().equals("tboff")  // no trace-back
