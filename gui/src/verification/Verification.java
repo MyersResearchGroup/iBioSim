@@ -1109,8 +1109,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				}				
 				// ------- Temporary Settings ------------
 				// Options for printing out intermediate results during POR
-				Options.setDebugMode(true);
-				//Options.setDebugMode(false);
+				//Options.setDebugMode(true);
+				Options.setDebugMode(false);
 				Options.setNecessaryUsingDependencyGraphs(true);
 				//Options.setNecessaryUsingDependencyGraphs(false);
 				// ----------------------------------------
