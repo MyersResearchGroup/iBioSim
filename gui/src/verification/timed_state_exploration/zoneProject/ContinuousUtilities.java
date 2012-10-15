@@ -691,7 +691,7 @@ public class ContinuousUtilities {
 		int currentRate = z.getCurrentRate(index);
 
 		// Get the current value of the inequality. This requires looking into the current state.
-		int currentValue = localState.getCurrentValue(contIndex);
+		int currentValue = localState.getCurrentValue(ineq.getName());
 		
 		// Get the Zone index of the variable.
 		int zoneIndex = z.timerIndexToDBMIndex(index);
