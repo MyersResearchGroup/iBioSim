@@ -821,7 +821,7 @@ public class ContinuousUtilities {
 	 * @param s
 	 * 		The state to update the inequalities in.
 	 */
-	public static void updateInequalities(Zone z, State s){
+	public static void updateInitialInequalities(Zone z, State s){
 		// Extract the LPN.
 		LhpnFile lpn = s.getLpn();
 
@@ -841,9 +841,11 @@ public class ContinuousUtilities {
 				InequalityVariable var = (InequalityVariable) lpn.getVariable(variables[i]);
 				//vector[i] = var.evaluateInequality(s, this._zones[0]);
 
-				// Get the new value.
-				//vector[i] = var.evaluateInequality(s, _zones[0]).equals("true") ? 1 : 0;
-				vector[i] = var.evaluate(s, z);
+//				// Get the new value.
+//				//vector[i] = var.evaluateInequality(s, _zones[0]).equals("true") ? 1 : 0;
+//				vector[i] = var.evaluate(s, z);
+				String value = var.evaluate(s, z) == 0 ? "false" : "true";
+				var.addInitValue(value);
 			}
 		}
 
