@@ -176,7 +176,7 @@ public class Project {
 				// First create a zone with the continuous variables.
 				State[] ls = new State[1];
 				ls[0] = initStateArray[index];
-				Zone z = new Zone(ls);
+				Zone z = new Zone(ls, true);
 				ContinuousUtilities.updateInitialInequalities(z, ls[0]);
 				initStateArray[index] = curSg.getInitState();
 			}
