@@ -2809,8 +2809,13 @@ public class Zone{
 			LPNContinuousPair ltContPair = new LPNContinuousPair(lpnIndex, variableIndex, 0);
 			
 			// Need the current rate for the varaible, grab the stored LPNContinuousPair.
-
+			int zoneIndex = Arrays.binarySearch(_indexToTimerPair, ltContPair);
+			if(zoneIndex > 0){
+				ltContPair = (LPNContinuousPair) _indexToTimerPair[zoneIndex];
+			}
 			
+			
+			setDbmEntry(zoneIndex, 0, -ContinuousUtilities.chkDiv(iv.getConstant(), ltContPair.getCurrentRate(), true));
 		}
 	}
 	
