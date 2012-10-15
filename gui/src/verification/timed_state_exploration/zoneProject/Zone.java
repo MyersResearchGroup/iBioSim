@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import lpn.parser.ExprTree;
 import lpn.parser.LhpnFile;
@@ -2832,7 +2833,7 @@ public class Zone{
 	 * @param eventSet
 	 * 			A set of inequality events. Does nothing if the event set does not contian inequalities.
 	 */
-	public void restrictContinuous(EventSet eventSet){
+	private void restrictContinuous(EventSet eventSet){
 		// Check that the eventSet is a set of Inequality events.
 		if(!eventSet.isInequalities()){
 			// If the eventSet is not a set of inequalities, do nothing.
@@ -2852,7 +2853,8 @@ public class Zone{
 			int lpnIndex = iv.get_lpn().getLpnIndex();
 			
 			// Extract the variable index.
-			DualHashMap<String, Integer> variableIndexMap = _lpnList[lpnIndex].getVarIndexMap();
+//			DualHashMap<String, Integer> variableIndexMap = _lpnList[lpnIndex].getVarIndexMap();
+			DualHashMap<String, Integer> variableIndexMap = _lpnList[lpnIndex].getContinuousIndexMap();
 			int  variableIndex = variableIndexMap.getValue(x.getName());
 			
 			// Package it up for referencing.
@@ -2865,8 +2867,30 @@ public class Zone{
 			}
 			
 			
-			setDbmEntry(zoneIndex, 0, -ContinuousUtilities.chkDiv(iv.getConstant(), ltContPair.getCurrentRate(), true));
+			//setDbmEntry(zoneIndex, 0, -ContinuousUtilities.chkDiv(iv.getConstant(), ltContPair.getCurrentRate(), true));
+			
+			// Perform the restricting.
+			restrictContinuous(ltContPair, iv.getConstant());
 		}
+	}
+	
+	/**
+	 * Returns a zone that is the result from resticting the this zone according to a list of firing event inequalities.
+	 * @param eventSet
+	 * 		The list of inequalities that are firing.
+	 * @return
+	 * 		The new zone that is the result of restricting this zone according to the firing of the inequalities
+	 * 		in the eventSet.
+	 */
+	public Zone getContinuousRestrictedZone(EventSet eventSet){
+		// Make a new copy of the zone.
+		Zone z = this.clone();
+		
+		z.restrictContinuous(eventSet);
+		
+		z.recononicalize();
+		
+		return z;
 	}
 	
 	/**
@@ -3115,11 +3139,9 @@ public class Zone{
 		
 //for(i=E.begin();i!=E.end()&&!done;i++) {
 		
+		// Recall that E contains the events sets which are inherited from the Transition class
+		// so they can be placed in an LpnTranList. So consider each event set.
 		for(Transition es : E){
-			
-			if(done){
-				break;
-			}
 			
 			if(!(es instanceof EventSet)){
 				// This collection should contain event sets, not transitions.
@@ -3127,6 +3149,12 @@ public class Zone{
 			}
 		
 			EventSet eventSet = (EventSet) es;
+			
+			if(done){
+				// Copy any remaining sets into newE.
+				newE.add(eventSet.clone());
+				break;
+			}
 			
 //eventSet* workSet = new eventSet();
 //*workSet = copyEventSet(*i,events,ineqL);
@@ -3136,7 +3164,12 @@ public class Zone{
 //for(eventSet::iterator j=workSet->begin();j!=workSet->end();j++) {
 
 
-			for(Event oldEvent : workSet){
+			// Get an iterator for the elements in the workset.
+			//Iterator<Event> workSetIterator = workSet.iterator();
+			//for(Event oldEvent : workSet){
+			//while(workSetIterator.hasNext()){
+			for(Event oldEvent : eventSet){	
+				//Event oldEvent = workSetIterator.next();
 			
 //  if (((*j)->t == -1) && ((*j)->ineq == -1)) continue;
 				
@@ -3183,7 +3216,7 @@ public class Zone{
 					rv1l = ContinuousUtilities.chkDiv(
 							-1 * oldEvent.getInequalityVariable().getConstant(), 
 							getCurrentRate(ltPair), true);
-					rv2u = ContinuousUtilities.chkDiv(
+					rv1u = ContinuousUtilities.chkDiv(
 							oldEvent.getInequalityVariable().getConstant(), 
 							getCurrentRate(ltPair), true);
 					
@@ -3468,15 +3501,16 @@ public class Zone{
 		
 		// This part of the code is essentially copying the all the old event set into the new event set.
 		// There might be a way around doing this by working directly on the set to begin with.
-		for(Transition T : E){
-			if(!(T instanceof EventSet)){
-				// This collection should contain event sets, not transitions.
-				throw new IllegalArgumentException("The eventSet was a Transition object not an EventSet object.");
-			}
-			EventSet es = (EventSet) T;
-			
-			newE.add(es.clone());
-		}
+		// Moved to being done at the begining of the previous block.
+//		for(Transition T : E){
+//			if(!(T instanceof EventSet)){
+//				// This collection should contain event sets, not transitions.
+//				throw new IllegalArgumentException("The eventSet was a Transition object not an EventSet object.");
+//			}
+//			EventSet es = (EventSet) T;
+//			
+//			newE.add(es.clone());
+//		}
 		
 		
 //#ifdef __LHPN_ADD_ACTION__
@@ -3768,6 +3802,14 @@ public class Zone{
 			
 		LPNContinuousPair cV = (LPNContinuousPair) contVar;
 		
+		// Search for the pair in the zone.
+		int index = Arrays.binarySearch(_indexToTimerPair, cV);
+		if(index >0){
+			// The continuous variable was found amongst the non zero rate continuous variables.
+			// Grab that indexing object instead since it has the rate.
+			cV = (LPNContinuousPair) _indexToTimerPair[index];
+		}
+		
 		return cV.getCurrentRate();
 	}
 	
@@ -3808,6 +3850,36 @@ public class Zone{
 			LPNContinuousPair lcPair = (LPNContinuousPair) _indexToTimerPair[index];
 			lcPair.setCurrentRate(currentRate);
 		}
+	}
+	
+	/**
+	 * Adds a transition to a zone.
+	 * @param newTransitions
+	 * 			The newly enabled transitions.
+	 * @return
+	 * 			The result of adding the transition.
+	 */
+	public Zone addTransition(LPNTransitionPair[] newTransitions){
+		/*
+		 * The zone will remain the same for all the continuous variables.
+		 * The only thing that will change is a new transition will be added into the transitions.
+		 */
+		
+		// Create a Zone to alter.
+		Zone newZone = new Zone();
+		
+		// Create a copy of the current indexing pairs.
+		newZone._indexToTimerPair = Arrays.copyOf(_indexToTimerPair, _indexToTimerPair.length);
+		
+		// Create a copy of the LPN list.
+		newZone._lpnList = Arrays.copyOf(this._lpnList, this._lpnList.length);
+		
+		// Copy the rate zero continuous variables.
+		newZone._rateZeroContinuous = this._rateZeroContinuous.clone();
+		
+		// Adde the new transition to teh 
+		
+		return newZone;
 	}
 	
 	/**
