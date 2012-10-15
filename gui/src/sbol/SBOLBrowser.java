@@ -116,12 +116,14 @@ public class SBOLBrowser extends JPanel implements ActionListener {
 									!localLibURIs.contains(lib.getURI().toString())) {
 								localLibURIs.add(lib.getURI());
 								localLibIds.add(lib.getDisplayId());
+								for (DnaComponent comp : lib.getComponents())
+									if (!isAssociationBrowser || !comp.getURI().toString().endsWith("iBioSim"))
+										localCompURIs.add(comp.getURI());
 							}
-						} else if (sbolObj instanceof DnaComponent) {
-							URI compURI = sbolObj.getURI();
-							if (!isAssociationBrowser || !compURI.toString().endsWith("iBioSim"))
-								localCompURIs.add(sbolObj.getURI());
-						}
+						} else if (sbolObj instanceof DnaComponent && 
+								(!isAssociationBrowser || !sbolObj.getURI().toString().endsWith("iBioSim")))
+							localCompURIs.add(sbolObj.getURI());
+						
 				}
 			}
 		}

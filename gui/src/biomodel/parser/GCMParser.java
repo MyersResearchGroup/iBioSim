@@ -31,6 +31,7 @@ import org.sbml.libsbml.Species;
 import org.sbml.libsbml.SpeciesReference;
 
 import biomodel.annotation.AnnotationUtility;
+import biomodel.annotation.SBOLAnnotation;
 import biomodel.network.BaseSpecies;
 import biomodel.network.DiffusibleConstitutiveSpecies;
 import biomodel.network.DiffusibleSpecies;
@@ -375,6 +376,9 @@ public class GCMParser {
 				speciesIF.setKc(complex.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING).getValue(),
 						complex.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING).getValue());
 			} else {
+				Model model = sbml.getModel();
+				double kf = model.getParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING).getValue();
+				double kr = model.getParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING).getValue();
 				speciesIF.setKc(sbml.getModel().getParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING).getValue(),
 						sbml.getModel().getParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING).getValue());
 			}
@@ -694,11 +698,28 @@ public class GCMParser {
 			}
 
 			// Finishes connecting synthesis nodes in accordance with various maps (see above)
+			// if no SBOL detected, then removes placeholder URI for iBioSim composite component instead
 			if (sbolDetected) {
 				connectMappedSynthesisNodes();
 				SBOLSynthesizer synthesizer = new SBOLSynthesizer(biomodel, modelURIs, synMap);
 				return synthesizer;
-			} 
+			} else { 
+				int index = 0;
+				int removeIndex = -1;
+				for (URI modelURI : modelURIs) {
+					if (modelURI.toString().endsWith("iBioSimPlaceHolder"))
+						removeIndex = index;
+					index++;
+				}
+				if (removeIndex >= 0) {
+					modelURIs.remove(removeIndex);
+					if (modelURIs.size() > 0) {
+						SBOLAnnotation sbolAnnot = new SBOLAnnotation(sbmlModel.getMetaId(), modelURIs);
+						AnnotationUtility.setSBOLAnnotation(sbmlModel, sbolAnnot);
+					} else
+						AnnotationUtility.removeSBOLAnnotation(sbmlModel);
+				}
+			}
 		}
 		return null;
 	}
@@ -722,16 +743,18 @@ public class GCMParser {
 				synNode = new SynthesisNode(instantiation.getId(), sbolURIs);
 				sbolDetected = true;
 			} else {
-				GCMParser subParser = new GCMParser(bioSubModel, false);
-				SBOLSynthesizer sbolSynth = subParser.buildSbolSynthesizer();
-				if (sbolSynth != null) {
-					synNode = new SynthesisNode(instantiation.getId(), sbolURIs, sbolSynth);
+				sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlSubModel);
+				if (sbolURIs.size() > 0) {
+					synNode = new SynthesisNode(instantiation.getId(), sbolURIs);
 					sbolDetected = true;
 				} else {
-					sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlSubModel);
-					synNode = new SynthesisNode(instantiation.getId(), sbolURIs);
-					if (sbolURIs.size() > 0)
+					GCMParser subParser = new GCMParser(bioSubModel, false);
+					SBOLSynthesizer sbolSynth = subParser.buildSbolSynthesizer();
+					if (sbolSynth != null) {
+						synNode = new SynthesisNode(instantiation.getId(), sbolURIs, sbolSynth);
 						sbolDetected = true;
+					} else
+						synNode = new SynthesisNode(instantiation.getId(), sbolURIs);
 				}
 			}
 			synMap.put(synNode.getID(), synNode);

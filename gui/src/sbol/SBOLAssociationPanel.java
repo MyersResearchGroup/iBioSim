@@ -87,8 +87,7 @@ public class SBOLAssociationPanel extends JPanel {
 		this.add(componentScroll, "Center");
 		
 		if (loadSBOLFiles(sbolFilePaths)) {
-			setComponentIDList();
-			boolean display = true;
+			boolean display = setComponentIDList();
 			while (display)
 				display = panelOpen();
 		}
@@ -117,9 +116,10 @@ public class SBOLAssociationPanel extends JPanel {
 		return true;
 	}
 	
-	private void setComponentIDList() {
+	private boolean setComponentIDList() {
 		LinkedList<String> compIdNames = new LinkedList<String>();
-		for (int i = 0; i < compURIs.size(); i++) {
+		LinkedList<Integer> dissociate = new LinkedList<Integer>();
+		for (int i = compURIs.size() - 1; i >= 0; i--) {
 			URI uri = compURIs.get(i);
 			String compIdName = "";
 			if (uri.toString().endsWith("iBioSimPlaceHolder")) 
@@ -132,14 +132,27 @@ public class SBOLAssociationPanel extends JPanel {
 						compIdName = compIdName + " : " + resolvedComp.getName();
 					if (uri.toString().endsWith("iBioSim"))
 						compIdName = compIdName + " (iBioSim Composite DNA Component)";
-				} else 
-					JOptionPane.showMessageDialog(Gui.frame, "Currently associated component with URI " + uri.toString() +
-							" is not found in project SBOL files and could not be loaded.", "DNA Component Not Found", JOptionPane.ERROR_MESSAGE);
+				} else {
+					Object[] options = { "OK", "Cancel" };
+					int choice = JOptionPane.showOptionDialog(Gui.frame, 
+							"Currently associated DNA component with URI " + uri.toString() +
+							" is not found in project SBOL files and could not be loaded. " +
+							"Would like to dissociate this component?", 
+							"DNA Component Not Found", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+					if (choice == 0) 
+						dissociate.add(i);
+					else
+						return false;
+				}
 			}
-			compIdNames.add(compIdName);
+			if (compIdName.length() > 0)
+				compIdNames.addFirst(compIdName);
 		}
 		Object[] idObjects = compIdNames.toArray();
 		compList.setListData(idObjects);
+		for (int i : dissociate)
+			compURIs.remove(i);
+		return true;
 	}
 	
 	private boolean panelOpen() {

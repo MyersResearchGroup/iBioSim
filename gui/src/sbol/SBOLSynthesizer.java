@@ -113,8 +113,6 @@ public class SBOLSynthesizer {
 		if (loadNodeDNAComponents("save", saveDirectory)) {
 			synthComp = synthesizeDnaComponent();
 			if (synthComp != null) {
-//				if (!localMatch) {
-//					String[] descriptors = getDescriptorsFromUser(filePath);
 				for (String sbolFile : sbolFiles) {
 					SBOLDocumentImpl sbolDoc = (SBOLDocumentImpl) SBOLUtility.loadSBOLFile(saveDirectory + File.separator + sbolFile);
 					SBOLUtility.mergeDNAComponent(synthComp, sbolDoc);
@@ -123,7 +121,6 @@ public class SBOLSynthesizer {
 					}
 					SBOLUtility.writeSBOLDocument(saveDirectory + File.separator + sbolFile, sbolDoc);
 				}
-//				}
 				Model sbmlModel = bioModel.getSBMLDocument().getModel();
 				if (modelURIs.size() == 0)
 					modelURIs.add(synthComp.getURI());
@@ -212,12 +209,6 @@ public class SBOLSynthesizer {
 		LinkedList<DnaComponent> subComps = orderSubComponents(startTypes);
 		if (subComps == null)
 			return null;
-//		DnaComponent localMatchComp = checkForLocalMatch(subComps);
-		// Construct composite component
-//		if (localMatchComp != null) {
-//			localMatch = true;
-//			return localMatchComp;
-//		} else {
 		// Create composite component and its sequence
 		DnaComponent synthComp = new DnaComponentImpl();	
 		DnaSequence synthSeq = new DnaSequenceImpl();
@@ -270,21 +261,22 @@ public class SBOLSynthesizer {
 	// Stops at nodes with other promoters or previously visited nodes
 	private LinkedList<DnaComponent> orderSubComponents(Set<String> startTypes) {
 		LinkedHashSet<SynthesisNode> startNodes = new LinkedHashSet<SynthesisNode>();
-//		Set<String> startNodeIDs = new HashSet<String>();
+		Set<String> startNodeIDs = new HashSet<String>();
 		
 		// Determines start nodes and counts total number of nodes with DNA components
-		int nodesSBOL = determineStartNodes(startNodes, startTypes);
+		int nodesSBOL = determineStartNodes(startNodes, startNodeIDs, startTypes);
 
 		// Walks and orders subcomponents
 		LinkedList<DnaComponent> subComps = new LinkedList<DnaComponent>();
 		int nodesSBOLVisited = 0;
 		for (SynthesisNode startNode : startNodes) {
-			nodesSBOLVisited = nodesSBOLVisited + walkSynthesisNodes(startNode, subComps);
+			Set<String> locallyVisitedNodeIDs = new HashSet<String>();
+			nodesSBOLVisited = nodesSBOLVisited + walkSynthesisNodes(startNode, subComps, startNodeIDs, locallyVisitedNodeIDs);
 		}
 		
 		// Orders leftover subcomponents that did not follow the subcomponents matching the beginning of the regex
-		if (nodesSBOLVisited != nodesSBOL) {
-			subComps.addAll(orderLeftoverSubComponents());
+		if (nodesSBOLVisited < nodesSBOL) {
+			subComps.addAll(orderLeftoverSubComponents(new HashSet(synMap.values()), nodesSBOLVisited, nodesSBOL));
 		}
 		return subComps;
 	}
@@ -292,7 +284,7 @@ public class SBOLSynthesizer {
 	// Populates sets of start nodes and their IDs (1st URI of start node is for DNA component of SO type specified by filter
 	// or for DNA component whose recursively 1st subcomponent is of the correct type)
 	// Returns total number of nodes visited that had URIs (start nodes or not)
-	private int determineStartNodes(LinkedHashSet<SynthesisNode> startNodes, Set<String> startTypes) {
+	private int determineStartNodes(LinkedHashSet<SynthesisNode> startNodes, Set<String> startNodeIDs, Set<String> startTypes) {
 		int nodesSBOL = 0;
 		for (SynthesisNode synNode : synMap.values()) {
 			LinkedList<DnaComponent> dnaComps = synNode.getDNAComponents();
@@ -302,6 +294,7 @@ public class SBOLSynthesizer {
 				if (checkStartCompType(startComp, startTypes)) {
 					synNode.setVisited(true);
 					startNodes.add(synNode);
+					startNodeIDs.add(synNode.getID());
 				}
 			}
 		}
@@ -320,7 +313,8 @@ public class SBOLSynthesizer {
 	}
 	
 	// Recursive helper method for walking synthesis node graph and loading associated SBOL DNA component URIs
-	private int walkSynthesisNodes(SynthesisNode synNode, LinkedList<DnaComponent> subComps) {
+	private int walkSynthesisNodes(SynthesisNode synNode, LinkedList<DnaComponent> subComps, Set<String> startNodeIDs,
+			Set<String> locallyVisitedNodeIDs) {
 		int nodesSBOLVisited = 0;
 		LinkedList<DnaComponent> dnaComps = synNode.getDNAComponents();
 		if (dnaComps.size() > 0) {
@@ -328,50 +322,43 @@ public class SBOLSynthesizer {
 			subComps.addAll(dnaComps);
 		}
 		for (SynthesisNode nextNode : synNode.getNextNodes())
-			if (!nextNode.isVisited()) {
+			if (!startNodeIDs.contains(nextNode.getID()) && !locallyVisitedNodeIDs.contains(nextNode.getID())) {
 				nextNode.setVisited(true);
-				nodesSBOLVisited = nodesSBOLVisited + walkSynthesisNodes(nextNode, subComps);
+				locallyVisitedNodeIDs.add(nextNode.getID());
+				nodesSBOLVisited = nodesSBOLVisited + walkSynthesisNodes(nextNode, subComps, startNodeIDs, locallyVisitedNodeIDs);
 			}
 		return nodesSBOLVisited;
 	}
 	
 	// Orders leftover subcomponents that did not follow the subcomponents matching the beginning of the regex
-	private LinkedList<DnaComponent> orderLeftoverSubComponents() {
+	private LinkedList<DnaComponent> orderLeftoverSubComponents(Set<SynthesisNode> synNodes, int nodesSBOLVisited, int nodesSBOL) {
 		LinkedList<DnaComponent> leftoverSubComponents = new LinkedList<DnaComponent>();
 		Set<SynthesisNode> startNodes = new HashSet<SynthesisNode>();
+		Set<String> startNodeIDs = new HashSet<String>();
 		Set<SynthesisNode> leftoverNodes = new HashSet<SynthesisNode>();
 		Set<String> nextIDs = new HashSet<String>();
-		for (SynthesisNode synNode : synMap.values())
+		for (SynthesisNode synNode : synNodes)
 			if (!synNode.isVisited()) {
 				leftoverNodes.add(synNode);
 				for (SynthesisNode nextNode : synNode.getNextNodes())
 					nextIDs.add(nextNode.getID());
 			}
 		for (SynthesisNode leftover : leftoverNodes)
-			if (!nextIDs.contains(leftover.getID()))
+			if (!nextIDs.contains(leftover.getID())) {
 				startNodes.add(leftover);
+				startNodeIDs.add(leftover.getID());
+			}
+		if (startNodes.size() == 0)
+			startNodes.add(leftoverNodes.iterator().next());
 		for (SynthesisNode startNode : startNodes) {
-			walkSynthesisNodes(startNode, leftoverSubComponents);
+			Set<String> locallyVisitedNodeIDs = new HashSet<String>();
+			nodesSBOLVisited = nodesSBOLVisited + walkSynthesisNodes(startNode, leftoverSubComponents, startNodeIDs, 
+					locallyVisitedNodeIDs);
 		}
+		if (nodesSBOLVisited < nodesSBOL)
+			leftoverSubComponents.addAll(orderLeftoverSubComponents(leftoverNodes, nodesSBOLVisited, nodesSBOL));
 		return leftoverSubComponents;
 	}
-	
-	// Check if DNA components to be assembled already exist as composite component in local SBOL files
-//	private DnaComponent checkForLocalMatch(LinkedList<DnaComponent> subComps) {
-//
-//		LinkedList<URI> subCompURIs = new LinkedList<URI>();
-//		for (DnaComponent subComp : subComps)
-//			subCompURIs.add(subComp.getURI());
-//		for (DnaComponent localComp : localComps) {
-//			LinkedList<URI> localSubCompURIs = new LinkedList<URI>();
-//			for (SequenceAnnotation sa : localComp.getAnnotations())
-//				localSubCompURIs.add(sa.getSubComponent().getURI());
-//			if (localSubCompURIs.equals(subCompURIs)) {
-//				return localComp;
-//			}
-//		}
-//		return null;
-//	}
 	
 	private int addSubComponent(int position, DnaComponent subComp, DnaComponent synthComp, int addCount) {	
 		if (subComp.getDnaSequence() != null && subComp.getDnaSequence().getNucleotides() != null 
@@ -489,25 +476,25 @@ public class SBOLSynthesizer {
 	// Loads and sets URIs for newly synthesized DNA component and its sequence, 
 	// Also loads and sets display ID, name, description, and SO type for for newly synthesized component
 	private void loadSBOLDescriptors(DnaComponent synthComp, DnaSequence synthSeq) {
-		URI existingCompURI = null;
-		DnaComponent existingComp = null;
+		URI existingBioSimURI = null;
+		DnaComponent existingBioSimComp = null;
 		boolean constructCompURI = false;
 		boolean constructSeqURI = false;
 		boolean placeHolderURI = false;
 		if (modelURIs.size() > 0) {
 			Iterator<URI> uriIterator = modelURIs.iterator();
 			do {
-				existingCompURI = uriIterator.next();
-			} while (uriIterator.hasNext() && !existingCompURI.toString().endsWith("iBioSim") && !existingCompURI.toString().endsWith("iBioSimPlaceHolder"));
-			if (existingCompURI.toString().endsWith("iBioSim")) {
+				existingBioSimURI = uriIterator.next();
+			} while (uriIterator.hasNext() && !existingBioSimURI.toString().endsWith("iBioSim") && !existingBioSimURI.toString().endsWith("iBioSimPlaceHolder"));
+			if (existingBioSimURI.toString().endsWith("iBioSim")) {
 				Iterator<String> fileIterator = fileResolverMap.keySet().iterator();
 				do { 
 					targetFile = fileIterator.next();
 					Resolver<DnaComponent, URI> compResolver = fileResolverMap.get(targetFile);
-					existingComp = compResolver.resolve(existingCompURI);
-				} while (existingComp == null && fileIterator.hasNext());
-				synthComp.setURI(existingCompURI);
-				DnaSequence existingSeq = existingComp.getDnaSequence();
+					existingBioSimComp = compResolver.resolve(existingBioSimURI);
+				} while (existingBioSimComp == null && fileIterator.hasNext());
+				synthComp.setURI(existingBioSimURI);
+				DnaSequence existingSeq = existingBioSimComp.getDnaSequence();
 				if (existingSeq != null)
 					synthSeq.setURI(existingSeq.getURI());
 				else {
@@ -531,7 +518,7 @@ public class SBOLSynthesizer {
 			}
 			synthComp.setURI(synthCompURI);
 			if (placeHolderURI) {
-				int replaceIndex = modelURIs.indexOf(existingCompURI);
+				int replaceIndex = modelURIs.indexOf(existingBioSimURI);
 				modelURIs.remove(replaceIndex);
 				modelURIs.add(replaceIndex, synthCompURI);
 			}
@@ -552,12 +539,12 @@ public class SBOLSynthesizer {
 			synthComp.setName(descriptors[1]);
 			synthComp.setDescription(descriptors[2]);
 			targetFile = descriptors[3];
-		} else if (existingComp != null) {
-			synthComp.setDisplayId(existingComp.getDisplayId());
-			if (existingComp.getName() != null)
-				synthComp.setName(existingComp.getName());
-			if (existingComp.getDescription() != null)
-				synthComp.setDescription(existingComp.getDescription());
+		} else if (existingBioSimComp != null) {
+			synthComp.setDisplayId(existingBioSimComp.getDisplayId());
+			if (existingBioSimComp.getName() != null)
+				synthComp.setName(existingBioSimComp.getName());
+			if (existingBioSimComp.getDescription() != null)
+				synthComp.setDescription(existingBioSimComp.getDescription());
 		} else {
 			synthComp.setDisplayId(bioModel.getSBMLDocument().getModel().getId());
 			targetFile = sbolFiles.iterator().next();
