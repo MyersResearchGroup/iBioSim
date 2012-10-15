@@ -51,7 +51,7 @@ public class InequalityVariable extends Variable {
 //	int _referenceCount;
 	
 	/**
-	 * 
+	 * Not supported.
 	 * @param name
 	 * @param type
 	 * @param initCond
@@ -64,6 +64,7 @@ public class InequalityVariable extends Variable {
 	}
 
 	/**
+	 * Not supported.
 	 * @param name
 	 * @param type
 	 * @param initValue
@@ -106,6 +107,9 @@ public class InequalityVariable extends Variable {
 		
 		// Set the containing LPN.
 		_lpn = lpn;
+		
+		// Initialize the the variable list.
+		_variables = new ArrayList<Variable>();
 		
 		// Extract the variable.
 //		String contVariableName = "";
