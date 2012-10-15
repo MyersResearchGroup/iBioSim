@@ -103,7 +103,7 @@ public class Event {
 		}
 		else if(_inequality != null){
 			// This event represents an inequality.
-			result += "Inequality Event : + " + _inequality;
+			result += "Inequality Event : " + _inequality;
 		}
 		else{
 			// The event is not initialized.
