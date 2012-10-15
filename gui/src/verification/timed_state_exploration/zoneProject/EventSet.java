@@ -392,8 +392,15 @@ public class EventSet extends Transition implements Iterable<Event>{
 		@Override
 		public void remove() {
 			
-			throw new UnsupportedOperationException("Remove is not supported by" +
-					" the EventSet's iterator.");
+			// Determine which mode is being operated in.
+			if(_inequal == null){
+				// We are in the Transition mode. This is not supported, so complain.
+				throw new UnsupportedOperationException("The remove method is not supported when for the EventSet" +
+						" iterator when in the Transition mode.");
+			}
+			else{
+				_inequal.remove();
+			}
 		}
 		
 	}
