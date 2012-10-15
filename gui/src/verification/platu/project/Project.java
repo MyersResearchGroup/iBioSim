@@ -177,7 +177,7 @@ public class Project {
 				State[] ls = new State[1];
 				ls[0] = initStateArray[index];
 				Zone z = new Zone(ls);
-				ContinuousUtilities.updateInequalities(z, ls[0]);
+				ContinuousUtilities.updateInitialInequalities(z, ls[0]);
 				initStateArray[index] = curSg.getInitState();
 			}
 			initStateArray[index].update(curSg, varValMap, curSg.getLpn().getVarIndexMap());
