@@ -2803,7 +2803,7 @@ public class Zone{
 			
 			// Extract the variable index.
 			DualHashMap<String, Integer> variableIndexMap = _lpnList[lpnIndex].getVarIndexMap();
-			int  variableIndex = variableIndexMap.getValue(iv.getName());
+			int  variableIndex = variableIndexMap.getValue(x.getName());
 			
 			// Package it up for referencing.
 			LPNContinuousPair ltContPair = new LPNContinuousPair(lpnIndex, variableIndex, 0);
