@@ -201,7 +201,7 @@ public class Analysis {
 			initPrjState = new TimedPrjState(initStateArray);
 			
 			// Set the initial values of the inequality variables.
-			((TimedPrjState) initPrjState).updateInequalityVariables();
+			//((TimedPrjState) initPrjState).updateInequalityVariables();
 		}
 		prjStateSet.add(initPrjState);
 		
