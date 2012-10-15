@@ -473,7 +473,53 @@ public class Zone{
 		initializeRowColumnContVar();
 		
 		// Advance Time
-		advance();
+		//advance();
+		advance(localStates);
+		
+		// Re-canonicalize
+		recononicalize();
+		
+		// Check the size of the DBM.
+		checkZoneMaxSize();
+	}
+	
+	/**
+	 * Creates a Zone based on the local states.
+	 * @param localStates
+	 * 			The current state (or initial) of the LPNs.
+	 */
+	public Zone(State[] localStates, boolean init){
+		
+		// Extract the local states.
+		//State[] localStates = tps.toStateArray();
+		
+		// Initialize hash code to -1 (indicating nothing cached).
+		_hashCode = -1;
+		
+		// Initialize the LPN list.
+		initialize_lpnList(localStates);
+		
+		// Get the enabled transitions. This initializes the _indexTotimerPair
+		// which stores the relevant information.
+		// This method will also initialize the _rateZeroContinuous
+		initialize_indexToTimerPair(localStates);
+		
+		// Initialize the matrix.
+		_matrix = new int[matrixSize()][matrixSize()];
+		
+		// Set the lower bound/ upper bounds of the timers and the rates.
+		initializeLowerUpperBounds(getAllNames(), localStates);
+		
+		// Initialize the row and column entries for the continuous variables.
+		initializeRowColumnContVar();
+		
+		if(init){
+			return;
+		}
+		
+		// Advance Time
+		//advance();
+		advance(localStates);
 		
 		// Re-canonicalize
 		recononicalize();
@@ -1526,7 +1572,7 @@ public class Zone{
 							.getContVar(_indexToTimerPair[i].get_transitionIndex());
 					
 					name = var.getName() + 
-							":[" + -1*getDbmEntry(0, i) + "," + getDbmEntry(i, 0) +
+							":[" + -1*getDbmEntry(i, 0) + "," + getDbmEntry(0, i) + "]\n" +
 							"rate:";
 				}
 				
@@ -2107,6 +2153,10 @@ public class Zone{
 			
 		for(LPNTransitionPair ltPair : _indexToTimerPair){
 
+			if(ltPair.equals(LPNTransitionPair.ZERO_TIMER_PAIR)){
+				continue;
+			}
+			
 			// For ease, extract the index.
 			int index = ltPair.get_transitionIndex();
 
@@ -2114,7 +2164,7 @@ public class Zone{
 			int newValue = 0;
 
 //			if(ltPair.get_isTimer()){
-			if(ltPair instanceof LPNContinuousPair){
+			if(!(ltPair instanceof LPNContinuousPair)){
 				// If the pair is a timer, then simply get the stored largest value.
 				newValue = getUpperBoundbydbmIndex(index);
 			}
@@ -2127,7 +2177,7 @@ public class Zone{
 			
 			// In either case (timer or continuous), set the upper bound portion
 			// of the DBM to the new value.
-			setDbmEntryByPair(ltPair, LPNTransitionPair.ZERO_TIMER_PAIR, newValue);
+			setDbmEntryByPair(LPNTransitionPair.ZERO_TIMER_PAIR, ltPair, newValue);
 		}
 	}
 	
