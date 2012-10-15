@@ -148,57 +148,30 @@ public class EditPreferences {
 		icons = new JCheckBox("Use Plus/Minus For Expanding/Collapsing File Tree");
 		libsbmlFlatten = new JCheckBox("Use libsbml to Flatten Models");
 		infix = new JCheckBox("Use Infix Expression Parser");
-		if (async) {
-			if (biosimrc.get("lema.general.file_browser", "").equals("FileDialog")) {
-				dialog.setSelected(true);
-			}
-			else {
-				dialog.setSelected(false);
-			}
-			if (biosimrc.get("lema.general.tree_icons", "").equals("default")) {
-				icons.setSelected(false);
-			}
-			else {
-				icons.setSelected(true);
-			}
-			if (biosimrc.get("lema.general.flatten", "").equals("default")) {
-				libsbmlFlatten.setSelected(false);
-			}
-			else {
-				libsbmlFlatten.setSelected(true);
-			}
-			if (biosimrc.get("lema.general.infix", "").equals("infix")) {
-				infix.setSelected(true);
-			}
-			else {
-				infix.setSelected(false);
-			}
-		} else {
-			if (biosimrc.get("biosim.general.file_browser", "").equals("FileDialog")) {
-				dialog.setSelected(true);
-			}
-			else {
-				dialog.setSelected(false);
-			}
-			if (biosimrc.get("biosim.general.tree_icons", "").equals("default")) {
-				icons.setSelected(false);
-			}
-			else {
-				icons.setSelected(true);
-			}
-			if (biosimrc.get("biosim.general.flatten", "").equals("default")) {
-				libsbmlFlatten.setSelected(false);
-			}
-			else {
-				libsbmlFlatten.setSelected(true);
-			}
-			if (biosimrc.get("biosim.general.infix", "").equals("infix")) {
-				infix.setSelected(true);
-			}
-			else {
-				infix.setSelected(false);
-			}			
+		if (biosimrc.get("biosim.general.file_browser", "").equals("FileDialog")) {
+			dialog.setSelected(true);
 		}
+		else {
+			dialog.setSelected(false);
+		}
+		if (biosimrc.get("biosim.general.tree_icons", "").equals("default")) {
+			icons.setSelected(false);
+		}
+		else {
+			icons.setSelected(true);
+		}
+		if (biosimrc.get("biosim.general.flatten", "").equals("default")) {
+			libsbmlFlatten.setSelected(false);
+		}
+		else {
+			libsbmlFlatten.setSelected(true);
+		}
+		if (biosimrc.get("biosim.general.infix", "").equals("infix")) {
+			infix.setSelected(true);
+		}
+		else {
+			infix.setSelected(false);
+		}			
 		JLabel verCmdLabel = new JLabel("Verification command:");
 		verCmd = new JTextField(biosimrc.get("lema.verification.command", ""));
 		viewerLabel = new JLabel("External Editor for non-LPN files:");
@@ -1021,53 +994,28 @@ public class EditPreferences {
 	}
 	
 	private void saveGeneralPreferences (Preferences biosimrc) {
-		if (async) {
-			if (dialog.isSelected()) {
-				biosimrc.put("lema.general.file_browser", "FileDialog");
-			} else {
-				biosimrc.put("lema.general.file_browser", "JFileChooser");
-			}
-			if (icons.isSelected()) {
-				biosimrc.put("lema.general.tree_icons", "plus_minus");
-				tree.setExpandibleIcons(false);
-			} else {
-				biosimrc.put("lema.general.tree_icons", "default");
-				tree.setExpandibleIcons(true);
-			}
-			if (libsbmlFlatten.isSelected()) {
-				biosimrc.put("lema.general.flatten", "libsbml");
-			} else {
-				biosimrc.put("lema.general.flatten", "default");
-			}
-			if (infix.isSelected()) {
-				biosimrc.put("lema.general.infix", "infix");
-			} else {
-				biosimrc.put("lema.general.infix", "prefix");
-			}
+		if (dialog.isSelected()) {
+			biosimrc.put("biosim.general.file_browser", "FileDialog");
 		} else {
-			if (dialog.isSelected()) {
-				biosimrc.put("biosim.general.file_browser", "FileDialog");
-			} else {
-				biosimrc.put("biosim.general.file_browser", "JFileChooser");
-			}
-			if (icons.isSelected()) {
-				biosimrc.put("biosim.general.tree_icons", "plus_minus");
-				tree.setExpandibleIcons(false);
-			} else {
-				biosimrc.put("biosim.general.tree_icons", "default");
-				tree.setExpandibleIcons(true);
-			}
-			if (libsbmlFlatten.isSelected()) {
-				biosimrc.put("biosim.general.flatten", "libsbml");
-			} else {
-				biosimrc.put("biosim.general.flatten", "default");
-			}
-			if (infix.isSelected()) {
-				biosimrc.put("biosim.general.infix", "infix");
-			} else {
-				biosimrc.put("biosim.general.infix", "prefix");
-			}			
+			biosimrc.put("biosim.general.file_browser", "JFileChooser");
 		}
+		if (icons.isSelected()) {
+			biosimrc.put("biosim.general.tree_icons", "plus_minus");
+			tree.setExpandibleIcons(false);
+		} else {
+			biosimrc.put("biosim.general.tree_icons", "default");
+			tree.setExpandibleIcons(true);
+		}
+		if (libsbmlFlatten.isSelected()) {
+			biosimrc.put("biosim.general.flatten", "libsbml");
+		} else {
+			biosimrc.put("biosim.general.flatten", "default");
+		}
+		if (infix.isSelected()) {
+			biosimrc.put("biosim.general.infix", "infix");
+		} else {
+			biosimrc.put("biosim.general.infix", "prefix");
+		}			
 		//SBMLLevelVersion = "L3V1";
 		//SBML_LEVEL = 3;
 		//SBML_VERSION = 1;
