@@ -149,6 +149,9 @@ public class Variable {
 	 * 		The InequalityVariable to add.
 	 */
 	public void addInequalityVariable(InequalityVariable inVar){
+		if(inequalities == null){
+			inequalities = new ArrayList<InequalityVariable>();
+		}
 		inequalities.add(inVar);
 	}
 	
