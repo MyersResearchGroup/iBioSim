@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -26,6 +27,7 @@ import verification.platu.project.PrjState;
 import verification.timed_state_exploration.zoneProject.EventSet;
 import verification.timed_state_exploration.zoneProject.InequalityVariable;
 import verification.timed_state_exploration.zoneProject.Event;
+import verification.timed_state_exploration.zoneProject.LPNTransitionPair;
 import verification.timed_state_exploration.zoneProject.TimedPrjState;
 import verification.timed_state_exploration.zoneProject.Zone;
 
@@ -849,6 +851,78 @@ public class StateGraph {
         }
     	return enabledTranAfterFiring;
 	}
+    
+    /**
+     * Updates the transition vector.
+     * @param enabledTranBeforeFiring
+     * 			The enabling before the transition firing.
+     * @param newMarking
+     * 			The new marking to check for transitions with.
+     * @param newVectorArray
+     * 			The new values of the boolean variables.
+     * @param firedTran
+     * 			The transition that fire.
+     * @param newlyEnabled
+     * 			A list to capture the newly enabled transitions.
+     * @return
+     * 			The newly enabled transitions.
+     */
+    public boolean[] updateEnabledTranVector(boolean[] enabledTranBeforeFiring,
+			int[] newMarking, int[] newVectorArray, Transition firedTran, ArrayList<LPNTransitionPair> newlyEnabled) {
+    	boolean[] enabledTranAfterFiring = enabledTranBeforeFiring.clone();
+		// Disable fired transition
+    	if (firedTran != null) {
+    		enabledTranAfterFiring[firedTran.getIndex()] = false;
+    		for (Integer curConflictingTranIndex : firedTran.getConflictSetTransIndices()) {
+    			enabledTranAfterFiring[curConflictingTranIndex] = false;
+    		}
+    	}
+        // find newly enabled transition(s) based on the updated markings and variables
+    	if (Options.getDebugMode())
+			System.out.println("Finding newly enabled transitions at updateEnabledTranVector.");
+        for (Transition tran : this.lpn.getAllTransitions()) {
+        	boolean needToUpdate = true;
+        	String tranName = tran.getName();
+    		int tranIndex = tran.getIndex();
+    		if (Options.getDebugMode())
+				System.out.println("Checking " + tranName);
+    		if (this.lpn.getEnablingTree(tranName) != null 
+    				&& this.lpn.getEnablingTree(tranName).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(newVectorArray)) == 0.0) {
+    			if (Options.getDebugMode())
+					System.out.println(tran.getName() + " " + "Enabling condition is false");    			
+    			if (enabledTranAfterFiring[tranIndex] && !tran.isPersistent())
+    				enabledTranAfterFiring[tranIndex] = false;
+    			continue;
+    		}
+    		if (this.lpn.getTransitionRateTree(tranName) != null 
+    				&& this.lpn.getTransitionRateTree(tranName).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(newVectorArray)) == 0.0) {
+    			if (Options.getDebugMode())
+					System.out.println("Rate is zero");
+    			continue;
+    		}
+    		if (this.lpn.getPreset(tranName) != null && this.lpn.getPreset(tranName).length != 0) {
+    			for (int place : this.lpn.getPresetIndex(tranName)) {
+    				if (newMarking[place]==0) {
+    					if (Options.getDebugMode())
+							System.out.println(tran.getName() + " " + "Missing a preset token");
+    					needToUpdate = false;
+    					break;
+    				}
+    			}
+    		}
+			if (needToUpdate) {
+            	// if a transition is enabled and it is not recorded in the enabled transition vector
+    			enabledTranAfterFiring[tranIndex] = true;
+    			if (Options.getDebugMode())
+					System.out.println(tran.getName() + " is Enabled.");
+            }
+			
+			if(newlyEnabled != null && enabledTranAfterFiring[tranIndex] && !enabledTranBeforeFiring[tranIndex]){
+				newlyEnabled.add(new LPNTransitionPair(tran.getLpn().getLpnIndex(), tranIndex));
+			}
+        }
+    	return enabledTranAfterFiring;
+	}
 
 	public State constrFire(Transition firedTran, final State curState) {
     	// Marking update
@@ -1174,11 +1248,16 @@ public class StateGraph {
 		
 		// Determine if the list of events represents a list of inequalities.
 		if(eventSet.isInequalities()){
-			
+
 			// Create a copy of the current states.
-			State[] states = currentTimedPrjState.getStateArray().clone();
+			State[] oldStates = currentTimedPrjState.getStateArray();
 			
-			// Get the variable index map of getting the indecies
+			State[] states = new State[oldStates.length];
+			for(int i=0; i<oldStates.length; i++){
+				states[i] = oldStates[i].clone();
+			}
+			
+			// Get the variable index map for getting the indecies
 			// of the variables.
 			DualHashMap<String, Integer> map = lpn.getVarIndexMap();
 			
@@ -1193,10 +1272,25 @@ public class StateGraph {
 				// Flip the value of the inequality.
 				int[] vector = states[this.lpn.getLpnIndex()].getVector();
 				vector[variableIndex] = 
-						vector[variableIndex] == 1 ? 1 : 0;
-				
-				return new TimedPrjState(states, currentTimedPrjState.get_zones());
+						vector[variableIndex] == 0 ? 1 : 0;
 			}
+			
+			// Update the enabled transitions according to inequalities that have changed.
+			for(int i=0; i<states.length; i++){
+				boolean[] newEnabledTranVector = updateEnabledTranVector(states[i].getTranVector(),
+						states[i].marking, states[i].vector, null);
+		        State newState = curSgArray[i].addState(new State(this.lpn, states[i].marking, states[i].vector, newEnabledTranVector));
+		        states[i] = newState;
+			}
+			
+			Zone zc = new Zone (states);
+			
+			// Get a new zone that has been restricted according to the inequalities firing.
+			Zone z = currentTimedPrjState.get_zones()[0].getContinuousRestrictedZone(eventSet);
+			
+//			return new TimedPrjState(states, currentTimedPrjState.get_zones());
+						
+			return new TimedPrjState(states, new Zone[]{z});
 		}
 		
 		return fire(curSgArray, currentPrjState, eventSet.getTransition());
