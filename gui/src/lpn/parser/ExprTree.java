@@ -4978,7 +4978,7 @@ public class ExprTree {
 //				lvalue = uvalue = 0;
 
 				// false if lower2 > upper1
-				if (r2Range.get_LowerBound() > r1Range.get_UpperBound()){
+				else if (r2Range.get_LowerBound() > r1Range.get_UpperBound()){
 					lBound = uBound = 0;
 				}
 					
