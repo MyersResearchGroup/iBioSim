@@ -29,6 +29,8 @@ import verification.platu.lpn.io.PlatuInstParser;
 import verification.platu.main.Options;
 import verification.platu.stategraph.State;
 import verification.platu.stategraph.StateGraph;
+import verification.timed_state_exploration.zoneProject.ContinuousUtilities;
+import verification.timed_state_exploration.zoneProject.Zone;
 
 public class Project {
 
@@ -168,6 +170,15 @@ public class Project {
 		// Add the initial states into their respective LPN.
 		for (int index = 0; index < lpnCnt; index++) {
 			StateGraph curSg = sgArray[index];
+			// If this is a timing analysis, the boolean inequality variables
+			// must be updated.
+			if(Options.getTimingAnalysisFlag()){
+				// First create a zone with the continuous variables.
+				State[] ls = new State[1];
+				ls[0] = initStateArray[index];
+				Zone z = new Zone(ls);
+				ContinuousUtilities.updateInequalities(z, ls[0]);
+			}
 			initStateArray[index].update(curSg, varValMap, curSg.getLpn().getVarIndexMap());
 			initStateArray[index] = curSg.addState(initStateArray[index]);			
 		}
