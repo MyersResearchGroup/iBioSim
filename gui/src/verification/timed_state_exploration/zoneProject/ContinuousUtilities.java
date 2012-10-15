@@ -680,9 +680,9 @@ public class ContinuousUtilities {
 		// Find the index of the continuous variable this inequality refers to.
 		// I'm assuming there is a single variable.
 		LhpnFile lpn = ineq.get_lpn();
-		Variable contVar = ineq.getInequalities().get(0);
+		Variable contVar = ineq.getContVariables().get(0);
 		DualHashMap<String, Integer> variableIndecies = lpn.getContinuousIndexMap();
-		int contIndex = variableIndecies.get(contVar);
+		int contIndex = variableIndecies.getValue(contVar.getName());
 
 		// Package up the information into a the index. Note the current rate doesn't matter.
 		LPNContinuousPair index = new LPNContinuousPair(lpn.getLpnIndex(), contIndex, 0);
