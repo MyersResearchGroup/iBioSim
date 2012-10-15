@@ -1111,8 +1111,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				// Options for printing out intermediate results during POR
 				//Options.setDebugMode(true);
 				Options.setDebugMode(false);
-				Options.setNecessaryUsingDependencyGraphs(true);
-				//Options.setNecessaryUsingDependencyGraphs(false);
 				// ----------------------------------------
 				Project untimed_dfs = new Project(selectedLPNs);
 				//----------- POR and Cycle Closing Methods (FULL)--------------
@@ -1231,11 +1229,13 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						Options.setPOR("tb");
 						Options.setCycleClosingMthd("behavioral");
 						Options.setCycleClosingAmpleMethd("cctb");
+						Options.setNecessaryUsingDependencyGraphs(false);
 					}
 					if (ampleMethdsIndex == 1) { 
 						Options.setPOR("tbdg");
 						Options.setCycleClosingMthd("behavioral");
 						Options.setCycleClosingAmpleMethd("cctbdg");
+						Options.setNecessaryUsingDependencyGraphs(true);
 					}		
 					if (ampleMethdsIndex == 2) {
 						Options.setPOR("tboff");
