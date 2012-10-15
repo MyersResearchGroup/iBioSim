@@ -63,15 +63,7 @@ public class SBOLUtility {
 		}
 	}
 	
-	// Adds DNA component and all its subcomponents to top level of SBOL Document
-	// Also replaces component and subcomponents with components from SBOL document if their URIs match
-	// Avoids conflict of multiple data structures with same URI in a single SBOL document
-//	public static void addDNAComponent(DnaComponent dnac, SBOLDocumentImpl sbolDoc) {
-//		dnac = replaceDNAComponent(dnac, sbolDoc);
-//		addDNAComponentWithoutReplacement(dnac, sbolDoc);
-//	}
-	
-	// Adds DNA component and all its subcomponents to top level of SBOL Document if not already present
+	// Adds given DNA component and all its subcomponents to top level of SBOL Document if not already present
 	public static void addDNAComponent(DnaComponent dnac, SBOLDocumentImpl sbolDoc, boolean replace) {
 		if (replace)
 			dnac = replaceDNAComponent(dnac, sbolDoc);
@@ -143,71 +135,7 @@ public class SBOLUtility {
 		return flattenedDoc;
 	}
 	
-//	public static void mergeDNAComponent(DnaComponent dnac, SBOLDocumentImpl sbolDoc) {
-//		SBOLDocumentImpl flattenedDoc = flattenDocument(sbolDoc);
-//		UriResolver<DnaComponent> flattenedResolver = flattenedDoc.getComponentUriResolver();
-//		replaceSubComponents(dnac.getAnnotations(), flattenedResolver);
-//	
-//		Set<DnaComponent> merges = new HashSet<DnaComponent>();
-//		List<DnaComponent> subMerges = new LinkedList<DnaComponent>();
-//		for (SBOLRootObject sbolObj : sbolDoc.getContents()) // note getContents() only returns top-level SBOL objects
-//			if (sbolObj instanceof DnaComponent) 
-//				if (sbolObj.getURI().toString().equals(dnac.getURI().toString()) ) 
-//					merges.add((DnaComponent) sbolObj);
-//				else {
-//					List<SequenceAnnotation> annos = ((DnaComponent) sbolObj).getAnnotations();
-//					if (annos != null && annos.size() > 0)
-//						subMerges.addAll(findSubMergeComponents(dnac, (DnaComponent) sbolObj, annos));
-//				}
-//		if (merges.size() > 0) {
-//			for (DnaComponent targetDnac : merges) 
-//				sbolDoc.removeContent(targetDnac);
-//			sbolDoc.addContent(dnac);
-//		}
-//		for (DnaComponent targetDnac : subMerges) {
-//			List<SequenceAnnotation> targetAnnos = acquireSubMergeAnnotations(dnac, targetDnac);
-//			for (SequenceAnnotation targetAnno : targetAnnos)
-//				targetAnno.setSubComponent(dnac);
-//			DnaSequence seq = targetDnac.getDnaSequence();
-//			String nucleotides = "";
-//			int position = 0;
-//			for (SequenceAnnotation anno : targetDnac.getAnnotations()) {
-//				String subNucleotides = anno.getSubComponent().getDnaSequence().getNucleotides();
-//				nucleotides = nucleotides + subNucleotides;
-//				anno.setBioStart(position + 1);
-//				position = position + subNucleotides.length();
-//				anno.setBioEnd(position);
-//			}
-//			seq.setNucleotides(nucleotides);
-//		}
-//		for (DnaComponent targetDnac : subMerges) 
-//			performSubMerge();
-		// Merge components in collections in the SBOL document
-//		for (SBOLRootObject sbolObj : sbolDoc.getContents())
-//			if (sbolObj instanceof org.sbolstandard.core.Collection) {
-//				merges.put(dnac, new HashSet<DnaComponent>());
-//				subMerges.put(dnac, new HashSet<DnaComponent>());
-//				for (DnaComponent collectDnac : ((org.sbolstandard.core.Collection) sbolObj).getComponents())
-//					if (collectDnac.getURI().toString().equals(dnac.getURI().toString())) 
-//						merges.get(dnac).add(collectDnac);
-//					else {
-//						List<SequenceAnnotation> annos = collectDnac.getAnnotations();
-//						if (annos != null && annos.size() > 0 && detectSubMergeTargets(dnac, annos))
-//							subMerges.get(dnac).add(collectDnac);
-//					}
-//				targetDnacs = merges.get(dnac);
-//				targetAnnos = subMerges.get(dnac);
-//				for (DnaComponent targetDnac : targetDnacs) 
-//					((org.sbolstandard.core.Collection) sbolObj).removeComponent(targetDnac);
-//				for (SequenceAnnotation targetAnno : targetAnnos)
-//					targetAnno.setSubComponent(null);
-//				if (targetDnacs.size() > 0)
-//					((org.sbolstandard.core.Collection) sbolObj).addComponent(dnac);
-//				for (SequenceAnnotation targetAnno : targetAnnos)
-//					targetAnno.setSubComponent(dnac);
-//			}
-//	}
-	
+	// Replaces all DNA components that have the same URI as the given DNA component with the given DNA component
 	public static void mergeDNAComponent(DnaComponent mergingDnac, SBOLDocument sbolDoc) {
 		SBOLDocumentImpl flattenedDoc = flattenDocument(sbolDoc);
 		UriResolver<DnaComponent> flattenedResolver = flattenedDoc.getComponentUriResolver();
@@ -241,6 +169,8 @@ public class SBOLUtility {
 		}
 	}
 	
+	// Deletes all DNA components that have URIs matching the given URI and updates the annotations
+	// and DNA sequences of composite components using the deleted components
 	public static void deleteDNAComponent(URI deletingURI, SBOLDocument sbolDoc) {
 		List<DnaComponent> intersections = intersectDNAComponent(deletingURI, sbolDoc);
 		for (DnaComponent intersectedDnac : intersections) {
@@ -270,8 +200,9 @@ public class SBOLUtility {
 		}
 	}
 	
+	// Returns all DNA components from SBOL document that have URIs matching the given URI
+	// or that have subcomponents matching the given URI
 	public static List<DnaComponent> intersectDNAComponent(URI intersectingURI, SBOLDocument sbolDoc) {
-//		Set<DnaComponent> merges = new HashSet<DnaComponent>();
 		List<DnaComponent> intersections = new LinkedList<DnaComponent>();
 		for (SBOLRootObject sbolObj : sbolDoc.getContents()) // note getContents() only returns top-level SBOL objects
 			if (sbolObj instanceof DnaComponent) 
@@ -306,48 +237,6 @@ public class SBOLUtility {
 				subIntersections.add(intersectedDnac);
 		}
 		return subIntersections;
-	}
-	
-	
-	
-	private static List<DnaComponent> findSubMergeComponents(DnaComponent targetingDnac, DnaComponent targetDnac, List<SequenceAnnotation> targetAnnos) {
-		List<DnaComponent> subMergeTargets = new LinkedList<DnaComponent>();
-		Iterator<SequenceAnnotation> annoIterator = targetAnnos.iterator();
-		while (subMergeTargets.size() == 0 && annoIterator.hasNext()) {
-			DnaComponent subDnac = annoIterator.next().getSubComponent();
-			if (subDnac != null && subDnac.getURI().toString().equals(targetingDnac.getURI().toString()))
-				subMergeTargets.add(targetDnac);
-		}
-		if (subMergeTargets.size() == 0) {
-			for (SequenceAnnotation targetAnno : targetAnnos) {
-				DnaComponent subDnac = targetAnno.getSubComponent();
-				if (subDnac != null) {
-					List<SequenceAnnotation> subAnnos = subDnac.getAnnotations();
-					if (subAnnos != null && subAnnos.size() > 0)
-						subMergeTargets.addAll(findSubMergeComponents(targetingDnac, subDnac, subAnnos));
-				}
-			}
-			if (subMergeTargets.size() > 0)
-				subMergeTargets.add(targetDnac);
-		}
-		return subMergeTargets;
-	}
-	
-	private static List<SequenceAnnotation> acquireSubMergeAnnotations(DnaComponent targetingDnac, DnaComponent targetDnac) {
-		List<SequenceAnnotation> subMergeTargets = new LinkedList<SequenceAnnotation>();
-		for (SequenceAnnotation targetAnno : targetDnac.getAnnotations()) {
-			DnaComponent subDnac = targetAnno.getSubComponent();
-			if (subDnac != null && subDnac.getURI().toString().equals(targetingDnac.getURI().toString())) 
-				subMergeTargets.add(targetAnno);
-		}
-		return subMergeTargets;
-	}
-	
-	private static void performSubMerge(DnaComponent dnac, DnaComponent targetDnac) {
-		for (SequenceAnnotation targetAnno : targetDnac.getAnnotations())
-			if (targetAnno.getSubComponent() == null) {
-				;
-			}
 	}
 	
 	// Converts global constant SBOL type to corresponding set of SO types
@@ -405,7 +294,6 @@ public class SBOLUtility {
 		else
 			return "N/A";
 	}
-	
 	
 	public static String soTypeToGrammarTerminal(String soType) {
 		if (soType.equals("promoter") || soType.equals("RNA polymerase promoter"))
