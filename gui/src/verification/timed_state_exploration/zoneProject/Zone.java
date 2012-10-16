@@ -2196,71 +2196,114 @@ public class Zone{
 	 * @param localStates
 	 * 			The current state.
 	 */
-	private void copyTransitions(Zone newZone, Zone tempZone, Collection<LPNTransitionPair> newTimers, 
+	private void copyTransitions(Zone tempZone, Collection<LPNTransitionPair> newTimers, 
 			Collection<LPNTransitionPair> oldTimers, State[] localStates){
-		// Copy in the new relations for the new timers.
-				for(LPNTransitionPair timerNew : newTimers)
+
+		
+		// Copy the tempZone to the new zone.
+		for(int i=0; i<tempZone.dbmSize(); i++)
+		{
+			if(!oldTimers.contains(tempZone._indexToTimerPair[i]))
+			{
+				continue;
+			}
+
+			// Get the new index of for the timer.
+			int newIndexi = i==0 ? 0 : 
+				Arrays.binarySearch(_indexToTimerPair, tempZone._indexToTimerPair[i]);
+			for(int j=0; j<tempZone.dbmSize(); j++)
+			{
+				if(!oldTimers.contains(tempZone._indexToTimerPair[j]))
 				{
-					for(LPNTransitionPair timerOld : oldTimers)
-					{	
-						newZone.setDbmEntry(newZone.timerIndexToDBMIndex(timerNew),
-								newZone.timerIndexToDBMIndex(timerOld),
-								 tempZone.getDbmEntry(0, tempZone.timerIndexToDBMIndex(timerOld)));
-
-						newZone.setDbmEntry(newZone.timerIndexToDBMIndex(timerOld),
-								newZone.timerIndexToDBMIndex(timerNew),
-								tempZone.getDbmEntry(tempZone.timerIndexToDBMIndex(timerOld), 0));
-					}
+					continue;
 				}
-				
-				// Set the upper and lower bounds for the new timers.
-				for(LPNTransitionPair pair : newTimers){
+				int newIndexj = j==0 ? 0 : 
+					Arrays.binarySearch(_indexToTimerPair, tempZone._indexToTimerPair[j]);
 
-					// Get all the upper and lower bounds for the new timers.
-					// Get the name for the timer in the i-th column/row of DBM
-					//String tranName = indexToTran.get(i).getName();
-					String tranName = _lpnList[pair.get_lpnIndex()]
-							.getTransition(pair.get_transitionIndex()).getName();
-					ExprTree delay = _lpnList[pair.get_lpnIndex()].getDelayTree(tranName);
+				_matrix[dbmIndexToMatrixIndex(newIndexi)]
+						[dbmIndexToMatrixIndex(newIndexj)]
+								= tempZone.getDbmEntry(i, j);
+			}
+		}
 
-					// Get the values of the variables for evaluating the ExprTree.
-					HashMap<String, String> varValues = 
-						_lpnList[pair.get_lpnIndex()]
-								.getAllVarsWithValuesAsString(localStates[pair.get_lpnIndex()].getVector());
+		// Copy the upper and lower bounds.
+		for(int i=1; i<tempZone.dbmSize(); i++)
+		{
+			if(!oldTimers.contains(tempZone._indexToTimerPair[i]))
+			{
+				continue;
+			}
+			setLowerBoundByLPNTransitionPair(tempZone._indexToTimerPair[i], 
+					-1*tempZone.getLowerBoundbydbmIndex(i));
+			// The minus sign is because _matrix stores the negative of the lower bound.
 
-					// Set the upper and lower bound.
-					int upper, lower;
-					if(delay.getOp().equals("uniform"))
-					{
-						IntervalPair lowerRange = delay.getLeftChild()
-								.evaluateExprBound(varValues, null);
-						IntervalPair upperRange = delay.getRightChild()
-								.evaluateExprBound(varValues, null);
-						
-						// The lower and upper bounds should evaluate to a single
-						// value. Yell if they don't.
-						if(!lowerRange.singleValue() || !upperRange.singleValue()){
-							throw new IllegalStateException("When evaulating the delay, " +
-									"the lower or the upper bound evaluated to a range " +
-									"instead of a single value.");
-						}
-						
-						lower = lowerRange.get_LowerBound();
-						upper = upperRange.get_UpperBound();
-						
-					}
-					else
-					{
-						IntervalPair range = delay.evaluateExprBound(varValues, this);
-						
-						lower = range.get_LowerBound();
-						upper = range.get_UpperBound();
-					}
+			setUpperBoundByLPNTransitionPair(tempZone._indexToTimerPair[i],
+					tempZone.getUpperBoundbydbmIndex(i));
+		}
 
-					newZone.setLowerBoundByLPNTransitionPair(pair, lower);
-					newZone.setUpperBoundByLPNTransitionPair(pair, upper);
+		// Copy in the new relations for the new timers.
+		for(LPNTransitionPair timerNew : newTimers)
+		{
+			for(LPNTransitionPair timerOld : oldTimers)
+			{	
+				setDbmEntry(timerIndexToDBMIndex(timerNew),
+						timerIndexToDBMIndex(timerOld),
+						tempZone.getDbmEntry(0, tempZone.timerIndexToDBMIndex(timerOld)));
 
+				setDbmEntry(timerIndexToDBMIndex(timerOld),
+						timerIndexToDBMIndex(timerNew),
+						tempZone.getDbmEntry(tempZone.timerIndexToDBMIndex(timerOld), 0));
+			}
+		}
+
+		// Set the upper and lower bounds for the new timers.
+		for(LPNTransitionPair pair : newTimers){
+
+			// Get all the upper and lower bounds for the new timers.
+			// Get the name for the timer in the i-th column/row of DBM
+			//String tranName = indexToTran.get(i).getName();
+			String tranName = _lpnList[pair.get_lpnIndex()]
+					.getTransition(pair.get_transitionIndex()).getName();
+			ExprTree delay = _lpnList[pair.get_lpnIndex()].getDelayTree(tranName);
+
+			// Get the values of the variables for evaluating the ExprTree.
+			HashMap<String, String> varValues = 
+					_lpnList[pair.get_lpnIndex()]
+							.getAllVarsWithValuesAsString(localStates[pair.get_lpnIndex()].getVector());
+
+			// Set the upper and lower bound.
+			int upper, lower;
+			if(delay.getOp().equals("uniform"))
+			{
+				IntervalPair lowerRange = delay.getLeftChild()
+						.evaluateExprBound(varValues, null);
+				IntervalPair upperRange = delay.getRightChild()
+						.evaluateExprBound(varValues, null);
+
+				// The lower and upper bounds should evaluate to a single
+				// value. Yell if they don't.
+				if(!lowerRange.singleValue() || !upperRange.singleValue()){
+					throw new IllegalStateException("When evaulating the delay, " +
+							"the lower or the upper bound evaluated to a range " +
+							"instead of a single value.");
 				}
+
+				lower = lowerRange.get_LowerBound();
+				upper = upperRange.get_UpperBound();
+
+			}
+			else
+			{
+				IntervalPair range = delay.evaluateExprBound(varValues, this);
+
+				lower = range.get_LowerBound();
+				upper = range.get_UpperBound();
+			}
+
+			setLowerBoundByLPNTransitionPair(pair, lower);
+			setUpperBoundByLPNTransitionPair(pair, upper);
+
+		}
 	}
 	
 	/**
@@ -3988,7 +4031,7 @@ public class Zone{
 		}
 		
 		// Copy in the new transitions.
-		newZone.copyTransitions(newZone, this, newTransitions, oldTransitionSet, localStates);
+		newZone.copyTransitions(this, newTransitions, oldTransitionSet, localStates);
 		
 		return newZone;
 	}
