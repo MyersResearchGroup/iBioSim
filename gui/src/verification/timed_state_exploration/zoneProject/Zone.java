@@ -1,6 +1,7 @@
 package verification.timed_state_exploration.zoneProject;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Arrays;
@@ -2183,6 +2184,86 @@ public class Zone{
 	}
 	
 	/**
+	 * Copies in the new values needed to add a set of new times.
+	 * @param newZone
+	 * 			The zone that the values are going to be copied into.
+	 * @param tempZone
+	 * 			The zone to look up current values of timers.
+	 * @param newTimers
+	 * 			A collection of the new timers.
+	 * @param oldTimers
+	 * 			A collection of the older timers.
+	 * @param localStates
+	 * 			The current state.
+	 */
+	private void copyTransitions(Zone newZone, Zone tempZone, Collection<LPNTransitionPair> newTimers, 
+			Collection<LPNTransitionPair> oldTimers, State[] localStates){
+		// Copy in the new relations for the new timers.
+				for(LPNTransitionPair timerNew : newTimers)
+				{
+					for(LPNTransitionPair timerOld : oldTimers)
+					{	
+						newZone.setDbmEntry(newZone.timerIndexToDBMIndex(timerNew),
+								newZone.timerIndexToDBMIndex(timerOld),
+								 tempZone.getDbmEntry(0, tempZone.timerIndexToDBMIndex(timerOld)));
+
+						newZone.setDbmEntry(newZone.timerIndexToDBMIndex(timerOld),
+								newZone.timerIndexToDBMIndex(timerNew),
+								tempZone.getDbmEntry(tempZone.timerIndexToDBMIndex(timerOld), 0));
+					}
+				}
+				
+				// Set the upper and lower bounds for the new timers.
+				for(LPNTransitionPair pair : newTimers){
+
+					// Get all the upper and lower bounds for the new timers.
+					// Get the name for the timer in the i-th column/row of DBM
+					//String tranName = indexToTran.get(i).getName();
+					String tranName = _lpnList[pair.get_lpnIndex()]
+							.getTransition(pair.get_transitionIndex()).getName();
+					ExprTree delay = _lpnList[pair.get_lpnIndex()].getDelayTree(tranName);
+
+					// Get the values of the variables for evaluating the ExprTree.
+					HashMap<String, String> varValues = 
+						_lpnList[pair.get_lpnIndex()]
+								.getAllVarsWithValuesAsString(localStates[pair.get_lpnIndex()].getVector());
+
+					// Set the upper and lower bound.
+					int upper, lower;
+					if(delay.getOp().equals("uniform"))
+					{
+						IntervalPair lowerRange = delay.getLeftChild()
+								.evaluateExprBound(varValues, null);
+						IntervalPair upperRange = delay.getRightChild()
+								.evaluateExprBound(varValues, null);
+						
+						// The lower and upper bounds should evaluate to a single
+						// value. Yell if they don't.
+						if(!lowerRange.singleValue() || !upperRange.singleValue()){
+							throw new IllegalStateException("When evaulating the delay, " +
+									"the lower or the upper bound evaluated to a range " +
+									"instead of a single value.");
+						}
+						
+						lower = lowerRange.get_LowerBound();
+						upper = upperRange.get_UpperBound();
+						
+					}
+					else
+					{
+						IntervalPair range = delay.evaluateExprBound(varValues, this);
+						
+						lower = range.get_LowerBound();
+						upper = range.get_UpperBound();
+					}
+
+					newZone.setLowerBoundByLPNTransitionPair(pair, lower);
+					newZone.setUpperBoundByLPNTransitionPair(pair, upper);
+
+				}
+	}
+	
+	/**
 	 * Finds the maximum amount that time cam advance.
 	 * @return
 	 * 		value.
@@ -3859,7 +3940,7 @@ public class Zone{
 	 * @return
 	 * 			The result of adding the transition.
 	 */
-	public Zone addTransition(LPNTransitionPair[] newTransitions){
+	public Zone addTransition(HashSet<LPNTransitionPair> newTransitions, State[] localStates){
 		/*
 		 * The zone will remain the same for all the continuous variables.
 		 * The only thing that will change is a new transition will be added into the transitions.
@@ -3868,16 +3949,46 @@ public class Zone{
 		// Create a Zone to alter.
 		Zone newZone = new Zone();
 		
-		// Create a copy of the current indexing pairs.
-		newZone._indexToTimerPair = Arrays.copyOf(_indexToTimerPair, _indexToTimerPair.length);
-		
 		// Create a copy of the LPN list.
 		newZone._lpnList = Arrays.copyOf(this._lpnList, this._lpnList.length);
 		
 		// Copy the rate zero continuous variables.
 		newZone._rateZeroContinuous = this._rateZeroContinuous.clone();
 		
-		// Adde the new transition to teh 
+		// Create a copy of the current indexing pairs.
+		//newZone._indexToTimerPair = Arrays.copyOf(_indexToTimerPair, _indexToTimerPair.length);
+		newZone._indexToTimerPair = new LPNTransitionPair[_indexToTimerPair.length + newTransitions.size()];
+		for(int i=0; i<_indexToTimerPair.length; i++){
+			newZone._indexToTimerPair[i] = _indexToTimerPair[i];
+		}
+		
+		
+		// Add the new transitions to the _indexToTimerPair list.
+//		for(int i=_indexToTimerPair.length; i<newZone._indexToTimerPair.length; i++){
+//			// Set up the index for the newTransitions list.
+//			int newTransitionIndex = i-_indexToTimerPair.length;
+//			newZone._indexToTimerPair[i] = newTransitions[newTransitionIndex];
+//		}
+		
+		int i = _indexToTimerPair.length;
+		for(LPNTransitionPair ltPair : newTransitions){
+			newZone._indexToTimerPair[i++] = ltPair;
+		}
+		
+		// Sort the _indexToTimerPair list.
+		Arrays.sort(newZone._indexToTimerPair);
+		
+		// Create matrix.
+		newZone._matrix = new int[newZone._indexToTimerPair.length+1][newZone._indexToTimerPair.length+1];
+		
+		// Convert the current transitions to a collection of transitions.
+		HashSet<LPNTransitionPair> oldTransitionSet = new HashSet<LPNTransitionPair>();
+		for(LPNTransitionPair ltPair : _indexToTimerPair){
+			oldTransitionSet.add(ltPair);
+		}
+		
+		// Copy in the new transitions.
+		newZone.copyTransitions(newZone, this, newTransitions, oldTransitionSet, localStates);
 		
 		return newZone;
 	}
