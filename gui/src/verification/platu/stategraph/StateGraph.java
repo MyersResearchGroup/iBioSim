@@ -868,7 +868,7 @@ public class StateGraph {
      * 			The newly enabled transitions.
      */
     public boolean[] updateEnabledTranVector(boolean[] enabledTranBeforeFiring,
-			int[] newMarking, int[] newVectorArray, Transition firedTran, ArrayList<LPNTransitionPair> newlyEnabled) {
+			int[] newMarking, int[] newVectorArray, Transition firedTran, HashSet<LPNTransitionPair> newlyEnabled) {
     	boolean[] enabledTranAfterFiring = enabledTranBeforeFiring.clone();
 		// Disable fired transition
     	if (firedTran != null) {
@@ -1275,18 +1275,20 @@ public class StateGraph {
 						vector[variableIndex] == 0 ? 1 : 0;
 			}
 			
+			HashSet<LPNTransitionPair> newlyEnabled = new HashSet<LPNTransitionPair>();
 			// Update the enabled transitions according to inequalities that have changed.
 			for(int i=0; i<states.length; i++){
 				boolean[] newEnabledTranVector = updateEnabledTranVector(states[i].getTranVector(),
-						states[i].marking, states[i].vector, null);
+						states[i].marking, states[i].vector, null, newlyEnabled);
 		        State newState = curSgArray[i].addState(new State(this.lpn, states[i].marking, states[i].vector, newEnabledTranVector));
 		        states[i] = newState;
 			}
 			
-			Zone zc = new Zone (states);
-			
 			// Get a new zone that has been restricted according to the inequalities firing.
 			Zone z = currentTimedPrjState.get_zones()[0].getContinuousRestrictedZone(eventSet);
+			
+			// Add any new transitions.
+			z = z.addTransition(newlyEnabled, states);
 			
 //			return new TimedPrjState(states, currentTimedPrjState.get_zones());
 						
