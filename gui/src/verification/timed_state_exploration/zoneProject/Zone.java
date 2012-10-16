@@ -1130,7 +1130,10 @@ public class Zone{
 			// The upper and lower bounds are stored in the same
 			// place as the delays, so the same method of 
 			// retrieval will work.
-			return getUpperBoundbydbmIndex(contVar.get_transitionIndex());
+			//return getUpperBoundbydbmIndex(contVar.get_transitionIndex());
+			
+			// Grab the current rate from the LPNContinuousPair.
+			return ((LPNContinuousPair)_indexToTimerPair[i]).getCurrentRate();
 		}
 		
 		
@@ -2159,15 +2162,15 @@ public class Zone{
 				continue;
 			}
 			
-			// For ease, extract the index.
-			int index = ltPair.get_transitionIndex();
-
 			// Get the new value.
 			int newValue = 0;
 
 //			if(ltPair.get_isTimer()){
 			if(!(ltPair instanceof LPNContinuousPair)){
 				// If the pair is a timer, then simply get the stored largest value.
+				
+				int index = timerIndexToDBMIndex(ltPair);
+
 				newValue = getUpperBoundbydbmIndex(index);
 			}
 			else{
@@ -4032,6 +4035,10 @@ public class Zone{
 		
 		// Copy in the new transitions.
 		newZone.copyTransitions(this, newTransitions, oldTransitionSet, localStates);
+		
+		newZone.advance(localStates);
+		
+		newZone.recononicalize();
 		
 		return newZone;
 	}
