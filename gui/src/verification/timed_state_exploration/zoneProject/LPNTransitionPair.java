@@ -270,7 +270,7 @@ public class LPNTransitionPair implements Comparable<LPNTransitionPair>{
 		
 		
 		if((this instanceof LPNContinuousPair != otherPair instanceof LPNContinuousPair)
-				&& !(this.equals(ZERO_TIMER_PAIR))){
+				&& !(this.equals(ZERO_TIMER_PAIR) || otherPair.equals(ZERO_TIMER_PAIR))){
 			// Continuous variables come before all timers except the zero timer. In this block
 			// exactly one of this pair and other pair is a continuous variable index. If this
 			// is the continuous variable index, then this is smaller. If this is not the
