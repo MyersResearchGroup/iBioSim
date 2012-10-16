@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 
+import verification.platu.lpn.DualHashMap;
 import verification.platu.stategraph.State;
 
 import lpn.parser.ExprTree;
@@ -469,5 +470,10 @@ public class InequalityVariable extends Variable {
 	 */
 	public ArrayList<Variable> getContVariables(){
 		return _variables;
+	}
+	
+	public int get_index(){
+		DualHashMap<String, Integer> indexMap = _lpn.getVarIndexMap();
+		return indexMap.getValue(getName());
 	}
 }
