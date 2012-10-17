@@ -1949,8 +1949,20 @@ public class Zone{
 	public Zone fireTransitionbydbmIndex(int index, LpnTranList enabledTimers,
 			State[] localStates)
 	{
+		/*
+		 * For the purpose of adding the newly enabled transitions and removing
+		 * the disable transitions, the continuous variables that still have
+		 * a nonzero rate can be treated like still enbaled timers.
+		 */
 		
+		// Initialize the zone.
 		Zone newZone = new Zone();
+		
+		// These sets will defferentiate between the new timers and the
+		// old timers, that is between the timers that are not already in the
+		// zone and those that are already in the zone..
+		HashSet<LPNTransitionPair> newTimers = new HashSet<LPNTransitionPair>();
+		HashSet<LPNTransitionPair> oldTimers = new HashSet<LPNTransitionPair>();
 		
 		// Copy the LPNs over.
 		newZone._lpnList = new LhpnFile[this._lpnList.length];
@@ -1958,14 +1970,34 @@ public class Zone{
 			newZone._lpnList[i] = this._lpnList[i];
 		}
 		
-		// Copy the continuous variables over.
+		// Copy the rate zero continuous variables over.
 		newZone._rateZeroContinuous = this._rateZeroContinuous.clone();
+		
+		// Add the continuous variables to the enabled timers.
+		for(int i=1; _indexToTimerPair[i] instanceof LPNContinuousPair; i++){
+			oldTimers.add(_indexToTimerPair[i]);
+		}
 		
 		// Extract the pairing information for the enabled timers.
 		// Using the enabledTimersList should be faster than calling the get method
-		// several times.
-		newZone._indexToTimerPair = new LPNTransitionPair[enabledTimers.size() + 1];
+		// several times. Also add the non-zero rate continuous variables.
+//		newZone._indexToTimerPair = new LPNTransitionPair[enabledTimers.size() + 1];
+		newZone._indexToTimerPair = new LPNTransitionPair[enabledTimers.size() + oldTimers.size() + 1];
+		// Currently the 'oldTimers' set contains only the continuous variables.
+		
 		int count = 0;
+		
+		// Copy in the continuous variables.
+		for(int i=0; i<oldTimers.size(); i++){
+			// This loop counts to the number of elements in the oldTimers set.
+			// This corresponds to the number of continuous variables in
+			// this._indexToTimerPair. But the continuous variables start at
+			// i=1 after the zero timer pair.
+			newZone._indexToTimerPair[i++] = _indexToTimerPair[i].clone();
+			// I'm cloning these elements in case I need to change the 
+			// rate. If the rate does not change, this can be a copy.
+		}
+		
 //		newZone._indexToTimerPair[count++] = 
 //				new LPNTransitionPair(LPNTransitionPair.ZERO_TIMER, -1, true);
 		newZone._indexToTimerPair[count++] = 
@@ -1979,8 +2011,8 @@ public class Zone{
 		
 		Arrays.sort(newZone._indexToTimerPair);
 		
-		HashSet<LPNTransitionPair> newTimers = new HashSet<LPNTransitionPair>();
-		HashSet<LPNTransitionPair> oldTimers = new HashSet<LPNTransitionPair>();
+//		HashSet<LPNTransitionPair> newTimers = new HashSet<LPNTransitionPair>();
+//		HashSet<LPNTransitionPair> oldTimers = new HashSet<LPNTransitionPair>();
 		
 		for(int i=0; i<newZone._indexToTimerPair.length; i++)
 		{
