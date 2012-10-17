@@ -55,10 +55,6 @@ public class SBOLBrowser extends JPanel implements ActionListener {
 		
 		constructBrowser(new HashSet<String>());
 			
-//		JPanel browserPanel = new JPanel(new GridLayout(3,1));
-//		browserPanel.add(selectionPanel);
-//		browserPanel.add(viewScroll);
-//		browserPanel.add(filterPanel);
 		JPanel browserPanel = new JPanel(new BorderLayout());
 		browserPanel.add(filterPanel, BorderLayout.NORTH);
 		browserPanel.add(selectionPanel, BorderLayout.CENTER);
@@ -67,7 +63,7 @@ public class SBOLBrowser extends JPanel implements ActionListener {
 		JTabbedPane browserTab = new JTabbedPane();
 		browserTab.add("SBOL Browser", browserPanel);
 		this.add(browserTab);
-		gui.addTab(browsePath.substring(browsePath.lastIndexOf(File.separator) + 1), this, null);
+		gui.addTab(browsePath.substring(browsePath.lastIndexOf(File.separator) + 1), this, "SBOL Browser");
 	}
 	
 	//Constructor when browsing RDF file subsets for SBOL to GCM association
@@ -116,9 +112,6 @@ public class SBOLBrowser extends JPanel implements ActionListener {
 									!localLibURIs.contains(lib.getURI().toString())) {
 								localLibURIs.add(lib.getURI());
 								localLibIds.add(lib.getDisplayId());
-//								for (DnaComponent comp : lib.getComponents())
-//									if (!isAssociationBrowser || !comp.getURI().toString().endsWith("iBioSim"))
-//										localCompURIs.add(comp.getURI());
 							}
 						} else if (sbolObj instanceof DnaComponent && 
 								(!isAssociationBrowser || !sbolObj.getURI().toString().endsWith("iBioSim")))

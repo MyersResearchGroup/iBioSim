@@ -8241,6 +8241,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				modelEditor.getSpeciesPanel().refreshSpeciesPanel(modelEditor.getGCM());
 			}
 			
+			if (this.tab.getComponentAt(i).getName().equals("SBOL Browser")) {
+				int currentIndex = this.tab.getSelectedIndex();
+				this.tab.setComponentAt(i, new SBOLBrowser(this, tree.getFile()));
+				this.tab.setSelectedIndex(currentIndex);
+			}
+			
 			String properties = root + separator + tab + separator + tab + ".sim";
 			String properties2 = root + separator + tab + separator + tab + ".lrn";
 			if (new File(properties).exists()) {
