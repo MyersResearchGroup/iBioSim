@@ -114,7 +114,7 @@ public class SBOLField extends JPanel implements ActionListener {
 			for (String filePath : gcmEditor.getGui().getFilePaths(".sbol")) {
 				SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
 				if (sbolDoc != null) {
-					SBOLDocumentImpl flattenedDoc = SBOLUtility.flattenDocument(sbolDoc);
+					SBOLDocumentImpl flattenedDoc = (SBOLDocumentImpl) SBOLUtility.flattenSBOLDocument(sbolDoc);
 					DnaComponent resolvedDnac = flattenedDoc.getComponentUriResolver().resolve(sourceCompURI);
 					if (resolvedDnac != null) {
 						for (URI uri : resolvedDnac.getTypes())
