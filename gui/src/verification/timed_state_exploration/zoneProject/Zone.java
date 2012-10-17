@@ -1985,23 +1985,29 @@ public class Zone{
 		newZone._indexToTimerPair = new LPNTransitionPair[enabledTimers.size() + oldTimers.size() + 1];
 		// Currently the 'oldTimers' set contains only the continuous variables.
 		
-		int count = 0;
+		int count = 0; // Count keeps track of where to place the next LPNTransitionPair into the _indexToTimer.
 		
-		// Copy in the continuous variables.
-		for(int i=0; i<oldTimers.size(); i++){
+		// Copy in the continuous variables (and the zero timer).
+		//for(int i=0; i<oldTimers.size(); i++){
+		for(LPNTransitionPair ltPair : _indexToTimerPair){
+			if(!(ltPair instanceof LPNContinuousPair) && !(ltPair.equals(LPNTransitionPair.ZERO_TIMER_PAIR))){
+				// If we've reached the end of the continous variables, stop.
+				break;
+			}
 			// This loop counts to the number of elements in the oldTimers set.
 			// This corresponds to the number of continuous variables in
 			// this._indexToTimerPair. But the continuous variables start at
 			// i=1 after the zero timer pair.
-			newZone._indexToTimerPair[i++] = _indexToTimerPair[i].clone();
+//			newZone._indexToTimerPair[count++] = _indexToTimerPair[i].clone();
+			newZone._indexToTimerPair[count++] = ltPair.clone();
 			// I'm cloning these elements in case I need to change the 
 			// rate. If the rate does not change, this can be a copy.
 		}
 		
 //		newZone._indexToTimerPair[count++] = 
 //				new LPNTransitionPair(LPNTransitionPair.ZERO_TIMER, -1, true);
-		newZone._indexToTimerPair[count++] = 
-				new LPNTransitionPair(LPNTransitionPair.ZERO_TIMER, -1);
+//		newZone._indexToTimerPair[count++] = 
+//				new LPNTransitionPair(LPNTransitionPair.ZERO_TIMER, -1);
 		for(Transition t : enabledTimers){
 //			newZone._indexToTimerPair[count++] = 
 //					new LPNTransitionPair(t.getLpn().getLpnIndex(), t.getIndex(), true);
@@ -2161,7 +2167,11 @@ public class Zone{
 
 		}
 		
-		newZone.advance();
+		//newZone.advance();
+		// Advance time.
+		newZone.advance(localStates);
+		
+		// Recanonicalize.
 		newZone.recononicalize();
 		
 		newZone.checkZoneMaxSize();
