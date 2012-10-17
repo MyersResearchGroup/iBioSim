@@ -93,15 +93,13 @@ public class SBOLAssociationPanel extends JPanel {
 		}
 	}
 	
-	
-	
 	private boolean loadSBOLFiles(HashSet<String> sbolFilePaths) {
 		LinkedList<Resolver<DnaComponent, URI>> compResolvers = new LinkedList<Resolver<DnaComponent, URI>>();
 		for (String filePath : sbolFilePaths) {
 			SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
 //			sbolFileDocMap.put(filePath, sbolDoc);
 			if (sbolDoc != null) {
-				SBOLDocumentImpl flattenedDoc = SBOLUtility.flattenDocument(sbolDoc);
+				SBOLDocumentImpl flattenedDoc = (SBOLDocumentImpl) SBOLUtility.flattenSBOLDocument(sbolDoc);
 				compResolvers.add(flattenedDoc.getComponentUriResolver());
 			} else
 				return false;
@@ -171,6 +169,7 @@ public class SBOLAssociationPanel extends JPanel {
 				} catch (URISyntaxException e) {
 					e.printStackTrace();
 				}
+				iBioSimURIPresent = true;
 			}
 			return true;
 		} else if (choice == 1) {
@@ -179,7 +178,6 @@ public class SBOLAssociationPanel extends JPanel {
 			return true;
 		} else if (choice == 2) {
 			removeSelectedURIs();
-//			setComponentIDList();
 			return true;
 		} else if (choice == 3) 
 			return false;

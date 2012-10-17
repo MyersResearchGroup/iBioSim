@@ -28,6 +28,7 @@ import org.sbml.libsbml.Model;
 import org.sbolstandard.core.*;
 import org.sbolstandard.core.impl.*;
 import org.sbolstandard.core.impl.AggregatingResolver.UseFirstFound;
+import org.sbolstandard.core.util.SBOLDeepEquality;
 import org.sbolstandard.core.util.SequenceOntology;
 
 import biomodel.annotation.AnnotationUtility;
@@ -51,6 +52,7 @@ public class SBOLSynthesizer {
 	private String targetFile;
 	private String uriAuthority;
 	private String time;
+//	private URI existingBioSimURI;
 	
 	public SBOLSynthesizer(BioModel biomodel, LinkedList<URI> modelURIs, LinkedHashMap<String, SynthesisNode> synMap) {
 		this.bioModel = biomodel;
@@ -74,7 +76,7 @@ public class SBOLSynthesizer {
 			this.sbolFiles.add(sbolFile);
 			SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
 			if (sbolDoc != null) {
-				SBOLDocumentImpl flattenedDoc = SBOLUtility.flattenDocument(sbolDoc);
+				SBOLDocumentImpl flattenedDoc = (SBOLDocumentImpl) SBOLUtility.flattenSBOLDocument(sbolDoc);
 				Resolver<DnaComponent, URI> compResolver = flattenedDoc.getComponentUriResolver();
 				compResolvers.add(compResolver);
 				fileResolverMap.put(sbolFile, compResolver);
@@ -92,38 +94,38 @@ public class SBOLSynthesizer {
 	
 	public DnaComponent exportDnaComponent(String exportFilePath, String saveDirectory) {
 		DnaComponent synthComp = saveDnaComponent(saveDirectory, true);
-//		DnaComponent synthComp = null;
-//		if (loadNodeDNAComponents("export", filePath)) {
-//			synthComp = synthesizeDnaComponent();
-//			if (synthComp != null) {
-//				if (!localMatch) {
-//					String[] descriptors = getDescriptorsFromUser();
-//				}
-				SBOLDocumentImpl sbolDoc = (SBOLDocumentImpl) SBOLFactory.createDocument();
-				SBOLUtility.addDNAComponent(synthComp, sbolDoc, true);
-				SBOLUtility.writeSBOLDocument(exportFilePath, sbolDoc);
-//			} 
-//		}
+		SBOLDocument sbolDoc = SBOLFactory.createDocument();
+		SBOLUtility.addDNAComponent(synthComp, sbolDoc);
+		SBOLUtility.writeSBOLDocument(exportFilePath, sbolDoc);
 		return synthComp;
 	}
 	
-	// Saves synthesized DNA component to local SBOL file and annotates SBML model
+	// Synthesizes new composite DNA component from graph of annotated model elements, loads/constructs component descriptors and identifiers, 
+	// saves component to local SBOL files, and uses component to annotate model itself 
 	public DnaComponent saveDnaComponent(String saveDirectory, boolean saveModel) {
 		DnaComponent synthComp = null;
 		if (loadNodeDNAComponents("save", saveDirectory)) {
+			// Synthesize DNA component
 			synthComp = synthesizeDnaComponent();
 			if (synthComp != null) {
+				// Load/construct component descriptors and identifiers
+				URI existingBioSimURI = loadSBOLDescriptors(synthComp);
+				if (existingBioSimURI.toString().endsWith("iBioSimNull") || existingBioSimURI.toString().endsWith("iBioSim")
+						|| existingBioSimURI.toString().endsWith("iBioSimPlaceHolder"))
+					constructURIs(synthComp, existingBioSimURI);
+				// Save component to local SBOL files
 				for (String sbolFile : sbolFiles) {
-					SBOLDocumentImpl sbolDoc = (SBOLDocumentImpl) SBOLUtility.loadSBOLFile(saveDirectory + File.separator + sbolFile);
-					SBOLUtility.mergeDNAComponent(synthComp, sbolDoc);
-					if (sbolFile.equals(targetFile)) {
-						SBOLUtility.addDNAComponent(synthComp, sbolDoc, true);
+					if (existingBioSimURI.toString().endsWith("iBioSim") || sbolFile.equals(targetFile)) {
+						SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(saveDirectory + File.separator + sbolFile);
+						if (existingBioSimURI.toString().endsWith("iBioSim"))
+							SBOLUtility.mergeDNAComponent(existingBioSimURI, synthComp, sbolDoc);
+						if (sbolFile.equals(targetFile))
+							SBOLUtility.addDNAComponent(synthComp, sbolDoc);
+						SBOLUtility.writeSBOLDocument(saveDirectory + File.separator + sbolFile, sbolDoc);
 					}
-					SBOLUtility.writeSBOLDocument(saveDirectory + File.separator + sbolFile, sbolDoc);
 				}
+				// Use component to annotate model itself
 				Model sbmlModel = bioModel.getSBMLDocument().getModel();
-				if (modelURIs.size() == 0)
-					modelURIs.add(synthComp.getURI());
 				SBOLAnnotation sbolAnnot = new SBOLAnnotation(sbmlModel.getMetaId(), modelURIs);
 				AnnotationUtility.setSBOLAnnotation(sbmlModel, sbolAnnot);
 				bioModel.setModelSBOLAnnotationFlag(true);
@@ -214,11 +216,6 @@ public class SBOLSynthesizer {
 		DnaSequence synthSeq = new DnaSequenceImpl();
 		synthSeq.setNucleotides("");
 		synthComp.setDnaSequence(synthSeq);
-
-		// Load and set URI, display ID, name, description, and SO type for composite component and its sequence
-		// URI authority and time are set for possible creation of new URIs in loadSBOLDescriptors() and addSubComponent()
-		setAuthorityAndTime();
-		loadSBOLDescriptors(synthComp, synthSeq);
 
 		int position = 1;
 		int addCount = 0;
@@ -371,11 +368,11 @@ public class SBOLSynthesizer {
 			annot.setSubComponent(subComp);
 			synthComp.addAnnotation(annot);
 			position++;
-			try {
-				annot.setURI(new URI(uriAuthority + "#anno" + addCount + time + "_iBioSim"));
-			} catch (URISyntaxException e) {
-				e.printStackTrace();
-			}
+//			try {
+//				annot.setURI(new URI(uriAuthority + "#anno" + addCount + time + "_iBioSim"));
+//			} catch (URISyntaxException e) {
+//				e.printStackTrace();
+//			}
 			synthComp.getDnaSequence().setNucleotides(synthComp.getDnaSequence().getNucleotides() + subComp.getDnaSequence().getNucleotides());
 		} else {
 			JOptionPane.showMessageDialog(Gui.frame, "DNA Component " + subComp.getDisplayId() + " has no DNA sequence.", 
@@ -385,154 +382,33 @@ public class SBOLSynthesizer {
 		return position;
 	}
 	
-	private String[] getDescriptorsFromUser() {
-		String[] descriptors = new String[3];
-		for (int i = 0; i < descriptors.length; i++)
-			descriptors[i] = "";
-		JPanel inputPanel;
-		inputPanel = new JPanel(new GridLayout(4,2));
-		
-		JTextField modelText = new JTextField(20);
-		modelText.setText(bioModel.getSBMLDocument().getModel().getId());
-		modelText.setEnabled(false);
-		
-		JTextField idText = new JTextField(20);
-		JTextField nameText = new JTextField(20);
-		JTextField descripText = new JTextField(20);
-
-	
-		inputPanel.add(new JLabel("Display ID"));
-		inputPanel.add(idText);
-		inputPanel.add(new JLabel("Model"));
-		inputPanel.add(modelText);
-		inputPanel.add(new JLabel("Name"));
-		inputPanel.add(nameText);
-		inputPanel.add(new JLabel("Description"));
-		inputPanel.add(descripText);
-
-		String[] options = { "Ok", "Cancel" };
-		int option;
-		do {
-			option = JOptionPane.showOptionDialog(Gui.frame, inputPanel, "Save SBOL DNA Component", 
-					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-			if (option != JOptionPane.YES_OPTION)
-				return null;
-		} while (!isSourceIdValid(idText.getText(), null));
-		descriptors[0] = idText.getText();
-		descriptors[1] = nameText.getText();
-		descriptors[2] = descripText.getText();
-		return descriptors;
-	}
-	
-	private String[] getDescriptorsFromUser(String filePath) {
-		String[] descriptors = new String[4];
-		for (int i = 0; i < descriptors.length; i++)
-			descriptors[i] = "";
-		Object[] targets = sbolFiles.toArray();
-		
-		JPanel inputPanel;
-		inputPanel = new JPanel(new GridLayout(5,2));
-		
-		JTextField modelText = new JTextField(20);
-		modelText.setText(bioModel.getSBMLDocument().getModel().getId());
-		modelText.setEnabled(false);
-		
-		JComboBox fileBox = new JComboBox(targets);
-		JTextField idText = new JTextField(20);
-		JTextField nameText = new JTextField(20);
-		JTextField descripText = new JTextField(20);
-
-		inputPanel.add(new JLabel("Save to File"));
-		inputPanel.add(fileBox);
-		inputPanel.add(new JLabel("Model"));
-		inputPanel.add(modelText);
-		inputPanel.add(new JLabel("Display ID"));
-		inputPanel.add(idText);
-		inputPanel.add(new JLabel("Name"));
-		inputPanel.add(nameText);
-		inputPanel.add(new JLabel("Description"));
-		inputPanel.add(descripText);
-
-		SBOLDocument localDoc = null;
-		String[] options = { "Ok", "Cancel" };
-		int option;
-		do {
-			option = JOptionPane.showOptionDialog(Gui.frame, inputPanel, "Save SBOL DNA Component", JOptionPane.YES_NO_OPTION,
-					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-			if (option != JOptionPane.YES_OPTION) 
-				return null;
-			String chosenFileId = fileBox.getSelectedItem().toString();
-			if (!descriptors[3].equals(chosenFileId)) {
-				descriptors[3] = chosenFileId;
-				localDoc = SBOLUtility.loadSBOLFile(filePath + File.separator + chosenFileId);
-			}
-		} while (localDoc == null || !isSourceIdValid(idText.getText(), localDoc));
-		descriptors[0] = idText.getText();
-		descriptors[1] = nameText.getText();
-		descriptors[2] = descripText.getText();
-		return descriptors;
-	}
-	
-	// Loads and sets URIs for newly synthesized DNA component and its sequence, 
-	// Also loads and sets display ID, name, description, and SO type for for newly synthesized component
-	private void loadSBOLDescriptors(DnaComponent synthComp, DnaSequence synthSeq) {
+	// Loads SBOL descriptors such as display ID, name, and description for newly synthesized iBioSim composite component 
+	// from model or previously synthesized component
+	// Also determines target file for saving newly synthesized component and checks for match with previously synthesized 
+	// component (latter affects save of new component and the construction of its URIs)
+	private URI loadSBOLDescriptors(DnaComponent synthComp) {
 		URI existingBioSimURI = null;
 		DnaComponent existingBioSimComp = null;
-		boolean constructCompURI = false;
-		boolean constructSeqURI = false;
-		boolean placeHolderURI = false;
 		if (modelURIs.size() > 0) {
 			Iterator<URI> uriIterator = modelURIs.iterator();
 			do {
 				existingBioSimURI = uriIterator.next();
-			} while (uriIterator.hasNext() && !existingBioSimURI.toString().endsWith("iBioSim") && !existingBioSimURI.toString().endsWith("iBioSimPlaceHolder"));
+			} while (uriIterator.hasNext() && !existingBioSimURI.toString().endsWith("iBioSim") 
+					&& !existingBioSimURI.toString().endsWith("iBioSimPlaceHolder"));
 			if (existingBioSimURI.toString().endsWith("iBioSim")) {
 				Iterator<String> fileIterator = fileResolverMap.keySet().iterator();
 				do { 
-					targetFile = fileIterator.next();
-					Resolver<DnaComponent, URI> compResolver = fileResolverMap.get(targetFile);
+					Resolver<DnaComponent, URI> compResolver = fileResolverMap.get(fileIterator.next());
 					existingBioSimComp = compResolver.resolve(existingBioSimURI);
 				} while (existingBioSimComp == null && fileIterator.hasNext());
-				synthComp.setURI(existingBioSimURI);
-				DnaSequence existingSeq = existingBioSimComp.getDnaSequence();
-				if (existingSeq != null)
-					synthSeq.setURI(existingSeq.getURI());
-				else {
-					constructSeqURI = true;
-				}
-			} else {
-				placeHolderURI = true;
-				constructCompURI = true;
-				constructSeqURI = true;
 			}
-		} else {
-			constructCompURI = true;
-			constructSeqURI = true;
-		}
-		if (constructCompURI) {
-			URI synthCompURI = null;
+		} else
 			try {
-				synthCompURI = new URI(uriAuthority + "#comp" + time + "_iBioSim");
-			} catch (URISyntaxException e) {
-				e.printStackTrace();
+				existingBioSimURI = new URI(uriAuthority + "#iBioSimNull");
+			} catch (URISyntaxException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
-			synthComp.setURI(synthCompURI);
-			if (placeHolderURI) {
-				int replaceIndex = modelURIs.indexOf(existingBioSimURI);
-				modelURIs.remove(replaceIndex);
-				modelURIs.add(replaceIndex, synthCompURI);
-			}
-		}
-		if (constructSeqURI) {
-			URI synthSeqURI = null;
-			try {
-				synthSeqURI = new URI(uriAuthority + "#seq" + time + "_iBioSim");
-			} catch (URISyntaxException e) {
-				e.printStackTrace();
-			}
-			// Set component sequence URI
-			synthSeq.setURI(synthSeqURI);
-		}
 		String[] descriptors = bioModel.getSBOLDescriptors();
 		if (descriptors != null) {
 			synthComp.setDisplayId(descriptors[0]);
@@ -545,11 +421,62 @@ public class SBOLSynthesizer {
 				synthComp.setName(existingBioSimComp.getName());
 			if (existingBioSimComp.getDescription() != null)
 				synthComp.setDescription(existingBioSimComp.getDescription());
+			targetFile = "";
 		} else {
 			synthComp.setDisplayId(bioModel.getSBMLDocument().getModel().getId());
 			targetFile = sbolFiles.iterator().next();
 		}
 		synthComp.addType(SequenceOntology.type("SO_0000804"));
+		if (existingBioSimComp != null) {
+			List<SequenceAnnotation> synthAnnos = synthComp.getAnnotations();
+			List<SequenceAnnotation> existingAnnos = existingBioSimComp.getAnnotations();
+			if (synthAnnos.size() == existingAnnos.size()) {
+				for (int i = 0; i < synthAnnos.size(); i++)
+					synthAnnos.get(i).setURI(existingAnnos.get(i).getURI());
+				synthComp.setURI(existingBioSimURI);
+				if (existingBioSimComp.getDnaSequence() != null)
+					synthComp.getDnaSequence().setURI(existingBioSimComp.getDnaSequence().getURI());
+				if (SBOLDeepEquality.isDeepEqual(synthComp, existingBioSimComp))
+					try {
+						existingBioSimURI = new URI(existingBioSimURI.toString() + "Identical");
+					} catch (URISyntaxException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			} 
+		}
+		return existingBioSimURI;
+	}
+	
+	// Constructs URIs for newly synthesized component, its DNA sequence, and sequence annotations
+	// Also replaces URI of previously synthesized component or placeholder URI among component URIs previously annotating model
+	private void constructURIs(DnaComponent synthComp, URI existingBioSimURI) {
+		// URI authority and time are set for creating new URIs
+		setAuthorityAndTime();
+		try {
+			synthComp.setURI(new URI(uriAuthority + "#comp" + time + "_iBioSim"));
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		if (existingBioSimURI.toString().endsWith("iBioSim") || existingBioSimURI.toString().endsWith("iBioSimPlaceHolder")) {
+			int replaceIndex = modelURIs.indexOf(existingBioSimURI);
+			modelURIs.remove(replaceIndex);
+			modelURIs.add(replaceIndex, synthComp.getURI());
+		} else if (existingBioSimURI.toString().endsWith("iBioSimNull"))
+			modelURIs.add(synthComp.getURI());
+		try {
+			synthComp.getDnaSequence().setURI(new URI(uriAuthority + "#seq" + time + "_iBioSim"));
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		List<SequenceAnnotation> synthAnnos = synthComp.getAnnotations();
+		for (int i = 0; i < synthAnnos.size(); i++) {
+			try {
+				synthAnnos.get(i).setURI(new URI(uriAuthority + "#anno" + i + time + "_iBioSim"));
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	private boolean isSourceIdValid(String sourceID, SBOLDocument targetDoc) {
@@ -560,7 +487,7 @@ public class SBOLSynthesizer {
 			JOptionPane.showMessageDialog(Gui.frame, "Chosen ID is not alphanumeric.", "Invalid ID", JOptionPane.ERROR_MESSAGE);
 			return false;
 		} else if (targetDoc != null) {
-			SBOLDocumentImpl flattenedDoc = SBOLUtility.flattenDocument(targetDoc);
+			SBOLDocumentImpl flattenedDoc = (SBOLDocumentImpl) SBOLUtility.flattenSBOLDocument(targetDoc);
 			if (flattenedDoc.getComponentDisplayIdResolver().resolve(sourceID) != null) {
 				JOptionPane.showMessageDialog(Gui.frame, "Chosen SBOL file contains DNA component with chosen ID.", "Invalid ID", JOptionPane.ERROR_MESSAGE);
 				return false;

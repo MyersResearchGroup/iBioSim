@@ -104,7 +104,7 @@ public class SBOLBrowser extends JPanel implements ActionListener {
 			if (browsePath.equals("") || browseFile.equals(file)) {
 				SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
 				if (sbolDoc != null) {
-					SBOLDocumentImpl flattenedDoc = SBOLUtility.flattenDocument(sbolDoc);
+					SBOLDocumentImpl flattenedDoc = (SBOLDocumentImpl) SBOLUtility.flattenSBOLDocument(sbolDoc);
 					compResolvers.add(flattenedDoc.getComponentUriResolver());
 					annoResolvers.add(flattenedDoc.getAnnotationUriResolver());
 					seqResolvers.add(flattenedDoc.getSequenceUriResolver());
@@ -116,9 +116,9 @@ public class SBOLBrowser extends JPanel implements ActionListener {
 									!localLibURIs.contains(lib.getURI().toString())) {
 								localLibURIs.add(lib.getURI());
 								localLibIds.add(lib.getDisplayId());
-								for (DnaComponent comp : lib.getComponents())
-									if (!isAssociationBrowser || !comp.getURI().toString().endsWith("iBioSim"))
-										localCompURIs.add(comp.getURI());
+//								for (DnaComponent comp : lib.getComponents())
+//									if (!isAssociationBrowser || !comp.getURI().toString().endsWith("iBioSim"))
+//										localCompURIs.add(comp.getURI());
 							}
 						} else if (sbolObj instanceof DnaComponent && 
 								(!isAssociationBrowser || !sbolObj.getURI().toString().endsWith("iBioSim")))

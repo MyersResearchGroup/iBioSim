@@ -64,35 +64,48 @@ public class SBOLUtility {
 	}
 	
 	// Adds given DNA component and all its subcomponents to top level of SBOL Document if not already present
-	public static void addDNAComponent(DnaComponent dnac, SBOLDocumentImpl sbolDoc, boolean replace) {
-		if (replace)
-			dnac = replaceDNAComponent(dnac, sbolDoc);
-		UriResolver<DnaComponent> resolver = sbolDoc.getComponentUriResolver();
-		if (resolver.resolve(dnac.getURI()) == null) 
+	// Subcomponents of the given component are replaced by components of matching URIs from the SBOL document to avoid having
+	// multiple data structures of the same URI
+	public static void addDNAComponent(DnaComponent dnac, SBOLDocument sbolDoc) {
+		dnac = replaceDNAComponent(dnac, sbolDoc);
+		Set<String> topURIs = new HashSet<String>();
+		for (SBOLRootObject sbolObj : sbolDoc.getContents())
+			if (sbolObj instanceof DnaComponent)
+				topURIs.add(sbolObj.getURI().toString());
+		flattenDNAComponent(dnac, sbolDoc, topURIs);
+	}
+	
+	// Adds given DNA component and all its subcomponents to top level of SBOL Document if not already present
+	private static void flattenDNAComponent(DnaComponent dnac, SBOLDocument sbolDoc, Set<String> topURIs) {
+		if (!topURIs.contains(dnac.getURI().toString())) {
 			sbolDoc.addContent(dnac);
+			topURIs.add(dnac.getURI().toString());
+		}
 		List<SequenceAnnotation> annos = dnac.getAnnotations();
 		if (annos != null && annos.size() > 0)
-			addSubComponents(annos, sbolDoc, resolver);
+			flattenSubComponents(annos, sbolDoc, topURIs);
 	}
 	
 	// Recursively adds annotation subcomponents to top level of SBOL document if not already present
-	private static void addSubComponents(List<SequenceAnnotation> annos, SBOLDocument sbolDoc, UriResolver<DnaComponent> resolver) {
+	private static void flattenSubComponents(List<SequenceAnnotation> annos, SBOLDocument sbolDoc, Set<String> topURIs) {
 		for (SequenceAnnotation anno : annos) {
 			DnaComponent subDnac = anno.getSubComponent();
 			if (subDnac != null) {
-				if (resolver.resolve(subDnac.getURI()) == null)
+				if (!topURIs.contains(subDnac.getURI().toString())) {
 					sbolDoc.addContent(subDnac);
+					topURIs.add(subDnac.getURI().toString());
+				}
 				List<SequenceAnnotation> subAnnos = subDnac.getAnnotations();
 				if (subAnnos != null && subAnnos.size() > 0)
-					addSubComponents(subAnnos, sbolDoc, resolver);
+					flattenSubComponents(subAnnos, sbolDoc, topURIs);
 			}
 		}
 	}
 	
 	// Replaces DNA component and its subcomponents with components from SBOL document if their URIs match
-	// Used to avoid conflict of multiple data structures with same URI in a single SBOL document
+	// Used to avoid conflict of multiple data structures of same URI in a single SBOL document
 	public static DnaComponent replaceDNAComponent(DnaComponent dnac, SBOLDocument sbolDoc) {
-		SBOLDocumentImpl flattenedDoc = flattenDocument(sbolDoc);
+		SBOLDocumentImpl flattenedDoc = (SBOLDocumentImpl) flattenSBOLDocument(sbolDoc);
 		UriResolver<DnaComponent> flattenedResolver = flattenedDoc.getComponentUriResolver();
 		DnaComponent resolvedDnac = flattenedResolver.resolve(dnac.getURI());
 		if (resolvedDnac != null)
@@ -122,34 +135,37 @@ public class SBOLUtility {
 	}
 	
 	// Creates SBOL document in which every DNA component is accessible from the top level
-	public static SBOLDocumentImpl flattenDocument(SBOLDocument sbolDoc) {
-		SBOLDocumentImpl flattenedDoc = (SBOLDocumentImpl) SBOLFactory.createDocument();
+	public static SBOLDocument flattenSBOLDocument(SBOLDocument sbolDoc) {
+		SBOLDocument flattenedDoc = SBOLFactory.createDocument();
+		Set<String> topURIs = new HashSet<String>();
 		for (SBOLRootObject sbolObj : sbolDoc.getContents()) // note getContents() only returns top-level SBOL objects
 			if (sbolObj instanceof DnaComponent) 
-				addDNAComponent((DnaComponent) sbolObj, flattenedDoc, false);
+				flattenDNAComponent((DnaComponent) sbolObj, flattenedDoc, topURIs);
 			 else if (sbolObj instanceof org.sbolstandard.core.Collection) {
 				flattenedDoc.addContent(sbolObj);
 				for (DnaComponent dnac : ((org.sbolstandard.core.Collection) sbolObj).getComponents())
-					addDNAComponent(dnac, flattenedDoc, false);
+					flattenDNAComponent(dnac, flattenedDoc, topURIs);
 			}
 		return flattenedDoc;
 	}
 	
-	// Replaces all DNA components that have the same URI as the given DNA component with the given DNA component
-	public static void mergeDNAComponent(DnaComponent mergingDnac, SBOLDocument sbolDoc) {
-		SBOLDocumentImpl flattenedDoc = flattenDocument(sbolDoc);
+	// Replaces all DNA components of the merging URI with the given DNA component
+	// Subcomponents of the given component are replaced by components of matching URIs from the SBOL document to avoid having
+	// multiple data structures of the same URI
+	public static void mergeDNAComponent(URI mergingURI, DnaComponent mergingDnac, SBOLDocument sbolDoc) {
+		SBOLDocumentImpl flattenedDoc = (SBOLDocumentImpl) flattenSBOLDocument(sbolDoc);
 		UriResolver<DnaComponent> flattenedResolver = flattenedDoc.getComponentUriResolver();
 		replaceSubComponents(mergingDnac.getAnnotations(), flattenedResolver);
-		List<DnaComponent> intersections = intersectDNAComponent(mergingDnac.getURI(), sbolDoc);
+		List<DnaComponent> intersections = intersectDNAComponent(mergingURI, sbolDoc);
 		for (DnaComponent intersectedDnac : intersections) {
-			if (intersectedDnac.getURI().toString().equals(mergingDnac.getURI().toString())) {
+			if (intersectedDnac.getURI().toString().equals(mergingURI.toString())) {
 				sbolDoc.removeContent(intersectedDnac);
 				sbolDoc.addContent(mergingDnac);
 			} else {
 				List<SequenceAnnotation> intersectedAnnos = new LinkedList<SequenceAnnotation>();
 				for (SequenceAnnotation anno : intersectedDnac.getAnnotations()) {
 					DnaComponent subDnac = anno.getSubComponent();
-					if (subDnac != null && subDnac.getURI().toString().equals(mergingDnac.getURI().toString())) 
+					if (subDnac != null && subDnac.getURI().toString().equals(mergingURI.toString())) 
 						intersectedAnnos.add(anno);
 				}
 				for (SequenceAnnotation intersectedAnno : intersectedAnnos)

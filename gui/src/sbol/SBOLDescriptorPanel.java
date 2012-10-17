@@ -84,7 +84,7 @@ public class SBOLDescriptorPanel extends JPanel {
 		for (String targetFile : sbolFiles) {
 			SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath + File.separator + targetFile);
 			if (sbolDoc != null) {
-				SBOLDocumentImpl flattenedDoc = SBOLUtility.flattenDocument(sbolDoc);
+				SBOLDocumentImpl flattenedDoc = (SBOLDocumentImpl) SBOLUtility.flattenSBOLDocument(sbolDoc);
 				compResolver = flattenedDoc.getComponentUriResolver();
 				DnaComponent dnac = compResolver.resolve(sbolURI);
 				if (dnac != null) {
@@ -153,7 +153,7 @@ public class SBOLDescriptorPanel extends JPanel {
 		} else if (!sourceID.equals(initialID)) {
 			SBOLDocument targetDoc = SBOLUtility.loadSBOLFile(filePath + File.separator + targetFile);
 			if (targetDoc != null) {
-				SBOLDocumentImpl flattenedDoc = SBOLUtility.flattenDocument(targetDoc);
+				SBOLDocumentImpl flattenedDoc = (SBOLDocumentImpl) SBOLUtility.flattenSBOLDocument(targetDoc);
 				if (flattenedDoc.getComponentDisplayIdResolver().resolve(sourceID) != null) {
 					JOptionPane.showMessageDialog(Gui.frame, "Chosen SBOL file contains DNA component with chosen ID.", "Invalid ID", JOptionPane.ERROR_MESSAGE);
 					return false;
