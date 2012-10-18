@@ -1595,7 +1595,7 @@ public class Zone{
 		}
 		
 		if(!_rateZeroContinuous.isEmpty()){
-			result += "Rate Zero Continuous : \n";
+			result += "\nRate Zero Continuous : \n";
 			for (LPNTransitionPair ltPair : _rateZeroContinuous.keySet()){
 				result += "" + _rateZeroContinuous.get(ltPair);
 			}
