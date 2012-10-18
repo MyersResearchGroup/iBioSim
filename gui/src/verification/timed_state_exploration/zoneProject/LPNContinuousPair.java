@@ -31,6 +31,16 @@ public class LPNContinuousPair extends LPNTransitionPair {
 		super(lpnIndex, continuousIndex);
 		_currentRate = currentRate;
 	}
+	
+	/**
+	 * Creates an LPNContinuousPair with the give indexcies and a current rate of zero.
+	 * @param lpnIndex
+	 * @param continuousIndex
+	 */
+	public LPNContinuousPair(int lpnIndex, int continuousIndex) {
+		super(lpnIndex, continuousIndex);
+		_currentRate = 0;
+	}
 
 	@Override
 	public int hashCode() {
