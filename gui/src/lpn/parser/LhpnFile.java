@@ -1261,6 +1261,10 @@ public class LhpnFile {
 		return variables.get(index);
 	}
 	
+	public int getVariableIndex(String name){
+		return getVarIndexMap().get(name);
+	}
+	
 	public String getContVarName(int index){
 		int counter = 0;
 		
@@ -1283,6 +1287,11 @@ public class LhpnFile {
 		String name = getContVarName(index);
 		
 		return continuous.get(name);
+	}
+	
+	public int getContVarIndex(String name){
+		DualHashMap<String, Integer> contVarIndecies = getContinuousIndexMap();
+		return contVarIndecies.getValue(name);
 	}
 
 	public HashMap<String, String> getBoolInputs() {
