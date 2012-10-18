@@ -28,6 +28,8 @@ import verification.timed_state_exploration.zoneProject.ContinuousUtilities;
 import verification.timed_state_exploration.zoneProject.EventSet;
 import verification.timed_state_exploration.zoneProject.InequalityVariable;
 import verification.timed_state_exploration.zoneProject.Event;
+import verification.timed_state_exploration.zoneProject.IntervalPair;
+import verification.timed_state_exploration.zoneProject.LPNContinuousPair;
 import verification.timed_state_exploration.zoneProject.LPNTransitionPair;
 import verification.timed_state_exploration.zoneProject.TimedPrjState;
 import verification.timed_state_exploration.zoneProject.Zone;
@@ -646,16 +648,17 @@ public class StateGraph {
     	for(int i = 0; i < curSgArray.length; i++)
     		stateArray[i] = curSgArray[i].getState(curStateIdxArray[i]);
 
-    	return this.fire(curSgArray, stateArray, firedTran);
+    	return this.fire(curSgArray, stateArray, firedTran, null, null);
     }
 
     // This method is called by search_dfs(StateGraph[], State[]).
-    public State[] fire(final StateGraph[] curSgArray, final State[] curStateArray, Transition firedTran) {
+    public State[] fire(final StateGraph[] curSgArray, final State[] curStateArray, Transition firedTran,
+    		HashMap<LPNContinuousPair, IntervalPair> continuousValues, Zone z) {
     	int thisLpnIndex = this.getLpn().getLpnIndex(); 
     	State[] nextStateArray = curStateArray.clone();
     	
     	State curState = curStateArray[thisLpnIndex];
-    	State nextState = this.fire(curSgArray[thisLpnIndex], curState, firedTran);   
+    	State nextState = this.fire(curSgArray[thisLpnIndex], curState, firedTran, continuousValues, z);   
     	
     	//int[] nextVector = nextState.getVector();
     	//int[] curVector = curState.getVector();
@@ -730,7 +733,8 @@ public class StateGraph {
     }
     
     // TODO: (original) add transition that fires to parameters
-    public State fire(final StateGraph thisSg, final State curState, Transition firedTran) {  		
+    public State fire(final StateGraph thisSg, final State curState, Transition firedTran, 
+    		HashMap<LPNContinuousPair, IntervalPair> continuousValues, Zone z) {  		
     	// Search for and return cached next state first. 
 //    	if(this.nextStateMap.containsKey(curState) == true)
 //    		return (State)this.nextStateMap.get(curState);
@@ -764,19 +768,49 @@ public class StateGraph {
         		int newValue = (int)this.lpn.getBoolAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(curVector));
         		newVectorArray[this.lpn.getVarIndexMap().get(key)] = newValue;
         	}
-        	// TODO: (temp) type cast continuous variable to int.
-        	// Continuous variables will be handled by the
-        	// fire(StateGraph,PrjState,Transition) method in the timing.
         	
-//        	if (this.lpn.getContAssignTree(firedTran.getName(), key) != null) {
-//        		int newValue = (int)this.lpn.getContAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(curVector));
-//        		newVectorArray[this.lpn.getVarIndexMap().get(key)] = newValue;
-//        	}
         	if (this.lpn.getIntAssignTree(firedTran.getName(), key) != null) {
         		int newValue = (int)this.lpn.getIntAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(curVector));
         		newVectorArray[this.lpn.getVarIndexMap().get(key)] = newValue;
         	}
         } 
+        
+        // Update continuous variables.
+        for(String key : this.lpn.getContVars()){
+        	// Get the new assignments on the continuous variables and update inequalities.
+        	if (this.lpn.getContAssignTree(firedTran.getName(), key) != null) {
+//        		int newValue = (int)this.lpn.getContAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(curVector));
+//        		newVectorArray[this.lpn.getVarIndexMap().get(key)] = newValue;
+        		
+        		// Get the new value.
+        		IntervalPair newValue = this.lpn.getContAssignTree(firedTran.getName(), key)
+        				.evaluateExprBound(this.lpn.getAllVarsWithValuesAsString(curVector), z, null);
+        		
+        		// Get the pairing.
+        		int lpnIndex = this.lpn.getLpnIndex();
+        		int contVarIndex = this.lpn.getContVarIndex(key);
+        		
+        		// Package up the indecies.
+        		LPNContinuousPair contVar = new LPNContinuousPair(lpnIndex, contVarIndex);
+        		
+        		// Keep the current rate.
+        		contVar.setCurrentRate(z.getCurrentRate(contVar));
+        		
+        		continuousValues.put(contVar, newValue);
+        		
+        		// Get each inequality that involves the continuous variable.
+        		ArrayList<InequalityVariable> inequalities = this.lpn.getContVar(contVarIndex).getInequalities();
+        		
+        		// Update the inequalities.
+        		for(InequalityVariable ineq : inequalities){
+        			int ineqIndex = this.lpn.getVarIndexMap().get(ineq.getName());
+        			
+        			newVectorArray[ineqIndex] = ineq.evaluate(newVectorArray, null, continuousValues);
+        		}
+        		
+        	}
+        }
+        
         /*
         for (VarExpr s : firedTran.getAssignments()) {
             int newValue = (int) s.getExpr().evaluate(curVector);
@@ -1177,8 +1211,11 @@ public class StateGraph {
 		
 		Zone[] newZones = new Zone[1];
 		
+		HashMap<LPNContinuousPair, IntervalPair> newContValues = new HashMap<LPNContinuousPair, IntervalPair>();
+		
 		// Get the new un-timed local states.
-		State[] newStates = fire(curSgArray, curStateArray, firedTran);
+		State[] newStates = fire(curSgArray, curStateArray, firedTran, newContValues, 
+				currentTimedPrjState.get_zones()[0]);
 
 		LpnTranList enabledTransitions = new LpnTranList();
 		
@@ -1214,10 +1251,10 @@ public class StateGraph {
 		}
 		 
 		newZones[0] = currentZones[0].fire(firedTran,
-				enabledTransitions, newStates);
+				enabledTransitions, newContValues, newStates);
 		
-		ContinuousUtilities.updateInequalities(newZones[0],
-				newStates[firedTran.getLpn().getLpnIndex()]);
+//		ContinuousUtilities.updateInequalities(newZones[0],
+//				newStates[firedTran.getLpn().getLpnIndex()]);
 		
 		return new TimedPrjState(newStates, newZones);
 	}
