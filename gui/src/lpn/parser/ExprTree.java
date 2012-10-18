@@ -6,6 +6,7 @@ import java.util.Set;
 import java.lang.Math;
 
 import verification.timed_state_exploration.zoneProject.IntervalPair;
+import verification.timed_state_exploration.zoneProject.LPNContinuousPair;
 import verification.timed_state_exploration.zoneProject.Zone;
 
 public class ExprTree {
@@ -4553,8 +4554,22 @@ public class ExprTree {
 		}	
 	}
 	
-	
-	public IntervalPair evaluateExprBound(HashMap<String, String> variables, Zone z){
+	/**
+	 * Evaluates an expression tree involving ranges.
+	 * Note: if no continuous variables are present, both z and continuousValues can be null.
+	 * If continuous variables are present, then at least one must be non-null. Finally, if
+	 * z is non-null, then the values will be taken from z and continuousValues will not be consulted.
+	 * @param variables
+	 * 			The values of the variables.
+	 * @param z
+	 * 			The zone containing the continuous variables.
+	 * @param continuousValues
+	 * 			The continuous variables along with their values.
+	 * @return
+	 * 			The range of values for the expression tree.
+	 */
+	public IntervalPair evaluateExprBound(HashMap<String, String> variables, Zone z, 
+			HashMap<LPNContinuousPair, IntervalPair> continuousValues){
 		
 		
 		/*
@@ -4584,7 +4599,7 @@ public class ExprTree {
 //			      uvalue = INFIN;
 //			      return;
 //			    }
-			r1Range = r1.evaluateExprBound(variables, z);
+			r1Range = r1.evaluateExprBound(variables, z, continuousValues);
 			if ((r1Range.get_LowerBound() == -INFIN) || (r1Range.get_UpperBound() == INFIN)){
 				
 				return new IntervalPair(-INFIN, INFIN);
@@ -4600,7 +4615,7 @@ public class ExprTree {
 //			      }
 //		        }
 			if(r2 != null){
-				r2Range = r2.evaluateExprBound(variables, z);
+				r2Range = r2.evaluateExprBound(variables, z, continuousValues);
 				if ((r2Range.get_LowerBound() == - INFIN) || (r1Range.get_UpperBound() == INFIN)){
 					return new IntervalPair(-INFIN, INFIN);
 				}
@@ -5507,7 +5522,13 @@ public class ExprTree {
 				}
 			
 				else if(isit == 'c'){
-					return z.getContinuousBounds(variable, lhpn);
+					if(z != null){
+						return z.getContinuousBounds(variable, lhpn);
+					}
+					else{
+						return continuousValues.get(new LPNContinuousPair(lhpn.getLpnIndex(),
+								lhpn.getContVarIndex(variable)));
+					}
 				}
 				
 				else if (isit == 'b'){
