@@ -319,13 +319,55 @@ public class InequalityVariable extends Variable {
 	 */
 	public int evaluate(State localState, Zone z){
 	
+//		// From the (local) state, extract the current values to use in the 
+//		// evaluator.
+//		HashMap<String, String> values =
+//				_lpn.getAllVarsWithValuesAsString(localState.getVector());
+//		
+//		// Evaluate the defining expression tree.
+//		IntervalPair range = _inequalityExprTree.evaluateExprBound(values, z);
+//		
+//		// Check that the upper and lower bounds agree (indicating that a single
+//		// value was return instead of "don't know").
+//		if(range.get_LowerBound() != range.get_UpperBound()){
+//			// If a range of values (indicating a don't know condition) was
+//			// returned, yell.
+//			throw new IllegalStateException("When evaluating " + this +
+//					 " on the local state " + localState +
+//					 " with the zone " + z +
+//					 " the result was \"don't know\", that is the " +
+//					 " upper and lower bounds of the returned boolean " +
+//					 " do not agree.");
+//		}
+//		
+//		// If the upper and lower bounds agreed, then return that value.
+//		
+//		return range.get_LowerBound();
+		return evaluate(localState.getVector(), z, null);
+	}
+	
+	/**
+	 * Evaluates the inequality based on the current state and zone.
+	 * @param vector
+	 * 			The current value of the variables in the state.
+	 * @param z
+	 * 			The current zone.
+	 * @return
+	 * 			Zero if the inequality is false, a non-zero number if the
+	 * 			inequality is true.
+	 * @throws
+	 * 			IllegalStateException if the inequality cannot be evaulated to
+	 * 			true or false.
+	 */
+	public int evaluate(int[] vector, Zone z, HashMap<LPNContinuousPair, IntervalPair> continuousValues){
+		
 		// From the (local) state, extract the current values to use in the 
 		// evaluator.
 		HashMap<String, String> values =
-				_lpn.getAllVarsWithValuesAsString(localState.getVector());
+				_lpn.getAllVarsWithValuesAsString(vector);
 		
 		// Evaluate the defining expression tree.
-		IntervalPair range = _inequalityExprTree.evaluateExprBound(values, z);
+		IntervalPair range = _inequalityExprTree.evaluateExprBound(values, z, continuousValues);
 		
 		// Check that the upper and lower bounds agree (indicating that a single
 		// value was return instead of "don't know").
@@ -333,7 +375,7 @@ public class InequalityVariable extends Variable {
 			// If a range of values (indicating a don't know condition) was
 			// returned, yell.
 			throw new IllegalStateException("When evaluating " + this +
-					 " on the local state " + localState +
+					 " on the vector " + vector +
 					 " with the zone " + z +
 					 " the result was \"don't know\", that is the " +
 					 " upper and lower bounds of the returned boolean " +
@@ -371,7 +413,7 @@ public class InequalityVariable extends Variable {
 			// evaluation, nor a zone.
 			
 			IntervalPair result = _inequalityExprTree.getRightChild()
-					.evaluateExprBound(null, null);
+					.evaluateExprBound(null, null, null);
 			
 			// Check that the bounds are the same.
 			if(!result.singleValue()){
@@ -390,7 +432,7 @@ public class InequalityVariable extends Variable {
 			// evaluation.
 			
 			IntervalPair result = _inequalityExprTree.getLeftChild()
-					.evaluateExprBound(null, null);
+					.evaluateExprBound(null, null, null);
 			
 			// Check that the bounds are the same.
 			if(!result.singleValue()){
