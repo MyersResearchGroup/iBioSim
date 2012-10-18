@@ -24,6 +24,7 @@ import verification.platu.lpn.LpnTranList;
 import verification.platu.main.Main;
 import verification.platu.main.Options;
 import verification.platu.project.PrjState;
+import verification.timed_state_exploration.zoneProject.ContinuousUtilities;
 import verification.timed_state_exploration.zoneProject.EventSet;
 import verification.timed_state_exploration.zoneProject.InequalityVariable;
 import verification.timed_state_exploration.zoneProject.Event;
@@ -1214,6 +1215,9 @@ public class StateGraph {
 		 
 		newZones[0] = currentZones[0].fire(firedTran,
 				enabledTransitions, newStates);
+		
+		ContinuousUtilities.updateInequalities(newZones[0],
+				newStates[firedTran.getLpn().getLpnIndex()]);
 		
 		return new TimedPrjState(newStates, newZones);
 	}
