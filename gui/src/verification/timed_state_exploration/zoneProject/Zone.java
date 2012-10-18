@@ -8,6 +8,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import lpn.parser.ExprTree;
 import lpn.parser.LhpnFile;
 import lpn.parser.Transition;
@@ -530,6 +533,35 @@ public class Zone{
 		checkZoneMaxSize();
 	}
 	
+//	/**
+//	 * Sets ups a zone containing continuous variables only.
+//	 * @param continuousValues
+//	 * 		The values to populate the zone with.
+//	 */
+//	public Zone(HashMap<LPNContinuousPair, IntervalPair> continuousValues){
+//		
+//		Set<LPNContinuousPair> pairSet = continuousValues.keySet();
+//		
+//		// Copy the LPNContinuousPairs over
+//		_indexToTimerPair = new LPNTransitionPair[pairSet.size()+1];
+//		
+//		int count = 0; // The position in the _indexToTimerPair for the next value.
+//		_indexToTimerPair[count++] = LPNTransitionPair.ZERO_TIMER_PAIR;
+//		
+//		for(LPNContinuousPair lcPair: pairSet){
+//			_indexToTimerPair[count++] = lcPair;
+//		}
+//		
+//		Arrays.sort(_indexToTimerPair);
+//		
+//		_matrix = new int[matrixSize()][matrixSize()];
+//		
+//		for(int i=1; i<dbmSize(); i++){
+//			setDbmEntry(i, j, value)
+//		}
+//		
+//	}
+	
 	/**
 	 * Gives the names of all the transitions and continuous variables that 
 	 * are represented by the zone.
@@ -908,7 +940,7 @@ public class Zone{
 //					range = delay.evaluateExprBound(varValues, null);
 //				}
 				
-				range = delay.evaluateExprBound(varValues, this);
+				range = delay.evaluateExprBound(varValues, this, null);
 				
 //				int upper, lower;
 //				if(delay.getOp().equals("uniform"))
@@ -1907,7 +1939,8 @@ public class Zone{
 	 * 		The Zone obtained by firing Transition t with enabled Transitions enabled
 	 * 		enabledTran when the current state is localStates.
 	 */
-	public Zone fire(Transition t, LpnTranList enabledTran, State[] localStates){
+	public Zone fire(Transition t, LpnTranList enabledTran, HashMap<LPNContinuousPair,IntervalPair> newContValue,
+			State[] localStates){
 		
 		// Create the LPNTransitionPair to check if the Transitions is in the zone and to 
 		// find the index.
@@ -1930,8 +1963,8 @@ public class Zone{
 		Zone newZone = fireTransitionbydbmIndex(dbmIndex, enabledTran, localStates);
 		
 		// Update any assigned continuous variables.
-		newZone.updateContinuousAssignment(t, localStates[lpnIndex]);
-		
+		//newZone.updateContinuousAssignment(t, localStates[lpnIndex]);
+		newZone.updateContinuousAssignment(newContValue);
 		
 		//return fireTransitionbydbmIndex(dbmIndex, enabledTran, localStates);
 		
@@ -2134,9 +2167,9 @@ public class Zone{
 //				upper = (int) upperDelay.evaluateExpr(varValues);
 				
 				IntervalPair lowerRange = delay.getLeftChild()
-						.evaluateExprBound(varValues, null);
+						.evaluateExprBound(varValues, null, null);
 				IntervalPair upperRange = delay.getRightChild()
-						.evaluateExprBound(varValues, null);
+						.evaluateExprBound(varValues, null, null);
 				
 				// The lower and upper bounds should evaluate to a single
 				// value. Yell if they don't.
@@ -2156,7 +2189,7 @@ public class Zone{
 //
 //				upper = lower;
 				
-				IntervalPair range = delay.evaluateExprBound(varValues, this);
+				IntervalPair range = delay.evaluateExprBound(varValues, this, null);
 				
 				lower = range.get_LowerBound();
 				upper = range.get_UpperBound();
@@ -2321,9 +2354,9 @@ public class Zone{
 			if(delay.getOp().equals("uniform"))
 			{
 				IntervalPair lowerRange = delay.getLeftChild()
-						.evaluateExprBound(varValues, null);
+						.evaluateExprBound(varValues, null, null);
 				IntervalPair upperRange = delay.getRightChild()
-						.evaluateExprBound(varValues, null);
+						.evaluateExprBound(varValues, null, null);
 
 				// The lower and upper bounds should evaluate to a single
 				// value. Yell if they don't.
@@ -2339,7 +2372,7 @@ public class Zone{
 			}
 			else
 			{
-				IntervalPair range = delay.evaluateExprBound(varValues, this);
+				IntervalPair range = delay.evaluateExprBound(varValues, this, null);
 
 				lower = range.get_LowerBound();
 				upper = range.get_UpperBound();
@@ -3734,12 +3767,38 @@ public class Zone{
 			
 			// Get the bounds to assign the continuous variables.
 			IntervalPair assignment = 
-					assignTrees.get(contVar).evaluateExprBound(currentValues, this);
+					assignTrees.get(contVar).evaluateExprBound(currentValues, this, null);
 			
 			// Make the assignment.
 			setContinuousBounds(contVar, lpn, assignment);
 		}
 		
+	}
+	
+	/**
+	 * Updates the continuous variables according to the given values.
+	 * @param newContValues
+	 * 		The new values of the continuous variables.
+	 */
+	public void updateContinuousAssignment(HashMap<LPNContinuousPair, IntervalPair> newContValues){
+		
+		for(Entry<LPNContinuousPair, IntervalPair> pair : newContValues.entrySet()){
+			
+			if(pair.getKey().getCurrentRate() != 0){
+				// Set the lower bound.
+				setDbmEntryByPair(pair.getKey(), LPNTransitionPair.ZERO_TIMER_PAIR, (-1)*pair.getValue().get_LowerBound());
+
+				// Set the upper bound.
+				setDbmEntryByPair(pair.getKey(), LPNTransitionPair.ZERO_TIMER_PAIR, pair.getValue().get_UpperBound());
+			}
+			else{
+				LPNTransitionPair ltpair = pair.getKey();
+				VariableRangePair variablePair = new VariableRangePair(_lpnList[pair.getKey().get_lpnIndex()].getVariable(pair.getKey().get_transitionIndex()),
+						pair.getValue());
+				
+				_rateZeroContinuous.put(ltpair, variablePair);
+			}
+		}
 	}
 	
 	/* (non-Javadoc)
