@@ -3793,7 +3793,7 @@ public class Zone{
 			}
 			else{
 				LPNTransitionPair ltpair = pair.getKey();
-				VariableRangePair variablePair = new VariableRangePair(_lpnList[pair.getKey().get_lpnIndex()].getVariable(pair.getKey().get_transitionIndex()),
+				VariableRangePair variablePair = new VariableRangePair(_lpnList[pair.getKey().get_lpnIndex()].getContVar(pair.getKey().get_transitionIndex()),
 						pair.getValue());
 				
 				_rateZeroContinuous.put(ltpair, variablePair);
