@@ -694,8 +694,9 @@ public class Zone{
 	}
 	
 	/**
-	 * Initializes the _indexToTimerPair from the local states. (Add more detail.
-	 * This method also initializes the rate zero variables.)
+	 * Initializes the _indexToTimerPair from the local states. This includes
+	 * adding the zero timer, the continuous variables and the set of 
+	 * enabled timers.
 	 * @param localStates
 	 * 		The local states.
 	 * @return
@@ -1126,7 +1127,8 @@ public class Zone{
 //		LPNTransitionPair index = new LPNTransitionPair(lpnIndex, contIndex, false);
 		// Note : setting the rate is not necessary here since this is only 
 		// being used as an index.
-		LPNContinuousPair index = new LPNContinuousPair(lpnIndex, contIndex, 0);
+//		LPNContinuousPair index = new LPNContinuousPair(lpnIndex, contIndex, 0);
+		LPNContinuousPair index = new LPNContinuousPair(lpnIndex, contIndex);
 
 		//Search for the continuous variable in the rate zero variables.
 		VariableRangePair pairing = _rateZeroContinuous.get(index);
@@ -1277,7 +1279,8 @@ public class Zone{
 //		LPNTransitionPair index = new LPNTransitionPair(lpnIndex, contIndex, false);
 		// Note: Setting the rate is not necessary since this is only being used
 		// as an index.
-		LPNContinuousPair index = new LPNContinuousPair(lpnIndex, contIndex, 0);
+//		LPNContinuousPair index = new LPNContinuousPair(lpnIndex, contIndex, 0);
+		LPNContinuousPair index = new LPNContinuousPair(lpnIndex, contIndex);
 		
 		//Search for the continuous variable in the rate zero variables.
 		VariableRangePair pairing = _rateZeroContinuous.get(index);
@@ -1407,7 +1410,8 @@ public class Zone{
 //		LPNTransitionPair index = new LPNTransitionPair(lpnIndex, contIndex, false);
 		// Note: setting the current rate is not necessary here since the
 		// LPNContinuousPair is only being used as an index.
-		LPNContinuousPair index = new LPNContinuousPair(lpnIndex, contIndex, 0);
+//		LPNContinuousPair index = new LPNContinuousPair(lpnIndex, contIndex, 0);
+		LPNContinuousPair index = new LPNContinuousPair(lpnIndex, contIndex);
 		
 		// Search for the continuous variable in the rate zero variables.
 		VariableRangePair pairing = _rateZeroContinuous.get(index);
@@ -1461,7 +1465,8 @@ public class Zone{
 //		LPNTransitionPair index = new LPNTransitionPair(lpnIndex, contIndex, false);
 		//Note : Setting the rate is not necessary since this only being used
 		// as an index.
-		LPNContinuousPair index = new LPNContinuousPair(lpnIndex, contIndex, 0);
+//		LPNContinuousPair index = new LPNContinuousPair(lpnIndex, contIndex, 0);
+		LPNContinuousPair index = new LPNContinuousPair(lpnIndex, contIndex);
 
 		// Search for the continuous variable in the rate zero variables.
 		VariableRangePair pairing = _rateZeroContinuous.get(index);
@@ -3060,7 +3065,8 @@ public class Zone{
 			int  variableIndex = variableIndexMap.getValue(x.getName());
 			
 			// Package it up for referencing.
-			LPNContinuousPair ltContPair = new LPNContinuousPair(lpnIndex, variableIndex, 0);
+//			LPNContinuousPair ltContPair = new LPNContinuousPair(lpnIndex, variableIndex, 0);
+			LPNContinuousPair ltContPair = new LPNContinuousPair(lpnIndex, variableIndex);
 			
 			// Need the current rate for the varaible, grab the stored LPNContinuousPair.
 			int zoneIndex = Arrays.binarySearch(_indexToTimerPair, ltContPair);
@@ -3311,8 +3317,9 @@ public class Zone{
 //					new LPNTransitionPair(lpnIndex, varIndex, false);
 			// Note : setting the rate is not necessary since 
 			// this is only being used as aan index.
-			LPNContinuousPair ltPair = 
-					new LPNContinuousPair(lpnIndex, varIndex, 0);
+//			LPNContinuousPair ltPair = 
+//					new LPNContinuousPair(lpnIndex, varIndex, 0);
+			LPNContinuousPair ltPair = new LPNContinuousPair(lpnIndex, varIndex);
 			
 			rv2l = ContinuousUtilities.chkDiv(-1*ineq.getConstant(),
 					getCurrentRate(ltPair), true);
@@ -3412,8 +3419,10 @@ public class Zone{
 //							new LPNTransitionPair(lpnIndex, varIndex, false);
 					// Note : setting the rate is not necessary since this is
 					// only being used as an index.
+//					LPNContinuousPair ltPair = 
+//							new LPNContinuousPair(lpnIndex, varIndex, 0);
 					LPNContinuousPair ltPair = 
-							new LPNContinuousPair(lpnIndex, varIndex, 0);
+							new LPNContinuousPair(lpnIndex, varIndex);
 					
 					rv1l = ContinuousUtilities.chkDiv(
 							-1 * oldEvent.getInequalityVariable().getConstant(), 
