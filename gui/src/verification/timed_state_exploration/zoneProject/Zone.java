@@ -3862,10 +3862,13 @@ public class Zone{
 	
 	/**
 	 * Warps a Zone.
+	 * 
+	 * @param oldZone
+	 * 		The previous Zone.
 	 * @return
 	 * 		The warped Zone.
 	 */
-	public Zone dmbWarp(){
+	public void dmbWarp(Zone oldZone){
 		/*
 		 *  See "Verification of Analog/Mixed-Signal Circuits Using Labeled Hybrid Petri Nets"
 		 *  by S. Little, D. Walter, C. Myers, R. Thacker, S. Batchu, and T. Yoneda
@@ -3873,7 +3876,343 @@ public class Zone{
 		 *  from.
 		 */
 		
-		return null;
+//		return null;
+		
+//		void lhpnDbmWarp(lhpnStateADT s,eventADT *events,int nevents)
+//		{
+//		#ifdef __LHPN_TRACE__
+//		  printf("lhpnDbmWarp:begin()\n");
+//		#endif
+//		  /* TODO: This appears to NOT work when INFIN is in the bounds?
+//		     Should I have to worry about this case? */
+//		  for(int i=1;i<s->z->dbmEnd;i++) {
+//		    for(int j=i+1;j<s->z->dbmEnd;j++) {
+//		      double iVal = 0.0;
+//		      double jVal = 0.0;
+//		      double iWarp = 0;
+//		      double jWarp = 0;
+//		      double iXDot = 0;
+//		      double jXDot = 0;
+//
+		// According to atacs comments, this appears to NOT wark when
+		// INFIN is in the bounds.
+		// This portion of the code handles the warping of the relative
+		// parts of the zone.
+		for(int i=1; i< dbmSize(); i++){
+			for(int j=i+1; j<dbmSize(); j++){
+				double iVal, jVal, iWarp, jWarp, iXDot, jXDot;
+		
+				// Note : the iVal and the jVal correspond to the 
+				// alpha and beta describe in Scott Little's thesis.
+				
+		
+//		      /* deal w/ the fact that we might have continuous and discrete
+//		         places */
+//		#ifdef __LHPN_DEBUG_WARP__
+//		      printf("Working on %d->%d\n",i,j);
+//		#endif
+//		      if(s->z->curClocks[i].enabling == -2) {
+//		        iVal = fabs((double)s->r->oldBound[s->z->curClocks[i].enabled-nevents].current /
+//		                    (double)s->r->bound[s->z->curClocks[i].enabled-nevents].current);
+//		        iWarp = fabs((double)s->r->oldBound[s->z->curClocks[i].enabled-nevents].current);
+//		        iXDot = fabs((double)s->r->bound[s->z->curClocks[i].enabled-nevents].current);
+//		      }
+		
+				// Do some warping when dealing with the continuous variables.
+				if(_indexToTimerPair[i] instanceof LPNContinuousPair){
+					// Calcualte the alpha value.
+					iVal = Math.floor(Math.abs(
+							(double) oldZone.getCurrentRate(_indexToTimerPair[i]) /
+							(double) this.getCurrentRate(_indexToTimerPair[i])));
+					
+					// The old rate the zone was warped by.
+					iWarp = Math.floor(Math.abs(
+							(double) oldZone.getCurrentRate(_indexToTimerPair[i])));
+					
+					// The current rate rate of this continuous variable.
+					iXDot = iWarp = Math.floor(Math.abs(
+							(double) this.getCurrentRate(_indexToTimerPair[i])));
+				}
+				
+//		      else {
+//		        iVal = 1.0;
+//		        iWarp = 1.0;
+//		        iXDot = 1.0;
+//		      }
+//		      
+				else{
+					// The current variable is a timer, so the new rate and old rate
+					// are both 1. Hence we have
+					iVal = 1.0;
+					iWarp = 1.0;
+					iXDot = 1.0;
+				}
+				
+//		      if(s->z->curClocks[j].enabling == -2) {
+//		        jVal = fabs((double)s->r->oldBound[s->z->curClocks[j].enabled-nevents].current /
+//		                    (double)s->r->bound[s->z->curClocks[j].enabled-nevents].current);
+//		        jWarp = fabs((double)s->r->oldBound[s->z->curClocks[j].enabled-nevents].current);
+//		        jXDot = fabs((double)s->r->bound[s->z->curClocks[j].enabled-nevents].current);
+//		      }
+				
+				// Do some warping of the second variable if it is a continuous variabl.
+				if(_indexToTimerPair[j] instanceof LPNContinuousPair){
+					// Calcualte the alpha value.
+					jVal = Math.floor(Math.abs(
+							(double) oldZone.getCurrentRate(_indexToTimerPair[j]) /
+							(double) this.getCurrentRate(_indexToTimerPair[j])));
+					
+					// The old rate the zone was warped by.
+					jWarp = Math.floor(Math.abs(
+							(double) oldZone.getCurrentRate(_indexToTimerPair[j])));
+					
+					// The current rate rate of this continuous variable.
+					jXDot = iWarp = Math.floor(Math.abs(
+							(double) this.getCurrentRate(_indexToTimerPair[j])));
+				}
+				
+//		      else {
+//		        jVal = 1.0;
+//		        jWarp = 1.0;
+//		        jXDot = 1.0;
+//		      }
+//
+				else{
+					// The current variable is a timer, so the new rate and old rate
+					// are both 1. Hence we have
+					jVal = 1.0;
+					jWarp = 1.0;
+					jXDot = 1.0;
+				}
+				
+//		#ifdef __LHPN_DEBUG_WARP__
+//		      printf("iVal: %f, jVal: %f, iWarp: %f, jWarp: %f, iXDot: %f, jXDot: %f\n",iVal,jVal,iWarp,jWarp,iXDot,jXDot);
+//		/*       printf("calc1- jWarp:%d * s->z->matrix[i][j]:%d / jXDot:%d + (-1 * jWarp:%d * s->z->matrix[i][0]:%d) / jXDot:%d + (iWarp:%d * s->z->matrix[i][0]:%d) / iXDot:%d = %d 1:%d 2:%d 3:%d -- %d\n", jWarp,s->z->matrix[i][j],jXDot,jWarp,s->z->matrix[i][0],jXDot,iWarp,s->z->matrix[i][0],iXDot,(chkDiv((jWarp * s->z->matrix[i][j]),jXDot,'C') + chkDiv((-1 * jWarp * s->z->matrix[i][0]),jXDot,'C') + chkDiv((iWarp * s->z->matrix[i][0]),iXDot,'C')),chkDiv((jWarp * s->z->matrix[i][j]),jXDot,'C'),chkDiv((-1 * jWarp * s->z->matrix[i][0]),jXDot,'C'),chkDiv((iWarp * s->z->matrix[i][0]),iXDot,'C'),(int)ceil(((jWarp * s->z->matrix[i][j])/jXDot) +((-1 * jWarp * s->z->matrix[i][0])/jXDot) + ((iWarp * s->z->matrix[i][0])/iXDot))); */
+//		/*       printf("calc2-jWarp:%f * s->z->matrix[j][i]):%d/jXDot:%f) + ((-1 * jWarp:%f * s->z->matrix[0][i]:%d)/jXDot:%f) + ((iWarp:%f * s->z->matrix[0][i]):%d,iXDot:%f)) = %d 1:%f 2:%f 3:%f\n",jWarp,s->z->matrix[j][i],jXDot,jWarp,s->z->matrix[0][i],jXDot,iWarp,s->z->matrix[0][i],iXDot,(int) ceil(((jWarp * s->z->matrix[j][i])/jXDot) + ((-1 * jWarp * s->z->matrix[0][i])/jXDot) + ((iWarp * s->z->matrix[0][i]),iXDot)),((jWarp * (double)s->z->matrix[j][i])/jXDot),((-1 * jWarp * (double)s->z->matrix[0][i])/jXDot),(iWarp * (double)s->z->matrix[0][i])/iXDot); */
+//		#endif
+//		      
+//		      if(iVal > jVal) {
+//		/*         s->z->matrix[i][j] = */
+//		/*           chkDiv((jWarp * s->z->matrix[i][j]),jXDot,'C') + */
+//		/*           chkDiv((-1 * jWarp * s->z->matrix[i][0]),jXDot,'C') + */
+//		/*           chkDiv((iWarp * s->z->matrix[i][0]),iXDot,'C'); */
+//		/*         s->z->matrix[j][i] = */
+//		/*           chkDiv((jWarp * s->z->matrix[j][i]),jXDot,'C') + */
+//		/*           chkDiv((-1 * jWarp * s->z->matrix[0][i]),jXDot,'C') + */
+//		/*           chkDiv((iWarp * s->z->matrix[0][i]),iXDot,'C'); */
+//		        s->z->matrix[i][j] = (int)
+//		          ceil(((jWarp * s->z->matrix[i][j])/jXDot) +
+//		               ((-1 * jWarp * s->z->matrix[i][0])/jXDot) +
+//		               ((iWarp * s->z->matrix[i][0])/iXDot));
+//		        s->z->matrix[j][i] = (int)
+//		          ceil(((jWarp * s->z->matrix[j][i])/jXDot) +
+//		               ((-1 * jWarp * s->z->matrix[0][i])/jXDot) +
+//		               ((iWarp * s->z->matrix[0][i])/iXDot));
+//		      }
+				
+				// The zone is warped differently depending on which of rate is
+				// larger. See Scott Little's Thesis for more details.
+				if(iVal > jVal){
+					setDbmEntry(j, i, (int)
+							Math.ceil(((jWarp*getDbmEntry(j, i))/jXDot) +
+							((-1*jWarp*getDbmEntry(0, i)/jXDot)) +
+							((iWarp*getDbmEntry(0, i)/iXDot))));
+					
+					setDbmEntry(i, j, (int)
+							Math.ceil(((jWarp*getDbmEntry(i, j))/jXDot) +
+							((-1*jWarp*getDbmEntry(i, 0)/jXDot)) +
+							((iWarp*getDbmEntry(i, 0)/iXDot))));
+				}
+				
+//		      else {
+//		/*         s->z->matrix[j][i] = */
+//		/*           chkDiv((iWarp * s->z->matrix[j][i]),iXDot,'C') + */
+//		/*           chkDiv((-1 * iWarp * s->z->matrix[j][0]),iXDot,'C') + */
+//		/*           chkDiv((jWarp * s->z->matrix[j][0]),jXDot,'C'); */
+//		/*         s->z->matrix[i][j] = */
+//		/*           chkDiv((iWarp * s->z->matrix[i][j]),iXDot,'C') + */
+//		/*           chkDiv((-1 * iWarp * s->z->matrix[0][j]),iXDot,'C') + */
+//		/*           chkDiv((jWarp * s->z->matrix[0][j]),jXDot,'C'); */
+//		        s->z->matrix[j][i] = (int)
+//		          ceil(((iWarp * s->z->matrix[j][i])/iXDot) +
+//		               ((-1 * iWarp * s->z->matrix[j][0])/iXDot) +
+//		               ((jWarp * s->z->matrix[j][0])/jXDot));
+//		        s->z->matrix[i][j] = (int)
+//		          ceil(((iWarp * s->z->matrix[i][j])/iXDot) +
+//		               ((-1 * iWarp * s->z->matrix[0][j])/iXDot) +
+//		               ((jWarp * s->z->matrix[0][j])/jXDot));
+//		      }
+				
+				else{
+					setDbmEntry(i, j, (int)
+							Math.ceil(((iWarp*getDbmEntry(i, j))/iXDot) +
+							((-1*iWarp*getDbmEntry(0, j)/iXDot)) +
+							((jWarp*getDbmEntry(0, j)/jXDot))));
+					
+					setDbmEntry(j, i, (int)
+							Math.ceil(((iWarp*getDbmEntry(j, i))/iXDot) +
+							((-1*iWarp*getDbmEntry(j, 0)/iXDot)) +
+							((jWarp*getDbmEntry(j, 0)/jXDot))));
+				}
+//		    }
+//		  }
+//
+			}
+		}
+//		#ifdef __LHPN_DEBUG_WARP__
+//		  printf("After fixing up initial warp conditions.\n");
+//		  printZ(s->z,events,nevents,s->r);
+//		#endif
+//		  
+//		  for(int i=1;i<s->z->dbmEnd;i++) {
+//		    if(s->z->curClocks[i].enabling == -2) {
+		
+		// Handle the warping of the bounds.
+		for(int i=1; i<dbmSize(); i++){
+			if(_indexToTimerPair[i] instanceof LPNContinuousPair){
+		
+//		#ifdef __LHPN_DEBUG_WARP__
+//		      printf("old:%d new:%d v1:%d v2:%d\n",s->r->oldBound[s->z->curClocks[i].enabled-nevents].current,s->r->bound[s->z->curClocks[i].enabled-nevents].current,s->z->matrix[0][i],s->z->matrix[i][0]);
+//		#endif
+//		      if(abs(s->z->matrix[0][i]) != INFIN) {
+//		      s->z->matrix[0][i] =
+//		        chkDiv((abs(s->r->oldBound[s->z->curClocks[i].enabled-nevents].current)
+//		                * s->z->matrix[0][i]),
+//		               abs(s->r->bound[s->z->curClocks[i].enabled-nevents].current)
+//		               ,'C');
+//		      }
+				
+				if(Math.abs(getDbmEntry(i, 0)) != INFINITY){
+					// Undo the old warping and introduce the new warping.
+					// If the bound is infinite, then division does nothing.
+					setDbmEntry(i, 0, ContinuousUtilities.chkDiv(
+							Math.abs(oldZone.getCurrentRate(_indexToTimerPair[i]))
+							* getDbmEntry(i, 0),
+							Math.abs(getCurrentRate(_indexToTimerPair[i])), 
+							true));
+				}
+				
+//		      if(abs(s->z->matrix[i][0]) != INFIN) {
+//		      s->z->matrix[i][0] =
+//		        chkDiv((abs(s->r->oldBound[s->z->curClocks[i].enabled-nevents].current)
+//		                * s->z->matrix[i][0]),
+//		               abs(s->r->bound[s->z->curClocks[i].enabled-nevents].current)
+//		               ,'C');
+//		      }
+				
+				if(Math.abs(getDbmEntry(0, i)) != INFINITY){
+					// Undo the old warping and introduce the new warping.
+					// If the bound is inifite, then division does nothing.
+					setDbmEntry(0, i, ContinuousUtilities.chkDiv(
+							Math.abs(oldZone.getCurrentRate(_indexToTimerPair[i]))
+							* getDbmEntry(0, i),
+							Math.abs(getCurrentRate(_indexToTimerPair[i])), 
+							true));
+				}
+//		    }
+//		  }
+//
+			}
+		}
+			
+			
+//		#ifdef __LHPN_DEBUG_WARP__
+//		  printf("After fixing up places.\n");
+//		  printZ(s->z,events,nevents,s->r);
+//		#endif
+//
+//		  for(int i=1;i<s->z->dbmEnd;i++) {
+//		    if(s->z->curClocks[i].enabling == -2) {
+		
+		for(int i=1; i<dbmSize(); i++){
+			if(_indexToTimerPair[i] instanceof LPNContinuousPair){
+		
+//		#ifdef __LHPN_DEBUG_WARP__
+//		      printf("Warp: %d\n",s->r->oldBound[s->z->curClocks[i].enabled-nevents].current);
+//		#endif
+//		      if(((float)s->r->oldBound[s->z->curClocks[i].enabled-nevents].current /
+//		          (float)s->r->bound[s->z->curClocks[i].enabled-nevents].current) < 0.0) {
+//		        /* swap */
+//		        int temp = s->z->matrix[0][i];
+//		        s->z->matrix[0][i] = s->z->matrix[i][0];
+//		        s->z->matrix[i][0] = temp;
+//		      
+//		        for(int j=1;j<s->z->dbmEnd;j++) {
+//		          /* TBD: If i & j are both changing direction do we need to
+//		             remove the warp info? */
+//		          if(i != j) {
+//		            s->z->matrix[j][i] = INFIN;
+//		            s->z->matrix[i][j] = INFIN;
+//		          }
+//		        }
+//		      }   
+//		    }
+//		  }
+//
+				// Handle the case when the warping takes us into negative space.
+				if((double) oldZone.getCurrentRate(_indexToTimerPair[i])/
+						(double) this.getCurrentRate(_indexToTimerPair[i]) < 0.0);
+				/* We are warping into the negative space, so swap the upper and 
+				 * lower bounds.
+				 */
+				
+				int temp = getDbmEntry(i, 0);
+				setDbmEntry(i,0, getDbmEntry(0, i));
+				setDbmEntry(0, i, temp);
+				
+				
+				// Set the relationships to Infinity since nothing else is known.
+				for(int j=1; j<dbmSize(); j++){
+					if(i != j){
+						setDbmEntry(i, j, INFINITY);
+						setDbmEntry(j, i, INFINITY);
+					}
+				}
+			}		
+		}
+			
+//		#ifdef __LHPN_DEBUG_WARP__
+//		  printf("After handling negative warps.\n");
+//		  printZ(s->z,events,nevents,s->r);
+//		#endif
+//
+//		    for(int i=1;i<s->z->dbmEnd;i++) {
+//		    if(s->z->curClocks[i].enabling == -2) {
+		
+		for(int i=1; i<dbmSize(); i++){
+			if(_indexToTimerPair[i] instanceof LPNContinuousPair){
+				
+//		      int newCwarp = s->r->bound[s->z->curClocks[i].enabled-nevents].current;
+//		      int newLwarp = s->r->bound[s->z->curClocks[i].enabled-nevents].lower;
+//		      int newUwarp = s->r->bound[s->z->curClocks[i].enabled-nevents].upper;
+//		      s->r->oldBound[s->z->curClocks[i].enabled-nevents].current = newCwarp;
+//		      s->r->oldBound[s->z->curClocks[i].enabled-nevents].lower = newLwarp;
+//		      s->r->oldBound[s->z->curClocks[i].enabled-nevents].upper = newUwarp;
+//		        
+//		#ifdef __LHPN_DEBUG_WARP__
+//		      printf("New warp for %d: %d\n",i,s->r->oldBound[s->z->curClocks[i].enabled-nevents].current);
+//		#endif
+//		    }
+//		  }
+//
+			/* Do the nature of how I store things, I do not think I need to do
+			 * this portion.
+			 */
+			
+				
+			}
+		}
+			
+//		#ifdef __LHPN_DEBUG_WARP__
+//		  printf("Before recanon.\n");
+//		  printZ(s->z,events,nevents,s->r);
+//		#endif
+//		  recanonZ(s->z);
+//		#ifdef __LHPN_DEBUG_WARP__
+//		  printf("After recanon.\n");
+//		  printZ(s->z,events,nevents,s->r);
+//		#endif
+//		}
 	}
 	
 	
