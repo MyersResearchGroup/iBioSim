@@ -22,22 +22,47 @@ import verification.platu.stategraph.State;
 
 
 /**
- * This class is for storing and manipulating timing zones via difference bound matrices.
- * The underlying structure is backed by a two dimensional array. A difference bound 
- * matrix has the form
- *     t0  t1  t2  t3
- * t0 m00 m01 m02 m03
- * t1 m10 m11 m12 m13
- * t2 m20 m21 m22 m23
- * t3 m30 m31 m32 m33
- * where  tj - ti<= mij. In particular, m0k is an upper bound for tk and -mk is a lower
- * bound for tk.
+ * This class is for storing and manipulating the delay information for transitions as well as
+ * the values of continuous variables including rate their rates.
+ * A Zone represents the non-zero continuous variables and the timers for the delay in a 
+ * Difference Bound Matrix (DBM)
  * 
- * The timers are referred to by an index. 
+ *     t0  c0  c1  t0  t1
+ * t0 m00 m01 m02 m03 m04
+ * c0 m10 m11 m12 m13 m14
+ * c1 m20 m21 m22 m23 m24
+ * t0 m30 m31 m32 m33 m34
+ * t1 m40 m41 m42 m43 m44
  * 
- * This class also contains a public nested class DiagonalNonZeroException which extends
- * java.lang.RuntimeException. This exception may be thrown if the diagonal entries of a 
- * zone become nonzero.
+ * For the timers, tj - ti <= m(ti,tj) where m(ti,tj) represents the element of the matrix with
+ * row ti and column tj. In particular, m(t0,ti) is an upper bound for ti and -m(ti,0) is a
+ * lower bound for ti. The continuous variables are normalized to have rate one before being
+ * placed in the matrix. Thus for a continuous variables ci with rate ri, the entry m(t0, ci) is 
+ * (upper bound)/ri where 'upper bound' is the upper bound for the continuous variable and 
+ * m(ci,t0) is -1*(lower bound)/ri where 'lower bound' is the lower bound of the continuous variable.
+ * When the rate is negative, dividing out by the rate switches the inequalities. For example,
+ * if ci is a continuous variable such that l < ci < u for some values l and u, then the normalized
+ * ci (that is ci/ri) is satisfies u/ri < ci/r < l/ri. Hence the m(t0,ci) is (lower bound)/ri and 
+ * m(ci,0)  is -1*(upper bound)/ri. The m(ci,cj) as well as m(ti,ci) and m(ci,ti) give the same kind
+ * of relational information as with just timers, but with the normalized values of the continuous 
+ * variables. Note that a Zone with normalized continuous variables is referred to as being a 'warped'
+ * zone.
+ * 
+ * The rate zero continuous variables are also stored in a Zone object, but they are not present in
+ * the zone. The Zone merely records the range of the continuous variable.
+ * 
+ * The timers are referenced by the name of the transition that they are associated with and continuous
+ * variables are referenced by their name as well. In addition for non-zero rate continuous variables and
+ * the timers, several method will allow them to be referred by their index as a part of the (DMB). For
+ * example, c0 in the above DBM example, has index 1.
+ * 
+ * A third way that the timers and variables (both rate zero and rate non-zero) can be referred to by 
+ * an LPNTransitionPair object. These objects refer to a timer or continuous variable by providing the index
+ * of the corresponding transition or the index of the continuous variable as a member of an LPN and the
+ * index of that LPN. The LPNTransitionPair can be made more specific in the case of the continuous variables
+ * by using an LPNContinuousPair. These objects also provide the rate of the variable. LPNTransitionPairs
+ * can be used with continuous variables when they are only being used as an index only. If the rate is needed
+ * for the method, then LPNContinuousPairs must be used.
  * 
  * @author Andrew N. Fisher
  *
@@ -62,7 +87,7 @@ public class Zone{
 	* lb stands for lower bound while ub stands for upper bound.
 	* This upper and lower bound information is called the Delay for a Transition object.
 	* Since a timer is tied directly to a Transition, the timers are index by the corresponding
-	* Transition's index in a LPNTranslator.
+	* Transition's index in the LPN.
 	* The timers are named by an integer referred to as the index. The _indexToTimer array
 	* connects the index in the DBM sub-matrix to the index of the timer. It does this
 	* via the use of LPNTransitionPair objects. These objects store the index of the LPN
@@ -81,6 +106,32 @@ public class Zone{
 	* lower bounds are stored in the zeroth column of the DBM. The upper and
 	* lower bounds of the rate are stored in the ub and lb columns (where the 
 	* upper and lower bounds of the timers are stored).
+	* 
+	* 
+	* The difference bound matrix is stored in the _matrix member field, along with 
+	* the upper and lower bounds of the timers and rates for continuous variables.
+	* The upper and lower bounds are stored when the timer becomes enabled. The upper and
+	* lower bounds of the rates are stored when the rate is assigned. The upper and lower 
+	* bounds are stored in the first row and first column of the _matrix member field.
+	* The DBM occupies the rest of the array, that is, the sub-array formed by removing
+	* the first column and first row.
+	* For example, let t1 be a timer for a transition whose delay is between 2 and 3. Further
+	* let c1 be a continuous variable with rate between 4 and 5. Then _matrix would look like
+	*    lb t0 c1 t1
+	* ub  x  0  5  3
+	* t0  0  m  m  m
+	* c1 -4  m  m  m
+	* t1 -2  m  m  m
+	* 
+	* with out the lb, ub, t0, t1, and c1.
+	* 
+	* The x is does not represent anything and will most likely be zero. The upper and lower 
+	* bounds for the zero timer (which is always present) are always 0. The m's comprise 
+	* the DBM.
+	* 
+	* For the most part, a timer or a continuous variable is referred to internally by an
+	* LPNTransitionPair. Given a timer associated with a Transition t, 
+	* 
 	*/ 
 	
 	/* Representation invariant :
@@ -96,7 +147,7 @@ public class Zone{
 	* The LPNTransitionPair in the _indexToTimer array should be an LPNContinuousPair
 	*   when it stores the index to a continuous variable. Testing that the index
 	*   is an LPNContinuousPair is used to determined if the indexing object points
-	*   to a continuous variable.
+	*   to a continuous variable. Also the LPNContinuousPair keeps track of the current rate.
 	* 
 	*/
 	
@@ -1523,6 +1574,22 @@ public class Zone{
 	}
 	
 	/**
+	 * Retrieves an entry of the DBM using LPNTransitionPair indecies.
+	 * @param iPair
+	 * 		The LPNTransitionPair for the ith entry.
+	 * @param jPair
+	 * 		The LPNTransitionPair for the jth entry.
+	 * @return
+	 * 		The value of the (i,j) element of the DBM where i corresponds to the row
+	 * 		for the variable iPair and j corresponds to the row for the variable jPair.
+	 */
+	public int getDbmEntryByPair(LPNTransitionPair iPair, LPNTransitionPair jPair){
+		int iIndex = Arrays.binarySearch(_indexToTimerPair, iPair);
+		int jIndex = Arrays.binarySearch(_indexToTimerPair, jPair);
+		return getDbmEntry(iIndex, jIndex);
+	}
+	
+	/**
 	 * Sets an entry of the DBM using the DBM's addressing.
 	 * @param i
 	 * 			The row of the DBM.
@@ -1973,6 +2040,11 @@ public class Zone{
 		
 		//return fireTransitionbydbmIndex(dbmIndex, enabledTran, localStates);
 		
+		// Warp the Zone
+		newZone.dbmWarp(this);
+		
+		// Recanonicalize
+		newZone.recononicalize();
 		
 		return newZone;
 	}
@@ -3206,13 +3278,17 @@ public class Zone{
 			else{
 				// The index refers to a continuous variable. So check all the inequalities for inclusion.
 				Variable contVar = _lpnList[ltPair.get_lpnIndex()].getContVar(ltPair.get_transitionIndex());
-				for(InequalityVariable iv : contVar.getInequalities()){
-					
-					// Check if the inequality can change.
-					if(ContinuousUtilities.inequalityCanChange(this, iv, localState)){
-						result = addSetItem(result, new Event(iv), localState);
+				
+				if(contVar.getInequalities() != null){
+					for(InequalityVariable iv : contVar.getInequalities()){
+
+						// Check if the inequality can change.
+						if(ContinuousUtilities.inequalityCanChange(this, iv, localState)){
+							result = addSetItem(result, new Event(iv), localState);
+						}
 					}
 				}
+				
 			}
 		}
 		
@@ -3791,23 +3867,35 @@ public class Zone{
 	 */
 	public void updateContinuousAssignment(HashMap<LPNContinuousPair, IntervalPair> newContValues){
 		
-		for(Entry<LPNContinuousPair, IntervalPair> pair : newContValues.entrySet()){
-			
-			if(pair.getKey().getCurrentRate() != 0){
-				// Set the lower bound.
-				setDbmEntryByPair(pair.getKey(), LPNTransitionPair.ZERO_TIMER_PAIR, (-1)*pair.getValue().get_LowerBound());
-
-				// Set the upper bound.
-				setDbmEntryByPair(pair.getKey(), LPNTransitionPair.ZERO_TIMER_PAIR, pair.getValue().get_UpperBound());
-			}
-			else{
-				LPNTransitionPair ltpair = pair.getKey();
-				VariableRangePair variablePair = new VariableRangePair(_lpnList[pair.getKey().get_lpnIndex()].getContVar(pair.getKey().get_transitionIndex()),
-						pair.getValue());
-				
-				_rateZeroContinuous.put(ltpair, variablePair);
-			}
-		}
+		/*
+		 * In dealing with the rates and continuous variables, there are four cases to consider. These cases
+		 * depend on whether the the old value of the 'current rate' is zero or non-zero and whether the
+		 * new value of the 'current rate' is zero or non-zero. 
+		 * 1. old rate is non-zero, new rate is non-zero
+		 * 		Get the LPNContinuousVariable (
+		 * 2. 
+		 * 3. 
+		 * 4. 
+		 */
+		
+		
+//		for(Entry<LPNContinuousPair, IntervalPair> pair : newContValues.entrySet()){
+//			
+//			if(pair.getKey().getCurrentRate() != 0){
+//				// Set the lower bound.
+//				setDbmEntryByPair(pair.getKey(), LPNTransitionPair.ZERO_TIMER_PAIR, (-1)*pair.getValue().get_LowerBound());
+//
+//				// Set the upper bound.
+//				setDbmEntryByPair(pair.getKey(), LPNTransitionPair.ZERO_TIMER_PAIR, pair.getValue().get_UpperBound());
+//			}
+//			else{
+//				LPNTransitionPair ltpair = pair.getKey();
+//				VariableRangePair variablePair = new VariableRangePair(_lpnList[pair.getKey().get_lpnIndex()].getContVar(pair.getKey().get_transitionIndex()),
+//						pair.getValue());
+//				
+//				_rateZeroContinuous.put(ltpair, variablePair);
+//			}
+//		}
 	}
 	
 	/* (non-Javadoc)
@@ -3868,7 +3956,7 @@ public class Zone{
 	 * @return
 	 * 		The warped Zone.
 	 */
-	public void dbmWarp(Zone oldZone){
+	private void dbmWarp(Zone oldZone){
 		/*
 		 *  See "Verification of Analog/Mixed-Signal Circuits Using Labeled Hybrid Petri Nets"
 		 *  by S. Little, D. Walter, C. Myers, R. Thacker, S. Batchu, and T. Yoneda
