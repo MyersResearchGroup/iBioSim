@@ -346,6 +346,10 @@ public class ContinuousUtilities {
 		// Get all the inequalities that reference the variable of interest.
 		ArrayList<InequalityVariable> inequalities = variable.getInequalities();
 
+		if(inequalities == null){
+			return Zone.INFINITY;
+		}
+		
 		for(InequalityVariable ineq : inequalities){
 			
 			// Update the inequality variable.
