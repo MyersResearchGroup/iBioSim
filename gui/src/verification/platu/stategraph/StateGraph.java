@@ -762,21 +762,58 @@ public class StateGraph {
 
         //  State vector update
         int[] newVectorArray = curState.getVector().clone();
-        int[] curVector = curState.getVector();      
-        for (String key : this.lpn.getAllVarsWithValuesAsString(curVector).keySet()) {
+        int[] curVector = curState.getVector();
+        HashMap<String, String> currentValuesAsString = this.lpn.getAllVarsWithValuesAsString(curVector);
+        for (String key : currentValuesAsString.keySet()) {
         	if (this.lpn.getBoolAssignTree(firedTran.getName(), key) != null) {
-        		int newValue = (int)this.lpn.getBoolAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(curVector));
+        		int newValue = (int)this.lpn.getBoolAssignTree(firedTran.getName(), key).evaluateExpr(currentValuesAsString);
         		newVectorArray[this.lpn.getVarIndexMap().get(key)] = newValue;
         	}
         	
         	if (this.lpn.getIntAssignTree(firedTran.getName(), key) != null) {
-        		int newValue = (int)this.lpn.getIntAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(curVector));
+        		int newValue = (int)this.lpn.getIntAssignTree(firedTran.getName(), key).evaluateExpr(currentValuesAsString);
         		newVectorArray[this.lpn.getVarIndexMap().get(key)] = newValue;
         	}
         } 
         
-        // Update continuous variables.
+        // Update rates
         for(String key : this.lpn.getContVars()){
+        	
+    		// Get the pairing.
+    		int lpnIndex = this.lpn.getLpnIndex();
+    		int contVarIndex = this.lpn.getContVarIndex(key);
+
+    		// Package up the indecies.
+    		LPNContinuousPair contVar = new LPNContinuousPair(lpnIndex, contVarIndex);
+
+    		Integer newRate = null;
+        	
+        	// Check if there is a new rate assignment.
+        	if(this.lpn.getRateAssignTree(firedTran.getName(), key) != null){
+        		// Get the new value.
+        		IntervalPair newValue = this.lpn.getRateAssignTree(firedTran.getName(), key)
+        				//.evaluateExprBound(this.lpn.getAllVarsWithValuesAsString(curVector), z, null);
+        				.evaluateExprBound(currentValuesAsString, z, null);
+        				
+//        		// Get the pairing.
+//        		int lpnIndex = this.lpn.getLpnIndex();
+//        		int contVarIndex = this.lpn.getContVarIndex(key);
+//
+//        		// Package up the indecies.
+//        		LPNContinuousPair contVar = new LPNContinuousPair(lpnIndex, contVarIndex);
+
+        		// Keep the current rate.
+        		newRate = newValue.get_LowerBound();
+        		
+        		contVar.setCurrentRate(newValue.get_LowerBound());
+        		
+        		continuousValues.put(contVar, new IntervalPair(z.getDbmEntryByPair(contVar, LPNTransitionPair.ZERO_TIMER_PAIR),
+        				z.getDbmEntryByPair(LPNTransitionPair.ZERO_TIMER_PAIR, contVar)));
+        	}
+        //}
+        
+        // Update continuous variables.
+        //for(String key : this.lpn.getContVars()){
         	// Get the new assignments on the continuous variables and update inequalities.
         	if (this.lpn.getContAssignTree(firedTran.getName(), key) != null) {
 //        		int newValue = (int)this.lpn.getContAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(curVector));
@@ -784,17 +821,20 @@ public class StateGraph {
         		
         		// Get the new value.
         		IntervalPair newValue = this.lpn.getContAssignTree(firedTran.getName(), key)
-        				.evaluateExprBound(this.lpn.getAllVarsWithValuesAsString(curVector), z, null);
+        				//.evaluateExprBound(this.lpn.getAllVarsWithValuesAsString(curVector), z, null);
+        				.evaluateExprBound(currentValuesAsString, z, null);
         		
-        		// Get the pairing.
-        		int lpnIndex = this.lpn.getLpnIndex();
-        		int contVarIndex = this.lpn.getContVarIndex(key);
+//        		// Get the pairing.
+//        		int lpnIndex = this.lpn.getLpnIndex();
+//        		int contVarIndex = this.lpn.getContVarIndex(key);
+//        		
+//        		// Package up the indecies.
+//        		LPNContinuousPair contVar = new LPNContinuousPair(lpnIndex, contVarIndex);
         		
-        		// Package up the indecies.
-        		LPNContinuousPair contVar = new LPNContinuousPair(lpnIndex, contVarIndex);
-        		
-        		// Keep the current rate.
-        		contVar.setCurrentRate(z.getCurrentRate(contVar));
+        		if(newRate == null){
+        			// Keep the current rate.
+        			contVar.setCurrentRate(z.getCurrentRate(contVar));
+        		}
         		
         		continuousValues.put(contVar, newValue);
         		
@@ -1257,7 +1297,7 @@ public class StateGraph {
 //				newStates[firedTran.getLpn().getLpnIndex()]);
 		
 		// Warp the zone.
-		newZones[0].dbmWarp(currentTimedPrjState.get_zones()[0]);
+		//newZones[0].dbmWarp(currentTimedPrjState.get_zones()[0]);
 		
 		return new TimedPrjState(newStates, newZones);
 	}
