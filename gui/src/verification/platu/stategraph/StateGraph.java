@@ -1256,6 +1256,9 @@ public class StateGraph {
 //		ContinuousUtilities.updateInequalities(newZones[0],
 //				newStates[firedTran.getLpn().getLpnIndex()]);
 		
+		// Warp the zone.
+		newZones[0].dbmWarp(currentTimedPrjState.get_zones()[0]);
+		
 		return new TimedPrjState(newStates, newZones);
 	}
 	
