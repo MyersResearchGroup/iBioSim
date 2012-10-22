@@ -3861,14 +3861,14 @@ public class Zone{
 	}
 	
 	/**
-	 * Warps a Zone.
+	 * Warps this Zone with the aid of rate infomation from the previous Zone. 
 	 * 
 	 * @param oldZone
 	 * 		The previous Zone.
 	 * @return
 	 * 		The warped Zone.
 	 */
-	public void dmbWarp(Zone oldZone){
+	public void dbmWarp(Zone oldZone){
 		/*
 		 *  See "Verification of Analog/Mixed-Signal Circuits Using Labeled Hybrid Petri Nets"
 		 *  by S. Little, D. Walter, C. Myers, R. Thacker, S. Batchu, and T. Yoneda
