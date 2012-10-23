@@ -2295,27 +2295,58 @@ public class Zone{
 	 * Handles the moving in and out of continuous variables.
 	 * @param newContValues
 	 */
-	private void copyRates(Zone newZone, 
-			HashMap<LPNContinuousPair, IntervalPair> newZeroContValues,
-			HashMap<LPNContinuousPair, IntervalPair> newNonZeroContValues){
+//	private void copyRates(Zone newZone, 
+//			HashMap<LPNContinuousPair, IntervalPair> newZeroContValues,
+//			HashMap<LPNContinuousPair, IntervalPair> newNonZeroContValues){
 		
+//		newZone._rateZeroContinuous = new DualHashMap<LPNTransitionPair, VariableRangePair>();
+//		
+//		
+//		
+//		// Copy the zero rate variables over if they are still rate zero.
+//		for(Entry<LPNTransitionPair, VariableRangePair> entry : _rateZeroContinuous.entrySet()){
+//			LPNContinuousPair thePair = (LPNContinuousPair) entry.getKey();
+//			VariableRangePair rangeValue = entry.getValue();
+//			
+//			// Check if the pairing is in the newNonZeroContValues.
+//			IntervalPair interval = newNonZeroContValues.get(thePair);
+//			if(interval == null){
+//				// Interval being null indicates that the key was not
+//				// found.
+//				newZone._rateZeroContinuous.put(thePair, rangeValue);
+//			}
+//		}
+//	}
+	
+	/**
+	 * 
+	 * @param newZone
+	 * @param enabled
+	 * 		The enabled transitions.
+	 * @param newAssignValues
+	 */
+	private void copyRates(Zone newZone, LpnTranList enabledTran,
+			ArrayList<HashMap<LPNContinuousPair, IntervalPair>> newAssignValues){
+		/*
+		 * The newAssignValues is an ArrayList of four sets.
+		 * 0. Rate zero gets zero assigned.
+		 * 1. Rate zero gets non-zero rate assigned.
+		 * 2. Non-zero gets zero rate assigned.
+		 * 3. Non-zero gets non-zero  rate assigned.
+		 */
+		
+		final int OLD_ZERO = 0; 	// Case 0 in description.
+		final int NEW_NON_ZERO = 1; // Case 1 in description.
+		final int NEW_ZERO = 2;		// Case 2 in description.
+		final int OLD_NON_ZERO = 3;	// Cade 3 in description.
+		
+		// Create new rate zero member variable.
 		newZone._rateZeroContinuous = new DualHashMap<LPNTransitionPair, VariableRangePair>();
 		
+		// Create new _indexToTimerPair. 
 		
 		
-		// Copy the zero rate variables over if they are still rate zero.
-		for(Entry<LPNTransitionPair, VariableRangePair> entry : _rateZeroContinuous.entrySet()){
-			LPNContinuousPair thePair = (LPNContinuousPair) entry.getKey();
-			VariableRangePair rangeValue = entry.getValue();
-			
-			// Check if the pairing is in the newNonZeroContValues.
-			IntervalPair interval = newNonZeroContValues.get(thePair);
-			if(interval == null){
-				// Interval being null indicates that the key was not
-				// found.
-				newZone._rateZeroContinuous.put(thePair, rangeValue);
-			}
-		}
+		// 
 	}
 	
 	/**
