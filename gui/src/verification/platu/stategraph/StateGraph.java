@@ -652,13 +652,18 @@ public class StateGraph {
     }
 
     // This method is called by search_dfs(StateGraph[], State[]).
+//    public State[] fire(final StateGraph[] curSgArray, final State[] curStateArray, Transition firedTran,
+//    		HashMap<LPNContinuousPair, IntervalPair> continuousValues, Zone z) {
     public State[] fire(final StateGraph[] curSgArray, final State[] curStateArray, Transition firedTran,
-    		HashMap<LPNContinuousPair, IntervalPair> continuousValues, Zone z) {
+    		ArrayList<HashMap<LPNContinuousPair, IntervalPair>> newAssignValues, Zone z) {
     	int thisLpnIndex = this.getLpn().getLpnIndex(); 
     	State[] nextStateArray = curStateArray.clone();
     	
     	State curState = curStateArray[thisLpnIndex];
-    	State nextState = this.fire(curSgArray[thisLpnIndex], curState, firedTran, continuousValues, z);   
+//    	State nextState = this.fire(curSgArray[thisLpnIndex], curState, firedTran, continuousValues, z);   
+    	
+    	State nextState = this.fire(curSgArray[thisLpnIndex], curState, firedTran, newAssignValues, z);   
+    	
     	
     	//int[] nextVector = nextState.getVector();
     	//int[] curVector = curState.getVector();
@@ -733,8 +738,11 @@ public class StateGraph {
     }
     
     // TODO: (original) add transition that fires to parameters
+//    public State fire(final StateGraph thisSg, final State curState, Transition firedTran, 
+//    		HashMap<LPNContinuousPair, IntervalPair> continuousValues, Zone z) {
     public State fire(final StateGraph thisSg, final State curState, Transition firedTran, 
-    		HashMap<LPNContinuousPair, IntervalPair> continuousValues, Zone z) {  		
+    		ArrayList<HashMap<LPNContinuousPair, IntervalPair>> newAssignValues, Zone z) {
+    
     	// Search for and return cached next state first. 
 //    	if(this.nextStateMap.containsKey(curState) == true)
 //    		return (State)this.nextStateMap.get(curState);
@@ -777,6 +785,14 @@ public class StateGraph {
         } 
         
         // Update rates
+        final int OLD_ZERO = 0; 	// Case 0 in description.
+		final int NEW_NON_ZERO = 1; // Case 1 in description.
+		final int NEW_ZERO = 2;		// Case 2 in description.
+		final int OLD_NON_ZERO = 3;	// Cade 3 in description.
+		newAssignValues.add(new HashMap<LPNContinuousPair, IntervalPair>());
+		newAssignValues.add(new HashMap<LPNContinuousPair, IntervalPair>());
+		newAssignValues.add(new HashMap<LPNContinuousPair, IntervalPair>());
+		newAssignValues.add(new HashMap<LPNContinuousPair, IntervalPair>());
         for(String key : this.lpn.getContVars()){
         	
     		// Get the pairing.
@@ -787,11 +803,12 @@ public class StateGraph {
     		LPNContinuousPair contVar = new LPNContinuousPair(lpnIndex, contVarIndex);
 
     		Integer newRate = null;
+    		IntervalPair newValue= null;
         	
         	// Check if there is a new rate assignment.
         	if(this.lpn.getRateAssignTree(firedTran.getName(), key) != null){
         		// Get the new value.
-        		IntervalPair newValue = this.lpn.getRateAssignTree(firedTran.getName(), key)
+        		IntervalPair newIntervalRate = this.lpn.getRateAssignTree(firedTran.getName(), key)
         				//.evaluateExprBound(this.lpn.getAllVarsWithValuesAsString(curVector), z, null);
         				.evaluateExprBound(currentValuesAsString, z, null);
         				
@@ -803,12 +820,39 @@ public class StateGraph {
 //        		LPNContinuousPair contVar = new LPNContinuousPair(lpnIndex, contVarIndex);
 
         		// Keep the current rate.
-        		newRate = newValue.get_LowerBound();
+        		newRate = newIntervalRate.get_LowerBound();
         		
-        		contVar.setCurrentRate(newValue.get_LowerBound());
+        		contVar.setCurrentRate(newIntervalRate.get_LowerBound());
         		
-        		continuousValues.put(contVar, new IntervalPair(z.getDbmEntryByPair(contVar, LPNTransitionPair.ZERO_TIMER_PAIR),
-        				z.getDbmEntryByPair(LPNTransitionPair.ZERO_TIMER_PAIR, contVar)));
+//        		continuousValues.put(contVar, new IntervalPair(z.getDbmEntryByPair(contVar, LPNTransitionPair.ZERO_TIMER_PAIR),
+//        				z.getDbmEntryByPair(LPNTransitionPair.ZERO_TIMER_PAIR, contVar)));
+        		
+//        		// Check if the new assignment gives rate zero.
+//        		boolean newRateZero = newRate == 0;
+//        		// Check if the variable was already rate zero.
+//        		boolean oldRateZero = z.getCurrentRate(contVar) == 0;
+//        		
+//        		// Put the new value in the appropriate set.
+//        		if(oldRateZero){
+//        			if(newRateZero){
+//        				// Old rate is zero and the new rate is zero.
+//        				newAssignValues.get(OLD_ZERO).put(contVar, newValue);
+//        			}
+//        			else{
+//        				// Old rate is zero and the new rate is non-zero.
+//        				newAssignValues.get(NEW_NON_ZERO).put(contVar, newValue);
+//        			}
+//        		}
+//        		else{
+//        			if(newRateZero){
+//        				// Old rate is non-zero and the new rate is zero.
+//        				newAssignValues.get(NEW_ZERO).put(contVar, newValue);
+//        			}
+//        			else{
+//        				// Old rate is non-zero and the new rate is non-zero.
+//        				newAssignValues.get(OLD_NON_ZERO).put(contVar, newValue);
+//        			}
+//        		}
         	}
         //}
         
@@ -820,7 +864,7 @@ public class StateGraph {
 //        		newVectorArray[this.lpn.getVarIndexMap().get(key)] = newValue;
         		
         		// Get the new value.
-        		IntervalPair newValue = this.lpn.getContAssignTree(firedTran.getName(), key)
+        		newValue = this.lpn.getContAssignTree(firedTran.getName(), key)
         				//.evaluateExprBound(this.lpn.getAllVarsWithValuesAsString(curVector), z, null);
         				.evaluateExprBound(currentValuesAsString, z, null);
         		
@@ -836,7 +880,8 @@ public class StateGraph {
         			contVar.setCurrentRate(z.getCurrentRate(contVar));
         		}
         		
-        		continuousValues.put(contVar, newValue);
+        		
+//        		continuousValues.put(contVar, newValue);
         		
         		// Get each inequality that involves the continuous variable.
         		ArrayList<InequalityVariable> inequalities = this.lpn.getContVar(contVarIndex).getInequalities();
@@ -845,10 +890,51 @@ public class StateGraph {
         		for(InequalityVariable ineq : inequalities){
         			int ineqIndex = this.lpn.getVarIndexMap().get(ineq.getName());
         			
+        			
+        			HashMap<LPNContinuousPair, IntervalPair> continuousValues = new HashMap<LPNContinuousPair, IntervalPair>();
+        			continuousValues.putAll(newAssignValues.get(OLD_ZERO));
+        			continuousValues.putAll(newAssignValues.get(NEW_NON_ZERO));
+        			continuousValues.putAll(newAssignValues.get(NEW_ZERO));
+        			continuousValues.putAll(newAssignValues.get(OLD_NON_ZERO));
+        			
+        			
         			newVectorArray[ineqIndex] = ineq.evaluate(newVectorArray, null, continuousValues);
         		}
-        		
         	}
+        	
+
+        	// If the value did not get assigned, put in the old value.
+        	if(newValue == null){
+        		newValue = z.getContinuousBounds(contVar);
+        	}
+    		
+    		// Check if the new assignment gives rate zero.
+    		boolean newRateZero = newRate == 0;
+    		// Check if the variable was already rate zero.
+    		boolean oldRateZero = z.getCurrentRate(contVar) == 0;
+    		
+    		// Put the new value in the appropriate set.
+    		if(oldRateZero){
+    			if(newRateZero){
+    				// Old rate is zero and the new rate is zero.
+    				newAssignValues.get(OLD_ZERO).put(contVar, newValue);
+    			}
+    			else{
+    				// Old rate is zero and the new rate is non-zero.
+    				newAssignValues.get(NEW_NON_ZERO).put(contVar, newValue);
+    			}
+    		}
+    		else{
+    			if(newRateZero){
+    				// Old rate is non-zero and the new rate is zero.
+    				newAssignValues.get(NEW_ZERO).put(contVar, newValue);
+    			}
+    			else{
+    				// Old rate is non-zero and the new rate is non-zero.
+    				newAssignValues.get(OLD_NON_ZERO).put(contVar, newValue);
+    			}
+    		}
+        	
         }
         
         /*
@@ -1251,12 +1337,18 @@ public class StateGraph {
 		
 		Zone[] newZones = new Zone[1];
 		
-		HashMap<LPNContinuousPair, IntervalPair> newContValues = new HashMap<LPNContinuousPair, IntervalPair>();
+		//HashMap<LPNContinuousPair, IntervalPair> newContValues = new HashMap<LPNContinuousPair, IntervalPair>();
+		
+		ArrayList<HashMap<LPNContinuousPair, IntervalPair>> newAssignValues = 
+				new ArrayList<HashMap<LPNContinuousPair, IntervalPair>>();
 		
 		// Get the new un-timed local states.
-		State[] newStates = fire(curSgArray, curStateArray, firedTran, newContValues, 
-				currentTimedPrjState.get_zones()[0]);
+//		State[] newStates = fire(curSgArray, curStateArray, firedTran, newContValues, 
+//				currentTimedPrjState.get_zones()[0]);
 
+		State[] newStates = fire(curSgArray, curStateArray, firedTran, newAssignValues, 
+				currentTimedPrjState.get_zones()[0]);
+		
 		LpnTranList enabledTransitions = new LpnTranList();
 		
 		for(int i=0; i<newStates.length; i++)
@@ -1290,8 +1382,11 @@ public class StateGraph {
 //			}
 		}
 		 
+//		newZones[0] = currentZones[0].fire(firedTran,
+//				enabledTransitions, newContValues, newStates);
+		
 		newZones[0] = currentZones[0].fire(firedTran,
-				enabledTransitions, newContValues, newStates);
+				enabledTransitions, newAssignValues, newStates);
 		
 //		ContinuousUtilities.updateInequalities(newZones[0],
 //				newStates[firedTran.getLpn().getLpnIndex()]);
