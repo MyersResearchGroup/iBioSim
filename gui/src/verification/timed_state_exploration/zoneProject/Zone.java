@@ -1493,6 +1493,25 @@ public class Zone{
 		return new IntervalPair(lower, upper);
 	}
 	
+	public IntervalPair getContinuousBounds(LPNContinuousPair ltContPair){
+		
+		// First check in the zone.
+		int variableIndex = Arrays.binarySearch(_indexToTimerPair, ltContPair);
+		
+		if(variableIndex < 0){
+			// The variable was not found in the zone. Check to see if its
+			// in the rate-zero varaibles. Technically I will return whatever
+			// is in the _rateZeroConintuous, null or not.
+			return _rateZeroContinuous.get(ltContPair).get_range();
+		}
+		
+		// The varaible was found in the zone. Yay.
+		int lower = (-1)*getDbmEntry(variableIndex, 0);
+		int upper = getDbmEntry(0, variableIndex);
+				
+		return new IntervalPair(lower, upper);
+	}
+	
 	/** 
 	 * Sets the bounds for a continuous variable.
 	 * @param contVar
@@ -2011,7 +2030,7 @@ public class Zone{
 	 * 		The Zone obtained by firing Transition t with enabled Transitions enabled
 	 * 		enabledTran when the current state is localStates.
 	 */
-	public Zone fire(Transition t, LpnTranList enabledTran, HashMap<LPNContinuousPair,IntervalPair> newContValue,
+	public Zone fire(Transition t, LpnTranList enabledTran, ArrayList<HashMap<LPNContinuousPair, IntervalPair>> newAssignValues,
 			State[] localStates){
 		
 		// Create the LPNTransitionPair to check if the Transitions is in the zone and to 
@@ -2033,11 +2052,11 @@ public class Zone{
 		
 		// Get the new zone portion.
 		Zone newZone = fireTransitionbydbmIndex(dbmIndex, enabledTran, localStates,
-				newContValue);
+				newAssignValues);
 		
 		// Update any assigned continuous variables.
 		//newZone.updateContinuousAssignment(t, localStates[lpnIndex]);
-		newZone.updateContinuousAssignment(newContValue);
+		newZone.updateContinuousAssignment(newAssignValues);
 		
 		//return fireTransitionbydbmIndex(dbmIndex, enabledTran, localStates);
 		
@@ -2058,8 +2077,12 @@ public class Zone{
 	 * @return
 	 * 			The updated Zone.
 	 */
+//	public Zone fireTransitionbydbmIndex(int index, LpnTranList enabledTimers,
+//			State[] localStates, HashMap<LPNContinuousPair, IntervalPair> newContValue)
+//	{
 	public Zone fireTransitionbydbmIndex(int index, LpnTranList enabledTimers,
-			State[] localStates, HashMap<LPNContinuousPair, IntervalPair> newContValue)
+			State[] localStates, 
+			ArrayList<HashMap<LPNContinuousPair, IntervalPair>> newAssignValues)
 	{
 		/*
 		 * For the purpose of adding the newly enabled transitions and removing
@@ -2089,6 +2112,8 @@ public class Zone{
 //		for(int i=1; _indexToTimerPair[i] instanceof LPNContinuousPair; i++){
 //			oldTimers.add(_indexToTimerPair[i]);
 //		}
+		
+		copyRates(newZone, enabledTimers, newAssignValues);
 		
 		// Extract the pairing information for the enabled timers.
 		// Using the enabledTimersList should be faster than calling the get method
@@ -2319,7 +2344,10 @@ public class Zone{
 //	}
 	
 	/**
-	 * 
+	 * Handles the moving of the continuous variables in and out of the
+	 * _rateZeroContinuous. This includes the adding of all rate zero (new and old)
+	 * cotninuous variables to the _rateZeroContinuous, and creating the 
+	 * _indexToTimerPair and populating it.
 	 * @param newZone
 	 * @param enabled
 	 * 		The enabled transitions.
@@ -2338,15 +2366,100 @@ public class Zone{
 		final int OLD_ZERO = 0; 	// Case 0 in description.
 		final int NEW_NON_ZERO = 1; // Case 1 in description.
 		final int NEW_ZERO = 2;		// Case 2 in description.
-		final int OLD_NON_ZERO = 3;	// Cade 3 in description.
+		//final int OLD_NON_ZERO = 3;	// Cade 3 in description. Isn't used.
+		
+		HashMap<LPNContinuousPair, IntervalPair> oldRateZero = 
+				newAssignValues.get(OLD_ZERO);
+		
+		HashMap<LPNContinuousPair, IntervalPair> newNonZeroRate = 
+				newAssignValues.get(NEW_NON_ZERO);
+		
+		HashMap<LPNContinuousPair, IntervalPair> newRateZero = 
+				newAssignValues.get(NEW_ZERO);
 		
 		// Create new rate zero member variable.
 		newZone._rateZeroContinuous = new DualHashMap<LPNTransitionPair, VariableRangePair>();
 		
-		// Create new _indexToTimerPair. 
+		// Create new _indexToTimerPair.
+		// First get the total number of non-zero rate continuous variables that
+		// are present in the old zone.
+		int totalContinuous = 0;
+		for(int i=0; i<_lpnList.length; i++){
+			totalContinuous += _lpnList[i].getTotalNumberOfContVars();
+		}
+		
+		int numberNonZero = totalContinuous - _rateZeroContinuous.size();
+		
+		// The size is given by 
+		// total number of transistors 
+		// + number of non-zero rate continuous variables previously in the zone
+		// + number of zero rate continuous variables that now have non-zero
+		// - number of non-zero rate continuous variables that are now zero.
+		
+		int newSize = enabledTran.size()
+				+ numberNonZero + newAssignValues.get(NEW_NON_ZERO).size()
+				- newAssignValues.get(NEW_ZERO).size();
+		
+		// Create the timer array.
+		newZone._indexToTimerPair = new LPNTransitionPair[newSize];
+		
+		// Copy over the rate zero conintinuous variables.
+		// First copy over all the continuous variables that still have
+		// rate zero.
+		for(LPNTransitionPair ltTranPair : _rateZeroContinuous.keySet()){
+			// Cast the index.
+			LPNContinuousPair ltContPair = (LPNContinuousPair) ltTranPair;
+			if(newNonZeroRate.containsKey(ltContPair)){
+				// The variable no longer is rate zero, so do nothing.
+				continue;
+			}
+			
+			newZone._rateZeroContinuous.put(ltTranPair, _rateZeroContinuous.get(ltTranPair));
+			
+		}
 		
 		
-		// 
+		
+		// Next add the values that are newly set to rate zero.
+		for(LPNContinuousPair ltContPair : newRateZero.keySet()){
+			// Exract the variable.
+			Variable v = _lpnList[ltContPair.get_lpnIndex()].
+					getContVar(ltContPair.get_ContinuousIndex());
+			
+			// Create a VariableRangePair.
+			VariableRangePair vrp = new VariableRangePair(v, newRateZero.get(ltContPair));
+			
+			// Add the value to the map.
+			newZone._rateZeroContinuous.put(ltContPair, vrp);
+		}
+		
+		// We still need to add in the rate zero continuous variables whose rate remains zero
+		// since their range might have changed. We could check if the range has changed, but
+		// its just as easy (or easier) to simply add it anyway.
+		for(LPNContinuousPair ltContPair : oldRateZero.keySet()){
+			// Exract the variable.
+			Variable v = _lpnList[ltContPair.get_lpnIndex()].
+					getContVar(ltContPair.get_ContinuousIndex());
+			
+			// Create a VariableRangePair.
+			VariableRangePair vrp = new VariableRangePair(v, newRateZero.get(ltContPair));
+			
+			// Add the value to the map.
+			newZone._rateZeroContinuous.put(ltContPair, vrp);
+		}
+		
+		// Added the indecies for the non-zero rate continuous variables to the
+		// _indexToTimer array.
+		// Start with the values already in the old array.
+		int index = 1; // Index for the next continuous index object.
+		for(int i=1; _indexToTimerPair[i] instanceof LPNContinuousPair; i++){
+			// Check that the value should not be removed.
+			if(newRateZero.containsKey(((LPNContinuousPair) _indexToTimerPair[i]))){
+				continue;
+			}
+			
+			newZone._indexToTimerPair[index++] = _indexToTimerPair[i];
+		}
 	}
 	
 	/**
@@ -3925,7 +4038,8 @@ public class Zone{
 	 * @param newContValues
 	 * 		The new values of the continuous variables.
 	 */
-	public void updateContinuousAssignment(HashMap<LPNContinuousPair, IntervalPair> newContValues){
+//	public void updateContinuousAssignment(HashMap<LPNContinuousPair, IntervalPair> newContValues){
+	public void updateContinuousAssignment(ArrayList<HashMap<LPNContinuousPair, IntervalPair>> newAssignValues){
 		
 		/*
 		 * In dealing with the rates and continuous variables, there are four cases to consider. These cases
@@ -3934,10 +4048,13 @@ public class Zone{
 		 * 1. old rate is non-zero, new rate is non-zero.
 		 * 		Get the LPNContinuousPair from the _indexToTimerPair and change the value.
 		 * 2. old rate is non-zero, new rate is zero.
+		 * 		Add the variable with its upper and lower bounds to _rateZeroContinuous.
+		 * 3. old rate is zero, new rate is zero.
 		 * 		
-		 * 3. 
-		 * 4. 
+		 * 4. old rate is zero, new rate is non-zero.
 		 */
+		
+		
 		
 		
 //		for(Entry<LPNContinuousPair, IntervalPair> pair : newContValues.entrySet()){
