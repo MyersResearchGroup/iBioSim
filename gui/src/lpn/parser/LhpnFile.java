@@ -2455,6 +2455,10 @@ public class LhpnFile {
 		findInequalityNodes(ET.getRightChild(), operators, nodes);
 	}
 	
+	public int getTotalNumberOfContVars(){
+		return continuous.size();
+	}
+	
 	private static final String PROPERTY = "#@\\.property ([^@]*)\\n";
 
 	private static final String INPUT = "\\.inputs([[\\s[^\\n]]\\w+]*?)\\n";
