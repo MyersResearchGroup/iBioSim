@@ -2375,11 +2375,12 @@ public class Zone{
 		// total number of transistors 
 		// + number of non-zero rate continuous variables previously in the zone
 		// + number of zero rate continuous variables that now have non-zero
-		// - number of non-zero rate continuous variables that are now zero.
+		// - number of non-zero rate continuous variables that are now zero
+		// + 1 for the zero timer.
 		
 		int newSize = enabledTran.size()
 				+ numberNonZero + newAssignValues.get(NEW_NON_ZERO).size()
-				- newAssignValues.get(NEW_ZERO).size();
+				- newAssignValues.get(NEW_ZERO).size() + 1;
 		
 		// Create the timer array.
 		newZone._indexToTimerPair = new LPNTransitionPair[newSize];
