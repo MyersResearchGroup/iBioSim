@@ -70,44 +70,6 @@ import verification.platu.stategraph.State;
 public class Zone{
 	
 	/*Abstraction Function : 
-	* The difference bound matrix is represented by int[][].
-	*
-	* In order to keep track of the upper and lower bounds of timers from when they are first
-	* enabled, the matrix will be augmented by a row and a column. The first row will contain
-	* the upper bounds and the first column will contain the negative of the lower bounds.
-	* For one timer t1 that is between 2 and 3, we might have
-	*    lb t0 t1
-	* ub  x  0  3
-	* t0  0  m  m
-	* t1  -2 m  m
-	* where x is not important (and will be given a zero value), 3 is the upper bound on t1
-	* and -2 is the negative of the lower bound. The m values represent the actual difference
-	* bound matrix. They are stored according to tj-ti <= mij.
-	* Also note that the column heading are not part of the stored representation
-	* lb stands for lower bound while ub stands for upper bound.
-	* This upper and lower bound information is called the Delay for a Transition object.
-	* Since a timer is tied directly to a Transition, the timers are index by the corresponding
-	* Transition's index in the LPN.
-	* The timers are named by an integer referred to as the index. The _indexToTimer array
-	* connects the index in the DBM sub-matrix to the index of the timer. It does this
-	* via the use of LPNTransitionPair objects. These objects store the index of the LPN
-	* the transition is from as well as the index of the transition in that LPN.
-	* 
-	* The zone also stores the continuous variables. Continuous variables are
-	* referenced by an LPNContinuousPair that stores the index of the LPN
-	* that the continuous variable is apart of as well as the index of the 
-	* continuous variable. The current rate of the continuous variable is
-	* also stored in the LPNContinuousPair. When the rate of the continuous
-	* variable is zero, it is stored in the _rateZeroContinuous member field along
-	* with a VariableRangePair that gives the range of the continuous variable.
-	* When the rate is nonzero, the continuous variable is store in the DBM.
-	* A continuous variable is stored in the zone in the same way. The current
-	* upper bounds are stored in the zeroth row and the negative of the current
-	* lower bounds are stored in the zeroth column of the DBM. The upper and
-	* lower bounds of the rate are stored in the ub and lb columns (where the 
-	* upper and lower bounds of the timers are stored).
-	* 
-	* 
 	* The difference bound matrix is stored in the _matrix member field, along with 
 	* the upper and lower bounds of the timers and rates for continuous variables.
 	* The upper and lower bounds are stored when the timer becomes enabled. The upper and
@@ -130,7 +92,26 @@ public class Zone{
 	* the DBM.
 	* 
 	* For the most part, a timer or a continuous variable is referred to internally by an
-	* LPNTransitionPair. Given a timer associated with a Transition t, 
+	* LPNTransitionPair. An LPNTransitionPair combines the index of the transition (or
+	* continuous variable) with the index of the LPN that the transition (or continuous 
+	* variables) is a member of. Both continuous variables and transitions can be referred
+	* to by an LPNTransitionPair; however, it is better to use an LPNContinuousPair (which
+	* is inherited from the LPNTransitionPair) to refer to continuous variables.
+	* LPNContinuousPairs are used to distinguish continuous variables from transitions. They 
+	* also store the current rate of the continuous variable. 
+	* 
+	* The LPNTransitionPairs are stored in the _indexToTimerPair member field. The row/column
+	* in the DBM for a transition is determined by the its position in this array. For example,
+	* suppose a transition t has an LPNTransitionPair ltTranPair that is the third element of
+	* the _indexToTimerPair. Then t will be the third column/row of the DBM.
+	* 
+	* Continuous variables are handled slightly differently. The LPNContinuousPair for the 
+	* continuous variables with a non-zero rate are stored in the _indexToTimerPair just as 
+	* with the transitions. And just like with the transitions, the index in the DBM is
+	* determined by the index of the LPNContinuousPair in the _indexToTimerPair. However,
+	* rate zero continuous variables are stored in the _rateZeroContinuous member variable.
+	* The _rateZerContinuous pairs an LPNContinuousPair with a VariableRangePair. The
+	* VariableRangePair combines the variable with its upper and lower bound.
 	* 
 	*/ 
 	
