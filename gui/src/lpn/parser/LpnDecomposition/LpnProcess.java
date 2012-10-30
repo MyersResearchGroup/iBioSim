@@ -19,9 +19,11 @@ public class LpnProcess extends LhpnFile {
 	private ArrayList<Variable> processOutput = new ArrayList<Variable>();
 	private ArrayList<Variable> processInternal = new ArrayList<Variable>();
 	private int id;
+	private boolean noBranchFlag;
 	
 	public LpnProcess(Integer procId) {
 		id = procId;
+		noBranchFlag = true;
 	}
 	
 	public int getProcessId() {
@@ -357,6 +359,14 @@ public class LpnProcess extends LhpnFile {
 			lpnProc.addInternal(var.getName(), var.getType(), var.getInitValue());
 		}
 		return lpnProc;
+	}
+
+	public void setNoBranchFlag(boolean noBranch) {
+		noBranchFlag = noBranch;		
+	}
+	
+	public boolean getNoBranchFlag() {
+		return noBranchFlag;
 	}
 	
 }
