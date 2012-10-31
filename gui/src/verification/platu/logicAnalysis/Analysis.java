@@ -13,8 +13,11 @@ import java.util.Stack;
 
 import javax.swing.JOptionPane;
 
+import lpn.parser.Abstraction;
 import lpn.parser.LhpnFile;
+import lpn.parser.Place;
 import lpn.parser.Transition;
+import lpn.parser.LpnDecomposition.LpnProcess;
 import main.Gui;
 import verification.platu.MDD.MDT;
 import verification.platu.MDD.Mdd;
@@ -207,15 +210,14 @@ public class Analysis {
 		
 		PrjState stateStackTop = initPrjState;
 		if (Options.getDebugMode()) {
-			System.out.println("%%%%%%% stateStackTop %%%%%%%%");
-			printStateArray(stateStackTop.toStateArray());
+//			System.out.println("%%%%%%% stateStackTop %%%%%%%%");
+//			printStateArray(stateStackTop.toStateArray());
 		}
-		stateStack.add(stateStackTop);
-		
+		stateStack.add(stateStackTop);		
 		constructDstLpnList(sgList);
-		if (Options.getDebugMode())
-			printDstLpnList(sgList);
-		
+		if (Options.getDebugMode()) {
+//			printDstLpnList(sgList);
+		}		
 		boolean init = true;
 		LpnTranList initEnabled;
 		if(!Options.getTimingAnalysisFlag()){ // Timing Change.
@@ -232,15 +234,17 @@ public class Analysis {
 		curIndexStack.push(0);
 		init = false;
 		if (Options.getDebugMode()) {
-			System.out.println("call getEnabled on initStateArray at 0: ");
-			System.out.println("+++++++ Push trans onto lpnTranStack ++++++++");
-			printTransitionSet(initEnabled, "");
+//			System.out.println("call getEnabled on initStateArray at 0: ");
+//			System.out.println("+++++++ Push trans onto lpnTranStack ++++++++");
+//			printTransitionSet(initEnabled, "");
 		}
 		boolean memExceedsLimit = false;
 		
 		main_while_loop: while (failure == false && stateStack.size() != 0) {
-			if (Options.getDebugMode())
-				System.out.println("$$$$$$$$$$$ loop begins $$$$$$$$$$");
+			if (Options.getDebugMode()) {
+//				System.out.println("$$$$$$$$$$$ loop begins $$$$$$$$$$");
+			}
+				
 			long curTotalMem = Runtime.getRuntime().totalMemory();
 			long curUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 
@@ -278,10 +282,10 @@ public class Analysis {
 				return null;
 			}
 			if (Options.getDebugMode()) {
-				System.out.println("------- curStateArray ----------");
-				printStateArray(curStateArray);
-				System.out.println("+++++++ curEnabled trans ++++++++");
-				printTransLinkedList(curEnabled);
+//				System.out.println("------- curStateArray ----------");
+//				printStateArray(curStateArray);
+//				System.out.println("+++++++ curEnabled trans ++++++++");
+//				printTransLinkedList(curEnabled);
 			}
 			
 			// If all enabled transitions of the current LPN are considered,
@@ -292,9 +296,9 @@ public class Analysis {
 			if (curEnabled.size() == 0) {
 				lpnTranStack.pop();
 				if (Options.getDebugMode()) {
-					System.out.println("+++++++ Pop trans off lpnTranStack ++++++++");
-					System.out.println("####### lpnTranStack #########");
-					printLpnTranStack(lpnTranStack);
+//					System.out.println("+++++++ Pop trans off lpnTranStack ++++++++");
+//					System.out.println("####### lpnTranStack #########");
+//					printLpnTranStack(lpnTranStack);
 				}
 				curIndexStack.pop();
 				curIndex++;
@@ -310,13 +314,14 @@ public class Analysis {
 					}
 					if (curEnabled.size() > 0) {
 						if (Options.getDebugMode()) {
-							System.out.println("+++++++ Push trans onto lpnTranStack ++++++++");
-							printTransLinkedList(curEnabled);
+//							System.out.println("+++++++ Push trans onto lpnTranStack ++++++++");
+//							printTransLinkedList(curEnabled);
 						}				
 						lpnTranStack.push(curEnabled);
 						curIndexStack.push(curIndex);
-						if (Options.getDebugMode())
-							printIntegerStack("curIndexStack after push 1", curIndexStack);
+						if (Options.getDebugMode()) {
+							//printIntegerStack("curIndexStack after push 1", curIndexStack);
+						}
 						break;
 					} 					
 					curIndex++;
@@ -325,8 +330,8 @@ public class Analysis {
 			if (curIndex == numLpns) {
 //				prjStateSet.add(stateStackTop);
 				if (Options.getDebugMode()) {
-					System.out.println("%%%%%%% Remove stateStackTop from stateStack %%%%%%%%");
-					printStateArray(stateStackTop.toStateArray());
+//					System.out.println("%%%%%%% Remove stateStackTop from stateStack %%%%%%%%");
+//					printStateArray(stateStackTop.toStateArray());
 				}
 				stateStack.remove(stateStackTop);
 				stateStackTop = stateStackTop.getFather();
@@ -335,9 +340,9 @@ public class Analysis {
 
 			Transition firedTran = curEnabled.removeLast();	
 			if (Options.getDebugMode()) {
-				System.out.println("###################");			
-				System.out.println("Fired transition: " + firedTran.getLpn().getLabel() + "(" + firedTran.getName() + ")");
-				System.out.println("###################");
+//				System.out.println("###################");			
+//				System.out.println("Fired transition: " + firedTran.getLpn().getLabel() + "(" + firedTran.getName() + ")");
+//				System.out.println("###################");
 			}
 			
 			State[] nextStateArray;
@@ -411,20 +416,20 @@ public class Analysis {
 				nextPrjState.setFather(stateStackTop);
 				if (Options.getOutputSgFlag()) {
 					if (Options.getDebugMode()) {
-						System.out.println("******* curStateArray *******");
-						printStateArray(curStateArray);
-						System.out.println("******* nextStateArray *******");
-						printStateArray(nextStateArray);			
-						System.out.println("stateStackTop: ");
-						printStateArray(stateStackTop.toStateArray());
-						System.out.println("firedTran = " + firedTran.getName());
-						System.out.println("***nextStateMap for stateStackTop before firedTran being added: ");
-						printNextStateMap(stateStackTop.getNextStateMap());
+//						System.out.println("******* curStateArray *******");
+//						printStateArray(curStateArray);
+//						System.out.println("******* nextStateArray *******");
+//						printStateArray(nextStateArray);			
+//						System.out.println("stateStackTop: ");
+//						printStateArray(stateStackTop.toStateArray());
+//						System.out.println("firedTran = " + firedTran.getName());
+//						System.out.println("***nextStateMap for stateStackTop before firedTran being added: ");
+//						printNextStateMap(stateStackTop.getNextStateMap());
 					}
 					stateStackTop.setTranOut(firedTran, nextPrjState);
 					if (Options.getDebugMode()) {
-						System.out.println("***nextStateMap for stateStackTop after firedTran being added: ");
-						printNextStateMap(stateStackTop.getNextStateMap());
+//						System.out.println("***nextStateMap for stateStackTop after firedTran being added: ");
+//						printNextStateMap(stateStackTop.getNextStateMap());
 					}
 					for (PrjState prjState : prjStateSet) {
 						if (prjState.equals(stateStackTop)) {
@@ -439,18 +444,18 @@ public class Analysis {
 				}
 				stateStackTop = nextPrjState;
 				if (Options.getDebugMode()) {
-					System.out.println("%%%%%%% Add global state to stateStack %%%%%%%%");
-					printStateArray(stateStackTop.toStateArray());
+//					System.out.println("%%%%%%% Add global state to stateStack %%%%%%%%");
+//					printStateArray(stateStackTop.toStateArray());
 				}
 				stateStack.add(stateStackTop);
 				if (Options.getDebugMode()) {
-					System.out.println("+++++++ Push trans onto lpnTranStack ++++++++");
-					printTransitionSet((LpnTranList) nextEnabledArray[0], "");
+//					System.out.println("+++++++ Push trans onto lpnTranStack ++++++++");
+//					printTransitionSet((LpnTranList) nextEnabledArray[0], "");
 				}				
 				lpnTranStack.push((LpnTranList) nextEnabledArray[0].clone());
 				if (Options.getDebugMode()) {
-					System.out.println("******** lpnTranStack ***********");
-					printLpnTranStack(lpnTranStack);
+//					System.out.println("******** lpnTranStack ***********");
+//					printLpnTranStack(lpnTranStack);
 				}
 				curIndexStack.push(0);
 				totalStates++;
@@ -458,10 +463,10 @@ public class Analysis {
 			else {
 				if (Options.getOutputSgFlag()) {
 					if (Options.getDebugMode()) {
-						System.out.println("******* curStateArray *******");
-						printStateArray(curStateArray);
-						System.out.println("******* nextStateArray *******");
-						printStateArray(nextStateArray);
+//						System.out.println("******* curStateArray *******");
+//						printStateArray(curStateArray);
+//						System.out.println("******* nextStateArray *******");
+//						printStateArray(nextStateArray);
 					}		
 					for (PrjState prjState : prjStateSet) {
 						if (prjState.equals(nextPrjState)) {
@@ -469,23 +474,23 @@ public class Analysis {
 						}							
 					}
 					if (Options.getDebugMode()) {
-						System.out.println("stateStackTop: ");
-						printStateArray(stateStackTop.toStateArray());
-						System.out.println("firedTran = " + firedTran.getName());
-						System.out.println("nextStateMap for stateStackTop before firedTran being added: ");
-						printNextStateMap(stateStackTop.getNextStateMap());
+//						System.out.println("stateStackTop: ");
+//						printStateArray(stateStackTop.toStateArray());
+//						System.out.println("firedTran = " + firedTran.getName());
+//						System.out.println("nextStateMap for stateStackTop before firedTran being added: ");
+//						printNextStateMap(stateStackTop.getNextStateMap());
 					}
 					stateStackTop.setTranOut(firedTran, nextPrjState);
 					if (Options.getDebugMode()) {
-						System.out.println("***nextStateMap for stateStackTop after firedTran being added: ");
-						printNextStateMap(stateStackTop.getNextStateMap());
+//						System.out.println("***nextStateMap for stateStackTop after firedTran being added: ");
+//						printNextStateMap(stateStackTop.getNextStateMap());
 					}
 					for (PrjState prjState : prjStateSet) {
 						if (prjState == stateStackTop) { 
 							prjState.setNextStateMap((HashMap<Transition, PrjState>) stateStackTop.getNextStateMap().clone());
 							if (Options.getDebugMode()) {
-								System.out.println("***nextStateMap for prjState: ");
-								printNextStateMap(prjState.getNextStateMap());
+//								System.out.println("***nextStateMap for prjState: ");
+//								printNextStateMap(prjState.getNextStateMap());
 							}						
 						}
 					}
@@ -513,7 +518,7 @@ public class Analysis {
 		for (Transition tran : curEnabled) {
 			if (tran.isFail()) {
 				JOptionPane.showMessageDialog(Gui.frame,
-						"Failure transition " + tran.getName() + "is enabled.", "Error",
+						"Failure transition " + tran.getName() + " is enabled.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 				failureTranIsEnabled = true;
 				break;
@@ -621,18 +626,67 @@ public class Analysis {
 		}	
 	}
 	
-/*
-	private void drawDependencyGraphsForNecessarySets(LhpnFile[] lpnList,
+	private void drawDependencyGraphs(LhpnFile[] lpnList,
 			HashMap<LpnTransitionPair, StaticSets> staticSetsMap) {
-		String fileName = Options.getPrjSgPath() + "_necessarySet.dot";
+		String fileName = Options.getPrjSgPath() + "dependencyGraph.dot";
 		BufferedWriter out;
 		try {
 			out = new BufferedWriter(new FileWriter(fileName));
 			out.write("digraph G {\n");
-			for (LpnTransitionPair seedTran : staticSetsMap.keySet()) {
-				for (LpnTransitionPair canEnableTran : staticSetsMap.get(seedTran).getEnableSet()) {
-					
+			for (LpnTransitionPair curTran : staticSetsMap.keySet()) {
+				String curTranStr = lpnList[curTran.getLpnIndex()].getLabel() 
+						+ "_" + lpnList[curTran.getLpnIndex()].getTransition(curTran.getTranIndex()).getName(); 
+				out.write(curTranStr + "[shape=\"box\"];");
+				out.newLine();
+			}
+			for (LpnTransitionPair curTran : staticSetsMap.keySet()) {
+				StaticSets curStaticSets = staticSetsMap.get(curTran);
+				String curTranStr = lpnList[curTran.getLpnIndex()].getLabel() 
+						+ "_" + lpnList[curTran.getLpnIndex()].getTransition(curTran.getTranIndex()).getName();
+				for (LpnTransitionPair curTranInDisable : curStaticSets.getOtherTransDisableCurTranSet()) {
+					String curTranInDisableStr = lpnList[curTranInDisable.getLpnIndex()].getLabel() 
+							+ "_" + lpnList[curTranInDisable.getLpnIndex()].getTransition(curTranInDisable.getTranIndex()).getName();
+					out.write(curTranInDisableStr + "->" + curTranStr + "[color=\"chocolate\"];");
+					out.newLine();
 				}
+//				for (LpnTransitionPair curTranInDisable : curStaticSets.getCurTranDisableOtherTransSet()) {
+//					String curTranInDisableStr = lpnList[curTranInDisable.getLpnIndex()].getLabel() 
+//							+ "_" + lpnList[curTranInDisable.getLpnIndex()].getTransition(curTranInDisable.getTranIndex()).getName();
+//					out.write(curTranStr + "->" + curTranInDisableStr + "[color=\"chocolate\"];");	
+//					out.newLine();				
+//				}
+//				for (LpnTransitionPair curTranInDisable : curStaticSets.getDisableSet()) {
+//					String curTranInDisableStr = lpnList[curTranInDisable.getLpnIndex()].getLabel() 
+//							+ "_" + lpnList[curTranInDisable.getLpnIndex()].getTransition(curTranInDisable.getTranIndex()).getName();
+//					out.write(curTranStr + "->" + curTranInDisableStr + "[color=\"blue\"];");
+//					out.newLine();
+//				}
+				HashSet<LpnTransitionPair> enableByBringingToken = new HashSet<LpnTransitionPair>();
+				Transition curTransition = lpnList[curTran.getLpnIndex()].getTransition(curTran.getTranIndex());
+				for (Place p : curTransition.getPreset()) {
+					for (Transition presetTran : p.getPreset()) {
+						int lpnIndex = presetTran.getLpn().getLpnIndex();
+						enableByBringingToken.add(new LpnTransitionPair(lpnIndex, presetTran.getIndex()));
+					}
+				}
+				for (LpnTransitionPair curTranInCanEnable : enableByBringingToken) {
+					String curTranInCanEnableStr = lpnList[curTranInCanEnable.getLpnIndex()].getLabel() 
+							+ "_" + lpnList[curTranInCanEnable.getLpnIndex()].getTransition(curTranInCanEnable.getTranIndex()).getName();
+					//out.write(curTranInCanEnableStr +  "->" + curTranStr + "[color=\"mediumaquamarine\"];");
+					out.write(curTranStr + "->" + curTranInCanEnableStr + "[color=\"mediumaquamarine\"];");
+					out.newLine();
+				}
+				for (LpnTransitionPair curTranInCanEnable : curStaticSets.getCanEnableSet()) {
+					String curTranInCanEnableStr = lpnList[curTranInCanEnable.getLpnIndex()].getLabel() 
+							+ "_" + lpnList[curTranInCanEnable.getLpnIndex()].getTransition(curTranInCanEnable.getTranIndex()).getName();
+					//out.write(curTranInCanEnableStr + "->" + curTranStr + "[color=\"deepskyblue\"];");
+					out.write(curTranStr + "->" + curTranInCanEnableStr + "[color=\"deepskyblue\"];");
+					out.newLine();
+				}
+				
+
+
+				
 			}
 			out.write("}");
 			out.close();
@@ -640,7 +694,7 @@ public class Analysis {
 			e.printStackTrace();
 		}				
 	}
-*/
+
 	
 	private String intArrayToString(String type, State curState) {
 		String arrayStr = "";
@@ -774,34 +828,76 @@ public class Analysis {
 		
 		PrjState stateStackTop = initPrjState;
 		if (Options.getDebugMode()) {
-			System.out.println("%%%%%%% stateStackTop %%%%%%%%");
-			printStateArray(stateStackTop.toStateArray());
+//			System.out.println("%%%%%%% stateStackTop %%%%%%%%");
+//			printStateArray(stateStackTop.toStateArray());
 		}
 		stateStack.add(stateStackTop);
 		constructDstLpnList(sgList);
 		if (Options.getDebugMode()) {
-			printDstLpnList(sgList);
+//			printDstLpnList(sgList);
 			createPORDebugFile();
 		}			
 		
 		// Find static pieces for POR. 
 		HashMap<Integer, Transition[]> allTransitions = new HashMap<Integer, Transition[]>(lpnList.length); 
 		HashMap<LpnTransitionPair, StaticSets> staticSetsMap = new HashMap<LpnTransitionPair, StaticSets>();
-		for (int i=0; i<lpnList.length; i++)
-			allTransitions.put(i, lpnList[i].getAllTransitions());
+		HashMap<Transition, Integer> allProcessTransInOneLpn = new HashMap<Transition, Integer>();
+		HashMap<Transition, LpnProcess> allTransitionsToLpnProcesses = new HashMap<Transition, LpnProcess>();
+		for (int lpnIndex=0; lpnIndex<lpnList.length; lpnIndex++) {
+			allTransitions.put(lpnIndex, lpnList[lpnIndex].getAllTransitions());
+			// create an Abstraction object to get all processes in one LPN
+			Abstraction abs = new Abstraction(lpnList[lpnIndex]);
+			abs.decomposeLpnIntoProcesses();				 
+			allProcessTransInOneLpn = (HashMap<Transition, Integer>)abs.getTransWithProcIDs();
+			HashMap<Integer, LpnProcess> processMapForOneLpn = new HashMap<Integer, LpnProcess>();
+			for (Transition curTran: allProcessTransInOneLpn.keySet()) {
+				Integer procId = allProcessTransInOneLpn.get(curTran);
+				if (!processMapForOneLpn.containsKey(procId)) {
+					LpnProcess newProcess = new LpnProcess(procId);
+					newProcess.addTranToProcess(curTran);
+					if (curTran.getPreset() != null) {
+						if (newProcess.getNoBranchFlag() && (curTran.getPreset().length > 1)) {
+							newProcess.setNoBranchFlag(false);
+						}
+						Place[] preset = curTran.getPreset();
+						for (Place p : preset) {
+							newProcess.addPlaceToProcess(p);
+						}
+					}
+					processMapForOneLpn.put(procId, newProcess);
+					allTransitionsToLpnProcesses.put(curTran, newProcess);
+				}
+				else {
+					LpnProcess curProcess = processMapForOneLpn.get(procId);
+					curProcess.addTranToProcess(curTran);
+					if (curTran.getPreset() != null) {
+						if (curProcess.getNoBranchFlag() && (curTran.getPreset().length > 1)) {
+							curProcess.setNoBranchFlag(false);
+						}
+						Place[] preset = curTran.getPreset();
+						for (Place p : preset) {
+							curProcess.addPlaceToProcess(p);
+						}
+					}
+					allTransitionsToLpnProcesses.put(curTran, curProcess);
+				}
+			}
+		}		
 		HashMap<LpnTransitionPair, Integer> tranFiringFreq = new HashMap<LpnTransitionPair, Integer>(allTransitions.keySet().size());
 		for (int lpnIndex=0; lpnIndex<lpnList.length; lpnIndex++) {
-			if (Options.getDebugMode())
-				System.out.println("LPN = " + lpnList[lpnIndex].getLabel());
+			if (Options.getDebugMode()) {
+//				System.out.println("LPN = " + lpnList[lpnIndex].getLabel());
+			}
 			for (Transition curTran: allTransitions.get(lpnIndex)) {
 				StaticSets curStatic = new StaticSets(curTran, allTransitions);
 				curStatic.buildCurTranDisableOtherTransSet(lpnIndex);
 				if (Options.getPORdeadlockPreserve())
-					curStatic.buildOtherTransDisableCurTranSet(lpnIndex);
-				curStatic.buildModifyAssignSet();
+					curStatic.buildOtherTransDisableCurTranSet(lpnIndex, allTransitionsToLpnProcesses);
+				else {
+					//curStatic.buildModifyAssignSet();
+					curStatic.buildModifyAssignSet(allTransitionsToLpnProcesses);
+				}
 				curStatic.buildEnableBySettingEnablingTrue();
-//				if (Options.getDebugMode())
-//					curStatic.buildEnableByBringingToken();
 				LpnTransitionPair lpnTranPair = new LpnTransitionPair(lpnIndex,curTran.getIndex());
 				staticSetsMap.put(lpnTranPair, curStatic);
 				//if (!Options.getNecessaryUsingDependencyGraphs()) 
@@ -809,24 +905,25 @@ public class Analysis {
 			}			
 		}
 		if (Options.getDebugMode()) {
-			printStaticSetsMap(lpnList, staticSetsMap);
+//			printStaticSetsMap(lpnList, staticSetsMap);
 			writeStaticSetsMapToPORDebugFile(lpnList, staticSetsMap);
-//			if (Options.getNecessaryUsingDependencyGraphs())
-//				drawDependencyGraphsForNecessarySets(lpnList, staticSetsMap);
 		}
 			
 		boolean init = true;
 		LpnTranList initAmpleTrans = new LpnTranList();
-		if (Options.getDebugMode())
-			System.out.println("call getAmple on curStateArray at 0: ");
+		if (Options.getDebugMode()) {
+//			System.out.println("call getAmple on curStateArray at 0: ");
+		}			
 //		if (Options.getNecessaryUsingDependencyGraphs()) 
 //			tranFiringFreq = null;
 		initAmpleTrans = getAmple(initStateArray, null, staticSetsMap, init, tranFiringFreq, sgList, stateStack, stateStackTop);
 		lpnTranStack.push(initAmpleTrans);
 		init = false;
 		if (Options.getDebugMode()) {
-			System.out.println("+++++++ Push trans onto lpnTranStack @ 1++++++++");
-			printTransitionSet(initAmpleTrans, "");
+//			System.out.println("+++++++ Push trans onto lpnTranStack @ 1++++++++");
+//			printTransitionSet(initAmpleTrans, "");
+			if (Options.getNecessaryUsingDependencyGraphs())
+				drawDependencyGraphs(lpnList, staticSetsMap);
 		}		
 		HashSet<LpnTransitionPair> initAmple = new HashSet<LpnTransitionPair>();
 		for (Transition t: initAmpleTrans) {
@@ -837,8 +934,8 @@ public class Analysis {
 		boolean memExceedsLimit = false;
 		main_while_loop: while (failure == false && stateStack.size() != 0) {
 			if (Options.getDebugMode()) {
-				System.out.println("~~~~~~~~~~~ loop begins ~~~~~~~~~~~");
-				writeStringWithNewLineToPORDebugFile("~~~~~~~~~~~ loop begins ~~~~~~~~~~~");
+//				System.out.println("~~~~~~~~~~~ loop begins ~~~~~~~~~~~");
+				writeStringWithEndOfLineToPORDebugFile("~~~~~~~~~~~ loop begins ~~~~~~~~~~~");
 			}
 			long curTotalMem = Runtime.getRuntime().totalMemory();
 			long curUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
@@ -878,14 +975,14 @@ public class Analysis {
 				lpnTranStack.pop();
 				prjStateSet.add(stateStackTop);
 				if (Options.getDebugMode()) {
-					System.out.println("+++++++ Pop trans off lpnTranStack ++++++++");
-					System.out.println("####### lpnTranStack #########");
-					printLpnTranStack(lpnTranStack);
-//					System.out.println("####### stateStack #########");
-//					printStateStack(stateStack);
-					System.out.println("####### prjStateSet #########");
-					printPrjStateSet(prjStateSet);
-					System.out.println("%%%%%%% Remove stateStackTop from stateStack %%%%%%%%");
+//					System.out.println("+++++++ Pop trans off lpnTranStack ++++++++");
+//					System.out.println("####### lpnTranStack #########");
+//					printLpnTranStack(lpnTranStack);
+////					System.out.println("####### stateStack #########");
+////					printStateStack(stateStack);
+//					System.out.println("####### prjStateSet #########");
+//					printPrjStateSet(prjStateSet);
+//					System.out.println("%%%%%%% Remove stateStackTop from stateStack %%%%%%%%");
 				}
 				stateStack.remove(stateStackTop);
 				stateStackTop = stateStackTop.getFather();
@@ -894,12 +991,12 @@ public class Analysis {
 
 			Transition firedTran = curAmpleTrans.removeLast();	
 			if (Options.getDebugMode()) {
-				System.out.println("#################################");
-				System.out.println("Fired Transition: " + firedTran.getLpn().getLabel() + "(" + firedTran.getName() + ")");
-				System.out.println("#################################");
-				writeStringWithNewLineToPORDebugFile("#################################");
-				writeStringWithNewLineToPORDebugFile("Fired Transition: " + firedTran.getLpn().getLabel() + "(" + firedTran.getName() + ")");
-				writeStringWithNewLineToPORDebugFile("#################################");
+//				System.out.println("#################################");
+//				System.out.println("Fired Transition: " + firedTran.getLpn().getLabel() + "(" + firedTran.getName() + ")");
+//				System.out.println("#################################");
+				writeStringWithEndOfLineToPORDebugFile("#################################");
+				writeStringWithEndOfLineToPORDebugFile("Fired Transition: " + firedTran.getLpn().getLabel() + "(" + firedTran.getName() + ")");
+				writeStringWithEndOfLineToPORDebugFile("#################################");
 			}
 			
 			LpnTransitionPair firedLpnTranPair = new LpnTransitionPair(firedTran.getLpn().getLpnIndex(), firedTran.getIndex());
@@ -907,8 +1004,8 @@ public class Analysis {
 				Integer freq = tranFiringFreq.get(firedLpnTranPair) + 1;
 				tranFiringFreq.put(firedLpnTranPair, freq);
 				if (Options.getDebugMode()) {
-					System.out.println("~~~~~~tranFiringFreq~~~~~~~");
-					printHashMap(tranFiringFreq, sgList);
+//					System.out.println("~~~~~~tranFiringFreq~~~~~~~");
+//					printHashMap(tranFiringFreq, sgList);
 				}
 //			}
 			
@@ -946,31 +1043,32 @@ public class Analysis {
 			Boolean existingState = prjStateSet.contains(nextPrjState) || stateStack.contains(nextPrjState);
 						
 			if (existingState == false) {
-				if (Options.getDebugMode()) 
-					System.out.println("%%%%%%% existingSate == false %%%%%%%%");				
+				if (Options.getDebugMode()) {
+//					System.out.println("%%%%%%% existingSate == false %%%%%%%%");				
+				}
 				if (Options.getOutputSgFlag()) {
 					if (Options.getDebugMode()) {
-						System.out.println("******* curStateArray *******");
-						printStateArray(curStateArray);
-						System.out.println("******* nextStateArray *******");
-						printStateArray(nextStateArray);			
-						System.out.println("stateStackTop: ");
-						printStateArray(stateStackTop.toStateArray());
-						System.out.println("firedTran = " + firedTran.getName());
-						System.out.println("***nextStateMap for stateStackTop before firedTran being added: ");
-						printNextStateMap(stateStackTop.getNextStateMap());
+//						System.out.println("******* curStateArray *******");
+//						printStateArray(curStateArray);
+//						System.out.println("******* nextStateArray *******");
+//						printStateArray(nextStateArray);			
+//						System.out.println("stateStackTop: ");
+//						printStateArray(stateStackTop.toStateArray());
+//						System.out.println("firedTran = " + firedTran.getName());
+//						System.out.println("***nextStateMap for stateStackTop before firedTran being added: ");
+//						printNextStateMap(stateStackTop.getNextStateMap());
 					}
 					stateStackTop.setTranOut(firedTran, nextPrjState);
 					if (Options.getDebugMode()) {
-						System.out.println("***nextStateMap for stateStackTop after firedTran being added: ");
-						printNextStateMap(stateStackTop.getNextStateMap());
+//						System.out.println("***nextStateMap for stateStackTop after firedTran being added: ");
+//						printNextStateMap(stateStackTop.getNextStateMap());
 					}
 					for (PrjState prjState : prjStateSet) {
 						if (prjState.equals(stateStackTop)) {
 							prjState.setTranOut(firedTran, nextPrjState);
 							if (Options.getDebugMode()) {
-								System.out.println("***nextStateMap for prjState: ");
-								printNextStateMap(prjState.getNextStateMap());
+//								System.out.println("***nextStateMap for prjState: ");
+//								printNextStateMap(prjState.getNextStateMap());
 							}
 						}
 					}
@@ -982,10 +1080,10 @@ public class Analysis {
 				stateStackTop = nextPrjState;
 				stateStack.add(stateStackTop);
 				if (Options.getDebugMode()) {
-					System.out.println("%%%%%%% Add global state to stateStack %%%%%%%%");
-					printStateArray(stateStackTop.toStateArray());
-					System.out.println("+++++++ Push trans onto lpnTranStack @ 2++++++++");
-					printTransitionSet((LpnTranList) nextAmpleTrans, "");
+//					System.out.println("%%%%%%% Add global state to stateStack %%%%%%%%");
+//					printStateArray(stateStackTop.toStateArray());
+//					System.out.println("+++++++ Push trans onto lpnTranStack @ 2++++++++");
+//					printTransitionSet((LpnTranList) nextAmpleTrans, "");
 				}
 				lpnTranStack.push((LpnTranList) nextAmpleTrans.clone());
 				totalStates++;
@@ -993,10 +1091,10 @@ public class Analysis {
 			else {
 				if (Options.getOutputSgFlag()) {
 					if (Options.getDebugMode()) {
-						System.out.println("******* curStateArray *******");
-						printStateArray(curStateArray);
-						System.out.println("******* nextStateArray *******");
-						printStateArray(nextStateArray);
+//						System.out.println("******* curStateArray *******");
+//						printStateArray(curStateArray);
+//						System.out.println("******* nextStateArray *******");
+//						printStateArray(nextStateArray);
 					}
 					for (PrjState prjState : prjStateSet) {
 						if (prjState.equals(nextPrjState)) {
@@ -1004,23 +1102,23 @@ public class Analysis {
 						}							
 					}
 					if (Options.getDebugMode()) {
-						System.out.println("stateStackTop: ");
-						printStateArray(stateStackTop.toStateArray());
-						System.out.println("firedTran = " + firedTran.getName());
-						System.out.println("nextStateMap for stateStackTop before firedTran being added: ");
-						printNextStateMap(stateStackTop.getNextStateMap());
+//						System.out.println("stateStackTop: ");
+//						printStateArray(stateStackTop.toStateArray());
+//						System.out.println("firedTran = " + firedTran.getName());
+//						System.out.println("nextStateMap for stateStackTop before firedTran being added: ");
+//						printNextStateMap(stateStackTop.getNextStateMap());
 					}
 					stateStackTop.setTranOut(firedTran, nextPrjState);
 					if (Options.getDebugMode()) {
-						System.out.println("***nextStateMap for stateStackTop after firedTran being added: ");
-						printNextStateMap(stateStackTop.getNextStateMap());
+//						System.out.println("***nextStateMap for stateStackTop after firedTran being added: ");
+//						printNextStateMap(stateStackTop.getNextStateMap());
 					}
 					for (PrjState prjState : prjStateSet) {
 						if (prjState == stateStackTop) { 
 							prjState.setNextStateMap((HashMap<Transition, PrjState>) stateStackTop.getNextStateMap().clone());
 							if (Options.getDebugMode()) {
-								System.out.println("***nextStateMap for prjState: ");
-								printNextStateMap(prjState.getNextStateMap());
+//								System.out.println("***nextStateMap for prjState: ");
+//								printNextStateMap(prjState.getNextStateMap());
 							}
 						}
 					}
@@ -1029,8 +1127,9 @@ public class Analysis {
 				if (!Options.getCycleClosingMthd().toLowerCase().equals("no_cycleclosing")) {
 					// Cycle closing check
 					if (prjStateSet.contains(nextPrjState) && stateStack.contains(nextPrjState)) {
-						if (Options.getDebugMode()) 
-							System.out.println("%%%%%%% Cycle Closing %%%%%%%%");
+						if (Options.getDebugMode()) {
+//							System.out.println("%%%%%%% Cycle Closing %%%%%%%%");
+						}							
 						HashSet<LpnTransitionPair> nextAmpleSet = new HashSet<LpnTransitionPair>();
 						HashSet<LpnTransitionPair> curAmpleSet = new HashSet<LpnTransitionPair>();
 						for (Transition t : nextAmpleTrans) {
@@ -1053,28 +1152,28 @@ public class Analysis {
 							stateStackTop.setChild(nextPrjState);
 							nextPrjState.setFather(stateStackTop);	
 							if (Options.getDebugMode()) {
-								System.out.println("nextPrjState: ");
-								printStateArray(nextPrjState.toStateArray());
-								System.out.println("nextStateMap for nextPrjState: ");
-								printNextStateMap(nextPrjState.getNextStateMap());		
+//								System.out.println("nextPrjState: ");
+//								printStateArray(nextPrjState.toStateArray());
+//								System.out.println("nextStateMap for nextPrjState: ");
+//								printNextStateMap(nextPrjState.getNextStateMap());		
 							}
 							stateStackTop = nextPrjState;
 							stateStack.add(stateStackTop);
 							if (Options.getDebugMode()) {
-								System.out.println("%%%%%%% Add state to stateStack %%%%%%%%");
-								printStateArray(stateStackTop.toStateArray());
-								System.out.println("stateStackTop: ");
-								printStateArray(stateStackTop.toStateArray());
-								System.out.println("nextStateMap for stateStackTop: ");
-								printNextStateMap(nextPrjState.getNextStateMap());
+//								System.out.println("%%%%%%% Add state to stateStack %%%%%%%%");
+//								printStateArray(stateStackTop.toStateArray());
+//								System.out.println("stateStackTop: ");
+//								printStateArray(stateStackTop.toStateArray());
+//								System.out.println("nextStateMap for stateStackTop: ");
+//								printNextStateMap(nextPrjState.getNextStateMap());
 							}
 							
 							lpnTranStack.push(newNextAmpleTrans.clone());
 							if (Options.getDebugMode()) {
-								System.out.println("+++++++ Push these trans onto lpnTranStack @ Cycle Closing ++++++++");
-								printTransitionSet((LpnTranList) newNextAmpleTrans, "");
-								System.out.println("******* lpnTranStack ***************");
-								printLpnTranStack(lpnTranStack);
+//								System.out.println("+++++++ Push these trans onto lpnTranStack @ Cycle Closing ++++++++");
+//								printTransitionSet((LpnTranList) newNextAmpleTrans, "");
+//								System.out.println("******* lpnTranStack ***************");
+//								printLpnTranStack(lpnTranStack);
 								
 							}
 						}
@@ -1120,7 +1219,7 @@ public class Analysis {
 		}
 	}
 
-	private void writeStringWithNewLineToPORDebugFile(String string) {		
+	private void writeStringWithEndOfLineToPORDebugFile(String string) {		
 		try {
 			PORdebugBufferedWriter.append(string);
 			PORdebugBufferedWriter.newLine();
@@ -1233,29 +1332,32 @@ public class Analysis {
             }
     	}
     		// Cycle closing on global state graph
-    		if (Options.getDebugMode()) 
-    			System.out.println("~~~~~~~ existing global state ~~~~~~~~");
+    		if (Options.getDebugMode()) {
+    			//System.out.println("~~~~~~~ existing global state ~~~~~~~~");
+    		}
     		if (cycleClosingMthd.equals("strong")) {
     			newNextAmple.addAll(getIntSetSubstraction(curEnabled, nextAmple));
     			updateLocalAmpleTbl(newNextAmple, sgList, nextStateArray);
     		}
     		else if (cycleClosingMthd.equals("behavioral")) {
-    			if (Options.getDebugMode()) 
-    				System.out.println("****** behavioral: cycle closing check ********");
+    			if (Options.getDebugMode()) {
+//    				System.out.println("****** behavioral: cycle closing check ********");
+    			}
     			HashSet<LpnTransitionPair> curReduced = getIntSetSubstraction(curEnabled, curAmple);
     			HashSet<LpnTransitionPair> oldNextAmple = new HashSet<LpnTransitionPair>();
     			DependentSetComparator depComp = new DependentSetComparator(tranFiringFreq); 
     			PriorityQueue<DependentSet> dependentSetQueue = new PriorityQueue<DependentSet>(nextEnabled.size(), depComp);
     			// TODO: Is oldNextAmple correctly obtained below?
     			if (Options.getDebugMode()) {
-    				System.out.println("******* nextStateArray *******");
-    				printStateArray(nextStateArray);
+//    				System.out.println("******* nextStateArray *******");
+//    				printStateArray(nextStateArray);
     			}
     			for (int lpnIndex=0; lpnIndex < sgList.length; lpnIndex++) {
     				if (sgList[lpnIndex].getEnabledSetTbl().get(nextStateArray[lpnIndex]) != null) {
     					LpnTranList oldLocalNextAmpleTrans = sgList[lpnIndex].getEnabledSetTbl().get(nextStateArray[lpnIndex]);
-    					if (Options.getDebugMode()) 
-    						printTransitionSet(oldLocalNextAmpleTrans, "oldLocalNextAmpleTrans");
+    					if (Options.getDebugMode()) {
+//    						printTransitionSet(oldLocalNextAmpleTrans, "oldLocalNextAmpleTrans");
+    					}    						
         				for (Transition oldLocalTran : oldLocalNextAmpleTrans)
         					oldNextAmple.add(new LpnTransitionPair(lpnIndex, oldLocalTran.getIndex()));
     				}
@@ -1267,8 +1369,8 @@ public class Analysis {
     				HashSet<LpnTransitionPair> dependent = new HashSet<LpnTransitionPair>();
     				dependent = computeDependent(nextStateArray,seed,dependent,nextEnabled,staticSetsMap, lpnList, isCycleClosingAmpleComputation);
     				if (Options.getDebugMode()) {
-    					printIntegerSet(dependent, sgList, "dependent set for ignored transition " + sgList[seed.getLpnIndex()].getLpn().getLabel() 
-						+ "(" + sgList[seed.getLpnIndex()].getLpn().getTransition(seed.getTranIndex()).getName() + ")");
+//    					printIntegerSet(dependent, sgList, "dependent set for ignored transition " + sgList[seed.getLpnIndex()].getLpn().getLabel() 
+//						+ "(" + sgList[seed.getLpnIndex()].getLpn().getTransition(seed.getTranIndex()).getName() + ")");
     				}
     				// TODO: Is this still necessary?
 //     				boolean dependentOnlyHasDummyTrans = true;
@@ -1297,8 +1399,8 @@ public class Analysis {
         			updateLocalAmpleTbl(newNextAmple, sgList, nextStateArray);
     			}
     			if (Options.getDebugMode()) {
-    				printIntegerSet(newNextAmple, sgList, "newNextAmple");
-    				System.out.println("******** behavioral: end of cycle closing check *****");
+//    				printIntegerSet(newNextAmple, sgList, "newNextAmple");
+//    				System.out.println("******** behavioral: end of cycle closing check *****");
     			}
     		}
     		else if (cycleClosingMthd.equals("state_search")) {
@@ -1323,14 +1425,15 @@ public class Analysis {
 				newLpnTranList.add(tran);
 				sgList[lpnTran.getLpnIndex()].getEnabledSetTbl().put(nextStateArray[lpnTran.getLpnIndex()], newLpnTranList);
 				if (Options.getDebugMode()) {
-					System.out.println("@ updateLocalAmpleTbl: ");
-					System.out.println("Add S" + nextStateArray[lpnTran.getLpnIndex()].getIndex() + " to the enabledSetTbl of " 
-							+ sgList[lpnTran.getLpnIndex()].getLpn().getLabel() + ".");
+//					System.out.println("@ updateLocalAmpleTbl: ");
+//					System.out.println("Add S" + nextStateArray[lpnTran.getLpnIndex()].getIndex() + " to the enabledSetTbl of " 
+//							+ sgList[lpnTran.getLpnIndex()].getLpn().getLabel() + ".");
 				}			
 			}
 		}
-		if (Options.getDebugMode())
-			printEnabledSetTbl(sgList);
+		if (Options.getDebugMode()) {
+//			printEnabledSetTbl(sgList);
+		}
 	}
 
 	private void printPrjStateSet(HashSet<PrjState> prjStateSet) {
@@ -1803,12 +1906,12 @@ public class Analysis {
    		
         HashSet<LpnTransitionPair> ready = new HashSet<LpnTransitionPair>();
         if (Options.getDebugMode()) {
-	        System.out.println("******** Partial Order Reduction ************");
-	      	printIntegerSet(curEnabled, sgList, "Enabled set");
-	      	System.out.println("******* Begin POR");
-	      	writeStringWithNewLineToPORDebugFile("******* Partial Order Reduction *******");
+//	        System.out.println("******** Partial Order Reduction ************");
+//	      	printIntegerSet(curEnabled, sgList, "Enabled set");
+//	      	System.out.println("******* Begin POR");
+	      	writeStringWithEndOfLineToPORDebugFile("******* Partial Order Reduction *******");
 	      	writeIntegerSetToPORDebugFile(curEnabled, sgList, "Enabled set");
-	      	writeStringWithNewLineToPORDebugFile("******* Begin POR *******");
+	      	writeStringWithEndOfLineToPORDebugFile("******* Begin POR *******");
         }
         if (curEnabled.isEmpty()) {
         	return ample;
@@ -1818,12 +1921,12 @@ public class Analysis {
 //        else
         ready = partialOrderReduction(stateArray, curEnabled, staticSetsMap, tranFiringFreq, sgList);
     	if (Options.getDebugMode()) {
-	    	System.out.println("******* End POR *******");
-	    	printIntegerSet(ready, sgList, "Ready set");
-	    	System.out.println("********************");
-	    	writeStringWithNewLineToPORDebugFile("******* End POR *******");
+//	    	System.out.println("******* End POR *******");
+//	    	printIntegerSet(ready, sgList, "Ready set");
+//	    	System.out.println("********************");
+	    	writeStringWithEndOfLineToPORDebugFile("******* End POR *******");
 	    	writeIntegerSetToPORDebugFile(ready, sgList, "Ready set");
-	    	writeStringWithNewLineToPORDebugFile("********************");
+	    	writeStringWithEndOfLineToPORDebugFile("********************");
     	}
 		// ************* Priority: tran fired less times first *************
     	//if (tranFiringFreq != null) {
@@ -3868,10 +3971,10 @@ public class Analysis {
 		}
 		for (LpnTransitionPair enabledTran : curEnabled) {
 			if (Options.getDebugMode()) {
-				System.out.println("@ partialOrderReduction, consider transition " + sgList[enabledTran.getLpnIndex()].getLpn().getLabel() 
-					+ "("+ sgList[enabledTran.getLpnIndex()].getLpn().getTransition(enabledTran.getTranIndex()) + "). Compute its dependent set.");
-				writeStringWithNewLineToPORDebugFile("@ partialOrderReduction, consider transition " + sgList[enabledTran.getLpnIndex()].getLpn().getLabel() 
-				+ "("+ sgList[enabledTran.getLpnIndex()].getLpn().getTransition(enabledTran.getTranIndex()) + "). Compute its dependent set.");
+//				System.out.println("@ partialOrderReduction, consider transition " + sgList[enabledTran.getLpnIndex()].getLpn().getLabel() 
+//					+ "("+ sgList[enabledTran.getLpnIndex()].getLpn().getTransition(enabledTran.getTranIndex()) + "). Compute its dependent set.");
+//				writeStringWithNewLineToPORDebugFile("@ partialOrderReduction, consider transition " + sgList[enabledTran.getLpnIndex()].getLpn().getLabel() 
+//				+ "("+ sgList[enabledTran.getLpnIndex()].getLpn().getTransition(enabledTran.getTranIndex()) + "). Compute its dependent set.");
 			}
 			HashSet<LpnTransitionPair> dependent = new HashSet<LpnTransitionPair>();
 			boolean isCycleClosingAmpleComputation = false;
@@ -3906,9 +4009,9 @@ public class Analysis {
 		PriorityQueue<DependentSet> dependentSetQueue = new PriorityQueue<DependentSet>(curEnabled.size(), depComp);
 		for (LpnTransitionPair enabledTran : curEnabled) {
 			if (Options.getDebugMode()){
-				System.out.println("@ partialOrderReduction, consider transition " + sgList[enabledTran.getLpnIndex()].getLpn().getLabel() 
-				+ "("+ sgList[enabledTran.getLpnIndex()].getLpn().getTransition(enabledTran.getTranIndex()) + ")");
-				writeStringWithNewLineToPORDebugFile("@ partialOrderReduction, consider transition " + sgList[enabledTran.getLpnIndex()].getLpn().getLabel() 
+//				System.out.println("@ partialOrderReduction, consider seed transition " + sgList[enabledTran.getLpnIndex()].getLpn().getLabel() 
+//				+ "("+ sgList[enabledTran.getLpnIndex()].getLpn().getTransition(enabledTran.getTranIndex()) + ")");
+				writeStringWithEndOfLineToPORDebugFile("@ partialOrderReduction, consider seed transition " + sgList[enabledTran.getLpnIndex()].getLpn().getLabel() 
 						+ "("+ sgList[enabledTran.getLpnIndex()].getLpn().getTransition(enabledTran.getTranIndex()) + ")");
 			}
 			HashSet<LpnTransitionPair> dependent = new HashSet<LpnTransitionPair>();
@@ -3951,10 +4054,9 @@ public class Analysis {
 		HashSet<LpnTransitionPair> disableSet = staticMap.get(seedTran).getDisableSet(); 
 		HashSet<LpnTransitionPair> otherTransDisableEnabledTran = staticMap.get(seedTran).getOtherTransDisableCurTranSet();
 		if (Options.getDebugMode()) {
-			System.out.println("@ getDependentSet, consider transition " + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()).getName());
-			//printIntegerSet(canModifyAssign, lpnList, lpnList[enabledLpnTran.getLpnIndex()].getTransition(enabledLpnTran.getTranIndex()) + " can modify assignments");
-			printIntegerSet(disableSet, lpnList, "Disable set for " + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()));
-			writeStringWithNewLineToPORDebugFile("@ getDependentSet, consider transition " + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()).getName());
+//			System.out.println("@ Beginning of computeDependent, consider transition " + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()).getName());
+//			printIntegerSet(disableSet, lpnList, "Disable set for " + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()));
+			writeStringWithEndOfLineToPORDebugFile("@ Beginning of computeDependent, consider transition " + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()).getName());
 			writeIntegerSetToPORDebugFile(disableSet, lpnList, "Disable set for " + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()));
 		}
 		dependent.add(seedTran);
@@ -3963,23 +4065,25 @@ public class Analysis {
 //				dependent.add(lpnTranPair);
 //		}
 		if (Options.getDebugMode()) {
-			printIntegerSet(dependent, lpnList, "@ getDependentSet at 0, dependent set for " + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()));
+//			printIntegerSet(dependent, lpnList, "@ getDependentSet at 0, dependent set for " + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()));
 			writeIntegerSetToPORDebugFile(dependent, lpnList, "@ getDependentSet at 0, dependent set for " + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()));
 		}
-//		// dependent is equal to enabled. Terminate.
-//		if (dependent.size() == curEnabled.size()) {
-//			if (Options.getDebugMode()) 
+		// dependent is equal to enabled. Terminate.
+		if (dependent.size() == curEnabled.size()) {
+			if (Options.getDebugMode()) {
 //				System.out.println("Check 0: dependent == curEnabled. Return dependent.");
-//			return dependent;
-//		}
+				writeStringWithEndOfLineToPORDebugFile("Check 0: Size of dependent is equal to enabled. Return dependent.");
+			}
+			return dependent;
+		}
 		for (LpnTransitionPair tranInDisableSet : disableSet) {
 			if (Options.getDebugMode()) {
-				System.out.println("Consider transition in the disable set of "  
-						+ lpnList[seedTran.getLpnIndex()].getLabel()  
-						+ "(" + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()) + "): "
-						+ lpnList[tranInDisableSet.getLpnIndex()].getLabel() 
-						+"(" + lpnList[tranInDisableSet.getLpnIndex()].getTransition(tranInDisableSet.getTranIndex()) + ")");
-				writeStringWithNewLineToPORDebugFile("Consider transition in the disable set of "  
+//				System.out.println("Consider transition in the disable set of "  
+//						+ lpnList[seedTran.getLpnIndex()].getLabel()  
+//						+ "(" + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()) + "): "
+//						+ lpnList[tranInDisableSet.getLpnIndex()].getLabel() 
+//						+"(" + lpnList[tranInDisableSet.getLpnIndex()].getTransition(tranInDisableSet.getTranIndex()) + ")");
+				writeStringWithEndOfLineToPORDebugFile("Consider transition in the disable set of "  
 						+ lpnList[seedTran.getLpnIndex()].getLabel()  
 						+ "(" + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()) + "): "
 						+ lpnList[tranInDisableSet.getLpnIndex()].getLabel() 
@@ -3991,7 +4095,7 @@ public class Analysis {
 					&& (!tranInDisableSetIsPersistent || otherTransDisableEnabledTran.contains(tranInDisableSet))) {
 				dependent.addAll(computeDependent(curStateArray,tranInDisableSet,dependent,curEnabled,staticMap, lpnList, isCycleClosingAmpleComputation));
 				if (Options.getDebugMode()) {
-					printIntegerSet(dependent, lpnList, "@ getDependentSet at 1 for transition " + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()));
+//					printIntegerSet(dependent, lpnList, "@ getDependentSet at 1 for transition " + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()));
 					writeIntegerSetToPORDebugFile(dependent, lpnList, "@ getDependentSet at 1 for transition " + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()));
 				}
 			}
@@ -4001,18 +4105,17 @@ public class Analysis {
 					dependent.addAll(curEnabled);
 					break;
 				}
-				LpnTransitionPair origTran = new LpnTransitionPair(tranInDisableSet.getLpnIndex(), tranInDisableSet.getTranIndex());
+				LpnTransitionPair seedTranInDisableSet = new LpnTransitionPair(tranInDisableSet.getLpnIndex(), tranInDisableSet.getTranIndex());
 				HashSet<LpnTransitionPair> necessary = null;
 				if (Options.getDebugMode()) {
-					printCachedNecessarySets(lpnList);
+//					printCachedNecessarySets(lpnList);
 					writeCachedNecessarySetsToPORDebugFile(lpnList);
-				}
-					
+				}				
 				if (cachedNecessarySets.containsKey(tranInDisableSet)) {
 					if (Options.getDebugMode()) {
-						System.out.println("Found transition " + lpnList[tranInDisableSet.getLpnIndex()].getLabel() + "("
-								+ lpnList[tranInDisableSet.getLpnIndex()].getTransition(tranInDisableSet.getTranIndex()).getName() + ") in the cached necessary sets.");
-						writeStringWithNewLineToPORDebugFile("Found transition " + lpnList[tranInDisableSet.getLpnIndex()].getLabel() + "("
+//						System.out.println("Found transition " + lpnList[tranInDisableSet.getLpnIndex()].getLabel() + "("
+//								+ lpnList[tranInDisableSet.getLpnIndex()].getTransition(tranInDisableSet.getTranIndex()).getName() + ") in the cached necessary sets.");
+						writeStringWithEndOfLineToPORDebugFile("Found transition " + lpnList[tranInDisableSet.getLpnIndex()].getLabel() + "("
 								+ lpnList[tranInDisableSet.getLpnIndex()].getTransition(tranInDisableSet.getTranIndex()).getName() + ") in the cached necessary sets.");
 					}
 					necessary = cachedNecessarySets.get(tranInDisableSet);
@@ -4020,55 +4123,85 @@ public class Analysis {
 				else {
 					if (Options.getNecessaryUsingDependencyGraphs()) {
 						if (Options.getDebugMode()) {
-							System.out.println("==== Compute necessary using BFS ====");
-							writeStringWithNewLineToPORDebugFile("==== Compute necessary using BFS ====");
+//							System.out.println("==== Compute necessary using BFS ====");
+							writeStringWithEndOfLineToPORDebugFile("==== Compute necessary using BFS ====");
 						}							
-						necessary = computeNecessaryUsingDependencyGraphs(curStateArray,tranInDisableSet,curEnabled, staticMap, lpnList);
+						necessary = computeNecessaryUsingDependencyGraphs(curStateArray,tranInDisableSet,curEnabled, staticMap, lpnList, seedTran);
 					}
 					else {
 						if (Options.getDebugMode()) {
-							System.out.println("==== Compute necessary using DFS ====");
-							writeStringWithNewLineToPORDebugFile("==== Compute necessary using DFS ====");
+//							System.out.println("==== Compute necessary using DFS ====");
+							writeStringWithEndOfLineToPORDebugFile("==== Compute necessary using DFS ====");
 						}
-						necessary = computeNecessary(curStateArray,tranInDisableSet,dependent,curEnabled, staticMap, lpnList, origTran);
+						necessary = computeNecessary(curStateArray,tranInDisableSet,dependent,curEnabled, staticMap, lpnList, seedTranInDisableSet);//, seedTran);
 					}
 				}	
 				if (necessary != null && !necessary.isEmpty()) {
 					cachedNecessarySets.put(tranInDisableSet, necessary);
 					if (Options.getDebugMode()) {
-						printIntegerSet(necessary, lpnList, "necessary set for transition " + lpnList[tranInDisableSet.getLpnIndex()].getLabel() 
-								+ "(" + lpnList[tranInDisableSet.getLpnIndex()].getTransition(tranInDisableSet.getTranIndex()) + ")");
+//						printIntegerSet(necessary, lpnList, "necessary set for transition " + lpnList[tranInDisableSet.getLpnIndex()].getLabel() 
+//								+ "(" + lpnList[tranInDisableSet.getLpnIndex()].getTransition(tranInDisableSet.getTranIndex()) + ")");
 						writeIntegerSetToPORDebugFile(necessary, lpnList, "necessary set for transition " + lpnList[tranInDisableSet.getLpnIndex()].getLabel() 
 								+ "(" + lpnList[tranInDisableSet.getLpnIndex()].getTransition(tranInDisableSet.getTranIndex()) + ")");
 					}
 					for (LpnTransitionPair tranNecessary : necessary) {
 						if (!dependent.contains(tranNecessary)) {
 							if (Options.getDebugMode()) {
-								printIntegerSet(dependent, lpnList, "Dependent set for " + lpnList[seedTran.getLpnIndex()].getLabel() + "(" + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()) + "):");
-								System.out.println("It does not contain this transition found by computeNecessary: " + 
-									lpnList[tranNecessary.getLpnIndex()].getLabel() + "(" + lpnList[tranNecessary.getLpnIndex()].getTransition(tranNecessary.getTranIndex()) + ")"
-									+ ". Compute its dependent set.");
-								writeIntegerSetToPORDebugFile(dependent, lpnList, "Dependent set for " + lpnList[seedTran.getLpnIndex()].getLabel() + "(" + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()) + "):");
-								writeStringWithNewLineToPORDebugFile("It does not contain this transition found by computeNecessary: " + 
+//								printIntegerSet(dependent, lpnList, "Check if the newly found necessary transition is in the dependent set. Dependent set for " + lpnList[seedTran.getLpnIndex()].getLabel() + "(" + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()) + ")");
+//								System.out.println("It does not contain this transition found by computeNecessary: " + 
+//									lpnList[tranNecessary.getLpnIndex()].getLabel() + "(" + lpnList[tranNecessary.getLpnIndex()].getTransition(tranNecessary.getTranIndex()) + ")"
+//									+ ". Compute its dependent set.");
+								writeIntegerSetToPORDebugFile(dependent, lpnList, "Check if the newly found necessary transition is in the dependent set. Dependent set for " + lpnList[seedTran.getLpnIndex()].getLabel() + "(" + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()) + ")");
+								writeStringWithEndOfLineToPORDebugFile("It does not contain this transition found by computeNecessary: " + 
 										lpnList[tranNecessary.getLpnIndex()].getLabel() + "(" + lpnList[tranNecessary.getLpnIndex()].getTransition(tranNecessary.getTranIndex()) + ")"
 										+ ". Compute its dependent set.");
 							}
 							dependent.addAll(computeDependent(curStateArray,tranNecessary,dependent,curEnabled,staticMap, lpnList, isCycleClosingAmpleComputation));
-						}					
+						}
+						else {
+							if (Options.getDebugMode()) {
+//								printIntegerSet(dependent, lpnList, "Check if the newly found necessary transition is in the dependent set. Dependent set for " + lpnList[seedTran.getLpnIndex()].getLabel() + "(" + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()) + ")");
+//								System.out.println("It already contains this transition found by computeNecessary: " + 
+//									lpnList[tranNecessary.getLpnIndex()].getLabel() + "(" + lpnList[tranNecessary.getLpnIndex()].getTransition(tranNecessary.getTranIndex()) + ")"
+//									+ ".");
+								writeIntegerSetToPORDebugFile(dependent, lpnList, "Check if the newly found necessary transition is in the dependent set. Dependent set for " + lpnList[seedTran.getLpnIndex()].getLabel() + "(" + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()) + ")");
+								writeStringWithEndOfLineToPORDebugFile("It already contains this transition found by computeNecessary: " 
+										 + lpnList[tranNecessary.getLpnIndex()].getLabel() + "(" + lpnList[tranNecessary.getLpnIndex()].getTransition(tranNecessary.getTranIndex()) + ").");
+							}
+						}
 					}
 				}
 				else {
 					if (Options.getDebugMode()) {
-						System.out.println("necessary set for transition " + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()) + " is empty.");
-						writeStringWithNewLineToPORDebugFile("necessary set for transition " + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()) + " is empty.");
+						if (necessary == null) {
+//							System.out.println("necessary set for transition " + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()) + " is null.");
+							writeStringWithEndOfLineToPORDebugFile("necessary set for transition " + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()) + " is null.");
+						}
+						else {
+//							System.out.println("necessary set for transition " + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()) + " is empty.");
+							writeStringWithEndOfLineToPORDebugFile("necessary set for transition " + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()) + " is empty.");
+						}
 					}			
 					dependent.addAll(curEnabled);
 				}
 				if (Options.getDebugMode()) {
-					printIntegerSet(dependent, lpnList, "@ getDependentSet at 2, dependent set for transition " + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()));
+//					printIntegerSet(dependent, lpnList, "@ getDependentSet at 2, dependent set for transition " + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()));
 					writeIntegerSetToPORDebugFile(dependent, lpnList, "@ getDependentSet at 2, dependent set for transition " + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()));
+				}					
+			}
+			else if (dependent.contains(tranInDisableSet)) {
+				if (Options.getDebugMode()) {
+//					printIntegerSet(dependent, lpnList, "@ getDependentSet at 3 for transition " + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()));
+//					System.out.println("Transition " + lpnList[tranInDisableSet.getLpnIndex()].getLabel() 
+//							+"(" + lpnList[tranInDisableSet.getLpnIndex()].getTransition(tranInDisableSet.getTranIndex()) + ") is already in the disable set of "  							
+//							+ lpnList[seedTran.getLpnIndex()].getLabel()  
+//							+ "(" + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()) + ").");
+					writeIntegerSetToPORDebugFile(dependent, lpnList, "@ getDependentSet at 3 for transition " + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()));
+					writeStringWithEndOfLineToPORDebugFile("Transition " + lpnList[tranInDisableSet.getLpnIndex()].getLabel() 
+							+"(" + lpnList[tranInDisableSet.getLpnIndex()].getTransition(tranInDisableSet.getTranIndex()) + ") is already in the disable set of "  							
+							+ lpnList[seedTran.getLpnIndex()].getLabel()  
+							+ "(" + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()) + ").");
 				}
-					
 			}
 		}
 		return dependent;
@@ -4079,17 +4212,17 @@ public class Analysis {
 	private HashSet<LpnTransitionPair> computeNecessary(State[] curStateArray,
 			LpnTransitionPair tran, HashSet<LpnTransitionPair> dependent,
 			HashSet<LpnTransitionPair> curEnabledIndices, HashMap<LpnTransitionPair, StaticSets> staticMap, 
-			LhpnFile[] lpnList, LpnTransitionPair origTran) {
+			LhpnFile[] lpnList, LpnTransitionPair seedTranInDisableSet) { //, LpnTransitionPair seedTran) {
 		if (Options.getDebugMode()) {
-			System.out.println("@ getNecessary, consider transition: " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(tran.getTranIndex()).getName() + ")");
-			writeStringWithNewLineToPORDebugFile("@ getNecessary, consider transition: " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(tran.getTranIndex()).getName() + ")");
+//			System.out.println("@ getNecessary, consider transition: " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(tran.getTranIndex()).getName() + ")");
+			writeStringWithEndOfLineToPORDebugFile("@ getNecessary, consider transition: " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(tran.getTranIndex()).getName() + ")");
 		}
 			
 		if (cachedNecessarySets.containsKey(tran)) {
 			if (Options.getDebugMode()) {
-				System.out.println("Found transition" + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(tran.getTranIndex()).getName() + ")"
-						+ "'s necessary set in the cached necessary sets. ");
-				writeStringWithNewLineToPORDebugFile("Found transition" + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(tran.getTranIndex()).getName() + ")"
+//				System.out.println("Found transition" + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(tran.getTranIndex()).getName() + ")"
+//						+ "'s necessary set in the cached necessary sets. ");
+				writeStringWithEndOfLineToPORDebugFile("Found transition" + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(tran.getTranIndex()).getName() + ")"
 						+ "'s necessary set in the cached necessary sets. ");
 			}				
 			return cachedNecessarySets.get(tran);
@@ -4102,45 +4235,45 @@ public class Analysis {
 			int place = presetPlaces[i];
 			if (curStateArray[tran.getLpnIndex()].getMarking()[place]==0) {
 				if (Options.getDebugMode()) {
-					System.out.println("####### compute nMarking for transition " + lpnList[tran.getLpnIndex()].getLabel() 
-							+ "(" + lpnList[tran.getLpnIndex()].getTransition(tran.getTranIndex()).getName() +  ") " + "########");
-					writeStringWithNewLineToPORDebugFile("####### compute nMarking for transition " + lpnList[tran.getLpnIndex()].getLabel() 
+//					System.out.println("####### compute nMarking for transition " + lpnList[tran.getLpnIndex()].getLabel() 
+//							+ "(" + lpnList[tran.getLpnIndex()].getTransition(tran.getTranIndex()).getName() +  ") " + "########");
+					writeStringWithEndOfLineToPORDebugFile("####### compute nMarking for transition " + lpnList[tran.getLpnIndex()].getLabel() 
 							+ "(" + lpnList[tran.getLpnIndex()].getTransition(tran.getTranIndex()).getName() +  ") " + "########");
 				}				
 				HashSet<LpnTransitionPair> nMarkingTemp = new HashSet<LpnTransitionPair>();				
 				String placeName = lpnList[tran.getLpnIndex()].getAllPlaces().get(place);
 				if (Options.getDebugMode()) {
-					System.out.println("preset place of " + transition.getName() + " is " + placeName);
-					writeStringWithNewLineToPORDebugFile("preset place of " + transition.getName() + " is " + placeName);
+//					System.out.println("preset place of " + transition.getName() + " is " + placeName);
+					writeStringWithEndOfLineToPORDebugFile("preset place of " + transition.getName() + " is " + placeName);
 				}		
 				int[] presetTrans = lpnList[tran.getLpnIndex()].getPresetIndex(placeName);
 				for (int j=0; j < presetTrans.length; j++) {
 					LpnTransitionPair presetTran = new LpnTransitionPair(tran.getLpnIndex(), presetTrans[j]);
 					if (Options.getDebugMode()) {
-						System.out.println("preset transition of " + placeName + " is " + lpnList[presetTran.getLpnIndex()].getLabel() + "(" + lpnList[presetTran.getLpnIndex()].getTransition(presetTran.getTranIndex()) + ")");
-						writeStringWithNewLineToPORDebugFile("preset transition of " + placeName + " is " + lpnList[presetTran.getLpnIndex()].getLabel() + "(" + lpnList[presetTran.getLpnIndex()].getTransition(presetTran.getTranIndex()) + ")");
+//						System.out.println("preset transition of " + placeName + " is " + lpnList[presetTran.getLpnIndex()].getLabel() + "(" + lpnList[presetTran.getLpnIndex()].getTransition(presetTran.getTranIndex()) + ")");
+						writeStringWithEndOfLineToPORDebugFile("preset transition of " + placeName + " is " + lpnList[presetTran.getLpnIndex()].getLabel() + "(" + lpnList[presetTran.getLpnIndex()].getTransition(presetTran.getTranIndex()) + ")");
 					}
-					if (origTran.getVisitedTrans().contains(presetTran)) {
+					if (seedTranInDisableSet.getVisitedTrans().contains(presetTran)) {
 						if (Options.getDebugMode()) {
-							System.out.println("Transition " + lpnList[presetTran.getLpnIndex()].getLabel() + "(" + lpnList[presetTran.getLpnIndex()].getTransition(presetTran.getTranIndex()) + ") is visted before by " 
-									+ lpnList[origTran.getLpnIndex()].getLabel() + "(" + lpnList[origTran.getLpnIndex()].getTransition(origTran.getTranIndex()).getName() + ").");
-							writeStringWithNewLineToPORDebugFile("Transition " + lpnList[presetTran.getLpnIndex()].getLabel() + "(" + lpnList[presetTran.getLpnIndex()].getTransition(presetTran.getTranIndex()) + ") is visted before by " 
-									+ lpnList[origTran.getLpnIndex()].getLabel() + "(" + lpnList[origTran.getLpnIndex()].getTransition(origTran.getTranIndex()).getName() + ").");
+//							System.out.println("Transition " + lpnList[presetTran.getLpnIndex()].getLabel() + "(" + lpnList[presetTran.getLpnIndex()].getTransition(presetTran.getTranIndex()) + ") is visted before by " 
+//									+ lpnList[seedTranInDisableSet.getLpnIndex()].getLabel() + "(" + lpnList[seedTranInDisableSet.getLpnIndex()].getTransition(seedTranInDisableSet.getTranIndex()).getName() + ").");
+							writeStringWithEndOfLineToPORDebugFile("Transition " + lpnList[presetTran.getLpnIndex()].getLabel() + "(" + lpnList[presetTran.getLpnIndex()].getTransition(presetTran.getTranIndex()) + ") is visted before by " 
+									+ lpnList[seedTranInDisableSet.getLpnIndex()].getLabel() + "(" + lpnList[seedTranInDisableSet.getLpnIndex()].getTransition(seedTranInDisableSet.getTranIndex()).getName() + ").");
 						}
 						if (cachedNecessarySets.containsKey(presetTran)) {
 							if (Options.getDebugMode()) {
-								System.out.println("Found transition" + lpnList[presetTran.getLpnIndex()].getLabel() + "(" + lpnList[presetTran.getLpnIndex()].getTransition(presetTran.getTranIndex()).getName() + ")"
-										+ "'s necessary set in the cached necessary sets. Add it to nMarkingTemp.");
-								writeStringWithNewLineToPORDebugFile("Found transition" + lpnList[presetTran.getLpnIndex()].getLabel() + "(" + lpnList[presetTran.getLpnIndex()].getTransition(presetTran.getTranIndex()).getName() + ")"
+//								System.out.println("Found transition" + lpnList[presetTran.getLpnIndex()].getLabel() + "(" + lpnList[presetTran.getLpnIndex()].getTransition(presetTran.getTranIndex()).getName() + ")"
+//										+ "'s necessary set in the cached necessary sets. Add it to nMarkingTemp.");
+								writeStringWithEndOfLineToPORDebugFile("Found transition" + lpnList[presetTran.getLpnIndex()].getLabel() + "(" + lpnList[presetTran.getLpnIndex()].getTransition(presetTran.getTranIndex()).getName() + ")"
 										+ "'s necessary set in the cached necessary sets. Add it to nMarkingTemp.");
 							}
 							nMarkingTemp = cachedNecessarySets.get(presetTran);
 						}
 						if (curEnabledIndices.contains(presetTran)) {
 							if (Options.getDebugMode()) {
-								System.out.println("@ nMarking: curEnabled contains transition " + lpnList[presetTran.getLpnIndex()].getLabel()
-										+ "(" + lpnList[presetTran.getLpnIndex()].getTransition(presetTran.getTranIndex()).getName() + "). Add to nMarkingTmp.");
-								writeStringWithNewLineToPORDebugFile("@ nMarking: curEnabled contains transition " + lpnList[presetTran.getLpnIndex()].getLabel()
+//								System.out.println("@ nMarking: curEnabled contains transition " + lpnList[presetTran.getLpnIndex()].getLabel()
+//										+ "(" + lpnList[presetTran.getLpnIndex()].getTransition(presetTran.getTranIndex()).getName() + "). Add to nMarkingTmp.");
+								writeStringWithEndOfLineToPORDebugFile("@ nMarking: curEnabled contains transition " + lpnList[presetTran.getLpnIndex()].getLabel()
 										+ "(" + lpnList[presetTran.getLpnIndex()].getTransition(presetTran.getTranIndex()).getName() + "). Add to nMarkingTmp.");
 							}
 							nMarkingTemp.add(new LpnTransitionPair(tran.getLpnIndex(), presetTrans[j]));;
@@ -4148,40 +4281,40 @@ public class Analysis {
 						continue;
 					}
 					else
-						origTran.addVisitedTran(presetTran);
+						seedTranInDisableSet.addVisitedTran(presetTran);
 					if (Options.getDebugMode()) {
-						System.out.println("~~~~~~~~~ transVisited for transition " + lpnList[origTran.getLpnIndex()].getLabel() + "(" + lpnList[origTran.getLpnIndex()].getTransition(origTran.getTranIndex()).getName() +  ")~~~~~~~~~"); 
-						writeStringWithNewLineToPORDebugFile("~~~~~~~~~ transVisited for transition " + lpnList[origTran.getLpnIndex()].getLabel() + "(" + lpnList[origTran.getLpnIndex()].getTransition(origTran.getTranIndex()).getName() +  ")~~~~~~~~~");
-						for (LpnTransitionPair visitedTran : origTran.getVisitedTrans()) {
-							System.out.println(lpnList[visitedTran.getLpnIndex()].getLabel() + "(" + lpnList[visitedTran.getLpnIndex()].getTransition(visitedTran.getTranIndex()).getName() +  ") ");
-							writeStringWithNewLineToPORDebugFile(lpnList[visitedTran.getLpnIndex()].getLabel() + "(" + lpnList[visitedTran.getLpnIndex()].getTransition(visitedTran.getTranIndex()).getName() +  ") ");
+//						System.out.println("~~~~~~~~~ transVisited for transition " + lpnList[seedTranInDisableSet.getLpnIndex()].getLabel() + "(" + lpnList[seedTranInDisableSet.getLpnIndex()].getTransition(seedTranInDisableSet.getTranIndex()).getName() +  ")~~~~~~~~~"); 
+						writeStringWithEndOfLineToPORDebugFile("~~~~~~~~~ transVisited for transition " + lpnList[seedTranInDisableSet.getLpnIndex()].getLabel() + "(" + lpnList[seedTranInDisableSet.getLpnIndex()].getTransition(seedTranInDisableSet.getTranIndex()).getName() +  ")~~~~~~~~~");
+						for (LpnTransitionPair visitedTran : seedTranInDisableSet.getVisitedTrans()) {
+//							System.out.println(lpnList[visitedTran.getLpnIndex()].getLabel() + "(" + lpnList[visitedTran.getLpnIndex()].getTransition(visitedTran.getTranIndex()).getName() +  ") ");
+							writeStringWithEndOfLineToPORDebugFile(lpnList[visitedTran.getLpnIndex()].getLabel() + "(" + lpnList[visitedTran.getLpnIndex()].getTransition(visitedTran.getTranIndex()).getName() +  ") ");
 						}
-						System.out.println("@ getNecessary, consider transition: " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(presetTrans[j]).getName() + ").");
-						writeStringWithNewLineToPORDebugFile("@ getNecessary, consider transition: " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(presetTrans[j]).getName() + ").");
+//						System.out.println("@ getNecessary, consider transition: " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(presetTrans[j]).getName() + ").");
+						writeStringWithEndOfLineToPORDebugFile("@ getNecessary, consider transition: " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(presetTrans[j]).getName() + ").");
 					}
 
 					if (curEnabledIndices.contains(presetTran)) {
 						if (Options.getDebugMode()) {
-							System.out.println("@ nMarking: curEnabled contains transition " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(presetTran.getTranIndex()).getName() + "). Add to nMarkingTmp.");
-							writeStringWithNewLineToPORDebugFile("@ nMarking: curEnabled contains transition " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(presetTran.getTranIndex()).getName() + "). Add to nMarkingTmp.");
+//							System.out.println("@ nMarking: curEnabled contains transition " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(presetTran.getTranIndex()).getName() + "). Add to nMarkingTmp.");
+							writeStringWithEndOfLineToPORDebugFile("@ nMarking: curEnabled contains transition " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(presetTran.getTranIndex()).getName() + "). Add to nMarkingTmp.");
 						}	
 						nMarkingTemp.add(new LpnTransitionPair(tran.getLpnIndex(), presetTrans[j]));
 					}
 					else {
 						if (Options.getDebugMode()) {
-							System.out.println("@ nMarking: transition " + lpnList[tran.getLpnIndex()].getTransition(presetTrans[j]).getName() + " is not enabled. Compute its necessary set.");
-							writeStringWithNewLineToPORDebugFile("@ nMarking: transition " + lpnList[tran.getLpnIndex()].getTransition(presetTrans[j]).getName() + " is not enabled. Compute its necessary set.");
+//							System.out.println("@ nMarking: transition " + lpnList[tran.getLpnIndex()].getTransition(presetTrans[j]).getName() + " is not enabled. Compute its necessary set.");
+							writeStringWithEndOfLineToPORDebugFile("@ nMarking: transition " + lpnList[tran.getLpnIndex()].getTransition(presetTrans[j]).getName() + " is not enabled. Compute its necessary set.");
 						}
 						HashSet<LpnTransitionPair> tmp = null;
 						tmp = computeNecessary(curStateArray, presetTran, dependent, 
-													curEnabledIndices, staticMap, lpnList, origTran);
+													curEnabledIndices, staticMap, lpnList, seedTranInDisableSet);
 						if (tmp != null)							
 							nMarkingTemp.addAll(tmp);
 						else  
 							if (Options.getDebugMode()) {
-								System.out.println("@ nMarking: necessary set for transition " + lpnList[tran.getLpnIndex()].getLabel() 
-										+ "(" + lpnList[tran.getLpnIndex()].getTransition(presetTrans[j]).getName() + ") is null.");
-								writeStringWithNewLineToPORDebugFile("@ nMarking: necessary set for transition " + lpnList[tran.getLpnIndex()].getLabel() 
+//								System.out.println("@ nMarking: necessary set for transition " + lpnList[tran.getLpnIndex()].getLabel() 
+//										+ "(" + lpnList[tran.getLpnIndex()].getTransition(presetTrans[j]).getName() + ") is null.");
+								writeStringWithEndOfLineToPORDebugFile("@ nMarking: necessary set for transition " + lpnList[tran.getLpnIndex()].getLabel() 
 										+ "(" + lpnList[tran.getLpnIndex()].getTransition(presetTrans[j]).getName() + ") is null.");
 							}
 					}
@@ -4192,8 +4325,8 @@ public class Analysis {
 			}
 			else 
 				if (Options.getDebugMode()) {
-					System.out.println("Place " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getAllPlaces().get(place) + ") is marked.");
-					writeStringWithNewLineToPORDebugFile("Place " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getAllPlaces().get(place) + ") is marked.");
+//					System.out.println("Place " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getAllPlaces().get(place) + ") is marked.");
+					writeStringWithEndOfLineToPORDebugFile("Place " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getAllPlaces().get(place) + ") is marked.");
 				}
 					
 		}
@@ -4202,9 +4335,9 @@ public class Analysis {
 		int[] varValueVector = curStateArray[tran.getLpnIndex()].getVector();//curState.getVector();
 		HashSet<LpnTransitionPair> canEnable = staticMap.get(tran).getEnableBySettingEnablingTrue();
 		if (Options.getDebugMode()) {
-			System.out.println("####### compute nEnable for transition " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(tran.getTranIndex()).getName() +  ") " + "########");
-			printIntegerSet(canEnable, lpnList, lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(tran.getTranIndex()) + ") can be enabled by");
-			writeStringWithNewLineToPORDebugFile("####### compute nEnable for transition " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(tran.getTranIndex()).getName() +  ") " + "########");
+//			System.out.println("####### compute nEnable for transition " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(tran.getTranIndex()).getName() +  ") " + "########");
+//			printIntegerSet(canEnable, lpnList, lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(tran.getTranIndex()) + ") can be enabled by");
+			writeStringWithEndOfLineToPORDebugFile("####### compute nEnable for transition " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(tran.getTranIndex()).getName() +  ") " + "########");
 			writeIntegerSetToPORDebugFile(canEnable, lpnList, lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(tran.getTranIndex()) + ") can be enabled by");
 		}
 		if (transition.getEnablingTree() != null
@@ -4215,24 +4348,24 @@ public class Analysis {
 				if (curEnabledIndices.contains(tranCanEnable)) {
 					nEnable.add(tranCanEnable);
 					if (Options.getDebugMode())	{
-						System.out.println("@ nEnable: curEnabled contains transition " + lpnList[tranCanEnable.getLpnIndex()].getLabel() + "(" + lpnList[tranCanEnable.getLpnIndex()].getTransition(tranCanEnable.getTranIndex()).getName() + "). Add to nEnable.");
-						writeStringWithNewLineToPORDebugFile("@ nEnable: curEnabled contains transition " + lpnList[tranCanEnable.getLpnIndex()].getLabel() + "(" + lpnList[tranCanEnable.getLpnIndex()].getTransition(tranCanEnable.getTranIndex()).getName() + "). Add to nEnable.");
+//						System.out.println("@ nEnable: curEnabled contains transition " + lpnList[tranCanEnable.getLpnIndex()].getLabel() + "(" + lpnList[tranCanEnable.getLpnIndex()].getTransition(tranCanEnable.getTranIndex()).getName() + "). Add to nEnable.");
+						writeStringWithEndOfLineToPORDebugFile("@ nEnable: curEnabled contains transition " + lpnList[tranCanEnable.getLpnIndex()].getLabel() + "(" + lpnList[tranCanEnable.getLpnIndex()].getTransition(tranCanEnable.getTranIndex()).getName() + "). Add to nEnable.");
 					}						
 				}
 				else {
-					if (origTran.getVisitedTrans().contains(tranCanEnable)) {
+					if (seedTranInDisableSet.getVisitedTrans().contains(tranCanEnable)) {
 						if (Options.getDebugMode()) {
-							System.out.println("Transition " + lpnList[tranCanEnable.getLpnIndex()].getLabel() + "(" + lpnList[tranCanEnable.getLpnIndex()].getTransition(tranCanEnable.getTranIndex()) + ") is visted before by " 
-									+ lpnList[origTran.getLpnIndex()].getLabel() + "(" + lpnList[origTran.getLpnIndex()].getTransition(origTran.getTranIndex()).getName() + ").");
-							writeStringWithNewLineToPORDebugFile("Transition " + lpnList[tranCanEnable.getLpnIndex()].getLabel() + "(" + lpnList[tranCanEnable.getLpnIndex()].getTransition(tranCanEnable.getTranIndex()) + ") is visted before by " 
-									+ lpnList[origTran.getLpnIndex()].getLabel() + "(" + lpnList[origTran.getLpnIndex()].getTransition(origTran.getTranIndex()).getName() + ").");
+//							System.out.println("Transition " + lpnList[tranCanEnable.getLpnIndex()].getLabel() + "(" + lpnList[tranCanEnable.getLpnIndex()].getTransition(tranCanEnable.getTranIndex()) + ") is visted before by " 
+//									+ lpnList[seedTranInDisableSet.getLpnIndex()].getLabel() + "(" + lpnList[seedTranInDisableSet.getLpnIndex()].getTransition(seedTranInDisableSet.getTranIndex()).getName() + ").");
+							writeStringWithEndOfLineToPORDebugFile("Transition " + lpnList[tranCanEnable.getLpnIndex()].getLabel() + "(" + lpnList[tranCanEnable.getLpnIndex()].getTransition(tranCanEnable.getTranIndex()) + ") is visted before by " 
+									+ lpnList[seedTranInDisableSet.getLpnIndex()].getLabel() + "(" + lpnList[seedTranInDisableSet.getLpnIndex()].getTransition(seedTranInDisableSet.getTranIndex()).getName() + ").");
 						}
 							
 						if (cachedNecessarySets.containsKey(tranCanEnable)) {
 							if (Options.getDebugMode()) {
-								System.out.println("Found transition" + lpnList[tranCanEnable.getLpnIndex()].getLabel() + "(" + lpnList[tranCanEnable.getLpnIndex()].getTransition(tranCanEnable.getTranIndex()).getName() + ")"
-										+ "'s necessary set in the cached necessary sets. Add it to nMarkingTemp.");
-								writeStringWithNewLineToPORDebugFile("Found transition" + lpnList[tranCanEnable.getLpnIndex()].getLabel() + "(" + lpnList[tranCanEnable.getLpnIndex()].getTransition(tranCanEnable.getTranIndex()).getName() + ")"
+//								System.out.println("Found transition" + lpnList[tranCanEnable.getLpnIndex()].getLabel() + "(" + lpnList[tranCanEnable.getLpnIndex()].getTransition(tranCanEnable.getTranIndex()).getName() + ")"
+//										+ "'s necessary set in the cached necessary sets. Add it to nMarkingTemp.");
+								writeStringWithEndOfLineToPORDebugFile("Found transition" + lpnList[tranCanEnable.getLpnIndex()].getLabel() + "(" + lpnList[tranCanEnable.getLpnIndex()].getTransition(tranCanEnable.getTranIndex()).getName() + ")"
 										+ "'s necessary set in the cached necessary sets. Add it to nMarkingTemp.");
 							}
 							nEnable.addAll(cachedNecessarySets.get(tranCanEnable));
@@ -4240,43 +4373,43 @@ public class Analysis {
 						continue;
 					}
 					else
-						origTran.addVisitedTran(tranCanEnable);
+						seedTranInDisableSet.addVisitedTran(tranCanEnable);
 					if (Options.getDebugMode()) {
-						System.out.println("@ nEnable: transition " + lpnList[tranCanEnable.getLpnIndex()].getTransition(tranCanEnable.getTranIndex()).getName() + " is not enabled. Compute its necessary set.");
-						writeStringWithNewLineToPORDebugFile("@ nEnable: transition " + lpnList[tranCanEnable.getLpnIndex()].getTransition(tranCanEnable.getTranIndex()).getName() + " is not enabled. Compute its necessary set.");
+//						System.out.println("@ nEnable: transition " + lpnList[tranCanEnable.getLpnIndex()].getTransition(tranCanEnable.getTranIndex()).getName() + " is not enabled. Compute its necessary set.");
+						writeStringWithEndOfLineToPORDebugFile("@ nEnable: transition " + lpnList[tranCanEnable.getLpnIndex()].getTransition(tranCanEnable.getTranIndex()).getName() + " is not enabled. Compute its necessary set.");
 					}
 					HashSet<LpnTransitionPair> tmp = null;
 					tmp = computeNecessary(curStateArray, tranCanEnable, dependent, 
-												curEnabledIndices, staticMap, lpnList, origTran);
+												curEnabledIndices, staticMap, lpnList, seedTranInDisableSet);
 					if (tmp != null)
 						nEnable.addAll(tmp);
 					else
 						if (Options.getDebugMode()) {
-							System.out.println("@ nEnable: necessary set for transition " + lpnList[tranCanEnable.getLpnIndex()].getLabel() + "(" + lpnList[tranCanEnable.getLpnIndex()].getTransition(tranCanEnable.getTranIndex()).getName() + ") is null.");
-							writeStringWithNewLineToPORDebugFile("@ nEnable: necessary set for transition " + lpnList[tranCanEnable.getLpnIndex()].getLabel() + "(" + lpnList[tranCanEnable.getLpnIndex()].getTransition(tranCanEnable.getTranIndex()).getName() + ") is null.");
+//							System.out.println("@ nEnable: necessary set for transition " + lpnList[tranCanEnable.getLpnIndex()].getLabel() + "(" + lpnList[tranCanEnable.getLpnIndex()].getTransition(tranCanEnable.getTranIndex()).getName() + ") is null.");
+							writeStringWithEndOfLineToPORDebugFile("@ nEnable: necessary set for transition " + lpnList[tranCanEnable.getLpnIndex()].getLabel() + "(" + lpnList[tranCanEnable.getLpnIndex()].getTransition(tranCanEnable.getTranIndex()).getName() + ") is null.");
 						}				
 				}
 			}
 		}
 		if (Options.getDebugMode()) {
 			if (transition.getEnablingTree() == null) {
-				System.out.println("@ nEnable: transition " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(tran.getTranIndex()).getName() + ") has no enabling condition.");
-				writeStringWithNewLineToPORDebugFile("@ nEnable: transition " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(tran.getTranIndex()).getName() + ") has no enabling condition.");
+//				System.out.println("@ nEnable: transition " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(tran.getTranIndex()).getName() + ") has no enabling condition.");
+				writeStringWithEndOfLineToPORDebugFile("@ nEnable: transition " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(tran.getTranIndex()).getName() + ") has no enabling condition.");
 			}
 			else if (transition.getEnablingTree().evaluateExpr(lpnList[tran.getLpnIndex()].getAllVarsWithValuesAsString(varValueVector)) !=0.0) {
-				System.out.println("@ nEnable: transition " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(tran.getTranIndex()).getName() + ")'s enabling condition is true.");
-				writeStringWithNewLineToPORDebugFile("@ nEnable: transition " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(tran.getTranIndex()).getName() + ")'s enabling condition is true.");
+//				System.out.println("@ nEnable: transition " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(tran.getTranIndex()).getName() + ")'s enabling condition is true.");
+				writeStringWithEndOfLineToPORDebugFile("@ nEnable: transition " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(tran.getTranIndex()).getName() + ")'s enabling condition is true.");
 			}
 			else if (transition.getEnablingTree() != null
 					&& transition.getEnablingTree().evaluateExpr(lpnList[tran.getLpnIndex()].getAllVarsWithValuesAsString(varValueVector)) == 0.0
 					&& canEnable.isEmpty()) {
-				System.out.println("@ nEnable: transition " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(tran.getTranIndex()).getName() 
-						+ ")'s enabling condition is false, but no other transitions that can help to enable it were found .");
-				writeStringWithNewLineToPORDebugFile("@ nEnable: transition " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(tran.getTranIndex()).getName() 
+//				System.out.println("@ nEnable: transition " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(tran.getTranIndex()).getName() 
+//						+ ")'s enabling condition is false, but no other transitions that can help to enable it were found .");
+				writeStringWithEndOfLineToPORDebugFile("@ nEnable: transition " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(tran.getTranIndex()).getName() 
 						+ ")'s enabling condition is false, but no other transitions that can help to enable it were found .");
 			}
-			printIntegerSet(nMarking, lpnList, "nMarking for transition " + transition.getName());
-			printIntegerSet(nEnable, lpnList, "nEnable for transition " + transition.getName());
+//			printIntegerSet(nMarking, lpnList, "nMarking for transition " + transition.getName());
+//			printIntegerSet(nEnable, lpnList, "nEnable for transition " + transition.getName());
 			writeIntegerSetToPORDebugFile(nMarking, lpnList, "nMarking for transition " + transition.getName());
 			writeIntegerSetToPORDebugFile(nEnable, lpnList, "nEnable for transition " + transition.getName());
 		}
@@ -4284,7 +4417,7 @@ public class Analysis {
 			if (!nMarking.isEmpty()) 
 				cachedNecessarySets.put(tran, nMarking);
 			if (Options.getDebugMode()) {
-				printCachedNecessarySets(lpnList);	
+//				printCachedNecessarySets(lpnList);	
 				writeCachedNecessarySetsToPORDebugFile(lpnList);
 			}
 			return nMarking;
@@ -4293,7 +4426,7 @@ public class Analysis {
 			if (!nEnable.isEmpty())
 				cachedNecessarySets.put(tran, nEnable);
 			if (Options.getDebugMode()) {
-				printCachedNecessarySets(lpnList);
+//				printCachedNecessarySets(lpnList);
 				writeCachedNecessarySetsToPORDebugFile(lpnList);
 			}
 			return nEnable;
@@ -4306,7 +4439,7 @@ public class Analysis {
 				if (getIntSetSubstraction(nMarking, dependent).size() < getIntSetSubstraction(nEnable, dependent).size()) {
 					cachedNecessarySets.put(tran, nMarking);
 					if (Options.getDebugMode()) {
-						printCachedNecessarySets(lpnList);
+//						printCachedNecessarySets(lpnList);
 						writeCachedNecessarySetsToPORDebugFile(lpnList);
 					}					
 					return nMarking;
@@ -4314,7 +4447,7 @@ public class Analysis {
 				else {
 					cachedNecessarySets.put(tran, nEnable);
 					if (Options.getDebugMode()) {
-						printCachedNecessarySets(lpnList);
+//						printCachedNecessarySets(lpnList);
 						writeCachedNecessarySetsToPORDebugFile(lpnList);
 					}
 					return nEnable;
@@ -4323,7 +4456,7 @@ public class Analysis {
 			else if (nMarking.isEmpty() && !nEnable.isEmpty()) {
 				cachedNecessarySets.put(tran, nEnable);
 				if (Options.getDebugMode()) {
-					printCachedNecessarySets(lpnList);
+//					printCachedNecessarySets(lpnList);
 					writeCachedNecessarySetsToPORDebugFile(lpnList);
 				}
 				return nEnable;
@@ -4331,7 +4464,7 @@ public class Analysis {
 			else { 
 				cachedNecessarySets.put(tran, nMarking);
 				if (Options.getDebugMode()) {
-					printCachedNecessarySets(lpnList);
+//					printCachedNecessarySets(lpnList);
 					writeCachedNecessarySetsToPORDebugFile(lpnList);
 				}	
 				return nMarking;
@@ -4340,17 +4473,17 @@ public class Analysis {
 	}
 
 	private HashSet<LpnTransitionPair> computeNecessaryUsingDependencyGraphs(State[] curStateArray,
-			LpnTransitionPair seedTran, HashSet<LpnTransitionPair> curEnabled,
+			LpnTransitionPair tran, HashSet<LpnTransitionPair> curEnabled,
 			HashMap<LpnTransitionPair, StaticSets> staticMap, 
-			LhpnFile[] lpnList) {
+			LhpnFile[] lpnList, LpnTransitionPair seedTran) {
 		if (Options.getDebugMode()) {
-			System.out.println("@ getNecessary, consider transition: " + lpnList[seedTran.getLpnIndex()].getLabel() + "(" + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()).getName() + ")");
-			writeStringWithNewLineToPORDebugFile("@ getNecessary, consider transition: " + lpnList[seedTran.getLpnIndex()].getLabel() + "(" + lpnList[seedTran.getLpnIndex()].getTransition(seedTran.getTranIndex()).getName() + ")");
+//			System.out.println("@ getNecessary, consider transition: " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(tran.getTranIndex()).getName() + ")");
+			writeStringWithEndOfLineToPORDebugFile("@ getNecessary, consider transition: " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(tran.getTranIndex()).getName() + ")");
 		}
 		// Use breadth-first search to find the shorted path from the seed transition to an enabled transition.
 		LinkedList<LpnTransitionPair> exploredTransQueue = new LinkedList<LpnTransitionPair>();
 		HashSet<LpnTransitionPair> allExploredTrans = new HashSet<LpnTransitionPair>();
-		exploredTransQueue.add(seedTran);
+		exploredTransQueue.add(tran);
 		//boolean foundEnabledTran = false;
 		HashSet<LpnTransitionPair> canEnable = new HashSet<LpnTransitionPair>();
 		while(!exploredTransQueue.isEmpty()){
@@ -4358,39 +4491,68 @@ public class Analysis {
 			allExploredTrans.add(curTran);
 			if (cachedNecessarySets.containsKey(curTran)) {
 				if (Options.getDebugMode()) {
-					System.out.println("Found transition" + lpnList[curTran.getLpnIndex()].getLabel() + "(" + lpnList[curTran.getLpnIndex()].getTransition(curTran.getTranIndex()).getName() + ")"
-							+ "'s necessary set in the cached necessary sets. Terminate BFS.");				
-					writeStringWithNewLineToPORDebugFile("Found transition" + lpnList[curTran.getLpnIndex()].getLabel() + "(" + lpnList[curTran.getLpnIndex()].getTransition(curTran.getTranIndex()).getName() + ")"
+//					System.out.println("Found transition" + lpnList[curTran.getLpnIndex()].getLabel() + "(" + lpnList[curTran.getLpnIndex()].getTransition(curTran.getTranIndex()).getName() + ")"
+//							+ "'s necessary set in the cached necessary sets. Terminate BFS.");				
+					writeStringWithEndOfLineToPORDebugFile("Found transition" + lpnList[curTran.getLpnIndex()].getLabel() + "(" + lpnList[curTran.getLpnIndex()].getTransition(curTran.getTranIndex()).getName() + ")"
 							+ "'s necessary set in the cached necessary sets. Terminate BFS.");
 				}
 				return cachedNecessarySets.get(curTran);			
 			}
 			canEnable = buildCanBringTokenSet(curTran,lpnList, curStateArray);
+			if (Options.getDebugMode()) {
+//				printIntegerSet(canEnable, lpnList, "Neighbors that can help to bring tokens to transition " + lpnList[curTran.getLpnIndex()].getLabel() + "(" + lpnList[curTran.getLpnIndex()].getTransition(curTran.getTranIndex()) + ") ");
+				writeIntegerSetToPORDebugFile(canEnable, lpnList, "Neighbors that can help to bring tokens to transition " + lpnList[curTran.getLpnIndex()].getLabel() + "(" + lpnList[curTran.getLpnIndex()].getTransition(curTran.getTranIndex()) + ") ");
+			}
 			// Decide if canSetEnablingTrue set can help to enable curTran.
 			Transition curTransition = lpnList[curTran.getLpnIndex()].getTransition(curTran.getTranIndex());
 			int[] varValueVector = curStateArray[curTran.getLpnIndex()].getVector();
 			if (curTransition.getEnablingTree() != null
-					&& curTransition.getEnablingTree().evaluateExpr(lpnList[curTran.getLpnIndex()].getAllVarsWithValuesAsString(varValueVector)) == 0.0) 
+					&& curTransition.getEnablingTree().evaluateExpr(lpnList[curTran.getLpnIndex()].getAllVarsWithValuesAsString(varValueVector)) == 0.0) {
 				canEnable.addAll(staticMap.get(curTran).getEnableBySettingEnablingTrue());
+				if (Options.getDebugMode()) {
+//					printIntegerSet(canEnable, lpnList, "Neighbors that can help to set the enabling of transition " + lpnList[curTran.getLpnIndex()].getLabel() + "(" + lpnList[curTran.getLpnIndex()].getTransition(curTran.getTranIndex()) + ") ");
+					writeIntegerSetToPORDebugFile(staticMap.get(curTran).getEnableBySettingEnablingTrue(), lpnList, "Neighbors that can help to set the enabling transition " + lpnList[curTran.getLpnIndex()].getLabel() + "(" + lpnList[curTran.getLpnIndex()].getTransition(curTran.getTranIndex()) + ") ");
+				}
+			}
 			if (Options.getDebugMode()) {
-				printIntegerSet(canEnable, lpnList, "Neighbors that can help to enable trnasition " + lpnList[curTran.getLpnIndex()].getLabel() + "(" + lpnList[curTran.getLpnIndex()].getTransition(curTran.getTranIndex()) + ") ");
-				writeIntegerSetToPORDebugFile(canEnable, lpnList, "Neighbors that can help to enable trnasition " + lpnList[curTran.getLpnIndex()].getLabel() + "(" + lpnList[curTran.getLpnIndex()].getTransition(curTran.getTranIndex()) + ") ");
+//				printIntegerSet(canEnable, lpnList, "Neighbors that can help to enable transition " + lpnList[curTran.getLpnIndex()].getLabel() + "(" + lpnList[curTran.getLpnIndex()].getTransition(curTran.getTranIndex()) + ") ");
+				writeIntegerSetToPORDebugFile(canEnable, lpnList, "Neighbors that can help to enable transition " + lpnList[curTran.getLpnIndex()].getLabel() + "(" + lpnList[curTran.getLpnIndex()].getTransition(curTran.getTranIndex()) + ") ");
 			}
 			for (LpnTransitionPair neighborTran : canEnable) {
 				if (curEnabled.contains(neighborTran)) {
-					HashSet<LpnTransitionPair> necessarySet = new HashSet<LpnTransitionPair>();
-					necessarySet.add(neighborTran);
-					// TODO: Is it true that the necessary set for a disabled transition only contains a single element before the dependent set of the element is computed?
-					cachedNecessarySets.put(seedTran, necessarySet);
-					if (Options.getDebugMode()) {
-						System.out.println("Enabled neighbor that can help to enable trnasition " + lpnList[curTran.getLpnIndex()].getLabel() 
-								+ "(" + lpnList[curTran.getLpnIndex()].getTransition(curTran.getTranIndex()) + "): " + lpnList[neighborTran.getLpnIndex()].getLabel() 
-								+ "(" + lpnList[neighborTran.getLpnIndex()].getTransition(neighborTran.getTranIndex()) + ")");
-						writeStringWithNewLineToPORDebugFile("Enabled neighbor that can help to enable trnasition " + lpnList[curTran.getLpnIndex()].getLabel() 
-						+ "(" + lpnList[curTran.getLpnIndex()].getTransition(curTran.getTranIndex()) + "): " + lpnList[neighborTran.getLpnIndex()].getLabel() 
-						+ "(" + lpnList[neighborTran.getLpnIndex()].getTransition(neighborTran.getTranIndex()) + ")");
+					if (!neighborTran.equals(seedTran)) {
+						HashSet<LpnTransitionPair> necessarySet = new HashSet<LpnTransitionPair>();
+						necessarySet.add(neighborTran);
+						// TODO: Is it true that the necessary set for a disabled transition only contains a single element before the dependent set of the element is computed?
+						cachedNecessarySets.put(tran, necessarySet);
+						if (Options.getDebugMode()) {
+//							System.out.println("Enabled neighbor that can help to enable transition " + lpnList[curTran.getLpnIndex()].getLabel() 
+//									+ "(" + lpnList[curTran.getLpnIndex()].getTransition(curTran.getTranIndex()) + "): " + lpnList[neighborTran.getLpnIndex()].getLabel() 
+//									+ "(" + lpnList[neighborTran.getLpnIndex()].getTransition(neighborTran.getTranIndex()) + ").");
+							writeStringWithEndOfLineToPORDebugFile("Enabled neighbor that can help to enable transition " + lpnList[curTran.getLpnIndex()].getLabel() 
+							+ "(" + lpnList[curTran.getLpnIndex()].getTransition(curTran.getTranIndex()) + "): " + lpnList[neighborTran.getLpnIndex()].getLabel() 
+							+ "(" + lpnList[neighborTran.getLpnIndex()].getTransition(neighborTran.getTranIndex()) + ").");
+						}
+						return necessarySet;
 					}
-					return necessarySet;
+					else if (neighborTran.equals(seedTran) && canEnable.size()==1) {
+						if (Options.getDebugMode()) {
+//							System.out.println("Enabled neighbor that can help to enable transition " + lpnList[curTran.getLpnIndex()].getLabel() 
+//									+ "(" + lpnList[curTran.getLpnIndex()].getTransition(curTran.getTranIndex()) + "): " + lpnList[neighborTran.getLpnIndex()].getLabel() 
+//									+ "(" + lpnList[neighborTran.getLpnIndex()].getTransition(neighborTran.getTranIndex()) + "). But " + lpnList[neighborTran.getLpnIndex()].getLabel() 
+//									+ "(" + lpnList[neighborTran.getLpnIndex()].getTransition(neighborTran.getTranIndex()) + ") is the seed transition. Return null necessary set.");
+							writeStringWithEndOfLineToPORDebugFile("Enabled neighbor that can help to enable transition " + lpnList[curTran.getLpnIndex()].getLabel() 
+							+ "(" + lpnList[curTran.getLpnIndex()].getTransition(curTran.getTranIndex()) + "): " + lpnList[neighborTran.getLpnIndex()].getLabel() 
+							+ "(" + lpnList[neighborTran.getLpnIndex()].getTransition(neighborTran.getTranIndex()) + "). But " + lpnList[neighborTran.getLpnIndex()].getLabel() 
+							+ "(" + lpnList[neighborTran.getLpnIndex()].getTransition(neighborTran.getTranIndex()) + ") is the seed transition. Return null necessary set.");
+						}
+						return null;
+//						if (exploredTransQueue.isEmpty()) {
+//							System.out.println("exploredTransQueue is empty. Return null necessary set."); 
+//							writeStringWithNewLineToPORDebugFile("exploredTransQueue is empty. Return null necessary set.");							
+//							return null;
+//						}			
+					}
 				}
 				if (!allExploredTrans.contains(neighborTran)) {
 					allExploredTrans.add(neighborTran);
@@ -4435,14 +4597,14 @@ public class Analysis {
 	}
 	
 	private void writeCachedNecessarySetsToPORDebugFile(LhpnFile[] lpnList) {
-		writeStringWithNewLineToPORDebugFile("================ cachedNecessarySets =================");
+		writeStringWithEndOfLineToPORDebugFile("================ cachedNecessarySets =================");
 		for (LpnTransitionPair key : cachedNecessarySets.keySet()) {
 			writeStringToPORDebugFile(lpnList[key.getLpnIndex()].getLabel() + "(" + lpnList[key.getLpnIndex()].getTransition(key.getTranIndex()).getName() + ") => ");
 			HashSet<LpnTransitionPair> necessarySet = cachedNecessarySets.get(key);
 			for (LpnTransitionPair necessary : necessarySet) {
 				writeStringToPORDebugFile(lpnList[necessary.getLpnIndex()].getLabel() + "(" + lpnList[necessary.getLpnIndex()].getTransition(necessary.getTranIndex()).getName() + ") ");
 			}
-			writeStringWithNewLineToPORDebugFile("");
+			writeStringWithEndOfLineToPORDebugFile("");
 		}
 		
 	}
@@ -4501,17 +4663,17 @@ public class Analysis {
 		if (!setName.isEmpty())
 			writeStringToPORDebugFile(setName + ": ");
 		if (indicies == null) {
-			writeStringWithNewLineToPORDebugFile("null");
+			writeStringWithEndOfLineToPORDebugFile("null");
 		}
 		else if (indicies.isEmpty()) {
-			writeStringWithNewLineToPORDebugFile("empty");
+			writeStringWithEndOfLineToPORDebugFile("empty");
 		}
 		else {
 			for (LpnTransitionPair lpnTranPair : indicies) {
 				writeStringToPORDebugFile("\t" + sgList[lpnTranPair.getLpnIndex()].getLpn().getLabel() + "(" 
 						+ sgList[lpnTranPair.getLpnIndex()].getLpn().getAllTransitions()[lpnTranPair.getTranIndex()].getName() + ") \t");
 			}
-			writeStringWithNewLineToPORDebugFile("");
+			writeStringWithEndOfLineToPORDebugFile("");
 		}	
 	}
 	
@@ -4539,20 +4701,17 @@ public class Analysis {
 		if (!setName.isEmpty())
 			writeStringToPORDebugFile(setName + ": ");
 		if (indicies == null) {
-			writeStringWithNewLineToPORDebugFile("null");
+			writeStringWithEndOfLineToPORDebugFile("null");
 		}
 		else if (indicies.isEmpty()) {
-			writeStringWithNewLineToPORDebugFile("empty");
+			writeStringWithEndOfLineToPORDebugFile("empty");
 		}
 		else {
 			for (LpnTransitionPair lpnTranPair : indicies) {
 				writeStringToPORDebugFile(lpnList[lpnTranPair.getLpnIndex()].getLabel() + "(" 
 						+ lpnList[lpnTranPair.getLpnIndex()].getAllTransitions()[lpnTranPair.getTranIndex()].getName() + ") \t");
 			}
-			writeStringWithNewLineToPORDebugFile("");
+			writeStringWithEndOfLineToPORDebugFile("");
 		}	
 	}
-	
-	
-	
 }
