@@ -676,7 +676,7 @@ public class Analysis {
 					out.write(curTranStr + "->" + curTranInCanEnableStr + "[color=\"mediumaquamarine\"];");
 					out.newLine();
 				}
-				for (LpnTransitionPair curTranInCanEnable : curStaticSets.getCanEnableSet()) {
+				for (LpnTransitionPair curTranInCanEnable : curStaticSets.getCanEnableBySettingEnablingTrueSet()) {
 					String curTranInCanEnableStr = lpnList[curTranInCanEnable.getLpnIndex()].getLabel() 
 							+ "_" + lpnList[curTranInCanEnable.getLpnIndex()].getTransition(curTranInCanEnable.getTranIndex()).getName();
 					//out.write(curTranInCanEnableStr + "->" + curTranStr + "[color=\"deepskyblue\"];");
