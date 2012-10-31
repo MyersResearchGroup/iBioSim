@@ -440,8 +440,8 @@ public class StateGraph {
         }   	
     	if(enabledSetTbl.containsKey(curState) == true){
     		if (Options.getDebugMode()) {
-    			System.out.println("~~~~~~~ existing state in enabledSetTbl for LPN" + curState.getLpn().getLabel() + ": S" + curState.getIndex() + "~~~~~~~~");
-        		printTransitionSet((LpnTranList)enabledSetTbl.get(curState), "enabled trans at this state ");
+//    			System.out.println("~~~~~~~ existing state in enabledSetTbl for LPN" + curState.getLpn().getLabel() + ": S" + curState.getIndex() + "~~~~~~~~");
+//        		printTransitionSet((LpnTranList)enabledSetTbl.get(curState), "enabled trans at this state ");
     		}
             return (LpnTranList)enabledSetTbl.get(curState).clone();
         }   	
@@ -450,8 +450,9 @@ public class StateGraph {
         if (init) {
         	for (Transition tran : this.lpn.getAllTransitions()) {
             	if (isEnabled(tran,curState)) {
-            		if (Options.getDebugMode())
-            			System.out.println("Transition " + tran.getLpn().getLabel() + "(" + tran.getName() + ") is enabled");
+            		if (Options.getDebugMode()) {
+//            			System.out.println("Transition " + tran.getLpn().getLabel() + "(" + tran.getName() + ") is enabled");
+            		}            			
             		if(tran.isLocal()==true)
             			curEnabled.addLast(tran);
                     else
@@ -472,8 +473,8 @@ public class StateGraph {
         }
         this.enabledSetTbl.put(curState, curEnabled);
         if (Options.getDebugMode()) {
-        	System.out.println("~~~~~~~~ State S" + curState.getIndex() + " does not exist in enabledSetTbl for LPN " + curState.getLpn().getLabel() + ". Add to enabledSetTbl.");
-        	printEnabledSetTbl();
+//        	System.out.println("~~~~~~~~ State S" + curState.getIndex() + " does not exist in enabledSetTbl for LPN " + curState.getLpn().getLabel() + ". Add to enabledSetTbl.");
+//        	printEnabledSetTbl();
         }
         return curEnabled;
     }
@@ -490,27 +491,31 @@ public class StateGraph {
 			int[] varValuesVector = curState.getVector();
 			String tranName = tran.getName();
 			int tranIndex = tran.getIndex();
-			if (Options.getDebugMode())
-				System.out.println("Checking " + tran);
+			if (Options.getDebugMode()) {
+//				System.out.println("Checking " + tran);
+			}				
 			if (this.lpn.getEnablingTree(tranName) != null 
 					&& this.lpn.getEnablingTree(tranName).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(varValuesVector)) == 0.0
 					&& !(tran.isPersistent() && curState.getTranVector()[tranIndex])) {
-				if (Options.getDebugMode())
-					System.out.println(tran.getName() + " " + "Enabling condition is false");
+				if (Options.getDebugMode()) {
+//					System.out.println(tran.getName() + " " + "Enabling condition is false");
+				}	
 				return false;
 			}
 			if (this.lpn.getTransitionRateTree(tranName) != null 
 					&& this.lpn.getTransitionRateTree(tranName).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(varValuesVector)) == 0.0) {
-				if (Options.getDebugMode())
-					System.out.println("Rate is zero");
+				if (Options.getDebugMode()) {
+//					System.out.println("Rate is zero");
+				}					
 				return false;
 			}
 			if (this.lpn.getPreset(tranName) != null && this.lpn.getPreset(tranName).length != 0) {
 				int[] curMarking = curState.getMarking();
 				for (int place : this.lpn.getPresetIndex(tranName)) {
 					if (curMarking[place]==0) {
-						if (Options.getDebugMode())
-							System.out.println(tran.getName() + " " + "Missing a preset token");
+						if (Options.getDebugMode()) {
+//							System.out.println(tran.getName() + " " + "Missing a preset token");
+						}							
 						return false;
 					}
 				}
@@ -971,33 +976,39 @@ public class StateGraph {
     		}
     	}
         // find newly enabled transition(s) based on the updated markings and variables
-    	if (Options.getDebugMode())
-			System.out.println("Finding newly enabled transitions at updateEnabledTranVector.");
+    	if (Options.getDebugMode()) {
+//    		System.out.println("Finding newly enabled transitions at updateEnabledTranVector.");
+    	}
+			
         for (Transition tran : this.lpn.getAllTransitions()) {
         	boolean needToUpdate = true;
         	String tranName = tran.getName();
     		int tranIndex = tran.getIndex();
-    		if (Options.getDebugMode())
-				System.out.println("Checking " + tranName);
+    		if (Options.getDebugMode()) {
+//    			System.out.println("Checking " + tranName);
+    		}
     		if (this.lpn.getEnablingTree(tranName) != null 
     				&& this.lpn.getEnablingTree(tranName).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(newVectorArray)) == 0.0) {
-    			if (Options.getDebugMode())
-					System.out.println(tran.getName() + " " + "Enabling condition is false");    			
+    			if (Options.getDebugMode()) {
+//    				System.out.println(tran.getName() + " " + "Enabling condition is false");    			
+    			}					
     			if (enabledTranAfterFiring[tranIndex] && !tran.isPersistent())
     				enabledTranAfterFiring[tranIndex] = false;
     			continue;
     		}
     		if (this.lpn.getTransitionRateTree(tranName) != null 
     				&& this.lpn.getTransitionRateTree(tranName).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(newVectorArray)) == 0.0) {
-    			if (Options.getDebugMode())
-					System.out.println("Rate is zero");
+    			if (Options.getDebugMode()) {
+//    				System.out.println("Rate is zero");
+    			}					
     			continue;
     		}
     		if (this.lpn.getPreset(tranName) != null && this.lpn.getPreset(tranName).length != 0) {
     			for (int place : this.lpn.getPresetIndex(tranName)) {
     				if (newMarking[place]==0) {
-    					if (Options.getDebugMode())
-							System.out.println(tran.getName() + " " + "Missing a preset token");
+    					if (Options.getDebugMode()) {
+//    						System.out.println(tran.getName() + " " + "Missing a preset token");
+    					}
     					needToUpdate = false;
     					break;
     				}
@@ -1006,8 +1017,9 @@ public class StateGraph {
 			if (needToUpdate) {
             	// if a transition is enabled and it is not recorded in the enabled transition vector
     			enabledTranAfterFiring[tranIndex] = true;
-    			if (Options.getDebugMode())
-					System.out.println(tran.getName() + " is Enabled.");
+    			if (Options.getDebugMode()) {
+//    				System.out.println(tran.getName() + " is Enabled.");
+    			}					
             }
         }
     	return enabledTranAfterFiring;
