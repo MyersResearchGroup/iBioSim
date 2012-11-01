@@ -789,15 +789,17 @@ public class StateGraph {
         	}
         } 
         
-        // Update rates
+        // Update rates      
         final int OLD_ZERO = 0; 	// Case 0 in description.
-		final int NEW_NON_ZERO = 1; // Case 1 in description.
-		final int NEW_ZERO = 2;		// Case 2 in description.
-		final int OLD_NON_ZERO = 3;	// Cade 3 in description.
-		newAssignValues.add(new HashMap<LPNContinuousPair, IntervalPair>());
-		newAssignValues.add(new HashMap<LPNContinuousPair, IntervalPair>());
-		newAssignValues.add(new HashMap<LPNContinuousPair, IntervalPair>());
-		newAssignValues.add(new HashMap<LPNContinuousPair, IntervalPair>());
+        final int NEW_NON_ZERO = 1; // Case 1 in description.
+        final int NEW_ZERO = 2;		// Case 2 in description.
+        final int OLD_NON_ZERO = 3;	// Cade 3 in description.
+        if(Options.getTimingAnalysisFlag()){
+        	newAssignValues.add(new HashMap<LPNContinuousPair, IntervalPair>());
+        	newAssignValues.add(new HashMap<LPNContinuousPair, IntervalPair>());
+        	newAssignValues.add(new HashMap<LPNContinuousPair, IntervalPair>());
+        	newAssignValues.add(new HashMap<LPNContinuousPair, IntervalPair>());
+        }
         for(String key : this.lpn.getContVars()){
         	
     		// Get the pairing.
