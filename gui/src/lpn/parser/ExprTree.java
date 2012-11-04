@@ -6,6 +6,7 @@ import java.util.Set;
 import java.lang.Math;
 
 import verification.timed_state_exploration.zoneProject.IntervalPair;
+import verification.timed_state_exploration.zoneProject.LPNContAndRate;
 import verification.timed_state_exploration.zoneProject.LPNContinuousPair;
 import verification.timed_state_exploration.zoneProject.Zone;
 
@@ -4569,7 +4570,8 @@ public class ExprTree {
 	 * 			The range of values for the expression tree.
 	 */
 	public IntervalPair evaluateExprBound(HashMap<String, String> variables, Zone z, 
-			HashMap<LPNContinuousPair, IntervalPair> continuousValues){
+//			HashMap<LPNContinuousPair, IntervalPair> continuousValues){
+			HashMap<LPNContAndRate, IntervalPair> continuousValues){
 		
 		
 		/*
@@ -5522,13 +5524,24 @@ public class ExprTree {
 				}
 			
 				else if(isit == 'c'){
-					if(z != null){
-						return z.getContinuousBounds(variable, lhpn);
+//					if(z != null){
+//						return z.getContinuousBounds(variable, lhpn);
+//					}
+//					else{
+//						return continuousValues.get(new LPNContinuousPair(lhpn.getLpnIndex(),
+//								lhpn.getContVarIndex(variable)));
+//					}
+					LPNContinuousPair lcPair = new LPNContinuousPair(lhpn.getLpnIndex(),
+							lhpn.getContVarIndex(variable));
+					
+					IntervalPair result = continuousValues.get(new LPNContAndRate(lcPair));
+					if(result != null){
+						return result;
 					}
 					else{
-						return continuousValues.get(new LPNContinuousPair(lhpn.getLpnIndex(),
-								lhpn.getContVarIndex(variable)));
+						return z.getContinuousBounds(variable, lhpn);
 					}
+					
 				}
 				
 				else if (isit == 'b'){
