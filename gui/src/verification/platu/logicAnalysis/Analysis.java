@@ -126,7 +126,7 @@ public class Analysis {
 				// LPNTran firedTran = curEnabledSet.removeFirst();
 				
 				// TODO: (check) Not sure if lpnList[index] is correct
-				State[] nextStateArray = lpnList[index].fire(lpnList, curPrjState, firedTran, null, null);
+				State[] nextStateArray = lpnList[index].fire(lpnList, curPrjState, firedTran);
 
 				// Add nextPrjState into prjStateSet
 				// If nextPrjState has been traversed before, skip to the next
@@ -352,7 +352,7 @@ public class Analysis {
 			// Timing Change.
 			if(!Options.getTimingAnalysisFlag()){
 				// Get the next states from the fire method and define the next project state.				
-				nextStateArray = sgList[curIndex].fire(sgList, curStateArray, firedTran, null, null);
+				nextStateArray = sgList[curIndex].fire(sgList, curStateArray, firedTran);
 				nextPrjState = new PrjState(nextStateArray);
 			}
 			else{
@@ -1009,7 +1009,7 @@ public class Analysis {
 				}
 //			}
 			
-			State[] nextStateArray = sgList[firedLpnTranPair.getLpnIndex()].fire(sgList, curStateArray, firedTran, null, null);
+			State[] nextStateArray = sgList[firedLpnTranPair.getLpnIndex()].fire(sgList, curStateArray, firedTran);
 			tranFiringCnt++;
 			
 
@@ -2572,7 +2572,7 @@ public class Analysis {
 					sg = lpnList[i];
 				}
 			}
-			State[] nextStateArray = sg.fire(lpnList, curStateArray, firedTran, null, null);			
+			State[] nextStateArray = sg.fire(lpnList, curStateArray, firedTran);
 			
 			// Check if the firedTran causes disabling error or deadlock.
 			@SuppressWarnings("unchecked")
@@ -2838,7 +2838,7 @@ public class Analysis {
 			}
 
 			Transition firedTran = curEnabled.removeLast();
-			State[] nextStateArray = lpnList[curIndex].fire(lpnList, curStateArray,firedTran, null, null);
+			State[] nextStateArray = lpnList[curIndex].fire(lpnList, curStateArray,firedTran);
 			tranFiringCnt++;
 
 			// Check if the firedTran causes disabling error or deadlock.
@@ -3006,7 +3006,7 @@ public class Analysis {
 				while (curEnabled.size() > 0) {
 					Transition firedTran = curEnabled.removeLast();
 					// TODO: (check) Not sure if curLpn.fire is correct.
-					nextStateArray = curLpn.fire(lpnList, curStateArray, firedTran, null, null);
+					nextStateArray = curLpn.fire(lpnList, curStateArray, firedTran);
 					tranFiringCnt++;
 
 					for (int i = 0; i < arraySize; i++) {
@@ -3160,7 +3160,7 @@ public class Analysis {
 					
 					for (Transition firedTran : curEnabled) {
 						// TODO: (check) Not sure if sgList[i].fire is correct.
-						State[] nextStateArray = sgList[i].fire(sgList, curStateArray, firedTran, null, null);
+						State[] nextStateArray = sgList[i].fire(sgList, curStateArray, firedTran);
 						tranFiringCnt++;
 				
 						/*
@@ -3534,7 +3534,7 @@ public class Analysis {
 					sg = lpnList[i];
 				}
 			}
-			State[] nextStateArray = sg.fire(lpnList, curStateArray, firedTran, null, null);
+			State[] nextStateArray = sg.fire(lpnList, curStateArray, firedTran);
 			tranFiringCnt++;
 			
 			// Check if the firedTran causes disabling error or deadlock.
