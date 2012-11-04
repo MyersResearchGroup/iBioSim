@@ -19,9 +19,9 @@ public class Event {
 	 * time.
 	 */
 	
-	Transition _transition;
+	private Transition _transition;
 	
-	InequalityVariable _inequality;
+	private InequalityVariable _inequality;
 	
 	/**
 	 * Initializes the Event as a transition event.
