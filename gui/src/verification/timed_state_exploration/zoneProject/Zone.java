@@ -2011,7 +2011,9 @@ public class Zone{
 	 * 		The Zone obtained by firing Transition t with enabled Transitions enabled
 	 * 		enabledTran when the current state is localStates.
 	 */
-	public Zone fire(Transition t, LpnTranList enabledTran, ArrayList<HashMap<LPNContinuousPair, IntervalPair>> newAssignValues,
+//	public Zone fire(Transition t, LpnTranList enabledTran, ArrayList<HashMap<LPNContinuousPair, IntervalPair>> newAssignValues,
+//			State[] localStates){
+	public Zone fire(Transition t, LpnTranList enabledTran, ArrayList<HashMap<LPNContAndRate, IntervalPair>> newAssignValues,
 			State[] localStates){
 		
 		// Create the LPNTransitionPair to check if the Transitions is in the zone and to 
@@ -2063,7 +2065,8 @@ public class Zone{
 //	{
 	public Zone fireTransitionbydbmIndex(int index, LpnTranList enabledTimers,
 			State[] localStates, 
-			ArrayList<HashMap<LPNContinuousPair, IntervalPair>> newAssignValues)
+//			ArrayList<HashMap<LPNContinuousPair, IntervalPair>> newAssignValues)
+			ArrayList<HashMap<LPNContAndRate, IntervalPair>> newAssignValues)
 	{
 		/*
 		 * For the purpose of adding the newly enabled transitions and removing
@@ -2096,44 +2099,49 @@ public class Zone{
 		
 		copyRates(newZone, enabledTimers, newAssignValues);
 		
+		// Add the continuous variables to the enabled timers.
+		for(int i=1; _indexToTimerPair[i] instanceof LPNContinuousPair; i++){
+			oldTimers.add(_indexToTimerPair[i]);
+		}
+		
 		// Extract the pairing information for the enabled timers.
 		// Using the enabledTimersList should be faster than calling the get method
 		// several times. Also add the non-zero rate continuous variables.
 //		newZone._indexToTimerPair = new LPNTransitionPair[enabledTimers.size() + 1];
-		newZone._indexToTimerPair = new LPNTransitionPair[enabledTimers.size() + oldTimers.size() + 1];
+		//newZone._indexToTimerPair = new LPNTransitionPair[enabledTimers.size() + oldTimers.size() + 1];
 		// Currently the 'oldTimers' set contains only the continuous variables.
-		
-		int count = 0; // Count keeps track of where to place the next LPNTransitionPair into the _indexToTimer.
-		
-		// Copy in the continuous variables (and the zero timer).
-		//for(int i=0; i<oldTimers.size(); i++){
-		for(LPNTransitionPair ltPair : _indexToTimerPair){
-			if(!(ltPair instanceof LPNContinuousPair) && !(ltPair.equals(LPNTransitionPair.ZERO_TIMER_PAIR))){
-				// If we've reached the end of the continous variables, stop.
-				break;
-			}
-			// This loop counts to the number of elements in the oldTimers set.
-			// This corresponds to the number of continuous variables in
-			// this._indexToTimerPair. But the continuous variables start at
-			// i=1 after the zero timer pair.
-//			newZone._indexToTimerPair[count++] = _indexToTimerPair[i].clone();
-			newZone._indexToTimerPair[count++] = ltPair.clone();
-			// I'm cloning these elements in case I need to change the 
-			// rate. If the rate does not change, this can be a copy.
-		}
-		
-//		newZone._indexToTimerPair[count++] = 
-//				new LPNTransitionPair(LPNTransitionPair.ZERO_TIMER, -1, true);
-//		newZone._indexToTimerPair[count++] = 
-//				new LPNTransitionPair(LPNTransitionPair.ZERO_TIMER, -1);
-		for(Transition t : enabledTimers){
+//		
+//		int count = 0; // Count keeps track of where to place the next LPNTransitionPair into the _indexToTimer.
+//		
+//		// Copy in the continuous variables (and the zero timer).
+//		//for(int i=0; i<oldTimers.size(); i++){
+//		for(LPNTransitionPair ltPair : _indexToTimerPair){
+//			if(!(ltPair instanceof LPNContinuousPair) && !(ltPair.equals(LPNTransitionPair.ZERO_TIMER_PAIR))){
+//				// If we've reached the end of the continous variables, stop.
+//				break;
+//			}
+//			// This loop counts to the number of elements in the oldTimers set.
+//			// This corresponds to the number of continuous variables in
+//			// this._indexToTimerPair. But the continuous variables start at
+//			// i=1 after the zero timer pair.
+////			newZone._indexToTimerPair[count++] = _indexToTimerPair[i].clone();
+//			newZone._indexToTimerPair[count++] = ltPair.clone();
+//			// I'm cloning these elements in case I need to change the 
+//			// rate. If the rate does not change, this can be a copy.
+//		}
+//		
+////		newZone._indexToTimerPair[count++] = 
+////				new LPNTransitionPair(LPNTransitionPair.ZERO_TIMER, -1, true);
+////		newZone._indexToTimerPair[count++] = 
+////				new LPNTransitionPair(LPNTransitionPair.ZERO_TIMER, -1);
+//		for(Transition t : enabledTimers){
+////			newZone._indexToTimerPair[count++] = 
+////					new LPNTransitionPair(t.getLpn().getLpnIndex(), t.getIndex(), true);
 //			newZone._indexToTimerPair[count++] = 
-//					new LPNTransitionPair(t.getLpn().getLpnIndex(), t.getIndex(), true);
-			newZone._indexToTimerPair[count++] = 
-					new LPNTransitionPair(t.getLpn().getLpnIndex(), t.getIndex());
-		}
-		
-		Arrays.sort(newZone._indexToTimerPair);
+//					new LPNTransitionPair(t.getLpn().getLpnIndex(), t.getIndex());
+//		}
+//		
+//		Arrays.sort(newZone._indexToTimerPair);
 		
 //		HashSet<LPNTransitionPair> newTimers = new HashSet<LPNTransitionPair>();
 //		HashSet<LPNTransitionPair> oldTimers = new HashSet<LPNTransitionPair>();
@@ -2335,7 +2343,8 @@ public class Zone{
 	 * @param newAssignValues
 	 */
 	private void copyRates(Zone newZone, LpnTranList enabledTran,
-			ArrayList<HashMap<LPNContinuousPair, IntervalPair>> newAssignValues){
+//			ArrayList<HashMap<LPNContinuousPair, IntervalPair>> newAssignValues){
+			ArrayList<HashMap<LPNContAndRate, IntervalPair>> newAssignValues){
 		/*
 		 * The newAssignValues is an ArrayList of four sets.
 		 * 0. Rate zero gets zero assigned.
@@ -2347,16 +2356,27 @@ public class Zone{
 		final int OLD_ZERO = 0; 	// Case 0 in description.
 		final int NEW_NON_ZERO = 1; // Case 1 in description.
 		final int NEW_ZERO = 2;		// Case 2 in description.
-		//final int OLD_NON_ZERO = 3;	// Cade 3 in description. Isn't used.
+		final int OLD_NON_ZERO = 3;	// Case 3 in description. Isn't used.
 		
-		HashMap<LPNContinuousPair, IntervalPair> oldRateZero = 
+//		HashMap<LPNContinuousPair, IntervalPair> oldRateZero = 
+//				newAssignValues.get(OLD_ZERO);
+//		
+//		HashMap<LPNContinuousPair, IntervalPair> newNonZeroRate = 
+//				newAssignValues.get(NEW_NON_ZERO);
+//		
+//		HashMap<LPNContinuousPair, IntervalPair> newRateZero = 
+//				newAssignValues.get(NEW_ZERO);
+		
+		HashMap<LPNContAndRate, IntervalPair> oldRateZero = 
 				newAssignValues.get(OLD_ZERO);
 		
-		HashMap<LPNContinuousPair, IntervalPair> newNonZeroRate = 
+		HashMap<LPNContAndRate, IntervalPair> newNonZeroRate = 
 				newAssignValues.get(NEW_NON_ZERO);
 		
-		HashMap<LPNContinuousPair, IntervalPair> newRateZero = 
+		HashMap<LPNContAndRate, IntervalPair> newRateZero = 
 				newAssignValues.get(NEW_ZERO);
+		HashMap<LPNContAndRate, IntervalPair> oldNonZero = 
+				newAssignValues.get(OLD_NON_ZERO);
 		
 		// Create new rate zero member variable.
 		newZone._rateZeroContinuous = new DualHashMap<LPNTransitionPair, VariableRangePair>();
@@ -2385,6 +2405,9 @@ public class Zone{
 		// Create the timer array.
 		newZone._indexToTimerPair = new LPNTransitionPair[newSize];
 		
+		// Add in the zero timer.
+		newZone._indexToTimerPair[0] = LPNTransitionPair.ZERO_TIMER_PAIR;
+		
 		// Copy over the rate zero conintinuous variables.
 		// First copy over all the continuous variables that still have
 		// rate zero.
@@ -2403,45 +2426,80 @@ public class Zone{
 		
 		
 		// Next add the values that are newly set to rate zero.
-		for(LPNContinuousPair ltContPair : newRateZero.keySet()){
+//		for(LPNContinuousPair ltContPair : newRateZero.keySet()){
+		for(LPNContAndRate ltCar : newRateZero.keySet()){
 			// Exract the variable.
-			Variable v = _lpnList[ltContPair.get_lpnIndex()].
-					getContVar(ltContPair.get_ContinuousIndex());
+			Variable v = _lpnList[ltCar.get_lcPair().get_lpnIndex()].
+					getContVar(ltCar.get_lcPair().get_ContinuousIndex());
 			
 			// Create a VariableRangePair.
-			VariableRangePair vrp = new VariableRangePair(v, newRateZero.get(ltContPair));
+			VariableRangePair vrp = new VariableRangePair(v, newRateZero.get(ltCar.get_lcPair()));
 			
 			// Add the value to the map.
-			newZone._rateZeroContinuous.put(ltContPair, vrp);
+			newZone._rateZeroContinuous.put(ltCar.get_lcPair(), vrp);
 		}
 		
 		// We still need to add in the rate zero continuous variables whose rate remains zero
 		// since their range might have changed. We could check if the range has changed, but
 		// its just as easy (or easier) to simply add it anyway.
-		for(LPNContinuousPair ltContPair : oldRateZero.keySet()){
-			// Exract the variable.
-			Variable v = _lpnList[ltContPair.get_lpnIndex()].
-					getContVar(ltContPair.get_ContinuousIndex());
-			
-			// Create a VariableRangePair.
-			VariableRangePair vrp = new VariableRangePair(v, newRateZero.get(ltContPair));
-			
-			// Add the value to the map.
-			newZone._rateZeroContinuous.put(ltContPair, vrp);
-		}
+//		for(LPNContinuousPair ltContPair : oldRateZero.keySet()){
+//			// Exract the variable.
+//			Variable v = _lpnList[ltContPair.get_lpnIndex()].
+//					getContVar(ltContPair.get_ContinuousIndex());
+//			
+//			// Create a VariableRangePair.
+//			VariableRangePair vrp = new VariableRangePair(v, newRateZero.get(ltContPair));
+//			
+//			// Add the value to the map.
+//			newZone._rateZeroContinuous.put(ltContPair, vrp);
+//		}
 		
 		// Added the indecies for the non-zero rate continuous variables to the
 		// _indexToTimer array.
 		// Start with the values already in the old array.
 		int index = 1; // Index for the next continuous index object.
-		for(int i=1; _indexToTimerPair[i] instanceof LPNContinuousPair; i++){
+		for(int i=1; this._indexToTimerPair[i] instanceof LPNContinuousPair; i++){
 			// Check that the value should not be removed.
-			if(newRateZero.containsKey(((LPNContinuousPair) _indexToTimerPair[i]))){
+			LPNContAndRate lcar = new LPNContAndRate((LPNContinuousPair) _indexToTimerPair[i]);
+			
+			if(newRateZero.containsKey(lcar)){
 				continue;
 			}
-			
-			newZone._indexToTimerPair[index++] = _indexToTimerPair[i];
+			else if (oldNonZero.containsKey(lcar)){
+				continue;
+			}
+			else{
+				newZone._indexToTimerPair[index++] = this._indexToTimerPair[i];
+			}
 		}
+		
+		// Change to the new references for the oldNonZero. This change to the 
+		// new current rate.
+//		for(LPNContAndRate lcar : oldNonZero.keySet()){
+//			int oldIndex = Arrays.binarySearch(_indexToTimerPair, lcar.get_lcPair());
+//			_indexToTimerPair[oldIndex] = lcar.get_lcPair();
+//		}
+		
+		// Add in the indecies for the new non-zero into the old array.
+//		for(LPNContinuousPair ltCont : newNonZeroRate.keySet()){
+		for(LPNContAndRate ltCar : newNonZeroRate.keySet()){
+//			newZone._indexToTimerPair[index++] = ltCont;
+			newZone._indexToTimerPair[index++] = ltCar.get_lcPair();
+		}
+		
+//		Arrays.sort(newZone._indexToTimerPair);
+		
+		// Copy over the new transitions.
+		for(Transition t : enabledTran){
+//			newZone._indexToTimerPair[index++] = ;
+			int lpnIndex = t.getLpn().getLpnIndex();
+			int tranIndex = t.getIndex();
+			newZone._indexToTimerPair[index++] = 
+					new LPNTransitionPair (lpnIndex, tranIndex);
+		}
+		
+		Arrays.sort(newZone._indexToTimerPair);
+
 	}
 	
 	/**
@@ -4021,7 +4079,8 @@ public class Zone{
 	 * 		The new values of the continuous variables.
 	 */
 //	public void updateContinuousAssignment(HashMap<LPNContinuousPair, IntervalPair> newContValues){
-	public void updateContinuousAssignment(ArrayList<HashMap<LPNContinuousPair, IntervalPair>> newAssignValues){
+//	public void updateContinuousAssignment(ArrayList<HashMap<LPNContinuousPair, IntervalPair>> newAssignValues){
+	public void updateContinuousAssignment(ArrayList<HashMap<LPNContAndRate, IntervalPair>> newAssignValues){
 		
 		/*
 		 * In dealing with the rates and continuous variables, there are four cases to consider. These cases
@@ -4032,12 +4091,92 @@ public class Zone{
 		 * 2. old rate is non-zero, new rate is zero.
 		 * 		Add the variable with its upper and lower bounds to _rateZeroContinuous.
 		 * 3. old rate is zero, new rate is zero.
-		 * 		
+		 * 		Lookup the zero rate in the _rateZeroContinuous and add any new continuous assignments.
 		 * 4. old rate is zero, new rate is non-zero.
+		 * 		Remove the rate from the _rateZeroContinuous and add the zone.
 		 */
 		
 		
+		// The updating of the rate-zero continuous variables is taken care of 
+		// by the copyRates. So just need to update the values in the zone.
+		// This amounts to copying over the values from the old zone for
+		// continuous variables that haven't changed and copying in
+		// values for the new vlues.
 		
+		
+		final int OLD_ZERO = 0; 	// Case 0 in description.
+		final int NEW_NON_ZERO = 1; // Case 1 in description.
+		final int NEW_ZERO = 2;		// Case 2 in description.
+		final int OLD_NON_ZERO = 3;	// Cade 3 in description.
+		
+//		HashMap<LPNContinuousPair, IntervalPair> newNonZero =
+//				newAssignValues.get(NEW_NON_ZERO);
+//		HashMap<LPNContinuousPair, IntervalPair> oldNonZero =
+//				newAssignValues.get(OLD_NON_ZERO);
+		
+		HashMap<LPNContAndRate, IntervalPair> newNonZero =
+				newAssignValues.get(NEW_NON_ZERO);
+		HashMap<LPNContAndRate, IntervalPair> oldNonZero =
+				newAssignValues.get(OLD_NON_ZERO);
+		
+//		for(Entry<LPNContinuousPair, IntervalPair> pair : newNonZero.entrySet()){
+//			// Set the lower bound.
+//			setDbmEntryByPair(pair.getKey(), LPNTransitionPair.ZERO_TIMER_PAIR, (-1)*pair.getValue().get_LowerBound());
+//			
+//			// Set the upper bound.
+//			setDbmEntryByPair(pair.getKey(), LPNTransitionPair.ZERO_TIMER_PAIR, pair.getValue().get_UpperBound());
+//		}
+		
+		for(Entry<LPNContAndRate, IntervalPair> pair : newNonZero.entrySet()){
+			// Set the lower bound.
+			setDbmEntryByPair(pair.getKey()._lcPair,
+					LPNTransitionPair.ZERO_TIMER_PAIR, (-1)*pair.getValue().get_LowerBound());
+			
+			// Set the upper bound.
+			setDbmEntryByPair(pair.getKey().get_lcPair(),
+					LPNTransitionPair.ZERO_TIMER_PAIR, pair.getValue().get_UpperBound());
+			
+			// Set the rate.
+			LPNTransitionPair ltpair = pair.getKey().get_lcPair();
+			
+			int index = Arrays.binarySearch(_indexToTimerPair, ltpair);
+			
+//			_matrix[index][0] = pair.getValue().get_UpperBound();
+//			_matrix[0][index] = pair.getValue().get_LowerBound();
+			_matrix[dbmIndexToMatrixIndex(index)][0] = -1*pair.getKey().get_rateInterval().get_LowerBound();
+			_matrix[0][dbmIndexToMatrixIndex(index)] = pair.getKey().get_rateInterval().get_UpperBound();
+		}
+		
+
+//		for(Entry<LPNContinuousPair, IntervalPair> pair : oldNonZero.entrySet()){
+//			// Set the lower bound.
+//			setDbmEntryByPair(pair.getKey(), LPNTransitionPair.ZERO_TIMER_PAIR, (-1)*pair.getValue().get_LowerBound());
+//			
+//			// Set the upper bound.
+//			setDbmEntryByPair(pair.getKey(), LPNTransitionPair.ZERO_TIMER_PAIR, pair.getValue().get_UpperBound());
+//		}
+		
+		for(Entry<LPNContAndRate, IntervalPair> pair : oldNonZero.entrySet()){
+			// Set the lower bound.
+			setDbmEntryByPair(pair.getKey().get_lcPair(),
+					LPNTransitionPair.ZERO_TIMER_PAIR, (-1)*pair.getValue().get_LowerBound());
+			
+			// Set the upper bound.
+			setDbmEntryByPair(pair.getKey().get_lcPair(),
+					LPNTransitionPair.ZERO_TIMER_PAIR, pair.getValue().get_UpperBound());
+			
+			int index = Arrays.binarySearch(_indexToTimerPair, pair.getKey().get_lcPair());
+			
+			// Set the current rate.
+			LPNTransitionPair ltPair = pair.getKey().get_lcPair();
+			setCurrentRate(ltPair, pair.getKey().get_lcPair().getCurrentRate());
+			
+			// Set the upper and lower bounds for the rates.
+//			_matrix[index][0] = pair.getValue().get_UpperBound();
+//			_matrix[0][index] = pair.getValue().get_LowerBound();
+			_matrix[dbmIndexToMatrixIndex(index)][0] = -1*pair.getKey().get_rateInterval().get_LowerBound();
+			_matrix[0][dbmIndexToMatrixIndex(index)] = pair.getKey().get_rateInterval().get_UpperBound();
+		}
 		
 //		for(Entry<LPNContinuousPair, IntervalPair> pair : newContValues.entrySet()){
 //			
