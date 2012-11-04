@@ -2,6 +2,7 @@ package verification.timed_state_exploration.zoneProject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Properties;
 
 import verification.platu.lpn.DualHashMap;
@@ -9,6 +10,7 @@ import verification.platu.stategraph.State;
 
 import lpn.parser.ExprTree;
 import lpn.parser.LhpnFile;
+import lpn.parser.Transition;
 import lpn.parser.Variable;
 
 
@@ -36,6 +38,12 @@ public class InequalityVariable extends Variable {
 	//String _variable;
 	//Variable _variable;
 	private ArrayList<Variable> _variables;
+	
+	/* 
+	 * Holds the Transitions that have this inequality in their enabling
+	 * condition.
+	 */
+	private HashSet<Transition> _transtitions;
 	
 	/* The LhpnFile object that this InequalityVariable belongs to. */
 	private LhpnFile _lpn;
@@ -359,7 +367,8 @@ public class InequalityVariable extends Variable {
 	 * 			IllegalStateException if the inequality cannot be evaulated to
 	 * 			true or false.
 	 */
-	public int evaluate(int[] vector, Zone z, HashMap<LPNContinuousPair, IntervalPair> continuousValues){
+//	public int evaluate(int[] vector, Zone z, HashMap<LPNContinuousPair, IntervalPair> continuousValues){
+	public int evaluate(int[] vector, Zone z, HashMap<LPNContAndRate, IntervalPair> continuousValues){
 		
 		// From the (local) state, extract the current values to use in the 
 		// evaluator.
@@ -514,8 +523,32 @@ public class InequalityVariable extends Variable {
 		return _variables;
 	}
 	
+	/**
+	 * Gets the index of this Inequality variable as a Boolean variable
+	 * in the associated LPN.
+	 * @return
+	 * 		The index in the LPN.
+	 */
 	public int get_index(){
 		DualHashMap<String, Integer> indexMap = _lpn.getVarIndexMap();
 		return indexMap.getValue(getName());
+	}
+	
+	/**
+	 * Registers a Transition with this IneqaualityVaraible.
+	 * @param t
+	 * 		A Transition that has this InequalityVariable in its enabling condition.
+	 */
+	public void addTransition(Transition t){
+		_transtitions.add(t);
+	}
+	
+	/**
+	 * Get the Transitions that have this Inequaltiy variable in their enabling condition.
+	 * @return
+	 * 		The set of all Transitions that have this Inqualtiy variable in their enabling condition.
+	 */
+	public HashSet<Transition> getTransitions(){
+		return _transtitions;
 	}
 }
