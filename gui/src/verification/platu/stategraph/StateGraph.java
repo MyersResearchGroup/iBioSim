@@ -29,6 +29,7 @@ import verification.timed_state_exploration.zoneProject.EventSet;
 import verification.timed_state_exploration.zoneProject.InequalityVariable;
 import verification.timed_state_exploration.zoneProject.Event;
 import verification.timed_state_exploration.zoneProject.IntervalPair;
+import verification.timed_state_exploration.zoneProject.LPNContAndRate;
 import verification.timed_state_exploration.zoneProject.LPNContinuousPair;
 import verification.timed_state_exploration.zoneProject.LPNTransitionPair;
 import verification.timed_state_exploration.zoneProject.TimedPrjState;
@@ -653,22 +654,25 @@ public class StateGraph {
     	for(int i = 0; i < curSgArray.length; i++)
     		stateArray[i] = curSgArray[i].getState(curStateIdxArray[i]);
 
-    	return this.fire(curSgArray, stateArray, firedTran, null, null);
+    	return this.fire(curSgArray, stateArray, firedTran);
     }
 
     // This method is called by search_dfs(StateGraph[], State[]).
-//    public State[] fire(final StateGraph[] curSgArray, final State[] curStateArray, Transition firedTran,
+    public State[] fire(final StateGraph[] curSgArray, final State[] curStateArray, Transition firedTran){
 //    		HashMap<LPNContinuousPair, IntervalPair> continuousValues, Zone z) {
-    public State[] fire(final StateGraph[] curSgArray, final State[] curStateArray, Transition firedTran,
-    		ArrayList<HashMap<LPNContinuousPair, IntervalPair>> newAssignValues, Zone z) {
+//    public State[] fire(final StateGraph[] curSgArray, final State[] curStateArray, Transition firedTran,
+//    		ArrayList<HashMap<LPNContinuousPair, IntervalPair>> newAssignValues, Zone z) {
+//    public State[] fire(final StateGraph[] curSgArray, final State[] curStateArray, Transition firedTran,
+//    		ArrayList<HashMap<LPNContAndRate, IntervalPair>> newAssignValues, Zone z) {
+    	
     	int thisLpnIndex = this.getLpn().getLpnIndex(); 
     	State[] nextStateArray = curStateArray.clone();
     	
     	State curState = curStateArray[thisLpnIndex];
 //    	State nextState = this.fire(curSgArray[thisLpnIndex], curState, firedTran, continuousValues, z);   
     	
-    	State nextState = this.fire(curSgArray[thisLpnIndex], curState, firedTran, newAssignValues, z);   
-    	
+//    	State nextState = this.fire(curSgArray[thisLpnIndex], curState, firedTran, newAssignValues, z);   
+    	State nextState = this.fire(curSgArray[thisLpnIndex], curState, firedTran);
     	
     	//int[] nextVector = nextState.getVector();
     	//int[] curVector = curState.getVector();
@@ -743,10 +747,12 @@ public class StateGraph {
     }
     
     // TODO: (original) add transition that fires to parameters
-//    public State fire(final StateGraph thisSg, final State curState, Transition firedTran, 
+    public State fire(final StateGraph thisSg, final State curState, Transition firedTran){ 
 //    		HashMap<LPNContinuousPair, IntervalPair> continuousValues, Zone z) {
-    public State fire(final StateGraph thisSg, final State curState, Transition firedTran, 
-    		ArrayList<HashMap<LPNContinuousPair, IntervalPair>> newAssignValues, Zone z) {
+//    public State fire(final StateGraph thisSg, final State curState, Transition firedTran, 
+//    		ArrayList<HashMap<LPNContinuousPair, IntervalPair>> newAssignValues, Zone z) {
+//    public State fire(final StateGraph thisSg, final State curState, Transition firedTran, 
+//    		ArrayList<HashMap<LPNContAndRate, IntervalPair>> newAssignValues, Zone z) {
     
     	// Search for and return cached next state first. 
 //    	if(this.nextStateMap.containsKey(curState) == true)
@@ -789,160 +795,173 @@ public class StateGraph {
         	}
         } 
         
-        // Update rates      
-        final int OLD_ZERO = 0; 	// Case 0 in description.
-        final int NEW_NON_ZERO = 1; // Case 1 in description.
-        final int NEW_ZERO = 2;		// Case 2 in description.
-        final int OLD_NON_ZERO = 3;	// Cade 3 in description.
-        if(Options.getTimingAnalysisFlag()){
-        	newAssignValues.add(new HashMap<LPNContinuousPair, IntervalPair>());
-        	newAssignValues.add(new HashMap<LPNContinuousPair, IntervalPair>());
-        	newAssignValues.add(new HashMap<LPNContinuousPair, IntervalPair>());
-        	newAssignValues.add(new HashMap<LPNContinuousPair, IntervalPair>());
-        }
-        for(String key : this.lpn.getContVars()){
-        	
-    		// Get the pairing.
-    		int lpnIndex = this.lpn.getLpnIndex();
-    		int contVarIndex = this.lpn.getContVarIndex(key);
-
-    		// Package up the indecies.
-    		LPNContinuousPair contVar = new LPNContinuousPair(lpnIndex, contVarIndex);
-
-    		Integer newRate = null;
-    		IntervalPair newValue= null;
-        	
-        	// Check if there is a new rate assignment.
-        	if(this.lpn.getRateAssignTree(firedTran.getName(), key) != null){
-        		// Get the new value.
-        		IntervalPair newIntervalRate = this.lpn.getRateAssignTree(firedTran.getName(), key)
-        				//.evaluateExprBound(this.lpn.getAllVarsWithValuesAsString(curVector), z, null);
-        				.evaluateExprBound(currentValuesAsString, z, null);
-        				
-//        		// Get the pairing.
-//        		int lpnIndex = this.lpn.getLpnIndex();
-//        		int contVarIndex = this.lpn.getContVarIndex(key);
+//        // Update rates      
+//        final int OLD_ZERO = 0; 	// Case 0 in description.
+////		final int NEW_NON_ZERO = 1; // Case 1 in description.
+////		final int NEW_ZERO = 2;		// Case 2 in description.
+////		final int OLD_NON_ZERO = 3;	// Case 3 in description.
+////		newAssignValues.add(new HashMap<LPNContAndRate, IntervalPair>());
+////		newAssignValues.add(new HashMap<LPNContAndRate, IntervalPair>());
+////		newAssignValues.add(new HashMap<LPNContAndRate, IntervalPair>());
+////		newAssignValues.add(new HashMap<LPNContAndRate, IntervalPair>());
 //
-//        		// Package up the indecies.
-//        		LPNContinuousPair contVar = new LPNContinuousPair(lpnIndex, contVarIndex);
-
-        		// Keep the current rate.
-        		newRate = newIntervalRate.get_LowerBound();
-        		
-        		contVar.setCurrentRate(newIntervalRate.get_LowerBound());
-        		
-//        		continuousValues.put(contVar, new IntervalPair(z.getDbmEntryByPair(contVar, LPNTransitionPair.ZERO_TIMER_PAIR),
-//        				z.getDbmEntryByPair(LPNTransitionPair.ZERO_TIMER_PAIR, contVar)));
-        		
-//        		// Check if the new assignment gives rate zero.
-//        		boolean newRateZero = newRate == 0;
-//        		// Check if the variable was already rate zero.
-//        		boolean oldRateZero = z.getCurrentRate(contVar) == 0;
+//        final int NEW_NON_ZERO = 1; // Case 1 in description.
+//        final int NEW_ZERO = 2;		// Case 2 in description.
+//        final int OLD_NON_ZERO = 3;	// Cade 3 in description.
+//        if(Options.getTimingAnalysisFlag()){
+//        	newAssignValues.add(new HashMap<LPNContAndRate, IntervalPair>());
+//        	newAssignValues.add(new HashMap<LPNContAndRate, IntervalPair>());
+//        	newAssignValues.add(new HashMap<LPNContAndRate, IntervalPair>());
+//        	newAssignValues.add(new HashMap<LPNContAndRate, IntervalPair>());
+//        }
+//
+//        for(String key : this.lpn.getContVars()){
+//        	
+//    		// Get the pairing.
+//    		int lpnIndex = this.lpn.getLpnIndex();
+//    		int contVarIndex = this.lpn.getContVarIndex(key);
+//
+//    		// Package up the indecies.
+//    		LPNContinuousPair contVar = new LPNContinuousPair(lpnIndex, contVarIndex);
+//
+//    		//Integer newRate = null;
+//    		IntervalPair newRate = null;
+//    		IntervalPair newValue= null;
+//        	
+//        	// Check if there is a new rate assignment.
+//        	if(this.lpn.getRateAssignTree(firedTran.getName(), key) != null){
+//        		// Get the new value.
+//        		//IntervalPair newIntervalRate = this.lpn.getRateAssignTree(firedTran.getName(), key)
+//        				//.evaluateExprBound(this.lpn.getAllVarsWithValuesAsString(curVector), z, null);
+//        		newRate = this.lpn.getRateAssignTree(firedTran.getName(), key)
+//        				.evaluateExprBound(currentValuesAsString, z, null);
+//        				
+////        		// Get the pairing.
+////        		int lpnIndex = this.lpn.getLpnIndex();
+////        		int contVarIndex = this.lpn.getContVarIndex(key);
+////
+////        		// Package up the indecies.
+////        		LPNContinuousPair contVar = new LPNContinuousPair(lpnIndex, contVarIndex);
+//
+//        		// Keep the current rate.
+//        		//newRate = newIntervalRate.get_LowerBound();
 //        		
-//        		// Put the new value in the appropriate set.
-//        		if(oldRateZero){
-//        			if(newRateZero){
-//        				// Old rate is zero and the new rate is zero.
-//        				newAssignValues.get(OLD_ZERO).put(contVar, newValue);
-//        			}
-//        			else{
-//        				// Old rate is zero and the new rate is non-zero.
-//        				newAssignValues.get(NEW_NON_ZERO).put(contVar, newValue);
-//        			}
-//        		}
-//        		else{
-//        			if(newRateZero){
-//        				// Old rate is non-zero and the new rate is zero.
-//        				newAssignValues.get(NEW_ZERO).put(contVar, newValue);
-//        			}
-//        			else{
-//        				// Old rate is non-zero and the new rate is non-zero.
-//        				newAssignValues.get(OLD_NON_ZERO).put(contVar, newValue);
-//        			}
-//        		}
-        	}
-        //}
-        
-        // Update continuous variables.
-        //for(String key : this.lpn.getContVars()){
-        	// Get the new assignments on the continuous variables and update inequalities.
-        	if (this.lpn.getContAssignTree(firedTran.getName(), key) != null) {
-//        		int newValue = (int)this.lpn.getContAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(curVector));
-//        		newVectorArray[this.lpn.getVarIndexMap().get(key)] = newValue;
-        		
-        		// Get the new value.
-        		newValue = this.lpn.getContAssignTree(firedTran.getName(), key)
-        				//.evaluateExprBound(this.lpn.getAllVarsWithValuesAsString(curVector), z, null);
-        				.evaluateExprBound(currentValuesAsString, z, null);
-        		
-//        		// Get the pairing.
-//        		int lpnIndex = this.lpn.getLpnIndex();
-//        		int contVarIndex = this.lpn.getContVarIndex(key);
+//        		//contVar.setCurrentRate(newIntervalRate.get_LowerBound());
+//        		contVar.setCurrentRate(newRate.get_LowerBound());
 //        		
-//        		// Package up the indecies.
-//        		LPNContinuousPair contVar = new LPNContinuousPair(lpnIndex, contVarIndex);
-        		
-        		if(newRate == null){
-        			// Keep the current rate.
-        			contVar.setCurrentRate(z.getCurrentRate(contVar));
-        		}
-        		
-        		
-//        		continuousValues.put(contVar, newValue);
-        		
-        		// Get each inequality that involves the continuous variable.
-        		ArrayList<InequalityVariable> inequalities = this.lpn.getContVar(contVarIndex).getInequalities();
-        		
-        		// Update the inequalities.
-        		for(InequalityVariable ineq : inequalities){
-        			int ineqIndex = this.lpn.getVarIndexMap().get(ineq.getName());
-        			
-        			
-        			HashMap<LPNContinuousPair, IntervalPair> continuousValues = new HashMap<LPNContinuousPair, IntervalPair>();
-        			continuousValues.putAll(newAssignValues.get(OLD_ZERO));
-        			continuousValues.putAll(newAssignValues.get(NEW_NON_ZERO));
-        			continuousValues.putAll(newAssignValues.get(NEW_ZERO));
-        			continuousValues.putAll(newAssignValues.get(OLD_NON_ZERO));
-        			
-        			
-        			newVectorArray[ineqIndex] = ineq.evaluate(newVectorArray, null, continuousValues);
-        		}
-        	}
-        	
-
-        	// If the value did not get assigned, put in the old value.
-        	if(newValue == null){
-        		newValue = z.getContinuousBounds(contVar);
-        	}
-    		
-    		// Check if the new assignment gives rate zero.
-    		boolean newRateZero = newRate == 0;
-    		// Check if the variable was already rate zero.
-    		boolean oldRateZero = z.getCurrentRate(contVar) == 0;
-    		
-    		// Put the new value in the appropriate set.
-    		if(oldRateZero){
-    			if(newRateZero){
-    				// Old rate is zero and the new rate is zero.
-    				newAssignValues.get(OLD_ZERO).put(contVar, newValue);
-    			}
-    			else{
-    				// Old rate is zero and the new rate is non-zero.
-    				newAssignValues.get(NEW_NON_ZERO).put(contVar, newValue);
-    			}
-    		}
-    		else{
-    			if(newRateZero){
-    				// Old rate is non-zero and the new rate is zero.
-    				newAssignValues.get(NEW_ZERO).put(contVar, newValue);
-    			}
-    			else{
-    				// Old rate is non-zero and the new rate is non-zero.
-    				newAssignValues.get(OLD_NON_ZERO).put(contVar, newValue);
-    			}
-    		}
-        	
-        }
+////        		continuousValues.put(contVar, new IntervalPair(z.getDbmEntryByPair(contVar, LPNTransitionPair.ZERO_TIMER_PAIR),
+////        				z.getDbmEntryByPair(LPNTransitionPair.ZERO_TIMER_PAIR, contVar)));
+//        		
+////        		// Check if the new assignment gives rate zero.
+////        		boolean newRateZero = newRate == 0;
+////        		// Check if the variable was already rate zero.
+////        		boolean oldRateZero = z.getCurrentRate(contVar) == 0;
+////        		
+////        		// Put the new value in the appropriate set.
+////        		if(oldRateZero){
+////        			if(newRateZero){
+////        				// Old rate is zero and the new rate is zero.
+////        				newAssignValues.get(OLD_ZERO).put(contVar, newValue);
+////        			}
+////        			else{
+////        				// Old rate is zero and the new rate is non-zero.
+////        				newAssignValues.get(NEW_NON_ZERO).put(contVar, newValue);
+////        			}
+////        		}
+////        		else{
+////        			if(newRateZero){
+////        				// Old rate is non-zero and the new rate is zero.
+////        				newAssignValues.get(NEW_ZERO).put(contVar, newValue);
+////        			}
+////        			else{
+////        				// Old rate is non-zero and the new rate is non-zero.
+////        				newAssignValues.get(OLD_NON_ZERO).put(contVar, newValue);
+////        			}
+////        		}
+//        	}
+//        //}
+//        
+//        // Update continuous variables.
+//        //for(String key : this.lpn.getContVars()){
+//        	// Get the new assignments on the continuous variables and update inequalities.
+//        	if (this.lpn.getContAssignTree(firedTran.getName(), key) != null) {
+////        		int newValue = (int)this.lpn.getContAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(curVector));
+////        		newVectorArray[this.lpn.getVarIndexMap().get(key)] = newValue;
+//        		
+//        		// Get the new value.
+//        		newValue = this.lpn.getContAssignTree(firedTran.getName(), key)
+//        				//.evaluateExprBound(this.lpn.getAllVarsWithValuesAsString(curVector), z, null);
+//        				.evaluateExprBound(currentValuesAsString, z, null);
+//        		
+////        		// Get the pairing.
+////        		int lpnIndex = this.lpn.getLpnIndex();
+////        		int contVarIndex = this.lpn.getContVarIndex(key);
+////        		
+////        		// Package up the indecies.
+////        		LPNContinuousPair contVar = new LPNContinuousPair(lpnIndex, contVarIndex);
+//        		
+//        		if(newRate == null){
+//        			// Keep the current rate.
+//        			contVar.setCurrentRate(z.getCurrentRate(contVar));
+//        		}
+//        		
+//        		
+////        		continuousValues.put(contVar, newValue);
+//        		
+//        		// Get each inequality that involves the continuous variable.
+//        		ArrayList<InequalityVariable> inequalities = this.lpn.getContVar(contVarIndex).getInequalities();
+//        		
+//        		// Update the inequalities.
+//        		for(InequalityVariable ineq : inequalities){
+//        			int ineqIndex = this.lpn.getVarIndexMap().get(ineq.getName());
+//        			
+//        			
+//        			HashMap<LPNContAndRate, IntervalPair> continuousValues = new HashMap<LPNContAndRate, IntervalPair>();
+//        			continuousValues.putAll(newAssignValues.get(OLD_ZERO));
+//        			continuousValues.putAll(newAssignValues.get(NEW_NON_ZERO));
+//        			continuousValues.putAll(newAssignValues.get(NEW_ZERO));
+//        			continuousValues.putAll(newAssignValues.get(OLD_NON_ZERO));
+//        			
+//        			
+//        			newVectorArray[ineqIndex] = ineq.evaluate(newVectorArray, z, continuousValues);
+//        		}
+//        	}
+//        	
+//
+//        	// If the value did not get assigned, put in the old value.
+//        	if(newValue == null){
+//        		newValue = z.getContinuousBounds(contVar);
+//        	}
+//    		
+//    		// Check if the new assignment gives rate zero.
+//    		//boolean newRateZero = newRate == 0;
+//        	boolean newRateZero = newRate.singleValue() ? newRate.get_LowerBound() == 0 : false;
+//    		// Check if the variable was already rate zero.
+//    		boolean oldRateZero = z.getCurrentRate(contVar) == 0;
+//    		
+//    		// Put the new value in the appropriate set.
+//    		if(oldRateZero){
+//    			if(newRateZero){
+//    				// Old rate is zero and the new rate is zero.
+//    				newAssignValues.get(OLD_ZERO).put(new LPNContAndRate(contVar, newRate), newValue);
+//    			}
+//    			else{
+//    				// Old rate is zero and the new rate is non-zero.
+//    				newAssignValues.get(NEW_NON_ZERO).put(new LPNContAndRate(contVar, newRate), newValue);
+//    			}
+//    		}
+//    		else{
+//    			if(newRateZero){
+//    				// Old rate is non-zero and the new rate is zero.
+//    				newAssignValues.get(NEW_ZERO).put(new LPNContAndRate(contVar, newRate), newValue);
+//    			}
+//    			else{
+//    				// Old rate is non-zero and the new rate is non-zero.
+//    				newAssignValues.get(OLD_NON_ZERO).put(new LPNContAndRate(contVar, newRate), newValue);
+//    			}
+//    		}
+//        	
+//        }
         
         /*
         for (VarExpr s : firedTran.getAssignments()) {
@@ -1317,7 +1336,7 @@ public class StateGraph {
 	}
 	
 	/**
-	 * Fires a transition.
+	 * Fires a transition for the timed code.
 	 * @param curSgArray
 	 * 			The current information on the all local states.
 	 * @param currentPrjState
@@ -1353,15 +1372,27 @@ public class StateGraph {
 		
 		//HashMap<LPNContinuousPair, IntervalPair> newContValues = new HashMap<LPNContinuousPair, IntervalPair>();
 		
-		ArrayList<HashMap<LPNContinuousPair, IntervalPair>> newAssignValues = 
-				new ArrayList<HashMap<LPNContinuousPair, IntervalPair>>();
+//		ArrayList<HashMap<LPNContinuousPair, IntervalPair>> newAssignValues = 
+//				new ArrayList<HashMap<LPNContinuousPair, IntervalPair>>();
+		
+		/* 
+		 * This ArrayList contains four separate maps that store the 
+		 * rate and continuous variables assignments.
+		 */
+		ArrayList<HashMap<LPNContAndRate, IntervalPair>> newAssignValues = 
+				new ArrayList<HashMap<LPNContAndRate, IntervalPair>>();
 		
 		// Get the new un-timed local states.
-//		State[] newStates = fire(curSgArray, curStateArray, firedTran, newContValues, 
+		State[] newStates = fire(curSgArray, curStateArray, firedTran); 
 //				currentTimedPrjState.get_zones()[0]);
 
-		State[] newStates = fire(curSgArray, curStateArray, firedTran, newAssignValues, 
-				currentTimedPrjState.get_zones()[0]);
+//		State[] newStates = fire(curSgArray, curStateArray, firedTran, newAssignValues, 
+//				currentTimedPrjState.get_zones()[0]);
+		
+		// Get the new values from rate assignments and continuous variable
+		// assignments. Also fix the enabled transition markings.
+		
+		
 		
 		LpnTranList enabledTransitions = new LpnTranList();
 		
@@ -1489,5 +1520,193 @@ public class StateGraph {
 		}
 		
 		return fire(curSgArray, currentPrjState, eventSet.getTransition());
+	}
+	
+	/**
+	 * 
+	 * @param z
+	 * @param currentValuesAsString
+	 * @param states
+	 * @param firedTran
+	 * @return
+	 */
+	public ArrayList<HashMap<LPNContAndRate, IntervalPair>>
+		updateContinuousState(Zone z, HashMap<String, String> currentValuesAsString,
+				State[] states, Transition firedTran){
+		
+		ArrayList<HashMap<LPNContAndRate, IntervalPair>> newAssignValues 
+			= new ArrayList<HashMap<LPNContAndRate, IntervalPair>>();
+		
+		// Update rates      
+		final int OLD_ZERO = 0; 	// Case 0 in description.
+		//		final int NEW_NON_ZERO = 1; // Case 1 in description.
+		//		final int NEW_ZERO = 2;		// Case 2 in description.
+		//		final int OLD_NON_ZERO = 3;	// Case 3 in description.
+		//		newAssignValues.add(new HashMap<LPNContAndRate, IntervalPair>());
+		//		newAssignValues.add(new HashMap<LPNContAndRate, IntervalPair>());
+		//		newAssignValues.add(new HashMap<LPNContAndRate, IntervalPair>());
+		//		newAssignValues.add(new HashMap<LPNContAndRate, IntervalPair>());
+
+		final int NEW_NON_ZERO = 1; // Case 1 in description.
+		final int NEW_ZERO = 2;		// Case 2 in description.
+		final int OLD_NON_ZERO = 3;	// Cade 3 in description.
+		if(Options.getTimingAnalysisFlag()){
+			newAssignValues.add(new HashMap<LPNContAndRate, IntervalPair>());
+			newAssignValues.add(new HashMap<LPNContAndRate, IntervalPair>());
+			newAssignValues.add(new HashMap<LPNContAndRate, IntervalPair>());
+			newAssignValues.add(new HashMap<LPNContAndRate, IntervalPair>());
+		}
+
+		for(String key : this.lpn.getContVars()){
+
+			// Get the pairing.
+			int lpnIndex = this.lpn.getLpnIndex();
+			int contVarIndex = this.lpn.getContVarIndex(key);
+
+			// Package up the indecies.
+			LPNContinuousPair contVar = new LPNContinuousPair(lpnIndex, contVarIndex);
+
+			//Integer newRate = null;
+			IntervalPair newRate = null;
+			IntervalPair newValue= null;
+
+			// Check if there is a new rate assignment.
+			if(this.lpn.getRateAssignTree(firedTran.getName(), key) != null){
+				// Get the new value.
+				//IntervalPair newIntervalRate = this.lpn.getRateAssignTree(firedTran.getName(), key)
+				//.evaluateExprBound(this.lpn.getAllVarsWithValuesAsString(curVector), z, null);
+				newRate = this.lpn.getRateAssignTree(firedTran.getName(), key)
+						.evaluateExprBound(currentValuesAsString, z, null);
+
+				//      		// Get the pairing.
+				//      		int lpnIndex = this.lpn.getLpnIndex();
+				//      		int contVarIndex = this.lpn.getContVarIndex(key);
+				//
+				//      		// Package up the indecies.
+				//      		LPNContinuousPair contVar = new LPNContinuousPair(lpnIndex, contVarIndex);
+
+				// Keep the current rate.
+				//newRate = newIntervalRate.get_LowerBound();
+
+				//contVar.setCurrentRate(newIntervalRate.get_LowerBound());
+				contVar.setCurrentRate(newRate.get_LowerBound());
+
+				//      		continuousValues.put(contVar, new IntervalPair(z.getDbmEntryByPair(contVar, LPNTransitionPair.ZERO_TIMER_PAIR),
+				//      				z.getDbmEntryByPair(LPNTransitionPair.ZERO_TIMER_PAIR, contVar)));
+
+				//      		// Check if the new assignment gives rate zero.
+				//      		boolean newRateZero = newRate == 0;
+				//      		// Check if the variable was already rate zero.
+				//      		boolean oldRateZero = z.getCurrentRate(contVar) == 0;
+				//      		
+				//      		// Put the new value in the appropriate set.
+				//      		if(oldRateZero){
+				//      			if(newRateZero){
+				//      				// Old rate is zero and the new rate is zero.
+				//      				newAssignValues.get(OLD_ZERO).put(contVar, newValue);
+				//      			}
+				//      			else{
+				//      				// Old rate is zero and the new rate is non-zero.
+				//      				newAssignValues.get(NEW_NON_ZERO).put(contVar, newValue);
+				//      			}
+				//      		}
+				//      		else{
+				//      			if(newRateZero){
+				//      				// Old rate is non-zero and the new rate is zero.
+				//      				newAssignValues.get(NEW_ZERO).put(contVar, newValue);
+				//      			}
+				//      			else{
+				//      				// Old rate is non-zero and the new rate is non-zero.
+				//      				newAssignValues.get(OLD_NON_ZERO).put(contVar, newValue);
+				//      			}
+				//      		}
+			}
+			//}
+
+			// Update continuous variables.
+			//for(String key : this.lpn.getContVars()){
+			// Get the new assignments on the continuous variables and update inequalities.
+			if (this.lpn.getContAssignTree(firedTran.getName(), key) != null) {
+				//      		int newValue = (int)this.lpn.getContAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(curVector));
+				//      		newVectorArray[this.lpn.getVarIndexMap().get(key)] = newValue;
+
+				// Get the new value.
+				newValue = this.lpn.getContAssignTree(firedTran.getName(), key)
+						//.evaluateExprBound(this.lpn.getAllVarsWithValuesAsString(curVector), z, null);
+						.evaluateExprBound(currentValuesAsString, z, null);
+
+				//      		// Get the pairing.
+				//      		int lpnIndex = this.lpn.getLpnIndex();
+				//      		int contVarIndex = this.lpn.getContVarIndex(key);
+				//      		
+				//      		// Package up the indecies.
+				//      		LPNContinuousPair contVar = new LPNContinuousPair(lpnIndex, contVarIndex);
+
+				if(newRate == null){
+					// Keep the current rate.
+					contVar.setCurrentRate(z.getCurrentRate(contVar));
+				}
+
+
+				//      		continuousValues.put(contVar, newValue);
+
+				// Get each inequality that involves the continuous variable.
+				ArrayList<InequalityVariable> inequalities = this.lpn.getContVar(contVarIndex).getInequalities();
+
+				// Update the inequalities.
+				for(InequalityVariable ineq : inequalities){
+					int ineqIndex = this.lpn.getVarIndexMap().get(ineq.getName());
+
+
+					HashMap<LPNContAndRate, IntervalPair> continuousValues = new HashMap<LPNContAndRate, IntervalPair>();
+					continuousValues.putAll(newAssignValues.get(OLD_ZERO));
+					continuousValues.putAll(newAssignValues.get(NEW_NON_ZERO));
+					continuousValues.putAll(newAssignValues.get(NEW_ZERO));
+					continuousValues.putAll(newAssignValues.get(OLD_NON_ZERO));
+
+					// Adjust state vector values for the inequality variables.
+					int[] newVectorArray = states[this.lpn.getLpnIndex()].getVector();
+					newVectorArray[ineqIndex] = ineq.evaluate(newVectorArray, z, continuousValues);
+				}
+			}
+
+
+			// If the value did not get assigned, put in the old value.
+			if(newValue == null){
+				newValue = z.getContinuousBounds(contVar);
+			}
+
+			// Check if the new assignment gives rate zero.
+			//boolean newRateZero = newRate == 0;
+			boolean newRateZero = newRate.singleValue() ? newRate.get_LowerBound() == 0 : false;
+			// Check if the variable was already rate zero.
+			boolean oldRateZero = z.getCurrentRate(contVar) == 0;
+
+			// Put the new value in the appropriate set.
+			if(oldRateZero){
+				if(newRateZero){
+					// Old rate is zero and the new rate is zero.
+					newAssignValues.get(OLD_ZERO).put(new LPNContAndRate(contVar, newRate), newValue);
+				}
+				else{
+					// Old rate is zero and the new rate is non-zero.
+					newAssignValues.get(NEW_NON_ZERO).put(new LPNContAndRate(contVar, newRate), newValue);
+				}
+			}
+			else{
+				if(newRateZero){
+					// Old rate is non-zero and the new rate is zero.
+					newAssignValues.get(NEW_ZERO).put(new LPNContAndRate(contVar, newRate), newValue);
+				}
+				else{
+					// Old rate is non-zero and the new rate is non-zero.
+					newAssignValues.get(OLD_NON_ZERO).put(new LPNContAndRate(contVar, newRate), newValue);
+				}
+			}
+
+		}
+		
+		
+		return newAssignValues;
 	}
 }
