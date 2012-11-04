@@ -10,6 +10,11 @@ public class IntervalPair {
 		this._upperBound = upperBound;
 	}
 	
+	public IntervalPair(){
+		this._lowerBound = 0;
+		this._upperBound = 0;
+	}
+	
 	public int get_LowerBound() {
 		return _lowerBound;
 	}
