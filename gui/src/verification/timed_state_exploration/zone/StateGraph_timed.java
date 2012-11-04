@@ -48,7 +48,7 @@ public class StateGraph_timed extends StateGraph{
 	 {
 		 // TODO: Overrides the base and must add the zone factor.
 		 
-		 State[] newState = super.fire(curSgArray, curStateArray, firedTran, null, null);
+		 State[] newState = super.fire(curSgArray, curStateArray, firedTran);
 		 //TimedState[] newTimedStates = new TimedState[newState.length];
 		 State[] newTimedStates = new State[newState.length];
 		 
