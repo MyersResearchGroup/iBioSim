@@ -2312,15 +2312,36 @@ public class LhpnFile {
 		 *  The expression trees for the boolean assignment and the enabling 
 		 *  conditions are contained in the Transitions.
 		 */
+		HashMap<InequalityVariable, InequalityVariable> inequalities =
+				new HashMap<InequalityVariable, InequalityVariable>();
 		for(Transition T : transitions.values()){
 			// Extract the inequalities from the boolean expression.
 			for(ExprTree E : T.getBoolAssignTrees().values()){
-				parseBooleanInequalities(E);
+				parseBooleanInequalities(E, inequalities);
 			}
 			
 			// Extract the inequalities from the enabling condition.
-			parseBooleanInequalities(T.getEnablingTree());
+			parseBooleanInequalities(T.getEnablingTree(), inequalities, T);
 		}
+		
+		// Add the inequalities to the booleans and variables.
+		for(InequalityVariable iv : inequalities.keySet()){
+			booleans.put("$" + iv.toString(), iv);
+			variables.add(iv);
+		}
+	}
+	
+	/**
+	 * Extracts the boolean variables associated with inequalities from a 
+	 * single ExprTree. This method is not meant for use with enabling
+	 * conditions since it will not register the transition with the
+	 * inequality variable.
+	 * @param ET
+	 * 		The expression tree for which the inequalities are extracted.
+	 */
+	private void parseBooleanInequalities(ExprTree ET,
+			HashMap<InequalityVariable, InequalityVariable> previousInequalities){
+		parseBooleanInequalities(ET, previousInequalities, null);
 	}
 	
 	/**
@@ -2328,8 +2349,13 @@ public class LhpnFile {
 	 * single ExprTree.
 	 * @param ET
 	 * 		The expression tree for which the inequalities are extracted.
+	 * @param T
+	 * 		If this expression tree is from an enabling condition, then the Transition
+	 * 		whose enabling condition that gave rise to this expression tree. Null
+	 * 		otherwise.
 	 */
-	private void parseBooleanInequalities(ExprTree ET){
+	private void parseBooleanInequalities(ExprTree ET, 
+			HashMap<InequalityVariable, InequalityVariable> previousInequalities, Transition T){
 		/*
 		 *  This method servers as a driver method for a recursive like search.
 		 *  The basic idea is to explore the tree until an inequality is found,
@@ -2344,7 +2370,7 @@ public class LhpnFile {
 		ArrayList<ExprTree> inequalities = new ArrayList<ExprTree>();
 		findInequalityNodes(ET, operators, inequalities);
 		
-		parseBooleanInequalities(inequalities);
+		parseBooleanInequalities(inequalities, previousInequalities, T);
 		
 	}
 	
@@ -2353,10 +2379,19 @@ public class LhpnFile {
 	 * @param inequalities
 	 * 		An ExprTree array containing nodes whose roots are a relational
 	 * 		operator.
+	 * @param T
+	 * 		If this expression tree is from an enabling condition, then the Transition
+	 * 		whose enabling condition that gave rise to this expression tree. Null
+	 * 		otherwise.
 	 */
-	private void parseBooleanInequalities(ArrayList<ExprTree> inequalities){
-		// For each node, create an InequalityVariable, add it to the variables,
+	private void
+	parseBooleanInequalities(ArrayList<ExprTree> inequalities,
+			HashMap<InequalityVariable, InequalityVariable> previousInequalities, Transition T){
+		// For each node, create an InequalityVariable, add it to the set of variables,
 		// and replace the current node of the ExprTree with the InequaltiyVariable.
+		
+//		HashMap<InequalityVariable, InequalityVariable> variableMap =
+//				new HashMap<InequalityVariable, InequalityVariable>();
 		
 		for(ExprTree ET : inequalities){ // ET phone home.
 			
@@ -2389,11 +2424,30 @@ public class LhpnFile {
 			}
 			else{
 				// Register variable with the continuous variable.
+				// This is taken care of by the constructor.
 				// TODO : finish.
 
 				// Add the variable
-				booleans.put(booleanName, newVariable);
-				variables.add(newVariable);
+				//booleans.put(booleanName, newVariable);
+				//variables.add(newVariable);
+				// Check if we have seen this variable before.
+				InequalityVariable seenBefore = previousInequalities.get(newVariable);
+				if(seenBefore == null){
+					// We have not seen this variable before, so add it to the
+					// list.
+					previousInequalities.put(newVariable, newVariable);
+					if(T != null){
+						// If there is a transition, register it.
+						newVariable.addTransition(T);
+					}
+				}
+				else if(T != null){
+					// We've seen this variable before. So no need to add it. Just
+					// need to register the transition. If the transition is null
+					// there is nothing to do.
+					seenBefore.addTransition(T);
+				}
+				
 			}
 			
 			// Replace the node into a boolean value.
@@ -2411,6 +2465,8 @@ public class LhpnFile {
 			ET.r1 = null;
 			ET.r2 = null;
 		}
+		
+		//return variableMap;
 	}
 	
 	/**
