@@ -45,6 +45,20 @@ public class LhpnFile {
 	
 	protected int lpnIndex;
 
+	/* 
+	 * Cached value of the map that associates a variable name with its
+	 * index. This field is initialized when a call to getVarIndexMap
+	 * is made.
+	 */
+	protected DualHashMap<String, Integer> _varIndexMap;
+
+	/*
+	 * Cached value of the map that associates a continuous variable with
+	 * its index. This field is initialized when a call to getContinuousIndexMap
+	 * is made.
+	 */
+	DualHashMap<String, Integer> _continuousIndexMap;
+	
 	public LhpnFile(Log log) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
@@ -1197,14 +1211,24 @@ public class LhpnFile {
 	}
 	
 	public DualHashMap<String, Integer> getVarIndexMap() {
-		int i = 0;
-		HashMap<String, Integer> varIndexHashMap = new HashMap<String, Integer>();
-		for (Variable v: variables) {
-			varIndexHashMap.put(v.getName(), i);
-			i++;
+		
+		if(_varIndexMap == null){
+
+			int i = 0;
+			HashMap<String, Integer> varIndexHashMap = new HashMap<String, Integer>();
+			for (Variable v: variables) {
+				varIndexHashMap.put(v.getName(), i);
+				i++;
+			}
+			DualHashMap<String, Integer> varIndexMap = new DualHashMap<String, Integer>(varIndexHashMap, variables.size());
+			
+			_varIndexMap = varIndexMap;
+			
+			return varIndexMap;
 		}
-		DualHashMap<String, Integer> varIndexMap = new DualHashMap<String, Integer>(varIndexHashMap, variables.size());
-		return varIndexMap;
+		else{
+			return _varIndexMap;
+		}
 	}
 	
 	/**
@@ -1213,15 +1237,23 @@ public class LhpnFile {
 	 * 		The map that associates the continuous variable and name.
 	 */
 	public DualHashMap<String, Integer> getContinuousIndexMap(){
-		int i=0;
-		HashMap<String, Integer> contVarIndexHashMap = new HashMap<String, Integer>();
-		for(Variable v : continuous.values()){
-			contVarIndexHashMap.put(v.getName(), i);
-			i++;
+		
+		if(_continuousIndexMap == null){
+			int i=0;
+			HashMap<String, Integer> contVarIndexHashMap = new HashMap<String, Integer>();
+			for(Variable v : continuous.values()){
+				contVarIndexHashMap.put(v.getName(), i);
+				i++;
+			}
+			DualHashMap<String, Integer> contIndexMap = 
+					new DualHashMap<String, Integer> (contVarIndexHashMap, variables.size());
+			
+			_continuousIndexMap = contIndexMap;
+			return contIndexMap;
 		}
-		DualHashMap<String, Integer> contIndexMap = 
-				new DualHashMap<String, Integer> (contVarIndexHashMap, variables.size());
-		return contIndexMap;
+		else{
+			return _continuousIndexMap;
+		}
 	}
 	
 	public HashMap<String, String> getAllVarsWithValuesAsString(int[] varValueVector) {
