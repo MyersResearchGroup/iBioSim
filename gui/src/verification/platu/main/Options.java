@@ -77,7 +77,7 @@ public class Options {
 	/*
 	 * Report disabling error flag
 	 */
-	private static boolean reportDisablingError = false;
+	private static boolean disablingError = true;
 	
 	/*
 	 * Output state graph (dot) flag
@@ -361,12 +361,12 @@ public class Options {
 		return porDeadlockPreserve;
 	}
 	
-	public static void setReportDisablingError() {
-		reportDisablingError = true;
+	public static void disableDisablingError() {
+		disablingError = false;
 	}
  
 	public static boolean getReportDisablingError() {
-		return reportDisablingError;
+		return disablingError;
 	}
 
 	public static void setMemoryUpperBound(long value) {
