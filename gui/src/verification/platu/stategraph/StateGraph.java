@@ -1379,19 +1379,30 @@ public class StateGraph {
 		 * This ArrayList contains four separate maps that store the 
 		 * rate and continuous variables assignments.
 		 */
-		ArrayList<HashMap<LPNContAndRate, IntervalPair>> newAssignValues = 
-				new ArrayList<HashMap<LPNContAndRate, IntervalPair>>();
+//		ArrayList<HashMap<LPNContAndRate, IntervalPair>> newAssignValues = 
+//				new ArrayList<HashMap<LPNContAndRate, IntervalPair>>();
 		
 		// Get the new un-timed local states.
 		State[] newStates = fire(curSgArray, curStateArray, firedTran); 
 //				currentTimedPrjState.get_zones()[0]);
 
+		
+		
 //		State[] newStates = fire(curSgArray, curStateArray, firedTran, newAssignValues, 
 //				currentTimedPrjState.get_zones()[0]);
 		
 		// Get the new values from rate assignments and continuous variable
 		// assignments. Also fix the enabled transition markings.
 		
+		// Convert the values of the current marking to strings. This is needed for the evaluator.
+		HashMap<String, String> valuesAsString = 
+				this.lpn.getAllVarsWithValuesAsString(curStateArray[this.lpn.getLpnIndex()].getVector());
+		
+//		ArrayList<HashMap<LPNContAndRate, IntervalPair>> newAssignValues =
+//				updateContinuousState(currentTimedPrjState.get_zones()[0], valuesAsString, curStateArray, firedTran);
+		
+		ArrayList<HashMap<LPNContAndRate, IntervalPair>> newAssignValues =
+				updateContinuousState(currentTimedPrjState.get_zones()[0], curStateArray, firedTran);
 		
 		
 		LpnTranList enabledTransitions = new LpnTranList();
@@ -1523,19 +1534,40 @@ public class StateGraph {
 	}
 	
 	/**
-	 * 
+	 * This method handles the extracting of the new rate and continuous variable assignments.
 	 * @param z
+	 * 		The previous zone.
 	 * @param currentValuesAsString
+	 * 		The current values of the Boolean varaibles converted to strings.
 	 * @param states
+	 * 		The current states.
 	 * @param firedTran
+	 * 		The fired transition.
 	 * @return
+	 * 		The continuous variable and rate assignments.
 	 */
-	public ArrayList<HashMap<LPNContAndRate, IntervalPair>>
-		updateContinuousState(Zone z, HashMap<String, String> currentValuesAsString,
-				State[] states, Transition firedTran){
+//	public ArrayList<HashMap<LPNContAndRate, IntervalPair>>
+//		updateContinuousState(Zone z, HashMap<String, String> currentValuesAsString,
+//				State[] states, Transition firedTran){
+	private ArrayList<HashMap<LPNContAndRate, IntervalPair>>
+		updateContinuousState(Zone z,
+			State[] states, Transition firedTran){
+
+		// Convert the current values of Boolean variables to strings for use in the 
+		// Evaluator.
+		HashMap<String, String> currentValuesAsString = 
+				this.lpn.getAllVarsWithValuesAsString(states[this.lpn.getLpnIndex()].getVector());
 		
+		
+		// Accumulates a set of all transitions taht need their enabling conditions
+		// re-evaulated.
+		HashSet<Transition> needUpdating = new HashSet<Transition>();
+		
+		// Accumulates the new assignment information.
 		ArrayList<HashMap<LPNContAndRate, IntervalPair>> newAssignValues 
 			= new ArrayList<HashMap<LPNContAndRate, IntervalPair>>();
+		
+		
 		
 		// Update rates      
 		final int OLD_ZERO = 0; 	// Case 0 in description.
