@@ -329,7 +329,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		// LPN List
 		addLPN = new JButton("Add LPN");
 		removeLPN = new JButton("Remove LPN");
-		//divideLPN1 = new JButton("Divide LPN into Modules");
 		GridBagConstraints gridBagConstraints = new GridBagConstraints();
 		JPanel LPNPanel = Utility.createPanel(this, "LPNs",
 				lpnList, addLPN, removeLPN, null);
@@ -1106,10 +1105,16 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					 LhpnFile curLPN = new LhpnFile();
 					 curLPN.load(directory + separator + curLPNname);
 					 selectedLPNs.add(curLPN);
-				}				
-				// ------- Temporary Settings ------------
+				}
+				System.out.println("====== LPN loading order ========");
+				for (int i=0; i<selectedLPNs.size(); i++) {
+					System.out.println(selectedLPNs.get(i).getLabel());
+				}
+				// ------- Debugging Messages Settings ------------
 				// Options for printing out intermediate results during POR
 				//Options.setDebugMode(true);
+				//if (Options.getDebugMode())
+				//	System.out.println("Debug mode is ON.");
 				Options.setDebugMode(false);
 				// ----------------------------------------
 				Project untimed_dfs = new Project(selectedLPNs);
@@ -1206,7 +1211,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 //					}
 //				}
 				// -------------------------------------				
-				//----------- POR and Cycle Closing Methods (Simple)--------------
+				//----------- POR and Cycle Closing Methods (Simplified)--------------
 				if (untimedPOR.isSelected()) {
 					// Options for using trace-back in ample calculation
 					String[] ampleMethds = {"Trace-back", "Trace-back with dependency graphs","No trace-back for ample computation"};
@@ -1286,13 +1291,14 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					Options.setOutputLogFlag(true);
 //					Options.setPrintLogToFile(false);
 					StateGraph[] stateGraphArray = untimed_dfs.searchPOR();
-					if (dot.isSelected()) {
-						for (int i=0; i<stateGraphArray.length; i++) {
-							String graphFileName = stateGraphArray[i].getLpn().getLabel() + "POR_"+ Options.getCycleClosingMthd() + "_local_sg.dot";
-							stateGraphArray[i].outputLocalStateGraph(directory + separator + graphFileName);
+					if (stateGraphArray != null)
+						if (dot.isSelected()) {
+							for (int i=0; i<stateGraphArray.length; i++) {
+								String graphFileName = stateGraphArray[i].getLpn().getLabel() + "POR_"+ Options.getCycleClosingMthd() + "_local_sg.dot";
+								stateGraphArray[i].outputLocalStateGraph(directory + separator + graphFileName);
+							}
+							// Code for producing global state graph is in search_dfsPOR in the Analysis class.						
 						}
-						// Code for producing global state graph is in search_dfsPOR in the Analysis class.						
-					}
 				}				
 				else { // No POR
 					Options.setPrjSgPath(directory + separator);
@@ -1321,8 +1327,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				 abs.decomposeLpnIntoProcesses();				 
 				 allProcessTrans.putAll((HashMap<Transition, Integer>)abs.getTransWithProcIDs().clone());
 				 HashMap<Integer, LpnProcess> processMap = new HashMap<Integer, LpnProcess>();
-				 for (Iterator<Transition> tranIter = allProcessTrans.keySet().iterator(); tranIter.hasNext();) {
-					Transition curTran = tranIter.next();
+				 for (Transition curTran: allProcessTrans.keySet()) {
 					Integer procId = allProcessTrans.get(curTran);
 					if (!processMap.containsKey(procId)) {
 						LpnProcess newProcess = new LpnProcess(procId);
