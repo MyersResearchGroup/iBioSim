@@ -85,6 +85,11 @@ public class VerificationNoGui {
 		 curLPN.load(directory + curLPNname);
 		 lpnList.add(curLPN);
 		}		
+		System.out.println("====== LPN loading order ========");
+		for (int i=0; i<lpnList.size(); i++) {
+			System.out.println(lpnList.get(i).getLabel());
+		}
+		
 		
 		Project untimed_dfs = new Project(lpnList);
 		if (poroff)
