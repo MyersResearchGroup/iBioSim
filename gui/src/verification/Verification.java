@@ -48,6 +48,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ListModel;
 
 import lpn.parser.Abstraction;
 import lpn.parser.LhpnFile;
@@ -1106,18 +1107,45 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					 curLPN.load(directory + separator + curLPNname);
 					 selectedLPNs.add(curLPN);
 				}
-				System.out.println("====== LPN loading order ========");
-				for (int i=0; i<selectedLPNs.size(); i++) {
-					System.out.println(selectedLPNs.get(i).getLabel());
-				}
+//				System.out.println("====== LPN loading order (default) ========");
+//				for (int i=0; i<selectedLPNs.size(); i++) {
+//					System.out.println(selectedLPNs.get(i).getLabel());
+//				}
+				
+////=============== Code to produce a GUI for rearranging the order of loading LPNs into the Project constructor ================			
+//				System.out.println("====== LPN loading order (manipulated) ========");
+//				ArrayList<LhpnFile> selectedLPNsManipulated = new ArrayList<LhpnFile>(selectedLPNs.size());
+//				System.out.println("size = " + selectedLPNsManipulated.size());
+//				String[] LPNlabels = new String[selectedLPNs.size()];
+//				for (int i=0; i<selectedLPNs.size(); i++) {
+//					LPNlabels[i] = selectedLPNs.get(i).getLabel();
+//					System.out.println(i + " " + LPNlabels[i]);
+//				}
+//				System.out.println("selected index");
+//				for (int i=0; i<selectedLPNs.size(); i++) {
+//					JList LpnLoadingOrderList = new JList(LPNlabels);
+//					LpnLoadingOrderList.setVisibleRowCount(10);				
+//					JScrollPane ampleMethdsPane = new JScrollPane(LpnLoadingOrderList);
+//					JPanel mainPanel0 = new JPanel(new BorderLayout());
+//					mainPanel0.add("North", new JLabel("Select a LPN:"));
+//					mainPanel0.add("Center", ampleMethdsPane);							
+//					Object[] options0 = {"Select", "Cancel"};
+//					int optionRtVal0 = JOptionPane.showOptionDialog(Gui.frame, mainPanel0, "LPN order manipulation", 
+//							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options0, options0[0]);
+//					if (optionRtVal0 == 1)  // Cancel					
+//						return;
+//					System.out.println(LpnLoadingOrderList.getSelectedIndex() + " " + selectedLPNs.get(LpnLoadingOrderList.getSelectedIndex()).getLabel());
+//					selectedLPNsManipulated.add(selectedLPNs.get(LpnLoadingOrderList.getSelectedIndex()));
+//				}			
+//				//Project untimed_dfs = new Project(selectedLPNsManipulated);
+				Project untimed_dfs = new Project(selectedLPNs);				
+				
 				// ------- Debugging Messages Settings ------------
 				// Options for printing out intermediate results during POR
 				//Options.setDebugMode(true);
 				//if (Options.getDebugMode())
 				//	System.out.println("Debug mode is ON.");
 				Options.setDebugMode(false);
-				// ----------------------------------------
-				Project untimed_dfs = new Project(selectedLPNs);
 				//----------- POR and Cycle Closing Methods (FULL)--------------
 //				if (untimedPOR.isSelected()) {
 //					// Options for using trace-back in ample calculation
