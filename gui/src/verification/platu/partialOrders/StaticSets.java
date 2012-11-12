@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Set;
 
 import lpn.parser.ExprTree;
@@ -21,7 +22,7 @@ public class StaticSets {
 	private HashSet<LpnTransitionPair> disableByStealingToken;
 	private HashSet<LpnTransitionPair> enableBySettingEnablingTrue;
 	private ArrayList<ExprTree> conjunctsOfEnabling; 
-	private HashMap<ExprTree, HashSet<LpnTransitionPair>> otherTransSetCurTranEnablingTrue;
+	private LinkedHashMap<ExprTree, HashSet<LpnTransitionPair>> otherTransSetCurTranEnablingTrue;
 	private HashSet<LpnTransitionPair> curTranSetOtherTranEnablingFalse; // A set of transitions (with associated LPNs) whose enabling condition can become false due to executing curTran's assignments. 
 	private HashSet<LpnTransitionPair> otherTransSetCurNonPersistentCurTranEnablingFalse; // A set of transitions (with associated LPNs) whose enabling condition can become false due to executing another transition's assignments.
 	private HashSet<LpnTransitionPair> modifyAssignment;
@@ -37,7 +38,7 @@ public class StaticSets {
 		curTranSetOtherTranEnablingFalse = new HashSet<LpnTransitionPair>();
 		otherTransSetCurNonPersistentCurTranEnablingFalse = new HashSet<LpnTransitionPair>();
 		enableBySettingEnablingTrue = new HashSet<LpnTransitionPair>();
-		otherTransSetCurTranEnablingTrue = new HashMap<ExprTree, HashSet<LpnTransitionPair>>();
+		otherTransSetCurTranEnablingTrue = new LinkedHashMap<ExprTree, HashSet<LpnTransitionPair>>();
 		conjunctsOfEnabling = new ArrayList<ExprTree>();
 		modifyAssignment = new HashSet<LpnTransitionPair>();
 		if (Options.getDebugMode()) {
