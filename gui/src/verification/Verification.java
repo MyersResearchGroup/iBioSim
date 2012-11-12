@@ -48,7 +48,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.ListModel;
 
 import lpn.parser.Abstraction;
 import lpn.parser.LhpnFile;
@@ -1142,10 +1141,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				
 				// ------- Debugging Messages Settings ------------
 				// Options for printing out intermediate results during POR
-				//Options.setDebugMode(true);
-				//if (Options.getDebugMode())
-				//	System.out.println("Debug mode is ON.");
-				Options.setDebugMode(false);
+				Options.setDebugMode(true);
+				if (Options.getDebugMode())
+					System.out.println("Debug mode is ON.");
+				//Options.setDebugMode(false);
 				//----------- POR and Cycle Closing Methods (FULL)--------------
 //				if (untimedPOR.isSelected()) {
 //					// Options for using trace-back in ample calculation
@@ -1242,7 +1241,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				//----------- POR and Cycle Closing Methods (Simplified)--------------
 				if (untimedPOR.isSelected()) {
 					// Options for using trace-back in ample calculation
-					String[] ampleMethds = {"Trace-back", "Trace-back with dependency graphs","No trace-back for ample computation"};
+					String[] ampleMethds = {"Trace-back", "Trace-back (O1)","No trace-back for ample computation"};
 					JList ampleMethdsList = new JList(ampleMethds);
 					ampleMethdsList.setVisibleRowCount(3);
 					//cycleClosingList.addListSelectionListener(new ValueReporter());
@@ -1262,13 +1261,13 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						Options.setPOR("tb");
 						Options.setCycleClosingMthd("behavioral");
 						Options.setCycleClosingAmpleMethd("cctb");
-						Options.setNecessaryUsingDependencyGraphs(false);
 					}
 					if (ampleMethdsIndex == 1) { 
-						Options.setPOR("tbdg");
+						Options.setPOR("tb");
 						Options.setCycleClosingMthd("behavioral");
-						Options.setCycleClosingAmpleMethd("cctbdg");
-						Options.setNecessaryUsingDependencyGraphs(true);
+						Options.setCycleClosingAmpleMethd("cctb");
+						Options.setTraceBackOptimization(1);
+						
 					}		
 					if (ampleMethdsIndex == 2) {
 						Options.setPOR("tboff");
