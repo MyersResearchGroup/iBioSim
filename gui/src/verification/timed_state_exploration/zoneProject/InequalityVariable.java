@@ -168,7 +168,8 @@ public class InequalityVariable extends Variable {
 	 * '$' of the InequalityVariable name.
 	 */
 	public String toString(){
-		return "Inequality Variable : " + getName().substring(1);
+		//return "Inequality Variable : " + getName().substring(1);
+		return getName().substring(1);
 	}
 	
 //	
