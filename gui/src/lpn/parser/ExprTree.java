@@ -5534,7 +5534,10 @@ public class ExprTree {
 					LPNContinuousPair lcPair = new LPNContinuousPair(lhpn.getLpnIndex(),
 							lhpn.getContVarIndex(variable));
 					
-					IntervalPair result = continuousValues.get(new LPNContAndRate(lcPair));
+					IntervalPair result = null;
+					if(continuousValues != null){
+						result = continuousValues.get(new LPNContAndRate(lcPair));
+					}
 					if(result != null){
 						return result;
 					}
