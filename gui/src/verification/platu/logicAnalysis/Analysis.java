@@ -4354,14 +4354,15 @@ public class Analysis {
 							@Override
 							public int compare(HashSet<LpnTransitionPair> o0, HashSet<LpnTransitionPair> o1) {
 								if (o0.size() < o1.size())
-									return 1;
-								else if (o0.size() > o1.size())
 									return -1;
+								else if (o0.size() > o1.size())
+									return 1;
 								else
 									return 0;
 							}
 
 						});
+
 				for (ExprTree conjunctExprTree : canSetCurTranEnablingTrue.keySet()) {
 					HashSet<LpnTransitionPair> nEnableOfOneConjunct = null;
 					if (conjunctExprTree.evaluateExpr(lpnList[tran.getLpnIndex()].getAllVarsWithValuesAsString(varValueVector)) == 0.0) {
