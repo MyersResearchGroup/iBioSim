@@ -56,6 +56,20 @@ public class AnnotationUtility {
 		return sbolURIs;
 	}
 	
+	public static int[] parseGridAnnotation(SBase sbmlObject) {
+		String annotation = sbmlObject.getAnnotationString();
+		Pattern gridPattern = Pattern.compile(GRID_ANNOTATION);
+		Matcher gridMatcher = gridPattern.matcher(annotation);
+		int[] gridSize = new int[2];
+		gridSize[0]=0;
+		gridSize[1]=0;
+		if (gridMatcher.find()) {
+			gridSize[0] = Integer.valueOf(gridMatcher.group(0));
+			gridSize[1] = Integer.valueOf(gridMatcher.group(1));
+		}
+		return gridSize;
+	}
+	
 //	public static LinkedList<URI> parseSubSBOLAnnotation(Submodel instantiation, BioModel bioModel) {
 //		CompSBMLDocumentPlugin sbmlCompDoc = bioModel.getSBMLComp();
 //		String sbmlSubFileID = sbmlCompDoc.getExternalModelDefinition(instantiation.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
@@ -89,5 +103,8 @@ public class AnnotationUtility {
 				"</rdf:Description>\\s*" +
 			"</rdf:RDF>\\s*" +
 		"</ModelToSBOL>";
+	
+	private static final String GRID_ANNOTATION =
+			"<ibiosim:ibiosim xmlns:ibiosim=\"http://www\\.fakeuri\\.com\" ibiosim:grid=\"\\((\\d+),(\\d+)\\)\"/>";
 	
 }
