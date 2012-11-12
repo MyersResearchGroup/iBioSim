@@ -3265,15 +3265,18 @@ public class BioModel {
 					sbmlLayout.getLayout("iBioSim").unsetAnnotation();
 			}
 			
+			int[] gridSize = AnnotationUtility.parseGridAnnotation(sbml.getModel().getCompartment(0));
+			/*
 			String annotation = sbml.getModel().getCompartment(0).getAnnotation().toXMLString();
 			int first = annotation.indexOf("(");
 			int middle = annotation.indexOf(",");
 			int last = annotation.indexOf(")");
 			int row = Integer.valueOf(annotation.substring(first+1,middle));
 			int col = Integer.valueOf(annotation.substring(middle+1,last));
-			
-			buildGrid(row, col);
-			
+			*/
+			if (gridSize[0] > 0 && gridSize[1] > 0) {
+				buildGrid(gridSize[0], gridSize[1]);
+			}
 			return;
 		}
 		//for backwards compatibility
@@ -3281,13 +3284,18 @@ public class BioModel {
 			
 			if (sbmlLayout != null) {
 				if (sbmlLayout.getLayout("iBioSim")!=null && sbmlLayout.getLayout("iBioSim").isSetAnnotation()) {
+					int[] gridSize = AnnotationUtility.parseGridAnnotation(sbmlLayout.getLayout("iBioSim"));
+					/*
 					String annotation = sbmlLayout.getLayout("iBioSim").getAnnotation().toXMLString();
 					int first = annotation.indexOf("(");
 					int middle = annotation.indexOf(",");
 					int last = annotation.indexOf(")");
 					int row = Integer.valueOf(annotation.substring(first+1,middle));
 					int col = Integer.valueOf(annotation.substring(middle+1,last));
-					buildGrid(row, col);
+					*/
+					if (gridSize[0] > 0 && gridSize[1] > 0) {
+						buildGrid(gridSize[0], gridSize[1]);
+					}
 					return;
 				}
 			}			
