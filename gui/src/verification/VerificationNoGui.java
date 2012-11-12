@@ -41,9 +41,6 @@ public class VerificationNoGui {
 				Options.setCycleClosingAmpleMethd("cctboff");
 				poroff = false;
 			}
-			else if (args[i].equals("-O1")) {
-				Options.setTraceBackOptimization(1);
-			}
 			else if (args[i].contains("-dir=")) { // Directory should be provided as an argument starting with -dir:
 				directory = args[i].trim().substring(5);
 			}
@@ -95,9 +92,7 @@ public class VerificationNoGui {
 		System.out.println("====== LPN loading order ========");
 		for (int i=0; i<lpnList.size(); i++) {
 			System.out.println(lpnList.get(i).getLabel());
-		}
-		System.out.println("Optimization = " + Options.getTraceBackOptimization());
-		
+		}		
 		
 		Project untimed_dfs = new Project(lpnList);
 		if (poroff)
