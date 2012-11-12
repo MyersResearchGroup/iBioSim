@@ -21,7 +21,7 @@ public class StaticSets {
 	private HashSet<LpnTransitionPair> disableByStealingToken;
 	private HashSet<LpnTransitionPair> enableBySettingEnablingTrue;
 	private ArrayList<ExprTree> conjunctsOfEnabling; 
-	private ArrayList<HashSet<LpnTransitionPair>> otherTransSetCurTranEnablingTrue;
+	private HashMap<ExprTree, HashSet<LpnTransitionPair>> otherTransSetCurTranEnablingTrue;
 	private HashSet<LpnTransitionPair> curTranSetOtherTranEnablingFalse; // A set of transitions (with associated LPNs) whose enabling condition can become false due to executing curTran's assignments. 
 	private HashSet<LpnTransitionPair> otherTransSetCurNonPersistentCurTranEnablingFalse; // A set of transitions (with associated LPNs) whose enabling condition can become false due to executing another transition's assignments.
 	private HashSet<LpnTransitionPair> modifyAssignment;
@@ -37,7 +37,7 @@ public class StaticSets {
 		curTranSetOtherTranEnablingFalse = new HashSet<LpnTransitionPair>();
 		otherTransSetCurNonPersistentCurTranEnablingFalse = new HashSet<LpnTransitionPair>();
 		enableBySettingEnablingTrue = new HashSet<LpnTransitionPair>();
-		otherTransSetCurTranEnablingTrue = new ArrayList<HashSet<LpnTransitionPair>>();
+		otherTransSetCurTranEnablingTrue = new HashMap<ExprTree, HashSet<LpnTransitionPair>>();
 		conjunctsOfEnabling = new ArrayList<ExprTree>();
 		modifyAssignment = new HashSet<LpnTransitionPair>();
 		if (Options.getDebugMode()) {
@@ -336,7 +336,7 @@ public class StaticSets {
 							}			
 						}
 					}
-					otherTransSetCurTranEnablingTrue.add(index, transCanEnableConjunct);
+					otherTransSetCurTranEnablingTrue.put(conjunct, transCanEnableConjunct);
 				}
 			}
 		}
@@ -352,9 +352,9 @@ public class StaticSets {
 		}
 	}
 
-	public ArrayList<ExprTree> getConjunctsOfEnabling() {
-		return conjunctsOfEnabling;
-	}
+//	public ArrayList<ExprTree> getConjunctsOfEnabling() {
+//		return conjunctsOfEnabling;
+//	}
 	
 	public HashSet<LpnTransitionPair> getModifyAssignSet() {
 		return modifyAssignment;
@@ -389,7 +389,7 @@ public class StaticSets {
 		return curTranInCanEnableSet;
 	}
 	
-	public ArrayList<HashSet<LpnTransitionPair>> getOtherTransSetCurTranEnablingTrue() {
+	public HashMap<ExprTree, HashSet<LpnTransitionPair>> getOtherTransSetCurTranEnablingTrue() {
 		return otherTransSetCurTranEnablingTrue;
 	}
 	
@@ -400,7 +400,7 @@ public class StaticSets {
 	/*	For every transition curTran in T, where T is the set of all transitions, we check t (t != curTran) in T, 
 		(1) intersection(VA(curTran), supportA(t)) != empty
 		(2) intersection(VA(t), supportA(curTran)) != empty
-		(3) intersection(VA(t), VA(curTran) != empty
+		(3) intersection(VA(t), VA(curTran)) != empty
 
 		VA(t0) : set of variables being assigned to (left hand side of the assignment) in transition t0.
 		supportA(t0): set of variables appearing in the expressions assigned to the variables of t0 (right hand side of the assignment).		
@@ -442,7 +442,7 @@ public class StaticSets {
 			}
 			for (String v1 : curTran.getAssignTrees().keySet()) {
 				for (String v2 : anotherTran.getAssignTrees().keySet()) {
-					if (v1.equals(v2)) {
+					if (v1.equals(v2) && !curTran.getAssignTree(v1).equals(anotherTran.getAssignTree(v2))) {					
 						modifyAssignment.add(new LpnTransitionPair(anotherTran.getLpn().getLpnIndex(), anotherTran.getIndex()));
 						if (Options.getDebugMode()) {
 							writeStringWithEndOfLineToPORDebugFile("Variable " + v1 + " are assigned in " + curTran.getName() + " and " + anotherTran.getName()); 
