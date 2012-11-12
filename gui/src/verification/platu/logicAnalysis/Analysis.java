@@ -841,10 +841,8 @@ public class Analysis {
 		}
 		stateStack.add(stateStackTop);
 		constructDstLpnList(sgList);
-		if (Options.getDebugMode()) {
-//			printDstLpnList(sgList);
-			createPORDebugFile();
-		}			
+		if (Options.getDebugMode()) 
+			createPORDebugFile();			
 		
 		// Find static pieces for POR. 
 		HashMap<Integer, Transition[]> allTransitions = new HashMap<Integer, Transition[]>(lpnList.length); 
@@ -1206,7 +1204,7 @@ public class Analysis {
 	private void createPORDebugFile() {
 		try {
 			PORdebugFileName = Options.getPrjSgPath() + Options.getLogName() + "_" + Options.getPOR() + "_" 
-					+ Options.getCycleClosingMthd() + "_" + Options.getCycleClosingAmpleMethd() + ".dbg";
+					+ Options.getCycleClosingMthd() + "_" + Options.getCycleClosingAmpleMethd() + "_O" + Options.getTraceBackOptimization() + ".dbg";
 			PORdebugFileStream = new FileWriter(PORdebugFileName, true);	
 			PORdebugBufferedWriter = new BufferedWriter(PORdebugFileStream);
 		} 
