@@ -3,6 +3,7 @@ package verification.timed_state_exploration.zoneProject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
 import lpn.parser.Transition;
@@ -274,6 +275,14 @@ public class EventSet extends Transition implements Iterable<Event>{
 	
 	public String getName(){
 		return toString();
+	}
+	
+	/**
+	 * This method disables (ha ha) the disablingError.
+	 */
+	public Transition disablingError(final LinkedList<Transition> current_enabled_transitions,
+			LinkedList<Transition> next_enabled_transitions) {
+		return null;
 	}
 	
 	/*
