@@ -1395,8 +1395,8 @@ public class StateGraph {
 		// assignments. Also fix the enabled transition markings.
 		
 		// Convert the values of the current marking to strings. This is needed for the evaluator.
-		HashMap<String, String> valuesAsString = 
-				this.lpn.getAllVarsWithValuesAsString(curStateArray[this.lpn.getLpnIndex()].getVector());
+//		HashMap<String, String> valuesAsString = 
+//				this.lpn.getAllVarsWithValuesAsString(curStateArray[this.lpn.getLpnIndex()].getVector());
 		
 //		ArrayList<HashMap<LPNContAndRate, IntervalPair>> newAssignValues =
 //				updateContinuousState(currentTimedPrjState.get_zones()[0], valuesAsString, curStateArray, firedTran);
@@ -1559,8 +1559,8 @@ public class StateGraph {
 				this.lpn.getAllVarsWithValuesAsString(states[this.lpn.getLpnIndex()].getVector());
 		
 		
-		// Accumulates a set of all transitions taht need their enabling conditions
-		// re-evaulated.
+		// Accumulates a set of all transitions that need their enabling conditions
+		// re-evaluated.
 		HashSet<Transition> needUpdating = new HashSet<Transition>();
 		
 		// Accumulates the new assignment information.
@@ -1689,6 +1689,9 @@ public class StateGraph {
 				for(InequalityVariable ineq : inequalities){
 					int ineqIndex = this.lpn.getVarIndexMap().get(ineq.getName());
 
+					// Add the transitions that this inequality affects.
+					needUpdating.addAll(ineq.getTransitions());
+					
 
 					HashMap<LPNContAndRate, IntervalPair> continuousValues = new HashMap<LPNContAndRate, IntervalPair>();
 					continuousValues.putAll(newAssignValues.get(OLD_ZERO));
@@ -1738,6 +1741,20 @@ public class StateGraph {
 
 		}
 		
+		
+		// Do the re-evaluating of the transitions.
+		for(Transition t : needUpdating){
+			// Get the index of the LPN and the index of the transition.
+			int lpnIndex = t.getLpn().getLpnIndex();
+			int tranIndex = t.getIndex();
+			
+			// Get the enabled vector from the appropriate state.
+			int[] vector = states[lpnIndex].getVector();
+			
+			// Set the (possibly) new value.
+			vector[tranIndex] = t.getEnablingTree().
+					evaluateExprBound(currentValuesAsString, z, null).get_LowerBound();
+		}
 		
 		return newAssignValues;
 	}
