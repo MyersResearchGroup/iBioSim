@@ -837,7 +837,7 @@ public class ContinuousUtilities {
 		LhpnFile lpn = s.getLpn();
 
 		// Get the state vector to update.
-		int[] vector = s.getVector();
+//		int[] vector = s.getVector();
 
 		// The variables are not stored in the state, so get them from the LPN.
 		String[] variables = lpn.getVariables();
