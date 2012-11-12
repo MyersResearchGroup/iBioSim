@@ -4262,9 +4262,9 @@ public class Analysis {
 					writeStringWithEndOfLineToPORDebugFile("Place " + lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getAllPlaces().get(place) + ") is marked.");
 				}					
 		}
-//		// Optimization 0: Return nMarking if it is of size 1.  
-//		if (nMarking != null && nMarking.size() == 1)
-//			return nMarking;
+		// Return nMarking if it is of size 1.  
+		if (nMarking != null && nMarking.size() == 1)
+			return nMarking;
 		
 		// Search for transition(s) that can help to enable the current transition. 
 		HashSet<LpnTransitionPair> nEnable = null;
@@ -4326,15 +4326,22 @@ public class Analysis {
 							}
 						}
 					}
+//					if (nEnableOfOneConjunct != null) {
+//						if (nEnable.isEmpty())
+//							nEnable = (HashSet<LpnTransitionPair>) nEnableOfOneConjunct.clone();
+//						else {
+//							if (nEnableOfOneConjunct.size() < nEnable.size())
+//								nEnable = (HashSet<LpnTransitionPair>) nEnableOfOneConjunct.clone();
+//						}
+//					}
 					if (nEnableOfOneConjunct != null) {
 						if (nEnable.isEmpty())
-							nEnable = (HashSet<LpnTransitionPair>) nEnableOfOneConjunct.clone();
+							nEnable = nEnableOfOneConjunct;
 						else {
 							if (nEnableOfOneConjunct.size() < nEnable.size())
-								nEnable = (HashSet<LpnTransitionPair>) nEnableOfOneConjunct.clone();
+								nEnable = nEnableOfOneConjunct;
 						}
 					}
-					
 				}
 			}
 		}
@@ -4362,7 +4369,6 @@ public class Analysis {
 							}
 
 						});
-
 				for (ExprTree conjunctExprTree : canSetCurTranEnablingTrue.keySet()) {
 					HashSet<LpnTransitionPair> nEnableOfOneConjunct = null;
 					if (conjunctExprTree.evaluateExpr(lpnList[tran.getLpnIndex()].getAllVarsWithValuesAsString(varValueVector)) == 0.0) {
