@@ -43,7 +43,7 @@ public class InequalityVariable extends Variable {
 	 * Holds the Transitions that have this inequality in their enabling
 	 * condition.
 	 */
-	private HashSet<Transition> _transtitions;
+	private HashSet<Transition> _transitions;
 	
 	/* The LhpnFile object that this InequalityVariable belongs to. */
 	private LhpnFile _lpn;
@@ -120,6 +120,8 @@ public class InequalityVariable extends Variable {
 		// Initialize the the variable list.
 		_variables = new ArrayList<Variable>();
 		
+		// Initialize the transition list.
+		_transitions = new HashSet<Transition>();
 		// Extract the variable.
 //		String contVariableName = "";
 //		
@@ -540,7 +542,7 @@ public class InequalityVariable extends Variable {
 	 * 		A Transition that has this InequalityVariable in its enabling condition.
 	 */
 	public void addTransition(Transition t){
-		_transtitions.add(t);
+		_transitions.add(t);
 	}
 	
 	/**
@@ -549,6 +551,6 @@ public class InequalityVariable extends Variable {
 	 * 		The set of all Transitions that have this Inqualtiy variable in their enabling condition.
 	 */
 	public HashSet<Transition> getTransitions(){
-		return _transtitions;
+		return _transitions;
 	}
 }
