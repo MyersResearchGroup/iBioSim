@@ -6,7 +6,6 @@ public class LpnTransitionPair {
 	private Integer lpnIndex;
 	private Integer tranIndex;
 	private HashSet<LpnTransitionPair> transVisited;
-	private int hashVal;
 	
 	public LpnTransitionPair(Integer lpnIndex, Integer tranIndex) {
 		this.lpnIndex = lpnIndex;
@@ -30,49 +29,43 @@ public class LpnTransitionPair {
 	public HashSet<LpnTransitionPair> getVisitedTrans() {
 		return transVisited;
 	}
-	
+
 	@Override
 	public int hashCode() {
-		if(hashVal == 0){
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + lpnIndex.hashCode();
-			result = prime * result + tranIndex.hashCode();
-			//result = prime * result + tranSetVisitedByNecessary.hashCode();
-			hashVal = result;
-		}	
-		return hashVal;
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((lpnIndex == null) ? 0 : lpnIndex.hashCode());
+		result = prime * result
+				+ ((tranIndex == null) ? 0 : tranIndex.hashCode());
+		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		
 		if (obj == null)
 			return false;
-		
 		if (getClass() != obj.getClass())
 			return false;
-		
 		LpnTransitionPair other = (LpnTransitionPair) obj;
-		if (!lpnIndex.equals(other.lpnIndex)) 
+		if (lpnIndex == null) {
+			if (other.lpnIndex != null)
+				return false;
+		} else if (!lpnIndex.equals(other.lpnIndex))
 			return false;
-		if (!tranIndex.equals(other.tranIndex))
+		if (tranIndex == null) {
+			if (other.tranIndex != null)
+				return false;
+		} else if (!tranIndex.equals(other.tranIndex))
 			return false;
 		return true;
 	}
 
-//	public void resetFiringCount() {
-//		firingCount = 0;
-//	}
-//
-//	public void increaseFiringCount() {
-//		firingCount++ ;
-//		
-//	}
-//
-//	public int getFiringCount() {
-//		return firingCount;
-//	}
+	@Override
+	public String toString() {
+		return "LpnTransitionPair [lpnIndex=" + lpnIndex + ", tranIndex="
+				+ tranIndex + "]";
+	}
 }
