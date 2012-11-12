@@ -41,6 +41,9 @@ public class VerificationNoGui {
 				Options.setCycleClosingAmpleMethd("cctboff");
 				poroff = false;
 			}
+			else if (args[i].equals("-O1")) {
+				Options.setTraceBackOptimization(1);
+			}
 			else if (args[i].contains("-dir=")) { // Directory should be provided as an argument starting with -dir:
 				directory = args[i].trim().substring(5);
 			}
@@ -59,7 +62,7 @@ public class VerificationNoGui {
 					Options.setMemoryUpperBound((long)(Float.parseFloat(memUpperBound) * 1000000));
 				}
 			}
-			else if (args[i].contains("-disableDeadlock")) {
+			else if (args[i].contains("-disableDeadlockPreserve")) {
 				Options.disablePORdeadlockPreserve();
 			}
 		}
