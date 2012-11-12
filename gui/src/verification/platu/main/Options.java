@@ -74,11 +74,6 @@ public class Options {
 //	private static boolean necessaryUsingDependencyGraphs = false;
 	
 	/*
-	 * Optimization index of trace-back for necessary set computation. Default is 0 (no optimization).
-	 */
-	private static int traceBackOptimization = 0;
-	
-	/*
 	 * Report disabling error flag
 	 */
 	private static boolean disablingError = true;
@@ -387,19 +382,5 @@ public class Options {
 	
 	public static boolean getMemUpperBoundFlag() {
 		return memoryUpperBoundFlag;
-	}
-
-	/*
-	 * Method for setting possible optimizations for trace-back. 
-	 * O(0) is the trace-back without any optimization.
-	 * O(1): When choosing conjuncts, select one that only consists of enabled transitions, whenever possible.
-	 * 
-	 */
-	public static void setTraceBackOptimization(int i) {
-		traceBackOptimization = i;
-	}
-	
-	public static int getTraceBackOptimization() {
-		return traceBackOptimization;
 	}
 }
