@@ -65,6 +65,10 @@ public class VerificationNoGui {
 			else if (args[i].contains("-disableDeadlockPreserve")) {
 				Options.disablePORdeadlockPreserve();
 			}
+			else if (args[i].contains("-debugON")) {
+				Options.setDebugMode(true);
+				System.out.println("Debug mode is ON.");
+			}
 		}
 		if (directory.trim().equals("") || directory == null) {
 			System.out.println("Direcotry provided is empty. Exit.");
@@ -78,7 +82,7 @@ public class VerificationNoGui {
 		Options.setPrjSgPath(directory);
 		// Options for printing the final numbers from search_dfs or search_dfsPOR. 
 		Options.setOutputLogFlag(true);
-		Options.setDebugMode(false);
+		//Options.setDebugMode(false);
 				
 		File[] lpns = dir.listFiles(new FileExtentionFilter(".lpn"));
 		ArrayList<LhpnFile> lpnList = new ArrayList<LhpnFile>();
@@ -92,6 +96,7 @@ public class VerificationNoGui {
 		for (int i=0; i<lpnList.size(); i++) {
 			System.out.println(lpnList.get(i).getLabel());
 		}
+		System.out.println("Optimization = " + Options.getTraceBackOptimization());
 		
 		
 		Project untimed_dfs = new Project(lpnList);
