@@ -2046,8 +2046,14 @@ public class Zone{
 		// Warp the Zone
 		newZone.dbmWarp(this);
 		
+		newZone.advance(localStates);
+		
 		// Recanonicalize
 		newZone.recononicalize();
+		
+		
+		newZone.checkZoneMaxSize();
+		
 		
 		return newZone;
 	}
@@ -2295,12 +2301,12 @@ public class Zone{
 		
 		//newZone.advance();
 		// Advance time.
-		newZone.advance(localStates);
+//		newZone.advance(localStates);
 		
 		// Recanonicalize.
-		newZone.recononicalize();
-		
-		newZone.checkZoneMaxSize();
+//		newZone.recononicalize();
+//		
+//		newZone.checkZoneMaxSize();
 		
 		return newZone;
 	}
@@ -4162,8 +4168,10 @@ public class Zone{
 					LPNTransitionPair.ZERO_TIMER_PAIR, (-1)*pair.getValue().get_LowerBound());
 			
 			// Set the upper bound.
-			setDbmEntryByPair(pair.getKey().get_lcPair(),
-					LPNTransitionPair.ZERO_TIMER_PAIR, pair.getValue().get_UpperBound());
+//			setDbmEntryByPair(pair.getKey().get_lcPair(),
+//					LPNTransitionPair.ZERO_TIMER_PAIR, pair.getValue().get_UpperBound());
+			setDbmEntryByPair(LPNTransitionPair.ZERO_TIMER_PAIR, pair.getKey().get_lcPair(),
+					pair.getValue().get_UpperBound());
 			
 			int index = Arrays.binarySearch(_indexToTimerPair, pair.getKey().get_lcPair());
 			
@@ -4281,7 +4289,7 @@ public class Zone{
 //		      double iXDot = 0;
 //		      double jXDot = 0;
 //
-		// According to atacs comments, this appears to NOT wark when
+		// According to atacs comments, this appears to NOT work when
 		// INFIN is in the bounds.
 		// This portion of the code handles the warping of the relative
 		// parts of the zone.
@@ -4342,7 +4350,7 @@ public class Zone{
 //		        jXDot = fabs((double)s->r->bound[s->z->curClocks[j].enabled-nevents].current);
 //		      }
 				
-				// Do some warping of the second variable if it is a continuous variabl.
+				// Do some warping of the second variable if it is a continuous variable.
 				if(_indexToTimerPair[j] instanceof LPNContinuousPair){
 					// Calcualte the alpha value.
 					jVal = Math.floor(Math.abs(
@@ -4353,7 +4361,7 @@ public class Zone{
 					jWarp = Math.floor(Math.abs(
 							(double) oldZone.getCurrentRate(_indexToTimerPair[j])));
 					
-					// The current rate rate of this continuous variable.
+					// The current rate of this continuous variable.
 					jXDot = iWarp = Math.floor(Math.abs(
 							(double) this.getCurrentRate(_indexToTimerPair[j])));
 				}
@@ -4538,21 +4546,21 @@ public class Zone{
 //
 				// Handle the case when the warping takes us into negative space.
 				if((double) oldZone.getCurrentRate(_indexToTimerPair[i])/
-						(double) this.getCurrentRate(_indexToTimerPair[i]) < 0.0);
-				/* We are warping into the negative space, so swap the upper and 
-				 * lower bounds.
-				 */
-				
-				int temp = getDbmEntry(i, 0);
-				setDbmEntry(i,0, getDbmEntry(0, i));
-				setDbmEntry(0, i, temp);
-				
-				
-				// Set the relationships to Infinity since nothing else is known.
-				for(int j=1; j<dbmSize(); j++){
-					if(i != j){
-						setDbmEntry(i, j, INFINITY);
-						setDbmEntry(j, i, INFINITY);
+						(double) this.getCurrentRate(_indexToTimerPair[i]) < 0.0){
+					/* We are warping into the negative space, so swap the upper and 
+					 * lower bounds.
+					 */
+					int temp = getDbmEntry(i, 0);
+					setDbmEntry(i,0, getDbmEntry(0, i));
+					setDbmEntry(0, i, temp);
+
+
+					// Set the relationships to Infinity since nothing else is known.
+					for(int j=1; j<dbmSize(); j++){
+						if(i != j){
+							setDbmEntry(i, j, INFINITY);
+							setDbmEntry(j, i, INFINITY);
+						}
 					}
 				}
 			}		
