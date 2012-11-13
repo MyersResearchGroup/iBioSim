@@ -11,7 +11,6 @@ public class LpnTransitionPair {
 		this.lpnIndex = lpnIndex;
 		this.tranIndex = tranIndex;
 		transVisited = new HashSet<LpnTransitionPair>();
-		//firingCount = 0;
 	}
 	
 	public Integer getLpnIndex() {
