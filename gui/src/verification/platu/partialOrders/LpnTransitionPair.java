@@ -64,7 +64,7 @@ public class LpnTransitionPair {
 
 	@Override
 	public String toString() {
-		return "LpnTransitionPair [lpnIndex=" + lpnIndex + ", tranIndex="
+		return "[lpnIndex=" + lpnIndex + ", tranIndex="
 				+ tranIndex + "]";
 	}
 }
