@@ -1464,22 +1464,34 @@ public class BioModel {
 		}
 		if (KcStr != null && KcStr.startsWith("(")) {
 			KineticLaw k = r.getKineticLaw();
-			LocalParameter p = k.createLocalParameter();
-			p.setId(GlobalConstants.FORWARD_KCOMPLEX_STRING);
+			LocalParameter p = k.getLocalParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING);
+			if (p==null) {	
+				p = k.createLocalParameter();
+				p.setId(GlobalConstants.FORWARD_KCOMPLEX_STRING);
+			}
 			p.setValue(1.0);
 			p.setAnnotation(GlobalConstants.FORWARD_KCOMPLEX_STRING+"="+KcStr);
-			p = k.createLocalParameter();
-			p.setId(GlobalConstants.REVERSE_KCOMPLEX_STRING);
+			p = k.getLocalParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING);
+			if (p==null) {	
+				p = k.createLocalParameter();
+				p.setId(GlobalConstants.REVERSE_KCOMPLEX_STRING);
+			}
 			p.setValue(1.0);
 		} else {
 			double [] Kc = Utility.getEquilibrium(KcStr); 
 			if (Kc[0] >= 0) { 	
 				KineticLaw k = r.getKineticLaw();
-				LocalParameter p = k.createLocalParameter();
-				p.setId(GlobalConstants.FORWARD_KCOMPLEX_STRING);
+				LocalParameter p = k.getLocalParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING);
+				if (p==null) {	
+					p = k.createLocalParameter();
+					p.setId(GlobalConstants.FORWARD_KCOMPLEX_STRING);
+				}
 				p.setValue(Kc[0]);
-				p = k.createLocalParameter();
-				p.setId(GlobalConstants.REVERSE_KCOMPLEX_STRING);
+				p = k.getLocalParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING);
+				if (p==null) {	
+					p = k.createLocalParameter();
+					p.setId(GlobalConstants.REVERSE_KCOMPLEX_STRING);
+				}
 				p.setValue(Kc[1]);
 			}
 		}
