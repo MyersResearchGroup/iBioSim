@@ -19,7 +19,6 @@ public class StaticSets {
 	private HashMap<Integer, Transition[]> allTransitions;
 	private HashSet<LpnTransitionPair> disableSet; 
 	private HashSet<LpnTransitionPair> disableByStealingToken;
-	private HashSet<LpnTransitionPair> enableBySettingEnablingTrue;
 	private ArrayList<ExprTree> conjunctsOfEnabling; 
 	private ArrayList<HashSet<LpnTransitionPair>> otherTransSetCurTranEnablingTrue;
 	private HashSet<LpnTransitionPair> curTranSetOtherTranEnablingFalse; // A set of transitions (with associated LPNs) whose enabling condition can become false due to executing curTran's assignments. 
@@ -36,7 +35,6 @@ public class StaticSets {
 		disableByStealingToken = new HashSet<LpnTransitionPair>();
 		curTranSetOtherTranEnablingFalse = new HashSet<LpnTransitionPair>();
 		otherTransSetCurNonPersistentCurTranEnablingFalse = new HashSet<LpnTransitionPair>();
-		enableBySettingEnablingTrue = new HashSet<LpnTransitionPair>();
 		otherTransSetCurTranEnablingTrue = new ArrayList<HashSet<LpnTransitionPair>>();
 		conjunctsOfEnabling = new ArrayList<ExprTree>();
 		modifyAssignment = new HashSet<LpnTransitionPair>();
@@ -377,16 +375,6 @@ public class StaticSets {
 		curTranDisableOtherTransSet.addAll(disableByStealingToken);
 		curTranDisableOtherTransSet.addAll(curTranSetOtherTranEnablingFalse);
 		return curTranDisableOtherTransSet;
-	}
-	
-	public HashSet<LpnTransitionPair> getEnableBySettingEnablingTrue() {
-		return enableBySettingEnablingTrue;
-	}
-	
-	public HashSet<LpnTransitionPair> getCanEnableBySettingEnablingTrueSet() {
-		HashSet<LpnTransitionPair> curTranInCanEnableSet = new HashSet<LpnTransitionPair>();
-		curTranInCanEnableSet.addAll(enableBySettingEnablingTrue);
-		return curTranInCanEnableSet;
 	}
 	
 	public ArrayList<HashSet<LpnTransitionPair>> getOtherTransSetCurTranEnablingTrue() {
