@@ -69,9 +69,9 @@ public class Options {
 	private static boolean porDeadlockPreserve = true;
 	
 //	/*
-//	 * Flag to use new necessary computation
+//	 * Flag to use use dependent set queue for POR
 //	 */
-//	private static boolean necessaryUsingDependencyGraphs = false;
+	private static boolean useDependentQueue = false;
 	
 	/*
 	 * Report disabling error flag
@@ -383,4 +383,13 @@ public class Options {
 	public static boolean getMemUpperBoundFlag() {
 		return memoryUpperBoundFlag;
 	}
+
+	public static boolean getUseDependentQueue() {
+		return useDependentQueue;
+	}
+	
+	public static boolean setUseDependentQueue() {
+		return useDependentQueue = true;
+	}
+	
 }
