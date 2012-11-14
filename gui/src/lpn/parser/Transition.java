@@ -403,8 +403,8 @@ public class Transition {
 		return conflictSet;	
 	}
 	
-	public Set<Integer> getConflictSetTransIndices() {
-		Set<Integer> conflictSet = new HashSet<Integer>();
+	public HashSet<Integer> getConflictSetTransIndices() {
+		HashSet<Integer> conflictSet = new HashSet<Integer>();
 		for (Place p : getPreset()) {
 			for (Transition t : p.getPostset()) {
 				if (!this.toString().equals(t.toString())) {
