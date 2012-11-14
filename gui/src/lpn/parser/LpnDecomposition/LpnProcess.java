@@ -19,11 +19,11 @@ public class LpnProcess extends LhpnFile {
 	private ArrayList<Variable> processOutput = new ArrayList<Variable>();
 	private ArrayList<Variable> processInternal = new ArrayList<Variable>();
 	private int id;
-	private boolean noBranchFlag;
+	private boolean isStateMachine;
 	
 	public LpnProcess(Integer procId) {
 		id = procId;
-		noBranchFlag = true;
+		isStateMachine = true;
 	}
 	
 	public int getProcessId() {
@@ -361,12 +361,12 @@ public class LpnProcess extends LhpnFile {
 		return lpnProc;
 	}
 
-	public void setNoBranchFlag(boolean noBranch) {
-		noBranchFlag = noBranch;		
+	public void setStateMachineFlag(boolean isSM) {
+		isStateMachine = isSM;		
 	}
 	
-	public boolean getNoBranchFlag() {
-		return noBranchFlag;
+	public boolean getStateMachineFlag() {
+		return isStateMachine;
 	}
 	
 }
