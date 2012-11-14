@@ -413,10 +413,12 @@ public class Analysis {
 				}
 			}
 
-			if (Analysis.deadLock(sgList, nextStateArray) == true) {
-				System.out.println("*** Verification failed: deadlock.");
-				failure = true;
-				break main_while_loop;
+			if(!Options.getTimingAnalysisFlag()){
+				if (Analysis.deadLock(sgList, nextStateArray) == true) {
+					System.out.println("*** Verification failed: deadlock.");
+					failure = true;
+					break main_while_loop;
+				}
 			}
 			
 			//PrjState nextPrjState = new PrjState(nextStateArray); // Moved earlier. Timing Change.
