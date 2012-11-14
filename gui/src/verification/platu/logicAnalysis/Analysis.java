@@ -854,7 +854,6 @@ public class Analysis {
 		HashMap<Transition, LpnProcess> allTransitionsToLpnProcesses = new HashMap<Transition, LpnProcess>();
 		for (int lpnIndex=0; lpnIndex<lpnList.length; lpnIndex++) {
 			allTransitions.put(lpnIndex, lpnList[lpnIndex].getAllTransitions());
-			// create an Abstraction object to get all processes in one LPN
 			Abstraction abs = new Abstraction(lpnList[lpnIndex]);
 			abs.decomposeLpnIntoProcesses();				 
 			allProcessTransInOneLpn = (HashMap<Transition, Integer>)abs.getTransWithProcIDs();
@@ -865,8 +864,10 @@ public class Analysis {
 					LpnProcess newProcess = new LpnProcess(procId);
 					newProcess.addTranToProcess(curTran);
 					if (curTran.getPreset() != null) {
-						if (newProcess.getNoBranchFlag() && (curTran.getPreset().length > 1)) {
-							newProcess.setNoBranchFlag(false);
+						if (newProcess.getStateMachineFlag() 
+								&& ((curTran.getPreset().length > 1)
+										|| (curTran.getPostset().length > 1))) {
+							newProcess.setStateMachineFlag(false);
 						}
 						Place[] preset = curTran.getPreset();
 						for (Place p : preset) {
@@ -880,8 +881,10 @@ public class Analysis {
 					LpnProcess curProcess = processMapForOneLpn.get(procId);
 					curProcess.addTranToProcess(curTran);
 					if (curTran.getPreset() != null) {
-						if (curProcess.getNoBranchFlag() && (curTran.getPreset().length > 1)) {
-							curProcess.setNoBranchFlag(false);
+						if (curProcess.getStateMachineFlag() 
+								&& (curTran.getPreset().length > 1
+										|| curTran.getPostset().length > 1)) {
+							curProcess.setStateMachineFlag(false);
 						}
 						Place[] preset = curTran.getPreset();
 						for (Place p : preset) {
@@ -900,14 +903,12 @@ public class Analysis {
 				writeStringWithEndOfLineToPORDebugFile("=======LPN = " + lpnList[lpnIndex].getLabel() + "=======");
 			}
 			for (Transition curTran: allTransitions.get(lpnIndex)) {
-				StaticSets curStatic = new StaticSets(curTran, allTransitions);
-				curStatic.buildCurTranDisableOtherTransSet(lpnIndex);
+				StaticSets curStatic = new StaticSets(curTran, allTransitionsToLpnProcesses);
+				curStatic.buildCurTranDisableOtherTransSet();
 				if (Options.getPORdeadlockPreserve())
-					curStatic.buildOtherTransDisableCurTranSet(lpnIndex, allTransitionsToLpnProcesses);
-				else {
-					//curStatic.buildModifyAssignSet();
-					curStatic.buildModifyAssignSet(allTransitionsToLpnProcesses);
-				}
+					curStatic.buildOtherTransDisableCurTranSet();
+				else 
+					curStatic.buildModifyAssignSet();
 				curStatic.buildOtherTransSetCurTranEnablingTrue();
 				LpnTransitionPair lpnTranPair = new LpnTransitionPair(lpnIndex,curTran.getIndex());
 				staticSetsMap.put(lpnTranPair, curStatic);
@@ -4094,7 +4095,6 @@ public class Analysis {
 		}
 		return dependent;
 	}
-
 
 	private String getNamesOfLPNandTrans(LhpnFile[] lpnList, LpnTransitionPair tran) {
 		return lpnList[tran.getLpnIndex()].getLabel() + "(" + lpnList[tran.getLpnIndex()].getTransition(tran.getTranIndex()).getName() + ")";
