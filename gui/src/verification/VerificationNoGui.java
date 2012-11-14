@@ -66,6 +66,11 @@ public class VerificationNoGui {
 				Options.setDebugMode(true);
 				System.out.println("Debug mode is ON.");
 			}
+			else if (args[i].contains("-depQueue")) {
+				Options.setUseDependentQueue();
+				System.out.println("Use dependent queue.");
+			}
+			
 		}
 		if (directory.trim().equals("") || directory == null) {
 			System.out.println("Direcotry provided is empty. Exit.");
@@ -92,7 +97,8 @@ public class VerificationNoGui {
 		System.out.println("====== LPN loading order ========");
 		for (int i=0; i<lpnList.size(); i++) {
 			System.out.println(lpnList.get(i).getLabel());
-		}		
+		}
+		
 		
 		Project untimed_dfs = new Project(lpnList);
 		if (poroff)
