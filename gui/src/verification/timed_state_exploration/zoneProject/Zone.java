@@ -809,11 +809,11 @@ public class Zone{
 				if(!rate.equals(new IntervalPair(0,0))){
 					// Temporary exception guaranteeing only unit rates.
 					//if(rate != -1 && rate != 1){
-					if(rate.get_LowerBound() != 1 && rate.get_UpperBound() != 1){
-						throw new IllegalArgumentException("Current development " +
-								"only supports positive unit rates. The variable " + contVar +
-								" has a rate of " + rate);
-					}
+//					if(rate.get_LowerBound() != 1 && rate.get_UpperBound() != 1){
+//						throw new IllegalArgumentException("Current development " +
+//								"only supports positive unit rates. The variable " + contVar +
+//								" has a rate of " + rate);
+//					}
 					
 //					// Get the LPN index for the variable
 //					int lpnIndex = lpn.getLpnIndex();
