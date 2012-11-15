@@ -2487,7 +2487,7 @@ public class Zone{
 				continue;
 			}
 			else{
-				newZone._indexToTimerPair[index++] = this._indexToTimerPair[i];
+				newZone._indexToTimerPair[index++] = this._indexToTimerPair[i].clone();
 			}
 		}
 		
