@@ -2425,10 +2425,22 @@ public class Zone{
 				continue;
 			}
 			
-			newZone._rateZeroContinuous.put(ltTranPair, _rateZeroContinuous.get(ltTranPair));
+			// If the value has had an assignment, use the new values instead.
+			if(oldRateZero.containsKey(ltContPair)){
+				// Create the new VariableRangePair to add.
+				
+				Variable v = _lpnList[ltContPair.get_lpnIndex()]
+						.getVariable(ltContPair.get_ContinuousIndex());
+				VariableRangePair vrp = 
+						new VariableRangePair(v, oldRateZero.get(ltContPair));
+				
+				newZone._rateZeroContinuous.put(ltContPair, vrp);
+			}
+			else{
+				newZone._rateZeroContinuous.put(ltTranPair, _rateZeroContinuous.get(ltTranPair));
+			}
 			
 		}
-		
 		
 		
 		// Next add the values that are newly set to rate zero.
