@@ -32,7 +32,6 @@ final public class LpnTranList extends LinkedList<Transition> {
         }
         return null;
         */
-    	// TODO: (check) if getLabel is equivalent to getName
     	for (Transition t: this) {
     		if (lpnt.getName() == t.getName()) {
     			return t;
