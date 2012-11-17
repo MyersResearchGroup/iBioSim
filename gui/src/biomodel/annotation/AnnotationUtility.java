@@ -63,9 +63,9 @@ public class AnnotationUtility {
 		int[] gridSize = new int[2];
 		gridSize[0]=0;
 		gridSize[1]=0;
-		if (gridMatcher.find()) {
-			gridSize[0] = Integer.valueOf(gridMatcher.group(0));
-			gridSize[1] = Integer.valueOf(gridMatcher.group(1));
+		if (gridMatcher.find() && gridMatcher.groupCount()==2) {
+			gridSize[0] = Integer.valueOf(gridMatcher.group(1));
+			gridSize[1] = Integer.valueOf(gridMatcher.group(2));
 		}
 		return gridSize;
 	}
