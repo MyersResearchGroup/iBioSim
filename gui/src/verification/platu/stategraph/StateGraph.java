@@ -998,7 +998,7 @@ public class StateGraph {
     	}
         // find newly enabled transition(s) based on the updated markings and variables
     	if (Options.getDebugMode()) {
-//    		System.out.println("Finding newly enabled transitions at updateEnabledTranVector.");
+//    		System.out.println("Find newly enabled transitions at updateEnabledTranVector.");
     	}
 			
         for (Transition tran : this.lpn.getAllTransitions()) {
