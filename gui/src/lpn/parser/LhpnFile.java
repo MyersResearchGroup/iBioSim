@@ -59,6 +59,20 @@ public class LhpnFile {
 	 */
 	DualHashMap<String, Integer> _continuousIndexMap;
 	
+	/* 
+	 * Cached value of the array of all the places in this LPN. This field is 
+	 * initialized when a call to getPlaceList is made.
+	 */
+	protected String[] placeList;
+	
+	/* 
+	 * Cached value of all the transition in this LPN. This field is 
+	 * initialized when a call to getAllTransitions is made.
+	 */
+	protected Transition[] allTransitions;
+	
+	
+	
 	public LhpnFile(Log log) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
@@ -924,11 +938,15 @@ public class LhpnFile {
 	}
 	
 	public Transition[] getAllTransitions() {
-		Transition[] allTransitions = new Transition[transitions.size()];
-		for (String t: transitions.keySet()) {
-			allTransitions[transitions.get(t).getIndex()] = transitions.get(t);
+		if (allTransitions == null) {
+			allTransitions = new Transition[transitions.size()];
+			for (String t: transitions.keySet()) {
+				allTransitions[transitions.get(t).getIndex()] = transitions.get(t);
+			}
+			return allTransitions;
 		}
-		return allTransitions;
+		else
+			return allTransitions;
 	}
 	
 	public Transition getTransition(int index) {
@@ -1018,22 +1036,30 @@ public class LhpnFile {
 	}
 
 	public String[] getPlaceList() {
-		String[] placeList = new String[places.size()];
-		int i = 0;
-		for (String t : places.keySet()) {
-			placeList[i++] = t;
+		if (this.placeList == null) {
+			placeList = new String[places.size()];
+			int i = 0;
+			for (String t : places.keySet()) {
+				placeList[i++] = t;
+			}
+			return placeList;
 		}
-		return placeList;
+		else
+			return this.placeList;		
 	}
 	
-	public ArrayList<String> getAllPlaces() {
-		ArrayList<String> placeList = new ArrayList<String>(places.size());
-		int i = 0;
-		for (String t: places.keySet()) {
-			placeList.add(i++, t);
-		}
-		return placeList;
-	}
+//	public ArrayList<String> getAllPlaces() {
+//		if(placeList == null) {
+//			int i = 0;
+//			for (String t: places.keySet()) {
+//				placeList.add(i++, t);
+//			}
+//			return placeList;
+//		}
+//		else
+//			return placeList;
+//
+//	}
 	
 	public Place getPlace(String place) {
 		return places.get(place);
@@ -1062,9 +1088,13 @@ public class LhpnFile {
 	public int[] getPresetIndex(String name) {
 		if (isTransition(name)) {
 			int[] preset = new int[transitions.get(name).getPreset().length];
-			int i = 0;
-			for (Place p : transitions.get(name).getPreset()) {
-				preset[i++] = this.getAllPlaces().indexOf(p.getName());
+			Place[] presetPlaces = transitions.get(name).getPreset();
+			for (int i=0; i<presetPlaces.length; i++) {
+				for (int placeIndex=0; placeIndex<this.getPlaceList().length; placeIndex++) {
+					if (this.getPlaceList()[placeIndex] == presetPlaces[i].getName()) {
+						preset[i] = placeIndex;
+					}
+				}
 			}
 			return preset;
 		}
@@ -1103,10 +1133,13 @@ public class LhpnFile {
 	public int[] getPostsetIndex(String name) {
 		if (isTransition(name)) {
 			int[] postset = new int[transitions.get(name).getPostset().length];
-			int i = 0;
-			for (Place p : transitions.get(name).getPostset()) {
-				if (this.getAllPlaces().contains(p.getName()))
-					postset[i++] = this.getAllPlaces().indexOf(p.getName());
+			Place[] postPlaces = transitions.get(name).getPostset();
+			for (int i=0; i<postPlaces.length; i++) {
+				for (int placeIndex=0; placeIndex<this.getPlaceList().length; placeIndex++) {
+					if (this.getPlaceList()[placeIndex] == postPlaces[i].getName()) {
+						postset[i] = placeIndex;
+					}
+				}
 			}
 			return postset;
 		}
@@ -2545,6 +2578,62 @@ public class LhpnFile {
 	
 	public int getTotalNumberOfContVars(){
 		return continuous.size();
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((booleans == null) ? 0 : booleans.hashCode());
+		result = prime * result
+				+ ((continuous == null) ? 0 : continuous.hashCode());
+		result = prime * result
+				+ ((integers == null) ? 0 : integers.hashCode());
+		result = prime * result + ((label == null) ? 0 : label.hashCode());
+		result = prime * result + lpnIndex;
+		result = prime * result
+				+ ((variables == null) ? 0 : variables.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		LhpnFile other = (LhpnFile) obj;
+		if (booleans == null) {
+			if (other.booleans != null)
+				return false;
+		} else if (!booleans.equals(other.booleans))
+			return false;
+		if (continuous == null) {
+			if (other.continuous != null)
+				return false;
+		} else if (!continuous.equals(other.continuous))
+			return false;
+		if (integers == null) {
+			if (other.integers != null)
+				return false;
+		} else if (!integers.equals(other.integers))
+			return false;
+		if (label == null) {
+			if (other.label != null)
+				return false;
+		} else if (!label.equals(other.label))
+			return false;
+		if (lpnIndex != other.lpnIndex)
+			return false;
+		if (variables == null) {
+			if (other.variables != null)
+				return false;
+		} else if (!variables.equals(other.variables))
+			return false;
+		return true;
 	}
 	
 	private static final String PROPERTY = "#@\\.property ([^@]*)\\n";
