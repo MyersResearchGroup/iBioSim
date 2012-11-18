@@ -52,9 +52,13 @@ public class Transition {
 	
 	private int index;
 	
-	//private boolean local;
-	
 	private List<LhpnFile> dstLpnList = new ArrayList<LhpnFile>();
+	
+	/**
+	 * This field variable collects each product term of the transition's enabling condition. 
+	 * It is initialized when buildConjunctsOfEnabling is called.
+	 */
+	private ArrayList<ExprTree> conjuncts; 
 
 //	public Transition(String name, ArrayList<Variable> variables, LhpnFile lhpn) {
 //		this.name = name;
@@ -814,7 +818,7 @@ public class Transition {
 //    }
     
     public String getFullLabel() {
-    	return this.lhpn.getLabel() + ":" + this.name;
+    	return this.lhpn.getLabel() + "(" + this.name + ")";
     }
 
     /**
@@ -880,26 +884,75 @@ public class Transition {
 				if (foundLPN) 
 					break;
 			}
-			
+		}		
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((delay == null) ? 0 : delay.hashCode());
+		result = prime * result + (fail ? 1231 : 1237);
+		result = prime * result + ((lhpn == null) ? 0 : lhpn.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + (persistent ? 1231 : 1237);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Transition other = (Transition) obj;
+		if (delay == null) {
+			if (other.delay != null)
+				return false;
+		} else if (!delay.equals(other.delay))
+			return false;
+		if (fail != other.fail)
+			return false;
+		if (lhpn == null) {
+			if (other.lhpn != null)
+				return false;
+		} else if (!lhpn.equals(other.lhpn))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (persistent != other.persistent)
+			return false;
+		return true;
+	}
+
+	/**
+	 * This method takes the enabling condition of a transition (in the product-of-sums), and break the conjunction into conjuncts.
+	 * @param term
+	 */
+	public void buildConjunctsOfEnabling(ExprTree term) {
+		if (conjuncts == null)
+			conjuncts = new ArrayList<ExprTree>();
+		if (term.getOp().equals("&&")){
+			buildConjunctsOfEnabling(term.getLeftChild());
+			buildConjunctsOfEnabling(term.getRightChild());
 		}
-		
-		
+		else {
+			conjuncts.add(term);
+		}
 	}
-
-	public boolean isSticky() {
-		// TODO Auto-generated method stub
-		return false;
+	
+	public ArrayList<ExprTree> getConjunctsOfEnabling() {
+		return conjuncts;
 	}
-
-	public void setSticky(boolean b) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	/* Maybe copy method below is not needed.
 	public Transition copy(HashMap<String, VarNode> variables){
     	return new Transition(this.name, this.index, this.preset, this.postset, this.enablingGuard.copy(variables), 
     			this.assignments.copy(variables), this.delayLB, this.delayUB, this.local);
     }
-	*/
+	*/	
 }
