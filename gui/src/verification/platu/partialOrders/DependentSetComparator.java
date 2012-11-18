@@ -2,12 +2,13 @@ package verification.platu.partialOrders;
 
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
+
+import lpn.parser.Transition;
 
 public class DependentSetComparator implements Comparator<DependentSet>{
-	private HashMap<LpnTransitionPair, Integer> tranFiringFreqMap; 
+	private HashMap<Transition, Integer> tranFiringFreqMap; 
 	
-	public DependentSetComparator(HashMap<LpnTransitionPair ,Integer> tranFiringFreq) {
+	public DependentSetComparator(HashMap<Transition, Integer> tranFiringFreq) {
 		this.tranFiringFreqMap = tranFiringFreq;
 	}
 
