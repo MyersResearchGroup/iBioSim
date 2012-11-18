@@ -1,23 +1,24 @@
 package verification.platu.partialOrders;
 
 import java.util.HashSet;
+import lpn.parser.Transition;
 
 public class DependentSet {
-	HashSet<LpnTransitionPair> dependent;
-	LpnTransitionPair seed;
+	HashSet<Transition> dependent;
+	Transition seed;
 	boolean enabledTranIsDummy;
 	
-	public DependentSet(HashSet<LpnTransitionPair> dependent, LpnTransitionPair enabledTran2, boolean enabledTranIsDummy) {
+	public DependentSet(HashSet<Transition> dependent, Transition enabledTran2, boolean enabledTranIsDummy) {
 		this.dependent = dependent;
 		this.seed = enabledTran2;
 		this.enabledTranIsDummy = enabledTranIsDummy;
 	}
 
-	public HashSet<LpnTransitionPair> getDependent() {
+	public HashSet<Transition> getDependent() {
 		return dependent;
 	}
 
-	public LpnTransitionPair getSeed() {
+	public Transition getSeed() {
 		return seed;
 	}
 	
