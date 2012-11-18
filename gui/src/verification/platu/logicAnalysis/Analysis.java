@@ -4268,7 +4268,7 @@ public class Analysis {
 		ArrayList<HashSet<Transition>> canEnable = staticMap.get(tran).getOtherTransSetCurTranEnablingTrue(); 
 		if (Options.getDebugMode()) {
 			writeStringWithEndOfLineToPORDebugFile("####### compute nEnable for transition " + getNamesOfLPNandTrans(tran) + "########");
-			writeIntegerSetToPORDebugFile(canEnable, getNamesOfLPNandTrans(tran) + " can be enabled by");
+			writeIntegerSetToPORDebugFile(canEnable, "@ nEnable: " + getNamesOfLPNandTrans(tran) + " can be enabled by");
 		}
 		if (tran.getEnablingTree() != null
 				&& tran.getEnablingTree().evaluateExpr(tran.getLpn().getAllVarsWithValuesAsString(varValueVector)) == 0.0
@@ -4277,7 +4277,8 @@ public class Analysis {
 				ExprTree conjunctExprTree = tran.getConjunctsOfEnabling().get(index);
 				HashSet<Transition> nEnableForOneConjunct = null;
 				if (Options.getDebugMode()) {
-					writeStringWithEndOfLineToPORDebugFile("@ nEnable: consider conjunct for transition " + getNamesOfLPNandTrans(tran) + ": " 
+					writeIntegerSetToPORDebugFile(canEnable, "@ nEnable: " + getNamesOfLPNandTrans(tran) + " can be enabled by");
+					writeStringWithEndOfLineToPORDebugFile("@ nEnable: Consider conjunct for transition " + getNamesOfLPNandTrans(tran) + ": " 
 							+ conjunctExprTree.toString());	
 				}
 				if (conjunctExprTree.evaluateExpr(tran.getLpn().getAllVarsWithValuesAsString(varValueVector)) == 0.0) {
@@ -4285,8 +4286,8 @@ public class Analysis {
 					nEnableForOneConjunct = new HashSet<Transition>();
 					if (Options.getDebugMode()) {
 						writeStringWithEndOfLineToPORDebugFile("@ nEnable: Conjunct for transition " + getNamesOfLPNandTrans(tran) + " " 
-								+ conjunctExprTree.toString() + "is evaluated to FALSE.");
-						writeIntegerSetToPORDebugFile(canEnableOneConjunctSet, "@ nEnable: Transitions that can enable this conjunct are:");														
+								+ conjunctExprTree.toString() + " is evaluated to FALSE.");
+						writeIntegerSetToPORDebugFile(canEnableOneConjunctSet, "@ nEnable: Transitions that can enable this conjunct are");														
 					}
 					for (Transition tranCanEnable : canEnableOneConjunctSet) {
 						if (curEnabledIndices.contains(tranCanEnable)) {
@@ -4315,7 +4316,7 @@ public class Analysis {
 								visitedTrans.add(tranCanEnable);
 							}
 							if (Options.getDebugMode()) {
-								writeStringWithEndOfLineToPORDebugFile("@ nEnable: transition " + getNamesOfLPNandTrans(tranCanEnable) 
+								writeStringWithEndOfLineToPORDebugFile("@ nEnable: Transition " + getNamesOfLPNandTrans(tranCanEnable) 
 										+ " is not enabled. Compute its necessary set.");
 							}
 							HashSet<Transition> tmp = computeNecessary(curStateArray, tranCanEnable, dependent, 
@@ -4339,13 +4340,26 @@ public class Analysis {
 				else {
 					if (Options.getDebugMode()) {
 						writeStringWithEndOfLineToPORDebugFile("@ nEnable: Conjunct for transition " + getNamesOfLPNandTrans(tran) + " " 
-								+ conjunctExprTree.toString() + "is evaluated to TRUE. No need to trace back on it.");
+								+ conjunctExprTree.toString() + " is evaluated to TRUE. No need to trace back on it.");
 					}
 				}
 				if (nEnableForOneConjunct != null) {
 					if (nEnable == null 
-							|| setSubstraction(nEnableForOneConjunct, dependent).size() < setSubstraction(nEnable, dependent).size())				
+							|| setSubstraction(nEnableForOneConjunct, dependent).size() < setSubstraction(nEnable, dependent).size()) {
+						if (Options.getDebugMode()) {
+							writeStringWithEndOfLineToPORDebugFile("@ nEnable: nEnable for transition " + getNamesOfLPNandTrans(tran) +" is replaced by nEnableForOneConjunct.");
+							writeIntegerSetToPORDebugFile(nEnable, "nEnable");
+							writeIntegerSetToPORDebugFile(nEnableForOneConjunct, "nEnableForOneConjunct");
+						}
 						nEnable = nEnableForOneConjunct;
+					}
+					else {
+						if (Options.getDebugMode()) {
+							writeStringWithEndOfLineToPORDebugFile("@ nEnable: nEnable for transition " + getNamesOfLPNandTrans(tran) +" remains unchanged.");
+							writeIntegerSetToPORDebugFile(nEnable, "nEnable");
+						}
+					}
+						
 				}			
 			}
 		}
