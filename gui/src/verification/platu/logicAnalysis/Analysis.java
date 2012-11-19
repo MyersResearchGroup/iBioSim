@@ -4140,7 +4140,6 @@ public class Analysis {
 		return tran.getLpn().getLabel() + "(" + tran.getName() + ")";
 	}
 
-	@SuppressWarnings("unchecked")
 	private HashSet<Transition> computeNecessary(State[] curStateArray,
 			Transition tran, HashSet<Transition> dependent,
 			HashSet<Transition> curEnabledIndices, HashMap<Transition, StaticSets> staticMap) { // LhpnFile[] lpnList, Transition seedTran) {
@@ -4240,7 +4239,7 @@ public class Analysis {
 							}
 					}
 				}
-				if (nMarkingTemp != null)
+				if (!nMarkingTemp.isEmpty())
 					//if (nMarking == null || nMarkingTemp.size() < nMarking.size())
 					if (nMarking == null 
 							|| setSubstraction(nMarkingTemp, dependent).size() < setSubstraction(nMarking, dependent).size())
@@ -4343,9 +4342,10 @@ public class Analysis {
 								+ conjunctExprTree.toString() + " is evaluated to TRUE. No need to trace back on it.");
 					}
 				}
-				if (nEnableForOneConjunct != null) {
+				if (nEnableForOneConjunct != null && !nEnableForOneConjunct.isEmpty()) {
 					if (nEnable == null 
 							|| setSubstraction(nEnableForOneConjunct, dependent).size() < setSubstraction(nEnable, dependent).size()) {
+									//&& !nEnableForOneConjunct.isEmpty())) {
 						if (Options.getDebugMode()) {
 							writeStringWithEndOfLineToPORDebugFile("@ nEnable: nEnable for transition " + getNamesOfLPNandTrans(tran) +" is replaced by nEnableForOneConjunct.");
 							writeIntegerSetToPORDebugFile(nEnable, "nEnable");
@@ -4358,8 +4358,7 @@ public class Analysis {
 							writeStringWithEndOfLineToPORDebugFile("@ nEnable: nEnable for transition " + getNamesOfLPNandTrans(tran) +" remains unchanged.");
 							writeIntegerSetToPORDebugFile(nEnable, "nEnable");
 						}
-					}
-						
+					}				
 				}			
 			}
 		}
@@ -4397,9 +4396,9 @@ public class Analysis {
 			}
 			return nEnable;
 		}
-//		else if (nMarking == null && nEnable == null) {
-//			return null;
-//		}
+		else if (nMarking == null && nEnable == null) {
+			return null;
+		}
 		else {
 			if (!nMarking.isEmpty() && !nEnable.isEmpty()) {
 				if (setSubstraction(nMarking, dependent).size() < setSubstraction(nEnable, dependent).size()) {
