@@ -4335,30 +4335,30 @@ public class Analysis {
 								}				
 						}
 					}
+					if (!nEnableForOneConjunct.isEmpty()) {
+						if (nEnable == null 
+								|| setSubstraction(nEnableForOneConjunct, dependent).size() < setSubstraction(nEnable, dependent).size()) {
+										//&& !nEnableForOneConjunct.isEmpty())) {
+							if (Options.getDebugMode()) {
+								writeStringWithEndOfLineToPORDebugFile("@ nEnable: nEnable for transition " + getNamesOfLPNandTrans(tran) +" is replaced by nEnableForOneConjunct.");
+								writeIntegerSetToPORDebugFile(nEnable, "nEnable");
+								writeIntegerSetToPORDebugFile(nEnableForOneConjunct, "nEnableForOneConjunct");
+							}
+							nEnable = nEnableForOneConjunct;
+						}
+						else {
+							if (Options.getDebugMode()) {
+								writeStringWithEndOfLineToPORDebugFile("@ nEnable: nEnable for transition " + getNamesOfLPNandTrans(tran) +" remains unchanged.");
+								writeIntegerSetToPORDebugFile(nEnable, "nEnable");
+							}
+						}				
+					}
 				}
 				else {
 					if (Options.getDebugMode()) {
 						writeStringWithEndOfLineToPORDebugFile("@ nEnable: Conjunct for transition " + getNamesOfLPNandTrans(tran) + " " 
 								+ conjunctExprTree.toString() + " is evaluated to TRUE. No need to trace back on it.");
 					}
-				}
-				if (nEnableForOneConjunct != null && !nEnableForOneConjunct.isEmpty()) {
-					if (nEnable == null 
-							|| setSubstraction(nEnableForOneConjunct, dependent).size() < setSubstraction(nEnable, dependent).size()) {
-									//&& !nEnableForOneConjunct.isEmpty())) {
-						if (Options.getDebugMode()) {
-							writeStringWithEndOfLineToPORDebugFile("@ nEnable: nEnable for transition " + getNamesOfLPNandTrans(tran) +" is replaced by nEnableForOneConjunct.");
-							writeIntegerSetToPORDebugFile(nEnable, "nEnable");
-							writeIntegerSetToPORDebugFile(nEnableForOneConjunct, "nEnableForOneConjunct");
-						}
-						nEnable = nEnableForOneConjunct;
-					}
-					else {
-						if (Options.getDebugMode()) {
-							writeStringWithEndOfLineToPORDebugFile("@ nEnable: nEnable for transition " + getNamesOfLPNandTrans(tran) +" remains unchanged.");
-							writeIntegerSetToPORDebugFile(nEnable, "nEnable");
-						}
-					}				
 				}			
 			}
 		}
