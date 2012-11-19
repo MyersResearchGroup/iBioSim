@@ -2046,6 +2046,8 @@ public class Zone{
 		// Warp the Zone
 		newZone.dbmWarp(this);
 		
+		newZone.recononicalize();
+		
 		newZone.advance(localStates);
 		
 		// Recanonicalize
