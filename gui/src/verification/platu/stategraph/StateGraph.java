@@ -1562,6 +1562,7 @@ public class StateGraph {
 		// Accumulates a set of all transitions that need their enabling conditions
 		// re-evaluated.
 		HashSet<Transition> needUpdating = new HashSet<Transition>();
+		HashSet<InequalityVariable> ineqNeedUpdating= new HashSet<InequalityVariable>();
 		
 		// Accumulates the new assignment information.
 		ArrayList<HashMap<LPNContAndRate, IntervalPair>> newAssignValues 
@@ -1677,6 +1678,7 @@ public class StateGraph {
 				if(newRate == null){
 					// Keep the current rate.
 					contVar.setCurrentRate(z.getCurrentRate(contVar));
+					newRate = z.getRateBounds(contVar);
 				}
 
 
@@ -1685,32 +1687,46 @@ public class StateGraph {
 				// Get each inequality that involves the continuous variable.
 				ArrayList<InequalityVariable> inequalities = this.lpn.getContVar(contVarIndex).getInequalities();
 
-				// Update the inequalities.
-				for(InequalityVariable ineq : inequalities){
-					int ineqIndex = this.lpn.getVarIndexMap().get(ineq.getName());
-
-					// Add the transitions that this inequality affects.
-					needUpdating.addAll(ineq.getTransitions());
-					
-
-					HashMap<LPNContAndRate, IntervalPair> continuousValues = new HashMap<LPNContAndRate, IntervalPair>();
-					continuousValues.putAll(newAssignValues.get(OLD_ZERO));
-					continuousValues.putAll(newAssignValues.get(NEW_NON_ZERO));
-					continuousValues.putAll(newAssignValues.get(NEW_ZERO));
-					continuousValues.putAll(newAssignValues.get(OLD_NON_ZERO));
-
-					// Adjust state vector values for the inequality variables.
-					int[] newVectorArray = states[this.lpn.getLpnIndex()].getVector();
-					newVectorArray[ineqIndex] = ineq.evaluate(newVectorArray, z, continuousValues);
-				}
+				ineqNeedUpdating.addAll(inequalities);
+				
+//				// Update the inequalities.
+//				for(InequalityVariable ineq : inequalities){
+//					int ineqIndex = this.lpn.getVarIndexMap().get(ineq.getName());
+//
+//					// Add the transitions that this inequality affects.
+//					needUpdating.addAll(ineq.getTransitions());
+//					
+//
+//					HashMap<LPNContAndRate, IntervalPair> continuousValues = new HashMap<LPNContAndRate, IntervalPair>();
+//					continuousValues.putAll(newAssignValues.get(OLD_ZERO));
+//					continuousValues.putAll(newAssignValues.get(NEW_NON_ZERO));
+//					continuousValues.putAll(newAssignValues.get(NEW_ZERO));
+//					continuousValues.putAll(newAssignValues.get(OLD_NON_ZERO));
+//
+//					// Adjust state vector values for the inequality variables.
+//					int[] newVectorArray = states[this.lpn.getLpnIndex()].getVector();
+//					newVectorArray[ineqIndex] = ineq.evaluate(newVectorArray, z, continuousValues);
+////					newVectorArray[ineqIndex] = ineq.evaluate(newVectorArray, z, null);
+//				}
 			}
 
+			
+			if(newValue == null && newRate == null){
+				// If nothing was set, then nothing needs to be done.
+				continue;
+			}
 
 			// If the value did not get assigned, put in the old value.
 			if(newValue == null){
 				newValue = z.getContinuousBounds(contVar);
 			}
 
+			
+			// If a new rate has not been assigned, put in the old rate.
+//			if(newRate == null){
+//				newRate = z.getRateBounds(contVar);
+//			}
+			
 			// Check if the new assignment gives rate zero.
 			//boolean newRateZero = newRate == 0;
 			boolean newRateZero = newRate.singleValue() ? newRate.get_LowerBound() == 0 : false;
@@ -1739,6 +1755,26 @@ public class StateGraph {
 				}
 			}
 
+		}
+		
+		// Update the inequalities.
+		for(InequalityVariable ineq : ineqNeedUpdating){
+			int ineqIndex = this.lpn.getVarIndexMap().get(ineq.getName());
+
+			// Add the transitions that this inequality affects.
+			needUpdating.addAll(ineq.getTransitions());
+			
+
+			HashMap<LPNContAndRate, IntervalPair> continuousValues = new HashMap<LPNContAndRate, IntervalPair>();
+			continuousValues.putAll(newAssignValues.get(OLD_ZERO));
+			continuousValues.putAll(newAssignValues.get(NEW_NON_ZERO));
+			continuousValues.putAll(newAssignValues.get(NEW_ZERO));
+			continuousValues.putAll(newAssignValues.get(OLD_NON_ZERO));
+
+			// Adjust state vector values for the inequality variables.
+			int[] newVectorArray = states[this.lpn.getLpnIndex()].getVector();
+			newVectorArray[ineqIndex] = ineq.evaluate(newVectorArray, z, continuousValues);
+//			newVectorArray[ineqIndex] = ineq.evaluate(newVectorArray, z, null);
 		}
 		
 		
