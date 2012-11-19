@@ -2469,13 +2469,15 @@ public class Zone{
 			}
 			
 			// If the value has had an assignment, use the new values instead.
-			if(oldRateZero.containsKey(ltContPair)){
+			if(oldRateZero.containsKey(new LPNContAndRate(ltContPair))){
 				// Create the new VariableRangePair to add.
 				
+//				Variable v = _lpnList[ltContPair.get_lpnIndex()]
+//						.getVariable(ltContPair.get_ContinuousIndex());
 				Variable v = _lpnList[ltContPair.get_lpnIndex()]
-						.getVariable(ltContPair.get_ContinuousIndex());
+						.getContVar(ltContPair.get_ContinuousIndex());
 				VariableRangePair vrp = 
-						new VariableRangePair(v, oldRateZero.get(ltContPair));
+						new VariableRangePair(v, oldRateZero.get(new LPNContAndRate(ltContPair)));
 				
 				newZone._rateZeroContinuous.put(ltContPair, vrp);
 			}
