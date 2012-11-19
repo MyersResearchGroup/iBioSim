@@ -61,4 +61,8 @@ public class LPNContAndRate {
 	public String toString(){
 		return _lcPair.toString() + " " +_rateInterval.toString();
 	}
+	
+	public int hashCode(){
+		return _lcPair.hashCode();
+	}
 }
