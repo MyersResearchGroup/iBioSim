@@ -1474,6 +1474,13 @@ public class Zone{
 		return new IntervalPair(lower, upper);
 	}
 	
+	/**
+	 * Gets the range for the continuous variable.
+	 * @param ltContPair
+	 * 		The index of the variable of interest.
+	 * @return
+	 * 		The range of the continuous variable described by ltContPair.
+	 */
 	public IntervalPair getContinuousBounds(LPNContinuousPair ltContPair){
 		
 		// First check in the zone.
@@ -1490,6 +1497,40 @@ public class Zone{
 		int lower = (-1)*getDbmEntry(variableIndex, 0);
 		int upper = getDbmEntry(0, variableIndex);
 				
+		return new IntervalPair(lower, upper);
+	}
+	
+	/**
+	 * Gets the range of the rate associated with a continuous variable.
+	 * @param ltContPair
+	 * 		The index of the continuous variable.
+	 * @return
+	 * 		The range of rates associated with the continuous variable indexed
+	 * 		by ltContPair.
+	 */
+	public IntervalPair getRateBounds(LPNTransitionPair ltPair){
+		
+		int upper;
+		int lower;
+		
+		// Check if the ltContpair is in the zone.
+		int i = Arrays.binarySearch(_indexToTimerPair, ltPair);
+
+		if(i < 0){
+			// Assume the rate is zero. This covers the case if conVar
+			// is in the rate zero as well as if its not in the state at all.
+			return new IntervalPair(0,0);
+		}
+		
+		
+		upper = getUpperBoundbydbmIndex(ltPair.get_transitionIndex());
+		lower = getLowerBoundbydbmIndex(ltPair.get_transitionIndex());
+
+		
+		// The continuous variable is in the zone.
+		// The upper and lower bounds are stored in the same
+		// place as the delays, so the same method of 
+		// retrieval will work.
 		return new IntervalPair(lower, upper);
 	}
 	
