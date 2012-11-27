@@ -3044,20 +3044,30 @@ public class BioModel {
 			
 			int count = 1;
 			submodelID = "C" + count;
-			
-			for (int i = 0; i < sbml.getModel().getNumParameters(); ++i) {
-				
+			boolean changed = false;
+			do { 
+				changed = false;
+				for (int i = 0; i < sbml.getModel().getNumParameters(); ++i) {
+
+					if (sbml.getModel().getParameter(i).getId().endsWith("__locations")) {
+						while (sbml.getModel().getParameter(i).getAnnotationString().contains("array:" + submodelID + "=")) {
+							++count;
+							submodelID = "C" + count;
+							changed = true;
+						}
+					}
+					/*
 				boolean escape = false;
-				
+
 				while (sbml.getModel().getParameter(i).getId().contains(extId + "__locations") == true) {
-					
+
 					++count;
 					submodelID = "C" + count;
-					
+
 					if (sbml.getModel().getParameter(extId + "__locations") != null &&
 							sbml.getModel().getParameter(extId + "__locations")
 							.getAnnotationString().contains("array:" + submodelID + "=") == false) {
-						
+
 						escape = true;
 						break;
 					}
@@ -3067,11 +3077,12 @@ public class BioModel {
 						break;
 					}
 				}
-				
+
 				if (escape == true)
 					break;
-			}
-			
+					 */
+				}
+			} while (changed);
 			while (this.getSBMLCompModel().getSubmodel(submodelID) != null) {
 				
 				++count;
