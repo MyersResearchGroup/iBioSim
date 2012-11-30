@@ -509,6 +509,11 @@ public class Zone{
 		// Initialize the row and column entries for the continuous variables.
 		initializeRowColumnContVar();
 		
+		// Create  a previous zone to the initial zone for the sake of warping.
+		Zone tmpZone = beforeInitialZone();
+		
+		dbmWarp(tmpZone);
+		
 		// Advance Time
 		//advance();
 		advance(localStates);
@@ -3328,7 +3333,13 @@ public class Zone{
 			}
 		}
 		
-		clonedZone._indexToTimerPair = Arrays.copyOf(_indexToTimerPair, _indexToTimerPair.length);
+//		clonedZone._indexToTimerPair = Arrays.copyOf(_indexToTimerPair, _indexToTimerPair.length);
+		
+		clonedZone._indexToTimerPair = new LPNTransitionPair[this._indexToTimerPair.length];
+		
+		for(int i=0; i<_indexToTimerPair.length; i++){
+			clonedZone._indexToTimerPair[i] = this._indexToTimerPair[i].clone();
+		}
 		
 		clonedZone._hashCode = this._hashCode;
 		
@@ -4942,6 +4953,28 @@ public class Zone{
 		newZone.recononicalize();
 		
 		return newZone;
+	}
+	
+	/**
+	 * This method creates a zone identical to the current zone except all the current rates are turned to 1.
+	 * This is to provide a previous zone to the initial zone for warping.
+	 * @return
+	 * 		A zone identical to this zone with all rates set to 1.
+	 */
+	private Zone beforeInitialZone(){
+		Zone z = this.clone();
+		
+//		for(int i=1; _indexToTimerPair[i] instanceof LPNContinuousPair; i++){
+		for(int i=1; i<z._indexToTimerPair.length; i++){
+			if(!(z._indexToTimerPair[i] instanceof LPNContinuousPair)){
+				break;
+			}
+			LPNContinuousPair lcPair = (LPNContinuousPair) z._indexToTimerPair[i];
+			
+			lcPair.setCurrentRate(1);
+		}
+		
+		return z;
 	}
 	
 	/**
