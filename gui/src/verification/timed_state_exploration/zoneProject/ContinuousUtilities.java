@@ -371,7 +371,8 @@ public class ContinuousUtilities {
 						// Check if the entire range lies below the constant.
 						if(z.getDbmEntry(0, contDBMIndex)
 								< chkDiv(ineq.getConstant(), z.getCurrentRate(contVar), false)){
-							newMin = z.getDbmEntry(0, contVar.get_transitionIndex());
+//							newMin = z.getDbmEntry(0, contVar.get_transitionIndex());
+							newMin = z.getDbmEntry(0, contDBMIndex);
 							System.err.println("maxAdvance: Impossible case 1.");
 						}
 
@@ -404,7 +405,8 @@ public class ContinuousUtilities {
 						else if((-1)*z.getDbmEntry(contDBMIndex,0)
 								< chkDiv(ineq.getConstant(), z.getCurrentRate(contVar), false)){
 							
-							newMin = z.getDbmEntry(0, contVar.get_transitionIndex());
+//							newMin = z.getDbmEntry(0, contVar.get_transitionIndex());
+							newMin = z.getDbmEntry(0, contDBMIndex);
 							System.err.print("maxAdvance : Impossible case 3.");
 						}
 
@@ -433,7 +435,7 @@ public class ContinuousUtilities {
 
 						// Check if the entire range lies above the constant.
 						else if((-1)*z.getDbmEntry(0, contDBMIndex)
-								< (-1)*chkDiv(ineq.getConstant(),
+								> (-1)*chkDiv(ineq.getConstant(),
 										z.getCurrentRate(contVar), false)){
 							
 							newMin = chkDiv(ineq.getConstant(), 
@@ -443,7 +445,8 @@ public class ContinuousUtilities {
 
 						else{
 							// straddle case
-							newMin = z.getDbmEntry(0, contVar.get_transitionIndex());
+//							newMin = z.getDbmEntry(0, contVar.get_transitionIndex());
+							newMin = z.getDbmEntry(0, contDBMIndex);
 						}
 
 					}
@@ -518,7 +521,8 @@ public class ContinuousUtilities {
 								< chkDiv(ineq.getConstant(), 
 										z.getCurrentRate(contVar), false)){
 							
-							newMin = z.getDbmEntry(0, contVar.get_transitionIndex());
+//							newMin = z.getDbmEntry(0, contVar.get_transitionIndex());
+							newMin = z.getDbmEntry(0, contDBMIndex);
 							System.err.println("maxAdvance : Impossible case 7.");
 						}
 
@@ -577,7 +581,7 @@ public class ContinuousUtilities {
 
 						// Check if the entire range lies below the constant.
 						if(z.getDbmEntry(contDBMIndex,0)
-								< (-1)*chkDiv(ineq.getConstant(),
+								< chkDiv((-1)*ineq.getConstant(),
 										z.getCurrentRate(contVar), false)){
 							
 							newMin = z.getDbmEntry(0,contDBMIndex);
@@ -586,8 +590,8 @@ public class ContinuousUtilities {
 
 						// Check if the entire range lies above the constant.
 						else if((-1)*z.getDbmEntry(0,contDBMIndex)
-								< (-1)*chkDiv(ineq.getConstant(),
-										z.getCurrentRate(contVar),false)){
+								> (-1)*chkDiv(ineq.getConstant(),
+										(-1)*z.getCurrentRate(contVar),false)){
 							
 							newMin = chkDiv(ineq.getConstant(), z.getCurrentRate(contVar),false);
 						}
@@ -597,7 +601,8 @@ public class ContinuousUtilities {
 						else {
 							// straddle case
 							
-							newMin = z.getDbmEntry(0, contVar.get_transitionIndex());
+//							newMin = z.getDbmEntry(0, contVar.get_transitionIndex());
+							newMin = z.getDbmEntry(0, contDBMIndex);
 						}
 
 
