@@ -170,6 +170,7 @@ public class SBOLSynthesizer {
 		Set<String> startTypes = constructValidator.getStartTypes();
 		Set<String> terminalTypes = constructValidator.getTerminalTypes();
 		for (SBOLSynthesisNode startNode : synGraph.getStartNodes()) {
+			serialValidator.reset();
 			List<DnaComponent> dnaComps = gatherDNAComponents(startNode, serialValidator, terminalTypes);
 			if (dnaComps == null) 
 				return null;
