@@ -3,6 +3,7 @@ package sbol;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 public class SequenceTypeValidator {
@@ -11,8 +12,8 @@ public class SequenceTypeValidator {
 	
 	public SequenceTypeValidator(String regex) {
 		Set<NFAState> nfaStartStates = constructNFA(regex);
-		this.dfa = new DFA();
-		dfa.setStartState(constructDFA(nfaStartStates));
+		this.dfa = new DFA(nfaStartStates);
+//		dfa.setStartState(constructDFA(nfaStartStates));
 //		dfa.print();
 	}
 	
@@ -111,50 +112,33 @@ public class SequenceTypeValidator {
 		}
 	}
 	
-	private DFAState constructDFA(Set<NFAState> nfaStates) {
-		String dfaStateID = "";
-		HashMap<String, Set<NFAState>> combinedTransitions = new HashMap<String, Set<NFAState>>();
-		boolean accepting = false;
-		for (NFAState nfaState : nfaStates) {
-			dfaStateID = dfaStateID + nfaState.getID();
-			HashMap<String, Set<NFAState>> transitions = nfaState.getTransitions();
-			for (String input : transitions.keySet())
-				if (combinedTransitions.containsKey(input))
-					combinedTransitions.get(input).addAll(transitions.get(input));
-				else
-					combinedTransitions.put(input, transitions.get(input));
-			if (nfaState.isAccepting())
-				accepting = true;
-		}
-		DFAState dfaState = new DFAState(dfaStateID);
-		dfa.addState(dfaState);
-		for (String input : combinedTransitions.keySet()) {
-			Set<NFAState> nfaDestinations = combinedTransitions.get(input);
-			dfaStateID = "";
-			for (NFAState nfaDestination : nfaDestinations)
-				dfaStateID = dfaStateID + nfaDestination.getID();
-			DFAState dfaDestination;
-			if (dfa.hasState(dfaStateID))
-				dfaDestination = dfa.getState(dfaStateID);
-			else
-				dfaDestination = constructDFA(combinedTransitions.get(input));
-			dfaState.addTransition(input, dfaDestination);
-		}
-		dfaState.setAccepting(accepting);
-		return dfaState;
+	public boolean validate(List<String> types) {
+		return dfa.run(types);
 	}
 	
-	public boolean validateSequenceTypes(LinkedList<String> types) {
-//		LinkedList<String> terminals = new LinkedList<String>();
-//		for (String type : types)
-//			terminals.add(SBOLUtility.soTypeToGrammarTerminal(type));
-		return dfa.run(types);
+	public boolean isValid() {
+		return dfa.isAccepting();
+	}
+	
+	public void reset() {
+		dfa.reset();
 	}
 	
 	public Set<String> getStartTypes() {
 		Set<String> startTypes = new HashSet<String>();
 		startTypes.addAll(dfa.getStartState().getTransitions().keySet());
 		return startTypes;
+	}
+	
+	public Set<String> getTerminalTypes() {
+		Set<String> terminalTypes = new HashSet<String>();
+		for (DFAState state : dfa.getStates().values()) {
+			HashMap<String, DFAState> transitions = state.getTransitions();
+			for (String type : transitions.keySet())
+				if (transitions.get(type).isAccepting())
+					terminalTypes.add(type);
+		}
+		return terminalTypes;
 	}
 	
 	private class NFAState {
@@ -218,6 +202,10 @@ public class SequenceTypeValidator {
 			return id;
 		}
 		
+		public void setID(String id) {
+			this.id = id;
+		}
+		
 		public String toString() {
 			return id;
 		}
@@ -244,17 +232,46 @@ public class SequenceTypeValidator {
 	}
 	
 	private class DFA {
-		private HashMap<String, DFAState> states;
+		private HashMap<String, DFAState> states = new HashMap<String, DFAState>();
 		private DFAState startState;
-		private Set<DFAState> acceptStates;
+		private DFAState currentState;
 		
-		public DFA() {
-			this.states = new HashMap<String, DFAState>();
-			this.acceptStates = new HashSet<DFAState>();
+		public DFA(Set<NFAState> nfaStates) {
+			startState = constructDFA(nfaStates);
+			currentState = startState;
 		}
 		
-		public void setStartState(DFAState startState) {
-			this.startState = startState;
+		public DFAState constructDFA(Set<NFAState> nfaStates) {
+			String dfaStateID = "";
+			HashMap<String, Set<NFAState>> combinedTransitions = new HashMap<String, Set<NFAState>>();
+			boolean accepting = false;
+			for (NFAState nfaState : nfaStates) {
+				dfaStateID = dfaStateID + nfaState.getID();
+				HashMap<String, Set<NFAState>> transitions = nfaState.getTransitions();
+				for (String input : transitions.keySet())
+					if (combinedTransitions.containsKey(input))
+						combinedTransitions.get(input).addAll(transitions.get(input));
+					else
+						combinedTransitions.put(input, transitions.get(input));
+				if (nfaState.isAccepting())
+					accepting = true;
+			}
+			DFAState dfaState = new DFAState(dfaStateID);
+			addState(dfaState);
+			for (String input : combinedTransitions.keySet()) {
+				Set<NFAState> nfaDestinations = combinedTransitions.get(input);
+				dfaStateID = "";
+				for (NFAState nfaDestination : nfaDestinations)
+					dfaStateID = dfaStateID + nfaDestination.getID();
+				DFAState dfaDestination;
+				if (hasState(dfaStateID))
+					dfaDestination = getState(dfaStateID);
+				else
+					dfaDestination = constructDFA(combinedTransitions.get(input));
+				dfaState.addTransition(input, dfaDestination);
+			}
+			dfaState.setAccepting(accepting);
+			return dfaState;
 		}
 		
 		public DFAState getStartState() {
@@ -277,7 +294,13 @@ public class SequenceTypeValidator {
 			return states;
 		}
 		
+		// Prints out DFA in dot format
 		public void print() {
+			int reindex = 0;
+			for (DFAState state : states.values()) {
+				state.setID("S" + reindex);
+				reindex++;
+			}
 			printHelper(startState, new HashSet<String>());
 			System.out.println();
 		}
@@ -285,28 +308,35 @@ public class SequenceTypeValidator {
 		private void printHelper(DFAState currentState, Set<String> visitedIds) {
 			visitedIds.add(currentState.getID());
 			if (currentState.isAccepting())
-				System.out.println(currentState.getID() + " is accepting.");
+				System.out.println(currentState.getID() + " [peripheries=2]");
 			for (String input : currentState.getTransitions().keySet()) {
 				DFAState destination = currentState.transition(input);
-				System.out.println(currentState.getID() + "-" + input + "->" + destination.getID());
+				System.out.println(currentState.getID() + " -> " + destination.getID() + " [label=\" " 
+						+ input + "\"]");
 				if (!visitedIds.contains(destination.getID()))
 					printHelper(destination, visitedIds);
 			}
 			
 		}
 		
-		public boolean run(LinkedList<String> inputs) {
-			DFAState currentState = startState;
-			for (String input : inputs) {
-				if (currentState != null)
-					currentState = currentState.transition(input);
-				else
+		public boolean run(List<String> inputs) {
+			DFAState nextState = currentState;
+			for (int i = 0; i < inputs.size(); i++) {
+				nextState = nextState.transition(inputs.get(i));
+				if (nextState == null)
 					return false;
+				else if (i == inputs.size() - 1)
+					currentState = nextState;
 			}
-			if (currentState != null && currentState.isAccepting())
-				return true;
-			else
-				return false;
+			return currentState.isAccepting();
+		}
+		
+		public boolean isAccepting() {
+			return currentState.isAccepting();
+		}
+		
+		public void reset() {
+			currentState = startState;
 		}
 	}
 	

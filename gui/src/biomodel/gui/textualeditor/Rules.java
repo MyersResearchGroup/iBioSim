@@ -9,6 +9,7 @@ import java.awt.event.MouseListener;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.JButton;
@@ -224,7 +225,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			}
 			if (!modelEditor.isParamsOnly()) {
 				//Parse out SBOL annotations and add to SBOL field
-				LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(rule);
+				List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(rule);
 				// Field for annotating rules with SBOL DNA components
 				sbolField = new SBOLField(sbolURIs, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 2, false);
 			}
@@ -418,7 +419,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 //						}
 						if (!error) {
 							// Add SBOL annotation to rule
-							LinkedList<URI> sbolURIs = sbolField.getSBOLURIs();
+							List<URI> sbolURIs = sbolField.getSBOLURIs();
 							if (sbolURIs.size() > 0) {
 								SBOLAnnotation sbolAnnot = new SBOLAnnotation(r.getMetaId(), sbolURIs);
 								AnnotationUtility.setSBOLAnnotation(r, sbolAnnot);

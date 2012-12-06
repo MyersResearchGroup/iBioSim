@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
@@ -596,7 +597,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		// Parse out GCM and SBOL annotations and add to respective fields
 		if (!paramsOnly) {
 			// Field for annotating species with SBOL DNA components
-			LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(species);
+			List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(species);
 			sbolField = new SBOLField(sbolURIs, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 3, false);
 
 			grid.add(sbolField);
@@ -957,7 +958,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			
 			if (!paramsOnly) {
 				// Add SBOL annotation to species
-				LinkedList<URI> sbolURIs = sbolField.getSBOLURIs();
+				List<URI> sbolURIs = sbolField.getSBOLURIs();
 				if (sbolURIs.size() > 0) {
 					SBOLAnnotation sbolAnnot = new SBOLAnnotation(species.getMetaId(), sbolURIs);
 					AnnotationUtility.setSBOLAnnotation(species, sbolAnnot);

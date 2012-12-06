@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 import java.util.prefs.Preferences;
 
@@ -2558,13 +2559,13 @@ public class BioModel {
 		elementSBOLCount = 0;
 		SBaseList modelElements = sbml.getModel().getListOfAllElements();
 		for (long i = 0; i < modelElements.getSize(); i++) {
-			LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(modelElements.get(i));
+			List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(modelElements.get(i));
 			if (sbolURIs.size() > 0)
 				elementSBOLCount++;
 		}
 		for (long i = 0; i < sbmlCompModel.getNumSubmodels(); i++) {
 			Submodel instantiation = sbmlCompModel.getSubmodel(i);
-			LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(instantiation);
+			List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(instantiation);
 			if (sbolURIs.size() > 0)
 				elementSBOLCount++;
 //			else {
@@ -2582,7 +2583,7 @@ public class BioModel {
 	public void setModelSBOLAnnotationFlag() {
 		modelSBOLAnnotationFlag = false;
 		Model sbmlModel = sbml.getModel();
-		LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlModel);
+		List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlModel);
 		if (sbolURIs.size() > 0)
 			modelSBOLAnnotationFlag = true;
 	}
@@ -2595,10 +2596,13 @@ public class BioModel {
 		modelSBOLAnnotationFlag = set;
 	}
 	
-	// Descriptor array should be size 4 and contain DNA component ID, name, description, and
-	// file save destination in that order
+	// Descriptor array should be size 3 and contain DNA component ID, name, and description in that order
 	public void setSBOLDescriptors(String[] descriptors) {
 		sbolDescriptors = descriptors;
+	}
+	
+	public void setSBOLSaveFile(String saveFile) {
+		sbolSaveFile = saveFile;
 	}
 	
 	public int getElementSBOLCount() {
@@ -2611,6 +2615,10 @@ public class BioModel {
 	
 	public String[] getSBOLDescriptors() {
 		return sbolDescriptors;
+	}
+	
+	public String getSBOLSaveFile() {
+		return sbolSaveFile;
 	}
 	
 	public int getPlaceHolderIndex() {
@@ -6566,6 +6574,51 @@ public class BioModel {
 		return document;
 	}
 	
+	public BioModel partiallyFlattenModel(String subModelId) {
+		ArrayList<String> modelList = new ArrayList<String>();
+		modelList.add(filename);
+		String tempFile = filename.replace(".gcm","").replace(".xml","")+"_temp.xml";
+		save(tempFile);
+		
+		BioModel model = new BioModel(path);
+		model.load(tempFile);
+
+		// flatten one submodel instead of looping through all submodels
+		BioModel subModel = new BioModel(path);		
+		String extModelFile = getExtModelFileName(subModelId);
+		subModel.load(path + separator + extModelFile);
+		ArrayList<String> modelListCopy = copyArray(modelList);
+		if (modelListCopy.contains(subModel.getFilename())) {
+			Utility.createErrorMessage("Loop Detected", "Cannot flatten model.\n" + "There is a loop in the components.");
+			load(tempFile);
+			new File(tempFile).delete();
+			return null;
+		}
+		modelListCopy.add(subModel.getFilename());
+
+		// recursively add this component's sbml to the overall sbml
+		unionSBML(model, subModel, subModelId, subModel.getParameter(GlobalConstants.RNAP_STRING));
+		if (model.getSBMLDocument() == null && modelListCopy.isEmpty()) {
+			Utility.createErrorMessage("Loop Detected", "Cannot flatten model.\n" + "There is a loop in the components.");
+			load(tempFile);
+			new File(tempFile).delete();
+			return null;
+		}
+		else if (model.getSBMLDocument() == null) {
+			Utility.createErrorMessage("Cannot Flatten Model", "Unable to flatten sbml files from components.");
+			load(tempFile);
+			new File(tempFile).delete();
+			return null;
+		}
+		if (model.getSBMLCompModel().getNumSubmodels() == 0) {
+			model.getSBMLDocument().enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", false);
+			model.getSBMLDocument().enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", false);
+		}
+		checkModelConsistency(model.getSBMLDocument());
+		new File(tempFile).delete();
+		return model;
+	}
+	
 	public SBMLDocument flattenModel() {
 		Preferences biosimrc = Preferences.userRoot();
 		if (biosimrc.get("biosim.general.flatten", "").equals("libsbml")) {
@@ -7553,5 +7606,6 @@ public class BioModel {
 	private int elementSBOLCount;
 	private boolean modelSBOLAnnotationFlag;
 	private String[] sbolDescriptors;
+	private String sbolSaveFile;
 	private int placeHolderIndex;
 }

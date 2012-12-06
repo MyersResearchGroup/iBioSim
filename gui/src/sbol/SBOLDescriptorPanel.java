@@ -36,7 +36,7 @@ public class SBOLDescriptorPanel extends JPanel {
 	private Resolver<DnaComponent, URI> compResolver;
 	private String initialID;
 	private JTextField sbolID, sbolName, sbolDescription;
-	private JComboBox sbolFileDestination;
+	private JComboBox sbolSaveFile;
 	private String[] options = {"Ok", "Cancel"};
 	
 	public SBOLDescriptorPanel(URI sbolURI, String filePath, HashSet<String> sbolFiles, BioModel bioModel) {
@@ -69,9 +69,9 @@ public class SBOLDescriptorPanel extends JPanel {
 		sbolID = new JTextField("", 40);
 		sbolName = new JTextField("", 40);
 		sbolDescription = new JTextField("", 40);
-		sbolFileDestination = new JComboBox(sbolFiles.toArray());
+		sbolSaveFile = new JComboBox(sbolFiles.toArray());
 		add(new JLabel("Save SBOL DNA Component to File:"));
-		add(sbolFileDestination);
+		add(sbolSaveFile);
 		add(new JLabel("SBOL DNA Component ID:"));
 		add(sbolID);
 		add(new JLabel("SBOL DNA Component Name:"));
@@ -88,7 +88,7 @@ public class SBOLDescriptorPanel extends JPanel {
 				compResolver = flattenedDoc.getComponentUriResolver();
 				DnaComponent dnac = compResolver.resolve(sbolURI);
 				if (dnac != null) {
-					sbolFileDestination.setSelectedItem(targetFile);
+					sbolSaveFile.setSelectedItem(targetFile);
 					initialID = dnac.getDisplayId();
 					sbolID.setText(initialID);
 					if (dnac.getName() != null)
@@ -120,7 +120,7 @@ public class SBOLDescriptorPanel extends JPanel {
 			sbolID.setText(initialID);
 			sbolName.setText(sbolDescriptors[1]);
 			sbolDescription.setText(sbolDescriptors[2]);
-			sbolFileDestination.setSelectedItem(sbolDescriptors[3]);
+			sbolSaveFile.setSelectedItem(sbolDescriptors[3]);
 		}
 	}
 	
@@ -130,14 +130,15 @@ public class SBOLDescriptorPanel extends JPanel {
 				"Composite SBOL Descriptors", JOptionPane.YES_NO_CANCEL_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (option == 0) {
-			String[] sbolDescriptors = new String[4];
-			if (!isSourceIdValid(sbolID.getText(), sbolFileDestination.getSelectedItem().toString()))
+			
+			if (!isSourceIdValid(sbolID.getText(), sbolSaveFile.getSelectedItem().toString()))
 				return true;
+			String[] sbolDescriptors = new String[3];
 			sbolDescriptors[0] = sbolID.getText();
 			sbolDescriptors[1] = sbolName.getText();
-			sbolDescriptors[2] = sbolDescription.getText();
-			sbolDescriptors[3] = sbolFileDestination.getSelectedItem().toString();
+			sbolDescriptors[2] = sbolDescription.getText(); 
 			bioModel.setSBOLDescriptors(sbolDescriptors);
+			bioModel.setSBOLSaveFile(sbolSaveFile.getSelectedItem().toString());
 			return false;
 		} else
 			return false;
