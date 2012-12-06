@@ -7,6 +7,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -31,15 +32,15 @@ public class SBOLField extends JPanel implements ActionListener {
 	private int styleOption;
 	private JLabel sbolLabel;
 	private JTextField sbolText = new JTextField(20);
-	private LinkedList<URI> sbolURIs;
-	private LinkedList<URI> initialURIs;
+	private List<URI> sbolURIs;
+	private List<URI> initialURIs;
 	private boolean initiallyBlank;
 	private JButton sbolButton = new JButton("Associate SBOL");
 	private ModelEditor gcmEditor;
 	private boolean isModelPanelField;
 	private URI deletionURI;
 	
-	public SBOLField(LinkedList<URI> sbolURIs, String sbolType, ModelEditor gcmEditor, int styleOption, boolean isModelPanelField) {
+	public SBOLField(List<URI> sbolURIs, String sbolType, ModelEditor gcmEditor, int styleOption, boolean isModelPanelField) {
 		super(new GridLayout(1, styleOption));
 	
 		this.sbolURIs = sbolURIs;
@@ -66,7 +67,7 @@ public class SBOLField extends JPanel implements ActionListener {
 		return initiallyBlank;
 	}
 	
-	public LinkedList<URI> getInitialURIs() {
+	public List<URI> getInitialURIs() {
 		return initialURIs;
 	}
 	
@@ -86,11 +87,11 @@ public class SBOLField extends JPanel implements ActionListener {
 		sbolText.setText(text);
 	}
 	
-	public LinkedList<URI> getSBOLURIs() {
+	public List<URI> getSBOLURIs() {
 		return sbolURIs;
 	}
 	
-	public void setSBOLURIs(LinkedList<URI> sbolURIs) {
+	public void setSBOLURIs(List<URI> sbolURIs) {
 		this.sbolURIs = sbolURIs;
 	}
 	

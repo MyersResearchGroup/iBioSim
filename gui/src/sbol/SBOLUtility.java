@@ -255,6 +255,20 @@ public class SBOLUtility {
 		return subIntersections;
 	}
 	
+	public static List<String> loadLowestSOTypes(DnaComponent dnaComp) {
+		List<String> types = new LinkedList<String>();
+		List<DnaComponent> dnaComps = new LinkedList<DnaComponent>();
+		dnaComps.add(dnaComp);
+		do {
+			if (dnaComps.get(0).getAnnotations().size() > 0)
+				for (SequenceAnnotation anno : dnaComps.remove(0).getAnnotations())
+					dnaComps.add(anno.getSubComponent());
+			else
+				types.add(convertURIToSOType(dnaComps.remove(0).getTypes().iterator().next()));
+		} while (dnaComps.size() > 0);
+		return types;
+	}
+	
 	// Converts global constant SBOL type to corresponding set of SO types
 	public static Set<String> soSynonyms(String sbolType) {
 		Set<String> types = new HashSet<String>();

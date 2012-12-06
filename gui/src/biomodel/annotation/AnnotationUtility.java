@@ -3,6 +3,7 @@ package biomodel.annotation;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,9 +37,9 @@ public class AnnotationUtility {
 		sbmlObject.setAnnotation(annotation);
 	}
 	
-	public static LinkedList<URI> parseSBOLAnnotation(SBase sbmlObject) {
+	public static List<URI> parseSBOLAnnotation(SBase sbmlObject) {
 		String annotation = sbmlObject.getAnnotationString();
-		LinkedList<URI> sbolURIs = new LinkedList<URI>();
+		List<URI> sbolURIs = new LinkedList<URI>();
 		Pattern sbolPattern = Pattern.compile(SBOL_ANNOTATION);
 		Matcher sbolMatcher = sbolPattern.matcher(annotation);
 		Pattern componentPattern = Pattern.compile(DNA_COMPONENT_ANNOTATION);
@@ -55,7 +56,7 @@ public class AnnotationUtility {
 		}
 		return sbolURIs;
 	}
-	
+
 	public static int[] parseGridAnnotation(SBase sbmlObject) {
 		String annotation = sbmlObject.getAnnotationString();
 		Pattern gridPattern = Pattern.compile(GRID_ANNOTATION);
@@ -69,15 +70,6 @@ public class AnnotationUtility {
 		}
 		return gridSize;
 	}
-	
-//	public static LinkedList<URI> parseSubSBOLAnnotation(Submodel instantiation, BioModel bioModel) {
-//		CompSBMLDocumentPlugin sbmlCompDoc = bioModel.getSBMLComp();
-//		String sbmlSubFileID = sbmlCompDoc.getExternalModelDefinition(instantiation.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
-//		BioModel bioSubModel = new BioModel(bioModel.getPath());
-//		bioSubModel.load(sbmlSubFileID);
-//		Model sbmlSubModel = bioSubModel.getSBMLDocument().getModel();
-//		return AnnotationUtility.parseSBOLAnnotation(sbmlSubModel);
-//	}
 	
 	private static final String XML_NAME_START_CHAR = "[:[A-Z]_[a-z][\\u00C0-\\u00D6][\\u00D8-\\u00F6]" +
 			"[\\u00F8-\\u02FF][\\u0370-\\u037D][\\u037F-\\u1FFF][\\u200C-\\u200D][\\u2070-\\u218F][\\u2C00-\\u2FEF]" +

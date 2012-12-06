@@ -5,6 +5,7 @@ import java.awt.GridLayout;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -326,7 +327,7 @@ public class PromoterPanel extends JPanel {
 		// Parse out SBOL annotations and add to SBOL field
 		if (!paramsOnly) {
 			// Field for annotating promoter with SBOL DNA components
-			LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(promoter);
+			List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(promoter);
 			sbolField = new SBOLField(sbolURIs, GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 3, false);
 			add(sbolField);
 		}
@@ -453,7 +454,7 @@ public class PromoterPanel extends JPanel {
 
 			if (!paramsOnly) {
 				// Add SBOL annotation to promoter
-				LinkedList<URI> sbolURIs = sbolField.getSBOLURIs();
+				List<URI> sbolURIs = sbolField.getSBOLURIs();
 				if (sbolURIs.size() > 0) {
 					SBOLAnnotation sbolAnnot = new SBOLAnnotation(promoter.getMetaId(), sbolURIs);
 					AnnotationUtility.setSBOLAnnotation(promoter, sbolAnnot);

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -538,7 +539,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 		// Parse out SBOL annotations and add to SBOL field
 		if(!paramsOnly) {
 			// Field for annotating submodel with SBOL DNA components
-			LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(instance);
+			List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(instance);
 			sbolField = new SBOLField(sbolURIs, GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 2, false);
 			add(sbolField);
 		}
@@ -827,7 +828,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			componentsList.setSelectedValue(id + " " + selectedComponent.replace(".xml", "") + " " + newPort, true);
 			if (!paramsOnly) {
 				// Add SBOL annotation to submodel
-				LinkedList<URI> sbolURIs = sbolField.getSBOLURIs();
+				List<URI> sbolURIs = sbolField.getSBOLURIs();
 				if (sbolURIs.size() > 0) {
 					SBOLAnnotation sbolAnnot = new SBOLAnnotation(instance.getMetaId(), sbolURIs);
 					AnnotationUtility.setSBOLAnnotation(instance, sbolAnnot);

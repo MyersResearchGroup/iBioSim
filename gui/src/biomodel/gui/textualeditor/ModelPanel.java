@@ -8,6 +8,7 @@ import java.awt.event.MouseListener;
 import java.net.URI;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -178,7 +179,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 				extentUnits.setSelectedItem(bioModel.getSBMLDocument().getModel().getExtentUnits());
 				conversionFactor.setSelectedItem(bioModel.getSBMLDocument().getModel().getConversionFactor());
 			}
-			LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlModel);
+			List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlModel);
 			sbolField = new SBOLField(sbolURIs, GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 1, true);
 
 			modelEditorPanel.add(substanceUnitsLabel);
@@ -220,7 +221,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 //			}
 			// Add SBOL annotation to SBML model itself
 			if (!error) {
-				LinkedList<URI> sbolURIs = sbolField.getSBOLURIs();
+				List<URI> sbolURIs = sbolField.getSBOLURIs();
 				if (sbolURIs.size() > 0) {
 					SBOLAnnotation sbolAnnot = new SBOLAnnotation(sbmlModel.getMetaId(), sbolURIs);
 					AnnotationUtility.setSBOLAnnotation(sbmlModel, sbolAnnot);

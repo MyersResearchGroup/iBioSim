@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
@@ -75,6 +76,7 @@ import org.sbml.libsbml.Trigger;
 import org.sbml.libsbml.libsbml;
 
 import sbol.SBOLDescriptorPanel;
+import sbol.SequenceTypeValidator;
 
 
 import main.Gui;
@@ -614,7 +616,7 @@ public class Schematic extends JPanel implements ActionListener {
 //			HashSet<String> sbolFiles = gui.getSbolFiles();
 			URI modelURI = null;
 			if (bioModel.getSBOLDescriptors() == null) {
-				LinkedList<URI> modelURIs = AnnotationUtility.parseSBOLAnnotation(bioModel.getSBMLDocument().getModel());
+				List<URI> modelURIs = AnnotationUtility.parseSBOLAnnotation(bioModel.getSBMLDocument().getModel());
 				Iterator<URI> uriIterator = modelURIs.iterator();
 				while (uriIterator.hasNext() && (modelURI == null || !modelURI.toString().endsWith("iBioSim"))) {
 					modelURI = uriIterator.next();

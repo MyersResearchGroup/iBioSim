@@ -10,6 +10,7 @@ import java.awt.event.MouseListener;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -591,7 +592,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			if (!paramsOnly) {
 				// Field for annotating reaction with SBOL DNA components
 				Reaction reac = gcm.getSBMLDocument().getModel().getReaction(reactionId);
-				LinkedList<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(reac);
+				List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(reac);
 				sbolField = new SBOLField(sbolURIs, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 2, false);
 				reactionPanelNorth1b.add(sbolField);
 			}
@@ -852,7 +853,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 //						}
 						if (!error) {
 							// Add SBOL annotation to reaction
-							LinkedList<URI> sbolURIs = sbolField.getSBOLURIs();
+							List<URI> sbolURIs = sbolField.getSBOLURIs();
 							if (sbolURIs.size() > 0) {
 								SBOLAnnotation sbolAnnot = new SBOLAnnotation(react.getMetaId(), sbolURIs);
 								AnnotationUtility.setSBOLAnnotation(react, sbolAnnot);
