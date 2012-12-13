@@ -168,6 +168,8 @@ public class Schematic extends JPanel implements ActionListener {
 	
 	private boolean lema = false;
 	
+	private ModelPanel modelPanel;
+	
 	//CLASS METHODS
 	
     /**
@@ -435,7 +437,7 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		toolBar.addSeparator();
 
-		ModelPanel modelPanel = new ModelPanel(bioModel, modelEditor);
+		modelPanel = new ModelPanel(bioModel, modelEditor);
 		toolBar.add(modelPanel);
 		
 		sbolDescriptorsButton = new JButton("SBOL");
@@ -2607,7 +2609,9 @@ public class Schematic extends JPanel implements ActionListener {
 		return sbolDescriptorsButton;
 	}
 	
-	
+	public ModelPanel getModelPanel() {
+		return modelPanel;
+	}
 	//FRAME PRINTING
 	
 	

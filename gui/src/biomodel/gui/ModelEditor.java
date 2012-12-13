@@ -361,6 +361,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 
 		// Annotate SBML model with synthesized SBOL DNA component and save component to local SBOL file
+		modelPanel.deleteDissociatedBioSimComponent();
 		if (command.contains("Check")) {
 			saveSBOL(true);
 		} else {
@@ -479,7 +480,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		if (identityManager.containsBioSimURI()) {
 			SBOLSynthesisGraph synGraph = new SBOLSynthesisGraph(biomodel);
 			if (synGraph.containsSBOL()) {
-				SBOLFileManager fileManager = new SBOLFileManager(getGui().getFilePaths(".sbol"));
+				SBOLFileManager fileManager = new SBOLFileManager(biosim.getFilePaths(".sbol"));
 				if (fileManager.loadSBOLFiles() && synGraph.loadDNAComponents(fileManager)) {
 					SequenceTypeValidator constructValidator = 
 							new SequenceTypeValidator(Preferences.userRoot().get("biosim.synthesis.regex", ""));
@@ -1537,6 +1538,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		else {
 			this.schematic = new Schematic(biomodel, biosim, this, true, null,compartmentPanel,reactionPanel,rulesPanel,
 					consPanel,eventPanel,parametersPanel,lema);
+			modelPanel = schematic.getModelPanel();
 			tab.addTab("Schematic", schematic);
 			if (biomodel.getGrid().isEnabled()) {
 				tab.addTab("Grid Species", speciesPanel);

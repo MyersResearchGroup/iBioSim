@@ -9,6 +9,7 @@ import java.net.URI;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -72,6 +73,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 		super();
 		this.bioModel = gcm;
 		this.gcmEditor = gcmEditor;
+		sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 1, true);
 		this.sbmlModel = gcm.getSBMLDocument().getModel();
 		this.dirty = gcmEditor.getDirty();
 		this.setText("Model");
@@ -162,7 +164,8 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			extentUnits.addItem("item");
 			extentUnits.addItem("kilogram");
 			extentUnits.addItem("mole");
-
+			sbolField.setSBOLURIs(AnnotationUtility.parseSBOLAnnotation(sbmlModel));
+			
 			ListOf listOfParameters = bioModel.getSBMLDocument().getModel().getListOfParameters();
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumParameters(); i++) {
 				Parameter param = (Parameter) listOfParameters.get(i);
@@ -179,9 +182,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 				extentUnits.setSelectedItem(bioModel.getSBMLDocument().getModel().getExtentUnits());
 				conversionFactor.setSelectedItem(bioModel.getSBMLDocument().getModel().getConversionFactor());
 			}
-			List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlModel);
-			sbolField = new SBOLField(sbolURIs, GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 1, true);
-
+			
 			modelEditorPanel.add(substanceUnitsLabel);
 			modelEditorPanel.add(substanceUnits);
 			modelEditorPanel.add(timeUnitsLabel);
@@ -203,22 +204,8 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 		int value = JOptionPane.showOptionDialog(Gui.frame, modelEditorPanel, "Model Editor", JOptionPane.YES_NO_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
-//		boolean removeElementSBOLAnnotationFlag = false;
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = false;
-			// Checks whether SBOL annotations on model elements need to be deleted later when annotating model with SBOL
-//			if (bioModel.getElementSBOLCount() > 0 && sbolField.getSBOLURIs().size() > 0 
-//					&& !sbolField.getSBOLURIs().equals(sbolField.getInitialURIs())) {
-//				Object[] sbolOptions = { "OK", "Cancel" };
-//				int choice = JOptionPane.showOptionDialog(null, 
-//						"SBOL associated to model elements can't coexist with SBOL associated to model itself unless" +
-//								" the latter was previously generated from the former.  Remove SBOL associated to model elements and models associated to SBOL?", 
-//								"Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, sbolOptions, sbolOptions[0]);
-//				if (choice == JOptionPane.OK_OPTION)
-//					removeElementSBOLAnnotationFlag = true;
-//				else 
-//					error = true;
-//			}
 			// Add SBOL annotation to SBML model itself
 			if (!error) {
 				List<URI> sbolURIs = sbolField.getSBOLURIs();
@@ -226,28 +213,18 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 					SBOLAnnotation sbolAnnot = new SBOLAnnotation(sbmlModel.getMetaId(), sbolURIs);
 					AnnotationUtility.setSBOLAnnotation(sbmlModel, sbolAnnot);
 					bioModel.setModelSBOLAnnotationFlag(true);
-//					gcmEditor.getSchematic().getSBOLDescriptorsButton().setEnabled(false);
-//					if (removeElementSBOLAnnotationFlag) {
-//						SBaseList modelElements = bioModel.getSBMLDocument().getModel().getListOfAllElements();
-//						for (long i = 0; i < modelElements.getSize(); i++)
-//							AnnotationUtility.removeSBOLAnnotation(modelElements.get(i));
-//						gcmEditor.getSchematic().refresh();
-//						bioModel.setElementSBOLCount(0);
-//
-//					}
 				} else {
 					AnnotationUtility.removeSBOLAnnotation(sbmlModel);
 					bioModel.setModelSBOLAnnotationFlag(false);
-//					gcmEditor.getSchematic().getSBOLDescriptorsButton().setEnabled(true);
 				}
 				// Deletes iBioSim composite components that have been removed from association panel
-				URI deletionURI = sbolField.getDeletionURI();
-				if (deletionURI != null)
-					for (String filePath : gcmEditor.getGui().getFilePaths(".sbol")) {
-						SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
-						SBOLUtility.deleteDNAComponent(deletionURI, sbolDoc);
-						SBOLUtility.writeSBOLDocument(filePath, sbolDoc);
-					}
+//				URI deletionURI = sbolField.getDeletionURI();
+//				if (deletionURI != null)
+//					for (String filePath : gcmEditor.getGui().getFilePaths(".sbol")) {
+//						SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
+//						SBOLUtility.deleteDNAComponent(deletionURI, sbolDoc);
+//						SBOLUtility.writeSBOLDocument(filePath, sbolDoc);
+//					}
 			}
 			if (!error) {
 				if (bioModel.getSBMLDocument().getLevel() > 2) {
@@ -303,6 +280,19 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 				value = JOptionPane.showOptionDialog(Gui.frame, modelEditorPanel, "Model Units Editor", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			}
+		}
+	}
+	
+	public void deleteDissociatedBioSimComponent() {
+		// Deletes from local SBOL files any iBioSim composite component that had its URI removed from the SBOLAssociationPanel
+		URI deletionURI = sbolField.getDeletionURI();
+		if (deletionURI != null) {
+			for (String filePath : gcmEditor.getGui().getFilePaths(".sbol")) {
+				SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
+				SBOLUtility.deleteDNAComponent(deletionURI, sbolDoc);
+				SBOLUtility.writeSBOLDocument(filePath, sbolDoc);
+			}
+			sbolField.nullifyDeletionURI();
 		}
 	}
 

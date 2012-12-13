@@ -32,7 +32,7 @@ public class SBOLField extends JPanel implements ActionListener {
 	private int styleOption;
 	private JLabel sbolLabel;
 	private JTextField sbolText = new JTextField(20);
-	private List<URI> sbolURIs;
+	private List<URI> sbolURIs = new LinkedList<URI>();
 	private List<URI> initialURIs;
 	private boolean initiallyBlank;
 	private JButton sbolButton = new JButton("Associate SBOL");
@@ -42,8 +42,16 @@ public class SBOLField extends JPanel implements ActionListener {
 	
 	public SBOLField(List<URI> sbolURIs, String sbolType, ModelEditor gcmEditor, int styleOption, boolean isModelPanelField) {
 		super(new GridLayout(1, styleOption));
+		this.sbolURIs.addAll(sbolURIs);
+		constructField(sbolType, gcmEditor, styleOption, isModelPanelField);
+	}
 	
-		this.sbolURIs = sbolURIs;
+	public SBOLField(String sbolType, ModelEditor gcmEditor, int styleOption, boolean isModelPanelField) {
+		super(new GridLayout(1, styleOption));
+		constructField(sbolType, gcmEditor, styleOption, isModelPanelField);
+	}
+	
+	public void constructField(String sbolType, ModelEditor gcmEditor, int styleOption, boolean isModelPanelField) {
 		this.initialURIs = new LinkedList<URI>(sbolURIs);
 		initiallyBlank = sbolURIs.size() == 0;
 		this.sbolType = sbolType;
@@ -73,6 +81,10 @@ public class SBOLField extends JPanel implements ActionListener {
 	
 	public URI getDeletionURI() {
 		return deletionURI;
+	}
+	
+	public void nullifyDeletionURI() {
+		deletionURI = null;
 	}
 	
 	public String getType() {
