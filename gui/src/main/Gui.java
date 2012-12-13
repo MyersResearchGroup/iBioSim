@@ -42,6 +42,7 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
@@ -82,6 +83,8 @@ import javax.swing.tree.TreeModel;
 import analysis.AnalysisView;
 import analysis.Run;
 import lpn.parser.properties.BuildProperty;
+import biomodel.annotation.AnnotationUtility;
+import biomodel.annotation.SBOLAnnotation;
 import biomodel.gui.ModelEditor;
 import biomodel.gui.movie.MovieContainer;
 import biomodel.gui.textualeditor.ElementsPanel;
@@ -122,10 +125,13 @@ import org.jlibsedml.SedMLError;
 import org.jlibsedml.Task;
 //import org.antlr.runtime.TokenStream;
 import org.sbml.libsbml.*;
+import org.sbolstandard.core.SBOLDocument;
 
 //import lpn.parser.properties.*;
 
 import sbol.SBOLBrowser;
+import sbol.SBOLUtility;
+
 import java.net.*;
 import uk.ac.ebi.biomodels.*;
 
@@ -2975,6 +2981,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 					System.gc();
 					if (tree.getFile().endsWith(".xml")) {
+						SBMLDocument document = readSBML(tree.getFile());
+						Iterator<URI> sbolIterator = AnnotationUtility.parseSBOLAnnotation(document.getModel()).iterator();
+						while (sbolIterator != null && sbolIterator.hasNext()) {
+							URI sbolURI = sbolIterator.next();
+							if (sbolURI.toString().endsWith("iBioSim")) {
+								sbolIterator = null;
+								for (String filePath : getFilePaths(".sbol")) {
+									SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
+									SBOLUtility.deleteDNAComponent(sbolURI, sbolDoc);
+									SBOLUtility.writeSBOLDocument(filePath, sbolDoc);
+								}
+							}
+						} 
 						new File(tree.getFile().replace(".xml", ".gcm")).delete();
 					}
 					new File(tree.getFile()).delete();
@@ -4508,6 +4527,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					if (overwrite(root + separator + copy, copy)) {
 						if (copy.endsWith(".xml")) {
 							SBMLDocument document = readSBML(tree.getFile());
+							List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(document.getModel());
+							Iterator<URI> sbolIterator = sbolURIs.iterator();
+							while (sbolIterator != null && sbolIterator.hasNext()) {
+								if (sbolIterator.next().toString().endsWith("iBioSim")) {
+									sbolIterator.remove();
+									sbolIterator = null;
+									if (sbolURIs.size() > 0)
+										AnnotationUtility.setSBOLAnnotation(document.getModel(), 
+											new SBOLAnnotation(document.getModel().getMetaId(), sbolURIs));
+									else
+										AnnotationUtility.removeSBOLAnnotation(document.getModel());
+								}
+							} 
 							document.getModel().setId(copy.substring(0, copy.lastIndexOf(".")));
 							SBMLWriter writer = new SBMLWriter();
 							writer.writeSBML(document, root + separator + copy);
