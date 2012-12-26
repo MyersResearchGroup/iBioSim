@@ -58,10 +58,6 @@
 <div class="p"><!----></div>
 </li>
 
-<li> LPN Model Editor - a tool to create a model using a <em>labeled Petri net</em> (LPN).
-<div class="p"><!----></div>
-</li>
-
 <li> Analysis Tool - an abstraction-based ODE, Monte Carlo, and Markov analysis tool.
 <div class="p"><!----></div>
 </li>
@@ -105,7 +101,7 @@ To create a new project, select New &#8594; Project from the File menu as shown 
 3</a>&nbsp;&nbsp;Model Editor</h2>
 
 <div class="p"><!----></div>
-After you have created a project, you can create a new model to add to the project by selecting New &#8594; Model from the File menu as shown below. You will then be prompted to enter a model ID.  Enter <tt>lambda</tt> (do not select "Make Grid" at this time).  At this point, a Model editor will open in a new tab.
+After you have created a project, you can create a new model to add to the project by selecting New &#8594; Model from the File menu as shown below. You will then be prompted to enter a model ID.  Enter <tt>lambda</tt>.  At this point, a Model editor will open in a new tab.
 
 <div class="p"><!----></div>
 
@@ -123,25 +119,25 @@ After you have created a project, you can create a new model to add to the proje
 </center>
 
 <div class="p"><!----></div>
-To add a chemical species, select the Add Species icon <img src="../gui/icons/modelview/add_species_selected.png" alt="../gui/icons/modelview/add_species_selected.png" /> and click on the schematic canvas.  This will drop a new species with default ID and other values.  You may change these defaults by double-clicking on the species to open the Species Editor.  In this case, let us change the ID to CI and units to mole.  We will leave all other values at their default values.  One thing that is important to note is that when this model is analyzed a default degradation reaction will be created which has a rate of 0.0075.  If you do not want a degradation reaction, you must change "default" to "custom" and change the degradation rate to 0.
+To add a chemical species, select the Add Species icon <img src="../gui/icons/modelview/add_species_selected.png" alt="../gui/icons/modelview/add_species_selected.png" /> and click on the schematic canvas.  This will drop a new species with default ID and other values.  You may change these defaults by clicking on the selection icon 
+<img src="../gui/icons/modelview/select_mode_selected.png" alt="../gui/icons/modelview/select_mode_selected.png" />, and
+double-clicking on the species to open the Species Editor.  In this case, let us change the ID to CI, and click on degrades checkbox.  We will leave all other values at their default values.  One thing that is important to note is that when this model is analyzed a default degradation reaction will be created which has a rate of 0.0075.  
 
 <div class="p"><!----></div>
 
-<center>
-<img src="screenshots/species.png" alt="screenshots/species.png" />
+<center><img src="screenshots/species.png" alt="screenshots/species.png" />
 </center>
 
 <div class="p"><!----></div>
-Add another species for the CI dimer molecule.  Edit this species to set its ID to CI2 and change its units to mole.  This species is created using a complex-formation reaction with an equilibrium constant of 0.1 M<sup>&#8722;1</sup>.  Change default to custom for the complex formation equilibrium and set it to this value as shown below.
+Add another species for the CI dimer molecule.  The next step is to add a complex-formation reaction to convert CI monomers into CI dimers.  Select the complex formation icon <img src="../gui/icons/modelview/bio_activation_selected.png" alt="../gui/icons/modelview/bio_activation_selected.png" />, highlight the CI species, and, while holding the mouse button, stretch the complex formation arc to the S2 species.  Next, edit this species to set its ID to CI2 and select that it degrades.  This species is created using a complex-formation reaction with an equilibrium constant of 0.1.  Change default to custom for the complex formation equilibrium and set it to this value as shown below.
 
 <div class="p"><!----></div>
 
-<center>
-<img src="screenshots/species2.png" alt="screenshots/species2.png" /> 
+<center><img src="screenshots/species2.png" alt="screenshots/species2.png" /> 
 </center>
 
 <div class="p"><!----></div>
-The next step is to add a complex-formation reaction to convert CI monomers into CI dimers.  Select the complex formation icon <img src="../gui/icons/modelview/bio_activation_selected.png" alt="../gui/icons/modelview/bio_activation_selected.png" />, highlight the CI species, and, while holding the mouse button, stretch the complex formation arc to the CI2 species.  If you double-click on the complex formation arc, an influence editor will open which indicates that this is a complex formation arc and the stoichiometry of binding (i.e., the number of molecules of the source species used to construct the sink species) is 2.  The default in this case is correct as it does take two molecules of CI to make CI2.
+If you double-click on the complex formation arc, an influence editor will open which indicates that this is a complex formation arc and the stoichiometry of binding (i.e., the number of molecules of the source species used to construct the sink species) is 2.  The default in this case is correct as it does take two molecules of CI to make CI2.
 
 <div class="p"><!----></div>
 
@@ -166,7 +162,7 @@ The PR promoter is repressed by the CI2 species.  To create this relationship, s
 </center>
 
 <div class="p"><!----></div>
-As mentioned earlier, the PR promoter initiates the production of the CII species.  Add the CII species following the steps given earlier for adding a species.  Then, highlight the PR promoter and, while holding the mouse button, stretch the production arc to the CII species.  Note that the icons selected for this are not important because all arcs from promoters to species are always production arcs.
+As mentioned earlier, the PR promoter initiates the production of the CII species.  Add the CII species following the steps given earlier for adding a species (be sure to mark that it degrades).  Then, highlight the PR promoter and, while holding the mouse button, stretch the production arc to the CII species.  Note that the icons selected for this are not important because all arcs from promoters to species are always production arcs.
 
 <div class="p"><!----></div>
 
@@ -187,7 +183,7 @@ Finally, CII species activates the production of the CI species from the PRE pro
 </center>
 
 <div class="p"><!----></div>
-Next, let's go look at some of the other model tabs.  Click on the Definitions tab.  Here one can add/remove/edit definitions for functions and units.  Every model starts with some predefined random functions.  For example, click on the uniform function.  This function takes arguments a and b and returns a uniform random number between a and b in our simulator.  In other simulators that do not support this function, it simply returns the mean, which is (a + b)/2.
+Next, let's go look at some of the other model tabs.  Click on the Functions tab.  Here one can add/remove/edit definitions for functions.  Click on Add Function, and let's create a function to compute the total number of molecules where x is the number of monomers and y is the number of dimers.  Let's give this function an ID of total with arguments x and y, and a definition of x + 2 * y.
 
 <div class="p"><!----></div>
 
@@ -195,7 +191,7 @@ Next, let's go look at some of the other model tabs.  Click on the Definitions t
 </center>
 
 <div class="p"><!----></div>
-Unit definitions allow the user to create custom units for use in models.  As an example, click Add Unit and enter the ID nanoMole.  A unit is defined using pre-defined base units.  Click on Add to List and find mole in the Kind combo box, and change the multiplier to 1e&#8722;9 to define a nanoMole in terms of moles. The exponent and multiplier are real numbers, and the scale is an integer that specifies the relationship between the derived unit and the base unit using the relation below:
+Click on the Units tab.  Unit definitions allow the user to create custom units for use in models.  As an example, click Add Unit and enter the ID nanoMole.  A unit is defined using pre-defined base units.  Click on Add to List and find mole in the Kind combo box, and change the multiplier to 1e&#8722;9 to define a nanoMole in terms of moles. The exponent and multiplier are real numbers, and the scale is an integer that specifies the relationship between the derived unit and the base unit using the relation below:
 
 <br clear="all" /><table border="0" width="100%"><tr><td>
 <table border="0" cellspacing="0" cellpadding="0">
@@ -215,7 +211,7 @@ Follow the same steps to create a unit for microLitre.
 </center>
 
 <div class="p"><!----></div>
-Next, click on the Compartments tab.  This tab includes both general model information like its ID, name, and default units as well as a list of compartments.  Click on the Model Units button to bring up a window of default units for this model.  These are the units to be used for various things when no units are provided.  For this model, let's make the Substance Units be in nanoMoles, Time Units be in seconds, and Volume Units be in microLitres.  The Extent Units indicate the units of change for reactions.  Let's make that also be nanoMole.
+Next, click on the Schematic tab.  Then, click on the Model button to bring up a window of default units for this model.  These are the units to be used for various things when no units are provided.  For this model, let's make the Substance Units be in nanoMoles, Time Units be in seconds, and Volume Units be in microLitres.  The Extent Units indicate the units of change for reactions.  Let's make that also be nanoMoles.
 
 <div class="p"><!----></div>
 
@@ -223,7 +219,7 @@ Next, click on the Compartments tab.  This tab includes both general model infor
 </center>
 
 <div class="p"><!----></div>
-Compartments are the membrane-enclosed regions where species can be found and reactions take place.  All models must include at least one compartment.  <tt>iBioSim</tt>, therefore, creates the default compartment initially.  Let's click on Edit Compartment to give this the more meaningful name of Cell.  If you go back to the schematic now, you will find the combo box in the toolbar has also changed to Cell.  This combo box specifies the name of the compartment which encloses this model.  The check box next to it indicates whether this model is to be considered to be membrane-enclosed by this compartment.  If this model is part of a larger model within a single compartment, you should leave this unchecked.  If, however, it is a complete model within the specified compartment, it should be checked.  In this case, let's check it.
+Compartments are the membrane-enclosed regions where species can be found and reactions take place.  All models must include at least one compartment.  <tt>iBioSim</tt>, therefore, creates the a default compartment initially with the ID of Cell.  If you click on the schematic within the Cell compartment, it brings up the compartment editor.  Uncheck the "Is Mapped to a Port".  This indicates that this port should be enclosing this model and not replaced when instantiated in a larger model.  Once you press OK, you will notice that the compartment now has rounded corners to indicate that this is membrane enclosed by the compartment Cell.
 
 <div class="p"><!----></div>
 
@@ -231,7 +227,7 @@ Compartments are the membrane-enclosed regions where species can be found and re
 </center>
 
 <div class="p"><!----></div>
-Next, click on the Parameters tab.  This tab includes the default model generation parameters as well as additional global variables.  The model generation parameters are used for default values when creating a reaction-based model from our higher level model.  These parameters can be edited by selecting them and changing default to custom and entering a new value.  They cannot be removed.
+Next, click on the Constants tab.  This tab includes the default model generation parameters as well as additional global variables.  The model generation parameters are used for default values when creating a reaction-based model from our higher level model.  These parameters can be edited by selecting them and entering a new initial value.  They should not be removed.  Note that new global constants can also be added by the user, if desired.
 
 <div class="p"><!----></div>
 
@@ -239,7 +235,8 @@ Next, click on the Parameters tab.  This tab includes the default model generati
 </center>
 
 <div class="p"><!----></div>
-Global parameters can be used to specify constants and additional variables.  For example, click on Add Parameter, so we can specify a variable, CI_total, for the total amount of the species CI in both monomer and dimer form.  Its units are in nanoMole and it is not constant.
+While you can add a global variable here, the preferred way is to add it on the schematic.  Click on the Schematic tab.  Select the add variable icon <img src="../gui/icons/modelview/variable_mode_selected.png" alt="../gui/icons/modelview/variable_mode_selected.png" />, and click a location to add the variable to the schematic.  Then, click on the selection icon 
+<img src="../gui/icons/modelview/select_mode_selected.png" alt="../gui/icons/modelview/select_mode_selected.png" />, and double click on the variable to open the Parameter Editor.  Change the ID to CI_total, for the total amount of the species CI in both monomer and dimer form.  Its units are in nanoMole and it is not constant.  
 
 <div class="p"><!----></div>
 
@@ -247,15 +244,13 @@ Global parameters can be used to specify constants and additional variables.  Fo
 </center>
 
 <div class="p"><!----></div>
-Now, let's go to the Assignments tab.  This tab includes initial assignments and rules.  Initial assignments are used when you want the initial value of a compartment size, species amount or concentration, or parameter to be determined by a mathematical equation rather than a constant.  Click on Add Initial, select CI2 as the Symbol, and enter the assignment 5*CI, which causes CI2's initial value to be five times that of CI's initial value.  Therefore, if we were to go change CI's initial value, CI2's initial value would also change due to this initial assignment.
 
 <div class="p"><!----></div>
 
-<center><img src="screenshots/initial.png" alt="screenshots/initial.png" />
-</center>
-
 <div class="p"><!----></div>
-There are three types of rules: algebraic, assignment, and rate.  Algebraic rules are used to specify relationships that must be maintained.  Assignment rules are used to define one variable in terms of a mathematical expression.  Finally, rate rules are used to indicate a differential equation to govern the evolution of a variable in terms of a mathematical expression on other variables.  As an example, let's now add our definition for CI_total.  Click on the Add Rule button, select Assignment, select the variable CI_total, and enter the expression 2*CI2+CI.  This indicates that the amount of CI in total is two times the number of dimer molecules plus the number of monomer molecules.
+Now, let's create a rule to compute the value of CI_total.  There are three types of rules: algebraic, assignment, and rate.  Algebraic rules are used to specify relationships that must be maintained.  Assignment rules are used to define one variable in terms of a mathematical expression.  Finally, rate rules are used to indicate a differential equation to govern the evolution of a variable in terms of a mathematical expression on other variables.  To add a rule, select the add rule icon
+<img src="../gui/icons/modelview/rule_mode_selected.png" alt="../gui/icons/modelview/rule_mode_selected.png" />.  In the Rule editor, 
+select Assignment, select the variable CI_total, and enter the expression total(CI,CI2).  This uses our new function to compute that the amount of CI in total is the number of monomer molecules plus two times the number of dimer molecules.
 
 <div class="p"><!----></div>
 
@@ -263,16 +258,12 @@ There are three types of rules: algebraic, assignment, and rate.  Algebraic rule
 </center>
 
 <div class="p"><!----></div>
-The next tab is the properties tab.  Here you can specify probabilistic temporal logic properties using <em>Continuous Stochastic Logic</em> (CSL) that you wish to check.  For example, the property shown,
-Pr{PF[0,2100](CI&#62;20}, would ask the analyzer to determine the probability that CI exceeds 20 molecules within 2100 seconds.
 
 <div class="p"><!----></div>
 
-<center><img src="screenshots/properties.png" alt="screenshots/properties.png" />
-</center>
-
 <div class="p"><!----></div>
-This tab also allows the user to enter constraints, which are conditions that must be satisfied or simulation should terminate.  Click on the Add Constraint button to add a constraint that states that CI remains less than or equal to 25 molecules as shown below.  Add a second constraint that states that CII remains less than or equal to 35 molecules.
+Next, let's add a constraint.  A constraint is a condition that must be satisfied or simulation should terminate.  To add a constraint, select the add constraint icon
+<img src="../gui/icons/modelview/constraint_mode_selected.png" alt="../gui/icons/modelview/constraint_mode_selected.png" />.  Add a constraint that states that CI remains less than or equal to 20 molecules as shown below.  Add a second constraint that states that CII remains less than or equal to 50 molecules.
 
 <div class="p"><!----></div>
 
@@ -280,7 +271,7 @@ This tab also allows the user to enter constraints, which are conditions that mu
 </center>
 
 <div class="p"><!----></div>
-The last tab is the Events tab, which is used to specify discrete state changes.  For example, let's describe an event for cell division.  Click on the Add Event button, enter the ID CellDivision, trigger true, and delay of 2100.  The trigger specifies the condition that should be satisfied to enable this event.  In this case, we want it to be enabled initially.  The delay indicates the time after which it is enabled that it should execute.  This combination results in a cell division event at 2100 seconds after simulation begins.  The event assignments specify the state change(s) for this event.  Click on the Add Assignment button and select the CI variable, and enter the assignment CI/2.  In other words, the number of molecules is being divided between the two daughter cells.  Similarly, add event assignments to divide up CI2 and CII.
+Finally, let's add an event.  Eventa are used to specify discrete state changes.  For example, let's describe an event for cell division.  Click on the Add Event button, enter the ID CellDivision, trigger true, and delay of 2100.  The trigger specifies the condition that should be satisfied to enable this event.  In this case, we want it to be enabled initially.  The delay indicates the time after which it is enabled that it should execute.  Finally, select the Dynamic Process of Symmetric Division.  This combination results in a cell division event at 2100 seconds after simulation begins.  The event assignments specify the state change(s) for this event.  Click on the Add Assignment button and select the CI variable, and enter the assignment CI / uniform(1,2).  In other words, the number of molecules is being divided between the two daughter cells with a random distribution.  Similarly, add event assignments to divide up CI2 and CII.
 
 <div class="p"><!----></div>
 
@@ -288,14 +279,19 @@ The last tab is the Events tab, which is used to specify discrete state changes.
 </center>
 
 <div class="p"><!----></div>
-At this point, make sure your model has been saved by either clicking on the Save icon <img src="../gui/icons/save.png" alt="../gui/icons/save.png" /> or selecting the Save option from the File menu.
+At this point, you should have a model that looks like the one below (though locations of elements may be different).  Now, let's make sure the model is saved by either clicking on the Save icon <img src="../gui/icons/save.png" alt="../gui/icons/save.png" /> or selecting the Save option from the File menu.
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/save.png" alt="screenshots/save.png" />
+</center>
 
 <div class="p"><!----></div>
  <h2><a name="tth_sEc4">
 4</a>&nbsp;&nbsp;Analysis Tool</h2>
 
 <div class="p"><!----></div>
-This section describes how to analyze the model just created.  The first step is to create an analysis view.  To do this, right-click on the model file and select Create Analysis View.  Enter the analysis ID <tt>simLambda</tt>.  At this point, a new analysis view should open.  You should also notice that an icon appears next to your model file.  When you click on this, it will show you all of the analysis and learn views associated with this model.
+This section describes how to analyze the model just created.  The first step is to create an analysis view.  To do this, right-click on the model file and select Create Analysis View.  Enter the analysis ID <tt>lambda</tt> or just press enter.  At this point, a new analysis view should open.  You should also notice that an icon appears next to your model file.  When you click on this, it will show you all of the analysis and learn views associated with this model.
 
 <div class="p"><!----></div>
 
@@ -304,7 +300,7 @@ This section describes how to analyze the model just created.  The first step is
 </center>
 
 <div class="p"><!----></div>
-In order to perform analysis, the analysis tool first converts the model into a reaction-based model in the <em>Systems Biology Markup Language</em> (SBML).  There are three different ways to see the reaction-based model that is produced.  If GraphViz is installed on your computer, you can select Network for your Simulation Type.  Then, either press the Save and Run icon <img src="../gui/icons/run-icon.jpg" alt="../gui/icons/run-icon.jpg" /> or select the Save and Run option from the File menu.  The result will be a GraphViz window that will open to show the reaction-based model such as the one shown below for our example.  If it does not open in GraphViz, make sure that you have files with the <tt>.dot</tt> file extension associated with GraphViz on your computer.  You can also view the model in a web browser by selecting Browser for your simulation type.  In this case, you should ensure that you have files with the <tt>.xhtml</tt> extension associated with your favorite browser.  Finally, you can save the reaction-based model by selecting Model as your simulation type.  In this case, you must provide a new model ID.  This new model will appear in your project and it can be opened in the Model Editor.  Since this model does not include any layout information, you will need to either lay it out by hand or using one of the default layout routines selectable using the Apply Layout icon <img src="../gui/icons/modelview/choose_layout_selected.png" alt="../gui/icons/modelview/choose_layout_selected.png" />,
+In order to perform analysis, the analysis tool first converts the model into a reaction-based model in the <em>Systems Biology Markup Language</em> (SBML).  There are three different ways to see the reaction-based model that is produced.  If GraphViz is installed on your computer, you can select Network for your Simulation Type.  Then, either press the Save and Run icon <img src="../gui/icons/run-icon.jpg" alt="../gui/icons/run-icon.jpg" /> or select the Save and Run option from the File menu.  The result will be a GraphViz window that will open to show the reaction-based model such as the one shown below for our example.  If it does not open in GraphViz, make sure that you have files with the <tt>.dot</tt> file extension associated with GraphViz on your computer.  You can also view the model in a web browser by selecting Browser for your simulation type.  In this case, you should ensure that you have files with the <tt>.xhtml</tt> extension associated with your favorite browser.  Finally, you can save the reaction-based model by selecting Model as your simulation type.  In this case, you must provide a new model ID.  This new model will appear in your project and it can be opened in the Model Editor.  Since this model does not include any layout information, you will need to either lay it out by hand or using one of the default layout routines selectable using the Apply Layout icon    <img src="../gui/icons/modelview/choose_layout_selected.png" alt="../gui/icons/modelview/choose_layout_selected.png" />,
 
 <div class="p"><!----></div>
 
@@ -330,14 +326,15 @@ Next, click on the SBML elements tab.  This tab allows you to select which SBML 
 </center>
 
 <div class="p"><!----></div>
-Now, go back to the simulation options tab.  Here, change the simulation type back to ODE, change the time limit to 2100.0, change the print interval to 10.0, enter a Simulation ID of <tt>ode</tt>, and make sure the selected Property is none.  Then, either press the Save and Run icon <img src="../gui/icons/run-icon.jpg" alt="../gui/icons/run-icon.jpg" /> or select the Save and Run option from the File menu.
+Now, go back to the simulation options tab.  Here, change the simulation type back to ODE, change the time limit to 2100.0, change the print interval to 10.0, and enter a Simulation ID of <tt>ode</tt>.  Then, either press the Save and Run icon <img src="../gui/icons/run-icon.jpg" alt="../gui/icons/run-icon.jpg" /> or select the Save and Run option from the File menu.
 After the simulation completes, click on the TSD Graph tab.  Double-click on the graph to bring up the graph editor.
 Open the <tt>ode</tt> simulation, highlight Average, select CI_total and CII, change the Title to "ODE Simulation Results", change the X-Axis Label to "Time (seconds)", and change the Y-Axis Label to "Number of Molecules".  
 Press the OK button.  
 
 <div class="p"><!----></div>
 
-<center><img src="screenshots/odeResults.png" alt="screenshots/odeResults.png" /><br />
+<center><img src="screenshots/odeSim.png" alt="screenshots/odeSim.png" /><br />
+<img src="screenshots/odeResults.png" alt="screenshots/odeResults.png" /><br />
 <img src="screenshots/odeSimResults.png" alt="screenshots/odeSimResults.png" />
 </center>
 
@@ -345,35 +342,35 @@ Press the OK button.
 Graphs can be exported in a variety of formats including:
 
 <ul>
-<li> Time series data format (TSD).
+<li> Time series data format (tsd).
 <div class="p"><!----></div>
 </li>
 
-<li> Comma separated value (CSV).
+<li> Comma separated value (csv).
 <div class="p"><!----></div>
 </li>
 
-<li> Column separated data (DAT).
+<li> Column separated data (dat).
 <div class="p"><!----></div>
 </li>
 
-<li> Encapsulated postscript (EPS).
+<li> Encapsulated postscript (eps).
 <div class="p"><!----></div>
 </li>
 
-<li> Joint Photographic Experts Group (JPG).
+<li> Joint Photographic Experts Group (jpg).
 <div class="p"><!----></div>
 </li>
 
-<li> Portable document format (PDF).
+<li> Portable document format (pdf).
 <div class="p"><!----></div>
 </li>
 
-<li> Portable network graphics (PNG).
+<li> Portable network graphics (png).
 <div class="p"><!----></div>
 </li>
 
-<li> Scalable vector graphics (SVG).
+<li> Scalable vector graphics (svg).
 <div class="p"><!----></div>
 </li>
 </ul>
@@ -389,7 +386,8 @@ Now, select the Simulation Options tab again, select <tt>Monte Carlo</tt>, chang
 
 <div class="p"><!----></div>
 
-<center><img src="screenshots/ssaResults.png" alt="screenshots/ssaResults.png" /><br />
+<center><img src="screenshots/ssaSim.png" alt="screenshots/ssaSim.png" /><br />
+<img src="screenshots/ssaResults.png" alt="screenshots/ssaResults.png" /><br />
 <img src="screenshots/ssaSimResults.png" alt="screenshots/ssaSimResults.png" />
 </center>
 
@@ -451,7 +449,7 @@ One way to understand why abstraction is so much faster is by looking at the com
 </center>
 
 <div class="p"><!----></div>
-Next, let's try checking some properties.  To do this, go to the SBML Elements tab and check the boxes next to the constraints.  Recall that these constraints terminate simulation whenever CI goes above 25 molecules and CII goes above 35 molecules.  Go back to the Simulation Options tab and change the Simulation ID to prob, then press the Save and Run icon.  Now, let's plot the results on a histogram by clicking on the Histogram tab and then double-clicking on the graph to bring up the histogram graph editor shown below.  Open the prob folder, select the sim-rep file, and check the Use check box to get all fields.  
+Next, let's try checking some properties.  To do this, go to the SBML Elements tab and check the boxes next to the constraints.  Recall that these constraints terminate simulation whenever CI goes above 20 molecules or CII goes above 50 molecules.  Go back to the Simulation Options tab and change the Simulation Type to Monte Carlo and Simulation ID to prob, then press the Save and Run icon.  Now, let's plot the results on a histogram by clicking on the Histogram tab and then double-clicking on the graph to bring up the histogram graph editor shown below.  Open the prob folder, select the sim-rep file, and check the Use check box to get all fields.  
 
 <div class="p"><!----></div>
 
@@ -459,7 +457,7 @@ Next, let's try checking some properties.  To do this, go to the SBML Elements t
 </center>
 
 <div class="p"><!----></div>
-The histogram shown here indicates that CI goes above 25 molecules first about 23 percent of the time, CII goes above 35 molecules first about 71 percent of the time, and the simulation terminates before either happens about 6 percent of the time.
+The histogram shown here indicates that CI goes above 20 molecules first about 21 percent of the time, CII goes above 50 molecules first about 74 percent of the time, and the simulation terminates before either happens about 5 percent of the time.
 
 <div class="p"><!----></div>
 
@@ -487,7 +485,7 @@ This section describes how a model can be learned from time series data using <t
 </center>
 
 <div class="p"><!----></div>
-The next step is to add some experimental data from which you wish to learn a model.  In this demo, we will just utilize our simulation data as synthetic experimental data.  To do this, click Copy From View, and select <tt>simLambda/abs</tt>.  Highlight <tt>simLambda/abs/run-1.tsd</tt> and you should see the simulation data for CI and CII appear on the right in the data editor. 
+The next step is to add some experimental data from which you wish to learn a model.  In this demo, we will just utilize our simulation data as synthetic experimental data.  To do this, click Copy From View, and select <tt>lambda/abs</tt>.  Highlight <tt>lambda/abs/run-1.tsd</tt> and you should see the simulation data for CI and CII appear on the right in the data editor. 
 
 <div class="p"><!----></div>
 
@@ -495,7 +493,7 @@ The next step is to add some experimental data from which you wish to learn a mo
 </center>
 
 <div class="p"><!----></div>
-Now, click on the Learn tab.  Here you can edit the various learning options.  For example, you can either use auto-generated levels or user-generated levels for your data encoding.  Select Use User Generated Levels, which will make the levels below editable.  You can also select how many bins to use.  Change the number of bins for both CI and CII to 3.  At this point, you can ask the tool to suggest levels by clicking on the Suggest Levels button.  Finally, click on the Save and Run icon which will bring up the model that has been learned from this experimental data using Graphviz's dotty program, and ask you for a model ID for the generated model.  
+Now, click on the Learn tab.  Here you can edit the various learning options.  For example, you can either use auto-generated levels or user-generated levels for your data encoding.  Select Use User Generated Levels, which will make the levels below editable.  At this point, you can ask the tool to suggest levels by clicking on the Suggest Levels button.  Finally, click on the Save and Run icon which will bring up the model that has been learned from this experimental data using Graphviz's dotty program, and ask you for a model ID for the generated model.  
 
 <div class="p"><!----></div>
 
@@ -508,15 +506,8 @@ Now, click on the Learn tab.  Here you can edit the various learning options.  F
 6</a>&nbsp;&nbsp;Advanced Modeling</h2>
 
 <div class="p"><!----></div>
-This section is less detailed than the others but it gives some intuition about modeling using reactions, compartments, and grids.  It also introduces our preliminary support of the emerging <em>Synthetic Biology Open Language standard</em> (SBOL).  Let us take the last of these first.  An SBOL file includes <em>Collections</em> of <em>DNA Components</em>.  Each DNA component has a unique ID, name, description, type, and a DNA sequence.  A DNA component can be a simple sequence feature like a promoter, ribosome binding site, open reading frame (i.e., gene), or terminator.  It can also be an annotated DNA sequence that includes several of these individual features, perhaps organized hierarchically.  For example, a DNA component may include a promoter followed by a ribosome binding site followed by a open reading frame followed by a terminator.  When editing the model, you may have noticed the various SBOL fields.  Namely, for a promoter, you can associate both a DNA component to the promoter as well as a terminator for the transcription initiated at this promoter.  For a species, you can associate both a DNA component for the open reading frame for the gene that produces this species as well as the ribosome binding site where translation begins for this gene.  This SBOL browser is opened by clicking on an Associate SBOL button within either the Species Editor or Promoter Editor.  This browser only shows DNA components of the appropriate type.  For example, when associating a species to its open reading frame, only DNA components of the open reading frame type are shown.  After you have associated all genetically produced species (i.e., CI and CII in our model) and all promoters (i.e., PR and PRE in our model), you can then save the DNA component for your model into your SBOL file.  You can also export it into a new or existing SBOL file outside your project.
-
-<div class="p"><!----></div>
-
-<center><img src="screenshots/AssociateSBOL.png" alt="screenshots/AssociateSBOL.png" />
-</center>
-
-<div class="p"><!----></div>
-In the next example, let's consider an alternative model of CII degradation which we are going to model using chemical reactions.  To do this, create a new model named <tt>CII_degradation</tt>.  In this model, create species CII, P1, and CII_P1, making CII have the input type so that we can connect to it later.  
+This section is less detailed than the others but it gives some intuition about modeling using reactions, components, and grids.  
+First, let's consider an alternative model of CII degradation which we are going to model using chemical reactions.  To do this, create a new model named <tt>CII_degradation</tt>.  In this model, create species CII, P1, and CII_P1, making CII have the input type so that we can connect to it later.  Set an initial amount of 35 molecules for P1.
 
 <div class="p"><!----></div>
 
@@ -548,7 +539,7 @@ Connecting product species is accomplished in much the same way, except in this 
 </center>
 
 <div class="p"><!----></div>
-Now, let's adjust the parameters for this reaction by clicking on it to open the Reaction Editor.  Let's make this reaction reversible and adjust its forward reaction rate to be 1.0.  Finally, press the Use Mass Action button to automatically create a kinetic law for this reaction.
+Now, let's adjust the parameters for this reaction by clicking on it to open the Reaction Editor. Press the Use Mass Action button to automatically create a kinetic law for this reaction.  Then, make this reaction reversible and adjust its forward reaction rate to be 1.0.  
 
 <div class="p"><!----></div>
 
@@ -564,7 +555,7 @@ Follow the same steps to add another reaction that degrades CII in the CII_P1 fo
 </center>
 
 <div class="p"><!----></div>
-Let's now go and add this new degradation mechanism to our lambda model (you might actually want to copy your old model before you do this, which you can do by highlighting the file and selecting Edit &#8594; Copy or using the right mouse button menu).  First, open the Species Editor on CII and change its degradation rate to 0.  Next, select the Add Component icon <img src="../gui/icons/modelview/add_component_selected.png" alt="../gui/icons/modelview/add_component_selected.png" /> and click on the Schematic canvas opening the Add Component(s) window.  In this window, browse the combo box to find your CII_degradation model.  Pressing OK will then add it to your schematic.
+Let's now go and add this new degradation mechanism to our lambda model (you might actually want to copy your old model before you do this, which you can do by highlighting the file and selecting Edit &#8594; Copy or using the right mouse button menu).   To simplify things, remove the rule, constraints, and event.  Next, open the Species Editor on CII and deselect the degrades option.  Finally, select the Add Component icon <img src="../gui/icons/modelview/add_component_selected.png" alt="../gui/icons/modelview/add_component_selected.png" /> and click on the Schematic canvas opening the Add Component(s) window.  In this window, browse the combo box to find your CII_degradation model.  Pressing OK will then add it to your schematic.
 
 <div class="p"><!----></div>
 
@@ -581,7 +572,7 @@ You may want to now go and try simulating this model, if you like.
 </center>
 
 <div class="p"><!----></div>
-In the last example, we will build a model with a grid.  Before doing this, create another copy of your lambda model, then go into this copy and remove the initial assignments, rules, properties, constraints, and events, as they will get in the way.  Also, edit the CII species and make it diffusible.  Now, create a new model named <tt>Population</tt> and select the Make Grid check box bring up the Create a Grid window.  In this window, select your copy of your lambda model and change the number of rows and columns to 5.  
+In the last example, we will build a model with a grid. First, edit the CII species and make it diffusible, and save the model.  Now, create a grid model using the File &#8594; New &#8594; Grid Model menu, and name the new model <tt>Population</tt>.  In the create grid window shown below, select your copy of your lambda model and change the number of rows and columns to 5.  
 
 <div class="p"><!----></div>
 
@@ -617,5 +608,5 @@ is available in the <tt>docs</tt> directory that comes with the distribution.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>H</a>,
-version 3.81.<br />On 12 May 2012, 10:13.</small>
+version 3.81.<br />On 24 Dec 2012, 14:16.</small>
 </html>
