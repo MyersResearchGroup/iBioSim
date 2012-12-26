@@ -445,7 +445,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		closeAll = new JMenuItem("Close All");
 		pref = new JMenuItem("Preferences");
 		newProj = new JMenuItem("Project");
-		newSBMLModel = new JMenuItem("SBML Model");
+		newSBMLModel = new JMenuItem("Model");
 		newGridModel = new JMenuItem("Grid Model");
 		newSpice = new JMenuItem("Spice Circuit");
 		newVhdl = new JMenuItem("VHDL Model");
@@ -736,7 +736,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		if (!async) {
 			newMenu.add(newSBMLModel);
 			newMenu.add(newGridModel);
-			newMenu.add(newLhpn);
+			//newMenu.add(newLhpn);
 		}
 		else if (atacs) {
 			newMenu.add(newVhdl);
