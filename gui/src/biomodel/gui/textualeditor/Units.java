@@ -1029,7 +1029,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 	 */
 	private void updateUnitId(String origId, String newId) {
 		
-		System.err.println("update unit id");
+		//System.err.println("update unit id");
 		
 		if (origId.equals(newId))
 			return;

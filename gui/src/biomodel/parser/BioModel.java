@@ -6560,16 +6560,18 @@ public class BioModel {
 		//}
 		document.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", false);
 		document.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", false);
-		SBMLWriter writer = new SBMLWriter();
-		writer.writeSBML(document, path + separator + "_temp.xml");
+		//SBMLWriter writer = new SBMLWriter();
+		//writer.writeSBML(document, path + separator + "_temp.xml");
 		SBaseList elements = document.getModel().getListOfAllElements();
-		// THIS IS A WORKAROUND A FLATTEN BUG WHICH DOES NOT RENAME METAIDs
-		document.getModel().setMetaId("iBioSim"+0);
-		long metaIdNum = 1;
-		for (long i = 0; i < elements.getSize(); i++) {
-			SBase sbase = elements.get(i);
-			sbase.setMetaId("iBioSim"+metaIdNum);
-			metaIdNum++;
+		if (sbmlCompModel.getNumSubmodels() > 0) {
+			// THIS IS A WORKAROUND A FLATTEN BUG WHICH DOES NOT RENAME METAIDs
+			document.getModel().setMetaId("iBioSim"+0);
+			long metaIdNum = 1;
+			for (long i = 0; i < elements.getSize(); i++) {
+				SBase sbase = elements.get(i);
+				sbase.setMetaId("iBioSim"+metaIdNum);
+				metaIdNum++;
+			}
 		}
 		return document;
 	}

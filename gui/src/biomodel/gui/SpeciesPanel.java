@@ -88,7 +88,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		
 		//if this is in analysis mode, only show the sweepable/changeable values
 		if (paramsOnly)
-			grid = new JPanel(new GridLayout(5,1));
+			grid = new JPanel(new GridLayout(7,1));
 		else {
 			
 			if (bioModel.getSBMLDocument().getLevel() > 2) {

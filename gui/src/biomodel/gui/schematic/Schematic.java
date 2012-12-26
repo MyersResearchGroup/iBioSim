@@ -348,7 +348,7 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		toolBar.addSeparator();
 
-		ModelPanel modelPanel = new ModelPanel(bioModel, modelEditor);
+		modelPanel = new ModelPanel(bioModel, modelEditor);
 		toolBar.add(modelPanel);
 		toolBar.setFloatable(false);
 		
