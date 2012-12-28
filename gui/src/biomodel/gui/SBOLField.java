@@ -38,7 +38,7 @@ public class SBOLField extends JPanel implements ActionListener {
 	private JButton sbolButton = new JButton("Associate SBOL");
 	private ModelEditor gcmEditor;
 	private boolean isModelPanelField;
-	private URI deletionURI;
+	private URI removedBioSimURI;
 	
 	public SBOLField(List<URI> sbolURIs, String sbolType, ModelEditor gcmEditor, int styleOption, boolean isModelPanelField) {
 		super(new GridLayout(1, styleOption));
@@ -77,14 +77,6 @@ public class SBOLField extends JPanel implements ActionListener {
 	
 	public List<URI> getInitialURIs() {
 		return initialURIs;
-	}
-	
-	public URI getDeletionURI() {
-		return deletionURI;
-	}
-	
-	public void nullifyDeletionURI() {
-		deletionURI = null;
 	}
 	
 	public String getType() {
@@ -152,10 +144,10 @@ public class SBOLField extends JPanel implements ActionListener {
 			if (isModelPanelField) {
 				associationPanel = new SBOLAssociationPanel(sbolFilePaths, sbolURIs, 
 						SBOLUtility.soSynonyms(sbolType), gcmEditor.getGCM().getSBMLDocument().getModel().getId());
-				deletionURI = associationPanel.getDeletionURI();
+				removedBioSimURI = associationPanel.getRemovedBioSimURI();
 			} else
 				associationPanel = new SBOLAssociationPanel(sbolFilePaths, sbolURIs, SBOLUtility.soSynonyms(sbolType));
-			sbolURIs = associationPanel.getCompURIs();
+			sbolURIs = associationPanel.getComponentURIs();
 		} 
 	}
 	
@@ -173,5 +165,21 @@ public class SBOLField extends JPanel implements ActionListener {
 			sbolLabel = new JLabel("SBOL Ribosome Binding Site");
 		else if (sbolType.equals(GlobalConstants.SBOL_TERMINATOR))
 			sbolLabel = new JLabel("SBOL Terminator");
+	}
+	
+	// Deletes from local SBOL files any iBioSim composite component that had its URI removed from the SBOLAssociationPanel
+	public void deleteRemovedBioSimComponent() {
+		if (removedBioSimURI != null) {
+			for (String filePath : gcmEditor.getGui().getFilePaths(".sbol")) {
+				SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
+				SBOLUtility.deleteDNAComponent(removedBioSimURI, sbolDoc);
+				SBOLUtility.writeSBOLDocument(filePath, sbolDoc);
+			}
+			removedBioSimURI = null;
+		}
+	}
+	
+	public void resetRemovedBioSimURI() {
+		removedBioSimURI = null;
 	}
 }

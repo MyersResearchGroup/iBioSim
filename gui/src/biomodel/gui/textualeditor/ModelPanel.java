@@ -203,6 +203,8 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, modelEditorPanel, "Model Editor", JOptionPane.YES_NO_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+		if (value != JOptionPane.YES_OPTION)
+			sbolField.resetRemovedBioSimURI();
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = false;
@@ -282,19 +284,6 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			}
 		}
 	}
-	
-	public void deleteDissociatedBioSimComponent() {
-		// Deletes from local SBOL files any iBioSim composite component that had its URI removed from the SBOLAssociationPanel
-		URI deletionURI = sbolField.getDeletionURI();
-		if (deletionURI != null) {
-			for (String filePath : gcmEditor.getGui().getFilePaths(".sbol")) {
-				SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
-				SBOLUtility.deleteDNAComponent(deletionURI, sbolDoc);
-				SBOLUtility.writeSBOLDocument(filePath, sbolDoc);
-			}
-			sbolField.nullifyDeletionURI();
-		}
-	}
 
 	public void actionPerformed(ActionEvent e) {
 		// if the add unit button is clicked
@@ -333,5 +322,9 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 	 * This method currently does nothing.
 	 */
 	public void mouseReleased(MouseEvent e) {
+	}
+	
+	public SBOLField getSBOLField() {
+		return sbolField;
 	}
 }

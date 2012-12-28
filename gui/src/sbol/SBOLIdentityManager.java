@@ -4,8 +4,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Calendar;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.prefs.Preferences;
+
+import javax.swing.JOptionPane;
+
+import main.Gui;
 
 import org.sbml.libsbml.Model;
 import org.sbolstandard.core.DnaComponent;
@@ -19,36 +24,39 @@ import biomodel.parser.BioModel;
 
 public class SBOLIdentityManager {
 
+	private BioModel biomodel;
 	private List<URI> modelURIs;
-	private URI bioSimURI;
+	private int indexOfBioSimURI = -1;
 	private DnaComponent bioSimComp;
+	private String saveFileID;
 	private String uriAuthority;
 	private String time;
 	
 	public SBOLIdentityManager(BioModel biomodel) {
+		this.biomodel = biomodel;
 		setAuthority();
 		modelURIs = AnnotationUtility.parseSBOLAnnotation(biomodel.getSBMLDocument().getModel());
-		if (modelURIs.size() == 0)
+		if (modelURIs.size() == 0) {
 			try {
-				bioSimURI = new URI(uriAuthority + "#iBioSimPlaceHolder");
-				modelURIs.add(bioSimURI);
+				modelURIs.add(new URI(uriAuthority + "#iBioSimPlaceHolder"));
 			} catch (URISyntaxException e) {
 				e.printStackTrace();
 			}
-		else {
+			indexOfBioSimURI = 0;
+		} else {
+			int indexOfModelURI = -1;
 			Iterator<URI> iterate = modelURIs.iterator();
-			while (iterate.hasNext() && bioSimURI == null) {
+			while (iterate.hasNext() && indexOfBioSimURI < 0) {
+				indexOfModelURI++;
 				URI modelURI = iterate.next();
 				if (modelURI.toString().endsWith("iBioSim") || modelURI.toString().endsWith("iBioSimPlaceHolder"))
-					bioSimURI = modelURI;
+					indexOfBioSimURI = indexOfModelURI;
 			} 
-			if (bioSimURI == null)
-				try {
-					bioSimURI = new URI(uriAuthority + "#iBioSimNull");
-				} catch (URISyntaxException e) {
-					e.printStackTrace();
-				}
 		}
+	}
+	
+	public BioModel getBioModel() {
+		return biomodel;
 	}
 	
 	public List<URI> getModelURIs() {
@@ -56,48 +64,78 @@ public class SBOLIdentityManager {
 	}
 	
 	public URI getBioSimURI() {
-		return bioSimURI;
+		return modelURIs.get(indexOfBioSimURI);
 	}
 	
-	public DnaComponent getBioSimComp() {
+	public DnaComponent getBioSimComponent() {
 		return bioSimComp;
 	}
 	
+	public String getSaveFileID() {
+		return saveFileID;
+	}
+	
 	public boolean containsBioSimURI() {
-		return bioSimURI.toString().endsWith("iBioSim") || bioSimURI.toString().endsWith("iBioSimPlaceHolder");
+		return (indexOfBioSimURI >= 0 && 
+				(modelURIs.get(indexOfBioSimURI).toString().endsWith("iBioSim") || 
+						modelURIs.get(indexOfBioSimURI).toString().endsWith("iBioSimPlaceHolder")));
 	}
 	
-	private void loadBioSimComponent(SBOLFileManager fileManager) {
-		if (bioSimURI.toString().endsWith("iBioSim"))
-			bioSimComp = fileManager.resolveURI(bioSimURI);
+	public boolean containsPlaceHolderURI() {
+		return (indexOfBioSimURI >= 0 && 
+				modelURIs.get(indexOfBioSimURI).toString().endsWith("iBioSimPlaceHolder"));
 	}
 	
-	public void removeBioSimURI(BioModel biomodel) {
-		int removeIndex = modelURIs.indexOf(bioSimURI);
-		if (removeIndex >= 0) {
-			modelURIs.remove(removeIndex);
+	public void removeBioSimURI() {
+		modelURIs.remove(indexOfBioSimURI);
+	}
+	
+	public void replaceBioSimURI (URI replacementURI) {
+		modelURIs.remove(indexOfBioSimURI);
+		modelURIs.add(indexOfBioSimURI, replacementURI);
+	}
+	
+//	public void insertPlaceHolderURI() {
+//		try {
+//			modelURIs.add(indexOfBioSimURI, new URI("http://www.async.ece.utah.edu#iBioSimPlaceHolder"));
+//		} catch (URISyntaxException e) {
+//			e.printStackTrace();
+//		}
+//	}
+	
+	public boolean loadBioSimComponent(SBOLFileManager fileManager) {
+		bioSimComp = fileManager.resolveURI(modelURIs.get(indexOfBioSimURI));
+		if (bioSimComp == null) {
+			String[] options = new String[]{"Ok", "Cancel"};
+			int choice = JOptionPane.showOptionDialog(null, 
+					"Previously synthesized composite DNA component and its descriptors could not be loaded." +
+							"  Would you like to overwrite?", "Warning", JOptionPane.DEFAULT_OPTION, 
+							JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+			return (choice == 0);
+		} else
+			return true;
+	}
+	
+	public boolean loadAndLocateBioSimComponent(SBOLFileManager fileManager) {
+		bioSimComp = fileManager.resolveAndLocateTopLevelURI(modelURIs.get(indexOfBioSimURI));
+		if (bioSimComp == null) {
+			String[] options = new String[]{"Ok", "Cancel"};
+			int choice = JOptionPane.showOptionDialog(null, 
+					"Previously synthesized composite DNA component and its descriptors could not be loaded." +
+							"  Would you like to overwrite?", "Warning", JOptionPane.DEFAULT_OPTION, 
+							JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+			return (choice == 0);
+		} else {
+			saveFileID = fileManager.getLocatedFileID();
+			return true;
 		}
-	}
-	
-	public void replaceBioSimURI (BioModel biomodel, URI replacementURI) {
-		int replaceIndex = modelURIs.indexOf(bioSimURI);
-		if (replaceIndex >= 0) {
-			modelURIs.remove(replaceIndex);
-			modelURIs.add(replaceIndex, replacementURI);
-		}
-	}
-	
-	public void describeAndIdentifyDNAComponent(BioModel biomodel, DnaComponent dnaComp, SBOLFileManager fileManager) {
-		loadBioSimComponent(fileManager);
-		describeDNAComponent(biomodel, dnaComp);
-		identifyDNAComponent(dnaComp);
 	}
 	
 	// Loads SBOL descriptors such as display ID, name, and description for newly synthesized iBioSim composite component 
 	// from model or previously synthesized component
 	// Also determines target file for saving newly synthesized component and checks for match with previously synthesized 
 	// component (latter affects save of new component and the construction of its URIs)
-	private void describeDNAComponent(BioModel biomodel, DnaComponent dnaComp) {
+	public void describeDNAComponent(DnaComponent dnaComp) {
 		String[] descriptors = biomodel.getSBOLDescriptors();
 		if (descriptors != null) {
 			dnaComp.setDisplayId(descriptors[0]);
@@ -117,26 +155,28 @@ public class SBOLIdentityManager {
 			
 	// Constructs URIs for newly synthesized component, its DNA sequence, and sequence annotations
 	// Also replaces URI of previously synthesized component or placeholder URI among component URIs previously annotating model
-	private void identifyDNAComponent(DnaComponent dnaComp) {
+	public void identifyDNAComponent(DnaComponent dnaComp) {
+		boolean identical = false;
 		if (bioSimComp != null) {
-			List<SequenceAnnotation> synthAnnos = dnaComp.getAnnotations();
-			List<SequenceAnnotation> existingAnnos = bioSimComp.getAnnotations();
-			if (synthAnnos.size() == existingAnnos.size()) {
-				for (int i = 0; i < synthAnnos.size(); i++)
-					synthAnnos.get(i).setURI(existingAnnos.get(i).getURI());
-				dnaComp.setURI(bioSimURI);
+			List<SequenceAnnotation> annos = dnaComp.getAnnotations();
+			List<SequenceAnnotation> synthAnnos = bioSimComp.getAnnotations();
+			if (annos.size() == synthAnnos.size()) {
+				for (int i = 0; i < annos.size(); i++)
+					annos.get(i).setURI(synthAnnos.get(i).getURI());
+				dnaComp.setURI(modelURIs.get(indexOfBioSimURI));
 				if (bioSimComp.getDnaSequence() != null)
 					dnaComp.getDnaSequence().setURI(bioSimComp.getDnaSequence().getURI());
-				if (SBOLDeepEquality.isDeepEqual(dnaComp, bioSimComp)) 
-					try {
-						bioSimURI = new URI(bioSimURI.toString() + "Identical");
-					} catch (URISyntaxException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+				identical = SBOLDeepEquality.isDeepEqual(dnaComp, bioSimComp);
+//				if (SBOLDeepEquality.isDeepEqual(dnaComp, synthesizedComp)) 
+//					try {
+//						synthesizedURI = new URI(synthesizedURI.toString() + "Identical");
+//					} catch (URISyntaxException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
 			} 
 		}
-		if (!bioSimURI.toString().endsWith("Identical")) {
+		if (!identical) {
 			setTime();
 			// URI authority and time are set for creating new URIs
 			try {
@@ -160,7 +200,7 @@ public class SBOLIdentityManager {
 		}
 	}
 	
-	public void annotateBioModel(BioModel biomodel) {
+	public void annotateBioModel() {
 		Model sbmlModel = biomodel.getSBMLDocument().getModel();
 		if (modelURIs.size() > 0) {
 			SBOLAnnotation sbolAnnot = new SBOLAnnotation(sbmlModel.getMetaId(), modelURIs);

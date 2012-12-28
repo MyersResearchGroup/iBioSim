@@ -361,7 +361,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 
 		// Annotate SBML model with synthesized SBOL DNA component and save component to local SBOL file
-		modelPanel.deleteDissociatedBioSimComponent();
+		modelPanel.getSBOLField().deleteRemovedBioSimComponent();
 		if (command.contains("Check")) {
 			saveSBOL(true);
 		} else {
@@ -480,28 +480,42 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		if (identityManager.containsBioSimURI()) {
 			SBOLSynthesisGraph synGraph = new SBOLSynthesisGraph(biomodel);
 			if (synGraph.containsSBOL()) {
-				SBOLFileManager fileManager = new SBOLFileManager(biosim.getFilePaths(".sbol"));
-				if (fileManager.loadSBOLFiles() && synGraph.loadDNAComponents(fileManager)) {
+				SBOLFileManager fileManager = new SBOLFileManager(biosim.getRoot(), biosim.getSbolFiles());
+				if (fileManager.sbolFilesAreLoaded() && synGraph.loadDNAComponents(fileManager)) {
 					SequenceTypeValidator constructValidator = 
 							new SequenceTypeValidator(Preferences.userRoot().get("biosim.synthesis.regex", ""));
 					synGraph.cutGraph(constructValidator.getStartTypes());
-//					synGraph.print();
 					if (synGraph.isLinear()) {
 						SBOLSynthesizer synthesizer = new SBOLSynthesizer(synGraph, constructValidator);
 						DnaComponent synthComp = synthesizer.synthesizeDNAComponent();
 						if (synthComp != null) {
-							identityManager.describeAndIdentifyDNAComponent(biomodel, synthComp, fileManager);
-							identityManager.replaceBioSimURI(biomodel, synthComp.getURI());
-							fileManager.saveDNAComponent(biomodel, synthComp, path, identityManager);
-						} else
-							identityManager.removeBioSimURI(biomodel);
-					} else
-						identityManager.removeBioSimURI(biomodel);
-				} else
-					identityManager.removeBioSimURI(biomodel);
-			} else
-				identityManager.removeBioSimURI(biomodel);
-			identityManager.annotateBioModel(biomodel);
+							if (identityManager.containsPlaceHolderURI() || identityManager.loadBioSimComponent(fileManager)) {
+								identityManager.describeDNAComponent(synthComp);
+								identityManager.identifyDNAComponent(synthComp);
+								fileManager.saveDNAComponent(synthComp, identityManager);
+								identityManager.replaceBioSimURI(synthComp.getURI());
+								identityManager.annotateBioModel();
+							}
+						} else if (identityManager.containsPlaceHolderURI()) {
+							identityManager.removeBioSimURI();
+							identityManager.annotateBioModel();
+						}
+					} else if (identityManager.containsPlaceHolderURI()) {
+						identityManager.removeBioSimURI();
+						identityManager.annotateBioModel();
+					}
+				} else if (identityManager.containsPlaceHolderURI()) {
+					identityManager.removeBioSimURI();
+					identityManager.annotateBioModel();
+				} 
+			} else {
+				if (!identityManager.containsPlaceHolderURI()) {
+					SBOLFileManager fileManager = new SBOLFileManager(biosim.getRoot(), biosim.getSbolFiles());
+					fileManager.deleteDNAComponent(identityManager.getBioSimURI());
+				}
+				identityManager.removeBioSimURI();
+				identityManager.annotateBioModel();
+			} 
 		}
 	}
 	

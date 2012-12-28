@@ -76,6 +76,8 @@ import org.sbml.libsbml.Trigger;
 import org.sbml.libsbml.libsbml;
 
 import sbol.SBOLDescriptorPanel;
+import sbol.SBOLFileManager;
+import sbol.SBOLIdentityManager;
 import sbol.SequenceTypeValidator;
 
 
@@ -615,19 +617,10 @@ public class Schematic extends JPanel implements ActionListener {
 		}
 		else if (command.equals("editSBOLDescriptors")) {
 			Gui gui = modelEditor.getGui();
-//			HashSet<String> sbolFiles = gui.getSbolFiles();
-			URI modelURI = null;
-			if (bioModel.getSBOLDescriptors() == null) {
-				List<URI> modelURIs = AnnotationUtility.parseSBOLAnnotation(bioModel.getSBMLDocument().getModel());
-				Iterator<URI> uriIterator = modelURIs.iterator();
-				while (uriIterator.hasNext() && (modelURI == null || !modelURI.toString().endsWith("iBioSim"))) {
-					modelURI = uriIterator.next();
-				}
-			}
-			if (modelURI != null && modelURI.toString().endsWith("iBioSim")) {
-				SBOLDescriptorPanel descriptorPanel = new SBOLDescriptorPanel(modelURI, gui.getRoot(), gui.getSbolFiles(), bioModel);
-			} else {
-				SBOLDescriptorPanel descriptorPanel = new SBOLDescriptorPanel(gui.getRoot(), gui.getSbolFiles(), bioModel);
+			SBOLIdentityManager identityManager = new SBOLIdentityManager(bioModel);
+			SBOLFileManager fileManager = new SBOLFileManager(gui.getRoot(), gui.getSbolFiles());
+			if (fileManager.sbolFilesAreLoaded()) {
+				SBOLDescriptorPanel descriptorPanel = new SBOLDescriptorPanel(identityManager, fileManager);
 			}
 		}
 		else if(command == ""){
