@@ -30,7 +30,7 @@ public class SBOLAssociationPanel extends JPanel {
 	private JList compList = new JList();
 	private String[] options;
 	private boolean iBioSimURIPresent;
-	private URI deletionURI;
+	private URI removedBioSimURI;
 	
 	public SBOLAssociationPanel(HashSet<String> sbolFilePaths, List<URI> defaultCompURIs, Set<String> soTypes, String modelID) {
 		super(new BorderLayout());
@@ -141,9 +141,11 @@ public class SBOLAssociationPanel extends JPanel {
 		}
 		Object[] idObjects = compIdNames.toArray();
 		compList.setListData(idObjects);
-		for (int i : dissociationIndices) 
-			if (compURIs.remove(i).toString().endsWith("iBioSim"))
-				insertPlaceHolder();
+		for (int i : dissociationIndices) {
+			URI compURI = compURIs.remove(i);
+			if (compURI.toString().endsWith("iBioSim"))
+				insertPlaceHolder(new int[]{i});	
+		}
 		return true;
 	}
 	
@@ -162,7 +164,7 @@ public class SBOLAssociationPanel extends JPanel {
 			return true;
 		} else if (choice == 1) {
 			SBOLBrowser browser = new SBOLBrowser(sbolFilePaths, soTypes, getSelectedURIs());
-			insertComponents(browser.getSelection());
+			insertComponentURIs(browser.getSelection());
 			return true;
 		} else if (choice == 2) {
 			removeSelectedURIs();
@@ -171,6 +173,7 @@ public class SBOLAssociationPanel extends JPanel {
 			return false;
 		else {
 			compURIs = defaultCompURIs;
+			removedBioSimURI = null;
 			return false;
 		}
 	}
@@ -202,49 +205,60 @@ public class SBOLAssociationPanel extends JPanel {
 		return selectedURIs;
 	}
 	
-	private void insertComponents(LinkedList<URI> insertionURIs) {
+	private void insertComponentURIs(LinkedList<URI> insertionURIs) {
 		int[] selectedIndices = compList.getSelectedIndices();
+		insertComponentURIs(insertionURIs, selectedIndices);
+	}
+	
+	private void insertComponentURIs(LinkedList<URI> insertionURIs, int[] insertionIndices) {
 		int insertionIndex;
-		if (selectedIndices.length == 0)
+		if (insertionIndices.length == 0)
 			insertionIndex = compURIs.size();
 		else
-			insertionIndex = selectedIndices[selectedIndices.length - 1];
+			insertionIndex = insertionIndices[insertionIndices.length - 1];
 		compURIs.addAll(insertionIndex, insertionURIs);
 		setComponentIDList();
 	}
 	
 	private void insertPlaceHolder() {
-		LinkedList<URI> tempList = new LinkedList<URI>();
+		insertComponentURIs(createPlaceHolder());
+	}
+	
+	private void insertPlaceHolder(int[] insertionIndices) {
+		insertComponentURIs(createPlaceHolder(), insertionIndices);
+	}
+	
+	private LinkedList<URI> createPlaceHolder() {
+		LinkedList<URI> placeHolderList = new LinkedList<URI>();
 		try {
-			tempList.add(new URI("http://www.async.ece.utah.edu#iBioSimPlaceHolder"));
+			placeHolderList.add(new URI("http://www.async.ece.utah.edu#iBioSimPlaceHolder"));
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
-		insertComponents(tempList);
+		return placeHolderList;
 	}
 	
 	private void removeSelectedURIs() {
 		int[] selectedIndices = compList.getSelectedIndices();
 		if (selectedIndices.length == 0) {
-			if (compURIs.size() > 0) {
-				URI compURI = compURIs.remove(compURIs.size() - 1);
-				if (compURI.toString().endsWith("iBioSim"))
-					deletionURI = compURI;
+			selectedIndices = new int[]{compURIs.size() - 1};
+		}
+		for (int i = selectedIndices.length; i > 0; i--) {
+			URI compURI = compURIs.remove(selectedIndices[i - 1]);
+			if (compURI.toString().endsWith("iBioSim"))	{
+				removedBioSimURI = compURI;
+				int[] insertionIndex = new int[]{selectedIndices[i - 1]};
+				insertPlaceHolder(insertionIndex);
 			}
-		} else 
-			for (int i = selectedIndices.length; i > 0; i--) {
-				URI compURI = compURIs.remove(selectedIndices[i - 1]);
-				if (compURI.toString().endsWith("iBioSim"))	
-					deletionURI = compURI;
-			}
+		}
 		setComponentIDList();
 	}
 	
-	public List<URI> getCompURIs() {
+	public List<URI> getComponentURIs() {
 		return compURIs;
 	}
 	
-	public URI getDeletionURI() {
-		return deletionURI;
+	public URI getRemovedBioSimURI() {
+		return removedBioSimURI;
 	}
 }

@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.prefs.Preferences;
 
 import javax.swing.JButton;
@@ -88,6 +89,9 @@ import org.sbml.libsbml.XMLAttributes;
 import org.sbml.libsbml.XMLNode;
 import org.sbml.libsbml.XMLTriple;
 import org.sbml.libsbml.libsbml;
+import org.sbolstandard.core.SBOLDocument;
+
+import sbol.SBOLUtility;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.Grid;
@@ -2596,6 +2600,14 @@ public class BioModel {
 		modelSBOLAnnotationFlag = set;
 	}
 	
+	public int getElementSBOLCount() {
+		return elementSBOLCount;
+	}
+	
+	public boolean getModelSBOLAnnotationFlag() {
+		return modelSBOLAnnotationFlag;
+	}
+	
 	// Descriptor array should be size 3 and contain DNA component ID, name, and description in that order
 	public void setSBOLDescriptors(String[] descriptors) {
 		sbolDescriptors = descriptors;
@@ -2605,21 +2617,32 @@ public class BioModel {
 		sbolSaveFile = saveFile;
 	}
 	
-	public int getElementSBOLCount() {
-		return elementSBOLCount;
-	}
-	
-	public boolean getModelSBOLAnnotationFlag() {
-		return modelSBOLAnnotationFlag;
-	}
+//	public void setRemovedBioSimURI(URI dissociatedBioSimURI) {
+//		this.dissociatedBioSimURI = dissociatedBioSimURI;
+//	}
 	
 	public String[] getSBOLDescriptors() {
 		return sbolDescriptors;
 	}
 	
-	public String getSBOLSaveFile() {
+	public String getSBOLSaveFileID() {
 		return sbolSaveFile;
 	}
+	
+//	public URI getRemovedBioSimURI() {
+//		return dissociatedBioSimURI;
+//	}
+	
+//	public void deleteRemovedBioSimComponent(Set<String> sbolFilePaths) {
+//		if (dissociatedBioSimURI != null) {
+//			for (String filePath : sbolFilePaths) {
+//				SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
+//				SBOLUtility.deleteDNAComponent(dissociatedBioSimURI, sbolDoc);
+//				SBOLUtility.writeSBOLDocument(filePath, sbolDoc);
+//			}
+//			dissociatedBioSimURI = null;
+//		}
+//	}
 	
 	public int getPlaceHolderIndex() {
 		return placeHolderIndex;
@@ -7609,5 +7632,6 @@ public class BioModel {
 	private boolean modelSBOLAnnotationFlag;
 	private String[] sbolDescriptors;
 	private String sbolSaveFile;
+	private URI dissociatedBioSimURI;
 	private int placeHolderIndex;
 }
