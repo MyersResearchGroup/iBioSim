@@ -360,6 +360,9 @@ Now, click on the Learn tab.  Here you can edit the various learning options.  F
 \section{Advanced Modeling}
 
 This section is less detailed than the others but it gives some intuition about modeling using reactions, components, and grids.  
+
+%% TODO: Need to add SBOL to tutorial
+
 %It also introduces our preliminary support of the emerging \emph{Synthetic Biology Open Language standard} (SBOL).  Let us take the last of these first.  An SBOL file includes \emph{Collections} of \emph{DNA Components}.  Each DNA component has a unique ID, name, description, type, and a DNA sequence.  A DNA component can be a simple sequence feature like a promoter, ribosome binding site, open reading frame (i.e., gene), or terminator.  It can also be an annotated DNA sequence that includes several of these individual features, perhaps organized hierarchically.  For example, a DNA component may include a promoter followed by a ribosome binding site followed by a open reading frame followed by a terminator.  When editing the model, you may have noticed the various SBOL fields.  Namely, for a promoter, you can associate both a DNA component to the promoter as well as a terminator for the transcription initiated at this promoter.  For a species, you can associate both a DNA component for the open reading frame for the gene that produces this species as well as the ribosome binding site where translation begins for this gene.  This SBOL browser is opened by clicking on an Associate SBOL button within either the Species Editor or Promoter Editor.  This browser only shows DNA components of the appropriate type.  For example, when associating a species to its open reading frame, only DNA components of the open reading frame type are shown.  After you have associated all genetically produced species (i.e., CI and CII in our model) and all promoters (i.e., PR and PRE in our model), you can then save the DNA component for your model into your SBOL file.  You can also export it into a new or existing SBOL file outside your project.
 %
 % \begin{center}
@@ -432,6 +435,8 @@ When you create a reaction-based model for a grid during analysis, reactions are
 \begin{center}
 \includegraphics[width=160mm]{screenshots/compAppearances}
 \end{center}
+
+%% TODO: Add Petri net modeling
 
 \noindent
 A more detailed 
