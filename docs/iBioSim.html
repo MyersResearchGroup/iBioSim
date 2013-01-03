@@ -42,33 +42,47 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc2.4"
 >2.4&nbsp; Exporting Models and Graphs</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc2.5"
->2.5&nbsp; Editing Project Objects and Creating Tool Views</a><br />
+>2.5&nbsp; Editing Project Objects</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc2.6"
+>2.6&nbsp; Creating Tool Views</a><br />
 <a href="#tth_sEc3"
 >3&nbsp; Model Editor</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.1"
->3.1&nbsp; Species</a><br />
+>3.1&nbsp; Compartments</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.2"
->3.2&nbsp; Reactions</a><br />
+>3.2&nbsp; Species</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.3"
->3.3&nbsp; Components</a><br />
+>3.3&nbsp; Reactions</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.4"
->3.4&nbsp; Promoters</a><br />
+>3.4&nbsp; Components</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.5"
->3.5&nbsp; Influences</a><br />
+>3.5&nbsp; Promoters</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.6"
->3.6&nbsp; Compartments</a><br />
+>3.6&nbsp; Real Variables</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.7"
->3.7&nbsp; Parameters</a><br />
+>3.7&nbsp; Boolean Variables</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.8"
->3.8&nbsp; Definitions</a><br />
+>3.8&nbsp; Petri Net Places</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.9"
->3.9&nbsp; Assignments</a><br />
+>3.9&nbsp; Petri Net Transitions</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.10"
->3.10&nbsp; Properties</a><br />
+>3.10&nbsp; Rules</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.11"
->3.11&nbsp; Events</a><br />
+>3.11&nbsp; Constraints</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.12"
+>3.12&nbsp; Events</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.13"
+>3.13&nbsp; Influences</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.14"
+>3.14&nbsp; Model Editor</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.15"
+>3.15&nbsp; Constants</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.16"
+>3.16&nbsp; Functions</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc3.17"
+>3.17&nbsp; Units</a><br />
 <a href="#tth_sEc4"
->4&nbsp; SBOL Browser</a><br />
+>4&nbsp; SBOL Editors</a><br />
 <a href="#tth_sEc5"
 >5&nbsp; Analysis Tool</a><br />
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#tth_sEc5.1"
@@ -112,7 +126,7 @@
 It is capable of importing and exporting models specified using the <A HREF="http://www.sbml.org/">
 <em>Systems Biology Markup Language</em>
 </A>
-&nbsp;(SBML).  It can import all levels and versions while being able to export Level 2 Version 4 or Level 3 Version 1.  It supports all SBML modeling constructs except the <em>delay</em> function and some types of <em>fast</em> reactions.  It was the first tool to produce correct results for all examples in the SBML benchmark suite.  It has also been tested successfully on the stochastic benchmark suite and the curated models in the 
+&nbsp;(SBML).  It can import all levels and versions while being able to export Level 3 Version 1.  It has support the hierarchical modeling package, as well as, the layout package.  It supports all SBML modeling constructs except the <em>delay</em> function and some types of <em>fast</em> reactions.  It was the first tool to produce correct results for all examples in the SBML benchmark suite.  It has also been tested successfully on the stochastic benchmark suite and the curated models in the 
 <A HREF="http://www.ebi.ac.uk/biomodels-main/">
 <em>BioModels database</em>.
 </A>
@@ -151,7 +165,7 @@ Finally, it is one of the first tools to also support the
 
 <div class="p"><!----></div>
 
-<h2>Credits</h2>
+<h3>Credits</h3>
 
 <div class="p"><!----></div>
 The iBioSim tool is being developed at the University of Utah
@@ -178,7 +192,7 @@ Nam Nguyen,
 Tyler Patterson, 
 </A>
 Nicholas Roehner, 
-and Jason Stevens.  Nathan Barker is now with Southern Utah University, Kevin Jones is now with Raytheon, Hiroyuki Kuwahara is now with Carnegie Mellon University, and Nam Nguyen is now with the University of Texas in Austin.
+and Jason Stevens.  Nathan Barker is now with Southern Utah University, Kevin Jones is now with Raytheon, Hiroyuki Kuwahara is now with Carnegie Mellon University, Nam Nguyen is now with the University of Texas in Austin, and Jason Stevens is now with the University of Washington.
 
 <div class="p"><!----></div>
  <h2><a name="tth_sEc2">
@@ -198,7 +212,7 @@ A project is a collection of models, analysis views, learn views, and graphs.  A
 2.1</a>&nbsp;&nbsp;Creating and Opening Projects</h3>
 
 <div class="p"><!----></div>
-To create a new project, select New &#8594; Project from the File menu as shown below.  You will then be prompted to browse to a desired location and to give a name to the project directory.  After you do this, click the new button and a new project directory will be created.  To open a project, select Open &#8594; Project from the File menu.  You will then be prompted to browse to a project directory to open, and clicking open will open the project. You may also open a project by selecting one of your ten most recently opened projects by selecting the project name shown in the File drop down menu shown below. 
+To create a new project, select New &#8594; Project from the File menu as shown below.  You will then be prompted to browse to a desired location and to give a name to the project directory.  After you do this, click the new button and a new project directory will be created.  To open a project, select Open Project from the File menu.  You will then be prompted to browse to a project directory to open, and clicking open will open the project. You may also open a project by selecting one of your ten most recently opened projects by selecting the project name shown in the Open Recent menu within the File menu.
 
 <div class="p"><!----></div>
 
@@ -210,8 +224,7 @@ To create a new project, select New &#8594; Project from the File menu as shown 
 2.2</a>&nbsp;&nbsp;Creating and Opening Models and Graphs</h3>
 
 <div class="p"><!----></div>
-After you have created or opened a project, you can create a new model or graph to add to the project.  To create a new model, select New &#8594; Model from the File menu as shown below. You will then be prompted to enter a model ID.  At this point, a Model editor (see Section&nbsp;<a href="#ModelEdit">3</a>) will open in a new tab.  To create a new LPN model, select New &#8594; LPN Model from the File menu. You will then be prompted to give a model ID.  At this point, an LPN model editor 
-will open in a new tab. To create a new TSD graph, select New &#8594; TSD Graph from the File menu. You will then be prompted to give a name to the TSD graph.  At this point, a TSD graph editor (see Section&nbsp;<a href="#TSDGraph">7</a>) will open in a new tab. To create a new histogram, select New &#8594; Histogram from the File menu. You will then be prompted to give a name to the histogram.  At this point, a histogram editor (see Section&nbsp;<a href="#Histogram">8</a>) will open in a new tab.  Once a model or graph is created, it can be opened again later by right-clicking on the object in the project window and selecting "View/Edit" or, alternatively, double-clicking on the object.  Note that a model can be opened in either a graphical or textual editor.  An open model or graph can be closed by either clicking on the "X" in the tab or by selecting File &#8594; Close.  The File &#8594; Close All option will close all tabs.
+After you have created or opened a project, you can create a new model or graph to add to the project.  To create a new model, select New &#8594; Model from the File menu as shown below. You will then be prompted to enter a model ID.  At this point, a Model editor (see Section&nbsp;<a href="#ModelEdit">3</a>) will open in a new tab.  
 
 <div class="p"><!----></div>
 
@@ -219,11 +232,53 @@ will open in a new tab. To create a new TSD graph, select New &#8594; TSD Graph 
 </center>
 
 <div class="p"><!----></div>
+
+<center><img src="screenshots/ModelId.png" alt="screenshots/ModelId.png" />
+</center>
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/ModelEditor.png" alt="screenshots/ModelEditor.png" />
+</center>
+
+<div class="p"><!----></div>
+To create a new grid model, select New &#8594; Grid Model from the File menu as shown below. You will then be prompted to enter a model ID.  Next, a Create Grid window opens that asks for the number of rows and columns in the grid.  It also asks which model to use to populate the grid initially.  You can select "none" if you wish to populate it later.  At this point, a Grid Model editor (see Section&nbsp;<a href="#ModelEdit">3</a>) will open in a new tab.  
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/createGrid.png" alt="screenshots/createGrid.png" />
+</center>
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/gridModel.png" alt="screenshots/gridModel.png" />
+</center>
+
+<div class="p"><!----></div>
+To create a new TSD graph, select New &#8594; TSD Graph from the File menu. You will then be prompted to give a name to the TSD graph.  At this point, a TSD graph editor (see Section&nbsp;<a href="#TSDGraph">7</a>) will open in a new tab. 
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/TopTSDgraph.png" alt="screenshots/TopTSDgraph.png" />
+</center>
+
+<div class="p"><!----></div>
+To create a new histogram, select New &#8594; Histogram from the File menu. You will then be prompted to give a name to the histogram.  At this point, a histogram editor (see Section&nbsp;<a href="#Histogram">8</a>) will open in a new tab.  
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/Histogram.png" alt="screenshots/Histogram.png" />
+</center>
+
+<div class="p"><!----></div>
+Once a model or graph is created, it can be opened again later by right-clicking on the object in the project window and selecting "View/Edit" or, alternatively, double-clicking on the object.  Note that a model can be opened in either a graphical or textual editor.  An open model or graph can be closed by either clicking on the "X" in the tab or by selecting Close from the File menu.  The Close All option in the File menu closes all tabs.
+
+<div class="p"><!----></div>
      <h3><a name="tth_sEc2.3">
 2.3</a>&nbsp;&nbsp;Importing Models</h3>
 
 <div class="p"><!----></div>
-You can also import models into the current working project.  These can be models from other <tt>iBioSim</tt> projects, models in the 
+You can also import files into the current working project.  These can be models in the 
 <A HREF="http://www.sbml.org/">
 <em>Systems Biology Markup Language</em>
 </A>
@@ -231,14 +286,15 @@ You can also import models into the current working project.  These can be model
 <A HREF="http://www.ebi.ac.uk/biomodels-main/">
 <em>BioModels database</em>
 </A>
-, LPN models, or a 
+, <em>Labeled Petri Net</em> (LPN) models, a 
 <A HREF="http://www.sbolstandard.org/">
 <em>Synthetic Biology Open Language</em>
 </A>  
-(SBOL) file (see Section&nbsp;<a href="#SBOL">4</a>). 
-To import an <tt>iBioSim</tt> model, select File &#8594; Import &#8594; iBioSim Model.  
-You will then be able to browse to find a model to import.  After  selecting the desired model, click the import button to bring the model into the project.  Before bringing the model into the project, it will be checked to see if it is a valid model file.  To import an SBML model, the procedure is the same except use the Import &#8594; SBML Model option.  Before bringing the model into the project, it will be checked to see if it a valid SBML file.  
-The model will also be checked for consistency, and any errors or warnings will be reported.  These should be corrected before analysis of the model is performed.  Importing of an LPN model or an SBOL file are similar in that you are asked to locate the appropriate file to import.
+(SBOL) file (see Section&nbsp;<a href="#SBOL">4</a>), or a 
+<A HREF="http://sed-ml.org/">
+<em>Simulation Experiment Description Markup Language</em>
+</A>  
+(SED-ML) file. 
 
 <div class="p"><!----></div>
 
@@ -246,7 +302,9 @@ The model will also be checked for consistency, and any errors or warnings will 
 </center> 
 
 <div class="p"><!----></div>
-When importing a model from the BioModels database, the window below will open, initially only listing the BioModel numbers.  Selecting "Get Names" will fetch the model names from the database.  Beware that this can take a significant amount of time.  When you click on a model to select it, you can use the "Get Description" button to fetch a description of the model which will open in a browser.  Similarly, the "Get Reference" button will fetch the reference describing this model and again open it in a browser.
+To import a SBML, select Import &#8594; SBML Model from the File menu.  
+You will then be able to browse to find a model to import.  After  selecting the desired model, click the import button to bring the model into the project.  Before bringing the model into the project, it will be checked to see if it is a valid SBML file.  
+The model will also be checked for consistency, and any errors or warnings will be reported.  These should be corrected before analysis of the model is performed.  Importing of an LPN model, an SBOL file, or a SED-ML file are similar in that you are asked to locate the appropriate file to import.  When importing a model from the BioModels database, the window below will open, initially only listing the BioModel numbers.  Selecting "Get Names" will fetch the model names from the database.  Beware that this can take a significant amount of time.  When you click on a model to select it, you can use the "Get Description" button to fetch a description of the model which will open in a browser.  Similarly, the "Get Reference" button will fetch the reference describing this model and again open it in a browser.
 
 <div class="p"><!----></div>
 
@@ -258,7 +316,16 @@ When importing a model from the BioModels database, the window below will open, 
 2.4</a>&nbsp;&nbsp;Exporting Models and Graphs</h3>
 
 <div class="p"><!----></div>
-You can also export a model in either SBML or SBOL format.  To export an SBML model, select File &#8594; Export &#8594; Systems Biology Markup Language (SBML).  Then, you will be able to browse to find a location to export the SBML file.  Currently, the SBML model generated is a single flattened chemical reaction model.  When exporting model as an SBOL component, you must browse to find an SBOL library.  The SBOL component will then be added to the selected library.  Graphs of time series data or histograms can be exported from the project in many formats.  The supported file formats are:  
+You can also export a model in either SBML or SBOL format.  To export an SBML model, select  Export &#8594; Flat SBML or Export &#8594; SBML.  Then, you will be able to browse to find a location to export the SBML file.  A flat SBML file is a single flattened chemical reaction model while an SBML file is a single file hierarchical model with high-level genetic constructs.  
+When exporting model as an SBOL component, you must browse to find an SBOL library.  The SBOL component will then be added to the selected library.  Finally, you can export a JPG image of a model.
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/export.png" alt="screenshots/export.png" />
+</center> 
+
+<div class="p"><!----></div>
+Data and graphs of time series data or histograms can be exported from the project in many formats.  The supported file formats are:  
 
 <ul>
 <li> Time series data format (tsd), see Section&nbsp;<a href="#TSD">12</a>.
@@ -296,7 +363,7 @@ You can also export a model in either SBML or SBOL format.  To export an SBML mo
 
 <div class="p"><!----></div>
      <h3><a name="tth_sEc2.5">
-2.5</a>&nbsp;&nbsp;Editing Project Objects and Creating Tool Views</h3>
+2.5</a>&nbsp;&nbsp;Editing Project Objects</h3>
 
 <div class="p"><!----></div>
 All project objects can be modified by highlighting the object and using a right mouse click to open a menu of options, as shown below. Using this menu, every type of object can be copied, renamed, or deleted (these actions can also be done from the Edit menu).  For a model file, the "View/Edit" option opens the model editor (see Section&nbsp;<a href="#ModelEdit">3</a>).  For an LPN model, the "View/Edit" option opens the LPN model editor. 
@@ -315,6 +382,8 @@ For a TSD graph, the "View/Edit" option opens the TSD graph editor (see Section&
 <div class="p"><!----></div>
 
 <div class="p"><!----></div>
+     <h3><a name="tth_sEc2.6">
+2.6</a>&nbsp;&nbsp;Creating Tool Views</h3>
 
 <div class="p"><!----></div>
 To perform analysis or learning, right-click on a model and select "Create Analysis View" (see Section&nbsp;<a href="#Analysis">5</a>) to perform analysis or "Create Learn View" (see Section&nbsp;<a href="#Learn">6</a>) to perform learning. You will then be prompted to give a name to your analysis or learn view. After a name is entered, a tab with the newly created view will open.  Views can also be created using the Tools menu.  Once a view is created, it can be opened again later by right-clicking on an analysis directory and selecting "Open Analysis/Learn View" or, alternatively, double-clicking on the view.
@@ -327,7 +396,7 @@ To perform analysis or learning, right-click on a model and select "Create Analy
 </a>Model Editor</h2>
 
 <div class="p"><!----></div>
-The model editor allows the user to create or modify a model of a genetic circuit or other biochemical system.  <tt>iBioSim</tt> models are based on SBML Level 3 Version 1 models with added features to support visualization, hierarchy, and modeling of genetic regulation.  SBML models can be imported and exported to allow interfacing with SBML-compliant tools.  When exporting an SBML model, the hierarchy and genetic regulation are flattened to create a single SBML model.  The model editor includes both a schematic editor as well as several textual editors.  For large models, the schematic portion can also be edited textually instead.  As shown below, when creating a new model, you can select whether the model should be on a grid or not.  Let us focus initially on models that are not on a grid.
+The model editor allows the user to create or modify a model of a genetic circuit or other biochemical system.  <tt>iBioSim</tt> models are based on SBML Level 3 Version 1 models with added features to support visualization, hierarchy, and modeling of genetic regulation.  SBML models can be imported and exported to allow interfacing with SBML-compliant tools.  When exporting an SBML model, the hierarchy and genetic regulation can be flattened to create a single SBML model that uses only SBML L3V1 core constructs.  The model editor includes both a schematic editor as well as several textual editors.  For large models, the schematic portion can also be edited textually instead.  You can create both ordinary models and grid models.
 
 <div class="p"><!----></div>
 
@@ -335,12 +404,9 @@ The model editor allows the user to create or modify a model of a genetic circui
 </center>
 
 <div class="p"><!----></div>
-The schematic editor shown below allows one to add <em>chemical species</em> (see Section&nbsp;<a href="#Species">3.1</a>), 
-<em>chemical reactions</em> (see Section&nbsp;<a href="#Reactions">3.2</a>), <em>components</em> (see Section&nbsp;<a href="#Components">3.3</a>),
-and <em>promoters</em> (see Section&nbsp;<a href="#Promoters">3.4</a>) to a model depending on the icon selected in the toolbar.   Chemical species are the molecules such as proteins.  Chemical reactions change <em>reactant</em> species into <em>product</em> species.  Components are instances of other models within the project.  Finally, promoters are locations on a DNA sequence in which transcription is initiated.  
-There are several types of relationships between species that can be specified.  A species may <em>activate</em> or <em>repress</em> the production of other species (see Section&nbsp;<a href="#Influences">3.5</a>).  One can also specify when there is no influence between two species or when a self-influence exists.  Species can also be related by complex-formation reactions  which indicate that multiple identical or different species can be combined to form a complex species.  A species can also be a reactant or product in a chemical reaction, indicating that the reaction consumes or produces the species, respectively (see Section&nbsp;<a href="#Reactions">3.2</a>).  Finally, a species can be a <em>modifier</em> to a chemical reaction, indicating that it affects the rate of the reaction but is neither produced nor consumed by the reaction (see Section&nbsp;<a href="#Reactions">3.2</a>).
-The next item on the toolbar is a checkbox used to indicate if the model is to be considered enclosed within a <em>compartment</em>.  The combo box is used to select the enclosing compartment for the model.  The remaining items on the toolbar allow you to apply an automatic layout routine <img src="../gui/icons/modelview/choose_layout_selected.png" alt="../gui/icons/modelview/choose_layout_selected.png" />, zoom, restore to default size (Un-Zoom), pan, undo, and redo.
-Finally, the additional tabs allow the user to add, edit, or remove compartments (membrane-enclosed objects where reactions take place, see Section&nbsp;<a href="#Compartments">3.6</a>), <em>parameters</em> (values used in model generation and within math equations, see Section&nbsp;<a href="#Parameters">3.7</a>), <em>definitions</em> (custom functions and units, see Section&nbsp;<a href="#Definitions">3.8</a>), <em>assignments</em> (mathematical equations that govern the values of variables in the model, see Section&nbsp;<a href="#Assignments">3.9</a>), <em>properties</em> (mathematical equations that describe either desired or undesired behaviors, see Section&nbsp;<a href="#Properties">3.10</a>), and <em>events</em> (objects that describe discrete state changes, see Section&nbsp;<a href="#Events">3.11</a>).
+The schematic editor for an ordinary model is shown below.  There are two groups of icons.  By selecting the appropriate icon in the first group, the user can add <em>compartments</em> (see Section&nbsp;<a href="#Compartments">3.1</a>), <em>chemical species</em> (see Section&nbsp;<a href="#Species">3.2</a>), 
+<em>chemical reactions</em> (see Section&nbsp;<a href="#Reactions">3.3</a>), <em>components</em> (see Section&nbsp;<a href="#Components">3.4</a>), <em>promoters</em> (see Section&nbsp;<a href="#Promoters">3.5</a>), <em>real variables</em> (see Section&nbsp;<a href="#Variables">3.6</a>), <em>Boolean variables</em> (see Section&nbsp;<a href="#Booleans">3.7</a>), <em>Petri net places</em> (see Section&nbsp;<a href="#Places">3.8</a>), <em>Petri net transitions</em> (see Section&nbsp;<a href="#Transitions">3.9</a>), <em>rules</em> (see Section&nbsp;<a href="#Rules">3.10</a>), <em>constraints</em> (see Section&nbsp;<a href="#Constraints">3.11</a>), and <em>events</em> (see Section&nbsp;<a href="#Events">3.12</a>) to the schematic.  When the select icon is highlighted, <img src="../gui/icons/modelview/select_mode_selected.png" alt="../gui/icons/modelview/select_mode_selected.png" />, double clicking on an object in the schematic opens the appropriate object editor.  In this mode, relationships can also be created between objects by selecting an object and, while holding the mouse, dragging the connection to another object.  The type of relationship (or <em>influence</em>) is determined by the icon that is highlight in the second group  (see Section&nbsp;<a href="#Influences">3.13</a>).  Finally, if the self regulation icon,
+<img src="../gui/icons/modelview/self_influence_selected.png" alt="../gui/icons/modelview/self_influence_selected.png" />, is selected, clicking on a species creates a self influence relationship.  The remaining items on the toolbar allow the user to apply an automatic layout routine <img src="../gui/icons/modelview/choose_layout_selected.png" alt="../gui/icons/modelview/choose_layout_selected.png" />, zoom, restore to default size (Un-Zoom), pan, undo, edit model attributes (see Section&nbsp;<a href="#ModelEditor">3.14</a>), and edit the SBOL information associated with the model (see Section&nbsp;<a href="#SBOL">4</a>).  Finally, the additional tabs allow the user to add, edit, or remove <em>real constants</em> (see Section&nbsp;<a href="#Constants">3.15</a>), <em>function definitions</em> (see Section&nbsp;<a href="#Functions">3.16</a>), and <em>unit definitions</em> (see Section&nbsp;<a href="#Units">3.17</a>).
 
 <div class="p"><!----></div>
 
@@ -348,15 +414,20 @@ Finally, the additional tabs allow the user to add, edit, or remove compartments
 </center>
 
 <div class="p"><!----></div>
-<tt>iBioSim</tt> also supports the creation of models on a grid.  The idea of a grid is to provide a coarse-grain spatial representation.  A single model can be instantiated within each grid location.  The models can be for individual cells, allowing one to model population dynamics.  The models can also be different segments of a single cell, allowing one to model diffusion within a cell.  Key to grid-based modeling are diffusible species, described in Section&nbsp;<a href="#Species">3.1</a>.  When the models within grid locations are compartment-enclosed components, reactions are added to represent the movement of these diffusible species between the compartment and the area outside the compartment within the grid location (i.e., membrane diffusion).  When performing analysis, reactions are also automatically added to represent the movement of these diffusible species between the grid locations.  To use a grid, check the Make Grid option when creating the model.  A window will then open asking for the number of rows and columns in the grid.  It also asks which model to use to populate the grid.  You can select "none" if you wish to populate it later.
+For large models, it may be preferable to use the textual model editor shown below.  The textual editor includes all the same elements as the graphical editor except they are presented as lists of their Ids.  In each list, the user can add new element, remove existing elements, or edit the properties of existing elements.  Note that constants, real variables, Boolean variables, and places appear in the Parameter list, influences appear in the Reaction list, and Petri net transitions appear in the Event list.
 
 <div class="p"><!----></div>
 
-<center><img src="screenshots/createGrid.png" alt="screenshots/createGrid.png" />
+<center><img src="screenshots/textualEditor.png" alt="screenshots/textualEditor.png" />
 </center>
 
 <div class="p"><!----></div>
-The schematic for a model on a grid is a bit different than for an ordinary model, which is evident from the toolbar.  Namely, a grid-based model can only include components, with at most one component per grid location.  By pressing the Add Component icon <img src="../gui/icons/modelview/add_component_selected.png" alt="../gui/icons/modelview/add_component_selected.png" /> and clicking on an empty grid location, you are allowed to select a model to instantiate within that grid location.  You can also select Edit Grid Size to change the size of the grid.  If the grid is larger in one or more dimensions than before, you can select a model to populate the new grid locations.  A smaller grid size simply removes the component instantiations that fall outside the new grid.  You can also edit the grid by selecting individual grid locations by clicking on them or selecting multiple grid locations using the rectangle selection tool by left-clicking and dragging the mouse.  When you then use the right mouse button, it brings up the menu shown below.  This menu allows you to delete the component that was right-clicked on or to open its model in a Model Editor.  You can also use this menu to select or de-select all grid locations, and you can either clear occupied, or populate non-occupied, selected grid locations.
+
+<div class="p"><!----></div>
+<tt>iBioSim</tt> also supports the creation of models on a grid.  The idea of a grid is to provide a coarse-grain spatial representation.  A single model can be instantiated within each grid location.  The models can be for individual cells, allowing one to model population dynamics.  The models can also be different segments of a single cell, allowing one to model diffusion within a cell.  Key to grid-based modeling are diffusible species, described in Section&nbsp;<a href="#Species">3.2</a>.  When the models within grid locations are compartment-enclosed components, reactions are added to represent the movement of these diffusible species between the compartment and the area outside the compartment within the grid location (i.e., <em>membrane diffusion</em>).  When performing analysis, reactions are also automatically added to represent the movement of these diffusible species between the grid locations.  
+
+<div class="p"><!----></div>
+The schematic for a model on a grid is a bit different than for an ordinary model, which is evident from the toolbar.  Namely, a grid-based model can only include components, with at most one component per grid location.  By pressing the Add Component icon <img src="../gui/icons/modelview/add_component_selected.png" alt="../gui/icons/modelview/add_component_selected.png" /> and clicking on an empty grid location, you are allowed to select a model to instantiate within that grid location.  You can also select Edit Grid Size to change the size of the grid.  If the grid is larger in one or more dimensions than before, you can select a model to populate the new grid locations.  A smaller grid size simply removes the component instantiations that fall outside the new grid.  You can also edit the grid by selecting individual grid locations by clicking on them or selecting multiple grid locations using the rectangle selection tool by left-clicking and dragging the mouse.  When you then use the right mouse button, it brings up the menu shown below.  This menu allows you to delete the component that was right-clicked on or to open its model in a Model Editor.  You can also use this menu to select or de-select all grid locations, and you can either clear occupied, or populate non-occupied, selected grid locations.  The grid model editor has one additional tab which allows the user to edit properties for the species that diffuse on the grid.
 
 <div class="p"><!----></div>
 
@@ -375,7 +446,48 @@ The schematic for a model on a grid is a bit different than for an ordinary mode
 
 <div class="p"><!----></div>
      <h3><a name="tth_sEc3.1">
-3.1</a>&nbsp;&nbsp;<a name="Species">
+3.1</a>&nbsp;&nbsp;<a name="Compartments">
+</a>Compartments</h3>
+
+<div class="p"><!----></div>
+Compartments are used to specify membrane-enclosed regions where species are found. A new model includes a compartment named <tt>Cell</tt> by default.  Note that when a compartment has species or reactions assigned to it that it cannot be removed without first removing or reassigning these species and reactions.  To add a new compartment to the model, select the Add Compartment icon <img src="../gui/icons/modelview/add_compartment_selected.png" alt="../gui/icons/modelview/add_compartment_selected.png" /> and click on the schematic canvas.  This will drop a new compartment with default ID and other values.  You may change these defaults by double-clicking on the compartment to open the Compartment Editor.  
+As shown below, a compartment has the following fields:
+
+<ul>
+<li> ID: a unique ID composed of only alphanumeric characters and underscores.
+<div class="p"><!----></div>
+</li>
+
+<li> Name: an arbitrary string description (optional).
+<div class="p"><!----></div>
+</li>
+
+<li> Dimensions: number of spatial dimensions (default=3).
+<div class="p"><!----></div>
+</li>
+
+<li> Constant: Boolean indicating if the size is constant (default=true).
+<div class="p"><!----></div>
+</li>
+
+<li> Size: initial size of the compartment (default=1.0).  This value can be a mathematical expression (see Section&nbsp;<a href="#SBMLMath">10</a>) which is called an <em>initial assignment</em>.
+<div class="p"><!----></div>
+</li>
+
+<li> Units: the units for the size (default=none).
+<div class="p"><!----></div>
+</li>
+</ul>
+Finally, a compartment can be mapped to a port (default=true).  When a compartment is assigned to a port, it is assumed that the compartment is not membrane enclosed.  This is indicated by the compartment having square corners.  By assigning a compartment to a port, when this model is used as a subModel in another model, the compartment can be replaced with the one in the enclosing model.  When a compartment is not assigned to a port, it is assumed that the compartment is membrane enclosed which is indicated with rounded corners.
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/compartment.png" alt="screenshots/compartment.png" />
+</center>
+
+<div class="p"><!----></div>
+     <h3><a name="tth_sEc3.2">
+3.2</a>&nbsp;&nbsp;<a name="Species">
 </a>Species</h3>
 
 <div class="p"><!----></div>
@@ -390,19 +502,23 @@ Species are the molecules, such as proteins, that are produced by genes or chemi
 <div class="p"><!----></div>
 </li>
 
-<li> Type: used to indicate how this species can be connected in hierarchical models.  The <em>input</em> type is used to indicate a species that is produced outside this model, the <em>internal</em> type is used to indicate that a species is produced inside this model but cannot be used in other models, and the <em>output</em> type is used to indicate that a species is produced by this model and can be used in other models.
+<li> Type: used to indicate how this species can be connected in hierarchical models.  The <em>input</em> type is used to indicate a species that is produced outside this model, the <em>internal</em> type is used to indicate that a species is produced inside this model but cannot be used in other models, and the <em>output</em> type is used to indicate that a species is produced by this model and can be used in other models (default=internal).
 <div class="p"><!----></div>
 </li>
 
-<li> Diffusible: this checkbox indicates if this species can diffuse in multi-compartment and grid-based models.
+<li> Constitutive: this checkbox indicates that a default production reaction should be created for this species (default=false).
 <div class="p"><!----></div>
 </li>
 
-<li> Constitutive: this checkbox indicates that a default production reaction should be created for this species.
+<li> Degrades: this checkbox indicates that a default degradation reaction should be created for this species (default=false).
 <div class="p"><!----></div>
 </li>
 
-<li> Compartment: location of the species (default=default).
+<li> Diffusible: this checkbox indicates if this species can diffuse in multi-compartment and grid-based models (default=false).
+<div class="p"><!----></div>
+</li>
+
+<li> Compartment: location of the species (default is set by where the species is placed in the schematic).
 <div class="p"><!----></div>
 </li>
 
@@ -426,15 +542,19 @@ Species are the molecules, such as proteins, that are produced by genes or chemi
 <div class="p"><!----></div>
 </li>
 
-<li> Initial amount/concentration (ns): initial value of the amount or concentration of the species.  If the value is enclosed in brackets (i.e., [number]), it is a concentration, otherwise it is an amount.  The default is the value of the global parameter ns.
+<li> Initial Amount/Concentration: initial value of the amount or concentration of the species (default=0.0).  This value can be a mathematical expression (see Section&nbsp;<a href="#SBMLMath">10</a>) which is called an <em>initial assignment</em>.  If the value/expression is enclosed in brackets (i.e., [e]), it is a concentration, otherwise it is an amount.
 <div class="p"><!----></div>
 </li>
 
-<li> Degradation rate (kd): the degradation rate for this species.  The default is the value of the global parameter kd.  Note that a value of 0 will result in no degradation reaction being produced for this species.
+<li> Open complex production rate (ko): once RNAP binds to this promoter, this is the rate at which transcription is initiated.  Note that this production rate is used in the production reaction created when a species is marked as constitutively produced.  The default value is the global parameter ko.
 <div class="p"><!----></div>
 </li>
 
-<li> Extracellular degradation rate (kecd): the rate at which this species degrades when it is outside a cell (i.e., on the grid level).  If a species is present in different models (i.e., has the same ID), be sure to keep these rates consistent.  The default is the global parameter kecd.
+<li> Stoichiometry of production (np): the average number of proteins that are produced by an mRNA before it degrades.  This value is used in the production reaction created when a species is marked as constitutively produced.  The default value is the global parameter np.
+<div class="p"><!----></div>
+</li>
+
+<li> Degradation rate (kd): the degradation rate for this species.  This value is used in the degradation reaction created when a species is marked that it degrades.  The default is the value of the global parameter kd.
 <div class="p"><!----></div>
 </li>
 
@@ -443,21 +563,11 @@ Species are the molecules, such as proteins, that are produced by genes or chemi
 </li>
 
 <li> Membrane diffusion rate (fd/rv) (kmdiff): the forward (in to out) and reverse (out to in) rate constants (slash-separated) for diffusion of this species through its compartment's membrane.  Note that when membrane diffusion reactions are generated, the rates are taken from the inner species.  If no reverse rate is given, a default of 1.0 is used.  The default is the global parameter kmdiff.
-<div class="p"><!----></div>
-</li>
 
-<li> Extracellular diffusion rate (kecdiff): the rate at which this species diffuses between grid locations in a grid-based model.  This rate is used for both the forward and reverse diffusion reactions.  If a species is present in different models (i.e., has the same ID), be sure to keep these rates consistent.  The default is the global parameter kecdiff.
-<div class="p"><!----></div>
-</li>
-
-<li> SBOL Ribosome Binding Site: the DNA component for the ribosome binding site that is associated with this species.     Either a full path can be specified (i.e., &#9001; filename &#9002; / &#9001; collection &#9002; / &#9001; DNA component &#9002;) or clicking on the Associate SBOL button opens the SBOL browser described in Section&nbsp;<a href="#SBOL">4</a>.
-<div class="p"><!----></div>
-</li>
-
-<li> SBOL Open Reading Frame: the DNA component for the open reading frame (gene) that is associated with this species.    Either a full path can be specified (i.e., &#9001; filename &#9002; / &#9001; collection &#9002; / &#9001; DNA component &#9002;) or clicking on the Associate SBOL button opens the SBOL browser described in Section&nbsp;<a href="#SBOL">4</a>.
 <div class="p"><!----></div>
 </li>
 </ul>
+Finally, one can specify an SBOL DNA Component with this species by clicking on the Associate SBOL button.  More details can be found in Section&nbsp;<a href="#SBOL">4</a>.
 
 <div class="p"><!----></div>
 
@@ -465,8 +575,8 @@ Species are the molecules, such as proteins, that are produced by genes or chemi
 </center>
 
 <div class="p"><!----></div>
-     <h3><a name="tth_sEc3.2">
-3.2</a>&nbsp;&nbsp;<a name="Reactions">
+     <h3><a name="tth_sEc3.3">
+3.3</a>&nbsp;&nbsp;<a name="Reactions">
 </a>Reactions</h3>
 
 <div class="p"><!----></div>
@@ -482,7 +592,7 @@ To add a reaction, select the Add Reaction icon <img src="../gui/icons/modelview
 Reactions convert reactant species into product species with perhaps modifier species (e.g., enzymes or catalysts) affecting the rate of this conversion.  The next step, therefore, is to indicate which species are reactants, products, and modifiers for the reaction.  This is accomplished by selecting the Reaction icon <img src="../gui/icons/modelview/reaction_selected.png" alt="../gui/icons/modelview/reaction_selected.png" /> or Modifier icon <img src="../gui/icons/modelview/modifier_selected.png" alt="../gui/icons/modelview/modifier_selected.png" />.  With the Reaction icon selected, selecting a species, holding the mouse button, and dragging the arc to a reaction makes the selected species a reactant in that reaction.  Similarly, selecting a reaction, holding the mouse button, and dragging the arc to a species makes the species a product in the selected reaction.  Finally, with the Modifier icon selected, dragging an arc between a species and reaction (in either direction) adds the species as a modifier in the reaction.  When you select a reactant edge, it opens a Reactants Editor.  This editor allows you to change the following things:
 
 <ul>
-<li> ID: this is the ID for this reactant and should not be confused with the Species ID.  This ID can be used in equations such as initial, rule, or event assignments.  Use this ID when you want the stoichiometry to be determined by an equation or used in an equation.  The ID is optional.
+<li> ID: this is the ID for this reactant and should not be confused with the Species ID.  This ID can be used in equations such as rules and event assignments.  Use this ID when you want the stoichiometry to be determined by an equation or used in an equation.  The ID is optional.
 <div class="p"><!----></div>
 </li>
 
@@ -494,11 +604,11 @@ Reactions convert reactant species into product species with perhaps modifier sp
 <div class="p"><!----></div>
 </li>
 
-<li> Stoichiometry: the number of molecules consumed by the reaction.  Note that this value will be overridden when the reactant ID is used on the left-hand side of an assignment.
+<li> Stoichiometry: the number of molecules consumed by the reaction (default=1.0).  Note that this value will be overridden when the reactant ID is used on the left-hand side of an assignment.
 <div class="p"><!----></div>
 </li>
 
-<li> Constant: indicates whether the stoichiometry can change dynamically.
+<li> Constant: indicates whether the stoichiometry can change dynamically (default=true).
 <div class="p"><!----></div>
 </li>
 </ul>
@@ -526,7 +636,11 @@ When you select a reaction, it opens the Reaction Editor which allows you to edi
 <div class="p"><!----></div>
 </li>
 
-<li> Compartment: the location where this reaction takes place.
+<li> Is Mapped to a Port: a checkbox indicating whether or not this reaction is mapped to a port, so it can be replaced or deleted in hierarchical models (default=false).
+<div class="p"><!----></div>
+</li>
+
+<li> Compartment: the location where this reaction takes place.  This is set by the location in which the reaction is placed in the schematic.
 <div class="p"><!----></div>
 </li>
 
@@ -538,7 +652,11 @@ When you select a reaction, it opens the Reaction Editor which allows you to edi
 <div class="p"><!----></div>
 </li>
 
-<li> List of Local Parameters: symbolic values that can be used in the <em>kinetic law</em> for this reaction.  Their IDs only need to be unique to this reaction.  Local parameters can be added, removed, and edited using the appropriate buttons.  Each parameter is composed of an ID, Name (optional), Value, and Units (optional).  The list of parameters begins with a default forward reaction rate (kf) and reverse reaction rate (kr).  These names and their values should likely be edited.
+<li> SBOL DNA Component: the Associate SBOL button allows the user to annotate the reaction with SBOL (see Section&nbsp;<a href="#SBOL">4</a>).
+<div class="p"><!----></div>
+</li>
+
+<li> List of Local Parameters: symbolic values that can be used in the <em>kinetic law</em> for this reaction.  Their IDs only need to be unique to this reaction.  Local parameters can be added, removed, and edited using the appropriate buttons.  Each parameter is composed of an ID, Name (optional), Value, Units (optional), and a checkbox indicting whether or not this parameter is mapped to a port.  The list of parameters begins with a default forward reaction rate (kf) and reverse reaction rate (kr).  These names and their values should likely be edited.
 <div class="p"><!----></div>
 </li>
 
@@ -559,7 +677,7 @@ The Clear button clears the kinetic law editor.  Note that the kinetic law formu
 </center>
 
 <div class="p"><!----></div>
-To simplify a schematic, one can use implicit reactions in some limited situations.  To create an implicit reaction, with the Reaction icon highlighted and the mouse button selected, drag a reaction edge between two species.  This action creates a reaction with a default ID and parameters, including the source species as a reactant and sink species as a product.  If you connect an additional reaction edge to either species, you are asked if you wish to create a new reaction or add this new relationship to an existing reaction on the source and/or sink species.  Implicit reactions can only be used when the following conditions hold:
+To simplify a schematic, one can use implicit reactions in some limited situations.  To create an implicit reaction, with the Reaction icon <img src="../gui/icons/modelview/reaction_selected.png" alt="../gui/icons/modelview/reaction_selected.png" /> highlighted and the mouse button selected, drag a reaction edge between two species.  This action creates a reaction with a default ID and parameters, including the source species as a reactant and sink species as a product.  If you connect an additional reaction edge to either species, you are asked if you wish to create a new reaction or add this new relationship to an existing reaction on the source and/or sink species.  Implicit reactions can only be used when the following conditions hold:
 
 <ul>
 <li> The stoichiometry of all reactants and products for the reaction is 1.
@@ -582,8 +700,8 @@ The first condition is a default and cannot be changed.  Adding edges can, howev
 </center>
 
 <div class="p"><!----></div>
-     <h3><a name="tth_sEc3.3">
-3.3</a>&nbsp;&nbsp;<a name="Components">
+     <h3><a name="tth_sEc3.4">
+3.4</a>&nbsp;&nbsp;<a name="Components">
 </a>Components</h3>
 
 <div class="p"><!----></div>
@@ -595,21 +713,65 @@ Components are instances of other models within the project, and they are used t
 </center>
 
 <div class="p"><!----></div>
-When a component is added, it appears in the schematic either with sharp or rounded corners.  A component with sharp corners is not enclosed within a compartment, so it may have ports to which species may be connected.  In other words, this is likely part of a hierarchical model.  On the other hand, rounded corners indicate that it is enclosed within a compartment, so it cannot have any ports.  In this case, the component is likely to be part of either a multi-compartment or cellular population model.  If a diffusible species with the same ID exists inside and outside of a compartment-enclosed component, a membrane diffusion reaction will be created, allowing the species to be transported to/from the compartment-enclosed component.  If the compartment-enclosed component is on a grid, the outside diffusible species will be automatically created if the inside diffusible species exists.  Clicking on the component opens the Component Editor, which allows you to change the instance name for the component as well as see a list of the components ports.
-
-<div class="p"><!----></div>
-
-<center><img src="screenshots/editComp.png" alt="screenshots/editComp.png" />
-</center>
-
-<div class="p"><!----></div>
-
-<div class="p"><!----></div>
-When a component has ports, connections to input ports can be made by selecting a species and, while holding the mouse button, drag an arc to the component.  If there are multiple input ports, you are asked which input port to connect this species to.  To connect to output ports, begin by selecting the component and drag an arc to the species to be connected to the output port.  Note that when you make these connections you are specifying that the species in the top-level model is the same species as the one in the component that it is connected too.  
+When a component is added, it appears in the schematic either with sharp or rounded corners.  A component with sharp corners is not enclosed within a compartment (i.e., its compartment is on a port).  In other words, this is likely part of a hierarchical model.  On the other hand, rounded corners indicate that it is enclosed within a compartment.  In this case, the component is likely to be part of either a multi-compartment or cellular population model.  If a diffusible species with the same ID exists inside and outside of a compartment-enclosed component, a membrane diffusion reaction will be created, allowing the species to be transported to/from the compartment-enclosed component.  If the compartment-enclosed component is on a grid, the outside diffusible species will be automatically created if the inside diffusible species exists.  
+When a component has ports, connections to input ports can be made by selecting an object and, while holding the mouse button, drag an arc to the component.  If there are multiple input ports, you are asked which input port to connect this object to.  To connect to output ports, begin by selecting the component and drag an arc to the object to be connected to the output port.  Note that when you make these connections you are specifying that the object in the top-level model is the same object as the one in the component that it is connected too (i.e., it creates a <em>replacement</em>).    
 
 <div class="p"><!----></div>
 
 <center><img src="screenshots/addPort.png" alt="screenshots/addPort.png" />
+</center>
+
+<div class="p"><!----></div>
+Clicking on the component opens the Component Editor which allows you to edit the following fields:
+
+<ul>
+<li> ID: a unique ID composed only of alphanumeric characters and underscores.
+<div class="p"><!----></div>
+</li>
+
+<li> Name: an arbitrary string description (optional).
+<div class="p"><!----></div>
+</li>
+
+<li> Time Conversion Factor: is a constant global parameter, the value of which is used to convert the submodel's time units into the units used in the model that includes it.
+<div class="p"><!----></div>
+</li>
+
+<li> Extent Conversion Factor: is a constant global parameter, the value of which is used to convert the submodel's extent units into the units used in the model that includes it.
+<div class="p"><!----></div>
+</li>
+
+<li> SBOL DNA Component: the Associate SBOL button allows the user to annotate the reaction with SBOL (see Section&nbsp;<a href="#SBOL">4</a>).
+<div class="p"><!----></div>
+</li>
+</ul>
+The last part of the Component Editor is a table of replacements and deletions.  This table lists all items that are mapped to ports within the submodel.  For each port, it includes:
+
+<ul>
+<li> Type: the type of SBML element.
+<div class="p"><!----></div>
+</li>
+
+<li> Port: the ID of the SBML element.
+<div class="p"><!----></div>
+</li>
+
+<li> Direction: the direction of replacement.  A &#8592; indicates that the item in the enclosing model replaces the one in the submodel.  A &#8594; indicates that the item in the enclosing model is replaced by the one in the submodel.
+<div class="p"><!----></div>
+</li>
+
+<li> Replacement: this indicates the ID of the item in the enclosing model that is involved in the replacement.  If the replacement selection is "delete" then the object in the submodel is deleted when this model is flattened.  If the replacement selection is "none" then there is no replacement or deletion on this port.
+<div class="p"><!----></div>
+</li>
+
+<li> Conversion: is a constant global parameter, the value of which is used to convert the submodel's units for this element into the units used by the item replacing it within the enclosing model.
+<div class="p"><!----></div>
+</li>
+</ul>
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/editComp.png" alt="screenshots/editComp.png" />
 </center>
 
 <div class="p"><!----></div>
@@ -621,8 +783,8 @@ When adding a component to a grid, you are simply asked which model to instantia
 </center>
 
 <div class="p"><!----></div>
-     <h3><a name="tth_sEc3.4">
-3.4</a>&nbsp;&nbsp;<a name="Promoters">
+     <h3><a name="tth_sEc3.5">
+3.5</a>&nbsp;&nbsp;<a name="Promoters">
 </a>Promoters</h3>
 
 <div class="p"><!----></div>
@@ -637,6 +799,10 @@ Promoters are the locations on a DNA sequence in which transcription is initiate
 <div class="p"><!----></div>
 </li>
 
+<li> Type: used to indicate how this object can be connected in hierarchical models.  The <em>input</em> type is used to indicate a object that is produced outside this model, the <em>internal</em> type is used to indicate that a object is produced inside this model but cannot be used in other models, and the <em>output</em> type is used to indicate that a object is produced by this model and can be used in other models (default=internal).
+<div class="p"><!----></div>
+</li>
+
 <li> Initial promoter count (ng): the number of copies of this promoter.  The default is the value of the global parameter ng.
 <div class="p"><!----></div>
 </li>
@@ -645,11 +811,11 @@ Promoters are the locations on a DNA sequence in which transcription is initiate
 <div class="p"><!----></div>
 </li>
 
-<li> Open complex production rate (ko): once RNAP binds to this promoter, this is the rate at which transcription is initiated.  Note that this production rate is only used for promoters with no activators.  The default value is the global parameter ko.
+<li> Activated RNAP binding equilibrium (Kao): the equilibrium constant to use for the binding of RNAP to a promoter with an activator.  The default value is the global parameter Kao.  Note that this can either be specified as a single equilibrium constant or as a forward rate "/" reverse rate.
 <div class="p"><!----></div>
 </li>
 
-<li> Stoichiometry of production (np): the average number of proteins that are produced by an mRNA before it degrades.  The default value is the global parameter np.
+<li> Open complex production rate (ko): once RNAP binds to this promoter, this is the rate at which transcription is initiated.  Note that this production rate is only used for promoters with no activators.  The default value is the global parameter ko.
 <div class="p"><!----></div>
 </li>
 
@@ -661,11 +827,11 @@ Promoters are the locations on a DNA sequence in which transcription is initiate
 <div class="p"><!----></div>
 </li>
 
-<li> SBOL Promoter: the DNA component that is associated with this promoter.     Either a full path can be specified (i.e., &#9001; filename &#9002; / &#9001; collection &#9002; / &#9001; DNA component &#9002;) or clicking on the Associate SBOL button opens the SBOL browser described in Section&nbsp;<a href="#SBOL">4</a>.
+<li> Stoichiometry of production (np): the average number of proteins that are produced by an mRNA before it degrades.  The default value is the global parameter np.
 <div class="p"><!----></div>
 </li>
 
-<li> SBOL Terminator: the DNA component that is associated with the terminator for the transcription initiated by this promoter.     Either a full path can be specified (i.e., &#9001; filename &#9002; / &#9001; collection &#9002; / &#9001; DNA component &#9002;) or clicking on the Associate SBOL button opens the SBOL browser described in Section&nbsp;<a href="#SBOL">4</a>.
+<li> SBOL DNA Component: the Associate SBOL button allows the user to annotate the promoter with SBOL (see Section&nbsp;<a href="#SBOL">4</a>).
 <div class="p"><!----></div>
 </li>
 </ul>
@@ -676,124 +842,12 @@ Promoters are the locations on a DNA sequence in which transcription is initiate
 </center>
 
 <div class="p"><!----></div>
-     <h3><a name="tth_sEc3.5">
-3.5</a>&nbsp;&nbsp;<a name="Influences">
-</a>Influences</h3>
-
-<div class="p"><!----></div>
-There are several types of influences between species that can be specified.  A species may <em>activate</em> or <em>repress</em> the production of other species.  This relationship is made from a species to the promoter that it activates or represses.  It can also be made directly between two species with an implicit promoter annotating the edge.  One can also specify when there is no influence between two species.  An activating or repressing self-influence can also be specified.  Species can also be related by complex-formation reactions, which indicate that multiple identical or different species can be combined to form a complex species.  
-
-<div class="p"><!----></div>
-To add a complex-formation reaction, select the complex formation icon <img src="../gui/icons/modelview/bio_activation_selected.png" alt="../gui/icons/modelview/bio_activation_selected.png" />, highlight a species that is part of a complex, and, while holding the mouse button, stretch the complex formation arc to the complex species.  If you double-click on the complex formation arc, an influence editor will open, which indicates that this is a complex formation arc and the stoichiometry of binding (i.e., the number of molecules of the source species used to construct the sink species) is 2, which you can customize, if desired.
-
-<div class="p"><!----></div>
-
-<center><img src="screenshots/complex.png" alt="screenshots/complex.png" /> 
-</center>
-
-<div class="p"><!----></div>
-To create a repression influence, select the Repression icon 
-<img src="../gui/icons/modelview/inhibition_selected.png" alt="../gui/icons/modelview/inhibition_selected.png" />, highlight the species that is acting as a repressor, and, while holding the mouse button, stretch the repression arc to either the promoter or another species.  In the later, case, an implicit promoter is added.  Double clicking on the repression arc brings up an influence editor.  In this editor, you can customize the stoichiometry of binding as well as the repression binding equilibrium.
-
-<div class="p"><!----></div>
-
-<center><img src="screenshots/repression.png" alt="screenshots/repression.png" /> 
-</center>
-
-<div class="p"><!----></div>
-To create an activation influence, select the Activation icon 
-<img src="../gui/icons/modelview/activation_selected.png" alt="../gui/icons/modelview/activation_selected.png" />, highlight the species that is acting as an activator, and while holding the mouse button stretch the activation arc to either the promoter or another species.  In the latter case, an implicit promoter is added.  Double-clicking on the activation arc brings up an influence editor.  In this editor, you can customize the stoichiometry of binding as well as the activation binding equilibrium.
-
-<div class="p"><!----></div>
-
-<center><img src="screenshots/activation.png" alt="screenshots/activation.png" />
-</center>
-
-<div class="p"><!----></div>
-To indicate that a species has no influence on another species, select the No Influence icon 
-<img src="../gui/icons/modelview/no_influence.png" alt="../gui/icons/modelview/no_influence.png" />, highlight the species that has no influence, and, while holding the mouse button, stretch the no-influence arc to the species it has no influence upon.  Double-clicking on the no-influence arc brings up an influence editor.  In this editor, you can change its type to indicate that it actually has an influence, if you like, and edit accordingly.  No-influence arcs are used by the Learn Tool to avoid adding influences where you are certain there isn't one.
-
-<div class="p"><!----></div>
-
-<center><img src="screenshots/noInfluence.png" alt="screenshots/noInfluence.png" />
-</center>
-
-<div class="p"><!----></div>
-The last type of influence is a self-influence.  A self-influence can be either activation or repression.  To create a self-influence, select the Self-influence icon <img src="../gui/icons/modelview/self_influence_selected.png" alt="../gui/icons/modelview/self_influence_selected.png" />, select the appropriate Activation or Repression icon, and click on the species that influences itself.  If you click on a self-influence, you will be able to edit its promoter, its type of influence, its stoichiometry of binding, as well as the appropriate binding equilibrium. 
-
-<div class="p"><!----></div>
-
-<center><img src="screenshots/selfInfluence.png" alt="screenshots/selfInfluence.png" />
-</center>
-
-<div class="p"><!----></div>
      <h3><a name="tth_sEc3.6">
-3.6</a>&nbsp;&nbsp;<a name="Compartments">
-</a>Compartments</h3>
+3.6</a>&nbsp;&nbsp;<a name="Variables">
+</a>Real Variables</h3>
 
 <div class="p"><!----></div>
-Compartments are used to specify membrane-enclosed regions where species are found. Every model must include at least one compartment. A new model includes a compartment named <tt>default</tt>.  While its ID and other parameters can be changed, it cannot be removed unless a new compartment is added.  A compartment to which species or reactions have been assigned also cannot be removed.  
-As shown below, a compartment has the following fields:
-
-<ul>
-<li> ID: a unique ID composed of only alphanumeric characters and underscores.
-<div class="p"><!----></div>
-</li>
-
-<li> Name: an arbitrary string description (optional).
-<div class="p"><!----></div>
-</li>
-
-<li> Dimensions: number of spatial dimensions (default=3).
-<div class="p"><!----></div>
-</li>
-
-<li> Constant: Boolean indicating if the size is constant (default=true).
-<div class="p"><!----></div>
-</li>
-
-<li> Size: initial size of the compartment (default=1.0).
-<div class="p"><!----></div>
-</li>
-
-<li> Units: the units for the size (default=none).
-<div class="p"><!----></div>
-</li>
-</ul>
-
-<div class="p"><!----></div>
-
-<center><img src="screenshots/compartment.png" alt="screenshots/compartment.png" />
-</center>
-
-<div class="p"><!----></div>
-In addition to the list of compartments, this tab also includes the Model ID (which cannot be changed), the Model Name (an arbitrary string description of this model), and the Model Units.  Clicking on the Model Units button allows you to see and edit this model's default units.  The substance units are the default units for species, the time units are the default units for time, the volume units are the default units for 3-dimensional compartments, the area units are the default units for 2-dimensional compartments, the length units are the default units for 1-dimensional compartments, the extent units are the defaults units for the amount changed due to a reaction.  Kinetic laws have default units of extent units / time units.  The conversion factor is the constant global parameter to be used as the default conversion factor to convert species units into extent units.
-
-<div class="p"><!----></div>
-
-<center><img src="screenshots/ModelUnits.png" alt="screenshots/ModelUnits.png" />
-</center>
-
-<div class="p"><!----></div>
-     <h3><a name="tth_sEc3.7">
-3.7</a>&nbsp;&nbsp;<a name="Parameters">
-</a>Parameters</h3>
-
-<div class="p"><!----></div>
-There are two types of parameters: model generation parameters and global parameters.  The model generation parameters provide default parameter values when converting a model into a reaction-based model for analysis. 
-In the Species, Promoter, and Influence Editors, any parameter set to default uses the value found in this list.  These defaults can be modified in the user preferences (see Section&nbsp;<a href="#Preferences">9</a>).  The user can also edit these parameters for an individual model by changing the default to custom, then changing the value.
-
-<div class="p"><!----></div>
-
-<center><img src="screenshots/GCMparam.png" alt="screenshots/GCMparam.png" />
-</center>
-
-<div class="p"><!----></div>
-
-<div class="p"><!----></div>
-
-<div class="p"><!----></div>
-Global Parameters are variables that can be used in math formulas (see Section&nbsp;<a href="#SBMLMath">10</a>).  A parameter includes the following:
+Real variables are non-constant global parameters that can be used in math formulas (see Section&nbsp;<a href="#SBMLMath">10</a>).  A parameter includes the following:
 
 <ul>
 <li> ID: a unique ID composed only of alphanumeric characters and underscores.
@@ -804,7 +858,7 @@ Global Parameters are variables that can be used in math formulas (see Section&n
 <div class="p"><!----></div>
 </li>
 
-<li> Value: initial value for the parameter.
+<li> Initial value: initial value for the parameter.  This value can be a mathematical expression (see Section&nbsp;<a href="#SBMLMath">10</a>) which is called an <em>initial assignment</em>.
 <div class="p"><!----></div>
 </li>
 
@@ -812,10 +866,15 @@ Global Parameters are variables that can be used in math formulas (see Section&n
 <div class="p"><!----></div>
 </li>
 
-<li> Constant: Boolean indicating if the parameter value is constant (default=true).
+<li> Constant: Boolean indicating if the parameter value is constant (default=false).
+<div class="p"><!----></div>
+</li>
+
+<li> Port Type: used to indicate how this object can be connected in hierarchical models.  The <em>input</em> type is used to indicate a object that is produced outside this model, the <em>internal</em> type is used to indicate that a object is produced inside this model but cannot be used in other models, and the <em>output</em> type is used to indicate that a object is produced by this model and can be used in other models (default=internal).
 <div class="p"><!----></div>
 </li>
 </ul>
+Note that changing a the Constant attribute to true removes the parameter from the schematic, and it puts it in the list of Constants found in the Constant tab (see Section&nbsp;<a href="#Constants">3.15</a>).
 
 <div class="p"><!----></div>
 
@@ -823,65 +882,134 @@ Global Parameters are variables that can be used in math formulas (see Section&n
 </center>
 
 <div class="p"><!----></div>
+     <h3><a name="tth_sEc3.7">
+3.7</a>&nbsp;&nbsp;<a name="Booleans">
+</a>Boolean Variables</h3>
+
+<div class="p"><!----></div>
+Boolean variables are global parameters that can only take the values of true and false.  A Boolean variable includes the following:
+
+<ul>
+<li> ID: a unique ID composed only of alphanumeric characters and underscores.
+<div class="p"><!----></div>
+</li>
+
+<li> Name: an arbitrary string description (optional).
+<div class="p"><!----></div>
+</li>
+
+<li> Initial value: initial value for the parameter (default=false).
+<div class="p"><!----></div>
+</li>
+
+<li> Port Type: used to indicate how this object can be connected in hierarchical models.  The <em>input</em> type is used to indicate a object that is produced outside this model, the <em>internal</em> type is used to indicate that a object is produced inside this model but cannot be used in other models, and the <em>output</em> type is used to indicate that a object is produced by this model and can be used in other models (default=internal).
+<div class="p"><!----></div>
+</li>
+</ul>
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/Boolean.png" alt="screenshots/Boolean.png" />
+</center>
+
+<div class="p"><!----></div>
      <h3><a name="tth_sEc3.8">
-3.8</a>&nbsp;&nbsp;<a name="Definitions">
-</a>Definitions</h3>
+3.8</a>&nbsp;&nbsp;<a name="Places">
+</a>Petri Net Places</h3>
 
 <div class="p"><!----></div>
-The Definitions tab allows users to provide function and unit definitions. Function definitions are used to create user-defined functions that can then be used in math formulas (see Section&nbsp;<a href="#SBMLMath">10</a>).  As shown below, function definitions include an ID, an optional name field, a comma-separated list of arguments, and its definition.  The definition is a math formula, though it is restricted to the use of variable names which are arguments to the function.  While functions can call other functions, they cannot be recursive (i.e., call themselves) either directly or indirectly (i.e., through a cycle of function calls).  Several random functions supported by <tt>iBioSim</tt>'s simulators are added automatically to every model.
+Places are a special type of global parameter that is used in Petri net models.  A place can either be <em>marked</em> with a token or <em>not marked</em> with a toke.  A place includes the following:
+
+<ul>
+<li> ID: a unique ID composed only of alphanumeric characters and underscores.
+<div class="p"><!----></div>
+</li>
+
+<li> Name: an arbitrary string description (optional).
+<div class="p"><!----></div>
+</li>
+
+<li> Initial marking: indicates if there is a token in this place initially (default=false).
+<div class="p"><!----></div>
+</li>
+
+<li> Port Type: used to indicate how this object can be connected in hierarchical models.  The <em>input</em> type is used to indicate a object that is produced outside this model, the <em>internal</em> type is used to indicate that a object is produced inside this model but cannot be used in other models, and the <em>output</em> type is used to indicate that a object is produced by this model and can be used in other models (default=internal).
+<div class="p"><!----></div>
+</li>
+</ul>
 
 <div class="p"><!----></div>
 
-<center><img src="screenshots/function.png" alt="screenshots/function.png" />
+<center><img src="screenshots/place.png" alt="screenshots/place.png" />
 </center>
-
-<div class="p"><!----></div>
-Unit definitions are used to construct user-defined units which are derived from the set of base units.  As shown below, a unit definition includes an ID, an optional name, and a list of units that define it.  There are buttons to add, remove, and edit elements in the list of units.  Each unit is composed of a kind, exponent, scale, and multiplier.  The kind is selected from the list of base units in the table below.  The exponent and multiplier are real numbers, and the scale is an integer that specifies the relationship between the derived unit and the base unit using the relation below:
-
-<br clear="all" /><table border="0" width="100%"><tr><td>
-<table border="0" cellspacing="0" cellpadding="0">
- <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-<span class="roman">unit</span> </td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
- = </td></tr></table></td><td nowrap="nowrap" align="left">
-<table><tr><td nowrap="nowrap" align="right" colspan="1">(<span class="roman">multiplier</span> * 10<sup><span class="roman">scale</span></sup> * <span class="roman">baseUnit</span>)<sup><span class="roman">exponent</span></sup></td></tr></table></td><td width="50%"></td></tr></table>
-</td></tr></table>
-
-
-
-<div class="p"><!----></div>
-
-<center><img src="screenshots/units.png" alt="screenshots/units.png" />
-</center>
-
-<div class="p"><!----></div>
-
-<center>
-<table border="1">
-<tr><td align="center">ampere        </td><td align="center">farad  </td><td align="center">joule    </td><td align="center">lux  </td><td align="center">radian    </td><td align="center">volt </td></tr>
-<tr><td align="center">avogadro     </td><td align="center">gram  </td><td align="center">katal   </td><td align="center">metre   </td><td align="center">second   </td><td align="center">watt </td></tr>
-<tr><td align="center">bacquerel       </td><td align="center">gray </td><td align="center">kelvin </td><td align="center">mole </td><td align="center">siemens   </td><td align="center">weber </td></tr>
-<tr><td align="center">candela       </td><td align="center">henry </td><td align="center">kilogram    </td><td align="center">newton    </td><td align="center">sievert </td><td align="center">&nbsp;</td></tr>
-<tr><td align="center">coulomb </td><td align="center">hertz  </td><td align="center">litre    </td><td align="center">ohm </td><td align="center">steradian     </td><td align="center">&nbsp;</td></tr>
-<tr><td align="center">dimensionless         </td><td align="center">item </td><td align="center">lumen      </td><td align="center">pascal </td><td align="center">tesla      </td><td align="center">&nbsp;</td></tr></table>
-
-</center>
-
-<div class="p"><!----></div>
-
-<div class="p"><!----></div>
-
-<div class="p"><!----></div>
-
-<div class="p"><!----></div>
 
 <div class="p"><!----></div>
      <h3><a name="tth_sEc3.9">
-3.9</a>&nbsp;&nbsp;<a name="Assignments">
-</a>Assignments</h3>
+3.9</a>&nbsp;&nbsp;<a name="Transitions">
+</a>Petri Net Transitions</h3>
 
 <div class="p"><!----></div>
-There are two types of assignments: initial assignments and rules.  Initial assignments as shown below are used to provide a mathematical formula (see Section&nbsp;<a href="#SBMLMath">10</a>) that is evaluated at time 0 to determine the initial value of a compartment size, species amount or concentration, or parameter.  The value of this formula takes precedence over the initial value specified in the object.  
+Transitions are a special kind of event used Petri net models.  Each transition is composed of the following items:
+
+<ul>
+<li> ID: a unique ID composed only of alphanumeric characters and underscores.
+<div class="p"><!----></div>
+</li>
+
+<li> Name: an arbitrary string description (optional).
+<div class="p"><!----></div>
+</li>
+
+<li> Enabling condition: a mathematical formula which must evaluate to true for the transition to fire.
+<div class="p"><!----></div>
+</li>
+
+<li> Delay: a mathematical formula which is evaluated when a transition becomes enabled, and the result is the amount of time before the transition is fired.
+<div class="p"><!----></div>
+</li>
+
+<li> Priority: a mathematical formula which sets the priority for this transition when multiple transitions are scheduled to be executed simultaneously.  In this situation, the transition with the highest priority is the next to be executed.
+<div class="p"><!----></div>
+</li>
+
+<li> Enabling is persistent: this Boolean indicates the behavior when an enabling condition becomes false before a transition is fired.  If it is persistent, then it still fires when ready.  If it is not persistent, then the transition is disabled and no longer scheduled to fire (default=false).
+<div class="p"><!----></div>
+</li>
+
+<li> Fail transition: this Boolean indicates if the firing of this transition should be considered as a failure or not (default=false).
+<div class="p"><!----></div>
+</li>
+
+<li> Is Mapped to a Port: this Boolean indicates whether this transition should be mapped to a port, so it can be replaced or deleted in hierarchical models.
+<div class="p"><!----></div>
+</li>
+
+<li> List of Assignments: these indicate how the state is supposed to change when the transition fires.  Use the add, remove, and edit assignment buttons to update them.  In the assignment editor, the variable to change must be selected and the assignment to be performed must be specified as a mathematical formula.
+<div class="p"><!----></div>
+</li>
+</ul>
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/transition.png" alt="screenshots/transition.png" />
+</center>
+
+<div class="p"><!----></div>
+Places and transitions are connected to form a <em>token flow relation</em>.  To connect a place to the <em>preset</em> of a transition, select the place and, while holding the mouse button, drag the connection to the transition.  Similarly, to connect a place to the <em>postset</em> of a transition, select a transition and, while holding the mouse button, drag the connection to the place.  A transition is enabled when all of its preset places are marked and its enabling condition is true. Once it is enabled, it can fire after the amount of time specified in the delay assignment has elapsed.  When multiple transitions can occur at the same time, the priority expression is evaluated.  The transition with the highest priority gets to fire first.  When a transition fires, it removes tokens from all preset places, and places tokens in all postset places.  Similarly, it will execute the assignments associated with the transition.
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/flowRelation.png" alt="screenshots/flowRelation.png" />
+</center>
+
+<div class="p"><!----></div>
+     <h3><a name="tth_sEc3.10">
+3.10</a>&nbsp;&nbsp;<a name="Rules">
+</a>Rules</h3>
+
+<div class="p"><!----></div>
+
+<div class="p"><!----></div>
 
 <div class="p"><!----></div>
 There are three types of rules: algebraic, assignment, and rate rules:
@@ -897,14 +1025,22 @@ There are three types of rules: algebraic, assignment, and rate rules:
 </center>
 
 <div class="p"><!----></div>
+Algebraic rules specify relationships which must be maintained.  Assignment rules specify the value of a compartment size, species amount or concentration, or parameter in terms of a mathematical formula (see Section&nbsp;<a href="#SBMLMath">10</a>).  A quantity cannot be determined by both an assignment rule and an initial assignment (i.e., its initial value is an expression).  Rate rules specify the rate of change of a compartment size, species amount or concentration, or parameter in terms of a mathematical formula.  A quantity cannot be determined by both an assignment rule and a rate rule.  A species that is a reactant or a product of any reaction cannot be updated by either an assignment rule or rate rule.  When adding a rule, the user first selects the type of rule as shown below (note that when editing a rule, the user cannot modify the rule type).  
+This automatically restricts the set of quantities available for the left-hand side to those that are valid.  The user should then select a variable (except in the case of an algebraic rule) and enter a mathematical formula for the rule.  In addition, the following attributes can be edited for a rule:
 
-<center><img src="screenshots/initial.png" alt="screenshots/initial.png" />
-</center>
-
+<ul>
+<li> ID: a unique ID composed only of alphanumeric characters and underscores.
 <div class="p"><!----></div>
-Algebraic rules specify relationships which must be maintained.  Assignment rules specify the value of a compartment size, species amount or concentration, or parameter in terms of a mathematical formula (see
-Section&nbsp;<a href="#SBMLMath">10</a>).  A variable cannot be determined by both an assignment rule and initial assignment.  Rate rules specify the rate of change of a compartment size, species amount or concentration, or parameter in terms of a mathematical formula (see Section&nbsp;<a href="#SBMLMath">10</a>).  A variable cannot be determined by both an assignment rule and a rate rule.  A species that is a reactant or a product of any reaction cannot be updated by either an assignment rule or rate rule.  
-When adding a rule, the user first selects the type of rule as shown below.  This automatically restricts the set of variables available for the left-hand side to those that are valid.  The user should then select a variable (except in the case of an algebraic rule) and enter a mathematical formula (see Section&nbsp;<a href="#SBMLMath">10</a>) for the rule.  When editing a rule, the user cannot modify the rule type. 
+</li>
+
+<li> Is Mapped to a Port: this Boolean indicates whether this rule should be mapped to a port, so it can be replaced or deleted in hierarchical models.
+<div class="p"><!----></div>
+</li>
+
+<li> SBOL DNA Component: the Associate SBOL button allows the user to annotate the promoter with SBOL (see Section&nbsp;<a href="#SBOL">4</a>).
+<div class="p"><!----></div>
+</li>
+</ul>
 
 <div class="p"><!----></div>
 
@@ -912,20 +1048,13 @@ When adding a rule, the user first selects the type of rule as shown below.  Thi
 </center>
 
 <div class="p"><!----></div>
-     <h3><a name="tth_sEc3.10">
-3.10</a>&nbsp;&nbsp;<a name="Properties">
-</a>Properties</h3>
-
-<div class="p"><!----></div>
-The properties tab allows users to provide formulas for either desired or un-desired behavior.  These formulas can be provided in two forms as either a <em>Continuous Stochastic Logic</em> (CSL) property (see Section&nbsp;<a href="#CSL">11</a>) or as a constraint.  CSL is a temporal logic which allows one to specify probabilistic temporal logic properties.  Analysis of a CSL property should return the probability that the property is true.  These properties can either be transient properties to ask if something happens within a certain amount of time, or steady-state properties to ask the probability of a given state as time goes to infinity.  The syntax for our CSL properties is given in Section&nbsp;<a href="#CSL">11</a>.
-
-<div class="p"><!----></div>
-
-<center><img src="screenshots/properties.png" alt="screenshots/properties.png" />
-</center>
+     <h3><a name="tth_sEc3.11">
+3.11</a>&nbsp;&nbsp;<a name="Constraints">
+</a>Constraints</h3>
 
 <div class="p"><!----></div>
 Constraints are used to specify properties that should cause simulation to terminate.  As shown below, each constraint is composed of an ID which is used to identify it in graphs, a constraint given as a mathematical formula (see Section&nbsp;<a href="#SBMLMath">10</a>), and a message describing the constraint.  A default ID is automatically generated when a new constraint is created.
+Special functions are provided to support a form of <em>Continuous Stochastic Logic</em> (CSL) within these constraints (see Section&nbsp;<a href="#CSL">11</a>).  
 
 <div class="p"><!----></div>
 
@@ -933,11 +1062,11 @@ Constraints are used to specify properties that should cause simulation to termi
 </center>
 
 <div class="p"><!----></div>
-Our analysis methods can provide histograms that show the proportion of simulations that either satisfy a CSL property or are terminated due to a constraint.  Analysis can also show time-series plots showing the proportion of simulations at each time point that have either satisfied a CSL property or terminated due to a constraint. 
+Our analysis methods can provide histograms that show the proportion of simulations that are terminated due to a constraint.  Analysis can also show time-series plots showing the proportion of simulations at each time point that have terminated due to a constraint. 
 
 <div class="p"><!----></div>
-     <h3><a name="tth_sEc3.11">
-3.11</a>&nbsp;&nbsp;<a name="Events">
+     <h3><a name="tth_sEc3.12">
+3.12</a>&nbsp;&nbsp;<a name="Events">
 </a>Events</h3>
 
 <div class="p"><!----></div>
@@ -976,6 +1105,14 @@ Events are used to specify discrete changes of compartment sizes, species amount
 <div class="p"><!----></div>
 </li>
 
+<li> Dynamic Process: indicates if this is a dynamic event.  The possible dynamic even types are symmetric and asymmetric cell division, cell death, and cell movement in a specified direction.
+<div class="p"><!----></div>
+</li>
+
+<li> Is Mapped to a Port: this Boolean indicates whether this rule should be mapped to a port, so it can be replaced or deleted in hierarchical models.
+<div class="p"><!----></div>
+</li>
+
 <li> List of Event Assignments: these indicate how the state is supposed to change when the event executes.  Use the add, remove, and edit assignment buttons to update them.  In the event assignment editor, the variable to change must be selected and the assignment to be performed must be specified as a mathematical formula.
 <div class="p"><!----></div>
 </li>
@@ -987,9 +1124,300 @@ Events are used to specify discrete changes of compartment sizes, species amount
 </center>
 
 <div class="p"><!----></div>
+     <h3><a name="tth_sEc3.13">
+3.13</a>&nbsp;&nbsp;<a name="Influences">
+</a>Influences</h3>
+
+<div class="p"><!----></div>
+There are several types of influences between species that can be specified.  A species may <em>activate</em> or <em>repress</em> the production of other species.  This relationship is made from a species to the promoter that it activates or represses.  It can also be made directly between two species with an implicit promoter annotating the edge.  One can also specify when there is no influence between two species.  An activating or repressing self-influence can also be specified.  Species can also be related by complex-formation reactions, which indicate that multiple identical or different species can be combined to form a complex species.  
+
+<div class="p"><!----></div>
+To add a complex-formation reaction, select the complex formation icon <img src="../gui/icons/modelview/bio_activation_selected.png" alt="../gui/icons/modelview/bio_activation_selected.png" />, highlight a species that is part of a complex, and, while holding the mouse button, stretch the complex formation arc to the complex species.  If you double-click on the complex formation arc, an influence editor will open, which indicates that this is a complex formation arc and the stoichiometry of binding (i.e., the number of molecules of the source species used to construct the sink species) is 2, which you can customize, if desired.
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/complex.png" alt="screenshots/complex.png" /> 
+</center>
+
+<div class="p"><!----></div>
+To create a repression influence, select the Repression icon 
+<img src="../gui/icons/modelview/inhibition_selected.png" alt="../gui/icons/modelview/inhibition_selected.png" />, highlight the species that is acting as a repressor, and, while holding the mouse button, stretch the repression arc to either the promoter or another species.  In the later, case, an implicit promoter is added.  Double clicking on the repression arc brings up an influence editor.  In this editor, you can customize the stoichiometry of binding as well as the repression binding equilibrium constant.  You can also change the type of influence, as well as, the promoter on which this influence takes place.  Note that pressing the Edit Promoter button brings up the Promoter Editor for the corresponding promoter (see Section&nbsp;<a href="#Promoters">3.5</a>). 
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/repression.png" alt="screenshots/repression.png" /> 
+</center>
+
+<div class="p"><!----></div>
+To create an activation influence, select the Activation icon 
+<img src="../gui/icons/modelview/activation_selected.png" alt="../gui/icons/modelview/activation_selected.png" />, highlight the species that is acting as an activator, and while holding the mouse button stretch the activation arc to either the promoter or another species.  In the latter case, an implicit promoter is added.  Double-clicking on the activation arc brings up an influence editor.  In this editor, you can customize the stoichiometry of binding as well as the activation binding equilibrium constant.  You can also change the type of influence, as well as, the promoter on which this influence takes place.  
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/activation.png" alt="screenshots/activation.png" />
+</center>
+
+<div class="p"><!----></div>
+To indicate that a species has no influence on another species, select the No Influence icon 
+<img src="../gui/icons/modelview/no_influence.png" alt="../gui/icons/modelview/no_influence.png" />, highlight the species that has no influence, and, while holding the mouse button, stretch the no-influence arc to the species it has no influence upon.  Double-clicking on the no-influence arc brings up an influence editor.  In this editor, you can change its type to indicate that it actually has an influence, if you like, and edit accordingly.  No-influence arcs are used by the Learn Tool to avoid adding influences where you are certain there isn't one.  You can also change the type of influence, as well as, the promoter on which this species has no influence.  
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/noInfluence.png" alt="screenshots/noInfluence.png" />
+</center>
+
+<div class="p"><!----></div>
+The last type of influence is a self-influence.  A self-influence can be either activation or repression.  To create a self-influence, select the Self-influence icon <img src="../gui/icons/modelview/self_influence_selected.png" alt="../gui/icons/modelview/self_influence_selected.png" />, select the appropriate Activation or Repression icon, and click on the species that influences itself.  If you click on a self-influence, you will be able to edit its promoter, its type of influence, its stoichiometry of binding, as well as the appropriate binding equilibrium constant. 
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/selfInfluence.png" alt="screenshots/selfInfluence.png" />
+</center>
+
+<div class="p"><!----></div>
+     <h3><a name="tth_sEc3.14">
+3.14</a>&nbsp;&nbsp;<a name="ModelEditor">
+</a>Model Editor</h3>
+
+<div class="p"><!----></div>
+Clicking on the Model button on the schematic tab brings up the Model Editor.  This editor includes:
+
+<ul>
+<li> Model ID: a unique ID composed only of alphanumeric characters and underscores.  This cannot be changed here.  To change it, you must rename the model file.
+<div class="p"><!----></div>
+</li>
+
+<li> Name: an arbitrary string description (optional).
+<div class="p"><!----></div>
+</li>
+
+<li> Substance units: the default units for species.
+<div class="p"><!----></div>
+</li>
+
+<li> Time units: the default units for time.
+<div class="p"><!----></div>
+</li>
+
+<li> Volume units: the default units for 3-dimensional compartments.
+<div class="p"><!----></div>
+</li>
+
+<li> Area units: the default units for 2-dimensional compartments.
+<div class="p"><!----></div>
+</li>
+
+<li> Length units: the default units for 1-dimensional compartments.
+<div class="p"><!----></div>
+</li>
+
+<li> Extent units: the default units for the amount changed due to a reaction.  Kinetic laws have default units of extent units / time units.
+<div class="p"><!----></div>
+</li>
+
+<li> Conversion factor: the constant global parameter to be used as the default conversion factor to convert species units into extent units.
+<div class="p"><!----></div>
+</li>
+
+<li> SBOL DNA Component: the Associate SBOL button allows the user to annotate the promoter with SBOL (see Section&nbsp;<a href="#SBOL">4</a>).
+<div class="p"><!----></div>
+</li>
+</ul>
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/ModelUnits.png" alt="screenshots/ModelUnits.png" />
+</center>
+
+<div class="p"><!----></div>
+     <h3><a name="tth_sEc3.15">
+3.15</a>&nbsp;&nbsp;<a name="Constants">
+</a>Constants</h3>
+
+<div class="p"><!----></div>
+The Constants tab includes a list of all the constant global parameters.  They are not included in the schematic, but they can appear in math formulas (see Section&nbsp;<a href="#SBMLMath">10</a>).  This tab can be used to add, remove, or edit these constants.  The following attributes can be edited for a global parameter:
+
+<ul>
+<li> ID: a unique ID composed only of alphanumeric characters and underscores.
+<div class="p"><!----></div>
+</li>
+
+<li> Name: an arbitrary string description (optional).
+<div class="p"><!----></div>
+</li>
+
+<li> Initial value: initial value for the parameter.  This value can be a mathematical expression (see Section&nbsp;<a href="#SBMLMath">10</a>) which is called an <em>initial assignment</em>.
+<div class="p"><!----></div>
+</li>
+
+<li> Units: the units for the parameter value (default=none).
+<div class="p"><!----></div>
+</li>
+
+<li> Constant: Boolean indicating if the parameter value is constant (default=true).
+<div class="p"><!----></div>
+</li>
+
+<li> Port Type: used to indicate how this object can be connected in hierarchical models.  The <em>input</em> type is used to indicate a object that is produced outside this model, the <em>internal</em> type is used to indicate that a object is produced inside this model but cannot be used in other models, and the <em>output</em> type is used to indicate that a object is produced by this model and can be used in other models (default=internal).
+<div class="p"><!----></div>
+</li>
+</ul>
+Note that changing the Constant attribute to false removes the parameter from the constants list, and it places the parameter on the schematic.
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/GCMparam.png" alt="screenshots/GCMparam.png" />
+</center>
+
+<div class="p"><!----></div>
+Some constants are added to the model automatically because they are needed to provide default parameter values when converting genetic regulation elements into a reaction-based model.  
+In the Species, Promoter, and Influence Editors, any parameter set to default uses the value found in this list.  These defaults can be modified in the user preferences (see Section&nbsp;<a href="#Preferences">9</a>).  The user can also edit these parameters for an individual model here.  
+The complete list of model generation parameters is listed below:
+
+<div class="p"><!----></div>
+
+<center>
+<table border="1">
+<tr><td align="center">ID </td><td align="center">Default Value </td><td align="center">Units      </td><td align="center">Structure </td><td align="center">Description </td></tr><tr><td></td></tr>
+<tr><td align="center">ka </td><td align="center">0.25          </td><td align="center">[1/(<span class="roman">sec</span>)] </td><td align="center">promoter  
+</td><td align="center">Activated production rate</td></tr>
+<tr><td align="center">Ka </td><td align="center">0.0033        </td><td align="center">[1/(<span class="roman">molecule</span><sup>(nc+1)</sup>)] </td><td align="center">influence
+</td><td align="center">Activation binding equilibrium </td></tr>
+<tr><td align="center">kb </td><td align="center">0.0001        </td><td align="center">[1/(<span class="roman">sec</span>)] </td><td align="center">promoter  
+</td><td align="center">Basal production rate </td></tr>
+<tr><td align="center">kd </td><td align="center">0.0075        </td><td align="center">[1/(<span class="roman">sec</span>)] </td><td align="center">species   
+</td><td align="center">Degradation rate </td></tr>
+<tr><td align="center">kecd </td><td align="center">0.005        </td><td align="center">[1/(<span class="roman">sec</span>)] </td><td align="center">species   
+</td><td align="center">Extracellular degradation rate </td></tr>
+<tr><td align="center">nc </td><td align="center">2             </td><td align="center">molecule   </td><td align="center">influence  </td><td align="center">Stoichiometry of binding </td></tr>
+<tr><td align="center">nr </td><td align="center">30            </td><td align="center">molecule   </td><td align="center">model     </td><td align="center">Initial RNAP count </td></tr>
+<tr><td align="center">ng </td><td align="center">2             </td><td align="center">molecule   </td><td align="center">promoter  </td><td align="center">Initial promoter count </td></tr>
+<tr><td align="center">ko </td><td align="center">0.05          </td><td align="center">[1/(<span class="roman">sec</span>)] </td><td align="center">promoter  
+</td><td align="center">Open complex production rate </td></tr>
+<tr><td align="center">Ko </td><td align="center">0.033         </td><td align="center">[1/(<span class="roman">molecule</span>)] </td><td align="center">promoter  
+</td><td align="center">RNAP binding equilibrium</td></tr>
+<tr><td align="center">Kao </td><td align="center">1         </td><td align="center">[1/(<span class="roman">molecule</span>)] </td><td align="center">promoter  
+</td><td align="center">Activated RNAP binding equilibrium</td></tr>
+<tr><td align="center">Kr </td><td align="center">0.5           </td><td align="center">[1/(<span class="roman">molecule</span><sup>nc</sup>)] </td><td align="center">influence
+</td><td align="center">Repression binding equilibrium </td></tr>
+<tr><td align="center">np </td><td align="center">10            </td><td align="center">molecule   </td><td align="center">promoter  </td><td align="center">Stoichiometry of
+production </td></tr>
+<tr><td align="center">Kc </td><td align="center">0.05          </td><td align="center">[1/(<span class="roman">molecule</span>)] </td><td align="center">species
+</td><td align="center">Complex formation equilibrium </td></tr>
+<tr><td align="center">kmdiff_f </td><td align="center">1.0          </td><td align="center">[1/(<span class="roman">molecule</span>)] </td><td align="center">species   
+</td><td align="center">Forward membrane diffusion rate</td></tr>
+<tr><td align="center">kmdiff_r </td><td align="center">0.01          </td><td align="center">[1/(<span class="roman">molecule</span>)] </td><td align="center">species   
+</td><td align="center">Reverse membrane diffusion rate</td></tr>
+<tr><td align="center">kecdiff </td><td align="center">1.0          </td><td align="center">[1/(<span class="roman">molecule</span>)] </td><td align="center">species   
+</td><td align="center">Extracellular diffusion rate</td></tr></table>
+
+</center>
+
+<div class="p"><!----></div>
+     <h3><a name="tth_sEc3.16">
+3.16</a>&nbsp;&nbsp;<a name="Functions">
+</a>Functions</h3>
+
+<div class="p"><!----></div>
+The functions tab is used to add, remove, and edit function definitions. Function definitions are used to create user-defined functions that can then be used in math formulas (see Section&nbsp;<a href="#SBMLMath">10</a>).  As shown below, function definitions include:
+
+<ul>
+<li> ID: a unique ID composed only of alphanumeric characters and underscores.
+<div class="p"><!----></div>
+</li>
+
+<li> Name: an arbitrary string description (optional).
+<div class="p"><!----></div>
+</li>
+
+<li> Arguments: a comma-separated list of arguments for the function.
+<div class="p"><!----></div>
+</li>
+
+<li> Definition: a math formula, though it is restricted to the use of variable names which are arguments to the function.
+<div class="p"><!----></div>
+</li>
+
+<li> Is Mapped to a Port: this Boolean indicates whether this transition should be mapped to a port, so it can be replaced or deleted in hierarchical models.
+<div class="p"><!----></div>
+</li>
+</ul>
+While functions can call other functions, they cannot be recursive (i.e., call themselves) either directly or indirectly (i.e., through a cycle of function calls).  
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/function.png" alt="screenshots/function.png" />
+</center>
+
+<div class="p"><!----></div>
+     <h3><a name="tth_sEc3.17">
+3.17</a>&nbsp;&nbsp;<a name="Units">
+</a>Units</h3>
+
+<div class="p"><!----></div>
+The Units tab is used to add, remove, and edit unit definitions.  Unit definitions are used to construct user-defined units which are derived from the set of base units.  As shown below, a unit definition includes:
+
+<ul>
+<li> ID: a unique ID composed only of alphanumeric characters and underscores.
+<div class="p"><!----></div>
+</li>
+
+<li> Name: an arbitrary string description (optional).
+<div class="p"><!----></div>
+</li>
+
+<li> Is Mapped to a Port: this Boolean indicates whether this transition should be mapped to a port, so it can be replaced or deleted in hierarchical models.
+<div class="p"><!----></div>
+</li>
+
+<li> List of Units: the units that make up the unit definition.  There are buttons to add, remove, and edit elements in the list of units.  Each unit is composed of a kind, exponent, scale, and multiplier.  The kind is selected from the list of base units in the table below.  The exponent and multiplier are real numbers, and the scale is an integer that specifies the relationship between the derived unit and the base unit using the relation below:
+
+<br clear="all" /><table border="0" width="95%"><tr><td>
+<table border="0" cellspacing="0" cellpadding="0">
+ <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+<span class="roman">unit</span> </td></tr></table></td><td nowrap="nowrap" align="left">
+<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
+ = </td></tr></table></td><td nowrap="nowrap" align="left">
+<table><tr><td nowrap="nowrap" align="right" colspan="1">(<span class="roman">multiplier</span> * 10<sup><span class="roman">scale</span></sup> * <span class="roman">baseUnit</span>)<sup><span class="roman">exponent</span></sup></td></tr></table></td><td width="50%"></td></tr></table>
+</td></tr></table>
+
+
+<div class="p"><!----></div>
+</li>
+</ul>
+
+<div class="p"><!----></div>
+
+<center>
+<table border="1">
+<tr><td align="center">ampere        </td><td align="center">farad  </td><td align="center">joule    </td><td align="center">lux  </td><td align="center">radian    </td><td align="center">volt </td></tr>
+<tr><td align="center">avogadro     </td><td align="center">gram  </td><td align="center">katal   </td><td align="center">metre   </td><td align="center">second   </td><td align="center">watt </td></tr>
+<tr><td align="center">bacquerel       </td><td align="center">gray </td><td align="center">kelvin </td><td align="center">mole </td><td align="center">siemens   </td><td align="center">weber </td></tr>
+<tr><td align="center">candela       </td><td align="center">henry </td><td align="center">kilogram    </td><td align="center">newton    </td><td align="center">sievert </td><td align="center">&nbsp;</td></tr>
+<tr><td align="center">coulomb </td><td align="center">hertz  </td><td align="center">litre    </td><td align="center">ohm </td><td align="center">steradian     </td><td align="center">&nbsp;</td></tr>
+<tr><td align="center">dimensionless         </td><td align="center">item </td><td align="center">lumen      </td><td align="center">pascal </td><td align="center">tesla      </td><td align="center">&nbsp;</td></tr></table>
+
+</center>
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/units.png" alt="screenshots/units.png" />
+</center>
+
+<div class="p"><!----></div>
+
+<div class="p"><!----></div>
+
+<div class="p"><!----></div>
+
+<div class="p"><!----></div>
+
+<div class="p"><!----></div>
  <h2><a name="tth_sEc4">
 4</a>&nbsp;&nbsp;<a name="SBOL">
-</a>SBOL Browser</h2>
+</a>SBOL Editors</h2>
+
+<div class="p"><!----></div>
 
 <div class="p"><!----></div>
 SBOL is an emerging standard under development for the exchange of information about synthetic biology designs.  An SBOL file includes <em>Collections</em> of <em>DNA Components</em>.  Each DNA component has a unique ID, name, description, type, and a DNA sequence.  A DNA component can be a simple sequence feature like a promoter, ribosome binding site, open reading frame (i.e., gene), or terminator.  It can also be an annotated DNA sequence that includes several of these individual features, perhaps organized hierarchically.  For example, a DNA component may include a promoter followed by a ribosome binding site followed by an open reading frame followed by a terminator.  <tt>iBioSim</tt> includes an SBOL browser that allows the user to view an individual SBOL file by clicking on it in the list of project files.  In this browser, you can highlight individual DNA components and see the information stored about them.
@@ -1000,7 +1428,7 @@ SBOL is an emerging standard under development for the exchange of information a
 </center>
 
 <div class="p"><!----></div>
-A similar SBOL browser is available for associating DNA components to a model.  Namely, for a promoter, you can associate both a DNA component to the promoter as well as a terminator for the transcription initiated at this promoter.  For a species, you can associate both a DNA component for the open reading frame for the gene that produces this species as well as the ribosome binding site where translation begins for this gene.  This SBOL browser is opened by clicking on an Associate SBOL button within either the Species Editor (see Section&nbsp;<a href="#Species">3.1</a>) or Promoter Editor (see Section&nbsp;<a href="#Promoters">3.4</a>).  This browser only shows DNA components of the appropriate type.  For example, when associating a species to its open reading frame, only DNA components of the open reading frame type are shown.
+A similar SBOL browser is available for associating DNA components to a model.  Namely, for a promoter, you can associate both a DNA component to the promoter as well as a terminator for the transcription initiated at this promoter.  For a species, you can associate both a DNA component for the open reading frame for the gene that produces this species as well as the ribosome binding site where translation begins for this gene.  This SBOL browser is opened by clicking on an Associate SBOL button within either the Species Editor (see Section&nbsp;<a href="#Species">3.2</a>) or Promoter Editor (see Section&nbsp;<a href="#Promoters">3.5</a>).  This browser only shows DNA components of the appropriate type.  For example, when associating a species to its open reading frame, only DNA components of the open reading frame type are shown.
 
 <div class="p"><!----></div>
 
@@ -1044,12 +1472,7 @@ within the reb2sac tool described in
 <A HREF="http://www.async.ece.utah.edu/publications">
 Kuwahara's PhD Dissertation (UofUtah 2007).
 </A>
-  An analysis view includes several tabs.  The Simulation Options tab, described in Section&nbsp;<a href="#simOptions">5.1</a>, selects the different simulation methods and parameters.  The Abstraction Options tab described in Section&nbsp;<a href="#absOptions">5.2</a> configures model abstraction.  The Schematic tab, described in Section&nbsp;<a href="#AnalysisSchematic">5.3</a>, allows the user to modify or sweep various parameters on the schematic.  It also provides an alternative way of visualizing simulation data upon the schematic.  The Parameters tab allows the user to modify or sweep model generation and global parameters, and it is described in Section&nbsp;<a href="#AnalysisParameters">5.4</a>.  The SBML elements tab described in Section&nbsp;<a href="#SBMLElements">5.5</a> allows the user to add or remove parts of the model during analysis.  The TSD Graph tab is a graph editor for some series data, and it is described in Section&nbsp;<a href="#TSDGraph">7</a>.  Finally, the Histogram tab is a graph editor for probability data, and it is described in Section&nbsp;<a href="#Histogram">8</a>.
-
-<div class="p"><!----></div>
-
-<center><img src="screenshots/analysisView.png" alt="screenshots/analysisView.png" />
-</center>
+  An analysis view includes several tabs.  The Simulation Options tab, described in Section&nbsp;<a href="#simOptions">5.1</a>, selects the different simulation methods and parameters.  The Abstraction Options tab described in Section&nbsp;<a href="#absOptions">5.2</a> configures model abstraction.  The Schematic tab, described in Section&nbsp;<a href="#AnalysisSchematic">5.3</a>, allows the user to modify or sweep various parameters on the schematic.  It also provides an alternative way of visualizing simulation data upon the schematic.  The Parameters tab allows the user to modify or sweep global parameters, and it is described in Section&nbsp;<a href="#AnalysisParameters">5.4</a>.  The SBML elements tab described in Section&nbsp;<a href="#SBMLElements">5.5</a> allows the user to add or remove parts of the model during analysis.  The TSD Graph tab is a graph editor for time series data, and it is described in Section&nbsp;<a href="#TSDGraph">7</a>.  Finally, the Histogram tab is a graph editor for probability data, and it is described in Section&nbsp;<a href="#Histogram">8</a>.
 
 <div class="p"><!----></div>
      <h3><a name="tth_sEc5.1">
@@ -1072,20 +1495,18 @@ The first set of radio buttons in this tab specifies the type of abstraction.
 <div class="p"><!----></div>
 </li>
 </ul>
-
-<div class="p"><!----></div>
 The second set of radio buttons specify the type of analysis.  
 
 <ul>
-<li> ODE: continuous-deterministic simulation.
+<li> ODE: perform continuous-deterministic simulation.
 <div class="p"><!----></div>
 </li>
 
-<li> Monte Carlo: discrete-stochastic simulation.
+<li> Monte Carlo: perform discrete-stochastic simulation.
 <div class="p"><!----></div>
 </li>
 
-<li> Markov: performs temporal probability distribution analysis on finite-state Markov chain models (this requires logical abstraction).
+<li> Markov: perform temporal probability distribution analysis on finite-state Markov chain models (this option requires logical abstraction).
 <div class="p"><!----></div>
 </li>
 
@@ -1097,15 +1518,22 @@ The second set of radio buttons specify the type of analysis.
 <div class="p"><!----></div>
 </li>
 
-<li> Browser outputs the model in xhtml format for display in a web browser.
+<li> Browser: outputs the model in xhtml format for display in a web browser.
 <div class="p"><!----></div>
 </li>
 
-<li> LPN: produces an LPN model and puts it in the list of project files (this requires logical abstraction).
+<li> LPN: produces an LPN model and puts it in the list of project files (this option requires logical abstraction).
 <div class="p"><!----></div>
 </li>
 </ul>
-Some results selecting Model, Network, and Browser are shown below.
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/analysisView.png" alt="screenshots/analysisView.png" />
+</center>
+
+<div class="p"><!----></div>
+Some results selecting Model, Network, and Browser options are shown below.
 
 <div class="p"><!----></div>
 
@@ -1126,7 +1554,7 @@ Some results selecting Model, Network, and Browser are shown below.
 The next group of options are for simulation-based analysis only.
 
 <ul>
-<li> Report concentrations: if checked, report concentrations rather than amounts (default=amounts).
+<li> Report concentrations: if checked, report concentrations rather than amounts (default=Amounts).
 <div class="p"><!----></div>
 </li>
 
@@ -1134,7 +1562,11 @@ The next group of options are for simulation-based analysis only.
 <div class="p"><!----></div>
 </li>
 
-<li> Append Simulation Runs: if checked, additional simulation runs are added to the existing set of simulation runs rather than first removing the previous runs (default=overwrite).  Note that the seed changes automatically when this gets checked, because otherwise the additional runs will likely be the same as the previous set.
+<li> Append Simulation Runs: if checked, additional simulation runs are added to the existing set of simulation runs rather than first removing the previous runs (default=Overwrite).  Note that the seed changes automatically when this gets checked, because otherwise the additional runs will be the same as the previous set.
+<div class="p"><!----></div>
+</li>
+
+<li> Generate Statistics: if checked, statistics such as average and standard deviation data are generated immediately after completing simulation.  Otherwise, they are only generated on demand (i.e., for example, when included in a TSD graph).
 <div class="p"><!----></div>
 </li>
 </ul> 
@@ -1152,15 +1584,17 @@ The next field specifies the simulation method you want to use based on the simu
 <tr><td align="center">ODE  </td><td align="center">rk4imp    </td><td>Implicit 4th order Runge-Kutta at Gaussian points </td></tr>
 <tr><td align="center">ODE  </td><td align="center">rk8pd     </td><td>Embedded Runge-Kutta Prince-Dormand (8,9) method </td></tr>
 <tr><td align="center">ODE  </td><td align="center">rkf45     </td><td>Embedded Runge-Kutta-Fehlberg (4, 5) method </td></tr>
-<tr><td align="center">Monte carlo </td><td align="center">Gillespie </td><td>Gillespie's SSA direct method </td></tr>
-<tr><td align="center">Monte carlo </td><td align="center">GillespieJava </td><td>Java implementation of Gillespie's SSA direct method </td></tr>
-<tr><td align="center">Monte carlo </td><td align="center">mpde </td><td>iSSA using marginal probability density evolution </td></tr>
-<tr><td align="center">Monte carlo </td><td align="center">mp </td><td>iSSA using the mean path </td></tr>
-<tr><td align="center">Monte carlo </td><td align="center">mp-adaptive </td><td>iSSA using the mean path and adaptive step size</td></tr>
-<tr><td align="center">Monte carlo </td><td align="center">mp-event </td><td>iSSA using the mean path and event count step size </td></tr>
-<tr><td align="center">Monte carlo </td><td align="center">emc-sim   </td><td>Use jump count as next reaction time </td></tr>
-<tr><td align="center">Monte carlo </td><td align="center">bunker    </td><td>Uses mean for next reaction time </td></tr>
-<tr><td align="center">Monte carlo </td><td align="center">nmc       </td><td>Uses normally distributed next reaction time </td></tr>
+<tr><td align="center">ODE  </td><td align="center">rkf45 (java) </td><td>Native Java Runge-Kutta-Fehlberg method </td></tr>
+<tr><td align="center">Monte Carlo </td><td align="center">gillespie </td><td>Gillespie's SSA-direct method </td></tr>
+<tr><td align="center">Monte Carlo </td><td align="center">SSA-CR </td><td>SSA composition and rejection method </td></tr>
+<tr><td align="center">Monte Carlo </td><td align="center">interactive </td><td>Interactive SSA-direct method </td></tr>
+<tr><td align="center">Monte Carlo </td><td align="center">emc-sim   </td><td>Uses jump count as next reaction time </td></tr>
+<tr><td align="center">Monte Carlo </td><td align="center">bunker    </td><td>Uses mean for next reaction time </td></tr>
+<tr><td align="center">Monte Carlo </td><td align="center">nmc       </td><td>Uses normally distributed next reaction time </td></tr>
+<tr><td align="center">Monte Carlo </td><td align="center">mpde </td><td>iSSA using marginal probability density evolution </td></tr>
+<tr><td align="center">Monte Carlo </td><td align="center">mp </td><td>iSSA using the mean path </td></tr>
+<tr><td align="center">Monte Carlo </td><td align="center">mp-adaptive </td><td>iSSA using the mean path and adaptive step size</td></tr>
+<tr><td align="center">Monte Carlo </td><td align="center">mp-event </td><td>iSSA using the mean path and event count step size </td></tr>
 <tr><td align="center">Markov </td><td align="center">steady-state </td><td>Steady-state Markov chain analysis </td></tr>
 <tr><td align="center">Markov </td><td align="center">transient </td><td>Transient Markov chain analysis </td></tr>
 <tr><td align="center">Markov </td><td align="center">reachability </td><td>Only perform reachability analysis </td></tr>
@@ -1200,13 +1634,6 @@ The table below specifies these:
 
 <div class="p"><!----></div>
 Abstraction is performed in three steps.  There is a preprocess step, which is a sequence of abstractions performed once on the initial model.  The main loop iterates through a group of abstractions until there is no change in the model.  Finally, there is a postprocess step, which is a sequence of abstractions performed once at the end.  Clicking on the Add button brings up a list of all the possible abstraction methods.  The selected abstraction method is added after the highlighted abstraction method in the list.  If no method is highlighted, it makes it the first abstraction in the list.
-
-<div class="p"><!----></div>
-
-<center><img src="screenshots/absOptions.png" alt="screenshots/absOptions.png" />
-</center>
-
-<div class="p"><!----></div>
 <tt>iBioSim</tt> supports many different types of abstraction.  However, there are a few critical ones that we list here:
 
 <ul>
@@ -1230,28 +1657,35 @@ Abstraction is performed in three steps.  There is a preprocess step, which is a
 <div class="p"><!----></div>
 </li>
 </ul>
-
-<div class="p"><!----></div>
 This tab also includes a few parameters for the abstraction methods.
 
 <ul>
-<li> Rapid Equilibrium Condition 1 specifies threshold T1 such that the rapid equilibrium condition fails when T1  &gt;  E0 / (S0 + k&#8722;1/k1).
+<li> Rapid Equilibrium Condition 1: specifies threshold T1 such that the rapid equilibrium condition fails when T1  &gt;  E0 / (S0 + k&#8722;1/k1).
 <div class="p"><!----></div>
 </li>
 
-<li> Rapid Equilibrium Condition 2 specifies threshold T2 such that the rapid equilibrium condition fails when T1  &gt;  k2 /k&#8722;1.
+<li> Rapid Equilibrium Condition 2: specifies threshold T2 such that the rapid equilibrium condition fails when T1  &gt;  k2 /k&#8722;1.
 <div class="p"><!----></div>
 </li>
 
-<li> The QSSA condition specifies threshold T used by the QSSA abstraction method where T  &gt;  E0 / (S0 + KM).
+<li> QSSA Condition: specifies threshold T used by the QSSA abstraction method where T  &gt;  E0 / (S0 + KM).
 <div class="p"><!----></div>
 </li>
 
-<li> The Max concentration threshold specifies the maximum number of molecules that a species can have initially and still be considered an operator site by the operator site reduction.
+<li> Max Concentration Threshold: specifies the maximum number of molecules that a species can have initially and still be considered an operator site by the operator site reduction.
+<div class="p"><!----></div>
+</li>
+
+<li> Grid Diffusion Stoichiometry Amplification: the number of molecules that are moved per diffusion reaction.
 <div class="p"><!----></div>
 </li>
 </ul>
 Note that these are not used by the common abstractions listed above.
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/absOptions.png" alt="screenshots/absOptions.png" />
+</center>
 
 <div class="p"><!----></div>
 
@@ -1439,7 +1873,7 @@ When selected, the basic FindBaseProb function is used.
 </li>
 
 <li> View Log button:<br />
-Opens a window contain the log file generated by GeneNet during the learn process for debugging purposes.
+Opens a window containing the log file generated by GeneNet during the learn process for debugging purposes.
 <div class="p"><!----></div>
 </li>
 </ul>
@@ -1715,14 +2149,37 @@ not data) file types, you will be prompted to give a desired pixel height and wi
 </a>Preferences</h2>
 
 <div class="p"><!----></div>
-User preferences can be set by selecting the <tt>Preferences</tt> option under the <tt>File</tt> menu on Linux and Windows or the <tt>iBioSim</tt> menu on MacOS.  As shown below, under the General Preferences tab, the
-user can decide whether they wish to use a File Dialog for selecting files.  If this is not checked, files are selected using the default Java File Chooser.  One can also choose whether or not they want to use plus/minus for expanding and collapsing file trees.  The Model Preferences tab allows users to select between Level 3 Version 1 of SBML or Level 2 Version 4.  One can also select whether they wish to see warnings about undeclared units in SBML and whether they wish to check units at all.  Finally, it allows users to change the default model generation parameter values.  The Analysis Preferences tab allows users to change the default values used by the analysis tool.  The simulation command in particular can be useful to select an alternative simulator.  We've used it to select a script that executes the simulation on a compute server.  Finally, the Learn Preferences tab allows users to change the default values used by the learn tool.
+User preferences can be set by selecting the <tt>Preferences</tt> option under the <tt>File</tt> menu on Linux and Windows or the <tt>iBioSim</tt> menu on MacOS.  As shown below, under the General Preferences tab, the user can decide whether they wish to:
+
+<ul>
+<li> Use a File Dialog for selecting files or the default Java File Chooser.
+<div class="p"><!----></div>
+</li>
+
+<li> Use plus/minus for expanding and collapsing file trees.
+<div class="p"><!----></div>
+</li>
+
+<li> Use the libsbml or the <tt>iBioSim</tt> flatten procedure.
+<div class="p"><!----></div>
+</li>
+
+<li> Use the infix expression parser in mathematical expressions.
+<div class="p"><!----></div>
+</li>
+</ul>
+The Restore Defaults button on this tab and the others restores the default preferences.  In the Schematics preference tab, the user can decide the shape, color (fill, stroke, and font), and opacity for each schematic object.  The Synthesis Preferences allows the user to select a default URI for new SBOL DNA components and a regular expression to validate generated SBOL DNA components.  The Model Preferences tab allows users to select whether they wish to see warnings about undeclared units in SBML and whether they wish to check units at all.  Finally, it allows users to change the default model generation parameter values.  The Analysis Preferences tab allows users to change the default values used by the analysis tool.  The simulation command in particular can be useful to select an alternative simulator.  We've used it to select a script that executes the simulation on a compute server.  Finally, the Learn Preferences tab allows users to change the default values used by the learn tool.
 
 <div class="p"><!----></div>
 
 <center>
 <table>
-<tr><td align="center"><img src="screenshots/GenPref.png" alt="screenshots/GenPref.png" /> </td><td align="center"><img src="screenshots/ModelPref.png" alt="screenshots/ModelPref.png" /> 
+<tr><td align="center"><img src="screenshots/GenPref.png" alt="screenshots/GenPref.png" /> </td><td align="center"><img src="screenshots/SchPref.png" alt="screenshots/SchPref.png" /> 
+</td></tr></table>
+ <br />
+
+<table>
+<tr><td align="center"><img src="screenshots/SynPref.png" alt="screenshots/SynPref.png" /> </td><td align="center"><img src="screenshots/ModelPref.png" alt="screenshots/ModelPref.png" />
 </td></tr></table>
  <br />
 
@@ -1795,11 +2252,11 @@ Math formulas appear in many model constructs.  These formulas are expressed as 
 <div class="p"><!----></div>
 </li>
 
-<li> Logical functions: and, or, xor, not.
+<li> Logical functions: and (&amp;&amp;), or (&#124;&#124;), xor, not (!).
 <div class="p"><!----></div>
 </li>
 
-<li> Relational functions: eq, neq, geq, gt, leq, and lt.
+<li> Relational functions: eq (==), neq (!=), geq (&#62;=), gt (&#62;), leq (&lt;=), and lt (&lt;).
 <div class="p"><!----></div>
 </li>
 
@@ -1839,6 +2296,9 @@ Math formulas appear in many model constructs.  These formulas are expressed as 
 </a>Continuous Stochastic Logic (CSL) Formulas</h2>
 
 <div class="p"><!----></div>
+CSL is a temporal logic which allows one to specify probabilistic temporal logic properties.  Analysis of a CSL property should return the probability that the property is true.  These properties can either be transient properties to ask if something happens within a certain amount of time, or steady-state properties to ask the probability of a given state as time goes to infinity.  The syntax for our CSL properties is given in Section&nbsp;<a href="#CSL">11</a>.
+
+<div class="p"><!----></div>
 To analyze a probabilistic models using <tt>iBioSim</tt>, it is necessary to specify one or more properties of
 the model.  <tt>iBioSim</tt> accepts property specifications using a subset of probabilistic temporal logic <em>Continuous Stochastic Logic</em> (CSL).  There are four types of CSL properties currently supported:
 
@@ -1859,7 +2319,6 @@ the model.  <tt>iBioSim</tt> accepts property specifications using a subset of p
 <div class="p"><!----></div>
 </li>
 </ul>
-The time bounds, &#968;, can be a relational operator ( &lt; ,  &#8804; , =,  &#8805; ,  &gt; ) followed by a constant real time value.  They can also be a time bound of the form [ l, u ], where l and u are constant real-time values.  The state formula, &#936;, should evaluate to a Boolean, and it can include:
 The time bound, &#968;, can either be a relational operator ( &lt; ,  &#8804; , =,  &#8805; ,  &gt; ) followed by a constant real time value or a time bound of the form [ l, u ] where l and u
 are constant real time values.  The state formula, &#936;, should evaluate to a Boolean, and it can include:
 
@@ -1946,5 +2405,5 @@ mail will be filtered by our spam filters:
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>H</a>,
-version 3.81.<br />On 12 May 2012, 10:13.</small>
+version 3.81.<br />On  2 Jan 2013, 19:25.</small>
 </html>
