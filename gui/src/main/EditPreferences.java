@@ -707,10 +707,10 @@ public class EditPreferences {
 		type.setSelectedItem(biosimrc.get("biosim.sim.type", ""));
 
 		if (type.getSelectedItem().equals("ODE")) {
-			choices = new String[] { "euler", "gear1", "gear2", "rk4imp", "rk8pd", "rkf45" };
+			choices = new String[] { "euler", "gear1", "gear2", "rk4imp", "rk8pd", "rkf45", "rkf45 (Java)" };
 		}
 		else if (type.getSelectedItem().equals("Monte Carlo")) {
-			choices = new String[] { "gillespie", "gillespieJava", "Gillespie SSA-CR (Java)", "Gillespie SSA-Direct (Java)", "mpde", "mean_path", "mean_path-bifurcation", "median_path", "median_path-bifurcation", "mean_path-adaptive", "mean_path-adaptive-bifurcation", "median_path-adaptive", "median_path-adaptive-bifurcation", "mean_path-event", "mean_path-event-bifurcation", "median_path-event", "median_path-event-bifurcation", "emc-sim", "bunker", "nmc"};
+			choices = new String[] { "gillespie", "interactive", "SSA-CR", "SSA-Direct", "iSSA", "emc-sim", "bunker", "nmc"};
 		}
 		else if (type.getSelectedItem().equals("Markov")) {
 			choices = new String[] { "steady-state-markov-chain-analysis", "transient-markov-chain-analysis", "reachability-analysis", "atacs",
@@ -771,6 +771,7 @@ public class EditPreferences {
 					sim.addItem("rk4imp");
 					sim.addItem("rk8pd");
 					sim.addItem("rkf45");
+					sim.addItem("rkf45 (Java)");
 					sim.setSelectedIndex(5);
 					sim.setSelectedItem(o);
 				}
@@ -778,22 +779,10 @@ public class EditPreferences {
 					Object o = sim.getSelectedItem();
 					sim.removeAllItems();
 					sim.addItem("gillespie");
-					sim.addItem("gillespieJava");
-					sim.addItem("Gillespie SSA-CR (Java)");
-					sim.addItem("Gillespie SSA-Direct (Java)");
-					sim.addItem("mpde");
-					sim.addItem("mean_path");
-					sim.addItem("mean_path-bifurcation");
-					sim.addItem("median_path");
-					sim.addItem("median_path-bifurcation");
-					sim.addItem("mean_path-adaptive");
-					sim.addItem("mean_path-adaptive-bifurcation");
-					sim.addItem("median_path-adaptive");
-					sim.addItem("median_path-adaptive-bifurcation");
-					sim.addItem("mean_path-event");
-					sim.addItem("mean_path-event-bifurcation");
-					sim.addItem("median_path-event");
-					sim.addItem("median_path-event-bifurcation");
+					sim.addItem("interactive");
+					sim.addItem("SSA-CR");
+					sim.addItem("SSA-Direct");
+					sim.addItem("iSSA");
 					sim.addItem("emc-sim");
 					sim.addItem("bunker");
 					sim.addItem("nmc");

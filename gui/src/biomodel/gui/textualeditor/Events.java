@@ -221,8 +221,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					else if (event.getAnnotationString().contains("Move Below"))
 						dynamicProcess.setSelectedItem("Move Below");
 					
-					if (event.isSetDelay()) {
-						ASTNode delay = event.getDelay().getMath();
+					if (event.isSetDelay() && event.getDelay().isSetMath()) {
+						ASTNode delay = event.getDelay().getMath();	
 						if ((delay.getType() == libsbml.AST_FUNCTION) && (delay.getName().equals("priority"))) {
 							eventDelay.setText(SBMLutilities.myFormulaToString(delay.getLeftChild()));
 							eventPriority.setText(SBMLutilities.myFormulaToString(delay.getRightChild()));

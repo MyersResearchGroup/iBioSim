@@ -554,9 +554,9 @@ public class Nary_Run implements ActionListener, Runnable {
 		String[] finalS = Utility.getList(finalStates, finalState);
 		Run runProgram = new Run(null);
 		naryCancel.addActionListener(runProgram);
-		runProgram.createNaryProperties(timeLimit, useInterval, printInterval, minTimeStep, timeStep, outDir, rndSeed, run, printer_id,
+		runProgram.createNaryProperties(timeLimit, useInterval, printInterval, minTimeStep, timeStep, outDir, rndSeed, run, 1, printer_id,
 				printer_track_quantity, getFilename, naryFrame, filename, monteCarlo, stopE, stopR, finalS, inhib, consLevel, getSpeciesProps,
-				conLevel, termCond, intSpecies, rap1, rap2, qss, con, counts);
+				conLevel, termCond, intSpecies, rap1, rap2, qss, con, counts, false, false, false, false, false);
 		if (monteCarlo.isSelected()) {
 			File[] files = new File(outDir).listFiles();
 			for (File f : files) {

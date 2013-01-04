@@ -11,6 +11,7 @@ import graph.Graph;
 import java.awt.AWTError;
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -63,6 +64,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.JPopupMenu;
@@ -236,6 +239,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	public boolean atacs, lema;
 
 	private String viewer;
+	
+	private boolean runGetNames;
 
 	private String[] BioModelIds = null;
 
@@ -1091,7 +1096,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else {
 			name = new JLabel("iBioSim", JLabel.CENTER);
-			version = new JLabel("Version 2.3", JLabel.CENTER);
+			version = new JLabel("Version 2.4", JLabel.CENTER);
 			developers = "Nathan Barker\nKevin Jones\nHiroyuki Kuwahara\n"
 					+ "Curtis Madsen\nChris Myers\nNam Nguyen\nTyler Patterson\nNicholas Roehner\nJason Stevens";
 		}
@@ -1850,8 +1855,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JCheckBox dummy = new JCheckBox();
 				dummy.setSelected(false);
 				JList empty = new JList();
-				run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1, new String[0], "tsd.printer", "amount", "false",
-						(directory + theFile).split(separator), "none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, null);
+				JRadioButton emptyButton = new JRadioButton();
+				run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1, 1, new String[0], "tsd.printer", "amount", "false",
+						(directory + theFile).split(separator), "none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, 
+						null, false, false, false, false, false);
 				log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + directory + out + ".dot " + directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
 				Process graph = exec.exec("reb2sac --target.encoding=dot --out=" + out + ".dot " + theFile, null, work);
@@ -2037,8 +2044,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JCheckBox dummy = new JCheckBox();
 				dummy.setSelected(false);
 				JList empty = new JList();
-				run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1, new String[0], "tsd.printer", "amount", "false",
-						(directory + theFile).split(separator), "none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, null);
+				JRadioButton emptyButton = new JRadioButton();
+				run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1, 1, new String[0], "tsd.printer", "amount", "false",
+						(directory + theFile).split(separator), "none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, 
+						null, false, false, false, false, false);
 				log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + directory + out + ".dot " + directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
 				Process graph = exec.exec("reb2sac --target.encoding=dot --out=" + out + ".dot " + theFile, null, work);
@@ -2134,9 +2143,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JCheckBox dummy = new JCheckBox();
 				JList empty = new JList();
 				dummy.setSelected(false);
-				run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1, new String[0], "tsd.printer", "amount", "false",
-						(directory + theFile).split(separator), "none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, null);
-
+				run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1, 1, new String[0], "tsd.printer", "amount", "false",
+						(directory + theFile).split(separator), "none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, 
+						null, false, false, false, false, false);
 				log.addText("Executing:\nreb2sac --target.encoding=xhtml --out=" + directory + out + ".xhtml " + directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
 				Process browse = exec.exec("reb2sac --target.encoding=xhtml --out=" + out + ".xhtml " + theFile, null, work);
@@ -3046,7 +3055,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				return;
 			}
 		}
-		JPanel BioModelsPanel = new JPanel(new BorderLayout());
+		final JPanel BioModelsPanel = new JPanel(new BorderLayout());
 		final JList ListOfBioModels = new JList();
 		sort(BioModelIds);
 		ListOfBioModels.setListData(BioModelIds);
@@ -3060,21 +3069,40 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		JButton GetNames = new JButton("Get Names");
 		JButton GetDescription = new JButton("Get Description");
 		JButton GetReference = new JButton("Get Reference");
-		GetNames.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				for (int i = 0; i < BioModelIds.length; i++) {
+		final JProgressBar progressBar = new JProgressBar(0,100);
+		progressBar.setStringPainted(true);
+		progressBar.setValue(0);
+		runGetNames = true;
+		final Thread getNamesThread = new Thread(new Runnable() {
+		    public void run() {
+		    	for (int i = 0; i < BioModelIds.length && runGetNames; i++) {
 					try {
-						BioModelIds[i] += " " + client.getModelNameById(BioModelIds[i]);
+						progressBar.setValue(100 * i / BioModelIds.length);
+						if (!BioModelIds[i].contains(" ")) {
+							BioModelIds[i] += " " + client.getModelNameById(BioModelIds[i]);
+							ListOfBioModels.setListData(BioModelIds);
+							ListOfBioModels.revalidate();
+							ListOfBioModels.repaint();
+						}
 					}
 					catch (BioModelsWSException e1) {
 						JOptionPane.showMessageDialog(frame, "Error Contacting BioModels Database", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 				ListOfBioModels.setListData(BioModelIds);
+				runGetNames = false;
+		    }
+		});
+		GetNames.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (runGetNames && !getNamesThread.isAlive()) {
+					getNamesThread.start();
+				}
 			}
 		});
 		GetDescription.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if (ListOfBioModels.isSelectionEmpty()) return;
 				String SelectedModel = ((String) ListOfBioModels.getSelectedValue()).split(" ")[0];
 				String command = "";
 				if (System.getProperty("os.name").contentEquals("Linux")) {
@@ -3098,6 +3126,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		});
 		GetReference.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if (ListOfBioModels.isSelectionEmpty()) return;
 				String SelectedModel = ((String) ListOfBioModels.getSelectedValue()).split(" ")[0];
 				try {
 					String Pub = (client.getSimpleModelById(SelectedModel)).getPublicationId();
@@ -3126,12 +3155,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		GetButtons.add(GetNames);
 		GetButtons.add(GetDescription);
 		GetButtons.add(GetReference);
+		GetButtons.add(progressBar);
 		BioModelsPanel.add(TextBioModels, "North");
 		BioModelsPanel.add(ScrollBioModels, "Center");
 		BioModelsPanel.add(GetButtons, "South");
 		Object[] options = { "OK", "Cancel" };
 		int value = JOptionPane.showOptionDialog(frame, BioModelsPanel, "List of BioModels", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 				null, options, options[0]);
+		runGetNames = false;
 		if (value == JOptionPane.YES_OPTION && ListOfBioModels.getSelectedValue() != null) {
 			String ModelId = ((String) ListOfBioModels.getSelectedValue()).split(" ")[0];
 			String filename = ModelId + ".xml";
@@ -3766,7 +3797,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				null);
 		simTab.addTab("Simulation Options", reb2sac);
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
-		simTab.addTab("Abstraction Options", reb2sac.getAdvanced());
+		simTab.addTab("Advanced Options", reb2sac.getAdvanced());
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 		String gcmFile = sbml1[sbml1.length - 1].replace(".xml", ".gcm");
 		ModelEditor gcm = new ModelEditor(root + separator, gcmFile, this, log, true, simName.trim(), root
@@ -4963,7 +4994,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 												//}
 											}
 											else {
-												t.addTab("Abstraction Options", c);
+												t.addTab("Advanced Options", c);
 												t.getComponentAt(t.getComponents().length - 1).setName("");
 											}
 										}
@@ -7050,10 +7081,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		simTab.addTab("Simulation Options", reb2sac);
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 		if (fileType == 2) {
-			simTab.addTab("Abstraction Options", new AbstPane(root, sbml1[sbml1.length - 1], log, this, false, false));
+			simTab.addTab("Advanced Options", new AbstPane(root, sbml1[sbml1.length - 1], log, this, false, false));
 		}
 		else {
-			simTab.addTab("Abstraction Options", reb2sac.getAdvanced());
+			simTab.addTab("Advanced Options", reb2sac.getAdvanced());
 		}
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 		if (sbml1[sbml1.length - 1].contains(".gcm")) {
@@ -7656,10 +7687,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						simTab.addTab("Simulation Options", reb2sac);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 						if (gcmFile.contains(".lpn")) {
-							simTab.addTab("Abstraction Options", lhpnAbstraction);
+							simTab.addTab("Advanced Options", lhpnAbstraction);
 						}
 						else {
-							simTab.addTab("Abstraction Options", reb2sac.getAdvanced());
+							simTab.addTab("Advanced Options", reb2sac.getAdvanced());
 						}
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 						// simTab.addTab("Advanced Options",
@@ -8079,7 +8110,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			AnalysisView reb2sac = new AnalysisView(sbmlLoadFile, sbmlFile, root, this, newSim, log, simTab, propertiesFile, gcmFile, null, null);
 			simTab.addTab("Simulation Options", reb2sac);
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
-			simTab.addTab("Abstraction Options", reb2sac.getAdvanced());
+			simTab.addTab("Advanced Options", reb2sac.getAdvanced());
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 			// simTab.addTab("Advanced Options", reb2sac.getProperties());
 			// simTab.getComponentAt(simTab.getComponents().length -

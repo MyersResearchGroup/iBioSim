@@ -109,10 +109,16 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
 	private JTextField rapid1, rapid2, qssa, maxCon, diffStoichAmp; // advanced options
 
+	private JComboBox bifurcation;
+	
+	private JRadioButton mpde, meanPath, medianPath;
+	
+	private JRadioButton adaptive, nonAdaptive;
 	/*
 	 * advanced labels
 	 */
-	private JLabel rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel;
+	private JLabel rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel, 
+		iSSATypeLabel, iSSAAdaptiveLabel, bifurcationLabel;
 
 	private String sbmlFile, root; // sbml file and root directory
 
@@ -405,7 +411,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		editPostAbs.addActionListener(this);
 
 		// Creates some abstraction options
-		JPanel advancedGrid = new JPanel(new GridLayout(5, 4));
+		JPanel advancedGrid = new JPanel(new GridLayout(8, 4));
 		advanced = new JPanel(new BorderLayout());
 		
 		rapidLabel1 = new JLabel("Rapid Equilibrium Condition 1:");
@@ -418,6 +424,43 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		maxCon = new JTextField(biosimrc.get("biosim.sim.concentration", ""), 15);
 		diffStoichAmp = new JTextField("1.0", 15);
 		diffStoichAmpLabel = new JLabel("Grid Diffusion Stoichiometry Amplification:");
+		String [] options = { "1", "2" };
+
+		mpde = new JRadioButton();
+		mpde.setText("MPDE");
+		mpde.addActionListener(this);
+		meanPath = new JRadioButton();
+		meanPath.setText("Mean Path");
+		meanPath.addActionListener(this);
+		medianPath = new JRadioButton();
+		medianPath.setText("Median Path");
+		medianPath.addActionListener(this);
+		ButtonGroup iSSATypeButtons = new ButtonGroup();
+		iSSATypeButtons.add(mpde);
+		iSSATypeButtons.add(meanPath);
+		iSSATypeButtons.add(medianPath);
+		medianPath.setSelected(true);
+		JPanel iSSAType = new JPanel(new GridLayout(1,3));
+		iSSAType.add(mpde);
+		iSSAType.add(meanPath);
+		iSSAType.add(medianPath);
+		iSSATypeLabel = new JLabel("iSSA Type:");
+
+		adaptive = new JRadioButton();
+		adaptive.setText("Adaptive");
+		nonAdaptive = new JRadioButton();
+		nonAdaptive.setText("Non-adaptive");
+		ButtonGroup iSSAAdaptiveButtons = new ButtonGroup();
+		iSSAAdaptiveButtons.add(adaptive);
+		iSSAAdaptiveButtons.add(nonAdaptive);
+		adaptive.setSelected(true);
+		JPanel iSSAAdaptive = new JPanel(new GridLayout(1,2));
+		iSSAAdaptive.add(adaptive);
+		iSSAAdaptive.add(nonAdaptive);
+		iSSAAdaptiveLabel = new JLabel("iSSA Adaptive:");
+		
+		bifurcation = new JComboBox(options);
+		bifurcationLabel = new JLabel("Number of Paths to Follow with iSSA:");
 		
 		maxConLabel.setEnabled(false);
 		maxCon.setEnabled(false);
@@ -429,6 +472,15 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		rapid2.setEnabled(false);
 		diffStoichAmp.setEnabled(false);
 		diffStoichAmpLabel.setEnabled(false);
+		mpde.setEnabled(false);
+		meanPath.setEnabled(false);
+		medianPath.setEnabled(false);
+		iSSATypeLabel.setEnabled(false);
+		adaptive.setEnabled(false);
+		nonAdaptive.setEnabled(false);
+		iSSAAdaptiveLabel.setEnabled(false);
+		bifurcation.setEnabled(false);
+		bifurcationLabel.setEnabled(false);
 		
 		advancedGrid.add(rapidLabel1);
 		advancedGrid.add(rapid1);
@@ -440,6 +492,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		advancedGrid.add(maxCon);
 		advancedGrid.add(diffStoichAmpLabel);
 		advancedGrid.add(diffStoichAmp);
+		advancedGrid.add(iSSATypeLabel);
+		advancedGrid.add(iSSAType);
+		advancedGrid.add(iSSAAdaptiveLabel);
+		advancedGrid.add(iSSAAdaptive);
+		advancedGrid.add(bifurcationLabel);
+		advancedGrid.add(bifurcation);
 		JPanel advAbs = new JPanel(new BorderLayout());
 		advAbs.add(absHolder, "Center");
 		advAbs.add(advancedGrid, "South");
@@ -513,7 +571,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		odeMonteAndMarkovPanel.add(sbml);
 		odeMonteAndMarkovPanel.add(dot);
 		odeMonteAndMarkovPanel.add(xhtml);
-		odeMonteAndMarkovPanel.add(lhpn);
+		//odeMonteAndMarkovPanel.add(lhpn);
 		sbml.addActionListener(this);
 		dot.addActionListener(this);
 		xhtml.addActionListener(this);
@@ -649,7 +707,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, sbml, seed, seedLabel, runs, runsLabel,
 					minStepLabel, minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
 					interval, simulators, simulatorsLabel, explanation, description, none, rapid1, rapid2, qssa,
-					maxCon, diffStoichAmp, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel, fileStem, fileStemLabel, preAbs, loopAbs,
+					maxCon, diffStoichAmp, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel, 
+					fileStem, fileStemLabel, preAbs, loopAbs,
 					postAbs, preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs,
 					rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn);
 			if (modelFile.contains(".lpn") || modelFile.contains(".s") || modelFile.contains(".inst")) {
@@ -681,7 +740,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, sbml, seed, seedLabel, runs, runsLabel,
 					minStepLabel, minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
 					interval, simulators, simulatorsLabel, explanation, description, none, rapid1, rapid2, qssa,
-					maxCon, diffStoichAmp, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel, fileStem, fileStemLabel, preAbs, loopAbs,
+					maxCon, diffStoichAmp, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel, 
+					fileStem, fileStemLabel, preAbs, loopAbs,
 					postAbs, preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs,
 					rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn);
 			if (modelFile.contains(".lpn")) {
@@ -746,6 +806,15 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			genRuns.setEnabled(true);
 			genStats.setEnabled(true);
 			report.setEnabled(true);
+			mpde.setEnabled(false);
+			meanPath.setEnabled(false);
+			medianPath.setEnabled(false);
+			iSSATypeLabel.setEnabled(false);
+			adaptive.setEnabled(false);
+			nonAdaptive.setEnabled(false);
+			iSSAAdaptiveLabel.setEnabled(false);
+			bifurcation.setEnabled(false);
+			bifurcationLabel.setEnabled(false);
 		}
 		// if the monteCarlo Radio Button is selected
 		else if (e.getSource() == monteCarlo) {
@@ -771,6 +840,15 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					intervalLabel.setEnabled(true);
 				}
 			}
+			mpde.setEnabled(false);
+			meanPath.setEnabled(false);
+			medianPath.setEnabled(false);
+			iSSATypeLabel.setEnabled(false);
+			adaptive.setEnabled(false);
+			nonAdaptive.setEnabled(false);
+			iSSAAdaptiveLabel.setEnabled(false);
+			bifurcation.setEnabled(false);
+			bifurcationLabel.setEnabled(false);
 		}
 		// if the markov Radio Button is selected
 		else if (e.getSource() == markov) {
@@ -782,6 +860,15 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			genRuns.setEnabled(false);
 			genStats.setEnabled(false);
 			report.setEnabled(false);
+			mpde.setEnabled(false);
+			meanPath.setEnabled(false);
+			medianPath.setEnabled(false);
+			iSSATypeLabel.setEnabled(false);
+			adaptive.setEnabled(false);
+			nonAdaptive.setEnabled(false);
+			iSSAAdaptiveLabel.setEnabled(false);
+			bifurcation.setEnabled(false);
+			bifurcationLabel.setEnabled(false);
 		}
 		// if the sbml Radio Button is selected
 		else if (e.getSource() == sbml) {
@@ -794,6 +881,15 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			genStats.setEnabled(false);
 			report.setEnabled(false);
 			absErr.setEnabled(false);
+			mpde.setEnabled(false);
+			meanPath.setEnabled(false);
+			medianPath.setEnabled(false);
+			iSSATypeLabel.setEnabled(false);
+			adaptive.setEnabled(false);
+			nonAdaptive.setEnabled(false);
+			iSSAAdaptiveLabel.setEnabled(false);
+			bifurcation.setEnabled(false);
+			bifurcationLabel.setEnabled(false);
 		}
 		// if the dot Radio Button is selected
 		else if (e.getSource() == dot) {
@@ -806,6 +902,15 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			genStats.setEnabled(false);
 			report.setEnabled(false);
 			absErr.setEnabled(false);
+			mpde.setEnabled(false);
+			meanPath.setEnabled(false);
+			medianPath.setEnabled(false);
+			iSSATypeLabel.setEnabled(false);
+			adaptive.setEnabled(false);
+			nonAdaptive.setEnabled(false);
+			iSSAAdaptiveLabel.setEnabled(false);
+			bifurcation.setEnabled(false);
+			bifurcationLabel.setEnabled(false);
 		}
 		// if the xhtml Radio Button is selected
 		else if (e.getSource() == xhtml) {
@@ -818,6 +923,15 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			genStats.setEnabled(false);
 			report.setEnabled(false);
 			absErr.setEnabled(false);
+			mpde.setEnabled(false);
+			meanPath.setEnabled(false);
+			medianPath.setEnabled(false);
+			iSSATypeLabel.setEnabled(false);
+			adaptive.setEnabled(false);
+			nonAdaptive.setEnabled(false);
+			iSSAAdaptiveLabel.setEnabled(false);
+			bifurcation.setEnabled(false);
+			bifurcationLabel.setEnabled(false);
 		}
 		// if the lhpn Radio Button is selected
 		else if (e.getSource() == lhpn) {
@@ -830,6 +944,15 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			genStats.setEnabled(false);
 			report.setEnabled(false);
 			absErr.setEnabled(false);
+			mpde.setEnabled(false);
+			meanPath.setEnabled(false);
+			medianPath.setEnabled(false);
+			iSSATypeLabel.setEnabled(false);
+			adaptive.setEnabled(false);
+			nonAdaptive.setEnabled(false);
+			iSSAAdaptiveLabel.setEnabled(false);
+			bifurcation.setEnabled(false);
+			bifurcationLabel.setEnabled(false);
 		}
 		// if the add interesting species button is clicked
 		// else if (e.getSource() == addIntSpecies) {
@@ -864,9 +987,39 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		 * terminations.setListData(termConditions); }
 		 */
 		// if the simulators combo box is selected
+		else if (e.getSource() == mpde) {
+			adaptive.setEnabled(false);
+			nonAdaptive.setEnabled(false);
+			iSSAAdaptiveLabel.setEnabled(false);
+			bifurcation.setEnabled(false);
+			bifurcationLabel.setEnabled(false);
+		}
+		else if (e.getSource() == meanPath) {
+			adaptive.setEnabled(true);
+			nonAdaptive.setEnabled(true);
+			iSSAAdaptiveLabel.setEnabled(true);
+			bifurcation.setEnabled(true);
+			bifurcationLabel.setEnabled(true);
+		}
+		else if (e.getSource() == medianPath) {
+			adaptive.setEnabled(true);
+			nonAdaptive.setEnabled(true);
+			iSSAAdaptiveLabel.setEnabled(true);
+			bifurcation.setEnabled(true);
+			bifurcationLabel.setEnabled(true);
+		}
 		else if (e.getSource() == simulators) {
 			if (simulators.getItemCount() == 0) {
 				description.setText("");
+				mpde.setEnabled(false);
+				meanPath.setEnabled(false);
+				medianPath.setEnabled(false);
+				iSSATypeLabel.setEnabled(false);
+				adaptive.setEnabled(false);
+				nonAdaptive.setEnabled(false);
+				iSSAAdaptiveLabel.setEnabled(false);
+				bifurcation.setEnabled(false);
+				bifurcationLabel.setEnabled(false);
 			}
 			else if (simulators.getSelectedItem().equals("euler")) {
 				minStep.setEnabled(true);
@@ -876,6 +1029,15 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				absErr.setEnabled(false);
 				errorLabel.setEnabled(false);
 				description.setText("Euler method");
+				mpde.setEnabled(false);
+				meanPath.setEnabled(false);
+				medianPath.setEnabled(false);
+				iSSATypeLabel.setEnabled(false);
+				adaptive.setEnabled(false);
+				nonAdaptive.setEnabled(false);
+				iSSAAdaptiveLabel.setEnabled(false);
+				bifurcation.setEnabled(false);
+				bifurcationLabel.setEnabled(false);
 			}
 			else if (simulators.getSelectedItem().equals("gear1")) {
 				minStep.setEnabled(true);
@@ -885,6 +1047,15 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				absErr.setEnabled(true);
 				errorLabel.setEnabled(true);
 				description.setText("Gear method, M=1");
+				mpde.setEnabled(false);
+				meanPath.setEnabled(false);
+				medianPath.setEnabled(false);
+				iSSATypeLabel.setEnabled(false);
+				adaptive.setEnabled(false);
+				nonAdaptive.setEnabled(false);
+				iSSAAdaptiveLabel.setEnabled(false);
+				bifurcation.setEnabled(false);
+				bifurcationLabel.setEnabled(false);
 			}
 			else if (simulators.getSelectedItem().equals("gear2")) {
 				minStep.setEnabled(true);
@@ -894,6 +1065,15 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				absErr.setEnabled(true);
 				errorLabel.setEnabled(true);
 				description.setText("Gear method, M=2");
+				mpde.setEnabled(false);
+				meanPath.setEnabled(false);
+				medianPath.setEnabled(false);
+				iSSATypeLabel.setEnabled(false);
+				adaptive.setEnabled(false);
+				nonAdaptive.setEnabled(false);
+				iSSAAdaptiveLabel.setEnabled(false);
+				bifurcation.setEnabled(false);
+				bifurcationLabel.setEnabled(false);
 			}
 			else if (simulators.getSelectedItem().equals("rk4imp")) {
 				minStep.setEnabled(true);
@@ -903,6 +1083,15 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				absErr.setEnabled(true);
 				errorLabel.setEnabled(true);
 				description.setText("Implicit 4th order Runge-Kutta at Gaussian points");
+				mpde.setEnabled(false);
+				meanPath.setEnabled(false);
+				medianPath.setEnabled(false);
+				iSSATypeLabel.setEnabled(false);
+				adaptive.setEnabled(false);
+				nonAdaptive.setEnabled(false);
+				iSSAAdaptiveLabel.setEnabled(false);
+				bifurcation.setEnabled(false);
+				bifurcationLabel.setEnabled(false);
 			}
 			else if (simulators.getSelectedItem().equals("rk8pd")) {
 				minStep.setEnabled(true);
@@ -912,6 +1101,15 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				absErr.setEnabled(true);
 				errorLabel.setEnabled(true);
 				description.setText("Embedded Runge-Kutta Prince-Dormand (8,9) method");
+				mpde.setEnabled(false);
+				meanPath.setEnabled(false);
+				medianPath.setEnabled(false);
+				iSSATypeLabel.setEnabled(false);
+				adaptive.setEnabled(false);
+				nonAdaptive.setEnabled(false);
+				iSSAAdaptiveLabel.setEnabled(false);
+				bifurcation.setEnabled(false);
+				bifurcationLabel.setEnabled(false);
 			}
 			else if (simulators.getSelectedItem().equals("rkf45")) {
 				minStep.setEnabled(true);
@@ -921,159 +1119,131 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				absErr.setEnabled(true);
 				errorLabel.setEnabled(true);
 				description.setText("Embedded Runge-Kutta-Fehlberg (4, 5) method");
+				mpde.setEnabled(false);
+				meanPath.setEnabled(false);
+				medianPath.setEnabled(false);
+				iSSATypeLabel.setEnabled(false);
+				adaptive.setEnabled(false);
+				nonAdaptive.setEnabled(false);
+				iSSAAdaptiveLabel.setEnabled(false);
+				bifurcation.setEnabled(false);
+				bifurcationLabel.setEnabled(false);
 			}
-			else if (((String) simulators.getSelectedItem()).equals("Gillespie SSA-CR (Java)")) {
-				description.setText("Gillespie SSA Composition and Rejection Method");
+			else if (((String) simulators.getSelectedItem()).equals("SSA-CR")) {
+				description.setText("SSA Composition and Rejection Method");
 				minStep.setEnabled(true);
 				minStepLabel.setEnabled(true);
 				step.setEnabled(true);
 				stepLabel.setEnabled(true);
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
+				mpde.setEnabled(false);
+				meanPath.setEnabled(false);
+				medianPath.setEnabled(false);
+				iSSATypeLabel.setEnabled(false);
+				adaptive.setEnabled(false);
+				nonAdaptive.setEnabled(false);
+				iSSAAdaptiveLabel.setEnabled(false);
+				bifurcation.setEnabled(false);
+				bifurcationLabel.setEnabled(false);
 			}
-			else if (((String) simulators.getSelectedItem()).equals("Gillespie SSA-Direct (Java)")) {
-				description.setText("Gillespie SSA Direct Method");
+			else if (((String) simulators.getSelectedItem()).equals("SSA-Direct")) {
+				description.setText("SSA Direct Method");
 				minStep.setEnabled(true);
 				minStepLabel.setEnabled(true);
 				step.setEnabled(true);
 				stepLabel.setEnabled(true);
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
+				mpde.setEnabled(false);
+				meanPath.setEnabled(false);
+				medianPath.setEnabled(false);
+				iSSATypeLabel.setEnabled(false);
+				adaptive.setEnabled(false);
+				nonAdaptive.setEnabled(false);
+				iSSAAdaptiveLabel.setEnabled(false);
+				bifurcation.setEnabled(false);
+				bifurcationLabel.setEnabled(false);
 			}
-			else if (((String) simulators.getSelectedItem()).equals("Runge-Kutta-Fehlberg (Java)")) {
-				description.setText("Runge-Kutta-Fehlberg Method");
+			else if (((String) simulators.getSelectedItem()).equals("rkf45 (Java)")) {
+				description.setText("Runge-Kutta-Fehlberg Method (Java)");
 				minStep.setEnabled(true);
 				minStepLabel.setEnabled(true);
 				step.setEnabled(true);
 				stepLabel.setEnabled(true);
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
+				mpde.setEnabled(false);
+				meanPath.setEnabled(false);
+				medianPath.setEnabled(false);
+				iSSATypeLabel.setEnabled(false);
+				adaptive.setEnabled(false);
+				nonAdaptive.setEnabled(false);
+				iSSAAdaptiveLabel.setEnabled(false);
+				bifurcation.setEnabled(false);
+				bifurcationLabel.setEnabled(false);
 			}
 			else if (((String) simulators.getSelectedItem()).contains("gillespie")) {
-				description.setText("Gillespie's Direct method");
+				description.setText("SSA-Direct Method");
 				minStep.setEnabled(true);
 				minStepLabel.setEnabled(true);
 				step.setEnabled(true);
 				stepLabel.setEnabled(true);
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
+				mpde.setEnabled(false);
+				meanPath.setEnabled(false);
+				medianPath.setEnabled(false);
+				iSSATypeLabel.setEnabled(false);
+				adaptive.setEnabled(false);
+				nonAdaptive.setEnabled(false);
+				iSSAAdaptiveLabel.setEnabled(false);
+				bifurcation.setEnabled(false);
+				bifurcationLabel.setEnabled(false);
 			}
-			else if (simulators.getSelectedItem().equals("mpde")) {
-				description.setText("iSSA (Marginal Probability Density Evolution)");
+			else if (((String) simulators.getSelectedItem()).contains("interactive")) {
+				description.setText("Interactive SSA-Direct Method");
 				minStep.setEnabled(true);
 				minStepLabel.setEnabled(true);
 				step.setEnabled(true);
 				stepLabel.setEnabled(true);
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
+				mpde.setEnabled(false);
+				meanPath.setEnabled(false);
+				medianPath.setEnabled(false);
+				iSSATypeLabel.setEnabled(false);
+				adaptive.setEnabled(false);
+				nonAdaptive.setEnabled(false);
+				iSSAAdaptiveLabel.setEnabled(false);
+				bifurcation.setEnabled(false);
+				bifurcationLabel.setEnabled(false);
 			}
-			else if (simulators.getSelectedItem().equals("mean_path")) {
-				description.setText("iSSA (Mean Path)");
+			else if (simulators.getSelectedItem().equals("iSSA")) {
+				description.setText("incremental SSA");
 				minStep.setEnabled(true);
 				minStepLabel.setEnabled(true);
 				step.setEnabled(true);
 				stepLabel.setEnabled(true);
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
-			}
-			else if (simulators.getSelectedItem().equals("median_path")) {
-				description.setText("iSSA (Median Path)");
-				minStep.setEnabled(true);
-				minStepLabel.setEnabled(true);
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
-				errorLabel.setEnabled(false);
-				absErr.setEnabled(false);
-			}
-			else if (simulators.getSelectedItem().equals("mean_path-bifurcation")) {
-				description.setText("iSSA (Mean Path) with Bifurcation Detection");
-				minStep.setEnabled(true);
-				minStepLabel.setEnabled(true);
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
-				errorLabel.setEnabled(false);
-				absErr.setEnabled(false);
-			}
-			else if (simulators.getSelectedItem().equals("median_path-bifurcation")) {
-				description.setText("iSSA (Median Path) with Bifurcation Detection");
-				minStep.setEnabled(true);
-				minStepLabel.setEnabled(true);
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
-				errorLabel.setEnabled(false);
-				absErr.setEnabled(false);
-			}
-			else if (simulators.getSelectedItem().equals("mean_path-adaptive")) {
-				description.setText("iSSA (Mean Path Adaptive)");
-				minStep.setEnabled(true);
-				minStepLabel.setEnabled(true);
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
-				errorLabel.setEnabled(false);
-				absErr.setEnabled(false);
-			}
-			else if (simulators.getSelectedItem().equals("median_path-adaptive")) {
-				description.setText("iSSA (Median Path Adaptive)");
-				minStep.setEnabled(true);
-				minStepLabel.setEnabled(true);
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
-				errorLabel.setEnabled(false);
-				absErr.setEnabled(false);
-			}
-			else if (simulators.getSelectedItem().equals("mean_path-adaptive-bifurcation")) {
-				description.setText("iSSA (Mean Path Adaptive) with Bifurcation Detection");
-				minStep.setEnabled(true);
-				minStepLabel.setEnabled(true);
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
-				errorLabel.setEnabled(false);
-				absErr.setEnabled(false);
-			}
-			else if (simulators.getSelectedItem().equals("median_path-adaptive-bifurcation")) {
-				description.setText("iSSA (Median Path Adaptive) with Bifurcation Detection");
-				minStep.setEnabled(true);
-				minStepLabel.setEnabled(true);
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
-				errorLabel.setEnabled(false);
-				absErr.setEnabled(false);
-			}
-			else if (simulators.getSelectedItem().equals("mean_path-event")) {
-				description.setText("iSSA (Mean Path Event)");
-				minStep.setEnabled(true);
-				minStepLabel.setEnabled(true);
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
-				errorLabel.setEnabled(false);
-				absErr.setEnabled(false);
-			}
-			else if (simulators.getSelectedItem().equals("median_path-event")) {
-				description.setText("iSSA (Median Path Event)");
-				minStep.setEnabled(true);
-				minStepLabel.setEnabled(true);
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
-				errorLabel.setEnabled(false);
-				absErr.setEnabled(false);
-			}
-			else if (simulators.getSelectedItem().equals("mean_path-event-bifurcation")) {
-				description.setText("iSSA (Mean Path Event) with Bifurcation Detection");
-				minStep.setEnabled(true);
-				minStepLabel.setEnabled(true);
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
-				errorLabel.setEnabled(false);
-				absErr.setEnabled(false);
-			}
-			else if (simulators.getSelectedItem().equals("median_path-event-bifurcation")) {
-				description.setText("iSSA (Median Path Event) with Bifurcation Detection");
-				minStep.setEnabled(true);
-				minStepLabel.setEnabled(true);
-				step.setEnabled(true);
-				stepLabel.setEnabled(true);
-				errorLabel.setEnabled(false);
-				absErr.setEnabled(false);
+				mpde.setEnabled(true);
+				meanPath.setEnabled(true);
+				medianPath.setEnabled(true);
+				iSSATypeLabel.setEnabled(true);
+				if (mpde.isSelected()) {
+					adaptive.setEnabled(false);
+					nonAdaptive.setEnabled(false);
+					iSSAAdaptiveLabel.setEnabled(false);
+					bifurcation.setEnabled(false);
+					bifurcationLabel.setEnabled(false);
+				} else {
+					adaptive.setEnabled(true);
+					nonAdaptive.setEnabled(true);
+					iSSAAdaptiveLabel.setEnabled(true);
+					bifurcation.setEnabled(true);
+					bifurcationLabel.setEnabled(true);
+				}
 			}
 			else if (simulators.getSelectedItem().equals("emc-sim")) {
 				description.setText("Monte Carlo sim with jump count as" + " independent variable");
@@ -1083,6 +1253,15 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				stepLabel.setEnabled(true);
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
+				mpde.setEnabled(false);
+				meanPath.setEnabled(false);
+				medianPath.setEnabled(false);
+				iSSATypeLabel.setEnabled(false);
+				adaptive.setEnabled(false);
+				nonAdaptive.setEnabled(false);
+				iSSAAdaptiveLabel.setEnabled(false);
+				bifurcation.setEnabled(false);
+				bifurcationLabel.setEnabled(false);
 			}
 			else if (simulators.getSelectedItem().equals("bunker")) {
 				description.setText("Bunker's method");
@@ -1092,6 +1271,15 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				stepLabel.setEnabled(true);
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
+				mpde.setEnabled(false);
+				meanPath.setEnabled(false);
+				medianPath.setEnabled(false);
+				iSSATypeLabel.setEnabled(false);
+				adaptive.setEnabled(false);
+				nonAdaptive.setEnabled(false);
+				iSSAAdaptiveLabel.setEnabled(false);
+				bifurcation.setEnabled(false);
+				bifurcationLabel.setEnabled(false);
 			}
 			else if (simulators.getSelectedItem().equals("nmc")) {
 				description.setText("Monte Carlo simulation with normally" + " distributed waiting time");
@@ -1101,6 +1289,15 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				stepLabel.setEnabled(true);
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
+				mpde.setEnabled(false);
+				meanPath.setEnabled(false);
+				medianPath.setEnabled(false);
+				iSSATypeLabel.setEnabled(false);
+				adaptive.setEnabled(false);
+				nonAdaptive.setEnabled(false);
+				iSSAAdaptiveLabel.setEnabled(false);
+				bifurcation.setEnabled(false);
+				bifurcationLabel.setEnabled(false);
 			}
 			else if (simulators.getSelectedItem().equals("ctmc-transient")) {
 				description.setText("Transient Distribution Analysis");
@@ -1114,6 +1311,15 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				limit.setEnabled(false);
 				intervalLabel.setEnabled(false);
 				interval.setEnabled(false);
+				mpde.setEnabled(false);
+				meanPath.setEnabled(false);
+				medianPath.setEnabled(false);
+				iSSATypeLabel.setEnabled(false);
+				adaptive.setEnabled(false);
+				nonAdaptive.setEnabled(false);
+				iSSAAdaptiveLabel.setEnabled(false);
+				bifurcation.setEnabled(false);
+				bifurcationLabel.setEnabled(false);
 			}
 			else if (simulators.getSelectedItem().equals("atacs")) {
 				description.setText("ATACS Analysis Tool");
@@ -1127,6 +1333,15 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				limit.setEnabled(false);
 				intervalLabel.setEnabled(false);
 				interval.setEnabled(false);
+				mpde.setEnabled(false);
+				meanPath.setEnabled(false);
+				medianPath.setEnabled(false);
+				iSSATypeLabel.setEnabled(false);
+				adaptive.setEnabled(false);
+				nonAdaptive.setEnabled(false);
+				iSSAAdaptiveLabel.setEnabled(false);
+				bifurcation.setEnabled(false);
+				bifurcationLabel.setEnabled(false);
 			}
 			else if (simulators.getSelectedItem().equals("reachability-analysis")) {
 				description.setText("State Space Exploration");
@@ -1140,6 +1355,15 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				limit.setEnabled(false);
 				intervalLabel.setEnabled(false);
 				interval.setEnabled(false);
+				mpde.setEnabled(false);
+				meanPath.setEnabled(false);
+				medianPath.setEnabled(false);
+				iSSATypeLabel.setEnabled(false);
+				adaptive.setEnabled(false);
+				nonAdaptive.setEnabled(false);
+				iSSAAdaptiveLabel.setEnabled(false);
+				bifurcation.setEnabled(false);
+				bifurcationLabel.setEnabled(false);
 			}
 			else if (simulators.getSelectedItem().equals("steady-state-markov-chain-analysis")) {
 				description.setText("Steady State Markov Chain Analysis");
@@ -1153,6 +1377,15 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				limit.setEnabled(false);
 				intervalLabel.setEnabled(false);
 				interval.setEnabled(false);
+				mpde.setEnabled(false);
+				meanPath.setEnabled(false);
+				medianPath.setEnabled(false);
+				iSSATypeLabel.setEnabled(false);
+				adaptive.setEnabled(false);
+				nonAdaptive.setEnabled(false);
+				iSSAAdaptiveLabel.setEnabled(false);
+				bifurcation.setEnabled(false);
+				bifurcationLabel.setEnabled(false);
 			}
 			else if (simulators.getSelectedItem().equals("transient-markov-chain-analysis")) {
 				description.setText("Transient Markov Chain Analysis Using Uniformization");
@@ -1166,6 +1399,15 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				limit.setEnabled(true);
 				intervalLabel.setEnabled(true);
 				interval.setEnabled(true);
+				mpde.setEnabled(false);
+				meanPath.setEnabled(false);
+				medianPath.setEnabled(false);
+				iSSATypeLabel.setEnabled(false);
+				adaptive.setEnabled(false);
+				nonAdaptive.setEnabled(false);
+				iSSAAdaptiveLabel.setEnabled(false);
+				bifurcation.setEnabled(false);
+				bifurcationLabel.setEnabled(false);
 			}
 		}
 		// if the Run button is clicked
@@ -1809,18 +2051,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		// int steps;
 		double runTime;
 		if (((String) intervalLabel.getSelectedItem()).contains("Print Interval")) {
-			if (simulators.getSelectedItem().equals("mpde") || simulators.getSelectedItem().equals("mean_path")
-					|| simulators.getSelectedItem().equals("median_path")
-					|| simulators.getSelectedItem().equals("mean_path-bifurcation")
-					|| simulators.getSelectedItem().equals("median_path-bifurcation")
-					|| simulators.getSelectedItem().equals("mean_path-adaptive")
-					|| simulators.getSelectedItem().equals("median_path-adaptive")
-					|| simulators.getSelectedItem().equals("mean_path-adaptive-bifurcation")
-					|| simulators.getSelectedItem().equals("median_path-adaptive-bifurcation")
-					|| simulators.getSelectedItem().equals("mean_path-event")
-					|| simulators.getSelectedItem().equals("median_path-event")
-					|| simulators.getSelectedItem().equals("mean_path-event-bifurcation")
-					|| simulators.getSelectedItem().equals("median_path-event-bifurcation")) {
+			if (simulators.getSelectedItem().equals("iSSA")) { 
 				runTime = timeLimit;
 			}
 			else {
@@ -1828,18 +2059,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			}
 		}
 		else {
-			if (simulators.getSelectedItem().equals("mpde") || simulators.getSelectedItem().equals("mean_path")
-					|| simulators.getSelectedItem().equals("median_path")
-					|| simulators.getSelectedItem().equals("mean_path-bifurcation")
-					|| simulators.getSelectedItem().equals("median_path-bifurcation")
-					|| simulators.getSelectedItem().equals("mean_path-adaptive")
-					|| simulators.getSelectedItem().equals("median_path-adaptive")
-					|| simulators.getSelectedItem().equals("mean_path-adaptive-bifurcation")
-					|| simulators.getSelectedItem().equals("median_path-adaptive-bifurcation")
-					|| simulators.getSelectedItem().equals("mean_path-event")
-					|| simulators.getSelectedItem().equals("median_path-event")
-					|| simulators.getSelectedItem().equals("mean_path-event-bifurcation")
-					|| simulators.getSelectedItem().equals("median_path-event-bifurcation")) {
+			if (simulators.getSelectedItem().equals("iSSA")) { 
 				runTime = timeLimit;
 			}
 			else {
@@ -1882,10 +2102,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		cancel.addActionListener(runProgram);
 		biomodelsim.getExitButton().addActionListener(runProgram);
 		// saveSAD(outDir);
+		int numPaths = Integer.parseInt((String)(bifurcation.getSelectedItem()));
 		runProgram.createProperties(timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval,
-				minTimeStep, timeStep, absError, ".", rndSeed, run, intSpecies, printer_id, printer_track_quantity, 
+				minTimeStep, timeStep, absError, ".", rndSeed, run, numPaths, intSpecies, printer_id, printer_track_quantity, 
 				generate_statistics, simProp.split(separator), selectedButtons, this, simProp, rap1, rap2, qss, con, 
-				stoichAmp, preAbs, loopAbs, postAbs, lhpnAbstraction);
+				stoichAmp, preAbs, loopAbs, postAbs, lhpnAbstraction, mpde.isSelected(), meanPath.isSelected(), 
+				medianPath.isSelected(), adaptive.isSelected(), nonAdaptive.isSelected());
 		try {
 			Properties getProps = new Properties();
 			FileInputStream load = new FileInputStream(new File(propName));
@@ -2315,10 +2537,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		String propName = sbmlProp.substring(0, sbmlProp.length() - getFilename[getFilename.length - 1].length())
 				+ getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
 		log.addText("Creating properties file1:\n" + propName + "\n");
+		int numPaths = Integer.parseInt((String)(bifurcation.getSelectedItem()));
 		runProgram.createProperties(timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval,
-				minTimeStep, timeStep, absError, ".", rndSeed, run, intSpecies, printer_id, printer_track_quantity, 
+				minTimeStep, timeStep, absError, ".", rndSeed, run, numPaths, intSpecies, printer_id, printer_track_quantity, 
 				generate_statistics, sbmlProp.split(separator), selectedButtons, this, sbmlProp, rap1, rap2, qss, con, 
-				stoichAmp, preAbs, loopAbs, postAbs, lhpnAbstraction);
+				stoichAmp, preAbs, loopAbs, postAbs, lhpnAbstraction, mpde.isSelected(), meanPath.isSelected(), 
+				medianPath.isSelected(), adaptive.isSelected(), nonAdaptive.isSelected());
 		try {
 			Properties getProps = new Properties();
 			FileInputStream load = new FileInputStream(new File(propName));
@@ -2460,14 +2684,14 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				return new Algorithm(GlobalConstants.KISAO_RUNGE_KUTTA_PRINCE_DORMAND);
 			}
 			else if (((String) simulators.getSelectedItem()).contains("rkf45") ||
-					((String) simulators.getSelectedItem()).contains("Runge-Kutta-Fehlberg (Java)")) {
+					((String) simulators.getSelectedItem()).contains("rkf45 (Java)")) {
 				return new Algorithm(GlobalConstants.KISAO_RUNGE_KUTTA_FEHLBERG);
 			}
 		} else if (monteCarlo.isEnabled()) {
 			if (((String) simulators.getSelectedItem()).contains("gillespie")) {
 				return new Algorithm(GlobalConstants.KISAO_GILLESPIE_DIRECT);
 			}
-			else if (((String) simulators.getSelectedItem()).equals("Gillespie SSA-CR (Java)")) {
+			else if (((String) simulators.getSelectedItem()).equals("SSA-CR")) {
 				return new Algorithm(GlobalConstants.KISAO_SSA_CR);
 			}
 			Algorithm algorithm = new Algorithm(GlobalConstants.KISAO_MONTE_CARLO);
@@ -2498,17 +2722,17 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			ODE.setEnabled(true);
 			// check annotation
 			simulators.setSelectedItem("rkf45");
-			simulators.setSelectedItem("Runge-Kutta-Fehlberg (Java)");
+			simulators.setSelectedItem("rkf45 (Java)");
 		} else if (algorithm.getKisaoID().equals(GlobalConstants.KISAO_GILLESPIE_DIRECT)) {
 			monteCarlo.setEnabled(true);
 			simulators.setSelectedItem("gillespie");
 		} else if (algorithm.getKisaoID().equals(GlobalConstants.KISAO_SSA_CR)) {
 			monteCarlo.setEnabled(true);
-			simulators.setSelectedItem("Gillespie SSA-CR (Java)");
+			simulators.setSelectedItem("SSA-CR");
 		} else if (algorithm.getKisaoID().equals(GlobalConstants.KISAO_MONTE_CARLO)) {
 			monteCarlo.setEnabled(true);
 			Annotation annotation = getSEDBaseAnnotation(algorithm,"analysis");
-			simulators.setSelectedItem("Gillespie SSA-CR (Java)");
+			simulators.setSelectedItem("SSA-CR");
 			/*
 			Algorithm algorithm = new Algorithm(GlobalConstants.KISAO_GENERIC);
 			Element para = new Element("analysis");
@@ -2727,6 +2951,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					}
 					else if (key.equals("reb2sac.diffusion.stoichiometry.amplification.value")){
 					}
+					else if (key.equals("reb2sac.iSSA.number.paths")){
+					}
+					else if (key.equals("reb2sac.iSSA.type")){
+					}
+					else if (key.equals("reb2sac.iSSA.adaptive")){
+					}
 					else if (key.equals("ode.simulation.time.limit")) {
 					}
 					else if (key.equals("ode.simulation.print.interval")) {
@@ -2895,7 +3125,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, sbml, seed, seedLabel, runs, runsLabel,
 							minStepLabel, minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
 							interval, simulators, simulatorsLabel, explanation, description, none, rapid1, rapid2, qssa,
-							maxCon, diffStoichAmp, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel, fileStem, fileStemLabel, preAbs, loopAbs,
+							maxCon, diffStoichAmp, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel, 
+							fileStem, fileStemLabel, preAbs, loopAbs,
 							postAbs, preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs,
 							rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn);
 					if (modelFile.contains(".lpn")) {
@@ -2908,7 +3139,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, sbml, seed, seedLabel, runs, runsLabel,
 							minStepLabel, minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
 							interval, simulators, simulatorsLabel, explanation, description, none, rapid1, rapid2, qssa,
-							maxCon, diffStoichAmp, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel, fileStem, fileStemLabel, preAbs, loopAbs,
+							maxCon, diffStoichAmp, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, diffStoichAmpLabel, 
+							fileStem, fileStemLabel, preAbs, loopAbs,
 							postAbs, preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs,
 							rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn);
 					if (modelFile.contains(".lpn")) {
@@ -3202,6 +3434,27 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				}
 				if (load.containsKey("reb2sac.diffusion.stoichiometry.amplification.value")) {
 					diffStoichAmp.setText(load.getProperty("reb2sac.diffusion.stoichiometry.amplification.value"));
+				}
+				if (load.containsKey("reb2sac.iSSA.number.paths")) {
+					bifurcation.setSelectedItem(load.getProperty("reb2sac.iSSA.number.paths"));
+				}
+				if (load.containsKey("reb2sac.iSSA.type")) {
+					String type = load.getProperty("reb2sac.iSSA.type");
+					if (type.equals("mpde")) {
+						mpde.doClick();
+					} else if (type.equals("medianPath")) {
+						medianPath.doClick();
+					} else {
+						meanPath.doClick();
+					}
+				}
+				if (load.containsKey("reb2sac.iSSA.adaptive")) {
+					String type = load.getProperty("reb2sac.iSSA.adaptive");
+					if (type.equals("true")) {
+						adaptive.doClick();
+					} else {
+						nonAdaptive.doClick();
+					} 
 				}
 			}
 			else {

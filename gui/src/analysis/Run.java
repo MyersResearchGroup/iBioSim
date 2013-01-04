@@ -75,10 +75,11 @@ public class Run implements ActionListener {
 	 * @param stem
 	 */
 	public void createProperties(double timeLimit, String useInterval, double printInterval, double minTimeStep,
-			double timeStep, double absError, String outDir, long rndSeed, int run, String[] intSpecies,
+			double timeStep, double absError, String outDir, long rndSeed, int run, int numPaths, String[] intSpecies,
 			String printer_id, String printer_track_quantity, String genStats, String[] getFilename, String selectedButtons,
 			Component component, String filename, double rap1, double rap2, double qss, int con, double stoichAmp,
-			JList preAbs, JList loopAbs, JList postAbs, AbstPane abstPane) {
+			JList preAbs, JList loopAbs, JList postAbs, AbstPane abstPane, boolean mpde, boolean meanPath,
+			boolean medianPath, boolean adaptive, boolean nonAdaptive) {
 		Properties abs = new Properties();
 		if (selectedButtons.contains("abs") || selectedButtons.contains("nary")) {
 			int gcmIndex = 1;
@@ -223,6 +224,19 @@ public class Run implements ActionListener {
 		}
 		else if (selectedButtons.contains("monteCarlo")) {
 			abs.setProperty("reb2sac.simulation.method", "monteCarlo");
+			abs.setProperty("reb2sac.iSSA.number.paths", "" + numPaths);
+			if (mpde) {
+				abs.setProperty("reb2sac.iSSA.type", "mpde");
+			} else if (meanPath) {
+				abs.setProperty("reb2sac.iSSA.type", "meanPath");
+			} else {
+				abs.setProperty("reb2sac.iSSA.type", "medianPath");
+			}
+			if (adaptive) {
+				abs.setProperty("reb2sac.iSSA.adaptive", "true");
+			} else {
+				abs.setProperty("reb2sac.iSSA.adaptive", "false");
+			}
 		}
 		else if (selectedButtons.contains("markov")) {
 			abs.setProperty("reb2sac.simulation.method", "markov");
@@ -324,11 +338,12 @@ public class Run implements ActionListener {
 	 * the nary properties file from that information.
 	 */
 	public void createNaryProperties(double timeLimit, String useInterval, double printInterval, double minTimeStep,
-			double timeStep, String outDir, long rndSeed, int run, String printer_id, String printer_track_quantity,
+			double timeStep, String outDir, long rndSeed, int run, int numPaths, String printer_id, String printer_track_quantity,
 			String[] getFilename, Component component, String filename, JRadioButton monteCarlo, String stopE, double stopR,
 			String[] finalS, ArrayList<JTextField> inhib, ArrayList<JList> consLevel, ArrayList<String> getSpeciesProps,
 			ArrayList<Object[]> conLevel, String[] termCond, String[] intSpecies, double rap1, double rap2, double qss,
-			int con, ArrayList<Integer> counts) {
+			int con, ArrayList<Integer> counts, boolean mpde, boolean meanPath, boolean medianPath, boolean adaptive, 
+			boolean nonAdaptive) {
 		Properties nary = new Properties();
 		try {
 			FileInputStream load = new FileInputStream(new File(outDir + separator + "species.properties"));
@@ -400,6 +415,19 @@ public class Run implements ActionListener {
 			nary.setProperty("monte.carlo.simulation.random.seed", "" + rndSeed);
 			nary.setProperty("monte.carlo.simulation.runs", "" + run);
 			nary.setProperty("monte.carlo.simulation.out.dir", ".");
+			nary.setProperty("reb2sac.iSSA.number.paths", "" + numPaths);
+			if (mpde) {
+				nary.setProperty("reb2sac.iSSA.type", "mpde");
+			} else if (meanPath) {
+				nary.setProperty("reb2sac.iSSA.type", "meanPath");
+			} else {
+				nary.setProperty("reb2sac.iSSA.type", "medianPath");
+			}
+			if (adaptive) {
+				nary.setProperty("reb2sac.iSSA.adaptive", "true");
+			} else {
+				nary.setProperty("reb2sac.iSSA.adaptive", "false");
+			}
 		}
 		for (int i = 0; i < finalS.length; i++) {
 			if (finalS[i].trim() != "<<unknown>>") {
@@ -1156,7 +1184,7 @@ public class Run implements ActionListener {
 				else {
 					Preferences biosimrc = Preferences.userRoot();
 					
-					if (sim.equals("gillespieJava")) {
+					if (sim.equals("interactive")) {
 						time1 = System.nanoTime();
 						int index = -1;
 						for (int i = 0; i < simTab.getComponentCount(); i++) {
@@ -1173,7 +1201,7 @@ public class Run implements ActionListener {
 						new File(directory + separator + "running").delete();
 						return exitValue;
 					}
-					else if (sim.equals("Gillespie SSA-CR (Java)")) {
+					else if (sim.equals("SSA-CR")) {
 						
 						double stoichAmpValue = 
 							Double.parseDouble(properties.getProperty(
@@ -1192,7 +1220,7 @@ public class Run implements ActionListener {
 						new File(directory + separator + "running").delete();
 						return exitValue;
 					}
-					else if (sim.equals("Gillespie SSA-Direct (Java)")) {
+					else if (sim.equals("SSA-Direct")) {
 						
 						double stoichAmpValue = 
 							Double.parseDouble(properties.getProperty(
@@ -1210,7 +1238,7 @@ public class Run implements ActionListener {
 						new File(directory + separator + "running").delete();
 						return exitValue;
 					}
-					else if (sim.equals("Runge-Kutta-Fehlberg (Java)")) {
+					else if (sim.equals("rkf45 (Java)")) {
 						
 						double stoichAmpValue = 
 							Double.parseDouble(properties.getProperty(

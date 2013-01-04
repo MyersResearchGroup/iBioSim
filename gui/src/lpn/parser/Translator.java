@@ -234,7 +234,7 @@ public class Translator {
 					Enabling = "1"; // Enabling is true
 				}
 				else {
-					EnablingBool = lhpn.getEnablingTree(t).getElement("SBML");
+					EnablingBool = lhpn.getEnablingTree(t).toString("SBML");
 					Enabling = "piecewise(1, " + EnablingBool + ", 0)";
 				}
 
@@ -310,9 +310,9 @@ public class Translator {
 
 				// create exp for KineticLaw
 				if (lhpn.getTransition(t).isPersistent())
-					rateReaction.setFormula("(" + modifierStr + Enabling + "*" + lhpn.getTransitionRateTree(t).getElement("SBML") + ")"); 
+					rateReaction.setFormula("(" + modifierStr + Enabling + "*" + lhpn.getTransitionRateTree(t).toString("SBML") + ")"); 
 				else
-					rateReaction.setFormula("(" + reactantStr + Enabling + "*" + lhpn.getTransitionRateTree(t).getElement("SBML") + ")"); 
+					rateReaction.setFormula("(" + reactantStr + Enabling + "*" + lhpn.getTransitionRateTree(t).toString("SBML") + ")"); 
 
 				Event e = m.createEvent();
 				//					e.setId("event" + counter);		
@@ -437,7 +437,7 @@ public class Translator {
 					Enabling = "true"; // Enabling is true (Boolean)
 				}
 				else {
-					Enabling = lhpn.getEnablingTree(t).getElement("SBML");
+					Enabling = lhpn.getEnablingTree(t).toString("SBML");
 				}
 				//					System.out.println("Enabling = " + Enabling);
 
@@ -496,11 +496,13 @@ public class Translator {
 				// Priority and delay
 				if (lhpn.getTransition(t).getDelay()!=null) {
 					e.createDelay();
-					e.getDelay().setMath(SBMLutilities.myParseFormula(lhpn.getTransition(t).getDelay()));
+					String delay = lhpn.getTransition(t).getDelayTree().toString("SBML");
+					e.getDelay().setMath(SBMLutilities.myParseFormula(delay));
 				}
 				if (lhpn.getTransition(t).getPriority()!=null) {
 					e.createPriority();
-					e.getPriority().setMath(SBMLutilities.myParseFormula(lhpn.getTransition(t).getPriority()));
+					String priority = lhpn.getTransition(t).getPriorityTree().toString("SBML");
+					e.getPriority().setMath(SBMLutilities.myParseFormula(priority));
 				}
 				/*
 					if (lhpn.getTransition(t).getPriority()==null) {
@@ -879,7 +881,7 @@ public class Translator {
 			if (EnablingTestNull == null){
 				Enabling = "true"; // Enabling is true (Boolean)
 			} else {
-				Enabling = lhpn.getEnablingTree(t).getElement("SBML");
+				Enabling = lhpn.getEnablingTree(t).toString("SBML");
 			}
 
 			//test Preset(t)
@@ -938,11 +940,13 @@ public class Translator {
 			// Priority and delay
 			if (lhpn.getTransition(t).getDelay()!=null) {
 				e.createDelay();
-				e.getDelay().setMath(SBMLutilities.myParseFormula(lhpn.getTransition(t).getDelay()));
+				String delay = lhpn.getTransition(t).getDelayTree().toString("SBML");
+				e.getDelay().setMath(SBMLutilities.myParseFormula(delay));
 			}
 			if (lhpn.getTransition(t).getPriority()!=null) {
 				e.createPriority();
-				e.getPriority().setMath(SBMLutilities.myParseFormula(lhpn.getTransition(t).getPriority()));
+				String priority = lhpn.getTransition(t).getPriorityTree().toString("SBML");
+				e.getPriority().setMath(SBMLutilities.myParseFormula(priority));
 			}
 
 			// Check if there is any self-loop. If the intersection between lhpn.getPreset(t) and lhpn.getPostset(t)
