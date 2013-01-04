@@ -35,6 +35,7 @@ import org.sbml.libsbml.SpeciesReference;
 import org.sbml.libsbml.SpeciesType;
 import org.sbml.libsbml.UnitDefinition;
 
+import biomodel.gui.ModelEditor;
 import biomodel.parser.BioModel;
 
 /**
@@ -76,9 +77,12 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 	private Rules rulesPanel;
 	
 	private Parameters parametersPanel;
+	
+	private ModelEditor modelEditor;
 
 	public MySpecies(Gui biosim, BioModel bioModel, MutableBoolean dirty, Boolean paramsOnly,
-			ArrayList<String> getParams, String file, ArrayList<String> parameterChanges, Boolean editOnly) {
+			ArrayList<String> getParams, String file, ArrayList<String> parameterChanges, Boolean editOnly, 
+			ModelEditor modelEditor) {
 		super(new BorderLayout());
 		this.bioModel = bioModel;
 		this.biosim = biosim;
@@ -86,6 +90,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		this.paramsOnly = paramsOnly;
 		this.file = file;
 		this.parameterChanges = parameterChanges;
+		this.modelEditor = modelEditor;
 		JPanel addSpecs = new JPanel();
 		addSpec = new JButton("Add Species");
 		removeSpec = new JButton("Remove Species");
@@ -1052,10 +1057,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		}
 		// if the edit species button is clicked
 		else if (e.getSource() == editSpec) {
-			
-			
 			if (species.getModel().getSize() > 0) {
-								
 				//if we're dealing with grid species, use a different species editor
 				if (bioModel.getSBMLDocument().getModel().getSpecies(((String)species.getModel().getElementAt(0)).split(" ")[0])
 						.getAnnotation() != null &&						
@@ -1065,15 +1067,23 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 					openGridSpeciesEditor();
 				}
 				else {
-					
-					speciesEditor("OK");
+					//speciesEditor("OK");
+					if (species.getSelectedIndex() == -1) {
+						JOptionPane.showMessageDialog(Gui.frame, "No species selected.", "Must Select A Species", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					String id = ((String) species.getSelectedValue()).split(" ")[0];
+					if (BioModel.isPromoterSpecies(bioModel.getSBMLDocument().getModel().getSpecies(id))) {
+						modelEditor.launchPromoterPanel(id);
+					} else {
+						modelEditor.launchSpeciesPanel(id, false);
+					}
 					initialsPanel.refreshInitialAssignmentPanel(bioModel);
 					rulesPanel.refreshRulesPanel();
 					parametersPanel.refreshParameterPanel(bioModel);
 				}
 			}
 			else {
-				
 				JOptionPane.showMessageDialog(Gui.frame, "No species selected.", 
 						"Must Select A Species", JOptionPane.ERROR_MESSAGE);
 			}
@@ -1087,7 +1097,17 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2) {
 			if (e.getSource() == species) {
-				speciesEditor("OK");
+				//speciesEditor("OK");
+				if (species.getSelectedIndex() == -1) {
+					JOptionPane.showMessageDialog(Gui.frame, "No species selected.", "Must Select A Species", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				String id = ((String) species.getSelectedValue()).split(" ")[0];
+				if (BioModel.isPromoterSpecies(bioModel.getSBMLDocument().getModel().getSpecies(id))) {
+					modelEditor.launchPromoterPanel(id);
+				} else {
+					modelEditor.launchSpeciesPanel(id, false);
+				}
 				initialsPanel.refreshInitialAssignmentPanel(bioModel);
 				rulesPanel.refreshRulesPanel();
 				parametersPanel.refreshParameterPanel(bioModel);

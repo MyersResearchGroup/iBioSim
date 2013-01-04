@@ -452,10 +452,10 @@ public class SBMLutilities {
 		setTimeToT(mathFormula);
 		String formula;
 		Preferences biosimrc = Preferences.userRoot();
-		if (biosimrc.get("biosim.general.infix", "").equals("infix")) {
-			formula = myFormulaToStringInfix(mathFormula);
-		} else {
+		if (biosimrc.get("biosim.general.infix", "").equals("prefix")) {
 			formula = libsbml.formulaToString(mathFormula);
+		} else {
+			formula = myFormulaToStringInfix(mathFormula);
 		}
 		formula = formula.replaceAll("arccot", "acot");
 		formula = formula.replaceAll("arccoth", "acoth");
@@ -500,10 +500,10 @@ public class SBMLutilities {
 	public static ASTNode myParseFormula(String formula) {
 		ASTNode mathFormula;
 		Preferences biosimrc = Preferences.userRoot();
-		if (biosimrc.get("biosim.general.infix", "").equals("infix")) {
-			mathFormula = libsbml.parseL3Formula(formula);
-		} else {
+		if (biosimrc.get("biosim.general.infix", "").equals("prefix")) {
 			mathFormula = libsbml.parseFormula(formula);
+		} else {
+			mathFormula = libsbml.parseL3Formula(formula);
 		}
 		if (mathFormula == null)
 			return null;
