@@ -6572,8 +6572,12 @@ public class BioModel {
 	
 	public SBMLDocument newFlattenModel() {
 		SBMLDocument document = new SBMLDocument();
+		long numSubModels = sbmlCompModel.getNumSubmodels();
 		Model model = sbmlCompModel.flattenModel();
-		if (model==null) return null;
+		if (model==null) {
+			Utility.createErrorMessage("Error During Flattening", "Cannot flatten model.");
+			return null;
+		}
 		document.setModel(model);
 		document.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
 		document.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
@@ -6586,7 +6590,7 @@ public class BioModel {
 		//SBMLWriter writer = new SBMLWriter();
 		//writer.writeSBML(document, path + separator + "_temp.xml");
 		SBaseList elements = document.getModel().getListOfAllElements();
-		if (sbmlCompModel.getNumSubmodels() > 0) {
+		if (numSubModels > 0) {
 			// THIS IS A WORKAROUND A FLATTEN BUG WHICH DOES NOT RENAME METAIDs
 			document.getModel().setMetaId("iBioSim"+0);
 			long metaIdNum = 1;
@@ -7077,6 +7081,10 @@ public class BioModel {
 			updateVarId(false, r.getId(), newName, subBioModel);
 			r.setId(newName);
 			if (r.isSetMetaId()) r.setMetaId(subModelId + "__" + r.getMetaId());
+			for (int j = 0; j < r.getKineticLaw().getNumLocalParameters(); j++) {
+				LocalParameter l = r.getKineticLaw().getLocalParameter(j);
+				if (l.isSetMetaId()) l.setMetaId(subModelId + "__" + l.getMetaId());
+			}
 		}
 		for (int i = 0; i < subModel.getNumReactions(); i++) {
 			Reaction r = subModel.getReaction(i);

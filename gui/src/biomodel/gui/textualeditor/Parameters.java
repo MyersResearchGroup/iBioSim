@@ -350,15 +350,18 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		}
 		String selectedID = "";
 		boolean isPlace = false;
+		boolean isBoolean = false;
 		Parameter rateParam = null;
 		if (option.equals("OK")) {
 			try {
 				Parameter paramet = bioModel.getSBMLDocument().getModel().getParameter(selected);
 				if (SBMLutilities.isPlace(paramet) || SBMLutilities.isBoolean(paramet)) {
-					isPlace = true;
 					valueLabel.setText("Initial marking");
 					if (SBMLutilities.isBoolean(paramet)) {
 						valueLabel.setText("Initial value");
+						isBoolean = true;
+					} else {
+						isPlace = true;
 					}
 					if (paramsOnly) {
 						parametersPanel.setLayout(new GridLayout(6, 2));
@@ -504,7 +507,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			parametersPanel.add(type);
 		}
 		parametersPanel.add(valueLabel);
-		if (isPlace) {
+		if (isPlace || isBoolean) {
 			parametersPanel.add(placeMarking);
 		} else {
 			parametersPanel.add(paramValue);
@@ -517,7 +520,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			parametersPanel.add(new JLabel());
 			parametersPanel.add(sweep);
 		}
-		if (!isPlace) {
+		if (!isPlace && !isBoolean) {
 			parametersPanel.add(unitLabel);
 			parametersPanel.add(paramUnits);
 			parametersPanel.add(constLabel);
@@ -529,6 +532,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		String editorTitle = "Parameter Editor";
 		if (isPlace) {
 			editorTitle = "Place Editor";
+		} else if (isBoolean) {
+			editorTitle = "Boolean Editor";
 		}
 		int value = JOptionPane.showOptionDialog(Gui.frame, parametersPanel, editorTitle, JOptionPane.YES_NO_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -536,7 +541,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), paramID.getText().trim(), selectedID, false, false);
 			if (!error) {
-				if (isPlace) {
+				if (isPlace | isBoolean) {
 					if (placeMarking.getSelectedIndex()==0) {
 						paramValue.setText("0.0");
 					} else {

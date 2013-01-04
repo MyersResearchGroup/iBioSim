@@ -119,7 +119,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 		}
 		timeConvFactorBox = new JComboBox(parameters);
 		extentConvFactorBox = new JComboBox(parameters);
-		
+
 		ArrayList <String> compartmentList = bioModel.getCompartments();
 		Collections.sort(compartmentList);
 		String[] compsWithNone = new String[compartmentList.size() + 2];
@@ -451,8 +451,9 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 				convBox.add(convFactor);
 			}
 		}
-		Submodel instance = bioModel.getSBMLCompModel().getSubmodel(subModelId);
 		
+
+		Submodel instance = bioModel.getSBMLCompModel().getSubmodel(subModelId);
 		// ID field
 		PropertyField field = new PropertyField(GlobalConstants.ID, "", null, null,
 				Utility.IDstring, paramsOnly, "default", false);
@@ -469,6 +470,28 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 		}
 		fields.put(GlobalConstants.NAME, field);
 		add(field);
+
+		JLabel timeConvFactorLabel = new JLabel("Time Conversion Factor");
+		JLabel extentConvFactorLabel = new JLabel("Extent Conversion Factor");
+		JPanel timePanel = new JPanel();
+		timePanel.setLayout(new GridLayout(1, 2));
+		JPanel extentPanel = new JPanel();
+		extentPanel.setLayout(new GridLayout(1, 2));
+		timePanel.add(timeConvFactorLabel);
+		timePanel.add(timeConvFactorBox);
+		extentPanel.add(extentConvFactorLabel);
+		extentPanel.add(extentConvFactorBox);
+		timeConvFactorBox.setSelectedItem(instance.getTimeConversionFactor());
+		extentConvFactorBox.setSelectedItem(instance.getExtentConversionFactor());
+		add(timePanel);
+		add(extentPanel);
+		// Parse out SBOL annotations and add to SBOL field
+		if(!paramsOnly) {
+			// Field for annotating submodel with SBOL DNA components
+			List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(instance);
+			sbolField = new SBOLField(sbolURIs, GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 2, false);
+			add(sbolField);
+		}
 		
 		// Port Map field
 		JPanel headingPanel = new JPanel();
@@ -528,33 +551,11 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			}
 		}
 		updateComboBoxEnabling();
-		timeConvFactorBox.setSelectedItem(instance.getTimeConversionFactor());
-		extentConvFactorBox.setSelectedItem(instance.getExtentConversionFactor());
-		
 		String oldName = null;
 		if (selected != null) {
 			oldName = selected;
 			fields.get(GlobalConstants.ID).setValue(selected);
 		}
-		// Parse out SBOL annotations and add to SBOL field
-		if(!paramsOnly) {
-			// Field for annotating submodel with SBOL DNA components
-			List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(instance);
-			sbolField = new SBOLField(sbolURIs, GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 2, false);
-			add(sbolField);
-		}
-		JLabel timeConvFactorLabel = new JLabel("Time Conversion Factor");
-		JLabel extentConvFactorLabel = new JLabel("Extent Conversion Factor");
-		JPanel timePanel = new JPanel();
-		timePanel.setLayout(new GridLayout(1, 2));
-		JPanel extentPanel = new JPanel();
-		extentPanel.setLayout(new GridLayout(1, 2));
-		timePanel.add(timeConvFactorLabel);
-		timePanel.add(timeConvFactorBox);
-		extentPanel.add(extentConvFactorLabel);
-		extentPanel.add(extentConvFactorBox);
-		add(timePanel);
-		add(extentPanel);
 		
 		boolean display = false;
 		while (!display) {

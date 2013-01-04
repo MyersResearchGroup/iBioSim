@@ -855,12 +855,13 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				if (!stem.equals("")) {
 					new File(path + separator + simName + separator + stem).mkdir();
 				}
-				createSBML(stem, ".");
-				if (!stem.equals("")) {
-					new AnalysisThread(reb2sac).start(stem, true);
-				}
-				else {
-					new AnalysisThread(reb2sac).start(".", true);
+				if (createSBML(stem, ".")) {
+					if (!stem.equals("")) {
+						new AnalysisThread(reb2sac).start(stem, true);
+					}
+					else {
+						new AnalysisThread(reb2sac).start(".", true);
+					}
 				}
 				reb2sac.emptyFrames();
 			}
@@ -1227,7 +1228,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 	}
 
-	public void createSBML(String stem, String direct) {
+	public boolean createSBML(String stem, String direct) {
 		try {
 			ArrayList<String> dd = new ArrayList<String>();
 			if (!direct.equals(".")) {
@@ -1287,7 +1288,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			GCMParser parser = new GCMParser(biomodel, false);
 			GeneticNetwork network = null;
 			network = parser.buildNetwork();
-			if (network==null) return;
+			if (network==null) return false;
 			if (reb2sac != null)
 				network.loadProperties(biomodel, reb2sac.getGcmAbstractions(), reb2sac.getInterestingSpecies(), reb2sac.getProperty());
 			else
@@ -1420,8 +1421,10 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(Gui.frame, "Unable to create sbml file.",
 					"Error Creating File", JOptionPane.ERROR_MESSAGE);
-			e1.printStackTrace();
+			return false;
+			//e1.printStackTrace();
 		}
+		return true;
 	}
 
 	public String getRefFile() {

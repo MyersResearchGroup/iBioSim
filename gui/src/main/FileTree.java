@@ -137,7 +137,11 @@ public class FileTree extends JPanel implements MouseListener {
 		this.dir = dir;
 		// Make a tree list with all the nodes, and make it a JTree
 		if (dir != null) {
-			tree = new JTree(addNodes(null, dir, true, false),true);
+			if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+				tree = new JTree(addNodes(null, dir, true, false),false);
+			} else {
+				tree = new JTree(addNodes(null, dir, true, false),true);
+			}
 			TreeCellRenderer renderer = new IconCellRenderer();
 			tree.setCellRenderer(renderer);
 			// Add a listener
