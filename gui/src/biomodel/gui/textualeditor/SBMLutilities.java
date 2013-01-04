@@ -43,6 +43,7 @@ import org.sbml.libsbml.Unit;
 import org.sbml.libsbml.UnitDefinition;
 import org.sbml.libsbml.libsbml;
 
+import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 
 
@@ -1274,6 +1275,7 @@ public class SBMLutilities {
 		ArrayList<String> productsUsing = new ArrayList<String>();
 		ArrayList<String> modifiersUsing = new ArrayList<String>();
 		ArrayList<String> kineticLawsUsing = new ArrayList<String>();
+		ArrayList<String> defaultParametersNeeded = new ArrayList<String>();
 		ArrayList<String> initsUsing = new ArrayList<String>();
 		ArrayList<String> rulesUsing = new ArrayList<String>();
 		ArrayList<String> constraintsUsing = new ArrayList<String>();
@@ -1297,6 +1299,10 @@ public class SBMLutilities {
 		if (checkReactions) {
 			for (int i = 0; i < model.getNumReactions(); i++) {
 				Reaction reaction = (Reaction) model.getListOfReactions().get(i);
+				if (BioModel.isProductionReaction(reaction) && BioModel.IsDefaultProductionParameter(species)) {
+					defaultParametersNeeded.add(reaction.getId());
+					inUse = true;
+				}
 				for (int j = 0; j < reaction.getNumProducts(); j++) {
 					if (reaction.getProduct(j).isSetSpecies()) {
 						String specRef = reaction.getProduct(j).getSpecies();
@@ -1432,6 +1438,7 @@ public class SBMLutilities {
 			String products = "";
 			String modifiers = "";
 			String kineticLaws = "";
+			String defaults = "";
 			String stoicMath = "";
 			String initAssigns = "";
 			String rules = "";
@@ -1448,6 +1455,8 @@ public class SBMLutilities {
 			Utility.sort(mods);
 			String[] kls = kineticLawsUsing.toArray(new String[0]);
 			Utility.sort(kls);
+			String[] dps = defaultParametersNeeded.toArray(new String[0]);
+			Utility.sort(dps);
 			String[] sm = stoicMathUsing.toArray(new String[0]);
 			Utility.sort(sm);
 			String[] inAs = initsUsing.toArray(new String[0]);
@@ -1496,6 +1505,14 @@ public class SBMLutilities {
 				}
 				else {
 					kineticLaws += kls[i] + "\n";
+				}
+			}
+			for (int i = 0; i < dps.length; i++) {
+				if (i == dps.length - 1) {
+					defaults += dps[i];
+				}
+				else {
+					defaults += dps[i] + "\n";
 				}
 			}
 			for (int i = 0; i < sm.length; i++) {
@@ -1562,6 +1579,9 @@ public class SBMLutilities {
 			}
 			if (kineticLawsUsing.size() != 0) {
 				message += "\n\nIt is used in the kinetic law in the following reactions:\n" + kineticLaws;
+			}
+			if (defaultParametersNeeded.size() != 0) {
+				message += "\n\nDefault parameter is needed by the following reactions:\n" + defaults;
 			}
 			if (stoicMathUsing.size() != 0) {
 				message += "\n\nIt is used in the stoichiometry math for the following reaction/species:\n" + stoicMath;
