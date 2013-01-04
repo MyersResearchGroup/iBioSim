@@ -7,13 +7,9 @@
 
 \usepackage{indentfirst,graphics,alltt,epsfig,color}
 
-\title{iBioSim Tutorial}
+\title{iBioSim Version 2.4 \\ Tutorial}
 
 \author{Chris J. Myers}
-
-% \date{Created: August 11th, 2008\\
-%   Last Revised: February 3rd, 2010
-% }
 
 \begin{document}
 
@@ -25,9 +21,6 @@
 \tableofcontents
 
 \clearpage
-  
-%\setlength{\parindent}{0em}
-%\setlength{\parskip}{10pt}
 
 \section{Introduction}
 
@@ -36,7 +29,6 @@
 
 \begin{itemize}
 \item Model Editor - a tool to create a model of a genetic circuit or other biological system.
-%\item LPN Model Editor - a tool to create a model using a \emph{labeled Petri net} (LPN).
 \item Analysis Tool - an abstraction-based ODE, Monte Carlo, and Markov analysis tool.
 \item TSD Graph Editor- a tool to visualize TSD files. 
 \item Histogram Graph Editor - a tool to visualize probability data. 
@@ -150,7 +142,7 @@ Next, click on the Schematic tab.  Then, click on the Model button to bring up a
 \includegraphics[width=160mm]{screenshots/ModelUnits}
 \end{center}
 
-Compartments are the membrane-enclosed regions where species can be found and reactions take place.  All models must include at least one compartment.  {\tt iBioSim}, therefore, creates the a default compartment initially with the ID of Cell.  If you click on the schematic within the Cell compartment, it brings up the compartment editor.  Uncheck the ``Is Mapped to a Port''.  This indicates that this port should be enclosing this model and not replaced when instantiated in a larger model.  Once you press OK, you will notice that the compartment now has rounded corners to indicate that this is membrane enclosed by the compartment Cell.
+Compartments are the membrane-enclosed regions where species can be found and reactions take place.  {\tt iBioSim} creates a default compartment initially with the ID of Cell.  If you click on the schematic within the Cell compartment, it brings up the compartment editor.  Uncheck the ``Is Mapped to a Port''.  This indicates that this port should be enclosing this model and not replaced when instantiated in a larger model.  Once you press OK, you will notice that the compartment now has rounded corners to indicate that this is membrane enclosed by the compartment Cell.
 
 \begin{center}
 \includegraphics[width=160mm]{screenshots/compartment}
