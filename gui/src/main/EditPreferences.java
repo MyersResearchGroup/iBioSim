@@ -166,11 +166,11 @@ public class EditPreferences {
 		else {
 			libsbmlFlatten.setSelected(true);
 		}
-		if (biosimrc.get("biosim.general.infix", "").equals("infix")) {
-			infix.setSelected(true);
+		if (biosimrc.get("biosim.general.infix", "").equals("prefix")) {
+			infix.setSelected(false);
 		}
 		else {
-			infix.setSelected(false);
+			infix.setSelected(true);
 		}			
 		JLabel verCmdLabel = new JLabel("Verification command:");
 		verCmd = new JTextField(biosimrc.get("lema.verification.command", ""));
@@ -1284,7 +1284,7 @@ public class EditPreferences {
 			biosimrc.put("biosim.general.flatten", "default");
 		}
 		if (biosimrc.get("biosim.general.infix", "").equals("")) {
-			biosimrc.put("biosim.general.infix", "default");
+			biosimrc.put("biosim.general.infix", "infix");
 		}
 		if (biosimrc.get("biosim.gcm.KREP_VALUE", "").equals("")) {
 			biosimrc.put("biosim.gcm.KREP_VALUE", ".5");

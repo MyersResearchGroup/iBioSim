@@ -2139,7 +2139,8 @@ public class Schematic extends JPanel implements ActionListener {
 		}		
 		else if(cellType == GlobalConstants.VARIABLE || cellType == GlobalConstants.PLACE || cellType == GlobalConstants.BOOLEAN){
 			
-			String id = parameters.parametersEditor("OK",(String)cell.getId());
+			String id = parameters.parametersEditor("OK",(String)cell.getId(),
+					cellType == GlobalConstants.BOOLEAN, cellType == GlobalConstants.PLACE);
 			
 			if (!cell.getId().equals(id)) {
 				if (bioModel.getSBMLLayout().getNumLayouts() != 0) {

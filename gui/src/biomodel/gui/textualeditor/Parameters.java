@@ -51,7 +51,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 
 	private JList parameters; // JList of parameters
 
-	private JButton addParam, removeParam, editParam; // parameters buttons
+	private JButton addParam, addBool, addPlace, removeParam, editParam; // parameters buttons
 
 	private JTextField paramID, paramName, paramValue, rateValue;
 
@@ -98,11 +98,19 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			removeParam = new JButton("Remove Constant");
 			editParam = new JButton("Edit Constant");
 		} else {
-			addParam = new JButton("Add Parameter");
+			addParam = new JButton("Add Real");
+			addBool = new JButton("Add Boolean");
+			addPlace = new JButton("Add Place");
 			removeParam = new JButton("Remove Parameter");
 			editParam = new JButton("Edit Parameter");
 		}
 		addParams.add(addParam);
+		if (!constantsOnly) {
+			addParams.add(addBool);
+			addParams.add(addPlace);
+			addBool.addActionListener(this);
+			addPlace.addActionListener(this);
+		}
 		addParams.add(removeParam);
 		addParams.add(editParam);
 		addParam.addActionListener(this);
@@ -234,13 +242,21 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	/**
 	 * Creates a frame used to edit parameters or create new ones.
 	 */
-	public String parametersEditor(String option,String selected) {
+	public String parametersEditor(String option,String selected,boolean isBoolean,boolean isPlace) {
 		JPanel parametersPanel;
 		if (paramsOnly) {
-			parametersPanel = new JPanel(new GridLayout(8, 2));
+			if (isBoolean || isPlace) {
+				parametersPanel = new JPanel(new GridLayout(6, 2));
+			} else {
+				parametersPanel = new JPanel(new GridLayout(8, 2));
+			}
 		}
 		else {
-			parametersPanel = new JPanel(new GridLayout(6, 2));
+			if (isBoolean || isPlace) {
+				parametersPanel = new JPanel(new GridLayout(4, 2));
+			} else {
+				parametersPanel = new JPanel(new GridLayout(6, 2));
+			}
 		}
 		JLabel idLabel = new JLabel("ID:");
 		JLabel nameLabel = new JLabel("Name:");
@@ -349,8 +365,6 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			sweep.setEnabled(false);
 		}
 		String selectedID = "";
-		boolean isPlace = false;
-		boolean isBoolean = false;
 		Parameter rateParam = null;
 		if (option.equals("OK")) {
 			try {
@@ -771,6 +785,13 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							else {
 								paramet.setConstant(false);
 							}
+							if (isPlace) {
+								paramet.setSBOTerm(GlobalConstants.SBO_PETRI_NET_PLACE);
+								paramet.setConstant(false);
+							} else if (isBoolean) {
+								paramet.setSBOTerm(GlobalConstants.SBO_LOGICAL);
+								paramet.setConstant(false);
+							}
 							paramet.setValue(val);
 							if (!unit.equals("( none )")) {
 								paramet.setUnits(unit);
@@ -871,12 +892,13 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		// if the add compartment type button is clicked
-		// if the add species type button is clicked
-		// if the add compartment button is clicked
 		// if the add parameters button is clicked
 		if (e.getSource() == addParam) {
-			parametersEditor("Add","");
+			parametersEditor("Add","",false,false);
+		} else if (e.getSource() == addBool) {
+			parametersEditor("Add","",true,false);
+		} else if (e.getSource() == addPlace) {
+			parametersEditor("Add","",false,true);
 		}
 		// if the edit parameters button is clicked
 		else if (e.getSource() == editParam) {
@@ -885,7 +907,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				return;
 			}
 			String selected = ((String) parameters.getSelectedValue()).split(" ")[0];
-			parametersEditor("OK",selected);
+			parametersEditor("OK",selected,false,false);
 			initialsPanel.refreshInitialAssignmentPanel(bioModel);
 			rulesPanel.refreshRulesPanel();
 		}
@@ -916,7 +938,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 					return;
 				}
 				String selected = ((String) parameters.getSelectedValue()).split(" ")[0];
-				parametersEditor("OK",selected);
+				parametersEditor("OK",selected,false,false);
 				initialsPanel.refreshInitialAssignmentPanel(bioModel);
 				rulesPanel.refreshRulesPanel();
 			}

@@ -41,7 +41,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 
 	private static final long serialVersionUID = 1L;
 
-	private JButton addEvent, removeEvent, editEvent;
+	private JButton addEvent, addTrans, removeEvent, editEvent;
 
 	private JList events; // JList of events
 
@@ -54,13 +54,14 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	private Gui biosim;
 
 	/* Create event panel */
-	public Events(Gui biosim, BioModel bioModel, MutableBoolean dirty) {
+	public Events(Gui biosim, BioModel bioModel, MutableBoolean dirty, boolean isTextual) {
 		super(new BorderLayout());
 		this.bioModel = bioModel;
 		this.biosim = biosim;
 		this.dirty = dirty;
 		Model model = bioModel.getSBMLDocument().getModel();
 		addEvent = new JButton("Add Event");
+		addTrans = new JButton("Add Transition");
 		removeEvent = new JButton("Remove Event");
 		editEvent = new JButton("Edit Event");
 		events = new JList();
@@ -82,6 +83,10 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		}
 		JPanel addRem = new JPanel();
 		addRem.add(addEvent);
+		if (isTextual) {
+			addRem.add(addTrans);
+			addTrans.addActionListener(this);
+		}
 		addRem.add(removeEvent);
 		addRem.add(editEvent);
 		addEvent.addActionListener(this);
@@ -1408,6 +1413,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		// if the add event button is clicked
 		if (e.getSource() == addEvent) {
 			eventEditor("Add","",false);
+		}else if (e.getSource() == addTrans) {
+			eventEditor("Add","",true);
 		}
 		// if the edit event button is clicked
 		else if (e.getSource() == editEvent) {

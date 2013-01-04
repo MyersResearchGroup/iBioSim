@@ -1508,12 +1508,13 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		
 		compartmentPanel = new Compartments(biosim,biomodel,dirty, paramsOnly,getParams, path + separator + file,	parameterChanges,false);
 		reactionPanel = new Reactions(biosim,biomodel,dirty, paramsOnly,getParams,path + separator + file,parameterChanges, this);
-		speciesPanel = new MySpecies(biosim,biomodel,dirty, paramsOnly,getParams,path + separator + file,parameterChanges,biomodel.getGrid().isEnabled());
+		speciesPanel = new MySpecies(biosim,biomodel,dirty, paramsOnly,getParams,path + separator + file,parameterChanges,
+				biomodel.getGrid().isEnabled(),this);
 		parametersPanel = new Parameters(biosim, biomodel,dirty, paramsOnly,getParams,path + separator + file,parameterChanges, 
 				!paramsOnly && !biomodel.getGrid().isEnabled() && !textBased);
 		rulesPanel = new Rules(biosim, biomodel, this, dirty);
 		consPanel = new Constraints(biomodel,dirty);
-		eventPanel = new Events(biosim,biomodel,dirty);
+		eventPanel = new Events(biosim,biomodel,dirty,textBased);
 
 		JPanel compPanel = new JPanel(new BorderLayout());
 		if (textBased) {
