@@ -334,6 +334,27 @@ public class BioModel {
 		return false;
 	}
 	
+	public static boolean IsDefaultProductionParameter(String paramId) {
+		if (paramId.equals(GlobalConstants.FORWARD_KREP_STRING) ||
+			paramId.equals(GlobalConstants.REVERSE_KREP_STRING) ||
+			paramId.equals(GlobalConstants.FORWARD_KACT_STRING) ||
+			paramId.equals(GlobalConstants.REVERSE_KACT_STRING) ||
+			paramId.equals(GlobalConstants.FORWARD_RNAP_BINDING_STRING) ||
+			paramId.equals(GlobalConstants.REVERSE_RNAP_BINDING_STRING) ||
+			paramId.equals(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING) || 
+			paramId.equals(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING) ||
+			paramId.equals(GlobalConstants.COOPERATIVITY_STRING) ||
+			paramId.equals(GlobalConstants.RNAP_STRING) ||
+			paramId.equals(GlobalConstants.OCR_STRING) ||
+			paramId.equals(GlobalConstants.KBASAL_STRING) ||
+			paramId.equals(GlobalConstants.PROMOTER_COUNT_STRING) ||
+			paramId.equals(GlobalConstants.STOICHIOMETRY_STRING) ||
+			paramId.equals(GlobalConstants.ACTIVATED_STRING)) {
+			return true;
+		}
+		return false;
+	}
+	
 	public boolean IsWithinCompartment() {
 		if (sbml.getModel().getNumCompartments()==0) return false;
 		for (long i = 0; i < sbml.getModel().getNumCompartments(); i++) {
