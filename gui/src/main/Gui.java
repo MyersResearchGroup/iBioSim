@@ -774,7 +774,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		file.add(save);
 		file.add(saveAs);
 		if (!async) {
-			file.add(saveSBOL);
+			//file.add(saveSBOL);
 			file.add(check);
 		}
 		file.add(run);

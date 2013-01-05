@@ -3405,6 +3405,7 @@ public class BioModel {
 				}
 			}
 			speciesPanel.refreshSpeciesPanel(this);
+			reactionPanel.refreshReactionPanel(this);
 		}
 	}
 
@@ -4627,6 +4628,11 @@ public class BioModel {
 				layout.removeTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+id);
 			}
 		}
+		if (speciesPanel!=null)
+			speciesPanel.refreshSpeciesPanel(this);
+		if (reactionPanel!=null) {
+			reactionPanel.refreshReactionPanel(this);
+		}
 	}
 
 	/**
@@ -5553,12 +5559,22 @@ public class BioModel {
 		return compartment;
 	}
 
-	public void createSpecies(String id, float x, float y) {
-		String compartment = getCompartmentByLocation(x,y, GlobalConstants.DEFAULT_SPECIES_WIDTH, 
-				GlobalConstants.DEFAULT_SPECIES_HEIGHT);
-		if (compartment.equals("")) {
-			Utility.createErrorMessage("Compartment Required", "Species must be placed within a compartment.");
-			return;
+	public String createSpecies(String id, float x, float y) {
+		String compartment;
+		if (x >= 0 && y >= 0) {
+			compartment = getCompartmentByLocation(x,y, GlobalConstants.DEFAULT_SPECIES_WIDTH, 
+					GlobalConstants.DEFAULT_SPECIES_HEIGHT);
+			if (compartment.equals("")) {
+				Utility.createErrorMessage("Compartment Required", "Species must be placed within a compartment.");
+				return null;
+			}
+		} else {
+			if (sbml.getModel().getNumCompartments()==0) {
+				Utility.createErrorMessage("Compartment Required", "Species must be placed within a compartment.");
+				return null;
+			} else {
+				compartment = sbml.getModel().getCompartment(0).getId();
+			}
 		}
 		if (id == null) {
 			do {
@@ -5566,39 +5582,38 @@ public class BioModel {
 				id = "S" + String.valueOf(creatingSpeciesID);
 			} while (sbml.getElementBySId(id)!=null);
 		}
-		
-		Layout layout = null;
-		if (sbmlLayout.getLayout("iBioSim") != null) {
-			layout = sbmlLayout.getLayout("iBioSim"); 
-		} else {
-			layout = sbmlLayout.createLayout();
-			layout.setId("iBioSim");
+		if (x >= 0 && y >= 0) {
+			Layout layout = null;
+			if (sbmlLayout.getLayout("iBioSim") != null) {
+				layout = sbmlLayout.getLayout("iBioSim"); 
+			} else {
+				layout = sbmlLayout.createLayout();
+				layout.setId("iBioSim");
+			}
+			SpeciesGlyph speciesGlyph = null;
+			if (layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+id)!=null) {
+				speciesGlyph = layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+id);
+			} else {
+				speciesGlyph = layout.createSpeciesGlyph();
+				speciesGlyph.setId(GlobalConstants.GLYPH+"__"+id);
+				speciesGlyph.setSpeciesId(id);
+			}
+			speciesGlyph.getBoundingBox().setX(x);
+			speciesGlyph.getBoundingBox().setY(y);
+			speciesGlyph.getBoundingBox().setWidth(GlobalConstants.DEFAULT_SPECIES_WIDTH);
+			speciesGlyph.getBoundingBox().setHeight(GlobalConstants.DEFAULT_SPECIES_HEIGHT);
+			TextGlyph textGlyph = layout.createTextGlyph();
+			textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+id);
+			textGlyph.setGraphicalObjectId(GlobalConstants.GLYPH+"__"+id);
+			textGlyph.setText(id);
+			textGlyph.setBoundingBox(speciesGlyph.getBoundingBox());
 		}
-		SpeciesGlyph speciesGlyph = null;
-		if (layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+id)!=null) {
-			speciesGlyph = layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+id);
-		} else {
-			speciesGlyph = layout.createSpeciesGlyph();
-			speciesGlyph.setId(GlobalConstants.GLYPH+"__"+id);
-			speciesGlyph.setSpeciesId(id);
-		}
-		speciesGlyph.getBoundingBox().setX(x);
-		speciesGlyph.getBoundingBox().setY(y);
-		speciesGlyph.getBoundingBox().setWidth(GlobalConstants.DEFAULT_SPECIES_WIDTH);
-		speciesGlyph.getBoundingBox().setHeight(GlobalConstants.DEFAULT_SPECIES_HEIGHT);
-		TextGlyph textGlyph = layout.createTextGlyph();
-		textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+id);
-		textGlyph.setGraphicalObjectId(GlobalConstants.GLYPH+"__"+id);
-		textGlyph.setText(id);
-		textGlyph.setBoundingBox(speciesGlyph.getBoundingBox());
 		if (sbml != null && sbml.getModel().getSpecies(id)==null) {
 			Model m = sbml.getModel();
 			Species species = m.createSpecies();
 			species.setId(id);
-			
 			// Set default species metaID
 			metaIDIndex = SBMLutilities.setDefaultMetaID(sbml, species, metaIDIndex); 
-			
 			species.setCompartment(compartment);
 			species.setBoundaryCondition(false);
 			species.setConstant(false);
@@ -5607,6 +5622,7 @@ public class BioModel {
 			if (speciesPanel!=null)
 				speciesPanel.refreshSpeciesPanel(this);
 		}
+		return id;
 	}
 
 	public void createReaction(String id, float x, float y) {
@@ -5782,6 +5798,8 @@ public class BioModel {
 		promoter.setConstant(false);
 		promoter.setHasOnlySubstanceUnits(true);
 		createProductionReaction(id,null,null,null,null,null,null,false);
+		if (speciesPanel!=null)
+			speciesPanel.refreshSpeciesPanel(this);
 		if (is_explicit) {
 			Layout layout = null;
 			if (sbmlLayout.getLayout("iBioSim") != null) {

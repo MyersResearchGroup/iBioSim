@@ -713,10 +713,6 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 //			}
 			
 			String id = fields.get(GlobalConstants.ID).getValue();
-			if (selected != null && !oldName.equals(id)) {
-				bioModel.changeComponentName(oldName, id);
-			}
-			
 			Submodel instance = bioModel.getSBMLCompModel().getSubmodel(subModelId);
 			instance.setName(fields.get(GlobalConstants.NAME).getValue());
 			if (instance != null) {
@@ -822,6 +818,9 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 					CompModelPlugin subCompModel = subBioModel.getSBMLCompModel();
 					bioModel.addImplicitDeletions(subCompModel, submodel, speciesId);
 				}
+			}
+			if (selected != null && !oldName.equals(id)) {
+				bioModel.changeComponentName(oldName, id);
 			}
 			String newPort = bioModel.getComponentPortMap(id);
 			componentsList.removeItem(oldName + " " + selectedComponent.replace(".xml", "") + " " + oldPort);
