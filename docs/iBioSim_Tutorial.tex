@@ -213,7 +213,7 @@ This section describes how to analyze the model just created.  The first step is
 In order to perform analysis, the analysis tool first converts the model into a reaction-based model in the \emph{Systems Biology Markup Language} (SBML).  There are three different ways to see the reaction-based model that is produced.  If GraphViz is installed on your computer, you can select Network for your Simulation Type.  Then, either press the Save and Run icon \includegraphics{../gui/icons/run-icon} or select the Save and Run option from the File menu.  The result will be a GraphViz window that will open to show the reaction-based model such as the one shown below for our example.  If it does not open in GraphViz, make sure that you have files with the {\tt .dot} file extension associated with GraphViz on your computer.  You can also view the model in a web browser by selecting Browser for your simulation type.  In this case, you should ensure that you have files with the {\tt .xhtml} extension associated with your favorite browser.  Finally, you can save the reaction-based model by selecting Model as your simulation type.  In this case, you must provide a new model ID.  This new model will appear in your project and it can be opened in the Model Editor.  Since this model does not include any layout information, you will need to either lay it out by hand or using one of the default layout routines selectable using the Apply Layout icon    \includegraphics{../gui/icons/modelview/choose_layout_selected},
 
 \begin{center}
-\includegraphics[width=60mm]{screenshots/viewNetwork}
+\includegraphics[width=120mm]{screenshots/viewNetwork}
 \end{center}
 
 \begin{center}
@@ -285,14 +285,12 @@ Once you have made your selections, you can now play back the simulation.  You c
 
 Using the schematic tab, you can also adjust initial values and parameters allowing one to perform simulations to determine the effect of these changes.  Clicking on any species, promoter, reaction, or influence brings up the corresponding editor.  To change a value, switch the corresponding combo box to modified, which will then allow you to change the value.  For example, as shown below, we have reduced the degradation rate for CI to 0.00075.  Now, rerun the simulation and observe the change in the simulation data.
 
-%% TODO: show results
 \begin{center}
 \includegraphics[width=160mm]{screenshots/paramEdit}
 \end{center}
 
 In addition to making single changes, you can also sweep a value as shown below.   When you click on the Sweep button, it brings up a window where you can select the start value, the stop value, and the step value.  In this example, simulations are generated using degradation rates of 0.001, 0.003, 0.005, and 0.007.  The level indicates how the sweep should perform when multiple variables are swept at the same time.  Variables at the same level are changed at the same time.  Furthermore, all variables on level 2 are stepped through all their values before changing the values of those variables on level 1.  After the values on level 1 are changed, the values on level 2 are stepped through all their values again.  Rerun the simulation and create a graph that shows the value of CI for each of the different degradation rates.
 
-%% TODO: show results
 \begin{center}
 \includegraphics[width=160mm]{screenshots/sweep}
 %\includegraphics[height=90mm]{screenshots/sweepPR}
@@ -344,7 +342,6 @@ The next step is to add some experimental data from which you wish to learn a mo
 
 Now, click on the Learn tab.  Here you can edit the various learning options.  For example, you can either use auto-generated levels or user-generated levels for your data encoding.  Select Use User Generated Levels, which will make the levels below editable.  At this point, you can ask the tool to suggest levels by clicking on the Suggest Levels button.  Finally, click on the Save and Run icon which will bring up the model that has been learned from this experimental data using Graphviz's dotty program, and ask you for a model ID for the generated model.  
 
-%% TODO: double check with new results
 \begin{center}
 \includegraphics[width=160mm]{screenshots/learn}
 \end{center}

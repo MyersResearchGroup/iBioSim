@@ -245,7 +245,7 @@ The schematic editor for an ordinary model is shown below.  There are two groups
 For large models, it may be preferable to use the tabular model editor shown below.  The tabular editor includes all the same elements as the graphical editor except they are presented as lists of their Ids.  In each list, the user can add new element, remove existing elements, or edit the properties of existing elements.  Note that constants, real variables, Boolean variables, and places appear in the Parameter list, influences appear in the Reaction list, and Petri net transitions appear in the Event list.
 
 \begin{center}
-\includegraphics[height=25mm]{screenshots/textualEditor}
+\includegraphics[width=160mm]{screenshots/textualEditor}
 \end{center}
 
 \noindent
@@ -755,7 +755,7 @@ SBOL is an emerging standard under development for the exchange of information a
 When the user clicks on an Associate SBOL button in the editor for a model element, it opens up a window that includes an ordered list of DNA components associated with that model element.  In this window, highlighting a DNA component and pressing the Remove button removes this component from the list.  Pressing the Add button opens an SBOL Browser that can be used to find a DNA component to add to this list.  By selecting a DNA component and pressing OK, the selected component is added to the list.  It is added to the end of the list when no component is highlighted in the list, and it is added before the highlighted component, otherwise.
 
 \begin{center}
-\includegraphics[width=160mm]{screenshots/AssociateSBOL}
+\includegraphics[width=100mm]{screenshots/AssociateSBOL}
 \end{center}
 
 \begin{center}
@@ -806,21 +806,21 @@ The second set of radio buttons specify the type of analysis.
 \end{itemize}
 
 \begin{center}
-\includegraphics[height=90mm]{screenshots/analysisView}
+\includegraphics[width=160mm]{screenshots/analysisView}
 \end{center}
  
 Some results selecting Model, Network, and Browser options are shown below.
 
 \begin{center}
-\includegraphics[height=80mm]{screenshots/reactionModel}
+\includegraphics[width=160mm]{screenshots/reactionModel}
 \end{center}
 
 \begin{center}
-\includegraphics[height=80mm]{screenshots/viewNetwork}
+\includegraphics[width=120mm]{screenshots/viewNetwork}
 \end{center}
 
 \begin{center}
-\includegraphics[height=110mm]{screenshots/viewBrowser}
+\includegraphics[width=160mm]{screenshots/viewBrowser}
 \end{center}
 
 \noindent
@@ -1130,7 +1130,7 @@ In the TSD graph editor, a graph is created by double-clicking on the graph. You
 \end{itemize}
 
 \begin{center}
-\includegraphics[width=180mm]{screenshots/ssaResults}
+\includegraphics[width=160mm]{screenshots/ssaResults}
 \end{center}
 
 The data selection menu on the left displays all of the available sets of data that can be graphed.  For a top-level graph, these data sets are organized hierarchically.  Hierarchy is also introduced when different simulations in an analysis view are given different simulation IDs or after performing an analysis while sweeping parameter values.  In addition to being able to plot results from individual simulation runs, the average, standard deviation, and variance are also provided.  Finally, when constraints are used, the Termination Time and Percent Termination data is also computed.  The Termination Time gives a plot of the number of runs that have terminated versus time, while Percent Termination gives the percentage of runs that have terminated versus time.
@@ -1208,6 +1208,8 @@ When in a histogram graph editor, pressing the Save icon \includegraphics{../gui
 \end{itemize}
 If no extension is given, then the file type is the one specified in the file filter (default is pdf).  For image (i.e.,
 not data) file types, you will be prompted to give a desired pixel height and width for the file before the file is exported. 
+
+\clearpage
 
 \section{\label{Preferences}Preferences}
 
