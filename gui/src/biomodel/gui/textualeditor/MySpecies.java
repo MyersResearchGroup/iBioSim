@@ -60,7 +60,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 
 	private Gui biosim;
 
-	private JButton addSpec, removeSpec, editSpec; // species buttons
+	private JButton addSpec, addPromoter, removeSpec, editSpec; // species buttons
 
 	private JList species; // JList of species
 
@@ -78,6 +78,8 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 	
 	private Parameters parametersPanel;
 	
+	private Reactions reactionsPanel;
+	
 	private ModelEditor modelEditor;
 
 	public MySpecies(Gui biosim, BioModel bioModel, MutableBoolean dirty, Boolean paramsOnly,
@@ -93,16 +95,20 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		this.modelEditor = modelEditor;
 		JPanel addSpecs = new JPanel();
 		addSpec = new JButton("Add Species");
-		removeSpec = new JButton("Remove Species");
-		editSpec = new JButton("Edit Species");
+		addPromoter = new JButton("Add Promoter");
+		removeSpec = new JButton("Remove Species/Promoter");
+		editSpec = new JButton("Edit Species/Promoter");
 		addSpecs.add(addSpec);
+		addSpecs.add(addPromoter);
 		addSpecs.add(removeSpec);
 		addSpecs.add(editSpec);
 		addSpec.addActionListener(this);
+		addPromoter.addActionListener(this);
 		removeSpec.addActionListener(this);
 		editSpec.addActionListener(this);
 		if (paramsOnly || editOnly) {
 			addSpec.setEnabled(false);
+			addPromoter.setEnabled(false);
 			removeSpec.setEnabled(false);
 		}
 		JLabel speciesLabel = new JLabel("List of Species:");
@@ -1020,30 +1026,45 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 	private void removeSpecies() {
 		int index = species.getSelectedIndex();
 		if (index != -1) {
-			if (!SBMLutilities.variableInUse(bioModel.getSBMLDocument(), ((String) species.getSelectedValue()).split(" ")[0], false, true, true)) {
-				Species tempSpecies = bioModel.getSBMLDocument().getModel().getSpecies(((String) species.getSelectedValue()).split(" ")[0]);
-				ListOf s = bioModel.getSBMLDocument().getModel().getListOfSpecies();
-				for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumSpecies(); i++) {
-					if (((Species) s.get(i)).getId().equals(tempSpecies.getId())) {
-						s.remove(i);
-					}
-				}
-				species.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-				Utility.remove(species);
-				species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-				if (index < species.getModel().getSize()) {
-					species.setSelectedIndex(index);
-				}
-				else {
-					species.setSelectedIndex(index - 1);
-				}
+			String id = ((String) species.getSelectedValue()).split(" ")[0];
+			if (BioModel.isPromoterSpecies(bioModel.getSBMLDocument().getModel().getSpecies(id))) {
+				bioModel.removePromoter(id);
 				dirty.setValue(true);
 				bioModel.makeUndoPoint();
+			} else {
+				if (!SBMLutilities.variableInUse(bioModel.getSBMLDocument(), id, false, true, true)) {
+					bioModel.removeSpecies(id);
+					dirty.setValue(true);
+					bioModel.makeUndoPoint();
+				}
+				/*
+				if (!SBMLutilities.variableInUse(bioModel.getSBMLDocument(), id, false, true, true)) {
+					Species tempSpecies = bioModel.getSBMLDocument().getModel().getSpecies(id);
+					ListOf s = bioModel.getSBMLDocument().getModel().getListOfSpecies();
+					for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumSpecies(); i++) {
+						if (((Species) s.get(i)).getId().equals(tempSpecies.getId())) {
+							s.remove(i);
+						}
+					}
+					species.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+					Utility.remove(species);
+					species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+					if (index < species.getModel().getSize()) {
+						species.setSelectedIndex(index);
+					}
+					else {
+						species.setSelectedIndex(index - 1);
+					}
+					dirty.setValue(true);
+					bioModel.makeUndoPoint();
+				}
+				*/
 			}
 		}
 	}
 
-	public void setPanels(InitialAssignments initialsPanel, Rules rulesPanel, Parameters parametersPanel) {
+	public void setPanels(Reactions reactionsPanel,InitialAssignments initialsPanel, Rules rulesPanel, Parameters parametersPanel) {
+		this.reactionsPanel = reactionsPanel;
 		this.initialsPanel = initialsPanel;
 		this.rulesPanel = rulesPanel;
 		this.parametersPanel = parametersPanel;
@@ -1052,7 +1073,22 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 	public void actionPerformed(ActionEvent e) {
 		// if the add species button is clicked
 		if (e.getSource() == addSpec) {
-			speciesEditor("Add");
+			String id;
+			if ((id = bioModel.createSpecies(null, -1, -1)) != null) {
+				modelEditor.launchSpeciesPanel(id, false);
+			}
+			//speciesEditor("Add");
+			reactionsPanel.refreshReactionPanel(bioModel);
+			parametersPanel.refreshParameterPanel(bioModel);
+		}
+		// if the add promoter button is clicked
+		else if (e.getSource() == addPromoter) {
+			String id;
+			if ((id = bioModel.createPromoter(null, 10, 10, true)) != null) {
+				modelEditor.launchPromoterPanel(id);
+			}
+			//speciesEditor("Add");
+			reactionsPanel.refreshReactionPanel(bioModel);
 			parametersPanel.refreshParameterPanel(bioModel);
 		}
 		// if the edit species button is clicked
@@ -1078,6 +1114,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 					} else {
 						modelEditor.launchSpeciesPanel(id, false);
 					}
+					reactionsPanel.refreshReactionPanel(bioModel);
 					initialsPanel.refreshInitialAssignmentPanel(bioModel);
 					rulesPanel.refreshRulesPanel();
 					parametersPanel.refreshParameterPanel(bioModel);
@@ -1108,6 +1145,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				} else {
 					modelEditor.launchSpeciesPanel(id, false);
 				}
+				reactionsPanel.refreshReactionPanel(bioModel);
 				initialsPanel.refreshInitialAssignmentPanel(bioModel);
 				rulesPanel.refreshRulesPanel();
 				parametersPanel.refreshParameterPanel(bioModel);

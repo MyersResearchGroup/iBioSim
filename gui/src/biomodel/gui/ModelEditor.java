@@ -9,17 +9,12 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.prefs.Preferences;
 
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -27,7 +22,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.tree.TreeModel;
 
 import main.Gui;
 import main.Log;
@@ -38,7 +32,6 @@ import org.sbml.libsbml.ExternalModelDefinition;
 import org.sbml.libsbml.InitialAssignment;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.LocalParameter;
-import org.sbml.libsbml.Model;
 import org.sbml.libsbml.Parameter;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.Rule;
@@ -47,14 +40,10 @@ import org.sbml.libsbml.SBMLWriter;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.Submodel;
 import org.sbolstandard.core.DnaComponent;
-import org.sbolstandard.core.SBOLDocument;
-import org.sbolstandard.core.SBOLFactory;
 
 import analysis.ConstraintTermThread;
 import analysis.AnalysisView;
 import analysis.AnalysisThread;
-import biomodel.annotation.AnnotationUtility;
-import biomodel.annotation.SBOLAnnotation;
 import biomodel.gui.movie.MovieContainer;
 import biomodel.gui.movie.SchemeChooserPanel;
 import biomodel.gui.schematic.Schematic;
@@ -83,7 +72,6 @@ import sbol.SBOLFileManager;
 import sbol.SBOLIdentityManager;
 import sbol.SBOLSynthesisGraph;
 import sbol.SBOLSynthesizer;
-import sbol.SBOLUtility;
 import sbol.SequenceTypeValidator;
 
 /**
@@ -275,11 +263,13 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		} else {
 			compartmentPanel.refreshCompartmentPanel(biomodel);
 			parametersPanel.refreshParameterPanel(biomodel);
-			functionPanel.refreshFunctionsPanel();
-			unitPanel.refreshUnitsPanel();
+			speciesPanel.refreshSpeciesPanel(biomodel);
+			reactionPanel.refreshReactionPanel(biomodel);
 			rulesPanel.refreshRulesPanel();
 			consPanel.refreshConstraintsPanel();
 			eventPanel.refreshEventsPanel();
+			functionPanel.refreshFunctionsPanel();
+			unitPanel.refreshUnitsPanel();
 		}
 	}
 	
@@ -1541,6 +1531,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		JPanel componentsPanel = Utility.createPanel(this, "Components", components, addInit, removeInit, editInit);
 		mainPanelCenterCenter.add(componentsPanel);
 		
+		this.schematic = new Schematic(biomodel, biosim, this, true, null,compartmentPanel,reactionPanel,rulesPanel,
+				consPanel,eventPanel,parametersPanel,lema);
 		if (textBased) {
 			if (!biosim.lema) {
 				tab.addTab("Compartments", compPanel);
@@ -1554,8 +1546,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			tab.addTab("Events", eventPanel);
 		} 
 		else {
-			this.schematic = new Schematic(biomodel, biosim, this, true, null,compartmentPanel,reactionPanel,rulesPanel,
-					consPanel,eventPanel,parametersPanel,lema);
 			modelPanel = schematic.getModelPanel();
 			tab.addTab("Schematic", schematic);
 			if (biomodel.getGrid().isEnabled()) {
@@ -1592,7 +1582,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		InitialAssignments initialsPanel = new InitialAssignments(biosim,biomodel,dirty);
 		compartmentPanel.setPanels(initialsPanel, rulesPanel);
 		functionPanel.setPanels(initialsPanel, rulesPanel);
-		speciesPanel.setPanels(initialsPanel, rulesPanel,parametersPanel);
+		speciesPanel.setPanels(reactionPanel, initialsPanel, rulesPanel, parametersPanel);
 		reactionPanel.setPanels(initialsPanel, rulesPanel);
 		
 		setLayout(new BorderLayout());
@@ -1896,6 +1886,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 					name = list.getSelectedValue().toString();
 					String comp = name.split(" ")[0];
 					biomodel.removeComponent(comp);
+					list.removeItem(name);
 				}
 			}
 		}
@@ -1974,7 +1965,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				//ConditionsPanel panel = new ConditionsPanel(selected, list, gcm, paramsOnly,gcmEditor);
 			}
 			else if (getName().contains("Component")) {
-				displayChooseComponentDialog(getName().contains("Edit"), list, false);
+				if (list.getSelectedValue() != null && getName().contains("Edit")) {
+					displayChooseComponentDialog(true, list, false);
+				} else {
+					displayChooseComponentDialog(false, list, true);
+				}
 			}
 			else if (getName().contains("Parameter")) {
 				String selected = null;
@@ -2270,6 +2265,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				String md5 = Utility.MD5(SBMLstr);
 				// TODO: Is this correct?
 				outID = biomodel.addComponent(null, comp, false, null, -1, -1, 0, 0, md5);
+				list.addItem(outID + " " + comp.replace(".xml", "") + " ()");
 			}else{
 				new ComponentsPanel(selected, list, biomodel, subBioModel, ports, comp, oldPort, paramsOnly, this);
 				outID = selected;

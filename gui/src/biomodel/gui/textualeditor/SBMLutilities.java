@@ -1265,6 +1265,7 @@ public class SBMLutilities {
 			boolean checkReactions) {
 		Model model = document.getModel();
 		boolean inUse = false;
+		boolean isSpecies = (document.getModel().getSpecies(species) != null);
 		if (species.equals("")) {
 			return inUse;
 		}
@@ -1299,6 +1300,8 @@ public class SBMLutilities {
 		if (checkReactions) {
 			for (int i = 0; i < model.getNumReactions(); i++) {
 				Reaction reaction = (Reaction) model.getListOfReactions().get(i);
+				if (isSpecies && (BioModel.isDegradationReaction(reaction) || BioModel.isDiffusionReaction(reaction) ||
+						BioModel.isConstitutiveReaction(reaction))) continue;
 				if (BioModel.isProductionReaction(reaction) && BioModel.IsDefaultProductionParameter(species)) {
 					defaultParametersNeeded.add(reaction.getId());
 					inUse = true;

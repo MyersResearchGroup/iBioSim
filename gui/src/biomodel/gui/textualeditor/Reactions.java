@@ -2236,15 +2236,20 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		int index = reactions.getSelectedIndex();
 		if (index != -1) {
 			String selected = ((String) reactions.getSelectedValue()).split(" ")[0];
-			bioModel.removeReaction(selected);
-			reactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-			reacts = (String[]) Utility.remove(reactions, reacts);
-			reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			if (index < reactions.getModel().getSize()) {
-				reactions.setSelectedIndex(index);
-			}
-			else {
-				reactions.setSelectedIndex(index - 1);
+			Reaction reaction = bioModel.getSBMLDocument().getModel().getReaction(selected);
+			if (BioModel.isProductionReaction(reaction)) {
+				bioModel.removePromoter(selected.replace("Production_", ""));
+			} else {
+				bioModel.removeReaction(selected);
+				reactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+				reacts = (String[]) Utility.remove(reactions, reacts);
+				reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+				if (index < reactions.getModel().getSize()) {
+					reactions.setSelectedIndex(index);
+				}
+				else {
+					reactions.setSelectedIndex(index - 1);
+				}
 			}
 			dirty.setValue(true);
 			bioModel.makeUndoPoint();
