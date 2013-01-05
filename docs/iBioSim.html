@@ -1395,7 +1395,7 @@ The Units tab is used to add, remove, and edit unit definitions.  Unit definitio
 </a>SBOL Editors</h2>
 
 <div class="p"><!----></div>
-SBOL is an emerging standard under development for the exchange of information about synthetic biology designs.  An SBOL file includes <em>Collections</em> of <em>DNA Components</em>.  Each DNA component has a unique ID, name, description, type, and a DNA sequence.  A DNA component can be a simple sequence feature type such as a <em>promoter</em>, <em>ribosome entry site</em>, <em>coding sequence</em> (i.e., gene), or <em>terminator</em>.  It can also be an annotated DNA sequence that includes several of these individual features, perhaps organized hierarchically.  For example, a DNA component may include a promoter followed by a ribosome binding site followed by an open reading frame followed by a terminator.  <tt>iBioSim</tt> includes an SBOL browser that allows the user to view an individual SBOL file by clicking on it in the list of project files.  In this browser, the user can highlight individual DNA components and see the information stored about them.  The user can also enter a type of DNA component and press the Filter button to limit the list to only DNA components of the requested type.
+SBOL is an emerging standard under development for the exchange of information about synthetic biology designs.  An SBOL file includes <em>Collections</em> of <em>DNA Components</em>.  Each DNA component has a unique ID, name, description, <em>Sequence Ontology</em> type, and a DNA sequence.  A DNA component can be a simple sequence feature such as a <em>promoter</em>, <em>ribosome entry site</em>, <em>coding sequence</em> (i.e., gene), or <em>terminator</em>.  It can also be a DNA sequence annotated with several of these individual features.  For example, a DNA component that is a gene may have its sequence annotated with a promoter DNA component followed by a ribosome binding site, an open reading frame, and a terminator.  <tt>iBioSim</tt> includes an SBOL browser that allows the user to view an individual SBOL file by clicking on it in the list of project files.  In this browser, the user can highlight individual DNA components and see the information stored about them.  The user can also enter an SO type and press the Filter button to limit the list to only DNA components of the requested type.
 
 <div class="p"><!----></div>
 
@@ -1403,7 +1403,7 @@ SBOL is an emerging standard under development for the exchange of information a
 </center>
 
 <div class="p"><!----></div>
-When the user clicks on an Associate SBOL button, it opens up a window that includes an ordered list of DNA components associated with that SBML element.  In this window, highlighting a DNA component and pressing the Remove button removes this component from the list.  Pressing the Add button opens an SBOL Browser that can be used to find a DNA component to add to this list.  By selecting a DNA component and pressing OK, the selected component is added to the list.  It is added to the end of the list when no component is highlighted in the list, and it is added before the highlighted component, otherwise.
+When the user clicks on an Associate SBOL button in the editor for a model element, it opens up a window that includes an ordered list of DNA components associated with that model element.  In this window, highlighting a DNA component and pressing the Remove button removes this component from the list.  Pressing the Add button opens an SBOL Browser that can be used to find a DNA component to add to this list.  By selecting a DNA component and pressing OK, the selected component is added to the list.  It is added to the end of the list when no component is highlighted in the list, and it is added before the highlighted component, otherwise.
 
 <div class="p"><!----></div>
 
@@ -1416,7 +1416,7 @@ When the user clicks on an Associate SBOL button, it opens up a window that incl
 </center>
 
 <div class="p"><!----></div>
-The SBOL Association window is a bit different when associating SBOL to the top-level SBML model element.  In particular, it includes a button to Add/Move Composite.  Any model which has SBOL associated with some of its elements automatically generates a composite DNA component which is typically associated with the Model element.  It is possible though to add additional DNA components either before or after this composite component.  One can also remove the composite DNA component and replace it with a DNA component from an SBOL file.  The purpose of the Add/Move Composite is to restore the composite component to the list, if it has been removed.  It has the added functionality of moving it to before the highlighted component, if it is currently in the list.
+The SBOL Association window is a bit different when associating SBOL to the top-level SBML model itself.  In particular, it includes a button to Add/Move Composite.  Upon save, any model which has SBOL associated with some of its elements automatically generates a composite DNA component which is typically associated with the model itself.  It is possible though to add additional DNA components either before or after this composite component.  One can also remove the composite DNA component and replace it with a DNA component from an SBOL file.  The purpose of the Add/Move Composite is to restore the composite component to the list, if it has been removed.  It has the added functionality of moving it before the highlighted component, if it is currently in the list.
 
 <div class="p"><!----></div>
 
@@ -2345,5 +2345,5 @@ mail will be filtered by our spam filters:
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>H</a>,
-version 3.81.<br />On  4 Jan 2013, 10:12.</small>
+version 3.81.<br />On  5 Jan 2013, 10:13.</small>
 </html>
