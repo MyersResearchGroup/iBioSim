@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
@@ -52,6 +53,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -362,6 +364,14 @@ public class Schematic extends JPanel implements ActionListener {
 		return toolBar;
 	}
 	
+	public void cut() {
+		removeCells(null,null);
+	}
+	
+	public void select() {
+		selectButton.doClick();
+	}
+	
 	/**
 	 * create the toolbar.
 	 * @return
@@ -371,7 +381,7 @@ public class Schematic extends JPanel implements ActionListener {
 		JToolBar toolBar = new JToolBar();
 		
 		ButtonGroup modeButtonGroup = new ButtonGroup();
-		selectButton =Utils.makeRadioToolButton("select_mode.png", "", "Select", this, modeButtonGroup); 
+		selectButton = Utils.makeRadioToolButton("select_mode.png", "", "Select", this, modeButtonGroup); 
 		toolBar.add(selectButton);
 		selectButton.setSelected(true);
 		addCompartmentButton = Utils.makeRadioToolButton("add_compartment.png", "", "Add Compartment", this, modeButtonGroup);
@@ -1082,322 +1092,9 @@ public class Schematic extends JPanel implements ActionListener {
 		graph.addListener(mxEvent.CELLS_REMOVED, new mxEventSource.mxIEventListener() {
 			
 			public void invoke(Object arg0, mxEventObject event) {
-				
-				if (graph.dynamic == true)
-					return;
-					
-				// if the graph isn't being built and this event
-				// comes through, remove all the cells from the 
-				// internal model that were specified.
-				if(graph.isBuilding == false){
-					
-					Object cells[] = (Object [])event.getProperties().get("cells");
-					
-					// sort the cells so that edges are first. This makes them
-					// get deleted before anything they are connected to.
-					Arrays.sort(cells, 0, cells.length, new Comparator<Object>() {
-						
-						public int compare(Object a, Object b){
-							
-							boolean av = ((mxCell)a).isEdge();
-							boolean bv = ((mxCell)b).isEdge();
-							if(av && !bv) return -1; // a is edge, b isn't
-							if(!av && bv) return 1; // b is edge, a isn't
-							return 0; // both are the same
-						}
-					});
-					
-					boolean doNotRemove = false;
-					for(Object ocell:cells){
-						
-						mxCell cell = (mxCell)ocell;
-						String type = graph.getCellType(cell);
-
-						if(type == GlobalConstants.SPECIES){
-							if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, true, true)) {
-								doNotRemove = true;
-							}
-						} else if (type == GlobalConstants.PROMOTER){
-							if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, true, false)) {
-								doNotRemove = true;
-							}
-						} else if(type == GlobalConstants.VARIABLE || type == GlobalConstants.PLACE || type == GlobalConstants.BOOLEAN) {
-							if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, true, true)) {
-								doNotRemove = true;
-							}
-						} else if(type == GlobalConstants.COMPARTMENT) {
-							if (SBMLutilities.compartmentInUse(bioModel.getSBMLDocument(), cell.getId())) {
-								doNotRemove = true; 
-							} else if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, true, true)) {
-								doNotRemove = true;
-							}
-						} else if (type == GlobalConstants.REACTION){
-							if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, true, false)) {
-								doNotRemove = true;
-							}
-							/*
-						} else if (type == GlobalConstants.RULE_EDGE){
-							doNotRemove = true;
-						} else if (type == GlobalConstants.CONSTRAINT_EDGE){
-							doNotRemove = true;
-						} else if (type == GlobalConstants.EVENT_EDGE){
-							doNotRemove = true;
-							*/
-						} else if(type == GlobalConstants.REACTION_EDGE) {
-							mxCell source = (mxCell)cell.getSource();
-							mxCell target = (mxCell)cell.getTarget();
-							if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
-								(graph.getCellType(target) == GlobalConstants.SPECIES)) {
-								Reaction r = bioModel.getSBMLDocument().getModel().getReaction((String)cell.getValue());
-								ListOf reactants = r.getListOfReactants();
-								for (int i = 0; i < r.getNumReactants(); i++) {
-									SpeciesReference s = (SpeciesReference)reactants.get(i);
-									if (s.getSpecies().equals(source.getId())) {
-										if (s.isSetId() && 
-												SBMLutilities.variableInUse(bioModel.getSBMLDocument(), s.getId(), false, true, false)) {
-											doNotRemove = true;
-										}
-										break;
-									}
-								} 
-								ListOf products = r.getListOfProducts();
-								for (int i = 0; i < r.getNumProducts(); i++) {
-									SpeciesReference s = (SpeciesReference)products.get(i);
-									if (s.getSpecies().equals(target.getId())) {
-										if (s.isSetId() && 
-												SBMLutilities.variableInUse(bioModel.getSBMLDocument(), s.getId(), false, true, false)) {
-											doNotRemove = true;
-										}
-										break;
-									}
-								}
-							} 
-							else if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
-								(graph.getCellType(target) == GlobalConstants.REACTION)) {
-								Reaction r = bioModel.getSBMLDocument().getModel().getReaction(target.getId());
-								ListOf reactants = r.getListOfReactants();
-								for (int i = 0; i < r.getNumReactants(); i++) {
-									SpeciesReference s = (SpeciesReference)reactants.get(i);
-									if (s.getSpecies().equals(source.getId())) {
-										if (s.isSetId() && 
-												SBMLutilities.variableInUse(bioModel.getSBMLDocument(), s.getId(), false, true, false)) {
-											doNotRemove = true;
-										}
-										break;
-									}
-								}
-							} 
-							else if ((graph.getCellType(source) == GlobalConstants.REACTION) &&
-								(graph.getCellType(target) == GlobalConstants.SPECIES)) {
-								Reaction r = bioModel.getSBMLDocument().getModel().getReaction(source.getId());
-								ListOf products = r.getListOfProducts();
-								for (int i = 0; i < r.getNumProducts(); i++) {
-									SpeciesReference s = (SpeciesReference)products.get(i);
-									if (s.getSpecies().equals(target.getId())) {
-										if (s.isSetId() && 
-												SBMLutilities.variableInUse(bioModel.getSBMLDocument(), s.getId(), false, true, false)) {
-											doNotRemove = true;
-										}
-										break;
-									}
-								}
-							}
-						}
-						if (doNotRemove) {
-							modelEditor.refresh();
-							graph.buildGraph();
-							drawGrid();
-							return;
-						}
-					}
-					
-					for(Object ocell:cells){
-						
-						mxCell cell = (mxCell)ocell;
-						//System.out.print(cell.getId() + " Deleting.\n");
-						
-						String type = graph.getCellType(cell);
-						
-						if(type == GlobalConstants.INFLUENCE || type == GlobalConstants.PRODUCTION){
-							bioModel.removeInfluence(cell.getId());
-						}
-						else if(type == GlobalConstants.REACTION_EDGE) {
-							
-							mxCell source = (mxCell)cell.getSource();
-							mxCell target = (mxCell)cell.getTarget();
-							
-							if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
-									(graph.getCellType(target) == GlobalConstants.SPECIES)) {
-								
-								Reaction r = bioModel.getSBMLDocument().getModel().getReaction((String)cell.getValue());
-								
-								if (r.getNumReactants()==1 && r.getNumProducts()==1) {
-									reactions.removeTheReaction(bioModel,(String)cell.getValue());
-								} 
-								else if (r.getNumReactants() > 1) {
-									
-									ListOf reactants = r.getListOfReactants();
-									
-									for (int i = 0; i < r.getNumReactants(); i++) {
-										
-										SpeciesReference s = (SpeciesReference)reactants.get(i);
-										
-										if (s.getSpecies().equals(source.getId())) {
-											reactants.remove(i);
-											break;
-										}
-									}
-								} 
-								else if (r.getNumProducts() > 1) {
-									
-									ListOf products = r.getListOfProducts();
-									
-									for (int i = 0; i < r.getNumProducts(); i++) {
-										
-										SpeciesReference s = (SpeciesReference)products.get(i);
-										
-										if (s.getSpecies().equals(target.getId())) {
-											products.remove(i);
-											break;
-										}
-									}
-								}
-							} 
-							else if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
-								(graph.getCellType(target) == GlobalConstants.REACTION)) {
-								
-								Reaction r = bioModel.getSBMLDocument().getModel().getReaction(target.getId());
-								boolean found = false;
-								ListOf reactants = r.getListOfReactants();
-								
-								for (int i = 0; i < r.getNumReactants(); i++) {
-									
-									SpeciesReference s = (SpeciesReference)reactants.get(i);
-									
-									if (s.getSpecies().equals(source.getId())) {
-										reactants.remove(i);
-										found = true;
-										break;
-									}
-								}
-								if (!found) {
-									
-									ListOf modifiers = r.getListOfModifiers();
-									
-									for (int i = 0; i < r.getNumModifiers(); i++) {
-										
-										ModifierSpeciesReference s = (ModifierSpeciesReference)modifiers.get(i);
-										
-										if (s.getSpecies().equals(source.getId())) {
-											modifiers.remove(i);
-											break;
-										}
-									}
-								}
-							} 
-							else if ((graph.getCellType(source) == GlobalConstants.REACTION) &&
-								(graph.getCellType(target) == GlobalConstants.SPECIES)) {
-								
-								Reaction r = bioModel.getSBMLDocument().getModel().getReaction(source.getId());
-								ListOf products = r.getListOfProducts();
-								
-								for (int i = 0; i < r.getNumProducts(); i++) {
-									
-									SpeciesReference s = (SpeciesReference)products.get(i);
-									
-									if (s.getSpecies().equals(target.getId())) {
-										products.remove(i);
-										break;
-									}
-								}
-							}
-						}
-						else if(type == GlobalConstants.REACTION) {
-
-							bioModel.removeReaction(cell.getId());
-						}
-						else if(type == GlobalConstants.RULE) {
-							
-							bioModel.removeByMetaId(cell.getId());
-						}
-						else if(type == GlobalConstants.CONSTRAINT) {
-							
-							bioModel.removeByMetaId(cell.getId());
-						}
-						else if(type == GlobalConstants.EVENT || type == GlobalConstants.TRANSITION) {
-							
-							bioModel.removeById(cell.getId());
-						}
-						else if(type == GlobalConstants.VARIABLE || type == GlobalConstants.PLACE || type == GlobalConstants.BOOLEAN) {
-							bioModel.removeById(cell.getId());
-						}
-						else if(type == GlobalConstants.COMPARTMENT) {
-							bioModel.removeById(cell.getId());
-						}
-						else if(type == GlobalConstants.SPECIES){
-							
-							/*
-							if(gcm.speciesUsedInOtherGCM(cell.getId())){
-								JOptionPane.showMessageDialog(Gui.frame, "Sorry, the species \""+cell.getId()+"\" is used in another component and cannot be removed.");
-								continue;
-							}
-							*/
-							//gcm.removeSpeciesAndAssociations(cell.getId());
-							bioModel.removeSpecies(cell.getId());
-							//graph.speciesRemoved(cell.getId());
-						}
-						else if(type == GlobalConstants.COMPONENT){
-									
-							//if there's a grid, remove the component from the grid as well
-							if (grid.isEnabled()) {
-								
-								grid.eraseNode(cell.getId(), bioModel);
-								modelEditor.getSpeciesPanel().refreshSpeciesPanel(bioModel);
-							}
-							else
-								bioModel.removeComponent(cell.getId());
-						}
-						else if(type == GlobalConstants.PROMOTER){
-							bioModel.removePromoter(cell.getId());
-						}
-						else if(type == GlobalConstants.PETRI_NET_EDGE){
-							mxCell source = (mxCell)cell.getSource();
-							mxCell target = (mxCell)cell.getTarget();
-							if (graph.getCellType(source) == GlobalConstants.PLACE) {
-								Event e = bioModel.getSBMLDocument().getModel().getEvent(target.getId());
-								Trigger t = e.getTrigger();
-								t.setMath(SBMLutilities.removePreset(t.getMath(),source.getId()));
-								EventAssignment ea = e.getEventAssignment(source.getId());
-								if (ea!=null) {
-									ea.removeFromParentAndDelete();
-								}
-							} else if (graph.getCellType(target) == GlobalConstants.PLACE) {
-								Event e = bioModel.getSBMLDocument().getModel().getEvent(source.getId());
-								EventAssignment ea = e.getEventAssignment(target.getId());
-								if (ea!=null) {
-									ea.removeFromParentAndDelete();
-								}
-							}
-						}
-						else if(type == GlobalConstants.COMPONENT_CONNECTION){
-							removeComponentConnection(cell);
-						}
-						else if(type == graph.CELL_NOT_FULLY_CONNECTED){
-							// do nothing. This can happen if the user deletes a species that is connected
-							// to influences or connections. The influences or connections will be 
-							// removed, but then the graph library will still fire an event to remove
-							// the now defunct edge. In that case this branch will be called and should
-							// do nothing.
-						}
-					}
-					
-					modelEditor.setDirty(true);
-					modelEditor.refresh();
-					graph.buildGraph();
-					drawGrid();
-					bioModel.makeUndoPoint();
-				}
+				removeCells(arg0, event);
 			}
+	
 		});
 
 		graph.addListener(mxEvent.CELLS_RESIZED, new mxEventSource.mxIEventListener() {
@@ -1463,6 +1160,325 @@ public class Schematic extends JPanel implements ActionListener {
 		});
 		
 	}
+	
+	public void removeCells(Object arg0, mxEventObject event) {
+		
+		if (graph.dynamic == true)
+			return;
+			
+		// if the graph isn't being built and this event
+		// comes through, remove all the cells from the 
+		// internal model that were specified.
+		if(graph.isBuilding == false){
+
+			Object cells[] = graph.getSelectionCells(); //(Object [])event.getProperties().get("cells");
+			
+			// sort the cells so that edges are first. This makes them
+			// get deleted before anything they are connected to.
+			Arrays.sort(cells, 0, cells.length, new Comparator<Object>() {
+				
+				public int compare(Object a, Object b){
+					
+					boolean av = ((mxCell)a).isEdge();
+					boolean bv = ((mxCell)b).isEdge();
+					if(av && !bv) return -1; // a is edge, b isn't
+					if(!av && bv) return 1; // b is edge, a isn't
+					return 0; // both are the same
+				}
+			});
+			
+			boolean doNotRemove = false;
+			for(Object ocell:cells){
+				
+				mxCell cell = (mxCell)ocell;
+				String type = graph.getCellType(cell);
+
+				if(type == GlobalConstants.SPECIES){
+					if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, true, true)) {
+						doNotRemove = true;
+					}
+				} else if (type == GlobalConstants.PROMOTER){
+					if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, true, false)) {
+						doNotRemove = true;
+					}
+				} else if(type == GlobalConstants.VARIABLE || type == GlobalConstants.PLACE || type == GlobalConstants.BOOLEAN) {
+					if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, true, true)) {
+						doNotRemove = true;
+					}
+				} else if(type == GlobalConstants.COMPARTMENT) {
+					if (SBMLutilities.compartmentInUse(bioModel.getSBMLDocument(), cell.getId())) {
+						doNotRemove = true; 
+					} else if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, true, true)) {
+						doNotRemove = true;
+					}
+				} else if (type == GlobalConstants.REACTION){
+					if (SBMLutilities.variableInUse(bioModel.getSBMLDocument(), cell.getId(), false, true, false)) {
+						doNotRemove = true;
+					}
+					/*
+				} else if (type == GlobalConstants.RULE_EDGE){
+					doNotRemove = true;
+				} else if (type == GlobalConstants.CONSTRAINT_EDGE){
+					doNotRemove = true;
+				} else if (type == GlobalConstants.EVENT_EDGE){
+					doNotRemove = true;
+					*/
+				} else if(type == GlobalConstants.REACTION_EDGE) {
+					mxCell source = (mxCell)cell.getSource();
+					mxCell target = (mxCell)cell.getTarget();
+					if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
+						(graph.getCellType(target) == GlobalConstants.SPECIES)) {
+						Reaction r = bioModel.getSBMLDocument().getModel().getReaction((String)cell.getValue());
+						ListOf reactants = r.getListOfReactants();
+						for (int i = 0; i < r.getNumReactants(); i++) {
+							SpeciesReference s = (SpeciesReference)reactants.get(i);
+							if (s.getSpecies().equals(source.getId())) {
+								if (s.isSetId() && 
+										SBMLutilities.variableInUse(bioModel.getSBMLDocument(), s.getId(), false, true, false)) {
+									doNotRemove = true;
+								}
+								break;
+							}
+						} 
+						ListOf products = r.getListOfProducts();
+						for (int i = 0; i < r.getNumProducts(); i++) {
+							SpeciesReference s = (SpeciesReference)products.get(i);
+							if (s.getSpecies().equals(target.getId())) {
+								if (s.isSetId() && 
+										SBMLutilities.variableInUse(bioModel.getSBMLDocument(), s.getId(), false, true, false)) {
+									doNotRemove = true;
+								}
+								break;
+							}
+						}
+					} 
+					else if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
+						(graph.getCellType(target) == GlobalConstants.REACTION)) {
+						Reaction r = bioModel.getSBMLDocument().getModel().getReaction(target.getId());
+						ListOf reactants = r.getListOfReactants();
+						for (int i = 0; i < r.getNumReactants(); i++) {
+							SpeciesReference s = (SpeciesReference)reactants.get(i);
+							if (s.getSpecies().equals(source.getId())) {
+								if (s.isSetId() && 
+										SBMLutilities.variableInUse(bioModel.getSBMLDocument(), s.getId(), false, true, false)) {
+									doNotRemove = true;
+								}
+								break;
+							}
+						}
+					} 
+					else if ((graph.getCellType(source) == GlobalConstants.REACTION) &&
+						(graph.getCellType(target) == GlobalConstants.SPECIES)) {
+						Reaction r = bioModel.getSBMLDocument().getModel().getReaction(source.getId());
+						ListOf products = r.getListOfProducts();
+						for (int i = 0; i < r.getNumProducts(); i++) {
+							SpeciesReference s = (SpeciesReference)products.get(i);
+							if (s.getSpecies().equals(target.getId())) {
+								if (s.isSetId() && 
+										SBMLutilities.variableInUse(bioModel.getSBMLDocument(), s.getId(), false, true, false)) {
+									doNotRemove = true;
+								}
+								break;
+							}
+						}
+					}
+				}
+				if (doNotRemove) {
+					modelEditor.refresh();
+					graph.buildGraph();
+					drawGrid();
+					return;
+				}
+			}
+			
+			for(Object ocell:cells){
+				
+				mxCell cell = (mxCell)ocell;
+				//System.out.print(cell.getId() + " Deleting.\n");
+				
+				String type = graph.getCellType(cell);
+				
+				if(type == GlobalConstants.INFLUENCE || type == GlobalConstants.PRODUCTION){
+					bioModel.removeInfluence(cell.getId());
+				}
+				else if(type == GlobalConstants.REACTION_EDGE) {
+					
+					mxCell source = (mxCell)cell.getSource();
+					mxCell target = (mxCell)cell.getTarget();
+					
+					if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
+							(graph.getCellType(target) == GlobalConstants.SPECIES)) {
+						
+						Reaction r = bioModel.getSBMLDocument().getModel().getReaction((String)cell.getValue());
+						
+						if (r.getNumReactants()==1 && r.getNumProducts()==1) {
+							reactions.removeTheReaction(bioModel,(String)cell.getValue());
+						} 
+						else if (r.getNumReactants() > 1) {
+							
+							ListOf reactants = r.getListOfReactants();
+							
+							for (int i = 0; i < r.getNumReactants(); i++) {
+								
+								SpeciesReference s = (SpeciesReference)reactants.get(i);
+								
+								if (s.getSpecies().equals(source.getId())) {
+									reactants.remove(i);
+									break;
+								}
+							}
+						} 
+						else if (r.getNumProducts() > 1) {
+							
+							ListOf products = r.getListOfProducts();
+							
+							for (int i = 0; i < r.getNumProducts(); i++) {
+								
+								SpeciesReference s = (SpeciesReference)products.get(i);
+								
+								if (s.getSpecies().equals(target.getId())) {
+									products.remove(i);
+									break;
+								}
+							}
+						}
+					} 
+					else if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
+						(graph.getCellType(target) == GlobalConstants.REACTION)) {
+						
+						Reaction r = bioModel.getSBMLDocument().getModel().getReaction(target.getId());
+						boolean found = false;
+						ListOf reactants = r.getListOfReactants();
+						
+						for (int i = 0; i < r.getNumReactants(); i++) {
+							
+							SpeciesReference s = (SpeciesReference)reactants.get(i);
+							
+							if (s.getSpecies().equals(source.getId())) {
+								reactants.remove(i);
+								found = true;
+								break;
+							}
+						}
+						if (!found) {
+							
+							ListOf modifiers = r.getListOfModifiers();
+							
+							for (int i = 0; i < r.getNumModifiers(); i++) {
+								
+								ModifierSpeciesReference s = (ModifierSpeciesReference)modifiers.get(i);
+								
+								if (s.getSpecies().equals(source.getId())) {
+									modifiers.remove(i);
+									break;
+								}
+							}
+						}
+					} 
+					else if ((graph.getCellType(source) == GlobalConstants.REACTION) &&
+						(graph.getCellType(target) == GlobalConstants.SPECIES)) {
+						
+						Reaction r = bioModel.getSBMLDocument().getModel().getReaction(source.getId());
+						ListOf products = r.getListOfProducts();
+						
+						for (int i = 0; i < r.getNumProducts(); i++) {
+							
+							SpeciesReference s = (SpeciesReference)products.get(i);
+							
+							if (s.getSpecies().equals(target.getId())) {
+								products.remove(i);
+								break;
+							}
+						}
+					}
+				}
+				else if(type == GlobalConstants.REACTION) {
+
+					bioModel.removeReaction(cell.getId());
+				}
+				else if(type == GlobalConstants.RULE) {
+					
+					bioModel.removeByMetaId(cell.getId());
+				}
+				else if(type == GlobalConstants.CONSTRAINT) {
+					
+					bioModel.removeByMetaId(cell.getId());
+				}
+				else if(type == GlobalConstants.EVENT || type == GlobalConstants.TRANSITION) {
+					
+					bioModel.removeById(cell.getId());
+				}
+				else if(type == GlobalConstants.VARIABLE || type == GlobalConstants.PLACE || type == GlobalConstants.BOOLEAN) {
+					bioModel.removeById(cell.getId());
+				}
+				else if(type == GlobalConstants.COMPARTMENT) {
+					bioModel.removeById(cell.getId());
+				}
+				else if(type == GlobalConstants.SPECIES){
+					
+					/*
+					if(gcm.speciesUsedInOtherGCM(cell.getId())){
+						JOptionPane.showMessageDialog(Gui.frame, "Sorry, the species \""+cell.getId()+"\" is used in another component and cannot be removed.");
+						continue;
+					}
+					*/
+					//gcm.removeSpeciesAndAssociations(cell.getId());
+					bioModel.removeSpecies(cell.getId());
+					//graph.speciesRemoved(cell.getId());
+				}
+				else if(type == GlobalConstants.COMPONENT){
+							
+					//if there's a grid, remove the component from the grid as well
+					if (grid.isEnabled()) {
+						
+						grid.eraseNode(cell.getId(), bioModel);
+						modelEditor.getSpeciesPanel().refreshSpeciesPanel(bioModel);
+					}
+					else
+						bioModel.removeComponent(cell.getId());
+				}
+				else if(type == GlobalConstants.PROMOTER){
+					bioModel.removePromoter(cell.getId());
+				}
+				else if(type == GlobalConstants.PETRI_NET_EDGE){
+					mxCell source = (mxCell)cell.getSource();
+					mxCell target = (mxCell)cell.getTarget();
+					if (graph.getCellType(source) == GlobalConstants.PLACE) {
+						Event e = bioModel.getSBMLDocument().getModel().getEvent(target.getId());
+						Trigger t = e.getTrigger();
+						t.setMath(SBMLutilities.removePreset(t.getMath(),source.getId()));
+						EventAssignment ea = e.getEventAssignment(source.getId());
+						if (ea!=null) {
+							ea.removeFromParentAndDelete();
+						}
+					} else if (graph.getCellType(target) == GlobalConstants.PLACE) {
+						Event e = bioModel.getSBMLDocument().getModel().getEvent(source.getId());
+						EventAssignment ea = e.getEventAssignment(target.getId());
+						if (ea!=null) {
+							ea.removeFromParentAndDelete();
+						}
+					}
+				}
+				else if(type == GlobalConstants.COMPONENT_CONNECTION){
+					removeComponentConnection(cell);
+				}
+				else if(type == graph.CELL_NOT_FULLY_CONNECTED){
+					// do nothing. This can happen if the user deletes a species that is connected
+					// to influences or connections. The influences or connections will be 
+					// removed, but then the graph library will still fire an event to remove
+					// the now defunct edge. In that case this branch will be called and should
+					// do nothing.
+				}
+			}
+			
+			modelEditor.setDirty(true);
+			modelEditor.refresh();
+			graph.buildGraph();
+			drawGrid();
+			bioModel.makeUndoPoint();
+		}
+	}
+
         
 	//INPUT/OUTPUT AND CONNECTION METHODS
 	
