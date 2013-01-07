@@ -244,7 +244,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private String[] BioModelIds = null;
 
-	private JMenuItem undo, redo, copy, rename, delete, save, saveAs, saveSBOL, check, run, refresh, viewCircuit, viewRules, viewTrace, viewLog, viewCoverage,
+	private JMenuItem cut,select,undo, redo, copy, rename, delete, save, saveAs, saveSBOL, check, run, refresh, viewCircuit, viewRules, viewTrace, viewLog, viewCoverage,
 			viewLHPN, saveModel, saveAsVerilog, viewSG, viewModGraph, viewLearnedModel, viewModBrowser, createAnal, createLearn, createSbml,
 			createSynth, createVer, close, closeAll, convertToLPN;
 	
@@ -437,6 +437,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		menuBar.add(tools);
 		menuBar.add(help);
+		select = new JMenuItem("Select Mode");
+		cut = new JMenuItem("Cut");
 		undo = new JMenuItem("Undo");
 		redo = new JMenuItem("Redo");
 		copy = new JMenuItem("Copy File");
@@ -526,6 +528,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		createSynth = new JMenuItem("Synthesis Tool");
 		createVer = new JMenuItem("Verification Tool");
 		exit = new JMenuItem("Exit");
+		select.addActionListener(this);
+		cut.addActionListener(this);
 		undo.addActionListener(this);
 		redo.addActionListener(this);
 		copy.addActionListener(this);
@@ -649,6 +653,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		newLhpn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ShortCutKey));
 		graph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ShortCutKey));
 		probGraph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, ShortCutKey | KeyEvent.SHIFT_MASK));
+		select.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0));
+		cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0));
 		undo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, ShortCutKey));
 		redo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, ShortCutKey | KeyEvent.SHIFT_MASK));
 		copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ShortCutKey | KeyEvent.SHIFT_MASK));
@@ -709,6 +715,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		run.setEnabled(false);
 		check.setEnabled(false);
 		refresh.setEnabled(false);
+		cut.setEnabled(false);
+		select.setEnabled(false);
 		undo.setEnabled(false);
 		redo.setEnabled(false);
 		copy.setEnabled(false);
@@ -730,6 +738,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		createSbml.setEnabled(false);
 		createSynth.setEnabled(false);
 		createVer.setEnabled(false);
+		edit.add(select);
+		edit.add(cut);
 		edit.add(undo);
 		edit.add(redo);
 		edit.addSeparator();
@@ -2931,6 +2941,18 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else if (e.getActionCommand().equals("viewModel")) {
 			viewModel();
+		}
+		else if (e.getSource() == select) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof ModelEditor) {
+				((ModelEditor) comp).select();
+			}
+		}
+		else if (e.getSource() == cut) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof ModelEditor) {
+				((ModelEditor) comp).cut();
+			}
 		}
 		else if (e.getSource() == undo) {
 			Component comp = tab.getSelectedComponent();
@@ -8596,6 +8618,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		viewCoverage.setEnabled(false);
 		viewLearnedModel.setEnabled(false);
 		refresh.setEnabled(false);
+		select.setEnabled(false);
+		cut.setEnabled(false);
 		undo.setEnabled(false);
 		redo.setEnabled(false);
 		if (selectedTab != -1) {
@@ -8611,6 +8635,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			saveAs.setEnabled(true);
 			saveSBOL.setEnabled(true);
 			check.setEnabled(true);
+			select.setEnabled(true);
+			cut.setEnabled(true);
 			undo.setEnabled(true);
 			redo.setEnabled(true);
 			exportMenu.setEnabled(true);

@@ -2253,6 +2253,14 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		return outID;
 	}
 	
+	public void cut() {
+		schematic.cut();
+	}
+	
+	public void select() {
+		schematic.select();
+	}
+	
 	public void undo() {
 		biomodel.undo();
 		schematic.refresh();
