@@ -168,7 +168,7 @@ You can also import files into the current working project.  These can be models
 (SED-ML) file. 
 
 \begin{center}
-\includegraphics[height=80mm]{screenshots/import}
+\includegraphics[height=60mm]{screenshots/import}
 \end{center} 
 
 To import a SBML, select Import $\rightarrow$ SBML Model from the File menu.  
@@ -176,7 +176,7 @@ You will then be able to browse to find a model to import.  After  selecting the
 The model will also be checked for consistency, and any errors or warnings will be reported.  These should be corrected before analysis of the model is performed.  Importing of an LPN model, an SBOL file, or a SED-ML file are similar in that you are asked to locate the appropriate file to import.  When importing a model from the BioModels database, the window below will open, initially only listing the BioModel numbers.  Selecting ``Get Names'' will fetch the model names from the database.  Beware that this can take a significant amount of time.  When you click on a model to select it, you can use the ``Get Description'' button to fetch a description of the model which will open in a browser.  Similarly, the ``Get Reference'' button will fetch the reference describing this model and again open it in a browser.
 
 \begin{center}
-\includegraphics[height=80mm]{screenshots/BioModels}
+\includegraphics[height=60mm]{screenshots/BioModels}
 \end{center} 
 
 \subsection{Exporting Models and Graphs}
@@ -201,6 +201,8 @@ Data and graphs of time series data or histograms can be exported from the proje
 \item Scalable vector graphics (svg).
 \end{itemize}
 
+\clearpage
+
 \subsection{Editing Project Objects}
 
 \noindent
@@ -218,9 +220,9 @@ For an analysis view, the ``Open Analysis View'' option opens the analysis view 
 \noindent
 To perform analysis or learning, right-click on a model and select ``Create Analysis View'' (see Section~\ref{Analysis}) to perform analysis or ``Create Learn View'' (see Section~\ref{Learn}) to perform learning. You will then be prompted to give a name to your analysis or learn view. After a name is entered, a tab with the newly created view will open.  Views can also be created using the Tools menu.  Once a view is created, it can be opened again later by right-clicking on an analysis directory and selecting ``Open Analysis/Learn View'' or, alternatively, double-clicking on the view.
 
-\begin{center}
-\includegraphics[height=65mm]{screenshots/GCMAnalysis} 
-\end{center}
+%\begin{center}
+%\includegraphics[height=65mm]{screenshots/GCMAnalysis} 
+%\end{center}
 
 \clearpage
 
@@ -233,13 +235,20 @@ The model editor allows the user to create or modify a model of a genetic circui
 \includegraphics[height=25mm]{screenshots/ModelId}
 \end{center}
 
-\noindent
 The schematic editor for an ordinary model is shown below.  There are two groups of icons.  By selecting the appropriate icon in the first group, the user can add \emph{compartments} (see Section~\ref{Compartments}), \emph{chemical species} (see Section~\ref{Species}), 
 \emph{chemical reactions} (see Section~\ref{Reactions}), \emph{components} (see Section~\ref{Components}), \emph{promoters} (see Section~\ref{Promoters}), \emph{real variables} (see Section~\ref{Variables}), \emph{Boolean variables} (see Section~\ref{Booleans}), \emph{Petri net places} (see Section~\ref{Places}), \emph{Petri net transitions} (see Section~\ref{Transitions}), \emph{rules} (see Section~\ref{Rules}), \emph{constraints} (see Section~\ref{Constraints}), and \emph{events} (see Section~\ref{Events}) to the schematic.  When the select icon is highlighted, \includegraphics{../gui/icons/modelview/select_mode_selected}, double clicking on an object in the schematic opens the appropriate object editor.  In this mode, relationships can also be created between objects by selecting an object and, while holding the mouse, dragging the connection to another object.  The type of relationship (or \emph{influence}) is determined by the icon that is highlight in the second group  (see Section~\ref{Influences}).  Finally, if the self regulation icon,
-\includegraphics{../gui/icons/modelview/self_influence_selected}, is selected, clicking on a species creates a self influence relationship.  The remaining items on the toolbar allow the user to apply an automatic layout routine \includegraphics{../gui/icons/modelview/choose_layout_selected}, zoom, restore to default size (Un-Zoom), pan, edit model attributes (see Section~\ref{ModelEditor}), and edit the SBOL information associated with the model (see Section~\ref{SBOL}).  Finally, the additional tabs allow the user to add, edit, or remove \emph{real constants} (see Section~\ref{Constants}), \emph{function definitions} (see Section~\ref{Functions}), and \emph{unit definitions} (see Section~\ref{Units}).  One last note, there are undo and redo options available in the Edit menu which can be useful while creating/editing a model within the model editor.
+\includegraphics{../gui/icons/modelview/self_influence_selected}, is selected, clicking on a species creates a self influence relationship.  The remaining items on the toolbar allow the user to apply an automatic layout routine \includegraphics{../gui/icons/modelview/choose_layout_selected}, zoom, restore to default size (Un-Zoom), pan, edit model attributes (see Section~\ref{ModelEditor}), and edit the SBOL information associated with the model (see Section~\ref{SBOL}).  Finally, the additional tabs allow the user to add, edit, or remove \emph{real constants} (see Section~\ref{Constants}), \emph{function definitions} (see Section~\ref{Functions}), and \emph{unit definitions} (see Section~\ref{Units}).  One last note, there are several options in the Edit menu, which are also available via hotkeys, that can be useful during model editing.  These include return to select mode, delete, undo, and redo.  The user can also return to the select mode using the ESC key while delete and selection options are available in a right click menu on schematic objects.
+
+\begin{center}
+\includegraphics[width=40mm]{screenshots/editMenu}
+\end{center}
 
 \begin{center}
 \includegraphics[width=160mm]{screenshots/ModelEditor}
+\end{center}
+
+\begin{center}
+\includegraphics[width=160mm]{screenshots/deleteSelect}
 \end{center}
 
 For large models, it may be preferable to use the tabular model editor shown below.  The tabular editor includes all the same elements as the graphical editor except they are presented as lists of their Ids.  In each list, the user can add new element, remove existing elements, or edit the properties of existing elements.  Note that constants, real variables, Boolean variables, and places appear in the Parameter list, influences appear in the Reaction list, and Petri net transitions appear in the Event list.
@@ -254,15 +263,15 @@ For large models, it may be preferable to use the tabular model editor shown bel
 The schematic for a model on a grid is a bit different than for an ordinary model, which is evident from the toolbar.  Namely, a grid-based model can only include components, with at most one component per grid location.  By pressing the Add Component icon \includegraphics{../gui/icons/modelview/add_component_selected} and clicking on an empty grid location, you are allowed to select a model to instantiate within that grid location.  You can also select Edit Grid Size to change the size of the grid.  If the grid is larger in one or more dimensions than before, you can select a model to populate the new grid locations.  A smaller grid size simply removes the component instantiations that fall outside the new grid.  You can also edit the grid by selecting individual grid locations by clicking on them or selecting multiple grid locations using the rectangle selection tool by left-clicking and dragging the mouse.  When you then use the right mouse button, it brings up the menu shown below.  This menu allows you to delete the component that was right-clicked on or to open its model in a Model Editor.  You can also use this menu to select or de-select all grid locations, and you can either clear occupied, or populate non-occupied, selected grid locations.  The grid model editor has one additional tab which allows the user to edit properties for the species that diffuse on the grid.
 
 \begin{center}
-\includegraphics[width=160mm]{screenshots/gridModel}
+\includegraphics[width=140mm]{screenshots/gridModel}
 \end{center}
 
 \begin{center}
-\includegraphics[width=160mm]{screenshots/editGridSize}
+\includegraphics[width=140mm]{screenshots/editGridSize}
 \end{center}
 
 \begin{center}
-\includegraphics[width=160mm]{screenshots/gridRightButton}
+\includegraphics[width=140mm]{screenshots/gridRightButton}
 \end{center}
 
 \subsection{\label{Compartments}Compartments}
@@ -311,8 +320,10 @@ Species are the molecules, such as proteins, that are produced by genes or chemi
 Finally, one can specify an SBOL DNA Component with this species by clicking on the Associate SBOL button.  More details can be found in Section~\ref{SBOL}.
 
 \begin{center}
-\includegraphics[height=80mm]{screenshots/species}
+\includegraphics[width=160mm]{screenshots/species}
 \end{center}
+
+\clearpage
 
 \subsection{\label{Reactions}Reactions}
 
@@ -321,7 +332,7 @@ Reactions are used to create or destroy molecular species in a biochemical react
 To add a reaction, select the Add Reaction icon \includegraphics{../gui/icons/modelview/add_reaction_selected} and click on the schematic canvas which drops a new reaction with a default ID and parameter values.  
 
 \begin{center}
-\includegraphics[height=80mm]{screenshots/reaction}
+\includegraphics[width=155mm]{screenshots/reaction}
 \end{center}
 
 Reactions convert reactant species into product species with perhaps modifier species (e.g., enzymes or catalysts) affecting the rate of this conversion.  The next step, therefore, is to indicate which species are reactants, products, and modifiers for the reaction.  This is accomplished by selecting the Reaction icon \includegraphics{../gui/icons/modelview/reaction_selected} or Modifier icon \includegraphics{../gui/icons/modelview/modifier_selected}.  With the Reaction icon selected, selecting a species, holding the mouse button, and dragging the arc to a reaction makes the selected species a reactant in that reaction.  Similarly, selecting a reaction, holding the mouse button, and dragging the arc to a species makes the species a product in the selected reaction.  Finally, with the Modifier icon selected, dragging an arc between a species and reaction (in either direction) adds the species as a modifier in the reaction.  When you select a reactant edge, it opens a Reactants Editor.  This editor allows you to change the following things:
@@ -335,11 +346,11 @@ Reactions convert reactant species into product species with perhaps modifier sp
 Similarly, the ID, Name, Species, Stoichiometry, and Constant fields can be edited for a Product edge as shown below.  Modifier edges do not have any of these fields, so they cannot be edited.
 
 \begin{center}
-\includegraphics[height=80mm]{screenshots/reactant} 
+\includegraphics[width=155mm]{screenshots/reactant} 
 \end{center}
 
 \begin{center}
-\includegraphics[height=80mm]{screenshots/product}
+\includegraphics[width=155mm]{screenshots/product}
 \end{center}
 
 When you select a reaction, it opens the Reaction Editor which allows you to edit the following reaction fields:
@@ -357,11 +368,11 @@ The Clear button clears the kinetic law editor.  Note that the kinetic law formu
 \end{itemize}
 
 \begin{center}
-\includegraphics[height=80mm]{screenshots/localParam}
+\includegraphics[width=155mm]{screenshots/localParam}
 \end{center}
 
 \begin{center}
-\includegraphics[height=80mm]{screenshots/kineticLaw} 
+\includegraphics[width=155mm]{screenshots/kineticLaw} 
 \end{center}
 
 To simplify a schematic, one can use implicit reactions in some limited situations.  To create an implicit reaction, with the Reaction icon \includegraphics{../gui/icons/modelview/reaction_selected} highlighted and the mouse button selected, drag a reaction edge between two species.  This action creates a reaction with a default ID and parameters, including the source species as a reactant and sink species as a product.  If you connect an additional reaction edge to either species, you are asked if you wish to create a new reaction or add this new relationship to an existing reaction on the source and/or sink species.  Implicit reactions can only be used when the following conditions hold:
@@ -373,7 +384,7 @@ To simplify a schematic, one can use implicit reactions in some limited situatio
 The first condition is a default and cannot be changed.  Adding edges can, however, cause a violation of the second or third condition.  If this violation occurs, an explicit reaction is created to replace the implicit reaction.
 
 \begin{center}
-\includegraphics[width=160mm]{screenshots/implicitReactions} 
+\includegraphics[width=155mm]{screenshots/implicitReactions} 
 \end{center}
 
 \subsection{\label{Components}Components}
@@ -419,6 +430,8 @@ When adding a component to a grid, you are simply asked which model to instantia
 \includegraphics[width=160mm]{screenshots/addCompGrid}
 \end{center}
 
+\clearpage
+
 \subsection{\label{Promoters}Promoters}
 
 \noindent
@@ -441,6 +454,8 @@ Promoters are the locations on a DNA sequence in which transcription is initiate
 \includegraphics[width=160mm]{screenshots/promoter}
 \end{center}
 
+\clearpage
+
 \subsection{\label{Variables}Real Variables}
 
 \noindent
@@ -459,6 +474,8 @@ Note that changing a the Constant attribute to true removes the parameter from t
 \includegraphics[width=160mm]{screenshots/parameter}
 \end{center}
 
+\clearpage
+
 \subsection{\label{Booleans}Boolean Variables}
 
 \noindent
@@ -474,6 +491,8 @@ Boolean variables are global parameters that can only take the values of true an
 \includegraphics[width=160mm]{screenshots/Boolean}
 \end{center}
 
+\clearpage
+
 \subsection{\label{Places}Petri Net Places}
 
 \noindent
@@ -486,8 +505,10 @@ Places are a special type of global parameter that is used in Petri net models. 
 \end{itemize}
 
 \begin{center}
-\includegraphics[height=80mm]{screenshots/place}
+\includegraphics[width=160mm]{screenshots/place}
 \end{center}
+
+\clearpage
 
 \subsection{\label{Transitions}Petri Net Transitions}
 
@@ -515,6 +536,8 @@ Places and transitions are connected to form a \emph{token flow relation}.  To c
 \includegraphics[width=160mm]{screenshots/flowRelation}
 \end{center}
 
+\clearpage
+
 \subsection{\label{Rules}Rules}
 
 \noindent
@@ -539,8 +562,10 @@ This automatically restricts the set of quantities available for the left-hand s
 \end{itemize}
 
 \begin{center}
-\includegraphics[height=80mm]{screenshots/rule}
+\includegraphics[width=160mm]{screenshots/rule}
 \end{center}
+
+\clearpage
 
 \subsection{\label{Constraints}Constraints}
 
@@ -549,10 +574,12 @@ Constraints are used to specify properties that should cause simulation to termi
 Special functions are provided to support a form of \emph{Continuous Stochastic Logic} (CSL) within these constraints (see Section~\ref{SBMLMath}).  
 
 \begin{center}
-\includegraphics[height=80mm]{screenshots/constraint}
+\includegraphics[width=160mm]{screenshots/constraint}
 \end{center}
 
 Our analysis methods can provide histograms that show the proportion of simulations that are terminated due to a constraint.  Analysis can also show time-series plots showing the proportion of simulations at each time point that have terminated due to a constraint. 
+
+\clearpage
 
 \subsection{\label{Events}Events}
 
@@ -573,8 +600,10 @@ Events are used to specify discrete changes of compartment sizes, species amount
 \end{itemize}
 
 \begin{center}
-\includegraphics[height=80mm]{screenshots/event}
+\includegraphics[width=160mm]{screenshots/event}
 \end{center}
+
+\clearpage
 
 \subsection{\label{Influences}Influences}
 
@@ -613,6 +642,8 @@ The last type of influence is a self-influence.  A self-influence can be either 
 \includegraphics[width=160mm]{screenshots/selfInfluence}
 \end{center}
 
+\clearpage
+
 \subsection{\label{ModelEditor}Model Editor}
 
 \noindent
@@ -633,6 +664,8 @@ Clicking on the Model button on the schematic tab brings up the Model Editor.  T
 \begin{center}
 \includegraphics[width=160mm]{screenshots/ModelUnits}
 \end{center}
+
+\clearpage
 
 \subsection{\label{Constants}Constants}
 
@@ -695,6 +728,8 @@ kecdiff & 1.0          & $\frac{1}{\mathrm{molecule}}$ & species
 \end{tabular}
 \end{center}
 
+\clearpage
+
 \subsection{\label{Functions}Functions}
 
 \noindent
@@ -711,6 +746,8 @@ While functions can call other functions, they cannot be recursive (i.e., call t
 \begin{center}
 \includegraphics[width=160mm]{screenshots/function}
 \end{center}
+
+\clearpage
 
 \subsection{\label{Units}Units}
 
@@ -749,7 +786,7 @@ dimensionless         & item & lumen      & pascal & tesla      & ~\\ \hline
 SBOL is an emerging standard under development for the exchange of information about synthetic biology designs.  An SBOL file includes \emph{Collections} of \emph{DNA Components}.  Each DNA component has a unique ID, name, description, \emph{Sequence Ontology} type, and a DNA sequence.  A DNA component can be a simple sequence feature such as a \emph{promoter}, \emph{ribosome entry site}, \emph{coding sequence} (i.e., gene), or \emph{terminator}.  It can also be a DNA sequence annotated with several of these individual features.  For example, a DNA component that is a gene may have its sequence annotated with a promoter DNA component followed by a ribosome binding site, an open reading frame, and a terminator.  {\tt iBioSim} includes an SBOL browser that allows the user to view an individual SBOL file by clicking on it in the list of project files.  In this browser, the user can highlight individual DNA components and see the information stored about them.  The user can also enter an SO type and press the Filter button to limit the list to only DNA components of the requested type.
 
 \begin{center}
-\includegraphics[height=80mm]{screenshots/SBOLBrowser}
+\includegraphics[width=160mm]{screenshots/SBOLBrowser}
 \end{center}
 
 When the user clicks on an Associate SBOL button in the editor for a model element, it opens up a window that includes an ordered list of DNA components associated with that model element.  In this window, highlighting a DNA component and pressing the Remove button removes this component from the list.  Pressing the Add button opens an SBOL Browser that can be used to find a DNA component to add to this list.  By selecting a DNA component and pressing OK, the selected component is added to the list.  It is added to the end of the list when no component is highlighted in the list, and it is added before the highlighted component, otherwise.
@@ -882,6 +919,8 @@ Simulation ID     & Creates a simulation directory with the ID name \\ \hline
 \end{tabular}
 \end{center}
 
+\clearpage
+
 \subsection{\label{absOptions}Abstraction Options}
 
 \noindent
@@ -977,6 +1016,8 @@ Finally, there are a few options used by the incremental SSA simulation method. 
 % On this tab, there are buttons to add a new option, edit an
 % existing option, remove an existing option, or clear all options.
 
+\clearpage
+
 \subsection{\label{AnalysisSchematic}Schematic}
 
 \noindent
@@ -1014,6 +1055,8 @@ Once you have made your selections, you can now playback the simulation.  You ca
 \begin{center}
 \includegraphics[width=160mm]{screenshots/movieView}
 \end{center}
+
+\clearpage
 
 \subsection{\label{AnalysisParameters}Parameters}
 
