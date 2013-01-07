@@ -1,6 +1,7 @@
 package sbol;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Calendar;
@@ -20,6 +21,7 @@ import org.sbml.libsbml.Model;
 import org.sbolstandard.core.DnaComponent;
 import org.sbolstandard.core.Resolver;
 import org.sbolstandard.core.SBOLDocument;
+import org.sbolstandard.core.SBOLFactory;
 import org.sbolstandard.core.SequenceAnnotation;
 import org.sbolstandard.core.impl.AggregatingResolver;
 import org.sbolstandard.core.impl.SBOLDocumentImpl;
@@ -75,6 +77,24 @@ public class SBOLFileManager {
 		return resolvedComp;
 	}
 	
+	public List<DnaComponent> resolveURIs(List<URI> uris) {
+		boolean error = false;
+		List<DnaComponent> resolvedComps = new LinkedList<DnaComponent>();
+		for (URI uri : uris) {
+			DnaComponent resolvedComp = aggregateCompResolver.resolve(uri);
+			if (resolvedComp == null) {
+				JOptionPane.showMessageDialog(Gui.frame, "DNA component with URI " + uri.toString() +
+						" could not be found in project SBOL files.", "DNA Component Not Found", JOptionPane.ERROR_MESSAGE);
+				error = true;
+			} else if (!error)
+				resolvedComps.add(resolvedComp);
+		}
+		if (error)
+			return null;
+		else
+			return resolvedComps;
+	}
+	
 	public DnaComponent resolveAndLocateTopLevelURI(URI uri) {
 		for (String sbolFileID : fileDocMap.keySet()) {
 			DnaComponent resolvedComp = ((SBOLDocumentImpl) fileDocMap.get(sbolFileID))
@@ -99,7 +119,7 @@ public class SBOLFileManager {
 	
 	}
 	
-	public DnaComponent saveDNAComponent(DnaComponent dnaComp, SBOLIdentityManager identityManager) {
+	public void saveDNAComponent(DnaComponent dnaComp, SBOLIdentityManager identityManager) {
 		BioModel biomodel = identityManager.getBioModel();
 		String targetFileID = biomodel.getSBOLSaveFileID();
 		if (biomodel.getSBOLSaveFileID() != null)
@@ -120,8 +140,31 @@ public class SBOLFileManager {
 			SBOLUtility.writeSBOLDocument(projectDirectory + File.separator + sbolFileID, sbolDoc);
 //			}
 		}
-		return dnaComp;
-	} 
+	}
+	
+	public void exportDNAComponents(List<DnaComponent> dnaComps, String exportFilePath) {
+		SBOLDocument sbolDoc;
+		File exportFile = new File(exportFilePath);
+		if (exportFile.exists()) {
+			sbolDoc = SBOLUtility.loadSBOLFile(exportFilePath);
+			if (sbolDoc != null) {
+				for (DnaComponent dnaComp : dnaComps)
+					SBOLUtility.addDNAComponent(dnaComp, sbolDoc);
+				SBOLUtility.writeSBOLDocument(exportFilePath, sbolDoc);
+			}
+		} else {
+			sbolDoc = SBOLFactory.createDocument();
+			for (DnaComponent dnaComp : dnaComps)
+				SBOLUtility.addDNAComponent(dnaComp, sbolDoc);
+			try {
+				exportFile.createNewFile();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			SBOLUtility.writeSBOLDocument(exportFilePath, sbolDoc);
+		}
+	}
 	
 	public void deleteDNAComponent(URI deletingURI) {
 		for (String sbolFileID : fileDocMap.keySet()) {

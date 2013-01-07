@@ -43,7 +43,8 @@ public class SBOLDescriptorPanel extends JPanel {
 	public SBOLDescriptorPanel(SBOLIdentityManager identityManager, SBOLFileManager fileManager) {
 		super(new GridLayout(4, 2));
 		constructPanel(fileManager.getSBOLFileIDs());
-		boolean display = (loadSBOLDescriptors(identityManager) || !identityManager.containsBioSimURI() ||
+		boolean display = (loadSBOLDescriptors(identityManager) || 
+				!identityManager.containsBioSimURI() || identityManager.containsPlaceHolderURI() ||
 				loadBioSimComponentDescriptors(identityManager, fileManager));
 		while (display)
 			display = panelOpen(identityManager, fileManager);
@@ -64,6 +65,22 @@ public class SBOLDescriptorPanel extends JPanel {
 		add(sbolDescription);
 	}
 	
+	private boolean loadSBOLDescriptors(SBOLIdentityManager identityManager) {
+		String[] sbolDescriptors = identityManager.getBioModel().getSBOLDescriptors();
+		if (sbolDescriptors == null) {
+			initialID = identityManager.getBioModel().getSBMLDocument().getModel().getId();
+			sbolID.setText(initialID);
+			return false;
+		} else {
+			initialID = sbolDescriptors[0];
+			sbolID.setText(initialID);
+			sbolName.setText(sbolDescriptors[1]);
+			sbolDescription.setText(sbolDescriptors[2]);
+			sbolSaveFileID.setSelectedItem(identityManager.getBioModel().getSBOLSaveFileID());
+			return true;
+		}
+	}
+	
 	private boolean loadBioSimComponentDescriptors(SBOLIdentityManager identityManager, SBOLFileManager fileManager) {
 		if (identityManager.loadAndLocateBioSimComponent(fileManager)) {
 			DnaComponent bioSimComp = identityManager.getBioSimComponent();
@@ -81,23 +98,6 @@ public class SBOLDescriptorPanel extends JPanel {
 		} else
 			return false;
 	}
-	
-	private boolean loadSBOLDescriptors(SBOLIdentityManager identityManager) {
-		String[] sbolDescriptors = identityManager.getBioModel().getSBOLDescriptors();
-		if (sbolDescriptors == null) {
-			initialID = identityManager.getBioModel().getSBMLDocument().getModel().getId();
-			sbolID.setText(initialID);
-			return false;
-		} else {
-			initialID = sbolDescriptors[0];
-			sbolID.setText(initialID);
-			sbolName.setText(sbolDescriptors[1]);
-			sbolDescription.setText(sbolDescriptors[2]);
-			sbolSaveFileID.setSelectedItem(identityManager.getBioModel().getSBOLSaveFileID());
-			return true;
-		}
-	}
-	
 	
 	private boolean panelOpen(SBOLIdentityManager identityManager, SBOLFileManager fileManager) {
 		int option = JOptionPane.showOptionDialog(Gui.frame, this,

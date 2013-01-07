@@ -26,6 +26,7 @@ public class SBOLIdentityManager {
 
 	private BioModel biomodel;
 	private List<URI> modelURIs;
+	private List<DnaComponent> modelComps;
 	private int indexOfBioSimURI = -1;
 	private DnaComponent bioSimComp;
 	private String saveFileID;
@@ -63,6 +64,10 @@ public class SBOLIdentityManager {
 		return modelURIs;
 	}
 	
+	public List<DnaComponent> getModelComponents() {
+		return modelComps;
+	}
+	
 	public URI getBioSimURI() {
 		return modelURIs.get(indexOfBioSimURI);
 	}
@@ -84,6 +89,18 @@ public class SBOLIdentityManager {
 	public boolean containsPlaceHolderURI() {
 		return (indexOfBioSimURI >= 0 && 
 				modelURIs.get(indexOfBioSimURI).toString().endsWith("iBioSimPlaceHolder"));
+	}
+	
+	public boolean containsModelURIs() {
+		if (modelURIs.size() > 0 && !(modelURIs.size() == 1 && containsPlaceHolderURI()))
+			return true;
+		else {
+			JOptionPane.showMessageDialog(Gui.frame, "There is no SBOL associated with the model itself " +
+					"(to associate SBOL with the model itself, you must associate SBOL with its elements and save " +
+					"or associate SBOL directly via the model panel).",
+					"No Model SBOL", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
 	}
 	
 	public void removeBioSimURI() {
@@ -129,6 +146,14 @@ public class SBOLIdentityManager {
 			saveFileID = fileManager.getLocatedFileID();
 			return true;
 		}
+	}
+	
+	public boolean loadModelComponents(SBOLFileManager fileManager) {
+		List<URI> exportURIs = new LinkedList<URI>(modelURIs);
+		if (containsPlaceHolderURI())
+			exportURIs.remove(indexOfBioSimURI);
+		modelComps = fileManager.resolveURIs(exportURIs);
+		return (modelComps != null);
 	}
 	
 	// Loads SBOL descriptors such as display ID, name, and description for newly synthesized iBioSim composite component 
