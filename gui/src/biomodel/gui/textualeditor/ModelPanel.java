@@ -38,6 +38,7 @@ import org.sbolstandard.core.impl.SBOLDocumentImpl;
 import org.sbolstandard.core.impl.AggregatingResolver.UseFirstFound;
 
 import sbol.SBOLUtility;
+import sbol.SequenceTypeValidator;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;

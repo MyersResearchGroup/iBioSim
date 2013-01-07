@@ -446,24 +446,23 @@ public class SBOLSynthesisGraph {
 	}
 	
 	public boolean loadDNAComponents(SBOLFileManager fileManager) {
+		boolean error = false;
 		for (SBOLSynthesisNode synNode : getNodes()) {
 			List<URI> sbolURIs = synNode.getURIs();
 			if (sbolURIs.size() > 0) {
 				List<DnaComponent> dnaComps = new LinkedList<DnaComponent>();
 				for (URI sbolURI : sbolURIs) {
 					DnaComponent dnaComp = fileManager.resolveURI(sbolURI);
-					if (dnaComp != null)
+					if (dnaComp == null)
+						error = true;
+					else if (!error)
 						dnaComps.add(dnaComp);
-					else {
-						JOptionPane.showMessageDialog(Gui.frame, "Component with URI " + sbolURI +
-								" is not found in project SBOL files.", "DNA Component Not Found", JOptionPane.ERROR_MESSAGE);
-						return false;
-					}
 				}
-				synNode.setDNAComponents(dnaComps);
+				if (!error)
+					synNode.setDNAComponents(dnaComps);
 			}
 		}
-		return true;
+		return (!error);
 	}
 	
 	public void cutGraph(Set<String> startTypes) {
