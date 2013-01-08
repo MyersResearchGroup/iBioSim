@@ -11,6 +11,9 @@ import org.sbml.libsbml.CompSBMLDocumentPlugin;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.SBase;
 import org.sbml.libsbml.Submodel;
+import org.sbml.libsbml.XMLAttributes;
+import org.sbml.libsbml.XMLNode;
+import org.sbml.libsbml.XMLTriple;
 import org.sbml.libsbml.libsbml;
 
 import biomodel.parser.BioModel;
@@ -57,6 +60,39 @@ public class AnnotationUtility {
 		return sbolURIs;
 	}
 
+	public static void setSweepAnnotation(SBase sbmlObject, String sweep) {
+		if (sbmlObject.isSetAnnotation())
+			removeSweepAnnotation(sbmlObject);
+		XMLAttributes attr = new XMLAttributes();
+		attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
+		attr.add("ibiosim:sweep", sweep);
+		XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
+		if (sbmlObject.appendAnnotation(node) != libsbml.LIBSBML_OPERATION_SUCCESS)
+			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating species " 
+					+ sbmlObject.getId());
+	}
+	
+	public static void removeSweepAnnotation(SBase sbmlObject) {
+		String annotation = sbmlObject.getAnnotationString();
+		Pattern sweepPattern = Pattern.compile(SWEEP_ANNOTATION);
+		Matcher sweepMatcher = sweepPattern.matcher(annotation);
+		if (sweepMatcher.find()) {
+			String sweepAnnotation = sweepMatcher.group(0);
+			annotation = annotation.replace(sweepAnnotation, "");
+		}
+		sbmlObject.setAnnotation(annotation);
+	}
+	
+	public static String parseSweepAnnotation(SBase sbmlObject) {
+		String annotation = sbmlObject.getAnnotationString();
+		Pattern sweepPattern = Pattern.compile(SWEEP_ANNOTATION);
+		Matcher sweepMatcher = sweepPattern.matcher(annotation);
+		if (sweepMatcher.find()) {
+			return sweepMatcher.group(0);
+		}
+		return null;
+	}
+	
 	public static int[] parseGridAnnotation(SBase sbmlObject) {
 		String annotation = sbmlObject.getAnnotationString();
 		Pattern gridPattern = Pattern.compile(GRID_ANNOTATION);
@@ -98,5 +134,8 @@ public class AnnotationUtility {
 	
 	private static final String GRID_ANNOTATION =
 			"<ibiosim:ibiosim xmlns:ibiosim=\"http://www\\.fakeuri\\.com\" ibiosim:grid=\"\\((\\d+),(\\d+)\\)\"/>";
+	
+	private static final String SWEEP_ANNOTATION =
+			"<ibiosim:ibiosim xmlns:ibiosim=\"http://www\\.fakeuri\\.com\" ibiosim:sweep=\"\\s*\"/>";
 	
 }
