@@ -27,8 +27,8 @@ public class SBOLBrowser extends JPanel implements ActionListener {
 	
 	private String[] options = {"Ok", "Cancel"};
 	private JPanel selectionPanel = new JPanel(new GridLayout(1,2));
-	private JPanel filterPanel = new JPanel(new GridLayout(1,5));
-	private JTextField filterText = new JTextField();
+	private JPanel filterPanel = new JPanel(new GridLayout(1,3));
+	private JComboBox filterBox;
 	private JTextArea viewArea = new JTextArea();
 	private JScrollPane viewScroll = new JScrollPane();
 	private CollectionBrowserPanel libPanel;
@@ -114,9 +114,8 @@ public class SBOLBrowser extends JPanel implements ActionListener {
 								localLibIds.add(lib.getDisplayId());
 							}
 						} else if (sbolObj instanceof DnaComponent && 
-								(!isAssociationBrowser || !sbolObj.getURI().toString().endsWith("iBioSim")))
+								(!isAssociationBrowser || !sbolObj.getURI().toString().endsWith("iBioSim"))) 
 							localCompURIs.add(sbolObj.getURI());
-						
 				}
 			}
 		}
@@ -124,6 +123,13 @@ public class SBOLBrowser extends JPanel implements ActionListener {
 		aggregateAnnoResolver.setResolvers(annoResolvers);
 		aggregateSeqResolver.setResolvers(seqResolvers);
 		aggregateLibResolver.setResolvers(libResolvers);
+		Set<String> dnacTypes = new LinkedHashSet<String>();
+		dnacTypes.add("all");
+		for (int i = 0; i < localCompURIs.size(); i++) {
+			DnaComponent localComp = aggregateCompResolver.resolve(localCompURIs.get(i));
+			dnacTypes.add(SBOLUtility.convertURIToSOType(localComp.getTypes().iterator().next()));
+		}
+		filterBox = new JComboBox(dnacTypes.toArray(new String[dnacTypes.size()]));
 		
 	}
 	
@@ -158,14 +164,12 @@ public class SBOLBrowser extends JPanel implements ActionListener {
 		selectionPanel.add(libPanel);
 		selectionPanel.add(compPanel);
 		
-		JButton filterButton = new JButton("Filter");
-		filterButton.setActionCommand("filterSBOL");
-		filterButton.addActionListener(this);
+		filterBox.setActionCommand("filterSBOL");
+		filterBox.addActionListener(this);
 		JLabel filterLabel = new JLabel("Filter by Type:  ");
 		filterLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		filterPanel.add(filterLabel);
-		filterPanel.add(filterText);
-		filterPanel.add(filterButton);
+		filterPanel.add(filterBox);
 		filterPanel.add(new JLabel());
 	}
 	
@@ -175,7 +179,8 @@ public class SBOLBrowser extends JPanel implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("filterSBOL")) {
-			compPanel.filterComponents(filterText.getText());
+			libPanel.displaySelected();
+			compPanel.filterComponents(filterBox.getSelectedItem().toString());
 		} 
 		
 	}
