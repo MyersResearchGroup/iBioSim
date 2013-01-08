@@ -140,7 +140,8 @@ public class FileTree extends JPanel implements MouseListener {
 			if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
 				tree = new JTree(addNodes(null, dir, true, false),false);
 			} else {
-				tree = new JTree(addNodes(null, dir, true, false),true);
+				tree = new JTree(addNodes(null, dir, true, false),false);
+				tree.expandPath(tree.getLeadSelectionPath());
 			}
 			TreeCellRenderer renderer = new IconCellRenderer();
 			tree.setCellRenderer(renderer);
