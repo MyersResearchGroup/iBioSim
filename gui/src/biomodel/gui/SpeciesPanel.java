@@ -323,9 +323,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					bioModel.getParameter(GlobalConstants.INITIAL_STRING), origString, defaultValue,
 					Utility.SWEEPstring + "|" + Utility.CONCstring, paramsOnly, origString, false);
 			fields.put(GlobalConstants.INITIAL_STRING, field);
-			if (species.isSetAnnotation() && species.getAnnotationString().contains(GlobalConstants.INITIAL_STRING)) {
-				String annotation = species.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
-				String sweep = annotation.substring(annotation.indexOf(GlobalConstants.INITIAL_STRING)+3);
+			String sweep = AnnotationUtility.parseSweepAnnotation(species);
+			if (sweep != null) {
 				field.setValue(sweep);
 				field.setCustom();
 			} else if (species.isSetInitialAmount() &&	!defaultValue.equals("" + species.getInitialAmount())) {
@@ -892,7 +891,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 						else if (Utility.isValid(f.getValue(), Utility.CONCstring)) {
 							species.setInitialConcentration(Double.parseDouble(f.getValue().substring(1,f.getValue().length()-1)));
 						} else {
-							species.setAnnotation(GlobalConstants.INITIAL_STRING+"="+f.getValue());
+							AnnotationUtility.setSweepAnnotation(species, f.getValue());
+							//species.setAnnotation(GlobalConstants.INITIAL_STRING+"="+f.getValue());
 						}
 					} else {
 						if (refGCM.getSBMLDocument().getModel().getSpecies(selected).isSetInitialAmount()) {
