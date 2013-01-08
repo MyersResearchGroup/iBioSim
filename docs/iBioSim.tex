@@ -30,7 +30,7 @@
 It is capable of importing and exporting models specified using the %%tth:\begin{html}<A HREF="http://www.sbml.org/">\end{html}
 \emph{Systems Biology Markup Language}
 %%tth:\begin{html}</A>\end{html}
-~(SBML).  It can import all levels and versions while being able to export Level 3 Version 1.  It has support the hierarchical modeling package, as well as, the layout package.  It supports all SBML modeling constructs except the \emph{delay} function and some types of \emph{fast} reactions.  It was the first tool to produce correct results for all examples in the SBML benchmark suite.  It has also been tested successfully on the stochastic benchmark suite and the curated models in the 
+~(SBML).  It can import all levels and versions of SBML and is able to export Level 3 Version 1.  It supports all core SBML modeling constructs except the \emph{delay} function and some types of \emph{fast} reactions, and also has support for the hierarchical modeling package and layout package.  It was the first tool to produce correct results for all examples in the SBML benchmark suite.  It has also been tested successfully on the stochastic benchmark suite and the curated models in the 
 %%tth:\begin{html}<A HREF="http://www.ebi.ac.uk/biomodels-main/">\end{html}
 \emph{BioModels database}.
 %%tth:\begin{html}</A>\end{html}
@@ -182,8 +182,8 @@ The model will also be checked for consistency, and any errors or warnings will 
 \subsection{Exporting Models and Graphs}
 
 \noindent
-You can also export a model in either SBML or SBOL format.  To export an SBML model, select  Export $\rightarrow$ Flat SBML or Export $\rightarrow$ SBML.  Then, you will be able to browse to find a location to export the SBML file.  A flat SBML file is a single flattened chemical reaction model while an SBML file is a single file hierarchical model with high-level genetic constructs.  
-When exporting model as an SBOL component, you must browse to find an SBOL library.  The SBOL component will then be added to the selected library.  Finally, you can export a JPG image of a model.
+You can also export a SBML model or the SBOL associated with this model.  To export an SBML model, select  Export $\rightarrow$ Flat SBML or Export $\rightarrow$ SBML.  Then, you will be able to browse to find a location to export the SBML file.  A flat SBML file is a single flattened chemical reaction model while an SBML file is a single file hierarchical model with high-level genetic constructs.  
+When exporting SBOL associated to a model, you must browse to find an existing SBOL file or enter the name for a new file.  The associated SBOL will then be added to the selected file or a new file.  Finally, you can export a JPG image of a model.
 
 \begin{center}
 \includegraphics[height=80mm]{screenshots/export}
@@ -317,7 +317,7 @@ Species are the molecules, such as proteins, that are produced by genes or chemi
 \item Complex formation equilibrium (Kc): the equilibrium constant for formation of this species when it is produced by a complex formation reaction.  The default is the global parameter Kc.  The equilibrium constant can be specified as a forward and reverse rate constant using the $\langle$ forward rate $\rangle / \langle$ reverse rate $\rangle$ form.
 \item Membrane diffusion rate (fd/rv) (kmdiff): the forward (in to out) and reverse (out to in) rate constants (slash-separated) for diffusion of this species through its compartment's membrane.  Note that when membrane diffusion reactions are generated, the rates are taken from the inner species.  If no reverse rate is given, a default of 1.0 is used.  The default is the global parameter kmdiff.
 \end{itemize}
-Finally, one can specify an SBOL DNA Component with this species by clicking on the Associate SBOL button.  More details can be found in Section~\ref{SBOL}.
+Finally, one can specify that an SBOL DNA Component is associated with this species by clicking on the Associate SBOL button.  More details can be found in Section~\ref{SBOL}.
 
 \begin{center}
 \includegraphics[width=160mm]{screenshots/species}
@@ -361,7 +361,7 @@ When you select a reaction, it opens the Reaction Editor which allows you to edi
 \item Compartment: the location where this reaction takes place.  This is set by the location in which the reaction is placed in the schematic.
 \item Reversible: a Boolean indicating if the reaction is reversible (default=false).  Note that reversible reactions are indicated in the schematic with double headed arrows.
 \item Fast: a Boolean indicating if the reaction reaches equilibrium rapidly (default=false).  Note that this only has limited support in analysis, so it should be used sparingly.
-\item SBOL DNA Component: the Associate SBOL button allows the user to annotate the reaction with SBOL (see Section~\ref{SBOL}).
+\item SBOL DNA Component: the Associate SBOL button allows the user to associate an SBOL DNA component with the reaction (see Section~\ref{SBOL}).
 \item List of Local Parameters: symbolic values that can be used in the \emph{kinetic law} for this reaction.  Their IDs only need to be unique to this reaction.  Local parameters can be added, removed, and edited using the appropriate buttons.  Each parameter is composed of an ID, Name (optional), Value, Units (optional), and a checkbox indicting whether or not this parameter is mapped to a port.  The list of parameters begins with a default forward reaction rate (kf) and reverse reaction rate (kr).  These names and their values should likely be edited. 
 \item Kinetic Law: a mathematical formula (see Section~\ref{SBMLMath}) describing the rate or probability for this reaction.  The kinetic law can either be automatically generated using the Use Mass Action button or manually entered.  The Use Mass Action button creates a rate law using the law of mass action assuming that the first parameter in the list is the forward reaction rate and the second parameter in the list is the reverse reaction rate.  
 The Clear button clears the kinetic law editor.  Note that the kinetic law formula can only include species IDs that are reactants, products, or modifiers to this reaction.
@@ -409,7 +409,7 @@ Clicking on the component opens the Component Editor which allows you to edit th
 \item Name: an arbitrary string description (optional).
 \item Time Conversion Factor: is a constant global parameter, the value of which is used to convert the submodel's time units into the units used in the model that includes it.
 \item Extent Conversion Factor: is a constant global parameter, the value of which is used to convert the submodel's extent units into the units used in the model that includes it.
-\item SBOL DNA Component: the Associate SBOL button allows the user to annotate the reaction with SBOL (see Section~\ref{SBOL}).
+\item SBOL DNA Component: the Associate SBOL button allows the user to associate an SBOL DNA component with the submodel (see Section~\ref{SBOL}).
 \end{itemize}
 The last part of the Component Editor is a table of replacements and deletions.  This table lists all items that are mapped to ports within the submodel.  For each port, it includes:
 \begin{itemize}
@@ -447,7 +447,7 @@ Promoters are the locations on a DNA sequence in which transcription is initiate
 \item Basal production rate (kb): once RNAP binds to an activated promoter, this is the rate at which transcription is initiated without the activator also being bound.  The default value is the global parameter kb.
 \item Activated production rate (ka): once RNAP binds to an activated promoter, this is the rate at which transcription is initiated when the activator is also bound to the promoter.  The default value is the global value ka.
 \item Stoichiometry of production (np): the average number of proteins that are produced by an mRNA before it degrades.  The default value is the global parameter np.
-\item SBOL DNA Component: the Associate SBOL button allows the user to annotate the promoter with SBOL (see Section~\ref{SBOL}).
+\item SBOL DNA Component: the Associate SBOL button allows the user to associate an SBOL DNA component with the promoter (see Section~\ref{SBOL}).
 \end{itemize}
 
 \begin{center}
@@ -496,7 +496,7 @@ Boolean variables are global parameters that can only take the values of true an
 \subsection{\label{Places}Petri Net Places}
 
 \noindent
-Places are a special type of global parameter that is used in Petri net models.  A place can either be \emph{marked} with a token or \emph{not marked} with a toke.  A place includes the following:
+Places are a special type of global parameter that is used in Petri net models.  A place can either be \emph{marked} with a token or \emph{not marked} with a token.  A place includes the following:
 \begin{itemize}
 \item ID: a unique ID composed only of alphanumeric characters and underscores.
 \item Name: an arbitrary string description (optional).
@@ -558,7 +558,7 @@ This automatically restricts the set of quantities available for the left-hand s
 \begin{itemize}
 \item ID: a unique ID composed only of alphanumeric characters and underscores.
 \item Is Mapped to a Port: this Boolean indicates whether this rule should be mapped to a port, so it can be replaced or deleted in hierarchical models.
-\item SBOL DNA Component: the Associate SBOL button allows the user to annotate the promoter with SBOL (see Section~\ref{SBOL}).
+\item SBOL DNA Component: the Associate SBOL button allows the user to associate an SBOL DNA component with the rule (see Section~\ref{SBOL}).
 \end{itemize}
 
 \begin{center}
@@ -658,7 +658,7 @@ Clicking on the Model button on the schematic tab brings up the Model Editor.  T
 \item Length units: the default units for 1-dimensional compartments.
 \item Extent units: the default units for the amount changed due to a reaction.  Kinetic laws have default units of extent units / time units.  
 \item Conversion factor: the constant global parameter to be used as the default conversion factor to convert species units into extent units.
-\item SBOL DNA Component: the Associate SBOL button allows the user to annotate the promoter with SBOL (see Section~\ref{SBOL}).
+\item SBOL DNA Component: the Associate SBOL button allows the user to associate an SBOL DNA component with the model (see Section~\ref{SBOL}).
 \end{itemize}
 
 \begin{center}
@@ -783,13 +783,13 @@ dimensionless         & item & lumen      & pascal & tesla      & ~\\ \hline
 
 \section{\label{SBOL}SBOL Editors}
 
-SBOL is an emerging standard under development for the exchange of information about synthetic biology designs.  An SBOL file includes \emph{Collections} of \emph{DNA Components}.  Each DNA component has a unique ID, name, description, \emph{Sequence Ontology} type, and a DNA sequence.  A DNA component can be a simple sequence feature such as a \emph{promoter}, \emph{ribosome entry site}, \emph{coding sequence} (i.e., gene), or \emph{terminator}.  It can also be a DNA sequence annotated with several of these individual features.  For example, a DNA component that is a gene may have its sequence annotated with a promoter DNA component followed by a ribosome binding site, an open reading frame, and a terminator.  {\tt iBioSim} includes an SBOL browser that allows the user to view an individual SBOL file by clicking on it in the list of project files.  In this browser, the user can highlight individual DNA components and see the information stored about them.  The user can also enter an SO type and press the Filter button to limit the list to only DNA components of the requested type.
+SBOL is an emerging standard under development for the exchange of information about synthetic biology designs.  An SBOL file includes \emph{Collections} of \emph{DNA Components}.  Each DNA component has a unique ID, name, description, \emph{Sequence Ontology} type, and a DNA sequence.  A DNA component can be a simple sequence feature such as a \emph{promoter}, \emph{ribosome entry site}, \emph{coding sequence}, or \emph{terminator}.  It can also be a region of DNA annotated with several of these individual features.  For example, a DNA component that is a gene may have its sequence annotated with a promoter DNA component followed by components for a ribosome binding site, a coding sequence, and a terminator.  {\tt iBioSim} includes an SBOL browser that allows the user to view an individual SBOL file by clicking on it in the list of project files.  In this browser, the user can highlight individual DNA components and see the information stored about them.  The user can also enter an SO type and press the Filter button to limit the list to only DNA components of the requested type.
 
 \begin{center}
 \includegraphics[width=160mm]{screenshots/SBOLBrowser}
 \end{center}
 
-When the user clicks on an Associate SBOL button in the editor for a model element, it opens up a window that includes an ordered list of DNA components associated with that model element.  In this window, highlighting a DNA component and pressing the Remove button removes this component from the list.  Pressing the Add button opens an SBOL Browser that can be used to find a DNA component to add to this list.  By selecting a DNA component and pressing OK, the selected component is added to the list.  It is added to the end of the list when no component is highlighted in the list, and it is added before the highlighted component, otherwise.
+When the user clicks on an Associate SBOL button in the editor for a model element, it opens up a window that includes an ordered list of DNA components associated with that model element.  In this window, highlighting a DNA component and pressing the Remove button removes this component from the list.  Pressing the Add button opens an SBOL Browser that can be used to find a DNA component to add to this list.  By selecting a DNA component and pressing OK, the selected component is added to the list.  It is added to the end of the list when no component is highlighted in the list, and it is added before the highlighted component otherwise.
 
 \begin{center}
 \includegraphics[width=100mm]{screenshots/AssociateSBOL}
@@ -799,13 +799,13 @@ When the user clicks on an Associate SBOL button in the editor for a model eleme
 \includegraphics[width=160mm]{screenshots/AssociateSBOLBrowser}
 \end{center}
 
-The SBOL Association window is a bit different when associating SBOL to the top-level SBML model itself.  In particular, it includes a button to Add/Move Composite.  Upon save, any model which has SBOL associated with some of its elements automatically generates a composite DNA component which is typically associated with the model itself.  It is possible though to add additional DNA components either before or after this composite component.  One can also remove the composite DNA component and replace it with a DNA component from an SBOL file.  The purpose of the Add/Move Composite is to restore the composite component to the list, if it has been removed.  It has the added functionality of moving it before the highlighted component, if it is currently in the list.
+The SBOL Association window is a bit different when associating SBOL to the SBML model itself as opposed to the individual model elements.  In particular, this window includes a button to Add/Move Composite.  Upon save, any model which has SBOL associated with some of its elements automatically generates a composite DNA component which is typically associated with the model itself.  It is possible, though, to add additional DNA components either before or after this composite component.  One can also remove the composite DNA component and replace it with a DNA component from an SBOL file.  The purpose of the Add/Move Composite button is to restore the composite component to the list if it has been removed.  This button has the added functionality of moving the composite component before the highlighted component if the former is currently in the list.
 
 \begin{center}
 \includegraphics[width=160mm]{screenshots/AssociateSBOLModel}
 \end{center}
 
-The last SBOL window is the Composite SBOL Descriptors window which is opened by pressing the SBOL button on the schematic.  In this window, the user can select which SBOL file in which to store the composite component generated for this model.  The user can also specify the Id, name, and description for this composite component.  When the user saves this model, this information is stored with the composite component in the specified SBOL file.
+The last SBOL window is the Composite SBOL Descriptors window which is opened by pressing the SBOL button on the schematic.  In this window, the user can select which SBOL file in which to store the composite DNA component generated for this model upon save.  The user can also specify the ID, name, and description for this composite component.  When the user saves this model, this information is stored as part of the composite component in the specified SBOL file.
 
 \begin{center}
 \includegraphics[width=160mm]{screenshots/SBOLbutton}
@@ -1264,7 +1264,7 @@ User preferences can be set by selecting the {\tt Preferences} option under the 
 \item Use the libsbml or the {\tt iBioSim} flatten procedure.
 \item Use the infix expression parser in mathematical expressions.
 \end{itemize}
-The Restore Defaults button on this tab and the others restores the default preferences.  In the Schematics preference tab, the user can decide the shape, color (fill, stroke, and font), and opacity for each schematic object.  The Synthesis Preferences allows the user to select a default URI for new SBOL DNA components and a regular expression to validate generated SBOL DNA components.  The Model Preferences tab allows users to select whether they wish to see warnings about undeclared units in SBML and whether they wish to check units at all.  Finally, it allows users to change the default model generation parameter values.  The Analysis Preferences tab allows users to change the default values used by the analysis tool.  The simulation command in particular can be useful to select an alternative simulator.  We've used it to select a script that executes the simulation on a compute server.  Finally, the Learn Preferences tab allows users to change the default values used by the learn tool.
+The Restore Defaults button on this tab and the others restores the default preferences.  In the Schematics preference tab, the user can decide the shape, color (fill, stroke, and font), and opacity for each schematic object.  The Synthesis Preferences allows the user to select a default URI authority for composite SBOL DNA components generated by iBioSim and a regular expression for validating the SO types of the subcomponents making up these generated components.  The Model Preferences tab allows users to select whether they wish to see warnings about undeclared units in SBML and whether they wish to check units at all.  Finally, it allows users to change the default model generation parameter values.  The Analysis Preferences tab allows users to change the default values used by the analysis tool.  The simulation command in particular can be useful to select an alternative simulator.  We've used it to select a script that executes the simulation on a compute server.  Finally, the Learn Preferences tab allows users to change the default values used by the learn tool.
 
 \begin{center}
 \begin{tabular}{cc}
