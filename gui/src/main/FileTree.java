@@ -141,7 +141,7 @@ public class FileTree extends JPanel implements MouseListener {
 				tree = new JTree(addNodes(null, dir, true, false),false);
 			} else {
 				tree = new JTree(addNodes(null, dir, true, false),false);
-				tree.expandPath(tree.getLeadSelectionPath());
+				//tree.expandPath(tree.getLeadSelectionPath());
 			}
 			TreeCellRenderer renderer = new IconCellRenderer();
 			tree.setCellRenderer(renderer);
@@ -819,6 +819,7 @@ public class FileTree extends JPanel implements MouseListener {
 					}
 				}
 				root.insert(node, insert);
+				tree.expandPath(new TreePath(root.getPath()));
 				Runnable updateTree = new Runnable() {
 					public void run() {
 						tree.updateUI();
