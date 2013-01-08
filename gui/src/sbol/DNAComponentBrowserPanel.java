@@ -61,7 +61,8 @@ public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 		LinkedList<String> filteredIDs = new LinkedList<String>();
 		for (int i = 0; i < compURIs.size(); i++) {
 			DnaComponent dnac = aggregateCompResolver.resolve(compURIs.get(i));
-			if (SBOLUtility.convertURIToSOType(dnac.getTypes().iterator().next()).equals(filterType)) {
+			if (filterType.equals("all") || 
+					SBOLUtility.convertURIToSOType(dnac.getTypes().iterator().next()).equals(filterType)) {
 				filteredURIs.add(compURIs.get(i));
 				filteredIDs.add(compIDs.get(i));
 			}

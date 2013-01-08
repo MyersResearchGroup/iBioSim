@@ -87,7 +87,7 @@ public class CollectionBrowserPanel extends JPanel implements MouseListener {
 		}
 	}
 	
-	private void displaySelected() {
+	public void displaySelected() {
 		URI[] selectedURIs = getSelectedURIs();
 		LinkedList<String> compIdNames = new LinkedList<String>();
 		LinkedList<URI> compURIs = new LinkedList<URI>();
