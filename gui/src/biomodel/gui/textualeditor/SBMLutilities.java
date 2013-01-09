@@ -222,7 +222,7 @@ public class SBMLutilities {
 						} else if (splitLaw[i].equals("U")) {
 							createFunction(model, "G", "Globally Property", "lambda(t,x,or(not(t),x))");
 							createFunction(model, "F", "Eventually Property", "lambda(t,x,or(not(t),not(x)))");
-							createFunction(model, "U", "Until Property", "lambda(t,x,y,or(G(t,x),F(t,y)))");
+							createFunction(model, "U", "Until Property", "lambda(t,x,y,and(G(t,x),F(t,y)))");
 						} else if (splitLaw[i].equals("rate")) {
 							createFunction(model, "rate", "Rate", "lambda(a,a)");
 						} else if (splitLaw[i].equals("BIT")) {

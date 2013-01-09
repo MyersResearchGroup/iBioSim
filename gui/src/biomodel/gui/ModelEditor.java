@@ -44,6 +44,7 @@ import org.sbolstandard.core.DnaComponent;
 import analysis.ConstraintTermThread;
 import analysis.AnalysisView;
 import analysis.AnalysisThread;
+import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.movie.MovieContainer;
 import biomodel.gui.movie.SchemeChooserPanel;
 import biomodel.gui.schematic.Schematic;
@@ -255,7 +256,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			network.mergeSBML(path + separator + simName + separator + gcmname + ".xml");
 			*/
 			//reb2sac.updateSpeciesList();
-			biomodel.reloadSBMLFile();
+			//biomodel.reloadSBMLFile();
 			compartmentPanel.refreshCompartmentPanel(biomodel);
 			speciesPanel.refreshSpeciesPanel(biomodel);
 			parametersPanel.refreshParameterPanel(biomodel);
@@ -879,7 +880,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 						Species species = biomodel.getSBMLDocument().getModel().getSpecies(id);
 						if (species!=null) {
 							if (value.startsWith("(")) {
-								species.appendAnnotation(","+GlobalConstants.INITIAL_STRING + "=" + value);
+								AnnotationUtility.setSweepAnnotation(species, value);
 							} else {
 								if (value.startsWith("[")) {
 									species.setInitialConcentration(Double.parseDouble(value.substring(1,value.length()-1)));
@@ -897,7 +898,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 								kd.setId(GlobalConstants.KDECAY_STRING);
 							}
 							if (value.startsWith("(")) {
-								kd.setAnnotation(GlobalConstants.KDECAY_STRING + "=" + value);
+								AnnotationUtility.setSweepAnnotation(kd, value);
 							} else {
 								kd.setValue(Double.parseDouble(value));
 							}
@@ -916,7 +917,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 								kc_r.setId(GlobalConstants.REVERSE_KCOMPLEX_STRING);
 							}
 							if (value.startsWith("(")) {
-								kc_f.setAnnotation(GlobalConstants.FORWARD_KCOMPLEX_STRING + "=" + value);
+								AnnotationUtility.setSweepAnnotation(kc_f, value);
 							} else {
 								double [] Kc = Utility.getEquilibrium(value);
 								kc_f.setValue(Kc[0]);
@@ -937,7 +938,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 								kmdiff_r.setId(GlobalConstants.REVERSE_MEMDIFF_STRING);
 							}
 							if (value.startsWith("(")) {
-								kmdiff_f.setAnnotation(GlobalConstants.FORWARD_MEMDIFF_STRING + "=" + value);
+								AnnotationUtility.setSweepAnnotation(kmdiff_f, value);
 							} else {
 								double [] Kmdiff = Utility.getEquilibrium(value);
 								kmdiff_f.setValue(Kmdiff[0]);
@@ -948,7 +949,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 						Species species = biomodel.getSBMLDocument().getModel().getSpecies(id);
 						if (species!=null) {
 							if (value.startsWith("(")) {
-								species.appendAnnotation(","+GlobalConstants.PROMOTER_COUNT_STRING + "=" + value);
+								AnnotationUtility.setSweepAnnotation(species, value);
 							} else {
 								species.setInitialAmount(Double.parseDouble(value));
 							}
@@ -967,7 +968,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 								ko_r.setId(GlobalConstants.REVERSE_RNAP_BINDING_STRING);
 							}
 							if (value.startsWith("(")) {
-								ko_f.setAnnotation(GlobalConstants.FORWARD_RNAP_BINDING_STRING + "=" + value);
+								AnnotationUtility.setSweepAnnotation(ko_f, value);
 							} else {
 								double [] Ko = Utility.getEquilibrium(value);
 								ko_f.setValue(Ko[0]);
@@ -988,7 +989,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 								kao_r.setId(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING);
 							}
 							if (value.startsWith("(")) {
-								kao_f.setAnnotation(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING + "=" + value);
+								AnnotationUtility.setSweepAnnotation(kao_f, value);
 							} else {
 								double [] Kao = Utility.getEquilibrium(value);
 								kao_f.setValue(Kao[0]);
@@ -1004,7 +1005,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 								ko.setId(GlobalConstants.OCR_STRING);
 							}
 							if (value.startsWith("(")) {
-								ko.setAnnotation(GlobalConstants.OCR_STRING + "=" + value);
+								AnnotationUtility.setSweepAnnotation(ko, value);
 							} else {
 								ko.setValue(Double.parseDouble(value));
 							}
@@ -1018,7 +1019,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 								kb.setId(GlobalConstants.KBASAL_STRING);
 							}
 							if (value.startsWith("(")) {
-								kb.setAnnotation(GlobalConstants.KBASAL_STRING + "=" + value);
+								AnnotationUtility.setSweepAnnotation(kb, value);
 							} else {
 								kb.setValue(Double.parseDouble(value));
 							}
@@ -1032,7 +1033,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 								ka.setId(GlobalConstants.ACTIVATED_STRING);
 							}
 							if (value.startsWith("(")) {
-								ka.setAnnotation(GlobalConstants.ACTIVATED_STRING + "=" + value);
+								AnnotationUtility.setSweepAnnotation(ka, value);
 							} else {
 								ka.setValue(Double.parseDouble(value));
 							}
@@ -1046,7 +1047,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 								np.setId(GlobalConstants.STOICHIOMETRY_STRING);
 							}
 							if (value.startsWith("(")) {
-								np.setAnnotation(GlobalConstants.STOICHIOMETRY_STRING + "=" + value);
+								AnnotationUtility.setSweepAnnotation(np, value);
 							} else {
 								np.setValue(Double.parseDouble(value));
 							}
@@ -1097,7 +1098,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 									}
 								}
 								if (value.startsWith("(")) {
-									nc.setAnnotation(GlobalConstants.COOPERATIVITY_STRING + "=" + value);
+									AnnotationUtility.setSweepAnnotation(nc, value);
 								} else {
 									nc.setValue(Double.parseDouble(value));
 								}
@@ -1112,7 +1113,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 									nc.setId(GlobalConstants.COOPERATIVITY_STRING + "_" + sourceId);
 								}
 								if (value.startsWith("(")) {
-									nc.setAnnotation(GlobalConstants.COOPERATIVITY_STRING + "=" + value);
+									AnnotationUtility.setSweepAnnotation(nc, value);
 								} else {
 									nc.setValue(Double.parseDouble(value));
 								}
@@ -1143,7 +1144,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 								ka_r.setId(GlobalConstants.REVERSE_KACT_STRING.replace("_","_" + sourceId + "_"));
 							}
 							if (value.startsWith("(")) {
-								ka_f.setAnnotation(GlobalConstants.FORWARD_KACT_STRING + "=" + value);
+								AnnotationUtility.setSweepAnnotation(ka_f, value);
 							} else {
 								double [] Ka = Utility.getEquilibrium(value);
 								ka_f.setValue(Ka[0]);
@@ -1175,7 +1176,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 								kr_r.setId(GlobalConstants.REVERSE_KREP_STRING.replace("_","_" + sourceId + "_"));
 							}
 							if (value.startsWith("(")) {
-								kr_f.setAnnotation(GlobalConstants.FORWARD_KREP_STRING + "=" + value);
+								AnnotationUtility.setSweepAnnotation(kr_f, value);
 							} else {
 								double [] Kr = Utility.getEquilibrium(value);
 								kr_f.setValue(Kr[0]);

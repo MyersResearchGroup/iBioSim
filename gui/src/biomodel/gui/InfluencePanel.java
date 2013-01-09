@@ -18,6 +18,7 @@ import org.sbml.libsbml.ModifierSpeciesReference;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.SpeciesReference;
 
+import biomodel.annotation.AnnotationUtility;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 import biomodel.util.Utility;
@@ -183,10 +184,8 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		} else {
 			field.setEnabled(false);
 		}
-		if (nc != null && nc.isSetAnnotation() && 
-				nc.getAnnotationString().contains(GlobalConstants.COOPERATIVITY_STRING)) {
-			String sweep = nc.getAnnotationString().replace("<annotation>"+GlobalConstants.COOPERATIVITY_STRING+"=","")
-					.replace("</annotation>","");
+		String sweep = AnnotationUtility.parseSweepAnnotation(nc);
+		if (sweep != null) {		
 			field.setValue(sweep);
 			field.setCustom();
 		} else if (nc != null && !defaultValue.equals(""+nc.getValue())) {
@@ -230,10 +229,8 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		} else {
 			field.setEnabled(false);
 		}
-		if (kr_f != null && kr_f.isSetAnnotation() && 
-				kr_f.getAnnotationString().contains(GlobalConstants.FORWARD_KREP_STRING)) {
-			String sweep = kr_f.getAnnotationString().replace("<annotation>"+GlobalConstants.FORWARD_KREP_STRING+"=","")
-					.replace("</annotation>","");
+		sweep = AnnotationUtility.parseSweepAnnotation(kr_f);
+		if (sweep != null) {		
 			field.setValue(sweep);
 			field.setCustom();
 		} else if (kr_f != null && !defaultValue.equals(kr_f.getValue()+"/"+kr_r.getValue())) {
@@ -277,10 +274,8 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		} else {
 			field.setEnabled(false);
 		}
-		if (ka_f != null && ka_f.isSetAnnotation() && 
-				ka_f.getAnnotationString().contains(GlobalConstants.FORWARD_KACT_STRING)) {
-			String sweep = ka_f.getAnnotationString().replace("<annotation>"+GlobalConstants.FORWARD_KACT_STRING+"=","")
-					.replace("</annotation>","");
+		sweep = AnnotationUtility.parseSweepAnnotation(ka_f);
+		if (sweep != null) {		
 			field.setValue(sweep);
 			field.setCustom();
 		} else if (ka_f != null && !defaultValue.equals(ka_f.getValue()+"/"+ka_r.getValue())) {
@@ -384,7 +379,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 					LocalParameter nc = production.getKineticLaw().createLocalParameter();
 					nc.setId(GlobalConstants.COOPERATIVITY_STRING +  "_" + regulator + "_r");
 					if (f.getValue().startsWith("(")) {
-						nc.setAnnotation(GlobalConstants.COOPERATIVITY_STRING + "=" + f.getValue());
+						AnnotationUtility.setSweepAnnotation(nc, f.getValue());
 						nc.setValue(1.0);
 					} else {
 						nc.setValue(Double.parseDouble(f.getValue()));
@@ -393,7 +388,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 					LocalParameter nc = production.getKineticLaw().createLocalParameter();
 					nc.setId(GlobalConstants.COOPERATIVITY_STRING +  "_" + regulator + "_a");
 					if (f.getValue().startsWith("(")) {
-						nc.setAnnotation(GlobalConstants.COOPERATIVITY_STRING + "=" + f.getValue());
+						AnnotationUtility.setSweepAnnotation(nc, f.getValue());
 						nc.setValue(1.0);
 					} else {
 						nc.setValue(Double.parseDouble(f.getValue()));
@@ -409,7 +404,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 					LocalParameter p = production.getKineticLaw().createLocalParameter();
 					if (f.getValue().startsWith("(")) {
 						Kr = Utility.getEquilibrium("1.0/1.0");
-						p.setAnnotation(GlobalConstants.FORWARD_KREP_STRING+"="+f.getValue());
+						AnnotationUtility.setSweepAnnotation(p, f.getValue());
 					} else {
 						Kr = Utility.getEquilibrium(f.getValue());
 					}
@@ -427,7 +422,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 					LocalParameter p = production.getKineticLaw().createLocalParameter();
 					if (f.getValue().startsWith("(")) {
 						Ka = Utility.getEquilibrium("1.0/1.0");
-						p.setAnnotation(GlobalConstants.FORWARD_KACT_STRING+"="+f.getValue());
+						AnnotationUtility.setSweepAnnotation(p, f.getValue());
 					} else {
 						Ka = Utility.getEquilibrium(f.getValue());
 					}

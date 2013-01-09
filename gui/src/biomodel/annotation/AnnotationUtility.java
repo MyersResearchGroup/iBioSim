@@ -7,16 +7,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.sbml.libsbml.CompSBMLDocumentPlugin;
-import org.sbml.libsbml.Model;
 import org.sbml.libsbml.SBase;
-import org.sbml.libsbml.Submodel;
 import org.sbml.libsbml.XMLAttributes;
 import org.sbml.libsbml.XMLNode;
 import org.sbml.libsbml.XMLTriple;
 import org.sbml.libsbml.libsbml;
 
-import biomodel.parser.BioModel;
 import biomodel.util.Utility;
 
 public class AnnotationUtility {
@@ -53,7 +49,6 @@ public class AnnotationUtility {
 				try {
 					sbolURIs.add(new URI(componentMatcher.group(1)));
 				} catch (URISyntaxException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 		}
@@ -84,11 +79,14 @@ public class AnnotationUtility {
 	}
 	
 	public static String parseSweepAnnotation(SBase sbmlObject) {
+		if (sbmlObject==null) return null;
 		String annotation = sbmlObject.getAnnotationString();
 		Pattern sweepPattern = Pattern.compile(SWEEP_ANNOTATION);
 		Matcher sweepMatcher = sweepPattern.matcher(annotation);
-		if (sweepMatcher.find()) {
-			return sweepMatcher.group(0);
+		//System.out.println("Parsing "+annotation);
+		if (sweepMatcher.find() && sweepMatcher.groupCount()==1) {
+			//System.out.println("Returning " + sweepMatcher.group(1));
+			return sweepMatcher.group(1);
 		}
 		return null;
 	}
@@ -136,6 +134,6 @@ public class AnnotationUtility {
 			"<ibiosim:ibiosim xmlns:ibiosim=\"http://www\\.fakeuri\\.com\" ibiosim:grid=\"\\((\\d+),(\\d+)\\)\"/>";
 	
 	private static final String SWEEP_ANNOTATION =
-			"<ibiosim:ibiosim xmlns:ibiosim=\"http://www\\.fakeuri\\.com\" ibiosim:sweep=\"\\s*\"/>";
+			"<ibiosim:ibiosim xmlns:ibiosim=\"http://www\\.fakeuri\\.com\" ibiosim:sweep=\"(\\S+)\"/>";
 	
 }
