@@ -3355,17 +3355,27 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									
 							}
 							if (!lpnUSF) {
-								FileOutputStream out = new FileOutputStream(new File(root + separator + file[file.length - 1]));
-								FileInputStream in = new FileInputStream(new File(filename));
-								// log.addText(filename);
-								int read = in.read();							
-								while (read != -1) {
-									out.write(read);
-									read = in.read();
+								String outFileName = file[file.length - 1];
+								
+								if (!lema && !atacs) { 
+									Translator t1 = new Translator();
+									t1.convertLPN2SBML(filename, "");
+									t1.setFilename(root + separator + outFileName.replace(".lpn", ".xml"));
+									t1.outputSBML();
+									outFileName = outFileName.replace(".lpn", ".xml");
+								} else {
+									FileOutputStream out = new FileOutputStream(new File(root + separator + outFileName));
+									FileInputStream in = new FileInputStream(new File(filename));
+									// log.addText(filename);
+									int read = in.read();							
+									while (read != -1) {
+										out.write(read);
+										read = in.read();
+									}
+									in.close();
+									out.close();
 								}
-								in.close();
-								out.close();
-								addToTree(file[file.length - 1]);
+								addToTree(outFileName);
 							}
 							else {
 								ANTLRFileStream in = new ANTLRFileStream(filename);
