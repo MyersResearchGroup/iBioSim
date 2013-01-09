@@ -460,8 +460,9 @@ public class Utility {
 	public static final String NUMstring = "([\\d]*[\\.\\d]?\\d+)([eE][-+]?[\\d]+)?";
 	public static final String CONCstring = "\\[" + NUMstring + "\\]";
 	public static final String SLASHstring = "(" + NUMstring + "/)?" + NUMstring;
-	public static final String SWEEPstring = "(\\(" + NUMstring + ",[[\\s]*]?" + NUMstring + ",[[\\s]*]?" + NUMstring +
-		",[[\\s]*]?[12]\\))|" + NUMstring;
+	public static final String SWEEPformat = "\\(" + NUMstring + ",[[\\s]*]?" + NUMstring + ",[[\\s]*]?" + NUMstring +
+		",[[\\s]*]?[12]\\)";
+	public static final String SWEEPstring = "(" + SWEEPformat + ")|" + NUMstring;
 	public static final String SLASHSWEEPstring = "(\\((" + NUMstring + "/)?" + NUMstring + ",[[\\s]*]?(" + NUMstring + "/)?" + 
 		NUMstring + ",[[\\s]*]?(" + NUMstring + "/)?" + NUMstring + ",[[\\s]*]?[12]\\))|(" + NUMstring + "/)?" + NUMstring;
 	public static final String PROPstring = "([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*";

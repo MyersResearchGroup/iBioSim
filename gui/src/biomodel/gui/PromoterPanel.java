@@ -42,53 +42,51 @@ public class PromoterPanel extends JPanel {
 	private Species promoter = null;
 	private Reaction production = null;
 	
-	public PromoterPanel(String selected, BioModel gcm, boolean paramsOnly, BioModel refGCM, 
+	public PromoterPanel(String selected, BioModel bioModel, boolean paramsOnly, BioModel refGCM, 
 			ModelEditor gcmEditor) {
 		super(new GridLayout(paramsOnly?7:11, 1));
 		this.selected = selected;
-		this.bioModel = gcm;
+		this.bioModel = bioModel;
 		this.paramsOnly = paramsOnly;
 		this.modelEditor = gcmEditor;
 
 		fields = new HashMap<String, PropertyField>();
 		
 
-		Model model = gcm.getSBMLDocument().getModel();
+		Model model = bioModel.getSBMLDocument().getModel();
 		promoter = model.getSpecies(selected);
 
 		PropertyField field  = null;
-		if (!paramsOnly) {
-			// ID field
-			field = new PropertyField(GlobalConstants.ID, promoter.getId(), null, null, Utility.IDstring, paramsOnly, "default", false);
-			fields.put(GlobalConstants.ID, field);
-			add(field);		
-			// Name field
-			field = new PropertyField(GlobalConstants.NAME, promoter.getName(), null, null, Utility.NAMEstring, paramsOnly, "default", false);
-			fields.put(GlobalConstants.NAME, field);
-			add(field);	
+		// ID field
+		field = new PropertyField(GlobalConstants.ID, promoter.getId(), null, null, Utility.IDstring, paramsOnly, "default", false);
+		fields.put(GlobalConstants.ID, field);
+		if (!paramsOnly) add(field);		
+		// Name field
+		field = new PropertyField(GlobalConstants.NAME, promoter.getName(), null, null, Utility.NAMEstring, paramsOnly, "default", false);
+		fields.put(GlobalConstants.NAME, field);
+		if (!paramsOnly) add(field);	
 			
-			// Type field
-			JPanel tempPanel = new JPanel();
-			JLabel tempLabel = new JLabel(GlobalConstants.TYPE);
-			typeBox = new JComboBox(types);
-			//typeBox.addActionListener(this);
-			tempPanel.setLayout(new GridLayout(1, 2));
-			tempPanel.add(tempLabel);
-			tempPanel.add(typeBox);
-			add(tempPanel);
-			if (bioModel.isInput(promoter.getId())) {
-				typeBox.setSelectedItem(GlobalConstants.INPUT);
-			} else if (bioModel.isOutput(promoter.getId())) {
-				typeBox.setSelectedItem(GlobalConstants.OUTPUT);
-			} else {
-				typeBox.setSelectedItem(GlobalConstants.INTERNAL);
-			}
+		// Type field
+		JPanel tempPanel = new JPanel();
+		JLabel tempLabel = new JLabel(GlobalConstants.TYPE);
+		typeBox = new JComboBox(types);
+		//typeBox.addActionListener(this);
+		tempPanel.setLayout(new GridLayout(1, 2));
+		tempPanel.add(tempLabel);
+		tempPanel.add(typeBox);
+		if (!paramsOnly) add(tempPanel);
+		if (bioModel.isInput(promoter.getId())) {
+			typeBox.setSelectedItem(GlobalConstants.INPUT);
+		} else if (bioModel.isOutput(promoter.getId())) {
+			typeBox.setSelectedItem(GlobalConstants.OUTPUT);
+		} else {
+			typeBox.setSelectedItem(GlobalConstants.INTERNAL);
 		}
-		production = gcm.getProductionReaction(selected);
+		production = bioModel.getProductionReaction(selected);
 		
 		// promoter count
 		String origString = "default";
-		String defaultValue = gcm.getParameter(GlobalConstants.PROMOTER_COUNT_STRING);
+		String defaultValue = bioModel.getParameter(GlobalConstants.PROMOTER_COUNT_STRING);
 		String formatString = Utility.NUMstring;
 		if (paramsOnly) {
 			if (refGCM.getSBMLDocument().getModel().getSpecies(promoter.getId()).getInitialAmount() != 
@@ -99,11 +97,10 @@ public class PromoterPanel extends JPanel {
 			formatString = Utility.SWEEPstring;
 		} 
 		field = new PropertyField(GlobalConstants.PROMOTER_COUNT_STRING, 
-				gcm.getParameter(GlobalConstants.PROMOTER_COUNT_STRING), origString, 
+				bioModel.getParameter(GlobalConstants.PROMOTER_COUNT_STRING), origString, 
 				defaultValue, formatString, paramsOnly, origString, false);
-		if (promoter.isSetAnnotation() && promoter.getAnnotationString().contains(GlobalConstants.PROMOTER_COUNT_STRING)) {
-			String annotation = promoter.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
-			String sweep = annotation.substring(annotation.indexOf(GlobalConstants.PROMOTER_COUNT_STRING)+3);
+		String sweep = AnnotationUtility.parseSweepAnnotation(promoter);
+		if (sweep != null) {		
 			field.setValue(sweep);
 			field.setCustom();
 		} else if (!defaultValue.equals(""+promoter.getInitialAmount())) {
@@ -115,8 +112,8 @@ public class PromoterPanel extends JPanel {
 
 		// RNAP binding
 		origString = "default";
-		defaultValue = gcm.getParameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING) + "/" + 
-				gcm.getParameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING); 
+		defaultValue = bioModel.getParameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING) + "/" + 
+				bioModel.getParameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING); 
 		formatString = Utility.SLASHstring;
 		if (paramsOnly) {
 			/*
@@ -138,10 +135,8 @@ public class PromoterPanel extends JPanel {
 		if (production != null) {
 			LocalParameter ko_f = production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING);
 			LocalParameter ko_r = production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING);
-			if (ko_f != null && ko_f.isSetAnnotation() && 
-					ko_f.getAnnotationString().contains(GlobalConstants.FORWARD_RNAP_BINDING_STRING)) {
-				String sweep = ko_f.getAnnotationString().replace("<annotation>"+GlobalConstants.FORWARD_RNAP_BINDING_STRING+"=","")
-						.replace("</annotation>","");
+			sweep = AnnotationUtility.parseSweepAnnotation(ko_f);
+			if (sweep != null) {		
 				field.setValue(sweep);
 				field.setCustom();
 			} else if (ko_f != null && ko_r != null && !defaultValue.equals(ko_f.getValue()+"/"+ko_r.getValue())) {
@@ -154,8 +149,8 @@ public class PromoterPanel extends JPanel {
 		
 		// Activated RNAP binding
 		origString = "default";
-		defaultValue = gcm.getParameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING) + "/" + 
-				gcm.getParameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING); 
+		defaultValue = bioModel.getParameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING) + "/" + 
+				bioModel.getParameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING); 
 		formatString = Utility.SLASHstring;
 		if (paramsOnly) {
 			/*
@@ -177,10 +172,8 @@ public class PromoterPanel extends JPanel {
 		if (production != null) {
 			LocalParameter kao_f = production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING);
 			LocalParameter kao_r = production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING);
-			if (kao_f != null && kao_f.isSetAnnotation() && 
-					kao_f.getAnnotationString().contains(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING)) {
-				String sweep = kao_f.getAnnotationString().replace("<annotation>"+GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING+"=","")
-						.replace("</annotation>","");
+			sweep = AnnotationUtility.parseSweepAnnotation(kao_f);
+			if (sweep != null) {		
 				field.setValue(sweep);
 				field.setCustom();
 			} else if (kao_f != null && kao_r != null && !defaultValue.equals(kao_f.getValue()+"/"+kao_r.getValue())) {
@@ -193,7 +186,7 @@ public class PromoterPanel extends JPanel {
 		
 		// kocr
 		origString = "default";
-		defaultValue = gcm.getParameter(GlobalConstants.OCR_STRING);
+		defaultValue = bioModel.getParameter(GlobalConstants.OCR_STRING);
 		formatString = Utility.NUMstring;
 		if (paramsOnly) {
 			//defaultValue = refGCM.getParameter(GlobalConstants.OCR_STRING);
@@ -207,14 +200,12 @@ public class PromoterPanel extends JPanel {
 			}
 			formatString = Utility.SWEEPstring;
 		}
-		field = new PropertyField(GlobalConstants.OCR_STRING, gcm.getParameter(GlobalConstants.OCR_STRING),
+		field = new PropertyField(GlobalConstants.OCR_STRING, bioModel.getParameter(GlobalConstants.OCR_STRING),
 				origString, defaultValue, formatString, paramsOnly, origString, false);
 		if (production != null) {
 			LocalParameter ko = production.getKineticLaw().getLocalParameter(GlobalConstants.OCR_STRING);
-			if (ko != null && ko.isSetAnnotation() && 
-					ko.getAnnotationString().contains(GlobalConstants.OCR_STRING)) {
-				String sweep = ko.getAnnotationString().replace("<annotation>"+GlobalConstants.OCR_STRING+"=","")
-						.replace("</annotation>","");
+			sweep = AnnotationUtility.parseSweepAnnotation(ko);
+			if (sweep != null) {		
 				field.setValue(sweep);
 				field.setCustom();
 			} else if (ko != null && !defaultValue.equals(ko.getValue()+"")) {
@@ -227,7 +218,7 @@ public class PromoterPanel extends JPanel {
 		
 		// kbasal
 		origString = "default";
-		defaultValue = gcm.getParameter(GlobalConstants.KBASAL_STRING);
+		defaultValue = bioModel.getParameter(GlobalConstants.KBASAL_STRING);
 		formatString = Utility.NUMstring;
 		if (paramsOnly) {
 			if (production != null) {
@@ -240,14 +231,12 @@ public class PromoterPanel extends JPanel {
 			}
 			formatString = Utility.SWEEPstring;
 		}
-		field = new PropertyField(GlobalConstants.KBASAL_STRING, gcm.getParameter(GlobalConstants.KBASAL_STRING),
+		field = new PropertyField(GlobalConstants.KBASAL_STRING, bioModel.getParameter(GlobalConstants.KBASAL_STRING),
 				origString, defaultValue, Utility.SWEEPstring, paramsOnly, origString, false);
 		if (production != null) {
 			LocalParameter kb = production.getKineticLaw().getLocalParameter(GlobalConstants.KBASAL_STRING);
-			if (kb != null && kb.isSetAnnotation() && 
-					kb.getAnnotationString().contains(GlobalConstants.KBASAL_STRING)) {
-				String sweep = kb.getAnnotationString().replace("<annotation>"+GlobalConstants.KBASAL_STRING+"=","")
-						.replace("</annotation>","");
+			sweep = AnnotationUtility.parseSweepAnnotation(kb);
+			if (sweep != null) {		
 				field.setValue(sweep);
 				field.setCustom();
 			} else if (kb != null && !defaultValue.equals(kb.getValue()+"")) {
@@ -260,7 +249,7 @@ public class PromoterPanel extends JPanel {
 		
 		// kactived production
 		origString = "default";
-		defaultValue = gcm.getParameter(GlobalConstants.ACTIVATED_STRING);
+		defaultValue = bioModel.getParameter(GlobalConstants.ACTIVATED_STRING);
 		formatString = Utility.NUMstring;
 		if (paramsOnly) {
 			if (production != null) {
@@ -273,14 +262,12 @@ public class PromoterPanel extends JPanel {
 			}
 			formatString = Utility.SWEEPstring;
 		}
-		field = new PropertyField(GlobalConstants.ACTIVATED_STRING, gcm.getParameter(GlobalConstants.ACTIVATED_STRING),
+		field = new PropertyField(GlobalConstants.ACTIVATED_STRING, bioModel.getParameter(GlobalConstants.ACTIVATED_STRING),
 				origString, defaultValue, formatString, paramsOnly, origString, false);
 		if (production != null) {
 			LocalParameter ka = production.getKineticLaw().getLocalParameter(GlobalConstants.ACTIVATED_STRING);
-			if (ka != null && ka.isSetAnnotation() && 
-					ka.getAnnotationString().contains(GlobalConstants.ACTIVATED_STRING)) {
-				String sweep = ka.getAnnotationString().replace("<annotation>"+GlobalConstants.ACTIVATED_STRING+"=","")
-						.replace("</annotation>","");
+			sweep = AnnotationUtility.parseSweepAnnotation(ka);
+			if (sweep != null) {		
 				field.setValue(sweep);
 				field.setCustom();
 			} else if (ka != null && !defaultValue.equals(ka.getValue()+"")) {
@@ -293,7 +280,7 @@ public class PromoterPanel extends JPanel {
 		
 		// stoichiometry
 		origString = "default";
-		defaultValue = gcm.getParameter(GlobalConstants.STOICHIOMETRY_STRING);
+		defaultValue = bioModel.getParameter(GlobalConstants.STOICHIOMETRY_STRING);
 		formatString = Utility.NUMstring;
 		if (paramsOnly) {
 			if (production != null) {
@@ -306,14 +293,12 @@ public class PromoterPanel extends JPanel {
 			}
 			formatString = Utility.SWEEPstring;
 		}
-		field = new PropertyField(GlobalConstants.STOICHIOMETRY_STRING, gcm.getParameter(GlobalConstants.STOICHIOMETRY_STRING),
+		field = new PropertyField(GlobalConstants.STOICHIOMETRY_STRING, bioModel.getParameter(GlobalConstants.STOICHIOMETRY_STRING),
 				origString, defaultValue, formatString, paramsOnly, origString, false);
 		if (production != null) {
 			LocalParameter np = production.getKineticLaw().getLocalParameter(GlobalConstants.STOICHIOMETRY_STRING);
-			if (np != null && np.isSetAnnotation() && 
-					np.getAnnotationString().contains(GlobalConstants.STOICHIOMETRY_STRING)) {
-				String sweep = np.getAnnotationString().replace("<annotation>"+GlobalConstants.STOICHIOMETRY_STRING+"=","")
-						.replace("</annotation>","");
+			sweep = AnnotationUtility.parseSweepAnnotation(np);
+			if (sweep != null) {		
 				field.setValue(sweep);
 				field.setCustom();
 			} else if (np != null && !defaultValue.equals(np.getValue()+"")) {
@@ -408,7 +393,7 @@ public class PromoterPanel extends JPanel {
 			PropertyField f = fields.get(GlobalConstants.PROMOTER_COUNT_STRING);
 			if (f.getValue().startsWith("(")) {
 				promoter.setInitialAmount(1.0);
-				promoter.appendAnnotation("," + GlobalConstants.PROMOTER_COUNT_STRING + "=" + f.getValue());
+				AnnotationUtility.setSweepAnnotation(promoter, f.getValue());
 			} else {
 				promoter.setInitialAmount(Double.parseDouble(f.getValue()));
 			}

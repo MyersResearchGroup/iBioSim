@@ -9,7 +9,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
@@ -53,18 +52,18 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	 * @param influencesList
 	 * @param conditionsList
 	 * @param componentsList
-	 * @param gcm
+	 * @param bioModel
 	 * @param paramsOnly
 	 * @param refGCM
 	 * @param modelEditor
 	 */
 	public SpeciesPanel(Gui biosim, String selected, PropertyList speciesList, 
-			PropertyList componentsList, BioModel gcm, boolean paramsOnly,
+			PropertyList componentsList, BioModel bioModel, boolean paramsOnly,
 			BioModel refGCM, ModelEditor modelEditor, boolean inTab){
 
 		super(new BorderLayout());
 		this.biosim = biosim;
-		constructor(selected, speciesList, componentsList, gcm, paramsOnly, refGCM, modelEditor, inTab);
+		constructor(selected, speciesList, componentsList, bioModel, paramsOnly, refGCM, modelEditor, inTab);
 	}
 	
 	/**
@@ -374,10 +373,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				origString, defaultValue, formatString, paramsOnly, origString, false);
 		if (constitutive != null) {
 			LocalParameter ko = constitutive.getKineticLaw().getLocalParameter(GlobalConstants.OCR_STRING);
-			if (ko != null && ko.isSetAnnotation() && 
-					ko.getAnnotationString().contains(GlobalConstants.OCR_STRING)) {
-				String sweep = ko.getAnnotationString().replace("<annotation>"+GlobalConstants.OCR_STRING+"=","")
-						.replace("</annotation>","");
+			String sweep = AnnotationUtility.parseSweepAnnotation(ko);
+			if (sweep != null) {
 				field.setValue(sweep);
 				field.setCustom();
 			} else if (ko != null && !defaultValue.equals(ko.getValue()+"")) {
@@ -407,10 +404,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				origString, defaultValue, formatString, paramsOnly, origString, false);
 		if (constitutive != null) {
 			LocalParameter np = constitutive.getKineticLaw().getLocalParameter(GlobalConstants.STOICHIOMETRY_STRING);
-			if (np != null && np.isSetAnnotation() && 
-					np.getAnnotationString().contains(GlobalConstants.STOICHIOMETRY_STRING)) {
-				String sweep = np.getAnnotationString().replace("<annotation>"+GlobalConstants.STOICHIOMETRY_STRING+"=","")
-						.replace("</annotation>","");
+			String sweep = AnnotationUtility.parseSweepAnnotation(np);
+			if (sweep != null) {
 				field.setValue(sweep);
 				field.setCustom();
 			} else if (np != null && !defaultValue.equals(np.getValue()+"")) {
@@ -441,9 +436,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				formatString, paramsOnly, origString, false);
 		if (degradation != null) {
 			LocalParameter kd = degradation.getKineticLaw().getLocalParameter(GlobalConstants.KDECAY_STRING);
-			if (kd != null && kd.isSetAnnotation() && kd.getAnnotationString().contains(GlobalConstants.KDECAY_STRING)) {
-				String sweep = kd.getAnnotationString().replace("<annotation>"+GlobalConstants.KDECAY_STRING+"=","")
-						.replace("</annotation>","");
+			String sweep = AnnotationUtility.parseSweepAnnotation(kd);
+			if (sweep != null) {
 				field.setValue(sweep);
 				field.setCustom();
 			} else if (kd != null && !defaultValue.equals(""+kd.getValue())) {
@@ -509,10 +503,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		if (complex != null) {
 			LocalParameter kc_f = complex.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING);
 			LocalParameter kc_r = complex.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING);
-			if (kc_f != null && kc_f.isSetAnnotation() && 
-					kc_f.getAnnotationString().contains(GlobalConstants.FORWARD_KCOMPLEX_STRING)) {
-				String sweep = kc_f.getAnnotationString().replace("<annotation>"+GlobalConstants.FORWARD_KCOMPLEX_STRING+"=","")
-						.replace("</annotation>","");
+			String sweep = AnnotationUtility.parseSweepAnnotation(kc_f);
+			if (sweep != null) {
 				field.setValue(sweep);
 				field.setCustom();
 			} else if (kc_f != null && kc_r != null && !defaultValue.equals(kc_f.getValue()+"/"+kc_r.getValue())) {
@@ -546,10 +538,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		if (diffusion != null) {
 			LocalParameter kmdiff_f = diffusion.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_MEMDIFF_STRING);
 			LocalParameter kmdiff_r = diffusion.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_MEMDIFF_STRING);
-			if (kmdiff_f != null && kmdiff_f.isSetAnnotation() && 
-					kmdiff_f.getAnnotationString().contains(GlobalConstants.FORWARD_MEMDIFF_STRING)) {
-				String sweep = kmdiff_f.getAnnotationString().replace("<annotation>"+GlobalConstants.FORWARD_MEMDIFF_STRING+"=","")
-						.replace("</annotation>","");
+			String sweep = AnnotationUtility.parseSweepAnnotation(kmdiff_f);
+			if (sweep != null) {
 				field.setValue(sweep);
 				field.setCustom();
 			} else if (kmdiff_f != null && kmdiff_r != null && !defaultValue.equals(kmdiff_f.getValue()+"/"+kmdiff_r.getValue())) {
@@ -608,31 +598,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			} else {
 				typeBox.setSelectedItem(GlobalConstants.INTERNAL);
 			}
-			/*
-			String annotation = species.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
-			String [] annotations = annotation.split(",");
-			for (int i=0;i<annotations.length;i++) 
-				if (annotations[i].startsWith(GlobalConstants.TYPE)) {
-					String [] type = annotations[i].split("=");
-					typeBox.setSelectedItem(type[1]);
-				}
-				*/
 		}
-			
-		/*
-		if (selected != null) {
-			
-			Properties prop = gcm.getSpecies().get(selected);
-			//This will generate the action command associated with changing the type combo box
-			typeBox.setSelectedItem(((String)prop.getProperty(GlobalConstants.TYPE))
-					.replace(GlobalConstants.SPASTIC, "").replace(GlobalConstants.DIFFUSIBLE, ""));
-			//loadProperties(prop);
-		}
-		else {
-			
-			typeBox.setSelectedItem(types[1]);
-		}
-		*/
 		
 		boolean display = false;
 		
@@ -718,6 +684,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	 */
 	public boolean handlePanelData(int value) {	
 		
+		species = bioModel.getSBMLDocument().getModel().getSpecies(selected);
+		
 		// the new id of the species. Will be filled in later.
 		String newSpeciesID = null;
 		
@@ -756,29 +724,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				}
 			}
 			
-			// TOOD: FIX ME
-			/*
-			if (selected != null && (typeBox.getSelectedItem().toString().equals(types[0]) || 
-					specConstitutive.isSelected())) {
-				
-				for (String infl : gcm.getInfluences().keySet()) {
-					
-					String geneProduct = GCMFile.getOutput(infl);
-					
-					if (selected.equals(geneProduct)) {
-						
-						Utility.createErrorMessage("Error", "There must be no connections to an input species " +
-						"or constitutive species.");
-						return false;
-					}
-				}
-			}
-			*/
-			
 			newSpeciesID = fields.get(GlobalConstants.ID).getValue();
 
-			//Properties property = new Properties();
-//			boolean removeModelSBOLAnnotationFlag = false;
 			if (selected != null) {			
 				
 				//check and add interesting species information
@@ -787,20 +734,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					return false;
 				}
 				
-				// preserve positioning info
-				/*
-				for (Object s : gcm.getSpecies().get(selected).keySet()) {
-					
-					String k = s.toString();
-					
-					if (k.equals("graphwidth") || k.equals("graphheight") || k.equals("graphy") || k.equals("graphx")) {
-						
-						String v = (gcm.getSpecies().get(selected).getProperty(k)).toString();
-						property.put(k, v);
-					}
-				}
-				*/
-				
 				if (!paramsOnly) {
 					
 					InitialAssignments.removeInitialAssignment(bioModel, selected);
@@ -808,7 +741,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 						species.setInitialAmount(Double.parseDouble(initialField.getText()));
 					} 
 					else if (Utility.isValid(initialField.getText(), Utility.CONCstring)) {
-						//String conc = fields.get(GlobalConstants.INITIAL_STRING).getValue();
 						species.setInitialConcentration(Double.parseDouble(initialField.getText().substring(1,initialField.getText().length()-1)));
 					} else {
 						boolean error = InitialAssignments.addInitialAssignment(biosim, bioModel, species.getId(), 
@@ -816,7 +748,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 						if (error) return false;
 						species.setInitialAmount(Double.parseDouble("0.0"));
 					}
-					
 					// Checks whether SBOL annotation on model needs to be deleted later when annotating species with SBOL
 //					if (sbolField.getSBOLURIs().size() > 0 && 
 //							bioModel.getElementSBOLCount() == 0 && bioModel.getModelSBOLAnnotationFlag()) {
@@ -887,12 +818,13 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
 						if (Utility.isValid(f.getValue(), Utility.NUMstring)) {
 							species.setInitialAmount(Double.parseDouble(f.getValue()));
+							AnnotationUtility.removeSweepAnnotation(species);
 						} 
 						else if (Utility.isValid(f.getValue(), Utility.CONCstring)) {
 							species.setInitialConcentration(Double.parseDouble(f.getValue().substring(1,f.getValue().length()-1)));
+							AnnotationUtility.removeSweepAnnotation(species);
 						} else {
 							AnnotationUtility.setSweepAnnotation(species, f.getValue());
-							//species.setAnnotation(GlobalConstants.INITIAL_STRING+"="+f.getValue());
 						}
 					} else {
 						if (refGCM.getSBMLDocument().getModel().getSpecies(selected).isSetInitialAmount()) {

@@ -1026,30 +1026,10 @@ public class BioModel {
 		}
 		boolean onPort = false;
 		if (property.containsKey(GlobalConstants.TYPE)) {
-			/*
-			species.setAnnotation(GlobalConstants.TYPE + "=" + property.getProperty(GlobalConstants.TYPE)
-					.replace("diffusible","").replace("constitutive",""));
-					*/
 			String type = property.getProperty(GlobalConstants.TYPE).replace("diffusible","").replace("constitutive","");
 			createDirPort(species.getId(),type);
 			onPort = (type.equals(GlobalConstants.INPUT)||type.equals(GlobalConstants.OUTPUT));
-		} /*else {
-			species.setAnnotation(GlobalConstants.TYPE + "=" + GlobalConstants.INTERNAL);
-		}*/
-		/*
-		if (property.containsKey(GlobalConstants.SBOL_RBS) &&
-				property.containsKey(GlobalConstants.SBOL_CDS)) {
-			species.appendAnnotation("," + GlobalConstants.SBOL_RBS + "=" + 
-				property.getProperty(GlobalConstants.SBOL_RBS) + "," + 
-				GlobalConstants.SBOL_CDS + "=" + property.getProperty(GlobalConstants.SBOL_CDS));
-		} else if (property.containsKey(GlobalConstants.SBOL_RBS)) {
-			species.appendAnnotation("," + GlobalConstants.SBOL_RBS + "=" + 
-					property.getProperty(GlobalConstants.SBOL_RBS));
-		} else if (property.containsKey(GlobalConstants.SBOL_CDS)) {
-			species.appendAnnotation("," + GlobalConstants.SBOL_CDS + "=" + 
-					property.getProperty(GlobalConstants.SBOL_CDS));
-		}
-		*/
+		} 
 		double kd = -1;
 		if (property.containsKey(GlobalConstants.KDECAY_STRING)) {
 			kd = Double.parseDouble(property.getProperty(GlobalConstants.KDECAY_STRING));
@@ -1084,20 +1064,6 @@ public class BioModel {
 		promoter.setConstant(false);
 		promoter.setHasOnlySubstanceUnits(true);
 		promoter.setSBOTerm(GlobalConstants.SBO_PROMOTER_BINDING_REGION);
-		/*
-		if (property.containsKey(GlobalConstants.SBOL_PROMOTER) &&
-				property.containsKey(GlobalConstants.SBOL_TERMINATOR)) {
-			promoter.appendAnnotation(GlobalConstants.SBOL_PROMOTER + "=" + 
-					property.getProperty(GlobalConstants.SBOL_PROMOTER) + "," +
-					GlobalConstants.SBOL_TERMINATOR + "=" + property.getProperty(GlobalConstants.SBOL_TERMINATOR));
-		} else if (property.containsKey(GlobalConstants.SBOL_PROMOTER)) {
-			promoter.appendAnnotation(GlobalConstants.SBOL_PROMOTER + "=" + 
-					property.getProperty(GlobalConstants.SBOL_PROMOTER));
-		} else if (property.containsKey(GlobalConstants.SBOL_TERMINATOR)) {
-			promoter.appendAnnotation(GlobalConstants.SBOL_TERMINATOR + "=" + 
-					property.getProperty(GlobalConstants.SBOL_TERMINATOR));
-		}
-		*/
 		createProductionReaction(s,property.getProperty(GlobalConstants.ACTIVATED_STRING),
 				property.getProperty(GlobalConstants.STOICHIOMETRY_STRING),
 				property.getProperty(GlobalConstants.OCR_STRING),
@@ -1280,21 +1246,6 @@ public class BioModel {
 	}
 	
 	public void setGridSize(int rows, int cols) {
-		
-//		Layout layout = createLayout();
-//		
-//		if (rows > 0 && cols > 0) {
-//			
-//			XMLAttributes attr = new XMLAttributes();
-//			attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
-//			attr.add("ibiosim:grid", "(" + rows + "," + cols + ")");
-//			XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
-//			
-//			layout.setAnnotation(node);
-//		} 
-//		else {
-//			layout.unsetAnnotation();
-//		}
 		
 		//get the grid compartment
 		Compartment gridComp = sbml.getModel().getCompartment(0);
@@ -1496,7 +1447,7 @@ public class BioModel {
 				p.setId(GlobalConstants.FORWARD_KCOMPLEX_STRING);
 			}
 			p.setValue(1.0);
-			p.setAnnotation(GlobalConstants.FORWARD_KCOMPLEX_STRING+"="+KcStr);
+			AnnotationUtility.setSweepAnnotation(p, KcStr);
 			p = k.getLocalParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING);
 			if (p==null) {	
 				p = k.createLocalParameter();
@@ -1901,7 +1852,7 @@ public class BioModel {
 			LocalParameter p = k.createLocalParameter();
 			p.setId(GlobalConstants.FORWARD_MEMDIFF_STRING);
 			p.setValue(1.0);
-			p.setAnnotation(GlobalConstants.FORWARD_MEMDIFF_STRING+"="+kmdiffStr);
+			AnnotationUtility.setSweepAnnotation(p, kmdiffStr);
 			p = k.createLocalParameter();
 			p.setId(GlobalConstants.REVERSE_MEMDIFF_STRING);
 			p.setValue(1.0);
@@ -1965,7 +1916,7 @@ public class BioModel {
 			}
 			double npVal = 1.0;
 			if (np.startsWith("(")) {
-				p.setAnnotation(GlobalConstants.STOICHIOMETRY_STRING+"="+np);
+				AnnotationUtility.setSweepAnnotation(p, np);
 			} else {
 				npVal = Double.parseDouble(np);
 			}
@@ -1985,7 +1936,7 @@ public class BioModel {
 				p.setId(GlobalConstants.OCR_STRING);
 			}
 			if (ko.startsWith("(")) {
-				p.setAnnotation(GlobalConstants.OCR_STRING+"="+ko);
+				AnnotationUtility.setSweepAnnotation(p, ko);
 				p.setValue(1.0);
 			} else {
 				p.setValue(Double.parseDouble(ko));
@@ -2030,7 +1981,7 @@ public class BioModel {
 			p.setId("kd");
 			p.setValue(kd);
 			if (sweep != null) {
-				p.setAnnotation(GlobalConstants.KDECAY_STRING+"="+sweep);
+				AnnotationUtility.setSweepAnnotation(p, sweep);
 			} 
 		}
 		k.setMath(SBMLutilities.myParseFormula("kd*"+s));
@@ -2085,7 +2036,7 @@ public class BioModel {
 			p.setId(GlobalConstants.STOICHIOMETRY_STRING);
 			double npVal = 1.0;
 			if (np.startsWith("(")) {
-				p.setAnnotation(GlobalConstants.STOICHIOMETRY_STRING+"="+np);
+				AnnotationUtility.setSweepAnnotation(p, np);
 			} else {
 				npVal = Double.parseDouble(np);
 			}
@@ -2102,7 +2053,7 @@ public class BioModel {
 			LocalParameter p = k.createLocalParameter();
 			p.setId(GlobalConstants.OCR_STRING);
 			if (ko.startsWith("(")) {
-				p.setAnnotation(GlobalConstants.OCR_STRING+"="+ko);
+				AnnotationUtility.setSweepAnnotation(p, ko);
 				p.setValue(1.0);
 			} else {
 				p.setValue(Double.parseDouble(ko));
@@ -2112,7 +2063,7 @@ public class BioModel {
 			LocalParameter p = k.createLocalParameter();
 			p.setId(GlobalConstants.KBASAL_STRING);
 			if (kb.startsWith("(")) {
-				p.setAnnotation(GlobalConstants.KBASAL_STRING+"="+kb);
+				AnnotationUtility.setSweepAnnotation(p, kb);
 				p.setValue(1.0);
 			} else {
 				p.setValue(Double.parseDouble(kb));
@@ -2122,7 +2073,7 @@ public class BioModel {
 			LocalParameter p = k.createLocalParameter();
 			p.setId(GlobalConstants.ACTIVATED_STRING);
 			if (ka.startsWith("(")) {
-				p.setAnnotation(GlobalConstants.ACTIVATED_STRING+"="+ka);
+				AnnotationUtility.setSweepAnnotation(p, ka);
 				p.setValue(1.0);
 			} else {
 				p.setValue(Double.parseDouble(ka));
@@ -2132,7 +2083,7 @@ public class BioModel {
 			double [] Ko;
 			LocalParameter p = k.createLocalParameter();
 			if (KoStr.startsWith("(")) {
-				p.setAnnotation(GlobalConstants.FORWARD_RNAP_BINDING_STRING+"="+KoStr);
+				AnnotationUtility.setSweepAnnotation(p, KoStr);
 				p.setValue(1.0);
 				Ko = Utility.getEquilibrium("1.0/1.0");
 			} else {
@@ -2148,7 +2099,7 @@ public class BioModel {
 			double [] Kao;
 			LocalParameter p = k.createLocalParameter();
 			if (KaoStr.startsWith("(")) {
-				p.setAnnotation(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING+"="+KaoStr);
+				AnnotationUtility.setSweepAnnotation(p, KaoStr);
 				p.setValue(1.0);
 				Kao = Utility.getEquilibrium("1.0/1.0");
 			} else {
@@ -2593,15 +2544,6 @@ public class BioModel {
 			List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(instantiation);
 			if (sbolURIs.size() > 0)
 				elementSBOLCount++;
-//			else {
-//				String sbmlSubFileID = sbmlComp.getExternalModelDefinition(instantiation.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
-//				BioModel bioSubModel = new BioModel(path);
-//				bioSubModel.load(sbmlSubFileID);
-//				Model sbmlSubModel = bioSubModel.getSBMLDocument().getModel();
-//				sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlSubModel);
-//				if (sbolURIs.size() > 0)
-//					elementSBOLCount++;
-//			}
 		}
 	}
 	
@@ -3079,18 +3021,6 @@ public class BioModel {
 		extModel.setSource("file:" + modelFile.replace(".gcm",".xml"));
 		extModel.setMd5(md5);
 		
-//		if (enclosed && extModel.getAnnotationString().contains("compartment") == false) {	
-//			
-//			XMLAttributes attr = new XMLAttributes();			
-//			attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
-//			attr.add("ibiosim:type", "compartment");
-//			XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
-//			
-//			extModel.setAnnotation(node);
-//		}
-//		else
-//			extModel.getAnnotation().getChild(0).removeAttr("ibiosim:type");
-		
 		//figure out what the submodel's ID should be if it's not provided
 		if (submodelID == null) {
 			
@@ -3108,31 +3038,6 @@ public class BioModel {
 							changed = true;
 						}
 					}
-					/*
-				boolean escape = false;
-
-				while (sbml.getModel().getParameter(i).getId().contains(extId + "__locations") == true) {
-
-					++count;
-					submodelID = "C" + count;
-
-					if (sbml.getModel().getParameter(extId + "__locations") != null &&
-							sbml.getModel().getParameter(extId + "__locations")
-							.getAnnotationString().contains("array:" + submodelID + "=") == false) {
-
-						escape = true;
-						break;
-					}
-					else if (sbml.getModel().getParameter(extId + "__locations") == null &&
-							sbml.getModel().getParameter(submodelID + "__"+ extId + "__locations") == null) {
-						escape = true;
-						break;
-					}
-				}
-
-				if (escape == true)
-					break;
-					 */
 				}
 			} while (changed);
 			while (this.getSBMLCompModel().getSubmodel(submodelID) != null) {
@@ -3341,14 +3246,6 @@ public class BioModel {
 			}
 			
 			int[] gridSize = AnnotationUtility.parseGridAnnotation(sbml.getModel().getCompartment(0));
-			/*
-			String annotation = sbml.getModel().getCompartment(0).getAnnotation().toXMLString();
-			int first = annotation.indexOf("(");
-			int middle = annotation.indexOf(",");
-			int last = annotation.indexOf(")");
-			int row = Integer.valueOf(annotation.substring(first+1,middle));
-			int col = Integer.valueOf(annotation.substring(middle+1,last));
-			*/
 			if (gridSize[0] > 0 && gridSize[1] > 0) {
 				buildGrid(gridSize[0], gridSize[1]);
 			}
@@ -3360,14 +3257,6 @@ public class BioModel {
 			if (sbmlLayout != null) {
 				if (sbmlLayout.getLayout("iBioSim")!=null && sbmlLayout.getLayout("iBioSim").isSetAnnotation()) {
 					int[] gridSize = AnnotationUtility.parseGridAnnotation(sbmlLayout.getLayout("iBioSim"));
-					/*
-					String annotation = sbmlLayout.getLayout("iBioSim").getAnnotation().toXMLString();
-					int first = annotation.indexOf("(");
-					int middle = annotation.indexOf(",");
-					int last = annotation.indexOf(")");
-					int row = Integer.valueOf(annotation.substring(first+1,middle));
-					int col = Integer.valueOf(annotation.substring(middle+1,last));
-					*/
 					if (gridSize[0] > 0 && gridSize[1] > 0) {
 						buildGrid(gridSize[0], gridSize[1]);
 					}
@@ -3654,24 +3543,6 @@ public class BioModel {
 		}
 		return promoterSet;
 	}
-
-	/*
-	public String getSpeciesType(Species species) {
-		String type = GlobalConstants.INTERNAL;
-		if (species.isSetAnnotation()) {
-			String annotation = species.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
-			String [] annotations = annotation.split(",");
-			for (int i=0;i<annotations.length;i++) {
-				if (annotations[i].startsWith(GlobalConstants.TYPE)) {
-					String [] splits = annotations[i].split("=");
-					type = splits[1];
-					break;
-				}
-			}
-		}
-		return type;
-	}
-	*/
 	
 	public ArrayList<String> getCompartmentPorts() {
 		ArrayList<String> compartments = new ArrayList<String>();
@@ -6048,7 +5919,7 @@ public class BioModel {
 		//globalParameters.put(parameter, value);
 		if (sbml != null) { 
 			if (value.startsWith("(")) {
-				sbml.getModel().getParameter(parameter).setAnnotation(value);
+				AnnotationUtility.setSweepAnnotation(sbml.getModel().getParameter(parameter), value);
 			} else {
 				sbml.getModel().getParameter(parameter).setValue(Double.parseDouble(value));
 			}
