@@ -3472,6 +3472,19 @@ public class BioModel {
 		if (sbml!=null) {
 			for (int i = 0; i < sbml.getModel().getNumEvents(); i++) {
 				Event event = sbml.getModel().getEvent(i);
+				if (SBMLutilities.isTransition(event)) continue;
+				eventSet.add(event.getId());
+			}
+		}
+		return eventSet;
+	}
+
+	public ArrayList<String> getTransitions() {
+		ArrayList<String> eventSet = new ArrayList<String>();
+		if (sbml!=null) {
+			for (int i = 0; i < sbml.getModel().getNumEvents(); i++) {
+				Event event = sbml.getModel().getEvent(i);
+				if (!SBMLutilities.isTransition(event)) continue;
 				eventSet.add(event.getId());
 			}
 		}
@@ -3501,6 +3514,32 @@ public class BioModel {
 		if (sbml!=null) {
 			for (int i = 0; i < sbml.getModel().getNumParameters(); i++) {
 				Parameter parameter = sbml.getModel().getParameter(i);
+				if (SBMLutilities.isBoolean(parameter)) continue;
+				if (SBMLutilities.isPlace(parameter)) continue;
+				parameterSet.add(parameter.getId());
+			}
+		}
+		return parameterSet;
+	}
+
+	public ArrayList<String> getBooleans() {
+		ArrayList<String> parameterSet = new ArrayList<String>();
+		if (sbml!=null) {
+			for (int i = 0; i < sbml.getModel().getNumParameters(); i++) {
+				Parameter parameter = sbml.getModel().getParameter(i);
+				if (!SBMLutilities.isBoolean(parameter)) continue;
+				parameterSet.add(parameter.getId());
+			}
+		}
+		return parameterSet;
+	}
+
+	public ArrayList<String> getPlaces() {
+		ArrayList<String> parameterSet = new ArrayList<String>();
+		if (sbml!=null) {
+			for (int i = 0; i < sbml.getModel().getNumParameters(); i++) {
+				Parameter parameter = sbml.getModel().getParameter(i);
+				if (!SBMLutilities.isPlace(parameter)) continue;
 				parameterSet.add(parameter.getId());
 			}
 		}
@@ -3627,8 +3666,16 @@ public class BioModel {
 						if (isConstitutiveReaction(r)) continue;
 						if (r.getAnnotationString().contains("grid")) continue;						
 					}
-					if (sbase.isSetSBOTerm() && sbase.getSBOTerm()==GlobalConstants.SBO_PROMOTER_BINDING_REGION) {
-						type = GlobalConstants.PROMOTER;
+					if (sbase.isSetSBOTerm()) {
+						if (sbase.getSBOTerm()==GlobalConstants.SBO_PROMOTER_BINDING_REGION) {
+							type = GlobalConstants.PROMOTER;
+						} else if (sbase.getSBOTerm()==GlobalConstants.SBO_LOGICAL) {
+							type = GlobalConstants.BOOLEAN;
+						} else if (sbase.getSBOTerm()==GlobalConstants.SBO_PETRI_NET_PLACE) {
+							type = GlobalConstants.PLACE;
+						} else if (sbase.getSBOTerm()==GlobalConstants.SBO_PETRI_NET_TRANSITION) {
+							type = GlobalConstants.TRANSITION;
+						}
 					}
 					ports.add(type + ":" + id + ":" + idRef);
 				}
