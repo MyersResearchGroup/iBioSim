@@ -1171,8 +1171,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				minStepLabel.setEnabled(true);
 				step.setEnabled(true);
 				stepLabel.setEnabled(true);
-				errorLabel.setEnabled(false);
-				absErr.setEnabled(false);
+				errorLabel.setEnabled(true);
+				absErr.setEnabled(true);
 				mpde.setEnabled(false);
 				meanPath.setEnabled(false);
 				medianPath.setEnabled(false);
