@@ -3067,21 +3067,6 @@ public class BioModel {
 		
 		//if a gridded/arrayed submodel exists, it'll have this ID
 		String gridSubmodelID = "GRID__" + extId;
-		if (compartment!=null) {
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)compartment.getPlugin("comp");
-			boolean foundIt = false;
-			for (long i=0;i<sbmlSBase.getNumReplacedElements();i++) {
-				ReplacedElement replacement = sbmlSBase.getReplacedElement(i);
-				if (replacement.getSubmodelRef().equals(gridSubmodelID)) foundIt = true;
-			}
-			if (!foundIt) {
-				for (String compartmentPort : compartmentPorts) {
-					ReplacedElement replacement = sbmlSBase.createReplacedElement();
-					replacement.setSubmodelRef(gridSubmodelID);
-					replacement.setPortRef(GlobalConstants.COMPARTMENT+"__"+compartmentPort);
-				}
-			}
-		}
 		
 		Submodel potentialGridSubmodel = sbmlCompModel.getSubmodel(gridSubmodelID);
 		
@@ -3127,6 +3112,22 @@ public class BioModel {
 				
 				potentialGridSubmodel.setAnnotation(node);				
 				potentialGridSubmodel.setModelRef(extId);
+				
+				if (compartment!=null) {
+					CompSBasePlugin sbmlSBase = (CompSBasePlugin)compartment.getPlugin("comp");
+					boolean foundIt = false;
+					for (long i=0;i<sbmlSBase.getNumReplacedElements();i++) {
+						ReplacedElement replacement = sbmlSBase.getReplacedElement(i);
+						if (replacement.getSubmodelRef().equals(gridSubmodelID)) foundIt = true;
+					}
+					if (!foundIt) {
+						for (String compartmentPort : compartmentPorts) {
+							ReplacedElement replacement = sbmlSBase.createReplacedElement();
+							replacement.setSubmodelRef(gridSubmodelID);
+							replacement.setPortRef(GlobalConstants.COMPARTMENT+"__"+compartmentPort);
+						}
+					}
+				}
 			}
 			else {
 				
@@ -3141,6 +3142,22 @@ public class BioModel {
 				submodel.setModelRef(extId);
 				// Set default submodel metaID
 				metaIDIndex = SBMLutilities.setDefaultMetaID(sbml, submodel, metaIDIndex); 
+				
+				if (compartment!=null) {
+					CompSBasePlugin sbmlSBase = (CompSBasePlugin)compartment.getPlugin("comp");
+					boolean foundIt = false;
+					for (long i=0;i<sbmlSBase.getNumReplacedElements();i++) {
+						ReplacedElement replacement = sbmlSBase.getReplacedElement(i);
+						if (replacement.getSubmodelRef().equals(submodelID)) foundIt = true;
+					}
+					if (!foundIt) {
+						for (String compartmentPort : compartmentPorts) {
+							ReplacedElement replacement = sbmlSBase.createReplacedElement();
+							replacement.setSubmodelRef(submodelID);
+							replacement.setPortRef(GlobalConstants.COMPARTMENT+"__"+compartmentPort);
+						}
+					}
+				}
 			}
 		}
 		
