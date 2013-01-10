@@ -317,10 +317,11 @@ public class Schematic extends JPanel implements ActionListener {
 			if(this.editable)
 				this.add(toolbar, BorderLayout.NORTH);
 		}
-		this.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_S,0),"AddSpecies");
-		this.getActionMap().put("AddSpecies",new AddSpeciesAction());
+		//this.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_S,0),"AddSpecies");
+		//this.getActionMap().put("AddSpecies",new AddSpeciesAction());
 	}
 	
+	/*
 	class AddSpeciesAction extends AbstractAction {
 	    public AddSpeciesAction() {
 	        super(null, null);
@@ -331,7 +332,7 @@ public class Schematic extends JPanel implements ActionListener {
 	        System.out.println("Action for first button/menu item");
 	    }
 	}
-
+*/
 	
 	//TOOLBAR BUILDING METHODS
 	

@@ -170,6 +170,56 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			}
 		}
 		
+		ArrayList <String> booleanList = bioModel.getBooleans();
+		Collections.sort(booleanList);
+		String[] boolsWithNone = new String[booleanList.size() + 2];
+		boolsWithNone[0] = "--none--";
+		boolsWithNone[1] = "--delete--";
+		for (int l = 2; l < boolsWithNone.length; l++) {
+			boolsWithNone[l] = booleanList.get(l - 2);
+		}
+		for (int i = 0; i < ports.size(); i++) {
+			String type = ports.get(i).split(":")[0];
+			String portId = ports.get(i).split(":")[1];
+			String idRef = ports.get(i).split(":")[2];
+			if (type.equals(GlobalConstants.BOOLEAN)) {
+				portIds.add(portId);
+				idRefs.add(idRef);
+				types.add(type);
+				JComboBox port = new JComboBox(boolsWithNone);
+				portmapBox.add(port);
+				JComboBox dirport = new JComboBox(directions);
+				directionBox.add(dirport);
+				JComboBox convFactor = new JComboBox(parameters);
+				convBox.add(convFactor);
+			}
+		}
+		
+		ArrayList <String> placeList = bioModel.getPlaces();
+		Collections.sort(placeList);
+		String[] placesWithNone = new String[placeList.size() + 2];
+		placesWithNone[0] = "--none--";
+		placesWithNone[1] = "--delete--";
+		for (int l = 2; l < placesWithNone.length; l++) {
+			placesWithNone[l] = placeList.get(l - 2);
+		}
+		for (int i = 0; i < ports.size(); i++) {
+			String type = ports.get(i).split(":")[0];
+			String portId = ports.get(i).split(":")[1];
+			String idRef = ports.get(i).split(":")[2];
+			if (type.equals(GlobalConstants.PLACE)) {
+				portIds.add(portId);
+				idRefs.add(idRef);
+				types.add(type);
+				JComboBox port = new JComboBox(placesWithNone);
+				portmapBox.add(port);
+				JComboBox dirport = new JComboBox(directions);
+				directionBox.add(dirport);
+				JComboBox convFactor = new JComboBox(parameters);
+				convBox.add(convFactor);
+			}
+		}
+		
 		ArrayList <String> speciesList = bioModel.getSpecies();
 		Collections.sort(speciesList);
 		String[] specsWithNone = new String[speciesList.size() + 2];
@@ -425,6 +475,32 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			}
 		}
 		
+		ArrayList <String> transitionList = bioModel.getTransitions();
+		Collections.sort(transitionList);
+		String[] transWithNone = new String[transitionList.size() + 2];
+		transWithNone[0] = "--none--";
+		transWithNone[1] = "--delete--";
+		for (int l = 2; l < transWithNone.length; l++) {
+			transWithNone[l] = transitionList.get(l - 2);
+		}
+		for (int i = 0; i < ports.size(); i++) {
+			String type = ports.get(i).split(":")[0];
+			String portId = ports.get(i).split(":")[1];
+			String idRef = ports.get(i).split(":")[2];
+			if (type.equals(GlobalConstants.TRANSITION)) {
+				portIds.add(portId);
+				idRefs.add(idRef);
+				types.add(type);
+				JComboBox port = new JComboBox(transWithNone);
+				portmapBox.add(port);
+				JComboBox dirport = new JComboBox(directions);
+				directionBox.add(dirport);
+				JComboBox convFactor = new JComboBox(parameters);
+				convFactor.setEnabled(false);
+				convBox.add(convFactor);
+			}
+		}
+
 		String[] Choices = new String[2];
 		Choices[0] = "--include--";
 		Choices[1] = "--delete--";
@@ -438,7 +514,8 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 				!type.equals(GlobalConstants.FUNCTION) && !type.equals(GlobalConstants.UNIT) &&
 				!type.equals(GlobalConstants.ASSIGNMENT_RULE) && !type.equals(GlobalConstants.RATE_RULE) &&
 				!type.equals(GlobalConstants.ALGEBRAIC_RULE) && !type.equals(GlobalConstants.CONSTRAINT)  && 
-				!type.equals(GlobalConstants.PROMOTER)) {
+				!type.equals(GlobalConstants.PROMOTER) && !type.equals(GlobalConstants.BOOLEAN) && 
+				!type.equals(GlobalConstants.PLACE) && !type.equals(GlobalConstants.TRANSITION)) {
 				portIds.add(portId);
 				idRefs.add(idRef.replace("init__",""));
 				types.add(type);
