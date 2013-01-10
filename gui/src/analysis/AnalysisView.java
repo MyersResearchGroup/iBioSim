@@ -134,7 +134,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
 	private JTabbedPane simTab; // the simulation tab
 
-	private ModelEditor gcmEditor; // gcm editor
+	private ModelEditor modelEditor; // gcm editor
 
 	private JCheckBox append;
 
@@ -775,7 +775,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					simulators, simulatorsLabel, explanation, description, rapid1, rapid2, qssa, maxCon, rapidLabel1,
 					rapidLabel2, qssaLabel, maxConLabel, fileStem, fileStemLabel, preAbs, loopAbs, postAbs,
 					preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs,
-					editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn, gcmEditor);
+					editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn, modelEditor);
 			if (!sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected() && runFiles) {
 				append.setEnabled(true);
 				concentrations.setEnabled(true);
@@ -854,7 +854,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		else if (e.getSource() == markov) {
 			Button_Enabling.enableMarkov(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step,
 					errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
-					explanation, description, fileStem, fileStemLabel, gcmEditor, postAbs, modelFile);
+					explanation, description, fileStem, fileStemLabel, modelEditor, postAbs, modelFile);
 			append.setEnabled(false);
 			concentrations.setEnabled(false);
 			genRuns.setEnabled(false);
@@ -1147,8 +1147,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				bifurcation.setEnabled(false);
 				bifurcationLabel.setEnabled(false);
 			}
-			else if (((String) simulators.getSelectedItem()).equals("SSA-Direct")) {
-				description.setText("SSA Direct Method");
+			else if (((String) simulators.getSelectedItem()).equals("SSA-Direct (Java)")) {
+				description.setText("SSA-Direct Method (Java)");
 				minStep.setEnabled(true);
 				minStepLabel.setEnabled(true);
 				step.setEnabled(true);
@@ -1427,15 +1427,15 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				stem += fileStem.getText().trim();
 			}
 			for (int i = 0; i < biomodelsim.getTab().getTabCount(); i++) {
-				if (gcmEditor != null) {
-					if (biomodelsim.getTab().getTitleAt(i).equals(gcmEditor.getRefFile())) {
+				if (modelEditor != null) {
+					if (biomodelsim.getTab().getTitleAt(i).equals(modelEditor.getRefFile())) {
 						if (biomodelsim.getTab().getComponentAt(i) instanceof ModelEditor) {
 							ModelEditor gcm = ((ModelEditor) (biomodelsim.getTab().getComponentAt(i)));
 							if (gcm.isDirty()) {
 								Object[] options = { "Yes", "No" };
 								int value = JOptionPane
 										.showOptionDialog(Gui.frame,
-												"Do you want to save changes to " + gcmEditor.getRefFile()
+												"Do you want to save changes to " + modelEditor.getRefFile()
 														+ " before running the simulation?", "Save Changes",
 												JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
 												options[0]);
@@ -1465,8 +1465,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					}
 				}
 			}
-			if (gcmEditor != null) {
-				gcmEditor.saveParams(true, stem, ignoreSweep);
+			if (modelEditor != null) {
+				modelEditor.saveParams(true, stem, ignoreSweep);
 			}
 			else {
 				if (!stem.equals("")) {
@@ -1512,8 +1512,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			if (sbml.isSelected() || dot.isSelected() || xhtml.isSelected() || lhpn.isSelected()) {
 				ignoreSweep = true;
 			}
-			if (gcmEditor != null) {
-				gcmEditor.saveParams(false, "", ignoreSweep);
+			if (modelEditor != null) {
+				modelEditor.saveParams(false, "", ignoreSweep);
 			}
 			save();
 		}
@@ -2193,7 +2193,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			}
 			exit = runProgram.execute(simProp, sbml, dot, xhtml, lhpn, Gui.frame, ODE, monteCarlo, sim, printer_id,
 					printer_track_quantity, root + separator + simName, nary, 1, intSpecies, log, biomodelsim, simTab,
-					root, progress, simName + " " + direct, gcmEditor, direct, timeLimit, runTime, modelFile,
+					root, progress, simName + " " + direct, modelEditor, direct, timeLimit, runTime, modelFile,
 					lhpnAbstraction, abstraction, lpnProperty, absError, timeStep, printInterval, run, rndSeed,
 					refresh, label, running);
 		}
@@ -2206,10 +2206,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			}
 			exit = runProgram.execute(simProp, sbml, dot, xhtml, lhpn, Gui.frame, ODE, monteCarlo, sim, printer_id,
 					printer_track_quantity, root + separator + simName, nary, 1, intSpecies, log, biomodelsim, simTab,
-					root, progress, simName, gcmEditor, null, timeLimit, runTime, modelFile, lhpnAbstraction,
+					root, progress, simName, modelEditor, null, timeLimit, runTime, modelFile, lhpnAbstraction,
 					abstraction, lpnProperty, absError, timeStep, printInterval, run, rndSeed, refresh, label, running);
 		}
-		if (nary.isSelected() && gcmEditor == null && !sim.contains("markov-chain-analysis") && !lhpn.isSelected()
+		if (nary.isSelected() && modelEditor == null && !sim.contains("markov-chain-analysis") && !lhpn.isSelected()
 				&& exit == 0) {
 			String d = null;
 			if (!direct.equals(".")) {
@@ -3155,7 +3155,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 							simulators, simulatorsLabel, explanation, description, rapid1, rapid2, qssa, maxCon,
 							rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, fileStem, fileStemLabel, preAbs, loopAbs,
 							postAbs, preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs,
-							addLoopAbs, rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn, gcmEditor);
+							addLoopAbs, rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn, modelEditor);
 				}
 				if (load.containsKey("ode.simulation.absolute.error")) {
 					absErr.setText(load.getProperty("ode.simulation.absolute.error"));
@@ -3286,7 +3286,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 						Button_Enabling.enableMarkov(seed, seedLabel, runs, runsLabel, minStepLabel, minStep,
 								stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
 								simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel,
-								gcmEditor, postAbs, modelFile);
+								modelEditor, postAbs, modelFile);
 						if (load.containsKey("selected.simulator")) {
 							selectedMarkovSim = load.getProperty("selected.simulator");
 							simulators.setSelectedItem(selectedMarkovSim);
@@ -3548,7 +3548,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 */
 	
 	public void setGcm(ModelEditor gcm) {
-		gcmEditor = gcm;
+		modelEditor = gcm;
 		if (nary.isSelected()) {
 			lhpn.setEnabled(true);
 		}

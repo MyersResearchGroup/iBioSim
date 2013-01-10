@@ -109,26 +109,26 @@ public class MovieContainer extends JPanel implements ActionListener {
 	 * constructor
 	 * 
 	 * @param reb2sac_
-	 * @param gcm
+	 * @param bioModel
 	 * @param biosim
 	 * @param gcm2sbml
 	 */
- 	public MovieContainer(AnalysisView reb2sac_, BioModel gcm, Gui biosim, ModelEditor gcm2sbml, boolean lema) {
+ 	public MovieContainer(AnalysisView reb2sac_, BioModel bioModel, Gui biosim, ModelEditor gcm2sbml, boolean lema) {
 		
 		super(new BorderLayout());
 		
 		//JComboBox compartmentList = MySpecies.createCompartmentChoices(gcm);
-		schematic = new Schematic(gcm, biosim, gcm2sbml, false, this, null, gcm.getReactionPanel(), gcm.getRulePanel(),
-				gcm.getConstraintPanel(),  gcm.getEventPanel(), gcm.getParameterPanel(), lema);
+		schematic = new Schematic(bioModel, biosim, gcm2sbml, false, this, bioModel.getCompartmentPanel(), bioModel.getReactionPanel(), bioModel.getRulePanel(),
+				bioModel.getConstraintPanel(),  bioModel.getEventPanel(), bioModel.getParameterPanel(), lema);
 		this.add(schematic, BorderLayout.CENTER);
 		
-		this.gcm = gcm;
+		this.gcm = bioModel;
 		this.biosim = biosim;
 		this.analysisView = reb2sac_;
 		this.modelEditor = gcm2sbml;
 		this.movieScheme = new MovieScheme();
-		this.originalGridRows = gcm.getGrid().getNumRows();
-		this.originalGridCols = gcm.getGrid().getNumCols();
+		this.originalGridRows = bioModel.getGrid().getNumRows();
+		this.originalGridCols = bioModel.getGrid().getNumCols();
 		
 		this.playTimer = new Timer(0, playTimerEventHandler);
 		mode = PAUSED;
