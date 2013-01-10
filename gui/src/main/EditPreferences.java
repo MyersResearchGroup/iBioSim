@@ -710,7 +710,7 @@ public class EditPreferences {
 			choices = new String[] { "euler", "gear1", "gear2", "rk4imp", "rk8pd", "rkf45", "rkf45 (Java)" };
 		}
 		else if (type.getSelectedItem().equals("Monte Carlo")) {
-			choices = new String[] { "gillespie", "interactive", "SSA-CR", "SSA-Direct", "iSSA", "emc-sim", "bunker", "nmc"};
+			choices = new String[] { "gillespie", "SSA-Direct (Java)", "SSA-CR", "iSSA", "interactive", "emc-sim", "bunker", "nmc"};
 		}
 		else if (type.getSelectedItem().equals("Markov")) {
 			choices = new String[] { "steady-state-markov-chain-analysis", "transient-markov-chain-analysis", "reachability-analysis", "atacs",
@@ -779,9 +779,9 @@ public class EditPreferences {
 					Object o = sim.getSelectedItem();
 					sim.removeAllItems();
 					sim.addItem("gillespie");
-					sim.addItem("interactive");
+					sim.addItem("SSA-Direct (Java)");
 					sim.addItem("SSA-CR");
-					sim.addItem("SSA-Direct");
+					sim.addItem("interactive");
 					sim.addItem("iSSA");
 					sim.addItem("emc-sim");
 					sim.addItem("bunker");

@@ -95,6 +95,7 @@ import sbol.SBOLUtility;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.Grid;
+import biomodel.gui.textualeditor.Compartments;
 import biomodel.gui.textualeditor.Constraints;
 import biomodel.gui.textualeditor.Events;
 import biomodel.gui.textualeditor.MySpecies;
@@ -390,6 +391,14 @@ public class BioModel {
 
 	public void setSpeciesPanel(MySpecies speciesPanel) {
 		this.speciesPanel = speciesPanel;
+	}
+
+	public Compartments getCompartmentPanel() {
+		return compartmentPanel;
+	}
+
+	public void setCompartmentPanel(Compartments compartmentPanel) {
+		this.compartmentPanel = compartmentPanel;
 	}
 
 	public Reactions getReactionPanel() {
@@ -3295,6 +3304,7 @@ public class BioModel {
 			}
 			speciesPanel.refreshSpeciesPanel(this);
 			reactionPanel.refreshReactionPanel(this);
+			compartmentPanel.refreshCompartmentPanel(this);
 		}
 	}
 
@@ -4550,6 +4560,9 @@ public class BioModel {
 			speciesPanel.refreshSpeciesPanel(this);
 		if (reactionPanel!=null) {
 			reactionPanel.refreshReactionPanel(this);
+		}
+		if (compartmentPanel!=null) {
+			compartmentPanel.refreshCompartmentPanel(this);
 		}
 	}
 
@@ -7562,6 +7575,8 @@ public class BioModel {
 	private CompModelPlugin sbmlCompModel = null;
 	
 	private MySpecies speciesPanel = null;
+	
+	private Compartments compartmentPanel = null;
 	
 	private Reactions reactionPanel = null;
 	

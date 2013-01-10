@@ -205,8 +205,8 @@ public class SimulatorSSADirect extends Simulator {
 			
 		} //end simulation loop
 		
-		System.err.println("total time: " + String.valueOf((initializationTime + System.nanoTime() - 
-				initTime2 - initTime3) / 1e9f));
+		//System.err.println("total time: " + String.valueOf((initializationTime + System.nanoTime() - 
+		//		initTime2 - initTime3) / 1e9f));
 //		System.err.println("total step 1 time: " + String.valueOf(step1Time / 1e9f));
 //		System.err.println("total step 2 time: " + String.valueOf(step2Time / 1e9f));
 //		System.err.println("total step 3 time: " + String.valueOf(step3Time / 1e9f));
@@ -281,6 +281,43 @@ public class SimulatorSSADirect extends Simulator {
 			
 			setupGrid();
 			createModelCopy();
+		}
+		
+		if (dynamicBoolean == false) {
+			
+			bufferedTSDWriter.write("(" + "\"" + "time" + "\"");
+			
+			//if there's an interesting species, only those get printed
+			if (interestingSpecies.size() > 0) {
+				
+				for (String speciesID : interestingSpecies)
+					bufferedTSDWriter.write(", \"" + speciesID + "\"");
+			}
+			else {
+			
+				for (String speciesID : speciesIDSet) {				
+					bufferedTSDWriter.write(", \"" + speciesID + "\"");
+				}
+				
+				//print compartment IDs (for sizes)
+				for (String componentID : compartmentIDSet) {
+					
+					bufferedTSDWriter.write(", \"" + componentID + "\"");
+				}		
+				
+				//print nonconstant parameter IDs
+				for (String parameterID : nonconstantParameterIDSet) {
+					
+					try {
+						bufferedTSDWriter.write(", \"" + parameterID + "\"");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}		
+			}
+			
+			bufferedTSDWriter.write("),\n");
+		
 		}
 	}
 

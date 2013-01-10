@@ -56,7 +56,7 @@ public class SBOLSynthesizer {
 		if (constructValidator != null && !constructValidator.validate(types)) {
 			Object[] options = { "OK", "Cancel" };
 			int choice = JOptionPane.showOptionDialog(null, 
-					"Ordering of SBOL DNA components associated to SBML does not match preferred regular expression for a complete genetic construct.  Proceed with synthesis?", 
+					"Ordering of SBOL DNA components associated to SBML does not match\n preferred regular expression for a complete genetic construct.\n  Proceed with synthesis?", 
 					"Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
 			if (choice != JOptionPane.OK_OPTION)
 				return null;

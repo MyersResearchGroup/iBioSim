@@ -1494,6 +1494,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 		compPanel.add(compartmentPanel,"Center");
 
+		biomodel.setCompartmentPanel(compartmentPanel);
 		biomodel.setSpeciesPanel(speciesPanel);
 		biomodel.setReactionPanel(reactionPanel);
 		biomodel.setRulePanel(rulesPanel);

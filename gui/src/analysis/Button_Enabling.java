@@ -268,10 +268,10 @@ public class Button_Enabling {
 			description.setEnabled(true);
 			simulators.removeAllItems();
 			simulators.addItem("gillespie");
+			simulators.addItem("SSA-Direct (Java)");
 			simulators.addItem("SSA-CR");
 			simulators.addItem("iSSA");
 			simulators.addItem("interactive");
-			//simulators.addItem("Gillespie SSA-Direct (Java)");
 			simulators.addItem("emc-sim");
 			simulators.addItem("bunker");
 			simulators.addItem("nmc");
@@ -391,10 +391,10 @@ public class Button_Enabling {
 		description.setEnabled(true);
 		simulators.removeAllItems();
 		simulators.addItem("gillespie");
+		simulators.addItem("SSA-Direct (Java)");
 		simulators.addItem("SSA-CR");
 		simulators.addItem("iSSA");
 		simulators.addItem("interactive");
-		//simulators.addItem("Gillespie SSA-Direct (Java)");
 		simulators.addItem("emc-sim");
 		simulators.addItem("bunker");
 		simulators.addItem("nmc");

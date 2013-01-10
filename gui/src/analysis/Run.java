@@ -1220,7 +1220,7 @@ public class Run implements ActionListener {
 						new File(directory + separator + "running").delete();
 						return exitValue;
 					}
-					else if (sim.equals("SSA-Direct")) {
+					else if (sim.equals("SSA-Direct (Java)")) {
 						
 						double stoichAmpValue = 
 							Double.parseDouble(properties.getProperty(
