@@ -14,7 +14,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
@@ -27,15 +26,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
@@ -55,12 +49,10 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.sbml.libsbml.ASTNode;
 import org.sbml.libsbml.CompartmentGlyph;
 import org.sbml.libsbml.Event;
 import org.sbml.libsbml.EventAssignment;
@@ -72,22 +64,17 @@ import org.sbml.libsbml.ModifierSpeciesReference;
 import org.sbml.libsbml.Parameter;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.ReactionGlyph;
-import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.SpeciesGlyph;
 import org.sbml.libsbml.SpeciesReference;
 import org.sbml.libsbml.TextGlyph;
 import org.sbml.libsbml.Trigger;
-import org.sbml.libsbml.libsbml;
 
 import sbol.SBOLDescriptorPanel;
 import sbol.SBOLFileManager;
 import sbol.SBOLIdentityManager;
-import sbol.SequenceTypeValidator;
 
 
 import main.Gui;
 
-import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.DropComponentPanel;
 import biomodel.gui.Grid;
 import biomodel.gui.GridPanel;
@@ -1185,7 +1172,7 @@ public class Schematic extends JPanel implements ActionListener {
 			}
 		});
 	}
-	
+
 	/**
 	 * Listeners to take care of CELL events -- cell change/movement on the graph
 	 */
@@ -1198,13 +1185,14 @@ public class Schematic extends JPanel implements ActionListener {
 				
 				Object cells[] = (Object [])event.getProperties().get("cells");
 				
+				int numberEdges = 0;
 				for(int i=0; i<cells.length; i++){
 					
 					mxCell cell = (mxCell)cells[i];
 					
 					// If an edge gets moved ignore it then rebuild the graph from the model
 					if(cell.isEdge()){
-						biosim.log.addText("Sorry; edges can't be moved independently.");
+						numberEdges++;
 					}
 					else{
 						
@@ -1236,11 +1224,14 @@ public class Schematic extends JPanel implements ActionListener {
 						}
 					}
 				}
-				
-				graph.buildGraph();
-				drawGrid();
-				bioModel.makeUndoPoint();
-				modelEditor.setDirty(true);
+				if (numberEdges==cells.length) {
+					Utility.createErrorMessage("Error Moving Edges", "Edges cannot be moved independently.");
+					graph.buildGraph();
+					drawGrid();
+				} else {
+					bioModel.makeUndoPoint();
+					modelEditor.setDirty(true);
+				}
 			}
 		});
 	
@@ -1891,18 +1882,6 @@ public class Schematic extends JPanel implements ActionListener {
 			bioModel.makeUndoPoint();
 			return;
 		} 
-		// make sure the species name is valid
-		// TODO: FIX ME
-		/*
-		String iia = gcm.isInfluenceAllowed(name);
-		
-		if(iia != null){
-			JOptionPane.showMessageDialog(Gui.frame, "The influence could not be added because " + iia);
-			graph.buildGraph();
-			gcm2sbml.refresh();
-			return;
-		}
-		*/
 		
 		if (reactionButton.isSelected()) {
 			
