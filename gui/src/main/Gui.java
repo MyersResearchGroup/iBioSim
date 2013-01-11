@@ -11,7 +11,6 @@ import graph.Graph;
 import java.awt.AWTError;
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -244,9 +243,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private String[] BioModelIds = null;
 
-	private JMenuItem cut,select,undo, redo, copy, rename, delete, save, saveAs, saveSBOL, check, run, refresh, viewCircuit, viewRules, viewTrace, viewLog, viewCoverage,
-			viewLHPN, saveModel, saveAsVerilog, viewSG, viewModGraph, viewLearnedModel, viewModBrowser, createAnal, createLearn, createSbml,
-			createSynth, createVer, close, closeAll, convertToLPN;
+	private JMenuItem addCompartment, addSpecies, addReaction, addComponent, addPromoter, addVariable, addBoolean, addPlace,
+		addTransition, addRule, addConstraint, addEvent, addSelfInfl, cut, select,undo, redo, copy, rename, delete;
+	
+	private JMenuItem save, saveAs, saveSBOL, check, run, refresh, viewCircuit, viewRules, viewTrace, viewLog, viewCoverage,
+			viewLHPN, saveModel, saveAsVerilog, viewSG, viewModGraph, viewLearnedModel, viewModBrowser, createAnal, createLearn, 
+			createSbml,	createSynth, createVer, close, closeAll, convertToLPN;
 	
 	public String ENVVAR;
 
@@ -439,6 +441,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		menuBar.add(help);
 		select = new JMenuItem("Select Mode");
 		cut = new JMenuItem("Delete");
+		addCompartment = new JMenuItem("Add Compartment");
+		addSpecies = new JMenuItem("Add Species");
+		addReaction = new JMenuItem("Add Reaction");
+		addComponent = new JMenuItem("Add Component");
+		addPromoter = new JMenuItem("Add Promoter");
+		addVariable = new JMenuItem("Add Variable");
+		addBoolean = new JMenuItem("Add Boolean");
+		addPlace = new JMenuItem("Add Place");
+		addTransition = new JMenuItem("Add Transition");
+		addRule = new JMenuItem("Add Rule");
+		addConstraint = new JMenuItem("Add Constraint");
+		addEvent = new JMenuItem("Add Event");
+		addSelfInfl = new JMenuItem("Add Self Influence");
 		undo = new JMenuItem("Undo");
 		redo = new JMenuItem("Redo");
 		copy = new JMenuItem("Copy File");
@@ -530,6 +545,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exit = new JMenuItem("Exit");
 		select.addActionListener(this);
 		cut.addActionListener(this);
+		addCompartment.addActionListener(this);
+		addSpecies.addActionListener(this);
+		addReaction.addActionListener(this);
+		addComponent.addActionListener(this);
+		addPromoter.addActionListener(this);
+		addVariable.addActionListener(this);
+		addBoolean.addActionListener(this);
+		addPlace.addActionListener(this);
+		addTransition.addActionListener(this);
+		addRule.addActionListener(this);
+		addConstraint.addActionListener(this);
+		addEvent.addActionListener(this);
+		addSelfInfl.addActionListener(this);
 		undo.addActionListener(this);
 		redo.addActionListener(this);
 		copy.addActionListener(this);
@@ -655,6 +683,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		probGraph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, ShortCutKey | KeyEvent.SHIFT_MASK));
 		select.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0));
 		cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0));
+		addCompartment.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.ALT_MASK));
+		addSpecies.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0));
+		addReaction.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, 0));
+		addComponent.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, 0));
+		addPromoter.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.SHIFT_MASK));
+		addVariable.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, 0));
+		addBoolean.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, 0));
+		addPlace.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, 0));
+		addTransition.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, 0));
+		addRule.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.SHIFT_MASK));
+		addConstraint.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.SHIFT_MASK));
+		addEvent.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, 0));
+		addSelfInfl.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, 0));
 		undo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, ShortCutKey));
 		redo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, ShortCutKey | KeyEvent.SHIFT_MASK));
 		copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ShortCutKey | KeyEvent.SHIFT_MASK));
@@ -717,6 +758,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		refresh.setEnabled(false);
 		cut.setEnabled(false);
 		select.setEnabled(false);
+		addCompartment.setEnabled(false);
+		addSpecies.setEnabled(false);
+		addReaction.setEnabled(false);
+		addComponent.setEnabled(false);
+		addPromoter.setEnabled(false);
+		addVariable.setEnabled(false);
+		addBoolean.setEnabled(false);
+		addPlace.setEnabled(false);
+		addTransition.setEnabled(false);
+		addRule.setEnabled(false);
+		addConstraint.setEnabled(false);
+		addEvent.setEnabled(false);
+		addSelfInfl.setEnabled(false);
 		undo.setEnabled(false);
 		redo.setEnabled(false);
 		copy.setEnabled(false);
@@ -738,10 +792,28 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		createSbml.setEnabled(false);
 		createSynth.setEnabled(false);
 		createVer.setEnabled(false);
-		edit.add(select);
-		edit.add(cut);
 		edit.add(undo);
 		edit.add(redo);
+		edit.addSeparator();
+		edit.add(select);
+		edit.add(cut);
+		if (!async) {
+			edit.add(addCompartment);
+			edit.add(addSpecies);
+			edit.add(addPromoter);
+			edit.add(addReaction);
+		}
+		edit.add(addComponent);
+		edit.add(addVariable);
+		edit.add(addBoolean);
+		edit.add(addPlace);
+		edit.add(addTransition);
+		edit.add(addRule);
+		edit.add(addConstraint);
+		if (!async) {
+			edit.add(addEvent);
+			edit.add(addSelfInfl);
+		}		
 		edit.addSeparator();
 		edit.add(copy);
 		edit.add(rename);
@@ -2952,6 +3024,84 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			Component comp = tab.getSelectedComponent();
 			if (comp instanceof ModelEditor) {
 				((ModelEditor) comp).cut();
+			}
+		}
+		else if (e.getSource() == addCompartment) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof ModelEditor) {
+				((ModelEditor) comp).addCompartment();
+			}
+		}
+		else if (e.getSource() == addSpecies) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof ModelEditor) {
+				((ModelEditor) comp).addSpecies();
+			}
+		}
+		else if (e.getSource() == addReaction) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof ModelEditor) {
+				((ModelEditor) comp).addReaction();
+			}
+		}
+		else if (e.getSource() == addComponent) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof ModelEditor) {
+				((ModelEditor) comp).addComponent();
+			}
+		}
+		else if (e.getSource() == addPromoter) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof ModelEditor) {
+				((ModelEditor) comp).addPromoter();
+			}
+		}
+		else if (e.getSource() == addVariable) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof ModelEditor) {
+				((ModelEditor) comp).addVariable();
+			}
+		}
+		else if (e.getSource() == addBoolean) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof ModelEditor) {
+				((ModelEditor) comp).addBoolean();
+			}
+		}
+		else if (e.getSource() == addPlace) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof ModelEditor) {
+				((ModelEditor) comp).addPlace();
+			}
+		}
+		else if (e.getSource() == addTransition) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof ModelEditor) {
+				((ModelEditor) comp).addTransition();
+			}
+		}
+		else if (e.getSource() == addRule) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof ModelEditor) {
+				((ModelEditor) comp).addRule();
+			}
+		}
+		else if (e.getSource() == addConstraint) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof ModelEditor) {
+				((ModelEditor) comp).addConstraint();
+			}
+		}
+		else if (e.getSource() == addEvent) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof ModelEditor) {
+				((ModelEditor) comp).addEvent();
+			}
+		}
+		else if (e.getSource() == addSelfInfl) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof ModelEditor) {
+				((ModelEditor) comp).addSelfInfluence();
 			}
 		}
 		else if (e.getSource() == undo) {
@@ -8630,6 +8780,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		refresh.setEnabled(false);
 		select.setEnabled(false);
 		cut.setEnabled(false);
+		addCompartment.setEnabled(false);
+		addSpecies.setEnabled(false);
+		addReaction.setEnabled(false);
+		addComponent.setEnabled(false);
+		addPromoter.setEnabled(false);
+		addVariable.setEnabled(false);
+		addBoolean.setEnabled(false);
+		addPlace.setEnabled(false);
+		addTransition.setEnabled(false);
+		addRule.setEnabled(false);
+		addConstraint.setEnabled(false);
+		addEvent.setEnabled(false);
+		addSelfInfl.setEnabled(false);
 		undo.setEnabled(false);
 		redo.setEnabled(false);
 		if (selectedTab != -1) {
@@ -8647,6 +8810,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			check.setEnabled(true);
 			select.setEnabled(true);
 			cut.setEnabled(true);
+			addCompartment.setEnabled(true);
+			addSpecies.setEnabled(true);
+			addReaction.setEnabled(true);
+			addComponent.setEnabled(true);
+			addPromoter.setEnabled(true);
+			addVariable.setEnabled(true);
+			addBoolean.setEnabled(true);
+			addPlace.setEnabled(true);
+			addTransition.setEnabled(true);
+			addRule.setEnabled(true);
+			addConstraint.setEnabled(true);
+			addEvent.setEnabled(true);
+			addSelfInfl.setEnabled(true);
 			undo.setEnabled(true);
 			redo.setEnabled(true);
 			exportMenu.setEnabled(true);

@@ -2257,6 +2257,58 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		return outID;
 	}
 	
+	public void addCompartment() {
+		schematic.addCompartment(-1,-1);
+	}
+	
+	public void addSpecies() {
+		schematic.addSpecies(-1,-1);
+	}
+	
+	public void addReaction() {
+		schematic.addReaction(-1,-1);
+	}
+	
+	public void addComponent() {
+		schematic.addComponent(-1,-1);
+	}
+	
+	public void addPromoter() {
+		schematic.addPromoter(-1,-1);
+	}
+	
+	public void addVariable() {
+		schematic.addVariable(-1,-1);
+	}
+	
+	public void addBoolean() {
+		schematic.addBoolean(-1,-1);
+	}
+	
+	public void addPlace() {
+		schematic.addPlace(-1,-1);
+	}
+	
+	public void addTransition() {
+		schematic.addTransition(-1,-1);
+	}
+	
+	public void addRule() {
+		schematic.addRule(-1,-1);
+	}
+	
+	public void addConstraint() {
+		schematic.addConstraint(-1,-1);
+	}
+	
+	public void addEvent() {
+		schematic.addEvent(-1,-1);
+	}
+	
+	public void addSelfInfluence() {
+		schematic.addSelfInfluence(-1,-1);
+	}
+	
 	public void cut() {
 		schematic.cut();
 	}
