@@ -6,7 +6,9 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.GridLayout;
+import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.PointerInfo;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -380,6 +382,228 @@ public class Schematic extends JPanel implements ActionListener {
 	
 	public void cut() {
 		removeCells(null,null);
+	}
+	
+	public void addCompartment(int x, int y) {
+		if (x < 0 && y < 0) {
+			PointerInfo a = MouseInfo.getPointerInfo();
+			Point c = graphComponent.getLocationOnScreen();
+			Point b = a.getLocation();
+			x = (int)(b.getX() - c.getX());
+			y = (int)(b.getY() - c.getY());
+		}
+		bioModel.createCompartment(null, x, y);
+		graph.buildGraph();
+		modelEditor.refresh();
+		modelEditor.setDirty(true);
+		bioModel.makeUndoPoint();
+	}
+	
+	public void addSpecies(int x, int y) {
+		if (x < 0 && y < 0) {
+			PointerInfo a = MouseInfo.getPointerInfo();
+			Point c = graphComponent.getLocationOnScreen();
+			Point b = a.getLocation();
+			x = (int)(b.getX() - c.getX());
+			y = (int)(b.getY() - c.getY());
+		}
+		bioModel.createSpecies(null, x, y);
+		graph.buildGraph();
+		modelEditor.refresh();
+		modelEditor.setDirty(true);
+		bioModel.makeUndoPoint();
+	}
+	
+	public void addReaction(int x, int y) {
+		if (x < 0 && y < 0) {
+			PointerInfo a = MouseInfo.getPointerInfo();
+			Point c = graphComponent.getLocationOnScreen();
+			Point b = a.getLocation();
+			x = (int)(b.getX() - c.getX());
+			y = (int)(b.getY() - c.getY());
+		}
+		bioModel.createReaction(null, x, y);
+		graph.buildGraph();
+		modelEditor.refresh();
+		modelEditor.setDirty(true);
+		bioModel.makeUndoPoint();
+	}
+	
+	public void addComponent(int x, int y) {
+		if (x < 0 && y < 0) {
+			PointerInfo a = MouseInfo.getPointerInfo();
+			Point c = graphComponent.getLocationOnScreen();
+			Point b = a.getLocation();
+			x = (int)(b.getX() - c.getX());
+			y = (int)(b.getY() - c.getY());
+		}
+		
+		boolean dropped;
+		
+		//if there's a grid, do a different panel than normal
+		if (grid.isEnabled()) {
+
+			//the true is to indicate the dropping is happening on a grid
+			dropped = DropComponentPanel.dropComponent(modelEditor, bioModel, x, y, true);
+		}
+		else {
+			
+			//the false is to indicate the dropping isn't happening on a grid
+			dropped = DropComponentPanel.dropComponent(modelEditor, bioModel, x, y, false);
+		}
+		
+		//if the components dropped successfully
+		if(dropped){
+			
+			modelEditor.setDirty(true);
+			graph.buildGraph();
+			modelEditor.refresh();
+			bioModel.makeUndoPoint();
+		}
+	}
+	
+	public void addPromoter(int x, int y) {
+		if (x < 0 && y < 0) {
+			PointerInfo a = MouseInfo.getPointerInfo();
+			Point c = graphComponent.getLocationOnScreen();
+			Point b = a.getLocation();
+			x = (int)(b.getX() - c.getX());
+			y = (int)(b.getY() - c.getY());
+		}
+		bioModel.createPromoter(null, x, y, true);
+		modelEditor.refresh();
+		graph.buildGraph();
+		modelEditor.setDirty(true);
+		bioModel.makeUndoPoint();
+	}
+	
+	public void addVariable(int x, int y) {
+		if (x < 0 && y < 0) {
+			PointerInfo a = MouseInfo.getPointerInfo();
+			Point c = graphComponent.getLocationOnScreen();
+			Point b = a.getLocation();
+			x = (int)(b.getX() - c.getX());
+			y = (int)(b.getY() - c.getY());
+		}
+		bioModel.createVariable(null, x, y, false, false);
+		modelEditor.refresh();
+		graph.buildGraph();
+		modelEditor.setDirty(true);
+		bioModel.makeUndoPoint();
+	}
+	
+	public void addBoolean(int x, int y) {
+		if (x < 0 && y < 0) {
+			PointerInfo a = MouseInfo.getPointerInfo();
+			Point c = graphComponent.getLocationOnScreen();
+			Point b = a.getLocation();
+			x = (int)(b.getX() - c.getX());
+			y = (int)(b.getY() - c.getY());
+		}
+		bioModel.createVariable(null, x, y, false, true);
+		modelEditor.refresh();
+		graph.buildGraph();
+		modelEditor.setDirty(true);
+		bioModel.makeUndoPoint();
+	}
+	
+	public void addPlace(int x, int y) {
+		if (x < 0 && y < 0) {
+			PointerInfo a = MouseInfo.getPointerInfo();
+			Point c = graphComponent.getLocationOnScreen();
+			Point b = a.getLocation();
+			x = (int)(b.getX() - c.getX());
+			y = (int)(b.getY() - c.getY());
+		}
+		bioModel.createVariable(null, x, y, true, false);
+		modelEditor.refresh();
+		graph.buildGraph();
+		modelEditor.setDirty(true);
+		bioModel.makeUndoPoint();
+	}
+	
+	public void addTransition(int x, int y) {
+		if (x < 0 && y < 0) {
+			PointerInfo a = MouseInfo.getPointerInfo();
+			Point c = graphComponent.getLocationOnScreen();
+			Point b = a.getLocation();
+			x = (int)(b.getX() - c.getX());
+			y = (int)(b.getY() - c.getY());
+		}
+		String id = events.eventEditor("Add", "",true);
+		bioModel.createEvent(id, x, y, true);
+		modelEditor.refresh();
+		graph.buildGraph();
+		modelEditor.setDirty(true);
+		bioModel.makeUndoPoint();
+	}
+	
+	public void addRule(int x, int y) {
+		if (x < 0 && y < 0) {
+			PointerInfo a = MouseInfo.getPointerInfo();
+			Point c = graphComponent.getLocationOnScreen();
+			Point b = a.getLocation();
+			x = (int)(b.getX() - c.getX());
+			y = (int)(b.getY() - c.getY());
+		}
+		String id = rules.ruleEditor("Add", "");
+		bioModel.createRule(id, x, y);
+		modelEditor.refresh();
+		graph.buildGraph();
+		modelEditor.setDirty(true);
+		bioModel.makeUndoPoint();
+	}
+	
+	public void addConstraint(int x, int y) {
+		if (x < 0 && y < 0) {
+			PointerInfo a = MouseInfo.getPointerInfo();
+			Point c = graphComponent.getLocationOnScreen();
+			Point b = a.getLocation();
+			x = (int)(b.getX() - c.getX());
+			y = (int)(b.getY() - c.getY());
+		}
+		String id = constraints.constraintEditor("Add", "");
+		bioModel.createConstraint(id, x, y);
+		modelEditor.refresh();
+		graph.buildGraph();
+		modelEditor.setDirty(true);
+		bioModel.makeUndoPoint();
+	}
+	
+	public void addEvent(int x, int y) {
+		if (x < 0 && y < 0) {
+			PointerInfo a = MouseInfo.getPointerInfo();
+			Point c = graphComponent.getLocationOnScreen();
+			Point b = a.getLocation();
+			x = (int)(b.getX() - c.getX());
+			y = (int)(b.getY() - c.getY());
+		}
+		String id = events.eventEditor("Add", "",false);
+		bioModel.createEvent(id, x, y, false);
+		modelEditor.refresh();
+		graph.buildGraph();
+		modelEditor.setDirty(true);
+		bioModel.makeUndoPoint();
+	}
+	
+	public void addSelfInfluence(int x, int y) {
+		if (x < 0 && y < 0) {
+			PointerInfo a = MouseInfo.getPointerInfo();
+			Point c = graphComponent.getLocationOnScreen();
+			Point b = a.getLocation();
+			x = (int)(b.getX() - c.getX());
+			y = (int)(b.getY() - c.getY());
+		}
+		mxCell cell = (mxCell)(graphComponent.getCellAt(x,y));
+		if(cell.isEdge() == false) {
+			// the user clicked to add a self-influence to a component.
+			//Object parent, String id, Object value, Object source, Object target, String style
+			mxCell edge = new mxCell();
+			edge.setEdge(true);
+			edge.setSource(cell);
+			edge.setTarget(cell);
+			tryAddAssociationBetweenCells(edge);								
+		}
 	}
 	
 	public void select() {
@@ -851,125 +1075,43 @@ public class Schematic extends JPanel implements ActionListener {
 						}
 						else*/ 
 						if(addCompartmentButton != null && addCompartmentButton.isSelected()) {
-							bioModel.createCompartment(null, e.getX(), e.getY());
-							graph.buildGraph();
-							modelEditor.refresh();
-							modelEditor.setDirty(true);
-							bioModel.makeUndoPoint();
+							addCompartment(e.getX(), e.getY());
 						}
 						else if(addSpeciesButton != null && addSpeciesButton.isSelected()) {
-							bioModel.createSpecies(null, e.getX(), e.getY());
-							graph.buildGraph();
-							modelEditor.refresh();
-							modelEditor.setDirty(true);
-							bioModel.makeUndoPoint();
+							addSpecies(e.getX(), e.getY());
 						}
 						else if(addReactionButton != null && addReactionButton.isSelected()) {
-							bioModel.createReaction(null, e.getX(), e.getY());
-							graph.buildGraph();
-							modelEditor.refresh();
-							modelEditor.setDirty(true);
-							bioModel.makeUndoPoint();
+							addReaction(e.getX(), e.getY());
 						}
 						else if(addComponentButton != null && addComponentButton.isSelected()) {
-							
-							boolean dropped;
-							
-							//if there's a grid, do a different panel than normal
-							if (grid.isEnabled()) {
-
-								//the true is to indicate the dropping is happening on a grid
-								dropped = DropComponentPanel.dropComponent(
-										modelEditor, bioModel, e.getX(), e.getY(), true);
-							}
-							else {
-								
-								//the false is to indicate the dropping isn't happening on a grid
-								dropped = DropComponentPanel.dropComponent(
-											modelEditor, bioModel, e.getX(), e.getY(), false);
-							}
-							
-							//if the components dropped successfully
-							if(dropped){
-								
-								modelEditor.setDirty(true);
-								graph.buildGraph();
-								modelEditor.refresh();
-								bioModel.makeUndoPoint();
-							}
+							addComponent(e.getX(), e.getY());
 						}
 						else if(addPromoterButton != null && addPromoterButton.isSelected()) {
-							bioModel.createPromoter(null, e.getX(), e.getY(), true);
-							modelEditor.refresh();
-							graph.buildGraph();
-							modelEditor.setDirty(true);
-							bioModel.makeUndoPoint();
+							addPromoter(e.getX(), e.getY());
 						}
 						else if(addVariableButton != null && addVariableButton.isSelected()) {
-							bioModel.createVariable(null, e.getX(), e.getY(),false, false);
-							modelEditor.refresh();
-							graph.buildGraph();
-							modelEditor.setDirty(true);
-							bioModel.makeUndoPoint();
+							addVariable(e.getX(), e.getY());
 						}
 						else if(addBooleanButton != null && addBooleanButton.isSelected()) {
-							bioModel.createVariable(null, e.getX(), e.getY(),false, true);
-							modelEditor.refresh();
-							graph.buildGraph();
-							modelEditor.setDirty(true);
-							bioModel.makeUndoPoint();
+							addBoolean(e.getX(), e.getY());
 						}
 						else if(addPlaceButton != null && addPlaceButton.isSelected()) {
-							bioModel.createVariable(null, e.getX(), e.getY(),true, false);
-							modelEditor.refresh();
-							graph.buildGraph();
-							modelEditor.setDirty(true);
-							bioModel.makeUndoPoint();
+							addPlace(e.getX(), e.getY());
 						}
 						else if(addRuleButton != null && addRuleButton.isSelected()) {
-							String id = rules.ruleEditor("Add", "");
-							bioModel.createRule(id, e.getX(), e.getY());
-							modelEditor.refresh();
-							graph.buildGraph();
-							modelEditor.setDirty(true);
-							bioModel.makeUndoPoint();
+							addRule(e.getX(), e.getY());
 						}
 						else if(addConstraintButton != null && addConstraintButton.isSelected()) {
-							String id = constraints.constraintEditor("Add", "");
-							bioModel.createConstraint(id, e.getX(), e.getY());
-							modelEditor.refresh();
-							graph.buildGraph();
-							modelEditor.setDirty(true);
-							bioModel.makeUndoPoint();
+							addConstraint(e.getX(), e.getY());
 						}
 						else if(addEventButton != null && addEventButton.isSelected()) {
-							String id = events.eventEditor("Add", "",false);
-							bioModel.createEvent(id, e.getX(), e.getY(),false);
-							modelEditor.refresh();
-							graph.buildGraph();
-							modelEditor.setDirty(true);
-							bioModel.makeUndoPoint();
+							addEvent(e.getX(), e.getY());
 						}
 						else if(addTransitionButton != null && addTransitionButton.isSelected()) {
-							String id = events.eventEditor("Add", "",true);
-							bioModel.createEvent(id, e.getX(), e.getY(),true);
-							modelEditor.refresh();
-							graph.buildGraph();
-							modelEditor.setDirty(true);
-							bioModel.makeUndoPoint();
+							addTransition(e.getX(),e.getY());
 						}
 						else if(selfInfluenceButton != null && selfInfluenceButton.isSelected()) {
-							
-							if(cell.isEdge() == false) {
-								
-								// the user clicked to add a self-influence to a component.
-								//Object parent, String id, Object value, Object source, Object target, String style
-								mxCell edge = new mxCell();
-								edge.setEdge(true);
-								edge.setSource(cell);
-								edge.setTarget(cell);
-								tryAddAssociationBetweenCells(edge);								
-							}
+							addSelfInfluence(e.getX(),e.getY());
 						}
 					}
 					//if cell != null
