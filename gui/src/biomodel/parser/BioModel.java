@@ -4839,46 +4839,6 @@ public class BioModel {
 	}
 
 	/**
-	 * returns null if the given influence is allowed and false otherwise.
-	 * Reasons an influence wouldn't be allowed is if it shadows an existing
-	 * influence, is a no-influence and an influence already exists there, or a
-	 * no-influence already exists there. If the influence isn't allowed,
-	 * returns a reason why.
-	 */
-	/*
-	public String isInfluenceAllowed(String newInfluenceName) {
-
-		String sourceID = GCMFile.getInput(newInfluenceName);
-		String targetID = GCMFile.getOutput(newInfluenceName);
-
-		// Only one influence with the exact same name is allowed.
-		if (this.getInfluences().containsKey(newInfluenceName)) {
-			return "there is already an influence between those species on that promoter.";
-		}
-
-		// now check for existing influences between the two given species.
-		for (String infName : this.getInfluences().keySet()) {
-			if (GCMFile.getInput(infName).equals(sourceID)
-					&& GCMFile.getOutput(infName).equals(targetID)) {
-				// the influence goes between the same set of species. Now do
-				// some more checks.
-				String arrow = getArrow(infName);
-				String newArrow = getArrow(newInfluenceName);
-				if (arrow.contains("x>")) {
-					return "there is a no-influence between these species.";
-				}
-
-				if (newArrow.contains("x>")) {
-					return "there is already at least one influence between these species.\nYou cannot add a no-influence until you remove the other influences.";
-				}
-			}
-		}
-
-		// nothing was wrong, the influence is allowed.
-		return null;
-	}
-	*/
-	/**
 	 * creates/removes grid species if a file is updated
 	 * 
 	 * @param filename

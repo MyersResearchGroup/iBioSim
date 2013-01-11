@@ -8810,19 +8810,21 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			check.setEnabled(true);
 			select.setEnabled(true);
 			cut.setEnabled(true);
-			addCompartment.setEnabled(true);
-			addSpecies.setEnabled(true);
-			addReaction.setEnabled(true);
+			if (!((ModelEditor) comp).isGridEditor()) {
+				addCompartment.setEnabled(true);
+				addSpecies.setEnabled(true);
+				addReaction.setEnabled(true);
+				addPromoter.setEnabled(true);
+				addVariable.setEnabled(true);
+				addBoolean.setEnabled(true);
+				addPlace.setEnabled(true);
+				addTransition.setEnabled(true);
+				addRule.setEnabled(true);
+				addConstraint.setEnabled(true);
+				addEvent.setEnabled(true);
+				addSelfInfl.setEnabled(true);
+			}
 			addComponent.setEnabled(true);
-			addPromoter.setEnabled(true);
-			addVariable.setEnabled(true);
-			addBoolean.setEnabled(true);
-			addPlace.setEnabled(true);
-			addTransition.setEnabled(true);
-			addRule.setEnabled(true);
-			addConstraint.setEnabled(true);
-			addEvent.setEnabled(true);
-			addSelfInfl.setEnabled(true);
 			undo.setEnabled(true);
 			redo.setEnabled(true);
 			exportMenu.setEnabled(true);

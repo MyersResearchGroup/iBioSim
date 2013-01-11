@@ -2257,6 +2257,10 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		return outID;
 	}
 	
+	public boolean isGridEditor() {
+		return biomodel.getGrid().isEnabled();
+	}
+	
 	public void addCompartment() {
 		schematic.addCompartment(-1,-1);
 	}
