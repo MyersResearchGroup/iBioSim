@@ -2365,9 +2365,18 @@ public class SBMLutilities {
 		} else if (math.getType() == libsbml.AST_NAME_TIME) {
  			return "t";
 		} else if (math.getType() == libsbml.AST_PLUS) {
-			String leftStr = myFormulaToStringInfix(math.getLeftChild());
-			String rightStr = myFormulaToStringInfix(math.getRightChild());
-			return "(" + leftStr + " + " + rightStr + ")";
+			String returnVal = "(";
+			boolean first = true;
+			for (int i=0; i < math.getNumChildren(); i++) {
+				if (first) {
+					first = false;
+				} else {
+					returnVal += " + ";
+				}
+				returnVal += myFormulaToStringInfix(math.getChild(i));
+			}
+			returnVal += ")";
+			return returnVal;
 		} else if (math.getType() == libsbml.AST_POWER) {
 			String leftStr = myFormulaToStringInfix(math.getLeftChild());
 			String rightStr = myFormulaToStringInfix(math.getRightChild());
@@ -2415,9 +2424,18 @@ public class SBMLutilities {
 			String rightStr = myFormulaToStringInfix(math.getRightChild());
 			return "(" + leftStr + " != " + rightStr + ")";
 		} else if (math.getType() == libsbml.AST_TIMES) {
-			String leftStr = myFormulaToStringInfix(math.getLeftChild());
-			String rightStr = myFormulaToStringInfix(math.getRightChild());
-			return "(" + leftStr + " * " + rightStr + ")";
+			String returnVal = "(";
+			boolean first = true;
+			for (int i=0; i < math.getNumChildren(); i++) {
+				if (first) {
+					first = false;
+				} else {
+					returnVal += " * ";
+				}
+				returnVal += myFormulaToStringInfix(math.getChild(i));
+			}
+			returnVal += ")";
+			return returnVal;
 		} else {
 			if (math.isOperator()) {
 				System.out.println("Operator " + math.getOperatorName() + " is not currently supported.");

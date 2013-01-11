@@ -14,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
@@ -334,10 +335,11 @@ public class Schematic extends JPanel implements ActionListener {
 		JToolBar toolBar = new JToolBar();
 		
 		ButtonGroup modeButtonGroup = new ButtonGroup();
-		selectButton = Utils.makeRadioToolButton("select_mode.png", "", "Select", this, modeButtonGroup); 
+		selectButton = Utils.makeRadioToolButton("select_mode.png", "", "Select (" +
+				KeyEvent.getKeyText(KeyEvent.VK_ESCAPE) + ")", this, modeButtonGroup); 
 		toolBar.add(selectButton);
 		selectButton.setSelected(true);
-		addComponentButton = Utils.makeRadioToolButton("add_component.png", "", "Add Components", this, modeButtonGroup);
+		addComponentButton = Utils.makeRadioToolButton("add_component.png", "", "Add Components (C)", this, modeButtonGroup);
 		toolBar.add(addComponentButton);
 		toolBar.add(Utils.makeToolButton("", "editGridSize", "Edit Grid Size", this));
 		
@@ -635,35 +637,41 @@ public class Schematic extends JPanel implements ActionListener {
 
 		JToolBar toolBar = new JToolBar();
 		
+		System.out.println();
 		ButtonGroup modeButtonGroup = new ButtonGroup();
-		selectButton = Utils.makeRadioToolButton("select_mode.png", "", "Select", this, modeButtonGroup); 
+		selectButton = Utils.makeRadioToolButton("select_mode.png", "", "Select (" + KeyEvent.getKeyText(KeyEvent.VK_ESCAPE)
+				+ ")", this, modeButtonGroup); 
 		toolBar.add(selectButton);
 		selectButton.setSelected(true);
-		addCompartmentButton = Utils.makeRadioToolButton("add_compartment.png", "", "Add Compartment", this, modeButtonGroup);
+		addCompartmentButton = Utils.makeRadioToolButton("add_compartment.png", "", "Add Compartment (" + 
+				KeyEvent.getKeyText(KeyEvent.VK_ALT) + " C)", this, modeButtonGroup);
 		toolBar.add(addCompartmentButton);
-		addSpeciesButton = Utils.makeRadioToolButton("add_species.png", "", "Add Species", this, modeButtonGroup);
+		addSpeciesButton = Utils.makeRadioToolButton("add_species.png", "", "Add Species (S)", this, modeButtonGroup);
 		toolBar.add(addSpeciesButton);
-		addReactionButton = Utils.makeRadioToolButton("add_reaction.png", "", "Add Reactions", this, modeButtonGroup);
+		addReactionButton = Utils.makeRadioToolButton("add_reaction.png", "", "Add Reactions (R)", this, modeButtonGroup);
 		toolBar.add(addReactionButton);
-		addComponentButton = Utils.makeRadioToolButton("add_component.png", "", "Add Components", this, modeButtonGroup);
+		addComponentButton = Utils.makeRadioToolButton("add_component.png", "", "Add Components (C)", this, modeButtonGroup);
 		toolBar.add(addComponentButton);
-		addPromoterButton = Utils.makeRadioToolButton("promoter_mode.png", "", "Add Promoters", this, modeButtonGroup);
+		addPromoterButton = Utils.makeRadioToolButton("promoter_mode.png", "", "Add Promoters (" +
+				KeyEvent.getKeyText(KeyEvent.VK_SHIFT) + " P)", this, modeButtonGroup);
 		toolBar.add(addPromoterButton);
-		addVariableButton = Utils.makeRadioToolButton("variable_mode.png", "", "Add Variables", this, modeButtonGroup);
+		addVariableButton = Utils.makeRadioToolButton("variable_mode.png", "", "Add Variables (V)", this, modeButtonGroup);
 		toolBar.add(addVariableButton);
-		addBooleanButton = Utils.makeRadioToolButton("boolean_mode.png", "", "Add Booleans", this, modeButtonGroup);
+		addBooleanButton = Utils.makeRadioToolButton("boolean_mode.png", "", "Add Booleans (B)", this, modeButtonGroup);
 		toolBar.add(addBooleanButton);
-		addPlaceButton = Utils.makeRadioToolButton("add_place.png", "", "Add Places", this, modeButtonGroup);
+		addPlaceButton = Utils.makeRadioToolButton("add_place.png", "", "Add Places (P)", this, modeButtonGroup);
 		toolBar.add(addPlaceButton);
-		addTransitionButton = Utils.makeRadioToolButton("add_transition.png", "", "Add Transitions", this, modeButtonGroup);
+		addTransitionButton = Utils.makeRadioToolButton("add_transition.png", "", "Add Transitions (T)", this, modeButtonGroup);
 		toolBar.add(addTransitionButton);
-		addRuleButton = Utils.makeRadioToolButton("rule_mode.png", "", "Add Rules", this, modeButtonGroup);
+		addRuleButton = Utils.makeRadioToolButton("rule_mode.png", "", "Add Rules (" +
+				KeyEvent.getKeyText(KeyEvent.VK_SHIFT) + " R)", this, modeButtonGroup);
 		toolBar.add(addRuleButton);
-		addConstraintButton = Utils.makeRadioToolButton("constraint_mode.png", "", "Add Constraints", this, modeButtonGroup);
+		addConstraintButton = Utils.makeRadioToolButton("constraint_mode.png", "", "Add Constraints (" +
+				KeyEvent.getKeyText(KeyEvent.VK_SHIFT) + " C)", this, modeButtonGroup);
 		toolBar.add(addConstraintButton);
-		addEventButton = Utils.makeRadioToolButton("event_mode.png", "", "Add Events", this, modeButtonGroup);
+		addEventButton = Utils.makeRadioToolButton("event_mode.png", "", "Add Events (E)", this, modeButtonGroup);
 		toolBar.add(addEventButton);
-		selfInfluenceButton = Utils.makeRadioToolButton("self_influence.png", "", "Add Self Influences", this, modeButtonGroup);
+		selfInfluenceButton = Utils.makeRadioToolButton("self_influence.png", "", "Add Self Influences (I)", this, modeButtonGroup);
 		toolBar.add(selfInfluenceButton);
 
 		toolBar.addSeparator();
@@ -729,22 +737,25 @@ public class Schematic extends JPanel implements ActionListener {
 		JToolBar toolBar = new JToolBar();
 		
 		ButtonGroup modeButtonGroup = new ButtonGroup();
-		selectButton =Utils.makeRadioToolButton("select_mode.png", "", "Select", this, modeButtonGroup); 
+		selectButton =Utils.makeRadioToolButton("select_mode.png", "", "Select (" +
+				KeyEvent.getKeyText(KeyEvent.VK_ESCAPE) + ")", this, modeButtonGroup); 
 		toolBar.add(selectButton);
 		selectButton.setSelected(true);
-		addComponentButton = Utils.makeRadioToolButton("add_component.png", "", "Add Components", this, modeButtonGroup);
+		addComponentButton = Utils.makeRadioToolButton("add_component.png", "", "Add Components (C)", this, modeButtonGroup);
 		toolBar.add(addComponentButton);
-		addBooleanButton = Utils.makeRadioToolButton("boolean_mode.png", "", "Add Booleans", this, modeButtonGroup);
+		addBooleanButton = Utils.makeRadioToolButton("boolean_mode.png", "", "Add Booleans (B)", this, modeButtonGroup);
 		toolBar.add(addBooleanButton);
-		addVariableButton = Utils.makeRadioToolButton("variable_mode.png", "", "Add Variables", this, modeButtonGroup);
+		addVariableButton = Utils.makeRadioToolButton("variable_mode.png", "", "Add Variables (V)", this, modeButtonGroup);
 		toolBar.add(addVariableButton);
-		addPlaceButton = Utils.makeRadioToolButton("add_place.png", "", "Add Places", this, modeButtonGroup);
+		addPlaceButton = Utils.makeRadioToolButton("add_place.png", "", "Add Places (P)", this, modeButtonGroup);
 		toolBar.add(addPlaceButton);
-		addTransitionButton = Utils.makeRadioToolButton("add_transition.png", "", "Add Transitions", this, modeButtonGroup);
+		addTransitionButton = Utils.makeRadioToolButton("add_transition.png", "", "Add Transitions (T)", this, modeButtonGroup);
 		toolBar.add(addTransitionButton);
-		addRuleButton = Utils.makeRadioToolButton("rule_mode.png", "", "Add Rules", this, modeButtonGroup);
+		addRuleButton = Utils.makeRadioToolButton("rule_mode.png", "", "Add Rules (" +
+				KeyEvent.getKeyText(KeyEvent.VK_SHIFT) + " R)", this, modeButtonGroup);
 		toolBar.add(addRuleButton);
-		addConstraintButton = Utils.makeRadioToolButton("constraint_mode.png", "", "Add Constraints", this, modeButtonGroup);
+		addConstraintButton = Utils.makeRadioToolButton("constraint_mode.png", "", "Add Constraints (" +
+				KeyEvent.getKeyText(KeyEvent.VK_SHIFT) + " C)", this, modeButtonGroup);
 		toolBar.add(addConstraintButton);
 		//addEventButton = Utils.makeRadioToolButton("event_mode.png", "", "Add Events", this, modeButtonGroup);
 		//toolBar.add(addEventButton);
