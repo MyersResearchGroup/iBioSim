@@ -244,7 +244,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private String[] BioModelIds = null;
 
 	private JMenuItem addCompartment, addSpecies, addReaction, addComponent, addPromoter, addVariable, addBoolean, addPlace,
-		addTransition, addRule, addConstraint, addEvent, addSelfInfl, cut, select,undo, redo, copy, rename, delete;
+		addTransition, addRule, addConstraint, addEvent, addSelfInfl, cut, select,undo, redo, copy, rename, delete,
+		moveLeft, moveRight, moveUp, moveDown;
 	
 	private JMenuItem save, saveAs, saveSBOL, check, run, refresh, viewCircuit, viewRules, viewTrace, viewLog, viewCoverage,
 			viewLHPN, saveModel, saveAsVerilog, viewSG, viewModGraph, viewLearnedModel, viewModBrowser, createAnal, createLearn, 
@@ -454,6 +455,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		addConstraint = new JMenuItem("Add Constraint");
 		addEvent = new JMenuItem("Add Event");
 		addSelfInfl = new JMenuItem("Add Self Influence");
+		moveLeft = new JMenuItem("Move Left");
+		moveRight = new JMenuItem("Move Right");
+		moveUp = new JMenuItem("Move Up");
+		moveDown = new JMenuItem("Move Down");
 		undo = new JMenuItem("Undo");
 		redo = new JMenuItem("Redo");
 		copy = new JMenuItem("Copy File");
@@ -558,6 +563,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		addConstraint.addActionListener(this);
 		addEvent.addActionListener(this);
 		addSelfInfl.addActionListener(this);
+		moveLeft.addActionListener(this);
+		moveRight.addActionListener(this);
+		moveUp.addActionListener(this);
+		moveDown.addActionListener(this);
 		undo.addActionListener(this);
 		redo.addActionListener(this);
 		copy.addActionListener(this);
@@ -696,6 +705,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		addConstraint.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.SHIFT_MASK));
 		addEvent.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, 0));
 		addSelfInfl.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, 0));
+		moveLeft.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, KeyEvent.SHIFT_MASK));
+		moveRight.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.SHIFT_MASK));
+		moveUp.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, KeyEvent.SHIFT_MASK));
+		moveDown.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, KeyEvent.SHIFT_MASK));
 		undo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, ShortCutKey));
 		redo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, ShortCutKey | KeyEvent.SHIFT_MASK));
 		copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ShortCutKey | KeyEvent.SHIFT_MASK));
@@ -771,6 +784,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		addConstraint.setEnabled(false);
 		addEvent.setEnabled(false);
 		addSelfInfl.setEnabled(false);
+		moveLeft.setEnabled(false);
+		moveRight.setEnabled(false);
+		moveUp.setEnabled(false);
+		moveDown.setEnabled(false);
 		undo.setEnabled(false);
 		redo.setEnabled(false);
 		copy.setEnabled(false);
@@ -797,6 +814,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		edit.addSeparator();
 		edit.add(select);
 		edit.add(cut);
+		edit.add(moveLeft);
+		edit.add(moveRight);
+		edit.add(moveUp);
+		edit.add(moveDown);
 		if (!async) {
 			edit.add(addCompartment);
 			edit.add(addSpecies);
@@ -3102,6 +3123,30 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			Component comp = tab.getSelectedComponent();
 			if (comp instanceof ModelEditor) {
 				((ModelEditor) comp).addSelfInfluence();
+			}
+		}
+		else if (e.getSource() == moveLeft) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof ModelEditor) {
+				((ModelEditor) comp).moveLeft();
+			}
+		}
+		else if (e.getSource() == moveRight) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof ModelEditor) {
+				((ModelEditor) comp).moveRight();
+			}
+		}
+		else if (e.getSource() == moveUp) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof ModelEditor) {
+				((ModelEditor) comp).moveUp();
+			}
+		}
+		else if (e.getSource() == moveDown) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof ModelEditor) {
+				((ModelEditor) comp).moveDown();
 			}
 		}
 		else if (e.getSource() == undo) {
@@ -8793,6 +8838,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		addConstraint.setEnabled(false);
 		addEvent.setEnabled(false);
 		addSelfInfl.setEnabled(false);
+		moveLeft.setEnabled(false);
+		moveRight.setEnabled(false);
+		moveUp.setEnabled(false);
+		moveDown.setEnabled(false);
 		undo.setEnabled(false);
 		redo.setEnabled(false);
 		if (selectedTab != -1) {
@@ -8823,6 +8872,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				addConstraint.setEnabled(true);
 				addEvent.setEnabled(true);
 				addSelfInfl.setEnabled(true);
+				moveLeft.setEnabled(true);
+				moveRight.setEnabled(true);
+				moveUp.setEnabled(true);
+				moveDown.setEnabled(true);
 			}
 			addComponent.setEnabled(true);
 			undo.setEnabled(true);

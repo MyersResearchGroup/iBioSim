@@ -367,6 +367,36 @@ public class Schematic extends JPanel implements ActionListener {
 		return toolBar;
 	}
 	
+	public void moveCells(int deltaX,int deltaY) {
+		Object cells[] = (Object [])graph.getSelectionCells();
+		int numberEdges = 0;
+		for(int i=0; i<cells.length; i++){
+			
+			mxCell cell = (mxCell)cells[i];
+			
+			// If an edge gets moved ignore it then rebuild the graph from the model
+			if(cell.isEdge()){
+				numberEdges++;
+			}
+			else{
+				cell.getGeometry().setX(cell.getGeometry().getX()+deltaX);
+				cell.getGeometry().setY(cell.getGeometry().getY()+deltaY);
+				graph.updateInternalPosition(cell);
+			}
+		}
+		if (numberEdges==cells.length) {
+			Utility.createErrorMessage("Error Moving Edges", "Edges cannot be moved independently.");
+			graph.buildGraph();
+			drawGrid();
+		} else {
+			graph.buildGraph();
+			graph.setSelectionCells(cells);
+			drawGrid();
+			bioModel.makeUndoPoint();
+			modelEditor.setDirty(true);
+		}
+	}
+	
 	public void cut() {
 		removeCells(null,null);
 	}
@@ -1229,6 +1259,8 @@ public class Schematic extends JPanel implements ActionListener {
 					graph.buildGraph();
 					drawGrid();
 				} else {
+					graph.buildGraph();
+					drawGrid();
 					bioModel.makeUndoPoint();
 					modelEditor.setDirty(true);
 				}
