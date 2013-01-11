@@ -1359,6 +1359,7 @@ public class BioModel {
 			locationParameter = sbml.getModel().createParameter();
 			locationParameter.setId(locationParameterID);
 			locationParameter.setConstant(false);
+			locationParameter.setValue(0);
 		}
 		
 		if (locationParameter.getAnnotation() != null)
@@ -3173,6 +3174,7 @@ public class BioModel {
 				locationParameter = sbml.getModel().createParameter();
 				locationParameter.setId(locationParameterID);
 				locationParameter.setConstant(false);
+				locationParameter.setValue(0);
 			}
 			
 			if (locationParameter.getAnnotation() != null)
@@ -6415,6 +6417,33 @@ public class BioModel {
 		writer.writeSBML(document, exportFile);
 	}
 	
+	private void expandListOfSubmodels(CompModelPlugin docCompModel) {
+		if (this.getGridEnabledFromFile(filename.replace(".gcm",".xml"))) {
+			
+			//look through the location parameter arrays
+			for (int i = 0; i < sbml.getModel().getNumParameters(); ++i) {
+				
+				Parameter parameter = sbml.getModel().getParameter(i);
+				
+				//if it's a location parameter, loop through the annotation and collect submodel IDs
+				if (parameter.getId().contains("__locations")) {
+					String modelId = parameter.getId().replace("__locations","");
+					Submodel submodel = docCompModel.getSubmodel("GRID__"+modelId);
+					submodel.removeFromParentAndDelete();
+					String[] splitAnnotation = parameter.getAnnotationString().replace("<annotation>","")
+					.replace("</annotation>","").replace("\"","").replace("http://www.fakeuri.com","").replace("/>","").split("array:");
+					
+					//find all components in the annotation
+					for (int j = 2; j < splitAnnotation.length; ++j) {
+						submodel = docCompModel.createSubmodel();
+						submodel.setId(splitAnnotation[j].split("=")[0].trim());
+						submodel.setModelRef(modelId);
+					}
+				}	
+			}
+		}
+	}
+	
 	private ArrayList<String> getListOfSubmodels() {
 		ArrayList<String> comps = new ArrayList<String>();
 
@@ -6518,9 +6547,14 @@ public class BioModel {
 	}
 	
 	public SBMLDocument newFlattenModel() {
-		SBMLDocument document = new SBMLDocument();
+		BioModel bioModel = new BioModel(path);
+		bioModel.load(filename);
+		SBMLDocument document = bioModel.getSBMLDocument();
 		long numSubModels = sbmlCompModel.getNumSubmodels();
-		Model model = sbmlCompModel.flattenModel();
+		if (numSubModels > 0 && isGridEnabled()) {
+			expandListOfSubmodels(bioModel.getSBMLCompModel());
+		}
+		Model model = bioModel.getSBMLCompModel().flattenModel();
 		if (model==null) {
 			Utility.createErrorMessage("Error During Flattening", "Cannot flatten model.");
 			return null;
