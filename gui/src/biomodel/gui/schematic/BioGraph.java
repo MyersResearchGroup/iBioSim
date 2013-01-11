@@ -198,6 +198,7 @@ public class BioGraph extends mxGraph {
 	public boolean buildGraph() {
 		
 		this.isBuilding = true;
+		this.allowDanglingEdges = false;
 
 		// remove all the cells from the graph (vertices and edges)
 		this.removeCells(this.getChildCells(this.getDefaultParent(), true, true));
@@ -2357,16 +2358,18 @@ public class BioGraph extends mxGraph {
 	private boolean createGraphCompartmentFromModel(String id){
 		CellValueObject cvo = new CellValueObject(id, "Compartment", null);
 		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
-		this.compartmentsToMxCellMap.put(id, (mxCell)insertedVertex);
-
+		mxCell cell = (mxCell)insertedVertex;
+		cell.setConnectable(false);
+		this.compartmentsToMxCellMap.put(id, cell);
+		
 		if (bioModel.IsWithinCompartment()) {
 			this.setCompartmentStyles(id,true);
 		} else {
 			this.setCompartmentStyles(id,false);
 		}
 		
-		return sizeAndPositionFromProperties((mxCell)insertedVertex,
-				GlobalConstants.DEFAULT_COMPARTMENT_WIDTH,GlobalConstants.DEFAULT_COMPARTMENT_HEIGHT);
+		return sizeAndPositionFromProperties(cell,GlobalConstants.DEFAULT_COMPARTMENT_WIDTH,
+				GlobalConstants.DEFAULT_COMPARTMENT_HEIGHT);
 	}
 	
 	private boolean createGraphRuleFromModel(String id){
