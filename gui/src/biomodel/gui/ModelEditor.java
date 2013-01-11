@@ -2314,19 +2314,19 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	}
 	
 	public void moveLeft() {
-		schematic.moveCells(-1,0);
+		schematic.moveCells(-5,0);
 	}
 	
 	public void moveRight() {
-		schematic.moveCells(1,0);
+		schematic.moveCells(5,0);
 	}
 	
 	public void moveUp() {
-		schematic.moveCells(0,-1);
+		schematic.moveCells(0,-5);
 	}
 	
 	public void moveDown() {
-		schematic.moveCells(0,1);
+		schematic.moveCells(0,5);
 	}
 	
 	public void cut() {
