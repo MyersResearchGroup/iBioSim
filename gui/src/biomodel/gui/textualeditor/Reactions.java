@@ -30,6 +30,7 @@ import main.util.Utility;
 
 import org.sbml.libsbml.Compartment;
 import org.sbml.libsbml.FunctionDefinition;
+import org.sbml.libsbml.InitialAssignment;
 import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Model;
@@ -155,7 +156,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 
 	private JTextField productName;
 
-	private JTextField productStoiciometry; // text field for editing products
+	private JTextField productStoichiometry; // text field for editing products
 
 	private JComboBox reactantSpecies; // ComboBox for reactant editing
 
@@ -168,7 +169,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	
 	private SBOLField sbolField;
 
-	private JTextField reactantStoiciometry;
+	private JTextField reactantStoichiometry;
 
 	private JTextArea kineticLaw; // text area for editing kinetic law
 
@@ -1531,7 +1532,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		 * productId.setText("product"+j);
 		 */
 		productName = new JTextField("");
-		productStoiciometry = new JTextField("1");
+		productStoichiometry = new JTextField("1");
 		String selectedID = "";
 		if (option.equals("OK")) {
 			String v = selectedProductId;
@@ -1542,20 +1543,24 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 				}
 			}
-			if (product.isSetId()) {
-				selectedID = product.getId();
-				productId.setText(product.getId());
-			}
 			if (product.isSetName()) {
 				productName.setText(product.getName());
 			}
 			productSpecies.setSelectedItem(product.getSpecies());
 			if ((gcm.getSBMLDocument().getLevel() < 3) && (product.isSetStoichiometryMath())) {
 				stoiciLabel.setSelectedItem("Stoichiometry Math");
-				productStoiciometry.setText("" + SBMLutilities.myFormulaToString(product.getStoichiometryMath().getMath()));
+				productStoichiometry.setText("" + SBMLutilities.myFormulaToString(product.getStoichiometryMath().getMath()));
 			}
 			else {
-				productStoiciometry.setText("" + product.getStoichiometry());
+				productStoichiometry.setText("" + product.getStoichiometry());
+				if (product.isSetId()) {
+					selectedID = product.getId();
+					productId.setText(product.getId());
+					InitialAssignment init = bioModel.getSBMLDocument().getModel().getInitialAssignment(selectedID);
+					if (init!=null) {
+						productStoichiometry.setText("" + bioModel.removeBooleans(init.getMath()));
+					} 						
+				}
 			}
 			if (!product.getConstant()) {
 				productConstant.setSelectedItem("false");
@@ -1573,7 +1578,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		else {
 			productsPanel.add(stoichiometryLabel);
 		}
-		productsPanel.add(productStoiciometry);
+		productsPanel.add(productStoichiometry);
 		if (gcm.getSBMLDocument().getLevel() > 2) {
 			productsPanel.add(constantLabel);
 			productsPanel.add(productConstant);
@@ -1599,13 +1604,20 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			if (!error) {
 				if (stoiciLabel.getSelectedItem().equals("Stoichiometry")) {
+					InitialAssignments.removeInitialAssignment(bioModel, selectedID);
 					try {
-						val = Double.parseDouble(productStoiciometry.getText().trim());
+						val = Double.parseDouble(productStoichiometry.getText().trim());
 					}
 					catch (Exception e1) {
-						JOptionPane.showMessageDialog(Gui.frame, "The stoichiometry must be a real number.", "Enter A Valid Value",
-								JOptionPane.ERROR_MESSAGE);
-						error = true;
+						if (productId.getText().equals("")) {
+							JOptionPane.showMessageDialog(Gui.frame, "The stoichiometry must be a real number if no id is provided.", "Enter A Valid Value",
+									JOptionPane.ERROR_MESSAGE);
+							error = true;
+						} else {
+							error = InitialAssignments.addInitialAssignment(biosim, bioModel, productId.getText().trim(), 
+									productStoichiometry.getText().trim());
+							val = 1.0;
+						}
 					}
 					if (val <= 0) {
 						JOptionPane.showMessageDialog(Gui.frame, "The stoichiometry value must be greater than 0.", "Enter A Valid Value",
@@ -1615,7 +1627,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					prod = productSpecies.getSelectedItem() + " " + val;
 				}
 				else {
-					prod = productSpecies.getSelectedItem() + " " + productStoiciometry.getText().trim();
+					prod = productSpecies.getSelectedItem() + " " + productStoichiometry.getText().trim();
 				}
 			}
 			int index = -1;
@@ -1644,18 +1656,18 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			if (!error) {
 				if (stoiciLabel.getSelectedItem().equals("Stoichiometry Math")) {
-					if (productStoiciometry.getText().trim().equals("")) {
+					if (productStoichiometry.getText().trim().equals("")) {
 						JOptionPane.showMessageDialog(Gui.frame, "Stoichiometry math must have formula.", "Enter Stoichiometry Formula",
 								JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
-					else if (SBMLutilities.myParseFormula(productStoiciometry.getText().trim()) == null) {
+					else if (SBMLutilities.myParseFormula(productStoichiometry.getText().trim()) == null) {
 						JOptionPane.showMessageDialog(Gui.frame, "Stoichiometry formula is not valid.", "Enter Valid Formula",
 								JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
 					else {
-						ArrayList<String> invalidVars = getInvalidVariablesInReaction(productStoiciometry.getText().trim(), true, "", false);
+						ArrayList<String> invalidVars = getInvalidVariablesInReaction(productStoichiometry.getText().trim(), true, "", false);
 						if (invalidVars.size() > 0) {
 							String invalid = "";
 							for (int i = 0; i < invalidVars.size(); i++) {
@@ -1681,10 +1693,10 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						}
 						if (!error) {
 							error = SBMLutilities.checkNumFunctionArguments(gcm.getSBMLDocument(),
-									SBMLutilities.myParseFormula(productStoiciometry.getText().trim()));
+									SBMLutilities.myParseFormula(productStoichiometry.getText().trim()));
 						}
 						if (!error) {
-							if (SBMLutilities.myParseFormula(productStoiciometry.getText().trim()).isBoolean()) {
+							if (SBMLutilities.myParseFormula(productStoichiometry.getText().trim()).isBoolean()) {
 								JOptionPane.showMessageDialog(Gui.frame, "Stoichiometry math must evaluate to a number.", "Number Expected",
 										JOptionPane.ERROR_MESSAGE);
 								error = true;
@@ -1720,7 +1732,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 					else {
 						produ.createStoichiometryMath();
-						produ.getStoichiometryMath().setMath(SBMLutilities.myParseFormula(productStoiciometry.getText().trim()));
+						produ.getStoichiometryMath().setMath(SBMLutilities.myParseFormula(productStoichiometry.getText().trim()));
 						produ.setStoichiometry(1);
 					}
 					if (productConstant.getSelectedItem().equals("true")) {
@@ -1753,7 +1765,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 					else {
 						produ.createStoichiometryMath();
-						produ.getStoichiometryMath().setMath(SBMLutilities.myParseFormula(productStoiciometry.getText().trim()));
+						produ.getStoichiometryMath().setMath(SBMLutilities.myParseFormula(productStoichiometry.getText().trim()));
 					}
 					if (productConstant.getSelectedItem().equals("true")) {
 						produ.setConstant(true);
@@ -1970,7 +1982,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		reactantId = new JTextField("");
 		reactantName = new JTextField("");
-		reactantStoiciometry = new JTextField("1");
+		reactantStoichiometry = new JTextField("1");
 		String selectedID = "";
 		if (option.equals("OK")) {
 			String v = selectedReactantId;
@@ -1982,19 +1994,23 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 			reactantSpecies.setSelectedItem(reactant.getSpecies());
-			if (reactant.isSetId()) {
-				selectedID = reactant.getId();
-				reactantId.setText(reactant.getId());
-			}
 			if (reactant.isSetName()) {
 				reactantName.setText(reactant.getName());
 			}
 			if ((gcm.getSBMLDocument().getLevel() < 3) && (reactant.isSetStoichiometryMath())) {
 				stoiciLabel.setSelectedItem("Stoichiometry Math");
-				reactantStoiciometry.setText("" + SBMLutilities.myFormulaToString(reactant.getStoichiometryMath().getMath()));
+				reactantStoichiometry.setText("" + SBMLutilities.myFormulaToString(reactant.getStoichiometryMath().getMath()));
 			}
 			else {
-				reactantStoiciometry.setText("" + reactant.getStoichiometry());
+				reactantStoichiometry.setText("" + reactant.getStoichiometry());
+				if (reactant.isSetId()) {
+					selectedID = reactant.getId();
+					reactantId.setText(reactant.getId());
+					InitialAssignment init = bioModel.getSBMLDocument().getModel().getInitialAssignment(selectedID);
+					if (init!=null) {
+						reactantStoichiometry.setText("" + bioModel.removeBooleans(init.getMath()));
+					} 
+				} 
 			}
 			if (!reactant.getConstant()) {
 				reactantConstant.setSelectedItem("false");
@@ -2012,7 +2028,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		else {
 			reactantsPanel.add(stoichiometryLabel);
 		}
-		reactantsPanel.add(reactantStoiciometry);
+		reactantsPanel.add(reactantStoichiometry);
 		if (gcm.getSBMLDocument().getLevel() > 2) {
 			reactantsPanel.add(constantLabel);
 			reactantsPanel.add(reactantConstant);
@@ -2038,13 +2054,20 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			if (!error) {
 				if (stoiciLabel.getSelectedItem().equals("Stoichiometry")) {
+					InitialAssignments.removeInitialAssignment(bioModel, selectedID);
 					try {
-						val = Double.parseDouble(reactantStoiciometry.getText().trim());
+						val = Double.parseDouble(reactantStoichiometry.getText().trim());
 					}
 					catch (Exception e1) {
-						JOptionPane.showMessageDialog(Gui.frame, "The stoichiometry must be a real number.", "Enter A Valid Value",
-								JOptionPane.ERROR_MESSAGE);
-						error = true;
+						if (reactantId.getText().equals("")) {
+							JOptionPane.showMessageDialog(Gui.frame, "The stoichiometry must be a real number if no id is provided.", "Enter A Valid Value",
+									JOptionPane.ERROR_MESSAGE);
+							error = true;
+						} else {
+							error = InitialAssignments.addInitialAssignment(biosim, bioModel, reactantId.getText().trim(), 
+									reactantStoichiometry.getText().trim());
+							val = 1.0;
+						}
 					}
 					if (val <= 0) {
 						JOptionPane.showMessageDialog(Gui.frame, "The stoichiometry value must be greater than 0.", "Enter A Valid Value",
@@ -2054,7 +2077,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					react = reactantSpecies.getSelectedItem() + " " + val;
 				}
 				else {
-					react = reactantSpecies.getSelectedItem() + " " + reactantStoiciometry.getText().trim();
+					react = reactantSpecies.getSelectedItem() + " " + reactantStoichiometry.getText().trim();
 				}
 			}
 			int index = -1;
@@ -2083,18 +2106,18 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			if (!error) {
 				if (stoiciLabel.getSelectedItem().equals("Stoichiometry Math")) {
-					if (reactantStoiciometry.getText().trim().equals("")) {
+					if (reactantStoichiometry.getText().trim().equals("")) {
 						JOptionPane.showMessageDialog(Gui.frame, "Stoichiometry math must have formula.", "Enter Stoichiometry Formula",
 								JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
-					else if (SBMLutilities.myParseFormula(reactantStoiciometry.getText().trim()) == null) {
+					else if (SBMLutilities.myParseFormula(reactantStoichiometry.getText().trim()) == null) {
 						JOptionPane.showMessageDialog(Gui.frame, "Stoichiometry formula is not valid.", "Enter Valid Formula",
 								JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
 					else {
-						ArrayList<String> invalidVars = getInvalidVariablesInReaction(reactantStoiciometry.getText().trim(), true, "", false);
+						ArrayList<String> invalidVars = getInvalidVariablesInReaction(reactantStoichiometry.getText().trim(), true, "", false);
 						if (invalidVars.size() > 0) {
 							String invalid = "";
 							for (int i = 0; i < invalidVars.size(); i++) {
@@ -2120,10 +2143,10 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						}
 						if (!error) {
 							error = SBMLutilities.checkNumFunctionArguments(gcm.getSBMLDocument(),
-									SBMLutilities.myParseFormula(reactantStoiciometry.getText().trim()));
+									SBMLutilities.myParseFormula(reactantStoichiometry.getText().trim()));
 						}
 						if (!error) {
-							if (SBMLutilities.myParseFormula(reactantStoiciometry.getText().trim()).isBoolean()) {
+							if (SBMLutilities.myParseFormula(reactantStoichiometry.getText().trim()).isBoolean()) {
 								JOptionPane.showMessageDialog(Gui.frame, "Stoichiometry math must evaluate to a number.", "Number Expected",
 										JOptionPane.ERROR_MESSAGE);
 								error = true;
@@ -2159,7 +2182,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 					else {
 						reactan.createStoichiometryMath();
-						reactan.getStoichiometryMath().setMath(SBMLutilities.myParseFormula(reactantStoiciometry.getText().trim()));
+						reactan.getStoichiometryMath().setMath(SBMLutilities.myParseFormula(reactantStoichiometry.getText().trim()));
 						reactan.setStoichiometry(1);
 					}
 					if (reactantConstant.getSelectedItem().equals("true")) {
@@ -2193,7 +2216,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 					else {
 						reactan.createStoichiometryMath();
-						reactan.getStoichiometryMath().setMath(SBMLutilities.myParseFormula(reactantStoiciometry.getText().trim()));
+						reactan.getStoichiometryMath().setMath(SBMLutilities.myParseFormula(reactantStoichiometry.getText().trim()));
 					}
 					if (reactantConstant.getSelectedItem().equals("true")) {
 						reactan.setConstant(true);
