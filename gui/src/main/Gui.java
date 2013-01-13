@@ -39,6 +39,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -272,6 +274,70 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	public static Object ICON_EXPAND = UIManager.get("Tree.expandedIcon");
 
 	public static Object ICON_COLLAPSE = UIManager.get("Tree.collapsedIcon");
+	
+	public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
+		
+		String message;
+		
+		//Implements Thread.UncaughtExceptionHandler.uncaughtException()
+		public void uncaughtException(Thread th, Throwable ex) {
+			final JFrame exp = new JFrame("Unhandled Exception");
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			ex.printStackTrace(pw);
+			ex.printStackTrace();
+			message = sw.toString(); // stack trace as a string
+			JLabel error = new JLabel("Program has thrown an exception of the type:");
+			JLabel errMsg = new JLabel(ex.toString());
+			JButton details = new JButton("Details");
+			details.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					Object[] options = { "Close" };
+					JOptionPane.showOptionDialog(exp, message, "Details", JOptionPane.YES_OPTION, 
+							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				}
+			});
+			JButton close = new JButton("Close");
+			close.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					exp.dispose();
+				}
+			});
+			JPanel errMessage = new JPanel();
+			errMessage.add(error);
+			JPanel errMsgPanel = new JPanel();
+			errMsgPanel.add(errMsg);
+			JPanel buttons = new JPanel();
+			buttons.add(details);
+			buttons.add(close);
+			JPanel expPanel = new JPanel(new BorderLayout());
+			expPanel.add(errMessage,"North");
+			expPanel.add(errMsgPanel,"Center");
+			expPanel.add(buttons,"South");
+			exp.setContentPane(expPanel);
+			exp.pack();
+			Dimension screenSize;
+			try {
+				Toolkit tk = Toolkit.getDefaultToolkit();
+				screenSize = tk.getScreenSize();
+			}
+			catch (AWTError awe) {
+				screenSize = new Dimension(640, 480);
+			}
+			Dimension frameSize = exp.getSize();
+
+			if (frameSize.height > screenSize.height) {
+				frameSize.height = screenSize.height;
+			}
+			if (frameSize.width > screenSize.width) {
+				frameSize.width = screenSize.width;
+			}
+			int x = screenSize.width / 2 - frameSize.width / 2;
+			int y = screenSize.height / 2 - frameSize.height / 2;
+			exp.setLocation(x, y);
+			exp.setVisible(true);
+		}
+	}
 
 	public class MacOSAboutHandler extends Application {
 
@@ -329,6 +395,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		this.atacs = atacs;
 		this.LPN2SBML = LPN2SBML;
 		async = lema || atacs;
+		Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler());
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -3239,15 +3306,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					String message;
 					if (gcms.equals("")) {
 						message = "Unable to delete the selected file." + "\nIt is linked to the following views:\n" + view
-								+ "Delete these views first.";
+								+ "\nDelete these views first.";
 					}
 					else if (view.equals("")) {
 						message = "Unable to delete the selected file." + "\nIt is linked to the following models:\n" + gcms
-								+ "Delete these models first.";
+								+ "\nDelete these models first.";
 					}
 					else {
 						message = "Unable to delete the selected file." + "\nIt is linked to the following views:\n" + view
-								+ "It is also linked to the following models:\n" + gcms + "Delete these views and models first.";
+								+ "\nIt is also linked to the following models:\n" + gcms + "\nDelete these views and models first.";
 					}
 					JTextArea messageArea = new JTextArea(message);
 					messageArea.setEditable(false);
@@ -4931,15 +4998,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					String message;
 					if (gcms.equals("")) {
 						message = "Unable to rename the selected file." + "\nIt is linked to the following views:\n" + view
-								+ "Delete these views first.";
+								+ "\nDelete these views first.";
 					}
 					else if (view.equals("")) {
 						message = "Unable to rename the selected file." + "\nIt is linked to the following models:\n" + gcms
-								+ "Delete these models first.";
+								+ "\nDelete these models first.";
 					}
 					else {
 						message = "Unable to rename the selected file." + "\nIt is linked to the following views:\n" + view
-								+ "It is also linked to the following models:\n" + gcms + "Delete these views and models first.";
+								+ "\nIt is also linked to the following models:\n" + gcms + "\nDelete these views and models first.";
 					}
 					JTextArea messageArea = new JTextArea(message);
 					messageArea.setEditable(false);
