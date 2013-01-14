@@ -67,6 +67,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
+import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.JPopupMenu;
@@ -211,6 +212,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private JPanel mainPanel; // the main panel
 
+	private JSplitPane topSplit;
+	
+	private JSplitPane mainSplit;
+	
 	private Boolean LPN2SBML = true;
 
 	public Log log; // the log
@@ -1159,7 +1164,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		// Packs the frame and displays it
 		mainPanel = new JPanel(new BorderLayout());
 		tree = new FileTree(null, this, lema, atacs);
-
+		
 		EditPreferences editPreferences = new EditPreferences(frame,async,tree);
 		editPreferences.setDefaultPreferences();
 
@@ -1167,9 +1172,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		tab = new CloseAndMaxTabbedPane(false, this);
 		tab.setPreferredSize(new Dimension(1100, 550));
 		// tab.getPaneUI().addMouseListener(this);
-		mainPanel.add(tree, "West");
-		mainPanel.add(tab, "Center");
-		mainPanel.add(log, "South");
+		
+		topSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tree, tab);
+		mainSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, topSplit, log);
+		
+		//mainPanel.add(tree, "West");
+		mainPanel.add(mainSplit, "Center");
+		//mainPanel.add(log, "South");
 		mainPanel.add(toolbar, "North");
 		frame.setContentPane(mainPanel);
 		frame.setJMenuBar(menuBar);
@@ -5779,7 +5788,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	public void refresh() {
 		mainPanel.remove(tree);
 		tree = new FileTree(new File(root), this, lema, atacs);
-		mainPanel.add(tree, "West");
+		topSplit.setLeftComponent(tree);
+		//mainPanel.add(tree, "West");
 		mainPanel.validate();
 	}
 
@@ -5789,7 +5799,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	public void refreshTree() {
 		mainPanel.remove(tree);
 		tree = new FileTree(new File(root), this, lema, atacs);
-		mainPanel.add(tree, "West");
+		topSplit.setLeftComponent(tree);
+		//mainPanel.add(tree, "West");
 		// updateGCM();
 		mainPanel.validate();
 	}
