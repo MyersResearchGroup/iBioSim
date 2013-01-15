@@ -3,6 +3,8 @@ package analysis.markov;
 import java.util.ArrayList;
 import analysis.markov.StateGraph.Property;
 
+import main.Gui;
+
 public class PerfromSteadyStateMarkovAnalysisThread extends Thread {
 
 	private StateGraph sg;
@@ -13,6 +15,7 @@ public class PerfromSteadyStateMarkovAnalysisThread extends Thread {
 
 	public PerfromSteadyStateMarkovAnalysisThread(StateGraph sg) {
 		super(sg);
+		Thread.setDefaultUncaughtExceptionHandler(new Gui.UncaughtExceptionHandler());
 		this.sg = sg;
 	}
 

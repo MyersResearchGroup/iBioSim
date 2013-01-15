@@ -280,7 +280,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	public static Object ICON_COLLAPSE = UIManager.get("Tree.collapsedIcon");
 	
-	public class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
+	public static class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
 		
 		String message;
 		

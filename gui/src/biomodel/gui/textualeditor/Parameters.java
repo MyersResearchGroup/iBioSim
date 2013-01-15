@@ -651,7 +651,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							String[] params = new String[parameters.getModel().getSize()];
 							for (int i = 0; i < parameters.getModel().getSize(); i++) {
 								params[i] = parameters.getModel().getElementAt(i).toString();
-								if (params[i].equals(selected)) index = i;
+								if (params[i].split(" ")[0].equals(selected)) index = i;
 							}
 							Parameter paramet = bioModel.getSBMLDocument().getModel().getParameter(selected);
 							paramet.setId(paramID.getText().trim());

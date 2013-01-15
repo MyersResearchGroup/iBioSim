@@ -10,9 +10,7 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Scanner;
-import java.util.Set;
 import java.util.prefs.Preferences;
 
 import javax.swing.JFileChooser;
@@ -439,7 +437,10 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			// Then read in the file with the GCMParser
 			GCMParser parser = new GCMParser(path + separator + modelId + ".gcm");
 			GeneticNetwork network = null;
-			network = parser.buildNetwork();
+			BioModel bioModel = new BioModel(path);
+			bioModel.load(path + separator + modelId + ".xml");
+			SBMLDocument sbml = bioModel.flattenModel();		
+			network = parser.buildNetwork(sbml);
 			if (network == null) return;
 			network.loadProperties(biomodel);
 			// Finally, output to a file
@@ -564,7 +565,10 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			biosimrc.put("biosim.general.export_dir",exportPath);
 			GCMParser parser = new GCMParser(path + separator + modelId + ".xml");
 			GeneticNetwork network = null;
-			network = parser.buildNetwork();
+			BioModel bioModel = new BioModel(path);
+			bioModel.load(path + separator + modelId + ".xml");
+			SBMLDocument sbml = bioModel.flattenModel();		
+			network = parser.buildNetwork(sbml);
 			if (network==null) return;
 			network.loadProperties(biomodel);
 			network.mergeSBML(exportPath);
@@ -1217,175 +1221,23 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 						dd.add(d[i]);
 					}
 				}
-				for (String di : dd) {
-					if (di.contains("/")) {
-						// TODO: REMOVED LIKELY CAUSE PROBLEM WITH PARAMS
-						/*
-						if (gcm.getPromoters().containsKey(di.split("=")[0].split("/")[0])) {
-							Properties promoterProps = gcm.getPromoters().get(di.split("=")[0].split("/")[0]);
-							promoterProps.put(di.split("=")[0].split("/")[1],
-									di.split("=")[1]);
-						}
-						if (gcm.getSpecies().contains(di.split("=")[0].split("/")[0])) {
-							Properties speciesProps = gcm.getSpecies().get(di.split("=")[0].split("/")[0]);
-							speciesProps.put(di.split("=")[0].split("/")[1],
-									di.split("=")[1]);
-						}
-						if (gcm.getInfluences().containsKey(di.split("=")[0].split("/")[0].replace("\"", ""))) {
-							Properties influenceProps = gcm.getInfluences().get(
-									di.split("=")[0].split("/")[0].replace("\"", ""));
-							influenceProps.put(di.split("=")[0].split("/")[1]
-									.replace("\"", ""), di.split("=")[1]);
-						}
-						*/
-					}
-					else {
-						/*
-						if (gcm.getGlobalParameters().containsKey(di.split("=")[0])) {
-							gcm.getGlobalParameters().put(di.split("=")[0], di.split("=")[1]);
-						}
-						if (gcm.getParameters().containsKey(di.split("=")[0])) {
-							gcm.getParameters().put(di.split("=")[0], di.split("=")[1]);
-						}
-						*/
-					}
-				}
 			}
 			direct = direct.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", "");
 			if (direct.equals(".") && !stem.equals("")) {
 				direct = "";
 			}
-			
 			GCMParser parser = new GCMParser(biomodel, false);
 			GeneticNetwork network = null;
-			network = parser.buildNetwork();
+			SBMLDocument sbml = biomodel.flattenModel();		
+			performModifications(sbml,dd);
+			network = parser.buildNetwork(sbml);
 			if (network==null) return false;
 			if (reb2sac != null)
 				network.loadProperties(biomodel, reb2sac.getGcmAbstractions(), reb2sac.getInterestingSpecies(), reb2sac.getProperty());
 			else
 				network.loadProperties(biomodel);
 			SBMLDocument d = network.getSBML();
-			for (String s : elementsPanel.getElementChanges()) {
-				for (long i = d.getModel().getNumInitialAssignments() - 1; i >= 0; i--) {
-					if (s.contains("=")) {
-						String formula = SBMLutilities.myFormulaToString(((InitialAssignment) d.getModel()
-								.getListOfInitialAssignments().get(i)).getMath());
-						String sFormula = s.substring(s.indexOf('=') + 1).trim();
-						sFormula = SBMLutilities.myFormulaToString(SBMLutilities.myParseFormula(sFormula));
-						sFormula = s.substring(0, s.indexOf('=') + 1) + " " + sFormula;
-						if ((((InitialAssignment) d.getModel().getListOfInitialAssignments().get(i))
-								.getSymbol()
-								+ " = " + formula).equals(sFormula)) {
-							d.getModel().getListOfInitialAssignments().remove(i);
-						}
-					}
-				}
-				for (long i = d.getModel().getNumConstraints() - 1; i >= 0; i--) {
-					if (d.getModel().getListOfConstraints().get(i).getMetaId().equals(s)) {
-						d.getModel().getListOfConstraints().remove(i);
-					}
-				}
-				for (long i = d.getModel().getNumEvents() - 1; i >= 0; i--) {
-					if (d.getModel().getListOfEvents().get(i).getId().equals(s)) {
-						d.getModel().getListOfEvents().remove(i);
-					}
-				}
-				for (long i = d.getModel().getNumRules() - 1; i >= 0; i--) {
-					if (s.contains("=")) {
-						String formula = SBMLutilities.myFormulaToString(((Rule) d.getModel().getListOfRules().get(i)).getMath());
-						String sFormula = s.substring(s.indexOf('=') + 1).trim();
-						sFormula = SBMLutilities.myFormulaToString(SBMLutilities.myParseFormula(sFormula));
-						sFormula = s.substring(0, s.indexOf('=') + 1) + " " + sFormula;
-						if ((((Rule) d.getModel().getListOfRules().get(i)).getVariable() + " = " + formula).equals(sFormula)) {
-							d.getModel().getListOfRules().remove(i);
-						}
-					}
-				}
-			}
-			for (int i = 0; i < d.getModel().getNumCompartments(); i++) {
-				for (String change : parameterChanges) {
-					if (change.split(" ")[0].equals(d.getModel().getCompartment(i).getId())) {
-						String[] splits = change.split(" ");
-						if (splits[splits.length - 2].equals("Modified") || splits[splits.length - 2].equals("Custom")) {
-							String value = splits[splits.length - 1];
-							d.getModel().getCompartment(i).setSize(Double.parseDouble(value));
-						}
-					}
-				}
-				for (String di : dd) {
-					if (di.split("=")[0].split(" ")[0].equals(d.getModel().getCompartment(i).getId())) {
-						String value = di.split("=")[1];
-						d.getModel().getCompartment(i).setSize(Double.parseDouble(value));
-					}
-				}
-			}
-			for (int i = 0; i < d.getModel().getNumSpecies(); i++) {
-				for (String change : parameterChanges) {
-					if (change.split(" ")[0].equals(d.getModel().getSpecies(i).getId())) {
-						String[] splits = change.split(" ");
-						if (splits[splits.length - 2].equals("Modified") || splits[splits.length - 2].equals("Custom")) {
-							String value = splits[splits.length - 1];
-							if (d.getModel().getSpecies(i).isSetInitialAmount()) {
-								d.getModel().getSpecies(i).setInitialAmount(Double.parseDouble(value));
-							}
-							else {
-								d.getModel().getSpecies(i).setInitialConcentration(Double.parseDouble(value));
-							}
-						}
-					}
-				}
-				for (String di : dd) {
-					if (di.split("=")[0].split(" ")[0].equals(d.getModel().getSpecies(i).getId())) {
-						String value = di.split("=")[1];
-						if (d.getModel().getSpecies(i).isSetInitialAmount()) {
-							d.getModel().getSpecies(i).setInitialAmount(Double.parseDouble(value));
-						}
-						else {
-							d.getModel().getSpecies(i).setInitialConcentration(Double.parseDouble(value));
-						}
-					}
-				}
-			}
-			for (int i = 0; i < d.getModel().getNumParameters(); i++) {
-				for (String change : parameterChanges) {
-					if (change.split(" ")[0].equals(d.getModel().getParameter(i).getId())) {
-						String[] splits = change.split(" ");
-						if (splits[splits.length - 2].equals("Modified") || splits[splits.length - 2].equals("Custom")) {
-							String value = splits[splits.length - 1];
-							d.getModel().getParameter(i).setValue(Double.parseDouble(value));
-						}
-					}
-				}
-				for (String di : dd) {
-					if (di.split("=")[0].split(" ")[0].equals(d.getModel().getParameter(i).getId())) {
-						String value = di.split("=")[1];
-						d.getModel().getParameter(i).setValue(Double.parseDouble(value));
-					}
-				}
-			}
-			for (int i = 0; i < d.getModel().getNumReactions(); i++) {
-				Reaction reaction = d.getModel().getReaction(i);
-				
-				ListOf parameters = reaction.getKineticLaw().getListOfParameters();
-				for (int j = 0; j < reaction.getKineticLaw().getNumParameters(); j++) {
-					Parameter paramet = ((Parameter) (parameters.get(j)));
-					for (String change : parameterChanges) {
-						if (change.split(" ")[0].equals(reaction.getId() + "/" + paramet.getId())) {
-							String[] splits = change.split(" ");
-							if (splits[splits.length - 2].equals("Modified") || splits[splits.length - 2].equals("Custom")) {
-								String value = splits[splits.length - 1];
-								paramet.setValue(Double.parseDouble(value));
-							}
-						}
-					}
-					for (String di : dd) {
-						if (di.split("=")[0].split(" ")[0].equals(reaction.getId() + "/" + paramet.getId())) {
-							String value = di.split("=")[1];
-							paramet.setValue(Double.parseDouble(value));
-						}
-					}
-				}
-			}
+			performModifications(d,dd);
 			network.markAbstractable();
 			network.mergeSBML(path + separator + simName + separator + stem + direct + separator + modelId + ".xml", d);
 		}
@@ -1396,6 +1248,130 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			//e1.printStackTrace();
 		}
 		return true;
+	}
+	
+	private void performModifications(SBMLDocument d,ArrayList<String> dd) {
+		for (String s : elementsPanel.getElementChanges()) {
+			for (long i = d.getModel().getNumInitialAssignments() - 1; i >= 0; i--) {
+				if (s.contains("=")) {
+					String formula = SBMLutilities.myFormulaToString(((InitialAssignment) d.getModel()
+							.getListOfInitialAssignments().get(i)).getMath());
+					String sFormula = s.substring(s.indexOf('=') + 1).trim();
+					sFormula = SBMLutilities.myFormulaToString(SBMLutilities.myParseFormula(sFormula));
+					sFormula = s.substring(0, s.indexOf('=') + 1) + " " + sFormula;
+					if ((((InitialAssignment) d.getModel().getListOfInitialAssignments().get(i))
+							.getSymbol()
+							+ " = " + formula).equals(sFormula)) {
+						d.getModel().getListOfInitialAssignments().remove(i);
+					}
+				}
+			}
+			for (long i = d.getModel().getNumConstraints() - 1; i >= 0; i--) {
+				if (d.getModel().getListOfConstraints().get(i).getMetaId().equals(s)) {
+					d.getModel().getListOfConstraints().remove(i);
+				}
+			}
+			for (long i = d.getModel().getNumEvents() - 1; i >= 0; i--) {
+				if (d.getModel().getListOfEvents().get(i).getId().equals(s)) {
+					d.getModel().getListOfEvents().remove(i);
+				}
+			}
+			for (long i = d.getModel().getNumRules() - 1; i >= 0; i--) {
+				if (s.contains("=")) {
+					String formula = SBMLutilities.myFormulaToString(((Rule) d.getModel().getListOfRules().get(i)).getMath());
+					String sFormula = s.substring(s.indexOf('=') + 1).trim();
+					sFormula = SBMLutilities.myFormulaToString(SBMLutilities.myParseFormula(sFormula));
+					sFormula = s.substring(0, s.indexOf('=') + 1) + " " + sFormula;
+					if ((((Rule) d.getModel().getListOfRules().get(i)).getVariable() + " = " + formula).equals(sFormula)) {
+						d.getModel().getListOfRules().remove(i);
+					}
+				}
+			}
+		}
+		for (int i = 0; i < d.getModel().getNumCompartments(); i++) {
+			for (String change : parameterChanges) {
+				if (change.split(" ")[0].equals(d.getModel().getCompartment(i).getId())) {
+					String[] splits = change.split(" ");
+					if (splits[splits.length - 2].equals("Modified") || splits[splits.length - 2].equals("Custom")) {
+						String value = splits[splits.length - 1];
+						d.getModel().getCompartment(i).setSize(Double.parseDouble(value));
+					}
+				}
+			}
+			for (String di : dd) {
+				if (di.split("=")[0].split(" ")[0].equals(d.getModel().getCompartment(i).getId())) {
+					String value = di.split("=")[1];
+					d.getModel().getCompartment(i).setSize(Double.parseDouble(value));
+				}
+			}
+		}
+		for (int i = 0; i < d.getModel().getNumSpecies(); i++) {
+			for (String change : parameterChanges) {
+				if (change.split(" ")[0].equals(d.getModel().getSpecies(i).getId())) {
+					String[] splits = change.split(" ");
+					if (splits[splits.length - 2].equals("Modified") || splits[splits.length - 2].equals("Custom")) {
+						String value = splits[splits.length - 1];
+						if (d.getModel().getSpecies(i).isSetInitialAmount()) {
+							d.getModel().getSpecies(i).setInitialAmount(Double.parseDouble(value));
+						}
+						else {
+							d.getModel().getSpecies(i).setInitialConcentration(Double.parseDouble(value));
+						}
+					}
+				}
+			}
+			for (String di : dd) {
+				if (di.split("=")[0].split("/")[0].equals(d.getModel().getSpecies(i).getId())) {
+					String value = di.split("=")[1];
+					if (d.getModel().getSpecies(i).isSetInitialAmount()) {
+						d.getModel().getSpecies(i).setInitialAmount(Double.parseDouble(value));
+					}
+					else {
+						d.getModel().getSpecies(i).setInitialConcentration(Double.parseDouble(value));
+					}
+				}
+			}
+		}
+		for (int i = 0; i < d.getModel().getNumParameters(); i++) {
+			for (String change : parameterChanges) {
+				if (change.split(" ")[0].equals(d.getModel().getParameter(i).getId())) {
+					String[] splits = change.split(" ");
+					if (splits[splits.length - 2].equals("Modified") || splits[splits.length - 2].equals("Custom")) {
+						String value = splits[splits.length - 1];
+						d.getModel().getParameter(i).setValue(Double.parseDouble(value));
+					}
+				}
+			}
+			for (String di : dd) {
+				if (di.split("=")[0].split(" ")[0].equals(d.getModel().getParameter(i).getId())) {
+					String value = di.split("=")[1];
+					d.getModel().getParameter(i).setValue(Double.parseDouble(value));
+				}
+			}
+		}
+		for (int i = 0; i < d.getModel().getNumReactions(); i++) {
+			Reaction reaction = d.getModel().getReaction(i);
+			
+			ListOf parameters = reaction.getKineticLaw().getListOfParameters();
+			for (int j = 0; j < reaction.getKineticLaw().getNumParameters(); j++) {
+				Parameter paramet = ((Parameter) (parameters.get(j)));
+				for (String change : parameterChanges) {
+					if (change.split(" ")[0].equals(reaction.getId() + "/" + paramet.getId())) {
+						String[] splits = change.split(" ");
+						if (splits[splits.length - 2].equals("Modified") || splits[splits.length - 2].equals("Custom")) {
+							String value = splits[splits.length - 1];
+							paramet.setValue(Double.parseDouble(value));
+						}
+					}
+				}
+				for (String di : dd) {
+					if (di.split("=")[0].split(" ")[0].equals(reaction.getId() + "/" + paramet.getId())) {
+						String value = di.split("=")[1];
+						paramet.setValue(Double.parseDouble(value));
+					}
+				}
+			}
+		}
 	}
 
 	public String getRefFile() {
@@ -1600,9 +1576,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		JPanel initPanel = Utility.createPanel(this, "Species", species, addInit, removeInit, editInit);
 		mainPanelCenterCenter.add(initPanel);
 		
-		parameters = new PropertyList("Parameter List");
-		editInit = new EditButton("Edit Parameter", parameters);
-		parameters.addAllItem(generateParameters());
 		parametersPanel.setPanels(initialsPanel, rulesPanel);
 		propPanel.add(consPanel, "Center");
 	}
@@ -1731,23 +1704,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 */
 	
 	public void reloadParameters() {
-		parameters.removeAllItem();
-		parameters.addAllItem(generateParameters());
-	}
-
-	private Set<String> generateParameters() {
-		HashSet<String> results = new HashSet<String>();
 		if (paramsOnly) {
-			/*
-			HashMap<String, String> params = gcm.getGlobalParameters();
-			ArrayList<Object> remove = new ArrayList<Object>();
-			for (String key : params.keySet()) {
-				remove.add(key);
-			}
-			for (Object prop : remove) {
-				params.remove(prop);
-			}
-			*/
 			for (String update : parameterChanges) {
 				String id;
 				if (!update.contains("/")) {
@@ -1757,54 +1714,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				}
 			}
 		}
-		/*
-		for (String s : gcm.getParameters().keySet()) {
-			if (!s.equals(GlobalConstants.KBIO_STRING) && !s.equals(GlobalConstants.KASSOCIATION_STRING)
-					&& !s.equals(GlobalConstants.MAX_DIMER_STRING)) {
-				if (gcm.getGlobalParameters().containsKey(s)) {
-					if (gcm.getParameter(s).contains("(")) {
-						results.add(CompatibilityFixer.getGuiName(s) + " ("
-								+ s + "), Sweep, "
-								+ gcm.getParameter(s));
-					}
-					else {
-						if (paramsOnly) {
-							results.add(CompatibilityFixer.getGuiName(s) + " ("
-									+ s + "), Modified, "
-									+ gcm.getParameter(s));
-						}
-						else {
-							results.add(CompatibilityFixer.getGuiName(s) + " ("
-									+ s + "), Custom, "
-									+ gcm.getParameter(s));
-						}
-					}
-				}
-				else {
-					if (paramsOnly) {
-						GCMFile refGCM = new GCMFile(path);
-						refGCM.load(path + separator + refFile);
-						if (refGCM.getGlobalParameters().containsKey(s)) {
-							results.add(CompatibilityFixer.getGuiName(s) + " ("
-									+ s + "), Custom, "
-									+ gcm.getParameter(s));
-						}
-						else {
-							results.add(CompatibilityFixer.getGuiName(s) + " ("
-									+ s + "), Default, "
-									+ gcm.getParameter(s));
-						}
-					}
-					else {
-						results.add(CompatibilityFixer.getGuiName(s) + " ("
-								+ s + "), Default, "
-								+ gcm.getParameter(s));
-					}
-				}
-			}
-		}
-		*/
-		return results;
 	}
 
 	// Internal private classes used only by the gui
@@ -2397,8 +2306,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	private PropertyList influences = null;
 
 	private PropertyList promoters = null;
-
-	private PropertyList parameters = null;
 
 	private PropertyList components = null;
 	
