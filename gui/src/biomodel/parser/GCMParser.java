@@ -78,8 +78,8 @@ public class GCMParser {
 		this.biomodel = gcm;
 	}
 
-	public GeneticNetwork buildNetwork() {
-		SBMLDocument sbml = biomodel.flattenModel();		
+	public GeneticNetwork buildNetwork(SBMLDocument sbml) {
+		//SBMLDocument sbml = biomodel.flattenModel();		
 		if (sbml == null) return null;
 		return buildTopLevelNetwork(sbml);
 	}

@@ -678,7 +678,8 @@ public class BioModel {
 
 	public LhpnFile convertToLHPN(ArrayList<String> specs, ArrayList<Object[]> conLevel, MutableString lpnProperty) {
 		GCMParser parser = new GCMParser(this, false);
-		GeneticNetwork network = parser.buildNetwork();
+		SBMLDocument sbml = this.flattenModel();		
+		GeneticNetwork network = parser.buildNetwork(sbml);
 		if (network == null) return null;
 		network.markAbstractable();
 		AbstractionEngine abs = network.createAbstractionEngine();
