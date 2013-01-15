@@ -1423,7 +1423,7 @@ public abstract class Simulator {
 			String speciesID = species.getId();
 			
 			//check to see if the species is arrayed			
-			if (stripAnnotation(species.getAnnotationString()).isEmpty() == false) {
+			if (stripAnnotation(species.getAnnotationString()).contains("array:array")) {
 				
 				arraysExist = true;
 				
@@ -3575,7 +3575,7 @@ public abstract class Simulator {
 			String speciesID = species.getId();
 			
 			//check to see if the species is arrayed			
-			if (stripAnnotation(species.getAnnotationString()).isEmpty() == false) {
+			if (stripAnnotation(species.getAnnotationString()).contains("array:array")) {
 				
 				arraysExist = true;
 				
