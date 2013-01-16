@@ -56,6 +56,7 @@ import java.util.regex.Matcher;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -283,6 +284,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	public static Object ICON_EXPAND = UIManager.get("Tree.expandedIcon");
 
 	public static Object ICON_COLLAPSE = UIManager.get("Tree.collapsedIcon");
+
+	private static final String[] bugReportTypes = new String[] { "BUG", "CHANGE", "FEATURE" };
 	
 	public static class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
 		
@@ -356,7 +359,16 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	}
 	
 	private static void submitBugReport(String message) {
-		JPanel reportBugPanel = new JPanel(new GridLayout(3,1));
+		JPanel reportBugPanel = new JPanel(new GridLayout(4,1));
+		JLabel typeLabel = new JLabel("Type of Report:");
+		JComboBox reportType = new JComboBox(bugReportTypes);
+		if (!message.equals("")) {
+			typeLabel.setEnabled(false);
+			reportType.setEnabled(false);
+		}
+ 		JPanel typePanel = new JPanel(new GridLayout(1,2));
+		typePanel.add(typeLabel);
+		typePanel.add(reportType);
 		JLabel emailLabel = new JLabel("Email address:");
 		JTextField emailAddr = new JTextField(30);
 		JPanel emailPanel = new JPanel(new GridLayout(1,2));
@@ -372,6 +384,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		JPanel bugDetailPanel = new JPanel(new GridLayout(1,2));
 		bugDetailPanel.add(bugDetailLabel);
 		bugDetailPanel.add(bugDetail);
+		reportBugPanel.add(typePanel);
 		reportBugPanel.add(emailPanel);
 		reportBugPanel.add(bugSubjectPanel);
 		reportBugPanel.add(bugDetailPanel);
@@ -397,7 +410,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			try {
 				mimeMessage.setFrom(new InternetAddress(emailAddr.getText().trim()));
 				mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-				mimeMessage.setSubject("BUG:"+bugSubject.getText().trim());
+				mimeMessage.setSubject(reportType.getSelectedItem() + ":"+bugSubject.getText().trim());
 				mimeMessage.setText("Bug reported by: "+emailAddr.getText().trim()+"\n\nDescription:\n"+
 						bugDetail.getText().trim()+message);
 				Transport.send(mimeMessage);
