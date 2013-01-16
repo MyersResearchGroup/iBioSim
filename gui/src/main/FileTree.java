@@ -830,6 +830,10 @@ public class FileTree extends JPanel implements MouseListener {
 			}
 		}
 	}
+	
+	public void expandPath(DefaultMutableTreeNode node) {
+		tree.expandPath(new TreePath(node.getPath()));
+	}
 
 	private void sort(Object[] sort) {
 		int i, j;
