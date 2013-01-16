@@ -609,7 +609,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						int index = 0;
 						for (int i = 0; i < parameters.getModel().getSize(); i++) {
 							params[i] = parameters.getModel().getElementAt(i).toString();
-							if (params[i].equals(selected)) index = i;
+							if (params[i].split(" ")[0].equals(selected)) index = i;
 						}
 						String[] splits = params[index].split(" ");
 						for (int i = 0; i < splits.length - 2; i++) {
