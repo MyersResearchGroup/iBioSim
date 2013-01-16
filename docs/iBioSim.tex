@@ -240,11 +240,11 @@ The schematic editor for an ordinary model is shown below.  There are two groups
 \includegraphics{../gui/icons/modelview/self_influence_selected}, is selected, clicking on a species creates a self influence relationship.  The remaining items on the toolbar allow the user to apply an automatic layout routine \includegraphics{../gui/icons/modelview/choose_layout_selected}, zoom, restore to default size (Un-Zoom), pan, edit model attributes (see Section~\ref{ModelEditor}), and edit the SBOL information associated with the model (see Section~\ref{SBOL}).  Finally, the additional tabs allow the user to add, edit, or remove \emph{real constants} (see Section~\ref{Constants}), \emph{function definitions} (see Section~\ref{Functions}), and \emph{unit definitions} (see Section~\ref{Units}).  One last note, there are several options in the Edit menu, which are also available via hotkeys, that can be useful during model editing.  These include return undo, redo, return to select mode, delete, and moving and adding elements on the schematic.  The user can also return to the select mode using the ESC key while delete and selection options are available in a right click menu on schematic objects.  
 
 \begin{center}
-\includegraphics[width=40mm]{screenshots/editMenu}
+\includegraphics[width=160mm]{screenshots/ModelEditor}
 \end{center}
 
 \begin{center}
-\includegraphics[width=160mm]{screenshots/ModelEditor}
+\includegraphics[width=40mm]{screenshots/editMenu}
 \end{center}
 
 \begin{center}
@@ -340,7 +340,7 @@ Reactions convert reactant species into product species with perhaps modifier sp
 \item ID: this is the ID for this reactant and should not be confused with the Species ID.  This ID can be used in equations such as rules and event assignments.  Use this ID when you want the stoichiometry to be determined by an equation or used in an equation.  The ID is optional.
 \item Name: an arbitrary string description of the species (optional).
 \item Species: the ID of the reactant species.
-\item Stoichiometry: the number of molecules consumed by the reaction (default=1.0).  Note that this value will be overridden when the reactant ID is used on the left-hand side of an assignment.
+\item Stoichiometry: the number of molecules consumed by the reaction (default=1.0).  This value can be a mathematical expression (see Section~\ref{SBMLMath}) which is called an \emph{initial assignment}.  
 \item Constant: indicates whether the stoichiometry can change dynamically (default=true).  
 \end{itemize}
 Similarly, the ID, Name, Species, Stoichiometry, and Constant fields can be edited for a Product edge as shown below.  Modifier edges do not have any of these fields, so they cannot be edited.
@@ -1377,17 +1377,19 @@ are available in the {\tt docs} directory that comes with the distribution.
 \section{Reporting Bugs and Feature Requests}
 
 \noindent
-In order to report a bug or to request a change or feature, please
-send an email to:\\ 
+When there is an un-handled exception, the window below allows the user to see more details about the exception.  These are likely not particularly useful to a user, but they are useful to us.  Therefore, the user can also submit this information as a bug report.  To make the bug report more useful, please provide an email address, a brief description of the bug, and a detailed description about how the bug occurred.  While all these fields are optional, the more information provided, the better.  A report can also be submitted from the Help menu.  In this case, the user can select whether the report is a BUG (an error or crash of the software), a CHANGE (something which can be improved), or a FEATURE (something new).  Finally, report can be submitted by sending an email to:\\ 
 %%tth:\begin{html}<a href="mailto:atacs-bugs@vlsigroup.ece.utah.edu">\end{html}
 {\tt atacs-bugs@vlsigroup.ece.utah.edu}.
 %%tth:\begin{html}</a>\end{html}
-The subject line must begin with one of the following keywords or the
-mail will be filtered by our spam filters:
-\begin{itemize}
-\item BUG - error or crash of the software
-\item CHANGE - something which can be improved
-\item FEATURE - something new
-\end{itemize}
- 
+Note that the subject line must begin with the keyword BUG, CHANGE, or FEATURE or the
+mail will be filtered by our spam filters.
+
+\begin{center}
+\includegraphics[width=60mm]{screenshots/exception}
+\end{center}
+
+\begin{center}
+\includegraphics[width=160mm]{screenshots/bugReport}
+\end{center}
+
 \end{document}

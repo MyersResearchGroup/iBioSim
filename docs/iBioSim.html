@@ -399,12 +399,12 @@ The schematic editor for an ordinary model is shown below.  There are two groups
 
 <div class="p"><!----></div>
 
-<center><img src="screenshots/editMenu.png" alt="screenshots/editMenu.png" />
+<center><img src="screenshots/ModelEditor.png" alt="screenshots/ModelEditor.png" />
 </center>
 
 <div class="p"><!----></div>
 
-<center><img src="screenshots/ModelEditor.png" alt="screenshots/ModelEditor.png" />
+<center><img src="screenshots/editMenu.png" alt="screenshots/editMenu.png" />
 </center>
 
 <div class="p"><!----></div>
@@ -600,7 +600,7 @@ Reactions convert reactant species into product species with perhaps modifier sp
 <div class="p"><!----></div>
 </li>
 
-<li> Stoichiometry: the number of molecules consumed by the reaction (default=1.0).  Note that this value will be overridden when the reactant ID is used on the left-hand side of an assignment.
+<li> Stoichiometry: the number of molecules consumed by the reaction (default=1.0).  This value can be a mathematical expression (see Section&nbsp;<a href="#SBMLMath">10</a>) which is called an <em>initial assignment</em>.
 <div class="p"><!----></div>
 </li>
 
@@ -2324,27 +2324,22 @@ are available in the <tt>docs</tt> directory that comes with the distribution.
 13</a>&nbsp;&nbsp;Reporting Bugs and Feature Requests</h2>
 
 <div class="p"><!----></div>
-In order to report a bug or to request a change or feature, please
-send an email to:<br />
+When there is an un-handled exception, the window below allows the user to see more details about the exception.  These are likely not particularly useful to a user, but they are useful to us.  Therefore, the user can also submit this information as a bug report.  To make the bug report more useful, please provide an email address, a brief description of the bug, and a detailed description about how the bug occurred.  While all these fields are optional, the more information provided, the better.  A report can also be submitted from the Help menu.  In this case, the user can select whether the report is a BUG (an error or crash of the software), a CHANGE (something which can be improved), or a FEATURE (something new).  Finally, report can be submitted by sending an email to:<br />
 <a href="mailto:atacs-bugs@vlsigroup.ece.utah.edu">
 <tt>atacs-bugs@vlsigroup.ece.utah.edu</tt>.
 </a>
-The subject line must begin with one of the following keywords or the
-mail will be filtered by our spam filters:
+Note that the subject line must begin with the keyword BUG, CHANGE, or FEATURE or the
+mail will be filtered by our spam filters.
 
-<ul>
-<li> BUG - error or crash of the software
 <div class="p"><!----></div>
-</li>
 
-<li> CHANGE - something which can be improved
-<div class="p"><!----></div>
-</li>
+<center><img src="screenshots/exception.png" alt="screenshots/exception.png" />
+</center>
 
-<li> FEATURE - something new
 <div class="p"><!----></div>
-</li>
-</ul>
+
+<center><img src="screenshots/bugReport.png" alt="screenshots/bugReport.png" />
+</center>
 
 <div class="p"><!----></div>
 
@@ -2352,5 +2347,5 @@ mail will be filtered by our spam filters:
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>H</a>,
-version 3.81.<br />On 14 Jan 2013, 09:24.</small>
+version 3.81.<br />On 15 Jan 2013, 21:09.</small>
 </html>
