@@ -84,6 +84,9 @@ import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.tree.TreeModel;
+import javax.mail.*;
+import javax.mail.PasswordAuthentication;
+import javax.mail.internet.*;
 
 import analysis.AnalysisView;
 import analysis.Run;
@@ -187,6 +190,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private JMenuItem importRsg; // The import rsg menu item
 	private JMenuItem importSpice; // The import spice circuit item
 	private JMenuItem manual; // The manual menu item
+	private JMenuItem bugReport; // The manual menu item
 	private JMenuItem about; // The about menu item
 	private JMenuItem openProj; // The open menu item
 	private JMenuItem clearRecent; // Clear recent project list
@@ -302,6 +306,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				}
 			});
+			JButton report = new JButton("Send Bug Report");
+			report.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					submitBugReport("\n\nStack trace:\n"+message);
+				}
+			});
 			JButton close = new JButton("Close");
 			close.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -314,6 +324,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			errMsgPanel.add(errMsg);
 			JPanel buttons = new JPanel();
 			buttons.add(details);
+			buttons.add(report);
 			buttons.add(close);
 			JPanel expPanel = new JPanel(new BorderLayout());
 			expPanel.add(errMessage,"North");
@@ -343,7 +354,75 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			exp.setVisible(true);
 		}
 	}
+	
+	private static void submitBugReport(String message) {
+		JPanel reportBugPanel = new JPanel(new GridLayout(3,1));
+		JLabel emailLabel = new JLabel("Email address:");
+		JTextField emailAddr = new JTextField(30);
+		JPanel emailPanel = new JPanel(new GridLayout(1,2));
+		emailPanel.add(emailLabel);
+		emailPanel.add(emailAddr);
+		JLabel bugSubjectLabel = new JLabel("Brief Description:");
+		JTextField bugSubject = new JTextField(30);
+		JPanel bugSubjectPanel = new JPanel(new GridLayout(1,2));
+		bugSubjectPanel.add(bugSubjectLabel);
+		bugSubjectPanel.add(bugSubject);
+		JLabel bugDetailLabel = new JLabel("Detailed Description:");
+		JTextArea bugDetail = new JTextArea(5,30);
+		JPanel bugDetailPanel = new JPanel(new GridLayout(1,2));
+		bugDetailPanel.add(bugDetailLabel);
+		bugDetailPanel.add(bugDetail);
+		reportBugPanel.add(emailPanel);
+		reportBugPanel.add(bugSubjectPanel);
+		reportBugPanel.add(bugDetailPanel);
+		Object[] options = { "Send", "Cancel" };
+		int value = JOptionPane.showOptionDialog(Gui.frame, reportBugPanel, "Bug Report",
+				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+		if (value==0) {
+			String to = "atacs-bugs@vlsigroup.ece.utah.edu";
+			Properties props = new Properties();
+			props.put("mail.smtp.user", "ibiosim@gmail.com");
+			props.put("mail.smtp.host", "smtp.gmail.com");
+			props.put("mail.smtp.port", "465");
+			props.put("mail.smtp.starttls.enable", "true");
+			props.put("mail.smtp.debug", "true");
+			props.put("mail.smtp.auth", "true");
+			props.put("mail.smtp.socketFactory.port", "465");
+			props.put("mail.smtp.socketFactory.class", 
+					"javax.net.ssl.SSLSocketFactory");
+			props.put("mail.smtp.socketFactory.fallback", "false");
+			MyAuthenticator authentication = new MyAuthenticator("ibiosim@gmail.com","lambda123");
+			Session session = Session.getDefaultInstance(props,authentication);
+			MimeMessage mimeMessage = new MimeMessage(session);
+			try {
+				mimeMessage.setFrom(new InternetAddress(emailAddr.getText().trim()));
+				mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+				mimeMessage.setSubject("BUG:"+bugSubject.getText().trim());
+				mimeMessage.setText("Bug reported by: "+emailAddr.getText().trim()+"\n\nDescription:\n"+
+						bugDetail.getText().trim()+message);
+				Transport.send(mimeMessage);
+			} catch (MessagingException mex) {
+				mex.printStackTrace();
+			}
+		}
+	}
+	
+	   
+	public static class MyAuthenticator extends javax.mail.Authenticator {
+		String User;
+		String Password;
+		public MyAuthenticator (String user, String password) {
+			User = user;
+			Password = password;
+		}
 
+		@Override
+		public PasswordAuthentication getPasswordAuthentication() {
+			return new javax.mail.PasswordAuthentication(User, Password);
+		}
+	}
+
+ 
 	public class MacOSAboutHandler extends Application {
 
 		public MacOSAboutHandler() {
@@ -537,6 +616,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		rename = new JMenuItem("Rename File");
 		delete = new JMenuItem("Delete File");
 		manual = new JMenuItem("Manual");
+		bugReport = new JMenuItem("Submit Bug Report");
 		about = new JMenuItem("About");
 		openProj = new JMenuItem("Open Project");
 		clearRecent = new JMenuItem("Clear Recent");
@@ -650,6 +730,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		closeAll.addActionListener(this);
 		pref.addActionListener(this);
 		manual.addActionListener(this);
+		bugReport.addActionListener(this);
 		newProj.addActionListener(this);
 		newSBMLModel.addActionListener(this);
 		newGridModel.addActionListener(this);
@@ -787,6 +868,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		rename.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, ShortCutKey | KeyEvent.SHIFT_MASK));
 		delete.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ShortCutKey | KeyEvent.SHIFT_MASK));
 		manual.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey | KeyEvent.SHIFT_MASK));
+		bugReport.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, ShortCutKey));
 		exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ShortCutKey));
 		pref.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, ShortCutKey));
 
@@ -1010,6 +1092,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportMovieMenu.add(exportMp4);
 		//file.addSeparator();
 		help.add(manual);
+		help.add(bugReport);
 		if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
 			new MacOSAboutHandler();
 			new MacOSPreferencesHandler();
@@ -1628,6 +1711,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else if (e.getSource() == about) {
 			about();
+		}
+		else if (e.getSource() == bugReport) {
+			submitBugReport("");
 		}
 		else if (e.getSource() == manual) {
 			try {
