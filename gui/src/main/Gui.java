@@ -85,6 +85,7 @@ import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
 import javax.mail.*;
 import javax.mail.PasswordAuthentication;
 import javax.mail.internet.*;
@@ -7383,6 +7384,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						openLearn();
 					}
 				}
+			}
+			else if (new File(tree.getFile()).isDirectory() && tree.getFile().equals(root)) {
+				tree.expandPath(tree.getRoot());
 			}
 		}
 		else {
