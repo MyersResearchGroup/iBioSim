@@ -520,10 +520,10 @@ public class GeneticNetwork {
 		++submodelIndex) {
 			
 			SBMLReader sbmlReader = new SBMLReader();
-			Model submodel = sbmlReader.readSBMLFromFile(properties.getPath() + 
-					properties.getSBMLCompModel().getSubmodel(submodelIndex).getModelRef() + ".xml").getModel();
-			if (properties.getSBMLCompModel().getSubmodel(submodelIndex).getId().contains("GRID__") == false)
-				submodel.setId(properties.getSBMLCompModel().getSubmodel(submodelIndex).getId());
+			String extModelFile = properties.getSBMLComp().getExternalModelDefinition(
+					properties.getSBMLCompModel().getSubmodel(submodelIndex).getModelRef())
+					.getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
+			Model submodel = sbmlReader.readSBMLFromFile(properties.getPath() + extModelFile).getModel();
 			
 			//find all individual dynamic events (within submodels)
 			for (int i = 0; i < submodel.getNumEvents(); ++i) {

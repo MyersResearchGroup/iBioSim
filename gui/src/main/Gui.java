@@ -9978,7 +9978,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	public static SBMLDocument readSBML(String filename) {
 		SBMLReader reader = new SBMLReader();
 		SBMLDocument document = reader.readSBML(filename);
-		document.getModel().setId(document.getModel().getId().replace(".","_"));
+		if (document.getModel().isSetId()) {
+			document.getModel().setId(document.getModel().getId().replace(".","_"));
+		}
 		JTextArea messageArea = new JTextArea();
 		messageArea.append("Conversion to SBML level " + SBML_LEVEL + " version " + SBML_VERSION + " produced the errors listed below. ");
 		messageArea.append("It is recommended that you fix them before using these models or you may get unexpected results.\n\n");
