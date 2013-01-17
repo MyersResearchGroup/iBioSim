@@ -1274,6 +1274,13 @@ public class Run implements ActionListener {
 						command = command.replaceAll("sim", sim);
 						log.addText(command + "\n");
 						time1 = System.nanoTime();
+						
+						double stoichAmpValue = 
+							Double.parseDouble(properties.getProperty(
+									"reb2sac.diffusion.stoichiometry.amplification.value"));
+						
+						Simulator.expandArrays(filename, stoichAmpValue);
+
 						reb2sac = exec.exec(command, null, work);
 					}
 				}
