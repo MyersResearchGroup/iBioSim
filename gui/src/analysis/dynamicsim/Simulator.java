@@ -1808,6 +1808,8 @@ public abstract class Simulator {
 					//loop through all reactants
 					for (SpeciesReference reactant : reaction.getListOfReactants()) {
 						
+						reactant.unsetMetaId();
+						
 						//find offsets
 						//the row offset is in the kinetic law via i
 						//the col offset is in the kinetic law via j
@@ -1858,13 +1860,14 @@ public abstract class Simulator {
 					
 					//loop through all modifiers
 					for (ModifierSpeciesReference modifier : reaction.getListOfModifiers()) {
-						
+						modifier.unsetMetaId();
 						
 					}					
 					
 					//loop through all products
 					for (SpeciesReference product : reaction.getListOfProducts()) {
 						
+						product.unsetMetaId();
 						//find offsets
 						int rowOffset = 0;
 						int colOffset = 0;
@@ -1929,7 +1932,7 @@ public abstract class Simulator {
 						
 						//checking for these local parameters using getLocalParameters() doesn't seem to work
 						for (LocalParameter lp : newReaction.getKineticLaw().getListOfLocalParameters()) {
-							
+							lp.unsetMetaId();
 							if (lp.getId().equals("i"))
 								i = true;
 							else if (lp.getId().equals("j"))

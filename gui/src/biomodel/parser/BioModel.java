@@ -173,13 +173,13 @@ public class BioModel {
 				//createDiffusionDefaultParameters();
 			} else {
 				c.setId("Cell");
+				Port port = sbmlCompModel.createPort();
+				port.setId(GlobalConstants.COMPARTMENT+"__"+c.getId());
+				port.setIdRef(c.getId());
 			}
 			c.setSize(1);
 			c.setSpatialDimensions(3);
 			c.setConstant(true);
-			Port port = sbmlCompModel.createPort();
-			port.setId(GlobalConstants.COMPARTMENT+"__"+c.getId());
-			port.setIdRef(c.getId());
 		}
 	}
 
@@ -6227,38 +6227,38 @@ public class BioModel {
 				j++;
 			}
 		}
-		if (!this.isGridEnabled()) {
-			for (long i = 0; i < sbmlCompModel.getNumSubmodels(); i++) {
-				Submodel submodel = sbmlCompModel.getSubmodel(i);
-				BioModel subBioModel = new BioModel(path);		
-				String extModelFile = sbmlComp.getExternalModelDefinition(submodel.getModelRef())
-						.getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
-				subBioModel.load(path + separator + extModelFile);
-				SBMLWriter writer = new SBMLWriter();
-				String SBMLstr = writer.writeSBMLToString(subBioModel.getSBMLDocument());
-				String md5 = Utility.MD5(SBMLstr);
-				if (!sbmlComp.getExternalModelDefinition(submodel.getModelRef()).getMd5().equals("") &&
+		//if (!this.isGridEnabled()) {
+		for (long i = 0; i < sbmlCompModel.getNumSubmodels(); i++) {
+			Submodel submodel = sbmlCompModel.getSubmodel(i);
+			BioModel subBioModel = new BioModel(path);		
+			String extModelFile = sbmlComp.getExternalModelDefinition(submodel.getModelRef())
+					.getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
+			subBioModel.load(path + separator + extModelFile);
+			SBMLWriter writer = new SBMLWriter();
+			String SBMLstr = writer.writeSBMLToString(subBioModel.getSBMLDocument());
+			String md5 = Utility.MD5(SBMLstr);
+			if (!sbmlComp.getExternalModelDefinition(submodel.getModelRef()).getMd5().equals("") &&
 					!sbmlComp.getExternalModelDefinition(submodel.getModelRef()).getMd5().equals(md5)) {
-					//System.out.println("MD5 DOES NOT MATCH");
-					sbmlComp.getExternalModelDefinition(submodel.getModelRef()).setMd5(md5);
-				}
-				removeStaleReplacementsDeletions(subBioModel,submodel);
-				addImplicitReplacementsDeletions(subBioModel,submodel);
-				for (j = 0; j < subBioModel.getSBMLCompModel().getNumPorts(); j++) {
-					Port subPort = subBioModel.getSBMLCompModel().getPort(j);
-					if (!isPortRemoved(submodel,subPort.getId())) {
-						Port port = sbmlCompModel.createPort();
-						port.setId(subPort.getId()+"__"+submodel.getId());
-						port.setIdRef(submodel.getId());
-						if (subPort.isSetSBOTerm()) {
-							port.setSBOTerm(subPort.getSBOTerm());
-						}
-						SBaseRef sbaseRef = port.createSBaseRef();
-						sbaseRef.setPortRef(subPort.getId());
+				//System.out.println("MD5 DOES NOT MATCH");
+				sbmlComp.getExternalModelDefinition(submodel.getModelRef()).setMd5(md5);
+			}
+			removeStaleReplacementsDeletions(subBioModel,submodel);
+			addImplicitReplacementsDeletions(subBioModel,submodel);
+			for (j = 0; j < subBioModel.getSBMLCompModel().getNumPorts(); j++) {
+				Port subPort = subBioModel.getSBMLCompModel().getPort(j);
+				if (!isPortRemoved(submodel,subPort.getId())) {
+					Port port = sbmlCompModel.createPort();
+					port.setId(subPort.getId()+"__"+submodel.getId());
+					port.setIdRef(submodel.getId());
+					if (subPort.isSetSBOTerm()) {
+						port.setSBOTerm(subPort.getSBOTerm());
 					}
+					SBaseRef sbaseRef = port.createSBaseRef();
+					sbaseRef.setPortRef(subPort.getId());
 				}
 			}
 		}
+		//}
 	}
 
 	public boolean isInput(String id) {
@@ -6578,8 +6578,10 @@ public class BioModel {
 			long metaIdNum = 1;
 			for (long i = 0; i < elements.getSize(); i++) {
 				SBase sbase = elements.get(i);
-				sbase.setMetaId("iBioSim"+metaIdNum);
-				metaIdNum++;
+				if (sbase.isSetMetaId()) {
+					sbase.setMetaId("iBioSim"+metaIdNum);
+					metaIdNum++;
+				}
 			}
 		}
 		return document;
