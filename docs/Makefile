@@ -43,11 +43,11 @@ iBioSim_Grid_Tutorial.pdf: iBioSim_Grid_Tutorial.tex
 iBioSim_Grid_Tutorial.html: iBioSim_Grid_Tutorial.pdf
 	tth -u -e2 -LiBioSim_Grid_Tutorial < iBioSim_Grid_Tutorial.tex > iBioSim_Grid_Tutorial.html
 
-iBioSim_install.pdf: iBioSim_install.tex
+iBioSim_Install.pdf: iBioSim_Install.tex
 	$(PDFLATEX) iBioSim_Install
 	$(PDFLATEX) iBioSim_Install
 
-iBioSim_install.html: iBioSim_install.pdf
+iBioSim_Install.html: iBioSim_Install.pdf
 	tth -u -e2 -LiBioSim_Install < iBioSim_Install.tex > iBioSim_Install.html
 
 clean:
