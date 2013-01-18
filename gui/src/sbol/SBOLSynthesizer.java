@@ -15,11 +15,11 @@ import org.sbolstandard.core.impl.*;
 public class SBOLSynthesizer {
 	
 	private SBOLSynthesisGraph synGraph;
-	private SequenceTypeValidator constructValidator;
+	private SequenceTypeValidator seqValidator;
 	
-	public SBOLSynthesizer(SBOLSynthesisGraph synGraph, SequenceTypeValidator constructValidator) {
+	public SBOLSynthesizer(SBOLSynthesisGraph synGraph, SequenceTypeValidator seqValidator) {
 		this.synGraph = synGraph;
-		this.constructValidator = constructValidator;
+		this.seqValidator = seqValidator;
 	}
 	
 	public DnaComponent exportDnaComponent(String exportFilePath, String saveDirectory) {
@@ -53,16 +53,15 @@ public class SBOLSynthesizer {
 			types.addAll(SBOLUtility.loadLowestSOTypes(subComp));
 		}
 
-		if (constructValidator != null && !constructValidator.validate(types)) {
+		if (seqValidator != null && !seqValidator.validateConstruct(types)) {
 			Object[] options = { "OK", "Cancel" };
 			int choice = JOptionPane.showOptionDialog(null, 
-					"Ordering of SBOL DNA components associated to SBML does not match\n preferred regular expression for a complete genetic construct.\n  Proceed with synthesis?", 
+					"Ordering of DNA components associated with model does not match\n preferred regular expression for a complete genetic construct.\n  Proceed with synthesis?", 
 					"Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
 			if (choice != JOptionPane.OK_OPTION)
 				return null;
 		}
 		return synthComp;
-//		}
 	}
 	
 	private int addSubComponent(int position, DnaComponent subComp, DnaComponent synthComp, int addCount) {	
@@ -90,20 +89,11 @@ public class SBOLSynthesizer {
 		List<DnaComponent> subCompsWithoutTerminal = new LinkedList<DnaComponent>();
 		List<DnaComponent> subCompsWithoutStart = new LinkedList<DnaComponent>();
 		List<DnaComponent> subCompsWithoutStartOrTerminal = new LinkedList<DnaComponent>();
-		String p = "promoter";
-		String r = "ribosome entry site";
-		String c = "coding sequence";
-		String t = "terminator";
-		SequenceTypeValidator serialValidator = new SequenceTypeValidator("(("+p+"(("+r+","+c+")+"+t+"+"+p+")*("+r+","+c+")*("+r+"("+c+","+t+"*)?)?)" +
-				"|("+r+"(("+c+","+r+")*"+c+","+t+"+"+p+","+r+")*("+c+","+r+")*("+c+"("+t+"+"+p+"?)?)?)" +
-				"|("+c+"(("+r+","+c+")*"+t+"+"+p+","+r+","+c+")*("+r+","+c+")*("+r+"|("+t+"+("+p+","+r+"?)?))?)" +
-				"|("+t+"+("+p+"("+r+","+c+")+"+t+"+)*("+p+"("+r+","+c+")*"+r+"?)?))?");
-//		SequenceTypeValidator serialValidator = new SequenceTypeValidator("p");
-		Set<String> startTypes = constructValidator.getStartTypes();
-		Set<String> terminalTypes = constructValidator.getTerminalTypes();
+		Set<String> startTypes = seqValidator.getStartTypes();
+		Set<String> terminalTypes = seqValidator.getTerminalTypes();
 		for (SBOLSynthesisNode startNode : synGraph.getStartNodes()) {
-			serialValidator.reset();
-			List<DnaComponent> dnaComps = gatherDNAComponents(startNode, serialValidator, terminalTypes);
+			seqValidator.resetFragmentValidator();
+			List<DnaComponent> dnaComps = gatherDNAComponents(startNode, seqValidator, terminalTypes);
 			if (dnaComps == null) 
 				return null;
 			else if (dnaComps.size() > 0) {
@@ -155,7 +145,7 @@ public class SBOLSynthesizer {
 		}
 	}
 	
-	private List<DnaComponent> gatherDNAComponents(SBOLSynthesisNode startNode, SequenceTypeValidator serialValidator, 
+	private List<DnaComponent> gatherDNAComponents(SBOLSynthesisNode startNode, SequenceTypeValidator seqValidator, 
 			Set<String> terminalTypes) {
 		List<SBOLSynthesisNode> currentNodes = new LinkedList<SBOLSynthesisNode>();
 		List<DnaComponent> dnaComps = new LinkedList<DnaComponent>();
@@ -164,13 +154,14 @@ public class SBOLSynthesizer {
 			List<String> soTypes = new LinkedList<String>();
 			for (DnaComponent dnaComp : currentNodes.get(0).getDNAComponents())
 				soTypes.addAll(SBOLUtility.loadLowestSOTypes(dnaComp));
-			if (serialValidator.validate(soTypes))
-				dnaComps.addAll(currentNodes.get(0).getDNAComponents());
-			else {
-				JOptionPane.showMessageDialog(Gui.frame, "Serialized DNA components have an invalid ordering of sequence types.", 
-						"Invalid Sequence Type Order", JOptionPane.ERROR_MESSAGE);
-				return null;
-			}
+			if (soTypes.size() > 0) 
+				if (seqValidator.validateFragment(soTypes))
+					dnaComps.addAll(currentNodes.get(0).getDNAComponents());
+				else {
+					JOptionPane.showMessageDialog(Gui.frame, "Serialized DNA components have an invalid ordering of sequence types.", 
+							"Invalid Sequence Type Order", JOptionPane.ERROR_MESSAGE);
+					return null;
+				}
 			if (currentNodes.get(0).getNextNodes().size() > 1)
 				orderNonTerminalBranchesFirst(currentNodes.get(0), terminalTypes);
 			currentNodes.addAll(0, currentNodes.remove(0).getNextNodes());

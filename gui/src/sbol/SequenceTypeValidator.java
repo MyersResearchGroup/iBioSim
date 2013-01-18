@@ -6,14 +6,23 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import antlrPackage.PropertyParser.else_if_return;
+
 public class SequenceTypeValidator {
-	private DFA dfa;
+	private DFA constructDFA;
+	private DFA fragmentDFA;
 	private int stateIndex;
 	
 	public SequenceTypeValidator(String regex) {
+		String altRegex = altFragmentRegex(regex);
+		String exAltRegex = exFragmentRegex(altRegex);
+//		System.out.println(altRegex);
+//		System.out.println(exAltRegex);
 		Set<NFAState> nfaStartStates = constructNFA(regex);
-		this.dfa = new DFA(nfaStartStates);
-//		dfa.print();
+		this.constructDFA = new DFA(nfaStartStates);
+		nfaStartStates = constructNFA(exAltRegex);
+		this.fragmentDFA = new DFA(nfaStartStates);
+//		fragmentDFA.print();
 	}
 	
 	private Set<NFAState> constructNFA(String regex) {
@@ -29,48 +38,58 @@ public class SequenceTypeValidator {
 	
 	private Set<NFAState> constructNFAHelper(Set<NFAState> startStates, String regex, String quantifier, Set<String> localIDs) { 
 		Set<NFAState> acceptStates = new HashSet<NFAState>();
-		if (!regex.contains("(") && !regex.contains(")") && !regex.contains("+") && !regex.contains("*")
-				&& !regex.contains("|") && !regex.contains("?") && !regex.contains(",")) {
-			NFAState nextState = new NFAState("S" + stateIndex);
-			localIDs.add("S" + stateIndex);
-			stateIndex++;
-			for (NFAState startState : startStates)
-				startState.addTransition(regex.trim(), nextState);
-			acceptStates.add(nextState);
-		} else {
-			int i = 0;
-			acceptStates.addAll(startStates);
-			do {
-				int j;
-				String subRegex;
-				String subQuantifier = "";
-				boolean or = false;
-				while (regex.substring(i, i + 1).equals("|") || regex.substring(i, i + 1).equals(",")) {
-					if (regex.substring(i, i + 1).equals("|"))
-						or = true;
-					i++;
-				}
-				if (regex.substring(i, i + 1).equals("(")) {
-					j = findClosingParen(regex, i);
-					subRegex = regex.substring(i + 1, j);
-				} else {
-					j = findClosingLetter(regex, i);
-					subRegex = regex.substring(i, j + 1);
-				}
-				if (j + 1 < regex.length())
-					subQuantifier = regex.substring(j + 1, j + 2);
-				Set<String> subIDs = new HashSet<String>();
-				if (or)
-					acceptStates.addAll(constructNFAHelper(startStates, subRegex, subQuantifier, subIDs));
-				else
-					acceptStates = constructNFAHelper(acceptStates, subRegex, subQuantifier, subIDs);
-				localIDs.addAll(subIDs);
-				if (subQuantifier.equals("+") || subQuantifier.equals("*") || subQuantifier.equals("?")) {
-					i = j + 2;
-				} else
-					i = j + 1;
-			} while (i < regex.length());
-		}
+		acceptStates.addAll(startStates);
+		int i = 0;
+		do {
+			int j;
+			String subRegex;
+			String subQuantifier = "";
+			if (regex.substring(i, i + 1).equals(","))
+				i++;
+			if (regex.substring(i, i + 1).equals("|")) {
+				j = locateClosingOr(regex, i);
+				subRegex = regex.substring(i + 1, j);
+			} else if (regex.substring(i, i + 1).equals("(")) {
+				j = locateClosingParen(regex, i);
+				subRegex = regex.substring(i + 1, j);
+			} else {
+				j = locateClosingLetter(regex, i);
+				subRegex = regex.substring(i, j + 1);
+			}
+			if (j + 1 < regex.length())
+				subQuantifier = regex.substring(j + 1, j + 2);
+			Set<String> subIDs = new HashSet<String>();
+			if (regex.substring(i, i + 1).equals("|"))
+				acceptStates.addAll(constructNFAHelper(startStates, subRegex, subQuantifier, subIDs));
+			else if (regex.substring(i, i + 1).equals("("))
+				acceptStates = constructNFAHelper(acceptStates, subRegex, subQuantifier, subIDs);
+			else 
+				acceptStates = addNFAState(acceptStates, subRegex, subQuantifier, subIDs);
+			localIDs.addAll(subIDs);
+			if (regex.substring(i, i + 1).equals("|"))
+				i = j;
+			else if (subQuantifier.equals("+") || subQuantifier.equals("*") || subQuantifier.equals("?")) 
+				i = j + 2;
+			else
+				i = j + 1;
+		} while (i < regex.length());
+		quantifyNFAStates(startStates, acceptStates, quantifier, localIDs);
+		return acceptStates;
+	}
+	
+	private Set<NFAState> addNFAState(Set<NFAState> startStates, String regex, String quantifier, Set<String> localIDs) { 
+		Set<NFAState> acceptStates = new HashSet<NFAState>();
+		NFAState nextState = new NFAState("S" + stateIndex);
+		localIDs.add("S" + stateIndex);
+		stateIndex++;
+		for (NFAState startState : startStates)
+			startState.addTransition(regex.trim(), nextState);
+		acceptStates.add(nextState);
+		quantifyNFAStates(startStates, acceptStates, quantifier, localIDs);
+		return acceptStates;
+	}
+	
+	private void quantifyNFAStates(Set<NFAState> startStates, Set<NFAState> acceptStates, String quantifier, Set<String> localIDs) {
 		if (quantifier.equals("+") || quantifier.equals("*"))
 			for (NFAState startState : startStates) 
 				for (String label : startState.getTransitions().keySet()) 
@@ -80,58 +99,254 @@ public class SequenceTypeValidator {
 								acceptState.addTransition(label, destination);
 		if (quantifier.equals("*") || quantifier.equals("?"))
 			acceptStates.addAll(startStates);
-		return acceptStates;
 	}
 	
-	private int findClosingParen(String regex, int j) {
-		int openParen = 1;
-		int closeParen = 0;
-		do {
-			j++;
-			String token = regex.substring(j, j + 1);
-			if (token.equals("("))
-				openParen++;
-			else if (token.equals(")"))
-				closeParen++;
-		} while (openParen != closeParen && j < regex.length());
-		return j;
-	}
-	
-	private int findClosingLetter(String regex, int j) {
-		while (true) {
-			if (j + 1 < regex.length()) {
-				String token = regex.substring(j + 1, j + 2);
-				if (token.equals("(") || token.equals(")") || token.equals("+") || token.equals("*")
-						|| token.equals("|") || token.equals("?") || token.equals(","))
-					return j;
-				else
-					j++;
+	private String altFragmentRegex(String regex) {
+		List<String> orFragments = findOrFragments(regex);
+		if (orFragments.size() > 1) {
+			String result = altFragmentRegex(orFragments.get(0));
+			for (int i = 1; i < orFragments.size(); i++)
+				result = result + "|" + altFragmentRegex(orFragments.get(i));
+			return result;
+		} else if (regex.startsWith("(")) {
+			int i = locateClosingParen(regex, 0);
+			String xFragment = regex.substring(1, i);
+			if (i + 1 < regex.length()) {
+				String quantifier = regex.substring(i + 1, i + 2);
+				if (quantifier.equals("*") || quantifier.equals("+"))
+					if (i + 2 < regex.length()) {
+						String yFragment = getSubRegex(regex, i + 2);
+						return "(" + altFragmentRegex(xFragment) + ")" + "(" + xFragment + ")*" + yFragment + "|"
+								+ altFragmentRegex(yFragment);
+					} else
+						return "(" + altFragmentRegex(xFragment) + ")" + "(" + xFragment + ")*";
+				else if (quantifier.equals("?") || quantifier.equals(","))
+					if (i + 2 < regex.length()) {
+						String yFragment = getSubRegex(regex, i + 2);
+						return altFragmentRegex("(" + xFragment + ")" + yFragment);
+					} else
+						return altFragmentRegex(xFragment);
+				else {
+					String yFragment = getSubRegex(regex, i + 1);
+					orFragments = findOrFragments(xFragment);
+					if (orFragments.size() > 1) {
+						String result = altFragmentRegex(orFragments.get(0));
+						for (int j = 1; j < orFragments.size(); j++)
+							result = result + "|" + altFragmentRegex(orFragments.get(j));
+						return ("(" + result + ")" + yFragment + "|" + altFragmentRegex(yFragment));
+					} else
+						return altFragmentRegex(xFragment + "," + yFragment);
+				}
 			} else 
-				return j;
+				return altFragmentRegex(xFragment);
+		} else {
+			int i = locateClosingLetter(regex, 0);
+			String terminal = regex.substring(0, i + 1);
+			if (i + 1 < regex.length()) {
+				String quantifier = regex.substring(i + 1, i + 2);
+				if (quantifier.equals("*") || quantifier.equals("+"))
+					if (i + 2 < regex.length()) {
+						String xFragment = getSubRegex(regex, i + 2);
+						return terminal + "," + terminal + "*" + xFragment + "|" + altFragmentRegex(xFragment);
+					} else
+						return terminal + "," + terminal + "*";
+				else if (quantifier.equals("?") || quantifier.equals(","))
+					if (i + 2 < regex.length()) {
+						String xFragment = getSubRegex(regex, i + 2);
+						return terminal + "," + xFragment + "|" + altFragmentRegex(xFragment);
+					} else
+						return terminal;
+				else {
+					String xFragment = getSubRegex(regex, i + 1);
+					return terminal + "," + xFragment + "|" + altFragmentRegex(xFragment);
+				}
+			} else
+				return terminal;
 		}
 	}
 	
-	public boolean validate(List<String> types) {
-		return dfa.run(types);
+	// (prom,(ribo,code)+term+|(ribo,code|code)(ribo,code)*term+|term,term*)(prom(ribo,code)+term+)*
+	
+	// prom((ribo,code)*ribo(code(term*term((prom(ribo,code)+term+)*(prom((ribo,code)*ribo(code(term*term)?)?)?)?)?)?)?)?
+	// ribo(code((ribo,code)*(ribo(code)?|term*term((prom(ribo,code)+term+)*(prom((ribo,code)*ribo(code(term*term)?)?)?)?)?))?)?
+	// prom((ribo,code)*ribo(code(term*term((prom(ribo,code)+term+)*(prom((ribo,code)*ribo(code(term*term)?)?)?)?)?)?)?)?|
+	//ribo(code((ribo,code)*(ribo(code)?|term*term((prom(ribo,code)+term+)*(prom((ribo,code)*ribo(code(term*term)?)?)?)?)?))?)?
+	//|code((ribo,code)*(ribo(code)?|term*term((prom(ribo,code)+term+)*(prom((ribo,code)*ribo(code(term*term)?)?)?)?)?))?
+	//|term(term*(term|(prom(ribo,code)+term+)*(prom((ribo,code)*ribo(code(term*term)?)?)?)?))?
+	
+	private String exFragmentRegex(String regex) {
+		List<String> orFragments = findOrFragments(regex);
+		if (orFragments.size() > 1) {
+			regex = exFragmentRegex(orFragments.get(0));
+			for (int i = 1; i < orFragments.size(); i++)
+				regex = regex + "|" + exFragmentRegex(orFragments.get(i));
+			return regex;
+		} else if (regex.startsWith("(")) {
+			int i = locateClosingParen(regex, 0);
+			String xFragment = regex.substring(1, i);
+			if (i + 1 < regex.length()) {
+				String quantifier = regex.substring(i + 1, i + 2);
+				if (quantifier.equals("*"))
+					if (i + 2 < regex.length()) {
+						String yFragment = getSubRegex(regex, i + 2);
+						return "(" + xFragment + ")*(" + exFragmentRegex(xFragment) + "|" + exFragmentRegex(yFragment) + ")";
+					} else
+						return "(" + xFragment + ")*(" + exFragmentRegex(xFragment) + ")?";
+				else if (quantifier.equals("+")) 
+					if (i + 2 < regex.length()) {
+						String yFragment = getSubRegex(regex, i + 2);
+						return "(" + xFragment + ")*" + exFragmentRegex(xFragment + "," + yFragment);
+					} else
+						return "(" + xFragment + ")*" + exFragmentRegex(xFragment);
+				else if (quantifier.equals("?"))
+					if (i + 2 < regex.length()) {
+						String yFragment = getSubRegex(regex, i + 2);
+						return "(" + exFragmentRegex(xFragment) + ")?" + exFragmentRegex(yFragment);
+					} else
+						return "(" + exFragmentRegex(xFragment) + ")?";
+				else if (quantifier.equals(","))
+					if (i + 2 < regex.length()) {
+						String yFragment = getSubRegex(regex, i + 2);
+						return exFragmentRegex("(" + xFragment + ")" + yFragment);
+					} else
+						return exFragmentRegex(xFragment);
+				else {
+					String yFragment = getSubRegex(regex, i + 1);
+					orFragments = findOrFragments(xFragment);
+					if (orFragments.size() > 1) {
+						String result = exFragmentRegex(orFragments.get(0) + "," + yFragment);
+						for (int j = 1; j < orFragments.size(); j++)
+							result = result + "|" + exFragmentRegex(orFragments.get(j) + "," + yFragment);
+						return result;
+					} else
+						return exFragmentRegex(xFragment + "," + yFragment);
+				}
+			} else 
+				return exFragmentRegex(xFragment);
+		} else {
+			int i = locateClosingLetter(regex, 0);
+			String terminal = regex.substring(0, i + 1);
+			if (i + 1 < regex.length()) {
+				String quantifier = regex.substring(i + 1, i + 2);
+				if (quantifier.equals("*"))
+					if (i + 2 < regex.length()) {
+						String xFragment = getSubRegex(regex, i + 2);
+						return terminal + "*(" + terminal + "|" + exFragmentRegex(xFragment) + ")";
+					} else
+						return terminal + "*";
+				else if (quantifier.equals("+"))
+					if (i + 2 < regex.length()) {
+						String xFragment = getSubRegex(regex, i + 2);
+						return terminal + "*" + exFragmentRegex(terminal + "," + xFragment);
+					} else
+						return terminal + "*" + terminal;
+				else if (quantifier.equals("?"))
+					if (i + 2 < regex.length()) {
+						String xFragment = getSubRegex(regex, i + 2);
+						return terminal + "?" + exFragmentRegex(xFragment);
+					} else
+						return terminal + "?";
+				else if (quantifier.equals(","))
+					if (i + 2 < regex.length()) {
+						String xFragment = getSubRegex(regex, i + 2);
+						return terminal + "(" + exFragmentRegex(xFragment) + ")?";
+					} else
+						return terminal;
+				else {
+					String xFragment = getSubRegex(regex, i + 1);
+					return terminal + "(" + exFragmentRegex(xFragment) + ")?";
+				}
+			} else
+				return terminal;
+		}	
 	}
 	
-	public boolean isValid() {
-		return dfa.isAccepting();
+	private int locateClosingParen(String regex, int i) {
+		int openParen = 0;
+		int closeParen = 0;
+		for (int j = i; j < regex.length(); j++) {
+			if (regex.substring(j, j + 1).equals("("))
+				openParen++;
+			else if (regex.substring(j, j + 1).equals(")"))
+				closeParen++;
+			if (openParen == closeParen)
+				return j;
+		}
+		return regex.length();
 	}
 	
-	public void reset() {
-		dfa.reset();
+	private int locateClosingLetter(String regex, int i) {
+		for (int j = i; j < regex.length(); j++) {
+			String token = regex.substring(j, j + 1);
+			if ((token.equals("(") || token.equals(")") || token.equals("+") || token.equals("*")
+					|| token.equals("|") || token.equals("?") || token.equals(",")) && j > i)
+				return j - 1;
+		}
+		return regex.length() - 1;
+	}
+	
+	private List<String> findOrFragments(String regex) {
+		List<String> orFragments = new LinkedList<String>();
+		int j = locateClosingOr(regex, 0);
+		orFragments.add(regex.substring(0, j));
+		while (j < regex.length()) {
+			int i = j;
+			j = locateClosingOr(regex, i);
+			orFragments.add(regex.substring(i + 1, j));
+		}
+		return orFragments;
+	}
+	
+	private int locateClosingOr(String regex, int i) {
+		int openParen = 0;
+		int closedParen = 0;
+		for (int j = i; j < regex.length(); j++)
+			if (regex.substring(j, j + 1).equals("("))
+				openParen++;
+			else if (regex.substring(j, j + 1).equals(")"))
+				closedParen++;
+			else if (regex.substring(j, j + 1).equals("|") && j > i && openParen == closedParen)
+				return j;
+		return regex.length();
+	}
+	
+	private String getSubRegex(String regex, int index) {
+		String subRegex = regex.substring(index);
+		if (subRegex.startsWith(","))
+			return subRegex.substring(1);
+		else
+			return subRegex;
+	}
+	
+	public boolean validateConstruct(List<String> types) {
+		return constructDFA.run(types);
+	}
+	
+	public boolean validateFragment(List<String> types) {
+		return fragmentDFA.run(types);
+	}
+	
+	public boolean isConstructValid() {
+		return constructDFA.isAccepting();
+	}
+	
+	public boolean isFragmentValid() {
+		return fragmentDFA.isAccepting();
+	}
+	
+	public void resetFragmentValidator() {
+		fragmentDFA.reset();
 	}
 	
 	public Set<String> getStartTypes() {
 		Set<String> startTypes = new HashSet<String>();
-		startTypes.addAll(dfa.getStartState().getTransitions().keySet());
+		startTypes.addAll(constructDFA.getStartState().getTransitions().keySet());
 		return startTypes;
 	}
 	
 	public Set<String> getTerminalTypes() {
 		Set<String> terminalTypes = new HashSet<String>();
-		for (DFAState state : dfa.getStates().values()) {
+		for (DFAState state : constructDFA.getStates().values()) {
 			HashMap<String, DFAState> transitions = state.getTransitions();
 			for (String type : transitions.keySet())
 				if (transitions.get(type).isAccepting())

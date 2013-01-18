@@ -672,7 +672,7 @@ public class EditPreferences {
 		restoreSyn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				uriField.setText("http://www.async.ece.utah.edu");
-				regexField.setText("((promoter(ribosome entry site,coding sequence)+terminator+)|engineered region)+");
+				regexField.setText(GlobalConstants.SO_CONSTRUCT_REGEX);
 			}
 		});	
 		
@@ -1425,7 +1425,7 @@ public class EditPreferences {
 			biosimrc.put("biosim.synthesis.uri", "http://www.async.ece.utah.edu");
 		}
 		if (biosimrc.get("biosim.synthesis.regex", "").equals("")) {
-			biosimrc.put("biosim.synthesis.regex", "((promoter(ribosome entry site,coding sequence)+terminator+)|engineered region)+");
+			biosimrc.put("biosim.synthesis.regex", GlobalConstants.SO_CONSTRUCT_REGEX);
 		}
 		if (biosimrc.get("biosim.general.tree_icons", "").equals("")) {
 			biosimrc.put("biosim.general.tree_icons", "default");
