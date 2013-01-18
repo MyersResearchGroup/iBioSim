@@ -476,11 +476,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			if (synGraph.containsSBOL()) {
 				SBOLFileManager fileManager = new SBOLFileManager(biosim.getRoot(), biosim.getSbolFiles());
 				if (fileManager.sbolFilesAreLoaded() && synGraph.loadDNAComponents(fileManager)) {
-					SequenceTypeValidator constructValidator = 
+					SequenceTypeValidator seqValidator = 
 							new SequenceTypeValidator(Preferences.userRoot().get("biosim.synthesis.regex", ""));
-					synGraph.cutGraph(constructValidator.getStartTypes());
+					synGraph.cutGraph(seqValidator.getStartTypes());
 					if (synGraph.isLinear()) {
-						SBOLSynthesizer synthesizer = new SBOLSynthesizer(synGraph, constructValidator);
+						SBOLSynthesizer synthesizer = new SBOLSynthesizer(synGraph, seqValidator);
 						DnaComponent synthComp = synthesizer.synthesizeDNAComponent();
 						if (synthComp != null) {
 							if (identityManager.containsPlaceHolderURI() || identityManager.loadBioSimComponent(fileManager)) {
