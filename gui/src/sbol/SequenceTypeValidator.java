@@ -6,8 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import antlrPackage.PropertyParser.else_if_return;
-
 public class SequenceTypeValidator {
 	private DFA constructDFA;
 	private DFA fragmentDFA;
