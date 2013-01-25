@@ -1065,7 +1065,6 @@ public abstract class Simulator {
 			}
 			//if it's a reaction id return the propensity
 			else if (reactionToPropensityMap.keySet().contains(node.getName())) {
-				
 				return reactionToPropensityMap.get(node.getName());
 			}
 			else {
@@ -1079,7 +1078,6 @@ public abstract class Simulator {
 				}
 				else				
 					value = variableToValueMap.get(name);
-				
 				return value;
 			}
 		}
@@ -1378,7 +1376,6 @@ public abstract class Simulator {
 			} //end switch
 			
 		}
-		
 		return 0.0;
 	}
 
@@ -2493,7 +2490,7 @@ public abstract class Simulator {
 		if (formula.isFunction() == false || formula.isLeaf() == false) {
 			
 			for (int i = 0; i < formula.getChildCount(); ++i)
-				formula.replaceChild(i, inlineFormula(formula.getChild(i).clone()));
+				formula.replaceChild(i, inlineFormula(formula.getChild(i)));//.clone()));
 		}
 		
 		if (formula.isFunction() && model.getFunctionDefinition(formula.getName()) != null) {
@@ -5007,7 +5004,6 @@ public abstract class Simulator {
 		}
 		//if it's not a reversible reaction
 		else {
-			
 			reactionToSpeciesAndStoichiometrySetMap.put(reactionID, new HashSet<StringDoublePair>());
 			reactionToReactantStoichiometrySetMap.put(reactionID, new HashSet<StringDoublePair>());
 			
@@ -5106,7 +5102,7 @@ public abstract class Simulator {
 			
 				//calculate propensity
 				propensity = evaluateExpressionRecursive(inlineFormula(reactionFormula));
-				
+
 				//stoichiometry amplification -- alter the propensity
 				if (reactionID.contains("_Diffusion_") && stoichAmpBoolean == true)
 					propensity *= (1.0 / stoichAmpGridValue);
