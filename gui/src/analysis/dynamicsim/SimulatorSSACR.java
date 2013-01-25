@@ -954,8 +954,9 @@ public class SimulatorSSACR extends Simulator {
 			
 			double newPropensity = 0.0;
 			
-			if (notEnoughMoleculesFlag == false)
+			if (notEnoughMoleculesFlag == false) {
 				newPropensity = evaluateExpressionRecursive(reactionToFormulaMap.get(affectedReactionID));
+			}
 			
 			//stoichiometry amplification -- alter the propensity
 			if (affectedReactionID.contains("_Diffusion_") && stoichAmpBoolean == true) {
