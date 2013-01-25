@@ -434,7 +434,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				} 
 			} 
 			if (promoterId != null) {
-				gcm.createProductionKineticLaw(production);
+				BioModel.createProductionKineticLaw(production);
 			} else {
 				String KcStr = null;
 				if (production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING)!=null &&

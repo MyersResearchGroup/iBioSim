@@ -448,7 +448,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 					}
 					int index = compartments.getSelectedIndex();
 					String[] splits = comps[index].split(" ");
-					if (splits[0].length() == 1) {
+					if (splits.length == 1) {
 						addComp += splits[0] + " ";
 					}
 					else {
@@ -802,9 +802,10 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 			comparts[i] += " " + compartment.getSize();
 			if (paramsOnly) {
 				for (int j = 0; j < parameterChanges.size(); j++) {
-					if (parameterChanges.get(j).split(" ")[0].equals(comparts[i].split(" ")[0])) {
-						parameterChanges.set(j, comparts[i] + " " + parameterChanges.get(j).split(" ")[2] + " "
-								+ parameterChanges.get(j).split(" ")[3]);
+					String[] splits = parameterChanges.get(j).split(" ");
+					if (splits[0].equals(comparts[i].split(" ")[0])) {
+						parameterChanges.set(j,	comparts[i] + " " + splits[splits.length-2] + " " + 
+								splits[splits.length-1]);
 						comparts[i] = parameterChanges.get(j);
 					}
 				}

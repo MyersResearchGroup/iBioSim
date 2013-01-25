@@ -26,15 +26,16 @@ import main.Log;
 import main.util.ExampleFileFilter;
 import main.util.MutableBoolean;
 
+import org.sbml.libsbml.Compartment;
 import org.sbml.libsbml.ExternalModelDefinition;
 import org.sbml.libsbml.InitialAssignment;
-import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.LocalParameter;
 import org.sbml.libsbml.Parameter;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.Rule;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.SBMLWriter;
+import org.sbml.libsbml.SBase;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.Submodel;
 import org.sbolstandard.core.DnaComponent;
@@ -1226,18 +1227,17 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			if (direct.equals(".") && !stem.equals("")) {
 				direct = "";
 			}
-			GCMParser parser = new GCMParser(biomodel, false);
-			GeneticNetwork network = null;
 			SBMLDocument sbml = biomodel.flattenModel();		
 			performModifications(sbml,dd);
-			network = parser.buildNetwork(sbml);
+			GCMParser parser = new GCMParser(biomodel, false);
+			GeneticNetwork network = parser.buildNetwork(sbml);
 			if (network==null) return false;
 			if (reb2sac != null)
 				network.loadProperties(biomodel, reb2sac.getGcmAbstractions(), reb2sac.getInterestingSpecies(), reb2sac.getProperty());
 			else
 				network.loadProperties(biomodel);
 			SBMLDocument d = network.getSBML();
-			performModifications(d,dd);
+			//performModifications(d,dd);
 			network.markAbstractable();
 			network.mergeSBML(path + separator + simName + separator + stem + direct + separator + modelId + ".xml", d);
 		}
@@ -1288,90 +1288,166 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				}
 			}
 		}
-		for (int i = 0; i < d.getModel().getNumCompartments(); i++) {
-			for (String change : parameterChanges) {
-				if (change.split(" ")[0].equals(d.getModel().getCompartment(i).getId())) {
-					String[] splits = change.split(" ");
-					if (splits[splits.length - 2].equals("Modified") || splits[splits.length - 2].equals("Custom")) {
-						String value = splits[splits.length - 1];
-						d.getModel().getCompartment(i).setSize(Double.parseDouble(value));
-					}
-				}
-			}
-			for (String di : dd) {
-				if (di.split("=")[0].split(" ")[0].equals(d.getModel().getCompartment(i).getId())) {
-					String value = di.split("=")[1];
-					d.getModel().getCompartment(i).setSize(Double.parseDouble(value));
-				}
-			}
-		}
-		for (int i = 0; i < d.getModel().getNumSpecies(); i++) {
-			for (String change : parameterChanges) {
-				if (change.split(" ")[0].equals(d.getModel().getSpecies(i).getId())) {
-					String[] splits = change.split(" ");
-					if (splits[splits.length - 2].equals("Modified") || splits[splits.length - 2].equals("Custom")) {
-						String value = splits[splits.length - 1];
-						if (d.getModel().getSpecies(i).isSetInitialAmount()) {
-							d.getModel().getSpecies(i).setInitialAmount(Double.parseDouble(value));
+		for (String change : parameterChanges) {
+			String[] splits = change.split(" ");
+			String id = splits[0];
+			String value = splits[splits.length-1];
+			// Make sure it is not a sweep
+			if (!value.contains("(")) {
+				// Make sure not a special parameter
+				if (!id.contains("/")) {
+					updateValue(d,id,null,null,value,null);
+				} else {
+					String paramId = id.split("/")[1];
+					id = id.split("/")[0];
+					String factor = null;
+					String type = null;
+					if (id.contains("-")) {
+						if (id.contains("->")) type = "a";
+						else type = "r";
+						factor = id.substring(1,id.indexOf("-"));
+						if (id.contains(",")) {
+							id = id.substring(id.indexOf(",")+1,id.length()-1);
+						} else if (id.contains(">")){
+							id = id.substring(id.indexOf(">")+1,id.length()-1);
+						} else {
+							id = id.substring(id.indexOf("|")+1,id.length()-1);
 						}
-						else {
-							d.getModel().getSpecies(i).setInitialConcentration(Double.parseDouble(value));
+					} else if (id.contains("+")) {
+						factor = id.substring(1,id.indexOf("+"));
+						id = id.substring(id.indexOf(">")+1,id.length()-1);
+					}
+					updateValue(d,id,factor,paramId,value,type);
+				}
+			}
+		}
+		for (String di : dd) {
+			String[] splits = di.split("=");
+			String id = splits[0];
+			String value = splits[1];
+			// Make sure not a special parameter
+			if (!id.contains("/")) {
+				id = id.split(" ")[0];
+				updateValue(d,id,null,null,value,null);
+			} else {
+				String paramId = id.split("/")[1];
+				id = id.split("/")[0];
+				String factor = null;
+				String type = null;
+				if (id.contains("-")) {
+					if (id.contains("->")) type = "a";
+					else type = "r";
+					factor = id.substring(1,id.indexOf("-"));
+					if (id.contains(",")) {
+						id = id.substring(id.indexOf(",")+1,id.length()-1);
+					} else if (id.contains(">")){
+						id = id.substring(id.indexOf(">")+1,id.length()-1);
+					} else {
+						id = id.substring(id.indexOf("|")+1,id.length()-1);
+					}
+				} else if (id.contains("+")) {
+					factor = id.substring(1,id.indexOf("+"));
+					id = id.substring(id.indexOf(">")+1,id.length()-1);
+				}
+				updateValue(d,id,factor,paramId,value,type);
+			}
+		}
+	}
+	
+	private void updateValue(SBMLDocument d,String id,String factor,String paramId,String value,String type) {
+		SBase sbase = d.getElementBySId(id);
+		if (sbase != null) {
+			if (sbase.getElementName().equals(GlobalConstants.COMPARTMENT)) {
+				Compartment compartment = d.getModel().getCompartment(id);
+				compartment.setSize(Double.parseDouble(value));
+			} else if (sbase.getElementName().equals(GlobalConstants.SBMLSPECIES)) {
+				if (paramId!=null) {
+					if (paramId.equals(GlobalConstants.INITIAL_STRING)||
+							paramId.equals(GlobalConstants.PROMOTER_COUNT_STRING)) {
+						Species species = d.getModel().getSpecies(id);
+						if (species.isSetInitialAmount()) {
+							species.setInitialAmount(Double.parseDouble(value));
+						} else {
+							species.setInitialConcentration(Double.parseDouble(value));
 						}
-					}
-				}
-			}
-			for (String di : dd) {
-				if (di.split("=")[0].split("/")[0].equals(d.getModel().getSpecies(i).getId())) {
-					String value = di.split("=")[1];
-					if (d.getModel().getSpecies(i).isSetInitialAmount()) {
-						d.getModel().getSpecies(i).setInitialAmount(Double.parseDouble(value));
-					}
-					else {
-						d.getModel().getSpecies(i).setInitialConcentration(Double.parseDouble(value));
-					}
-				}
-			}
-		}
-		for (int i = 0; i < d.getModel().getNumParameters(); i++) {
-			for (String change : parameterChanges) {
-				if (change.split(" ")[0].equals(d.getModel().getParameter(i).getId())) {
-					String[] splits = change.split(" ");
-					if (splits[splits.length - 2].equals("Modified") || splits[splits.length - 2].equals("Custom")) {
-						String value = splits[splits.length - 1];
-						d.getModel().getParameter(i).setValue(Double.parseDouble(value));
-					}
-				}
-			}
-			for (String di : dd) {
-				if (di.split("=")[0].split(" ")[0].equals(d.getModel().getParameter(i).getId())) {
-					String value = di.split("=")[1];
-					d.getModel().getParameter(i).setValue(Double.parseDouble(value));
-				}
-			}
-		}
-		for (int i = 0; i < d.getModel().getNumReactions(); i++) {
-			Reaction reaction = d.getModel().getReaction(i);
-			
-			ListOf parameters = reaction.getKineticLaw().getListOfParameters();
-			for (int j = 0; j < reaction.getKineticLaw().getNumParameters(); j++) {
-				Parameter paramet = ((Parameter) (parameters.get(j)));
-				for (String change : parameterChanges) {
-					if (change.split(" ")[0].equals(reaction.getId() + "/" + paramet.getId())) {
-						String[] splits = change.split(" ");
-						if (splits[splits.length - 2].equals("Modified") || splits[splits.length - 2].equals("Custom")) {
-							String value = splits[splits.length - 1];
-							paramet.setValue(Double.parseDouble(value));
+					} else if (paramId.equals(GlobalConstants.KDECAY_STRING)) {
+						Reaction degradation = BioModel.getDegradationReaction(id, d.getModel());
+						if (degradation!=null && degradation.getKineticLaw()!=null) {
+							LocalParameter localparam = degradation.getKineticLaw().getLocalParameter(GlobalConstants.KDECAY_STRING);
+							if (localparam==null) {
+								localparam = degradation.getKineticLaw().createLocalParameter();
+								localparam.setId(GlobalConstants.KDECAY_STRING);
+							}
+							localparam.setValue(Double.parseDouble(value));
 						}
+					} else if (paramId.equals(GlobalConstants.KCOMPLEX_STRING)) {
+						Reaction complex = BioModel.getComplexReaction(id, d.getModel());
+						if (complex!=null && complex.getKineticLaw()!=null) {
+							BioModel.updateComplexParameters(complex, value);
+						}
+					} else if (paramId.equals(GlobalConstants.COOPERATIVITY_STRING)&&type==null) {
+						Reaction complex = BioModel.getComplexReaction(id, d.getModel());
+						if (complex!=null && complex.getKineticLaw()!=null) {
+							BioModel.updateComplexCooperativity(d.getModel(), factor, id, value);
+						}
+					} else if (paramId.equals(GlobalConstants.MEMDIFF_STRING)) {
+						Reaction diffusion = BioModel.getDiffusionReaction(id, d.getModel());
+						if (diffusion!=null && diffusion.getKineticLaw()!=null) {
+							BioModel.updateDiffusionParameters(id,diffusion, value);
+						}
+					} else {
+						Reaction production = BioModel.getProductionReaction(id, d.getModel());
+						if (production!=null && production.getKineticLaw()!=null) {
+							if (factor!=null) {
+								if (paramId.equals(GlobalConstants.COOPERATIVITY_STRING)) {
+									BioModel.addProductionParameters(production, factor, value, null, null,type);
+								} else if (paramId.equals(GlobalConstants.KACT_STRING)) {
+									BioModel.addProductionParameters(production, factor, null, value, null,null);
+								} else if (paramId.equals(GlobalConstants.KREP_STRING)) {
+									BioModel.addProductionParameters(production, factor, null, null, value,null);
+								}
+							} else if (value.contains("/")) {
+								double [] K = Utility.getEquilibrium(value);
+								if (K[0] >= 0) { 	
+									LocalParameter localparam = 
+											production.getKineticLaw().getLocalParameter(paramId.replace("K","k")+"_f");
+									if (localparam==null) {
+										localparam = production.getKineticLaw().createLocalParameter();
+										localparam.setId(paramId);
+									}
+									localparam.setValue(K[0]);
+									localparam = production.getKineticLaw().getLocalParameter(paramId.replace("K","k")+"_r");
+									if (localparam==null) {
+										localparam = production.getKineticLaw().createLocalParameter();
+										localparam.setId(paramId);
+									}
+									localparam.setValue(K[1]);
+								}
+							} else {
+								LocalParameter localparam = production.getKineticLaw().getLocalParameter(paramId);
+								if (localparam==null) {
+									localparam = production.getKineticLaw().createLocalParameter();
+									localparam.setId(paramId);
+								}
+								localparam.setValue(Double.parseDouble(value));
+							}
+						}
+
 					}
 				}
-				for (String di : dd) {
-					if (di.split("=")[0].split(" ")[0].equals(reaction.getId() + "/" + paramet.getId())) {
-						String value = di.split("=")[1];
-						paramet.setValue(Double.parseDouble(value));
+			} else if (sbase.getElementName().equals(GlobalConstants.PARAMETER)) {
+				Parameter parameter = d.getModel().getParameter(id);
+				parameter.setValue(Double.parseDouble(value));
+			} else if (sbase.getElementName().equals(GlobalConstants.SBMLREACTION)) {
+				Reaction reaction = d.getModel().getReaction(id);
+				if (paramId!=null && reaction.getKineticLaw()!=null) {
+					LocalParameter localparam = reaction.getKineticLaw().getLocalParameter(paramId);
+					if (localparam!=null) {
+						localparam.setValue(Double.parseDouble(value));
 					}
 				}
-			}
-		}
+			} 
+		} 
 	}
 
 	public String getRefFile() {
@@ -1561,11 +1637,45 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		editInit = new EditButton("Edit Species", species);
 		if (paramsOnly) {
 			ArrayList<String> specs = biomodel.getSpecies();
+			ArrayList<String> promoters = biomodel.getPromoters();
+			for (String s : getParams) {
+				if (s.contains("-")) {
+					String factor = s.substring(1,s.indexOf("-"));
+					String promoter = null;
+					if (s.contains(",")) {
+						promoter = s.substring(s.indexOf(",")+1,s.indexOf("/")-1);
+					} else if (s.contains(">")){
+						promoter = s.substring(s.indexOf(">")+1,s.indexOf("/")-1);
+					} else {
+						promoter = s.substring(s.indexOf("|")+1,s.indexOf("/")-1);
+					}
+					if (specs.contains(factor) && promoters.contains(promoter)) {
+						parameterChanges.add(s);
+					} 
+				} else if (s.contains("+")) {
+					String factor = s.substring(1,s.indexOf("+"));
+					String complex = s.substring(s.indexOf(">")+1,s.indexOf("/")-1);
+					if (specs.contains(factor) && specs.contains(complex)) {
+						parameterChanges.add(s);
+					} 
+				}
+			}
 			for (String s : getParams) {
 				if (s.contains("/") && specs.contains(s.split("/")[0].trim())) {
-					specs.remove(s.split("/")[0].trim());
-					specs.add(s.split("/")[0].trim() + " Modified");
+					specs.add(s.split("/")[0].trim());
 					parameterChanges.add(s);
+				}
+			}
+			for (String s : getParams) {
+				if (!s.contains("\"")) {
+					if (s.contains("/") && promoters.contains(s.split("/")[0].trim())) {
+						parameterChanges.add(s);
+					}
+				}
+			}
+			for (String s : getParams) {
+				if (!parameterChanges.contains(s)) {
+					System.out.println(s);
 				}
 			}
 			species.addAllItem(specs);
@@ -1579,129 +1689,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		parametersPanel.setPanels(initialsPanel, rulesPanel);
 		propPanel.add(consPanel, "Center");
 	}
-
-	/*
-	public void reloadFiles() {
-		lock();
-		// sbmlFiles.removeAll();
-		String[] sbmlList = Utility.getFiles(path, ".sbml");
-		String[] xmlList = Utility.getFiles(path, ".xml");
-
-		String[] temp = new String[sbmlList.length + xmlList.length];
-		System.arraycopy(sbmlList, 0, temp, 0, sbmlList.length);
-		System.arraycopy(xmlList, 0, temp, sbmlList.length, xmlList.length);
-
-		Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
-		String[] allList = new String[temp.length + 1];
-		System.arraycopy(temp, 0, allList, 1, temp.length);
-		allList[0] = none;
-
-		DefaultComboBoxModel model = new DefaultComboBoxModel(allList);
-
-		sbmlFiles.setModel(model);
-
-		sbmlFiles.setSelectedItem(none);
-
-		sbmlFiles.setSelectedItem(gcm.getSBMLFile());
-		if (!gcm.getSBMLFile().equals("")) {
-			gcm.setSBMLDocument(Gui.readSBML(path + separator + gcm.getSBMLFile()));
-			if (sbmlFiles.getSelectedItem().equals(none)) {
-				Utility.createErrorMessage("Warning: Missing File", "Unable to find SBML file "
-						+ gcm.getSBMLFile() + ".  Creating a default SBML file");
-				SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
-				Model m = document.createModel();
-				document.setModel(m);
-				m.setId(gcmname);
-				Compartment c = m.createCompartment();
-				c.setId("default");
-				gcm.getUsedIDs().add("default");
-				c.setSize(1);
-				c.setSpatialDimensions(3);
-				c.setConstant(true);
-				String[] species = (String[])gcm.getSpecies().toArray();
-				for (int i = 0; i < species.length; i++) {
-					Species s = m.createSpecies();
-					s.setId(species[i]);
-					s.setCompartment("default");
-					s.setBoundaryCondition(false);
-					s.setConstant(false);
-					s.setInitialAmount(0);
-					s.setHasOnlySubstanceUnits(true);
-				}
-				SBMLutilities.addRandomFunctions(document);
-				SBMLWriter writer = new SBMLWriter();
-				writer.writeSBML(document, path + separator + gcmname + ".xml");
-				biosim.addToTreeNoUpdate(gcmname + ".xml");
-				setDirty(true);
-			} else {
-				SBMLDocument document = Gui.readSBML(path + separator + gcm.getSBMLFile());
-				SBMLutilities.addRandomFunctions(document);
-				SBMLWriter writer = new SBMLWriter();
-				writer.writeSBML(document, path + separator + gcmname + ".xml");
-				biosim.addToTreeNoUpdate(gcmname + ".xml");
-				setDirty(true);
-			}
-		} else {
-			SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
-			Model m = document.createModel();
-			document.setModel(m);
-			m.setId(gcmname);
-			Compartment c = m.createCompartment();
-			c.setId("default");
-			gcm.getUsedIDs().add("default");
-			c.setSize(1);
-			c.setSpatialDimensions(3);
-			c.setConstant(true);
-			ArrayList<String> speciesList = gcm.getSpecies();
-			for (String species : speciesList) {
-				Species s = m.createSpecies();
-				s.setId(species);
-				gcm.getUsedIDs().add(species);
-				s.setCompartment("default");
-				s.setBoundaryCondition(false);
-				s.setConstant(false);
-				s.setInitialAmount(0);
-				s.setHasOnlySubstanceUnits(true);
-			}
-			SBMLutilities.addRandomFunctions(document);
-			SBMLWriter writer = new SBMLWriter();
-			writer.writeSBML(document, path + separator + gcmname + ".xml");
-			biosim.addToTreeNoUpdate(gcmname + ".xml");
-			setDirty(true);
-		}
-		gcm.setSBMLFile(gcmname+".xml");
-		sbmlFiles.setSelectedItem(gcm.getSBMLFile());
-		if (gcm.getSBMLDocument()==null) {
-			gcm.setSBMLDocument(Gui.readSBML(path + separator + gcm.getSBMLFile()));
-			//CompSBMLDocumentPlugin compdoc = (CompSBMLDocumentPlugin)sbml.getPlugin("comp");
-			gcm.getSBMLDocument().enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
-			gcm.getSBMLDocument().setPkgRequired("layout", false); 
-			gcm.setSBMLLayout((LayoutModelPlugin)gcm.getSBMLDocument().getModel().getPlugin("layout"));
-			gcm.getSBMLDocument().enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
-			gcm.getSBMLDocument().setPkgRequired("comp", true); 
-			gcm.setSBMLComp((CompSBMLDocumentPlugin)gcm.getSBMLDocument().getPlugin("comp"));
-			gcm.setSBMLCompModel((CompModelPlugin)gcm.getSBMLDocument().getModel().getPlugin("comp"));
-
-		} else {
-			gcm.getSBMLDocument().setModel(Gui.readSBML(path + separator + gcm.getSBMLFile()).getModel());
-			//CompSBMLDocumentPlugin compdoc = (CompSBMLDocumentPlugin)sbml.getPlugin("comp");
-			gcm.getSBMLDocument().enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
-			gcm.getSBMLDocument().setPkgRequired("layout", false); 
-			gcm.setSBMLLayout((LayoutModelPlugin)gcm.getSBMLDocument().getModel().getPlugin("layout"));
-			gcm.getSBMLDocument().enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
-			gcm.getSBMLDocument().setPkgRequired("comp", true); 
-			gcm.setSBMLComp((CompSBMLDocumentPlugin)gcm.getSBMLDocument().getPlugin("comp"));
-			gcm.setSBMLCompModel((CompModelPlugin)gcm.getSBMLDocument().getModel().getPlugin("comp"));
-		}
-		if (!paramsOnly) { 
-			gcm.save(path + separator + gcmname + ".gcm");
-			SBMLWriter writer = new SBMLWriter();
-			writer.writeSBML(gcm.getSBMLDocument(), path + separator + gcmname + ".xml");
-		}
-		
-		unlock();
-	}
-*/
 	
 	public void reloadParameters() {
 		if (paramsOnly) {

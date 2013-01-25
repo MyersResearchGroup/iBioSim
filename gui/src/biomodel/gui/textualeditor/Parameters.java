@@ -219,9 +219,10 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			if (paramsOnly) {
 				params[k] += " " + parameter.getValue();
 				for (int j = 0; j < parameterChanges.size(); j++) {
-					if (parameterChanges.get(j).split(" ")[0].equals(params[k].split(" ")[0])) {
-						parameterChanges.set(j,
-								params[k] + " " + parameterChanges.get(j).split(" ")[2] + " " + parameterChanges.get(j).split(" ")[3]);
+					String[] splits = parameterChanges.get(j).split(" ");
+					if (splits[0].equals(params[k].split(" ")[0])) {
+						parameterChanges.set(j,	params[k] + " " + splits[splits.length-2] + " " + 
+								splits[splits.length-1]);
 						params[k] = parameterChanges.get(j);
 					}
 				}

@@ -1433,23 +1433,8 @@ public class BioModel {
 			sbmlCompModel = (CompModelPlugin)sbml.getModel().getPlugin("comp");
 		}
 	}
-
-	public Reaction createComplexReaction(String s,String KcStr,boolean onPort) {
-		createComplexDefaultParameters();
-		Reaction r = getComplexReaction(s);
-		if (r==null) {
-			r = sbml.getModel().createReaction();
-			r.setId("Complex_"+s);
-			r.setSBOTerm(GlobalConstants.SBO_ASSOCIATION);
-			r.setCompartment(sbml.getModel().getSpecies(s).getCompartment());
-			r.setReversible(true);
-			r.setFast(false);
-			SpeciesReference product = r.createProduct();
-			product.setSpecies(s);
-			product.setStoichiometry(1);
-			product.setConstant(true);		
-			r.createKineticLaw();
-		}
+	
+	public static void updateComplexParameters(Reaction r,String KcStr) {
 		if (KcStr != null && KcStr.startsWith("(")) {
 			KineticLaw k = r.getKineticLaw();
 			LocalParameter p = k.getLocalParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING);
@@ -1482,7 +1467,26 @@ public class BioModel {
 				}
 				p.setValue(Kc[1]);
 			}
+		}		
+	}
+
+	public Reaction createComplexReaction(String s,String KcStr,boolean onPort) {
+		createComplexDefaultParameters();
+		Reaction r = getComplexReaction(s);
+		if (r==null) {
+			r = sbml.getModel().createReaction();
+			r.setId("Complex_"+s);
+			r.setSBOTerm(GlobalConstants.SBO_ASSOCIATION);
+			r.setCompartment(sbml.getModel().getSpecies(s).getCompartment());
+			r.setReversible(true);
+			r.setFast(false);
+			SpeciesReference product = r.createProduct();
+			product.setSpecies(s);
+			product.setStoichiometry(1);
+			product.setConstant(true);		
+			r.createKineticLaw();
 		}
+		updateComplexParameters(r,KcStr);
 		createComplexKineticLaw(r);
 		Port port = getPortByIdRef(r.getId());
 		if (port!=null) {
@@ -1725,6 +1729,49 @@ public class BioModel {
 		return false;
 	}
 	
+	public static void addProductionParameters(Reaction r, String factorId, String ncStr, String KaStr, String KrStr, String type) {
+		KineticLaw k = r.getKineticLaw();
+		if (ncStr!=null) {
+			LocalParameter p = k.getLocalParameter(GlobalConstants.COOPERATIVITY_STRING+"_"+factorId+"_"+type);
+			if (p==null) {
+				p = k.createLocalParameter();
+				p.setId(GlobalConstants.COOPERATIVITY_STRING+"_"+factorId+"_"+type);
+			}
+			p.setValue(Double.parseDouble(ncStr));
+		} 							
+		if (KaStr != null) {
+			LocalParameter p = k.getLocalParameter(GlobalConstants.FORWARD_KACT_STRING.replace("_","_"+factorId+"_"));
+			if (p==null) {
+				p = k.createLocalParameter();
+				p.setId(GlobalConstants.FORWARD_KACT_STRING.replace("_","_"+factorId+"_"));
+			}
+			double [] Ka = Utility.getEquilibrium(KaStr);
+			p.setValue(Ka[0]);
+			p = k.getLocalParameter(GlobalConstants.REVERSE_KACT_STRING.replace("_","_"+factorId+"_"));
+			if (p==null) {
+				p = k.createLocalParameter();
+				p.setId(GlobalConstants.REVERSE_KACT_STRING.replace("_","_"+factorId+"_"));
+			}
+			p.setValue(Ka[1]);
+		} 
+		if (KrStr != null) {
+			LocalParameter p = k.getLocalParameter(GlobalConstants.FORWARD_KREP_STRING.replace("_","_"+factorId+"_"));
+			if (p==null) {
+				p = k.createLocalParameter();
+				p.setId(GlobalConstants.FORWARD_KREP_STRING.replace("_","_"+factorId+"_"));
+			}
+			double [] Kr = Utility.getEquilibrium(KrStr);
+			p.setValue(Kr[0]);
+			p = k.getLocalParameter(GlobalConstants.REVERSE_KREP_STRING.replace("_","_"+factorId+"_"));
+			if (p==null) {
+				p = k.createLocalParameter();
+				p.setId(GlobalConstants.REVERSE_KREP_STRING.replace("_","_"+factorId+"_"));
+			}
+			p.setValue(Kr[1]);
+		} 
+		createProductionKineticLaw(r);
+	}
+	
 	public Reaction addActivatorToProductionReaction(String promoterId,String activatorId,String productId,String npStr,
 			String ncStr,String KaStr) {
 		Reaction r = getProductionReaction(promoterId);
@@ -1750,22 +1797,7 @@ public class BioModel {
 			r.removeProduct(promoterId+"_mRNA");
 			sbml.getModel().removeSpecies(promoterId+"_mRNA");
 		}
-		KineticLaw k = r.getKineticLaw();
-		if (ncStr!=null && k.getLocalParameter(GlobalConstants.COOPERATIVITY_STRING+"_"+activatorId+"_a")==null) {
-			LocalParameter p = k.createLocalParameter();
-			p.setId(GlobalConstants.COOPERATIVITY_STRING+"_"+activatorId+"_a");
-			p.setValue(Double.parseDouble(ncStr));
-		} 							
-		if (KaStr != null && k.getLocalParameter(GlobalConstants.FORWARD_KACT_STRING.replace("_","_"+activatorId+"_"))==null) {
-			double [] Ka = Utility.getEquilibrium(KaStr);
-			LocalParameter p = k.createLocalParameter();
-			p.setId(GlobalConstants.FORWARD_KACT_STRING.replace("_","_"+activatorId+"_"));
-			p.setValue(Ka[0]);
-			p = k.createLocalParameter();
-			p.setId(GlobalConstants.REVERSE_KACT_STRING.replace("_","_"+activatorId+"_"));
-			p.setValue(Ka[1]);
-		} 
-		createProductionKineticLaw(r);
+		addProductionParameters(r,activatorId,ncStr,KaStr,null,"a");
 		return r;
 	}
 	
@@ -1794,34 +1826,13 @@ public class BioModel {
 			r.removeProduct(promoterId+"_mRNA");
 			sbml.getModel().removeSpecies(promoterId+"_mRNA");
 		}
-		KineticLaw k = r.getKineticLaw();
-		if (ncStr!=null && k.getLocalParameter(GlobalConstants.COOPERATIVITY_STRING+"_"+repressorId+"_r")==null) {
-			LocalParameter p = k.createLocalParameter();
-			p.setId(GlobalConstants.COOPERATIVITY_STRING+"_"+repressorId+"_r");
-			p.setValue(Double.parseDouble(ncStr));
-		} 							
-		if (KrStr != null && k.getLocalParameter(GlobalConstants.FORWARD_KREP_STRING.replace("_","_"+repressorId+"_"))==null) {
-			double [] Kr = Utility.getEquilibrium(KrStr);
-			LocalParameter p = k.createLocalParameter();
-			p.setId(GlobalConstants.FORWARD_KREP_STRING.replace("_","_"+repressorId+"_"));
-			p.setValue(Kr[0]);
-			p = k.createLocalParameter();
-			p.setId(GlobalConstants.REVERSE_KREP_STRING.replace("_","_"+repressorId+"_"));
-			p.setValue(Kr[1]);
-		} 
-		createProductionKineticLaw(r);
+		addProductionParameters(r,repressorId,ncStr,null,KrStr,"r");
 		return r;
 	}
-
-	public Reaction addReactantToComplexReaction(String reactantId,String productId,String KcStr,String CoopStr) {
-		boolean onPort = (getPortByIdRef(productId)!=null);
-		Reaction r = createComplexReaction(productId,KcStr,onPort);
+	
+	public static void updateComplexCooperativity(Model model,String reactantId,String productId,String CoopStr) {
+		Reaction r = getComplexReaction(productId,model);
 		SpeciesReference reactant = r.getReactant(reactantId);
-		if (reactant==null) {
-			reactant = r.createReactant();
-			reactant.setSpecies(reactantId);
-			reactant.setConstant(true);
-		}
 		KineticLaw k = r.getKineticLaw();
 		LocalParameter p = k.getLocalParameter(GlobalConstants.COOPERATIVITY_STRING+"_"+reactantId);
 		if (CoopStr != null) {
@@ -1836,29 +1847,27 @@ public class BioModel {
 			if (p != null) {
 				k.removeLocalParameter(GlobalConstants.COOPERATIVITY_STRING+"_"+reactantId);
 			}
-			Parameter gp = sbml.getModel().getParameter(GlobalConstants.COOPERATIVITY_STRING);
+			Parameter gp = model.getParameter(GlobalConstants.COOPERATIVITY_STRING);
 			reactant.setStoichiometry(gp.getValue());
 		}
 		createComplexKineticLaw(r);
+	}
+
+	public Reaction addReactantToComplexReaction(String reactantId,String productId,String KcStr,String CoopStr) {
+		boolean onPort = (getPortByIdRef(productId)!=null);
+		Reaction r = createComplexReaction(productId,KcStr,onPort);
+		SpeciesReference reactant = r.getReactant(reactantId);
+		if (reactant==null) {
+			reactant = r.createReactant();
+			reactant.setSpecies(reactantId);
+			reactant.setConstant(true);
+		}
+		updateComplexCooperativity(sbml.getModel(),reactantId,productId,CoopStr);
 		return r;
 	}
 	
-	public Reaction createDiffusionReaction(String s,String kmdiffStr,boolean onPort) {
-		createDiffusionDefaultParameters();
-		Reaction reaction = sbml.getModel().getReaction("MembraneDiffusion_"+s);		
-		if (reaction==null) {
-			reaction = sbml.getModel().createReaction();
-			reaction.setId("MembraneDiffusion_"+s);
-			reaction.setSBOTerm(GlobalConstants.SBO_DIFFUSION);
-			reaction.setCompartment(sbml.getModel().getSpecies(s).getCompartment());
-			reaction.setReversible(true);
-			reaction.setFast(false);
-			SpeciesReference reactant = reaction.createReactant();
-			reactant.setSpecies(s);
-			reactant.setStoichiometry(1);
-			reactant.setConstant(true);
-		}
-		KineticLaw k = reaction.createKineticLaw();
+	public static void updateDiffusionParameters(String s,Reaction reaction,String kmdiffStr) {
+		KineticLaw k = reaction.getKineticLaw();
 		if (kmdiffStr != null && kmdiffStr.startsWith("(")) {
 			LocalParameter p = k.createLocalParameter();
 			p.setId(GlobalConstants.FORWARD_MEMDIFF_STRING);
@@ -1879,7 +1888,26 @@ public class BioModel {
 			}
 		}
 		k.setMath(SBMLutilities.myParseFormula(GlobalConstants.FORWARD_MEMDIFF_STRING+"*"+s+"-"+
-				GlobalConstants.REVERSE_MEMDIFF_STRING));
+				GlobalConstants.REVERSE_MEMDIFF_STRING));		
+	}
+	
+	public Reaction createDiffusionReaction(String s,String kmdiffStr,boolean onPort) {
+		createDiffusionDefaultParameters();
+		Reaction reaction = sbml.getModel().getReaction("MembraneDiffusion_"+s);		
+		if (reaction==null) {
+			reaction = sbml.getModel().createReaction();
+			reaction.setId("MembraneDiffusion_"+s);
+			reaction.setSBOTerm(GlobalConstants.SBO_DIFFUSION);
+			reaction.setCompartment(sbml.getModel().getSpecies(s).getCompartment());
+			reaction.setReversible(true);
+			reaction.setFast(false);
+			SpeciesReference reactant = reaction.createReactant();
+			reactant.setSpecies(s);
+			reactant.setStoichiometry(1);
+			reactant.setConstant(true);
+		}
+		KineticLaw k = reaction.createKineticLaw();
+		updateDiffusionParameters(s,reaction,kmdiffStr);
 		Port port = getPortByIdRef(reaction.getId());
 		if (port!=null) {
 			if (onPort) {
@@ -2040,8 +2068,35 @@ public class BioModel {
 			product.setSpecies(mRNA.getId());
 			product.setStoichiometry(1.0);
 			product.setConstant(true);
-		} 
-		k = r.createKineticLaw();
+			k = r.createKineticLaw();
+		} else {
+			k = r.getKineticLaw();
+			if (k.getLocalParameter(GlobalConstants.STOICHIOMETRY_STRING)!=null) {
+				k.removeLocalParameter(GlobalConstants.STOICHIOMETRY_STRING);
+			}
+			if (k.getLocalParameter(GlobalConstants.OCR_STRING)!=null) {
+				k.removeLocalParameter(GlobalConstants.OCR_STRING);
+			}
+			if (k.getLocalParameter(GlobalConstants.KBASAL_STRING)!=null) {
+				k.removeLocalParameter(GlobalConstants.KBASAL_STRING);
+			}
+			if (k.getLocalParameter(GlobalConstants.ACTIVATED_STRING)!=null) {
+				k.removeLocalParameter(GlobalConstants.ACTIVATED_STRING);
+			}
+			if (k.getLocalParameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING)!=null) {
+				k.removeLocalParameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING);
+			}
+			if (k.getLocalParameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING)!=null) {
+				k.removeLocalParameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING);
+			}
+			if (k.getLocalParameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING)!=null) {
+				k.removeLocalParameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING);
+			}
+			if (k.getLocalParameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING)!=null) {
+				k.removeLocalParameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING);
+			}
+		}
+		
 		if (np != null) {
 			LocalParameter p = k.createLocalParameter();
 			p.setId(GlobalConstants.STOICHIOMETRY_STRING);
@@ -2141,7 +2196,7 @@ public class BioModel {
 		return r;
 	}
 
-	public void createComplexKineticLaw(Reaction reaction) {
+	public static void createComplexKineticLaw(Reaction reaction) {
 		String kineticLaw;
 		kineticLaw = GlobalConstants.FORWARD_KCOMPLEX_STRING;
 		for (int i=0;i<reaction.getNumReactants();i++) {
@@ -2158,7 +2213,7 @@ public class BioModel {
 		
 	}
 
-	public void createProductionKineticLaw(Reaction reaction) {
+	public static void createProductionKineticLaw(Reaction reaction) {
 		String kineticLaw;
 		boolean activated = false;
 		String promoter = "";
@@ -2705,7 +2760,7 @@ public class BioModel {
 			Reaction reaction = sbml.getModel().getReaction("Constitutive_"+oldId);
 			reaction.setId("Constitutive_"+baseId);
 		}
-		Reaction diffusion = getDiffusionReaction(oldId);
+		Reaction diffusion = getDiffusionReaction(oldId,sbml.getModel());
 		if (diffusion != null) {
 			diffusion.setId("MembraneDiffusion_"+baseId);
 		}
@@ -3301,7 +3356,7 @@ public class BioModel {
 			if (isSpeciesConstitutive(id)) {
 				removeReaction("Constitutive_"+id);
 			}
-			if (getDiffusionReaction(id)!=null) {
+			if (getDiffusionReaction(id,sbml.getModel())!=null) {
 				removeReaction("MembraneDiffusion_"+id);
 			}
 			if (getDegradationReaction(id)!=null) {
@@ -4265,7 +4320,7 @@ public class BioModel {
 		return null;
 	}
 	
-	public Reaction getDegradationReaction(String speciesId, Model model) {
+	public static Reaction getDegradationReaction(String speciesId, Model model) {
 		Reaction degradation = model.getReaction("Degradation_"+speciesId);
 		if (degradation != null) {
 			if (degradation.isSetSBOTerm()) {
@@ -4281,10 +4336,10 @@ public class BioModel {
 		return null;
 	}
 	
-	public Reaction getDiffusionReaction(String speciesId) {
-		Reaction diffusion = sbml.getModel().getReaction("MembraneDiffusion_"+speciesId);
+	public static Reaction getDiffusionReaction(String speciesId,Model model) {
+		Reaction diffusion = model.getReaction("MembraneDiffusion_"+speciesId);
 		if (diffusion == null) {
-			diffusion = sbml.getModel().getReaction("Diffusion_"+speciesId);
+			diffusion = model.getReaction("Diffusion_"+speciesId);
 			if (diffusion != null) {
 				diffusion.setId("MembraneDiffusion_"+speciesId);
 			}
@@ -4329,6 +4384,31 @@ public class BioModel {
 		return null;
 	}
 	
+	public static Reaction getProductionReaction(String speciesId,Model model) {
+		String component = "";
+		if (speciesId.contains("__")) {
+			component = speciesId.substring(0,speciesId.lastIndexOf("__")+2);
+			speciesId = speciesId.substring(speciesId.lastIndexOf("__")+2);
+		}
+		Reaction production = model.getReaction(component+"Production_"+speciesId);
+		if (production != null) {
+			if (production.isSetSBOTerm()) {
+				if (production.getSBOTerm()==GlobalConstants.SBO_PRODUCTION) {
+					production.setSBOTerm(GlobalConstants.SBO_GENETIC_PRODUCTION);
+					return production;
+				} else if  (production.getSBOTerm()==GlobalConstants.SBO_GENETIC_PRODUCTION) {
+					return production;
+				}
+			} else if (production.isSetAnnotation()) {
+				if (production.getAnnotationString().contains("Production")) {
+					production.setSBOTerm(GlobalConstants.SBO_GENETIC_PRODUCTION);
+					production.unsetAnnotation();
+					return production;
+				}
+			}
+		}
+		return null;
+	}	
 	public Reaction getConstitutiveReaction(String speciesId) {
 		Reaction constitutive = sbml.getModel().getReaction("Constitutive_"+speciesId);
 		if (constitutive != null) {
@@ -4349,7 +4429,20 @@ public class BioModel {
 		}
 		return null;
 	}
-
+	
+	public static Reaction getComplexReaction(String speciesId,Model model) {
+		String component = "";
+		if (speciesId.contains("__")) {
+			component = speciesId.substring(0,speciesId.lastIndexOf("__")+2);
+			speciesId = speciesId.substring(speciesId.lastIndexOf("__")+2);
+		}
+		Reaction complex = model.getReaction(component+"Complex_"+speciesId);
+		if (complex != null) {
+			if (isComplexReaction(complex)) return complex;
+		}
+		return null;
+	}
+	
 	public boolean isSpeciesComplex(String speciesId) {
 		Reaction complex = getComplexReaction(speciesId);
 		if (complex != null) {
@@ -5020,7 +5113,7 @@ public class BioModel {
 		
 		String speciesID = species.getId();
 		Boolean speciesDegrades = false;			
-		Reaction degradation = this.getDegradationReaction(speciesID, compModel);
+		Reaction degradation = BioModel.getDegradationReaction(speciesID, compModel);
 		
 		//fix the sbo term/annotation stuff if it's not correct
 		if (degradation != null)
@@ -5961,7 +6054,9 @@ public class BioModel {
 			if (value.startsWith("(")) {
 				AnnotationUtility.setSweepAnnotation(sbml.getModel().getParameter(parameter), value);
 			} else {
-				sbml.getModel().getParameter(parameter).setValue(Double.parseDouble(value));
+				if (sbml.getModel().getParameter(parameter)!=null) {
+					sbml.getModel().getParameter(parameter).setValue(Double.parseDouble(value));
+				}
 			}
 		} 
 		//parameters.put(parameter, value);

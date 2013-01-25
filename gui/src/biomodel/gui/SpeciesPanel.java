@@ -146,7 +146,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		tempPanel = new JPanel(new GridLayout(1,2));
 		tempPanel.add(new JLabel(""));
 
-		diffusion = bioModel.getDiffusionReaction(selected);
+		diffusion = BioModel.getDiffusionReaction(selected,bioModel.getSBMLDocument().getModel());
 		constitutive = bioModel.getConstitutiveReaction(selected);
 		degradation = bioModel.getDegradationReaction(selected);
 		complex = bioModel.getComplexReaction(selected);

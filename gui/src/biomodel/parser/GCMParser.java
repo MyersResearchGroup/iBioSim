@@ -203,16 +203,16 @@ public class GCMParser {
 						p.addToReactionMap(modifier.getSpecies(), infl);
 						p.addRepressor(modifier.getSpecies(), speciesList.get(modifier.getSpecies()));
 						speciesList.get(modifier.getSpecies()).setRepressor(true);
-						if (production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KREP_STRING.replace("_","_"+modifier.getId()+"_"))!=null &&
-							production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KREP_STRING.replace("_","_"+modifier.getId()+"_"))!=null) {
-							infl.setRep(production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KREP_STRING.replace("_","_"+modifier.getId()+"_")).getValue(),
-									production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KREP_STRING.replace("_","_"+modifier.getId()+"_")).getValue());
+						if (production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KREP_STRING.replace("_","_"+modifier.getSpecies()+"_"))!=null &&
+							production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KREP_STRING.replace("_","_"+modifier.getSpecies()+"_"))!=null) {
+							infl.setRep(production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KREP_STRING.replace("_","_"+modifier.getSpecies()+"_")).getValue(),
+									production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KREP_STRING.replace("_","_"+modifier.getSpecies()+"_")).getValue());
 						} else {
 							infl.setRep(sbml.getModel().getParameter(GlobalConstants.FORWARD_KREP_STRING).getValue(),
 									sbml.getModel().getParameter(GlobalConstants.REVERSE_KREP_STRING).getValue());
 						}
-						if (production.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + modifier.getId() + "_r") != null) {
-							infl.setCoop(production.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + modifier.getId() + "_r").getValue());
+						if (production.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + modifier.getSpecies() + "_r") != null) {
+							infl.setCoop(production.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + modifier.getSpecies() + "_r").getValue());
 						} else {
 							infl.setCoop(sbml.getModel().getParameter(GlobalConstants.COOPERATIVITY_STRING).getValue());
 						}
@@ -234,16 +234,16 @@ public class GCMParser {
 						p.addToReactionMap(modifier.getSpecies(), infl);
 						p.addActivator(modifier.getSpecies(), speciesList.get(modifier.getSpecies()));
 						speciesList.get(modifier.getSpecies()).setActivator(true);
-						if (production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KACT_STRING.replace("_","_"+modifier.getId()+"_"))!=null &&
-								production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KACT_STRING.replace("_","_"+modifier.getId()+"_"))!=null) {
-							infl.setAct(production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KACT_STRING.replace("_","_"+modifier.getId()+"_")).getValue(),
-									production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KACT_STRING.replace("_","_"+modifier.getId()+"_")).getValue());
+						if (production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KACT_STRING.replace("_","_"+modifier.getSpecies()+"_"))!=null &&
+								production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KACT_STRING.replace("_","_"+modifier.getSpecies()+"_"))!=null) {
+							infl.setAct(production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KACT_STRING.replace("_","_"+modifier.getSpecies()+"_")).getValue(),
+									production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KACT_STRING.replace("_","_"+modifier.getSpecies()+"_")).getValue());
 						} else {
 							infl.setAct(sbml.getModel().getParameter(GlobalConstants.FORWARD_KACT_STRING).getValue(),
 									sbml.getModel().getParameter(GlobalConstants.REVERSE_KACT_STRING).getValue());
 						}
-						if (production.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + modifier.getId() + "_a") != null) {
-							infl.setCoop(production.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + modifier.getId() + "_a").getValue());
+						if (production.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + modifier.getSpecies() + "_a") != null) {
+							infl.setCoop(production.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + modifier.getSpecies() + "_a").getValue());
 						} else {
 							infl.setCoop(sbml.getModel().getParameter(GlobalConstants.COOPERATIVITY_STRING).getValue());
 						}
