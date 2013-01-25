@@ -2329,9 +2329,10 @@ public abstract class Simulator {
 				
 				//this assignment rule is going to be evaluated, so the rule's variable's value will change
 				for (AssignmentRule assignmentRule : variableToAffectedAssignmentRuleSetMap.get(speciesID)) {
-				
-					affectedReactionSet.addAll(speciesToAffectedReactionSetMap
-							.get(assignmentRule.getVariable()));
+					if (speciesToAffectedReactionSetMap.get(assignmentRule.getVariable())!=null) {
+						affectedReactionSet.addAll(speciesToAffectedReactionSetMap
+								.get(assignmentRule.getVariable()));
+					}
 				}
 			}
 		}
@@ -2479,6 +2480,19 @@ public abstract class Simulator {
 		untriggeredEventSet.removeAll(triggeredEvents);
 	}
 	
+	public void replaceArgument(ASTNode formula,String bvar, ASTNode arg) {
+		int n = 0;
+		for (int i = 0; i < formula.getChildCount(); i++) {
+			ASTNode child = formula.getChild(i);
+			if (child.isString() && child.getName().equals(bvar)) {
+				formula.replaceChild(n, arg.clone());
+			} else if (child.getChildCount() > 0) {
+				replaceArgument(child, bvar, arg);
+			}
+			n++;
+		}
+	}
+	
 	/**
 	 * inlines a formula with function definitions
 	 * 
@@ -2520,7 +2534,7 @@ public abstract class Simulator {
 				if (child.isLeaf() && child.isName()) {
 					
 					int index = inlinedChildToOldIndexMap.get(child.getName());
-					inlinedFormula.replaceArgument(child.toFormula(), oldFormula.getChild(index));
+					replaceArgument(inlinedFormula,child.toFormula(), oldFormula.getChild(index));
 					
 					if (inlinedFormula.getChildCount() == 0)
 						inlinedFormula = oldFormula.getChild(index);

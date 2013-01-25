@@ -9,6 +9,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JTabbedPane;
+import javax.xml.stream.XMLStreamException;
 
 import main.Gui;
 
@@ -60,10 +61,14 @@ public class DynamicSimulation {
 						maxTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, 
 						interestingSpecies, numSteps, relError, absError, quantityType);
 		}
-		catch (Exception e) {
+		catch (IOException e) {
 			e.printStackTrace();
+			return;
 		}
-		
+		catch (XMLStreamException e) {
+			e.printStackTrace();
+			return;
+		}		
 		for (int run = 1; run <= runs; ++run) {
 			
 			if (cancelFlag == true)
@@ -93,6 +98,7 @@ public class DynamicSimulation {
 				simulator.printStatisticsTSD();
 			} catch (IOException e) {
 				e.printStackTrace();
+				return;
 			}
 		}
 		if (simTab!=null) {
