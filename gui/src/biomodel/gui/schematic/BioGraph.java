@@ -2318,7 +2318,7 @@ public class BioGraph extends mxGraph {
 		else truncID = sp;
 		
 		String label = truncID;
-		if (bioModel.getDiffusionReaction(sp)!=null) label += " (D)";
+		if (BioModel.getDiffusionReaction(sp,bioModel.getSBMLDocument().getModel())!=null) label += " (D)";
 		if (bioModel.isSpeciesConstitutive(sp)) label += " (C)";
 		if (bioModel.isInput(sp)) {
 			label += '\n' + GlobalConstants.INPUT;

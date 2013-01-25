@@ -637,7 +637,6 @@ public class Schematic extends JPanel implements ActionListener {
 
 		JToolBar toolBar = new JToolBar();
 		
-		System.out.println();
 		ButtonGroup modeButtonGroup = new ButtonGroup();
 		selectButton = Utils.makeRadioToolButton("select_mode.png", "", "Select (" + KeyEvent.getKeyText(KeyEvent.VK_ESCAPE)
 				+ ")", this, modeButtonGroup); 
@@ -2622,10 +2621,10 @@ public class Schematic extends JPanel implements ActionListener {
 						}
 					}
 					
-					for (String intspec : modelEditor.getReb2Sac().getInterestingSpeciesAsArrayList())
-						System.err.println(intspec);
+					//for (String intspec : modelEditor.getReb2Sac().getInterestingSpeciesAsArrayList())
+					//	System.err.println(intspec);
 					
-					System.err.println("");
+					//System.err.println("");
 						
 					
 					movieContainer.setIsDirty(true);
