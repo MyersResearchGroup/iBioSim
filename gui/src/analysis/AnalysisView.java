@@ -3274,7 +3274,75 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 								simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel,
 								postAbs, abstraction, nary);
 						if (load.containsKey("selected.simulator")) {
-							simulators.setSelectedItem(load.getProperty("selected.simulator"));
+							String simId = load.getProperty("selected.simulator");
+							if (simId.equals("mpde")) {
+								simulators.setSelectedItem("iSSA");
+								mpde.doClick();
+								nonAdaptive.doClick();
+								bifurcation.setSelectedItem("1");
+							} else if (simId.equals("mean_path")) {
+								simulators.setSelectedItem("iSSA");
+								meanPath.doClick();
+								nonAdaptive.doClick();
+								bifurcation.setSelectedItem("1");
+							} else if (simId.equals("median_path")) {
+								simulators.setSelectedItem("iSSA");
+								medianPath.doClick();
+								nonAdaptive.doClick();
+								bifurcation.setSelectedItem("1");
+							} else if (simId.equals("mean_path-bifurcation")) {
+								simulators.setSelectedItem("iSSA");
+								meanPath.doClick();
+								nonAdaptive.doClick();
+								bifurcation.setSelectedItem("2");
+							} else if (simId.equals("median_path-bifurcation")) {
+								simulators.setSelectedItem("iSSA");
+								medianPath.doClick();
+								nonAdaptive.doClick();
+								bifurcation.setSelectedItem("2");
+							} else if (simId.equals("mean_path-adaptive")) {
+								simulators.setSelectedItem("iSSA");
+								meanPath.doClick();
+								adaptive.doClick();
+								bifurcation.setSelectedItem("1");
+							} else if (simId.equals("median_path-adaptive")) {
+								simulators.setSelectedItem("iSSA");
+								medianPath.doClick();
+								adaptive.doClick();
+								bifurcation.setSelectedItem("1");
+							} else if (simId.equals("mean_path-adaptive-bifurcation")) {
+								simulators.setSelectedItem("iSSA");
+								meanPath.doClick();
+								adaptive.doClick();
+								bifurcation.setSelectedItem("2");
+							} else if (simId.equals("median_path-adaptive-bifurcation")) {
+								simulators.setSelectedItem("iSSA");
+								medianPath.doClick();
+								adaptive.doClick();
+								bifurcation.setSelectedItem("2");
+							} else if (simId.equals("mean_path-event")) {
+								simulators.setSelectedItem("iSSA");
+								meanPath.doClick();
+								nonAdaptive.doClick();
+								bifurcation.setSelectedItem("1");
+							} else if (simId.equals("median_path-event")) {
+								simulators.setSelectedItem("iSSA");
+								medianPath.doClick();
+								nonAdaptive.doClick();
+								bifurcation.setSelectedItem("1");
+							} else if (simId.equals("mean_path-event-bifurcation")) {
+								simulators.setSelectedItem("iSSA");
+								meanPath.doClick();
+								nonAdaptive.doClick();
+								bifurcation.setSelectedItem("2");
+							} else if (simId.equals("median_path-event-bifurcation")) {
+								simulators.setSelectedItem("iSSA");
+								medianPath.doClick();
+								nonAdaptive.doClick();
+								bifurcation.setSelectedItem("2");
+							} else {
+								simulators.setSelectedItem(simId);
+							}
 						}
 						if (load.containsKey("file.stem")) {
 							fileStem.setText(load.getProperty("file.stem"));
