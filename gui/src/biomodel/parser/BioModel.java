@@ -6652,7 +6652,7 @@ public class BioModel {
 		}
 		Model model = bioModel.getSBMLCompModel().flattenModel();
 		if (model==null) {
-			Utility.createErrorMessage("Error During Flattening", "Cannot flatten model.");
+			//Utility.createErrorMessage("Error During Flattening", "Cannot flatten model.");
 			return null;
 		}
 		document.setModel(model);
@@ -6732,7 +6732,8 @@ public class BioModel {
 		if (biosimrc.get("biosim.general.flatten", "").equals("libsbml")) {
 			//String tempFile = filename.replace(".gcm","").replace(".xml","")+"_temp.xml";
 			//save(tempFile);
-			return newFlattenModel();
+			SBMLDocument result = newFlattenModel();
+			if (result!=null) return result;
 		}
 		ArrayList<String> modelList = new ArrayList<String>();
 		modelList.add(filename);
