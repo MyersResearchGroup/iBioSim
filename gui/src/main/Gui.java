@@ -1203,7 +1203,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			if (atacs) {
 				recentProjects[i].setText(biosimrc.get("atacs.recent.project." + i, ""));
 				recentProjectPaths[i] = biosimrc.get("atacs.recent.project.path." + i, "");
-				if (!recentProjectPaths[i].equals("")) {
+				if (!recentProjects[i].getText().trim().equals("") && !recentProjectPaths[i].trim().equals("")) {
 					openRecent.add(recentProjects[i]);
 					numberRecentProj = i + 1;
 				} else {
@@ -1213,7 +1213,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			else if (lema) {
 				recentProjects[i].setText(biosimrc.get("lema.recent.project." + i, ""));
 				recentProjectPaths[i] = biosimrc.get("lema.recent.project.path." + i, "");
-				if (!recentProjectPaths[i].equals("")) {
+				if (!recentProjects[i].getText().trim().equals("") && !recentProjectPaths[i].trim().equals("")) {
 					openRecent.add(recentProjects[i]);
 					numberRecentProj = i + 1;
 				} else {
@@ -1223,7 +1223,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			else {
 				recentProjects[i].setText(biosimrc.get("biosim.recent.project." + i, ""));
 				recentProjectPaths[i] = biosimrc.get("biosim.recent.project.path." + i, "");
-				if (!recentProjectPaths[i].equals("")) {
+				if (!recentProjects[i].getText().trim().equals("") && !recentProjectPaths[i].trim().equals("")) {
 					openRecent.add(recentProjects[i]);
 					numberRecentProj = i + 1;
 				} else {
