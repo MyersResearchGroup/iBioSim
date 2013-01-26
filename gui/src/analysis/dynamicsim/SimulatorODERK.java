@@ -120,6 +120,7 @@ public class SimulatorODERK extends Simulator {
 		for (String reaction : reactionToFormulaMap.keySet()) {
 			
 			ASTNode formula = reactionToFormulaMap.get(reaction);
+			//System.out.println("HERE: " + formula.toFormula());
 			
 			HashSet<StringDoublePair> reactantAndStoichiometrySet = reactionToReactantStoichiometrySetMap.get(reaction);
 			HashSet<StringDoublePair> speciesAndStoichiometrySet = reactionToSpeciesAndStoichiometrySetMap.get(reaction);
@@ -133,7 +134,8 @@ public class SimulatorODERK extends Simulator {
 				ASTNode stoichNode = new ASTNode();
 				stoichNode.setValue(-1 * stoichiometry);
 				
-				dvariablesdtime[varIndex] = ASTNode.sum(dvariablesdtime[varIndex], formula.clone().multiplyWith(stoichNode));
+				;
+				dvariablesdtime[varIndex] = ASTNode.sum(dvariablesdtime[varIndex], ASTNode.times(formula,stoichNode));
 			}
 			
 			//loop through products
@@ -150,7 +152,7 @@ public class SimulatorODERK extends Simulator {
 					ASTNode stoichNode = new ASTNode();
 					stoichNode.setValue(stoichiometry);
 					
-					dvariablesdtime[varIndex] = ASTNode.sum(dvariablesdtime[varIndex], formula.clone().multiplyWith(stoichNode));
+					dvariablesdtime[varIndex] = ASTNode.sum(dvariablesdtime[varIndex], ASTNode.times(formula,stoichNode));
 				}
 			}			
 		}
@@ -240,9 +242,9 @@ public class SimulatorODERK extends Simulator {
 		currentTime = 0.0;
 		
 		if (absoluteError == 0)
-			absoluteError = 1e-6;
+			absoluteError = 1e-9;
 		if (relativeError == 0)
-			relativeError = 1e-3;
+			relativeError = 1e-6;
 		if (stepSize > Double.MAX_VALUE)
 			stepSize = 0.01;
 		if (numSteps == 0)
@@ -251,6 +253,7 @@ public class SimulatorODERK extends Simulator {
 		//create runge-kutta instance
 		DerivnFunc derivnFunction = new DerivnFunc();
 		RungeKutta rungeKutta = new RungeKutta();
+		rungeKutta.setStepSize(stepSize);
 		
 		//absolute error
 		rungeKutta.setToleranceAdditionFactor(absoluteError);
@@ -303,11 +306,10 @@ public class SimulatorODERK extends Simulator {
 			
 			//set rk values
 			rungeKutta.setInitialValueOfX(currentTime);
-			rungeKutta.setFinalValueOfX(currentTime + stepSize);
+			rungeKutta.setFinalValueOfX(printTime);
 			rungeKutta.setInitialValuesOfY(values);
-			rungeKutta.setStepSize(stepSize);
 			
-			currentTime += stepSize;
+			currentTime = printTime;
 			
 			//STEP 2B: calculate rate rules using this time step
 			HashSet<String> affectedVariables = performRateRules(stepSize);
@@ -419,6 +421,9 @@ public class SimulatorODERK extends Simulator {
 						variableToIsConstantMap.get(currentVar) == false) {
 					
 					currValueChanges[i] = evaluateExpressionRecursive(dvariablesdtime[i]);
+					//if (currValueChanges[i]!=0) {
+					//	System.out.println(indexToVariableMap.get(i) + "= " + dvariablesdtime[i].toFormula() + "=" + currValueChanges[i]);
+					//}
 				}
 				else currValueChanges[i] = 0;
 				

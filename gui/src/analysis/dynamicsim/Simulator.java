@@ -4442,7 +4442,9 @@ public abstract class Simulator {
 		
 		reactionID = reactionID.replace("_negative_","-");
 		
-		for (LocalParameter localParameter : kineticLaw.getListOfLocalParameters()) {
+		for (int i = 0; i < kineticLaw.getLocalParameterCount(); i++) {
+
+			LocalParameter localParameter = kineticLaw.getLocalParameter(i);
 			
 			String parameterID = "";
 			
@@ -4451,6 +4453,7 @@ public abstract class Simulator {
 				parameterID = reactionID + "_" + localParameter.getId();
 			else 
 				parameterID = localParameter.getId();
+			//System.out.println("Before: " + localParameter.getId() + " after: " + parameterID);
 							
 			String oldParameterID = localParameter.getId();
 			variableToValueMap.put(parameterID, localParameter.getValue());
@@ -4460,6 +4463,7 @@ public abstract class Simulator {
 				localParameter.setId(parameterID);
 				localParameter.setMetaId(parameterID);
 			}
+			//System.out.println("After: " + localParameter.getId());
 			
 			//for some reason, changing the local parameter sometimes changes the kinetic law instances
 			//of that parameter id (and sometimes doesn't), so those ones are fine and ignore them
@@ -4468,6 +4472,7 @@ public abstract class Simulator {
 				alterLocalParameter(kineticLaw.getMath(), reactionID, oldParameterID, parameterID);
 			}
 		}
+		//System.out.println(kineticLaw.getMath().toFormula());
 	}
 	
 	/**
