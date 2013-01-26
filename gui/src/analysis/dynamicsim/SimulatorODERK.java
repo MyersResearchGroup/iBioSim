@@ -11,7 +11,6 @@ import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AssignmentRule;
-import org.sbml.jsbml.Rule;
 
 import flanagan.integration.RungeKutta;
 import flanagan.integration.DerivnFunction;
@@ -239,6 +238,7 @@ public class SimulatorODERK extends Simulator {
 		
 		double printTime = -0.0001;
 		double stepSize = 0.0001;
+		double nextEndTime = 0.0;
 		currentTime = 0.0;
 		
 		if (absoluteError == 0)
@@ -304,12 +304,17 @@ public class SimulatorODERK extends Simulator {
 				printTime += printInterval;
 			}
 			
+			nextEndTime = currentTime + maxTimeStep;
+			if (nextEndTime > printTime) {
+				nextEndTime = printTime;
+			}
+			
 			//set rk values
 			rungeKutta.setInitialValueOfX(currentTime);
-			rungeKutta.setFinalValueOfX(printTime);
+			rungeKutta.setFinalValueOfX(nextEndTime);
 			rungeKutta.setInitialValuesOfY(values);
 			
-			currentTime = printTime;
+			currentTime = nextEndTime;
 			
 			//STEP 2B: calculate rate rules using this time step
 			HashSet<String> affectedVariables = performRateRules(stepSize);

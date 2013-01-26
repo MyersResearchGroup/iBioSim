@@ -4467,10 +4467,10 @@ public abstract class Simulator {
 			
 			//for some reason, changing the local parameter sometimes changes the kinetic law instances
 			//of that parameter id (and sometimes doesn't), so those ones are fine and ignore them
-			if (kineticLaw.getMath().toFormula().contains(parameterID) == false) {
+			//if (kineticLaw.getMath().toFormula().contains(parameterID) == false) {
 
-				alterLocalParameter(kineticLaw.getMath(), reactionID, oldParameterID, parameterID);
-			}
+			alterLocalParameter(kineticLaw.getMath(), reactionID, oldParameterID, parameterID);
+			//}
 		}
 		//System.out.println(kineticLaw.getMath().toFormula());
 	}
@@ -4833,13 +4833,13 @@ public abstract class Simulator {
 				if (reactionFormula.getChildCount() >= 2 &&
 						reactionFormula.getChild(1).getType().equals(ASTNode.Type.PLUS))
 					distributedNode = ASTNode.sum(
-							ASTNode.times(reactionFormula.getLeftChild().clone(), reactionFormula.getRightChild().getLeftChild().clone()), 
-							ASTNode.times(new ASTNode(-1), reactionFormula.getLeftChild().clone(), reactionFormula.getRightChild().getRightChild().clone()));
+							ASTNode.times(reactionFormula.getLeftChild(), reactionFormula.getRightChild().getLeftChild()), 
+							ASTNode.times(new ASTNode(-1), reactionFormula.getLeftChild(), reactionFormula.getRightChild().getRightChild()));
 				else if (reactionFormula.getChildCount() >= 2 &&
 						reactionFormula.getChild(1).getType().equals(ASTNode.Type.MINUS))
 					distributedNode = ASTNode.diff(
-							ASTNode.times(reactionFormula.getLeftChild().clone(), reactionFormula.getRightChild().getLeftChild().clone()), 
-							ASTNode.times(reactionFormula.getLeftChild().clone(), reactionFormula.getRightChild().getRightChild().clone()));
+							ASTNode.times(reactionFormula.getLeftChild(), reactionFormula.getRightChild().getLeftChild()), 
+							ASTNode.times(reactionFormula.getLeftChild(), reactionFormula.getRightChild().getRightChild()));
 				
 				reactionFormula = distributedNode;
 			}
