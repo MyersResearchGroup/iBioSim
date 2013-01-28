@@ -1076,7 +1076,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 							else
 								promoterId = id.substring(id.indexOf(">")+1);
 						}
-						if (id.contains("-")) {
+						if (id.contains("->")||id.contains("-|")) {
 							sourceId = id.substring(0,id.indexOf("-"));
 						} else {
 							sourceId = id.substring(0,id.indexOf("+"));
@@ -1302,7 +1302,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 					id = id.split("/")[0];
 					String factor = null;
 					String type = null;
-					if (id.contains("-")) {
+					if (id.contains("->")||id.contains("-|")) {
 						if (id.contains("->")) type = "a";
 						else type = "r";
 						factor = id.substring(1,id.indexOf("-"));
@@ -1334,7 +1334,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				id = id.split("/")[0];
 				String factor = null;
 				String type = null;
-				if (id.contains("-")) {
+				if (id.contains("->")||id.contains("-|")) {
 					if (id.contains("->")) type = "a";
 					else type = "r";
 					factor = id.substring(1,id.indexOf("-"));
@@ -1639,7 +1639,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			ArrayList<String> specs = biomodel.getSpecies();
 			ArrayList<String> promoters = biomodel.getPromoters();
 			for (String s : getParams) {
-				if (s.contains("-")) {
+				if (s.contains("-|")||s.contains("->")) {
 					String factor = s.substring(1,s.indexOf("-"));
 					String promoter = null;
 					if (s.contains(",")) {
