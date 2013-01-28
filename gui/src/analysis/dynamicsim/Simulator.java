@@ -4634,12 +4634,12 @@ public abstract class Simulator {
 		//this is stored in a hashmap, as is whether the variable is in a constraint
 		for (Constraint constraint : model.getListOfConstraints()) {
 			
+			constraint.setMath(inlineFormula(constraint.getMath()));
 			for (ASTNode constraintNode : constraint.getMath().getListOfNodes()) {
 				
 				if (constraintNode.isName()) {
 					
 					String nodeName = constraintNode.getName();					
-					constraint.setMath(inlineFormula(constraint.getMath()));
 					
 					variableToAffectedConstraintSetMap.put(nodeName, new HashSet<ASTNode>());
 					variableToAffectedConstraintSetMap.get(nodeName).add(constraint.getMath());
