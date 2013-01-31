@@ -803,55 +803,54 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		speciesPanel.add(kecd);
 		
 		//set the values of the species fields using the sbml gcm.getSBMLDocument()
-		try {
 			
-			Species selectedSpecies = bioModel.getSBMLDocument().getModel().getSpecies(((String)species.getSelectedValue()).split(" ")[0]);
-			
-			ID.setText(selectedSpecies.getId());
-			ID.setEditable(false);
-			Name.setText(selectedSpecies.getName());
-			
-			if (selectedSpecies.getBoundaryCondition())
-				specBoundary.setSelectedItem("true");
-			else
-				specBoundary.setSelectedItem("false");
-			
-			if (selectedSpecies.getConstant())
-				specConstant.setSelectedItem("true");
-			else
-				specConstant.setSelectedItem("false");
-			
-			if (selectedSpecies.getHasOnlySubstanceUnits())
-				specHasOnly.setSelectedItem("true");
-			else
-				specHasOnly.setSelectedItem("false");
-			
-			if (bioModel.getSBMLDocument().getModel().getInitialAssignment(selectedSpecies.getId()) != null) {
-				
-				init.setText(bioModel.removeBooleans(
-						bioModel.getSBMLDocument().getModel().getInitialAssignment(selectedSpecies.getId()).getMath()));
-				initLabel.setSelectedItem("Initial Assignment");
-			}
-			else if (selectedSpecies.isSetInitialAmount()) {
-				
-				init.setText("" + selectedSpecies.getInitialAmount());
-				initLabel.setSelectedItem("Initial Amount");
-			}
-			else {
-				
-				init.setText("" + selectedSpecies.getInitialConcentration());
-				initLabel.setSelectedItem("Initial Concentration");
-			}
-			
-			kecdiff.setText(String.valueOf(bioModel.getSBMLDocument().getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Above")
-					.getKineticLaw().getParameter("kecdiff").getValue()));
-			kecd.setText(String.valueOf(bioModel.getSBMLDocument().getModel().getReaction("Degradation_" + selectedSpecies.getId())
-					.getKineticLaw().getParameter("kecd").getValue()));			
+		Species selectedSpecies = bioModel.getSBMLDocument().getModel().getSpecies(((String)species.getSelectedValue()).split(" ")[0]);
+
+		ID.setText(selectedSpecies.getId());
+		ID.setEditable(false);
+		Name.setText(selectedSpecies.getName());
+
+		if (selectedSpecies.getBoundaryCondition())
+			specBoundary.setSelectedItem("true");
+		else
+			specBoundary.setSelectedItem("false");
+
+		if (selectedSpecies.getConstant())
+			specConstant.setSelectedItem("true");
+		else
+			specConstant.setSelectedItem("false");
+
+		if (selectedSpecies.getHasOnlySubstanceUnits())
+			specHasOnly.setSelectedItem("true");
+		else
+			specHasOnly.setSelectedItem("false");
+
+		if (bioModel.getSBMLDocument().getModel().getInitialAssignment(selectedSpecies.getId()) != null) {
+
+			init.setText(bioModel.removeBooleans(
+					bioModel.getSBMLDocument().getModel().getInitialAssignment(selectedSpecies.getId()).getMath()));
+			initLabel.setSelectedItem("Initial Assignment");
 		}
-		catch (Exception e) {			
-			e.printStackTrace();
+		else if (selectedSpecies.isSetInitialAmount()) {
+
+			init.setText("" + selectedSpecies.getInitialAmount());
+			initLabel.setSelectedItem("Initial Amount");
+		}
+		else {
+
+			init.setText("" + selectedSpecies.getInitialConcentration());
+			initLabel.setSelectedItem("Initial Concentration");
 		}
 
+		Reaction diffusion = bioModel.getSBMLDocument().getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Above");
+		if (diffusion!=null) {
+			kecdiff.setText(String.valueOf(diffusion.getKineticLaw().getParameter("kecdiff").getValue()));
+		}
+		Reaction degradation = bioModel.getSBMLDocument().getModel().getReaction("Degradation_" + selectedSpecies.getId());
+		if (degradation!=null) {
+			kecd.setText(String.valueOf(degradation.getKineticLaw().getParameter("kecd").getValue()));			
+		}
+		
 		//show the frame
 		Object[] options = { "OK", "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, speciesPanel, "Species Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
@@ -859,7 +858,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		
 		if (value == JOptionPane.YES_OPTION) {
 			
-			Species selectedSpecies = bioModel.getSBMLDocument().getModel().getSpecies(((String)species.getSelectedValue()).split(" ")[0]);
+			selectedSpecies = bioModel.getSBMLDocument().getModel().getSpecies(((String)species.getSelectedValue()).split(" ")[0]);
 			
 			//set the species settings in the sbml model
 			selectedSpecies.setBoundaryCondition(Boolean.valueOf((String) specBoundary.getModel().getSelectedItem()));
@@ -894,16 +893,19 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 			double kecdiffRate = Double.parseDouble(kecdiff.getText());
 			double kecdRate = Double.parseDouble(kecd.getText());
 			
-			bioModel.getSBMLDocument().getModel().getReaction("Degradation_" + selectedSpecies.getId())
-				.getKineticLaw().getParameter("kecd").setValue(kecdRate);			
-			bioModel.getSBMLDocument().getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Above")
-				.getKineticLaw().getParameter("kecdiff").setValue(kecdiffRate);			
-			bioModel.getSBMLDocument().getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Below")
-				.getKineticLaw().getParameter("kecdiff").setValue(kecdiffRate);
-			bioModel.getSBMLDocument().getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Left")
-				.getKineticLaw().getParameter("kecdiff").setValue(kecdiffRate);
-			bioModel.getSBMLDocument().getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Right")
-				.getKineticLaw().getParameter("kecdiff").setValue(kecdiffRate);		
+			if (degradation!=null) {
+				degradation.getKineticLaw().getParameter("kecd").setValue(kecdRate);		
+			}
+			if (diffusion!=null) {
+				bioModel.getSBMLDocument().getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Above")
+					.getKineticLaw().getParameter("kecdiff").setValue(kecdiffRate);			
+				bioModel.getSBMLDocument().getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Below")
+					.getKineticLaw().getParameter("kecdiff").setValue(kecdiffRate);
+				bioModel.getSBMLDocument().getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Left")
+					.getKineticLaw().getParameter("kecdiff").setValue(kecdiffRate);
+				bioModel.getSBMLDocument().getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Right")
+					.getKineticLaw().getParameter("kecdiff").setValue(kecdiffRate);	
+			}
 		}
 	}
 	
