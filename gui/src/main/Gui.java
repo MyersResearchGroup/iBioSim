@@ -3978,6 +3978,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								tab.remove(i);
 							}
 							ModelEditor modelEditor = new ModelEditor(root + separator, modelId, this, log, false, null, null, null, false, grid,lema);
+							modelEditor.save("Save GCM");
 							addTab(modelId, modelEditor, "GCM Editor");
 							addToTree(modelId);
 						}

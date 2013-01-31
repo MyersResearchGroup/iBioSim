@@ -221,7 +221,12 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				assignRuleVar(rule.getVariable());
 				ruleVar.setEnabled(true);
 				ruleVar.setSelectedItem(rule.getVariable());
-				ruleMath.setText(bioModel.removeBooleans(rule.getMath()));
+				if (bioModel.getSBMLDocument().getModel().getParameter(rule.getVariable())!=null &&
+						SBMLutilities.isBoolean(bioModel.getSBMLDocument().getModel().getParameter(rule.getVariable()))) {
+					ruleMath.setText(bioModel.removeBooleanAssign(rule.getMath()));
+				} else {
+					ruleMath.setText(bioModel.removeBooleans(rule.getMath()));
+				}
 			}
 			if (!modelEditor.isParamsOnly()) {
 				//Parse out SBOL annotations and add to SBOL field
@@ -344,9 +349,17 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					error = SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), bioModel.addBooleans(ruleMath.getText().trim()));
 				}
 				if (!error) {
-					if (bioModel.addBooleans(ruleMath.getText().trim()).isBoolean()) {
-						JOptionPane.showMessageDialog(Gui.frame, "Rule must evaluate to a number.", "Number Expected", JOptionPane.ERROR_MESSAGE);
-						error = true;
+					if (bioModel.getSBMLDocument().getModel().getParameter(addVar)!=null &&
+							SBMLutilities.isBoolean(bioModel.getSBMLDocument().getModel().getParameter(addVar))) {
+						if (!bioModel.addBooleans(ruleMath.getText().trim()).isBoolean()) {
+							JOptionPane.showMessageDialog(Gui.frame, "Rule must evaluate to a Boolean.", "Boolean Expected", JOptionPane.ERROR_MESSAGE);
+							error = true;
+						}
+					} else {
+						if (bioModel.addBooleans(ruleMath.getText().trim()).isBoolean()) {
+							JOptionPane.showMessageDialog(Gui.frame, "Rule must evaluate to a number.", "Number Expected", JOptionPane.ERROR_MESSAGE);
+							error = true;
+						}
 					}
 				}
 			}
@@ -380,7 +393,12 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					else {
 						oldVar = r.getVariable();
 						r.setVariable(addVar);
-						r.setMath(bioModel.addBooleans(ruleMath.getText().trim()));
+						if (bioModel.getSBMLDocument().getModel().getParameter(addVar)!=null &&
+								SBMLutilities.isBoolean(bioModel.getSBMLDocument().getModel().getParameter(addVar))) {
+							r.setMath(bioModel.addBooleanAssign(ruleMath.getText().trim()));
+						} else {
+							r.setMath(bioModel.addBooleans(ruleMath.getText().trim()));
+						}
 						error = checkAssignmentRuleUnits(r);
 						addStr = addVar + " = " + bioModel.removeBooleans(r.getMath());
 					}
@@ -524,7 +542,12 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 							AssignmentRule r = sbmlDoc.getModel().createAssignmentRule();
 							r.setMetaId(id.getText().trim());
 							r.setVariable(addVar);
-							r.setMath(bioModel.addBooleans(ruleMath.getText().trim()));
+							if (bioModel.getSBMLDocument().getModel().getParameter(addVar)!=null &&
+									SBMLutilities.isBoolean(bioModel.getSBMLDocument().getModel().getParameter(addVar))) {
+								r.setMath(bioModel.addBooleanAssign(ruleMath.getText().trim()));
+							} else {
+								r.setMath(bioModel.addBooleans(ruleMath.getText().trim()));
+							}
 							error = checkAssignmentRuleUnits(r);
 							rPointer = r;
 						}
@@ -754,7 +777,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		}
 		for (int i = 0; i < model.getNumParameters(); i++) {
 			Parameter p = model.getParameter(i);
-			if (!(p.getConstant()) && !SBMLutilities.isPlace(p) && !SBMLutilities.isBoolean(p)) {
+			if (!(p.getConstant()) && !SBMLutilities.isPlace(p) /*&& !SBMLutilities.isBoolean(p)*/) {
 				if (keepVarAssignRule(bioModel, selected, p.getId())) {
 					ruleVar.addItem(p.getId());
 					assignOK = true;
