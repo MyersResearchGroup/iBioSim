@@ -45,6 +45,7 @@ import org.sbml.libsbml.Compartment;
 import org.sbml.libsbml.CompartmentGlyph;
 import org.sbml.libsbml.CompartmentType;
 import org.sbml.libsbml.Constraint;
+import org.sbml.libsbml.ConversionProperties;
 import org.sbml.libsbml.Deletion;
 import org.sbml.libsbml.Dimensions;
 import org.sbml.libsbml.Event;
@@ -6650,25 +6651,40 @@ public class BioModel {
 		if (numSubModels > 0 && isGridEnabled()) {
 			expandListOfSubmodels(bioModel.getSBMLCompModel());
 		}
-		Model model = bioModel.getSBMLCompModel().flattenModel();
-		if (model==null) {
-			//Utility.createErrorMessage("Error During Flattening", "Cannot flatten model.");
+		if (document.getErrorLog().getNumFailsWithSeverity(libsbml.LIBSBML_SEV_ERROR) > 0) {
+			// doc.printErrors();
 			return null;
-		}
-		document.setModel(model);
-		document.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
-		document.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
-		//CompModelPlugin documentCompModel = (CompModelPlugin)sbml.getModel().getPlugin("comp");
-		//while (documentCompModel.getNumPorts()>0) {
-		//	documentCompModel.getPort(0).removeFromParentAndDelete();
+		} else {
+		  /* create a new conversion properties structure */
+	      ConversionProperties props = new ConversionProperties();
+
+		  /* add an option that we want to flatten */
+		  props.addOption("flatten comp", true, "flatten comp");
+
+		  /* add an option to leave ports if the user has requested this */
+		  props.addOption("leavePorts", false, "unused ports should be listed in the flattened model");
+
+		  /* perform the conversion */
+		  if (document.convert(props) != libsbml.LIBSBML_OPERATION_SUCCESS) {
+			  return null;
+		  }
+		}		
+		//Model model = bioModel.getSBMLCompModel().flattenModel();
+		//if (model==null) {
+			//Utility.createErrorMessage("Error During Flattening", "Cannot flatten model.");
+			//return null;
 		//}
+		//document.setModel(model);
+		//document.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
+		//document.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
 		document.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", false);
 		document.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", false);
 		//SBMLWriter writer = new SBMLWriter();
 		//writer.writeSBML(document, path + separator + "_temp.xml");
+		// THIS IS A WORKAROUND A FLATTEN BUG WHICH DOES NOT RENAME METAIDs
+		/*
 		SBaseList elements = document.getModel().getListOfAllElements();
 		if (numSubModels > 0) {
-			// THIS IS A WORKAROUND A FLATTEN BUG WHICH DOES NOT RENAME METAIDs
 			document.getModel().setMetaId("iBioSim"+0);
 			long metaIdNum = 1;
 			for (long i = 0; i < elements.getSize(); i++) {
@@ -6679,6 +6695,7 @@ public class BioModel {
 				}
 			}
 		}
+		*/
 		return document;
 	}
 	
