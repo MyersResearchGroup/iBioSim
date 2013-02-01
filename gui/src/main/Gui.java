@@ -1598,6 +1598,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				else if (save == 3) {
 					autosave = 2;
 				}
+				markTabClean(i);
 			}
 		}
 		else if (e.getSource() == closeAll) {
@@ -5959,6 +5960,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			if (i>=0 && tab.getTitleAt(i).endsWith("*")) {
 				tab.setTitleAt(i, tab.getTitleAt(i).replace("*",""));
 			}
+		}
+	}
+	
+	public void markTabClean(int i) {
+		if (i>=0 && tab.getTitleAt(i).endsWith("*")) {
+			tab.setTitleAt(i, tab.getTitleAt(i).replace("*",""));
 		}
 	}
 	
