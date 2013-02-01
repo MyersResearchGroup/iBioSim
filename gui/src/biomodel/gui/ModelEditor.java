@@ -312,11 +312,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	
 	public void setDirty(boolean dirty) {
 		this.dirty.setValue(dirty);
-		if (dirty) {
-			biosim.markTabDirty(filename.replace(".gcm", ".xml"));
-		} else {
-			biosim.markTabClean(filename.replace(".gcm", ".xml"));
-		}
+		biosim.markTabDirty(dirty);
 	}
 
 	public BioModel getGCM() {
@@ -714,6 +710,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				}
 			}
 			out.close();
+			setDirty(false);
 		}
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(Gui.frame, "Unable to save parameter file.", "Error Saving File", JOptionPane.ERROR_MESSAGE);

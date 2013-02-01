@@ -2018,7 +2018,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else if (e.getActionCommand().equals("stateGraph")) {
 			try {
-				String directory = root + separator + tab.getTitleAt(tab.getSelectedIndex());
+				String directory = root + separator + getTitleAt(tab.getSelectedIndex());
 				File work = new File(directory);
 				for (String f : new File(directory).list()) {
 					if (f.contains("_sg.dot")) {
@@ -2562,7 +2562,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 			}
 			else if (comp instanceof JScrollPane) {
-				String fileName = tab.getTitleAt(tab.getSelectedIndex());
+				String fileName = getTitleAt(tab.getSelectedIndex());
 				try {
 					File output = new File(root + separator + fileName);
 					output.createNewFile();
@@ -2643,7 +2643,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 			}
 			else if (comp instanceof JScrollPane) {
-				String fileName = tab.getTitleAt(tab.getSelectedIndex());
+				String fileName = getTitleAt(tab.getSelectedIndex());
 				String newName = "";
 				if (fileName.endsWith(".vhd")) {
 					newName = JOptionPane.showInputDialog(frame, "Enter VHDL name:", "VHDL Name", JOptionPane.PLAIN_MESSAGE);
@@ -5949,20 +5949,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		return tree;
 	}
 	
-	public void markTabDirty(String name) {
-		for (int i = 0; i < tab.getTabCount(); i++) {
-			if (tab.getTitleAt(i).equals(name)) {
-				tab.setTitleAt(i,name+"*");
-				break;
+	public void markTabDirty(boolean dirty) {
+		int i = tab.getSelectedIndex();
+		if (dirty) {
+			if (i>=0 && !tab.getTitleAt(i).endsWith("*")) {
+				tab.setTitleAt(i, tab.getTitleAt(i)+"*");
 			}
-		}
-	}
-	
-	public void markTabClean(String name) {
-		for (int i = 0; i < tab.getTabCount(); i++) {
-			if (tab.getTitleAt(i).equals(name+"*")) {
-				tab.setTitleAt(i,name);
-				break;
+		} else {
+			if (i>=0 && tab.getTitleAt(i).endsWith("*")) {
+				tab.setTitleAt(i, tab.getTitleAt(i).replace("*",""));
 			}
 		}
 	}
@@ -6020,7 +6015,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				ModelEditor editor = (ModelEditor) tab.getComponentAt(index);
 				if (editor.isDirty()) {
 					if (autosave == 0) {
-						int value = JOptionPane.showOptionDialog(frame, "Do you want to save changes to " + tab.getTitleAt(index) + "?",
+						int value = JOptionPane.showOptionDialog(frame, "Do you want to save changes to " + getTitleAt(index) + "?",
 								"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
 						if (value == YES_OPTION) {
 							editor.save("gcm");
@@ -6053,7 +6048,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				LHPNEditor editor = (LHPNEditor) tab.getComponentAt(index);
 				if (editor.isDirty()) {
 					if (autosave == 0) {
-						int value = JOptionPane.showOptionDialog(frame, "Do you want to save changes to " + tab.getTitleAt(index) + "?",
+						int value = JOptionPane.showOptionDialog(frame, "Do you want to save changes to " + getTitleAt(index) + "?",
 								"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
 						if (value == YES_OPTION) {
 							editor.save();
@@ -6141,7 +6136,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			if (tab.getComponentAt(index) instanceof Graph) {
 				if (((Graph) tab.getComponentAt(index)).hasChanged()) {
 					if (autosave == 0) {
-						int value = JOptionPane.showOptionDialog(frame, "Do you want to save changes to " + tab.getTitleAt(index) + "?",
+						int value = JOptionPane.showOptionDialog(frame, "Do you want to save changes to " + getTitleAt(index) + "?",
 								"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
 						if (value == YES_OPTION) {
 							((Graph) tab.getComponentAt(index)).save();
@@ -6190,7 +6185,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							if (((AnalysisView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).hasChanged()) {
 								if (autosave == 0) {
 									int value = JOptionPane.showOptionDialog(frame,
-											"Do you want to save simulation option changes for " + tab.getTitleAt(index) + "?", "Save Changes",
+											"Do you want to save simulation option changes for " + getTitleAt(index) + "?", "Save Changes",
 											JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
 									if (value == YES_OPTION) {
 										((AnalysisView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
@@ -6268,7 +6263,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									|| ((MovieContainer) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).getIsDirty()) {
 								if (autosave == 0) {
 									int value = JOptionPane.showOptionDialog(frame,
-											"Do you want to save parameter changes for " + tab.getTitleAt(index) + "?", "Save Changes",
+											"Do you want to save parameter changes for " + getTitleAt(index) + "?", "Save Changes",
 											JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
 									if (value == YES_OPTION) {
 										((MovieContainer) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).savePreferences();
@@ -6294,7 +6289,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								if (((LearnGCM) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).hasChanged()) {
 									if (autosave == 0) {
 										int value = JOptionPane.showOptionDialog(frame,
-												"Do you want to save learn option changes for " + tab.getTitleAt(index) + "?", "Save Changes",
+												"Do you want to save learn option changes for " + getTitleAt(index) + "?", "Save Changes",
 												JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
 										if (value == YES_OPTION) {
 											if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnGCM) {
@@ -6325,7 +6320,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								if (((LearnLHPN) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).hasChanged()) {
 									if (autosave == 0) {
 										int value = JOptionPane.showOptionDialog(frame,
-												"Do you want to save learn option changes for " + tab.getTitleAt(index) + "?", "Save Changes",
+												"Do you want to save learn option changes for " + getTitleAt(index) + "?", "Save Changes",
 												JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
 										if (value == YES_OPTION) {
 											if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnLHPN) {
@@ -6355,7 +6350,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						}
 						else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName().equals("Data Manager")) {
 							if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof DataManager) {
-								((DataManager) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).saveChanges(tab.getTitleAt(index));
+								((DataManager) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).saveChanges(getTitleAt(index));
 							}
 						}
 						else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName().contains("Graph")) {
@@ -6363,7 +6358,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								if (((Graph) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).hasChanged()) {
 									if (autosave == 0) {
 										int value = JOptionPane.showOptionDialog(frame,
-												"Do you want to save graph changes for " + tab.getTitleAt(index) + "?", "Save Changes",
+												"Do you want to save graph changes for " + getTitleAt(index) + "?", "Save Changes",
 												JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
 										if (value == YES_OPTION) {
 											if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Graph) {
@@ -6404,7 +6399,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						if (((Synthesis) array[0]).hasChanged()) {
 							if (autosave == 0) {
 								int value = JOptionPane.showOptionDialog(frame,
-										"Do you want to save synthesis option changes for " + tab.getTitleAt(index) + "?", "Save Changes",
+										"Do you want to save synthesis option changes for " + getTitleAt(index) + "?", "Save Changes",
 										JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
 								if (value == YES_OPTION) {
 									if (array[0] instanceof Synthesis) {
@@ -6438,7 +6433,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						if (((Verification) array[0]).hasChanged()) {
 							if (autosave == 0) {
 								int value = JOptionPane.showOptionDialog(frame,
-										"Do you want to save verification option changes for " + tab.getTitleAt(index) + "?", "Save Changes",
+										"Do you want to save verification option changes for " + getTitleAt(index) + "?", "Save Changes",
 										JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
 								if (value == YES_OPTION) {
 									((Verification) array[0]).save();
@@ -8463,7 +8458,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			new File(root + separator + newSim).mkdir();
 			// new FileWriter(new File(root + separator + newSim + separator +
 			// ".sim")).close();
-			String oldSim = tab.getTitleAt(tab.getSelectedIndex());
+			String oldSim = getTitleAt(tab.getSelectedIndex());
 			String[] s = new File(root + separator + oldSim).list();
 			String sbmlFile = "";
 			String propertiesFile = "";
@@ -9164,7 +9159,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			Component learnComponent = null;			
 			Boolean learn = false;
 			Boolean learnLHPN = false;
-			for (String s : new File(root + separator + tab.getTitleAt(tab.getSelectedIndex())).list()) {
+			for (String s : new File(root + separator + getTitleAt(tab.getSelectedIndex())).list()) {
 				if (s.contains("_sg.dot")) {
 					viewSG.setEnabled(true);
 				}
@@ -9188,7 +9183,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				save.setEnabled(true);
 				run.setEnabled(true);
 				if (learn) {
-					if (new File(root + separator + tab.getTitleAt(tab.getSelectedIndex()) + separator + "method.gcm").exists()) {
+					if (new File(root + separator + getTitleAt(tab.getSelectedIndex()) + separator + "method.gcm").exists()) {
 						viewLearnedModel.setEnabled(true);
 					}
 					run.setEnabled(true);
@@ -9260,7 +9255,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				run.setEnabled(true);
 			}
 			else if (component instanceof LearnGCM) {
-				if (new File(root + separator + tab.getTitleAt(tab.getSelectedIndex()) + separator + "method.gcm").exists()) {
+				if (new File(root + separator + getTitleAt(tab.getSelectedIndex()) + separator + "method.gcm").exists()) {
 					viewLearnedModel.setEnabled(true);
 				}
 				saveButton.setEnabled(true);
@@ -9288,7 +9283,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				save.setEnabled(true);
 				saveAs.setEnabled(true);
 				if (learn) {
-					if (new File(root + separator + tab.getTitleAt(tab.getSelectedIndex()) + separator + "method.gcm").exists()) {
+					if (new File(root + separator + getTitleAt(tab.getSelectedIndex()) + separator + "method.gcm").exists()) {
 						viewLearnedModel.setEnabled(true);
 					}
 					run.setEnabled(true);
@@ -9311,7 +9306,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				save.setEnabled(true);
 				run.setEnabled(true);
 				if (learn) {
-					if (new File(root + separator + tab.getTitleAt(tab.getSelectedIndex()) + separator + "method.gcm").exists()) {
+					if (new File(root + separator + getTitleAt(tab.getSelectedIndex()) + separator + "method.gcm").exists()) {
 						viewLearnedModel.setEnabled(true);
 					}
 					run.setEnabled(true);
