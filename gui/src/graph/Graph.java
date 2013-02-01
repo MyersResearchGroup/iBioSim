@@ -337,7 +337,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		edit.setHorizontalAlignment(SwingConstants.CENTER);
 		graph.add(edit);
 		graph.addMouseListener(this);
-		change = false;
+		setChange(false);
 
 		// creates text fields for changing the graph's dimensions
 		resize = new JCheckBox("Auto Resize");
@@ -2825,7 +2825,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				double minX;
 				double maxX;
 				double scaleX;
-				change = true;
+				setChange(true);
 				try {
 					minY = Double.parseDouble(YMin.getText().trim());
 					maxY = Double.parseDouble(YMax.getText().trim());
@@ -5685,7 +5685,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				graph.store(store, "Graph Data");
 				store.close();
 				log.addText("Creating graph file:\n" + outDir + separator + graphName + "\n");
-				change = false;
+				setChange(false);
 			}
 			catch (Exception except) {
 				JOptionPane.showMessageDialog(Gui.frame, "Unable To Save Graph!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -5714,7 +5714,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				graph.store(store, "Probability Data");
 				store.close();
 				log.addText("Creating graph file:\n" + outDir + separator + graphName + "\n");
-				change = false;
+				setChange(false);
 			}
 			catch (Exception except) {
 				JOptionPane.showMessageDialog(Gui.frame, "Unable To Save Graph!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -5764,7 +5764,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							del.delete();
 						}
 						for (int i = 0; i < biomodelsim.getTab().getTabCount(); i++) {
-							if (biomodelsim.getTab().getTitleAt(i).equals(graphName)) {
+							if (biomodelsim.getTitleAt(i).equals(graphName)) {
 								biomodelsim.getTab().remove(i);
 							}
 						}
@@ -5815,7 +5815,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					graph.store(store, "Graph Data");
 					store.close();
 					log.addText("Creating graph file:\n" + f.getAbsolutePath() + "\n");
-					change = false;
+					setChange(false);
 					biomodelsim.addToTree(f.getName());
 				}
 				catch (Exception except) {
@@ -5865,7 +5865,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							del.delete();
 						}
 						for (int i = 0; i < biomodelsim.getTab().getTabCount(); i++) {
-							if (biomodelsim.getTab().getTitleAt(i).equals(graphName)) {
+							if (biomodelsim.getTitleAt(i).equals(graphName)) {
 								biomodelsim.getTab().remove(i);
 							}
 						}
@@ -5905,7 +5905,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					graph.store(store, "Probability Graph Data");
 					store.close();
 					log.addText("Creating probability graph file:\n" + f.getAbsolutePath() + "\n");
-					change = false;
+					setChange(false);
 					biomodelsim.addToTree(f.getName());
 				}
 				catch (Exception except) {
@@ -7000,6 +7000,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	public void setGraphName(String graphName) {
 		this.graphName = graphName;
 	}
+	
+	public void setChange(boolean change) {
+		this.change = change;
+		biomodelsim.markTabDirty(change);
+	}
 
 	public boolean hasChanged() {
 		return change;
@@ -7025,7 +7030,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		edit.setHorizontalAlignment(SwingConstants.CENTER);
 		graph.add(edit);
 		graph.addMouseListener(this);
-		change = false;
+		setChange(false);
 
 		// creates the buttons for the graph frame
 		JPanel ButtonHolder = new JPanel();
@@ -7536,7 +7541,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			int value = JOptionPane.showOptionDialog(Gui.frame, all, "Edit Probability Graph", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 					null, options, options[0]);
 			if (value == JOptionPane.YES_OPTION) {
-				change = true;
+				setChange(true);
 				lastSelected = selected;
 				selected = "";
 				BarRenderer rend = (BarRenderer) chart.getCategoryPlot().getRenderer();

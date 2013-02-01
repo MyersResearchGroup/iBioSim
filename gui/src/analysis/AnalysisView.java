@@ -1428,7 +1428,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			}
 			for (int i = 0; i < biomodelsim.getTab().getTabCount(); i++) {
 				if (modelEditor != null) {
-					if (biomodelsim.getTab().getTitleAt(i).equals(modelEditor.getRefFile())) {
+					if (biomodelsim.getTitleAt(i).equals(modelEditor.getRefFile())) {
 						if (biomodelsim.getTab().getComponentAt(i) instanceof ModelEditor) {
 							ModelEditor gcm = ((ModelEditor) (biomodelsim.getTab().getComponentAt(i)));
 							if (gcm.isDirty()) {
@@ -1447,7 +1447,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					}
 				}
 				else {
-					if (biomodelsim.getTab().getTitleAt(i).equals(modelFile)) {
+					if (biomodelsim.getTitleAt(i).equals(modelFile)) {
 						if (biomodelsim.getTab().getComponentAt(i) instanceof LHPNEditor) {
 							LHPNEditor lpn = ((LHPNEditor) (biomodelsim.getTab().getComponentAt(i)));
 							if (lpn.isDirty()) {
