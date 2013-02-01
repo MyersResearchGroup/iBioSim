@@ -209,7 +209,8 @@ public class Schematic extends JPanel implements ActionListener {
 
 		if (graph == null) {
 			
-			graph = new BioGraph(bioModel,biosim.lema);		
+			graph = new BioGraph(bioModel,biosim.lema);	
+			graph.setResetEdgesOnMove(false);
 			addGraphListeners();
 			bioModel.makeUndoPoint();
 		}
@@ -2015,23 +2016,29 @@ public class Schematic extends JPanel implements ActionListener {
 
 			}
 			else{
-				// connect two species to each other, create new implicit promoter if influence is activation or repression
-				String newPromoterName = "";
-				
-				if (activationButton.isSelected() || inhibitionButton.isSelected() || noInfluenceButton.isSelected()) {
-					mxGeometry geom = target.getGeometry();
-					newPromoterName = bioModel.createPromoter(null, (float)geom.getX(), (float)geom.getY(), false);
-					bioModel.createProductionReaction(newPromoterName,null,null,null,null,null,null,false);
-					if (activationButton.isSelected()) {
-						bioModel.addActivatorToProductionReaction(newPromoterName, sourceID, targetID, null, null, null);
-					} else if (inhibitionButton.isSelected()) {
-						bioModel.addRepressorToProductionReaction(newPromoterName, sourceID, targetID, null, null, null);
-					} else if (noInfluenceButton.isSelected()) {
-						bioModel.addNoInfluenceToProductionReaction(newPromoterName, sourceID, targetID);
+				if ((graph.getCellType(source) == GlobalConstants.SPECIES) && 
+						(graph.getCellType(target) == GlobalConstants.SPECIES) &&
+						(bioModel.getSBMLDocument().getModel().getSpecies(sourceID)!=null) &&
+						(bioModel.getSBMLDocument().getModel().getSpecies(targetID)!=null)) {
+					// connect two species to each other, create new implicit promoter if influence is activation or repression
+					String newPromoterName = "";
+
+					if (activationButton.isSelected() || inhibitionButton.isSelected() || noInfluenceButton.isSelected()) {
+						mxGeometry geom = target.getGeometry();
+						newPromoterName = bioModel.createPromoter(null, (float)geom.getX(), (float)geom.getY(), false);
+						bioModel.createProductionReaction(newPromoterName,null,null,null,null,null,null,false);
+						if (activationButton.isSelected()) {
+							bioModel.addActivatorToProductionReaction(newPromoterName, sourceID, targetID, null, null, null);
+						} else if (inhibitionButton.isSelected()) {
+							bioModel.addRepressorToProductionReaction(newPromoterName, sourceID, targetID, null, null, null);
+						} else if (noInfluenceButton.isSelected()) {
+							bioModel.addNoInfluenceToProductionReaction(newPromoterName, sourceID, targetID);
+						}
 					}
-				}
-				else if (bioActivationButton.isSelected()) {
-					bioModel.addReactantToComplexReaction(sourceID, targetID, null, null);
+					else if (bioActivationButton.isSelected()) {
+						System.out.println("source="+sourceID+" target="+targetID);
+						bioModel.addReactantToComplexReaction(sourceID, targetID, null, null);
+					}
 				}
 			}
 		}
