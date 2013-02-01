@@ -72,8 +72,6 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 
 	private BioModel bioModel;
 
-	private MutableBoolean dirty;
-
 	private Gui biosim;
 
 	private JComboBox ruleType, ruleVar;
@@ -85,12 +83,11 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	private JTextField ruleMath;
 
 	/* Create rule panel */
-	public Rules(Gui biosim, BioModel gcm, ModelEditor gcmEditor, MutableBoolean dirty) {
+	public Rules(Gui biosim, BioModel gcm, ModelEditor modelEditor) {
 		super(new BorderLayout());
 		this.bioModel = gcm;
 		this.biosim = biosim;
-		this.modelEditor = gcmEditor;
-		this.dirty = dirty;
+		this.modelEditor = modelEditor;
 
 		/* Create rule panel */
 		Model model = gcm.getSBMLDocument().getModel();
@@ -579,7 +576,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 						rules.setSelectedIndex(index);
 					}
 				}
-				dirty.setValue(true);
+				modelEditor.setDirty(true);
 				bioModel.makeUndoPoint();
 			}
 			if (error) {
@@ -610,7 +607,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			else {
 				rules.setSelectedIndex(index - 1);
 			}
-			dirty.setValue(true);
+			modelEditor.setDirty(true);
 			bioModel.makeUndoPoint();
 		}
 	}

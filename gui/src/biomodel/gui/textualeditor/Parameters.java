@@ -35,6 +35,7 @@ import org.sbml.libsbml.Species;
 import org.sbml.libsbml.SpeciesReference;
 import org.sbml.libsbml.UnitDefinition;
 
+import biomodel.gui.ModelEditor;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 
@@ -65,8 +66,6 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 
 	private BioModel bioModel;
 
-	private MutableBoolean dirty;
-
 	private Boolean paramsOnly;
 
 	private String file;
@@ -79,17 +78,19 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 
 	private Gui biosim;
 	
+	private ModelEditor modelEditor;
+	
 	private boolean constantsOnly;
 
-	public Parameters(Gui biosim, BioModel gcm, MutableBoolean dirty, Boolean paramsOnly, ArrayList<String> getParams,
+	public Parameters(Gui biosim, BioModel gcm, ModelEditor modelEditor, Boolean paramsOnly, ArrayList<String> getParams,
 			String file, ArrayList<String> parameterChanges, boolean constantsOnly) {
 		super(new BorderLayout());
 		this.bioModel = gcm;
-		this.dirty = dirty;
 		this.paramsOnly = paramsOnly;
 		this.file = file;
 		this.parameterChanges = parameterChanges;
 		this.biosim = biosim;
+		this.modelEditor = modelEditor;
 		this.constantsOnly = constantsOnly;
 		Model model = gcm.getSBMLDocument().getModel();
 		JPanel addParams = new JPanel();
@@ -820,7 +821,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 								}
 							}
 						}
-						dirty.setValue(true);
+						modelEditor.setDirty(true);
 						bioModel.makeUndoPoint();
 					}
 				}
@@ -880,7 +881,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 					layout.removeTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+selected);
 				}
 			}
-			dirty.setValue(true);
+			modelEditor.setDirty(true);
 			bioModel.makeUndoPoint();
 			return true;
 		}

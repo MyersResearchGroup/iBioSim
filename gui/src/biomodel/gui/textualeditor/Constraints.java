@@ -32,6 +32,7 @@ import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.UnitDefinition;
 import org.sbml.libsbml.XMLNode;
 
+import biomodel.gui.ModelEditor;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 
@@ -52,13 +53,13 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 
 	private BioModel bioModel;
 
-	private MutableBoolean dirty;
+	private ModelEditor modelEditor;
 
 	/* Create initial assignment panel */
-	public Constraints(BioModel bioModel, MutableBoolean dirty) {
+	public Constraints(BioModel bioModel, ModelEditor modelEditor) {
 		super(new BorderLayout());
 		this.bioModel = bioModel;
-		this.dirty = dirty;
+		this.modelEditor = modelEditor;
 		Model model = bioModel.getSBMLDocument().getModel();
 		addConstraint = new JButton("Add Constraint");
 		removeConstraint = new JButton("Remove Constraint");
@@ -306,7 +307,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 							constraints.setSelectedIndex(index);
 						}
 					}
-					dirty.setValue(true);
+					modelEditor.setDirty(true);
 					bioModel.makeUndoPoint();
 				}
 			}
@@ -373,7 +374,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 				layout.removeTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+selected);
 			}
 		}
-		dirty.setValue(true);
+		modelEditor.setDirty(true);
 		bioModel.makeUndoPoint();
 	}
 

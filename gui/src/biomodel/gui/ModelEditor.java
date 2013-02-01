@@ -312,6 +312,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	
 	public void setDirty(boolean dirty) {
 		this.dirty.setValue(dirty);
+		if (dirty) {
+			biosim.markTabDirty(filename.replace(".gcm", ".xml"));
+		} else {
+			biosim.markTabClean(filename.replace(".gcm", ".xml"));
+		}
 	}
 
 	public BioModel getGCM() {
@@ -331,7 +336,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 	public void save(String command) {
 		//log.addText("save");
-		dirty.setValue(false);	
+		setDirty(false);	
 		
 		speciesPanel.refreshSpeciesPanel(biomodel);
 
@@ -1529,15 +1534,15 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		
 		String file = filename.replace(".gcm", ".xml");
 		
-		compartmentPanel = new Compartments(biosim,biomodel,dirty, paramsOnly,getParams, path + separator + file,	parameterChanges,false);
-		reactionPanel = new Reactions(biosim,biomodel,dirty, paramsOnly,getParams,path + separator + file,parameterChanges, this);
-		speciesPanel = new MySpecies(biosim,biomodel,dirty, paramsOnly,getParams,path + separator + file,parameterChanges,
+		compartmentPanel = new Compartments(biosim,biomodel,this, paramsOnly,getParams, path + separator + file, parameterChanges,false);
+		reactionPanel = new Reactions(biosim,biomodel,paramsOnly,getParams,path + separator + file,parameterChanges, this);
+		speciesPanel = new MySpecies(biosim,biomodel,paramsOnly,getParams,path + separator + file,parameterChanges,
 				biomodel.getGrid().isEnabled(),this);
-		parametersPanel = new Parameters(biosim, biomodel,dirty, paramsOnly,getParams,path + separator + file,parameterChanges, 
+		parametersPanel = new Parameters(biosim, biomodel,this, paramsOnly,getParams,path + separator + file,parameterChanges, 
 				!paramsOnly && !biomodel.getGrid().isEnabled() && !textBased);
-		rulesPanel = new Rules(biosim, biomodel, this, dirty);
-		consPanel = new Constraints(biomodel,dirty);
-		eventPanel = new Events(biosim,biomodel,dirty,textBased);
+		rulesPanel = new Rules(biosim, biomodel, this);
+		consPanel = new Constraints(biomodel, this);
+		eventPanel = new Events(biosim,biomodel,this,textBased);
 
 		JPanel compPanel = new JPanel(new BorderLayout());
 		if (textBased) {
@@ -1593,8 +1598,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 		}
 		
-		functionPanel = new Functions(biomodel,dirty);
-		unitPanel = new Units(biosim,biomodel,dirty);
+		functionPanel = new Functions(biomodel,this);
+		unitPanel = new Units(biosim,biomodel,this);
 		//JPanel defnPanel = new JPanel(new BorderLayout());
 		//defnPanel.add(mainPanelNorth, "North");
 		//defnPanel.add(functionPanel,"Center");
@@ -1603,17 +1608,19 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		tab.addTab("Functions", functionPanel);
 		tab.addTab("Units", unitPanel);
 		
+		/*
 		if (biomodel.getSBMLDocument().getLevel() < 3) {
-			CompartmentTypes compTypePanel = new CompartmentTypes(biosim,biomodel,dirty);
-			SpeciesTypes specTypePanel = new SpeciesTypes(biosim,biomodel,dirty);
+			CompartmentTypes compTypePanel = new CompartmentTypes(biosim,biomodel,this);
+			SpeciesTypes specTypePanel = new SpeciesTypes(biosim,biomodel,this);
 			JPanel typePanel = new JPanel(new BorderLayout());
 			typePanel.add(mainPanelNorth, "North");
 			typePanel.add(compTypePanel,"Center");
 			typePanel.add(specTypePanel,"South");
 			tab.addTab("Types", typePanel);
 		}
+		*/
 
-		InitialAssignments initialsPanel = new InitialAssignments(biosim,biomodel,dirty);
+		InitialAssignments initialsPanel = new InitialAssignments(biosim,biomodel,this);
 		compartmentPanel.setPanels(initialsPanel, rulesPanel);
 		functionPanel.setPanels(initialsPanel, rulesPanel);
 		speciesPanel.setPanels(reactionPanel, initialsPanel, rulesPanel, parametersPanel);
