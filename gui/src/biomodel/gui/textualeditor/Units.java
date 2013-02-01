@@ -38,6 +38,7 @@ import org.sbml.libsbml.Unit;
 import org.sbml.libsbml.UnitDefinition;
 import org.sbml.libsbml.libsbml;
 
+import biomodel.gui.ModelEditor;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 
@@ -64,7 +65,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 
 	private BioModel bioModel;
 
-	private MutableBoolean dirty;
+	private ModelEditor modelEditor;
 
 	private Gui biosim;
 	
@@ -72,11 +73,11 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 
 	//private String[] uList;
 
-	public Units(Gui biosim, BioModel gcm, MutableBoolean dirty) {
+	public Units(Gui biosim, BioModel gcm, ModelEditor modelEditor) {
 		super(new BorderLayout());
 		this.bioModel = gcm;
 		this.biosim = biosim;
-		this.dirty = dirty;
+		this.modelEditor = modelEditor;
 		Model model = gcm.getSBMLDocument().getModel();
 		addUnit = new JButton("Add Unit");
 		removeUnit = new JButton("Remove Unit");
@@ -425,7 +426,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 							unitDefs.setSelectedIndex(index);
 						}
 					}
-					dirty.setValue(true);
+					modelEditor.setDirty(true);
 					bioModel.makeUndoPoint();
 				}
 				if (error) {
@@ -594,7 +595,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 						unitList.setSelectedIndex(index);
 					}
 				}
-				dirty.setValue(true);
+				modelEditor.setDirty(true);
 				bioModel.makeUndoPoint();
 			}
 			if (error) {
@@ -649,7 +650,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			else {
 				unitList.setSelectedIndex(index - 1);
 			}
-			dirty.setValue(true);
+			modelEditor.setDirty(true);
 			bioModel.makeUndoPoint();
 		}
 	}
@@ -684,7 +685,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 				else {
 					unitDefs.setSelectedIndex(index - 1);
 				}
-				dirty.setValue(true);
+				modelEditor.setDirty(true);
 				bioModel.makeUndoPoint();
 			}
 		}

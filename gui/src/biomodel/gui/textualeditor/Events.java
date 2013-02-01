@@ -27,6 +27,7 @@ import main.util.Utility;
 
 import org.sbml.libsbml.*;
 
+import biomodel.gui.ModelEditor;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 
@@ -49,16 +50,16 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 
 	private BioModel bioModel;
 
-	private MutableBoolean dirty;
+	private ModelEditor modelEditor;
 
 	private Gui biosim;
 
 	/* Create event panel */
-	public Events(Gui biosim, BioModel bioModel, MutableBoolean dirty, boolean isTextual) {
+	public Events(Gui biosim, BioModel bioModel, ModelEditor modelEditor, boolean isTextual) {
 		super(new BorderLayout());
 		this.bioModel = bioModel;
 		this.biosim = biosim;
-		this.dirty = dirty;
+		this.modelEditor = modelEditor;
 		Model model = bioModel.getSBMLDocument().getModel();
 		addEvent = new JButton("Add Event");
 		addTrans = new JButton("Add Transition");
@@ -1024,7 +1025,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		if (value == JOptionPane.NO_OPTION) {
 			return selected;
 		}
-		dirty.setValue(true);
+		modelEditor.setDirty(true);
 		bioModel.makeUndoPoint();
 		return eventID.getText().trim();
 	}
@@ -1127,7 +1128,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			else {
 				events.setSelectedIndex(index - 1);
 			}
-			dirty.setValue(true);
+			modelEditor.setDirty(true);
 			gcm.makeUndoPoint();
 		}
 	}

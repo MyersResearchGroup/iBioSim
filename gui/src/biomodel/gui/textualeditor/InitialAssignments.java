@@ -36,6 +36,7 @@ import org.sbml.libsbml.Species;
 import org.sbml.libsbml.SpeciesReference;
 import org.sbml.libsbml.UnitDefinition;
 
+import biomodel.gui.ModelEditor;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 
@@ -56,16 +57,16 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 
 	private BioModel gcm;
 
-	private MutableBoolean dirty;
+	private ModelEditor modelEditor;
 
 	private Gui biosim;
 
 	/* Create initial assignment panel */
-	public InitialAssignments(Gui biosim, BioModel gcm, MutableBoolean dirty) {
+	public InitialAssignments(Gui biosim, BioModel gcm, ModelEditor modelEditor) {
 		super(new BorderLayout());
 		this.gcm = gcm;
 		this.biosim = biosim;
-		this.dirty = dirty;
+		this.modelEditor = modelEditor;
 		Model model = gcm.getSBMLDocument().getModel();
 		/* Create initial assignment panel */
 		addInit = new JButton("Add Initial");
@@ -444,7 +445,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			}
 		}
 		if (!error) {
-			dirty.setValue(true);
+			modelEditor.setDirty(true);
 			gcm.makeUndoPoint();
 		}
 		return error;
@@ -577,7 +578,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			else {
 				initAssigns.setSelectedIndex(index - 1);
 			}
-			dirty.setValue(true);
+			modelEditor.setDirty(true);
 			gcm.makeUndoPoint();
 		}
 	}

@@ -50,8 +50,6 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 
 	private BioModel bioModel;
 
-	private MutableBoolean dirty;
-
 	private Boolean paramsOnly;
 
 	private String file;
@@ -82,13 +80,11 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 	
 	private ModelEditor modelEditor;
 
-	public MySpecies(Gui biosim, BioModel bioModel, MutableBoolean dirty, Boolean paramsOnly,
-			ArrayList<String> getParams, String file, ArrayList<String> parameterChanges, Boolean editOnly, 
-			ModelEditor modelEditor) {
+	public MySpecies(Gui biosim, BioModel bioModel, Boolean paramsOnly, ArrayList<String> getParams, String file, 
+			ArrayList<String> parameterChanges, Boolean editOnly, ModelEditor modelEditor) {
 		super(new BorderLayout());
 		this.bioModel = bioModel;
 		this.biosim = biosim;
-		this.dirty = dirty;
 		this.paramsOnly = paramsOnly;
 		this.file = file;
 		this.parameterChanges = parameterChanges;
@@ -736,7 +732,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 							species.setSelectedIndex(index1);
 						}
 					}
-					dirty.setValue(true);
+					modelEditor.setDirty(true);
 					bioModel.makeUndoPoint();
 				}
 			}
@@ -1033,12 +1029,12 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 			String id = ((String) species.getSelectedValue()).split(" ")[0];
 			if (BioModel.isPromoterSpecies(bioModel.getSBMLDocument().getModel().getSpecies(id))) {
 				bioModel.removePromoter(id);
-				dirty.setValue(true);
+				modelEditor.setDirty(true);
 				bioModel.makeUndoPoint();
 			} else {
 				if (!SBMLutilities.variableInUse(bioModel.getSBMLDocument(), id, false, true, true)) {
 					bioModel.removeSpecies(id);
-					dirty.setValue(true);
+					modelEditor.setDirty(true);
 					bioModel.makeUndoPoint();
 				}
 				/*
@@ -1059,7 +1055,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 					else {
 						species.setSelectedIndex(index - 1);
 					}
-					dirty.setValue(true);
+					modelEditor.setDirty(true);
 					bioModel.makeUndoPoint();
 				}
 				*/

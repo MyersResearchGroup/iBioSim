@@ -85,7 +85,6 @@ import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.tree.TreeModel;
-import javax.swing.tree.TreePath;
 import javax.mail.*;
 import javax.mail.PasswordAuthentication;
 import javax.mail.internet.*;
@@ -262,7 +261,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	
 	private JMenuItem save, saveAs, saveSBOL, check, run, refresh, viewCircuit, viewRules, viewTrace, viewLog, viewCoverage,
 			viewLHPN, saveModel, saveAsVerilog, viewSG, viewModGraph, viewLearnedModel, viewModBrowser, createAnal, createLearn, 
-			createSbml,	createSynth, createVer, close, closeAll, convertToLPN;
+			createSbml,	createSynth, createVer, close, closeAll, saveAll, convertToLPN;
 	
 	public String ENVVAR;
 
@@ -411,7 +410,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			try {
 				mimeMessage.setFrom(new InternetAddress(emailAddr.getText().trim()));
 				mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-				mimeMessage.setSubject(reportType.getSelectedItem() + ":"+bugSubject.getText().trim());
+				mimeMessage.setSubject(reportType.getSelectedItem() + ": "+bugSubject.getText().trim());
 				mimeMessage.setText("Bug reported by: "+emailAddr.getText().trim()+"\n\nDescription:\n"+
 						bugDetail.getText().trim()+message);
 				Transport.send(mimeMessage);
@@ -636,6 +635,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		clearRecent = new JMenuItem("Clear Recent");
 		close = new JMenuItem("Close");
 		closeAll = new JMenuItem("Close All");
+		saveAll = new JMenuItem("Save All");
 		pref = new JMenuItem("Preferences");
 		newProj = new JMenuItem("Project");
 		newSBMLModel = new JMenuItem("Model");
@@ -742,6 +742,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		clearRecent.addActionListener(this);
 		close.addActionListener(this);
 		closeAll.addActionListener(this);
+		saveAll.addActionListener(this);
 		pref.addActionListener(this);
 		manual.addActionListener(this);
 		bugReport.addActionListener(this);
@@ -839,6 +840,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		openProj.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ShortCutKey));
 		close.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ShortCutKey));
 		closeAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ShortCutKey | KeyEvent.SHIFT_MASK));
+		saveAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ShortCutKey | KeyEvent.ALT_MASK));
 		save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ShortCutKey));
 		saveAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ShortCutKey | KeyEvent.SHIFT_MASK));
 		run.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ShortCutKey));
@@ -1044,6 +1046,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		file.addSeparator();
 		file.add(save);
 		file.add(saveAs);
+		file.add(saveAll);
 		if (!async) {
 			//file.add(saveSBOL);
 			file.add(check);
@@ -1327,6 +1330,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(dispatcher);
 	}
 	
+	public String getTitleAt(int i) {
+		return tab.getTitleAt(i).replace("*","");
+	}
+	
 	public boolean getCheckUndeclared() {
 		Preferences biosimrc = Preferences.userRoot();
 		if (biosimrc.get("biosim.check.undeclared", "").equals("false")) {
@@ -1577,6 +1584,21 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			Component comp = tab.getSelectedComponent();
 			Point point = comp.getLocation();
 			tab.fireCloseTabEvent(new MouseEvent(comp, e.getID(), e.getWhen(), e.getModifiers(), point.x, point.y, 0, false), tab.getSelectedIndex());
+		}
+		else if (e.getSource() == saveAll) {
+			int autosave = 0;
+			for (int i = 0; i < tab.getTabCount(); i++) {
+				int save = save(i, autosave);
+				if (save == 0) {
+					break;
+				}
+				else if (save == 2) {
+					autosave = 1;
+				}
+				else if (save == 3) {
+					autosave = 2;
+				}
+			}
 		}
 		else if (e.getSource() == closeAll) {
 			while (tab.getSelectedComponent() != null) {
@@ -1871,7 +1893,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		else if (e.getActionCommand().equals("createSynthesis")) {
 			if (root != null) {
 				for (int i = 0; i < tab.getTabCount(); i++) {
-					if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+					if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 						tab.setSelectedIndex(i);
 						if (save(i, 0) == 0) {
 							return;
@@ -1935,7 +1957,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		else if (e.getActionCommand().equals("createVerify")) {
 			if (root != null) {
 				for (int i = 0; i < tab.getTabCount(); i++) {
-					if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+					if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 						tab.setSelectedIndex(i);
 						if (save(i, 0) == 0) {
 							return;
@@ -2035,7 +2057,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				theFile = filename.substring(filename.lastIndexOf('\\') + 1);
 			}
 			for (int i = 0; i < tab.getTabCount(); i++) {
-				if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+				if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 					tab.setSelectedIndex(i);
 					if (save(i, 0) == 0) {
 						return;
@@ -2223,7 +2245,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				theFile = filename.substring(filename.lastIndexOf('\\') + 1);
 			}
 			for (int i = 0; i < tab.getTabCount(); i++) {
-				if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+				if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 					tab.setSelectedIndex(i);
 					if (save(i, 0) == 0) {
 						return;
@@ -2400,7 +2422,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				theFile = filename.substring(filename.lastIndexOf('\\') + 1);
 			}
 			for (int i = 0; i < tab.getTabCount(); i++) {
-				if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+				if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 					tab.setSelectedIndex(i);
 					if (save(i, 0) == 0) {
 						return;
@@ -3358,7 +3380,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			if (new File(tree.getFile()).isDirectory()) {
 				String dirName = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
 				for (int i = 0; i < tab.getTabCount(); i++) {
-					if (tab.getTitleAt(i).equals(dirName)) {
+					if (getTitleAt(i).equals(dirName)) {
 						tab.remove(i);
 					}
 				}
@@ -3377,7 +3399,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				if (views.length == 0) {
 					String fileName = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
 					for (int i = 0; i < tab.getTabCount(); i++) {
-						if (tab.getTitleAt(i).equals(fileName)) {
+						if (getTitleAt(i).equals(fileName)) {
 							tab.remove(i);
 						}
 					}
@@ -4464,7 +4486,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private void createLearn() {
 		if (root != null) {
 			for (int i = 0; i < tab.getTabCount(); i++) {
-				if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+				if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 					tab.setSelectedIndex(i);
 					if (save(i, 0) == 0) {
 						return;
@@ -4933,7 +4955,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private void copy() {
 		if (!tree.getFile().equals(root)) {
 			for (int i = 0; i < tab.getTabCount(); i++) {
-				if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+				if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 					tab.setSelectedIndex(i);
 					if (save(i, 0) == 0) {
 						return;
@@ -5131,7 +5153,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			
 			String oldName = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
 			for (int i = 0; i < tab.getTabCount(); i++) {
-				if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+				if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 					tab.setSelectedIndex(i);
 					if (save(i, 0) == 0) {
 						return;
@@ -5267,7 +5289,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							}
 						}
 						for (int i = 0; i < tab.getTabCount(); i++) {
-							if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+							if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 								/*	
 								if (tree.getFile().length() > 4 && tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
 										|| tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
@@ -5516,7 +5538,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			String theSBMLFile = fullPath.split(separator)[fullPath.split(separator).length - 1];
 			String theGCMFile = theSBMLFile.replace(".xml", ".gcm");
 			for (int i = 0; i < tab.getTabCount(); i++) {
-				if (tab.getTitleAt(i).equals(theSBMLFile) || tab.getTitleAt(i).equals(theGCMFile)) {
+				if (getTitleAt(i).equals(theSBMLFile) || getTitleAt(i).equals(theGCMFile)) {
 					tab.setSelectedIndex(i);
 					done = true;
 					break;
@@ -5605,7 +5627,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private void openGraph() {
 		boolean done = false;
 		for (int i = 0; i < tab.getTabCount(); i++) {
-			if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+			if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 				tab.setSelectedIndex(i);
 				done = true;
 			}
@@ -5620,7 +5642,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private void openHistogram() {
 		boolean done = false;
 		for (int i = 0; i < tab.getTabCount(); i++) {
-			if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+			if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 				tab.setSelectedIndex(i);
 				done = true;
 			}
@@ -5770,7 +5792,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	public int getTab(String name) {
 		for (int i = 0; i < tab.getTabCount(); i++) {
-			if (tab.getTitleAt(i).equals(name)) {
+			if (getTitleAt(i).equals(name)) {
 				return i;
 			}
 		}
@@ -5926,7 +5948,25 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	public FileTree getFileTree() {
 		return tree;
 	}
-
+	
+	public void markTabDirty(String name) {
+		for (int i = 0; i < tab.getTabCount(); i++) {
+			if (tab.getTitleAt(i).equals(name)) {
+				tab.setTitleAt(i,name+"*");
+				break;
+			}
+		}
+	}
+	
+	public void markTabClean(String name) {
+		for (int i = 0; i < tab.getTabCount(); i++) {
+			if (tab.getTitleAt(i).equals(name+"*")) {
+				tab.setTitleAt(i,name);
+				break;
+			}
+		}
+	}
+	
 	/**
 	 * This method adds the given Component to a tab.
 	 */
@@ -7431,7 +7471,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		String sbmlFile;
 		String modelId = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1].replace(".xml","").replace(".lpn","");
 		for (int i = 0; i < tab.getTabCount(); i++) {
-			if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+			if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 				tab.setSelectedIndex(i);
 				if (save(i, 0) == 0) {
 					return;
@@ -7537,7 +7577,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private void openLearn() {
 		boolean done = false;
 		for (int i = 0; i < tab.getTabCount(); i++) {
-			if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+			if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 				tab.setSelectedIndex(i);
 				done = true;
 			}
@@ -7606,7 +7646,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JOptionPane.showMessageDialog(frame, "Unable to load properties file!", "Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 			}
 			for (int i = 0; i < tab.getTabCount(); i++) {
-				if (tab.getTitleAt(i).equals(learnFile)) {
+				if (getTitleAt(i).equals(learnFile)) {
 					tab.setSelectedIndex(i);
 					if (save(i, 0) == 0) {
 						return;
@@ -7641,7 +7681,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private void openLearnLHPN() {
 		boolean done = false;
 		for (int i = 0; i < tab.getTabCount(); i++) {
-			if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+			if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 				tab.setSelectedIndex(i);
 				done = true;
 			}
@@ -7706,7 +7746,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JOptionPane.showMessageDialog(frame, "Unable to load properties file!", "Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 			}
 			for (int i = 0; i < tab.getTabCount(); i++) {
-				if (tab.getTitleAt(i).equals(learnFile)) {
+				if (getTitleAt(i).equals(learnFile)) {
 					tab.setSelectedIndex(i);
 					if (save(i, 0) == 0) {
 						return;
@@ -7737,7 +7777,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private void openSynth() {
 		boolean done = false;
 		for (int i = 0; i < tab.getTabCount(); i++) {
-			if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+			if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 				tab.setSelectedIndex(i);
 				done = true;
 			}
@@ -7797,7 +7837,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JOptionPane.showMessageDialog(frame, "Unable to load properties file!", "Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 			}
 			for (int i = 0; i < tab.getTabCount(); i++) {
-				if (tab.getTitleAt(i).equals(synthesisFile)) {
+				if (getTitleAt(i).equals(synthesisFile)) {
 					tab.setSelectedIndex(i);
 					if (save(i, 0) == 0) {
 						return;
@@ -7821,7 +7861,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private void openVerify() {
 		boolean done = false;
 		for (int i = 0; i < tab.getTabCount(); i++) {
-			if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+			if (getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 				tab.setSelectedIndex(i);
 				done = true;
 			}
@@ -7867,7 +7907,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JOptionPane.showMessageDialog(frame, "Unable to load properties file!", "Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 			}
 			for (int i = 0; i < tab.getTabCount(); i++) {
-				if (tab.getTitleAt(i).equals(verifyFile)) {
+				if (getTitleAt(i).equals(verifyFile)) {
 					tab.setSelectedIndex(i);
 					if (save(i, 0) == 0) {
 						return;
@@ -7898,7 +7938,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		String filename = tree.getFile();
 		boolean done = false;
 		for (int i = 0; i < tab.getTabCount(); i++) {
-			if (tab.getTitleAt(i).equals(filename.split(separator)[filename.split(separator).length - 1])) {
+			if (getTitleAt(i).equals(filename.split(separator)[filename.split(separator).length - 1])) {
 				tab.setSelectedIndex(i);
 				done = true;
 			}
@@ -8070,7 +8110,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							return;
 						}
 						for (int i = 0; i < tab.getTabCount(); i++) {
-							if (tab.getTitleAt(i).equals(sbmlLoadFile.split(separator)[sbmlLoadFile.split(separator).length - 1])) {
+							if (getTitleAt(i).equals(sbmlLoadFile.split(separator)[sbmlLoadFile.split(separator).length - 1])) {
 								tab.setSelectedIndex(i);
 								if (save(i, 0) == 0) {
 									return;
@@ -8573,7 +8613,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	public void refreshLearn(String learnName, boolean data) {
 		for (int i = 0; i < tab.getTabCount(); i++) {
-			if (tab.getTitleAt(i).equals(learnName)) {
+			if (getTitleAt(i).equals(learnName)) {
 				for (int j = 0; j < ((JTabbedPane) tab.getComponentAt(i)).getComponentCount(); j++) {
 					if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).getName().equals("TSD Graph")) {
 						// if (data) {
@@ -8607,7 +8647,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	/*
 	private void updateGCM() {
 		for (int i = 0; i < tab.getTabCount(); i++) {
-			if (tab.getTitleAt(i).contains(".gcm")) {
+			if (getTitleAt(i).contains(".gcm")) {
 				((ModelEditor) tab.getComponentAt(i)).reloadFiles();
 				tab.setTitleAt(i, ((ModelEditor) tab.getComponentAt(i)).getFilename());
 			}
@@ -8618,7 +8658,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	public boolean updateOpenGCM(String gcmName) {
 		
 		for (int i = 0; i < tab.getTabCount(); i++) {
-			String tab = this.tab.getTitleAt(i);
+			String tab = this.getTitleAt(i);
 			if (gcmName.equals(tab)) {
 				if (this.tab.getComponentAt(i) instanceof ModelEditor) {
 					((ModelEditor) this.tab.getComponentAt(i)).reload(gcmName.replace(".gcm", ""));
@@ -8633,7 +8673,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private void renameOpenGCMComponents(String gcmName, String oldname, String newName) {
 		for (int i = 0; i < tab.getTabCount(); i++) {
-			String tab = this.tab.getTitleAt(i);
+			String tab = this.getTitleAt(i);
 			if (gcmName.equals(tab)) {
 				if (this.tab.getComponentAt(i) instanceof ModelEditor) {
 					((ModelEditor) this.tab.getComponentAt(i)).renameComponents(oldname, newName);
@@ -8645,7 +8685,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	public void updateAsyncViews(String updatedFile) {
 		for (int i = 0; i < tab.getTabCount(); i++) {
-			String tab = this.tab.getTitleAt(i);
+			String tab = this.getTitleAt(i);
 			String properties = root + separator + tab + separator + tab + ".ver";
 			String properties1 = root + separator + tab + separator + tab + ".synth";
 			String properties2 = root + separator + tab + separator + tab + ".lrn";
@@ -8703,7 +8743,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	public void updateViews(String updatedFile) {
 		
 		for (int i = 0; i < tab.getTabCount(); i++) {
-			String tab = this.tab.getTitleAt(i);	
+			String tab = this.getTitleAt(i);	
 			
 			if (this.tab.getComponentAt(i).getName().equals("GCM Editor")) {
 			
@@ -8855,7 +8895,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			// ArrayList<String> saved = new ArrayList<String>();
 			// if (this.tab.getComponentAt(i) instanceof GCM2SBMLEditor) {
-			// saved.add(this.tab.getTitleAt(i));
+			// saved.add(this.getTitleAt(i));
 			// GCM2SBMLEditor gcm = (GCM2SBMLEditor) this.tab.getComponentAt(i);
 			// if (gcm.getSBMLFile().equals(updatedFile)) {
 			// gcm.save("save");
@@ -9542,7 +9582,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			if (value == JOptionPane.YES_OPTION) {
 				for (int i = 0; i < tab.getTabCount(); i++) {
-					if (tab.getTitleAt(i).equals(name)) {
+					if (getTitleAt(i).equals(name)) {
 						tab.remove(i);
 					}
 				}
@@ -9568,7 +9608,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	/*
 	public boolean updateOpenSBML(String sbmlName) {
 		for (int i = 0; i < tab.getTabCount(); i++) {
-			String tab = this.tab.getTitleAt(i);
+			String tab = this.getTitleAt(i);
 			if (sbmlName.equals(tab)) {
 				if (this.tab.getComponentAt(i) instanceof SBML_Editor) {
 					SBML_Editor newSBML = new SBML_Editor(root + separator + sbmlName, null, log, this, null, null);
@@ -9585,7 +9625,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	public void updateTabName(String oldName, String newName) {
 		for (int i = 0; i < tab.getTabCount(); i++) {
-			String tab = this.tab.getTitleAt(i);
+			String tab = this.getTitleAt(i);
 			if (oldName.equals(tab)) {
 				this.tab.setTitleAt(i, newName);
 			}
@@ -9594,7 +9634,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	public boolean updateOpenLHPN(String lhpnName) {
 		for (int i = 0; i < tab.getTabCount(); i++) {
-			String tab = this.tab.getTitleAt(i);
+			String tab = this.getTitleAt(i);
 			if (lhpnName.equals(tab)) {
 				if (this.tab.getComponentAt(i) instanceof LHPNEditor) {
 					LHPNEditor newLHPN = new LHPNEditor(root, lhpnName, null, this, log);

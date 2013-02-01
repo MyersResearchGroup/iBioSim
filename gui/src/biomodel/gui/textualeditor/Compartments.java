@@ -39,6 +39,7 @@ import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.UnitDefinition;
 
+import biomodel.gui.ModelEditor;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 
@@ -68,8 +69,8 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 	private boolean editComp = false;
 
 	private BioModel bioModel;
-
-	private MutableBoolean dirty;
+	
+	private ModelEditor modelEditor;
 
 	private Boolean paramsOnly;
 
@@ -85,15 +86,15 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 	
 	private Gui biosim;
 
-	public Compartments(Gui biosim, BioModel gcm, MutableBoolean dirty, Boolean paramsOnly, 
+	public Compartments(Gui biosim, BioModel gcm, ModelEditor modelEditor, Boolean paramsOnly, 
 			ArrayList<String> getParams, String file, ArrayList<String> parameterChanges, Boolean editOnly) {
 		super(new BorderLayout());
 		this.bioModel = gcm;
-		this.dirty = dirty;
 		this.paramsOnly = paramsOnly;
 		this.file = file;
 		this.parameterChanges = parameterChanges;
 		this.biosim = biosim;
+		this.modelEditor = modelEditor;
 		Model model = gcm.getSBMLDocument().getModel();
 		addCompart = new JButton("Add Compartment");
 		removeCompart = new JButton("Remove Compartment");
@@ -648,7 +649,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 							compartments.setSelectedIndex(index);
 						}
 					}
-					dirty.setValue(true);
+					modelEditor.setDirty(true);
 					bioModel.makeUndoPoint();
 				}
 			}
@@ -855,7 +856,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						else {
 							compartments.setSelectedIndex(index - 1);
 						}
-						dirty.setValue(true);
+						modelEditor.setDirty(true);
 						bioModel.makeUndoPoint();
 					}
 				}

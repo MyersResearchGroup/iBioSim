@@ -32,6 +32,7 @@ import org.sbml.libsbml.Port;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.libsbml;
 
+import biomodel.gui.ModelEditor;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 
@@ -50,9 +51,9 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 
 	private JList functions; // JList of functions
 
-	private BioModel gcm;
+	private BioModel bioModel;
 
-	private MutableBoolean dirty;
+	private ModelEditor modelEditor;
 
 	private InitialAssignments initialsPanel;
 
@@ -61,11 +62,11 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 	private JCheckBox onPort;
 
 	/* Create initial assignment panel */
-	public Functions(BioModel gcm, MutableBoolean dirty) {
+	public Functions(BioModel bioModel, ModelEditor modelEditor) {
 		super(new BorderLayout());
-		this.gcm = gcm;
-		this.dirty = dirty;
-		Model model = gcm.getSBMLDocument().getModel();
+		this.bioModel = bioModel;
+		this.modelEditor = modelEditor;
+		Model model = bioModel.getSBMLDocument().getModel();
 		addFunction = new JButton("Add Function");
 		removeFunction = new JButton("Remove Function");
 		editFunction = new JButton("Edit Function");
@@ -195,11 +196,11 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 		String selectedID = "";
 		if (option.equals("OK")) {
 			try {
-				FunctionDefinition function = gcm.getSBMLDocument().getModel().getFunctionDefinition((((String) functions.getSelectedValue()).split(" ")[0]));
+				FunctionDefinition function = bioModel.getSBMLDocument().getModel().getFunctionDefinition((((String) functions.getSelectedValue()).split(" ")[0]));
 				funcID.setText(function.getId());
 				selectedID = function.getId();
 				funcName.setText(function.getName());
-				if (gcm.getPortByIdRef(function.getId())!=null) {
+				if (bioModel.getPortByIdRef(function.getId())!=null) {
 					onPort.setSelected(true);
 				} else {
 					onPort.setSelected(false);
@@ -238,7 +239,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 				null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(gcm.getSBMLDocument(), funcID.getText().trim(), selectedID, false, false);
+			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), funcID.getText().trim(), selectedID, false, false);
 			if (!error) {
 				String[] vars = eqn.getText().trim().split(" |\\(|\\)|\\,|\\*|\\+|\\/|\\-");
 				for (int i = 0; i < vars.length; i++) {
@@ -265,7 +266,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 					error = true;
 				}
 				else {
-					ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(gcm.getSBMLDocument(), eqn.getText().trim(), args.getText().trim(), true);
+					ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(bioModel.getSBMLDocument(), eqn.getText().trim(), args.getText().trim(), true);
 					if (invalidVars.size() > 0) {
 						String invalid = "";
 						for (int i = 0; i < invalidVars.size(); i++) {
@@ -292,7 +293,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 			if (!error) {
-				error = SBMLutilities.checkNumFunctionArguments(gcm.getSBMLDocument(), SBMLutilities.myParseFormula(eqn.getText().trim()));
+				error = SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), SBMLutilities.myParseFormula(eqn.getText().trim()));
 			}
 			if (!error) {
 				if (option.equals("OK")) {
@@ -305,7 +306,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 					functions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					funcs = Utility.getList(funcs, functions);
 					functions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					FunctionDefinition f = gcm.getSBMLDocument().getModel().getFunctionDefinition(val);
+					FunctionDefinition f = bioModel.getSBMLDocument().getModel().getFunctionDefinition(val);
 					f.setId(funcID.getText().trim());
 					f.setName(funcName.getText().trim());
 					if (args.getText().trim().equals("")) {
@@ -324,7 +325,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 						error = true;
 						funcs[index] = oldVal;
 					}
-					Port port = gcm.getPortByIdRef(val);
+					Port port = bioModel.getPortByIdRef(val);
 					if (port!=null) {
 						if (onPort.isSelected()) {
 							port.setId(GlobalConstants.FUNCTION+"__"+f.getId());
@@ -334,14 +335,14 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 						}
 					} else {
 						if (onPort.isSelected()) {
-							port = gcm.getSBMLCompModel().createPort();
+							port = bioModel.getSBMLCompModel().createPort();
 							port.setId(GlobalConstants.FUNCTION+"__"+f.getId());
 							port.setIdRef(f.getId());
 						}
 					}
 					functions.setListData(funcs);
 					functions.setSelectedIndex(index);
-					SBMLutilities.updateVarId(gcm.getSBMLDocument(), false, val, funcID.getText().trim());
+					SBMLutilities.updateVarId(bioModel.getSBMLDocument(), false, val, funcID.getText().trim());
 				}
 				else {
 					String[] funcs = new String[functions.getModel().getSize()];
@@ -371,7 +372,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 						funcs = oldVal;
 					}
 					if (!error) {
-						FunctionDefinition f = gcm.getSBMLDocument().getModel().createFunctionDefinition();
+						FunctionDefinition f = bioModel.getSBMLDocument().getModel().createFunctionDefinition();
 						f.setId(funcID.getText().trim());
 						f.setName(funcName.getText().trim());
 						if (args.getText().trim().equals("")) {
@@ -381,22 +382,22 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 							f.setMath(libsbml.parseFormula("lambda(" + args.getText().trim() + "," + eqn.getText().trim() + ")"));
 						}
 						if (onPort.isSelected()) {
-							Port port = gcm.getSBMLCompModel().createPort();
+							Port port = bioModel.getSBMLCompModel().createPort();
 							port.setId(GlobalConstants.FUNCTION+"__"+f.getId());
 							port.setIdRef(f.getId());
 						}
 					}
 					functions.setListData(funcs);
 					functions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					if (gcm.getSBMLDocument().getModel().getNumFunctionDefinitions() == 1) {
+					if (bioModel.getSBMLDocument().getModel().getNumFunctionDefinitions() == 1) {
 						functions.setSelectedIndex(0);
 					}
 					else {
 						functions.setSelectedIndex(index);
 					}
 				}
-				dirty.setValue(true);
-				gcm.makeUndoPoint();
+				modelEditor.setDirty(true);
+				bioModel.makeUndoPoint();
 			}
 			if (error) {
 				value = JOptionPane.showOptionDialog(Gui.frame, functionPanel, "Function Editor", JOptionPane.YES_NO_OPTION,
@@ -414,18 +415,18 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 	private void removeFunction() {
 		int index = functions.getSelectedIndex();
 		if (index != -1) {
-			if (!SBMLutilities.variableInUse(gcm.getSBMLDocument(), ((String) functions.getSelectedValue()).split(" ")[0], false, true, true)) {
-				FunctionDefinition tempFunc = gcm.getSBMLDocument().getModel().getFunctionDefinition(((String) functions.getSelectedValue()).split(" ")[0]);
-				ListOf f = gcm.getSBMLDocument().getModel().getListOfFunctionDefinitions();
-				for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumFunctionDefinitions(); i++) {
+			if (!SBMLutilities.variableInUse(bioModel.getSBMLDocument(), ((String) functions.getSelectedValue()).split(" ")[0], false, true, true)) {
+				FunctionDefinition tempFunc = bioModel.getSBMLDocument().getModel().getFunctionDefinition(((String) functions.getSelectedValue()).split(" ")[0]);
+				ListOf f = bioModel.getSBMLDocument().getModel().getListOfFunctionDefinitions();
+				for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumFunctionDefinitions(); i++) {
 					if (((FunctionDefinition) f.get(i)).getId().equals(tempFunc.getId())) {
 						f.remove(i);
 					}
 				}
-				for (long i = 0; i < gcm.getSBMLCompModel().getNumPorts(); i++) {
-					Port port = gcm.getSBMLCompModel().getPort(i);
+				for (long i = 0; i < bioModel.getSBMLCompModel().getNumPorts(); i++) {
+					Port port = bioModel.getSBMLCompModel().getPort(i);
 					if (port.isSetIdRef() && port.getIdRef().equals(tempFunc.getId())) {
-						gcm.getSBMLCompModel().removePort(i);
+						bioModel.getSBMLCompModel().removePort(i);
 						break;
 					}
 				}
@@ -438,8 +439,8 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 				else {
 					functions.setSelectedIndex(index - 1);
 				}
-				dirty.setValue(true);
-				gcm.makeUndoPoint();
+				modelEditor.setDirty(true);
+				bioModel.makeUndoPoint();
 			}
 		}
 	}
@@ -448,7 +449,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 	 * Refresh functions panel
 	 */
 	public void refreshFunctionsPanel() {
-		Model model = gcm.getSBMLDocument().getModel();
+		Model model = bioModel.getSBMLDocument().getModel();
 		ListOf listOfFunctions = model.getListOfFunctionDefinitions();
 		int count = 0;
 		for (int i = 0; i < model.getNumFunctionDefinitions(); i++) {
@@ -490,7 +491,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 		// if the edit event button is clicked
 		else if (e.getSource() == editFunction) {
 			functionEditor("OK");
-			initialsPanel.refreshInitialAssignmentPanel(gcm);
+			initialsPanel.refreshInitialAssignmentPanel(bioModel);
 			rulesPanel.refreshRulesPanel();
 		}
 		// if the remove event button is clicked
@@ -503,7 +504,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 		if (e.getClickCount() == 2) {
 			if (e.getSource() == functions) {
 				functionEditor("OK");
-				initialsPanel.refreshInitialAssignmentPanel(gcm);
+				initialsPanel.refreshInitialAssignmentPanel(bioModel);
 				rulesPanel.refreshRulesPanel();
 			}
 		}

@@ -179,8 +179,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 
 	private BioModel bioModel;
 
-	private MutableBoolean dirty;
-
 	private Boolean paramsOnly;
 
 	private String file;
@@ -197,12 +195,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	
 	private ModelEditor modelEditor;
 
-	public Reactions(Gui biosim, BioModel gcm, MutableBoolean dirty, Boolean paramsOnly,
-			ArrayList<String> getParams, String file, ArrayList<String> parameterChanges, ModelEditor gcmEditor) {
+	public Reactions(Gui biosim, BioModel gcm, Boolean paramsOnly, ArrayList<String> getParams, String file, 
+			ArrayList<String> parameterChanges, ModelEditor gcmEditor) {
 		super(new BorderLayout());
 		this.bioModel = gcm;
 		this.biosim = biosim;
-		this.dirty = dirty;
 		this.paramsOnly = paramsOnly;
 		this.file = file;
 		this.parameterChanges = parameterChanges;
@@ -945,7 +942,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						removeTheReaction(gcm, reac);
 					}
 				}
-				dirty.setValue(true);
+				modelEditor.setDirty(true);
 				gcm.makeUndoPoint();
 			}
 			if (error) {
@@ -1473,7 +1470,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							reacParameters.setSelectedIndex(0);
 						}
 					}
-					dirty.setValue(true);
+					modelEditor.setDirty(true);
 					bioModel.makeUndoPoint();
 				}
 			}
@@ -1788,7 +1785,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					products.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					products.setSelectedIndex(0);
 				}
-				dirty.setValue(true);
+				modelEditor.setDirty(true);
 				gcm.makeUndoPoint();
 			}
 			if (error) {
@@ -1929,7 +1926,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 				}
 			}
-			dirty.setValue(true);
+			modelEditor.setDirty(true);
 			bioModel.makeUndoPoint();
 			if (error) {
 				value = JOptionPane.showOptionDialog(Gui.frame, modifiersPanel, "Modifiers Editor", JOptionPane.YES_NO_OPTION,
@@ -2239,7 +2236,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					reactants.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					reactants.setSelectedIndex(0);
 				}
-				dirty.setValue(true);
+				modelEditor.setDirty(true);
 				gcm.makeUndoPoint();
 			}
 			if (error) {
@@ -2274,7 +2271,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					reactions.setSelectedIndex(index - 1);
 				}
 			}
-			dirty.setValue(true);
+			modelEditor.setDirty(true);
 			bioModel.makeUndoPoint();
 		}
 	}
@@ -2312,7 +2309,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					else {
 						reactants.setSelectedIndex(index - 1);
 					}
-					dirty.setValue(true);
+					modelEditor.setDirty(true);
 					bioModel.makeUndoPoint();
 				}
 			}
@@ -2339,7 +2336,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					else {
 						products.setSelectedIndex(index - 1);
 					}
-					dirty.setValue(true);
+					modelEditor.setDirty(true);
 					bioModel.makeUndoPoint();
 				}
 			}
@@ -2367,7 +2364,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			else {
 				modifiers.setSelectedIndex(index - 1);
 			}
-			dirty.setValue(true);
+			modelEditor.setDirty(true);
 			bioModel.makeUndoPoint();
 		}
 	}
@@ -2465,7 +2462,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 		}
 		kineticLaw.setText(kinetic);
-		dirty.setValue(true);
+		modelEditor.setDirty(true);
 		bioModel.makeUndoPoint();
 	}
 
@@ -2537,7 +2534,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			else {
 				reacParameters.setSelectedIndex(index - 1);
 			}
-			dirty.setValue(true);
+			modelEditor.setDirty(true);
 			bioModel.makeUndoPoint();
 		}
 	}
@@ -2656,7 +2653,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		// if the clear button is clicked
 		else if (e.getSource() == clearKineticLaw) {
 			kineticLaw.setText("");
-			dirty.setValue(true);
+			modelEditor.setDirty(true);
 			bioModel.makeUndoPoint();
 		}
 		// if the use mass action button is clicked
