@@ -45,7 +45,7 @@ public class MemoryChart extends Thread {
         long init = System.currentTimeMillis() / 1000;
         long unit = 1000;
         f.setSize(600, 400);
-        f.show();
+        f.setVisible(true);
         f.setLocation(0, 0);
 //        f.setTitle(sg.label);
         while (running) {
@@ -94,7 +94,7 @@ public class MemoryChart extends Thread {
                         Logger.getLogger(MemoryChart.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-                f.hide();
+                f.setVisible(false);
             }
         };
         new Thread(runnable).start();

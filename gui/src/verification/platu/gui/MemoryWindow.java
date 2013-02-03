@@ -70,7 +70,7 @@ public class MemoryWindow extends Thread {
             long unit = 1000;
             while(f==null)Thread.sleep(100);
             f.setSize(400, 700);
-            f.show();
+            f.setVisible(true);
             f.setLocation(0, 0);
             f.setTitle("MemoryChart");
             int itter = 0;
