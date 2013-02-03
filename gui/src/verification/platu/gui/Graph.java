@@ -23,7 +23,7 @@ public class Graph extends javax.swing.JFrame {
     public Graph(JPanel p) {
         initComponents();
         setContentPane(p);
-        show();
+        setVisible(true);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         validate();
     }

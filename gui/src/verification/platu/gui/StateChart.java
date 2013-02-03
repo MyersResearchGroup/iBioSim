@@ -39,7 +39,7 @@ public class StateChart extends Thread {
         long init = System.currentTimeMillis() / 1000;
         long unit = 1;
         f.setSize(600, 400);
-        f.show();
+        f.setVisible(true);
         f.setLocation(600, 0);
         states.add(0, 0);
         stateTrans.add(0, 0);
@@ -88,7 +88,7 @@ public class StateChart extends Thread {
                         Logger.getLogger(StateChart.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-                f.hide();
+                f.setVisible(false);
             }
         };
         new Thread(runnable).start();

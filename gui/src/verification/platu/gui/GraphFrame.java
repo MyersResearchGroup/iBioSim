@@ -23,7 +23,7 @@ public class GraphFrame extends javax.swing.JFrame {
     public GraphFrame(JPanel p) {
         initComponents();
 setContentPane(p);
-        show();
+        setVisible(true);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         validate();
     }

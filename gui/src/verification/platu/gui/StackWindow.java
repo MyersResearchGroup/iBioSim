@@ -58,7 +58,7 @@ final static JFrame f=new JFrame(StackWindow.class.getSimpleName());
         });
         t.start();
         f.setSize(800, 400);
-        f.show();
+        f.setVisible(true);
        f. setLocation(410, 0);
     }
 String arrayToString(Object[] objs){

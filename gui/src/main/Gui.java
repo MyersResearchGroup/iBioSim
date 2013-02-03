@@ -4168,9 +4168,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						if (document != null) {
 							document.getModel().setId(newFile.replace(".xml",""));
 							document.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
-							document.setPkgRequired("layout", false); 
+							document.setPackageRequired("layout", false); 
 							document.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
-							document.setPkgRequired("comp", true); 
+							document.setPackageRequired("comp", true); 
 							((CompSBMLDocumentPlugin)document.getPlugin("comp")).setRequired(true);
 							CompSBMLDocumentPlugin documentComp = (CompSBMLDocumentPlugin)document.getPlugin("comp");
 							CompModelPlugin documentCompModel = (CompModelPlugin)document.getModel().getPlugin("comp");
@@ -5567,9 +5567,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			gcmFile.setSBMLDocument(document);
 			gcmFile.setSBMLFile(theSBMLFile);
 			document.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
-			document.setPkgRequired("layout", false); 
+			document.setPackageRequired("layout", false); 
 			document.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
-			document.setPkgRequired("comp", true); 
+			document.setPackageRequired("comp", true); 
 			gcmFile.setSBMLLayout((LayoutModelPlugin)document.getModel().getPlugin("layout"));
 			gcmFile.setSBMLComp((CompSBMLDocumentPlugin)document.getPlugin("comp"));
 			gcmFile.setSBMLCompModel((CompModelPlugin)document.getModel().getPlugin("comp"));
@@ -9947,10 +9947,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
 				document.setModel(model);
 				document.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
-				document.setPkgRequired("layout", false); 
-				LayoutModelPlugin documentLayout = (LayoutModelPlugin)document.getModel().getPlugin("layout");
+				document.setPackageRequired("layout", false); 
+				//LayoutModelPlugin documentLayout = (LayoutModelPlugin)document.getModel().getPlugin("layout");
 				document.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
-				document.setPkgRequired("comp", true);
+				document.setPackageRequired("comp", true);
 				((CompSBMLDocumentPlugin)document.getPlugin("comp")).setRequired(true);
 				CompSBMLDocumentPlugin documentComp = (CompSBMLDocumentPlugin)document.getPlugin("comp");
 				CompModelPlugin documentCompModel = (CompModelPlugin)document.getModel().getPlugin("comp");
