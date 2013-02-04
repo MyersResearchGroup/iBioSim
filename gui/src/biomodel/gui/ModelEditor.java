@@ -70,8 +70,8 @@ import biomodel.util.Utility;
 
 import sbol.SBOLFileManager;
 import sbol.SBOLIdentityManager;
-import sbol.SBOLSynthesisGraph;
-import sbol.SBOLSynthesizer;
+import sbol.SBOLAssemblyGraph;
+import sbol.SBOLAssembler;
 import sbol.SequenceTypeValidator;
 
 /**
@@ -474,7 +474,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	public void saveSBOL(boolean check) {
 		SBOLIdentityManager identityManager = new SBOLIdentityManager(biomodel);
 		if (identityManager.containsBioSimURI()) {
-			SBOLSynthesisGraph synGraph = new SBOLSynthesisGraph(biomodel);
+			SBOLAssemblyGraph synGraph = new SBOLAssemblyGraph(biomodel);
 			if (synGraph.containsSBOL()) {
 				SBOLFileManager fileManager = new SBOLFileManager(biosim.getRoot(), biosim.getSbolFiles());
 				if (fileManager.sbolFilesAreLoaded() && synGraph.loadDNAComponents(fileManager)) {
@@ -482,7 +482,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 							new SequenceTypeValidator(Preferences.userRoot().get("biosim.synthesis.regex", ""));
 					synGraph.cutGraph(seqValidator.getStartTypes());
 					if (synGraph.isLinear()) {
-						SBOLSynthesizer synthesizer = new SBOLSynthesizer(synGraph, seqValidator);
+						SBOLAssembler synthesizer = new SBOLAssembler(synGraph, seqValidator);
 						DnaComponent synthComp = synthesizer.synthesizeDNAComponent();
 						if (synthComp != null) {
 							if (identityManager.containsPlaceHolderURI() || identityManager.loadBioSimComponent(fileManager)) {
