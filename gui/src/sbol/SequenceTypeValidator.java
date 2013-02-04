@@ -163,15 +163,6 @@ public class SequenceTypeValidator {
 		}
 	}
 	
-	// (prom,(ribo,code)+term+|(ribo,code|code)(ribo,code)*term+|term,term*)(prom(ribo,code)+term+)*
-	
-	// prom((ribo,code)*ribo(code(term*term((prom(ribo,code)+term+)*(prom((ribo,code)*ribo(code(term*term)?)?)?)?)?)?)?)?
-	// ribo(code((ribo,code)*(ribo(code)?|term*term((prom(ribo,code)+term+)*(prom((ribo,code)*ribo(code(term*term)?)?)?)?)?))?)?
-	// prom((ribo,code)*ribo(code(term*term((prom(ribo,code)+term+)*(prom((ribo,code)*ribo(code(term*term)?)?)?)?)?)?)?)?|
-	//ribo(code((ribo,code)*(ribo(code)?|term*term((prom(ribo,code)+term+)*(prom((ribo,code)*ribo(code(term*term)?)?)?)?)?))?)?
-	//|code((ribo,code)*(ribo(code)?|term*term((prom(ribo,code)+term+)*(prom((ribo,code)*ribo(code(term*term)?)?)?)?)?))?
-	//|term(term*(term|(prom(ribo,code)+term+)*(prom((ribo,code)*ribo(code(term*term)?)?)?)?))?
-	
 	private String exFragmentRegex(String regex) {
 		List<String> orFragments = findOrFragments(regex);
 		if (orFragments.size() > 1) {
