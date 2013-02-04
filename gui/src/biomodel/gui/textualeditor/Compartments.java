@@ -19,12 +19,10 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
 import main.Gui;
-import main.util.MutableBoolean;
 import main.util.Utility;
 
 import org.sbml.libsbml.Compartment;
@@ -32,7 +30,6 @@ import org.sbml.libsbml.CompartmentType;
 import org.sbml.libsbml.InitialAssignment;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Model;
-import org.sbml.libsbml.Parameter;
 import org.sbml.libsbml.Port;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.SBMLDocument;
@@ -175,7 +172,6 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		JLabel nameLabel = new JLabel("Name:");
 		JLabel compTypeLabel = new JLabel("Type:");
 		JLabel dimLabel = new JLabel("Dimensions:");
-		JLabel outsideLabel = new JLabel("Outside:");
 		JLabel constLabel = new JLabel("Constant:");
 		JLabel sizeLabel = new JLabel("Size:");
 		JLabel compUnitsLabel = new JLabel("Units:");
@@ -191,7 +187,6 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		Utility.sort(compTypeList);
 		Object[] choices = compTypeList;
 		compTypeBox = new JComboBox(choices);
-		Object[] dims = { "0", "1", "2", "3" };
 		dimText = new JTextField(12);
 		dimText.setText("3.0");
 		compSize = new JTextField(12);
@@ -495,7 +490,6 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						compartments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						Compartment c = bioModel.getSBMLDocument().getModel().getCompartment(val);
 						c.setId(compID.getText().trim());
-						boolean enclosing = false;
 						c.setName(compName.getText().trim());
 						if (!selCompType.equals("( none )")) {
 							c.setCompartmentType(selCompType);
@@ -664,22 +658,22 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		return compID.getText().trim();
 	}
 
-	/**
-	 * Variable that is updated by a rule or event cannot be constant
-	 */
-	private boolean checkOutsideCycle(String compID, String outside, int depth) {
-		depth++;
-		if (depth > bioModel.getSBMLDocument().getModel().getNumCompartments())
-			return true;
-		Compartment compartment = bioModel.getSBMLDocument().getModel().getCompartment(outside);
-		if (compartment.isSetOutside()) {
-			if (compartment.getOutside().equals(compID)) {
-				return true;
-			}
-			return checkOutsideCycle(compID, compartment.getOutside(), depth);
-		}
-		return false;
-	}
+//	/**
+//	 * Variable that is updated by a rule or event cannot be constant
+//	 */
+//	private boolean checkOutsideCycle(String compID, String outside, int depth) {
+//		depth++;
+//		if (depth > bioModel.getSBMLDocument().getModel().getNumCompartments())
+//			return true;
+//		Compartment compartment = bioModel.getSBMLDocument().getModel().getCompartment(outside);
+//		if (compartment.isSetOutside()) {
+//			if (compartment.getOutside().equals(compID)) {
+//				return true;
+//			}
+//			return checkOutsideCycle(compID, compartment.getOutside(), depth);
+//		}
+//		return false;
+//	}
 
 	/**
 	 * Set compartment options based on number of dimensions

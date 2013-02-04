@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.sbml.libsbml.Model;
 import org.sbml.libsbml.ModifierSpeciesReference;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.SBMLDocument;
@@ -77,15 +76,11 @@ public class GCMParser {
 		//this.debug = debug;
 		this.biomodel = gcm;
 	}
-
-	public GeneticNetwork buildNetwork(SBMLDocument sbml) {
-		//SBMLDocument sbml = biomodel.flattenModel();		
-		if (sbml == null) return null;
-		return buildTopLevelNetwork(sbml);
-	}
 	
-	public GeneticNetwork buildTopLevelNetwork(SBMLDocument sbml) {		
+	public GeneticNetwork buildNetwork(SBMLDocument sbml) {		
 		
+		if (sbml == null) return null;
+
 		speciesList = new HashMap<String, SpeciesInterface>();
 		promoterList = new HashMap<String, Promoter>();
 		complexMap = new HashMap<String, ArrayList<Influence>>();
@@ -357,9 +352,9 @@ public class GCMParser {
 				speciesIF.setKc(complex.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING).getValue(),
 						complex.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING).getValue());
 			} else {
-				Model model = sbml.getModel();
-				double kf = model.getParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING).getValue();
-				double kr = model.getParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING).getValue();
+				//Model model = sbml.getModel();
+				//double kf = model.getParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING).getValue();
+				//double kr = model.getParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING).getValue();
 				speciesIF.setKc(sbml.getModel().getParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING).getValue(),
 						sbml.getModel().getParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING).getValue());
 			}

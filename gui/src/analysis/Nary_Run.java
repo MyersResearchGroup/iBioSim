@@ -142,7 +142,6 @@ public class Nary_Run implements ActionListener, Runnable {
 		this.rap2 = rap2;
 		this.qss = qss;
 		this.con = con;
-		this.termCond = termCond;
 		this.intSpecies = intSpecies;
 		this.ge = ge;
 		this.gt = gt;

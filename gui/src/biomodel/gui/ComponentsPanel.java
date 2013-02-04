@@ -8,7 +8,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JComboBox;
@@ -19,7 +18,6 @@ import javax.swing.JPanel;
 import org.sbml.libsbml.CompModelPlugin;
 import org.sbml.libsbml.CompSBasePlugin;
 import org.sbml.libsbml.Deletion;
-import org.sbml.libsbml.Model;
 import org.sbml.libsbml.ReplacedElement;
 import org.sbml.libsbml.Replacing;
 import org.sbml.libsbml.SBase;

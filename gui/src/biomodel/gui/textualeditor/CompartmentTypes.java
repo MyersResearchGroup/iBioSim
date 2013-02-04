@@ -27,7 +27,6 @@ import org.sbml.libsbml.Compartment;
 import org.sbml.libsbml.CompartmentType;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Model;
-import org.sbml.libsbml.SBMLDocument;
 
 import biomodel.parser.BioModel;
 
@@ -50,13 +49,10 @@ public class CompartmentTypes extends JPanel implements ActionListener, MouseLis
 
 	private MutableBoolean dirty;
 
-	private Gui biosim;
-
 	/* Create initial assignment panel */
-	public CompartmentTypes(Gui biosim, BioModel gcm, MutableBoolean dirty) {
+	public CompartmentTypes(BioModel gcm, MutableBoolean dirty) {
 		super(new BorderLayout());
 		this.gcm = gcm;
-		this.biosim = biosim;
 		this.dirty = dirty;
 		Model model = gcm.getSBMLDocument().getModel();
 		addCompType = new JButton("Add Type");

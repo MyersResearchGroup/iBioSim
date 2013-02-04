@@ -17,10 +17,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 import java.util.prefs.Preferences;
 
 import javax.swing.JButton;
@@ -58,7 +56,6 @@ import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.LayoutExtension;
 import org.sbml.libsbml.LayoutModelPlugin;
 import org.sbml.libsbml.ListOf;
-import org.sbml.libsbml.ListOfRules;
 import org.sbml.libsbml.LocalParameter;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.ModelDefinition;
@@ -90,9 +87,6 @@ import org.sbml.libsbml.XMLAttributes;
 import org.sbml.libsbml.XMLNode;
 import org.sbml.libsbml.XMLTriple;
 import org.sbml.libsbml.libsbml;
-import org.sbolstandard.core.SBOLDocument;
-
-import sbol.SBOLUtility;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.Grid;
@@ -1907,7 +1901,7 @@ public class BioModel {
 			reactant.setStoichiometry(1);
 			reactant.setConstant(true);
 		}
-		KineticLaw k = reaction.createKineticLaw();
+		reaction.createKineticLaw();
 		updateDiffusionParameters(s,reaction,kmdiffStr);
 		Port port = getPortByIdRef(reaction.getId());
 		if (port!=null) {
@@ -7511,49 +7505,6 @@ public class BioModel {
 		}
 	}
 
-	private void setTimeAndTrigVar(ASTNode node) {
-		if (node.getType() == libsbml.AST_NAME) {
-			if (node.getName().equals("t")) {
-				node.setType(libsbml.AST_NAME_TIME);
-			}
-			else if (node.getName().equals("time")) {
-				node.setType(libsbml.AST_NAME_TIME);
-			}
-		}
-		if (node.getType() == libsbml.AST_FUNCTION) {
-			if (node.getName().equals("acot")) {
-				node.setType(libsbml.AST_FUNCTION_ARCCOT);
-			}
-			else if (node.getName().equals("acoth")) {
-				node.setType(libsbml.AST_FUNCTION_ARCCOTH);
-			}
-			else if (node.getName().equals("acsc")) {
-				node.setType(libsbml.AST_FUNCTION_ARCCSC);
-			}
-			else if (node.getName().equals("acsch")) {
-				node.setType(libsbml.AST_FUNCTION_ARCCSCH);
-			}
-			else if (node.getName().equals("asec")) {
-				node.setType(libsbml.AST_FUNCTION_ARCSEC);
-			}
-			else if (node.getName().equals("asech")) {
-				node.setType(libsbml.AST_FUNCTION_ARCSECH);
-			}
-			else if (node.getName().equals("acosh")) {
-				node.setType(libsbml.AST_FUNCTION_ARCCOSH);
-			}
-			else if (node.getName().equals("asinh")) {
-				node.setType(libsbml.AST_FUNCTION_ARCSINH);
-			}
-			else if (node.getName().equals("atanh")) {
-				node.setType(libsbml.AST_FUNCTION_ARCTANH);
-			}
-		}
-
-		for (int c = 0; c < node.getNumChildren(); c++)
-			setTimeAndTrigVar(node.getChild(c));
-	}
-
 	public String getFilename() {
 		return filename;
 	}
@@ -7739,6 +7690,5 @@ public class BioModel {
 	private boolean modelSBOLAnnotationFlag;
 	private String[] sbolDescriptors;
 	private String sbolSaveFile;
-	private URI dissociatedBioSimURI;
 	private int placeHolderIndex;
 }

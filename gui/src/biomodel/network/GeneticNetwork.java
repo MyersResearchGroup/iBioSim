@@ -2,7 +2,6 @@
 
 
 import java.awt.Dimension;
-import java.awt.Point;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -10,7 +9,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.swing.JOptionPane;
@@ -22,11 +20,7 @@ import lpn.parser.Translator;
 import main.Gui;
 import main.util.MutableString;
 
-import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.ListOf;
-import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.libsbml.Event;
-import org.sbml.libsbml.EventAssignment;
 import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.LocalParameter;
 import org.sbml.libsbml.Model;
@@ -37,7 +31,6 @@ import org.sbml.libsbml.SBMLReader;
 import org.sbml.libsbml.SBMLWriter;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.SpeciesReference;
-import org.sbml.libsbml.Submodel;
 import org.sbml.libsbml.Unit;
 import org.sbml.libsbml.UnitDefinition;
 import org.sbml.libsbml.XMLAttributes;
@@ -45,9 +38,6 @@ import org.sbml.libsbml.XMLNode;
 import org.sbml.libsbml.XMLTriple;
 import org.sbml.libsbml.libsbml;
 
-import com.lowagie.text.Document;
-
-import biomodel.gui.Grid;
 import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
@@ -127,7 +117,7 @@ public class GeneticNetwork {
 		}
 		*/
 		this.species = species;
-		interestingSpecies = new String[species.size()];
+		//interestingSpecies = new String[species.size()];
 		this.promoters = promoters;
 		this.complexMap = complexMap;
 		this.partsMap = partsMap;
@@ -196,7 +186,7 @@ public class GeneticNetwork {
 			else if (abstractionOption.equals("operator-site-reduction-abstraction"))
 				operatorAbstraction = true;
 		}
-		this.interestingSpecies = interestingSpecies;
+		//this.interestingSpecies = interestingSpecies;
 		this.property = property;
 	}
 	
@@ -855,27 +845,23 @@ public class GeneticNetwork {
 	/**
 	 * Checks if species belongs in a compartment other than default
 	 */
-	private String checkCompartments(String species) {
-		String compartment = document.getModel().getCompartment(0).getId();
-		//String[] splitted = species.split("__");
-		String component = species;
-		while (component.contains("__")) {
-			component = component.substring(0,component.lastIndexOf("__"));
-			for (String compartmentName : compartments.keySet()) {
-				if (compartmentName.equals(component))
-					return compartmentName;					
-				else if (compartmentName.contains("__") && compartmentName.substring(0, compartmentName.lastIndexOf("__"))
-						.equals(component)) {
-					return compartmentName;
-				}
-			}
-		}
-		/*
-		if (compartments.contains(splitted[0]))
-			compartment = splitted[0];
-			*/
-		return compartment;
-	}
+//	private String checkCompartments(String species) {
+//		String compartment = document.getModel().getCompartment(0).getId();
+//		//String[] splitted = species.split("__");
+//		String component = species;
+//		while (component.contains("__")) {
+//			component = component.substring(0,component.lastIndexOf("__"));
+//			for (String compartmentName : compartments.keySet()) {
+//				if (compartmentName.equals(component))
+//					return compartmentName;					
+//				else if (compartmentName.contains("__") && compartmentName.substring(0, compartmentName.lastIndexOf("__"))
+//						.equals(component)) {
+//					return compartmentName;
+//				}
+//			}
+//		}
+//		return compartment;
+//	}
 
 	public AbstractionEngine createAbstractionEngine() {
 		return new AbstractionEngine(species, complexMap, partsMap, Double.parseDouble(properties
@@ -1098,7 +1084,7 @@ public class GeneticNetwork {
 	
 	private boolean complexAbstraction = false;
 	
-	private String[] interestingSpecies;
+	//private String[] interestingSpecies;
 
 	private HashMap<String, SpeciesInterface> species = null;
 

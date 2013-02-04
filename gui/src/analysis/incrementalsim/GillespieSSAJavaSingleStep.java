@@ -2,7 +2,6 @@ package analysis.incrementalsim;
 
 import graph.Graph;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.PriorityQueue;
@@ -13,21 +12,16 @@ import main.Gui;
 import org.sbml.libsbml.*;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.io.*;
 import java.lang.Math;
 import java.lang.Object;
 
 
-import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.table.DefaultTableModel;
 
 public class GillespieSSAJavaSingleStep {
 	// SpeciesIndex maps from each species to a column index. 

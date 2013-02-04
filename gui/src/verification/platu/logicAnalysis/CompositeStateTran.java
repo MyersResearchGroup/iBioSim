@@ -1,7 +1,6 @@
 package verification.platu.logicAnalysis;
 
 import lpn.parser.Transition;
-import verification.platu.lpn.LPNTran;
 
 public class CompositeStateTran {
 	private int nextState = 0;

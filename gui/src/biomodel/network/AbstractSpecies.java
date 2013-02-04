@@ -1,12 +1,5 @@
 package biomodel.network;
 
-
-import java.util.Properties;
-
-import biomodel.util.GlobalConstants;
-import biomodel.util.Utility;
-
-
 /**
  * This class describes an abstract species class. Species are nodes in the
  * graph. All species are derived from this class.

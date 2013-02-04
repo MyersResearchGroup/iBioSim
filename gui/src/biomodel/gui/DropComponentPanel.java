@@ -6,9 +6,6 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -18,18 +15,9 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
-import org.sbml.libsbml.CompExtension;
-import org.sbml.libsbml.CompModelPlugin;
-import org.sbml.libsbml.CompSBMLDocumentPlugin;
-import org.sbml.libsbml.CompartmentGlyph;
-import org.sbml.libsbml.Layout;
 import org.sbml.libsbml.SBMLWriter;
-import org.sbml.libsbml.Species;
-import org.sbml.libsbml.SpeciesGlyph;
-import org.sbml.libsbml.Submodel;
 
 import biomodel.util.GlobalConstants;
 import biomodel.util.Utility;
@@ -192,7 +180,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		
 		String[] options = {GlobalConstants.OK, GlobalConstants.CANCEL};
 		
-		String newComponentID = "";
+		//String newComponentID = "";
 		
 		boolean error = true;
 		
@@ -228,7 +216,8 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 						int row = gcm.getGrid().getRowFromPoint(new Point((int)mouseX, (int)mouseY));
 						int col = gcm.getGrid().getColFromPoint(new Point((int)mouseX, (int)mouseY));
 						
-						newComponentID = applyGridComponent(row, col, component);
+						//newComponentID = 
+						applyGridComponent(row, col, component);
 					}
 					//if we're adding components to selected location(s)
 					else {
@@ -239,7 +228,8 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 						if (selectedNodes.size() > 0) {
 							
 							for (Point rowCol : selectedNodes)
-								newComponentID = applyGridComponent(rowCol.x, rowCol.y, component);				
+								//newComponentID = 
+								applyGridComponent(rowCol.x, rowCol.y, component);				
 						}
 					}
 					
@@ -432,7 +422,8 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 				SBMLWriter writer = new SBMLWriter();
 				String SBMLstr = writer.writeSBMLToString(compGCM.getSBMLDocument());
 				String md5 = Utility.MD5(SBMLstr);
-				String id = gcm.addComponent(null, comp, compGCM.IsWithinCompartment(), compGCM.getCompartmentPorts(), -1, -1, 
+				//String id = 
+				gcm.addComponent(null, comp, compGCM.IsWithinCompartment(), compGCM.getCompartmentPorts(), -1, -1, 
 						col * separationX + topleftX, row * separationY + topleftY,md5);
 			}
 		}

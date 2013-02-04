@@ -1296,12 +1296,12 @@ public class ExprTree {
 
 	public boolean intexpr_P(String expr) {
 		newresult = new ExprTree(this);
-		int spos, i;
+		//int spos, i;
 		String ineq = "";
 		String comp;
 		switch (token) {
 		case '=':
-			spos = position;
+			//spos = position;
 			(token) = intexpr_gettok(expr);
 			newresult.token = token;
 			newresult.tokvalue = tokvalue;
@@ -1359,11 +1359,11 @@ public class ExprTree {
 			}
 			break;
 		case '>':
-			spos = position;
+			//spos = position;
 			(token) = intexpr_gettok(expr);
 			newresult.token = token;
 			if ((token) == '=') {
-				spos = position;
+				//spos = position;
 				(token) = intexpr_gettok(expr);
 				newresult.token = token;
 				newresult.tokvalue = tokvalue;
@@ -1423,10 +1423,10 @@ public class ExprTree {
 			}
 			break;
 		case '<':
-			spos = position;
+			//spos = position;
 			(token) = intexpr_gettok(expr);
 			if ((token) == '=') {
-				spos = position;
+				//spos = position;
 				(token) = intexpr_gettok(expr);
 				newresult.token = token;
 				newresult.tokvalue = tokvalue;

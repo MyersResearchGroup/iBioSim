@@ -8,7 +8,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import biomodel.parser.BioModel;
-import biomodel.util.Utility;
 
 import lpn.parser.Parser;
 import main.Gui;

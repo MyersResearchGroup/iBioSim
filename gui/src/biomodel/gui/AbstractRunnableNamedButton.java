@@ -5,6 +5,11 @@ import javax.swing.JButton;
 public abstract class AbstractRunnableNamedButton extends JButton implements NamedObject,
 		Runnable {		
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public AbstractRunnableNamedButton(String name) {
 		super(name);
 		this.setName(name);
@@ -21,5 +26,5 @@ public abstract class AbstractRunnableNamedButton extends JButton implements Nam
 		super.setEnabled(enabled);
 	}
 	
-	private String name = "";
+	//private String name = "";
 }

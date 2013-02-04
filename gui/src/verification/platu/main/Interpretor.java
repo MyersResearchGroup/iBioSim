@@ -13,7 +13,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import lpn.parser.LhpnFile;
-import verification.platu.lpn.LPN;
 import verification.platu.project.Project;
 import verification.platu.stategraph.StateGraph;
 
