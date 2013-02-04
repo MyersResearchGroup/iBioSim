@@ -20,7 +20,6 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
 import main.Gui;
-import main.util.MutableBoolean;
 import main.util.Utility;
 
 import org.sbml.libsbml.Compartment;
@@ -31,10 +30,8 @@ import org.sbml.libsbml.Parameter;
 import org.sbml.libsbml.Port;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.Rule;
-import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.SpeciesReference;
-import org.sbml.libsbml.UnitDefinition;
 
 import biomodel.gui.ModelEditor;
 import biomodel.parser.BioModel;

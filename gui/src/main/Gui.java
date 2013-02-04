@@ -4233,7 +4233,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		addModelViewTab(reb2sac, simTab, gcm);
 		simTab.addTab("Parameters", gcm);
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("GCM Editor");
-		ElementsPanel elementsPanel = new ElementsPanel(gcm.getGCM().getSBMLDocument(),
+		ElementsPanel elementsPanel = new ElementsPanel(gcm.getBioModel().getSBMLDocument(),
 				root + separator + simName.trim() + separator + simName.trim() + ".sim");
 		simTab.addTab("SBML Elements", elementsPanel);
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
@@ -7546,7 +7546,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			addModelViewTab(reb2sac, simTab, gcm);
 			simTab.addTab("Parameters", gcm);
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("GCM Editor");
-			ElementsPanel elementsPanel = new ElementsPanel(gcm.getGCM().getSBMLDocument(),
+			ElementsPanel elementsPanel = new ElementsPanel(gcm.getBioModel().getSBMLDocument(),
 					root + separator + simName.trim() + separator + simName.trim() + ".sim");
 			simTab.addTab("SBML Elements", elementsPanel);
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
@@ -7560,7 +7560,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			addModelViewTab(reb2sac, simTab, gcm);
 			simTab.addTab("Parameters", gcm);
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("GCM Editor");
-			ElementsPanel elementsPanel = new ElementsPanel(gcm.getGCM().getSBMLDocument(),
+			ElementsPanel elementsPanel = new ElementsPanel(gcm.getBioModel().getSBMLDocument(),
 					root + separator + simName.trim() + separator + simName.trim() + ".sim");
 			simTab.addTab("SBML Elements", elementsPanel);
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
@@ -8162,7 +8162,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							addModelViewTab(reb2sac, simTab, gcm);
 							simTab.addTab("Parameters", gcm);
 							simTab.getComponentAt(simTab.getComponents().length - 1).setName("GCM Editor");
-							ElementsPanel elementsPanel = new ElementsPanel(gcm.getGCM().getSBMLDocument(),
+							ElementsPanel elementsPanel = new ElementsPanel(gcm.getBioModel().getSBMLDocument(),
 									root + separator + split[split.length - 1].trim() + separator
 									+ split[split.length - 1].trim() + ".sim");
 							simTab.addTab("SBML Elements", elementsPanel);
@@ -8202,7 +8202,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private void addModelViewTab(AnalysisView reb2sac, JTabbedPane tabPane, ModelEditor gcm2sbml) {
 
 		// Add the modelview tab
-		MovieContainer movieContainer = new MovieContainer(reb2sac, gcm2sbml.getGCM(), this, gcm2sbml, lema);
+		MovieContainer movieContainer = new MovieContainer(reb2sac, gcm2sbml.getBioModel(), this, gcm2sbml, lema);
 
 		tabPane.addTab("Schematic", movieContainer);
 		tabPane.getComponentAt(tabPane.getComponents().length - 1).setName("ModelViewMovie");
@@ -8578,7 +8578,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				addModelViewTab(reb2sac, simTab, gcm);
 				simTab.addTab("Parameters", gcm);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("GCM Editor");
-				ElementsPanel elementsPanel = new ElementsPanel(gcm.getGCM().getSBMLDocument(),
+				ElementsPanel elementsPanel = new ElementsPanel(gcm.getBioModel().getSBMLDocument(),
 						root + separator + newSim + separator + newSim + ".sim");
 				simTab.addTab("SBML Elements", elementsPanel);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
@@ -8751,8 +8751,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			
 				//this is so that the grid species list gets updated if there's a diffusibility change
 				ModelEditor modelEditor = (ModelEditor) this.tab.getComponentAt(i);
-				modelEditor.getGCM().updateGridSpecies(updatedFile.replace(".gcm",""));				
-				modelEditor.getSpeciesPanel().refreshSpeciesPanel(modelEditor.getGCM());
+				modelEditor.getBioModel().updateGridSpecies(updatedFile.replace(".gcm",""));				
+				modelEditor.getSpeciesPanel().refreshSpeciesPanel(modelEditor.getBioModel());
 			}
 			
 			if (this.tab.getComponentAt(i).getName().equals("SBOL Browser")) {
@@ -8841,7 +8841,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									((Reb2Sac) sim.getComponentAt(0)), log, this, root + separator + tab, root + separator + tab + separator
 											+ tab + ".sim");
 											*/
-							ElementsPanel elementsPanel = new ElementsPanel(((ModelEditor) (sim.getComponentAt(j))).getGCM().getSBMLDocument(),
+							ElementsPanel elementsPanel = new ElementsPanel(((ModelEditor) (sim.getComponentAt(j))).getBioModel().getSBMLDocument(),
 									root + separator + tab + separator + tab + ".sim");
 							sim.setComponentAt(j + 1, elementsPanel);
 							sim.getComponentAt(j + 1).setName("");

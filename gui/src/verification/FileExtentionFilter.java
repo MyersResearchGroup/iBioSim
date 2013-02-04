@@ -2,7 +2,6 @@ package verification;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FilenameFilter;
 
 public class FileExtentionFilter implements FileFilter {
 	

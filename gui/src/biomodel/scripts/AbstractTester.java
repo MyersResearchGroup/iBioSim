@@ -25,7 +25,7 @@ abstract public class AbstractTester implements TesterInterface {
 		for (int i = 0; i < results.length; i++) {
 			results[i] = true;
 		}
-		int totalValues = highSpecies.size() + lowSpecies.size();
+		//int totalValues = highSpecies.size() + lowSpecies.size();
 		int index = 0;
 		for (double i = timeStart; i <= timeEnd; i=i+timeSpan) {
 			int numPassed = 0;

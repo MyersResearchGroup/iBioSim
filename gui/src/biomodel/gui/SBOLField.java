@@ -143,7 +143,7 @@ public class SBOLField extends JPanel implements ActionListener {
 			SBOLAssociationPanel  associationPanel;
 			if (isModelPanelField) {
 				associationPanel = new SBOLAssociationPanel(sbolFilePaths, sbolURIs, 
-						SBOLUtility.soSynonyms(sbolType), gcmEditor.getGCM().getSBMLDocument().getModel().getId());
+						SBOLUtility.soSynonyms(sbolType), gcmEditor.getBioModel().getSBMLDocument().getModel().getId());
 				removedBioSimURI = associationPanel.getRemovedBioSimURI();
 			} else
 				associationPanel = new SBOLAssociationPanel(sbolFilePaths, sbolURIs, SBOLUtility.soSynonyms(sbolType));

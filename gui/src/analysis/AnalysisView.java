@@ -15,12 +15,8 @@ import org.jdom.Element;
 import org.jdom.Namespace;
 import org.jlibsedml.Algorithm;
 import org.jlibsedml.Annotation;
-import org.jlibsedml.Curve;
-import org.jlibsedml.DataGenerator;
 import org.jlibsedml.Libsedml;
 import org.jlibsedml.Model;
-import org.jlibsedml.Output;
-import org.jlibsedml.Plot2D;
 import org.jlibsedml.SEDBase;
 import org.jlibsedml.SEDMLDocument;
 import org.jlibsedml.SedML;
@@ -28,14 +24,8 @@ import org.jlibsedml.SedMLError;
 import org.jlibsedml.Simulation;
 import org.jlibsedml.Task;
 import org.jlibsedml.UniformTimeCourse;
-import org.jlibsedml.Variable;
-import org.jlibsedml.VariableSymbol;
 import org.jlibsedml.XMLException;
-import org.jlibsedml.modelsupport.KisaoOntology;
-import org.jlibsedml.modelsupport.KisaoTerm;
-import org.jlibsedml.modelsupport.SBMLSupport;
 import org.jlibsedml.modelsupport.SUPPORTED_LANGUAGE;
-import org.jmathml.ASTNode;
 
 import lpn.gui.LHPNEditor;
 import lpn.parser.Abstraction;
@@ -46,7 +36,6 @@ import main.util.*;
 import main.util.dataparser.DataParser;
 
 import biomodel.gui.ModelEditor;
-import biomodel.gui.textualeditor.*;
 import biomodel.util.GlobalConstants;
 
 import verification.AbstPane;

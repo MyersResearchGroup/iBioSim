@@ -1,6 +1,5 @@
 package analysis;
 
-import java.awt.Component;
 import java.util.*;
 
 import javax.swing.*;

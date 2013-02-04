@@ -13,6 +13,10 @@ import java.util.*;
 
 public class CollectionBrowserPanel extends JPanel implements MouseListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private LinkedList<URI> localLibURIs;
 	private LinkedList<URI> localCompURIs;
 //	private HashMap<String, org.sbolstandard.core.Collection> libMap;

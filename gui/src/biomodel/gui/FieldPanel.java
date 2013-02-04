@@ -20,10 +20,12 @@ import javax.swing.JTextField;
  */
 public class FieldPanel extends JPanel implements NamedObject, FocusListener {
 
+	private static final long serialVersionUID = 1L;
+	
 	public FieldPanel(String name, Pattern pattern, boolean editable) {
 		super(new GridLayout(1, 2));
 		super.setName(name);
-		this.editable = editable;
+		//this.editable = editable;
 		this.pattern = pattern;
 		this.field = new JTextField(40);
 		field.addFocusListener(this);		
@@ -59,6 +61,6 @@ public class FieldPanel extends JPanel implements NamedObject, FocusListener {
 	}
 
 	private Pattern pattern = null;
-	private boolean editable = true;
+	//private boolean editable = true;
 	private JTextField field = null;	
 }

@@ -6,9 +6,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
 import lpn.parser.LhpnFile;
 
 import org.antlr.runtime.*;
@@ -23,13 +20,10 @@ import org.antlr.runtime.TokenStream;
 //import lpn.parser.properties.PropertyLexer;
 //import antlrPackage.PropertyParser;
 //import antlrPackage.PropertyParser.program_return;
-import lpn.parser.properties.PropertyLexer.*;
 
 
 public class BuildProperty {
 	//public static JFrame frame;
-	private String root;
-	private String separator;
 	static int numPlaces=0;
 	static int numTransitions=0;
 	static int numFailTransitions=0;
@@ -54,13 +48,7 @@ public class BuildProperty {
 		numFailPlaces=0;
 		numStartPlaces=0;
 		numEndPlaces=0;
-		
-		if (File.separator.equals("\\")) {
-			separator = "\\\\";
-		}
-		else {
-			separator = File.separator;
-		}
+
 		LhpnFile lpn = new LhpnFile();
 		lpn.load(propFileName);
 		
@@ -68,7 +56,6 @@ public class BuildProperty {
 		String lpnFileName = lpnFileString.concat("lpn");
 		File lpnFile = new File(lpnFileName);
 		lpnFile.createNewFile();
-		String[] lpnPath = lpnFileName.split(separator);
 		System.out.println("No of places : "+numPlaces);
 		BufferedReader input = new BufferedReader(new FileReader(propFileName));
 

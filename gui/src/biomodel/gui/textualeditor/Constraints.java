@@ -20,7 +20,6 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
 import main.Gui;
-import main.util.MutableBoolean;
 import main.util.Utility;
 
 import org.sbml.libsbml.Constraint;
@@ -28,8 +27,6 @@ import org.sbml.libsbml.Layout;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.Port;
-import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.UnitDefinition;
 import org.sbml.libsbml.XMLNode;
 
 import biomodel.gui.ModelEditor;

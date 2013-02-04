@@ -139,7 +139,7 @@ public class CompositeStateGraph {
 		this.initState = initialState;
 		this.stateGraphArray = sgArray;
 		
-		int size = 0;
+		//int size = 0;
 		for(int i = 0; i < sgArray.length; i++){
 			label += sgArray[i].getLpn().getLabel();
 			
@@ -147,7 +147,7 @@ public class CompositeStateGraph {
 				label += "||";
 			}
 			
-			size *= sgArray[i].reachSize();
+			//size *= sgArray[i].reachSize();
 		}
 		
 		this.addState(this.initState);
@@ -166,7 +166,7 @@ public class CompositeStateGraph {
 		this.stateGraphArray = sgArray;
 		
 		// construct label
-		int size = 0;
+		//int size = 0;
 		for(int i = 0; i < sgArray.length; i++){
 			label += sgArray[i].getLpn().getLabel();
 			
@@ -174,7 +174,7 @@ public class CompositeStateGraph {
 				label += "||";
 			}
 			
-			size *= sgArray[i].reachSize();
+			//size *= sgArray[i].reachSize();
 		}
 		
 		this.addState(this.initState);

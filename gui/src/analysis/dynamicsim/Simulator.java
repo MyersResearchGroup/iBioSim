@@ -36,7 +36,6 @@ import odk.lang.FastMath;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
 import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.AbstractMathContainer;
 import org.sbml.jsbml.Annotation;
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.Compartment;
@@ -61,7 +60,6 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.text.parser.ParseException;
-import org.sbml.jsbml.util.Maths;
 
 public abstract class Simulator {
 	
@@ -4023,10 +4021,10 @@ public abstract class Simulator {
 					}// end looping through reactants
 					
 					//loop through all modifiers
-					for (ModifierSpeciesReference modifier : reaction.getListOfModifiers()) {
+					//for (ModifierSpeciesReference modifier : reaction.getListOfModifiers()) {
 						
 						
-					}					
+					//}					
 					
 					//loop through all products
 					for (SpeciesReference product : reaction.getListOfProducts()) {

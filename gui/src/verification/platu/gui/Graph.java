@@ -19,7 +19,9 @@ import javax.swing.JPanel;
  */
 public class Graph extends javax.swing.JFrame {
 
-    /** Creates new form Graph */
+	private static final long serialVersionUID = 1L;
+
+	/** Creates new form Graph */
     public Graph(JPanel p) {
         initComponents();
         setContentPane(p);

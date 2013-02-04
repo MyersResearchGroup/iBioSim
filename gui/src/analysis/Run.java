@@ -5,7 +5,6 @@ import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
-import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import javax.swing.*;
@@ -525,7 +524,7 @@ public class Run implements ActionListener {
 						}
 					}
 				}
-				BioModel paramBioModel = gcmEditor.getGCM();
+				//BioModel paramBioModel = gcmEditor.getBioModel();
 				BioModel bioModel = new BioModel(root);
 				bioModel.load(root + separator + gcmEditor.getRefFile());
 				//gcm.getSBMLDocument().setModel(paramGCM.getSBMLDocument().getModel().cloneObject());
@@ -650,7 +649,7 @@ public class Run implements ActionListener {
 							}
 						}
 						progress.setIndeterminate(true);
-						BioModel paramGCM = gcmEditor.getGCM();
+						//BioModel paramGCM = gcmEditor.getBioModel();
 						BioModel gcm = new BioModel(root);
 						gcm.load(root + separator + gcmEditor.getRefFile());
 						//gcm.getSBMLDocument().setModel(paramGCM.getSBMLDocument().getModel().cloneObject());
@@ -804,7 +803,7 @@ public class Run implements ActionListener {
 							}
 						}
 						progress.setIndeterminate(true);
-						BioModel paramGCM = gcmEditor.getGCM();
+						//BioModel paramGCM = gcmEditor.getBioModel();
 						BioModel gcm = new BioModel(root);
 						gcm.load(root + separator + gcmEditor.getRefFile());
 						//gcm.getSBMLDocument().setModel(paramGCM.getSBMLDocument().getModel().cloneObject());
@@ -930,7 +929,7 @@ public class Run implements ActionListener {
 								}
 							}
 						}
-						BioModel paramGCM = gcmEditor.getGCM();
+						//BioModel paramGCM = gcmEditor.getBioModel();
 						BioModel gcm = new BioModel(root);
 						gcm.load(root + separator + gcmEditor.getRefFile());
 						//gcm.getSBMLDocument().setModel(paramGCM.getSBMLDocument().getModel().cloneObject());

@@ -178,7 +178,7 @@ public class GCM2SBML {
 					continue;
 				}
 				if (matcher.group(1).equals("compartmentId")) {
-					enclosingCompartment = matcher.group(2);
+					//enclosingCompartment = matcher.group(2);
 				} else {
 					String prop = CompatibilityFixer.convertOLDName(matcher.group(1));
 					if (matcher.group(3) != null) {
@@ -1103,7 +1103,7 @@ public class GCM2SBML {
 	
 	private boolean isWithinCompartment = false;
 	
-	private String enclosingCompartment = "";
+	//private String enclosingCompartment = "";
 	
 	//private String path;
 	

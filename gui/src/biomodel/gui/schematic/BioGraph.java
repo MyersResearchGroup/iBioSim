@@ -269,9 +269,6 @@ public class BioGraph extends mxGraph {
 				needsPositioning = true;
 		}
 		
-		int x = 225;
-		int y = 50;
-		
 		// add reactions
 		for (int i = 0; i < m.getNumReactions(); i++) {
 			
@@ -1264,7 +1261,6 @@ public class BioGraph extends mxGraph {
 			String id = bioModel.getSBMLCompModel().getSubmodel(i).getId();
 			BioModel compBioModel = new BioModel(bioModel.getPath());
 			String modelFileName = bioModel.getModelFileName(id);
-			File compFile = new File(bioModel.getPath() + File.separator + modelFileName);
 			compBioModel.load(bioModel.getPath() + File.separator + modelFileName);
 			HashMap<String,String> connections = bioModel.getInputConnections(compBioModel,id);
 			for (String propName : connections.keySet()) {
@@ -1730,10 +1726,6 @@ public class BioGraph extends mxGraph {
 				generalGlyph.setId(GlobalConstants.GLYPH+"__"+(String)cell.getId());
 				generalGlyph.setReferenceId((String)cell.getId());
 			}
-			double x = generalGlyph.getBoundingBox().x();
-			double y = generalGlyph.getBoundingBox().y();
-			double width = generalGlyph.getBoundingBox().width();
-			double height = generalGlyph.getBoundingBox().height();
 			generalGlyph.getBoundingBox().setX(geom.getX());
 			generalGlyph.getBoundingBox().setY(geom.getY());
 			generalGlyph.getBoundingBox().setWidth(geom.getWidth());

@@ -64,10 +64,10 @@ public class GCMScript {
 	
 	public double[][] generateThreshold(String directory, ArrayList<String> species, String type, double bestTime) {
 		ExperimentResult highResults, lowResults = null;
-		double[] timeValues = null;
+		//double[] timeValues = null;
 		double[] high = new double[species.size()];
 		double[] low = new double[species.size()];
-		int index = -1;
+		//int index = -1;
 		highResults = new ExperimentResult(Utility.calculateAverage(directory + File.separator + type
 				+ experiment[0]));
 
@@ -114,7 +114,7 @@ public class GCMScript {
 		return passed;
 	}
 
-	private String[] kind = { "coop", "rep", "promoter" };
+	//private String[] kind = { "coop", "rep", "promoter" };
 	private String[] gate = { "maj", "tog", "si" };
 	private String[] experiment = { "-h-high", "-h-low", "-l-high", "-l-low" };	
 }

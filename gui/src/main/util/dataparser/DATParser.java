@@ -10,7 +10,6 @@ public class DATParser extends DataParser {
 		try {
 			warning = warn;
 			boolean warning2 = warning;
-			boolean warning3 = warning;
 			FileInputStream fileInput = new FileInputStream(new File(filename));
 			ProgressMonitorInputStream prog = new ProgressMonitorInputStream(component, "Reading Reb2sac Output Data From "
 					+ new File(filename).getName(), fileInput);

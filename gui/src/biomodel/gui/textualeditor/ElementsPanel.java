@@ -21,6 +21,7 @@ import org.sbml.libsbml.SBMLDocument;
 
 public class ElementsPanel extends JPanel { 
 
+	private static final long serialVersionUID = 1L;
 	private ArrayList<String> elementChanges;
 	
 	public ElementsPanel(SBMLDocument document,String paramFile) {

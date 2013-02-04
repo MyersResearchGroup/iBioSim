@@ -2996,7 +2996,7 @@ public class Analysis {
 				searchDepth.push(nextStates2Explore);
 		}
 
-		endoffunction: System.out.println("-------------------------------------\n"
+		System.out.println("-------------------------------------\n"
 						+ "---> run statistics: \n"
 						+ " # Depth of search (Length of Cex): " + searchDepth.size() + "\n"
 						+ " # LPN transition firings: " + (double)tranFiringCnt/1000000 + " M\n"

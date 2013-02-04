@@ -1,6 +1,5 @@
 package biomodel.network;
 
-import biomodel.util.GlobalConstants;
 import biomodel.visitor.SpeciesVisitor;
 
 public class DiffusibleSpecies extends AbstractSpecies{

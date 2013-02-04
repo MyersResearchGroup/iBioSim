@@ -34,7 +34,7 @@ public class ExperimentResult {
 	 * @return the time what which the species takes the value
 	 */
 	public double getTime(String species, double valuePoint, double timePoint) {
-		double time = timePoint;
+		//double time = timePoint;
 		int index = (int) Math.floor(interpolateIndex(timeValue, timePoint));
 		double[] speciesValues = results.get(species);
 		for (; index < timeValue.length; index++) {

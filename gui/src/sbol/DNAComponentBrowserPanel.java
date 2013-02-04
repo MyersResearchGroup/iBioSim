@@ -13,6 +13,7 @@ import java.util.*;
 
 public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 
+	private static final long serialVersionUID = 1L;
 	private LinkedList<URI> compURIs;
 	private LinkedList<String> compIDs;
 //	private HashMap<String, DnaComponent> compMap;
