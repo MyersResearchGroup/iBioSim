@@ -47,7 +47,6 @@ import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.movie.MovieContainer;
 import biomodel.gui.movie.SchemeChooserPanel;
 import biomodel.gui.schematic.Schematic;
-import biomodel.gui.textualeditor.CompartmentTypes;
 import biomodel.gui.textualeditor.Compartments;
 import biomodel.gui.textualeditor.Constraints;
 import biomodel.gui.textualeditor.ElementsPanel;
@@ -60,7 +59,6 @@ import biomodel.gui.textualeditor.Parameters;
 import biomodel.gui.textualeditor.Reactions;
 import biomodel.gui.textualeditor.Rules;
 import biomodel.gui.textualeditor.SBMLutilities;
-import biomodel.gui.textualeditor.SpeciesTypes;
 import biomodel.gui.textualeditor.Units;
 import biomodel.network.GeneticNetwork;
 import biomodel.parser.BioModel;
@@ -1419,14 +1417,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 	}
 
-	public synchronized void lock() {
-		lock = true;
-	}
-
-	public synchronized void unlock() {
-		lock = false;
-	}
-	
 	public void rebuildGui() {
 		removeAll();
 		buildGui();
@@ -1663,18 +1653,18 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	}
 
 	// Internal private classes used only by the gui
-	private class SaveButton extends AbstractRunnableNamedButton {
-		public SaveButton(String name, JTextField fieldNameField) {
-			super(name);
-			this.fieldNameField = fieldNameField;
-		}
-
-		public void run() {
-			save(getName());
-		}
-
-		private JTextField fieldNameField = null;
-	}
+//	private class SaveButton extends AbstractRunnableNamedButton {
+//		public SaveButton(String name, JTextField fieldNameField) {
+//			super(name);
+//			this.fieldNameField = fieldNameField;
+//		}
+//
+//		public void run() {
+//			save(getName());
+//		}
+//
+//		private JTextField fieldNameField = null;
+//	}
 
 	private class RemoveButton extends AbstractRunnableNamedButton {
 		public RemoveButton(String name, PropertyList list) {
@@ -2243,23 +2233,15 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	
 	private JTabbedPane tab = null;
 
-	private boolean lock = false;
-
 	private String[] options = { "Ok", "Cancel" };
 
 	private PropertyList species = null;
 
 	private PropertyList influences = null;
 
-	private PropertyList promoters = null;
-
 	private PropertyList components = null;
-	
-	private PropertyList conditions = null;
 
 	private String path = null;
-
-	private static final String none = "--none--";
 
 	private Gui biosim = null;
 
