@@ -2606,5 +2606,148 @@ public class SBMLutilities {
 		return postset;
 	}
 	
+	public static void replaceArgument(ASTNode formula,String bvar, ASTNode arg) {
+		int n = 0;
+		for (int i = 0; i < formula.getNumChildren(); i++) {
+			ASTNode child = formula.getChild(i);
+			if (child.getName() != null && child.getName().equals(bvar)) {
+				formula.replaceChild(n, arg.deepCopy());
+			} else if (child.getNumChildren() > 0) {
+				replaceArgument(child, bvar, arg);
+			}
+			n++;
+		}
+	}
+	
+	/**
+	 * recursively puts every astnode child into the arraylist passed in
+	 * 
+	 * @param node
+	 * @param nodeChildrenList
+	 */
+	protected static void getAllASTNodeChildren(ASTNode node, ArrayList<ASTNode> nodeChildrenList) {
+		
+		for (int i = 0; i < node.getNumChildren(); i++) {
+			ASTNode child = node.getChild(i);
+			if (child.getNumChildren() == 0)
+				nodeChildrenList.add(child);
+			else {
+				nodeChildrenList.add(child);
+				getAllASTNodeChildren(child, nodeChildrenList);
+			}
+		}			
+	}
+	
+	/**
+	 * inlines a formula with function definitions
+	 * 
+	 * @param formula
+	 * @return
+	 */
+	public static ASTNode inlineFormula(Model model, ASTNode formula) {
+		
+		HashSet<String> ibiosimFunctionDefinitions = new HashSet<String>();
+		
+		ibiosimFunctionDefinitions.add("uniform");
+		ibiosimFunctionDefinitions.add("exponential");
+		ibiosimFunctionDefinitions.add("gamma");
+		ibiosimFunctionDefinitions.add("chisq");
+		ibiosimFunctionDefinitions.add("lognormal");
+		ibiosimFunctionDefinitions.add("laplace");
+		ibiosimFunctionDefinitions.add("cauchy");
+		ibiosimFunctionDefinitions.add("poisson");
+		ibiosimFunctionDefinitions.add("binomial");
+		ibiosimFunctionDefinitions.add("bernoulli");
+		ibiosimFunctionDefinitions.add("normal");
+		ibiosimFunctionDefinitions.add("rate");
+		ibiosimFunctionDefinitions.add("BIT");
+		ibiosimFunctionDefinitions.add("BITNOT");
+		ibiosimFunctionDefinitions.add("BITAND");
+		ibiosimFunctionDefinitions.add("BITOR");
+		ibiosimFunctionDefinitions.add("BITXOR");
+		
+		if (formula.isFunction() == false /* || formula.isLeaf() == false*/) {
+			
+			for (int i = 0; i < formula.getNumChildren(); ++i)
+				formula.replaceChild(i, inlineFormula(model,formula.getChild(i)));//.clone()));
+
+		} else if (formula.isFunction() && model.getFunctionDefinition(formula.getName()) != null) {
+			
+			if (ibiosimFunctionDefinitions.contains(formula.getName()))
+				return formula;
+			
+			ASTNode inlinedFormula = model.getFunctionDefinition(formula.getName()).getBody().deepCopy();
+			ASTNode oldFormula = formula.deepCopy();
+			
+			ArrayList<ASTNode> inlinedChildren = new ArrayList<ASTNode>();
+			getAllASTNodeChildren(inlinedFormula, inlinedChildren);
+			
+			if (inlinedChildren.size() == 0)
+				inlinedChildren.add(inlinedFormula);
+			
+			HashMap<String, Integer> inlinedChildToOldIndexMap = new HashMap<String, Integer>();
+			
+			for (int i = 0; i < model.getFunctionDefinition(formula.getName()).getNumArguments(); ++i) {
+				inlinedChildToOldIndexMap.put(model.getFunctionDefinition(formula.getName()).getArgument(i).getName(), i);
+			}
+			
+			for (int i = 0; i < inlinedChildren.size(); ++i) {
+				
+				ASTNode child = inlinedChildren.get(i);
+				
+				if (child.getNumChildren()==0 && child.isName()) {
+					
+					int index = inlinedChildToOldIndexMap.get(child.getName());
+					replaceArgument(inlinedFormula,myFormulaToString(child), oldFormula.getChild(index));
+					
+					if (inlinedFormula.getNumChildren() == 0)
+						inlinedFormula = oldFormula.getChild(index);
+				}
+			}
+			
+			return inlinedFormula;
+		}
+		return formula;
+	}
+	
+	public static void expandFunctionDefinitions(SBMLDocument doc) {
+		Model model = doc.getModel();
+		for (long i = 0; i < model.getNumInitialAssignments(); i++) {
+			InitialAssignment ia = model.getInitialAssignment(i);
+			if (ia.isSetMath()) {
+				ia.setMath(inlineFormula(model,ia.getMath()));
+			}
+		}
+		for (long i = 0; i < model.getNumRules(); i++) {
+			Rule r = model.getRule(i);
+			if (r.isSetMath()) {
+				r.setMath(inlineFormula(model,r.getMath()));
+			}
+		}
+		for (long i = 0; i < model.getNumConstraints(); i++) {
+			Constraint c = model.getConstraint(i);
+			if (c.isSetMath()) {
+				c.setMath(inlineFormula(model,c.getMath()));
+			}
+		}
+		for (long i = 0; i < model.getNumEvents(); i++) {
+			Event e = model.getEvent(i);
+			if (e.getDelay()!=null && e.getDelay().isSetMath()) {
+				e.getDelay().setMath(inlineFormula(model,e.getDelay().getMath()));
+			}
+			if (e.getTrigger()!=null && e.getTrigger().isSetMath()) {
+				e.getTrigger().setMath(inlineFormula(model,e.getTrigger().getMath()));
+			}
+			if (e.getPriority()!=null && e.getPriority().isSetMath()) {
+				e.getPriority().setMath(inlineFormula(model,e.getPriority().getMath()));
+			}
+			for (long j = 0; j < e.getNumEventAssignments(); j++) {
+				EventAssignment ea = e.getEventAssignment(j);
+				if (ea.isSetMath()) {
+					ea.setMath(inlineFormula(model,ea.getMath()));
+				}
+			}
+		}
+	}
 
 }

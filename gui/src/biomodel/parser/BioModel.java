@@ -2325,6 +2325,7 @@ public class BioModel {
 		ArrayList<String> booleans = new ArrayList<String>();
 		HashMap<String,String> rates = new HashMap<String,String>();
 		SBMLDocument flatSBML = flattenModel();
+		SBMLutilities.expandFunctionDefinitions(flatSBML);
 		//flatSBML.expandFunctionDefinitions();
 		flatSBML.expandInitialAssignments();
 		LhpnFile lpn = new LhpnFile();
