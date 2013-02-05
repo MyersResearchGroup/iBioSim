@@ -5304,6 +5304,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									((Graph) tab.getComponentAt(i)).setGraphName(rename);
 									tab.setTitleAt(i, rename);
 								}
+								else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
+									((ModelEditor) tab.getComponentAt(i)).reload(rename.substring(0, rename.length() - 4));
+									tab.setTitleAt(i, rename);
+								}
 								else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
 									((ModelEditor) tab.getComponentAt(i)).reload(rename.substring(0, rename.length() - 4));
 									tab.setTitleAt(i, rename);
