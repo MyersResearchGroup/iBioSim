@@ -4762,7 +4762,7 @@ public class BioModel {
 					if (grid.getNumCols() > 0 && grid.getNumRows() > 0)
 						removeGridSpecies(componentModelRef);
 					
-					this.getSBMLComp().removeExternalModelDefinition(componentModelRef);
+					sbmlComp.removeExternalModelDefinition(componentModelRef);
 				}
 				else {					
 					
@@ -4777,10 +4777,16 @@ public class BioModel {
 		}
 		else {
 			
+			int count = 0;
 			for (int i = 0; i < sbmlCompModel.getNumSubmodels(); ++i) {
 				if (sbmlCompModel.getSubmodel(i).getId().equals(name)) {
 					sbmlCompModel.removeSubmodel(i);
+				} else if (sbmlCompModel.getSubmodel(i).getModelRef().equals(componentModelRef)) {
+					count++;
 				}
+			}
+			if (count==0) {
+				sbmlComp.removeExternalModelDefinition(componentModelRef);
 			}
 		}
 		
