@@ -3091,6 +3091,11 @@ public class BioModel {
 			boolean changed = false;
 			do { 
 				changed = false;
+				if (sbml.getElementBySId(submodelID)!=null) {
+					++count;
+					submodelID = "C" + count;
+					changed = true;
+				}
 				for (int i = 0; i < sbml.getModel().getNumParameters(); ++i) {
 
 					if (sbml.getModel().getParameter(i).getId().endsWith("__locations")) {
