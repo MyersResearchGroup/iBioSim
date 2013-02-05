@@ -629,18 +629,8 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 	 * Remove a unit from list
 	 */
 	private void removeList() {
-		int index = unitDefs.getSelectedIndex();
+		int index = unitList.getSelectedIndex();
 		if (index != -1) {
-			UnitDefinition tempUnit = bioModel.getSBMLDocument().getModel().getUnitDefinition(((String) unitDefs.getSelectedValue()).split(" ")[0]);
-			if (unitList.getSelectedIndex() != -1) {
-				String selected = (String) unitList.getSelectedValue();
-				ListOf u = tempUnit.getListOfUnits();
-				for (int i = 0; i < tempUnit.getNumUnits(); i++) {
-					if (selected.contains(unitToString(tempUnit.getUnit(i)))) {
-						u.remove(i);
-					}
-				}
-			}
 			unitList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			Utility.remove(unitList);
 			unitList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -650,9 +640,32 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			else {
 				unitList.setSelectedIndex(index - 1);
 			}
-			modelEditor.setDirty(true);
-			bioModel.makeUndoPoint();
 		}
+		
+//		int index = unitDefs.getSelectedIndex();
+//		if (index != -1) {
+//			UnitDefinition tempUnit = bioModel.getSBMLDocument().getModel().getUnitDefinition(((String) unitDefs.getSelectedValue()).split(" ")[0]);
+//			if (unitList.getSelectedIndex() != -1) {
+//				String selected = (String) unitList.getSelectedValue();
+//				ListOf u = tempUnit.getListOfUnits();
+//				for (int i = 0; i < tempUnit.getNumUnits(); i++) {
+//					if (selected.contains(unitToString(tempUnit.getUnit(i)))) {
+//						u.remove(i);
+//					}
+//				}
+//			}
+//			unitList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+//			Utility.remove(unitList);
+//			unitList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+//			if (index < unitList.getModel().getSize()) {
+//				unitList.setSelectedIndex(index);
+//			}
+//			else {
+//				unitList.setSelectedIndex(index - 1);
+//			}
+//			modelEditor.setDirty(true);
+//			bioModel.makeUndoPoint();
+//		}
 	}
 
 	/**
