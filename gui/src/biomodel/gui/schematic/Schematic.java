@@ -2036,7 +2036,6 @@ public class Schematic extends JPanel implements ActionListener {
 						}
 					}
 					else if (bioActivationButton.isSelected()) {
-						System.out.println("source="+sourceID+" target="+targetID);
 						bioModel.addReactantToComplexReaction(sourceID, targetID, null, null);
 					}
 				}
