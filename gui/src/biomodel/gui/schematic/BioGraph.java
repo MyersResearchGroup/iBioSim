@@ -1454,39 +1454,39 @@ public class BioGraph extends mxGraph {
 	public void updateAllInternalPosition(){
 
 		for(mxCell cell:this.compartmentsToMxCellMap.values()){
-			updateInternalPosition(cell);
+			updateInternalPosition(cell,false);
 		}
 
 		for(mxCell cell:this.speciesToMxCellMap.values()){
-			updateInternalPosition(cell);
+			updateInternalPosition(cell,false);
 		}
 		
 		for(mxCell cell:this.reactionsToMxCellMap.values()){
-			updateInternalPosition(cell);
+			updateInternalPosition(cell,false);
 		}
 		
 		for(mxCell cell:this.rulesToMxCellMap.values()){
-			updateInternalPosition(cell);
+			updateInternalPosition(cell,false);
 		}
 		
 		for(mxCell cell:this.constraintsToMxCellMap.values()){
-			updateInternalPosition(cell);
+			updateInternalPosition(cell,false);
 		}
 		
 		for(mxCell cell:this.eventsToMxCellMap.values()){
-			updateInternalPosition(cell);
+			updateInternalPosition(cell,false);
 		}
 		
 		for(mxCell cell:this.componentsToMxCellMap.values()){
-			updateInternalPosition(cell);
+			updateInternalPosition(cell,false);
 		}
 		
 		for(mxCell cell:this.drawnPromoterToMxCellMap.values()){
-			updateInternalPosition(cell);
+			updateInternalPosition(cell,false);
 		}
 		
 		for(mxCell cell:this.variableToMxCellMap.values()){
-			updateInternalPosition(cell);
+			updateInternalPosition(cell,false);
 		}
 	}
 	
@@ -1495,7 +1495,7 @@ public class BioGraph extends mxGraph {
 	 * update the internal model to reflect it's coordinates.
 	 * Called when a cell is dragged with the GUI.
 	 */
-	public void updateInternalPosition(mxCell cell){
+	public void updateInternalPosition(mxCell cell,boolean warn){
 		
 		mxGeometry geom = cell.getGeometry();
 		if (getCellType(cell).equals(GlobalConstants.SPECIES) ||
@@ -1522,7 +1522,9 @@ public class BioGraph extends mxGraph {
 				geom.setY(speciesGlyph.getBoundingBox().y());
 				geom.setWidth(speciesGlyph.getBoundingBox().width());
 				geom.setHeight(speciesGlyph.getBoundingBox().height());
-				Utility.createErrorMessage("Compartment Required", "Species must be placed within a compartment.");
+				if (warn) {
+					Utility.createErrorMessage("Compartment Required", "Species must be placed within a compartment.");
+				}
 				return;
 			} 
 			bioModel.getSBMLDocument().getModel().getSpecies((String)cell.getId()).setCompartment(compartment);
@@ -1596,7 +1598,9 @@ public class BioGraph extends mxGraph {
 					geom.setY(reactionGlyph.getBoundingBox().y());
 					geom.setWidth(reactionGlyph.getBoundingBox().width());
 					geom.setHeight(reactionGlyph.getBoundingBox().height());
-					Utility.createErrorMessage("Compartment Required", "Reaction must be placed within a compartment.");
+					if (warn) {
+						Utility.createErrorMessage("Compartment Required", "Reaction must be placed within a compartment.");
+					}
 					return;
 				} 
 				bioModel.getSBMLDocument().getModel().getReaction((String)cell.getId()).setCompartment(compartment);
@@ -1679,7 +1683,9 @@ public class BioGraph extends mxGraph {
 				geom.setY(y);
 				geom.setWidth(width);
 				geom.setHeight(height);
-				Utility.createErrorMessage("Compartment Overlap", "Compartments must not overlap.");
+				if (warn) {
+					Utility.createErrorMessage("Compartment Overlap", "Compartments must not overlap.");
+				}
 				return;
 			}
 			compGlyph.getBoundingBox().setX(geom.getX());
@@ -1693,7 +1699,9 @@ public class BioGraph extends mxGraph {
 				compGlyph.getBoundingBox().setY(y);
 				compGlyph.getBoundingBox().setWidth(width);
 				compGlyph.getBoundingBox().setHeight(height);
-				Utility.createErrorMessage("Missing Compartment", "All species and reactions must be within a compartment.");
+				if (warn) {
+					Utility.createErrorMessage("Missing Compartment", "All species and reactions must be within a compartment.");
+				}
 			}
 			geom.setX(compGlyph.getBoundingBox().x());
 			geom.setY(compGlyph.getBoundingBox().y());
