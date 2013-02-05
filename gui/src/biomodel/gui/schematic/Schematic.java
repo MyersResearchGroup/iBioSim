@@ -384,7 +384,7 @@ public class Schematic extends JPanel implements ActionListener {
 			else{
 				cell.getGeometry().setX(cell.getGeometry().getX()+deltaX);
 				cell.getGeometry().setY(cell.getGeometry().getY()+deltaY);
-				graph.updateInternalPosition(cell);
+				graph.updateInternalPosition(cell,true);
 			}
 		}
 		if (numberEdges==cells.length) {
@@ -1255,13 +1255,13 @@ public class Schematic extends JPanel implements ActionListener {
 								mxGeometry snapGeom = 
 									new mxGeometry(snapRect.x, snapRect.y, snapRect.width, snapRect.height);
 								cell.setGeometry(snapGeom);
-								graph.updateInternalPosition(cell);
+								graph.updateInternalPosition(cell,true);
 							}
 						}
 						//if there's no grid, move the cell wherever
 						else {
 							if (!grid.isEnabled())
-								graph.updateInternalPosition(cell);
+								graph.updateInternalPosition(cell,true);
 						}
 					}
 				}
@@ -1293,7 +1293,7 @@ public class Schematic extends JPanel implements ActionListener {
 
 				for(Object ocell:cells){
 					mxCell cell = (mxCell)ocell;
-					graph.updateInternalPosition(cell);
+					graph.updateInternalPosition(cell,true);
 				}
 				graph.buildGraph();
 				drawGrid();
