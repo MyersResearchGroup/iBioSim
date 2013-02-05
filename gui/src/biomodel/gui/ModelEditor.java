@@ -365,9 +365,9 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		//gcm.getSBMLDocument().getModel().setName(modelPanel.getModelName());
 		biomodel.save(path + separator + modelId + ".xml");
 		//log.addText("Saving GCM file:\n" + path + separator + gcmname + ".gcm\n");
-		log.addText("Saving SBML file:\n" + path + separator + biomodel.getSBMLFile() + "\n");
+		log.addText("Saving SBML file:\n" + path + separator + modelId  + ".xml\n");
 		if (command.contains("Check")) {
-			SBMLutilities.check(path + separator + biomodel.getSBMLFile());
+			SBMLutilities.check(path + separator + modelId + ".xml");
 		}	
 		if (command.contains("LHPN")) {
 			String lpnName = JOptionPane.showInputDialog(Gui.frame,
