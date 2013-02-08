@@ -66,6 +66,8 @@ public class EditPreferences {
 	
 	private JTextField uriField;
 	private JTextField regexField;
+	private JComboBox validationBox;
+	private JComboBox warningBox;
 	
 	private JTextField limit;
 	private JTextField interval;
@@ -660,19 +662,29 @@ public class EditPreferences {
 		// synthesis preferences
 		JPanel synthesisLabels = new JPanel(new GridLayout(13, 1));
 		synthesisLabels.add(new JLabel("URI Authority"));
-		synthesisLabels.add(new JLabel("Validation Regex"));
+		synthesisLabels.add(new JLabel("Validate Assembly of DNA Components"));
+		synthesisLabels.add(new JLabel("Regular Expression for Complete Genetic Construct"));
+		synthesisLabels.add(new JLabel("Incomplete Construct Warning"));
 		
 		JPanel synthesisFields = new JPanel(new GridLayout(13 ,1));
-		uriField = new JTextField(biosimrc.get("biosim.synthesis.uri", ""),15);
-		regexField = new JTextField(biosimrc.get("biosim.synthesis.regex", ""),15);
+		uriField = new JTextField(biosimrc.get(GlobalConstants.SBOL_URI_AUTHORITY_PREFERENCE, ""),15);
+		regexField = new JTextField(biosimrc.get(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, ""),15);
+		validationBox = new JComboBox(new String[]{"True", "False"});
+		validationBox.setSelectedItem(biosimrc.get(GlobalConstants.CONSTRUCT_VALIDATION_PREFERENCE, ""));
+		warningBox = new JComboBox(new String[]{"True", "False"});
+		warningBox.setSelectedItem(biosimrc.get(GlobalConstants.CONSTRUCT_VALIDATION_WARNING_PREFERENCE, ""));
 		synthesisFields.add(uriField);
+		synthesisFields.add(validationBox);
 		synthesisFields.add(regexField);
+		synthesisFields.add(warningBox);
 		
 		JButton restoreSyn = new JButton("Restore Defaults");
 		restoreSyn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				uriField.setText("http://www.async.ece.utah.edu");
-				regexField.setText(GlobalConstants.SO_CONSTRUCT_REGEX);
+				uriField.setText(GlobalConstants.MYERS_LAB_URI_AUTHORITY);
+				regexField.setText(GlobalConstants.GENETIC_CONSTRUCT_REGEX);
+				validationBox.setSelectedItem(GlobalConstants.CONSTRUCT_VALIDATION);
+				warningBox.setSelectedItem(GlobalConstants.CONSTRUCT_VALIDATION_WARNING);
 			}
 		});	
 		
@@ -1206,21 +1218,29 @@ public class EditPreferences {
 	private boolean saveSynthesisPreferences(Preferences biosimrc) {
 		boolean problem = false;
 		if (!uriField.getText().trim().equals(""))
-			biosimrc.put("biosim.synthesis.uri", uriField.getText().trim());
+			biosimrc.put(GlobalConstants.SBOL_URI_AUTHORITY_PREFERENCE, uriField.getText().trim());
 		else {
 			JOptionPane.showMessageDialog(Gui.frame, "URI authority cannot be blank.", 
 					"Invalid Preference", JOptionPane.ERROR_MESSAGE);
-			uriField.setText(biosimrc.get("biosim.synthesis.uri", ""));
+			uriField.setText(biosimrc.get(GlobalConstants.SBOL_URI_AUTHORITY_PREFERENCE, ""));
 			problem = true;
 		}
 		if (!regexField.getText().trim().equals(""))
-			biosimrc.put("biosim.synthesis.regex", regexField.getText().trim());
+			biosimrc.put(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, regexField.getText().trim());
 		else {
 			JOptionPane.showMessageDialog(Gui.frame, "Validation regex cannot be blank.", 
 					"Invalid Preference", JOptionPane.ERROR_MESSAGE);
-			regexField.setText(biosimrc.get("biosim.synthesis.regex", ""));
+			regexField.setText(biosimrc.get(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, ""));
 			problem = true;
 		}
+		if (validationBox.getSelectedItem().equals("True"))
+			biosimrc.put(GlobalConstants.CONSTRUCT_VALIDATION_PREFERENCE, "True");
+		else
+			biosimrc.put(GlobalConstants.CONSTRUCT_VALIDATION_PREFERENCE, "False");
+		if (warningBox.getSelectedItem().equals("True"))
+			biosimrc.put(GlobalConstants.CONSTRUCT_VALIDATION_WARNING_PREFERENCE, "True");
+		else
+			biosimrc.put(GlobalConstants.CONSTRUCT_VALIDATION_WARNING_PREFERENCE, "False");
 		return problem;
 	}
 	
@@ -1421,11 +1441,17 @@ public class EditPreferences {
 		if (biosimrc.get("biosim.learn.findbaseprob", "").equals("")) {
 			biosimrc.put("biosim.learn.findbaseprob", "False");
 		}
-		if (biosimrc.get("biosim.synthesis.uri", "").equals("")) {
-			biosimrc.put("biosim.synthesis.uri", "http://www.async.ece.utah.edu");
+		if (biosimrc.get(GlobalConstants.SBOL_URI_AUTHORITY_PREFERENCE, "").equals("")) {
+			biosimrc.put(GlobalConstants.SBOL_URI_AUTHORITY_PREFERENCE, GlobalConstants.MYERS_LAB_URI_AUTHORITY);
 		}
-		if (biosimrc.get("biosim.synthesis.regex", "").equals("")) {
-			biosimrc.put("biosim.synthesis.regex", GlobalConstants.SO_CONSTRUCT_REGEX);
+		if (biosimrc.get(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, "").equals("")) {
+			biosimrc.put(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, GlobalConstants.GENETIC_CONSTRUCT_REGEX);
+		}
+		if (biosimrc.get(GlobalConstants.CONSTRUCT_VALIDATION_PREFERENCE, "").equals("")) {
+			biosimrc.put(GlobalConstants.CONSTRUCT_VALIDATION_PREFERENCE, GlobalConstants.CONSTRUCT_VALIDATION);
+		}
+		if (biosimrc.get(GlobalConstants.CONSTRUCT_VALIDATION_WARNING_PREFERENCE, "").equals("")) {
+			biosimrc.put(GlobalConstants.CONSTRUCT_VALIDATION_WARNING_PREFERENCE, GlobalConstants.CONSTRUCT_VALIDATION_WARNING);
 		}
 		if (biosimrc.get("biosim.general.tree_icons", "").equals("")) {
 			biosimrc.put("biosim.general.tree_icons", "default");

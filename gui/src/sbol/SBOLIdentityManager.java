@@ -21,6 +21,7 @@ import org.sbolstandard.core.util.SequenceOntology;
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
 import biomodel.parser.BioModel;
+import biomodel.util.GlobalConstants;
 
 public class SBOLIdentityManager {
 
@@ -35,7 +36,7 @@ public class SBOLIdentityManager {
 	
 	public SBOLIdentityManager(BioModel biomodel) {
 		this.biomodel = biomodel;
-		setAuthority();
+		loadAuthority();
 		modelURIs = AnnotationUtility.parseSBOLAnnotation(biomodel.getSBMLDocument().getModel());
 		if (modelURIs.size() == 0) {
 			try {
@@ -235,8 +236,8 @@ public class SBOLIdentityManager {
 			AnnotationUtility.removeSBOLAnnotation(sbmlModel);
 	}
 
-	private void setAuthority() {
-		uriAuthority = Preferences.userRoot().get("biosim.synthesis.uri", "");
+	private void loadAuthority() {
+		uriAuthority = Preferences.userRoot().get(GlobalConstants.SBOL_URI_AUTHORITY_PREFERENCE, "");
 	}
 	
 	private void setTime() {

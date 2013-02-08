@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Set;
 
 public class SequenceTypeValidator {
-	private DFA constructDFA;
-	private DFA fragmentDFA;
+	private DFA completeDFA;
+	private DFA partialDFA;
 	private int stateIndex;
 	
 	public SequenceTypeValidator(String regex) {
@@ -17,9 +17,9 @@ public class SequenceTypeValidator {
 //		System.out.println(altRegex);
 //		System.out.println(exAltRegex);
 		Set<NFAState> nfaStartStates = constructNFA(regex);
-		this.constructDFA = new DFA(nfaStartStates);
+		this.completeDFA = new DFA(nfaStartStates);
 		nfaStartStates = constructNFA(exAltRegex);
-		this.fragmentDFA = new DFA(nfaStartStates);
+		this.partialDFA = new DFA(nfaStartStates);
 //		fragmentDFA.print();
 	}
 	
@@ -307,35 +307,35 @@ public class SequenceTypeValidator {
 			return subRegex;
 	}
 	
-	public boolean validateConstruct(List<String> types) {
-		return constructDFA.run(types);
+	public boolean validateCompleteConstruct(List<String> types) {
+		return completeDFA.run(types);
 	}
 	
-	public boolean validateFragment(List<String> types) {
-		return fragmentDFA.run(types);
+	public boolean validatePartialConstruct(List<String> types) {
+		return partialDFA.run(types);
 	}
 	
-	public boolean isConstructValid() {
-		return constructDFA.isAccepting();
+	public boolean isCompleteConstructValid() {
+		return completeDFA.isAccepting();
 	}
 	
-	public boolean isFragmentValid() {
-		return fragmentDFA.isAccepting();
+	public boolean isPartialConstructValid() {
+		return partialDFA.isAccepting();
 	}
 	
-	public void resetFragmentValidator() {
-		fragmentDFA.reset();
+	public void resetPartialConstructValidator() {
+		partialDFA.reset();
 	}
 	
 	public Set<String> getStartTypes() {
 		Set<String> startTypes = new HashSet<String>();
-		startTypes.addAll(constructDFA.getStartState().getTransitions().keySet());
+		startTypes.addAll(completeDFA.getStartState().getTransitions().keySet());
 		return startTypes;
 	}
 	
 	public Set<String> getTerminalTypes() {
 		Set<String> terminalTypes = new HashSet<String>();
-		for (DFAState state : constructDFA.getStates().values()) {
+		for (DFAState state : completeDFA.getStates().values()) {
 			HashMap<String, DFAState> transitions = state.getTransitions();
 			for (String type : transitions.keySet())
 				if (transitions.get(type).isAccepting())
@@ -504,7 +504,9 @@ public class SequenceTypeValidator {
 				state.setID("S" + reindex);
 				reindex++;
 			}
+			System.out.println("digraph G {");
 			printHelper(startState, new HashSet<String>());
+			System.out.println("}");
 			System.out.println();
 		}
 		
