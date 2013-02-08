@@ -427,22 +427,22 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	public void saveSBOL(boolean check) {
 		SBOLIdentityManager identityManager = new SBOLIdentityManager(biomodel);
 		if (identityManager.containsBioSimURI()) {
-			SBOLAssemblyGraph synGraph = new SBOLAssemblyGraph(biomodel);
-			if (synGraph.containsSBOL()) {
+			SBOLAssemblyGraph assemblyGraph = new SBOLAssemblyGraph(biomodel);
+			if (assemblyGraph.containsSBOL()) {
 				SBOLFileManager fileManager = new SBOLFileManager(biosim.getRoot(), biosim.getSbolFiles());
-				if (fileManager.sbolFilesAreLoaded() && synGraph.loadDNAComponents(fileManager)) {
+				if (fileManager.sbolFilesAreLoaded() && assemblyGraph.loadDNAComponents(fileManager)) {
 					SequenceTypeValidator seqValidator = 
-							new SequenceTypeValidator(Preferences.userRoot().get("biosim.synthesis.regex", ""));
-					synGraph.cutGraph(seqValidator.getStartTypes());
-					if (synGraph.isLinear()) {
-						SBOLAssembler synthesizer = new SBOLAssembler(synGraph, seqValidator);
-						DnaComponent synthComp = synthesizer.synthesizeDNAComponent();
-						if (synthComp != null) {
+							new SequenceTypeValidator(Preferences.userRoot().get(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, ""));
+					assemblyGraph.cutGraph(seqValidator.getStartTypes());
+					if (assemblyGraph.isLinear()) {
+						SBOLAssembler synthesizer = new SBOLAssembler(assemblyGraph, seqValidator);
+						DnaComponent assembledComp = synthesizer.assembleDNAComponent();
+						if (assembledComp != null) {
 							if (identityManager.containsPlaceHolderURI() || identityManager.loadBioSimComponent(fileManager)) {
-								identityManager.describeDNAComponent(synthComp);
-								identityManager.identifyDNAComponent(synthComp);
-								fileManager.saveDNAComponent(synthComp, identityManager);
-								identityManager.replaceBioSimURI(synthComp.getURI());
+								identityManager.describeDNAComponent(assembledComp);
+								identityManager.identifyDNAComponent(assembledComp);
+								fileManager.saveDNAComponent(assembledComp, identityManager);
+								identityManager.replaceBioSimURI(assembledComp.getURI());
 								identityManager.annotateBioModel();
 							}
 						} else if (identityManager.containsPlaceHolderURI()) {
