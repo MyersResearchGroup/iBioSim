@@ -5545,6 +5545,9 @@ public class BioModel {
 	
 	public String getCompartmentByLocation(float x, float y, float w, float h) {
 		String compartment = "";
+		if (sbml.getModel().getNumCompartments() > 0) {
+			compartment = sbml.getModel().getCompartment(0).getId();
+		}
 		double distance = -1;
 		for (long i = 0; i < sbml.getModel().getNumCompartments(); i++) {
 			Compartment c = sbml.getModel().getCompartment(i);
@@ -5556,16 +5559,18 @@ public class BioModel {
 				layout.setId("iBioSim");
 			}
 			CompartmentGlyph compartmentGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+c.getId());
-			double cx = compartmentGlyph.getBoundingBox().x();
-			double cy = compartmentGlyph.getBoundingBox().y();
-			double cw = compartmentGlyph.getBoundingBox().width();
-			double ch = compartmentGlyph.getBoundingBox().height();
-			if (x >= cx && y >= cy && x + w <= cx+cw && y + h <= cy+ch) {
-				double calcDist = (x - cx) + (y - cy);
-				if (distance==-1 || distance > calcDist) {
-					compartment = compartmentGlyph.getCompartmentId();
+			if (compartmentGlyph != null) {
+				double cx = compartmentGlyph.getBoundingBox().x();
+				double cy = compartmentGlyph.getBoundingBox().y();
+				double cw = compartmentGlyph.getBoundingBox().width();
+				double ch = compartmentGlyph.getBoundingBox().height();
+				if (x >= cx && y >= cy && x + w <= cx+cw && y + h <= cy+ch) {
+					double calcDist = (x - cx) + (y - cy);
+					if (distance==-1 || distance > calcDist) {
+						compartment = compartmentGlyph.getCompartmentId();
+					}
 				}
-			}
+			} 
 		}
 		return compartment;
 	}

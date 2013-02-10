@@ -14,7 +14,6 @@ import main.*;
 import org.sbml.libsbml.*;
 
 import biomodel.parser.BioModel;
-import biomodel.util.GlobalConstants;
 
 /**
  * This class creates a GUI for the Learn program. It implements the
@@ -31,7 +30,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 
 	// private JButton browseInit; // the browse initial network button
 
-	private JButton save, run, viewGcm, saveGcm, viewLog; // the run button
+	private JButton save, run, viewModel, saveModel, viewLog; // the run button
 
 	private JComboBox debug; // debug combo box
 
@@ -393,7 +392,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 					if (BioModel.isProductionReaction(r)) {
 						for (int j = 0; j < r.getNumModifiers(); j++) {
 							ModifierSpeciesReference modifier = r.getModifier(j);
-							if (modifier.isSetAnnotation() && modifier.getAnnotationString().contains(GlobalConstants.NOINFLUENCE)) {
+							if (BioModel.isNeutral(modifier)) {
 								for (int k = 0; k < r.getNumProducts(); k++) {
 									SpeciesReference product = r.getProduct(k);
 									write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=diamond];\n");
@@ -429,9 +428,9 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 			}
 		}
 		else {
-			BioModel gcm = new BioModel(biosim.getRoot());
-			gcm.load(learnFile);
-			speciesList = gcm.getSpecies();
+			BioModel bioModel = new BioModel(biosim.getRoot());
+			bioModel.load(learnFile);
+			speciesList = bioModel.getSpecies();
 			try {
 				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
 				BufferedReader input = new BufferedReader(new FileReader(new File(learnFile)));
@@ -462,24 +461,24 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 		save.setMnemonic(KeyEvent.VK_S);
 
 		// Creates the view circuit button
-		viewGcm = new JButton("View Circuit");
-		runHolder.add(viewGcm);
-		viewGcm.addActionListener(this);
-		viewGcm.setMnemonic(KeyEvent.VK_V);
+		viewModel = new JButton("View Circuit");
+		runHolder.add(viewModel);
+		viewModel.addActionListener(this);
+		viewModel.setMnemonic(KeyEvent.VK_V);
 
 		// Creates the save circuit button
-		saveGcm = new JButton("Save Circuit");
-		runHolder.add(saveGcm);
-		saveGcm.addActionListener(this);
-		saveGcm.setMnemonic(KeyEvent.VK_C);
+		saveModel = new JButton("Save Circuit");
+		runHolder.add(saveModel);
+		saveModel.addActionListener(this);
+		saveModel.setMnemonic(KeyEvent.VK_C);
 
 		// Creates the view circuit button
 		//runHolder.add(viewLog);
 		viewLog.addActionListener(this);
 		viewLog.setMnemonic(KeyEvent.VK_R);
 		if (!(new File(directory + separator + "method.gcm").exists())) {
-			viewGcm.setEnabled(false);
-			saveGcm.setEnabled(false);
+			viewModel.setEnabled(false);
+			saveModel.setEnabled(false);
 		}
 		if (!(new File(directory + separator + "run.log").exists())) {
 			viewLog.setEnabled(false);
@@ -616,14 +615,14 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 		else if (e.getSource() == save) {
 			save();
 		}
-		else if (e.getSource() == viewGcm) {
-			viewGcm();
+		else if (e.getSource() == viewModel) {
+			viewModel();
 		}
 		else if (e.getSource() == viewLog) {
 			viewLog();
 		}
-		else if (e.getSource() == saveGcm) {
-			saveGcm();
+		else if (e.getSource() == saveModel) {
+			saveModel();
 		}
 	}
 
@@ -908,38 +907,33 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 		}
 	}
 
-	public void saveGcm() {
-		try {
-			if (new File(directory + separator + "method.gcm").exists()) {
-				String copy = JOptionPane.showInputDialog(Gui.frame, "Enter Circuit Name:", "Save Circuit", JOptionPane.PLAIN_MESSAGE);
-				if (copy != null) {
-					copy = copy.trim();
-				}
-				else {
-					return;
-				}
-				if (!copy.equals("")) {
-					if (copy.length() > 3) {
-						if (!copy.substring(copy.length() - 4).equals(".gcm")) {
-							copy += ".gcm";
-						}
-					}
-					else {
+	public void saveModel() {
+		if (new File(directory + separator + "method.gcm").exists()) {
+			String copy = JOptionPane.showInputDialog(Gui.frame, "Enter Model Name:", "Save Model", JOptionPane.PLAIN_MESSAGE);
+			if (copy != null) {
+				copy = copy.trim();
+			}
+			else {
+				return;
+			}
+			if (!copy.equals("")) {
+				if (copy.length() > 3) {
+					if (!copy.substring(copy.length() - 4).equals(".gcm")) {
 						copy += ".gcm";
 					}
 				}
-				biosim.saveGcm(copy, directory + separator + "method.gcm");
+				else {
+					copy += ".gcm";
+				}
 			}
-			else {
-				JOptionPane.showMessageDialog(Gui.frame, "No circuit has been generated yet.", "Error", JOptionPane.ERROR_MESSAGE);
-			}
+			biosim.saveGcm(copy, directory + separator + "method.gcm");
 		}
-		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Unable to save circuit.", "Error", JOptionPane.ERROR_MESSAGE);
+		else {
+			JOptionPane.showMessageDialog(Gui.frame, "No model has been generated yet.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
-	public void viewGcm() {
+	public void viewModel() {
 		try {
 			File work = new File(directory);
 			if (new File(directory + separator + "method.gcm").exists()) {
@@ -965,11 +959,11 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 				}
 			}
 			else {
-				JOptionPane.showMessageDialog(Gui.frame, "No circuit has been generated yet.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "No model has been generated yet.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Unable to view circuit.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to view model.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -1297,15 +1291,15 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 					}
 				}
 				else {
-					JOptionPane.showMessageDialog(Gui.frame, "A gcm file was not generated." + "\nPlease see the run.log file.", "Error",
+					JOptionPane.showMessageDialog(Gui.frame, "A model was not generated." + "\nPlease see the run.log file.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
 				running.setCursor(null);
 				running.dispose();
 				if (new File(directory + separator + "method.gcm").exists()) {
-					viewGcm.setEnabled(true);
-					saveGcm.setEnabled(true);
-					saveGcm();
+					viewModel.setEnabled(true);
+					saveModel.setEnabled(true);
+					saveModel();
 				}
 				if (new File(directory + separator + "run.log").exists()) {
 					viewLog.setEnabled(true);
@@ -1313,7 +1307,10 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 				biosim.enableTabMenu(biosim.getTab().getSelectedIndex());
 			}
 		}
-		catch (Exception e1) {
+		catch (IOException e1) {
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to learn from data.", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+		catch (InterruptedException e1) {
 			JOptionPane.showMessageDialog(Gui.frame, "Unable to learn from data.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -1337,12 +1334,12 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 		return false;
 	}
 
-	public boolean getViewGcmEnabled() {
-		return viewGcm.isEnabled();
+	public boolean getViewModelEnabled() {
+		return viewModel.isEnabled();
 	}
 
-	public boolean getSaveGcmEnabled() {
-		return saveGcm.isEnabled();
+	public boolean getSaveModelEnabled() {
+		return saveModel.isEnabled();
 	}
 
 	public boolean getViewLogEnabled() {
@@ -1360,8 +1357,42 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
 				write.write("digraph G {\n");
 				for (int i = 0; i < model.getNumSpecies(); i++) {
+					if (BioModel.isPromoterSpecies(((Species)ids.get(i)))) continue;
 					speciesList.add(((Species) ids.get(i)).getId());
-					write.write("s" + i + " [shape=ellipse,color=black,label=\"" + ((Species) ids.get(i)).getId() + "\"" + "];\n");
+					write.write(((Species) ids.get(i)).getId() + " [shape=ellipse,color=black,label=\"" + ((Species) ids.get(i)).getId() + "\"" + "];\n");
+				}
+				for (int i = 0; i < model.getNumReactions(); i++) {
+					Reaction r = model.getReaction(i);
+					if (BioModel.isProductionReaction(r)) {
+						for (int j = 0; j < r.getNumModifiers(); j++) {
+							ModifierSpeciesReference modifier = r.getModifier(j);
+							if (BioModel.isNeutral(modifier)) {
+								for (int k = 0; k < r.getNumProducts(); k++) {
+									SpeciesReference product = r.getProduct(k);
+									write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=diamond];\n");
+								}
+							}
+							if (BioModel.isActivator(modifier)) {
+								for (int k = 0; k < r.getNumProducts(); k++) {
+									SpeciesReference product = r.getProduct(k);
+									write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=vee];\n");
+								}
+							}
+							if (BioModel.isRepressor(modifier)) {
+								for (int k = 0; k < r.getNumProducts(); k++) {
+									SpeciesReference product = r.getProduct(k);
+									write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=tee];\n");
+								}
+							}
+							if (BioModel.isRegulator(modifier)) {
+								for (int k = 0; k < r.getNumProducts(); k++) {
+									SpeciesReference product = r.getProduct(k);
+									write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=tee];\n");
+									write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=vee];\n");
+								}
+							}
+						}
+					}
 				}
 				write.write("}\n");
 				write.close();
@@ -1371,9 +1402,9 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 			}
 		}
 		else {
-			BioModel gcm = new BioModel(biosim.getRoot());
-			gcm.load(learnFile);
-			speciesList = gcm.getSpecies();
+			BioModel bioModel = new BioModel(biosim.getRoot());
+			bioModel.load(learnFile);
+			speciesList = bioModel.getSpecies();
 			try {
 				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
 				BufferedReader input = new BufferedReader(new FileReader(new File(learnFile)));
