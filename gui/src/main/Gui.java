@@ -381,9 +381,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		bugSubjectPanel.add(bugSubject);
 		JLabel bugDetailLabel = new JLabel("Detailed Description:");
 		JTextArea bugDetail = new JTextArea(5,30);
+		bugDetail.setLineWrap(true);
+		bugDetail.setWrapStyleWord(true);
+		JScrollPane scroll = new JScrollPane();
+		scroll.setMinimumSize(new Dimension(100, 100));
+		scroll.setPreferredSize(new Dimension(100, 100));
+		scroll.setViewportView(bugDetail);
 		JPanel bugDetailPanel = new JPanel(new GridLayout(1,2));
 		bugDetailPanel.add(bugDetailLabel);
-		bugDetailPanel.add(bugDetail);
+		bugDetailPanel.add(scroll);
 		reportBugPanel.add(typePanel);
 		reportBugPanel.add(emailPanel);
 		reportBugPanel.add(bugSubjectPanel);
@@ -1379,7 +1385,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else {
 			name = new JLabel("iBioSim", JLabel.CENTER);
-			version = new JLabel("Version 2.4.2", JLabel.CENTER);
+			version = new JLabel("Version 2.4.3", JLabel.CENTER);
 			developers = "Nathan Barker\nKevin Jones\nHiroyuki Kuwahara\n"
 					+ "Curtis Madsen\nChris Myers\nNam Nguyen\nTyler Patterson\nNicholas Roehner\nJason Stevens\nLeandro Watanabe";
 		}
@@ -1502,7 +1508,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			if (comp instanceof JTabbedPane) {
 				Component component = ((JTabbedPane) comp).getSelectedComponent();
 				if (component instanceof LearnGCM) {
-					((LearnGCM) component).viewGcm();
+					((LearnGCM) component).viewModel();
 				}
 				else if (component instanceof LearnLHPN) {
 					((LearnLHPN) component).viewLhpn();
@@ -1561,7 +1567,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			if (comp instanceof JTabbedPane) {
 				for (Component component : ((JTabbedPane) comp).getComponents()) {
 					if (component instanceof LearnGCM) {
-						((LearnGCM) component).saveGcm();
+						((LearnGCM) component).saveModel();
 					}
 					else if (component instanceof LearnLHPN) {
 						((LearnLHPN) component).saveLhpn();
@@ -2223,7 +2229,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			for (int i = 0; i < ((JTabbedPane) comp).getTabCount(); i++) {
 				Component component = ((JTabbedPane) comp).getComponent(i);
 				if (component instanceof LearnGCM) {
-					((LearnGCM) component).viewGcm();
+					((LearnGCM) component).viewModel();
 					return;
 				}
 				else if (component instanceof LearnLHPN) {
@@ -6505,7 +6511,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				addToTree(sbmlFile);
 			}
 		}
-		catch (Exception e1) {
+		catch (IOException e1) {
 			JOptionPane.showMessageDialog(frame, "Unable to save genetic circuit.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -9198,9 +9204,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						viewLearnedModel.setEnabled(true);
 					}
 					run.setEnabled(true);
-					saveModel.setEnabled(((LearnGCM) learnComponent).getViewGcmEnabled());
+					saveModel.setEnabled(((LearnGCM) learnComponent).getViewModelEnabled());
 					saveAsVerilog.setEnabled(false);
-					viewCircuit.setEnabled(((LearnGCM) learnComponent).getViewGcmEnabled());
+					viewCircuit.setEnabled(((LearnGCM) learnComponent).getViewModelEnabled());
 					viewLog.setEnabled(((LearnGCM) learnComponent).getViewLogEnabled());
 				}
 				else if (learnLHPN) {
@@ -9273,9 +9279,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				runButton.setEnabled(true);
 				save.setEnabled(true);
 				run.setEnabled(true);
-				viewCircuit.setEnabled(((LearnGCM) component).getViewGcmEnabled());
+				viewCircuit.setEnabled(((LearnGCM) component).getViewModelEnabled());
 				viewLog.setEnabled(((LearnGCM) component).getViewLogEnabled());
-				saveModel.setEnabled(((LearnGCM) component).getViewGcmEnabled());
+				saveModel.setEnabled(((LearnGCM) component).getViewModelEnabled());
 			}
 			else if (component instanceof LearnLHPN) {
 				saveButton.setEnabled(true);
@@ -9298,8 +9304,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						viewLearnedModel.setEnabled(true);
 					}
 					run.setEnabled(true);
-					saveModel.setEnabled(((LearnGCM) learnComponent).getViewGcmEnabled());
-					viewCircuit.setEnabled(((LearnGCM) learnComponent).getViewGcmEnabled());
+					saveModel.setEnabled(((LearnGCM) learnComponent).getViewModelEnabled());
+					viewCircuit.setEnabled(((LearnGCM) learnComponent).getViewModelEnabled());
 					viewLog.setEnabled(((LearnGCM) learnComponent).getViewLogEnabled());
 				}
 				else if (learnLHPN) {
@@ -9321,8 +9327,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						viewLearnedModel.setEnabled(true);
 					}
 					run.setEnabled(true);
-					saveModel.setEnabled(((LearnGCM) learnComponent).getViewGcmEnabled());
-					viewCircuit.setEnabled(((LearnGCM) learnComponent).getViewGcmEnabled());
+					saveModel.setEnabled(((LearnGCM) learnComponent).getViewModelEnabled());
+					viewCircuit.setEnabled(((LearnGCM) learnComponent).getViewModelEnabled());
 					viewLog.setEnabled(((LearnGCM) learnComponent).getViewLogEnabled());
 				}
 				else if (learnLHPN) {

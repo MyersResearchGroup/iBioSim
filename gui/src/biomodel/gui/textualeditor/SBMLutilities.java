@@ -2172,7 +2172,7 @@ public class SBMLutilities {
 	
 	public static ASTNode removeBoolean(ASTNode math,String boolVar) {
 		if (math.getType() == libsbml.AST_RELATIONAL_EQ) {
-			if (math.getLeftChild().getName().equals(boolVar)) {
+			if (math.getLeftChild().getName()!=null && math.getLeftChild().getName().equals(boolVar)) {
 				return math.getLeftChild().deepCopy();
 			}
 		}

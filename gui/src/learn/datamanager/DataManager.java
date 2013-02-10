@@ -1187,6 +1187,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				ListOf ids = model.getListOfSpecies();
 				ArrayList<String> getSpecies = new ArrayList<String>();
 				for (int i = 0; i < model.getNumSpecies(); i++) {
+					if (BioModel.isPromoterSpecies(((Species)ids.get(i)))) continue;
 					getSpecies.add(((Species) ids.get(i)).getId());
 				}
 				species = getSpecies.toArray(new String[0]);
