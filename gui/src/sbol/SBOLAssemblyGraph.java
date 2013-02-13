@@ -110,27 +110,30 @@ public class SBOLAssemblyGraph {
 				}
 			}
 		}
-		Model sbmlModel = biomodel.getSBMLDocument().getModel();
-		SBaseList listOfElements = sbmlModel.getListOfAllElements();
-		for (long i = 0; i < listOfElements.getSize(); i++) {
-			CompSBasePlugin compSBMLSpecies = (CompSBasePlugin) listOfElements.get(i).getPlugin("comp");
-			for (long j = 0; j < compSBMLSpecies.getNumReplacedElements(); j++) {
-				ReplacedElement replacement = compSBMLSpecies.getReplacedElement(j);
-				if (AnnotationUtility.parseSBOLAnnotation(listOfElements.get(i)).size() > 0) 
-					return true;
-				else {
-					Submodel submodel = compSBMLModel.getSubmodel(replacement.getSubmodelRef());
-					String subSBMLFileID = compSBMLDoc.getExternalModelDefinition(submodel.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
-					BioModel subBioModel = new BioModel(biomodel.getPath());
-					subBioModel.load(subSBMLFileID);
-					CompModelPlugin subCompSBMLModel = subBioModel.getSBMLCompModel();
-					String elementID = subCompSBMLModel.getPort(replacement.getPortRef()).getIdRef();
-					Model subSBMLModel = subBioModel.getSBMLDocument().getModel();
-					if (AnnotationUtility.parseSBOLAnnotation(subSBMLModel.getElementBySId(elementID)).size() > 0) 
-						return true;
-				}
-			}
-		}
+		 Model sbmlModel = biomodel.getSBMLDocument().getModel();
+	        SBaseList listOfElements = sbmlModel.getListOfAllElements();
+	        for (long i = 0; i < listOfElements.getSize(); i++) {
+	            CompSBasePlugin compSBMLElement = (CompSBasePlugin) listOfElements.get(i).getPlugin("comp");
+	            if (compSBMLElement != null && compSBMLElement.getNumReplacedElements() > 0)
+	                if (AnnotationUtility.parseSBOLAnnotation(listOfElements.get(i)).size() > 0) 
+	                    return true;
+	                else {
+	                    for (long j = 0; j < compSBMLElement.getNumReplacedElements(); j++) {
+	                        ReplacedElement replacement = compSBMLElement.getReplacedElement(j);
+	                        Submodel submodel = compSBMLModel.getSubmodel(replacement.getSubmodelRef());
+	                        String subSBMLFileID = compSBMLDoc.getExternalModelDefinition(submodel.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
+	                        BioModel subBioModel = new BioModel(biomodel.getPath());
+	                        subBioModel.load(subSBMLFileID);
+	                        CompModelPlugin subCompSBMLModel = subBioModel.getSBMLCompModel();
+	                        String elementID = subCompSBMLModel.getPort(replacement.getPortRef()).getIdRef();
+	                        Model subSBMLModel = subBioModel.getSBMLDocument().getModel();
+	                        if (AnnotationUtility.parseSBOLAnnotation(subSBMLModel.getElementBySId(elementID)).size() > 0) 
+	                            return true;
+	                    }
+	                }
+	    
+	        }
+		
 		return false;
 	}
 	
