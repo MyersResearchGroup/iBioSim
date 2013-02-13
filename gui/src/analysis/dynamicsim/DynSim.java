@@ -7,8 +7,16 @@ import java.util.Properties;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 
+import org.sbml.libsbml.SBMLDocument;
+
+import biomodel.network.GeneticNetwork;
+import biomodel.parser.BioModel;
+import biomodel.parser.GCMParser;
+
+import main.Gui;
 import main.util.dataparser.TSDParser;
 
 public class DynSim {
@@ -49,13 +57,13 @@ public class DynSim {
 			args = new String[3];
 			
 			//model
-			args[0] = "/home/beauregard/Desktop/cases/semantic/" + caseNum + "/" + caseNum + "-sbml-l3v1.xml";
+			args[0] = "/home/leandro/cases/semantic/" + caseNum + "/" + caseNum + "-sbml-l2v1.xml";
 			
 			//output dir
-			args[1] = "/home/beauregard/Desktop/cases/semantic/" + caseNum + "/";
+			args[1] = "/home/leandro/cases/semantic/" + caseNum + "/";
 			
 			//properties file
-			args[2] = "/home/beauregard/Desktop/cases/semantic/" + caseNum + "/" + caseNum + "-settings.properties";
+			args[2] = "/home/leandro/cases/semantic/" + caseNum + "/" + caseNum + "-settings.txt";
 		}
 		
 		String filename = args[0];
@@ -90,6 +98,23 @@ public class DynSim {
 		for (String intSpec : interestingSpecies) {
 			intSpecies[i] = intSpec; ++i;
 		}
+		
+	/*	try {
+		
+		 	BioModel biomodel = new BioModel(outputDirectory);
+			SBMLDocument sbml = biomodel.flattenModel();		
+			GCMParser parser = new GCMParser(biomodel, false);
+			GeneticNetwork network = parser.buildNetwork(sbml);
+			sbml = network.getSBML();
+			network.mergeSBML(filename, sbml);
+		
+		}
+		catch (Exception e1) {
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to create sbml file.",
+					"Error Creating File", JOptionPane.ERROR_MESSAGE);
+		}
+	*/	
+		
 		
 		simulator.simulate(filename, outputDirectory, timeLimit, maxTimeStep, minTimeStep, 
 				randomSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, 
