@@ -399,7 +399,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				JOptionPane.showMessageDialog(Gui.frame, "Trigger formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 				error = true;
 			}
-			else if (!bioModel.addBooleans(eventTrigger.getText().trim()).isBoolean()) {
+			else if (!bioModel.addBooleans(eventTrigger.getText().trim()).returnsBoolean(bioModel.getSBMLDocument().getModel())) {
 				JOptionPane.showMessageDialog(Gui.frame, "Trigger formula must be of type Boolean.", 
 						"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 				error = true;
@@ -502,7 +502,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					error = SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), 
 							bioModel.addBooleans(eventDelay.getText().trim()));
 					if (!error) {
-						if (bioModel.addBooleans(eventDelay.getText().trim()).isBoolean()) {
+						if (bioModel.addBooleans(eventDelay.getText().trim()).returnsBoolean(bioModel.getSBMLDocument().getModel())) {
 							JOptionPane.showMessageDialog(Gui.frame, "Event delay must evaluate to a number.", "Number Expected",
 									JOptionPane.ERROR_MESSAGE);
 							error = true;
@@ -513,7 +513,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					error = SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), 
 							bioModel.addBooleans(eventPriority.getText().trim()));
 					if (!error) {
-						if (bioModel.addBooleans(eventPriority.getText().trim()).isBoolean()) {
+						if (bioModel.addBooleans(eventPriority.getText().trim()).returnsBoolean(bioModel.getSBMLDocument().getModel())) {
 							JOptionPane.showMessageDialog(Gui.frame, "Event priority must evaluate to a number.", "Number Expected",
 									JOptionPane.ERROR_MESSAGE);
 							error = true;
@@ -1306,13 +1306,13 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					error = SBMLutilities.checkNumFunctionArguments(gcm.getSBMLDocument(), assignMath);
 					if (!error) {
 						if (p != null && SBMLutilities.isBoolean(p)) {
-							if (!SBMLutilities.myParseFormula(eqn.getText().trim()).isBoolean()) {
+							if (!SBMLutilities.myParseFormula(eqn.getText().trim()).returnsBoolean(bioModel.getSBMLDocument().getModel())) {
 								JOptionPane.showMessageDialog(Gui.frame, "Event assignment must evaluate to a Boolean.", "Boolean Expected",
 										JOptionPane.ERROR_MESSAGE);
 								error = true;
 							}
 						} else {
-							if (SBMLutilities.myParseFormula(eqn.getText().trim()).isBoolean()) {
+							if (SBMLutilities.myParseFormula(eqn.getText().trim()).returnsBoolean(bioModel.getSBMLDocument().getModel())) {
 								JOptionPane.showMessageDialog(Gui.frame, "Event assignment must evaluate to a number.", "Number Expected",
 										JOptionPane.ERROR_MESSAGE);
 								error = true;

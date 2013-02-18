@@ -348,12 +348,12 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				if (!error) {
 					if (bioModel.getSBMLDocument().getModel().getParameter(addVar)!=null &&
 							SBMLutilities.isBoolean(bioModel.getSBMLDocument().getModel().getParameter(addVar))) {
-						if (!bioModel.addBooleans(ruleMath.getText().trim()).isBoolean()) {
+						if (!bioModel.addBooleans(ruleMath.getText().trim()).returnsBoolean(bioModel.getSBMLDocument().getModel())) {
 							JOptionPane.showMessageDialog(Gui.frame, "Rule must evaluate to a Boolean.", "Boolean Expected", JOptionPane.ERROR_MESSAGE);
 							error = true;
 						}
 					} else {
-						if (bioModel.addBooleans(ruleMath.getText().trim()).isBoolean()) {
+						if (bioModel.addBooleans(ruleMath.getText().trim()).returnsBoolean(bioModel.getSBMLDocument().getModel())) {
 							JOptionPane.showMessageDialog(Gui.frame, "Rule must evaluate to a number.", "Number Expected", JOptionPane.ERROR_MESSAGE);
 							error = true;
 						}
