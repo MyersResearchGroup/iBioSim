@@ -1071,49 +1071,51 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 	}
 
 	public void run() {
+		String geneNet = "GeneNet";
+		geneNet += " --debug " + debug.getSelectedItem();
 		try {
-			String geneNet = "GeneNet";
-			geneNet += " --debug " + debug.getSelectedItem();
+			double activation = Double.parseDouble(this.activation.getText().trim());
+			geneNet += " -ta " + activation;
+			double repression = Double.parseDouble(this.repression.getText().trim());
+			geneNet += " -tr " + repression;
+			double parent = Double.parseDouble(this.parent.getText().trim());
+			geneNet += " -ti " + parent;
+			// int windowRising =
+			// Integer.parseInt(this.windowRising.getText().trim());
+			// geneNet += " --windowRisingAmount " + windowRising;
+			// int windowSize =
+			// Integer.parseInt(this.windowSize.getText().trim());
+			// geneNet += " --windowSize " + windowSize;
+			int numBins = Integer.parseInt((String) this.numBins.getSelectedItem());
+			geneNet += " --numBins " + numBins;
+			double influenceLevel = Double.parseDouble(this.influenceLevel.getText().trim());
+			geneNet += " -tm " + influenceLevel;
+			double relaxIPDelta = Double.parseDouble(this.relaxIPDelta.getText().trim());
+			geneNet += " -tt " + relaxIPDelta;
+			int letNThrough = Integer.parseInt(this.letNThrough.getText().trim());
+			geneNet += " -tn " + letNThrough;
+			int maxVectorSize = Integer.parseInt(this.maxVectorSize.getText().trim());
+			geneNet += " -tj " + maxVectorSize;
+			if (succ.isSelected()) {
+			}
+			if (pred.isSelected()) {
+				geneNet += " -noSUCC -PRED";
+			}
+			if (both.isSelected()) {
+				geneNet += " -PRED";
+			}
+			if (basicFBP.isSelected()) {
+				geneNet += " -basicFBP";
+			}
+		}
+		catch (Exception e2) {
+			JOptionPane.showMessageDialog(this, "Must enter numbers into input fields.", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		if (user.isSelected()) {
+			FileWriter write;
 			try {
-				double activation = Double.parseDouble(this.activation.getText().trim());
-				geneNet += " -ta " + activation;
-				double repression = Double.parseDouble(this.repression.getText().trim());
-				geneNet += " -tr " + repression;
-				double parent = Double.parseDouble(this.parent.getText().trim());
-				geneNet += " -ti " + parent;
-				// int windowRising =
-				// Integer.parseInt(this.windowRising.getText().trim());
-				// geneNet += " --windowRisingAmount " + windowRising;
-				// int windowSize =
-				// Integer.parseInt(this.windowSize.getText().trim());
-				// geneNet += " --windowSize " + windowSize;
-				int numBins = Integer.parseInt((String) this.numBins.getSelectedItem());
-				geneNet += " --numBins " + numBins;
-				double influenceLevel = Double.parseDouble(this.influenceLevel.getText().trim());
-				geneNet += " -tm " + influenceLevel;
-				double relaxIPDelta = Double.parseDouble(this.relaxIPDelta.getText().trim());
-				geneNet += " -tt " + relaxIPDelta;
-				int letNThrough = Integer.parseInt(this.letNThrough.getText().trim());
-				geneNet += " -tn " + letNThrough;
-				int maxVectorSize = Integer.parseInt(this.maxVectorSize.getText().trim());
-				geneNet += " -tj " + maxVectorSize;
-				if (succ.isSelected()) {
-				}
-				if (pred.isSelected()) {
-					geneNet += " -noSUCC -PRED";
-				}
-				if (both.isSelected()) {
-					geneNet += " -PRED";
-				}
-				if (basicFBP.isSelected()) {
-					geneNet += " -basicFBP";
-				}
-			}
-			catch (Exception e2) {
-				JOptionPane.showMessageDialog(this, "Must enter numbers into input fields.", "Error", JOptionPane.ERROR_MESSAGE);
-			}
-			if (user.isSelected()) {
-				FileWriter write = new FileWriter(new File(directory + separator + "levels.lvl"));
+				write = new FileWriter(new File(directory + separator + "levels.lvl"));
 				write.write("time, 0\n");
 				for (int i = 0; i < species.size(); i++) {
 					if (((JTextField) species.get(i).get(0)).getText().trim().equals("")) {
@@ -1136,93 +1138,101 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 				write.close();
 				geneNet += " --readLevels";
 			}
-			geneNet += " --cpp_harshenBoundsOnTie --cpp_cmp_output_donotInvertSortOrder --cpp_seedParents --cmp_score_mustNotWinMajority";
-			/*
-			 * if (harshenBoundsOnTie.isSelected()) { geneNet += "
-			 * --cpp_harshenBoundsOnTie"; } if
-			 * (donotInvertSortOrder.isSelected()) { geneNet +=
-			 * " --cpp_cmp_output_donotInvertSortOrder"; } if
-			 * (seedParents.isSelected()) { geneNet += " --cpp_seedParents"; }
-			 * if (mustNotWinMajority.isSelected()) { geneNet += "
-			 * --cmp_score_mustNotWinMajority"; } if
-			 * (donotTossSingleRatioParents.isSelected()) { geneNet += "
-			 * --score_donotTossSingleRatioParents"; } if
-			 * (donotTossChangedInfluenceSingleParents.isSelected()) { geneNet
-			 * += " --output_donotTossChangedInfluenceSingleParents"; }
-			 */
-			if (spacing.isSelected()) {
-				geneNet += " -binN";
+			catch (IOException e1) {
+				JOptionPane.showMessageDialog(Gui.frame, "File I/O error.", "Error", JOptionPane.ERROR_MESSAGE);
+				return;
 			}
-			final JButton cancel = new JButton("Cancel");
-			final JFrame running = new JFrame("Progress");
-			WindowListener w = new WindowListener() {
-				public void windowClosing(WindowEvent arg0) {
-					cancel.doClick();
-					running.dispose();
-				}
-
-				public void windowOpened(WindowEvent arg0) {
-				}
-
-				public void windowClosed(WindowEvent arg0) {
-				}
-
-				public void windowIconified(WindowEvent arg0) {
-				}
-
-				public void windowDeiconified(WindowEvent arg0) {
-				}
-
-				public void windowActivated(WindowEvent arg0) {
-				}
-
-				public void windowDeactivated(WindowEvent arg0) {
-				}
-			};
-			running.addWindowListener(w);
-			JPanel text = new JPanel();
-			JPanel progBar = new JPanel();
-			JPanel button = new JPanel();
-			JPanel all = new JPanel(new BorderLayout());
-			JLabel label = new JLabel("Running...");
-			JProgressBar progress = new JProgressBar(0, species.size());
-			progress.setStringPainted(true);
-			// progress.setString("");
-			progress.setValue(0);
-			text.add(label);
-			progBar.add(progress);
-			button.add(cancel);
-			all.add(text, "North");
-			all.add(progBar, "Center");
-			all.add(button, "South");
-			running.setContentPane(all);
-			running.pack();
-			Dimension screenSize;
-			try {
-				Toolkit tk = Toolkit.getDefaultToolkit();
-				screenSize = tk.getScreenSize();
+		}
+		geneNet += " --cpp_harshenBoundsOnTie --cpp_cmp_output_donotInvertSortOrder --cpp_seedParents --cmp_score_mustNotWinMajority";
+		/*
+		 * if (harshenBoundsOnTie.isSelected()) { geneNet += "
+		 * --cpp_harshenBoundsOnTie"; } if
+		 * (donotInvertSortOrder.isSelected()) { geneNet +=
+		 * " --cpp_cmp_output_donotInvertSortOrder"; } if
+		 * (seedParents.isSelected()) { geneNet += " --cpp_seedParents"; }
+		 * if (mustNotWinMajority.isSelected()) { geneNet += "
+		 * --cmp_score_mustNotWinMajority"; } if
+		 * (donotTossSingleRatioParents.isSelected()) { geneNet += "
+		 * --score_donotTossSingleRatioParents"; } if
+		 * (donotTossChangedInfluenceSingleParents.isSelected()) { geneNet
+		 * += " --output_donotTossChangedInfluenceSingleParents"; }
+		 */
+		if (spacing.isSelected()) {
+			geneNet += " -binN";
+		}
+		final JButton cancel = new JButton("Cancel");
+		final JFrame running = new JFrame("Progress");
+		WindowListener w = new WindowListener() {
+			public void windowClosing(WindowEvent arg0) {
+				cancel.doClick();
+				running.dispose();
 			}
-			catch (AWTError awe) {
-				screenSize = new Dimension(640, 480);
-			}
-			Dimension frameSize = running.getSize();
 
-			if (frameSize.height > screenSize.height) {
-				frameSize.height = screenSize.height;
+			public void windowOpened(WindowEvent arg0) {
 			}
-			if (frameSize.width > screenSize.width) {
-				frameSize.width = screenSize.width;
+
+			public void windowClosed(WindowEvent arg0) {
 			}
-			int x = screenSize.width / 2 - frameSize.width / 2;
-			int y = screenSize.height / 2 - frameSize.height / 2;
-			running.setLocation(x, y);
-			running.setVisible(true);
-			running.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			Runtime exec = Runtime.getRuntime();
-			log.addText("Executing:\n" + geneNet + " " + directory + "\n");
-			geneNet += " .";
-			File work = new File(directory);
-			final Process learn = exec.exec(geneNet, null, work);
+
+			public void windowIconified(WindowEvent arg0) {
+			}
+
+			public void windowDeiconified(WindowEvent arg0) {
+			}
+
+			public void windowActivated(WindowEvent arg0) {
+			}
+
+			public void windowDeactivated(WindowEvent arg0) {
+			}
+		};
+		running.addWindowListener(w);
+		JPanel text = new JPanel();
+		JPanel progBar = new JPanel();
+		JPanel button = new JPanel();
+		JPanel all = new JPanel(new BorderLayout());
+		JLabel label = new JLabel("Running...");
+		JProgressBar progress = new JProgressBar(0, species.size());
+		progress.setStringPainted(true);
+		// progress.setString("");
+		progress.setValue(0);
+		text.add(label);
+		progBar.add(progress);
+		button.add(cancel);
+		all.add(text, "North");
+		all.add(progBar, "Center");
+		all.add(button, "South");
+		running.setContentPane(all);
+		running.pack();
+		Dimension screenSize;
+		try {
+			Toolkit tk = Toolkit.getDefaultToolkit();
+			screenSize = tk.getScreenSize();
+		}
+		catch (AWTError awe) {
+			screenSize = new Dimension(640, 480);
+		}
+		Dimension frameSize = running.getSize();
+
+		if (frameSize.height > screenSize.height) {
+			frameSize.height = screenSize.height;
+		}
+		if (frameSize.width > screenSize.width) {
+			frameSize.width = screenSize.width;
+		}
+		int x = screenSize.width / 2 - frameSize.width / 2;
+		int y = screenSize.height / 2 - frameSize.height / 2;
+		running.setLocation(x, y);
+		running.setVisible(true);
+		running.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		Runtime exec = Runtime.getRuntime();
+		log.addText("Executing:\n" + geneNet + " " + directory + "\n");
+		geneNet += " .";
+		File work = new File(directory);
+		final Process learn;
+		int exitValue = 0;
+		try {
+			learn = exec.exec(geneNet, null, work);
 			cancel.setActionCommand("Cancel");
 			cancel.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -1239,36 +1249,42 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 					running.dispose();
 				}
 			});
-			try {
-				String output = "";
-				InputStream reb = learn.getInputStream();
-				InputStreamReader isr = new InputStreamReader(reb);
-				BufferedReader br = new BufferedReader(isr);
-				FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
-				int count = 0;
-				while ((output = br.readLine()) != null) {
-					if (output.startsWith("Gene = ", 0)) {
-						// log.addText(output);
-						count++;
-						progress.setValue(count);
-					}
-					out.write(output);
-					out.write("\n");
+			String output = "";
+			InputStream reb = learn.getInputStream();
+			InputStreamReader isr = new InputStreamReader(reb);
+			BufferedReader br = new BufferedReader(isr);
+			FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
+			int count = 0;
+			while ((output = br.readLine()) != null) {
+				if (output.startsWith("Gene = ", 0)) {
+					// log.addText(output);
+					count++;
+					progress.setValue(count);
 				}
-				br.close();
-				isr.close();
-				reb.close();
-				out.close();
-				viewLog.setEnabled(true);
+				out.write(output);
+				out.write("\n");
 			}
-			catch (Exception e) {
-			}
-			int exitValue = learn.waitFor();
-			if (exitValue == 143) {
-				JOptionPane.showMessageDialog(Gui.frame, "Learning was" + " canceled by the user.", "Canceled Learning", JOptionPane.ERROR_MESSAGE);
-			}
-			else {
-				if (new File(directory + separator + "method.gcm").exists()) {
+			br.close();
+			isr.close();
+			reb.close();
+			out.close();
+			viewLog.setEnabled(true);
+			exitValue = learn.waitFor();
+		}
+		catch (IOException e1) {
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to learn from data.", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		catch (InterruptedException e1) {
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to learn from data.", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		if (exitValue == 143) {
+			JOptionPane.showMessageDialog(Gui.frame, "Learning was" + " canceled by the user.", "Canceled Learning", JOptionPane.ERROR_MESSAGE);
+		}
+		else {
+			if (new File(directory + separator + "method.gcm").exists()) {
+				try {
 					if (System.getProperty("os.name").contentEquals("Linux")) {
 						String command = "dotty method.gcm";
 						log.addText("Executing:\n" + "dotty " + directory + separator + "method.gcm\n");
@@ -1289,29 +1305,25 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 						exec = Runtime.getRuntime();
 						exec.exec(command, null, work);
 					}
+				} 
+				catch (IOException e) {
 				}
-				else {
-					JOptionPane.showMessageDialog(Gui.frame, "A model was not generated." + "\nPlease see the run.log file.", "Error",
-							JOptionPane.ERROR_MESSAGE);
-				}
-				running.setCursor(null);
-				running.dispose();
-				if (new File(directory + separator + "method.gcm").exists()) {
-					viewModel.setEnabled(true);
-					saveModel.setEnabled(true);
-					saveModel();
-				}
-				if (new File(directory + separator + "run.log").exists()) {
-					viewLog.setEnabled(true);
-				}
-				biosim.enableTabMenu(biosim.getTab().getSelectedIndex());
 			}
-		}
-		catch (IOException e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Unable to learn from data.", "Error", JOptionPane.ERROR_MESSAGE);
-		}
-		catch (InterruptedException e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Unable to learn from data.", "Error", JOptionPane.ERROR_MESSAGE);
+			else {
+				JOptionPane.showMessageDialog(Gui.frame, "A model was not generated." + "\nPlease see the run.log file.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+			running.setCursor(null);
+			running.dispose();
+			if (new File(directory + separator + "method.gcm").exists()) {
+				viewModel.setEnabled(true);
+				saveModel.setEnabled(true);
+				saveModel();
+			}
+			if (new File(directory + separator + "run.log").exists()) {
+				viewLog.setEnabled(true);
+			}
+			biosim.enableTabMenu(biosim.getTab().getSelectedIndex());
 		}
 	}
 
