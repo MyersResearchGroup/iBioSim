@@ -52,19 +52,19 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 
 	private JList initAssigns; // JList of initial assignments
 
-	private BioModel gcm;
+	private BioModel bioModel;
 
 	private ModelEditor modelEditor;
 
 	private Gui biosim;
 
 	/* Create initial assignment panel */
-	public InitialAssignments(Gui biosim, BioModel gcm, ModelEditor modelEditor) {
+	public InitialAssignments(Gui biosim, BioModel bioModel, ModelEditor modelEditor) {
 		super(new BorderLayout());
-		this.gcm = gcm;
+		this.bioModel = bioModel;
 		this.biosim = biosim;
 		this.modelEditor = modelEditor;
-		Model model = gcm.getSBMLDocument().getModel();
+		Model model = bioModel.getSBMLDocument().getModel();
 		/* Create initial assignment panel */
 		addInit = new JButton("Add Initial");
 		removeInit = new JButton("Remove Initial");
@@ -196,7 +196,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 		if (SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), bioModel.addBooleans(assignment.trim()))) {
 			return true;
 		}
-		if (bioModel.addBooleans(assignment.trim()).isBoolean()) {
+		if (bioModel.addBooleans(assignment.trim()).returnsBoolean(bioModel.getSBMLDocument().getModel())) {
 			JOptionPane.showMessageDialog(Gui.frame, "Initial assignment must evaluate to a number.", "Number Expected", JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
@@ -307,7 +307,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			JOptionPane.showMessageDialog(Gui.frame, "Initial assignment is not valid.", "Enter Valid Assignment", JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
-		ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(gcm.getSBMLDocument(), assignment, "", false);
+		ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(bioModel.getSBMLDocument(), assignment, "", false);
 		if (invalidVars.size() > 0) {
 			String invalid = "";
 			for (int i = 0; i < invalidVars.size(); i++) {
@@ -331,10 +331,10 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			JOptionPane.showMessageDialog(Gui.frame, scrolls, "Unknown Variables", JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
-		if (SBMLutilities.checkNumFunctionArguments(gcm.getSBMLDocument(), SBMLutilities.myParseFormula(assignment))) {
+		if (SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), SBMLutilities.myParseFormula(assignment))) {
 			return true;
 		}
-		if (SBMLutilities.myParseFormula(assignment).isBoolean()) {
+		if (SBMLutilities.myParseFormula(assignment).returnsBoolean(bioModel.getSBMLDocument().getModel())) {
 			JOptionPane.showMessageDialog(Gui.frame, "Initial assignment must evaluate to a number.", "Number Expected", JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
@@ -348,14 +348,14 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			initAssigns.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			inits = Utility.getList(inits, initAssigns);
 			initAssigns.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			InitialAssignment r = (InitialAssignment) (gcm.getSBMLDocument().getModel().getListOfInitialAssignments()).get(Rindex);
+			InitialAssignment r = (InitialAssignment) (bioModel.getSBMLDocument().getModel().getListOfInitialAssignments()).get(Rindex);
 			String oldSymbol = r.getSymbol();
 			String oldInit = SBMLutilities.myFormulaToString(r.getMath());
 			String oldVal = inits[index];
 			r.setSymbol(variable);
 			r.setMath(SBMLutilities.myParseFormula(assignment));
 			inits[index] = variable + " = " + SBMLutilities.myFormulaToString(r.getMath());
-			if (InitialAssignments.checkInitialAssignmentUnits(biosim, gcm, r)) {
+			if (InitialAssignments.checkInitialAssignmentUnits(biosim, bioModel, r)) {
 				error = true;
 			}
 			if (!error) {
@@ -368,7 +368,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 				}
 			}
 			if (!error) {
-				if (SBMLutilities.checkCycles(gcm.getSBMLDocument())) {
+				if (SBMLutilities.checkCycles(bioModel.getSBMLDocument())) {
 					JOptionPane.showMessageDialog(Gui.frame, "Cycle detected within initial assignments, assignment rules, and rate laws.",
 							"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 					error = true;
@@ -390,7 +390,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			JList add = new JList();
 			int index = initAssigns.getSelectedIndex();
 			String addStr;
-			InitialAssignment r = gcm.getSBMLDocument().getModel().createInitialAssignment();
+			InitialAssignment r = bioModel.getSBMLDocument().getModel().createInitialAssignment();
 			r.setSymbol(variable);
 			r.setMath(SBMLutilities.myParseFormula(assignment));
 			addStr = variable + " = " + SBMLutilities.myFormulaToString(r.getMath());
@@ -404,7 +404,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			for (int i = 0; i < adding.length; i++) {
 				inits[i] = (String) adding[i];
 			}
-			if (InitialAssignments.checkInitialAssignmentUnits(biosim, gcm, r)) {
+			if (InitialAssignments.checkInitialAssignmentUnits(biosim, bioModel, r)) {
 				error = true;
 			}
 			if (!error) {
@@ -416,15 +416,15 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 					error = true;
 				}
 			}
-			if (!error && SBMLutilities.checkCycles(gcm.getSBMLDocument())) {
+			if (!error && SBMLutilities.checkCycles(bioModel.getSBMLDocument())) {
 				JOptionPane.showMessageDialog(Gui.frame, "Cycle detected within initial assignments, assignment rules, and rate laws.",
 						"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 				error = true;
 			}
 			if (error) {
 				inits = oldInits;
-				ListOf ia = gcm.getSBMLDocument().getModel().getListOfInitialAssignments();
-				for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumInitialAssignments(); i++) {
+				ListOf ia = bioModel.getSBMLDocument().getModel().getListOfInitialAssignments();
+				for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumInitialAssignments(); i++) {
 					if (SBMLutilities.myFormulaToString(((InitialAssignment) ia.get(i)).getMath()).equals(
 							SBMLutilities.myFormulaToString(r.getMath()))
 							&& ((InitialAssignment) ia.get(i)).getSymbol().equals(r.getSymbol())) {
@@ -434,7 +434,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			}
 			initAssigns.setListData(inits);
 			initAssigns.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			if (gcm.getSBMLDocument().getModel().getNumInitialAssignments() == 1) {
+			if (bioModel.getSBMLDocument().getModel().getNumInitialAssignments() == 1) {
 				initAssigns.setSelectedIndex(0);
 			}
 			else {
@@ -443,7 +443,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 		}
 		if (!error) {
 			modelEditor.setDirty(true);
-			gcm.makeUndoPoint();
+			bioModel.makeUndoPoint();
 		}
 		return error;
 	}
@@ -469,26 +469,26 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 		else {
 			selected = new String("");
 		}
-		Model model = gcm.getSBMLDocument().getModel();
+		Model model = bioModel.getSBMLDocument().getModel();
 		ListOf ids = model.getListOfCompartments();
 		for (int i = 0; i < model.getNumCompartments(); i++) {
 			String id = ((Compartment) ids.get(i)).getId();
-			if (keepVarInit(gcm, selected.split(" ")[0], id)
-					&& (gcm.getSBMLDocument().getLevel() > 2 || ((Compartment) ids.get(i)).getSpatialDimensions() != 0)) {
+			if (keepVarInit(bioModel, selected.split(" ")[0], id)
+					&& (bioModel.getSBMLDocument().getLevel() > 2 || ((Compartment) ids.get(i)).getSpatialDimensions() != 0)) {
 				initVar.addItem(id);
 			}
 		}
 		ids = model.getListOfParameters();
 		for (int i = 0; i < model.getNumParameters(); i++) {
 			String id = ((Parameter) ids.get(i)).getId();
-			if (keepVarInit(gcm, selected.split(" ")[0], id)) {
+			if (keepVarInit(bioModel, selected.split(" ")[0], id)) {
 				initVar.addItem(id);
 			}
 		}
 		ids = model.getListOfSpecies();
 		for (int i = 0; i < model.getNumSpecies(); i++) {
 			String id = ((Species) ids.get(i)).getId();
-			if (keepVarInit(gcm, selected.split(" ")[0], id)) {
+			if (keepVarInit(bioModel, selected.split(" ")[0], id)) {
 				initVar.addItem(id);
 			}
 		}
@@ -500,7 +500,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 				SpeciesReference reactant = (SpeciesReference) ids2.get(j);
 				if ((reactant.isSetId()) && (!reactant.getId().equals(""))) {
 					String id = reactant.getId();
-					if (keepVarInit(gcm, selected.split(" ")[0], id)) {
+					if (keepVarInit(bioModel, selected.split(" ")[0], id)) {
 						initVar.addItem(id);
 					}
 				}
@@ -510,7 +510,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 				SpeciesReference product = (SpeciesReference) ids2.get(j);
 				if ((product.isSetId()) && (!product.getId().equals(""))) {
 					String id = product.getId();
-					if (keepVarInit(gcm, selected.split(" ")[0], id)) {
+					if (keepVarInit(bioModel, selected.split(" ")[0], id)) {
 						initVar.addItem(id);
 					}
 				}
@@ -521,8 +521,8 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 		if (option.equals("OK")) {
 			initVar.setSelectedItem(selected.split(" ")[0]);
 			initMath.setText(selected.substring(selected.indexOf('=') + 2));
-			ListOf r = gcm.getSBMLDocument().getModel().getListOfInitialAssignments();
-			for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumInitialAssignments(); i++) {
+			ListOf r = bioModel.getSBMLDocument().getModel().getListOfInitialAssignments();
+			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumInitialAssignments(); i++) {
 				if (SBMLutilities.myFormulaToString(((InitialAssignment) r.get(i)).getMath()).equals(initMath.getText())
 						&& ((InitialAssignment) r.get(i)).getSymbol().equals(initVar.getSelectedItem())) {
 					Rindex = i;
@@ -559,8 +559,8 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			String selected = ((String) initAssigns.getSelectedValue());
 			String tempVar = selected.split(" ")[0];
 			String tempMath = selected.substring(selected.indexOf('=') + 2);
-			ListOf r = gcm.getSBMLDocument().getModel().getListOfInitialAssignments();
-			for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumInitialAssignments(); i++) {
+			ListOf r = bioModel.getSBMLDocument().getModel().getListOfInitialAssignments();
+			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumInitialAssignments(); i++) {
 				if (SBMLutilities.myFormulaToString(((InitialAssignment) r.get(i)).getMath()).equals(tempMath)
 						&& ((InitialAssignment) r.get(i)).getSymbol().equals(tempVar)) {
 					r.remove(i);
@@ -576,7 +576,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 				initAssigns.setSelectedIndex(index - 1);
 			}
 			modelEditor.setDirty(true);
-			gcm.makeUndoPoint();
+			bioModel.makeUndoPoint();
 		}
 	}
 

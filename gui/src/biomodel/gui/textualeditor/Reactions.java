@@ -708,7 +708,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 			if (!error) {
-				if (bioModel.addBooleans(kineticLaw.getText().trim()).isBoolean()) {
+				if (bioModel.addBooleans(kineticLaw.getText().trim()).returnsBoolean(bioModel.getSBMLDocument().getModel())) {
 					JOptionPane.showMessageDialog(Gui.frame, "Kinetic law must evaluate to a number.", "Number Expected", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
@@ -1693,7 +1693,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 									SBMLutilities.myParseFormula(productStoichiometry.getText().trim()));
 						}
 						if (!error) {
-							if (SBMLutilities.myParseFormula(productStoichiometry.getText().trim()).isBoolean()) {
+							if (SBMLutilities.myParseFormula(productStoichiometry.getText().trim()).returnsBoolean(bioModel.getSBMLDocument().getModel())) {
 								JOptionPane.showMessageDialog(Gui.frame, "Stoichiometry math must evaluate to a number.", "Number Expected",
 										JOptionPane.ERROR_MESSAGE);
 								error = true;
@@ -2143,7 +2143,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 									SBMLutilities.myParseFormula(reactantStoichiometry.getText().trim()));
 						}
 						if (!error) {
-							if (SBMLutilities.myParseFormula(reactantStoichiometry.getText().trim()).isBoolean()) {
+							if (SBMLutilities.myParseFormula(reactantStoichiometry.getText().trim()).returnsBoolean(bioModel.getSBMLDocument().getModel())) {
 								JOptionPane.showMessageDialog(Gui.frame, "Stoichiometry math must evaluate to a number.", "Number Expected",
 										JOptionPane.ERROR_MESSAGE);
 								error = true;
