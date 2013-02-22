@@ -1385,7 +1385,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else {
 			name = new JLabel("iBioSim", JLabel.CENTER);
-			version = new JLabel("Version 2.4.3", JLabel.CENTER);
+			version = new JLabel("Version 2.4.4", JLabel.CENTER);
 			developers = "Nathan Barker\nKevin Jones\nHiroyuki Kuwahara\n"
 					+ "Curtis Madsen\nChris Myers\nNam Nguyen\nTyler Patterson\nNicholas Roehner\nJason Stevens\nLeandro Watanabe";
 		}
