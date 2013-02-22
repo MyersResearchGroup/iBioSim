@@ -6327,6 +6327,10 @@ public class BioModel {
 			Port port = sbmlCompModel.getPort(j);
 			if (port.isSetSBaseRef()) {
 				port.removeFromParentAndDelete();
+			} else if (port.isSetIdRef() && sbml.getElementBySId(port.getIdRef()) == null) {
+				port.removeFromParentAndDelete();
+			} else if (port.isSetMetaIdRef() && sbml.getElementByMetaId(port.getMetaIdRef()) == null) {
+				port.removeFromParentAndDelete();
 			} else {
 				/* TODO: temporary to restore SBO terms */
 				isInputPort(port);
@@ -6407,6 +6411,59 @@ public class BioModel {
 		port.setSBOTerm(GlobalConstants.SBO_OUTPUT_PORT);
 		return true;
 	}
+	
+	private void removeStaleLayout() {
+		Layout layout = sbmlLayout.getLayout("iBioSim");
+		Model model = sbml.getSBMLDocument().getModel();
+		if (sbmlLayout.getLayout("iBioSim")!=null) {
+			long i = 0;
+			while (i < layout.getNumSpeciesGlyphs()) {
+				SpeciesGlyph sg = layout.getSpeciesGlyph(i);
+				if (sg.getSpeciesId() == null || model.getSpecies(sg.getSpeciesId())==null) {
+					sg.removeFromParentAndDelete();
+				} else {
+					i++;
+				}
+			}
+			i = 0;
+			while (i < layout.getNumCompartmentGlyphs()) {
+				CompartmentGlyph cg = layout.getCompartmentGlyph(i);
+				if (cg.getCompartmentId() == null || model.getCompartment(cg.getCompartmentId())==null) {
+					cg.removeFromParentAndDelete();
+				} else {
+					i++;
+				}
+			}
+			i = 0;
+			while (i < layout.getNumReactionGlyphs()) {
+				ReactionGlyph rg = layout.getReactionGlyph(i);
+				if (rg.getReactionId() == null || model.getReaction(rg.getReactionId())==null) {
+					rg.removeFromParentAndDelete();
+				} else {
+					i++;
+				}
+			}
+			i = 0;
+			while (i < layout.getNumGeneralGlyphs()) {
+				GeneralGlyph g = layout.getGeneralGlyph(i);
+				if (g.getReferenceId() == null || 
+						(model.getElementBySId(g.getReferenceId())==null && model.getElementByMetaId(g.getReferenceId())==null)) {
+					g.removeFromParentAndDelete();
+				} else {
+					i++;
+				}
+			}
+			i = 0;
+			while (i < layout.getNumTextGlyphs()) {
+				TextGlyph tg = layout.getTextGlyph(i);
+				if (tg.getGraphicalObjectId() == null || layout.getElementBySId(tg.getGraphicalObjectId())==null) {
+					tg.removeFromParentAndDelete();
+				} else {
+					i++;
+				}
+			}
+		}
+	}
 
 	private void loadSBMLFile(String sbmlFile) {
 		if (!sbmlFile.equals("")) {
@@ -6431,6 +6488,7 @@ public class BioModel {
 		SBMLutilities.fillBlankMetaIDs(sbml);
 		loadGridSize();
 		updatePorts();
+		removeStaleLayout();
 		
 		for (int i = 0; i < sbml.getModel().getNumParameters(); ++i) {
 			if (sbml.getModel().getParameter(i).getId().contains("__locations")) {
@@ -6658,12 +6716,13 @@ public class BioModel {
 		BioModel bioModel = new BioModel(path);
 		bioModel.load(filename);
 		SBMLDocument document = bioModel.getSBMLDocument();
+		document.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", false);
 		long numSubModels = sbmlCompModel.getNumSubmodels();
 		if (numSubModels > 0 && isGridEnabled()) {
 			expandListOfSubmodels(bioModel.getSBMLCompModel());
 		}
 		if (document.getErrorLog().getNumFailsWithSeverity(libsbml.LIBSBML_SEV_ERROR) > 0) {
-			// doc.printErrors();
+			//document.printErrors();
 			return null;
 		} else {
 		  /* create a new conversion properties structure */
@@ -6689,7 +6748,6 @@ public class BioModel {
 		//document.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
 		//document.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
 		document.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", false);
-		document.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", false);
 		//SBMLWriter writer = new SBMLWriter();
 		//writer.writeSBML(document, path + separator + "_temp.xml");
 		// THIS IS A WORKAROUND A FLATTEN BUG WHICH DOES NOT RENAME METAIDs
@@ -6761,7 +6819,10 @@ public class BioModel {
 			//String tempFile = filename.replace(".gcm","").replace(".xml","")+"_temp.xml";
 			//save(tempFile);
 			SBMLDocument result = newFlattenModel();
-			if (result!=null) return result;
+			if (result!=null) {
+				result.getModel().setName("Created by libsbml flatten routine");
+				return result;
+			}
 		}
 		ArrayList<String> modelList = new ArrayList<String>();
 		modelList.add(filename);
@@ -6805,6 +6866,7 @@ public class BioModel {
 		}
 		model.getSBMLDocument().enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", false);
 		model.getSBMLDocument().enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", false);
+		model.getSBMLDocument().getModel().setName("Created by iBioSim flatten routine");
 		checkModelConsistency(model.getSBMLDocument());
 		new File(tempFile).delete();
 		return model.getSBMLDocument();
@@ -7385,13 +7447,19 @@ public class BioModel {
 
 	private String updateFormulaVar(String s, String origVar, String newVar) {
 		s = " " + s + " ";
-		s = s.replace(" " + origVar + " ", " " + newVar + " ");
-		s = s.replace(" " + origVar + "(", " " + newVar + "(");
-		s = s.replace("(" + origVar + ")", "(" + newVar + ")");
-		s = s.replace("(" + origVar + " ", "(" + newVar + " ");
-		s = s.replace("(" + origVar + ",", "(" + newVar + ",");
-		s = s.replace(" " + origVar + ")", " " + newVar + ")");
-		s = s.replace(" " + origVar + "^", " " + newVar + "^");
+		String olds;
+		do { 
+			olds = s;
+			s = s.replace("," + origVar + ",", "," + newVar + ",");
+			s = s.replace(" " + origVar + " ", " " + newVar + " ");
+			s = s.replace("," + origVar + ")", "," + newVar + ")");
+			s = s.replace(" " + origVar + "(", " " + newVar + "(");
+			s = s.replace("(" + origVar + ")", "(" + newVar + ")");
+			s = s.replace("(" + origVar + " ", "(" + newVar + " ");
+			s = s.replace("(" + origVar + ",", "(" + newVar + ",");
+			s = s.replace(" " + origVar + ")", " " + newVar + ")");
+			s = s.replace(" " + origVar + "^", " " + newVar + "^");
+		} while (s != olds);
 		return s.trim();
 	}
 

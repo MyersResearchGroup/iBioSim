@@ -156,7 +156,7 @@ public class GeneticNetwork {
 		
 		try {
 			PrintStream p = new PrintStream(new FileOutputStream(filename));
-			m.setName("Created from " + gcm);
+			//m.setName("Created from " + gcm);
 			m.setId(new File(filename).getName().replace(".xml", ""));	
 			m.setVolumeUnits("litre");
 			m.setSubstanceUnits("mole");
@@ -242,7 +242,7 @@ public class GeneticNetwork {
 			
 			PrintStream p = new PrintStream(new FileOutputStream(filename),true,"UTF-8");
 
-			m.setName("Created from " + new File(filename).getName().replace("xml", "gcm"));
+			//m.setName("Created from " + new File(filename).getName().replace("xml", "gcm"));
 			m.setId(new File(filename).getName().replace(".xml", ""));			
 			m.setVolumeUnits("litre");
 			m.setSubstanceUnits("mole");

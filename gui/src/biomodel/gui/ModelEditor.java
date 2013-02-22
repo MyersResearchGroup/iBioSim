@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.prefs.Preferences;
@@ -1160,48 +1161,44 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	}
 
 	public boolean createSBML(String stem, String direct) {
-		try {
-			ArrayList<String> dd = new ArrayList<String>();
-			if (!direct.equals(".")) {
-				String[] d = direct.split("_");
-				for (int i = 0; i < d.length; i++) {
-					if (!d[i].contains("=")) {
-						String di = d[i];
-						while (!d[i].contains("=")) {
-							i++;
-							di += "_" + d[i];
-						}
-						dd.add(di);
+		ArrayList<String> dd = new ArrayList<String>();
+		if (!direct.equals(".")) {
+			String[] d = direct.split("_");
+			for (int i = 0; i < d.length; i++) {
+				if (!d[i].contains("=")) {
+					String di = d[i];
+					while (!d[i].contains("=")) {
+						i++;
+						di += "_" + d[i];
 					}
-					else {
-						dd.add(d[i]);
-					}
+					dd.add(di);
+				}
+				else {
+					dd.add(d[i]);
 				}
 			}
-			direct = direct.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", "");
-			if (direct.equals(".") && !stem.equals("")) {
-				direct = "";
-			}
-			SBMLDocument sbml = biomodel.flattenModel();		
-			performModifications(sbml,dd);
-			GCMParser parser = new GCMParser(biomodel, false);
-			GeneticNetwork network = parser.buildNetwork(sbml);
-			if (network==null) return false;
-			if (reb2sac != null)
-				network.loadProperties(biomodel, reb2sac.getGcmAbstractions(), reb2sac.getInterestingSpecies(), reb2sac.getProperty());
-			else
-				network.loadProperties(biomodel);
-			SBMLDocument d = network.getSBML();
-			//performModifications(d,dd);
-			network.markAbstractable();
-			network.mergeSBML(path + separator + simName + separator + stem + direct + separator + modelId + ".xml", d);
 		}
-		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Unable to create sbml file.",
-					"Error Creating File", JOptionPane.ERROR_MESSAGE);
-			return false;
-			//e1.printStackTrace();
+		direct = direct.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", "");
+		if (direct.equals(".") && !stem.equals("")) {
+			direct = "";
 		}
+		SBMLDocument sbml = biomodel.flattenModel();		
+		performModifications(sbml,dd);
+		GCMParser parser = new GCMParser(biomodel, false);
+		GeneticNetwork network = parser.buildNetwork(sbml);
+		if (network==null) return false;
+		if (reb2sac != null)
+			network.loadProperties(biomodel, reb2sac.getGcmAbstractions(), reb2sac.getInterestingSpecies(), reb2sac.getProperty());
+		else
+			network.loadProperties(biomodel);
+		SBMLDocument d = network.getSBML();
+		//performModifications(d,dd);
+		network.markAbstractable();
+		network.mergeSBML(path + separator + simName + separator + stem + direct + separator + modelId + ".xml", d);
+		//			JOptionPane.showMessageDialog(Gui.frame, "Unable to create sbml file.",
+		//					"Error Creating File", JOptionPane.ERROR_MESSAGE);
+		//			return false;
+		//e1.printStackTrace();
 		return true;
 	}
 	
