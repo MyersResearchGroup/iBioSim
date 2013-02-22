@@ -6443,14 +6443,16 @@ public class BioModel {
 					i++;
 				}
 			}
-			i = 0;
-			while (i < layout.getNumGeneralGlyphs()) {
-				GeneralGlyph g = layout.getGeneralGlyph(i);
-				if (g.getReferenceId() == null || 
-						(model.getElementBySId(g.getReferenceId())==null && model.getElementByMetaId(g.getReferenceId())==null)) {
-					g.removeFromParentAndDelete();
-				} else {
-					i++;
+			if (!isGridEnabled()) {
+				i = 0;
+				while (i < layout.getNumGeneralGlyphs()) {
+					GeneralGlyph g = layout.getGeneralGlyph(i);
+					if (g.getReferenceId() == null || 
+							(model.getElementBySId(g.getReferenceId())==null && model.getElementByMetaId(g.getReferenceId())==null)) {
+						g.removeFromParentAndDelete();
+					} else {
+						i++;
+					}
 				}
 			}
 			i = 0;
