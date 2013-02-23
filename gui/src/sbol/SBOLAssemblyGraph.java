@@ -121,14 +121,16 @@ public class SBOLAssemblyGraph {
 	                    for (long j = 0; j < compSBMLElement.getNumReplacedElements(); j++) {
 	                        ReplacedElement replacement = compSBMLElement.getReplacedElement(j);
 	                        Submodel submodel = compSBMLModel.getSubmodel(replacement.getSubmodelRef());
-	                        String subSBMLFileID = compSBMLDoc.getExternalModelDefinition(submodel.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
-	                        BioModel subBioModel = new BioModel(biomodel.getPath());
-	                        subBioModel.load(subSBMLFileID);
-	                        CompModelPlugin subCompSBMLModel = subBioModel.getSBMLCompModel();
-	                        String elementID = subCompSBMLModel.getPort(replacement.getPortRef()).getIdRef();
-	                        Model subSBMLModel = subBioModel.getSBMLDocument().getModel();
-	                        if (AnnotationUtility.parseSBOLAnnotation(subSBMLModel.getElementBySId(elementID)).size() > 0) 
-	                            return true;
+	                        if (submodel != null) {
+	                        	String subSBMLFileID = compSBMLDoc.getExternalModelDefinition(submodel.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
+	                        	BioModel subBioModel = new BioModel(biomodel.getPath());
+	                        	subBioModel.load(subSBMLFileID);
+	                        	CompModelPlugin subCompSBMLModel = subBioModel.getSBMLCompModel();
+	                        	String elementID = subCompSBMLModel.getPort(replacement.getPortRef()).getIdRef();
+	                        	Model subSBMLModel = subBioModel.getSBMLDocument().getModel();
+	                        	if (AnnotationUtility.parseSBOLAnnotation(subSBMLModel.getElementBySId(elementID)).size() > 0) 
+	                        		return true;
+	                        }
 	                    }
 	                }
 	    
@@ -222,23 +224,25 @@ public class SBOLAssemblyGraph {
 		CompSBMLDocumentPlugin compSBMLDoc = (CompSBMLDocumentPlugin) sbmlDoc.getPlugin("comp");
 		for (long i = 0; i < sbmlCompModel.getNumSubmodels(); i++) {
 			Submodel submodel = sbmlCompModel.getSubmodel(i);
-			String subSBMLFileID = compSBMLDoc.getExternalModelDefinition(submodel.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
-			BioModel subBioModel = new BioModel(biomodel.getPath());
-			subBioModel.load(subSBMLFileID);
-			Model sbmlSubModel = subBioModel.getSBMLDocument().getModel();
+			if (submodel != null) {
+				String subSBMLFileID = compSBMLDoc.getExternalModelDefinition(submodel.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
+				BioModel subBioModel = new BioModel(biomodel.getPath());
+				subBioModel.load(subSBMLFileID);
+				Model sbmlSubModel = subBioModel.getSBMLDocument().getModel();
 
-			SBOLAssemblyNode synNode;
-			List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(submodel);
-			if (sbolURIs.size() > 0) {
-				synNode = new SBOLAssemblyNode(submodel.getId(), sbolURIs);
-				containsSBOL = true;
-			} else {
-				sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlSubModel);
-				synNode = new SBOLAssemblyNode(submodel.getId(), sbolURIs);
-				if (sbolURIs.size() > 0)
-					containsSBOL = true; 
+				SBOLAssemblyNode synNode;
+				List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(submodel);
+				if (sbolURIs.size() > 0) {
+					synNode = new SBOLAssemblyNode(submodel.getId(), sbolURIs);
+					containsSBOL = true;
+				} else {
+					sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlSubModel);
+					synNode = new SBOLAssemblyNode(submodel.getId(), sbolURIs);
+					if (sbolURIs.size() > 0)
+						containsSBOL = true; 
+				}
+				synMap.put(synNode.getID(), synNode);
 			}
-			synMap.put(synNode.getID(), synNode);
 		}
 	}
 
@@ -287,28 +291,32 @@ public class SBOLAssemblyGraph {
 				for (long j = 0; j < compSBMLSpecies.getNumReplacedElements(); j++) {
 					ReplacedElement replacement = compSBMLSpecies.getReplacedElement(j);
 					Submodel submodel = compSBMLModel.getSubmodel(replacement.getSubmodelRef());
-					String subSBMLFileID = compSBMLDoc.getExternalModelDefinition(submodel.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
-					BioModel subBioModel = new BioModel(biomodel.getPath());
-					subBioModel.load(subSBMLFileID);
-					CompModelPlugin subCompSBMLModel = subBioModel.getSBMLCompModel();
-					SBOLAssemblyNode modelSynNode = synMap.get(replacement.getSubmodelRef());
-					if (BioModel.isInputPort(subCompSBMLModel.getPort(replacement.getPortRef())))
-						synNode.addNextNode(modelSynNode);
-					else if (BioModel.isOutputPort(subCompSBMLModel.getPort(replacement.getPortRef())))
-						modelSynNode.addNextNode(synNode);
+					if (submodel != null) {
+						String subSBMLFileID = compSBMLDoc.getExternalModelDefinition(submodel.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
+						BioModel subBioModel = new BioModel(biomodel.getPath());
+						subBioModel.load(subSBMLFileID);
+						CompModelPlugin subCompSBMLModel = subBioModel.getSBMLCompModel();
+						SBOLAssemblyNode modelSynNode = synMap.get(replacement.getSubmodelRef());
+						if (BioModel.isInputPort(subCompSBMLModel.getPort(replacement.getPortRef())))
+							synNode.addNextNode(modelSynNode);
+						else if (BioModel.isOutputPort(subCompSBMLModel.getPort(replacement.getPortRef())))
+							modelSynNode.addNextNode(synNode);
+					}
 				}
 				ReplacedBy replacedBy = compSBMLSpecies.getReplacedBy();
 				if (replacedBy != null) {
 					Submodel submodel = compSBMLModel.getSubmodel(replacedBy.getSubmodelRef());
-					String subSBMLFileID = compSBMLDoc.getExternalModelDefinition(submodel.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
-					BioModel subBioModel = new BioModel(biomodel.getPath());
-					subBioModel.load(subSBMLFileID);
-					CompModelPlugin subCompSBMLModel = subBioModel.getSBMLCompModel();
-					SBOLAssemblyNode modelSynNode = synMap.get(replacedBy.getSubmodelRef());
-					if (BioModel.isInputPort(subCompSBMLModel.getPort(replacedBy.getPortRef())))
-						synNode.addNextNode(modelSynNode);
-					else if (BioModel.isOutputPort(subCompSBMLModel.getPort(replacedBy.getPortRef())))
-						modelSynNode.addNextNode(synNode);
+					if (submodel!=null) {
+						String subSBMLFileID = compSBMLDoc.getExternalModelDefinition(submodel.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
+						BioModel subBioModel = new BioModel(biomodel.getPath());
+						subBioModel.load(subSBMLFileID);
+						CompModelPlugin subCompSBMLModel = subBioModel.getSBMLCompModel();
+						SBOLAssemblyNode modelSynNode = synMap.get(replacedBy.getSubmodelRef());
+						if (BioModel.isInputPort(subCompSBMLModel.getPort(replacedBy.getPortRef())))
+							synNode.addNextNode(modelSynNode);
+						else if (BioModel.isOutputPort(subCompSBMLModel.getPort(replacedBy.getPortRef())))
+							modelSynNode.addNextNode(synNode);
+					}
 				}
 			}
 			if (sbolURIs.size() > 0)
