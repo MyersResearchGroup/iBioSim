@@ -4061,11 +4061,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		});
 		if (!stop) {
 			tree.setSelectionRow(0);
-			tree.setSelectionRow(1);
+			//tree.setSelectionRow(1);
 		}
 		else {
 			tree.setSelectionRow(0);
-			tree.setSelectionRow(selectionRow);
+			//tree.setSelectionRow(selectionRow);
 		}
 	}
 
