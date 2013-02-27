@@ -327,9 +327,9 @@ public class DTSDParser {
 			frameToComponentToLocationMapMap.put(dataIndex, new HashMap<String, Point>());
 			HashMap<String, Point> componentToLocationMap = frameToComponentToLocationMapMap.get(dataIndex);
 			
-			int minRow = Integer.MAX_VALUE;
+			int minRow = 0; //Integer.MAX_VALUE;
 			int maxRow = Integer.MIN_VALUE;
-			int minCol = Integer.MAX_VALUE;
+			int minCol = 0; //Integer.MAX_VALUE;
 			int maxCol = Integer.MIN_VALUE;
 			
 			if (frameDataMap != null) {
@@ -367,6 +367,12 @@ public class DTSDParser {
 							componentToLocationMap.put(compID, new Point());
 						
 						componentToLocationMap.get(compID).x = row;
+						if (row > maxRow) {
+							maxRow = row;
+						}
+						if (row < minRow) {
+							minRow = row;
+						}
 					}				
 					else if (dataIterator.getKey().contains("__locationY")) {
 						
@@ -377,6 +383,12 @@ public class DTSDParser {
 							componentToLocationMap.put(compID, new Point());
 						
 						componentToLocationMap.get(compID).y = col;
+						if (col > maxCol) {
+							maxCol = col;
+						}
+						if (col < minCol) {
+							minCol = col;
+						}
 					}
 				}
 			}

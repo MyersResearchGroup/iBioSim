@@ -7321,11 +7321,13 @@ public class BioModel {
 		for (int i = 0; i < subModel.getNumEvents(); i++) {
 			org.sbml.libsbml.Event event = (org.sbml.libsbml.Event) subModel.getListOfEvents().get(i);
 			
+			/*
 			if (event.getAnnotationString().length() > 0 && (
 					event.getAnnotationString().contains("Division") ||
 					event.getAnnotationString().contains("Death") ||
 					event.getAnnotationString().contains("Move")))
 				continue;
+			*/
 			
 			String newName = subModelId + "__" + event.getId();
 			updateVarId(false, event.getId(), newName, subBioModel);

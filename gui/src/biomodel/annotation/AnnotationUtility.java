@@ -21,7 +21,7 @@ public class AnnotationUtility {
 		if (sbmlObject.isSetAnnotation())
 			removeSBOLAnnotation(sbmlObject);
 		if (sbmlObject.appendAnnotation(sbolAnnot.toXMLString()) != libsbml.LIBSBML_OPERATION_SUCCESS)
-			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating species " 
+			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
 					+ sbmlObject.getId());
 	}
 	
@@ -63,7 +63,7 @@ public class AnnotationUtility {
 		attr.add("ibiosim:sweep", sweep);
 		XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
 		if (sbmlObject.appendAnnotation(node) != libsbml.LIBSBML_OPERATION_SUCCESS)
-			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating species " 
+			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
 					+ sbmlObject.getId());
 	}
 	
@@ -105,6 +105,44 @@ public class AnnotationUtility {
 		return gridSize;
 	}
 	
+	public static void setArrayAnnotation(SBase sbmlObject, String array) {
+		if (sbmlObject.isSetAnnotation())
+			removeArrayAnnotation(sbmlObject);
+		String [] attributes = array.split(" ");
+		XMLAttributes attr = new XMLAttributes();
+		attr.add("xmlns:array", "http://www.fakeuri.com");
+		for (int i = 0; i < attributes.length; i++) {
+			attr.add(attributes[i].split("=")[0], attributes[i].split("=")[1].replace("\"", ""));
+		}
+		XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);
+		if (sbmlObject.appendAnnotation(node) != libsbml.LIBSBML_OPERATION_SUCCESS)
+			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
+					+ sbmlObject.getId());
+	}
+	
+	
+	public static void removeArrayAnnotation(SBase sbmlObject) {
+		String annotation = sbmlObject.getAnnotationString();
+		Pattern arrayPattern = Pattern.compile(ARRAY_ANNOTATION);
+		Matcher arrayMatcher = arrayPattern.matcher(annotation);
+		if (arrayMatcher.find()) {
+			String arrayAnnotation = arrayMatcher.group(0);
+			annotation = annotation.replace(arrayAnnotation, "");
+		}
+		sbmlObject.setAnnotation(annotation);
+	}
+	
+	public static String parseArrayAnnotation(SBase sbmlObject) {
+		String annotation = sbmlObject.getAnnotationString();
+		Pattern arrayPattern = Pattern.compile(ARRAY_ANNOTATION);
+		Matcher arrayMatcher = arrayPattern.matcher(annotation);
+		if (arrayMatcher.find()) {
+			return arrayMatcher.group(1);
+		} else {
+			return "";
+		}
+	}
+	
 	private static final String XML_NAME_START_CHAR = "[:[A-Z]_[a-z][\\u00C0-\\u00D6][\\u00D8-\\u00F6]" +
 			"[\\u00F8-\\u02FF][\\u0370-\\u037D][\\u037F-\\u1FFF][\\u200C-\\u200D][\\u2070-\\u218F][\\u2C00-\\u2FEF]" +
 			"[\\u3001-\\uD7FF][\\uF900-\\uFDCF][\\uFDF0-\\uFFFD][\\u10000-\\uEFFFF]]";
@@ -135,5 +173,8 @@ public class AnnotationUtility {
 	
 	private static final String SWEEP_ANNOTATION =
 			"<ibiosim:ibiosim xmlns:ibiosim=\"http://www\\.fakeuri\\.com\" ibiosim:sweep=\"(\\S+)\"/>";
+	
+	private static final String ARRAY_ANNOTATION =
+			"<array:array xmlns:array=\"http://www\\.fakeuri\\.com\" (.+)/>";
 	
 }

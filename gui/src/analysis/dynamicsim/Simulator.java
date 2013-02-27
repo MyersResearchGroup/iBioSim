@@ -3026,6 +3026,8 @@ public abstract class Simulator {
 					
 					if (locationToMove.x == compX && locationToMove.y == compY) {
 						
+						if (componentToReactionSetMap.get(compID)==null) continue;
+						
 						for (String reactionID : componentToReactionSetMap.get(compID)) {
 							
 							//only need to change the rv membrane diffusion reaction
@@ -4125,6 +4127,9 @@ public abstract class Simulator {
 		for (Reaction reactionToAdd : reactionsToAdd) {
 			
 			reactionToAdd.setMetaId(reactionToAdd.getId());
+			if (model.getReaction(reactionToAdd.getId())!=null) {
+				model.removeReaction(reactionToAdd.getId());
+			}
 			model.addReaction(reactionToAdd);
 		}
 		
