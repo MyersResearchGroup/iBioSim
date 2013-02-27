@@ -38,6 +38,7 @@ import org.sbml.libsbml.XMLNode;
 import org.sbml.libsbml.XMLTriple;
 import org.sbml.libsbml.libsbml;
 
+import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
@@ -433,7 +434,8 @@ public class GeneticNetwork {
 					validSubmodels.add(submodel.getId());				
 			}
 			
-			membraneDiffusionReaction.setAnnotation("");
+			//membraneDiffusionReaction.setAnnotation("");
+			String arrayAnnotation = "";
 			
 			//now go through this list of valid submodels, find their locations, and add those to the reaction's annotation
 			for (String validSubmodelID : validSubmodels) {
@@ -442,6 +444,9 @@ public class GeneticNetwork {
 				
 					validSubmodelID = validSubmodelID.replace("GRID__","");
 					
+					if (!arrayAnnotation.equals("")) arrayAnnotation += " "; 
+					arrayAnnotation += AnnotationUtility.parseArrayAnnotation(properties.getSBMLDocument().getModel().getParameter(validSubmodelID + "__locations"));
+					/*
 					if (membraneDiffusionReaction.getAnnotationString().length() > 0)
 						membraneDiffusionReaction.appendAnnotation(", " + 
 							properties.getSBMLDocument().getModel().getParameter(validSubmodelID + "__locations").getAnnotationString()
@@ -450,8 +455,11 @@ public class GeneticNetwork {
 						membraneDiffusionReaction.setAnnotation( 
 								properties.getSBMLDocument().getModel().getParameter(validSubmodelID + "__locations").getAnnotationString()
 								.replace("<annotation>","").replace("</annotation>",""));
+								*/
+
 				}
 			}
+			AnnotationUtility.setArrayAnnotation(membraneDiffusionReaction, arrayAnnotation);
 			
 			//fix the array annotation that was just created
 					
@@ -503,6 +511,7 @@ public class GeneticNetwork {
 			}
 		}
 		
+		/* 
 		ArrayList<Event> dynamicEvents = new ArrayList<Event>();
 		
 		//look through all submodels for dynamic events
@@ -514,11 +523,16 @@ public class GeneticNetwork {
 					properties.getSBMLCompModel().getSubmodel(submodelIndex).getModelRef())
 					.getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
 			Model submodel = sbmlReader.readSBMLFromFile(properties.getPath() + extModelFile).getModel();
-			
+			*/
 			//find all individual dynamic events (within submodels)
+			Model submodel = document.getModel();
 			for (int i = 0; i < submodel.getNumEvents(); ++i) {
 				
 				Event event = submodel.getEvent(i);
+				
+				String[] splitID = event.getId().split("__");			
+				String submodelId = splitID[0];
+				String eventId = splitID[1];
 				
 				if (event.getAnnotationString().length() > 0 && (
 						event.getAnnotationString().contains("Division") ||
@@ -526,28 +540,30 @@ public class GeneticNetwork {
 						event.getAnnotationString().contains("Move"))) {
 					
 					if (event.getAnnotationString().contains("Symmetric Division"))
-						event.setId(submodel.getId() + "__SymmetricDivision__" + event.getId());
+						event.setId(submodelId + "__SymmetricDivision__" + eventId);
 					else if (event.getAnnotationString().contains("Asymmetric Division"))
-						event.setId(submodel.getId() + "__AsymmetricDivision__" + event.getId());
+						event.setId(submodelId + "__AsymmetricDivision__" + eventId);
 					else if (event.getAnnotationString().contains("Death"))
-						event.setId(submodel.getId() + "__Death__" + event.getId());
+						event.setId(submodelId + "__Death__" + eventId);
 					else if (event.getAnnotationString().contains("Move Random"))
-						event.setId(submodel.getId() + "__MoveRandom__" + event.getId());
+						event.setId(submodelId + "__MoveRandom__" + eventId);
 					else if (event.getAnnotationString().contains("Move Left"))
-						event.setId(submodel.getId() + "__MoveLeft__" + event.getId());
+						event.setId(submodelId + "__MoveLeft__" + eventId);
 					else if (event.getAnnotationString().contains("Move Right"))
-						event.setId(submodel.getId() + "__MoveRight__" + event.getId());
+						event.setId(submodelId + "__MoveRight__" + eventId);
 					else if (event.getAnnotationString().contains("Move Above"))
-						event.setId(submodel.getId() + "__MoveAbove__" + event.getId());
+						event.setId(submodelId + "__MoveAbove__" + eventId);
 					else if (event.getAnnotationString().contains("Move Below"))
-						event.setId(submodel.getId() + "__MoveBelow__" + event.getId());
+						event.setId(submodelId + "__MoveBelow__" + eventId);
 					
-					dynamicEvents.add(event);
+					//dynamicEvents.add(event);
 				}
 			}
-		}
+			/*
+		}*/
 		
 		//make arrays out of the dynamic events (for the top-level model)
+		/*
 		for (Event dynEvent : dynamicEvents) {
 			
 			Event e = dynEvent.cloneObject();
@@ -572,8 +588,10 @@ public class GeneticNetwork {
 					.replace("<annotation>","").replace("</annotation>","").trim());
 			}
 		}
+		*/
 		
-		//replace all Type=Grid occurences with more complete information
+		//replace all Type=Grid occurrences with more complete information
+			/*
 		for (int i = 0; i < document.getModel().getNumReactions(); ++i) {
 			
 			if (document.getModel().getReaction(i).getAnnotationString() != null &&
@@ -582,8 +600,9 @@ public class GeneticNetwork {
 				document.getModel().getReaction(i).setAnnotation("");
 			}
 		}
+		*/
 		
-		//replace all Type=Grid occurences with more complete information
+		//replace all Type=Grid occurrences with more complete information
 		for (int i = 0; i < document.getModel().getNumSpecies(); ++i) {
 			
 			if (document.getModel().getSpecies(i).getAnnotationString() != null &&
