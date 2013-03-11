@@ -70,6 +70,14 @@ public class VerificationNoGui {
 				Options.setUseDependentQueue();
 				System.out.println("Use dependent queue.");
 			}
+			else if (args[i].contains("-disableDisablingError")) {
+				Options.disableDisablingError();
+				System.out.println("Disabling error was diabled.");
+			}
+			else if (args[i].contains("-generateStateGraph")) {
+				Options.setOutputSgFlag(true);
+				System.out.println("Gererate state graphs.");
+			}
 			
 		}
 		if (directory.trim().equals("") || directory == null) {
@@ -104,7 +112,7 @@ public class VerificationNoGui {
 		if (poroff)
 			untimed_dfs.search();
 		else 
-			untimed_dfs.searchPOR();
+			untimed_dfs.search_por_traceback();
 		
 	}
 }
