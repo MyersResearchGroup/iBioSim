@@ -1141,9 +1141,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				
 				// ------- Debugging Messages Settings ------------
 				// Options for printing out intermediate results during POR
-				//Options.setDebugMode(true);
-				//if (Options.getDebugMode())
-				//	System.out.println("Debug mode is ON.");
+//				Options.setDebugMode(true);
+//				if (Options.getDebugMode())
+//					System.out.println("Debug mode is ON.");
 				Options.setDebugMode(false);
 				//----------- POR and Cycle Closing Methods (FULL)--------------
 //				if (untimedPOR.isSelected()) {
@@ -1316,7 +1316,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					// Options for printing the final numbers from search_dfs or search_dfsPOR. 
 					Options.setOutputLogFlag(true);
 //					Options.setPrintLogToFile(false);
-					StateGraph[] stateGraphArray = untimed_dfs.searchPOR();
+					StateGraph[] stateGraphArray = untimed_dfs.search_por_traceback();
 					if (stateGraphArray != null)
 						if (dot.isSelected()) {
 							for (int i=0; i<stateGraphArray.length; i++) {

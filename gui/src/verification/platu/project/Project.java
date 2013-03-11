@@ -256,12 +256,12 @@ public class Project {
 	
 	/**
 	 * Find the SG for the entire project where each project state is a tuple of
-	 * local states. Use partial order reduction during dfs search.
+	 * local states. Use partial order reduction with trace-back during the dfs search.
 	 * @param globalSGpath 
 	 * @return 
 	 * 
 	 */
-	public StateGraph[] searchPOR() {	
+	public StateGraph[] search_por_traceback() {	
 		validateInputs();
 //		
 //		if(Options.getSearchType().equals("compositional")){
@@ -317,7 +317,7 @@ public class Project {
 		
 		Analysis dfsPOR = new Analysis(sgArray);
 		StateGraph[] stateGraphArray;	
-		stateGraphArray = dfsPOR.search_dfsPOR(sgArray, initStateArray);
+		stateGraphArray = dfsPOR.search_dfs_por_traceback(sgArray, initStateArray);
 		
 		long elapsedTimeMillis = System.currentTimeMillis() - start; 
 		float elapsedTimeSec = elapsedTimeMillis/1000F;	
