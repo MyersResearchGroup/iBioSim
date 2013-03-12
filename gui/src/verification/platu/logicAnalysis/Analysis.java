@@ -4123,7 +4123,7 @@ public class Analysis {
 						}
 					}			
 					//dependent.addAll(curEnabled);
-					return dependent;
+					return curEnabled;
 				}
 				if (Options.getDebugMode()) {
 					writeIntegerSetToPORDebugFile(dependent,"@ computeDependent at 2, dependent set for transition " + getNamesOfLPNandTrans(seedTran)); 
