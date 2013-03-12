@@ -4122,7 +4122,8 @@ public class Analysis {
 							writeStringWithEndOfLineToPORDebugFile("necessary set for transition " + getNamesOfLPNandTrans(seedTran) + " is empty.");
 						}
 					}			
-					dependent.addAll(curEnabled);
+					//dependent.addAll(curEnabled);
+					return dependent;
 				}
 				if (Options.getDebugMode()) {
 					writeIntegerSetToPORDebugFile(dependent,"@ computeDependent at 2, dependent set for transition " + getNamesOfLPNandTrans(seedTran)); 
