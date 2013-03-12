@@ -4216,9 +4216,6 @@ public class Analysis {
 							}
 							writeStringWithEndOfLineToPORDebugFile("@ nMarking, before call computeNecessary: consider transition: " 
 									+ getNamesOfLPNandTrans(presetTran));
-						}
-
-						if (Options.getDebugMode()) {
 							writeStringWithEndOfLineToPORDebugFile("@ nMarking: transition " + getNamesOfLPNandTrans(presetTran) + " is not enabled. Compute its necessary set.");
 						}
 						HashSet<Transition> tmp = computeNecessary(curStateArray, presetTran, dependent, curEnabled);
