@@ -581,7 +581,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		fields.put(GlobalConstants.KECDIFF_STRING, field);
 		grid.add(field);
 		*/
-		setFieldEnablings();
 		
 		// Parse out GCM and SBOL annotations and add to respective fields
 		if (!paramsOnly) {
@@ -593,12 +592,15 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 			if (bioModel.isInput(species.getId())) {
 				typeBox.setSelectedItem(GlobalConstants.INPUT);
+				specDiffusible.setSelected(false);
 			} else if (bioModel.isOutput(species.getId())) {
 				typeBox.setSelectedItem(GlobalConstants.OUTPUT);
+				specDiffusible.setSelected(false);
 			} else {
 				typeBox.setSelectedItem(GlobalConstants.INTERNAL);
 			}
 		}
+		setFieldEnablings();
 		
 		boolean display = false;
 		
@@ -1062,6 +1064,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		fields.get(GlobalConstants.KDECAY_STRING).setEnabled(false);
 		fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(false);
 		fields.get(GlobalConstants.MEMDIFF_STRING).setEnabled(false);
+		typeBox.setEnabled(true);
 		
 		//diffusible
 		if (specConstitutive.isSelected()) {
@@ -1070,12 +1073,18 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		} 
 		if (specDiffusible.isSelected()) {
 			fields.get(GlobalConstants.MEMDIFF_STRING).setEnabled(true);
+			typeBox.setEnabled(false);
 		} 
 		if (specDegradable.isSelected()) {
 			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
 		}
 		if (complex != null) {
 			fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(true);
+		}
+		if (typeBox.getSelectedItem()!=GlobalConstants.INTERNAL) {
+			specDiffusible.setEnabled(false);
+		} else {
+			specDiffusible.setEnabled(true);
 		}
 	}
 	
