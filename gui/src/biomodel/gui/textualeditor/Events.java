@@ -782,6 +782,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
 							e.setAnnotation(node);
 						}
+						else {
+							e.unsetAnnotation();
+						}
 					}
 					else {
 						while (e.getNumEventAssignments() > 0) {

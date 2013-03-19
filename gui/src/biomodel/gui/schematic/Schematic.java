@@ -295,6 +295,7 @@ public class Schematic extends JPanel implements ActionListener {
 			}
 
 			drawGrid();
+			graph.setCellsResizable(false);
 		}
 		//if there's no grid, draw the usual toolbar
 		else {
@@ -307,6 +308,10 @@ public class Schematic extends JPanel implements ActionListener {
 			//if we're in a non-analysis schematic
 			if(this.editable)
 				this.add(toolbar, BorderLayout.NORTH);
+			else {
+				graph.setCellsResizable(false);
+				graph.setCellsMovable(false);
+			}
 		}
 		//this.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_S,0),"AddSpecies");
 		//this.getActionMap().put("AddSpecies",new AddSpeciesAction());
