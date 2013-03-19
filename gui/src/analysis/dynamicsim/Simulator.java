@@ -399,14 +399,15 @@ public abstract class Simulator {
 	 * @param oldString
 	 * @param newString
 	 */
-	private void alterLocalParameter(ASTNode node, String reactionID, String oldString, String newString) {
+	private void alterLocalParameter(ASTNode node, Reaction reaction, String oldString, String newString) {
 		
+		String reactionID = reaction.getId();
 		if (node.isName() && node.getName().equals(oldString)) {
-			node.setVariable(model.getReaction(reactionID).getKineticLaw().getLocalParameter(newString));
+			node.setVariable(reaction.getKineticLaw().getLocalParameter(newString));
 		}
 		else {
 			for (ASTNode childNode : node.getChildren())
-				alterLocalParameter(childNode, reactionID, oldString, newString);
+				alterLocalParameter(childNode, reaction, oldString, newString);
 		}
 	}
 	
@@ -2903,7 +2904,7 @@ public abstract class Simulator {
 						product.setStoichiometry(1);
 						fdReaction.addProduct(product);
 						
-						setupLocalParameters(fdReaction.getKineticLaw(), fdReaction.getId());						
+						setupLocalParameters(fdReaction.getKineticLaw(), fdReaction);						
 						
 						setupSingleReaction(fdReaction.getId(), fdReaction.getKineticLaw().getMath(), false,
 								fdReaction.getListOfReactants(), fdReaction.getListOfProducts(), fdReaction.getListOfModifiers());
@@ -2936,7 +2937,7 @@ public abstract class Simulator {
 						product.setStoichiometry(1);
 						rvReaction.addProduct(product);
 	
-						setupLocalParameters(rvReaction.getKineticLaw(), rvReaction.getId());
+						setupLocalParameters(rvReaction.getKineticLaw(), rvReaction);
 						
 						setupSingleReaction(rvReaction.getId(), rvReaction.getKineticLaw().getMath(), false,
 								rvReaction.getListOfReactants(), rvReaction.getListOfProducts(), rvReaction.getListOfModifiers());
@@ -2989,7 +2990,7 @@ public abstract class Simulator {
 					reactant.setStoichiometry(1);
 					degReaction.addReactant(reactant);
 					
-					setupLocalParameters(degReaction.getKineticLaw(), degReaction.getId());
+					setupLocalParameters(degReaction.getKineticLaw(), degReaction);
 					setupSingleReaction(degReaction.getId(), degReaction.getKineticLaw().getMath(), false,
 							degReaction.getListOfReactants(), degReaction.getListOfProducts(), degReaction.getListOfModifiers());
 				}
@@ -4441,8 +4442,9 @@ public abstract class Simulator {
 	 * @param kineticLaw
 	 * @param reactionID
 	 */
-	private void setupLocalParameters(KineticLaw kineticLaw, String reactionID) {
+	private void setupLocalParameters(KineticLaw kineticLaw, Reaction reaction) {
 		
+		String reactionID = reaction.getId();
 		reactionID = reactionID.replace("_negative_","-");
 		
 		for (int i = 0; i < kineticLaw.getLocalParameterCount(); i++) {
@@ -4472,7 +4474,7 @@ public abstract class Simulator {
 			//of that parameter id (and sometimes doesn't), so those ones are fine and ignore them
 			//if (kineticLaw.getMath().toFormula().contains(parameterID) == false) {
 
-			alterLocalParameter(kineticLaw.getMath(), reactionID, oldParameterID, parameterID);
+			alterLocalParameter(kineticLaw.getMath(), reaction, oldParameterID, parameterID);
 			//}
 		}
 		//System.out.println(kineticLaw.getMath().toFormula());
@@ -4509,7 +4511,7 @@ public abstract class Simulator {
 		for (Reaction reaction : model.getListOfReactions()) {
 			
 			KineticLaw kineticLaw = reaction.getKineticLaw();
-			setupLocalParameters(kineticLaw, reaction.getId());
+			setupLocalParameters(kineticLaw, reaction);
 		}
 		
 		//add values to hashmap for easy access to global parameter values
