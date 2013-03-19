@@ -6458,7 +6458,8 @@ public class BioModel {
 			i = 0;
 			while (i < layout.getNumTextGlyphs()) {
 				TextGlyph tg = layout.getTextGlyph(i);
-				if (tg.getGraphicalObjectId() == null || layout.getElementBySId(tg.getGraphicalObjectId())==null) {
+				if (tg.getGraphicalObjectId() == null || (layout.getElementBySId(tg.getGraphicalObjectId())==null &&
+						model.getElementBySId(tg.getGraphicalObjectId())==null && model.getElementByMetaId(tg.getGraphicalObjectId())==null)) {
 					tg.removeFromParentAndDelete();
 				} else {
 					i++;
