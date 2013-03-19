@@ -335,13 +335,13 @@ public class GeneticNetwork {
 	 * @return the sbml document
 	 */
 	public SBMLDocument mergeSBML(String filename, SBMLDocument document) {
-		try {
-			currentDocument = document;
-			return outputSBML(filename, document);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new IllegalStateException("Unable to output to SBML");
-		}
+		//try {
+		currentDocument = document;
+		return outputSBML(filename, document);
+		//} catch (Exception e) {
+		//	e.printStackTrace();
+		//	throw new IllegalStateException("Unable to output to SBML");
+		//}
 	}
 	
 	/**
@@ -529,6 +529,8 @@ public class GeneticNetwork {
 			for (int i = 0; i < submodel.getNumEvents(); ++i) {
 				
 				Event event = submodel.getEvent(i);
+				
+				if (!event.getId().contains("__")) continue;
 				
 				String[] splitID = event.getId().split("__");			
 				String submodelId = splitID[0];
