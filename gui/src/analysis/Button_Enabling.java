@@ -390,6 +390,7 @@ public class Button_Enabling {
 		description.setEnabled(true);
 		simulators.removeAllItems();
 		simulators.addItem("gillespie");
+		simulators.addItem("SSA-Direct");
 		simulators.addItem("SSA-Direct (Java)");
 		simulators.addItem("SSA-CR");
 		simulators.addItem("iSSA");

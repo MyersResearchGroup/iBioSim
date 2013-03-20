@@ -60,6 +60,10 @@ public class DynamicSimulation {
 				simulator = new SimulatorODERK(SBMLFileName, outputDirectory, timeLimit, 
 						maxTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, 
 						interestingSpecies, numSteps, relError, absError, quantityType);
+			else if (simulatorType.equals("ufdirect"))
+				simulator = new SimulatorSSADirectUnflatten(SBMLFileName, outputDirectory, timeLimit, 
+						maxTimeStep, minTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, 
+						interestingSpecies, quantityType);
 		}
 		catch (IOException e) {
 			e.printStackTrace();

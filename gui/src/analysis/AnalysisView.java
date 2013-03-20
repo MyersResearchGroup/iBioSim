@@ -1190,6 +1190,24 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				bifurcation.setEnabled(false);
 				bifurcationLabel.setEnabled(false);
 			}
+			else if (((String) simulators.getSelectedItem()).contains("SSA-Direct")) {
+				description.setText("SSA-Direct Method on Unflatten Models");
+				minStep.setEnabled(true);
+				minStepLabel.setEnabled(true);
+				step.setEnabled(true);
+				stepLabel.setEnabled(true);
+				errorLabel.setEnabled(false);
+				absErr.setEnabled(false);
+				mpde.setEnabled(false);
+				meanPath.setEnabled(false);
+				medianPath.setEnabled(false);
+				iSSATypeLabel.setEnabled(false);
+				adaptive.setEnabled(false);
+				nonAdaptive.setEnabled(false);
+				iSSAAdaptiveLabel.setEnabled(false);
+				bifurcation.setEnabled(false);
+				bifurcationLabel.setEnabled(false);
+			}
 			else if (((String) simulators.getSelectedItem()).contains("interactive")) {
 				description.setText("Interactive SSA-Direct Method");
 				minStep.setEnabled(true);
