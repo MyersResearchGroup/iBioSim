@@ -228,6 +228,7 @@ public class SimulatorODERK extends Simulator {
 	}
 
 	protected void simulate() {
+		int currSteps = 0;
 		
 		if (sbmlHasErrorsFlag == true)
 			return;
@@ -300,8 +301,9 @@ public class SimulatorODERK extends Simulator {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				
-				printTime += printInterval;
+				currSteps++;
+				printTime = (currSteps*timeLimit/numSteps);
+				//printTime += printInterval;
 			}
 			
 			nextEndTime = currentTime + maxTimeStep;
@@ -364,8 +366,9 @@ public class SimulatorODERK extends Simulator {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				
-				printTime += printInterval;
+				currSteps++;
+				printTime = (currSteps*timeLimit/numSteps);
+				//printTime += printInterval;
 				running.setTitle("Progress (" + (int)((currentTime / timeLimit) * 100.0) + "%)");
 			}
 			
