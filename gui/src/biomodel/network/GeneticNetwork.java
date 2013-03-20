@@ -459,7 +459,9 @@ public class GeneticNetwork {
 
 				}
 			}
-			AnnotationUtility.setArrayAnnotation(membraneDiffusionReaction, arrayAnnotation);
+			if (!arrayAnnotation.equals("")) {
+				AnnotationUtility.setArrayAnnotation(membraneDiffusionReaction, arrayAnnotation);
+			}
 			
 			//fix the array annotation that was just created
 					
