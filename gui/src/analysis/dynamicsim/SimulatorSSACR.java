@@ -871,8 +871,9 @@ public class SimulatorSSACR extends Simulator {
 						if (newGroupReactionSet.size() == 1)
 							nonemptyGroupSet.add(group);
 						
-						if (oldGroupReactionSet.size() == 0)
+						if (oldGroupReactionSet.size() == 0) {
 							nonemptyGroupSet.remove(oldGroup);
+						}
 						
 						if (newPropensity > groupToMaxValueMap.get(group))
 							groupToMaxValueMap.put(group, newPropensity);
