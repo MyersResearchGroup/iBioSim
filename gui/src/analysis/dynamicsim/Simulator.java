@@ -1960,6 +1960,9 @@ public abstract class Simulator {
 		for (Reaction reactionToAdd : reactionsToAdd) {
 			
 			reactionToAdd.setMetaId(reactionToAdd.getId());
+			if (model.getReaction(reactionToAdd.getId())!=null) {
+				model.removeReaction(reactionToAdd.getId());
+			}
 			model.addReaction(reactionToAdd);
 		}
 		
