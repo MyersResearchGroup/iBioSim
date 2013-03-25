@@ -826,7 +826,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		
 		biosim.log.addText("file saved to " + fullPath);
 		
-		this.modelEditor.saveParams(false, "", true);
+		this.modelEditor.saveParams(false, "", true, null);
 	}
 
 	/**

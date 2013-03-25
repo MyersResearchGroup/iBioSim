@@ -2551,7 +2551,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 					*/
 					else if (component instanceof ModelEditor) {
-						((ModelEditor) component).saveParams(false, "", true);
+						((ModelEditor) component).saveParams(false, "", true, null);
 					}
 					else if (component instanceof AnalysisView) {
 						((AnalysisView) component).save();
@@ -4244,7 +4244,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		simTab.addTab("SBML Elements", elementsPanel);
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 		gcm.setElementsPanel(elementsPanel);
-		gcm.createSBML("",".");
+		gcm.createSBML("",".", null);
 		reb2sac.run(".", true);
 		Graph tsdGraph;
 		tsdGraph = reb2sac.createGraph(root + separator + simName + separator + simName + ".grf");
@@ -8835,7 +8835,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							new File(properties).renameTo(new File(properties.replace(".sim", ".temp")));
 							try {
 								boolean dirty = ((ModelEditor) (sim.getComponentAt(j))).isDirty();
-								((ModelEditor) (sim.getComponentAt(j))).saveParams(false, "", true);
+								((ModelEditor) (sim.getComponentAt(j))).saveParams(false, "", true, null);
 								((ModelEditor) (sim.getComponentAt(j))).reload(check.replace(".gcm", "").replace(".xml", ""));
 								((ModelEditor) (sim.getComponentAt(j))).refresh();
 								((ModelEditor) (sim.getComponentAt(j))).loadParams();
@@ -10039,7 +10039,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		messageArea.append("It is recommended that you fix them before using these models or you may get unexpected results.\n\n");
 		boolean display = false;
 		long numErrors = 0;
-		if (SBMLLevelVersion.equals("L2V4")) {
+		if (SBMLLevelVersion!= null && SBMLLevelVersion.equals("L2V4")) {
 			numErrors = document.checkL2v4Compatibility();
 		}
 		else {

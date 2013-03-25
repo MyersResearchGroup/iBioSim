@@ -47,9 +47,34 @@ public class DynSim {
 	public static void main(String[] args) {
 		
 		boolean testSuite = true;
+		String varname;
+		if (System.getProperty("mrj.version") != null)
+			varname = "DYLD_LIBRARY_PATH"; // We're on a Mac.
+		else
+			varname = "LD_LIBRARY_PATH"; // We're not on a Mac.
+		try {
+			System.loadLibrary("sbmlj");
+			// For extra safety, check that the jar file is in the
+			// classpath.
+			Class.forName("org.sbml.libsbml.libsbml");
+		}
+		catch (UnsatisfiedLinkError e) {
+			e.printStackTrace();
+			System.err.println("Error: could not link with the libSBML library." + "  It is likely\nyour " + varname
+					+ " environment variable does not include\nthe" + " directory containing the libsbml library file.");
+			System.exit(1);
+		}
+		catch (ClassNotFoundException e) {
+			System.err.println("Error: unable to load the file libsbmlj.jar." + "  It is likely\nyour " + varname + " environment"
+					+ " variable or CLASSPATH variable\ndoes not include" + " the directory containing the libsbmlj.jar file.");
+			System.exit(1);
+		}
+		catch (SecurityException e) {
+			System.err.println("Could not load the libSBML library files due to a" + " security exception.");
+			System.exit(1);
+		}
 		
 		if (args.length == 0) {
-			
 			//this is for the sbml test suite
 			
 			String caseNum = "00068";
@@ -57,10 +82,11 @@ public class DynSim {
 			args = new String[3];
 			
 			//model
-			args[0] = "/home/leandro/cases/semantic/" + caseNum + "/" + caseNum + "-sbml-l2v1.xml";
+			args[0] = "/home/leandro/cases/semantic/" + caseNum + "/" + caseNum + "-sbml-l2v2.xml";
 			
 			//output dir
 			args[1] = "/home/leandro/cases/semantic/" + caseNum + "/";
+			//args[1] = "/home/leandro/cases/semantic/" + caseNum;
 			
 			//properties file
 			args[2] = "/home/leandro/cases/semantic/" + caseNum + "/" + caseNum + "-settings.txt";
@@ -99,29 +125,30 @@ public class DynSim {
 			intSpecies[i] = intSpec; ++i;
 		}
 		
-	/*	try {
+		try {
 		
 		 	BioModel biomodel = new BioModel(outputDirectory);
+		 	biomodel.load(filename);
 			SBMLDocument sbml = biomodel.flattenModel();		
 			GCMParser parser = new GCMParser(biomodel, false);
 			GeneticNetwork network = parser.buildNetwork(sbml);
 			sbml = network.getSBML();
 			network.mergeSBML(filename, sbml);
+			simulator.simulate(filename, outputDirectory, timeLimit, maxTimeStep, minTimeStep, 
+					randomSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, 
+					intSpecies, numSteps, relativeError, absoluteError, quantityType, genStats, null);
+			
+			TSDParser tsdp = new TSDParser(outputDirectory + "run-1.tsd", true);		
+			tsdp.outputCSV(outputDirectory + "run-1.csv");
 		
 		}
 		catch (Exception e1) {
+			e1.printStackTrace();
 			JOptionPane.showMessageDialog(Gui.frame, "Unable to create sbml file.",
 					"Error Creating File", JOptionPane.ERROR_MESSAGE);
 		}
-	*/	
 		
 		
-		simulator.simulate(filename, outputDirectory, timeLimit, maxTimeStep, minTimeStep, 
-				randomSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, 
-				intSpecies, numSteps, relativeError, absoluteError, quantityType, genStats, null);
-		
-		TSDParser tsdp = new TSDParser(outputDirectory + "run-1.tsd", true);		
-		tsdp.outputCSV(outputDirectory + "run-1.csv");
 	}
 	
 	private static void readProperties(String filename) {
