@@ -1473,7 +1473,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				}
 			}
 			if (modelEditor != null) {
-				modelEditor.saveParams(true, stem, ignoreSweep);
+				modelEditor.saveParams(true, stem, ignoreSweep, simulators.getSelectedItem().toString());
 			}
 			else {
 				if (!stem.equals("")) {
@@ -1520,7 +1520,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				ignoreSweep = true;
 			}
 			if (modelEditor != null) {
-				modelEditor.saveParams(false, "", ignoreSweep);
+				modelEditor.saveParams(false, "", ignoreSweep, simulators.getSelectedItem().toString());
 			}
 			save();
 		}

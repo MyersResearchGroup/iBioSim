@@ -648,7 +648,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		sweep.add(Keq);
 	}
 	
-	public void saveParams(boolean run, String stem, boolean ignoreSweep) {
+	public void saveParams(boolean run, String stem, boolean ignoreSweep, String analysisMethod) {
 		try {
 			FileOutputStream out = new FileOutputStream(new File(paramFile));
 			out.write((refFile + "\n").getBytes());
@@ -740,7 +740,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 									+ stem
 									+ sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "")
 											.replace("\"", "").replace(" ", "_").replace(",", "")).mkdir();
-							createSBML(stem, sweepTwo);
+							createSBML(stem, sweepTwo, analysisMethod);
 							AnalysisThread thread = new AnalysisThread(reb2sac);
 							thread.start(
 									stem
@@ -764,7 +764,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 								+ stem
 								+ sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "")
 										.replace("\"", "").replace(" ", "_").replace(",", "")).mkdir();
-						createSBML(stem, sweep);
+						createSBML(stem, sweep, analysisMethod);
 						AnalysisThread thread = new AnalysisThread(reb2sac);
 						thread.start(
 								stem
@@ -787,7 +787,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				if (!stem.equals("")) {
 					new File(path + separator + simName + separator + stem).mkdir();
 				}
-				if (createSBML(stem, ".")) {
+				if (createSBML(stem, ".", analysisMethod)) {
 					if (!stem.equals("")) {
 						new AnalysisThread(reb2sac).start(stem, true);
 					}
@@ -1160,7 +1160,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 	}
 
-	public boolean createSBML(String stem, String direct) {
+	public boolean createSBML(String stem, String direct, String analysisMethod) {
 		ArrayList<String> dd = new ArrayList<String>();
 		if (!direct.equals(".")) {
 			String[] d = direct.split("_");
@@ -1182,23 +1182,29 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		if (direct.equals(".") && !stem.equals("")) {
 			direct = "";
 		}
-		SBMLDocument sbml = biomodel.flattenModel();		
-		performModifications(sbml,dd);
-		GCMParser parser = new GCMParser(biomodel, false);
-		GeneticNetwork network = parser.buildNetwork(sbml);
-		if (network==null) return false;
-		if (reb2sac != null)
-			network.loadProperties(biomodel, reb2sac.getGcmAbstractions(), reb2sac.getInterestingSpecies(), reb2sac.getProperty());
-		else
-			network.loadProperties(biomodel);
-		SBMLDocument d = network.getSBML();
-		//performModifications(d,dd);
-		network.markAbstractable();
-		network.mergeSBML(path + separator + simName + separator + stem + direct + separator + modelId + ".xml", d);
-		//			JOptionPane.showMessageDialog(Gui.frame, "Unable to create sbml file.",
-		//					"Error Creating File", JOptionPane.ERROR_MESSAGE);
-		//			return false;
-		//e1.printStackTrace();
+		if(!analysisMethod.equals("SSA-Direct"))
+		{
+			SBMLDocument sbml = biomodel.flattenModel();		
+			performModifications(sbml,dd);
+			GCMParser parser = new GCMParser(biomodel, false);
+			GeneticNetwork network = parser.buildNetwork(sbml);
+			
+			if (network==null)
+				return false;
+			if (reb2sac != null)
+				network.loadProperties(biomodel, reb2sac.getGcmAbstractions(), reb2sac.getInterestingSpecies(), reb2sac.getProperty());
+			else
+				network.loadProperties(biomodel);
+			
+			SBMLDocument d = network.getSBML();
+			//performModifications(d,dd);
+			network.markAbstractable();
+			network.mergeSBML(path + separator + simName + separator + stem + direct + separator + modelId + ".xml", d);
+			//			JOptionPane.showMessageDialog(Gui.frame, "Unable to create sbml file.",
+			//					"Error Creating File", JOptionPane.ERROR_MESSAGE);
+			//			return false;
+			//e1.printStackTrace();
+		}
 		return true;
 	}
 	
