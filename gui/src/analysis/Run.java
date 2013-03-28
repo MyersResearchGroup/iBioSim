@@ -496,7 +496,7 @@ public class Run implements ActionListener {
 			}
 			File work = new File(directory);
 			new FileWriter(new File(directory + separator + "running")).close();
-			log.setLogFile(directory + separator + "log.txt");
+			FileWriter logFile = new FileWriter(new File(directory + separator + "log.txt"));
 			Properties properties = new Properties();
 			properties.load(new FileInputStream(directory + separator + 
 					theFile.replace(".xml","") + ".properties"));
@@ -562,7 +562,7 @@ public class Run implements ActionListener {
 				prop = mutProp.getString();
 				if (lpnFile == null) {
 					new File(directory + separator + "running").delete();
-					log.closeLogFile();
+					logFile.close();
 					return 0;
 				}
 				lpnFile.save(root + separator + simName + separator + lpnName);
@@ -584,6 +584,7 @@ public class Run implements ActionListener {
 			if (nary.isSelected() && gcmEditor == null && !sim.contains("markov-chain-analysis") && !lhpn.isSelected()
 					&& naryRun == 1) {
 				log.addText("Executing:\nreb2sac --target.encoding=nary-level " + filename + "\n");
+				logFile.write("Executing:\nreb2sac --target.encoding=nary-level " + filename + "\n\n");
 				time1 = System.nanoTime();
 				reb2sac = exec.exec("reb2sac --target.encoding=nary-level " + theFile, null, work);
 			}
@@ -611,7 +612,7 @@ public class Run implements ActionListener {
 						}
 						else {
 							new File(directory + separator + "running").delete();
-							log.closeLogFile();
+							logFile.close();
 							return 0;
 						}
 					}
@@ -633,7 +634,7 @@ public class Run implements ActionListener {
 						t1.setFilename(root + separator + sbmlName);
 						t1.outputSBML();
 						exitValue = 0;
-						log.closeLogFile();
+						logFile.close();
 						return exitValue;
 					}
 					else if (gcmEditor != null && nary.isSelected()) {
@@ -691,7 +692,7 @@ public class Run implements ActionListener {
 							prop = mutProp.getString();
 							if (lpnFile == null) {
 								new File(directory + separator + "running").delete();
-								log.closeLogFile();
+								logFile.close();
 								return 0;
 							}
 							lpnFile.save(root + separator + simName + separator + lpnName);
@@ -713,7 +714,7 @@ public class Run implements ActionListener {
 						else {
 							time1 = System.nanoTime();
 							new File(directory + separator + "running").delete();
-							log.closeLogFile();
+							logFile.close();
 							return 0;
 						}
 						exitValue = 0;
@@ -722,12 +723,15 @@ public class Run implements ActionListener {
 						if (r2s.reb2sacAbstraction() && (abstraction.isSelected() || nary.isSelected())) {
 							log.addText("Executing:\nreb2sac --target.encoding=sbml --out=" + ".." + separator + sbmlName + " "
 									+ filename + "\n");
+							logFile.write("Executing:\nreb2sac --target.encoding=sbml --out=" + ".." + separator + sbmlName + " "
+									+ filename + "\n\n");
 							time1 = System.nanoTime();
 							reb2sac = exec.exec(
 									"reb2sac --target.encoding=sbml --out=" + ".." + separator + sbmlName + " " + theFile, null, work);
 						}
 						else {
 							log.addText("Outputting SBML file:\n" + root + separator + sbmlName + "\n");
+							logFile.write("Outputting SBML file:\n" + root + separator + sbmlName + "\n\n");
 							time1 = System.nanoTime();
 							FileOutputStream fileOutput = new FileOutputStream(new File(root + separator + sbmlName));
 							FileInputStream fileInput = new FileInputStream(new File(filename));
@@ -775,7 +779,7 @@ public class Run implements ActionListener {
 						}
 						else {
 							new File(directory + separator + "running").delete();
-							log.closeLogFile();
+							logFile.close();
 							return 0;
 						}
 					}
@@ -792,7 +796,7 @@ public class Run implements ActionListener {
 						}
 						time1 = System.nanoTime();
 						exitValue = 0;
-						log.closeLogFile();
+						logFile.close();
 						return exitValue;
 					}
 					else {
@@ -849,15 +853,16 @@ public class Run implements ActionListener {
 							prop = mutProp.getString();
 							if (lhpnFile == null) {
 								new File(directory + separator + "running").delete();
-								log.closeLogFile();
+								logFile.close();
 								return 0;
 							}
 							lhpnFile.save(root + separator + lhpnName);
 							log.addText("Saving GCM file as LHPN:\n" + root + separator + lhpnName + "\n");
+							logFile.write("Saving GCM file as LHPN:\n" + root + separator + lhpnName + "\n\n");
 						}
 						else {
 							new File(directory + separator + "running").delete();
-							log.closeLogFile();
+							logFile.close();
 							return 0;
 						}
 						exitValue = 0;
@@ -892,12 +897,14 @@ public class Run implements ActionListener {
 				}
 				else {
 					log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + out + ".dot " + filename + "\n");
+					logFile.write("Executing:\nreb2sac --target.encoding=dot --out=" + out + ".dot " + filename + "\n\n");
 					time1 = System.nanoTime();
 					reb2sac = exec.exec("reb2sac --target.encoding=dot --out=" + out + ".dot " + theFile, null, work);
 				}
 			}
 			else if (xhtml.isSelected()) {
 				log.addText("Executing:\nreb2sac --target.encoding=xhtml --out=" + out + ".xhtml " + filename + "\n");
+				logFile.write("Executing:\nreb2sac --target.encoding=xhtml --out=" + out + ".xhtml " + filename + "\n\n");
 				time1 = System.nanoTime();
 				
 //				double stoichAmpValue = 
@@ -911,6 +918,7 @@ public class Run implements ActionListener {
 			else {
 				if (sim.equals("atacs")) {
 					log.addText("Executing:\nreb2sac --target.encoding=hse2 " + filename + "\n");
+					logFile.write("Executing:\nreb2sac --target.encoding=hse2 " + filename + "\n\n");
 					time1 = System.nanoTime();
 					reb2sac = exec.exec("reb2sac --target.encoding=hse2 " + theFile, null, work);
 				}
@@ -976,16 +984,18 @@ public class Run implements ActionListener {
 							prop = mutProp.getString();
 							if (lhpnFile == null) {
 								new File(directory + separator + "running").delete();
-								log.closeLogFile();
+								logFile.close();
 								return 0;
 							}
 							lhpnFile.save(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn");
 							log.addText("Saving GCM file as LHPN:\n"
 									+ filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn" + "\n");
+							logFile.write("Saving GCM file as LHPN:\n"
+									+ filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn" + "\n\n");
 						}
 						else {
 							new File(directory + separator + "running").delete();
-							log.closeLogFile();
+							logFile.close();
 							return 0;
 						}
 					}
@@ -995,6 +1005,7 @@ public class Run implements ActionListener {
 						buildStateGraph.start();
 						buildStateGraph.join();
 						log.addText("Number of states found: " + sg.getNumberOfStates() + "\n");
+						logFile.write("Number of states found: " + sg.getNumberOfStates() + "\n\n");
 						if (sim.equals("reachability-analysis") && !sg.getStop()) {
 							time2 = System.nanoTime();
 							Object[] options = { "Yes", "No" };
@@ -1008,16 +1019,19 @@ public class Run implements ActionListener {
 									Runtime execGraph = Runtime.getRuntime();
 									if (System.getProperty("os.name").contentEquals("Linux")) {
 										log.addText("Executing:\ndotty " + graphFile + "\n");
+										logFile.write("Executing:\ndotty " + graphFile + "\n\n");
 										execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
 												+ "_sg.dot", null, new File(directory));
 									}
 									else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
 										log.addText("Executing:\nopen " + graphFile + "\n");
+										logFile.write("Executing:\nopen " + graphFile + "\n\n");
 										execGraph.exec("open " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
 												+ "_sg.dot", null, new File(directory));
 									}
 									else {
 										log.addText("Executing:\ndotty " + graphFile + "\n");
+										logFile.write("Executing:\ndotty " + graphFile + "\n\n");
 										execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
 												+ "_sg.dot", null, new File(directory));
 									}
@@ -1032,6 +1046,7 @@ public class Run implements ActionListener {
 						else if (sim.equals("steady-state-markov-chain-analysis")) {
 							if (!sg.getStop()) {
 								log.addText("Performing steady state Markov chain analysis.\n");
+								logFile.write("Performing steady state Markov chain analysis.\n\n");
 								PerfromSteadyStateMarkovAnalysisThread performMarkovAnalysis = new PerfromSteadyStateMarkovAnalysisThread(
 										sg);
 								if (modelFile.contains(".lpn")) {
@@ -1072,16 +1087,19 @@ public class Run implements ActionListener {
 											Runtime execGraph = Runtime.getRuntime();
 											if (System.getProperty("os.name").contentEquals("Linux")) {
 												log.addText("Executing:\ndotty " + graphFile + "\n");
+												logFile.write("Executing:\ndotty " + graphFile + "\n\n");
 												execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
 														+ "_sg.dot", null, new File(directory));
 											}
 											else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
 												log.addText("Executing:\nopen " + graphFile + "\n");
+												logFile.write("Executing:\nopen " + graphFile + "\n\n");
 												execGraph.exec("open " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
 														+ "_sg.dot", null, new File(directory));
 											}
 											else {
 												log.addText("Executing:\ndotty " + graphFile + "\n");
+												logFile.write("Executing:\ndotty " + graphFile + "\n\n");
 												execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
 														+ "_sg.dot", null, new File(directory));
 											}
@@ -1098,6 +1116,7 @@ public class Run implements ActionListener {
 						else if (sim.equals("transient-markov-chain-analysis")) {
 							if (!sg.getStop()) {
 								log.addText("Performing transient Markov chain analysis with uniformization.\n");
+								logFile.write("Performing transient Markov chain analysis with uniformization.\n\n");
 								PerfromTransientMarkovAnalysisThread performMarkovAnalysis = new PerfromTransientMarkovAnalysisThread(
 										sg, progress);
 								time1 = System.nanoTime();
@@ -1139,16 +1158,19 @@ public class Run implements ActionListener {
 											Runtime execGraph = Runtime.getRuntime();
 											if (System.getProperty("os.name").contentEquals("Linux")) {
 												log.addText("Executing:\ndotty " + graphFile + "\n");
+												logFile.write("Executing:\ndotty " + graphFile + "\n\n");
 												execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
 														+ "_sg.dot", null, new File(directory));
 											}
 											else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
 												log.addText("Executing:\nopen " + graphFile + "\n");
+												logFile.write("Executing:\nopen " + graphFile + "\n\n");
 												execGraph.exec("open " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
 														+ "_sg.dot", null, new File(directory));
 											}
 											else {
 												log.addText("Executing:\ndotty " + graphFile + "\n");
+												logFile.write("Executing:\ndotty " + graphFile + "\n\n");
 												execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
 														+ "_sg.dot", null, new File(directory));
 											}
@@ -1210,7 +1232,7 @@ public class Run implements ActionListener {
 								((Graph) simTab.getComponentAt(index)));
 						exitValue = 0;
 						new File(directory + separator + "running").delete();
-						log.closeLogFile();
+						logFile.close();
 						return exitValue;
 					}
 					else if (sim.equals("SSA-CR")) {
@@ -1230,7 +1252,7 @@ public class Run implements ActionListener {
 								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab);						
 						exitValue = 0;
 						new File(directory + separator + "running").delete();
-						log.closeLogFile();
+						logFile.close();
 						return exitValue;
 					}
 					else if (sim.equals("SSA-Direct (Java)")) {
@@ -1249,7 +1271,7 @@ public class Run implements ActionListener {
 								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab);						
 						exitValue = 0;
 						new File(directory + separator + "running").delete();
-						log.closeLogFile();
+						logFile.close();
 						return exitValue;
 					}
 					else if (sim.equals("SSA-Direct")) {
@@ -1268,7 +1290,7 @@ public class Run implements ActionListener {
 								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab);						
 						exitValue = 0;
 						new File(directory + separator + "running").delete();
-						log.closeLogFile();
+						logFile.close();
 						return exitValue;
 					}
 					else if (sim.equals("rkf45 (Java)")) {
@@ -1284,13 +1306,14 @@ public class Run implements ActionListener {
 								stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab);				
 						exitValue = 0;
 						new File(directory + separator + "running").delete();
-						log.closeLogFile();
+						logFile.close();
 						return exitValue;
 					}
 					else if (biosimrc.get("biosim.sim.command", "").equals("")) {
 						
 						time1 = System.nanoTime();
 						log.addText("Executing:\nreb2sac --target.encoding=" + sim + " " + filename + "\n");
+						logFile.write("Executing:\nreb2sac --target.encoding=" + sim + " " + filename + "\n\n");
 						
 						double stoichAmpValue = 
 							Double.parseDouble(properties.getProperty(
@@ -1307,6 +1330,7 @@ public class Run implements ActionListener {
 						command = command.replaceAll("filename", fileStem);
 						command = command.replaceAll("sim", sim);
 						log.addText(command + "\n");
+						logFile.write(command + "\n\n");
 						time1 = System.nanoTime();
 						
 						double stoichAmpValue = 
@@ -1438,8 +1462,10 @@ public class Run implements ActionListener {
 			}
 			if (!error.equals("")) {
 				log.addText("Errors:\n" + error + "\n");
+				logFile.write("Errors:\n" + error + "\n\n");
 			}
 			log.addText("Total Simulation Time: " + time + " for " + simName + "\n\n");
+			logFile.write("Total Simulation Time: " + time + " for " + simName + "\n\n\n");
 			if (exitValue != 0) {
 				if (exitValue == 143) {
 					JOptionPane.showMessageDialog(Gui.frame, "The simulation was" + " canceled by the user.",
@@ -1492,28 +1518,34 @@ public class Run implements ActionListener {
 				else if (dot.isSelected()) {
 					if (System.getProperty("os.name").contentEquals("Linux")) {
 						log.addText("Executing:\ndotty " + directory + out + ".dot" + "\n");
+						logFile.write("Executing:\ndotty " + directory + out + ".dot" + "\n\n");
 						exec.exec("dotty " + out + ".dot", null, work);
 					}
 					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
 						log.addText("Executing:\nopen " + directory + out + ".dot\n");
+						logFile.write("Executing:\nopen " + directory + out + ".dot\n\n");
 						exec.exec("open " + out + ".dot", null, work);
 					}
 					else {
 						log.addText("Executing:\ndotty " + directory + out + ".dot" + "\n");
+						logFile.write("Executing:\ndotty " + directory + out + ".dot" + "\n\n");
 						exec.exec("dotty " + out + ".dot", null, work);
 					}
 				}
 				else if (xhtml.isSelected()) {
 					if (System.getProperty("os.name").contentEquals("Linux")) {
 						log.addText("Executing:\ngnome-open " + directory + out + ".xhtml" + "\n");
+						logFile.write("Executing:\ngnome-open " + directory + out + ".xhtml" + "\n\n");
 						exec.exec("gnome-open " + out + ".xhtml", null, work);
 					}
 					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
 						log.addText("Executing:\nopen " + directory + out + ".xhtml" + "\n");
+						logFile.write("Executing:\nopen " + directory + out + ".xhtml" + "\n\n");
 						exec.exec("open " + out + ".xhtml", null, work);
 					}
 					else {
 						log.addText("Executing:\ncmd /c start " + directory + out + ".xhtml" + "\n");
+						logFile.write("Executing:\ncmd /c start " + directory + out + ".xhtml" + "\n\n");
 						exec.exec("cmd /c start " + out + ".xhtml", null, work);
 					}
 				}
@@ -1521,6 +1553,9 @@ public class Run implements ActionListener {
 					log.addText("Executing:\natacs -T0.000001 -oqoflhsgllvA "
 							+ filename.substring(0, filename.length()
 									- filename.split(separator)[filename.split(separator).length - 1].length()) + "out.hse\n");
+					logFile.write("Executing:\natacs -T0.000001 -oqoflhsgllvA "
+							+ filename.substring(0, filename.length()
+									- filename.split(separator)[filename.split(separator).length - 1].length()) + "out.hse\n\n");
 					exec.exec("atacs -T0.000001 -oqoflhsgllvA out.hse", null, work);
 					if (refresh) {
 						for (int i = 0; i < simTab.getComponentCount(); i++) {
@@ -1582,7 +1617,7 @@ public class Run implements ActionListener {
 										((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
 									}
 									new File(directory + separator + "running").delete();
-									log.closeLogFile();
+									logFile.close();
 									if (outputTerm) {
 										ArrayList<String> dataLabels = new ArrayList<String>();
 										dataLabels.add("time");
@@ -1693,7 +1728,7 @@ public class Run implements ActionListener {
 										((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
 									}
 									new File(directory + separator + "running").delete();
-									log.closeLogFile();
+									logFile.close();
 									if (outputTerm) {
 										ArrayList<String> dataLabels = new ArrayList<String>();
 										dataLabels.add("time");
@@ -1822,7 +1857,7 @@ public class Run implements ActionListener {
 										((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
 									}
 									new File(directory + separator + "running").delete();
-									log.closeLogFile();
+									logFile.close();
 									if (outputTerm) {
 										ArrayList<String> dataLabels = new ArrayList<String>();
 										dataLabels.add("time");
@@ -1933,7 +1968,7 @@ public class Run implements ActionListener {
 										((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
 									}
 									new File(directory + separator + "running").delete();
-									log.closeLogFile();
+									logFile.close();
 									if (outputTerm) {
 										ArrayList<String> dataLabels = new ArrayList<String>();
 										dataLabels.add("time");
@@ -2034,7 +2069,7 @@ public class Run implements ActionListener {
 			}
 			// }
 			new File(directory + separator + "running").delete();
-			log.closeLogFile();
+			logFile.close();
 		}
 		catch (InterruptedException e1) {
 			JOptionPane.showMessageDialog(Gui.frame, "Error In Execution!", "Error In Execution", JOptionPane.ERROR_MESSAGE);
