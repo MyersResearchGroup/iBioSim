@@ -496,6 +496,7 @@ public class Run implements ActionListener {
 			}
 			File work = new File(directory);
 			new FileWriter(new File(directory + separator + "running")).close();
+			log.setLogFile(directory + separator + "log.txt");
 			Properties properties = new Properties();
 			properties.load(new FileInputStream(directory + separator + 
 					theFile.replace(".xml","") + ".properties"));
@@ -561,6 +562,7 @@ public class Run implements ActionListener {
 				prop = mutProp.getString();
 				if (lpnFile == null) {
 					new File(directory + separator + "running").delete();
+					log.closeLogFile();
 					return 0;
 				}
 				lpnFile.save(root + separator + simName + separator + lpnName);
@@ -609,6 +611,7 @@ public class Run implements ActionListener {
 						}
 						else {
 							new File(directory + separator + "running").delete();
+							log.closeLogFile();
 							return 0;
 						}
 					}
@@ -630,6 +633,7 @@ public class Run implements ActionListener {
 						t1.setFilename(root + separator + sbmlName);
 						t1.outputSBML();
 						exitValue = 0;
+						log.closeLogFile();
 						return exitValue;
 					}
 					else if (gcmEditor != null && nary.isSelected()) {
@@ -687,6 +691,7 @@ public class Run implements ActionListener {
 							prop = mutProp.getString();
 							if (lpnFile == null) {
 								new File(directory + separator + "running").delete();
+								log.closeLogFile();
 								return 0;
 							}
 							lpnFile.save(root + separator + simName + separator + lpnName);
@@ -708,6 +713,7 @@ public class Run implements ActionListener {
 						else {
 							time1 = System.nanoTime();
 							new File(directory + separator + "running").delete();
+							log.closeLogFile();
 							return 0;
 						}
 						exitValue = 0;
@@ -769,6 +775,7 @@ public class Run implements ActionListener {
 						}
 						else {
 							new File(directory + separator + "running").delete();
+							log.closeLogFile();
 							return 0;
 						}
 					}
@@ -785,6 +792,7 @@ public class Run implements ActionListener {
 						}
 						time1 = System.nanoTime();
 						exitValue = 0;
+						log.closeLogFile();
 						return exitValue;
 					}
 					else {
@@ -841,6 +849,7 @@ public class Run implements ActionListener {
 							prop = mutProp.getString();
 							if (lhpnFile == null) {
 								new File(directory + separator + "running").delete();
+								log.closeLogFile();
 								return 0;
 							}
 							lhpnFile.save(root + separator + lhpnName);
@@ -848,6 +857,7 @@ public class Run implements ActionListener {
 						}
 						else {
 							new File(directory + separator + "running").delete();
+							log.closeLogFile();
 							return 0;
 						}
 						exitValue = 0;
@@ -966,6 +976,7 @@ public class Run implements ActionListener {
 							prop = mutProp.getString();
 							if (lhpnFile == null) {
 								new File(directory + separator + "running").delete();
+								log.closeLogFile();
 								return 0;
 							}
 							lhpnFile.save(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn");
@@ -974,6 +985,7 @@ public class Run implements ActionListener {
 						}
 						else {
 							new File(directory + separator + "running").delete();
+							log.closeLogFile();
 							return 0;
 						}
 					}
@@ -1198,6 +1210,7 @@ public class Run implements ActionListener {
 								((Graph) simTab.getComponentAt(index)));
 						exitValue = 0;
 						new File(directory + separator + "running").delete();
+						log.closeLogFile();
 						return exitValue;
 					}
 					else if (sim.equals("SSA-CR")) {
@@ -1217,6 +1230,7 @@ public class Run implements ActionListener {
 								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab);						
 						exitValue = 0;
 						new File(directory + separator + "running").delete();
+						log.closeLogFile();
 						return exitValue;
 					}
 					else if (sim.equals("SSA-Direct (Java)")) {
@@ -1235,6 +1249,7 @@ public class Run implements ActionListener {
 								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab);						
 						exitValue = 0;
 						new File(directory + separator + "running").delete();
+						log.closeLogFile();
 						return exitValue;
 					}
 					else if (sim.equals("SSA-Direct")) {
@@ -1253,6 +1268,7 @@ public class Run implements ActionListener {
 								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab);						
 						exitValue = 0;
 						new File(directory + separator + "running").delete();
+						log.closeLogFile();
 						return exitValue;
 					}
 					else if (sim.equals("rkf45 (Java)")) {
@@ -1268,6 +1284,7 @@ public class Run implements ActionListener {
 								stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab);				
 						exitValue = 0;
 						new File(directory + separator + "running").delete();
+						log.closeLogFile();
 						return exitValue;
 					}
 					else if (biosimrc.get("biosim.sim.command", "").equals("")) {
@@ -1565,6 +1582,7 @@ public class Run implements ActionListener {
 										((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
 									}
 									new File(directory + separator + "running").delete();
+									log.closeLogFile();
 									if (outputTerm) {
 										ArrayList<String> dataLabels = new ArrayList<String>();
 										dataLabels.add("time");
@@ -1675,6 +1693,7 @@ public class Run implements ActionListener {
 										((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
 									}
 									new File(directory + separator + "running").delete();
+									log.closeLogFile();
 									if (outputTerm) {
 										ArrayList<String> dataLabels = new ArrayList<String>();
 										dataLabels.add("time");
@@ -1803,6 +1822,7 @@ public class Run implements ActionListener {
 										((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
 									}
 									new File(directory + separator + "running").delete();
+									log.closeLogFile();
 									if (outputTerm) {
 										ArrayList<String> dataLabels = new ArrayList<String>();
 										dataLabels.add("time");
@@ -1913,6 +1933,7 @@ public class Run implements ActionListener {
 										((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
 									}
 									new File(directory + separator + "running").delete();
+									log.closeLogFile();
 									if (outputTerm) {
 										ArrayList<String> dataLabels = new ArrayList<String>();
 										dataLabels.add("time");
@@ -2013,6 +2034,7 @@ public class Run implements ActionListener {
 			}
 			// }
 			new File(directory + separator + "running").delete();
+			log.closeLogFile();
 		}
 		catch (InterruptedException e1) {
 			JOptionPane.showMessageDialog(Gui.frame, "Error In Execution!", "Error In Execution", JOptionPane.ERROR_MESSAGE);
