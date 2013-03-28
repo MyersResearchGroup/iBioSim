@@ -50,6 +50,7 @@ public class StateGraph {
     protected List<Constraint> frontierConstraintSet = new LinkedList<Constraint>();
     protected Set<Constraint> constraintSet = new HashSet<Constraint>();
     protected LhpnFile lpn;
+    protected static Set<Entry<Transition, State>> emptySet = new HashSet<Entry<Transition, State>>(0);
     
     public StateGraph(LhpnFile lpn) {
     	this.lpn = lpn;   	
@@ -480,13 +481,13 @@ public class StateGraph {
         return curEnabled;
     }
     
-    private void printEnabledSetTbl() {
-    	System.out.println("******* enabledSetTbl**********");
-    	for (State s : enabledSetTbl.keySet()) {
-    		System.out.print("S" + s.getIndex() + " -> ");
-    		printTransitionSet(enabledSetTbl.get(s), "");
-    	}	
-	}
+//    private void printEnabledSetTbl() {
+//    	System.out.println("******* enabledSetTbl**********");
+//    	for (State s : enabledSetTbl.keySet()) {
+//    		System.out.print("S" + s.getIndex() + " -> ");
+//    		printTransitionSet(enabledSetTbl.get(s), "");
+//    	}	
+//	}
     
     public boolean isEnabled(Transition tran, State curState) {	   	
 			int[] varValuesVector = curState.getVector();
@@ -596,7 +597,6 @@ public class StateGraph {
     	return nextMap.get(firedTran);
     }
     
-    private static Set<Entry<Transition, State>> emptySet = new HashSet<Entry<Transition, State>>(0);
     public Set<Entry<Transition, State>> getOutgoingTrans(State currentState){
     	HashMap<Transition, State> tranMap = this.nextStateMap.get(currentState);
     	if(tranMap == null){
@@ -634,7 +634,7 @@ public class StateGraph {
     	int[] initialVector = new int[size];
     	for(int i = 0; i < size; i++) {
     		String var = this.lpn.getVarIndexMap().getKey(i);
-    		int val = this.lpn.getInitVector(var);// this.initVector.get(var);
+    		int val = this.lpn.getInitVector(var);
     		initialVector[i] = val;
     	}
 		return new State(this.lpn, this.lpn.getInitialMarkingsArray(), initialVector, this.lpn.getInitEnabledTranArray(initialVector));
@@ -1245,7 +1245,7 @@ public class StateGraph {
 		}
 	}
 
-	private String intArrayToString(String type, State curState) {
+	protected String intArrayToString(String type, State curState) {
 		String arrayStr = "";
 		if (type.equals("markings")) {
 			for (int i=0; i< curState.getMarking().length; i++) {
@@ -1270,7 +1270,7 @@ public class StateGraph {
 		return arrayStr;
 	}
 	
-	private String boolArrayToString(String type, State curState) {
+	protected String boolArrayToString(String type, State curState) {
 		String arrayStr = "";
 		if (type.equals("enabledTrans")) {
 			for (int i=0; i< curState.getTranVector().length; i++) {
