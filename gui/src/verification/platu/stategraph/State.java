@@ -1,14 +1,20 @@
 package verification.platu.stategraph;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Set;
 
 import lpn.parser.LhpnFile;
-import lpn.parser.Transition;
-
 import verification.platu.common.PlatuObj;
 import verification.platu.lpn.DualHashMap;
-import verification.platu.lpn.LPN;
 import verification.platu.lpn.LpnTranList;
 import verification.platu.lpn.VarSet;
 import verification.timed_state_exploration.zone.TimedState;
@@ -25,7 +31,7 @@ public class State extends PlatuObj {
     protected int[] vector;
     protected boolean[] tranVector; // indicator vector to record whether each transition is enabled or not. 
     private int hashVal = 0;
-    private LhpnFile lpn = null;
+    protected LhpnFile lpn = null;
     private int index;
     private boolean localEnabledOnly;
     protected boolean failure = false;
