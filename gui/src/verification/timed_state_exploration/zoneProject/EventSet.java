@@ -34,6 +34,8 @@ public class EventSet extends Transition implements Iterable<Event>{
 	 * Exactly one of the fields '_transition' or '_inequalities' should be non-null.
 	 * Testing for null is how this class determines whether it represents a 
 	 * Transition or a set of inequalities. Both variables can be null in which
+	 * case the EventSet can be changed to either mode by storing something in 
+	 * the _transition or _inequalities (but not both) variables.
 	 */
 	
 	// A variable indicating whether we are a transition or a set of inequalities
@@ -277,8 +279,23 @@ public class EventSet extends Transition implements Iterable<Event>{
 		return toString();
 	}
 	
+
 	/**
-	 * This method disables (ha ha) the disablingError.
+	 * Determines if the EventSet represents a transition that is a failure 
+	 * transition.
+	 * @return
+	 * 		True if this EventSet is storing a failure transition; false otherwise.
+	 */
+	public boolean isFail() {
+		
+		// If this eventSet represents a transition to fire, then check if the
+		// Transition is a failure transition. Otherwise return false.
+		
+		return _transition != null && _transition.isFail();
+	}
+	
+	/**
+	 * This method disables (ha ha) the disablingError. It needs to be finished.
 	 */
 	public Transition disablingError(final LinkedList<Transition> current_enabled_transitions,
 			LinkedList<Transition> next_enabled_transitions) {
