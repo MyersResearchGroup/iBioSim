@@ -82,31 +82,31 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	private static final long serialVersionUID = -5806315070287184299L;
 
 	private JButton save, run, viewCircuit, viewTrace, viewLog, addComponent,
-			removeComponent, addSFile, addLPN, removeLPN;
+	removeComponent, addSFile, addLPN, removeLPN;
 
 	private JLabel algorithm, timingMethod, timingOptions, otherOptions,
-			otherOptions2, compilation, bddSizeLabel, advTiming, abstractLabel,
-			listLabel;
+	otherOptions2, compilation, bddSizeLabel, advTiming, abstractLabel,
+	listLabel;
 
 	public JRadioButton untimed, geometric, posets, bag, bap, baptdc, verify,
-			vergate, orbits, search, trace, bdd, dbm, smt, untimedStateSearch, lhpn, view, none,
-			simplify, abstractLhpn, dbm2, splitZone;
+	vergate, orbits, search, trace, bdd, dbm, smt, untimedStateSearch, lhpn, view, none,
+	simplify, abstractLhpn, dbm2, splitZone;
 
 	private JCheckBox abst, partialOrder, dot, verbose, graph, untimedPOR, decomposeLPN, multipleLPNs, genrg,
-			timsubset, superset, infopt, orbmatch, interleav, prune, disabling,
-			nofail, noproj, keepgoing, explpn, nochecks, reduction, newTab,
-			postProc, redCheck, xForm2, expandRate, useGraphs;
+	timsubset, superset, infopt, orbmatch, interleav, prune, disabling,
+	nofail, noproj, keepgoing, explpn, nochecks, reduction, newTab,
+	postProc, redCheck, xForm2, expandRate, useGraphs;
 
 	private JTextField bddSize, backgroundField, componentField;
-	
+
 	private JList sList;
-	
+
 	private DefaultListModel sListModel;
 
 	private ButtonGroup timingMethodGroup, algorithmGroup, abstractionGroup;
 
 	private String directory, separator, root, verFile, oldBdd,
-			sourceFileNoPath;
+	sourceFileNoPath;
 
 	public String verifyFile;
 
@@ -325,7 +325,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				componentList, addComponent, removeComponent, null);
 		constraints.gridx = 0;
 		constraints.gridy = 1;
-		
+
 		// LPN List
 		addLPN = new JButton("Add LPN");
 		removeLPN = new JButton("Remove LPN");
@@ -988,10 +988,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				} else if (new File(directory + separator + filename).exists()
 						|| filename.equals(sourceFileNoPath) || contains) {
 					JOptionPane
-							.showMessageDialog(
-									Gui.frame,
-									"This component is already contained in this tool.",
-									"Error", JOptionPane.ERROR_MESSAGE);
+					.showMessageDialog(
+							Gui.frame,
+							"This component is already contained in this tool.",
+							"Error", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				componentList.addItem(filename);
@@ -1050,10 +1050,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						} else if (new File(directory + separator + filename).exists()
 								|| filename.equals(sourceFileNoPath) || contains) {
 							JOptionPane
-									.showMessageDialog(
-											Gui.frame,
-											"This lpn is already contained in this tool.",
-											"Error", JOptionPane.ERROR_MESSAGE);
+							.showMessageDialog(
+									Gui.frame,
+									"This lpn is already contained in this tool.",
+									"Error", JOptionPane.ERROR_MESSAGE);
 							return;
 						}
 						lpnList.addItem(filename);
@@ -1071,15 +1071,15 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		}
 	}
 
-//	private void printAllProcesses(HashMap<Transition, Integer> allProcessTrans) {		
-//		System.out.println("~~~~~~~~~~Begin~~~~~~~~~");
-//		Set<Transition> allTransitions = allProcessTrans.keySet();
-//		for (Iterator<Transition> allTransIter = allTransitions.iterator(); allTransIter.hasNext();) {
-//			Transition curTran = allTransIter.next();			
-//			System.out.println(curTran.getName() + "\t" + allProcessTrans.get(curTran));
-//		}
-//		System.out.println("~~~~~~~~~~End~~~~~~~~~");
-//	}
+	//	private void printAllProcesses(HashMap<Transition, Integer> allProcessTrans) {		
+	//		System.out.println("~~~~~~~~~~Begin~~~~~~~~~");
+	//		Set<Transition> allTransitions = allProcessTrans.keySet();
+	//		for (Iterator<Transition> allTransIter = allTransitions.iterator(); allTransIter.hasNext();) {
+	//			Transition curTran = allTransIter.next();			
+	//			System.out.println(curTran.getName() + "\t" + allProcessTrans.get(curTran));
+	//		}
+	//		System.out.println("~~~~~~~~~~End~~~~~~~~~");
+	//	}
 
 	@SuppressWarnings("unchecked")
 	public void run() {
@@ -1097,146 +1097,159 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			LhpnFile lpn = new LhpnFile();
 			lpn.load(directory + separator + lpnFileName);
 			Options.setLogName(lpn.getLabel());
+			for (String t: lpn.getTransitionList()) {
+				if (lpn.isExpTransitionRateTree(t)) {
+					Options.setProbabilisticLPNflag();
+					break;
+				}					
+			}
 			if (!decomposeLPN.isSelected()) {
 				ArrayList<LhpnFile> selectedLPNs = new ArrayList<LhpnFile>();
 				selectedLPNs.add(lpn);
 				for (int i=0; i < lpnList.getSelectedValues().length; i++) {
-					 String curLPNname = (String) lpnList.getSelectedValues()[i];
-					 LhpnFile curLPN = new LhpnFile();
-					 curLPN.load(directory + separator + curLPNname);
-					 selectedLPNs.add(curLPN);
+					String curLPNname = (String) lpnList.getSelectedValues()[i];
+					LhpnFile curLPN = new LhpnFile();
+					curLPN.load(directory + separator + curLPNname);
+					selectedLPNs.add(curLPN);
+					if (!Options.getProbabilisticLPNflag())
+						for (String t: curLPN.getTransitionList()) {
+							if (curLPN.isExpTransitionRateTree(t)) {
+								Options.setProbabilisticLPNflag();
+								break;
+							}					
+						}
 				}
-//				System.out.println("====== LPN loading order (default) ========");
-//				for (int i=0; i<selectedLPNs.size(); i++) {
-//					System.out.println(selectedLPNs.get(i).getLabel());
-//				}
-				
-////=============== Code to produce a GUI for rearranging the order of loading LPNs into the Project constructor ================			
-//				System.out.println("====== LPN loading order (manipulated) ========");
-//				ArrayList<LhpnFile> selectedLPNsManipulated = new ArrayList<LhpnFile>(selectedLPNs.size());
-//				System.out.println("size = " + selectedLPNsManipulated.size());
-//				String[] LPNlabels = new String[selectedLPNs.size()];
-//				for (int i=0; i<selectedLPNs.size(); i++) {
-//					LPNlabels[i] = selectedLPNs.get(i).getLabel();
-//					System.out.println(i + " " + LPNlabels[i]);
-//				}
-//				System.out.println("selected index");
-//				for (int i=0; i<selectedLPNs.size(); i++) {
-//					JList LpnLoadingOrderList = new JList(LPNlabels);
-//					LpnLoadingOrderList.setVisibleRowCount(10);				
-//					JScrollPane ampleMethdsPane = new JScrollPane(LpnLoadingOrderList);
-//					JPanel mainPanel0 = new JPanel(new BorderLayout());
-//					mainPanel0.add("North", new JLabel("Select a LPN:"));
-//					mainPanel0.add("Center", ampleMethdsPane);							
-//					Object[] options0 = {"Select", "Cancel"};
-//					int optionRtVal0 = JOptionPane.showOptionDialog(Gui.frame, mainPanel0, "LPN order manipulation", 
-//							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options0, options0[0]);
-//					if (optionRtVal0 == 1)  // Cancel					
-//						return;
-//					System.out.println(LpnLoadingOrderList.getSelectedIndex() + " " + selectedLPNs.get(LpnLoadingOrderList.getSelectedIndex()).getLabel());
-//					selectedLPNsManipulated.add(selectedLPNs.get(LpnLoadingOrderList.getSelectedIndex()));
-//				}			
-//				//Project untimed_dfs = new Project(selectedLPNsManipulated);
+				//				System.out.println("====== LPN loading order (default) ========");
+				//				for (int i=0; i<selectedLPNs.size(); i++) {
+				//					System.out.println(selectedLPNs.get(i).getLabel());
+				//				}
+
+				////=============== Code to produce a GUI for rearranging the order of loading LPNs into the Project constructor ================			
+				//				System.out.println("====== LPN loading order (manipulated) ========");
+				//				ArrayList<LhpnFile> selectedLPNsManipulated = new ArrayList<LhpnFile>(selectedLPNs.size());
+				//				System.out.println("size = " + selectedLPNsManipulated.size());
+				//				String[] LPNlabels = new String[selectedLPNs.size()];
+				//				for (int i=0; i<selectedLPNs.size(); i++) {
+				//					LPNlabels[i] = selectedLPNs.get(i).getLabel();
+				//					System.out.println(i + " " + LPNlabels[i]);
+				//				}
+				//				System.out.println("selected index");
+				//				for (int i=0; i<selectedLPNs.size(); i++) {
+				//					JList LpnLoadingOrderList = new JList(LPNlabels);
+				//					LpnLoadingOrderList.setVisibleRowCount(10);				
+				//					JScrollPane ampleMethdsPane = new JScrollPane(LpnLoadingOrderList);
+				//					JPanel mainPanel0 = new JPanel(new BorderLayout());
+				//					mainPanel0.add("North", new JLabel("Select a LPN:"));
+				//					mainPanel0.add("Center", ampleMethdsPane);							
+				//					Object[] options0 = {"Select", "Cancel"};
+				//					int optionRtVal0 = JOptionPane.showOptionDialog(Gui.frame, mainPanel0, "LPN order manipulation", 
+				//							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options0, options0[0]);
+				//					if (optionRtVal0 == 1)  // Cancel					
+				//						return;
+				//					System.out.println(LpnLoadingOrderList.getSelectedIndex() + " " + selectedLPNs.get(LpnLoadingOrderList.getSelectedIndex()).getLabel());
+				//					selectedLPNsManipulated.add(selectedLPNs.get(LpnLoadingOrderList.getSelectedIndex()));
+				//				}			
+				//				//Project untimed_dfs = new Project(selectedLPNsManipulated);
 				Project untimed_dfs = new Project(selectedLPNs);				
-				
+
 				// ------- Debugging Messages Settings ------------
 				// Options for printing out intermediate results during POR
-//				Options.setDebugMode(true);
-//				if (Options.getDebugMode())
-//					System.out.println("Debug mode is ON.");
+				//				Options.setDebugMode(true);
+				//				if (Options.getDebugMode())
+				//					System.out.println("Debug mode is ON.");
 				Options.setDebugMode(false);
 				//----------- POR and Cycle Closing Methods (FULL)--------------
-//				if (untimedPOR.isSelected()) {
-//					// Options for using trace-back in ample calculation
-//					String[] ampleMethds = {"Use trace-back for ample computation", "No trace-back for ample computation"};
-//					JList ampleMethdsList = new JList(ampleMethds);
-//					ampleMethdsList.setVisibleRowCount(2);
-//					//cycleClosingList.addListSelectionListener(new ValueReporter());
-//					JScrollPane ampleMethdsPane = new JScrollPane(ampleMethdsList);
-//					JPanel mainPanel0 = new JPanel(new BorderLayout());
-//					mainPanel0.add("North", new JLabel("Select an ample set computation method:"));
-//					mainPanel0.add("Center", ampleMethdsPane);							
-//					Object[] options0 = {"Run", "Cancel"};
-//					int optionRtVal0 = JOptionPane.showOptionDialog(Gui.frame, mainPanel0, "Ample set computation methods selection", 
-//								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options0, options0[0]);
-//					if (optionRtVal0 == 1) {
-//						// Cancel
-//						return;
-//					}
-//					int ampleMethdsIndex = ampleMethdsList.getSelectedIndex();
-//					if (ampleMethdsIndex == 0) 
-//						Options.setPOR("tb");
-//					if (ampleMethdsIndex == 1)
-//						Options.setPOR("tboff");					
-//					// GUI for different cycle closing methods.
-//					String[] entries = {"Use behavioral analysis",
-//										"Use behavioral analysis and state trace-back",
-//										"No cycle closing",
-//										"Strong cycle condition"};
-//					JList cycleClosingList = new JList(entries);
-//					cycleClosingList.setVisibleRowCount(4);
-//					//cycleClosingList.addListSelectionListener(new ValueReporter());
-//					JScrollPane cycleClosingPane = new JScrollPane(cycleClosingList);
-//					JPanel mainPanel = new JPanel(new BorderLayout());
-//					mainPanel.add("North", new JLabel("Select a cycle closing method:"));
-//					mainPanel.add("Center", cycleClosingPane);							
-//					Object[] options = {"Run", "Cancel"};
-//					int optionRtVal = JOptionPane.showOptionDialog(Gui.frame, mainPanel, "Cycle closing methods selection", 
-//								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-//					if (optionRtVal == 1) {
-//						// Cancel
-//						return;
-//					}
-//					int cycleClosingMthdIndex = cycleClosingList.getSelectedIndex();
-//					if (cycleClosingMthdIndex == 0) {
-//						Options.setCycleClosingMthd("behavioral");
-//						if (Options.getPOR().equals("tb")) {
-//							String[] cycleClosingAmpleMethds = {"Use trace-back", "No trace-back"};
-//							JList cycleClosingAmpleList = new JList(cycleClosingAmpleMethds);
-//							cycleClosingAmpleList.setVisibleRowCount(2);
-//							JScrollPane cycleClosingAmpleMethdsPane = new JScrollPane(cycleClosingAmpleList);
-//							JPanel mainPanel1 = new JPanel(new BorderLayout());
-//							mainPanel1.add("North", new JLabel("Select a cycle closing ample computation method:"));
-//							mainPanel1.add("Center", cycleClosingAmpleMethdsPane);							
-//							Object[] options1 = {"Run", "Cancel"};
-//							int optionRtVal1 = JOptionPane.showOptionDialog(Gui.frame, mainPanel1, "Cycle closing ample computation method selection", 
-//										JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options1, options1[0]);
-//							if (optionRtVal1 == 1) {
-//								// Cancel
-//								return;
-//							}
-//							int cycleClosingAmpleMethdIndex = cycleClosingAmpleList.getSelectedIndex();
-//							if (cycleClosingAmpleMethdIndex == 0) 
-//								Options.setCycleClosingAmpleMethd("cctb");
-//							if (cycleClosingAmpleMethdIndex == 1)
-//								Options.setCycleClosingAmpleMethd("cctboff");
-//						}
-//						else if (Options.getPOR().equals("tboff")) {
-//							Options.setCycleClosingAmpleMethd("cctboff");
-//						}
-//					}						
-//					else if (cycleClosingMthdIndex == 1) 
-//						Options.setCycleClosingMthd("state_search");
-//					else if (cycleClosingMthdIndex == 2)
-//						Options.setCycleClosingMthd("no_cycleclosing");
-//					else if (cycleClosingMthdIndex == 3)
-//						Options.setCycleClosingMthd("strong");
-//					if (dot.isSelected()) {
-//						Options.setOutputSgFlag(true);
-//					}
-//					Options.setPrjSgPath(directory + separator);
-//					// Options for printing the final numbers from search_dfs or search_dfsPOR. 
-//					Options.setOutputLogFlag(true);
-////					Options.setPrintLogToFile(false);
-//					StateGraph[] stateGraphArray = untimed_dfs.searchPOR();
-//					if (dot.isSelected()) {
-//						for (int i=0; i<stateGraphArray.length; i++) {
-//							String graphFileName = stateGraphArray[i].getLpn().getLabel() + "POR_"+ Options.getCycleClosingMthd() + "_local_sg.dot";
-//							stateGraphArray[i].outputLocalStateGraph(directory + separator + graphFileName);
-//						}
-//						// Code for producing global state graph is in search_dfsPOR in the Analysis class.						
-//					}
-//				}
+				//				if (untimedPOR.isSelected()) {
+				//					// Options for using trace-back in ample calculation
+				//					String[] ampleMethds = {"Use trace-back for ample computation", "No trace-back for ample computation"};
+				//					JList ampleMethdsList = new JList(ampleMethds);
+				//					ampleMethdsList.setVisibleRowCount(2);
+				//					//cycleClosingList.addListSelectionListener(new ValueReporter());
+				//					JScrollPane ampleMethdsPane = new JScrollPane(ampleMethdsList);
+				//					JPanel mainPanel0 = new JPanel(new BorderLayout());
+				//					mainPanel0.add("North", new JLabel("Select an ample set computation method:"));
+				//					mainPanel0.add("Center", ampleMethdsPane);							
+				//					Object[] options0 = {"Run", "Cancel"};
+				//					int optionRtVal0 = JOptionPane.showOptionDialog(Gui.frame, mainPanel0, "Ample set computation methods selection", 
+				//								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options0, options0[0]);
+				//					if (optionRtVal0 == 1) {
+				//						// Cancel
+				//						return;
+				//					}
+				//					int ampleMethdsIndex = ampleMethdsList.getSelectedIndex();
+				//					if (ampleMethdsIndex == 0) 
+				//						Options.setPOR("tb");
+				//					if (ampleMethdsIndex == 1)
+				//						Options.setPOR("tboff");					
+				//					// GUI for different cycle closing methods.
+				//					String[] entries = {"Use behavioral analysis",
+				//										"Use behavioral analysis and state trace-back",
+				//										"No cycle closing",
+				//										"Strong cycle condition"};
+				//					JList cycleClosingList = new JList(entries);
+				//					cycleClosingList.setVisibleRowCount(4);
+				//					//cycleClosingList.addListSelectionListener(new ValueReporter());
+				//					JScrollPane cycleClosingPane = new JScrollPane(cycleClosingList);
+				//					JPanel mainPanel = new JPanel(new BorderLayout());
+				//					mainPanel.add("North", new JLabel("Select a cycle closing method:"));
+				//					mainPanel.add("Center", cycleClosingPane);							
+				//					Object[] options = {"Run", "Cancel"};
+				//					int optionRtVal = JOptionPane.showOptionDialog(Gui.frame, mainPanel, "Cycle closing methods selection", 
+				//								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				//					if (optionRtVal == 1) {
+				//						// Cancel
+				//						return;
+				//					}
+				//					int cycleClosingMthdIndex = cycleClosingList.getSelectedIndex();
+				//					if (cycleClosingMthdIndex == 0) {
+				//						Options.setCycleClosingMthd("behavioral");
+				//						if (Options.getPOR().equals("tb")) {
+				//							String[] cycleClosingAmpleMethds = {"Use trace-back", "No trace-back"};
+				//							JList cycleClosingAmpleList = new JList(cycleClosingAmpleMethds);
+				//							cycleClosingAmpleList.setVisibleRowCount(2);
+				//							JScrollPane cycleClosingAmpleMethdsPane = new JScrollPane(cycleClosingAmpleList);
+				//							JPanel mainPanel1 = new JPanel(new BorderLayout());
+				//							mainPanel1.add("North", new JLabel("Select a cycle closing ample computation method:"));
+				//							mainPanel1.add("Center", cycleClosingAmpleMethdsPane);							
+				//							Object[] options1 = {"Run", "Cancel"};
+				//							int optionRtVal1 = JOptionPane.showOptionDialog(Gui.frame, mainPanel1, "Cycle closing ample computation method selection", 
+				//										JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options1, options1[0]);
+				//							if (optionRtVal1 == 1) {
+				//								// Cancel
+				//								return;
+				//							}
+				//							int cycleClosingAmpleMethdIndex = cycleClosingAmpleList.getSelectedIndex();
+				//							if (cycleClosingAmpleMethdIndex == 0) 
+				//								Options.setCycleClosingAmpleMethd("cctb");
+				//							if (cycleClosingAmpleMethdIndex == 1)
+				//								Options.setCycleClosingAmpleMethd("cctboff");
+				//						}
+				//						else if (Options.getPOR().equals("tboff")) {
+				//							Options.setCycleClosingAmpleMethd("cctboff");
+				//						}
+				//					}						
+				//					else if (cycleClosingMthdIndex == 1) 
+				//						Options.setCycleClosingMthd("state_search");
+				//					else if (cycleClosingMthdIndex == 2)
+				//						Options.setCycleClosingMthd("no_cycleclosing");
+				//					else if (cycleClosingMthdIndex == 3)
+				//						Options.setCycleClosingMthd("strong");
+				//					if (dot.isSelected()) {
+				//						Options.setOutputSgFlag(true);
+				//					}
+				//					Options.setPrjSgPath(directory + separator);
+				//					// Options for printing the final numbers from search_dfs or search_dfsPOR. 
+				//					Options.setOutputLogFlag(true);
+				////					Options.setPrintLogToFile(false);
+				//					StateGraph[] stateGraphArray = untimed_dfs.searchPOR();
+				//					if (dot.isSelected()) {
+				//						for (int i=0; i<stateGraphArray.length; i++) {
+				//							String graphFileName = stateGraphArray[i].getLpn().getLabel() + "POR_"+ Options.getCycleClosingMthd() + "_local_sg.dot";
+				//							stateGraphArray[i].outputLocalStateGraph(directory + separator + graphFileName);
+				//						}
+				//						// Code for producing global state graph is in search_dfsPOR in the Analysis class.						
+				//					}
+				//				}
 				// -------------------------------------				
 				//----------- POR and Cycle Closing Methods (Simplified)--------------
 				if (untimedPOR.isSelected()) {
@@ -1251,7 +1264,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					mainPanel0.add("Center", ampleMethdsPane);							
 					Object[] options0 = {"Run", "Cancel"};
 					int optionRtVal0 = JOptionPane.showOptionDialog(Gui.frame, mainPanel0, "Ample set computation methods selection", 
-								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options0, options0[0]);
+							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options0, options0[0]);
 					if (optionRtVal0 == 1) {
 						// Cancel
 						return;
@@ -1274,40 +1287,40 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						Options.setCycleClosingAmpleMethd("cctboff");
 					}
 					// Choose different cycle closing methods
-//					int cycleClosingMthdIndex = cycleClosingList.getSelectedIndex();
-//					if (cycleClosingMthdIndex == 0) {
-//						Options.setCycleClosingMthd("behavioral");
-//						if (Options.getPOR().equals("tb")) {
-//							String[] cycleClosingAmpleMethds = {"Use trace-back", "No trace-back"};
-//							JList cycleClosingAmpleList = new JList(cycleClosingAmpleMethds);
-//							cycleClosingAmpleList.setVisibleRowCount(2);
-//							JScrollPane cycleClosingAmpleMethdsPane = new JScrollPane(cycleClosingAmpleList);
-//							JPanel mainPanel1 = new JPanel(new BorderLayout());
-//							mainPanel1.add("North", new JLabel("Select a cycle closing ample computation method:"));
-//							mainPanel1.add("Center", cycleClosingAmpleMethdsPane);							
-//							Object[] options1 = {"Run", "Cancel"};
-//							int optionRtVal1 = JOptionPane.showOptionDialog(Gui.frame, mainPanel1, "Cycle closing ample computation method selection", 
-//										JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options1, options1[0]);
-//							if (optionRtVal1 == 1) {
-//								// Cancel
-//								return;
-//							}
-//							int cycleClosingAmpleMethdIndex = cycleClosingAmpleList.getSelectedIndex();
-//							if (cycleClosingAmpleMethdIndex == 0) 
-//								Options.setCycleClosingAmpleMethd("cctb");
-//							if (cycleClosingAmpleMethdIndex == 1)
-//								Options.setCycleClosingAmpleMethd("cctboff");
-//						}
-//						else if (Options.getPOR().equals("tboff")) {
-//							Options.setCycleClosingAmpleMethd("cctboff");
-//						}
-//					}						
-//					else if (cycleClosingMthdIndex == 1) 
-//						Options.setCycleClosingMthd("state_search");
-//					else if (cycleClosingMthdIndex == 2)
-//						Options.setCycleClosingMthd("no_cycleclosing");
-//					else if (cycleClosingMthdIndex == 3)
-//						Options.setCycleClosingMthd("strong");
+					//					int cycleClosingMthdIndex = cycleClosingList.getSelectedIndex();
+					//					if (cycleClosingMthdIndex == 0) {
+					//						Options.setCycleClosingMthd("behavioral");
+					//						if (Options.getPOR().equals("tb")) {
+					//							String[] cycleClosingAmpleMethds = {"Use trace-back", "No trace-back"};
+					//							JList cycleClosingAmpleList = new JList(cycleClosingAmpleMethds);
+					//							cycleClosingAmpleList.setVisibleRowCount(2);
+					//							JScrollPane cycleClosingAmpleMethdsPane = new JScrollPane(cycleClosingAmpleList);
+					//							JPanel mainPanel1 = new JPanel(new BorderLayout());
+					//							mainPanel1.add("North", new JLabel("Select a cycle closing ample computation method:"));
+					//							mainPanel1.add("Center", cycleClosingAmpleMethdsPane);							
+					//							Object[] options1 = {"Run", "Cancel"};
+					//							int optionRtVal1 = JOptionPane.showOptionDialog(Gui.frame, mainPanel1, "Cycle closing ample computation method selection", 
+					//										JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options1, options1[0]);
+					//							if (optionRtVal1 == 1) {
+					//								// Cancel
+					//								return;
+					//							}
+					//							int cycleClosingAmpleMethdIndex = cycleClosingAmpleList.getSelectedIndex();
+					//							if (cycleClosingAmpleMethdIndex == 0) 
+					//								Options.setCycleClosingAmpleMethd("cctb");
+					//							if (cycleClosingAmpleMethdIndex == 1)
+					//								Options.setCycleClosingAmpleMethd("cctboff");
+					//						}
+					//						else if (Options.getPOR().equals("tboff")) {
+					//							Options.setCycleClosingAmpleMethd("cctboff");
+					//						}
+					//					}						
+					//					else if (cycleClosingMthdIndex == 1) 
+					//						Options.setCycleClosingMthd("state_search");
+					//					else if (cycleClosingMthdIndex == 2)
+					//						Options.setCycleClosingMthd("no_cycleclosing");
+					//					else if (cycleClosingMthdIndex == 3)
+					//						Options.setCycleClosingMthd("strong");
 
 					if (dot.isSelected()) {
 						Options.setOutputSgFlag(true);
@@ -1315,7 +1328,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					Options.setPrjSgPath(directory + separator);
 					// Options for printing the final numbers from search_dfs or search_dfsPOR. 
 					Options.setOutputLogFlag(true);
-//					Options.setPrintLogToFile(false);
+					//					Options.setPrintLogToFile(false);
 					StateGraph[] stateGraphArray = untimed_dfs.search_por_traceback();
 					if (stateGraphArray != null)
 						if (dot.isSelected()) {
@@ -1330,7 +1343,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					Options.setPrjSgPath(directory + separator);
 					// Options for printing the final numbers from search_dfs or search_dfsPOR. 
 					Options.setOutputLogFlag(true);
-//					Options.setPrintLogToFile(false);
+					//					Options.setPrintLogToFile(false);
 					if (dot.isSelected()) 
 						Options.setOutputSgFlag(true);
 					StateGraph[] stateGraphArray = untimed_dfs.search();
@@ -1347,13 +1360,13 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			}
 			else if (!untimedPOR.isSelected() && !multipleLPNs.isSelected() && decomposeLPN.isSelected() 
 					&& verbose.isSelected() && lpnList.getSelectedValue() == null) {
-				 HashMap<Transition, Integer> allProcessTrans = new HashMap<Transition, Integer>();
-				 // create an Abstraction object to get all processes in one LPN
-				 Abstraction abs = lpn.abstractLhpn(this);
-				 abs.decomposeLpnIntoProcesses();				 
-				 allProcessTrans.putAll((HashMap<Transition, Integer>)abs.getTransWithProcIDs().clone());
-				 HashMap<Integer, LpnProcess> processMap = new HashMap<Integer, LpnProcess>();
-				 for (Transition curTran: allProcessTrans.keySet()) {
+				HashMap<Transition, Integer> allProcessTrans = new HashMap<Transition, Integer>();
+				// create an Abstraction object to get all processes in one LPN
+				Abstraction abs = lpn.abstractLhpn(this);
+				abs.decomposeLpnIntoProcesses();				 
+				allProcessTrans.putAll((HashMap<Transition, Integer>)abs.getTransWithProcIDs().clone());
+				HashMap<Integer, LpnProcess> processMap = new HashMap<Integer, LpnProcess>();
+				for (Transition curTran: allProcessTrans.keySet()) {
 					Integer procId = allProcessTrans.get(curTran);
 					if (!processMap.containsKey(procId)) {
 						LpnProcess newProcess = new LpnProcess(procId);
@@ -1400,7 +1413,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 							if (!processOutput.contains(abs.getVariable(curRead)))
 								processOutput.add(abs.getVariable(curRead));
 						}
-						
+
 					}
 					else if (allProcessRead.get(curRead).size() > 1 || allProcessWrite.get(curRead).size() > 1) {
 						ArrayList<Integer> readList = allProcessRead.get(curRead);
@@ -1419,7 +1432,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 							Integer curProcessID = readList.get(i);
 							ArrayList<Variable> processInput = processMap.get(curProcessID).getProcessInput();
 							if (!processInput.contains(abs.getVariable(curRead)))
-									processInput.add(abs.getVariable(curRead));
+								processInput.add(abs.getVariable(curRead));
 						}
 					}
 					else if (allProcessWrite.get(curRead).size() == 0) {
@@ -1471,7 +1484,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				mainPanel0.add("Center", decompMethdsPane);							
 				Object[] options0 = {"Run", "Cancel"};
 				int optionRtVal0 = JOptionPane.showOptionDialog(Gui.frame, mainPanel0, "LPN decomposition methods selection", 
-							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options0, options0[0]);
+						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options0, options0[0]);
 				if (optionRtVal0 == 1) {
 					// Cancel
 					return;
@@ -1534,10 +1547,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					mainPanel.add("North", new JLabel("number of variables in this LPN: " + lpn.getVariables().length));
 					mainPanel.add("Center", new JLabel("number of variables in the smallest process: " + leastNumVarsInOneProcess));
 					mainPanel.add("South", maxVarsPanel);
-					
+
 					Object[] options = {"Run", "Cancel"};
 					int optionRtVal = JOptionPane.showOptionDialog(Gui.frame, mainPanel, "Assign the maximal number of variables in one component", 
-								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 					if (optionRtVal == 1) {
 						// Cancel
 						return;
@@ -1579,7 +1592,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				return;
 			}
 		}
-			
+
 		long time1 = System.nanoTime();
 		File work = new File(directory);
 		/*
@@ -1595,10 +1608,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						"Error with preprocessing.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 				//e.printStackTrace();
-				
+
 			}
 		}
-		*/
+		 */
 		try {
 			if (verifyFile.endsWith(".lpn")) {
 				Runtime.getRuntime().exec("atacs -llsl " + verifyFile, null,
@@ -1628,105 +1641,105 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
-			
+
 			return;
 		}
-		
+
 		/**
 		 * If the splitZone option (labeled "Split Zone") is selected,
 		 * run the timed analysis.
 		 */
 		if(splitZone.isSelected())
 		{
-			
+
 			// Version prior to adding zones to the project states.
 			// Uses the timed_state_exploration.zone infrastructure.
-//			if(multipleLPNs.isSelected())
-//			{
-//				
-//			}
-//			else
-//			{
-//				LhpnFile lpn = new LhpnFile();
-//				lpn.load(directory + separator + lpnFileName);
-//
-//				// The full state graph is created for only one LPN.
-//
-//				/**
-//				 * This is what selects the timing analysis.
-//				 * The method setTimingAnalysisType sets a static variable
-//				 * in the Options class that is queried by the search method.
-//				 */
-//				Options.setTimingAnalsysisType("zone");
-//
-//				ZoneType.setSubsetFlag(!timsubset.isSelected());
-//				ZoneType.setSupersetFlag(!superset.isSelected());
-//
-//				Project_Timed timedStateSearch = new Project_Timed(lpn, 
-//						Options.getTimingAnalysisFlag(), false);
-//				if(useGraphs.isSelected()){
-//					timedStateSearch = new Project_Timed(lpn, 
-//							Options.getTimingAnalysisFlag(), true);
-//				}
-//				StateGraph_timed[] stateGraphArray = timedStateSearch.search();
-//				String graphFileName = verifyFile.replace(".lpn", "") + "_sg.dot";
-//				if (stateGraphArray.length > 1) {
-//					JOptionPane.showMessageDialog(
-//							Gui.frame,
-//							"Mutiple state graphs should not be produced.",
-//							"Error", JOptionPane.ERROR_MESSAGE);		
-//
-//				}
-//				else {
-//					if (dot.isSelected()) {
-//						stateGraphArray[0].outputLocalStateGraph(directory + separator + graphFileName);  
-//					}
-//					if(graph.isSelected()){
-//						showGraph(directory + separator + graphFileName);
-//					}
-//				}
-//			
-//				Options.setTimingAnalsysisType("off");
-//				Zone.clearLexicon();
-//			}
-//			return;
-			
-			
+			//			if(multipleLPNs.isSelected())
+			//			{
+			//				
+			//			}
+			//			else
+			//			{
+			//				LhpnFile lpn = new LhpnFile();
+			//				lpn.load(directory + separator + lpnFileName);
+			//
+			//				// The full state graph is created for only one LPN.
+			//
+			//				/**
+			//				 * This is what selects the timing analysis.
+			//				 * The method setTimingAnalysisType sets a static variable
+			//				 * in the Options class that is queried by the search method.
+			//				 */
+			//				Options.setTimingAnalsysisType("zone");
+			//
+			//				ZoneType.setSubsetFlag(!timsubset.isSelected());
+			//				ZoneType.setSupersetFlag(!superset.isSelected());
+			//
+			//				Project_Timed timedStateSearch = new Project_Timed(lpn, 
+			//						Options.getTimingAnalysisFlag(), false);
+			//				if(useGraphs.isSelected()){
+			//					timedStateSearch = new Project_Timed(lpn, 
+			//							Options.getTimingAnalysisFlag(), true);
+			//				}
+			//				StateGraph_timed[] stateGraphArray = timedStateSearch.search();
+			//				String graphFileName = verifyFile.replace(".lpn", "") + "_sg.dot";
+			//				if (stateGraphArray.length > 1) {
+			//					JOptionPane.showMessageDialog(
+			//							Gui.frame,
+			//							"Mutiple state graphs should not be produced.",
+			//							"Error", JOptionPane.ERROR_MESSAGE);		
+			//
+			//				}
+			//				else {
+			//					if (dot.isSelected()) {
+			//						stateGraphArray[0].outputLocalStateGraph(directory + separator + graphFileName);  
+			//					}
+			//					if(graph.isSelected()){
+			//						showGraph(directory + separator + graphFileName);
+			//					}
+			//				}
+			//			
+			//				Options.setTimingAnalsysisType("off");
+			//				Zone.clearLexicon();
+			//			}
+			//			return;
+
+
 			// This is the code before the revision for allowing multiple LPNs
-//			// Uses the timed_state_exploration.zoneProject infrastructure.
-//			LhpnFile lpn = new LhpnFile();
-//			lpn.load(directory + separator + lpnFileName);
-//
-//			// The full state graph is created for only one LPN.
-//			
-//			/**
-//			 * This is what selects the timing analysis.
-//			 * The method setTimingAnalysisType sets a static variable
-//			 * in the Options class that is queried by the search method.
-//			 */
-//			Options.setTimingAnalsysisType("zone");
-//
-//			ZoneType.setSubsetFlag(!timsubset.isSelected());
-//			ZoneType.setSupersetFlag(!superset.isSelected());
-//			
-//			Project timedStateSearch = new Project(lpn);
-//			
-//			StateGraph[] stateGraphArray = timedStateSearch.search();
-//			String graphFileName = verifyFile.replace(".lpn", "") + "_sg.dot";
-//			
-//			if (dot.isSelected()) {
-//				stateGraphArray[0].outputLocalStateGraph(directory + separator + graphFileName);  
-//			}
-//			
-//			if(graph.isSelected()){
-//				showGraph(directory + separator + graphFileName);
-//			}
-//		
-//			Options.setTimingAnalsysisType("off");
-//			Zone.clearLexicon();
-//			
-//			return;
-			
+			//			// Uses the timed_state_exploration.zoneProject infrastructure.
+			//			LhpnFile lpn = new LhpnFile();
+			//			lpn.load(directory + separator + lpnFileName);
+			//
+			//			// The full state graph is created for only one LPN.
+			//			
+			//			/**
+			//			 * This is what selects the timing analysis.
+			//			 * The method setTimingAnalysisType sets a static variable
+			//			 * in the Options class that is queried by the search method.
+			//			 */
+			//			Options.setTimingAnalsysisType("zone");
+			//
+			//			ZoneType.setSubsetFlag(!timsubset.isSelected());
+			//			ZoneType.setSupersetFlag(!superset.isSelected());
+			//			
+			//			Project timedStateSearch = new Project(lpn);
+			//			
+			//			StateGraph[] stateGraphArray = timedStateSearch.search();
+			//			String graphFileName = verifyFile.replace(".lpn", "") + "_sg.dot";
+			//			
+			//			if (dot.isSelected()) {
+			//				stateGraphArray[0].outputLocalStateGraph(directory + separator + graphFileName);  
+			//			}
+			//			
+			//			if(graph.isSelected()){
+			//				showGraph(directory + separator + graphFileName);
+			//			}
+			//		
+			//			Options.setTimingAnalsysisType("off");
+			//			Zone.clearLexicon();
+			//			
+			//			return;
+
 			// Uses the timed_state_exploration.zoneProject infrastructure.
 			LhpnFile lpn = new LhpnFile();
 			lpn.load(directory + separator + lpnFileName);
@@ -1735,22 +1748,22 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			ArrayList<LhpnFile> selectedLPNs = new ArrayList<LhpnFile>();
 			// Add the current LPN to the list.
 			selectedLPNs.add(lpn);
-//			for (int i=0; i < lpnList.getSelectedValues().length; i++) {
-//				 String curLPNname = (String) lpnList.getSelectedValues()[i];
-//				 LhpnFile curLPN = new LhpnFile();
-//				 curLPN.load(directory + separator + curLPNname);
-//				 selectedLPNs.add(curLPN);
-//			}
-			
+			//			for (int i=0; i < lpnList.getSelectedValues().length; i++) {
+			//				 String curLPNname = (String) lpnList.getSelectedValues()[i];
+			//				 LhpnFile curLPN = new LhpnFile();
+			//				 curLPN.load(directory + separator + curLPNname);
+			//				 selectedLPNs.add(curLPN);
+			//			}
+
 			String[] guiLPNList = lpnList.getItems();
 			for (int i=0; i < guiLPNList.length; i++) {
-				 String curLPNname = guiLPNList[i];
-				 LhpnFile curLPN = new LhpnFile();
-				 curLPN.load(directory + separator + curLPNname);
-				 selectedLPNs.add(curLPN);
+				String curLPNname = guiLPNList[i];
+				LhpnFile curLPN = new LhpnFile();
+				curLPN.load(directory + separator + curLPNname);
+				selectedLPNs.add(curLPN);
 			}
-			
-			
+
+
 			// Extract boolean variables from continuous variable inequalities.
 			for(int i=0; i<selectedLPNs.size(); i++){
 				selectedLPNs.get(i).parseBooleanInequalities();
@@ -1765,22 +1778,22 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 
 			Zone.setSubsetFlag(!timsubset.isSelected());
 			Zone.setSupersetFlag(!superset.isSelected());
-			
+
 			Project timedStateSearch = new Project(selectedLPNs);
-			
+
 			StateGraph[] stateGraphArray = timedStateSearch.search();
 			String graphFileName = verifyFile.replace(".lpn", "") + "_sg.dot";
-			
+
 			if (dot.isSelected()) {
 				stateGraphArray[0].outputLocalStateGraph(directory + separator + graphFileName);  
 			}
-			
+
 			if(graph.isSelected()){
 				showGraph(directory + separator + graphFileName);
 			}
-		
+
 			Options.setTimingAnalsysisType("off");
-			
+
 			return;
 
 		}
@@ -1790,13 +1803,13 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					"Enter Filename", JOptionPane.PLAIN_MESSAGE);
 			if (abstFilename != null) {
 				if (!abstFilename.endsWith(".lpn")) {
-				while (abstFilename.contains("\\.")) {
-					abstFilename = (String) JOptionPane.showInputDialog(this,
-							"Please enter a valid file name for the abstracted LPN.",
-							"Invalid Filename", JOptionPane.PLAIN_MESSAGE);
+					while (abstFilename.contains("\\.")) {
+						abstFilename = (String) JOptionPane.showInputDialog(this,
+								"Please enter a valid file name for the abstracted LPN.",
+								"Invalid Filename", JOptionPane.PLAIN_MESSAGE);
+					}
+					abstFilename = abstFilename + ".lpn";
 				}
-				abstFilename = abstFilename + ".lpn";
-			}
 			}
 		} else {
 			abstFilename = lpnFileName.replace(".lpn", "_abs.lpn");
@@ -1807,7 +1820,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			String[] contVars = lhpnFile.getContVars();
 			String[] intVars = lhpnFile.getIntVars();
 			String[] variables = new String[boolVars.length + contVars.length
-					+ intVars.length];
+			                                + intVars.length];
 			int k = 0;
 			for (int j = 0; j < contVars.length; j++) {
 				variables[k] = contVars[j];
@@ -1920,7 +1933,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 							JOptionPane.ERROR_MESSAGE);
 				}
 			}
-			
+
 			String options = "";
 			// BDD Linkspace Size
 			if (!bddSize.getText().equals("") && !bddSize.getText().equals("0")) {
@@ -2430,8 +2443,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					prop.setProperty("verification.timing.methods", "untimed");
 				} else if (geometric.isSelected()) {
 					prop
-							.setProperty("verification.timing.methods",
-									"geometric");
+					.setProperty("verification.timing.methods",
+							"geometric");
 				} else if (posets.isSelected()) {
 					prop.setProperty("verification.timing.methods", "posets");
 				} else if (bag.isSelected()) {
@@ -2535,8 +2548,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				prop.setProperty("verification.compilation.expandRate", "true");
 			} else {
 				prop
-						.setProperty("verification.compilation.expandRate",
-								"false");
+				.setProperty("verification.compilation.expandRate",
+						"false");
 			}
 			if (genrg.isSelected()) {
 				prop.setProperty("verification.timing.genrg", "true");
@@ -2808,8 +2821,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			}
 		} catch (Exception e1) {
 			JOptionPane
-					.showMessageDialog(Gui.frame, "Unable to view trace.",
-							"Error", JOptionPane.ERROR_MESSAGE);
+			.showMessageDialog(Gui.frame, "Unable to view trace.",
+					"Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -2937,34 +2950,34 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	public void showGraph(String fileName)
 	{
 		File file = new File(fileName);
-		
+
 		File work = file.getParentFile();
 		try {
 			Runtime exec = Runtime.getRuntime();
 			if (new File(fileName).exists()) {
-				
+
 				long kB = 1024;	// number of bytes in a kilobyte.
-				
+
 				long fileSize = file.length()/kB; // Size of file in megabytes.
-				
+
 				// If the file is larger than a given amount of megabytes,
 				// then give the user the chance to cancel the operation.
-				
+
 				int thresholdSize = 100;	// Specifies the threshold for giving the
-										// user the option to not attempt to open the file.
+				// user the option to not attempt to open the file.
 				if(fileSize > thresholdSize)
 				{
 					int answer = JOptionPane.showConfirmDialog(Gui.frame,
 							"The size of the file exceeds " + thresholdSize + " kB."
-							+ "The file may not open. Do you want to continue?", 
-							"Do you want to continue?", JOptionPane.YES_NO_OPTION);
-					
+									+ "The file may not open. Do you want to continue?", 
+									"Do you want to continue?", JOptionPane.YES_NO_OPTION);
+
 					if(answer == JOptionPane.NO_OPTION)
 					{
 						return;
 					}
 				}
-				
+
 				String command;
 				if (System.getProperty("os.name")
 						.contentEquals("Linux")) {
