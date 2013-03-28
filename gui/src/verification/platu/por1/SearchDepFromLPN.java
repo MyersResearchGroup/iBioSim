@@ -12,7 +12,7 @@ import verification.platu.stategraph.StateGraph;
 
 /**
  * in this approach, we consider 7 conditions for dependent transition
- * Seperate the interleaving transition and dependent transition.
+ * Separate the interleaving transition and dependent transition.
  * @author Administrator
  *
  */
@@ -105,7 +105,7 @@ public class SearchDepFromLPN {
     }
 	/**
 	 * flag 0 : represent independent
-	 * flag 1:  represent calsality
+	 * flag 1:  represent causality
 	 * flag 2: represent interleaving 
 	 * @param t1
 	 * @param t2
