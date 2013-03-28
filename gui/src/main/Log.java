@@ -1,6 +1,10 @@
 package main;
 
 import java.awt.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import javax.swing.*;
 
 public class Log extends JPanel {
@@ -11,6 +15,8 @@ public class Log extends JPanel {
 	private static final long serialVersionUID = -5114950687877373374L;
 
 	private JTextArea logArea; // log text area
+	
+	private FileWriter logFile;
 
 	private JScrollPane scroll;
 
@@ -29,5 +35,21 @@ public class Log extends JPanel {
 		logArea.append(text + "\n");
 		logArea.setSelectionStart(logArea.getText().length());
 		logArea.setSelectionEnd(logArea.getText().length());
+		if (logFile != null) {
+			try {
+				logFile.write(text + "\n");
+			}
+			catch (Exception e) {
+			}
+		}
+	}
+	
+	public void setLogFile(String filename) throws IOException {
+		logFile = new FileWriter(new File(filename));
+	}
+	
+	public void closeLogFile() throws IOException {
+		logFile.close();
+		logFile = null;
 	}
 }
