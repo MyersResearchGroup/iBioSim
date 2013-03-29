@@ -173,6 +173,7 @@ public class SBMLutilities {
 					|| splitLaw[i].equals("leq") || splitLaw[i].equals("gt") || splitLaw[i].equals("neq") || splitLaw[i].equals("lt")
 					|| splitLaw[i].equals("delay") || splitLaw[i].equals("t") || splitLaw[i].equals("time") || splitLaw[i].equals("true")
 					|| splitLaw[i].equals("false") || splitLaw[i].equals("pi") || splitLaw[i].equals("exponentiale")
+					|| splitLaw[i].equals("infinity") || splitLaw[i].equals("notanumber")
 					|| ((document.getLevel() > 2) && (splitLaw[i].equals("avogadro")))) {
 			}
 			else {
