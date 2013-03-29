@@ -2182,7 +2182,6 @@ public abstract class Simulator {
 				Point parentLocation = componentToLocationMap.get(compartmentID);
 				Point childLocation = (Point) parentLocation.clone();
 				moveComponent(compartmentID, "", new Point(), childLocation, direction, reactionsToAdjust);
-				
 				updatePropensities(reactionsToAdjust);
 				updateAfterDynamicChanges();
 			}
