@@ -300,12 +300,12 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			tempPanel.add(specInteresting);
 			thresholdTextField = new JTextField(thresholdText);
 			
-			if (!bioModel.isInput(selected) &&
+			/*if (!bioModel.isInput(selected) &&
 					(modelEditor.getBioModel().getBiochemicalSpecies() != null &&
-					!modelEditor.getBioModel().getBiochemicalSpecies().contains(selected))) {
-				tempPanel.add(thresholdTextField);
-				specInteresting.setText("Mark as Interesting (Enter comma-separated thresholds)");
-			}
+					!modelEditor.getBioModel().getBiochemicalSpecies().contains(selected))) { */
+			tempPanel.add(thresholdTextField);
+			specInteresting.setText("Mark as Interesting (Enter comma-separated thresholds)");
+			//}
 			
 			grid.add(tempPanel);
 		}		
