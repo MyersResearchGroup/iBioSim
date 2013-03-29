@@ -2615,8 +2615,10 @@ public class Schematic extends JPanel implements ActionListener {
 							
 							for (String intSpecies : modelEditor.getReb2Sac().getInterestingSpeciesAsArrayList()) {
 								
-								if (intSpecies.split(" ")[0].equals(checkbox.getKey()))
+								if (intSpecies.split(" ")[0].equals(checkbox.getKey())) {
 									modelEditor.getReb2Sac().removeInterestingSpecies(intSpecies);
+									break;
+								}
 							}
 							
 							if (copyIntSpecies.isSelected()) {
@@ -2629,8 +2631,10 @@ public class Schematic extends JPanel implements ActionListener {
 										
 										for (String intSpecies : modelEditor.getReb2Sac().getInterestingSpeciesAsArrayList()) {
 											
-											if (intSpecies.split(" ")[0].equals(newID))
+											if (intSpecies.split(" ")[0].equals(newID)) {
 												modelEditor.getReb2Sac().removeInterestingSpecies(intSpecies);
+												break;
+											}
 										}
 									}
 								}
