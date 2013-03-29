@@ -1317,6 +1317,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				plot.setRangeAxis(rangeAxis);
 				LogY.setSelected(false);
 			}
+		} else {
+			NumberAxis rangeAxis = new NumberAxis(chart.getXYPlot().getRangeAxis().getLabel());
+			plot.setRangeAxis(rangeAxis);
 		}
 		if (visibleLegend.isSelected()) {
 			if (chart.getLegend() == null) {
@@ -1356,9 +1359,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				JOptionPane.showMessageDialog(Gui.frame, "Log plots are not allowed with data\nvalues less than or equal to zero.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 				NumberAxis domainAxis = new NumberAxis(chart.getXYPlot().getDomainAxis().getLabel());
-				plot.setRangeAxis(domainAxis);
+				plot.setDomainAxis(domainAxis);
 				LogX.setSelected(false);
 			}
+		} else {
+			NumberAxis domainAxis = new NumberAxis(chart.getXYPlot().getDomainAxis().getLabel());
+			plot.setDomainAxis(domainAxis);
 		}
 	}
 
@@ -1599,8 +1605,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		final JLabel yScale = new JLabel("Y-Step:");
 		LogX.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				XYPlot plot = (XYPlot) chart.getXYPlot();
 				if (((JCheckBox) e.getSource()).isSelected()) {
-					XYPlot plot = (XYPlot) chart.getXYPlot();
 					try {
 						LogarithmicAxis domainAxis = new LogarithmicAxis(chart.getXYPlot().getDomainAxis().getLabel());
 						domainAxis.setStrictValuesFlag(false);
@@ -1610,16 +1616,19 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						JOptionPane.showMessageDialog(Gui.frame, "Log plots are not allowed with data\nvalues less than or equal to zero.", "Error",
 								JOptionPane.ERROR_MESSAGE);
 						NumberAxis domainAxis = new NumberAxis(chart.getXYPlot().getDomainAxis().getLabel());
-						plot.setRangeAxis(domainAxis);
+						plot.setDomainAxis(domainAxis);
 						LogX.setSelected(false);
 					}
+				} else {
+					NumberAxis domainAxis = new NumberAxis(chart.getXYPlot().getDomainAxis().getLabel());
+					plot.setDomainAxis(domainAxis);
 				}
 			}
 		});
 		LogY.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				XYPlot plot = (XYPlot) chart.getXYPlot();
 				if (((JCheckBox) e.getSource()).isSelected()) {
-					XYPlot plot = (XYPlot) chart.getXYPlot();
 					try {
 						LogarithmicAxis rangeAxis = new LogarithmicAxis(chart.getXYPlot().getRangeAxis().getLabel());
 						rangeAxis.setStrictValuesFlag(false);
@@ -1632,6 +1641,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						plot.setRangeAxis(rangeAxis);
 						LogY.setSelected(false);
 					}
+				} else {
+					NumberAxis rangeAxis = new NumberAxis(chart.getXYPlot().getRangeAxis().getLabel());
+					plot.setRangeAxis(rangeAxis);
 				}
 			}
 		});
