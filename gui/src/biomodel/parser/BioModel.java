@@ -163,11 +163,19 @@ public class BioModel {
 		if (!lema) {
 			Compartment c = m.createCompartment();
 			if (grid) {
-				c.setId("Grid");
+				if (!modelId.equals("Grid")) {
+					c.setId("Grid");
+				} else {
+					c.setId("GridComp");
+				}
 				loadDefaultParameters();
 				//createDiffusionDefaultParameters();
 			} else {
-				c.setId("Cell");
+				if (!modelId.equals("Cell")) {
+					c.setId("Cell");
+				} else {
+					c.setId("CellComp");
+				}
 				Port port = sbmlCompModel.createPort();
 				port.setId(GlobalConstants.COMPARTMENT+"__"+c.getId());
 				port.setIdRef(c.getId());
