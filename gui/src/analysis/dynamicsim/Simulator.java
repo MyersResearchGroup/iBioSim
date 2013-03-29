@@ -527,7 +527,9 @@ public abstract class Simulator {
 		//DUPLICATE VARIABLES and alter them to coincide with the new ID
 		
 		HashSet<String> childComponentVariableSet = new HashSet<String>();
-		
+		if (componentToVariableSetMap.containsKey(parentComponentID) == false)
+			componentToVariableSetMap.put(parentComponentID, new HashSet<String>());
+
 		for (String parentVariableID : componentToVariableSetMap.get(parentComponentID)) {
 			
 			String childVariableID = parentVariableID.replace(parentComponentID, childComponentID);
@@ -608,6 +610,8 @@ public abstract class Simulator {
 		//DUPLICATE REACTIONS and alter them to coincide with the new ID
 		
 		HashSet<String> childReactionSet = new HashSet<String>();
+		if (componentToReactionSetMap.containsKey(parentComponentID) == false)
+			componentToReactionSetMap.put(parentComponentID, new HashSet<String>());
 		
 		for (String parentReactionID : componentToReactionSetMap.get(parentComponentID)) {
 			
@@ -665,6 +669,8 @@ public abstract class Simulator {
 			reactionToReactantStoichiometrySetMap.put(childReactionID, new HashSet<StringDoublePair>());
 			
 			boolean notEnoughMoleculesFlag = false;
+			if (reactionToSpeciesAndStoichiometrySetMap.containsKey(parentReactionID) == false)
+				reactionToSpeciesAndStoichiometrySetMap.put(parentReactionID, new HashSet<StringDoublePair>());
 			
 			//add species/stoichiometry pairs for this new reaction
 			for (StringDoublePair parentSpeciesAndStoichiometry : reactionToSpeciesAndStoichiometrySetMap.get(parentReactionID)) {
@@ -697,6 +703,9 @@ public abstract class Simulator {
 					notEnoughMoleculesFlag = true;
 			}
 			
+			if (reactionToReactantStoichiometrySetMap.containsKey(parentReactionID) == false)
+				reactionToReactantStoichiometrySetMap.put(parentReactionID, new HashSet<StringDoublePair>());
+
 			//add reactant/stoichiometry pairs for this new reactions
 			for (StringDoublePair parentReactantAndStoichiometry : reactionToReactantStoichiometrySetMap.get(parentReactionID)) {
 				
@@ -753,6 +762,8 @@ public abstract class Simulator {
 		//DUPLICATE EVENTS
 		
 		HashSet<String> childEventSet = new HashSet<String>();
+		if (componentToEventSetMap.containsKey(parentComponentID) == false)
+			componentToEventSetMap.put(parentComponentID, new HashSet<String>());
 		
 		for (String parentEventID : componentToEventSetMap.get(parentComponentID)) {
 			
