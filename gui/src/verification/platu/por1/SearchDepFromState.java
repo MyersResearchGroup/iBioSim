@@ -84,11 +84,9 @@ public class SearchDepFromState {
 	{
 		lpnTranRelation.findCompositionalDependencies();
 		//get individual dependent
-		// TODO: (future) Need to fix this.
-		initialDepTrans = null; //lpnTranRelation.getDependentTrans();
+		initialDepTrans = lpnTranRelation.getDependentTrans();
 		//get interleaving
-		// TODO: (future) Need to fix this.
-		initialInterleavingTrans = null;// lpnTranRelation.getInterleavingTrans();
+		initialInterleavingTrans = lpnTranRelation.getInterleavingTrans();
 		this.setInterleavingSet(initialInterleavingTrans);
 		
 //		System.out.println("print original depTranSet");
