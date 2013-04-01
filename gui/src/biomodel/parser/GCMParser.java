@@ -14,6 +14,7 @@ import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.SpeciesReference;
 
+import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.network.BaseSpecies;
 import biomodel.network.DiffusibleConstitutiveSpecies;
 import biomodel.network.DiffusibleSpecies;
