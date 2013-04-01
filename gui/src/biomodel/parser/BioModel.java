@@ -5161,6 +5161,7 @@ public class BioModel {
 			r.setCompartment(sbml.getModel().getCompartment(0).getId());
 			r.setReversible(false);
 			r.setFast(false);
+			r.setSBOTerm(GlobalConstants.SBO_DEGRADATION);
 			
 			XMLAttributes attr = new XMLAttributes();
 			attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
@@ -5227,7 +5228,11 @@ public class BioModel {
 		
 		for (Species newSpecies : newGridSpecies) {
 			
-			createGridDegradationReaction(newSpecies, compModel);
+			if (getDegradationReaction(newSpecies.getId()) == null &&
+					getDegradationReaction(newSpecies.getId(), compModel) != null) {
+				createGridDegradationReaction(newSpecies, compModel);
+			}
+			if (sbml.getModel().getReaction("Diffusion_"+newSpecies.getId()+"_Above")!=null) continue;
 			
 			String speciesID = newSpecies.getId();
 			

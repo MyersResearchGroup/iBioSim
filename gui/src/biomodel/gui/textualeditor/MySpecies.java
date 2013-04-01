@@ -1135,20 +1135,29 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		if (e.getClickCount() == 2) {
 			if (e.getSource() == species) {
 				//speciesEditor("OK");
-				if (species.getSelectedIndex() == -1) {
-					JOptionPane.showMessageDialog(Gui.frame, "No species selected.", "Must Select A Species", JOptionPane.ERROR_MESSAGE);
-					return;
+				if (bioModel.getSBMLDocument().getModel().getSpecies(((String)species.getModel().getElementAt(0)).split(" ")[0])
+						.getAnnotation() != null &&						
+						bioModel.getSBMLDocument().getModel().getSpecies(((String)species.getModel().getElementAt(0)).split(" ")[0])
+						.getAnnotationString().contains("type=\"grid\"")) {
+					
+					openGridSpeciesEditor();
 				}
-				String id = ((String) species.getSelectedValue()).split(" ")[0];
-				if (BioModel.isPromoterSpecies(bioModel.getSBMLDocument().getModel().getSpecies(id))) {
-					modelEditor.launchPromoterPanel(id);
-				} else {
-					modelEditor.launchSpeciesPanel(id, false);
+				else {
+					if (species.getSelectedIndex() == -1) {
+						JOptionPane.showMessageDialog(Gui.frame, "No species selected.", "Must Select A Species", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					String id = ((String) species.getSelectedValue()).split(" ")[0];
+					if (BioModel.isPromoterSpecies(bioModel.getSBMLDocument().getModel().getSpecies(id))) {
+						modelEditor.launchPromoterPanel(id);
+					} else {
+						modelEditor.launchSpeciesPanel(id, false);
+					}
+					reactionsPanel.refreshReactionPanel(bioModel);
+					initialsPanel.refreshInitialAssignmentPanel(bioModel);
+					rulesPanel.refreshRulesPanel();
+					parametersPanel.refreshParameterPanel(bioModel);
 				}
-				reactionsPanel.refreshReactionPanel(bioModel);
-				initialsPanel.refreshInitialAssignmentPanel(bioModel);
-				rulesPanel.refreshRulesPanel();
-				parametersPanel.refreshParameterPanel(bioModel);
 			}
 		}
 	}
