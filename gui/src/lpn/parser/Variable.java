@@ -7,7 +7,7 @@ import verification.timed_state_exploration.zoneProject.InequalityVariable;
 
 public class Variable {
 	
-	private String name;
+	protected String name;
 	
 	private String type;
 	
