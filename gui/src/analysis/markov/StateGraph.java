@@ -42,6 +42,10 @@ public class StateGraph implements Runnable {
 		stop = false;
 		markovResults = null;
 	}
+	
+	public Property createProperty(String label, String property) {
+		return new Property(label, property);
+	}
 
 	public void buildStateGraph(JProgressBar progress) {
 		stateGraph = new ArrayList<State>();// HashMap<String,

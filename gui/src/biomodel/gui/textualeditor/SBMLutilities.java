@@ -211,7 +211,7 @@ public class SBMLutilities {
 						} else if (splitLaw[i].equals("bernoulli")) {
 							createFunction(model, "bernoulli", "Bernoulli distribution", "lambda(p,p)");
 						} else if (splitLaw[i].equals("PSt")) {
-							createFunction(model, "PSt", "Probabilistic Steady State Property", "lambda(x,uniform(0,1))");
+							createFunction(model, "PSt", "Probabilistic Steady State Property",	"lambda(x,uniform(0,1))");
 						} else if (splitLaw[i].equals("St")) {
 							createFunction(model, "St", "Steady State Property", "lambda(x,x)");
 						} else if (splitLaw[i].equals("PG")) {
@@ -258,7 +258,6 @@ public class SBMLutilities {
 						else {
 							invalidVars.add(splitLaw[i]);
 						}
-						
 						if (splitLaw[i].contains("neighborQuantity")) {
 							createFunction(sbml.getModel(), "getCompartmentLocationX", "getCompartmentLocationX", "lambda(a,0)");
 							createFunction(sbml.getModel(), "getCompartmentLocationY", "getCompartmentLocationY", "lambda(a,0)");
