@@ -210,6 +210,10 @@ public class SBMLutilities {
 							createFunction(model, "binomial", "Binomial distribution", "lambda(p,n,p*n)");
 						} else if (splitLaw[i].equals("bernoulli")) {
 							createFunction(model, "bernoulli", "Bernoulli distribution", "lambda(p,p)");
+						} else if (splitLaw[i].equals("PSt")) {
+							createFunction(model, "PSt", "Probabilistic Steady State Property", "lambda(x,uniform(0,1))");
+						} else if (splitLaw[i].equals("St")) {
+							createFunction(model, "St", "Steady State Property", "lambda(x,x)");
 						} else if (splitLaw[i].equals("PG")) {
 							createFunction(model, "PG", "Probabilistic Globally Property", "lambda(t,x,uniform(0,1))");
 						} else if (splitLaw[i].equals("G")) {
@@ -325,6 +329,16 @@ public class SBMLutilities {
 		if (document.getModel().getFunctionDefinition("bernoulli")!=null) {
 			if (!variableInUse(document, "bernoulli", false, false, true)) {
 				document.getModel().removeFunctionDefinition("bernoulli");
+			}
+		}
+		if (document.getModel().getFunctionDefinition("St")!=null) {
+			if (!variableInUse(document, "St", false, false, true)) {
+				document.getModel().removeFunctionDefinition("St");
+			}
+		}
+		if (document.getModel().getFunctionDefinition("PSt")!=null) {
+			if (!variableInUse(document, "PSt", false, false, true)) {
+				document.getModel().removeFunctionDefinition("PSt");
 			}
 		}
 		if (document.getModel().getFunctionDefinition("PG")!=null) {
@@ -836,6 +850,8 @@ public class SBMLutilities {
 		else if (functionId.equals("poisson")) return true;
 		else if (functionId.equals("binomial")) return true;
 		else if (functionId.equals("bernoulli")) return true;
+		else if (functionId.equals("St")) return true;
+		else if (functionId.equals("PSt")) return true;
 		else if (functionId.equals("PG")) return true;
 		else if (functionId.equals("PF")) return true;
 		else if (functionId.equals("PU")) return true;
@@ -900,6 +916,8 @@ public class SBMLutilities {
 		usedIDs.add("poisson");
 		usedIDs.add("binomial");
 		usedIDs.add("bernoulli");
+		usedIDs.add("St");
+		usedIDs.add("PSt");
 		usedIDs.add("PG");
 		usedIDs.add("PF");
 		usedIDs.add("PU");
