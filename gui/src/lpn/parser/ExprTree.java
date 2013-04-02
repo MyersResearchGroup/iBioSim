@@ -32,7 +32,7 @@ public class ExprTree {
 
 	public int token = 0;
 
-	private ExprTree newresult;
+	ExprTree newresult;
 
 	private ArrayList<String> booleanSignals, integerSignals, continuousSignals;
 
