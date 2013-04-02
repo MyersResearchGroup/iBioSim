@@ -1416,6 +1416,10 @@ public class Translator {
 		else if (prop.getName().equals("U")) {
 			operator += "PU";
 		}
+		else if (prop.getName().equals("St")) {
+			property = "St=?{" + convertHelper(prop.getChild(0)) + "}";
+			return property;
+		}
 		ASTNode node = prop.getChild(0);
 		if (node.getName().equals("and")) {
 			String min = "0";
@@ -1553,6 +1557,9 @@ public class Translator {
 			else if (op.getName().equals("eq")) {
 				convert = "(" + convertHelper(op.getChild(0)) + "=" + convertHelper(op.getChild(1)) + ")";
 				return convert;
+			}
+			else if (op.getName().equals("PSt")) {
+				return "St=?{" + convertHelper(op.getChild(0)) + "}";
 			}
 			else if (op.getName().equals("PG") || op.getName().equals("PF") || op.getName().equals("PU")) {
 				String operator = "";
