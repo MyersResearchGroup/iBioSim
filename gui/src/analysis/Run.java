@@ -539,7 +539,7 @@ public class Run implements ActionListener {
 					Model m = bioModel.getSBMLDocument().getModel();
 					for (int num = 0; num < m.getNumConstraints(); num++) {
 						String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
-						if (constraint.startsWith("G(") || constraint.startsWith("F(") || constraint.startsWith("U(") || constraint.startsWith("St(")) {
+						if (constraint.startsWith("G(") || constraint.startsWith("F(") || constraint.startsWith("U(")) {
 							propList.add(constraint);
 						}
 					}
@@ -669,7 +669,7 @@ public class Run implements ActionListener {
 								Model m = gcm.getSBMLDocument().getModel();
 								for (int num = 0; num < m.getNumConstraints(); num++) {
 									String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
-									if (constraint.startsWith("G(") || constraint.startsWith("F(") || constraint.startsWith("U(") || constraint.startsWith("St(")) {
+									if (constraint.startsWith("G(") || constraint.startsWith("F(") || constraint.startsWith("U(")) {
 										propList.add(constraint);
 									}
 								}
@@ -830,7 +830,7 @@ public class Run implements ActionListener {
 								Model m = gcm.getSBMLDocument().getModel();
 								for (int num = 0; num < m.getNumConstraints(); num++) {
 									String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
-									if (constraint.startsWith("G(") || constraint.startsWith("F(") || constraint.startsWith("U(") || constraint.startsWith("St(")) {
+									if (constraint.startsWith("G(") || constraint.startsWith("F(") || constraint.startsWith("U(")) {
 										propList.add(constraint);
 									}
 								}
@@ -961,7 +961,7 @@ public class Run implements ActionListener {
 								Model m = gcm.getSBMLDocument().getModel();
 								for (int num = 0; num < m.getNumConstraints(); num++) {
 									String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
-									if (constraint.startsWith("G(") || constraint.startsWith("F(") || constraint.startsWith("U(")  || constraint.startsWith("St(")) {
+									if (constraint.startsWith("G(") || constraint.startsWith("F(") || constraint.startsWith("U(")) {
 										propList.add(constraint);
 									}
 								}
@@ -1053,7 +1053,18 @@ public class Run implements ActionListener {
 									performMarkovAnalysis.start(absError, null);
 								}
 								else {
-									ArrayList<Property> conditions = new ArrayList<Property>();
+									BioModel gcm = new BioModel(root);
+									gcm.load(root + separator + gcmEditor.getRefFile());
+									ArrayList<String> propList = new ArrayList<String>();
+									if (prop == null) {
+										Model m = gcm.getSBMLDocument().getModel();
+										for (int num = 0; num < m.getNumConstraints(); num++) {
+											String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
+											if (constraint.startsWith("St(")) {
+												propList.add(Translator.convertProperty(m.getConstraint(num).getMath()));
+											}
+										}
+									}
 									// TODO: THIS NEEDS FIXING
 									/*
 									for (int i = 0; i < gcmEditor.getGCM().getConditions().size(); i++) {
@@ -1062,7 +1073,7 @@ public class Run implements ActionListener {
 										}
 									}
 									*/
-									performMarkovAnalysis.start(absError, conditions);
+									performMarkovAnalysis.start(absError, propList);
 								}
 								performMarkovAnalysis.join();
 								time2 = System.nanoTime();

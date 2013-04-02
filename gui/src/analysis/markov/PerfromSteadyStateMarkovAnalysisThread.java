@@ -19,9 +19,12 @@ public class PerfromSteadyStateMarkovAnalysisThread extends Thread {
 		this.sg = sg;
 	}
 
-	public void start(double tolerance, ArrayList<Property> conditions) {
+	public void start(double tolerance, ArrayList<String> props) {
 		this.tolerance = tolerance;
-		this.conditions = conditions;
+		conditions = new ArrayList<Property>();
+		for (String prop : props) {
+			conditions.add(sg.createProperty(prop, prop));
+		}
 		super.start();
 	}
 
