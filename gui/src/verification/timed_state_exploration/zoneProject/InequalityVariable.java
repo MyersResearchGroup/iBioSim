@@ -172,6 +172,28 @@ public class InequalityVariable extends Variable {
 		return getName().substring(1);
 	}
 	
+	/**
+	 * Override the equals method.
+	 */
+	public boolean equals(Object var){
+		/*
+		 * Due to the fact that twoString returns the name without the '$' sign
+		 * the equals method for variable will not work since it will end up 
+		 * comparing the name without the dollar sign to the name with.
+		 * So we need to correct the equals to use the full name. It should
+		 * be considered whether the equals method the Variable class should
+		 * just be changed to type checking and then use the name subfield.
+		 */
+		
+		if(!(var instanceof InequalityVariable)){
+			return false;
+		}
+		
+		// Cast the variable
+		InequalityVariable ineqvar = (InequalityVariable) var;
+		return this.name.equals(ineqvar.name);
+	}
+	
 //	
 //	This is no longer needed since variables will not dynamically change.
 //	
