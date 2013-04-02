@@ -539,7 +539,7 @@ public class Run implements ActionListener {
 					Model m = bioModel.getSBMLDocument().getModel();
 					for (int num = 0; num < m.getNumConstraints(); num++) {
 						String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
-						if (constraint.startsWith("G") || constraint.startsWith("F") || constraint.startsWith("U")) {
+						if (constraint.startsWith("G(") || constraint.startsWith("F(") || constraint.startsWith("U(") || constraint.startsWith("St(")) {
 							propList.add(constraint);
 						}
 					}
@@ -669,7 +669,7 @@ public class Run implements ActionListener {
 								Model m = gcm.getSBMLDocument().getModel();
 								for (int num = 0; num < m.getNumConstraints(); num++) {
 									String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
-									if (constraint.startsWith("G") || constraint.startsWith("F") || constraint.startsWith("U")) {
+									if (constraint.startsWith("G(") || constraint.startsWith("F(") || constraint.startsWith("U(") || constraint.startsWith("St(")) {
 										propList.add(constraint);
 									}
 								}
@@ -830,7 +830,7 @@ public class Run implements ActionListener {
 								Model m = gcm.getSBMLDocument().getModel();
 								for (int num = 0; num < m.getNumConstraints(); num++) {
 									String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
-									if (constraint.startsWith("G") || constraint.startsWith("F") || constraint.startsWith("U")) {
+									if (constraint.startsWith("G(") || constraint.startsWith("F(") || constraint.startsWith("U(") || constraint.startsWith("St(")) {
 										propList.add(constraint);
 									}
 								}
@@ -961,7 +961,7 @@ public class Run implements ActionListener {
 								Model m = gcm.getSBMLDocument().getModel();
 								for (int num = 0; num < m.getNumConstraints(); num++) {
 									String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
-									if (constraint.startsWith("G") || constraint.startsWith("F") || constraint.startsWith("U")) {
+									if (constraint.startsWith("G(") || constraint.startsWith("F(") || constraint.startsWith("U(")  || constraint.startsWith("St(")) {
 										propList.add(constraint);
 									}
 								}
