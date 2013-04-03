@@ -423,6 +423,17 @@ public class Analysis {
 					break main_while_loop;
 				}
 			}
+			else{
+				if (Analysis.deadLock(sgList, nextStateArray) == true){
+					System.out.println("*** Verification failed: deadlock.");
+					failure = true;
+					JOptionPane.showMessageDialog(Gui.frame,
+							"The system deadlocked.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				
+					break main_while_loop;
+				}
+			}
 			
 			//PrjState nextPrjState = new PrjState(nextStateArray); // Moved earlier. Timing Change.
 			Boolean	existingState = prjStateSet.contains(nextPrjState); //|| stateStack.contains(nextPrjState);		
@@ -521,7 +532,11 @@ public class Analysis {
 				+ ", max_stack_depth: " + max_stack_depth 
 				+ ", peak total memory: " + peakTotalMem / 1000000 + " MB"
 				+ ", peak used memory: " + peakUsedMem / 1000000 + " MB");
-		
+		if(Options.getTimingAnalysisFlag() && !failure){
+			JOptionPane.showMessageDialog(Gui.frame,
+					"Verification was successful.", "Success",
+					JOptionPane.INFORMATION_MESSAGE);
+		}
 		if (Options.getOutputLogFlag()) 
 			writePerformanceResultsToLogFile(false, tranFiringCnt, totalStateCnt, peakTotalMem / 1000000, peakUsedMem / 1000000);
 		if (Options.getOutputSgFlag()) {
