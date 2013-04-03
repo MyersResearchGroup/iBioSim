@@ -2565,8 +2565,14 @@ public class LhpnFile {
 			
 			if(oplist.equals(op)){
 				// If the two are equal, then this node is an inequality.
-				// So add it to the list and return.
-				nodes.add(ET);
+				
+				// Check that this inequality involves a continuous variable
+				// and not a discrete variable which is handled by the 
+				// untimed code currently.
+				if(ET.containsExactlyCont()){
+					// So add it to the list and return. After determining.
+					nodes.add(ET);
+				}
 				return;
 			}
 		}
