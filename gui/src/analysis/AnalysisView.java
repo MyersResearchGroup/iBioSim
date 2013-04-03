@@ -977,6 +977,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		 */
 		// if the simulators combo box is selected
 		else if (e.getSource() == mpde) {
+			nonAdaptive.setSelected(true);
 			adaptive.setEnabled(false);
 			nonAdaptive.setEnabled(false);
 			iSSAAdaptiveLabel.setEnabled(false);
