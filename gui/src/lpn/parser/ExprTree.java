@@ -1970,6 +1970,44 @@ public class ExprTree {
 		return false;
 	}
 
+	/**
+	 * This method will return true if the 
+	 * expression tree contains a continuous variable.
+	 * This is difference from containsCont() which
+	 * will return true if there is an integer,
+	 * relational, arithmetic or number.
+	 * @return
+	 * 	True if this ExprTree continuous a 
+	 * 	continuous variable.
+	 */
+	public boolean containsExactlyCont() {
+		switch (isit) {
+		// These are leaf nodes that we are not looking for.
+		case 'b': // Boolean
+		case 't': // Truth value
+		case 'i': // Integer
+		case 'n': // Number
+			return false;
+		// This is what we are looking for.	
+		case 'c': // Continuous
+			return true;		
+		// The subexpression may contain a continuous variable
+		// so need to check further.
+		case 'a': // Arithmetic
+		case 'r': // Relational
+		case 'l': // Logical
+		case 'w': // bitWise
+			boolean r1cont = false,
+			r2cont = false;
+			if (r1 != null)
+				r1cont = r1.containsExactlyCont();
+			if (r2 != null)
+				r2cont = r2.containsExactlyCont();
+			return (r1cont || r2cont);
+		}
+		return false;
+	}
+	
 	public void replace(String var, String type, ExprTree e) {
 		if (this == e) {
 			return;
