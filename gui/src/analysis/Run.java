@@ -1048,7 +1048,7 @@ public class Run implements ActionListener {
 								log.addText("Performing steady state Markov chain analysis.\n");
 								logFile.write("Performing steady state Markov chain analysis.\n\n");
 								PerfromSteadyStateMarkovAnalysisThread performMarkovAnalysis = new PerfromSteadyStateMarkovAnalysisThread(
-										sg);
+										sg, progress);
 								if (modelFile.contains(".lpn")) {
 									performMarkovAnalysis.start(absError, null);
 								}
