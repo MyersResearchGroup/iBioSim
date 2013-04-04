@@ -1055,13 +1055,13 @@ public class Run implements ActionListener {
 								else {
 									BioModel gcm = new BioModel(root);
 									gcm.load(root + separator + gcmEditor.getRefFile());
-									ArrayList<String> propList = new ArrayList<String>();
+									ArrayList<Property> propList = new ArrayList<Property>();
 									if (prop == null) {
 										Model m = gcm.getSBMLDocument().getModel();
 										for (int num = 0; num < m.getNumConstraints(); num++) {
 											String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
 											if (constraint.startsWith("St(")) {
-												propList.add(Translator.convertProperty(m.getConstraint(num).getMath()));
+												propList.add(sg.createProperty(constraint.trim().replace(" ", ""), Translator.convertProperty(m.getConstraint(num).getMath())));
 											}
 										}
 									}
