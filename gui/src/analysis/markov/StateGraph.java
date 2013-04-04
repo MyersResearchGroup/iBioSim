@@ -318,12 +318,34 @@ public class StateGraph implements Runnable {
 	}
 
 	private String removeNesting(double error, double timeStep, String prop, JProgressBar progress) {
-		if (prop.contains("Pr=?{")) {
-			progress.setString("Determining Sat Sets.");
-			int index = prop.indexOf("Pr=?{");
+		if (prop.contains("Pr=?{") || prop.contains("St=?{")) {
+			if (progress != null) {
+				progress.setString("Determining Sat Sets.");
+			}
+			int transientPropIndex = prop.indexOf("Pr=?{");
+			int steadyStatePropIndex = prop.indexOf("St=?{");
+			if (transientPropIndex == -1) {
+				transientPropIndex = Integer.MAX_VALUE;
+			}
+			if (steadyStatePropIndex == -1) {
+				steadyStatePropIndex = Integer.MAX_VALUE;
+			}
+			int index = 0;
+			if (transientPropIndex < steadyStatePropIndex) {
+				index = transientPropIndex;
+			}
+			else {
+				index = steadyStatePropIndex;
+			}
 			String newProp = prop.substring(0, index);
 			String cond = prop.substring(index);
-			String nest = "Pr=?{";
+			String nest;
+			if (transientPropIndex < steadyStatePropIndex) {
+				nest = "Pr=?{";
+			}
+			else {
+				nest = "St=?{";
+			}
 			int braces = 1;
 			for (int i = 5; i < cond.length(); i++) {
 				char c = cond.charAt(i);
@@ -342,8 +364,13 @@ public class StateGraph implements Runnable {
 			index++;
 			cond = cond.substring(index);
 			String check = nest.substring(5, nest.length() - 1);
-			if (check.contains("Pr=?{")) {
-				nest = "Pr=?{" + removeNesting(error, timeStep, check, progress) + "}";
+			if (check.contains("Pr=?{") || check.contains("St=?{")) {
+				if (transientPropIndex < steadyStatePropIndex) {
+					nest = "Pr=?{" + removeNesting(error, timeStep, check, progress) + "}";
+				}
+				else {
+					nest = "St=?{" + removeNesting(error, timeStep, check, progress) + "}";
+				}
 			}
 			newProp += determineNestedProbability(error, timeStep, nest)
 					+ removeNesting(error, timeStep, cond, progress);
@@ -537,7 +564,7 @@ public class StateGraph implements Runnable {
 						conditions.add(new Property("Failure", "~(" + condition[1] + ")"));
 					}
 					conditions.add(new Property("Success", condition[1]));
-					return performSteadyStateMarkovianAnalysis(error, conditions, initial);
+					return performSteadyStateMarkovianAnalysis(error, conditions, initial, progress);
 				}
 				// Compute Gamma
 				Gamma = 0;
@@ -845,7 +872,7 @@ public class StateGraph implements Runnable {
 					conditions.add(new Property("Failure", "~(" + condition[1] + ")"));
 				}
 				conditions.add(new Property("Success", condition[1]));
-				performSteadyStateMarkovianAnalysis(error, conditions, initial);
+				performSteadyStateMarkovianAnalysis(error, conditions, initial, null);
 			}
 			// Compute Gamma
 			Gamma = 0;
@@ -1142,12 +1169,21 @@ public class StateGraph implements Runnable {
 		}
 	}
 
-	public boolean performSteadyStateMarkovianAnalysis(double tolerance, ArrayList<Property> conditions, State initial) {
+	public boolean performSteadyStateMarkovianAnalysis(double tolerance, ArrayList<Property> props, State initial, JProgressBar progress) {
 		if (!canPerformMarkovianAnalysis()) {
 			stop = true;
 			return false;
 		}
 		else {
+			ArrayList<Property> conditions = new ArrayList<Property>();
+			for (Property p : props) {
+				conditions.add(createProperty(p.getLabel(), removeNesting(tolerance, Double.MAX_VALUE, p.getProperty().substring(5, p.getProperty().length() - 1), progress)));
+			}
+			if (progress != null) {
+				progress.setString(null);
+				progress.setIndeterminate(true);
+			}
+			enableAllTransitions();
 			if (initial == null && !stop) {
 				initial = getInitialState();
 				for (State m : stateGraph) {
