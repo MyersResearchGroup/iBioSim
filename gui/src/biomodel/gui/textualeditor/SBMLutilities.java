@@ -213,7 +213,7 @@ public class SBMLutilities {
 						} else if (splitLaw[i].equals("PSt")) {
 							createFunction(model, "PSt", "Probabilistic Steady State Property",	"lambda(x,uniform(0,1))");
 						} else if (splitLaw[i].equals("St")) {
-							createFunction(model, "St", "Steady State Property", "lambda(x,x)");
+							createFunction(model, "St", "Steady State Property", "lambda(x,not(not(x)))");
 						} else if (splitLaw[i].equals("PG")) {
 							createFunction(model, "PG", "Probabilistic Globally Property", "lambda(t,x,uniform(0,1))");
 						} else if (splitLaw[i].equals("G")) {
