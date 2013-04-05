@@ -1269,6 +1269,40 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		double maxY = Double.MIN_VALUE;
 		double minX = Double.MAX_VALUE;
 		double maxX = Double.MIN_VALUE;
+		if (LogY.isSelected()) {
+			try {
+				LogarithmicAxis rangeAxis = new LogarithmicAxis(chart.getXYPlot().getRangeAxis().getLabel());
+				rangeAxis.setStrictValuesFlag(false);
+				plot.setRangeAxis(rangeAxis);
+			}
+			catch (Exception e1) {
+				JOptionPane.showMessageDialog(Gui.frame, "Log plots are not allowed with data\nvalues less than or equal to zero.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+				NumberAxis rangeAxis = new NumberAxis(chart.getXYPlot().getRangeAxis().getLabel());
+				plot.setRangeAxis(rangeAxis);
+				LogY.setSelected(false);
+			}
+		} else {
+			NumberAxis rangeAxis = new NumberAxis(chart.getXYPlot().getRangeAxis().getLabel());
+			plot.setRangeAxis(rangeAxis);
+		}
+		if (LogX.isSelected()) {
+			try {
+				LogarithmicAxis domainAxis = new LogarithmicAxis(chart.getXYPlot().getDomainAxis().getLabel());
+				domainAxis.setStrictValuesFlag(false);
+				plot.setDomainAxis(domainAxis);
+			}
+			catch (Exception e1) {
+				JOptionPane.showMessageDialog(Gui.frame, "Log plots are not allowed with data\nvalues less than or equal to zero.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+				NumberAxis domainAxis = new NumberAxis(chart.getXYPlot().getDomainAxis().getLabel());
+				plot.setDomainAxis(domainAxis);
+				LogX.setSelected(false);
+			}
+		} else {
+			NumberAxis domainAxis = new NumberAxis(chart.getXYPlot().getDomainAxis().getLabel());
+			plot.setDomainAxis(domainAxis);
+		}
 		for (int j = 0; j < dataset.getSeriesCount(); j++) {
 			XYSeries series = dataset.getSeries(j);
 			double[][] seriesArray = series.toArray();
@@ -1304,34 +1338,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			axis.setRange(minY - (Math.abs(minY) * .1), maxY + (Math.abs(maxY) * .1));
 		}
 		axis.setAutoTickUnitSelection(true);
-		if (LogY.isSelected()) {
-			try {
-				LogarithmicAxis rangeAxis = new LogarithmicAxis(chart.getXYPlot().getRangeAxis().getLabel());
-				rangeAxis.setStrictValuesFlag(false);
-				plot.setRangeAxis(rangeAxis);
-			}
-			catch (Exception e1) {
-				JOptionPane.showMessageDialog(Gui.frame, "Log plots are not allowed with data\nvalues less than or equal to zero.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-				NumberAxis rangeAxis = new NumberAxis(chart.getXYPlot().getRangeAxis().getLabel());
-				plot.setRangeAxis(rangeAxis);
-				LogY.setSelected(false);
-			}
-		} else {
-			NumberAxis rangeAxis = new NumberAxis(chart.getXYPlot().getRangeAxis().getLabel());
-			plot.setRangeAxis(rangeAxis);
-		}
-		if (visibleLegend.isSelected()) {
-			if (chart.getLegend() == null) {
-				chart.addLegend(legend);
-			}
-		}
-		else {
-			if (chart.getLegend() != null) {
-				legend = chart.getLegend();
-			}
-			chart.removeLegend();
-		}
 		axis = (NumberAxis) plot.getDomainAxis();
 		if (minX == Double.MAX_VALUE || maxX == Double.MIN_VALUE) {
 			axis.setRange(-1, 1);
@@ -1349,23 +1355,22 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			axis.setRange(minX, maxX);
 		}
 		axis.setAutoTickUnitSelection(true);
-		if (LogX.isSelected()) {
-			try {
-				LogarithmicAxis domainAxis = new LogarithmicAxis(chart.getXYPlot().getDomainAxis().getLabel());
-				domainAxis.setStrictValuesFlag(false);
-				plot.setDomainAxis(domainAxis);
+		if (visibleLegend.isSelected()) {
+			if (chart.getLegend() == null) {
+				chart.addLegend(legend);
 			}
-			catch (Exception e1) {
-				JOptionPane.showMessageDialog(Gui.frame, "Log plots are not allowed with data\nvalues less than or equal to zero.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-				NumberAxis domainAxis = new NumberAxis(chart.getXYPlot().getDomainAxis().getLabel());
-				plot.setDomainAxis(domainAxis);
-				LogX.setSelected(false);
-			}
-		} else {
-			NumberAxis domainAxis = new NumberAxis(chart.getXYPlot().getDomainAxis().getLabel());
-			plot.setDomainAxis(domainAxis);
 		}
+		else {
+			if (chart.getLegend() != null) {
+				legend = chart.getLegend();
+			}
+			chart.removeLegend();
+		}
+		applyChartTheme(chart);
+		chart.setBackgroundPaint(new java.awt.Color(238, 238, 238));
+		chart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
+		chart.getXYPlot().setDomainGridlinePaint(java.awt.Color.LIGHT_GRAY);
+		chart.getXYPlot().setRangeGridlinePaint(java.awt.Color.LIGHT_GRAY);
 	}
 
 	/**
@@ -1623,6 +1628,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					NumberAxis domainAxis = new NumberAxis(chart.getXYPlot().getDomainAxis().getLabel());
 					plot.setDomainAxis(domainAxis);
 				}
+				applyChartTheme(chart);
+				chart.setBackgroundPaint(new java.awt.Color(238, 238, 238));
+				chart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
+				chart.getXYPlot().setDomainGridlinePaint(java.awt.Color.LIGHT_GRAY);
+				chart.getXYPlot().setRangeGridlinePaint(java.awt.Color.LIGHT_GRAY);
 			}
 		});
 		LogY.addActionListener(new ActionListener() {
@@ -1645,6 +1655,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					NumberAxis rangeAxis = new NumberAxis(chart.getXYPlot().getRangeAxis().getLabel());
 					plot.setRangeAxis(rangeAxis);
 				}
+				applyChartTheme(chart);
+				chart.setBackgroundPaint(new java.awt.Color(238, 238, 238));
+				chart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
+				chart.getXYPlot().setDomainGridlinePaint(java.awt.Color.LIGHT_GRAY);
+				chart.getXYPlot().setRangeGridlinePaint(java.awt.Color.LIGHT_GRAY);
 			}
 		});
 		visibleLegend.addActionListener(new ActionListener() {
