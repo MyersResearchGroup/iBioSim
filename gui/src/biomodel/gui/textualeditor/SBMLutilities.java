@@ -2436,7 +2436,7 @@ public class SBMLutilities {
 		} else if (math.getType() == libsbml.AST_RELATIONAL_LT) {
 			String leftStr = myFormulaToStringInfix(math.getLeftChild());
 			String rightStr = myFormulaToStringInfix(math.getRightChild());
-			return "(" + leftStr + " <= " + rightStr + ")";
+			return "(" + leftStr + " < " + rightStr + ")";
 		} else if (math.getType() == libsbml.AST_RELATIONAL_NEQ) {
 			String leftStr = myFormulaToStringInfix(math.getLeftChild());
 			String rightStr = myFormulaToStringInfix(math.getRightChild());
