@@ -834,8 +834,9 @@ public class BioModel {
 										}
 										else {
 											reactionDegradations += "(("
-													+ SBMLutilities.myFormulaToString(replaceParams(law.getMath(), parameters))
-													+ ")*" + r.getReactant(k).getStoichiometry() + ") + ";
+													+ SBMLutilities.myFormulaToString(replaceParams(law.getMath(),
+															parameters)) + ")*" + r.getReactant(k).getStoichiometry()
+													+ ") + ";
 										}
 									}
 								}
@@ -862,7 +863,7 @@ public class BioModel {
 										}
 										else {
 											reactionProductions += "(("
-													+ SBMLutilities.myFormulaToString(replaceParams(law.getMath().getLeftChild(),
+													+ SBMLutilities.myFormulaToString(replaceParams(law.getMath(),
 															parameters)) + ")*" + r.getProduct(k).getStoichiometry()
 													+ ") + ";
 										}
@@ -893,10 +894,6 @@ public class BioModel {
 									+ "-" + number + "))");
 							transNum++;
 						}
-						LHPN.addTransition(specs.get(i) + "_trans" + transNum);
-						LHPN.addMovement(specs.get(i) + placeNum, specs.get(i) + "_trans" + transNum);
-						LHPN.addMovement(specs.get(i) + "_trans" + transNum, previousPlaceName);
-						LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i), number);
 						String specExpr = specs.get(i);
 						if (network.getSpecies().get(specs.get(i)).isSequesterable()) {
 							specExpr = abs.sequesterSpecies(specs.get(i), 0, false);
@@ -915,16 +912,29 @@ public class BioModel {
 							if (param != null) {
 								kd = param.getValue();
 							}
+							LHPN.addTransition(specs.get(i) + "_trans" + transNum);
+							LHPN.addMovement(specs.get(i) + placeNum, specs.get(i) + "_trans" + transNum);
+							LHPN.addMovement(specs.get(i) + "_trans" + transNum, previousPlaceName);
+							LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i), number);
+							if (!reactionDegradations.equals("")) {
+								LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "((" + specExpr + "*" + kd + ")"
+										+ "+" + reactionDegradations + ")/" + "(" + threshold + "-" + number + ")");
+							}
+							else {
+								LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" + specExpr + "*" + kd + ")/"
+										+ "(" + threshold + "-" + number + ")");
+							}
+							transNum++;
 						}
-						if (!reactionDegradations.equals("")) {
-							LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "((" + specExpr + "*" + kd + ")"
-									+ "+" + reactionDegradations + ")/" + "(" + threshold + "-" + number + ")");
+						else if (!reactionDegradations.equals("")) {
+							LHPN.addTransition(specs.get(i) + "_trans" + transNum);
+							LHPN.addMovement(specs.get(i) + placeNum, specs.get(i) + "_trans" + transNum);
+							LHPN.addMovement(specs.get(i) + "_trans" + transNum, previousPlaceName);
+							LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i), number);
+							LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" + reactionDegradations
+									+ ")/" + "(" + threshold + "-" + number + ")");
+							transNum++;
 						}
-						else {
-							LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" + specExpr + "*" + kd + ")/"
-									+ "(" + threshold + "-" + number + ")");
-						}
-						transNum++;
 					}
 					previousPlaceName = specs.get(i) + placeNum;
 					placeNum++;
