@@ -1,5 +1,8 @@
 package verification.timed_state_exploration.zoneProject;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -18,6 +21,7 @@ import lpn.parser.Variable;
 
 import verification.platu.lpn.DualHashMap;
 import verification.platu.lpn.LpnTranList;
+import verification.platu.main.Options;
 import verification.platu.stategraph.State;
 
 
@@ -169,6 +173,18 @@ public class Zone{
 	
 	/* Records the largest zone that occurs. */
 	public static int ZoneSize = 0;
+	
+	/* Write a log file */
+	private static BufferedWriter _writeLogFile = null;
+	
+	/**
+	 * Returns the write log.
+	 * @return
+	 * 		The _writeLogfile.
+	 */
+	public static BufferedWriter get_writeLogFile(){
+		return _writeLogFile;
+	}
 	
 	private void checkZoneMaxSize(){
 		if(dbmSize() > ZoneSize){
@@ -382,7 +398,7 @@ public class Zone{
 	 * 			have just been enabled.
 	 */
 	public Zone(State initialState)
-	{
+	{	
 		// Extract the associated LPN.
 		LhpnFile lpn = initialState.getLpn();
 		
@@ -485,6 +501,20 @@ public class Zone{
 	 * 			The current state (or initial) of the LPNs.
 	 */
 	public Zone(State[] localStates){
+		
+		// Open the log file.
+		if(_writeLogFile == null && Options.get_TimingLogfile() != null){
+			try{
+				_writeLogFile = 
+						new BufferedWriter(
+								new FileWriter(Options.get_TimingLogfile()));
+			} catch (IOException e) {
+
+				e.printStackTrace();
+			}finally{
+
+			}
+		}
 		
 		// Extract the local states.
 		//State[] localStates = tps.toStateArray();
@@ -2061,6 +2091,15 @@ public class Zone{
 //			State[] localStates){
 	public Zone fire(Transition t, LpnTranList enabledTran, ArrayList<HashMap<LPNContAndRate, IntervalPair>> newAssignValues,
 			State[] localStates){
+		
+		try {
+			if(_writeLogFile != null){
+				_writeLogFile.write(t.toString());
+				_writeLogFile.newLine();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 		// Create the LPNTransitionPair to check if the Transitions is in the zone and to 
 		// find the index.
