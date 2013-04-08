@@ -12,6 +12,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -1743,6 +1744,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			// Uses the timed_state_exploration.zoneProject infrastructure.
 			LhpnFile lpn = new LhpnFile();
 			lpn.load(directory + separator + lpnFileName);
+			
+			Options.set_TimingLogFile(directory + separator
+					+ lpnFileName + ".tlog");
 
 			// Load any other listed LPNs.
 			ArrayList<LhpnFile> selectedLPNs = new ArrayList<LhpnFile>();
@@ -1794,6 +1798,17 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 
 			Options.setTimingAnalsysisType("off");
 
+			BufferedWriter logFile = Zone.get_writeLogFile();
+			
+			if(logFile != null){
+				try {
+					logFile.close();
+				} catch (IOException e) {
+
+					e.printStackTrace();
+				}
+			}
+			
 			return;
 
 		}
