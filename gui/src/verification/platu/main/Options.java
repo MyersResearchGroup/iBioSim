@@ -154,6 +154,18 @@ public class Options {
 	 */
 	public static int TimeUpperBound = 1500;
 
+	/* The timing log file */
+	public static String _TimingLogFile = null;
+	
+	/* Sets the _TimingLogFile */
+	public static void set_TimingLogFile(String logFile){
+		_TimingLogFile = logFile;
+	}
+	
+	/* Gets the _TimingLogFile */
+	public static String get_TimingLogfile(){
+		return _TimingLogFile;
+	}
 	
 	/*
 	 * Option for compositional minimization type.
