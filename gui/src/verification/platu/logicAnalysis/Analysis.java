@@ -36,6 +36,7 @@ import verification.platu.stategraph.StateGraph;
 import verification.timed_state_exploration.zoneProject.EventSet;
 import verification.timed_state_exploration.zoneProject.TimedPrjState;
 import verification.timed_state_exploration.zoneProject.StateSet;
+import verification.timed_state_exploration.zoneProject.Zone;
 
 public class Analysis {
 
@@ -564,6 +565,16 @@ public class Analysis {
 		boolean failureTranIsEnabled = false;
 		for (Transition tran : curAmpleTrans) {
 			if (tran.isFail()) {
+				
+				if(Zone.get_writeLogFile() != null){
+					try {
+						Zone.get_writeLogFile().write(tran.getName());
+						Zone.get_writeLogFile().newLine();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				
 				JOptionPane.showMessageDialog(Gui.frame,
 						"Failure transition " + tran.getName() + " is enabled.", "Error",
 						JOptionPane.ERROR_MESSAGE);
