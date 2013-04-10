@@ -1269,6 +1269,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		double maxY = Double.MIN_VALUE;
 		double minX = Double.MAX_VALUE;
 		double maxX = Double.MIN_VALUE;
+		Font rangeFont = chart.getXYPlot().getRangeAxis().getLabelFont();
+		Font rangeTickFont = chart.getXYPlot().getRangeAxis().getTickLabelFont();
+		Font domainFont = chart.getXYPlot().getDomainAxis().getLabelFont();
+		Font domainTickFont = chart.getXYPlot().getDomainAxis().getTickLabelFont();
 		if (LogY.isSelected()) {
 			try {
 				LogarithmicAxis rangeAxis = new LogarithmicAxis(chart.getXYPlot().getRangeAxis().getLabel());
@@ -1303,6 +1307,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			NumberAxis domainAxis = new NumberAxis(chart.getXYPlot().getDomainAxis().getLabel());
 			plot.setDomainAxis(domainAxis);
 		}
+		chart.getXYPlot().getDomainAxis().setLabelFont(domainFont);
+		chart.getXYPlot().getDomainAxis().setTickLabelFont(domainTickFont);
+		chart.getXYPlot().getRangeAxis().setLabelFont(rangeFont);
+		chart.getXYPlot().getRangeAxis().setTickLabelFont(rangeTickFont);
 		for (int j = 0; j < dataset.getSeriesCount(); j++) {
 			XYSeries series = dataset.getSeries(j);
 			double[][] seriesArray = series.toArray();
@@ -1366,11 +1374,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 			chart.removeLegend();
 		}
-		applyChartTheme(chart);
-		chart.setBackgroundPaint(new java.awt.Color(238, 238, 238));
-		chart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
-		chart.getXYPlot().setDomainGridlinePaint(java.awt.Color.LIGHT_GRAY);
-		chart.getXYPlot().setRangeGridlinePaint(java.awt.Color.LIGHT_GRAY);
 	}
 
 	/**
@@ -1611,6 +1614,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		LogX.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				XYPlot plot = (XYPlot) chart.getXYPlot();
+				Font rangeFont = chart.getXYPlot().getRangeAxis().getLabelFont();
+				Font rangeTickFont = chart.getXYPlot().getRangeAxis().getTickLabelFont();
+				Font domainFont = chart.getXYPlot().getDomainAxis().getLabelFont();
+				Font domainTickFont = chart.getXYPlot().getDomainAxis().getTickLabelFont();
 				if (((JCheckBox) e.getSource()).isSelected()) {
 					try {
 						LogarithmicAxis domainAxis = new LogarithmicAxis(chart.getXYPlot().getDomainAxis().getLabel());
@@ -1628,16 +1635,19 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					NumberAxis domainAxis = new NumberAxis(chart.getXYPlot().getDomainAxis().getLabel());
 					plot.setDomainAxis(domainAxis);
 				}
-				applyChartTheme(chart);
-				chart.setBackgroundPaint(new java.awt.Color(238, 238, 238));
-				chart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
-				chart.getXYPlot().setDomainGridlinePaint(java.awt.Color.LIGHT_GRAY);
-				chart.getXYPlot().setRangeGridlinePaint(java.awt.Color.LIGHT_GRAY);
+				chart.getXYPlot().getDomainAxis().setLabelFont(domainFont);
+				chart.getXYPlot().getDomainAxis().setTickLabelFont(domainTickFont);
+				chart.getXYPlot().getRangeAxis().setLabelFont(rangeFont);
+				chart.getXYPlot().getRangeAxis().setTickLabelFont(rangeTickFont);
 			}
 		});
 		LogY.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				XYPlot plot = (XYPlot) chart.getXYPlot();
+				Font rangeFont = chart.getXYPlot().getRangeAxis().getLabelFont();
+				Font rangeTickFont = chart.getXYPlot().getRangeAxis().getTickLabelFont();
+				Font domainFont = chart.getXYPlot().getDomainAxis().getLabelFont();
+				Font domainTickFont = chart.getXYPlot().getDomainAxis().getTickLabelFont();
 				if (((JCheckBox) e.getSource()).isSelected()) {
 					try {
 						LogarithmicAxis rangeAxis = new LogarithmicAxis(chart.getXYPlot().getRangeAxis().getLabel());
@@ -1655,11 +1665,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					NumberAxis rangeAxis = new NumberAxis(chart.getXYPlot().getRangeAxis().getLabel());
 					plot.setRangeAxis(rangeAxis);
 				}
-				applyChartTheme(chart);
-				chart.setBackgroundPaint(new java.awt.Color(238, 238, 238));
-				chart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
-				chart.getXYPlot().setDomainGridlinePaint(java.awt.Color.LIGHT_GRAY);
-				chart.getXYPlot().setRangeGridlinePaint(java.awt.Color.LIGHT_GRAY);
+				chart.getXYPlot().getDomainAxis().setLabelFont(domainFont);
+				chart.getXYPlot().getDomainAxis().setTickLabelFont(domainTickFont);
+				chart.getXYPlot().getRangeAxis().setLabelFont(rangeFont);
+				chart.getXYPlot().getRangeAxis().setTickLabelFont(rangeTickFont);
 			}
 		});
 		visibleLegend.addActionListener(new ActionListener() {
@@ -3643,7 +3652,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					dataset.addSeries(graphData.get(i));
 				}
 				fixGraph(title.getText().trim(), x.getText().trim(), y.getText().trim(), dataset);
-				chart.getXYPlot().setRenderer(rend);
 				XYPlot plot = chart.getXYPlot();
 				if (resize.isSelected()) {
 					resize(dataset);
@@ -3658,6 +3666,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					axis.setRange(minX, maxX);
 					axis.setTickUnit(new NumberTickUnit(scaleX));
 				}
+				chart.getXYPlot().setRenderer(rend);
 			} //end of "Ok" option being true
 			else {
 				selected = "";
@@ -6745,7 +6754,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				dataset.addSeries(graphData.get(i));
 			}
 			fixGraph(chart.getTitle().getText(), chart.getXYPlot().getDomainAxis().getLabel(), chart.getXYPlot().getRangeAxis().getLabel(), dataset);
-			chart.getXYPlot().setRenderer(rend);
 			XYPlot plot = chart.getXYPlot();
 			if (resize.isSelected()) {
 				resize(dataset);
@@ -6760,6 +6768,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				axis.setRange(minX, maxX);
 				axis.setTickUnit(new NumberTickUnit(scaleX));
 			}
+			chart.getXYPlot().setRenderer(rend);
 		}
 		else {
 			BarRenderer rend = (BarRenderer) chart.getCategoryPlot().getRenderer();
