@@ -287,6 +287,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private static final String[] bugReportTypes = new String[] { "BUG", "CHANGE", "FEATURE" };
 	
+	private static final String lemaVersion = "1.9";
+	
+	private static final String atacsVersion = "6.9";
+	
+	private static final String iBioSimVersion = "2.4.5";
+		
 	public static class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
 		
 		String message;
@@ -417,8 +423,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				mimeMessage.setFrom(new InternetAddress(emailAddr.getText().trim()));
 				mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
 				mimeMessage.setSubject(reportType.getSelectedItem() + ": "+bugSubject.getText().trim());
-				mimeMessage.setText("Bug reported by: "+emailAddr.getText().trim()+"\n\nDescription:\n"+
-						bugDetail.getText().trim()+message);
+				mimeMessage.setText(System.getProperty("software.running") + "\n\nOperating system: " + 
+						System.getProperty("os.name") + "\n\nBug reported by: " + emailAddr.getText().trim() + 
+						"\n\nDescription:\n"+bugDetail.getText().trim()+message);
 				Transport.send(mimeMessage);
 			} catch (MessagingException mex) {
 				mex.printStackTrace();
@@ -507,12 +514,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		if (atacs) {
 			ENVVAR = System.getenv("ATACSGUI");
+			System.setProperty("software.running", "ATACS Version " + atacsVersion);
 		}
 		else if (lema) {
 			ENVVAR = System.getenv("LEMA");
+			System.setProperty("software.running", "LEMA Version " + lemaVersion);
 		}
 		else {
 			ENVVAR = System.getenv("BIOSIM");
+			System.setProperty("software.running", "iBioSim Version " + iBioSimVersion);
 		}
 
 		// Creates a new frame
@@ -1372,20 +1382,20 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		final String developers;
 		if (lema) {
 			name = new JLabel("LEMA", JLabel.CENTER);
-			version = new JLabel("Version 1.9", JLabel.CENTER);
+			version = new JLabel("Version "+lemaVersion, JLabel.CENTER);
 			developers = "Satish Batchu\nAndrew Fisher\nKevin Jones\nDhanashree Kulkarni\nScott Little\nCurtis Madsen\nChris Myers\nNicholas Seegmiller\n"
 					+ "Robert Thacker\nDavid Walter\nZhen Zhang";
 		}
 		else if (atacs) {
 			name = new JLabel("ATACS", JLabel.CENTER);
-			version = new JLabel("Version 6.9", JLabel.CENTER);
+			version = new JLabel("Version "+atacsVersion, JLabel.CENTER);
 			developers = "Wendy Belluomini\nJeff Cuthbert\nHans Jacobson\nKevin Jones\nSung-Tae Jung\n"
 					+ "Christopher Krieger\nScott Little\nCurtis Madsen\nEric Mercer\nChris Myers\n"
 					+ "Curt Nelson\nEric Peskin\nNicholas Seegmiller\nDavid Walter\nHao Zheng";
 		}
 		else {
 			name = new JLabel("iBioSim", JLabel.CENTER);
-			version = new JLabel("Version 2.4.5", JLabel.CENTER);
+			version = new JLabel("Version "+iBioSimVersion, JLabel.CENTER);
 			developers = "Nathan Barker\nKevin Jones\nHiroyuki Kuwahara\n"
 					+ "Curtis Madsen\nChris Myers\nNam Nguyen\nTyler Patterson\nNicholas Roehner\nJason Stevens\nLeandro Watanabe";
 		}
