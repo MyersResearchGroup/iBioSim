@@ -61,6 +61,8 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.text.parser.ParseException;
 
+import biomodel.util.GlobalConstants;
+
 public abstract class Simulator {
 	
 	//SBML model
@@ -539,7 +541,8 @@ public abstract class Simulator {
 			if (speciesIDSet.contains(parentVariableID)) {
 				
 				//if it's a promoter, double it first, as it's a dna-based species
-				if (model.getSpecies(parentVariableID).getSBOTerm() == 354)
+				if (model.getSpecies(parentVariableID).isSetSBOTerm() &&
+						model.getSpecies(parentVariableID).getSBOTerm() == GlobalConstants.SBO_PROMOTER_SPECIES)
 					variableToValueMap.put(parentVariableID, variableToValueMap.get(parentVariableID) * 2);
 				
 				//duplicate species into the model
