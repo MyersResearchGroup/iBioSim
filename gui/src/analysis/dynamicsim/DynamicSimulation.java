@@ -21,6 +21,7 @@ public class DynamicSimulation {
 	
 	//the simulator object
 	private Simulator simulator = null;
+	private HierarchicalSimulator hSimulator = null;
 	
 	private boolean cancelFlag = false;	
 	private boolean statisticsFlag = false;
@@ -60,8 +61,8 @@ public class DynamicSimulation {
 				simulator = new SimulatorODERK(SBMLFileName, outputDirectory, timeLimit, 
 						maxTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, 
 						interestingSpecies, numSteps, relError, absError, quantityType);
-			else if (simulatorType.equals("ufdirect"))
-				simulator = new SimulatorSSADirectUnflatten(SBMLFileName, outputDirectory, timeLimit, 
+			else if (simulatorType.equals("hierarchydirect"))
+				hSimulator = new SimulatorSSADirectHierarchical(SBMLFileName, outputDirectory, timeLimit, 
 						maxTimeStep, minTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, 
 						interestingSpecies, quantityType);
 		}
@@ -81,13 +82,22 @@ public class DynamicSimulation {
 			progressLabel.setText(progressText.replace(" (" + (run - 1) + ")","") + " (" + run + ")");
 			running.setMinimumSize(new Dimension((progressLabel.getText().length() * 10) + 20, 
 					(int) running.getSize().getHeight()));
-	
+			if(simulator != null)
+			{
 			simulator.simulate();
 			simulator.clear();
 			
 			if ((runs - run) >= 1)
 				simulator.setupForNewRun(run + 1);
-			
+			}
+			else if(hSimulator != null)
+			{
+				hSimulator.simulate();
+				hSimulator.clear();
+				
+				if ((runs - run) >= 1)
+					hSimulator.setupForNewRun(run + 1);
+			}
 //			//garbage collect every twenty-five runs
 //			if ((run % 25) == 0)
 //				System.gc();
@@ -99,7 +109,10 @@ public class DynamicSimulation {
 			running.setMinimumSize(new Dimension(200,100));
 			
 			try {
-				simulator.printStatisticsTSD();
+				if(simulator != null)
+					simulator.printStatisticsTSD();
+				else if(hSimulator != null)
+					hSimulator.printStatisticsTSD();
 			} catch (IOException e) {
 				e.printStackTrace();
 				return;
