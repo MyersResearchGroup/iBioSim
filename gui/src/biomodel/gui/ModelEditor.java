@@ -1182,7 +1182,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		if (direct.equals(".") && !stem.equals("")) {
 			direct = "";
 		}
-		if(!analysisMethod.equals("SSA-Direct"))
+		if(analysisMethod != null && !analysisMethod.contains("SSA-Hierarchical"))
 		{
 			SBMLDocument sbml = biomodel.flattenModel();		
 			performModifications(sbml,dd);
@@ -1204,6 +1204,10 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			//					"Error Creating File", JOptionPane.ERROR_MESSAGE);
 			//			return false;
 			//e1.printStackTrace();
+		}
+		else
+		{
+			biomodel.save(path + separator + simName + separator + stem + direct + separator + modelId + ".xml");
 		}
 		return true;
 	}
