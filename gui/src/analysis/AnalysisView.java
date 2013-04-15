@@ -1191,8 +1191,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				bifurcation.setEnabled(false);
 				bifurcationLabel.setEnabled(false);
 			}
-			else if (((String) simulators.getSelectedItem()).contains("SSA-Direct")) {
-				description.setText("SSA-Direct Method on Unflatten Models");
+			else if (((String) simulators.getSelectedItem()).contains("SSA-Hierarchical (Java)")) {
+				description.setText("SSA-Direct Method on Hierarchical Models");
 				minStep.setEnabled(true);
 				minStepLabel.setEnabled(true);
 				step.setEnabled(true);
