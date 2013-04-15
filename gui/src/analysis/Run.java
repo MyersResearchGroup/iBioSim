@@ -1285,7 +1285,7 @@ public class Run implements ActionListener {
 						logFile.close();
 						return exitValue;
 					}
-					else if (sim.equals("SSA-Direct")) {
+				else if (sim.equals("SSA-Hierarchical (Java)")) {
 						
 						double stoichAmpValue = 
 							Double.parseDouble(properties.getProperty(
@@ -1294,14 +1294,13 @@ public class Run implements ActionListener {
 						double minTimeStep = 
 							Double.valueOf(properties.getProperty("monte.carlo.simulation.min.time.step"));
 
-						dynSim = new DynamicSimulation("ufdirect");					
+						dynSim = new DynamicSimulation("hierarchydirect");					
 						String SBMLFileName = directory + separator + theFile;
 						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
 								timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running,
 								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab);						
 						exitValue = 0;
 						new File(directory + separator + "running").delete();
-						logFile.close();
 						return exitValue;
 					}
 					else if (sim.equals("rkf45 (Java)")) {
