@@ -1809,6 +1809,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				}
 			}
 			
+			Zone.reset_writeLogFile();
+			
 			return;
 
 		}
