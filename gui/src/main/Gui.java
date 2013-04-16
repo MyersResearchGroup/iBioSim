@@ -291,7 +291,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	
 	private static final String atacsVersion = "6.9";
 	
-	private static final String iBioSimVersion = "2.4.5";
+	private static final String iBioSimVersion = "2.4.6";
 		
 	public static class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
 		
