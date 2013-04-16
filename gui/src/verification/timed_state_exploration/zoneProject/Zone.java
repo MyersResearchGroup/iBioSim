@@ -186,6 +186,21 @@ public class Zone{
 		return _writeLogFile;
 	}
 	
+	/**
+	 * Sets the BufferedWriter.
+	 * @param writeLogFile
+	 */
+	public static void set_writeLogFile(BufferedWriter writeLogFile){
+			_writeLogFile = writeLogFile;
+	}
+	
+	/**
+	 * Sets the writeLogFile to null.
+	 */
+	public static void reset_writeLogFile(){
+		_writeLogFile = null;
+	}
+	
 	private void checkZoneMaxSize(){
 		if(dbmSize() > ZoneSize){
 			ZoneSize = dbmSize();
