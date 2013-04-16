@@ -2912,14 +2912,17 @@ public abstract class Simulator {
 						Reaction fdReaction = model.createReaction(newReactionID);
 						KineticLaw fdKineticLaw = model.createKineticLaw();
 						fdKineticLaw.setMath(newNode.clone());
-						fdReaction.setKineticLaw(fdKineticLaw);						
-						SpeciesReference reactant = new SpeciesReference(model.getSpecies(newGridSpeciesID));
-						reactant.setStoichiometry(1);
-						fdReaction.addReactant(reactant);
-						SpeciesReference product = new SpeciesReference(model.getSpecies(neighborID));
-						product.setStoichiometry(1);
-						fdReaction.addProduct(product);
-						
+						fdReaction.setKineticLaw(fdKineticLaw);		
+						if (model.getSpecies(newGridSpeciesID)!=null) {
+							SpeciesReference reactant = new SpeciesReference(model.getSpecies(newGridSpeciesID));
+							reactant.setStoichiometry(1);
+							fdReaction.addReactant(reactant);
+						}
+						if (model.getSpecies(neighborID)!=null) {
+							SpeciesReference product = new SpeciesReference(model.getSpecies(neighborID));
+							product.setStoichiometry(1);
+							fdReaction.addProduct(product);
+						}
 						setupLocalParameters(fdReaction.getKineticLaw(), fdReaction);						
 						
 						setupSingleReaction(fdReaction.getId(), fdReaction.getKineticLaw().getMath(), false,
