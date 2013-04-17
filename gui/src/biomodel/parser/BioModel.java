@@ -2109,7 +2109,7 @@ public class BioModel {
 				k.removeLocalParameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING);
 			}
 		}
-		
+		metaIDIndex = SBMLutilities.setDefaultMetaID(sbml, r, metaIDIndex);
 		if (np != null) {
 			LocalParameter p = k.createLocalParameter();
 			p.setId(GlobalConstants.STOICHIOMETRY_STRING);
@@ -2626,6 +2626,19 @@ public class BioModel {
 				elementSBOLCount++;
 		}
 	}
+	
+//	public void correctPromoterToSBOLAnnotations() {
+//		Model sbmlModel = sbml.getModel();
+//		for (long i = 0; i < sbmlModel.getNumSpecies(); i++) {
+//			Species sbmlSpecies = sbmlModel.getSpecies(i);
+//			if (isPromoterSpecies(sbmlSpecies)) {
+//				List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlSpecies);
+//				if (sbolURIs.size() > 0)
+//					
+//			}
+//			
+//		}
+//	}
 	
 	public void setModelSBOLAnnotationFlag() {
 		modelSBOLAnnotationFlag = false;

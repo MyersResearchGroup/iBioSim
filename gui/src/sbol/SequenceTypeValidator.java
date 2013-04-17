@@ -6,21 +6,33 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import biomodel.util.GlobalConstants;
+
 public class SequenceTypeValidator {
-	private DFA completeDFA;
-	private DFA partialDFA;
+	private DFA completeConstructDFA;
+	private DFA terminalConstructDFA;
+	private DFA startConstructDFA;
+	private DFA partialConstructDFA;
 	private int stateIndex;
 	
 	public SequenceTypeValidator(String regex) {
-		String altRegex = altFragmentRegex(regex);
-		String exAltRegex = exFragmentRegex(altRegex);
+		String rightAltRegex = altFragmentRegex(regex);
+		String revRegex = reverseRegex(regex);
+		String leftAltRegex = altFragmentRegex(revRegex);
+//		String exAltRegex = exFragmentRegex(rightAltRegex);
 //		System.out.println(altRegex);
 //		System.out.println(exAltRegex);
 		Set<NFAState> nfaStartStates = constructNFA(regex);
-		this.completeDFA = new DFA(nfaStartStates);
-		nfaStartStates = constructNFA(exAltRegex);
-		this.partialDFA = new DFA(nfaStartStates);
-//		fragmentDFA.print();
+		completeConstructDFA = new DFA(nfaStartStates);
+		nfaStartStates = constructNFA(rightAltRegex);
+		terminalConstructDFA = new DFA(nfaStartStates);
+		nfaStartStates = constructNFA(leftAltRegex);
+		startConstructDFA = new DFA(nfaStartStates);
+//		nfaStartStates = constructNFA(exAltRegex);
+//		partialConstructDFA = new DFA(nfaStartStates);
+		partialConstructDFA = terminalConstructDFA.clone("?");
+//		terminalConstructDFA.print();
+//		partialConstructDFA.print();
 	}
 	
 	private Set<NFAState> constructNFA(String regex) {
@@ -166,10 +178,10 @@ public class SequenceTypeValidator {
 	private String exFragmentRegex(String regex) {
 		List<String> orFragments = findOrFragments(regex);
 		if (orFragments.size() > 1) {
-			regex = exFragmentRegex(orFragments.get(0));
+			String result = exFragmentRegex(orFragments.get(0));
 			for (int i = 1; i < orFragments.size(); i++)
-				regex = regex + "|" + exFragmentRegex(orFragments.get(i));
-			return regex;
+				result = result + "|" + exFragmentRegex(orFragments.get(i));
+			return result;
 		} else if (regex.startsWith("(")) {
 			int i = locateClosingParen(regex, 0);
 			String xFragment = regex.substring(1, i);
@@ -250,6 +262,51 @@ public class SequenceTypeValidator {
 		}	
 	}
 	
+	private String reverseRegex(String regex) {
+		List<String> orFragments = findOrFragments(regex);
+		if (orFragments.size() > 1) {
+			String result = reverseRegex(orFragments.get(0));
+			for (int i = 1; i < orFragments.size(); i++)
+				result = result + "|" + reverseRegex(orFragments.get(i));
+			return result;
+		} else {
+			String result = "";
+			int i = 0;
+			while (i < regex.length()) {
+				String token = regex.substring(i, i + 1);
+				if (token.equals("(")) {
+					int j = locateClosingParen(regex, i);
+					if (j + 1 < regex.length()) {
+						String quantifier = regex.substring(j + 1, j + 2);
+						if (isQuantifier(quantifier))
+							result = "(" + reverseRegex(regex.substring(i + 1, j)) + ")" + quantifier + result;
+						else
+							result = "(" + reverseRegex(regex.substring(i + 1, j)) + ")" + result;
+					} else
+						result = "(" + reverseRegex(regex.substring(i + 1, j)) + ")" + result;
+					i = j + 1;
+				} else if (isLetter(token)) {
+					int j = locateClosingLetter(regex, i);
+					if (j + 1 < regex.length()) {
+						String quantifier = regex.substring(j + 1, j + 2);
+						if (isQuantifier(quantifier))
+							result = regex.substring(i, j + 1) + quantifier + result;
+						else if (i > 0)
+							result = regex.substring(i, j + 1) + "," + result;
+						else 
+							result = regex.substring(i, j + 1) + result;
+					} else if (i > 0)
+						result = regex.substring(i, j + 1) + "," + result;
+					else
+						result = regex.substring(i, j + 1) + result;
+					i = j + 1;
+				} else
+					i++;
+			}
+			return result;
+		}
+	}
+	
 	private int locateClosingParen(String regex, int i) {
 		int openParen = 0;
 		int closeParen = 0;
@@ -267,12 +324,21 @@ public class SequenceTypeValidator {
 	private int locateClosingLetter(String regex, int i) {
 		for (int j = i; j < regex.length(); j++) {
 			String token = regex.substring(j, j + 1);
-			if ((token.equals("(") || token.equals(")") || token.equals("+") || token.equals("*")
-					|| token.equals("|") || token.equals("?") || token.equals(",")) && j > i)
+			if (!isLetter(token) && j > i)
 				return j - 1;
 		}
 		return regex.length() - 1;
 	}
+	
+	private boolean isLetter(String token) {
+		return (!token.equals("(") && !token.equals(")") && !token.equals("+") && !token.equals("*")
+				&& !token.equals("|") && !token.equals("?") && !token.equals(","));
+	}
+	
+	private boolean isQuantifier(String token) {
+		return (token.equals("+") || token.equals("*") || token.equals("?"));
+	}
+	
 	
 	private List<String> findOrFragments(String regex) {
 		List<String> orFragments = new LinkedList<String>();
@@ -307,35 +373,118 @@ public class SequenceTypeValidator {
 			return subRegex;
 	}
 	
-	public boolean validateCompleteConstruct(List<String> types) {
-		return completeDFA.run(types);
+	public boolean validateCompleteConstruct(List<String> types, boolean saveState) {
+		if (saveState)
+			return completeConstructDFA.runAndSave(types);
+		else 
+			return completeConstructDFA.run(types);
 	}
 	
-	public boolean validatePartialConstruct(List<String> types) {
-		return partialDFA.run(types);
+	public boolean validatePartialConstruct(List<String> types, boolean saveState) {
+		if (saveState)
+			return partialConstructDFA.runAndSave(types);
+		else 
+			return partialConstructDFA.run(types);
 	}
 	
+	public boolean validateTerminalConstruct(List<String> types, boolean saveState) {
+		if (saveState)
+			return terminalConstructDFA.runAndSave(types);
+		else 
+			return terminalConstructDFA.run(types);
+	}
+	
+	public boolean validateStartConstruct(List<String> types, boolean saveState) {
+		List<String> reverseTypes = new LinkedList<String>();
+		for (int i = 0; i < types.size() - 1; i++)
+			reverseTypes.add(0, types.get(i));
+		if (saveState)
+			return startConstructDFA.runAndSave(reverseTypes);
+		else 
+			return startConstructDFA.run(reverseTypes);
+	}
+
 	public boolean isCompleteConstructValid() {
-		return completeDFA.isAccepting();
+		return completeConstructDFA.isAccepting();
 	}
 	
 	public boolean isPartialConstructValid() {
-		return partialDFA.isAccepting();
+		return partialConstructDFA.isAccepting();
+	}
+	
+	public boolean isTerminalConstructValid() {
+		return terminalConstructDFA.isAccepting();
+	}
+	
+	public boolean isStartConstructValid() {
+		return startConstructDFA.isAccepting();
+	}
+	
+	public boolean isCompleteConstructFailed() {
+		return completeConstructDFA.inFailState();
+	}
+	
+	public boolean isPartialConstructFailed() {
+		return partialConstructDFA.inFailState();
+	}
+	
+	public boolean isTerminalConstructFailed() {
+		return terminalConstructDFA.inFailState();
+	}
+	
+	public boolean isStartConstructFailed() {
+		return startConstructDFA.inFailState();
+	}
+
+	public boolean isTerminalConstructStarted() {
+		return !terminalConstructDFA.inStartState();
+	}
+	
+	public boolean isPartialConstructStarted() {
+		return !partialConstructDFA.inStartState();
+	}
+	
+	public void resetCompleteConstructValidator() {
+		completeConstructDFA.reset();
 	}
 	
 	public void resetPartialConstructValidator() {
-		partialDFA.reset();
+		partialConstructDFA.reset();
+	}
+	
+	public void resetTerminalConstructValidator() {
+		terminalConstructDFA.reset();
+	}
+	
+	public void resetStartConstructValidator() {
+		startConstructDFA.reset();
+	}
+	
+	public void savePartialConstructValidator() {
+		partialConstructDFA.save();
+	}
+	
+	public void saveTerminalConstructValidator() {
+		terminalConstructDFA.save();
+	}
+	
+	public void loadPartialConstructValidator() {
+		partialConstructDFA.load();
+	}
+	
+	public void loadTerminalConstructValidator() {
+		terminalConstructDFA.load();
 	}
 	
 	public Set<String> getStartTypes() {
 		Set<String> startTypes = new HashSet<String>();
-		startTypes.addAll(completeDFA.getStartState().getTransitions().keySet());
+		startTypes.addAll(completeConstructDFA.getStartState().getTransitions().keySet());
 		return startTypes;
 	}
 	
 	public Set<String> getTerminalTypes() {
 		Set<String> terminalTypes = new HashSet<String>();
-		for (DFAState state : completeDFA.getStates().values()) {
+		for (DFAState state : completeConstructDFA.getStates().values()) {
 			HashMap<String, DFAState> transitions = state.getTransitions();
 			for (String type : transitions.keySet())
 				if (transitions.get(type).isAccepting())
@@ -425,6 +574,10 @@ public class SequenceTypeValidator {
 			transitions.put(input, destination);
 		}
 		
+		public void setTransitions(HashMap<String, DFAState> transitions) {
+			this.transitions = transitions;
+		}
+		
 		public DFAState transition(String input) {
 			return transitions.get(input);
 		}
@@ -435,13 +588,27 @@ public class SequenceTypeValidator {
 	}
 	
 	private class DFA {
-		private HashMap<String, DFAState> states = new HashMap<String, DFAState>();
+		private HashMap<String, DFAState> states;
 		private DFAState startState;
 		private DFAState currentState;
+		private DFAState failState;
+		private List<DFAState> saveStates;
 		
 		public DFA(Set<NFAState> nfaStates) {
+			states = new HashMap<String, DFAState>();
 			startState = constructDFA(nfaStates);
 			currentState = startState;
+			failState = new DFAState(GlobalConstants.CONSTRUCT_VALIDATION_FAIL_STATE_ID);
+			failState.setAccepting(false);
+			saveStates = new LinkedList<DFAState>();
+		}
+		
+		public DFA(HashMap<String, DFAState> states, DFAState startState, DFAState failState) {
+			this.states = states;
+			this.startState = startState;
+			currentState = startState;
+			this.failState = failState;
+			saveStates = new LinkedList<DFAState>();
 		}
 		
 		public DFAState constructDFA(Set<NFAState> nfaStates) {
@@ -475,6 +642,28 @@ public class SequenceTypeValidator {
 			}
 			dfaState.setAccepting(accepting);
 			return dfaState;
+		}
+		
+		public DFA clone(String quantifier) {
+			HashMap<String, DFAState> clonedStates = new HashMap<String, DFAState>();
+			for (String id : states.keySet()) {
+				DFAState clonedState = new DFAState(id);
+				if (id.equals(GlobalConstants.CONSTRUCT_VALIDATION_FAIL_STATE_ID))
+					clonedState.setAccepting(false);
+				else if (quantifier.equals("?") && !id.equals(startState.getID()))
+					clonedState.setAccepting(true);
+				else
+					clonedState.setAccepting(states.get(id).isAccepting());
+				clonedStates.put(id, clonedState);
+			}
+			for (String id : states.keySet()) {
+				HashMap<String, DFAState> clonedTransitions = new HashMap<String, DFAState>();
+				HashMap<String, DFAState> transitions = states.get(id).getTransitions();
+				for (String input : transitions.keySet())
+					clonedTransitions.put(input, clonedStates.get(transitions.get(input).getID()));
+				clonedStates.get(id).setTransitions(clonedTransitions);
+			}
+			return new DFA(clonedStates, clonedStates.get(startState.getID()), clonedStates.get(failState.getID()));
 		}
 		
 		public DFAState getStartState() {
@@ -524,24 +713,62 @@ public class SequenceTypeValidator {
 			
 		}
 		
+		public boolean runAndSave(List<String> inputs) {
+			DFAState nextState = currentState;
+			for (int i = 0; i < inputs.size(); i++) {
+				nextState = nextState.transition(inputs.get(i));
+				if (nextState == null) {
+					currentState = failState;
+					return false;
+//					return i;
+				} else if (i == inputs.size() - 1)
+					currentState = nextState;
+			}
+//			if (currentState.isAccepting())
+//				return inputs.size();
+//			else
+//				return -1;
+			return currentState.isAccepting();
+		}
+		
 		public boolean run(List<String> inputs) {
 			DFAState nextState = currentState;
 			for (int i = 0; i < inputs.size(); i++) {
 				nextState = nextState.transition(inputs.get(i));
-				if (nextState == null)
+				if (nextState == null) {
 					return false;
-				else if (i == inputs.size() - 1)
-					currentState = nextState;
+//					return i;
+				}
 			}
-			return currentState.isAccepting();
+//			if (nextState.isAccepting())
+//				return inputs.size();
+//			else
+//				return -1;
+			return nextState.isAccepting();
 		}
 		
 		public boolean isAccepting() {
 			return currentState.isAccepting();
 		}
 		
+		public boolean inFailState() {
+			return currentState.getID().equals(GlobalConstants.CONSTRUCT_VALIDATION_FAIL_STATE_ID);
+		}
+		
 		public void reset() {
 			currentState = startState;
+		}
+		
+		public void save() {
+			saveStates.add(0, currentState);
+		}
+		
+		public void load() {
+			currentState = saveStates.remove(0);
+		}
+		
+		public boolean inStartState() {
+			return currentState == startState;
 		}
 	}
 	

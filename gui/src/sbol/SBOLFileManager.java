@@ -86,13 +86,11 @@ public class SBOLFileManager {
 				JOptionPane.showMessageDialog(Gui.frame, "DNA component with URI " + uri.toString() +
 						" could not be found in project SBOL files.", "DNA Component Not Found", JOptionPane.ERROR_MESSAGE);
 				error = true;
+				resolvedComps.clear();
 			} else if (!error)
 				resolvedComps.add(resolvedComp);
 		}
-		if (error)
-			return null;
-		else
-			return resolvedComps;
+		return resolvedComps;
 	}
 	
 	public DnaComponent resolveAndLocateTopLevelURI(URI uri) {

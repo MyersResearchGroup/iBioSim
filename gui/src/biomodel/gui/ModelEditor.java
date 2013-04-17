@@ -434,34 +434,30 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				if (fileManager.sbolFilesAreLoaded() && assemblyGraph.loadDNAComponents(fileManager)) {
 					SequenceTypeValidator seqValidator = 
 							new SequenceTypeValidator(Preferences.userRoot().get(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, ""));
-					assemblyGraph.cutGraph(seqValidator.getStartTypes());
-					if (assemblyGraph.isLinear()) {
-						SBOLAssembler synthesizer = new SBOLAssembler(assemblyGraph, seqValidator);
-						DnaComponent assembledComp = synthesizer.assembleDNAComponent();
-						if (assembledComp != null) {
-							if (identityManager.containsPlaceHolderURI() || identityManager.loadBioSimComponent(fileManager)) {
-								identityManager.describeDNAComponent(assembledComp);
-								identityManager.identifyDNAComponent(assembledComp);
-								fileManager.saveDNAComponent(assembledComp, identityManager);
-								identityManager.replaceBioSimURI(assembledComp.getURI());
-								identityManager.annotateBioModel();
-							}
-						} else if (identityManager.containsPlaceHolderURI()) {
-							identityManager.removeBioSimURI();
+					SBOLAssembler assembler = new SBOLAssembler(assemblyGraph, seqValidator);
+					DnaComponent assembledComp = assembler.assembleDNAComponent();
+					if (assembledComp != null) {
+						if (identityManager.containsPlaceHolderURI() || identityManager.loadBioSimComponent(fileManager)) {
+							identityManager.describeDNAComponent(assembledComp);
+							identityManager.identifyDNAComponent(assembledComp);
+							fileManager.saveDNAComponent(assembledComp, identityManager);
+							identityManager.replaceBioSimURI(assembledComp.getURI());
 							identityManager.annotateBioModel();
 						}
 					} else if (identityManager.containsPlaceHolderURI()) {
 						identityManager.removeBioSimURI();
 						identityManager.annotateBioModel();
 					}
+
 				} else if (identityManager.containsPlaceHolderURI()) {
 					identityManager.removeBioSimURI();
 					identityManager.annotateBioModel();
 				} 
 			} else {
-				if (!identityManager.containsPlaceHolderURI()) {
+				if (identityManager.containsBioSimURI() && !identityManager.containsPlaceHolderURI()) {
 					SBOLFileManager fileManager = new SBOLFileManager(biosim.getRoot(), biosim.getSbolFiles());
-					fileManager.deleteDNAComponent(identityManager.getBioSimURI());
+					if (fileManager.sbolFilesAreLoaded())
+						fileManager.deleteDNAComponent(identityManager.getBioSimURI());
 				}
 				identityManager.removeBioSimURI();
 				identityManager.annotateBioModel();
@@ -1879,7 +1875,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	}
 
 	public SpeciesPanel launchSpeciesPanel(String id, boolean inTab) {
-		
 		BioModel refGCM = null;
 		
 		if (paramsOnly) {

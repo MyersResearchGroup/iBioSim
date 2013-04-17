@@ -130,7 +130,7 @@ public class GlobalConstants {
 	public static final String SBOL_RBS = "sbolRBS";
 	public static final String SBOL_CDS = "sbolCDS";
 	public static final String SBOL_DNA_COMPONENT = "sbolDnaComponent";
-	public static final String GENETIC_CONSTRUCT_REGEX = "(promoter(ribosome entry site,coding sequence)+terminator+|engineered region)+";
+	public static final String GENETIC_CONSTRUCT_REGEX = "(promoter(ribosome entry site,coding sequence)+terminator+)+";
 	public static final String GENETIC_CONSTRUCT_REGEX_PREFERENCE = "biosim.synthesis.regex";
 	public static final String SBOL_URI_AUTHORITY_PREFERENCE = "biosim.synthesis.uri";
 	public static final String MYERS_LAB_URI_AUTHORITY = "http://www.async.ece.utah.edu";
@@ -138,6 +138,7 @@ public class GlobalConstants {
 	public static final String CONSTRUCT_VALIDATION_PREFERENCE = "biosim.synthesis.validation";
 	public static final String CONSTRUCT_VALIDATION_WARNING = "False";
 	public static final String CONSTRUCT_VALIDATION_WARNING_PREFERENCE = "biosim.synthesis.validation_warning";
+	public static final String CONSTRUCT_VALIDATION_FAIL_STATE_ID = "Sf";
 	
 	public static final String BIO = "biochem";
 	public static final String ACTIVATION = "activation";

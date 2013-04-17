@@ -312,7 +312,7 @@ public class PromoterPanel extends JPanel {
 		// Parse out SBOL annotations and add to SBOL field
 		if (!paramsOnly) {
 			// Field for annotating promoter with SBOL DNA components
-			List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(promoter);
+			List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(production);
 			sbolField = new SBOLField(sbolURIs, GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 3, false);
 			add(sbolField);
 		}
@@ -441,8 +441,8 @@ public class PromoterPanel extends JPanel {
 				// Add SBOL annotation to promoter
 				List<URI> sbolURIs = sbolField.getSBOLURIs();
 				if (sbolURIs.size() > 0) {
-					SBOLAnnotation sbolAnnot = new SBOLAnnotation(promoter.getMetaId(), sbolURIs);
-					AnnotationUtility.setSBOLAnnotation(promoter, sbolAnnot);
+					SBOLAnnotation sbolAnnot = new SBOLAnnotation(production.getMetaId(), sbolURIs);
+					AnnotationUtility.setSBOLAnnotation(production, sbolAnnot);
 					if (sbolField.wasInitiallyBlank())
 						bioModel.setElementSBOLCount(bioModel.getElementSBOLCount() + 1);
 //					if (removeModelSBOLAnnotationFlag) {
@@ -451,7 +451,7 @@ public class PromoterPanel extends JPanel {
 //						modelEditor.getSchematic().getSBOLDescriptorsButton().setEnabled(true);
 //					}
 				} else {
-					AnnotationUtility.removeSBOLAnnotation(promoter);
+					AnnotationUtility.removeSBOLAnnotation(production);
 					if (!sbolField.wasInitiallyBlank())
 						bioModel.setElementSBOLCount(bioModel.getElementSBOLCount() - 1);
 				}

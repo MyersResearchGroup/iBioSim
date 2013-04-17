@@ -255,18 +255,58 @@ public class SBOLUtility {
 		return subIntersections;
 	}
 	
-	public static List<String> loadLowestSOTypes(DnaComponent dnaComp) {
-		List<String> types = new LinkedList<String>();
+	public static List<String> loadDNAComponentTypes(DnaComponent dnaComp) {
 		List<DnaComponent> dnaComps = new LinkedList<DnaComponent>();
 		dnaComps.add(dnaComp);
-		do {
-			if (dnaComps.get(0).getAnnotations().size() > 0)
-				for (SequenceAnnotation anno : dnaComps.remove(0).getAnnotations())
-					dnaComps.add(anno.getSubComponent());
+		return loadDNAComponentTypes(dnaComps);
+	}
+	
+	public static List<String> loadDNAComponentTypes(List<DnaComponent> dnaComps) {
+		List<String> types = new LinkedList<String>();
+		List<DnaComponent> loadComps = new LinkedList<DnaComponent>(dnaComps);
+		while (loadComps.size() > 0) {
+			if (loadComps.get(0).getAnnotations().size() > 0)
+				for (SequenceAnnotation anno : loadComps.remove(0).getAnnotations())
+					loadComps.add(anno.getSubComponent());
 			else
-				types.add(convertURIToSOType(dnaComps.remove(0).getTypes().iterator().next()));
-		} while (dnaComps.size() > 0);
+				types.add(convertURIToSOType(loadComps.remove(0).getTypes().iterator().next()));
+		}
 		return types;
+	}
+	
+	public static List<String> loadNodeTypes(SBOLAssemblyNode assemblyNode) {
+		return loadDNAComponentTypes(assemblyNode.getDNAComponents());
+	}
+	
+	public static List<String> loadNodeTypes(List<SBOLAssemblyNode> assemblyNodes) {
+		List<String> types = new LinkedList<String>();
+		for (SBOLAssemblyNode assemblyNode : assemblyNodes)
+			types.addAll(loadNodeTypes(assemblyNode));
+		return types;
+	}
+	
+	public static List<URI> loadDNAComponentURIs(List<DnaComponent> dnaComps) {
+		List<URI> uris = new LinkedList<URI>();
+		List<DnaComponent> loadComps = new LinkedList<DnaComponent>(dnaComps);
+		while (loadComps.size() > 0) {
+			if (loadComps.get(0).getAnnotations().size() > 0)
+				for (SequenceAnnotation anno : loadComps.remove(0).getAnnotations())
+					loadComps.add(anno.getSubComponent());
+			else
+				uris.add(loadComps.remove(0).getURI());
+		}
+		return uris;
+	}
+	
+	public static List<URI> loadNodeURIs(SBOLAssemblyNode assemblyNode) {
+		return loadDNAComponentURIs(assemblyNode.getDNAComponents());
+	}
+	
+	public static List<URI> loadNodeURIs(List<SBOLAssemblyNode> assemblyNodes) {
+		List<URI> uris = new LinkedList<URI>();
+		for (SBOLAssemblyNode assemblyNode : assemblyNodes)
+			uris.addAll(loadNodeURIs(assemblyNode));
+		return uris;
 	}
 	
 	// Converts global constant SBOL type to corresponding set of SO types
