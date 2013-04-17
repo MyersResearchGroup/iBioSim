@@ -153,8 +153,11 @@ public class SBOLIdentityManager {
 		List<URI> exportURIs = new LinkedList<URI>(modelURIs);
 		if (containsPlaceHolderURI())
 			exportURIs.remove(indexOfBioSimURI);
-		modelComps = fileManager.resolveURIs(exportURIs);
-		return (modelComps != null);
+		if (exportURIs.size() > 0) {
+			modelComps = fileManager.resolveURIs(exportURIs);
+			return modelComps.size() > 0;
+		} else
+			return false;
 	}
 	
 	// Loads SBOL descriptors such as display ID, name, and description for newly synthesized iBioSim composite component 
