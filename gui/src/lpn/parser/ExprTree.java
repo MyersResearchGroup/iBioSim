@@ -4582,6 +4582,47 @@ public class ExprTree {
 		return ET;
 	}
 
+	/*
+	 * Performs the same operation as this.clone except it does not copy the parsing information.
+	 */
+	@SuppressWarnings("unchecked")
+	public ExprTree shallowclone(){
+		
+		ExprTree ET = new ExprTree(); // ET phone home.
+		
+		ET.op = op;
+
+		ET.isit = isit;
+
+		ET.lvalue = lvalue;
+		
+		ET.uvalue = uvalue;
+		
+		ET.variable = variable;
+
+		ET.real = real;
+
+		ET.logical = logical;
+
+		ET.r1 = r1 != null ? r1.shallowclone() : null;
+		
+		ET.r2 = r2 != null ? r2.shallowclone() : null;
+		
+		//private ArrayList<String> booleanSignals, integerSignals, continuousSignals;
+
+		ET.booleanSignals = (ArrayList<String>) booleanSignals.clone();
+		
+		ET.integerSignals = (ArrayList<String>) integerSignals.clone();
+		
+		ET.continuousSignals = (ArrayList<String>) continuousSignals;
+		
+		ET.lhpn = lhpn;
+		
+		ET.expression = expression;
+		
+		return ET;
+	}
+	
 	public ExprTree getExprTree() {
 		token = this.intexpr_gettok(expression);
 		this.intexpr_L(expression);
