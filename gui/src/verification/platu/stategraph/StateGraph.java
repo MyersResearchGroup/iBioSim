@@ -1687,6 +1687,11 @@ public class StateGraph {
 				// Get each inequality that involves the continuous variable.
 				ArrayList<InequalityVariable> inequalities = this.lpn.getContVar(contVarIndex).getInequalities();
 
+				/* If inequalities is null, create and size size list */
+				if(inequalities == null){
+					inequalities = new ArrayList<InequalityVariable>();
+				}
+				
 				ineqNeedUpdating.addAll(inequalities);
 				
 //				// Update the inequalities.
