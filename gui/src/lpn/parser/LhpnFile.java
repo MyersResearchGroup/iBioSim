@@ -2465,7 +2465,7 @@ public class LhpnFile {
 			
 			// Create the InequalityVariable.
 			InequalityVariable newVariable = new InequalityVariable(booleanName, "false",
-					ET.clone(), this);
+					ET.shallowclone(), this);
 			
 			// Check if the Variable is present already.
 			Variable v = booleans.get(booleanName);
