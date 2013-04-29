@@ -65,6 +65,24 @@ public class StateSet implements Iterable<PrjState>{
 	// Caches whether subsets, supersets, and timing is being used.
 	private boolean timed, subsets, supersets;
 	
+	private PrjState _initState;
+	
+	/*
+	 * Get the initial state.
+	 */
+	public PrjState get_initState() {
+		return _initState;
+	}
+
+    /* 
+     * Set the initial state.
+     * @param initState
+     * 		The initial state.
+     */
+	public void set_initState(PrjState initState) {
+		this._initState = initState;
+	}
+
 	/**
 	 * Creates a state set. The StateSet will be initialized into the into the subset/superset
 	 * mode if the expression
