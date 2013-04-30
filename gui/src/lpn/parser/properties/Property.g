@@ -10,8 +10,8 @@ options {
 
 @header {
   package lpn.parser.properties;
-  
- // package antlrPackage;
+  //import lpn.parser.LhpnFile;
+  //package antlrPackage;
 }
 
 @lexer::header { 
@@ -110,8 +110,8 @@ ASSERT_UNTIL
 :'assertUntil'
 ;
 
-POSEDGE
-: 'posedge'
+WAIT_POSEDGE
+: 'waitPosedge'
 ;
 
 
@@ -119,8 +119,8 @@ ID  :	('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'0'..'9'|'_')*
     ;
 
 INT :	'0'..'9'+
+    
     ;
-
 FLOAT
     :   ('0'..'9')+ '.' ('0'..'9')* EXPONENT?
     |   '.' ('0'..'9')+ EXPONENT?
@@ -192,8 +192,9 @@ DIV
 :'/'
 ;
 
-
-
+DASH
+:'***'
+;
 EQUAL
 :'='
 ;
@@ -250,22 +251,27 @@ SEMICOL
 COMMA
 :','
 ;
-
-
+UNIFORM
+:'uniform('INT','INT')'
+;
 
 booleanNegationExpression
 : (NOT^)* constantValue
+//: (NOT^)*  (LPARA!)* relationalExpression (RPARA!)*
 ;
   
 always_statement
-: ALWAYS^  SEMICOL!
+: ALWAYS^  LCURL! (statement)* RCURL!  //SEMICOL!
 ;
 signExpression
 :(PLUS^|MINUS^)*  booleanNegationExpression
+//:(PLUS^|MINUS^)* constantValue
 ;
 multiplyingExpression
   : signExpression ((MULT^|DIV^|MOD^) signExpression)*
   ;
+
+
 
 addingExpression
   : multiplyingExpression ((PLUS^|MINUS^) multiplyingExpression)*
@@ -276,35 +282,41 @@ relationalExpression
   : addingExpression ((EQUAL^|NOT_EQUAL^|GET^|GETEQ^|LET^|LETEQ^|SAMEAS^) addingExpression)*
   ;
 
-
 logicalExpression
    : relationalExpression ((AND^|OR^) relationalExpression)*
 	 ;
-	 
+//logicalExpression
+ //  : relationalExpression ((AND^|OR^) relationalExpression)*
+//   ;	 
+
 unaryExpression
-	: NOT^ LPARA! logicalExpression RPARA! SEMICOL!
-  
-	;
-	 
+  : (NOT^)*  LPARA! logicalExpression RPARA! 
+ // : (NOT^)*   logicalExpression 
+  ;
+
+combinationalExpression
+: unaryExpression ((AND^|OR^) unaryExpression)*
+;
 expression
 	//: relational
   //:constantValue
   //|primitiveElement
   //|addingExpression
   //|multiplyingExpression
-  : unaryExpression
-  |logicalExpression
-  |edge_expression
-  ;
+  //:  unaryExpression 
+ // | logicalExpression
+  :combinationalExpression
+  | logicalExpression
+   ;
 
 
 constantValue
-	: INT | ID
+	: INT | ID | UNIFORM
 	;
 
 wait_statement
 	: WAIT^ LPARA! expression RPARA! SEMICOL!
-	| WAIT^ LPARA! expression COMMA!  expression RPARA! SEMICOL!
+	| WAIT^ LPARA! expression COMMA!  expression (GET expression)* RPARA! SEMICOL!
 	;
 		
 	
@@ -336,12 +348,17 @@ assertUntil_statement
 :ASSERT_UNTIL^ LPARA! expression COMMA! expression RPARA! SEMICOL!
 ;
 
-edge_expression
-: POSEDGE^ ID
+edge_statement
+: WAIT_POSEDGE^ LPARA! expression RPARA! SEMICOL!
 ;
 assertStable_statement
 :ASSERT_STABLE^ LPARA! expression COMMA! expression RPARA! SEMICOL!
 ;
+
+
+//waitPosedge_statement
+//:WAIT_POSEDGE^ LPARA! expression RPARA! SEMICOL!
+//;
 
 statement
 	:wait_statement
@@ -351,12 +368,7 @@ statement
 	|assertUntil_statement
 	|always_statement
 	|assertStable_statement
-  ; 
+	|edge_statement
+	; 
 	
-//assignment
-//	: variable EQUAL^ expression
-//	;
-	
-//variable
-	//: ID
-//	;
+
