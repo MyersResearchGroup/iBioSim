@@ -17,9 +17,8 @@ import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.TokenStream;
 
 
-//import lpn.parser.properties.PropertyLexer;
-//import antlrPackage.PropertyParser;
-//import antlrPackage.PropertyParser.program_return;
+
+
 
 
 public class BuildProperty {
@@ -31,6 +30,7 @@ public class BuildProperty {
 	static int numStartPlaces=0;
 	static int numEndPlaces=0;
 	static String pFirst = "p0";
+	static String pLast ="";
 	static boolean loop = false;
 	
 	static List list = new List();
@@ -56,7 +56,12 @@ public class BuildProperty {
 		String lpnFileName = lpnFileString.concat("lpn");
 		File lpnFile = new File(lpnFileName);
 		lpnFile.createNewFile();
+
+		//String[] lpnPath = lpnFileName.split(separator);
+		//System.out.println("No of places : "+numPlaces);
+
 		System.out.println("No of places : "+numPlaces);
+
 		BufferedReader input = new BufferedReader(new FileReader(propFileName));
 
 		String line = input.readLine();
@@ -73,26 +78,24 @@ public class BuildProperty {
 		}
 
 		String  property = sb.toString();
-		System.out.println("property: "+property+"\n");
+		//System.out.println("property: "+property+"\n");
 		CharStream charStream = new ANTLRStringStream(property);
 		PropertyLexer lexer = new PropertyLexer(charStream);
 		TokenStream tokenStream =  new CommonTokenStream(lexer);
 		PropertyParser parser = new PropertyParser(tokenStream);
 		PropertyParser.program_return program = parser.program();
-		System.out.println("tree: "+((Tree)program.tree).toStringTree()+"\n");
+		//System.out.println("tree: "+((Tree)program.tree).toStringTree()+"\n");
 
 		CommonTree r0 = ((CommonTree)program.tree);
 		//System.out.println("parent :"+program.start.getText());
 		int number = r0.getChildCount();
-		System.out.println("NUMBER : "+number+"\n");
+		//System.out.println("NUMBER : "+number+"\n");
 		printTree(r0, number);
 		generateFile(r0, lpn,lpnFileName);
 	}
 
 	public void generateFile(CommonTree r0, LhpnFile lpn, String lpnFileName){
 		LhpnFile lpnFinal = new LhpnFile();
-		
-
 		File lpnFile = new File(".lpn");
 		try {
 			lpnFile.createNewFile();
@@ -105,10 +108,10 @@ public class BuildProperty {
 			if(loop){
 			lpnFinal.addTransition("t" + numTransitions);
 			numTransitions++;
-			lpnFinal.addMovement("p"+(numPlaces-1),"t" +(numTransitions-1));
+			lpnFinal.addMovement(pLast,"t" +(numTransitions-1));
 			lpnFinal.addMovement("t" +(numTransitions-1), pFirst); 
 			loop=false;
-			}
+			} 
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -146,48 +149,70 @@ public class BuildProperty {
 				childCount= t.getChildCount();
 			}
 
-			System.out.println("child count is : "+t.getChildCount());
+			//System.out.println("child count is : "+t.getChildCount());
 			for(int i=0;i<childCount;i++){
-				System.out.println("child is : "+t.getChild(i));	
+				//System.out.println("child is : "+t.getChild(i));	
 			} 
 			for(int i=0;i<childCount;i++){
 
 				CommonTree switchCaseTree= new CommonTree();
 
 				if(recursiveCall){
-					System.out.println("Start of switch statement in recursive call:"+t);
+					//System.out.println("Start of switch statement in recursive call:"+t);
 					switchCaseTree=t;
 				}
 				else {
-					System.out.println("Start of switch statement not in recursive call:"+t.getChild(i));
+					//System.out.println("Start of switch statement not in recursive call:"+t.getChild(i));
 					switchCaseTree=(CommonTree)t.getChild(i);
 				}
 				switch(switchCaseTree.getType())
 				{
 				
 				case lpn.parser.properties.PropertyLexer.ALWAYS : 
+					//System.out.println("child count of always : "+switchCaseTree.getChildCount());
 					if(numPlaces==0) pFirst="p0";
 					else pFirst = "p"+(numPlaces-1);
+					
+					//System.out.println("pFirst is :"+pFirst);
+					//for(int q=0; q<switchCaseTree.getChildCount();q++){
+					lpnObj = generateLPN((CommonTree)switchCaseTree, lpnObj, false);
+				//	}
+					pLast="p"+(numPlaces-1);
 					loop=true;
-				break;
+					
+					if(loop){
+						lpnObj.addTransition("t" + numTransitions);
+						numTransitions++;
+						lpnObj.addMovement(pLast,"t" +(numTransitions-1));
+						lpnObj.addMovement("t" +(numTransitions-1), pFirst); 
+						loop=false;
+						} 
+				break; 
+				case lpn.parser.properties.PropertyLexer.RCURL :
+					pLast= "p"+(numPlaces-1);
+					//loop=false;
+					//System.out.println("pLast is :"+pLast);
+					break;
 				case lpn.parser.properties.PropertyLexer.BOOLEAN : 
 					varType = "boolean";
 					varName = generateExpression((CommonTree)switchCaseTree.getChild(0));
 					lpnObj.addInput(varName, varType);
 					break;
 				case lpn.parser.properties.PropertyLexer.REAL : 
-					varType = "real";
+					varType = "discrete";
 					 varName = generateExpression((CommonTree)switchCaseTree.getChild(0));
-					 lpnObj.addInput(varName, varType);
+					lpnObj.addInput(varName, varType);
 					break;
 				case lpn.parser.properties.PropertyLexer.INTEGER : 
 					 varType = "int";
 					 varName = generateExpression((CommonTree)switchCaseTree.getChild(0));
-					 lpnObj.addInput(varName, varType);
+					lpnObj.addInput(varName, varType);
 					break;
 				case lpn.parser.properties.PropertyLexer.ASSERT :
-					System.out.println("Assert statement ");
+					//System.out.println("Assert statement ");
 					enablingCond= generateExpression((CommonTree)switchCaseTree.getChild(0));
+					
+					//System.out.println("Assert statement enabling cond :"+enablingCond);
 					delay= generateExpression((CommonTree)switchCaseTree.getChild(1));
 					if(numPlaces==0){
 						lpnObj.addPlace("p"+numPlaces, true);
@@ -200,7 +225,7 @@ public class BuildProperty {
 					lpnObj.addMovement("p"+(numPlaces-1), "t" +(numTransitions-1));
 					lpnObj.addTransition("tFail" + numFailTransitions);
 					lpnObj.getTransition("tFail" + numFailTransitions).setFail(true);
-					lpnObj.addEnabling("tFail" +numFailTransitions, "~"+enablingCond);
+					lpnObj.addEnabling("tFail" +numFailTransitions, "~("+enablingCond+")");
 
 					numFailTransitions++;
 					lpnObj.addMovement("p"+(numPlaces-1), "tFail" +(numFailTransitions-1));
@@ -215,7 +240,7 @@ public class BuildProperty {
 					
 				break;	
 				case lpn.parser.properties.PropertyLexer.WAIT_STABLE :
-					System.out.println("child is :"+(CommonTree)switchCaseTree.getChild(0));
+					//System.out.println("child is :"+(CommonTree)switchCaseTree.getChild(0));
 					enablingCond= generateExpression((CommonTree)switchCaseTree.getChild(0));
 					delay= generateExpression((CommonTree)switchCaseTree.getChild(1));
 					if(numPlaces==0){
@@ -262,8 +287,7 @@ public class BuildProperty {
 					
 				break;
 				case lpn.parser.properties.PropertyLexer.ID : 
-					System.out.println("Property name ");
-
+					//System.out.println("Property name ");
 					break;
 				case lpn.parser.properties.PropertyLexer.INT :
 					break;
@@ -303,31 +327,8 @@ public class BuildProperty {
 					System.out.println("wait statement: ");
 					int count = switchCaseTree.getChildCount();
 					if (count==1){
-						if(switchCaseTree.getChild(0).toString().matches("posedge")){
-						enablingCond= generateExpression((CommonTree)switchCaseTree.getChild(0));
 						
-						if(numPlaces==0){
-							lpnObj.addPlace("p"+numPlaces, true);
-							numPlaces++;
-						}
-						lpnObj.addTransition("t" + numTransitions);
-						lpnObj.addEnabling("t" +numTransitions, "~"+enablingCond);
-						numTransitions++;
-						lpnObj.addMovement("p"+(numPlaces-1), "t" +(numTransitions-1));
 						
-						lpnObj.addPlace("p"+numPlaces, false);
-						numPlaces++;
-						lpnObj.addMovement( "t" +(numTransitions-1),"p"+(numPlaces-1));
-						lpnObj.addTransition("t" + numTransitions);
-						lpnObj.addEnabling("t" +numTransitions, enablingCond);
-						numTransitions++;
-						lpnObj.addMovement("p"+(numPlaces-1), "t" +(numTransitions-1));
-						
-						lpnObj.addPlace("p"+numPlaces, false);
-						numPlaces++;
-						lpnObj.addMovement( "t" +(numTransitions-1),"p"+(numPlaces-1));
-					}
-						else{
 							enablingCond= generateExpression((CommonTree)switchCaseTree.getChild(0));
 							
 							if(numPlaces==0){
@@ -343,7 +344,7 @@ public class BuildProperty {
 							numPlaces++;
 							lpnObj.addMovement( "t" +(numTransitions-1),"p"+(numPlaces-1));
 							
-						}
+						
 					}
 					else if(count==2){
 						enablingCond= generateExpression((CommonTree)switchCaseTree.getChild(0));
@@ -376,6 +377,7 @@ public class BuildProperty {
 					break;
 
 				case lpn.parser.properties.PropertyLexer.IF :
+					boolean elsePartExists = false;
 					System.out.println("IF statement");
 					if(list.getItemCount()!=0){
 						list.removeAll();
@@ -428,7 +430,7 @@ public class BuildProperty {
 
 							for(int m=0;m<list.getItemCount();m++){
 
-								if(list.getItem(m).matches(enablingCond)){
+								if(list.getItem(m).toString().equalsIgnoreCase(enablingCond)){
 									if(m==(list.getItemCount()-1)){
 										newEnablingCond1 = "("+list.getItem(m)+")";
 									}
@@ -450,7 +452,7 @@ public class BuildProperty {
 
 							}
 							String newEnablingCond = sb.toString();
-							System.out.println("newEnablinCondition : "+newEnablingCond+"\n");
+							//System.out.println("newEnablinCondition : "+newEnablingCond+"\n");
 
 							lpnObj.addEnabling("t" +numTransitions, enablingCond);
 							numTransitions++;
@@ -480,10 +482,12 @@ public class BuildProperty {
 					
 					for(int j=0;j<switchCaseTree.getChildCount();j++){
 						if(switchCaseTree.getChild(j).getType()==lpn.parser.properties.PropertyLexer.ELSE){
+							elsePartExists = true;
 							lpnObj=generateLPN((CommonTree)switchCaseTree.getChild(j), lpnObj, true);
 							}
 					}
 			
+					if(!elsePartExists){
 					String newEnablingCond1 = "";
 					StringBuffer sb = new StringBuffer();
 						for(int m=0;m<list.getItemCount();m++){
@@ -499,13 +503,13 @@ public class BuildProperty {
 
 						}
 						String newEnablingCond = sb.toString();
-						
+						System.out.println(" condition is :"+newEnablingCond);
 						lpnObj.addTransition("t" + numTransitions);
-						lpnObj.addEnabling("t" +numTransitions, newEnablingCond);
+							lpnObj.addEnabling("t" +numTransitions, newEnablingCond);
 					numTransitions++;
-					lpnObj.addMovement("pStart"+(numStartPlaces-1),"t" +(numTransitions-1));
+						lpnObj.addMovement("pStart"+(numStartPlaces-1),"t" +(numTransitions-1));
 					lpnObj.addMovement("t" +(numTransitions-1),"pEnd"+(numEndPlaces-1)); 
-					
+				}
 					lpnObj.addTransition("t" + numTransitions);
 					numTransitions++;
 					lpnObj.addMovement("pEnd"+(numEndPlaces-1),"t" +(numTransitions-1));
@@ -517,11 +521,12 @@ public class BuildProperty {
 				case lpn.parser.properties.PropertyLexer.END :
 					break;
 				case lpn.parser.properties.PropertyLexer.ELSEIF :
-					System.out.println("ELSEIF ");	
+					//System.out.println("ELSEIF ");	
 					for(int j=0;j<switchCaseTree.getChildCount();j++){
 
 						if(j==0){
 							enablingCond=  generateExpression((CommonTree)switchCaseTree.getChild(0));
+							System.out.println("enabling condition :"+enablingCond);
 							if(numPlaces==0){
 								lpnObj.addPlace("p"+numPlaces, true);
 								numPlaces++;
@@ -529,16 +534,24 @@ public class BuildProperty {
 							lpnObj.addTransition("t" + numTransitions);
 							StringBuffer sb2 = new StringBuffer();
 							String newEnablingCondition1= "";
-
+							int counter=-1;
 							for(int m=0;m<list.getItemCount();m++){
-
-								if(list.getItem(m).matches(enablingCond)){
-									if(m==(list.getItemCount()-1)){
+								System.out.println("item :"+list.getItem(m).toString());
+								
+								if(list.getItem(m).toString().equalsIgnoreCase(enablingCond)){
+									counter=m;
+									
+								}
+							}
+							System.out.println("counter is : "+counter);
+							
+							for(int m=0;m<=counter;m++){
+								System.out.println("item :"+list.getItem(m).toString());
+								
+								if(list.getItem(m).toString().equalsIgnoreCase(enablingCond)){
+								
 										newEnablingCondition1 = "("+list.getItem(m)+")";
-									}
-									else{
-										newEnablingCondition1 = "("+list.getItem(m)+")&";
-									}
+								
 								}
 								else{
 									if(m==(list.getItemCount()-1)){
@@ -578,7 +591,7 @@ public class BuildProperty {
 					lpnObj.addMovement("t" +(numTransitions-1), "pEnd"+(numEndPlaces-1));
 					break;
 				case lpn.parser.properties.PropertyLexer.ELSE :
-					System.out.println("ELSE ");	
+					//System.out.println("ELSE ");	
 					
 					StringBuffer sb3 = new StringBuffer();
 					String newEnablingCondition2= "";
@@ -597,7 +610,7 @@ public class BuildProperty {
 
 					}
 					String newEnablingCond2 = sb3.toString();
-					System.out.println("newEnablinCondition in ELSE : "+newEnablingCond2+"\n");
+					//System.out.println("newEnablinCondition in ELSE : "+newEnablingCond2+"\n");
 					lpnObj.addTransition("t" + numTransitions);
 					lpnObj.addEnabling("t" +numTransitions, newEnablingCond2);
 					numTransitions++;
@@ -620,9 +633,32 @@ public class BuildProperty {
 					lpnObj.addMovement("p"+(numPlaces-1),"t" +(numTransitions-1));
 					lpnObj.addMovement("t" +(numTransitions-1), "pEnd"+(numEndPlaces-1));
 					break;
-				case lpn.parser.properties.PropertyLexer.POSEDGE :
+				case lpn.parser.properties.PropertyLexer.WAIT_POSEDGE :
 					enablingCond=  generateExpression((CommonTree)switchCaseTree.getChild(0));
-					System.out.println("");
+					//System.out.println("");
+					
+					enablingCond= generateExpression((CommonTree)switchCaseTree.getChild(0));
+					
+					if(numPlaces==0){
+						lpnObj.addPlace("p"+numPlaces, true);
+						numPlaces++;
+					}
+					lpnObj.addTransition("t" + numTransitions);
+					lpnObj.addEnabling("t" +numTransitions, "~("+enablingCond+")");
+					numTransitions++;
+					lpnObj.addMovement("p"+(numPlaces-1), "t" +(numTransitions-1));
+					
+					lpnObj.addPlace("p"+numPlaces, false);
+					numPlaces++;
+					lpnObj.addMovement( "t" +(numTransitions-1),"p"+(numPlaces-1));
+					lpnObj.addTransition("t" + numTransitions);
+					lpnObj.addEnabling("t" +numTransitions, enablingCond);
+					numTransitions++;
+					lpnObj.addMovement("p"+(numPlaces-1), "t" +(numTransitions-1));
+					
+					lpnObj.addPlace("p"+numPlaces, false);
+					numPlaces++;
+					lpnObj.addMovement( "t" +(numTransitions-1),"p"+(numPlaces-1));
 				break;
 				default :
 					break;
@@ -648,38 +684,38 @@ public class BuildProperty {
 				break;
 			case lpn.parser.properties.PropertyLexer.ID : 
 				result= newChild.toString();
-				System.out.println("String in ID : "+result);
+				//System.out.println("String in ID : "+result);
 				break;
 			case lpn.parser.properties.PropertyLexer.FLOAT:
 				result=newChild.toString();
 				break;
 			case lpn.parser.properties.PropertyLexer.INT	:
 				result=newChild.toString();
-				System.out.println("String in INT :"+result);
+				//System.out.println("String in INT :"+result);
 				break;
 			case lpn.parser.properties.PropertyLexer.STRING	:
 				result=newChild.toString();
 				break;
-			case lpn.parser.properties.PropertyLexer.POSEDGE	:
+			case lpn.parser.properties.PropertyLexer.WAIT_POSEDGE	:
 				result=generateExpression((CommonTree)newChild.getChild(0));
 				break;
 			case lpn.parser.properties.PropertyLexer.GET :
 				string1= generateExpression((CommonTree)newChild.getChild(0));
 				string2= generateExpression((CommonTree)newChild.getChild(1));
 				result= (string1 + ">" +string2);
-				System.out.println("String in GET :"+result);
+				//System.out.println("String in GET :"+result);
 				break;
 			case lpn.parser.properties.PropertyLexer.AND :
 				string1= generateExpression((CommonTree)newChild.getChild(0));
 				string2= generateExpression((CommonTree)newChild.getChild(1));
-				result= (string1 + "&" +string2);
-				System.out.println("String in AND :"+result);
+				result= ("("+string1 + ")&(" +string2+")");
+				//result= (string1 + "&" +string2);
 				break;
 			case lpn.parser.properties.PropertyLexer.DIV :
 				string1= generateExpression((CommonTree)newChild.getChild(0));
 				string2= generateExpression((CommonTree)newChild.getChild(1));
 				result= (string1 + "/" +string2);
-				System.out.println("result2 :"+result);
+				//System.out.println("result2 :"+result);
 				break;
 			case lpn.parser.properties.PropertyLexer.EQUAL :
 				string1= generateExpression((CommonTree)newChild.getChild(0));
@@ -691,7 +727,7 @@ public class BuildProperty {
 				string1= generateExpression((CommonTree)newChild.getChild(0));
 				string2= generateExpression((CommonTree)newChild.getChild(1));
 				result= (string1 + ">=" +string2);
-				System.out.println("result2 :"+result);
+				
 				break;
 			case lpn.parser.properties.PropertyLexer.LET :
 				string1= generateExpression((CommonTree)newChild.getChild(0));
@@ -709,51 +745,67 @@ public class BuildProperty {
 				string1= generateExpression((CommonTree)newChild.getChild(0));
 				string2= generateExpression((CommonTree)newChild.getChild(1));
 				result= (string1 + "-" +string2);
-				System.out.println("result2 :"+result);
+				//System.out.println("result2 :"+result);
 				break;
 			case lpn.parser.properties.PropertyLexer.MOD :
 				string1= generateExpression((CommonTree)newChild.getChild(0));
 				string2= generateExpression((CommonTree)newChild.getChild(1));
 				result= (string1 + "%" +string2);
-				System.out.println("result2 :"+result);
+				//System.out.println("result2 :"+result);
 				break;
 			case lpn.parser.properties.PropertyLexer.MULT :
 				string1= generateExpression((CommonTree)newChild.getChild(0));
 				string2= generateExpression((CommonTree)newChild.getChild(1));
 				result= (string1 + "*" +string2);
-				System.out.println("result2 :"+result);
+				//System.out.println("result2 :"+result);
 				break;
 
 			case lpn.parser.properties.PropertyLexer.NOT :
 				string1= generateExpression((CommonTree)newChild.getChild(0));
-				result= ("~" +string1);
-				System.out.println("String in NOT :"+result);
+				result= ("~(" +string1+")");
+				//result= "~"+string1;
+				//System.out.println("String in NOT :"+result);
 				break;
 			case lpn.parser.properties.PropertyLexer.NOT_EQUAL :
 				string1= generateExpression((CommonTree)newChild.getChild(0));
 				string2= generateExpression((CommonTree)newChild.getChild(1));
 				result= (string1 + "!=" +string2);
-				System.out.println("result2 :"+result);
+				//System.out.println("result2 :"+result);
 				break;
 			case lpn.parser.properties.PropertyLexer.OR :
 				string1= generateExpression((CommonTree)newChild.getChild(0));
 				string2= generateExpression((CommonTree)newChild.getChild(1));
 				result= (string1 + "|" +string2);
-				System.out.println("result2 :"+result);
+				//System.out.println("result2 :"+result);
 				break;
 			case lpn.parser.properties.PropertyLexer.PLUS :
 				string1= generateExpression((CommonTree)newChild.getChild(0));
 				string2= generateExpression((CommonTree)newChild.getChild(1));
 				result= (string1 + " + " +string2);
-				System.out.println("result2 :"+result);
+				//System.out.println("result2 :"+result);
 				break;
 			case lpn.parser.properties.PropertyLexer.SAMEAS :
 				string1= generateExpression((CommonTree)newChild.getChild(0));
 				string2= generateExpression((CommonTree)newChild.getChild(1));
 				result= (string1 + "=" +string2);
-				System.out.println("String in SAMEAS :"+result);
+				//System.out.println("String in SAMEAS :"+result);
 				break;
-
+				
+			case lpn.parser.properties.PropertyLexer.LPARA :
+				string1= generateExpression((CommonTree)newChild.getChild(0));
+				string2= generateExpression((CommonTree)newChild.getChild(1));
+				result= "(";
+				break;
+			case lpn.parser.properties.PropertyLexer.RPARA :
+				string1= generateExpression((CommonTree)newChild.getChild(0));
+				string2= generateExpression((CommonTree)newChild.getChild(1));
+				result= ")";
+				//System.out.println("String in SAMEAS :"+result);
+				break;
+			case lpn.parser.properties.PropertyLexer.UNIFORM :
+				result= newChild.toString();
+				System.out.println("String in UNIFORM :"+result);
+				break;
 			default :
 				break;
 			}
