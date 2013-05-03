@@ -182,23 +182,10 @@ public abstract class HierarchicalSimulator {
 			separator = File.separator;
 		}
 		
-		CompModelPlugin sbmlCompModel = (CompModelPlugin)document.getModel().getPlugin("comp");
-		CompSBMLDocumentPlugin sbmlComp = (CompSBMLDocumentPlugin)document.getPlugin("comp");
-		
-		submodels = new ModelState[(int)sbmlCompModel.getNumSubmodels()];
+
 		topmodel = new ModelState(document.getModel(), true, "");
-		numModels = 1;
-		String path = getPath(outputDirectory);
-		for (int i = 0; i < sbmlCompModel.getNumSubmodels(); i++) {
-			Submodel submodel = sbmlCompModel.getSubmodel(i);
-			BioModel subBioModel = new BioModel(path);		
-			String extModelFile = sbmlComp.getExternalModelDefinition(submodel.getModelRef())
-					.getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
-			subBioModel.load(path + extModelFile);
-			
-			submodels[i] = new ModelState(subBioModel.getSBMLDocument().getModel(), false, submodel.getId());
-			numModels++;
-		}
+		numModels = 1 + (int)setupSubmodels(document);
+
 		
 		getComponentPortMap(document);
 		
@@ -317,6 +304,27 @@ public abstract class HierarchicalSimulator {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	protected long setupSubmodels(SBMLDocument document)
+	{
+		String path = getPath(outputDirectory);
+		CompModelPlugin sbmlCompModel = (CompModelPlugin)document.getModel().getPlugin("comp");
+		CompSBMLDocumentPlugin sbmlComp = (CompSBMLDocumentPlugin)document.getPlugin("comp");
+		submodels = new ModelState[(int)sbmlCompModel.getNumSubmodels()];
+		long size = sbmlCompModel.getNumSubmodels();
+		
+		for (int i = 0; i < size; i++) {
+			Submodel submodel = sbmlCompModel.getSubmodel(i);
+			BioModel subBioModel = new BioModel(path);		
+			String extModelFile = sbmlComp.getExternalModelDefinition(submodel.getModelRef())
+					.getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
+			subBioModel.load(path + extModelFile);
+			
+			submodels[i] = new ModelState(subBioModel.getSBMLDocument().getModel(), false, submodel.getId());
+		}
+		
+		return size;
 	}
 	
 	protected void getComponentPortMap(SBMLDocument sbml) {
@@ -608,7 +616,7 @@ public abstract class HierarchicalSimulator {
 					
 					//don't need to check if there are enough, because products are added
 				}
-				size = productsList.size();
+				size = modifiersList.size();
 				for (int i = 0; i < size; i++)
 				{
 					ModifierSpeciesReference modifier = (ModifierSpeciesReference)modifiersList.get(i);
