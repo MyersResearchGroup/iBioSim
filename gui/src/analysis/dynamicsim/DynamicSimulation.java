@@ -86,7 +86,7 @@ public class DynamicSimulation {
 			{
 			simulator.simulate();
 			simulator.clear();
-			
+			hSimulator = null;
 			if ((runs - run) >= 1)
 				simulator.setupForNewRun(run + 1);
 			}
@@ -94,7 +94,7 @@ public class DynamicSimulation {
 			{
 				hSimulator.simulate();
 				hSimulator.clear();
-				
+				simulator = null;
 				if ((runs - run) >= 1)
 					hSimulator.setupForNewRun(run + 1);
 			}
@@ -102,7 +102,6 @@ public class DynamicSimulation {
 //			if ((run % 25) == 0)
 //				System.gc();
 		}
-		
 		if (cancelFlag == false && statisticsFlag == true) {
 			
 			progressLabel.setText("Generating Statistics . . .");
@@ -111,8 +110,6 @@ public class DynamicSimulation {
 			try {
 				if(simulator != null)
 					simulator.printStatisticsTSD();
-				else if(hSimulator != null)
-					hSimulator.printStatisticsTSD();
 			} catch (IOException e) {
 				e.printStackTrace();
 				return;

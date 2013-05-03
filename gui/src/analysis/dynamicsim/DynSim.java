@@ -82,7 +82,7 @@ public class DynSim {
 			args = new String[3];
 			
 			//model
-			args[0] = "/home/leandro/cases/semantic/" + caseNum + "/" + caseNum + "-sbml-l2v2.xml";
+			args[0] = "/home/leandro/cases/semantic/" + caseNum + "/" + caseNum + "-sbml-l2v4.xml";
 			
 			//output dir
 			args[1] = "/home/leandro/cases/semantic/" + caseNum + "/";
@@ -100,7 +100,7 @@ public class DynSim {
 		JFrame running = new JFrame();
 		DynamicSimulation simulator = null;
 		
-		if (testSuite == true) {
+		if (testSuite) {
 			
 			readSettings(settingsFile);			
 			printInterval = timeLimit / numSteps;			
