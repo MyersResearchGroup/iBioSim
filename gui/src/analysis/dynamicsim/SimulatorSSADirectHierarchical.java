@@ -8,6 +8,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
+import org.sbml.libsbml.SBMLDocument;
+import org.sbml.libsbml.SBMLReader;
+
+import analysis.dynamicsim.HierarchicalSimulator.ModelState;
 import analysis.dynamicsim.Simulator.StringDoublePair;
 
 import odk.lang.FastMath;
@@ -341,14 +345,85 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 	 * clears data structures for new run
 	 */
 	protected void clear() {
-
+		SBMLReader reader = new SBMLReader();
+		SBMLDocument document = reader.readSBML(SBMLFileName);
 		
+		topmodel = new ModelState(document.getModel(), true, "");
+		setupSubmodels(document);
 	}
 
 	/**
 	 * does minimized initalization process to prepare for a new run
 	 */
 	protected void setupForNewRun(int newRun) {
+
+		try {
+			topmodel.setupSpecies();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		topmodel.setupParameters();
+		topmodel.setupInitialAssignments();
+		
+		//STEP 0: calculate initial propensities (including the total)		
+		topmodel.setupReactions();		
+		
+		setupForOutput(0, newRun);
+		
+		for(ModelState model : submodels)
+		{
+		try {
+			model.setupSpecies();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		model.setupParameters();
+		model.setupInitialAssignments();
+		
+		//STEP 0: calculate initial propensities (including the total)		
+		model.setupReactions();		
+		
+		setupForOutput(0, newRun);
+		
+		}
+		
+
+		
+		for (String speciesID : topmodel.speciesIDSet) {				
+			try {
+				bufferedTSDWriter.write(", \"" + speciesID + "\"");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		for(ModelState model : submodels)
+		{
+			for (String speciesID : model.speciesIDSet) {				
+				//if(!replacements.containsKey(speciesID))
+				//{
+					try {
+						bufferedTSDWriter.write(", \"" + speciesID + "_" + model.ID + "\"");
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				//}
+			}
+			
+		}
+		
+		
+		try {
+			bufferedTSDWriter.write("),\n");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+		
 	}
 	
 }
