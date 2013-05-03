@@ -18,7 +18,7 @@ import main.util.MutableBoolean;
 public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 	
 	private static Long initializationTime = new Long(0);
-	
+	private int submodelIndex;
 	public SimulatorSSADirectHierarchical(String SBMLFileName, String outputDirectory, double timeLimit, 
 			double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, 
 			double stoichAmpValue, JFrame running, String[] interestingSpecies, String quantityType) 
@@ -82,9 +82,8 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 			
 			//STEP 2: calculate delta_t, the time till the next reaction execution
 			 
-			double delta_t = FastMath.log(1 / r1) / totalPropensity;
-			System.out.println("delta t = " + delta_t + ": total propensity = " + totalPropensity);
-			
+			double delta_t = FastMath.log(1 / r1) / getTotalPropensity();
+		
 			if (delta_t > maxTimeStep)
 				delta_t = maxTimeStep;
 			
@@ -101,23 +100,29 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 			
 			//STEP 4: perform selected reaction and update species counts
 				
-				performReaction(selectedReactionID, true, true);
-				
-				//STEP 5: compute affected reactions' new propensities and update total propensity
-				
-				//create a set (precludes duplicates) of reactions that the selected reaction's species affect
-				HashSet<String> affectedReactionSet = getAffectedReactionSet(selectedReactionID, true);
-				
-				updatePropensities(affectedReactionSet);
+				if(submodelIndex == -1)
+				{
+					topmodel.performReaction(selectedReactionID, true, true);
+					HashSet<String> affectedReactionSet = topmodel.getAffectedReactionSet(selectedReactionID, true);
+					
+					//STEP 5: compute affected reactions' new propensities and update total propensity
+					updatePropensities(affectedReactionSet);
+				}
+				else
+				{
+					submodels[submodelIndex].performReaction(selectedReactionID, true, true);
+					HashSet<String> affectedReactionSet = submodels[submodelIndex].getAffectedReactionSet(selectedReactionID, true);
+					
+					//STEP 5: compute affected reactions' new propensities and update total propensity
+					updatePropensities(affectedReactionSet);
+				}
+
 			}
 			
 			//update time for next iteration
 			currentTime += delta_t;
 			
-			if (variableToIsInAssignmentRuleMap != null &&
-					variableToIsInAssignmentRuleMap.containsKey("time"))				
-				performAssignmentRules(variableToAffectedAssignmentRuleSetMap.get("time"));
-			
+				
 			while (currentTime > printTime && printTime < timeLimit) {
 				
 				try {
@@ -164,59 +169,51 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 	private void initialize(long randomSeed, int runNumber) 
 	throws IOException, XMLStreamException {	
 		
-		setupArrays();
-		setupSpecies();
-		setupParameters();
-		setupInitialAssignments();
+		
+		topmodel.setupSpecies();
+		topmodel.setupParameters();
+		topmodel.setupInitialAssignments();
 		
 		//STEP 0: calculate initial propensities (including the total)		
-		setupReactions();		
+		topmodel.setupReactions();		
 		
 		setupForOutput(randomSeed, runNumber);
 		
-			
+		for(ModelState model : submodels)
+		{
+		model.setupSpecies();
+		model.setupParameters();
+		model.setupInitialAssignments();
+		
+		//STEP 0: calculate initial propensities (including the total)		
+		model.setupReactions();		
+		
+		setupForOutput(randomSeed, runNumber);
+		
+		}
+		
 		bufferedTSDWriter.write("(" + "\"" + "time" + "\"");
 		
-		//if there's an interesting species, only those get printed
-		if (interestingSpecies.size() > 0) {
-			
-			for (String speciesID : interestingSpecies)
-				bufferedTSDWriter.write(", \"" + speciesID + "\"");
+		for (String speciesID : topmodel.speciesIDSet) {				
+			bufferedTSDWriter.write(", \"" + speciesID + "\"");
 		}
-		else {
 		
-			for (String speciesID : speciesIDSet) {				
-				bufferedTSDWriter.write(", \"" + speciesID + "\"");
+		for(ModelState model : submodels)
+		{
+			for (String speciesID : model.speciesIDSet) {				
+				//if(!replacements.containsKey(speciesID))
+				//{
+					bufferedTSDWriter.write(", \"" + speciesID + "_" + model.ID + "\"");
+				//}
 			}
 			
-			//print compartment IDs (for sizes)
-			for (String componentID : compartmentIDSet) {
-				
-				bufferedTSDWriter.write(", \"" + componentID + "\"");
-			}		
-			
-			//print nonconstant parameter IDs
-			for (String parameterID : nonconstantParameterIDSet) {
-				
-				try {
-					bufferedTSDWriter.write(", \"" + parameterID + "\"");
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}		
 		}
+		
 		
 		bufferedTSDWriter.write("),\n");
 		
 	}
 	
-
-	protected void eraseComponentFurther(HashSet<String> reactionIDs) {}
-	
-	/**
-	 * 
-	 */
-	protected void updateAfterDynamicChanges() {}
 	
 	/**
 	 * updates the propensities of the reactions affected by the recently performed reaction
@@ -227,40 +224,59 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		//loop through the affected reactions and update the propensities
 		for (String affectedReactionID : affectedReactionSet) {
 			
-			boolean notEnoughMoleculesFlag = false;
-			
-			HashSet<StringDoublePair> reactantStoichiometrySet = 
-				reactionToReactantStoichiometrySetMap.get(affectedReactionID);
-			
-			//check for enough molecules for the reaction to occur
-			for (StringDoublePair speciesAndStoichiometry : reactantStoichiometrySet) {
-				
-				String speciesID = speciesAndStoichiometry.string;
-				double stoichiometry = speciesAndStoichiometry.doub;
-				
-				//if there aren't enough molecules to satisfy the stoichiometry
-				if (variableToValueMap.get(speciesID) < stoichiometry) {
-					notEnoughMoleculesFlag = true;
-					break;
-				}
+			if(submodelIndex == -1)
+			{
+				HashSet<StringDoublePair> reactantStoichiometrySet = 
+				topmodel.reactionToReactantStoichiometrySetMap.get(affectedReactionID);
+				updatePropensities(topmodel, affectedReactionSet,affectedReactionID, reactantStoichiometrySet);
 			}
-			
-			double newPropensity = 0.0;
-			
-			if (notEnoughMoleculesFlag == false) {
+			else
+			{
+				HashSet<StringDoublePair> reactantStoichiometrySet = 
+				submodels[submodelIndex].reactionToReactantStoichiometrySetMap.get(affectedReactionID);
+				updatePropensities(submodels[submodelIndex], affectedReactionSet,affectedReactionID, reactantStoichiometrySet); 
 				
-				newPropensity = evaluateExpressionRecursive(reactionToFormulaMap.get(affectedReactionID));
-				//newPropensity = CalculatePropensityIterative(affectedReactionID);
 			}
-			
-			double oldPropensity = reactionToPropensityMap.get(affectedReactionID);
-			
-			//add the difference of new v. old propensity to the total propensity
-			totalPropensity += newPropensity - oldPropensity;
-			
-			reactionToPropensityMap.put(affectedReactionID, newPropensity);
-		}
+
 	}
+	}
+	
+	/**
+	 * Helper method
+	 */
+	private void updatePropensities(ModelState model, HashSet<String> affectedReactionSet, String affectedReactionID, HashSet<StringDoublePair> reactantStoichiometrySet) 
+	{
+		boolean notEnoughMoleculesFlag = false; 
+		
+		//check for enough molecules for the reaction to occur
+		for (StringDoublePair speciesAndStoichiometry : reactantStoichiometrySet) {
+			
+			String speciesID = speciesAndStoichiometry.string;
+			double stoichiometry = speciesAndStoichiometry.doub;
+			
+			//if there aren't enough molecules to satisfy the stoichiometry
+			if (model.variableToValueMap.get(speciesID) < stoichiometry) {
+				notEnoughMoleculesFlag = true;
+				break;
+			}
+		}
+		
+		double newPropensity = 0.0;
+		
+		if (notEnoughMoleculesFlag == false) {
+			
+			newPropensity = model.evaluateExpressionRecursive(model.reactionToFormulaMap.get(affectedReactionID));
+			//newPropensity = CalculatePropensityIterative(affectedReactionID);
+		}
+		
+		double oldPropensity = model.reactionToPropensityMap.get(affectedReactionID);
+		
+		//add the difference of new v. old propensity to the total propensity
+		model.propensity += newPropensity - oldPropensity;
+		
+		model.reactionToPropensityMap.put(affectedReactionID, newPropensity);
+	}	
+	
 	
 	/**
 	 * randomly selects a reaction to perform
@@ -270,22 +286,45 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 	 */
 	private String selectReaction(double r2) {
 		
-		double randomPropensity = r2 * (totalPropensity);
+		double randomPropensity = r2 * (getTotalPropensity());
 		double runningTotalReactionsPropensity = 0.0;
 		String selectedReaction = "";
 		
 		//finds the reaction that the random propensity lies in
 		//it keeps adding the next reaction's propensity to a running total
 		//until the running total is greater than the random propensity
-		for (String currentReaction : reactionToPropensityMap.keySet()) {
+		
+		
+		for (String currentReaction : topmodel.reactionToPropensityMap.keySet()) {
 			
-			runningTotalReactionsPropensity += reactionToPropensityMap.get(currentReaction);
+			runningTotalReactionsPropensity += topmodel.reactionToPropensityMap.get(currentReaction);
 			
-			if (randomPropensity < runningTotalReactionsPropensity) {
+			if (randomPropensity < runningTotalReactionsPropensity) 
+			{
 				selectedReaction = currentReaction;
-				break;
+				// keep track of submodel index
+				submodelIndex = -1;
+				return selectedReaction;
 			}
 		}
+		
+		for(int i = 0; i < numModels - 1; i ++)
+		{
+			
+		for (String currentReaction : submodels[i].reactionToPropensityMap.keySet()) 
+		{
+			runningTotalReactionsPropensity += submodels[i].reactionToPropensityMap.get(currentReaction);
+			
+			if (randomPropensity < runningTotalReactionsPropensity) 
+			{
+				selectedReaction = currentReaction;
+				// keep track of submodel index
+				submodelIndex = i;
+				return selectedReaction;
+			}
+		}
+	}
+		
 		
 		return selectedReaction;		
 	}
@@ -302,23 +341,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 	 * clears data structures for new run
 	 */
 	protected void clear() {
-		
-		variableToValueMap.clear();
-		reactionToPropensityMap.clear();
-		
-		reactionToFormulaMap.clear();
-		speciesIDSet.clear();
-		componentToLocationMap.clear();
-		componentToReactionSetMap.clear();
-		componentToVariableSetMap.clear();
-		componentToEventSetMap.clear();
-		compartmentIDSet.clear();
-		nonconstantParameterIDSet.clear();
-		
-		minRow = Integer.MAX_VALUE;
-		minCol = Integer.MAX_VALUE;
-		maxRow = Integer.MIN_VALUE;
-		maxCol = Integer.MIN_VALUE;
+
 		
 	}
 
@@ -326,22 +349,6 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 	 * does minimized initalization process to prepare for a new run
 	 */
 	protected void setupForNewRun(int newRun) {
-		
-		try {
-			setupSpecies();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		totalPropensity = 0.0;
-		minPropensity = Double.MAX_VALUE;
-		maxPropensity = Double.MIN_VALUE;
-		
-		//STEP 0A: calculate initial propensities (including the total)		
-		setupReactions();		
-		setupEvents();		
-		setupForOutput(0, newRun);
-
 	}
 	
 }
