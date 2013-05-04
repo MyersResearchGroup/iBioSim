@@ -898,16 +898,18 @@ public abstract class Simulator {
 	 */
 	protected HashSet<String> eraseComponent(String componentID) {
 		
-		for (String reactionID : componentToReactionSetMap.get(componentID)) {
-			
-			reactionToPropensityMap.remove(reactionID);
-			reactionToSpeciesAndStoichiometrySetMap.remove(reactionID);	
-			reactionToReactantStoichiometrySetMap.remove(reactionID);	
-			reactionToFormulaMap.remove(reactionID);
+		if (componentToReactionSetMap.get(componentID)!=null) { 
+			for (String reactionID : componentToReactionSetMap.get(componentID)) {
+
+				reactionToPropensityMap.remove(reactionID);
+				reactionToSpeciesAndStoichiometrySetMap.remove(reactionID);	
+				reactionToReactantStoichiometrySetMap.remove(reactionID);	
+				reactionToFormulaMap.remove(reactionID);
+			}
+
+			//simulator-specific data structure erasal
+			eraseComponentFurther(componentToReactionSetMap.get(componentID));
 		}
-		
-		//simulator-specific data structure erasal
-		eraseComponentFurther(componentToReactionSetMap.get(componentID));
 		
 		for (String variableID : componentToVariableSetMap.get(componentID)) {
 			

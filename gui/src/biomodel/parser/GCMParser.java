@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.prefs.Preferences;
 
 import org.sbml.libsbml.ModifierSpeciesReference;
 import org.sbml.libsbml.Reaction;
@@ -127,6 +128,7 @@ public class GCMParser {
 	}
 
 	private void parsePromoterData(SBMLDocument sbml, Species promoter) {
+		Preferences biosimrc = Preferences.userRoot();
 		Promoter p = new Promoter();
 		p.setId(promoter.getId());
 		promoterList.put(promoter.getId(), p);
@@ -142,40 +144,54 @@ public class GCMParser {
 			p.setCompartment(production.getCompartment());
 			if (production.getKineticLaw().getLocalParameter(GlobalConstants.ACTIVATED_STRING) != null) {
 				p.setKact(production.getKineticLaw().getLocalParameter(GlobalConstants.ACTIVATED_STRING).getValue());
-			} else {
+			} else if (sbml.getModel().getParameter(GlobalConstants.ACTIVATED_STRING) != null) {
 				p.setKact(sbml.getModel().getParameter(GlobalConstants.ACTIVATED_STRING).getValue());
+			} else {
+				p.setKact(Double.parseDouble(biosimrc.get("biosim.gcm.ACTIVED_VALUE", "")));
 			}
 			if (production.getKineticLaw().getLocalParameter(GlobalConstants.KBASAL_STRING) != null) {
 				p.setKbasal(production.getKineticLaw().getLocalParameter(GlobalConstants.KBASAL_STRING).getValue());
-			} else {
+			} else if (sbml.getModel().getParameter(GlobalConstants.KBASAL_STRING) != null) {
 				p.setKbasal(sbml.getModel().getParameter(GlobalConstants.KBASAL_STRING).getValue());
+			} else {
+				p.setKbasal(Double.parseDouble(biosimrc.get("biosim.gcm.KBASAL_VALUE", "")));
 			}
 			if (production.getKineticLaw().getLocalParameter(GlobalConstants.OCR_STRING) != null) {
 				p.setKoc(production.getKineticLaw().getLocalParameter(GlobalConstants.OCR_STRING).getValue());
-			} else {
+			} else if (sbml.getModel().getParameter(GlobalConstants.OCR_STRING) != null) {
 				p.setKoc(sbml.getModel().getParameter(GlobalConstants.OCR_STRING).getValue());
+			} else {
+				p.setKoc(Double.parseDouble(biosimrc.get("biosim.gcm.OCR_VALUE", "")));
 			}
 			if (production.getKineticLaw().getLocalParameter(GlobalConstants.STOICHIOMETRY_STRING) != null) {
 				p.setStoich(production.getKineticLaw().getLocalParameter(GlobalConstants.STOICHIOMETRY_STRING).getValue());
-			} else {
+			} else if (sbml.getModel().getParameter(GlobalConstants.STOICHIOMETRY_STRING) != null) {
 				p.setStoich(sbml.getModel().getParameter(GlobalConstants.STOICHIOMETRY_STRING).getValue());
+			} else {
+				p.setKact(Double.parseDouble(biosimrc.get("biosim.gcm.STOICHIOMETRY_VALUE", "")));
 			}
 			if (production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING)!=null &&
 				production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING)!=null) {
 				p.setKrnap(production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING).getValue(),
 						   production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING).getValue());
-			} else {
+			} else if ((sbml.getModel().getParameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING) != null)  && 
+					(sbml.getModel().getParameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING) != null)) {
 				p.setKrnap(sbml.getModel().getParameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING).getValue(),
 						   sbml.getModel().getParameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING).getValue());
+			} else {
+				p.setKrnap(Double.parseDouble(biosimrc.get("biosim.gcm.RNAP_BINDING_VALUE", "")),1.0);
 			}
 			if (production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING)!=null &&
 					production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING)!=null) {
-					p.setKArnap(production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING).getValue(),
-							    production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING).getValue());
-				} else {
-					p.setKArnap(sbml.getModel().getParameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING).getValue(),
-							    sbml.getModel().getParameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING).getValue());
-				}
+				p.setKArnap(production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING).getValue(),
+						production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING).getValue());
+			} else if ((sbml.getModel().getParameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING) != null)  && 
+					(sbml.getModel().getParameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING) != null))  {
+				p.setKArnap(sbml.getModel().getParameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING).getValue(),
+						sbml.getModel().getParameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING).getValue());
+			} else {
+				p.setKArnap(Double.parseDouble(biosimrc.get("biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE", "")),1.0);
+			}
 			for (long j = 0; j < production.getNumProducts(); j++) {
 				SpeciesReference product = production.getProduct(j);
 				if (!BioModel.isMRNASpecies(sbml.getModel().getSpecies(product.getSpecies())))
@@ -203,14 +219,19 @@ public class GCMParser {
 							production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KREP_STRING.replace("_","_"+modifier.getSpecies()+"_"))!=null) {
 							infl.setRep(production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KREP_STRING.replace("_","_"+modifier.getSpecies()+"_")).getValue(),
 									production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KREP_STRING.replace("_","_"+modifier.getSpecies()+"_")).getValue());
-						} else {
+						} else if ((sbml.getModel().getParameter(GlobalConstants.FORWARD_KREP_STRING) != null)  && 
+								(sbml.getModel().getParameter(GlobalConstants.REVERSE_KREP_STRING) != null))  {
 							infl.setRep(sbml.getModel().getParameter(GlobalConstants.FORWARD_KREP_STRING).getValue(),
 									sbml.getModel().getParameter(GlobalConstants.REVERSE_KREP_STRING).getValue());
+						} else {
+							infl.setRep(Double.parseDouble(biosimrc.get("biosim.gcm.KREP_VALUE", "")),1.0);
 						}
 						if (production.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + modifier.getSpecies() + "_r") != null) {
 							infl.setCoop(production.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + modifier.getSpecies() + "_r").getValue());
-						} else {
+						} else if (sbml.getModel().getParameter(GlobalConstants.COOPERATIVITY_STRING) != null) {
 							infl.setCoop(sbml.getModel().getParameter(GlobalConstants.COOPERATIVITY_STRING).getValue());
+						} else {
+							infl.setCoop(Double.parseDouble(biosimrc.get("biosim.gcm.COOPERATIVITY_VALUE", "")));
 						}
 					}
 				} 
@@ -234,14 +255,19 @@ public class GCMParser {
 								production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KACT_STRING.replace("_","_"+modifier.getSpecies()+"_"))!=null) {
 							infl.setAct(production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KACT_STRING.replace("_","_"+modifier.getSpecies()+"_")).getValue(),
 									production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KACT_STRING.replace("_","_"+modifier.getSpecies()+"_")).getValue());
-						} else {
+						} else if ((sbml.getModel().getParameter(GlobalConstants.FORWARD_KACT_STRING) != null)  && 
+								(sbml.getModel().getParameter(GlobalConstants.REVERSE_KACT_STRING) != null))   {
 							infl.setAct(sbml.getModel().getParameter(GlobalConstants.FORWARD_KACT_STRING).getValue(),
 									sbml.getModel().getParameter(GlobalConstants.REVERSE_KACT_STRING).getValue());
+						} else {
+							infl.setAct(Double.parseDouble(biosimrc.get("biosim.gcm.KACT_VALUE", "")),1.0);
 						}
 						if (production.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + modifier.getSpecies() + "_a") != null) {
 							infl.setCoop(production.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + modifier.getSpecies() + "_a").getValue());
-						} else {
+						} else if (sbml.getModel().getParameter(GlobalConstants.COOPERATIVITY_STRING) != null) {
 							infl.setCoop(sbml.getModel().getParameter(GlobalConstants.COOPERATIVITY_STRING).getValue());
+						} else {
+							infl.setCoop(Double.parseDouble(biosimrc.get("biosim.gcm.COOPERATIVITY_VALUE", "")));
 						}
 					}
 				} 
@@ -259,6 +285,7 @@ public class GCMParser {
 	 *            the properties of the species
 	 */
 	private void parseSpeciesData(SBMLDocument sbml,Species species) {
+		Preferences biosimrc = Preferences.userRoot();
 		
 		SpeciesInterface speciesIF = null;
 
@@ -337,8 +364,10 @@ public class GCMParser {
 		if (degradation != null) {
 			if (degradation.getKineticLaw().getLocalParameter(GlobalConstants.KDECAY_STRING)!=null) {
 				speciesIF.setDecay(degradation.getKineticLaw().getLocalParameter(GlobalConstants.KDECAY_STRING).getValue());
-			} else {
+			} else if (sbml.getModel().getParameter(GlobalConstants.KDECAY_STRING)!=null){
 				speciesIF.setDecay(sbml.getModel().getParameter(GlobalConstants.KDECAY_STRING).getValue());
+			} else {
+				speciesIF.setDecay(Double.parseDouble(biosimrc.get("biosim.gcm.KDECAY_VALUE", "")));
 			}
 			
 			if (degradation.getAnnotationString().contains("grid") == false)
