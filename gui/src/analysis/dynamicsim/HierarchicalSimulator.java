@@ -245,8 +245,16 @@ public abstract class HierarchicalSimulator {
 		//loop through the speciesIDs and print their current value to the file
 		for (String speciesID : speciesIDSet)
 		{		
-			bufferedTSDWriter.write(commaSpace + topmodel.getvariableToValue().get(speciesID));
-			commaSpace = ", ";
+			if(replacements.containsKey(speciesID))
+			{
+				bufferedTSDWriter.write(commaSpace + replacements.get(speciesID));
+				commaSpace = ", ";
+			}
+			else
+			{
+				bufferedTSDWriter.write(commaSpace + topmodel.getvariableToValue().get(speciesID));
+				commaSpace = ", ";
+			}
 		}
 		
 		for (ModelState models : submodels)
@@ -255,11 +263,16 @@ public abstract class HierarchicalSimulator {
 			//loop through the speciesIDs and print their current value to the file
 			for (String speciesID : speciesIDSet)
 			{		
-				//if(!replacements.containsKey(speciesID))
-				//{
+				if(replacements.containsKey(speciesID))
+				{
+					bufferedTSDWriter.write(commaSpace + replacements.get(speciesID));
+					commaSpace = ", ";
+				}
+				else
+				{
 					bufferedTSDWriter.write(commaSpace + models.getvariableToValue().get(speciesID));
 					commaSpace = ", ";
-				//}
+				}
 			}
 		}
 		
@@ -332,7 +345,6 @@ public abstract class HierarchicalSimulator {
 			Species species = sbml.getModel().getSpecies(i);
 			CompSBasePlugin sbmlSBase = (CompSBasePlugin)species.getPlugin("comp");
 			for (long j = 0; j < sbmlSBase.getNumReplacedElements(); j++) {
-
 					String s = species.getId();
 					replacements.put(s, species.getInitialAmount());
 				}
@@ -415,8 +427,6 @@ public abstract class HierarchicalSimulator {
 		//note that species and stoichiometries need to be thought of as unique for each reaction
 		protected HashMap<String, HashSet<StringDoublePair> > reactionToSpeciesAndStoichiometrySetMap = null;
 		
-		protected HashMap<String, HashSet<StringStringPair> > reactionToNonconstantStoichiometriesSetMap = null;
-		
 		//allows for access to reactant/modifier speciesID and stoichiometry from a reaction ID
 		protected HashMap<String, HashSet<StringDoublePair> > reactionToReactantStoichiometrySetMap = null;
 		
@@ -429,7 +439,7 @@ public abstract class HierarchicalSimulator {
 		//allows for access to species booleans from a species ID
 		protected HashMap<String, Boolean> speciesToIsBoundaryConditionMap = null;
 		protected HashMap<String, Boolean> speciesToHasOnlySubstanceUnitsMap = null;
-		protected HashMap<String, String> speciesToConversionFactorMap = null;
+		//protected HashMap<String, String> speciesToConversionFactorMap = null;
 		protected HashMap<String, String> speciesToCompartmentNameMap = null;
 		
 		//a linked (ordered) set of all species IDs, to allow easy access to their values via the variableToValue map
@@ -441,21 +451,12 @@ public abstract class HierarchicalSimulator {
 		
 		//allows for access to the set of assignment rules that a variable (rhs) in an assignment rule affects
 		protected HashMap<String, HashSet<AssignmentRule> > variableToAffectedAssignmentRuleSetMap = null;
-		
-		//allows to access to whether or not a variable is in an assignment or rate rule rule (RHS)
-		protected HashMap<String, Boolean> variableToIsInAssignmentRuleMap = null;
-		
-		//allows for access to the set of constraints that a variable affects
-		protected HashMap<String, HashSet<ASTNode> > variableToAffectedConstraintSetMap = null;
-		
-		protected HashMap<String, Boolean> variableToIsInConstraintMap = null;
+			
 		protected HashMap<String, Boolean> variableToIsConstantMap = null;
 		
-		//allows access to a component's location on the grid from its ID
-		protected LinkedHashMap<String, Point> componentToLocationMap = null;
 		
-		protected LinkedHashSet<String> compartmentIDSet = new LinkedHashSet<String>();
-		protected LinkedHashSet<String> nonconstantParameterIDSet = new LinkedHashSet<String>();
+		//protected LinkedHashSet<String> compartmentIDSet = new LinkedHashSet<String>();
+		//protected LinkedHashSet<String> nonconstantParameterIDSet = new LinkedHashSet<String>();
 		
 		protected HashSet<String> ibiosimFunctionDefinitions = new HashSet<String>();
 		
@@ -501,10 +502,8 @@ public abstract class HierarchicalSimulator {
 			speciesToIsBoundaryConditionMap = new HashMap<String, Boolean>((int) numSpecies);
 			variableToIsConstantMap = new HashMap<String, Boolean>((int) (numSpecies + numParameters));
 			speciesToHasOnlySubstanceUnitsMap = new HashMap<String, Boolean>((int) numSpecies);
-			speciesToConversionFactorMap = new HashMap<String, String>((int) numSpecies);
 			speciesToCompartmentNameMap = new HashMap<String, String>((int) numSpecies);
 			speciesIDSet = new LinkedHashSet<String>((int) numSpecies);
-			reactionToNonconstantStoichiometriesSetMap = new HashMap<String, HashSet<StringStringPair> >();
 			variableToValueMap = new TObjectDoubleHashMap<String>((int) numSpecies + (int) numParameters);
 			
 			reactionToPropensityMap = new TObjectDoubleHashMap<String>((int) (numReactions * 1.5));		
@@ -512,164 +511,10 @@ public abstract class HierarchicalSimulator {
 			reactionToReactantStoichiometrySetMap = new HashMap<String, HashSet<StringDoublePair> >((int) (numReactions * 1.5));
 			reactionToFormulaMap = new HashMap<String, ASTNode>((int) (numReactions * 1.5));
 			
-			componentToLocationMap = new LinkedHashMap<String, Point>();
-		}
-		
-		
-		
-		/**
-		 * calculates the initial propensity of a single reaction
-		 * also does some initialization stuff
-		 * 
-		 * @param reactionID
-		 * @param reactionFormula
-		 * @param reversible
-		 * @param reactantsList
-		 * @param productsList
-		 * @param modifiersList
-		 */
-		private void setupSingleReaction(String reactionID, ASTNode reactionFormula, boolean reversible, 
-				ListOfSpeciesReferences reactantsList, ListOfSpeciesReferences productsList, 
-				ListOfSpeciesReferences modifiersList) {
-		reactionID = reactionID.replace("_negative_","-");
-			
-			long size;
-			
-			reactionToSpeciesAndStoichiometrySetMap.put(reactionID, new HashSet<StringDoublePair>());
-			reactionToReactantStoichiometrySetMap.put(reactionID, new HashSet<StringDoublePair>());
-			
-			size = reactantsList.size();
-			for (int i = 0; i < size; i++)
-			{
-						
-				SpeciesReference reactant = (SpeciesReference)reactantsList.get(i);
-				
-				String reactantID = reactant.getSpecies().replace("_negative_","-");
-					
-				//stoichiometry amplification -- alter the stoichiometry
-				if (reactionID.contains("_Diffusion_") && stoichAmpBoolean) 
-					reactant.setStoichiometry(stoichAmpGridValue);
-					
-					double reactantStoichiometry;
-					
-					//if there was an initial assignment for the speciesref id
-					if (variableToValueMap.containsKey(reactant.getId()))
-						reactantStoichiometry = variableToValueMap.get(reactant.getId());
-					else
-						reactantStoichiometry = reactant.getStoichiometry();
-					
-					reactionToSpeciesAndStoichiometrySetMap.get(reactionID).add(
-							new StringDoublePair(reactantID, -reactantStoichiometry));
-					reactionToReactantStoichiometrySetMap.get(reactionID).add(
-							new StringDoublePair(reactantID, reactantStoichiometry));
-						
-					//if there wasn't an initial assignment
-					if (reactant.getConstant() == false &&
-							variableToValueMap.containsKey(reactant.getId()) == false &&
-							reactant.getId().length() > 0) {
-						
-						if (reactionToNonconstantStoichiometriesSetMap.containsKey(reactionID) == false)
-							reactionToNonconstantStoichiometriesSetMap.put(reactionID, new HashSet<StringStringPair>());
-						
-						reactionToNonconstantStoichiometriesSetMap.get(reactionID)
-						.add(new StringStringPair(reactantID, reactant.getId()));
-						variableToValueMap.put(reactant.getId(), reactantStoichiometry);
-					}
-					
-					//as a reactant, this species affects the reaction's propensity
-					speciesToAffectedReactionSetMap.get(reactantID).add(reactionID);
-					
-		
-				}
-				
-				size = productsList.size();
-				for (int i = 0; i < size; i ++) {
-					SpeciesReference product = (SpeciesReference)productsList.get(i); 
-					
-					//stoichiometry amplification -- alter the stoichiometry
-					if (reactionID.contains("_Diffusion_") && stoichAmpBoolean == true)
-						product.setStoichiometry(stoichAmpGridValue);
-					
-					String productID = product.getSpecies().replace("_negative_","-");
-					double productStoichiometry;
-					
-					//if there was an initial assignment for the speciesref id
-					if (variableToValueMap.containsKey(product.getId()))
-						productStoichiometry = variableToValueMap.get(product.getId());
-					else
-						productStoichiometry = product.getStoichiometry();
-					
-					reactionToSpeciesAndStoichiometrySetMap.get(reactionID).add(
-							new StringDoublePair(productID, productStoichiometry));
-					
-					if (product.getConstant() == false && 
-							variableToValueMap.containsKey(product.getId()) == false &&
-							product.getId().length() > 0) {
-						
-						if (reactionToNonconstantStoichiometriesSetMap.containsKey(reactionID) == false)
-							reactionToNonconstantStoichiometriesSetMap.put(reactionID, new HashSet<StringStringPair>());
-						
-						reactionToNonconstantStoichiometriesSetMap.get(reactionID)
-						.add(new StringStringPair(productID, product.getId()));
-						variableToValueMap.put(product.getId(), productStoichiometry);
-					}
-					
-					//don't need to check if there are enough, because products are added
-				}
-				size = modifiersList.size();
-				for (int i = 0; i < size; i++)
-				{
-					ModifierSpeciesReference modifier = (ModifierSpeciesReference)modifiersList.get(i);
-					
-					String modifierID = modifier.getSpecies();
-					modifierID = modifierID.replace("_negative_","-");
-					
-					//as a modifier, this species affects the reaction's propensity
-					speciesToAffectedReactionSetMap.get(modifierID).add(reactionID);
-				}
-				
-				reactionToFormulaMap.put(reactionID, inlineFormula(reactionFormula));
-				
-				double propensity;
-				
-		
-					//calculate propensity
-					propensity = evaluateExpressionRecursive(inlineFormula(reactionFormula));
-
-					//stoichiometry amplification -- alter the propensity
-					if (reactionID.contains("_Diffusion_") && stoichAmpBoolean == true)
-						propensity *= (1.0 / stoichAmpGridValue);
-					
-					if (propensity < minPropensity && propensity > 0) 
-						minPropensity = propensity;
-					if (propensity > maxPropensity)
-						maxPropensity = propensity;
-					
-					this.propensity += propensity;
-				
-				
-				reactionToPropensityMap.put(reactionID, propensity);
-			}	
-		
-		/**
-		 * calculates the initial propensities for each reaction in the model
-		 * 
-		 * @param numReactions the number of reactions in the model
-		 */
-		protected void setupReactions() {
-			
-			//loop through all reactions and calculate their propensities
-			Reaction reaction;
-			
-			for (int i = 0;  i < numReactions; i++) {
-				reaction = model.getReaction(i);
-				String reactionID = reaction.getId();
-				ASTNode reactionFormula = reaction.getKineticLaw().getMath();
-							
-				setupSingleReaction(reactionID, reactionFormula, reaction.getReversible(), 
-						reaction.getListOfReactants(), reaction.getListOfProducts(), reaction.getListOfModifiers());
 			}
-		}
+		
+		
+	
 		
 		/**
 		 * calculates an expression using a recursive algorithm
@@ -678,10 +523,6 @@ public abstract class HierarchicalSimulator {
 		 * @return the evaluated expression
 		 */
 		protected double evaluateExpressionRecursive(ASTNode node) {
-			
-			//these if/else-ifs before the else are leaf conditions
-			
-			//logical constant, logical operator, or relational operator
 			if (node.isBoolean()) {
 				
 				switch (node.getType()) {
@@ -774,7 +615,7 @@ public abstract class HierarchicalSimulator {
 				
 				String name = node.getName().replace("_negative_","-");
 					
-				if (node.getType() == libsbmlConstants.AST_NAME_TIME) {
+				if (node.getType()==libsbmlConstants.AST_NAME_TIME) {
 					
 					return currentTime;
 				}
@@ -788,11 +629,15 @@ public abstract class HierarchicalSimulator {
 					
 					if (this.speciesToHasOnlySubstanceUnitsMap.containsKey(name) &&
 							this.speciesToHasOnlySubstanceUnitsMap.get(name) == false) {
-						
 						value = (variableToValueMap.get(name) / variableToValueMap.get(speciesToCompartmentNameMap.get(name)));
 					}
-					else				
-						value = variableToValueMap.get(name);
+					else	
+					{
+						if(replacements.containsKey(name))
+							value = replacements.get(name);
+						else	
+							value = variableToValueMap.get(name);
+					}
 					return value;
 				}
 			}
@@ -901,62 +746,7 @@ public abstract class HierarchicalSimulator {
 						return prng.nextGaussian(evaluateExpressionRecursive(node.getLeftChild()),
 								evaluateExpressionRecursive(node.getRightChild()));	
 					}
-					else if (nodeName.equals("get2DArrayElement")) {
-						
-					}
-					else if (nodeName.equals("neighborQuantityLeftFull")) {
-						
-						int leftIndex = (int) evaluateExpressionRecursive(node.getChild(1));
-						int rightIndex = (int) evaluateExpressionRecursive(node.getChild(2));
-						String specName = node.getChild(0).getName().split("__")[node.getChild(0).getName().split("__").length - 1];
-						String speciesName = "ROW" + leftIndex + "_COL" + (rightIndex - 1) + "__" + specName;
-						
-						if (variableToValueMap.containsKey(speciesName))
-							return variableToValueMap.get(speciesName);
-						else return 1;
-					}
-					else if (nodeName.equals("neighborQuantityRightFull")) {
-						
-						int leftIndex = (int) evaluateExpressionRecursive(node.getChild(1));
-						int rightIndex = (int) evaluateExpressionRecursive(node.getChild(2));
-						String specName = node.getChild(0).getName().split("__")[node.getChild(0).getName().split("__").length - 1];
-						String speciesName = "ROW" + leftIndex + "_COL" + (rightIndex + 1) + "__" + specName;
-						
-						if (variableToValueMap.containsKey(speciesName)) {
-							return variableToValueMap.get(speciesName);
-						}
-						else return 1;
-					}
-					else if (nodeName.equals("neighborQuantityAboveFull")) {
-						
-						int leftIndex = (int) evaluateExpressionRecursive(node.getChild(1));
-						int rightIndex = (int) evaluateExpressionRecursive(node.getChild(2));
-						String specName = node.getChild(0).getName().split("__")[node.getChild(0).getName().split("__").length - 1];
-						String speciesName = "ROW" + (leftIndex - 1) + "_COL" + rightIndex + "__" + specName;
-						
-						if (variableToValueMap.containsKey(speciesName))
-							return variableToValueMap.get(speciesName);
-						else return 1;
-					}
-					else if (nodeName.equals("neighborQuantityBelowFull")) {
-						
-						int leftIndex = (int) evaluateExpressionRecursive(node.getChild(1));
-						int rightIndex = (int) evaluateExpressionRecursive(node.getChild(2));
-						String specName = node.getChild(0).getName().split("__")[node.getChild(0).getName().split("__").length - 1];
-						String speciesName = "ROW" + (leftIndex + 1) + "_COL" + rightIndex + "__" + specName;
-						
-						if (variableToValueMap.containsKey(speciesName))
-							return variableToValueMap.get(speciesName);
-						else return 1;
-					}
-					else if (nodeName.equals("getCompartmentLocationX")) {
-						
-						return this.componentToLocationMap.get(node.getChild(0).getName().split("__")[0]).getX();
-					}
-					else if (nodeName.equals("getCompartmentLocationY")) {
-						
-						return this.componentToLocationMap.get(node.getChild(0).getName().split("__")[0]).getY();
-					}
+
 					
 					break;
 				}
@@ -1160,55 +950,6 @@ public abstract class HierarchicalSimulator {
 				return 0.0;
 		}
 
-		/**
-		 * recursively puts the nodes that have the same name as the quarry string passed in into the arraylist passed in
-		 * so, the entire tree is searched through, which i don't think is possible with the jsbml methods
-		 * 
-		 * @param node node to search through
-		 * @param quarry string to search for
-		 * @param satisfyingNodes list of nodes that satisfy the condition
-		 */
-		protected void getSatisfyingNodes(ASTNode node, String quarry, ArrayList<ASTNode> satisfyingNodes) {
-			
-			if (node.isName() && node.getName().equals(quarry))
-				satisfyingNodes.add(node);
-			else if (node.isFunction() && node.getName().equals(quarry))
-				satisfyingNodes.add(node);
-			else {
-				ASTNode childNode;
-				for (int i = 0; i < node.getNumChildren(); i++)
-				{
-					childNode = node.getChild(i);
-					getSatisfyingNodes(childNode, quarry, satisfyingNodes);
-				}
-			}
-		}
-		
-		/**
-		 * recursively puts the nodes that have the same name as the quarry string passed in into the arraylist passed in
-		 * so, the entire tree is searched through, which i don't think is possible with the jsbml methods
-		 * the lax version uses contains instead of equals
-		 * 
-		 * @param node node to search through
-		 * @param quarry string to search for
-		 * @param satisfyingNodes list of nodes that satisfy the condition
-		 */
-		void getSatisfyingNodesLax(ASTNode node, String quarry, ArrayList<ASTNode> satisfyingNodes) {
-			
-			if (node.isName() && node.getName().contains(quarry))
-				satisfyingNodes.add(node);
-			else if (node.isFunction() && node.getName().contains(quarry))
-				satisfyingNodes.add(node);
-			else {
-				ASTNode childNode;
-				for (int i = 0; i < node.getNumChildren(); i++)
-				{
-					childNode = node.getChild(i);
-					getSatisfyingNodesLax(childNode, quarry, satisfyingNodes);
-				}
-			}		
-		}
-		
 		
 		/**
 		 * inlines a formula with function definitions
@@ -1217,6 +958,8 @@ public abstract class HierarchicalSimulator {
 		 * @return
 		 */
 		protected ASTNode inlineFormula(ASTNode formula) {
+			
+		
 			
 			if (formula.isFunction() == false ||
 					(formula.getLeftChild() == null && formula.getRightChild() == null)) {
@@ -1273,56 +1016,28 @@ public abstract class HierarchicalSimulator {
 		 */
 		protected void performReaction(String selectedReactionID, final boolean noAssignmentRulesFlag, final boolean noConstraintsFlag) {
 			
-			//these are sets of things that need to be re-evaluated or tested due to the reaction firing
-			HashSet<AssignmentRule> affectedAssignmentRuleSet = new HashSet<AssignmentRule>();
-			HashSet<ASTNode> affectedConstraintSet = new HashSet<ASTNode>();
-			
 			//loop through the reaction's reactants and products and update their amounts
 			for (StringDoublePair speciesAndStoichiometry : reactionToSpeciesAndStoichiometrySetMap.get(selectedReactionID)) {
 				
 				double stoichiometry = speciesAndStoichiometry.doub;
 				String speciesID = speciesAndStoichiometry.string;
 				
-				//this means the stoichiometry isn't constant, so look to the variableToValue map
-				if (reactionToNonconstantStoichiometriesSetMap.containsKey(selectedReactionID)) {
-					
-					for (StringStringPair doubleID : reactionToNonconstantStoichiometriesSetMap.get(selectedReactionID)) {
-						
-						//string1 is the species ID; string2 is the speciesReference ID
-						if (doubleID.string1.equals(speciesID)) {
-							
-							stoichiometry = variableToValueMap.get(doubleID.string2);
-							
-							//this is to get the plus/minus correct, as the variableToValueMap has
-							//a stoichiometry without the reactant/product plus/minus data
-							stoichiometry *= (int)(speciesAndStoichiometry.doub/Math.abs(speciesAndStoichiometry.doub));
-							break;
-						}
-					}
-				}
-				
 				//update the species count if the species isn't a boundary condition or constant
 				//note that the stoichiometries are earlier modified with the correct +/- sign
 				boolean cond1 = speciesToIsBoundaryConditionMap.get(speciesID);
 				boolean cond2 = variableToIsConstantMap.get(speciesID);
 				if (!cond1 && !cond2) {
-					
-					if (speciesToConversionFactorMap.containsKey(speciesID)) {
-						variableToValueMap.adjustValue(speciesID, stoichiometry * 
-								variableToValueMap.get(speciesToConversionFactorMap.get(speciesID)));
+					if(replacements.containsKey(speciesID))
+					{
+						double val = replacements.get(speciesID) + stoichiometry;
+						if(val >= 0)
+							replacements.put(speciesID, replacements.get(speciesID) + stoichiometry);
 					}
-					else {
+					else
+					{
 						variableToValueMap.adjustValue(speciesID, stoichiometry);
 					}
 				}
-				
-				//if this variable that was just updated is part of an assignment rule (RHS)
-				//then re-evaluate that assignment rule
-				if (noAssignmentRulesFlag == false && variableToIsInAssignmentRuleMap.get(speciesID) == true)
-					affectedAssignmentRuleSet.addAll(variableToAffectedAssignmentRuleSetMap.get(speciesID));
-				
-				if (noConstraintsFlag == false && variableToIsInConstraintMap.get(speciesID) == true)
-					affectedConstraintSet.addAll(variableToAffectedConstraintSetMap.get(speciesID));
 			}
 			
 		
@@ -1338,9 +1053,9 @@ public abstract class HierarchicalSimulator {
 				return;
 			if (species.isSetInitialAmount())
 			{
-				//if(replacements.containsKey(speciesID))
-					//variableToValueMap.put(speciesID, replacements.get(speciesID));
-				//else
+				if(replacements.containsKey(speciesID))
+					variableToValueMap.put(speciesID, replacements.get(speciesID));
+				else
 					variableToValueMap.put(speciesID, species.getInitialAmount());
 			}
 			speciesToAffectedReactionSetMap.put(speciesID, new HashSet<String>(20));
@@ -1367,65 +1082,7 @@ public abstract class HierarchicalSimulator {
 			}
 		}
 
-		/**
-		 * puts initial assignment-related information into data structures
-		 */
-		protected void setupInitialAssignments() 
-		{
-			long size;
-			
-			HashSet<String> affectedVariables = new HashSet<String>();
-			
-			//calculate initial assignments a lot of times in case there are dependencies
-			//running it the number of initial assignments times will avoid problems
-			//and all of them will be fully calculated and determined
-			for (int i = 0; i < numInitialAssignments; ++i) {
-				size = model.getListOfInitialAssignments().size();
-				for (long j = 0; j < size; j++) {
-					InitialAssignment initialAssignment = model.getListOfInitialAssignments().get(j);
-					
-					String variable = initialAssignment.getSymbol().replace("_negative_","-");				
-					initialAssignment.setMath(inlineFormula(initialAssignment.getMath()));
-					
-					if (speciesToHasOnlySubstanceUnitsMap.containsKey(variable) &&
-							speciesToHasOnlySubstanceUnitsMap.get(variable) == false) {
-						
-						variableToValueMap.put(variable, 
-								evaluateExpressionRecursive(initialAssignment.getMath()) * 
-								variableToValueMap.get(speciesToCompartmentNameMap.get(variable)));
-					}
-					else {
-						variableToValueMap.put(variable, evaluateExpressionRecursive(initialAssignment.getMath()));
-					}			
-					
-					affectedVariables.add(variable);
-				}
-			}
-				
-					//this is kind of weird, but apparently if an initial assignment changes a compartment size
-					//i need to go back and update species amounts because they used the non-changed-by-assignment sizes
-					size = model.getListOfSpecies().size();
-					for (long j = 0; j < size; j++)
-					{
-							Species species = model.getListOfSpecies().get(j);
-						
-						if (species.isSetInitialConcentration()) {
-							
-							String speciesID = species.getId();
-							
-							//revert to the initial concentration value
-							if (Double.isNaN(variableToValueMap.get(speciesID)) == false)
-								variableToValueMap.put(speciesID, 
-										variableToValueMap.get(speciesID) / model.getCompartment(species.getCompartment()).getSize());
-							else
-								variableToValueMap.put(speciesID, species.getInitialConcentration());
-							
-							//multiply by the new compartment size to get into amount
-							variableToValueMap.put(speciesID, variableToValueMap.get(speciesID) * 
-									variableToValueMap.get(speciesToCompartmentNameMap.get(speciesID)));
-						}
-					}
-		}
+		
 		
 		/**
 		 * sets up the local parameters in a single kinetic law
@@ -1445,9 +1102,9 @@ public abstract class HierarchicalSimulator {
 				String parameterID = "";
 				
 				//the parameters don't get reset after each run, so don't re-do this prepending
-				if (localParameter.getId().contains(reactionID + "_") == false)					
-					parameterID = reactionID + "_" + localParameter.getId();
-				else 
+				//if (localParameter.getId().contains(reactionID + "_") == false)					
+					//parameterID = reactionID + "_" + localParameter.getId();
+				//else 
 					parameterID = localParameter.getId();
 								
 				variableToValueMap.put(parameterID, localParameter.getValue());
@@ -1469,12 +1126,8 @@ public abstract class HierarchicalSimulator {
 		private void setupSingleParameter(Parameter parameter) {
 			
 			String parameterID = parameter.getId();
-			
 			variableToValueMap.put(parameterID, parameter.getValue());
 			variableToIsConstantMap.put(parameterID, parameter.getConstant());
-			
-			if (parameter.getConstant() == false)
-				nonconstantParameterIDSet.add(parameterID);
 			
 		}
 
@@ -1486,7 +1139,6 @@ public abstract class HierarchicalSimulator {
 			//add local parameters
 			Reaction reaction;
 			Parameter parameter;
-			Compartment compartment;
 			long size;
 			
 			
@@ -1509,20 +1161,119 @@ public abstract class HierarchicalSimulator {
 				setupSingleParameter(parameter);
 			}
 			
-			//add compartment sizes in
-			size = model.getListOfCompartments().size();
-			for (int i = 0; i < size; i++) {
-				compartment = model.getCompartment(i);
-				String compartmentID = compartment.getId();
+		}
+		
+		
+		/**
+		 * calculates the initial propensity of a single reaction
+		 * also does some initialization stuff
+		 * 
+		 * @param reactionID
+		 * @param reactionFormula
+		 * @param reversible
+		 * @param reactantsList
+		 * @param productsList
+		 * @param modifiersList
+		 */
+		private void setupSingleReaction(String reactionID, ASTNode reactionFormula, boolean reversible, 
+				ListOfSpeciesReferences reactantsList, ListOfSpeciesReferences productsList, 
+				ListOfSpeciesReferences modifiersList) {
+		reactionID = reactionID.replace("_negative_","-");
+			
+			long size;
+			boolean notEnoughMoleculesFlag = false;
+			reactionToSpeciesAndStoichiometrySetMap.put(reactionID, new HashSet<StringDoublePair>());
+			reactionToReactantStoichiometrySetMap.put(reactionID, new HashSet<StringDoublePair>());
+			
+			size = reactantsList.size();
+			for (int i = 0; i < size; i++)
+			{
+						
+				SpeciesReference reactant = (SpeciesReference)reactantsList.get(i);
 				
-				compartmentIDSet.add(compartmentID);
-				variableToValueMap.put(compartmentID, compartment.getSize());
+				String reactantID = reactant.getSpecies().replace("_negative_","-");
+					double reactantStoichiometry;
+					
+					//if there was an initial assignment for the speciesref id
+					if(replacements.containsKey(reactant.getId()))
+						reactantStoichiometry = replacements.get(reactant.getId());
+					else if (variableToValueMap.containsKey(reactant.getId()))
+						reactantStoichiometry = variableToValueMap.get(reactant.getId());
+					else
+						reactantStoichiometry = reactant.getStoichiometry();
+					
+					reactionToSpeciesAndStoichiometrySetMap.get(reactionID).add(
+							new StringDoublePair(reactantID, -reactantStoichiometry));
+					reactionToReactantStoichiometrySetMap.get(reactionID).add(
+							new StringDoublePair(reactantID, reactantStoichiometry));
+						
+
+					//as a reactant, this species affects the reaction's propensity
+					speciesToAffectedReactionSetMap.get(reactantID).add(reactionID);
+					
+					//make sure there are enough molecules for this species
+					if (variableToValueMap.get(reactantID) < reactantStoichiometry)
+						notEnoughMoleculesFlag = true;
+				}
 				
-				if (Double.isNaN(compartment.getSize()))
-					variableToValueMap.put(compartmentID, 1.0);
+				size = productsList.size();
+				for (int i = 0; i < size; i ++) {
+					SpeciesReference product = (SpeciesReference)productsList.get(i); 
+					
+					String productID = product.getSpecies().replace("_negative_","-");
+					double productStoichiometry;
+					
+					//if there was an initial assignment for the speciesref id
+					if(replacements.containsKey(product.getId()))
+						productStoichiometry = replacements.get(product.getId());
+					else if (variableToValueMap.containsKey(product.getId()))
+						productStoichiometry = variableToValueMap.get(product.getId());
+					else
+						productStoichiometry = product.getStoichiometry();
+					
+					reactionToSpeciesAndStoichiometrySetMap.get(reactionID).add(
+							new StringDoublePair(productID, productStoichiometry));
+				}
 				
-				variableToIsConstantMap.put(compartmentID, compartment.getConstant());
+				reactionToFormulaMap.put(reactionID, inlineFormula(reactionFormula));
 				
+				double propensity;
+				
+		
+				if (notEnoughMoleculesFlag == true)
+					propensity = 0.0;
+				else {//calculate propensity
+					propensity = evaluateExpressionRecursive(inlineFormula(reactionFormula));
+
+					if (propensity < minPropensity && propensity > 0) 
+						minPropensity = propensity;
+					if (propensity > maxPropensity)
+						maxPropensity = propensity;
+					
+					this.propensity += propensity;
+				
+				}
+				
+				reactionToPropensityMap.put(reactionID, propensity);
+			}	
+		
+		/**
+		 * calculates the initial propensities for each reaction in the model
+		 * 
+		 * @param numReactions the number of reactions in the model
+		 */
+		protected void setupReactions() {
+			
+			//loop through all reactions and calculate their propensities
+			Reaction reaction;
+			
+			for (int i = 0;  i < numReactions; i++) {
+				reaction = model.getReaction(i);
+				String reactionID = reaction.getId();
+				ASTNode reactionFormula = reaction.getKineticLaw().getMath();
+							
+				setupSingleReaction(reactionID, reactionFormula, reaction.getReversible(), 
+						reaction.getListOfReactants(), reaction.getListOfProducts(), reaction.getListOfModifiers());
 			}
 		}
 		

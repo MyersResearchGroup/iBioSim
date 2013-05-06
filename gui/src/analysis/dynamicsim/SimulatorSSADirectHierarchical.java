@@ -175,10 +175,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		
 		
 		topmodel.setupSpecies();
-		topmodel.setupParameters();
-		topmodel.setupInitialAssignments();
-		
-		//STEP 0: calculate initial propensities (including the total)		
+		topmodel.setupParameters();	
 		topmodel.setupReactions();		
 		
 		setupForOutput(randomSeed, runNumber);
@@ -186,10 +183,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		for(ModelState model : submodels)
 		{
 		model.setupSpecies();
-		model.setupParameters();
-		model.setupInitialAssignments();
-		
-		//STEP 0: calculate initial propensities (including the total)		
+		model.setupParameters();	
 		model.setupReactions();		
 		
 		setupForOutput(randomSeed, runNumber);
@@ -350,6 +344,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		
 		topmodel = new ModelState(document.getModel(), true, "");
 		setupSubmodels(document);
+		getComponentPortMap(document);
 	}
 
 	/**
@@ -363,10 +358,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		topmodel.setupParameters();
-		topmodel.setupInitialAssignments();
-		
-		//STEP 0: calculate initial propensities (including the total)		
+		topmodel.setupParameters();		
 		topmodel.setupReactions();		
 		
 		setupForOutput(0, newRun);
@@ -379,10 +371,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		model.setupParameters();
-		model.setupInitialAssignments();
-		
-		//STEP 0: calculate initial propensities (including the total)		
+		model.setupParameters();	
 		model.setupReactions();		
 		
 		setupForOutput(0, newRun);
@@ -403,15 +392,12 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		for(ModelState model : submodels)
 		{
 			for (String speciesID : model.speciesIDSet) {				
-				//if(!replacements.containsKey(speciesID))
-				//{
 					try {
 						bufferedTSDWriter.write(", \"" + speciesID + "_" + model.ID + "\"");
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-				//}
 			}
 			
 		}
