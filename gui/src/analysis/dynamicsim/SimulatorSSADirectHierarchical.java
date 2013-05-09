@@ -86,7 +86,13 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 			
 			//STEP 2: calculate delta_t, the time till the next reaction execution
 			 
-			double delta_t = FastMath.log(1 / r1) / getTotalPropensity();
+			double totalPropensity = getTotalPropensity();
+			double delta_t;
+			
+			if(totalPropensity <= 0)
+				delta_t = FastMath.log(1 / r1);
+			else
+				delta_t = FastMath.log(1 / r1) / totalPropensity;
 		
 			if (delta_t > maxTimeStep)
 				delta_t = maxTimeStep;
@@ -115,6 +121,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 				else
 				{
 					submodels[submodelIndex].performReaction(selectedReactionID, true, true);
+					
 					HashSet<String> affectedReactionSet = submodels[submodelIndex].getAffectedReactionSet(selectedReactionID, true);
 					
 					//STEP 5: compute affected reactions' new propensities and update total propensity
@@ -306,7 +313,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 			}
 		}
 		
-		for(int i = 0; i < numModels - 1; i ++)
+		for(int i = 0; i < numSubmodels; i ++)
 		{
 			
 		for (String currentReaction : submodels[i].reactionToPropensityMap.keySet()) 
@@ -343,6 +350,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		SBMLDocument document = reader.readSBML(SBMLFileName);
 		
 		topmodel = new ModelState(document.getModel(), true, "");
+		
 		setupSubmodels(document);
 		getComponentPortMap(document);
 	}

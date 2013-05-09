@@ -72,11 +72,7 @@ public abstract class HierarchicalSimulator {
 	protected ModelState topmodel; // Top Level Module
 	protected ModelState [] submodels; // Submodels
 	protected HashMap<String, Double> replacements;
-	
-	
-	
-	protected int numModels;
-	
+	protected int numSubmodels;
 	
 	//generates random numbers based on the xorshift method
 	protected XORShiftRandom randomNumberGenerator = null;
@@ -159,8 +155,8 @@ public abstract class HierarchicalSimulator {
 		SBMLErrorLog errors = document.getErrorLog();
 		
 		//if the sbml document has errors, tell the user and don't simulate
-		if (document.getNumErrors() > 0) {
-			
+		if (document.getNumErrors() > 0) 
+		{	
 			String errorString = "";
 			
 			for (int i = 0; i < errors.getNumErrors(); i++) {
@@ -175,18 +171,19 @@ public abstract class HierarchicalSimulator {
 		}
 		
 		
-		if (File.separator.equals("\\")) {
+		if (File.separator.equals("\\")) 
+		{
 			separator = "\\\\";
 		}
-		else {
+		else 
+		{
 			separator = File.separator;
 		}
 		
 
 		topmodel = new ModelState(document.getModel(), true, "");
-		numModels = 1 + (int)setupSubmodels(document);
+		numSubmodels = (int)setupSubmodels(document);
 
-		
 		getComponentPortMap(document);
 		
 		ibiosimFunctionDefinitions.add("uniform");
@@ -241,7 +238,7 @@ public abstract class HierarchicalSimulator {
 		//print the current time
 		bufferedTSDWriter.write(printTime + ", ");
 		
-		LinkedHashSet<String> speciesIDSet = topmodel.getSpeciesID();
+		LinkedHashSet<String> speciesIDSet = topmodel.speciesIDSet;
 		//loop through the speciesIDs and print their current value to the file
 		for (String speciesID : speciesIDSet)
 		{		
@@ -252,14 +249,13 @@ public abstract class HierarchicalSimulator {
 			}
 			else
 			{
-				bufferedTSDWriter.write(commaSpace + topmodel.getvariableToValue().get(speciesID));
+				bufferedTSDWriter.write(commaSpace + topmodel.variableToValueMap.get(speciesID));
 				commaSpace = ", ";
 			}
 		}
-		
 		for (ModelState models : submodels)
 		{
-			speciesIDSet = models.getSpeciesID();
+			speciesIDSet = models.speciesIDSet;
 			//loop through the speciesIDs and print their current value to the file
 			for (String speciesID : speciesIDSet)
 			{		
@@ -270,7 +266,7 @@ public abstract class HierarchicalSimulator {
 				}
 				else
 				{
-					bufferedTSDWriter.write(commaSpace + models.getvariableToValue().get(speciesID));
+					bufferedTSDWriter.write(commaSpace + models.variableToValueMap.get(speciesID));
 					commaSpace = ", ";
 				}
 			}
@@ -335,7 +331,7 @@ public abstract class HierarchicalSimulator {
 			subBioModel.load(path + extModelFile);
 			
 			submodels[i] = new ModelState(subBioModel.getSBMLDocument().getModel(), false, submodel.getId());
-		}
+			}
 		
 		return size;
 	}
@@ -344,10 +340,23 @@ public abstract class HierarchicalSimulator {
 		for (long i = 0; i < sbml.getModel().getNumSpecies(); i++) {
 			Species species = sbml.getModel().getSpecies(i);
 			CompSBasePlugin sbmlSBase = (CompSBasePlugin)species.getPlugin("comp");
-			for (long j = 0; j < sbmlSBase.getNumReplacedElements(); j++) {
-					String s = species.getId();
-					replacements.put(s, species.getInitialAmount());
-				}
+			String s = species.getId();
+			for (long j = 0; j < sbmlSBase.getNumReplacedElements(); j++) 
+			{
+					replacements.put(s, species.getInitialAmount());		
+			}
+			if(sbmlSBase.isSetReplacedBy())
+			{
+				Replacing replacement = sbmlSBase.getReplacedBy();
+				String submodel = replacement.getSubmodelRef();
+				for(ModelState model : submodels)
+					if(submodel.equals(model.ID))
+					{
+						replacements.put(s, model.model.getModel().getSpecies(i).getInitialAmount());
+						break;
+					}
+						
+			}
 			}
 			
 			}
@@ -363,11 +372,11 @@ public abstract class HierarchicalSimulator {
 	protected double getTotalPropensity()
 	{
 		double totalPropensity = 0;
-		totalPropensity += topmodel.getTotalSubmodelPropensity();
+		totalPropensity += topmodel.propensity;
 		
 		for(ModelState model : submodels)
 		{
-			totalPropensity += model.getTotalSubmodelPropensity();
+			totalPropensity += model.propensity;
 		}
 		
 		return totalPropensity;
@@ -439,7 +448,6 @@ public abstract class HierarchicalSimulator {
 		//allows for access to species booleans from a species ID
 		protected HashMap<String, Boolean> speciesToIsBoundaryConditionMap = null;
 		protected HashMap<String, Boolean> speciesToHasOnlySubstanceUnitsMap = null;
-		//protected HashMap<String, String> speciesToConversionFactorMap = null;
 		protected HashMap<String, String> speciesToCompartmentNameMap = null;
 		
 		//a linked (ordered) set of all species IDs, to allow easy access to their values via the variableToValue map
@@ -449,14 +457,8 @@ public abstract class HierarchicalSimulator {
 		protected TObjectDoubleHashMap<String> variableToValueMap = null;
 		
 		
-		//allows for access to the set of assignment rules that a variable (rhs) in an assignment rule affects
-		protected HashMap<String, HashSet<AssignmentRule> > variableToAffectedAssignmentRuleSetMap = null;
 			
 		protected HashMap<String, Boolean> variableToIsConstantMap = null;
-		
-		
-		//protected LinkedHashSet<String> compartmentIDSet = new LinkedHashSet<String>();
-		//protected LinkedHashSet<String> nonconstantParameterIDSet = new LinkedHashSet<String>();
 		
 		protected HashSet<String> ibiosimFunctionDefinitions = new HashSet<String>();
 		
@@ -469,16 +471,8 @@ public abstract class HierarchicalSimulator {
 		protected FileWriter TSDWriter = null;
 		protected BufferedWriter bufferedTSDWriter = null;
 		
-		//boolean flags
-		protected boolean cancelFlag = false;
-		protected boolean constraintFailureFlag = false;
-
-		
-		protected boolean stoichAmpBoolean = false;
-		protected double stoichAmpGridValue = 1.0;
-		
 		protected boolean printConcentrations = false;
-		
+		protected boolean isCopy;
 
 		
 		protected JFrame running = new JFrame();
@@ -488,7 +482,7 @@ public abstract class HierarchicalSimulator {
 		
 		PsRandom prng = new PsRandom();
 		
-		public ModelState(Model bioModel, boolean topModule, String submodelID)
+		public ModelState(Model bioModel, boolean isCopy, String submodelID)
 		{
 			this.model = bioModel;
 			this.numSpecies = this.model.getNumSpecies();
@@ -496,6 +490,7 @@ public abstract class HierarchicalSimulator {
 			this.numReactions = this.model.getNumReactions();
 			this.numInitialAssignments = (int)this.model.getNumInitialAssignments();
 			this.ID = submodelID;
+			//this.isCopy = isCopy;
 			
 			//set initial capacities for collections (1.5 is used to multiply numReactions due to reversible reactions)
 			speciesToAffectedReactionSetMap = new HashMap<String, HashSet<String> >((int) numSpecies);
@@ -1244,7 +1239,9 @@ public abstract class HierarchicalSimulator {
 					propensity = 0.0;
 				else {//calculate propensity
 					propensity = evaluateExpressionRecursive(inlineFormula(reactionFormula));
-
+					if(propensity < 0.0)
+						propensity = 0.0;
+					
 					if (propensity < minPropensity && propensity > 0) 
 						minPropensity = propensity;
 					if (propensity > maxPropensity)
@@ -1290,20 +1287,6 @@ public abstract class HierarchicalSimulator {
 			}
 		}
 		
-		protected LinkedHashSet<String> getSpeciesID()
-		{
-			return this.speciesIDSet;
-		}
-		
-		protected TObjectDoubleHashMap<String> getvariableToValue()
-		{
-			return this.variableToValueMap;
-		}
-		
-		protected double getTotalSubmodelPropensity()
-		{
-			return this.propensity;
-		}
 	}
 }
 
