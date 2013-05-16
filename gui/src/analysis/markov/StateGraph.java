@@ -1334,6 +1334,10 @@ public class StateGraph implements Runnable {
 				HashMap<String, Double> output = new HashMap<String, Double>();
 				if (conditions != null && !stop) {
 					for (Property cond : conditions) {
+						String prop = cond.getProperty();
+						if (prop.startsWith("St")) {
+							prop = prop.substring(5, prop.length()-1);
+						}
 						double prob = 0;
 						// for (String ss : s.split("&&")) {
 						// if (ss.split("->").length == 2) {
@@ -1377,8 +1381,8 @@ public class StateGraph implements Runnable {
 							// for (String state : stateGraph.keySet()) {
 							// for (State m : stateGraph.get(state)) {
 							ExprTree expr = new ExprTree(lhpn);
-							expr.token = expr.intexpr_gettok(cond.getProperty());
-							expr.intexpr_L(cond.getProperty());
+							expr.token = expr.intexpr_gettok(prop);
+							expr.intexpr_L(prop);
 							if (expr.evaluateExpr(m.getVariables()) == 1.0) {
 								prob += m.getCurrentProb();
 							}
