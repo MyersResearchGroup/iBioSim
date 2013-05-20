@@ -499,7 +499,7 @@ public class Run implements ActionListener {
 			FileWriter logFile = new FileWriter(new File(directory + separator + "log.txt"));
 			Properties properties = new Properties();
 			properties.load(new FileInputStream(directory + separator + 
-					theFile.replace(".xml","") + ".properties"));
+					theFile.replace(".sbml", "").replace(".xml","") + ".properties"));
 			boolean genStats = Boolean.parseBoolean(properties.getProperty(
 					"reb2sac.generate.statistics"));
 			String out = theFile;
