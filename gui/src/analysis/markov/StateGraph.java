@@ -1530,6 +1530,14 @@ public class StateGraph implements Runnable {
 	public int getNumberOfStates() {
 		return stateGraph.size();
 	}
+	
+	public int getNumberOfTransitions() {
+		int transitions = 0;
+		for (State m : stateGraph) {
+			transitions += m.getNextStates().length;
+		}
+		return transitions;
+	}
 
 	private ArrayList<String> copyArrayList(ArrayList<String> original) {
 		ArrayList<String> copy = new ArrayList<String>();
