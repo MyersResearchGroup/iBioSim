@@ -1004,13 +1004,15 @@ public class Run implements ActionListener {
 						BuildStateGraphThread buildStateGraph = new BuildStateGraphThread(sg, progress);
 						buildStateGraph.start();
 						buildStateGraph.join();
-						log.addText("Number of states found: " + sg.getNumberOfStates() + "\n");
-						logFile.write("Number of states found: " + sg.getNumberOfStates() + "\n\n");
+						log.addText("Number of states found: " + sg.getNumberOfStates());
+						logFile.write("Number of states found: " + sg.getNumberOfStates() + "\n");
+						log.addText("Number of transitions found: " + sg.getNumberOfTransitions() + "\n");
+						logFile.write("Number of transitions found: " + sg.getNumberOfTransitions() + "\n\n");
 						if (sim.equals("reachability-analysis") && !sg.getStop()) {
 							time2 = System.nanoTime();
 							Object[] options = { "Yes", "No" };
 							int value = JOptionPane.showOptionDialog(Gui.frame, "The state graph contains " + sg.getNumberOfStates()
-									+ " states.\n" + "Do you want to view it in Graphviz?", "View State Graph",
+									+ " states and " + sg.getNumberOfTransitions() + " transitions.\n" + "Do you want to view it in Graphviz?", "View State Graph",
 									JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 							if (value == JOptionPane.YES_OPTION) {
 								String graphFile = filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot";
@@ -1086,10 +1088,9 @@ public class Run implements ActionListener {
 										simrepstream.close();
 									}
 									Object[] options = { "Yes", "No" };
-									int value = JOptionPane.showOptionDialog(Gui.frame,
-											"The state graph contains " + sg.getNumberOfStates() + " states.\n"
-													+ "Do you want to view it in Graphviz?", "View State Graph", JOptionPane.YES_NO_OPTION,
-											JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+									int value = JOptionPane.showOptionDialog(Gui.frame, "The state graph contains " + sg.getNumberOfStates()
+											+ " states and " + sg.getNumberOfTransitions() + " transitions.\n" + "Do you want to view it in Graphviz?", "View State Graph",
+											JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 									if (value == JOptionPane.YES_OPTION) {
 										String graphFile = filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
 												+ "_sg.dot";
@@ -1157,10 +1158,9 @@ public class Run implements ActionListener {
 										simrepstream.close();
 									}
 									Object[] options = { "Yes", "No" };
-									int value = JOptionPane.showOptionDialog(Gui.frame,
-											"The state graph contains " + sg.getNumberOfStates() + " states.\n"
-													+ "Do you want to view it in Graphviz?", "View State Graph", JOptionPane.YES_NO_OPTION,
-											JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+									int value = JOptionPane.showOptionDialog(Gui.frame, "The state graph contains " + sg.getNumberOfStates()
+											+ " states and " + sg.getNumberOfTransitions() + " transitions.\n" + "Do you want to view it in Graphviz?", "View State Graph",
+											JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 									if (value == JOptionPane.YES_OPTION) {
 										String graphFile = filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
 												+ "_sg.dot";
