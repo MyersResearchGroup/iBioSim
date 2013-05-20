@@ -2939,7 +2939,7 @@ public class LearnModel { // added ItemListener SB
 						if (tKey != null){
 							String pPrev = getPresetPlaceFullKey(tKey);
 							String nextPlace = getPostsetPlaceFullKey(tKey);
-							out.write("Transition " + g.getTransition(t).getName() + " b/w " + pPrev + " and " + nextPlace + " : finding delay \n");
+							out.write("Transition " + g.getTransition(t).getLabel() + " b/w " + pPrev + " and " + nextPlace + " : finding delay \n");
 							if (transitionInfo.get(pPrev + "," + nextPlace).getProperty("dMin") != null){
 								mind = Double.parseDouble(transitionInfo.get(pPrev + "," + nextPlace).getProperty("dMin"));
 								if (minDelay == null)
