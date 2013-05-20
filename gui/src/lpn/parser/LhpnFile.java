@@ -13,7 +13,7 @@ import main.Log;
 
 import verification.Verification;
 import verification.platu.lpn.DualHashMap;
-
+import verification.platu.stategraph.StateGraph;
 import verification.timed_state_exploration.zoneProject.InequalityVariable;
 
 
@@ -71,7 +71,22 @@ public class LhpnFile {
 	 */
 	protected Transition[] allTransitions;
 	
+	/*
+	 * The i-th array in this list stores THIS Lpn's variable indices of the shared variables 
+	 * between this LPN and another LPN whose lpnIndex is i. 
+	 */
+	protected List<int[]> thisIndexList;
 	
+	/*
+	 * The i-th array in this list stores THE i-th Lpn's variable indices of the
+	 * shared variables between this LPN and the i-th LPN.
+	 */
+    protected List<int[]> otherIndexList;
+    
+    /*
+     * The local state graph that corresponds to this LPN.  
+     */
+    protected StateGraph stateGraph;
 	
 	public LhpnFile(Log log) {
 		if (File.separator.equals("\\")) {
@@ -89,7 +104,7 @@ public class LhpnFile {
 		variables = new ArrayList<Variable>();
 		properties = new ArrayList<String>();
 		lpnIndex = 0;
-		tranIndex = 0;
+		tranIndex = 0;		
 	}
 	
 	public LhpnFile() {
@@ -108,6 +123,8 @@ public class LhpnFile {
 		properties = new ArrayList<String>();
 		lpnIndex = 0;
 		tranIndex = 0;
+		thisIndexList = new ArrayList<int[]>();
+		otherIndexList = new ArrayList<int[]>();		
 	}
 	
 	public void save(String filename) {
@@ -252,7 +269,7 @@ public class LhpnFile {
 						if (!flag) {
 							buffer.append("#@.failtrans ");
 						}
-						buffer.append(t.getName() + " ");
+						buffer.append(t.getLabel() + " ");
 						flag = true;
 					}
 				}
@@ -265,7 +282,7 @@ public class LhpnFile {
 						if (!flag) {
 							buffer.append("#@.non_disabling ");
 						}
-						buffer.append(t.getName() + " ");
+						buffer.append(t.getLabel() + " ");
 						flag = true;
 					}
 				}
@@ -308,10 +325,10 @@ public class LhpnFile {
 				buffer.append(".graph\n");
 				for (Transition t : transitions.values()) {
 					for (Place s : t.getPreset()) {
-						buffer.append(s.getName() + " " + t.getName() + "\n");
+						buffer.append(s.getName() + " " + t.getLabel() + "\n");
 					}
 					for (Place s : t.getPostset()) {
-						buffer.append(t.getName() + " " + s.getName() + "\n");
+						buffer.append(t.getLabel() + " " + s.getName() + "\n");
 					}
 				}
 			}
@@ -365,7 +382,7 @@ public class LhpnFile {
 							buffer.append("#@.enablings {");
 							flag = true;
 						}
-						buffer.append("<" + t.getName() + "=["
+						buffer.append("<" + t.getLabel() + "=["
 								+ t.getEnabling() + "]>");
 					}
 				}
@@ -381,7 +398,7 @@ public class LhpnFile {
 							flag = true;
 						}
 						for (String var : contAssign.keySet()) {
-							buffer.append("<" + t.getName() + "=[" + var + ":="
+							buffer.append("<" + t.getLabel() + "=[" + var + ":="
 									+ contAssign.get(var) + "]>");
 						}
 					}
@@ -392,7 +409,7 @@ public class LhpnFile {
 							flag = true;
 						}
 						for (String var : intAssign.keySet()) {
-							buffer.append("<" + t.getName() + "=[" + var + ":="
+							buffer.append("<" + t.getLabel() + "=[" + var + ":="
 									+ intAssign.get(var) + "]>");
 						}
 					}
@@ -409,7 +426,7 @@ public class LhpnFile {
 								buffer.append("#@.rate_assignments {");
 								flag = true;
 							}
-							buffer.append("<" + t.getName() + "=[" + var + ":="
+							buffer.append("<" + t.getLabel() + "=[" + var + ":="
 									+ t.getRateAssignment(var) + "]>");
 						}
 					}
@@ -424,7 +441,7 @@ public class LhpnFile {
 							buffer.append("#@.delay_assignments {");
 							flag = true;
 						}
-						buffer.append("<" + t.getName() + "=[" + t.getDelay()
+						buffer.append("<" + t.getLabel() + "=[" + t.getDelay()
 								+ "]>");
 					}
 				}
@@ -438,7 +455,7 @@ public class LhpnFile {
 							buffer.append("#@.priority_assignments {");
 							flag = true;
 						}
-						buffer.append("<" + t.getName() + "=["
+						buffer.append("<" + t.getLabel() + "=["
 								+ t.getPriority() + "]>");
 					}
 				}
@@ -454,7 +471,7 @@ public class LhpnFile {
 						buffer.append("#@.boolean_assignments {");
 						flag = true;
 					}
-					buffer.append("<" + t.getName() + "=[" + var + ":="
+					buffer.append("<" + t.getLabel() + "=[" + var + ":="
 							+ boolAssign.get(var) + "]>");
 				}
 			}
@@ -536,7 +553,7 @@ public class LhpnFile {
 			}
 			buffer.append("\"]\n");
 			for (Transition t : transitions.values()) {
-				buffer.append(t.getName() + " [shape=plaintext,label=\"" + t.getName());
+				buffer.append(t.getLabel() + " [shape=plaintext,label=\"" + t.getLabel());
 				if (t.containsEnabling()) {
 					if (t.isPersistent()) {
 						buffer.append("\\n{" + t.getEnabling() + "}");
@@ -624,13 +641,13 @@ public class LhpnFile {
 				}
 				Transition[] postset = place.getPostset();
 				for (Transition t : postset) {
-					buffer.append(place.getName() + " -> " + t.getName() + "\n");
+					buffer.append(place.getName() + " -> " + t.getLabel() + "\n");
 				}
 			}
 			for (Transition t : transitions.values()) {
 				Place[] postset = t.getPostset();
 				for (Place place : postset) {
-					buffer.append(t.getName() + " -> " + place.getName() + "\n");
+					buffer.append(t.getLabel() + " -> " + place.getName() + "\n");
 				}
 			}
 			buffer.append("}\n");
@@ -662,7 +679,7 @@ public class LhpnFile {
 //	}
 	
 	public void addTransition(Transition t) {
-		transitions.put(t.getName(), t);
+		transitions.put(t.getLabel(), t);
 	}
 
 	public void addPlace(String name, Boolean ic) {
@@ -1077,7 +1094,7 @@ public class LhpnFile {
 			String[] preset = new String[places.get(name).getPreset().length];
 			int i = 0;
 			for (Transition t : places.get(name).getPreset()) {
-				preset[i++] = t.getName();
+				preset[i++] = t.getLabel();
 			}
 			return preset;
 		} else {
@@ -1122,7 +1139,7 @@ public class LhpnFile {
 			String[] postset = new String[places.get(name).getPostset().length];
 			int i = 0;
 			for (Transition t : places.get(name).getPostset()) {
-				postset[i++] = t.getName();
+				postset[i++] = t.getLabel();
 			}
 			return postset;
 		} else {
@@ -1159,10 +1176,10 @@ public class LhpnFile {
 		ArrayList<String> movements = new ArrayList<String>();
 		for (Transition t : transitions.values()) {
 			for (Place p : t.getPostset()) {
-				movements.add(t.getName() + " " + p.getName());
+				movements.add(t.getLabel() + " " + p.getName());
 			}
 			for (Place p : t.getPreset()) {
-				movements.add(p.getName() + " " + t.getName());
+				movements.add(p.getName() + " " + t.getLabel());
 			}
 		}
 		String[] array = new String[movements.size()];
@@ -1177,8 +1194,8 @@ public class LhpnFile {
 		boolean[] initEnabledTrans = new boolean[getAllTransitions().length];
 		for (int i=0; i< getAllTransitions().length; i++) {
 			Transition transition = getAllTransitions()[i];
-			Place[] tranPreset = transitions.get(transition.getName()).getPreset(); 
-			String tranName = transition.getName();
+			Place[] tranPreset = transitions.get(transition.getLabel()).getPreset(); 
+			String tranName = transition.getLabel();
 			boolean presetNotMarked = false;
 			if (getPreset(tranName) != null && getPreset(tranName).length != 0) {
 				for (int j=0; j<tranPreset.length; j++) {
@@ -1623,10 +1640,10 @@ public class LhpnFile {
 	public void removePlace(String name) {
 		if (name != null && places.containsKey(name)) {
 			for (Transition t : places.get(name).getPreset()) {
-				removeMovement(t.getName(), name);
+				removeMovement(t.getLabel(), name);
 			}
 			for (Transition t : places.get(name).getPostset()) {
-				removeMovement(name, t.getName());
+				removeMovement(name, t.getLabel());
 			}
 			places.remove(name);
 		}
@@ -2642,6 +2659,71 @@ public class LhpnFile {
 		return true;
 	}
 	
+
+    /**
+     * This method fills integer arrays varIndexArrayThisLpn and varIndexArrayOtherLpn. 
+     * Both arrays stores indices of shared variables between this lpn and otherLpn.  
+     * variable index from THIS lpn.
+     * @param varIndexArrayThisLpn
+     * @param varIndexArrayOtherLpn
+     * @param otherLpn
+     */
+    public void genIndexLists(int[] varIndexArrayThisLpn, int[] varIndexArrayOtherLpn, LhpnFile otherLpn){
+    	int arrayIndex = 0;
+    	DualHashMap<String, Integer> otherVarIndexMap = otherLpn.getVarIndexMap();
+    	String[] interfaceVars = otherLpn.getInterfaceVariables();
+    	for(int i = 0; i < interfaceVars.length; i++){
+			String var = interfaceVars[i];
+			Integer thisIndex = this._varIndexMap.getValue(var);
+			if(thisIndex != null){
+				varIndexArrayThisLpn[arrayIndex] = thisIndex;
+				varIndexArrayOtherLpn[arrayIndex] = otherVarIndexMap.getValue(var);
+				arrayIndex++;
+			}
+		}
+    }
+	
+	private String[] getInterfaceVariables() {
+    		int size = getAllInputs().keySet().size() + getAllOutputs().keySet().size();
+    		String[] interfaceVariables = new String[size];
+    		HashSet<String> interfaceSet = new HashSet<String>();
+    		int i = 0;
+    		for(String input : getAllInputs().keySet()){
+    			interfaceVariables[i++] = input;
+    			interfaceSet.add(input);
+    		}
+    		for(String output : getAllOutputs().keySet()){
+    			if(interfaceSet.contains(output)) 
+    				continue;
+    			interfaceVariables[i++] = output;
+    		}	
+    	return interfaceVariables;
+	}
+	
+    public void setThisIndexList(List<int[]> indexList){
+    	this.thisIndexList = indexList;
+    }
+    
+    public void setOtherIndexList(List<int[]> indexList){
+    	this.otherIndexList = indexList;
+    }
+    
+    public List<int[]> getThisIndexList(){
+    	return this.thisIndexList;
+    }
+    
+    public List<int[]> getOtherIndexList(){
+    	return this.otherIndexList;
+    }
+    
+    public int[] getThisIndexArray(int i){
+    	return this.thisIndexList.get(i);
+    }
+    
+    public int[] getOtherIndexArray(int i){
+    	return this.otherIndexList.get(i);
+    }
+
 	private static final String PROPERTY = "#@\\.property ([^@]*)\\n";
 
 	private static final String INPUT = "\\.inputs([[\\s[^\\n]]\\w+]*?)\\n";
@@ -2709,6 +2791,20 @@ public class LhpnFile {
 	private static final String BOOLEAN_TRANS = "<(\\S+?)=\\[(\\S*?)\\]>";
 
 	private static final String BOOLEAN_ASSIGN = "([^:]+?):=(.+)";
+	
+	@Override
+	public String toString() {
+		return "LhpnFile [label=" + label + ", lpnIndex=" + lpnIndex + "]";
+	}
+
+	public StateGraph getStateGraph() {		
+		return this.stateGraph;
+	}
+
+	public void addStateGraph(StateGraph stateGraph) {
+		if (this.stateGraph == null)
+			this.stateGraph = stateGraph;
+	}
 
 	
 
