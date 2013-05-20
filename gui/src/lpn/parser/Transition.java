@@ -323,7 +323,7 @@ public class Transition {
     	return this.index;
     }
 	
-	public String getName() {
+	public String getLabel() {
 		return name;
 	}
 
@@ -400,7 +400,7 @@ public class Transition {
 		for (Place p : getPreset()) {
 			for (Transition t : p.getPostset()) {
 				if (!this.toString().equals(t.toString())) {
-					conflictSet.add(t.getName());
+					conflictSet.add(t.getLabel());
 				}
 			}
 		}
@@ -794,7 +794,7 @@ public class Transition {
     }
 
 	public boolean isLocal() {
-		// Returns true if LPNTran only modifies non-output variables.
+		// Returns true if LPNTran only modifies internal variables.
 		boolean isLocal = true;
 		for (String assignVar : this.getAssignments().keySet()) {
 			if (!this.getLpn().getAllInternals().keySet().contains(assignVar)) {
@@ -872,8 +872,7 @@ public class Transition {
 		boolean foundLPN = false;
 		if (this.getAssignments() != null) {
 			Set<String> assignedVars = this.getAssignments().keySet();  
-			for (Iterator<String> assignedVarsIter = assignedVars.iterator(); assignedVarsIter.hasNext();) {
-				String curVar = assignedVarsIter.next();
+			for (String curVar : assignedVars) {
 				for (int i=0; i<allVars.length; i++) {
 					if (curVar.equals(allVars[i]) && !this.dstLpnList.contains(curLPN)) {
 						this.dstLpnList.add(curLPN);

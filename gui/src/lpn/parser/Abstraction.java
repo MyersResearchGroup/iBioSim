@@ -537,7 +537,7 @@ public class Abstraction extends LhpnFile {
 							boolean flag = true;
 							HashMap<String, String> contAssignments = tP
 									.getContAssignments();
-							if (contAssignments.containsKey(tP.getName())) {
+							if (contAssignments.containsKey(tP.getLabel())) {
 								for (String var : contAssignments.keySet()) {
 									if (!t.getContAssignments()
 											.containsKey(var)
@@ -550,7 +550,7 @@ public class Abstraction extends LhpnFile {
 							}
 							HashMap<String, String> intAssignments = tP
 									.getIntAssignments();
-							if (intAssignments.containsKey(tP.getName())) {
+							if (intAssignments.containsKey(tP.getLabel())) {
 								for (String var : intAssignments.keySet()) {
 									if (!t.getIntAssignments().containsKey(var)
 											|| (tP.getIntAssignTree(var).isit != 'c')) {
@@ -562,7 +562,7 @@ public class Abstraction extends LhpnFile {
 							}
 							HashMap<String, String> boolAssignments = tP
 									.getBoolAssignments();
-							if (boolAssignments.containsKey(tP.getName())) {
+							if (boolAssignments.containsKey(tP.getLabel())) {
 								for (String var : boolAssignments.keySet()) {
 									if (!t.getBoolAssignments()
 											.containsKey(var)
@@ -725,11 +725,11 @@ public class Abstraction extends LhpnFile {
 				// initially unmarked and has no preset
 				for (Transition t : p.getPostset()) { // Remove each transition
 					// in the post set
-					removeMovement(p.getName(), t.getName());
+					removeMovement(p.getName(), t.getLabel());
 					for (Place pP : t.getPostset()) {
-						removeMovement(t.getName(), pP.getName());
+						removeMovement(t.getLabel(), pP.getName());
 					}
-					removeTransition(t.getName());
+					removeTransition(t.getLabel());
 				}
 				removePlace.add(p.getName());
 				change = true;
@@ -751,15 +751,15 @@ public class Abstraction extends LhpnFile {
 					// recursively dead
 					continue;
 				for (Transition t : p.getPostset()) {
-					removeMovement(p.getName(), t.getName()); // Remove all
+					removeMovement(p.getName(), t.getLabel()); // Remove all
 					// transitions in its post set
 					for (Place pP : t.getPostset()) {
-						removeMovement(t.getName(), pP.getName());
+						removeMovement(t.getLabel(), pP.getName());
 					}
-					removeTransition(t.getName());
+					removeTransition(t.getLabel());
 				}
 				for (Transition t : p.getPreset()) {
-					removeMovement(t.getName(), p.getName()); // Remove all
+					removeMovement(t.getLabel(), p.getName()); // Remove all
 					// transitions in its preset
 				}
 				removePlace.add(p.getName());
@@ -789,12 +789,12 @@ public class Abstraction extends LhpnFile {
 						&& abstPane.absListModel.contains(abstPane.xform16)
 						&& abstPane.isSimplify()) {
 					// If the enabling condition is constant false
-					removeTrans.add(t.getName());
+					removeTrans.add(t.getLabel());
 				} else if (expr.lvalue == 1
 						&& abstPane.absListModel.contains(abstPane.xform15)
 						&& abstPane.isSimplify()) {
 					// If the enabling condition is constant true
-					removeEnab.add(t.getName());
+					removeEnab.add(t.getLabel());
 				}
 			}
 			// If the enabling condition is initially true
@@ -814,7 +814,7 @@ public class Abstraction extends LhpnFile {
 					}
 				}
 				if (enabled) {
-					removeEnab.add(t.getName());
+					removeEnab.add(t.getLabel());
 				}
 			}
 			// If the enabling condition is initially false
@@ -825,7 +825,7 @@ public class Abstraction extends LhpnFile {
 					&& abstPane.isSimplify()) {
 				boolean disabled = true;
 				for (Transition tP : transitions.values()) {
-					if (!tP.getName().equals(t)
+					if (!tP.getLabel().equals(t)
 							&& expr.getChange(tP.getAssignments()) == 'T'
 							|| expr.getChange(tP.getAssignments()) == 't'
 							|| expr.getChange(tP.getAssignments()) == 'X') {
@@ -834,7 +834,7 @@ public class Abstraction extends LhpnFile {
 					}
 				}
 				if (disabled) {
-					removeTrans.add(t.getName());
+					removeTrans.add(t.getLabel());
 				}
 			}
 		}
@@ -894,13 +894,13 @@ public class Abstraction extends LhpnFile {
 										.parseInt(upper)) {
 									for (Place s : tP.getPreset()) {
 										removeMovement(s.getName(), tP
-												.getName());
+												.getLabel());
 									}
 									for (Place s : tP.getPreset()) {
-										removeMovement(tP.getName(), s
+										removeMovement(tP.getLabel(), s
 												.getName());
 									}
-									removeTransition(tP.getName());
+									removeTransition(tP.getLabel());
 									change = true;
 								}
 							}
@@ -972,15 +972,15 @@ public class Abstraction extends LhpnFile {
 								upper = upper2;
 							}
 							for (Place s : tP.getPreset()) {
-								removeMovement(s.getName(), tP.getName());
+								removeMovement(s.getName(), tP.getLabel());
 							}
 							for (Place s : tP.getPostset()) {
-								removeMovement(tP.getName(), s.getName());
+								removeMovement(tP.getLabel(), s.getName());
 							}
 							String delay = "uniform(" + lower.toString() + ","
 									+ upper.toString() + ")";
 							t.addDelay(delay);
-							removeTransition(tP.getName());
+							removeTransition(tP.getLabel());
 							change = true;
 						}
 					}
@@ -994,7 +994,7 @@ public class Abstraction extends LhpnFile {
 		for (Transition t : transitions.values()) {
 			if (t.isFail()) {
 				for (Place p : t.getPostset()) {
-					removeMovement(t.getName(), p.getName());
+					removeMovement(t.getLabel(), p.getName());
 				}
 			}
 		}
@@ -1386,12 +1386,12 @@ public class Abstraction extends LhpnFile {
 
 	private void combinePlaces(Place place1, Place place2) {
 		for (Transition t : place1.getPreset()) {
-			addMovement(t.getName(), place1.getName());
-			removeMovement(t.getName(), place2.getName());
+			addMovement(t.getLabel(), place1.getName());
+			removeMovement(t.getLabel(), place2.getName());
 		}
 		for (Transition t : place1.getPostset()) {
-			addMovement(place1.getName(), t.getName());
-			removeMovement(place2.getName(), t.getName());
+			addMovement(place1.getName(), t.getLabel());
+			removeMovement(place2.getName(), t.getLabel());
 		}
 		removePlace(place2.getName());
 	}
@@ -1782,7 +1782,7 @@ public class Abstraction extends LhpnFile {
 				if ((process_read.get(var).equals(process_trans.get(t)) && process_write
 						.get(var).equals(process_trans.get(t)))
 						&& !readBeforeWrite(t, var)) {
-					String[] temp = { t.getName(), var };
+					String[] temp = { t.getLabel(), var };
 					remove.add(temp);
 				}
 			}
@@ -1806,7 +1806,7 @@ public class Abstraction extends LhpnFile {
 				if ((process_read.get(var).equals(process_trans.get(t)) && process_write
 						.get(var).equals(process_trans.get(t)))
 						&& !weakReadBeforeWrite(t, var)) {
-					String[] temp = { t.getName(), var };
+					String[] temp = { t.getLabel(), var };
 					remove.add(temp);
 				}
 			}
@@ -1924,16 +1924,16 @@ public class Abstraction extends LhpnFile {
 			if (!t.isInteresting(visited)) {
 				change = true;
 				for (Place p : t.getPreset()) {
-					removeMovement(p.getName(), t.getName());
+					removeMovement(p.getName(), t.getLabel());
 				}
 				for (Place p : t.getPostset()) {
-					removeMovement(t.getName(), p.getName());
+					removeMovement(t.getLabel(), p.getName());
 				}
 				remove.add(t);
 			}
 		}
 		for (Transition t : remove) {
-			removeTransition(t.getName());
+			removeTransition(t.getLabel());
 		}
 		return change;
 	}
@@ -1992,20 +1992,20 @@ public class Abstraction extends LhpnFile {
 			return false;
 		}
 		// Update control flow
-		removeMovement(transition.getName(), place.getName());
+		removeMovement(transition.getLabel(), place.getName());
 		for (Place p : preset) {
 			if (marked)
 				p.setMarking(true);
-			removeMovement(p.getName(), transition.getName());
+			removeMovement(p.getName(), transition.getLabel());
 			for (Transition t : postset) {
-				addMovement(p.getName(), t.getName());
+				addMovement(p.getName(), t.getLabel());
 			}
 		}
 		for (Transition t : placePreset) {
-			removeMovement(t.getName(), place.getName());
+			removeMovement(t.getLabel(), place.getName());
 			for (Place p : preset) {
 				if (!p.equals(place) && !t.equals(transition)) {
-					addMovement(t.getName(), p.getName());
+					addMovement(t.getLabel(), p.getName());
 				}
 			}
 		}
@@ -2020,7 +2020,7 @@ public class Abstraction extends LhpnFile {
 			} else if (transition.getEnablingTree() != null) {
 				t.addEnabling(transition.getEnablingTree().toString());
 			}
-			removeMovement(place.getName(), t.getName());
+			removeMovement(place.getName(), t.getLabel());
 		}
 		removePlace(place.getName());
 		// Add delays
@@ -2059,7 +2059,7 @@ public class Abstraction extends LhpnFile {
 				}
 			}
 		}
-		removeTransition(transition.getName());
+		removeTransition(transition.getLabel());
 		return true;
 	}
 
@@ -2081,21 +2081,21 @@ public class Abstraction extends LhpnFile {
 		}
 		boolean marked = place.isMarked();
 		// Update the control Flow
-		removeMovement(place.getName(), transition.getName());
+		removeMovement(place.getName(), transition.getLabel());
 		for (Transition t : preset) {
-			removeMovement(t.getName(), place.getName());
+			removeMovement(t.getLabel(), place.getName());
 			for (Place p : postset) {
-				addMovement(t.getName(), p.getName());
+				addMovement(t.getLabel(), p.getName());
 			}
 		}
 		for (Transition t : placePostset) {
-			removeMovement(place.getName(), t.getName());
+			removeMovement(place.getName(), t.getLabel());
 		}
 		for (Place p : postset) {
-			removeMovement(transition.getName(), p.getName());
+			removeMovement(transition.getLabel(), p.getName());
 			for (Transition t : placePostset) {
 				if (!t.equals(transition)) {
-					addMovement(p.getName(), t.getName());
+					addMovement(p.getName(), t.getLabel());
 				}
 			}
 			if (marked) {
@@ -2138,7 +2138,7 @@ public class Abstraction extends LhpnFile {
 			}
 		}
 		removePlace(place.getName());
-		removeTransition(transition.getName());
+		removeTransition(transition.getLabel());
 		return true;
 	}
 
@@ -2159,21 +2159,21 @@ public class Abstraction extends LhpnFile {
 			return false;
 		}
 		// Update control flow
-		removeMovement(transition.getName(), place.getName());
+		removeMovement(transition.getLabel(), place.getName());
 		for (Place p : preset) {
 			places.put(p.getName(), p);
 			if (marked)
 				p.setMarking(true);
-			removeMovement(p.getName(), transition.getName());
+			removeMovement(p.getName(), transition.getLabel());
 			for (Transition t : postset) {
-				addMovement(p.getName(), t.getName());
+				addMovement(p.getName(), t.getLabel());
 			}
 		}
 		for (Transition t : placePreset) {
-			removeMovement(t.getName(), place.getName());
+			removeMovement(t.getLabel(), place.getName());
 			for (Place p : preset) {
 				if (!p.equals(place) && !t.equals(transition)) {
-					addMovement(t.getName(), p.getName());
+					addMovement(t.getLabel(), p.getName());
 				}
 			}
 		}
@@ -2188,7 +2188,7 @@ public class Abstraction extends LhpnFile {
 			} else if (transition.getEnablingTree() != null) {
 				t.addEnabling(transition.getEnablingTree().toString("LHPN"));
 			}
-			removeMovement(place.getName(), t.getName());
+			removeMovement(place.getName(), t.getLabel());
 		}
 		removePlace(place.getName());
 		// Add delays
@@ -2207,7 +2207,7 @@ public class Abstraction extends LhpnFile {
 		for (Transition t : postset) {
 			t.addDelay(transition.getDelay() + "+" + t.getDelay());
 		}
-		removeTransition(transition.getName());
+		removeTransition(transition.getLabel());
 		return true;
 	}
 
@@ -2228,20 +2228,20 @@ public class Abstraction extends LhpnFile {
 			return false;
 		}
 		// Update control flow
-		removeMovement(transition.getName(), place.getName());
+		removeMovement(transition.getLabel(), place.getName());
 		for (Place p : preset) {
 			if (marked)
 				addPlace(p.getName(), true);
-			removeMovement(p.getName(), transition.getName());
+			removeMovement(p.getName(), transition.getLabel());
 			for (Transition t : postset) {
-				addMovement(p.getName(), t.getName());
+				addMovement(p.getName(), t.getLabel());
 			}
 		}
 		for (Transition t : placePreset) {
-			removeMovement(t.getName(), place.getName());
+			removeMovement(t.getLabel(), place.getName());
 			for (Place p : preset) {
 				if (!p.equals(place) && !t.equals(transition)) {
-					addMovement(t.getName(), p.getName());
+					addMovement(t.getLabel(), p.getName());
 				}
 			}
 		}
@@ -2256,7 +2256,7 @@ public class Abstraction extends LhpnFile {
 			} else if (transition.getEnablingTree() != null) {
 				t.addEnabling(transition.getEnabling());
 			}
-			removeMovement(place.getName(), t.getName());
+			removeMovement(place.getName(), t.getLabel());
 		}
 		removePlace(place.getName());
 		// Add delays
@@ -2271,7 +2271,7 @@ public class Abstraction extends LhpnFile {
 							+ ")");
 			}
 		}
-		removeTransition(transition.getName());
+		removeTransition(transition.getLabel());
 		return true;
 	}
 
@@ -2291,14 +2291,14 @@ public class Abstraction extends LhpnFile {
 		}
 		// Combine Control Flow
 		for (Place p : trans2.getPreset()) {
-			addMovement(p.getName(), trans1.getName());
-			removeMovement(p.getName(), trans2.getName());
+			addMovement(p.getName(), trans1.getLabel());
+			removeMovement(p.getName(), trans2.getLabel());
 		}
 		for (Place p : trans2.getPostset()) {
-			addMovement(trans1.getName(), p.getName());
-			removeMovement(trans2.getName(), p.getName());
+			addMovement(trans1.getLabel(), p.getName());
+			removeMovement(trans2.getLabel(), p.getName());
 		}
-		removeTransition(trans2.getName());
+		removeTransition(trans2.getLabel());
 		if (!samePostset) {
 			for (Place p : trans2.getPostset()) {
 				if (p.isMarked() == trans1.getPostset()[0].isMarked()) {
@@ -2450,11 +2450,11 @@ public class Abstraction extends LhpnFile {
 			ArrayList<Transition> unvisited, boolean change) {
 		ArrayList<String[]> toChange = new ArrayList<String[]>();
 		for (String var : trans.getIntAssignments().keySet()) {
-			String[] add = { trans.getName(), var };
+			String[] add = { trans.getLabel(), var };
 			toChange.add(add);
 		}
 		for (String var : trans.getBoolAssignments().keySet()) {
-			String[] add = { trans.getName(), var };
+			String[] add = { trans.getLabel(), var };
 			toChange.add(add);
 		}
 		for (String[] array : toChange) {
@@ -2509,7 +2509,7 @@ public class Abstraction extends LhpnFile {
 			if (p.isMarked())
 				return change;
 			for (Transition tP : p.getPostset()) {
-				if (transName.equals(tP.getName())) {
+				if (transName.equals(tP.getLabel())) {
 					return change;
 				}
 				for (Place pP : tP.getPreset()) {
@@ -2646,12 +2646,12 @@ public class Abstraction extends LhpnFile {
 		for (Transition t : remove) {
 			for (Place p : t.getPreset()) {
 				for (Transition tP : p.getPreset()) {
-					removeMovement(tP.getName(), p.getName());
+					removeMovement(tP.getLabel(), p.getName());
 				}
-				removeMovement(p.getName(), t.getName());
+				removeMovement(p.getName(), t.getLabel());
 				removePlace(p.getName());
 			}
-			removeTransition(t.getName());
+			removeTransition(t.getLabel());
 			change = true;
 		}
 		return change;
@@ -3418,7 +3418,7 @@ public class Abstraction extends LhpnFile {
 			boolean abstraction) {
 		if (abstraction) {
 			for (Transition tP : list) {
-				if (!transitions.containsKey(tP.getName())) {
+				if (!transitions.containsKey(tP.getLabel())) {
 					return;
 				}
 			}
@@ -3451,11 +3451,11 @@ public class Abstraction extends LhpnFile {
 						t.addPostset(pP);
 					}
 				}
-				removeTransition(tP.getName());
+				removeTransition(tP.getLabel());
 			}
 		} else {
 			for (Transition tP : list) {
-				if (!transitions.containsKey(tP.getName())) {
+				if (!transitions.containsKey(tP.getLabel())) {
 					return;
 				}
 			}
@@ -3524,7 +3524,7 @@ public class Abstraction extends LhpnFile {
 			}
 		}
 		for (Transition tP : list) {
-			removeTransition(tP.getName());
+			removeTransition(tP.getLabel());
 		}
 	}
 
