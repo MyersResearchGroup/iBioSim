@@ -3,14 +3,13 @@ package lpn.parser;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 public class Transition {
 
-	private String name;
+	private String label;
 
 	private boolean fail = false;
 
@@ -76,7 +75,7 @@ public class Transition {
 //	}
 	
 	public Transition(String name, int index, LhpnFile lhpn) {
-		this.name = name;
+		this.label = name;
 		this.lhpn = lhpn;
 		this.index = index;
 		//this.local = local;
@@ -261,7 +260,7 @@ public class Transition {
 	}
 
 	public void setName(String newName) {
-		this.name = newName;
+		this.label = newName;
 	}
 
 	public void setFail(boolean fail) {
@@ -324,7 +323,7 @@ public class Transition {
     }
 	
 	public String getLabel() {
-		return name;
+		return label;
 	}
 
 	public String getDelay() {
@@ -772,11 +771,11 @@ public class Transition {
 
 	@Override
 	public String toString() {
-		return name;
+		return label;
 	}
 
 	public void changeName(String newName) {
-		name = newName;
+		label = newName;
 	}
 
     /**
@@ -818,7 +817,7 @@ public class Transition {
 //    }
     
     public String getFullLabel() {
-    	return this.lhpn.getLabel() + "(" + this.name + ")";
+    	return this.lhpn.getLabel() + "(" + this.label + ")";
     }
 
     /**
@@ -893,7 +892,7 @@ public class Transition {
 		result = prime * result + ((delay == null) ? 0 : delay.hashCode());
 		result = prime * result + (fail ? 1231 : 1237);
 		result = prime * result + ((lhpn == null) ? 0 : lhpn.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((label == null) ? 0 : label.hashCode());
 		result = prime * result + (persistent ? 1231 : 1237);
 		return result;
 	}
@@ -919,10 +918,10 @@ public class Transition {
 				return false;
 		} else if (!lhpn.equals(other.lhpn))
 			return false;
-		if (name == null) {
-			if (other.name != null)
+		if (label == null) {
+			if (other.label != null)
 				return false;
-		} else if (!name.equals(other.name))
+		} else if (!label.equals(other.label))
 			return false;
 		if (persistent != other.persistent)
 			return false;
