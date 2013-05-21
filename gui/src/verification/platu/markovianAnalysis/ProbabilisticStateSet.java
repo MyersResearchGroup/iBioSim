@@ -5,8 +5,6 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import verification.platu.project.PrjState;
-import verification.platu.project.ProbabilisticPrjState;
-import verification.platu.stategraph.State;
 import verification.timed_state_exploration.zoneProject.StateSet;
 
 public class ProbabilisticStateSet extends StateSet {
