@@ -130,7 +130,7 @@ public class LPNTran {
     	return this.supportSet;
     }
 
-    // TODO: (done) Moved to StateGraph.
+    // (done) Moved to StateGraph.
 	/**
 	 * Check if firing 'fired_transition' causes a disabling error.
 	 * @param current_enabled_transitions
@@ -432,7 +432,7 @@ public class LPNTran {
      * @param curLpnIndex
      * @return
      */
-    // TODO: (done) Moved fire to StateGraph
+    // (done) Moved fire to StateGraph
     public State[] fire(final StateGraph[] curSgArray, final int[] curStateIdxArray) {
     	State[] stateArray = new State[curSgArray.length];
     	for(int i = 0; i < curSgArray.length; i++)
@@ -441,7 +441,7 @@ public class LPNTran {
     	return this.fire(curSgArray, stateArray);
     }
     
- // TODO: (done) Moved fire to StateGraph
+ // (done) Moved fire to StateGraph
     public State[] fire(final StateGraph[] curSgArray, final State[] curStateArray) {
     	int thisLpnIndex = this.getLpn().getIndex(); 
     	State[] nextStateArray = curStateArray.clone();
@@ -475,12 +475,12 @@ public class LPNTran {
 		nextStateArray[this.lpn.getIndex()] = nextState;
         for(LPN curLpn : this.dstLpnList) {
         	int curIdx = curLpn.getIndex();
-        	// TODO: (temp) Hack here.  Probably LPNTran.java will go away.
+        	// (temp) Hack here.  Probably LPNTran.java will go away.
     		State newState = null; //curSgArray[curIdx].getNextState(curStateArray[curIdx], this);
     		if(newState != null) 
         		nextStateArray[curIdx] = newState;
         	else {
-        		// TODO: (done) may not need to be updated, but could change to use our var index map
+        		// (done) may not need to be updated, but could change to use our var index map
         		/*
         		State newOther = curStateArray[curIdx].update(vvSet, curSgArray[curIdx].getLpn().getVarIndexMap());
         		if (newOther == null)
@@ -498,12 +498,12 @@ public class LPNTran {
         return nextStateArray;
     }
     
-    // TODO: (done) Moved fire to StateGraph    
+    // (done) Moved fire to StateGraph    
     public State fire(final StateGraph thisSg, final State curState) {  		
     	// Search for and return cached next state first. 
 //    	if(this.nextStateMap.containsKey(curState) == true)
 //    		return (State)this.nextStateMap.get(curState);
-    	// TODO: (temp) Hack here.  Probably LPNTran.java will go away.
+    	// (temp) Hack here.  Probably LPNTran.java will go away.
     	State nextState = null; // thisSg.getNextState(curState, this);
     	if(nextState != null)
     		return nextState;
@@ -554,7 +554,7 @@ public class LPNTran {
         		System.exit(1);
         	}
         }
-		// TODO: (temp) Hack here.  Probably LPNTran.java will go away.
+		// (temp) Hack here.  Probably LPNTran.java will go away.
 		//thisSg.addStateTran(curState, this, newState);
 		return newState;
     }
@@ -568,7 +568,7 @@ public class LPNTran {
     	this.dstLpnList.add(lpn);
     }
     
-    // TODO: (done) Move constrFire to StateGraph  
+    // Moved to StateGraph.java  
     public State constrFire(final State curState) {
     	// Marking update
         int[] curOldMarking = curState.getMarking();
@@ -615,7 +615,7 @@ public class LPNTran {
             newVectorArray[s.getVar().getIndex(curVector)] = newValue;
         }
         
-        //TODO: (temp) Hack here. Probably LPNTran.java will go away.
+        //(temp) Hack here. Probably LPNTran.java will go away.
         State newState = null; //new State(this.lpn, curNewMarking, newVectorArray);
         
         int[] newVector = newState.getVector();
