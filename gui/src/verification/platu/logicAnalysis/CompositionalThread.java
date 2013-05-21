@@ -111,22 +111,15 @@ public class CompositionalThread extends Thread{
 	private void extractConstraints(StateGraph sg, StateGraph srcSG, List<Constraint> newConstraintSet, List<Constraint> oldConstraintSet){
 		newConstraintSet.clear();
 		oldConstraintSet.clear();
-		
 		LhpnFile srcLpn = srcSG.getLpn();
-		// TODO: (future) need to update for our LPN
-		/*
 		for(Constraint newConstraint : sg.getNewConstraintSet()){
 			if(newConstraint.getLpn() != srcLpn) continue;
-	    	
 			newConstraintSet.add(newConstraint);
 		}
-		
 		for(Constraint oldConstraint : sg.getOldConstraintSet()){
 			if(oldConstraint.getLpn() != srcLpn) continue;
-			
 			oldConstraintSet.add(oldConstraint);
 		}
-		*/
 	}
 	
 	/**
@@ -160,12 +153,14 @@ public class CompositionalThread extends Thread{
 		verification.platu.stategraph.State newState = new verification.platu.stategraph.State(compatibleState);
 		int[] newVector = newState.getVector();
 		
-		List<VarNode> variableList = c.getVariableList();
+		//List<VarNode> variableList = c.getVariableList();
+		List<Integer> variableList = c.getVariableList();
 		List<Integer> valueList = c.getValueList();
 		
-		int[] compatibleVector = compatibleState.getVector();
+		//int[] compatibleVector = compatibleState.getVector();
 		for(int i = 0; i < variableList.size(); i++){
-			int index = variableList.get(i).getIndex(compatibleVector);
+			//int index = variableList.get(i).getIndex(compatibleVector);
+			int index = variableList.get(i);
 			newVector[index] = valueList.get(i);
 		}
 		
