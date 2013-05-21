@@ -5,7 +5,6 @@ import java.util.*;
 import lpn.parser.LhpnFile;
 import lpn.parser.Transition;
 
-import verification.platu.lpn.*;
 import verification.platu.main.Options;
 import verification.platu.stategraph.*;
 
@@ -13,7 +12,6 @@ public class PrjState {
 	protected  State[] stateArray;
 	private PrjState father;
 	private PrjState child;
-	// member variables below created for outputGlobalStateGraph in Analysis
 	private HashMap<Transition, PrjState> nextStateMap;
 
 	public PrjState() {
