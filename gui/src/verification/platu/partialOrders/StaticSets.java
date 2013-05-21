@@ -71,15 +71,15 @@ public class StaticSets {
 						|| anotherTranEnablingTree.getChange(curTran.getAssignments())=='f'
 						|| anotherTranEnablingTree.getChange(curTran.getAssignments())=='X')) {
 					if (Options.getDebugMode()) {
-						writeStringWithEndOfLineToPORDebugFile(curTran.getLpn().getLabel() + "(" + curTran.getName() + ") can disable " + anotherTran.getLpn().getLabel() + "(" + anotherTran.getName() + "). " 
-								+ anotherTran.getName() + "'s enabling condition (" + anotherTranEnablingTree + "), may become false due to firing of " 
-								+ curTran.getName() + ".");
+						writeStringWithEndOfLineToPORDebugFile(curTran.getLpn().getLabel() + "(" + curTran.getLabel() + ") can disable " + anotherTran.getLpn().getLabel() + "(" + anotherTran.getLabel() + "). " 
+								+ anotherTran.getLabel() + "'s enabling condition (" + anotherTranEnablingTree + "), may become false due to firing of " 
+								+ curTran.getLabel() + ".");
 						if (anotherTranEnablingTree.getChange(curTran.getAssignments())=='F') 
-							writeStringWithEndOfLineToPORDebugFile("Reason is " + anotherTran.getName() + "_enablingTree.getChange(" + curTran.getName() + ".getAssignments()) = F.");
+							writeStringWithEndOfLineToPORDebugFile("Reason is " + anotherTran.getLabel() + "_enablingTree.getChange(" + curTran.getLabel() + ".getAssignments()) = F.");
 						if (anotherTranEnablingTree.getChange(curTran.getAssignments())=='f') 
-							writeStringWithEndOfLineToPORDebugFile("Reason is " + anotherTran.getName() + "_enablingTree.getChange(" + curTran.getName() + ".getAssignments()) = f.");
+							writeStringWithEndOfLineToPORDebugFile("Reason is " + anotherTran.getLabel() + "_enablingTree.getChange(" + curTran.getLabel() + ".getAssignments()) = f.");
 						if (anotherTranEnablingTree.getChange(curTran.getAssignments())=='X') 
-							writeStringWithEndOfLineToPORDebugFile("Reason is " + anotherTran.getName() + "_enablingTree.getChange(" + curTran.getName() + ".getAssignments()) = X.");
+							writeStringWithEndOfLineToPORDebugFile("Reason is " + anotherTran.getLabel() + "_enablingTree.getChange(" + curTran.getLabel() + ".getAssignments()) = X.");
 					}
 					curTranSetOtherTranEnablingFalse.add(anotherTran);
 				}
@@ -116,15 +116,15 @@ public class StaticSets {
 							|| curTranEnablingTree.getChange(anotherTran.getAssignments())=='f'
 							|| curTranEnablingTree.getChange(anotherTran.getAssignments())=='X')) {
 						if (Options.getDebugMode()) {
-							writeStringWithEndOfLineToPORDebugFile(curTran.getLpn().getLabel() + "(" + curTran.getName() + ") can be disabled by " + anotherTran.getLpn().getLabel() + "(" + anotherTran.getName() + "). " 
-									+ curTran.getName() + "'s enabling condition (" + curTranEnablingTree +  "), may become false due to firing of " 
-									+ anotherTran.getName() + ".");
+							writeStringWithEndOfLineToPORDebugFile(curTran.getLpn().getLabel() + "(" + curTran.getLabel() + ") can be disabled by " + anotherTran.getLpn().getLabel() + "(" + anotherTran.getLabel() + "). " 
+									+ curTran.getLabel() + "'s enabling condition (" + curTranEnablingTree +  "), may become false due to firing of " 
+									+ anotherTran.getLabel() + ".");
 							if (curTranEnablingTree.getChange(anotherTran.getAssignments())=='F') 
-								writeStringWithEndOfLineToPORDebugFile("Reason is " + curTran.getName() + "_enablingTree.getChange(" + anotherTran.getName() + ".getAssignments()) = F.");
+								writeStringWithEndOfLineToPORDebugFile("Reason is " + curTran.getLabel() + "_enablingTree.getChange(" + anotherTran.getLabel() + ".getAssignments()) = F.");
 							if (curTranEnablingTree.getChange(anotherTran.getAssignments())=='f') 
-								writeStringWithEndOfLineToPORDebugFile("Reason is " + curTran.getName() + "_enablingTree.getChange(" + anotherTran.getName() + ".getAssignments()) = f.");
+								writeStringWithEndOfLineToPORDebugFile("Reason is " + curTran.getLabel() + "_enablingTree.getChange(" + anotherTran.getLabel() + ".getAssignments()) = f.");
 							if (curTranEnablingTree.getChange(anotherTran.getAssignments())=='X') 
-								writeStringWithEndOfLineToPORDebugFile("Reason is " + curTran.getName() + "_enablingTree.getChange(" + anotherTran.getName() + ".getAssignments()) = X.");					
+								writeStringWithEndOfLineToPORDebugFile("Reason is " + curTran.getLabel() + "_enablingTree.getChange(" + anotherTran.getLabel() + ".getAssignments()) = X.");					
 						}	
 						otherTransSetCurNonPersistentCurTranEnablingFalse.add(anotherTran);
 					}
@@ -176,9 +176,9 @@ public class StaticSets {
 					}
 				}
 				if (Options.getDebugMode()) {
-					writeStringWithEndOfLineToPORDebugFile(curTran.getLpn().getLabel() + "(" + curTran.getName() + ") can cause dependency relation by stealing tokens from these transitions:");
+					writeStringWithEndOfLineToPORDebugFile(curTran.getLpn().getLabel() + "(" + curTran.getLabel() + ") can cause dependency relation by stealing tokens from these transitions:");
 					for (Transition t : disableByStealingToken) {
-						writeStringToPORDebugFile(t.getLpn().getLabel() + "(" + t.getName() + "), ");
+						writeStringToPORDebugFile(t.getLpn().getLabel() + "(" + t.getLabel() + "), ");
 					}
 					writeStringWithEndOfLineToPORDebugFile("");
 				}
@@ -292,8 +292,8 @@ public class StaticSets {
 		if (curTranEnablingTree != null) {// || curTranEnablingTree.toString().equals("TRUE") || curTranEnablingTree.toString().equals("FALSE"))) {
 			//buildConjunctsOfEnabling(curTranEnablingTree, conjunctsOfEnabling);
 			if (Options.getDebugMode()) { 
-				writeStringWithEndOfLineToPORDebugFile("Transition " + curTran.getLpn().getLabel() + "(" + curTran.getName() + ")'s enabling tree is " + curTranEnablingTree.toString() + " and getOp() returns " + curTranEnablingTree.getOp());
-				writeStringWithEndOfLineToPORDebugFile(curTran.getLpn().getLabel() + "(" + curTran.getName() + ")'s enabling transition has the following terms: ");
+				writeStringWithEndOfLineToPORDebugFile("Transition " + curTran.getLpn().getLabel() + "(" + curTran.getLabel() + ")'s enabling tree is " + curTranEnablingTree.toString() + " and getOp() returns " + curTranEnablingTree.getOp());
+				writeStringWithEndOfLineToPORDebugFile(curTran.getLpn().getLabel() + "(" + curTran.getLabel() + ")'s enabling transition has the following terms: ");
 				for (int i1=0; i1<curTran.getConjunctsOfEnabling().size(); i1++) {
 					writeStringWithEndOfLineToPORDebugFile(curTran.getConjunctsOfEnabling().get(i1).toString());
 				}
@@ -310,14 +310,14 @@ public class StaticSets {
 								|| conjunct.getChange(anotherTran.getAssignments())=='X') {
 							transCanEnableConjunct.add(anotherTran);
 							if (Options.getDebugMode()) {
-								writeStringWithEndOfLineToPORDebugFile(curTran.getLpn().getLabel() + "(" + curTran.getName() + ")'s conjunct (" + conjunct.toString() + ") in its enabling condition (" +  curTranEnablingTree 
-										+  ") can be set to true by " + anotherTran.getName() + ". ");
+								writeStringWithEndOfLineToPORDebugFile(curTran.getLpn().getLabel() + "(" + curTran.getLabel() + ")'s conjunct (" + conjunct.toString() + ") in its enabling condition (" +  curTranEnablingTree 
+										+  ") can be set to true by " + anotherTran.getLabel() + ". ");
 								if (conjunct.getChange(anotherTran.getAssignments())=='T') 
-									writeStringWithEndOfLineToPORDebugFile("The reason is conjunct.getChange(" + anotherTran.getName() + ".getAssignments()) = T.");
+									writeStringWithEndOfLineToPORDebugFile("The reason is conjunct.getChange(" + anotherTran.getLabel() + ".getAssignments()) = T.");
 								if (conjunct.getChange(anotherTran.getAssignments())=='t') 
-									writeStringWithEndOfLineToPORDebugFile("The reason is conjunct.getChange(" + anotherTran.getName() + ".getAssignments()) = t.");
+									writeStringWithEndOfLineToPORDebugFile("The reason is conjunct.getChange(" + anotherTran.getLabel() + ".getAssignments()) = t.");
 								if (conjunct.getChange(anotherTran.getAssignments())=='X') 
-									writeStringWithEndOfLineToPORDebugFile("The reason is conjunct.getChange(" + anotherTran.getName() + ".getAssignments()) = X.");
+									writeStringWithEndOfLineToPORDebugFile("The reason is conjunct.getChange(" + anotherTran.getLabel() + ".getAssignments()) = X.");
 							}
 						}
 					}
@@ -380,8 +380,8 @@ public class StaticSets {
 					if (anotherTranAssignTree != null && anotherTranAssignTree.containsVar(v)) {
 						modifyAssignment.add(anotherTran);
 						if (Options.getDebugMode()) {
-							writeStringWithEndOfLineToPORDebugFile("Variable " + v + " in " + curTran.getLpn().getLabel() + "(" + curTran.getName() + ")"
-									+ " may change the right hand side of assignment " + anotherTranAssignTree + " in " + anotherTran.getName());
+							writeStringWithEndOfLineToPORDebugFile("Variable " + v + " in " + curTran.getLpn().getLabel() + "(" + curTran.getLabel() + ")"
+									+ " may change the right hand side of assignment " + anotherTranAssignTree + " in " + anotherTran.getLabel());
 						}
 					}					
 				}
@@ -391,8 +391,8 @@ public class StaticSets {
 					if (curTranAssignTree != null && curTranAssignTree.containsVar(v)) {
 						modifyAssignment.add(anotherTran);
 						if (Options.getDebugMode()) {
-							writeStringWithEndOfLineToPORDebugFile("Variable " + v + " in " + anotherTran.getLpn().getLabel() + "(" + anotherTran.getName() + ")"
-									+ " may change the right hand side of assignment " + curTranAssignTree +  " in " + anotherTran.getName());
+							writeStringWithEndOfLineToPORDebugFile("Variable " + v + " in " + anotherTran.getLpn().getLabel() + "(" + anotherTran.getLabel() + ")"
+									+ " may change the right hand side of assignment " + curTranAssignTree +  " in " + anotherTran.getLabel());
 						}
 					}
 				}
@@ -402,7 +402,7 @@ public class StaticSets {
 					if (v1.equals(v2) && !curTran.getAssignTree(v1).equals(anotherTran.getAssignTree(v2))) {
 						modifyAssignment.add(anotherTran);
 						if (Options.getDebugMode()) {
-							writeStringWithEndOfLineToPORDebugFile("Variable " + v1 + " are assigned in " + curTran.getLpn().getLabel() + "(" + curTran.getName() + ") and " + anotherTran.getLpn().getLabel() + "(" + anotherTran.getName() + ")"); 
+							writeStringWithEndOfLineToPORDebugFile("Variable " + v1 + " are assigned in " + curTran.getLpn().getLabel() + "(" + curTran.getLabel() + ") and " + anotherTran.getLpn().getLabel() + "(" + anotherTran.getLabel() + ")"); 
 						}
 					}					
 				}
