@@ -6,30 +6,28 @@ import java.util.List;
 
 import lpn.parser.LhpnFile;
 import lpn.parser.Transition;
-
-import verification.platu.expression.VarNode;
 import verification.platu.lpn.DualHashMap;
 import verification.platu.stategraph.State;
 
 public class Constraint{
-	private LhpnFile lpn;
+	private LhpnFile lpn; // lpn that generates the constraint
 	final private int[] interfaceValues;
 	final private Transition lpnTransition;
 	final private int[] vector;
-	List<VarNode> variableList = new ArrayList<VarNode>(1);
+	//List<VarNode> variableList = new ArrayList<VarNode>(1);
+	List<Integer> variableList = new ArrayList<Integer>(1); // variableList stores the index of interface variables in the other lpn. 
 	List<Integer> valueList = new ArrayList<Integer>(1);
 	private int hashVal = -1;
 
-	public Constraint(State start, State end, Transition firedTran, Transition lpn2) {
+	public Constraint(State start, State end, Transition firedTran, LhpnFile lpn2) {
 	    this.lpnTransition = firedTran;
-	    this.lpn = firedTran.getLpn();
-		//this.lpn = firedTran.getLpn();
+	    this.lpn = firedTran.getLpn();		
 		this.vector = start.getVector();
 
 		int[] endVector = end.getVector();
 //		int index = dstLpn.getInterfaceIndex(this.lpn.getLabel());
-		// TODO: (temp) Need to find out what ID is.
-		int[] thisIndex = null; // lpn2.getOtherIndexArray(this.lpn.ID-1);
+		//int[] thisIndex = lpn2.getOtherIndexArray(this.lpn.ID-1);
+		int[] thisIndex = lpn2.getOtherIndexArray(this.lpn.getLpnIndex());
 		DualHashMap<String, Integer> varIndexMap = this.lpn.getVarIndexMap();
 
 		this.interfaceValues = new int[thisIndex.length];
@@ -38,24 +36,22 @@ public class Constraint{
 			this.interfaceValues[i] = this.vector[varIndex];
 			if(this.vector[varIndex] != endVector[varIndex]){
 				String variable = varIndexMap.getKey(varIndex);
-				this.valueList.add(endVector[varIndex]);
-				// TODO: (temp) need to replace getVarNodeMap.
-				this.variableList.add(null);
-				//this.variableList.add(lpn2.getVarNodeMap().get(variable));
+				this.valueList.add(endVector[varIndex]);				
+				this.variableList.add(lpn2.getVarIndexMap().get(variable));
+				//this.variableList.add(lpn2.getVarNodeMap().get(variable));				
 			}
 		}
-
-//		if(this.variableList.size() == 0){
-//			System.out.println(this.lpnTransition.getFullLabel());
-//			System.err.println("error: invalid constraint");
-//			System.exit(1);
-//		}
+		if(this.variableList.size() == 0){
+			System.out.println(this.lpnTransition.getFullLabel());
+			System.err.println("error: invalid constraint");
+			System.exit(1);
+		}
 	}
-	
+
 	/**
      * @return List of modified variables.
      */
-	public List<VarNode> getVariableList(){
+	public List<Integer> getVariableList(){
 		return this.variableList;
 	}
 	
@@ -137,5 +133,16 @@ public class Constraint{
 			return false;
 		
 		return true;
-	}    
+	}
+
+	@Override
+	public String toString() {
+		return "Constraint [lpn=" + lpn.getLabel() + ",\n interfaceValues="
+				+ Arrays.toString(interfaceValues) + ",\n lpnTransition="
+				+ lpnTransition + ",\n vector=" + Arrays.toString(vector)
+				+ ",\n variableList=" + variableList + ",\n valueList=" + valueList
+				+ "]";
+	}
+	
+	
 }
