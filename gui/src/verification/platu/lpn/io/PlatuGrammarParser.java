@@ -693,7 +693,7 @@ public class PlatuGrammarParser extends Parser {
                     for (Transition t: (logic3!=null?logic3.lpnTranSet:null)) {
                       lpn.addTransition(t);
                       t.setLpn(lpn);
-                      System.out.println("transition(logic): " + t.getName());
+                      System.out.println("transition(logic): " + t.getLabel());
                       for (Place p : t.getPreset()) {
                         if ((logic3!=null?logic3.initMarking:null).contains(p.getName())) 
                           lpn.addPlace(p.getName(), true);
@@ -724,7 +724,7 @@ public class PlatuGrammarParser extends Parser {
             //            lpn.addTransition(t);
             //          }
                       for (Transition t : outputTranList) {
-                        System.out.println("transition(out): " + t.getName());
+                        System.out.println("transition(out): " + t.getLabel());
                         lpn.addTransition(t);
                       }
                       
@@ -2783,13 +2783,13 @@ public class PlatuGrammarParser extends Parser {
                         // map lpn transition with output and potential outuput variables
                         if(GlobalTranMap.containsKey(var)){
                           GlobalTranMap.get(var).add(lpnTran);
-                          System.out.println("Add "+ lpnTran.getName() + " to variable " + var);
+                          System.out.println("Add "+ lpnTran.getLabel() + " to variable " + var);
                         }
                         else{
                           List<Transition> tranList = new ArrayList<Transition>();
                           tranList.add(lpnTran);
                           GlobalTranMap.put(var, tranList);
-                          System.out.println("Create tranList for variable " + var + ", and add " + lpnTran.getName() + " to it.");
+                          System.out.println("Create tranList for variable " + var + ", and add " + lpnTran.getLabel() + " to it.");
                           
                         }
                       }
@@ -3353,12 +3353,12 @@ public class PlatuGrammarParser extends Parser {
                        					  //tran.setLocalFlag(false);
                        						//outputLPN.addOutputTran(tran);
                        						outputLPN.addTransition(tran);
-                       						System.out.println("@term : Added transition " + tran.getName() + " to LPN " + outputLPN.getLabel());
+                       						System.out.println("@term : Added transition " + tran.getLabel() + " to LPN " + outputLPN.getLabel());
                        						inputTranList.add(tran);
-                       						System.out.println("@term : Added transition " + tran.getName() + " to inputTranList.");
+                       						System.out.println("@term : Added transition " + tran.getLabel() + " to inputTranList.");
                        						System.out.println("inputTranList : ");
                        						for (Transition t : inputTranList) {
-                       						   System.out.println("Transition: " + t.getName());
+                       						   System.out.println("Transition: " + t.getLabel());
                        						}
                        						System.out.println("~~~~~~~~~~~~~");
                        					}

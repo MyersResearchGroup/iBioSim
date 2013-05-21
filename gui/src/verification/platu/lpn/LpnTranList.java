@@ -33,7 +33,7 @@ final public class LpnTranList extends LinkedList<Transition> {
         return null;
         */
     	for (Transition t: this) {
-    		if (lpnt.getName() == t.getName()) {
+    		if (lpnt.getLabel() == t.getLabel()) {
     			return t;
     		}
     	}
@@ -62,7 +62,7 @@ final public class LpnTranList extends LinkedList<Transition> {
         String ret = "";
         Iterator<Transition> it = this.iterator();
         while (it.hasNext()) {
-            ret += it.next().getName();
+            ret += it.next().getLabel();
             if (it.hasNext()) {
                 ret += ", ";
             }
