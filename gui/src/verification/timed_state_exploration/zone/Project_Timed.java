@@ -66,7 +66,7 @@ public class Project_Timed extends Project{
 		// TODO Auto-generated constructor stub
 	}
 	
-	public StateGraph_timed[] search() {	
+	public void search() {	
 		validateInputs();
 		
 //		if(Options.getSearchType().equals("compositional")){
@@ -173,7 +173,7 @@ public class Project_Timed extends Project{
 			long elapsedTimeMillisForTimed = System.currentTimeMillis() - startTimed;
 			System.out.println("---> totoal runtime: " + (double)elapsedTimeMillisForTimed/1000 + " sec\n");
 			//return new StateGraph_timed[0];
-			return states;
+			
 		}
 		
 		Analysis dfsStateExploration = new Analysis(sgArray);
@@ -186,7 +186,7 @@ public class Project_Timed extends Project{
 		
 		//return stateGraphArray;
 		
-		return new StateGraph_timed[0];
+		//return new StateGraph_timed[0];
 	}
 
 }

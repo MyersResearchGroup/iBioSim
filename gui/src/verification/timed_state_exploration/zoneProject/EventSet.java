@@ -261,7 +261,7 @@ public class EventSet extends Transition implements Iterable<Event>{
 		// Check what type of events are contained in this event set.
 		if(_transition != null){
 			// This is a set of a singleton transition.
-			result += "Transition Event Set = [" + _transition.getName();
+			result += "Transition Event Set = [" + _transition.getLabel();
 		}
 		else if (_inequalities != null){
 			result += "Inequality Event Set = [" + _inequalities;
@@ -275,7 +275,7 @@ public class EventSet extends Transition implements Iterable<Event>{
 		return result;
 	}
 	
-	public String getName(){
+	public String getLabel(){
 		return toString();
 	}
 	

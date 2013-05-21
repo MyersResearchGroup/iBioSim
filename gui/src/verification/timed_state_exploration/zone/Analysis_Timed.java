@@ -213,7 +213,7 @@ public class Analysis_Timed extends Analysis{
 			System.out.println("LPN: " + curLPN.getLabel());
 			Transition[] allTrans = curLPN.getAllTransitions(); 
 			for (int j=0; j< allTrans.length; j++) {
-				System.out.print(allTrans[j].getName() + ": ");
+				System.out.print(allTrans[j].getLabel() + ": ");
 				for (int k=0; k< allTrans[j].getDstLpnList().size(); k++) {
 					System.out.print(allTrans[j].getDstLpnList().get(k).getLabel() + ",");
 				}

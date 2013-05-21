@@ -475,7 +475,7 @@ public class Zone{
 		{
 			// Get the name for the timer in the i-th column/row of DBM
 			String tranName = 
-					lpn.getTransition(_indexToTimerPair[i].get_transitionIndex()).getName();
+					lpn.getTransition(_indexToTimerPair[i].get_transitionIndex()).getLabel();
 			ExprTree delay = lpn.getDelayTree(tranName);
 			
 			// Get the values of the variables for evaluating the ExprTree.
@@ -750,7 +750,7 @@ public class Zone{
 				// Get the LPN that this pairing references and find the name of the
 				// transition whose index is given by this pairing.
 				transitionNames.add(_lpnList[ltPair.get_lpnIndex()]
-						.getTransition(ltPair.get_transitionIndex()).getName());
+						.getTransition(ltPair.get_transitionIndex()).getLabel());
 			}
 		}
 		
@@ -1763,7 +1763,7 @@ public class Zone{
 					Transition tran = _lpnList[_indexToTimerPair[i].get_lpnIndex()].
 							getTransition(_indexToTimerPair[i].get_transitionIndex());
 					
-					name = tran.getName();
+					name = tran.getLabel();
 				}
 				else{
 					// If the current LPNTransitionPair is not a timer, get the
@@ -2349,7 +2349,7 @@ public class Zone{
 			// Get the name for the timer in the i-th column/row of DBM
 			//String tranName = indexToTran.get(i).getName();
 			String tranName = _lpnList[pair.get_lpnIndex()]
-					.getTransition(pair.get_transitionIndex()).getName();
+					.getTransition(pair.get_transitionIndex()).getLabel();
 			ExprTree delay = _lpnList[pair.get_lpnIndex()].getDelayTree(tranName);
 
 			// Get the values of the variables for evaluating the ExprTree.
@@ -2753,7 +2753,7 @@ public class Zone{
 			// Get the name for the timer in the i-th column/row of DBM
 			//String tranName = indexToTran.get(i).getName();
 			String tranName = _lpnList[pair.get_lpnIndex()]
-					.getTransition(pair.get_transitionIndex()).getName();
+					.getTransition(pair.get_transitionIndex()).getLabel();
 			ExprTree delay = _lpnList[pair.get_lpnIndex()].getDelayTree(tranName);
 
 			// Get the values of the variables for evaluating the ExprTree.

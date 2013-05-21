@@ -103,7 +103,7 @@ public class StateGraph_timed extends StateGraph{
 
 	public TimedState getInitStateTimed(boolean usegraph) {
 		
-		State initialStateNoTime = getInitState();
+		State initialStateNoTime = genInitialState();
 		
 		// TODO Auto-generated method stub
 		// Adds the zone factor.
@@ -131,7 +131,7 @@ public class StateGraph_timed extends StateGraph{
 				for (Transition curTran : stateTransitionPair.keySet()) {
 					String curStateName = "S" + curState.getIndex();
 					String nextStateName = "S" + stateTransitionPair.get(curTran).getIndex();
-					String curTranName = curTran.getName();
+					String curTranName = curTran.getLabel();
 					out.write(curStateName + " -> " + nextStateName + " [label=\"" + curTranName + "\"]\n");
 				}
 			}
