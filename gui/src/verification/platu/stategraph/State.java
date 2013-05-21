@@ -175,7 +175,9 @@ public class State extends PlatuObj {
 
     public String print() {
     	DualHashMap<String, Integer> VarIndexMap = this.lpn.getVarIndexMap();
-    	String message = "Marking: [";
+    	String message = "LPN: " + lpn.getLabel() + "\n"; 
+    	message += "ID: " + index + "\n";
+    	message += "Marking: [";
         for (int i : marking) {
             message += i + ",";
         }
@@ -307,7 +309,6 @@ public class State extends PlatuObj {
     		else
     			outVec[i] = 0;
     	}
-    	// TODO: (??) Need to create outTranVector as well?
     	return new State(this.lpn, this.marking, outVec, this.tranVector);
     }
     
@@ -343,7 +344,7 @@ public class State extends PlatuObj {
      * @param VarIndexMap
      * @return
      */
-    public State update(StateGraph SG,HashMap<String, Integer> newVector, DualHashMap<String, Integer> VarIndexMap) {
+    public State update(StateGraph SG, HashMap<String, Integer> newVector, DualHashMap<String, Integer> VarIndexMap) {
     	int[] newStateVector = new int[this.vector.length];
     	
     	boolean newState = false;
@@ -363,7 +364,7 @@ public class State extends PlatuObj {
     		else
     			newStateVector[index] = this.vector[index];    		
     	}
-        boolean[] newEnabledTranVector = SG.updateEnabledTranVector(this.getTranVector(), this.marking, newStateVector, null);
+        boolean[] newEnabledTranVector = SG.updateEnabledTranVector(this, this.marking, newStateVector, null);
     	if(newState == true)
     		return new State(this.lpn, this.marking, newStateVector, newEnabledTranVector);
     	
