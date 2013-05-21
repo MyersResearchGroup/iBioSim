@@ -62,7 +62,6 @@ import main.Gui;
 import main.Log;
 import verification.platu.main.Options;
 import verification.platu.project.Project;
-import verification.platu.stategraph.StateGraph;
 import verification.timed_state_exploration.zoneProject.Zone;
 import biomodel.gui.PropertyList;
 import biomodel.util.Utility;
@@ -1255,9 +1254,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				//----------- POR and Cycle Closing Methods (Simplified)--------------
 				if (untimedPOR.isSelected()) {
 					// Options for using trace-back in ample calculation
-					String[] ampleMethds = {"Trace-back", "Trace-back (depQueue)","No trace-back for ample computation"};
+					// TODO: Only need to keep Trace-back (depQueue). 
+					String[] ampleMethds = {"Trace-back", "Trace-back (depQueue)","No trace-back for ample computation", "Behavioral Analysis"};
 					JList ampleMethdsList = new JList(ampleMethds);
-					ampleMethdsList.setVisibleRowCount(3);
+					ampleMethdsList.setVisibleRowCount(4);
 					//cycleClosingList.addListSelectionListener(new ValueReporter());
 					JScrollPane ampleMethdsPane = new JScrollPane(ampleMethdsList);
 					JPanel mainPanel0 = new JPanel(new BorderLayout());
@@ -1287,7 +1287,12 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						Options.setCycleClosingMthd("behavioral");
 						Options.setCycleClosingAmpleMethd("cctboff");
 					}
-					// Choose different cycle closing methods
+					if (ampleMethdsIndex == 3) {
+						Options.setPOR("behavioral");
+						Options.setCycleClosingMthd("behavioral");
+						Options.setCycleClosingAmpleMethd("cctboff");
+					}
+					// TODO: Choose different cycle closing methods
 					//					int cycleClosingMthdIndex = cycleClosingList.getSelectedIndex();
 					//					if (cycleClosingMthdIndex == 0) {
 					//						Options.setCycleClosingMthd("behavioral");
@@ -1329,16 +1334,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					Options.setPrjSgPath(directory + separator);
 					// Options for printing the final numbers from search_dfs or search_dfsPOR. 
 					Options.setOutputLogFlag(true);
-					//					Options.setPrintLogToFile(false);
-					StateGraph[] stateGraphArray = untimed_dfs.search_por_traceback();
-					if (stateGraphArray != null)
-						if (dot.isSelected()) {
-							for (int i=0; i<stateGraphArray.length; i++) {
-								String graphFileName = stateGraphArray[i].getLpn().getLabel() + "POR_"+ Options.getCycleClosingMthd() + "_local_sg.dot";
-								stateGraphArray[i].outputLocalStateGraph(directory + separator + graphFileName);
-							}
-							// Code for producing global state graph is in search_dfsPOR in the Analysis class.						
-						}
+					//Options.setPrintLogToFile(false);
+					untimed_dfs.searchWithPOR();
 				}				
 				else { // No POR
 					Options.setPrjSgPath(directory + separator);
@@ -1347,15 +1344,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					//					Options.setPrintLogToFile(false);
 					if (dot.isSelected()) 
 						Options.setOutputSgFlag(true);
-					StateGraph[] stateGraphArray = untimed_dfs.search();
-					if (stateGraphArray != null)
-						if (dot.isSelected()) {
-							for (int i=0; i<stateGraphArray.length; i++) {
-								String graphFileName = stateGraphArray[i].getLpn().getLabel() + "_local_sg.dot";
-								stateGraphArray[i].outputLocalStateGraph(directory + separator + graphFileName);
-							}
-							// Code for producing global state graph is in search_dfsPOR in the Analysis class.
-						}
+					untimed_dfs.search();
 				}
 				return;
 			}
@@ -1743,8 +1732,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 
 			// Uses the timed_state_exploration.zoneProject infrastructure.
 			LhpnFile lpn = new LhpnFile();
-			lpn.load(directory + separator + lpnFileName);
-			
+			lpn.load(directory + separator + lpnFileName);			
 			Options.set_TimingLogFile(directory + separator
 					+ lpnFileName + ".tlog");
 
@@ -1784,13 +1772,16 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			Zone.setSupersetFlag(!superset.isSelected());
 
 			Project timedStateSearch = new Project(selectedLPNs);
-
-			StateGraph[] stateGraphArray = timedStateSearch.search();
+			if (dot.isSelected()) {
+				Options.setOutputSgFlag(true);
+				Options.setPrjSgPath(directory + separator);				
+			}
+			timedStateSearch.search();
 			String graphFileName = verifyFile.replace(".lpn", "") + "_sg.dot";
 
-			if (dot.isSelected()) {
-				stateGraphArray[0].outputLocalStateGraph(directory + separator + graphFileName);  
-			}
+//			if (dot.isSelected()) {
+//				stateGraphArray[0].outputLocalStateGraph(directory + separator + graphFileName);  
+//			}
 
 			if(graph.isSelected()){
 				showGraph(directory + separator + graphFileName);
