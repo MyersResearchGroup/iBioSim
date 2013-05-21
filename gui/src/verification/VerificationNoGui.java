@@ -10,7 +10,7 @@ import lpn.parser.LhpnFile;
 
 
 /**
- * This class provides a way to run depth-first search and partial order reduction (in platu package)
+ * This class provides script to run depth-first search and partial order reduction (in the platu package)
  * without the need for a GUI.
  * @author Zhen Zhang
  *
@@ -33,6 +33,12 @@ public class VerificationNoGui {
 				Options.setPOR("tb");
 				Options.setCycleClosingMthd("behavioral");
 				Options.setCycleClosingAmpleMethd("cctb");
+				poroff = false;
+			}
+			else if (args[i].equals("-porbehavioral")) {
+				Options.setPOR("behavioral");
+				Options.setCycleClosingMthd("behavioral");
+				Options.setCycleClosingAmpleMethd("cctboff");
 				poroff = false;
 			}
 			else if (args[i].equals("-portboff")) {
@@ -112,7 +118,7 @@ public class VerificationNoGui {
 		if (poroff)
 			untimed_dfs.search();
 		else 
-			untimed_dfs.search_por_traceback();
+			untimed_dfs.searchWithPOR();
 		
 	}
 }
