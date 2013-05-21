@@ -363,7 +363,7 @@ public class LPN {
     		// put in outputTranList if not already
     		// put in dstLpn's inputTranList
     		// set as non local
-        // TODO: (temp) Hack here, but no problem as LPN.java will go away.
+        // (temp) Hack here, but no problem as LPN.java will go away.
         ArrayList<LPNTran> transitionsTemp = null;
     	for(LPNTran lpnTran : transitionsTemp) {//this.transitions){
     		if(lpnTran.getAssignedVar().contains(outputVarNode)){
