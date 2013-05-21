@@ -41,7 +41,7 @@ public class TimingAnalysis {
 			LhpnFile curLpn = SgArray[index].getLpn();
 			StateGraph curSg = SgArray[index];
 			// TODO: (Check) check if curSg is correct
-			initStateArray[index] = curSg.getInitState();
+			initStateArray[index] = curSg.genInitialState();
 			int[] curStateVector = initStateArray[index].getVector();
 			HashSet<String> outVars = (HashSet<String>) curLpn.getAllOutputs().keySet();
 			DualHashMap<String, Integer> VarIndexMap = curLpn.getVarIndexMap();
@@ -82,7 +82,7 @@ public class TimingAnalysis {
 		while (traceCex != null && traceCex.size() > 0) {
 			Transition lpnTran = traceCex.removeFirst();
 			System.out.println(lpnTran.getLpn().getLabel() + " : "
-					+ lpnTran.getName());
+					+ lpnTran.getLabel());
 		}
 
 		System.out.println("Modules' local states: ");
