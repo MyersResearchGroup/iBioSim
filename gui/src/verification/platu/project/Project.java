@@ -22,11 +22,10 @@ import verification.platu.logicAnalysis.CompositionalAnalysis;
 import verification.platu.lpn.LPN;
 import verification.platu.lpn.LPNTranRelation;
 import verification.platu.lpn.io.Instance;
-import verification.platu.lpn.io.PlatuGrammarLexer;
-import verification.platu.lpn.io.PlatuGrammarParser;
 import verification.platu.lpn.io.PlatuInstLexer;
 import verification.platu.lpn.io.PlatuInstParser;
 import verification.platu.main.Options;
+import verification.platu.markovianAnalysis.ProbabilisticStateGraph;
 import verification.platu.stategraph.State;
 import verification.platu.stategraph.StateGraph;
 import verification.timed_state_exploration.zoneProject.ContinuousUtilities;
@@ -59,7 +58,7 @@ public class Project {
 		this.designUnitSet = new ArrayList<StateGraph>(1);
 		StateGraph stateGraph = new StateGraph(lpn);
 		designUnitSet.add(stateGraph);
-		//stateGraph.printStates();
+		
 	}
 	
 	/**
@@ -97,11 +96,21 @@ public class Project {
 	public Project(ArrayList<LhpnFile> lpns) {
 		this.label = "";
 		this.designUnitSet = new ArrayList<StateGraph>(lpns.size());
-		for (int i=0; i<lpns.size(); i++) {
-			LhpnFile lpn = lpns.get(i);
-			StateGraph stateGraph = new StateGraph(lpn);
-			designUnitSet.add(stateGraph);
-		}		
+		if (!Options.getProbabilisticLPNflag())
+			for (int i=0; i<lpns.size(); i++) {
+				LhpnFile lpn = lpns.get(i);
+				StateGraph stateGraph = new StateGraph(lpn);
+				lpn.addStateGraph(stateGraph);
+				designUnitSet.add(stateGraph);
+			}
+		else 
+			for (int i=0; i<lpns.size(); i++) {
+				LhpnFile lpn = lpns.get(i);
+				ProbabilisticStateGraph stateGraph = new ProbabilisticStateGraph(lpn);
+				lpn.addStateGraph(stateGraph);
+				designUnitSet.add(stateGraph);
+			}
+		lpnTranRelation = new LPNTranRelation(this.designUnitSet);
 	}
 
 	/**
@@ -109,7 +118,7 @@ public class Project {
 	 * local states
 	 * 
 	 */
-	public StateGraph[] search() {	
+	public void search() {	
 		validateInputs();
 		
 //		if(Options.getSearchType().equals("compositional")){
@@ -155,19 +164,13 @@ public class Project {
 		for (int index = 0; index < lpnCnt; index++) {
 			LhpnFile curLpn = sgArray[index].getLpn();
 			StateGraph curSg = sgArray[index];
-			initStateArray[index] = curSg.getInitState(); //curLpn.getInitState();
+			initStateArray[index] = curSg.genInitialState();
 			int[] curStateVector = initStateArray[index].getVector();
 			varValMap = curLpn.getAllVarsWithValuesAsInt(curStateVector);
-//			HashMap<String, String> vars = curLpn.getAllOutputs();//curLpn.getAllOutputs();
-//			DualHashMap<String, Integer> VarIndexMap = curLpn.getVarIndexMap();
-//			for(String var : vars.keySet()) {
-//				varValMap.put(var, curStateVector[VarIndexMap.getValue(var)]);
-//			}
-			
 		}
 		
 		// Adjust the value of the input variables in LPN in the initial state.
-		// Add the initial states into their respective LPN.
+		// Add the initial states into their respective LPNs.
 		for (int index = 0; index < lpnCnt; index++) {
 			StateGraph curSg = sgArray[index];
 			// If this is a timing analysis, the boolean inequality variables
@@ -178,7 +181,7 @@ public class Project {
 				ls[0] = initStateArray[index];
 				Zone z = new Zone(ls, true);
 				ContinuousUtilities.updateInitialInequalities(z, ls[0]);
-				initStateArray[index] = curSg.getInitState();
+				initStateArray[index] = curSg.genInitialState();
 			}
 			initStateArray[index].update(curSg, varValMap, curSg.getLpn().getVarIndexMap());
 			initStateArray[index] = curSg.addState(initStateArray[index]);			
@@ -221,14 +224,18 @@ public class Project {
 //		}
 		
 		Analysis dfsStateExploration = new Analysis(sgArray);
-		StateGraph[] stateGraphArray = dfsStateExploration.search_dfs(sgArray, initStateArray);
+		dfsStateExploration.search_dfs(sgArray, initStateArray);
 		
 		long elapsedTimeMillis = System.currentTimeMillis() - start; 
 		float elapsedTimeSec = elapsedTimeMillis/1000F;
 		System.out.println("---> total runtime: " + elapsedTimeSec + " sec\n");
 		if (Options.getOutputLogFlag())
 			outputRuntimeLog(false, elapsedTimeSec);
-		return stateGraphArray;
+		if (Options.getOutputSgFlag())
+			if (sgArray != null)
+				for (int i=0; i<sgArray.length; i++) {					
+					sgArray[i].drawLocalStateGraph();
+				}		
 	}
 
 	public Set<LPN> readLpn(final String src_file) {
@@ -261,7 +268,7 @@ public class Project {
 	 * @return 
 	 * 
 	 */
-	public StateGraph[] search_por_traceback() {	
+	public void searchWithPOR() {	
 		validateInputs();
 //		
 //		if(Options.getSearchType().equals("compositional")){
@@ -283,10 +290,10 @@ public class Project {
 		/* Prepare search by placing LPNs in an array in the order of their indices.*/
         StateGraph[] sgArray = new StateGraph[lpnCnt];
         int idx = 0;
-		for (StateGraph du : designUnitSet) {
-			LhpnFile lpn = du.getLpn();
+		for (StateGraph sg : designUnitSet) {
+			LhpnFile lpn = sg.getLpn();
 			lpn.setLpnIndex(idx++);
-			sgArray[lpn.getLpnIndex()] = du;
+			sgArray[lpn.getLpnIndex()] = sg;
 		}
 
 		// Initialize the project state
@@ -296,7 +303,7 @@ public class Project {
 		for (int index = 0; index < lpnCnt; index++) {
 			LhpnFile curLpn = sgArray[index].getLpn();
 			StateGraph curSg = sgArray[index];
-			initStateArray[index] = curSg.getInitState(); //curLpn.getInitState();
+			initStateArray[index] = curSg.genInitialState(); //curLpn.getInitState();
 			int[] curStateVector = initStateArray[index].getVector();
 			varValMap = curLpn.getAllVarsWithValuesAsInt(curStateVector);
 //			DualHashMap<String, Integer> VarIndexMap = curLpn.getVarIndexMap();
@@ -309,23 +316,33 @@ public class Project {
 		// Adjust the value of the input variables in LPN in the initial state.
 		// Add the initial states into their respective LPN.
 		for (int index = 0; index < lpnCnt; index++) {
-			StateGraph curLpn = sgArray[index];
-			initStateArray[index].update(curLpn, varValMap, curLpn.getLpn().getVarIndexMap());
-			initStateArray[index] = curLpn.addState(initStateArray[index]);
-			
+			StateGraph curSg = sgArray[index];
+			initStateArray[index].update(curSg, varValMap, curSg.getLpn().getVarIndexMap());
+			initStateArray[index] = curSg.addState(initStateArray[index]);
 		}		
 		
 		Analysis dfsPOR = new Analysis(sgArray);
-		StateGraph[] stateGraphArray;	
-		stateGraphArray = dfsPOR.search_dfs_por_traceback(sgArray, initStateArray);
-		
+		if (Options.getPOR().toLowerCase().equals("tb"))
+			dfsPOR.searchPOR_taceback(sgArray, initStateArray);
+		else if (Options.getPOR().toLowerCase().equals("behavioral")) {
+			CompositionalAnalysis compAnalysis = new CompositionalAnalysis();
+			compAnalysis.compositionalFindSG(sgArray);
+			// TODO: (temp) Need to restore the behavioral method.
+			//dfsPOR.searchPOR_behavioral(sgArray, initStateArray, lpnTranRelation, "state");
+		}			
+		else {
+			System.out.println("Need to provide a POR method.");			
+		}
 		long elapsedTimeMillis = System.currentTimeMillis() - start; 
 		float elapsedTimeSec = elapsedTimeMillis/1000F;	
 		System.out.println("---> total runtime: " + elapsedTimeSec + " sec\n");
-		
 		if (Options.getOutputLogFlag())
-			outputRuntimeLog(true, elapsedTimeSec);
-		return stateGraphArray;
+			outputRuntimeLog(true, elapsedTimeSec);		
+		if (Options.getOutputSgFlag())
+			if (sgArray != null)
+				for (int i=0; i<sgArray.length; i++) {								
+					sgArray[i].drawLocalStateGraph();
+				}
 	}
 	
 	private void outputRuntimeLog(boolean isPOR, float runtime) {
