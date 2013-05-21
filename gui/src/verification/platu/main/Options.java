@@ -33,14 +33,14 @@ public class Options {
 //	private static String POR = "off";
 	
 	/*
-	 * Partial order reduction options for ample set computation (not including ample compuation for cycle closing check).
+	 * Partial order reduction options for ample set computation (not including ample computation for cycle closing check).
 	 */
 	public static enum PorDef { 
-		TB, // POR with traceback
+		TB, // POR with trace-back
 		TBOFF // POR without trace-back	
 		
 		};
-	private static String POR = "tb";
+	private static String POR = null;
 	
 	/*
 	 * Cycle closing method for partial order reduction
