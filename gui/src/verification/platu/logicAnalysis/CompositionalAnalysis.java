@@ -1,8 +1,5 @@
 package verification.platu.logicAnalysis;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,9 +12,6 @@ import java.util.Stack;
 import lpn.parser.LhpnFile;
 import lpn.parser.Transition;
 import verification.platu.common.Pair;
-import verification.platu.expression.VarNode;
-import verification.platu.lpn.LPN;
-import verification.platu.lpn.LPNTran;
 import verification.platu.lpn.VarSet;
 import verification.platu.main.Options;
 import verification.platu.stategraph.State;
@@ -860,7 +854,7 @@ public class CompositionalAnalysis {
 		
 		// create new composite state graph
 		StateGraph[] sgArray = new StateGraph[size];
-		List<LPN> lpnList = new ArrayList<LPN>(size);
+		List<LhpnFile> lpnList = new ArrayList<LhpnFile>(size);
 		for(int i = 0; i < sg1Size; i++){
 			sgArray[i] = stateGraphArray1[i];
 			// TOOD: is this needed???
@@ -1194,7 +1188,7 @@ public class CompositionalAnalysis {
 		
 		// create new composite state graph
 		StateGraph[] sgArray = new StateGraph[size];
-		List<LPN> lpnList = new ArrayList<LPN>(size);
+		List<LhpnFile> lpnList = new ArrayList<LhpnFile>(size);
 		for(int i = 0; i < sg1Size; i++){
 			sgArray[i] = stateGraphArray1[i];
 			// TODO: (future) Is this needed??
@@ -1454,7 +1448,8 @@ public class CompositionalAnalysis {
 		System.out.println("\n****** Compositional Analysis ******");
 		long start = System.currentTimeMillis(); 
 		
-		compositionalFindSG(designUnitSet);
+		StateGraph[] sgArray = (StateGraph[]) designUnitSet.toArray();
+		compositionalFindSG(sgArray);
 		
 		List<CompositeStateGraph> sgList = new ArrayList<CompositeStateGraph>();
 		System.out.println();
@@ -2381,46 +2376,39 @@ public class CompositionalAnalysis {
 	/**
      * Constructs the compositional state graphs.
      */
-	public void compositionalFindSG(List<StateGraph> designUnitSet){
+	public void compositionalFindSG(StateGraph[] sgArray){
 //		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 //		try {
 //			br.readLine();
 //		} catch (IOException e) {
 //			e.printStackTrace();
 //		}
-		
-		int iter = 0;
+ 		int iter = 0;
 		int newTransitions = 0;
 		long start = System.currentTimeMillis();
 		HashMap<StateGraph, List<StateGraph>> inputSrcMap = new HashMap<StateGraph, List<StateGraph>>();
-		
-		for (StateGraph sg : designUnitSet) {
+		for (StateGraph sg : sgArray) {
 			LhpnFile lpn = sg.getLpn();
-			
-            // Add initial state to state graph
-			State init = sg.getInitState();
+		    // Add initial state to state graph
+			State init = sg.genInitialState();
 			sg.setInitialState(init);
 			sg.addState(init);
 			sg.addFrontierState(init);
-
-			
-			VarSet inputSet = (VarSet) lpn.getAllInputs().keySet();
-			VarSet outputSet = (VarSet) lpn.getAllOutputs().keySet();
+			Set<String> inputSet = lpn.getAllInputs().keySet();
+			Set<String> outputSet = lpn.getAllOutputs().keySet();
 			int numSrc = 0;
-
 			// Find lpn interfaces
-			for(StateGraph sg2 : designUnitSet){
+			for(StateGraph sg2 : sgArray){
+				if(sg == sg2) 
+					continue;
 				LhpnFile lpn2 = sg2.getLpn();
-				if(sg == sg2) continue;
-				
-				VarSet outputs = (VarSet) lpn2.getAllOutputs().keySet();
+				Set<String> outputs = lpn2.getAllOutputs().keySet();
 				for(String output : outputs){
 					if (inputSet.contains(output)){
 						numSrc++;
 						break;
 					}
 				}
-
 				for(String output : outputs){
 					if (outputSet.contains(output)){
 						numSrc++;
@@ -2428,89 +2416,80 @@ public class CompositionalAnalysis {
 					}
 				}
 			}
-			
-			List<int[]> thisInterfaceList = new ArrayList<int[]>(designUnitSet.size());
-			List<int[]> otherInterfaceList = new ArrayList<int[]>(designUnitSet.size());
-			for(int i = 0; i < designUnitSet.size() + 1; i++){
+			List<int[]> thisInterfaceList = new ArrayList<int[]>(sgArray.length);
+			List<int[]> otherInterfaceList = new ArrayList<int[]>(sgArray.length);
+			// TODO: Why designUnitSet.size() + 1 ?
+//			for(int i = 0; i < designUnitSet.size() + 1; i++){
+			for(int i = 0; i < sgArray.length; i++){
 				thisInterfaceList.add(null);
 				otherInterfaceList.add(null);
 			}
-			
 			List<StateGraph> srcArray = new ArrayList<StateGraph>(numSrc);
-			
 			if(numSrc > 0){
-				int index = 0;
-				for(StateGraph sg2 : designUnitSet){	
-					LhpnFile lpn2 = sg2.getLpn();
-					if(sg == sg2) continue;
-					
+//				int index = 0;
+				for(StateGraph sg2 : sgArray){
+					if(sg == sg2) 
+						continue;
+					LhpnFile lpn2 = sg2.getLpn();					
 					int interfaceSize = 0;
-					VarSet outputs = (VarSet) lpn2.getAllOutputs().keySet();
-					VarSet inputs = (VarSet) lpn2.getAllInputs().keySet();
-					
+					Set<String> outputs = lpn2.getAllOutputs().keySet();
+					Set<String> inputs = lpn2.getAllInputs().keySet();
 					for(String output : outputs){
 						if (inputSet.contains(output)){
 							interfaceSize++;
 						}
 					}
-					
 					for(String input : inputs){
 						if(outputSet.contains(input)){
 							interfaceSize++;
 						}
 					}
-					
 					for(String output : outputs){
 						if (outputSet.contains(output)){
 							interfaceSize++;
 						}
 					}
-					
 					for(String input : inputs){
 						if (inputSet.contains(input)){
 							interfaceSize++;
 						}
 					}
-					// TODO: (future) need to fix for our LPN
-					/*
 					if(interfaceSize > 0){
 						int[] thisIndexList = new int[interfaceSize];
 						int[] otherIndexList = new int[interfaceSize];
-						lpn.genIndexLists(thisIndexList, otherIndexList, lpn2);
-						
-						thisInterfaceList.set(lpn2.ID-1, thisIndexList);
-						otherInterfaceList.set(lpn2.ID-1, otherIndexList);
+						lpn.genIndexLists(thisIndexList, otherIndexList, lpn2);						
+						thisInterfaceList.set(lpn2.getLpnIndex(), thisIndexList);
+						otherInterfaceList.set(lpn2.getLpnIndex(), otherIndexList);
+						// Hao's LPN starting index is 1, whereas ours starts from 0. 
+//						thisInterfaceList.set(lpn2.ID-1, thisIndexList);
+//						otherInterfaceList.set(lpn2.ID-1, otherIndexList);
 						srcArray.add(sg2);
-						index++;
+//						index++;
 					}
-					*/
 				}
 			}
-			// TODO: (future) need to fix for our LPN
-			/*
 			lpn.setThisIndexList(thisInterfaceList);
 			lpn.setOtherIndexList(otherInterfaceList);
-			*/
 			inputSrcMap.put(sg, srcArray);
 		}
 		
-		LhpnFile[] lpnList = new LhpnFile[designUnitSet.size()];
-
-		int idx = 0;
-		for (StateGraph sg : designUnitSet) {
-			lpnList[idx++] = sg.getLpn();
-		}	
-		
+		// TODO: (temp) designUnitSet has been created already at this point. 
+//		LhpnFile[] lpnList = new LhpnFile[designUnitSet.size()];
+//		int idx = 0;
+//		for (StateGraph sg : designUnitSet) {
+//			lpnList[idx++] = sg.getLpn();
+//		}
+		constructDstLpnList(sgArray);
 		// Run initial findSG
-		for (StateGraph sg : designUnitSet) {
+		for (StateGraph sg : sgArray) {
 			int result = 0;
+			// TODO: What is sticky semantics?
 			if(Options.getStickySemantics()){
 //				result = sg.constrStickyFindSG(sg.getInitialState(), emptyTranList);
 			}
 			else{
 				result = sg.constrFindSG(sg.getInitialState());
 			}
-			
 			newTransitions += result;
 		}
 
@@ -2522,43 +2501,34 @@ public class CompositionalAnalysis {
 		while(newTransitions > 0){
 			iter++;
 			newTransitions = 0;
-			
-			for(StateGraph sg : designUnitSet){
+			for(StateGraph sg : sgArray){
 				sg.genConstraints();
 				sg.genFrontier();
 			}
-
-			for(StateGraph sg : designUnitSet){
+			// Extract and apply constraints generated from srcSG to sg. 
+			for(StateGraph sg : sgArray){
 				for(StateGraph srcSG : inputSrcMap.get(sg)){
 					extractConstraints(sg, srcSG, newConstraintSet, oldConstraintSet);
-					newTransitions += applyConstraintSet(sg, srcSG, iter, newConstraintSet, oldConstraintSet);
-					
+					newTransitions += applyConstraintSet(sg, srcSG, newConstraintSet, oldConstraintSet);			
 				}
 			}
-
 			long curTotalMem = Runtime.getRuntime().totalMemory();
 			if(curTotalMem > peakTotal)
 				peakTotal = curTotalMem;
-			
 			long curUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 			if(curUsedMem > peakUsed)
 				peakUsed = curUsedMem;
 		}
-		
 		System.out.println();
-		
 		int numStates = 0;
 		int numTrans = 0;
 		int numConstr = 0;
-		for (StateGraph sg : designUnitSet) {
+		for (StateGraph sg : sgArray) {
 			sg.genConstraints();
 			sg.genFrontier();
-			
 			System.out.print("   ");
 			sg.printStates();
-			
 //			sg.clear();
-			
 			numStates += sg.reachSize();
 //			numTrans += sg.numTransitions();
 			numConstr += sg.numConstraints();
@@ -2568,15 +2538,12 @@ public class CompositionalAnalysis {
 		System.out.println("   --> # transitions: " + numTrans);
 		System.out.println("   --> # constraints: " + numConstr);
 		System.out.println("   --> # iterations: " + iter);
-		
 		System.out.println("\n   --> Peak used memory: " + peakUsed/1000000F + " MB");
 		System.out.println("   --> Peak total memory: " + peakTotal/1000000F + " MB");
 		System.out.println("   --> Final used memory: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1000000F + " MB");
-		
 		long elapsedTimeMillis = System.currentTimeMillis()-start; 
 		float elapsedTimeSec = elapsedTimeMillis/1000F;
 		System.out.println("   --> Elapsed time: " + elapsedTimeSec + " sec");
-		
 		if(elapsedTimeSec > 60){
 			float elapsedTime = elapsedTimeSec/(float)60;
 			System.out.println("   --> Elapsed time: " + elapsedTime + " min");
@@ -2603,20 +2570,20 @@ public class CompositionalAnalysis {
 			LhpnFile lpn = sg.getLpn();
 			
             // Add initial state to state graph
-			State init = sg.getInitState();
+			State init = sg.genInitialState();
 			sg.setInitialState(init);
 			sg.addState(init);
 			sg.addFrontierState(init);
 			
-			VarSet inputSet = (VarSet) lpn.getAllInputs().keySet();
-			VarSet outputSet = (VarSet) lpn.getAllOutputs().keySet();
+			Set<String> inputSet = lpn.getAllInputs().keySet();
+			Set<String> outputSet = lpn.getAllOutputs().keySet();
 			int size = 0;
 			
 			// Find lpn interfaces
 			for(StateGraph sg2 : designUnitSet){				
 				if(sg == sg2) continue;
 				
-				VarSet outputs = (VarSet) sg2.getLpn().getAllOutputs().keySet();
+				Set<String> outputs = sg2.getLpn().getAllOutputs().keySet();
 				for(String output : outputs){
 					if (inputSet.contains(output)){
 						size++;
@@ -2642,7 +2609,7 @@ public class CompositionalAnalysis {
 					
 					boolean src = false;
 					int interfaceSize = 0;
-					VarSet outputs = (VarSet) lpn2.getAllOutputs().keySet();
+					Set<String> outputs = lpn2.getAllOutputs().keySet();
 					for(String output : outputs){
 						if (inputSet.contains(output)){
 							interfaceSize++;
@@ -2651,7 +2618,7 @@ public class CompositionalAnalysis {
 					}
 
 					if(src){
-						VarSet inputs = (VarSet) lpn2.getAllInputs().keySet();
+						Set<String> inputs = lpn2.getAllInputs().keySet();
 						for(String input : inputs){
 							if (outputSet.contains(input)){
 								interfaceSize++;
@@ -2684,11 +2651,8 @@ public class CompositionalAnalysis {
 					}
 				}
 			}
-			// TODO: (future) need to add getThisIndexArray in LhpnFile.
-			/*
 			lpn.setThisIndexList(thisInterfaceList);
 			lpn.setOtherIndexList(otherInterfaceList);
-			*/
 			inputSrcMap.put(sg, srcArray);
 		}
 		
@@ -2781,16 +2745,14 @@ public class CompositionalAnalysis {
 	 * Applies new constraints to the entire state set, and applies old constraints to the frontier state set.
      * @return Number of new transitions.
      */
-	private int applyConstraintSet(StateGraph sg, StateGraph srcSG, int iter, List<Constraint> newConstraintSet, List<Constraint> oldConstraintSet){
+	private int applyConstraintSet(StateGraph sg, StateGraph srcSG, List<Constraint> newConstraintSet, List<Constraint> oldConstraintSet){
 		int newTransitions = 0;
-
 		LhpnFile srcLpn = srcSG.getLpn();
 		LhpnFile lpn = sg.getLpn();
-		// TODO: (future) need to add getThisIndexArray in LhpnFile.
-		/*
-		int[] thisIndexList = lpn.getThisIndexArray(srcLpn.ID - 1);
-		int[] otherIndexList = lpn.getOtherIndexArray(srcLpn.ID - 1);
-		
+		int[] thisIndexList = lpn.getThisIndexArray(srcLpn.getLpnIndex());
+		int[] otherIndexList = lpn.getOtherIndexArray(srcLpn.getLpnIndex());
+//		int[] thisIndexList = lpn.getThisIndexArray(srcLpn.ID - 1);
+//		int[] otherIndexList = lpn.getOtherIndexArray(srcLpn.ID - 1);		
 		if(newConstraintSet.size() > 0){
 			for(State currentState : sg.getStateSet()){
 				for(Constraint c : newConstraintSet){
@@ -2799,7 +2761,6 @@ public class CompositionalAnalysis {
 					}
 				}
 			}
-
 			for(State currentState : sg.getFrontierStateSet()){
 				for(Constraint c : newConstraintSet){
 					if(compatible(currentState, c, thisIndexList, otherIndexList)){						
@@ -2808,7 +2769,6 @@ public class CompositionalAnalysis {
 				}
 			}
 		}
-		
 		if(oldConstraintSet.size() > 0){
 			for(State currentState : sg.getFrontierStateSet()){
 				for(Constraint c : oldConstraintSet){
@@ -2818,34 +2778,28 @@ public class CompositionalAnalysis {
 				}
 			}
 		}
-		*/
 		return newTransitions;
 	}
 	
 	/**
      * Extracts applicable constraints from a StateGraph.
-     * @param sg The state graph the constraints are to be applied.
-     * @param srcSG The state graph the constraint are extracted from.
+     * @param sg - The state graph the constraints are to be applied.
+     * @param srcSG - The state graph the constraint are extracted from.
      */
 	private void extractConstraints(StateGraph sg, StateGraph srcSG, List<Constraint> newConstraintSet, List<Constraint> oldConstraintSet){
 		newConstraintSet.clear();
 		oldConstraintSet.clear();
-		
 		LhpnFile srcLpn = srcSG.getLpn();
-		// TODO: (irrelavent) Constraint?
-		/*
 		for(Constraint newConstraint : sg.getNewConstraintSet()){
-			if(newConstraint.getLpn() != srcLpn) continue;
-	    	
+			if(newConstraint.getLpn() != srcLpn) 
+				continue;	    	
 			newConstraintSet.add(newConstraint);
 		}
-		
 		for(Constraint oldConstraint : sg.getOldConstraintSet()){
-			if(oldConstraint.getLpn() != srcLpn) continue;
-			
+			if(oldConstraint.getLpn() != srcLpn) 
+				continue;
 			oldConstraintSet.add(oldConstraint);
 		}
-		*/
 	}
 	
 	/**
@@ -2855,61 +2809,132 @@ public class CompositionalAnalysis {
 	private boolean compatible(State currentState, Constraint constr, int[] thisIndexList, int[] otherIndexList){
 		int[] constraintVector = constr.getVector();
 		int[] currentVector = currentState.getVector();
-		
 		for(int i = 0; i < thisIndexList.length; i++){
 			int thisIndex = thisIndexList[i];
-			int otherIndex = otherIndexList[i];
-			
+			int otherIndex = otherIndexList[i];		
 			if(currentVector[thisIndex] != constraintVector[otherIndex]){
 				return false;
 			}
-		}
-		
+		}	
 		return true;
 	}
 	
 	/**
-     * Creates a state from a given constraint and compatible state.  If the state is new, then findSG is called.
+     * Creates a state from a given constraint and compatible state and insert into state graph.  If the state is new, then findSG is called.
      * @return Number of new transitions.
      */
 	private int createNewState(StateGraph sg, State compatibleState, Constraint c){
 		int newTransitions = 0;
-
-		// Create new state and insert into state graph
 		State newState = new State(compatibleState);
-		int[] newVector = newState.getVector();
-		
-		List<VarNode> variableList = c.getVariableList();
+		int[] newVector = newState.getVector();		
+		//List<VarNode> variableList = c.getVariableList();
+		List<Integer> variableList = c.getVariableList();
 		List<Integer> valueList = c.getValueList();
 		
-		int[] compatibleVector = compatibleState.getVector();
+		//int[] compatibleVector = compatibleState.getVector();
+		// TODO: Need to update tranVector here? 
 		for(int i = 0; i < variableList.size(); i++){
-			int index = variableList.get(i).getIndex(compatibleVector);
+			//int index = variableList.get(i).getIndex(compatibleVector);
+			int index = variableList.get(i);
 			newVector[index] = valueList.get(i);
 		}
-		
+		updateTranVectorByConstraint(newState.getLpn(), newState.getTranVector(), newState.getMarking(), newVector);
 		State nextState = sg.addState(newState);
 		if(nextState == newState){
 			int result = 0;
-			
 			sg.addFrontierState(nextState);
-
-			if(Options.getStickySemantics()){
+			// TODO: Need to consider the "Sticky sematics"
+//			if(Options.getStickySemantics()){
 //				result = sg.constrStickyFindSG(nextState, sg.getEnabled(compatibleState));
-			}
-			else{
+//			}
+//			else{
 				result = sg.constrFindSG(nextState);
-			}
-			
-			if(result < 0) return newTransitions;
-			
+//			}
+			if(result < 0) 
+				return newTransitions;
 			newTransitions += result;
 		}
-
 		Transition constraintTran = c.getLpnTransition();
 		sg.addStateTran(compatibleState, constraintTran, nextState);
     	newTransitions++;
-		
 		return newTransitions;
+	}
+	
+	private String printTranVecotr(boolean[] tranVector) {
+		String tranVecStr = "[";
+		for (boolean i : tranVector) {
+			tranVecStr = tranVecStr + "," + i;
+		}
+		tranVecStr = tranVecStr + "]";
+		return tranVecStr;
+	}
+
+	/**
+     * Update tranVector due to application of a constraint. Only vector of a state can change due to a constraint, and
+     * therefore the tranVector can potentially change.
+     * @param lpn
+     * @param enabledTranBeforeConstr
+     * @param marking
+     * @param newVector
+     * @return
+     */
+    public void updateTranVectorByConstraint(LhpnFile lpn, boolean[] enabledTran,
+			int[] marking, int[] newVector) {    	
+        // find newly enabled transition(s) based on the updated variables vector.
+        for (Transition tran : lpn.getAllTransitions()) {
+        	boolean needToUpdate = true;
+        	String tranName = tran.getLabel();
+    		int tranIndex = tran.getIndex();
+    		if (Options.getDebugMode()) {
+//    			System.out.println("Checking " + tranName);
+    		}
+    		if (lpn.getEnablingTree(tranName) != null 
+    				&& lpn.getEnablingTree(tranName).evaluateExpr(lpn.getAllVarsWithValuesAsString(newVector)) == 0.0) {
+    			if (Options.getDebugMode()) {
+    				System.out.println(tran.getLabel() + " " + "Enabling condition is false");    			
+    			}					
+    			if (enabledTran[tranIndex] && !tran.isPersistent())
+    				enabledTran[tranIndex] = false;
+    			continue;
+    		}
+    		if (lpn.getTransitionRateTree(tranName) != null 
+    				&& lpn.getTransitionRateTree(tranName).evaluateExpr(lpn.getAllVarsWithValuesAsString(newVector)) == 0.0) {
+    			if (Options.getDebugMode()) {
+    				System.out.println("Rate is zero");
+    			}					
+    			continue;
+    		}
+    		if (lpn.getPreset(tranName) != null && lpn.getPreset(tranName).length != 0) {
+    			for (int place : lpn.getPresetIndex(tranName)) {
+    				if (marking[place]==0) {
+    					if (Options.getDebugMode()) {
+    						System.out.println(tran.getLabel() + " " + "Missing a preset token");
+    					}
+    					needToUpdate = false;
+    					break;
+    				}
+    			}
+    		}
+			if (needToUpdate) {            	
+    			enabledTran[tranIndex] = true;
+    			if (Options.getDebugMode()) {
+    				System.out.println(tran.getLabel() + " is Enabled.");
+    			}					
+            }
+        }
+	}
+
+	private void constructDstLpnList(StateGraph[] sgArray) {
+		for (int i=0; i<sgArray.length; i++) {
+			LhpnFile curLPN = sgArray[i].getLpn();
+			Transition[] allTrans = curLPN.getAllTransitions();
+			for (int j=0; j<allTrans.length; j++) {
+				Transition curTran = allTrans[j];
+				for (int k=0; k<sgArray.length; k++) {
+					curTran.setDstLpnList(sgArray[k].getLpn());
+				}
+								
+			}
+		}
 	}
 }
