@@ -308,7 +308,7 @@ public class Zone extends ZoneType {
 		{
 			// Get the name for the timer in the i-th column/row of DBM
 			//String tranName = indexToTran.get(_indexToTimer[i]).getName();
-			String tranName = _indexToTransition.get(_indexToTimer[i]).getName();
+			String tranName = _indexToTransition.get(_indexToTimer[i]).getLabel();
 			ExprTree delay = lpn.getDelayTree(tranName);
 			
 			// Get the values of the variables for evaluating the ExprTree.
@@ -1052,7 +1052,7 @@ public class Zone extends ZoneType {
 			// Get all the upper and lower bounds for the new timers.
 			// Get the name for the timer in the i-th column/row of DBM
 			//String tranName = indexToTran.get(i).getName();
-			String tranName = _indexToTransition.get(i).getName();
+			String tranName = _indexToTransition.get(i).getLabel();
 			ExprTree delay = lpn.getDelayTree(tranName);
 
 			// Get the values of the variables for evaluating the ExprTree.

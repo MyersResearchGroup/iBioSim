@@ -613,6 +613,5 @@ public class StateSet implements Iterable<PrjState>{
 			
 			throw new UnsupportedOperationException("The iterator was not initialized.");
 		}
-		
 	}
 }

@@ -99,7 +99,7 @@ public class Event {
 		// Test if this event is a transition or is an inequality.
 		if(_transition != null){
 			// This event represents a transition.
-			result += "Transition Event : " + _transition.getName();
+			result += "Transition Event : " + _transition.getLabel();
 		}
 		else if(_inequality != null){
 			// This event represents an inequality.
