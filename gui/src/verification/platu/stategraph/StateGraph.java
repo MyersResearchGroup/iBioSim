@@ -1202,10 +1202,14 @@ public class StateGraph {
 	public void drawLocalStateGraph() {
 		try {
 			String graphFileName = null;
-			if (Options.getPOR() == null)
-				graphFileName = Options.getPrjSgPath() + getLpn().getLabel() + "_local_sg.dot";
-			else
-				graphFileName = Options.getPrjSgPath() + getLpn().getLabel() + "POR_"+ Options.getCycleClosingMthd() + "_local_sg.dot";
+			if ( Options.getTimingAnalysisType() == "off") {
+				if (Options.getPOR() == null)
+					graphFileName = Options.getPrjSgPath() + getLpn().getLabel() + "_local_sg.dot";
+				else
+					graphFileName = Options.getPrjSgPath() + getLpn().getLabel() + "POR_"+ Options.getCycleClosingMthd() + "_local_sg.dot";
+			} else {
+				graphFileName = Options.getPrjSgPath() + getLpn().getLabel() + "_sg.dot";
+			}
 			int size = this.lpn.getVarIndexMap().size();
 			String varNames = "";
 			for(int i = 0; i < size; i++) {
