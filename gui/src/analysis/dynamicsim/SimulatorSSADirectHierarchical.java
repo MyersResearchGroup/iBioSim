@@ -1,6 +1,7 @@
 package analysis.dynamicsim;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import javax.swing.JFrame;
@@ -23,6 +24,8 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 	
 	private static Long initializationTime = new Long(0);
 	private int submodelIndex;
+
+	
 	public SimulatorSSADirectHierarchical(String SBMLFileName, String outputDirectory, double timeLimit, 
 			double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, 
 			double stoichAmpValue, JFrame running, String[] interestingSpecies, String quantityType) 
@@ -54,7 +57,15 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		currentTime = 0.0;
 		double printTime = -0.00001;
 		
-		while (currentTime < timeLimit && !cancelFlag) {
+		while (currentTime < timeLimit && !cancelFlag && !stopDueConstraint) {
+			
+			//if a constraint fails
+			if (constraintFailureFlag == true) {
+				
+				JOptionPane.showMessageDialog(Gui.frame, "Simulation Canceled Due To Constraint Failure",
+						"Constraint Failure", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
 			
 			//TSD PRINTING
 			//print to TSD if the next print interval arrives
@@ -112,17 +123,17 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 				
 				if(submodelIndex == -1)
 				{
-					topmodel.performReaction(selectedReactionID, true, true);
-					HashSet<String> affectedReactionSet = topmodel.getAffectedReactionSet(selectedReactionID, true);
+					performReaction(topmodel, selectedReactionID, true, topmodel.noConstraintsFlag);
+					HashSet<String> affectedReactionSet = getAffectedReactionSet(topmodel, selectedReactionID, true);
 					
 					//STEP 5: compute affected reactions' new propensities and update total propensity
 					updatePropensities(affectedReactionSet);
 				}
 				else
 				{
-					submodels[submodelIndex].performReaction(selectedReactionID, true, true);
+					performReaction(submodels[submodelIndex], selectedReactionID, true, submodels[submodelIndex].noConstraintsFlag);
 					
-					HashSet<String> affectedReactionSet = submodels[submodelIndex].getAffectedReactionSet(selectedReactionID, true);
+					HashSet<String> affectedReactionSet = getAffectedReactionSet(submodels[submodelIndex], selectedReactionID, true);
 					
 					//STEP 5: compute affected reactions' new propensities and update total propensity
 					updatePropensities(affectedReactionSet);
@@ -146,6 +157,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 				printTime += printInterval;
 				running.setTitle("Progress (" + (int)((currentTime / timeLimit) * 100.0) + "%)");
 			}
+			
 			
 		} //end simulation loop
 		
@@ -181,20 +193,20 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 	throws IOException, XMLStreamException {	
 		
 		
-		topmodel.setupSpecies();
-		topmodel.setupParameters();	
-		topmodel.setupReactions();		
+		setupSpecies(topmodel);
+		setupParameters(topmodel);	
+		setupReactions(topmodel);		
+		setupConstraints(topmodel);
 		
 		setupForOutput(randomSeed, runNumber);
 		
 		for(ModelState model : submodels)
 		{
-		model.setupSpecies();
-		model.setupParameters();	
-		model.setupReactions();		
-		
-		setupForOutput(randomSeed, runNumber);
-		
+			setupSpecies(model);
+			setupParameters(model);	
+			setupReactions(model);		
+			setupConstraints(model);
+			setupForOutput(randomSeed, runNumber);
 		}
 		
 		bufferedTSDWriter.write("(" + "\"" + "time" + "\"");
@@ -205,13 +217,8 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		
 		for(ModelState model : submodels)
 		{
-			for (String speciesID : model.speciesIDSet) {				
-				//if(!replacements.containsKey(speciesID))
-				//{
+			for (String speciesID : model.speciesIDSet) 				
 					bufferedTSDWriter.write(", \"" + speciesID + "_" + model.ID + "\"");
-				//}
-			}
-			
 		}
 		
 		
@@ -240,10 +247,8 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 				HashSet<StringDoublePair> reactantStoichiometrySet = 
 				submodels[submodelIndex].reactionToReactantStoichiometrySetMap.get(affectedReactionID);
 				updatePropensities(submodels[submodelIndex], affectedReactionSet,affectedReactionID, reactantStoichiometrySet); 
-				
-			}
-
-	}
+			}		
+		}
 	}
 	
 	/**
@@ -270,7 +275,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		
 		if (notEnoughMoleculesFlag == false) {
 			
-			newPropensity = model.evaluateExpressionRecursive(model.reactionToFormulaMap.get(affectedReactionID));
+			newPropensity = evaluateExpressionRecursive(model, model.reactionToFormulaMap.get(affectedReactionID));
 			//newPropensity = CalculatePropensityIterative(affectedReactionID);
 		}
 		
@@ -279,7 +284,11 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		//add the difference of new v. old propensity to the total propensity
 		model.propensity += newPropensity - oldPropensity;
 		
+		//totalPropensity += newPropensity - oldPropensity;
+		
 		model.reactionToPropensityMap.put(affectedReactionID, newPropensity);
+		
+		
 	}	
 	
 	
@@ -346,6 +355,17 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 	 * clears data structures for new run
 	 */
 	protected void clear() {
+		topmodel.clear();
+		
+		for(int i = 0; i < this.numSubmodels; i++)
+			submodels[i].clear();
+		
+		for(String key : replacements.keySet())
+			replacements.put(key, initReplacementState.get(key));
+		
+		
+
+		/*
 		SBMLReader reader = new SBMLReader();
 		SBMLDocument document = reader.readSBML(SBMLFileName);
 		
@@ -353,6 +373,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		
 		setupSubmodels(document);
 		getComponentPortMap(document);
+	*/
 	}
 
 	/**
@@ -361,26 +382,26 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 	protected void setupForNewRun(int newRun) {
 
 		try {
-			topmodel.setupSpecies();
+			setupSpecies(topmodel);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		topmodel.setupParameters();		
-		topmodel.setupReactions();		
+		setupParameters(topmodel);		
+		setupReactions(topmodel);		
 		
 		setupForOutput(0, newRun);
 		
 		for(ModelState model : submodels)
 		{
 		try {
-			model.setupSpecies();
+			setupSpecies(model);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		model.setupParameters();	
-		model.setupReactions();		
+		setupParameters(model);	
+		setupReactions(model);		
 		
 		setupForOutput(0, newRun);
 		

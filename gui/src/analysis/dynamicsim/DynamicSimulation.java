@@ -74,6 +74,7 @@ public class DynamicSimulation {
 			e.printStackTrace();
 			return;
 		}		
+		double val1 = System.currentTimeMillis();
 		for (int run = 1; run <= runs; ++run) {
 			
 			if (cancelFlag == true)
@@ -84,11 +85,11 @@ public class DynamicSimulation {
 					(int) running.getSize().getHeight()));
 			if(simulator != null)
 			{
-			simulator.simulate();
-			simulator.clear();
-			hSimulator = null;
-			if ((runs - run) >= 1)
-				simulator.setupForNewRun(run + 1);
+				simulator.simulate();
+				simulator.clear();
+				hSimulator = null;
+				if ((runs - run) >= 1)
+					simulator.setupForNewRun(run + 1);
 			}
 			else if(hSimulator != null)
 			{
@@ -100,8 +101,17 @@ public class DynamicSimulation {
 			}
 //			//garbage collect every twenty-five runs
 //			if ((run % 25) == 0)
+//			{
 //				System.gc();
+//				System.runFinalization();
+//			}
 		}
+		System.gc();
+		System.runFinalization();
+		
+		double val2 = System.currentTimeMillis();
+		System.out.println("Simulation Time: " + (val2-val1)/1000);
+		
 		if (cancelFlag == false && statisticsFlag == true) {
 			
 			progressLabel.setText("Generating Statistics . . .");
