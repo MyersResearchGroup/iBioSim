@@ -20,9 +20,15 @@ public class Abstraction extends LhpnFile {
 
 	private HashMap<String, Integer> process_read = new HashMap<String, Integer>();
 	
-	private HashMap<String, ArrayList<Integer>> processWrite = new HashMap<String, ArrayList<Integer>>();
+	/**
+	 * A map from variable name to processes that write to the variable.
+	 */
+	private HashMap<String, ArrayList<Integer>> processWriteToVar = new HashMap<String, ArrayList<Integer>>();
 	
-	private HashMap<String, ArrayList<Integer>> processRead = new HashMap<String, ArrayList<Integer>>();
+	/**
+	 * A map from variable name to processes that read the variable.
+	 */
+	private HashMap<String, ArrayList<Integer>> processReadVar = new HashMap<String, ArrayList<Integer>>();
 
 	private ArrayList<Transition> read = new ArrayList<Transition>();
 
@@ -2722,16 +2728,20 @@ public class Abstraction extends LhpnFile {
 		return true;
 	}
 	
+	/**
+	 * This method walks on an LPN and decomposes the LPN into processes. 
+	 * Each process is the smallest strongly connected places and transitions. 
+	 * @return
+	 */
 	public boolean decomposeLpnIntoProcesses() {
-		for (Transition t : transitions.values()) { // Add all transitions to
-			// process structure
+		// Add all transitions to process structure
+		for (Transition t : transitions.values()) { 
 			process_trans.put(t, 0);
 		}
 		Integer i = 1; // The total number of processes
 		Integer process = 1; // The active process number
 		while (process_trans.containsValue(0)) {
-			Transition new_proc = new Transition(); // Find a transition that is
-			// not part of a process
+			Transition new_proc = new Transition(); // Find a transition that is not part of a process.
 			for (Transition t : process_trans.keySet()) {
 				if (process_trans.get(t) == 0) {
 					new_proc = t;
@@ -2793,7 +2803,7 @@ public class Abstraction extends LhpnFile {
 			if (!addTransProcess(new_proc, process))
 				return false;
 		}
-		assignProcessVariables();
+		assignProcessesToVariables();
 		return true;
 	}
 	
@@ -2802,11 +2812,11 @@ public class Abstraction extends LhpnFile {
 	}
 	
 	public HashMap<String,ArrayList<Integer>> getProcessRead() {
-		return processRead;
+		return processReadVar;
 	}
 	
 	public HashMap<String, ArrayList<Integer>> getProcessWrite() {
-		return processWrite;
+		return processWriteToVar;
 	}
 	
 	public void assignVariableProcess() {
@@ -2852,87 +2862,112 @@ public class Abstraction extends LhpnFile {
 	}
 	
 	// This method uses process_trans constructed by decomposeLpnIntoProcesses().
-	public void assignProcessVariables() {
-		for (String v : booleans.keySet()) { // / Add All variables to process
-			// structure
-			processWrite.put(v, new ArrayList<Integer>());
-			processRead.put(v, new ArrayList<Integer>());
+	public void assignProcessesToVariables() {
+		for (String v : booleans.keySet()) { // Add All variables to process structure
+			processWriteToVar.put(v, new ArrayList<Integer>());
+			processReadVar.put(v, new ArrayList<Integer>());
 		}
 		for (String v : continuous.keySet()) {
-			processWrite.put(v, new ArrayList<Integer>());
-			processRead.put(v, new ArrayList<Integer>());
+			processWriteToVar.put(v, new ArrayList<Integer>());
+			processReadVar.put(v, new ArrayList<Integer>());
 		}
 		for (String v : integers.keySet()) {
-			processWrite.put(v, new ArrayList<Integer>());
-			processRead.put(v, new ArrayList<Integer>());
+			processWriteToVar.put(v, new ArrayList<Integer>());
+			processReadVar.put(v, new ArrayList<Integer>());
 		}
 		
-		for (Transition t : transitions.values()) { // For each
-			// transition with assignments
+		for (Transition t : transitions.values()) {
 			HashMap<String, String> assignments = t.getAssignments();
 			HashMap<String, ExprTree> assignTrees = t.getAssignTrees();
-			for (String v : assignments.keySet()) { // The variables assigned on
-				// each transition
-				if ((processWrite.get(v).isEmpty())
-						|| (processWrite.get(v).size() == 1
-								&& processWrite.get(v).get(0).equals(process_trans.get(t)))) {
-					ArrayList<Integer> processIDSet = new ArrayList<Integer>(1);
-					processIDSet.add(process_trans.get(t));
-					processWrite.put(v, processIDSet); 
-					// variable locally written to a process
-				} else {
-					ArrayList<Integer> processIDSet = processWrite.get(v);
-					processIDSet.add(process_trans.get(t));
-					processWrite.put(v, processIDSet); 
-					//variable as globally written
-				}
+			for (String v : assignments.keySet()) { 
+				// Variables assigned on each transition
+				ArrayList<Integer> processIDSet = processWriteToVar.get(v);
+				processIDSet.add(process_trans.get(t));
+				processWriteToVar.put(v, processIDSet); 
 			}
+//			for (String v : assignments.keySet()) { 
+//				// Variables assigned on each transition
+//				if ((processWrite.get(v).isEmpty())
+//						|| (processWrite.get(v).size() == 1
+//								&& processWrite.get(v).get(0).equals(process_trans.get(t)))) {
+//					ArrayList<Integer> processIDSet = new ArrayList<Integer>(1);
+//					processIDSet.add(process_trans.get(t));
+//					processWrite.put(v, processIDSet); 
+//					// variable locally written to a process
+//				} else {
+//					ArrayList<Integer> processIDSet = processWrite.get(v);
+//					processIDSet.add(process_trans.get(t));
+//					processWrite.put(v, processIDSet); 
+//					//variable as globally written
+//				}
+//			}		
 			for (ExprTree e : assignTrees.values()) {
 				for (String v : e.getVars()) {
-					if ((processRead.get(v).isEmpty())
-							|| (processRead.get(v).size() == 1
-									&& processRead.get(v).get(0).equals(process_trans.get(t)))) {
-						ArrayList<Integer> processIDSet = new ArrayList<Integer>(1);
-						processIDSet.add(process_trans.get(t));
-						processRead.put(v, processIDSet); 
-						// variable locally read
-					} else {
-						ArrayList<Integer> processIDSet = processRead.get(v);
-						processIDSet.add(process_trans.get(t));
-						processRead.put(v, processIDSet); 
-						// variable globally read
-					}
+					ArrayList<Integer> processIDSet = processReadVar.get(v);
+					processIDSet.add(process_trans.get(t));
+					processReadVar.put(v, processIDSet); 						
 				}
 			}
+//			for (ExprTree e : assignTrees.values()) {
+//				for (String v : e.getVars()) {
+//					if ((processRead.get(v).isEmpty())
+//							|| (processRead.get(v).size() == 1
+//									&& processRead.get(v).get(0).equals(process_trans.get(t)))) {
+//						ArrayList<Integer> processIDSet = new ArrayList<Integer>(1);
+//						processIDSet.add(process_trans.get(t));
+//						processRead.put(v, processIDSet); 
+//						// variable locally read
+//					} else {
+//						ArrayList<Integer> processIDSet = processRead.get(v);
+//						processIDSet.add(process_trans.get(t));
+//						processRead.put(v, processIDSet); 
+//						// variable globally read
+//					}
+//				}
+//			}
 			ExprTree e = t.getEnablingTree();
 			if (e != null) {
 				for (String v : e.getVars()) {
-					if ((processRead.get(v).isEmpty())
-						|| (processRead.get(v).size() == 1
-							&& (processRead.get(v).get(0).equals(process_trans.get(t))))) {
-						ArrayList<Integer> processIDSet = new ArrayList<Integer>();
-						processIDSet.add(process_trans.get(t));
-						processRead.put(v, processIDSet); 
-						// variable locally read
-					} else {
-						ArrayList<Integer> processIDSet = processRead.get(v);
-						processIDSet.add(process_trans.get(t));
-						processRead.put(v, processIDSet); 
-						// variable globally read
-					}
+					ArrayList<Integer> processIDSet = processReadVar.get(v);
+					processIDSet.add(process_trans.get(t));
+					processReadVar.put(v, processIDSet); 
+				}
+			}
+//			if (e != null) {
+//				for (String v : e.getVars()) {
+//					if ((processRead.get(v).isEmpty())
+//						|| (processRead.get(v).size() == 1
+//							&& (processRead.get(v).get(0).equals(process_trans.get(t))))) {
+//						ArrayList<Integer> processIDSet = new ArrayList<Integer>();
+//						processIDSet.add(process_trans.get(t));
+//						processRead.put(v, processIDSet); 
+//						// variable locally read
+//					} else {
+//						ArrayList<Integer> processIDSet = processRead.get(v);
+//						processIDSet.add(process_trans.get(t));
+//						processRead.put(v, processIDSet); 
+//						// variable globally read
+//					}
+//				}
+//			}
+			
+			ExprTree delayTree = t.getDelayTree();
+			if (delayTree != null) {
+				for (String v : delayTree.getVars()) {
+					ArrayList<Integer> processIDSet = processReadVar.get(v);
+					processIDSet.add(process_trans.get(t));
+					processReadVar.put(v, processIDSet); 
 				}
 			}
 		}
 	}
 	
 	public boolean addTransProcess(Transition tran, Integer proc) {
-		process_trans.put(tran, proc); // Add the current transition to the
-		// process
+		process_trans.put(tran, proc); // Add the current transition to the process
 		for (Place p : tran.getPostset()) {
 			for (Transition t : p.getPostset()) {
 				if (process_trans.get(t) == 0)
-					addTransProcess(t, proc); // Add the postset of the
-				// transition to the same process recursively
+					addTransProcess(t, proc); // Add the postset of the transition to the same process recursively
 				else if (process_trans.get(t) != proc) {
 					System.out
 							.println("Error: Multiple Process Labels Added to the Same Transition");
