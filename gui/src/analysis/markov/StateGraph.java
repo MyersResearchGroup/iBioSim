@@ -1176,12 +1176,18 @@ public class StateGraph implements Runnable {
 		}
 		else {
 			ArrayList<Property> conditions = new ArrayList<Property>();
-			for (Property p : props) {
-				if (p.getProperty().substring(5, p.getProperty().length() - 1).contains("St=?{") || p.getProperty().substring(5, p.getProperty().length() - 1).contains("Pr=?{")) {
-					conditions.add(createProperty(p.getLabel(), removeNesting(tolerance, 100, p.getProperty().substring(5, p.getProperty().length() - 1), progress)));
-				}
-				else {
-					conditions.add(p);
+			if (props != null) {
+				for (Property p : props) {
+					if (p.getProperty().substring(5, p.getProperty().length() - 1).contains("St=?{")
+							|| p.getProperty().substring(5, p.getProperty().length() - 1).contains("Pr=?{")) {
+						conditions.add(createProperty(
+								p.getLabel(),
+								removeNesting(tolerance, 100, p.getProperty()
+										.substring(5, p.getProperty().length() - 1), progress)));
+					}
+					else {
+						conditions.add(p);
+					}
 				}
 			}
 			if (progress != null) {
