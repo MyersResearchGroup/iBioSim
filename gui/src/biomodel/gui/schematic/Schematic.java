@@ -556,11 +556,13 @@ public class Schematic extends JPanel implements ActionListener {
 			y = (int)(b.getY() - c.getY());
 		}
 		String id = events.eventEditor("Add", "",true);
-		bioModel.createEvent(id, x, y, true);
-		modelEditor.refresh();
-		graph.buildGraph();
-		modelEditor.setDirty(true);
-		bioModel.makeUndoPoint();
+		if (!id.equals("")) {
+			bioModel.createEvent(id, x, y, true);
+			modelEditor.refresh();
+			graph.buildGraph();
+			modelEditor.setDirty(true);
+			bioModel.makeUndoPoint();
+		}
 	}
 	
 	public void addRule(int x, int y) {
@@ -572,11 +574,13 @@ public class Schematic extends JPanel implements ActionListener {
 			y = (int)(b.getY() - c.getY());
 		}
 		String id = rules.ruleEditor("Add", "");
-		bioModel.createRule(id, x, y);
-		modelEditor.refresh();
-		graph.buildGraph();
-		modelEditor.setDirty(true);
-		bioModel.makeUndoPoint();
+		if (!id.equals("")) {
+			bioModel.createRule(id, x, y);
+			modelEditor.refresh();
+			graph.buildGraph();
+			modelEditor.setDirty(true);
+			bioModel.makeUndoPoint();
+		}
 	}
 	
 	public void addConstraint(int x, int y) {
@@ -588,11 +592,13 @@ public class Schematic extends JPanel implements ActionListener {
 			y = (int)(b.getY() - c.getY());
 		}
 		String id = constraints.constraintEditor("Add", "");
-		bioModel.createConstraint(id, x, y);
-		modelEditor.refresh();
-		graph.buildGraph();
-		modelEditor.setDirty(true);
-		bioModel.makeUndoPoint();
+		if (!id.equals("")) {
+			bioModel.createConstraint(id, x, y);
+			modelEditor.refresh();
+			graph.buildGraph();
+			modelEditor.setDirty(true);
+			bioModel.makeUndoPoint();
+		}
 	}
 	
 	public void addEvent(int x, int y) {
@@ -604,11 +610,13 @@ public class Schematic extends JPanel implements ActionListener {
 			y = (int)(b.getY() - c.getY());
 		}
 		String id = events.eventEditor("Add", "",false);
-		bioModel.createEvent(id, x, y, false);
-		modelEditor.refresh();
-		graph.buildGraph();
-		modelEditor.setDirty(true);
-		bioModel.makeUndoPoint();
+		if (!id.equals("")) {
+			bioModel.createEvent(id, x, y, false);
+			modelEditor.refresh();
+			graph.buildGraph();
+			modelEditor.setDirty(true);
+			bioModel.makeUndoPoint();
+		}
 	}
 	
 	public void addSelfInfluence(int x, int y) {
