@@ -1548,7 +1548,7 @@ public class StateGraph implements Runnable {
 	}
 	
 	public double getTotalMemoryUsed() {
-		return usedMemory;
+		return totalUsedMemory;
 	}
 	
 	public int getNumberOfTransitions() {

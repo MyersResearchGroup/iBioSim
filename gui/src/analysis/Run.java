@@ -1010,8 +1010,8 @@ public class Run implements ActionListener {
 						logFile.write("Number of transitions found: " + sg.getNumberOfTransitions() + "\n");
 						log.addText("Memory used during state exploration: " + sg.getMemoryUsed() + "MB");
 						logFile.write("Memory used during state exploration: " + sg.getMemoryUsed() + "MB\n");
-						log.addText("Total memory used: " + sg.getMemoryUsed() + "MB\n");
-						logFile.write("Total memory used: " + sg.getMemoryUsed() + "MB\n\n");
+						log.addText("Total memory used: " + sg.getTotalMemoryUsed() + "MB\n");
+						logFile.write("Total memory used: " + sg.getTotalMemoryUsed() + "MB\n\n");
 						if (sim.equals("reachability-analysis") && !sg.getStop()) {
 							time2 = System.nanoTime();
 							Object[] options = { "Yes", "No" };
