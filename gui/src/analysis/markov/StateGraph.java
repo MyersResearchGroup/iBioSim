@@ -36,6 +36,8 @@ public class StateGraph implements Runnable {
 	private int waitingThreads, threadCount;
 
 	private boolean phase1, phase2;
+	
+	private double usedMemory;
 
 	public StateGraph(LhpnFile lhpn) {
 		this.lhpn = lhpn;
@@ -48,6 +50,7 @@ public class StateGraph implements Runnable {
 	}
 
 	public void buildStateGraph(JProgressBar progress) {
+		long initialMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 		stateGraph = new ArrayList<State>();// HashMap<String,
 		// LinkedList<State>>();
 		HashMap<String, LinkedList<Integer>> stateLocations = new HashMap<String, LinkedList<Integer>>();
@@ -282,6 +285,7 @@ public class StateGraph implements Runnable {
 				}
 			}
 		}
+		usedMemory = ((double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() - initialMemory)) / 1000000;
 	}
 
 	public boolean canPerformMarkovianAnalysis() {
@@ -1535,6 +1539,10 @@ public class StateGraph implements Runnable {
 
 	public int getNumberOfStates() {
 		return stateGraph.size();
+	}
+	
+	public double getMemoryUsed() {
+		return usedMemory;
 	}
 	
 	public int getNumberOfTransitions() {
