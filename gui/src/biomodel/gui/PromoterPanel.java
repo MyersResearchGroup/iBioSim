@@ -386,7 +386,6 @@ public class PromoterPanel extends JPanel {
 				promoter.setName(fields.get(GlobalConstants.NAME).getValue());
 			}
 			String speciesType = typeBox.getSelectedItem().toString();
-			bioModel.createDirPort(promoter.getId(),speciesType);
 			boolean onPort = (speciesType.equals(GlobalConstants.INPUT)||speciesType.equals(GlobalConstants.OUTPUT));
 			
 			promoter.setSBOTerm(GlobalConstants.SBO_PROMOTER_BINDING_REGION);
@@ -462,6 +461,7 @@ public class PromoterPanel extends JPanel {
 					this.secondToLastUsedPromoter = oldName;
 					promoterNameChange = true;
 				}
+				bioModel.createDirPort(promoter.getId(),speciesType);
 				this.lastUsedPromoter = id;
 			}
 			modelEditor.setDirty(true);

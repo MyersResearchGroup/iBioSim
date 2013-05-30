@@ -839,7 +839,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				}
 			}
 			String speciesType = typeBox.getSelectedItem().toString();
-			bioModel.createDirPort(species.getId(),speciesType);
 			boolean onPort = (speciesType.equals(GlobalConstants.INPUT)||speciesType.equals(GlobalConstants.OUTPUT));
 			
 			if (degradation != null && !specDegradable.isSelected()) {
@@ -919,6 +918,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					components.addItem(submodel.getId() + " " + submodel.getModelRef() + " " + bioModel.getComponentPortMap(submodel.getId()));
 				}
 			}
+			bioModel.createDirPort(species.getId(),speciesType);
 
 			//gcm.addSpecies(newSpeciesID, property);
 			
