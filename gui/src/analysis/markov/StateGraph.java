@@ -37,7 +37,7 @@ public class StateGraph implements Runnable {
 
 	private boolean phase1, phase2;
 	
-	private double usedMemory;
+	private double totalUsedMemory, usedMemory;
 
 	public StateGraph(LhpnFile lhpn) {
 		this.lhpn = lhpn;
@@ -285,7 +285,9 @@ public class StateGraph implements Runnable {
 				}
 			}
 		}
-		usedMemory = ((double) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory() - initialMemory)) / 1000000;
+		totalUsedMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+		usedMemory = (totalUsedMemory - initialMemory) / 1000000;
+		totalUsedMemory = totalUsedMemory /1000000;
 	}
 
 	public boolean canPerformMarkovianAnalysis() {
@@ -1542,6 +1544,10 @@ public class StateGraph implements Runnable {
 	}
 	
 	public double getMemoryUsed() {
+		return usedMemory;
+	}
+	
+	public double getTotalMemoryUsed() {
 		return usedMemory;
 	}
 	
