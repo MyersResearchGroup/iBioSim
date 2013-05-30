@@ -351,11 +351,10 @@ public class SBOLAssemblyGraph {
 	
 	private LinkedList<String> parseInputHelper(ASTNode astNode) {
 		LinkedList<String> inputs = new LinkedList<String>();
+		if (!astNode.isOperator() && !astNode.isNumber())
+			inputs.add(astNode.getName());
 		for (long i = 0; i < astNode.getNumChildren(); i++) {
-			ASTNode childNode = astNode.getChild(i);
-			if (!childNode.isOperator() && !childNode.isNumber())
-				inputs.add(childNode.getName());
-			inputs.addAll(parseInputHelper(childNode));
+			inputs.addAll(parseInputHelper(astNode.getChild(i)));
 		}
 		return inputs;
 	}
@@ -427,6 +426,7 @@ public class SBOLAssemblyGraph {
 	}
 	
 	public void print() {
+		idNodes();
 		HashMap<SBOLAssemblyNode, String> nodeToState = new HashMap<SBOLAssemblyNode, String>();
 		int stateIndex = 0;
 		for (SBOLAssemblyNode assemblyNode : assemblyNodes) {
@@ -449,6 +449,7 @@ public class SBOLAssemblyGraph {
 	}
 	
 	public void print(List<SBOLAssemblyNode> orderedNodes) {
+		idNodes();
 		HashMap<SBOLAssemblyNode, String> nodeToState = new HashMap<SBOLAssemblyNode, String>();
 		int stateIndex = 0;
 		for (SBOLAssemblyNode assemblyNode : assemblyNodes) {
