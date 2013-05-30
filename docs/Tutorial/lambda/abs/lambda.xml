@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
+  <model metaid="iBioSim1" id="lambda" name="Created by iBioSim flatten routine" substanceUnits="mole" timeUnits="second" volumeUnits="litre" extentUnits="nanoMole">
+    <listOfFunctionDefinitions>
+      <functionDefinition id="total" name="Find total molecules">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <lambda>
+            <bvar>
+              <ci> x </ci>
+            </bvar>
+            <bvar>
+              <ci> y </ci>
+            </bvar>
+            <apply>
+              <plus/>
+              <ci> x </ci>
+              <apply>
+                <times/>
+                <cn type="integer"> 2 </cn>
+                <ci> y </ci>
+              </apply>
+            </apply>
+          </lambda>
+        </math>
+      </functionDefinition>
+      <functionDefinition id="uniform" name="Uniform distribution">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <lambda>
+            <bvar>
+              <ci> a </ci>
+            </bvar>
+            <bvar>
+              <ci> b </ci>
+            </bvar>
+            <apply>
+              <divide/>
+              <apply>
+                <plus/>
+                <ci> a </ci>
+                <ci> b </ci>
+              </apply>
+              <cn type="integer"> 2 </cn>
+            </apply>
+          </lambda>
+        </math>
+      </functionDefinition>
+    </listOfFunctionDefinitions>
+    <listOfUnitDefinitions>
+      <unitDefinition id="nanoMole">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="-9" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="microLitre">
+        <listOfUnits>
+          <unit kind="litre" exponent="1" scale="-3" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="u_1_second_n1">
+        <listOfUnits>
+          <unit kind="second" exponent="-1" scale="0" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="u_1_mole_n1">
+        <listOfUnits>
+          <unit kind="mole" exponent="-1" scale="0" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="u_1_mole_n1_1_second_n1">
+        <listOfUnits>
+          <unit kind="mole" exponent="-1" scale="0" multiplier="1"/>
+          <unit kind="second" exponent="-1" scale="0" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+    </listOfUnitDefinitions>
+    <listOfCompartments>
+      <compartment id="Cell" spatialDimensions="3" size="1" constant="true"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species metaid="iBioSim2" id="CI" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species metaid="iBioSim4" sboTerm="SBO:0000590" id="PR" compartment="Cell" initialAmount="2" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species metaid="iBioSim6" id="CII" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species metaid="iBioSim7" sboTerm="SBO:0000590" id="PRE" compartment="Cell" initialAmount="2" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter metaid="iBioSim10" id="kd" name="Degradation rate" value="0.0075" constant="true"/>
+      <parameter metaid="iBioSim11" id="kc_f" name="Forward complex formation rate" value="0.05" constant="true"/>
+      <parameter metaid="iBioSim12" id="kc_r" name="Reverse complex formation rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim13" id="nc" name="Stoichiometry of binding" value="2" constant="true"/>
+      <parameter metaid="iBioSim14" id="kr_f" name="Forward repression binding rate" value="0.5" constant="true"/>
+      <parameter metaid="iBioSim15" id="kr_r" name="Reverse repression binding rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim16" id="ka_f" name="Forward activation binding rate" value="0.0033" constant="true"/>
+      <parameter metaid="iBioSim17" id="ka_r" name="Reverse activation binding rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim18" id="ko_f" name="Forward RNAP binding rate" value="0.033" constant="true"/>
+      <parameter metaid="iBioSim19" id="ko_r" name="Reverse RNAP binding rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim20" id="kao_f" name="Forward activated RNAP binding rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim21" id="kao_r" name="Reverse activated RNAP binding rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim22" id="nr" name="Initial RNAP count" value="30" constant="true"/>
+      <parameter metaid="iBioSim23" id="ko" name="Open complex production rate" value="0.05" constant="true"/>
+      <parameter metaid="iBioSim24" id="kb" name="Basal production rate" value="0.0001" constant="true"/>
+      <parameter metaid="iBioSim25" id="ng" name="Initial promoter count" value="2" constant="true"/>
+      <parameter metaid="iBioSim26" id="np" name="Stoichiometry of production" value="10" constant="true"/>
+      <parameter metaid="iBioSim27" id="ka" name="Activated production rate" value="0.25" constant="true"/>
+      <parameter metaid="iBioSim9" id="CI_total" value="0" units="nanoMole" constant="false"/>
+    </listOfParameters>
+    <listOfReactions>
+      <reaction id="Degradation_CI" reversible="false" fast="false" compartment="Cell">
+        <listOfReactants>
+          <speciesReference species="CI" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> kd </ci>
+              <ci> CI </ci>
+            </apply>
+          </math>
+          <listOfLocalParameters>
+            <localParameter id="kd" value="0.0075" units="u_1_second_n1"/>
+          </listOfLocalParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="Degradation_CII" reversible="false" fast="false" compartment="Cell">
+        <listOfReactants>
+          <speciesReference species="CII" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> kd </ci>
+              <ci> CII </ci>
+            </apply>
+          </math>
+          <listOfLocalParameters>
+            <localParameter id="kd" value="0.0075" units="u_1_second_n1"/>
+          </listOfLocalParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="R_abstracted_production_PRE" reversible="false" fast="false" compartment="Cell">
+        <listOfProducts>
+          <speciesReference species="CI" stoichiometry="10" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="CII"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> ng__PRE </ci>
+                <apply>
+                  <plus/>
+                  <apply>
+                    <times/>
+                    <ci> kb__PRE </ci>
+                    <ci> Ko__PRE </ci>
+                    <ci> RNAP </ci>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <ci> ka__CII_PRE </ci>
+                    <ci> RNAP </ci>
+                    <apply>
+                      <power/>
+                      <apply>
+                        <times/>
+                        <ci> Ka__CII_PRE </ci>
+                        <ci> CII </ci>
+                      </apply>
+                      <ci> nc__CII_PRE </ci>
+                    </apply>
+                  </apply>
+                </apply>
+              </apply>
+              <apply>
+                <plus/>
+                <cn type="integer"> 1 </cn>
+                <apply>
+                  <times/>
+                  <ci> Ko__PRE </ci>
+                  <ci> RNAP </ci>
+                </apply>
+                <apply>
+                  <times/>
+                  <ci> Kao__PRE </ci>
+                  <ci> RNAP </ci>
+                  <apply>
+                    <power/>
+                    <apply>
+                      <times/>
+                      <ci> Ka__CII_PRE </ci>
+                      <ci> CII </ci>
+                    </apply>
+                    <ci> nc__CII_PRE </ci>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfLocalParameters>
+            <localParameter id="RNAP" value="30" units="u_1_mole_n1"/>
+            <localParameter id="ng__PRE" value="2" units="u_1_mole_n1"/>
+            <localParameter id="kb__PRE" value="4e-05" units="u_1_second_n1"/>
+            <localParameter id="Ko__PRE" value="0.01" units="u_1_mole_n1"/>
+            <localParameter id="Kao__PRE" value="1" units="u_1_mole_n1"/>
+            <localParameter id="nc__CII_PRE" value="1" units="dimensionless"/>
+            <localParameter id="Ka__CII_PRE" value="0.00161" units="u_1_mole_n1"/>
+            <localParameter id="ka__CII_PRE" value="0.015" units="u_1_second_n1"/>
+          </listOfLocalParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="R_abstracted_production_PR" reversible="false" fast="false" compartment="Cell">
+        <listOfProducts>
+          <speciesReference species="CII" stoichiometry="10" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="CI"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> ko__PR </ci>
+                <ci> ng__PR </ci>
+                <ci> Ko__PR </ci>
+                <ci> RNAP </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <cn type="integer"> 1 </cn>
+                <apply>
+                  <times/>
+                  <ci> Ko__PR </ci>
+                  <ci> RNAP </ci>
+                </apply>
+                <apply>
+                  <power/>
+                  <apply>
+                    <times/>
+                    <ci> Kr__CI2_PR </ci>
+                    <apply>
+                      <power/>
+                      <apply>
+                        <divide/>
+                        <ci> kf_c__CI2 </ci>
+                        <apply>
+                          <plus/>
+                          <ci> kr_c__CI2 </ci>
+                          <ci> kd__CI2 </ci>
+                        </apply>
+                      </apply>
+                      <apply>
+                        <minus/>
+                        <ci> nc__CI_CI2 </ci>
+                        <cn type="integer"> 1 </cn>
+                      </apply>
+                    </apply>
+                    <apply>
+                      <power/>
+                      <ci> CI </ci>
+                      <ci> nc__CI_CI2 </ci>
+                    </apply>
+                  </apply>
+                  <ci> nc__CI2_PR </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfLocalParameters>
+            <localParameter id="RNAP" value="30" units="u_1_mole_n1"/>
+            <localParameter id="ng__PR" value="2" units="u_1_mole_n1"/>
+            <localParameter id="Ko__PR" value="0.69422" units="u_1_mole_n1"/>
+            <localParameter id="ko__PR" value="0.014" units="u_1_second_n1"/>
+            <localParameter id="kf_c__CI2" value="0.1" units="u_1_mole_n1_1_second_n1"/>
+            <localParameter id="kd__CI2" value="0.0075" units="u_1_second_n1"/>
+            <localParameter id="kr_c__CI2" value="1" units="u_1_second_n1"/>
+            <localParameter id="nc__CI_CI2" value="2" units="dimensionless"/>
+            <localParameter id="nc__CI2_PR" value="1" units="dimensionless"/>
+            <localParameter id="Kr__CI2_PR" value="0.2165" units="u_1_mole_n1"/>
+          </listOfLocalParameters>
+        </kineticLaw>
+      </reaction>
+    </listOfReactions>
+  </model>
+</sbml>

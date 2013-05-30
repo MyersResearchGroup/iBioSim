@@ -1,0 +1,6 @@
+Executing:
+reb2sac --target.encoding=gillespie /Users/myers/research/nobackup/workspace/BioSim/docs/Tutorial/lambda/abs/lambda.xml
+
+Total Simulation Time: 1.605304 second for lambda abs
+
+

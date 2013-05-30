@@ -1,0 +1,744 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1" level="3" version="1" layout:required="false" comp:required="true">
+  <model metaid="iBioSim1" id="lambda" substanceUnits="nanoMole" timeUnits="second" volumeUnits="microLitre" extentUnits="nanoMole">
+    <listOfFunctionDefinitions>
+      <functionDefinition id="total" name="Find total molecules">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <lambda>
+            <bvar>
+              <ci> x </ci>
+            </bvar>
+            <bvar>
+              <ci> y </ci>
+            </bvar>
+            <apply>
+              <plus/>
+              <ci> x </ci>
+              <apply>
+                <times/>
+                <cn type="integer"> 2 </cn>
+                <ci> y </ci>
+              </apply>
+            </apply>
+          </lambda>
+        </math>
+      </functionDefinition>
+      <functionDefinition id="uniform" name="Uniform distribution">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <lambda>
+            <bvar>
+              <ci> a </ci>
+            </bvar>
+            <bvar>
+              <ci> b </ci>
+            </bvar>
+            <apply>
+              <divide/>
+              <apply>
+                <plus/>
+                <ci> a </ci>
+                <ci> b </ci>
+              </apply>
+              <cn type="integer"> 2 </cn>
+            </apply>
+          </lambda>
+        </math>
+      </functionDefinition>
+    </listOfFunctionDefinitions>
+    <listOfUnitDefinitions>
+      <unitDefinition id="nanoMole">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="-9" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="microLitre">
+        <listOfUnits>
+          <unit kind="litre" exponent="1" scale="-3" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+    </listOfUnitDefinitions>
+    <listOfCompartments>
+      <compartment id="Cell" spatialDimensions="3" size="1" constant="true"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species metaid="iBioSim2" id="CI" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species metaid="iBioSim3" id="CI2" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species metaid="iBioSim4" sboTerm="SBO:0000590" id="PR" compartment="Cell" initialAmount="2" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species metaid="iBioSim6" id="CII" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species metaid="iBioSim7" sboTerm="SBO:0000590" id="PRE" compartment="Cell" initialAmount="2" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter metaid="iBioSim10" id="kd" name="Degradation rate" value="0.0075" constant="true"/>
+      <parameter metaid="iBioSim11" id="kc_f" name="Forward complex formation rate" value="0.05" constant="true"/>
+      <parameter metaid="iBioSim12" id="kc_r" name="Reverse complex formation rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim13" id="nc" name="Stoichiometry of binding" value="2" constant="true"/>
+      <parameter metaid="iBioSim14" id="kr_f" name="Forward repression binding rate" value="0.5" constant="true"/>
+      <parameter metaid="iBioSim15" id="kr_r" name="Reverse repression binding rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim16" id="ka_f" name="Forward activation binding rate" value="0.0033" constant="true"/>
+      <parameter metaid="iBioSim17" id="ka_r" name="Reverse activation binding rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim18" id="ko_f" name="Forward RNAP binding rate" value="0.033" constant="true"/>
+      <parameter metaid="iBioSim19" id="ko_r" name="Reverse RNAP binding rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim20" id="kao_f" name="Forward activated RNAP binding rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim21" id="kao_r" name="Reverse activated RNAP binding rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim22" id="nr" name="Initial RNAP count" value="30" constant="true"/>
+      <parameter metaid="iBioSim23" id="ko" name="Open complex production rate" value="0.05" constant="true"/>
+      <parameter metaid="iBioSim24" id="kb" name="Basal production rate" value="0.0001" constant="true"/>
+      <parameter metaid="iBioSim25" id="ng" name="Initial promoter count" value="2" constant="true"/>
+      <parameter metaid="iBioSim26" id="np" name="Stoichiometry of production" value="10" constant="true"/>
+      <parameter metaid="iBioSim27" id="ka" name="Activated production rate" value="0.25" constant="true"/>
+      <parameter metaid="iBioSim9" id="CI_total" value="0" units="nanoMole" constant="false"/>
+    </listOfParameters>
+    <listOfRules>
+      <assignmentRule metaid="Total" variable="CI_total">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <ci> total </ci>
+            <ci> CI </ci>
+            <ci> CI2 </ci>
+          </apply>
+        </math>
+      </assignmentRule>
+    </listOfRules>
+    <listOfConstraints>
+      <constraint metaid="CI20">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <leq/>
+            <ci> CI </ci>
+            <cn type="integer"> 20 </cn>
+          </apply>
+        </math>
+      </constraint>
+      <constraint metaid="CII50">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <leq/>
+            <ci> CII </ci>
+            <cn type="integer"> 50 </cn>
+          </apply>
+        </math>
+      </constraint>
+    </listOfConstraints>
+    <listOfReactions>
+      <reaction metaid="iBioSim28" sboTerm="SBO:0000179" id="Degradation_CI" reversible="false" fast="false" compartment="Cell">
+        <listOfReactants>
+          <speciesReference species="CI" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> kd </ci>
+              <ci> CI </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="iBioSim29" sboTerm="SBO:0000177" id="Complex_CI2" reversible="true" fast="false" compartment="Cell">
+        <listOfReactants>
+          <speciesReference species="CI" stoichiometry="2" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="CI2" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <minus/>
+              <apply>
+                <times/>
+                <ci> kc_f </ci>
+                <apply>
+                  <power/>
+                  <ci> CI </ci>
+                  <ci> nc </ci>
+                </apply>
+              </apply>
+              <apply>
+                <times/>
+                <ci> kc_r </ci>
+                <ci> CI2 </ci>
+              </apply>
+            </apply>
+          </math>
+          <listOfLocalParameters>
+            <localParameter id="kc_f" value="0.1"/>
+            <localParameter id="kc_r" value="1"/>
+          </listOfLocalParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="iBioSim30" sboTerm="SBO:0000179" id="Degradation_CI2" reversible="false" fast="false" compartment="Cell">
+        <listOfReactants>
+          <speciesReference species="CI2" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> kd </ci>
+              <ci> CI2 </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="iBioSim5" sboTerm="SBO:0000589" id="Production_PR" reversible="false" fast="false" compartment="Cell">
+        <listOfProducts>
+          <speciesReference species="CII" stoichiometry="10" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference sboTerm="SBO:0000598" species="PR"/>
+          <modifierSpeciesReference sboTerm="SBO:0000020" species="CI2"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> PR </ci>
+                <ci> ko </ci>
+                <apply>
+                  <divide/>
+                  <ci> ko_f </ci>
+                  <ci> ko_r </ci>
+                </apply>
+                <ci> nr </ci>
+              </apply>
+              <apply>
+                <plus/>
+                <cn type="integer"> 1 </cn>
+                <apply>
+                  <times/>
+                  <apply>
+                    <divide/>
+                    <ci> ko_f </ci>
+                    <ci> ko_r </ci>
+                  </apply>
+                  <ci> nr </ci>
+                </apply>
+                <apply>
+                  <power/>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <divide/>
+                      <ci> kr_CI2_f </ci>
+                      <ci> kr_CI2_r </ci>
+                    </apply>
+                    <ci> CI2 </ci>
+                  </apply>
+                  <ci> nc_CI2_r </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfLocalParameters>
+            <localParameter id="ko" value="0.014"/>
+            <localParameter id="ko_f" value="0.69422"/>
+            <localParameter id="ko_r" value="1"/>
+            <localParameter id="nc_CI2_r" value="1"/>
+            <localParameter id="kr_CI2_f" value="0.2165"/>
+            <localParameter id="kr_CI2_r" value="1"/>
+          </listOfLocalParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="iBioSim31" sboTerm="SBO:0000179" id="Degradation_CII" reversible="false" fast="false" compartment="Cell">
+        <listOfReactants>
+          <speciesReference species="CII" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> kd </ci>
+              <ci> CII </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="iBioSim8" sboTerm="SBO:0000589" id="Production_PRE" reversible="false" fast="false" compartment="Cell">
+        <listOfProducts>
+          <speciesReference species="CI" stoichiometry="10" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference sboTerm="SBO:0000598" species="PRE"/>
+          <modifierSpeciesReference sboTerm="SBO:0000459" species="CII"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> PRE </ci>
+                <apply>
+                  <plus/>
+                  <apply>
+                    <times/>
+                    <ci> kb </ci>
+                    <apply>
+                      <divide/>
+                      <ci> ko_f </ci>
+                      <ci> ko_r </ci>
+                    </apply>
+                    <ci> nr </ci>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <ci> ka </ci>
+                    <apply>
+                      <divide/>
+                      <ci> kao_f </ci>
+                      <ci> kao_r </ci>
+                    </apply>
+                    <ci> nr </ci>
+                    <apply>
+                      <power/>
+                      <apply>
+                        <times/>
+                        <apply>
+                          <divide/>
+                          <ci> ka_CII_f </ci>
+                          <ci> ka_CII_r </ci>
+                        </apply>
+                        <ci> CII </ci>
+                      </apply>
+                      <ci> nc_CII_a </ci>
+                    </apply>
+                  </apply>
+                </apply>
+              </apply>
+              <apply>
+                <plus/>
+                <cn type="integer"> 1 </cn>
+                <apply>
+                  <times/>
+                  <apply>
+                    <divide/>
+                    <ci> ko_f </ci>
+                    <ci> ko_r </ci>
+                  </apply>
+                  <ci> nr </ci>
+                </apply>
+                <apply>
+                  <times/>
+                  <apply>
+                    <divide/>
+                    <ci> kao_f </ci>
+                    <ci> kao_r </ci>
+                  </apply>
+                  <ci> nr </ci>
+                  <apply>
+                    <power/>
+                    <apply>
+                      <times/>
+                      <apply>
+                        <divide/>
+                        <ci> ka_CII_f </ci>
+                        <ci> ka_CII_r </ci>
+                      </apply>
+                      <ci> CII </ci>
+                    </apply>
+                    <ci> nc_CII_a </ci>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+          <listOfLocalParameters>
+            <localParameter id="kb" value="4e-05"/>
+            <localParameter id="ka" value="0.015"/>
+            <localParameter id="ko_f" value="0.01"/>
+            <localParameter id="ko_r" value="1"/>
+            <localParameter id="nc_CII_a" value="1"/>
+            <localParameter id="ka_CII_f" value="0.00161"/>
+            <localParameter id="ka_CII_r" value="1"/>
+          </listOfLocalParameters>
+        </kineticLaw>
+      </reaction>
+    </listOfReactions>
+    <listOfEvents>
+      <event id="CellDivision" useValuesFromTriggerTime="false">
+        <annotation>
+          <ibiosim:ibiosim xmlns:ibiosim="http://www.fakeuri.com" ibiosim:type="Symmetric Division"/>
+        </annotation>
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <true/>
+          </math>
+        </trigger>
+        <delay>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 2100 </cn>
+          </math>
+        </delay>
+        <listOfEventAssignments>
+          <eventAssignment variable="CI">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <apply>
+                <divide/>
+                <ci> CI </ci>
+                <apply>
+                  <ci> uniform </ci>
+                  <cn type="integer"> 1 </cn>
+                  <cn type="integer"> 2 </cn>
+                </apply>
+              </apply>
+            </math>
+          </eventAssignment>
+          <eventAssignment variable="CI2">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <apply>
+                <divide/>
+                <ci> CI2 </ci>
+                <apply>
+                  <ci> uniform </ci>
+                  <cn type="integer"> 1 </cn>
+                  <cn type="integer"> 2 </cn>
+                </apply>
+              </apply>
+            </math>
+          </eventAssignment>
+          <eventAssignment variable="CII">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <apply>
+                <divide/>
+                <ci> CII </ci>
+                <apply>
+                  <ci> uniform </ci>
+                  <cn type="integer"> 1 </cn>
+                  <cn type="integer"> 2 </cn>
+                </apply>
+              </apply>
+            </math>
+          </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+    </listOfEvents>
+    <layout:listOfLayouts xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1">
+      <layout:layout layout:id="iBioSim">
+        <layout:dimensions layout:width="0" layout:height="0"/>
+        <layout:listOfCompartmentGlyphs>
+          <layout:compartmentGlyph layout:id="Glyph__Cell" layout:compartment="Cell">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:width="1070" layout:height="425"/>
+            </layout:boundingBox>
+          </layout:compartmentGlyph>
+        </layout:listOfCompartmentGlyphs>
+        <layout:listOfSpeciesGlyphs>
+          <layout:speciesGlyph layout:id="Glyph__CI" layout:species="CI">
+            <layout:boundingBox>
+              <layout:position layout:x="86" layout:y="50"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__CI2" layout:species="CI2">
+            <layout:boundingBox>
+              <layout:position layout:x="103" layout:y="202"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__PR" layout:species="PR">
+            <layout:boundingBox>
+              <layout:position layout:x="150" layout:y="340"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="Glyph__CII" layout:species="CII">
+            <layout:boundingBox>
+              <layout:position layout:x="320" layout:y="200"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+        </layout:listOfSpeciesGlyphs>
+        <layout:listOfReactionGlyphs>
+          <layout:reactionGlyph layout:id="Glyph__CI__complex__CI2">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:width="0" layout:height="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="Glyph__CI__product__CI2" layout:speciesGlyph="Glyph__CI2" layout:role="product">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="LineSegment">
+                      <layout:start layout:x="136" layout:y="65"/>
+                      <layout:end layout:x="153" layout:y="217"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__PR__Production__CII">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:width="0" layout:height="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="Glyph__PR__product__CII" layout:speciesGlyph="Glyph__CII" layout:role="product">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="LineSegment">
+                      <layout:start layout:x="200" layout:y="355"/>
+                      <layout:end layout:x="370" layout:y="215"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__CI2__repression__PR">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:width="0" layout:height="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="Glyph__CI2__product__PR" layout:speciesGlyph="Glyph__PR" layout:role="product">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="LineSegment">
+                      <layout:start layout:x="153" layout:y="217"/>
+                      <layout:end layout:x="200" layout:y="355"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="Glyph__CII__repression__CI">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:width="0" layout:height="0"/>
+            </layout:boundingBox>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="Glyph__CII__product__CI" layout:speciesGlyph="Glyph__CI" layout:role="product">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="LineSegment">
+                      <layout:start layout:x="370" layout:y="215"/>
+                      <layout:end layout:x="136" layout:y="65"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+        </layout:listOfReactionGlyphs>
+        <layout:listOfTextGlyphs>
+          <layout:textGlyph layout:id="TextGlyph__Cell" layout:text="Cell" layout:graphicalObject="Glyph__Cell">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0"/>
+              <layout:dimensions layout:width="1070" layout:height="425"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__CI" layout:text="CI" layout:graphicalObject="Glyph__CI">
+            <layout:boundingBox>
+              <layout:position layout:x="86" layout:y="50"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__CI2" layout:text="CI2" layout:graphicalObject="Glyph__CI2">
+            <layout:boundingBox>
+              <layout:position layout:x="103" layout:y="202"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__PR" layout:text="PR" layout:graphicalObject="Glyph__PR">
+            <layout:boundingBox>
+              <layout:position layout:x="150" layout:y="340"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__CII" layout:text="CII" layout:graphicalObject="Glyph__CII">
+            <layout:boundingBox>
+              <layout:position layout:x="320" layout:y="200"/>
+              <layout:dimensions layout:width="100" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__CI_total" layout:text="CI_total" layout:graphicalObject="Glyph__CI_total">
+            <layout:boundingBox>
+              <layout:position layout:x="30" layout:y="120"/>
+              <layout:dimensions layout:width="30" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__Total" layout:text="Total" layout:graphicalObject="Glyph__Total">
+            <layout:boundingBox>
+              <layout:position layout:x="20" layout:y="200"/>
+              <layout:dimensions layout:width="50" layout:height="50"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__CI20" layout:text="CI20" layout:graphicalObject="Glyph__CI20">
+            <layout:boundingBox>
+              <layout:position layout:x="310" layout:y="20"/>
+              <layout:dimensions layout:width="50" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__CellDivision" layout:text="CellDivision" layout:graphicalObject="Glyph__CellDivision">
+            <layout:boundingBox>
+              <layout:position layout:x="350" layout:y="90"/>
+              <layout:dimensions layout:width="75" layout:height="25"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__CII50" layout:text="CII50" layout:graphicalObject="Glyph__CII50">
+            <layout:boundingBox>
+              <layout:position layout:x="488" layout:y="174"/>
+              <layout:dimensions layout:width="50" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+        </layout:listOfTextGlyphs>
+        <layout:listOfAdditionalGraphicalObjects>
+          <layout:generalGlyph layout:id="Glyph__CI_total" layout:reference="CI_total">
+            <layout:boundingBox>
+              <layout:position layout:x="30" layout:y="120"/>
+              <layout:dimensions layout:width="30" layout:height="30"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__Total" layout:reference="Total">
+            <layout:boundingBox>
+              <layout:position layout:x="20" layout:y="200"/>
+              <layout:dimensions layout:width="50" layout:height="50"/>
+            </layout:boundingBox>
+            <layout:listOfReferenceGlyphs>
+              <layout:referenceGlyph layout:id="Glyph__Total__substrate__CI" layout:glyph="Glyph__CI" layout:role="substrate">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="LineSegment">
+                      <layout:start layout:x="136" layout:y="65"/>
+                      <layout:end layout:x="45" layout:y="225"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:referenceGlyph>
+              <layout:referenceGlyph layout:id="Glyph__Total__substrate__CI2" layout:glyph="Glyph__CI2" layout:role="substrate">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="LineSegment">
+                      <layout:start layout:x="153" layout:y="217"/>
+                      <layout:end layout:x="45" layout:y="225"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:referenceGlyph>
+              <layout:referenceGlyph layout:id="Glyph__Total__product__CI_total" layout:glyph="Glyph__CI_total" layout:role="product">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="LineSegment">
+                      <layout:start layout:x="45" layout:y="225"/>
+                      <layout:end layout:x="45" layout:y="135"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:referenceGlyph>
+            </layout:listOfReferenceGlyphs>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__CI20" layout:reference="CI20">
+            <layout:boundingBox>
+              <layout:position layout:x="310" layout:y="20"/>
+              <layout:dimensions layout:width="50" layout:height="40"/>
+            </layout:boundingBox>
+            <layout:listOfReferenceGlyphs>
+              <layout:referenceGlyph layout:id="Glyph__CI20__substrate__CI" layout:glyph="Glyph__CI" layout:role="substrate">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="LineSegment">
+                      <layout:start layout:x="136" layout:y="65"/>
+                      <layout:end layout:x="335" layout:y="40"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:referenceGlyph>
+            </layout:listOfReferenceGlyphs>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__CellDivision" layout:reference="CellDivision">
+            <layout:boundingBox>
+              <layout:position layout:x="350" layout:y="90"/>
+              <layout:dimensions layout:width="75" layout:height="25"/>
+            </layout:boundingBox>
+            <layout:listOfReferenceGlyphs>
+              <layout:referenceGlyph layout:id="Glyph__CellDivision__substrate__CI" layout:glyph="Glyph__CI" layout:role="substrate">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="LineSegment">
+                      <layout:start layout:x="136" layout:y="65"/>
+                      <layout:end layout:x="387.5" layout:y="102.5"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:referenceGlyph>
+              <layout:referenceGlyph layout:id="Glyph__CellDivision__product__CI" layout:glyph="Glyph__CI" layout:role="product">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="LineSegment">
+                      <layout:start layout:x="387.5" layout:y="102.5"/>
+                      <layout:end layout:x="136" layout:y="65"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:referenceGlyph>
+              <layout:referenceGlyph layout:id="Glyph__CellDivision__substrate__CI2" layout:glyph="Glyph__CI2" layout:role="substrate">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="LineSegment">
+                      <layout:start layout:x="153" layout:y="217"/>
+                      <layout:end layout:x="387.5" layout:y="102.5"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:referenceGlyph>
+              <layout:referenceGlyph layout:id="Glyph__CellDivision__product__CI2" layout:glyph="Glyph__CI2" layout:role="product">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="LineSegment">
+                      <layout:start layout:x="387.5" layout:y="102.5"/>
+                      <layout:end layout:x="153" layout:y="217"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:referenceGlyph>
+              <layout:referenceGlyph layout:id="Glyph__CellDivision__substrate__CII" layout:glyph="Glyph__CII" layout:role="substrate">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="LineSegment">
+                      <layout:start layout:x="370" layout:y="215"/>
+                      <layout:end layout:x="387.5" layout:y="102.5"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:referenceGlyph>
+              <layout:referenceGlyph layout:id="Glyph__CellDivision__product__CII" layout:glyph="Glyph__CII" layout:role="product">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="LineSegment">
+                      <layout:start layout:x="387.5" layout:y="102.5"/>
+                      <layout:end layout:x="370" layout:y="215"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:referenceGlyph>
+            </layout:listOfReferenceGlyphs>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__CII50" layout:reference="CII50">
+            <layout:boundingBox>
+              <layout:position layout:x="488" layout:y="174"/>
+              <layout:dimensions layout:width="50" layout:height="40"/>
+            </layout:boundingBox>
+            <layout:listOfReferenceGlyphs>
+              <layout:referenceGlyph layout:id="Glyph__CII50__substrate__CII" layout:glyph="Glyph__CII" layout:role="substrate">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="LineSegment">
+                      <layout:start layout:x="370" layout:y="215"/>
+                      <layout:end layout:x="513" layout:y="194"/>
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:referenceGlyph>
+            </layout:listOfReferenceGlyphs>
+          </layout:generalGlyph>
+        </layout:listOfAdditionalGraphicalObjects>
+      </layout:layout>
+    </layout:listOfLayouts>
+  </model>
+</sbml>

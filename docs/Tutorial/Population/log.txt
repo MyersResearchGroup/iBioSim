@@ -1,0 +1,6 @@
+Executing:
+reb2sac --target.encoding=gillespie /Users/myers/research/nobackup/workspace/BioSim/docs//Tutorial/Population/Population.xml
+
+Total Simulation Time: 4.703422 seconds for Population
+
+
