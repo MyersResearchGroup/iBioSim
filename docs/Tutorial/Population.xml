@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1" level="3" version="1" layout:required="false" comp:required="true">
+  <model metaid="iBioSim1" id="Population">
+    <listOfCompartments>
+      <compartment id="Grid" spatialDimensions="3" size="1" constant="true">
+        <annotation>
+          <ibiosim:ibiosim xmlns:ibiosim="http://www.fakeuri.com" ibiosim:grid="(5,5)"/>
+        </annotation>
+      </compartment>
+    </listOfCompartments>
+    <listOfParameters>
+      <parameter metaid="iBioSim2" id="kr_f" name="Forward repression binding rate" value="0.5" constant="true"/>
+      <parameter metaid="iBioSim3" id="kr_r" name="Reverse repression binding rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim4" id="ka_f" name="Forward activation binding rate" value="0.0033" constant="true"/>
+      <parameter metaid="iBioSim5" id="ka_r" name="Reverse activation binding rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim6" id="ko_f" name="Forward RNAP binding rate" value="0.033" constant="true"/>
+      <parameter metaid="iBioSim7" id="ko_r" name="Reverse RNAP binding rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim8" id="kao_f" name="Forward activated RNAP binding rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim9" id="kao_r" name="Reverse activated RNAP binding rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim10" id="kc_f" name="Forward complex formation rate" value="0.05" constant="true"/>
+      <parameter metaid="iBioSim11" id="kc_r" name="Reverse complex formation rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim12" id="kmdiff_f" name="Forward membrane diffusion rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim13" id="kmdiff_r" name="Reverse membrane diffusion rate" value="0.01" constant="true"/>
+      <parameter metaid="iBioSim14" id="kd" name="Degradation rate" value="0.0075" constant="true"/>
+      <parameter metaid="iBioSim15" id="kecd" name="Extracellular degradation rate" value="0.005" constant="true"/>
+      <parameter metaid="iBioSim16" id="nc" name="Stoichiometry of binding" value="2" constant="true"/>
+      <parameter metaid="iBioSim17" id="nr" name="Initial RNAP count" value="30" constant="true"/>
+      <parameter metaid="iBioSim18" id="ko" name="Open complex production rate" value="0.05" constant="true"/>
+      <parameter metaid="iBioSim19" id="kb" name="Basal production rate" value="0.0001" constant="true"/>
+      <parameter metaid="iBioSim20" id="ng" name="Initial promoter count" value="2" constant="true"/>
+      <parameter metaid="iBioSim21" id="np" name="Stoichiometry of production" value="10" constant="true"/>
+      <parameter metaid="iBioSim22" id="ka" name="Activated production rate" value="0.25" constant="true"/>
+      <parameter metaid="iBioSim23" id="kecdiff" name="Extracellular diffusion rate" value="1" constant="true"/>
+      <parameter id="lambda__locations" value="0" constant="false">
+        <annotation>
+          <array:array xmlns:array="http://www.fakeuri.com" array:C1="(0,0)" array:C2="(0,1)" array:C3="(0,2)" array:C4="(0,3)" array:C5="(0,4)" array:C6="(1,0)" array:C7="(1,1)" array:C8="(1,2)" array:C9="(1,3)" array:C10="(1,4)" array:C11="(2,0)" array:C12="(2,1)" array:C13="(2,2)" array:C14="(2,3)" array:C15="(2,4)" array:C16="(3,0)" array:C17="(3,1)" array:C18="(3,2)" array:C19="(3,3)" array:C20="(3,4)" array:C21="(4,0)" array:C22="(4,1)" array:C23="(4,2)" array:C24="(4,3)" array:C25="(4,4)"/>
+        </annotation>
+      </parameter>
+    </listOfParameters>
+    <layout:listOfLayouts xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1">
+      <layout:layout layout:id="iBioSim">
+        <layout:dimensions layout:width="0" layout:height="0"/>
+        <layout:listOfTextGlyphs>
+          <layout:textGlyph layout:id="TextGlyph__C1" layout:text="C1" layout:graphicalObject="Glyph__C1">
+            <layout:boundingBox>
+              <layout:position layout:x="30" layout:y="30"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__C2" layout:text="C2" layout:graphicalObject="Glyph__C2">
+            <layout:boundingBox>
+              <layout:position layout:x="140" layout:y="30"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__C3" layout:text="C3" layout:graphicalObject="Glyph__C3">
+            <layout:boundingBox>
+              <layout:position layout:x="250" layout:y="30"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__C4" layout:text="C4" layout:graphicalObject="Glyph__C4">
+            <layout:boundingBox>
+              <layout:position layout:x="360" layout:y="30"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__C5" layout:text="C5" layout:graphicalObject="Glyph__C5">
+            <layout:boundingBox>
+              <layout:position layout:x="470" layout:y="30"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__C6" layout:text="C6" layout:graphicalObject="Glyph__C6">
+            <layout:boundingBox>
+              <layout:position layout:x="30" layout:y="100"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__C7" layout:text="C7" layout:graphicalObject="Glyph__C7">
+            <layout:boundingBox>
+              <layout:position layout:x="140" layout:y="100"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__C8" layout:text="C8" layout:graphicalObject="Glyph__C8">
+            <layout:boundingBox>
+              <layout:position layout:x="250" layout:y="100"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__C9" layout:text="C9" layout:graphicalObject="Glyph__C9">
+            <layout:boundingBox>
+              <layout:position layout:x="360" layout:y="100"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__C10" layout:text="C10" layout:graphicalObject="Glyph__C10">
+            <layout:boundingBox>
+              <layout:position layout:x="470" layout:y="100"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__C11" layout:text="C11" layout:graphicalObject="Glyph__C11">
+            <layout:boundingBox>
+              <layout:position layout:x="30" layout:y="170"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__C12" layout:text="C12" layout:graphicalObject="Glyph__C12">
+            <layout:boundingBox>
+              <layout:position layout:x="140" layout:y="170"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__C13" layout:text="C13" layout:graphicalObject="Glyph__C13">
+            <layout:boundingBox>
+              <layout:position layout:x="250" layout:y="170"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__C14" layout:text="C14" layout:graphicalObject="Glyph__C14">
+            <layout:boundingBox>
+              <layout:position layout:x="360" layout:y="170"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__C15" layout:text="C15" layout:graphicalObject="Glyph__C15">
+            <layout:boundingBox>
+              <layout:position layout:x="470" layout:y="170"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__C16" layout:text="C16" layout:graphicalObject="Glyph__C16">
+            <layout:boundingBox>
+              <layout:position layout:x="30" layout:y="240"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__C17" layout:text="C17" layout:graphicalObject="Glyph__C17">
+            <layout:boundingBox>
+              <layout:position layout:x="140" layout:y="240"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__C18" layout:text="C18" layout:graphicalObject="Glyph__C18">
+            <layout:boundingBox>
+              <layout:position layout:x="250" layout:y="240"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__C19" layout:text="C19" layout:graphicalObject="Glyph__C19">
+            <layout:boundingBox>
+              <layout:position layout:x="360" layout:y="240"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__C20" layout:text="C20" layout:graphicalObject="Glyph__C20">
+            <layout:boundingBox>
+              <layout:position layout:x="470" layout:y="240"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__C21" layout:text="C21" layout:graphicalObject="Glyph__C21">
+            <layout:boundingBox>
+              <layout:position layout:x="30" layout:y="310"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__C22" layout:text="C22" layout:graphicalObject="Glyph__C22">
+            <layout:boundingBox>
+              <layout:position layout:x="140" layout:y="310"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__C23" layout:text="C23" layout:graphicalObject="Glyph__C23">
+            <layout:boundingBox>
+              <layout:position layout:x="250" layout:y="310"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__C24" layout:text="C24" layout:graphicalObject="Glyph__C24">
+            <layout:boundingBox>
+              <layout:position layout:x="360" layout:y="310"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:id="TextGlyph__C25" layout:text="C25" layout:graphicalObject="Glyph__C25">
+            <layout:boundingBox>
+              <layout:position layout:x="470" layout:y="310"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:textGlyph>
+        </layout:listOfTextGlyphs>
+        <layout:listOfAdditionalGraphicalObjects>
+          <layout:generalGlyph layout:id="Glyph__C1" layout:reference="C1">
+            <layout:boundingBox>
+              <layout:position layout:x="30" layout:y="30"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__C2" layout:reference="C2">
+            <layout:boundingBox>
+              <layout:position layout:x="140" layout:y="30"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__C3" layout:reference="C3">
+            <layout:boundingBox>
+              <layout:position layout:x="250" layout:y="30"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__C4" layout:reference="C4">
+            <layout:boundingBox>
+              <layout:position layout:x="360" layout:y="30"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__C5" layout:reference="C5">
+            <layout:boundingBox>
+              <layout:position layout:x="470" layout:y="30"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__C6" layout:reference="C6">
+            <layout:boundingBox>
+              <layout:position layout:x="30" layout:y="100"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__C7" layout:reference="C7">
+            <layout:boundingBox>
+              <layout:position layout:x="140" layout:y="100"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__C8" layout:reference="C8">
+            <layout:boundingBox>
+              <layout:position layout:x="250" layout:y="100"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__C9" layout:reference="C9">
+            <layout:boundingBox>
+              <layout:position layout:x="360" layout:y="100"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__C10" layout:reference="C10">
+            <layout:boundingBox>
+              <layout:position layout:x="470" layout:y="100"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__C11" layout:reference="C11">
+            <layout:boundingBox>
+              <layout:position layout:x="30" layout:y="170"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__C12" layout:reference="C12">
+            <layout:boundingBox>
+              <layout:position layout:x="140" layout:y="170"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__C13" layout:reference="C13">
+            <layout:boundingBox>
+              <layout:position layout:x="250" layout:y="170"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__C14" layout:reference="C14">
+            <layout:boundingBox>
+              <layout:position layout:x="360" layout:y="170"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__C15" layout:reference="C15">
+            <layout:boundingBox>
+              <layout:position layout:x="470" layout:y="170"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__C16" layout:reference="C16">
+            <layout:boundingBox>
+              <layout:position layout:x="30" layout:y="240"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__C17" layout:reference="C17">
+            <layout:boundingBox>
+              <layout:position layout:x="140" layout:y="240"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__C18" layout:reference="C18">
+            <layout:boundingBox>
+              <layout:position layout:x="250" layout:y="240"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__C19" layout:reference="C19">
+            <layout:boundingBox>
+              <layout:position layout:x="360" layout:y="240"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__C20" layout:reference="C20">
+            <layout:boundingBox>
+              <layout:position layout:x="470" layout:y="240"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__C21" layout:reference="C21">
+            <layout:boundingBox>
+              <layout:position layout:x="30" layout:y="310"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__C22" layout:reference="C22">
+            <layout:boundingBox>
+              <layout:position layout:x="140" layout:y="310"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__C23" layout:reference="C23">
+            <layout:boundingBox>
+              <layout:position layout:x="250" layout:y="310"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__C24" layout:reference="C24">
+            <layout:boundingBox>
+              <layout:position layout:x="360" layout:y="310"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+          <layout:generalGlyph layout:id="Glyph__C25" layout:reference="C25">
+            <layout:boundingBox>
+              <layout:position layout:x="470" layout:y="310"/>
+              <layout:dimensions layout:width="80" layout:height="40"/>
+            </layout:boundingBox>
+          </layout:generalGlyph>
+        </layout:listOfAdditionalGraphicalObjects>
+      </layout:layout>
+    </layout:listOfLayouts>
+    <comp:listOfSubmodels>
+      <comp:submodel comp:id="GRID__lambda" comp:modelRef="lambda">
+        <annotation>
+          <array:array xmlns:array="http://www.fakeuri.com" array:count="25"/>
+        </annotation>
+      </comp:submodel>
+    </comp:listOfSubmodels>
+  </model>
+  <comp:listOfExternalModelDefinitions>
+    <comp:externalModelDefinition comp:id="lambda" comp:source="file:lambda.xml" comp:md5="3cc58148874d948b0c625676fe373e63"/>
+  </comp:listOfExternalModelDefinitions>
+</sbml>

@@ -14,9 +14,9 @@
  
 
 
-<title> iBioSim Version 2.4 \ Tutorial</title>
+<title> iBioSim Version 2.5 \ Tutorial</title>
  
-<h1 align="center">iBioSim Version 2.4 <br />Tutorial </h1>
+<h1 align="center">iBioSim Version 2.5 <br />Tutorial </h1>
 
 <div class="p"><!----></div>
 
@@ -119,6 +119,14 @@ After you have created a project, you can create a new model to add to the proje
 </center>
 
 <div class="p"><!----></div>
+Compartments are the membrane-enclosed regions where species can be found and reactions take place.  <tt>iBioSim</tt> creates a default compartment initially with the ID of Cell.  If you click on the schematic within the Cell compartment, it brings up the compartment editor.  Uncheck the "Is Mapped to a Port".  This indicates that this compartment should be enclosing this model and not replaced when instantiated in a larger model.  Once you press OK, you will notice that the compartment now has rounded corners to indicate that this is membrane enclosed by the compartment Cell.
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/compartment.png" alt="screenshots/compartment.png" />
+</center>
+
+<div class="p"><!----></div>
 To add a chemical species, select the Add Species icon <img src="../gui/icons/modelview/add_species_selected.png" alt="../gui/icons/modelview/add_species_selected.png" /> and click on the schematic canvas.  This will drop a new species with default ID and other values.  You may change these defaults by clicking on the selection icon 
 <img src="../gui/icons/modelview/select_mode_selected.png" alt="../gui/icons/modelview/select_mode_selected.png" />, and
 double-clicking on the species to open the Species Editor.  In this case, let us change the ID to CI, and click on degrades checkbox.  We will leave all other values at their default values.  One thing that is important to note is that when this model is analyzed a default degradation reaction will be created which has a rate of 0.0075.  
@@ -129,7 +137,7 @@ double-clicking on the species to open the Species Editor.  In this case, let us
 </center>
 
 <div class="p"><!----></div>
-Add another species for the CI dimer molecule.  The next step is to add a complex-formation reaction to convert CI monomers into CI dimers.  Select the complex formation icon <img src="../gui/icons/modelview/bio_activation_selected.png" alt="../gui/icons/modelview/bio_activation_selected.png" />, highlight the CI species, and, while holding the mouse button, stretch the complex formation arc to the S2 species.  Next, edit this species to set its ID to CI2 and select that it degrades.  This species is created using a complex-formation reaction with an equilibrium constant of 0.1.  Change default to custom for the complex formation equilibrium and set it to this value as shown below.
+Add another species for the CI dimer molecule.  The next step is to add a complex-formation reaction to convert CI monomers into CI dimers.  Select the complex formation icon <img src="../gui/icons/modelview/bio_activation_selected.png" alt="../gui/icons/modelview/bio_activation_selected.png" />, highlight the CI species, and, while holding the mouse button, stretch the complex formation arc to the S1 species.  Next, edit this species to set its ID to CI2 and select that it degrades.  This species is created using a complex-formation reaction with an equilibrium constant of 0.1.  Change default to custom for the complex formation equilibrium and set it to this value as shown below.
 
 <div class="p"><!----></div>
 
@@ -191,7 +199,7 @@ Next, let's go look at some of the other model tabs.  Click on the Functions tab
 </center>
 
 <div class="p"><!----></div>
-Click on the Units tab.  Unit definitions allow the user to create custom units for use in models.  As an example, click Add Unit and enter the ID nanoMole.  A unit is defined using pre-defined base units.  Click on Add to List and find mole in the Kind combo box, and change the multiplier to 1e&#8722;9 to define a nanoMole in terms of moles. The exponent and multiplier are real numbers, and the scale is an integer that specifies the relationship between the derived unit and the base unit using the relation below:
+Click on the Units tab.  Unit definitions allow the user to create custom units for use in models.  As an example, click Add Unit and enter the ID nanoMole.  A unit is defined using pre-defined base units.  Click on Add to List and find mole in the Kind combo box, and change the scale to &#8722;9 to define a nanoMole in terms of moles. The exponent and multiplier are real numbers, and the scale is an integer that specifies the relationship between the derived unit and the base unit using the relation below:
 
 <br clear="all" /><table border="0" width="100%"><tr><td>
 <table border="0" cellspacing="0" cellpadding="0">
@@ -216,14 +224,6 @@ Next, click on the Schematic tab.  Then, click on the Model button to bring up a
 <div class="p"><!----></div>
 
 <center><img src="screenshots/ModelUnits.png" alt="screenshots/ModelUnits.png" />
-</center>
-
-<div class="p"><!----></div>
-Compartments are the membrane-enclosed regions where species can be found and reactions take place.  <tt>iBioSim</tt> creates a default compartment initially with the ID of Cell.  If you click on the schematic within the Cell compartment, it brings up the compartment editor.  Uncheck the "Is Mapped to a Port".  This indicates that this port should be enclosing this model and not replaced when instantiated in a larger model.  Once you press OK, you will notice that the compartment now has rounded corners to indicate that this is membrane enclosed by the compartment Cell.
-
-<div class="p"><!----></div>
-
-<center><img src="screenshots/compartment.png" alt="screenshots/compartment.png" />
 </center>
 
 <div class="p"><!----></div>
@@ -271,7 +271,7 @@ Next, let's add a constraint.  A constraint is a condition that must be satisfie
 </center>
 
 <div class="p"><!----></div>
-Finally, let's add an event.  Eventa are used to specify discrete state changes.  For example, let's describe an event for cell division.  Click on the Add Event button, enter the ID CellDivision, trigger true, and delay of 2100.  The trigger specifies the condition that should be satisfied to enable this event.  In this case, we want it to be enabled initially.  The delay indicates the time after which it is enabled that it should execute.  Finally, select the Dynamic Process of Symmetric Division.  This combination results in a cell division event at 2100 seconds after simulation begins.  The event assignments specify the state change(s) for this event.  Click on the Add Assignment button and select the CI variable, and enter the assignment CI / uniform(1,2).  In other words, the number of molecules is being divided between the two daughter cells with a random distribution.  Similarly, add event assignments to divide up CI2 and CII.
+Finally, let's add an event.  Events are used to specify discrete state changes.  For example, let's describe an event for cell division.  Click on the Add Event button, enter the ID CellDivision, trigger true, and delay of 2100.  The trigger specifies the condition that should be satisfied to enable this event.  In this case, we want it to be enabled initially.  The delay indicates the time after which it is enabled that it should execute.  Finally, select the Dynamic Process of Symmetric Division.  This combination results in a cell division event at 2100 seconds after simulation begins.  The event assignments specify the state change(s) for this event.  Click on the Add Assignment button and select the CI variable, and enter the assignment CI / uniform(1,2).  In other words, the number of molecules is being divided between the two daughter cells with a random distribution.  Similarly, add event assignments to divide up CI2 and CII.
 
 <div class="p"><!----></div>
 
@@ -423,7 +423,7 @@ Using the schematic tab, you can also adjust initial values and parameters allow
 </center>
 
 <div class="p"><!----></div>
-In addition to making single changes, you can also sweep a value as shown below.   When you click on the Sweep button, it brings up a window where you can select the start value, the stop value, and the step value.  In this example, simulations are generated using degradation rates of 0.001, 0.003, 0.005, and 0.007.  The level indicates how the sweep should perform when multiple variables are swept at the same time.  Variables at the same level are changed at the same time.  Furthermore, all variables on level 2 are stepped through all their values before changing the values of those variables on level 1.  After the values on level 1 are changed, the values on level 2 are stepped through all their values again.  Rerun the simulation and create a graph that shows the value of CI for each of the different degradation rates.
+In addition to making single changes, you can also sweep a value as shown below.   When you click on the Sweep button, it brings up a window where you can select the start value, the stop value, and the step value.  Using the values shown below for this example, simulations are generated using degradation rates of 0.001, 0.003, 0.005, and 0.007.  The level indicates how the sweep should perform when multiple variables are swept at the same time.  Variables at the same level are changed at the same time.  Furthermore, all variables on level 2 are stepped through all their values before changing the values of those variables on level 1.  After the values on level 1 are changed, the values on level 2 are stepped through all their values again.  Rerun the simulation and create a graph that shows the value of CI for each of the different degradation rates.
 
 <div class="p"><!----></div>
 
@@ -447,7 +447,7 @@ One way to understand why abstraction is so much faster is by looking at the com
 </center>
 
 <div class="p"><!----></div>
-Next, let's try checking some properties.  To do this, go to the SBML Elements tab and check the boxes next to the constraints.  Recall that these constraints terminate simulation whenever CI goes above 20 molecules or CII goes above 50 molecules.  Go back to the Simulation Options tab and change the Simulation Type to Monte Carlo and Simulation ID to prob, then press the Save and Run icon.  Now, let's plot the results on a histogram by clicking on the Histogram tab and then double-clicking on the graph to bring up the histogram graph editor shown below.  Open the prob folder, select the sim-rep file, and check the Use check box to get all fields.  
+Next, let's try checking some properties.  To do this, go to the SBML Elements tab and check the boxes next to the constraints.  Recall that these constraints terminate simulation whenever CI goes above 20 molecules or CII goes above 50 molecules.  Go back to the Simulation Options tab and change abstraction back to none, the Simulation Type to Monte Carlo, and Simulation ID to prob, then press the Save and Run icon.  Now, let's plot the results on a histogram by clicking on the Histogram tab and then double-clicking on the graph to bring up the histogram graph editor shown below.  Open the prob folder, select the sim-rep file, and check the Use check box to get all fields.  
 
 <div class="p"><!----></div>
 
@@ -611,5 +611,5 @@ is available in the <tt>docs</tt> directory that comes with the distribution.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>H</a>,
-version 3.81.<br />On  1 Feb 2013, 07:48.</small>
+version 3.81.<br />On 30 May 2013, 11:35.</small>
 </html>

@@ -24,22 +24,6 @@
 
 <div class="p"><!----></div>
 
-<h3 align="center">August 25th, 2011 </h3>
-
-<div class="p"><!----></div>
- 
-<div class="p"><!----></div>
-
-<h1>Contents </h1><a href="#tth_sEc1"
->1&nbsp; Introduction</a><br />
-<a href="#tth_sEc2"
->2&nbsp; Creating a Grid Component</a><br />
-<a href="#tth_sEc3"
->3&nbsp; Creating and Populating a Grid</a><br />
-<a href="#tth_sEc4"
->4&nbsp; Simulating and Visualizing a Grid</a><br />
-
-
 <div class="p"><!----></div>
   
 <div class="p"><!----></div>
@@ -59,10 +43,10 @@ A grid is a structure used for separating components spatially.  So the first th
 <div class="p"><!----></div>
 
 <ol type="1">
-<li> Below is the Sender 1 model.  It contains two constitutive species, one which will act as an input (SignalA) and the other as an aesthetic reporter (CFP).  Make sure that SignalA is marked as diffusible and that the model is enclosed in a compartment (tick the box on the toolbar).
+<li> Below is the Sender 1 model.  It contains two constitutive species, one which will act as an input (SignalA) and the other as an aesthetic reporter (CFP).  Make sure that SignalA is marked as diffusible and degradable. Also, make sure that the model is enclosed in a compartment (uncheck the "Is Mapped to a Port" on the Compartment Editor). Finally, change the open complex production rate ko to 0.5 as shown below. 
 
 <div class="p"><!----></div>
-<img src="screenshots/sender1.png" alt="screenshots/sender1.png" />
+<img src="screenshots/newgrid/sender1.png" alt="screenshots/newgrid/sender1.png" />
 <div class="p"><!----></div>
 </li>
 
@@ -70,10 +54,10 @@ A grid is a structure used for separating components spatially.  So the first th
 <div class="p"><!----></div>
 </li>
 
-<li> Below is the model for the NOR gate cell.  At the left, you can see that two species repress a promoter that leads to production of a GFP species.  If both of the repressing species are marked diffusible and given the same ID as the species in Sender 1/2 (e.g., SignalA/B), then membrane diffusion reactions will be created and any SignalA/B species can come into or diffuse out of the cell.  If these species were not present or not marked diffusible, then no membrane diffusion reactions would be created.  In the figure there is also a species panel which shows custom diffusion rates (0.1/1.0 for kmdiff, 0.35 for kecdiff) that should be used for both SignalA and SignalB.  Also, change Kr to 5 for the two repression influences (by double-clicking on the red repression influences) and ko to 0.025 for the promoter.  Like Sender 1/2, this model needs to be enclosed in a compartment.  Enclosing it in a compartment creates a virtual membrane, which species can be transported through via membrane diffusion reactions.  (Note that membrane diffusion rates are taken from the inner species.  The membrane diffusion rates for the Sender models are kept as default for the sake of simplicity.)
+<li> Below is the model for the NOR gate cell.  At the left, you can see that two species repress a promoter that leads to production of a GFP species.  If both of the repressing species are marked diffusible and given the same ID as the species in Sender 1/2 (e.g., SignalA/B), then membrane diffusion reactions will be created and any SignalA/B species can come into or diffuse out of the cell.  If these species were not present or not marked diffusible, then no membrane diffusion reactions would be created.  In the figure there is also a species panel which shows custom diffusion rate (0.01/1.0 for kmdiff) that should be used for both SignalA and SignalB.  Also, on the Constants tab change the value of kecdiff to 0.01.  Like Sender 1/2, this model needs to be enclosed in a compartment.  Enclosing it in a compartment creates a virtual membrane, which species can be transported through via membrane diffusion reactions.  (Note that membrane diffusion rates are taken from the inner species.  The membrane diffusion rates for the Sender models are kept as default for the sake of simplicity.)
 
 <div class="p"><!----></div>
-<img src="screenshots/norgate_signala.png" alt="screenshots/norgate_signala.png" />
+<img src="screenshots/newgrid/norgate_signala.png" alt="screenshots/newgrid/norgate_signala.png" />
 <div class="p"><!----></div>
 </li>
 
@@ -89,31 +73,31 @@ A grid is a structure used for separating components spatially.  So the first th
 <div class="p"><!----></div>
 
 <ol type="1">
-<li> To create a grid, create a new model and tick the "Make Grid" box when entering the model ID.  You will then be prompted to create a new grid.  Make this grid 6 x 15 and fill it with the NOR gate model.  After a moment, you will see a populated grid in the schematic.  If the grid is too large to fit, you can zoom out by selecting the zoom button in the toolbar, or holding alt or control, and then using the mouse wheel (or whatever you use for vertical scroll).  
+<li> Create a grid model using the File &#8594; New &#8594; Grid Model menu, and name the new model as you wish. You will then be prompted to create a new grid.  Make this grid 6 x 15 and fill it with the NOR gate model.  After a moment, you will see a populated grid in the schematic.  If the grid is too large to fit, you can zoom out by selecting the zoom button in the toolbar, or holding alt or control, and then using the mouse wheel (or whatever you use for vertical scroll).  
 
 <div class="p"><!----></div>
-<img src="screenshots/create_grid.png" alt="screenshots/create_grid.png" />
+<img src="screenshots/newgrid/create_grid.png" alt="screenshots/newgrid/create_grid.png" />
 <div class="p"><!----></div>
 </li>
 
 <li> The grid now only contains the NOR gate model, so we need to add the Sender models to the grid as well.  To do this, left-click on the four corners of the grid (they should appear light-blue if selected), then right-click and choose the "Clear Selected Location(s)" option.  (Placing the Sender models at the corners will allow for a good demonstration of the NOR functionality.)
 
 <div class="p"><!----></div>
-<img src="screenshots/clear_locations.png" alt="screenshots/clear_locations.png" />
+<img src="screenshots/newgrid/clear_locations.png" alt="screenshots/newgrid/clear_locations.png" />
 <div class="p"><!----></div>
 </li>
 
 <li> Now let's add Sender 1 to the top two corners.  De-select the bottom two corners (by single-clicking), then right-click and choose the &#196;dd Component(s) to Non-Occupied Selected Location(s)" option.  Choose the Sender 1 model at the prompt.
 
 <div class="p"><!----></div>
-<img src="screenshots/add_sender1.png" alt="screenshots/add_sender1.png" />
+<img src="screenshots/newgrid/add_sender1.png" alt="screenshots/newgrid/add_sender1.png" />
 <div class="p"><!----></div>
 </li>
 
 <li> Now let's add Sender 2 to the bottom two corners.  To demonstrate another way of adding components, select the component radio button on the toolbar (looks like a square).  Left-click on one of the empty bottom two corners then choose the Sender 2 model at the prompt.  Do the same for the remaining empty corner.
 
 <div class="p"><!----></div>
-<img src="screenshots/add_sender2.png" alt="screenshots/add_sender2.png" />
+<img src="screenshots/newgrid/add_sender2.png" alt="screenshots/newgrid/add_sender2.png" />
 <div class="p"><!----></div>
 </li>
 
@@ -132,7 +116,7 @@ A grid is a structure used for separating components spatially.  So the first th
 <li> Simulating a grid model is no different than simulating a non-grid model.  For my simulation run, I turned on abstraction, used Monte Carlo/Gillespie, and set a time limit of 400.  When you've chosen your simulation options, click the little green play button on the top toolbar.  This will generate the SBML and then simulate the model.  Simulation should take under a minute with the options provided.
 
 <div class="p"><!----></div>
-<img src="screenshots/grid_sim_options.png" alt="screenshots/grid_sim_options.png" />
+<img src="screenshots/newgrid/grid_sim_options.png" alt="screenshots/newgrid/grid_sim_options.png" />
 <div class="p"><!----></div>
 </li>
 
@@ -150,7 +134,7 @@ A grid is a structure used for separating components spatially.  So the first th
 <li> The appearance scheme is now complete, so hit the play button and watch the circuit in action!  You can drag the ticker around to see certain spots in the simulation, and if you'd like you can also zoom in/out and pan around while the simulation takes place.  The simulation should show the behavior below.  In the center, where the diffusible species don't reach well (i.e., where both inputs are OFF), there is GFP, indicating ON behavior; everywhere else (i.e., where either or both inputs are ON) there is no GFP, indicating OFF behavior.  By changing diffusion rates and how much of the SignalA/B species are produced, you can tune how large the green spot in the middle will be.
 
 <div class="p"><!----></div>
-<img src="screenshots/multicellular_nor_sim.png" alt="screenshots/multicellular_nor_sim.png" />
+<img src="screenshots/newgrid/multicellular_nor_sim.png" alt="screenshots/newgrid/multicellular_nor_sim.png" />
 <div class="p"><!----></div>
 </li>
 
@@ -165,5 +149,5 @@ A grid is a structure used for separating components spatially.  So the first th
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>H</a>,
-version 3.81.<br />On 22 Dec 2012, 16:03.</small>
+version 3.81.<br />On 30 May 2013, 10:03.</small>
 </html>
