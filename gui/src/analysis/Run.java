@@ -1006,8 +1006,10 @@ public class Run implements ActionListener {
 						buildStateGraph.join();
 						log.addText("Number of states found: " + sg.getNumberOfStates());
 						logFile.write("Number of states found: " + sg.getNumberOfStates() + "\n");
-						log.addText("Number of transitions found: " + sg.getNumberOfTransitions() + "\n");
-						logFile.write("Number of transitions found: " + sg.getNumberOfTransitions() + "\n\n");
+						log.addText("Number of transitions found: " + sg.getNumberOfTransitions());
+						logFile.write("Number of transitions found: " + sg.getNumberOfTransitions() + "\n");
+						log.addText("Memory used during state exploration: " + sg.getMemoryUsed() + "MB\n");
+						logFile.write("Memory used during state exploration: " + sg.getMemoryUsed() + "MB\n\n");
 						if (sim.equals("reachability-analysis") && !sg.getStop()) {
 							time2 = System.nanoTime();
 							Object[] options = { "Yes", "No" };
@@ -1409,7 +1411,7 @@ public class Run implements ActionListener {
 				reb2.close();
 			}
 			catch (Exception e) {
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 			if (reb2sac != null) {
 				exitValue = reb2sac.waitFor();
