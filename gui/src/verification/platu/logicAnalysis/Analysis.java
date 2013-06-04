@@ -497,7 +497,6 @@ public class Analysis {
 				}
 				stateStackTop = nextPrjState;
 				stateStack.add(stateStackTop);
-				// TODO Do we need to clone nextEnabledArray[0] here?
 				lpnTranStack.push((LpnTranList) nextEnabledArray[0].clone());
 				curIndexStack.push(0);
 				totalStates++;
