@@ -29,9 +29,9 @@ public class State extends PlatuObj {
     
     protected int[] marking;
     protected int[] vector;
-    protected boolean[] tranVector; // indicator vector to record whether each transition is enabled or not. 
+    protected boolean[] tranVector; // an indicator vector to record whether each transition is enabled or not 
     private int hashVal = 0;
-    protected LhpnFile lpn = null;
+    protected LhpnFile lpn;
     private int index;
     private boolean localEnabledOnly;
     protected boolean failure = false;
@@ -54,14 +54,13 @@ public class State extends PlatuObj {
     	this.lpn = lpn;
         this.marking = new_marking;
         this.vector = new_vector;
-        this.tranVector = new_isTranEnabled;
-
+        if(new_isTranEnabled != null)
+        	this.tranVector = new_isTranEnabled;
         if (marking == null || vector == null || tranVector == null) {
             new NullPointerException().printStackTrace();
-        }
-        
+        }        
     	//Arrays.sort(this.marking);
-    	this.index = 0;
+    	//this.index = 0;
         localEnabledOnly = false;
         counts[0]++;
     }
@@ -175,21 +174,22 @@ public class State extends PlatuObj {
 
     public String print() {
     	DualHashMap<String, Integer> VarIndexMap = this.lpn.getVarIndexMap();
-    	String message = "LPN: " + lpn.getLabel() + "\n"; 
-    	message += "ID: " + index + "\n";
+    	String newLine = System.getProperty("line.separator");//This will retrieve line separator dependent on OS.
+    	String message = "State ID: " + index + newLine;
+    	message += "LPN: " + lpn.getLabel() + newLine; 
     	message += "Marking: [";
         for (int i : marking) {
             message += i + ",";
         }
-        message += "]\n" + "Vector: [";
+        message += "]" + newLine + "Vector: [";
         for (int i = 0; i < vector.length; i++) {
             message += VarIndexMap.getKey(i) + "=>" + vector[i]+", ";
         }
-        message += "]\n" + "Transition Vector: [";
+        message += "]" + newLine + "Transition Vector: [";
         for (int i = 0; i < tranVector.length; i++) {
         	message += tranVector[i] + ",";
         }
-        message += "]\n";
+        message += "]" + newLine;
         return message;
     }
 
@@ -364,10 +364,10 @@ public class State extends PlatuObj {
     		else
     			newStateVector[index] = this.vector[index];    		
     	}
-        boolean[] newEnabledTranVector = SG.updateEnabledTranVector(this, this.marking, newStateVector, null);
-    	if(newState == true)
-    		return new State(this.lpn, this.marking, newStateVector, newEnabledTranVector);
-    	
+    	if(newState == true) {    		 
+    		boolean[] newEnabledTranVector = SG.updateEnabledTranVector(this, this.marking, newStateVector, null);
+        	return new State(this.lpn, this.marking, newStateVector, newEnabledTranVector);
+    	} 	
     	return null;
     }
     
