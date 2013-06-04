@@ -118,7 +118,8 @@ public class Project {
 	 * local states
 	 * 
 	 */
-	public void search() {	
+	public void search() {
+		// TODO: temporarily set the input validation only to non-stochastic LPN models.
 		if (!Options.getProbabilisticModelFlag())
 			validateInputs();
 		
@@ -269,9 +270,9 @@ public class Project {
 	 * 
 	 */
 	public void searchWithPOR() {
+		// TODO: temporarily set the input validation only to non-stochastic LPN models.
 		if (!Options.getProbabilisticModelFlag())
 			validateInputs();
-//		
 //		if(Options.getSearchType().equals("compositional")){
 //    		this.analysis = new CompositionalAnalysis();
 //			
