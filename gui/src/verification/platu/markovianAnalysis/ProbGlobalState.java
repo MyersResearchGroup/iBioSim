@@ -4,23 +4,22 @@ import lpn.parser.Transition;
 import verification.platu.project.PrjState;
 import verification.platu.stategraph.State;
 
-public class ProbabilisticPrjState extends PrjState {	
+public class ProbGlobalState extends PrjState {	
 	
 	private int color;
 	private double currentProb;
 	private double nextProb;
-	private double transitionSum;
 	
-	public ProbabilisticPrjState() {
+	public ProbGlobalState() {
 		super();
 	}
 
-	public ProbabilisticPrjState(State[] other, Transition newFiredTran,
+	public ProbGlobalState(State[] other, Transition newFiredTran,
 			int newTranFiringCnt) {
 		super(other, newFiredTran, newTranFiringCnt);
 	}
 
-	public ProbabilisticPrjState(State[] other) {
+	public ProbGlobalState(State[] other) {
 		super(other);
 	}
 	
@@ -52,16 +51,6 @@ public class ProbabilisticPrjState extends PrjState {
 		currentProb = nextProb;
 	}
 	
-//	private double getTransitionSum(double noRate, State n) {
-//		if (transitionSum == -1) {
-//			transitionSum = 0;
-//			for (StateTransitionPair next : nextStates) {
-//				if (next.isEnabled()) {
-//					transitionSum += next.getTransition();
-//				}
-//			}
-//		}
-//		return transitionSum;
-//	}
+	
 	
 }
