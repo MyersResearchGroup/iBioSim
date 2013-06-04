@@ -37,8 +37,7 @@ public class Options {
 	 */
 	public static enum PorDef { 
 		TB, // POR with trace-back
-		TBOFF // POR without trace-back	
-		
+		TBOFF // POR without trace-back			
 		};
 	private static String POR = null;
 	
@@ -409,7 +408,7 @@ public class Options {
 		probabilisticLPNflag = true;		
 	}
 	
-	public static boolean getProbabilisticLPNflag() {
+	public static boolean getProbabilisticModelFlag() {
 		return probabilisticLPNflag;
 	}
 	
