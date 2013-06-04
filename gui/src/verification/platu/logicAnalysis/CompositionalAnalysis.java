@@ -2482,8 +2482,7 @@ public class CompositionalAnalysis {
 		constructDstLpnList(sgArray);
 		// Run initial findSG
 		for (StateGraph sg : sgArray) {
-			int result = 0;
-			// TODO: What is sticky semantics?
+			int result = 0;			
 			if(Options.getStickySemantics()){
 //				result = sg.constrStickyFindSG(sg.getInitialState(), emptyTranList);
 			}
