@@ -116,7 +116,8 @@ public class StateGraph_timed extends StateGraph{
 	}
 	 
 	
-	public void outputLocalStateGraph(String file) {
+	//public void outputLocalStateGraph(String file) {
+	public void drawLocalStateGraph(String file) {
 		try {
 			BufferedWriter out = new BufferedWriter(new FileWriter(file));
 			out.write("digraph G {\n");
