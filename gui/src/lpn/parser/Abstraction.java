@@ -2730,7 +2730,7 @@ public class Abstraction extends LhpnFile {
 	
 	/**
 	 * This method walks on an LPN and decomposes the LPN into processes. 
-	 * Each process is the smallest strongly connected places and transitions. 
+	 * Each process is a strongly connected places and transitions. 
 	 * @return
 	 */
 	public boolean decomposeLpnIntoProcesses() {
@@ -2949,8 +2949,7 @@ public class Abstraction extends LhpnFile {
 //						// variable globally read
 //					}
 //				}
-//			}
-			
+//			}		
 			ExprTree delayTree = t.getDelayTree();
 			if (delayTree != null) {
 				for (String v : delayTree.getVars()) {
