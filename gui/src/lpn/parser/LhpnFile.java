@@ -1189,43 +1189,6 @@ public class LhpnFile {
 		}
 		return array;
 	}
-
-	public boolean[] getInitEnabledTranArray(int[] initialVector) {
-		boolean[] initEnabledTrans = new boolean[getAllTransitions().length];
-		for (int i=0; i< getAllTransitions().length; i++) {
-			Transition transition = getAllTransitions()[i];
-			Place[] tranPreset = transitions.get(transition.getLabel()).getPreset(); 
-			String tranName = transition.getLabel();
-			boolean presetNotMarked = false;
-			if (getPreset(tranName) != null && getPreset(tranName).length != 0) {
-				for (int j=0; j<tranPreset.length; j++) {
-					if (!tranPreset[j].isMarked()) {
-						initEnabledTrans[i] = false;
-						presetNotMarked = true;
-						break;
-					}
-				}
-			}
-			if (presetNotMarked) {
-				presetNotMarked = false;
-				continue;
-			}
-			else {
-				if (getEnablingTree(tranName) != null && getEnablingTree(tranName).evaluateExpr(getAllVarsWithValuesAsString(initialVector)) == 0.0) {
-					initEnabledTrans[i] = false;
-					continue;
-				}
-				else if (getTransitionRateTree(tranName) != null && getTransitionRateTree(tranName).evaluateExpr(getAllVarsWithValuesAsString(initialVector)) == 0.0) {
-					initEnabledTrans[i] = false;
-					continue;
-				}
-				else {
-					initEnabledTrans[i] = true;
-				}
-			}			
-		}
-		return initEnabledTrans;
-	}
 	
 	public boolean getInitialMarking(String place) {
 		return places.get(place).isMarked();
