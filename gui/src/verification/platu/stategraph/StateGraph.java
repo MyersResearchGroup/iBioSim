@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.Stack;
 
 import lpn.parser.LhpnFile;
+import lpn.parser.Place;
 import lpn.parser.Transition;
 import verification.platu.common.IndexObjMap;
 import verification.platu.logicAnalysis.Constraint;
@@ -38,7 +39,7 @@ public class StateGraph {
 
 	protected State init = null;
     protected IndexObjMap<State> stateCache;
-    protected IndexObjMap<State> localStateCache;
+    //protected IndexObjMap<State> localStateCache;
     protected HashMap<State, State> state2LocalMap;
     protected HashMap<State, LpnTranList> enabledSetTbl;
     protected HashMap<State, HashMap<Transition, State>> nextStateMap;
@@ -55,10 +56,13 @@ public class StateGraph {
     public StateGraph(LhpnFile lpn) {
     	this.lpn = lpn;   	
         this.stateCache = new IndexObjMap<State>();
-        this.localStateCache = new IndexObjMap<State>();
+        // TODO: Is localStateCache read anywhere?
+        //this.localStateCache = new IndexObjMap<State>();
         this.state2LocalMap = new HashMap<State, State>();
         this.enabledSetTbl = new HashMap<State, LpnTranList>();
-        this.nextStateMap = new HashMap<State, HashMap<Transition, State>>();
+        if (!Options.getProbabilisticModelFlag())
+        	this.nextStateMap = new HashMap<State, HashMap<Transition, State>>();
+        
     }
     
     public LhpnFile getLpn(){
@@ -69,9 +73,9 @@ public class StateGraph {
     	System.out.println(String.format("%-8s    %5s", this.lpn.getLabel(), "|States| = " + stateCache.size()));
     }
 
-    public Set<Transition> getTranList(State currentState){
-    	return this.nextStateMap.get(currentState).keySet();
-    }
+//    public Set<Transition> getTranList(State currentState){
+//    	return this.nextStateMap.get(currentState).keySet();
+//    }
     
     /**
      * Finds reachable states from the given state.
@@ -288,6 +292,7 @@ public class StateGraph {
     	return this.init;
     }
     
+    // Hao's method
     public void draw(){
     	String dotFile = Options.getDotPath();
 		if(!dotFile.endsWith("/") && !dotFile.endsWith("\\")){
@@ -432,8 +437,8 @@ public class StateGraph {
         }   	
     	if(enabledSetTbl.containsKey(curState) == true){
     		if (Options.getDebugMode()) {
-//    			System.out.println("~~~~~~~ existing state in enabledSetTbl for LPN" + curState.getLpn().getLabel() + ": S" + curState.getIndex() + "~~~~~~~~");
-//        		printTransitionSet((LpnTranList)enabledSetTbl.get(curState), "enabled trans at this state ");
+    			System.out.println("~~~~~~~ existing state in enabledSetTbl for LPN" + curState.getLpn().getLabel() + ": S" + curState.getIndex() + "~~~~~~~~");
+        		printTransitionSet(enabledSetTbl.get(curState), "Enabled trans at this state: ");
     		}
             return (LpnTranList)enabledSetTbl.get(curState).clone();
         }   	
@@ -443,7 +448,7 @@ public class StateGraph {
         	for (Transition tran : this.lpn.getAllTransitions()) {
             	if (isEnabled(tran,curState)) {
             		if (Options.getDebugMode()) {
-//            			System.out.println("Transition " + tran.getLpn().getLabel() + "(" + tran.getName() + ") is enabled");
+            			System.out.println("Transition " + tran.getLpn().getLabel() + "(" + tran.getLabel() + ") is enabled");
             		}            			
             		if(tran.isLocal()==true)
             			curEnabled.addLast(tran);
@@ -464,22 +469,34 @@ public class StateGraph {
         	}
         }
         this.enabledSetTbl.put(curState, curEnabled);
-        if (Options.getDebugMode()) {
-//        	System.out.println("~~~~~~~~ State S" + curState.getIndex() + " does not exist in enabledSetTbl for LPN " + curState.getLpn().getLabel() + ". Add to enabledSetTbl.");
-//        	printEnabledSetTbl();
-        }
         return curEnabled;
     }
     
-//    private void printEnabledSetTbl() {
-//    	System.out.println("******* enabledSetTbl**********");
-//    	for (State s : enabledSetTbl.keySet()) {
-//    		System.out.print("S" + s.getIndex() + " -> ");
-//    		printTransitionSet(enabledSetTbl.get(s), "");
-//    	}	
-//	}
+    protected void printEnabledSetTblToDebugFile() {
+    	System.out.println("******* enabledSetTbl**********");
+    	for (State s : enabledSetTbl.keySet()) {
+    		System.out.print("S" + s.getIndex() + " -> ");
+    		printTransitionSet(enabledSetTbl.get(s), "");
+    	}	
+	}
     
-    public boolean isEnabled(Transition tran, State curState) {	   	
+    
+    protected void printTransitionSet(LpnTranList transitionSet, String setName) {
+		if (!setName.isEmpty()) 
+			System.out.println(setName + " : ");
+		if (transitionSet.isEmpty()) {
+			System.out.println("empty");
+		}
+		else {
+			for (Transition tran : transitionSet) {
+				System.out.print(tran.getFullLabel() + ", ");
+			}
+			System.out.println("");
+		}
+	}
+	
+
+	public boolean isEnabled(Transition tran, State curState) {	   	
 			int[] varValuesVector = curState.getVector();
 			String tranName = tran.getLabel();
 			int tranIndex = tran.getIndex();
@@ -551,7 +568,7 @@ public class StateGraph {
     	State lState = this.state2LocalMap.get(cachedState);
     	if(lState == null) {
     		lState = cachedState.getLocalState();
-    		lState = this.localStateCache.add(lState);
+    		//lState = this.localStateCache.add(lState);
     		this.state2LocalMap.put(cachedState, lState);
     	}	
     	return cachedState;
@@ -586,6 +603,7 @@ public class StateGraph {
     	return nextMap.get(firedTran);
     }
     
+    // Hao's method
     public Set<Entry<Transition, State>> getOutgoingTrans(State currentState){
     	HashMap<Transition, State> tranMap = this.nextStateMap.get(currentState);
     	if(tranMap == null){
@@ -626,7 +644,7 @@ public class StateGraph {
     		int val = this.lpn.getInitVector(var);
     		initialVector[i] = val;
     	}
-		this.init = new State(this.lpn, this.lpn.getInitialMarkingsArray(), initialVector, this.lpn.getInitEnabledTranArray(initialVector));
+		this.init = new State(this.lpn, this.lpn.getInitialMarkingsArray(), initialVector, genInitEnabledTranArray(initialVector));
 		return this.init;
     }
     
@@ -734,7 +752,6 @@ public class StateGraph {
 //        					curStateArray[curIdx].print() + firedTran.getName() + "\n" + 
 //        					cachedOther.getIndex() + ":\n" + cachedOther.print());
             		curSgArray[curIdx].addStateTran(curStateArray[curIdx], firedTran, cachedOther);
-            		//((ProbabilisticStateGraph) curSgArray[curIdx]).printNextProbabilisticStateMap(firedTran);
         		}   		
         	}
         }
@@ -966,8 +983,11 @@ public class StateGraph {
         }
         */
         // Enabled transition vector update
-        boolean[] newEnabledTranVector = updateEnabledTranVector(curState, curNewMarking, newVectorArray, firedTran);
+	   	boolean[] newEnabledTranVector = updateEnabledTranVector(curState, curNewMarking, newVectorArray, firedTran);
         State newState = thisSg.addState(new State(this.lpn, curNewMarking, newVectorArray, newEnabledTranVector));
+
+	
+        
         // TODO: (future) assertions in our LPN?
         /*
         int[] newVector = newState.getVector();
@@ -983,14 +1003,14 @@ public class StateGraph {
 		return newState;
     }
     
-    public boolean[] updateEnabledTranVector(State curState,
+    public boolean[] updateEnabledTranVector(State state,
 			int[] newMarking, int[] newVectorArray, Transition firedTran) {
-    	boolean[] enabledTranAfterFiring = curState.getTranVector().clone();
+    	boolean[] tranVectorAfterFiring = state.getTranVector().clone();
 		// Disable the fired transition and all of its conflicting transitions. 
     	if (firedTran != null) {
-    		enabledTranAfterFiring[firedTran.getIndex()] = false;
+    		tranVectorAfterFiring[firedTran.getIndex()] = false;
     		for (Integer curConflictingTranIndex : firedTran.getConflictSetTransIndices()) {
-    			enabledTranAfterFiring[curConflictingTranIndex] = false;
+    			tranVectorAfterFiring[curConflictingTranIndex] = false;
     		}
     	}
         // find newly enabled transition(s) based on the updated markings and variables
@@ -1006,8 +1026,8 @@ public class StateGraph {
     			if (Options.getDebugMode()) {
 //    				System.out.println(tran.getName() + " " + "Enabling condition is false");    			
     			}					
-    			if (enabledTranAfterFiring[tranIndex] && !tran.isPersistent())
-    				enabledTranAfterFiring[tranIndex] = false;
+    			if (tranVectorAfterFiring[tranIndex] && !tran.isPersistent())
+    				tranVectorAfterFiring[tranIndex] = false;
     			continue;
     		}
     		if (this.lpn.getTransitionRateTree(tranName) != null 
@@ -1029,13 +1049,13 @@ public class StateGraph {
     			}
     		}
 			if (needToUpdate) {            	
-    			enabledTranAfterFiring[tranIndex] = true;
+    			tranVectorAfterFiring[tranIndex] = true;
     			if (Options.getDebugMode()) {
 //    				System.out.println(tran.getName() + " is Enabled.");
     			}					
             }
         }
-    	return enabledTranAfterFiring;
+    	return tranVectorAfterFiring;
 	}
     
     /**
@@ -1836,5 +1856,42 @@ public class StateGraph {
     @Override
 	public String toString() {
 		return "StateGraph [lpn=" + lpn + "]";
+	}
+    
+	public boolean[] genInitEnabledTranArray(int[] initialVector) {
+		boolean[] initEnabledTrans = new boolean[this.lpn.getAllTransitions().length];
+		for (int i=0; i< this.lpn.getAllTransitions().length; i++) {
+			Transition transition = this.lpn.getAllTransitions()[i];
+			Place[] tranPreset = this.lpn.getTransition(transition.getLabel()).getPreset(); 
+			String tranName = transition.getLabel();
+			boolean presetNotMarked = false;
+			if (this.lpn.getPreset(tranName) != null && this.lpn.getPreset(tranName).length != 0) {
+				for (int j=0; j<tranPreset.length; j++) {
+					if (!tranPreset[j].isMarked()) {
+						initEnabledTrans[i] = false;
+						presetNotMarked = true;
+						break;
+					}
+				}
+			}
+			if (presetNotMarked) {
+				presetNotMarked = false;
+				continue;
+			}
+			else {
+				if (this.lpn.getEnablingTree(tranName) != null && this.lpn.getEnablingTree(tranName).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(initialVector)) == 0.0) {
+					initEnabledTrans[i] = false;
+					continue;
+				}
+				else if (this.lpn.getTransitionRateTree(tranName) != null && this.lpn.getTransitionRateTree(tranName).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(initialVector)) == 0.0) {
+					initEnabledTrans[i] = false;
+					continue;
+				}
+				else {
+					initEnabledTrans[i] = true;
+				}
+			}			
+		}
+		return initEnabledTrans;
 	}
 }
