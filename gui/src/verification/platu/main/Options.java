@@ -181,7 +181,7 @@ public class Options {
 	 */
 	private static boolean stickySemantics = false;
 	private static boolean timingAnalysisFlag = false;
-	private static boolean probabilisticLPNflag = false;
+	private static boolean probabilisticModel = false;
 
 	public static void setCompositionalMinimization(String minimizationType){
 		if (minimizationType.equals("abstraction")){
@@ -405,11 +405,11 @@ public class Options {
 	}
 
 	public static void setProbabilisticLPNflag() {
-		probabilisticLPNflag = true;		
+		probabilisticModel = true;		
 	}
 	
 	public static boolean getProbabilisticModelFlag() {
-		return probabilisticLPNflag;
+		return probabilisticModel;
 	}
 	
 }
