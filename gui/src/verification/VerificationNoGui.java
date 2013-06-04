@@ -84,6 +84,10 @@ public class VerificationNoGui {
 				Options.setOutputSgFlag(true);
 				System.out.println("Gererate state graphs.");
 			}
+			else if (args[i].contains("-prob")) {
+				Options.setProbabilisticLPNflag();
+				System.out.println("Probabilistic LPNs.");
+			}
 			
 		}
 		if (directory.trim().equals("") || directory == null) {
