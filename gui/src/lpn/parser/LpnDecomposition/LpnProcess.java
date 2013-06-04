@@ -331,7 +331,9 @@ public class LpnProcess extends LhpnFile {
 		// Transitions
 		for (int i=0; i< this.getProcessTransitions().size(); i++) {
 			Transition t = this.getProcessTransitions().get(i);
+			t.setIndex(i);
 			lpnProc.addTransition(t);
+			
 		}
 		// Inputs
 		for (int i=0; i< this.getProcessInput().size(); i++) {
