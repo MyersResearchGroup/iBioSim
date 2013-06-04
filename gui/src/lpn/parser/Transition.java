@@ -771,7 +771,8 @@ public class Transition {
 
 	@Override
 	public String toString() {
-		return label;
+		return "Transition [label=" + label + ", lhpn=" + lhpn.getLabel() + ", tranIndex="
+				+ index + "]";
 	}
 
 	public void changeName(String newName) {
@@ -817,7 +818,7 @@ public class Transition {
 //    }
     
     public String getFullLabel() {
-    	return this.lhpn.getLabel() + "(" + this.label + ")";
+    	return this.label + "(" + this.lhpn.getLabel() + ")";
     }
 
     /**
@@ -866,6 +867,10 @@ public class Transition {
 		return null;
 	}
 
+	/**
+	 * If a variable is written by this transition, and it appears in the variable list of curLPN, then it is added to the dstLpnList for this transition.
+	 * @param curLPN
+	 */
 	public void setDstLpnList(LhpnFile curLPN) {
 		String[] allVars = curLPN.getVariables();
 		boolean foundLPN = false;
