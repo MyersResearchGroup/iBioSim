@@ -25,7 +25,7 @@ import verification.platu.lpn.io.Instance;
 import verification.platu.lpn.io.PlatuInstLexer;
 import verification.platu.lpn.io.PlatuInstParser;
 import verification.platu.main.Options;
-import verification.platu.markovianAnalysis.ProbabilisticStateGraph;
+import verification.platu.markovianAnalysis.ProbLocalStateGraph;
 import verification.platu.stategraph.State;
 import verification.platu.stategraph.StateGraph;
 import verification.timed_state_exploration.zoneProject.ContinuousUtilities;
@@ -96,7 +96,7 @@ public class Project {
 	public Project(ArrayList<LhpnFile> lpns) {
 		this.label = "";
 		this.designUnitSet = new ArrayList<StateGraph>(lpns.size());
-		if (!Options.getProbabilisticLPNflag())
+		if (!Options.getProbabilisticModelFlag())
 			for (int i=0; i<lpns.size(); i++) {
 				LhpnFile lpn = lpns.get(i);
 				StateGraph stateGraph = new StateGraph(lpn);
@@ -106,7 +106,7 @@ public class Project {
 		else 
 			for (int i=0; i<lpns.size(); i++) {
 				LhpnFile lpn = lpns.get(i);
-				ProbabilisticStateGraph stateGraph = new ProbabilisticStateGraph(lpn);
+				ProbLocalStateGraph stateGraph = new ProbLocalStateGraph(lpn);
 				lpn.addStateGraph(stateGraph);
 				designUnitSet.add(stateGraph);
 			}
@@ -119,7 +119,8 @@ public class Project {
 	 * 
 	 */
 	public void search() {	
-		validateInputs();
+		if (!Options.getProbabilisticModelFlag())
+			validateInputs();
 		
 //		if(Options.getSearchType().equals("compositional")){
 //    		this.analysis = new CompositionalAnalysis();
@@ -160,17 +161,16 @@ public class Project {
 		// Initialize the project state
 		HashMap<String, Integer> varValMap = new HashMap<String, Integer>();
 		State[] initStateArray = new State[lpnCnt];
-		
 		for (int index = 0; index < lpnCnt; index++) {
 			LhpnFile curLpn = sgArray[index].getLpn();
-			StateGraph curSg = sgArray[index];
+			StateGraph curSg = sgArray[index];			
 			initStateArray[index] = curSg.genInitialState();
 			int[] curStateVector = initStateArray[index].getVector();
 			varValMap = curLpn.getAllVarsWithValuesAsInt(curStateVector);
 		}
-		
+
 		// Adjust the value of the input variables in LPN in the initial state.
-		// Add the initial states into their respective LPNs.
+		// Add the initial states into their respective state graphs.
 		for (int index = 0; index < lpnCnt; index++) {
 			StateGraph curSg = sgArray[index];
 			// If this is a timing analysis, the boolean inequality variables
@@ -184,7 +184,7 @@ public class Project {
 				initStateArray[index] = curSg.genInitialState();
 			}
 			initStateArray[index].update(curSg, varValMap, curSg.getLpn().getVarIndexMap());
-			initStateArray[index] = curSg.addState(initStateArray[index]);			
+			initStateArray[index] = curSg.addState(initStateArray[index]);		
 		}
 		
 		// Initialize the zones for the initStateArray, if timining is enabled.
@@ -222,7 +222,7 @@ public class Project {
 //			dfsTimedStateExploration.search_dfs_timed(sgArray, initStateArray);
 //			return new StateGraph[0];
 //		}
-		
+
 		Analysis dfsStateExploration = new Analysis(sgArray);
 		dfsStateExploration.search_dfs(sgArray, initStateArray);
 		
@@ -268,8 +268,9 @@ public class Project {
 	 * @return 
 	 * 
 	 */
-	public void searchWithPOR() {	
-		validateInputs();
+	public void searchWithPOR() {
+		if (!Options.getProbabilisticModelFlag())
+			validateInputs();
 //		
 //		if(Options.getSearchType().equals("compositional")){
 //    		this.analysis = new CompositionalAnalysis();
@@ -326,9 +327,8 @@ public class Project {
 			dfsPOR.searchPOR_taceback(sgArray, initStateArray);
 		else if (Options.getPOR().toLowerCase().equals("behavioral")) {
 			CompositionalAnalysis compAnalysis = new CompositionalAnalysis();
-			compAnalysis.compositionalFindSG(sgArray);
-			// TODO: (temp) Need to restore the behavioral method.
-			//dfsPOR.searchPOR_behavioral(sgArray, initStateArray, lpnTranRelation, "state");
+			compAnalysis.compositionalFindSG(sgArray);			
+			dfsPOR.searchPOR_behavioral(sgArray, initStateArray, lpnTranRelation, "state");
 		}			
 		else {
 			System.out.println("Need to provide a POR method.");			
@@ -492,14 +492,13 @@ public class Project {
 	        for(String input : sg.getLpn().getAllInputs().keySet()){
 	        	boolean connected = false;
 	        	for(StateGraph sg2 : designUnitSet){
-	        		if(sg == sg2) continue;
-	        		
+	        		if(sg == sg2) 
+	        			continue;	        		
 	        		if(sg2.getLpn().getAllOutputs().keySet().contains(input)){
 	        			connected = true;
 	        			break;
 	        		}
-	        	}
-	        	
+	        	}	        	
 	        	if(!connected){
 	        		error = true;
 	        		System.err.println("error in lpn " + sg.getLpn().getLabel() + ": input variable '" + input + "' is not dependent on an output");
