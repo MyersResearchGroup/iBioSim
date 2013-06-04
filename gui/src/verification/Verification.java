@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Properties;
 import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
@@ -1111,7 +1110,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					LhpnFile curLPN = new LhpnFile();
 					curLPN.load(directory + separator + curLPNname);
 					selectedLPNs.add(curLPN);
-					if (!Options.getProbabilisticLPNflag())
+					if (!Options.getProbabilisticModelFlag())
 						for (String t: curLPN.getTransitionList()) {
 							if (curLPN.isExpTransitionRateTree(t)) {
 								Options.setProbabilisticLPNflag();
@@ -1153,10 +1152,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				Project untimed_dfs = new Project(selectedLPNs);				
 
 				// ------- Debugging Messages Settings ------------
-				// Options for printing out intermediate results during POR
-				//				Options.setDebugMode(true);
-				//				if (Options.getDebugMode())
-				//					System.out.println("Debug mode is ON.");
+				 //Options for printing out intermediate results during POR
+				Options.setDebugMode(true);
+				if (Options.getDebugMode())
+					System.out.println("Debug mode is ON.");
 				Options.setDebugMode(false);
 				//----------- POR and Cycle Closing Methods (FULL)--------------
 				//				if (untimedPOR.isSelected()) {
@@ -1348,22 +1347,20 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				}
 				return;
 			}
-			else if (!untimedPOR.isSelected() && !multipleLPNs.isSelected() && decomposeLPN.isSelected() 
-					&& verbose.isSelected() && lpnList.getSelectedValue() == null) {
+			else if (decomposeLPN.isSelected() && verbose.isSelected() && lpnList.getSelectedValue() == null) {
 				HashMap<Transition, Integer> allProcessTrans = new HashMap<Transition, Integer>();
 				// create an Abstraction object to get all processes in one LPN
 				Abstraction abs = lpn.abstractLhpn(this);
 				abs.decomposeLpnIntoProcesses();				 
-				allProcessTrans.putAll((HashMap<Transition, Integer>)abs.getTransWithProcIDs().clone());
+				allProcessTrans.putAll(abs.getTransWithProcIDs());
 				HashMap<Integer, LpnProcess> processMap = new HashMap<Integer, LpnProcess>();
 				for (Transition curTran: allProcessTrans.keySet()) {
 					Integer procId = allProcessTrans.get(curTran);
 					if (!processMap.containsKey(procId)) {
 						LpnProcess newProcess = new LpnProcess(procId);
 						newProcess.addTranToProcess(curTran);
-						if (curTran.getPreset() != null) {
-							Place[] preset = curTran.getPreset();
-							for (Place p : preset) {
+						if (curTran.getPreset() != null) {							
+							for (Place p : curTran.getPreset()) {
 								newProcess.addPlaceToProcess(p);
 							}
 						}
@@ -1373,8 +1370,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						LpnProcess curProcess = processMap.get(procId);
 						curProcess.addTranToProcess(curTran);
 						if (curTran.getPreset() != null) {
-							Place[] preset = curTran.getPreset();
-							for (Place p : preset) {
+							for (Place p : curTran.getPreset()) {
 								curProcess.addPlaceToProcess(p);
 							}
 						}			
@@ -1386,7 +1382,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					if (allProcessRead.get(curRead).size() == 1 
 							&& allProcessWrite.get(curRead).size() == 1) {
 						if (allProcessRead.get(curRead).equals(allProcessWrite.get(curRead))) {
-							// variable is read and written only by one process
+							// variable is read and written only by one single process
 							Integer curProcessID = allProcessRead.get(curRead).get(0); 
 							ArrayList<Variable> processInternal = processMap.get(curProcessID).getProcessInternal();
 							if (!processInternal.contains(abs.getVariable(curRead)))
@@ -1520,8 +1516,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				if (decompMethdIndex ==1) { // User decides one LPN partition.
 					// Find the process with the least number of variables
 					int leastNumVarsInOneProcess = lpn.getVariables().length;
-					for (Iterator<Integer> processMapIter = processMap.keySet().iterator(); processMapIter.hasNext();) {
-						Integer curProcId = processMapIter.next();
+					for (Integer curProcId : processMap.keySet()) {
 						LpnProcess curProcess = processMap.get(curProcId);
 						if (curProcess.getProcessVarSize() < leastNumVarsInOneProcess) {
 							leastNumVarsInOneProcess = curProcess.getProcessVarSize();
@@ -1549,8 +1544,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					if (leastNumVarsInOneProcess >= maxNumVarsInOneComp) {
 						// The original LPN is decomposed into processes.
 						// Store each process as individual LPN.
-						for (Iterator<Integer> processMapIter = processMap.keySet().iterator(); processMapIter.hasNext();) {
-							Integer curProcId = processMapIter.next();
+						for (Integer curProcId : processMap.keySet()) {						
 							LpnProcess curProcess = processMap.get(curProcId);	
 							LhpnFile lpnProc = new LhpnFile();
 							lpnProc = curProcess.buildLPN(lpnProc);
@@ -1574,7 +1568,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					return;				
 				}
 			}
-			else if (!untimedPOR.isSelected() && !decomposeLPN.isSelected() && multipleLPNs.isSelected() && lpnList.getSelectedValues().length < 1) {
+			else if (multipleLPNs.isSelected() && lpnList.getSelectedValues().length < 1) {
 				JOptionPane.showMessageDialog(
 						Gui.frame,
 						"Please select at least 1 more LPN.",
