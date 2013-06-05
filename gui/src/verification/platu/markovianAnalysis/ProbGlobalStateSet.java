@@ -1,54 +1,46 @@
 package verification.platu.markovianAnalysis;
 
-import java.util.HashMap;
-
-import lpn.parser.Transition;
-import verification.platu.project.PrjState;
 import verification.timed_state_exploration.zoneProject.StateSet;
 
 public class ProbGlobalStateSet extends StateSet {
 	
 	//protected HashSet<PrjState> probGlobalStateSet;
 	private boolean stop;
-	protected HashMap<PrjState, HashMap<Transition, ProbGlobalStateTuple>> nextProbGlobalStateTupleMap;
+	//protected HashMap<PrjState, HashMap<Transition, ProbGlobalStateTuple>> nextProbGlobalStateTupleMap;
 		
 	public ProbGlobalStateSet() {
 		super();
-		nextProbGlobalStateTupleMap = new HashMap<PrjState, HashMap<Transition, ProbGlobalStateTuple>>();
+		//nextProbGlobalStateTupleMap = new HashMap<PrjState, HashMap<Transition, ProbGlobalStateTuple>>();
 	}
 
-    public void addGlobalStateTran(PrjState stateStackTop, Transition firedTran, double firedTranRate, PrjState nextPrjState) {
-    	HashMap<Transition, ProbGlobalStateTuple> nextMap = this.nextProbGlobalStateTupleMap.get(stateStackTop);
-    	if(nextMap == null)  {
-    		nextMap = new HashMap<Transition,ProbGlobalStateTuple>();
-    		nextMap.put(firedTran, new ProbGlobalStateTuple(nextPrjState, firedTranRate, 0.0));
-    		this.nextProbGlobalStateTupleMap.put(stateStackTop, nextMap);
-    	}
-    	else {
-    		nextMap.put(firedTran, new ProbGlobalStateTuple(nextPrjState, firedTranRate, 0.0));
-//    		if (nextMap.get(firedTran) == null) 
-//    			nextMap.put(firedTran, new ProbGlobalStateTuple(nextSt, firedTranRate, 0.0));
-//    		if (nextMap.get(firedTran).getNextProbGlobalState() == null)
-//    			nextMap.get(firedTran).addNextProbGlobalState(nextSt);
-    	}
-    }
+//    public void addGlobalStateTran(PrjState stateStackTop, Transition firedTran, double firedTranRate, PrjState nextPrjState) {
+//    	HashMap<Transition, ProbGlobalStateTuple> nextMap = this.nextProbGlobalStateTupleMap.get(stateStackTop);
+//    	if(nextMap == null)  {
+//    		nextMap = new HashMap<Transition,ProbGlobalStateTuple>();
+//    		nextMap.put(firedTran, new ProbGlobalStateTuple(nextPrjState, firedTranRate, 0.0));
+//    		this.nextProbGlobalStateTupleMap.put(stateStackTop, nextMap);
+//    	}
+//    	else {
+//    		nextMap.put(firedTran, new ProbGlobalStateTuple(nextPrjState, firedTranRate, 0.0));
+//    	}
+//    }
 
 //	public void add(PrjState s) {
-//		probGlobalStateSet.add(s);
+//		nextProbGlobalStateTupleMap.put(s, null);
 //	}
-
+//
 //	public void setInitState(PrjState initPrjState) {
 //		this.initState = initPrjState;	
 //	}
-
+//
 //	public Boolean contains(PrjState s) {
 //		return probGlobalStateSet.contains(s);
 //	}
-
+//
 //	public  HashSet<PrjState> getProbGlobalStateSet() {		
 //		return probGlobalStateSet;
 //	}
-    
+//    
 //	public boolean performSteadyStateMarkovianAnalysis(double tolerance, ArrayList<Property> conditions, ProbabilisticPrjState givenInitial) {
 //		// TODO: Deal with threading (the "stop" variable).
 //		if (!canPerformMarkovianAnalysis()) {
