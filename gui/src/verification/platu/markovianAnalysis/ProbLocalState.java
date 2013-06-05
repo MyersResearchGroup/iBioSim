@@ -11,23 +11,10 @@ import verification.platu.stategraph.State;
 import verification.platu.stategraph.StateGraph;
 
 public class ProbLocalState extends State{
-	private int color;
-	private double currentProb;
-	private double nextProb;
 		
 	public ProbLocalState(LhpnFile lpn, int[] marking, int[] vector,
 			boolean[] tranVector) {
 		super(lpn, marking, vector, tranVector);
-		setColor(0);
-		setCurrentProb(0.0);
-		setNextProb(0.0);
-	}
-	
-	public ProbLocalState(State other) {
-		super(other);
-		setColor(0);
-		setCurrentProb(0.0);
-		setNextProb(0.0);
 	}
 	
     /**
@@ -112,30 +99,6 @@ public class ProbLocalState extends State{
     	}    	
     	return new ProbLocalState(this.lpn, this.marking, outVec, this.tranVector);
     }
-
-	public int getColor() {
-		return color;
-	}
-
-	public void setColor(int color) {
-		this.color = color;
-	}
-
-	public double getCurrentProb() {
-		return currentProb;
-	}
-
-	public void setCurrentProb(double currentProb) {
-		this.currentProb = currentProb;
-	}
-
-	public double getNextProb() {
-		return nextProb;
-	}
-
-	public void setNextProb(double nextProb) {
-		this.nextProb = nextProb;
-	}
 }
 
 
