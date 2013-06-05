@@ -1,5 +1,7 @@
 package verification.platu.markovianAnalysis;
 
+import java.util.ArrayList;
+
 import lpn.parser.Transition;
 import verification.platu.project.PrjState;
 import verification.platu.stategraph.State;
@@ -9,18 +11,20 @@ public class ProbGlobalState extends PrjState {
 	private int color;
 	private double currentProb;
 	private double nextProb;
-	
-	public ProbGlobalState() {
-		super();
-	}
+	/**
+	 * Index of the local state that where the most recent fired transition originates.
+	 */
+	private ArrayList<Integer> localStateIndexArray;
 
 	public ProbGlobalState(State[] other, Transition newFiredTran,
 			int newTranFiringCnt) {
 		super(other, newFiredTran, newTranFiringCnt);
+		localStateIndexArray = new ArrayList<Integer>();
 	}
 
 	public ProbGlobalState(State[] other) {
 		super(other);
+		localStateIndexArray = new ArrayList<Integer>();
 	}
 	
 	public int getColor() {
@@ -51,6 +55,16 @@ public class ProbGlobalState extends PrjState {
 		currentProb = nextProb;
 	}
 	
+	public ArrayList<Integer> getLocalStateIndex() {
+		return localStateIndexArray;
+	}
+
+//	public void setLocalStateIndex(ArrayList<Integer> localStateIndex) {
+//		this.localStateIndexArray = localStateIndex;
+//	}
 	
+	public void addLocalStateIndex(int localStateIndex) {
+		this.localStateIndexArray.add(localStateIndex);
+	}
 	
 }
