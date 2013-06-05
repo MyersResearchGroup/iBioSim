@@ -26,6 +26,7 @@ import verification.platu.common.IndexObjMap;
 import verification.platu.lpn.LPNTranRelation;
 import verification.platu.lpn.LpnTranList;
 import verification.platu.main.Options;
+import verification.platu.markovianAnalysis.ProbGlobalState;
 import verification.platu.markovianAnalysis.ProbGlobalStateSet;
 import verification.platu.markovianAnalysis.ProbLocalStateGraph;
 import verification.platu.markovianAnalysis.ProbLocalStateTuple;
@@ -213,7 +214,10 @@ public class Analysis {
 		// being used or not. Timing Change.
 		if(!Options.getTimingAnalysisFlag()){
 			// If not doing timing.
-			initPrjState = new PrjState(initStateArray);
+			if (!Options.getProbabilisticModelFlag())				
+				initPrjState = new PrjState(initStateArray);
+			else
+				initPrjState = new ProbGlobalState(initStateArray);
 		}
 		else{
 			// If timing is enabled.
@@ -225,7 +229,8 @@ public class Analysis {
 		prjStateSet.add(initPrjState);
 		prjStateSet.set_initState(initPrjState);
 
-		PrjState stateStackTop = initPrjState;
+		PrjState stateStackTop;		
+		stateStackTop = initPrjState;
 		if (Options.getDebugMode()) {
 			printStateArray(stateStackTop.toStateArray(), "~~~~ stateStackTop ~~~~");
 		}
@@ -438,34 +443,39 @@ public class Analysis {
 				stateStackTop.setChild(nextPrjState);
 				nextPrjState.setFather(stateStackTop);
 				if (Options.getProbabilisticModelFlag()) {
-					for (int i=0; i<stateStackTop.getStateArray().length; i++) {						
-						State curState = stateStackTop.getStateArray()[i];
-						if (curState.getLpn().equals(firedTran.getLpn())) { // Locate the local state from which firedTran was fired in this iteration.
-							HashMap<State, HashMap<Transition, ProbLocalStateTuple>> nextLocalStateTupleMap = ((ProbLocalStateGraph) sgList[i]).getNextProbLocalStateMap();
-							double firedTranRate = nextLocalStateTupleMap.get(curState).get(firedTran).getTranRate(); 
-							// Search for transition rate stored locally, and add global state transition relation. 
-							// In this case, next global state (nextPrjState) does not exist. 
-							if (nextLocalStateTupleMap.get(curState).get(firedTran).getNextProbLocalState() != null 
-									&& firedTranRate != 0.0) {								
-								((ProbGlobalStateSet) prjStateSet).addGlobalStateTran(stateStackTop, firedTran, firedTranRate, nextPrjState);
-								break;
-							}
-						}
-//						// ----------- Temp -----------------
-//						HashMap<Transition, ProbLocalStateTuple> tran_nextStateTupleMap = nextStateTupleMap.get(curState);
-//						if (tran_nextStateTupleMap == null) 
-//							System.out.println("Yohji Yamamoto 0 ");
-//						else {
-//							ProbLocalStateTuple nextStTuple = tran_nextStateTupleMap.get(firedTran);
-//							if (nextStTuple == null) {
-//								System.out.println("Yohji Yamamoto 1 ");
-//								System.out.println("curState = " + curState.getIndex() + "(" + curState.getLpn().getLabel() +")");
-//								System.out.println("firedTran = " + firedTran.getFullLabel());
+//					for (int i=0; i<stateStackTop.getStateArray().length; i++) {						
+//						State curState = stateStackTop.getStateArray()[i];
+//						//						if (curState.getLpn().equals(firedTran.getLpn())) { // Locate the local state from which firedTran was fired in this iteration.
+//						//							HashMap<State, HashMap<Transition, ProbLocalStateTuple>> nextLocalStateTupleMap = ((ProbLocalStateGraph) sgList[i]).getNextProbLocalStateMap();
+//						//							double firedTranRate = nextLocalStateTupleMap.get(curState).get(firedTran).getTranRate(); 
+//						//							// Search for transition rate stored locally, and add global state transition relation. 
+//						//							// In this case, next global state (nextPrjState) does not exist. 
+//						//							if (nextLocalStateTupleMap.get(curState).get(firedTran).getNextProbLocalState() != null 
+//						//									&& firedTranRate != 0.0) {								
+//						//								((ProbGlobalStateSet) prjStateSet).addGlobalStateTran(stateStackTop, firedTran, firedTranRate, nextPrjState);
+//						//								break;
+//						//							}
+//						//						}
+//						if (curState.getLpn().equals(firedTran.getLpn())) { // Locate the local state from which firedTran was fired in this iteration.
+//							HashMap<State, HashMap<Transition, ProbLocalStateTuple>> nextLocalStateTupleMap = ((ProbLocalStateGraph) sgList[i]).getNextProbLocalStateMap();
+//							ProbLocalStateTuple nextLocalStateTuple = nextLocalStateTupleMap.get(curState).get(firedTran);
+//							State nextLocalState = nextLocalStateTuple.getNextProbLocalState();
+//							if (nextLocalState!= null) {
+//								nextLocalStateTuple.getNextLocalToGlobalMap().put(firedTran, nextPrjState);								
+//								break;
 //							}
-//
 //						}
-//						// ----------------------------------------
-					}
+//					}
+					int curStateIndex = firedTran.getLpn().getLpnIndex();
+					// Mark in the global state which local state has the outgoing transition which was fired in this iteration. 
+					if (stateStackTop instanceof ProbGlobalState) 
+						((ProbGlobalState) stateStackTop).addLocalStateIndex(curStateIndex);
+					State curState = stateStackTop.getStateArray()[curStateIndex];
+					HashMap<State, HashMap<Transition, ProbLocalStateTuple>> nextLocalStateTupleMap = ((ProbLocalStateGraph) sgList[curStateIndex]).getNextProbLocalStateMap();
+					ProbLocalStateTuple nextLocalStateTuple = nextLocalStateTupleMap.get(curState).get(firedTran);
+					State nextLocalState = nextLocalStateTuple.getNextProbLocalState();
+					if (nextLocalState!= null) 
+						nextLocalStateTuple.getNextLocalToGlobalMap().put(firedTran, nextPrjState);																				
 				}
 				if (Options.getOutputSgFlag()) {
 					if (Options.getDebugMode()) {
@@ -509,20 +519,42 @@ public class Analysis {
 			}
 			else {
 				if (Options.getProbabilisticModelFlag()) {
-					for (int i=0; i<stateStackTop.getStateArray().length; i++) {						
-						State curState = stateStackTop.getStateArray()[i];
-						if (curState.getLpn().equals(firedTran.getLpn())) { // Locate the local state from which firedTran was fired in this iteration.
-							HashMap<State, HashMap<Transition, ProbLocalStateTuple>> nextLocalStateTupleMap = ((ProbLocalStateGraph) sgList[i]).getNextProbLocalStateMap();
-							double firedTranRate = nextLocalStateTupleMap.get(curState).get(firedTran).getTranRate(); 
-							// Search for transition rate stored locally, and add global state transition relation. 
-							// In this case, next global state (nextPrjState) does not exist. 
-							if (nextLocalStateTupleMap.get(curState).get(firedTran).getNextProbLocalState() != null 
-									&& firedTranRate != 0.0) {								
-								((ProbGlobalStateSet) prjStateSet).addGlobalStateTran(stateStackTop, firedTran, firedTranRate, nextPrjState);
-								break;
-							}
-						}
-					}
+					//					for (int i=0; i<stateStackTop.getStateArray().length; i++) {						
+					//						State curState = stateStackTop.getStateArray()[i];
+					//						if (curState.getLpn().equals(firedTran.getLpn())) { // Locate the local state from which firedTran was fired in this iteration.
+					//							HashMap<State, HashMap<Transition, ProbLocalStateTuple>> nextLocalStateTupleMap = ((ProbLocalStateGraph) sgList[i]).getNextProbLocalStateMap();
+					//							double firedTranRate = nextLocalStateTupleMap.get(curState).get(firedTran).getTranRate(); 
+					//							// Search for transition rate stored locally, and add global state transition relation. 
+					//							// In this case, next global state (nextPrjState) does not exist. 
+					//							if (nextLocalStateTupleMap.get(curState).get(firedTran).getNextProbLocalState() != null 
+					//									&& firedTranRate != 0.0) {								
+					//								((ProbGlobalStateSet) prjStateSet).addGlobalStateTran(stateStackTop, firedTran, firedTranRate, nextPrjState);
+					//								break;
+					//							}
+					//						}
+					//					}
+//					for (int i=0; i<stateStackTop.getStateArray().length; i++) {						
+//						State curState = stateStackTop.getStateArray()[i];
+//						if (curState.getLpn().equals(firedTran.getLpn())) { // Locate the local state from which firedTran was fired in this iteration.
+//							HashMap<State, HashMap<Transition, ProbLocalStateTuple>> nextLocalStateTupleMap = ((ProbLocalStateGraph) sgList[i]).getNextProbLocalStateMap();
+//							ProbLocalStateTuple nextLocalStateTuple = nextLocalStateTupleMap.get(curState).get(firedTran);
+//							State nextLocalState = nextLocalStateTuple.getNextProbLocalState();
+//							if (nextLocalState!= null) {
+//								nextLocalStateTuple.getNextLocalToGlobalMap().put(firedTran, nextPrjState);								
+//								break;
+//							}
+//						}
+//					}
+					int curStateIndex = firedTran.getLpn().getLpnIndex();					
+					// Mark in the global state which local state has the outgoing transition which was fired in this iteration.
+					if (stateStackTop instanceof ProbGlobalState)
+						((ProbGlobalState)stateStackTop).addLocalStateIndex(curStateIndex);
+					State curState = stateStackTop.getStateArray()[curStateIndex];
+					HashMap<State, HashMap<Transition, ProbLocalStateTuple>> nextLocalStateTupleMap = ((ProbLocalStateGraph) sgList[curStateIndex]).getNextProbLocalStateMap();
+					ProbLocalStateTuple nextLocalStateTuple = nextLocalStateTupleMap.get(curState).get(firedTran);
+					State nextLocalState = nextLocalStateTuple.getNextProbLocalState();
+					if (nextLocalState!= null) 
+						nextLocalStateTuple.getNextLocalToGlobalMap().put(firedTran, nextPrjState);
 				}
 				if (Options.getOutputSgFlag()) {
 					if (Options.getDebugMode()) {						
