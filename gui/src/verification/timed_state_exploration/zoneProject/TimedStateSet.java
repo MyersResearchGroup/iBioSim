@@ -224,6 +224,18 @@ public class TimedStateSet extends HashSet<PrjState> {
 //	}
 	
 	/**
+	 * Overrides the HashSet version of the contains method since TimedStateSets
+	 * handle containment a little differently.
+	 */
+	public boolean contains(Object obj){
+		if(!(obj instanceof PrjState)){
+			return false;
+		}
+		
+		return contains((PrjState) obj);
+	}
+	
+	/**
 	 * Determines whether the StateSet contains the PrjState or not.
 	 * @param s
 	 * 		The PrjState to determine if the PrjState contains it.
