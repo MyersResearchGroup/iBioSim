@@ -12,6 +12,8 @@ import java.util.Stack;
 
 import javax.swing.JOptionPane;
 
+import org.antlr.grammar.v3.ANTLRParser.optionsSpec_return;
+
 import lpn.parser.Abstraction;
 import lpn.parser.ExprTree;
 import lpn.parser.LhpnFile;
@@ -39,6 +41,7 @@ import verification.platu.stategraph.StateGraph;
 import verification.timed_state_exploration.zoneProject.EventSet;
 import verification.timed_state_exploration.zoneProject.StateSet;
 import verification.timed_state_exploration.zoneProject.TimedPrjState;
+import verification.timed_state_exploration.zoneProject.TimedStateSet;
 import verification.timed_state_exploration.zoneProject.Zone;
 
 public class Analysis {
@@ -208,7 +211,9 @@ public class Analysis {
 		// for how it behaves. Timing Change.
 		// TODO: Temporarily call a ProbGlobalStateSet constructor.
 		//StateSet prjStateSet = new StateSet();
-		StateSet prjStateSet = new ProbGlobalStateSet();//new StateSet();		
+		//StateSet prjStateSet = new ProbGlobalStateSet();//new StateSet();		
+		HashSet<PrjState> prjStateSet = generateStateSet();
+		
 		PrjState initPrjState;
 		// Create the appropriate type for the PrjState depending on whether timing is 
 		// being used or not. Timing Change.
@@ -227,7 +232,11 @@ public class Analysis {
 			//((TimedPrjState) initPrjState).updateInequalityVariables();
 		}
 		prjStateSet.add(initPrjState);
-		prjStateSet.set_initState(initPrjState);
+		
+		if(Options.getProbabilisticModelFlag()){
+			
+			((ProbGlobalStateSet) prjStateSet).set_initState(initPrjState);
+		}
 
 		PrjState stateStackTop;		
 		stateStackTop = initPrjState;
@@ -594,7 +603,7 @@ public class Analysis {
 		totalStateCnt = prjStateSet.size();
 		System.out.println("---> final numbers: # LPN transition firings: "	+ tranFiringCnt 
 			//+ ", # of prjStates found: " + totalStateCnt 
-			+ ", " + prjStateSet.stateString()
+			+ ", " + prjStateSet.toString()
 			+ ", max_stack_depth: " + max_stack_depth 
 			+ ", peak total memory: " + peakTotalMem / 1000000 + " MB"
 			+ ", peak used memory: " + peakUsedMem / 1000000 + " MB");
@@ -607,7 +616,10 @@ public class Analysis {
 			writePerformanceResultsToLogFile(false, tranFiringCnt, totalStateCnt, peakTotalMem / 1000000, peakUsedMem / 1000000);
 		if (Options.getOutputSgFlag()) {
 			System.out.println("outputSGPath = "  + Options.getPrjSgPath());
-			drawGlobalStateGraph(sgList, prjStateSet.toHashSet(), true);
+			
+			// TODO: Andrew: I don't think you need the toHashSet() now.
+			//drawGlobalStateGraph(sgList, prjStateSet.toHashSet(), true);
+			drawGlobalStateGraph(sgList, prjStateSet, true);
 		}		
 		return sgList;
 	}
@@ -626,6 +638,29 @@ public class Analysis {
 //		return failureTranIsEnabled;
 //	}
 
+	/**
+	 * Generates the appropriate version of a HashSet<PrjState> for storing
+	 * the "already seen" set of project states.
+	 * @return
+	 * 		Returns a HashSet<PrjState>, a StateSet, or a ProbGlobalStateSet
+	 * 				depending on the type.
+	 */
+	private HashSet<PrjState> generateStateSet(){
+		
+		boolean timed = Options.getTimingAnalysisFlag();
+		boolean subsets = Zone.getSubsetFlag();
+		boolean supersets = Zone.getSupersetFlag();
+		
+		if(Options.getProbabilisticModelFlag()){
+			return new ProbGlobalStateSet();
+		}
+		else if(timed && (subsets || supersets)){
+			return new TimedStateSet();
+		}
+		
+		return new HashSet<PrjState>();
+	}
+	
 	private boolean failureTranIsEnabled(LinkedList<Transition> curAmpleTrans) {
 		boolean failureTranIsEnabled = false;
 		for (Transition tran : curAmpleTrans) {
