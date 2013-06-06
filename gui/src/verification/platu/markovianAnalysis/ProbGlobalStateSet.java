@@ -1,8 +1,18 @@
 package verification.platu.markovianAnalysis;
 
+import java.util.HashMap;
+import java.util.HashSet;
+
+import lpn.parser.Transition;
+import verification.platu.project.PrjState;
+
 import verification.timed_state_exploration.zoneProject.StateSet;
 
-public class ProbGlobalStateSet extends StateSet {
+// TODO: Andrew: changed this to extend a HashSet instead of StateSet.
+//public class ProbGlobalStateSet extends StateSet {
+public class ProbGlobalStateSet extends HashSet<PrjState>{
+	
+	private PrjState _initState;
 	
 	//protected HashSet<PrjState> probGlobalStateSet;
 	private boolean stop;
@@ -13,18 +23,38 @@ public class ProbGlobalStateSet extends StateSet {
 		//nextProbGlobalStateTupleMap = new HashMap<PrjState, HashMap<Transition, ProbGlobalStateTuple>>();
 	}
 
-//    public void addGlobalStateTran(PrjState stateStackTop, Transition firedTran, double firedTranRate, PrjState nextPrjState) {
-//    	HashMap<Transition, ProbGlobalStateTuple> nextMap = this.nextProbGlobalStateTupleMap.get(stateStackTop);
-//    	if(nextMap == null)  {
-//    		nextMap = new HashMap<Transition,ProbGlobalStateTuple>();
-//    		nextMap.put(firedTran, new ProbGlobalStateTuple(nextPrjState, firedTranRate, 0.0));
-//    		this.nextProbGlobalStateTupleMap.put(stateStackTop, nextMap);
-//    	}
-//    	else {
-//    		nextMap.put(firedTran, new ProbGlobalStateTuple(nextPrjState, firedTranRate, 0.0));
-//    	}
-//    }
 
+//	public void addGlobalStateTran(PrjState stateStackTop, Transition firedTran, double firedTranRate, PrjState nextPrjState) {
+//		HashMap<Transition, ProbGlobalStateTuple> nextMap = this.nextProbGlobalStateTupleMap.get(stateStackTop);
+//		if(nextMap == null)  {
+//			nextMap = new HashMap<Transition,ProbGlobalStateTuple>();
+//			nextMap.put(firedTran, new ProbGlobalStateTuple(nextPrjState, firedTranRate, 0.0));
+//			this.nextProbGlobalStateTupleMap.put(stateStackTop, nextMap);
+//		}
+//		else {
+//			nextMap.put(firedTran, new ProbGlobalStateTuple(nextPrjState, firedTranRate, 0.0));
+//		}
+//	}
+ 
+    
+    /* 
+     * Set the initial state.
+     * @param initState
+     * 		The initial state.
+     */
+	public void set_initState(PrjState initState) {
+		this._initState = initState;
+	}
+	
+	/*
+	 * Get the initial state.
+	 */
+	public PrjState get_initState() {
+		return _initState;
+	}
+
+
+	
 //	public void add(PrjState s) {
 //		nextProbGlobalStateTupleMap.put(s, null);
 //	}
