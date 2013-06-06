@@ -38,6 +38,12 @@ public class VerificationNoGui {
 			else if (args[i].equals("-porbehavioral")) {
 				Options.setPOR("behavioral");
 				Options.setCycleClosingMthd("behavioral");
+				Options.setCycleClosingAmpleMethd("none");
+				poroff = false;
+			}
+			else if (args[i].equals("-porbehavioral")) {
+				Options.setPOR("behavioral");
+				Options.setCycleClosingMthd("behavioral");
 				Options.setCycleClosingAmpleMethd("cctboff");
 				poroff = false;
 			}
