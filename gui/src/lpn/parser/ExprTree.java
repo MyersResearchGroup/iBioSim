@@ -5553,9 +5553,10 @@ public class ExprTree {
 //				}
 //			      }
 			
-			else if (isit == 'd'){
-				// TODO : Check what this is before doing it.
-			}
+			// Not present in the current implementation. These are 'i'.
+//			else if (isit == 'd'){
+//				//Check what this is before doing it.
+//			}
 			
 //			  }else{
 		}
