@@ -2409,7 +2409,7 @@ public class LhpnFile {
 		 */
 		
 		// Create a list of operators to match.
-		String[] operators = new String[]{"<", "<=", ">", ">="};
+		String[] operators = new String[]{"<", "<=", ">", ">=", "="};
 		
 		// Get the nodes containing inequalities.
 		ArrayList<ExprTree> inequalities = new ArrayList<ExprTree>();
