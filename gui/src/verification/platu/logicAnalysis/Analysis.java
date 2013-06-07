@@ -12,7 +12,6 @@ import java.util.Stack;
 
 import javax.swing.JOptionPane;
 
-import org.antlr.grammar.v3.ANTLRParser.optionsSpec_return;
 
 import lpn.parser.Abstraction;
 import lpn.parser.ExprTree;
