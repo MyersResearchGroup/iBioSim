@@ -5114,8 +5114,8 @@ public class BioModel {
 				speciesToAdd.add(componentModel.getListOfSpecies().get(speciesIndex));
 				
 				//if it's degradable and there's no degradation reaction, add one
-				if (getDegradationReaction(speciesID) == null &&
-						getDegradationReaction(speciesID, componentModel) != null) {
+				if (getDegradationReaction(speciesID) == null /*&&
+						getDegradationReaction(speciesID, componentModel) != null*/) {
 					createGridDegradationReaction(componentModel.getListOfSpecies().get(speciesIndex), sbml.getModel());
 				}				
 			}
@@ -5154,7 +5154,7 @@ public class BioModel {
 		Reaction degradation = BioModel.getDegradationReaction(speciesID, compModel);
 		
 		//fix the sbo term/annotation stuff if it's not correct
-		if (degradation != null)
+		//if (degradation != null)
 			speciesDegrades = true;
 		
 		//only make grid degradation reactions if the species is degradable
@@ -6586,41 +6586,45 @@ public class BioModel {
 	public void exportSingleFile(String exportFile) {
 		ArrayList<String> comps = new ArrayList<String>();
 		SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
-		document.setModel(sbml.getModel());
 		document.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
 		document.setPackageRequired("layout", false); 
-		//LayoutModelPlugin documentLayout = (LayoutModelPlugin)document.getModel().getPlugin("layout");
 		document.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
 		document.setPackageRequired("comp", true);
-		((CompSBMLDocumentPlugin)document.getPlugin("comp")).setRequired(true);
-		CompSBMLDocumentPlugin documentComp = (CompSBMLDocumentPlugin)document.getPlugin("comp");
-		//CompModelPlugin documentCompModel = (CompModelPlugin)document.getModel().getPlugin("comp");
-		for (long i = 0; i < sbmlCompModel.getNumSubmodels(); i++) {
-			String subModelId = sbmlCompModel.getSubmodel(i).getId();
-			String extModel = sbmlComp.getExternalModelDefinition(sbmlCompModel.getSubmodel(subModelId)
-					.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
-			if (!comps.contains((String)extModel)) {
-				comps.add(extModel);
-				SBMLDocument subDocument = Gui.readSBML(path + separator + extModel);
-				CompModelPlugin subDocumentCompModel = (CompModelPlugin)subDocument.getModel().getPlugin("comp");
-				String id = subDocument.getModel().getId();
-				SBaseList elements = subDocument.getListOfAllElements();
-				for (long j = 0; j < elements.getSize(); j++) {
-					SBase sbase = elements.get(j);
-					if (sbase.isSetMetaId()) {
-						for (long k = 0; k < subDocumentCompModel.getNumPorts(); k++) {
-							Port port = subDocumentCompModel.getPort(k);
-							if (port.isSetMetaIdRef() && port.getMetaIdRef().equals(sbase.getMetaId())) {
-								port.setMetaIdRef(id+"__"+sbase.getMetaId());
+		document.setModel(sbml.getModel());
+		//LayoutModelPlugin documentLayout = (LayoutModelPlugin)document.getModel().getPlugin("layout");
+		if (sbmlCompModel.getNumSubmodels()>0) {
+			//document.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
+			//document.setPackageRequired("comp", true);
+			//((CompSBMLDocumentPlugin)document.getPlugin("comp")).setRequired(true);
+			CompSBMLDocumentPlugin documentComp = (CompSBMLDocumentPlugin)document.getPlugin("comp");
+			//CompModelPlugin documentCompModel = (CompModelPlugin)document.getModel().getPlugin("comp");
+			for (long i = 0; i < sbmlCompModel.getNumSubmodels(); i++) {
+				String subModelId = sbmlCompModel.getSubmodel(i).getId();
+				String extModel = sbmlComp.getExternalModelDefinition(sbmlCompModel.getSubmodel(subModelId)
+						.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
+				if (!comps.contains((String)extModel)) {
+					comps.add(extModel);
+					SBMLDocument subDocument = Gui.readSBML(path + separator + extModel);
+					CompModelPlugin subDocumentCompModel = (CompModelPlugin)subDocument.getModel().getPlugin("comp");
+					String id = subDocument.getModel().getId();
+					SBaseList elements = subDocument.getListOfAllElements();
+					for (long j = 0; j < elements.getSize(); j++) {
+						SBase sbase = elements.get(j);
+						if (sbase.isSetMetaId()) {
+							for (long k = 0; k < subDocumentCompModel.getNumPorts(); k++) {
+								Port port = subDocumentCompModel.getPort(k);
+								if (port.isSetMetaIdRef() && port.getMetaIdRef().equals(sbase.getMetaId())) {
+									port.setMetaIdRef(id+"__"+sbase.getMetaId());
+								}
 							}
+							sbase.setMetaId(id+"__"+sbase.getMetaId());
 						}
-						sbase.setMetaId(id+"__"+sbase.getMetaId());
 					}
+					ModelDefinition md = new ModelDefinition(subDocument.getModel());
+					documentComp.addModelDefinition(md);
+					recurseExportSingleFile(comps,(CompModelPlugin)subDocument.getModel().getPlugin("comp"),
+							(CompSBMLDocumentPlugin)subDocument.getPlugin("comp"),documentComp);
 				}
-				ModelDefinition md = new ModelDefinition(subDocument.getModel());
-				documentComp.addModelDefinition(md);
-				recurseExportSingleFile(comps,(CompModelPlugin)subDocument.getModel().getPlugin("comp"),
-						(CompSBMLDocumentPlugin)subDocument.getPlugin("comp"),documentComp);
 			}
 		}
 		SBMLWriter writer = new SBMLWriter();

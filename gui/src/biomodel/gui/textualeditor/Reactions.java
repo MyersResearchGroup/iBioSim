@@ -2376,8 +2376,12 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		String kf;
 		String kr;
 		if (changedParameters.size() == 0) {
-			kf = "kf";
-			kr = "kr";
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to create mass action kinetic law.\n"
+					+ "Requires at least one local parameter.", "Unable to Create Kinetic Law",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+			//kf = "kf";
+			//kr = "kr";
 		}
 		else if (changedParameters.size() == 1) {
 			kf = changedParameters.get(0).getId();
