@@ -12,6 +12,7 @@ import javax.swing.JTabbedPane;
 import javax.xml.stream.XMLStreamException;
 
 import main.Gui;
+import main.Log;
 
 
 public class DynamicSimulation {
@@ -38,7 +39,7 @@ public class DynamicSimulation {
 			double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, 
 			int runs, JLabel progressLabel, JFrame running, double stoichAmpValue, 
 			String[] interestingSpecies, int numSteps, double relError, double absError, 
-			String quantityType, Boolean genStats, JTabbedPane simTab) {
+			String quantityType, Boolean genStats, JTabbedPane simTab, Log log) {
 		
 		String progressText = progressLabel.getText();
 		statisticsFlag = genStats;
@@ -110,8 +111,11 @@ public class DynamicSimulation {
 		System.runFinalization();
 		
 		double val2 = System.currentTimeMillis();
-		System.out.println("Simulation Time: " + (val2-val1)/1000);
-		
+		if (log==null) {
+			System.out.println("Simulation Time: " + (val2-val1)/1000);
+		} else {
+			log.addText("Simulation Time: " + (val2-val1)/1000);
+		}
 		if (cancelFlag == false && statisticsFlag == true) {
 			
 			progressLabel.setText("Generating Statistics . . .");

@@ -136,7 +136,7 @@ public class DynSim {
 			network.mergeSBML(filename, sbml);
 			simulator.simulate(filename, outputDirectory, timeLimit, maxTimeStep, minTimeStep, 
 					randomSeed, progress, printInterval, runs, progressLabel, running, stoichAmpValue, 
-					intSpecies, numSteps, relativeError, absoluteError, quantityType, genStats, null);
+					intSpecies, numSteps, relativeError, absoluteError, quantityType, genStats, null, null);
 			
 			TSDParser tsdp = new TSDParser(outputDirectory + "run-1.tsd", true);		
 			tsdp.outputCSV(outputDirectory + "run-1.csv");
