@@ -1264,7 +1264,7 @@ public class Run implements ActionListener {
 						String SBMLFileName = directory + separator + theFile;
 						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
 								timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running,
-								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab);						
+								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, log);						
 						exitValue = 0;
 						new File(directory + separator + "running").delete();
 						logFile.close();
@@ -1283,7 +1283,7 @@ public class Run implements ActionListener {
 						String SBMLFileName = directory + separator + theFile;
 						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
 								timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running,
-								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab);						
+								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, log);						
 						exitValue = 0;
 						new File(directory + separator + "running").delete();
 						logFile.close();
@@ -1302,7 +1302,7 @@ public class Run implements ActionListener {
 						String SBMLFileName = directory + separator + theFile;
 						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
 								timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running,
-								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab);						
+								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, log);						
 						exitValue = 0;
 						new File(directory + separator + "running").delete();
 						return exitValue;
@@ -1317,7 +1317,7 @@ public class Run implements ActionListener {
 						String SBMLFileName = directory + separator + theFile;
 						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
 								timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running,
-								stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab);				
+								stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, log);				
 						exitValue = 0;
 						new File(directory + separator + "running").delete();
 						logFile.close();
