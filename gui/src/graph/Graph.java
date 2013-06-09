@@ -1762,15 +1762,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		simDir = new IconNode(simDirString, simDirString);
 		simDir.setIconName("");
 		String[] files = new File(outDir).list();
-		// for (int i = 1; i < files.length; i++) {
-		// String index = files[i];
-		// int j = i;
-		// while ((j > 0) && files[j - 1].compareToIgnoreCase(index) > 0) {
-		// files[j] = files[j - 1];
-		// j = j - 1;
-		// }
-		// files[j] = index;
-		// }
 		boolean addMean = false;
 		boolean addVar = false;
 		boolean addDev = false;
@@ -1784,13 +1775,18 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			if ((file.length() > 3 && (file.substring(file.length() - 4).equals("." + printer_id.substring(0, printer_id.length() - 8))))
 					|| (file.length() > 4 && file.substring(file.length() - 5).equals(".dtsd"))) {
 				
-				if (file.contains("run-") || file.contains("mean")) {
+				if (file.contains("run-")) {
+					addMean = true;
+					addVar = true;
+					addDev = true;
+				} 
+				else if (file.contains("mean")) {
 					addMean = true;
 				}
-				else if (file.contains("run-") || file.contains("variance")) {
+				else if (file.contains("variance")) {
 					addVar = true;
 				}
-				else if (file.contains("run-") || file.contains("standard_deviation")) {
+				else if (file.contains("standard_deviation")) {
 					addDev = true;
 				}
 				else if (file.startsWith("term-time")) {
@@ -1832,16 +1828,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			else if (new File(outDir + separator + file).isDirectory()) {
 				boolean addIt = false;
 				String[] files3 = new File(outDir + separator + file).list();
-				// for (int i = 1; i < files3.length; i++) {
-				// String index = files3[i];
-				// int j = i;
-				// while ((j > 0) && files3[j - 1].compareToIgnoreCase(index) >
-				// 0) {
-				// files3[j] = files3[j - 1];
-				// j = j - 1;
-				// }
-				// files3[j] = index;
-				// }
 				for (String getFile : files3) {
 					if ((getFile.length() > 3
 							&& (getFile.substring(getFile.length() - 4).equals("." + printer_id.substring(0, printer_id.length() - 8))))
@@ -1922,16 +1908,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						else if (new File(outDir + separator + file + separator + f).isDirectory()) {
 							boolean addIt2 = false;
 							String[] files2 = new File(outDir + separator + file + separator + f).list();
-							// for (int i = 1; i < files2.length; i++) {
-							// String index = files2[i];
-							// int j = i;
-							// while ((j > 0) && files2[j -
-							// 1].compareToIgnoreCase(index) > 0) {
-							// files2[j] = files2[j - 1];
-							// j = j - 1;
-							// }
-							// files2[j] = index;
-							// }
 							for (String getFile2 : files2) {
 								if (getFile2.length() > 3
 										&& (getFile2.substring(getFile2.length() - 4).equals("." + printer_id.substring(0, printer_id.length() - 8))
@@ -2576,188 +2552,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			editPanel.add(specPanel, "Center");
 			scroll.setViewportView(editPanel);
 			scroll.getVerticalScrollBar().setUnitIncrement(10);
-			// JButton ok = new JButton("Ok");
-			/*
-			 * ok.addActionListener(new ActionListener() { public void
-			 * actionPerformed(ActionEvent e) { double minY; double maxY; double
-			 * scaleY; double minX; double maxX; double scaleX; change = true;
-			 * try { minY = Double.parseDouble(YMin.getText().trim()); maxY =
-			 * Double.parseDouble(YMax.getText().trim()); scaleY =
-			 * Double.parseDouble(YScale.getText().trim()); minX =
-			 * Double.parseDouble(XMin.getText().trim()); maxX =
-			 * Double.parseDouble(XMax.getText().trim()); scaleX =
-			 * Double.parseDouble(XScale.getText().trim()); NumberFormat num =
-			 * NumberFormat.getInstance(); num.setMaximumFractionDigits(4);
-			 * num.setGroupingUsed(false); minY =
-			 * Double.parseDouble(num.format(minY)); maxY =
-			 * Double.parseDouble(num.format(maxY)); scaleY =
-			 * Double.parseDouble(num.format(scaleY)); minX =
-			 * Double.parseDouble(num.format(minX)); maxX =
-			 * Double.parseDouble(num.format(maxX)); scaleX =
-			 * Double.parseDouble(num.format(scaleX)); } catch (Exception e1) {
-			 * JOptionPane.showMessageDialog(BioSim.frame, "Must enter doubles
-			 * into the inputs " + "to change the graph's dimensions!", "Error",
-			 * JOptionPane.ERROR_MESSAGE); return; } lastSelected = selected;
-			 * selected = ""; ArrayList<XYSeries> graphData = new
-			 * ArrayList<XYSeries>(); XYLineAndShapeRenderer rend =
-			 * (XYLineAndShapeRenderer) chart.getXYPlot().getRenderer(); int
-			 * thisOne = -1; for (int i = 1; i < graphed.size(); i++) {
-			 * GraphSpecies index = graphed.get(i); int j = i; while ((j > 0) &&
-			 * (graphed.get(j -
-			 * 1).getSpecies().compareToIgnoreCase(index.getSpecies()) > 0)) {
-			 * graphed.set(j, graphed.get(j - 1)); j = j - 1; } graphed.set(j,
-			 * index); } ArrayList<GraphSpecies> unableToGraph = new
-			 * ArrayList<GraphSpecies>(); HashMap<String,
-			 * ArrayList<ArrayList<Double>>> allData = new HashMap<String,
-			 * ArrayList<ArrayList<Double>>>(); for (GraphSpecies g : graphed) {
-			 * if (g.getDirectory().equals("")) { thisOne++;
-			 * rend.setSeriesVisible(thisOne, true);
-			 * rend.setSeriesLinesVisible(thisOne, g.getConnected());
-			 * rend.setSeriesShapesFilled(thisOne, g.getFilled());
-			 * rend.setSeriesShapesVisible(thisOne, g.getVisible());
-			 * rend.setSeriesPaint(thisOne, g.getShapeAndPaint().getPaint());
-			 * rend.setSeriesShape(thisOne, g.getShapeAndPaint().getShape()); if
-			 * (!g.getRunNumber().equals("Average") &&
-			 * !g.getRunNumber().equals("Variance") &&
-			 * !g.getRunNumber().equals("Standard Deviation")) { if (new
-			 * File(outDir + separator + g.getRunNumber() + "." +
-			 * printer_id.substring(0, printer_id.length() - 8)).exists()) {
-			 * readGraphSpecies(outDir + separator + g.getRunNumber() + "." +
-			 * printer_id.substring(0, printer_id.length() - 8), BioSim.frame);
-			 * ArrayList<ArrayList<Double>> data; if
-			 * (allData.containsKey(g.getRunNumber() + " " + g.getDirectory()))
-			 * { data = allData.get(g.getRunNumber() + " " + g.getDirectory());
-			 * } else { data = readData(outDir + separator + g.getRunNumber() +
-			 * "." + printer_id.substring(0, printer_id.length() - 8),
-			 * BioSim.frame, y.getText().trim(), g.getRunNumber(), null); for
-			 * (int i = 2; i < graphSpecies.size(); i++) { String index =
-			 * graphSpecies.get(i); ArrayList<Double> index2 = data.get(i); int
-			 * j = i; while ((j > 1) && graphSpecies.get(j -
-			 * 1).compareToIgnoreCase(index) > 0) { graphSpecies.set(j,
-			 * graphSpecies.get(j - 1)); data.set(j, data.get(j - 1)); j = j -
-			 * 1; } graphSpecies.set(j, index); data.set(j, index2); }
-			 * allData.put(g.getRunNumber() + " " + g.getDirectory(), data); }
-			 * graphData.add(new XYSeries(g.getSpecies())); if (data.size() !=
-			 * 0) { for (int i = 0; i < (data.get(0)).size(); i++) {
-			 * graphData.get(graphData.size() - 1).add((data.get(0)).get(i),
-			 * (data.get(g.getNumber() + 1)).get(i)); } } } else {
-			 * unableToGraph.add(g); thisOne--; } } else { boolean ableToGraph =
-			 * false; try { for (String s : new File(outDir).list()) { if
-			 * (s.length() > 3 && s.substring(0, 4).equals("run-")) {
-			 * ableToGraph = true; } } } catch (Exception e1) { ableToGraph =
-			 * false; } if (ableToGraph) { int next = 1; while (!new File(outDir
-			 * + separator + "run-" + next + "." + printer_id.substring(0,
-			 * printer_id.length() - 8)).exists()) { next++; }
-			 * readGraphSpecies(outDir + separator + "run-" + next + "." +
-			 * printer_id.substring(0, printer_id.length() - 8), BioSim.frame);
-			 * ArrayList<ArrayList<Double>> data; if
-			 * (allData.containsKey(g.getRunNumber() + " " + g.getDirectory()))
-			 * { data = allData.get(g.getRunNumber() + " " + g.getDirectory());
-			 * } else { data = readData(outDir + separator + "run-1." +
-			 * printer_id.substring(0, printer_id.length() - 8), BioSim.frame,
-			 * y.getText().trim(), g.getRunNumber().toLowerCase(), null); for
-			 * (int i = 2; i < graphSpecies.size(); i++) { String index =
-			 * graphSpecies.get(i); ArrayList<Double> index2 = data.get(i); int
-			 * j = i; while ((j > 1) && graphSpecies.get(j -
-			 * 1).compareToIgnoreCase(index) > 0) { graphSpecies.set(j,
-			 * graphSpecies.get(j - 1)); data.set(j, data.get(j - 1)); j = j -
-			 * 1; } graphSpecies.set(j, index); data.set(j, index2); }
-			 * allData.put(g.getRunNumber() + " " + g.getDirectory(), data); }
-			 * graphData.add(new XYSeries(g.getSpecies())); if (data.size() !=
-			 * 0) { for (int i = 0; i < (data.get(0)).size(); i++) {
-			 * graphData.get(graphData.size() - 1).add((data.get(0)).get(i),
-			 * (data.get(g.getNumber() + 1)).get(i)); } } } else {
-			 * unableToGraph.add(g); thisOne--; } } } else { thisOne++;
-			 * rend.setSeriesVisible(thisOne, true);
-			 * rend.setSeriesLinesVisible(thisOne, g.getConnected());
-			 * rend.setSeriesShapesFilled(thisOne, g.getFilled());
-			 * rend.setSeriesShapesVisible(thisOne, g.getVisible());
-			 * rend.setSeriesPaint(thisOne, g.getShapeAndPaint().getPaint());
-			 * rend.setSeriesShape(thisOne, g.getShapeAndPaint().getShape()); if
-			 * (!g.getRunNumber().equals("Average") &&
-			 * !g.getRunNumber().equals("Variance") &&
-			 * !g.getRunNumber().equals("Standard Deviation")) { if (new
-			 * File(outDir + separator + g.getDirectory() + separator +
-			 * g.getRunNumber() + "." + printer_id.substring(0,
-			 * printer_id.length() - 8)).exists()) { readGraphSpecies( outDir +
-			 * separator + g.getDirectory() + separator + g.getRunNumber() + "."
-			 * + printer_id.substring(0, printer_id.length() - 8),
-			 * BioSim.frame); ArrayList<ArrayList<Double>> data; if
-			 * (allData.containsKey(g.getRunNumber() + " " + g.getDirectory()))
-			 * { data = allData.get(g.getRunNumber() + " " + g.getDirectory());
-			 * } else { data = readData(outDir + separator + g.getDirectory() +
-			 * separator + g.getRunNumber() + "." + printer_id.substring(0,
-			 * printer_id.length() - 8), BioSim.frame, y.getText().trim(),
-			 * g.getRunNumber(), g.getDirectory()); for (int i = 2; i <
-			 * graphSpecies.size(); i++) { String index = graphSpecies.get(i);
-			 * ArrayList<Double> index2 = data.get(i); int j = i; while ((j > 1)
-			 * && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
-			 * graphSpecies.set(j, graphSpecies.get(j - 1)); data.set(j,
-			 * data.get(j - 1)); j = j - 1; } graphSpecies.set(j, index);
-			 * data.set(j, index2); } allData.put(g.getRunNumber() + " " +
-			 * g.getDirectory(), data); } graphData.add(new
-			 * XYSeries(g.getSpecies())); if (data.size() != 0) { for (int i =
-			 * 0; i < (data.get(0)).size(); i++) {
-			 * graphData.get(graphData.size() - 1).add((data.get(0)).get(i),
-			 * (data.get(g.getNumber() + 1)).get(i)); } } } else {
-			 * unableToGraph.add(g); thisOne--; } } else { boolean ableToGraph =
-			 * false; try { for (String s : new File(outDir + separator +
-			 * g.getDirectory()).list()) { if (s.length() > 3 && s.substring(0,
-			 * 4).equals("run-")) { ableToGraph = true; } } } catch (Exception
-			 * e1) { ableToGraph = false; } if (ableToGraph) { int next = 1;
-			 * while (!new File(outDir + separator + g.getDirectory() +
-			 * separator + "run-" + next + "." + printer_id.substring(0,
-			 * printer_id.length() - 8)).exists()) { next++; }
-			 * readGraphSpecies(outDir + separator + g.getDirectory() +
-			 * separator + "run-" + next + "." + printer_id.substring(0,
-			 * printer_id.length() - 8), BioSim.frame);
-			 * ArrayList<ArrayList<Double>> data; if
-			 * (allData.containsKey(g.getRunNumber() + " " + g.getDirectory()))
-			 * { data = allData.get(g.getRunNumber() + " " + g.getDirectory());
-			 * } else { data = readData(outDir + separator + g.getDirectory() +
-			 * separator + "run-1." + printer_id.substring(0,
-			 * printer_id.length() - 8), BioSim.frame, y.getText().trim(),
-			 * g.getRunNumber().toLowerCase(), g.getDirectory()); for (int i =
-			 * 2; i < graphSpecies.size(); i++) { String index =
-			 * graphSpecies.get(i); ArrayList<Double> index2 = data.get(i); int
-			 * j = i; while ((j > 1) && graphSpecies.get(j -
-			 * 1).compareToIgnoreCase(index) > 0) { graphSpecies.set(j,
-			 * graphSpecies.get(j - 1)); data.set(j, data.get(j - 1)); j = j -
-			 * 1; } graphSpecies.set(j, index); data.set(j, index2); }
-			 * allData.put(g.getRunNumber() + " " + g.getDirectory(), data); }
-			 * graphData.add(new XYSeries(g.getSpecies())); if (data.size() !=
-			 * 0) { for (int i = 0; i < (data.get(0)).size(); i++) {
-			 * graphData.get(graphData.size() - 1).add((data.get(0)).get(i),
-			 * (data.get(g.getNumber() + 1)).get(i)); } } } else {
-			 * unableToGraph.add(g); thisOne--; } } } } for (GraphSpecies g :
-			 * unableToGraph) { graphed.remove(g); } XYSeriesCollection dataset
-			 * = new XYSeriesCollection(); for (int i = 0; i < graphData.size();
-			 * i++) { dataset.addSeries(graphData.get(i)); }
-			 * fixGraph(title.getText().trim(), x.getText().trim(),
-			 * y.getText().trim(), dataset);
-			 * chart.getXYPlot().setRenderer(rend); XYPlot plot =
-			 * chart.getXYPlot(); if (resize.isSelected()) { resize(dataset); }
-			 * else { NumberAxis axis = (NumberAxis) plot.getRangeAxis();
-			 * axis.setAutoTickUnitSelection(false); axis.setRange(minY, maxY);
-			 * axis.setTickUnit(new NumberTickUnit(scaleY)); axis = (NumberAxis)
-			 * plot.getDomainAxis(); axis.setAutoTickUnitSelection(false);
-			 * axis.setRange(minX, maxX); axis.setTickUnit(new
-			 * NumberTickUnit(scaleX)); } //f.dispose(); } });
-			 */
-			// final JButton cancel = new JButton("Cancel");
-			// cancel.addActionListener(new ActionListener() {
-			// public void actionPerformed(ActionEvent e) {
-			// selected = "";
-			// int size = graphed.size();
-			// for (int i = 0; i < size; i++) {
-			// graphed.remove();
-			// }
-			// for (GraphSpecies g : old) {
-			// graphed.add(g);
-			// }
-			// f.dispose();
-			// }
-			// });
 			final JButton deselect = new JButton("Deselect All");
 			deselect.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -2869,17 +2663,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					minX = Double.parseDouble(XMin.getText().trim());
 					maxX = Double.parseDouble(XMax.getText().trim());
 					scaleX = Double.parseDouble(XScale.getText().trim());
-					/*
-					 * NumberFormat num = NumberFormat.getInstance();
-					 * num.setMaximumFractionDigits(4);
-					 * num.setGroupingUsed(false); minY =
-					 * Double.parseDouble(num.format(minY)); maxY =
-					 * Double.parseDouble(num.format(maxY)); scaleY =
-					 * Double.parseDouble(num.format(scaleY)); minX =
-					 * Double.parseDouble(num.format(minX)); maxX =
-					 * Double.parseDouble(num.format(maxX)); scaleX =
-					 * Double.parseDouble(num.format(scaleX));
-					 */
 				}
 				catch (Exception e1) {
 					JOptionPane.showMessageDialog(Gui.frame, "Must enter doubles into the inputs " + "to change the graph's dimensions!", "Error",
@@ -2921,7 +2704,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						rend.setSeriesPaint(thisOne, g.getShapeAndPaint().getPaint());
 						rend.setSeriesShape(thisOne, g.getShapeAndPaint().getShape());
 						
-						if (!g.getRunNumber().equals("Average") && !g.getRunNumber().equals("Variance")
+						if (!g.getRunNumber().equals("Average") && !g.getRunNumber().equals("All Runs") 
+								&& !g.getRunNumber().equals("Variance")
 								&& !g.getRunNumber().equals("Standard Deviation") && !g.getRunNumber().equals("Termination Time")
 								&& !g.getRunNumber().equals("Percent Termination") && !g.getRunNumber().equals("Constraint Termination")
 								&& !g.getRunNumber().equals("Bifurcation Statistics")) {
@@ -3678,45 +3462,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					graphed.add(g);
 				}
 			}
-			// WindowListener w = new WindowListener() {
-			// public void windowClosing(WindowEvent arg0) {
-			// cancel.doClick();
-			// }
-			// public void windowOpened(WindowEvent arg0) {
-			// }
-			// public void windowClosed(WindowEvent arg0) {
-			// }
-			// public void windowIconified(WindowEvent arg0) {
-			// }
-			// public void windowDeiconified(WindowEvent arg0) {
-			// }
-			// public void windowActivated(WindowEvent arg0) {
-			// }
-			// public void windowDeactivated(WindowEvent arg0) {
-			// }
-			// };
-			// f.addWindowListener(w);
-			// f.setContentPane(all);
-			// f.pack();
-			// Dimension screenSize;
-			// try {
-			// Toolkit tk = Toolkit.getDefaultToolkit();
-			// screenSize = tk.getScreenSize();
-			// }
-			// catch (AWTError awe) {
-			// screenSize = new Dimension(640, 480);
-			// }
-			// Dimension frameSize = f.getSize();
-			// if (frameSize.height > screenSize.height) {
-			// frameSize.height = screenSize.height;
-			// }
-			// if (frameSize.width > screenSize.width) {
-			// frameSize.width = screenSize.width;
-			// }
-			// int xx = screenSize.width / 2 - frameSize.width / 2;
-			// int yy = screenSize.height / 2 - frameSize.height / 2;
-			// f.setLocation(xx, yy);
-			// f.setVisible(true);
 		}
 	}
 
@@ -3732,15 +3477,401 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		renderer.setClosedIcon(MetalIconFactory.getTreeFolderIcon());
 		renderer.setOpenIcon(MetalIconFactory.getTreeFolderIcon());
 	}
+	
+	private void selectGraphVariable(ActionEvent e, int i, String directory,HashMap<String, Shape> shapey,
+			HashMap<String, Paint> colory, String dataSet, String label, boolean update) {
+		node.setIcon(TextIcons.getIcon("g"));
+		node.setIconName("" + (char) 10003);
+		IconNode n = ((IconNode) node.getParent());
+		while (n != null) {
+			n.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
+			n.setIconName("" + (char) 10003);
+			if (n.getParent() == null) {
+				n = null;
+			}
+			else {
+				n = ((IconNode) n.getParent());
+			}
+		}
+		tree.revalidate();
+		tree.repaint();
+		String s = series.get(i).getText();
+		((JCheckBox) e.getSource()).setSelected(false);
+		int[] cols = new int[35];
+		int[] shaps = new int[10];
+		for (int k = 0; k < boxes.size(); k++) {
+			if (boxes.get(k).isSelected()) {
+				if (colorsCombo.get(k).getSelectedItem().equals("Red")) {
+					cols[0]++;
+					colorsButtons.get(k).setBackground((Color) colory.get("Red"));
+					colorsButtons.get(k).setForeground((Color) colory.get("Red"));
+				}
+				else if (colorsCombo.get(k).getSelectedItem().equals("Blue")) {
+					cols[1]++;
+					colorsButtons.get(k).setBackground((Color) colory.get("Blue"));
+					colorsButtons.get(k).setForeground((Color) colory.get("Blue"));
+				}
+				else if (colorsCombo.get(k).getSelectedItem().equals("Green")) {
+					cols[2]++;
+					colorsButtons.get(k).setBackground((Color) colory.get("Green"));
+					colorsButtons.get(k).setForeground((Color) colory.get("Green"));
+				}
+				else if (colorsCombo.get(k).getSelectedItem().equals("Yellow")) {
+					cols[3]++;
+					colorsButtons.get(k).setBackground((Color) colory.get("Yellow"));
+					colorsButtons.get(k).setForeground((Color) colory.get("Yellow"));
+				}
+				else if (colorsCombo.get(k).getSelectedItem().equals("Magenta")) {
+					cols[4]++;
+					colorsButtons.get(k).setBackground((Color) colory.get("Magenta"));
+					colorsButtons.get(k).setForeground((Color) colory.get("Magenta"));
+				}
+				else if (colorsCombo.get(k).getSelectedItem().equals("Cyan")) {
+					cols[5]++;
+					colorsButtons.get(k).setBackground((Color) colory.get("Cyan"));
+					colorsButtons.get(k).setForeground((Color) colory.get("Cyan"));
+				}
+				else if (colorsCombo.get(k).getSelectedItem().equals("Tan")) {
+					cols[6]++;
+					colorsButtons.get(k).setBackground((Color) colory.get("Tan"));
+					colorsButtons.get(k).setForeground((Color) colory.get("Tan"));
+				}
+				else if (colorsCombo.get(k).getSelectedItem().equals("Gray (Dark)")) {
+					cols[7]++;
+					colorsButtons.get(k).setBackground((Color) colory.get("Gray (Dark)"));
+					colorsButtons.get(k).setForeground((Color) colory.get("Gray (Dark)"));
+				}
+				else if (colorsCombo.get(k).getSelectedItem().equals("Red (Dark)")) {
+					cols[8]++;
+					colorsButtons.get(k).setBackground((Color) colory.get("Red (Dark)"));
+					colorsButtons.get(k).setForeground((Color) colory.get("Red (Dark)"));
+				}
+				else if (colorsCombo.get(k).getSelectedItem().equals("Blue (Dark)")) {
+					cols[9]++;
+					colorsButtons.get(k).setBackground((Color) colory.get("Blue (Dark)"));
+					colorsButtons.get(k).setForeground((Color) colory.get("Blue (Dark)"));
+				}
+				else if (colorsCombo.get(k).getSelectedItem().equals("Green (Dark)")) {
+					cols[10]++;
+					colorsButtons.get(k).setBackground((Color) colory.get("Green (Dark)"));
+					colorsButtons.get(k).setForeground((Color) colory.get("Green (Dark)"));
+				}
+				else if (colorsCombo.get(k).getSelectedItem().equals("Yellow (Dark)")) {
+					cols[11]++;
+					colorsButtons.get(k).setBackground((Color) colory.get("Yellow (Dark)"));
+					colorsButtons.get(k).setForeground((Color) colory.get("Yellow (Dark)"));
+				}
+				else if (colorsCombo.get(k).getSelectedItem().equals("Magenta (Dark)")) {
+					cols[12]++;
+					colorsButtons.get(k).setBackground((Color) colory.get("Magenta (Dark)"));
+					colorsButtons.get(k).setForeground((Color) colory.get("Magenta (Dark)"));
+				}
+				else if (colorsCombo.get(k).getSelectedItem().equals("Cyan (Dark)")) {
+					cols[13]++;
+					colorsButtons.get(k).setBackground((Color) colory.get("Cyan (Dark)"));
+					colorsButtons.get(k).setForeground((Color) colory.get("Cyan (Dark)"));
+				}
+				else if (colorsCombo.get(k).getSelectedItem().equals("Black")) {
+					cols[14]++;
+					colorsButtons.get(k).setBackground((Color) colory.get("Black"));
+					colorsButtons.get(k).setForeground((Color) colory.get("Black"));
+				}
+				else if (colorsCombo.get(k).getSelectedItem().equals("Gray")) {
+					cols[21]++;
+					colorsButtons.get(k).setBackground((Color) colory.get("Gray"));
+					colorsButtons.get(k).setForeground((Color) colory.get("Gray"));
+				}
+				else if (colorsCombo.get(k).getSelectedItem().equals("Red (Extra Dark)")) {
+					cols[22]++;
+					colorsButtons.get(k).setBackground((Color) colory.get("Red (Extra Dark)"));
+					colorsButtons.get(k).setForeground((Color) colory.get("Red (Extra Dark)"));
+				}
+				else if (colorsCombo.get(k).getSelectedItem().equals("Blue (Extra Dark)")) {
+					cols[23]++;
+					colorsButtons.get(k).setBackground((Color) colory.get("Blue (Extra Dark)"));
+					colorsButtons.get(k).setForeground((Color) colory.get("Blue (Extra Dark)"));
+				}
+				else if (colorsCombo.get(k).getSelectedItem().equals("Green (Extra Dark)")) {
+					cols[24]++;
+					colorsButtons.get(k).setBackground((Color) colory.get("Green (Extra Dark)"));
+					colorsButtons.get(k).setForeground((Color) colory.get("Green (Extra Dark)"));
+				}
+				else if (colorsCombo.get(k).getSelectedItem().equals("Yellow (Extra Dark)")) {
+					cols[25]++;
+					colorsButtons.get(k).setBackground((Color) colory.get("Yellow (Extra Dark)"));
+					colorsButtons.get(k).setForeground((Color) colory.get("Yellow (Extra Dark)"));
+				}
+				else if (colorsCombo.get(k).getSelectedItem().equals("Magenta (Extra Dark)")) {
+					cols[26]++;
+					colorsButtons.get(k).setBackground((Color) colory.get("Magenta (Extra Dark)"));
+					colorsButtons.get(k).setForeground((Color) colory.get("Magenta (Extra Dark)"));
+				}
+				else if (colorsCombo.get(k).getSelectedItem().equals("Cyan (Extra Dark)")) {
+					cols[27]++;
+					colorsButtons.get(k).setBackground((Color) colory.get("Cyan (Extra Dark)"));
+					colorsButtons.get(k).setForeground((Color) colory.get("Cyan (Extra Dark)"));
+				}
+				else if (colorsCombo.get(k).getSelectedItem().equals("Red (Light)")) {
+					cols[28]++;
+					colorsButtons.get(k).setBackground((Color) colory.get("Red (Light)"));
+					colorsButtons.get(k).setForeground((Color) colory.get("Red (Light)"));
+				}
+				else if (colorsCombo.get(k).getSelectedItem().equals("Blue (Light)")) {
+					cols[29]++;
+					colorsButtons.get(k).setBackground((Color) colory.get("Blue (Light)"));
+					colorsButtons.get(k).setForeground((Color) colory.get("Blue (Light)"));
+				}
+				else if (colorsCombo.get(k).getSelectedItem().equals("Green (Light)")) {
+					cols[30]++;
+					colorsButtons.get(k).setBackground((Color) colory.get("Green (Light)"));
+					colorsButtons.get(k).setForeground((Color) colory.get("Green (Light)"));
+				}
+				else if (colorsCombo.get(k).getSelectedItem().equals("Yellow (Light)")) {
+					cols[31]++;
+					colorsButtons.get(k).setBackground((Color) colory.get("Yellow (Light)"));
+					colorsButtons.get(k).setForeground((Color) colory.get("Yellow (Light)"));
+				}
+				else if (colorsCombo.get(k).getSelectedItem().equals("Magenta (Light)")) {
+					cols[32]++;
+					colorsButtons.get(k).setBackground((Color) colory.get("Magenta (Light)"));
+					colorsButtons.get(k).setForeground((Color) colory.get("Magenta (Light)"));
+				}
+				else if (colorsCombo.get(k).getSelectedItem().equals("Cyan (Light)")) {
+					cols[33]++;
+					colorsButtons.get(k).setBackground((Color) colory.get("Cyan (Light)"));
+					colorsButtons.get(k).setForeground((Color) colory.get("Cyan (Light)"));
+				}
+				else if (colorsCombo.get(k).getSelectedItem().equals("Gray (Light)")) {
+					cols[34]++;
+					colorsButtons.get(k).setBackground((Color) colory.get("Gray (Light)"));
+					colorsButtons.get(k).setForeground((Color) colory.get("Gray (Light)"));
+				}
+				if (shapesCombo.get(k).getSelectedItem().equals("Square")) {
+					shaps[0]++;
+				}
+				else if (shapesCombo.get(k).getSelectedItem().equals("Circle")) {
+					shaps[1]++;
+				}
+				else if (shapesCombo.get(k).getSelectedItem().equals("Triangle")) {
+					shaps[2]++;
+				}
+				else if (shapesCombo.get(k).getSelectedItem().equals("Diamond")) {
+					shaps[3]++;
+				}
+				else if (shapesCombo.get(k).getSelectedItem().equals("Rectangle (Horizontal)")) {
+					shaps[4]++;
+				}
+				else if (shapesCombo.get(k).getSelectedItem().equals("Triangle (Upside Down)")) {
+					shaps[5]++;
+				}
+				else if (shapesCombo.get(k).getSelectedItem().equals("Circle (Half)")) {
+					shaps[6]++;
+				}
+				else if (shapesCombo.get(k).getSelectedItem().equals("Arrow")) {
+					shaps[7]++;
+				}
+				else if (shapesCombo.get(k).getSelectedItem().equals("Rectangle (Vertical)")) {
+					shaps[8]++;
+				}
+				else if (shapesCombo.get(k).getSelectedItem().equals("Arrow (Backwards)")) {
+					shaps[9]++;
+				}
+			}
+		}
+		for (GraphSpecies graph : graphed) {
+			if (graph.getShapeAndPaint().getPaintName().equals("Red")) {
+				cols[0]++;
+			}
+			else if (graph.getShapeAndPaint().getPaintName().equals("Blue")) {
+				cols[1]++;
+			}
+			else if (graph.getShapeAndPaint().getPaintName().equals("Green")) {
+				cols[2]++;
+			}
+			else if (graph.getShapeAndPaint().getPaintName().equals("Yellow")) {
+				cols[3]++;
+			}
+			else if (graph.getShapeAndPaint().getPaintName().equals("Magenta")) {
+				cols[4]++;
+			}
+			else if (graph.getShapeAndPaint().getPaintName().equals("Cyan")) {
+				cols[5]++;
+			}
+			else if (graph.getShapeAndPaint().getPaintName().equals("Tan")) {
+				cols[6]++;
+			}
+			else if (graph.getShapeAndPaint().getPaintName().equals("Gray (Dark)")) {
+				cols[7]++;
+			}
+			else if (graph.getShapeAndPaint().getPaintName().equals("Red (Dark)")) {
+				cols[8]++;
+			}
+			else if (graph.getShapeAndPaint().getPaintName().equals("Blue (Dark)")) {
+				cols[9]++;
+			}
+			else if (graph.getShapeAndPaint().getPaintName().equals("Green (Dark)")) {
+				cols[10]++;
+			}
+			else if (graph.getShapeAndPaint().getPaintName().equals("Yellow (Dark)")) {
+				cols[11]++;
+			}
+			else if (graph.getShapeAndPaint().getPaintName().equals("Magenta (Dark)")) {
+				cols[12]++;
+			}
+			else if (graph.getShapeAndPaint().getPaintName().equals("Cyan (Dark)")) {
+				cols[13]++;
+			}
+			else if (graph.getShapeAndPaint().getPaintName().equals("Black")) {
+				cols[14]++;
+			}
+			else if (graph.getShapeAndPaint().getPaintName().equals("Gray")) {
+				cols[21]++;
+			}
+			else if (graph.getShapeAndPaint().getPaintName().equals("Red (Extra Dark)")) {
+				cols[22]++;
+			}
+			else if (graph.getShapeAndPaint().getPaintName().equals("Blue (Extra Dark)")) {
+				cols[23]++;
+			}
+			else if (graph.getShapeAndPaint().getPaintName().equals("Green (Extra Dark)")) {
+				cols[24]++;
+			}
+			else if (graph.getShapeAndPaint().getPaintName().equals("Yellow (Extra Dark)")) {
+				cols[25]++;
+			}
+			else if (graph.getShapeAndPaint().getPaintName().equals("Magenta (Extra Dark)")) {
+				cols[26]++;
+			}
+			else if (graph.getShapeAndPaint().getPaintName().equals("Cyan (Extra Dark)")) {
+				cols[27]++;
+			}
+			else if (graph.getShapeAndPaint().getPaintName().equals("Red (Light)")) {
+				cols[28]++;
+			}
+			else if (graph.getShapeAndPaint().getPaintName().equals("Blue (Light)")) {
+				cols[29]++;
+			}
+			else if (graph.getShapeAndPaint().getPaintName().equals("Green (Light)")) {
+				cols[30]++;
+			}
+			else if (graph.getShapeAndPaint().getPaintName().equals("Yellow (Light)")) {
+				cols[31]++;
+			}
+			else if (graph.getShapeAndPaint().getPaintName().equals("Magenta (Light)")) {
+				cols[32]++;
+			}
+			else if (graph.getShapeAndPaint().getPaintName().equals("Cyan (Light)")) {
+				cols[33]++;
+			}
+			else if (graph.getShapeAndPaint().getPaintName().equals("Gray (Light)")) {
+				cols[34]++;
+			}
+			if (graph.getShapeAndPaint().getShapeName().equals("Square")) {
+				shaps[0]++;
+			}
+			else if (graph.getShapeAndPaint().getShapeName().equals("Circle")) {
+				shaps[1]++;
+			}
+			else if (graph.getShapeAndPaint().getShapeName().equals("Triangle")) {
+				shaps[2]++;
+			}
+			else if (graph.getShapeAndPaint().getShapeName().equals("Diamond")) {
+				shaps[3]++;
+			}
+			else if (graph.getShapeAndPaint().getShapeName().equals("Rectangle (Horizontal)")) {
+				shaps[4]++;
+			}
+			else if (graph.getShapeAndPaint().getShapeName().equals("Triangle (Upside Down)")) {
+				shaps[5]++;
+			}
+			else if (graph.getShapeAndPaint().getShapeName().equals("Circle (Half)")) {
+				shaps[6]++;
+			}
+			else if (graph.getShapeAndPaint().getShapeName().equals("Arrow")) {
+				shaps[7]++;
+			}
+			else if (graph.getShapeAndPaint().getShapeName().equals("Rectangle (Vertical)")) {
+				shaps[8]++;
+			}
+			else if (graph.getShapeAndPaint().getShapeName().equals("Arrow (Backwards)")) {
+				shaps[9]++;
+			}
+		}
+		((JCheckBox) e.getSource()).setSelected(true);
+		series.get(i).setText(s);
+		series.get(i).setSelectionStart(0);
+		series.get(i).setSelectionEnd(0);
+		int colorSet = 0;
+		for (int j = 1; j < cols.length; j++) {
+			if ((j < 15 || j > 20) && cols[j] < cols[colorSet]) {
+				colorSet = j;
+			}
+		}
+		int shapeSet = 0;
+		for (int j = 1; j < shaps.length; j++) {
+			if (shaps[j] < shaps[shapeSet]) {
+				shapeSet = j;
+			}
+		}
+		DefaultDrawingSupplier draw = new DefaultDrawingSupplier();
+		Paint paint;
+		if (colorSet == 34) {
+			paint = colors.get("Gray (Light)");
+		}
+		else {
+			for (int j = 0; j < colorSet; j++) {
+				draw.getNextPaint();
+			}
+			paint = draw.getNextPaint();
+		}
+		Object[] set = colory.keySet().toArray();
+		String color = (String) colorsCombo.get(i).getSelectedItem();
+		for (int j = 0; j < set.length; j++) {
+			if (paint == colory.get(set[j])) {
+				if (update) {
+					colorsCombo.get(i).setSelectedItem(set[j]);
+					colorsButtons.get(i).setBackground((Color) paint);
+					colorsButtons.get(i).setForeground((Color) paint);
+				} 
+				color = (String)set[j];
+			}
+		}
+		for (int j = 0; j < shapeSet; j++) {
+			draw.getNextShape();
+		}
+		Shape shape = draw.getNextShape();
+		set = shapey.keySet().toArray();
+		String shapeStr = (String)shapesCombo.get(i).getSelectedItem();
+		for (int j = 0; j < set.length; j++) {
+			if (shape == shapey.get(set[j])) {
+				if (update) {
+					shapesCombo.get(i).setSelectedItem(set[j]);
+				}
+				shapeStr = (String)set[j];
+			}
+		}
+		boolean allChecked = true;
+		for (JCheckBox temp : boxes) {
+			if (!temp.isSelected()) {
+				allChecked = false;
+			}
+		}
+		if (allChecked) {
+			use.setSelected(true);
+		}
+		//String color = (String) colorsCombo.get(i).getSelectedItem();
+		if (color.equals("Custom")) {
+			color += "_" + colorsButtons.get(i).getBackground().getRGB();
+		}
+		graphed.add(new GraphSpecies(shapey.get(shapeStr), color, filled.get(i).isSelected(), 
+				visible.get(i).isSelected(), connected.get(i).isSelected(), dataSet, boxes.get(i).getName(), label,
+				XVariable.getSelectedIndex(), i, directory));
+	}
 
 	private void addTreeListener() {
-		boolean stop = false;
-		int selectionRow = 1;
 		for (int i = 1; i < tree.getRowCount(); i++) {
 			tree.setSelectionRow(i);
 			if (selected.equals(lastSelected)) {
-				stop = true;
-				selectionRow = i;
 				break;
 			}
 		}
@@ -4095,14 +4226,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 			}
 		});
-		if (!stop) {
-			tree.setSelectionRow(0);
-			//tree.setSelectionRow(1);
-		}
-		else {
-			tree.setSelectionRow(0);
-			//tree.setSelectionRow(selectionRow);
-		}
+		tree.setSelectionRow(0);
 	}
 
 	private JPanel fixGraphChoices(final String directory) {
@@ -4337,419 +4461,34 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				public void actionPerformed(ActionEvent e) {
 					int i = Integer.parseInt(e.getActionCommand());
 					if (((JCheckBox) e.getSource()).isSelected()) {
-						node.setIcon(TextIcons.getIcon("g"));
-						node.setIconName("" + (char) 10003);
-						IconNode n = ((IconNode) node.getParent());
-						while (n != null) {
-							n.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
-							n.setIconName("" + (char) 10003);
-							if (n.getParent() == null) {
-								n = null;
+						if (tree.getSelectionCount()>1) {
+							for (int j = 0; j < tree.getSelectionCount(); j++) {
+								IconNode curNode = (IconNode) tree.getPathForRow(tree.getSelectionRows()[j]).getLastPathComponent();
+								String next = curNode.getName();
+								String label = series.get(i).getText().trim();
+								label = label.substring(0,label.indexOf("(")-1);
+								String runNumber = "";
+								if (next.startsWith("run-")) {
+									runNumber = curNode.getName().substring(curNode.getName().indexOf("-")+1);
+								} else if (next.equals("Average")) {
+									runNumber += (char) 967;
+								} else if (next.equals("Variance")) {
+									runNumber += (char) 948 + "" + (char) 178;
+								} else if (next.equals("Standard Deviation")) {
+									runNumber += (char) 948;
+								} else {
+									continue;
+								}
+								if (directory.equals("")) {
+									label += "(" + runNumber + ")";
+								} else {
+									label += "(" + directory + "," + runNumber + ")";
+								}
+								selectGraphVariable(e,i,directory,shapey,colory,next,label,false);
 							}
-							else {
-								n = ((IconNode) n.getParent());
-							}
+						} else {
+							selectGraphVariable(e,i,directory,shapey,colory,selected,series.get(i).getText().trim(),true);
 						}
-						tree.revalidate();
-						tree.repaint();
-						String s = series.get(i).getText();
-						((JCheckBox) e.getSource()).setSelected(false);
-						int[] cols = new int[35];
-						int[] shaps = new int[10];
-						for (int k = 0; k < boxes.size(); k++) {
-							if (boxes.get(k).isSelected()) {
-								if (colorsCombo.get(k).getSelectedItem().equals("Red")) {
-									cols[0]++;
-									colorsButtons.get(k).setBackground((Color) colory.get("Red"));
-									colorsButtons.get(k).setForeground((Color) colory.get("Red"));
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Blue")) {
-									cols[1]++;
-									colorsButtons.get(k).setBackground((Color) colory.get("Blue"));
-									colorsButtons.get(k).setForeground((Color) colory.get("Blue"));
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Green")) {
-									cols[2]++;
-									colorsButtons.get(k).setBackground((Color) colory.get("Green"));
-									colorsButtons.get(k).setForeground((Color) colory.get("Green"));
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Yellow")) {
-									cols[3]++;
-									colorsButtons.get(k).setBackground((Color) colory.get("Yellow"));
-									colorsButtons.get(k).setForeground((Color) colory.get("Yellow"));
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Magenta")) {
-									cols[4]++;
-									colorsButtons.get(k).setBackground((Color) colory.get("Magenta"));
-									colorsButtons.get(k).setForeground((Color) colory.get("Magenta"));
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Cyan")) {
-									cols[5]++;
-									colorsButtons.get(k).setBackground((Color) colory.get("Cyan"));
-									colorsButtons.get(k).setForeground((Color) colory.get("Cyan"));
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Tan")) {
-									cols[6]++;
-									colorsButtons.get(k).setBackground((Color) colory.get("Tan"));
-									colorsButtons.get(k).setForeground((Color) colory.get("Tan"));
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Gray (Dark)")) {
-									cols[7]++;
-									colorsButtons.get(k).setBackground((Color) colory.get("Gray (Dark)"));
-									colorsButtons.get(k).setForeground((Color) colory.get("Gray (Dark)"));
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Red (Dark)")) {
-									cols[8]++;
-									colorsButtons.get(k).setBackground((Color) colory.get("Red (Dark)"));
-									colorsButtons.get(k).setForeground((Color) colory.get("Red (Dark)"));
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Blue (Dark)")) {
-									cols[9]++;
-									colorsButtons.get(k).setBackground((Color) colory.get("Blue (Dark)"));
-									colorsButtons.get(k).setForeground((Color) colory.get("Blue (Dark)"));
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Green (Dark)")) {
-									cols[10]++;
-									colorsButtons.get(k).setBackground((Color) colory.get("Green (Dark)"));
-									colorsButtons.get(k).setForeground((Color) colory.get("Green (Dark)"));
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Yellow (Dark)")) {
-									cols[11]++;
-									colorsButtons.get(k).setBackground((Color) colory.get("Yellow (Dark)"));
-									colorsButtons.get(k).setForeground((Color) colory.get("Yellow (Dark)"));
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Magenta (Dark)")) {
-									cols[12]++;
-									colorsButtons.get(k).setBackground((Color) colory.get("Magenta (Dark)"));
-									colorsButtons.get(k).setForeground((Color) colory.get("Magenta (Dark)"));
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Cyan (Dark)")) {
-									cols[13]++;
-									colorsButtons.get(k).setBackground((Color) colory.get("Cyan (Dark)"));
-									colorsButtons.get(k).setForeground((Color) colory.get("Cyan (Dark)"));
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Black")) {
-									cols[14]++;
-									colorsButtons.get(k).setBackground((Color) colory.get("Black"));
-									colorsButtons.get(k).setForeground((Color) colory.get("Black"));
-								}
-								/*
-								 * else if
-								 * (colorsCombo.get(k).getSelectedItem().
-								 * equals("Red ")) { cols[15]++; } else if
-								 * (colorsCombo
-								 * .get(k).getSelectedItem().equals("Blue ")) {
-								 * cols[16]++; } else if
-								 * (colorsCombo.get(k).getSelectedItem
-								 * ().equals("Green ")) { cols[17]++; } else if
-								 * (colorsCombo.get(k).getSelectedItem().equals(
-								 * "Yellow ")) { cols[18]++; } else if
-								 * (colorsCombo
-								 * .get(k).getSelectedItem().equals("Magenta "))
-								 * { cols[19]++; } else if
-								 * (colorsCombo.get(k).getSelectedItem
-								 * ().equals("Cyan ")) { cols[20]++; }
-								 */
-								else if (colorsCombo.get(k).getSelectedItem().equals("Gray")) {
-									cols[21]++;
-									colorsButtons.get(k).setBackground((Color) colory.get("Gray"));
-									colorsButtons.get(k).setForeground((Color) colory.get("Gray"));
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Red (Extra Dark)")) {
-									cols[22]++;
-									colorsButtons.get(k).setBackground((Color) colory.get("Red (Extra Dark)"));
-									colorsButtons.get(k).setForeground((Color) colory.get("Red (Extra Dark)"));
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Blue (Extra Dark)")) {
-									cols[23]++;
-									colorsButtons.get(k).setBackground((Color) colory.get("Blue (Extra Dark)"));
-									colorsButtons.get(k).setForeground((Color) colory.get("Blue (Extra Dark)"));
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Green (Extra Dark)")) {
-									cols[24]++;
-									colorsButtons.get(k).setBackground((Color) colory.get("Green (Extra Dark)"));
-									colorsButtons.get(k).setForeground((Color) colory.get("Green (Extra Dark)"));
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Yellow (Extra Dark)")) {
-									cols[25]++;
-									colorsButtons.get(k).setBackground((Color) colory.get("Yellow (Extra Dark)"));
-									colorsButtons.get(k).setForeground((Color) colory.get("Yellow (Extra Dark)"));
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Magenta (Extra Dark)")) {
-									cols[26]++;
-									colorsButtons.get(k).setBackground((Color) colory.get("Magenta (Extra Dark)"));
-									colorsButtons.get(k).setForeground((Color) colory.get("Magenta (Extra Dark)"));
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Cyan (Extra Dark)")) {
-									cols[27]++;
-									colorsButtons.get(k).setBackground((Color) colory.get("Cyan (Extra Dark)"));
-									colorsButtons.get(k).setForeground((Color) colory.get("Cyan (Extra Dark)"));
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Red (Light)")) {
-									cols[28]++;
-									colorsButtons.get(k).setBackground((Color) colory.get("Red (Light)"));
-									colorsButtons.get(k).setForeground((Color) colory.get("Red (Light)"));
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Blue (Light)")) {
-									cols[29]++;
-									colorsButtons.get(k).setBackground((Color) colory.get("Blue (Light)"));
-									colorsButtons.get(k).setForeground((Color) colory.get("Blue (Light)"));
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Green (Light)")) {
-									cols[30]++;
-									colorsButtons.get(k).setBackground((Color) colory.get("Green (Light)"));
-									colorsButtons.get(k).setForeground((Color) colory.get("Green (Light)"));
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Yellow (Light)")) {
-									cols[31]++;
-									colorsButtons.get(k).setBackground((Color) colory.get("Yellow (Light)"));
-									colorsButtons.get(k).setForeground((Color) colory.get("Yellow (Light)"));
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Magenta (Light)")) {
-									cols[32]++;
-									colorsButtons.get(k).setBackground((Color) colory.get("Magenta (Light)"));
-									colorsButtons.get(k).setForeground((Color) colory.get("Magenta (Light)"));
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Cyan (Light)")) {
-									cols[33]++;
-									colorsButtons.get(k).setBackground((Color) colory.get("Cyan (Light)"));
-									colorsButtons.get(k).setForeground((Color) colory.get("Cyan (Light)"));
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Gray (Light)")) {
-									cols[34]++;
-									colorsButtons.get(k).setBackground((Color) colory.get("Gray (Light)"));
-									colorsButtons.get(k).setForeground((Color) colory.get("Gray (Light)"));
-								}
-								if (shapesCombo.get(k).getSelectedItem().equals("Square")) {
-									shaps[0]++;
-								}
-								else if (shapesCombo.get(k).getSelectedItem().equals("Circle")) {
-									shaps[1]++;
-								}
-								else if (shapesCombo.get(k).getSelectedItem().equals("Triangle")) {
-									shaps[2]++;
-								}
-								else if (shapesCombo.get(k).getSelectedItem().equals("Diamond")) {
-									shaps[3]++;
-								}
-								else if (shapesCombo.get(k).getSelectedItem().equals("Rectangle (Horizontal)")) {
-									shaps[4]++;
-								}
-								else if (shapesCombo.get(k).getSelectedItem().equals("Triangle (Upside Down)")) {
-									shaps[5]++;
-								}
-								else if (shapesCombo.get(k).getSelectedItem().equals("Circle (Half)")) {
-									shaps[6]++;
-								}
-								else if (shapesCombo.get(k).getSelectedItem().equals("Arrow")) {
-									shaps[7]++;
-								}
-								else if (shapesCombo.get(k).getSelectedItem().equals("Rectangle (Vertical)")) {
-									shaps[8]++;
-								}
-								else if (shapesCombo.get(k).getSelectedItem().equals("Arrow (Backwards)")) {
-									shaps[9]++;
-								}
-							}
-						}
-						for (GraphSpecies graph : graphed) {
-							if (graph.getShapeAndPaint().getPaintName().equals("Red")) {
-								cols[0]++;
-							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Blue")) {
-								cols[1]++;
-							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Green")) {
-								cols[2]++;
-							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Yellow")) {
-								cols[3]++;
-							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Magenta")) {
-								cols[4]++;
-							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Cyan")) {
-								cols[5]++;
-							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Tan")) {
-								cols[6]++;
-							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Gray (Dark)")) {
-								cols[7]++;
-							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Red (Dark)")) {
-								cols[8]++;
-							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Blue (Dark)")) {
-								cols[9]++;
-							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Green (Dark)")) {
-								cols[10]++;
-							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Yellow (Dark)")) {
-								cols[11]++;
-							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Magenta (Dark)")) {
-								cols[12]++;
-							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Cyan (Dark)")) {
-								cols[13]++;
-							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Black")) {
-								cols[14]++;
-							}
-							/*
-							 * else if
-							 * (graph.getShapeAndPaint().getPaintName().equals
-							 * ("Red ")) { cols[15]++; } else if
-							 * (graph.getShapeAndPaint
-							 * ().getPaintName().equals("Blue ")) { cols[16]++;
-							 * } else if
-							 * (graph.getShapeAndPaint().getPaintName()
-							 * .equals("Green ")) { cols[17]++; } else if
-							 * (graph.
-							 * getShapeAndPaint().getPaintName().equals("Yellow "
-							 * )) { cols[18]++; } else if
-							 * (graph.getShapeAndPaint
-							 * ().getPaintName().equals("Magenta ")) {
-							 * cols[19]++; } else if
-							 * (graph.getShapeAndPaint().getPaintName
-							 * ().equals("Cyan ")) { cols[20]++; }
-							 */
-							else if (graph.getShapeAndPaint().getPaintName().equals("Gray")) {
-								cols[21]++;
-							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Red (Extra Dark)")) {
-								cols[22]++;
-							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Blue (Extra Dark)")) {
-								cols[23]++;
-							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Green (Extra Dark)")) {
-								cols[24]++;
-							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Yellow (Extra Dark)")) {
-								cols[25]++;
-							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Magenta (Extra Dark)")) {
-								cols[26]++;
-							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Cyan (Extra Dark)")) {
-								cols[27]++;
-							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Red (Light)")) {
-								cols[28]++;
-							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Blue (Light)")) {
-								cols[29]++;
-							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Green (Light)")) {
-								cols[30]++;
-							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Yellow (Light)")) {
-								cols[31]++;
-							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Magenta (Light)")) {
-								cols[32]++;
-							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Cyan (Light)")) {
-								cols[33]++;
-							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Gray (Light)")) {
-								cols[34]++;
-							}
-							if (graph.getShapeAndPaint().getShapeName().equals("Square")) {
-								shaps[0]++;
-							}
-							else if (graph.getShapeAndPaint().getShapeName().equals("Circle")) {
-								shaps[1]++;
-							}
-							else if (graph.getShapeAndPaint().getShapeName().equals("Triangle")) {
-								shaps[2]++;
-							}
-							else if (graph.getShapeAndPaint().getShapeName().equals("Diamond")) {
-								shaps[3]++;
-							}
-							else if (graph.getShapeAndPaint().getShapeName().equals("Rectangle (Horizontal)")) {
-								shaps[4]++;
-							}
-							else if (graph.getShapeAndPaint().getShapeName().equals("Triangle (Upside Down)")) {
-								shaps[5]++;
-							}
-							else if (graph.getShapeAndPaint().getShapeName().equals("Circle (Half)")) {
-								shaps[6]++;
-							}
-							else if (graph.getShapeAndPaint().getShapeName().equals("Arrow")) {
-								shaps[7]++;
-							}
-							else if (graph.getShapeAndPaint().getShapeName().equals("Rectangle (Vertical)")) {
-								shaps[8]++;
-							}
-							else if (graph.getShapeAndPaint().getShapeName().equals("Arrow (Backwards)")) {
-								shaps[9]++;
-							}
-						}
-						((JCheckBox) e.getSource()).setSelected(true);
-						series.get(i).setText(s);
-						series.get(i).setSelectionStart(0);
-						series.get(i).setSelectionEnd(0);
-						int colorSet = 0;
-						for (int j = 1; j < cols.length; j++) {
-							if ((j < 15 || j > 20) && cols[j] < cols[colorSet]) {
-								colorSet = j;
-							}
-						}
-						int shapeSet = 0;
-						for (int j = 1; j < shaps.length; j++) {
-							if (shaps[j] < shaps[shapeSet]) {
-								shapeSet = j;
-							}
-						}
-						DefaultDrawingSupplier draw = new DefaultDrawingSupplier();
-						Paint paint;
-						if (colorSet == 34) {
-							paint = colors.get("Gray (Light)");
-						}
-						else {
-							for (int j = 0; j < colorSet; j++) {
-								draw.getNextPaint();
-							}
-							paint = draw.getNextPaint();
-						}
-						Object[] set = colory.keySet().toArray();
-						for (int j = 0; j < set.length; j++) {
-							if (paint == colory.get(set[j])) {
-								colorsCombo.get(i).setSelectedItem(set[j]);
-								colorsButtons.get(i).setBackground((Color) paint);
-								colorsButtons.get(i).setForeground((Color) paint);
-							}
-						}
-						for (int j = 0; j < shapeSet; j++) {
-							draw.getNextShape();
-						}
-						Shape shape = draw.getNextShape();
-						set = shapey.keySet().toArray();
-						for (int j = 0; j < set.length; j++) {
-							if (shape == shapey.get(set[j])) {
-								shapesCombo.get(i).setSelectedItem(set[j]);
-							}
-						}
-						boolean allChecked = true;
-						for (JCheckBox temp : boxes) {
-							if (!temp.isSelected()) {
-								allChecked = false;
-							}
-						}
-						if (allChecked) {
-							use.setSelected(true);
-						}
-						String color = (String) colorsCombo.get(i).getSelectedItem();
-						if (color.equals("Custom")) {
-							color += "_" + colorsButtons.get(i).getBackground().getRGB();
-						}
-						graphed.add(new GraphSpecies(shapey.get(shapesCombo.get(i).getSelectedItem()), color, filled.get(i).isSelected(), visible
-								.get(i).isSelected(), connected.get(i).isSelected(), selected, boxes.get(i).getName(),
-								series.get(i).getText().trim(), XVariable.getSelectedIndex(), i, directory));
 					}
 					else {
 						boolean check = false;
@@ -6123,16 +5862,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				minX = Double.parseDouble(XMin.getText().trim());
 				maxX = Double.parseDouble(XMax.getText().trim());
 				scaleX = Double.parseDouble(XScale.getText().trim());
-				/*
-				 * NumberFormat num = NumberFormat.getInstance();
-				 * num.setMaximumFractionDigits(4); num.setGroupingUsed(false);
-				 * minY = Double.parseDouble(num.format(minY)); maxY =
-				 * Double.parseDouble(num.format(maxY)); scaleY =
-				 * Double.parseDouble(num.format(scaleY)); minX =
-				 * Double.parseDouble(num.format(minX)); maxX =
-				 * Double.parseDouble(num.format(maxX)); scaleX =
-				 * Double.parseDouble(num.format(scaleX));
-				 */
 			}
 			catch (Exception e1) {
 			}
@@ -6275,12 +6004,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 						if (ableToGraph) {
 							int nextOne = 1;
-							// while (!new File(outDir + separator + "run-" +
-							// nextOne + "."
-							// + printer_id.substring(0, printer_id.length() -
-							// 8)).exists()) {
-							// nextOne++;
-							// }
 							ArrayList<ArrayList<Double>> data;
 							if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 								data = allData.get(g.getRunNumber() + " " + g.getDirectory());
@@ -6565,13 +6288,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 						if (ableToGraph) {
 							int nextOne = 1;
-							// while (!new File(outDir + separator +
-							// g.getDirectory() + separator
-							// + "run-" + nextOne + "."
-							// + printer_id.substring(0, printer_id.length() -
-							// 8)).exists()) {
-							// nextOne++;
-							// }
 							ArrayList<ArrayList<Double>> data;
 							if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 								data = allData.get(g.getRunNumber() + " " + g.getDirectory());
