@@ -2013,7 +2013,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		// if the delete popup menu is selected
 		else if (e.getActionCommand().contains("delete") || e.getSource() == delete) {
-			delete();
+			delete(tree.getFile());
 		}
 		else if (e.getActionCommand().equals("openLPN")) {
 			openLPN();
@@ -3391,17 +3391,18 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		enableTabMenu(tab.getSelectedIndex());
 		enableTreeMenu();
 	}
-
-	private void delete() {
-		if (!tree.getFile().equals(root)) {
-			if (new File(tree.getFile()).isDirectory()) {
-				String dirName = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
+	
+	private void delete(String fullPath) {
+		if (!fullPath.equals(root)) {
+			int value = JOptionPane.YES_OPTION;
+			if (new File(fullPath).isDirectory()) {
+				String dirName = fullPath.split(separator)[fullPath.split(separator).length - 1];
 				for (int i = 0; i < tab.getTabCount(); i++) {
 					if (getTitleAt(i).equals(dirName)) {
 						tab.remove(i);
 					}
 				}
-				File dir = new File(tree.getFile());
+				File dir = new File(fullPath);
 				if (dir.isDirectory()) {
 					deleteDir(dir);
 				}
@@ -3412,17 +3413,49 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				deleteFromTree(dirName);
 			}
 			else {
-				String[] views = canDelete(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]);
-				if (views.length == 0) {
-					String fileName = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
+				String[] views = canDelete(fullPath.split(separator)[fullPath.split(separator).length - 1]);
+				if (views.length != 0) {
+					String view = "";
+					String gcms = "";
+					for (int i = 0; i < views.length; i++) {
+						if (views[i].endsWith(".xml")) {
+							gcms += views[i] + "\n";
+						}
+						else {
+							view += views[i] + "\n";
+						}
+					}
+					String message = "Unable to delete the selected file.\n";
+					if (!views.equals("")) {
+						message += "\nIt is linked to the following views:\n" + view;
+					}
+					if (!gcms.equals("")) {
+						message += "\nIt is linked to the following models:\n" + gcms;
+					}
+					message += "\nDelete file and all files that reference it?";
+					JTextArea messageArea = new JTextArea(message);
+					messageArea.setEditable(false);
+					JScrollPane scroll = new JScrollPane();
+					scroll.setMinimumSize(new Dimension(300, 300));
+					scroll.setPreferredSize(new Dimension(300, 300));
+					scroll.setViewportView(messageArea);
+					Object[] options = { "Yes", "No" };
+					value = JOptionPane.showOptionDialog(frame, scroll, "Unable to Delete File", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+							null, options, options[1]);
+				}
+				if (value == JOptionPane.YES_OPTION) {
+					for (int i = 0; i < views.length; i++) {
+						delete(root + separator + views[i]);
+					}
+					String fileName = fullPath.split(separator)[fullPath.split(separator).length - 1];
 					for (int i = 0; i < tab.getTabCount(); i++) {
 						if (getTitleAt(i).equals(fileName)) {
 							tab.remove(i);
 						}
 					}
 					System.gc();
-					if (tree.getFile().endsWith(".xml")) {
-						SBMLDocument document = readSBML(tree.getFile());
+					if (fullPath.endsWith(".xml")) {
+						SBMLDocument document = readSBML(fullPath);
 						Iterator<URI> sbolIterator = AnnotationUtility.parseSBOLAnnotation(document.getModel()).iterator();
 						while (sbolIterator != null && sbolIterator.hasNext()) {
 							URI sbolURI = sbolIterator.next();
@@ -3435,42 +3468,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								}
 							}
 						} 
-						new File(tree.getFile().replace(".xml", ".gcm")).delete();
+						new File(fullPath.replace(".xml", ".gcm")).delete();
 					}
-					new File(tree.getFile()).delete();
+					new File(fullPath).delete();
 					deleteFromTree(fileName);
-				}
-				else {
-					String view = "";
-					String gcms = "";
-					for (int i = 0; i < views.length; i++) {
-						if (views[i].endsWith(".xml")) {
-							gcms += views[i] + "\n";
-						}
-						else {
-							view += views[i] + "\n";
-						}
-					}
-					String message;
-					if (gcms.equals("")) {
-						message = "Unable to delete the selected file." + "\nIt is linked to the following views:\n" + view
-								+ "\nDelete these views first.";
-					}
-					else if (view.equals("")) {
-						message = "Unable to delete the selected file." + "\nIt is linked to the following models:\n" + gcms
-								+ "\nDelete these models first.";
-					}
-					else {
-						message = "Unable to delete the selected file." + "\nIt is linked to the following views:\n" + view
-								+ "\nIt is also linked to the following models:\n" + gcms + "\nDelete these views and models first.";
-					}
-					JTextArea messageArea = new JTextArea(message);
-					messageArea.setEditable(false);
-					JScrollPane scroll = new JScrollPane();
-					scroll.setMinimumSize(new Dimension(300, 300));
-					scroll.setPreferredSize(new Dimension(300, 300));
-					scroll.setViewportView(messageArea);
-					JOptionPane.showMessageDialog(frame, scroll, "Unable To Delete File", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
