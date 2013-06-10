@@ -251,9 +251,16 @@ public abstract class HierarchicalSimulator {
 	 */
 	protected String getPath(String path)
 	{
+		String separator = path.substring(path.length()-1, path.length());
+		
+		if (File.separator.equals("\\")) 
+		{
+			separator = "\\\\";
+		}
+		
 		String temp = path.substring(0, path.length()-1);
 		
-		while(temp != "" && !temp.endsWith("/"))
+		while(temp != "" && !temp.endsWith(separator))
 		{
 			temp = path.substring(0, temp.length()-1);
 		}
@@ -1141,9 +1148,9 @@ public abstract class HierarchicalSimulator {
 			String parameterID = "";
 			
 			//the parameters don't get reset after each run, so don't re-do this prepending
-			if (localParameter.getId().contains(reactionID + "_") == false)					
-				parameterID = reactionID + "_" + localParameter.getId();
-			else 
+			//if (localParameter.getId().contains(reactionID + "_") == false)					
+				//parameterID = reactionID + "_" + localParameter.getId();
+		//	else 
 				parameterID = localParameter.getId();
 					
 			String oldParameterID = localParameter.getId();
@@ -1203,7 +1210,7 @@ public abstract class HierarchicalSimulator {
 		long size;
 		
 		
-		size = modelstate.model.getListOfReactions().size();
+		size = modelstate.numReactions;
 		for (int i = 0; i < size; i++) 
 		{
 			reaction = modelstate.model.getReaction(i);
@@ -1306,6 +1313,9 @@ public abstract class HierarchicalSimulator {
 			if (notEnoughMoleculesFlag == true)
 				propensity = 0.0;
 			else {//calculate propensity
+				//System.out.println("Node: " + libsbml.formulaToString(reactionFormula));
+				System.out.println("Node: " + evaluateExpressionRecursive(modelstate, inlineFormula(modelstate, reactionFormula).getLeftChild()));
+				
 				propensity = evaluateExpressionRecursive(modelstate, inlineFormula(modelstate, reactionFormula));
 				if(propensity < 0.0)
 					propensity = 0.0;
