@@ -8703,9 +8703,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			
 			if (this.tab.getComponentAt(i).getName().equals("SBOL Browser")) {
-				int currentIndex = this.tab.getSelectedIndex();
-				this.tab.setComponentAt(i, new SBOLBrowser(this, tree.getFile()));
-				this.tab.setSelectedIndex(currentIndex);
+				((SBOLBrowser) this.tab.getComponentAt(i)).reload(this, tab);
 			}
 			
 			String properties = root + separator + tab + separator + tab + ".sim";
@@ -8750,8 +8748,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							new File(properties.replace(".sim", ".temp")).renameTo(new File(properties));
 							ElementsPanel elementsPanel = new ElementsPanel(((ModelEditor) (sim.getComponentAt(j))).getBioModel().getSBMLDocument(),
 									root + separator + tab + separator + tab + ".sim");
-							//sim.setComponentAt(j + 1, elementsPanel);
-							//sim.getComponentAt(j + 1).setName("");
 							((ModelEditor) (sim.getComponentAt(j))).setElementsPanel(elementsPanel);
 							
 							for (int k = 0; k < sim.getTabCount(); k++) {
@@ -8802,24 +8798,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 			}
-			// ArrayList<String> saved = new ArrayList<String>();
-			// if (this.tab.getComponentAt(i) instanceof GCM2SBMLEditor) {
-			// saved.add(this.getTitleAt(i));
-			// GCM2SBMLEditor gcm = (GCM2SBMLEditor) this.tab.getComponentAt(i);
-			// if (gcm.getSBMLFile().equals(updatedFile)) {
-			// gcm.save("save");
-			// }
-			// }
-			// String[] files = new File(root).list();
-			// for (String s : files) {
-			// if (s.endsWith(".gcm") && !saved.contains(s)) {
-			// GCMFile gcm = new GCMFile(root);
-			// gcm.load(root + separator + s);
-			// if (gcm.getSBMLFile().equals(updatedFile)) {
-			// updateViews(s);
-			// }
-			// }
-			// }
 		}
 	}
 
