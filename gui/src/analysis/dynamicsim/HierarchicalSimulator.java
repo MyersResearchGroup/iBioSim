@@ -1314,7 +1314,7 @@ public abstract class HierarchicalSimulator {
 				propensity = 0.0;
 			else {//calculate propensity
 				//System.out.println("Node: " + libsbml.formulaToString(reactionFormula));
-				System.out.println("Node: " + evaluateExpressionRecursive(modelstate, inlineFormula(modelstate, reactionFormula).getLeftChild()));
+				//System.out.println("Node: " + evaluateExpressionRecursive(modelstate, inlineFormula(modelstate, reactionFormula).getLeftChild()));
 				
 				propensity = evaluateExpressionRecursive(modelstate, inlineFormula(modelstate, reactionFormula));
 				if(propensity < 0.0)

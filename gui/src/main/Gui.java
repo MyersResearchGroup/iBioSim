@@ -8729,44 +8729,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					
 					for (int j = 0; j < sim.getTabCount(); j++) {
 						
-						// String tabName = sim.getComponentAt(j).getName();
-						// boolean b =
-						// sim.getComponentAt(j).getName().equals("ModelViewMovie");
 						if (sim.getComponentAt(j) instanceof AnalysisView) {
 							((AnalysisView) sim.getComponentAt(j)).updateProperties();
 						}
-						/*
-						else if (sim.getComponentAt(j).getName().equals("SBML Editor")) {
-							new File(properties).renameTo(new File(properties.replace(".sim", ".temp")));
-							try {
-								boolean dirty = ((SBML_Editor) (sim.getComponentAt(j))).isDirty();
-								((SBML_Editor) (sim.getComponentAt(j))).save(false, "", true, true);
-								if (updatedFile.contains(".gcm")) {
-									// GCMParser parser = new GCMParser(root +
-									// separator + updatedFile);
-									// GeneticNetwork network =
-									// parser.buildNetwork();
-									// GeneticNetwork.setRoot(root + separator);
-									// network.mergeSBML(root + separator + tab
-									// + separator + updatedFile.replace(".gcm",
-									// ".xml"));
-									((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j,
-											root + separator + tab + separator + updatedFile.replace(".gcm", ".xml"));
-								}
-								else {
-									((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j, root + separator + updatedFile);
-								}
-								((SBML_Editor) (sim.getComponentAt(j))).setDirty(dirty);
-							}
-							catch (Exception e) {
-								e.printStackTrace();
-							}
-							new File(properties).delete();
-							new File(properties.replace(".sim", ".temp")).renameTo(new File(properties));
-							sim.setComponentAt(j + 1, ((SBML_Editor) (sim.getComponentAt(j))).getElementsPanel());
-							sim.getComponentAt(j + 1).setName("");
-						}
-						*/
 						else if (sim.getComponentAt(j).getName().equals("GCM Editor")) {							
 							
 							new File(properties).renameTo(new File(properties.replace(".sim", ".temp")));
@@ -8783,15 +8748,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							}
 							new File(properties).delete();
 							new File(properties.replace(".sim", ".temp")).renameTo(new File(properties));
-							/*
-							SBML_Editor sbml = new SBML_Editor(root + separator + ((GCM2SBMLEditor) (sim.getComponentAt(j))).getSBMLFile(),
-									((Reb2Sac) sim.getComponentAt(0)), log, this, root + separator + tab, root + separator + tab + separator
-											+ tab + ".sim");
-											*/
 							ElementsPanel elementsPanel = new ElementsPanel(((ModelEditor) (sim.getComponentAt(j))).getBioModel().getSBMLDocument(),
 									root + separator + tab + separator + tab + ".sim");
-							sim.setComponentAt(j + 1, elementsPanel);
-							sim.getComponentAt(j + 1).setName("");
+							//sim.setComponentAt(j + 1, elementsPanel);
+							//sim.getComponentAt(j + 1).setName("");
 							((ModelEditor) (sim.getComponentAt(j))).setElementsPanel(elementsPanel);
 							
 							for (int k = 0; k < sim.getTabCount(); k++) {

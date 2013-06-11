@@ -1262,6 +1262,10 @@ public class Run implements ActionListener {
 						
 						dynSim = new DynamicSimulation("cr");
 						String SBMLFileName = directory + separator + theFile;
+						if (!direct.equals(".")) {
+							outDir = outDir + separator + direct;
+						}
+
 						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
 								timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running,
 								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, log);						
@@ -1281,6 +1285,9 @@ public class Run implements ActionListener {
 
 						dynSim = new DynamicSimulation("direct");					
 						String SBMLFileName = directory + separator + theFile;
+						if (!direct.equals(".")) {
+							outDir = outDir + separator + direct;
+						}
 						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
 								timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running,
 								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, log);						
@@ -1300,6 +1307,9 @@ public class Run implements ActionListener {
 
 						dynSim = new DynamicSimulation("hierarchydirect");					
 						String SBMLFileName = directory + separator + theFile;
+						if (!direct.equals(".")) {
+							outDir = outDir + separator + direct;
+						}
 						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
 								timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running,
 								stoichAmpValue, intSpecies, 0, 0, 0, printer_track_quantity, genStats, simTab, log);						
@@ -1315,6 +1325,9 @@ public class Run implements ActionListener {
 						
 						dynSim = new DynamicSimulation("rk");					
 						String SBMLFileName = directory + separator + theFile;
+						if (!direct.equals(".")) {
+							outDir = outDir + separator + direct;
+						}
 						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
 								timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running,
 								stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, log);				

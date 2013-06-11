@@ -4365,7 +4365,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		XVariable.removeAllItems();
 		ArrayList <String> components = new ArrayList<String>();
 		components.add("All Variables");
-		int realSize = 1;
+		int realSize = 0;
+		if (startsWith!=null) realSize = 1;
 		for (int i = 0; i < graphSpecies.size(); i++) {
 			if (startsWith!=null && !graphSpecies.get(i).startsWith(startsWith+"__")) continue;
 			String variable = graphSpecies.get(i);
