@@ -66,6 +66,39 @@ public class SBOLBrowser extends JPanel implements ActionListener {
 		gui.addTab(browsePath.substring(browsePath.lastIndexOf(File.separator) + 1), this, "SBOL Browser");
 	}
 	
+	public void reload(Gui gui,String browsePath) {
+		this.removeAll();
+		
+		browsePath = browsePath.replace("\\\\", "\\");
+		
+		selectionPanel = new JPanel(new GridLayout(1,2));
+		filterPanel = new JPanel(new GridLayout(1,3));
+		viewArea = new JTextArea();
+		viewScroll = new JScrollPane();
+		
+		aggregateCompResolver = new AggregatingResolver.UseFirstFound<DnaComponent, URI>();
+		aggregateAnnoResolver = new AggregatingResolver.UseFirstFound<SequenceAnnotation, URI>();
+		aggregateSeqResolver = new AggregatingResolver.UseFirstFound<DnaSequence, URI>();
+		aggregateLibResolver = new AggregatingResolver.UseFirstFound<org.sbolstandard.core.Collection, URI>();
+		
+		localLibURIs = new LinkedList<URI>();
+		localLibIds = new LinkedList<String>();
+		localCompURIs = new LinkedList<URI>();
+		
+		loadSbolFiles(gui.getFilePaths(".sbol"), browsePath);
+		
+		constructBrowser(new HashSet<String>());
+		
+		JPanel browserPanel = new JPanel(new BorderLayout());
+		browserPanel.add(filterPanel, BorderLayout.NORTH);
+		browserPanel.add(selectionPanel, BorderLayout.CENTER);
+		browserPanel.add(viewScroll, BorderLayout.SOUTH);
+		
+		JTabbedPane browserTab = new JTabbedPane();
+		browserTab.add("SBOL Browser", browserPanel);
+		this.add(browserTab);
+	}
+	
 	//Constructor when browsing RDF file subsets for SBOL to GCM association
 	public SBOLBrowser(HashSet<String> sbolFilePaths, Set<String> filter, LinkedList<URI> defaultSelectedCompURIs) {
 //		super(new GridLayout(3,1));
