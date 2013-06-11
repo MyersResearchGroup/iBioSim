@@ -359,7 +359,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 
 		// Annotate SBML model with synthesized SBOL DNA component and save component to local SBOL file
-		if (!lema) {
+		if (!lema && !biomodel.isGridEnabled()) {
 			modelPanel.getSBOLField().deleteRemovedBioSimComponent();
 			if (command.contains("Check")) {
 				saveSBOL(true);

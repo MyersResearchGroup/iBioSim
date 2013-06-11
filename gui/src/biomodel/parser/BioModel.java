@@ -6790,32 +6790,7 @@ public class BioModel {
 			  return null;
 		  }
 		}		
-		//Model model = bioModel.getSBMLCompModel().flattenModel();
-		//if (model==null) {
-			//Utility.createErrorMessage("Error During Flattening", "Cannot flatten model.");
-			//return null;
-		//}
-		//document.setModel(model);
-		//document.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
-		//document.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
 		document.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", false);
-		//SBMLWriter writer = new SBMLWriter();
-		//writer.writeSBML(document, path + separator + "_temp.xml");
-		// THIS IS A WORKAROUND A FLATTEN BUG WHICH DOES NOT RENAME METAIDs
-		/*
-		SBaseList elements = document.getModel().getListOfAllElements();
-		if (numSubModels > 0) {
-			document.getModel().setMetaId("iBioSim"+0);
-			long metaIdNum = 1;
-			for (long i = 0; i < elements.getSize(); i++) {
-				SBase sbase = elements.get(i);
-				if (sbase.isSetMetaId()) {
-					sbase.setMetaId("iBioSim"+metaIdNum);
-					metaIdNum++;
-				}
-			}
-		}
-		*/
 		return document;
 	}
 	

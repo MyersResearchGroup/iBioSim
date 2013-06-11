@@ -1262,7 +1262,7 @@ public class Run implements ActionListener {
 						
 						dynSim = new DynamicSimulation("cr");
 						String SBMLFileName = directory + separator + theFile;
-						if (!direct.equals(".")) {
+						if (direct != null && !direct.equals(".")) {
 							outDir = outDir + separator + direct;
 						}
 
@@ -1285,7 +1285,7 @@ public class Run implements ActionListener {
 
 						dynSim = new DynamicSimulation("direct");					
 						String SBMLFileName = directory + separator + theFile;
-						if (!direct.equals(".")) {
+						if (direct != null && !direct.equals(".")) {
 							outDir = outDir + separator + direct;
 						}
 						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
@@ -1307,7 +1307,7 @@ public class Run implements ActionListener {
 
 						dynSim = new DynamicSimulation("hierarchydirect");					
 						String SBMLFileName = directory + separator + theFile;
-						if (!direct.equals(".")) {
+						if (direct != null && !direct.equals(".")) {
 							outDir = outDir + separator + direct;
 						}
 						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
@@ -1325,7 +1325,7 @@ public class Run implements ActionListener {
 						
 						dynSim = new DynamicSimulation("rk");					
 						String SBMLFileName = directory + separator + theFile;
-						if (!direct.equals(".")) {
+						if (direct != null && !direct.equals(".")) {
 							outDir = outDir + separator + direct;
 						}
 						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
