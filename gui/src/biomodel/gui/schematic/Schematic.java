@@ -170,7 +170,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 * Constructor
 	 * @param internalModel
 	 */
-	public Schematic(BioModel gcm, Gui biosim, ModelEditor gcm2sbml, boolean editable, 
+	public Schematic(BioModel gcm, Gui biosim, ModelEditor modelEditor, boolean editable, 
 			MovieContainer movieContainer2, Compartments compartments, Reactions reactions, Rules rules,
 			Constraints constraints, Events events, Parameters parameters, boolean lema) {
 		
@@ -181,7 +181,7 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		this.bioModel = gcm;
 		this.biosim = biosim;
-		this.modelEditor = gcm2sbml;
+		this.modelEditor = modelEditor;
 		this.editable = editable;
 		this.movieContainer = movieContainer2;
 		this.compartments = compartments;
@@ -197,7 +197,7 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		// initialize everything on creation.
 		display();
-		gcm2sbml.setDirty(false);
+		modelEditor.setDirty(false);
 	}
 	
 	/**
@@ -209,7 +209,7 @@ public class Schematic extends JPanel implements ActionListener {
 
 		if (graph == null) {
 			
-			graph = new BioGraph(bioModel,biosim.lema);	
+			graph = new BioGraph(bioModel,biosim.lema,editable,modelEditor);	
 			graph.setResetEdgesOnMove(false);
 			addGraphListeners();
 			bioModel.makeUndoPoint();
@@ -2349,6 +2349,16 @@ public class Schematic extends JPanel implements ActionListener {
 					}
 					cell.setId(id);
 				}
+			} else {
+				if (cell.getStyle().equals("RULE;")) {
+					cell.setStyle("RULE_EXCLUDE;");
+					graph.refresh();
+					modelEditor.getElementChanges().add(cell.getId());
+				} else {
+					cell.setStyle("RULE;");
+					graph.refresh();
+					modelEditor.getElementChanges().remove(cell.getId());
+				}
 			}
 		}		
 		else if(cellType == GlobalConstants.VARIABLE || cellType == GlobalConstants.PLACE || cellType == GlobalConstants.BOOLEAN){
@@ -2399,6 +2409,16 @@ public class Schematic extends JPanel implements ActionListener {
 					}
 					cell.setId(id);
 				}
+			} else {
+				if (cell.getStyle().equals("CONSTRAINT;")) {
+					cell.setStyle("CONSTRAINT_EXCLUDE;");
+					graph.refresh();
+					modelEditor.getElementChanges().add(cell.getId());
+				} else {
+					cell.setStyle("CONSTRAINT;");
+					graph.refresh();
+					modelEditor.getElementChanges().remove(cell.getId());
+				}
 			}
 		}
 		else if(cellType == GlobalConstants.EVENT || cellType == GlobalConstants.TRANSITION){
@@ -2424,6 +2444,16 @@ public class Schematic extends JPanel implements ActionListener {
 						}
 					}
 					cell.setId(id);
+				}
+			} else {
+				if (cell.getStyle().equals("EVENT;")) {
+					cell.setStyle("EVENT_EXCLUDE;");
+					graph.refresh();
+					modelEditor.getElementChanges().add(cell.getId());
+				} else {
+					cell.setStyle("EVENT;");
+					graph.refresh();
+					modelEditor.getElementChanges().remove(cell.getId());
 				}
 			}
 		}

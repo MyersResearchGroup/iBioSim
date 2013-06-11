@@ -45,6 +45,7 @@ import main.Gui;
 
 
 import biomodel.gui.Grid;
+import biomodel.gui.ModelEditor;
 import biomodel.gui.movie.MovieAppearance;
 import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.parser.BioModel;
@@ -101,12 +102,16 @@ public class BioGraph extends mxGraph {
 	
 	private boolean lema;
 	
+	private boolean editable;
+	
+	private ModelEditor modelEditor;
+	
 	
 	/**
 	 * constructor
 	 * @param bioModel
 	 */
-	public BioGraph(BioModel bioModel,boolean lema) {
+	public BioGraph(BioModel bioModel,boolean lema,boolean editable,ModelEditor modelEditor) {
 		
 		super();
 		
@@ -117,6 +122,10 @@ public class BioGraph extends mxGraph {
 		this.bioModel = bioModel;
 		
 		this.lema = lema;
+		
+		this.editable = editable;
+		
+		this.modelEditor = modelEditor;
 		
 		this.initializeMaps();
 	
@@ -2656,6 +2665,16 @@ public class BioGraph extends mxGraph {
 		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Rule", "50")));
 		stylesheet.putCellStyle("RULE", style);
 		
+		//rules excluded
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.Rule", mxConstants.SHAPE_SWIMLANE));
+		style.put(mxConstants.STYLE_ROUNDED, biosimrc.get(prefix+".schematic.rounded.Rule", "false").equals("true"));
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Rule", "#FFFF00"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Rule", "#000000"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.Rule", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, 0);
+		stylesheet.putCellStyle("RULE_EXCLUDE", style);
+		
 		//constraints
 		style = new Hashtable<String, Object>();
 		style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.Constraint", mxConstants.SHAPE_HEXAGON));
@@ -2666,6 +2685,16 @@ public class BioGraph extends mxGraph {
 		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Constraint", "50")));
 		stylesheet.putCellStyle("CONSTRAINT", style);
 		
+		//constraints excluded
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.Constraint", mxConstants.SHAPE_HEXAGON));
+		style.put(mxConstants.STYLE_ROUNDED, biosimrc.get(prefix+".schematic.rounded.Constraint", "false").equals("true"));
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Constraint", "#FF0000"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Constraint", "#000000"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.Constraint", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, 0);
+		stylesheet.putCellStyle("CONSTRAINT_EXCLUDE", style);
+		
 		//events
 		style = new Hashtable<String, Object>();
 		style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.Event", mxConstants.SHAPE_RECTANGLE));
@@ -2675,6 +2704,16 @@ public class BioGraph extends mxGraph {
 		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.Event", "#000000"));
 		style.put(mxConstants.STYLE_OPACITY, Integer.parseInt(biosimrc.get(prefix+".schematic.opacity.Event", "50")));
 		stylesheet.putCellStyle("EVENT", style);
+		
+		//events excluded
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_SHAPE, biosimrc.get(prefix+".schematic.shape.Event", mxConstants.SHAPE_RECTANGLE));
+		style.put(mxConstants.STYLE_ROUNDED, biosimrc.get(prefix+".schematic.rounded.Event", "false").equals("true"));
+		style.put(mxConstants.STYLE_FILLCOLOR, biosimrc.get(prefix+".schematic.color.Event", "#00FF00"));
+		style.put(mxConstants.STYLE_STROKECOLOR, biosimrc.get(prefix+".schematic.strokeColor.Event", "#000000"));
+		style.put(mxConstants.STYLE_FONTCOLOR, biosimrc.get(prefix+".schematic.fontColor.Event", "#000000"));
+		style.put(mxConstants.STYLE_OPACITY, 0);
+		stylesheet.putCellStyle("EVENT_EXCLUDE", style);
 		
 		//explicit promoter
 		style = new Hashtable<String, Object>();
@@ -2971,6 +3010,9 @@ public class BioGraph extends mxGraph {
 
 	private void setRuleStyles(String id){
 		String style="RULE;";
+		if (!editable && modelEditor.getElementChanges().contains(id)) {
+			style="RULE_EXCLUDE;";
+		}
 		
 		mxCell cell = this.getRulesCell(id);
 		cell.setStyle(style);
@@ -2978,6 +3020,9 @@ public class BioGraph extends mxGraph {
 
 	private void setConstraintStyles(String id){
 		String style="CONSTRAINT;";
+		if (!editable && modelEditor.getElementChanges().contains(id)) {
+			style="CONSTRAINT_EXCLUDE;";
+		}
 		
 		mxCell cell = this.getConstraintsCell(id);
 		cell.setStyle(style);
@@ -2985,6 +3030,9 @@ public class BioGraph extends mxGraph {
 
 	private void setEventStyles(String id){
 		String style="EVENT;";
+		if (!editable && modelEditor.getElementChanges().contains(id)) {
+			style="EVENT_EXCLUDE;";
+		}
 		
 		mxCell cell = this.getEventsCell(id);
 		cell.setStyle(style);

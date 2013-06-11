@@ -4244,18 +4244,18 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		simTab.addTab("Advanced Options", reb2sac.getAdvanced());
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 		String gcmFile = sbml1[sbml1.length - 1].replace(".xml", ".gcm");
-		ModelEditor gcm = new ModelEditor(root + separator, gcmFile, this, log, true, simName.trim(), root
+		ModelEditor modelEditor = new ModelEditor(root + separator, gcmFile, this, log, true, simName.trim(), root
 				+ separator + simName.trim() + separator + simName.trim() + ".sim", reb2sac, false, false,lema);
-		reb2sac.setGcm(gcm);
-		addModelViewTab(reb2sac, simTab, gcm);
-		simTab.addTab("Parameters", gcm);
-		simTab.getComponentAt(simTab.getComponents().length - 1).setName("GCM Editor");
-		ElementsPanel elementsPanel = new ElementsPanel(gcm.getBioModel().getSBMLDocument(),
+		reb2sac.setGcm(modelEditor);
+		ElementsPanel elementsPanel = new ElementsPanel(modelEditor.getBioModel().getSBMLDocument(),
 				root + separator + simName.trim() + separator + simName.trim() + ".sim");
-		simTab.addTab("SBML Elements", elementsPanel);
-		simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-		gcm.setElementsPanel(elementsPanel);
-		gcm.createSBML("",".", null);
+		modelEditor.setElementsPanel(elementsPanel);
+		addModelViewTab(reb2sac, simTab, modelEditor);
+		simTab.addTab("Parameters", modelEditor);
+		simTab.getComponentAt(simTab.getComponents().length - 1).setName("GCM Editor");
+		//simTab.addTab("SBML Elements", elementsPanel);
+		//simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
+		modelEditor.createSBML("",".", null);
 		reb2sac.run(".", true);
 		Graph tsdGraph;
 		tsdGraph = reb2sac.createGraph(root + separator + simName + separator + simName + ".grf");
@@ -5346,79 +5346,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 										Component c = ((JTabbedPane) tab.getComponentAt(i)).getComponent(j);
 										comps.add(c);
 									}
-									//SBML_Editor sbml = null;
-									AnalysisView reb2sac = null;
 									for (Component c : comps) {
-										if (c instanceof AnalysisView) {
-											((AnalysisView) c).setSim(rename);
-											analysis = true;
-										}
-										/*
-										else if (c instanceof SBML_Editor) {
-											String properties = root + separator + rename + separator + rename + ".sim";
-											new File(properties).renameTo(new File(properties.replace(".sim", ".temp")));
-											try {
-												boolean dirty = ((SBML_Editor) c).isDirty();
-												((SBML_Editor) c).setParamFileAndSimDir(properties, root + separator + rename);
-												((SBML_Editor) c).save(false, "", true, true);
-												((SBML_Editor) c).updateSBML(i, 0);
-												((SBML_Editor) c).setDirty(dirty);
-											}
-											catch (Exception e1) {
-												e1.printStackTrace();
-											}
-											new File(properties).delete();
-											new File(properties.replace(".sim", ".temp")).renameTo(new File(properties));
-										}
-										*/
-										else if (c instanceof Graph) {
-											// c.addMouseListener(this);
-											Graph g = ((Graph) c);
-											g.setDirectory(root + separator + rename);
-											if (g.isTSDGraph()) {
-												g.setGraphName(rename + ".grf");
-											}
-											else {
-												g.setGraphName(rename + ".prb");
-											}
-										}
-										else if (c instanceof LearnGCM) {
-											LearnGCM l = ((LearnGCM) c);
-											l.setDirectory(root + separator + rename);
-										}
-										else if (c instanceof DataManager) {
-											DataManager d = ((DataManager) c);
-											d.setDirectory(root + separator + rename);
-										}
 										if (analysis) {
-											if (c instanceof AnalysisView) {
-												reb2sac = (AnalysisView) c;
-												t.addTab("Simulation Options", c);
-												t.getComponentAt(t.getComponents().length - 1).setName("Simulate");
-											}
-											else if (c instanceof MovieContainer) {
+											if (c instanceof MovieContainer) {
 												t.addTab("Schematic", c);
 												t.getComponentAt(t.getComponents().length - 1).setName("ModelViewMovie");
 											}
-											/*
-											else if (c instanceof SBML_Editor) {
-												sbml = (SBML_Editor) c;
-												t.addTab("Parameter Editor", c);
-												t.getComponentAt(t.getComponents().length - 1).setName("SBML Editor");
-											}
-											*/
 											else if (c instanceof ModelEditor) {
-												ModelEditor gcm = (ModelEditor) c;
-												/*
-												if (!gcm.getSBMLFile().equals("--none--")) {
-													sbml = new SBML_Editor(root + separator + gcm.getSBMLFile(), reb2sac, log, this, root + separator
-															+ rename, root + separator + rename + separator + rename + ".sim");
-												}
-												*/
+												((ModelEditor)c).setParamFile(root + separator + rename + separator + rename + ".sim");
 												t.addTab("Parameters", c);
 												t.getComponentAt(t.getComponents().length - 1).setName("GCM Editor");
 											}
 											else if (c instanceof Graph) {
+												((Graph)c).setDirectory(root + separator + rename);
 												if (((Graph) c).isTSDGraph()) {
 													t.addTab("TSD Graph", c);
 													t.getComponentAt(t.getComponents().length - 1).setName("TSD Graph");
@@ -5429,21 +5369,40 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 												}
 											}
 											else if (c instanceof JScrollPane) {
-												/*
-												if (sbml != null) {
-													t.addTab("SBML Elements", sbml.getElementsPanel());
-													t.getComponentAt(t.getComponents().length - 1).setName("");
-												}
-												else {*/
-												JScrollPane scroll = new JScrollPane();
-												scroll.setViewportView(new JPanel());
-												t.addTab("SBML Elements", scroll);
-												t.getComponentAt(t.getComponents().length - 1).setName("");
-												//}
+												//JScrollPane scroll = new JScrollPane();
+												//scroll.setViewportView(new JPanel());
+												//t.addTab("SBML Elements", scroll);
+												//t.getComponentAt(t.getComponents().length - 1).setName("");
 											}
 											else {
 												t.addTab("Advanced Options", c);
 												t.getComponentAt(t.getComponents().length - 1).setName("");
+											}
+										} else {
+											if (c instanceof AnalysisView) {
+												((AnalysisView) c).setSim(rename);
+												t.addTab("Simulation Options", c);
+												t.getComponentAt(t.getComponents().length - 1).setName("Simulate");
+												analysis = true;
+											}
+											else if (c instanceof Graph) {
+												// c.addMouseListener(this);
+												Graph g = ((Graph) c);
+												g.setDirectory(root + separator + rename);
+												if (g.isTSDGraph()) {
+													g.setGraphName(rename + ".grf");
+												}
+												else {
+													g.setGraphName(rename + ".prb");
+												}
+											}
+											else if (c instanceof LearnGCM) {
+												LearnGCM l = ((LearnGCM) c);
+												l.setDirectory(root + separator + rename);
+											}
+											else if (c instanceof DataManager) {
+												DataManager d = ((DataManager) c);
+												d.setDirectory(root + separator + rename);
 											}
 										}
 									}
@@ -5482,7 +5441,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 			}
-			catch (Exception e1) {
+			catch (IOException e1) {
 				JOptionPane.showMessageDialog(frame, "Unable to rename selected file.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -7561,31 +7520,31 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 		if (sbml1[sbml1.length - 1].contains(".gcm")) {
 			String gcmFile = sbml1[sbml1.length - 1];
-			ModelEditor gcm = new ModelEditor(root + separator, gcmFile, this, log, true, simName.trim(), root
+			ModelEditor modelEditor = new ModelEditor(root + separator, gcmFile, this, log, true, simName.trim(), root
 					+ separator + simName.trim() + separator + simName.trim() + ".sim", reb2sac, false, false, lema);
-			reb2sac.setGcm(gcm);
-			addModelViewTab(reb2sac, simTab, gcm);
-			simTab.addTab("Parameters", gcm);
-			simTab.getComponentAt(simTab.getComponents().length - 1).setName("GCM Editor");
-			ElementsPanel elementsPanel = new ElementsPanel(gcm.getBioModel().getSBMLDocument(),
+			reb2sac.setGcm(modelEditor);
+			ElementsPanel elementsPanel = new ElementsPanel(modelEditor.getBioModel().getSBMLDocument(),
 					root + separator + simName.trim() + separator + simName.trim() + ".sim");
-			simTab.addTab("SBML Elements", elementsPanel);
-			simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-			gcm.setElementsPanel(elementsPanel);
+			modelEditor.setElementsPanel(elementsPanel);
+			addModelViewTab(reb2sac, simTab, modelEditor);
+			simTab.addTab("Parameters", modelEditor);
+			simTab.getComponentAt(simTab.getComponents().length - 1).setName("GCM Editor");
+			//simTab.addTab("SBML Elements", elementsPanel);
+			//simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 		}
 		else if (sbml1[sbml1.length - 1].contains(".sbml") || sbml1[sbml1.length - 1].contains(".xml")) {
 			String gcmFile = sbml1[sbml1.length - 1].replace(".xml", ".gcm");
-			ModelEditor gcm = new ModelEditor(root + separator, gcmFile, this, log, true, simName.trim(), root
+			ModelEditor modelEditor = new ModelEditor(root + separator, gcmFile, this, log, true, simName.trim(), root
 					+ separator + simName.trim() + separator + simName.trim() + ".sim", reb2sac, false, false, lema);
-			reb2sac.setGcm(gcm);
-			addModelViewTab(reb2sac, simTab, gcm);
-			simTab.addTab("Parameters", gcm);
-			simTab.getComponentAt(simTab.getComponents().length - 1).setName("GCM Editor");
-			ElementsPanel elementsPanel = new ElementsPanel(gcm.getBioModel().getSBMLDocument(),
+			reb2sac.setGcm(modelEditor);
+			ElementsPanel elementsPanel = new ElementsPanel(modelEditor.getBioModel().getSBMLDocument(),
 					root + separator + simName.trim() + separator + simName.trim() + ".sim");
-			simTab.addTab("SBML Elements", elementsPanel);
-			simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-			gcm.setElementsPanel(elementsPanel);
+			modelEditor.setElementsPanel(elementsPanel);
+			addModelViewTab(reb2sac, simTab, modelEditor);
+			simTab.addTab("Parameters", modelEditor);
+			simTab.getComponentAt(simTab.getComponents().length - 1).setName("GCM Editor");
+			//simTab.addTab("SBML Elements", elementsPanel);
+			//simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 		}
 		Graph tsdGraph;
 		tsdGraph = reb2sac.createGraph(null);
@@ -8175,33 +8134,21 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									+ split[split.length - 1].trim(), root + separator + split[split.length - 1].trim() + separator
 									+ split[split.length - 1].trim() + ".sim");
 									*/
-							ModelEditor gcm = new ModelEditor(root + separator, gcmFile, this, log, true, split[split.length - 1].trim(), root
+							ModelEditor modelEditor = new ModelEditor(root + separator, gcmFile, this, log, true, split[split.length - 1].trim(), root
 									+ separator + split[split.length - 1].trim() + separator + split[split.length - 1].trim() + ".sim", reb2sac,
 									false, false, lema);
-							reb2sac.setGcm(gcm);
+							reb2sac.setGcm(modelEditor);
 							// sbml.addMouseListener(this);
-							addModelViewTab(reb2sac, simTab, gcm);
-							simTab.addTab("Parameters", gcm);
-							simTab.getComponentAt(simTab.getComponents().length - 1).setName("GCM Editor");
-							ElementsPanel elementsPanel = new ElementsPanel(gcm.getBioModel().getSBMLDocument(),
+							ElementsPanel elementsPanel = new ElementsPanel(modelEditor.getBioModel().getSBMLDocument(),
 									root + separator + split[split.length - 1].trim() + separator
 									+ split[split.length - 1].trim() + ".sim");
-							simTab.addTab("SBML Elements", elementsPanel);
-							simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-							gcm.setElementsPanel(elementsPanel);
+							modelEditor.setElementsPanel(elementsPanel);
+							addModelViewTab(reb2sac, simTab, modelEditor);
+							simTab.addTab("Parameters", modelEditor);
+							simTab.getComponentAt(simTab.getComponents().length - 1).setName("GCM Editor");
+							//simTab.addTab("SBML Elements", elementsPanel);
+							//simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 						}
-						/*
-						else if (gcmFile.contains(".sbml") || gcmFile.contains(".xml")) {
-							SBML_Editor sbml = new SBML_Editor(sbmlLoadFile, reb2sac, log, this, root + separator + split[split.length - 1].trim(),
-									root + separator + split[split.length - 1].trim() + separator + split[split.length - 1].trim() + ".sim");
-							reb2sac.setSbml(sbml);
-							// sbml.addMouseListener(this);
-							simTab.addTab("Parameter Editor", sbml);
-							simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
-							simTab.addTab("SBML Elements", sbml.getElementsPanel());
-							simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-						}
-						*/
 						Graph tsdGraph = reb2sac.createGraph(open);
 						simTab.addTab("TSD Graph", tsdGraph);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("TSD Graph");
@@ -8220,10 +8167,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	 * 
 	 * @return
 	 */
-	private void addModelViewTab(AnalysisView reb2sac, JTabbedPane tabPane, ModelEditor gcm2sbml) {
+	private void addModelViewTab(AnalysisView reb2sac, JTabbedPane tabPane, ModelEditor modelEditor) {
 
 		// Add the modelview tab
-		MovieContainer movieContainer = new MovieContainer(reb2sac, gcm2sbml.getBioModel(), this, gcm2sbml, lema);
+		MovieContainer movieContainer = new MovieContainer(reb2sac, modelEditor.getBioModel(), this, modelEditor, lema);
 
 		tabPane.addTab("Schematic", movieContainer);
 		tabPane.getComponentAt(tabPane.getComponents().length - 1).setName("ModelViewMovie");
@@ -8233,6 +8180,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			public void stateChanged(ChangeEvent e) {
 
 				JTabbedPane selectedTab = (JTabbedPane) (e.getSource());
+				if (selectedTab.getSelectedIndex()<0) return;
 				if (!(selectedTab.getComponent(selectedTab.getSelectedIndex()) instanceof JScrollPane)) {
 					JPanel selectedPanel = (JPanel) selectedTab.getComponent(selectedTab.getSelectedIndex());
 					String className = selectedPanel.getClass().getName();
@@ -8584,45 +8532,23 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 			simTab.addTab("Advanced Options", reb2sac.getAdvanced());
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-			// simTab.addTab("Advanced Options", reb2sac.getProperties());
-			// simTab.getComponentAt(simTab.getComponents().length -
-			// 1).setName("");
 			if (gcmFile.contains(".gcm")) {
-				/*
-				SBML_Editor sbml = new SBML_Editor(root + separator + gcmFile.replace(".gcm",".xml"), reb2sac, log, this, root + separator + newSim, root
-						+ separator + newSim + separator + newSim + ".sim");
-						*/
-				ModelEditor gcm = new ModelEditor(root + separator, gcmFile, this, log, true, newSim, root + separator + newSim + separator
+				ModelEditor modelEditor = new ModelEditor(root + separator, gcmFile, this, log, true, newSim, root + separator + newSim + separator
 						+ newSim + ".sim", reb2sac, false, false, lema);
-				reb2sac.setGcm(gcm);
-				// sbml.addMouseListener(this);
-				addModelViewTab(reb2sac, simTab, gcm);
-				simTab.addTab("Parameters", gcm);
-				simTab.getComponentAt(simTab.getComponents().length - 1).setName("GCM Editor");
-				ElementsPanel elementsPanel = new ElementsPanel(gcm.getBioModel().getSBMLDocument(),
+				reb2sac.setGcm(modelEditor);
+				ElementsPanel elementsPanel = new ElementsPanel(modelEditor.getBioModel().getSBMLDocument(),
 						root + separator + newSim + separator + newSim + ".sim");
-				simTab.addTab("SBML Elements", elementsPanel);
-				simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-				gcm.setElementsPanel(elementsPanel);
+				modelEditor.setElementsPanel(elementsPanel);
+				addModelViewTab(reb2sac, simTab, modelEditor);
+				simTab.addTab("Parameters", modelEditor);
+				simTab.getComponentAt(simTab.getComponents().length - 1).setName("GCM Editor");
+				//simTab.addTab("SBML Elements", elementsPanel);
+				//simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 			}
-			/*
-			else {
-				SBML_Editor sbml = new SBML_Editor(sbmlLoadFile, reb2sac, log, this, root + separator + newSim, root + separator + newSim + separator
-						+ newSim + ".sim");
-				reb2sac.setSbml(sbml);
-				// sbml.addMouseListener(this);
-				simTab.addTab("Parameter Editor", sbml);
-				simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
-				simTab.addTab("SBML Elements", sbml.getElementsPanel());
-				simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-			}
-			*/
 			Graph tsdGraph = reb2sac.createGraph(null);
-			// tsdGraph.addMouseListener(this);
 			simTab.addTab("TSD Graph", tsdGraph);
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("TSD Graph");
 			Graph probGraph = reb2sac.createProbGraph(null);
-			// probGraph.addMouseListener(this);
 			simTab.addTab("Histogram", probGraph);
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("ProbGraph");
 			tab.setComponentAt(tab.getSelectedIndex(), simTab);
