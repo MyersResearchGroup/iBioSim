@@ -194,12 +194,20 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 	}
 
+	public void setParamFile(String paramFile) {
+		this.paramFile = paramFile;
+	}
+	
 	public String getFilename() {
 		return filename;
 	}
 	
 	public String getPath() {
 		return path;
+	}
+	
+	public void setPath(String path) {
+		this.path = path;
 	}
 
 	public void reload(String newName) {
@@ -1208,6 +1216,10 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		return true;
 	}
 	
+	public ArrayList<String> getElementChanges() {
+		return elementsPanel.getElementChanges();
+	}
+	
 	private void performModifications(SBMLDocument d,ArrayList<String> dd) {
 		for (String s : elementsPanel.getElementChanges()) {
 			for (long i = d.getModel().getNumInitialAssignments() - 1; i >= 0; i--) {
@@ -1243,6 +1255,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 					if ((((Rule) d.getModel().getListOfRules().get(i)).getVariable() + " = " + formula).equals(sFormula)) {
 						d.getModel().getListOfRules().remove(i);
 					}
+				} else if (d.getModel().getListOfRules().get(i).getMetaId().equals(s)) {
+					d.getModel().getListOfRules().remove(i);
 				}
 			}
 		}
@@ -1314,6 +1328,9 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	
 	private void updateValue(SBMLDocument d,String id,String factor,String paramId,String value,String type) {
 		SBase sbase = d.getElementBySId(id);
+		if (d.getModel().getInitialAssignment(id)!=null) {
+			d.getModel().removeInitialAssignment(id);
+		}
 		if (sbase != null) {
 			if (sbase.getElementName().equals(GlobalConstants.COMPARTMENT)) {
 				Compartment compartment = d.getModel().getCompartment(id);

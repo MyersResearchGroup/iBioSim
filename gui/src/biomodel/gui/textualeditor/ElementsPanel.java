@@ -80,6 +80,10 @@ public class ElementsPanel extends JPanel {
 			else {
 				rul[i] = "d( " + rule.getVariable() + " )/dt = " + SBMLutilities.myFormulaToString(rule.getMath());
 			}
+			if (elementChanges.contains(rul[i])) {
+				elementChanges.remove(rul[i]);
+				elementChanges.add(rule.getMetaId());
+			}
 		}
 		e = m.getListOfInitialAssignments();
 		int initsNum = (int) m.getNumInitialAssignments();
@@ -200,12 +204,6 @@ public class ElementsPanel extends JPanel {
 			events.add(evPanel);
 			this.add(events);
 		}
-		//JPanel elementsPanel = new JPanel();
-		//((FlowLayout) elementsPanel.getLayout()).setAlignment(FlowLayout.LEFT);
-		//elementsPanel.add(elements);
-		//JScrollPane scroll = new JScrollPane();
-		//scroll.setViewportView(elements);
-		//return scroll;
 	}
 
 	public ArrayList<String> getElementChanges() {
