@@ -1556,8 +1556,50 @@ public class StateGraph {
 						
 			return new TimedPrjState(states, new Zone[]{z});
 		}
+		else if (eventSet.isRate()){
+			// The EventSet is a rate change event, so fire the rate change.
+			fire(curSgArray, currentPrjState, eventSet.getRateChange());
+		}
 		
 		return fire(curSgArray, currentPrjState, eventSet.getTransition());
+	}
+	
+	/**
+	 * Fires a rate change event.
+	 * 
+	 * @param curSgArray
+	 * 		The current information for the states.
+	 * @param currentPrjState
+	 * 		The current project state.
+	 * @param firedRate
+	 * 		The rate to fire. This consists of an LPNcontinuousPair that
+	 * 		has the index of the continuous variable to change and what the new 
+	 * 		rate should be.
+	 * @return
+	 */
+	public TimedPrjState fire(final StateGraph[] curSgArray, 
+			final PrjState currentPrjState, LPNContinuousPair firedRate){
+		
+
+		TimedPrjState currentTimedPrjState;
+		
+		// Check that this is a timed state.
+		if(currentPrjState instanceof TimedPrjState){
+			currentTimedPrjState = (TimedPrjState) currentPrjState;
+		}
+		else{
+			throw new IllegalArgumentException("Attempted to use the " +
+					"fire(StateGraph[],PrjState,Transition)" +
+					"without a TimedPrjState stored in the PrjState " +
+					"variable. This method is meant for TimedPrjStates.");
+		}
+		
+		Zone[] newZones = new Zone[1];
+		
+		newZones[0] = currentTimedPrjState.get_zones()[0].
+				fire(firedRate, firedRate.getCurrentRate());
+		
+		return new TimedPrjState(currentTimedPrjState.getStateArray(), newZones);
 	}
 	
 	/**
@@ -1649,7 +1691,7 @@ public class StateGraph {
 				//newRate = newIntervalRate.get_LowerBound();
 
 				//contVar.setCurrentRate(newIntervalRate.get_LowerBound());
-				contVar.setCurrentRate(newRate.get_LowerBound());
+				contVar.setCurrentRate(newRate.getSmallestRate());
 
 				//      		continuousValues.put(contVar, new IntervalPair(z.getDbmEntryByPair(contVar, LPNTransitionPair.ZERO_TIMER_PAIR),
 				//      				z.getDbmEntryByPair(LPNTransitionPair.ZERO_TIMER_PAIR, contVar)));
