@@ -10,18 +10,23 @@ import lpn.parser.Transition;
 public class Event {
 
 	/*
-	 * Abstraction Function : An event simply represents a transition or an Inequality. Whichever the 
-	 * event is representing is stored in the corresponding member variables _transition or _inequality.
+	 * Abstraction Function : An event simply represents a transition, an Inequality,
+	 * or a rate change. Whichever the event is representing is stored in the
+	 * corresponding member variables _transition, _inequality, or _rate.
 	 */
 	
 	/*
-	 * Representation Invariant : Exactly one of _transition or _inequality should be non-null at a given
-	 * time.
+	 * Representation Invariant : Exactly one of _transition, _inequality, or _rate
+	 * should be non-null at a given time.
 	 */
 	
 	private Transition _transition;
 	
 	private InequalityVariable _inequality;
+	
+	// The rate stored as the currentRate is the rate the variable is going to be
+	// changed to.
+	private LPNContinuousPair _rate;
 	
 	/**
 	 * Initializes the Event as a transition event.
@@ -42,6 +47,14 @@ public class Event {
 	}
 	
 	/**
+	 * Initializes the Even as a rate change event.
+	 * @param r
+	 */
+	public Event(LPNContinuousPair r){
+		_rate = r;
+	}
+	
+	/**
 	 * Determines whether this Event represents a Transition.
 	 * @return
 	 * 		True if this EventSet represents a Transition; false otherwise.
@@ -59,7 +72,7 @@ public class Event {
 	 */
 	public boolean isRate() {
 		
-		return false;
+		return _rate != null;
 	}
 	
 	/**
@@ -89,6 +102,14 @@ public class Event {
 		return _transition;
 	}
 	
+	/**
+	 * Gets the rate change for the rate change event this Event represents.
+	 * @return
+	 */
+	public LPNContinuousPair getRateChange(){
+		return _rate;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
@@ -104,6 +125,10 @@ public class Event {
 		else if(_inequality != null){
 			// This event represents an inequality.
 			result += "Inequality Event : " + _inequality;
+		}
+		else if(_rate != null){
+			// This event represents a rate change.
+			result += "Rate change Event: " + _rate; 
 		}
 		else{
 			// The event is not initialized.
