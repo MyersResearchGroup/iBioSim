@@ -65,4 +65,30 @@ public class IntervalPair {
 	public String toString(){
 		return "[" + _lowerBound + "," + _upperBound + "]";
 	}
+	
+	/**
+	 * Returns the rate in the range with the smallest absolute value. 
+	 * @return
+	 * 		Let [a,b] be the range of rates. Returns 0 if a<0<b, a if
+	 * 		0<a<b and b if a<b<0.
+	 */
+	public int getSmallestRate(){
+		
+		if(_lowerBound < 0 && _upperBound >0){
+			return 0;
+		}
+		
+		return Math.abs(_lowerBound)<Math.abs(_upperBound) ?
+				_lowerBound : _upperBound;
+	}
+	
+	/**
+	 * Returns the rate in the range with the largest absolute value.
+	 * @return
+	 * 		Let [a,b] be the rage of rates.
+	 */		
+	public int getLargestRate(){
+		return Math.abs(_lowerBound)>Math.abs(_upperBound)?
+				_lowerBound : _upperBound;
+	}
 }
