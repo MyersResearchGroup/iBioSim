@@ -9,10 +9,11 @@ import java.util.NoSuchElementException;
 import lpn.parser.Transition;
 
 /**
- * An EventSet represents a transition to fire or a set of inequalities that must
- * fire together. When the EventSet represents a single transition, it is said to be in
- * Transition mode. When the EventSet represents a list of inequalities, it is said to be in
- * Inequality mode.
+ * An EventSet represents a transition to fire, a set of inequalities that must
+ * fire together, or a rate change. When the EventSet represents a single transition,
+ * it is said to be in Transition mode. When the EventSet represents a list of 
+ * inequalities, it is said to be in Inequality mode. When it represents a rate
+ * rate change it is said to be in Rate mode.
  * 
  * @author Andrew N. Fisher
  *
@@ -20,22 +21,25 @@ import lpn.parser.Transition;
 public class EventSet extends Transition implements Iterable<Event>{
 
 	/*
-	 * Abstraction Function : An EventSet is either singleton set containing a Transition or
-	 * is a set of IneqaulityVariables (but not both). Accordingly, an EventSet is said to operate in one
-	 * of two modes: a Transition mode and an Inequality mode. When the EventSet contains no elements it
-	 * is said to have No Mode. When the EventSet contains a single Transition it is stored as the
-	 * _transition variable. When the EventSet contains a set InequalityVariables, they are stored in
-	 * _inequalities.
+	 * Abstraction Function : An EventSet is a singleton set containing a Transition,
+	 * a set of IneqaulityVariables, or a singleton set representing a rate change.
+	 * Accordingly, an EventSet is said to operate in one
+	 * of three modes: a Transition mode, an Inequality mode, or a Rate mode. When the
+	 * EventSet contains no elements it is said to have No Mode. When the EventSet
+	 * contains a single Transition it is stored as the _transition variable. When
+	 * the EventSet contains a set InequalityVariables, they are stored in
+	 * _inequalities. When the EventSet contains a rate change, the variable and new
+	 * rate are stored as an LPNContinuousPair in the _rate variable.
 	 */
 	
 	
 	/*
 	 * Representation Invariant :
-	 * Exactly one of the fields '_transition' or '_inequalities' should be non-null.
-	 * Testing for null is how this class determines whether it represents a 
-	 * Transition or a set of inequalities. Both variables can be null in which
-	 * case the EventSet can be changed to either mode by storing something in 
-	 * the _transition or _inequalities (but not both) variables.
+	 * Exactly one of the fields '_transition', '_inequalities', '_rate' should be
+	 * non-null. Testing for null is how this class determines whether it represents
+	 * a Transition, a set of inequalities, or a rate change. All three variables can
+	 * be null in which case the EventSet can be changed to either mode by storing
+	 * something in the _transition, _inequalities or rate variables.
 	 */
 	
 	// A variable indicating whether we are a transition or a set of inequalities
@@ -49,6 +53,9 @@ public class EventSet extends Transition implements Iterable<Event>{
 	
 	// The set of inequalities.
 	ArrayList<InequalityVariable> _inequalities;
+	
+	// The rate to change.
+	LPNContinuousPair  _rate;
 	
 	/**
 	 * Creates an uninitialized EventSet. The mode of the EventSet is determined by the first use
@@ -79,6 +86,14 @@ public class EventSet extends Transition implements Iterable<Event>{
 	}
 	
 	/**
+	 * Creates an EventSet in the Rate mod.
+	 * @param rate
+	 */
+	public EventSet(LPNContinuousPair rate){
+		_rate = rate;
+	}
+	
+	/**
 	 * Determines whether this EventSet represents a Transition.
 	 * @return
 	 * 		True if this EventSet represents a Transition; false otherwise.
@@ -102,7 +117,7 @@ public class EventSet extends Transition implements Iterable<Event>{
 	 * 		True if this EventSet represents a rate event; false otherwise.
 	 */
 	public boolean isRate(){
-		return false;
+		return _rate != null;
 	}
 	
 	/**
@@ -133,28 +148,33 @@ public class EventSet extends Transition implements Iterable<Event>{
 		}
 		
 		// We are not in the Inequality mode.
-		// If we are also not in the Transition mode, then the new event determines
-		// the mode.
-		if(_transition == null){
+		// If we are also not in the Transition mode or Rate mode, then the new
+		//event determines the mode.
+		if(_transition == null || _rate == null){
 			if(e.isInequality()){
 				// The event is an inequality, so add it to the inequalities.
 				// This also implies that the mode is the Inequality mode.
 				_inequalities = new ArrayList<InequalityVariable>();
 				_inequalities.add(e.getInequalityVariable());
 			}
-			else{
+			else if(e.isTransition()){
 				// The event is a Transition, so store it. This also implies the
 				// mode is the Transition mode.
 				_transition = e.getTransition();
+			}
+			else{
+				// Since the event is not an inequality or a transition, it must
+				// for a rate change.
+				_rate = e.getRateChange();
 			}
 			
 			return;
 		}
 		
-		// We are in the Transition mode. Nothing can be added in the transition mode.
-		// yell.
+		// We are in the Transition mode or Rate mode. Nothing can be added in the
+		// these modes so yell.
 		throw new IllegalArgumentException("Another event was attempted to be added" +
-				"to an EventSet that already had a transition in it.");
+				"to an EventSet that already had a transition or rate in it.");
 	}
 	
 	/**
@@ -173,16 +193,21 @@ public class EventSet extends Transition implements Iterable<Event>{
 		// Create a new EventSet instance.
 		EventSet newSet = new EventSet();
 		
-		// Determine whether or not the EventSet is in the Inequalty mode.
+		// Determine whether or not the EventSet is in the Inequality mode.
 		if(_inequalities != null){
 			// In the Inequality mode, we need to make a new ArrayList and copy the elements references over.
 			newSet._inequalities = new ArrayList<InequalityVariable>();
 			newSet._inequalities.addAll(this._inequalities);
 		}
 		
-		else{
+		else if (_transition != null){
 			// In this case we are in the Transition mode. Simple copy the transition over.
 			newSet._transition = this._transition;
+		}
+		else{
+			// Since we are not in Inequality or Transition mode, we must be in Rate
+			// mode (or have no mode). Simply copy the rate.
+			newSet._rate = this._rate;
 		}
 		
 		return newSet;
@@ -194,10 +219,17 @@ public class EventSet extends Transition implements Iterable<Event>{
 	 * 		The event to remove.
 	 */
 	public void remove(Event e){
-		// If the event is a transition and is equal to the store transition
+		// If the event is a transition and is equal to the stored transition
 		// remove the stored transition.
 		if(e.isTransition() && e.equals(_transition)){
 			_transition = null;
+			return;
+		}
+		
+		// If the event is a rate change and is equal to the stored rate change,
+		// remove the stored rate.
+		if(e.isRate() && e.equals(_rate)){
+			_rate = null;
 			return;
 		}
 		
@@ -214,8 +246,8 @@ public class EventSet extends Transition implements Iterable<Event>{
 	 * 		The number of elements in the EventSet.
 	 */
 	public int size(){
-		if(_transition != null){
-			// If we are in the Transition mode, the size is 1.
+		if(_transition != null || _rate != null){
+			// If we are in the Transition mode or Rate mode, the size is 1.
 			return 1;
 		}
 		else{
@@ -234,7 +266,7 @@ public class EventSet extends Transition implements Iterable<Event>{
 		
 		// If one of the member variables is not null (and contains elements),
 		// the set is not empty.
-		if(_transition != null || 
+		if(_transition != null || _rate != null ||
 				(_inequalities != null && _inequalities.size() != 0)){
 			return false;
 		}
@@ -251,6 +283,16 @@ public class EventSet extends Transition implements Iterable<Event>{
 		return _transition;
 	}
 	
+	/**
+	 * Retrieve the rate change that this EventSet represents.
+	 * @return
+	 * 		The rate change that this EventSet represents or null if
+	 * 		this EventSet does not represent a rate change.
+	 */
+	public LPNContinuousPair getRateChange(){
+		return _rate;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see lpn.parser.Transition#toString()
@@ -262,6 +304,10 @@ public class EventSet extends Transition implements Iterable<Event>{
 		if(_transition != null){
 			// This is a set of a singleton transition.
 			result += "Transition Event Set = [" + _transition.getLabel();
+		}
+		else if(_rate !=null){
+			// This is a single rate change.
+			result += "Rate change Event set = [" + _rate;
 		}
 		else if (_inequalities != null){
 			result += "Inequality Event Set = [" + _inequalities;
@@ -313,25 +359,24 @@ public class EventSet extends Transition implements Iterable<Event>{
 	 * the Transition mode or the Inequality mode depending on whether the EventSet that created
 	 * it holds a Transition or a list of Inequalities. In the Transition mode the iterator
 	 * will return the single Transition. In the Inequality mode, the Iterator will iterate
-	 * through the Ineqaulity variables. All elements are returned packaged as Event objects.
+	 * through the Inequality variables. All elements are returned packaged as Event objects.
 	 * @author Andrew N. Fisher
 	 *
 	 */
 	private class EventSetIterator implements Iterator<Event>{
 
 		/*
-		 * Abstraction Function : The Iterator operates in one of two modes: the
-		 * Transition mode and the Inequality mode. If the _inequal variable
-		 * is null, then the mode is the Transition mode, otherwise it is the
-		 * Inequality mode.
+		 * Abstraction Function : The Iterator operates in one of three modes: the
+		 * Transition mode, the Inequality mode, or the Rate mode. The mode is
+		 * determined by which of _tran, _inequal, or _r is non-null.
+		 * The modes are then Transition, Inequality, or Rate mode respectively.
 		 */
 		
 		/*
 		 * Representation Invariant : If the Iterator is created in a given mode,
-		 * then it should stay in that mode. The mode is determined by whether
-		 * the _ineq variable is null or not. Do not use the _tran variable to
-		 * determine the mode. The _tran variable will be null in the Transition
-		 * mode after returning it.
+		 * then it should stay in that mode. The mode is determined by which field
+		 * is non-null. Exactly one of _tran, _inequal, or _r should be non-null.
+		 * The _tran or _rate variable will be null in the after returning it.
 		 */
 		
 		// Stores the single transition if the Iterator is in the Transition mode.
@@ -341,26 +386,40 @@ public class EventSet extends Transition implements Iterable<Event>{
 		// Inequality mode.
 		Iterator<InequalityVariable> _inequal;
 		
+		// Stores the single rate change if the Iterator is in the Rate mode.
+		LPNContinuousPair _r;
+		
 		/**
-		 * The constructor initializes an Iterator in one of two modes : the Transition
-		 * mode or the the Inequality mode. This mode is set once the Iterator is created.
+		 * The constructor initializes an Iterator in one of three modes : the 
+		 * Transition mode, the Inequality mode, or the Rate mode.
+		 * This mode is set once the Iterator is created.
 		 */
 		public EventSetIterator(){
 			
-			// Check to see in the EventSet is in a consitant state. It should only contain
-			// A Transition or a list of InequalityVariables. It should not include both.
-			if(_transition == null && _inequalities == null){
-				throw new IllegalStateException("The EventSet has both a transition" +
-						" and a set of inequalities.");
+			// Check to see in the EventSet is in a consistent state.
+			if((_transition == null && _inequalities == null && _rate == null)
+					|| (_transition != null && _inequalities != null)
+					|| (_transition != null && _rate != null)
+					|| (_inequalities != null && _rate != null)){
+				throw new IllegalStateException("The EventSet is not in a correct" +
+						" mode.");
 			}
 			
 			if(EventSet.this._inequalities != null){
-				// The EventSet contains inequalities. So initialize the EventSetIterator in Inequality mode.
+				// The EventSet contains inequalities. So initialize the
+				// EventSetIterator in Inequality mode.
 				_inequal = EventSet.this._inequalities.iterator();
 			}
-			else{
-				// The EventSet contains a transition. So initialize the EventSetIterator in Transition mode.
+			else if (EventSet.this._transition != null){
+				// The EventSet contains a transition. So initialize the 
+				// EventSetIterator in Transition mode.
 				_tran = EventSet.this._transition;
+			}
+			else{
+				// The EventSet is not in Inequality or Transition mode, so
+				// it must be in Rate mode. So initialize the EventSetIterator
+				// to Rate mode.
+				_r = EventSet.this._rate;
 			}
 		}
 		
@@ -378,8 +437,9 @@ public class EventSet extends Transition implements Iterable<Event>{
 				return _inequal.hasNext();
 			}
 			
-			// The Iterator is in the Transition mode. So determine if there is still a transition to return.
-			return _tran != null;
+			// The Iterator is in the Transition or Rate mode.
+			// So determine if there is still a transition or rate to return.
+			return _tran != null || _r != null;
 		}
 
 		/*
@@ -391,24 +451,33 @@ public class EventSet extends Transition implements Iterable<Event>{
 			
 			//Determine the mode the EventSetIterator is in.			
 			if(_inequal != null){
-				// The Iterator is in the Inequality mode, so pass the action to th _ineqaulities iterator.
+				// The Iterator is in the Inequality mode, so pass the action
+				// to the _ineqaulities iterator.
 				return new Event(_inequal.next());
 			}
 			
-			// The Iterator is in the Transition mode. 
-			if(_tran == null){
-				// The transition has already been returned so complain.
+			// The Iterator is in the Transition or rate mode. 
+			if(_tran == null && _r == null){
+				// The transition or rate has already been returned so complain.
 				throw new NoSuchElementException("No more elements to return.");
 			}
 			
-			// The Iterator is in the Transition mode and the transition has not be removed.
-			// Remove the transition and return it.
+			// The Iterator is in the Transition or Rate mode and the
+			// transition or rate has not be removed.
+			// Remove the transition or rate and return it.
 			
-			Transition tmpTran = _tran;
+			if(_tran != null){
+				Transition tmpTran = _tran;
 			
-			_tran = null;
+				_tran = null;
 			
-			return new Event(tmpTran);
+				return new Event(tmpTran);
+			}
+			else{
+				LPNContinuousPair tmpRate = _r;
+				_r = null;
+				return new Event(tmpRate);
+			}
 		}
 
 		/*
@@ -420,7 +489,8 @@ public class EventSet extends Transition implements Iterable<Event>{
 			
 			// Determine which mode is being operated in.
 			if(_inequal == null){
-				// We are in the Transition mode. This is not supported, so complain.
+				// We are in the Transition or Rate mode.
+				// This is not supported, so complain.
 				throw new UnsupportedOperationException("The remove method is not supported when for the EventSet" +
 						" iterator when in the Transition mode.");
 			}
