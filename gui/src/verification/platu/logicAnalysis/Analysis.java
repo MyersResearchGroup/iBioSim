@@ -38,7 +38,6 @@ import verification.platu.project.PrjState;
 import verification.platu.stategraph.State;
 import verification.platu.stategraph.StateGraph;
 import verification.timed_state_exploration.zoneProject.EventSet;
-import verification.timed_state_exploration.zoneProject.StateSet;
 import verification.timed_state_exploration.zoneProject.TimedPrjState;
 import verification.timed_state_exploration.zoneProject.TimedStateSet;
 import verification.timed_state_exploration.zoneProject.Zone;
@@ -314,6 +313,40 @@ public class Analysis {
 				printTransList(curEnabled, "+++++++ curEnabled trans ++++++++");
 			}
 			
+			//						//------- TEMP ---------
+//			State tmp1 = curStateArray[curIndex];
+//			if (tmp1.getIndex()==56 && tmp1.getLpn().getLabel().equals("speedInd_decomp6vars1888")
+//				&& curStateArray[curIndex+1].getIndex()==1 
+//				&& curStateArray[curIndex+2].getIndex()==773
+//				&& curStateArray[curIndex+3].getIndex()==1){
+//				System.out.println("=====Yohji Yamamoto 0_0====");			
+//				System.out.println("curIndex = " + curIndex);
+//				printTransList(curEnabled, "curEnabled");
+//				printStateArray(curStateArray, "curStateArray");
+//				printStateArray(stateStackTop.getFather().toStateArray(), "curStateArray's father");
+//				
+//				ProbLocalStateGraph tmp3 = null;
+//				if (sgList[curEnabled.getLast().getLpn().getLpnIndex()] instanceof ProbLocalStateGraph)
+//					tmp3 = (ProbLocalStateGraph) sgList[curEnabled.getLast().getLpn().getLpnIndex()];
+//					tmp3.printNextProbLocalStateTupleMap("Analysis.java => search_dfs(), before firing");
+//				System.out.println("=========================");
+//			}
+//			if (tmp1.getIndex()==773 && tmp1.getLpn().getLabel().equals("speedInd_decomp6vars740")) {
+//				System.out.println("=====Yohji Yamamoto 1_0====");			
+//				System.out.println("curIndex = " + curIndex);
+//				printTransList(curEnabled, "curEnabled");
+//				printStateArray(curStateArray, "curStateArray");
+//				printStateArray(stateStackTop.getFather().toStateArray(), "curStateArray's father");
+//				
+//				ProbLocalStateGraph tmp3 = null;
+//				if (sgList[curEnabled.getLast().getLpn().getLpnIndex()] instanceof ProbLocalStateGraph)
+//					tmp3 = (ProbLocalStateGraph) sgList[curEnabled.getLast().getLpn().getLpnIndex()];
+//					tmp3.printNextProbLocalStateTupleMap("Analysis.java => search_dfs(), before firing");
+//				System.out.println("=========================");
+//			}						
+			//						//--------------------
+			
+			
 			// If all enabled transitions of the current LPN are considered,
 			// then consider the next LPN
 			// by increasing the curIndex.
@@ -366,6 +399,33 @@ public class Analysis {
 				System.out.println("Fired transition: " + firedTran.getFullLabel());
 				System.out.println("###################");
 			}
+			//------- TEMP ---------
+//			int firedTranIndex00 = firedTran.getLpn().getLpnIndex();
+//			State tmp = curStateArray[firedTranIndex00];
+//			if (tmp.getIndex()==773 && tmp.getLpn().getLabel().equals("speedInd_decomp6vars740") 
+//					&& firedTran.getFullLabel().equals("S2_trans19(speedInd_decomp6vars740)")) {
+//				System.out.println("Yohji Yamamoto 1_1");
+//				System.out.println("###################");			
+//				System.out.println("Fired transition: " + firedTran.getFullLabel());
+//				System.out.println("Fired tran LPN index = " + firedTran.getLpn().getLpnIndex());
+//				System.out.println("curIndex = " + curIndex);
+//				System.out.println("###################");
+//			}
+//			if (tmp.getIndex()==56 && tmp.getLpn().getLabel().equals("speedInd_decomp6vars1888")				
+//				&& firedTran.getFullLabel().equals("X_trans5(speedInd_decomp6vars1888)")
+//				&& curStateArray[firedTranIndex00+1].getIndex()==1 
+//				&& curStateArray[firedTranIndex00+2].getIndex()==773
+//				&& curStateArray[firedTranIndex00+3].getIndex()==1) {
+//				System.out.println("Yohji Yamamoto 0_1");
+//				System.out.println("###################");			
+//				System.out.println("Fired transition: " + firedTran.getFullLabel());
+//				System.out.println("Fired tran LPN index = " + firedTran.getLpn().getLpnIndex());
+//				System.out.println("curIndex = " + curIndex);
+//				System.out.println("###################");
+//				
+//			}
+			//--------------------
+			
 			
 			State[] nextStateArray;
 			PrjState nextPrjState; // Moved this definition up. Timing Change.
@@ -407,7 +467,8 @@ public class Analysis {
 					enabledList = ((TimedPrjState) nextPrjState).getPossibleEvents(0, i);
 				}
 				nextEnabledArray[i] = enabledList;
-				if (Options.getReportDisablingError()) {
+				// TODO: (temp) Stochastic model does not need disabling error?
+				if (Options.getReportDisablingError() && !Options.getProbabilisticModelFlag()) {
 					Transition disabledTran = firedTran.disablingError(
 							curEnabledArray[i], nextEnabledArray[i]);
 					if (disabledTran != null) {
@@ -474,16 +535,31 @@ public class Analysis {
 //							}
 //						}
 //					}
-					int curStateIndex = firedTran.getLpn().getLpnIndex();
+					int indexOfCurStateInStateArray = firedTran.getLpn().getLpnIndex();
 					// Mark in the global state which local state has the outgoing transition which was fired in this iteration. 
 					if (stateStackTop instanceof ProbGlobalState) 
-						((ProbGlobalState) stateStackTop).addLocalStateIndex(curStateIndex);
-					State curState = stateStackTop.getStateArray()[curStateIndex];
-					HashMap<State, HashMap<Transition, ProbLocalStateTuple>> nextLocalStateTupleMap = ((ProbLocalStateGraph) sgList[curStateIndex]).getNextProbLocalStateMap();
+						((ProbGlobalState) stateStackTop).addLocalStateIndex(indexOfCurStateInStateArray);
+					State curState = stateStackTop.getStateArray()[indexOfCurStateInStateArray];
+					HashMap<State, HashMap<Transition, ProbLocalStateTuple>> nextLocalStateTupleMap = ((ProbLocalStateGraph) sgList[indexOfCurStateInStateArray]).getNextProbLocalStateMap();
 					ProbLocalStateTuple nextLocalStateTuple = nextLocalStateTupleMap.get(curState).get(firedTran);
 					State nextLocalState = nextLocalStateTuple.getNextProbLocalState();
 					if (nextLocalState!= null) 
-						nextLocalStateTuple.getNextLocalToGlobalMap().put(firedTran, nextPrjState);																				
+						nextLocalStateTuple.getNextLocalToGlobalMap().put(firedTran, nextPrjState);	
+					// ------- TEMP ----------
+//					if (nextLocalState != null) {
+//						if (nextLocalState.getIndex()==773 && nextLocalState.getLpn().getLabel().equals("speedInd_decomp6vars740")) {
+//							System.out.println("=====Yohji Yamamoto 6====");			
+//							System.out.println("curIndex = " + curIndex);
+//							System.out.println("nextLocalStateTuple = " + nextLocalStateTuple.toString());
+//							//printStateArray(curStateArray, "curStateArray");
+//							System.out.println("=========================");
+//						}
+//					}
+					
+//					if (firedTran.getLabel().equals(("S2_trans19(speedInd_decomp6vars740")))
+//					dfd	
+						
+					// -----------------------
 				}
 				if (Options.getOutputSgFlag()) {
 					if (Options.getDebugMode()) {
@@ -601,8 +677,7 @@ public class Analysis {
 		double totalStateCnt =0;
 		totalStateCnt = prjStateSet.size();
 		System.out.println("---> final numbers: # LPN transition firings: "	+ tranFiringCnt 
-			//+ ", # of prjStates found: " + totalStateCnt 
-			+ ", " + prjStateSet.toString()
+			+ ", # of prjStates found: " + totalStateCnt			
 			+ ", max_stack_depth: " + max_stack_depth 
 			+ ", peak total memory: " + peakTotalMem / 1000000 + " MB"
 			+ ", peak used memory: " + peakUsedMem / 1000000 + " MB");
@@ -876,7 +951,7 @@ public class Analysis {
 		if (type.equals("enabled trans")) {
 			for (int i=0; i< curState.getTranVector().length; i++) {
 				if (curState.getTranVector()[i]) {
-					arrayStr = arrayStr + curState.getLpn().getAllTransitions()[i].getLabel() + ",";
+					arrayStr = arrayStr + curState.getLpn().getAllTransitions()[i].getFullLabel() + ", ";
 				}
 			}
 			if (arrayStr != "")
@@ -889,20 +964,20 @@ public class Analysis {
 		if (title != null)
 			System.out.println(title);		
 		for (int i=0; i<stateArray.length; i++) {
-			System.out.print("S" + stateArray[i].getIndex() + "(" + stateArray[i].getLpn().getLabel() +") -> ");
-			System.out.print("markings: " + intArrayToString("markings", stateArray[i]) + " / ");
-			System.out.print("var values: " + intArrayToString("vars", stateArray[i]) + " / ");
-			System.out.print("enabled trans: " + boolArrayToString("enabled trans", stateArray[i]) + " / ");	
+			System.out.println("S" + stateArray[i].getIndex() + "(" + stateArray[i].getLpn().getLabel() +"): ");
+			System.out.println("\tmarkings: " + intArrayToString("markings", stateArray[i]));
+			System.out.println("\tvar values: " + intArrayToString("vars", stateArray[i]));
+			System.out.println("\tenabled trans: " + boolArrayToString("enabled trans", stateArray[i]));	
 		}
-		
+		System.out.println("----------------------------");
 	}
 
 	private void printTransList(LinkedList<Transition> tranList, String title) {
 		if (title != null)
-			System.out.println(title);
+			System.out.println("+++++++" + title + "+++++++");
 		for (int i=0; i< tranList.size(); i++) 
 			System.out.println(tranList.get(i).getFullLabel() + ", ");
-		System.out.println("");
+		System.out.println("+++++++++++++");
 	}
 
 //	private void writeIntegerStackToDebugFile(Stack<Integer> curIndexStack, String title) {
