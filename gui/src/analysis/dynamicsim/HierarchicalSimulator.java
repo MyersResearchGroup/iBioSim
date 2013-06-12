@@ -86,6 +86,7 @@ public abstract class HierarchicalSimulator {
 	protected HashMap<String, Double> replacements;
 	protected HashMap<String, HashSet<String>> speciesReplacementSubModels;
 	protected HashMap<String, Double> initReplacementState;
+	protected HashMap<String, Integer> IDtoIndex;
 	protected int numSubmodels;
 	protected double totalPropensity;
 	
@@ -105,8 +106,8 @@ public abstract class HierarchicalSimulator {
 	protected boolean cancelFlag = false;
 	protected boolean constraintFailureFlag = false;
 	protected boolean sbmlHasErrorsFlag = false;
-	protected boolean noConstraintsFlag = true;
-	protected boolean noRuleFlag = true;
+	//protected boolean noConstraintsFlag = true;
+//	protected boolean noRuleFlag = true;
 	protected boolean stopDueConstraint = false;
 	
 	protected double currentTime;
@@ -161,6 +162,8 @@ public abstract class HierarchicalSimulator {
 		replacements = new HashMap<String,Double>();
 		initReplacementState = new HashMap<String, Double>();
 		speciesReplacementSubModels = new HashMap<String, HashSet<String>>();
+
+		IDtoIndex = new HashMap<String, Integer>();
 		
 		if (quantityType != null && quantityType.equals("concentration"))
 			this.printConcentrations = true;
@@ -206,7 +209,6 @@ public abstract class HierarchicalSimulator {
 
 		topmodel = new ModelState(document.getModel(), true, "topmodel");
 		numSubmodels = (int)setupSubmodels(document);
-
 		getComponentPortMap(document);
 		
 		ibiosimFunctionDefinitions.add("uniform");
@@ -220,7 +222,6 @@ public abstract class HierarchicalSimulator {
 		ibiosimFunctionDefinitions.add("binomial");
 		ibiosimFunctionDefinitions.add("bernoulli");
 		ibiosimFunctionDefinitions.add("normal");
-		
 		
 		
 	}
@@ -268,10 +269,6 @@ public abstract class HierarchicalSimulator {
 		return temp;
 	}
 	
-	protected boolean getNoConstraintsFlag()
-	{
-		return this.noConstraintsFlag;
-	}
 	
 	/**
 	 * appends the current species states to the TSD file
@@ -369,6 +366,9 @@ public abstract class HierarchicalSimulator {
 		}
 	}
 	
+	/**
+	 * Initializes the modelstate array
+	 */
 	protected long setupSubmodels(SBMLDocument document)
 	{
 		String path = getPath(outputDirectory);
@@ -376,6 +376,7 @@ public abstract class HierarchicalSimulator {
 		CompSBMLDocumentPlugin sbmlComp = (CompSBMLDocumentPlugin)document.getPlugin("comp");
 		submodels = new ModelState[(int)sbmlCompModel.getNumSubmodels()];
 		long size = sbmlCompModel.getNumSubmodels();
+		IDtoIndex.put("topmodel", -1);
 		
 		for (int i = 0; i < size; i++) {
 			Submodel submodel = sbmlCompModel.getSubmodel(i);
@@ -385,11 +386,15 @@ public abstract class HierarchicalSimulator {
 			subBioModel.load(path + extModelFile);
 			
 			submodels[i] = new ModelState(subBioModel.getSBMLDocument().getModel(), false, submodel.getId());
-			}
+			IDtoIndex.put(submodel.getId(), i);
+		}
 		
 		return size;
 	}
 	
+	/**
+	 * Stores replacing values in a global map
+	 */
 	protected void getComponentPortMap(SBMLDocument sbml) {
 		for (long i = 0; i < sbml.getModel().getNumSpecies(); i++) {
 			Species species = sbml.getModel().getSpecies(i);
@@ -1006,14 +1011,38 @@ public abstract class HierarchicalSimulator {
 		}
 		
 	if (affectedAssignmentRuleSet.size() > 0)
+	{
 			performAssignmentRules(modelstate, affectedAssignmentRuleSet);
+	}
 		
 	if (affectedConstraintSet.size() > 0) 
-		if (testConstraints(modelstate, affectedConstraintSet) == false)
-			constraintFailureFlag = true;
-		else
+		//if (testConstraints(modelstate, affectedConstraintSet) == false)
+		//	constraintFailureFlag = true;
+		//else
 			stopDueConstraint = testConstraints(modelstate, affectedConstraintSet);
 	
+	}
+	
+	
+	protected void updateRules()
+	{
+		HashSet<AssignmentRule> affectedAssignmentRuleSet = new HashSet<AssignmentRule>();
+		ModelState model;
+		for(String species : speciesReplacementSubModels.keySet())
+			for(String submodel : speciesReplacementSubModels.get(species))
+			{
+				int index = IDtoIndex.get(submodel);
+				
+				if(index == -1)
+					model = topmodel;
+				else
+					model = submodels[index];
+				
+				if (model.noRuleFlag == false && model.variableToIsInAssignmentRuleMap.get(species) == true)
+					affectedAssignmentRuleSet.addAll(model.variableToAffectedAssignmentRuleSetMap.get(species));
+				if (affectedAssignmentRuleSet.size() > 0)
+						performAssignmentRules(model, affectedAssignmentRuleSet);
+			}
 	}
 	
 	/**
@@ -1031,10 +1060,10 @@ public abstract class HierarchicalSimulator {
 			//System.out.println("Node: " + libsbml.formulaToString(constraint));
 			
 			if (getBooleanFromDouble(evaluateExpressionRecursive(modelstate, constraint)))
-				return false;
+				return true;
 		}
 		
-		return true;
+		return false;
 	}
 	
 	/**
@@ -1591,13 +1620,20 @@ public abstract class HierarchicalSimulator {
 				
 				if (modelstate.speciesToHasOnlySubstanceUnitsMap.containsKey(variable) &&
 						modelstate.speciesToHasOnlySubstanceUnitsMap.get(variable) == false) {
-					
-					modelstate.variableToValueMap.put(variable, 
+					if(replacements.containsKey(variable))
+						replacements.put(variable, 
+								evaluateExpressionRecursive(modelstate, assignmentRule.getMath()) * 
+								modelstate.variableToValueMap.get(modelstate.speciesToCompartmentNameMap.get(variable)));
+					else
+						modelstate.variableToValueMap.put(variable, 
 							evaluateExpressionRecursive(modelstate, assignmentRule.getMath()) * 
 							modelstate.variableToValueMap.get(modelstate.speciesToCompartmentNameMap.get(variable)));
 				}
 				else {
-					modelstate.variableToValueMap.put(variable, evaluateExpressionRecursive(modelstate, assignmentRule.getMath()));
+					if(replacements.containsKey(variable))
+						replacements.put(variable, evaluateExpressionRecursive(modelstate, assignmentRule.getMath()));
+					else
+						modelstate.variableToValueMap.put(variable, evaluateExpressionRecursive(modelstate, assignmentRule.getMath()));
 				}
 				
 				affectedVariables.add(variable);
@@ -1735,7 +1771,7 @@ public abstract class HierarchicalSimulator {
 		    long size = modelstate.model.getListOfRules().size();
 		    
 		    if(size > 0)
-		    	noRuleFlag = false;
+		    	modelstate.noRuleFlag = false;
 		    
 			for (long i = 0; i < size; i++){
 					Rule rule = modelstate.model.getRule(i);
@@ -1940,7 +1976,7 @@ public abstract class HierarchicalSimulator {
 		
 		protected boolean printConcentrations = false;
 		protected boolean noConstraintsFlag = true;
-		
+		protected boolean noRuleFlag = true;
 		protected JFrame running = new JFrame();
 
 		
