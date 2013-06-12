@@ -2414,6 +2414,35 @@ public class Zone{
 	}
 	
 	/**
+	 *  This fire method fires a rate change event.
+	 * 
+	 * @param ltPair
+	 * 		The index of the continuous variable whose rate needs to be changed.
+	 * @param rate
+	 * 		The new rate.
+	 * @return
+	 * 		The new zone resulting from the rate change.
+	 */
+	public Zone fire(LPNTransitionPair ltPair, int rate){
+		
+		// Make a copy of the Zone.
+		Zone resultZone = this.clone();
+		
+		// Change the current rate of the continuous variable.
+		setCurrentRate(ltPair, rate);
+		
+		// Warp the zone.
+		resultZone.dbmWarp(this);
+		
+		// Recanonicalize.
+		resultZone.recononicalize();
+		
+		resultZone.checkZoneMaxSize();
+		
+		return resultZone;
+	}
+	
+	/**
 	 * Handles the moving in and out of continuous variables.
 	 * @param newContValues
 	 */
@@ -2487,7 +2516,8 @@ public class Zone{
 				newAssignValues.get(OLD_NON_ZERO);
 		
 		// Create new rate zero member variable.
-		newZone._rateZeroContinuous = new DualHashMap<LPNTransitionPair, VariableRangePair>();
+		newZone._rateZeroContinuous = new DualHashMap<LPNTransitionPair,
+				VariableRangePair>();
 		
 		// Create new _indexToTimerPair.
 		// First get the total number of non-zero rate continuous variables that
@@ -3617,7 +3647,23 @@ public class Zone{
 			}
 			
 			else{
-				// The index refers to a continuous variable. So check all the inequalities for inclusion.
+				// The index refers to a continuous variable.
+				// First check for a rate change event.
+				LPNContinuousPair ltContPair = 
+						((LPNContinuousPair) ltPair).clone();
+				
+				IntervalPair ratePair = getRateBounds(ltContPair);
+				
+				if(!ratePair.singleValue()
+						&& (ltContPair.getCurrentRate() == ratePair.getSmallestRate())){
+					// The rate represents a range of rates and no rate change
+					// event has occured.
+					ltContPair.setCurrentRate(ratePair.getLargestRate());
+					result = addSetItem(result, 
+							new Event(ltContPair), localState);
+				}
+				
+				// Check all the inequalities for inclusion.
 				Variable contVar = _lpnList[ltPair.get_lpnIndex()].getContVar(ltPair.get_transitionIndex());
 				
 				if(contVar.getInequalities() != null){
