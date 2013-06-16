@@ -68,7 +68,7 @@ public class SimulatorSSADirect extends Simulator {
 		//add events to queue if they trigger
 		if (noEventsFlag == false)
 			handleEvents(noAssignmentRulesFlag, noConstraintsFlag);
-		
+
 		while (currentTime < timeLimit && cancelFlag == false) {
 			
 			//if a constraint fails
@@ -137,59 +137,8 @@ public class SimulatorSSADirect extends Simulator {
 				delta_t = minTimeStep;
 			
 			//step2Time += System.nanoTime() - step2Initial;
-			
-			
-			
-			//STEP 3: select a reaction
-			
-			//long step3Initial = System.nanoTime();
-			
-			String selectedReactionID = selectReaction(r2);
-			
-			//step3Time += System.nanoTime() - step3Initial;
-			
-			//if its length isn't positive then there aren't any reactions
-			if (selectedReactionID.isEmpty() == false) {
-			
-				//STEP 4: perform selected reaction and update species counts
-				
-				//long step4Initial = System.nanoTime();
-				
-				performReaction(selectedReactionID, noAssignmentRulesFlag, noConstraintsFlag);
-				
-				//step4Time += System.nanoTime() - step4Initial;
-				
-				
-				
-				//STEP 5: compute affected reactions' new propensities and update total propensity
-				
-				//long step5Initial = System.nanoTime();
-				
-				//create a set (precludes duplicates) of reactions that the selected reaction's species affect
-				HashSet<String> affectedReactionSet = getAffectedReactionSet(selectedReactionID, noAssignmentRulesFlag);
-				
-				updatePropensities(affectedReactionSet);
-				
-				//step5Time += System.nanoTime() - step5Initial;
-			}
-			
-			//update time for next iteration
 			currentTime += delta_t;
-			
-			if (variableToIsInAssignmentRuleMap != null &&
-					variableToIsInAssignmentRuleMap.containsKey("time"))				
-				performAssignmentRules(variableToAffectedAssignmentRuleSetMap.get("time"));
-			
-			//add events to queue if they trigger
-			if (noEventsFlag == false) {
-				
-				handleEvents(noAssignmentRulesFlag, noConstraintsFlag);
-			
-				//step to the next event fire time if it comes before the next time step
-				if (!triggeredEventQueue.isEmpty() && triggeredEventQueue.peek().fireTime <= currentTime)
-					currentTime = triggeredEventQueue.peek().fireTime;
-			}
-			
+
 			while (currentTime > printTime && printTime < timeLimit) {
 				
 				try {
@@ -201,8 +150,58 @@ public class SimulatorSSADirect extends Simulator {
 				
 				printTime += printInterval;
 				running.setTitle("Progress (" + (int)((currentTime / timeLimit) * 100.0) + "%)");
-			}
+			}			
 			
+			//STEP 3: select a reaction
+			
+			//long step3Initial = System.nanoTime();
+			if (currentTime < timeLimit) {
+				String selectedReactionID = selectReaction(r2);
+
+				//step3Time += System.nanoTime() - step3Initial;
+
+				//if its length isn't positive then there aren't any reactions
+				if (selectedReactionID.isEmpty() == false) {
+
+					//STEP 4: perform selected reaction and update species counts
+
+					//long step4Initial = System.nanoTime();
+
+					performReaction(selectedReactionID, noAssignmentRulesFlag, noConstraintsFlag);
+
+					//step4Time += System.nanoTime() - step4Initial;
+
+
+
+					//STEP 5: compute affected reactions' new propensities and update total propensity
+
+					//long step5Initial = System.nanoTime();
+
+					//create a set (precludes duplicates) of reactions that the selected reaction's species affect
+					HashSet<String> affectedReactionSet = getAffectedReactionSet(selectedReactionID, noAssignmentRulesFlag);
+
+					updatePropensities(affectedReactionSet);
+
+					//step5Time += System.nanoTime() - step5Initial;
+				}
+
+				//update time for next iteration
+
+				if (variableToIsInAssignmentRuleMap != null &&
+						variableToIsInAssignmentRuleMap.containsKey("time"))				
+					performAssignmentRules(variableToAffectedAssignmentRuleSetMap.get("time"));
+
+				//add events to queue if they trigger
+				if (noEventsFlag == false) {
+
+					handleEvents(noAssignmentRulesFlag, noConstraintsFlag);
+
+					//step to the next event fire time if it comes before the next time step
+					if (!triggeredEventQueue.isEmpty() && triggeredEventQueue.peek().fireTime <= currentTime)
+						currentTime = triggeredEventQueue.peek().fireTime;
+				}
+			}
+
 		} //end simulation loop
 		
 		//System.err.println("total time: " + String.valueOf((initializationTime + System.nanoTime() - 

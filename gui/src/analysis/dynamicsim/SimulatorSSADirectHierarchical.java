@@ -76,13 +76,13 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 			}
 			else
 			{
-					if (submodels[submodelIndex].noEventsFlag == false) {
-						HashSet<String> affectedReactionSet = fireEvents(submodels[submodelIndex], submodels[submodelIndex].noRuleFlag, submodels[submodelIndex].noConstraintsFlag);				
-						
+				if (submodels[submodelIndex].noEventsFlag == false) {
+					HashSet<String> affectedReactionSet = fireEvents(submodels[submodelIndex], submodels[submodelIndex].noRuleFlag, submodels[submodelIndex].noConstraintsFlag);				
+
 					//recalculate propensties/groups for affected reactions
 					if (affectedReactionSet.size() > 0)
-							updatePropensities(affectedReactionSet);
-					}
+						updatePropensities(affectedReactionSet);
+				}
 			}
 			
 			
@@ -131,13 +131,28 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 			if (delta_t < minTimeStep)
 				delta_t = minTimeStep;
 			
+			//update time for next iteration
+			currentTime += delta_t;
 			
+			while (currentTime > printTime && printTime < timeLimit) {
+				
+				try {
+					printToTSD(printTime);
+					bufferedTSDWriter.write(",\n");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+				printTime += printInterval;
+				running.setTitle("Progress (" + (int)((currentTime / timeLimit) * 100.0) + "%)");
+			}
+
 			//STEP 3: select a reaction
 			
 			String selectedReactionID = selectReaction(r2);
 			
 			//if its length isn't positive then there aren't any reactions
-			if (!selectedReactionID.isEmpty()) {
+			if (currentTime < timeLimit && !selectedReactionID.isEmpty()) {
 			
 			//STEP 4: perform selected reaction and update species counts
 				
@@ -148,9 +163,6 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 					
 					//STEP 5: compute affected reactions' new propensities and update total propensity
 					updatePropensities(affectedReactionSet);
-					
-					//update time for next iteration
-					currentTime += delta_t;
 					
 					//if (topmodel.variableToIsInAssignmentRuleMap != null &&
 							//topmodel.variableToIsInAssignmentRuleMap.containsKey("time"))				
@@ -203,20 +215,6 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 	
 			//update time for next iteration
 			//currentTime += delta_t;
-			
-			while (currentTime > printTime && printTime < timeLimit) {
-				
-				try {
-					printToTSD(printTime);
-					bufferedTSDWriter.write(",\n");
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				
-				printTime += printInterval;
-				running.setTitle("Progress (" + (int)((currentTime / timeLimit) * 100.0) + "%)");
-			}
-			
 			
 		} //end simulation loop
 		
