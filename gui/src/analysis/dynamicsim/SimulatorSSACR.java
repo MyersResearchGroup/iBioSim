@@ -184,96 +184,8 @@ public class SimulatorSSACR extends Simulator {
 			
 			//step2Time += System.nanoTime() - step2Initial;
 			
-			
-			//STEP 2B: calculate rate rules using this time step
-			HashSet<String> affectedVariables = performRateRules(delta_t);
-			
-			//update stuff based on the rate rules altering values
-			for (String affectedVariable : affectedVariables) {
-				
-				if (speciesToAffectedReactionSetMap != null &&
-						speciesToAffectedReactionSetMap.containsKey(affectedVariable))
-					updatePropensities(speciesToAffectedReactionSetMap.get(affectedVariable));
-				
-				if (variableToAffectedAssignmentRuleSetMap != null &&
-						variableToAffectedAssignmentRuleSetMap.containsKey(affectedVariable))
-					performAssignmentRules(variableToAffectedAssignmentRuleSetMap.get(affectedVariable));
-				
-				if (variableToAffectedConstraintSetMap != null &&
-						variableToAffectedConstraintSetMap.containsKey(affectedVariable))
-					testConstraints(variableToAffectedConstraintSetMap.get(affectedVariable));
-			}
-			
-			//STEP 3A: select a group
-			
-			//long step3aInitial = System.nanoTime();
-			
-			int selectedGroup = selectGroup(r2);
-		
-			//step3aTime += System.nanoTime() - step3aInitial;
-			
-			//if it's zero that means there aren't any reactions to fire
-			if (selectedGroup != 0) {
-			
-				//STEP 3B: select a reaction within the group
-				
-				//long step3bInitial = System.nanoTime();
-				
-				String selectedReactionID = selectReaction(selectedGroup, r3, r4);
-				
-				//step3bTime += System.nanoTime() - step3bInitial;
-	
-				//System.err.println(selectedReactionID + "  " + reactionToPropensityMap.get(selectedReactionID));
-				
-				//STEP 4: perform selected reaction and update species counts
-				
-				//long step4Initial = System.nanoTime();
-				
-				performReaction(selectedReactionID, noAssignmentRulesFlag, noConstraintsFlag);
-				
-				//step4Time += System.nanoTime() - step4Initial;
-				
-				
-				//STEP 5: compute affected reactions' new propensities and update total propensity
-				
-				//long step5Initial = System.nanoTime();
-				
-				//create a set (precludes duplicates) of reactions that the selected reaction's species affect
-				HashSet<String> affectedReactionSet = getAffectedReactionSet(selectedReactionID, noAssignmentRulesFlag);
-				
-				boolean newMinPropensityFlag = updatePropensities(affectedReactionSet);
-				
-				//step5Time += System.nanoTime() - step5Initial;
-				
-				//STEP 6: re-assign affected reactions to appropriate groups
-				
-				//long step6Initial = System.nanoTime();
-				
-				//if there's a new minPropensity, then the group boundaries change
-				//so re-calculate all groups
-				if (newMinPropensityFlag == true)
-					reassignAllReactionsToGroups();
-				else
-					updateGroups(affectedReactionSet);
-				
-				//step6Time += System.nanoTime() - step6Initial;
-			}
-			
 			//update time for next iteration
 			currentTime += delta_t;
-			
-			if (variableToIsInAssignmentRuleMap != null && 
-					variableToIsInAssignmentRuleMap.containsKey("time"))				
-				performAssignmentRules(variableToAffectedAssignmentRuleSetMap.get("time"));
-			
-			//add events to queue if they trigger
-			if (noEventsFlag == false) {
-				
-				handleEvents(noAssignmentRulesFlag, noConstraintsFlag);
-			
-				if (!triggeredEventQueue.isEmpty() && (triggeredEventQueue.peek().fireTime <= currentTime))
-					currentTime = triggeredEventQueue.peek().fireTime;
-			}
 			
 			while ((currentTime > printTime) && (printTime < timeLimit)) {
 				
@@ -294,6 +206,97 @@ public class SimulatorSSACR extends Simulator {
 				printTime += printInterval;
 				running.setTitle("Progress (" + (int)((currentTime / timeLimit) * 100.0) + "%)");
 			}
+			
+			if (currentTime < timeLimit) {
+
+				//STEP 2B: calculate rate rules using this time step
+				HashSet<String> affectedVariables = performRateRules(delta_t);
+
+				//update stuff based on the rate rules altering values
+				for (String affectedVariable : affectedVariables) {
+
+					if (speciesToAffectedReactionSetMap != null &&
+							speciesToAffectedReactionSetMap.containsKey(affectedVariable))
+						updatePropensities(speciesToAffectedReactionSetMap.get(affectedVariable));
+
+					if (variableToAffectedAssignmentRuleSetMap != null &&
+							variableToAffectedAssignmentRuleSetMap.containsKey(affectedVariable))
+						performAssignmentRules(variableToAffectedAssignmentRuleSetMap.get(affectedVariable));
+
+					if (variableToAffectedConstraintSetMap != null &&
+							variableToAffectedConstraintSetMap.containsKey(affectedVariable))
+						testConstraints(variableToAffectedConstraintSetMap.get(affectedVariable));
+				}
+
+				//STEP 3A: select a group
+
+				//long step3aInitial = System.nanoTime();
+
+				int selectedGroup = selectGroup(r2);
+
+				//step3aTime += System.nanoTime() - step3aInitial;
+
+				//if it's zero that means there aren't any reactions to fire
+				if (selectedGroup != 0) {
+
+					//STEP 3B: select a reaction within the group
+
+					//long step3bInitial = System.nanoTime();
+
+					String selectedReactionID = selectReaction(selectedGroup, r3, r4);
+
+					//step3bTime += System.nanoTime() - step3bInitial;
+
+					//System.err.println(selectedReactionID + "  " + reactionToPropensityMap.get(selectedReactionID));
+
+					//STEP 4: perform selected reaction and update species counts
+
+					//long step4Initial = System.nanoTime();
+
+					performReaction(selectedReactionID, noAssignmentRulesFlag, noConstraintsFlag);
+
+					//step4Time += System.nanoTime() - step4Initial;
+
+
+					//STEP 5: compute affected reactions' new propensities and update total propensity
+
+					//long step5Initial = System.nanoTime();
+
+					//create a set (precludes duplicates) of reactions that the selected reaction's species affect
+					HashSet<String> affectedReactionSet = getAffectedReactionSet(selectedReactionID, noAssignmentRulesFlag);
+
+					boolean newMinPropensityFlag = updatePropensities(affectedReactionSet);
+
+					//step5Time += System.nanoTime() - step5Initial;
+
+					//STEP 6: re-assign affected reactions to appropriate groups
+
+					//long step6Initial = System.nanoTime();
+
+					//if there's a new minPropensity, then the group boundaries change
+					//so re-calculate all groups
+					if (newMinPropensityFlag == true)
+						reassignAllReactionsToGroups();
+					else
+						updateGroups(affectedReactionSet);
+
+					//step6Time += System.nanoTime() - step6Initial;
+				}
+
+				if (variableToIsInAssignmentRuleMap != null && 
+						variableToIsInAssignmentRuleMap.containsKey("time"))				
+					performAssignmentRules(variableToAffectedAssignmentRuleSetMap.get("time"));
+
+				//add events to queue if they trigger
+				if (noEventsFlag == false) {
+
+					handleEvents(noAssignmentRulesFlag, noConstraintsFlag);
+
+					if (!triggeredEventQueue.isEmpty() && (triggeredEventQueue.peek().fireTime <= currentTime))
+						currentTime = triggeredEventQueue.peek().fireTime;
+				}
+			}
+
 		} //end simulation loop
 		
 		
