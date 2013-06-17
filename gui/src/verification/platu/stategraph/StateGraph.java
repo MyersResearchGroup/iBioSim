@@ -1481,7 +1481,7 @@ public class StateGraph {
 	}
 	
 	/**
-	 * Fires a list of events. This list can either contain a single transition
+	 * Fires a list of events. This list can either contain a single transition, a rate change, 
 	 * or a set of inequalities.
 	 * @param curSgArray
 	 * 			The current information on the all local states.
@@ -1559,9 +1559,31 @@ public class StateGraph {
 		else if (eventSet.isRate()){
 			// The EventSet is a rate change event, so fire the rate change.
 			fire(curSgArray, currentPrjState, eventSet.getRateChange());
+			
+			
 		}
 		
 		return fire(curSgArray, currentPrjState, eventSet.getTransition());
+	}
+	
+	private Zone addNewEnabledTransitions(final StateGraph[] curSgArray, State[] states, EventSet eventSet,
+			TimedPrjState currentTimedPrjState){
+		HashSet<LPNTransitionPair> newlyEnabled = new HashSet<LPNTransitionPair>();
+		// Update the enabled transitions according to inequalities that have changed.
+		for(int i=0; i<states.length; i++){
+			boolean[] newEnabledTranVector = updateEnabledTranVector(states[i].getTranVector(),
+					states[i].marking, states[i].vector, null, newlyEnabled);
+	        State newState = curSgArray[i].addState(new State(this.lpn, states[i].marking, states[i].vector, newEnabledTranVector));
+	        states[i] = newState;
+		}
+		
+		// Get a new zone that has been restricted according to the inequalities firing.
+		Zone z = currentTimedPrjState.get_zones()[0].getContinuousRestrictedZone(eventSet);
+		
+		// Add any new transitions.
+		z = z.addTransition(newlyEnabled, states);
+		
+		return z;
 	}
 	
 	/**
@@ -1598,6 +1620,10 @@ public class StateGraph {
 		
 		newZones[0] = currentTimedPrjState.get_zones()[0].
 				fire(firedRate, firedRate.getCurrentRate());
+		
+		newZones[0].recononicalize();
+		newZones[0].advance(currentTimedPrjState.getStateArray());
+		newZones[0].recononicalize();
 		
 		return new TimedPrjState(currentTimedPrjState.getStateArray(), newZones);
 	}
