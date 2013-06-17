@@ -2009,7 +2009,7 @@ public class Zone{
 	/**
 	 * Performs the Floyd's least pairs algorithm to reduce the DBM.
 	 */
-	private void recononicalize()
+	public void recononicalize()
 	{
 		for(int k=0; k<dbmSize(); k++)
 		{
@@ -2435,9 +2435,9 @@ public class Zone{
 		resultZone.dbmWarp(this);
 		
 		// Recanonicalize.
-		resultZone.recononicalize();
-		
-		resultZone.checkZoneMaxSize();
+//		resultZone.recononicalize();
+//		
+//		resultZone.checkZoneMaxSize();
 		
 		return resultZone;
 	}
@@ -2671,7 +2671,7 @@ public class Zone{
 	 * Advances time. (This method should replace advance().)
 	 * @param localStates
 	 */
-	private void advance(State[] localStates){
+	public void advance(State[] localStates){
 			
 		for(LPNTransitionPair ltPair : _indexToTimerPair){
 
