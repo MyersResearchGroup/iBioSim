@@ -6764,8 +6764,12 @@ public class BioModel {
 	}
 	
 	public SBMLDocument newFlattenModel() {
+		String tempFile = filename.replace(".gcm","").replace(".xml","")+"_temp.xml";
+		save(tempFile);
 		BioModel bioModel = new BioModel(path);
-		bioModel.load(filename);
+		bioModel.load(tempFile);
+		new File(tempFile).delete();
+		
 		SBMLDocument document = bioModel.getSBMLDocument();
 		document.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", false);
 		long numSubModels = sbmlCompModel.getNumSubmodels();
