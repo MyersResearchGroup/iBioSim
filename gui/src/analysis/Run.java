@@ -240,6 +240,9 @@ public class Run implements ActionListener {
 		else if (selectedButtons.contains("markov")) {
 			abs.setProperty("reb2sac.simulation.method", "markov");
 		}
+		else if (selectedButtons.contains("fba")) {
+			abs.setProperty("reb2sac.simulation.method", "FBA");
+		}
 		else if (selectedButtons.contains("sbml")) {
 			abs.setProperty("reb2sac.simulation.method", "SBML");
 		}
@@ -466,7 +469,7 @@ public class Run implements ActionListener {
 	 * @param runTime
 	 * @param refresh
 	 */
-	public int execute(String filename, JRadioButton sbml, JRadioButton dot, JRadioButton xhtml, JRadioButton lhpn,
+	public int execute(String filename, JRadioButton fba, JRadioButton sbml, JRadioButton dot, JRadioButton xhtml, JRadioButton lhpn,
 			Component component, JRadioButton ode, JRadioButton monteCarlo, String sim, String printer_id,
 			String printer_track_quantity, String outDir, JRadioButton nary, int naryRun, String[] intSpecies, Log log,
 			Gui biomodelsim, JTabbedPane simTab, String root, JProgressBar progress,
@@ -587,6 +590,11 @@ public class Run implements ActionListener {
 				logFile.write("Executing:\nreb2sac --target.encoding=nary-level " + filename + "\n\n");
 				time1 = System.nanoTime();
 				reb2sac = exec.exec("reb2sac --target.encoding=nary-level " + theFile, null, work);
+			}
+			else if (fba.isSelected()) {
+				time1 = System.nanoTime();
+				FluxBalanceAnalysis fluxBalanceAnalysis = new FluxBalanceAnalysis(directory + separator + theFile);
+				exitValue = fluxBalanceAnalysis.PerformFluxBalanceAnalysis();
 			}
 			else if (sbml.isSelected()) {
 				sbmlName = JOptionPane.showInputDialog(component, "Enter Model ID:", "Model ID", JOptionPane.PLAIN_MESSAGE);
@@ -1509,6 +1517,9 @@ public class Run implements ActionListener {
 			}
 			else {
 				if (nary.isSelected() && gcmEditor == null && !lhpn.isSelected() && naryRun == 1) {
+				}
+				else if (fba.isSelected()) {
+					System.out.println("Scott: Here is where you tell me your results");
 				}
 				else if (sbml.isSelected()) {
 					if (sbmlName != null && !sbmlName.trim().equals("")) {
