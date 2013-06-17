@@ -229,7 +229,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		for (int i = 0; i < model.getNumReactions(); i++) {
 			Reaction reaction = (Reaction) listOfReactions.get(i);
 			reacts[i] = reaction.getId();
-			if (paramsOnly) {
+			if (paramsOnly && reaction.getKineticLaw()!=null) {
 				ListOf params = reaction.getKineticLaw().getListOfParameters();
 				for (int j = 0; j < reaction.getKineticLaw().getNumParameters(); j++) {
 					Parameter paramet = ((Parameter) (params.get(j)));

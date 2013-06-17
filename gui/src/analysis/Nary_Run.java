@@ -62,7 +62,7 @@ public class Nary_Run implements ActionListener, Runnable {
 
 	private String[] getFilename; // array of filename
 
-	private JRadioButton sbml, dot, xhtml, lhpn; // Radio Buttons output option
+	private JRadioButton fba, sbml, dot, xhtml, lhpn; // Radio Buttons output option
 
 	/*
 	 * Radio Buttons that represent the different abstractions
@@ -122,7 +122,7 @@ public class Nary_Run implements ActionListener, Runnable {
 	 * member variables and creates the nary frame.
 	 */
 	public Nary_Run(Component component, JRadioButton ge, JRadioButton gt, JRadioButton eq, JRadioButton lt, JRadioButton le,
-			JComboBox simulators, String[] getFilename, String filename, JRadioButton sbml, JRadioButton dot, JRadioButton xhtml, JRadioButton lhpn,
+			JComboBox simulators, String[] getFilename, String filename, JRadioButton fba, JRadioButton sbml, JRadioButton dot, JRadioButton xhtml, JRadioButton lhpn,
 			JRadioButton nary, JRadioButton ODE, JRadioButton monteCarlo, double timeLimit, String useInterval, double printInterval,
 			double minTimeStep, double timeStep, String outDir, long rndSeed, int run, String printer_id, String printer_track_quantity,
 			String[] intSpecies, double rap1, double rap2, double qss, int con, Log log, String ssaFile,
@@ -162,6 +162,7 @@ public class Nary_Run implements ActionListener, Runnable {
 		this.filename = filename;
 		this.dot = dot;
 		this.sbml = sbml;
+		this.fba = fba;
 		this.xhtml = xhtml;
 		this.lhpn = lhpn;
 		this.nary = nary;
@@ -564,7 +565,7 @@ public class Nary_Run implements ActionListener, Runnable {
 				}
 			}
 		}
-		runProgram.execute(filename, sbml, dot, xhtml, lhpn, naryFrame, ODE, monteCarlo, sim, printer_id, printer_track_quantity, outDir, nary, 2,
+		runProgram.execute(filename, fba, sbml, dot, xhtml, lhpn, naryFrame, ODE, monteCarlo, sim, printer_id, printer_track_quantity, outDir, nary, 2,
 				intSpecies, log, biomodelsim, simTab, root, progress, "", null, direct, timeLimit, timeLimit * run, modelFile,
 				abstPane, abstraction, null, absError, timeStep, printInterval, run, rndSeed, true, label, running);
 		running.setCursor(null);
