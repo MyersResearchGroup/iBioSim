@@ -145,34 +145,40 @@ public class GlobalConstants {
 	public static final String REPRESSION = "repression";
 	public static final String REGULATION = "regulation";
 	public static final String NOINFLUENCE = "no influence";
+	
 	public static final int SBO_ACTIVATION = 459;
 	public static final int SBO_REPRESSION = 20;
-	public static final int SBO_REGULATION = 19;
 	public static final int SBO_DUAL_ACTIVITY = 595;
 	public static final int SBO_NEUTRAL = 594;
-	public static final int SBO_PROMOTER = 535;
 	public static final int SBO_PROMOTER_MODIFIER = 598;
-	public static final int SBO_OLD_PROMOTER_SPECIES = 369;
-	public static final int SBO_PROMOTER_SPECIES = 354;
+
 	public static final int SBO_PROMOTER_BINDING_REGION = 590;
-	public static final int SBO_MRNA_OLD = 278;
 	public static final int SBO_MRNA = 250;
-	public static final int SBO_PLACE = 546;
+
 	public static final int SBO_PETRI_NET_PLACE = 593;
-	public static final int SBO_BOOLEAN = 547;
 	public static final int SBO_LOGICAL = 602;
-	public static final int SBO_TRANSITION = 464;
 	public static final int SBO_PETRI_NET_TRANSITION = 591;
+	
 	public static final int SBO_INPUT_PORT = 600;
 	public static final int SBO_OUTPUT_PORT = 601;
 
 	public static final int SBO_DEGRADATION = 179;
 	public static final int SBO_DIFFUSION = 185;
-	public static final int SBO_PRODUCTION = 183;
 	public static final int SBO_GENETIC_PRODUCTION = 589;
-	public static final int SBO_COMPLEX = 526;
 	public static final int SBO_ASSOCIATION = 177;
 	public static final int SBO_CONSTITUTIVE = 396;
+
+	// obsolete
+	public static final int SBO_REGULATION = 19;
+	public static final int SBO_OLD_PROMOTER_SPECIES = 369;
+	public static final int SBO_PROMOTER = 535;
+	public static final int SBO_PROMOTER_SPECIES = 354;
+	public static final int SBO_MRNA_OLD = 278;
+	public static final int SBO_BOOLEAN = 547;
+	public static final int SBO_PLACE = 546;
+	public static final int SBO_TRANSITION = 464;
+	public static final int SBO_PRODUCTION = 183;
+	public static final int SBO_COMPLEX = 526;
 	
 	public static final String KISAO_GENERIC = "KISAO:0000000";
 	public static final String KISAO_MONTE_CARLO = "KISAO:0000319";
