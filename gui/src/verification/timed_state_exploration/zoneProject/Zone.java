@@ -3537,6 +3537,10 @@ public class Zone{
 		// Make a new copy of the zone.
 		Zone z = this.clone();
 		
+		if(eventSet == null){
+			return z;
+		}
+		
 		z.restrictContinuous(eventSet);
 		
 		z.recononicalize();
@@ -3691,7 +3695,7 @@ public class Zone{
 	 * @param EventList
 	 * 			The list of possible events.
 	 */
-	private LpnTranList addSetItem(LpnTranList E, Event e, State s){
+	public LpnTranList addSetItem(LpnTranList E, Event e, State s){
 //		void lhpnAddSetItem(eventSets &E,lhpnEventADT e,ineqList &ineqL,lhpnZoneADT z,
 //                lhpnRateADT r,eventADT *events,int nevents,
 //	    lhpnStateADT cur_state)
@@ -4431,7 +4435,7 @@ public class Zone{
 	 * @return
 	 * 		The warped Zone.
 	 */
-	private void dbmWarp(Zone oldZone){
+	public void dbmWarp(Zone oldZone){
 		/*
 		 *  See "Verification of Analog/Mixed-Signal Circuits Using Labeled Hybrid Petri Nets"
 		 *  by S. Little, D. Walter, C. Myers, R. Thacker, S. Batchu, and T. Yoneda
