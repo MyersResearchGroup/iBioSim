@@ -72,9 +72,6 @@ import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
 import com.sun.org.apache.xpath.internal.operations.Variable;
 
-import analysis.dynamicsim.Simulator.EventToFire;
-import analysis.dynamicsim.Simulator.StringDoublePair;
-import analysis.dynamicsim.Simulator.StringStringPair;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 
@@ -102,13 +99,16 @@ public abstract class HierarchicalSimulator {
 	protected FileWriter TSDWriter = null;
 	protected BufferedWriter bufferedTSDWriter = null;
 	
+	//compares two events based on fire time and priority
+	protected EventComparator eventComparator = new EventComparator();
+	
 	//boolean flags
 	protected boolean cancelFlag = false;
 	protected boolean constraintFailureFlag = false;
 	protected boolean sbmlHasErrorsFlag = false;
 	//protected boolean noConstraintsFlag = true;
 //	protected boolean noRuleFlag = true;
-	protected boolean stopDueConstraint = false;
+	protected boolean constraintFlag = true;
 	
 	protected double currentTime;
 	protected String SBMLFileName;
@@ -1019,11 +1019,15 @@ public abstract class HierarchicalSimulator {
 		//if (testConstraints(modelstate, affectedConstraintSet) == false)
 		//	constraintFailureFlag = true;
 		//else
-			stopDueConstraint = testConstraints(modelstate, affectedConstraintSet);
+			constraintFlag = testConstraints(modelstate, affectedConstraintSet);
 	
 	}
 	
-	
+	/**
+	 * This method is used to update the values involving a species in the global
+	 * map. Without this method, species with rules involving replacing species
+	 * would not be updated.
+	 */
 	protected void updateRules()
 	{
 		HashSet<AssignmentRule> affectedAssignmentRuleSet = new HashSet<AssignmentRule>();
@@ -1473,12 +1477,15 @@ public abstract class HierarchicalSimulator {
 		//copy the triggered event queue -- except the events that are now untriggered
 		//this is done because the remove function can't work with just a string; it needs to match events
 		//this also re-evaluates the priorities in case they have changed
-		LinkedList<EventToFire> newTriggeredEventQueue = new LinkedList<EventToFire>();
-			
+		//LinkedList<EventToFire> newTriggeredEventQueue = new LinkedList<EventToFire>();
+		
+		PriorityQueue<EventToFire> newTriggeredEventQueue = new PriorityQueue<EventToFire>((int)modelstate.numEvents, eventComparator);
+		
+		
 		while (modelstate.triggeredEventQueue.size() > 0) {
 		
 			EventToFire event = modelstate.triggeredEventQueue.poll();
-			EventToFire eventToAdd = new EventToFire(event.eventID, (HashSet<Object>) event.eventAssignmentSet.clone(), event.fireTime);
+			EventToFire eventToAdd = new EventToFire(IDtoIndex.get(modelstate.ID), event.eventID, (HashSet<Object>) event.eventAssignmentSet.clone(), event.fireTime);
 			
 			if (untriggeredEvents.contains(event.eventID) == false)
 				newTriggeredEventQueue.add(eventToAdd);
@@ -1528,9 +1535,16 @@ public abstract class HierarchicalSimulator {
 				double assignmentValue;
 				
 
-					
-				variable = ((EventAssignment) eventAssignment).getVariable();
-				assignmentValue = evaluateExpressionRecursive(modelstate, ((EventAssignment) eventAssignment).getMath());
+				if (modelstate.eventToUseValuesFromTriggerTimeMap.get(eventToFireID) == true)	
+				{
+					variable = ((StringDoublePair) eventAssignment).string;
+					assignmentValue = ((StringDoublePair) eventAssignment).doub;
+				}
+				else
+				{
+					variable = ((EventAssignment) eventAssignment).getVariable();
+					assignmentValue = evaluateExpressionRecursive(modelstate, ((EventAssignment) eventAssignment).getMath());
+				}
 				
 				//update the species, but only if it's not a constant (bound. cond. is fine)
 				if (modelstate.variableToIsConstantMap.get(variable) == false) {
@@ -1572,13 +1586,14 @@ public abstract class HierarchicalSimulator {
 			//copy the triggered event queue -- except the events that are now untriggered
 			//this is done because the remove function can't work with just a string; it needs to match events
 			//this also re-evaluates the priorities in case they have changed
-			newTriggeredEventQueue = new LinkedList<EventToFire>();
+			//newTriggeredEventQueue = new LinkedList<EventToFire>();
+			newTriggeredEventQueue = new PriorityQueue<EventToFire>((int)modelstate.numEvents, eventComparator);
 			
 			while (modelstate.triggeredEventQueue.size() > 0) {
 			
 				EventToFire event = modelstate.triggeredEventQueue.poll();
 				EventToFire eventToAdd = 
-					new EventToFire(event.eventID, (HashSet<Object>) event.eventAssignmentSet.clone(), event.fireTime);
+					new EventToFire(IDtoIndex.get(modelstate.ID), event.eventID, (HashSet<Object>) event.eventAssignmentSet.clone(), event.fireTime);
 				
 				if (untriggeredEvents.contains(event.eventID) == false)
 					newTriggeredEventQueue.add(eventToAdd);
@@ -1654,38 +1669,62 @@ public abstract class HierarchicalSimulator {
 		//loop through all untriggered events
 		//if any trigger, evaluate the fire time(s) and add them to the queue
 		for (String untriggeredEventID : modelstate.untriggeredEventSet) {
-			
 			//if the trigger evaluates to true
 			if (getBooleanFromDouble(evaluateExpressionRecursive(modelstate, modelstate.eventToTriggerMap.get(untriggeredEventID))) == true) {
-				
-				//skip the event if it's initially true and this is time == 0
-				if (currentTime == 0.0 && modelstate.eventToTriggerInitiallyTrueMap.get(untriggeredEventID) == true)
-					continue;
-				
-				//switch from false to true must happen
-				if (modelstate.eventToPreviousTriggerValueMap.get(untriggeredEventID) == true)
-					continue;
-				
-				triggeredEvents.add(untriggeredEventID);
-				
-			
 					
-			double fireTime = currentTime;
-			
-			modelstate.triggeredEventQueue.add(new EventToFire(
-						untriggeredEventID, modelstate.eventToAssignmentSetMap.get(untriggeredEventID), fireTime));
+					//skip the event if it's initially true and this is time == 0
+					if (currentTime == 0.0 && modelstate.eventToTriggerInitiallyTrueMap.get(untriggeredEventID) == true)
+						continue;
+					
+					//switch from false to true must happen
+					if (modelstate.eventToPreviousTriggerValueMap.get(untriggeredEventID) == true)
+						continue;
+					
+					triggeredEvents.add(untriggeredEventID);
+					
+					//if assignment is to be evaluated at trigger time, evaluate it and replace the ASTNode assignment
+					if (modelstate.eventToUseValuesFromTriggerTimeMap.get(untriggeredEventID) == true)	{
+						
+						//temporary hashset of evaluated assignments
+						HashSet<Object> evaluatedAssignments = new HashSet<Object>();
+						
+						for (Object evAssignment : modelstate.eventToAssignmentSetMap.get(untriggeredEventID)) {
+							
+							EventAssignment eventAssignment = (EventAssignment) evAssignment;
+							evaluatedAssignments.add(new StringDoublePair(
+									eventAssignment.getVariable(), evaluateExpressionRecursive(modelstate, eventAssignment.getMath())));
+						}
+						
+						double fireTime = currentTime;
+						
+						if (modelstate.eventToHasDelayMap.get(untriggeredEventID) == true)
+							fireTime += evaluateExpressionRecursive(modelstate, modelstate.eventToDelayMap.get(untriggeredEventID));
 								
+						modelstate.triggeredEventQueue.add(new EventToFire(IDtoIndex.get(modelstate.ID),
+								untriggeredEventID, evaluatedAssignments, fireTime));
+					}
+					else {
+						
+						double fireTime = currentTime;
+						
+						if (modelstate.eventToHasDelayMap.get(untriggeredEventID) == true)
+							fireTime += evaluateExpressionRecursive(modelstate, modelstate.eventToDelayMap.get(untriggeredEventID));
+						modelstate.triggeredEventQueue.add(new EventToFire(IDtoIndex.get(modelstate.ID),
+								untriggeredEventID, modelstate.eventToAssignmentSetMap.get(untriggeredEventID), fireTime));
+					}			
 			}
-			else {
-				
-				modelstate.eventToPreviousTriggerValueMap.put(untriggeredEventID, false);
-			}
+				else {
+					
+					modelstate.eventToPreviousTriggerValueMap.put(untriggeredEventID, false);
+				}
 		}
+			
+			//remove recently triggered events from the untriggered set
+			//when they're fired, they get put back into the untriggered set
+			modelstate.untriggeredEventSet.removeAll(triggeredEvents);
+		}
+	
 		
-		//remove recently triggered events from the untriggered set
-		//when they're fired, they get put back into the untriggered set
-		modelstate.untriggeredEventSet.removeAll(triggeredEvents);
-	}
 	
 	/**
 	 * sets up a single event
@@ -1698,16 +1737,26 @@ public abstract class HierarchicalSimulator {
 		long numAssignments = event.getNumEventAssignments();
 
 	
-		modelstate.eventToHasDelayMap.put(eventID, false);
+		if (event.isSetPriority())
+			modelstate.eventToPriorityMap.put(eventID, inlineFormula(modelstate, event.getPriority().getMath()));
+		
+		if (event.isSetDelay()) {
+			
+			modelstate.eventToDelayMap.put(eventID, inlineFormula(modelstate, event.getDelay().getMath()));
+			modelstate.eventToHasDelayMap.put(eventID, true);
+		}
+		else
+			modelstate.eventToHasDelayMap.put(eventID, false);
 		
 		event.getTrigger().setMath(inlineFormula(modelstate, event.getTrigger().getMath()));
 		
 		modelstate.eventToTriggerMap.put(eventID, event.getTrigger().getMath());
+		modelstate.eventToTriggerInitiallyTrueMap.put(eventID, event.getTrigger().getInitialValue());
+		modelstate.eventToPreviousTriggerValueMap.put(eventID, event.getTrigger().getInitialValue());
+		modelstate.eventToTriggerPersistenceMap.put(eventID, event.getTrigger().getPersistent());
+		modelstate.eventToUseValuesFromTriggerTimeMap.put(eventID, event.getUseValuesFromTriggerTime());
 		modelstate.eventToAssignmentSetMap.put(eventID, new HashSet<Object>());
 		modelstate.eventToAffectedReactionSetMap.put(eventID, new HashSet<String>());
-		
-		//System.out.println(libsbml.formulaToString(event.getTrigger().getMath()));
-		
 		
 		modelstate.untriggeredEventSet.add(eventID);
 		
@@ -1890,16 +1939,75 @@ public abstract class HierarchicalSimulator {
 		public String eventID = "";
 		public HashSet<Object> eventAssignmentSet = null;
 		public double fireTime = 0.0;
+		public int index;
 		
-		public EventToFire(String eventID, HashSet<Object> eventAssignmentSet, double fireTime) {
+		public EventToFire(int index, String eventID, HashSet<Object> eventAssignmentSet, double fireTime) {
 			
 			this.eventID = eventID;
 			this.eventAssignmentSet = eventAssignmentSet;
-			this.fireTime = fireTime;			
+			this.fireTime = fireTime;	
+			this.index = index;
 		}
 	}
 	
-	
+	//EVENT COMPARATOR INNER CLASS
+	/**
+	 * compares two events to see which one should be before the other in the priority queue
+	 */
+	protected class EventComparator implements Comparator<EventToFire> {
+
+		/**
+		 * compares two events based on their fire times and priorities
+		 */
+		public int compare(EventToFire event1, EventToFire event2) {
+			
+			if (event1.fireTime > event2.fireTime)
+				return 1;
+			else if (event1.fireTime < event2.fireTime)
+				return -1;
+			else {
+				ModelState state1;
+				ModelState state2;
+				if(event1.index == -1)
+					state1 = topmodel;
+				else
+					state1 = submodels[event1.index];
+				if(event2.index == -1)
+					state2 = topmodel;
+				else
+					state2 = submodels[event2.index];
+				
+				if (state1.eventToPriorityMap.get(event1.eventID) == null) {
+					if (state2.eventToPriorityMap.get(event2.eventID) != null)
+						return -1;
+					else {
+						
+						if ((Math.random() * 100) > 50) {
+							return -1;
+						}
+						else {
+							return 1;
+						}
+					}
+				}
+				
+				if (evaluateExpressionRecursive(state1, state1.eventToPriorityMap.get(event1.eventID)) >  
+				evaluateExpressionRecursive(state2, state2.eventToPriorityMap.get(event2.eventID)))
+					return -1;
+				else if ( evaluateExpressionRecursive(state1, state1.eventToPriorityMap.get(event1.eventID)) <  
+						evaluateExpressionRecursive(state2, state2.eventToPriorityMap.get(event2.eventID)))
+					return 1;
+				else {
+					if ((Math.random() * 100) > 50) {
+						return -1;
+					}
+					else {
+						return 1;
+					}
+				}
+			}
+		}
+	}
 	
 	protected class ModelState
 	{
@@ -1983,7 +2091,8 @@ public abstract class HierarchicalSimulator {
 		PsRandom prng = new PsRandom();
 		
 		//stores events in order of fire time and priority
-		protected LinkedList<EventToFire> triggeredEventQueue = null;
+		//protected LinkedList<EventToFire> triggeredEventQueue = null;
+		protected PriorityQueue<EventToFire> triggeredEventQueue;
 		protected HashSet<String> untriggeredEventSet = null;
 		
 		
@@ -2034,7 +2143,8 @@ public abstract class HierarchicalSimulator {
 			
 			if (numEvents > 0) {
 				noEventsFlag = false;
-				triggeredEventQueue = new LinkedList<EventToFire>();
+				//triggeredEventQueue = new LinkedList<EventToFire>();
+				triggeredEventQueue = new PriorityQueue<EventToFire>((int) numEvents, eventComparator);
 				untriggeredEventSet = new HashSet<String>((int) numEvents);
 				eventToPriorityMap = new HashMap<String, ASTNode>((int) numEvents);
 				eventToDelayMap = new HashMap<String, ASTNode>((int) numEvents);
