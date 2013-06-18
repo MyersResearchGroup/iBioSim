@@ -17,6 +17,7 @@ import java.util.Stack;
 import lpn.parser.LhpnFile;
 import lpn.parser.Place;
 import lpn.parser.Transition;
+import lpn.parser.Variable;
 import verification.platu.common.IndexObjMap;
 import verification.platu.logicAnalysis.Constraint;
 import verification.platu.lpn.DualHashMap;
@@ -24,6 +25,7 @@ import verification.platu.lpn.LpnTranList;
 import verification.platu.main.Main;
 import verification.platu.main.Options;
 import verification.platu.project.PrjState;
+import verification.timed_state_exploration.zoneProject.ContinuousUtilities;
 import verification.timed_state_exploration.zoneProject.Event;
 import verification.timed_state_exploration.zoneProject.EventSet;
 import verification.timed_state_exploration.zoneProject.InequalityVariable;
@@ -1558,15 +1560,15 @@ public class StateGraph {
 		}
 		else if (eventSet.isRate()){
 			// The EventSet is a rate change event, so fire the rate change.
-			fire(curSgArray, currentPrjState, eventSet.getRateChange());
-			
-			
+			fireRateChange(curSgArray, currentPrjState,
+					eventSet.getRateChange());
 		}
 		
 		return fire(curSgArray, currentPrjState, eventSet.getTransition());
 	}
 	
-	private Zone addNewEnabledTransitions(final StateGraph[] curSgArray, State[] states, EventSet eventSet,
+	private Zone addNewEnabledTransitions(final StateGraph[] curSgArray,
+			State[] states, EventSet eventSet,
 			TimedPrjState currentTimedPrjState){
 		HashSet<LPNTransitionPair> newlyEnabled = new HashSet<LPNTransitionPair>();
 		// Update the enabled transitions according to inequalities that have changed.
@@ -1578,7 +1580,8 @@ public class StateGraph {
 		}
 		
 		// Get a new zone that has been restricted according to the inequalities firing.
-		Zone z = currentTimedPrjState.get_zones()[0].getContinuousRestrictedZone(eventSet);
+		Zone z = currentTimedPrjState.get_zones()[0].
+				getContinuousRestrictedZone(eventSet);
 		
 		// Add any new transitions.
 		z = z.addTransition(newlyEnabled, states);
@@ -1621,11 +1624,86 @@ public class StateGraph {
 		newZones[0] = currentTimedPrjState.get_zones()[0].
 				fire(firedRate, firedRate.getCurrentRate());
 		
-		newZones[0].recononicalize();
+		// Check if the any inequalities need to change.
+		
+		addNewEnabledTransitions(curSgArray, currentPrjState.getStateArray(),
+				null, currentTimedPrjState);
+		
 		newZones[0].advance(currentTimedPrjState.getStateArray());
 		newZones[0].recononicalize();
 		
 		return new TimedPrjState(currentTimedPrjState.getStateArray(), newZones);
+	}
+	
+	public TimedPrjState fireRateChange(final StateGraph[] curSgArray, 
+			final PrjState currentPrjState, LPNContinuousPair firedRate){
+		
+		TimedPrjState currentTimedPrjState;
+		
+		// Check that this is a timed state.
+		if(currentPrjState instanceof TimedPrjState){
+			currentTimedPrjState = (TimedPrjState) currentPrjState;
+		}
+		else{
+			throw new IllegalArgumentException("Attempted to use the " +
+					"fire(StateGraph[],PrjState,Transition)" +
+					"without a TimedPrjState stored in the PrjState " +
+					"variable. This method is meant for TimedPrjStates.");
+		}
+		
+		
+		// Create a new copy of the zone.
+		Zone[] newZones = new Zone[1];
+
+		newZones[0] = currentTimedPrjState.get_zones()[0]
+					.clone();
+		
+		// Change the rate.
+		newZones[0].setCurrentRate(firedRate, firedRate.getCurrentRate());
+		
+		// Warp the zone.
+		newZones[0].dbmWarp(currentTimedPrjState.get_zones()[0]);
+
+		State[] localStates  = currentTimedPrjState.getStateArray();
+		
+		TimedPrjState newTimedPrjState = new TimedPrjState(localStates, newZones);
+		
+		// Get any inequality events that need to change.
+		LpnTranList inequalityList = new LpnTranList();
+		
+		LhpnFile[] lpnList = newZones[0].get_lpnList();
+
+		
+		// Check all the inequalities for inclusion.
+		Variable contVar = lpnList[firedRate.get_lpnIndex()]
+				.getContVar(firedRate.get_transitionIndex());
+		
+		if(contVar.getInequalities() != null){
+			for(InequalityVariable iv : contVar.getInequalities()){
+
+				// Check if the inequality can change.
+				if(ContinuousUtilities.
+						inequalityCanChange(newZones[0], iv,
+								localStates[firedRate.get_lpnIndex()])){
+					inequalityList = 
+							newZones[0].addSetItem(inequalityList,
+							new Event(iv),
+							localStates[firedRate.get_lpnIndex()]);
+				}
+			}
+		}
+		
+		// Fire the inequalities.
+		if(inequalityList.size() >0){
+			if(inequalityList.size() >1){
+				throw new IllegalStateException("Expected a single set of "
+						+ "inequalities, but got something more.");
+			}
+			return fire(curSgArray, newTimedPrjState, inequalityList.getFirst());
+		}
+		
+		
+		return newTimedPrjState;
 	}
 	
 	/**
@@ -1633,7 +1711,7 @@ public class StateGraph {
 	 * @param z
 	 * 		The previous zone.
 	 * @param currentValuesAsString
-	 * 		The current values of the Boolean varaibles converted to strings.
+	 * 		The current values of the Boolean variables converted to strings.
 	 * @param oldStates
 	 * 		The current states.
 	 * @param firedTran
