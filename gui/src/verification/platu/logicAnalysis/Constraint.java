@@ -22,9 +22,9 @@ public class Constraint{
 	public Constraint(State start, State end, Transition firedTran, LhpnFile lpn2) {
 	    this.lpnTransition = firedTran;
 	    this.lpn = firedTran.getLpn();		
-		this.vector = start.getVector();
+		this.vector = start.getVariableVector();
 
-		int[] endVector = end.getVector();
+		int[] endVector = end.getVariableVector();
 //		int index = dstLpn.getInterfaceIndex(this.lpn.getLabel());
 		//int[] thisIndex = lpn2.getOtherIndexArray(this.lpn.ID-1);
 		int[] thisIndex = lpn2.getOtherIndexArray(this.lpn.getLpnIndex());

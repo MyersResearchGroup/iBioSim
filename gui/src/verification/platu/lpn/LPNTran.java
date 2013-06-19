@@ -219,7 +219,7 @@ public class LPNTran {
             }
 		}
         
-        int[] curVector = curState.getVector();
+        int[] curVector = curState.getVariableVector();
         if (curVector.length > 0) {
             if(getEnablingGuard().evaluate(curVector) == 0)
                 return false;
@@ -449,8 +449,8 @@ public class LPNTran {
     	State curState = curStateArray[thisLpnIndex];
     	State nextState = this.fire(curSgArray[thisLpnIndex], curState);   
     	
-    	int[] nextVector = nextState.getVector();
-    	int[] curVector = curState.getVector();
+    	int[] nextVector = nextState.getVariableVector();
+    	int[] curVector = curState.getVariableVector();
     	
         for(Expression e : assertions){
         	if(e.evaluate(nextVector) == 0){
@@ -537,8 +537,8 @@ public class LPNTran {
         }
 
         //  State vector update
-        int[] newVectorArray = curState.getVector().clone();
-        int[] curVector = curState.getVector();
+        int[] newVectorArray = curState.getVariableVector().clone();
+        int[] curVector = curState.getVariableVector();
         
         for (VarExpr s : getAssignments()) {
             int newValue = (int) s.getExpr().evaluate(curVector);
@@ -547,7 +547,7 @@ public class LPNTran {
                 
         State newState = null; //= thisSg.addState(new State(this.lpn, curNewMarking, newVectorArray));
         
-        int[] newVector = newState.getVector();
+        int[] newVector = newState.getVariableVector();
 		for(Expression e : assertions){
         	if(e.evaluate(newVector) == 0){
         		System.err.println("Assertion " + e.toString() + " failed in LPN transition " + this.lpn.getLabel() + ":" + this.label);
@@ -604,12 +604,12 @@ public class LPNTran {
         }
 
         //  State vector update
-        int[] oldVector = curState.getVector();
+        int[] oldVector = curState.getVariableVector();
         int size = oldVector.length;
         int[] newVectorArray = new int[size];
         System.arraycopy(oldVector, 0, newVectorArray, 0, size);
         
-        int[] curVector = curState.getVector();
+        int[] curVector = curState.getVariableVector();
         for (VarExpr s : getAssignments()) {
             int newValue = s.getExpr().evaluate(curVector);
             newVectorArray[s.getVar().getIndex(curVector)] = newValue;
@@ -618,7 +618,7 @@ public class LPNTran {
         //(temp) Hack here. Probably LPNTran.java will go away.
         State newState = null; //new State(this.lpn, curNewMarking, newVectorArray);
         
-        int[] newVector = newState.getVector();
+        int[] newVector = newState.getVariableVector();
 		for(Expression e : assertions){
         	if(e.evaluate(newVector) == 0){
         		System.err.println("Assertion " + e.toString() + " failed in LPN transition " + this.lpn.getLabel() + ":" + this.label);
