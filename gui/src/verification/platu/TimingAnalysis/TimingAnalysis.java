@@ -42,7 +42,7 @@ public class TimingAnalysis {
 			StateGraph curSg = SgArray[index];
 			// TODO: (Check) check if curSg is correct
 			initStateArray[index] = curSg.genInitialState();
-			int[] curStateVector = initStateArray[index].getVector();
+			int[] curStateVector = initStateArray[index].getVariableVector();
 			HashSet<String> outVars = (HashSet<String>) curLpn.getAllOutputs().keySet();
 			DualHashMap<String, Integer> VarIndexMap = curLpn.getVarIndexMap();
 			for (String var : outVars) {
