@@ -1,15 +1,12 @@
 package lpn.parser.LpnDecomposition;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Random;
 
 import lpn.parser.LhpnFile;
 import lpn.parser.Place;
 import lpn.parser.Transition;
 import lpn.parser.Variable;
-import verification.platu.lpn.DualHashMap;
 
 public class LpnProcess extends LhpnFile {
 	
