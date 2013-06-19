@@ -59,18 +59,18 @@ public class VerificationNoGui {
 			else if (args[i].contains("-log=")) { // Runtime, memory usage, and state count etc are written in the log file specified here.
 				Options.setLogName(args[i].trim().substring(5));
 			}
-			else if (args[i].contains("-memlim=")) {
-				Options.setMemUpperBoundFlag();
-				String memUpperBound = args[i].trim().replace("-memlim=", "");
-				if(memUpperBound.contains("G")) {
-					memUpperBound = memUpperBound.replace("G", "");					
-					Options.setMemoryUpperBound((long)(Float.parseFloat(memUpperBound) * 1000000000));
-				}
-				if(memUpperBound.contains("M")) {
-					memUpperBound = memUpperBound.replace("M", "");
-					Options.setMemoryUpperBound((long)(Float.parseFloat(memUpperBound) * 1000000));
-				}
-			}
+//			else if (args[i].contains("-memlim=")) {
+//				Options.setMemUpperBoundFlag();
+//				String memUpperBound = args[i].trim().replace("-memlim=", "");
+//				if(memUpperBound.contains("G")) {
+//					memUpperBound = memUpperBound.replace("G", "");					
+//					Options.setMemoryUpperBound((long)(Float.parseFloat(memUpperBound) * 1000000000));
+//				}
+//				if(memUpperBound.contains("M")) {
+//					memUpperBound = memUpperBound.replace("M", "");
+//					Options.setMemoryUpperBound((long)(Float.parseFloat(memUpperBound) * 1000000));
+//				}
+//			}
 			else if (args[i].contains("-disableDeadlockPreserve")) {
 				Options.disablePORdeadlockPreserve();
 			}
@@ -91,7 +91,7 @@ public class VerificationNoGui {
 				System.out.println("Gererate state graphs.");
 			}
 			else if (args[i].contains("-prob")) {
-				Options.setProbabilisticLPNflag();
+				Options.setMarkovianModelFlag();
 				System.out.println("Probabilistic LPNs.");
 			}
 			
@@ -122,8 +122,6 @@ public class VerificationNoGui {
 		for (int i=0; i<lpnList.size(); i++) {
 			System.out.println(lpnList.get(i).getLabel());
 		}
-		
-		
 		Project untimed_dfs = new Project(lpnList);
 		if (poroff)
 			untimed_dfs.search();
