@@ -29,12 +29,6 @@ public class PrjState {
 		}
 	}
 	
-	public PrjState(final State[] other, Transition newFiredTran, int newTranFiringCnt) {
-		stateArray = other;
-		father = null;
-		child = null;
-	}
-	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -90,11 +84,9 @@ public class PrjState {
 	
 	public String toString() {
 		String line ="";
-
 		for(int i = 0; i < stateArray.length; i++) {
 			line += stateArray[i].toString()+"+"+stateArray[i].getLpn().getLabel() + "   ";
 		}
-
 		return line;
 //            return toList(stateArray).toString();
 	}
@@ -110,7 +102,7 @@ public class PrjState {
 		for(int i = 0; i < stateArray.length; i++) {
 			System.out.println(lpnList[i].getLabel() + ".lpn" +": ");
 			//stateArray[i].print(lpnList[i].getVarIndexMap());
-			stateArray[i].print(lpnList[i]);
+			stateArray[i].printStateInfo();
 			System.out.println();
 		}
 	}
