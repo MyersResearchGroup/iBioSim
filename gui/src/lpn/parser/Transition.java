@@ -51,6 +51,9 @@ public class Transition {
 	
 	private int index;
 	
+	/**
+	 * List of LPNs that can be affected by firing this transition. 
+	 */
 	private List<LhpnFile> dstLpnList = new ArrayList<LhpnFile>();
 	
 	/**
@@ -890,49 +893,6 @@ public class Transition {
 		}		
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((delay == null) ? 0 : delay.hashCode());
-		result = prime * result + (fail ? 1231 : 1237);
-		result = prime * result + ((lhpn == null) ? 0 : lhpn.hashCode());
-		result = prime * result + ((label == null) ? 0 : label.hashCode());
-		result = prime * result + (persistent ? 1231 : 1237);
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Transition other = (Transition) obj;
-		if (delay == null) {
-			if (other.delay != null)
-				return false;
-		} else if (!delay.equals(other.delay))
-			return false;
-		if (fail != other.fail)
-			return false;
-		if (lhpn == null) {
-			if (other.lhpn != null)
-				return false;
-		} else if (!lhpn.equals(other.lhpn))
-			return false;
-		if (label == null) {
-			if (other.label != null)
-				return false;
-		} else if (!label.equals(other.label))
-			return false;
-		if (persistent != other.persistent)
-			return false;
-		return true;
-	}
-
 	/**
 	 * This method takes the enabling condition of a transition (in the product-of-sums), and break the conjunction into conjuncts.
 	 * @param term
@@ -957,5 +917,138 @@ public class Transition {
     	return new Transition(this.name, this.index, this.preset, this.postset, this.enablingGuard.copy(variables), 
     			this.assignments.copy(variables), this.delayLB, this.delayUB, this.local);
     }
-	*/	
+	*/
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((boolAssignments == null) ? 0 : boolAssignments.hashCode());
+		result = prime * result
+				+ ((contAssignments == null) ? 0 : contAssignments.hashCode());
+		result = prime * result + ((delay == null) ? 0 : delay.hashCode());
+		result = prime * result
+				+ ((dstLpnList == null) ? 0 : dstLpnList.hashCode());
+		result = prime * result
+				+ ((enabling == null) ? 0 : enabling.hashCode());
+		result = prime * result + (fail ? 1231 : 1237);
+		result = prime * result
+				+ ((intAssignments == null) ? 0 : intAssignments.hashCode());
+		result = prime * result + ((label == null) ? 0 : label.hashCode());
+		result = prime * result + ((lhpn == null) ? 0 : lhpn.hashCode());
+		result = prime * result + (persistent ? 1231 : 1237);
+		result = prime * result + ((postset == null) ? 0 : postset.hashCode());
+		result = prime * result + ((preset == null) ? 0 : preset.hashCode());
+		result = prime * result
+				+ ((priority == null) ? 0 : priority.hashCode());
+		result = prime * result
+				+ ((rateAssignments == null) ? 0 : rateAssignments.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof Transition)) {
+			return false;
+		}
+		Transition other = (Transition) obj;
+		if (boolAssignments == null) {
+			if (other.boolAssignments != null) {
+				return false;
+			}
+		} else if (!boolAssignments.equals(other.boolAssignments)) {
+			return false;
+		}
+		if (contAssignments == null) {
+			if (other.contAssignments != null) {
+				return false;
+			}
+		} else if (!contAssignments.equals(other.contAssignments)) {
+			return false;
+		}
+		if (delay == null) {
+			if (other.delay != null) {
+				return false;
+			}
+		} else if (!delay.equals(other.delay)) {
+			return false;
+		}
+		if (dstLpnList == null) {
+			if (other.dstLpnList != null) {
+				return false;
+			}
+		} else if (!dstLpnList.equals(other.dstLpnList)) {
+			return false;
+		}
+		if (enabling == null) {
+			if (other.enabling != null) {
+				return false;
+			}
+		} else if (!enabling.equals(other.enabling)) {
+			return false;
+		}
+		if (fail != other.fail) {
+			return false;
+		}
+		if (intAssignments == null) {
+			if (other.intAssignments != null) {
+				return false;
+			}
+		} else if (!intAssignments.equals(other.intAssignments)) {
+			return false;
+		}
+		if (label == null) {
+			if (other.label != null) {
+				return false;
+			}
+		} else if (!label.equals(other.label)) {
+			return false;
+		}
+		if (lhpn == null) {
+			if (other.lhpn != null) {
+				return false;
+			}
+		} else if (!lhpn.equals(other.lhpn)) {
+			return false;
+		}
+		if (persistent != other.persistent) {
+			return false;
+		}
+		if (postset == null) {
+			if (other.postset != null) {
+				return false;
+			}
+		} else if (!postset.equals(other.postset)) {
+			return false;
+		}
+		if (preset == null) {
+			if (other.preset != null) {
+				return false;
+			}
+		} else if (!preset.equals(other.preset)) {
+			return false;
+		}
+		if (priority == null) {
+			if (other.priority != null) {
+				return false;
+			}
+		} else if (!priority.equals(other.priority)) {
+			return false;
+		}
+		if (rateAssignments == null) {
+			if (other.rateAssignments != null) {
+				return false;
+			}
+		} else if (!rateAssignments.equals(other.rateAssignments)) {
+			return false;
+		}
+		return true;
+	}	
 }
