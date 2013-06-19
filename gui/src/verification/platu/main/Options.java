@@ -181,7 +181,7 @@ public class Options {
 	 */
 	private static boolean stickySemantics = false;
 	private static boolean timingAnalysisFlag = false;
-	private static boolean probabilisticModel = false;
+	private static boolean markovianModel = false;
 
 	public static void setCompositionalMinimization(String minimizationType){
 		if (minimizationType.equals("abstraction")){
@@ -404,12 +404,12 @@ public class Options {
 		return useDependentQueue = true;
 	}
 
-	public static void setProbabilisticLPNflag() {
-		probabilisticModel = true;		
+	public static void setMarkovianModelFlag() {
+		markovianModel = true;		
 	}
 	
-	public static boolean getProbabilisticModelFlag() {
-		return probabilisticModel;
+	public static boolean getMarkovianModelFlag() {
+		return markovianModel;
 	}
 	
 }
