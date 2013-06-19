@@ -1540,7 +1540,7 @@ public class LhpnFile {
 	 * @param var
 	 * @return
 	 */
-	public int getInitVector(String var) {
+	public int getInitVariableVector(String var) {
 		if (isBoolean(var)) {
 			if(booleans.get(var).getInitValue().equals("true"))
 				return 1;
@@ -1551,7 +1551,12 @@ public class LhpnFile {
 			return Integer.parseInt(integers.get(var).getInitValue());
 		}
 		else {
-			return (int) Double.parseDouble(continuous.get(var).getInitValue());
+			// Continuous variable is not accepted here.
+			// return (int) Double.parseDouble(continuous.get(var).getInitValue());
+			System.out.println(var + " is neither boolean or integer variable. ");
+    		new NullPointerException().printStackTrace();
+    		System.exit(1);
+    		return 0;
 		}
 	}
 
