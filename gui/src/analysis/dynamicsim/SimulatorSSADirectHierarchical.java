@@ -55,9 +55,9 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		
 		//SIMULATION LOOP
 		currentTime = 0.0;
-		double printTime = -0.00001;
+		double printTime = printInterval;
 		
-		handleEvents();
+		double nextEventTime = handleEvents();
 		
 		while (currentTime < timeLimit && !cancelFlag && constraintFlag) 
 		{
@@ -87,23 +87,23 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 			//TSD PRINTING
 			//print to TSD if the next print interval arrives
 			//this obviously prints the previous timestep's data
-			if (currentTime >= printTime) {
-				
-				if (printTime < 0)
-					printTime = 0.0;
-					
-				try {
-					printToTSD(printTime);
-					bufferedTSDWriter.write(",\n");
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				
-				printTime += printInterval;
-			}			
+//			if (currentTime >= printTime) {
+//				
+//				if (printTime < 0)
+//					printTime = 0.0;
+//					
+//				try {
+//					printToTSD(printTime);
+//					bufferedTSDWriter.write(",\n");
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
+//				
+//				printTime += printInterval;
+//			}			
 			
 			//update progress bar			
-			progress.setValue((int)((currentTime / timeLimit) * 100.0));
+			//progress.setValue((int)((currentTime / timeLimit) * 100.0));
 			
 			
 			//STEP 1: generate random numbers
@@ -115,22 +115,23 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 			//STEP 2: calculate delta_t, the time till the next reaction execution
 			 
 			double totalPropensity = getTotalPropensity();
-			double delta_t;
-			
-			if(totalPropensity <= 0)
-				delta_t = FastMath.log(1 / r1);
-			else
-				delta_t = FastMath.log(1 / r1) / totalPropensity;
-		
-			if (delta_t > maxTimeStep)
-				delta_t = maxTimeStep;
-			
-			if (delta_t < minTimeStep)
-				delta_t = minTimeStep;
-			
-			//update time for next iteration
-			currentTime += delta_t;
-			
+			double delta_t = FastMath.log(1 / r1) / totalPropensity;
+			double nextReactionTime = currentTime + delta_t;
+			nextEventTime = handleEvents();
+	
+			if (nextReactionTime < nextEventTime && nextReactionTime < currentTime + maxTimeStep) {
+				currentTime = nextReactionTime;
+				// perform reaction
+			} else if (nextEventTime < currentTime + maxTimeStep) {
+				currentTime = nextEventTime;
+				// print 
+			} else {
+				currentTime += maxTimeStep;
+				// print
+			}
+			if (currentTime > timeLimit) {
+				currentTime = timeLimit;
+			}
 			while (currentTime > printTime && printTime < timeLimit) {
 				
 				try {
@@ -143,84 +144,78 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 				printTime += printInterval;
 				running.setTitle("Progress (" + (int)((currentTime / timeLimit) * 100.0) + "%)");
 			}
-
+			if (currentTime == nextEventTime) {
 			//STEP 3: select a reaction
-			
-			String selectedReactionID = selectReaction(r2);
-			
-			//if its length isn't positive then there aren't any reactions
-			if (currentTime < timeLimit && !selectedReactionID.isEmpty()) {
-			
+
+				String selectedReactionID = selectReaction(r2);
+
+				//if its length isn't positive then there aren't any reactions
+				if (!selectedReactionID.isEmpty()) {
+
 					//STEP 4: perform selected reaction and update species counts
-				
-				if(submodelIndex == -1)
-				{
-					//if its length isn't positive then there aren't any reactions
-					if (!selectedReactionID.isEmpty()) {
-					performReaction(topmodel, selectedReactionID, topmodel.noRuleFlag, topmodel.noConstraintsFlag);
-					HashSet<String> affectedReactionSet = getAffectedReactionSet(topmodel, selectedReactionID, true);
-					
-					//STEP 5: compute affected reactions' new propensities and update total propensity
-					updatePropensities(affectedReactionSet, submodelIndex);
-					}
-					//update time for next iteration
-					currentTime += delta_t;
-					
-					//if (topmodel.variableToIsInAssignmentRuleMap != null &&
-							//topmodel.variableToIsInAssignmentRuleMap.containsKey("time"))				
-					//	performAssignmentRules(topmodel, topmodel.variableToAffectedAssignmentRuleSetMap.get("time"));
-					/*
+
+					if(submodelIndex == -1)
+					{
+						//if its length isn't positive then there aren't any reactions
+						if (!selectedReactionID.isEmpty()) {
+							performReaction(topmodel, selectedReactionID, topmodel.noRuleFlag, topmodel.noConstraintsFlag);
+							HashSet<String> affectedReactionSet = getAffectedReactionSet(topmodel, selectedReactionID, true);
+
+							//STEP 5: compute affected reactions' new propensities and update total propensity
+							updatePropensities(affectedReactionSet, submodelIndex);
+						}
+
+						//if (topmodel.variableToIsInAssignmentRuleMap != null &&
+						//topmodel.variableToIsInAssignmentRuleMap.containsKey("time"))				
+						//	performAssignmentRules(topmodel, topmodel.variableToAffectedAssignmentRuleSetMap.get("time"));
+						/*
 					if (topmodel.noEventsFlag == false) {
-						
+
 						handleEvents(topmodel, topmodel.noRuleFlag, topmodel.noConstraintsFlag);
-					
+
 						//step to the next event fire time if it comes before the next time step
 						if (!topmodel.triggeredEventQueue.isEmpty() && topmodel.triggeredEventQueue.peek().fireTime <= currentTime)
 							currentTime = topmodel.triggeredEventQueue.peek().fireTime;
 					}
-					*/
-				}
-				else
-				{
-					//if its length isn't positive then there aren't any reactions
-					if (!selectedReactionID.isEmpty()) {
-					performReaction(submodels[submodelIndex], selectedReactionID, submodels[submodelIndex].noRuleFlag, submodels[submodelIndex].noConstraintsFlag);
-					
-					HashSet<String> affectedReactionSet = getAffectedReactionSet(submodels[submodelIndex], selectedReactionID, true);
-					
-					//STEP 5: compute affected reactions' new propensities and update total propensity
-					updatePropensities(affectedReactionSet, submodelIndex);
+						 */
 					}
-					//update time for next iteration
-					currentTime += delta_t;
-					
-					
-				//	if (topmodel.variableToIsInAssignmentRuleMap != null &&
+					else
+					{
+						//if its length isn't positive then there aren't any reactions
+						if (!selectedReactionID.isEmpty()) {
+							performReaction(submodels[submodelIndex], selectedReactionID, submodels[submodelIndex].noRuleFlag, submodels[submodelIndex].noConstraintsFlag);
+
+							HashSet<String> affectedReactionSet = getAffectedReactionSet(submodels[submodelIndex], selectedReactionID, true);
+
+							//STEP 5: compute affected reactions' new propensities and update total propensity
+							updatePropensities(affectedReactionSet, submodelIndex);
+						}
+
+
+						//	if (topmodel.variableToIsInAssignmentRuleMap != null &&
 						//	submodels[submodelIndex].variableToIsInAssignmentRuleMap.containsKey("time"))				
 						//performAssignmentRules(submodels[submodelIndex], submodels[submodelIndex].variableToAffectedAssignmentRuleSetMap.get("time"));
-					
-					/*
+
+						/*
 					if (submodels[submodelIndex].noEventsFlag == false) {
-						
+
 						handleEvents(submodels[submodelIndex], submodels[submodelIndex].noRuleFlag, submodels[submodelIndex].noConstraintsFlag);
-					
+
 						//step to the next event fire time if it comes before the next time step
 						if (!submodels[submodelIndex].triggeredEventQueue.isEmpty() && submodels[submodelIndex].triggeredEventQueue.peek().fireTime <= currentTime)
 							currentTime = submodels[submodelIndex].triggeredEventQueue.peek().fireTime;
-							
+
 					}*/
+					}
 				}
 			}
-			
-			 handleEvents();
-			 
-			 updateRules();
-			 
-			//update time for next iteration
-			//currentTime += delta_t;
-			
-		} //end simulation loop
-		
+			updateRules();
+
+				//update time for next iteration
+				//currentTime += delta_t;
+
+			} //end simulation loop
+
 		if (cancelFlag == false) {
 			
 			//print the final species counts
@@ -445,23 +440,25 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 	*/
 	}
 
-	protected void handleEvents()
+	protected double handleEvents()
 	{
+		double nextEventTime = Double.POSITIVE_INFINITY;
 		if (topmodel.noEventsFlag == false)
 		{
 			handleEvents(topmodel, topmodel.noRuleFlag, topmodel.noConstraintsFlag);
 			//step to the next event fire time if it comes before the next time step
-			if (!topmodel.triggeredEventQueue.isEmpty() && topmodel.triggeredEventQueue.peek().fireTime <= currentTime)
-				currentTime = topmodel.triggeredEventQueue.peek().fireTime;
+			if (!topmodel.triggeredEventQueue.isEmpty() && topmodel.triggeredEventQueue.peek().fireTime <= nextEventTime)
+				nextEventTime = topmodel.triggeredEventQueue.peek().fireTime;
 		}
 		
 		for(int i = 0; i < numSubmodels; i++)
 			if (submodels[i].noEventsFlag == false){
 				handleEvents(submodels[i], submodels[i].noRuleFlag, submodels[i].noConstraintsFlag);
 				//step to the next event fire time if it comes before the next time step
-				if (!submodels[i].triggeredEventQueue.isEmpty() && submodels[i].triggeredEventQueue.peek().fireTime <= currentTime)
-					currentTime = submodels[i].triggeredEventQueue.peek().fireTime;
+				if (!submodels[i].triggeredEventQueue.isEmpty() && submodels[i].triggeredEventQueue.peek().fireTime <= nextEventTime)
+					nextEventTime = submodels[i].triggeredEventQueue.peek().fireTime;
 			}
+		return nextEventTime;
 	}
 	
 	/**

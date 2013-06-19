@@ -63,7 +63,8 @@ public class SimulatorSSADirect extends Simulator {
 		long step5Time = 0;
 		
 		currentTime = 0.0;
-		double printTime = -0.00001;
+		double printTime = printInterval;
+		double nextEventTime = Double.POSITIVE_INFINITY;
 		
 		//add events to queue if they trigger
 		if (noEventsFlag == false)
@@ -84,8 +85,12 @@ public class SimulatorSSADirect extends Simulator {
 			if (noEventsFlag == false) {
 				
 				HashSet<String> affectedReactionSet = 
-					fireEvents(noAssignmentRulesFlag, noConstraintsFlag);				
+					fireEvents(noAssignmentRulesFlag, noConstraintsFlag);	
 				
+				if (variableToIsInAssignmentRuleMap != null &&
+						variableToIsInAssignmentRuleMap.containsKey("time"))				
+					performAssignmentRules(variableToAffectedAssignmentRuleSetMap.get("time"));
+
 				//recalculate propensties/groups for affected reactions
 				if (affectedReactionSet.size() > 0)
 					updatePropensities(affectedReactionSet);
@@ -94,23 +99,23 @@ public class SimulatorSSADirect extends Simulator {
 			//TSD PRINTING
 			//print to TSD if the next print interval arrives
 			//this obviously prints the previous timestep's data
-			if (currentTime >= printTime) {
-				
-				if (printTime < 0)
-					printTime = 0.0;
-					
-				try {
-					printToTSD(printTime);
-					bufferedTSDWriter.write(",\n");
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				
-				printTime += printInterval;
-			}			
+//			if (currentTime >= printTime) {
+//
+//				if (printTime < 0)
+//					printTime = 0.0;
+//
+//				try {
+//					printToTSD(printTime);
+//					bufferedTSDWriter.write(",\n");
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
+//
+//				printTime += printInterval;
+//			}			
 			
 			//update progress bar			
-			progress.setValue((int)((currentTime / timeLimit) * 100.0));
+			//progress.setValue((int)((currentTime / timeLimit) * 100.0));
 			
 			
 			//STEP 1: generate random numbers
@@ -127,18 +132,31 @@ public class SimulatorSSADirect extends Simulator {
 			//STEP 2: calculate delta_t, the time till the next reaction execution
 			
 			//long step2Initial = System.nanoTime();
-			 
 			double delta_t = FastMath.log(1 / r1) / totalPropensity;
-			
-			if (delta_t > maxTimeStep)
-				delta_t = maxTimeStep;
-			
-			if (delta_t < minTimeStep)
-				delta_t = minTimeStep;
-			
-			//step2Time += System.nanoTime() - step2Initial;
-			currentTime += delta_t;
+			double nextReactionTime = currentTime + delta_t;
+			//add events to queue if they trigger
+			if (noEventsFlag == false) {
 
+				handleEvents(noAssignmentRulesFlag, noConstraintsFlag);
+				nextEventTime = Double.POSITIVE_INFINITY;
+				//step to the next event fire time if it comes before the next time step
+				if (!triggeredEventQueue.isEmpty() && triggeredEventQueue.peek().fireTime <= nextEventTime)
+					nextEventTime = triggeredEventQueue.peek().fireTime;
+			}
+	
+			if (nextReactionTime < nextEventTime && nextReactionTime < currentTime + maxTimeStep) {
+				currentTime = nextReactionTime;
+				// perform reaction
+			} else if (nextEventTime < currentTime + maxTimeStep) {
+				currentTime = nextEventTime;
+				// print 
+			} else {
+				currentTime += maxTimeStep;
+				// print
+			}
+			if (currentTime > timeLimit) {
+				currentTime = timeLimit;
+			}
 			while (currentTime > printTime && printTime < timeLimit) {
 				
 				try {
@@ -150,12 +168,10 @@ public class SimulatorSSADirect extends Simulator {
 				
 				printTime += printInterval;
 				running.setTitle("Progress (" + (int)((currentTime / timeLimit) * 100.0) + "%)");
-			}			
-			
-			//STEP 3: select a reaction
+			}
+			if (currentTime == nextEventTime) {			 
 			
 			//long step3Initial = System.nanoTime();
-			if (currentTime < timeLimit) {
 				String selectedReactionID = selectReaction(r2);
 
 				//step3Time += System.nanoTime() - step3Initial;
@@ -191,15 +207,6 @@ public class SimulatorSSADirect extends Simulator {
 						variableToIsInAssignmentRuleMap.containsKey("time"))				
 					performAssignmentRules(variableToAffectedAssignmentRuleSetMap.get("time"));
 
-				//add events to queue if they trigger
-				if (noEventsFlag == false) {
-
-					handleEvents(noAssignmentRulesFlag, noConstraintsFlag);
-
-					//step to the next event fire time if it comes before the next time step
-					if (!triggeredEventQueue.isEmpty() && triggeredEventQueue.peek().fireTime <= currentTime)
-						currentTime = triggeredEventQueue.peek().fireTime;
-				}
 			}
 
 		} //end simulation loop
