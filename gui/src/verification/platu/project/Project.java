@@ -96,7 +96,7 @@ public class Project {
 	public Project(ArrayList<LhpnFile> lpns) {
 		this.label = "";
 		this.designUnitSet = new ArrayList<StateGraph>(lpns.size());
-		if (!Options.getProbabilisticModelFlag())
+		if (!Options.getMarkovianModelFlag())
 			for (int i=0; i<lpns.size(); i++) {
 				LhpnFile lpn = lpns.get(i);
 				StateGraph stateGraph = new StateGraph(lpn);
@@ -120,7 +120,7 @@ public class Project {
 	 */
 	public void search() {
 		// TODO: temporarily set the input validation only to non-stochastic LPN models.
-		if (!Options.getProbabilisticModelFlag())
+		if (!Options.getMarkovianModelFlag())
 			validateInputs();
 		
 //		if(Options.getSearchType().equals("compositional")){
@@ -160,14 +160,17 @@ public class Project {
 //		}
 
 		// Initialize the project state
-		HashMap<String, Integer> varValMap = new HashMap<String, Integer>();
+		 HashMap<String, Integer> varValMap = new HashMap<String, Integer>();
 		State[] initStateArray = new State[lpnCnt];
 		for (int index = 0; index < lpnCnt; index++) {
 			LhpnFile curLpn = sgArray[index].getLpn();
 			StateGraph curSg = sgArray[index];			
 			initStateArray[index] = curSg.genInitialState();
-			int[] curStateVector = initStateArray[index].getVector();
-			varValMap = curLpn.getAllVarsWithValuesAsInt(curStateVector);
+			int[] curVariableVector = initStateArray[index].getVariableVector();
+			varValMap = curLpn.getAllVarsWithValuesAsInt(curVariableVector);
+			// TODO: Is it necessary to update initStateArray here?
+			//initStateArray[index].update(curSg, varValMap, curSg.getLpn().getVarIndexMap());
+			initStateArray[index] = curSg.addState(initStateArray[index]);
 		}
 
 		// Adjust the value of the input variables in LPN in the initial state.
@@ -184,8 +187,9 @@ public class Project {
 				ContinuousUtilities.updateInitialInequalities(z, ls[0]);
 				initStateArray[index] = curSg.genInitialState();
 			}
-			initStateArray[index].update(curSg, varValMap, curSg.getLpn().getVarIndexMap());
-			initStateArray[index] = curSg.addState(initStateArray[index]);		
+			// TODO: Moved them up to the previous "for" lopp.
+			//initStateArray[index].update(curSg, varValMap, curSg.getLpn().getVarIndexMap());			
+			//initStateArray[index] = curSg.addState(initStateArray[index]);	
 		}
 		
 		// Initialize the zones for the initStateArray, if timining is enabled.
@@ -271,7 +275,7 @@ public class Project {
 	 */
 	public void searchWithPOR() {
 		// TODO: temporarily set the input validation only to non-stochastic LPN models.
-		if (!Options.getProbabilisticModelFlag())
+		if (!Options.getMarkovianModelFlag())
 			validateInputs();
 //		if(Options.getSearchType().equals("compositional")){
 //    		this.analysis = new CompositionalAnalysis();
@@ -306,7 +310,7 @@ public class Project {
 			LhpnFile curLpn = sgArray[index].getLpn();
 			StateGraph curSg = sgArray[index];
 			initStateArray[index] = curSg.genInitialState(); //curLpn.getInitState();
-			int[] curStateVector = initStateArray[index].getVector();
+			int[] curStateVector = initStateArray[index].getVariableVector();
 			varValMap = curLpn.getAllVarsWithValuesAsInt(curStateVector);
 //			DualHashMap<String, Integer> VarIndexMap = curLpn.getVarIndexMap();
 //			HashMap<String, String> outVars = curLpn.getAllOutputs();		
