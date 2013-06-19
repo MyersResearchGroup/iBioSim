@@ -24,14 +24,6 @@ final public class LpnTranList extends LinkedList<Transition> {
     }
 
     public Transition get(Transition lpnt) {
-    	/*
-        for (LPNTran t : this) {
-            if (lpnt.getLabel() == t.getLabel()) {
-                return t;
-            }
-        }
-        return null;
-        */
     	for (Transition t: this) {
     		if (lpnt.getLabel() == t.getLabel()) {
     			return t;
