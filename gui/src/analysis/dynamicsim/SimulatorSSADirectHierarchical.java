@@ -57,35 +57,32 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		currentTime = 0.0;
 		double printTime = -0.00001;
 		
-		if (topmodel.noEventsFlag == false)
-			handleEvents(topmodel, topmodel.noRuleFlag, topmodel.noConstraintsFlag);
+		handleEvents();
 		
-		while (currentTime < timeLimit && !cancelFlag && !stopDueConstraint) {
+		while (currentTime < timeLimit && !cancelFlag && constraintFlag) 
+		{
 			
 			//EVENT HANDLING
 			//trigger and/or fire events, etc.
-			if(submodelIndex == -1)
+			if (topmodel.noEventsFlag == false) 
 			{
-				if (topmodel.noEventsFlag == false) {
-					HashSet<String> affectedReactionSet = fireEvents(topmodel, topmodel.noRuleFlag, topmodel.noConstraintsFlag);				
+				HashSet<String> affectedReactionSet = fireEvents(topmodel, topmodel.noRuleFlag, topmodel.noConstraintsFlag);				
 				
 				//recalculate propensties/groups for affected reactions
 				if (affectedReactionSet.size() > 0)
-					updatePropensities(affectedReactionSet);
-				}
+					updatePropensities(affectedReactionSet, -1);
 			}
-			else
+			
+			for(int i = 0; i < numSubmodels; i++)
 			{
-				if (submodels[submodelIndex].noEventsFlag == false) {
-					HashSet<String> affectedReactionSet = fireEvents(submodels[submodelIndex], submodels[submodelIndex].noRuleFlag, submodels[submodelIndex].noConstraintsFlag);				
-
+					if (submodels[i].noEventsFlag == false) {
+						HashSet<String> affectedReactionSet = fireEvents(submodels[i], submodels[i].noRuleFlag, submodels[i].noConstraintsFlag);				
+						
 					//recalculate propensties/groups for affected reactions
 					if (affectedReactionSet.size() > 0)
-						updatePropensities(affectedReactionSet);
-				}
+							updatePropensities(affectedReactionSet, i);
+					}
 			}
-			
-			
 			
 			//TSD PRINTING
 			//print to TSD if the next print interval arrives
@@ -154,20 +151,25 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 			//if its length isn't positive then there aren't any reactions
 			if (currentTime < timeLimit && !selectedReactionID.isEmpty()) {
 			
-			//STEP 4: perform selected reaction and update species counts
+					//STEP 4: perform selected reaction and update species counts
 				
 				if(submodelIndex == -1)
 				{
+					//if its length isn't positive then there aren't any reactions
+					if (!selectedReactionID.isEmpty()) {
 					performReaction(topmodel, selectedReactionID, topmodel.noRuleFlag, topmodel.noConstraintsFlag);
 					HashSet<String> affectedReactionSet = getAffectedReactionSet(topmodel, selectedReactionID, true);
 					
 					//STEP 5: compute affected reactions' new propensities and update total propensity
-					updatePropensities(affectedReactionSet);
+					updatePropensities(affectedReactionSet, submodelIndex);
+					}
+					//update time for next iteration
+					currentTime += delta_t;
 					
 					//if (topmodel.variableToIsInAssignmentRuleMap != null &&
 							//topmodel.variableToIsInAssignmentRuleMap.containsKey("time"))				
 					//	performAssignmentRules(topmodel, topmodel.variableToAffectedAssignmentRuleSetMap.get("time"));
-					
+					/*
 					if (topmodel.noEventsFlag == false) {
 						
 						handleEvents(topmodel, topmodel.noRuleFlag, topmodel.noConstraintsFlag);
@@ -176,16 +178,19 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 						if (!topmodel.triggeredEventQueue.isEmpty() && topmodel.triggeredEventQueue.peek().fireTime <= currentTime)
 							currentTime = topmodel.triggeredEventQueue.peek().fireTime;
 					}
+					*/
 				}
 				else
 				{
+					//if its length isn't positive then there aren't any reactions
+					if (!selectedReactionID.isEmpty()) {
 					performReaction(submodels[submodelIndex], selectedReactionID, submodels[submodelIndex].noRuleFlag, submodels[submodelIndex].noConstraintsFlag);
 					
 					HashSet<String> affectedReactionSet = getAffectedReactionSet(submodels[submodelIndex], selectedReactionID, true);
 					
 					//STEP 5: compute affected reactions' new propensities and update total propensity
-					updatePropensities(affectedReactionSet);
-				
+					updatePropensities(affectedReactionSet, submodelIndex);
+					}
 					//update time for next iteration
 					currentTime += delta_t;
 					
@@ -194,7 +199,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 						//	submodels[submodelIndex].variableToIsInAssignmentRuleMap.containsKey("time"))				
 						//performAssignmentRules(submodels[submodelIndex], submodels[submodelIndex].variableToAffectedAssignmentRuleSetMap.get("time"));
 					
-					
+					/*
 					if (submodels[submodelIndex].noEventsFlag == false) {
 						
 						handleEvents(submodels[submodelIndex], submodels[submodelIndex].noRuleFlag, submodels[submodelIndex].noConstraintsFlag);
@@ -202,17 +207,15 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 						//step to the next event fire time if it comes before the next time step
 						if (!submodels[submodelIndex].triggeredEventQueue.isEmpty() && submodels[submodelIndex].triggeredEventQueue.peek().fireTime <= currentTime)
 							currentTime = submodels[submodelIndex].triggeredEventQueue.peek().fireTime;
-					}
+							
+					}*/
 				}
-
-			}
-			else
-			{
-				currentTime += delta_t;
 			}
 			
+			 handleEvents();
+			 
 			 updateRules();
-	
+			 
 			//update time for next iteration
 			//currentTime += delta_t;
 			
@@ -237,7 +240,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		}
 	}
 	
-	/**
+		/**
 	 * sets up data structures local to the SSA-Direct method
 	 * 
 	 * @param noEventsFlag
@@ -293,12 +296,11 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		
 	}
 	
-	
 	/**
 	 * updates the propensities of the reactions affected by the recently performed reaction
 	 * @param affectedReactionSet the set of reactions affected by the recently performed reaction
 	 */
-	private void updatePropensities(HashSet<String> affectedReactionSet) {
+	private void updatePropensities(HashSet<String> affectedReactionSet, int index) {
 		
 		//loop through the affected reactions and update the propensities
 		for (String affectedReactionID : affectedReactionSet) {
@@ -312,8 +314,8 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 			else
 			{
 				HashSet<StringDoublePair> reactantStoichiometrySet = 
-				submodels[submodelIndex].reactionToReactantStoichiometrySetMap.get(affectedReactionID);
-				updatePropensities(submodels[submodelIndex], affectedReactionSet,affectedReactionID, reactantStoichiometrySet); 
+				submodels[index].reactionToReactantStoichiometrySetMap.get(affectedReactionID);
+				updatePropensities(submodels[index], affectedReactionSet,affectedReactionID, reactantStoichiometrySet); 
 			}		
 		}
 	}
@@ -443,6 +445,25 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 	*/
 	}
 
+	protected void handleEvents()
+	{
+		if (topmodel.noEventsFlag == false)
+		{
+			handleEvents(topmodel, topmodel.noRuleFlag, topmodel.noConstraintsFlag);
+			//step to the next event fire time if it comes before the next time step
+			if (!topmodel.triggeredEventQueue.isEmpty() && topmodel.triggeredEventQueue.peek().fireTime <= currentTime)
+				currentTime = topmodel.triggeredEventQueue.peek().fireTime;
+		}
+		
+		for(int i = 0; i < numSubmodels; i++)
+			if (submodels[i].noEventsFlag == false){
+				handleEvents(submodels[i], submodels[i].noRuleFlag, submodels[i].noConstraintsFlag);
+				//step to the next event fire time if it comes before the next time step
+				if (!submodels[i].triggeredEventQueue.isEmpty() && submodels[i].triggeredEventQueue.peek().fireTime <= currentTime)
+					currentTime = submodels[i].triggeredEventQueue.peek().fireTime;
+			}
+	}
+	
 	/**
 	 * does minimized initalization process to prepare for a new run
 	 */
