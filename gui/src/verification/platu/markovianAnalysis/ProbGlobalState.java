@@ -1,6 +1,6 @@
 package verification.platu.markovianAnalysis;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import lpn.parser.Transition;
 import verification.platu.project.PrjState;
@@ -11,20 +11,27 @@ public class ProbGlobalState extends PrjState {
 	private int color;
 	private double currentProb;
 	private double nextProb;
+	private double piProb;
 	/**
-	 * Index of the local state that where the most recent fired transition originates.
+	 * Transition probability for the embedded Markov chain. 
 	 */
-	private ArrayList<Integer> localStateIndexArray;
-
-	public ProbGlobalState(State[] other, Transition newFiredTran,
-			int newTranFiringCnt) {
-		super(other, newFiredTran, newTranFiringCnt);
-		localStateIndexArray = new ArrayList<Integer>();
-	}
+	private double tranProb;
+	/**
+	 * A hash map recording the transition-state flow information at current global state.
+	 * Key: outgoing transition from current state.
+	 * Value: next global state reached by the corresponding outgoing transition. 
+	 */
+	private HashMap<Transition, ProbGlobalState> nextProbGlobalStateMap;
+	//	/**
+	//	 * Index of the local state where the fired transition(s) originate(s) from.
+	//	 */
+	//	private ArrayList<Integer> localStateIndexArray;
+	
 
 	public ProbGlobalState(State[] other) {
 		super(other);
-		localStateIndexArray = new ArrayList<Integer>();
+		nextProbGlobalStateMap = new HashMap<Transition, ProbGlobalState>();
+		//localStateIndexArray = new ArrayList<Integer>();
 	}
 	
 	public int getColor() {
@@ -55,16 +62,57 @@ public class ProbGlobalState extends PrjState {
 		currentProb = nextProb;
 	}
 	
-	public ArrayList<Integer> getLocalStateIndex() {
-		return localStateIndexArray;
-	}
-
-//	public void setLocalStateIndex(ArrayList<Integer> localStateIndex) {
-//		this.localStateIndexArray = localStateIndex;
+//	public ArrayList<Integer> getLocalStateIndexArray() {
+//		return localStateIndexArray;
+//	}
+//	
+//	public void addLocalStateIndex(int localStateIndex) {
+//		this.localStateIndexArray.add(localStateIndex);
 //	}
 	
-	public void addLocalStateIndex(int localStateIndex) {
-		this.localStateIndexArray.add(localStateIndex);
+	public HashMap<Transition, ProbGlobalState> getNextProbGlobalStateMap() {
+		return nextProbGlobalStateMap;
 	}
-	
+
+//	public void setNextGlobalStateMap(
+//			HashMap<Transition, ProbGlobalState> nextGlobalStateMap) {
+//		this.nextGlobalStateMap = nextGlobalStateMap;
+//	}
+
+	public void addNextGlobalState(Transition firedTran, PrjState nextPrjState) {
+		this.nextProbGlobalStateMap.put(firedTran, (ProbGlobalState) nextPrjState);
+		
+	}
+
+	public double computeTransitionSum() {
+		double tranRateSum = 0;
+		for (Transition tran : nextProbGlobalStateMap.keySet()) {
+			tranRateSum += getOutgoingTranRate(tran);
+		}
+		return tranRateSum;		
+	}
+
+	public double getOutgoingTranRate(Transition tran) {
+		int curLocalStIndex = tran.getLpn().getLpnIndex();
+		State curLocalState = this.toStateArray()[curLocalStIndex];
+		double tranRate = ((ProbLocalState) curLocalState).getTranRate(tran.getIndex());	
+		return tranRate;
+	}
+
+	public double getTranProb() {
+		return tranProb;
+	}
+
+	public void setTranProb(double tranProb) {
+		this.tranProb = tranProb;
+	}
+
+	public double getPiProb() {
+		return piProb;
+	}
+
+	public void setPiProb(double piProb) {
+		this.piProb = piProb;
+	}
+
 }

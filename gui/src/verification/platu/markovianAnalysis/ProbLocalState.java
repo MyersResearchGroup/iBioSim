@@ -12,19 +12,27 @@ import verification.platu.stategraph.StateGraph;
 
 public class ProbLocalState extends State{
 		
-	public ProbLocalState(LhpnFile lpn, int[] marking, int[] vector,
-			boolean[] tranVector) {
-		super(lpn, marking, vector, tranVector);
-	}
+	/**
+	 * An array of enabled transition rates in this state. 
+	 * The index in this array corresponds to that in the tranVector in State.
+	 * Note that tranRateVector ONLY serves as a place holder for the computed transition rates.
+	 * It is NOT part of a state and therefore it should not be used to override 
+	 * hashCode and equals methods.
+	 */
+	private double[] tranRateVector; 
 	
-    /**
-     * Return a new state if the newVector leads to a new state from this state; otherwise return null.
-     * @param newVector
-     * @param VarIndexMap
-     * @return
+	public ProbLocalState(LhpnFile lpn, int[] marking, int[] vector,
+			boolean[] tranVector, double[] tranRateVector) {
+		super(lpn, marking, vector, tranVector);
+		this.tranRateVector = tranRateVector; 
+	}
+
+    /* (non-Javadoc)
+     * @see verification.platu.stategraph.State#update(verification.platu.stategraph.StateGraph, java.util.HashMap, verification.platu.lpn.DualHashMap)
+     * Return a new state if the newVector leads to a new state from this state; otherwise return null. Also, adjust the tranRateVector.
      */
     public State update(StateGraph thisSg, HashMap<String, Integer> newVector, DualHashMap<String, Integer> VarIndexMap) {
-    	int[] newStateVector = new int[this.vector.length];   	
+    	int[] newVariableVector = new int[this.vector.length];   	
     	boolean newStateExists = false;
     	for(int index = 0; index < vector.length; index++) {
     		String var = VarIndexMap.getKey(index);
@@ -33,72 +41,27 @@ public class ProbLocalState extends State{
     		if(newVal != null) {
     			if(this_val != newVal) {
     				newStateExists = true;
-    				newStateVector[index] = newVal;
+    				newVariableVector[index] = newVal;
     			}
     			else
-    				newStateVector[index] = this.vector[index]; 
+    				newVariableVector[index] = this.vector[index]; 
     		}
     		else
-    			newStateVector[index] = this.vector[index];    		
+    			newVariableVector[index] = this.vector[index];    		
     	}
-    	if(newStateExists == true) {    
-    		boolean[] newEnabledTranVector = this.getTranVector().clone();    		
-        	HashMap<Transition, ProbLocalStateTuple> nextStateMap = new HashMap<Transition, ProbLocalStateTuple>();
-    		((ProbLocalStateGraph)thisSg).updateTranVectorBuildNextStateSubMap(newEnabledTranVector, this.marking, newStateVector, null, nextStateMap);
-        	State newState = new ProbLocalState(this.lpn, this.marking, newStateVector, newEnabledTranVector);
-        	HashMap<Transition, ProbLocalStateTuple> existingNextStateMap = ((ProbLocalStateGraph) thisSg).getNextProbLocalStateMap().get(newState); 
-        	if (existingNextStateMap == null)	
-        	   	((ProbLocalStateGraph) thisSg).getNextProbLocalStateMap().put(newState, nextStateMap);
-        	else
-        		existingNextStateMap.putAll(nextStateMap);
-        	if (Options.getDebugMode()) {
-        		String newLine = System.getProperty("line.separator");//This will retrieve line separator dependent on OS.
-        		System.out.println("----------------Next State Map @ ProbLocalState -> update()----------------");        		
-        		for (State st : ((ProbLocalStateGraph) thisSg).getNextProbLocalStateMap().keySet()) {
-        			HashMap<Transition, ProbLocalStateTuple> nextStMap = ((ProbLocalStateGraph) thisSg).getNextProbLocalStateMap().get(st);
-        			System.out.println("S" + st.getIndex() + "("+ st.getLpn().getLabel() + "):");
-        			String message = "";
-        			for (Transition t : nextStMap.keySet()) {
-        				message += "\t" + t.getLabel() + "(" + t.getLpn().getLabel() +") ==> "; 
-        				ProbLocalStateTuple nextStTuple = nextStMap.get(t);
-        				if (nextStTuple.getNextProbLocalState() == null)
-        					message += "null" + newLine;
-        				else
-        					message += "S" + nextStTuple.getNextProbLocalState().getLabel() + "(" 
-        								+ nextStTuple.getNextProbLocalState().getLpn().getLabel() +"), rate="
-        								+ nextStTuple.getTranRate() + newLine;
-        			}            		
-        			System.out.print(message);            		
-        		}
-        		System.out.println("---------------End Of Next State Map--------------------");
-        	}
+    	if(newStateExists) {  
+    		boolean[] newTranVector = this.getTranVector().clone();		
+    		double[] newTranRateVector = ((ProbLocalStateGraph)thisSg).updateTranAndRateVectors(newTranVector, this.marking, newVariableVector, null); 
+    		State newState = thisSg.addState(new ProbLocalState(this.lpn, this.marking, newVariableVector, newTranVector, newTranRateVector));
         	return newState;
     	}
     	return null;
     }
-    
-    public ProbLocalState getLocalProbState() {
-    	//VarSet lpnOutputs = this.lpnModel.getOutputs();
-    	//VarSet lpnInternals = this.lpnModel.getInternals();
-    	Set<String> lpnOutputs = this.lpn.getAllOutputs().keySet();
-    	Set<String> lpnInternals = this.lpn.getAllInternals().keySet();
-    	DualHashMap<String,Integer> varIndexMap = this.lpn.getVarIndexMap();
-    	 
-    	int[] outVec = new int[this.vector.length];
-    	
-    	/*
-    	 * Create a copy of the vector of mState such that the values of inputs are set to 0
-    	 * and the values for outputs/internal variables remain the same.
-    	 */
-    	for(int i = 0; i < this.vector.length; i++) {
-    		String curVar = varIndexMap.getKey(i);
-    		if(lpnOutputs.contains(curVar) ==true || lpnInternals.contains(curVar)==true)
-    			outVec[i] = this.vector[i];
-    		else
-    			outVec[i] = 0;
-    	}    	
-    	return new ProbLocalState(this.lpn, this.marking, outVec, this.tranVector);
+
+    protected double getTranRate(int tranIndex) {
+    	return tranRateVector[tranIndex];    	
     }
+    
 }
 
 
