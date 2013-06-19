@@ -61,10 +61,8 @@ public class StateGraph {
         // TODO: Is localStateCache read anywhere?
         //this.localStateCache = new IndexObjMap<State>();
         this.state2LocalMap = new HashMap<State, State>();
-        this.enabledSetTbl = new HashMap<State, LpnTranList>();
-        if (!Options.getProbabilisticModelFlag())
-        	this.nextStateMap = new HashMap<State, HashMap<Transition, State>>();
-        
+        this.enabledSetTbl = new HashMap<State, LpnTranList>();        
+       	this.nextStateMap = new HashMap<State, HashMap<Transition, State>>();   
     }
     
     public LhpnFile getLpn(){
@@ -100,7 +98,7 @@ public class StateGraph {
             State currentState = stStack.pop();
             currentEnabledTransitions = tranStack.pop();
             for (Transition firedTran : currentEnabledTransitions) {
-            	System.out.println("firedTran: " + firedTran.getLabel() + "(" + firedTran.getLpn().getLabel() + ")");
+            	//System.out.println("firedTran: " + firedTran.getLabel() + "(" + firedTran.getLpn().getLabel() + ")");
               	State newState = constrFire(firedTran,currentState);
                 State nextState = addState(newState);
                 newStateFlag = false;
@@ -330,7 +328,7 @@ public class StateGraph {
     	for(int stateIdx = 0; stateIdx < this.reachSize(); stateIdx++) {
     		State state = this.getState(stateIdx);
     		String dotLabel = state.getIndex() + ": ";
-    		int[] vector = state.getVector();
+    		int[] vector = state.getVariableVector();
 
     		for(i = 0; i < size; i++){
     			dotLabel += variables[i];
@@ -368,8 +366,8 @@ public class StateGraph {
     			Transition lpnTran = stateTran.getKey();
     			
     			String edgeLabel = lpnTran.getLabel() + ": ";
-        		int[] headVector = headState.getVector();
-        		int[] tailVector = tailState.getVector();
+        		int[] headVector = headState.getVariableVector();
+        		int[] tailVector = tailState.getVariableVector();
         		
         		for(i = 0; i < size; i++){
             		if(headVector[i] != tailVector[i]){
@@ -412,8 +410,8 @@ public class StateGraph {
         }
     	
     	if(enabledSetTbl.containsKey(curState) == true){
-            return (LpnTranList)enabledSetTbl.get(curState).clone();
-        }
+    		return (LpnTranList)enabledSetTbl.get(curState).clone();
+    	}
     	
         LpnTranList curEnabled = new LpnTranList();
         for (Transition tran : this.lpn.getAllTransitions()) {
@@ -427,51 +425,38 @@ public class StateGraph {
         this.enabledSetTbl.put(curState, curEnabled);
         return curEnabled;
     }
-    
+
     /**
-     * Return the set of all LPN transitions that are enabled in 'state'.
+     * Return the set of all LPN transitions that are enabled in current state. The enabled transitions 
+     * are read from the tranVector in current state. 
      * @param curState
      * @return
      */
-    public LpnTranList getEnabled(State curState, boolean init) {
+    public LpnTranList getEnabledFromTranVector(State curState) {
     	if (curState == null) {
-            throw new NullPointerException();
-        }   	
-    	if(enabledSetTbl.containsKey(curState) == true){
-    		if (Options.getDebugMode()) {
-    			System.out.println("~~~~~~~ existing state in enabledSetTbl for LPN" + curState.getLpn().getLabel() + ": S" + curState.getIndex() + "~~~~~~~~");
-        		printTransitionSet(enabledSetTbl.get(curState), "Enabled trans at this state: ");
-    		}
-            return (LpnTranList)enabledSetTbl.get(curState).clone();
-        }   	
-        LpnTranList curEnabled = new LpnTranList();
-        //System.out.println("----Enabled transitions----");
-        if (init) {
-        	for (Transition tran : this.lpn.getAllTransitions()) {
-            	if (isEnabled(tran,curState)) {
-            		if (Options.getDebugMode()) {
-            			System.out.println("Transition " + tran.getLpn().getLabel() + "(" + tran.getLabel() + ") is enabled");
-            		}            			
-            		if(tran.isLocal()==true)
-            			curEnabled.addLast(tran);
-                    else
-                    	curEnabled.addFirst(tran);
-                 } 
-            }
-        }
-        else {
-        	for (int i=0; i < this.lpn.getAllTransitions().length; i++) {
-        		Transition tran = this.lpn.getAllTransitions()[i];
-        		if (curState.getTranVector()[i])
-        			if(tran.isLocal()==true)
-            			curEnabled.addLast(tran);
-                    else
-                    	curEnabled.addFirst(tran);
-        			
-        	}
-        }
-        this.enabledSetTbl.put(curState, curEnabled);
-        return curEnabled;
+    		throw new NullPointerException();
+    	}   	
+//    	if(enabledSetTbl.containsKey(curState) == true){
+//    		if (Options.getDebugMode()) {
+//    			System.out.println("~~~~~~~ existing state in enabledSetTbl for LPN" + curState.getLpn().getLabel() + ": S" + curState.getIndex() + "~~~~~~~~");
+//    			printTransitionSet(enabledSetTbl.get(curState), "Enabled trans at this state: ");
+//    		}
+//    		return (LpnTranList)enabledSetTbl.get(curState).clone();
+//    	}
+//    	LpnTranList curEnabled = new LpnTranList();
+//    	for (int i=0; i < this.lpn.getAllTransitions().length; i++) {
+//    		Transition tran = this.lpn.getAllTransitions()[i];
+//    		if (curState.getTranVector()[i])
+//    			if(tran.isLocal()==true)
+//    				curEnabled.addLast(tran);
+//    			else
+//    				curEnabled.addFirst(tran);
+//
+//    	}
+    	//this.enabledSetTbl.put(curState, curEnabled);
+    	
+    	LpnTranList curEnabled = curState.getEnabledTransitions();
+    	return curEnabled;
     }
     
     protected void printEnabledSetTblToDebugFile() {
@@ -481,8 +466,7 @@ public class StateGraph {
     		printTransitionSet(enabledSetTbl.get(s), "");
     	}	
 	}
-    
-    
+
     protected void printTransitionSet(LpnTranList transitionSet, String setName) {
 		if (!setName.isEmpty()) 
 			System.out.println(setName + " : ");
@@ -498,8 +482,8 @@ public class StateGraph {
 	}
 	
 
-	public boolean isEnabled(Transition tran, State curState) {	   	
-			int[] varValuesVector = curState.getVector();
+	private boolean isEnabled(Transition tran, State curState) {	   	
+			int[] varValuesVector = curState.getVariableVector();
 			String tranName = tran.getLabel();
 			int tranIndex = tran.getIndex();
 			if (Options.getDebugMode()) {
@@ -638,15 +622,15 @@ public class StateGraph {
     }
     
     public State genInitialState() {	
-    	// create initial vector
+    	// create initial vector: vector for variable initial values. 
 		int size = this.lpn.getVarIndexMap().size();
-    	int[] initialVector = new int[size];
+    	int[] initVariableVector = new int[size];
     	for(int i = 0; i < size; i++) {
     		String var = this.lpn.getVarIndexMap().getKey(i);
-    		int val = this.lpn.getInitVector(var);
-    		initialVector[i] = val;
+    		int val = this.lpn.getInitVariableVector(var);
+    		initVariableVector[i] = val;
     	}
-		this.init = new State(this.lpn, this.lpn.getInitialMarkingsArray(), initialVector, genInitEnabledTranArray(initialVector));
+		this.init = new State(this.lpn, this.lpn.getInitialMarkingsArray(), initVariableVector, genInitTranVector(initVariableVector));
 		return this.init;
     }
     
@@ -668,7 +652,7 @@ public class StateGraph {
     }
 
      /**
-     * This method is called by search_dfs(StateGraph[], State[]).
+     * This method is called by untimed search_dfs(StateGraph[], State[]).
      * @param curSgArray
      * @param curStateArray
      * @param firedTran
@@ -708,29 +692,7 @@ public class StateGraph {
         	return nextStateArray;
 		}	
         HashMap<String, Integer> vvSet = new HashMap<String, Integer>();
-        vvSet = this.lpn.getAllVarsWithValuesAsInt(nextState.getVector());
-//        
-//        for (String key : this.lpn.getAllVarsWithValuesAsString(curState.getVector()).keySet()) {
-//        	if (this.lpn.getBoolAssignTree(firedTran.getName(), key) != null) {
-//        		int newValue = (int)this.lpn.getBoolAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(curState.getVector()));
-//        		vvSet.put(key, newValue);
-//        	}
-//        	if (this.lpn.getContAssignTree(firedTran.getName(), key) != null) {
-//        		int newValue = (int)this.lpn.getContAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(curState.getVector()));
-//        		vvSet.put(key, newValue);
-//        	}
-//        	if (this.lpn.getIntAssignTree(firedTran.getName(), key) != null) {
-//        		int newValue = (int)this.lpn.getIntAssignTree(firedTran.getName(), key).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(curState.getVector()));
-//        		vvSet.put(key, newValue);
-//        	}
-//        }       
-        /*
-        for (VarExpr s : this.getAssignments()) {
-            int newValue = nextVector[s.getVar().getIndex(curVector)];
-            vvSet.put(s.getVar().getName(), newValue);   
-        }
-        */
-        
+        vvSet = this.lpn.getAllVarsWithValuesAsInt(nextState.getVariableVector());
         // Update other local states with the new values generated for the shared variables.
 		//nextStateArray[this.lpn.getIndex()] = nextState;      
 //		if (!firedTran.getDstLpnList().contains(this.lpn))
@@ -775,8 +737,7 @@ public class StateGraph {
     	
     	State nextState = thisSg.getNextState(curState, firedTran);
     	if(nextState != null)
-    		return nextState;
-    	
+    		return nextState;  	
     	// If no cached next state exists, do regular firing. 
     	// Marking update
         int[] curOldMarking = curState.getMarking();
@@ -795,18 +756,18 @@ public class StateGraph {
         }
 
         //  State vector update
-        int[] newVectorArray = curState.getVector().clone();
-        int[] curVector = curState.getVector();
+        int[] newVariableVector = curState.getVariableVector().clone();
+        int[] curVector = curState.getVariableVector();
         HashMap<String, String> currentValuesAsString = this.lpn.getAllVarsWithValuesAsString(curVector);
         for (String key : currentValuesAsString.keySet()) {
         	if (this.lpn.getBoolAssignTree(firedTran.getLabel(), key) != null) {
         		int newValue = (int)this.lpn.getBoolAssignTree(firedTran.getLabel(), key).evaluateExpr(currentValuesAsString);
-        		newVectorArray[this.lpn.getVarIndexMap().get(key)] = newValue;
+        		newVariableVector[this.lpn.getVarIndexMap().get(key)] = newValue;
         	}
         	
         	if (this.lpn.getIntAssignTree(firedTran.getLabel(), key) != null) {
         		int newValue = (int)this.lpn.getIntAssignTree(firedTran.getLabel(), key).evaluateExpr(currentValuesAsString);
-        		newVectorArray[this.lpn.getVarIndexMap().get(key)] = newValue;
+        		newVariableVector[this.lpn.getVarIndexMap().get(key)] = newValue;
         	}
         } 
         
@@ -985,8 +946,8 @@ public class StateGraph {
         }
         */
         // Enabled transition vector update
-	   	boolean[] newEnabledTranVector = updateEnabledTranVector(curState, curNewMarking, newVectorArray, firedTran);
-        State newState = thisSg.addState(new State(this.lpn, curNewMarking, newVectorArray, newEnabledTranVector));
+	   	boolean[] newTranVector = updateTranVector(curState, curNewMarking, newVariableVector, firedTran);
+        State newState = thisSg.addState(new State(this.lpn, curNewMarking, newVariableVector, newTranVector));
 
 	
         
@@ -1005,8 +966,8 @@ public class StateGraph {
 		return newState;
     }
     
-    public boolean[] updateEnabledTranVector(State state,
-			int[] newMarking, int[] newVectorArray, Transition firedTran) {
+    public boolean[] updateTranVector(State state,
+			int[] newMarking, int[] newVariableVector, Transition firedTran) {
     	boolean[] tranVectorAfterFiring = state.getTranVector().clone();
 		// Disable the fired transition and all of its conflicting transitions. 
     	if (firedTran != null) {
@@ -1024,7 +985,7 @@ public class StateGraph {
 //    			System.out.println("Checking " + tranName);
     		}
     		if (this.lpn.getEnablingTree(tranName) != null 
-    				&& this.lpn.getEnablingTree(tranName).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(newVectorArray)) == 0.0) {
+    				&& this.lpn.getEnablingTree(tranName).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(newVariableVector)) == 0.0) {
     			if (Options.getDebugMode()) {
 //    				System.out.println(tran.getName() + " " + "Enabling condition is false");    			
     			}					
@@ -1033,10 +994,12 @@ public class StateGraph {
     			continue;
     		}
     		if (this.lpn.getTransitionRateTree(tranName) != null 
-    				&& this.lpn.getTransitionRateTree(tranName).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(newVectorArray)) == 0.0) {
+    				&& this.lpn.getTransitionRateTree(tranName).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(newVariableVector)) == 0.0) {
     			if (Options.getDebugMode()) {
 //    				System.out.println("Rate is zero");
-    			}					
+    			}
+    			if (tranVectorAfterFiring[tranIndex])
+    				tranVectorAfterFiring[tranIndex] = false;
     			continue;
     		}
     		if (this.lpn.getPreset(tranName) != null && this.lpn.getPreset(tranName).length != 0) {
@@ -1046,6 +1009,8 @@ public class StateGraph {
 //    						System.out.println(tran.getName() + " " + "Missing a preset token");
     					}
     					needToUpdate = false;
+    					if (tranVectorAfterFiring[tranIndex])
+    						tranVectorAfterFiring[tranIndex] = false;
     					break;
     				}
     			}
@@ -1183,12 +1148,12 @@ public class StateGraph {
         }
 
         //  State vector update
-        int[] oldVector = curState.getVector();
+        int[] oldVector = curState.getVariableVector();
         int size = oldVector.length;
         int[] newVectorArray = new int[size];
         System.arraycopy(oldVector, 0, newVectorArray, 0, size);
         
-        int[] curVector = curState.getVector();
+        int[] curVector = curState.getVariableVector();
         for (String key : this.lpn.getAllVarsWithValuesAsString(curVector).keySet()) {
         	if (this.lpn.getBoolAssignTree(firedTran.getLabel(), key) != null) {
         		int newValue = (int)this.lpn.getBoolAssignTree(firedTran.getLabel(), key).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(curVector));
@@ -1205,7 +1170,7 @@ public class StateGraph {
         //newEnabledTranArray[firedTran.getIndex()] = false;
         //State newState = new State(this.lpn, curNewMarking, newVectorArray, newEnabledTranArray);
          */
-        boolean[] newEnabledTranVector = updateEnabledTranVector(curState, curNewMarking, newVectorArray, firedTran);
+        boolean[] newEnabledTranVector = updateTranVector(curState, curNewMarking, newVectorArray, firedTran);
         State newState = new State(this.lpn, curNewMarking, newVectorArray, newEnabledTranVector);
  
      // TODO: (future) assertions in our LPN?
@@ -1290,8 +1255,8 @@ public class StateGraph {
 			arrayStr = arrayStr.substring(0, arrayStr.lastIndexOf(","));
 		}				
 		else if (type.equals("vars")) {
-			for (int i=0; i< curState.getVector().length; i++) {
-				arrayStr = arrayStr + curState.getVector()[i] + ",";
+			for (int i=0; i< curState.getVariableVector().length; i++) {
+				arrayStr = arrayStr + curState.getVariableVector()[i] + ",";
 			}
 			if (arrayStr.contains(","))
 				arrayStr = arrayStr.substring(0, arrayStr.lastIndexOf(","));
@@ -1534,7 +1499,7 @@ public class StateGraph {
 				int variableIndex = map.getValue(iv.getName());
 				
 				// Flip the value of the inequality.
-				int[] vector = states[this.lpn.getLpnIndex()].getVector();
+				int[] vector = states[this.lpn.getLpnIndex()].getVariableVector();
 				vector[variableIndex] = 
 						vector[variableIndex] == 0 ? 1 : 0;
 			}
@@ -1729,7 +1694,7 @@ public class StateGraph {
 		// Convert the current values of Boolean variables to strings for use in the 
 		// Evaluator.
 		HashMap<String, String> currentValuesAsString = 
-				this.lpn.getAllVarsWithValuesAsString(oldStates[this.lpn.getLpnIndex()].getVector());
+				this.lpn.getAllVarsWithValuesAsString(oldStates[this.lpn.getLpnIndex()].getVariableVector());
 		
 		
 		// Accumulates a set of all transitions that need their enabling conditions
@@ -1951,7 +1916,7 @@ public class StateGraph {
 
 			// Adjust state vector values for the inequality variables.
 //			int[] newVectorArray = oldStates[this.lpn.getLpnIndex()].getVector();
-			int[] newVectorArray = newStates[this.lpn.getLpnIndex()].getVector();
+			int[] newVectorArray = newStates[this.lpn.getLpnIndex()].getVariableVector();
 			newVectorArray[ineqIndex] = ineq.evaluate(newVectorArray, z, continuousValues);
 //			newVectorArray[ineqIndex] = ineq.evaluate(newVectorArray, z, null);
 		}
@@ -1964,7 +1929,7 @@ public class StateGraph {
 			int tranIndex = t.getIndex();
 			
 			// Get the enabled vector from the appropriate state.
-			int[] vector = newStates[lpnIndex].getVector();
+			int[] vector = newStates[lpnIndex].getVariableVector();
 			int[] marking = newStates[lpnIndex].getMarking();
 			boolean[] previouslyEnabled = newStates[lpnIndex].getTranVector();
 			
@@ -2004,7 +1969,12 @@ public class StateGraph {
 		return "StateGraph [lpn=" + lpn + "]";
 	}
     
-	public boolean[] genInitEnabledTranArray(int[] initialVector) {
+	/**
+	 * Find enabled transitions in the initial state, and construct the tranVector in this state.
+	 * @param initialVector
+	 * @return
+	 */
+	public boolean[] genInitTranVector(int[] initialVector) {
 		boolean[] initEnabledTrans = new boolean[this.lpn.getAllTransitions().length];
 		for (int i=0; i< this.lpn.getAllTransitions().length; i++) {
 			Transition transition = this.lpn.getAllTransitions()[i];
