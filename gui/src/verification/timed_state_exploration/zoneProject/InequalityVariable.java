@@ -376,7 +376,7 @@ public class InequalityVariable extends Variable {
 //		// If the upper and lower bounds agreed, then return that value.
 //		
 //		return range.get_LowerBound();
-		return evaluate(localState.getVector(), z, null);
+		return evaluate(localState.getVariableVector(), z, null);
 	}
 	
 	/**
