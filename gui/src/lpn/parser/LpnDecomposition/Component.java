@@ -87,7 +87,6 @@ public class Component extends LhpnFile{
 			Transition t = this.getCompTransitions().get(i);
 			t.setIndex(i);
 			lpnComp.addTransition(t);
-			
 		}
 		// Inputs
 		for (int i=0; i< this.getInputs().size(); i++) {
