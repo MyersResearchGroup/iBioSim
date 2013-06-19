@@ -428,8 +428,11 @@ public class Analysis {
 				stateStackTop.setChild(nextPrjState);
 				nextPrjState.setFather(stateStackTop);
 				if (Options.getMarkovianModelFlag()) {
-					// Add <firedTran, nextPrjState> to stateStackTop's nextGlobalStateMap. 
-					((ProbGlobalState) stateStackTop).addNextGlobalState(firedTran, nextPrjState);
+					if (Options.getBuildGlobalStateGraph()) {
+						// Add <firedTran, nextPrjState> to stateStackTop's nextGlobalStateMap. 
+						((ProbGlobalState) stateStackTop).addNextGlobalState(firedTran, nextPrjState);
+					}
+						
 					
 					// NOT necessary. 
 //					// Locate the fired transition rate, add it to the next global state.					
@@ -504,8 +507,10 @@ public class Analysis {
 			}
 			else { // existingState == true
 				if (Options.getMarkovianModelFlag()) {
-					// Add <firedTran, nextPrjState> to stateStackTop's nextGlobalStateMap. 
-					((ProbGlobalState) stateStackTop).addNextGlobalState(firedTran, nextPrjState);
+					if (Options.getBuildGlobalStateGraph()) {
+						// Add <firedTran, nextPrjState> to stateStackTop's nextGlobalStateMap. 
+						((ProbGlobalState) stateStackTop).addNextGlobalState(firedTran, nextPrjState);
+					}
 					
 					// NOT necessary
 					// Locate the fired transition rate, add it to the next global state.					
@@ -1109,13 +1114,6 @@ public class Analysis {
 						+ " used memory: " + (float) curUsedMem / 1000000
 						+ " free memory: "
 						+ (float) Runtime.getRuntime().freeMemory() / 1000000);
-			}
-			if (!memExceedsLimit && Options.getMemUpperBoundFlag() && iterations % 100 == 0) {
-				if (curUsedMem > Options.getMemUpperBound()) {
-					System.out.println("******* Used memory exceeds memory upper bound (" + (float)Options.getMemUpperBound()/1000000 + "MB) *******");
-					System.out.println("******* Used memory = " + (float)curUsedMem/1000000 + "MB *******");
-					memExceedsLimit = true;
-				}
 			}
 			State[] curStateArray = stateStackTop.toStateArray(); //stateStack.peek();
 			LinkedList<Transition> curAmpleTrans = lpnTranStack.peek();
