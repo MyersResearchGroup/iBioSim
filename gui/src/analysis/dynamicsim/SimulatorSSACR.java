@@ -102,7 +102,8 @@ public class SimulatorSSACR extends Simulator {
 		TObjectIntHashMap<String> reactionToTimesFired = new TObjectIntHashMap<String>();
 		
 		currentTime = 0.0;
-		double printTime = -0.00001;
+		double printTime = printInterval;
+		double nextEventTime = Double.POSITIVE_INFINITY;
 		
 		//add events to queue if they trigger
 		if (noEventsFlag == false)
@@ -125,6 +126,10 @@ public class SimulatorSSACR extends Simulator {
 			if (noEventsFlag == false) {
 				
 				HashSet<String> affectedReactionSet = fireEvents(noAssignmentRulesFlag, noConstraintsFlag);
+
+				if (variableToIsInAssignmentRuleMap != null && 
+						variableToIsInAssignmentRuleMap.containsKey("time"))				
+					performAssignmentRules(variableToAffectedAssignmentRuleSetMap.get("time"));
 				
 				//recalculate propensties/groups for affected reactions
 				if (affectedReactionSet.size() > 0) {
@@ -139,23 +144,23 @@ public class SimulatorSSACR extends Simulator {
 			}
 			
 			//prints the initial (time == 0) data
-			if (currentTime >= printTime) {
-				
-				if (printTime < 0)
-					printTime = 0.0;
-					
-				try {
-					printToTSD(printTime);
-					bufferedTSDWriter.write(",\n");
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				
-				printTime += printInterval;	
-			}
-			
-			//update progress bar
-			progress.setValue((int)((currentTime / timeLimit) * 100.0));
+//			if (currentTime >= printTime) {
+//				
+//				if (printTime < 0)
+//					printTime = 0.0;
+//					
+//				try {
+//					printToTSD(printTime);
+//					bufferedTSDWriter.write(",\n");
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
+//				
+//				printTime += printInterval;	
+//			}
+//			
+//			//update progress bar
+//			progress.setValue((int)((currentTime / timeLimit) * 100.0));
 			
 			//STEP 1: generate random numbers
 			
@@ -175,19 +180,31 @@ public class SimulatorSSACR extends Simulator {
 			//long step2Initial = System.nanoTime();
 			 
 			double delta_t = FastMath.log(1 / r1) / totalPropensity;
-			
-			if (delta_t > maxTimeStep)
-				delta_t = maxTimeStep;
-			
-			if (delta_t < minTimeStep)
-				delta_t = minTimeStep;
-			
-			//step2Time += System.nanoTime() - step2Initial;
-			
-			//update time for next iteration
-			currentTime += delta_t;
-			
-			while ((currentTime > printTime) && (printTime < timeLimit)) {
+			double nextReactionTime = currentTime + delta_t;
+			//add events to queue if they trigger
+			if (noEventsFlag == false) {
+
+				handleEvents(noAssignmentRulesFlag, noConstraintsFlag);
+				nextEventTime = Double.POSITIVE_INFINITY;
+				//step to the next event fire time if it comes before the next time step
+				if (!triggeredEventQueue.isEmpty() && triggeredEventQueue.peek().fireTime <= nextEventTime)
+					nextEventTime = triggeredEventQueue.peek().fireTime;
+			}
+	
+			if (nextReactionTime < nextEventTime && nextReactionTime < currentTime + maxTimeStep) {
+				currentTime = nextReactionTime;
+				// perform reaction
+			} else if (nextEventTime < currentTime + maxTimeStep) {
+				currentTime = nextEventTime;
+				// print 
+			} else {
+				currentTime += maxTimeStep;
+				// print
+			}
+			if (currentTime > timeLimit) {
+				currentTime = timeLimit;
+			}
+			while (currentTime > printTime && printTime < timeLimit) {
 				
 				try {
 					printToTSD(printTime);
@@ -196,18 +213,10 @@ public class SimulatorSSACR extends Simulator {
 					e.printStackTrace();
 				}
 				
-//				for (String speciesID : speciesIDSet)
-//					if (speciesID.contains("ROW"))
-//						System.err.println(speciesID + "   " + variableToValueMap.get(speciesID));
-//				
-//				System.err.println();
-//				System.err.println();
-				
 				printTime += printInterval;
 				running.setTitle("Progress (" + (int)((currentTime / timeLimit) * 100.0) + "%)");
 			}
-			
-			if (currentTime < timeLimit) {
+			if (currentTime == nextEventTime) {			 
 
 				//STEP 2B: calculate rate rules using this time step
 				HashSet<String> affectedVariables = performRateRules(delta_t);
@@ -287,14 +296,6 @@ public class SimulatorSSACR extends Simulator {
 						variableToIsInAssignmentRuleMap.containsKey("time"))				
 					performAssignmentRules(variableToAffectedAssignmentRuleSetMap.get("time"));
 
-				//add events to queue if they trigger
-				if (noEventsFlag == false) {
-
-					handleEvents(noAssignmentRulesFlag, noConstraintsFlag);
-
-					if (!triggeredEventQueue.isEmpty() && (triggeredEventQueue.peek().fireTime <= currentTime))
-						currentTime = triggeredEventQueue.peek().fireTime;
-				}
 			}
 
 		} //end simulation loop
