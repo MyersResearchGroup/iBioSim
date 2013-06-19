@@ -10,11 +10,11 @@ public class Property {
 		this.property = property;
 	}
 
-	private String getLabel() {
+	String getLabel() {
 		return label;
 	}
 
-	private String getProperty() {
+	String getProperty() {
 		return property;
 	}
 
