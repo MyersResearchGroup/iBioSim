@@ -152,8 +152,8 @@ public class TimedState extends State{
 	}
 
 	@Override
-	public int[] getVector() {
-		return _state.getVector();
+	public int[] getVariableVector() {
+		return _state.getVariableVector();
 	}
 
 	@Override
@@ -202,8 +202,8 @@ public class TimedState extends State{
 	}
 
 	@Override
-	public void print(LhpnFile lpn) {
-		_state.print(lpn);
+	public void printStateInfo() {
+		_state.printStateInfo();
 	}
 
 	@Override

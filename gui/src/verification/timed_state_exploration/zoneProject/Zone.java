@@ -480,7 +480,7 @@ public class Zone{
 			
 			// Get the values of the variables for evaluating the ExprTree.
 			HashMap<String, String> varValues = 
-				lpn.getAllVarsWithValuesAsString(initialState.getVector());
+				lpn.getAllVarsWithValuesAsString(initialState.getVariableVector());
 			
 			// Set the upper and lower bound.
 			int upper, lower;
@@ -997,7 +997,7 @@ public class Zone{
 				// Get the values of the variables for evaluating the ExprTree.
 				HashMap<String, String> varValues = 
 						_lpnList[ltPair.get_lpnIndex()]
-								.getAllVarsWithValuesAsString(localStates[ltPair.get_lpnIndex()].getVector());
+								.getAllVarsWithValuesAsString(localStates[ltPair.get_lpnIndex()].getVariableVector());
 
 				// Set the upper and lower bound.
 				// Passing the zone as null since it should not be needed.
@@ -2355,7 +2355,7 @@ public class Zone{
 			// Get the values of the variables for evaluating the ExprTree.
 			HashMap<String, String> varValues = 
 				_lpnList[pair.get_lpnIndex()]
-						.getAllVarsWithValuesAsString(localStates[pair.get_lpnIndex()].getVector());
+						.getAllVarsWithValuesAsString(localStates[pair.get_lpnIndex()].getVariableVector());
 
 			// Set the upper and lower bound.
 			int upper, lower;
@@ -2789,7 +2789,7 @@ public class Zone{
 			// Get the values of the variables for evaluating the ExprTree.
 			HashMap<String, String> varValues = 
 					_lpnList[pair.get_lpnIndex()]
-							.getAllVarsWithValuesAsString(localStates[pair.get_lpnIndex()].getVector());
+							.getAllVarsWithValuesAsString(localStates[pair.get_lpnIndex()].getVariableVector());
 
 			// Set the upper and lower bound.
 			int upper, lower;
@@ -4234,7 +4234,7 @@ public class Zone{
 		
 		// Get the current values of the (local) state.
 		HashMap<String,String> currentValues = 
-				lpn.getAllVarsWithValuesAsString(s.getVector());
+				lpn.getAllVarsWithValuesAsString(s.getVariableVector());
 		
 		// Get all the continuous variable assignments.
 		HashMap<String, ExprTree> assignTrees = firedTran.getContAssignTrees();
