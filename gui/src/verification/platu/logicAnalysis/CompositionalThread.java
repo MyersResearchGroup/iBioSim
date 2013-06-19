@@ -128,7 +128,7 @@ public class CompositionalThread extends Thread{
      */
 	private boolean compatible(verification.platu.stategraph.State currentState, Constraint constr, int[] thisIndexList, int[] otherIndexList){
 		int[] constraintVector = constr.getVector();
-		int[] currentVector = currentState.getVector();
+		int[] currentVector = currentState.getVariableVector();
 		
 		for(int i = 0; i < thisIndexList.length; i++){
 			int thisIndex = thisIndexList[i];
@@ -151,7 +151,7 @@ public class CompositionalThread extends Thread{
 
 		// Create new state and insert into state graph
 		verification.platu.stategraph.State newState = new verification.platu.stategraph.State(compatibleState);
-		int[] newVector = newState.getVector();
+		int[] newVector = newState.getVariableVector();
 		
 		//List<VarNode> variableList = c.getVariableList();
 		List<Integer> variableList = c.getVariableList();

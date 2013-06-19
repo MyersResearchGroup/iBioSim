@@ -2807,7 +2807,7 @@ public class CompositionalAnalysis {
      */
 	private boolean compatible(State currentState, Constraint constr, int[] thisIndexList, int[] otherIndexList){
 		int[] constraintVector = constr.getVector();
-		int[] currentVector = currentState.getVector();
+		int[] currentVector = currentState.getVariableVector();
 		for(int i = 0; i < thisIndexList.length; i++){
 			int thisIndex = thisIndexList[i];
 			int otherIndex = otherIndexList[i];		
@@ -2825,7 +2825,7 @@ public class CompositionalAnalysis {
 	private int createNewState(StateGraph sg, State compatibleState, Constraint c){
 		int newTransitions = 0;
 		State newState = new State(compatibleState);
-		int[] newVector = newState.getVector();		
+		int[] newVector = newState.getVariableVector();		
 		//List<VarNode> variableList = c.getVariableList();
 		List<Integer> variableList = c.getVariableList();
 		List<Integer> valueList = c.getValueList();
