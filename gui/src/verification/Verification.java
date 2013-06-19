@@ -1080,7 +1080,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	//		System.out.println("~~~~~~~~~~End~~~~~~~~~");
 	//	}
 
-	@SuppressWarnings("unchecked")
 	public void run() {
 		copyFile();
 		String[] array = directory.split(separator);
@@ -1096,12 +1095,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			LhpnFile lpn = new LhpnFile();
 			lpn.load(directory + separator + lpnFileName);
 			Options.setLogName(lpn.getLabel());
-			for (String t: lpn.getTransitionList()) {
-				if (lpn.isExpTransitionRateTree(t)) {
-					Options.setProbabilisticLPNflag();
-					break;
-				}					
-			}
+			boolean canPerformMarkovianAnalysisTemp = true;
+			if (!canPerformMarkovianAnalysis(lpn))
+				canPerformMarkovianAnalysisTemp = false;
 			if (!decomposeLPN.isSelected()) {
 				ArrayList<LhpnFile> selectedLPNs = new ArrayList<LhpnFile>();
 				selectedLPNs.add(lpn);
@@ -1110,14 +1106,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					LhpnFile curLPN = new LhpnFile();
 					curLPN.load(directory + separator + curLPNname);
 					selectedLPNs.add(curLPN);
-					if (!Options.getProbabilisticModelFlag())
-						for (String t: curLPN.getTransitionList()) {
-							if (curLPN.isExpTransitionRateTree(t)) {
-								Options.setProbabilisticLPNflag();
-								break;
-							}					
-						}
+					if (!canPerformMarkovianAnalysis(curLPN))
+						canPerformMarkovianAnalysisTemp = false;
 				}
+				if (canPerformMarkovianAnalysisTemp)
+					Options.setMarkovianModelFlag();
 				//				System.out.println("====== LPN loading order (default) ========");
 				//				for (int i=0; i<selectedLPNs.size(); i++) {
 				//					System.out.println(selectedLPNs.get(i).getLabel());
@@ -1153,10 +1146,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 
 				// ------- Debugging Messages Settings ------------
 				 //Options for printing out intermediate results during POR
-				Options.setDebugMode(true);
-				if (Options.getDebugMode())
-					System.out.println("Debug mode is ON.");
+				//Options.setDebugMode(true);
 				Options.setDebugMode(false);
+				if (Options.getDebugMode())
+					System.out.println("Debug mode is ON.");				
 				//----------- POR and Cycle Closing Methods (FULL)--------------
 				//				if (untimedPOR.isSelected()) {
 				//					// Options for using trace-back in ample calculation
@@ -1563,9 +1556,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					for (Component comp : compMap.values()) {
 						LhpnFile lpnComp = new LhpnFile();
 						lpnComp = comp.buildLPN(lpnComp);
+						// --- TEMP ----
+						//checkDecomposition(lpn, lpnComp);
+						// -------------
 						lpnComp.save(root + separator + lpn.getLabel() + "_decomp" + maxNumVarsInOneComp + "vars" + comp.getComponentId() + ".lpn");		
-					}	
-					return;				
+					}				
 				}
 			}
 			else if (multipleLPNs.isSelected() && lpnList.getSelectedValues().length < 1) {
@@ -2372,6 +2367,36 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		}
 	}
 
+	private void checkDecomposition(LhpnFile lpn, LhpnFile lpnComp) {
+		// Places
+		for (String placeName : lpnComp.getPlaceList()) {
+			if (lpn.getPlace(placeName) == null)
+				System.out.println("Place " + placeName + "of component "+ lpnComp.getLabel() +" does not exist in LPN" + lpn.getLabel());
+			if (lpnComp.getInitialMarking(placeName) != lpn.getInitialMarking(placeName))
+				System.out.println("Initial marking for place " + placeName + "of component "+ lpnComp.getLabel() +" is not equal to that of " + lpn.getLabel());
+		}
+		// Transitions
+		for (Transition tran : lpnComp.getAllTransitions()) {
+			if (lpn.getTransition(tran.getLabel()) == null)
+				System.out.println("Transition " + tran.getFullLabel() + "does not exist in LPN" + lpn.getLabel());
+			else {
+				Transition tranInLpn = lpn.getTransition(tran.getLabel());
+				if (!tran.equals(tranInLpn)) {
+					System.out.println("Transition " + tran.getFullLabel() + "is not equal to " + tranInLpn.getFullLabel());
+				}				
+			}
+		}		
+		// Variables
+		for (String varName : lpnComp.getVariables()) {
+			if (lpn.getVariable(varName) == null)
+				System.out.println("Variable " + varName + "of component "+ lpnComp.getLabel() +" does not exist in LPN" + lpn.getLabel());
+			else {
+				if (!lpnComp.getVariable(varName).equals(lpn.getVariable(varName)))
+					System.out.println("Variable " + varName + "of component "+ lpnComp.getLabel() +" is not equal to that in LPN " + lpn.getLabel());
+			}
+		}
+	}
+
 	public void saveAs() {
 		String newName = JOptionPane.showInputDialog(Gui.frame,
 				"Enter Verification name:", "Verification Name",
@@ -3001,5 +3026,39 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	
+	public boolean canPerformMarkovianAnalysis(LhpnFile lpn) {
+		for (String trans : lpn.getTransitionList()) {
+			if (!lpn.isExpTransitionRateTree(trans)) {
+				JOptionPane.showMessageDialog(Gui.frame, "LPN has transitions without exponential delay.",
+						"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
+				return false;
+			}
+			for (String var : lpn.getVariables()) {
+				if (lpn.isRandomBoolAssignTree(trans, var)) {
+					JOptionPane.showMessageDialog(Gui.frame, "LPN has assignments containing random functions.",
+							"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
+				if (lpn.isRandomContAssignTree(trans, var)) {
+					JOptionPane.showMessageDialog(Gui.frame, "LPN has assignments containing random functions.",
+							"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
+				if (lpn.isRandomIntAssignTree(trans, var)) {
+					JOptionPane.showMessageDialog(Gui.frame, "LPN has assignments containing random functions.",
+							"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
+			}
+		}
+		if (lpn.getContVars().length > 0) {
+			JOptionPane.showMessageDialog(Gui.frame, "LPN contains continuous variables.",
+					"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		return true;		
 	}
 }
