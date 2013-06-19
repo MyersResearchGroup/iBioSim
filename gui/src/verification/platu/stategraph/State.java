@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Set;
 
 import lpn.parser.LhpnFile;
+import lpn.parser.Transition;
 import verification.platu.common.PlatuObj;
 import verification.platu.lpn.DualHashMap;
 import verification.platu.lpn.LpnTranList;
@@ -29,7 +30,7 @@ public class State extends PlatuObj {
     
     protected int[] marking;
     protected int[] vector;
-    protected boolean[] tranVector; // an indicator vector to record whether each transition is enabled or not 
+    protected boolean[] tranVector; // an indicator vector showing whether each transition is enabled or not 
     private int hashVal = 0;
     protected LhpnFile lpn;
     private int index;
@@ -273,7 +274,7 @@ public class State extends PlatuObj {
     /**
      * @return the vector
      */
-    public int[] getVector() {
+    public int[] getVariableVector() {
         // new Exception("StateVector getVector(): "+s).printStackTrace();
         return vector;
     }
@@ -323,7 +324,11 @@ public class State extends PlatuObj {
        LpnTranList enabledTrans = new LpnTranList();
        for (int i=0; i<tranVector.length; i++) {
     	   if (tranVector[i]) {
-    		   enabledTrans.add(this.lpn.getTransition(i));
+    		   Transition tran = this.lpn.getTransition(i);
+    		   if(tran.isLocal())
+    				enabledTrans.addLast(tran);
+    			else
+    				enabledTrans.addFirst(tran);
     	   }
        }
        return enabledTrans;
@@ -345,7 +350,7 @@ public class State extends PlatuObj {
      * @return
      */
     public State update(StateGraph SG, HashMap<String, Integer> newVector, DualHashMap<String, Integer> VarIndexMap) {
-    	int[] newStateVector = new int[this.vector.length];
+    	int[] newVariableVector = new int[this.vector.length];
     	
     	boolean newState = false;
     	for(int index = 0; index < vector.length; index++) {
@@ -356,17 +361,17 @@ public class State extends PlatuObj {
     		if(newVal != null) {
     			if(this_val != newVal) {
     				newState = true;
-    				newStateVector[index] = newVal;
+    				newVariableVector[index] = newVal;
     			}
     			else
-    				newStateVector[index] = this.vector[index]; 
+    				newVariableVector[index] = this.vector[index]; 
     		}
     		else
-    			newStateVector[index] = this.vector[index];    		
+    			newVariableVector[index] = this.vector[index];    		
     	}
     	if(newState == true) {    		 
-    		boolean[] newEnabledTranVector = SG.updateEnabledTranVector(this, this.marking, newStateVector, null);
-        	return new State(this.lpn, this.marking, newStateVector, newEnabledTranVector);
+    		boolean[] newTranVector = SG.updateTranVector(this, this.marking, newVariableVector, null);
+        	return new State(this.lpn, this.marking, newVariableVector, newTranVector);
     	} 	
     	return null;
     }
@@ -456,27 +461,30 @@ public class State extends PlatuObj {
     	this.failure = true;
     }
 
-	public void print(LhpnFile lpn) {
+	public void printStateInfo() {
 		System.out.print("Marking: [");
-//        for (int i : marking) {
-//            System.out.print(i + ",");
-//        }
         for (int i=0; i < marking.length; i++) {
-            System.out.print(lpn.getPlaceList().clone()[i] + "=" + marking[i] + ", ");
+            System.out.print(lpn.getPlaceList()[i] + "=" + marking[i] + ", ");
         }
         System.out.println("]");
         
         System.out.print("Vector: [");
         for (int i = 0; i < vector.length; i++) {
-            System.out.print(lpn.getVarIndexMap().getKey(i) + "=>" + vector[i]+", ");
+            System.out.print(lpn.getVarIndexMap().getKey(i) + "=" + vector[i]+", ");
         }
-        System.out.println("]");
-        
+        System.out.println("]");       
         System.out.print("Transition vector: [");
         for (boolean bool : tranVector) {
             System.out.print(bool + ",");
         }
         System.out.println("]");
+        String arrayStr = "";
+        for (int i=0; i< tranVector.length; i++) {
+        	if (tranVector[i]) {
+        		arrayStr = arrayStr + lpn.getAllTransitions()[i].getFullLabel() + ", ";
+        	}
+        }
+        System.out.println("enabled transitions: " + arrayStr);
 	}
 	
 	/**
@@ -530,4 +538,17 @@ public class State extends PlatuObj {
 	public int getCurrentValue(int variableIndex){
 		return vector[variableIndex];
 	}
-}
+
+	public String getFullLabel() {
+		String fullLabel = "S" + getIndex() + "(" + getLpn().getLabel() +")";
+		return fullLabel;
+	}
+	
+	/**
+	 * Returns the corresponding state graph that this state lives in.
+	 * @return
+	 */
+	public StateGraph getStateGraph() {
+		return this.getLpn().getStateGraph();
+	}
+ }
