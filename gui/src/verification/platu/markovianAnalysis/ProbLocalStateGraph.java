@@ -1,7 +1,5 @@
 package verification.platu.markovianAnalysis;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.util.HashMap;
 
 import lpn.parser.LhpnFile;
@@ -13,15 +11,18 @@ import verification.platu.stategraph.StateGraph;
 
 public class ProbLocalStateGraph extends StateGraph {
     	
-	//protected HashMap<State, HashMap<Transition, ProbLocalStateTuple>> nextProbLocalStateTupleMap;
+	/**
+	 * A map stores each state's outgoing transition rates.
+	 */
+	protected HashMap<State, HashMap<Transition, Double>> nextTranRateMap;
 	
     public ProbLocalStateGraph(LhpnFile lpn) {
     	super(lpn);
-    	//this.nextProbLocalStateTupleMap = new HashMap<State, HashMap<Transition, ProbLocalStateTuple>>();
+    	nextTranRateMap = new HashMap<State, HashMap<Transition, Double>>();
     }
     
     public void drawLocalStateGraph() {
-    	// TODO: Need to fix this method call.
+    	// TODO: Need to fix this method.
 //		try {			
 //			String graphFileName = null;
 //			if (Options.getPOR() == null)
@@ -80,17 +81,14 @@ public class ProbLocalStateGraph extends StateGraph {
 	 * @param newMarking
 	 * @param newVectorArray
 	 * @param firedTran
-	 * @return
 	 */
-	public double[] updateTranAndRateVectors(boolean[] enabledTransAfterFiring, int[] newMarking, int[] newVectorArray, Transition firedTran) {
-		double[] enabledTransRatesAfterFiring = new double[enabledTransAfterFiring.length];
+	public boolean[] updateTranVector(State state, int[] newMarking, int[] newVectorArray, Transition firedTran) {		
+		boolean[] tranVectorAfterFiring = state.getTranVector().clone();
 		// Disable the fired transition and all of its conflicting transitions. 
 		if (firedTran != null) {
-			enabledTransAfterFiring[firedTran.getIndex()] = false;
-			enabledTransRatesAfterFiring[firedTran.getIndex()] = 0.0;
+			tranVectorAfterFiring[firedTran.getIndex()] = false;
 			for (Integer curConflictingTranIndex : firedTran.getConflictSetTransIndices()) {
-				enabledTransAfterFiring[curConflictingTranIndex] = false;
-				enabledTransRatesAfterFiring[firedTran.getIndex()] = 0.0;
+				tranVectorAfterFiring[curConflictingTranIndex] = false;
 			}
 		}
 		// find newly enabled transition(s) based on the updated markings and variables
@@ -105,9 +103,8 @@ public class ProbLocalStateGraph extends StateGraph {
 				if (Options.getDebugMode()) {
 					//    				System.out.println(tran.getName() + " " + "Enabling condition is false");    			
 				}					
-				if (enabledTransAfterFiring[tranIndex] && !tran.isPersistent()) {
-					enabledTransAfterFiring[tranIndex] = false;
-					enabledTransRatesAfterFiring[tranIndex] = 0.0;
+				if (tranVectorAfterFiring[tranIndex] && !tran.isPersistent()) {
+					tranVectorAfterFiring[tranIndex] = false;
 				}		
 				continue;
 			}
@@ -117,9 +114,8 @@ public class ProbLocalStateGraph extends StateGraph {
 						if (Options.getDebugMode()) {
 							//    						System.out.println(tran.getName() + " " + "Missing a preset token");
 						}
-						if (enabledTransAfterFiring[tranIndex]) {
-							enabledTransAfterFiring[tranIndex] = false;
-							enabledTransRatesAfterFiring[tranIndex] = 0.0;
+						if (tranVectorAfterFiring[tranIndex]) {
+							tranVectorAfterFiring[tranIndex] = false;
 						}							
 						continue tran_iteration;
 					}
@@ -131,15 +127,14 @@ public class ProbLocalStateGraph extends StateGraph {
 					if (Options.getDebugMode()) {
 						//						System.out.println("Rate is zero");
 					}
-					if (enabledTransAfterFiring[tranIndex]) {
-						enabledTransAfterFiring[tranIndex] = false;
-						enabledTransRatesAfterFiring[tranIndex] = 0.0;
+					if (tranVectorAfterFiring[tranIndex]) {
+						tranVectorAfterFiring[tranIndex] = false;
 					}						
 					continue;
 				}
+				addStateTranRate(state, tran, tranRate);
 				// if a transition passes all tests above, it needs to be marked as enabled.
-				enabledTransAfterFiring[tranIndex] = true;
-				enabledTransRatesAfterFiring[tranIndex] = tranRate;
+				tranVectorAfterFiring[tranIndex] = true;
 				if (Options.getDebugMode()) {
 					//    				System.out.println(tran.getName() + " is Enabled.");
 				}	
@@ -150,7 +145,7 @@ public class ProbLocalStateGraph extends StateGraph {
 				System.exit(1);
 			}				
 		}
-		return enabledTransRatesAfterFiring;
+		return tranVectorAfterFiring;
 	}
     
 //	/**
@@ -205,7 +200,7 @@ public class ProbLocalStateGraph extends StateGraph {
 		}		
 		double[] initTranRateVector = new double[this.lpn.getAllTransitions().length];
 		boolean[] initTranVector = genInitTranVector(initVariableVector, initTranRateVector);
-		this.init = new ProbLocalState(this.lpn, this.lpn.getInitialMarkingsArray(), initVariableVector, initTranVector, initTranRateVector);
+		this.init = new ProbLocalState(this.lpn, this.lpn.getInitialMarkingsArray(), initVariableVector, initTranVector);
 		return this.init;
 	}
     
@@ -257,9 +252,8 @@ public class ProbLocalStateGraph extends StateGraph {
     		}
     	} 
     	// Enabled transition vector update
-    	boolean[] newTranVector = curState.getTranVector().clone();    	
-    	double[] newTranRateVector = updateTranAndRateVectors(newTranVector, curNewMarking, newVariableVector, firedTran); 
-    	State newState = thisSg.addState(new ProbLocalState(this.lpn, curNewMarking, newVariableVector, newTranVector, newTranRateVector));
+   		boolean[] newTranVector = updateTranVector(curState, curNewMarking, newVariableVector, firedTran);
+    	State newState = thisSg.addState(new ProbLocalState(this.lpn, curNewMarking, newVariableVector, newTranVector));
     	// TODO: (future) assertions in our LPN?
     	/*
     	int[] newVector = newState.getVector();
@@ -369,6 +363,21 @@ public class ProbLocalStateGraph extends StateGraph {
     	}	
     	return nextStateArray;
     }
+
+	public double getTranRate(State curLocalState, Transition tran) {
+		return nextTranRateMap.get(curLocalState).get(tran);
+	}
+	
+	public void addStateTranRate(State curSt, Transition firedTran, double tranRate) {
+		HashMap<Transition, Double> nextMap = this.nextTranRateMap.get(curSt);
+		if(nextMap == null)  {
+			nextMap = new HashMap<Transition,Double>();
+			nextMap.put(firedTran, tranRate);
+			this.nextTranRateMap.put(curSt, nextMap);
+		}
+		else
+			nextMap.put(firedTran, tranRate);
+	}
 
 //    public void printNextProbLocalStateTupleMap(String location) {
 //    	String newLine = System.getProperty("line.separator");//This will retrieve line separator dependent on OS.
