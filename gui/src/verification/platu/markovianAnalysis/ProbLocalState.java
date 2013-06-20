@@ -1,30 +1,17 @@
 package verification.platu.markovianAnalysis;
 
 import java.util.HashMap;
-import java.util.Set;
 
 import lpn.parser.LhpnFile;
-import lpn.parser.Transition;
 import verification.platu.lpn.DualHashMap;
-import verification.platu.main.Options;
 import verification.platu.stategraph.State;
 import verification.platu.stategraph.StateGraph;
 
 public class ProbLocalState extends State{
-		
-	/**
-	 * An array of enabled transition rates in this state. 
-	 * The index in this array corresponds to that in the tranVector in State.
-	 * Note that tranRateVector ONLY serves as a place holder for the computed transition rates.
-	 * It is NOT part of a state and therefore it should not be used to override 
-	 * hashCode and equals methods.
-	 */
-	private double[] tranRateVector; 
 	
 	public ProbLocalState(LhpnFile lpn, int[] marking, int[] vector,
-			boolean[] tranVector, double[] tranRateVector) {
-		super(lpn, marking, vector, tranVector);
-		this.tranRateVector = tranRateVector; 
+			boolean[] tranVector) {
+		super(lpn, marking, vector, tranVector);		
 	}
 
     /* (non-Javadoc)
@@ -49,17 +36,12 @@ public class ProbLocalState extends State{
     		else
     			newVariableVector[index] = this.vector[index];    		
     	}
-    	if(newStateExists) {  
-    		boolean[] newTranVector = this.getTranVector().clone();		
-    		double[] newTranRateVector = ((ProbLocalStateGraph)thisSg).updateTranAndRateVectors(newTranVector, this.marking, newVariableVector, null); 
-    		State newState = thisSg.addState(new ProbLocalState(this.lpn, this.marking, newVariableVector, newTranVector, newTranRateVector));
+    	if(newStateExists) {    		
+    		boolean[] newTranVector= ((ProbLocalStateGraph)thisSg).updateTranVector(this, this.marking, newVariableVector, null); 
+    		State newState = thisSg.addState(new ProbLocalState(this.lpn, this.marking, newVariableVector, newTranVector));
         	return newState;
     	}
     	return null;
-    }
-
-    protected double getTranRate(int tranIndex) {
-    	return tranRateVector[tranIndex];    	
     }
     
 }
