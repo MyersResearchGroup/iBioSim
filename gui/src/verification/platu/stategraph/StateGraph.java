@@ -1040,7 +1040,7 @@ public class StateGraph {
      * @return
      * 			The newly enabled transitions.
      */
-    public boolean[] updateEnabledTranVector(boolean[] enabledTranBeforeFiring,
+    public boolean[] updateTranVector(boolean[] enabledTranBeforeFiring,
 			int[] newMarking, int[] newVectorArray, Transition firedTran, HashSet<LPNTransitionPair> newlyEnabled) {
     	boolean[] enabledTranAfterFiring = enabledTranBeforeFiring.clone();
 		// Disable fired transition
@@ -1507,7 +1507,7 @@ public class StateGraph {
 			HashSet<LPNTransitionPair> newlyEnabled = new HashSet<LPNTransitionPair>();
 			// Update the enabled transitions according to inequalities that have changed.
 			for(int i=0; i<states.length; i++){
-				boolean[] newEnabledTranVector = updateEnabledTranVector(states[i].getTranVector(),
+				boolean[] newEnabledTranVector = updateTranVector(states[i].getTranVector(),
 						states[i].marking, states[i].vector, null, newlyEnabled);
 		        State newState = curSgArray[i].addState(new State(this.lpn, states[i].marking, states[i].vector, newEnabledTranVector));
 		        states[i] = newState;
@@ -1538,7 +1538,7 @@ public class StateGraph {
 		HashSet<LPNTransitionPair> newlyEnabled = new HashSet<LPNTransitionPair>();
 		// Update the enabled transitions according to inequalities that have changed.
 		for(int i=0; i<states.length; i++){
-			boolean[] newEnabledTranVector = updateEnabledTranVector(states[i].getTranVector(),
+			boolean[] newEnabledTranVector = updateTranVector(states[i].getTranVector(),
 					states[i].marking, states[i].vector, null, newlyEnabled);
 	        State newState = curSgArray[i].addState(new State(this.lpn, states[i].marking, states[i].vector, newEnabledTranVector));
 	        states[i] = newState;
