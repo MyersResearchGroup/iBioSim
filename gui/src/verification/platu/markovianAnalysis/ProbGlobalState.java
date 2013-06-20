@@ -3,6 +3,7 @@ package verification.platu.markovianAnalysis;
 import java.util.HashMap;
 
 import lpn.parser.Transition;
+import verification.platu.main.Options;
 import verification.platu.project.PrjState;
 import verification.platu.stategraph.State;
 
@@ -30,7 +31,8 @@ public class ProbGlobalState extends PrjState {
 
 	public ProbGlobalState(State[] other) {
 		super(other);
-		nextProbGlobalStateMap = new HashMap<Transition, ProbGlobalState>();
+		if (Options.getBuildGlobalStateGraph())
+			nextProbGlobalStateMap = new HashMap<Transition, ProbGlobalState>();
 		//localStateIndexArray = new ArrayList<Integer>();
 	}
 	
@@ -95,7 +97,7 @@ public class ProbGlobalState extends PrjState {
 	public double getOutgoingTranRate(Transition tran) {
 		int curLocalStIndex = tran.getLpn().getLpnIndex();
 		State curLocalState = this.toStateArray()[curLocalStIndex];
-		double tranRate = ((ProbLocalState) curLocalState).getTranRate(tran.getIndex());	
+		double tranRate = ((ProbLocalStateGraph) curLocalState.getLpn().getStateGraph()).getTranRate(curLocalState, tran);	
 		return tranRate;
 	}
 
