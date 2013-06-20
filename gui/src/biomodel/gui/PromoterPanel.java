@@ -41,14 +41,16 @@ public class PromoterPanel extends JPanel {
 	private ModelEditor modelEditor = null;
 	private Species promoter = null;
 	private Reaction production = null;
+	private PropertyList speciesList;
 	
-	public PromoterPanel(String selected, BioModel bioModel, boolean paramsOnly, BioModel refGCM, 
-			ModelEditor gcmEditor) {
+	public PromoterPanel(String selected, BioModel bioModel, PropertyList speciesList, boolean paramsOnly, BioModel refGCM, 
+			ModelEditor modelEditor) {
 		super(new GridLayout(paramsOnly?7:11, 1));
 		this.selected = selected;
 		this.bioModel = bioModel;
 		this.paramsOnly = paramsOnly;
-		this.modelEditor = gcmEditor;
+		this.modelEditor = modelEditor;
+		this.speciesList = speciesList;
 
 		fields = new HashMap<String, PropertyField>();
 		
@@ -313,7 +315,7 @@ public class PromoterPanel extends JPanel {
 		if (!paramsOnly) {
 			// Field for annotating promoter with SBOL DNA components
 			List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(production);
-			sbolField = new SBOLField(sbolURIs, GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 3, false);
+			sbolField = new SBOLField(sbolURIs, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 3, false);
 			add(sbolField);
 		}
 
@@ -464,6 +466,12 @@ public class PromoterPanel extends JPanel {
 				bioModel.createDirPort(promoter.getId(),speciesType);
 				this.lastUsedPromoter = id;
 			}
+			speciesList.removeItem(selected);
+			speciesList.removeItem(selected + " Modified");
+			speciesList.addItem(id);
+			speciesList.setSelectedValue(id, true);
+	
+			modelEditor.refresh();
 			modelEditor.setDirty(true);
 		} else if (value == JOptionPane.NO_OPTION) {
 			return true;

@@ -58,7 +58,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 
 	private Gui biosim;
 
-	private JButton addSpec, addPromoter, removeSpec, editSpec; // species buttons
+	private JButton addSpec, addComplex, addPromoter, removeSpec, editSpec; // species buttons
 
 	private JList species; // JList of species
 
@@ -91,19 +91,23 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		this.modelEditor = modelEditor;
 		JPanel addSpecs = new JPanel();
 		addSpec = new JButton("Add Species");
+		addComplex = new JButton("Add Complex");
 		addPromoter = new JButton("Add Promoter");
 		removeSpec = new JButton("Remove Species/Promoter");
 		editSpec = new JButton("Edit Species/Promoter");
 		addSpecs.add(addSpec);
+		addSpecs.add(addComplex);
 		addSpecs.add(addPromoter);
 		addSpecs.add(removeSpec);
 		addSpecs.add(editSpec);
 		addSpec.addActionListener(this);
+		addComplex.addActionListener(this);
 		addPromoter.addActionListener(this);
 		removeSpec.addActionListener(this);
 		editSpec.addActionListener(this);
 		if (paramsOnly || editOnly) {
 			addSpec.setEnabled(false);
+			addComplex.setEnabled(false);
 			addPromoter.setEnabled(false);
 			removeSpec.setEnabled(false);
 		}
@@ -1075,6 +1079,17 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		if (e.getSource() == addSpec) {
 			String id;
 			if ((id = bioModel.createSpecies(null, -1, -1)) != null) {
+				modelEditor.launchSpeciesPanel(id, false);
+			}
+			//speciesEditor("Add");
+			reactionsPanel.refreshReactionPanel(bioModel);
+			parametersPanel.refreshParameterPanel(bioModel);
+		}
+		// if the add promoter button is clicked
+		else if (e.getSource() == addComplex) {
+			String id;
+			if ((id = bioModel.createSpecies(null, -1, -1)) != null) {
+				bioModel.createComplexReaction(id, null, false);
 				modelEditor.launchSpeciesPanel(id, false);
 			}
 			//speciesEditor("Add");

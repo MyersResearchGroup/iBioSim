@@ -1500,7 +1500,7 @@ public class BioModel {
 			r.createKineticLaw();
 		}
 		updateComplexParameters(r,KcStr);
-		createComplexKineticLaw(r);
+		r.getKineticLaw().setMath(SBMLutilities.myParseFormula(createComplexKineticLaw(r)));
 		Port port = getPortByIdRef(r.getId());
 		if (port!=null) {
 			if (onPort) {
@@ -1538,7 +1538,7 @@ public class BioModel {
 			r.removeProduct(promoterId+"_mRNA");
 			sbml.getModel().removeSpecies(promoterId+"_mRNA");
 		}
-		createProductionKineticLaw(r);
+		r.getKineticLaw().setMath(SBMLutilities.myParseFormula(createProductionKineticLaw(r)));
 		return r;
 	}
 	
@@ -1782,7 +1782,7 @@ public class BioModel {
 			}
 			p.setValue(Kr[1]);
 		} 
-		createProductionKineticLaw(r);
+		r.getKineticLaw().setMath(SBMLutilities.myParseFormula(createProductionKineticLaw(r)));
 	}
 	
 	public Reaction addActivatorToProductionReaction(String promoterId,String activatorId,String productId,String npStr,
@@ -1863,7 +1863,7 @@ public class BioModel {
 			Parameter gp = model.getParameter(GlobalConstants.COOPERATIVITY_STRING);
 			reactant.setStoichiometry(gp.getValue());
 		}
-		createComplexKineticLaw(r);
+		r.getKineticLaw().setMath(SBMLutilities.myParseFormula(createComplexKineticLaw(r)));
 	}
 
 	public Reaction addReactantToComplexReaction(String reactantId,String productId,String KcStr,String CoopStr) {
@@ -2190,7 +2190,7 @@ public class BioModel {
 			p.setId(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING);
 			p.setValue(Kao[1]);
 		} 
-		createProductionKineticLaw(r);
+		r.getKineticLaw().setMath(SBMLutilities.myParseFormula(createProductionKineticLaw(r)));
 		Port port = getPortByIdRef(r.getId());
 		if (port!=null) {
 			if (onPort) {
@@ -2209,7 +2209,7 @@ public class BioModel {
 		return r;
 	}
 
-	public static void createComplexKineticLaw(Reaction reaction) {
+	public static String createComplexKineticLaw(Reaction reaction) {
 		String kineticLaw;
 		kineticLaw = GlobalConstants.FORWARD_KCOMPLEX_STRING;
 		for (int i=0;i<reaction.getNumReactants();i++) {
@@ -2222,11 +2222,10 @@ public class BioModel {
 			}
 		}
 		kineticLaw += "-" + GlobalConstants.REVERSE_KCOMPLEX_STRING + "*" + reaction.getProduct(0).getSpecies();
-		reaction.getKineticLaw().setMath(SBMLutilities.myParseFormula(kineticLaw));
-		
+		return kineticLaw;
 	}
 
-	public static void createProductionKineticLaw(Reaction reaction) {
+	public static String createProductionKineticLaw(Reaction reaction) {
 		String kineticLaw;
 		boolean activated = false;
 		String promoter = "";
@@ -2320,7 +2319,7 @@ public class BioModel {
 			}
 			kineticLaw += ")";
 		}
-		reaction.getKineticLaw().setMath(SBMLutilities.myParseFormula(kineticLaw));
+		return kineticLaw;
  	}
 	
 	/**
@@ -2809,7 +2808,7 @@ public class BioModel {
 						param.setId(GlobalConstants.COOPERATIVITY_STRING + "_" + newId);
 					}
 				}
-				createComplexKineticLaw(reaction);
+				reaction.getKineticLaw().setMath(SBMLutilities.myParseFormula(createComplexKineticLaw(reaction)));
 			} else if (isProductionReaction(reaction)) {
 				KineticLaw k = reaction.getKineticLaw();
 				for (int j=0;j<k.getNumLocalParameters();j++) {
@@ -4890,7 +4889,7 @@ public class BioModel {
 			if (reaction.getNumReactants()==0) {
 				sbml.getModel().removeReaction(reaction.getId());
 			} else {
-				createComplexKineticLaw(reaction);
+				reaction.getKineticLaw().setMath(SBMLutilities.myParseFormula(createComplexKineticLaw(reaction)));
 			}
 		} else if (name.contains(",")) {
 			Reaction reaction = getProductionReaction(name.substring(name.indexOf(",")+1));
@@ -4918,7 +4917,7 @@ public class BioModel {
 					sbml.getModel().removeSpecies(name.substring(name.indexOf(",")+1));
 					sbml.getModel().removeReaction(reaction.getId());
 				} else {
-					createProductionKineticLaw(reaction);
+					reaction.getKineticLaw().setMath(SBMLutilities.myParseFormula(createProductionKineticLaw(reaction)));
 				}
 			}
 		} else if (name.contains("|")) {
