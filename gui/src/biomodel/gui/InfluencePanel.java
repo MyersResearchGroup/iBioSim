@@ -19,6 +19,7 @@ import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.SpeciesReference;
 
 import biomodel.annotation.AnnotationUtility;
+import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 import biomodel.util.Utility;
@@ -434,7 +435,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				} 
 			} 
 			if (promoterId != null) {
-				BioModel.createProductionKineticLaw(production);
+				production.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createProductionKineticLaw(production)));
 			} else {
 				String KcStr = null;
 				if (production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING)!=null &&

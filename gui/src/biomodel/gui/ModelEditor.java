@@ -1870,7 +1870,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			refGCM = new BioModel(path);
 			refGCM.load(path + separator + refFile);
 		}
-		PromoterPanel panel = new PromoterPanel(id, biomodel, paramsOnly, refGCM, this);	
+		PromoterPanel panel = new PromoterPanel(id, biomodel, species, paramsOnly, refGCM, this);	
 		
 		if (paramsOnly) {
 			String updates = panel.updates();
