@@ -159,9 +159,6 @@ public class SimulatorSSACR extends Simulator {
 //				printTime += printInterval;	
 //			}
 //			
-//			//update progress bar
-//			progress.setValue((int)((currentTime / timeLimit) * 100.0));
-			
 			//STEP 1: generate random numbers
 			
 			//long step1Initial = System.nanoTime();
@@ -215,8 +212,11 @@ public class SimulatorSSACR extends Simulator {
 				
 				printTime += printInterval;
 				running.setTitle("Progress (" + (int)((currentTime / timeLimit) * 100.0) + "%)");
+				//update progress bar
+				progress.setValue((int)((currentTime / timeLimit) * 100.0));
+				
 			}
-			if (currentTime == nextEventTime) {			 
+			if (currentTime == nextReactionTime) {			 
 
 				//STEP 2B: calculate rate rules using this time step
 				HashSet<String> affectedVariables = performRateRules(delta_t);

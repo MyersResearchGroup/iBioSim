@@ -114,10 +114,6 @@ public class SimulatorSSADirect extends Simulator {
 //				printTime += printInterval;
 //			}			
 			
-			//update progress bar			
-			//progress.setValue((int)((currentTime / timeLimit) * 100.0));
-			
-			
 			//STEP 1: generate random numbers
 			
 			//long step1Initial = System.nanoTime();
@@ -168,8 +164,11 @@ public class SimulatorSSADirect extends Simulator {
 				
 				printTime += printInterval;
 				running.setTitle("Progress (" + (int)((currentTime / timeLimit) * 100.0) + "%)");
+				//update progress bar			
+				progress.setValue((int)((currentTime / timeLimit) * 100.0));
+				
 			}
-			if (currentTime == nextEventTime) {			 
+			if (currentTime == nextReactionTime) {			 
 			
 			//long step3Initial = System.nanoTime();
 				String selectedReactionID = selectReaction(r2);
