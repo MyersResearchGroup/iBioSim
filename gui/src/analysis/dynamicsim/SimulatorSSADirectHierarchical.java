@@ -102,10 +102,6 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 //				printTime += printInterval;
 //			}			
 			
-			//update progress bar			
-			//progress.setValue((int)((currentTime / timeLimit) * 100.0));
-			
-			
 			//STEP 1: generate random numbers
 			
 			double r1 = randomNumberGenerator.nextDouble();
@@ -143,8 +139,11 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 				
 				printTime += printInterval;
 				running.setTitle("Progress (" + (int)((currentTime / timeLimit) * 100.0) + "%)");
+				//update progress bar			
+				progress.setValue((int)((currentTime / timeLimit) * 100.0));
+				
 			}
-			if (currentTime == nextEventTime) {
+			if (currentTime == nextReactionTime) {
 			//STEP 3: select a reaction
 
 				String selectedReactionID = selectReaction(r2);
