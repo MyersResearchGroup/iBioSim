@@ -78,9 +78,39 @@ public class UpdateContinuous {
 	
 	
 	// The value.
-	private IntervalPair value;
-
-
+	private IntervalPair _value;
+	
+	
+	/**
+	 * Creates an UpdateContinuous object that has defualt values of false and null.
+	 */
+	public UpdateContinuous(){
+		_oldZero = false;
+		_newZero = false;
+		_newValue = false;
+		_value = null;
+		_lcrPair = null;
+	}
+	
+	/**
+	 * Creates a new UpdateContinuous object with the given information for a given
+	 * continuous variable.
+	 * @param oldZero True if the previous rate zero; false otherwise.
+	 * @param newZero True if the new rate is zero; false otherwise.
+	 * @param newValue True if the a value assignment has been made; false otherwise
+	 * @param value The range of continuous values.
+	 * @param lcrPair An LPNContAndRate pairing that has the reference information
+	 * for the continuous variable as well as the range of rates.
+	 */
+	public UpdateContinuous(boolean oldZero, boolean newZero, boolean newValue,
+			IntervalPair value, LPNContAndRate lcrPair){
+		_oldZero = oldZero;
+		_newZero = newZero;
+		_newValue = newValue;
+		_value = value;
+		_lcrPair = lcrPair;
+	}
+	
 	// Getters and setters for the member variables.
 	
 	/**
@@ -171,7 +201,7 @@ public class UpdateContinuous {
 	 * @return An IntervalPair that contains the upper and lower bounds for the value.
 	 */
 	public IntervalPair getValue() {
-		return value;
+		return _value;
 	}
 
 
@@ -182,7 +212,7 @@ public class UpdateContinuous {
 	 * value.
 	 */
 	public void setValue(IntervalPair value) {
-		this.value = value;
+		this._value = value;
 	}
 
 	
@@ -215,7 +245,7 @@ public class UpdateContinuous {
 		result = prime * result + (_newValue ? 1231 : 1237);
 		result = prime * result + (_newZero ? 1231 : 1237);
 		result = prime * result + (_oldZero ? 1231 : 1237);
-		result = prime * result + ((value == null) ? 0 : value.hashCode());
+		result = prime * result + ((_value == null) ? 0 : _value.hashCode());
 		return result;
 	}
 
@@ -240,10 +270,10 @@ public class UpdateContinuous {
 			return false;
 		if (_oldZero != other._oldZero)
 			return false;
-		if (value == null) {
-			if (other.value != null)
+		if (_value == null) {
+			if (other._value != null)
 				return false;
-		} else if (!value.equals(other.value))
+		} else if (!_value.equals(other._value))
 			return false;
 		return true;
 	}
