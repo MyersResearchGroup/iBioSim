@@ -127,10 +127,6 @@ public class SimulatorSSACR extends Simulator {
 				
 				HashSet<String> affectedReactionSet = fireEvents(noAssignmentRulesFlag, noConstraintsFlag);
 
-				if (variableToIsInAssignmentRuleMap != null && 
-						variableToIsInAssignmentRuleMap.containsKey("time"))				
-					performAssignmentRules(variableToAffectedAssignmentRuleSetMap.get("time"));
-				
 				//recalculate propensties/groups for affected reactions
 				if (affectedReactionSet.size() > 0) {
 					

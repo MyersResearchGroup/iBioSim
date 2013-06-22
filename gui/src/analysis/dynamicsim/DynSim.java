@@ -112,7 +112,7 @@ public class DynSim {
 			
 			if (selectedSimulator.contains("SSA-CR"))
 				simulator = new DynamicSimulation("cr");
-			else if (selectedSimulator.contains("Direct"))
+			else if (selectedSimulator.contains("SSA-Direct"))
 				simulator = new DynamicSimulation("direct");
 			else
 				simulator = new DynamicSimulation("rk");
