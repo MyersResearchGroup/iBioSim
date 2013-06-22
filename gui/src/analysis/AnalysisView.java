@@ -1165,7 +1165,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				bifurcation.setEnabled(false);
 				bifurcationLabel.setEnabled(false);
 			}
-			else if (((String) simulators.getSelectedItem()).equals("SSA-Direct (Java)")) {
+			else if (((String) simulators.getSelectedItem()).equals("SSA-Direct")) {
 				description.setText("SSA-Direct Method (Java)");
 				minStep.setEnabled(true);
 				minStepLabel.setEnabled(true);
@@ -1183,8 +1183,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				bifurcation.setEnabled(false);
 				bifurcationLabel.setEnabled(false);
 			}
-			else if (((String) simulators.getSelectedItem()).equals("rkf45 (Java)")) {
-				description.setText("Runge-Kutta-Fehlberg Method (Java)");
+			else if (((String) simulators.getSelectedItem()).equals("Runge-Kutta-Fehlberg")) {
+				description.setText("Runge-Kutta-Fehlberg Method (java)");
 				minStep.setEnabled(true);
 				minStepLabel.setEnabled(true);
 				step.setEnabled(true);
@@ -1219,8 +1219,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				bifurcation.setEnabled(false);
 				bifurcationLabel.setEnabled(false);
 			}
-			else if (((String) simulators.getSelectedItem()).contains("SSA-Hierarchical (Java)")) {
-				description.setText("SSA-Direct Method on Hierarchical Models");
+			else if (((String) simulators.getSelectedItem()).contains("SSA-Hierarchical")) {
+				description.setText("SSA-Direct Method on Hierarchical Models (java)");
 				minStep.setEnabled(true);
 				minStepLabel.setEnabled(true);
 				step.setEnabled(true);
@@ -1238,7 +1238,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				bifurcationLabel.setEnabled(false);
 			}
 			else if (((String) simulators.getSelectedItem()).contains("interactive")) {
-				description.setText("Interactive SSA-Direct Method");
+				description.setText("Interactive SSA-Direct Method (java)");
 				minStep.setEnabled(true);
 				minStepLabel.setEnabled(true);
 				step.setEnabled(true);
@@ -2726,7 +2726,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				return new Algorithm(GlobalConstants.KISAO_RUNGE_KUTTA_PRINCE_DORMAND);
 			}
 			else if (((String) simulators.getSelectedItem()).contains("rkf45") ||
-					((String) simulators.getSelectedItem()).contains("rkf45 (Java)")) {
+					((String) simulators.getSelectedItem()).contains("Runge-Kutta-Fehlberg")) {
 				return new Algorithm(GlobalConstants.KISAO_RUNGE_KUTTA_FEHLBERG);
 			}
 		} else if (monteCarlo.isEnabled()) {
@@ -2764,7 +2764,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			ODE.setEnabled(true);
 			// check annotation
 			simulators.setSelectedItem("rkf45");
-			simulators.setSelectedItem("rkf45 (Java)");
+			simulators.setSelectedItem("Runge-Kutta-Fehlberg");
 		} else if (algorithm.getKisaoID().equals(GlobalConstants.KISAO_GILLESPIE_DIRECT)) {
 			monteCarlo.setEnabled(true);
 			simulators.setSelectedItem("gillespie");

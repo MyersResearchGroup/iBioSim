@@ -270,7 +270,8 @@ public class Button_Enabling {
 			description.setEnabled(true);
 			simulators.removeAllItems();
 			simulators.addItem("gillespie");
-			simulators.addItem("SSA-Direct (Java)");
+			simulators.addItem("SSA-Hierarchical");
+			simulators.addItem("SSA-Direct");
 			simulators.addItem("SSA-CR");
 			simulators.addItem("iSSA");
 			simulators.addItem("interactive");
@@ -352,7 +353,7 @@ public class Button_Enabling {
 		simulators.addItem("rk4imp");
 		simulators.addItem("rk8pd");
 		simulators.addItem("rkf45");
-		simulators.addItem("rkf45 (Java)");
+		simulators.addItem("Runge-Kutta-Fehlberg");
 		simulators.setSelectedItem("rkf45");
 		ArrayList<String> getLists = new ArrayList<String>();
 		getLists.add("kinetic-law-constants-simplifier");
@@ -393,8 +394,8 @@ public class Button_Enabling {
 		description.setEnabled(true);
 		simulators.removeAllItems();
 		simulators.addItem("gillespie");
-		simulators.addItem("SSA-Hierarchical (Java)");
-		simulators.addItem("SSA-Direct (Java)");
+		simulators.addItem("SSA-Hierarchical");
+		simulators.addItem("SSA-Direct");
 		simulators.addItem("SSA-CR");
 		simulators.addItem("iSSA");
 		simulators.addItem("interactive");

@@ -719,10 +719,10 @@ public class EditPreferences {
 		type.setSelectedItem(biosimrc.get("biosim.sim.type", ""));
 
 		if (type.getSelectedItem().equals("ODE")) {
-			choices = new String[] { "euler", "gear1", "gear2", "rk4imp", "rk8pd", "rkf45", "rkf45 (Java)" };
+			choices = new String[] { "euler", "gear1", "gear2", "rk4imp", "rk8pd", "rkf45", "Runge-Kutta-Fehlberg" };
 		}
 		else if (type.getSelectedItem().equals("Monte Carlo")) {
-			choices = new String[] { "gillespie", "SSA-Direct (Java)", "SSA-CR", "iSSA", "interactive", "emc-sim", "bunker", "nmc"};
+			choices = new String[] { "gillespie", "SSA-Hierarchical", "SSA-Direct", "SSA-CR", "iSSA", "interactive", "emc-sim", "bunker", "nmc"};
 		}
 		else if (type.getSelectedItem().equals("Markov")) {
 			choices = new String[] { "steady-state-markov-chain-analysis", "transient-markov-chain-analysis", "reachability-analysis", "atacs",
@@ -783,7 +783,7 @@ public class EditPreferences {
 					sim.addItem("rk4imp");
 					sim.addItem("rk8pd");
 					sim.addItem("rkf45");
-					sim.addItem("rkf45 (Java)");
+					sim.addItem("Runge-Kutta-Fehlberg");
 					sim.setSelectedIndex(5);
 					sim.setSelectedItem(o);
 				}
@@ -791,7 +791,8 @@ public class EditPreferences {
 					Object o = sim.getSelectedItem();
 					sim.removeAllItems();
 					sim.addItem("gillespie");
-					sim.addItem("SSA-Direct (Java)");
+					sim.addItem("SSA-Hierarchical");
+					sim.addItem("SSA-Direct");
 					sim.addItem("SSA-CR");
 					sim.addItem("interactive");
 					sim.addItem("iSSA");
