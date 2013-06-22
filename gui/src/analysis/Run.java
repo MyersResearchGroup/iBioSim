@@ -1282,7 +1282,7 @@ public class Run implements ActionListener {
 						logFile.close();
 						return exitValue;
 					}
-					else if (sim.equals("SSA-Direct (Java)")) {
+					else if (sim.equals("SSA-Direct")) {
 						
 						double stoichAmpValue = 
 							Double.parseDouble(properties.getProperty(
@@ -1304,7 +1304,7 @@ public class Run implements ActionListener {
 						logFile.close();
 						return exitValue;
 					}
-				else if (sim.equals("SSA-Hierarchical (Java)")) {
+				else if (sim.equals("SSA-Hierarchical")) {
 						
 						double stoichAmpValue = 
 							Double.parseDouble(properties.getProperty(
@@ -1325,7 +1325,7 @@ public class Run implements ActionListener {
 						new File(directory + separator + "running").delete();
 						return exitValue;
 					}
-					else if (sim.equals("rkf45 (Java)")) {
+					else if (sim.equals("Runge-Kutta-Fehlberg")) {
 						
 						double stoichAmpValue = 
 							Double.parseDouble(properties.getProperty(
