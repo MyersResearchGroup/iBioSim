@@ -146,14 +146,6 @@ public abstract class HierarchicalSimulator {
 	/**
 	 * does lots of initialization
 	 * 
-	 * @param SBMLFileName
-	 * @param outputDirectory
-	 * @param timeLimit
-	 * @param maxTimeStep
-	 * @param randomSeed
-	 * @param progress
-	 * @param printInterval
-	 * @param initializationTime
 	 * @throws IOException
 	 * @throws XMLStreamException
 	 */
@@ -318,8 +310,16 @@ public abstract class HierarchicalSimulator {
 
 		for (String noConstantParam : topmodel.nonconstantParameterIDSet)
 		{
-			bufferedTSDWriter.write(commaSpace + topmodel.variableToValueMap.get(noConstantParam));
-			commaSpace = ", ";
+			if(replacements.containsKey(noConstantParam))
+			{
+				bufferedTSDWriter.write(commaSpace + replacements.get(noConstantParam));
+				commaSpace = ", ";
+			}
+			else
+			{
+				bufferedTSDWriter.write(commaSpace + topmodel.variableToValueMap.get(noConstantParam));
+				commaSpace = ", ";
+			}
 		}
 
 		for (ModelState models : submodels)
@@ -342,8 +342,16 @@ public abstract class HierarchicalSimulator {
 
 			for (String noConstantParam : models.nonconstantParameterIDSet)
 			{
-				bufferedTSDWriter.write(commaSpace + models.variableToValueMap.get(noConstantParam));
-				commaSpace = ", ";
+				if(replacements.containsKey(noConstantParam) && this.replacementSubModels.get(noConstantParam).contains(models.ID))
+				{
+					bufferedTSDWriter.write(commaSpace + replacements.get(noConstantParam));
+					commaSpace = ", ";
+				}
+				else
+				{
+					bufferedTSDWriter.write(commaSpace + models.variableToValueMap.get(noConstantParam));
+					commaSpace = ", ";
+				}
 			}
 		}
 
@@ -454,6 +462,48 @@ public abstract class HierarchicalSimulator {
 				replacementSubModels.get(s).add(submodel);
 				replacements.put(s, temp.model.getModel().getSpecies(i).getInitialAmount());
 				initReplacementState.put(s, temp.model.getModel().getSpecies(i).getInitialAmount());
+
+
+			}
+		}
+		
+		for (long i = 0; i < topmodel.model.getNumParameters(); i++) {
+			Parameter parameter = sbml.getModel().getParameter(i);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)parameter.getPlugin("comp");
+
+			String s = parameter.getId();
+			if(sbmlSBase.getListOfReplacedElements() != null)
+			{
+				replacements.put(s, parameter.getValue());	
+				initReplacementState.put(s, parameter.getValue());
+
+				if(!replacementSubModels.containsKey(s))
+					replacementSubModels.put(s, new HashSet<String>());
+
+				replacementSubModels.get(s).add("topmodel");
+
+				for(long j = 0; j < sbmlSBase.getListOfReplacedElements().size(); j++)
+				{
+					replacementSubModels.get(s).add(sbmlSBase.getReplacedElement(j).getSubmodelRef());
+				}
+			}
+
+
+			if(sbmlSBase.isSetReplacedBy())
+			{
+				Replacing replacement = sbmlSBase.getReplacedBy();
+				String submodel = replacement.getSubmodelRef();
+				if(!replacementSubModels.containsKey(s))
+					replacementSubModels.put(s, new HashSet<String>());
+
+				replacementSubModels.get(s).add("topmodel");
+
+				int index = IDtoIndex.get(submodel);
+				ModelState temp = getModel(index);
+
+				replacementSubModels.get(s).add(submodel);
+				replacements.put(s, temp.model.getModel().getParameter(i).getValue());
+				initReplacementState.put(s, temp.model.getModel().getParameter(i).getValue());
 
 
 			}
@@ -1547,7 +1597,7 @@ public abstract class HierarchicalSimulator {
 		if (modelstate.speciesIDSet.contains(speciesID))
 			return;
 	
-		if (modelstate.model.getNumConstraints() > 0)
+		if (modelstate.numConstraints > 0)
 			modelstate.variableToIsInConstraintMap.put(speciesID, false);
 	
 		if (species.isSetInitialAmount())
@@ -1557,7 +1607,23 @@ public abstract class HierarchicalSimulator {
 			else
 				modelstate.variableToValueMap.put(speciesID, species.getInitialAmount());
 		}
+		
+		else if (species.isSetInitialConcentration()) 
+		{
+			
+			modelstate.variableToValueMap.put(speciesID, species.getInitialConcentration() 
+					* modelstate.model.getCompartment(species.getCompartment()).getSize());
+		}
 	
+		
+		if (species.getHasOnlySubstanceUnits() == false) {
+			
+			modelstate.speciesToCompartmentSizeMap.put(speciesID, modelstate.model.getCompartment(species.getCompartment()).getSize());
+			modelstate.speciesToCompartmentNameMap.put(speciesID, species.getCompartment());
+			
+			if (Double.isNaN(modelstate.model.getCompartment(species.getCompartment()).getSize()))
+				modelstate.speciesToCompartmentSizeMap.put(speciesID, 1.0);
+		}	
 		if (modelstate.numRules > 0)
 			modelstate.variableToIsInAssignmentRuleMap.put(speciesID, false);
 	
@@ -1703,6 +1769,28 @@ public abstract class HierarchicalSimulator {
 			setupSingleParameter(modelstate, parameter);
 		}
 	
+		
+		//add compartment sizes in
+		size = modelstate.model.getNumCompartments();
+		for (int i = 0; i < size; i++) 
+		{
+			Compartment compartment = modelstate.model.getCompartment(i);
+			String compartmentID = compartment.getId();
+			
+			modelstate.compartmentIDSet.add(compartmentID);
+			modelstate.variableToValueMap.put(compartmentID, compartment.getSize());
+			
+			if (Double.isNaN(compartment.getSize()))
+				modelstate.variableToValueMap.put(compartmentID, 1.0);
+			
+			modelstate.variableToIsConstantMap.put(compartmentID, compartment.getConstant());
+			
+			if (modelstate.numRules > 0)
+				modelstate.variableToIsInAssignmentRuleMap.put(compartmentID, false);
+			
+			if (modelstate.numConstraints > 0)
+				modelstate.variableToIsInConstraintMap.put(compartmentID, false);
+		}
 	}
 
 	/**
@@ -1916,10 +2004,21 @@ public abstract class HierarchicalSimulator {
 				InitialAssignment initialAssignment = modelstate.model.getInitialAssignment(j);
 				String variable = initialAssignment.getId().replace("_negative_","-");				
 				initialAssignment.setMath(inlineFormula(modelstate, initialAssignment.getMath()));
+				
+				if (modelstate.speciesToHasOnlySubstanceUnitsMap.containsKey(variable) &&
+						modelstate.speciesToHasOnlySubstanceUnitsMap.get(variable) == false) {
+					
+					modelstate.variableToValueMap.put(variable, 
+							evaluateExpressionRecursive(modelstate, initialAssignment.getMath()) * 
+							modelstate.variableToValueMap.get(modelstate.speciesToCompartmentNameMap.get(variable)));
+				}
+				else {
 				if(replacements.containsKey(variable) && this.replacementSubModels.get(variable).contains(modelstate.ID))
 					modelstate.variableToValueMap.put(variable, replacements.get(variable));
 				else
 					modelstate.variableToValueMap.put(variable, evaluateExpressionRecursive(modelstate, initialAssignment.getMath()));
+				}
+				
 				affectedVariables.add(variable);
 			}			
 		}
@@ -2243,6 +2342,10 @@ public abstract class HierarchicalSimulator {
 		protected LinkedHashSet<String> nonconstantParameterIDSet;
 		protected HashMap<String, HashSet<StringStringPair> > reactionToNonconstantStoichiometriesSetMap = null;
 
+		
+		protected TObjectDoubleHashMap<String> speciesToCompartmentSizeMap = null;
+		protected LinkedHashSet<String> compartmentIDSet = new LinkedHashSet<String>();
+		
 		public ModelState(Model bioModel, boolean isCopy, String submodelID)
 		{
 			this.model = bioModel;
@@ -2261,6 +2364,7 @@ public abstract class HierarchicalSimulator {
 			speciesToIsBoundaryConditionMap = new HashMap<String, Boolean>((int) numSpecies);
 			variableToIsConstantMap = new HashMap<String, Boolean>((int) (numSpecies + numParameters));
 			speciesToHasOnlySubstanceUnitsMap = new HashMap<String, Boolean>((int) numSpecies);
+			speciesToCompartmentSizeMap = new TObjectDoubleHashMap<String>((int) numSpecies);
 			speciesToCompartmentNameMap = new HashMap<String, String>((int) numSpecies);
 			speciesIDSet = new LinkedHashSet<String>((int) numSpecies);
 			variableToValueMap = new TObjectDoubleHashMap<String>((int) numSpecies + (int) numParameters);
