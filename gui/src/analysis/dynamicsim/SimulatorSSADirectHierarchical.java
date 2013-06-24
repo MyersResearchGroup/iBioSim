@@ -21,15 +21,15 @@ import main.Gui;
 import main.util.MutableBoolean;
 
 public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
-	
+
 	private static Long initializationTime = new Long(0);
 	private int submodelIndex = -1;
 
-	
+
 	public SimulatorSSADirectHierarchical(String SBMLFileName, String outputDirectory, double timeLimit, 
 			double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, 
 			double stoichAmpValue, JFrame running, String[] interestingSpecies, String quantityType) 
-	throws IOException, XMLStreamException {
+					throws IOException, XMLStreamException {
 
 		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed,
 				progress, printInterval, initializationTime, stoichAmpValue, running, interestingSpecies, quantityType);
@@ -41,80 +41,80 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		} catch (XMLStreamException e2) {
 			e2.printStackTrace();
 		}
-		
+
 	}
 
 	public void simulate() {
-		
+
 		if (sbmlHasErrorsFlag)
 			return;
-		
+
 		long initTime2 = System.nanoTime();
-		
+
 		initializationTime += System.nanoTime() - initTime2;
-		
+
 		//SIMULATION LOOP
 		currentTime = 0.0;
 		double printTime = printInterval;
-		
+
 		double nextEventTime = handleEvents();
-		
+
 		while (currentTime < timeLimit && !cancelFlag && constraintFlag) 
 		{
-			
+
 			//EVENT HANDLING
 			//trigger and/or fire events, etc.
 			if (topmodel.noEventsFlag == false) 
 			{
 				HashSet<String> affectedReactionSet = fireEvents(topmodel, topmodel.noRuleFlag, topmodel.noConstraintsFlag);				
-				
+
 				//recalculate propensties/groups for affected reactions
 				if (affectedReactionSet.size() > 0)
 					updatePropensities(affectedReactionSet, -1);
 			}
-			
+
 			for(int i = 0; i < numSubmodels; i++)
 			{
-					if (submodels[i].noEventsFlag == false) {
-						HashSet<String> affectedReactionSet = fireEvents(submodels[i], submodels[i].noRuleFlag, submodels[i].noConstraintsFlag);				
-						
+				if (submodels[i].noEventsFlag == false) {
+					HashSet<String> affectedReactionSet = fireEvents(submodels[i], submodels[i].noRuleFlag, submodels[i].noConstraintsFlag);				
+
 					//recalculate propensties/groups for affected reactions
 					if (affectedReactionSet.size() > 0)
-							updatePropensities(affectedReactionSet, i);
-					}
+						updatePropensities(affectedReactionSet, i);
+				}
 			}
-			
+
 			//TSD PRINTING
 			//print to TSD if the next print interval arrives
 			//this obviously prints the previous timestep's data
-//			if (currentTime >= printTime) {
-//				
-//				if (printTime < 0)
-//					printTime = 0.0;
-//					
-//				try {
-//					printToTSD(printTime);
-//					bufferedTSDWriter.write(",\n");
-//				} catch (IOException e) {
-//					e.printStackTrace();
-//				}
-//				
-//				printTime += printInterval;
-//			}			
-			
+			//			if (currentTime >= printTime) {
+			//				
+			//				if (printTime < 0)
+			//					printTime = 0.0;
+			//					
+			//				try {
+			//					printToTSD(printTime);
+			//					bufferedTSDWriter.write(",\n");
+			//				} catch (IOException e) {
+			//					e.printStackTrace();
+			//				}
+			//				
+			//				printTime += printInterval;
+			//			}			
+
 			//STEP 1: generate random numbers
-			
+
 			double r1 = randomNumberGenerator.nextDouble();
 			double r2 = randomNumberGenerator.nextDouble();
-			
-			
+
+
 			//STEP 2: calculate delta_t, the time till the next reaction execution
-			 
+
 			double totalPropensity = getTotalPropensity();
 			double delta_t = FastMath.log(1 / r1) / totalPropensity;
 			double nextReactionTime = currentTime + delta_t;
 			nextEventTime = handleEvents();
-	
+
 			if (nextReactionTime < nextEventTime && nextReactionTime < currentTime + maxTimeStep) {
 				currentTime = nextReactionTime;
 				// perform reaction
@@ -129,22 +129,22 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 				currentTime = timeLimit;
 			}
 			while (currentTime > printTime && printTime < timeLimit) {
-				
+
 				try {
 					printToTSD(printTime);
 					bufferedTSDWriter.write(",\n");
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				
+
 				printTime += printInterval;
 				running.setTitle("Progress (" + (int)((currentTime / timeLimit) * 100.0) + "%)");
 				//update progress bar			
 				progress.setValue((int)((currentTime / timeLimit) * 100.0));
-				
+
 			}
 			if (currentTime == nextReactionTime) {
-			//STEP 3: select a reaction
+				//STEP 3: select a reaction
 
 				String selectedReactionID = selectReaction(r2);
 
@@ -210,20 +210,20 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 			}
 			updateRules();
 
-				//update time for next iteration
-				//currentTime += delta_t;
+			//update time for next iteration
+			//currentTime += delta_t;
 
-			} //end simulation loop
+		} //end simulation loop
 
 		if (cancelFlag == false) {
-			
+
 			//print the final species counts
 			try {
 				printToTSD(printTime);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
+
 			try {
 				bufferedTSDWriter.write(')');
 				bufferedTSDWriter.flush();
@@ -233,8 +233,8 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 			}
 		}
 	}
-	
-		/**
+
+	/**
 	 * sets up data structures local to the SSA-Direct method
 	 * 
 	 * @param noEventsFlag
@@ -244,9 +244,9 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 	 * @throws XMLStreamException
 	 */
 	private void initialize(long randomSeed, int runNumber) 
-	throws IOException, XMLStreamException {	
-		
-		
+			throws IOException, XMLStreamException {	
+
+
 		setupSpecies(topmodel);
 		setupParameters(topmodel);	
 		setupReactions(topmodel);		
@@ -255,8 +255,8 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		setupInitialAssignments(topmodel);
 		setupRules(topmodel);
 		setupForOutput(randomSeed, runNumber);
-		
-		
+
+
 		for(ModelState model : submodels)
 		{
 			setupSpecies(model);
@@ -268,93 +268,93 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 			setupRules(model);
 			setupForOutput(randomSeed, runNumber);
 		}
-		
+
 		bufferedTSDWriter.write("(" + "\"" + "time" + "\"");
-		
+
 		for (String speciesID : topmodel.speciesIDSet) {				
 			bufferedTSDWriter.write(", \"" + speciesID + "\"");
 		}
 		for (String noConstantParam : topmodel.nonconstantParameterIDSet) 				
 			bufferedTSDWriter.write(", \"" + noConstantParam + "\"");
-		
+
 		for(ModelState model : submodels)
 		{
 			for (String speciesID : model.speciesIDSet) 				
-					bufferedTSDWriter.write(", \"" + speciesID + "_" + model.ID + "\"");
+				bufferedTSDWriter.write(", \"" + speciesID + "_" + model.ID + "\"");
 			for (String noConstantParam : model.nonconstantParameterIDSet) 				
 				bufferedTSDWriter.write(", \"" + noConstantParam + "_" + model.ID + "\"");
 		}
-		
-		
+
+
 		bufferedTSDWriter.write("),\n");
-		
+
 	}
-	
+
 	/**
 	 * updates the propensities of the reactions affected by the recently performed reaction
 	 * @param affectedReactionSet the set of reactions affected by the recently performed reaction
 	 */
 	private void updatePropensities(HashSet<String> affectedReactionSet, int index) {
-		
+
 		//loop through the affected reactions and update the propensities
 		for (String affectedReactionID : affectedReactionSet) {
-			
+
 			if(submodelIndex == -1)
 			{
 				HashSet<StringDoublePair> reactantStoichiometrySet = 
-				topmodel.reactionToReactantStoichiometrySetMap.get(affectedReactionID);
+						topmodel.reactionToReactantStoichiometrySetMap.get(affectedReactionID);
 				updatePropensities(topmodel, affectedReactionSet,affectedReactionID, reactantStoichiometrySet);
 			}
 			else
 			{
 				HashSet<StringDoublePair> reactantStoichiometrySet = 
-				submodels[index].reactionToReactantStoichiometrySetMap.get(affectedReactionID);
+						submodels[index].reactionToReactantStoichiometrySetMap.get(affectedReactionID);
 				updatePropensities(submodels[index], affectedReactionSet,affectedReactionID, reactantStoichiometrySet); 
 			}		
 		}
 	}
-	
+
 	/**
 	 * Helper method
 	 */
 	private void updatePropensities(ModelState model, HashSet<String> affectedReactionSet, String affectedReactionID, HashSet<StringDoublePair> reactantStoichiometrySet) 
 	{
 		boolean notEnoughMoleculesFlag = false; 
-		
+
 		//check for enough molecules for the reaction to occur
 		for (StringDoublePair speciesAndStoichiometry : reactantStoichiometrySet) {
-			
+
 			String speciesID = speciesAndStoichiometry.string;
 			double stoichiometry = speciesAndStoichiometry.doub;
-			
+
 			//if there aren't enough molecules to satisfy the stoichiometry
 			if (model.variableToValueMap.get(speciesID) < stoichiometry) {
 				notEnoughMoleculesFlag = true;
 				break;
 			}
 		}
-		
+
 		double newPropensity = 0.0;
-		
+
 		if (notEnoughMoleculesFlag == false) {
-			
+
 			newPropensity = evaluateExpressionRecursive(model, model.reactionToFormulaMap.get(affectedReactionID));
 			//newPropensity = CalculatePropensityIterative(affectedReactionID);
 		}
-		
+
 		double oldPropensity = model.reactionToPropensityMap.get(affectedReactionID);
-		
+
 		//add the difference of new v. old propensity to the total propensity
 		model.propensity += newPropensity - oldPropensity;
-		
+
 		//totalPropensity += newPropensity - oldPropensity;
-		
+
 		model.reactionToPropensityMap.put(affectedReactionID, newPropensity);
-		
-		
+
+
 	}	
-	
-	
+
+
 	/**
 	 * randomly selects a reaction to perform
 	 * 
@@ -362,20 +362,20 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 	 * @return the ID of the selected reaction
 	 */
 	private String selectReaction(double r2) {
-		
+
 		double randomPropensity = r2 * (getTotalPropensity());
 		double runningTotalReactionsPropensity = 0.0;
 		String selectedReaction = "";
-		
+
 		//finds the reaction that the random propensity lies in
 		//it keeps adding the next reaction's propensity to a running total
 		//until the running total is greater than the random propensity
-		
-		
+
+
 		for (String currentReaction : topmodel.reactionToPropensityMap.keySet()) {
-			
+
 			runningTotalReactionsPropensity += topmodel.reactionToPropensityMap.get(currentReaction);
-			
+
 			if (randomPropensity < runningTotalReactionsPropensity) 
 			{
 				selectedReaction = currentReaction;
@@ -384,25 +384,25 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 				return selectedReaction;
 			}
 		}
-		
+
 		for(int i = 0; i < numSubmodels; i ++)
 		{
-			
-		for (String currentReaction : submodels[i].reactionToPropensityMap.keySet()) 
-		{
-			runningTotalReactionsPropensity += submodels[i].reactionToPropensityMap.get(currentReaction);
-			
-			if (randomPropensity < runningTotalReactionsPropensity) 
+
+			for (String currentReaction : submodels[i].reactionToPropensityMap.keySet()) 
 			{
-				selectedReaction = currentReaction;
-				// keep track of submodel index
-				submodelIndex = i;
-				return selectedReaction;
+				runningTotalReactionsPropensity += submodels[i].reactionToPropensityMap.get(currentReaction);
+
+				if (randomPropensity < runningTotalReactionsPropensity) 
+				{
+					selectedReaction = currentReaction;
+					// keep track of submodel index
+					submodelIndex = i;
+					return selectedReaction;
+				}
 			}
 		}
-	}
-		
-		
+
+
 		return selectedReaction;		
 	}
 
@@ -410,33 +410,33 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 	 * cancels the current run
 	 */
 	protected void cancel() {
-	
+
 		cancelFlag = true;
 	}
-	
+
 	/**
 	 * clears data structures for new run
 	 */
 	protected void clear() {
 		topmodel.clear();
-		
+
 		for(int i = 0; i < this.numSubmodels; i++)
 			submodels[i].clear();
-		
+
 		for(String key : replacements.keySet())
 			replacements.put(key, initReplacementState.get(key));
-		
-		
+
+
 
 		/*
 		SBMLReader reader = new SBMLReader();
 		SBMLDocument document = reader.readSBML(SBMLFileName);
-		
+
 		topmodel = new ModelState(document.getModel(), true, "");
-		
+
 		setupSubmodels(document);
 		getComponentPortMap(document);
-	*/
+		 */
 	}
 
 	protected double handleEvents()
@@ -447,19 +447,21 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 			handleEvents(topmodel, topmodel.noRuleFlag, topmodel.noConstraintsFlag);
 			//step to the next event fire time if it comes before the next time step
 			if (!topmodel.triggeredEventQueue.isEmpty() && topmodel.triggeredEventQueue.peek().fireTime <= nextEventTime)
-				nextEventTime = topmodel.triggeredEventQueue.peek().fireTime;
+				if(topmodel.triggeredEventQueue.peek().fireTime < nextEventTime)
+					nextEventTime = topmodel.triggeredEventQueue.peek().fireTime;
 		}
-		
+
 		for(int i = 0; i < numSubmodels; i++)
 			if (submodels[i].noEventsFlag == false){
 				handleEvents(submodels[i], submodels[i].noRuleFlag, submodels[i].noConstraintsFlag);
 				//step to the next event fire time if it comes before the next time step
 				if (!submodels[i].triggeredEventQueue.isEmpty() && submodels[i].triggeredEventQueue.peek().fireTime <= nextEventTime)
-					nextEventTime = submodels[i].triggeredEventQueue.peek().fireTime;
+					if(submodels[i].triggeredEventQueue.peek().fireTime < nextEventTime)
+						nextEventTime = submodels[i].triggeredEventQueue.peek().fireTime;
 			}
 		return nextEventTime;
 	}
-	
+
 	/**
 	 * does minimized initalization process to prepare for a new run
 	 */
@@ -473,26 +475,26 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		}
 		setupParameters(topmodel);		
 		setupReactions(topmodel);		
-		
+
 		setupForOutput(0, newRun);
-		
+
 		for(ModelState model : submodels)
 		{
-		try {
-			setupSpecies(model);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		setupParameters(model);	
-		setupReactions(model);		
-		
-		setupForOutput(0, newRun);
-		
-		}
-		
+			try {
+				setupSpecies(model);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			setupParameters(model);	
+			setupReactions(model);		
 
-		
+			setupForOutput(0, newRun);
+
+		}
+
+
+
 		for (String speciesID : topmodel.speciesIDSet) {				
 			try {
 				bufferedTSDWriter.write(", \"" + speciesID + "\"");
@@ -501,28 +503,28 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 				e.printStackTrace();
 			}
 		}
-		
+
 		for(ModelState model : submodels)
 		{
 			for (String speciesID : model.speciesIDSet) {				
-					try {
-						bufferedTSDWriter.write(", \"" + speciesID + "_" + model.ID + "\"");
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+				try {
+					bufferedTSDWriter.write(", \"" + speciesID + "_" + model.ID + "\"");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
-			
+
 		}
-		
-		
+
+
 		try {
 			bufferedTSDWriter.write("),\n");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}	
-		
+
 	}
-	
+
 }
