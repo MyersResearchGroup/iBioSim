@@ -132,7 +132,7 @@ public class State extends PlatuObj {
     }
     
     public String getLabel() {
-    	return null;
+    	return "S" + getIndex();
     }
     
     /**
@@ -550,5 +550,13 @@ public class State extends PlatuObj {
 	 */
 	public StateGraph getStateGraph() {
 		return this.getLpn().getStateGraph();
+	}
+
+	public Set<Transition> getOutgoingTranSet() {
+		return this.getStateGraph().getNextStateMap().get(this).keySet();		
+	}
+
+	public State getNextLocalState(Transition outTran) {
+		return this.getStateGraph().getNextState(this, outTran);		
 	}
  }
