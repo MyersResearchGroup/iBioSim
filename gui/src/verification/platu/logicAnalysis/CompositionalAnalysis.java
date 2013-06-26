@@ -2520,7 +2520,7 @@ public class CompositionalAnalysis {
 		}
 		System.out.println();
 		int numStates = 0;
-		int numTrans = 0;
+//		int numTrans = 0;
 		int numConstr = 0;
 		for (StateGraph sg : sgArray) {
 			sg.genConstraints();
@@ -2534,7 +2534,7 @@ public class CompositionalAnalysis {
 		}
 		
 		System.out.println("\n   --> # states: " + numStates);
-		System.out.println("   --> # transitions: " + numTrans);
+//		System.out.println("   --> # transitions: " + numTrans);
 		System.out.println("   --> # constraints: " + numConstr);
 		System.out.println("   --> # iterations: " + iter);
 		System.out.println("\n   --> Peak used memory: " + peakUsed/1000000F + " MB");
