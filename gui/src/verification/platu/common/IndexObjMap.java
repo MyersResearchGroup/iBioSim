@@ -33,6 +33,13 @@ public class IndexObjMap<T extends PlatuObj> {
 //		}
 		
 		int idx = this.idx2ObjTbl.size();
+		try {
+			if (idx > 2147483647) // Index is greater than the maximum number that int can represents. 
+				throw new Exception();
+		} catch (Exception e) {
+			System.out.println("Integer overflow.");
+			e.printStackTrace();
+		}
 		obj.setIndex(idx);
 		this.idx2ObjTbl.put(idx, obj);
 		return obj;
