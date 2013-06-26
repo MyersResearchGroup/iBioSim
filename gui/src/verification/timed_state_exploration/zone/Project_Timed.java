@@ -177,7 +177,8 @@ public class Project_Timed extends Project{
 		}
 		
 		Analysis dfsStateExploration = new Analysis(sgArray);
-		StateGraph[] stateGraphArray = dfsStateExploration.search_dfs(sgArray, initStateArray);
+		//StateGraph[] stateGraphArray = dfsStateExploration.search_dfs(sgArray, initStateArray);
+		dfsStateExploration.search_dfs(sgArray, initStateArray);
 		
 		long elapsedTimeMillis = System.currentTimeMillis() - start; 
 		float elapsedTimeSec = elapsedTimeMillis/1000F;
