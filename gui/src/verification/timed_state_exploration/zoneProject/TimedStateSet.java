@@ -5,10 +5,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import verification.platu.logicAnalysis.StateSetInterface;
 import verification.platu.main.Options;
 import verification.platu.project.PrjState;
 
-public class TimedStateSet extends HashSet<PrjState> {
+public class TimedStateSet extends HashSet<PrjState> implements StateSetInterface {
 
 	
 	/*
