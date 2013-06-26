@@ -328,6 +328,7 @@ public abstract class HierarchicalSimulator {
 			//loop through the speciesIDs and print their current value to the file
 			for (String speciesID : speciesIDSet)
 			{		
+				/*
 				if(replacements.containsKey(speciesID) && this.replacementSubModels.get(speciesID).contains(models.ID))
 				{
 					bufferedTSDWriter.write(commaSpace + replacements.get(speciesID));
@@ -338,6 +339,10 @@ public abstract class HierarchicalSimulator {
 					bufferedTSDWriter.write(commaSpace + models.variableToValueMap.get(speciesID));
 					commaSpace = ", ";
 				}
+				*/
+				bufferedTSDWriter.write(commaSpace + models.getvariableToValueMap(speciesID));
+				commaSpace = ", ";
+				
 			}
 
 			for (String noConstantParam : models.nonconstantParameterIDSet)
@@ -399,9 +404,10 @@ public abstract class HierarchicalSimulator {
 		CompModelPlugin sbmlCompModel = (CompModelPlugin)document.getModel().getPlugin("comp");
 		CompSBMLDocumentPlugin sbmlComp = (CompSBMLDocumentPlugin)document.getPlugin("comp");
 		submodels = new ModelState[(int)sbmlCompModel.getNumSubmodels()];
-		long size = sbmlCompModel.getNumSubmodels();
 		IDtoIndex.put("topmodel", -1);
-
+		
+		long size = sbmlCompModel.getNumSubmodels();
+		
 		for (int i = 0; i < size; i++) {
 			Submodel submodel = sbmlCompModel.getSubmodel(i);
 			BioModel subBioModel = new BioModel(path);
@@ -476,7 +482,6 @@ public abstract class HierarchicalSimulator {
 			{
 				replacements.put(s, parameter.getValue());	
 				initReplacementState.put(s, parameter.getValue());
-
 				if(!replacementSubModels.containsKey(s))
 					replacementSubModels.put(s, new HashSet<String>());
 
@@ -486,30 +491,107 @@ public abstract class HierarchicalSimulator {
 				{
 					replacementSubModels.get(s).add(sbmlSBase.getReplacedElement(j).getSubmodelRef());
 				}
-			}
+				
+
+				if(sbmlSBase.isSetReplacedBy())
+				{
+					Replacing replacement = sbmlSBase.getReplacedBy();
+					String submodel = replacement.getSubmodelRef();
+					if(!replacementSubModels.containsKey(s))
+						replacementSubModels.put(s, new HashSet<String>());
+
+					replacementSubModels.get(s).add("topmodel");
+
+					int index = IDtoIndex.get(submodel);
+					ModelState temp = getModel(index);
+
+					replacementSubModels.get(s).add(submodel);
+					replacements.put(s, temp.model.getModel().getParameter(i).getValue());
+					initReplacementState.put(s, temp.model.getModel().getParameter(i).getValue());
 
 
-			if(sbmlSBase.isSetReplacedBy())
-			{
-				Replacing replacement = sbmlSBase.getReplacedBy();
-				String submodel = replacement.getSubmodelRef();
-				if(!replacementSubModels.containsKey(s))
-					replacementSubModels.put(s, new HashSet<String>());
-
-				replacementSubModels.get(s).add("topmodel");
-
-				int index = IDtoIndex.get(submodel);
-				ModelState temp = getModel(index);
-
-				replacementSubModels.get(s).add(submodel);
-				replacements.put(s, temp.model.getModel().getParameter(i).getValue());
-				initReplacementState.put(s, temp.model.getModel().getParameter(i).getValue());
-
-
+				}
 			}
 		}
+		
+		
+		for (long i = 0; i < topmodel.model.getNumCompartments(); i++) {
+			Compartment compartment = sbml.getModel().getCompartment(i);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)compartment.getPlugin("comp");
+
+			String c = compartment.getId();
+			if(sbmlSBase.getListOfReplacedElements() != null)
+			{
+				replacements.put(c, compartment.getSize());	
+				initReplacementState.put(c, compartment.getSize());
+				if(!replacementSubModels.containsKey(c))
+					replacementSubModels.put(c, new HashSet<String>());
+
+				replacementSubModels.get(c).add("topmodel");
+
+				for(long j = 0; j < sbmlSBase.getListOfReplacedElements().size(); j++)
+				{
+					replacementSubModels.get(c).add(sbmlSBase.getReplacedElement(j).getSubmodelRef());
+				}
+				
+
+				if(sbmlSBase.isSetReplacedBy())
+				{
+					Replacing replacement = sbmlSBase.getReplacedBy();
+					String submodel = replacement.getSubmodelRef();
+					if(!replacementSubModels.containsKey(c))
+						replacementSubModels.put(c, new HashSet<String>());
+
+					replacementSubModels.get(c).add("topmodel");
+
+					int index = IDtoIndex.get(submodel);
+					ModelState temp = getModel(index);
+
+					replacementSubModels.get(c).add(submodel);
+					replacements.put(c, temp.model.getModel().getParameter(i).getValue());
+					initReplacementState.put(c, temp.model.getModel().getParameter(i).getValue());
+
+
+				}
+			}
+		}
+		
+		for (long i = 0; i < topmodel.model.getNumReactions(); i++) {
+			Reaction reaction = sbml.getModel().getReaction(i);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)reaction.getPlugin("comp");
+
+			String r = reaction.getId();
+			if(sbmlSBase.getListOfReplacedElements() != null)
+			{
+				if(!replacementSubModels.containsKey(r))
+					replacementSubModels.put(r, new HashSet<String>());
+
+				replacementSubModels.get(r).add("topmodel");
+
+				for(long j = 0; j < sbmlSBase.getListOfReplacedElements().size(); j++)
+				{
+					replacementSubModels.get(r).add(sbmlSBase.getReplacedElement(j).getSubmodelRef());
+				}
+				
+
+				if(sbmlSBase.isSetReplacedBy())
+				{
+					Replacing replacement = sbmlSBase.getReplacedBy();
+					String submodel = replacement.getSubmodelRef();
+					if(!replacementSubModels.containsKey(r))
+						replacementSubModels.put(r, new HashSet<String>());
+
+					replacementSubModels.get(r).add("topmodel");
+					replacementSubModels.get(r).add(submodel);
+				}
+			}
+		}
+	
 	}
 
+	
+	
+	
 	/**
 	 * Gets state from index
 	 */
@@ -708,14 +790,12 @@ public abstract class HierarchicalSimulator {
 
 				if (modelstate.speciesToHasOnlySubstanceUnitsMap.containsKey(name) &&
 						modelstate.speciesToHasOnlySubstanceUnitsMap.get(name) == false) {
-					value = (modelstate.variableToValueMap.get(name) / modelstate.variableToValueMap.get(modelstate.speciesToCompartmentNameMap.get(name)));
+					//value = (modelstate.variableToValueMap.get(name) / modelstate.variableToValueMap.get(modelstate.speciesToCompartmentNameMap.get(name)));
+					value = (modelstate.getvariableToValueMap(name) / modelstate.getCompartmentSize(name));
 				}
 				else	
-				{
-					if(replacements.containsKey(name) && this.replacementSubModels.get(name).contains(modelstate.ID))
-						value = replacements.get(name);
-					else	
-						value = modelstate.variableToValueMap.get(name);
+				{	
+						value = modelstate.getvariableToValueMap(name);
 				}
 				return value;
 			}
@@ -1286,11 +1366,13 @@ public abstract class HierarchicalSimulator {
 					if(replacements.containsKey(variable))
 						replacements.put(variable, 
 								evaluateExpressionRecursive(modelstate, assignmentRule.getMath()) * 
-								modelstate.variableToValueMap.get(modelstate.speciesToCompartmentNameMap.get(variable)));
+								modelstate.getCompartmentSize(variable));
+								//modelstate.variableToValueMap.get(modelstate.speciesToCompartmentNameMap.get(variable)));
 					else
 						modelstate.variableToValueMap.put(variable, 
 								evaluateExpressionRecursive(modelstate, assignmentRule.getMath()) * 
-								modelstate.variableToValueMap.get(modelstate.speciesToCompartmentNameMap.get(variable)));
+								//modelstate.variableToValueMap.get(modelstate.speciesToCompartmentNameMap.get(variable)));
+								modelstate.getCompartmentSize(variable));
 				}
 				else {
 					if(replacements.containsKey(variable))
@@ -1618,11 +1700,11 @@ public abstract class HierarchicalSimulator {
 		
 		if (species.getHasOnlySubstanceUnits() == false) {
 			
-			modelstate.speciesToCompartmentSizeMap.put(speciesID, modelstate.model.getCompartment(species.getCompartment()).getSize());
+			//modelstate.speciesToCompartmentSizeMap.put(speciesID, modelstate.model.getCompartment(species.getCompartment()).getSize());
 			modelstate.speciesToCompartmentNameMap.put(speciesID, species.getCompartment());
 			
-			if (Double.isNaN(modelstate.model.getCompartment(species.getCompartment()).getSize()))
-				modelstate.speciesToCompartmentSizeMap.put(speciesID, 1.0);
+			//if (Double.isNaN(modelstate.model.getCompartment(species.getCompartment()).getSize()))
+				//modelstate.speciesToCompartmentSizeMap.put(speciesID, 1.0);
 		}	
 		if (modelstate.numRules > 0)
 			modelstate.variableToIsInAssignmentRuleMap.put(speciesID, false);
@@ -2255,9 +2337,6 @@ public abstract class HierarchicalSimulator {
 		protected String ID;
 		protected boolean noEventsFlag = true;
 
-		//generates random numbers based on the xorshift method
-		//protected XORShiftRandom randomNumberGenerator = null;
-
 		//allows for access to a propensity from a reaction ID
 		protected TObjectDoubleHashMap<String> reactionToPropensityMap = null;
 
@@ -2343,7 +2422,7 @@ public abstract class HierarchicalSimulator {
 		protected HashMap<String, HashSet<StringStringPair> > reactionToNonconstantStoichiometriesSetMap = null;
 
 		
-		protected TObjectDoubleHashMap<String> speciesToCompartmentSizeMap = null;
+		//protected TObjectDoubleHashMap<String> speciesToCompartmentSizeMap = null;
 		protected LinkedHashSet<String> compartmentIDSet = new LinkedHashSet<String>();
 		
 		public ModelState(Model bioModel, boolean isCopy, String submodelID)
@@ -2364,7 +2443,7 @@ public abstract class HierarchicalSimulator {
 			speciesToIsBoundaryConditionMap = new HashMap<String, Boolean>((int) numSpecies);
 			variableToIsConstantMap = new HashMap<String, Boolean>((int) (numSpecies + numParameters));
 			speciesToHasOnlySubstanceUnitsMap = new HashMap<String, Boolean>((int) numSpecies);
-			speciesToCompartmentSizeMap = new TObjectDoubleHashMap<String>((int) numSpecies);
+			//speciesToCompartmentSizeMap = new TObjectDoubleHashMap<String>((int) numSpecies);
 			speciesToCompartmentNameMap = new HashMap<String, String>((int) numSpecies);
 			speciesIDSet = new LinkedHashSet<String>((int) numSpecies);
 			variableToValueMap = new TObjectDoubleHashMap<String>((int) numSpecies + (int) numParameters);
@@ -2380,7 +2459,6 @@ public abstract class HierarchicalSimulator {
 
 			if (numEvents > 0) {
 				noEventsFlag = false;
-				//triggeredEventQueue = new LinkedList<EventToFire>();
 				triggeredEventQueue = new PriorityQueue<EventToFire>((int) numEvents, eventComparator);
 				untriggeredEventSet = new HashSet<String>((int) numEvents);
 				eventToPriorityMap = new HashMap<String, ASTNode>((int) numEvents);
@@ -2427,7 +2505,21 @@ public abstract class HierarchicalSimulator {
 			maxPropensity = Double.MIN_VALUE / 10.0;
 		}
 
-
+		protected double getvariableToValueMap(String variable)
+		{
+			if(replacements.containsKey(variable) && replacementSubModels.get(variable).contains(this.ID))
+				return replacements.get(variable);
+			else
+				return variableToValueMap.get(variable);
+		}
+		
+		protected double getCompartmentSize(String variable)
+		{
+			if(replacements.containsKey(variable) && replacementSubModels.get(variable).contains(this.ID))
+				return replacements.get(speciesToCompartmentNameMap.get(variable));
+			else
+				return variableToValueMap.get(speciesToCompartmentNameMap.get(variable));
+		}
 	}
 }
 
