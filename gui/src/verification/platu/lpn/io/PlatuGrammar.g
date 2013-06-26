@@ -209,11 +209,11 @@ module returns [LhpnFile lpn]
 //	         			StatevectorMap, initialMarking);
         $lpn = new LhpnFile();
         $lpn.setLabel($ID.text);
-        System.out.println("---- LPN : " + $lpn.getLabel() + "----");
+        System.out.println("---- LPN : " + $lpn.getLabel() + " ----");
         for (Transition t: $logic.lpnTranSet) {
           $lpn.addTransition(t);
           t.setLpn($lpn);
-          System.out.println("transition(logic): " + t.getName());
+          System.out.println("transition(logic): " + t.getLabel());
           for (Place p : t.getPreset()) {
             if ($logic.initMarking.contains(p.getName())) 
               $lpn.addPlace(p.getName(), true);
@@ -240,11 +240,11 @@ module returns [LhpnFile lpn]
 //	      prj.getDesignUnitSet().add($lpn.getStateGraph());
           
 //          for (Transition t : inputTranList) {
-//            System.out.println("transition(in): " + t.getName()); 
+//            System.out.println("transition(in): " + t.getLabel()); 
 //            $lpn.addTransition(t);
 //          }
           for (Transition t : outputTranList) {
-            System.out.println("transition(out): " + t.getName());
+            System.out.println("transition(out): " + t.getLabel());
             $lpn.addTransition(t);
           }
           
@@ -513,9 +513,9 @@ variables
    				//VarNodeMap.put(varNode.getText(), new ExprTree(varNode.getText()));
    				//VarNodeMap.put(varNode.getText(), new VarNode(varNode.getText(), index));
     			
-    			// if associated input variable has been defined label as output, else label as internal
+    			// if associated input variable has been defined, label as output, else label as internal
 				if(!GlobalInterfaceMap.containsKey(var_tmp)){
-					Internals.add(var_tmp);
+					Internals.add(var_tmp);					
 				}
 				else{
 					if(GlobalInterfaceMap.get(varNode.getText()) != null){
@@ -889,9 +889,9 @@ transition returns [Transition lpnTran]// [LPNTran lpnTran]
               local = false;            
 //              if(GlobalInputMap.containsKey(var)){
 //                for(LhpnFile lpn : GlobalInputMap.get(var)){
-//                  //lpn.addInputTran($lpnTran);
+//                  lpn.addInputTran($lpnTran);
 //                  // dstLpn is added by setDstLpnList in Transition.java
-//                  // $lpnTran.addDstLpn(lpn);
+//                  $lpnTran.addDstLpn(lpn);
 //                }
 //              }
             }
@@ -899,18 +899,18 @@ transition returns [Transition lpnTran]// [LPNTran lpnTran]
             // map lpn transition with output and potential outuput variables
             if(GlobalTranMap.containsKey(var)){
               GlobalTranMap.get(var).add($lpnTran);
-              System.out.println("Add "+ $lpnTran.getName() + " to variable " + var);
+              System.out.println("Add "+ $lpnTran.getLabel() + " to variable " + var);
             }
             else{
               List<Transition> tranList = new ArrayList<Transition>();
               tranList.add($lpnTran);
               GlobalTranMap.put(var, tranList);
-              System.out.println("Create tranList for variable " + var + ", and add " + $lpnTran.getName() + " to it.");
+              System.out.println("Create tranList for variable " + var + ", and add " + $lpnTran.getLabel() + " to it.");
               
             }
           }
 
-//       		$lpnTran.setLocal(local);
+//     		$lpnTran.setLocal(local);
        		if(local == false){
        			outputTranList.add($lpnTran);
        		}
@@ -964,8 +964,7 @@ delay returns [int delayLB, int delayUB]
 		) ')' ';'
     ;
 
-assignment returns [HashMap<String, ExprTree> assign]//[VarExpr assign]
-    // TODO: All assignments are integer assignments? 
+assignment returns [HashMap<String, ExprTree> assign]//[VarExpr assign] 
     :   (var=ID '=' 
     		{	
     		  String var_tmp = $var.text;
@@ -1069,6 +1068,7 @@ term returns [ExprTree expr] //[ExpressionNode expr]
 	    			// and add to current lpn's inputTranList
    			if(!GlobalInterfaceMap.containsKey(ID_tmp)){
    				GlobalInterfaceMap.put(ID_tmp, null);
+   				System.out.println("@ term, Added entry (" + ID_tmp + "null) to GlobalInterfaceMap");
    			}
    			else{
    				Integer value = GlobalInterfaceMap.get(ID_tmp);
@@ -1088,12 +1088,12 @@ term returns [ExprTree expr] //[ExpressionNode expr]
    					  //tran.setLocalFlag(false);
    						//outputLPN.addOutputTran(tran);
    						outputLPN.addTransition(tran);
-   						System.out.println("@term : Added transition " + tran.getName() + " to LPN " + outputLPN.getLabel());
+   						System.out.println("@term : Added transition " + tran.getLabel() + " to LPN " + outputLPN.getLabel());
    						inputTranList.add(tran);
-   						System.out.println("@term : Added transition " + tran.getName() + " to inputTranList.");
+   						System.out.println("@term : Added transition " + tran.getLabel() + " to inputTranList.");
    						System.out.println("inputTranList : ");
    						for (Transition t : inputTranList) {
-   						   System.out.println("Transition: " + t.getName());
+   						   System.out.println("Transition: " + t.getLabel());
    						}
    						System.out.println("~~~~~~~~~~~~~");
    					}
