@@ -1,4 +1,4 @@
-// $ANTLR 3.4 /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g 2012-08-02 02:17:15
+// $ANTLR 3.4 /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g 2013-06-26 17:00:36
 
     package verification.platu.lpn.io;
 

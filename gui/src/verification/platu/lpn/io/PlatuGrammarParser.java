@@ -1,4 +1,4 @@
-// $ANTLR 3.4 /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g 2012-08-02 02:17:14
+// $ANTLR 3.4 /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g 2013-06-26 17:00:34
 
     package verification.platu.lpn.io;
     
@@ -689,7 +689,7 @@ public class PlatuGrammarParser extends Parser {
             //	         			StatevectorMap, initialMarking);
                     lpn = new LhpnFile();
                     lpn.setLabel((ID2!=null?ID2.getText():null));
-                    System.out.println("---- LPN : " + lpn.getLabel() + "----");
+                    System.out.println("---- LPN : " + lpn.getLabel() + " ----");
                     for (Transition t: (logic3!=null?logic3.lpnTranSet:null)) {
                       lpn.addTransition(t);
                       t.setLpn(lpn);
@@ -720,7 +720,7 @@ public class PlatuGrammarParser extends Parser {
             //	      prj.getDesignUnitSet().add(lpn.getStateGraph());
                       
             //          for (Transition t : inputTranList) {
-            //            System.out.println("transition(in): " + t.getName()); 
+            //            System.out.println("transition(in): " + t.getLabel()); 
             //            lpn.addTransition(t);
             //          }
                       for (Transition t : outputTranList) {
@@ -1357,9 +1357,9 @@ public class PlatuGrammarParser extends Parser {
             	       				//VarNodeMap.put(varNode.getText(), new ExprTree(varNode.getText()));
             	       				//VarNodeMap.put(varNode.getText(), new VarNode(varNode.getText(), index));
             	        			
-            	        			// if associated input variable has been defined label as output, else label as internal
+            	        			// if associated input variable has been defined, label as output, else label as internal
             	    				if(!GlobalInterfaceMap.containsKey(var_tmp)){
-            	    					Internals.add(var_tmp);
+            	    					Internals.add(var_tmp);					
             	    				}
             	    				else{
             	    					if(GlobalInterfaceMap.get(varNode.getText()) != null){
@@ -2773,9 +2773,9 @@ public class PlatuGrammarParser extends Parser {
                           local = false;            
             //              if(GlobalInputMap.containsKey(var)){
             //                for(LhpnFile lpn : GlobalInputMap.get(var)){
-            //                  //lpn.addInputTran(lpnTran);
+            //                  lpn.addInputTran(lpnTran);
             //                  // dstLpn is added by setDstLpnList in Transition.java
-            //                  // lpnTran.addDstLpn(lpn);
+            //                  lpnTran.addDstLpn(lpn);
             //                }
             //              }
                         }
@@ -2794,7 +2794,7 @@ public class PlatuGrammarParser extends Parser {
                         }
                       }
 
-            //       		lpnTran.setLocal(local);
+            //     		lpnTran.setLocal(local);
                    		if(local == false){
                    			outputTranList.add(lpnTran);
                    		}
@@ -3046,7 +3046,7 @@ public class PlatuGrammarParser extends Parser {
 
 
         try {
-            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:969:5: ( (var= ID '=' expression ';' ) | (var2= ID ( '[' ( INT | ID ) ']' )+ '=' expression ';' ) )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:968:5: ( (var= ID '=' expression ';' ) | (var2= ID ( '[' ( INT | ID ) ']' )+ '=' expression ';' ) )
             int alt35=2;
             int LA35_0 = input.LA(1);
 
@@ -3076,14 +3076,14 @@ public class PlatuGrammarParser extends Parser {
             }
             switch (alt35) {
                 case 1 :
-                    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:969:9: (var= ID '=' expression ';' )
+                    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:968:9: (var= ID '=' expression ';' )
                     {
-                    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:969:9: (var= ID '=' expression ';' )
-                    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:969:10: var= ID '=' expression ';'
+                    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:968:9: (var= ID '=' expression ';' )
+                    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:968:10: var= ID '=' expression ';'
                     {
-                    var=(Token)match(input,ID,FOLLOW_ID_in_assignment1531); 
+                    var=(Token)match(input,ID,FOLLOW_ID_in_assignment1526); 
 
-                    match(input,EQUALS,FOLLOW_EQUALS_in_assignment1533); 
+                    match(input,EQUALS,FOLLOW_EQUALS_in_assignment1528); 
 
                     	
                         		  String var_tmp = (var!=null?var.getText():null);
@@ -3108,13 +3108,13 @@ public class PlatuGrammarParser extends Parser {
                         			}
                         		
 
-                    pushFollow(FOLLOW_expression_in_assignment1549);
+                    pushFollow(FOLLOW_expression_in_assignment1544);
                     expression12=expression();
 
                     state._fsp--;
 
 
-                    match(input,SEMICOLON,FOLLOW_SEMICOLON_in_assignment1551); 
+                    match(input,SEMICOLON,FOLLOW_SEMICOLON_in_assignment1546); 
 
 
                     	    		Integer varCount = VarCountMap.get(var_tmp);
@@ -3136,19 +3136,19 @@ public class PlatuGrammarParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1007:10: (var2= ID ( '[' ( INT | ID ) ']' )+ '=' expression ';' )
+                    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1006:10: (var2= ID ( '[' ( INT | ID ) ']' )+ '=' expression ';' )
                     {
-                    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1007:10: (var2= ID ( '[' ( INT | ID ) ']' )+ '=' expression ';' )
-                    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1007:11: var2= ID ( '[' ( INT | ID ) ']' )+ '=' expression ';'
+                    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1006:10: (var2= ID ( '[' ( INT | ID ) ']' )+ '=' expression ';' )
+                    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1006:11: var2= ID ( '[' ( INT | ID ) ']' )+ '=' expression ';'
                     {
-                    var2=(Token)match(input,ID,FOLLOW_ID_in_assignment1580); 
+                    var2=(Token)match(input,ID,FOLLOW_ID_in_assignment1575); 
 
 
                     	   			List<Integer> indexList = new ArrayList<Integer>();
                     	   			
                     	   		
 
-                    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1012:6: ( '[' ( INT | ID ) ']' )+
+                    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1011:6: ( '[' ( INT | ID ) ']' )+
                     int cnt34=0;
                     loop34:
                     do {
@@ -3162,9 +3162,9 @@ public class PlatuGrammarParser extends Parser {
 
                         switch (alt34) {
                     	case 1 :
-                    	    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1012:7: '[' ( INT | ID ) ']'
+                    	    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1011:7: '[' ( INT | ID ) ']'
                     	    {
-                    	    match(input,57,FOLLOW_57_in_assignment1597); 
+                    	    match(input,57,FOLLOW_57_in_assignment1592); 
 
                     	    if ( input.LA(1)==ID||input.LA(1)==INT ) {
                     	        input.consume();
@@ -3176,7 +3176,7 @@ public class PlatuGrammarParser extends Parser {
                     	    }
 
 
-                    	    match(input,58,FOLLOW_58_in_assignment1607); 
+                    	    match(input,58,FOLLOW_58_in_assignment1602); 
 
                     	    }
                     	    break;
@@ -3191,15 +3191,15 @@ public class PlatuGrammarParser extends Parser {
                     } while (true);
 
 
-                    match(input,EQUALS,FOLLOW_EQUALS_in_assignment1611); 
+                    match(input,EQUALS,FOLLOW_EQUALS_in_assignment1606); 
 
-                    pushFollow(FOLLOW_expression_in_assignment1613);
+                    pushFollow(FOLLOW_expression_in_assignment1608);
                     expression();
 
                     state._fsp--;
 
 
-                    match(input,SEMICOLON,FOLLOW_SEMICOLON_in_assignment1615); 
+                    match(input,SEMICOLON,FOLLOW_SEMICOLON_in_assignment1610); 
 
                        		  
                     	   		
@@ -3230,7 +3230,7 @@ public class PlatuGrammarParser extends Parser {
 
 
     // $ANTLR start "term"
-    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1019:1: term returns [ExprTree expr] : ( ID | LPAREN expression RPAREN | INT | TRUE | FALSE );
+    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1018:1: term returns [ExprTree expr] : ( ID | LPAREN expression RPAREN | INT | TRUE | FALSE );
     public final ExprTree term() throws RecognitionException {
         ExprTree expr = null;
 
@@ -3241,7 +3241,7 @@ public class PlatuGrammarParser extends Parser {
 
 
         try {
-            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1020:5: ( ID | LPAREN expression RPAREN | INT | TRUE | FALSE )
+            // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1019:5: ( ID | LPAREN expression RPAREN | INT | TRUE | FALSE )
             int alt36=5;
             switch ( input.LA(1) ) {
             case ID:
@@ -3279,9 +3279,9 @@ public class PlatuGrammarParser extends Parser {
 
             switch (alt36) {
                 case 1 :
-                    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1020:9: ID
+                    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1019:9: ID
                     {
-                    ID13=(Token)match(input,ID,FOLLOW_ID_in_term1659); 
+                    ID13=(Token)match(input,ID,FOLLOW_ID_in_term1654); 
 
 
                         		  String ID_tmp = (ID13!=null?ID13.getText():null);
@@ -3334,6 +3334,7 @@ public class PlatuGrammarParser extends Parser {
                     	    			// and add to current lpn's inputTranList
                        			if(!GlobalInterfaceMap.containsKey(ID_tmp)){
                        				GlobalInterfaceMap.put(ID_tmp, null);
+                       				System.out.println("@ term, Added entry (" + ID_tmp + "null) to GlobalInterfaceMap");
                        			}
                        			else{
                        				Integer value = GlobalInterfaceMap.get(ID_tmp);
@@ -3372,15 +3373,15 @@ public class PlatuGrammarParser extends Parser {
                 case 2 :
                     // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1104:9: LPAREN expression RPAREN
                     {
-                    match(input,LPAREN,FOLLOW_LPAREN_in_term1677); 
+                    match(input,LPAREN,FOLLOW_LPAREN_in_term1672); 
 
-                    pushFollow(FOLLOW_expression_in_term1679);
+                    pushFollow(FOLLOW_expression_in_term1674);
                     expression14=expression();
 
                     state._fsp--;
 
 
-                    match(input,RPAREN,FOLLOW_RPAREN_in_term1681); 
+                    match(input,RPAREN,FOLLOW_RPAREN_in_term1676); 
 
                     expr = expression14;
 
@@ -3389,7 +3390,7 @@ public class PlatuGrammarParser extends Parser {
                 case 3 :
                     // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1105:9: INT
                     {
-                    INT15=(Token)match(input,INT,FOLLOW_INT_in_term1693); 
+                    INT15=(Token)match(input,INT,FOLLOW_INT_in_term1688); 
 
                      //{expr = new ConstNode("name", Integer.parseInt((INT15!=null?INT15.getText():null)));}
                                 ExprTree tree = new ExprTree(Integer.parseInt((INT15!=null?INT15.getText():null))+"");
@@ -3401,7 +3402,7 @@ public class PlatuGrammarParser extends Parser {
                 case 4 :
                     // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1109:9: TRUE
                     {
-                    match(input,TRUE,FOLLOW_TRUE_in_term1706); 
+                    match(input,TRUE,FOLLOW_TRUE_in_term1701); 
 
 
                               ExprTree tree = new ExprTree("true");
@@ -3413,7 +3414,7 @@ public class PlatuGrammarParser extends Parser {
                 case 5 :
                     // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1113:9: FALSE
                     {
-                    match(input,FALSE,FOLLOW_FALSE_in_term1718); 
+                    match(input,FALSE,FOLLOW_FALSE_in_term1713); 
 
 
                               ExprTree tree = new ExprTree("false");
@@ -3475,7 +3476,7 @@ public class PlatuGrammarParser extends Parser {
             	case 1 :
             	    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1125:7: '+'
             	    {
-            	    match(input,PLUS,FOLLOW_PLUS_in_unary1759); 
+            	    match(input,PLUS,FOLLOW_PLUS_in_unary1754); 
 
             	    }
             	    break;
@@ -3485,7 +3486,7 @@ public class PlatuGrammarParser extends Parser {
             	    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1125:13: ( '-' )
             	    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1125:14: '-'
             	    {
-            	    match(input,MINUS,FOLLOW_MINUS_in_unary1764); 
+            	    match(input,MINUS,FOLLOW_MINUS_in_unary1759); 
 
             	    if(positive){ positive = false;} else {positive = true;}
 
@@ -3501,7 +3502,7 @@ public class PlatuGrammarParser extends Parser {
             } while (true);
 
 
-            pushFollow(FOLLOW_term_in_unary1771);
+            pushFollow(FOLLOW_term_in_unary1766);
             term16=term();
 
             state._fsp--;
@@ -3568,7 +3569,7 @@ public class PlatuGrammarParser extends Parser {
             	case 1 :
             	    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1140:4: '~'
             	    {
-            	    match(input,BITWISE_NEGATION,FOLLOW_BITWISE_NEGATION_in_bitwiseNegation1803); 
+            	    match(input,BITWISE_NEGATION,FOLLOW_BITWISE_NEGATION_in_bitwiseNegation1798); 
 
             	    if(neg){neg = false;} else{neg = true;}
 
@@ -3581,7 +3582,7 @@ public class PlatuGrammarParser extends Parser {
             } while (true);
 
 
-            pushFollow(FOLLOW_unary_in_bitwiseNegation1809);
+            pushFollow(FOLLOW_unary_in_bitwiseNegation1804);
             unary17=unary();
 
             state._fsp--;
@@ -3647,7 +3648,7 @@ public class PlatuGrammarParser extends Parser {
             	case 1 :
             	    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1154:4: '!'
             	    {
-            	    match(input,NEGATION,FOLLOW_NEGATION_in_negation1835); 
+            	    match(input,NEGATION,FOLLOW_NEGATION_in_negation1830); 
 
             	    if(neg){neg = false;} else{neg = true;}
 
@@ -3660,7 +3661,7 @@ public class PlatuGrammarParser extends Parser {
             } while (true);
 
 
-            pushFollow(FOLLOW_bitwiseNegation_in_negation1841);
+            pushFollow(FOLLOW_bitwiseNegation_in_negation1836);
             bitwiseNegation18=bitwiseNegation();
 
             state._fsp--;
@@ -3712,7 +3713,7 @@ public class PlatuGrammarParser extends Parser {
             // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1168:5: (op1= negation ( '*' op2= negation | '/' op2= negation )* )
             // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1168:9: op1= negation ( '*' op2= negation | '/' op2= negation )*
             {
-            pushFollow(FOLLOW_negation_in_mult1870);
+            pushFollow(FOLLOW_negation_in_mult1865);
             op1=negation();
 
             state._fsp--;
@@ -3738,9 +3739,9 @@ public class PlatuGrammarParser extends Parser {
             	case 1 :
             	    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1169:8: '*' op2= negation
             	    {
-            	    match(input,TIMES,FOLLOW_TIMES_in_mult1882); 
+            	    match(input,TIMES,FOLLOW_TIMES_in_mult1877); 
 
-            	    pushFollow(FOLLOW_negation_in_mult1886);
+            	    pushFollow(FOLLOW_negation_in_mult1881);
             	    op2=negation();
 
             	    state._fsp--;
@@ -3753,9 +3754,9 @@ public class PlatuGrammarParser extends Parser {
             	case 2 :
             	    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1170:8: '/' op2= negation
             	    {
-            	    match(input,DIV,FOLLOW_DIV_in_mult1897); 
+            	    match(input,DIV,FOLLOW_DIV_in_mult1892); 
 
-            	    pushFollow(FOLLOW_negation_in_mult1901);
+            	    pushFollow(FOLLOW_negation_in_mult1896);
             	    op2=negation();
 
             	    state._fsp--;
@@ -3812,7 +3813,7 @@ public class PlatuGrammarParser extends Parser {
             // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1177:5: (op1= mult ( '+' op2= mult | '-' op2= mult )* )
             // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1177:9: op1= mult ( '+' op2= mult | '-' op2= mult )*
             {
-            pushFollow(FOLLOW_mult_in_add1953);
+            pushFollow(FOLLOW_mult_in_add1948);
             op1=mult();
 
             state._fsp--;
@@ -3838,9 +3839,9 @@ public class PlatuGrammarParser extends Parser {
             	case 1 :
             	    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1178:8: '+' op2= mult
             	    {
-            	    match(input,PLUS,FOLLOW_PLUS_in_add1964); 
+            	    match(input,PLUS,FOLLOW_PLUS_in_add1959); 
 
-            	    pushFollow(FOLLOW_mult_in_add1968);
+            	    pushFollow(FOLLOW_mult_in_add1963);
             	    op2=mult();
 
             	    state._fsp--;
@@ -3853,9 +3854,9 @@ public class PlatuGrammarParser extends Parser {
             	case 2 :
             	    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1179:9: '-' op2= mult
             	    {
-            	    match(input,MINUS,FOLLOW_MINUS_in_add1980); 
+            	    match(input,MINUS,FOLLOW_MINUS_in_add1975); 
 
-            	    pushFollow(FOLLOW_mult_in_add1984);
+            	    pushFollow(FOLLOW_mult_in_add1979);
             	    op2=mult();
 
             	    state._fsp--;
@@ -3910,7 +3911,7 @@ public class PlatuGrammarParser extends Parser {
             // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1184:5: (op1= add ( '<<' op2= add | '>>' op2= add )* )
             // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1184:9: op1= add ( '<<' op2= add | '>>' op2= add )*
             {
-            pushFollow(FOLLOW_add_in_shift2023);
+            pushFollow(FOLLOW_add_in_shift2018);
             op1=add();
 
             state._fsp--;
@@ -3936,9 +3937,9 @@ public class PlatuGrammarParser extends Parser {
             	case 1 :
             	    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1185:9: '<<' op2= add
             	    {
-            	    match(input,BITWISE_LSHIFT,FOLLOW_BITWISE_LSHIFT_in_shift2035); 
+            	    match(input,BITWISE_LSHIFT,FOLLOW_BITWISE_LSHIFT_in_shift2030); 
 
-            	    pushFollow(FOLLOW_add_in_shift2039);
+            	    pushFollow(FOLLOW_add_in_shift2034);
             	    op2=add();
 
             	    state._fsp--;
@@ -3951,9 +3952,9 @@ public class PlatuGrammarParser extends Parser {
             	case 2 :
             	    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1186:11: '>>' op2= add
             	    {
-            	    match(input,BITWISE_RSHIFT,FOLLOW_BITWISE_RSHIFT_in_shift2053); 
+            	    match(input,BITWISE_RSHIFT,FOLLOW_BITWISE_RSHIFT_in_shift2048); 
 
-            	    pushFollow(FOLLOW_add_in_shift2057);
+            	    pushFollow(FOLLOW_add_in_shift2052);
             	    op2=add();
 
             	    state._fsp--;
@@ -4005,7 +4006,7 @@ public class PlatuGrammarParser extends Parser {
             // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1194:5: (op1= shift ( '<' op2= shift | '<=' op2= shift | '>=' op2= shift | '>' op2= shift )* )
             // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1194:9: op1= shift ( '<' op2= shift | '<=' op2= shift | '>=' op2= shift | '>' op2= shift )*
             {
-            pushFollow(FOLLOW_shift_in_relation2096);
+            pushFollow(FOLLOW_shift_in_relation2091);
             op1=shift();
 
             state._fsp--;
@@ -4045,9 +4046,9 @@ public class PlatuGrammarParser extends Parser {
             	case 1 :
             	    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1195:8: '<' op2= shift
             	    {
-            	    match(input,LESS,FOLLOW_LESS_in_relation2107); 
+            	    match(input,LESS,FOLLOW_LESS_in_relation2102); 
 
-            	    pushFollow(FOLLOW_shift_in_relation2111);
+            	    pushFollow(FOLLOW_shift_in_relation2106);
             	    op2=shift();
 
             	    state._fsp--;
@@ -4060,9 +4061,9 @@ public class PlatuGrammarParser extends Parser {
             	case 2 :
             	    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1196:9: '<=' op2= shift
             	    {
-            	    match(input,LESS_EQUAL,FOLLOW_LESS_EQUAL_in_relation2123); 
+            	    match(input,LESS_EQUAL,FOLLOW_LESS_EQUAL_in_relation2118); 
 
-            	    pushFollow(FOLLOW_shift_in_relation2127);
+            	    pushFollow(FOLLOW_shift_in_relation2122);
             	    op2=shift();
 
             	    state._fsp--;
@@ -4075,9 +4076,9 @@ public class PlatuGrammarParser extends Parser {
             	case 3 :
             	    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1197:9: '>=' op2= shift
             	    {
-            	    match(input,GREATER_EQUAL,FOLLOW_GREATER_EQUAL_in_relation2139); 
+            	    match(input,GREATER_EQUAL,FOLLOW_GREATER_EQUAL_in_relation2134); 
 
-            	    pushFollow(FOLLOW_shift_in_relation2143);
+            	    pushFollow(FOLLOW_shift_in_relation2138);
             	    op2=shift();
 
             	    state._fsp--;
@@ -4090,9 +4091,9 @@ public class PlatuGrammarParser extends Parser {
             	case 4 :
             	    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1198:9: '>' op2= shift
             	    {
-            	    match(input,GREATER,FOLLOW_GREATER_in_relation2155); 
+            	    match(input,GREATER,FOLLOW_GREATER_in_relation2150); 
 
-            	    pushFollow(FOLLOW_shift_in_relation2159);
+            	    pushFollow(FOLLOW_shift_in_relation2154);
             	    op2=shift();
 
             	    state._fsp--;
@@ -4144,7 +4145,7 @@ public class PlatuGrammarParser extends Parser {
             // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1203:5: (op1= relation ( '==' op2= relation | '!=' op2= relation )* )
             // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1203:9: op1= relation ( '==' op2= relation | '!=' op2= relation )*
             {
-            pushFollow(FOLLOW_relation_in_equivalence2199);
+            pushFollow(FOLLOW_relation_in_equivalence2194);
             op1=relation();
 
             state._fsp--;
@@ -4170,9 +4171,9 @@ public class PlatuGrammarParser extends Parser {
             	case 1 :
             	    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1204:8: '==' op2= relation
             	    {
-            	    match(input,EQUIV,FOLLOW_EQUIV_in_equivalence2210); 
+            	    match(input,EQUIV,FOLLOW_EQUIV_in_equivalence2205); 
 
-            	    pushFollow(FOLLOW_relation_in_equivalence2214);
+            	    pushFollow(FOLLOW_relation_in_equivalence2209);
             	    op2=relation();
 
             	    state._fsp--;
@@ -4185,9 +4186,9 @@ public class PlatuGrammarParser extends Parser {
             	case 2 :
             	    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1206:8: '!=' op2= relation
             	    {
-            	    match(input,NOT_EQUIV,FOLLOW_NOT_EQUIV_in_equivalence2231); 
+            	    match(input,NOT_EQUIV,FOLLOW_NOT_EQUIV_in_equivalence2226); 
 
-            	    pushFollow(FOLLOW_relation_in_equivalence2235);
+            	    pushFollow(FOLLOW_relation_in_equivalence2230);
             	    op2=relation();
 
             	    state._fsp--;
@@ -4239,7 +4240,7 @@ public class PlatuGrammarParser extends Parser {
             // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1211:5: (op1= equivalence ( '&' op2= equivalence )* )
             // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1211:9: op1= equivalence ( '&' op2= equivalence )*
             {
-            pushFollow(FOLLOW_equivalence_in_bitwiseAnd2274);
+            pushFollow(FOLLOW_equivalence_in_bitwiseAnd2269);
             op1=equivalence();
 
             state._fsp--;
@@ -4262,9 +4263,9 @@ public class PlatuGrammarParser extends Parser {
             	case 1 :
             	    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1212:8: '&' op2= equivalence
             	    {
-            	    match(input,BITWISE_AND,FOLLOW_BITWISE_AND_in_bitwiseAnd2286); 
+            	    match(input,BITWISE_AND,FOLLOW_BITWISE_AND_in_bitwiseAnd2281); 
 
-            	    pushFollow(FOLLOW_equivalence_in_bitwiseAnd2290);
+            	    pushFollow(FOLLOW_equivalence_in_bitwiseAnd2285);
             	    op2=equivalence();
 
             	    state._fsp--;
@@ -4316,7 +4317,7 @@ public class PlatuGrammarParser extends Parser {
             // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1217:5: (op1= bitwiseAnd ( '^' op2= bitwiseAnd )* )
             // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1217:9: op1= bitwiseAnd ( '^' op2= bitwiseAnd )*
             {
-            pushFollow(FOLLOW_bitwiseAnd_in_bitwiseXor2329);
+            pushFollow(FOLLOW_bitwiseAnd_in_bitwiseXor2324);
             op1=bitwiseAnd();
 
             state._fsp--;
@@ -4339,9 +4340,9 @@ public class PlatuGrammarParser extends Parser {
             	case 1 :
             	    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1218:8: '^' op2= bitwiseAnd
             	    {
-            	    match(input,BITWISE_XOR,FOLLOW_BITWISE_XOR_in_bitwiseXor2340); 
+            	    match(input,BITWISE_XOR,FOLLOW_BITWISE_XOR_in_bitwiseXor2335); 
 
-            	    pushFollow(FOLLOW_bitwiseAnd_in_bitwiseXor2344);
+            	    pushFollow(FOLLOW_bitwiseAnd_in_bitwiseXor2339);
             	    op2=bitwiseAnd();
 
             	    state._fsp--;
@@ -4393,7 +4394,7 @@ public class PlatuGrammarParser extends Parser {
             // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1223:5: (op1= bitwiseXor ( '|' op2= bitwiseXor )* )
             // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1223:9: op1= bitwiseXor ( '|' op2= bitwiseXor )*
             {
-            pushFollow(FOLLOW_bitwiseXor_in_bitwiseOr2383);
+            pushFollow(FOLLOW_bitwiseXor_in_bitwiseOr2378);
             op1=bitwiseXor();
 
             state._fsp--;
@@ -4416,9 +4417,9 @@ public class PlatuGrammarParser extends Parser {
             	case 1 :
             	    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1224:8: '|' op2= bitwiseXor
             	    {
-            	    match(input,BITWISE_OR,FOLLOW_BITWISE_OR_in_bitwiseOr2394); 
+            	    match(input,BITWISE_OR,FOLLOW_BITWISE_OR_in_bitwiseOr2389); 
 
-            	    pushFollow(FOLLOW_bitwiseXor_in_bitwiseOr2398);
+            	    pushFollow(FOLLOW_bitwiseXor_in_bitwiseOr2393);
             	    op2=bitwiseXor();
 
             	    state._fsp--;
@@ -4470,7 +4471,7 @@ public class PlatuGrammarParser extends Parser {
             // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1229:5: (op1= bitwiseOr ( '&&' op2= bitwiseOr )* )
             // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1229:9: op1= bitwiseOr ( '&&' op2= bitwiseOr )*
             {
-            pushFollow(FOLLOW_bitwiseOr_in_and2438);
+            pushFollow(FOLLOW_bitwiseOr_in_and2433);
             op1=bitwiseOr();
 
             state._fsp--;
@@ -4493,9 +4494,9 @@ public class PlatuGrammarParser extends Parser {
             	case 1 :
             	    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1230:8: '&&' op2= bitwiseOr
             	    {
-            	    match(input,AND,FOLLOW_AND_in_and2449); 
+            	    match(input,AND,FOLLOW_AND_in_and2444); 
 
-            	    pushFollow(FOLLOW_bitwiseOr_in_and2453);
+            	    pushFollow(FOLLOW_bitwiseOr_in_and2448);
             	    op2=bitwiseOr();
 
             	    state._fsp--;
@@ -4547,7 +4548,7 @@ public class PlatuGrammarParser extends Parser {
             // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1236:5: (op1= and ( '||' op2= and )* )
             // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1236:9: op1= and ( '||' op2= and )*
             {
-            pushFollow(FOLLOW_and_in_or2498);
+            pushFollow(FOLLOW_and_in_or2493);
             op1=and();
 
             state._fsp--;
@@ -4570,9 +4571,9 @@ public class PlatuGrammarParser extends Parser {
             	case 1 :
             	    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1237:8: '||' op2= and
             	    {
-            	    match(input,OR,FOLLOW_OR_in_or2509); 
+            	    match(input,OR,FOLLOW_OR_in_or2504); 
 
-            	    pushFollow(FOLLOW_and_in_or2513);
+            	    pushFollow(FOLLOW_and_in_or2508);
             	    op2=and();
 
             	    state._fsp--;
@@ -4629,7 +4630,7 @@ public class PlatuGrammarParser extends Parser {
             // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1243:5: (op1= or ( '->' op2= or )* )
             // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1243:7: op1= or ( '->' op2= or )*
             {
-            pushFollow(FOLLOW_or_in_implication2553);
+            pushFollow(FOLLOW_or_in_implication2548);
             op1=or();
 
             state._fsp--;
@@ -4652,9 +4653,9 @@ public class PlatuGrammarParser extends Parser {
             	case 1 :
             	    // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1244:8: '->' op2= or
             	    {
-            	    match(input,IMPLICATION,FOLLOW_IMPLICATION_in_implication2564); 
+            	    match(input,IMPLICATION,FOLLOW_IMPLICATION_in_implication2559); 
 
-            	    pushFollow(FOLLOW_or_in_implication2568);
+            	    pushFollow(FOLLOW_or_in_implication2563);
             	    op2=or();
 
             	    state._fsp--;
@@ -4711,7 +4712,7 @@ public class PlatuGrammarParser extends Parser {
             // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1249:5: (op1= implication ( '?' op2= expression ':' op3= expression )? )
             // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1249:9: op1= implication ( '?' op2= expression ':' op3= expression )?
             {
-            pushFollow(FOLLOW_implication_in_expression2609);
+            pushFollow(FOLLOW_implication_in_expression2604);
             op1=implication();
 
             state._fsp--;
@@ -4730,17 +4731,17 @@ public class PlatuGrammarParser extends Parser {
                 case 1 :
                     // /Users/zhangz/myBioSim/BioSim/gui/src/verification/platu/lpn/io/PlatuGrammar.g:1250:7: '?' op2= expression ':' op3= expression
                     {
-                    match(input,QMARK,FOLLOW_QMARK_in_expression2619); 
+                    match(input,QMARK,FOLLOW_QMARK_in_expression2614); 
 
-                    pushFollow(FOLLOW_expression_in_expression2623);
+                    pushFollow(FOLLOW_expression_in_expression2618);
                     op2=expression();
 
                     state._fsp--;
 
 
-                    match(input,COLON,FOLLOW_COLON_in_expression2625); 
+                    match(input,COLON,FOLLOW_COLON_in_expression2620); 
 
-                    pushFollow(FOLLOW_expression_in_expression2629);
+                    pushFollow(FOLLOW_expression_in_expression2624);
                     op3=expression();
 
                     state._fsp--;
@@ -5043,82 +5044,82 @@ public class PlatuGrammarParser extends Parser {
     public static final BitSet FOLLOW_61_in_delay1485 = new BitSet(new long[]{0x0001000000000000L});
     public static final BitSet FOLLOW_RPAREN_in_delay1498 = new BitSet(new long[]{0x0002000000000000L});
     public static final BitSet FOLLOW_SEMICOLON_in_delay1500 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_assignment1531 = new BitSet(new long[]{0x0000000000010000L});
-    public static final BitSet FOLLOW_EQUALS_in_assignment1533 = new BitSet(new long[]{0x0020084282240080L});
-    public static final BitSet FOLLOW_expression_in_assignment1549 = new BitSet(new long[]{0x0002000000000000L});
-    public static final BitSet FOLLOW_SEMICOLON_in_assignment1551 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_assignment1580 = new BitSet(new long[]{0x0200000000000000L});
-    public static final BitSet FOLLOW_57_in_assignment1597 = new BitSet(new long[]{0x0000000002200000L});
-    public static final BitSet FOLLOW_set_in_assignment1599 = new BitSet(new long[]{0x0400000000000000L});
-    public static final BitSet FOLLOW_58_in_assignment1607 = new BitSet(new long[]{0x0200000000010000L});
-    public static final BitSet FOLLOW_EQUALS_in_assignment1611 = new BitSet(new long[]{0x0020084282240080L});
-    public static final BitSet FOLLOW_expression_in_assignment1613 = new BitSet(new long[]{0x0002000000000000L});
-    public static final BitSet FOLLOW_SEMICOLON_in_assignment1615 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ID_in_term1659 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_LPAREN_in_term1677 = new BitSet(new long[]{0x0020084282240080L});
-    public static final BitSet FOLLOW_expression_in_term1679 = new BitSet(new long[]{0x0001000000000000L});
-    public static final BitSet FOLLOW_RPAREN_in_term1681 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_INT_in_term1693 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_TRUE_in_term1706 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_FALSE_in_term1718 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_PLUS_in_unary1759 = new BitSet(new long[]{0x0020080282240000L});
-    public static final BitSet FOLLOW_MINUS_in_unary1764 = new BitSet(new long[]{0x0020080282240000L});
-    public static final BitSet FOLLOW_term_in_unary1771 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_BITWISE_NEGATION_in_bitwiseNegation1803 = new BitSet(new long[]{0x0020080282240080L});
-    public static final BitSet FOLLOW_unary_in_bitwiseNegation1809 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_NEGATION_in_negation1835 = new BitSet(new long[]{0x0020084282240080L});
-    public static final BitSet FOLLOW_bitwiseNegation_in_negation1841 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_negation_in_mult1870 = new BitSet(new long[]{0x0008000000008002L});
-    public static final BitSet FOLLOW_TIMES_in_mult1882 = new BitSet(new long[]{0x0020084282240080L});
-    public static final BitSet FOLLOW_negation_in_mult1886 = new BitSet(new long[]{0x0008000000008002L});
-    public static final BitSet FOLLOW_DIV_in_mult1897 = new BitSet(new long[]{0x0020084282240080L});
-    public static final BitSet FOLLOW_negation_in_mult1901 = new BitSet(new long[]{0x0008000000008002L});
-    public static final BitSet FOLLOW_mult_in_add1953 = new BitSet(new long[]{0x0000080200000002L});
-    public static final BitSet FOLLOW_PLUS_in_add1964 = new BitSet(new long[]{0x0020084282240080L});
-    public static final BitSet FOLLOW_mult_in_add1968 = new BitSet(new long[]{0x0000080200000002L});
-    public static final BitSet FOLLOW_MINUS_in_add1980 = new BitSet(new long[]{0x0020084282240080L});
-    public static final BitSet FOLLOW_mult_in_add1984 = new BitSet(new long[]{0x0000080200000002L});
-    public static final BitSet FOLLOW_add_in_shift2023 = new BitSet(new long[]{0x0000000000000242L});
-    public static final BitSet FOLLOW_BITWISE_LSHIFT_in_shift2035 = new BitSet(new long[]{0x0020084282240080L});
-    public static final BitSet FOLLOW_add_in_shift2039 = new BitSet(new long[]{0x0000000000000242L});
-    public static final BitSet FOLLOW_BITWISE_RSHIFT_in_shift2053 = new BitSet(new long[]{0x0020084282240080L});
-    public static final BitSet FOLLOW_add_in_shift2057 = new BitSet(new long[]{0x0000000000000242L});
-    public static final BitSet FOLLOW_shift_in_relation2096 = new BitSet(new long[]{0x0000000030180002L});
-    public static final BitSet FOLLOW_LESS_in_relation2107 = new BitSet(new long[]{0x0020084282240080L});
-    public static final BitSet FOLLOW_shift_in_relation2111 = new BitSet(new long[]{0x0000000030180002L});
-    public static final BitSet FOLLOW_LESS_EQUAL_in_relation2123 = new BitSet(new long[]{0x0020084282240080L});
-    public static final BitSet FOLLOW_shift_in_relation2127 = new BitSet(new long[]{0x0000000030180002L});
-    public static final BitSet FOLLOW_GREATER_EQUAL_in_relation2139 = new BitSet(new long[]{0x0020084282240080L});
-    public static final BitSet FOLLOW_shift_in_relation2143 = new BitSet(new long[]{0x0000000030180002L});
-    public static final BitSet FOLLOW_GREATER_in_relation2155 = new BitSet(new long[]{0x0020084282240080L});
-    public static final BitSet FOLLOW_shift_in_relation2159 = new BitSet(new long[]{0x0000000030180002L});
-    public static final BitSet FOLLOW_relation_in_equivalence2199 = new BitSet(new long[]{0x0000008000020002L});
-    public static final BitSet FOLLOW_EQUIV_in_equivalence2210 = new BitSet(new long[]{0x0020084282240080L});
-    public static final BitSet FOLLOW_relation_in_equivalence2214 = new BitSet(new long[]{0x0000008000020002L});
-    public static final BitSet FOLLOW_NOT_EQUIV_in_equivalence2231 = new BitSet(new long[]{0x0020084282240080L});
-    public static final BitSet FOLLOW_relation_in_equivalence2235 = new BitSet(new long[]{0x0000008000020002L});
-    public static final BitSet FOLLOW_equivalence_in_bitwiseAnd2274 = new BitSet(new long[]{0x0000000000000022L});
-    public static final BitSet FOLLOW_BITWISE_AND_in_bitwiseAnd2286 = new BitSet(new long[]{0x0020084282240080L});
-    public static final BitSet FOLLOW_equivalence_in_bitwiseAnd2290 = new BitSet(new long[]{0x0000000000000022L});
-    public static final BitSet FOLLOW_bitwiseAnd_in_bitwiseXor2329 = new BitSet(new long[]{0x0000000000000402L});
-    public static final BitSet FOLLOW_BITWISE_XOR_in_bitwiseXor2340 = new BitSet(new long[]{0x0020084282240080L});
-    public static final BitSet FOLLOW_bitwiseAnd_in_bitwiseXor2344 = new BitSet(new long[]{0x0000000000000402L});
-    public static final BitSet FOLLOW_bitwiseXor_in_bitwiseOr2383 = new BitSet(new long[]{0x0000000000000102L});
-    public static final BitSet FOLLOW_BITWISE_OR_in_bitwiseOr2394 = new BitSet(new long[]{0x0020084282240080L});
-    public static final BitSet FOLLOW_bitwiseXor_in_bitwiseOr2398 = new BitSet(new long[]{0x0000000000000102L});
-    public static final BitSet FOLLOW_bitwiseOr_in_and2438 = new BitSet(new long[]{0x0000000000000012L});
-    public static final BitSet FOLLOW_AND_in_and2449 = new BitSet(new long[]{0x0020084282240080L});
-    public static final BitSet FOLLOW_bitwiseOr_in_and2453 = new BitSet(new long[]{0x0000000000000012L});
-    public static final BitSet FOLLOW_and_in_or2498 = new BitSet(new long[]{0x0000010000000002L});
-    public static final BitSet FOLLOW_OR_in_or2509 = new BitSet(new long[]{0x0020084282240080L});
-    public static final BitSet FOLLOW_and_in_or2513 = new BitSet(new long[]{0x0000010000000002L});
-    public static final BitSet FOLLOW_or_in_implication2553 = new BitSet(new long[]{0x0000000000800002L});
-    public static final BitSet FOLLOW_IMPLICATION_in_implication2564 = new BitSet(new long[]{0x0020084282240080L});
-    public static final BitSet FOLLOW_or_in_implication2568 = new BitSet(new long[]{0x0000000000800002L});
-    public static final BitSet FOLLOW_implication_in_expression2609 = new BitSet(new long[]{0x0000400000000002L});
-    public static final BitSet FOLLOW_QMARK_in_expression2619 = new BitSet(new long[]{0x0020084282240080L});
-    public static final BitSet FOLLOW_expression_in_expression2623 = new BitSet(new long[]{0x0000000000000800L});
-    public static final BitSet FOLLOW_COLON_in_expression2625 = new BitSet(new long[]{0x0020084282240080L});
-    public static final BitSet FOLLOW_expression_in_expression2629 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_assignment1526 = new BitSet(new long[]{0x0000000000010000L});
+    public static final BitSet FOLLOW_EQUALS_in_assignment1528 = new BitSet(new long[]{0x0020084282240080L});
+    public static final BitSet FOLLOW_expression_in_assignment1544 = new BitSet(new long[]{0x0002000000000000L});
+    public static final BitSet FOLLOW_SEMICOLON_in_assignment1546 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_assignment1575 = new BitSet(new long[]{0x0200000000000000L});
+    public static final BitSet FOLLOW_57_in_assignment1592 = new BitSet(new long[]{0x0000000002200000L});
+    public static final BitSet FOLLOW_set_in_assignment1594 = new BitSet(new long[]{0x0400000000000000L});
+    public static final BitSet FOLLOW_58_in_assignment1602 = new BitSet(new long[]{0x0200000000010000L});
+    public static final BitSet FOLLOW_EQUALS_in_assignment1606 = new BitSet(new long[]{0x0020084282240080L});
+    public static final BitSet FOLLOW_expression_in_assignment1608 = new BitSet(new long[]{0x0002000000000000L});
+    public static final BitSet FOLLOW_SEMICOLON_in_assignment1610 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_term1654 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_LPAREN_in_term1672 = new BitSet(new long[]{0x0020084282240080L});
+    public static final BitSet FOLLOW_expression_in_term1674 = new BitSet(new long[]{0x0001000000000000L});
+    public static final BitSet FOLLOW_RPAREN_in_term1676 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_INT_in_term1688 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_TRUE_in_term1701 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_FALSE_in_term1713 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_PLUS_in_unary1754 = new BitSet(new long[]{0x0020080282240000L});
+    public static final BitSet FOLLOW_MINUS_in_unary1759 = new BitSet(new long[]{0x0020080282240000L});
+    public static final BitSet FOLLOW_term_in_unary1766 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_BITWISE_NEGATION_in_bitwiseNegation1798 = new BitSet(new long[]{0x0020080282240080L});
+    public static final BitSet FOLLOW_unary_in_bitwiseNegation1804 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_NEGATION_in_negation1830 = new BitSet(new long[]{0x0020084282240080L});
+    public static final BitSet FOLLOW_bitwiseNegation_in_negation1836 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_negation_in_mult1865 = new BitSet(new long[]{0x0008000000008002L});
+    public static final BitSet FOLLOW_TIMES_in_mult1877 = new BitSet(new long[]{0x0020084282240080L});
+    public static final BitSet FOLLOW_negation_in_mult1881 = new BitSet(new long[]{0x0008000000008002L});
+    public static final BitSet FOLLOW_DIV_in_mult1892 = new BitSet(new long[]{0x0020084282240080L});
+    public static final BitSet FOLLOW_negation_in_mult1896 = new BitSet(new long[]{0x0008000000008002L});
+    public static final BitSet FOLLOW_mult_in_add1948 = new BitSet(new long[]{0x0000080200000002L});
+    public static final BitSet FOLLOW_PLUS_in_add1959 = new BitSet(new long[]{0x0020084282240080L});
+    public static final BitSet FOLLOW_mult_in_add1963 = new BitSet(new long[]{0x0000080200000002L});
+    public static final BitSet FOLLOW_MINUS_in_add1975 = new BitSet(new long[]{0x0020084282240080L});
+    public static final BitSet FOLLOW_mult_in_add1979 = new BitSet(new long[]{0x0000080200000002L});
+    public static final BitSet FOLLOW_add_in_shift2018 = new BitSet(new long[]{0x0000000000000242L});
+    public static final BitSet FOLLOW_BITWISE_LSHIFT_in_shift2030 = new BitSet(new long[]{0x0020084282240080L});
+    public static final BitSet FOLLOW_add_in_shift2034 = new BitSet(new long[]{0x0000000000000242L});
+    public static final BitSet FOLLOW_BITWISE_RSHIFT_in_shift2048 = new BitSet(new long[]{0x0020084282240080L});
+    public static final BitSet FOLLOW_add_in_shift2052 = new BitSet(new long[]{0x0000000000000242L});
+    public static final BitSet FOLLOW_shift_in_relation2091 = new BitSet(new long[]{0x0000000030180002L});
+    public static final BitSet FOLLOW_LESS_in_relation2102 = new BitSet(new long[]{0x0020084282240080L});
+    public static final BitSet FOLLOW_shift_in_relation2106 = new BitSet(new long[]{0x0000000030180002L});
+    public static final BitSet FOLLOW_LESS_EQUAL_in_relation2118 = new BitSet(new long[]{0x0020084282240080L});
+    public static final BitSet FOLLOW_shift_in_relation2122 = new BitSet(new long[]{0x0000000030180002L});
+    public static final BitSet FOLLOW_GREATER_EQUAL_in_relation2134 = new BitSet(new long[]{0x0020084282240080L});
+    public static final BitSet FOLLOW_shift_in_relation2138 = new BitSet(new long[]{0x0000000030180002L});
+    public static final BitSet FOLLOW_GREATER_in_relation2150 = new BitSet(new long[]{0x0020084282240080L});
+    public static final BitSet FOLLOW_shift_in_relation2154 = new BitSet(new long[]{0x0000000030180002L});
+    public static final BitSet FOLLOW_relation_in_equivalence2194 = new BitSet(new long[]{0x0000008000020002L});
+    public static final BitSet FOLLOW_EQUIV_in_equivalence2205 = new BitSet(new long[]{0x0020084282240080L});
+    public static final BitSet FOLLOW_relation_in_equivalence2209 = new BitSet(new long[]{0x0000008000020002L});
+    public static final BitSet FOLLOW_NOT_EQUIV_in_equivalence2226 = new BitSet(new long[]{0x0020084282240080L});
+    public static final BitSet FOLLOW_relation_in_equivalence2230 = new BitSet(new long[]{0x0000008000020002L});
+    public static final BitSet FOLLOW_equivalence_in_bitwiseAnd2269 = new BitSet(new long[]{0x0000000000000022L});
+    public static final BitSet FOLLOW_BITWISE_AND_in_bitwiseAnd2281 = new BitSet(new long[]{0x0020084282240080L});
+    public static final BitSet FOLLOW_equivalence_in_bitwiseAnd2285 = new BitSet(new long[]{0x0000000000000022L});
+    public static final BitSet FOLLOW_bitwiseAnd_in_bitwiseXor2324 = new BitSet(new long[]{0x0000000000000402L});
+    public static final BitSet FOLLOW_BITWISE_XOR_in_bitwiseXor2335 = new BitSet(new long[]{0x0020084282240080L});
+    public static final BitSet FOLLOW_bitwiseAnd_in_bitwiseXor2339 = new BitSet(new long[]{0x0000000000000402L});
+    public static final BitSet FOLLOW_bitwiseXor_in_bitwiseOr2378 = new BitSet(new long[]{0x0000000000000102L});
+    public static final BitSet FOLLOW_BITWISE_OR_in_bitwiseOr2389 = new BitSet(new long[]{0x0020084282240080L});
+    public static final BitSet FOLLOW_bitwiseXor_in_bitwiseOr2393 = new BitSet(new long[]{0x0000000000000102L});
+    public static final BitSet FOLLOW_bitwiseOr_in_and2433 = new BitSet(new long[]{0x0000000000000012L});
+    public static final BitSet FOLLOW_AND_in_and2444 = new BitSet(new long[]{0x0020084282240080L});
+    public static final BitSet FOLLOW_bitwiseOr_in_and2448 = new BitSet(new long[]{0x0000000000000012L});
+    public static final BitSet FOLLOW_and_in_or2493 = new BitSet(new long[]{0x0000010000000002L});
+    public static final BitSet FOLLOW_OR_in_or2504 = new BitSet(new long[]{0x0020084282240080L});
+    public static final BitSet FOLLOW_and_in_or2508 = new BitSet(new long[]{0x0000010000000002L});
+    public static final BitSet FOLLOW_or_in_implication2548 = new BitSet(new long[]{0x0000000000800002L});
+    public static final BitSet FOLLOW_IMPLICATION_in_implication2559 = new BitSet(new long[]{0x0020084282240080L});
+    public static final BitSet FOLLOW_or_in_implication2563 = new BitSet(new long[]{0x0000000000800002L});
+    public static final BitSet FOLLOW_implication_in_expression2604 = new BitSet(new long[]{0x0000400000000002L});
+    public static final BitSet FOLLOW_QMARK_in_expression2614 = new BitSet(new long[]{0x0020084282240080L});
+    public static final BitSet FOLLOW_expression_in_expression2618 = new BitSet(new long[]{0x0000000000000800L});
+    public static final BitSet FOLLOW_COLON_in_expression2620 = new BitSet(new long[]{0x0020084282240080L});
+    public static final BitSet FOLLOW_expression_in_expression2624 = new BitSet(new long[]{0x0000000000000002L});
 
 }
