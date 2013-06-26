@@ -95,8 +95,8 @@ public class ExprTree {
 		}
 	}
 
-	public ExprTree(Transition transition) {
-	}
+//	public ExprTree(Transition transition) {
+//	}
 
 	ExprTree(char willbe, int lNV, int uNV, String var) {
 		op = "";
