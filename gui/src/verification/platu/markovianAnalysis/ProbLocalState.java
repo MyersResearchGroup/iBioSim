@@ -3,6 +3,7 @@ package verification.platu.markovianAnalysis;
 import java.util.HashMap;
 
 import lpn.parser.LhpnFile;
+import lpn.parser.Transition;
 import verification.platu.lpn.DualHashMap;
 import verification.platu.stategraph.State;
 import verification.platu.stategraph.StateGraph;
@@ -36,9 +37,11 @@ public class ProbLocalState extends State{
     		else
     			newVariableVector[index] = this.vector[index];    		
     	}
-    	if(newStateExists) {    		
-    		boolean[] newTranVector= ((ProbLocalStateGraph)thisSg).updateTranVector(this, this.marking, newVariableVector, null); 
+    	if(newStateExists) {
+    		HashMap<Transition, Double> tranRateMapForNewState = new HashMap<Transition, Double>();
+    		boolean[] newTranVector= ((ProbLocalStateGraph)thisSg).updateTranVector(this, this.marking, newVariableVector, null, tranRateMapForNewState); 
     		State newState = thisSg.addState(new ProbLocalState(this.lpn, this.marking, newVariableVector, newTranVector));
+    		((ProbLocalStateGraph) thisSg).addTranRate(newState, tranRateMapForNewState);
         	return newState;
     	}
     	return null;
