@@ -933,6 +933,7 @@ public class Transition {
 		result = prime * result
 				+ ((enabling == null) ? 0 : enabling.hashCode());
 		result = prime * result + (fail ? 1231 : 1237);
+		result = prime * result + index;
 		result = prime * result
 				+ ((intAssignments == null) ? 0 : intAssignments.hashCode());
 		result = prime * result + ((label == null) ? 0 : label.hashCode());
@@ -949,106 +950,80 @@ public class Transition {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
+		if (this == obj)
 			return true;
-		}
-		if (obj == null) {
+		if (obj == null)
 			return false;
-		}
-		if (!(obj instanceof Transition)) {
+		if (getClass() != obj.getClass())
 			return false;
-		}
 		Transition other = (Transition) obj;
 		if (boolAssignments == null) {
-			if (other.boolAssignments != null) {
+			if (other.boolAssignments != null)
 				return false;
-			}
-		} else if (!boolAssignments.equals(other.boolAssignments)) {
+		} else if (!boolAssignments.equals(other.boolAssignments))
 			return false;
-		}
 		if (contAssignments == null) {
-			if (other.contAssignments != null) {
+			if (other.contAssignments != null)
 				return false;
-			}
-		} else if (!contAssignments.equals(other.contAssignments)) {
+		} else if (!contAssignments.equals(other.contAssignments))
 			return false;
-		}
 		if (delay == null) {
-			if (other.delay != null) {
+			if (other.delay != null)
 				return false;
-			}
-		} else if (!delay.equals(other.delay)) {
+		} else if (!delay.equals(other.delay))
 			return false;
-		}
 		if (dstLpnList == null) {
-			if (other.dstLpnList != null) {
+			if (other.dstLpnList != null)
 				return false;
-			}
-		} else if (!dstLpnList.equals(other.dstLpnList)) {
+		} else if (!dstLpnList.equals(other.dstLpnList))
 			return false;
-		}
 		if (enabling == null) {
-			if (other.enabling != null) {
+			if (other.enabling != null)
 				return false;
-			}
-		} else if (!enabling.equals(other.enabling)) {
+		} else if (!enabling.equals(other.enabling))
 			return false;
-		}
-		if (fail != other.fail) {
+		if (fail != other.fail)
 			return false;
-		}
+		if (index != other.index)
+			return false;
 		if (intAssignments == null) {
-			if (other.intAssignments != null) {
+			if (other.intAssignments != null)
 				return false;
-			}
-		} else if (!intAssignments.equals(other.intAssignments)) {
+		} else if (!intAssignments.equals(other.intAssignments))
 			return false;
-		}
 		if (label == null) {
-			if (other.label != null) {
+			if (other.label != null)
 				return false;
-			}
-		} else if (!label.equals(other.label)) {
+		} else if (!label.equals(other.label))
 			return false;
-		}
 		if (lhpn == null) {
-			if (other.lhpn != null) {
+			if (other.lhpn != null)
 				return false;
-			}
-		} else if (!lhpn.equals(other.lhpn)) {
+		} else if (!lhpn.equals(other.lhpn))
 			return false;
-		}
-		if (persistent != other.persistent) {
+		if (persistent != other.persistent)
 			return false;
-		}
 		if (postset == null) {
-			if (other.postset != null) {
+			if (other.postset != null)
 				return false;
-			}
-		} else if (!postset.equals(other.postset)) {
+		} else if (!postset.equals(other.postset))
 			return false;
-		}
 		if (preset == null) {
-			if (other.preset != null) {
+			if (other.preset != null)
 				return false;
-			}
-		} else if (!preset.equals(other.preset)) {
+		} else if (!preset.equals(other.preset))
 			return false;
-		}
 		if (priority == null) {
-			if (other.priority != null) {
+			if (other.priority != null)
 				return false;
-			}
-		} else if (!priority.equals(other.priority)) {
+		} else if (!priority.equals(other.priority))
 			return false;
-		}
 		if (rateAssignments == null) {
-			if (other.rateAssignments != null) {
+			if (other.rateAssignments != null)
 				return false;
-			}
-		} else if (!rateAssignments.equals(other.rateAssignments)) {
+		} else if (!rateAssignments.equals(other.rateAssignments))
 			return false;
-		}
 		return true;
-	}	
+	}
+	
 }
