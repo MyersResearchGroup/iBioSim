@@ -1,14 +1,14 @@
 package verification.platu.markovianAnalysis;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Iterator;
 
-import lpn.parser.Transition;
-
+import verification.platu.logicAnalysis.StateSetInterface;
 import verification.platu.project.PrjState;
 
-public class ProbGlobalStateSet extends HashSet<PrjState>{
+public class ProbGlobalStateSet extends HashMap<PrjState, PrjState> implements StateSetInterface {//extends HashSet<PrjState>{
+
+	private static final long serialVersionUID = 1L;
 
 	private PrjState initState;
 
@@ -32,27 +32,20 @@ public class ProbGlobalStateSet extends HashSet<PrjState>{
 		this.initState = initPrjState;	
 	}
 
-	public Boolean contains(PrjState s) {
+	public boolean contains(PrjState s) {
 		return this.contains(s);
 	}
 
-	public HashSet<PrjState> getProbGlobalStateSet() {		
-		return this;
+	@Override
+	public boolean add(PrjState state) {
+		super.put(state, state);
+		return false;
 	}
 
-//	public ArrayList<ProbGlobalState> getNextGlobalStates(PrjState curGlobalState, ProbLocalStateGraph[] sgList) {
-//		ArrayList<ProbGlobalState> nextGlobalStates = new ArrayList<ProbGlobalState>();
-//		for (int indexOfCurStateInStateArray : ((ProbGlobalState)curGlobalState).getLocalStateIndexArray()) {
-//			ProbLocalState curState = (ProbLocalState) curGlobalState.getStateArray()[indexOfCurStateInStateArray];
-//			HashMap<Transition, ProbLocalStateTuple> nextLocalStateMap = ((ProbLocalStateGraph) sgList[indexOfCurStateInStateArray]).getNextProbLocalStateTupleMap().get(curState);
-//			for (Transition tran : nextLocalStateMap.keySet()) {
-//				ProbLocalStateTuple nextLocalStateTuple = nextLocalStateMap.get(tran);				
-//				ProbGlobalState nextProbGlobalState = (ProbGlobalState) nextLocalStateTuple.getNextLocalToGlobalMap().get(tran);
-//				nextGlobalStates.add(nextProbGlobalState);
-//			}
-//		}
-//		return nextGlobalStates;
-//	}
-    
+	@Override
+	public Iterator<PrjState> iterator() {
+		return super.keySet().iterator();
+	}
+	
 	
 }
