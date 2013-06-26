@@ -11,7 +11,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import lpn.parser.LhpnFile;
-
 import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
@@ -25,6 +24,8 @@ import verification.platu.lpn.io.Instance;
 import verification.platu.lpn.io.PlatuInstLexer;
 import verification.platu.lpn.io.PlatuInstParser;
 import verification.platu.main.Options;
+import verification.platu.markovianAnalysis.MarkovianAnalysis;
+import verification.platu.markovianAnalysis.ProbGlobalStateSet;
 import verification.platu.markovianAnalysis.ProbLocalStateGraph;
 import verification.platu.stategraph.State;
 import verification.platu.stategraph.StateGraph;
@@ -136,7 +137,7 @@ public class Project {
 //			return;
 //		}
 	    
-		long start = System.currentTimeMillis(); 
+		long startReachability = System.currentTimeMillis(); 
 		int lpnCnt = designUnitSet.size();
 
 		/* Prepare search by placing LPNs in an array in the order of their indices.*/
@@ -158,9 +159,9 @@ public class Project {
 //				sgArray[lpn.getIndex()] = du;
 //			}
 //		}
-
+		
 		// Initialize the project state
-		 HashMap<String, Integer> varValMap = new HashMap<String, Integer>();
+		HashMap<String, Integer> varValMap = new HashMap<String, Integer>();
 		State[] initStateArray = new State[lpnCnt];
 		for (int index = 0; index < lpnCnt; index++) {
 			LhpnFile curLpn = sgArray[index].getLpn();
@@ -168,9 +169,6 @@ public class Project {
 			initStateArray[index] = curSg.genInitialState();
 			int[] curVariableVector = initStateArray[index].getVariableVector();
 			varValMap = curLpn.getAllVarsWithValuesAsInt(curVariableVector);
-			// TODO: Is it necessary to update initStateArray here?
-			//initStateArray[index].update(curSg, varValMap, curSg.getLpn().getVarIndexMap());
-			initStateArray[index] = curSg.addState(initStateArray[index]);
 		}
 
 		// Adjust the value of the input variables in LPN in the initial state.
@@ -187,9 +185,9 @@ public class Project {
 				ContinuousUtilities.updateInitialInequalities(z, ls[0]);
 				initStateArray[index] = curSg.genInitialState();
 			}
-			// TODO: Moved them up to the previous "for" lopp.
-			//initStateArray[index].update(curSg, varValMap, curSg.getLpn().getVarIndexMap());			
-			//initStateArray[index] = curSg.addState(initStateArray[index]);	
+			// TODO: Is it necessary to update initStateArray for un-timed case?
+			initStateArray[index].update(curSg, varValMap, curSg.getLpn().getVarIndexMap());			
+			initStateArray[index] = curSg.addState(initStateArray[index]);	
 		}
 		
 		// Initialize the zones for the initStateArray, if timining is enabled.
@@ -229,18 +227,36 @@ public class Project {
 //		}
 
 		Analysis dfsStateExploration = new Analysis(sgArray);
-		dfsStateExploration.search_dfs(sgArray, initStateArray);
-		
-		long elapsedTimeMillis = System.currentTimeMillis() - start; 
-		float elapsedTimeSec = elapsedTimeMillis/1000F;
-		System.out.println("---> total runtime: " + elapsedTimeSec + " sec\n");
-		if (Options.getOutputLogFlag())
-			outputRuntimeLog(false, elapsedTimeSec);
+		if (!Options.getMarkovianModelFlag()) {
+			dfsStateExploration.search_dfs(sgArray, initStateArray);
+			long elapsedTimeMillis = System.currentTimeMillis() - startReachability; 
+			float elapsedTimeSec = elapsedTimeMillis/1000F;
+			System.out.println("---> total runtime for reachability analysis: " + elapsedTimeSec + " sec\n");
+			if (Options.getOutputLogFlag())
+				outputRuntimeLog(false, elapsedTimeSec);
+		}
+		else {
+			ProbGlobalStateSet globalStateSet = (ProbGlobalStateSet) dfsStateExploration.search_dfs(sgArray, initStateArray);
+			long elapsedTimeMillisReachability = System.currentTimeMillis() - startReachability; 
+			float elapsedTimeSecReachability = elapsedTimeMillisReachability/1000F;
+			System.out.println("---> total runtime for reachability analysis: " + elapsedTimeSecReachability + " sec");			
+			if (Options.getOutputLogFlag())
+				outputRuntimeLog(false, elapsedTimeSecReachability);			
+			System.out.println("--------- Steady State Analysis ---------");
+			long startSteadyState = System.currentTimeMillis();
+			MarkovianAnalysis markovianAnalysis = new MarkovianAnalysis();
+			double tolerance = 0.0000000001; 
+			//steadStateAnalysis.performSteadyStateMarkovianAnalysis(tolerance, props, globalStateSet, sgList, progress)
+			markovianAnalysis.performSteadyStateMarkovianAnalysis(tolerance, globalStateSet);
+			dfsStateExploration.drawGlobalStateGraph(sgArray, globalStateSet.getInitState(), globalStateSet, true);
+			long elapsedTimeMillisSteadyState = System.currentTimeMillis() - startSteadyState; 
+			float elapsedTimeSecSteadyState = elapsedTimeMillisSteadyState/1000F;
+			System.out.println("---> total runtime for steady state analysis: " + elapsedTimeSecSteadyState + " sec");
+		}
 		if (Options.getOutputSgFlag())
 			if (sgArray != null)
-				for (int i=0; i<sgArray.length; i++) {					
-					sgArray[i].drawLocalStateGraph();
-				}		
+				for (int i=0; i<sgArray.length; i++) 
+					sgArray[i].drawLocalStateGraph();				
 	}
 
 	public Set<LPN> readLpn(final String src_file) {
