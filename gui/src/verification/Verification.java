@@ -3032,31 +3032,31 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	public boolean canPerformMarkovianAnalysis(LhpnFile lpn) {
 		for (String trans : lpn.getTransitionList()) {
 			if (!lpn.isExpTransitionRateTree(trans)) {
-				JOptionPane.showMessageDialog(Gui.frame, "LPN has transitions without exponential delay.",
-						"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
+//				JOptionPane.showMessageDialog(Gui.frame, "LPN has transitions without exponential delay.",
+//						"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
 				return false;
 			}
 			for (String var : lpn.getVariables()) {
 				if (lpn.isRandomBoolAssignTree(trans, var)) {
-					JOptionPane.showMessageDialog(Gui.frame, "LPN has assignments containing random functions.",
-							"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
+//					JOptionPane.showMessageDialog(Gui.frame, "LPN has assignments containing random functions.",
+//							"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
 					return false;
 				}
 				if (lpn.isRandomContAssignTree(trans, var)) {
-					JOptionPane.showMessageDialog(Gui.frame, "LPN has assignments containing random functions.",
-							"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
+//					JOptionPane.showMessageDialog(Gui.frame, "LPN has assignments containing random functions.",
+//							"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
 					return false;
 				}
 				if (lpn.isRandomIntAssignTree(trans, var)) {
-					JOptionPane.showMessageDialog(Gui.frame, "LPN has assignments containing random functions.",
-							"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
+//					JOptionPane.showMessageDialog(Gui.frame, "LPN has assignments containing random functions.",
+//							"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
 					return false;
 				}
 			}
 		}
 		if (lpn.getContVars().length > 0) {
-			JOptionPane.showMessageDialog(Gui.frame, "LPN contains continuous variables.",
-					"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
+//			JOptionPane.showMessageDialog(Gui.frame, "LPN contains continuous variables.",
+//					"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		return true;		
