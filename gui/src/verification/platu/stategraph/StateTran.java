@@ -4,11 +4,6 @@
  */
 package verification.platu.stategraph;
 
-import java.io.ByteArrayOutputStream;
-import java.security.MessageDigest;
-import java.util.zip.Deflater;
-import org.apache.hadoop.io.compress.zlib.BuiltInZlibDeflater;
-
 import verification.platu.lpn.LPNTran;
 
 /**
