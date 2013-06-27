@@ -33,7 +33,7 @@ public class ProbGlobalStateSet extends HashMap<PrjState, PrjState> implements S
 	}
 
 	public boolean contains(PrjState s) {
-		return this.contains(s);
+		return this.keySet().contains(s);
 	}
 
 	@Override
