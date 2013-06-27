@@ -276,13 +276,20 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		}
 		for (String noConstantParam : topmodel.nonconstantParameterIDSet) 				
 			bufferedTSDWriter.write(", \"" + noConstantParam + "\"");
-
+		for (String compartment : topmodel.compartmentIDSet)
+		{
+			bufferedTSDWriter.write(", \"" + compartment + "\"");
+		}
 		for(ModelState model : submodels)
 		{
 			for (String speciesID : model.speciesIDSet) 				
 				bufferedTSDWriter.write(", \"" + speciesID + "_" + model.ID + "\"");
 			for (String noConstantParam : model.nonconstantParameterIDSet) 				
 				bufferedTSDWriter.write(", \"" + noConstantParam + "_" + model.ID + "\"");
+			for (String compartment : model.compartmentIDSet)
+			{
+				bufferedTSDWriter.write(", \"" + compartment +  "_" + model.ID + "\"");
+			}
 		}
 
 

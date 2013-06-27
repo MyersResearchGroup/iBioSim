@@ -322,6 +322,12 @@ public abstract class HierarchicalSimulator {
 			}
 		}
 
+		for (String compartment : topmodel.compartmentIDSet)
+		{
+				bufferedTSDWriter.write(commaSpace + topmodel.getVariableToValue(compartment));
+				commaSpace = ", ";
+		}
+		
 		for (ModelState models : submodels)
 		{
 			speciesIDSet = models.speciesIDSet;
@@ -340,7 +346,7 @@ public abstract class HierarchicalSimulator {
 					commaSpace = ", ";
 				}
 				*/
-				bufferedTSDWriter.write(commaSpace + models.getvariableToValueMap(speciesID));
+				bufferedTSDWriter.write(commaSpace + models.getVariableToValue(speciesID));
 				commaSpace = ", ";
 				
 			}
@@ -357,6 +363,12 @@ public abstract class HierarchicalSimulator {
 					bufferedTSDWriter.write(commaSpace + models.variableToValueMap.get(noConstantParam));
 					commaSpace = ", ";
 				}
+			}
+			
+			for (String compartment : topmodel.compartmentIDSet)
+			{
+					bufferedTSDWriter.write(commaSpace + models.getVariableToValue(compartment));
+					commaSpace = ", ";
 			}
 		}
 
@@ -566,7 +578,7 @@ public abstract class HierarchicalSimulator {
 				if(!replacementSubModels.containsKey(r))
 					replacementSubModels.put(r, new HashSet<String>());
 
-				replacementSubModels.get(r).add("topmodel");
+				//replacementSubModels.get(r).add("topmodel");
 
 				for(long j = 0; j < sbmlSBase.getListOfReplacedElements().size(); j++)
 				{
@@ -577,12 +589,13 @@ public abstract class HierarchicalSimulator {
 				if(sbmlSBase.isSetReplacedBy())
 				{
 					Replacing replacement = sbmlSBase.getReplacedBy();
+					
 					String submodel = replacement.getSubmodelRef();
 					if(!replacementSubModels.containsKey(r))
 						replacementSubModels.put(r, new HashSet<String>());
 
 					replacementSubModels.get(r).add("topmodel");
-					replacementSubModels.get(r).add(submodel);
+					//replacementSubModels.get(r).add(submodel);
 				}
 			}
 		}
@@ -791,11 +804,11 @@ public abstract class HierarchicalSimulator {
 				if (modelstate.speciesToHasOnlySubstanceUnitsMap.containsKey(name) &&
 						modelstate.speciesToHasOnlySubstanceUnitsMap.get(name) == false) {
 					//value = (modelstate.variableToValueMap.get(name) / modelstate.variableToValueMap.get(modelstate.speciesToCompartmentNameMap.get(name)));
-					value = (modelstate.getvariableToValueMap(name) / modelstate.getCompartmentSize(name));
+					value = (modelstate.getVariableToValue(name) / modelstate.getVariableToValue(modelstate.speciesToCompartmentNameMap.get(name)));
 				}
 				else	
 				{	
-						value = modelstate.getvariableToValueMap(name);
+						value = modelstate.getVariableToValue(name);
 				}
 				return value;
 			}
@@ -1266,12 +1279,8 @@ public abstract class HierarchicalSimulator {
 		for(String species : replacementSubModels.keySet())
 			for(String submodel : replacementSubModels.get(species))
 			{
-				int index = IDtoIndex.get(submodel);
+				model = getModel(IDtoIndex.get(submodel));
 
-				if(index == -1)
-					model = topmodel;
-				else
-					model = submodels[index];
 
 				if (model.noRuleFlag == false && model.variableToIsInAssignmentRuleMap.get(species) == true)
 					affectedAssignmentRuleSet.addAll(model.variableToAffectedAssignmentRuleSetMap.get(species));
@@ -1366,13 +1375,13 @@ public abstract class HierarchicalSimulator {
 					if(replacements.containsKey(variable))
 						replacements.put(variable, 
 								evaluateExpressionRecursive(modelstate, assignmentRule.getMath()) * 
-								modelstate.getCompartmentSize(variable));
+								modelstate.getVariableToValue(modelstate.speciesToCompartmentNameMap.get(variable)));
 								//modelstate.variableToValueMap.get(modelstate.speciesToCompartmentNameMap.get(variable)));
 					else
 						modelstate.variableToValueMap.put(variable, 
 								evaluateExpressionRecursive(modelstate, assignmentRule.getMath()) * 
 								//modelstate.variableToValueMap.get(modelstate.speciesToCompartmentNameMap.get(variable)));
-								modelstate.getCompartmentSize(variable));
+								modelstate.getVariableToValue(modelstate.speciesToCompartmentNameMap.get(variable)));
 				}
 				else {
 					if(replacements.containsKey(variable))
@@ -1899,6 +1908,10 @@ public abstract class HierarchicalSimulator {
 	
 	
 		size = reactantsList.size();
+		
+		if(replacementSubModels.get(reactionID) != null && replacementSubModels.get(reactionID).contains(modelstate.ID))
+			return;
+		
 		for (int i = 0; i < size; i++)
 		{
 	
@@ -2505,7 +2518,7 @@ public abstract class HierarchicalSimulator {
 			maxPropensity = Double.MIN_VALUE / 10.0;
 		}
 
-		protected double getvariableToValueMap(String variable)
+		protected double getVariableToValue(String variable)
 		{
 			if(replacements.containsKey(variable) && replacementSubModels.get(variable).contains(this.ID))
 				return replacements.get(variable);
@@ -2513,13 +2526,14 @@ public abstract class HierarchicalSimulator {
 				return variableToValueMap.get(variable);
 		}
 		
-		protected double getCompartmentSize(String variable)
+		protected void setvariableToValueMap(String variable, double value)
 		{
 			if(replacements.containsKey(variable) && replacementSubModels.get(variable).contains(this.ID))
-				return replacements.get(speciesToCompartmentNameMap.get(variable));
+				replacements.put(variable, value);
 			else
-				return variableToValueMap.get(speciesToCompartmentNameMap.get(variable));
+				variableToValueMap.put(variable, value);
 		}
+		
 	}
 }
 
