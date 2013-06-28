@@ -2011,11 +2011,6 @@ public abstract class Simulator {
 		//get rid of the locations parameters
 		for (Parameter parameter : model.getListOfParameters()) {
 			if (parameter.getId().contains("_locations")) {
-				
-//				if (parameter.getId().contains("_locations"))
-//					this.submodelIDToLocationsMap.put(
-//							parameter.getId().replace("__locations",""), stripAnnotation(parameter.getAnnotationString()));
-				
 				parametersToRemove.add(parameter.getId());
 			}
 		}
@@ -4188,11 +4183,9 @@ public abstract class Simulator {
 		//get rid of the locations parameters
 		for (Parameter parameter : model.getListOfParameters()) {
 			if (parameter.getId().contains("_locations")) {
-				
 				if (parameter.getId().contains("_locations"))
 					this.submodelIDToLocationsMap.put(
 							parameter.getId().replace("__locations",""), stripAnnotation(parameter.getAnnotationString()));
-				
 				parametersToRemove.add(parameter.getId());
 			}
 		}

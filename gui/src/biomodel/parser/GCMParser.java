@@ -370,7 +370,7 @@ public class GCMParser {
 				speciesIF.setDecay(Double.parseDouble(biosimrc.get("biosim.gcm.KDECAY_VALUE", "")));
 			}
 			
-			if (degradation.getAnnotationString().contains("grid") == false)
+			if (!BioModel.isGridReaction(degradation))
 				sbml.getModel().removeReaction(degradation.getId());
 		} else {
 			speciesIF.setDecay(0.0);

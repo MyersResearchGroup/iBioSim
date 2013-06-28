@@ -9872,12 +9872,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						}
 					}
 				}
-				/*
-			if (enclosed && extModel.getAnnotationString().contains("compartment") == false)
-				extModel.appendAnnotation("compartment");
-			else
-				extModel.setAnnotation(extModel.getAnnotationString().replace("compartment",""));
-				 */
 			} else {
 				return false;
 			}

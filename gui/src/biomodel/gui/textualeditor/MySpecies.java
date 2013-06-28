@@ -30,11 +30,13 @@ import org.sbml.libsbml.Parameter;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.Rule;
 import org.sbml.libsbml.SBMLDocument;
+import org.sbml.libsbml.SBase;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.SpeciesReference;
 import org.sbml.libsbml.SpeciesType;
 import org.sbml.libsbml.UnitDefinition;
 
+import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.ModelEditor;
 import biomodel.parser.BioModel;
 
@@ -897,6 +899,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				degradation.getKineticLaw().getParameter("kecd").setValue(kecdRate);		
 			}
 			if (diffusion!=null) {
+				AnnotationUtility.parseArraySizeAnnotation(bioModel.getSBMLDocument().getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Above").getKineticLaw().getLocalParameter("i"));
 				bioModel.getSBMLDocument().getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Above")
 					.getKineticLaw().getParameter("kecdiff").setValue(kecdiffRate);			
 				bioModel.getSBMLDocument().getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Below")
@@ -1110,11 +1113,8 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		else if (e.getSource() == editSpec) {
 			if (species.getModel().getSize() > 0) {
 				//if we're dealing with grid species, use a different species editor
-				if (bioModel.getSBMLDocument().getModel().getSpecies(((String)species.getModel().getElementAt(0)).split(" ")[0])
-						.getAnnotation() != null &&						
-						bioModel.getSBMLDocument().getModel().getSpecies(((String)species.getModel().getElementAt(0)).split(" ")[0])
-						.getAnnotationString().contains("type=\"grid\"")) {
-					
+				if (AnnotationUtility.parseGridAnnotation((SBase)bioModel.getSBMLDocument().getModel().
+								getSpecies(((String)species.getModel().getElementAt(0)).split(" ")[0]))!=null) {
 					openGridSpeciesEditor();
 				}
 				else {
@@ -1149,12 +1149,8 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2) {
 			if (e.getSource() == species) {
-				//speciesEditor("OK");
-				if (bioModel.getSBMLDocument().getModel().getSpecies(((String)species.getModel().getElementAt(0)).split(" ")[0])
-						.getAnnotation() != null &&						
-						bioModel.getSBMLDocument().getModel().getSpecies(((String)species.getModel().getElementAt(0)).split(" ")[0])
-						.getAnnotationString().contains("type=\"grid\"")) {
-					
+				if (AnnotationUtility.parseGridAnnotation(bioModel.getSBMLDocument().getModel().
+								getSpecies(((String)species.getModel().getElementAt(0)).split(" ")[0]))!=null) {
 					openGridSpeciesEditor();
 				}
 				else {

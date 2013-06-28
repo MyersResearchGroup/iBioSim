@@ -1274,16 +1274,10 @@ public class BioModel {
 		Compartment gridComp = sbml.getModel().getCompartment(0);
 		if (gridComp != null) {
 			if (rows > 0 && cols > 0) {
-
-				XMLAttributes attr = new XMLAttributes();
-				attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
-				attr.add("ibiosim:grid", "(" + rows + "," + cols + ")");
-				XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
-
-				gridComp.setAnnotation(node);
+				AnnotationUtility.setGridAnnotation(gridComp, rows, cols);
 			} 
 			else {
-				gridComp.unsetAnnotation();
+				AnnotationUtility.removeGridAnnotation(gridComp);
 			}
 		}
 	}
@@ -1323,39 +1317,18 @@ public class BioModel {
 			
 			//if the annotation string already exists, then one of these existed before
 			//so update its count
-			if (potentialGridSubmodel.getAnnotationString().length() > 0 && prop.keySet().contains("row") &&
-					prop.keySet().contains("col")) {
-				
-				int size = Integer.parseInt(potentialGridSubmodel.getAnnotationString()
-						.replace("\"","").split("=")[2].replace("/>","").replace("</annotation>","").trim());
-				
-				XMLAttributes attr = new XMLAttributes();			
-				attr.add("xmlns:array", "http://www.fakeuri.com");
-				attr.add("array:count", String.valueOf(++size));
-				XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);
-				
-				potentialGridSubmodel.setAnnotation(node);
+			int size = AnnotationUtility.parseArraySizeAnnotation(potentialGridSubmodel);
+			if (size > 0 && prop.keySet().contains("row") && prop.keySet().contains("col")) {
+				AnnotationUtility.setArraySizeAnnotation(potentialGridSubmodel, ++size);
 			}
 			else {
-				
-				XMLAttributes attr = new XMLAttributes();
-				attr.add("xmlns:array", "http://www.fakeuri.com");
-				attr.add("array:count", "1");
-				XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);
-				
-				potentialGridSubmodel.setAnnotation(node);
+				AnnotationUtility.setArraySizeAnnotation(potentialGridSubmodel, 1);
 			}
 		}
 		else {
 			potentialGridSubmodel = sbmlCompModel.createSubmodel();
 			potentialGridSubmodel.setId(gridSubmodelID);
-			
-			XMLAttributes attr = new XMLAttributes();			
-			attr.add("xmlns:array", "http://www.fakeuri.com");
-			attr.add("array:count", "1");
-			XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);
-			
-			potentialGridSubmodel.setAnnotation(node);
+			AnnotationUtility.setArraySizeAnnotation(potentialGridSubmodel, 1);
 		}
 		
 		potentialGridSubmodel.setModelRef(extId);
@@ -1375,19 +1348,7 @@ public class BioModel {
 			locationParameter.setConstant(false);
 			locationParameter.setValue(0);
 		}
-		
-		if (locationParameter.getAnnotation() != null)
-			locationParameter.getAnnotation().getChild(0).addAttr("array:" + submodelID, "(" + row + "," + col + ")");
-		else {
-			
-			XMLAttributes attr = new XMLAttributes();
-			attr.add("xmlns:array", "http://www.fakeuri.com");
-			attr.add("array:" + submodelID, "(" + row + "," + col + ")");
-			
-			XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);
-			
-			locationParameter.setAnnotation(node);
-		}
+		AnnotationUtility.appendArrayAnnotation(locationParameter, submodelID + "=\"(" + row + "," + col + ")\"");
 		
 		if (prop.keySet().contains("row") && prop.keySet().contains("col")
 				&& prop.getProperty("compartment").equals("true"))
@@ -1550,25 +1511,25 @@ public class BioModel {
 			} else if (reaction.getSBOTerm()==GlobalConstants.SBO_ASSOCIATION) {
 				return true;
 			}
-		} else if (reaction.isSetAnnotation()) {
-			if (reaction.getAnnotationString().contains("Complex")) {
-				reaction.setSBOTerm(GlobalConstants.SBO_ASSOCIATION);
-				reaction.unsetAnnotation();
-				return true;
-			}
+		} else if (AnnotationUtility.checkObsoleteAnnotation(reaction,"Complex")) {
+			reaction.setSBOTerm(GlobalConstants.SBO_ASSOCIATION);
+			AnnotationUtility.removeObsoleteAnnotation(reaction);
+			return true;
 		}
 		return false;
+	}
+	
+	public static boolean isGridReaction(Reaction reaction) {
+		return (AnnotationUtility.parseGridAnnotation(reaction)!=null);
 	}
 	
 	public static boolean isConstitutiveReaction(Reaction reaction) {
 		if (reaction.isSetSBOTerm()) {
 			if (reaction.getSBOTerm()==GlobalConstants.SBO_CONSTITUTIVE) return true;
-		} else if (reaction.isSetAnnotation()) {
-			if (reaction.getAnnotationString().contains("Constitutive")) {
-				reaction.setSBOTerm(GlobalConstants.SBO_CONSTITUTIVE);
-				reaction.unsetAnnotation();
-				return true;
-			}
+		} else if (AnnotationUtility.checkObsoleteAnnotation(reaction,"Constitutive")) {
+			reaction.setSBOTerm(GlobalConstants.SBO_CONSTITUTIVE);
+			AnnotationUtility.removeObsoleteAnnotation(reaction);
+			return true;
 		}
 		return false;
 	}
@@ -1576,12 +1537,10 @@ public class BioModel {
 	public static boolean isDegradationReaction(Reaction reaction) {
 		if (reaction.isSetSBOTerm()) {
 			if (reaction.getSBOTerm()==GlobalConstants.SBO_DEGRADATION) return true;
-		} else if (reaction.isSetAnnotation()) {
-			if (reaction.getAnnotationString().contains("Degradation")) {
-				reaction.setSBOTerm(GlobalConstants.SBO_DEGRADATION);
-				reaction.unsetAnnotation();
-				return true;
-			}
+		} else if (AnnotationUtility.checkObsoleteAnnotation(reaction,"Degradation")) {
+			reaction.setSBOTerm(GlobalConstants.SBO_DEGRADATION);
+			AnnotationUtility.removeObsoleteAnnotation(reaction);
+			return true;
 		}
 		return false;
 	}
@@ -1589,12 +1548,10 @@ public class BioModel {
 	public static boolean isDiffusionReaction(Reaction reaction) {
 		if (reaction.isSetSBOTerm()) {
 			if (reaction.getSBOTerm()==GlobalConstants.SBO_DIFFUSION) return true;
-		} else if (reaction.isSetAnnotation()) {
-			if (reaction.getAnnotationString().contains("Diffusion")) {
-				reaction.setSBOTerm(GlobalConstants.SBO_DIFFUSION);
-				reaction.unsetAnnotation();
-				return true;
-			}
+		} else if (AnnotationUtility.checkObsoleteAnnotation(reaction,"Diffusion")) {
+			reaction.setSBOTerm(GlobalConstants.SBO_DIFFUSION);
+			AnnotationUtility.removeObsoleteAnnotation(reaction);
+			return true;
 		}
 		return false;
 	}
@@ -1607,41 +1564,30 @@ public class BioModel {
 			} else if (reaction.getSBOTerm()==GlobalConstants.SBO_GENETIC_PRODUCTION) {
 				return true;
 			}
-		} else if (reaction.isSetAnnotation()) {
-			if (reaction.getAnnotationString().contains("Production")) {
-				reaction.setSBOTerm(GlobalConstants.SBO_GENETIC_PRODUCTION);
-				reaction.unsetAnnotation();
-				return true;
-			}
+		} else if (AnnotationUtility.checkObsoleteAnnotation(reaction,"Production")) {
+			reaction.setSBOTerm(GlobalConstants.SBO_GENETIC_PRODUCTION);
+			AnnotationUtility.removeObsoleteAnnotation(reaction);
+			return true;
 		}
 		return false;
 	}
 	
 	public static boolean isMRNASpecies(Species species) {
-		if (species.isSetAnnotation()) {
-			if (species.getAnnotationString().contains(GlobalConstants.TYPE+"="+GlobalConstants.MRNA)) {
-				species.setSBOTerm(GlobalConstants.SBO_MRNA);
-				species.unsetAnnotation();
-				return true;
-			}
-		}
 		if (species.isSetSBOTerm()) {
 			if (species.getSBOTerm()==GlobalConstants.SBO_MRNA || species.getSBOTerm()==GlobalConstants.SBO_MRNA_OLD) {
 				species.setSBOTerm(GlobalConstants.SBO_MRNA);
 				return true;
 			}
 		}
+		if (AnnotationUtility.checkObsoleteAnnotation(species,GlobalConstants.TYPE+"="+GlobalConstants.MRNA)) {
+			species.setSBOTerm(GlobalConstants.SBO_MRNA);
+			AnnotationUtility.removeObsoleteAnnotation(species);
+			return true;
+		}
 		return false;
 	}
 	
 	public static boolean isPromoterSpecies(Species species) {
-		if (species.isSetAnnotation()) {
-			if (species.getAnnotationString().contains(GlobalConstants.TYPE+"="+GlobalConstants.PROMOTER)) {
-				species.setSBOTerm(GlobalConstants.SBO_PROMOTER_BINDING_REGION);
-				species.unsetAnnotation();
-				return true;
-			}
-		}
 		if (species.isSetSBOTerm()) {
 			if (species.getSBOTerm()==GlobalConstants.SBO_OLD_PROMOTER_SPECIES) {
 				species.setSBOTerm(GlobalConstants.SBO_PROMOTER_BINDING_REGION);
@@ -1654,17 +1600,15 @@ public class BioModel {
 				return true;
 			}
 		}
+		if (AnnotationUtility.checkObsoleteAnnotation(species,GlobalConstants.TYPE+"="+GlobalConstants.PROMOTER)) {
+			species.setSBOTerm(GlobalConstants.SBO_PROMOTER_BINDING_REGION);
+			AnnotationUtility.removeObsoleteAnnotation(species);
+			return true;
+		}
 		return false;
 	}
 	
 	public static boolean isPromoter(ModifierSpeciesReference modifier) {
-		if (modifier.isSetAnnotation()) {
-			if (modifier.getAnnotationString().contains("promoter")) {
-				modifier.setSBOTerm(GlobalConstants.SBO_PROMOTER_MODIFIER);
-				modifier.unsetAnnotation();
-				return true;
-			}
-		}
 		if (modifier.isSetSBOTerm()) {
 			if (modifier.getSBOTerm()==GlobalConstants.SBO_PROMOTER) {
 				modifier.setSBOTerm(GlobalConstants.SBO_PROMOTER_MODIFIER);
@@ -1673,63 +1617,52 @@ public class BioModel {
 				return true;
 			}
 		}
+		if (AnnotationUtility.checkObsoleteAnnotation(modifier,"promoter")) {
+			modifier.setSBOTerm(GlobalConstants.SBO_PROMOTER_MODIFIER);
+			AnnotationUtility.removeObsoleteAnnotation(modifier);
+			return true;
+		}
 		return false;
 	}
 	
 	public static boolean isActivator(ModifierSpeciesReference modifier) {
-		if (modifier.isSetAnnotation()) {
-			if (modifier.getAnnotationString().contains(GlobalConstants.ACTIVATION)) {
-				modifier.setSBOTerm(GlobalConstants.SBO_ACTIVATION);
-				modifier.unsetAnnotation();
-				return true;
-			}
-		}
 		if (modifier.isSetSBOTerm()) {
 			if (modifier.getSBOTerm()==GlobalConstants.SBO_ACTIVATION) return true;
+		}
+		if (AnnotationUtility.checkObsoleteAnnotation(modifier,GlobalConstants.ACTIVATION)) {
+			modifier.setSBOTerm(GlobalConstants.SBO_ACTIVATION);
+			AnnotationUtility.removeObsoleteAnnotation(modifier);
+			return true;
 		}
 		return false;
 	}
 	
 	public static boolean isRepressor(ModifierSpeciesReference modifier) {
-		if (modifier.isSetAnnotation()) {
-			if (modifier.getAnnotationString().contains(GlobalConstants.REPRESSION)) {
-				modifier.setSBOTerm(GlobalConstants.SBO_REPRESSION);
-				modifier.unsetAnnotation();
-				return true;
-			}
-		}
 		if (modifier.isSetSBOTerm()) {
 			if (modifier.getSBOTerm()==GlobalConstants.SBO_REPRESSION) return true;
+		}
+		if (AnnotationUtility.checkObsoleteAnnotation(modifier,GlobalConstants.REPRESSION)) {
+			modifier.setSBOTerm(GlobalConstants.SBO_REPRESSION);
+			AnnotationUtility.removeObsoleteAnnotation(modifier);
+			return true;
 		}
 		return false;
 	}
 	
 	public static boolean isNeutral(ModifierSpeciesReference modifier) {
-		if (modifier.isSetAnnotation()) {
-			if (modifier.getAnnotationString().contains(GlobalConstants.NOINFLUENCE)) {
-				modifier.setSBOTerm(GlobalConstants.SBO_NEUTRAL);
-				modifier.unsetAnnotation();
-				return true;
-			}
-		}
 		if (modifier.isSetSBOTerm()) {
 			if (modifier.getSBOTerm()==GlobalConstants.SBO_NEUTRAL) return true;
+		}
+		if (AnnotationUtility.checkObsoleteAnnotation(modifier,GlobalConstants.NOINFLUENCE)) {
+			modifier.setSBOTerm(GlobalConstants.SBO_NEUTRAL);
+			AnnotationUtility.removeObsoleteAnnotation(modifier);
+			return true;
 		}
 		return false;
 	}
 	
 	public static boolean isRegulator(ModifierSpeciesReference modifier) {
 		if (modifier!=null) {
-			if (modifier.isSetAnnotation()) {
-				if (modifier.getAnnotationString().contains(GlobalConstants.REGULATION)) {
-					modifier.setSBOTerm(GlobalConstants.SBO_DUAL_ACTIVITY);
-					modifier.unsetAnnotation();
-					return true;
-				} else if (modifier.getAnnotationString().contains("promoter")) {
-					modifier.unsetAnnotation();
-					return false;
-				}
-			}
 			if (modifier.isSetSBOTerm()) {
 				if (modifier.getSBOTerm()==GlobalConstants.SBO_REGULATION) {
 					modifier.setSBOTerm(GlobalConstants.SBO_DUAL_ACTIVITY);
@@ -1737,6 +1670,14 @@ public class BioModel {
 				} else if (modifier.getSBOTerm()==GlobalConstants.SBO_DUAL_ACTIVITY) {
 					return true;
 				}
+			}
+			if (AnnotationUtility.checkObsoleteAnnotation(modifier,GlobalConstants.REGULATION)) {
+				modifier.setSBOTerm(GlobalConstants.SBO_DUAL_ACTIVITY);
+				AnnotationUtility.removeObsoleteAnnotation(modifier);
+				return true;
+			} else if (AnnotationUtility.checkObsoleteAnnotation(modifier,"promoter")) {
+				AnnotationUtility.removeObsoleteAnnotation(modifier);
+				return false;
 			}
 		}
 		return false;
@@ -2908,7 +2849,7 @@ public class BioModel {
 			Parameter param = sbml.getModel().getParameter(i);
 			
 			if (param.getId().contains("__locations"))
-				if (param.getAnnotationString().contains("array:" + oldName + "="))
+				if (AnnotationUtility.parseArrayAnnotation(param, oldName)!=null)
 					submodelID = "GRID__" + param.getId().replace("__locations", "");
 		}
 		
@@ -2922,25 +2863,12 @@ public class BioModel {
 		if (sbml.getModel().getParameter(subModel.getId().replace("GRID__","") + "__locations") != null) {
 			
 			Parameter param = sbml.getModel().getParameter(subModel.getId().replace("GRID__","") + "__locations");
-			
-			String value = param.getAnnotation().getChild(0).getAttrValue("array:" + oldName, "http://www.fakeuri.com");			
-			param.getAnnotation().getChild(0).removeAttr(value);
-			
-			if (value.equals("-1") == false)
-				param.getAnnotation().getChild(0).addAttr("array:" + newName, value);
-			
-			value = param.getAnnotation().getChild(0).getAttrValue(oldName, "http://www.fakeuri.com");
-			param.getAnnotation().getChild(0).removeAttr(value);
-			
-			if (value.equals("-1") == false)
-				param.getAnnotation().getChild(0).addAttr("array:" + newName, value);
-			
-			value = param.getAnnotation().getChild(0).getAttrValue("array:" + oldName);
-			param.getAnnotation().getChild(0).removeAttr(value);
-			
-			if (value.equals("-1") == false)
-				param.getAnnotation().getChild(0).addAttr("array:" + newName, value);
-			
+			String value = AnnotationUtility.parseArrayAnnotation(param, oldName);
+			if (value != null) {
+				AnnotationUtility.removeArrayAnnotation(param, oldName);
+				value = value.split("=")[1];
+				AnnotationUtility.setArrayAnnotation(param, newName + "=" + value);
+			}
 			if (param.getId().contains(oldName))
 				param.setId(param.getId().replace(oldName, newName));
 		}
@@ -2996,7 +2924,7 @@ public class BioModel {
 			if (isProductionReaction(r)) continue;
 			if (isComplexReaction(r)) continue;
 			if (isConstitutiveReaction(r)) continue;
-			if (r.getAnnotationString().contains("grid")) continue;
+			if (isGridReaction(r)) continue;
 			
 			if (!isModifier && r.getReactant(sourceID) != null) {
 				choices.add("Add " + targetID + " as a product of reaction " + r.getId());
@@ -3127,9 +3055,9 @@ public class BioModel {
 					changed = true;
 				}
 				for (int i = 0; i < sbml.getModel().getNumParameters(); ++i) {
-
-					if (sbml.getModel().getParameter(i).getId().endsWith("__locations")) {
-						while (sbml.getModel().getParameter(i).getAnnotationString().contains("array:" + submodelID + "=")) {
+					Parameter parameter = sbml.getModel().getParameter(i);
+					if (parameter.getId().endsWith("__locations")) {
+						while (AnnotationUtility.parseArrayAnnotation(parameter, submodelID)!=null) {
 							++count;
 							submodelID = "C" + count;
 							changed = true;
@@ -3162,26 +3090,12 @@ public class BioModel {
 				
 			//if the annotation string already exists, then one of these existed before
 			//so update its count
-			if (potentialGridSubmodel.getAnnotationString().length() > 0 && !(numRows == 0 && numCols == 0)) {
-				
-				int size = Integer.parseInt(potentialGridSubmodel.getAnnotationString()
-						.replace("\"","").split("=")[2].replace("/>","").replace("</annotation>","").trim());
-				
-				XMLAttributes attr = new XMLAttributes();			
-				attr.add("xmlns:array", "http://www.fakeuri.com");
-				attr.add("array:count", String.valueOf(++size));
-				XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);
-				
-				potentialGridSubmodel.setAnnotation(node);
+			int size = AnnotationUtility.parseArraySizeAnnotation(potentialGridSubmodel);
+			if (size >= 0 && !(numRows == 0 && numCols == 0)) {
+				AnnotationUtility.setArraySizeAnnotation(potentialGridSubmodel, ++size);
 			}
 			else {
-				
-				XMLAttributes attr = new XMLAttributes();
-				attr.add("xmlns:array", "http://www.fakeuri.com");
-				attr.add("array:count", "1");
-				XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);
-				
-				potentialGridSubmodel.setAnnotation(node);
+				AnnotationUtility.setArraySizeAnnotation(potentialGridSubmodel, 1);
 			}
 			
 			potentialGridSubmodel.setModelRef(extId);
@@ -3192,13 +3106,7 @@ public class BioModel {
 			
 				potentialGridSubmodel = sbmlCompModel.createSubmodel();
 				potentialGridSubmodel.setId(gridSubmodelID);
-				
-				XMLAttributes attr = new XMLAttributes();			
-				attr.add("xmlns:array", "http://www.fakeuri.com");
-				attr.add("array:count", "1");
-				XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);
-				
-				potentialGridSubmodel.setAnnotation(node);				
+				AnnotationUtility.setArraySizeAnnotation(potentialGridSubmodel, 1);
 				potentialGridSubmodel.setModelRef(extId);
 				
 				if (compartment!=null) {
@@ -3263,19 +3171,7 @@ public class BioModel {
 				locationParameter.setConstant(false);
 				locationParameter.setValue(0);
 			}
-			
-			if (locationParameter.getAnnotation() != null)
-				locationParameter.getAnnotation().getChild(0).addAttr("array:" + submodelID, "(" + row + "," + col + ")");
-			else {
-				
-				XMLAttributes attr = new XMLAttributes();
-				attr.add("xmlns:array", "http://www.fakeuri.com");
-				attr.add("array:" + submodelID, "(" + row + "," + col + ")");
-				
-				XMLNode node = new XMLNode(new XMLTriple("array","http://www.fakeuri.com","array"), attr);
-				
-				locationParameter.setAnnotation(node);
-			}
+			AnnotationUtility.appendArrayAnnotation(locationParameter, submodelID + "=\"(" + row + "," + col + ")\"");
 			
 			if (enclosed)
 				createGridSpecies(gridSubmodelID);
@@ -3352,33 +3248,20 @@ public class BioModel {
 	 * @param data string data from a gcm file
 	 */
 	private void loadGridSize() {
-		
-		if (sbml.getModel().getCompartment(0) != null && sbml.getModel().getCompartment(0).isSetAnnotation()) {
-			
-			if (sbmlLayout != null) {
-				if (sbmlLayout.getLayout("iBioSim")!=null && sbmlLayout.getLayout("iBioSim").isSetAnnotation())
-					sbmlLayout.getLayout("iBioSim").unsetAnnotation();
-			}
-			
-			int[] gridSize = AnnotationUtility.parseGridAnnotation(sbml.getModel().getCompartment(0));
-			if (gridSize[0] > 0 && gridSize[1] > 0) {
-				buildGrid(gridSize[0], gridSize[1]);
-			}
-			return;
+		int[] gridSize = null;
+		if (sbml.getModel().getCompartment(0) != null) {
+			gridSize = AnnotationUtility.parseGridAnnotation(sbml.getModel().getCompartment(0));
 		}
-		//for backwards compatibility
-		else {
-			
-			if (sbmlLayout != null) {
-				if (sbmlLayout.getLayout("iBioSim")!=null && sbmlLayout.getLayout("iBioSim").isSetAnnotation()) {
-					int[] gridSize = AnnotationUtility.parseGridAnnotation(sbmlLayout.getLayout("iBioSim"));
-					if (gridSize[0] > 0 && gridSize[1] > 0) {
-						buildGrid(gridSize[0], gridSize[1]);
-					}
-					return;
-				}
-			}			
+		if (gridSize == null && sbmlLayout != null && sbmlLayout.getLayout("iBioSim")!=null) {
+			gridSize = AnnotationUtility.parseGridAnnotation(sbmlLayout.getLayout("iBioSim"));
+			if (gridSize != null) {
+				AnnotationUtility.removeGridAnnotation(sbmlLayout.getLayout("iBioSim"));
+				AnnotationUtility.setGridAnnotation(sbml.getModel().getCompartment(0), gridSize[0], gridSize[1]);
+			}
 		}
+		if (gridSize != null && gridSize[0] > 0 && gridSize[1] > 0) {
+			buildGrid(gridSize[0], gridSize[1]);
+		} 
 	}
 
 	public void removeSpecies(String id) {
@@ -3620,7 +3503,7 @@ public class BioModel {
 				if (isProductionReaction(r)) continue;
 				if (isComplexReaction(r)) continue;
 				if (isConstitutiveReaction(r)) continue;
-				if (r.getAnnotationString().contains("grid")) continue;
+				if (isGridReaction(r)) continue;
 				reactionSet.add(r.getId());
 			}
 		}
@@ -3782,7 +3665,7 @@ public class BioModel {
 						if (isProductionReaction(r)) continue;
 						if (isComplexReaction(r)) continue;
 						if (isConstitutiveReaction(r)) continue;
-						if (r.getAnnotationString().contains("grid")) continue;						
+						if (isGridReaction(r)) continue;						
 					}
 					if (sbase.isSetSBOTerm()) {
 						if (sbase.getSBOTerm()==GlobalConstants.SBO_PROMOTER_BINDING_REGION) {
@@ -3872,12 +3755,8 @@ public class BioModel {
 				
 				//if it's a location parameter
 				if (parameter.getId().contains("__locations")) {
-					
-					if (parameter.getAnnotationString().contains("array:" + id + "=") ||
-							(parameter.getAnnotationString().contains("[[" + id + "]]"))) {
-						
+					if (AnnotationUtility.parseArrayAnnotation(parameter,id)!=null) {
 						componentModelRef = parameter.getId().replace("__locations","");
-						
 						if (componentModelRef.split("__").length > 1)
 							componentModelRef = componentModelRef.split("__")[1];
 						
@@ -3899,8 +3778,8 @@ public class BioModel {
 			CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbml.getModel().getSpecies(i).getPlugin("comp");
 			for (long j = 0; j < sbmlSBase.getNumReplacedElements(); j++) {
 				ReplacedElement replacement = sbmlSBase.getReplacedElement(j);
-				if (replacement.getSubmodelRef().equals(compId) && replacement.isSetAnnotation() &&
-					replacement.getAnnotation().toXMLString().contains("Input")) {
+				if (replacement.getSubmodelRef().equals(compId) && 
+						AnnotationUtility.checkObsoleteAnnotation(replacement, "Input")) {
 					String IdRef = replacement.getIdRef();
 					Port port = compBioModel.getPortByIdRef(IdRef);
 					if (port==null) {
@@ -3910,7 +3789,7 @@ public class BioModel {
 					if (BioModel.isInputPort(port)) {
 						replacement.unsetIdRef();
 						replacement.setPortRef(port.getId());
-						replacement.unsetAnnotation();
+						AnnotationUtility.removeObsoleteAnnotation(replacement);
 						inputs.put(port.getId().replace(GlobalConstants.INPUT+"__",""),sbml.getModel().getSpecies(i).getId());
 					}
 				} else if (replacement.getSubmodelRef().equals(compId) && replacement.isSetPortRef()) {
@@ -3947,8 +3826,8 @@ public class BioModel {
 			CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbml.getModel().getSpecies(i).getPlugin("comp");
 			for (long j = 0; j < sbmlSBase.getNumReplacedElements(); j++) {
 				ReplacedElement replacement = sbmlSBase.getReplacedElement(j);
-				if (replacement.getSubmodelRef().equals(compId) && replacement.isSetAnnotation() &&
-					replacement.getAnnotation().toXMLString().contains("Output")) {
+				if (replacement.getSubmodelRef().equals(compId) && 
+						AnnotationUtility.checkObsoleteAnnotation(replacement, "Output")) {
 					String IdRef = replacement.getIdRef();
 					Port port = compBioModel.getPortByIdRef(IdRef);
 					if (port==null) {
@@ -3958,7 +3837,7 @@ public class BioModel {
 					if (BioModel.isOutputPort(port)) {
 						replacement.unsetIdRef();
 						replacement.setPortRef(port.getId());
-						replacement.unsetAnnotation();
+						AnnotationUtility.removeObsoleteAnnotation(replacement);
 						outputs.put(port.getId().replace(GlobalConstants.OUTPUT+"__",""),sbml.getModel().getSpecies(i).getId());
 					}
 				} else if (replacement.getSubmodelRef().equals(compId) && replacement.isSetPortRef()) {
@@ -4080,70 +3959,42 @@ public class BioModel {
 	 * returns the submodel's row from the location annotation
 	 */
 	public int getSubmodelRow(String submodelID) {
-		
-		String componentModelRefID = "";
-		
 		//search through the parameter location arrays to find the correct one
+		String locationAnnotationString = null;
 		for (int i = 0; i < sbml.getModel().getNumParameters(); ++i) {
-			
 			Parameter parameter = sbml.getModel().getParameter(i);
-			
 			//if it's a location parameter
 			if (parameter.getId().contains("__locations")) {
-				
-				if (parameter.getAnnotationString().contains("array:" + submodelID + "=")) {
-					
-					componentModelRefID = parameter.getId().replace("__locations","");
-					break;
-				}		
+				locationAnnotationString = AnnotationUtility.parseArrayAnnotation(parameter,submodelID);
+				if (locationAnnotationString != null) {
+					String rowCol = locationAnnotationString.split("=")[1];
+					String row = rowCol.split(",")[0].replace("(","");
+					return Integer.parseInt(row);
+				}
 			}				
 		}
-		
-		String locationParameterString = componentModelRefID + "__locations";
-		
-		//get rid of the component from the location-lookup array and the modelref array
-		String locationAnnotationString = sbml.getModel().getParameter(locationParameterString).getAnnotationString();		
-		int submodelStringIndex = locationAnnotationString.indexOf("array:" + submodelID, 0);		
-		String leftPart = locationAnnotationString.substring(submodelStringIndex, locationAnnotationString.indexOf(")", submodelStringIndex));
-		String rowCol = leftPart.split("=")[1];
-		String row = rowCol.split(",")[0].replace("\"(","");
-		
-		return Integer.parseInt(row);
+		return -1;
 	}
 	
 	/**
 	 * returns the submodel's col from the location annotation
 	 */
 	public int getSubmodelCol(String submodelID) {
-		
-		String componentModelRefID = "";
-		
 		//search through the parameter location arrays to find the correct one
+		String locationAnnotationString = null;
 		for (int i = 0; i < sbml.getModel().getNumParameters(); ++i) {
-			
 			Parameter parameter = sbml.getModel().getParameter(i);
-			
 			//if it's a location parameter
 			if (parameter.getId().contains("__locations")) {
-				
-				if (parameter.getAnnotationString().contains("array:" + submodelID + "=")) {
-					
-					componentModelRefID = parameter.getId().replace("__locations","");
-					break;
-				}		
+				locationAnnotationString = AnnotationUtility.parseArrayAnnotation(parameter,submodelID);
+				if (locationAnnotationString != null) {
+					String rowCol = locationAnnotationString.split("=")[1];
+					String col = rowCol.split(",")[1].replace(")", "");
+					return Integer.parseInt(col);
+				}
 			}				
 		}
-		
-		String locationParameterString = componentModelRefID + "__locations";
-		
-		//get rid of the component from the location-lookup array and the modelref array
-		String locationAnnotationString = sbml.getModel().getParameter(locationParameterString).getAnnotationString();
-		int submodelStringIndex = locationAnnotationString.indexOf("array:" + submodelID, 0);		
-		String leftPart = locationAnnotationString.substring(submodelStringIndex, locationAnnotationString.indexOf(")", submodelStringIndex));
-		String rowCol = leftPart.split("=")[1];
-		String col = rowCol.split(",")[1];
-		
-		return Integer.parseInt(col);
+		return -1;
 	}
 	
 	/**
@@ -4164,9 +4015,7 @@ public class BioModel {
 			
 			//if it's a location parameter
 			if (parameter.getId().contains("__locations")) {
-				
-				if (parameter.getAnnotationString().contains("array:" + submodelID + "=")) {
-					
+				if (AnnotationUtility.parseArrayAnnotation(parameter, submodelID)!=null) {
 					componentModelRefID = parameter.getId().replace("__locations","");
 					break;
 				}		
@@ -4174,18 +4023,11 @@ public class BioModel {
 		}
 		
 		String locationParameterString = componentModelRefID + "__locations";
-		
-		sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).removeAttr(
-				sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).getAttrIndex(
-						"array:" + submodelID));
-		sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).removeAttr(
-				sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).getAttrIndex(
-						"array:" + submodelID, "http://www.fakeuri.com"));
-		sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).removeAttr(
-				sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).getAttrIndex(
-						submodelID, "http://www.fakeuri.com"));
-		sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0)
-		.addAttr("array:" + submodelID, "(" + row + "," + col + ")");
+		Parameter locationParameter = sbml.getModel().getParameter(locationParameterString);
+		if (locationParameter != null) {
+			AnnotationUtility.removeArrayAnnotation(locationParameter, submodelID);
+			AnnotationUtility.appendArrayAnnotation(locationParameter, submodelID + "=\"(" + row + "," + col + ")\"");
+		}		
 	}
 
 	/**
@@ -4287,39 +4129,25 @@ public class BioModel {
 				if (BioModel.isInputPort(port)) return GlobalConstants.INPUT;
 				else return GlobalConstants.OUTPUT;
 			}
-		}
-		if (species.isSetAnnotation()) {
-			String annotation = species.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
-			String [] annotations = annotation.split(",");
-			for (int i=0;i<annotations.length;i++) {
-				if (annotations[i].startsWith(GlobalConstants.TYPE)) {
-					String [] type = annotations[i].split("=");
-					if (sbmlCompModel!=null) {
-						if (type.length < 2) {
-							species.unsetAnnotation();
-							return GlobalConstants.INTERNAL;
-						} else if (type[1].equals(GlobalConstants.INPUT)) {
-							Port port = sbmlCompModel.createPort();
-							port.setId(speciesId);
-							port.setIdRef(speciesId);
-							port.setSBOTerm(GlobalConstants.SBO_INPUT_PORT);
-							species.unsetAnnotation();
-							return type[1];
-						} else if (type[1].equals(GlobalConstants.OUTPUT)) {
-							Port port = sbmlCompModel.createPort();
-							port.setId(speciesId);
-							port.setIdRef(speciesId);
-							port.setSBOTerm(GlobalConstants.SBO_OUTPUT_PORT);
-							species.unsetAnnotation();
-							return type[1];
-						} else if (type[1].equals(GlobalConstants.INTERNAL)) {
-							species.unsetAnnotation();
-							return type[1];
-						}
-					}
-				}
+			if (AnnotationUtility.checkObsoleteAnnotation(species, GlobalConstants.INPUT)) {
+				port = sbmlCompModel.createPort();
+				port.setId(speciesId);
+				port.setIdRef(speciesId);
+				port.setSBOTerm(GlobalConstants.SBO_INPUT_PORT);
+				AnnotationUtility.removeObsoleteAnnotation(species);
+				return GlobalConstants.INPUT;
+			} else if (AnnotationUtility.checkObsoleteAnnotation(species, GlobalConstants.OUTPUT)) {
+				port = sbmlCompModel.createPort();
+				port.setId(speciesId);
+				port.setIdRef(speciesId);
+				port.setSBOTerm(GlobalConstants.SBO_OUTPUT_PORT);
+				AnnotationUtility.removeObsoleteAnnotation(species);
+				return GlobalConstants.OUTPUT;
+			} else if (AnnotationUtility.checkObsoleteAnnotation(species, GlobalConstants.INTERNAL)) {
+				AnnotationUtility.removeObsoleteAnnotation(species);
+				return GlobalConstants.INTERNAL;
 			}
-		} 
+		}
 		if (isMRNASpecies(species)) {
 			return GlobalConstants.MRNA; 
 		}
@@ -4342,12 +4170,10 @@ public class BioModel {
 		if (degradation != null) {
 			if (degradation.isSetSBOTerm()) {
 				if (degradation.getSBOTerm()==GlobalConstants.SBO_DEGRADATION) return degradation;
-			} else if (degradation.isSetAnnotation()) {
-				if (degradation.getAnnotationString().contains("Degradation")) {
-					degradation.setSBOTerm(GlobalConstants.SBO_DEGRADATION);
-					degradation.unsetAnnotation();
-					return degradation;
-				}
+			} else if (AnnotationUtility.checkObsoleteAnnotation(degradation,"Degradation")) {
+				degradation.setSBOTerm(GlobalConstants.SBO_DEGRADATION);
+				AnnotationUtility.removeObsoleteAnnotation(degradation);
+				return degradation;
 			}
 		}
 		return null;
@@ -4358,12 +4184,10 @@ public class BioModel {
 		if (degradation != null) {
 			if (degradation.isSetSBOTerm()) {
 				if (degradation.getSBOTerm()==GlobalConstants.SBO_DEGRADATION) return degradation;
-			} else if (degradation.isSetAnnotation()) {
-				if (degradation.getAnnotationString().contains("Degradation")) {
-					degradation.setSBOTerm(GlobalConstants.SBO_DEGRADATION);
-					degradation.unsetAnnotation();
-					return degradation;
-				}
+			} else if (AnnotationUtility.checkObsoleteAnnotation(degradation,"Degradation")) {
+				degradation.setSBOTerm(GlobalConstants.SBO_DEGRADATION);
+				AnnotationUtility.removeObsoleteAnnotation(degradation);
+				return degradation;
 			}
 		}
 		return null;
@@ -4380,12 +4204,10 @@ public class BioModel {
 		if (diffusion != null) {
 			if (diffusion.isSetSBOTerm()) {
 				if (diffusion.getSBOTerm()==GlobalConstants.SBO_DIFFUSION) return diffusion;
-			} else if (diffusion.isSetAnnotation()) {
-				if (diffusion.getAnnotationString().contains("Diffusion")) {
-					diffusion.setSBOTerm(GlobalConstants.SBO_DIFFUSION);
-					diffusion.unsetAnnotation();
-					return diffusion;
-				}
+			} else if (AnnotationUtility.checkObsoleteAnnotation(diffusion,"Diffusion")) {
+				diffusion.setSBOTerm(GlobalConstants.SBO_DIFFUSION);
+				AnnotationUtility.removeObsoleteAnnotation(diffusion);
+				return diffusion;
 			}
 		}
 		return null;
@@ -4406,12 +4228,10 @@ public class BioModel {
 				} else if  (production.getSBOTerm()==GlobalConstants.SBO_GENETIC_PRODUCTION) {
 					return production;
 				}
-			} else if (production.isSetAnnotation()) {
-				if (production.getAnnotationString().contains("Production")) {
-					production.setSBOTerm(GlobalConstants.SBO_GENETIC_PRODUCTION);
-					production.unsetAnnotation();
-					return production;
-				}
+			} else if (AnnotationUtility.checkObsoleteAnnotation(production,"Production")) {
+				production.setSBOTerm(GlobalConstants.SBO_GENETIC_PRODUCTION);
+				AnnotationUtility.removeObsoleteAnnotation(production);
+				return production;
 			}
 		}
 		return null;
@@ -4432,12 +4252,10 @@ public class BioModel {
 				} else if  (production.getSBOTerm()==GlobalConstants.SBO_GENETIC_PRODUCTION) {
 					return production;
 				}
-			} else if (production.isSetAnnotation()) {
-				if (production.getAnnotationString().contains("Production")) {
-					production.setSBOTerm(GlobalConstants.SBO_GENETIC_PRODUCTION);
-					production.unsetAnnotation();
-					return production;
-				}
+			} else if (AnnotationUtility.checkObsoleteAnnotation(production,"Production")) {
+				production.setSBOTerm(GlobalConstants.SBO_GENETIC_PRODUCTION);
+				AnnotationUtility.removeObsoleteAnnotation(production);
+				return production;
 			}
 		}
 		return null;
@@ -4736,7 +4554,7 @@ public class BioModel {
 				//if it's a location parameter
 				if (parameter.getId().contains("__locations")) {
 					
-					if (parameter.getAnnotationString().contains("array:" + name + "=")) {
+					if (AnnotationUtility.parseArrayAnnotation(parameter,name)!=null) {
 						
 						componentModelRef = parameter.getId().replace("__locations","");						
 						break;
@@ -4746,22 +4564,11 @@ public class BioModel {
 		}
 		
 		String locationParameterString = componentModelRef + "__locations";
-		
-		if (sbml.getModel().getParameter(locationParameterString) != null) {
-			
-			//get rid of the component from the location-lookup array and the modelref array
-			sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).removeAttr(
-					sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).getAttrIndex(
-							"array:" + name));
-			sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).removeAttr(
-					sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).getAttrIndex(
-							"array:" + name, "http://www.fakeuri.com"));
-			sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).removeAttr(
-					sbml.getModel().getParameter(locationParameterString).getAnnotation().getChild(0).getAttrIndex(
-							name, "http://www.fakeuri.com"));
-			
-			if (sbml.getModel().getParameter(locationParameterString).getAnnotationString().length() < 1)
+		Parameter locationParameter = sbml.getModel().getParameter(locationParameterString);
+		if (locationParameter != null) {
+			if (AnnotationUtility.removeArrayAnnotation(locationParameter, name)) {
 				sbml.getModel().removeParameter(locationParameterString);
+			}
 		}
 		
 		//if a gridded/arrayed submodel exists, it'll have this ID	
@@ -4778,10 +4585,8 @@ public class BioModel {
 			
 			//if the annotation string already exists, then one of these existed before
 			//so update its count
-			if (potentialGridSubmodel.getAnnotationString().length() > 0) {
-				
-				int size = Integer.parseInt(potentialGridSubmodel.getAnnotationString()
-						.replace("\"","").split("=")[2].replace("/>","").replace("</annotation>","").trim());
+			int size = AnnotationUtility.parseArraySizeAnnotation(potentialGridSubmodel);
+			if (size >= 0) {
 				
 				//if we're getting rid of the last submodel of its kind
 				//then delete its grid species (if they exist) and the GRID__ submodel
@@ -4803,13 +4608,7 @@ public class BioModel {
 					sbmlComp.removeExternalModelDefinition(componentModelRef);
 				}
 				else {					
-					
-					XMLAttributes attr = new XMLAttributes();			
-					attr.add("xmlns:array", "http://www.fakeuri.com");
-					attr.add("array:count", String.valueOf(--size));
-					XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);
-					
-					potentialGridSubmodel.setAnnotation(node);
+					AnnotationUtility.setArraySizeAnnotation(potentialGridSubmodel, --size);
 				}
 			}
 		}
@@ -5127,15 +4926,9 @@ public class BioModel {
 		for (Species specToAdd : speciesToAdd) {
 			
 			if (sbml.getModel().getSpecies(specToAdd.getId()) == null) {
-				
-				XMLAttributes attr = new XMLAttributes();
-				attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
-				attr.add("ibiosim:type", "grid");
-				XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
-			
 				Species newSpecies = this.getSBMLDocument().getModel().createSpecies();
 				newSpecies.setId(specToAdd.getId());
-				newSpecies.setAnnotation(node);
+				AnnotationUtility.setGridAnnotation(newSpecies, grid.getNumRows(), grid.getNumCols());
 				newSpecies.setInitialAmount(0.0);
 				newSpecies.setBoundaryCondition(specToAdd.getBoundaryCondition());
 				newSpecies.setConstant(specToAdd.getConstant());
@@ -5188,12 +4981,7 @@ public class BioModel {
 			r.setFast(false);
 			r.setSBOTerm(GlobalConstants.SBO_DEGRADATION);
 			
-			XMLAttributes attr = new XMLAttributes();
-			attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
-			attr.add("ibiosim:type", "grid");
-			XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
-			
-			r.setAnnotation(node);
+			AnnotationUtility.setGridAnnotation(r, grid.getNumRows(), grid.getNumCols());
 			
 			KineticLaw kl = r.createKineticLaw();
 			
@@ -5210,22 +4998,9 @@ public class BioModel {
 				LocalParameter i = kl.createLocalParameter();
 				LocalParameter j = kl.createLocalParameter();
 				
-				attr = new XMLAttributes();
-				attr.add("xmlns:array", "http://www.fakeuri.com");
-				attr.add("array:min", "0");
-				attr.add("array:max", String.valueOf(this.getGrid().getNumRows() - 1));
-				node = new XMLNode(new XMLTriple("array","","array"), attr);
-				
-				i.setAnnotation(node);
-				
-				attr = new XMLAttributes();
-				attr.add("xmlns:array", "http://www.fakeuri.com");
-				attr.add("array:min", "0");
-				attr.add("array:max", String.valueOf(this.getGrid().getNumCols() - 1));
-				node = new XMLNode(new XMLTriple("array","","array"), attr);
-				
-				j.setAnnotation(node);
-				
+				AnnotationUtility.setArraySizeAnnotation(i, this.getGrid().getNumRows());
+				AnnotationUtility.setArraySizeAnnotation(j, this.getGrid().getNumCols());
+
 				i.setId("i");
 				j.setId("j");
 				
@@ -5306,13 +5081,8 @@ public class BioModel {
 				r.setCompartment(diffComp);
 				r.setReversible(true);
 				r.setFast(false);
-				
-				XMLAttributes attr = new XMLAttributes();
-				attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
-				attr.add("ibiosim:type", "grid");
-				XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
-				
-				r.setAnnotation(node);
+
+				AnnotationUtility.setGridAnnotation(r, grid.getNumRows(), grid.getNumCols());
 				KineticLaw kl = r.createKineticLaw();
 				
 				if (kecdiff > 0) {
@@ -5338,21 +5108,8 @@ public class BioModel {
 					LocalParameter i = kl.createLocalParameter();
 					LocalParameter j = kl.createLocalParameter();
 					
-					attr = new XMLAttributes();
-					attr.add("xmlns:array", "http://www.fakeuri.com");
-					attr.add("array:min", "0");
-					attr.add("array:max", String.valueOf(this.getGrid().getNumRows() - 1));
-					node = new XMLNode(new XMLTriple("array","","array"), attr);
-					
-					i.setAnnotation(node);
-					
-					attr = new XMLAttributes();
-					attr.add("xmlns:array", "http://www.fakeuri.com");
-					attr.add("array:min", "0");
-					attr.add("array:max", String.valueOf(this.getGrid().getNumCols() - 1));
-					node = new XMLNode(new XMLTriple("array","","array"), attr);
-					
-					j.setAnnotation(node);
+					AnnotationUtility.setArraySizeAnnotation(i, this.getGrid().getNumRows());
+					AnnotationUtility.setArraySizeAnnotation(j, this.getGrid().getNumCols());
 					
 					i.setId("i");
 					j.setId("j");
@@ -5379,12 +5136,7 @@ public class BioModel {
 			r.setReversible(true);
 			r.setFast(false);
 			
-			XMLAttributes attr = new XMLAttributes();
-			attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
-			attr.add("ibiosim:type", "grid");
-			XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
-			
-			r.setAnnotation(node);
+			AnnotationUtility.setGridAnnotation(r, grid.getNumRows(), grid.getNumCols());
 			
 			KineticLaw kl = r.createKineticLaw();
 			
@@ -5407,22 +5159,9 @@ public class BioModel {
 			
 			LocalParameter i = kl.createLocalParameter();
 			LocalParameter j = kl.createLocalParameter();
-			
-			attr = new XMLAttributes();
-			attr.add("xmlns:array", "http://www.fakeuri.com");
-			attr.add("array:min", "0");
-			attr.add("array:max", String.valueOf(this.getGrid().getNumRows() - 1));
-			node = new XMLNode(new XMLTriple("array","","array"), attr);
-			
-			i.setAnnotation(node);
-			
-			attr = new XMLAttributes();
-			attr.add("xmlns:array", "http://www.fakeuri.com");
-			attr.add("array:min", "0");
-			attr.add("array:max", String.valueOf(this.getGrid().getNumCols() - 1));
-			node = new XMLNode(new XMLTriple("array","","array"), attr);
-			
-			j.setAnnotation(node);
+
+			AnnotationUtility.setArraySizeAnnotation(i, this.getGrid().getNumRows());
+			AnnotationUtility.setArraySizeAnnotation(j, this.getGrid().getNumCols());
 			
 			i.setId("i");
 			j.setId("j");
@@ -6138,9 +5877,8 @@ public class BioModel {
 			}
 			for (long i = 0; i < sbml.getModel().getNumCompartments(); i++) {
 				Compartment compartment = sbml.getModel().getCompartment(i);
-				if (compartment.isSetAnnotation() &&
-					(compartment.getAnnotation().toXMLString().contains("EnclosingCompartment"))) {
-					compartment.unsetAnnotation();
+				if (AnnotationUtility.checkObsoleteAnnotation(compartment,"EnclosingCompartment")) {
+					AnnotationUtility.removeObsoleteAnnotation(compartment);
 					return;
 				} 
 			}
@@ -6646,11 +6384,9 @@ public class BioModel {
 					String modelId = parameter.getId().replace("__locations","");
 					Submodel submodel = docCompModel.getSubmodel("GRID__"+modelId);
 					submodel.removeFromParentAndDelete();
-					String[] splitAnnotation = parameter.getAnnotationString().replace("<annotation>","")
-					.replace("</annotation>","").replace("\"","").replace("http://www.fakeuri.com","").replace("/>","").split("array:");
-					
+					String[] splitAnnotation = AnnotationUtility.parseArrayAnnotation(parameter);
 					//find all components in the annotation
-					for (int j = 2; j < splitAnnotation.length; ++j) {
+					for (int j = 1; j < splitAnnotation.length; j++) {
 						submodel = docCompModel.createSubmodel();
 						submodel.setId(splitAnnotation[j].split("=")[0].trim());
 						submodel.setModelRef(modelId);
@@ -6672,13 +6408,9 @@ public class BioModel {
 				
 				//if it's a location parameter, loop through the annotation and collect submodel IDs
 				if (parameter.getId().contains("__locations")) {
-					
-					String[] splitAnnotation = parameter.getAnnotationString().replace("<annotation>","")
-					.replace("</annotation>","").replace("\"","").replace("http://www.fakeuri.com","").replace("/>","").split("array:");
-					
+					String[] splitAnnotation = AnnotationUtility.parseArrayAnnotation(parameter);
 					//find all components in the annotation
-					for (int j = 2; j < splitAnnotation.length; ++j) {
-							
+					for (int j = 1; j < splitAnnotation.length; j++) {
 						comps.add(splitAnnotation[j].split("=")[0].trim());
 					}
 				}	
@@ -6708,8 +6440,7 @@ public class BioModel {
 				//if it's a location parameter
 				if (parameter.getId().contains("__locations")) {
 					
-					if (parameter.getAnnotationString().contains("array:" + s + "=")) {
-						
+					if (AnnotationUtility.parseArrayAnnotation(parameter, s)!=null) {
 						componentModelRef = parameter.getId().replace("__locations","");
 						break;
 					}					
@@ -6739,14 +6470,15 @@ public class BioModel {
 			document.setConsistencyChecks(libsbml.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
 			long numErrors = document.checkConsistency();
 			if (numErrors > 0) {
-				Utility.createErrorMessage("Merged SBMLs Are Inconsistent", "The merged sbml files have inconsistencies.");
+				//Utility.createErrorMessage("Merged SBMLs Are Inconsistent", "The merged sbml files have inconsistencies.");
 				String message = "";
 				for (long i = 0; i < numErrors; i++) {
+					if (document.getError(i).getErrorId()==1020204) continue;
 					String error = document.getError(i).getMessage(); // .replace(". ",
 					// ".\n");
 					message += i + ":" + error + "\n";
 				}
-				if (numErrors > 0) {
+				if (!message.equals("")) {
 					JTextArea messageArea = new JTextArea(message);
 					messageArea.setLineWrap(true);
 					messageArea.setEditable(false);

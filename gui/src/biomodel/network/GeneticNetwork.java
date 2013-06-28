@@ -445,18 +445,16 @@ public class GeneticNetwork {
 					validSubmodelID = validSubmodelID.replace("GRID__","");
 					
 					if (!arrayAnnotation.equals("")) arrayAnnotation += " "; 
-					arrayAnnotation += AnnotationUtility.parseArrayAnnotation(properties.getSBMLDocument().getModel().getParameter(validSubmodelID + "__locations"));
-					/*
-					if (membraneDiffusionReaction.getAnnotationString().length() > 0)
-						membraneDiffusionReaction.appendAnnotation(", " + 
-							properties.getSBMLDocument().getModel().getParameter(validSubmodelID + "__locations").getAnnotationString()
-							.replace("<annotation>","").replace("</annotation>",""));
-					else 
-						membraneDiffusionReaction.setAnnotation( 
-								properties.getSBMLDocument().getModel().getParameter(validSubmodelID + "__locations").getAnnotationString()
-								.replace("<annotation>","").replace("</annotation>",""));
-								*/
-
+					String[] annotations = AnnotationUtility.parseArrayAnnotation(properties.getSBMLDocument().getModel().getParameter(validSubmodelID + "__locations"));
+					boolean first = true;
+					for (int i = 1; i < annotations.length; i++) {
+						if (!first) {
+							arrayAnnotation += " ";
+						} else {
+							first = false;
+						}
+						arrayAnnotation += annotations[i];
+					}
 				}
 			}
 			if (!arrayAnnotation.equals("")) {
@@ -465,15 +463,15 @@ public class GeneticNetwork {
 			
 			//fix the array annotation that was just created
 					
-			String reactionAnnotation = membraneDiffusionReaction.getAnnotationString();
 			ArrayList<String> components = new ArrayList<String>();
 			
-			String[] splitAnnotation = reactionAnnotation.replace("\"","").split("array:");
+			String[] splitAnnotation = AnnotationUtility.parseArrayAnnotation(membraneDiffusionReaction);
 			
 			//find all components in the annotation
-			for (int j = 2; j < splitAnnotation.length; ++j) {
-					
-				components.add(splitAnnotation[j].split("=")[0].trim());
+			if (splitAnnotation!=null) {
+				for (int j = 1; j < splitAnnotation.length; ++j) {
+					components.add(splitAnnotation[j].split("=")[0].trim());
+				}
 			}
 			
 			
@@ -506,120 +504,39 @@ public class GeneticNetwork {
 							membraneDiffusionReaction.getKineticLaw().getFormula() + " * " + potentialProductID);
 					
 					//take off the annotation so it's not mistaken as a grid-based memdiff reaction
-					membraneDiffusionReaction.setAnnotation("");
+					AnnotationUtility.removeArrayAnnotation(membraneDiffusionReaction);
 				}
 				else 
 					reactionsToRemove.add(membraneDiffusionReaction.getId());
 			}
 		}
-		
-		/* 
-		ArrayList<Event> dynamicEvents = new ArrayList<Event>();
-		
-		//look through all submodels for dynamic events
-		for (int submodelIndex = 0; submodelIndex < properties.getSBMLCompModel().getNumSubmodels(); 
-		++submodelIndex) {
-			
-			SBMLReader sbmlReader = new SBMLReader();
-			String extModelFile = properties.getSBMLComp().getExternalModelDefinition(
-					properties.getSBMLCompModel().getSubmodel(submodelIndex).getModelRef())
-					.getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
-			Model submodel = sbmlReader.readSBMLFromFile(properties.getPath() + extModelFile).getModel();
-			*/
-			//find all individual dynamic events (within submodels)
-			Model submodel = document.getModel();
-			for (int i = 0; i < submodel.getNumEvents(); ++i) {
-				
-				Event event = submodel.getEvent(i);
-				
-				if (!event.getId().contains("__")) continue;
-				
-				String[] splitID = event.getId().split("__");			
-				String submodelId = splitID[0];
-				String eventId = splitID[1];
-				
-				if (event.getAnnotationString().length() > 0 && (
-						event.getAnnotationString().contains("Division") ||
-						event.getAnnotationString().contains("Death") ||
-						event.getAnnotationString().contains("Move"))) {
-					
-					if (event.getAnnotationString().contains("Symmetric Division"))
-						event.setId(submodelId + "__SymmetricDivision__" + eventId);
-					else if (event.getAnnotationString().contains("Asymmetric Division"))
-						event.setId(submodelId + "__AsymmetricDivision__" + eventId);
-					else if (event.getAnnotationString().contains("Death"))
-						event.setId(submodelId + "__Death__" + eventId);
-					else if (event.getAnnotationString().contains("Move Random"))
-						event.setId(submodelId + "__MoveRandom__" + eventId);
-					else if (event.getAnnotationString().contains("Move Left"))
-						event.setId(submodelId + "__MoveLeft__" + eventId);
-					else if (event.getAnnotationString().contains("Move Right"))
-						event.setId(submodelId + "__MoveRight__" + eventId);
-					else if (event.getAnnotationString().contains("Move Above"))
-						event.setId(submodelId + "__MoveAbove__" + eventId);
-					else if (event.getAnnotationString().contains("Move Below"))
-						event.setId(submodelId + "__MoveBelow__" + eventId);
-					
-					//dynamicEvents.add(event);
-				}
-			}
-			/*
-		}*/
-		
-		//make arrays out of the dynamic events (for the top-level model)
-		/*
-		for (Event dynEvent : dynamicEvents) {
-			
-			Event e = dynEvent.cloneObject();
-			e.setNamespaces(document.getNamespaces());
-						
-			document.getModel().addEvent(e);
-			
-			Event dynamicEvent = document.getModel().getEvent(dynEvent.getId());
-			
-			String[] splitID = dynamicEvent.getId().split("__");			
-			String submodelID = splitID[0];
-			
-			//length of 3 indicates an array/grid
-			boolean isGrid = (splitID.length == 3);
-			
-			if (isGrid)
-				dynamicEvent.setId(dynamicEvent.getId().replace(submodelID + "__",""));
-			
-			if (properties.getSBMLDocument().getModel().getParameter(submodelID + "__locations") != null) {
-				dynamicEvent.setAnnotation(", " + 
-					properties.getSBMLDocument().getModel().getParameter(submodelID + "__locations").getAnnotationString()
-					.replace("<annotation>","").replace("</annotation>","").trim());
+		//find all individual dynamic events (within submodels)
+		Model submodel = document.getModel();
+		for (int i = 0; i < submodel.getNumEvents(); ++i) {
+
+			Event event = submodel.getEvent(i);
+
+			if (!event.getId().contains("__")) continue;
+
+			String[] splitID = event.getId().split("__");			
+			String submodelId = splitID[0];
+			String eventId = splitID[1];
+
+			String eventAnnotation = AnnotationUtility.parseDynamicAnnotation(event);
+			if (eventAnnotation!=null) {
+				event.setId(submodelId + "__"+eventAnnotation.replace(" ","") + "__" + eventId);
 			}
 		}
-		*/
-		
-		//replace all Type=Grid occurrences with more complete information
-			/*
-		for (int i = 0; i < document.getModel().getNumReactions(); ++i) {
-			
-			if (document.getModel().getReaction(i).getAnnotationString() != null &&
-					document.getModel().getReaction(i).getAnnotationString().contains("type=\"grid\"")) {
-				
-				document.getModel().getReaction(i).setAnnotation("");
-			}
-		}
-		*/
-		
+
 		//replace all Type=Grid occurrences with more complete information
 		for (int i = 0; i < document.getModel().getNumSpecies(); ++i) {
-			
-			if (document.getModel().getSpecies(i).getAnnotationString() != null &&
-					document.getModel().getSpecies(i).getAnnotationString().contains("type=\"grid\"")) {
-				
-				XMLAttributes attr = new XMLAttributes();
-				attr.add("xmlns:array", "http://www.fakeuri.com");
-				attr.add("array:rowsLowerLimit", "0");
-				attr.add("array:colsLowerLimit", "0");
-				attr.add("array:rowsUpperLimit", String.valueOf(properties.getGrid().getNumRows() - 1));
-				attr.add("array:colsUpperLimit", String.valueOf(properties.getGrid().getNumCols() - 1));
-				XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);
-				document.getModel().getSpecies(i).setAnnotation(node);
+			Species species = document.getModel().getSpecies(i);
+			if (AnnotationUtility.parseGridAnnotation(species) != null) {
+				AnnotationUtility.removeGridAnnotation(species);
+				String arrayAnnotation = "rowsLowerLimit=\"0\" colsLowerLimit=\"0\" rowsUpperLimit=\""+
+						String.valueOf(properties.getGrid().getNumRows() - 1) + "\" colsUpperLimit=\""+
+						String.valueOf(properties.getGrid().getNumCols() - 1);
+				AnnotationUtility.setArrayAnnotation(species, arrayAnnotation);		
 			}
 		}
 		
@@ -635,9 +552,9 @@ public class GeneticNetwork {
 			//if it's a location parameter
 			if (parameter.getId().contains("__locations")) {
 				
-				String[] splitAnnotation = parameter.getAnnotationString().replace("\"","").split("array:");
+				String[] splitAnnotation = AnnotationUtility.parseArrayAnnotation(parameter);
 				
-				for (int j = 2; j < splitAnnotation.length; ++j) {
+				for (int j = 1; j < splitAnnotation.length; ++j) {
 					allComponents.add(splitAnnotation[j].split("=")[0].trim());
 				}
 			}

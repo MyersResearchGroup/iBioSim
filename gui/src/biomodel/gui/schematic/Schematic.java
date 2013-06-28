@@ -76,6 +76,7 @@ import sbol.SBOLIdentityManager;
 
 import main.Gui;
 
+import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.DropComponentPanel;
 import biomodel.gui.Grid;
 import biomodel.gui.GridPanel;
@@ -2586,16 +2587,11 @@ public class Schematic extends JPanel implements ActionListener {
 						scPanel.updateMovieScheme();
 					
 					if (copyIntSpecies.isSelected()) {
-					
-						//get all of the components with the same model as the selected one
-						String locationAnnotationString = 
-							bioModel.getSBMLDocument().getModel()
-							.getParameter(compModelName + "__locations")
-							.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
 				
-						String[] compIDs = locationAnnotationString.replace("\"","").split("array:");
+						String[] compIDs = AnnotationUtility.parseArrayAnnotation(bioModel.getSBMLDocument().getModel()
+							.getParameter(compModelName + "__locations"));
 						
-						for (int j = 2; j < compIDs.length; ++j) {
+						for (int j = 1; j < compIDs.length; ++j) {
 							
 							if (compIDs[j].contains("=(")) {
 								

@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.sbml.libsbml.Parameter;
 
+import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.movie.SerializableScheme;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
@@ -232,35 +233,30 @@ public class MovieScheme {
 					
 					//if it's a location parameter
 					if (parameter.getId().contains("__locations")) {
-						
-						if (parameter.getAnnotationString().contains("array:" + compID + "=")) {
-							
-							String[] splitAnnotation = parameter.getAnnotationString().replace("<annotation>","")
-							.replace("</annotation>","").replace("\"","").split("array:");
-						
-							//loop through all components in the locations parameter array
-							for (int j = 2; j < splitAnnotation.length; ++j) {
-								
-								String submodelID = splitAnnotation[j].split("=")[0].trim();
-								
-								speciesID = submodelID + "__" + speciesIDNoPrefix;
-																
-								if (submodelID.length() == 0)
-									continue;
-								
-								if (remove) {
-									schemeApply.apply(speciesID);
-								}
-								else {
-									//add a scheme with this other species that's part of the same GCM
-									//as the component
-									this.createOrUpdateSpeciesScheme(speciesID, null);
-									schemeApply.apply(speciesID);
-									speciesSchemes.get(speciesID).setMin(min);
-									speciesSchemes.get(speciesID).setMax(max);
-								}
+						String[] splitAnnotation = AnnotationUtility.parseArrayAnnotation(parameter);
+
+						//loop through all components in the locations parameter array
+						for (int j = 1; j < splitAnnotation.length; ++j) {
+
+							String submodelID = splitAnnotation[j].split("=")[0].trim();
+
+							speciesID = submodelID + "__" + speciesIDNoPrefix;
+
+							if (submodelID.length() == 0)
+								continue;
+
+							if (remove) {
+								schemeApply.apply(speciesID);
 							}
-						}					
+							else {
+								//add a scheme with this other species that's part of the same GCM
+								//as the component
+								this.createOrUpdateSpeciesScheme(speciesID, null);
+								schemeApply.apply(speciesID);
+								speciesSchemes.get(speciesID).setMin(min);
+								speciesSchemes.get(speciesID).setMax(max);
+							}
+						}
 					}				
 				}
 			}
