@@ -83,24 +83,152 @@ public class AnnotationUtility {
 		String annotation = sbmlObject.getAnnotationString();
 		Pattern sweepPattern = Pattern.compile(SWEEP_ANNOTATION);
 		Matcher sweepMatcher = sweepPattern.matcher(annotation);
-		//System.out.println("Parsing "+annotation);
 		if (sweepMatcher.find() && sweepMatcher.groupCount()==1) {
-			//System.out.println("Returning " + sweepMatcher.group(1));
 			return sweepMatcher.group(1);
 		}
 		return null;
 	}
+
+	public static void setArraySizeAnnotation(SBase sbmlObject, int size) {
+		if (sbmlObject.isSetAnnotation())
+			removeArraySizeAnnotation(sbmlObject);
+		XMLAttributes attr = new XMLAttributes();
+		attr.add("xmlns:array", "http://www.fakeuri.com");
+		attr.add("array:size", ""+size);
+		XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);
+		if (sbmlObject.appendAnnotation(node) != libsbml.LIBSBML_OPERATION_SUCCESS)
+			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
+					+ sbmlObject.getId());
+	}
 	
-	public static int[] parseGridAnnotation(SBase sbmlObject) {
+	public static void removeArraySizeAnnotation(SBase sbmlObject) {
+		String annotation = sbmlObject.getAnnotationString();
+		Pattern arraySizePattern = Pattern.compile(ARRAY_SIZE_ANNOTATION);
+		Matcher arraySizeMatcher = arraySizePattern.matcher(annotation);
+		if (arraySizeMatcher.find()) {
+			String arraySizeAnnotation = arraySizeMatcher.group(0);
+			annotation = annotation.replace(arraySizeAnnotation, "");
+		}
+		sbmlObject.setAnnotation(annotation);
+	}
+	
+	public static int parseArraySizeAnnotation(SBase sbmlObject) {
+		if (sbmlObject==null) return -1;
+		String annotation = sbmlObject.getAnnotationString();
+		Pattern arraySizePattern = Pattern.compile(ARRAY_SIZE_ANNOTATION);
+		Matcher arraySizeMatcher = arraySizePattern.matcher(annotation);
+		if (arraySizeMatcher.find() && arraySizeMatcher.groupCount()==1) {
+			return Integer.valueOf(arraySizeMatcher.group(1));
+		} else {
+			arraySizePattern = Pattern.compile(OLD_ARRAY_SIZE_ANNOTATION);
+			arraySizeMatcher = arraySizePattern.matcher(annotation);
+			if (arraySizeMatcher.find() && arraySizeMatcher.groupCount()==1) {
+				annotation = annotation.replace("array:count", "array:size");
+				sbmlObject.setAnnotation(annotation);
+				return Integer.valueOf(arraySizeMatcher.group(1));
+			} else {
+				arraySizePattern = Pattern.compile(OLD_ARRAY_RANGE_ANNOTATION);
+				arraySizeMatcher = arraySizePattern.matcher(annotation);
+				if (arraySizeMatcher.find() && arraySizeMatcher.groupCount()==2) {
+					annotation = annotation.replace("array:min=\"0\" array:max","array:size");
+					sbmlObject.setAnnotation(annotation);
+					return Integer.valueOf(arraySizeMatcher.group(2))+1;
+				}				
+			}
+		}
+		return -1;
+	}
+	
+	public static void setDynamicAnnotation(SBase sbmlObject, String dynamic) {
+		if (sbmlObject.isSetAnnotation())
+			removeDynamicAnnotation(sbmlObject);
+		XMLAttributes attr = new XMLAttributes();
+		attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
+		attr.add("ibiosim:type", dynamic);
+		XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
+		if (sbmlObject.appendAnnotation(node) != libsbml.LIBSBML_OPERATION_SUCCESS)
+			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
+					+ sbmlObject.getId());
+	}
+	
+	public static void removeDynamicAnnotation(SBase sbmlObject) {
+		String annotation = sbmlObject.getAnnotationString();
+		Pattern dynamicPattern = Pattern.compile(DYNAMIC_ANNOTATION);
+		Matcher dynamicMatcher = dynamicPattern.matcher(annotation);
+		if (dynamicMatcher.find()) {
+			String dynamicAnnotation = dynamicMatcher.group(0);
+			annotation = annotation.replace(dynamicAnnotation, "");
+		}
+		sbmlObject.setAnnotation(annotation);
+	}
+	
+	public static String parseDynamicAnnotation(SBase sbmlObject) {
+		if (sbmlObject==null) return null;
+		String annotation = sbmlObject.getAnnotationString();
+		Pattern dynamicPattern = Pattern.compile(DYNAMIC_ANNOTATION);
+		Matcher dynamicMatcher = dynamicPattern.matcher(annotation);
+		if (dynamicMatcher.find() && dynamicMatcher.groupCount()==1) {
+			return dynamicMatcher.group(1);
+		}
+		return null;
+	}
+	
+	public static void setGridAnnotation(SBase sbmlObject, int rows, int cols) {
+		if (sbmlObject.isSetAnnotation())
+			removeGridAnnotation(sbmlObject);
+		XMLAttributes attr = new XMLAttributes();
+		attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
+		attr.add("ibiosim:grid", "(" + rows + "," + cols + ")");
+		XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
+		if (sbmlObject.appendAnnotation(node) != libsbml.LIBSBML_OPERATION_SUCCESS)
+			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
+					+ sbmlObject.getId());
+	}
+	
+	public static void removeGridAnnotation(SBase sbmlObject) {
 		String annotation = sbmlObject.getAnnotationString();
 		Pattern gridPattern = Pattern.compile(GRID_ANNOTATION);
 		Matcher gridMatcher = gridPattern.matcher(annotation);
-		int[] gridSize = new int[2];
-		gridSize[0]=0;
-		gridSize[1]=0;
+		if (gridMatcher.find()) {
+			String gridAnnotation = gridMatcher.group(0);
+			annotation = annotation.replace(gridAnnotation, "");
+		} else {
+			gridPattern = Pattern.compile(OLD_GRID_ANNOTATION);
+			gridMatcher = gridPattern.matcher(annotation);
+			if (gridMatcher.find()) {
+				String gridAnnotation = gridMatcher.group(0);
+				annotation = annotation.replace(gridAnnotation, "");
+			}
+		}
+		sbmlObject.setAnnotation(annotation);
+	}
+	
+	public static int[] parseGridAnnotation(SBase sbmlObject) {
+		String annotation = sbmlObject.getAnnotationString();
+		if (annotation==null) return null;
+		Pattern gridPattern = Pattern.compile(GRID_ANNOTATION);
+		Matcher gridMatcher = gridPattern.matcher(annotation);
+		int[] gridSize = null;
 		if (gridMatcher.find() && gridMatcher.groupCount()==2) {
+			gridSize = new int[2];
 			gridSize[0] = Integer.valueOf(gridMatcher.group(1));
 			gridSize[1] = Integer.valueOf(gridMatcher.group(2));
+		} else {
+			gridPattern = Pattern.compile(OLD_GRID_ANNOTATION);
+			gridMatcher = gridPattern.matcher(annotation);
+			if (gridMatcher.find()) {
+				gridSize = new int[2];
+				gridSize[0]=0;
+				gridSize[1]=0;
+			} else {
+				gridPattern = Pattern.compile(LAYOUT_GRID_ANNOTATION);
+				gridMatcher = gridPattern.matcher(annotation);
+				if (gridMatcher.find() && gridMatcher.groupCount()==2) {
+					gridSize = new int[2];
+					gridSize[0] = Integer.valueOf(gridMatcher.group(1));
+					gridSize[1] = Integer.valueOf(gridMatcher.group(2));
+				}				
+			}
 		}
 		return gridSize;
 	}
@@ -112,7 +240,7 @@ public class AnnotationUtility {
 		XMLAttributes attr = new XMLAttributes();
 		attr.add("xmlns:array", "http://www.fakeuri.com");
 		for (int i = 0; i < attributes.length; i++) {
-			attr.add(attributes[i].split("=")[0], attributes[i].split("=")[1].replace("\"", ""));
+			attr.add("array:"+attributes[i].split("=")[0], attributes[i].split("=")[1].replace("\"", ""));
 		}
 		XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);
 		if (sbmlObject.appendAnnotation(node) != libsbml.LIBSBML_OPERATION_SUCCESS)
@@ -120,6 +248,34 @@ public class AnnotationUtility {
 					+ sbmlObject.getId());
 	}
 	
+	public static void appendArrayAnnotation(SBase sbmlObject, String newElement) {
+		String elements = newElement;
+		String[] oldElements = AnnotationUtility.parseArrayAnnotation(sbmlObject);
+		if (oldElements != null) {
+			for (int i = 1; i < oldElements.length; i++) {
+				elements += " " + oldElements[i]; 
+			}
+		}
+		AnnotationUtility.setArrayAnnotation(sbmlObject, elements);
+	}
+	
+	public static boolean removeArrayAnnotation(SBase sbmlObject, String element) {
+		//get rid of the component from the location-lookup array and the modelref array
+		if (AnnotationUtility.parseArrayAnnotation(sbmlObject).length==2 &&
+				(sbmlObject.getAnnotation().getChild(0).getAttrIndex("array:" + element)>=0 || 
+				sbmlObject.getAnnotation().getChild(0).getAttrIndex("array:" + element, "http://www.fakeuri.com")>=0 || 
+				sbmlObject.getAnnotation().getChild(0).getAttrIndex(element, "http://www.fakeuri.com")>=0)) {
+			removeArrayAnnotation(sbmlObject);
+			return true;
+		} 
+		sbmlObject.getAnnotation().getChild(0).removeAttr(
+				sbmlObject.getAnnotation().getChild(0).getAttrIndex("array:" + element));
+		sbmlObject.getAnnotation().getChild(0).removeAttr(
+				sbmlObject.getAnnotation().getChild(0).getAttrIndex("array:" + element, "http://www.fakeuri.com"));
+		sbmlObject.getAnnotation().getChild(0).removeAttr(
+				sbmlObject.getAnnotation().getChild(0).getAttrIndex(element, "http://www.fakeuri.com"));
+		return false;
+	}
 	
 	public static void removeArrayAnnotation(SBase sbmlObject) {
 		String annotation = sbmlObject.getAnnotationString();
@@ -132,15 +288,33 @@ public class AnnotationUtility {
 		sbmlObject.setAnnotation(annotation);
 	}
 	
-	public static String parseArrayAnnotation(SBase sbmlObject) {
+	public static String[] parseArrayAnnotation(SBase sbmlObject) {
 		String annotation = sbmlObject.getAnnotationString();
 		Pattern arrayPattern = Pattern.compile(ARRAY_ANNOTATION);
 		Matcher arrayMatcher = arrayPattern.matcher(annotation);
 		if (arrayMatcher.find()) {
-			return arrayMatcher.group(1);
+			return arrayMatcher.group(1).replace("\"","").replace(" ","").split("array:");
 		} else {
-			return "";
+			return null;
 		}
+	}
+	
+	public static String parseArrayAnnotation(SBase sbmlObject,String element) {
+		String[] elements = parseArrayAnnotation(sbmlObject);
+		for (int i=1; i < elements.length; i++) {
+			if (elements[i].startsWith(element + "=")) {
+				return elements[i];
+			}
+		}
+		return null;
+	}
+	
+	public static boolean checkObsoleteAnnotation(SBase sbmlObject, String annotation) {
+		return sbmlObject.isSetAnnotation() && sbmlObject.getAnnotationString().contains(annotation);
+	}
+	
+	public static void removeObsoleteAnnotation(SBase sbmlObject) {
+		sbmlObject.unsetAnnotation();
 	}
 	
 	private static final String XML_NAME_START_CHAR = "[:[A-Z]_[a-z][\\u00C0-\\u00D6][\\u00D8-\\u00F6]" +
@@ -171,8 +345,25 @@ public class AnnotationUtility {
 	private static final String GRID_ANNOTATION =
 			"<ibiosim:ibiosim xmlns:ibiosim=\"http://www\\.fakeuri\\.com\" ibiosim:grid=\"\\((\\d+),(\\d+)\\)\"/>";
 	
+	private static final String LAYOUT_GRID_ANNOTATION = "grid=\\((\\d+),(\\d+)\\)";
+	
+	private static final String OLD_GRID_ANNOTATION =
+			"<ibiosim:ibiosim xmlns:ibiosim=\"http://www\\.fakeuri\\.com\" ibiosim:type=\"grid\"/>";
+	
+	private static final String DYNAMIC_ANNOTATION =
+			"<ibiosim:ibiosim xmlns:ibiosim=\"http://www\\.fakeuri\\.com\" ibiosim:type=\"([\\w\\s]+)\"/>";
+	
 	private static final String SWEEP_ANNOTATION =
 			"<ibiosim:ibiosim xmlns:ibiosim=\"http://www\\.fakeuri\\.com\" ibiosim:sweep=\"(\\S+)\"/>";
+	
+	private static final String OLD_ARRAY_SIZE_ANNOTATION =
+			"<array:array xmlns:array=\"http://www\\.fakeuri\\.com\" array:count=\"(\\d+)\"/>";
+	
+	private static final String OLD_ARRAY_RANGE_ANNOTATION =
+			"<array:array xmlns:array=\"http://www\\.fakeuri\\.com\" array:min=\"(\\d+)\" array:max=\"(\\d+)\"/>";
+	
+	private static final String ARRAY_SIZE_ANNOTATION =
+			"<array:array xmlns:array=\"http://www\\.fakeuri\\.com\" array:size=\"(\\d+)\"/>";
 	
 	private static final String ARRAY_ANNOTATION =
 			"<array:array xmlns:array=\"http://www\\.fakeuri\\.com\" (.+)/>";

@@ -13,6 +13,7 @@ import java.util.Map;
 import org.sbml.libsbml.Parameter;
 import org.sbml.libsbml.SBMLWriter;
 
+import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.schematic.BioGraph;
 import biomodel.parser.BioModel;
 
@@ -45,7 +46,7 @@ public class Grid {
 	
 	//components on the grid
 	//private HashMap<String, Properties> components;
-	private BioModel gcm;
+	private BioModel bioModel;
 	
 	//map of row, col grid locations to the component at that location
 	private HashMap<Point, String> locToComponentMap;
@@ -155,7 +156,7 @@ public class Grid {
 			}
 		}
 		
-		this.gcm = gcm;
+		this.bioModel = gcm;
 		
 		updateGridRectangles();
 		updateRectToNodeMap();
@@ -839,24 +840,23 @@ public class Grid {
 		
 		locToComponentMap.clear();	
 		
-		for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumParameters(); ++i) {
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumParameters(); ++i) {
 			
-			Parameter parameter = gcm.getSBMLDocument().getModel().getParameter(i);
+			Parameter parameter = bioModel.getSBMLDocument().getModel().getParameter(i);
 			
 			//if it's a location parameter
 			if (parameter.getId().contains("__locations")) {
-				
-				String[] splitAnnotation = parameter.getAnnotationString().replace("<annotation>","")
-				.replace("</annotation>","").replace("\"","").replace("http://www.fakeuri.com","").replace("/>","").split("array:");
-			
-				for (int j = 2; j < splitAnnotation.length; ++j) {
+
+				String[] splitAnnotation = AnnotationUtility.parseArrayAnnotation(parameter);
+
+				for (int j = 1; j < splitAnnotation.length; ++j) {
 					
 					splitAnnotation[j] = splitAnnotation[j].trim();
 					
 					String submodelID = splitAnnotation[j].split("=")[0];
 					
-					int row = gcm.getSubmodelRow(submodelID);
-					int col = gcm.getSubmodelCol(submodelID);
+					int row = bioModel.getSubmodelRow(submodelID);
+					int col = bioModel.getSubmodelCol(submodelID);
 					
 					locToComponentMap.put(new Point(row, col), submodelID);
 				}
@@ -989,24 +989,23 @@ public class Grid {
 	 */
 	private void putComponentsOntoGrid() {
 		
-		for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumParameters(); ++i) {
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumParameters(); ++i) {
 			
-			Parameter parameter = gcm.getSBMLDocument().getModel().getParameter(i);
+			Parameter parameter = bioModel.getSBMLDocument().getModel().getParameter(i);
 			
 			//if it's a location parameter
 			if (parameter.getId().contains("__locations")) {
 			
-				String[] splitAnnotation = parameter.getAnnotationString().replace("<annotation>","")
-				.replace("</annotation>","").replace("\"","").replace("http://www.fakeuri.com","").replace("/>","").split("array:");
-			
-				for (int j = 2; j < splitAnnotation.length; ++j) {
+				String[] splitAnnotation = AnnotationUtility.parseArrayAnnotation(parameter);
+							
+				for (int j = 1; j < splitAnnotation.length; ++j) {
 					
 					splitAnnotation[j] = splitAnnotation[j].trim();
 					
 					String submodelID = splitAnnotation[j].split("=")[0];
 					
-					int row = gcm.getSubmodelRow(submodelID);
-					int col = gcm.getSubmodelCol(submodelID);
+					int row = bioModel.getSubmodelRow(submodelID);
+					int col = bioModel.getSubmodelCol(submodelID);
 					
 					String gcmName = parameter.getId().replace("__locations","");
 					

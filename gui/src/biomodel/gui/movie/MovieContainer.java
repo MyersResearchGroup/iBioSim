@@ -8,6 +8,7 @@ import main.util.dataparser.DTSDParser;
 import main.util.dataparser.TSDParser;
 
 import analysis.AnalysisView;
+import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.Grid;
 import biomodel.gui.ModelEditor;
 import biomodel.gui.movie.SerializableScheme;
@@ -71,7 +72,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	
 	private Schematic schematic;
 	private AnalysisView analysisView;
-	private BioModel gcm;
+	private BioModel bioModel;
 	private Gui biosim;
 	private ModelEditor modelEditor;
 	private TSDParser parser;
@@ -122,7 +123,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 				bioModel.getConstraintPanel(),  bioModel.getEventPanel(), bioModel.getParameterPanel(), lema);
 		this.add(schematic, BorderLayout.CENTER);
 		
-		this.gcm = bioModel;
+		this.bioModel = bioModel;
 		this.biosim = biosim;
 		this.analysisView = reb2sac_;
 		this.modelEditor = gcm2sbml;
@@ -136,7 +137,7 @@ public class MovieContainer extends JPanel implements ActionListener {
  	
  	public void resetGridToOriginalSize() {
  		
- 		gcm.getGrid().resetGrid(originalGridRows, originalGridCols);
+ 		bioModel.getGrid().resetGrid(originalGridRows, originalGridCols);
  	}
 	
 	
@@ -294,7 +295,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	public void setupDynamicGrid() {
 		
 		Point gridSize = new Point(dynamicParser.getNumRows(), dynamicParser.getNumCols());
-		gcm.getGrid().resetGrid((int) gridSize.getX(), (int) gridSize.getY());
+		bioModel.getGrid().resetGrid((int) gridSize.getX(), (int) gridSize.getY());
 	}
 	
 	
@@ -433,7 +434,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		
 		if (dynamic == true) {
 
-			Grid grid = gcm.getGrid();
+			Grid grid = bioModel.getGrid();
 			grid.updateComponentLocations(dynamicParser.getComponentToLocationMap(frameIndex));
 			speciesTSData = dynamicParser.getSpeciesToValueMap(frameIndex);
 			componentList.addAll(dynamicParser.getComponentToLocationMap(frameIndex).keySet());
@@ -448,16 +449,13 @@ public class MovieContainer extends JPanel implements ActionListener {
 			speciesTSData = parser.getHashMap(frameIndex);
 			
 			//find all the components
-			for (long i = 0; i < gcm.getSBMLDocument().getModel().getNumParameters(); i++) {
+			for (long i = 0; i < bioModel.getSBMLDocument().getModel().getNumParameters(); i++) {
 				
-				if (gcm.getSBMLDocument().getModel().getParameter(i).getId().contains("__locations")) {
-					
-					String locationAnnotationString = gcm.getSBMLDocument().getModel().getParameter(i)
-					.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
+				if (bioModel.getSBMLDocument().getModel().getParameter(i).getId().contains("__locations")) {
 			
-					String[] compIDs = locationAnnotationString.replace("\"","").split("array:");
+					String[] compIDs = AnnotationUtility.parseArrayAnnotation(bioModel.getSBMLDocument().getModel().getParameter(i));
 					
-					for (int j = 2; j < compIDs.length; ++j) {
+					for (int j = 1; j < compIDs.length; ++j) {
 						
 						if (compIDs[j].contains("=(")) {							
 							componentList.add(compIDs[j].split("=")[0].trim());
@@ -468,9 +466,9 @@ public class MovieContainer extends JPanel implements ActionListener {
 				else {
 					
 					//look through the submodel IDs for component IDs
-					for (int j = 0; j < gcm.getSBMLCompModel().getNumSubmodels(); ++j) {						
+					for (int j = 0; j < bioModel.getSBMLCompModel().getNumSubmodels(); ++j) {						
 						
-						String submodelID = gcm.getSBMLCompModel().getSubmodel(j).getId();
+						String submodelID = bioModel.getSBMLCompModel().getSubmodel(j).getId();
 						
 						if (submodelID.contains("GRID__") == false)
 							componentList.add(submodelID);
@@ -529,8 +527,8 @@ public class MovieContainer extends JPanel implements ActionListener {
 				schematic.getGraph().setComponentAnimationValue(componentID, compAppearance);
 		}
 		
-		int numRows = gcm.getGrid().getNumRows();
-		int numCols = gcm.getGrid().getNumCols();
+		int numRows = bioModel.getGrid().getNumRows();
+		int numCols = bioModel.getGrid().getNumCols();
 		int minRow = 0;
 		int minCol = 0;
 		
@@ -543,7 +541,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		}
 			
 		//if there's a grid to set the appearance of
-		if (gcm.getGrid().isEnabled()) {
+		if (bioModel.getGrid().isEnabled()) {
 			
 			//loop through all grid locations and set appearances
 			for (int row = minRow; row < numRows + minRow; ++row) {
@@ -919,7 +917,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	}
 	
 	public BioModel getGCM() {
-		return gcm;
+		return bioModel;
 	}
 
 	public int getFrameIndex() {

@@ -33,6 +33,7 @@ import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.ReactionGlyph;
 import org.sbml.libsbml.ReferenceGlyph;
 import org.sbml.libsbml.Rule;
+import org.sbml.libsbml.SBase;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.SpeciesGlyph;
 import org.sbml.libsbml.SpeciesReference;
@@ -44,6 +45,7 @@ import main.Gui;
 //import javax.xml.bind.JAXBElement.GlobalScope;
 
 
+import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.Grid;
 import biomodel.gui.ModelEditor;
 import biomodel.gui.movie.MovieAppearance;
@@ -271,7 +273,7 @@ public class BioGraph extends mxGraph {
 		// add species
 		for(String sp : bioModel.getSpecies()){
 			
-			if (bioModel.getSBMLDocument().getModel().getSpecies(sp).getAnnotationString().contains("type=\"grid\""))
+			if (AnnotationUtility.parseGridAnnotation(bioModel.getSBMLDocument().getModel().getSpecies(sp))!=null) 
 				continue;
 			
 			if(createGraphSpeciesFromModel(sp))
@@ -287,7 +289,7 @@ public class BioGraph extends mxGraph {
 			if (BioModel.isProductionReaction(r)) continue;
 			if (BioModel.isComplexReaction(r)) continue;
 			if (BioModel.isConstitutiveReaction(r)) continue;
-			if (r.getAnnotationString().contains("grid")) continue;
+			if (BioModel.isGridReaction(r)) continue;
 			
 			if (layout.getReactionGlyph(r.getId()) != null) {
 				layout.getReactionGlyph(r.getId()).setId(GlobalConstants.GLYPH+"__"+r.getId());
@@ -405,10 +407,9 @@ public class BioGraph extends mxGraph {
 				
 				if (m.getParameter(i).getId().contains("__locations")) {
 					
-					String[] splitAnnotation = m.getParameter(i).getAnnotationString().replace("<annotation>","")
-					.replace("</annotation>","").replace("\"","").replace("http://www.fakeuri.com","").replace("/>","").split("array:");
-				
-					for (int j = 2; j < splitAnnotation.length; ++j) {
+					String[] splitAnnotation = AnnotationUtility.parseArrayAnnotation(m.getParameter(i));
+									
+					for (int j = 1; j < splitAnnotation.length; ++j) {
 						
 						splitAnnotation[j] = splitAnnotation[j].trim();						
 						String submodelID = splitAnnotation[j].split("=")[0];
@@ -487,8 +488,7 @@ public class BioGraph extends mxGraph {
 		for (int i = 0; i < m.getNumReactions(); i++) {
 			
 			Reaction r = m.getReaction(i);
-			if (r.getAnnotationString().contains("grid"))
-				continue;
+			if (BioModel.isGridReaction(r)) continue;
 			
 			if (BioModel.isComplexReaction(r)) {
 				for (int j = 0; j < r.getNumReactants(); j++) {
@@ -630,7 +630,7 @@ public class BioGraph extends mxGraph {
 			if (BioModel.isProductionReaction(r)) continue;
 			if (BioModel.isComplexReaction(r)) continue;
 			if (BioModel.isConstitutiveReaction(r)) continue;
-			if (r.getAnnotationString().contains("grid")) continue;
+			if (BioModel.isGridReaction(r)) continue;
 			
 			ReactionGlyph reactionGlyph = layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+r.getId());
 			if (reactionGlyph != null) {

@@ -1452,15 +1452,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			
 			//if the submodel is gridded, then get the component names from the locations parameter
 			if (biomodel.getSBMLDocument().getModel().getParameter(submodel.getId().replace("GRID__","") + "__locations") != null) {
-					
-				locationAnnotationString = 
-						biomodel.getSBMLDocument().getModel()
-						.getParameter(submodel.getId().replace("GRID__","") + "__locations")
-						.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
 			
-				String[] compIDs = locationAnnotationString.replace("\"","").split("array:");
+				String[] compIDs = AnnotationUtility.parseArrayAnnotation(biomodel.getSBMLDocument().getModel()
+						.getParameter(submodel.getId().replace("GRID__","") + "__locations"));
 				
-				for (int j = 2; j < compIDs.length; ++j) {
+				for (int j = 1; j < compIDs.length; ++j) {
 					
 					if (compIDs[j].contains("=(")) {
 						
