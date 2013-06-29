@@ -9,11 +9,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
-import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.SBMLReader;
+import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLReader;
 
 import analysis.dynamicsim.HierarchicalSimulator.ModelState;
-import analysis.dynamicsim.Simulator.StringDoublePair;
+
 
 import odk.lang.FastMath;
 

@@ -2,7 +2,6 @@ package analysis.dynamicsim;
 
 import gnu.trove.map.hash.TObjectDoubleHashMap;
 
-import java.awt.Point;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -12,9 +11,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
+import java.util.Map;
 import java.util.PriorityQueue;
 
 import javax.swing.JFrame;
@@ -26,43 +24,40 @@ import flanagan.math.Fmath;
 import flanagan.math.PsRandom;
 
 
-import org.sbml.libsbml.Deletion;
-import org.sbml.libsbml.EventAssignment;
-import org.sbml.libsbml.Constraint;
-import org.sbml.libsbml.CompModelPlugin;
-import org.sbml.libsbml.CompSBMLDocumentPlugin;
-import org.sbml.libsbml.CompSBasePlugin;
-import org.sbml.libsbml.Event;
-import org.sbml.libsbml.InitialAssignment;
-import org.sbml.libsbml.KineticLaw;
-import org.sbml.libsbml.LocalParameter;
-import org.sbml.libsbml.ModifierSpeciesReference;
-import org.sbml.libsbml.Parameter;
-import org.sbml.libsbml.Compartment;
-import org.sbml.libsbml.ListOfSpeciesReferences;
-import org.sbml.libsbml.Port;
-import org.sbml.libsbml.RateRule;
-import org.sbml.libsbml.ReplacedElement;
-import org.sbml.libsbml.Replacing;
-import org.sbml.libsbml.Rule;
-import org.sbml.libsbml.SBase;
-import org.sbml.libsbml.Species;
-import org.sbml.libsbml.ASTNode;
-import org.sbml.libsbml.AssignmentRule;
-import org.sbml.libsbml.Submodel;
-import org.sbml.libsbml.libsbml;
-import org.sbml.libsbml.libsbmlConstants;
-import org.sbml.libsbml.ListOfCompartments;
-import org.sbml.libsbml.ListOfEvents;
-import org.sbml.libsbml.ListOfParameters;
-import org.sbml.libsbml.ListOfReactions;
-import org.sbml.libsbml.ListOfSpecies;
-import org.sbml.libsbml.Model;
-import org.sbml.libsbml.Reaction;
-import org.sbml.libsbml.SpeciesReference;
-import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.SBMLErrorLog;
-import org.sbml.libsbml.SBMLReader;
+import org.sbml.jsbml.ext.SBasePlugin;
+import org.sbml.jsbml.ext.comp.Deletion;
+import org.sbml.jsbml.EventAssignment;
+import org.sbml.jsbml.Constraint;
+import org.sbml.jsbml.ext.comp.CompConstant;
+import org.sbml.jsbml.ext.comp.CompModelPlugin;
+import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
+import org.sbml.jsbml.ext.comp.CompSBasePlugin;
+import org.sbml.jsbml.ext.comp.ExternalModelDefinition;
+import org.sbml.jsbml.ext.comp.ReplacedBy;
+import org.sbml.jsbml.Event;
+import org.sbml.jsbml.InitialAssignment;
+import org.sbml.jsbml.KineticLaw;
+import org.sbml.jsbml.LocalParameter;
+import org.sbml.jsbml.ModifierSpeciesReference;
+import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.ext.comp.Port;
+import org.sbml.jsbml.RateRule;
+import org.sbml.jsbml.ext.comp.ReplacedElement;
+import org.sbml.jsbml.Rule;
+import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.Species;
+import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.AssignmentRule;
+import org.sbml.jsbml.ext.comp.Submodel;
+import org.sbml.jsbml.JSBML;
+import org.sbml.jsbml.ListOf;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLErrorLog;
+import org.sbml.jsbml.SBMLReader;
 
 import main.Gui;
 import main.util.MutableBoolean;
@@ -98,7 +93,7 @@ public abstract class HierarchicalSimulator {
 	protected int numSubmodels;
 	// Total propensity including all model states
 	protected double totalPropensity;
-	
+
 	//SBML Info.
 	final protected int SBML_LEVEL = 3;
 	final protected int SBML_VERSION = 1;
@@ -324,10 +319,10 @@ public abstract class HierarchicalSimulator {
 
 		for (String compartment : topmodel.compartmentIDSet)
 		{
-				bufferedTSDWriter.write(commaSpace + topmodel.getVariableToValue(compartment));
-				commaSpace = ", ";
+			bufferedTSDWriter.write(commaSpace + topmodel.getVariableToValue(compartment));
+			commaSpace = ", ";
 		}
-		
+
 		for (ModelState models : submodels)
 		{
 			speciesIDSet = models.speciesIDSet;
@@ -345,10 +340,10 @@ public abstract class HierarchicalSimulator {
 					bufferedTSDWriter.write(commaSpace + models.variableToValueMap.get(speciesID));
 					commaSpace = ", ";
 				}
-				*/
+				 */
 				bufferedTSDWriter.write(commaSpace + models.getVariableToValue(speciesID));
 				commaSpace = ", ";
-				
+
 			}
 
 			for (String noConstantParam : models.nonconstantParameterIDSet)
@@ -364,11 +359,11 @@ public abstract class HierarchicalSimulator {
 					commaSpace = ", ";
 				}
 			}
-			
+
 			for (String compartment : topmodel.compartmentIDSet)
 			{
-					bufferedTSDWriter.write(commaSpace + models.getVariableToValue(compartment));
-					commaSpace = ", ";
+				bufferedTSDWriter.write(commaSpace + models.getVariableToValue(compartment));
+				commaSpace = ", ";
 			}
 		}
 
@@ -413,15 +408,14 @@ public abstract class HierarchicalSimulator {
 	protected long setupSubmodels(SBMLDocument document)
 	{
 		String path = getPath(outputDirectory);
-		CompModelPlugin sbmlCompModel = (CompModelPlugin)document.getModel().getPlugin("comp");
-		CompSBMLDocumentPlugin sbmlComp = (CompSBMLDocumentPlugin)document.getPlugin("comp");
-		submodels = new ModelState[(int)sbmlCompModel.getNumSubmodels()];
+		CompModelPlugin sbmlCompModel = (CompModelPlugin)document.getModel().getExtension(CompConstant.namespaceURI);
+		CompSBMLDocumentPlugin sbmlComp = (CompSBMLDocumentPlugin)document.getExtension(CompConstant.namespaceURI);
+		submodels = new ModelState[(int)sbmlCompModel.getListOfSubmodels().size()];
+	
 		IDtoIndex.put("topmodel", -1);
 		
-		long size = sbmlCompModel.getNumSubmodels();
-		
-		for (int i = 0; i < size; i++) {
-			Submodel submodel = sbmlCompModel.getSubmodel(i);
+		/*
+		for (Submodel submodel : sbmlCompModel.getListOfSubmodels()) {
 			BioModel subBioModel = new BioModel(path);
 			String extModelFile = sbmlComp.getExternalModelDefinition(submodel.getModelRef())
 					.getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
@@ -431,8 +425,16 @@ public abstract class HierarchicalSimulator {
 			submodels[i] = new ModelState(subBioModel.getSBMLDocument().getModel(), false, submodel.getId());
 			IDtoIndex.put(submodel.getId(), i);
 		}
-
-		return size;
+		 */
+		int index = 0;
+		for (Submodel submodel : sbmlCompModel.getListOfSubmodels()) {
+			performDeletions(submodel);
+			submodels[index] = new ModelState(submodel.getModel(), false, submodel.getId());
+			IDtoIndex.put(submodel.getId(), index);
+			index++;
+		}
+		
+		return index;
 	}
 
 	/**
@@ -440,12 +442,12 @@ public abstract class HierarchicalSimulator {
 	 */
 	protected void getComponentPortMap(SBMLDocument sbml) 
 	{
-		for (long i = 0; i < topmodel.numSpecies; i++) {
+		for (int i = 0; i < topmodel.numSpecies; i++) {
 			Species species = sbml.getModel().getSpecies(i);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)species.getPlugin("comp");
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)species.getExtension(CompConstant.namespaceURI);
 
 			String s = species.getId();
-			if(sbmlSBase.getListOfReplacedElements() != null)
+			if(sbmlSBase != null && sbmlSBase.getListOfReplacedElements() != null)
 			{
 				replacements.put(s, species.getInitialAmount());	
 				initReplacementState.put(s, species.getInitialAmount());
@@ -456,16 +458,16 @@ public abstract class HierarchicalSimulator {
 				replacementSubModels.get(s).add("topmodel");
 				replacingModel.put(s, "topmodel");
 
-				for(long j = 0; j < sbmlSBase.getListOfReplacedElements().size(); j++)
+				for(ReplacedElement element: sbmlSBase.getListOfReplacedElements())
 				{
-					replacementSubModels.get(s).add(sbmlSBase.getReplacedElement(j).getSubmodelRef());
+					replacementSubModels.get(s).add(element.getSubmodelRef());
 				}
 			}
 
 
 			if(sbmlSBase.isSetReplacedBy())
 			{
-				Replacing replacement = sbmlSBase.getReplacedBy();
+				ReplacedBy replacement = sbmlSBase.getReplacedBy();
 				String submodel = replacement.getSubmodelRef();
 				if(!replacementSubModels.containsKey(s))
 					replacementSubModels.put(s, new HashSet<String>());
@@ -484,13 +486,13 @@ public abstract class HierarchicalSimulator {
 
 			}
 		}
-		
-		for (long i = 0; i < topmodel.model.getNumParameters(); i++) {
+
+		for (int i = 0; i < topmodel.numParameters; i++) {
 			Parameter parameter = sbml.getModel().getParameter(i);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)parameter.getPlugin("comp");
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)parameter.getExtension(CompConstant.namespaceURI);
 
 			String s = parameter.getId();
-			if(sbmlSBase.getListOfReplacedElements() != null)
+			if(sbmlSBase != null && sbmlSBase.getListOfReplacedElements() != null)
 			{
 				replacements.put(s, parameter.getValue());	
 				initReplacementState.put(s, parameter.getValue());
@@ -499,15 +501,15 @@ public abstract class HierarchicalSimulator {
 
 				replacementSubModels.get(s).add("topmodel");
 
-				for(long j = 0; j < sbmlSBase.getListOfReplacedElements().size(); j++)
+				for(ReplacedElement element: sbmlSBase.getListOfReplacedElements())
 				{
-					replacementSubModels.get(s).add(sbmlSBase.getReplacedElement(j).getSubmodelRef());
+					replacementSubModels.get(s).add(element.getSubmodelRef());
 				}
-				
+
 
 				if(sbmlSBase.isSetReplacedBy())
 				{
-					Replacing replacement = sbmlSBase.getReplacedBy();
+					ReplacedBy replacement = sbmlSBase.getReplacedBy();
 					String submodel = replacement.getSubmodelRef();
 					if(!replacementSubModels.containsKey(s))
 						replacementSubModels.put(s, new HashSet<String>());
@@ -525,14 +527,14 @@ public abstract class HierarchicalSimulator {
 				}
 			}
 		}
-		
-		
-		for (long i = 0; i < topmodel.model.getNumCompartments(); i++) {
+
+
+		for (int i = 0; i < topmodel.model.getCompartmentCount(); i++) {
 			Compartment compartment = sbml.getModel().getCompartment(i);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)compartment.getPlugin("comp");
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)compartment.getExtension(CompConstant.namespaceURI);
 
 			String c = compartment.getId();
-			if(sbmlSBase.getListOfReplacedElements() != null)
+			if(sbmlSBase != null && sbmlSBase.getListOfReplacedElements() != null)
 			{
 				replacements.put(c, compartment.getSize());	
 				initReplacementState.put(c, compartment.getSize());
@@ -541,15 +543,15 @@ public abstract class HierarchicalSimulator {
 
 				replacementSubModels.get(c).add("topmodel");
 
-				for(long j = 0; j < sbmlSBase.getListOfReplacedElements().size(); j++)
+				for(ReplacedElement element: sbmlSBase.getListOfReplacedElements())
 				{
-					replacementSubModels.get(c).add(sbmlSBase.getReplacedElement(j).getSubmodelRef());
+					replacementSubModels.get(c).add(element.getSubmodelRef());
 				}
-				
+
 
 				if(sbmlSBase.isSetReplacedBy())
 				{
-					Replacing replacement = sbmlSBase.getReplacedBy();
+					ReplacedBy replacement = sbmlSBase.getReplacedBy();
 					String submodel = replacement.getSubmodelRef();
 					if(!replacementSubModels.containsKey(c))
 						replacementSubModels.put(c, new HashSet<String>());
@@ -567,29 +569,29 @@ public abstract class HierarchicalSimulator {
 				}
 			}
 		}
-		
-		for (long i = 0; i < topmodel.model.getNumReactions(); i++) {
+
+		for (int i = 0; i < topmodel.numReactions; i++) {
 			Reaction reaction = sbml.getModel().getReaction(i);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)reaction.getPlugin("comp");
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)reaction.getExtension(CompConstant.namespaceURI);
 
 			String r = reaction.getId();
-			if(sbmlSBase.getListOfReplacedElements() != null)
+			if(sbmlSBase != null && sbmlSBase.getListOfReplacedElements() != null)
 			{
 				if(!replacementSubModels.containsKey(r))
 					replacementSubModels.put(r, new HashSet<String>());
 
 				//replacementSubModels.get(r).add("topmodel");
 
-				for(long j = 0; j < sbmlSBase.getListOfReplacedElements().size(); j++)
+				for(ReplacedElement element: sbmlSBase.getListOfReplacedElements())
 				{
-					replacementSubModels.get(r).add(sbmlSBase.getReplacedElement(j).getSubmodelRef());
+					replacementSubModels.get(r).add(element.getSubmodelRef());
 				}
-				
+
 
 				if(sbmlSBase.isSetReplacedBy())
 				{
-					Replacing replacement = sbmlSBase.getReplacedBy();
-					
+					ReplacedBy replacement = sbmlSBase.getReplacedBy();
+
 					String submodel = replacement.getSubmodelRef();
 					if(!replacementSubModels.containsKey(r))
 						replacementSubModels.put(r, new HashSet<String>());
@@ -599,12 +601,12 @@ public abstract class HierarchicalSimulator {
 				}
 			}
 		}
-	
+
 	}
 
-	
-	
-	
+
+
+
 	/**
 	 * Gets state from index
 	 */
@@ -620,30 +622,29 @@ public abstract class HierarchicalSimulator {
 	{
 		double totalPropensity = 0;
 		totalPropensity += topmodel.propensity;
-	
+
 		for(ModelState model : submodels)
 		{
 			totalPropensity += model.propensity;
 		}
-	
+
 		return totalPropensity;
 	}
 
 	/**
 	 * Perform deletion on comp model
 	 */
-	private void performDeletions(BioModel subBioModel, Submodel instance) {
+	private void performDeletions(Submodel instance) {
 
-		Model subModel = subBioModel.getSBMLDocument().getModel();
-
+		Model subModel = instance.getModel();
+		CompModelPlugin sbmlCompModel = (CompModelPlugin)subModel.getModel().getExtension("comp");
 		if (instance == null)
 			return;
-
-		for (long i = 0; i < instance.getNumDeletions(); i++) {
-			Deletion deletion = instance.getDeletion(i);
+	/*
+		for(Deletion deletion : instance.getListOfDeletions()){
 
 			if (deletion.isSetPortRef()) {
-				Port port = subBioModel.getSBMLCompModel().getPort(deletion.getPortRef());
+				Port port = sbmlCompModel.getPort(deletion.getPortRef());
 				if (port!=null) {
 					if (port.isSetIdRef()) {
 						if (subModel.getElementBySId(port.getIdRef())!=null) {
@@ -679,6 +680,7 @@ public abstract class HierarchicalSimulator {
 				}
 			}
 		}
+		*/
 	}
 
 	/**
@@ -692,16 +694,16 @@ public abstract class HierarchicalSimulator {
 
 			switch (node.getType()) {
 
-			case libsbmlConstants.AST_CONSTANT_TRUE:
+			case CONSTANT_TRUE:
 				return 1.0;
 
-			case libsbmlConstants.AST_CONSTANT_FALSE:
+			case CONSTANT_FALSE:
 				return 0.0;
 
-			case libsbmlConstants.AST_LOGICAL_NOT:
+			case  LOGICAL_NOT:
 				return getDoubleFromBoolean(!(getBooleanFromDouble(evaluateExpressionRecursive(modelstate, node.getLeftChild()))));
 
-			case libsbmlConstants.AST_LOGICAL_AND: {
+			case LOGICAL_AND: {
 
 				boolean andResult = true;
 
@@ -711,7 +713,7 @@ public abstract class HierarchicalSimulator {
 				return getDoubleFromBoolean(andResult);
 			}
 
-			case libsbmlConstants.AST_LOGICAL_OR: {
+			case LOGICAL_OR: {
 
 				boolean orResult = false;
 
@@ -721,7 +723,7 @@ public abstract class HierarchicalSimulator {
 				return getDoubleFromBoolean(orResult);				
 			}
 
-			case libsbmlConstants.AST_LOGICAL_XOR: {
+			case LOGICAL_XOR: {
 
 				boolean xorResult = getBooleanFromDouble(evaluateExpressionRecursive(modelstate, node.getChild(0)));
 
@@ -731,15 +733,15 @@ public abstract class HierarchicalSimulator {
 				return getDoubleFromBoolean(xorResult);
 			}
 
-			case libsbmlConstants.AST_RELATIONAL_EQ:
+			case RELATIONAL_EQ:
 				return getDoubleFromBoolean(
 						evaluateExpressionRecursive(modelstate, node.getLeftChild()) == evaluateExpressionRecursive(modelstate, node.getRightChild()));
 
-			case libsbmlConstants.AST_RELATIONAL_NEQ:
+			case RELATIONAL_NEQ:
 				return getDoubleFromBoolean(
 						evaluateExpressionRecursive(modelstate, node.getLeftChild()) != evaluateExpressionRecursive(modelstate, node.getRightChild()));
 
-			case libsbmlConstants.AST_RELATIONAL_GEQ:
+			case RELATIONAL_GEQ:
 			{
 				//System.out.println("Node: " + libsbml.formulaToString(node.getRightChild()) + " " + evaluateExpressionRecursive(modelstate, node.getRightChild()));
 				//System.out.println("Node: " + evaluateExpressionRecursive(modelstate, node.getLeftChild()) + " " + evaluateExpressionRecursive(modelstate, node.getRightChild()));
@@ -747,15 +749,15 @@ public abstract class HierarchicalSimulator {
 				return getDoubleFromBoolean(
 						evaluateExpressionRecursive(modelstate, node.getLeftChild()) >= evaluateExpressionRecursive(modelstate, node.getRightChild()));
 			}
-			case libsbmlConstants.AST_RELATIONAL_LEQ:
+			case RELATIONAL_LEQ:
 				return getDoubleFromBoolean(
 						evaluateExpressionRecursive(modelstate, node.getLeftChild()) <= evaluateExpressionRecursive(modelstate, node.getRightChild()));
 
-			case libsbmlConstants.AST_RELATIONAL_GT:
+			case RELATIONAL_GT:
 				return getDoubleFromBoolean(
 						evaluateExpressionRecursive(modelstate, node.getLeftChild()) > evaluateExpressionRecursive(modelstate, node.getRightChild()));
 
-			case libsbmlConstants.AST_RELATIONAL_LT:
+			case RELATIONAL_LT:
 			{
 				return getDoubleFromBoolean(
 						evaluateExpressionRecursive(modelstate, node.getLeftChild()) < evaluateExpressionRecursive(modelstate, node.getRightChild()));			
@@ -769,10 +771,10 @@ public abstract class HierarchicalSimulator {
 
 			switch (node.getType()) {
 
-			case libsbmlConstants.AST_CONSTANT_E:
+			case CONSTANT_E:
 				return Math.E;
 
-			case libsbmlConstants.AST_CONSTANT_PI:
+			case CONSTANT_PI:
 				return Math.PI;
 			}
 		}
@@ -789,7 +791,7 @@ public abstract class HierarchicalSimulator {
 
 			String name = node.getName().replace("_negative_","-");
 
-			if (node.getType()==libsbmlConstants.AST_NAME_TIME) {
+			if (node.getType()== org.sbml.jsbml.ASTNode.Type.NAME_TIME) {
 
 				return currentTime;
 			}
@@ -808,7 +810,7 @@ public abstract class HierarchicalSimulator {
 				}
 				else	
 				{	
-						value = modelstate.getVariableToValue(name);
+					value = modelstate.getVariableToValue(name);
 				}
 				return value;
 			}
@@ -822,7 +824,7 @@ public abstract class HierarchicalSimulator {
 
 			switch (node.getType()) {
 
-			case libsbmlConstants.AST_PLUS: {
+			case PLUS: {
 
 				double sum = 0.0;
 
@@ -832,7 +834,7 @@ public abstract class HierarchicalSimulator {
 				return sum;
 			}
 
-			case libsbmlConstants.AST_MINUS: {
+			case MINUS: {
 
 				double sum = evaluateExpressionRecursive(modelstate, leftChild);
 
@@ -842,7 +844,7 @@ public abstract class HierarchicalSimulator {
 				return sum;
 			}
 
-			case libsbmlConstants.AST_TIMES: {
+			case TIMES: {
 
 				double product = 1.0;
 
@@ -852,13 +854,13 @@ public abstract class HierarchicalSimulator {
 				return product;
 			}
 
-			case libsbmlConstants.AST_DIVIDE:
+			case DIVIDE:
 				return (evaluateExpressionRecursive(modelstate, leftChild) / evaluateExpressionRecursive(modelstate, rightChild));
 
-			case libsbmlConstants.AST_FUNCTION_POWER:
+			case FUNCTION_POWER:
 				return (FastMath.pow(evaluateExpressionRecursive(modelstate, leftChild), evaluateExpressionRecursive(modelstate, rightChild)));
 
-			case libsbmlConstants.AST_FUNCTION: {
+			case FUNCTION: {
 				//use node name to determine function
 				//i'm not sure what to do with completely user-defined functions, though
 				String nodeName = node.getName();
@@ -923,52 +925,52 @@ public abstract class HierarchicalSimulator {
 				break;
 			}
 
-			case libsbmlConstants.AST_FUNCTION_ABS:
+			case FUNCTION_ABS:
 				return FastMath.abs(evaluateExpressionRecursive(modelstate, node.getChild(0)));
 
-			case libsbmlConstants.AST_FUNCTION_ARCCOS:
+			case FUNCTION_ARCCOS:
 				return FastMath.acos(evaluateExpressionRecursive(modelstate, node.getChild(0)));
 
-			case libsbmlConstants.AST_FUNCTION_ARCSIN:
+			case FUNCTION_ARCSIN:
 				return FastMath.asin(evaluateExpressionRecursive(modelstate, node.getChild(0)));
 
-			case libsbmlConstants.AST_FUNCTION_ARCTAN:
+			case FUNCTION_ARCTAN:
 				return FastMath.atan(evaluateExpressionRecursive(modelstate, node.getChild(0)));
 
-			case libsbmlConstants.AST_FUNCTION_CEILING:
+			case FUNCTION_CEILING:
 				return FastMath.ceil(evaluateExpressionRecursive(modelstate, node.getChild(0)));				
 
-			case libsbmlConstants.AST_FUNCTION_COS:
+			case FUNCTION_COS:
 				return FastMath.cos(evaluateExpressionRecursive(modelstate, node.getChild(0)));
 
-			case libsbmlConstants.AST_FUNCTION_COSH:
+			case FUNCTION_COSH:
 				return FastMath.cosh(evaluateExpressionRecursive(modelstate, node.getChild(0)));
 
-			case libsbmlConstants.AST_FUNCTION_EXP:
+			case FUNCTION_EXP:
 				return FastMath.exp(evaluateExpressionRecursive(modelstate, node.getChild(0)));
 
-			case libsbmlConstants.AST_FUNCTION_FLOOR:
+			case FUNCTION_FLOOR:
 				return FastMath.floor(evaluateExpressionRecursive(modelstate, node.getChild(0)));
 
-			case libsbmlConstants.AST_FUNCTION_LN:
+			case FUNCTION_LN:
 				return FastMath.log(evaluateExpressionRecursive(modelstate, node.getChild(0)));
 
-			case libsbmlConstants.AST_FUNCTION_LOG:
+			case FUNCTION_LOG:
 				return FastMath.log10(evaluateExpressionRecursive(modelstate, node.getChild(0)));
 
-			case libsbmlConstants.AST_FUNCTION_SIN:
+			case FUNCTION_SIN:
 				return FastMath.sin(evaluateExpressionRecursive(modelstate, node.getChild(0)));
 
-			case libsbmlConstants.AST_FUNCTION_SINH:
+			case FUNCTION_SINH:
 				return FastMath.sinh(evaluateExpressionRecursive(modelstate, node.getChild(0)));
 
-			case libsbmlConstants.AST_FUNCTION_TAN:
+			case FUNCTION_TAN:
 				return FastMath.tan(evaluateExpressionRecursive(modelstate, node.getChild(0)));
 
-			case libsbmlConstants.AST_FUNCTION_TANH:		
+			case FUNCTION_TANH:		
 				return FastMath.tanh(evaluateExpressionRecursive(modelstate, node.getChild(0)));
 
-			case libsbmlConstants.AST_FUNCTION_PIECEWISE: {
+			case FUNCTION_PIECEWISE: {
 
 				//loop through child triples
 				//if child 1 is true, return child 0, else return child 2				
@@ -986,60 +988,60 @@ public abstract class HierarchicalSimulator {
 				return 0;
 			}
 
-			case libsbmlConstants.AST_FUNCTION_ROOT:
+			case FUNCTION_ROOT:
 				return FastMath.pow(evaluateExpressionRecursive(modelstate, node.getRightChild()), 
 						1 / evaluateExpressionRecursive(modelstate, node.getLeftChild()));
 
-			case libsbmlConstants.AST_FUNCTION_SEC:
+			case FUNCTION_SEC:
 				return Fmath.sec(evaluateExpressionRecursive(modelstate, node.getChild(0)));
 
-			case libsbmlConstants.AST_FUNCTION_SECH:
+			case FUNCTION_SECH:
 				return Fmath.sech(evaluateExpressionRecursive(modelstate, node.getChild(0)));
 
-			case libsbmlConstants.AST_FUNCTION_FACTORIAL:
+			case FUNCTION_FACTORIAL:
 				return Fmath.factorial(evaluateExpressionRecursive(modelstate, node.getChild(0)));
 
-			case libsbmlConstants.AST_FUNCTION_COT:
+			case FUNCTION_COT:
 				return Fmath.cot(evaluateExpressionRecursive(modelstate, node.getChild(0)));
 
-			case libsbmlConstants.AST_FUNCTION_COTH:
+			case FUNCTION_COTH:
 				return Fmath.coth(evaluateExpressionRecursive(modelstate, node.getChild(0)));
 
-			case libsbmlConstants.AST_FUNCTION_CSC:
+			case FUNCTION_CSC:
 				return Fmath.csc(evaluateExpressionRecursive(modelstate, node.getChild(0)));
 
-			case libsbmlConstants.AST_FUNCTION_CSCH:
+			case FUNCTION_CSCH:
 				return Fmath.csch(evaluateExpressionRecursive(modelstate, node.getChild(0)));
 
-			case libsbmlConstants.AST_FUNCTION_DELAY:
+			case FUNCTION_DELAY:
 				//NOT PLANNING TO SUPPORT THIS
 				return 0;
 
-			case libsbmlConstants.AST_FUNCTION_ARCTANH:
+			case FUNCTION_ARCTANH:
 				return Fmath.atanh(evaluateExpressionRecursive(modelstate, node.getChild(0)));
 
-			case libsbmlConstants.AST_FUNCTION_ARCSINH:
+			case FUNCTION_ARCSINH:
 				return Fmath.asinh(evaluateExpressionRecursive(modelstate, node.getChild(0)));
 
-			case libsbmlConstants.AST_FUNCTION_ARCCOSH:
+			case FUNCTION_ARCCOSH:
 				return Fmath.acosh(evaluateExpressionRecursive(modelstate, node.getChild(0)));
 
-			case libsbmlConstants.AST_FUNCTION_ARCCOT:
+			case FUNCTION_ARCCOT:
 				return Fmath.acot(evaluateExpressionRecursive(modelstate, node.getChild(0)));
 
-			case libsbmlConstants.AST_FUNCTION_ARCCOTH:
+			case FUNCTION_ARCCOTH:
 				return Fmath.acoth(evaluateExpressionRecursive(modelstate, node.getChild(0)));
 
-			case libsbmlConstants.AST_FUNCTION_ARCCSC:
+			case FUNCTION_ARCCSC:
 				return Fmath.acsc(evaluateExpressionRecursive(modelstate, node.getChild(0)));
 
-			case libsbmlConstants.AST_FUNCTION_ARCCSCH:
+			case FUNCTION_ARCCSCH:
 				return Fmath.acsch(evaluateExpressionRecursive(modelstate, node.getChild(0)));
 
-			case libsbmlConstants.AST_FUNCTION_ARCSEC:
+			case FUNCTION_ARCSEC:
 				return Fmath.asec(evaluateExpressionRecursive(modelstate, node.getChild(0)));
 
-			case libsbmlConstants.AST_FUNCTION_ARCSECH:
+			case FUNCTION_ARCSECH:
 				return Fmath.asech(evaluateExpressionRecursive(modelstate, node.getChild(0)));
 
 			} //end switch
@@ -1055,28 +1057,28 @@ public abstract class HierarchicalSimulator {
 	 * @param selectedReactionID the reaction to perform
 	 */
 	protected void performReaction(ModelState modelstate, String selectedReactionID, final boolean noAssignmentRulesFlag, final boolean noConstraintsFlag) {
-	
+
 		//these are sets of things that need to be re-evaluated or tested due to the reaction firing
 		HashSet<AssignmentRule> affectedAssignmentRuleSet = new HashSet<AssignmentRule>();
 		HashSet<ASTNode> affectedConstraintSet = new HashSet<ASTNode>();
-	
+
 		//loop through the reaction's reactants and products and update their amounts
 		for (StringDoublePair speciesAndStoichiometry : modelstate.reactionToSpeciesAndStoichiometrySetMap.get(selectedReactionID)) 
 		{
-	
+
 			double stoichiometry = speciesAndStoichiometry.doub;
 			String speciesID = speciesAndStoichiometry.string;
-	
+
 			//this means the stoichiometry isn't constant, so look to the variableToValue map
 			if (modelstate.reactionToNonconstantStoichiometriesSetMap.containsKey(selectedReactionID)) {
-	
+
 				for (StringStringPair doubleID : modelstate.reactionToNonconstantStoichiometriesSetMap.get(selectedReactionID)) {
-	
+
 					//string1 is the species ID; string2 is the speciesReference ID
 					if (doubleID.string1.equals(speciesID)) {
-	
+
 						stoichiometry = modelstate.variableToValueMap.get(doubleID.string2);
-	
+
 						//this is to get the plus/minus correct, as the variableToValueMap has
 						//a stoichiometry without the reactant/product plus/minus data
 						stoichiometry *= (int)(speciesAndStoichiometry.doub/Math.abs(speciesAndStoichiometry.doub));
@@ -1084,7 +1086,7 @@ public abstract class HierarchicalSimulator {
 					}
 				}
 			}
-	
+
 			//update the species count if the species isn't a boundary condition or constant
 			//note that the stoichiometries are earlier modified with the correct +/- sign
 			boolean cond1 = modelstate.speciesToIsBoundaryConditionMap.get(speciesID);
@@ -1101,27 +1103,27 @@ public abstract class HierarchicalSimulator {
 					modelstate.variableToValueMap.adjustValue(speciesID, stoichiometry);
 				}
 			}
-	
+
 			//if this variable that was just updated is part of an assignment rule (RHS)
 			//then re-evaluate that assignment rule
 			if (noAssignmentRulesFlag == false && modelstate.variableToIsInAssignmentRuleMap.get(speciesID) == true)
 				affectedAssignmentRuleSet.addAll(modelstate.variableToAffectedAssignmentRuleSetMap.get(speciesID));
-	
+
 			if (noConstraintsFlag == false && modelstate.variableToIsInConstraintMap.get(speciesID) == true)
 				affectedConstraintSet.addAll(modelstate.variableToAffectedConstraintSetMap.get(speciesID));
 		}
-	
+
 		if (affectedAssignmentRuleSet.size() > 0)
 		{
 			performAssignmentRules(modelstate, affectedAssignmentRuleSet);
 		}
-	
+
 		if (affectedConstraintSet.size() > 0) 
 			//if (testConstraints(modelstate, affectedConstraintSet) == false)
 			//	constraintFailureFlag = true;
 			//else
 			constraintFlag = testConstraints(modelstate, affectedConstraintSet);
-	
+
 	}
 
 	/**
@@ -1133,11 +1135,11 @@ public abstract class HierarchicalSimulator {
 	protected void getAllASTNodeChildren(ASTNode node, ArrayList<ASTNode> nodeChildrenList) {
 
 		ASTNode child;
-		long size = node.getNumChildren();
+		long size = node.getChildCount();
 
 		for (int i = 0; i < size; i++) {
 			child = node.getChild(i);
-			if (child.getNumChildren() == 0)
+			if (child.getChildCount() == 0)
 				nodeChildrenList.add(child);
 			else {
 				nodeChildrenList.add(child);
@@ -1154,19 +1156,20 @@ public abstract class HierarchicalSimulator {
 	 * @return the set of all reactions that the performed reaction affects the propensity of
 	 */
 	protected HashSet<String> getAffectedReactionSet(ModelState modelstate, String selectedReactionID, boolean noAssignmentRulesFlag) {
-	
+
 		HashSet<String> affectedReactionSet = new HashSet<String>(20);
 		affectedReactionSet.add(selectedReactionID);
-	
+		
+		
 		//loop through the reaction's reactants and products
 		for (StringDoublePair speciesAndStoichiometry : modelstate.reactionToSpeciesAndStoichiometrySetMap.get(selectedReactionID)) {
-	
+
 			String speciesID = speciesAndStoichiometry.string;
 			affectedReactionSet.addAll(modelstate.speciesToAffectedReactionSetMap.get(speciesID));
-	
+
 			//if the species is involved in an assignment rule then it its changing may affect a reaction's propensity
 			if (noAssignmentRulesFlag == false && modelstate.variableToIsInAssignmentRuleMap.get(speciesID)) {
-	
+
 				//this assignment rule is going to be evaluated, so the rule's variable's value will change
 				for (AssignmentRule assignmentRule : modelstate.variableToAffectedAssignmentRuleSetMap.get(speciesID)) {
 					if (modelstate.speciesToAffectedReactionSetMap.get(assignmentRule.getVariable())!=null) {
@@ -1176,7 +1179,7 @@ public abstract class HierarchicalSimulator {
 				}
 			}
 		}
-	
+
 		return affectedReactionSet;
 	}
 
@@ -1229,8 +1232,8 @@ public abstract class HierarchicalSimulator {
 			if (ibiosimFunctionDefinitions.contains(formula.getName()))
 				return formula;
 
-			ASTNode inlinedFormula = modelstate.model.getFunctionDefinition(formula.getName()).getBody().deepCopy();
-			ASTNode oldFormula = formula.deepCopy();
+			ASTNode inlinedFormula = modelstate.model.getFunctionDefinition(formula.getName()).getBody().clone();
+			ASTNode oldFormula = formula.clone();
 
 			ArrayList<ASTNode> inlinedChildren = new ArrayList<ASTNode>();
 			this.getAllASTNodeChildren(inlinedFormula, inlinedChildren);
@@ -1251,9 +1254,9 @@ public abstract class HierarchicalSimulator {
 				if ((child.getLeftChild() == null && child.getRightChild() == null) && child.isName()) {
 
 					int index = inlinedChildToOldIndexMap.get(child.getName());
-					replaceArgument(inlinedFormula,libsbml.formulaToString(child), oldFormula.getChild(index));
-
-					if (inlinedFormula.getNumChildren() == 0)
+					replaceArgument(inlinedFormula,child.toFormula(), oldFormula.getChild(index));
+					
+					if (inlinedFormula.getChildCount() == 0)
 						inlinedFormula = oldFormula.getChild(index);
 				}
 			}
@@ -1342,11 +1345,11 @@ public abstract class HierarchicalSimulator {
 
 	public void replaceArgument(ASTNode formula,String bvar, ASTNode arg) {
 		int n = 0;
-		for (int i = 0; i < formula.getNumChildren(); i++) {
+		for (int i = 0; i < formula.getChildCount(); i++) {
 			ASTNode child = formula.getChild(i);
-			if (child.isName() && child.getName().equals(bvar)) {
-				formula.replaceChild(n, arg.deepCopy());
-			} else if (child.getNumChildren() > 0) {
+			if (child.isString() && child.getName().equals(bvar)) {
+				formula.replaceChild(n, arg.clone());
+			} else if (child.getChildCount() > 0) {
 				replaceArgument(child, bvar, arg);
 			}
 			n++;
@@ -1376,7 +1379,7 @@ public abstract class HierarchicalSimulator {
 						replacements.put(variable, 
 								evaluateExpressionRecursive(modelstate, assignmentRule.getMath()) * 
 								modelstate.getVariableToValue(modelstate.speciesToCompartmentNameMap.get(variable)));
-								//modelstate.variableToValueMap.get(modelstate.speciesToCompartmentNameMap.get(variable)));
+					//modelstate.variableToValueMap.get(modelstate.speciesToCompartmentNameMap.get(variable)));
 					else
 						modelstate.variableToValueMap.put(variable, 
 								evaluateExpressionRecursive(modelstate, assignmentRule.getMath()) * 
@@ -1472,90 +1475,90 @@ public abstract class HierarchicalSimulator {
 	 * @param noConstraintsFlag
 	 */
 	protected HashSet<String> fireEvents(ModelState modelstate, final boolean noAssignmentRulesFlag, final boolean noConstraintsFlag) {
-	
+
 		//temporary set of events to remove from the triggeredEventQueue
 		HashSet<String> untriggeredEvents = new HashSet<String>();
-	
+
 		//loop through all triggered events
 		//if the trigger is no longer true
 		//remove from triggered queue and put into untriggered set
 		for (EventToFire triggeredEvent : modelstate.triggeredEventQueue)
 		{
 			String triggeredEventID = triggeredEvent.eventID;
-	
+
 			//if the trigger evaluates to false
 			if (getBooleanFromDouble(evaluateExpressionRecursive(modelstate, modelstate.eventToTriggerMap.get(triggeredEventID))) == false) {
-	
+
 				untriggeredEvents.add(triggeredEventID);
 				modelstate.eventToPreviousTriggerValueMap.put(triggeredEventID, false);
 			}
-	
+
 			if (getBooleanFromDouble(evaluateExpressionRecursive(modelstate, modelstate.eventToTriggerMap.get(triggeredEventID))) == false) {
 				modelstate.untriggeredEventSet.add(triggeredEventID);
 			}
 		}
-	
+
 		//copy the triggered event queue -- except the events that are now untriggered
 		//this is done because the remove function can't work with just a string; it needs to match events
 		//this also re-evaluates the priorities in case they have changed
 		//LinkedList<EventToFire> newTriggeredEventQueue = new LinkedList<EventToFire>();
-	
+
 		PriorityQueue<EventToFire> newTriggeredEventQueue = new PriorityQueue<EventToFire>((int)modelstate.numEvents, eventComparator);
-	
-	
+
+
 		while (modelstate.triggeredEventQueue.size() > 0) {
-	
+
 			EventToFire event = modelstate.triggeredEventQueue.poll();
 			EventToFire eventToAdd = new EventToFire(IDtoIndex.get(modelstate.ID), event.eventID, (HashSet<Object>) event.eventAssignmentSet.clone(), event.fireTime);
-	
+
 			if (untriggeredEvents.contains(event.eventID) == false)
 				newTriggeredEventQueue.add(eventToAdd);
 			else
 				modelstate.untriggeredEventSet.add(event.eventID);
 		}
-	
+
 		modelstate.triggeredEventQueue = newTriggeredEventQueue;
-	
+
 		//loop through untriggered events
 		//if the trigger is no longer true
 		//set the previous trigger value to false
 		for (String untriggeredEventID : modelstate.untriggeredEventSet) {
-	
+
 			if (getBooleanFromDouble(evaluateExpressionRecursive(modelstate, modelstate.eventToTriggerMap.get(untriggeredEventID))) == false)
 				modelstate.eventToPreviousTriggerValueMap.put(untriggeredEventID, false);
 		}
-	
+
 		//these are sets of things that need to be re-evaluated or tested due to the event firing
 		HashSet<String> affectedReactionSet = new HashSet<String>();
 		HashSet<AssignmentRule> affectedAssignmentRuleSet = new HashSet<AssignmentRule>();
 		HashSet<ASTNode> affectedConstraintSet = new HashSet<ASTNode>();
-	
+
 		//set of fired events to add to the untriggered set
 		HashSet<String> firedEvents = new HashSet<String>();
-	
-	
+
+
 		//fire all events whose fire time is less than the current time	
 		while (modelstate.triggeredEventQueue.size() > 0 && modelstate.triggeredEventQueue.peek().fireTime <= currentTime) {
-	
+
 			EventToFire eventToFire = modelstate.triggeredEventQueue.poll();
 			String eventToFireID = eventToFire.eventID;
-	
+
 			//System.err.println("firing " + eventToFireID);
-	
+
 			if (modelstate.eventToAffectedReactionSetMap.get(eventToFireID) != null)
 				affectedReactionSet.addAll(modelstate.eventToAffectedReactionSetMap.get(eventToFireID));
-	
+
 			firedEvents.add(eventToFireID);
 			modelstate.eventToPreviousTriggerValueMap.put(eventToFireID, true);
-	
-	
+
+
 			//execute all assignments for this event
 			for (Object eventAssignment : eventToFire.eventAssignmentSet) {
-	
+
 				String variable;
 				double assignmentValue;
-	
-	
+
+
 				if (modelstate.eventToUseValuesFromTriggerTimeMap.get(eventToFireID) == true)	
 				{
 					variable = ((StringDoublePair) eventAssignment).string;
@@ -1566,74 +1569,74 @@ public abstract class HierarchicalSimulator {
 					variable = ((EventAssignment) eventAssignment).getVariable();
 					assignmentValue = evaluateExpressionRecursive(modelstate, ((EventAssignment) eventAssignment).getMath());
 				}
-	
+
 				//update the species, but only if it's not a constant (bound. cond. is fine)
 				if (modelstate.variableToIsConstantMap.get(variable) == false) {
-	
+
 					if(replacements.containsKey(variable) && this.replacementSubModels.get(variable).contains(modelstate.ID))
 						replacements.put(variable, assignmentValue);
 					else
 						modelstate.variableToValueMap.put(variable, assignmentValue);
 				}
-	
+
 				if (noAssignmentRulesFlag == false && modelstate.variableToIsInAssignmentRuleMap.get(variable) == true) 
 					affectedAssignmentRuleSet.addAll(modelstate.variableToAffectedAssignmentRuleSetMap.get(variable));
 				if (noConstraintsFlag == false && modelstate.variableToIsInConstraintMap.get(variable) == true)
 					affectedConstraintSet.addAll(modelstate.variableToAffectedConstraintSetMap.get(variable));
-	
+
 			} //end loop through assignments
-	
+
 			//after an event fires, need to make sure the queue is updated
 			untriggeredEvents.clear();
-	
+
 			//loop through all triggered events
 			//if they aren't persistent and the trigger is no longer true
 			//remove from triggered queue and put into untriggered set
 			for (EventToFire triggeredEvent : modelstate.triggeredEventQueue) {
-	
+
 				String triggeredEventID = triggeredEvent.eventID;
-	
+
 				//if the trigger evaluates to false and the trigger isn't persistent
 				if (getBooleanFromDouble(evaluateExpressionRecursive(modelstate, modelstate.eventToTriggerMap.get(triggeredEventID))) == false) {
-	
+
 					untriggeredEvents.add(triggeredEventID);
 					modelstate.eventToPreviousTriggerValueMap.put(triggeredEventID, false);
 				}
-	
+
 				if (getBooleanFromDouble(evaluateExpressionRecursive(modelstate, modelstate.eventToTriggerMap.get(triggeredEventID))) == false)
 					modelstate.untriggeredEventSet.add(triggeredEventID);
 			}
-	
+
 			//copy the triggered event queue -- except the events that are now untriggered
 			//this is done because the remove function can't work with just a string; it needs to match events
 			//this also re-evaluates the priorities in case they have changed
 			//newTriggeredEventQueue = new LinkedList<EventToFire>();
 			newTriggeredEventQueue = new PriorityQueue<EventToFire>((int)modelstate.numEvents, eventComparator);
-	
+
 			while (modelstate.triggeredEventQueue.size() > 0) {
-	
+
 				EventToFire event = modelstate.triggeredEventQueue.poll();
 				EventToFire eventToAdd = 
 						new EventToFire(IDtoIndex.get(modelstate.ID), event.eventID, (HashSet<Object>) event.eventAssignmentSet.clone(), event.fireTime);
-	
+
 				if (untriggeredEvents.contains(event.eventID) == false)
 					newTriggeredEventQueue.add(eventToAdd);
 				else
 					modelstate.untriggeredEventSet.add(event.eventID);
 			}
-	
+
 			modelstate.triggeredEventQueue = newTriggeredEventQueue;
-	
+
 			//some events might trigger after this
 			handleEvents(modelstate, noAssignmentRulesFlag, noConstraintsFlag);
 		}//end loop through event queue
-	
+
 		//add the fired events back into the untriggered set
 		//this allows them to trigger/fire again later
-	
-	
+
+
 		modelstate.untriggeredEventSet.addAll(firedEvents);
-	
+
 		return affectedReactionSet;
 	}
 
@@ -1641,34 +1644,19 @@ public abstract class HierarchicalSimulator {
 	 * puts constraint-related information into data structures
 	 */
 	protected void setupConstraints(ModelState modelstate) {
-	
+
+		if (modelstate.numConstraints > 0)
+			modelstate.noConstraintsFlag = false;
+		
 		//loop through all constraints to find out which variables affect which constraints
 		//this is stored in a hashmap, as is whether the variable is in a constraint
-	
-		long size = modelstate.model.getNumConstraints();
-		long numNodes;
-	
-		if (size > 0)
-			modelstate.noConstraintsFlag = false;
-	
-		for (long i = 0; i < size; i++)
-		{
-	
-			Constraint constraint = modelstate.model.getConstraint(i);
-			ASTNode formula = constraint.getMath();
-	
-			constraint.setMath(inlineFormula(modelstate, formula));
-	
-			//System.out.println("Node" + libsbml.formulaToString(formula));
-	
-			numNodes = constraint.getMath().getNumChildren();
-	
-			for (long j = 0; j < numNodes; j++)
-			{
-	
-				ASTNode constraintNode = constraint.getMath().getChild(j);
+		for (Constraint constraint : modelstate.model.getListOfConstraints()) {
+
+			constraint.setMath(inlineFormula(modelstate, constraint.getMath()));
+			for (ASTNode constraintNode : constraint.getMath().getListOfNodes()) {
+
 				if (constraintNode.isName()) {
-	
+
 					String nodeName = constraintNode.getName();					
 					modelstate.variableToAffectedConstraintSetMap.put(nodeName, new HashSet<ASTNode>());
 					modelstate.variableToAffectedConstraintSetMap.get(nodeName).add(constraint.getMath());
@@ -1677,6 +1665,8 @@ public abstract class HierarchicalSimulator {
 			}
 		}
 	}
+
+
 
 	/**
 	 * sets up a single species
@@ -1687,10 +1677,10 @@ public abstract class HierarchicalSimulator {
 	private void setupSingleSpecies(ModelState modelstate, Species species, String speciesID) {
 		if (modelstate.speciesIDSet.contains(speciesID))
 			return;
-	
+
 		if (modelstate.numConstraints > 0)
 			modelstate.variableToIsInConstraintMap.put(speciesID, false);
-	
+
 		if (species.isSetInitialAmount())
 		{
 			if(replacements.containsKey(speciesID) && this.replacementSubModels.get(speciesID).contains(modelstate.ID))
@@ -1698,26 +1688,26 @@ public abstract class HierarchicalSimulator {
 			else
 				modelstate.variableToValueMap.put(speciesID, species.getInitialAmount());
 		}
-		
+
 		else if (species.isSetInitialConcentration()) 
 		{
-			
+
 			modelstate.variableToValueMap.put(speciesID, species.getInitialConcentration() 
 					* modelstate.model.getCompartment(species.getCompartment()).getSize());
 		}
-	
-		
+
+
 		if (species.getHasOnlySubstanceUnits() == false) {
-			
+
 			//modelstate.speciesToCompartmentSizeMap.put(speciesID, modelstate.model.getCompartment(species.getCompartment()).getSize());
 			modelstate.speciesToCompartmentNameMap.put(speciesID, species.getCompartment());
-			
+
 			//if (Double.isNaN(modelstate.model.getCompartment(species.getCompartment()).getSize()))
-				//modelstate.speciesToCompartmentSizeMap.put(speciesID, 1.0);
+			//modelstate.speciesToCompartmentSizeMap.put(speciesID, 1.0);
 		}	
 		if (modelstate.numRules > 0)
 			modelstate.variableToIsInAssignmentRuleMap.put(speciesID, false);
-	
+
 		if(!replacements.containsKey(speciesID) || replacingModel.get(speciesID).equals(modelstate.ID))
 		{
 			modelstate.speciesToAffectedReactionSetMap.put(speciesID, new HashSet<String>(20));
@@ -1726,7 +1716,7 @@ public abstract class HierarchicalSimulator {
 			modelstate.speciesToHasOnlySubstanceUnitsMap.put(speciesID, species.getHasOnlySubstanceUnits());
 			modelstate.speciesIDSet.add(speciesID);
 		}
-	
+
 	}
 
 	/**
@@ -1737,7 +1727,7 @@ public abstract class HierarchicalSimulator {
 	 */
 	private void setupReplacingSpecies() 
 	{
-	
+
 		for(String speciesID : replacingModel.keySet())
 		{
 			String ID = replacingModel.get(speciesID);
@@ -1761,7 +1751,7 @@ public abstract class HierarchicalSimulator {
 	 * @throws IOException
 	 */
 	protected void setupSpecies(ModelState modelstate) throws IOException {
-	
+
 		//add values to hashmap for easy access to species amounts
 		Species species;
 		long size = modelstate.model.getListOfSpecies().size();
@@ -1770,7 +1760,7 @@ public abstract class HierarchicalSimulator {
 			species = modelstate.model.getSpecies(i);
 			setupSingleSpecies(modelstate, species, species.getId());
 		}
-	
+
 		setupReplacingSpecies();
 	}
 
@@ -1781,25 +1771,25 @@ public abstract class HierarchicalSimulator {
 	 * @param reactionID
 	 */
 	private void setupLocalParameters(ModelState modelstate, KineticLaw kineticLaw, Reaction reaction) {
-	
+
 		String reactionID = reaction.getId();
 		reactionID = reactionID.replace("_negative_","-");
-	
+
 		for (int i = 0; i < kineticLaw.getNumParameters(); i++) {
-	
+
 			LocalParameter localParameter = kineticLaw.getLocalParameter(i);
-	
+
 			String parameterID = "";
-	
+
 			//the parameters don't get reset after each run, so don't re-do this prepending
 			//if (localParameter.getId().contains(reactionID + "_") == false)					
 			//parameterID = reactionID + "_" + localParameter.getId();
 			//	else 
 			parameterID = localParameter.getId();
-	
+
 			String oldParameterID = localParameter.getId();
 			modelstate.variableToValueMap.put(parameterID, localParameter.getValue());
-	
+
 			//alter the local parameter ID so that it goes to the local and not global value
 			if (localParameter.getId() != parameterID) {
 				localParameter.setId(parameterID);
@@ -1815,17 +1805,17 @@ public abstract class HierarchicalSimulator {
 	 * @param parameter
 	 */
 	private void setupSingleParameter(ModelState modelstate, Parameter parameter) {
-	
+
 		String parameterID = parameter.getId();
 		modelstate.variableToValueMap.put(parameterID, parameter.getValue());
 		modelstate.variableToIsConstantMap.put(parameterID, parameter.getConstant());
-	
+
 		if (parameter.getConstant() == false)
 			modelstate.nonconstantParameterIDSet.add(parameterID);
-	
+
 		if (modelstate.numRules > 0)
 			modelstate.variableToIsInAssignmentRuleMap.put(parameterID, false);
-	
+
 		if (modelstate.numConstraints > 0)
 			modelstate.variableToIsInConstraintMap.put(parameterID, false);
 	}
@@ -1834,13 +1824,13 @@ public abstract class HierarchicalSimulator {
 	 * puts parameter-related information into data structures
 	 */
 	protected void setupParameters(ModelState modelstate) {
-	
+
 		//add local parameters
 		Reaction reaction;
 		Parameter parameter;
 		long size;
-	
-	
+
+
 		size = modelstate.numReactions;
 		for (int i = 0; i < size; i++) 
 		{
@@ -1848,37 +1838,37 @@ public abstract class HierarchicalSimulator {
 			KineticLaw kineticLaw = reaction.getKineticLaw();
 			setupLocalParameters(modelstate, kineticLaw, reaction);
 		}
-	
+
 		//add values to hashmap for easy access to global parameter values
 		//NOTE: the IDs for the parameters and species must be unique, so putting them in the
 		//same hashmap is okay
-	
+
 		size = modelstate.model.getListOfParameters().size();
 		for (int i = 0; i < size; i++) 
 		{
 			parameter = modelstate.model.getParameter(i);
 			setupSingleParameter(modelstate, parameter);
 		}
-	
-		
+
+
 		//add compartment sizes in
 		size = modelstate.model.getNumCompartments();
 		for (int i = 0; i < size; i++) 
 		{
 			Compartment compartment = modelstate.model.getCompartment(i);
 			String compartmentID = compartment.getId();
-			
+
 			modelstate.compartmentIDSet.add(compartmentID);
 			modelstate.variableToValueMap.put(compartmentID, compartment.getSize());
-			
+
 			if (Double.isNaN(compartment.getSize()))
 				modelstate.variableToValueMap.put(compartmentID, 1.0);
-			
+
 			modelstate.variableToIsConstantMap.put(compartmentID, compartment.getConstant());
-			
+
 			if (modelstate.numRules > 0)
 				modelstate.variableToIsInAssignmentRuleMap.put(compartmentID, false);
-			
+
 			if (modelstate.numConstraints > 0)
 				modelstate.variableToIsInConstraintMap.put(compartmentID, false);
 		}
@@ -1896,30 +1886,30 @@ public abstract class HierarchicalSimulator {
 	 * @param modifiersList
 	 */
 	private void setupSingleReaction(ModelState modelstate, String reactionID, ASTNode reactionFormula, boolean reversible, 
-			ListOfSpeciesReferences reactantsList, ListOfSpeciesReferences productsList, 
-			ListOfSpeciesReferences modifiersList) {
+			ListOf<SpeciesReference> reactantsList, ListOf<SpeciesReference> productsList, 
+			ListOf<ModifierSpeciesReference> modifiersList) {
 		reactionID = reactionID.replace("_negative_","-");
-	
+
 		long size;
 		boolean notEnoughMoleculesFlag = false;
 		modelstate.reactionToSpeciesAndStoichiometrySetMap.put(reactionID, new HashSet<StringDoublePair>());
 		modelstate.reactionToReactantStoichiometrySetMap.put(reactionID, new HashSet<StringDoublePair>());
-	
-	
-	
+
+
+
 		size = reactantsList.size();
-		
+
 		if(replacementSubModels.get(reactionID) != null && replacementSubModels.get(reactionID).contains(modelstate.ID))
 			return;
-		
+
 		for (int i = 0; i < size; i++)
 		{
-	
+
 			SpeciesReference reactant = (SpeciesReference)reactantsList.get(i);
-	
+
 			String reactantID = reactant.getSpecies().replace("_negative_","-");
 			double reactantStoichiometry;
-	
+
 			//if there was an initial assignment for the speciesref id
 			if(replacements.containsKey(reactant.getId()) && this.replacementSubModels.get(reactant.getId()).contains(modelstate.ID))
 				reactantStoichiometry = replacements.get(reactant.getId());
@@ -1927,28 +1917,28 @@ public abstract class HierarchicalSimulator {
 				reactantStoichiometry = modelstate.variableToValueMap.get(reactant.getId());
 			else
 				reactantStoichiometry = reactant.getStoichiometry();
-	
+
 			modelstate.reactionToSpeciesAndStoichiometrySetMap.get(reactionID).add(
 					new StringDoublePair(reactantID, -reactantStoichiometry));
 			modelstate.reactionToReactantStoichiometrySetMap.get(reactionID).add(
 					new StringDoublePair(reactantID, reactantStoichiometry));
-	
-	
+
+
 			//as a reactant, this species affects the reaction's propensity
 			modelstate.speciesToAffectedReactionSetMap.get(reactantID).add(reactionID);
-	
+
 			//make sure there are enough molecules for this species
 			if (modelstate.variableToValueMap.get(reactantID) < reactantStoichiometry)
 				notEnoughMoleculesFlag = true;
 		}
-	
+
 		size = productsList.size();
 		for (int i = 0; i < size; i ++) {
 			SpeciesReference product = (SpeciesReference)productsList.get(i); 
-	
+
 			String productID = product.getSpecies().replace("_negative_","-");
 			double productStoichiometry;
-	
+
 			//if there was an initial assignment for the speciesref id
 			if(replacements.containsKey(product.getId()))
 				productStoichiometry = replacements.get(product.getId());
@@ -1956,36 +1946,36 @@ public abstract class HierarchicalSimulator {
 				productStoichiometry = modelstate.variableToValueMap.get(product.getId());
 			else
 				productStoichiometry = product.getStoichiometry();
-	
+
 			modelstate.reactionToSpeciesAndStoichiometrySetMap.get(reactionID).add(
 					new StringDoublePair(productID, productStoichiometry));
 		}
-	
+
 		modelstate.reactionToFormulaMap.put(reactionID, inlineFormula(modelstate, reactionFormula));
-	
+
 		double propensity;
-	
-	
+
+
 		if (notEnoughMoleculesFlag == true)
 			propensity = 0.0;
 		else {//calculate propensity
 			//System.out.println("Node: " + libsbml.formulaToString(reactionFormula));
 			//System.out.println("Node: " + evaluateExpressionRecursive(modelstate, inlineFormula(modelstate, reactionFormula).getLeftChild()));
-	
+
 			propensity = evaluateExpressionRecursive(modelstate, inlineFormula(modelstate, reactionFormula));
 			if(propensity < 0.0)
 				propensity = 0.0;
-	
+
 			if (propensity < modelstate.minPropensity && propensity > 0) 
 				modelstate.minPropensity = propensity;
 			if (propensity > modelstate.maxPropensity)
 				modelstate.maxPropensity = propensity;
-	
+
 			modelstate.propensity += propensity;
-	
+
 			//this.totalPropensity += propensity;
 		}
-	
+
 		modelstate.reactionToPropensityMap.put(reactionID, propensity);
 	}
 
@@ -1995,16 +1985,16 @@ public abstract class HierarchicalSimulator {
 	 * @param numReactions the number of reactions in the model
 	 */
 	protected void setupReactions(ModelState modelstate) {
-	
+
 		//loop through all reactions and calculate their propensities
 		Reaction reaction;
-	
+
 		for (int i = 0;  i < modelstate.numReactions; i++) 
 		{
 			reaction = modelstate.model.getReaction(i);
 			String reactionID = reaction.getId();
 			ASTNode reactionFormula = reaction.getKineticLaw().getMath();
-	
+
 			setupSingleReaction(modelstate, reactionID, reactionFormula, reaction.getReversible(), 
 					reaction.getListOfReactants(), reaction.getListOfProducts(), reaction.getListOfModifiers());
 		}
@@ -2018,7 +2008,6 @@ public abstract class HierarchicalSimulator {
 	protected void setupSingleEvent(ModelState modelstate, Event event) {
 
 		String eventID = event.getId();
-		long numAssignments = event.getNumEventAssignments();
 
 
 		if (event.isSetPriority())
@@ -2044,9 +2033,9 @@ public abstract class HierarchicalSimulator {
 
 		modelstate.untriggeredEventSet.add(eventID);
 
-		for(long i = 0; i < numAssignments; i++)
-		{
-			EventAssignment assignment = event.getEventAssignment(i);
+		for (EventAssignment assignment : event.getListOfEventAssignments()) {
+
+
 			String variableID = assignment.getVariable();
 
 			assignment.setMath(inlineFormula(modelstate, assignment.getMath()));
@@ -2073,56 +2062,51 @@ public abstract class HierarchicalSimulator {
 	 * puts initial assignment-related information into data structures
 	 */
 	protected void setupInitialAssignments(ModelState modelstate) {
-	
+
 		HashSet<String> affectedVariables = new HashSet<String>();
 		HashSet<AssignmentRule> allAssignmentRules = new HashSet<AssignmentRule>();
-	
+
 		//perform all assignment rules
-		for (int i = 0; i < modelstate.model.getListOfRules().size(); i++){
-			Rule rule = modelstate.model.getRule(i);
-	
+		for (Rule rule : modelstate.model.getListOfRules()) {
+
 			if (rule.isAssignment())
 				allAssignmentRules.add((AssignmentRule)rule);
 		}
-	
+
 		performAssignmentRules(modelstate, allAssignmentRules);
-	
-		long size = modelstate.model.getNumInitialAssignments();
+
 		//calculate initial assignments a lot of times in case there are dependencies
 		//running it the number of initial assignments times will avoid problems
 		//and all of them will be fully calculated and determined
-		for (int i = 0; i < size; ++i) {
-	
-			for (int j = 0; j < size; j++)
-			{
-	
-				InitialAssignment initialAssignment = modelstate.model.getInitialAssignment(j);
-				String variable = initialAssignment.getId().replace("_negative_","-");				
+		for (int i = 0; i < modelstate.numInitialAssignments; ++i) {
+			for (InitialAssignment initialAssignment : modelstate.model.getListOfInitialAssignments()) {
+
+				String variable = initialAssignment.getVariable().replace("_negative_","-");				
 				initialAssignment.setMath(inlineFormula(modelstate, initialAssignment.getMath()));
-				
+
 				if (modelstate.speciesToHasOnlySubstanceUnitsMap.containsKey(variable) &&
 						modelstate.speciesToHasOnlySubstanceUnitsMap.get(variable) == false) {
-					
+
 					modelstate.variableToValueMap.put(variable, 
 							evaluateExpressionRecursive(modelstate, initialAssignment.getMath()) * 
 							modelstate.variableToValueMap.get(modelstate.speciesToCompartmentNameMap.get(variable)));
 				}
 				else {
-				if(replacements.containsKey(variable) && this.replacementSubModels.get(variable).contains(modelstate.ID))
-					modelstate.variableToValueMap.put(variable, replacements.get(variable));
-				else
-					modelstate.variableToValueMap.put(variable, evaluateExpressionRecursive(modelstate, initialAssignment.getMath()));
+					if(replacements.containsKey(variable) && this.replacementSubModels.get(variable).contains(modelstate.ID))
+						modelstate.variableToValueMap.put(variable, replacements.get(variable));
+					else
+						modelstate.variableToValueMap.put(variable, evaluateExpressionRecursive(modelstate, initialAssignment.getMath()));
 				}
-				
+
 				affectedVariables.add(variable);
 			}			
 		}
-	
+
 		//perform assignment rules again for variable that may have changed due to the initial assignments
 		//they aren't set up yet, so just perform them all
 		performAssignmentRules(modelstate, allAssignmentRules);
-	
-	
+
+
 	}
 
 	/**
@@ -2162,9 +2146,9 @@ public abstract class HierarchicalSimulator {
 		if(size > 0)
 			modelstate.noRuleFlag = false;
 
-		for (long i = 0; i < size; i++){
-			Rule rule = modelstate.model.getRule(i);
 
+		for(Rule rule : modelstate.model.getListOfRules())
+		{
 			if (rule.isAssignment()) {
 
 				//Rules don't have a getVariable method, so this needs to be cast to an ExplicitRule
@@ -2174,7 +2158,7 @@ public abstract class HierarchicalSimulator {
 				//list of all children of the assignmentRule math
 				ArrayList<ASTNode> formulaChildren = new ArrayList<ASTNode>();
 
-				if (assignmentRule.getMath().getNumChildren() == 0)
+				if (assignmentRule.getMath().getChildCount() == 0)
 					formulaChildren.add(assignmentRule.getMath());
 				else
 					getAllASTNodeChildren(assignmentRule.getMath(), formulaChildren);
@@ -2434,10 +2418,10 @@ public abstract class HierarchicalSimulator {
 		protected LinkedHashSet<String> nonconstantParameterIDSet;
 		protected HashMap<String, HashSet<StringStringPair> > reactionToNonconstantStoichiometriesSetMap = null;
 
-		
+
 		//protected TObjectDoubleHashMap<String> speciesToCompartmentSizeMap = null;
 		protected LinkedHashSet<String> compartmentIDSet = new LinkedHashSet<String>();
-		
+
 		public ModelState(Model bioModel, boolean isCopy, String submodelID)
 		{
 			this.model = bioModel;
@@ -2525,7 +2509,7 @@ public abstract class HierarchicalSimulator {
 			else
 				return variableToValueMap.get(variable);
 		}
-		
+
 		protected void setvariableToValueMap(String variable, double value)
 		{
 			if(replacements.containsKey(variable) && replacementSubModels.get(variable).contains(this.ID))
@@ -2533,7 +2517,7 @@ public abstract class HierarchicalSimulator {
 			else
 				variableToValueMap.put(variable, value);
 		}
-		
+
 	}
 }
 
