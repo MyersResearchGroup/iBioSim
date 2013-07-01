@@ -269,6 +269,8 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 			setupForOutput(randomSeed, runNumber);
 		}
 
+		setupReplacingSpecies();
+		
 		bufferedTSDWriter.write("(" + "\"" + "time" + "\"");
 
 		for (String speciesID : topmodel.speciesIDSet) {				
