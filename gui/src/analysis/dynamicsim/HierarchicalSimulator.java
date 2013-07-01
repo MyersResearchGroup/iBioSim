@@ -33,6 +33,7 @@ import org.sbml.jsbml.ext.comp.CompModelPlugin;
 import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
 import org.sbml.jsbml.ext.comp.CompSBasePlugin;
 import org.sbml.jsbml.ext.comp.ExternalModelDefinition;
+import org.sbml.jsbml.ext.comp.ModelDefinition;
 import org.sbml.jsbml.ext.comp.ReplacedBy;
 import org.sbml.jsbml.Event;
 import org.sbml.jsbml.InitialAssignment;
@@ -404,16 +405,18 @@ public abstract class HierarchicalSimulator {
 
 	/**
 	 * Initializes the modelstate array
+	 * @throws IOException 
+	 * @throws XMLStreamException 
 	 */
-	protected long setupSubmodels(SBMLDocument document)
+	protected long setupSubmodels(SBMLDocument document) throws XMLStreamException, IOException
 	{
 		String path = getPath(outputDirectory);
 		CompModelPlugin sbmlCompModel = (CompModelPlugin)document.getModel().getExtension(CompConstant.namespaceURI);
 		CompSBMLDocumentPlugin sbmlComp = (CompSBMLDocumentPlugin)document.getExtension(CompConstant.namespaceURI);
 		submodels = new ModelState[(int)sbmlCompModel.getListOfSubmodels().size()];
-	
+		SBMLReader reader = new SBMLReader();
 		IDtoIndex.put("topmodel", -1);
-		
+
 		/*
 		for (Submodel submodel : sbmlCompModel.getListOfSubmodels()) {
 			BioModel subBioModel = new BioModel(path);
@@ -429,14 +432,16 @@ public abstract class HierarchicalSimulator {
 		int index = 0;
 		for (Submodel submodel : sbmlCompModel.getListOfSubmodels()) {
 			performDeletions(submodel);
-			submodels[index] = new ModelState(submodel.getModel(), false, submodel.getId());
+			String file = path+submodel.getModelRef()+".xml";
+			submodels[index] = new ModelState(reader.readSBML(file).getModel(), false, submodel.getId());
 			IDtoIndex.put(submodel.getId(), index);
 			index++;
 		}
-		
+
 		return index;
 	}
 
+	
 	/**
 	 * Stores replacing values in a global map
 	 */
@@ -447,63 +452,23 @@ public abstract class HierarchicalSimulator {
 			CompSBasePlugin sbmlSBase = (CompSBasePlugin)species.getExtension(CompConstant.namespaceURI);
 
 			String s = species.getId();
-			if(sbmlSBase != null && sbmlSBase.getListOfReplacedElements() != null)
+			if(sbmlSBase != null)
 			{
-				replacements.put(s, species.getInitialAmount());	
-				initReplacementState.put(s, species.getInitialAmount());
-
-				if(!replacementSubModels.containsKey(s))
-					replacementSubModels.put(s, new HashSet<String>());
-
-				replacementSubModels.get(s).add("topmodel");
-				replacingModel.put(s, "topmodel");
-
-				for(ReplacedElement element: sbmlSBase.getListOfReplacedElements())
+				if(sbmlSBase.getListOfReplacedElements() != null)
 				{
-					replacementSubModels.get(s).add(element.getSubmodelRef());
-				}
-			}
+					replacements.put(s, species.getInitialAmount());	
+					initReplacementState.put(s, species.getInitialAmount());
 
+					if(!replacementSubModels.containsKey(s))
+						replacementSubModels.put(s, new HashSet<String>());
 
-			if(sbmlSBase.isSetReplacedBy())
-			{
-				ReplacedBy replacement = sbmlSBase.getReplacedBy();
-				String submodel = replacement.getSubmodelRef();
-				if(!replacementSubModels.containsKey(s))
-					replacementSubModels.put(s, new HashSet<String>());
+					replacementSubModels.get(s).add("topmodel");
+					replacingModel.put(s, "topmodel");
 
-				replacementSubModels.get(s).add("topmodel");
-
-				replacingModel.put(s, submodel);
-
-				int index = IDtoIndex.get(submodel);
-				ModelState temp = getModel(index);
-
-				replacementSubModels.get(s).add(submodel);
-				replacements.put(s, temp.model.getModel().getSpecies(i).getInitialAmount());
-				initReplacementState.put(s, temp.model.getModel().getSpecies(i).getInitialAmount());
-
-
-			}
-		}
-
-		for (int i = 0; i < topmodel.numParameters; i++) {
-			Parameter parameter = sbml.getModel().getParameter(i);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)parameter.getExtension(CompConstant.namespaceURI);
-
-			String s = parameter.getId();
-			if(sbmlSBase != null && sbmlSBase.getListOfReplacedElements() != null)
-			{
-				replacements.put(s, parameter.getValue());	
-				initReplacementState.put(s, parameter.getValue());
-				if(!replacementSubModels.containsKey(s))
-					replacementSubModels.put(s, new HashSet<String>());
-
-				replacementSubModels.get(s).add("topmodel");
-
-				for(ReplacedElement element: sbmlSBase.getListOfReplacedElements())
-				{
-					replacementSubModels.get(s).add(element.getSubmodelRef());
+					for(ReplacedElement element: sbmlSBase.getListOfReplacedElements())
+					{
+						replacementSubModels.get(s).add(element.getSubmodelRef());
+					}
 				}
 
 
@@ -516,92 +481,138 @@ public abstract class HierarchicalSimulator {
 
 					replacementSubModels.get(s).add("topmodel");
 
+					replacingModel.put(s, submodel);
+
 					int index = IDtoIndex.get(submodel);
 					ModelState temp = getModel(index);
 
 					replacementSubModels.get(s).add(submodel);
-					replacements.put(s, temp.model.getModel().getParameter(i).getValue());
-					initReplacementState.put(s, temp.model.getModel().getParameter(i).getValue());
+					replacements.put(s, temp.model.getModel().getSpecies(s).getInitialAmount());
+					initReplacementState.put(s, temp.model.getModel().getSpecies(s).getInitialAmount());
 
 
 				}
 			}
 		}
+		for (int i = 0; i < topmodel.numParameters; i++) {
+			Parameter parameter = sbml.getModel().getParameter(i);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)parameter.getExtension(CompConstant.namespaceURI);
+
+			String s = parameter.getId();
+			if(sbmlSBase != null){
+				if(sbmlSBase.getListOfReplacedElements() != null)
+				{
+					replacements.put(s, parameter.getValue());	
+					initReplacementState.put(s, parameter.getValue());
+					if(!replacementSubModels.containsKey(s))
+						replacementSubModels.put(s, new HashSet<String>());
+
+					replacementSubModels.get(s).add("topmodel");
+
+					for(ReplacedElement element: sbmlSBase.getListOfReplacedElements())
+					{
+						replacementSubModels.get(s).add(element.getSubmodelRef());
+					}
 
 
+					if(sbmlSBase.isSetReplacedBy())
+					{
+						ReplacedBy replacement = sbmlSBase.getReplacedBy();
+						String submodel = replacement.getSubmodelRef();
+						if(!replacementSubModels.containsKey(s))
+							replacementSubModels.put(s, new HashSet<String>());
+
+						replacementSubModels.get(s).add("topmodel");
+
+						int index = IDtoIndex.get(submodel);
+						ModelState temp = getModel(index);
+
+						replacementSubModels.get(s).add(submodel);
+						replacements.put(s, temp.model.getModel().getParameter(s).getValue());
+						initReplacementState.put(s, temp.model.getModel().getParameter(s).getValue());
+
+
+					}
+				}
+			}
+
+		}
 		for (int i = 0; i < topmodel.model.getCompartmentCount(); i++) {
 			Compartment compartment = sbml.getModel().getCompartment(i);
 			CompSBasePlugin sbmlSBase = (CompSBasePlugin)compartment.getExtension(CompConstant.namespaceURI);
 
 			String c = compartment.getId();
-			if(sbmlSBase != null && sbmlSBase.getListOfReplacedElements() != null)
-			{
-				replacements.put(c, compartment.getSize());	
-				initReplacementState.put(c, compartment.getSize());
-				if(!replacementSubModels.containsKey(c))
-					replacementSubModels.put(c, new HashSet<String>());
-
-				replacementSubModels.get(c).add("topmodel");
-
-				for(ReplacedElement element: sbmlSBase.getListOfReplacedElements())
+			if(sbmlSBase != null ){
+				if(sbmlSBase.getListOfReplacedElements() != null)
 				{
-					replacementSubModels.get(c).add(element.getSubmodelRef());
-				}
-
-
-				if(sbmlSBase.isSetReplacedBy())
-				{
-					ReplacedBy replacement = sbmlSBase.getReplacedBy();
-					String submodel = replacement.getSubmodelRef();
+					replacements.put(c, compartment.getSize());	
+					initReplacementState.put(c, compartment.getSize());
 					if(!replacementSubModels.containsKey(c))
 						replacementSubModels.put(c, new HashSet<String>());
 
 					replacementSubModels.get(c).add("topmodel");
 
-					int index = IDtoIndex.get(submodel);
-					ModelState temp = getModel(index);
-
-					replacementSubModels.get(c).add(submodel);
-					replacements.put(c, temp.model.getModel().getParameter(i).getValue());
-					initReplacementState.put(c, temp.model.getModel().getParameter(i).getValue());
+					for(ReplacedElement element: sbmlSBase.getListOfReplacedElements())
+					{
+						replacementSubModels.get(c).add(element.getSubmodelRef());
+					}
 
 
+					if(sbmlSBase.isSetReplacedBy())
+					{
+						ReplacedBy replacement = sbmlSBase.getReplacedBy();
+						String submodel = replacement.getSubmodelRef();
+						if(!replacementSubModels.containsKey(c))
+							replacementSubModels.put(c, new HashSet<String>());
+
+						replacementSubModels.get(c).add("topmodel");
+
+						int index = IDtoIndex.get(submodel);
+						ModelState temp = getModel(index);
+
+						replacementSubModels.get(c).add(submodel);
+						replacements.put(c, temp.model.getModel().getParameter(c).getValue());
+						initReplacementState.put(c, temp.model.getModel().getParameter(c).getValue());
+
+
+					}
 				}
 			}
 		}
-
 		for (int i = 0; i < topmodel.numReactions; i++) {
 			Reaction reaction = sbml.getModel().getReaction(i);
 			CompSBasePlugin sbmlSBase = (CompSBasePlugin)reaction.getExtension(CompConstant.namespaceURI);
 
 			String r = reaction.getId();
-			if(sbmlSBase != null && sbmlSBase.getListOfReplacedElements() != null)
+			if(sbmlSBase != null )
 			{
-				if(!replacementSubModels.containsKey(r))
-					replacementSubModels.put(r, new HashSet<String>());
-
-				//replacementSubModels.get(r).add("topmodel");
-
-				for(ReplacedElement element: sbmlSBase.getListOfReplacedElements())
+				if(sbmlSBase.getListOfReplacedElements() != null)
 				{
-					replacementSubModels.get(r).add(element.getSubmodelRef());
-				}
-
-
-				if(sbmlSBase.isSetReplacedBy())
-				{
-					ReplacedBy replacement = sbmlSBase.getReplacedBy();
-
-					String submodel = replacement.getSubmodelRef();
 					if(!replacementSubModels.containsKey(r))
 						replacementSubModels.put(r, new HashSet<String>());
 
-					replacementSubModels.get(r).add("topmodel");
-					//replacementSubModels.get(r).add(submodel);
+					//replacementSubModels.get(r).add("topmodel");
+
+					for(ReplacedElement element: sbmlSBase.getListOfReplacedElements())
+					{
+						replacementSubModels.get(r).add(element.getSubmodelRef());
+					}
+
+
+					if(sbmlSBase.isSetReplacedBy())
+					{
+						ReplacedBy replacement = sbmlSBase.getReplacedBy();
+
+						String submodel = replacement.getSubmodelRef();
+						if(!replacementSubModels.containsKey(r))
+							replacementSubModels.put(r, new HashSet<String>());
+
+						replacementSubModels.get(r).add("topmodel");
+						//replacementSubModels.get(r).add(submodel);
+					}
 				}
 			}
 		}
-
 	}
 
 
@@ -636,19 +647,21 @@ public abstract class HierarchicalSimulator {
 	 */
 	private void performDeletions(Submodel instance) {
 
-		Model subModel = instance.getModel();
+		Model subModel = instance.getModel(); 
 		CompModelPlugin sbmlCompModel = (CompModelPlugin)subModel.getModel().getExtension("comp");
 		if (instance == null)
 			return;
+		ListOf<Port> ports = sbmlCompModel.getListOfPorts();
 	/*
 		for(Deletion deletion : instance.getListOfDeletions()){
 
 			if (deletion.isSetPortRef()) {
-				Port port = sbmlCompModel.getPort(deletion.getPortRef());
+				Port port = ports.get(deletion.getPortRef());
 				if (port!=null) {
 					if (port.isSetIdRef()) {
 						if (subModel.getElementBySId(port.getIdRef())!=null) {
 							SBase sbase =  subModel.getElementBySId(port.getIdRef());
+							
 							sbase.removeFromParentAndDelete();
 						}
 					} else if (port.isSetMetaIdRef()) {
@@ -680,7 +693,7 @@ public abstract class HierarchicalSimulator {
 				}
 			}
 		}
-		*/
+		 */
 	}
 
 	/**
@@ -1159,8 +1172,8 @@ public abstract class HierarchicalSimulator {
 
 		HashSet<String> affectedReactionSet = new HashSet<String>(20);
 		affectedReactionSet.add(selectedReactionID);
-		
-		
+
+
 		//loop through the reaction's reactants and products
 		for (StringDoublePair speciesAndStoichiometry : modelstate.reactionToSpeciesAndStoichiometrySetMap.get(selectedReactionID)) {
 
@@ -1255,7 +1268,7 @@ public abstract class HierarchicalSimulator {
 
 					int index = inlinedChildToOldIndexMap.get(child.getName());
 					replaceArgument(inlinedFormula,child.toFormula(), oldFormula.getChild(index));
-					
+
 					if (inlinedFormula.getChildCount() == 0)
 						inlinedFormula = oldFormula.getChild(index);
 				}
@@ -1647,7 +1660,7 @@ public abstract class HierarchicalSimulator {
 
 		if (modelstate.numConstraints > 0)
 			modelstate.noConstraintsFlag = false;
-		
+
 		//loop through all constraints to find out which variables affect which constraints
 		//this is stored in a hashmap, as is whether the variable is in a constraint
 		for (Constraint constraint : modelstate.model.getListOfConstraints()) {
@@ -1708,9 +1721,11 @@ public abstract class HierarchicalSimulator {
 		if (modelstate.numRules > 0)
 			modelstate.variableToIsInAssignmentRuleMap.put(speciesID, false);
 
-		if(!replacements.containsKey(speciesID) || replacingModel.get(speciesID).equals(modelstate.ID))
+
+		modelstate.speciesToAffectedReactionSetMap.put(speciesID, new HashSet<String>(20));
+		
+		if(!replacingModel.containsKey(speciesID) || replacingModel.get(speciesID).equals(modelstate.ID))
 		{
-			modelstate.speciesToAffectedReactionSetMap.put(speciesID, new HashSet<String>(20));
 			modelstate.speciesToIsBoundaryConditionMap.put(speciesID, species.getBoundaryCondition());
 			modelstate.variableToIsConstantMap.put(speciesID, species.getConstant());
 			modelstate.speciesToHasOnlySubstanceUnitsMap.put(speciesID, species.getHasOnlySubstanceUnits());
@@ -1725,7 +1740,7 @@ public abstract class HierarchicalSimulator {
 	 * @param species
 	 * @param speciesID
 	 */
-	private void setupReplacingSpecies() 
+	protected void setupReplacingSpecies() 
 	{
 
 		for(String speciesID : replacingModel.keySet())
@@ -1736,7 +1751,6 @@ public abstract class HierarchicalSimulator {
 			for(String modelID : replacementSubModels.get(speciesID))
 			{
 				replacedModelState = getModel(IDtoIndex.get(modelID));
-				replacedModelState.speciesToAffectedReactionSetMap.put(speciesID, new HashSet<String>(20));
 				replacedModelState.speciesToIsBoundaryConditionMap.put(speciesID, replacingModelState.speciesToIsBoundaryConditionMap.get(speciesID));
 				replacedModelState.variableToIsConstantMap.put(speciesID, replacingModelState.variableToIsConstantMap.get(speciesID));
 				replacedModelState.speciesToHasOnlySubstanceUnitsMap.put(speciesID, replacingModelState.speciesToHasOnlySubstanceUnitsMap.get(speciesID));
@@ -1761,7 +1775,6 @@ public abstract class HierarchicalSimulator {
 			setupSingleSpecies(modelstate, species, species.getId());
 		}
 
-		setupReplacingSpecies();
 	}
 
 	/**
