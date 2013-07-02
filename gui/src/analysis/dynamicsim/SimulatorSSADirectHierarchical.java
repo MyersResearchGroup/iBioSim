@@ -271,18 +271,18 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		}
 
 		setupReplacingSpecies();
-		
+
 		bufferedTSDWriter.write("(" + "\"" + "time" + "\"");
 
-		for (String speciesID : topmodel.speciesIDSet) {				
+		for (String speciesID : topmodel.speciesIDSet) 				
 			bufferedTSDWriter.write(", \"" + speciesID + "\"");
-		}
+
 		for (String noConstantParam : topmodel.nonconstantParameterIDSet) 				
 			bufferedTSDWriter.write(", \"" + noConstantParam + "\"");
+
 		for (String compartment : topmodel.compartmentIDSet)
-		{
 			bufferedTSDWriter.write(", \"" + compartment + "\"");
-		}
+
 		for(ModelState model : submodels.values())
 		{
 			for (String speciesID : model.speciesIDSet) 				
@@ -290,9 +290,8 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 			for (String noConstantParam : model.nonconstantParameterIDSet) 				
 				bufferedTSDWriter.write(", \"" + noConstantParam + "_" + model.ID + "\"");
 			for (String compartment : model.compartmentIDSet)
-			{
 				bufferedTSDWriter.write(", \"" + compartment +  "_" + model.ID + "\"");
-			}
+
 		}
 
 
@@ -318,7 +317,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 			else
 			{
 				HashSet<StringDoublePair> reactantStoichiometrySet = 
-						
+
 						submodels.get(id).reactionToReactantStoichiometrySetMap.get(affectedReactionID);
 				updatePropensities(submodels.get(id), affectedReactionSet,affectedReactionID, reactantStoichiometrySet); 
 			}		
@@ -391,7 +390,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 			{
 				selectedReaction = currentReaction;
 				// keep track of submodel index
-modelstateID = "topmodel";
+				modelstateID = "topmodel";
 				return selectedReaction;
 			}
 		}
@@ -431,8 +430,8 @@ modelstateID = "topmodel";
 	protected void clear() {
 		topmodel.clear();
 
-		for(int i = 0; i < this.numSubmodels; i++)
-			submodels.clear();
+		for(ModelState modelstate : submodels.values())
+			modelstate.clear();
 
 		for(String key : replacements.keySet())
 			replacements.put(key, initReplacementState.get(key));
@@ -480,61 +479,70 @@ modelstateID = "topmodel";
 
 		try {
 			setupSpecies(topmodel);
-		} catch (IOException e) {
+			setupParameters(topmodel);	
+			setupReactions(topmodel);		
+			setupConstraints(topmodel);
+			setupEvents(topmodel);
+			setupInitialAssignments(topmodel);
+			setupRules(topmodel);
+			setupForOutput(0, newRun);
+		} 
+		catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		setupParameters(topmodel);		
-		setupReactions(topmodel);		
 
-		setupForOutput(0, newRun);
 
 		for(ModelState model : submodels.values())
 		{
 			try {
 				setupSpecies(model);
+				setupParameters(model);	
+				setupReactions(model);		
+				setupConstraints(model);
+				setupEvents(model);
+				setupInitialAssignments(model);
+				setupRules(model);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			setupParameters(model);	
-			setupReactions(model);		
-
-			setupForOutput(0, newRun);
 
 		}
 
 
 
-		for (String speciesID : topmodel.speciesIDSet) {				
-			try {
-				bufferedTSDWriter.write(", \"" + speciesID + "\"");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		setupReplacingSpecies();
 
-		for(ModelState model : submodels.values())
-		{
-			for (String speciesID : model.speciesIDSet) {				
-				try {
-					bufferedTSDWriter.write(", \"" + speciesID + "_" + model.ID + "\"");
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-
-		}
 
 
 		try {
+			for (String speciesID : topmodel.speciesIDSet) 				
+				bufferedTSDWriter.write(", \"" + speciesID + "\"");
+
+			for (String noConstantParam : topmodel.nonconstantParameterIDSet) 				
+				bufferedTSDWriter.write(", \"" + noConstantParam + "\"");
+
+			for (String compartment : topmodel.compartmentIDSet)
+				bufferedTSDWriter.write(", \"" + compartment + "\"");
+
+			for(ModelState model : submodels.values())
+			{
+				for (String speciesID : model.speciesIDSet) 				
+					bufferedTSDWriter.write(", \"" + speciesID + "_" + model.ID + "\"");
+				for (String noConstantParam : model.nonconstantParameterIDSet) 				
+					bufferedTSDWriter.write(", \"" + noConstantParam + "_" + model.ID + "\"");
+				for (String compartment : model.compartmentIDSet)
+					bufferedTSDWriter.write(", \"" + compartment +  "_" + model.ID + "\"");
+
+			}
+
 			bufferedTSDWriter.write("),\n");
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}	
+		}
 
 	}
 
