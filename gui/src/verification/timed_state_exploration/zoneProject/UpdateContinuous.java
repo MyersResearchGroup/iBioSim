@@ -82,7 +82,7 @@ public class UpdateContinuous {
 	
 	
 	/**
-	 * Creates an UpdateContinuous object that has defualt values of false and null.
+	 * Creates an UpdateContinuous object that has default values of false and null.
 	 */
 	public UpdateContinuous(){
 		_oldZero = false;
@@ -109,6 +109,14 @@ public class UpdateContinuous {
 		_newValue = newValue;
 		_value = value;
 		_lcrPair = lcrPair;
+	}
+	
+	public UpdateContinuous(LPNContinuousPair lcpair){
+		_oldZero = false;
+		_newZero = false;
+		_newValue = false;
+		_value = null;
+		_lcrPair = new LPNContAndRate(lcpair);
 	}
 	
 	// Getters and setters for the member variables.
@@ -200,7 +208,7 @@ public class UpdateContinuous {
 	 * 
 	 * @return An IntervalPair that contains the upper and lower bounds for the value.
 	 */
-	public IntervalPair getValue() {
+	public IntervalPair get_Value() {
 		return _value;
 	}
 
@@ -211,7 +219,7 @@ public class UpdateContinuous {
 	 * @param value An IntervalPair that contains the upper and lower bounds for the
 	 * value.
 	 */
-	public void setValue(IntervalPair value) {
+	public void set_Value(IntervalPair value) {
 		this._value = value;
 	}
 
@@ -238,44 +246,75 @@ public class UpdateContinuous {
 	
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((_lcrPair == null) ? 0 : _lcrPair.hashCode());
-		result = prime * result + (_newValue ? 1231 : 1237);
-		result = prime * result + (_newZero ? 1231 : 1237);
-		result = prime * result + (_oldZero ? 1231 : 1237);
-		result = prime * result + ((_value == null) ? 0 : _value.hashCode());
-		return result;
+//		final int prime = 31;
+//		int result = 1;
+//		result = prime * result
+//				+ ((_lcrPair == null) ? 0 : _lcrPair.hashCode());
+//		result = prime * result + (_newValue ? 1231 : 1237);
+//		result = prime * result + (_newZero ? 1231 : 1237);
+//		result = prime * result + (_oldZero ? 1231 : 1237);
+//		result = prime * result + ((_value == null) ? 0 : _value.hashCode());
+//		return result;
+		
+		// Two UpdateContinuous variables are the same if they share the 
+		// same continuous part.
+		return _lcrPair.get_lcPair().hashCode();
 	}
 
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
+//		if (this == obj)
+//			return true;
+//		if (obj == null)
+//			return false;
+//		if (getClass() != obj.getClass())
+//			return false;
+//		UpdateContinuous other = (UpdateContinuous) obj;
+//		if (_lcrPair == null) {
+//			if (other._lcrPair != null)
+//				return false;
+//		} else if (!_lcrPair.equals(other._lcrPair))
+//			return false;
+//		if (_newValue != other._newValue)
+//			return false;
+//		if (_newZero != other._newZero)
+//			return false;
+//		if (_oldZero != other._oldZero)
+//			return false;
+//		if (_value == null) {
+//			if (other._value != null)
+//				return false;
+//		} else if (!_value.equals(other._value))
+//			return false;
+//		return true;
+		
+		if(!(obj instanceof UpdateContinuous)){
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		UpdateContinuous other = (UpdateContinuous) obj;
-		if (_lcrPair == null) {
-			if (other._lcrPair != null)
-				return false;
-		} else if (!_lcrPair.equals(other._lcrPair))
-			return false;
-		if (_newValue != other._newValue)
-			return false;
-		if (_newZero != other._newZero)
-			return false;
-		if (_oldZero != other._oldZero)
-			return false;
-		if (_value == null) {
-			if (other._value != null)
-				return false;
-		} else if (!_value.equals(other._value))
-			return false;
-		return true;
+		}
+		
+		UpdateContinuous uc = (UpdateContinuous) obj;
+		
+		// Two UpdateContinuous objects are the same if they share the same
+		// continuous part.
+		return _lcrPair.equals(uc.get_lcrPair());
 	}
 	
+	
+	public String toString(){
+		
+		String s = "Variable: " + _lcrPair + "\n" 
+				+ "Was Zero: " + _oldZero + "\n"
+				+ "Is Zero: " + _newZero + "\n"
+				+ "New value: " + _newValue + "\n";
+		
+		if(_value != null){
+			s += "Value is:" + _value + "\n";
+		}
+		else{
+			s += "Value is null" + "\n";
+		}
+		
+		return s;
+	}
 }
