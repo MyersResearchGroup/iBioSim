@@ -79,15 +79,13 @@ public abstract class HierarchicalSimulator {
 	// Top Level Module
 	protected ModelState topmodel; 
 	// Submodel states
-	protected ModelState [] submodels; 
+	protected HashMap<String, ModelState> submodels; 
 	// Associates species, parameters with a value
 	protected HashMap<String, Double> replacements; 
 	// Keeps track which submodels are involved in a replacement
 	protected HashMap<String, HashSet<String>> replacementSubModels;
 	// Initial replacement state for multiple runs
 	protected HashMap<String, Double> initReplacementState;
-	// Associates submodel ID with index of model state
-	protected HashMap<String, Integer> IDtoIndex;
 	// Keeps track which model contains the replacing values
 	protected HashMap<String, String> replacingModel; 
 	// Number of submodel states
@@ -164,7 +162,6 @@ public abstract class HierarchicalSimulator {
 		initReplacementState = new HashMap<String, Double>();
 		replacementSubModels = new HashMap<String, HashSet<String>>();
 		replacingModel = new HashMap<String,String>();
-		IDtoIndex = new HashMap<String, Integer>();
 
 		if (quantityType != null && quantityType.equals("concentration"))
 			this.printConcentrations = true;
@@ -324,7 +321,7 @@ public abstract class HierarchicalSimulator {
 			commaSpace = ", ";
 		}
 
-		for (ModelState models : submodels)
+		for (ModelState models : submodels.values())
 		{
 			speciesIDSet = models.speciesIDSet;
 			//loop through the speciesIDs and print their current value to the file
@@ -413,9 +410,9 @@ public abstract class HierarchicalSimulator {
 		String path = getPath(outputDirectory);
 		CompModelPlugin sbmlCompModel = (CompModelPlugin)document.getModel().getExtension(CompConstant.namespaceURI);
 		CompSBMLDocumentPlugin sbmlComp = (CompSBMLDocumentPlugin)document.getExtension(CompConstant.namespaceURI);
-		submodels = new ModelState[(int)sbmlCompModel.getListOfSubmodels().size()];
+		//submodels = new ModelState[(int)sbmlCompModel.getListOfSubmodels().size()];
+		submodels = new HashMap<String, ModelState>((int)sbmlCompModel.getListOfSubmodels().size());
 		SBMLReader reader = new SBMLReader();
-		IDtoIndex.put("topmodel", -1);
 
 		/*
 		for (Submodel submodel : sbmlCompModel.getListOfSubmodels()) {
@@ -431,10 +428,11 @@ public abstract class HierarchicalSimulator {
 		 */
 		int index = 0;
 		for (Submodel submodel : sbmlCompModel.getListOfSubmodels()) {
-			performDeletions(submodel);
+
 			String file = path+submodel.getModelRef()+".xml";
-			submodels[index] = new ModelState(reader.readSBML(file).getModel(), false, submodel.getId());
-			IDtoIndex.put(submodel.getId(), index);
+			Model model = reader.readSBML(file).getModel();
+			performDeletions(model, submodel);
+			submodels. put(submodel.getId(), new ModelState(model, false, submodel.getId()));
 			index++;
 		}
 
@@ -483,8 +481,7 @@ public abstract class HierarchicalSimulator {
 
 					replacingModel.put(s, submodel);
 
-					int index = IDtoIndex.get(submodel);
-					ModelState temp = getModel(index);
+					ModelState temp = getModel(submodel);
 
 					replacementSubModels.get(s).add(submodel);
 					replacements.put(s, temp.model.getModel().getSpecies(s).getInitialAmount());
@@ -524,8 +521,7 @@ public abstract class HierarchicalSimulator {
 
 						replacementSubModels.get(s).add("topmodel");
 
-						int index = IDtoIndex.get(submodel);
-						ModelState temp = getModel(index);
+						ModelState temp = getModel(submodel);
 
 						replacementSubModels.get(s).add(submodel);
 						replacements.put(s, temp.model.getModel().getParameter(s).getValue());
@@ -567,8 +563,7 @@ public abstract class HierarchicalSimulator {
 
 						replacementSubModels.get(c).add("topmodel");
 
-						int index = IDtoIndex.get(submodel);
-						ModelState temp = getModel(index);
+						ModelState temp = getModel(submodel);
 
 						replacementSubModels.get(c).add(submodel);
 						replacements.put(c, temp.model.getModel().getParameter(c).getValue());
@@ -621,12 +616,12 @@ public abstract class HierarchicalSimulator {
 	/**
 	 * Gets state from index
 	 */
-	private ModelState getModel(int index)
+	private ModelState getModel(String id)
 	{
-		if(index == -1)
-			return topmodel;
-		else
-			return submodels[index];
+	if(id.equals("topmodel"))
+		return topmodel;
+	else
+		return submodels.get(id);
 	}
 
 	protected double getTotalPropensity()
@@ -634,7 +629,7 @@ public abstract class HierarchicalSimulator {
 		double totalPropensity = 0;
 		totalPropensity += topmodel.propensity;
 
-		for(ModelState model : submodels)
+		for(ModelState model : submodels.values())
 		{
 			totalPropensity += model.propensity;
 		}
@@ -645,14 +640,14 @@ public abstract class HierarchicalSimulator {
 	/**
 	 * Perform deletion on comp model
 	 */
-	private void performDeletions(Submodel instance) {
-
+	private void performDeletions(Model submodel, Submodel instance) {
+		/*
 		Model subModel = instance.getModel(); 
 		CompModelPlugin sbmlCompModel = (CompModelPlugin)subModel.getModel().getExtension("comp");
 		if (instance == null)
 			return;
 		ListOf<Port> ports = sbmlCompModel.getListOfPorts();
-	/*
+	
 		for(Deletion deletion : instance.getListOfDeletions()){
 
 			if (deletion.isSetPortRef()) {
@@ -1295,7 +1290,7 @@ public abstract class HierarchicalSimulator {
 		for(String species : replacementSubModels.keySet())
 			for(String submodel : replacementSubModels.get(species))
 			{
-				model = getModel(IDtoIndex.get(submodel));
+				model = getModel(submodel);
 
 
 				if (model.noRuleFlag == false && model.variableToIsInAssignmentRuleMap.get(species) == true)
@@ -1455,7 +1450,7 @@ public abstract class HierarchicalSimulator {
 					if (modelstate.eventToHasDelayMap.get(untriggeredEventID) == true)
 						fireTime += evaluateExpressionRecursive(modelstate, modelstate.eventToDelayMap.get(untriggeredEventID));
 
-					modelstate.triggeredEventQueue.add(new EventToFire(IDtoIndex.get(modelstate.ID),
+					modelstate.triggeredEventQueue.add(new EventToFire(modelstate.ID,
 							untriggeredEventID, evaluatedAssignments, fireTime));
 				}
 				else {
@@ -1464,7 +1459,7 @@ public abstract class HierarchicalSimulator {
 
 					if (modelstate.eventToHasDelayMap.get(untriggeredEventID) == true)
 						fireTime += evaluateExpressionRecursive(modelstate, modelstate.eventToDelayMap.get(untriggeredEventID));
-					modelstate.triggeredEventQueue.add(new EventToFire(IDtoIndex.get(modelstate.ID),
+					modelstate.triggeredEventQueue.add(new EventToFire(modelstate.ID,
 							untriggeredEventID, modelstate.eventToAssignmentSetMap.get(untriggeredEventID), fireTime));
 				}			
 			}
@@ -1522,7 +1517,7 @@ public abstract class HierarchicalSimulator {
 		while (modelstate.triggeredEventQueue.size() > 0) {
 
 			EventToFire event = modelstate.triggeredEventQueue.poll();
-			EventToFire eventToAdd = new EventToFire(IDtoIndex.get(modelstate.ID), event.eventID, (HashSet<Object>) event.eventAssignmentSet.clone(), event.fireTime);
+			EventToFire eventToAdd = new EventToFire(modelstate.ID, event.eventID, (HashSet<Object>) event.eventAssignmentSet.clone(), event.fireTime);
 
 			if (untriggeredEvents.contains(event.eventID) == false)
 				newTriggeredEventQueue.add(eventToAdd);
@@ -1630,7 +1625,7 @@ public abstract class HierarchicalSimulator {
 
 				EventToFire event = modelstate.triggeredEventQueue.poll();
 				EventToFire eventToAdd = 
-						new EventToFire(IDtoIndex.get(modelstate.ID), event.eventID, (HashSet<Object>) event.eventAssignmentSet.clone(), event.fireTime);
+						new EventToFire(modelstate.ID, event.eventID, (HashSet<Object>) event.eventAssignmentSet.clone(), event.fireTime);
 
 				if (untriggeredEvents.contains(event.eventID) == false)
 					newTriggeredEventQueue.add(eventToAdd);
@@ -1746,11 +1741,11 @@ public abstract class HierarchicalSimulator {
 		for(String speciesID : replacingModel.keySet())
 		{
 			String ID = replacingModel.get(speciesID);
-			ModelState replacingModelState = getModel(IDtoIndex.get(ID));
+			ModelState replacingModelState = getModel(ID);
 			ModelState replacedModelState;
 			for(String modelID : replacementSubModels.get(speciesID))
 			{
-				replacedModelState = getModel(IDtoIndex.get(modelID));
+				replacedModelState = getModel(modelID);
 				replacedModelState.speciesToIsBoundaryConditionMap.put(speciesID, replacingModelState.speciesToIsBoundaryConditionMap.get(speciesID));
 				replacedModelState.variableToIsConstantMap.put(speciesID, replacingModelState.variableToIsConstantMap.get(speciesID));
 				replacedModelState.speciesToHasOnlySubstanceUnitsMap.put(speciesID, replacingModelState.speciesToHasOnlySubstanceUnitsMap.get(speciesID));
@@ -2263,14 +2258,14 @@ public abstract class HierarchicalSimulator {
 		public String eventID = "";
 		public HashSet<Object> eventAssignmentSet = null;
 		public double fireTime = 0.0;
-		public int index;
+		public String modelID;
 
-		public EventToFire(int index, String eventID, HashSet<Object> eventAssignmentSet, double fireTime) {
+		public EventToFire(String modelID, String eventID, HashSet<Object> eventAssignmentSet, double fireTime) {
 
 			this.eventID = eventID;
 			this.eventAssignmentSet = eventAssignmentSet;
 			this.fireTime = fireTime;	
-			this.index = index;
+			this.modelID = modelID;
 		}
 	}
 
@@ -2292,14 +2287,14 @@ public abstract class HierarchicalSimulator {
 			else {
 				ModelState state1;
 				ModelState state2;
-				if(event1.index == -1)
+				if(event1.modelID.equals("topmodel"))
 					state1 = topmodel;
 				else
-					state1 = submodels[event1.index];
-				if(event2.index == -1)
+					state1 = submodels.get(event1.modelID);
+				if(event2.modelID.equals("topmodel"))
 					state2 = topmodel;
 				else
-					state2 = submodels[event2.index];
+					state2 = submodels.get(event2.modelID);
 
 				if (state1.eventToPriorityMap.get(event1.eventID) == null) {
 					if (state2.eventToPriorityMap.get(event2.eventID) != null)

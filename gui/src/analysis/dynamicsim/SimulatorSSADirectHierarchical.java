@@ -23,7 +23,7 @@ import main.util.MutableBoolean;
 public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 
 	private static Long initializationTime = new Long(0);
-	private int submodelIndex = -1;
+	private String modelstateID;
 
 
 	public SimulatorSSADirectHierarchical(String SBMLFileName, String outputDirectory, double timeLimit, 
@@ -36,6 +36,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 
 		try {
 			initialize(randomSeed, 1);
+			modelstateID = "topmodel";
 		} catch (IOException e2) {
 			e2.printStackTrace();
 		} catch (XMLStreamException e2) {
@@ -70,17 +71,17 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 
 				//recalculate propensties/groups for affected reactions
 				if (affectedReactionSet.size() > 0)
-					updatePropensities(affectedReactionSet, -1);
+					updatePropensities(affectedReactionSet, "topmodel");
 			}
 
-			for(int i = 0; i < numSubmodels; i++)
+			for(ModelState models : submodels.values())
 			{
-				if (submodels[i].noEventsFlag == false) {
-					HashSet<String> affectedReactionSet = fireEvents(submodels[i], submodels[i].noRuleFlag, submodels[i].noConstraintsFlag);				
+				if (models.noEventsFlag == false) {
+					HashSet<String> affectedReactionSet = fireEvents(models, models.noRuleFlag, models.noConstraintsFlag);				
 
 					//recalculate propensties/groups for affected reactions
 					if (affectedReactionSet.size() > 0)
-						updatePropensities(affectedReactionSet, i);
+						updatePropensities(affectedReactionSet, models.ID);
 				}
 			}
 
@@ -153,7 +154,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 
 					//STEP 4: perform selected reaction and update species counts
 
-					if(submodelIndex == -1)
+					if(modelstateID.equals("topmodel"))
 					{
 						//if its length isn't positive then there aren't any reactions
 						if (!selectedReactionID.isEmpty()) {
@@ -161,7 +162,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 							HashSet<String> affectedReactionSet = getAffectedReactionSet(topmodel, selectedReactionID, true);
 
 							//STEP 5: compute affected reactions' new propensities and update total propensity
-							updatePropensities(affectedReactionSet, submodelIndex);
+							updatePropensities(affectedReactionSet, modelstateID);
 						}
 
 						//if (topmodel.variableToIsInAssignmentRuleMap != null &&
@@ -182,12 +183,12 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 					{
 						//if its length isn't positive then there aren't any reactions
 						if (!selectedReactionID.isEmpty()) {
-							performReaction(submodels[submodelIndex], selectedReactionID, submodels[submodelIndex].noRuleFlag, submodels[submodelIndex].noConstraintsFlag);
+							performReaction(submodels.get(modelstateID), selectedReactionID, submodels.get(modelstateID).noRuleFlag, submodels.get(modelstateID).noConstraintsFlag);
 
-							HashSet<String> affectedReactionSet = getAffectedReactionSet(submodels[submodelIndex], selectedReactionID, true);
+							HashSet<String> affectedReactionSet = getAffectedReactionSet(submodels.get(modelstateID), selectedReactionID, true);
 
 							//STEP 5: compute affected reactions' new propensities and update total propensity
-							updatePropensities(affectedReactionSet, submodelIndex);
+							updatePropensities(affectedReactionSet, modelstateID);
 						}
 
 
@@ -257,7 +258,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		setupForOutput(randomSeed, runNumber);
 
 
-		for(ModelState model : submodels)
+		for(ModelState model : submodels.values())
 		{
 			setupSpecies(model);
 			setupParameters(model);	
@@ -282,7 +283,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		{
 			bufferedTSDWriter.write(", \"" + compartment + "\"");
 		}
-		for(ModelState model : submodels)
+		for(ModelState model : submodels.values())
 		{
 			for (String speciesID : model.speciesIDSet) 				
 				bufferedTSDWriter.write(", \"" + speciesID + "_" + model.ID + "\"");
@@ -303,12 +304,12 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 	 * updates the propensities of the reactions affected by the recently performed reaction
 	 * @param affectedReactionSet the set of reactions affected by the recently performed reaction
 	 */
-	private void updatePropensities(HashSet<String> affectedReactionSet, int index) {
+	private void updatePropensities(HashSet<String> affectedReactionSet, String id) {
 
 		//loop through the affected reactions and update the propensities
 		for (String affectedReactionID : affectedReactionSet) {
 
-			if(submodelIndex == -1)
+			if(id.equals("topmodel"))
 			{
 				HashSet<StringDoublePair> reactantStoichiometrySet = 
 						topmodel.reactionToReactantStoichiometrySetMap.get(affectedReactionID);
@@ -317,8 +318,9 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 			else
 			{
 				HashSet<StringDoublePair> reactantStoichiometrySet = 
-						submodels[index].reactionToReactantStoichiometrySetMap.get(affectedReactionID);
-				updatePropensities(submodels[index], affectedReactionSet,affectedReactionID, reactantStoichiometrySet); 
+						
+						submodels.get(id).reactionToReactantStoichiometrySetMap.get(affectedReactionID);
+				updatePropensities(submodels.get(id), affectedReactionSet,affectedReactionID, reactantStoichiometrySet); 
 			}		
 		}
 	}
@@ -389,23 +391,23 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 			{
 				selectedReaction = currentReaction;
 				// keep track of submodel index
-				submodelIndex = -1;
+modelstateID = "topmodel";
 				return selectedReaction;
 			}
 		}
 
-		for(int i = 0; i < numSubmodels; i ++)
+		for(ModelState models : submodels.values())
 		{
 
-			for (String currentReaction : submodels[i].reactionToPropensityMap.keySet()) 
+			for (String currentReaction : models.reactionToPropensityMap.keySet()) 
 			{
-				runningTotalReactionsPropensity += submodels[i].reactionToPropensityMap.get(currentReaction);
+				runningTotalReactionsPropensity += models.reactionToPropensityMap.get(currentReaction);
 
 				if (randomPropensity < runningTotalReactionsPropensity) 
 				{
 					selectedReaction = currentReaction;
 					// keep track of submodel index
-					submodelIndex = i;
+					modelstateID = models.ID;
 					return selectedReaction;
 				}
 			}
@@ -430,7 +432,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		topmodel.clear();
 
 		for(int i = 0; i < this.numSubmodels; i++)
-			submodels[i].clear();
+			submodels.clear();
 
 		for(String key : replacements.keySet())
 			replacements.put(key, initReplacementState.get(key));
@@ -460,13 +462,13 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 					nextEventTime = topmodel.triggeredEventQueue.peek().fireTime;
 		}
 
-		for(int i = 0; i < numSubmodels; i++)
-			if (submodels[i].noEventsFlag == false){
-				handleEvents(submodels[i], submodels[i].noRuleFlag, submodels[i].noConstraintsFlag);
+		for(ModelState models : submodels.values())
+			if (models.noEventsFlag == false){
+				handleEvents(models, models.noRuleFlag, models.noConstraintsFlag);
 				//step to the next event fire time if it comes before the next time step
-				if (!submodels[i].triggeredEventQueue.isEmpty() && submodels[i].triggeredEventQueue.peek().fireTime <= nextEventTime)
-					if(submodels[i].triggeredEventQueue.peek().fireTime < nextEventTime)
-						nextEventTime = submodels[i].triggeredEventQueue.peek().fireTime;
+				if (!models.triggeredEventQueue.isEmpty() && models.triggeredEventQueue.peek().fireTime <= nextEventTime)
+					if(models.triggeredEventQueue.peek().fireTime < nextEventTime)
+						nextEventTime = models.triggeredEventQueue.peek().fireTime;
 			}
 		return nextEventTime;
 	}
@@ -487,7 +489,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 
 		setupForOutput(0, newRun);
 
-		for(ModelState model : submodels)
+		for(ModelState model : submodels.values())
 		{
 			try {
 				setupSpecies(model);
@@ -513,7 +515,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 			}
 		}
 
-		for(ModelState model : submodels)
+		for(ModelState model : submodels.values())
 		{
 			for (String speciesID : model.speciesIDSet) {				
 				try {
