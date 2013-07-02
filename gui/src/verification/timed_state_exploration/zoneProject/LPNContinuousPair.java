@@ -44,9 +44,9 @@ public class LPNContinuousPair extends LPNTransitionPair {
 
 	@Override
 	public int hashCode() {
-		final int prime = 37;
+		//final int prime = 37;
 		int result = super.hashCode();
-		result = result * prime + _currentRate;
+		//result = result * prime + _currentRate;
 		
 		return result;
 	}
