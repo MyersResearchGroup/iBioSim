@@ -48,6 +48,15 @@ public class InequalityVariable extends Variable {
 	/* The LhpnFile object that this InequalityVariable belongs to. */
 	private LhpnFile _lpn;
 	
+	/* 
+	 * The constant. Note: getConstant will set this variable. 
+	 */
+	private Integer _constant;
+	
+	/*
+	 * True if constant is on the right; false otherwise.
+	 */
+	private boolean _isRight;
 	
 //	
 //	Not needed anymore since the list of InequalityVariables is not dynamically
@@ -67,7 +76,7 @@ public class InequalityVariable extends Variable {
 	 */
 	public InequalityVariable(String name, String type, Properties initCond) {
 		super(name, type, initCond);
-		// TODO Auto-generated constructor stub
+		
 		throw new UnsupportedOperationException("This constructor needs to be verified"
 				+ "for correctness for inherited class InequalityVariable.");
 	}
@@ -82,7 +91,7 @@ public class InequalityVariable extends Variable {
 	public InequalityVariable(String name, String type, String initValue,
 			String port) {
 		super(name, type, initValue, port);
-		// TODO Auto-generated constructor stub
+		
 		throw new UnsupportedOperationException("This constructor needs to be verified"
 				+ "for correctness for inherited class InequalityVariable.");
 	}
@@ -158,7 +167,7 @@ public class InequalityVariable extends Variable {
 	 */
 	public InequalityVariable(String name, String type) {
 		super(name, type);
-		// TODO Auto-generated constructor stub
+		
 		throw new UnsupportedOperationException("This constructor needs to be verified"
 				+ "for correctness for inherited class InequalityVariable.");
 	}
@@ -389,10 +398,9 @@ public class InequalityVariable extends Variable {
 	 * 			Zero if the inequality is false, a non-zero number if the
 	 * 			inequality is true.
 	 * @throws
-	 * 			IllegalStateException if the inequality cannot be evaulated to
+	 * 			IllegalStateException if the inequality cannot be evaluated to
 	 * 			true or false.
 	 */
-//	public int evaluate(int[] vector, Zone z, HashMap<LPNContinuousPair, IntervalPair> continuousValues){
 	public int evaluate(int[] vector, Zone z, HashMap<LPNContAndRate, IntervalPair> continuousValues){
 		
 		// From the (local) state, extract the current values to use in the 
@@ -439,6 +447,10 @@ public class InequalityVariable extends Variable {
 	 */
 	public int getConstant(){
 		
+		if(_constant != null){
+			return _constant;
+		}
+		
 		// Find which side has the variable.
 		if(_inequalityExprTree.getLeftChild().containsCont()){
 			// Evaluate the other side. Note : since the assumption
@@ -455,6 +467,9 @@ public class InequalityVariable extends Variable {
 				throw new IllegalArgumentException("The InequalityVariable." +
 						"getConstant() method evaluated to a non-trivial range.");
 			}
+			
+			_constant = result.get_LowerBound();
+			_isRight = true;
 			
 			// Either the lower or upper bound will be fine to return.
 			return result.get_LowerBound();
@@ -475,11 +490,14 @@ public class InequalityVariable extends Variable {
 						"getConstant() method evaluated to a non-trivial range.");
 			}
 			
+			_constant = result.get_UpperBound();
+			_isRight = false;
+			
 			// Either the lower or upper bound will be fine to return.
 			return result.get_UpperBound();
 		}
 		
-//		System.err.println("Warning: the inequaltiy " + this +
+//		System.err.println("Warning: the inequality " + this +
 //				"does not have one side equal to a constant. For no good reason " +
 //				"I'm assuming it is 0.");
 		//return 0;
@@ -504,6 +522,45 @@ public class InequalityVariable extends Variable {
 //			
 //		return null;
 //	}
+	
+	/**
+	 * This method determines if the value exceeds the constant value.
+	 * @param value
+	 * 		Value to compare.
+	 * @return
+	 * 		If this inequality variable represents 'variable>constant' or
+	 * 		'variable>=constant', then method returns truth value of
+	 * 		'value>=constant'. Otherwise this method returns the truth value
+	 * 		of 'variable<=constant'
+	 */
+	public boolean exceedConstant(int value){
+		
+		// There are four cases to consider. 'v>,>= a', 'v<,<= a', 'a>,>= v'
+		// and 'a<,<= v'.
+		String operation = get_op();
+		
+		int constant = getConstant();
+		
+		if(">=".contains(operation)){
+			// Determine which side the constant lives on.
+			if(_isRight){
+				return value >= constant;
+			}
+			else{
+				return value <= constant;
+			}
+		}
+		else{
+			// Determine which side the constant lives on.
+			if(_isRight){
+				return value <= constant;
+			}
+			else{
+				return value >= constant;
+			}
+		}
+		
+	}
 	
 	/**
 	 * Adds the continuous variables that this InequalityVariable depends on
