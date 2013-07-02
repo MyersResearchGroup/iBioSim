@@ -1,29 +1,69 @@
 package verification.timed_state_exploration.zoneProject;
 
+
+/**
+ * An interval pair is a pair of integers representing a range of values by giving
+ * the upper and lower bounds for that range. They should be thought of as the 
+ * interval [a,b] where a and b are integers.
+ * 
+ * @author Andrew N. Fisher
+ *
+ */
 public class IntervalPair {
 	
+	// The lower bound of the interval.
 	private int _lowerBound;
+	
+	// The upper bound of the interval.
 	private int _upperBound;
 	
+	/**
+	 * Define an interval with the appropriate upper and lower bounds.
+	 * @param lowerBound
+	 * @param upperBound
+	 */
 	public IntervalPair(int lowerBound, int upperBound) {
 		this._lowerBound = lowerBound;
 		this._upperBound = upperBound;
 	}
 	
+	/**
+	 * Defines an interval with upper and lower bounds set to zero, thus representing
+	 * the point {0}.
+	 */
 	public IntervalPair(){
 		this._lowerBound = 0;
 		this._upperBound = 0;
 	}
 	
+	/**
+	 * Gets the lower bound for the interval.
+	 * @return
+	 */
 	public int get_LowerBound() {
 		return _lowerBound;
 	}
+	
+	/**
+	 * Sets the lower bound for the interval.
+	 * @param lowerBound
+	 */
 	public void set_LowerBound(int lowerBound) {
 		this._lowerBound = lowerBound;
 	}
+	
+	/**
+	 * Gets the upper bound for the interval.
+	 * @return
+	 */
 	public int get_UpperBound() {
 		return _upperBound;
 	}
+	
+	/**
+	 * Set the upper bound for the interval.
+	 * @param upperBound
+	 */
 	public void set_UpperBound(int upperBound) {
 		this._upperBound = upperBound;
 	}
