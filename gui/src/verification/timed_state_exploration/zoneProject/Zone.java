@@ -3064,7 +3064,7 @@ public class Zone{
 			
 			if(assignedLtContPair != null){
 			
-				if(assignedLtContPair.is_newZero()){
+				if(assignedLtContPair.newlyZero()){
 					// Variable was zero and is now non-zero, so add to the the non-zero
 					// references.
 					newZone._indexToTimerPair[indexTimerCount++] = 
