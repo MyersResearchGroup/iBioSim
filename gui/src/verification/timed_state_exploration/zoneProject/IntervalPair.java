@@ -131,4 +131,13 @@ public class IntervalPair {
 		return Math.abs(_lowerBound)>Math.abs(_upperBound)?
 				_lowerBound : _upperBound;
 	}
+	
+	/**
+	 * Determines if zero is this range.
+	 * @return True if the lower bound is less than zero and the upper bound is more
+	 * 			than zero; false otherwise.
+	 */
+	public boolean containsZero(){
+		return _lowerBound<0 && _upperBound>0;
+	}
 }
