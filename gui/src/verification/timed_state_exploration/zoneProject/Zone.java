@@ -4167,9 +4167,28 @@ public class Zone{
 						&& (ltContPair.getCurrentRate() == ratePair.getSmallestRate())){
 					// The rate represents a range of rates and no rate change
 					// event has occured.
-					ltContPair.setCurrentRate(ratePair.getLargestRate());
-					result = addSetItem(result, 
-							new Event(ltContPair), localState);
+					if(ratePair.containsZero()){
+						// The rate contians zero, so we need to add two rate
+						// events: one for the lower bound and one for the upper
+						// bound.
+						LPNContinuousPair otherltContPair = ltContPair.clone();
+						
+						ltContPair.setCurrentRate(ratePair.get_LowerBound());
+						otherltContPair.setCurrentRate(ratePair.get_UpperBound());
+						
+						// Create the events.
+						Event lowerRateChange = new Event(ltContPair);
+						Event upperRateChange = new Event(otherltContPair);
+						
+						// Add them to the result set.
+						result = addSetItem(result, lowerRateChange, localState);
+						result = addSetItem(result, upperRateChange, localState);
+					}
+					else{
+						ltContPair.setCurrentRate(ratePair.getLargestRate());
+						result = addSetItem(result, 
+								new Event(ltContPair), localState);
+					}
 				}
 				
 				// Check all the inequalities for inclusion.
@@ -4723,6 +4742,27 @@ public class Zone{
 //#endif
 //}
 		return E;
+	}
+	
+	/**
+	 * Adds a set item and explicitly sets a flag to remove the next set item
+	 * upon firing.
+	 * @param E
+	 * The list of current event sets.
+	 * @param e
+	 * The event to add.
+	 * @param s
+	 * The current state.
+	 * @param removeNext
+	 * True if afer firing this event, the next event should be removed from the
+	 * queue.
+	 * @return
+	 * The new event set.
+	 */
+	public LpnTranList addSetItem(LpnTranList E, Event e, State s, 
+			boolean removeNext){
+		
+		return null;
 	}
 	
 	/**
