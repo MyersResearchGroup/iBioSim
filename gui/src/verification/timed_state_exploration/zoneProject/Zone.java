@@ -3068,7 +3068,7 @@ public class Zone{
 					// Variable was zero and is now non-zero, so add to the the non-zero
 					// references.
 					newZone._indexToTimerPair[indexTimerCount++] = 
-							assignedLtContPair.get_lcrPair().get_lcPair();
+							assignedLtContPair.get_lcrPair().get_lcPair().clone();
 				}
 				else{
 					// Variable was zero and is still zero, but an assignment has been
@@ -3120,9 +3120,9 @@ public class Zone{
 				
 			}
 			else{
-				// The variable was non-zero and hasn't had na assignment.
+				// The variable was non-zero and hasn't had an assignment.
 				newZone._indexToTimerPair[indexTimerCount++] =
-						this._indexToTimerPair[i];
+						this._indexToTimerPair[i].clone();
 			}
 			
 		}
