@@ -497,6 +497,7 @@ public class Analysis {
 			JOptionPane.showMessageDialog(Gui.frame,
 					"Verification was successful.", "Success",
 					JOptionPane.INFORMATION_MESSAGE);
+			System.out.println(prjStateSet.toString());
 		}
 		if (Options.getOutputLogFlag()) 
 			writePerformanceResultsToLogFile(false, tranFiringCnt, totalStateCnt, peakTotalMem / 1000000, peakUsedMem / 1000000);
