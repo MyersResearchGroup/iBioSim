@@ -415,7 +415,7 @@ public class TimedStateSet extends HashSet<PrjState> implements StateSetInterfac
 		}
 	}
 	
-	public String stateString(){
+	public String toString(){
 		
 		String result = "";
 		
