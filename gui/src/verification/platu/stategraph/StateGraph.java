@@ -1381,9 +1381,28 @@ public class StateGraph {
 //		ArrayList<UpdateContinuous> newAssignValues =
 //				updateContinuousState(currentTimedPrjState.get_zones()[0], curStateArray, newStates, firedTran);
 
-		ContinuousRecordSet newAssignValues =
+//		ContinuousRecordSet newAssignValues =
+//				updateContinuousState(currentTimedPrjState.get_zones()[0],
+//						curStateArray, newStates, firedTran);
+		
+		ContinuousRecordSet newAssignValues = new ContinuousRecordSet();
+		
+		newStates  =
 				updateContinuousState(currentTimedPrjState.get_zones()[0],
-						curStateArray, newStates, firedTran);
+						curStateArray, newStates, firedTran,
+						newAssignValues);
+		
+		// Check the cached values. Current this assumes no shared continuous variables.
+		State nextState = this.getNextState(newStates[this.getLpn().getLpnIndex()], firedTran);
+		if( nextState != null){
+			newStates[this.getLpn().getLpnIndex()] = nextState;
+		}
+		else{
+			newStates[this.getLpn().getLpnIndex()] = 
+					this.addState(newStates[this.getLpn().getLpnIndex()]);
+			this.addStateTran(curStateArray[this.getLpn().getLpnIndex()], firedTran,
+					newStates[this.getLpn().getLpnIndex()]);
+		}
 		
 		
 		LpnTranList enabledTransitions = new LpnTranList();
@@ -1675,8 +1694,9 @@ public class StateGraph {
 //	private ArrayList<UpdateContinuous>
 //	updateContinuousState(Zone z,
 //		State[] oldStates, State[] newStates, Transition firedTran){
-	private ContinuousRecordSet updateContinuousState(Zone z,
-		State[] oldStates, State[] newStates, Transition firedTran){
+	private State[] updateContinuousState(Zone z,
+		State[] oldStates, State[] newStates, Transition firedTran, 
+		ContinuousRecordSet updateContinuousRecords){
 		// Convert the current values of Boolean variables to strings for use in the 
 		// Evaluator.
 		HashMap<String, String> currentValuesAsString = 
@@ -1686,13 +1706,15 @@ public class StateGraph {
 		// Accumulates a set of all transitions that need their enabling conditions
 		// re-evaluated.
 		HashSet<Transition> needUpdating = new HashSet<Transition>();
-		HashSet<InequalityVariable> ineqNeedUpdating= new HashSet<InequalityVariable>();
+		HashSet<InequalityVariable> ineqNeedUpdating=
+				new HashSet<InequalityVariable>();
 		
 		// Accumulates the new assignment information.
 //		ArrayList<UpdateContinuous> updateContinuousRecords =
 //				new ArrayList<UpdateContinuous>();
-		ContinuousRecordSet updateContinuousRecords =
-				new ContinuousRecordSet();
+
+//		ContinuousRecordSet updateContinuousRecords =
+//				new ContinuousRecordSet();
 		
 		// Accumulates the new assignment information.
 //		ArrayList<HashMap<LPNContAndRate, IntervalPair>> newAssignValues 
@@ -1834,15 +1856,24 @@ public class StateGraph {
 
 		}
 		
+		// If inequalities have changed, get a new copy of the current state. This is assuming
+		// only one state will change.
+		if(ineqNeedUpdating.size() != 0){
+			newStates[this.getLpn().getLpnIndex()] = newStates[this.getLpn().getLpnIndex()].clone();
+		}
+		
 		// Update the inequalities.
 		for(InequalityVariable ineq : ineqNeedUpdating){
-			int ineqIndex = this.lpn.getVarIndexMap().get(ineq.getName());
+			int ineqIndex = this.lpn.getVarIndexMap().
+					get(ineq.getName());
 
 			// Add the transitions that this inequality affects.
 			needUpdating.addAll(ineq.getTransitions());
 			
 
-			HashMap<LPNContAndRate, IntervalPair> continuousValues = new HashMap<LPNContAndRate, IntervalPair>();
+			HashMap<LPNContAndRate, IntervalPair> continuousValues
+							= new HashMap<LPNContAndRate, IntervalPair>();
+			
 			for(UpdateContinuous record : updateContinuousRecords.keySet()){
 				continuousValues.put(record.get_lcrPair(), record.get_Value());
 			}
@@ -1878,7 +1909,8 @@ public class StateGraph {
 			boolean needToUpdate = true;
         	String tranName = t.getLabel();
     		if (this.lpn.getEnablingTree(tranName) != null 
-    				&& this.lpn.getEnablingTree(tranName).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(vector)) == 0.0) {
+    				&& this.lpn.getEnablingTree(tranName)
+    					.evaluateExpr(this.lpn.getAllVarsWithValuesAsString(vector)) == 0.0) {
     		   	if (previouslyEnabled[tranIndex] && !t.isPersistent())
     				previouslyEnabled[tranIndex] = false;
     			continue;
@@ -1900,7 +1932,9 @@ public class StateGraph {
 		}
 		
 //		return newAssignValues;
-		return updateContinuousRecords;
+//		return updateContinuousRecords;
+		
+		return newStates;
 	}
 	
     @Override
