@@ -97,8 +97,8 @@ public class UpdateContinuous {
 	 * continuous variable.
 	 * @param oldZero True if the previous rate zero; false otherwise.
 	 * @param newZero True if the new rate is zero; false otherwise.
-	 * @param newValue True if the a value assignment has been made; false otherwise
-	 * @param value The range of continuous values.
+	 * @param newValue True if a value assignment has been made; false otherwise
+	 * @param value The range of values for the continuous variable.
 	 * @param lcrPair An LPNContAndRate pairing that has the reference information
 	 * for the continuous variable as well as the range of rates.
 	 */
