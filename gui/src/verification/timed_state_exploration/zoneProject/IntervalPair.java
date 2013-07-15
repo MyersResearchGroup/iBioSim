@@ -107,10 +107,11 @@ public class IntervalPair {
 	}
 	
 	/**
-	 * Returns the rate in the range with the smallest absolute value. 
+	 * Returns the rate in the range with the smallest absolute value
+	 * or zero if 0 is in the range. 
 	 * @return
-	 * 		Let [a,b] be the range of rates. Returns 0 if a<0<b, a if
-	 * 		0<a<b and b if a<b<0.
+	 * Let [a,b] be the range of rates. Returns 0 if a<0<b, a if
+	 * 0<a<b and b if a<b<0.
 	 */
 	public int getSmallestRate(){
 		
@@ -125,7 +126,7 @@ public class IntervalPair {
 	/**
 	 * Returns the rate in the range with the largest absolute value.
 	 * @return
-	 * 		Let [a,b] be the rage of rates.
+	 * 		Let [a,b] be the range of rates.
 	 */		
 	public int getLargestRate(){
 		return Math.abs(_lowerBound)>Math.abs(_upperBound)?
