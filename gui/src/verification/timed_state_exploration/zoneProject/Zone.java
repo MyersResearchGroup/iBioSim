@@ -9,10 +9,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import lpn.parser.ExprTree;
 import lpn.parser.LhpnFile;
@@ -169,7 +166,7 @@ public class Zone{
 	/* Stores the continuous variables that have rate zero */
 //	HashMap<LPNTransitionPair, Variable> _rateZeroContinuous;
 	//DualHashMap<RangeAndPairing, Variable> _rateZeroContinuous;
-	DualHashMap<LPNTransitionPair, VariableRangePair> _rateZeroContinuous;
+	DualHashMap<LPNContAndRate, VariableRangePair> _rateZeroContinuous;
 	
 	/* Records the largest zone that occurs. */
 	public static int ZoneSize = 0;
@@ -453,8 +450,9 @@ public class Zone{
 		ArrayList<LPNTransitionPair> enabledTransitionsArrayList =
 				new ArrayList<LPNTransitionPair>();
 		
-//		LPNTransitionPair zeroPair = new LPNTransitionPair(LPNTransitionPair.ZERO_TIMER, -1, true);
-		LPNTransitionPair zeroPair = new LPNTransitionPair(LPNTransitionPair.ZERO_TIMER, -1);
+//		LPNTransitionPair zeroPair = new LPNTransitionPair(LPNTransitionPair.ZERO_TIMER, -1);
+		LPNTransitionPair zeroPair = new LPNTransitionPair(LPNTransitionPair.ZERO_TIMER,
+				LPNTransitionPair.ZERO_TIMER);
 		
 		// Add the zero timer first.
 		enabledTransitionsArrayList.add(zeroPair);
@@ -462,7 +460,6 @@ public class Zone{
 		// The index of the boolean value corresponds to the index of the Transition.
 		for(int i=0; i<enabledTran.length; i++){
 			if(enabledTran[i]){
-//				enabledTransitionsArrayList.add(new LPNTransitionPair(LPNIndex, i, true));
 				enabledTransitionsArrayList.add(new LPNTransitionPair(LPNIndex, i));
 			}
 		}
@@ -530,9 +527,6 @@ public class Zone{
 
 			}
 		}
-		
-		// Extract the local states.
-		//State[] localStates = tps.toStateArray();
 		
 		// Initialize hash code to -1 (indicating nothing cached).
 		_hashCode = -1;
@@ -800,9 +794,8 @@ public class Zone{
 		 */
 		
 		// This method will also initialize the _rateZeroContinuous
-		//_rateZeroContinuous = new DualHashMap<RangeAndPairing, Variable>();
 		_rateZeroContinuous = 
-				new DualHashMap<LPNTransitionPair, VariableRangePair>();
+				new DualHashMap<LPNContAndRate, VariableRangePair>();
 		
 		// This list accumulates the transition pairs (ie timers) and the continuous
 		// variables.
@@ -811,9 +804,10 @@ public class Zone{
 				
 		// Put in the zero timer.
 //		enabledTransitionsArrayList
-//			.add(new LPNTransitionPair(LPNTransitionPair.ZERO_TIMER, -1, true));
+//			.add(new LPNTransitionPair(LPNTransitionPair.ZERO_TIMER, -1));
 		enabledTransitionsArrayList
-			.add(new LPNTransitionPair(LPNTransitionPair.ZERO_TIMER, -1));
+		.add(new LPNTransitionPair(LPNTransitionPair.ZERO_TIMER,
+				LPNTransitionPair.ZERO_TIMER));
 		
 		// Get the continuous variables.
 		for(int i=0; i<localStates.length; i++){
@@ -851,12 +845,12 @@ public class Zone{
 
 				LPNContinuousPair newPair = 
 						new LPNContinuousPair(lpnIndex, contVariableIndex,
-								rate.get_LowerBound());
+								rate.getSmallestRate());
 				
 				// If the rate is non-zero, then the variables needs to be tracked
 				// by matrix part of the Zone.
-				//if(rate !=0){
-				if(!rate.equals(new IntervalPair(0,0))){
+//				if(!rate.equals(new IntervalPair(0,0))){
+				if(newPair.getCurrentRate() != 0){	
 					// Temporary exception guaranteeing only unit rates.
 					//if(rate != -1 && rate != 1){
 //					if(rate.get_LowerBound() != 1 && rate.get_UpperBound() != 1){
@@ -881,13 +875,13 @@ public class Zone{
 				else{
 					// If the rate is zero, then the Zone keeps track of this variable
 					// in a list.
-//					_rateZeroContinuous.put(newPair, cpontVar);
 //					_rateZeroContinuous.
-//						put(new RangeAndPairing(newPair, parseRate(contVar.getInitValue())),
-//								contVar);
+//						put(newPair, new VariableRangePair(contVar,
+//								parseRate(contVar.getInitValue())));
 					_rateZeroContinuous.
-						put(newPair, new VariableRangePair(contVar,
-								parseRate(contVar.getInitValue())));
+						insert(new LPNContAndRate(newPair, rate),
+							new VariableRangePair(contVar,
+									parseRate(contVar.getInitValue())));
 				}
 			}
 			
@@ -1135,7 +1129,7 @@ public class Zone{
 		_indexToTimerPair = new LPNTransitionPair[0];
 		_hashCode = -1;
 		_lpnList = new LhpnFile[0];
-		_rateZeroContinuous = new DualHashMap<LPNTransitionPair, VariableRangePair>();
+		_rateZeroContinuous = new DualHashMap<LPNContAndRate, VariableRangePair>();
 	}
 	
 	/**
@@ -1444,7 +1438,7 @@ public class Zone{
 	}
 	
 	/**
-	 * Set the value of the upper bound for the delay.
+	 * Set the value of the lower bound for the delay.
 	 * @param t
 	 * 			The transition whose upper bound is being set.
 	 * @param value
@@ -1496,7 +1490,8 @@ public class Zone{
 		LPNContinuousPair index = new LPNContinuousPair(lpnIndex, contIndex);
 		
 		// Search for the continuous variable in the rate zero variables.
-		VariableRangePair pairing = _rateZeroContinuous.get(index);
+		VariableRangePair pairing = _rateZeroContinuous
+				.get(new LPNContAndRate(index, new IntervalPair(0,0)));
 		
 		// If Pairing is not null, the variable was found and return the result.
 		if(pairing != null){
@@ -1540,7 +1535,12 @@ public class Zone{
 			// The variable was not found in the zone. Check to see if its
 			// in the rate-zero varaibles. Technically I will return whatever
 			// is in the _rateZeroConintuous, null or not.
-			return _rateZeroContinuous.get(ltContPair).get_range();
+//			return _rateZeroContinuous.get(ltContPair).get_range();
+			
+			// First get an object to reference into the _rateZeroContinuous
+			LPNContAndRate lcr = new LPNContAndRate(ltContPair,
+					new IntervalPair(0,0));
+			return _rateZeroContinuous.get(lcr).get_range();
 		}
 		
 		// The varaible was found in the zone. Yay.
@@ -1567,9 +1567,21 @@ public class Zone{
 		int i = Arrays.binarySearch(_indexToTimerPair, ltPair);
 
 		if(i < 0){
-			// Assume the rate is zero. This covers the case if conVar
-			// is in the rate zero as well as if its not in the state at all.
-			return new IntervalPair(0,0);
+			// Then the variable is in the rate zero continuous
+			// variables so get the range of rates from there.
+//			return new IntervalPair(0,0);
+			
+			// Create an object to reference into the rate zero.
+			LPNContAndRate lcr = 
+					new LPNContAndRate((LPNContinuousPair) ltPair,
+							new IntervalPair(0,0));
+			
+			// Get the old version of lcr from the rate zero since
+			// that contains the rate. This is quite a hack.
+			VariableRangePair vrp = _rateZeroContinuous.get(lcr);
+			lcr = _rateZeroContinuous.getKey(vrp);
+			
+			return lcr.get_rateInterval();
 		}
 		
 		
@@ -1826,8 +1838,9 @@ public class Zone{
 		
 		if(!_rateZeroContinuous.isEmpty()){
 			result += "\nRate Zero Continuous : \n";
-			for (LPNTransitionPair ltPair : _rateZeroContinuous.keySet()){
-				result += "" + _rateZeroContinuous.get(ltPair);
+			for (LPNContAndRate lcrPair : _rateZeroContinuous.keySet()){
+				result += "" + _rateZeroContinuous.get(lcrPair) 
+						+ "Rate: " + lcrPair.get_rateInterval();
 			}
 		}
 		
@@ -2818,7 +2831,7 @@ public class Zone{
 //				newAssignValues.get(OLD_NON_ZERO);
 		
 		// Create new rate zero member variable.
-		newZone._rateZeroContinuous = new DualHashMap<LPNTransitionPair,
+		newZone._rateZeroContinuous = new DualHashMap<LPNContAndRate,
 				VariableRangePair>();
 		
 		// Create new _indexToTimerPair.
@@ -2892,9 +2905,9 @@ public class Zone{
 		// Copy over the rate zero continuous variables.
 		// First copy over all the continuous variables that still have
 		// rate zero.
-		for(LPNTransitionPair ltTranPair : _rateZeroContinuous.keySet()){
+		for(LPNContAndRate ltTranPair : _rateZeroContinuous.keySet()){
 			// Cast the index.
-			LPNContinuousPair ltContPair = (LPNContinuousPair) ltTranPair;
+			LPNContinuousPair ltContPair = (LPNContinuousPair) ltTranPair.get_lcPair();
 			if(!newAssignValues.get(ltContPair).is_newZero()){
 				// The variable no longer is rate zero, so do nothing.
 				continue;
@@ -2913,11 +2926,12 @@ public class Zone{
 						new VariableRangePair(v, 
 								newAssignValues.get(ltContPair).get_Value());
 				
-				newZone._rateZeroContinuous.put(ltContPair, vrp);
+				newZone._rateZeroContinuous.insert(
+						new LPNContAndRate(ltContPair, new IntervalPair(0,0)), vrp);
 			}
 			else{
 				newZone._rateZeroContinuous
-					.put(ltTranPair, _rateZeroContinuous.get(ltTranPair));
+					.insert(ltTranPair, _rateZeroContinuous.get(ltTranPair));
 			}
 			
 		}
@@ -3007,7 +3021,7 @@ public class Zone{
 			ContinuousRecordSet newAssignValues){
 		
 		// Create new rate zero member variable.
-		newZone._rateZeroContinuous = new DualHashMap<LPNTransitionPair,
+		newZone._rateZeroContinuous = new DualHashMap<LPNContAndRate,
 				VariableRangePair>();
 
 		// Create new _indexToTimerPair.
@@ -3055,16 +3069,16 @@ public class Zone{
 		
 		
 		// Sort the previous rate zero continuous variables into rate zero or non-zero.
-		for(LPNTransitionPair ltTranPair : _rateZeroContinuous.keySet()){
+		for(LPNContAndRate ltTranPair : _rateZeroContinuous.keySet()){
 			// Cast the index.
-			LPNContinuousPair ltContPair = (LPNContinuousPair) ltTranPair;
+			LPNContinuousPair ltContPair = (LPNContinuousPair) ltTranPair.get_lcPair();
 
 			// Check if the variable is a newly assigned value.
 			UpdateContinuous assignedLtContPair = newAssignValues.get(ltContPair);
 			
 			if(assignedLtContPair != null){
 			
-				if(assignedLtContPair.newlyZero()){
+				if(assignedLtContPair.newlyNonZero()){
 					// Variable was zero and is now non-zero, so add to the the non-zero
 					// references.
 					newZone._indexToTimerPair[indexTimerCount++] = 
@@ -3075,14 +3089,15 @@ public class Zone{
 					// made. Simply add in the new assigned value.
 					VariableRangePair vrp = this._rateZeroContinuous.get(ltTranPair);
 					
-					newZone._rateZeroContinuous.put(assignedLtContPair.get_lcrPair()._lcPair,
-							new VariableRangePair(vrp.get_variable(), assignedLtContPair.get_Value()));
+					newZone._rateZeroContinuous.insert(assignedLtContPair.get_lcrPair(),
+							new VariableRangePair(vrp.get_variable(),
+									assignedLtContPair.get_Value()));
 					
 				}
 			}
 			else{
 				newZone._rateZeroContinuous
-				.put(ltTranPair, _rateZeroContinuous.get(ltTranPair));
+				.insert(ltTranPair, _rateZeroContinuous.get(ltTranPair));
 			}
 		}
 		
@@ -3105,11 +3120,21 @@ public class Zone{
 					Variable v = _lpnList[ltCar.get_lpnIndex()].
 							getContVar(ltCar.get_ContinuousIndex());
 
+					// Dewarp the upper and lower bounds.
+					IntervalPair values = updateRecord.get_Value();
+					int currentRate = getCurrentRate(ltCar);
+					values.set_LowerBound(
+							values.get_LowerBound() * currentRate);
+					values.set_UpperBound(
+							values.get_UpperBound() * currentRate);
+					
 					// Create a VariableRangePair.
-					VariableRangePair vrp = new VariableRangePair(v, updateRecord.get_Value());
-
+					VariableRangePair vrp = new VariableRangePair(v,
+							values);
+					
 					// Add the value to the map.
-					newZone._rateZeroContinuous.put(ltCar, vrp);
+//					newZone._rateZeroContinuous.put(ltCar, vrp);
+					newZone._rateZeroContinuous.insert(updateRecord.get_lcrPair(), vrp);
 				}
 				else{
 					// This non-zero variable still has rate non-zero, but replace
@@ -4163,33 +4188,35 @@ public class Zone{
 				
 				IntervalPair ratePair = getRateBounds(ltContPair);
 				
-				if(!ratePair.singleValue()
-						&& (ltContPair.getCurrentRate() == ratePair.getSmallestRate())){
-					// The rate represents a range of rates and no rate change
-					// event has occured.
-					if(ratePair.containsZero()){
-						// The rate contians zero, so we need to add two rate
-						// events: one for the lower bound and one for the upper
-						// bound.
-						LPNContinuousPair otherltContPair = ltContPair.clone();
-						
-						ltContPair.setCurrentRate(ratePair.get_LowerBound());
-						otherltContPair.setCurrentRate(ratePair.get_UpperBound());
-						
-						// Create the events.
-						Event lowerRateChange = new Event(ltContPair);
-						Event upperRateChange = new Event(otherltContPair);
-						
-						// Add them to the result set.
-						result = addSetItem(result, lowerRateChange, localState);
-						result = addSetItem(result, upperRateChange, localState);
-					}
-					else{
-						ltContPair.setCurrentRate(ratePair.getLargestRate());
-						result = addSetItem(result, 
-								new Event(ltContPair), localState);
-					}
-				}
+//				if(!ratePair.singleValue()
+//						&& (ltContPair.getCurrentRate() == ratePair.getSmallestRate())){
+//					// The rate represents a range of rates and no rate change
+//					// event has occured.
+//					if(ratePair.containsZero()){
+//						// The rate contians zero, so we need to add two rate
+//						// events: one for the lower bound and one for the upper
+//						// bound.
+//						LPNContinuousPair otherltContPair = ltContPair.clone();
+//						
+//						ltContPair.setCurrentRate(ratePair.get_LowerBound());
+//						otherltContPair.setCurrentRate(ratePair.get_UpperBound());
+//						
+//						// Create the events.
+//						Event lowerRateChange = new Event(ltContPair);
+//						Event upperRateChange = new Event(otherltContPair);
+//						
+//						// Add them to the result set.
+//						result = addSetItem(result, lowerRateChange, localState);
+//						result = addSetItem(result, upperRateChange, localState);
+//					}
+//					else{
+//						ltContPair.setCurrentRate(ratePair.getLargestRate());
+//						result = addSetItem(result, 
+//								new Event(ltContPair), localState);
+//					}
+//				}
+				
+				result = createRateEvents(ltContPair, ratePair, result, localState);
 				
 				// Check all the inequalities for inclusion.
 				Variable contVar = _lpnList[ltPair.get_lpnIndex()].getContVar(ltPair.get_transitionIndex());
@@ -4204,6 +4231,52 @@ public class Zone{
 					}
 				}
 				
+			}
+		}
+		
+		// Check the rate zero variables for possible rate change events.
+		for(LPNContAndRate lcrPair : _rateZeroContinuous.keySet()){
+			// Get the reference object:
+			LPNContinuousPair ltContPair = lcrPair.get_lcPair();
+			
+			// Extract the range of rates.
+			IntervalPair ratePair = lcrPair.get_rateInterval();
+
+			result = createRateEvents(ltContPair, ratePair, result, localState);
+			
+		}
+		
+		return result;
+	}
+	
+	private LpnTranList createRateEvents(LPNContinuousPair ltContPair, IntervalPair ratePair,
+			LpnTranList result, State localState){
+		
+		if(!ratePair.singleValue()
+				&& (ltContPair.getCurrentRate() == ratePair.getSmallestRate())){
+			// The rate represents a range of rates and no rate change
+			// event has occured.
+			if(ratePair.containsZero()){
+				// The rate contians zero, so we need to add two rate
+				// events: one for the lower bound and one for the upper
+				// bound.
+				LPNContinuousPair otherltContPair = ltContPair.clone();
+				
+				ltContPair.setCurrentRate(ratePair.get_LowerBound());
+				otherltContPair.setCurrentRate(ratePair.get_UpperBound());
+				
+				// Create the events.
+				Event lowerRateChange = new Event(ltContPair);
+				Event upperRateChange = new Event(otherltContPair);
+				
+				// Add them to the result set.
+				result = addSetItem(result, lowerRateChange, localState);
+				result = addSetItem(result, upperRateChange, localState);
+			}
+			else{
+				ltContPair.setCurrentRate(ratePair.getLargestRate());
+				result = addSetItem(result, 
+						new Event(ltContPair), localState);
 			}
 		}
 		
@@ -4258,6 +4331,10 @@ public class Zone{
 //eSet->insert(e);
 			eSet.add(e);
 //newE->push_back(*eSet);
+			
+			// I believe that I should actually copy over the old list
+			// and then add the new event set.
+			newE = E.copy();
 			newE.addLast(eSet);
 //E.clear();
 //E = *newE;
@@ -5456,14 +5533,19 @@ public class Zone{
 			// The continuous variable was found amongst the non zero rate continuous variables.
 			// Grab that indexing object instead since it has the rate.
 			cV = (LPNContinuousPair) _indexToTimerPair[index];
+			return cV.getCurrentRate();
 		}
-		
-		return cV.getCurrentRate();
+		else{
+			// Since the variable was not found in the non-zero rate continuous
+			// variables, assume the rate is zero.
+			return 0;
+		}
 	}
 	
 	/**
 	 * Sets the current rate for a continuous variable. It sets the rate regardless of 
-	 * whether the variable is in the rate zero portion of the Zone or not.
+	 * whether the variable is in the rate zero portion of the Zone or not. But it
+	 * does not move variables in and out of the zone.
 	 * @param contVar
 	 * 		The index of the variable whose rate is going to be set.
 	 * @param currentRate
@@ -5482,10 +5564,12 @@ public class Zone{
 		
 		// Check for the current variable in the rate zero variables.
 		
-		VariableRangePair variableRange = _rateZeroContinuous.getValue(contVar);
+		VariableRangePair variableRange = _rateZeroContinuous.
+				getValue(new LPNContAndRate(cV, new IntervalPair(0,0)));
 		
 		if(variableRange != null){
-			LPNContinuousPair lcPair = (LPNContinuousPair)_rateZeroContinuous.getKey(variableRange);
+			LPNContinuousPair lcPair = (LPNContinuousPair)_rateZeroContinuous.
+					getKey(variableRange).get_lcPair();
 			lcPair.setCurrentRate(currentRate);
 			return;
 		}
@@ -5584,6 +5668,96 @@ public class Zone{
 		}
 		
 		return z;
+	}
+
+	/**
+	 * Returns a new Zone that has added into the DBM portion the given
+	 * continuous varaible that used to be in the zone. 
+	 * @param ltContPair The continuous varaible to move from the rate zero
+	 * variables.
+	 * @return The resulting Zone.
+	 */
+	public Zone moveOldRateZero(LPNContinuousPair ltContPair) {
+		
+		// Create a Zone to alter.
+		Zone newZone = new Zone();
+
+		// Create a copy of the LPN list.
+		newZone._lpnList = Arrays.copyOf(this._lpnList, this._lpnList.length);
+
+		// Copy the rate zero continuous variables.
+		newZone._rateZeroContinuous = this._rateZeroContinuous.clone();
+		
+		// Extract the continuous variable from the rate zero variables.
+		LPNContAndRate rateZero = new LPNContAndRate(ltContPair,
+				new IntervalPair(0,0));
+		
+		// This gets the values for the continuous variable.
+		VariableRangePair vrp = newZone._rateZeroContinuous.get(rateZero);
+		IntervalPair values = vrp.get_range();
+		
+		// This replaces the rateZero with the one stored in the _rateZeroContinuous.
+		// The purpose of this is to obtain the stored range of rates.
+		rateZero = newZone._rateZeroContinuous.getKey(vrp);
+		
+		// Get the range of rates.
+		IntervalPair rangeOfRates = rateZero.get_rateInterval();
+		
+		// Remove the continuous variable.
+		newZone._rateZeroContinuous.delete(rateZero);
+		
+		// Create a copy of the current indexing pairs.
+		//newZone._indexToTimerPair = Arrays.copyOf(_indexToTimerPair, _indexToTimerPair.length);
+		newZone._indexToTimerPair = new LPNTransitionPair[_indexToTimerPair.length + 1];
+		for(int i=0; i<_indexToTimerPair.length; i++){
+			newZone._indexToTimerPair[i] = _indexToTimerPair[i];
+		}
+
+		
+		// Add the continuous variable to the list of variables/transition in the DBM.
+		int i = _indexToTimerPair.length;
+		newZone._indexToTimerPair[i] = ltContPair;
+
+		// Sort the _indexToTimerPair list.
+		Arrays.sort(newZone._indexToTimerPair);
+
+		// Create matrix.
+		newZone._matrix = new int[newZone._indexToTimerPair.length+1][newZone._indexToTimerPair.length+1];
+
+		// Convert the current transitions to a collection of transitions.
+		HashSet<LPNTransitionPair> oldTransitionSet = new HashSet<LPNTransitionPair>();
+		for(LPNTransitionPair ltPair : _indexToTimerPair){
+			oldTransitionSet.add(ltPair);
+		}
+
+		// Copy in the new transitions.
+		newZone.copyTransitions(this, new HashSet<LPNTransitionPair>(),
+				oldTransitionSet, null);
+
+		// Get the index for the variable.
+		int index = Arrays.binarySearch(newZone._indexToTimerPair, ltContPair);
+		
+		
+		
+		// Copy in the upper and lower bound of the old rate zero variable.
+//		newZone.setLowerBoundByLPNTransitionPair(ltContPair,
+//				rangeOfRates.get_LowerBound());
+//		newZone.setUpperBoundByLPNTransitionPair(ltContPair, 
+//				rangeOfRates.get_UpperBound());
+		
+		newZone.setLowerBoundbydbmIndex(index, rangeOfRates.get_LowerBound());
+		newZone.setUpperBoundbydbmIndex(index, rangeOfRates.get_UpperBound());
+		
+		// Copy in the range of rates.
+		newZone.setDbmEntry(0, index, values.get_UpperBound());
+		newZone.setDbmEntry(index, 0, -1*values.get_LowerBound());
+		
+//		newZone.advance(localStates);
+
+		newZone.recononicalize();
+
+		return newZone;
+		
 	}
 	
 	/**
