@@ -1186,7 +1186,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		if (direct.equals(".") && !stem.equals("")) {
 			direct = "";
 		}
-		if(analysisMethod != null && !analysisMethod.contains("SSA-Hierarchical"))
+		if(analysisMethod != null && !analysisMethod.contains("Hierarchical"))
 		{
 			SBMLDocument sbml = biomodel.flattenModel();		
 			performModifications(sbml,dd);

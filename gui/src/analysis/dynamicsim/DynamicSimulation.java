@@ -62,10 +62,14 @@ public class DynamicSimulation {
 				simulator = new SimulatorODERK(SBMLFileName, outputDirectory, timeLimit, 
 						maxTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, 
 						interestingSpecies, numSteps, relError, absError, quantityType);
-			else if (simulatorType.equals("hierarchydirect"))
+			else if (simulatorType.equals("hierarch-direct"))
 				hSimulator = new SimulatorSSADirectHierarchical(SBMLFileName, outputDirectory, timeLimit, 
 						maxTimeStep, minTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, 
 						interestingSpecies, quantityType);
+			else if (simulatorType.equals("hierarchical-rk"))
+				hSimulator = new SimulatorODERKHierarchical(SBMLFileName, outputDirectory, timeLimit, 
+						maxTimeStep, randomSeed, progress, printInterval, stoichAmpValue, running, 
+						interestingSpecies, numSteps, relError, absError, quantityType);
 		}
 		catch (IOException e) {
 			e.printStackTrace();

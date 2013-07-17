@@ -1313,7 +1313,7 @@ public class Run implements ActionListener {
 						double minTimeStep = 
 							Double.valueOf(properties.getProperty("monte.carlo.simulation.min.time.step"));
 
-						dynSim = new DynamicSimulation("hierarchydirect");					
+						dynSim = new DynamicSimulation("hierarch-direct");					
 						String SBMLFileName = directory + separator + theFile;
 						if (direct != null && !direct.equals(".")) {
 							outDir = outDir + separator + direct;
@@ -1332,6 +1332,25 @@ public class Run implements ActionListener {
 									"reb2sac.diffusion.stoichiometry.amplification.value"));
 						
 						dynSim = new DynamicSimulation("rk");					
+						String SBMLFileName = directory + separator + theFile;
+						if (direct != null && !direct.equals(".")) {
+							outDir = outDir + separator + direct;
+						}
+						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
+								timeStep, 0.0, rndSeed, progress, printInterval, runs, progressLabel, running,
+								stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, log);				
+						exitValue = 0;
+						new File(directory + separator + "running").delete();
+						logFile.close();
+						return exitValue;
+					}
+					else if (sim.equals("Hierarchical-RK")) {
+						
+						double stoichAmpValue = 
+							Double.parseDouble(properties.getProperty(
+									"reb2sac.diffusion.stoichiometry.amplification.value"));
+						
+						dynSim = new DynamicSimulation("hierarchical-rk");					
 						String SBMLFileName = directory + separator + theFile;
 						if (direct != null && !direct.equals(".")) {
 							outDir = outDir + separator + direct;

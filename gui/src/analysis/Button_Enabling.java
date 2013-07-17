@@ -354,6 +354,7 @@ public class Button_Enabling {
 		simulators.addItem("rk8pd");
 		simulators.addItem("rkf45");
 		simulators.addItem("Runge-Kutta-Fehlberg");
+		simulators.addItem("Hierarchical-RK");
 		simulators.setSelectedItem("rkf45");
 		ArrayList<String> getLists = new ArrayList<String>();
 		getLists.add("kinetic-law-constants-simplifier");

@@ -1201,6 +1201,24 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				bifurcation.setEnabled(false);
 				bifurcationLabel.setEnabled(false);
 			}
+			else if (((String) simulators.getSelectedItem()).equals("Hierarchical-RK")) {
+				description.setText("Runge-Kutta-Fehlberg Method on Hierarchical Models (java)");
+				minStep.setEnabled(true);
+				minStepLabel.setEnabled(true);
+				step.setEnabled(true);
+				stepLabel.setEnabled(true);
+				errorLabel.setEnabled(true);
+				absErr.setEnabled(true);
+				mpde.setEnabled(false);
+				meanPath.setEnabled(false);
+				medianPath.setEnabled(false);
+				iSSATypeLabel.setEnabled(false);
+				adaptive.setEnabled(false);
+				nonAdaptive.setEnabled(false);
+				iSSAAdaptiveLabel.setEnabled(false);
+				bifurcation.setEnabled(false);
+				bifurcationLabel.setEnabled(false);
+			}
 			else if (((String) simulators.getSelectedItem()).contains("gillespie")) {
 				description.setText("SSA-Direct Method");
 				minStep.setEnabled(true);
