@@ -1599,10 +1599,19 @@ public class StateGraph {
 		
 		// Create a new copy of the zone.
 		Zone[] newZones = new Zone[1];
-
-		newZones[0] = currentTimedPrjState.get_zones()[0]
-					.clone();
 		
+		Zone[] oldZones = currentTimedPrjState.get_zones();
+		
+		// Check if this continuous variable is currently in the rate zeros.
+		if(currentTimedPrjState.get_zones()[0].getCurrentRate(firedRate) == 0){
+			// Need to add the rate zero continuous variables back into the zone.
+			newZones[0] = oldZones[0].moveOldRateZero(firedRate);
+		}
+		else{
+//			newZones[0] = currentTimedPrjState.get_zones()[0]
+//					.clone();
+			newZones[0] = oldZones[0].clone();
+		}
 		// Change the rate.
 		newZones[0].setCurrentRate(firedRate, firedRate.getCurrentRate());
 		
@@ -1789,17 +1798,34 @@ public class StateGraph {
 			}
 
 			
-			if(newValue == null && newRate == null){
-				// If nothing was set, then nothing needs to be done.
-				continue;
-			}
-
+//			if(newValue == null && newRate == null){
+//				// If nothing was set, then nothing needs to be done.
+//				continue;
+//			}
+			
+			
 			UpdateContinuous newRecord = new UpdateContinuous();
 			
+			if(newValue == null && newRate == null){
+				// Need to check if the current rate will be set to zero.
+				newRate = z.getRateBounds(contVar);
+				
+				if(!newRate.containsZero()){
+					// Nothing needs to be done, so continue.
+					continue;
+				}
+				else{
+					newRecord.set_lcrPair(new LPNContAndRate(contVar, newRate));
+					
+					// Set the rate to the lower bound or zero.
+					contVar.setCurrentRate(z.getSmallestRate(contVar));
+				}
+			}
+
 			// If the value did not get assigned, put in the old value.
 			if(newValue == null){
 				newValue = z.getContinuousBounds(contVar);
-				newRecord.set_newValue(true);
+				newRecord.set_newValue(false);
 				newRecord.set_Value(newValue);
 			}
 			else{
@@ -1816,14 +1842,17 @@ public class StateGraph {
 				newRate = z.getRateBounds(contVar);
 				newRecord.set_lcrPair(new LPNContAndRate(contVar, newRate));
 				
-				// Set the rate to the lower bound.
+				// Set the rate to the lower bound or zero.
 				contVar.setCurrentRate(z.getSmallestRate(contVar));
 			}
 			
 			
 			// Check if the new assignment gives rate zero.
-			boolean newRateZero = newRate.singleValue() ? 
-					newRate.get_LowerBound() == 0 : false;
+//			boolean newRateZero = newRate.singleValue() ? 
+//					newRate.get_LowerBound() == 0 : false;
+			
+			boolean newRateZero = newRate.containsZero();
+			
 			// Check if the variable was already rate zero. 
 			boolean oldRateZero = z.getCurrentRate(contVar) == 0;
 
