@@ -139,6 +139,6 @@ public class IntervalPair {
 	 * 			than zero; false otherwise.
 	 */
 	public boolean containsZero(){
-		return _lowerBound<0 && _upperBound>0;
+		return _lowerBound<0 && _upperBound>0 || _lowerBound == 0 || _upperBound == 0;
 	}
 }
