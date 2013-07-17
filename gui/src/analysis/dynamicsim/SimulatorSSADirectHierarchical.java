@@ -247,7 +247,6 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 	private void initialize(long randomSeed, int runNumber) 
 			throws IOException, XMLStreamException {	
 
-
 		setupSpecies(topmodel);
 		setupParameters(topmodel);	
 		setupReactions(topmodel);		
@@ -258,46 +257,50 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		setupForOutput(randomSeed, runNumber);
 
 
-		for(ModelState model : submodels.values())
-		{
-			setupSpecies(model);
-			setupParameters(model);	
-			setupReactions(model);		
-			setupConstraints(model);
-			setupEvents(model);
-			setupInitialAssignments(model);
-			setupRules(model);
-			setupForOutput(randomSeed, runNumber);
-		}
 
+			for(ModelState model : submodels.values())
+			{
+				setupSpecies(model);
+				setupParameters(model);	
+				setupReactions(model);		
+				setupConstraints(model);
+				setupEvents(model);
+				setupInitialAssignments(model);
+				setupRules(model);
+				setupForOutput(randomSeed, runNumber);
+			}
+		
 		setupReplacingSpecies();
+
 
 		bufferedTSDWriter.write("(" + "\"" + "time" + "\"");
 
-		for (String speciesID : topmodel.speciesIDSet) 				
+		for (String speciesID : topmodel.speciesIDSet) {				
 			bufferedTSDWriter.write(", \"" + speciesID + "\"");
-
+		}
 		for (String noConstantParam : topmodel.nonconstantParameterIDSet) 				
 			bufferedTSDWriter.write(", \"" + noConstantParam + "\"");
-
 		for (String compartment : topmodel.compartmentIDSet)
+		{
 			bufferedTSDWriter.write(", \"" + compartment + "\"");
-
+		}
 		for(ModelState model : submodels.values())
 		{
 			for (String speciesID : model.speciesIDSet) 				
-				bufferedTSDWriter.write(", \"" + speciesID + "_" + model.ID + "\"");
+				bufferedTSDWriter.write(", \"" + model.ID + "__" + speciesID + "\"");
 			for (String noConstantParam : model.nonconstantParameterIDSet) 				
-				bufferedTSDWriter.write(", \"" + noConstantParam + "_" + model.ID + "\"");
+				bufferedTSDWriter.write(", \"" + model.ID + "__" +  noConstantParam + "\"");
 			for (String compartment : model.compartmentIDSet)
-				bufferedTSDWriter.write(", \"" + compartment +  "_" + model.ID + "\"");
-
+				bufferedTSDWriter.write(", \"" + model.ID + "__" + compartment + "\"");
+			
 		}
 
 
 		bufferedTSDWriter.write("),\n");
 
+
 	}
+
 
 	/**
 	 * updates the propensities of the reactions affected by the recently performed reaction
@@ -430,8 +433,9 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 	protected void clear() {
 		topmodel.clear();
 
-		for(ModelState modelstate : submodels.values())
-			modelstate.clear();
+		for(int i = 0; i < this.numSubmodels; i++)
+			submodels.clear();
+
 
 		for(String key : replacements.keySet())
 			replacements.put(key, initReplacementState.get(key));
@@ -517,27 +521,29 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 
 
 		try {
-			for (String speciesID : topmodel.speciesIDSet) 				
+			for (String speciesID : topmodel.speciesIDSet) {				
 				bufferedTSDWriter.write(", \"" + speciesID + "\"");
-
+			}
 			for (String noConstantParam : topmodel.nonconstantParameterIDSet) 				
 				bufferedTSDWriter.write(", \"" + noConstantParam + "\"");
-
 			for (String compartment : topmodel.compartmentIDSet)
+			{
 				bufferedTSDWriter.write(", \"" + compartment + "\"");
-
+			}
 			for(ModelState model : submodels.values())
 			{
 				for (String speciesID : model.speciesIDSet) 				
-					bufferedTSDWriter.write(", \"" + speciesID + "_" + model.ID + "\"");
+					bufferedTSDWriter.write(", \"" + model.ID + "__" + speciesID + "\"");
 				for (String noConstantParam : model.nonconstantParameterIDSet) 				
-					bufferedTSDWriter.write(", \"" + noConstantParam + "_" + model.ID + "\"");
+					bufferedTSDWriter.write(", \"" + model.ID + "__" +  noConstantParam + "\"");
 				for (String compartment : model.compartmentIDSet)
-					bufferedTSDWriter.write(", \"" + compartment +  "_" + model.ID + "\"");
-
+					bufferedTSDWriter.write(", \"" + model.ID + "__" + compartment + "\"");
+				
 			}
 
+
 			bufferedTSDWriter.write("),\n");
+
 		}
 		catch (IOException e) {
 			// TODO Auto-generated catch block
