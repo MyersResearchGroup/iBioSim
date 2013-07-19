@@ -1494,10 +1494,19 @@ public class StateGraph {
 			}
 			
 			// Get a new zone that has been restricted according to the inequalities firing.
-			Zone z = currentTimedPrjState.get_zones()[0].getContinuousRestrictedZone(eventSet);
+			Zone z = currentTimedPrjState.get_zones()[0].getContinuousRestrictedZone(eventSet, states);
+			
+			
+			
+			z.recononicalize();
+			
 			
 			// Add any new transitions.
 			z = z.addTransition(newlyEnabled, states);
+			
+			z.advance(states);
+			
+			z.recononicalize();
 			
 //			return new TimedPrjState(states, currentTimedPrjState.get_zones());
 						
@@ -1526,10 +1535,17 @@ public class StateGraph {
 		
 		// Get a new zone that has been restricted according to the inequalities firing.
 		Zone z = currentTimedPrjState.get_zones()[0].
-				getContinuousRestrictedZone(eventSet);
+				getContinuousRestrictedZone(eventSet, states);
+		
+//		z.advance(states);
+		z.recononicalize();
 		
 		// Add any new transitions.
 		z = z.addTransition(newlyEnabled, states);
+		
+//		z.advance(states);
+//		
+//		z.recononicalize();
 		
 		return z;
 	}
