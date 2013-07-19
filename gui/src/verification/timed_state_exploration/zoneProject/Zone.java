@@ -3989,7 +3989,7 @@ public class Zone{
 	 * 		the variable indexed by ltContPair.
 	 * 
 	 */
-	private void restrictContinuous(LPNContinuousPair ltContPair, int constant){
+	private boolean restrictContinuous(LPNContinuousPair ltContPair, int constant){
 		
 		// It will be quicker to get the DBM index for the ltContPair one time.
 		int variableIndex = timerIndexToDBMIndex(ltContPair);
@@ -3998,14 +3998,18 @@ public class Zone{
 		// Set the lower bound the variable (which is the DBM[variabl][0] entry.
 		// Note : the lower bound in the zone is actually the negative of the lower
 		// bound hence the -1 on the warpValue.
-		setDbmEntry(variableIndex, zeroIndex, ContinuousUtilities.chkDiv(-1*constant, ltContPair.getCurrentRate(), true));
+		setDbmEntry(variableIndex, zeroIndex, -1*ContinuousUtilities.chkDiv(constant, ltContPair.getCurrentRate(), true));
 		
 		// Check if the upper bound needs to be advanced and advance it if necessary.
 		if(getDbmEntry(zeroIndex, variableIndex) < ContinuousUtilities.chkDiv(constant, ltContPair.getCurrentRate(), true)){
 			// If the upper bound in the zones is less than the new restricting value, we
 			// must advance it for the zone to remain consistent.
 			setDbmEntry(zeroIndex, variableIndex, ContinuousUtilities.chkDiv(constant, ltContPair.getCurrentRate(), true));
+			
+			return true;
 		}
+		
+		return false;
 	}
 	
 	/**
@@ -4019,6 +4023,10 @@ public class Zone{
 			// If the eventSet is not a set of inequalities, do nothing.
 			return;
 		}
+		
+		HashSet<LPNContinuousPair> adjustedColumns = new HashSet<LPNContinuousPair>();
+		
+		boolean needsAdjusting = false;
 		
 		// Restrict the variables according to each of the inequalities in the eventSet.
 		for(Event e : eventSet){
@@ -4041,6 +4049,7 @@ public class Zone{
 //			LPNContinuousPair ltContPair = new LPNContinuousPair(lpnIndex, variableIndex, 0);
 			LPNContinuousPair ltContPair = new LPNContinuousPair(lpnIndex, variableIndex);
 			
+
 			// Need the current rate for the varaible, grab the stored LPNContinuousPair.
 			int zoneIndex = Arrays.binarySearch(_indexToTimerPair, ltContPair);
 			if(zoneIndex > 0){
@@ -4051,7 +4060,32 @@ public class Zone{
 			//setDbmEntry(zoneIndex, 0, -ContinuousUtilities.chkDiv(iv.getConstant(), ltContPair.getCurrentRate(), true));
 			
 			// Perform the restricting.
-			restrictContinuous(ltContPair, iv.getConstant());
+			needsAdjusting = needsAdjusting | restrictContinuous(ltContPair, iv.getConstant());
+			
+			if(needsAdjusting){
+				adjustedColumns.add(ltContPair);
+			}
+		}
+		
+		// If one of the continuous variables has been moved forward, the other colmns
+		// need to be adjusted to keep a consistent zone.
+		if(needsAdjusting){
+			// At least one of the continuous variables has been moved forward,
+			// so se need to ajust the bounds to keep a consistent zone.
+			for(int i=1; i<_indexToTimerPair.length; i++){
+				
+				LPNTransitionPair ltpair = _indexToTimerPair[i];
+				
+				if(adjustedColumns.contains(ltpair)){
+					// This continuous variables already had the upper bound
+					// adjusted.
+					continue;
+				}
+				else{
+					// Add one to the upper bounds.
+					setDbmEntry(0, i, getDbmEntry(0, i)+1);
+				}
+			}
 		}
 	}
 	
@@ -4063,7 +4097,7 @@ public class Zone{
 	 * 		The new zone that is the result of restricting this zone according to the firing of the inequalities
 	 * 		in the eventSet.
 	 */
-	public Zone getContinuousRestrictedZone(EventSet eventSet){
+	public Zone getContinuousRestrictedZone(EventSet eventSet, State[] localStates){
 		// Make a new copy of the zone.
 		Zone z = this.clone();
 		
@@ -4073,7 +4107,9 @@ public class Zone{
 		
 		z.restrictContinuous(eventSet);
 		
-		z.recononicalize();
+//		z.advance(localStates);
+//		
+//		z.recononicalize();
 		
 		return z;
 	}
@@ -5641,9 +5677,9 @@ public class Zone{
 		// Copy in the new transitions.
 		newZone.copyTransitions(this, newTransitions, oldTransitionSet, localStates);
 		
-		newZone.advance(localStates);
-		
-		newZone.recononicalize();
+//		newZone.advance(localStates);
+//		
+//		newZone.recononicalize();
 		
 		return newZone;
 	}
