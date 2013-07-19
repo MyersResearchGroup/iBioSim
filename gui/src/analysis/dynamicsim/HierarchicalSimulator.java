@@ -790,6 +790,52 @@ public abstract class HierarchicalSimulator {
 		 */
 	}
 
+	
+	/**
+	 * performs every rate rule using the current time step
+	 * 
+	 * @param delta_t
+	 * @return
+	 */
+	protected HashSet<String> performRateRules(ModelState modelstate, double delta_t) {
+		
+		HashSet<String> affectedVariables = new HashSet<String>();
+		
+		for (Rule rule : modelstate.model.getListOfRules()) {
+			
+			if (rule.isRate()) {
+				
+				RateRule rateRule = (RateRule) rule;			
+				String variable = rateRule.getVariable();
+				
+				//update the species count (but only if the species isn't constant) (bound cond is fine)
+				if (modelstate.variableToIsConstantMap.containsKey(variable) && modelstate.variableToIsConstantMap.get(variable) == false) {
+					
+					if (modelstate.speciesToHasOnlySubstanceUnitsMap.containsKey(variable) &&
+							modelstate.speciesToHasOnlySubstanceUnitsMap.get(variable) == false) {
+						
+						double value = modelstate.getVariableToValue(variable) + delta_t * (
+								evaluateExpressionRecursive(modelstate, rateRule.getMath()) * 
+								modelstate.getVariableToValue(modelstate.speciesToCompartmentNameMap.get(variable)));
+						
+						modelstate.setvariableToValueMap(variable, value);
+						
+					}
+					else {
+						//double value = modelstate.getVariableToValue(variable) + 
+						//		delta_t * evaluateExpressionRecursive(modelstate, rateRule.getMath());
+						double value =	delta_t * evaluateExpressionRecursive(modelstate, rateRule.getMath());
+						modelstate.setvariableToValueMap(variable, value);
+					}
+					
+					affectedVariables.add(variable);
+				}
+			}
+		}
+		
+		return affectedVariables;
+	}
+	
 	/**
 	 * calculates an expression using a recursive algorithm
 	 * 
@@ -2566,6 +2612,7 @@ public abstract class HierarchicalSimulator {
 
 				//++numAssignmentRules;				
 			}
+			/*
 			else if (rule.isRate()) {
 
 				//Rules don't have a getVariable method, so this needs to be cast to an ExplicitRule
@@ -2592,6 +2639,7 @@ public abstract class HierarchicalSimulator {
 
 				//++numRateRules;	
 			}
+			*/
 		}
 
 

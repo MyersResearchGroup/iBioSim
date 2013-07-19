@@ -24,6 +24,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 
 	private static Long initializationTime = new Long(0);
 	private String modelstateID;
+	private boolean updateRateRule;
 
 
 	public SimulatorSSADirectHierarchical(String SBMLFileName, String outputDirectory, double timeLimit, 
@@ -115,21 +116,32 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 			double delta_t = FastMath.log(1 / r1) / totalPropensity;
 			double nextReactionTime = currentTime + delta_t;
 			nextEventTime = handleEvents();
-
-			if (nextReactionTime < nextEventTime && nextReactionTime < currentTime + maxTimeStep) {
+			updateRateRule = false;
+			
+			if (nextReactionTime < nextEventTime && nextReactionTime < currentTime + maxTimeStep) 
+			{
 				currentTime = nextReactionTime;
 				// perform reaction
-			} else if (nextEventTime < currentTime + maxTimeStep) {
+			} 
+			else if (nextEventTime < currentTime + maxTimeStep) 
+			{
 				currentTime = nextEventTime;
 				// print 
-			} else {
+			} 
+			else 
+			{
 				currentTime += maxTimeStep;
+				updateRateRule = true;
 				// print
 			}
-			if (currentTime > timeLimit) {
+			
+			if (currentTime > timeLimit) 
+			{
 				currentTime = timeLimit;
 			}
-			while (currentTime > printTime && printTime < timeLimit) {
+			
+			while (currentTime > printTime && printTime < timeLimit) 
+			{
 
 				try {
 					printToTSD(printTime);
@@ -144,7 +156,9 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 				progress.setValue((int)((currentTime / timeLimit) * 100.0));
 
 			}
-			if (currentTime == nextReactionTime) {
+			
+			if (currentTime == nextReactionTime) 
+			{
 				//STEP 3: select a reaction
 
 				String selectedReactionID = selectReaction(r2);
@@ -209,6 +223,19 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 					}
 				}
 			}
+			
+			if(updateRateRule)
+			{
+				//updatePropensities(performRateRules(topmodel, currentTime), "topmodel");
+				performRateRules(topmodel, currentTime);
+			
+				for(ModelState modelstate : submodels.values())
+				{
+					//updatePropensities(performRateRules(modelstate, currentTime), modelstate.ID);
+					performRateRules(modelstate, currentTime);
+				}
+			}
+			
 			updateRules();
 
 			//update time for next iteration
