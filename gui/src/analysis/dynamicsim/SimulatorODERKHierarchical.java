@@ -119,12 +119,15 @@ protected void simulate() {
 
 	if (absoluteError == 0)
 		absoluteError = 1e-9;
+	
 	if (relativeError == 0)
 		relativeError = 1e-6;
+	
 	if (stepSize > Double.MAX_VALUE)
 		stepSize = 0.01;
+	
 	if (numSteps == 0)
-		numSteps = 50;
+		numSteps = (int)(timeLimit/printInterval);
 
 	//create runge-kutta instance
 	RungeKutta rungeKutta = new RungeKutta();
@@ -160,9 +163,11 @@ protected void simulate() {
 				for (int i = 0; i < der.state.values.length; ++i)
 					der.state.values[i] = modelstate.getVariableToValue(der.state.indexToVariableMap.get(i));
 		}
+		
 
 		//prints the initial (time == 0) data				
-		if (printTime < 0) {
+		if (printTime < 0) 
+		{
 
 			printTime = 0.0;
 
@@ -178,7 +183,9 @@ protected void simulate() {
 		}
 
 		nextEndTime = currentTime + maxTimeStep;
-		if (nextEndTime > printTime) {
+		
+		if (nextEndTime > printTime) 
+		{
 			nextEndTime = printTime;
 		}
 
@@ -223,7 +230,8 @@ protected void simulate() {
 
 		//call the rk algorithm
 		der.state.values = rungeKutta.fehlberg(der);
-
+		}
+		
 		//TSD PRINTING
 		//this prints the previous timestep's data				
 		while ((currentTime >= printTime) && (printTime <= timeLimit)) {
@@ -245,6 +253,12 @@ protected void simulate() {
 		//update progress bar			
 		progress.setValue((int)((printTime / timeLimit) * 100.0));
 
+		for(DerivnFunc der : functions)
+		{
+		//EVENT HANDLING
+		//trigger and/or fire events, etc.
+			
+		ModelState modelstate = der.state.modelstate;
 		//add events to queue if they trigger
 		if (modelstate.noEventsFlag == false) {
 
