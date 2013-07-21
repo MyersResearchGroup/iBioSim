@@ -3998,7 +3998,7 @@ public class Zone{
 		// Set the lower bound the variable (which is the DBM[variabl][0] entry.
 		// Note : the lower bound in the zone is actually the negative of the lower
 		// bound hence the -1 on the warpValue.
-		setDbmEntry(variableIndex, zeroIndex, -1*ContinuousUtilities.chkDiv(constant, ltContPair.getCurrentRate(), true));
+		setDbmEntry(variableIndex, zeroIndex, ContinuousUtilities.chkDiv(-1*constant, ltContPair.getCurrentRate(), true));
 		
 		// Check if the upper bound needs to be advanced and advance it if necessary.
 		if(getDbmEntry(zeroIndex, variableIndex) < ContinuousUtilities.chkDiv(constant, ltContPair.getCurrentRate(), true)){
@@ -5751,8 +5751,8 @@ public class Zone{
 
 		
 		// Add the continuous variable to the list of variables/transition in the DBM.
-		int i = _indexToTimerPair.length;
-		newZone._indexToTimerPair[i] = ltContPair;
+		int numOfTransitions = _indexToTimerPair.length;
+		newZone._indexToTimerPair[numOfTransitions] = ltContPair;
 
 		// Sort the _indexToTimerPair list.
 		Arrays.sort(newZone._indexToTimerPair);
@@ -5781,12 +5781,42 @@ public class Zone{
 //		newZone.setUpperBoundByLPNTransitionPair(ltContPair, 
 //				rangeOfRates.get_UpperBound());
 		
+		// Copy in the range of rates.
 		newZone.setLowerBoundbydbmIndex(index, rangeOfRates.get_LowerBound());
 		newZone.setUpperBoundbydbmIndex(index, rangeOfRates.get_UpperBound());
 		
-		// Copy in the range of rates.
-		newZone.setDbmEntry(0, index, values.get_UpperBound());
-		newZone.setDbmEntry(index, 0, -1*values.get_LowerBound());
+		if(ltContPair.getCurrentRate()>0){
+
+			// Set the upper and lower bounds.
+			newZone.setDbmEntry(0, index,
+					ContinuousUtilities.chkDiv(values.get_UpperBound(),
+							ltContPair.getCurrentRate(), true));
+			newZone.setDbmEntry(index, 0,
+					ContinuousUtilities.chkDiv(-1*values.get_LowerBound(),
+							ltContPair.getCurrentRate(), true));
+		}
+		else{
+			// Set the upper and lower bounds. Since the rate is zero 
+			// We swap the real upper and lower bounds.
+			newZone.setDbmEntry(0, index,
+					ContinuousUtilities.chkDiv(values.get_LowerBound(),
+							ltContPair.getCurrentRate(), true));
+			newZone.setDbmEntry(index, 0,
+					ContinuousUtilities.chkDiv(-1*values.get_UpperBound(),
+							ltContPair.getCurrentRate(), true));
+		}
+		
+		// Set the DBM to having no relating information for how this
+		// variables relates to the other variables.
+		for(int i=1; i<newZone._indexToTimerPair.length; i++){
+			if(i == index){
+				continue;
+			}
+			else{
+				newZone.setDbmEntry(index, i, Zone.INFINITY);
+				newZone.setDbmEntry(i, index, Zone.INFINITY);
+			}
+		}
 		
 //		newZone.advance(localStates);
 
