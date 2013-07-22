@@ -260,20 +260,25 @@ public abstract class HierarchicalSimulator {
 	 */
 	protected String getPath(String path)
 	{
-		String separator = path.substring(path.length()-1, path.length());
-
+		String separator;
+		
+		String temp = path.substring(0, path.length()-1);
+		
 		if (File.separator.equals("\\")) 
 		{
 			separator = "\\\\";
+
 		}
+		else 
+		{
+			separator = File.separator;
+		}
+		
 
-		String temp = path.substring(0, path.length()-1);
-
-		while(temp != "" && !temp.endsWith(separator))
+		while(!temp.equals("") && !temp.endsWith(separator))
 		{
 			temp = path.substring(0, temp.length()-1);
 		}
-
 		return temp;
 	}
 
@@ -307,91 +312,93 @@ public abstract class HierarchicalSimulator {
 		//loop through the speciesIDs and print their current value to the file
 		for (String speciesID : speciesIDSet)
 		{	
-			/*
 			if(replacements.containsKey(speciesID))
 			{
-				bufferedTSDWriter.write(commaSpace + replacements.get(speciesID));
-				commaSpace = ", ";
+				if(replacementSubModels.get(speciesID).contains("topmodel"))
+				{
+					bufferedTSDWriter.write(commaSpace + topmodel.getVariableToValue(speciesID));
+					commaSpace = ", ";
+				}
 			}
 			else
 			{
-				bufferedTSDWriter.write(commaSpace + topmodel.variableToValueMap.get(speciesID));
+				bufferedTSDWriter.write(commaSpace + topmodel.getVariableToValue(speciesID));
 				commaSpace = ", ";
 			}
-			*/
 			
-			bufferedTSDWriter.write(commaSpace + topmodel.getVariableToValue(speciesID));
-			commaSpace = ", ";
 		}
 
 		for (String noConstantParam : topmodel.nonconstantParameterIDSet)
 		{
-		/*	if(replacements.containsKey(noConstantParam))
+			if(replacements.containsKey(noConstantParam))
 			{
-				bufferedTSDWriter.write(commaSpace + replacements.get(noConstantParam));
-				commaSpace = ", ";
+				if(replacementSubModels.get(noConstantParam).contains("topmodel"))
+				{
+					bufferedTSDWriter.write(commaSpace + topmodel.getVariableToValue(noConstantParam));
+					commaSpace = ", ";
+				}
 			}
 			else
 			{
-				bufferedTSDWriter.write(commaSpace + topmodel.variableToValueMap.get(noConstantParam));
+				bufferedTSDWriter.write(commaSpace + topmodel.getVariableToValue(noConstantParam));
 				commaSpace = ", ";
-			}*/
-			bufferedTSDWriter.write(commaSpace + topmodel.getVariableToValue(noConstantParam));
-			commaSpace = ", ";
+			}
 		}
-
+/*
 		for (String compartment : topmodel.compartmentIDSet)
 		{
 			bufferedTSDWriter.write(commaSpace + topmodel.getVariableToValue(compartment));
 			commaSpace = ", ";
 		}
-
+*/
 		for (ModelState models : submodels.values())
 		{
-			speciesIDSet = models.speciesIDSet;
 			//loop through the speciesIDs and print their current value to the file
-			for (String speciesID : speciesIDSet)
+			for (String speciesID : models.speciesIDSet)
 			{		
-				/*
-				if(replacements.containsKey(speciesID) && this.replacementSubModels.get(speciesID).contains(models.ID))
+				if(replacements.containsKey(speciesID))
 				{
-					bufferedTSDWriter.write(commaSpace + replacements.get(speciesID));
-					commaSpace = ", ";
+					if(!replacementSubModels.get(speciesID).contains(models.ID))
+					{
+						bufferedTSDWriter.write(commaSpace + models.getVariableToValue(speciesID));
+						commaSpace = ", ";
+						}
 				}
 				else
 				{
-					bufferedTSDWriter.write(commaSpace + models.variableToValueMap.get(speciesID));
-					commaSpace = ", ";
+
+					bufferedTSDWriter.write(commaSpace + models.getVariableToValue(speciesID));
+					commaSpace = ", ";	
 				}
-				 */
-				bufferedTSDWriter.write(commaSpace + models.getVariableToValue(speciesID));
-				commaSpace = ", ";
 
 			}
 
 			for (String noConstantParam : models.nonconstantParameterIDSet)
 			{
-				/*
-				if(replacements.containsKey(noConstantParam) && this.replacementSubModels.get(noConstantParam).contains(models.ID))
+				if(replacements.containsKey(noConstantParam))
 				{
-					bufferedTSDWriter.write(commaSpace + replacements.get(noConstantParam));
-					commaSpace = ", ";
+					if(!replacementSubModels.get(noConstantParam).contains(models.ID))
+					{
+						bufferedTSDWriter.write(commaSpace + models.getVariableToValue(noConstantParam));
+						commaSpace = ", ";
+				
+					}
 				}
 				else
 				{
-					bufferedTSDWriter.write(commaSpace + models.variableToValueMap.get(noConstantParam));
+					bufferedTSDWriter.write(commaSpace + models.getVariableToValue(noConstantParam));
 					commaSpace = ", ";
+			
 				}
-				*/
-				bufferedTSDWriter.write(commaSpace + models.getVariableToValue(noConstantParam));
-				commaSpace = ", ";
-			}
-
+				
+				}
+/*
 			for (String compartment : topmodel.compartmentIDSet)
 			{
 				bufferedTSDWriter.write(commaSpace + models.getVariableToValue(compartment));
 				commaSpace = ", ";
 			}
+			*/
 		}
 
 		bufferedTSDWriter.write(")");
