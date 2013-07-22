@@ -84,20 +84,70 @@ public class SimulatorODERKHierarchical  extends HierarchicalSimulator{
 
 		setupForOutput(randomSeed, runNumber);
 
+
 		bufferedTSDWriter.write("(" + "\"" + "time" + "\"");
+
+		for (String speciesID : topmodel.speciesIDSet) 
+			if(replacements.containsKey(speciesID))
+			{
+
+				if(replacementSubModels.get(speciesID).contains("topmodel"))
+				
+				bufferedTSDWriter.write(", \"" + speciesID + "\"");
+			}
+			else
+			{
+				bufferedTSDWriter.write(", \"" + speciesID + "\"");
+			}
+				
 		
-		
-		for(DerivnFunc der : functions)
+		for (String noConstantParam : topmodel.nonconstantParameterIDSet) 
+			if(replacements.containsKey(noConstantParam))
+			{
+
+				if(replacementSubModels.get(noConstantParam).contains("topmodel"))
+				
+					bufferedTSDWriter.write(", \"" + noConstantParam + "\"");
+			}
+			else
+			{
+				bufferedTSDWriter.write(", \"" + noConstantParam + "\"");
+			}
+		/*
+		for (String compartment : topmodel.compartmentIDSet)
 		{
-			ModelState model = der.state.modelstate;
-			for (String speciesID : model.speciesIDSet) 				
-				bufferedTSDWriter.write(", \"" + speciesID + "_" + model.ID + "\"");
-			for (String noConstantParam : model.nonconstantParameterIDSet) 				
-				bufferedTSDWriter.write(", \"" + noConstantParam + "_" + model.ID + "\"");
-			for (String compartment : model.compartmentIDSet)
-				bufferedTSDWriter.write(", \"" + compartment +  "_" + model.ID + "\"");
+			bufferedTSDWriter.write(", \"" + compartment + "\"");
+		}
+		*/
+		for(ModelState model : submodels.values())
+		{
+			for (String speciesID : model.speciesIDSet) 		
+				if(replacements.containsKey(speciesID))
+				{
+					if(!replacementSubModels.get(speciesID).contains(model.ID))
+						bufferedTSDWriter.write(", \"" + model.ID + "__" + speciesID + "\"");
+				}
+				else
+				{
+					bufferedTSDWriter.write(", \"" + model.ID + "__" + speciesID + "\"");
+				}
 			
-		}		
+			for (String noConstantParam : model.nonconstantParameterIDSet)
+				if(replacements.containsKey(noConstantParam))
+				{
+					if(!replacementSubModels.get(noConstantParam).contains(model.ID))
+						bufferedTSDWriter.write(", \"" + model.ID + "__" +  noConstantParam + "\"");
+				}
+				else
+				{
+				bufferedTSDWriter.write(", \"" + model.ID + "__" +  noConstantParam + "\"");
+				}
+			/*
+			for (String compartment : model.compartmentIDSet)
+				bufferedTSDWriter.write(", \"" + model.ID + "__" + compartment + "\"");
+				*/
+			
+		}
 
 		
 		bufferedTSDWriter.write("),\n");
@@ -112,10 +162,12 @@ protected void simulate() {
 	if (sbmlHasErrorsFlag == true)
 		return;
 
-	double printTime = -0.0001;
-	double stepSize = 0.0001;
+	double stepSize = 1e-9;
 	double nextEndTime = 0.0;
-	currentTime = 0.0;
+	
+	//SIMULATION LOOP
+	currentTime = printInterval;
+	double printTime = 0;
 
 	if (absoluteError == 0)
 		absoluteError = 1e-9;
@@ -123,8 +175,8 @@ protected void simulate() {
 	if (relativeError == 0)
 		relativeError = 1e-6;
 	
-	if (stepSize > Double.MAX_VALUE)
-		stepSize = 0.01;
+	//if (stepSize > Double.MAX_VALUE)
+		//stepSize = 0.01;
 	
 	if (numSteps == 0)
 		numSteps = (int)(timeLimit/printInterval);
@@ -132,16 +184,16 @@ protected void simulate() {
 	//create runge-kutta instance
 	RungeKutta rungeKutta = new RungeKutta();
 	rungeKutta.setStepSize(stepSize);
-
 	//absolute error
 	rungeKutta.setToleranceAdditionFactor(absoluteError);
 	//relative error
 	rungeKutta.setToleranceScalingFactor(relativeError);
-	//rungeKutta.setMaximumIterations(numSteps);
+	rungeKutta.setMaximumIterations(numSteps);
 
 	//add events to queue if they trigger
 	handleEvents();
 
+	
 	while (currentTime < timeLimit && !cancelFlag && constraintFlag) 
 	{
 
@@ -164,7 +216,7 @@ protected void simulate() {
 					der.state.values[i] = modelstate.getVariableToValue(der.state.indexToVariableMap.get(i));
 		}
 		
-
+/*
 		//prints the initial (time == 0) data				
 		if (printTime < 0) 
 		{
@@ -181,7 +233,7 @@ protected void simulate() {
 			printTime = (currSteps*timeLimit/numSteps);
 			//printTime += printInterval;
 		}
-
+		*/
 		nextEndTime = currentTime + maxTimeStep;
 		
 		if (nextEndTime > printTime) 
@@ -235,15 +287,14 @@ protected void simulate() {
 		//TSD PRINTING
 		//this prints the previous timestep's data				
 		while ((currentTime >= printTime) && (printTime <= timeLimit)) {
-
+		
 			try {
 				printToTSD(printTime);
-
-				if (printTime < timeLimit)
-					bufferedTSDWriter.write(",\n");
+				bufferedTSDWriter.write(",\n");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+
 			currSteps++;
 			printTime = (currSteps*timeLimit/numSteps);
 			//printTime += printInterval;
@@ -368,12 +419,12 @@ private class DerivnFunc implements DerivnFunction {
 		double[] currValueChanges = new double[y.length];
 		HashSet<AssignmentRule> affectedAssignmentRuleSet = new HashSet<AssignmentRule>();
 
-		for (int i = 0; i < y.length; ++i)
+		for (int i = 0; i < y.length; i++)
 			state.modelstate.setvariableToValueMap(state.indexToVariableMap.get(i), y[i]);
 
 		//calculate the current variable values
 		//based on the ODE system			
-		for (int i = 0; i < currValueChanges.length; ++i) {
+		for (int i = 0; i < currValueChanges.length; i++) {
 
 			String currentVar = state.indexToVariableMap.get(i);
 
@@ -457,27 +508,25 @@ protected class VariableState
 		}
 
 		//create system of ODEs for the change in variables
-		for (String reaction : modelstate.reactionToFormulaMap.keySet()) {
+		for (String reaction : modelstate.reactionToFormulaMap.keySet()) 
+		{
 
 			ASTNode formula = modelstate.reactionToFormulaMap.get(reaction);
 			//System.out.println("HERE: " + formula.toFormula());
-
 			HashSet<StringDoublePair> reactantAndStoichiometrySet = modelstate.reactionToReactantStoichiometrySetMap.get(reaction);
 			HashSet<StringDoublePair> speciesAndStoichiometrySet = modelstate.reactionToSpeciesAndStoichiometrySetMap.get(reaction);
+			
 
 			//loop through reactants
 			for (StringDoublePair reactantAndStoichiometry : reactantAndStoichiometrySet) {
 
 				String reactant = reactantAndStoichiometry.string;
-				double stoichiometry = reactantAndStoichiometry.doub;				
+				double stoichiometry = reactantAndStoichiometry.doub;		
 				int varIndex = variableToIndexMap.get(reactant);
 				ASTNode stoichNode = new ASTNode();
 				stoichNode.setValue(-1 * stoichiometry);
-
-				
 				dvariablesdtime[varIndex] = ASTNode.sum(dvariablesdtime[varIndex], ASTNode.times(formula,stoichNode));
 			}
-
 			//loop through products
 			for (StringDoublePair speciesAndStoichiometry : speciesAndStoichiometrySet) {
 
@@ -486,15 +535,17 @@ protected class VariableState
 
 				//if it's a product its stoichiometry will be positive
 				//(and if it's a reactant it'll be negative)
-				if (stoichiometry > 0) {
+				if (stoichiometry > 0) 
+				{
 
 					int varIndex = variableToIndexMap.get(species);
 					ASTNode stoichNode = new ASTNode();
 					stoichNode.setValue(stoichiometry);
-
 					dvariablesdtime[varIndex] = ASTNode.sum(dvariablesdtime[varIndex], ASTNode.times(formula,stoichNode));
+
 				}
-			}			
+			}
+
 		}
 
 	}
