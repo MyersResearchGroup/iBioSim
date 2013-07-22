@@ -57,6 +57,7 @@
 	<classpathentry kind="lib" path="gui/lib/jlibsedml.jar"/>
 	<classpathentry kind="lib" path="gui/lib/xom-1.2.1.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jmathml.jar"/>
+	<classpathentry kind="lib" path="gui/lib/joptimizer-3.1.0.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jsbml-1.0-a2-rev1489-with-dependencies.jar"/>
 	<classpathentry kind="output" path="gui/dist/classes"/>
 </classpath>
