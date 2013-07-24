@@ -403,6 +403,17 @@ public class InequalityVariable extends Variable {
 	 */
 	public int evaluate(int[] vector, Zone z, HashMap<LPNContAndRate, IntervalPair> continuousValues){
 		
+		// Extract the continuous variable from the zone.
+		
+		// Get the variable for the inequality.
+		Variable v = _variables.get(0);
+		
+		int lpnIndex = _lpn.getLpnIndex();
+		
+		int varIndex = _lpn.getContVarIndex(v.toString());
+		
+		
+		
 		// From the (local) state, extract the current values to use in the 
 		// evaluator.
 		HashMap<String, String> values =
@@ -441,7 +452,8 @@ public class InequalityVariable extends Variable {
 	
 	/**
 	 * This method returns the constant of an inequality where one side
-	 * evaluates to only a constant.
+	 * evaluates to only a constant. It also populates the _isRigth
+	 * field.
 	 * @return
 	 * 		The constant on one side of the inequality.
 	 */
@@ -578,8 +590,11 @@ public class InequalityVariable extends Variable {
 			// Added each variable to the member variable.
 			_variables.add(v);
 			
-			// Register this inequality variable with the continuous variable.
-			v.addInequalityVariable(this);
+			// Register this inequality variable with the continuous variable
+			// if it is not already registered.
+			if(v.getInequalities() == null || !v.getInequalities().contains(this)){
+				v.addInequalityVariable(this);
+			}
 		}
 		
 	}
@@ -626,11 +641,36 @@ public class InequalityVariable extends Variable {
 	}
 	
 	/**
-	 * Get the Transitions that have this Inequaltiy variable in their enabling condition.
+	 * Get the Transitions that have this Inequality variable in their enabling condition.
 	 * @return
-	 * 		The set of all Transitions that have this Inqualtiy variable in their enabling condition.
+	 * 		The set of all Transitions that have this Inequality variable in their enabling condition.
 	 */
 	public HashSet<Transition> getTransitions(){
 		return _transitions;
+	}
+	
+	/**
+	 * Determines if this is an inequality of the form
+	 * v>=a, v>a, a<=v or a<v.
+	 * @return
+	 * 		True if this inequality variable is of the form
+	 * 		v>=a, v>a, a<=v or a<v; false otherwise.
+	 */
+	public boolean isGreaterThan(){
+		// Ensure the _isRight field is populated.
+		getConstant();
+		
+		return (_isRight && getName().contains(">")) || (!_isRight && getName().contains("<")); 
+	}
+	
+	/**
+	 * Determines if this is an inequality of the form
+	 * v<=a, v<a, a>=v, or a>v.
+	 * @return
+	 * 		True if this is an inequality of the form
+	 * 		v<=a, v<a, a>=v, or a>v; false otherwise.
+	 */
+	public boolean isLessThan(){
+		return !isGreaterThan();
 	}
 }
