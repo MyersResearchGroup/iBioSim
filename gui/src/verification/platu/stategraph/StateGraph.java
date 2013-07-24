@@ -1731,7 +1731,12 @@ public class StateGraph {
 		// Accumulates a set of all transitions that need their enabling conditions
 		// re-evaluated.
 		HashSet<Transition> needUpdating = new HashSet<Transition>();
+		
+		
 		HashSet<InequalityVariable> ineqNeedUpdating=
+				new HashSet<InequalityVariable>();
+		
+		HashSet<InequalityVariable> rateIneqNeedUpdate =
 				new HashSet<InequalityVariable>();
 		
 		// Accumulates the new assignment information.
@@ -1773,6 +1778,8 @@ public class StateGraph {
 
 		for(String key : this.lpn.getContVars()){
 
+			UpdateContinuous newRecord = new UpdateContinuous();
+			
 			// Get the pairing.
 			int lpnIndex = this.lpn.getLpnIndex();
 			int contVarIndex = this.lpn.getContVarIndex(key);
@@ -1784,18 +1791,13 @@ public class StateGraph {
 			IntervalPair newRate = null;
 			IntervalPair newValue= null;
 
-			// Check if there is a new rate assignment.
-			if(this.lpn.getRateAssignTree(firedTran.getLabel(), key) != null){
-				newRate = this.lpn.getRateAssignTree(firedTran.getLabel(), key)
-						.evaluateExprBound(currentValuesAsString, z, null);
-
-				contVar.setCurrentRate(newRate.getSmallestRate());
-
-			}
 			//}
 
 			// Update continuous variables.
 			if (this.lpn.getContAssignTree(firedTran.getLabel(), key) != null) {
+				
+				newRecord.set_newValue(true);
+				
 				// Get the new value.
 				newValue = this.lpn.getContAssignTree(firedTran.getLabel(), key)
 						.evaluateExprBound(currentValuesAsString, z, null);
@@ -1813,6 +1815,17 @@ public class StateGraph {
 
 			}
 
+			// Check if there is a new rate assignment.
+			if(this.lpn.getRateAssignTree(firedTran.getLabel(), key) != null){
+				newRate = this.lpn.getRateAssignTree(firedTran.getLabel(), key)
+						.evaluateExprBound(currentValuesAsString, z, null);
+
+				contVar.setCurrentRate(newRate.getSmallestRate());
+
+				
+				newRecord.set_lcrPair(new LPNContAndRate(contVar, newRate));
+				
+			}
 			
 //			if(newValue == null && newRate == null){
 //				// If nothing was set, then nothing needs to be done.
@@ -1820,7 +1833,6 @@ public class StateGraph {
 //			}
 			
 			
-			UpdateContinuous newRecord = new UpdateContinuous();
 			
 			if(newValue == null && newRate == null){
 				// Need to check if the current rate will be set to zero.
@@ -1831,7 +1843,12 @@ public class StateGraph {
 					continue;
 				}
 				else{
+					
+					// Setting the  old zero and new zero will be handled below.
+					
 					newRecord.set_lcrPair(new LPNContAndRate(contVar, newRate));
+					
+					newRecord.set_newValue(false);
 					
 					// Set the rate to the lower bound or zero.
 					contVar.setCurrentRate(z.getSmallestRate(contVar));
@@ -1862,6 +1879,10 @@ public class StateGraph {
 				contVar.setCurrentRate(z.getSmallestRate(contVar));
 			}
 			
+//			newRecord.set_lcrPair(new LPNContAndRate(contVar, newRate));
+//			
+//			// Set the rate to the lower bound or zero.
+//			contVar.setCurrentRate(z.getSmallestRate(contVar));
 			
 			// Check if the new assignment gives rate zero.
 //			boolean newRateZero = newRate.singleValue() ? 
@@ -1899,13 +1920,109 @@ public class StateGraph {
 //				}
 //			}
 
+			// Check for inequalities that need to be changed based on a
+			// rate change.
+			
+			// Get each inequality that involves the continuous variable.
+			ArrayList<InequalityVariable> rateInequalities = 
+					this.lpn.getContVar(contVarIndex).getInequalities();
+
+			/* If inequalities is null, create a list */
+			if(rateInequalities == null){
+				rateInequalities = new ArrayList<InequalityVariable>();
+			}
+			
+			// Rate assignments can change the value of inequalities if
+			// the value of the variable is equal to the constant
+			// for the inequality variable.
+			for(InequalityVariable iv: rateInequalities){
+				// Assume that the variable can have a rate change alter
+				// the inequality if the upper and lower bound for the 
+				// values is within one and the constant is in between.
+				
+				boolean nearConstant = false;
+				
+				// Determine in the current value of the variable is 
+				// within 1 unit in the warped space.
+				if(contVar.getCurrentRate() > 0){
+					nearConstant = 
+							Math.abs(ContinuousUtilities.chkDiv(newValue.get_UpperBound(),
+									contVar.getCurrentRate(), true)
+							- ContinuousUtilities.chkDiv(newValue.get_LowerBound(),
+									contVar.getCurrentRate(), false))
+							<= 1.0;
+				}
+				else if (contVar.getCurrentRate()<0){
+					nearConstant = 
+							Math.abs(ContinuousUtilities.chkDiv(newValue.get_LowerBound(),
+									contVar.getCurrentRate(), true)
+							- ContinuousUtilities.chkDiv(newValue.get_UpperBound(),
+									contVar.getCurrentRate(), false))
+							<= 1.0;
+				}
+				else{
+					nearConstant=Math.abs(newValue.get_UpperBound()
+							- newValue.get_LowerBound()) <= 1.0;
+				}
+				
+				
+				if(nearConstant
+						&& newValue.get_LowerBound() <= iv.getConstant()
+						&& newValue.get_UpperBound() >= iv.getConstant()){
+					
+					int[] currentarray = newStates[this.lpn.getLpnIndex()].getVariableVector();
+					int ineqIndex = this.lpn.getVarIndexMap().get(iv.getName());
+					if(contVar.getCurrentRate() >= 0){
+						if(iv.isGreaterThan() && currentarray[ineqIndex] != 1){
+							// If we are an inequality of the form v>=a, v>a, 
+							// a<=v, or a<v, then the inequality is treated as true
+							// when the rate is positive. So if the inequality is not true
+							// add it to the inequalities to change.
+							rateIneqNeedUpdate.add(iv);
+							needUpdating.addAll(iv.getTransitions());
+						}
+						else if(iv.isLessThan() && currentarray[ineqIndex] != 0){
+							// If we are an inequality of the form v<=a, v<a, 
+							// a>=v, or a>v, then the inequality is treated as false
+							// when the rate is positive. So if the inequality is true
+							// add it to the inequalities to change.
+							rateIneqNeedUpdate.add(iv);
+							needUpdating.addAll(iv.getTransitions());
+						}
+					}
+					else{
+						// The rate is negative, so reverse the logic in the above.
+						if(iv.isGreaterThan() && currentarray[ineqIndex] != 0){
+							// If we are an inequality of the form v>=a, v>a, 
+							// a<=v, or a<v, then the inequality is treated as false
+							// when the rate is negative. So if the inequality is true
+							// add it to the inequalities to change.
+							rateIneqNeedUpdate.add(iv);
+							needUpdating.addAll(iv.getTransitions());
+						}
+						else if(iv.isLessThan() && currentarray[ineqIndex] != 1){
+							// If we are an inequality of the form v<=a, v<a, 
+							// a>=v, or a>v, then the inequality is treated as true
+							// when the rate is negative. So if the inequality is false
+							// add it to the inequalities to change.
+							rateIneqNeedUpdate.add(iv);
+							needUpdating.addAll(iv.getTransitions());
+						}
+					}
+				}
+			}
+			
 		}
 		
 		// If inequalities have changed, get a new copy of the current state. This is assuming
-		// only one state will change.
-		if(ineqNeedUpdating.size() != 0){
+		// only one local state will change.
+		if(ineqNeedUpdating.size() != 0 || rateIneqNeedUpdate.size() != 0){
 			newStates[this.getLpn().getLpnIndex()] = newStates[this.getLpn().getLpnIndex()].clone();
 		}
+
+		
+		// Get the vector to change.
+		int[] newVectorArray = newStates[this.lpn.getLpnIndex()].getVariableVector();
 		
 		// Update the inequalities.
 		for(InequalityVariable ineq : ineqNeedUpdating){
@@ -1932,12 +2049,23 @@ public class StateGraph {
 //			int[] newVectorArray = newStates[this.lpn.getLpnIndex()].getVector();
 //=======
 //			int[] newVectorArray = oldStates[this.lpn.getLpnIndex()].getVector();
-			int[] newVectorArray = newStates[this.lpn.getLpnIndex()].getVariableVector();
+
 //>>>>>>> 1.54
+			
 			newVectorArray[ineqIndex] = ineq.evaluate(newVectorArray, z, continuousValues);
 		}
 		
 		
+		// Update the inequalities.
+		for(InequalityVariable ineq : rateIneqNeedUpdate){
+			int ineqIndex = this.lpn.getVarIndexMap().
+					get(ineq.getName());
+			
+			// Flip the value of the inequality variable.
+			newVectorArray[ineqIndex] = newVectorArray[ineqIndex] == 0 ? 1 : 0;
+		}
+			
+			
 		// Do the re-evaluating of the transitions.
 		for(Transition t : needUpdating){
 			// Get the index of the LPN and the index of the transition.
