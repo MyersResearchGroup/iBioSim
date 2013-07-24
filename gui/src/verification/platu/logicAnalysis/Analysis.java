@@ -414,7 +414,7 @@ public class Analysis {
 				}
 			}
 			else{
-				if (Analysis.deadLock(sgList, nextStateArray) == true){
+				if (Analysis.deadLock(nextEnabledArray)){
 					System.out.println("*** Verification failed: deadlock.");
 					failure = true;
 					JOptionPane.showMessageDialog(Gui.frame,
@@ -4113,6 +4113,18 @@ public class Analysis {
 			}
 		}
 
+		return deadlock;
+	}
+	
+	public static boolean deadLock(LinkedList<Transition>[] lpnList) {
+		boolean deadlock = true;
+		for (int i = 0; i < lpnList.length; i++) {
+			LinkedList<Transition> tmp = lpnList[i];
+			if (tmp.size() > 0) {
+				deadlock = false;
+				break;
+			}
+		}
 		return deadlock;
 	}
 
