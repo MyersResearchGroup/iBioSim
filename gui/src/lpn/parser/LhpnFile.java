@@ -1252,7 +1252,7 @@ public class LhpnFile {
 	public DualHashMap<String, Integer> getContinuousIndexMap(){
 		
 		if(_continuousIndexMap == null){
-			int i=0;
+			int i=allTransitions.length;
 			HashMap<String, Integer> contVarIndexHashMap = new HashMap<String, Integer>();
 			for(Variable v : continuous.values()){
 				contVarIndexHashMap.put(v.getName(), i);
@@ -1311,19 +1311,22 @@ public class LhpnFile {
 	}
 	
 	public String getContVarName(int index){
-		int counter = 0;
+		//int counter = 0;
 		
 		// The index of the continuous variable is determined by
 		// the order it is returned by the 'continuous' fields
 		// iterator.
-		for(String name : continuous.keySet()){
-			if(counter == index){
-				return name;
-			}
-			counter++;
-		}
+//		for(String name : continuous.keySet()){
+//			if(counter == index){
+//				return name;
+//			}
+//			counter++;
+//		}
 		
-		return null;
+		DualHashMap<String, Integer> variableMap = getContinuousIndexMap();
+		
+		//return null;
+		return variableMap.getKey(index);
 	}
 	
 	public Variable getContVar(int index){
