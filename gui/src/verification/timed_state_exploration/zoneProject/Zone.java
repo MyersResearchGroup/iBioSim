@@ -553,6 +553,8 @@ public class Zone{
 		
 		dbmWarp(tmpZone);
 		
+		recononicalize();
+		
 		// Advance Time
 		//advance();
 		advance(localStates);
@@ -1520,7 +1522,8 @@ public class Zone{
 	}
 	
 	/**
-	 * Gets the range for the continuous variable.
+	 * Gets the range for the continuous variable. Values come back not
+	 * warped.
 	 * @param ltContPair
 	 * 		The index of the variable of interest.
 	 * @return
@@ -1544,8 +1547,10 @@ public class Zone{
 		}
 		
 		// The varaible was found in the zone. Yay.
-		int lower = (-1)*getDbmEntry(variableIndex, 0);
-		int upper = getDbmEntry(0, variableIndex);
+		int lower = (-1)*getDbmEntry(variableIndex, 0)
+				*getCurrentRate(ltContPair);
+		int upper = getDbmEntry(0, variableIndex)
+				*getCurrentRate(ltContPair);
 				
 		return new IntervalPair(lower, upper);
 	}
@@ -1850,12 +1855,12 @@ public class Zone{
 		// Print the DBM.
 		for(int i=0; i<_indexToTimerPair.length; i++)
 		{
-			result += "| " + getDbmEntry(i, 0);
+			result += "| " + String.format("%3d", getDbmEntry(i, 0));
 
 			for(int j=1; j<_indexToTimerPair.length; j++)
 			{
 
-				result += ", " + getDbmEntry(i, j);
+				result += ", " + String.format("%3d",getDbmEntry(i, j));
 			}
 			
 			result += " |\n";
@@ -2599,12 +2604,11 @@ public class Zone{
 							rates.get_UpperBound());
 					
 					// Copy the smallest and greatest continuous value.
-					newZone.setDbmEntryByPair(LPNTransitionPair.ZERO_TIMER_PAIR, 
-							_indexToTimerPair[i], -1*values.get_LowerBound());
-
-					newZone.setDbmEntryByPair(_indexToTimerPair[i], 
-							LPNTransitionPair.ZERO_TIMER_PAIR, values.get_UpperBound());					
-					
+//					newZone.setDbmEntryByPair(LPNTransitionPair.ZERO_TIMER_PAIR, 
+//							_indexToTimerPair[i], -1*values.get_LowerBound());
+//
+//					newZone.setDbmEntryByPair(_indexToTimerPair[i], 
+//							LPNTransitionPair.ZERO_TIMER_PAIR, values.get_UpperBound());
 					
 					continue;
 				}
@@ -2662,13 +2666,44 @@ public class Zone{
 				newZone.setUpperBoundByLPNTransitionPair(lcPair, 
 						rates.get_UpperBound());
 				
-				// Copy the smallest and greatest continuous value.
-				newZone.setDbmEntryByPair(LPNTransitionPair.ZERO_TIMER_PAIR, 
-						lcPair, -1*values.get_LowerBound());
-
-				newZone.setDbmEntryByPair(lcPair, 
-						LPNTransitionPair.ZERO_TIMER_PAIR, values.get_UpperBound());					
+				// Get the current rate.
+				int currentRate = lcPair.getCurrentRate();
 				
+				if(currentRate>= 0){
+				
+//					// Copy the smallest and greatest continuous value.
+//					newZone.setDbmEntryByPair(LPNTransitionPair.ZERO_TIMER_PAIR, 
+//							lcPair, -1*values.get_LowerBound());
+//
+//					newZone.setDbmEntryByPair(lcPair, 
+//							LPNTransitionPair.ZERO_TIMER_PAIR,
+//							values.get_UpperBound());
+					
+					// Copy the smallest and greatest continuous value.
+					newZone.setDbmEntryByPair(LPNTransitionPair.ZERO_TIMER_PAIR, 
+							lcPair,
+							ContinuousUtilities.chkDiv(-1*values.get_LowerBound(),
+									currentRate, true));
+
+					newZone.setDbmEntryByPair(lcPair, 
+							LPNTransitionPair.ZERO_TIMER_PAIR,
+							ContinuousUtilities.chkDiv(values.get_UpperBound(),
+									currentRate, true));
+				}
+				else{
+					// Copy the smallest and greatest continuous value.
+					// For negative rates, the upper and lower bounds need
+					// to be switched.
+					newZone.setDbmEntryByPair(LPNTransitionPair.ZERO_TIMER_PAIR, 
+							lcPair,
+							ContinuousUtilities.chkDiv(-1*values.get_LowerBound(),
+									currentRate, true));
+
+					newZone.setDbmEntryByPair(lcPair, 
+							LPNTransitionPair.ZERO_TIMER_PAIR,
+							ContinuousUtilities.chkDiv(values.get_UpperBound(),
+									currentRate, true));
+				}
 				
 				continue;
 			}
@@ -2719,6 +2754,28 @@ public class Zone{
 			newZone.setLowerBoundByLPNTransitionPair(pair, lower);
 			newZone.setUpperBoundByLPNTransitionPair(pair, upper);
 
+		}
+		
+		
+		//Erase relationships for continuous variables that have had new values
+		// assigned to them.
+		for(int i = 1; i<newZone._indexToTimerPair.length &&
+					_indexToTimerPair[i] instanceof LPNContinuousPair; i++){
+			LPNContinuousPair lcPair = (LPNContinuousPair) _indexToTimerPair[i];
+			
+			// Get the update variable.
+			UpdateContinuous update = newAssignValues.get(lcPair);
+			if(update != null && update.is_newValue()){
+				for(int j=1; j<newZone._indexToTimerPair.length; j++){
+					if (j==i){
+						continue;
+					}
+					else{
+						newZone.setDbmEntry(i, j, Zone.INFINITY);
+						newZone.setDbmEntry(j, i, Zone.INFINITY);
+					}
+				}
+			}
 		}
 		
 		//newZone.advance();
@@ -3202,7 +3259,7 @@ public class Zone{
 				newValue = getUpperBoundbydbmIndex(index);
 			}
 			else{
-				// I fthe pair is a continuous variable, then need to find the 
+				// If the pair is a continuous variable, then need to find the 
 				// possible largest bound governed by the inequalities.
 				newValue = ContinuousUtilities.maxAdvance(this,ltPair, localStates);
 			}
@@ -3343,7 +3400,8 @@ public class Zone{
 	private void setAllToLowerBoundRate(){
 		
 		// Loop through the continuous variables.
-		for(int i=1; _indexToTimerPair[i] instanceof LPNContinuousPair; i++){
+		for(int i=1; i<_indexToTimerPair.length && 
+				_indexToTimerPair[i] instanceof LPNContinuousPair; i++){
 			LPNContinuousPair ltContPair = (LPNContinuousPair) _indexToTimerPair[i];
 			
 			// For this, recall that for a continuous variable that the lower bound
