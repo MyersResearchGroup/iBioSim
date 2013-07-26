@@ -1520,7 +1520,7 @@ public class Run implements ActionListener {
 			}
 			log.addText("Total Simulation Time: " + time + " for " + simName + "\n\n");
 			logFile.write("Total Simulation Time: " + time + " for " + simName + "\n\n\n");
-			if (exitValue != 0) {
+			if (exitValue != 0 && !fba.isSelected()) {
 				if (exitValue == 143) {
 					JOptionPane.showMessageDialog(Gui.frame, "The simulation was" + " canceled by the user.",
 							"Canceled Simulation", JOptionPane.ERROR_MESSAGE);
@@ -1539,6 +1539,7 @@ public class Run implements ActionListener {
 				}
 				else if (fba.isSelected()) {
 					System.out.println("Scott: Here is where you tell me your results");
+					
 				}
 				else if (sbml.isSelected()) {
 					if (sbmlName != null && !sbmlName.trim().equals("")) {
