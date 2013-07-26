@@ -1,5 +1,7 @@
 package analysis;
 
+import java.text.NumberFormat;
+
 import main.Gui;
 
 import org.apache.commons.math.linear.Array2DRowRealMatrix;
@@ -25,8 +27,20 @@ public class FluxBalanceAnalysis {
 	
 	private FbcModelPlugin fbc;
 	
+	private NumberFormat nf;
+	
+	private double[] arr;
+	
 	public FluxBalanceAnalysis(String sbmlFileName) {
 		this.sbmlFileName = sbmlFileName;
+		nf = NumberFormat.getNumberInstance();
+		
+		//Set number of digits after decimal point
+		nf.setMaximumFractionDigits(4);
+		
+		nf.setGroupingUsed(false);
+		//Set the array to be the max it will ever be
+		arr=new double[(int) (2*(sbml.getModel().getNumSpecies() + sbml.getModel().getNumReactions()))];
 	}
 	
 	public int PerformFluxBalanceAnalysis(){
@@ -41,35 +55,6 @@ public class FluxBalanceAnalysis {
 			FluxBound bound = fbc.getFluxBound(i);
 			System.out.println(bound.getReaction());
 		}
-//		RealMatrix Pmatrix = new Array2DRowRealMatrix(new double[][] {
-//				{ 1.68, 0.34, 0.38 },
-//				{ 0.34, 3.09, -1.59 }, 
-//				{ 0.38, -1.59, 1.54 } });
-//		RealVector qVector = new ArrayRealVector(new double[] { 0.018, 0.025, 0.01 });
-//
-//	    // Objective function.
-//		double theta = 0.01522;
-//		RealMatrix P = Pmatrix.scalarMultiply(theta);
-//		RealVector q = qVector.mapMultiply(-1);
-//		PDQuadraticMultivariateRealFunction objectiveFunction = new PDQuadraticMultivariateRealFunction(P.getData(), q.toArray(), 0);
-//		
-//		OptimizationRequest or = new OptimizationRequest();
-//		or.setF0(objectiveFunction);
-//		or.setInitialPoint(new double[] {0.04, 0.50, 0.46}); 
-//		
-//	    //optimization
-//		NewtonUnconstrained opt = new NewtonUnconstrained();
-//		opt.setOptimizationRequest(or);
-//		int returnCode = 0;
-//		try {
-//			returnCode = opt.optimize();
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} 
-//		System.out.println(returnCode);
-//		return returnCode;
-		
 		
 		
 		
@@ -96,13 +81,14 @@ public class FluxBalanceAnalysis {
 		//optimization
 		jop = new JOptimizer();
 		jop.setOptimizationRequest(or);
-		int returnCode = 0;
 		try {
-			returnCode = jop.optimize();
+			jop.optimize();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		double [] sol = jop.getOptimizationResponse().getSolution();
+		System.out.println(nf.format(sol[0]));
+		System.out.println(nf.format(sol[1]));
 		return (int) sol[0];
 	}
 
