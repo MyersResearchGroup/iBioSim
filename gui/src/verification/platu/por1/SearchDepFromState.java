@@ -83,6 +83,7 @@ public class SearchDepFromState {
 	private void getInitialDepTran(LPNTranRelation lpnTranRelation)
 	{
 		lpnTranRelation.findCompositionalDependencies();
+		lpnTranRelation.printCompositionalDependencies();
 		//get individual dependent
 		initialDepTrans = lpnTranRelation.getDependentTrans();
 		//get interleaving
