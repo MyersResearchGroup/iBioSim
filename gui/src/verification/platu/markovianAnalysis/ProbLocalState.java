@@ -21,14 +21,14 @@ public class ProbLocalState extends State{
      */
     public State update(StateGraph thisSg, HashMap<String, Integer> newVector, DualHashMap<String, Integer> VarIndexMap) {
     	int[] newVariableVector = new int[this.vector.length];   	
-    	boolean newStateExists = false;
+    	boolean nextStateExists = false;
     	for(int index = 0; index < vector.length; index++) {
     		String var = VarIndexMap.getKey(index);
     		int this_val = this.vector[index];    		
 			Integer newVal = newVector.get(var);
     		if(newVal != null) {
     			if(this_val != newVal) {
-    				newStateExists = true;
+    				nextStateExists = true;
     				newVariableVector[index] = newVal;
     			}
     			else
@@ -37,12 +37,12 @@ public class ProbLocalState extends State{
     		else
     			newVariableVector[index] = this.vector[index];    		
     	}
-    	if(newStateExists) {
-    		HashMap<Transition, Double> tranRateMapForNewState = new HashMap<Transition, Double>();
-    		boolean[] newTranVector= ((ProbLocalStateGraph)thisSg).updateTranVector(this, this.marking, newVariableVector, null, tranRateMapForNewState); 
-    		State newState = thisSg.addState(new ProbLocalState(this.lpn, this.marking, newVariableVector, newTranVector));
-    		((ProbLocalStateGraph) thisSg).addTranRate(newState, tranRateMapForNewState);
-        	return newState;
+    	if(nextStateExists) {
+    		HashMap<Transition, Double> tranRateMapForNextState = new HashMap<Transition, Double>();
+    		boolean[] newTranVector= ((ProbLocalStateGraph)thisSg).updateTranVector(this, this.marking, newVariableVector, null, tranRateMapForNextState); 
+    		State nextState = thisSg.addState(new ProbLocalState(this.lpn, this.marking, newVariableVector, newTranVector));
+    		((ProbLocalStateGraph) thisSg).addTranRate(nextState, tranRateMapForNextState);  
+        	return nextState;
     	}
     	return null;
     }
