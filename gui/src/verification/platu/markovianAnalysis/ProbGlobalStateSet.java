@@ -6,7 +6,7 @@ import java.util.Iterator;
 import verification.platu.logicAnalysis.StateSetInterface;
 import verification.platu.project.PrjState;
 
-public class ProbGlobalStateSet extends HashMap<PrjState, PrjState> implements StateSetInterface {//extends HashSet<PrjState>{
+public class ProbGlobalStateSet extends HashMap<PrjState, PrjState> implements StateSetInterface, Runnable {//extends HashSet<PrjState>{
 
 	private static final long serialVersionUID = 1L;
 
@@ -19,7 +19,7 @@ public class ProbGlobalStateSet extends HashMap<PrjState, PrjState> implements S
 	/*
 	 * Get the initial state.
 	 */
-	public PrjState getInitState() {
+	public PrjState getInitialState() {
 		return initState;
 	}
 
@@ -45,6 +45,10 @@ public class ProbGlobalStateSet extends HashMap<PrjState, PrjState> implements S
 	@Override
 	public Iterator<PrjState> iterator() {
 		return super.keySet().iterator();
+	}
+
+	@Override
+	public void run() {	
 	}
 	
 	
