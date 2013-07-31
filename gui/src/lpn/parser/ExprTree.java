@@ -169,6 +169,19 @@ public class ExprTree {
 			lhpn = source.lhpn;
 		}
 	}
+	
+	/**
+	 * This constructor takes a list of variables names. 
+	 * Each variable name is either an actual LPN discrete integer variable name, or
+	 * a variable that is created during the Markovian analysis of nested properties. 
+	 * @param varNameList
+	 */
+	public ExprTree(ArrayList<String> varNameList) {
+		integerSignals = new ArrayList<String>();
+		for (int j = 0; j < varNameList.size(); j++) {
+			integerSignals.add(varNameList.get(j));
+		}
+	}
 
 	public int intexpr_gettok(String expr) {
 		char c;
