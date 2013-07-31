@@ -3,6 +3,7 @@ package verification.platu.markovianAnalysis;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.Semaphore;
 
 import lpn.parser.Transition;
 import verification.platu.main.Options;
@@ -15,10 +16,6 @@ public class ProbGlobalState extends PrjState {
 	private double currentProb;
 	private double nextProb;
 	private double piProb;
-	/**
-	 * Transition probability for the embedded Markov chain. 
-	 */
-	//private double tranProb;
 	
 	/**
 	 * Sum of all outgoing transition rates from this state. 
@@ -31,19 +28,35 @@ public class ProbGlobalState extends PrjState {
 	 * Value: next global state reached by the corresponding outgoing transition. 
 	 */
 	private HashMap<Transition, PrjState> nextProbGlobalStateMap;
-//	/**
-//	 * This flag is used in Markovian analysis to indicate whether this state has been explored or not.  
-//	 */
-//	private boolean isExplored;
-	
 
+	/**
+	 * This map stores for each state the probability value computed when checking
+	 * a nested property. 
+	 * key: "Pr" + nestedPropString.hashCode() or "St" + nestedPropString.hashCode()
+	 * value: success probability
+	 */
+	private HashMap<String, String> nestedProbValues;
+	
+	public Semaphore lock;
+	
+	
 	public ProbGlobalState(State[] other) {
 		super(other);
 		tranRateSum = 0.0;
 //		isExplored = false;
 		if (Options.getBuildGlobalStateGraph())
-			nextProbGlobalStateMap = new HashMap<Transition, PrjState>();
-		
+			nextProbGlobalStateMap = new HashMap<Transition, PrjState>();	
+		lock = new Semaphore(1);
+	}
+	
+	public HashMap<String, String> getNestedProbValues() {
+		return nestedProbValues;
+	}
+
+	public void addNestedProb(String id, String value) {
+		if (nestedProbValues == null)
+			nestedProbValues = new HashMap<String, String>();
+		nestedProbValues.put(id, value);
 	}
 	
 	public int getColor() {
@@ -73,27 +86,6 @@ public class ProbGlobalState extends PrjState {
 	public void setCurrentProbToNext() {
 		currentProb = nextProb;
 	}
-	
-//	public ArrayList<Integer> getLocalStateIndexArray() {
-//		return localStateIndexArray;
-//	}
-//	
-//	public void addLocalStateIndex(int localStateIndex) {
-//		this.localStateIndexArray.add(localStateIndex);
-//	}
-	
-//	public HashMap<Transition, ProbGlobalState> getNextProbGlobalStateMap() {
-//		if (Options.getBuildGlobalStateGraph())
-//			return nextProbGlobalStateMap;
-//		else {
-//			
-//		}
-//	}
-
-//	public void setNextGlobalStateMap(
-//			HashMap<Transition, ProbGlobalState> nextGlobalStateMap) {
-//		this.nextGlobalStateMap = nextGlobalStateMap;
-//	}
 
 	public void addNextGlobalState(Transition firedTran, PrjState nextPrjState) {
 		this.nextProbGlobalStateMap.put(firedTran, (ProbGlobalState) nextPrjState);
@@ -108,15 +100,6 @@ public class ProbGlobalState extends PrjState {
 	}
 
 	public double getTranProb(Transition tran) {
-//		double tranProb = 0.0;
-//		try {
-//			tranProb = getOutgoingTranRate(tran)/tranRateSum;
-//		}
-//		catch (ArithmeticException e){
-//			System.out.println("tranRateSum is 0. Divided by 0 here.");
-//			e.printStackTrace();
-//		}
-//		return tranProb;
 		double tranProb = 0.0;
 		if (tranRateSum != 0)
 			tranProb = getOutgoingTranRate(tran)/tranRateSum;
@@ -132,96 +115,33 @@ public class ProbGlobalState extends PrjState {
 	public void setPiProb(double piProb) {
 		this.piProb = piProb;
 	}
-
-//	public Set<Transition> getOutgoingTransitions() {
-//		if (Options.getBuildGlobalStateGraph())
-//			return nextProbGlobalStateMap.keySet();
-//		else {
-//			Set<Transition> outgoingTrans = new HashSet<Transition>();
-//			for (State curLocalSt : this.toStateArray())
-//				outgoingTrans.addAll(curLocalSt.getOutgoingTranSet());
-//			return outgoingTrans;
-//		}
-//	}
-
-//	/**
-//	 * If nextProbGlobalStateMap exists, this method returns the value field of it, else it uses local state-transition 
-//	 * information to search for the next probabilistic global states of this current probabilistic global state, 
-//	 * and returns a set of such next probabilistic global states. The search
-//	 * is performed based on the local states that this current global state is composed of. For example, assume a current
-//	 * global state S0 is composed of n (n>=1) local states: s_00,s_10,s_20...,s_n0. For each outgoing transition, t_k, of 
-//	 * s_00, find in each of the local state, namely s_00, s_10, s_20, ..., s_n0, their next states, and then piece them
-//	 * together to form a next global state, then grab the equivalent one from the global state set. The obtained is a 
-//	 * next global state reached from S0 by taking t_k. The process repeats for s_10, s_20, ..., s_n0. All obtained 
-//	 * next global states are added to a set and returned by this method. 
-//	 * @param globalStateSet
-//	 * @return
-//	 */
-//	public HashSet<ProbGlobalState> getNextProbGlobalStateSet(ProbGlobalStateSet globalStateSet) {
-//		if (Options.getBuildGlobalStateGraph())
-//			return (HashSet<ProbGlobalState>) nextProbGlobalStateMap.values();
-//		else {
-//			HashSet<ProbGlobalState> nextProbGlobalStateSet = new HashSet<ProbGlobalState>();
-//			for (State localSt : this.toStateArray()) {
-//				for (Transition outTran : localSt.getOutgoingTranSet()) {
-//					State[] nextStateArray = new State[this.toStateArray().length];
-//					for (State curLocalSt : this.toStateArray()) {
-//						State nextLocalSt = curLocalSt.getNextLocalState(outTran);
-//						if (nextLocalSt != null) { // outTran leads curLocalSt to a next state.
-//							nextStateArray[curLocalSt.getLpn().getLpnIndex()] = nextLocalSt;
-//						}
-//						else { // No nextOtherLocalSt found. Transition outTran does not change this local state.
-//							nextStateArray[curLocalSt.getLpn().getLpnIndex()] = curLocalSt;
-//						}
-//					}
-//					ProbGlobalState tmpProbGlobalSt = new ProbGlobalState(nextStateArray);
-//					if (globalStateSet.get(tmpProbGlobalSt) == null) {
-//						throw new NullPointerException("Next global state was not found.");
-//					}
-//					else {
-//						nextProbGlobalStateSet.add((ProbGlobalState) globalStateSet.get(tmpProbGlobalSt));
-//					}
-//				}
-//			}
-//			return nextProbGlobalStateSet;
-//		}
-//	}
-//
-//	public ProbGlobalState getNextProbGlobalStates(Transition outTran, ProbGlobalStateSet globalStateSet) {
-//		if (Options.getBuildGlobalStateGraph())
-//			return nextProbGlobalStateMap.get(outTran);
-//		else {			
-//			State[] nextStateArray = new State[this.toStateArray().length];
-//			for (State curLocalSt : this.toStateArray()) {
-//				State nextLocalSt = curLocalSt.getNextLocalState(outTran);
-//				if (nextLocalSt != null) { // outTran leads curLocalSt to a next state.
-//					nextStateArray[curLocalSt.getLpn().getLpnIndex()] = nextLocalSt;//nextOtherLocalSt.clone();
-//				}
-//				else { // No nextLocalSt was found. Transition outTran does not change this local state.
-//					nextStateArray[curLocalSt.getLpn().getLpnIndex()] = curLocalSt;
-//				}
-//			}
-//			ProbGlobalState tmpProbGlobalSt = new ProbGlobalState(nextStateArray);
-//			if (globalStateSet.get(tmpProbGlobalSt) == null) {
-//				throw new NullPointerException("Next global state was not found.");
-//			}
-//			else {
-//				return (ProbGlobalState) globalStateSet.get(tmpProbGlobalSt);					
-//			}
-//		}
-//	}
 	
 	/**
-	 * If nextProbGlobalStateMap exists, this method returns the value field of it, else it calls 
-	 * getNextPrjStateSet(HashMap<PrjState, PrjState>) in PrjState.java. 
+	 * If nextProbGlobalStateMap exists, this method returns the value field of it. 
+	 * If not, this method uses local state-transition information to search for the next global states of 
+	 * this current global state, and returns a set of such next global states. The search
+	 * is performed based on the local states that this current global state is composed of. For example, assume a current
+	 * global state S0 is composed of n (n>=1) local states: s_00,s_10,s_20...,s_n0. For each outgoing transition, t_k, of 
+	 * s_00, it finds in each of the local state, namely s_00, s_10, s_20, ..., s_n0, their next local states. It then 
+	 * pieces them together to form a next global state. Next, it grabs the equivalent one from the global state set. The obtained is a 
+	 * next global state reached from S0 by taking t_k. The whole process repeats for s_10, s_20, ..., s_n0. All obtained 
+	 * next global states are added to a set and returned by this method.
 	 * @param globalStateSet
 	 * @return
 	 */
-	public HashSet<PrjState> getNextProbGlobalStateSet(ProbGlobalStateSet globalStateSet) {
-		if (Options.getBuildGlobalStateGraph())
-			return (HashSet<PrjState>) nextProbGlobalStateMap.values();
-		else
-			return this.getNextPrjStateSet(globalStateSet);
+	public HashSet<ProbGlobalState> getNextProbGlobalStateSet(ProbGlobalStateSet globalStateSet) {
+		HashSet<ProbGlobalState> nextProbGlobalStateSet = new HashSet<ProbGlobalState>();
+		if (Options.getBuildGlobalStateGraph()) {			
+			for (Transition outTran : nextProbGlobalStateMap.keySet())
+				nextProbGlobalStateSet.add((ProbGlobalState) getNextProbGlobalState(outTran, globalStateSet));			
+			return nextProbGlobalStateSet;						
+		}			
+		else {			
+			for (State localSt : this.toStateArray()) 
+				for (Transition outTran : localSt.getOutgoingTranSet()) 
+					nextProbGlobalStateSet.add((ProbGlobalState) getNextProbGlobalState(outTran, globalStateSet));							
+			return nextProbGlobalStateSet;
+		}			
 	}
 
 	/**
@@ -234,8 +154,23 @@ public class ProbGlobalState extends PrjState {
 	public PrjState getNextProbGlobalState(Transition outTran, ProbGlobalStateSet globalStateSet) {
 		if (Options.getBuildGlobalStateGraph())
 			return nextProbGlobalStateMap.get(outTran);
-		else 
-			return this.getNextPrjState(outTran, globalStateSet);			
+		else {
+			State[] nextStateArray = new State[this.toStateArray().length];
+			for (State curLocalSt : this.toStateArray()) {
+				State nextLocalSt = curLocalSt.getNextLocalState(outTran);
+				if (nextLocalSt != null) { // outTran leads curLocalSt to a next state.
+					nextStateArray[curLocalSt.getLpn().getLpnIndex()] = nextLocalSt;//nextOtherLocalSt.clone();
+				}
+				else { // No nextLocalSt was found. Transition outTran did not change this local state.
+					nextStateArray[curLocalSt.getLpn().getLpnIndex()] = curLocalSt;
+				}
+			}
+			PrjState tmpPrjSt = new ProbGlobalState(nextStateArray);			
+			if (((ProbGlobalStateSet)globalStateSet).get(tmpPrjSt) == null) 
+				throw new NullPointerException("Next global state was not found.");		
+			else
+				return ((ProbGlobalStateSet) globalStateSet).get(tmpPrjSt);				
+		}
 	}
 
 	/**
@@ -285,5 +220,15 @@ public class ProbGlobalState extends PrjState {
 
 	public void setTranRateSum(double tranRateSum) {
 		this.tranRateSum = tranRateSum;		
+	}
+
+	public HashMap<String, String> getVariables() {
+		HashMap<String, String> varMap = new HashMap<String, String>();
+		for (State localSt : this.toStateArray()) {
+			varMap.putAll(localSt.getLpn().getAllVarsWithValuesAsString(localSt.getVariableVector()));			
+		}
+		if (nestedProbValues != null)
+			varMap.putAll(nestedProbValues);
+		return varMap;
 	}
 }
