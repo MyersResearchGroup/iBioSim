@@ -24,6 +24,6 @@ public class TransientMarkovMatrixMultiplyThread extends Thread {
 
 	@Override
 	public void run() {
-//		markovianAnalysis.transientMarkovMatrixMultiplication(startIndex, endIndex, Gamma, timeLimit, K);
+		markovianAnalysis.transientMarkovMatrixMultiplication(startIndex, endIndex, Gamma, timeLimit, K);
 	}
 }
