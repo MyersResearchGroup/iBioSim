@@ -10,7 +10,12 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+
 import lpn.parser.LhpnFile;
+import lpn.parser.Translator;
+
 import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
@@ -25,6 +30,7 @@ import verification.platu.lpn.io.PlatuInstLexer;
 import verification.platu.lpn.io.PlatuInstParser;
 import verification.platu.main.Options;
 import verification.platu.markovianAnalysis.MarkovianAnalysis;
+import verification.platu.markovianAnalysis.PerfromTransientMarkovAnalysisThread;
 import verification.platu.markovianAnalysis.ProbGlobalStateSet;
 import verification.platu.markovianAnalysis.ProbLocalStateGraph;
 import verification.platu.stategraph.State;
@@ -236,22 +242,82 @@ public class Project {
 				outputRuntimeLog(false, elapsedTimeSec);
 		}
 		else {
+			//Options.setBuildGlobalStateGraph();
 			ProbGlobalStateSet globalStateSet = (ProbGlobalStateSet) dfsStateExploration.search_dfs(sgArray, initStateArray);
 			long elapsedTimeMillisReachability = System.currentTimeMillis() - startReachability; 
 			float elapsedTimeSecReachability = elapsedTimeMillisReachability/1000F;
 			System.out.println("---> total runtime for reachability analysis: " + elapsedTimeSecReachability + " sec");			
 			if (Options.getOutputLogFlag())
-				outputRuntimeLog(false, elapsedTimeSecReachability);			
-			System.out.println("--------- Steady State Analysis ---------");
-			long startSteadyState = System.currentTimeMillis();
-			MarkovianAnalysis markovianAnalysis = new MarkovianAnalysis();
-			double tolerance = 0.0000000001; 
-			//steadStateAnalysis.performSteadyStateMarkovianAnalysis(tolerance, props, globalStateSet, sgList, progress)
-			markovianAnalysis.performSteadyStateMarkovianAnalysis(tolerance, globalStateSet);
-			dfsStateExploration.drawGlobalStateGraph(sgArray, globalStateSet.getInitState(), globalStateSet, true);
-			long elapsedTimeMillisSteadyState = System.currentTimeMillis() - startSteadyState; 
-			float elapsedTimeSecSteadyState = elapsedTimeMillisSteadyState/1000F;
-			System.out.println("---> total runtime for steady state analysis: " + elapsedTimeSecSteadyState + " sec");
+				outputRuntimeLog(false, elapsedTimeSecReachability);
+			// -------------------- Temp: steady-state analysis --------------
+//			System.out.println("--------- Steady State Analysis ---------");
+//			long startSteadyState = System.currentTimeMillis();
+//			MarkovianAnalysis markovianAnalysis = new MarkovianAnalysis(globalStateSet);
+//			double tolerance = 0.0000000001;
+//			PrjState initialSt = globalStateSet.getInitState();
+//			markovianAnalysis.performSteadyStateMarkovianAnalysis(tolerance, null, initialSt, null);
+//			dfsStateExploration.drawGlobalStateGraph(sgArray, globalStateSet.getInitState(), globalStateSet, true);
+//			long elapsedTimeMillisSteadyState = System.currentTimeMillis() - startSteadyState; 
+//			float elapsedTimeSecSteadyState = elapsedTimeMillisSteadyState/1000F;
+//			System.out.println("---> total runtime for steady state analysis: " + elapsedTimeSecSteadyState + " sec");
+//			// ------------------------------------------------------------
+			
+			// -------------------- Temp: transient analysis --------------
+			System.out.println("--------- Transient Analysis ---------");
+			long startTransientAnalysis = System.currentTimeMillis();
+			MarkovianAnalysis markovianAnalysis = new MarkovianAnalysis(globalStateSet);
+			double timeLimit = 2100.0;
+			double printInterval = 100.0;			
+			double timeStep = 100.0;
+			double absError = 1.0e-9;			
+			// ========== Temp: Properties ============
+			// --- toggle_switch ---
+			//String prop = "Pr=?{PF[<=5000]((LacI>40)&(TetR<20))}";
+			//String prop = "Pr=?{PF[<=5000]((TetR>40)&(LacI<20))}";			
+			// --- end of toggle_switch ---
+			
+			// --- majority ---
+			String prop = "Pr=?{PF[<=2100]((E>40)&(C<20))}";
+			// --- end of majority ---
+			// ========================================
+////			JPanel progBar = new JPanel();
+			JProgressBar progress = new JProgressBar(0, 100);
+//			progress.setStringPainted(true);
+//			progress.setValue(0);
+//			progress.setIndeterminate(true);
+////			progBar.add(progress);
+
+			PerfromTransientMarkovAnalysisThread performMarkovAnalysisThread = new PerfromTransientMarkovAnalysisThread(
+					markovianAnalysis, progress);			
+			if (prop != null) {
+				String[] condition = Translator.getProbpropParts(Translator.getProbpropExpression(prop));
+				boolean globallyTrue = false;
+				if (prop.contains("PF")) {
+					condition[0] = "true";
+				}
+				else if (prop.contains("PG")) {
+					condition[0] = "true";
+					globallyTrue = true;
+				}
+				performMarkovAnalysisThread.start(timeLimit, timeStep, printInterval, absError, condition, globallyTrue);
+			}
+			else {
+				performMarkovAnalysisThread.start(timeLimit, timeStep, printInterval, absError, null, false);
+			}
+			try {
+				performMarkovAnalysisThread.join();
+			} catch (InterruptedException e) {
+				//JOptionPane.showMessageDialog(Gui.frame, "Error In Execution!", "Error In Execution", JOptionPane.ERROR_MESSAGE);			
+				e.printStackTrace();
+			}
+			//dfsStateExploration.drawGlobalStateGraph(sgArray, globalStateSet.getInitialState(), globalStateSet, true);
+			long elapsedTimeMillisTransient = System.currentTimeMillis() - startTransientAnalysis; 
+			float elapsedTimeSecTransient = elapsedTimeMillisTransient/1000F;
+			System.out.println("---> total runtime for transient analysis: " + elapsedTimeSecTransient + " sec");
+			// ------------------------------------------------------------
+			
+			// -------------------- Temp: nested analysis --------------
+			// ------------------------------------------------------------
 		}
 		if (Options.getOutputSgFlag())
 			if (sgArray != null)
