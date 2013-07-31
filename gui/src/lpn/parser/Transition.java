@@ -871,24 +871,21 @@ public class Transition {
 	}
 
 	/**
-	 * If a variable is written by this transition, and it appears in the variable list of curLPN, then it is added to the dstLpnList for this transition.
+	 * If a variable is written by this transition, and it appears in the variable list of curLPN, 
+	 * then it is added to the dstLpnList for this transition.
 	 * @param curLPN
 	 */
 	public void setDstLpnList(LhpnFile curLPN) {
-		String[] allVars = curLPN.getVariables();
-		boolean foundLPN = false;
+		String[] allVars = curLPN.getVariables();		
 		if (this.getAssignments() != null) {
 			Set<String> assignedVars = this.getAssignments().keySet();  
 			for (String curVar : assignedVars) {
 				for (int i=0; i<allVars.length; i++) {
 					if (curVar.equals(allVars[i]) && !this.dstLpnList.contains(curLPN)) {
-						this.dstLpnList.add(curLPN);
-						foundLPN = true;
-						break;
+						this.dstLpnList.add(curLPN);						
+						return;
 					}
 				}
-				if (foundLPN) 
-					break;
 			}
 		}		
 	}
@@ -923,28 +920,10 @@ public class Transition {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((boolAssignments == null) ? 0 : boolAssignments.hashCode());
-		result = prime * result
-				+ ((contAssignments == null) ? 0 : contAssignments.hashCode());
-		result = prime * result + ((delay == null) ? 0 : delay.hashCode());
-		result = prime * result
-				+ ((dstLpnList == null) ? 0 : dstLpnList.hashCode());
-		result = prime * result
-				+ ((enabling == null) ? 0 : enabling.hashCode());
 		result = prime * result + (fail ? 1231 : 1237);
 		result = prime * result + index;
-		result = prime * result
-				+ ((intAssignments == null) ? 0 : intAssignments.hashCode());
 		result = prime * result + ((label == null) ? 0 : label.hashCode());
 		result = prime * result + ((lhpn == null) ? 0 : lhpn.hashCode());
-		result = prime * result + (persistent ? 1231 : 1237);
-		result = prime * result + ((postset == null) ? 0 : postset.hashCode());
-		result = prime * result + ((preset == null) ? 0 : preset.hashCode());
-		result = prime * result
-				+ ((priority == null) ? 0 : priority.hashCode());
-		result = prime * result
-				+ ((rateAssignments == null) ? 0 : rateAssignments.hashCode());
 		return result;
 	}
 
@@ -957,39 +936,9 @@ public class Transition {
 		if (getClass() != obj.getClass())
 			return false;
 		Transition other = (Transition) obj;
-		if (boolAssignments == null) {
-			if (other.boolAssignments != null)
-				return false;
-		} else if (!boolAssignments.equals(other.boolAssignments))
-			return false;
-		if (contAssignments == null) {
-			if (other.contAssignments != null)
-				return false;
-		} else if (!contAssignments.equals(other.contAssignments))
-			return false;
-		if (delay == null) {
-			if (other.delay != null)
-				return false;
-		} else if (!delay.equals(other.delay))
-			return false;
-		if (dstLpnList == null) {
-			if (other.dstLpnList != null)
-				return false;
-		} else if (!dstLpnList.equals(other.dstLpnList))
-			return false;
-		if (enabling == null) {
-			if (other.enabling != null)
-				return false;
-		} else if (!enabling.equals(other.enabling))
-			return false;
 		if (fail != other.fail)
 			return false;
 		if (index != other.index)
-			return false;
-		if (intAssignments == null) {
-			if (other.intAssignments != null)
-				return false;
-		} else if (!intAssignments.equals(other.intAssignments))
 			return false;
 		if (label == null) {
 			if (other.label != null)
@@ -1001,29 +950,6 @@ public class Transition {
 				return false;
 		} else if (!lhpn.equals(other.lhpn))
 			return false;
-		if (persistent != other.persistent)
-			return false;
-		if (postset == null) {
-			if (other.postset != null)
-				return false;
-		} else if (!postset.equals(other.postset))
-			return false;
-		if (preset == null) {
-			if (other.preset != null)
-				return false;
-		} else if (!preset.equals(other.preset))
-			return false;
-		if (priority == null) {
-			if (other.priority != null)
-				return false;
-		} else if (!priority.equals(other.priority))
-			return false;
-		if (rateAssignments == null) {
-			if (other.rateAssignments != null)
-				return false;
-		} else if (!rateAssignments.equals(other.rateAssignments))
-			return false;
 		return true;
 	}
-	
 }
