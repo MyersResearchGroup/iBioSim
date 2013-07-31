@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
+import java.util.Set;
 import java.util.Stack;
 
 import javax.swing.JOptionPane;
@@ -542,8 +543,7 @@ public class Analysis {
 //		}catch(IOException e){
 //			e.printStackTrace();
 //		}
-//		//---------------
-		//return sgList;
+//		//---------------		
 		return prjStateSet;
 	}
 
@@ -631,7 +631,7 @@ public class Analysis {
 		return failureTranIsEnabled;
 	}
 
-	public void drawGlobalStateGraph(StateGraph[] sgList, PrjState initGlobalState, StateSetInterface prjStateSet, boolean fullSG) {
+	public void drawGlobalStateGraph(StateGraph[] sgList, PrjState initGlobalState, StateSetInterface globalStateSet, boolean fullSG) {
 		try {
 			String fileName = null;
 			if (fullSG) {
@@ -647,7 +647,7 @@ public class Analysis {
 			num.setMaximumFractionDigits(6);
 			num.setGroupingUsed(false);
 			out.write("digraph G {\n");
-			for (PrjState curGlobalState : prjStateSet) {
+			for (PrjState curGlobalState : globalStateSet) {
 				// Build composite current global state.
 				String curVarNames = "";
 				String curVarValues = "";
@@ -655,11 +655,9 @@ public class Analysis {
 				String curEnabledTrans = "";
 				String curGlobalStateIndex = "";
 				String curGlobalStateProb = null;
-				HashMap<String, Integer> vars = new HashMap<String, Integer>();			
-				for (State curLocalState : curGlobalState.toStateArray()) {
-					
-					curGlobalStateIndex = curGlobalStateIndex + "_" + "S" + curLocalState.getIndex();
-					curGlobalStateIndex = curGlobalStateIndex.substring(curGlobalStateIndex.indexOf("_")+1, curGlobalStateIndex.length());				
+				HashMap<String, Integer> vars = new HashMap<String, Integer>();				
+				for (State curLocalState : curGlobalState.toStateArray()) {		
+					curGlobalStateIndex = curGlobalStateIndex + "_" + "S" + curLocalState.getIndex();										
 					LhpnFile curLpn = curLocalState.getLpn();
 					for(int i = 0; i < curLpn.getVarIndexMap().size(); i++) {						
 						vars.put(curLpn.getVarIndexMap().getKey(i), curLocalState.getVariableVector()[i]);
@@ -678,14 +676,14 @@ public class Analysis {
 					curVarValues = curVarValues.substring(0, curVarValues.lastIndexOf(","));
 				}
 				curMarkings = curMarkings.substring(curMarkings.indexOf(",")+1, curMarkings.length());
-				curEnabledTrans = curEnabledTrans.substring(curEnabledTrans.indexOf(",")+1, curEnabledTrans.length());
-				
+				curEnabledTrans = curEnabledTrans.substring(curEnabledTrans.indexOf(",")+1, curEnabledTrans.length());		
 				if (Options.getMarkovianModelFlag()) {
 					// State probability after steady state analysis.
 					curGlobalStateProb = num.format(((ProbGlobalState) curGlobalState).getCurrentProb());
-				}				
+				}
+				curGlobalStateIndex = curGlobalStateIndex.substring(curGlobalStateIndex.indexOf("_")+1, curGlobalStateIndex.length());				
 				if (curGlobalState.equals(initGlobalState)) {
-					out.write("Inits[shape=plaintext, label=\"<" + curVarNames + ">\"]\n");
+					out.write("Inits[shape=plaintext, label=\"<" + curVarNames + ">\"]\n");					
 					if (!Options.getMarkovianModelFlag())
 						out.write(curGlobalStateIndex + "[shape=ellipse,label=\"" + curGlobalStateIndex + "\\n<"+curVarValues+">" 
 								+ "\\n<"+curEnabledTrans+">" + "\\n<"+curMarkings+">" + "\", style=filled]\n");
@@ -701,48 +699,26 @@ public class Analysis {
 						out.write(curGlobalStateIndex + "[shape=ellipse,label=\"" + curGlobalStateIndex + "\\n<"+curVarValues+">" 
 								+ "\\n<"+curEnabledTrans+">" + "\\n<"+curMarkings+">" + "\\nProb = " + curGlobalStateProb + "\"]\n");
 				}
-				//curGlobalState
-				
-				// Build composite next global states.				
-				for (Transition outTran : curGlobalState.getOutgoingTrans()) {
-					PrjState nextGlobalState = curGlobalState.getNextPrjState(outTran, (HashMap<PrjState, PrjState>) prjStateSet);
-					String nextVarNames = "";
-					String nextVarValues = "";
-					String nextMarkings = "";
-					String nextEnabledTrans = "";
+								
+				// Build transitions to next global states.
+				Set <Transition> outgoingTrans = null;
+				if (!Options.getMarkovianModelFlag()) {
+					outgoingTrans = curGlobalState.getOutgoingTrans();
+				}
+				else {
+					outgoingTrans = ((ProbGlobalState) curGlobalState).getOutgoingTranSetForProbGlobalState();
+				}					
+				for (Transition outTran : outgoingTrans) {					
+					PrjState nextGlobalState = null;
+					if (!Options.getMarkovianModelFlag())
+						nextGlobalState = curGlobalState.getNextPrjState(outTran, globalStateSet);
+					else 
+						nextGlobalState = ((ProbGlobalState) curGlobalState).getNextProbGlobalState(outTran, (ProbGlobalStateSet) globalStateSet);
 					String nextGlobalStateIndex = "";
-					String nextGlobalStateProb = null;
 					for (State nextLocalState : nextGlobalState.toStateArray()) {
-						LhpnFile nextLpn = nextLocalState.getLpn();
-						for(int i = 0; i < nextLpn.getVarIndexMap().size(); i++) {
-							vars.put(nextLpn.getVarIndexMap().getKey(i), nextLocalState.getVariableVector()[i]);
-						}
-						nextMarkings = nextMarkings + "," + intArrayToString("markings", nextLocalState);
-						if (!boolArrayToString("enabled trans", nextLocalState).equals(""))
-							nextEnabledTrans = nextEnabledTrans + "," +  boolArrayToString("enabled trans", nextLocalState);
 						nextGlobalStateIndex = nextGlobalStateIndex + "_" + "S" + nextLocalState.getIndex();
 					}
-					for (String vName : vars.keySet()) {
-						Integer vValue = vars.get(vName);
-						nextVarValues = nextVarValues + vValue + ", ";
-						nextVarNames = nextVarNames + vName + ", ";
-					}
-					if (!nextVarNames.isEmpty() && !nextVarValues.isEmpty()) {
-						nextVarNames = nextVarNames.substring(0, nextVarNames.lastIndexOf(","));
-						nextVarValues = nextVarValues.substring(0, nextVarValues.lastIndexOf(","));
-					}
-					nextMarkings = nextMarkings.substring(nextMarkings.indexOf(",")+1, nextMarkings.length());
-					nextEnabledTrans = nextEnabledTrans.substring(nextEnabledTrans.indexOf(",")+1, nextEnabledTrans.length());
 					nextGlobalStateIndex = nextGlobalStateIndex.substring(nextGlobalStateIndex.indexOf("_")+1, nextGlobalStateIndex.length());
-					if (Options.getMarkovianModelFlag()) {
-						// State probability after steady state analysis.
-						nextGlobalStateProb = num.format(((ProbGlobalState) nextGlobalState).getCurrentProb());
-						out.write(nextGlobalStateIndex + "[shape=ellipse,label=\"" + nextGlobalStateIndex + "\\n<"+nextVarValues+">" 
-								+ "\\n<"+nextEnabledTrans+">" + "\\n<"+nextMarkings+">" + "\\nProb = " + nextGlobalStateProb + "\"]\n");
-					}
-					else 					
-						out.write(nextGlobalStateIndex + "[shape=ellipse,label=\"" + nextGlobalStateIndex + "\\n<"+nextVarValues+">" 
-								+ "\\n<"+nextEnabledTrans+">" + "\\n<"+nextMarkings+">" + "\"]\n");					
 					String outTranName = outTran.getLabel();
 					if (!Options.getMarkovianModelFlag()) {
 						if (outTran.isFail() && !outTran.isPersistent())
