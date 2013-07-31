@@ -15,8 +15,8 @@ public class ProbLocalStateGraph extends StateGraph {
 	 * This map stores each state's outgoing transition rates.
 	 */
 	private HashMap<State, HashMap<Transition, Double>> nextTranRateMap;
-	
-    public ProbLocalStateGraph(LhpnFile lpn) {
+
+	public ProbLocalStateGraph(LhpnFile lpn) {
     	super(lpn);
     	nextTranRateMap = new HashMap<State, HashMap<Transition, Double>>();
     }
@@ -123,15 +123,6 @@ public class ProbLocalStateGraph extends StateGraph {
 				}
 			}			
 			if (this.lpn.getTransitionRateTree(tranName) != null) {
-//				// ------- TEMP ---------
-//				System.out.println("---- @ ProbLocalStateGraph.java -> updateTranVector -----");
-//				System.out.println("Printout results of getAllVarsWithVarValuesAsString(int[]) call in LhpnFile.");
-//				for (String varName : this.lpn.getAllVarsWithValuesAsString(newVariableVector).keySet()) {
-//					String varValue = this.lpn.getAllVarsWithValuesAsString(newVariableVector).get(varName);
-//					System.out.println(varName + " = " + varValue);
-//				}
-//				System.out.println("-------------------------------------------------");
-//				// ----------------------
 				double tranRate = this.lpn.getTransitionRateTree(tranName).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(newVariableVector));										
 				if (tranRate == 0.0) {
 					if (Options.getDebugMode()) {
@@ -211,7 +202,7 @@ public class ProbLocalStateGraph extends StateGraph {
 		HashMap<Transition, Double> initTranRateMap = new HashMap<Transition, Double>();
 		boolean[] initTranVector = genInitTranVector(initVariableVector, initTranRateMap);
 		this.init = new ProbLocalState(this.lpn, this.lpn.getInitialMarkingsArray(), initVariableVector, initTranVector);
-		this.addTranRate(this.init, initTranRateMap);
+		this.addTranRate(this.init, initTranRateMap);		
 		if (Options.getDebugMode())
 			printNextProbLocalStateMapForGivenState(this.init, "ProbLocalStateGraph.java -> genInitialState()");
 		return this.init;
@@ -278,8 +269,6 @@ public class ProbLocalStateGraph extends StateGraph {
 	    	}
     	}
     	*/    	
-//    	double firedTranRate = ((ProbLocalState) curState).getTranRate(firedTran.getIndex());
-//    	((ProbLocalStateGraph)thisSg).addStateTran(curState, firedTran, firedTranRate, newState);
     	thisSg.addStateTran(curState, firedTran, newState);
     	((ProbLocalStateGraph) thisSg).addTranRate(newState, tranRateMapForNewState);  	
     	return newState;
@@ -363,79 +352,91 @@ public class ProbLocalStateGraph extends StateGraph {
     	}	
     	HashMap<String, Integer> vvSet = new HashMap<String, Integer>();
     	vvSet = this.lpn.getAllVarsWithValuesAsInt(nextState.getVariableVector());
-    	// update state graphs that are affected by firedTran.
+    	// update state graphs that are affected by firedTran.    	
     	for(LhpnFile curLPN : firedTran.getDstLpnList()) {
     		int curIdx = curLPN.getLpnIndex();
     		State newState = curSgArray[curIdx].getNextState(curStateArray[curIdx], firedTran);
     		if(newState != null) {
     			nextStateArray[curIdx] = newState;
     		}     		
-    		else {
+    		else {    			
     			State newOther = ((ProbLocalState) curStateArray[curIdx]).update(curSgArray[curIdx], vvSet, curSgArray[curIdx].getLpn().getVarIndexMap());
     			if (newOther == null)
     				nextStateArray[curIdx] = curStateArray[curIdx];
     			else {
     				State cachedOther = curSgArray[curIdx].addState(newOther);
-    				nextStateArray[curIdx] = cachedOther;
-    				// Find the fired transition rate from the local state (in another state graph) where firedTran originates.
-    				//int firedTranLPNindex = firedTran.getLpn().getLpnIndex();
-    				//State firedTranCurState = curStateArray[firedTranLPNindex];
-    				//double firedTranRate = ((ProbLocalState) firedTranCurState).getTranRate(firedTran.getIndex());
-    				//((ProbLocalStateGraph)curSgArray[curIdx]).addStateTran(curStateArray[curIdx], firedTran, firedTranRate, cachedOther);
+    				nextStateArray[curIdx] = cachedOther;    				
     				curSgArray[curIdx].addStateTran(curStateArray[curIdx], firedTran, cachedOther);
+    				double firedTranRate = ((ProbLocalStateGraph) curSgArray[thisLpnIndex]).getTranRate(curState, firedTran);
+					((ProbLocalStateGraph) curSgArray[curIdx]).addTranRate(curStateArray[curIdx], firedTran, firedTranRate);
     			}   		
     		}
     	}	
     	return nextStateArray;
     }
 
-	public double getTranRate(State curLocalState, Transition tran) {
-//		if (nextTranRateMap.get(curLocalState) == null) {
-//			System.out.println("No entry for " + curLocalState.getFullLabel() + " in nextTranRateMap");
-//			printNextProbLocalStateMapForGivenState(curLocalState, "ProbLocalStateGraph.java -> getTranRate()");
-//		}
-//		else if (nextTranRateMap.get(curLocalState).get(tran) == null) {
-//			System.out.println("No entry for " + curLocalState.getFullLabel() + " and transition " + tran.getFullLabel() + " in nextTranRateMap");
-//			printNextProbLocalStateMapForGivenState(curLocalState, "ProbLocalStateGraph.java -> getTranRate()");
-//		}
-		return nextTranRateMap.get(curLocalState).get(tran);
-	}
-	
-	/**
+   	/**
 	 * Add all transitions and their corresponding rates for the nextState to the nextTranRateMap.  
 	 * @param nextState
 	 * @param nextStateTranRateMap
 	 */
 	public void addTranRate(State nextState, HashMap<Transition, Double> nextStateTranRateMap) {
-		this.nextTranRateMap.put(nextState, nextStateTranRateMap);
+		HashMap<Transition, Double> innerMap = this.nextTranRateMap.get(nextState);
+		if (innerMap == null) {
+//			innerMap = new HashMap<Transition, Double>();
+//			innerMap.putAll(nextStateTranRateMap);
+//			this.nextTranRateMap.put(nextState, innerMap);
+			this.nextTranRateMap.put(nextState, nextStateTranRateMap);
+		}
+		else {			
+			innerMap.putAll(nextStateTranRateMap);			
+		}		
 		if (Options.getDebugMode())
 			printNextProbLocalStateMapForGivenState(nextState, "ProbLocalStateGraph.java -> addTranRate(). Adding state " + nextState.getFullLabel() + " to the map.");
 	}
+	
+	/**
+	 * Add a single entry to the nextTranRateMap. 
+	 * @param curState
+	 * @param firedTran
+	 * @param tranRate
+	 */
+	private void addTranRate(State curState, Transition firedTran,
+			double tranRate) {
+		HashMap<Transition, Double> innerMap = nextTranRateMap.get(curState);
+		if (innerMap != null) {
+			innerMap.put(firedTran, tranRate);
+		}
+		else {
+			innerMap = new HashMap<Transition, Double>();
+			innerMap.put(firedTran, tranRate);
+			nextTranRateMap.put(curState, innerMap);
+		}
+	}
 
-//    public void printNextProbLocalStateTupleMap(String location) {
-//    	String newLine = System.getProperty("line.separator");//This will retrieve line separator dependent on OS.
-//    	System.out.println("----------------Next State Map @ " + location + "----------------");
-//    	for (State st : nextProbLocalStateTupleMap.keySet()) {
-//    		HashMap<Transition, ProbLocalStateTuple> nextStMap = nextProbLocalStateTupleMap.get(st);
-//    		System.out.println("S" + st.getIndex() + "("+ st.getLpn().getLabel() + "):");
-//    		String message = "";
-//    		for (Transition t : nextStMap.keySet()) {
-//    			message += "\t" + t.getLabel() + "(" + t.getLpn().getLabel() +") ==> "; 
-//    			ProbLocalStateTuple nextStTuple = nextStMap.get(t);
-//    			if (nextStTuple.getNextProbLocalState() == null)
-//    			else
-//    				message += "S" + nextStTuple.getNextProbLocalState().getIndex() + "(" 
-//    						+ nextStTuple.getNextProbLocalState().getLpn().getLabel() +"), rate="
-//    						+ nextStTuple.getTranRate() + newLine;
-//    		}            		
-//    		System.out.print(message);            		
-//    	}
-//    	System.out.println("--------------End Of Next State Map----------------------");
-//    }
-//    
+	public double getTranRate(State curLocalState, Transition tran) {
+		if (nextTranRateMap.get(curLocalState) == null) {
+			System.out.println("No entry for " + curLocalState.getFullLabel() + " in nextTranRateMap");
+			printNextProbLocalStateMapForGivenState(curLocalState, "ProbLocalStateGraph.java -> getTranRate()");
+		}
+		else if (nextTranRateMap.get(curLocalState).get(tran) == null) {
+			System.out.println("No entry for " + curLocalState.getFullLabel() + " and transition " + tran.getFullLabel() + " in nextTranRateMap");
+			printNextProbLocalStateMapForGivenState(curLocalState, "ProbLocalStateGraph.java -> getTranRate()");
+		}
+		return nextTranRateMap.get(curLocalState).get(tran);
+	}
+	
+	public void setTranRate(State curLocalState, Transition tran, double tranRate) {
+		nextTranRateMap.get(curLocalState).put(tran, tranRate);
+	}
+	
+	public HashMap<State, HashMap<Transition, Double>> getNextTranRateMap() {
+		return nextTranRateMap;
+	}
+  
     public void printNextProbLocalStateMapForGivenState(State givenState, String location) {    	
     	System.out.println("----------------Next State Map @ " + location + "----------------");
-    	System.out.println("state = S" + givenState.getIndex() + "(" + givenState.getLpn().getLabel() + ")");
+    	System.out.println("state = " + givenState.getFullLabel());
     	HashMap<Transition, State> nextStateMapForGivenState = nextStateMap.get(givenState);
     	HashMap<Transition, Double> nextTranRateMapForGivenState = nextTranRateMap.get(givenState);
     	if (nextStateMapForGivenState == null)
