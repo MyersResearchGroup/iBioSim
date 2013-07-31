@@ -1,13 +1,15 @@
 package verification.platu.project;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import lpn.parser.LhpnFile;
 import lpn.parser.Transition;
-
-import verification.platu.main.Options;
-import verification.platu.markovianAnalysis.ProbGlobalState;
-import verification.platu.stategraph.*;
+import verification.platu.logicAnalysis.HashSetWrapper;
+import verification.platu.logicAnalysis.StateSetInterface;
+import verification.platu.stategraph.State;
 
 public class PrjState {
 	protected  State[] stateArray;
@@ -147,48 +149,6 @@ public class PrjState {
 	public State[] getStateArray() {
 		return stateArray;		
 	}
-	
-	/**
-	 * This method uses local state-transition information to search for the next global states of 
-	 * this current global state, and returns a set of such next global states. The search
-	 * is performed based on the local states that this current global state is composed of. For example, assume a current
-	 * global state S0 is composed of n (n>=1) local states: s_00,s_10,s_20...,s_n0. For each outgoing transition, t_k, of 
-	 * s_00, it finds in each of the local state, namely s_00, s_10, s_20, ..., s_n0, their next local states. It then 
-	 * pieces them together to form a next global state. Next, it grabs the equivalent one from the global state set. The obtained is a 
-	 * next global state reached from S0 by taking t_k. The whole process repeats for s_10, s_20, ..., s_n0. All obtained 
-	 * next global states are added to a set and returned by this method. 
-	 * @param globalStateSet
-	 * @return
-	 */
-	public HashSet<PrjState> getNextPrjStateSet(HashMap<PrjState, PrjState> globalStateSet) {
-		HashSet<PrjState> nextPrjStateSet = new HashSet<PrjState>();
-		for (State localSt : this.toStateArray()) {
-			for (Transition outTran : localSt.getOutgoingTranSet()) {
-				State[] nextStateArray = new State[this.toStateArray().length];
-				for (State curLocalSt : this.toStateArray()) {
-					State nextLocalSt = curLocalSt.getNextLocalState(outTran);
-					if (nextLocalSt != null) { // outTran leads curLocalSt to a next state.
-						nextStateArray[curLocalSt.getLpn().getLpnIndex()] = nextLocalSt;
-					}
-					else { // No nextOtherLocalSt found. Transition outTran does not change this local state.
-						nextStateArray[curLocalSt.getLpn().getLpnIndex()] = curLocalSt;
-					}
-				}
-				PrjState tmpProbGlobalSt;
-				if (!Options.getMarkovianModelFlag())
-					tmpProbGlobalSt = new PrjState(nextStateArray);
-				else
-					tmpProbGlobalSt = new ProbGlobalState(nextStateArray);
-				if (globalStateSet.get(tmpProbGlobalSt) == null) {
-					throw new NullPointerException("Next global state was not found.");
-				}
-				else {
-					nextPrjStateSet.add((PrjState) globalStateSet.get(tmpProbGlobalSt));
-				}
-			}
-		}
-		return nextPrjStateSet;
-	}
 
 	/**
 	 * This method uses local state-transition information to search for the next global states of 
@@ -202,7 +162,7 @@ public class PrjState {
 	 * @param globalStateSet
 	 * @return
 	 */
-	public PrjState getNextPrjState(Transition outTran, HashMap<PrjState, PrjState> globalStateSet) {
+	public PrjState getNextPrjState(Transition outTran, StateSetInterface globalStateSet) {
 		State[] nextStateArray = new State[this.toStateArray().length];
 		for (State curLocalSt : this.toStateArray()) {
 			State nextLocalSt = curLocalSt.getNextLocalState(outTran);
@@ -213,17 +173,11 @@ public class PrjState {
 				nextStateArray[curLocalSt.getLpn().getLpnIndex()] = curLocalSt;
 			}
 		}
-		PrjState tmpProbGlobalSt;
-		if (!Options.getMarkovianModelFlag())
-			tmpProbGlobalSt = new PrjState(nextStateArray);
+		PrjState tmpPrjSt = new PrjState(nextStateArray);
+		if (((HashSetWrapper)globalStateSet).get(tmpPrjSt) == null) 
+			throw new NullPointerException("Next global state was not found.");		
 		else
-			tmpProbGlobalSt = new ProbGlobalState(nextStateArray);
-		if (globalStateSet.get(tmpProbGlobalSt) == null) {
-			throw new NullPointerException("Next global state was not found.");
-		}
-		else {
-			return globalStateSet.get(tmpProbGlobalSt);					
-		}
+			return ((HashSetWrapper) globalStateSet).get(tmpPrjSt);							
 	}
 	
 	/**
