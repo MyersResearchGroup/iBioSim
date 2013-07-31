@@ -49,7 +49,7 @@ public class LPNTranRelation {
 		        	LpnTranList nextEnabledTransitions = sg.getEnabled(endState);
 		        	
 		        	// disabled trans
-		        	LpnTranList current_minus_next = currentEnabledTransitions.clone();
+		        	LpnTranList current_minus_next = currentEnabledTransitions;//currentEnabledTransitions.clone();
 		        	current_minus_next.removeAll(nextEnabledTransitions);
 		        	current_minus_next.remove(lpnTran);
 		        	
@@ -156,5 +156,30 @@ public class LPNTranRelation {
      */
 	public Set<Entry<Transition, Set<Transition>>> getInterleavingTrans(){
 		return this.interleavingDependence.entrySet();
+	}
+
+	public void printCompositionalDependencies() {
+		System.out.println("------- Compositional Dependencies -----------");
+		if (interleavingDependence.isEmpty()) {
+			System.out.println("empty interleavingDependence.");
+		}
+		else {
+			for (Transition tran : interleavingDependence.keySet()) {
+				System.out.println("interleaving dependency for tran = " + tran.getFullLabel());
+				for (Transition depTran : interleavingDependence.get(tran)) {
+					System.out.println("\t" + depTran.getFullLabel());
+				}
+			}
+		}
+		if (transitiveDependence.isEmpty()) {
+			System.out.println("empty transitiveDependence.");
+						for (Transition tran : transitiveDependence.keySet()) {
+				System.out.println("transitive dependency for tran = " + tran.getFullLabel());
+				for (Transition depTran : transitiveDependence.get(tran)) {
+					System.out.println("\t" + depTran.getFullLabel());
+				}
+			}
+		}
+		
 	}
 }
