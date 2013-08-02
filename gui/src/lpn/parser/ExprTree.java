@@ -177,6 +177,8 @@ public class ExprTree {
 	 * @param varNameList
 	 */
 	public ExprTree(ArrayList<String> varNameList) {
+		booleanSignals = new ArrayList<String>();
+		continuousSignals = new ArrayList<String>();
 		integerSignals = new ArrayList<String>();
 		for (int j = 0; j < varNameList.size(); j++) {
 			integerSignals.add(varNameList.get(j));
