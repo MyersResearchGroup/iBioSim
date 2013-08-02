@@ -13,27 +13,42 @@ import lpn.parser.Transition;
 import lpn.parser.LpnDecomposition.LpnProcess;
 import verification.platu.main.Options;
 
-public class StaticSets {
-	private Transition curTran;
-	private HashSet<Transition> disableSet; 
-	private HashSet<Transition> disableByStealingToken;
-	//private ArrayList<ExprTree> conjunctsOfEnabling; 
+public class StaticDependencySets {
+	protected Transition curTran;
+	protected HashSet<Transition> disableSet; 
+	protected HashSet<Transition> disableByStealingToken;
 	private ArrayList<HashSet<Transition>> otherTransSetCurTranEnablingTrue;
-	private HashSet<Transition> curTranSetOtherTranEnablingFalse; // A set of transitions (with associated LPNs) whose enabling condition can become false due to executing curTran's assignments. 
-	private HashSet<Transition> otherTransSetCurNonPersistentCurTranEnablingFalse; // A set of transitions (with associated LPNs) whose enabling condition can become false due to executing another transition's assignments.
+	/**
+	 * A set of transitions that can potentially be disabled by executing curTran. 
+	 */
+	protected HashSet<Transition> curTranSetOtherTranEnablingFalse;
+	
+	/**
+ 	 * A set of transitions that can potentially set a non-persistent curTran's
+	 * enabling condition false. 
+	 */
+	private HashSet<Transition> otherTransSetCurNonPersistentTranEnablingFalse;
+	
+	/**
+	 * See buildModifyAssignSet's comment for the explanation of modifyAssignment.
+	 */
 	private HashSet<Transition> modifyAssignment;
 	private String PORdebugFileName;
 	private FileWriter PORdebugFileStream;
 	private BufferedWriter PORdebugBufferedWriter;
-	private HashMap<Transition, LpnProcess> allTransToLpnProcs; 
+	protected HashMap<Transition, LpnProcess> allTransToLpnProcs; 
+	// ---- Specific field variables for probabilistic models ----
+	//private HashSet<Transition> curTranModifyOtherTranRate; 
+	//private ArrayList<HashSet<Transition>> otherTransModifyCurTranRate;
+	// --------------------------------------------------
 	
-	public StaticSets(Transition curTran, HashMap<Transition, LpnProcess> allTransToLpnProcs) {
+	public StaticDependencySets(Transition curTran, HashMap<Transition, LpnProcess> allTransToLpnProcs) {
 		this.curTran = curTran;
 		this.allTransToLpnProcs = allTransToLpnProcs;
 		disableSet = new HashSet<Transition>();
 		disableByStealingToken = new HashSet<Transition>();
 		curTranSetOtherTranEnablingFalse = new HashSet<Transition>();
-		otherTransSetCurNonPersistentCurTranEnablingFalse = new HashSet<Transition>();
+		otherTransSetCurNonPersistentTranEnablingFalse = new HashSet<Transition>();
 		otherTransSetCurTranEnablingTrue = new ArrayList<HashSet<Transition>>();
 		modifyAssignment = new HashSet<Transition>();
 		if (Options.getDebugMode()) {
@@ -49,8 +64,7 @@ public class StaticSets {
 	}
 		
 	/**
-	 * Build a set of transitions that curTran can disable.
-	 * @param curLpnIndex 
+	 * Build a set of transitions that curTran can disable.	
 	 */
 	public void buildCurTranDisableOtherTransSet() {
 		// Test if curTran can disable other transitions by stealing their tokens.
@@ -126,13 +140,13 @@ public class StaticSets {
 							if (curTranEnablingTree.getChange(anotherTran.getAssignments())=='X') 
 								writeStringWithEndOfLineToPORDebugFile("Reason is " + curTran.getLabel() + "_enablingTree.getChange(" + anotherTran.getLabel() + ".getAssignments()) = X.");					
 						}	
-						otherTransSetCurNonPersistentCurTranEnablingFalse.add(anotherTran);
+						otherTransSetCurNonPersistentTranEnablingFalse.add(anotherTran);
 					}
 				}
 			}
 		}
 		disableSet.addAll(disableByStealingToken);
-		disableSet.addAll(otherTransSetCurNonPersistentCurTranEnablingFalse);
+		disableSet.addAll(otherTransSetCurNonPersistentTranEnablingFalse);
 		buildModifyAssignSet();
 		disableSet.addAll(modifyAssignment);
 	}
@@ -337,7 +351,7 @@ public class StaticSets {
 	
 	public HashSet<Transition> getOtherTransDisableCurTranSet() {
 		HashSet<Transition> otherTransDisableCurTranSet = new HashSet<Transition>();
-		otherTransDisableCurTranSet.addAll(otherTransSetCurNonPersistentCurTranEnablingFalse);
+		otherTransDisableCurTranSet.addAll(otherTransSetCurNonPersistentTranEnablingFalse);
 		otherTransDisableCurTranSet.addAll(disableByStealingToken);
 		otherTransDisableCurTranSet.addAll(modifyAssignment);
 		return otherTransDisableCurTranSet;
@@ -358,7 +372,8 @@ public class StaticSets {
 		return curTran;
 	}
 
-	/*	For every transition curTran in T, where T is the set of all transitions, we check t (t != curTran) in T, 
+	/**
+	 * For every transition curTran in T, where T is the set of all transitions, we check t (t != curTran) in T, 
 		(1) intersection(VA(curTran), supportA(t)) != empty
 		(2) intersection(VA(t), supportA(curTran)) != empty
 		(3) intersection(VA(t), VA(curTran) != empty
@@ -411,7 +426,7 @@ public class StaticSets {
 		}
 	}
 	
-	private void writeStringWithEndOfLineToPORDebugFile(String string) {		
+	protected void writeStringWithEndOfLineToPORDebugFile(String string) {		
 		try {
 			PORdebugBufferedWriter.append(string);
 			PORdebugBufferedWriter.newLine();
