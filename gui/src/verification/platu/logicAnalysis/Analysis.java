@@ -33,7 +33,8 @@ import verification.platu.markovianAnalysis.ProbGlobalStateSet;
 import verification.platu.markovianAnalysis.ProbLocalStateGraph;
 import verification.platu.partialOrders.DependentSet;
 import verification.platu.partialOrders.DependentSetComparator;
-import verification.platu.partialOrders.StaticSets;
+import verification.platu.partialOrders.ProbStaticDependencySets;
+import verification.platu.partialOrders.StaticDependencySets;
 import verification.platu.por1.AmpleSet;
 import verification.platu.project.PrjState;
 import verification.platu.stategraph.State;
@@ -52,7 +53,7 @@ public class Analysis {
 	 * visitedTrans is used in computeNecessary for a disabled transition of interest, to keep track of all transitions visited during trace-back.
 	 */
 	private HashSet<Transition> visitedTrans;
-	HashMap<Transition, StaticSets> staticDependency = new HashMap<Transition, StaticSets>();
+	HashMap<Transition, StaticDependencySets> staticDependency = new HashMap<Transition, StaticDependencySets>();
 		
 	public Analysis(StateGraph[] lpnList, State[] initStateArray, LPNTranRelation lpnTranRelation, String method) {
 		traceCex = new LinkedList<Transition>();
@@ -769,7 +770,7 @@ public class Analysis {
 				out.newLine();
 			}
 			for (Transition curTran : staticDependency.keySet()) {
-				StaticSets curStaticSets = staticDependency.get(curTran);
+				StaticDependencySets curStaticSets = staticDependency.get(curTran);
 				String curTranStr = curTran.getLpn().getLabel() + "_" + curTran.getLabel();
 				for (Transition curTranInDisable : curStaticSets.getOtherTransDisableCurTranSet()) {
 					String curTranInDisableStr = curTranInDisable.getLpn().getLabel() + "_" + curTranInDisable.getLabel();							
@@ -925,7 +926,7 @@ public class Analysis {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public StateGraph[] searchPOR_taceback(final StateGraph[] sgList, final State[] initStateArray) {
+	public StateSetInterface searchPOR_taceback(final StateGraph[] sgList, final State[] initStateArray) {
 		System.out.println("---> calling function searchPOR_traceback");
 		System.out.println("---> " + Options.getPOR());
 		System.out.println("---> " + Options.getCycleClosingMthd());
@@ -945,7 +946,7 @@ public class Analysis {
 				
 		HashSet<PrjState> stateStack = new HashSet<PrjState>();
 		Stack<LinkedList<Transition>> lpnTranStack = new Stack<LinkedList<Transition>>();
-		HashSet<PrjState> prjStateSet = new HashSet<PrjState>();		
+		StateSetInterface prjStateSet = generateStateSet();
 		PrjState initPrjState = new PrjState(initStateArray);
 		prjStateSet.add(initPrjState);
 		
@@ -956,7 +957,7 @@ public class Analysis {
 		constructDstLpnList(sgList);
 		if (Options.getDebugMode())
 			printDstLpnList(sgList);
-		// Find static pieces for POR. 
+		// Determine statistically the dependency relations between transitions. 
 		HashMap<Integer, Transition[]> allTransitions = new HashMap<Integer, Transition[]>(lpnList.length); 
 		//HashMap<Transition, StaticSets> staticSetsMap = new HashMap<Transition, StaticSets>();
 		HashMap<Transition, Integer> allProcessTransInOneLpn = new HashMap<Transition, Integer>();
@@ -1019,13 +1020,22 @@ public class Analysis {
 				System.out.println("=======LPN = " + lpnList[lpnIndex].getLabel() + "=======");
 			}
 			for (Transition curTran: allTransitions.get(lpnIndex)) {
-				StaticSets curStatic = new StaticSets(curTran, allTransitionsToLpnProcesses);
+				StaticDependencySets curStatic = null;
+				if (!Options.getMarkovianModelFlag())
+					curStatic = new StaticDependencySets(curTran, allTransitionsToLpnProcesses);
+				else 
+					curStatic = new ProbStaticDependencySets(curTran, allTransitionsToLpnProcesses);
 				curStatic.buildOtherTransSetCurTranEnablingTrue(); 
 				curStatic.buildCurTranDisableOtherTransSet();
 				if (Options.getPORdeadlockPreserve())
 					curStatic.buildOtherTransDisableCurTranSet();
 				else 
 					curStatic.buildModifyAssignSet();
+				if (Options.getMarkovianModelFlag()) {
+					// TODO: Is it necessary to have buildCurTranModifyOtherTransRatesSet()?
+					((ProbStaticDependencySets) curStatic).buildCurTranModifyOtherTransRatesSet();
+					((ProbStaticDependencySets) curStatic).buildOtherTransModifyCurTranRateSet();
+				}
 				staticDependency.put(curTran, curStatic);
 				if (Options.getUseDependentQueue())
 					tranFiringFreq.put(curTran, 0);
@@ -1034,11 +1044,18 @@ public class Analysis {
 		if (Options.getDebugMode()) {
 			printStaticSetsMap(lpnList);
 		}			
-		//boolean init = true;
-		//LpnTranList initAmpleTrans = new LpnTranList();
-		LpnTranList initAmpleTrans = getAmple(initStateArray, null, tranFiringFreq, sgList, lpnList, stateStack, stateStackTop);
+		System.out.println("Exit now.");
+		System.exit(1);
+		
+		
+		
+		
+		
+		
+		
+		
+		LpnTranList initAmpleTrans = getAmple(initStateArray, null, tranFiringFreq, sgList, lpnList, prjStateSet, stateStackTop);
 		lpnTranStack.push(initAmpleTrans);
-		//init = false;
 		if (Options.getDebugMode()) {			
 			printTransList(initAmpleTrans, "+++++++ Push trans onto lpnTranStack @ 1++++++++");
 			drawDependencyGraphs(lpnList);
@@ -1230,7 +1247,7 @@ public class Analysis {
 		if (Options.getOutputSgFlag()) {
 			//drawGlobalStateGraph(sgList, prjStateSet, false);
 		}
-		return sgList;
+		return prjStateSet;
 	}
 	
 	private void writePerformanceResultsToLogFile(boolean isPOR, int tranFiringCnt, double totalStateCnt,
@@ -1289,9 +1306,9 @@ public class Analysis {
 
 	private HashSet<Transition> computeCycleClosingTrans(State[] curStateArray,
 			State[] nextStateArray,
-			HashMap<Transition, StaticSets> staticSetsMap,
+			HashMap<Transition, StaticDependencySets> staticSetsMap,
 			HashMap<Transition, Integer> tranFiringFreq,
-			StateGraph[] sgList, HashSet<PrjState> prjStateSet,
+			StateGraph[] sgList, StateSetInterface prjStateSet,
 			PrjState nextPrjState, HashSet<Transition> nextAmple, 
 			HashSet<Transition> curAmple, HashSet<PrjState> stateStack) {		
     	for (State s : nextStateArray)
@@ -1412,7 +1429,7 @@ public class Analysis {
 		}
 	}
 
-	private void printPrjStateSet(HashSet<PrjState> prjStateSet) {
+	private void printPrjStateSet(StateSetInterface prjStateSet) {
 		for (PrjState curGlobal : prjStateSet) {
 			State[] curStateArray = curGlobal.toStateArray();
 			printStateArray(curStateArray, null);
@@ -1676,7 +1693,7 @@ public class Analysis {
 	private void printStaticSetsMap( LhpnFile[] lpnList) {		
 		System.out.println("---------- staticSetsMap -----------");			
 		for (Transition lpnTranPair : staticDependency.keySet()) {
-			StaticSets statSets = staticDependency.get(lpnTranPair);
+			StaticDependencySets statSets = staticDependency.get(lpnTranPair);
 			printLpnTranPair(statSets.getTran(), statSets.getDisableSet(), "disableSet");
 			for (HashSet<Transition> setOneConjunctTrue : statSets.getOtherTransSetCurTranEnablingTrue()) {
 				printLpnTranPair(statSets.getTran(), setOneConjunctTrue, "enableBySetingEnablingTrue for one conjunct");
@@ -1760,7 +1777,7 @@ public class Analysis {
      * Return the set of all LPN transitions that are enabled in 'state'. The "init" flag indicates whether a transition
      * needs to be evaluated. The enabledSetTbl (for each StateGraph obj) stores the AMPLE set for each state of each LPN.
      * @param stateArray
-     * @param stateStack 
+     * @param prjStateSet 
      * @param enable 
      * @param disableByStealingToken 
      * @param disable 
@@ -1769,7 +1786,7 @@ public class Analysis {
      */
     private LpnTranList getAmple(State[] curStateArray, State[] nextStateArray, 
     			HashMap<Transition, Integer> tranFiringFreq, StateGraph[] sgList, LhpnFile[] lpnList,
-    			HashSet<PrjState> stateStack, PrjState stateStackTop) {
+    			StateSetInterface prjStateSet, PrjState stateStackTop) {
     	State[] stateArray = null;
     	if (nextStateArray == null)
     		stateArray = curStateArray;
@@ -1875,7 +1892,7 @@ public class Analysis {
      * @param isNextState
      * @return
      */
-	private LpnTranList getAmpleRefinedCycleRule(State[] curStateArray, State[] nextStateArray, HashMap<Transition,StaticSets> staticSetsMap, 
+	private LpnTranList getAmpleRefinedCycleRule(State[] curStateArray, State[] nextStateArray, HashMap<Transition,StaticDependencySets> staticSetsMap, 
 			boolean init, HashMap<Transition,Integer> tranFiringFreq, StateGraph[] sgList, 
 			HashSet<PrjState> stateStack, PrjState stateStackTop) {
 //    	AmpleSet nextAmple = new AmpleSet();
