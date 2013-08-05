@@ -1554,7 +1554,7 @@ public class StateGraph implements Runnable {
 	public int getNumberOfTransitions() {
 		int transitions = 0;
 		for (State m : stateGraph) {
-			transitions += m.getNextStates().length;
+			transitions += m.getNumTransitions();
 		}
 		return transitions;
 	}
@@ -1943,6 +1943,10 @@ public class StateGraph implements Runnable {
 
 		private StateTransitionPair[] getPrevStatesWithTrans() {
 			return prevStates;
+		}
+		
+		public int getNumTransitions() {
+			return nextStates.length;
 		}
 
 		public State[] getNextStates() {
