@@ -50,6 +50,7 @@ public class StateGraph implements Runnable {
 	}
 
 	public void buildStateGraph(JProgressBar progress) {
+		System.gc();
 		long initialMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 		stateGraph = new ArrayList<State>();// HashMap<String,
 		// LinkedList<State>>();
