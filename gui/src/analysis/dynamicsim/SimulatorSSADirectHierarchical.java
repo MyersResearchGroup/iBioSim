@@ -223,7 +223,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 					}
 				}
 			}
-			
+			/*
 			if(updateRateRule)
 			{
 				//updatePropensities(performRateRules(topmodel, currentTime), "topmodel");
@@ -235,7 +235,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 					performRateRules(modelstate, currentTime);
 				}
 			}
-			
+			*/
 			updateRules();
 
 			//update time for next iteration
@@ -623,5 +623,4 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		}
 
 	}
-
 }
