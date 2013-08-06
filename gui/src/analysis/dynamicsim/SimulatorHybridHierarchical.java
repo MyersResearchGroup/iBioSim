@@ -218,10 +218,17 @@ public class SimulatorHybridHierarchical  extends HierarchicalSimulator {
 
 			double reactionStep = currentTime + tau;
 
-			double odestep = currentTime;
 			
 			if (reactionStep < nextEventTime && reactionStep < currentTime + maxTimeStep) 
 			{
+				for(DiffEquations eq : functions)
+				{
+					odecalc.integrate(eq, currentTime, eq.state.values, reactionStep, eq.state.values);
+
+					updateValuesArray();
+
+				}
+				
 				currentTime = reactionStep;
 				// perform reaction
 			} 
@@ -241,36 +248,10 @@ public class SimulatorHybridHierarchical  extends HierarchicalSimulator {
 				currentTime = timeLimit;
 			}
 			
-			//do ODE step
-			while(odestep <= reactionStep)
-			{
-				for(DiffEquations eq : functions)
-				{
-					//EVENT HANDLING
-					//trigger and/or fire events, etc.
+			
 
-					ModelState modelstate = eq.state.modelstate;
-					double nextEndTime = currentTime + maxTimeStep;
-
-					if (nextEndTime > reactionStep) 
-					{
-						nextEndTime = reactionStep;
-					}
-
-
-					if(currentTime < nextEndTime && Math.abs(currentTime - nextEndTime) > 1e-3)
-					{
-						double[] temp = new double[eq.state.values.length];
-						odecalc.integrate(eq, currentTime, eq.state.values, nextEndTime, temp);
-						eq.state.values = temp;
-					}
-
-
-					updateValuesArray();
-
-
-				}
-			}
+				
+			
 
 			while (currentTime > printTime && printTime < timeLimit) 
 			{
