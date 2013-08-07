@@ -11,6 +11,12 @@ import lpn.parser.ExprTree;
 import lpn.parser.Transition;
 import lpn.parser.LpnDecomposition.LpnProcess;
 
+/**
+ * This class extends the non-probabilistic static dependency transition set. 
+ * It adds two more sets for dependency relations when transition rate expression is considered.  
+ * @author Zhen Zhang
+ *
+ */
 public class ProbStaticDependencySets extends StaticDependencySets {
 	
 	/**
