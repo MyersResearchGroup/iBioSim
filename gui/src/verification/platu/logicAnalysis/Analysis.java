@@ -231,8 +231,6 @@ public class Analysis {
 			//((TimedPrjState) initPrjState).updateInequalityVariables();
 		}
 		prjStateSet.add(initPrjState);
-		//prjStateSet.put(initPrjState, initPrjState);
-		
 		if(Options.getMarkovianModelFlag())	
 			((ProbGlobalStateSet) prjStateSet).setInitState(initPrjState);		
 
@@ -946,9 +944,19 @@ public class Analysis {
 		HashSet<PrjState> stateStack = new HashSet<PrjState>();
 		Stack<LinkedList<Transition>> lpnTranStack = new Stack<LinkedList<Transition>>();
 		StateSetInterface prjStateSet = generateStateSet();
-		PrjState initPrjState = new PrjState(initStateArray);
+		PrjState initPrjState;
+		// Create the appropriate type for the PrjState depending on whether timing is 
+		// being used or not. 
+		if (!Options.getMarkovianModelFlag()) {
+			initPrjState = new PrjState(initStateArray);
+		}			
+		else {
+			initPrjState = new ProbGlobalState(initStateArray);
+		}			
 		prjStateSet.add(initPrjState);
-		
+		if(Options.getMarkovianModelFlag()) {
+			((ProbGlobalStateSet) prjStateSet).setInitState(initPrjState);
+		}
 		PrjState stateStackTop = initPrjState;
 		if (Options.getDebugMode())			
 			printStateArray(stateStackTop.toStateArray(), "%%%%%%% stateStackTop %%%%%%%%");
@@ -1005,8 +1013,8 @@ public class Analysis {
 			}
 		}		
 		HashMap<Transition, Integer> tranFiringFreq = null;
-		if (Options.getUseDependentQueue())
-				tranFiringFreq = new HashMap<Transition, Integer>(allTransitions.keySet().size());
+//		if (Options.getUseDependentQueue())
+		tranFiringFreq = new HashMap<Transition, Integer>(allTransitions.keySet().size());
 		// Need to build conjuncts for each transition's enabling condition first before dealing with dependency and enable sets.
 		for (int lpnIndex=0; lpnIndex<lpnList.length; lpnIndex++) {
 			for (Transition curTran: allTransitions.get(lpnIndex)) {
@@ -1036,8 +1044,8 @@ public class Analysis {
 					((ProbStaticDependencySets) curStatic).buildOtherTransModifyCurTranRateSet();
 				}
 				staticDependency.put(curTran, curStatic);
-				if (Options.getUseDependentQueue())
-					tranFiringFreq.put(curTran, 0);
+//				if (Options.getUseDependentQueue())
+				tranFiringFreq.put(curTran, 0);
 			}			
 		}
 		if (Options.getDebugMode()) {
@@ -1107,19 +1115,18 @@ public class Analysis {
 				System.out.println("Fired Transition: " + firedTran.getLpn().getLabel() + "(" + firedTran.getLabel() + ")");
 				System.out.println("#################################");
 			}
-			if (Options.getUseDependentQueue()) {
-				Integer freq = tranFiringFreq.get(firedTran) + 1;
-				tranFiringFreq.put(firedTran, freq);
-//				if (Options.getDebugMode()) {
-//					System.out.println("~~~~~~tranFiringFreq~~~~~~~");
-//					printHashMap(tranFiringFreq, sgList);
-//				}
-			}
+			Integer freq = tranFiringFreq.get(firedTran) + 1;
+			tranFiringFreq.put(firedTran, freq);
+//			if (Options.getDebugMode()) {
+//				System.out.println("~~~~~~tranFiringFreq~~~~~~~");
+//				//printHashMap(tranFiringFreq, sgList);
+//			}
 			State[] nextStateArray = sgList[firedTran.getLpn().getLpnIndex()].fire(sgList, curStateArray, firedTran);
 			tranFiringCnt++;
 
 			// Check if the firedTran causes disabling error or deadlock.
-			if (Options.getReportDisablingError()) {
+			// TODO: (temp) Stochastic model does not need disabling error?
+			if (Options.getReportDisablingError() && !Options.getMarkovianModelFlag()) { 
 				for (int i=0; i<numLpns; i++) {
 					Transition disabledTran = firedTran.disablingError(curStateArray[i].getEnabledTransitions(), nextStateArray[i].getEnabledTransitions());
 					if (disabledTran != null) {
@@ -1139,9 +1146,13 @@ public class Analysis {
 				failure = true;
 				break main_while_loop;
 			}
-			PrjState nextPrjState = new PrjState(nextStateArray);
+			PrjState nextPrjState;//new PrjState(nextStateArray);
+			if (!Options.getMarkovianModelFlag())
+				nextPrjState = new PrjState(nextStateArray);
+			else
+				nextPrjState = new ProbGlobalState(nextStateArray);
 			Boolean existingState = prjStateSet.contains(nextPrjState) || stateStack.contains(nextPrjState);						
-			if (existingState == false) {
+			if (existingState == false) {				
 				if (Options.getDebugMode()) {
 					System.out.println("%%%%%%% existingSate == false %%%%%%%%");				
 					printStateArray(curStateArray, "******* curStateArray *******");
@@ -1155,27 +1166,41 @@ public class Analysis {
 				updateLocalAmpleTbl(nextAmpleTrans, sgList, nextStateArray);
 				stateStackTop.setChild(nextPrjState);
 				nextPrjState.setFather(stateStackTop);
+				if (Options.getMarkovianModelFlag()) {
+					if (Options.getBuildGlobalStateGraph()) {
+						// Add <firedTran, nextPrjState> to stateStackTop's nextGlobalStateMap. 
+						((ProbGlobalState) stateStackTop).addNextGlobalState(firedTran, nextPrjState);
+					}
+				}
 				stateStackTop = nextPrjState;
 				stateStack.add(stateStackTop);
+				lpnTranStack.push((LinkedList<Transition>) nextAmpleTrans.clone());
+				totalStates++;
 				if (Options.getDebugMode()) {
 					printStateArray(stateStackTop.toStateArray(), "%%%%%%% Add global state to stateStack %%%%%%%%");					
 					printTransList(nextAmpleTrans, "+++++++ Push trans onto lpnTranStack @ 2++++++++");
 				}
-				lpnTranStack.push((LinkedList<Transition>) nextAmpleTrans.clone());
-				totalStates++;
 			}
 			else {
-				if (Options.getOutputSgFlag()) {
-					if (Options.getDebugMode()) {
-						printStateArray(curStateArray, "******* curStateArray *******");
-						printStateArray(nextStateArray, "******* nextStateArray *******");
-						System.out.println("stateStackTop: ");
-						printStateArray(stateStackTop.toStateArray(), "stateStackTop: ");
-						System.out.println("firedTran = " + firedTran.getFullLabel());
-//						System.out.println("nextStateMap for stateStackTop before firedTran being added: ");
-//						printNextGlobalStateMap(stateStackTop.getNextStateMap());
-						System.out.println("-----------------------");
-					}											
+				if (Options.getMarkovianModelFlag()) {
+					if (Options.getBuildGlobalStateGraph()) {
+						// Add <firedTran, nextPrjState> to stateStackTop's nextGlobalStateMap. 
+						((ProbGlobalState) stateStackTop).addNextGlobalState(firedTran, nextPrjState);
+					}
+				}
+				else {
+					if (Options.getOutputSgFlag()) {
+						if (Options.getDebugMode()) {
+							printStateArray(curStateArray, "******* curStateArray *******");
+							printStateArray(nextStateArray, "******* nextStateArray *******");
+							System.out.println("stateStackTop: ");
+							printStateArray(stateStackTop.toStateArray(), "stateStackTop: ");
+							System.out.println("firedTran = " + firedTran.getFullLabel());
+							//						System.out.println("nextStateMap for stateStackTop before firedTran being added: ");
+							//						printNextGlobalStateMap(stateStackTop.getNextStateMap());
+							System.out.println("-----------------------");
+						}											
+					}
 				}
 				if (!Options.getCycleClosingMthd().toLowerCase().equals("no_cycleclosing")) {
 					// Cycle closing check
@@ -1234,7 +1259,8 @@ public class Analysis {
 		if (Options.getOutputLogFlag()) 
 			writePerformanceResultsToLogFile(true, tranFiringCnt, totalStateCnt, peakTotalMem / 1000000, peakUsedMem / 1000000);
 		if (Options.getOutputSgFlag()) {
-			//drawGlobalStateGraph(sgList, prjStateSet, false);
+			System.out.println("outputSGPath = "  + Options.getPrjSgPath());			//
+			drawGlobalStateGraph(sgList, initPrjState, prjStateSet, true);
 		}
 		return prjStateSet;
 	}
@@ -4237,7 +4263,7 @@ public class Analysis {
 //    			return ready;
 //    		}				
 //    	}
-    	if (Options.getUseDependentQueue()) {
+//    	if (Options.getUseDependentQueue()) {
     		DependentSetComparator depComp = new DependentSetComparator(tranFiringFreq); 
     		PriorityQueue<DependentSet> dependentSetQueue = new PriorityQueue<DependentSet>(curEnabled.size(), depComp);
     		for (Transition enabledTran : curEnabled) {
@@ -4260,26 +4286,26 @@ public class Analysis {
     		//cachedNecessarySets.clear();
     		ready = dependentSetQueue.poll().getDependent();
     		//return ready;
-    	}
-    	else {
-    		for (Transition enabledTran : curEnabled) {
-    			if (Options.getDebugMode())
-    				System.out.print("@ beginning of partialOrderReduction, consider seed transition " + getNamesOfLPNandTrans(enabledTran));    			
-    			HashSet<Transition> dependent = new HashSet<Transition>();
-    			boolean isCycleClosingAmpleComputation = false;
-    			dependent = computeDependent(curStateArray,enabledTran,dependent,curEnabled,isCycleClosingAmpleComputation);
-    			if (Options.getDebugMode()) {
-    				printIntegerSet(dependent, "@ end of partialOrderReduction, dependent set for enabled transition "
-    						+ getNamesOfLPNandTrans(enabledTran));						
-    			}
-    			if (ready.isEmpty() || dependent.size() < ready.size())
-    				ready = dependent;
-    			if (ready.size() == 1) {
-    				cachedNecessarySets.clear();
-    				return ready;
-    			}	
-    		}
-    	}
+//    	}
+//    	else {
+//    		for (Transition enabledTran : curEnabled) {
+//    			if (Options.getDebugMode())
+//    				System.out.print("@ beginning of partialOrderReduction, consider seed transition " + getNamesOfLPNandTrans(enabledTran));    			
+//    			HashSet<Transition> dependent = new HashSet<Transition>();
+//    			boolean isCycleClosingAmpleComputation = false;
+//    			dependent = computeDependent(curStateArray,enabledTran,dependent,curEnabled,isCycleClosingAmpleComputation);
+//    			if (Options.getDebugMode()) {
+//    				printIntegerSet(dependent, "@ end of partialOrderReduction, dependent set for enabled transition "
+//    						+ getNamesOfLPNandTrans(enabledTran));						
+//    			}
+//    			if (ready.isEmpty() || dependent.size() < ready.size())
+//    				ready = dependent;
+//    			if (ready.size() == 1) {
+//    				cachedNecessarySets.clear();
+//    				return ready;
+//    			}	
+//    		}
+//    	}
     	cachedNecessarySets.clear();
     	return ready;
     }
