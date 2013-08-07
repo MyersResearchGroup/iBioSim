@@ -924,8 +924,7 @@ public class Analysis {
 	 * @param initStateArray
 	 * @param cycleClosingMthdIndex 
 	 * @return
-	 */
-	@SuppressWarnings("unchecked")
+	 */	
 	public StateSetInterface searchPOR_taceback(final StateGraph[] sgList, final State[] initStateArray) {
 		System.out.println("---> calling function searchPOR_traceback");
 		System.out.println("---> " + Options.getPOR());
@@ -1044,16 +1043,6 @@ public class Analysis {
 		if (Options.getDebugMode()) {
 			printStaticSetsMap(lpnList);
 		}			
-		System.out.println("Exit now.");
-		System.exit(1);
-		
-		
-		
-		
-		
-		
-		
-		
 		LpnTranList initAmpleTrans = getAmple(initStateArray, null, tranFiringFreq, sgList, lpnList, prjStateSet, stateStackTop);
 		lpnTranStack.push(initAmpleTrans);
 		if (Options.getDebugMode()) {			
@@ -1201,7 +1190,7 @@ public class Analysis {
 						for (Transition t: curAmpleTrans) 
 							curAmpleSet.add(t);						
 						curAmpleSet.add(firedTran);
-						HashSet<Transition> newNextAmple = new HashSet<Transition>();
+						LpnTranList newNextAmple = new LpnTranList();
 						newNextAmple = computeCycleClosingTrans(curStateArray, nextStateArray, staticDependency, 
 																	tranFiringFreq, sgList, prjStateSet, nextPrjState, nextAmpleSet, curAmpleSet, stateStack);
 
@@ -1222,10 +1211,10 @@ public class Analysis {
 								printStateArray(stateStackTop.toStateArray(), "stateStackTop");
 //								System.out.println("nextStateMap for stateStackTop: ");
 //								printNextGlobalStateMap(nextPrjState.getNextStateMap());
-							}						
-							lpnTranStack.push((LinkedList<Transition>) newNextAmple.clone());
+							}									
+							lpnTranStack.push(newNextAmple.clone());
 							if (Options.getDebugMode()) {
-								printTransList((LinkedList<Transition>) newNextAmple.clone(), "+++++++ Push these trans onto lpnTranStack @ Cycle Closing ++++++++");								
+								printTransList(newNextAmple.clone(), "+++++++ Push these trans onto lpnTranStack @ Cycle Closing ++++++++");								
 								printTranStack(lpnTranStack, "******* lpnTranStack ***************");
 								
 							}
@@ -1296,15 +1285,15 @@ public class Analysis {
 		}
 	}
 
-	private LpnTranList convertToLpnTranList(HashSet<Transition> newNextAmple) {
-		LpnTranList newNextAmpleTrans = new LpnTranList();
-		for (Transition lpnTran : newNextAmple) {
-			newNextAmpleTrans.add(lpnTran);
-		}
-		return newNextAmpleTrans;
-	}
+//	private LpnTranList convertToLpnTranList(HashSet<Transition> newNextAmple) {
+//		LpnTranList newNextAmpleTrans = new LpnTranList();
+//		for (Transition lpnTran : newNextAmple) {
+//			newNextAmpleTrans.add(lpnTran);
+//		}
+//		return newNextAmpleTrans;
+//	}
 
-	private HashSet<Transition> computeCycleClosingTrans(State[] curStateArray,
+	private LpnTranList computeCycleClosingTrans(State[] curStateArray,
 			State[] nextStateArray,
 			HashMap<Transition, StaticDependencySets> staticSetsMap,
 			HashMap<Transition, Integer> tranFiringFreq,
@@ -1315,7 +1304,7 @@ public class Analysis {
     		if (s == null) 
     			throw new NullPointerException();
     	String cycleClosingMthd = Options.getCycleClosingMthd();
-    	HashSet<Transition> newNextAmple = new HashSet<Transition>();
+    	LpnTranList newNextAmple = new LpnTranList();
     	HashSet<Transition> nextEnabled = new HashSet<Transition>();
     	HashSet<Transition> curEnabled = new HashSet<Transition>();
     	for (int lpnIndex=0; lpnIndex<nextStateArray.length; lpnIndex++) {
@@ -1334,7 +1323,7 @@ public class Analysis {
     		}
     		if (cycleClosingMthd.equals("strong")) {
     			newNextAmple.addAll(setSubstraction(curEnabled, nextAmple));			
-    			updateLocalAmpleTbl(convertToLpnTranList(newNextAmple), sgList, nextStateArray);
+    			updateLocalAmpleTbl(newNextAmple, sgList, nextStateArray);
     		}
     		else if (cycleClosingMthd.equals("behavioral")) {
     			if (Options.getDebugMode()) {
@@ -1388,9 +1377,10 @@ public class Analysis {
     				// **************************
         			// TODO: Will newNextAmpleTmp - oldNextAmple be safe?
         			HashSet<Transition> newNextAmpleTmp = dependentSetQueue.poll().getDependent();        			
-        			newNextAmple = setSubstraction(newNextAmpleTmp, oldNextAmple);
+        			//newNextAmple = setSubstraction(newNextAmpleTmp, oldNextAmple);
+        			newNextAmple.addAll(setSubstraction(newNextAmpleTmp, oldNextAmple));
         			// **************************
-        			updateLocalAmpleTbl(convertToLpnTranList(newNextAmple), sgList, nextStateArray);
+        			updateLocalAmpleTbl(newNextAmple, sgList, nextStateArray);
     			}
     			if (Options.getDebugMode()) {
 //    				printIntegerSet(newNextAmple, sgList, "newNextAmple");
@@ -1691,16 +1681,28 @@ public class Analysis {
 //	}
 
 	private void printStaticSetsMap( LhpnFile[] lpnList) {		
-		System.out.println("---------- staticSetsMap -----------");			
+		System.out.println("============ staticSetsMap ============");			
 		for (Transition lpnTranPair : staticDependency.keySet()) {
-			StaticDependencySets statSets = staticDependency.get(lpnTranPair);
+			StaticDependencySets statSets = staticDependency.get(lpnTranPair);			
 			printLpnTranPair(statSets.getTran(), statSets.getDisableSet(), "disableSet");
 			for (HashSet<Transition> setOneConjunctTrue : statSets.getOtherTransSetCurTranEnablingTrue()) {
 				printLpnTranPair(statSets.getTran(), setOneConjunctTrue, "enableBySetingEnablingTrue for one conjunct");
 			}				
 		}
-
 	}
+	
+	private void printLpnTranPair(Transition curTran,
+			HashSet<Transition> TransitionSet, String setName) {				
+		System.out.println(setName + " for transition " + curTran.getFullLabel() + " is: ");
+		if (TransitionSet.isEmpty()) {
+			System.out.println("empty");				
+		}
+		else {
+			for (Transition lpnTranPair: TransitionSet) 
+				System.out.print(lpnTranPair.getFullLabel() + "\n");						
+			System.out.println();
+		}					
+	}	
 	
 //	private Transition[] assignStickyTransitions(LhpnFile lpn) {
 //		// allProcessTrans is a hashmap from a transition to its process color (integer). 
@@ -1759,20 +1761,7 @@ public class Analysis {
 //			System.out.print("\n");
 //		}			
 //	}
-	
-	private void printLpnTranPair(Transition curTran,
-			HashSet<Transition> TransitionSet, String setName) {				
-		System.out.println(setName + " for (" + curTran.getLpn().getLabel() + " , " + curTran.getLabel() + ") is: ");
-		if (TransitionSet.isEmpty()) {
-			System.out.println("empty");				
-		}
-		else {
-			for (Transition lpnTranPair: TransitionSet) 
-				System.out.print("(" + lpnTranPair.getLpn().getLabel() + ", " + lpnTranPair.getLabel() + ")," + " ");						
-			System.out.println();
-		}					
-	}		
-	
+			
     /**
      * Return the set of all LPN transitions that are enabled in 'state'. The "init" flag indicates whether a transition
      * needs to be evaluated. The enabledSetTbl (for each StateGraph obj) stores the AMPLE set for each state of each LPN.
