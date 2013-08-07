@@ -37,9 +37,11 @@ public class Options {
 	 */
 	public static enum PorDef { 
 		TB, // POR with trace-back
-		TBOFF // POR without trace-back			
+		TBOFF, // POR without trace-back
+		BEHAVIORAL, // POR with behavioral analysis
+		OFF // No POR
 		};
-	private static String POR = null;
+	private static String POR = "off";
 	
 	/*
 	 * Cycle closing method for partial order reduction
@@ -67,10 +69,10 @@ public class Options {
 	 */
 	private static boolean porDeadlockPreserve = true;
 	
-//	/*
-//	 * Flag to use use dependent set queue for POR
-//	 */
-	private static boolean useDependentQueue = false;
+////	/*
+////	 * Flag to use use dependent set queue for POR
+////	 */
+//	private static boolean useDependentQueue = false;
 	
 	/*
 	 * Report disabling error flag
@@ -405,13 +407,13 @@ public class Options {
 		return memoryUpperBoundFlag;
 	}
 
-	public static boolean getUseDependentQueue() {
-		return useDependentQueue;
-	}
-	
-	public static boolean setUseDependentQueue() {
-		return useDependentQueue = true;
-	}
+//	public static boolean getUseDependentQueue() {
+//		return useDependentQueue;
+//	}
+//	
+//	public static boolean setUseDependentQueue() {
+//		return useDependentQueue = true;
+//	}
 
 	public static void setMarkovianModelFlag() {
 		markovianModel = true;		
