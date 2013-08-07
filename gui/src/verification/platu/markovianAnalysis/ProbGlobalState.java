@@ -39,6 +39,8 @@ public class ProbGlobalState extends PrjState {
 	
 	public Semaphore lock;
 	
+	private boolean isAbsorbing;
+	
 	
 	public ProbGlobalState(State[] other) {
 		super(other);
@@ -47,8 +49,17 @@ public class ProbGlobalState extends PrjState {
 		if (Options.getBuildGlobalStateGraph())
 			nextProbGlobalStateMap = new HashMap<Transition, PrjState>();	
 		lock = new Semaphore(1);
+		isAbsorbing = false;
 	}
 	
+	public boolean isAbsorbing() {
+		return isAbsorbing;
+	}
+
+	public void setAbsorbing(boolean isAbsorbing) {
+		this.isAbsorbing = isAbsorbing;
+	}
+
 	public HashMap<String, String> getNestedProbValues() {
 		return nestedProbValues;
 	}
