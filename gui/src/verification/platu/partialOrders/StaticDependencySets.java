@@ -13,6 +13,11 @@ import lpn.parser.Transition;
 import lpn.parser.LpnDecomposition.LpnProcess;
 import verification.platu.main.Options;
 
+/**
+ * This class is used for constructing static dependent transition set for each seed transition.
+ * @author Zhen Zhang
+ *
+ */
 public class StaticDependencySets {
 	protected Transition curTran;
 	protected HashSet<Transition> disableSet; 
@@ -161,7 +166,7 @@ public class StaticDependencySets {
 						// Temporary solution: compare each conjunct to decide if they are disjoint. 
 						// Each conjunct in comparison only allow single literal or the negation of a literal. 
 						// TODO: Need a (DPLL) SAT solver to decide if they are disjoint.
-						if (!curTran.getConjunctsOfEnabling().isEmpty()) { 
+						if (curTran.getConjunctsOfEnabling() != null && !curTran.getConjunctsOfEnabling().isEmpty()) { 
 							// Assume buildConjunctsOfEnabling(term) was called previously for curTran and tranInConflict.
 							for (ExprTree conjunctOfCurTran : curTran.getConjunctsOfEnabling()) {	
 								for (ExprTree conjunctOfTranInConflict : tranInConflict.getConjunctsOfEnabling()) {
@@ -182,7 +187,6 @@ public class StaticDependencySets {
 						}
 						disableByStealingToken.add(tranInConflict);
 					}
-
 				}
 				else {
 					for (Transition tranInConflict : curTran.getConflictSet()) {
@@ -439,7 +443,7 @@ public class StaticDependencySets {
 	private void writeStringToPORDebugFile(String string) {		
 		try {
 			PORdebugBufferedWriter.append(string);
-			//PORdebugBufferedWriter.newLine();
+			
 			PORdebugBufferedWriter.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
