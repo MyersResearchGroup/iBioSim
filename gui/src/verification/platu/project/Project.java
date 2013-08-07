@@ -234,22 +234,49 @@ public class Project {
 
 		Analysis dfsStateExploration = new Analysis(sgArray);
 		if (!Options.getMarkovianModelFlag()) {
-			dfsStateExploration.search_dfs(sgArray, initStateArray);
+			if (Options.getPOR().toLowerCase().equals("off")) {
+				// DFS state exploration without any state reduction.
+				dfsStateExploration.search_dfs(sgArray, initStateArray);
+			}
+			if (Options.getPOR().toLowerCase().equals("tb")) {
+				dfsStateExploration.searchPOR_taceback(sgArray, initStateArray);
+			}				
+			else if (Options.getPOR().toLowerCase().equals("behavioral")) {
+				CompositionalAnalysis compAnalysis = new CompositionalAnalysis();
+				compAnalysis.compositionalFindSG(sgArray);			
+				dfsStateExploration.searchPOR_behavioral(sgArray, initStateArray, lpnTranRelation, "state");
+			}			
 			long elapsedTimeMillis = System.currentTimeMillis() - startReachability; 
 			float elapsedTimeSec = elapsedTimeMillis/1000F;
 			System.out.println("---> total runtime for reachability analysis: " + elapsedTimeSec + " sec\n");
 			if (Options.getOutputLogFlag())
 				outputRuntimeLog(false, elapsedTimeSec);
+			if (Options.getOutputSgFlag()) {
+				if (sgArray != null)
+					for (int i=0; i<sgArray.length; i++) {								
+						sgArray[i].drawLocalStateGraph();
+					}
+			}
 		}
-		else {
+		else { // Probabilistic model
 			//Options.setBuildGlobalStateGraph();
-			ProbGlobalStateSet globalStateSet = (ProbGlobalStateSet) dfsStateExploration.search_dfs(sgArray, initStateArray);
+			ProbGlobalStateSet globalStateSet = null;
+			if (Options.getPOR().toLowerCase().equals("off")) {
+				globalStateSet = (ProbGlobalStateSet) dfsStateExploration.search_dfs(sgArray, initStateArray);
+			}
+			else if (Options.getPOR().toLowerCase().equals("tb"))
+				globalStateSet = (ProbGlobalStateSet) dfsStateExploration.searchPOR_taceback(sgArray, initStateArray);
+			else if (Options.getPOR().toLowerCase().equals("behavioral")) {
+				CompositionalAnalysis compAnalysis = new CompositionalAnalysis();
+				compAnalysis.compositionalFindSG(sgArray);	
+				// TODO: (temp) Temporarily disable POR behavioral analysis on prob. models.
+				//globalStateSet = (ProbGlobalStateSet) dfsStateExploration.searchPOR_behavioral(sgArray, initStateArray, lpnTranRelation, "state");
+			}
 			long elapsedTimeMillisReachability = System.currentTimeMillis() - startReachability; 
 			float elapsedTimeSecReachability = elapsedTimeMillisReachability/1000F;
 			System.out.println("---> total runtime for reachability analysis: " + elapsedTimeSecReachability + " sec");			
 			if (Options.getOutputLogFlag())
-				outputRuntimeLog(false, elapsedTimeSecReachability);
-			
+				outputRuntimeLog(false, elapsedTimeSecReachability);			
 //			// -------------------- Temp: steady-state analysis --------------
 //			System.out.println("--------- Steady State Analysis ---------");
 //			long startSteadyState = System.currentTimeMillis();
@@ -263,27 +290,27 @@ public class Project {
 //			System.out.println("---> total runtime for steady state analysis: " + elapsedTimeSecSteadyState + " sec");
 //			// ------------------------------------------------------------
 			
-			// -------------------- Temp: transient analysis --------------
-			System.out.println("--------- Transient Analysis ---------");
-			long startTransientAnalysis = System.currentTimeMillis();
-			MarkovianAnalysis markovianAnalysis = new MarkovianAnalysis(globalStateSet);			
-//			// ========== Temp: Properties ============
-//			// --- toggle_switch ---
+//			// -------------------- Temp: transient analysis --------------
+//			System.out.println("--------- Transient Analysis ---------");
+//			long startTransientAnalysis = System.currentTimeMillis();
+//			MarkovianAnalysis markovianAnalysis = new MarkovianAnalysis(globalStateSet);			
+////			// ========== Temp: Properties ============
+////			// --- toggle_switch ---
 //			double timeLimit = 5000.0;
 //			double printInterval = 100.0;			
 //			double timeStep = 100.0;
 //			double absError = 1.0e-9;		
 //			String prop = "Pr=?{PF[<=5000]((LacI>40)&(TetR<20))}";
-//			String prop = "Pr=?{PF[<=5000]((TetR>40)&(LacI<20))}";			
-//			// --- end of toggle_switch ---
+//			//String prop = "Pr=?{PF[<=5000]((TetR>40)&(LacI<20))}";			
+////			// --- end of toggle_switch ---
 //			
 			// === C-element circuits ===
-			double timeLimit = 2100.0;
-			double printInterval = 100.0;			
-			double timeStep = 100.0;
-			double absError = 1.0e-9;
-			// --- majority ---
-			String prop = "Pr=?{PF[<=2100]((E>40)&(C<20))}";
+//			double timeLimit = 2100.0;
+//			double printInterval = 100.0;			
+//			double timeStep = 100.0;
+//			double absError = 1.0e-9;
+//			// --- majority ---
+//			String prop = "Pr=?{PF[<=2100]((E>40)&(C<20))}";
 			// --- end of majority ---
 //			
 //			// --- speedInd ---
@@ -296,42 +323,37 @@ public class Project {
 //			
 //			
 			// ========================================
-////			JPanel progBar = new JPanel();
-			JProgressBar progress = new JProgressBar(0, 100);
-//			progress.setStringPainted(true);
-//			progress.setValue(0);
-//			progress.setIndeterminate(true);
-////			progBar.add(progress);
-
-			PerfromTransientMarkovAnalysisThread performMarkovAnalysisThread = new PerfromTransientMarkovAnalysisThread(
-					markovianAnalysis, progress);			
-			if (prop != null) {
-				String[] condition = Translator.getProbpropParts(Translator.getProbpropExpression(prop));
-				boolean globallyTrue = false;
-				if (prop.contains("PF")) {
-					condition[0] = "true";
-				}
-				else if (prop.contains("PG")) {
-					condition[0] = "true";
-					globallyTrue = true;
-				}
-				performMarkovAnalysisThread.start(timeLimit, timeStep, printInterval, absError, condition, globallyTrue);
-			}
-			else {
-				performMarkovAnalysisThread.start(timeLimit, timeStep, printInterval, absError, null, false);
-			}
-			try {
-				performMarkovAnalysisThread.join();
-			} catch (InterruptedException e) {
-				//JOptionPane.showMessageDialog(Gui.frame, "Error In Execution!", "Error In Execution", JOptionPane.ERROR_MESSAGE);			
-				e.printStackTrace();
-			}
-			//dfsStateExploration.drawGlobalStateGraph(sgArray, globalStateSet.getInitialState(), globalStateSet, true);		
-			//markovianAnalysis.printStateSetStatus(globalStateSet, "end of transient analysis");
-			long elapsedTimeMillisTransient = System.currentTimeMillis() - startTransientAnalysis; 
-			float elapsedTimeSecTransient = elapsedTimeMillisTransient/1000F;
-			System.out.println("---> total runtime for transient analysis: " + elapsedTimeSecTransient + " sec");
-			// ------------------------------------------------------------
+//			JProgressBar progress = new JProgressBar(0, 100);
+//
+//			PerfromTransientMarkovAnalysisThread performMarkovAnalysisThread = new PerfromTransientMarkovAnalysisThread(
+//					markovianAnalysis, progress);			
+//			if (prop != null) {
+//				String[] condition = Translator.getProbpropParts(Translator.getProbpropExpression(prop));
+//				boolean globallyTrue = false;
+//				if (prop.contains("PF")) {
+//					condition[0] = "true";
+//				}
+//				else if (prop.contains("PG")) {
+//					condition[0] = "true";
+//					globallyTrue = true;
+//				}
+//				performMarkovAnalysisThread.start(timeLimit, timeStep, printInterval, absError, condition, globallyTrue);
+//			}
+//			else {
+//				performMarkovAnalysisThread.start(timeLimit, timeStep, printInterval, absError, null, false);
+//			}
+//			try {
+//				performMarkovAnalysisThread.join();
+//			} catch (InterruptedException e) {
+//				//JOptionPane.showMessageDialog(Gui.frame, "Error In Execution!", "Error In Execution", JOptionPane.ERROR_MESSAGE);			
+//				e.printStackTrace();
+//			}
+//			//dfsStateExploration.drawGlobalStateGraph(sgArray, globalStateSet.getInitialState(), globalStateSet, true);		
+//			//markovianAnalysis.printStateSetStatus(globalStateSet, "end of transient analysis");
+//			long elapsedTimeMillisTransient = System.currentTimeMillis() - startTransientAnalysis; 
+//			float elapsedTimeSecTransient = elapsedTimeMillisTransient/1000F;
+//			System.out.println("---> total runtime for transient analysis: " + elapsedTimeSecTransient + " sec");
+//			// ------------------------------------------------------------
 			
 			// -------------------- Temp: nested analysis --------------
 			// ------------------------------------------------------------
@@ -363,191 +385,6 @@ public class Project {
 		}
 
 		return lpnSet;
-	}
-	
-	/**
-	 * Find the SG for the entire project where each project state is a tuple of
-	 * local states. Use partial order reduction with trace-back during the dfs search.
-	 * @param globalSGpath 
-	 * @return 
-	 * 
-	 */
-	public void searchWithPOR() {
-		// TODO: temporarily set the input validation only to non-stochastic LPN models.
-		if (!Options.getMarkovianModelFlag())
-			validateInputs();
-//		if(Options.getSearchType().equals("compositional")){
-//    		this.analysis = new CompositionalAnalysis();
-//			
-//			if(Options.getParallelFlag()){
-//				this.analysis.parallelCompositionalFindSG(this.designUnitSet);
-//			}
-//			else{
-//				this.analysis.findReducedSG(this.designUnitSet);
-//			}
-//			
-//			return;
-//		}
-//	    
-		long startReachability = System.currentTimeMillis(); 
-		int lpnCnt = designUnitSet.size();
-
-		/* Prepare search by placing LPNs in an array in the order of their indices.*/
-        StateGraph[] sgArray = new StateGraph[lpnCnt];
-        int idx = 0;
-		for (StateGraph sg : designUnitSet) {
-			LhpnFile lpn = sg.getLpn();
-			lpn.setLpnIndex(idx++);
-			sgArray[lpn.getLpnIndex()] = sg;
-		}
-
-		// Initialize the project state
-		HashMap<String, Integer> varValMap = new HashMap<String, Integer>();
-		State[] initStateArray = new State[lpnCnt];
-		
-		for (int index = 0; index < lpnCnt; index++) {
-			LhpnFile curLpn = sgArray[index].getLpn();
-			StateGraph curSg = sgArray[index];
-			initStateArray[index] = curSg.genInitialState(); //curLpn.getInitState();
-			int[] curStateVector = initStateArray[index].getVariableVector();
-			varValMap = curLpn.getAllVarsWithValuesAsInt(curStateVector);
-//			DualHashMap<String, Integer> VarIndexMap = curLpn.getVarIndexMap();
-//			HashMap<String, String> outVars = curLpn.getAllOutputs();		
-//			for(String var : outVars.keySet()) {
-//				varValMap.put(var, curStateVector[VarIndexMap.getValue(var)]);
-//			}
-		}
-
-		// Adjust the value of the input variables in LPN in the initial state.
-		// Add the initial states into their respective LPN.
-		for (int index = 0; index < lpnCnt; index++) {
-			StateGraph curSg = sgArray[index];
-			initStateArray[index].update(curSg, varValMap, curSg.getLpn().getVarIndexMap());
-			initStateArray[index] = curSg.addState(initStateArray[index]);
-		}		
-		
-		Analysis dfsPOR = new Analysis(sgArray);
-		if (!Options.getMarkovianModelFlag()) {
-			if (Options.getPOR().toLowerCase().equals("tb"))
-				dfsPOR.searchPOR_taceback(sgArray, initStateArray);
-			else if (Options.getPOR().toLowerCase().equals("behavioral")) {
-				CompositionalAnalysis compAnalysis = new CompositionalAnalysis();
-				compAnalysis.compositionalFindSG(sgArray);			
-				dfsPOR.searchPOR_behavioral(sgArray, initStateArray, lpnTranRelation, "state");
-			}			
-			else {
-				System.out.println("Need to provide a POR method.");			
-			}
-			long elapsedTimeMillis = System.currentTimeMillis() - startReachability; 
-			float elapsedTimeSec = elapsedTimeMillis/1000F;	
-			System.out.println("---> total runtime for reachability analysis: " + elapsedTimeSec + " sec\n");
-			if (Options.getOutputLogFlag())
-				outputRuntimeLog(true, elapsedTimeSec);		
-			if (Options.getOutputSgFlag()) {
-				if (sgArray != null)
-					for (int i=0; i<sgArray.length; i++) {								
-						sgArray[i].drawLocalStateGraph();
-					}
-			}
-		}
-		else { // Markovian analysis
-			//Options.setBuildGlobalStateGraph();
-			ProbGlobalStateSet globalStateSet = null;
-			if (Options.getPOR().toLowerCase().equals("tb"))
-				globalStateSet = (ProbGlobalStateSet) dfsPOR.searchPOR_taceback(sgArray, initStateArray);
-			else if (Options.getPOR().toLowerCase().equals("behavioral")) {
-				CompositionalAnalysis compAnalysis = new CompositionalAnalysis();
-				compAnalysis.compositionalFindSG(sgArray);			
-				dfsPOR.searchPOR_behavioral(sgArray, initStateArray, lpnTranRelation, "state");
-			}			
-			else {
-				System.out.println("Need to provide a POR method.");			
-			}
-			long elapsedTimeMillis = System.currentTimeMillis() - startReachability; 
-			float elapsedTimeSec = elapsedTimeMillis/1000F;	
-			System.out.println("---> total runtime for reachability analysis: " + elapsedTimeSec + " sec\n");
-			if (Options.getOutputLogFlag())
-				outputRuntimeLog(true, elapsedTimeSec);		
-			if (Options.getOutputSgFlag()) {
-				if (sgArray != null)
-					for (int i=0; i<sgArray.length; i++) {								
-						sgArray[i].drawLocalStateGraph();
-					}
-			}
-				// -------------------- Temp: steady-state analysis --------------
-//			System.out.println("--------- Steady State Analysis ---------");
-//			long startSteadyState = System.currentTimeMillis();
-//			MarkovianAnalysis markovianAnalysis = new MarkovianAnalysis(globalStateSet);
-//			double tolerance = 0.0000000001;
-//			PrjState initialSt = globalStateSet.getInitState();
-//			markovianAnalysis.performSteadyStateMarkovianAnalysis(tolerance, null, initialSt, null);
-//			dfsStateExploration.drawGlobalStateGraph(sgArray, globalStateSet.getInitState(), globalStateSet, true);
-//			long elapsedTimeMillisSteadyState = System.currentTimeMillis() - startSteadyState; 
-//			float elapsedTimeSecSteadyState = elapsedTimeMillisSteadyState/1000F;
-//			System.out.println("---> total runtime for steady state analysis: " + elapsedTimeSecSteadyState + " sec");
-//			// ------------------------------------------------------------
-			
-			// -------------------- Temp: transient analysis --------------
-			System.out.println("--------- Transient Analysis ---------");
-			long startTransientAnalysis = System.currentTimeMillis();
-			MarkovianAnalysis markovianAnalysis = new MarkovianAnalysis(globalStateSet);		
-			// ========== Temp: Properties ============
-			// --- toggle_switch ---
-//			double timeLimit = 2100.0;
-//			double printInterval = 100.0;			
-//			double timeStep = 100.0;
-//			double absError = 1.0e-9;
-			//String prop = "Pr=?{PF[<=5000]((LacI>40)&(TetR<20))}";
-			//String prop = "Pr=?{PF[<=5000]((TetR>40)&(LacI<20))}";			
-			// --- end of toggle_switch ---
-			
-			// --- majority ---
-			double timeLimit = 2100.0;
-			double printInterval = 100.0;			
-			double timeStep = 100.0;
-			double absError = 1.0e-9;
-			String prop = "Pr=?{PF[<=2100]((E>40)&(C<20))}";
-			// --- end of majority ---
-			// ========================================
-////			JPanel progBar = new JPanel();
-			JProgressBar progress = new JProgressBar(0, 100);
-//			progress.setStringPainted(true);
-//			progress.setValue(0);
-//			progress.setIndeterminate(true);
-////			progBar.add(progress);
-
-			PerfromTransientMarkovAnalysisThread performMarkovAnalysisThread = new PerfromTransientMarkovAnalysisThread(
-					markovianAnalysis, progress);			
-			if (prop != null) {
-				String[] condition = Translator.getProbpropParts(Translator.getProbpropExpression(prop));
-				boolean globallyTrue = false;
-				if (prop.contains("PF")) {
-					condition[0] = "true";
-				}
-				else if (prop.contains("PG")) {
-					condition[0] = "true";
-					globallyTrue = true;
-				}
-				performMarkovAnalysisThread.start(timeLimit, timeStep, printInterval, absError, condition, globallyTrue);
-			}
-			else {
-				performMarkovAnalysisThread.start(timeLimit, timeStep, printInterval, absError, null, false);
-			}
-			try {
-				performMarkovAnalysisThread.join();
-			} catch (InterruptedException e) {
-				//JOptionPane.showMessageDialog(Gui.frame, "Error In Execution!", "Error In Execution", JOptionPane.ERROR_MESSAGE);			
-				e.printStackTrace();
-			}
-			//dfsStateExploration.drawGlobalStateGraph(sgArray, globalStateSet.getInitialState(), globalStateSet, true);
-			long elapsedTimeMillisTransient = System.currentTimeMillis() - startTransientAnalysis; 
-			float elapsedTimeSecTransient = elapsedTimeMillisTransient/1000F;
-			System.out.println("---> total runtime for transient analysis: " + elapsedTimeSecTransient + " sec");
-			// ------------------------------------------------------------
-			
-			// -------------------- Temp: nested analysis --------------
-			// ------------------------------------------------------------		
-		}
 	}
 	
 	private void outputRuntimeLog(boolean isPOR, float runtime) {
