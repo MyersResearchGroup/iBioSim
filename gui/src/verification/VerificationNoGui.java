@@ -26,32 +26,27 @@ public class VerificationNoGui {
 		//System.out.println("Enter the directory of all LPNs: ");
 		//Scanner scanner = new Scanner(System.in);
 		//String directory = scanner.nextLine();
-		String directory = null; 
-		boolean poroff = true;
+		String directory = null; 		
 		for (int i=0; i<args.length; i++) {
 			if (args[i].equals("-portb")) {
 				Options.setPOR("tb");
 				Options.setCycleClosingMthd("behavioral");
-				Options.setCycleClosingAmpleMethd("cctb");
-				poroff = false;
+				Options.setCycleClosingAmpleMethd("cctb");				
 			}
 			else if (args[i].equals("-porbehavioral")) {
 				Options.setPOR("behavioral");
 				Options.setCycleClosingMthd("behavioral");
 				Options.setCycleClosingAmpleMethd("none");
-				poroff = false;
 			}
 			else if (args[i].equals("-porbehavioral")) {
 				Options.setPOR("behavioral");
 				Options.setCycleClosingMthd("behavioral");
 				Options.setCycleClosingAmpleMethd("cctboff");
-				poroff = false;
 			}
 			else if (args[i].equals("-portboff")) {
 				Options.setPOR("tboff");
 				Options.setCycleClosingMthd("behavioral");
 				Options.setCycleClosingAmpleMethd("cctboff");
-				poroff = false;
 			}
 			else if (args[i].contains("-dir=")) { // Directory should be provided as an argument starting with -dir:
 				directory = args[i].trim().substring(5);
@@ -78,10 +73,10 @@ public class VerificationNoGui {
 				Options.setDebugMode(true);
 				System.out.println("Debug mode is ON.");
 			}
-			else if (args[i].contains("-depQueue")) {
-				Options.setUseDependentQueue();
-				System.out.println("Use dependent queue.");
-			}
+//			else if (args[i].contains("-depQueue")) {
+//				Options.setUseDependentQueue();
+//				System.out.println("Use dependent queue.");
+//			}
 			else if (args[i].contains("-disableDisablingError")) {
 				Options.disableDisablingError();
 				System.out.println("Disabling error was diabled.");
@@ -123,10 +118,6 @@ public class VerificationNoGui {
 			System.out.println(lpnList.get(i).getLabel());
 		}
 		Project untimed_dfs = new Project(lpnList);
-		if (poroff)
-			untimed_dfs.search();
-		else 
-			untimed_dfs.searchWithPOR();
-		
+		untimed_dfs.search();
 	}
 }
