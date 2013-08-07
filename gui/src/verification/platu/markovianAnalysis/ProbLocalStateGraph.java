@@ -439,16 +439,20 @@ public class ProbLocalStateGraph extends StateGraph {
     	System.out.println("state = " + givenState.getFullLabel());
     	HashMap<Transition, State> nextStateMapForGivenState = nextStateMap.get(givenState);
     	HashMap<Transition, Double> nextTranRateMapForGivenState = nextTranRateMap.get(givenState);
-    	if (nextStateMapForGivenState == null)
-    		System.out.println("next state = null");
+    	if (nextStateMapForGivenState == null) {    		
+    		NullPointerException npe = new NullPointerException("Next probabilistic local state is null.");
+    		npe.printStackTrace();    		
+    	}
     	else {
     		for (Transition t: nextStateMapForGivenState.keySet()) {
     			State nextState = nextStateMapForGivenState.get(t);    			
    				System.out.println(t.getFullLabel() + " -> S" + nextState.getIndex() + "(" + nextState.getLpn().getLabel() + ")");
     		}
     	}	
-    	if (nextTranRateMapForGivenState == null)
-    		System.out.println("tran rate = null");
+    	if (nextTranRateMapForGivenState == null) {    		
+    		NullPointerException npe1 = new NullPointerException("Next transition rateis is null.");
+    		npe1.printStackTrace();	    		
+    	}    		
     	else {
     		for (Transition t: nextTranRateMapForGivenState.keySet()) {
     			Double tranRate = nextTranRateMapForGivenState.get(t);
