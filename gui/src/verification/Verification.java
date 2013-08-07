@@ -91,7 +91,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	vergate, orbits, search, trace, bdd, dbm, smt, untimedStateSearch, lhpn, view, none,
 	simplify, abstractLhpn, dbm2, splitZone;
 
-	private JCheckBox abst, partialOrder, dot, verbose, graph, untimedPOR, decomposeLPN, multipleLPNs, genrg,
+	private JCheckBox abst, partialOrder, dot, verbose, graph, decomposeLPN, multipleLPNs, genrg,
 	timsubset, superset, infopt, orbmatch, interleav, prune, disabling,
 	nofail, noproj, keepgoing, explpn, nochecks, reduction, newTab,
 	postProc, redCheck, xForm2, expandRate, useGraphs;
@@ -253,13 +253,13 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		dot = new JCheckBox("Dot");
 		verbose = new JCheckBox("Verbose");
 		graph = new JCheckBox("Show State Graph");
-		untimedPOR = new JCheckBox("Use Partial Orders");
+		//untimedPOR = new JCheckBox("Use Partial Orders");
 		decomposeLPN = new JCheckBox("Decompose LPN into components");
 		multipleLPNs = new JCheckBox("Multiple LPNs");
 		dot.addActionListener(this);
 		verbose.addActionListener(this);
 		graph.addActionListener(this);
-		untimedPOR.addActionListener(this);
+		//untimedPOR.addActionListener(this);
 		decomposeLPN.addActionListener(this);
 		multipleLPNs.addActionListener(this);
 		// Verification Algorithms
@@ -408,7 +408,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		otherPanel.add(dot);
 		otherPanel.add(verbose);
 		otherPanel.add(graph);
-		otherPanel.add(untimedPOR);
+		//otherPanel.add(untimedPOR);
 		otherPanel.add(decomposeLPN);
 		otherPanel.add(multipleLPNs);
 
@@ -566,11 +566,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					graph.setSelected(true);
 				}
 			}
-			if (load.containsKey("verification.UntimedPOR")) {
-				if (load.getProperty("verification.UntimedPOR").equals("true")) {
-					untimedPOR.setSelected(true);
-				}
-			}
+//			if (load.containsKey("verification.UntimedPOR")) {
+//				if (load.getProperty("verification.UntimedPOR").equals("true")) {
+//					untimedPOR.setSelected(true);
+//				}
+//			}
 			if (load.containsKey("verification.DecomposeLPN")) {
 				if (load.getProperty("verification.DecomposeLPN").equals("true")) {
 					decomposeLPN.setSelected(true);
@@ -1244,10 +1244,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				//				}
 				// -------------------------------------				
 				//----------- POR and Cycle Closing Methods (Simplified)--------------
-				if (untimedPOR.isSelected()) {
+				//if (untimedPOR.isSelected()) {
 					// Options for using trace-back in ample calculation
 					// TODO: Only need to keep Trace-back (depQueue). 
-					String[] ampleMethds = {"Trace-back", "Trace-back (depQueue)","No trace-back for ample computation", "Behavioral Analysis"};
+					String[] ampleMethds = {"No POR", "Trace-back","No trace-back for ample computation", "Behavioral Analysis"};
 					JList ampleMethdsList = new JList(ampleMethds);
 					ampleMethdsList.setVisibleRowCount(4);
 					//cycleClosingList.addListSelectionListener(new ValueReporter());
@@ -1264,15 +1264,13 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					}
 					int ampleMethdsIndex = ampleMethdsList.getSelectedIndex();
 					if (ampleMethdsIndex == 0) { 
-						Options.setPOR("tb");
-						Options.setCycleClosingMthd("behavioral");
-						Options.setCycleClosingAmpleMethd("cctb");
+						Options.setPOR("off");						
 					}
 					if (ampleMethdsIndex == 1) { 
 						Options.setPOR("tb");
 						Options.setCycleClosingMthd("behavioral");
 						Options.setCycleClosingAmpleMethd("cctb");
-						Options.setUseDependentQueue();
+						//Options.setUseDependentQueue();
 					}		
 					if (ampleMethdsIndex == 2) {
 						Options.setPOR("tboff");
@@ -1324,20 +1322,19 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						Options.setOutputSgFlag(true);
 					}
 					Options.setPrjSgPath(directory + separator);
-					// Options for printing the final numbers from search_dfs or search_dfsPOR. 
+					// Options for printing the final numbers from search_dfs.
 					Options.setOutputLogFlag(true);
-					//Options.setPrintLogToFile(false);
-					untimed_dfs.searchWithPOR();
-				}				
-				else { // No POR
-					Options.setPrjSgPath(directory + separator);
-					// Options for printing the final numbers from search_dfs or search_dfsPOR. 
-					Options.setOutputLogFlag(true);
-					//					Options.setPrintLogToFile(false);
-					if (dot.isSelected()) 
-						Options.setOutputSgFlag(true);
 					untimed_dfs.search();
-				}
+				//}				
+				//else { // No POR
+//					Options.setPrjSgPath(directory + separator);
+//					// Options for printing the final numbers from search_dfs or search_dfsPOR. 
+//					Options.setOutputLogFlag(true);
+//					//					Options.setPrintLogToFile(false);
+//					if (dot.isSelected()) 
+//						Options.setOutputSgFlag(true);
+//					untimed_dfs.search();
+				//}
 				return;
 			}
 			else if (decomposeLPN.isSelected() && verbose.isSelected() && lpnList.getSelectedValue() == null) {
@@ -2525,11 +2522,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			} else {
 				prop.setProperty("verification.Graph", "false");
 			}
-			if (untimedPOR.isSelected()) {
-				prop.setProperty("verification.UntimedPOR", "true");
-			} else {
-				prop.setProperty("verification.UntimedPOR", "false");
-			}
+//			if (untimedPOR.isSelected()) {
+//				prop.setProperty("verification.UntimedPOR", "true");
+//			} else {
+//				prop.setProperty("verification.UntimedPOR", "false");
+//			}
 			if (decomposeLPN.isSelected()) {
 				prop.setProperty("verification.DecomposeLPN", "true");
 			} else {
