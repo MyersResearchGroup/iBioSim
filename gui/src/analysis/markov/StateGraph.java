@@ -681,6 +681,12 @@ public class StateGraph implements Runnable {
 				output.put("Failure", failureProb);
 				output.put("Success", successProb);
 				output.put("Timelimit", timelimitProb);
+				// --- Temp: Print results -----
+				System.out.println("------ Curtis's anlaysis engine ------");
+				System.out.println("Failure = " + failureProb);
+				System.out.println("Success = " + successProb);
+				System.out.println("Timelimit = " + timelimitProb);
+				// -----------------------------
 				String result1 = "#total";
 				String result2 = "1.0";
 				for (String s : output.keySet()) {
