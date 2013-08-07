@@ -162,14 +162,12 @@ public class MarkovianAnalysis implements Runnable{
 		System.out.println("normalizationFactor = " + normalizationFactor);
 		if (stop) {
 			return false;
-		}
+		}		
 		for (PrjState curGlobalSt : globalStateSet.keySet()) {
 			double curProb = ((ProbGlobalState) curGlobalSt).getCurrentProb();
-//			double tranRateSum = ((ProbGlobalState) curGlobalSt).getTranRateSum();
-//			((ProbGlobalState) curGlobalSt).setCurrentProb((curProb/totalProb) * tranRateSum);
 			((ProbGlobalState) curGlobalSt).setCurrentProb(curProb/normalizationFactor);
 		}
-//		printStateSetStatus(globalStateSet, "end of steady state analysis");
+		//printStateSetStatus(globalStateSet, "end of steady state analysis");		
 		return true;
 	}
 
@@ -180,20 +178,20 @@ public class MarkovianAnalysis implements Runnable{
 //			if (((ProbGlobalState) curGlobalSt).getCurrentProb() > 1) {
 //				System.out.println(curGlobalSt.getLabel() + ", curProb = " 
 //						+ ((ProbGlobalState) curGlobalSt).getCurrentProb() + ", exceeds 1.");
-//				System.exit(1);
-//				return;
+//				//System.exit(1);
+//				//return;
 //			}
 //			if (((ProbGlobalState) curGlobalSt).getNextProb() > 1) {
 //				System.out.println(curGlobalSt.getLabel() + ", nextProb = " 
 //						+ ((ProbGlobalState) curGlobalSt).getNextProb() + ", exceeds 1.");
-//				System.exit(1);
-//				return;
+//				//System.exit(1);
+//				//return;
 //			}
 //			if (((ProbGlobalState) curGlobalSt).getPiProb() > 1) {
 //				System.out.println(curGlobalSt.getLabel() + ", piProb = " 
 //						+ ((ProbGlobalState) curGlobalSt).getPiProb() + ", exceeds 1.");
-//				System.exit(1);
-//				return;
+//				//System.exit(1);
+//				//return;
 //			}
 //			System.out.println(curGlobalSt.getLabel() 
 //					+ ",\t curProb = " + ((ProbGlobalState) curGlobalSt).getCurrentProb()
@@ -748,6 +746,7 @@ public class MarkovianAnalysis implements Runnable{
 					if (!performTransientMarkovianAnalysis(step, Gamma, K, progress)) {
 						return false;
 					}
+					//printStateSetStatus(globalStateSet, "middle of transient analysis");
 					failureProb = 0;
 					successProb = 0;
 					// for (String state : stateGraph.keySet()) {
@@ -906,7 +905,12 @@ public class MarkovianAnalysis implements Runnable{
 		Object[] globalStArray = globalStateSet.keySet().toArray();
 		for (int i = 0; i < globalStArray.length; i++) {
 			ProbGlobalState m = (ProbGlobalState) globalStArray[i];
-			m.setNextProb(((ProbGlobalState) m).getCurrentProb() * (1 - (m.getTranRateSum() / Gamma)));
+			if (m.isAbsorbing()) {
+				m.setNextProb(((ProbGlobalState) m).getCurrentProb());
+			}
+			else {
+				m.setNextProb(((ProbGlobalState) m).getCurrentProb() * (1 - (m.getTranRateSum() / Gamma)));
+			}
 		}
 		ArrayList<TransientMarkovMatrixMultiplyThread> threads = new ArrayList<TransientMarkovMatrixMultiplyThread>();
 		for (int i = 0; i < threadCount; i++) {
@@ -1017,9 +1021,9 @@ public class MarkovianAnalysis implements Runnable{
 		Object[] globalStateArray = globalStateSet.keySet().toArray();		
 		for (int k = 1; k <= K && !stop; k++) {
 			for (int i = startIndex; i < endIndex; i++) {
-				ProbGlobalState curState = (ProbGlobalState) globalStateArray[i];				
-				for (Transition outTran : curState.getOutgoingTranSetForProbGlobalState()) {
-					if (!isPruned(curState, outTran)) {
+				ProbGlobalState curState = (ProbGlobalState) globalStateArray[i];
+				if (!curState.isAbsorbing()) {
+					for (Transition outTran : curState.getOutgoingTranSetForProbGlobalState()) {
 						ProbGlobalState nextState = (ProbGlobalState) curState.getNextProbGlobalState(outTran, globalStateSet);
 						try {
 							nextState.lock.acquire();
@@ -1028,8 +1032,8 @@ public class MarkovianAnalysis implements Runnable{
 							e.printStackTrace();
 						}
 						nextState.lock.release();
-					}					
-				}
+					}
+				}			
 				if (stop) {
 					waitingThreads--;
 					notifyAll();
@@ -1053,7 +1057,12 @@ public class MarkovianAnalysis implements Runnable{
 				m.setNextProb(m.getNextProb() * ((Gamma * timeLimit) / k));
 				m.setPiProb(m.getPiProb() + m.getNextProb());
 				m.setCurrentProbToNext();
-				m.setNextProb(m.getCurrentProb() * (1 - (m.getTranRateSum() / Gamma)));
+				if (m.isAbsorbing()) {
+					m.setNextProb(((ProbGlobalState) m).getCurrentProb());
+				}
+				else {
+					m.setNextProb(m.getCurrentProb() * (1 - (m.getTranRateSum() / Gamma)));					
+				}
 				if (stop) {
 					waitingThreads++;
 					notifyAll();
@@ -1085,35 +1094,33 @@ public class MarkovianAnalysis implements Runnable{
 			expr.token = expr.intexpr_gettok(condition);
 			expr.intexpr_L(condition);
 			if (expr.evaluateExpr(((ProbGlobalState) m).getVariables()) == 1.0) {
-				for (Transition trans : ((ProbGlobalState) m).getOutgoingTranSetForProbGlobalState()) {
-					pruneTransition(true, m, trans);
-				}
-				((ProbGlobalState) m).setTranRateSum(0.0);				
+				((ProbGlobalState) m).setAbsorbing(true);
+				//((ProbGlobalState) m).setTranRateSum(0.0);				
 			}
 		}
 	}
-	
-	/**
-	 * This method do or undo pruning for a given transition based on the pruneFlag. 
-	 * 
-	 * @param pruneFlag
-	 * @param curProbGlobalSt
-	 * @param outTran
-	 */
-	public void pruneTransition(boolean pruneFlag, PrjState curProbGlobalSt, Transition outTran) {
-		// TODO: Need to consider the case where next global state map exists.
-		// The local state index (in a global state) is the same as its corresponding lpn index. 
-		int localStateIndex = outTran.getLpn().getLpnIndex();
-		State localState = curProbGlobalSt.toStateArray()[localStateIndex];
-		ProbLocalStateGraph localSg = ((ProbLocalStateGraph) localState.getStateGraph());
-		double tranRate = localSg.getTranRate(localState, outTran);
-		if (pruneFlag && (tranRate > 0.0)) { // Set tranRate to negative since outTran is pruned.
-			localSg.setTranRate(localState, outTran, (-1* tranRate));
-		}
-		else if (!pruneFlag && (tranRate < 0.0)) { // Restore tranRate to positive.
-			localSg.setTranRate(localState, outTran, (-1* tranRate));
-		}
-	}
+//	
+//	/**
+//	 * This method do or undo pruning for a given transition based on the pruneFlag. 
+//	 * 
+//	 * @param pruneFlag
+//	 * @param curProbGlobalSt
+//	 * @param outTran
+//	 */
+//	public void pruneTransition(boolean pruneFlag, PrjState curProbGlobalSt, Transition outTran) {
+//		// TODO: Need to consider the case where next global state map exists.
+//		// The local state index (in a global state) is the same as its corresponding lpn index. 
+//		int localStateIndex = outTran.getLpn().getLpnIndex();
+//		State localState = curProbGlobalSt.toStateArray()[localStateIndex];
+//		ProbLocalStateGraph localSg = ((ProbLocalStateGraph) localState.getStateGraph());
+//		double tranRate = localSg.getTranRate(localState, outTran);
+//		if (pruneFlag && (tranRate > 0.0)) { // Set tranRate to negative since outTran is pruned.
+//			localSg.setTranRate(localState, outTran, (-1* tranRate));
+//		}
+//		else if (!pruneFlag && (tranRate < 0.0)) { // Restore tranRate to positive.
+//			localSg.setTranRate(localState, outTran, (-1* tranRate));
+//		}
+//	}
 	
 	/**
 	 * Test if the given transition outTran is pruned. 
