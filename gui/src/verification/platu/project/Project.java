@@ -249,14 +249,15 @@ public class Project {
 			System.out.println("---> total runtime for reachability analysis: " + elapsedTimeSecReachability + " sec");			
 			if (Options.getOutputLogFlag())
 				outputRuntimeLog(false, elapsedTimeSecReachability);
-			// -------------------- Temp: steady-state analysis --------------
+			
+//			// -------------------- Temp: steady-state analysis --------------
 //			System.out.println("--------- Steady State Analysis ---------");
 //			long startSteadyState = System.currentTimeMillis();
 //			MarkovianAnalysis markovianAnalysis = new MarkovianAnalysis(globalStateSet);
 //			double tolerance = 0.0000000001;
-//			PrjState initialSt = globalStateSet.getInitState();
+//			PrjState initialSt = ((ProbGlobalStateSet) globalStateSet).getInitialState();
 //			markovianAnalysis.performSteadyStateMarkovianAnalysis(tolerance, null, initialSt, null);
-//			dfsStateExploration.drawGlobalStateGraph(sgArray, globalStateSet.getInitState(), globalStateSet, true);
+//			dfsStateExploration.drawGlobalStateGraph(sgArray, initialSt, globalStateSet, true);
 //			long elapsedTimeMillisSteadyState = System.currentTimeMillis() - startSteadyState; 
 //			float elapsedTimeSecSteadyState = elapsedTimeMillisSteadyState/1000F;
 //			System.out.println("---> total runtime for steady state analysis: " + elapsedTimeSecSteadyState + " sec");
@@ -265,30 +266,35 @@ public class Project {
 			// -------------------- Temp: transient analysis --------------
 			System.out.println("--------- Transient Analysis ---------");
 			long startTransientAnalysis = System.currentTimeMillis();
-			MarkovianAnalysis markovianAnalysis = new MarkovianAnalysis(globalStateSet);
+			MarkovianAnalysis markovianAnalysis = new MarkovianAnalysis(globalStateSet);			
+//			// ========== Temp: Properties ============
+//			// --- toggle_switch ---
+//			double timeLimit = 5000.0;
+//			double printInterval = 100.0;			
+//			double timeStep = 100.0;
+//			double absError = 1.0e-9;		
+//			String prop = "Pr=?{PF[<=5000]((LacI>40)&(TetR<20))}";
+//			String prop = "Pr=?{PF[<=5000]((TetR>40)&(LacI<20))}";			
+//			// --- end of toggle_switch ---
+//			
+			// === C-element circuits ===
 			double timeLimit = 2100.0;
 			double printInterval = 100.0;			
 			double timeStep = 100.0;
-			double absError = 1.0e-9;			
-			// ========== Temp: Properties ============
-			// --- toggle_switch ---
-			//String prop = "Pr=?{PF[<=5000]((LacI>40)&(TetR<20))}";
-			//String prop = "Pr=?{PF[<=5000]((TetR>40)&(LacI<20))}";			
-			// --- end of toggle_switch ---
-			
+			double absError = 1.0e-9;
 			// --- majority ---
 			String prop = "Pr=?{PF[<=2100]((E>40)&(C<20))}";
 			// --- end of majority ---
-			
-			// --- speedInd ---
-			//String prop = "Pr=?{PF[<=2100]((S2>80)&(S3<20))}";
-			// --- end of speedInd ---
-			
-			// --- toggle ---
-			//String prop = "Pr=?{PF[<=2100]((Z>80)&(Y<40))}";
-			// --- end of toggle ---
-			
-			
+//			
+//			// --- speedInd ---
+//			//String prop = "Pr=?{PF[<=2100]((S2>80)&(S3<20))}";
+//			// --- end of speedInd ---
+//			
+//			// --- toggle ---
+//			//String prop = "Pr=?{PF[<=2100]((Z>80)&(Y<40))}";
+//			// --- end of toggle ---
+//			
+//			
 			// ========================================
 ////			JPanel progBar = new JPanel();
 			JProgressBar progress = new JProgressBar(0, 100);
@@ -320,7 +326,8 @@ public class Project {
 				//JOptionPane.showMessageDialog(Gui.frame, "Error In Execution!", "Error In Execution", JOptionPane.ERROR_MESSAGE);			
 				e.printStackTrace();
 			}
-			//dfsStateExploration.drawGlobalStateGraph(sgArray, globalStateSet.getInitialState(), globalStateSet, true);
+			//dfsStateExploration.drawGlobalStateGraph(sgArray, globalStateSet.getInitialState(), globalStateSet, true);		
+			//markovianAnalysis.printStateSetStatus(globalStateSet, "end of transient analysis");
 			long elapsedTimeMillisTransient = System.currentTimeMillis() - startTransientAnalysis; 
 			float elapsedTimeSecTransient = elapsedTimeMillisTransient/1000F;
 			System.out.println("---> total runtime for transient analysis: " + elapsedTimeSecTransient + " sec");
