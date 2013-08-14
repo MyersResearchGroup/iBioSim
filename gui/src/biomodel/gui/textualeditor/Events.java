@@ -1090,7 +1090,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			if (!p.getConstant()) {
 				if (keepVarEvent(gcm, assign, selected, id)) {
 					eaID.addItem(id);
-					if (!SBMLutilities.isBoolean(p)) {
+				}
+				if (!SBMLutilities.isBoolean(p)) {
+					if (keepVarEvent(gcm, assign, selected, id+"_"+GlobalConstants.RATE)) {
 						eaID.addItem(id+"_"+GlobalConstants.RATE);
 					}
 				}
