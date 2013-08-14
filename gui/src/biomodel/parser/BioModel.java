@@ -2432,8 +2432,10 @@ public class BioModel {
 					}
 				}
 			} 
-			error = true;
-			message += "Constraint: " + SBMLutilities.myFormulaToString(math) + "\n";
+			if (!foundFail) {
+				error = true;
+				message += "Constraint: " + SBMLutilities.myFormulaToString(math) + "\n";
+			}
 			//lpn.addProperty(SBMLutilities.SBMLMathToLPNString(c.getMath(), constants, booleans));
 		}
 		for (long i = 0; i < flatSBML.getModel().getNumEvents(); i++) {

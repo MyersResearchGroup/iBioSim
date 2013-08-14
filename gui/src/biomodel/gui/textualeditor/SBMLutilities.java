@@ -2683,6 +2683,12 @@ public class SBMLutilities {
 		ibiosimFunctionDefinitions.add("BITAND");
 		ibiosimFunctionDefinitions.add("BITOR");
 		ibiosimFunctionDefinitions.add("BITXOR");
+		ibiosimFunctionDefinitions.add("G");
+		ibiosimFunctionDefinitions.add("PG");
+		ibiosimFunctionDefinitions.add("F");
+		ibiosimFunctionDefinitions.add("PF");
+		ibiosimFunctionDefinitions.add("U");
+		ibiosimFunctionDefinitions.add("PU");
 		
 		if (formula.isFunction() == false /* || formula.isLeaf() == false*/) {
 			
