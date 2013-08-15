@@ -129,14 +129,12 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	
 	private Constraints consPanel;
 	
-	private boolean lema;
-	
 	public ModelEditor(String path) throws Exception {
-		this(path, null, null, null, false, null, null, null, false, false, false);
+		this(path, null, null, null, false, null, null, null, false, false);
 	}
 
 	public ModelEditor(String path, String filename, Gui biosim, Log log, boolean paramsOnly,
-			String simName, String paramFile, AnalysisView reb2sac, boolean textBased, boolean grid, boolean lema) throws Exception {
+			String simName, String paramFile, AnalysisView reb2sac, boolean textBased, boolean grid) throws Exception {
 		super();
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
@@ -152,7 +150,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		this.simName = simName;
 		this.reb2sac = reb2sac;
 		this.textBased = textBased;
-		this.lema = lema;
 		elementsPanel = null;
 		getParams = new ArrayList<String>();
 		if (paramFile != null) {
@@ -359,7 +356,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 
 		// Annotate SBML model with synthesized SBOL DNA component and save component to local SBOL file
-		if (!lema && !biomodel.isGridEnabled()) {
+		if (!biosim.lema && !biomodel.isGridEnabled()) {
 			modelPanel.getSBOLField().deleteRemovedBioSimComponent();
 			if (command.contains("Check")) {
 				saveSBOL(true);
@@ -1529,7 +1526,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		mainPanelCenterCenter.add(componentsPanel);
 		
 		this.schematic = new Schematic(biomodel, biosim, this, true, null,compartmentPanel,reactionPanel,rulesPanel,
-				consPanel,eventPanel,parametersPanel,lema);
+				consPanel,eventPanel,parametersPanel,biosim.lema);
 		if (textBased) {
 			if (!biosim.lema) {
 				tab.addTab("Compartments", compPanel);
@@ -1540,7 +1537,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			tab.addTab("Components", componentsPanel);
 			tab.addTab("Rules", rulesPanel);
 			tab.addTab("Constraints", propPanel);
-			tab.addTab("Events", eventPanel);
+			if (!biosim.lema) { 	
+				tab.addTab("Events", eventPanel);
+			} else {
+				tab.addTab("Transitions", eventPanel);
+			}
 		} 
 		else {
 			modelPanel = schematic.getModelPanel();

@@ -63,8 +63,13 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		Model model = bioModel.getSBMLDocument().getModel();
 		addEvent = new JButton("Add Event");
 		addTrans = new JButton("Add Transition");
-		removeEvent = new JButton("Remove Event");
-		editEvent = new JButton("Edit Event");
+		if (biosim.lema) {
+			removeEvent = new JButton("Remove Transition");
+			editEvent = new JButton("Edit Transition");
+		} else {
+			removeEvent = new JButton("Remove Event");
+			editEvent = new JButton("Edit Event");
+		}
 		events = new JList();
 		eventAssign = new JList();
 		ListOf listOfEvents = model.getListOfEvents();
@@ -83,7 +88,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			ev[i] = event.getId();
 		}
 		JPanel addRem = new JPanel();
-		addRem.add(addEvent);
+		if (!biosim.lema) {
+			addRem.add(addEvent);
+		}
 		if (isTextual) {
 			addRem.add(addTrans);
 			addTrans.addActionListener(this);
@@ -93,7 +100,12 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		addEvent.addActionListener(this);
 		removeEvent.addActionListener(this);
 		editEvent.addActionListener(this);
-		JLabel panelLabel = new JLabel("List of Events:");
+		JLabel panelLabel;
+		if (biosim.lema) {
+			panelLabel = new JLabel("List of Transitions:");
+		} else {
+			panelLabel = new JLabel("List of Events:");
+		}
 		JScrollPane scroll = new JScrollPane();
 		scroll.setMinimumSize(new Dimension(260, 220));
 		scroll.setPreferredSize(new Dimension(276, 152));
