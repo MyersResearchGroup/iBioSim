@@ -3768,7 +3768,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							if (!lpnUSF) {
 								String outFileName = file[file.length - 1];
 								
-								if (!lema && !atacs) { 
+								if (/*!lema &&*/ !atacs) { 
 									Translator t1 = new Translator();
 									t1.convertLPN2SBML(filename, "");
 									t1.setFilename(root + separator + outFileName.replace(".lpn", ".xml"));
