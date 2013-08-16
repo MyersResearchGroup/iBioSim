@@ -951,6 +951,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		save.setEnabled(false);
 		saveModel.setEnabled(false);
 		saveAs.setEnabled(false);
+		saveAll.setEnabled(false);
+		close.setEnabled(false);
+		closeAll.setEnabled(false);
+		importMenu.setEnabled(false);
 		saveSBOL.setEnabled(false);
 		run.setEnabled(false);
 		check.setEnabled(false);
@@ -2923,6 +2927,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				addRecentProject(filename);
 
 				//importDot.setEnabled(true);
+				importMenu.setEnabled(true);
 				importSbol.setEnabled(true);
 				importSedml.setEnabled(true);
 				importSbml.setEnabled(true);
@@ -3054,6 +3059,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						tab.removeAll();
 						addRecentProject(projDir);
 						//importDot.setEnabled(true);
+						importMenu.setEnabled(true);
 						importSbol.setEnabled(true);
 						importSedml.setEnabled(true);
 						importSbml.setEnabled(true);
@@ -6552,6 +6558,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		viewLearnedModel.setEnabled(othersEnabled);
 		viewCoverage.setEnabled(othersEnabled);
 		save.setEnabled(othersEnabled);
+		saveAll.setEnabled(othersEnabled);
 		viewLog.setEnabled(logEnabled);
 		// Do saveas & save button too
 	}
@@ -8906,6 +8913,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		saveAs.setEnabled(false);
 		saveSBOL.setEnabled(false);
 		saveModel.setEnabled(false);
+		saveAll.setEnabled(false);
+		close.setEnabled(false);
+		closeAll.setEnabled(false);
 		run.setEnabled(false);
 		check.setEnabled(false);
 		exportMenu.setEnabled(false);
@@ -8965,6 +8975,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			save.setEnabled(true);
 			saveAs.setEnabled(true);
 			saveSBOL.setEnabled(true);
+			saveAll.setEnabled(true);
+			close.setEnabled(true);
+			closeAll.setEnabled(true);
 			check.setEnabled(true);
 			select.setEnabled(true);
 			cut.setEnabled(true);
@@ -9004,6 +9017,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			saveasButton.setEnabled(true);
 			save.setEnabled(true);
 			saveAs.setEnabled(true);
+			saveAll.setEnabled(true);
+			close.setEnabled(true);
+			closeAll.setEnabled(true);
 			viewCircuit.setEnabled(true);
 			exportMenu.setEnabled(true);
 			exportSBML.setEnabled(true);
@@ -9026,6 +9042,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			exportButton.setEnabled(true);
 			save.setEnabled(true);
 			saveAs.setEnabled(true);
+			saveAll.setEnabled(true);
+			close.setEnabled(true);
+			closeAll.setEnabled(true);
 			refresh.setEnabled(true);
 			exportMenu.setEnabled(true);
 			exportImageMenu.setEnabled(true);
@@ -9073,6 +9092,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				refreshButton.setEnabled(true);
 				exportButton.setEnabled(true);
 				save.setEnabled(true);
+				saveAll.setEnabled(true);
+				close.setEnabled(true);
+				closeAll.setEnabled(true);
 				run.setEnabled(true);
 				if (learn) {
 					if (new File(root + separator + getTitleAt(tab.getSelectedIndex()) + separator + "method.gcm").exists()) {
@@ -9118,6 +9140,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				saveButton.setEnabled(true);
 				runButton.setEnabled(true);
 				save.setEnabled(true);
+				saveAll.setEnabled(true);
+				close.setEnabled(true);
+				closeAll.setEnabled(true);
 				run.setEnabled(true);
 			}
 			/*
@@ -9138,12 +9163,18 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				saveButton.setEnabled(true);
 				runButton.setEnabled(true);
 				save.setEnabled(true);
+				saveAll.setEnabled(true);
+				close.setEnabled(true);
+				closeAll.setEnabled(true);
 				run.setEnabled(true);
 			}
 			else if (component instanceof ModelEditor) {
 				saveButton.setEnabled(true);
 				runButton.setEnabled(true);
 				save.setEnabled(true);
+				saveAll.setEnabled(true);
+				close.setEnabled(true);
+				closeAll.setEnabled(true);
 				run.setEnabled(true);
 			}
 			else if (component instanceof LearnGCM) {
@@ -9153,6 +9184,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				saveButton.setEnabled(true);
 				runButton.setEnabled(true);
 				save.setEnabled(true);
+				saveAll.setEnabled(true);
+				close.setEnabled(true);
+				closeAll.setEnabled(true);
 				run.setEnabled(true);
 				viewCircuit.setEnabled(((LearnGCM) component).getViewModelEnabled());
 				viewLog.setEnabled(((LearnGCM) component).getViewLogEnabled());
@@ -9162,6 +9196,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				saveButton.setEnabled(true);
 				runButton.setEnabled(true);
 				save.setEnabled(true);
+				saveAll.setEnabled(true);
+				close.setEnabled(true);
+				closeAll.setEnabled(true);
 				run.setEnabled(true);
 				viewLearnedModel.setEnabled(((LearnLHPN) component).getViewLhpnEnabled());
 				viewCircuit.setEnabled(((LearnLHPN) component).getViewLhpnEnabled());
@@ -9174,6 +9211,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				runButton.setEnabled(true);
 				save.setEnabled(true);
 				saveAs.setEnabled(true);
+				saveAll.setEnabled(true);
+				close.setEnabled(true);
+				closeAll.setEnabled(true);
 				if (learn) {
 					if (new File(root + separator + getTitleAt(tab.getSelectedIndex()) + separator + "method.gcm").exists()) {
 						viewLearnedModel.setEnabled(true);
@@ -9196,6 +9236,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				saveButton.setEnabled(true);
 				runButton.setEnabled(true);
 				save.setEnabled(true);
+				saveAll.setEnabled(true);
+				close.setEnabled(true);
+				closeAll.setEnabled(true);
 				run.setEnabled(true);
 				if (learn) {
 					if (new File(root + separator + getTitleAt(tab.getSelectedIndex()) + separator + "method.gcm").exists()) {
@@ -9219,6 +9262,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				saveButton.setEnabled(true);
 				runButton.setEnabled(true);
 				save.setEnabled(true);
+				saveAll.setEnabled(true);
+				close.setEnabled(true);
+				closeAll.setEnabled(true);
 				run.setEnabled(true);
 			}
 		}
@@ -9228,6 +9274,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				saveasButton.setEnabled(true);
 				runButton.setEnabled(true);
 				save.setEnabled(true);
+				saveAll.setEnabled(true);
+				close.setEnabled(true);
+				closeAll.setEnabled(true);
 				run.setEnabled(true);
 				viewTrace.setEnabled(((Verification) comp).getViewTraceEnabled());
 				viewLog.setEnabled(((Verification) comp).getViewLogEnabled());
@@ -9237,6 +9286,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				saveasButton.setEnabled(true);
 				runButton.setEnabled(true);
 				save.setEnabled(true);
+				saveAll.setEnabled(true);
+				close.setEnabled(true);
+				closeAll.setEnabled(true);
 				run.setEnabled(true);
 				viewRules.setEnabled(true/*((Synthesis) comp).getViewRulesEnabled()*/);
 				viewTrace.setEnabled(true/*((Synthesis) comp).getViewTraceEnabled()*/);
@@ -9248,6 +9300,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			saveButton.setEnabled(true);
 			saveasButton.setEnabled(true);
 			save.setEnabled(true);
+			saveAll.setEnabled(true);
+			close.setEnabled(true);
+			closeAll.setEnabled(true);
 			saveAs.setEnabled(true);
 		}
 	}
