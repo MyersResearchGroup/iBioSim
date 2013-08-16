@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" xmlns:comp="http://www.sbml.org/sbml/level3/version1/comp/version1" level="3" version="1" layout:required="false" comp:required="true">
   <model metaid="iBioSim1" id="lambda" substanceUnits="nanoMole" timeUnits="second" volumeUnits="microLitre" extentUnits="nanoMole">
+    <annotation>
+      <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+          <rdf:Description rdf:about="#iBioSim1">
+            <mts:DNAComponents>
+              <rdf:Seq>
+                <rdf:li rdf:resource="http://www.async.ece.utah.edu#comp_5_17_2013_9_52_52_892_iBioSim"/>
+              </rdf:Seq>
+            </mts:DNAComponents>
+          </rdf:Description>
+        </rdf:RDF>
+      </ModelToSBOL>
+    </annotation>
     <listOfFunctionDefinitions>
       <functionDefinition id="total" name="Find total molecules">
         <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -61,7 +74,24 @@
       <compartment id="Cell" spatialDimensions="3" size="1" constant="true"/>
     </listOfCompartments>
     <listOfSpecies>
-      <species metaid="iBioSim2" id="CI" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species metaid="iBioSim2" id="CI" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim2">
+                <mts:DNAComponents>
+                  <rdf:Seq>
+                    <rdf:li rdf:resource="http://partsregistry.org/Part:BBa_B0034"/>
+                    <rdf:li rdf:resource="http://partsregistry.org/Part:BBa_C0051"/>
+                    <rdf:li rdf:resource="http://partsregistry.org/Part:BBa_B0015"/>
+                    <rdf:li rdf:resource="http://partsregistry.org/Part:BBa_B0015"/>
+                  </rdf:Seq>
+                </mts:DNAComponents>
+              </rdf:Description>
+            </rdf:RDF>
+          </ModelToSBOL>
+        </annotation>
+      </species>
       <species metaid="iBioSim3" id="CI2" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
       <species metaid="iBioSim4" sboTerm="SBO:0000590" id="PR" compartment="Cell" initialAmount="2" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
       <species metaid="iBioSim6" id="CII" compartment="Cell" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
@@ -182,6 +212,19 @@
         </kineticLaw>
       </reaction>
       <reaction metaid="iBioSim5" sboTerm="SBO:0000589" id="Production_PR" reversible="false" fast="false" compartment="Cell">
+        <annotation>
+          <ModelToSBOL xmlns="http://sbolstandard.org/modeltosbol/1.0#">
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:mts="http://sbolstandard.org/modeltosbol/1.0#">
+              <rdf:Description rdf:about="#iBioSim5">
+                <mts:DNAComponents>
+                  <rdf:Seq>
+                    <rdf:li rdf:resource="http://partsregistry.org/Part:BBa_R0051"/>
+                  </rdf:Seq>
+                </mts:DNAComponents>
+              </rdf:Description>
+            </rdf:RDF>
+          </ModelToSBOL>
+        </annotation>
         <listOfProducts>
           <speciesReference species="CII" stoichiometry="10" constant="true"/>
         </listOfProducts>
@@ -233,12 +276,12 @@
             </apply>
           </math>
           <listOfLocalParameters>
-            <localParameter id="ko" value="0.014"/>
-            <localParameter id="ko_f" value="0.69422"/>
-            <localParameter id="ko_r" value="1"/>
             <localParameter id="nc_CI2_r" value="1"/>
             <localParameter id="kr_CI2_f" value="0.2165"/>
             <localParameter id="kr_CI2_r" value="1"/>
+            <localParameter id="ko" value="0.014"/>
+            <localParameter id="ko_f" value="0.69422"/>
+            <localParameter id="ko_r" value="1"/>
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
