@@ -53,12 +53,15 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	private ModelEditor modelEditor;
 
 	private Gui biosim;
+	
+	private boolean isTextual;
 
 	/* Create event panel */
 	public Events(Gui biosim, BioModel bioModel, ModelEditor modelEditor, boolean isTextual) {
 		super(new BorderLayout());
 		this.bioModel = bioModel;
 		this.biosim = biosim;
+		this.isTextual = isTextual;
 		this.modelEditor = modelEditor;
 		Model model = bioModel.getSBMLDocument().getModel();
 		addEvent = new JButton("Add Event");
@@ -211,8 +214,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					for (int j = 0; j < bioModel.getSBMLDocument().getModel().getNumParameters(); j++) {
 						Parameter parameter = bioModel.getSBMLDocument().getModel().getParameter(j);
 						if (parameter!=null && SBMLutilities.isPlace(parameter)) {
-							if (trigger.contains("eq("+parameter.getId()+", 1)")||
-									trigger.contains("("+parameter.getId()+" == 1)")){
+							if (!isTextual && (trigger.contains("eq("+parameter.getId()+", 1)")||
+									trigger.contains("("+parameter.getId()+" == 1)"))) {
 								triggerMath = SBMLutilities.removePreset(triggerMath, parameter.getId());
 								presetPlaces.add(parameter.getId());
 							}
@@ -268,8 +271,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 										for (int j = 0; j < bioModel.getSBMLDocument().getModel().getNumParameters(); j++) {
 											Parameter parameter = bioModel.getSBMLDocument().getModel().getParameter(j);
 											if (parameter!=null && SBMLutilities.isPlace(parameter)) {
-												if (trigger.contains("eq("+parameter.getId()+", 1)")||
-														trigger.contains("("+parameter.getId()+" == 1)")){
+												if (!isTextual && (trigger.contains("eq("+parameter.getId()+", 1)")||
+														trigger.contains("("+parameter.getId()+" == 1)"))) {
 													triggerMath = SBMLutilities.removePreset(triggerMath, parameter.getId());
 													//presetPlaces.add(parameter.getId());
 												}
@@ -302,8 +305,16 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							numFail++;
 						}
 					}
-					assign = new String[(int) event.getNumEventAssignments()-(numPlaces+numFail)];
-					placeAssign = new String[numPlaces];
+					if (isTextual) {
+						assign = new String[(int) event.getNumEventAssignments()-(numFail)];
+					} else {
+						assign = new String[(int) event.getNumEventAssignments()-(numPlaces+numFail)];
+					}
+					if (isTextual) {
+						placeAssign = new String[0];
+					} else {
+						placeAssign = new String[numPlaces];
+					}
 					origAssign = new String[(int) event.getNumEventAssignments()];
 					int k=0;
 					int l=0;
@@ -312,8 +323,13 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 								bioModel.getSBMLDocument().getModel().getParameter(event.getEventAssignment(j).getVariable());
 						EventAssignment ea = event.getEventAssignment(j);
 						if (parameter!=null && SBMLutilities.isPlace(parameter)) {
-							placeAssign[k] = ea.getVariable() + " := " + SBMLutilities.myFormulaToString(ea.getMath());
-							k++;
+							if (isTextual) {
+								assign[l] = ea.getVariable() + " := " + SBMLutilities.myFormulaToString(ea.getMath());
+								l++;
+							} else {
+								placeAssign[k] = ea.getVariable() + " := " + SBMLutilities.myFormulaToString(ea.getMath());
+								k++;
+							}
 						} else if (ea.getVariable().equals(GlobalConstants.FAIL)){
 							failTransition.setSelected(true);
 						} else {
@@ -601,8 +617,10 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						if (!persistentTrigger.isSelected()) {
 							e.getTrigger().setPersistent(false);
 							ASTNode triggerMath = bioModel.addBooleans(eventTrigger.getText().trim());
-							for (int j = 0; j < presetPlaces.size(); j++) {
-								triggerMath = SBMLutilities.addPreset(triggerMath, presetPlaces.get(j));
+							if (!isTextual) {
+								for (int j = 0; j < presetPlaces.size(); j++) {
+									triggerMath = SBMLutilities.addPreset(triggerMath, presetPlaces.get(j));
+								}
 							}
 							e.getTrigger().setMath(triggerMath);
 							if (isTransition) {
@@ -620,12 +638,16 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							if (isTransition) {
 								e.getTrigger().setPersistent(false);
 								ASTNode leftChild = bioModel.addBooleans(eventTrigger.getText().trim());
-								for (int j = 0; j < presetPlaces.size(); j++) {
-									leftChild = SBMLutilities.addPreset(leftChild, presetPlaces.get(j));
+								if (!isTextual) {
+									for (int j = 0; j < presetPlaces.size(); j++) {
+										leftChild = SBMLutilities.addPreset(leftChild, presetPlaces.get(j));
+									}
 								}
 								ASTNode rightChild = SBMLutilities.myParseFormula("eq(" + GlobalConstants.TRIGGER + "_" + e.getId() + ",1)");
-								for (int j = 0; j < presetPlaces.size(); j++) {
-									rightChild = SBMLutilities.addPreset(rightChild, presetPlaces.get(j));
+								if (!isTextual) {
+									for (int j = 0; j < presetPlaces.size(); j++) {
+										rightChild = SBMLutilities.addPreset(rightChild, presetPlaces.get(j));
+									}
 								}
 								ASTNode ruleMath = SBMLutilities.myParseFormula("piecewise(1,or(" + SBMLutilities.myFormulaToString(leftChild) + "," + 
 										SBMLutilities.myFormulaToString(rightChild) + "),0)");
@@ -644,15 +666,19 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 								r.setMetaId(GlobalConstants.TRIGGER + "_" + GlobalConstants.RULE+"_"+e.getId());
 								r.setMath(ruleMath);
 								ASTNode triggerMath = SBMLutilities.myParseFormula(GlobalConstants.TRIGGER + "_" + e.getId());
-								for (int j = 0; j < presetPlaces.size(); j++) {
-									triggerMath = SBMLutilities.addPreset(triggerMath, presetPlaces.get(j));
+								if (!isTextual) {
+									for (int j = 0; j < presetPlaces.size(); j++) {
+										triggerMath = SBMLutilities.addPreset(triggerMath, presetPlaces.get(j));
+									}
 								}
 								e.getTrigger().setMath(triggerMath);
 							} else {
 								e.getTrigger().setPersistent(true);
 								ASTNode triggerMath = bioModel.addBooleans(eventTrigger.getText().trim());
-								for (int j = 0; j < presetPlaces.size(); j++) {
-									triggerMath = SBMLutilities.addPreset(triggerMath, presetPlaces.get(j));
+								if (!isTextual) {
+									for (int j = 0; j < presetPlaces.size(); j++) {
+										triggerMath = SBMLutilities.addPreset(triggerMath, presetPlaces.get(j));
+									}
 								}
 								e.getTrigger().setMath(triggerMath);
 							}
@@ -765,12 +791,16 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						if (isTransition) {
 							e.getTrigger().setPersistent(false);
 							ASTNode leftChild = bioModel.addBooleans(eventTrigger.getText().trim());
-							for (int j = 0; j < presetPlaces.size(); j++) {
-								leftChild = SBMLutilities.addPreset(leftChild, presetPlaces.get(j));
+							if (!isTextual) {
+								for (int j = 0; j < presetPlaces.size(); j++) {
+									leftChild = SBMLutilities.addPreset(leftChild, presetPlaces.get(j));
+								}
 							}
 							ASTNode rightChild = SBMLutilities.myParseFormula("eq(" + GlobalConstants.TRIGGER + "_" + e.getId() + ",1)");
-							for (int j = 0; j < presetPlaces.size(); j++) {
-								rightChild = SBMLutilities.addPreset(rightChild, presetPlaces.get(j));
+							if (!isTextual) {
+								for (int j = 0; j < presetPlaces.size(); j++) {
+									rightChild = SBMLutilities.addPreset(rightChild, presetPlaces.get(j));
+								}
 							}
 							ASTNode ruleMath = SBMLutilities.myParseFormula("piecewise(1,or(" + SBMLutilities.myFormulaToString(leftChild) + "," + 
 									SBMLutilities.myFormulaToString(rightChild) + "),0)");
@@ -789,8 +819,10 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							r.setMetaId(GlobalConstants.TRIGGER + "_" + GlobalConstants.RULE+"_"+e.getId());
 							r.setMath(ruleMath);
 							ASTNode triggerMath = SBMLutilities.myParseFormula(GlobalConstants.TRIGGER + "_" + e.getId());
-							for (int j = 0; j < presetPlaces.size(); j++) {
-								triggerMath = SBMLutilities.addPreset(triggerMath, presetPlaces.get(j));
+							if (!isTextual) {
+								for (int j = 0; j < presetPlaces.size(); j++) {
+									triggerMath = SBMLutilities.addPreset(triggerMath, presetPlaces.get(j));
+								}
 							}
 							e.getTrigger().setMath(triggerMath);
 						} else {
@@ -1097,13 +1129,13 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		}
 		for (int i = 0; i < model.getNumParameters(); i++) {
 			Parameter p = model.getParameter(i);
-			if (SBMLutilities.isPlace(p)||p.getId().endsWith("_"+GlobalConstants.RATE)) continue;
+			if ((!isTextual && SBMLutilities.isPlace(p))||p.getId().endsWith("_"+GlobalConstants.RATE)) continue;
 			String id = p.getId();
 			if (!p.getConstant()) {
 				if (keepVarEvent(gcm, assign, selected, id)) {
 					eaID.addItem(id);
 				}
-				if (!SBMLutilities.isBoolean(p)) {
+				if (!SBMLutilities.isBoolean(p) && !SBMLutilities.isPlace(p)) {
 					if (keepVarEvent(gcm, assign, selected, id+"_"+GlobalConstants.RATE)) {
 						eaID.addItem(id+"_"+GlobalConstants.RATE);
 					}

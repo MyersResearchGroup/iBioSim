@@ -1438,6 +1438,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		removeAll();
 		buildGui();
 		revalidate();
+		schematic.getGraph().buildGraph();
 	}
 
 	private void refreshComponentsList() {
