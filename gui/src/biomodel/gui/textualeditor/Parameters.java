@@ -165,6 +165,14 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						}
 					}
 				}
+			} else if (!params[i].endsWith("__DELETE")) {
+				if (SBMLutilities.isPlace(parameter)) {
+					params[i] += " - place";
+				} else if (SBMLutilities.isBoolean(parameter)) {
+					params[i] += " - boolean";
+				} else {
+					params[i] += " - real";
+				}
 			}
 		}
 		
@@ -226,6 +234,14 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 								splits[splits.length-1]);
 						params[k] = parameterChanges.get(j);
 					}
+				}
+			} else if (!params[k].endsWith("__DELETE")) {
+				if (SBMLutilities.isPlace(parameter)) {
+					params[k] += " - place";
+				} else if (SBMLutilities.isBoolean(parameter)) {
+					params[k] += " - boolean";
+				} else {
+					params[k] += " - real";
 				}
 			}
 			k++;
@@ -636,6 +652,15 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						param = paramID.getText().trim(); // + " " + val;
 						if (paramsOnly)
 							param += " " + val;
+						else {
+							if (isPlace) {
+								param += " - place";
+							} else if (isBoolean) {
+								param += " - boolean";
+							} else {
+								param += " - real";
+							}
+						}
 						/*
 						 * if (!unit.equals("( none )")) { param =
 						 * paramID.getText().trim() + " " + val + " " + unit; }
