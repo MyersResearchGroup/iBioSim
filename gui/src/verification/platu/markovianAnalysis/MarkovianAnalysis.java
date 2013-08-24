@@ -17,7 +17,6 @@ import verification.platu.stategraph.State;
 public class MarkovianAnalysis implements Runnable{
 	
 	private boolean stop;
-	private String markovResults;
 	private DataParser probData;
 	private int waitingThreads, threadCount;
 	private boolean phase1, phase2;	
@@ -68,7 +67,8 @@ public class MarkovianAnalysis implements Runnable{
 			progress.setString(null);
 			progress.setIndeterminate(true);
 		}
-		enableAllTransitions();
+		//enableAllTransitions();
+		setAllGlobalStatesAsNonAbsorbing();
 		// --------------------
 		boolean change = false;
 		boolean converged = false;
@@ -379,7 +379,8 @@ public class MarkovianAnalysis implements Runnable{
 //				if (((ProbGlobalState) initial).getNestedProbValues().keySet().contains(id)) {
 //					break;
 //				}
-				enableAllTransitions();
+				//enableAllTransitions();
+				setAllGlobalStatesAsNonAbsorbing();
 				double Gamma;
 				for (PrjState m : globalStateSet.keySet()) {
 					((ProbGlobalState) m).setCurrentProb(0.0);
@@ -394,7 +395,6 @@ public class MarkovianAnalysis implements Runnable{
 					expr.intexpr_L(condition[2]);
 					lowerbound = expr.evaluateExpr(null);
 					pruneStateGraph("~(" + condition[0] + ")");
-					// TODO: Add steady state method call. Currently, it does transient analysis.
 					// Compute Gamma
 					Gamma = 0;
 					for (PrjState m : globalStateSet) {
@@ -558,7 +558,8 @@ public class MarkovianAnalysis implements Runnable{
 				expr.intexpr_L(condition[3]);
 				progress.setMaximum((int) expr.evaluateExpr(null));
 			}
-			enableAllTransitions();
+			//enableAllTransitions();
+			setAllGlobalStatesAsNonAbsorbing();
 			ProbGlobalState initial = (ProbGlobalState) globalStateSet.getInitialState();			
 			if (initial != null) {
 				for (PrjState m : globalStateSet.keySet()) {
@@ -827,7 +828,6 @@ public class MarkovianAnalysis implements Runnable{
 					result1 += " " + s;
 					result2 += " " + output.get(s);
 				}
-				markovResults = result1 + "\n" + result2 + "\n";
 				// --- Temp: Print results -----
 				System.out.println("Failure = " + failureProb);
 				System.out.println("Success = " + successProb);
@@ -1094,8 +1094,7 @@ public class MarkovianAnalysis implements Runnable{
 			expr.token = expr.intexpr_gettok(condition);
 			expr.intexpr_L(condition);
 			if (expr.evaluateExpr(((ProbGlobalState) m).getVariables()) == 1.0) {
-				((ProbGlobalState) m).setAbsorbing(true);
-				//((ProbGlobalState) m).setTranRateSum(0.0);				
+				((ProbGlobalState) m).setAbsorbing(true);				
 			}
 		}
 	}
@@ -1108,7 +1107,6 @@ public class MarkovianAnalysis implements Runnable{
 //	 * @param outTran
 //	 */
 //	public void pruneTransition(boolean pruneFlag, PrjState curProbGlobalSt, Transition outTran) {
-//		// TODO: Need to consider the case where next global state map exists.
 //		// The local state index (in a global state) is the same as its corresponding lpn index. 
 //		int localStateIndex = outTran.getLpn().getLpnIndex();
 //		State localState = curProbGlobalSt.toStateArray()[localStateIndex];
@@ -1122,39 +1120,26 @@ public class MarkovianAnalysis implements Runnable{
 //		}
 //	}
 	
-	/**
-	 * Test if the given transition outTran is pruned. 
-	 * @param m
-	 * @param outTran
-	 * @return
-	 */
-	private boolean isPruned(ProbGlobalState m, Transition outTran) {
-		// TODO: Need to consider the case where next global state map exists. 
-		// The local state index (in a global state) is the same as its corresponding lpn index. 
-		int localStateIndex = outTran.getLpn().getLpnIndex();
-		State localState = m.toStateArray()[localStateIndex];
-		double tranRate = ((ProbLocalStateGraph) localState.getStateGraph()).getTranRate(localState, outTran);
-		if (tranRate < 0.0)
-			return true;
-		else
-			return false;
-	}
+//	public void enableAllTransitions() {
+//		// Need to consider the case where next global state map exists.
+//		for (State localInitSt : globalStateSet.getInitialState().toStateArray()) {
+//			ProbLocalStateGraph localSg = (ProbLocalStateGraph) localInitSt.getStateGraph(); 
+//			HashMap<State, HashMap<Transition, Double>> nextTranRateMap = localSg.getNextTranRateMap();
+//			for (State localSt : nextTranRateMap.keySet()) {
+//				for (Transition outTran : localSt.getOutgoingTranSet()) {
+//					if (localSg.getTranRate(localSt, outTran) < 0.0) {
+//						double tranRate = localSg.getTranRate(localSt, outTran);
+//						// Set tranRate to positive. We use negative rate to indicate a pruned transition.
+//						localSg.setTranRate(localSt, outTran, Math.abs(tranRate));
+//					}						
+//				}
+//			}
+//		}						
+//	}
 	
-	public void enableAllTransitions() {
-		// TODO: Need to consider the case where next global state map exists.
-		for (State localInitSt : globalStateSet.getInitialState().toStateArray()) {
-			ProbLocalStateGraph localSg = (ProbLocalStateGraph) localInitSt.getStateGraph(); 
-			HashMap<State, HashMap<Transition, Double>> nextTranRateMap = localSg.getNextTranRateMap();
-			for (State localSt : nextTranRateMap.keySet()) {
-				for (Transition outTran : localSt.getOutgoingTranSet()) {
-					if (localSg.getTranRate(localSt, outTran) < 0.0) {
-						double tranRate = localSg.getTranRate(localSt, outTran);
-						// Set tranRate to positive. We use negative rate to indicate a pruned transition.
-						localSg.setTranRate(localSt, outTran, Math.abs(tranRate));
-					}
-						
-				}
-			}
+	public void setAllGlobalStatesAsNonAbsorbing() {
+		for (PrjState m : globalStateSet.keySet()) {
+			((ProbGlobalState) m).setAbsorbing(false);				
 		}
 	}
 	
