@@ -31,9 +31,11 @@ public class Options {
 //		BEHAVIORAL // POR based on dependency relation by behavioral analysis
 //		};
 //	private static String POR = "off";
-	
-	/*
+		
+	/**
 	 * Partial order reduction options for ample set computation (not including ample computation for cycle closing check).
+	 * @author Zhen Zhang
+	 *
 	 */
 	public static enum PorDef { 
 		TB, // POR with trace-back
@@ -42,6 +44,20 @@ public class Options {
 		OFF // No POR
 		};
 	private static String POR = "off";
+	
+
+	/**
+	 * Options for dealing with transition rates when partial order reduction is applied. 
+	 * @author Zhen Zhang	
+	 */
+	public static enum tranRatePorDef {
+		FULL, // Fully consider dependency relations in transition rates
+		AVRG, // Add a second criterion for persistent set computation. When more than one persistent sets have the smallest size, 
+			 // choose one that has higher average transition rates. 
+		TOLR, // Only consider transition rate dependency when the rate change exceeds some tolerance
+		NONE, // Ignore entirely the dependency relations in transition rates.		
+	}
+	private static String tranRatePorDef = "full";
 	
 	/*
 	 * Cycle closing method for partial order reduction
@@ -62,7 +78,9 @@ public class Options {
 		CCTBDG, // cycle closing with trace-back using dependency graphs
 		CCTBOFF // cycle closing without trace-back
 		};
-	private static String cycleClosingAmpleMethd = "cctb";
+	private static String cycleClosingPersistentMethd = "cctb";
+	
+	
 	
 	/*
 	 * Deadlock preserving option during partial order reduction
@@ -345,11 +363,11 @@ public class Options {
 	}
 
 	public static void setCycleClosingAmpleMethd(String method) {
-		cycleClosingAmpleMethd = method;		
+		cycleClosingPersistentMethd = method;		
 	}
 	
-	public static String getCycleClosingAmpleMethd() {
-		return cycleClosingAmpleMethd;
+	public static String getCycleClosingPersistentMethd() {
+		return cycleClosingPersistentMethd;
 	}
 
 	public static void setDebugMode(boolean debugMode) {
@@ -429,5 +447,14 @@ public class Options {
 	public static boolean getBuildGlobalStateGraph() {		
 		return buildGlobalStateGraph;
 	}
+
+	public static String getTranRatePorDef() {
+		return tranRatePorDef;
+	}
+
+	public static void setTranRatePorDef(String tranRatePorDef) {
+		Options.tranRatePorDef = tranRatePorDef;
+	}
+	
 	
 }
