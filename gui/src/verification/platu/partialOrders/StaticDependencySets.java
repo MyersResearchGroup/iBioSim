@@ -58,7 +58,7 @@ public class StaticDependencySets {
 		modifyAssignment = new HashSet<Transition>();
 		if (Options.getDebugMode()) {
 			PORdebugFileName = Options.getPrjSgPath() + Options.getLogName() + "_" + Options.getPOR() + "_" 
-					+ Options.getCycleClosingMthd() + "_" + Options.getCycleClosingAmpleMethd() + ".dbg";
+					+ Options.getCycleClosingMthd() + "_" + Options.getCycleClosingPersistentMethd() + ".dbg";
 			try {
 				PORdebugFileStream = new FileWriter(PORdebugFileName, true);
 			} catch (IOException e) {

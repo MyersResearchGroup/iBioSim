@@ -264,8 +264,9 @@ public class Project {
 			if (Options.getPOR().toLowerCase().equals("off")) {
 				globalStateSet = (ProbGlobalStateSet) dfsStateExploration.search_dfs(sgArray, initStateArray);
 			}
-			else if (Options.getPOR().toLowerCase().equals("tb"))
+			else if (Options.getPOR().toLowerCase().equals("tb")) {
 				globalStateSet = (ProbGlobalStateSet) dfsStateExploration.searchPOR_taceback(sgArray, initStateArray);
+			}
 			else if (Options.getPOR().toLowerCase().equals("behavioral")) {
 				CompositionalAnalysis compAnalysis = new CompositionalAnalysis();
 				compAnalysis.compositionalFindSG(sgArray);	
@@ -290,20 +291,20 @@ public class Project {
 //			System.out.println("---> total runtime for steady state analysis: " + elapsedTimeSecSteadyState + " sec");
 //			// ------------------------------------------------------------
 			
-//			// -------------------- Temp: transient analysis --------------
-//			System.out.println("--------- Transient Analysis ---------");
-//			long startTransientAnalysis = System.currentTimeMillis();
-//			MarkovianAnalysis markovianAnalysis = new MarkovianAnalysis(globalStateSet);			
-////			// ========== Temp: Properties ============
-////			// --- toggle_switch ---
-//			double timeLimit = 5000.0;
-//			double printInterval = 100.0;			
-//			double timeStep = 100.0;
-//			double absError = 1.0e-9;		
-//			String prop = "Pr=?{PF[<=5000]((LacI>40)&(TetR<20))}";
-//			//String prop = "Pr=?{PF[<=5000]((TetR>40)&(LacI<20))}";			
-////			// --- end of toggle_switch ---
-//			
+			// -------------------- Temp: transient analysis --------------
+			System.out.println("--------- Transient Analysis ---------");
+			long startTransientAnalysis = System.currentTimeMillis();
+			MarkovianAnalysis markovianAnalysis = new MarkovianAnalysis(globalStateSet);			
+			// ========== Temp: Properties ============
+			// --- toggle_switch ---
+			double timeLimit = 5000.0;
+			double printInterval = 100.0;			
+			double timeStep = 100.0;
+			double absError = 1.0e-9;		
+			String prop = "Pr=?{PF[<=5000]((LacI>40)&(TetR<20))}";
+////			//String prop = "Pr=?{PF[<=5000]((TetR>40)&(LacI<20))}";			
+//////			// --- end of toggle_switch ---
+////			
 			// === C-element circuits ===
 //			double timeLimit = 2100.0;
 //			double printInterval = 100.0;			
@@ -311,49 +312,49 @@ public class Project {
 //			double absError = 1.0e-9;
 //			// --- majority ---
 //			String prop = "Pr=?{PF[<=2100]((E>40)&(C<20))}";
-			// --- end of majority ---
-//			
-//			// --- speedInd ---
-//			//String prop = "Pr=?{PF[<=2100]((S2>80)&(S3<20))}";
-//			// --- end of speedInd ---
-//			
-//			// --- toggle ---
-//			//String prop = "Pr=?{PF[<=2100]((Z>80)&(Y<40))}";
-//			// --- end of toggle ---
-//			
-//			
-			// ========================================
-//			JProgressBar progress = new JProgressBar(0, 100);
-//
-//			PerfromTransientMarkovAnalysisThread performMarkovAnalysisThread = new PerfromTransientMarkovAnalysisThread(
-//					markovianAnalysis, progress);			
-//			if (prop != null) {
-//				String[] condition = Translator.getProbpropParts(Translator.getProbpropExpression(prop));
-//				boolean globallyTrue = false;
-//				if (prop.contains("PF")) {
-//					condition[0] = "true";
-//				}
-//				else if (prop.contains("PG")) {
-//					condition[0] = "true";
-//					globallyTrue = true;
-//				}
-//				performMarkovAnalysisThread.start(timeLimit, timeStep, printInterval, absError, condition, globallyTrue);
-//			}
-//			else {
-//				performMarkovAnalysisThread.start(timeLimit, timeStep, printInterval, absError, null, false);
-//			}
-//			try {
-//				performMarkovAnalysisThread.join();
-//			} catch (InterruptedException e) {
-//				//JOptionPane.showMessageDialog(Gui.frame, "Error In Execution!", "Error In Execution", JOptionPane.ERROR_MESSAGE);			
-//				e.printStackTrace();
-//			}
-//			//dfsStateExploration.drawGlobalStateGraph(sgArray, globalStateSet.getInitialState(), globalStateSet, true);		
-//			//markovianAnalysis.printStateSetStatus(globalStateSet, "end of transient analysis");
-//			long elapsedTimeMillisTransient = System.currentTimeMillis() - startTransientAnalysis; 
-//			float elapsedTimeSecTransient = elapsedTimeMillisTransient/1000F;
-//			System.out.println("---> total runtime for transient analysis: " + elapsedTimeSecTransient + " sec");
-//			// ------------------------------------------------------------
+//			// --- end of majority ---
+////			
+////			// --- speedInd ---
+////			//String prop = "Pr=?{PF[<=2100]((S2>80)&(S3<20))}";
+////			// --- end of speedInd ---
+////			
+////			// --- toggle ---
+////			//String prop = "Pr=?{PF[<=2100]((Z>80)&(Y<40))}";
+////			// --- end of toggle ---
+////			
+////			
+//			// ========================================
+			JProgressBar progress = new JProgressBar(0, 100);
+
+			PerfromTransientMarkovAnalysisThread performMarkovAnalysisThread = new PerfromTransientMarkovAnalysisThread(
+					markovianAnalysis, progress);			
+			if (prop != null) {
+				String[] condition = Translator.getProbpropParts(Translator.getProbpropExpression(prop));
+				boolean globallyTrue = false;
+				if (prop.contains("PF")) {
+					condition[0] = "true";
+				}
+				else if (prop.contains("PG")) {
+					condition[0] = "true";
+					globallyTrue = true;
+				}
+				performMarkovAnalysisThread.start(timeLimit, timeStep, printInterval, absError, condition, globallyTrue);
+			}
+			else {
+				performMarkovAnalysisThread.start(timeLimit, timeStep, printInterval, absError, null, false);
+			}
+			try {
+				performMarkovAnalysisThread.join();
+			} catch (InterruptedException e) {
+				//JOptionPane.showMessageDialog(Gui.frame, "Error In Execution!", "Error In Execution", JOptionPane.ERROR_MESSAGE);			
+				e.printStackTrace();
+			}
+			//dfsStateExploration.drawGlobalStateGraph(sgArray, globalStateSet.getInitialState(), globalStateSet, true);		
+			//markovianAnalysis.printStateSetStatus(globalStateSet, "end of transient analysis");
+			long elapsedTimeMillisTransient = System.currentTimeMillis() - startTransientAnalysis; 
+			float elapsedTimeSecTransient = elapsedTimeMillisTransient/1000F;
+			System.out.println("---> total runtime for transient analysis: " + elapsedTimeSecTransient + " sec");
+			// ------------------------------------------------------------
 			
 			// -------------------- Temp: nested analysis --------------
 			// ------------------------------------------------------------
@@ -393,7 +394,7 @@ public class Project {
 			if (isPOR)
 				fileName = Options.getPrjSgPath() + Options.getLogName() + "_"
 						+ Options.getPOR() + "_" + Options.getCycleClosingMthd() + "_" 
-						+ Options.getCycleClosingAmpleMethd() +  "_runtime.log";
+						+ Options.getCycleClosingPersistentMethd() +  "_runtime.log";
 			else
 				fileName = Options.getPrjSgPath() + Options.getLogName() + "_full_runtime.log";
 			BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
