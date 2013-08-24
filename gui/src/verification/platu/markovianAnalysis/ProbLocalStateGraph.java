@@ -102,7 +102,7 @@ public class ProbLocalStateGraph extends StateGraph {
 			if (this.lpn.getEnablingTree(tranName) != null 
 					&& this.lpn.getEnablingTree(tranName).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(newVariableVector)) == 0.0) {
 				if (Options.getDebugMode()) {
-					//    				System.out.println(tran.getName() + " " + "Enabling condition is false");    			
+					System.out.println(tran.getFullLabel() + " " + "Enabling condition is false.");    			
 				}					
 				if (tranVectorAfterFiring[tranIndex] && !tran.isPersistent()) {
 					tranVectorAfterFiring[tranIndex] = false;
@@ -113,7 +113,7 @@ public class ProbLocalStateGraph extends StateGraph {
 				for (int place : this.lpn.getPresetIndex(tranName)) {
 					if (newMarking[place]==0) {
 						if (Options.getDebugMode()) {
-							//    						System.out.println(tran.getName() + " " + "Missing a preset token");
+							System.out.println(tran.getFullLabel() + " " + "Missing a preset token.");
 						}
 						if (tranVectorAfterFiring[tranIndex]) {
 							tranVectorAfterFiring[tranIndex] = false;
@@ -126,7 +126,7 @@ public class ProbLocalStateGraph extends StateGraph {
 				double tranRate = this.lpn.getTransitionRateTree(tranName).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(newVariableVector));										
 				if (tranRate == 0.0) {
 					if (Options.getDebugMode()) {
-						//						System.out.println("Rate is zero");
+						System.out.println(tran.getFullLabel() + " Rate is zero.");
 					}
 					if (tranVectorAfterFiring[tranIndex]) {
 						tranVectorAfterFiring[tranIndex] = false;
@@ -137,13 +137,17 @@ public class ProbLocalStateGraph extends StateGraph {
 				tranVectorAfterFiring[tranIndex] = true;
 				tranRateMapForNewState.put(tran, tranRate);
 				if (Options.getDebugMode()) {
-					//    				System.out.println(tran.getName() + " is Enabled.");
+					System.out.println(tran.getFullLabel() + " is Enabled.");
+					if (Options.getMarkovianModelFlag()) {
+						System.out.println("Added a new entry below to the inner transition rate map.");
+						System.out.println("tran = " + tran.getFullLabel() + ", rate = " + tranRate);
+						System.out.println("-------------------------");
+					}
 				}	
 			}
 			else {
 				System.out.println("Transition " + tran.getFullLabel() + "has empty delay expression.");
 				new NullPointerException().printStackTrace();
-				System.exit(1);
 			}				
 		}
 		return tranVectorAfterFiring;
@@ -204,7 +208,7 @@ public class ProbLocalStateGraph extends StateGraph {
 		this.init = new ProbLocalState(this.lpn, this.lpn.getInitialMarkingsArray(), initVariableVector, initTranVector);
 		this.addTranRate(this.init, initTranRateMap);		
 		if (Options.getDebugMode())
-			printNextProbLocalStateMapForGivenState(this.init, "ProbLocalStateGraph.java -> genInitialState()");
+			printNextProbLocalTranRateMapForGivenState(this.init, "ProbLocalStateGraph.java -> genInitialState()");
 		return this.init;
 	}
     
@@ -271,6 +275,11 @@ public class ProbLocalStateGraph extends StateGraph {
     	*/    	
     	thisSg.addStateTran(curState, firedTran, newState);
     	((ProbLocalStateGraph) thisSg).addTranRate(newState, tranRateMapForNewState);  	
+    	if (Options.getDebugMode()) {
+    		String location = "ProbLocalStateGraph.java, overriden fire(ProbLocalStateGraph, State, Transition)";
+    		thisSg.printNextStateForGivenState(curState, location);
+    		((ProbLocalStateGraph) thisSg).printNextProbLocalTranRateMapForGivenState(newState, location);    		
+    	}
     	return newState;
     }
     
@@ -369,7 +378,12 @@ public class ProbLocalStateGraph extends StateGraph {
     				curSgArray[curIdx].addStateTran(curStateArray[curIdx], firedTran, cachedOther);
     				double firedTranRate = ((ProbLocalStateGraph) curSgArray[thisLpnIndex]).getTranRate(curState, firedTran);
 					((ProbLocalStateGraph) curSgArray[curIdx]).addTranRate(curStateArray[curIdx], firedTran, firedTranRate);
-    			}   		
+					if (Options.getDebugMode()) {
+						String location = "ProbLocalStateGraph.java, overriden fire(StateGraph[], State[], Transition)";
+						curSgArray[curIdx].printNextStateForGivenState(curStateArray[curIdx], location);
+						((ProbLocalStateGraph) curSgArray[curIdx]).printNextProbLocalTranRateMapForGivenState(curStateArray[curIdx], location);    		
+					}
+    			}   
     		}
     	}	
     	return nextStateArray;
@@ -391,8 +405,8 @@ public class ProbLocalStateGraph extends StateGraph {
 		else {			
 			innerMap.putAll(nextStateTranRateMap);			
 		}		
-		if (Options.getDebugMode())
-			printNextProbLocalStateMapForGivenState(nextState, "ProbLocalStateGraph.java -> addTranRate(). Adding state " + nextState.getFullLabel() + " to the map.");
+//		if (Options.getDebugMode())
+//			printNextProbLocalTranRateMapForGivenState(nextState, "ProbLocalStateGraph.java -> addTranRate(). Adding state " + nextState.getFullLabel() + " to the map.");
 	}
 	
 	/**
@@ -417,11 +431,15 @@ public class ProbLocalStateGraph extends StateGraph {
 	public double getTranRate(State curLocalState, Transition tran) {
 		if (nextTranRateMap.get(curLocalState) == null) {
 			System.out.println("No entry for " + curLocalState.getFullLabel() + " in nextTranRateMap");
-			printNextProbLocalStateMapForGivenState(curLocalState, "ProbLocalStateGraph.java -> getTranRate()");
+			printNextProbLocalTranRateMapForGivenState(curLocalState, "ProbLocalStateGraph.java -> getTranRate()_0");
+			NullPointerException npe = new NullPointerException("Next probabilistic local state is null.");
+			npe.printStackTrace();  
 		}
 		else if (nextTranRateMap.get(curLocalState).get(tran) == null) {
 			System.out.println("No entry for " + curLocalState.getFullLabel() + " and transition " + tran.getFullLabel() + " in nextTranRateMap");
-			printNextProbLocalStateMapForGivenState(curLocalState, "ProbLocalStateGraph.java -> getTranRate()");
+			printNextProbLocalTranRateMapForGivenState(curLocalState, "ProbLocalStateGraph.java -> getTranRate()_1");
+			NullPointerException npe1 = new NullPointerException("Next transition rate is null.");
+    		npe1.printStackTrace();	 
 		}
 		return nextTranRateMap.get(curLocalState).get(tran);
 	}
@@ -434,14 +452,13 @@ public class ProbLocalStateGraph extends StateGraph {
 		return nextTranRateMap;
 	}
   
-    public void printNextProbLocalStateMapForGivenState(State givenState, String location) {    	
-    	System.out.println("----------------Next State Map @ " + location + "----------------");
+    public void printNextProbLocalTranRateMapForGivenState(State givenState, String location) {    	
+    	System.out.println("----------------Next Tran Rate Map @ " + location + "----------------");
     	System.out.println("state = " + givenState.getFullLabel());
     	HashMap<Transition, State> nextStateMapForGivenState = nextStateMap.get(givenState);
     	HashMap<Transition, Double> nextTranRateMapForGivenState = nextTranRateMap.get(givenState);
     	if (nextStateMapForGivenState == null) {    		
-    		NullPointerException npe = new NullPointerException("Next probabilistic local state is null.");
-    		npe.printStackTrace();    		
+    		System.out.println("No entry for " + givenState.getFullLabel() + " in nextStateMap");
     	}
     	else {
     		for (Transition t: nextStateMapForGivenState.keySet()) {
@@ -450,8 +467,7 @@ public class ProbLocalStateGraph extends StateGraph {
     		}
     	}	
     	if (nextTranRateMapForGivenState == null) {    		
-    		NullPointerException npe1 = new NullPointerException("Next transition rateis is null.");
-    		npe1.printStackTrace();	    		
+    		System.out.println("No entry for " + givenState.getFullLabel() + " in nextTranRateMap");
     	}    		
     	else {
     		for (Transition t: nextTranRateMapForGivenState.keySet()) {
@@ -459,6 +475,6 @@ public class ProbLocalStateGraph extends StateGraph {
    				System.out.println("tran = " + t.getFullLabel() + ", rate = " + tranRate);
     		}
     	}
-    	System.out.println("--------------End Of Next State Map----------------------");
+    	System.out.println("--------------End Of Next Tran Rate Map----------------------");
     }
 }
