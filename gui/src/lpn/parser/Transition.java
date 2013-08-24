@@ -921,7 +921,6 @@ public class Transition {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + (fail ? 1231 : 1237);
-		result = prime * result + index;
 		result = prime * result + ((label == null) ? 0 : label.hashCode());
 		result = prime * result + ((lhpn == null) ? 0 : lhpn.hashCode());
 		return result;
@@ -938,8 +937,6 @@ public class Transition {
 		Transition other = (Transition) obj;
 		if (fail != other.fail)
 			return false;
-		if (index != other.index)
-			return false;
 		if (label == null) {
 			if (other.label != null)
 				return false;
@@ -952,4 +949,5 @@ public class Transition {
 			return false;
 		return true;
 	}
+	
 }
