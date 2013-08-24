@@ -1245,8 +1245,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				// -------------------------------------				
 				//----------- POR and Cycle Closing Methods (Simplified)--------------
 				//if (untimedPOR.isSelected()) {
-					// Options for using trace-back in ample calculation
-					// TODO: Only need to keep Trace-back (depQueue). 
+					// Options for using trace-back in ample calculation					
 					String[] ampleMethds = {"No POR", "Trace-back","No trace-back for ample computation", "Behavioral Analysis"};
 					JList ampleMethdsList = new JList(ampleMethds);
 					ampleMethdsList.setVisibleRowCount(4);
@@ -1258,8 +1257,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					Object[] options0 = {"Run", "Cancel"};
 					int optionRtVal0 = JOptionPane.showOptionDialog(Gui.frame, mainPanel0, "Ample set computation methods selection", 
 							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options0, options0[0]);
-					if (optionRtVal0 == 1) {
-						// Cancel
+					if (optionRtVal0 == 1) { // Cancel
 						return;
 					}
 					int ampleMethdsIndex = ampleMethdsList.getSelectedIndex();
@@ -1270,7 +1268,40 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						Options.setPOR("tb");
 						Options.setCycleClosingMthd("behavioral");
 						Options.setCycleClosingAmpleMethd("cctb");
-						//Options.setUseDependentQueue();
+						if (Options.getMarkovianModelFlag()) {
+							String[] tranRateDepSpectrum = {"Full dependency relations", "Fastest average transition rates",
+									"Ignore dependency relations within a rate change tolerance", "Ignore dependency relations"};
+							JList tranRateDepSpectrumList = new JList(tranRateDepSpectrum);
+							tranRateDepSpectrumList.setVisibleRowCount(4);							
+							JScrollPane tranRateDepPane = new JScrollPane(tranRateDepSpectrumList);
+							JPanel mainPanel1 = new JPanel(new BorderLayout());
+							mainPanel1.add("North", new JLabel("Select a dependency relation for transition rates:"));
+							mainPanel1.add("Center", tranRateDepPane);							
+							Object[] options1 = {"Run", "Cancel"};
+							int optionRtVal1 = JOptionPane.showOptionDialog(Gui.frame, mainPanel1, "Transition rates depedency relation for partial-order reduction", 
+									JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options1, options1[0]);
+							if (optionRtVal1 == 1) { // Cancel
+								return;
+							}
+							int tranRateDepSpectrumListIndex = tranRateDepSpectrumList.getSelectedIndex();
+							if (tranRateDepSpectrumListIndex == 0) {
+								Options.setTranRatePorDef("full");
+							}
+							else if (tranRateDepSpectrumListIndex == 1){
+								Options.setTranRatePorDef("avrg");
+								System.out.println("To be implemented.");
+								System.exit(1);
+							}
+							else if (tranRateDepSpectrumListIndex == 2) {
+								Options.setTranRatePorDef("tolr");
+								System.out.println("To be implemented.");
+								System.exit(1);
+							}
+							else if (tranRateDepSpectrumListIndex == 3) {
+								Options.setTranRatePorDef("none");
+							}
+							
+						}					
 					}		
 					if (ampleMethdsIndex == 2) {
 						Options.setPOR("tboff");
