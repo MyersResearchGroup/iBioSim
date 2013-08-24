@@ -5,6 +5,7 @@ import java.util.HashMap;
 import lpn.parser.LhpnFile;
 import lpn.parser.Transition;
 import verification.platu.lpn.DualHashMap;
+import verification.platu.main.Options;
 import verification.platu.stategraph.State;
 import verification.platu.stategraph.StateGraph;
 
@@ -41,7 +42,11 @@ public class ProbLocalState extends State{
     		HashMap<Transition, Double> tranRateMapForNextState = new HashMap<Transition, Double>();
     		boolean[] newTranVector= ((ProbLocalStateGraph)thisSg).updateTranVector(this, this.marking, newVariableVector, null, tranRateMapForNextState); 
     		State nextState = thisSg.addState(new ProbLocalState(this.lpn, this.marking, newVariableVector, newTranVector));
-    		((ProbLocalStateGraph) thisSg).addTranRate(nextState, tranRateMapForNextState);  
+    		((ProbLocalStateGraph) thisSg).addTranRate(nextState, tranRateMapForNextState);
+    		if (Options.getDebugMode()) {
+    			String location = "ProbLocalState.java, update()";    			
+    			((ProbLocalStateGraph) thisSg).printNextProbLocalTranRateMapForGivenState(nextState, location);
+    		}
         	return nextState;
     	}
     	return null;
