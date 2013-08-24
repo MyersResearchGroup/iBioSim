@@ -177,10 +177,22 @@ public class ProbGlobalState extends PrjState {
 				}
 			}
 			PrjState tmpPrjSt = new ProbGlobalState(nextStateArray);			
-			if (((ProbGlobalStateSet)globalStateSet).get(tmpPrjSt) == null) 
-				throw new NullPointerException("Next global state was not found.");		
-			else
-				return ((ProbGlobalStateSet) globalStateSet).get(tmpPrjSt);				
+			if (((ProbGlobalStateSet)globalStateSet).get(tmpPrjSt) == null) {
+				String curGlobalStLabel = "";
+				String tmpPrjStLabel = "";
+				for (State s : this.toStateArray()) {
+					curGlobalStLabel  += s.getFullLabel() + "_";
+				}
+				for (State s : tmpPrjSt.toStateArray()) {
+					tmpPrjStLabel += s.getFullLabel() + "_"; 
+				}
+				String message = "Next global state was not found for current global state " 
+						+ curGlobalStLabel.substring(0, curGlobalStLabel.length()-1) + ".\ntmpPrjSt = "
+						+ tmpPrjStLabel.substring(0, tmpPrjStLabel.length()-1); 
+				NullPointerException npe = new NullPointerException(message);
+				throw npe;
+			}
+			return ((ProbGlobalStateSet) globalStateSet).get(tmpPrjSt);				
 		}
 	}
 
