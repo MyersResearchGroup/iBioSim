@@ -45,6 +45,11 @@ public class StateGraph {
     protected IndexObjMap<State> stateCache;
     //protected IndexObjMap<State> localStateCache;
     protected HashMap<State, State> state2LocalMap;
+    /**
+     * This field variable is inherited from Hao's code. His state does not store enabled transition array, and he uses this map to store
+     * enabled transitions in each local state. Since we store enabled transitions in each of our local state, the use of this map for storing
+     * enabled transitions is redundant. This field variable is used to store persistent sets for each local state instead. 
+     */
     protected HashMap<State, LpnTranList> enabledSetTbl;
     protected HashMap<State, HashMap<Transition, State>> nextStateMap;
     protected List<State> stateSet = new LinkedList<State>();
@@ -59,8 +64,7 @@ public class StateGraph {
     
     public StateGraph(LhpnFile lpn) {
     	this.lpn = lpn;   	
-        this.stateCache = new IndexObjMap<State>();
-        // TODO: Is localStateCache read anywhere?
+        this.stateCache = new IndexObjMap<State>();        
         //this.localStateCache = new IndexObjMap<State>();
         this.state2LocalMap = new HashMap<State, State>();
         this.enabledSetTbl = new HashMap<State, LpnTranList>();        
@@ -438,36 +442,17 @@ public class StateGraph {
     	if (curState == null) {
     		throw new NullPointerException();
     	}   	
-//    	if(enabledSetTbl.containsKey(curState) == true){
-//    		if (Options.getDebugMode()) {
-//    			System.out.println("~~~~~~~ existing state in enabledSetTbl for LPN" + curState.getLpn().getLabel() + ": S" + curState.getIndex() + "~~~~~~~~");
-//    			printTransitionSet(enabledSetTbl.get(curState), "Enabled trans at this state: ");
-//    		}
-//    		return (LpnTranList)enabledSetTbl.get(curState).clone();
-//    	}
-//    	LpnTranList curEnabled = new LpnTranList();
-//    	for (int i=0; i < this.lpn.getAllTransitions().length; i++) {
-//    		Transition tran = this.lpn.getAllTransitions()[i];
-//    		if (curState.getTranVector()[i])
-//    			if(tran.isLocal()==true)
-//    				curEnabled.addLast(tran);
-//    			else
-//    				curEnabled.addFirst(tran);
-//
-//    	}
-    	//this.enabledSetTbl.put(curState, curEnabled);
-    	
     	LpnTranList curEnabled = curState.getEnabledTransitions();
     	return curEnabled;
     }
     
-    protected void printEnabledSetTblToDebugFile() {
-    	System.out.println("******* enabledSetTbl**********");
-    	for (State s : enabledSetTbl.keySet()) {
-    		System.out.print("S" + s.getIndex() + " -> ");
-    		printTransitionSet(enabledSetTbl.get(s), "");
-    	}	
-	}
+//    protected void printEnabledSetTblToDebugFile() {
+//    	System.out.println("******* enabledSetTbl**********");
+//    	for (State s : enabledSetTbl.keySet()) {
+//    		System.out.print("S" + s.getIndex() + " -> ");
+//    		printTransitionSet(enabledSetTbl.get(s), "");
+//    	}	
+//	}
 
     protected void printTransitionSet(LpnTranList transitionSet, String setName) {
 		if (!setName.isEmpty()) 
@@ -558,7 +543,7 @@ public class StateGraph {
     		lState = cachedState.getLocalState();
     		//lState = this.localStateCache.add(lState);
     		this.state2LocalMap.put(cachedState, lState);
-    	}	
+    	}
     	return cachedState;
     }
 
@@ -580,8 +565,12 @@ public class StateGraph {
     		nextMap.put(firedTran, nextSt);
     		this.nextStateMap.put(curSt, nextMap);
     	}
-    	else
+    	else {
     		nextMap.put(firedTran, nextSt);
+    	}
+//    	if (Options.getDebugMode()) {
+//    		printNextStateForGivenState(curSt, "StateGraph.java -> addStateTran(State, Transition, State)");
+//    	}
     }
     
     public State getNextState(State curSt, Transition firedTran) {
@@ -718,6 +707,10 @@ public class StateGraph {
 //        					curStateArray[curIdx].print() + firedTran.getName() + "\n" + 
 //        					cachedOther.getIndex() + ":\n" + cachedOther.print());
             		curSgArray[curIdx].addStateTran(curStateArray[curIdx], firedTran, cachedOther);
+//					if (Options.getDebugMode()) {
+//						String location = "StateGraph.java, fire(StateGraph[], State[], Transition)";
+//						printNextStateForGivenState(curStateArray[curIdx], location);						
+//					}
         		}   		
         	}
         }
@@ -964,7 +957,10 @@ public class StateGraph {
         }
 		*/
 		thisSg.addStateTran(curState, firedTran, newState);
-		//((ProbabilisticStateGraph) thisSg).printNextProbabilisticStateMap(firedTran);
+    	if (Options.getDebugMode()) {
+    		String location = "StateGraph.java, fire(StateGraph, State, Transition)";
+    		thisSg.printNextStateForGivenState(curState, location);    		
+    	}
 		return newState;
     }
     
@@ -1317,10 +1313,6 @@ public class StateGraph {
 //			copyEnabledSetTbl.put(s.clone(), tranList);
 //		}
 //		return copyEnabledSetTbl;
-//	}
-
-//	public void setEnabledSetTbl(HashMap<State, LpnTranList> enabledSetTbl) {
-//		this.enabledSetTbl = enabledSetTbl;	
 //	}
 
 	public HashMap<State, LpnTranList> getEnabledSetTbl() {
@@ -2155,5 +2147,22 @@ public class StateGraph {
 			}			
 		}
 		return initEnabledTrans;
+	}
+
+	public void printNextStateForGivenState(State givenState, String location) {
+		System.out.println("----------------Next State Map @ " + location + "----------------");
+		System.out.println("state = " + givenState.getFullLabel());
+		HashMap<Transition, State> nextStateMapForGivenState = nextStateMap.get(givenState);		
+		if (nextStateMapForGivenState == null) {    		
+			System.out.println("No entry for " + givenState.getFullLabel() + " in nextStateMap");
+		}
+		else {
+			for (Transition t: nextStateMapForGivenState.keySet()) {
+				State nextState = nextStateMapForGivenState.get(t);    			
+				System.out.println(t.getFullLabel() + " -> S" + nextState.getIndex() + "(" + nextState.getLpn().getLabel() + ")");
+			}
+		}	
+		System.out.println("--------------End Of Next State Map----------------------");
+
 	}
 }
