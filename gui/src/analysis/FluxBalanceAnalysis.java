@@ -161,7 +161,7 @@ public class FluxBalanceAnalysis {
 				double [] sol = jop.getOptimizationResponse().getSolution();
 				
 				for (long j = 0; j < sbml.getModel().getNumReactions(); j++) {
-					System.out.println(sbml.getModel().getReaction(j)); // + " = " + sol[j]
+					System.out.println(sbml.getModel().getReaction(j) + " = " + sol[(int) j]);
 				}
 			}
 			return 0;
