@@ -61,7 +61,13 @@ public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 		LinkedList<URI> filteredURIs = new LinkedList<URI>();
 		LinkedList<String> filteredIDs = new LinkedList<String>();
 		for (int i = 0; i < compURIs.size(); i++) {
-			DnaComponent dnac = aggregateCompResolver.resolve(compURIs.get(i));
+			DnaComponent dnac = null;
+			try {
+				dnac = aggregateCompResolver.resolve(compURIs.get(i));
+			} catch (MergerException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			if (filterType.equals("all") || 
 					SBOLUtility.convertURIToSOType(dnac.getTypes().iterator().next()).equals(filterType)) {
 				filteredURIs.add(compURIs.get(i));
@@ -84,7 +90,13 @@ public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 			viewArea.setText("");
 			LinkedList<URI> selectedURIs = getSelectedURIs();
 			for (URI compURI : selectedURIs) {
-				DnaComponent dnac = aggregateCompResolver.resolve(compURI);
+				DnaComponent dnac = null;
+				try {
+					dnac = aggregateCompResolver.resolve(compURI);
+				} catch (MergerException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				if (dnac != null) {
 //					DnaComponent dnac = compMap.get(compURI);
 					
@@ -103,7 +115,13 @@ public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 					LinkedList<SequenceAnnotation> unsortedSA = new LinkedList<SequenceAnnotation>();
 					if (dnac.getAnnotations() != null) {
 						for (SequenceAnnotation sa : dnac.getAnnotations()) {
-							SequenceAnnotation resolvedSA = aggregateAnnoResolver.resolve(sa.getURI());
+							SequenceAnnotation resolvedSA = null;
+							try {
+								resolvedSA = aggregateAnnoResolver.resolve(sa.getURI());
+							} catch (MergerException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
 							if (resolvedSA != null)
 //								unsortedSA.add(annoMap.get(sa.getURI().toString()));
 								unsortedSA.add(resolvedSA);
@@ -129,7 +147,13 @@ public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 						viewArea.append("NA\n");
 					DnaSequence seq = dnac.getDnaSequence();
 					if (seq != null) {
-						DnaSequence resolvedSeq = aggregateSeqResolver.resolve(seq.getURI());
+						DnaSequence resolvedSeq = null;
+						try {
+							resolvedSeq = aggregateSeqResolver.resolve(seq.getURI());
+						} catch (MergerException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 						if (resolvedSeq != null)
 							viewArea.append("DNA Sequence:  " + resolvedSeq.getNucleotides() + "\n\n");
 						else 
@@ -167,7 +191,13 @@ public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 		for (int k = 0; k < arraySA.length; k++) {
 			DnaComponent subComponent = arraySA[k].getSubComponent();
 			if (subComponent != null) {
-				DnaComponent resolvedSubComponent = aggregateCompResolver.resolve(subComponent.getURI());
+				DnaComponent resolvedSubComponent = null;
+				try {
+					resolvedSubComponent = aggregateCompResolver.resolve(subComponent.getURI());
+				} catch (MergerException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				if (resolvedSubComponent != null)
 					annotations = annotations + resolvedSubComponent.getDisplayId();
 				else

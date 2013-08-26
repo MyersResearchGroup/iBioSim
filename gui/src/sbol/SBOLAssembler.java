@@ -2,8 +2,6 @@ package sbol;
 
 import java.net.URI;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -15,6 +13,7 @@ import main.Gui;
 
 import org.sbolstandard.core.*;
 import org.sbolstandard.core.impl.*;
+import org.sbolstandard.core.util.SequenceOntology;
 
 import biomodel.util.GlobalConstants;
 
@@ -65,11 +64,12 @@ public class SBOLAssembler {
 			return null;
 		} else { 
 			// Create composite component and its sequence
-			DnaComponent assembledComp = new DnaComponentImpl();	
+			DnaComponent assembledComp = new DnaComponentImpl();
+			assembledComp.addType(SequenceOntology.type("SO_0000804"));
 			DnaSequence synthSeq = new DnaSequenceImpl();
 			synthSeq.setNucleotides("");
 			assembledComp.setDnaSequence(synthSeq);
-
+			
 			int position = 1;
 			LinkedList<String> subCompTypes = new LinkedList<String>();
 			for (SBOLAssemblyNode assemblyNode : orderedNodes) 
@@ -189,87 +189,6 @@ public class SBOLAssembler {
 		return position;
 	}
 	
-//	private List<DnaComponent> orderSubComponents(List<String> startNodeIDs, List<String> currentNodeIDs, LinkedSet<String> localNodeIDs, 
-//			Set<String> globalNodeIDs) {
-//		List<DnaComponent> subComps = new LinkedList<DnaComponent>();
-//		while (startNodeIDs.size() > 0 || currentNodeIDs.size() > 0) {
-//			if (currentNodeIDs.size() == 0)
-//				currentNodeIDs.add(startNodeIDs.remove(0));
-//			List<DnaComponent> localComps = new LinkedList<DnaComponent>();
-//			while (currentNodeIDs.size() > 0) {
-////				List<DnaComponent> nodeComps = assemblyGraph.getNode(currentNodeIDs.get(0)).getDNAComponents();
-//				List<String> nodeTypes = SBOLUtility.loadNodeTypes(assemblyGraph.getNode(currentNodeIDs.get(0)));
-//				if (!seqValidator.validatePartialConstruct(nodeTypes, true)) {
-//					JOptionPane.showMessageDialog(Gui.frame, "Composite DNA component assembled from model has invalid ordering of sequence types among its subcomponents.\n" +
-//							"(Ordering does not match regular expression for complete or partial genetic construct.)", 
-//							"Invalid Sequence Type Order", JOptionPane.ERROR_MESSAGE);
-//					return null;
-//				} else {
-////					localComps.addAll(nodeComps);
-//					localNodeIDs.add(currentNodeIDs.get(0));
-//					seqValidator.validateTerminalConstruct(nodeTypes, true);
-//					List<String> nextNodeIDs = new LinkedList<String>();
-//					for (String nextNodeID : assemblyGraph.getNextNodeIDs(currentNodeIDs.get(0))) {
-//						List<String> nextNodeTypes = SBOLUtility.loadNodeTypes(assemblyGraph.getNode(nextNodeID));
-//						if (nextNodeTypes.size() > 1)
-//							nextNodeTypes = nextNodeTypes.subList(0, 1);
-//						if ((seqValidator.isTerminalConstructValid() && !seqValidator.validateTerminalConstruct(nextNodeTypes, false)) 
-//								|| !seqValidator.validatePartialConstruct(nextNodeTypes, false)) {
-//							if (!globalNodeIDs.contains(nextNodeID)) {
-//								startNodeIDs.add(nextNodeID);
-//								globalNodeIDs.add(nextNodeID);
-//							}
-//						} else if (!localNodeIDs.contains(nextNodeID)) {
-//							nextNodeIDs.add(nextNodeID);
-//						}
-//					}
-//					if (nextNodeIDs.size() > 1) {
-//						int i = 0;
-//						List<DnaComponent> branchComps = null;	
-//						while (i < nextNodeIDs.size()) {
-//							i++;
-//							List<String> copyStartNodeIDs = new LinkedList<String>(startNodeIDs);
-//							List<String> copyCurrentNodeIDs = new LinkedList<String>(currentNodeIDs);
-//							copyCurrentNodeIDs.addAll(0, nextNodeIDs);
-//							Set<String> copyGlobalNodeIDs = new HashSet<String>(globalNodeIDs);
-//							Set<String> copyLocalNodeIDs = new HashSet<String>(localNodeIDs);
-//							branchComps = orderSubComponents(copyStartNodeIDs, copyCurrentNodeIDs, 
-//									copyGlobalNodeIDs, copyLocalNodeIDs);
-//							if (branchComps == null)
-//								nextNodeIDs.add(nextNodeIDs.remove(0));
-//							else
-//								i = nextNodeIDs.size();
-//						} 
-//						return branchComps;
-//					} else {
-//						currentNodeIDs.remove(0);
-//						currentNodeIDs.addAll(0, nextNodeIDs);
-//					}
-//				}
-//			}
-//			seqValidator.resetTerminalConstructValidator();
-//			seqValidator.resetPartialConstructValidator();
-//			List<String> localTypes = SBOLUtility.loadDNAComponentTypes(localComps);
-//			List<String> subCompTypes = SBOLUtility.loadDNAComponentTypes(subComps);
-//			if (seqValidator.validateStartConstruct(localTypes, false) 
-//					&& seqValidator.validateTerminalConstruct(subCompTypes, false))
-//				subComps.addAll(localComps);
-//			else if (seqValidator.validateTerminalConstruct(localTypes, false)
-//					&& seqValidator.validateStartConstruct(subCompTypes, false))
-//				subComps.addAll(0, localComps);
-//			else if (subComps.size() > 0 && localComps.size() > 0) {
-//				JOptionPane.showMessageDialog(Gui.frame, "Failed to assemble DNA components associated with model into single sequence\n" +
-//						"without introducing potentially unintended component interactions.", 
-//						"Invalid SBOL Assembly", JOptionPane.ERROR_MESSAGE);
-//				return null;
-//			} else
-//				subComps.addAll(localComps);
-//			globalNodeIDs.addAll(localNodeIDs);
-//			localNodeIDs.clear();
-//		}
-//		return subComps;
-//	}
-	
 	private List<SBOLAssemblyNode> orderAssemblyNodes(List<SBOLAssemblyNode> startNodes, List<SBOLAssemblyNode> currentNodes, 
 			List<SBOLAssemblyNode> walkNodes, List<SBOLAssemblyNode> orderedNodes, 
 			Set<SBOLAssemblyNode> localVisitedNodes, Set<SBOLAssemblyNode> globalVisitedNodes) {
@@ -278,7 +197,8 @@ public class SBOLAssembler {
 				currentNodes.add(startNodes.get(0));
 			while (currentNodes.size() > 0) {		
 				List<String> currentNodeTypes = SBOLUtility.loadNodeTypes(currentNodes.get(0));
-				if (currentNodeTypes.size() == 0 || seqValidator.validatePartialConstruct(currentNodeTypes, true)) {
+//				currentNodeTypes.size() == 0 || 
+				if (seqValidator.validatePartialConstruct(currentNodeTypes, true)) {
 					localVisitedNodes.add(currentNodes.get(0));
 					seqValidator.validateTerminalConstruct(currentNodeTypes, true);
 					List<SBOLAssemblyNode> nextNodes = new LinkedList<SBOLAssemblyNode>();
@@ -291,9 +211,11 @@ public class SBOLAssembler {
 							List<String> nextNodeTypes = SBOLUtility.loadNodeTypes(nextNode);
 							if (nextNodeTypes.size() > 1)
 								nextNodeTypes = nextNodeTypes.subList(0, 1);
-							if (!seqValidator.validatePartialConstruct(nextNodeTypes, false) 
-									|| (!seqValidator.isPartialConstructStarted()) 
-									|| (seqValidator.isTerminalConstructValid() && !seqValidator.validateTerminalConstruct(nextNodeTypes, false))) 
+							if (nextNodeTypes.size() > 0 && 
+									(!seqValidator.validatePartialConstruct(nextNodeTypes, false) 
+									|| !seqValidator.isPartialConstructStarted() 
+									|| (seqValidator.isTerminalConstructValid() 
+											&& !seqValidator.validateTerminalConstruct(nextNodeTypes, false)))) 
 								startNodes.add(nextNode);
 							else if (!localVisitedNodes.contains(nextNode))
 								nextNodes.add(nextNode);
@@ -406,145 +328,5 @@ public class SBOLAssembler {
 		} else
 			return orderedNodes;
 	}
-	
-//	private List<DnaComponent> orderSubComponents(boolean validate) {
-//		List<DnaComponent> subComps = new LinkedList<DnaComponent>();
-//		List<DnaComponent> subCompsWithoutTerminal = new LinkedList<DnaComponent>();
-//		List<DnaComponent> subCompsWithoutStart = new LinkedList<DnaComponent>();
-//		List<DnaComponent> subCompsWithoutStartOrTerminal = new LinkedList<DnaComponent>();
-//		Set<String> startTypes = seqValidator.getStartTypes();
-//		Set<String> terminalTypes = seqValidator.getTerminalTypes();
-//		for (String startNodeID : assemblyGraph.getStartNodeIDs()) {
-//			List<DnaComponent> dnaComps = gatherDNAComponents(startNodeID, terminalTypes, validate);
-//			if (dnaComps == null) 
-//				return null;
-//			else if (dnaComps.size() > 0) {
-//				if (subCompsWithoutStartOrTerminal.size() == 0 || !validate) {
-//					List<String> leftTypes = SBOLUtility.loadLowestSOTypes(dnaComps.get(0));
-//					boolean dnaCompsHaveStart = startTypes.contains(leftTypes.get(0));
-//					List<String> rightTypes = SBOLUtility.loadLowestSOTypes(dnaComps.get(dnaComps.size() - 1));
-//					boolean dnaCompsHaveTerminal = terminalTypes.contains(rightTypes.get(rightTypes.size() - 1));
-//					if (dnaCompsHaveStart && dnaCompsHaveTerminal) 
-//						subComps.addAll(dnaComps);
-//					else if (!dnaCompsHaveStart && dnaCompsHaveTerminal) 
-//						if (subCompsWithoutStart.size() == 0 || !validate)
-//							subCompsWithoutStart.addAll(dnaComps);
-//						else {
-//							JOptionPane.showMessageDialog(Gui.frame, "Failed to assemble DNA components associated with model into single sequence\n" +
-//									"without introducing potentially unintended component interactions.", 
-//									"Invalid SBOL Assembly", JOptionPane.ERROR_MESSAGE);
-//							return null;
-//						}
-//					else if (dnaCompsHaveStart && !dnaCompsHaveTerminal)
-//						if (subCompsWithoutTerminal.size() == 0 || !validate)
-//							subCompsWithoutTerminal.addAll(dnaComps);
-//						else {
-//							JOptionPane.showMessageDialog(Gui.frame, "Failed to assemble DNA components associated with model into single sequence\n" +
-//									"without introducing potentially unintended component interactions.", 
-//									"Invalid SBOL Assembly", JOptionPane.ERROR_MESSAGE);
-//							return null;
-//						}
-//					else
-//						if (!validate || (subComps.size() == 0 && subCompsWithoutStart.size() == 0 
-//								&& subCompsWithoutTerminal.size() == 0 && subCompsWithoutStartOrTerminal.size() == 0))
-//							subCompsWithoutStartOrTerminal.addAll(dnaComps);
-//						else {
-//							JOptionPane.showMessageDialog(Gui.frame, "Failed to assemble DNA components associated with model into single sequence\n" +
-//									"without introducing potentially unintended component interactions.", 
-//									"Invalid SBOL Assembly", JOptionPane.ERROR_MESSAGE);
-//							return null;
-//						}
-//				} else {
-//					JOptionPane.showMessageDialog(Gui.frame, "Failed to assemble DNA components associated with model into single sequence\n" +
-//							"without introducing potentially unintended component interactions.", 
-//							"Invalid SBOL Assembly", JOptionPane.ERROR_MESSAGE);
-//					return null;
-//				}
-//			}
-//		}
-//		if (subCompsWithoutStartOrTerminal.size() > 0 && validate)
-//			return subCompsWithoutStartOrTerminal;
-//		else {
-//			subComps.addAll(0, subCompsWithoutStart);
-//			subComps.addAll(subCompsWithoutTerminal);
-//			if (!validate)
-//				subComps.addAll(subCompsWithoutStartOrTerminal);
-//			return subComps;
-//		}	
-//	}
-	
-//	private List<DnaComponent> gatherDNAComponents(String startNodeID, Set<String> terminalTypes, boolean validate) {
-//		List<String> currentNodeIDs = new LinkedList<String>();
-//		List<DnaComponent> dnaComps = new LinkedList<DnaComponent>();
-//		currentNodeIDs.add(0, startNodeID);
-//		seqValidator.resetPartialConstructValidator();
-//		while (currentNodeIDs.size() > 0) {
-//			SBOLAssemblyNode currentNode = assemblyGraph.getNode(currentNodeIDs.get(0));
-//			if (!validate || isValidNode(currentNode))
-//				dnaComps.addAll(currentNode.getDNAComponents());
-//			else 
-//				return null;
-//			if (assemblyGraph.getNextNodeIDs(currentNodeIDs.get(0)).size() > 1);
-//				orderNonTerminalBranchesFirst(currentNodeIDs.get(0), terminalTypes);
-//			currentNodeIDs.addAll(0, assemblyGraph.getNextNodeIDs(currentNodeIDs.remove(0)));
-//		}
-//		return dnaComps;
-//	}
-	
-//	private boolean isValidNode(SBOLAssemblyNode assemblyNode) {
-//		List<String> soTypes = new LinkedList<String>();
-//		for (DnaComponent dnaComp : assemblyNode.getDNAComponents())
-//			soTypes.addAll(SBOLUtility.loadLowestSOTypes(dnaComp));
-//		if (soTypes.size() > 0)
-//			if (seqValidator.validatePartialConstruct(soTypes, true))
-//				return true;
-//			else {
-//				JOptionPane.showMessageDialog(Gui.frame, "Composite DNA component assembled from model has invalid ordering of sequence types among its subcomponents.\n" +
-//						"(Ordering does not match regular expression for complete or partial genetic construct.)", 
-//						"Invalid Sequence Type Order", JOptionPane.ERROR_MESSAGE);
-//				return false;
-//			}
-//		return true;
-//	}
-	
-//	private boolean orderNonTerminalBranchesFirst(String branchingNodeID, Set<String> terminalTypes) {
-//		List<String> orderedBranchNodeIDs = new LinkedList<String>();
-//		boolean isTerminalBranch = false;
-//		for (String branchNodeID : assemblyGraph.getNextNodeIDs(branchingNodeID)) {
-//			String currentNodeID = branchNodeID;
-//			SBOLAssemblyNode currentNode = assemblyGraph.getNode(branchNodeID);
-//			boolean terminalDetected = false;
-//			while (currentNodeID.length() > 0) {
-//				Iterator<DnaComponent> dnaCompIterator = currentNode.getDNAComponents().iterator();
-//				while (!terminalDetected && dnaCompIterator.hasNext()) {
-//					List<String> soTypes = SBOLUtility.loadDNAComponentTypes(dnaCompIterator.next());
-//					Iterator<String> terminalIterator = terminalTypes.iterator();
-//					while (!terminalDetected && terminalIterator.hasNext()) 
-//						if (soTypes.contains(terminalIterator.next())) {
-//							terminalDetected = true;
-//							isTerminalBranch = true;
-//						}
-//				}
-//				if (terminalDetected) {
-//					orderedBranchNodeIDs.add(branchNodeID);
-//					currentNodeID = "";
-//				} else if (assemblyGraph.getNextNodeIDs(currentNodeID).size() == 0) {
-//					orderedBranchNodeIDs.add(0, branchNodeID);
-//					currentNodeID = "";
-//				} else if (assemblyGraph.getNextNodeIDs(currentNodeID).size() == 1) {
-//					currentNodeID =  assemblyGraph.getNextNodeIDs(currentNodeID).iterator().next();
-//					currentNode = assemblyGraph.getNode(currentNodeID);
-//				} else { // more than one next node
-//					if (orderNonTerminalBranchesFirst(currentNodeID, terminalTypes)) 
-//						orderedBranchNodeIDs.add(branchNodeID);
-//					else 
-//						orderedBranchNodeIDs.add(0, branchNodeID);
-//					currentNodeID = "";
-//				}
-//			}			
-//		}
-//		assemblyGraph.getEdges().put(branchingNodeID, orderedBranchNodeIDs);
-//		return isTerminalBranch;
-//	}
 	
 }

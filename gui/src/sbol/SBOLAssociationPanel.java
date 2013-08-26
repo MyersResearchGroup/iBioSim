@@ -114,7 +114,13 @@ public class SBOLAssociationPanel extends JPanel {
 				iBioSimURIPresent = true;
 				compIdName = modelID + " (Placeholder for iBioSim Composite DNA Component)";
 			} else {
-				DnaComponent resolvedComp = aggregateCompResolver.resolve(uri);
+				DnaComponent resolvedComp = null;
+				try {
+					resolvedComp = aggregateCompResolver.resolve(uri);
+				} catch (MergerException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				if (resolvedComp != null) {
 					compIdName = resolvedComp.getDisplayId();
 					if (resolvedComp.getName() != null && !resolvedComp.getName().equals(""))

@@ -667,7 +667,7 @@ public class EditPreferences {
 		synthesisLabels.add(new JLabel("Incomplete Construct Warning"));
 		
 		JPanel synthesisFields = new JPanel(new GridLayout(13 ,1));
-		uriField = new JTextField(biosimrc.get(GlobalConstants.SBOL_URI_AUTHORITY_PREFERENCE, ""),15);
+		uriField = new JTextField(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE, ""),15);
 		regexField = new JTextField(biosimrc.get(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, ""),15);
 		validationBox = new JComboBox(new String[]{"True", "False"});
 		validationBox.setSelectedItem(biosimrc.get(GlobalConstants.CONSTRUCT_VALIDATION_PREFERENCE, ""));
@@ -681,7 +681,7 @@ public class EditPreferences {
 		JButton restoreSyn = new JButton("Restore Defaults");
 		restoreSyn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				uriField.setText(GlobalConstants.MYERS_LAB_URI_AUTHORITY);
+				uriField.setText(GlobalConstants.MYERS_LAB_AUTHORITY);
 				regexField.setText(GlobalConstants.GENETIC_CONSTRUCT_REGEX);
 				validationBox.setSelectedItem(GlobalConstants.CONSTRUCT_VALIDATION);
 				warningBox.setSelectedItem(GlobalConstants.CONSTRUCT_VALIDATION_WARNING);
@@ -1219,11 +1219,11 @@ public class EditPreferences {
 	private boolean saveSynthesisPreferences(Preferences biosimrc) {
 		boolean problem = false;
 		if (!uriField.getText().trim().equals(""))
-			biosimrc.put(GlobalConstants.SBOL_URI_AUTHORITY_PREFERENCE, uriField.getText().trim());
+			biosimrc.put(GlobalConstants.SBOL_AUTHORITY_PREFERENCE, uriField.getText().trim());
 		else {
 			JOptionPane.showMessageDialog(Gui.frame, "URI authority cannot be blank.", 
 					"Invalid Preference", JOptionPane.ERROR_MESSAGE);
-			uriField.setText(biosimrc.get(GlobalConstants.SBOL_URI_AUTHORITY_PREFERENCE, ""));
+			uriField.setText(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE, ""));
 			problem = true;
 		}
 		if (!regexField.getText().trim().equals(""))
@@ -1442,8 +1442,8 @@ public class EditPreferences {
 		if (biosimrc.get("biosim.learn.findbaseprob", "").equals("")) {
 			biosimrc.put("biosim.learn.findbaseprob", "False");
 		}
-		if (biosimrc.get(GlobalConstants.SBOL_URI_AUTHORITY_PREFERENCE, "").equals("")) {
-			biosimrc.put(GlobalConstants.SBOL_URI_AUTHORITY_PREFERENCE, GlobalConstants.MYERS_LAB_URI_AUTHORITY);
+		if (biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE, "").equals("")) {
+			biosimrc.put(GlobalConstants.SBOL_AUTHORITY_PREFERENCE, GlobalConstants.MYERS_LAB_AUTHORITY);
 		}
 		if (biosimrc.get(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, "").equals("")) {
 			biosimrc.put(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, GlobalConstants.GENETIC_CONSTRUCT_REGEX);

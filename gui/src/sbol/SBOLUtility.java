@@ -263,14 +263,8 @@ public class SBOLUtility {
 	
 	public static List<String> loadDNAComponentTypes(List<DnaComponent> dnaComps) {
 		List<String> types = new LinkedList<String>();
-		List<DnaComponent> loadComps = new LinkedList<DnaComponent>(dnaComps);
-		while (loadComps.size() > 0) {
-			if (loadComps.get(0).getAnnotations().size() > 0)
-				for (SequenceAnnotation anno : loadComps.remove(0).getAnnotations())
-					loadComps.add(anno.getSubComponent());
-			else
-				types.add(convertURIToSOType(loadComps.remove(0).getTypes().iterator().next()));
-		}
+		for (DnaComponent lowestComp : loadLowestSubComponents(dnaComps))
+			types.add(convertURIToSOType(lowestComp.getTypes().iterator().next()));
 		return types;
 	}
 	
@@ -287,14 +281,8 @@ public class SBOLUtility {
 	
 	public static List<URI> loadDNAComponentURIs(List<DnaComponent> dnaComps) {
 		List<URI> uris = new LinkedList<URI>();
-		List<DnaComponent> loadComps = new LinkedList<DnaComponent>(dnaComps);
-		while (loadComps.size() > 0) {
-			if (loadComps.get(0).getAnnotations().size() > 0)
-				for (SequenceAnnotation anno : loadComps.remove(0).getAnnotations())
-					loadComps.add(anno.getSubComponent());
-			else
-				uris.add(loadComps.remove(0).getURI());
-		}
+		for (DnaComponent lowestComp : loadLowestSubComponents(dnaComps))
+			uris.add(lowestComp.getURI());
 		return uris;
 	}
 	
@@ -307,6 +295,85 @@ public class SBOLUtility {
 		for (SBOLAssemblyNode assemblyNode : assemblyNodes)
 			uris.addAll(loadNodeURIs(assemblyNode));
 		return uris;
+	}
+	
+	public static List<DnaComponent> loadLowestSubComponents(List<DnaComponent> dnaComps) {
+		List<DnaComponent> subComps = new LinkedList<DnaComponent>();
+		List<DnaComponent> tempComps = new LinkedList<DnaComponent>(dnaComps);
+		while (tempComps.size() > 0) {
+			if (tempComps.get(0).getAnnotations().size() > 0)
+				for (SequenceAnnotation anno : tempComps.remove(0).getAnnotations())
+					tempComps.add(anno.getSubComponent());
+			else
+				subComps.add(tempComps.remove(0));
+		}
+		return subComps;
+	}
+	
+	public static List<DnaComponent> filterDNAComponents(List<DnaComponent> dnaComps, Set<String> soFilterTypes) {
+		List<DnaComponent> subComps = new LinkedList<DnaComponent>();
+		List<DnaComponent> tempComps = new LinkedList<DnaComponent>(dnaComps);
+		while (tempComps.size() > 0) {
+			DnaComponent tempComp = tempComps.remove(0);
+			if (soFilterTypes.contains(convertURIToSOType(tempComp.getTypes().iterator().next())))
+				subComps.add(tempComp);
+			if (tempComp.getAnnotations().size() > 0)
+				for (SequenceAnnotation anno : tempComp.getAnnotations())
+					tempComps.add(anno.getSubComponent());
+		}
+		return subComps;
+	}
+	
+	public static boolean compareDNAComponents(List<DnaComponent> dnaComps1, List<DnaComponent> dnaComps2) {
+		if (dnaComps1.size() == dnaComps2.size()) {
+			for (int i = 0; i < dnaComps1.size(); i++)
+				if (!dnaComps1.get(i).equals(dnaComps2.get(i)))
+					return false;
+			return true;
+		} else
+			return false;
+	}
+	
+	public static boolean compareDNAComponents(Set<DnaComponent> dnaComps1, Set<DnaComponent> dnaComps2) {
+		for (DnaComponent dnaComp1 : dnaComps1) {
+			Iterator<DnaComponent> compIterator2 = dnaComps2.iterator();
+			boolean match = false;
+			while (compIterator2.hasNext() && !match)
+				match = dnaComp1.equals(compIterator2.next());
+			if (!match)
+				return false;
+		}
+		if (dnaComps1.size() == dnaComps2.size())
+			return true;
+		for (DnaComponent dnaComp2 : dnaComps2) {
+			Iterator<DnaComponent> compIterator1 = dnaComps1.iterator();
+			boolean match = false;
+			while (compIterator1.hasNext() && !match)
+				match = dnaComp2.equals(compIterator1.next());
+			if (!match)
+				return false;
+		}
+		return true;	
+	}
+	
+	public static boolean shareDNAComponent(Set<DnaComponent> dnaComps1, Set<DnaComponent> dnaComps2) {
+		if (dnaComps1.size() == 0 || dnaComps2.size() == 0)
+			return false;
+		for (DnaComponent dnaComp1 : dnaComps1) {
+			for (DnaComponent dnaComp2 : dnaComps2)
+				if (dnaComp1.equals(dnaComp2))
+					return true;
+		}
+		return false;	
+	}
+	
+	public static int countNucleotides(List<DnaComponent> dnaComps) {
+		int nucleotideCount = 0;
+		for (DnaComponent dnaComp : dnaComps) {
+			if (dnaComp.getDnaSequence() != null)
+				nucleotideCount += dnaComp.getDnaSequence().getNucleotides().length();
+		} 
+		return nucleotideCount;
 	}
 	
 	// Converts global constant SBOL type to corresponding set of SO types

@@ -7361,6 +7361,10 @@ public class BioModel {
 		return path;
 	}
 	
+	public String getSeparator() {
+		return separator;
+	}
+	
 	//UNDO-REDO METHODS
 	
 	public void makeUndoPoint() {
