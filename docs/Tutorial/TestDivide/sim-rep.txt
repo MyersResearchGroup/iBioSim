@@ -1,2 +1,2 @@
 #total time-limit
-2 2
+1 1

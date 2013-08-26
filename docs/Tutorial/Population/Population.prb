@@ -1,0 +1,11 @@
+#Probability Data
+#Sun Jun 09 18:21:36 MDT 2013
+visibleLegend=true
+x.axis=
+plot.background.paint=-1
+y.axis=Percent
+chart.background.paint=-1118482
+title=Population simulation results
+gradient=false
+plot.range.grid.line.paint=-4144960
+shadow=false

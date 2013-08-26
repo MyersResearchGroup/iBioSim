@@ -1,0 +1,42 @@
+digraph G {
+size="7.5,10"
+Inits [shape=plaintext,label="CI = 0\nCII = 0\nCI2 = 0.0\n"]
+CII_trans1 [shape=plaintext,label="CII_trans1\n[exponential((CII*0.0075)/(30-0))]\n<CII:=0>"];
+CII_trans0 [shape=plaintext,label="CII_trans0\n[exponential((10.0*(((10.0*0.014*2.0)*((0.69422*30.0))/((1+(0.69422*30.0))+((0.2165*CI2)^1.0)))))/(30-0)))]\n<CII:=30>"];
+CII_trans3 [shape=plaintext,label="CII_trans3\n[exponential((CII*0.0075)/(60-30))]\n<CII:=30>"];
+CII_trans2 [shape=plaintext,label="CII_trans2\n[exponential((10.0*(((10.0*0.014*2.0)*((0.69422*30.0))/((1+(0.69422*30.0))+((0.2165*CI2)^1.0)))))/(60-30)))]\n<CII:=60>"];
+CI_trans3 [shape=plaintext,label="CI_trans3\n[exponential((CI*0.0075)/(60-30))]\n<CI:=30>"];
+CI_trans2 [shape=plaintext,label="CI_trans2\n[exponential((10.0*(((10.0*2.0)*((4.0E-5*0.01*30.0)+(0.015*1.0*30.0*((0.00161*CII)^1.0)))/((1+(0.01*30.0))+(1.0*30.0*(0.00161*CII)^1.0)))))/(60-30)))]\n<CI:=60>"];
+CI_trans1 [shape=plaintext,label="CI_trans1\n[exponential((CI*0.0075)/(30-0))]\n<CI:=0>"];
+CI_trans0 [shape=plaintext,label="CI_trans0\n[exponential((10.0*(((10.0*2.0)*((4.0E-5*0.01*30.0)+(0.015*1.0*30.0*((0.00161*CII)^1.0)))/((1+(0.01*30.0))+(1.0*30.0*(0.00161*CII)^1.0)))))/(30-0)))]\n<CI:=30>"];
+CII0 [label="CII0"];
+CII0 [shape=circle,width=0.40,height=0.40]
+CII0 [height=.3,width=.3,peripheries=2,style=filled,color=black,fontcolor=white];
+CII0 -> CII_trans0
+CI0 [label="CI0"];
+CI0 [shape=circle,width=0.40,height=0.40]
+CI0 [height=.3,width=.3,peripheries=2,style=filled,color=black,fontcolor=white];
+CI0 -> CI_trans0
+CII1 [label="CII1"];
+CII1 [shape=circle,width=0.40,height=0.40]
+CII1 -> CII_trans1
+CII1 -> CII_trans2
+CI1 [label="CI1"];
+CI1 [shape=circle,width=0.40,height=0.40]
+CI1 -> CI_trans2
+CI1 -> CI_trans1
+CII2 [label="CII2"];
+CII2 [shape=circle,width=0.40,height=0.40]
+CII2 -> CII_trans3
+CI2 [label="CI2"];
+CI2 [shape=circle,width=0.40,height=0.40]
+CI2 -> CI_trans3
+CII_trans1 -> CII0
+CII_trans0 -> CII1
+CII_trans3 -> CII1
+CII_trans2 -> CII2
+CI_trans3 -> CI1
+CI_trans2 -> CI2
+CI_trans1 -> CI0
+CI_trans0 -> CI1
+}
