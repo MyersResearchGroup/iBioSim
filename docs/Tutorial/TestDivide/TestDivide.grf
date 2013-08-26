@@ -1,0 +1,19 @@
+#Graph Data
+#Wed Jun 05 16:52:08 MDT 2013
+visibleLegend=true
+x.axis=time
+auto.resize=true
+y.max=1.0
+plot.domain.grid.line.paint=-4144960
+x.max=1.0
+plot.background.paint=-1
+y.axis=amount
+chart.background.paint=-1118482
+x.scale=0.1
+LogY=false
+LogX=false
+title=TestDivide simulation results
+plot.range.grid.line.paint=-4144960
+y.min=-1.0
+y.scale=0.1
+x.min=-1.0

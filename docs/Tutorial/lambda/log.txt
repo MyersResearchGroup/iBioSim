@@ -1,0 +1,9 @@
+Executing:
+reb2sac --target.encoding=xhtml --out=lambda.xhtml /Users/myers/research/nobackup/workspace/BioSim/docs/Tutorial/lambda/lambda.xml
+
+Total Simulation Time: 0.163823 seconds for lambda
+
+
+Executing:
+open /Users/myers/research/nobackup/workspace/BioSim/docs/Tutorial/lambda/lambda.xhtml
+

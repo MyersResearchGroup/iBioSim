@@ -1,0 +1,28 @@
+.internal CI CII CI2 
+.dummy CII_trans1 CII_trans0 CII_trans3 CII_trans2 CI_trans3 CI_trans2 CI_trans1 CI_trans0 
+#@.variables CI CII CI2 
+#|.places CII0 CII1 CI0 CII2 CI1 CI2 
+.graph
+CII1 CII_trans1
+CII_trans1 CII0
+CII0 CII_trans0
+CII_trans0 CII1
+CII2 CII_trans3
+CII_trans3 CII1
+CII1 CII_trans2
+CII_trans2 CII2
+CI2 CI_trans3
+CI_trans3 CI1
+CI1 CI_trans2
+CI_trans2 CI2
+CI1 CI_trans1
+CI_trans1 CI0
+CI0 CI_trans0
+CI_trans0 CI1
+.marking {CII0 CI0 }
+#@.property Pr=?{(CII<=50)PU[<2100](CI>=50)}
+#@.init_vals {<CI=0><CII=0><CI2=0.0>}
+#@.assignments {<CII_trans1=[CII:=0]><CII_trans0=[CII:=30]><CII_trans3=[CII:=30]><CII_trans2=[CII:=60]><CI_trans3=[CI:=30]><CI_trans2=[CI:=60]><CI_trans1=[CI:=0]><CI_trans0=[CI:=30]>}
+#@.delay_assignments {<CII_trans1=[exponential((CII*0.0075)/(30-0))]><CII_trans0=[exponential((10.0*(((10.0*0.014*2.0)*((0.69422*30.0))/((1+(0.69422*30.0))+((0.2165*CI2)^1.0)))))/(30-0)))]><CII_trans3=[exponential((CII*0.0075)/(60-30))]><CII_trans2=[exponential((10.0*(((10.0*0.014*2.0)*((0.69422*30.0))/((1+(0.69422*30.0))+((0.2165*CI2)^1.0)))))/(60-30)))]><CI_trans3=[exponential((CI*0.0075)/(60-30))]><CI_trans2=[exponential((10.0*(((10.0*2.0)*((4.0E-5*0.01*30.0)+(0.015*1.0*30.0*((0.00161*CII)^1.0)))/((1+(0.01*30.0))+(1.0*30.0*(0.00161*CII)^1.0)))))/(60-30)))]><CI_trans1=[exponential((CI*0.0075)/(30-0))]><CI_trans0=[exponential((10.0*(((10.0*2.0)*((4.0E-5*0.01*30.0)+(0.015*1.0*30.0*((0.00161*CII)^1.0)))/((1+(0.01*30.0))+(1.0*30.0*(0.00161*CII)^1.0)))))/(30-0)))]>}
+#@.continuous 
+.end

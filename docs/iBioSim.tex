@@ -139,7 +139,7 @@ To create a new TSD graph, select New $\rightarrow$ TSD Graph from the File menu
 To create a new histogram, select New $\rightarrow$ Histogram from the File menu. You will then be prompted to give a name to the histogram.  At this point, a histogram editor (see Section~\ref{Histogram}) will open in a new tab.  
 
 \begin{center}
-\includegraphics[width=160mm]{screenshots/Histogram}
+\includegraphics[width=160mm]{screenshots/TopHistogram}
 \end{center}
 
 Once a model or graph is created, it can be opened again later by right-clicking on the object in the project window and selecting ``View/Edit'' or, alternatively, double-clicking on the object.  Note that a model can be opened in either a graphical or tabular editor.  An open model or graph can be closed by either clicking on the ``X'' in the tab or by selecting Close from the File menu.  The Close All option in the File menu closes all tabs.
@@ -882,9 +882,11 @@ ODE  & gear2     & Gear Method M=2 \\ \hline
 ODE  & rk4imp    & Implicit 4th order Runge-Kutta at Gaussian points \\ \hline
 ODE  & rk8pd     & Embedded Runge-Kutta Prince-Dormand (8,9) method \\ \hline
 ODE  & rkf45     & Embedded Runge-Kutta-Fehlberg (4, 5) method \\ \hline 
-ODE  & rkf45 (java) & Native Java Runge-Kutta-Fehlberg method \\ \hline 
-Monte Carlo & gillespie & Gillespie's SSA-direct method \\ \hline  
-Monte Carlo & SSA-CR & SSA composition and rejection method \\ \hline  
+ODE  & Runge-Kutta-Fehlberg & Runge-Kutta-Fehlberg method (java)\\ \hline 
+Monte Carlo & gillespie & SSA-direct method \\ \hline   
+Monte Carlo & SSA-Hierarchical & SSA-direct method on hierarchical models (java) \\ \hline    
+Monte Carlo & SSA-Direct & SSA-direct method (java) \\ \hline    
+Monte Carlo & SSA-CR & SSA composition and rejection method (java) \\ \hline  
 Monte Carlo & iSSA & incremental SSA \\ \hline    
 Monte Carlo & interactive & Interactive SSA-direct method \\ \hline  
 Monte Carlo & emc-sim   & Uses jump count as next reaction time \\ \hline 
@@ -922,7 +924,7 @@ Simulation ID     & Creates a simulation directory with the ID name \\ \hline
 
 \clearpage
 
-\subsection{\label{absOptions}Abstraction Options}
+\subsection{\label{absOptions}Advanced Options}
 
 \noindent
 Abstraction is performed in three steps.  There is a preprocess step, which is a sequence of abstractions performed once on the initial model.  The main loop iterates through a group of abstractions until there is no change in the model.  Finally, there is a postprocess step, which is a sequence of abstractions performed once at the end.  Clicking on the Add button brings up a list of all the possible abstraction methods.  The selected abstraction method is added after the highlighted abstraction method in the list.  If no method is highlighted, it makes it the first abstraction in the list.
@@ -1190,6 +1192,7 @@ After selecting a data set, one can select individual variables (typically speci
 \item Visible Check Box - determines whether shapes are visible on the line.  Checking or unchecking the box at the top changes the state for all species in the data set.
 \item Fill Check Box - determines whether shapes are filled on the line.  Checking or  unchecking the box at the top changes the state for all species in the data set.
 \end{itemize}
+If multiple data files are selected in the data selection menu on the left when the use check box is selected for a variable, then that variable will be checked for all highlighted data files.
 Note that a checkmark appears on a data set to indicate that some species have been selected in that data set. Also, all species can be deselected by pressing the Deselect All button.
 
 When in a TSD graph editor, pressing the Save icon \includegraphics{../gui/icons/save} saves the settings for the graph to a file, so when you re-open the graph, it will reload this data and display in the same way as before.  Pressing the Save As icon \includegraphics{../gui/icons/saveas} prompts for a new filename and creates a new top-level graph with that name.  Finally, pressing the Export icon \includegraphics{../gui/icons/export} prompts for a filename and exports the data to the given name.  The extension provided for the filename is used to determine how the graph is to be exported. The supported file types are: 

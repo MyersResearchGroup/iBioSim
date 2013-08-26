@@ -1,0 +1,16 @@
+Saving GCM file as LHPN:
+/Users/myers/research/nobackup/workspace/BioSim/docs/Tutorial/markov/lambda.lpn
+
+Number of states found: 9
+Number of transitions found: 24
+Memory used during state exploration: 2.290688MB
+Total memory used: 119.388984MB
+
+Performing transient Markov chain analysis with uniformization.
+
+Executing:
+open /Users/myers/research/nobackup/workspace/BioSim/docs/Tutorial/markov/lambda_sg.dot
+
+Total Simulation Time: 3.271173 seconds for markov
+
+

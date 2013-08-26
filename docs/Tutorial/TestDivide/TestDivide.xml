@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
+  <model metaid="iBioSim1" id="TestDivide" name="Created by iBioSim flatten routine" substanceUnits="mole" volumeUnits="litre">
+    <listOfUnitDefinitions>
+      <unitDefinition id="u_1_second_n1">
+        <listOfUnits>
+          <unit kind="second" exponent="-1" scale="0" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+    </listOfUnitDefinitions>
+    <listOfCompartments>
+      <compartment id="Grid" spatialDimensions="3" size="1" constant="true">
+        <annotation>
+          <ibiosim:ibiosim xmlns:ibiosim="http://www.fakeuri.com" ibiosim:grid="(4,5)"/>
+        </annotation>
+      </compartment>
+      <compartment id="C1__Cell" spatialDimensions="3" size="1" constant="true"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species metaid="C1__iBioSim2" id="C1__S0" compartment="C1__Cell" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter metaid="iBioSim2" id="kr_f" name="Forward repression binding rate" value="0.5" constant="true"/>
+      <parameter metaid="iBioSim3" id="kr_r" name="Reverse repression binding rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim4" id="ka_f" name="Forward activation binding rate" value="0.0033" constant="true"/>
+      <parameter metaid="iBioSim5" id="ka_r" name="Reverse activation binding rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim6" id="ko_f" name="Forward RNAP binding rate" value="0.033" constant="true"/>
+      <parameter metaid="iBioSim7" id="ko_r" name="Reverse RNAP binding rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim8" id="kao_f" name="Forward activated RNAP binding rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim9" id="kao_r" name="Reverse activated RNAP binding rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim10" id="kc_f" name="Forward complex formation rate" value="0.05" constant="true"/>
+      <parameter metaid="iBioSim11" id="kc_r" name="Reverse complex formation rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim12" id="kmdiff_f" name="Forward membrane diffusion rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim13" id="kmdiff_r" name="Reverse membrane diffusion rate" value="0.01" constant="true"/>
+      <parameter metaid="iBioSim14" id="kd" name="Degradation rate" value="0.0075" constant="true"/>
+      <parameter metaid="iBioSim15" id="kecd" name="Extracellular degradation rate" value="0.005" constant="true"/>
+      <parameter metaid="iBioSim16" id="nc" name="Stoichiometry of binding" value="2" constant="true"/>
+      <parameter metaid="iBioSim17" id="nr" name="Initial RNAP count" value="30" constant="true"/>
+      <parameter metaid="iBioSim18" id="ko" name="Open complex production rate" value="0.05" constant="true"/>
+      <parameter metaid="iBioSim19" id="kb" name="Basal production rate" value="0.0001" constant="true"/>
+      <parameter metaid="iBioSim20" id="ng" name="Initial promoter count" value="2" constant="true"/>
+      <parameter metaid="iBioSim21" id="np" name="Stoichiometry of production" value="10" constant="true"/>
+      <parameter metaid="iBioSim22" id="ka" name="Activated production rate" value="0.25" constant="true"/>
+      <parameter metaid="iBioSim23" id="kecdiff" name="Extracellular diffusion rate" value="1" constant="true"/>
+      <parameter metaid="iBioSim24" id="Divide__locations" value="0" constant="false">
+        <annotation>
+          <array:array xmlns:array="http://www.fakeuri.com" array:C1="(0,0)"/>
+        </annotation>
+      </parameter>
+      <parameter metaid="C1__iBioSim3" id="C1__kd" name="Degradation rate" value="0.0075" constant="true"/>
+      <parameter metaid="C1__iBioSim4" id="C1__np" name="Stoichiometry of production" value="10" constant="true"/>
+      <parameter metaid="C1__iBioSim5" id="C1__ko" name="Open complex production rate" value="0.05" constant="true"/>
+    </listOfParameters>
+    <listOfReactions>
+      <reaction id="Constitutive_production_C1__S0" reversible="false" fast="false" compartment="Grid">
+        <listOfProducts>
+          <speciesReference species="C1__S0" stoichiometry="10" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <ci> kp </ci>
+          </math>
+          <listOfLocalParameters>
+            <localParameter id="kp" value="0.05"/>
+          </listOfLocalParameters>
+        </kineticLaw>
+      </reaction>
+      <reaction id="Degradation_C1__S0" reversible="false" fast="false" compartment="Grid">
+        <listOfReactants>
+          <speciesReference species="C1__S0" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> kd </ci>
+              <ci> C1__S0 </ci>
+            </apply>
+          </math>
+          <listOfLocalParameters>
+            <localParameter id="kd" value="0.0075" units="u_1_second_n1"/>
+          </listOfLocalParameters>
+        </kineticLaw>
+      </reaction>
+    </listOfReactions>
+    <listOfEvents>
+      <event id="C1__SymmetricDivision__event0" useValuesFromTriggerTime="false">
+        <annotation>
+          <ibiosim:ibiosim xmlns:ibiosim="http://www.fakeuri.com" ibiosim:type="Symmetric Division"/>
+        </annotation>
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <true/>
+          </math>
+        </trigger>
+        <delay>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 200 </cn>
+          </math>
+        </delay>
+      </event>
+      <event id="C1__Death__event1" useValuesFromTriggerTime="false">
+        <annotation>
+          <ibiosim:ibiosim xmlns:ibiosim="http://www.fakeuri.com" ibiosim:type="Death"/>
+        </annotation>
+        <trigger initialValue="false" persistent="false">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <gt/>
+              <ci> C1__S0 </ci>
+              <cn type="integer"> 50 </cn>
+            </apply>
+          </math>
+        </trigger>
+        <delay>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <cn type="integer"> 100 </cn>
+          </math>
+        </delay>
+      </event>
+    </listOfEvents>
+  </model>
+</sbml>
