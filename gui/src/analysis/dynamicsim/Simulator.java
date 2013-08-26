@@ -33,7 +33,7 @@ import main.util.dataparser.TSDParser;
 
 import odk.lang.FastMath;
 
-import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Annotation;

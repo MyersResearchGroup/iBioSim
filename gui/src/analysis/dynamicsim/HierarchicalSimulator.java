@@ -74,7 +74,7 @@ import main.util.dataparser.TSDParser;
 
 import odk.lang.FastMath;
 
-import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import com.sun.org.apache.xpath.internal.operations.Variable;
 
