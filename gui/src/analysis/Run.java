@@ -1313,7 +1313,7 @@ public class Run implements ActionListener {
 						double minTimeStep = 
 							Double.valueOf(properties.getProperty("monte.carlo.simulation.min.time.step"));
 
-						dynSim = new DynamicSimulation("hierarch-direct");					
+						dynSim = new DynamicSimulation("hierarchical-direct");					
 						String SBMLFileName = directory + separator + theFile;
 						if (direct != null && !direct.equals(".")) {
 							outDir = outDir + separator + direct;
@@ -1325,6 +1325,27 @@ public class Run implements ActionListener {
 						new File(directory + separator + "running").delete();
 						return exitValue;
 					}
+				else if (sim.equals("Hybrid-Hierarchical")) {
+					
+					double stoichAmpValue = 
+						Double.parseDouble(properties.getProperty(
+								"reb2sac.diffusion.stoichiometry.amplification.value"));
+					
+					double minTimeStep = 
+						Double.valueOf(properties.getProperty("monte.carlo.simulation.min.time.step"));
+
+					dynSim = new DynamicSimulation("hierarchical-hybrid");					
+					String SBMLFileName = directory + separator + theFile;
+					if (direct != null && !direct.equals(".")) {
+						outDir = outDir + separator + direct;
+					}
+					dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
+							timeStep, minTimeStep, rndSeed, progress, printInterval, runs, progressLabel, running,
+							stoichAmpValue, intSpecies, 0, 0, absError, printer_track_quantity, genStats, simTab, log);						
+					exitValue = 0;
+					new File(directory + separator + "running").delete();
+					return exitValue;
+				}
 					else if (sim.equals("Runge-Kutta-Fehlberg")) {
 						
 						double stoichAmpValue = 

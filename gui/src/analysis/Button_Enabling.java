@@ -271,6 +271,7 @@ public class Button_Enabling {
 			simulators.removeAllItems();
 			simulators.addItem("gillespie");
 			simulators.addItem("SSA-Hierarchical");
+			simulators.addItem("Hybrid-Hierarchical");
 			simulators.addItem("SSA-Direct");
 			simulators.addItem("SSA-CR");
 			simulators.addItem("iSSA");
@@ -396,6 +397,7 @@ public class Button_Enabling {
 		simulators.removeAllItems();
 		simulators.addItem("gillespie");
 		simulators.addItem("SSA-Hierarchical");
+		simulators.addItem("Hybrid-Hierarchical");
 		simulators.addItem("SSA-Direct");
 		simulators.addItem("SSA-CR");
 		simulators.addItem("iSSA");
