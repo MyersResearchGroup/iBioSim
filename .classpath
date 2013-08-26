@@ -43,7 +43,6 @@
 	<classpathentry kind="lib" path="gui/lib/trove-3.0.0.jar"/>
 	<classpathentry kind="lib" path="gui/lib/openmali.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jafama.jar"/>
-	<classpathentry kind="lib" path="gui/lib/commons-math-2.2.jar"/>
 	<classpathentry kind="lib" path="gui/lib/flanagan.jar"/>
 	<classpathentry kind="lib" path="gui/lib/gson-2.0.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jcommon-1.0.17.jar"/>
@@ -59,6 +58,8 @@
 	<classpathentry kind="lib" path="gui/lib/jmathml.jar"/>
 	<classpathentry kind="lib" path="gui/lib/joptimizer-3.1.0.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jsbml-1.0-a2-rev1489-with-dependencies.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Leandro/workspace/BioSim/gui/lib/commons-math3-3.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Leandro/workspace/BioSim/gui/lib/commons-math-2.2.jar"/>
 	<classpathentry kind="lib" path="gui/lib/architecture-rules-3.0.0-M1.jar"/>
 	<classpathentry kind="lib" path="gui/lib/colt-1.2.0.jar"/>
 	<classpathentry kind="lib" path="gui/lib/commons-beanutils-1.6.jar"/>
