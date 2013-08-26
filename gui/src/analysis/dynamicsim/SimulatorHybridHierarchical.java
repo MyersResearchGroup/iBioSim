@@ -15,6 +15,9 @@ import odk.lang.FastMath;
 import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.exception.MaxCountExceededException;
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
+import org.apache.commons.math3.ode.FirstOrderIntegrator;
+import org.apache.commons.math3.ode.events.EventHandler;
+import org.apache.commons.math3.ode.events.EventHandler.Action;
 import org.apache.commons.math3.ode.nonstiff.HighamHall54Integrator;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AssignmentRule;
@@ -30,8 +33,7 @@ public class SimulatorHybridHierarchical  extends HierarchicalSimulator {
 	private static Long initializationTime = new Long(0);
 	private String modelstateID;
 	int numSteps;
-	double relativeError;
-	double absoluteError;
+	double relativeError, absoluteError , nextReactionStep, nextEventTime, p2;
 
 	DiffEquations[] functions;
 
@@ -172,21 +174,37 @@ public class SimulatorHybridHierarchical  extends HierarchicalSimulator {
 
 		//SIMULATION LOOP
 		currentTime = 0.0;
-		double printTime = printInterval;
-
-		HighamHall54Integrator odecalc = new HighamHall54Integrator(0, maxTimeStep, relativeError, absoluteError);
-
-		double nextEventTime = handleEvents();
-
 		
-		while (currentTime < timeLimit && !cancelFlag && constraintFlag) 
+		//double printTime = printInterval;
+		double printTime = 0.0;
+		double nextEndTime = 0.0;
+		int currSteps = 0;
+		
+		//double nextEventTime = handleEvents();
+		
+		nextEventTime = Double.POSITIVE_INFINITY;
+		
+		if (absoluteError == 0)
+			absoluteError = 1e-9;
+		
+		if (relativeError == 0)
+			relativeError = 1e-6;
+		
+		if (numSteps == 0)
+			numSteps = (int)(timeLimit/printInterval);
+
+		FirstOrderIntegrator odecalc = new HighamHall54Integrator(minTimeStep, maxTimeStep, absoluteError, relativeError);
+		odecalc.addEventHandler(new EventHandlerObject(), maxTimeStep, 0, numSteps);
+		
+		while (currentTime <= timeLimit && !cancelFlag && constraintFlag) 
 		{
 
+			/*
 			//EVENT HANDLING
 			//trigger and/or fire events, etc.
 			if (topmodel.noEventsFlag == false) 
 			{
-				HashSet<String> affectedReactionSet = fireEvents(topmodel, topmodel.noRuleFlag, topmodel.noConstraintsFlag);				
+				HashSet<String> affectedReactionSet = fireEvents(topmodel, "reaction", topmodel.noRuleFlag, topmodel.noConstraintsFlag);				
 
 				//recalculate propensties/groups for affected reactions
 				if (affectedReactionSet.size() > 0)
@@ -196,18 +214,18 @@ public class SimulatorHybridHierarchical  extends HierarchicalSimulator {
 			for(ModelState models : submodels.values())
 			{
 				if (models.noEventsFlag == false) {
-					HashSet<String> affectedReactionSet = fireEvents(models, models.noRuleFlag, models.noConstraintsFlag);				
+					HashSet<String> affectedReactionSet = fireEvents(models, "reaction",  models.noRuleFlag, models.noConstraintsFlag);				
 
 					//recalculate propensties/groups for affected reactions
 					if (affectedReactionSet.size() > 0)
 						updatePropensities(affectedReactionSet, models.ID);
 				}
 			}	
-
+*/
 			//STEP 1: generate random numbers
 
 			double p1 = randomNumberGenerator.nextDouble();
-			double p2 = randomNumberGenerator.nextDouble();
+			p2 = randomNumberGenerator.nextDouble();
 
 
 			//STEP 2: calculate delta_t, the time till the next reaction execution
@@ -216,44 +234,36 @@ public class SimulatorHybridHierarchical  extends HierarchicalSimulator {
 
 			double tau = -FastMath.log(p1)/totalPropensity;
 
-			double reactionStep = currentTime + tau;
+			nextReactionStep = currentTime + tau;
+			
+			nextEndTime = currentTime + maxTimeStep;
+			
 
 			
-			if (reactionStep < nextEventTime && reactionStep < currentTime + maxTimeStep) 
+			if (nextEndTime > printTime) 
 			{
-				for(DiffEquations eq : functions)
+				nextEndTime = printTime;
+			}
+			
+			
+			for(DiffEquations eq : functions)
+			{
+				if(currentTime < nextEndTime && Math.abs(currentTime - nextEndTime) > 1e-6)
 				{
-					odecalc.integrate(eq, currentTime, eq.state.values, reactionStep, eq.state.values);
+					odecalc.integrate(eq, currentTime, eq.state.values, nextEndTime, eq.state.values);
 
-					updateValuesArray();
-
+					fireEvent(eq, eq.state.modelstate);
+					
+						
 				}
-				
-				currentTime = reactionStep;
-				// perform reaction
-			} 
-			else if (nextEventTime < currentTime + maxTimeStep) 
-			{
-				currentTime = nextEventTime;
-				// print 
-			} 
-			else 
-			{
-				currentTime += maxTimeStep;
-				// print
+				else
+				{
+					currentTime = nextEndTime;
+				}
 			}
 			
-			if (currentTime > timeLimit) 
-			{
-				currentTime = timeLimit;
-			}
-			
-			
-
-				
-			
-
-			while (currentTime > printTime && printTime < timeLimit) 
+			updateValuesArray();
+			while (currentTime >= printTime && printTime <= timeLimit) {
 			{
 
 				try {
@@ -263,51 +273,16 @@ public class SimulatorHybridHierarchical  extends HierarchicalSimulator {
 					e.printStackTrace();
 				}
 
-				printTime += printInterval;
+				currSteps++;
+				printTime = (currSteps*timeLimit/numSteps);
+				
 				running.setTitle("Progress (" + (int)((currentTime / timeLimit) * 100.0) + "%)");
 				//update progress bar			
 				progress.setValue((int)((currentTime / timeLimit) * 100.0));
 
 			}
 
-			if (currentTime == reactionStep) 
-			{
-				//STEP 3: select a reaction
-
-				String selectedReactionID = selectReaction(p2);
-
-				//if its length isn't positive then there aren't any reactions
-				if (!selectedReactionID.isEmpty()) {
-
-					//STEP 4: perform selected reaction and update species counts
-
-					if(modelstateID.equals("topmodel"))
-					{
-						//if its length isn't positive then there aren't any reactions
-						if (!selectedReactionID.isEmpty()) {
-							performReaction(topmodel, selectedReactionID, topmodel.noRuleFlag, topmodel.noConstraintsFlag);
-							HashSet<String> affectedReactionSet = getAffectedReactionSet(topmodel, selectedReactionID, true);
-
-							//STEP 5: compute affected reactions' new propensities and update total propensity
-							updatePropensities(affectedReactionSet, modelstateID);
-						}
-					}
-					else
-					{
-						//if its length isn't positive then there aren't any reactions
-						if (!selectedReactionID.isEmpty()) {
-							performReaction(submodels.get(modelstateID), selectedReactionID, submodels.get(modelstateID).noRuleFlag, submodels.get(modelstateID).noConstraintsFlag);
-
-							HashSet<String> affectedReactionSet = getAffectedReactionSet(submodels.get(modelstateID), selectedReactionID, true);
-
-							//STEP 5: compute affected reactions' new propensities and update total propensity
-							updatePropensities(affectedReactionSet, modelstateID);
-						}
-					}
-				}
-			}
-
-			updateRules();
+			//updateRules();
 
 			//update time for next iteration
 			//currentTime += delta_t;
@@ -332,9 +307,45 @@ public class SimulatorHybridHierarchical  extends HierarchicalSimulator {
 			}
 		}
 	}
+	}
 
 
+	private void performStochasticReaction(double p2)
+	{
 
+		String selectedReactionID = selectReaction(p2);
+
+		//if its length isn't positive then there aren't any reactions
+		if (!selectedReactionID.isEmpty()) {
+
+			//STEP 4: perform selected reaction and update species counts
+
+			if(modelstateID.equals("topmodel"))
+			{
+				//if its length isn't positive then there aren't any reactions
+				if (!selectedReactionID.isEmpty()) {
+					performReaction(topmodel, selectedReactionID, topmodel.noRuleFlag, topmodel.noConstraintsFlag);
+					HashSet<String> affectedReactionSet = getAffectedReactionSet(topmodel, selectedReactionID, true);
+
+					//STEP 5: compute affected reactions' new propensities and update total propensity
+					updatePropensities(affectedReactionSet, modelstateID);
+				}
+			}
+			else
+			{
+				//if its length isn't positive then there aren't any reactions
+				if (!selectedReactionID.isEmpty()) {
+					performReaction(submodels.get(modelstateID), selectedReactionID, submodels.get(modelstateID).noRuleFlag, submodels.get(modelstateID).noConstraintsFlag);
+
+					HashSet<String> affectedReactionSet = getAffectedReactionSet(submodels.get(modelstateID), selectedReactionID, true);
+
+					//STEP 5: compute affected reactions' new propensities and update total propensity
+					updatePropensities(affectedReactionSet, modelstateID);
+				}
+			}
+		}
+	}
+	
 /**
  * updates the propensities of the reactions affected by the recently performed reaction
  * @param affectedReactionSet the set of reactions affected by the recently performed reaction
@@ -494,6 +505,106 @@ protected double handleEvents()
 	return nextEventTime;
 }
 
+private class EventHandlerObject implements EventHandler
+{
+	public EventHandlerObject() {}
+	
+	@Override
+	public Action eventOccurred(double t0, double[] y, boolean t) 
+	{
+		return EventHandler.Action.RESET_STATE;
+	}
+
+	@Override
+	public double g(double t, double[] y) {
+		
+		double t1 = currentTime;
+		double t2 = nextEventTime;
+	
+		if(nextEventTime == Double.POSITIVE_INFINITY)
+		{
+			return 1;
+		}
+
+		else if(t <= nextEventTime)
+		{
+			//System.out.println(currentTime);
+			
+			
+			return -1;
+			
+		}
+		else if(t <= nextReactionStep)
+		{
+			return -0.5;
+		}
+		else
+		{
+			return 1;
+		}
+	}
+	@Override
+	public void init(double t0, double[] y, double t) 
+	{
+	}
+
+	@Override
+	public void resetState(double t, double[] y) {
+		
+		for(DiffEquations eq : functions)
+		{
+			
+			ModelState modelstate = eq.state.modelstate;
+			
+			if(modelstate.noEventsFlag == true)
+				continue; 
+			
+
+			currentTime = t;
+			
+			if(t == nextReactionStep)
+				System.out.println("reaction");
+			//performStochasticReaction(p2);
+			HashSet<String> variables = fireEvent(eq, modelstate);
+			
+			
+			for(String var : variables)
+			{
+				int index = eq.state.variableToIndexMap.get(var);
+				y[index] = eq.state.values[index];
+			}
+		}
+		
+	}
+	
+	
+	
+}
+
+private HashSet<String> fireEvent(DiffEquations eq, ModelState modelstate)
+{
+	HashSet<String> vars = new HashSet<String>();
+	if (modelstate.noEventsFlag == false) 
+	{
+
+		//if events fired, then the affected species counts need to be updated in the values array
+		int sizeBefore = modelstate.triggeredEventQueue.size();
+	
+		vars = fireEvents(modelstate, "variable", modelstate.noRuleFlag, modelstate.noConstraintsFlag);
+	
+		int sizeAfter = modelstate.triggeredEventQueue.size();
+
+		if (sizeAfter != sizeBefore)
+		{
+			for (String var : vars)
+			{
+				int index = eq.state.variableToIndexMap.get(var);
+				eq.state.values[index] = modelstate.getVariableToValue(var);	
+			}
+		}
+		}
+	return vars;
+	}
 
 private class DiffEquations implements FirstOrderDifferentialEquations
 {
@@ -515,7 +626,7 @@ private class DiffEquations implements FirstOrderDifferentialEquations
 
 		//calculate the current variable values
 		//based on the ODE system			
-		for (int i = 0; i < currValueChanges.length; i++) {
+		for (int i = 0; i < currValueChanges.length - 1; i++) {
 
 			String currentVar = state.indexToVariableMap.get(i);
 
@@ -539,12 +650,13 @@ private class DiffEquations implements FirstOrderDifferentialEquations
 			//				if (variableToIsInConstraintMap.get(speciesID) == true)
 			//					affectedConstraintSet.addAll(variableToAffectedConstraintSetMap.get(speciesID));
 		}
-
+		currValueChanges[currValueChanges.length - 1] = t;
+		state.modelstate.setvariableToValueMap("time", t);
 		//updatePropensities(performRateRules(topmodel, currentTime), "topmodel");
 		performRateRules(state.modelstate, state.variableToIndexMap, currValueChanges);
-
-
-
+		
+	
+					
 		//if assignment rules are performed, these changes need to be reflected in the currValueChanges
 		//that get passed back
 		if (affectedAssignmentRuleSet.size() > 0) {
@@ -557,9 +669,14 @@ private class DiffEquations implements FirstOrderDifferentialEquations
 				currValueChanges[index] = state.modelstate.getVariableToValue(affectedVariable) - y[index];
 			}
 		}
+		
+	
+		
 
+		nextEventTime = handleEvents();
+	
 
-
+		currentTime = t;
 	}
 
 
@@ -653,23 +770,23 @@ protected class VariableState
 	MutableBoolean eventsFlag = new MutableBoolean(false);
 	MutableBoolean rulesFlag = new MutableBoolean(false);
 	MutableBoolean constraintsFlag = new MutableBoolean(false);
-
+	
 	protected VariableState(ModelState modelstate)
 	{
 		this.modelstate = modelstate;
-
-		variables = new String[modelstate.variableToValueMap.size()];
-		values = new double[modelstate.variableToValueMap.size()];
-		dvariablesdtime = new ASTNode[modelstate.variableToValueMap.size()];
-		variableToIndexMap = new HashMap<String, Integer>(modelstate.variableToValueMap.size());
-		indexToVariableMap = new HashMap<Integer, String>(modelstate.variableToValueMap.size());
-
+		int size = modelstate.variableToValueMap.size() + 1;
+		variables = new String[size];
+		values = new double[size];
+		dvariablesdtime = new ASTNode[size];
+		variableToIndexMap = new HashMap<String, Integer>(size);
+		indexToVariableMap = new HashMap<Integer, String>(size);
+		
 		int index = 0;
 
 		//convert variableToValueMap into two arrays
 		//and create a hashmap to find indices
-		for (String variable : modelstate.variableToValueMap.keySet()) {
-
+		for (String variable : modelstate.variableToValueMap.keySet()) 
+		{
 			variables[index] = variable;
 			values[index] = modelstate.getVariableToValue(variable);
 			variableToIndexMap.put(variable, index);
@@ -678,7 +795,14 @@ protected class VariableState
 			indexToVariableMap.put(index, variable);
 			++index;
 		}
+		
 
+		indexToVariableMap.put(index, "time");
+
+		variableToIndexMap.put("time", index);
+		variables[index] = "time";
+		values[index] = 0;
+		modelstate.variableToValueMap.put("time", 0);
 		//create system of ODEs for the change in variables
 		for (String reaction : modelstate.reactionToFormulaMap.keySet()) 
 		{
@@ -687,7 +811,7 @@ protected class VariableState
 			//System.out.println("HERE: " + formula.toFormula());
 			HashSet<StringDoublePair> reactantAndStoichiometrySet = modelstate.reactionToReactantStoichiometrySetMap.get(reaction);
 			HashSet<StringDoublePair> speciesAndStoichiometrySet = modelstate.reactionToSpeciesAndStoichiometrySetMap.get(reaction);
-
+			
 
 			//loop through reactants
 			for (StringDoublePair reactantAndStoichiometry : reactantAndStoichiometrySet) {
@@ -713,6 +837,8 @@ protected class VariableState
 					int varIndex = variableToIndexMap.get(species);
 					ASTNode stoichNode = new ASTNode();
 					stoichNode.setValue(stoichiometry);
+
+					//System.out.println("HERE2: " +  ASTNode.times(formula,stoichNode).toFormula());
 					dvariablesdtime[varIndex] = ASTNode.sum(dvariablesdtime[varIndex], ASTNode.times(formula,stoichNode));
 
 				}

@@ -1,6 +1,7 @@
 package analysis.dynamicsim;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -12,11 +13,14 @@ import main.util.MutableBoolean;
 
 import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.exception.MaxCountExceededException;
+import org.apache.commons.math3.exception.NumberIsTooSmallException;
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
+import org.apache.commons.math3.ode.FirstOrderIntegrator;
 import org.apache.commons.math3.ode.events.EventHandler;
 import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator;
 import org.apache.commons.math3.ode.nonstiff.DormandPrince853Integrator;
 import org.apache.commons.math3.ode.nonstiff.HighamHall54Integrator;
+import org.apache.commons.math3.ode.sampling.StepHandler;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.RateRule;
@@ -32,6 +36,8 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 	int numSteps;
 	double relativeError;
 	double absoluteError;
+	double eventOccurred;
+	double nextEventTime;
 	DiffEquations[] functions;
 	
 	public SimulatorODERKHierarchical2(String SBMLFileName, String outputDirectory, double timeLimit, double maxTimeStep, long randomSeed,
@@ -168,7 +174,6 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 		double nextEndTime = 0.0;
 		
 		//SIMULATION LOOP
-		//currentTime = printInterval;
 		currentTime = 0;
 		double printTime = 0;
 
@@ -178,17 +183,22 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 		if (relativeError == 0)
 			relativeError = 1e-6;
 		
-		//if (stepSize > Double.MAX_VALUE)
-			//stepSize = 0.01;
-		
 		if (numSteps == 0)
 			numSteps = (int)(timeLimit/printInterval);
 		
-		HighamHall54Integrator odecalc = new HighamHall54Integrator(0, maxTimeStep, relativeError, absoluteError);
+		FirstOrderIntegrator odecalc = new HighamHall54Integrator(minTimeStep, maxTimeStep, absoluteError, relativeError);
+		//FirstOrderIntegrator odecalc = new DormandPrince853Integrator(0, maxTimeStep, relativeError, absoluteError);
+		
 		//odecalc.setMaxEvaluations(numSteps);
 		//add events to queue if they trigger
-		//odecalc.addEventHandler(handler, maxCheckInterval, convergence, maxIterationCount);
-		double nextEventTime;
+		odecalc.addEventHandler(new EventHandlerObject(), maxTimeStep, 0, numSteps);
+		
+		nextEventTime = Double.POSITIVE_INFINITY;
+		
+		for(DiffEquations eq : functions)
+		{
+			performAssignmentRules(eq);
+		}
 		
 		while (currentTime <= timeLimit && !cancelFlag && constraintFlag) 
 		{
@@ -200,44 +210,10 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 				
 			ModelState modelstate = eq.state.modelstate;
 
-			nextEventTime = handleEvents();
-			
-			fireEvent(eq, modelstate);
-
-			if(currentTime == 0)
-			{
-				for(String currentVar : eq.state.modelstate.speciesIDSet)
-				{
-					HashSet<String> affectedVariables = new HashSet<String>();
-
-					HashSet<AssignmentRule> affectedAssignmentRuleSet = new HashSet<AssignmentRule>();
-					if (eq.state.modelstate.variableToIsInAssignmentRuleMap != null && eq.state.modelstate.variableToIsInAssignmentRuleMap.containsKey(currentVar) &&
-						eq.state.modelstate.variableToValueMap.contains(currentVar) && 
-						eq.state.modelstate.variableToIsInAssignmentRuleMap.get(currentVar) == true)
-					
-						affectedAssignmentRuleSet.addAll(eq.state.modelstate.variableToAffectedAssignmentRuleSetMap.get(currentVar));
-					
-					if (affectedAssignmentRuleSet.size() > 0) {
-
-						affectedVariables = performAssignmentRules(eq.state.modelstate, affectedAssignmentRuleSet);
-
-						for (String affectedVariable : affectedVariables) {
-
-							int index = eq.state.variableToIndexMap.get(affectedVariable);
-							eq.state.values[index] = eq.state.modelstate.getVariableToValue(affectedVariable) - eq.state.values[index];
-						}
-					}
-				}
-				
-				
-			}
+			//nextEventTime = handleEvents();
 			
 			nextEndTime = currentTime + maxTimeStep;
 			
-			if (nextEndTime > nextEventTime) 
-			{
-				nextEndTime = nextEventTime;
-			}
 			
 			
 			if (nextEndTime > printTime) 
@@ -245,14 +221,24 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 				nextEndTime = printTime;
 			}
 			
+			//fireEvent(eq, modelstate);
 			
-			if(currentTime < nextEndTime && Math.abs(currentTime - nextEndTime) > 1e-3)
+			if(currentTime < nextEndTime && Math.abs(currentTime - nextEndTime) > 1e-6)
 			{
-				double[] temp = new double[eq.state.values.length];
-				odecalc.integrate(eq, currentTime, eq.state.values, nextEndTime, temp);
-				eq.state.values = temp;
+				odecalc.integrate(eq, currentTime, eq.state.values, nextEndTime, eq.state.values);
+
+				fireEvent(eq, modelstate);
+				
+					
 			}
+			else
+			{
+				currentTime = nextEndTime;
+			}
+
 			
+			
+			}
 			
 			updateValuesArray();
 			
@@ -278,35 +264,10 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 			//update progress bar			
 			progress.setValue((int)((printTime / timeLimit) * 100.0));
 
-			currentTime = nextEndTime;
-
-		/*	
-			for(DiffEquations eq : functions)
-			{
-			//EVENT HANDLING
-			//trigger and/or fire events, etc.
-				
-			ModelState modelstate = eq.state.modelstate;
-			
-
-			//add events to queue if they trigger
-			if (modelstate.noEventsFlag == false) {
-
-				handleEvents();
-
-				//step to the next event fire time if it comes before the next time step
-				if (!topmodel.triggeredEventQueue.isEmpty() && topmodel.triggeredEventQueue.peek().fireTime <= currentTime)
-					currentTime = topmodel.triggeredEventQueue.peek().fireTime;
-			}
-
-			updateValuesArray();
-
-		} 
-			*/
 		//end simulation loop
 
 		
-		}
+		
 		}
 		try {
 			bufferedTSDWriter.write(')');
@@ -335,13 +296,11 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 		//and create a hashmap to find indices
 		for(DiffEquations eq : functions)
 		{
-			for (String variable : eq.state.modelstate.variableToValueMap.keySet()) 
+			for (String variable : eq.state.variables) 
 			{
+				index = eq.state.variableToIndexMap.get(variable);
 				eq.state.values[index] = eq.state.modelstate.getVariableToValue(variable);
-				++index;
 			}
-			
-			index = 0;
 		}
 	}
 
@@ -354,7 +313,9 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 			//step to the next event fire time if it comes before the next time step
 			if (!topmodel.triggeredEventQueue.isEmpty() && topmodel.triggeredEventQueue.peek().fireTime <= nextEventTime)
 				if(topmodel.triggeredEventQueue.peek().fireTime < nextEventTime)
+				{
 					nextEventTime = topmodel.triggeredEventQueue.peek().fireTime;
+				}
 		}
 
 		for(ModelState models : submodels.values())
@@ -363,35 +324,65 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 				//step to the next event fire time if it comes before the next time step
 				if (!models.triggeredEventQueue.isEmpty() && models.triggeredEventQueue.peek().fireTime <= nextEventTime)
 					if(models.triggeredEventQueue.peek().fireTime < nextEventTime)
+					{
 						nextEventTime = models.triggeredEventQueue.peek().fireTime;
+					}
 			}
 		return nextEventTime;
 	}
 
-	
-		
-	private boolean fireEvent(DiffEquations eq, ModelState modelstate)
+	private void performAssignmentRules(DiffEquations eq)
 	{
+		for(String currentVar : eq.state.modelstate.speciesIDSet)
+		{
+			HashSet<String> affectedVariables = new HashSet<String>();
+
+			HashSet<AssignmentRule> affectedAssignmentRuleSet = new HashSet<AssignmentRule>();
+			if (eq.state.modelstate.variableToIsInAssignmentRuleMap != null && eq.state.modelstate.variableToIsInAssignmentRuleMap.containsKey(currentVar) &&
+				eq.state.modelstate.variableToValueMap.contains(currentVar) && 
+				eq.state.modelstate.variableToIsInAssignmentRuleMap.get(currentVar) == true)
+			
+				affectedAssignmentRuleSet.addAll(eq.state.modelstate.variableToAffectedAssignmentRuleSetMap.get(currentVar));
+			
+			if (affectedAssignmentRuleSet.size() > 0) {
+
+				affectedVariables = performAssignmentRules(eq.state.modelstate, affectedAssignmentRuleSet);
+
+				for (String affectedVariable : affectedVariables) {
+
+					int index = eq.state.variableToIndexMap.get(affectedVariable);
+					eq.state.values[index] = eq.state.modelstate.getVariableToValue(affectedVariable) - eq.state.values[index];
+				}
+			}
+		}
+	}
+		
+	private HashSet<String> fireEvent(DiffEquations eq, ModelState modelstate)
+	{
+		HashSet<String> vars = new HashSet<String>();
 		if (modelstate.noEventsFlag == false) 
 		{
 
 			//if events fired, then the affected species counts need to be updated in the values array
 			int sizeBefore = modelstate.triggeredEventQueue.size();
 		
-			fireEvents(modelstate, modelstate.noRuleFlag, modelstate.noConstraintsFlag);
+			vars = fireEvents(modelstate, "variable", modelstate.noRuleFlag, modelstate.noConstraintsFlag);
 		
 			int sizeAfter = modelstate.triggeredEventQueue.size();
 
 			if (sizeAfter != sizeBefore)
 			{
-				for (int i = 0; i < eq.state.values.length; ++i)
-					eq.state.values[i] = modelstate.getVariableToValue(eq.state.indexToVariableMap.get(i));
-				return true;
+				for (String var : vars)
+				{
+					int index = eq.state.variableToIndexMap.get(var);
+					eq.state.values[index] = modelstate.getVariableToValue(var);	
+				}
 			}
+			}
+		return vars;
 		}
-		
-		return false;
-	}
+	
+	
 	
 	@Override
 	protected void clear() {
@@ -404,7 +395,77 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 		
 	}
 	
+	private class EventHandlerObject implements EventHandler
+	{
+		public EventHandlerObject() {}
+		
+		@Override
+		public Action eventOccurred(double t0, double[] y, boolean t) 
+		{
+			return EventHandler.Action.RESET_STATE;
+		}
 
+		@Override
+		public double g(double t, double[] y) {
+			
+			double t1 = currentTime;
+			double t2 = nextEventTime;
+		
+			if(nextEventTime == Double.POSITIVE_INFINITY)
+			{
+				return 1;
+			}
+
+			else if(t <= nextEventTime)
+			{
+				//System.out.println(currentTime);
+				
+				
+				return -1;
+				
+			}
+			else
+			{
+				return 1;
+			}
+		}
+
+		@Override
+		public void init(double t0, double[] y, double t) 
+		{
+		}
+
+		@Override
+		public void resetState(double t, double[] y) {
+			
+			for(DiffEquations eq : functions)
+			{
+				
+				ModelState modelstate = eq.state.modelstate;
+				
+				if(modelstate.noEventsFlag == true)
+					continue; 
+				
+
+				currentTime = t;
+				
+				HashSet<String> variables = fireEvent(eq, modelstate);
+				
+				
+				for(String var : variables)
+				{
+					int index = eq.state.variableToIndexMap.get(var);
+					y[index] = eq.state.values[index];
+				}
+			}
+			
+		}
+		
+		
+		
+	}
+	
+	
 	private class DiffEquations implements FirstOrderDifferentialEquations
 	{
 		
@@ -427,7 +488,7 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 
 			//calculate the current variable values
 			//based on the ODE system			
-			for (int i = 0; i < currValueChanges.length; i++) {
+			for (int i = 0; i < currValueChanges.length - 1; i++) {
 
 				String currentVar = state.indexToVariableMap.get(i);
 
@@ -451,7 +512,8 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 				//				if (variableToIsInConstraintMap.get(speciesID) == true)
 				//					affectedConstraintSet.addAll(variableToAffectedConstraintSetMap.get(speciesID));
 			}
-
+			currValueChanges[currValueChanges.length - 1] = t;
+			state.modelstate.setvariableToValueMap("time", t);
 			//updatePropensities(performRateRules(topmodel, currentTime), "topmodel");
 			performRateRules(state.modelstate, state.variableToIndexMap, currValueChanges);
 			
@@ -470,8 +532,13 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 				}
 			}
 			
+		
+			
 
+			nextEventTime = handleEvents();
+		
 
+			currentTime = t;
 		}
 			
 		
@@ -492,50 +559,7 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 		protected HashSet<String> performRateRules(ModelState modelstate, HashMap<String, Integer> variableToIndexMap, double[] currValueChanges) {
 			
 			HashSet<String> affectedVariables = new HashSet<String>();
-			/*
-			for (Rule rule : modelstate.model.getListOfRules()) {
-				
-				if (rule.isRate()) {
-					
-					RateRule rateRule = (RateRule) rule;			
-					String variable = rateRule.getVariable();
-					
-					//update the species count (but only if the species isn't constant) (bound cond is fine)
-					if (modelstate.variableToIsConstantMap.containsKey(variable) && modelstate.variableToIsConstantMap.get(variable) == false) {
-						
-						if (modelstate.speciesToHasOnlySubstanceUnitsMap.containsKey(variable) &&
-								modelstate.speciesToHasOnlySubstanceUnitsMap.get(variable) == false) 
-						{
-							if(!variableToIndexMap.containsKey(variable))
-								continue;
-							int index = variableToIndexMap.get(variable);
-							
-							if(index > currValueChanges.length)
-								continue;
-							
-							double value = (evaluateExpressionRecursive(modelstate, rateRule.getMath()) *
-									modelstate.getVariableToValue(modelstate.speciesToCompartmentNameMap.get(variable)));
-							currValueChanges[index] = value;
-							//modelstate.setvariableToValueMap(variable, value);
-							
-						}
-						else {
-							if(!variableToIndexMap.containsKey(variable))
-								continue;
-							int index = variableToIndexMap.get(variable);
-							if(index > currValueChanges.length)
-								continue;
-							double value = evaluateExpressionRecursive(modelstate, rateRule.getMath());
-							currValueChanges[index] = value;
-							//modelstate.setvariableToValueMap(variable, value);
-						}
-						
-						affectedVariables.add(variable);
-					}
-				}
-			}
-			*/
-			
+	
 			for (RateRule rateRule : modelstate.rateRulesList) {
 					
 					String variable = rateRule.getVariable();
@@ -595,19 +619,19 @@ protected class VariableState
 	protected VariableState(ModelState modelstate)
 	{
 		this.modelstate = modelstate;
-
-		variables = new String[modelstate.variableToValueMap.size()];
-		values = new double[modelstate.variableToValueMap.size()];
-		dvariablesdtime = new ASTNode[modelstate.variableToValueMap.size()];
-		variableToIndexMap = new HashMap<String, Integer>(modelstate.variableToValueMap.size());
-		indexToVariableMap = new HashMap<Integer, String>(modelstate.variableToValueMap.size());
+		int size = modelstate.variableToValueMap.size() + 1;
+		variables = new String[size];
+		values = new double[size];
+		dvariablesdtime = new ASTNode[size];
+		variableToIndexMap = new HashMap<String, Integer>(size);
+		indexToVariableMap = new HashMap<Integer, String>(size);
 		
 		int index = 0;
 
 		//convert variableToValueMap into two arrays
 		//and create a hashmap to find indices
-		for (String variable : modelstate.variableToValueMap.keySet()) {
-
+		for (String variable : modelstate.variableToValueMap.keySet()) 
+		{
 			variables[index] = variable;
 			values[index] = modelstate.getVariableToValue(variable);
 			variableToIndexMap.put(variable, index);
@@ -616,7 +640,14 @@ protected class VariableState
 			indexToVariableMap.put(index, variable);
 			++index;
 		}
+		
 
+		indexToVariableMap.put(index, "time");
+
+		variableToIndexMap.put("time", index);
+		variables[index] = "time";
+		values[index] = 0;
+		modelstate.variableToValueMap.put("time", 0);
 		//create system of ODEs for the change in variables
 		for (String reaction : modelstate.reactionToFormulaMap.keySet()) 
 		{
