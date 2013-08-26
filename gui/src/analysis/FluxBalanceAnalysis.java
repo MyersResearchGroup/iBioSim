@@ -5,10 +5,10 @@ import java.util.HashMap;
 
 import main.Gui;
 
-import org.apache.commons.math.linear.Array2DRowRealMatrix;
-import org.apache.commons.math.linear.ArrayRealVector;
-import org.apache.commons.math.linear.RealMatrix;
-import org.apache.commons.math.linear.RealVector;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.RealVector;
 import org.sbml.libsbml.FbcModelPlugin;
 import org.sbml.libsbml.FluxBound;
 import org.sbml.libsbml.Reaction;
