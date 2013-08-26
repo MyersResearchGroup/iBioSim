@@ -64,7 +64,6 @@ public class FluxBalanceAnalysis {
 				System.out.println(reactionIndex);
 				
 				//Set the array to be the max it will ever be, Min & max for each + possible reversible reactions
-				double [][] arr = new double [(int) sbml.getModel().getNumSpecies()][(int) (2*(sbml.getModel().getNumSpecies() + 2*(sbml.getModel().getNumReactions())))];
 				double [] objective = new double[(int) (4*(sbml.getModel().getNumSpecies() + (sbml.getModel().getNumReactions())))];
 				for (int j = 0; j < fbc.getObjective(i).getNumFluxObjectives(); j++) {
 					objective [(int) fbc.getObjective(i).getFluxObjective(j).getColumn()] = fbc.getObjective(i).getFluxObjective(j).getCoefficient();
@@ -113,6 +112,7 @@ public class FluxBalanceAnalysis {
 				}
 				
 				for (long j = 0; j < sbml.getModel().getNumSpecies(); j++) {
+					double[] stoch = new double [(int) (2*(sbml.getModel().getNumSpecies() + 2*(sbml.getModel().getNumReactions())))];
 					Species species = sbml.getModel().getSpecies(j);
 					System.out.println(species.getId());
 					// Construct a stoch vector size of number of reactions, init with 0's
@@ -122,37 +122,44 @@ public class FluxBalanceAnalysis {
 							SpeciesReference sr = r.getReactant(l);
 							if (sr.getSpecies().equals(species.getId())) {
 								System.out.println(r.getId() + ":" + (-1)*sr.getStoichiometry());
+								stoch[(int) (reactionIndex.get(r.getId())+2*sbml.getModel().getNumSpecies())]=(-1)*sr.getStoichiometry();
 							}
 						}
 						for (long l = 0; l < r.getNumProducts(); l++) {
 							SpeciesReference sr = r.getProduct(l);
 							if (sr.getSpecies().equals(species.getId())) {
 								System.out.println(r.getId() + ":" + sr.getStoichiometry());
+								stoch[(int) (reactionIndex.get(r.getId())+2*sbml.getModel().getNumSpecies())]=sr.getStoichiometry();
 							}
 						}
 						// Do same for products
 						// Insert (product stoch - reactant stoch) into appropriate location in the vector 
 					}
-					// inequalities[2*j + fbc.getNumFluxBounds()] = new LinearMultivariateRealFunction(stoch, 0);
-					// inequalities[2*j + 1 + fbc.getNumFluxBounds()] = new LinearMultivariateRealFunction(-1*stoch, 0);
+					inequalities[(int) (2*j + fbc.getNumFluxBounds())] = new LinearMultivariateRealFunction(stoch, 0);
+					for(int k = 0; k<stoch.length;k++){
+						stoch[k] = -1*stoch[k];
+					}
+					inequalities[(int) (2*j + 1 + fbc.getNumFluxBounds())] = new LinearMultivariateRealFunction(stoch, 0);
 				}
-//				//optimization problem
-//				OptimizationRequest or = new OptimizationRequest();
-//				or.setF0(objectiveFunction);
-//				or.setFi(inequalities);
-//				//or.setInitialPoint(new double[] {0.0, 0.0});//initial feasible point, not mandatory
-//				or.setToleranceFeas(1.E-9);
-//				or.setTolerance(1.E-9);
-//				
-//				//optimization
-//				jop = new JOptimizer();
-//				jop.setOptimizationRequest(or);
-//				try {
-//					jop.optimize();
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//				double [] sol = jop.getOptimizationResponse().getSolution();
+				//optimization problem
+				OptimizationRequest or = new OptimizationRequest();
+				or.setF0(objectiveFunction);
+				or.setFi(inequalities);
+				//or.setInitialPoint(new double[] {0.0, 0.0});//initial feasible point, not mandatory
+				or.setToleranceFeas(1.E-9);
+				or.setTolerance(1.E-9);
+				
+				//optimization
+				jop = new JOptimizer();
+				jop.setOptimizationRequest(or);
+				try {
+					jop.optimize();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+				double [] sol = jop.getOptimizationResponse().getSolution();
+				
 				for (long j = 0; j < sbml.getModel().getNumReactions(); j++) {
 					System.out.println(sbml.getModel().getReaction(j)); // + " = " + sol[j]
 				}
