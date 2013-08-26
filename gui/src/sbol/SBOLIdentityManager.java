@@ -179,7 +179,7 @@ public class SBOLIdentityManager {
 		} else {
 			dnaComp.setDisplayId(biomodel.getSBMLDocument().getModel().getId());
 		}
-		dnaComp.addType(SequenceOntology.type("SO_0000804"));
+//		dnaComp.addType(SequenceOntology.type("SO_0000804"));
 	}
 			
 	// Constructs URIs for newly synthesized component, its DNA sequence, and sequence annotations
@@ -240,7 +240,7 @@ public class SBOLIdentityManager {
 	}
 
 	private void loadAuthority() {
-		uriAuthority = Preferences.userRoot().get(GlobalConstants.SBOL_URI_AUTHORITY_PREFERENCE, "");
+		uriAuthority = Preferences.userRoot().get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE, "");
 	}
 	
 	private void setTime() {

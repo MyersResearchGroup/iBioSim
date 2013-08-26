@@ -134,11 +134,17 @@ import org.jlibsedml.SedMLError;
 import org.jlibsedml.Task;
 //import org.antlr.runtime.TokenStream;
 import org.sbml.libsbml.*;
+import org.sbolstandard.core.DnaComponent;
 import org.sbolstandard.core.SBOLDocument;
 
 //import lpn.parser.properties.*;
 
+import sbol.SBOLSynthesisMatcher;
 import sbol.SBOLBrowser;
+import sbol.SBOLFileManager;
+import sbol.SBOLSynthesisGraph;
+import sbol.SBOLSynthesizer;
+import sbol.SBOLTestFactory;
 import sbol.SBOLUtility;
 
 import java.net.*;
@@ -848,7 +854,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		viewSG.setActionCommand("stateGraph");
 		createLearn.setActionCommand("createLearn");
 		createSbml.setActionCommand("createSBML");
-		createSynth.setActionCommand("createSynthesis");
 		createVer.setActionCommand("createVerify");
 
 		ShortCutKey = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
@@ -1174,6 +1179,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		if (LPN2SBML) {
 			tools.add(createAnal);
+			tools.add(createSynth);
 		}
 		if (!atacs) {
 			tools.add(createLearn);
@@ -1972,6 +1978,55 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			else {
 				JOptionPane.showMessageDialog(frame, "You must open or create a project first.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		else if (e.getActionCommand().equals("performGeneticSynthesis")) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof ModelEditor) {
+//				SBOLTestFactory testFactory = new SBOLTestFactory();
+//				int[] gateTotals = new int[] {4, 4, 1};
+//				String[] gateTypes = new String[] {"NOT", "NOR", "OR"};
+//				List<BioModel> gateLibrary = testFactory.createTestLibrary(gateTotals, gateTypes, root);
+//				Set<DnaComponent> libComps = testFactory.annotateTestLibrary(4, 9, 2, 1, gateLibrary);
+//				for (BioModel gateModel : gateLibrary)
+//					gateModel.save(root + separator + gateModel.getSBMLFile());
+				SBOLFileManager fileManager = new SBOLFileManager(root, getSbolFiles());
+//				fileManager.saveDNAComponents(libComps, root + separator + "synTest.sbol");
+				BioModel specModel = ((ModelEditor) comp).getBioModel();
+				Set<SBOLSynthesisGraph> graphlibrary = new HashSet<SBOLSynthesisGraph>();
+				for (int i = 0; i < tree.getRoot().getChildCount(); i++) {
+					String libFileID = tree.getRoot().getChildAt(i).toString();
+					if (libFileID.endsWith(".xml") && !specModel.getSBMLFile().equals(libFileID)) {
+						BioModel gateModel = new BioModel(root);
+						gateModel.load(libFileID);
+						graphlibrary.add(new SBOLSynthesisGraph(gateModel, fileManager));
+					}
+				}
+				SBOLSynthesizer synthesizer = new SBOLSynthesizer(graphlibrary);
+				SBOLSynthesisGraph spec = new SBOLSynthesisGraph(specModel, fileManager);
+				List<Integer> solution = synthesizer.mapSpecification(spec);
+				String outputFileID;
+				int version = 1;
+				do {
+					outputFileID = spec.getModelID() + "_v" + version + ".xml";
+				} while(!overwrite(root + separator + outputFileID, outputFileID));
+				BioModel outputModel = synthesizer.composeModel(solution, spec, root, outputFileID);
+				outputModel.save(root + separator + outputFileID);
+				int i = getTab(outputFileID);
+				if (i != -1) {
+					tab.remove(i);
+				}
+				ModelEditor modelEditor;
+				try {
+					modelEditor = new ModelEditor(root + separator, outputFileID, this, log, false, null, null, null, false, false);
+				
+				modelEditor.save("Save GCM");
+				addTab(outputFileID, modelEditor, "GCM Editor");
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				addToTree(outputFileID);
 			}
 		}
 		// if the verify popup menu is selected on a vhdl or lhpn file
@@ -9334,6 +9389,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				viewModBrowser.setEnabled(true);
 				createAnal.setEnabled(true);
 				createAnal.setActionCommand("simulate");
+				createSynth.setEnabled(true);
+				createSynth.setActionCommand("performGeneticSynthesis");
 				createLearn.setEnabled(true);
 				copy.setEnabled(true);
 				rename.setEnabled(true);
@@ -9378,6 +9435,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				viewModel.setEnabled(true);
 				viewModGraph.setEnabled(true);
 				createSynth.setEnabled(true);
+				createSynth.setActionCommand("createSynthesis");
 				createVer.setEnabled(true);
 				copy.setEnabled(true);
 				rename.setEnabled(true);
@@ -9393,6 +9451,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					createLearn.setEnabled(true);
 				}
 				createSynth.setEnabled(true);
+				createSynth.setActionCommand("createSynthesis");
 				createVer.setEnabled(true);
 				copy.setEnabled(true);
 				rename.setEnabled(true);
@@ -9409,6 +9468,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				viewModel.setEnabled(true);
 				viewModGraph.setEnabled(true);
 				createSynth.setEnabled(true);
+				createSynth.setActionCommand("createSynthesis");
 				createVer.setEnabled(true);
 				copy.setEnabled(true);
 				rename.setEnabled(true);

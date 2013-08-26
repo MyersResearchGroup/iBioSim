@@ -19,6 +19,7 @@ import main.Gui;
 
 import org.sbml.libsbml.Model;
 import org.sbolstandard.core.DnaComponent;
+import org.sbolstandard.core.MergerException;
 import org.sbolstandard.core.Resolver;
 import org.sbolstandard.core.SBOLDocument;
 import org.sbolstandard.core.SBOLFactory;
@@ -70,7 +71,13 @@ public class SBOLFileManager {
 	}
 	
 	public DnaComponent resolveURI(URI uri) {
-		DnaComponent resolvedComp = aggregateCompResolver.resolve(uri);
+		DnaComponent resolvedComp = null;
+		try {
+			resolvedComp = aggregateCompResolver.resolve(uri);
+		} catch (MergerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		if (resolvedComp == null)
 			JOptionPane.showMessageDialog(Gui.frame, "DNA component with URI " + uri.toString() +
 					" could not be found in project SBOL files.", "DNA Component Not Found", JOptionPane.ERROR_MESSAGE);
@@ -81,7 +88,13 @@ public class SBOLFileManager {
 		boolean error = false;
 		List<DnaComponent> resolvedComps = new LinkedList<DnaComponent>();
 		for (URI uri : uris) {
-			DnaComponent resolvedComp = aggregateCompResolver.resolve(uri);
+			DnaComponent resolvedComp = null;
+			try {
+				resolvedComp = aggregateCompResolver.resolve(uri);
+			} catch (MergerException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			if (resolvedComp == null) {
 				JOptionPane.showMessageDialog(Gui.frame, "DNA component with URI " + uri.toString() +
 						" could not be found in project SBOL files.", "DNA Component Not Found", JOptionPane.ERROR_MESSAGE);
@@ -140,6 +153,13 @@ public class SBOLFileManager {
 		}
 	}
 	
+	public void saveDNAComponents(Set<DnaComponent> dnaComps, String fileID) {
+		SBOLDocument sbolDoc = new SBOLDocumentImpl();
+		for (DnaComponent dnaComp : dnaComps)
+			SBOLUtility.addDNAComponent(dnaComp, sbolDoc);
+		SBOLUtility.writeSBOLDocument(fileID, sbolDoc);
+	}
+	
 	public void exportDNAComponents(List<DnaComponent> dnaComps, String exportFilePath) {
 		SBOLDocument sbolDoc;
 		File exportFile = new File(exportFilePath);
@@ -178,6 +198,10 @@ public class SBOLFileManager {
 	
 	public String getLocatedFileID() {
 		return locatedFileID;
+	}
+	
+	public String getProjectDirectory() {
+		return projectDirectory;
 	}
 	
 }

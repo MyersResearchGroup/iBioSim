@@ -32,7 +32,7 @@ public class SequenceTypeValidator {
 //		partialConstructDFA = new DFA(nfaStartStates);
 		partialConstructDFA = terminalConstructDFA.clone("?");
 //		terminalConstructDFA.print();
-//		partialConstructDFA.print();
+//		startConstructDFA.print();
 	}
 	
 	private Set<NFAState> constructNFA(String regex) {
@@ -396,7 +396,7 @@ public class SequenceTypeValidator {
 	
 	public boolean validateStartConstruct(List<String> types, boolean saveState) {
 		List<String> reverseTypes = new LinkedList<String>();
-		for (int i = 0; i < types.size() - 1; i++)
+		for (int i = 0; i < types.size(); i++)
 			reverseTypes.add(0, types.get(i));
 		if (saveState)
 			return startConstructDFA.runAndSave(reverseTypes);
@@ -650,7 +650,8 @@ public class SequenceTypeValidator {
 				DFAState clonedState = new DFAState(id);
 				if (id.equals(GlobalConstants.CONSTRUCT_VALIDATION_FAIL_STATE_ID))
 					clonedState.setAccepting(false);
-				else if (quantifier.equals("?") && !id.equals(startState.getID()))
+				else if (quantifier.equals("?"))
+//					&& !id.equals(startState.getID()
 					clonedState.setAccepting(true);
 				else
 					clonedState.setAccepting(states.get(id).isAccepting());

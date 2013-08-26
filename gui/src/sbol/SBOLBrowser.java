@@ -159,7 +159,13 @@ public class SBOLBrowser extends JPanel implements ActionListener {
 		Set<String> dnacTypes = new LinkedHashSet<String>();
 		dnacTypes.add("all");
 		for (int i = 0; i < localCompURIs.size(); i++) {
-			DnaComponent localComp = aggregateCompResolver.resolve(localCompURIs.get(i));
+			DnaComponent localComp = null;
+			try {
+				localComp = aggregateCompResolver.resolve(localCompURIs.get(i));
+			} catch (MergerException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			dnacTypes.add(SBOLUtility.convertURIToSOType(localComp.getTypes().iterator().next()));
 		}
 		filterBox = new JComboBox(dnacTypes.toArray(new String[dnacTypes.size()]));

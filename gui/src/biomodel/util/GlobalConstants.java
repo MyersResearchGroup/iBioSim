@@ -129,11 +129,15 @@ public class GlobalConstants {
 	public static final String SBOL_TERMINATOR = "sbolTerminator";
 	public static final String SBOL_RBS = "sbolRBS";
 	public static final String SBOL_CDS = "sbolCDS";
+	public static final String SO_PROMOTER = "SO_0000167";
+	public static final String SO_TERMINATOR = "SO_0000141";
+	public static final String SO_RBS = "SO_0000139";
+	public static final String SO_CDS = "SO_0000316";
 	public static final String SBOL_DNA_COMPONENT = "sbolDnaComponent";
 	public static final String GENETIC_CONSTRUCT_REGEX = "(promoter(ribosome entry site,coding sequence)+terminator+)+";
 	public static final String GENETIC_CONSTRUCT_REGEX_PREFERENCE = "biosim.synthesis.regex";
-	public static final String SBOL_URI_AUTHORITY_PREFERENCE = "biosim.synthesis.uri";
-	public static final String MYERS_LAB_URI_AUTHORITY = "http://www.async.ece.utah.edu";
+	public static final String SBOL_AUTHORITY_PREFERENCE = "biosim.synthesis.uri";
+	public static final String MYERS_LAB_AUTHORITY = "http://www.async.ece.utah.edu";
 	public static final String CONSTRUCT_VALIDATION = "True";
 	public static final String CONSTRUCT_VALIDATION_PREFERENCE = "biosim.synthesis.validation";
 	public static final String CONSTRUCT_VALIDATION_WARNING = "False";
