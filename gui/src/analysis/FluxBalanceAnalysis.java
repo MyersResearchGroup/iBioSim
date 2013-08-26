@@ -1,6 +1,7 @@
 package analysis;
 
 import java.text.NumberFormat;
+import java.util.HashMap;
 
 import main.Gui;
 
@@ -32,49 +33,85 @@ public class FluxBalanceAnalysis {
 	
 	private NumberFormat nf;
 	
-	private double[] arr;
 	
 	public FluxBalanceAnalysis(String sbmlFileName) {
+		// Load the SBML file
 		this.sbmlFileName = sbmlFileName;
-		nf = NumberFormat.getNumberInstance();
+		sbml = Gui.readSBML(sbmlFileName);
+		fbc = (FbcModelPlugin)sbml.getModel().getPlugin("fbc");
 		
 		//Set number of digits after decimal point
+		nf = NumberFormat.getNumberInstance();		
 		nf.setMaximumFractionDigits(4);
-		
 		nf.setGroupingUsed(false);
-		//Set the array to be the max it will ever be
-		//arr=new double[(int) (2*(sbml.getModel().getNumSpecies() + sbml.getModel().getNumReactions()))];
 	}
 	
 	/**
 	 * @return
 	 */
 	public int PerformFluxBalanceAnalysis(){
-		// Load the SBML file
-		sbml = Gui.readSBML(sbmlFileName);
-		fbc = (FbcModelPlugin)sbml.getModel().getPlugin("fbc");
+		// Fill the objective array
 		if (fbc != null) {
 			for (long i = 0; i < fbc.getNumObjectives(); i++) {
-				String objective = "";
-				// Construct an double array size of number of reactions
-				for (long j = 0; j < fbc.getObjective(i).getNumFluxObjectives(); j++) {
-					objective += fbc.getObjective(i).getFluxObjective(j).getCoefficient() + "*" + fbc.getObjective(i).getFluxObjective(j).getReaction() + " + ";
-					// insert the coefficient in the array in the appropriate location for the reaction in this flux objective
+				HashMap<String, Integer> reactionIndex = new HashMap<String, Integer>();
+				int kp = 0;
+				for(int l =0;l<fbc.getNumFluxBounds();l++){
+					if(!reactionIndex.containsKey(fbc.getFluxBound(l).getReaction())){
+						reactionIndex.put(fbc.getFluxBound(l).getReaction(), kp);
+						kp++;
+					}
 				}
-				System.out.println(objective);
+				System.out.println(reactionIndex);
+				
+				//Set the array to be the max it will ever be, Min & max for each + possible reversible reactions
+				double [][] arr = new double [(int) sbml.getModel().getNumSpecies()][(int) (2*(sbml.getModel().getNumSpecies() + 2*(sbml.getModel().getNumReactions())))];
+				double [] objective = new double[(int) (4*(sbml.getModel().getNumSpecies() + (sbml.getModel().getNumReactions())))];
+				for (int j = 0; j < fbc.getObjective(i).getNumFluxObjectives(); j++) {
+					objective [(int) fbc.getObjective(i).getFluxObjective(j).getColumn()] = fbc.getObjective(i).getFluxObjective(j).getCoefficient();
+					System.out.println(fbc.getObjective(i).getFluxObjective(j).getReaction() + " " + fbc.getObjective(i).getFluxObjective(j).getColumn());
+					// Insert the coefficient in the array in the appropriate location for the reaction in this flux objective
+				}
+				String printTest = "";
+				for (int j = 0; j < objective.length; j++) {
+					printTest +=objective[j];
+				}				
+				System.out.println(printTest);
 				// [ 0 0 ... 1.0 ]
-				// LinearMultivariateRealFunction objectiveFunction = new LinearMultivariateRealFunction(MY_FLUX_COEFFICIENT_ARRAY, 0);
+				LinearMultivariateRealFunction objectiveFunction = new LinearMultivariateRealFunction(objective, 0);
 				
 				// Construct set of inequalities which is number of flux bounds (+ locations for equal bounds) + 2*number of species
 				//inequalities (polyhedral feasible set G.X<H )
-				//ConvexMultivariateRealFunction[] inequalities = new ConvexMultivariateRealFunction[4];
+				ConvexMultivariateRealFunction[] inequalities = new ConvexMultivariateRealFunction[(int) (2*(sbml.getModel().getNumSpecies() + 2*(sbml.getModel().getNumReactions())))];
+				System.out.println(fbc.getNumFluxBounds());
 				for (long j = 0; j < fbc.getNumFluxBounds(); j++) {
 					FluxBound bound = fbc.getFluxBound(j);
+					double R [] = new double [reactionIndex.size()];
+					if(reactionIndex.containsKey(bound.getReaction())){
+						R[reactionIndex.get(bound.getReaction())]=1;
+					}
+					
+					String secondTest = "";
+					for (int k = 0; k < R.length; k++) {
+						secondTest +=R[k];
+					}				
+					System.out.println(secondTest);
+					
+					if(bound.getOperation().equals("greaterEqual")){
+						for(int k = 0; k<R.length;k++){
+							R[k] = -1*R[k];
+						}
+						inequalities[(int) j] = new LinearMultivariateRealFunction(R, bound.getValue());
+					}
+					
+					else if(bound.getOperation().equals("lessEqual")){
+						inequalities[(int) j] = new LinearMultivariateRealFunction(R, -1* bound.getValue());
+					}
 					System.out.println(bound.getReaction() + " " + bound.getOperation() + " " + bound.getValue());
 					// Create a vector R size number of reactions where the entry is 1.0 for the reaction for this bound and 0 otherwise
 					// rSign/hSign is determined by the operation, <= +/-, >= -/+
 					// inequalities[j] = new LinearMultivariateRealFunction(rSign * R, hSign * value);
 				}
+				
 				for (long j = 0; j < sbml.getModel().getNumSpecies(); j++) {
 					Species species = sbml.getModel().getSpecies(j);
 					System.out.println(species.getId());
@@ -85,6 +122,12 @@ public class FluxBalanceAnalysis {
 							SpeciesReference sr = r.getReactant(l);
 							if (sr.getSpecies().equals(species.getId())) {
 								System.out.println(r.getId() + ":" + (-1)*sr.getStoichiometry());
+							}
+						}
+						for (long l = 0; l < r.getNumProducts(); l++) {
+							SpeciesReference sr = r.getProduct(l);
+							if (sr.getSpecies().equals(species.getId())) {
+								System.out.println(r.getId() + ":" + sr.getStoichiometry());
 							}
 						}
 						// Do same for products
