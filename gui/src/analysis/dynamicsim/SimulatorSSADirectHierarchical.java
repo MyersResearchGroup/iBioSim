@@ -68,7 +68,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 			//trigger and/or fire events, etc.
 			if (topmodel.noEventsFlag == false) 
 			{
-				HashSet<String> affectedReactionSet = fireEvents(topmodel, topmodel.noRuleFlag, topmodel.noConstraintsFlag);				
+				HashSet<String> affectedReactionSet = fireEvents(topmodel, "reaction", topmodel.noRuleFlag, topmodel.noConstraintsFlag);				
 
 				//recalculate propensties/groups for affected reactions
 				if (affectedReactionSet.size() > 0)
@@ -78,7 +78,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 			for(ModelState models : submodels.values())
 			{
 				if (models.noEventsFlag == false) {
-					HashSet<String> affectedReactionSet = fireEvents(models, models.noRuleFlag, models.noConstraintsFlag);				
+					HashSet<String> affectedReactionSet = fireEvents(models, "reaction", models.noRuleFlag, models.noConstraintsFlag);				
 
 					//recalculate propensties/groups for affected reactions
 					if (affectedReactionSet.size() > 0)

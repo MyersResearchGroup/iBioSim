@@ -1831,11 +1831,11 @@ public abstract class HierarchicalSimulator {
 	 * @param noAssignmentRulesFlag
 	 * @param noConstraintsFlag
 	 */
-	protected HashSet<String> fireEvents(ModelState modelstate, final boolean noAssignmentRulesFlag, final boolean noConstraintsFlag) {
+	protected HashSet<String> fireEvents(ModelState modelstate, String selector, final boolean noAssignmentRulesFlag, final boolean noConstraintsFlag) {
 
 		//temporary set of events to remove from the triggeredEventQueue
 		HashSet<String> untriggeredEvents = new HashSet<String>();
-
+		HashSet<String> variableInFiredEvents = new HashSet<String>();
 		//loop through all triggered events
 		//if the trigger is no longer true
 		//remove from triggered queue and put into untriggered set
@@ -1844,13 +1844,15 @@ public abstract class HierarchicalSimulator {
 			String triggeredEventID = triggeredEvent.eventID;
 
 			//if the trigger evaluates to false
-			if (getBooleanFromDouble(evaluateExpressionRecursive(modelstate, modelstate.eventToTriggerMap.get(triggeredEventID))) == false) {
+			if (modelstate.eventToTriggerPersistenceMap.get(triggeredEventID) == false && 
+					getBooleanFromDouble(evaluateExpressionRecursive(modelstate, modelstate.eventToTriggerMap.get(triggeredEventID))) == false) {
 
 				untriggeredEvents.add(triggeredEventID);
 				modelstate.eventToPreviousTriggerValueMap.put(triggeredEventID, false);
 			}
 
-			if (getBooleanFromDouble(evaluateExpressionRecursive(modelstate, modelstate.eventToTriggerMap.get(triggeredEventID))) == false) {
+			if (modelstate.eventToTriggerPersistenceMap.get(triggeredEventID) == true &&
+					getBooleanFromDouble(evaluateExpressionRecursive(modelstate, modelstate.eventToTriggerMap.get(triggeredEventID))) == false) {
 				modelstate.untriggeredEventSet.add(triggeredEventID);
 			}
 		}
@@ -1881,7 +1883,8 @@ public abstract class HierarchicalSimulator {
 		//set the previous trigger value to false
 		for (String untriggeredEventID : modelstate.untriggeredEventSet) {
 
-			if (getBooleanFromDouble(evaluateExpressionRecursive(modelstate, modelstate.eventToTriggerMap.get(untriggeredEventID))) == false)
+			if (modelstate.eventToTriggerPersistenceMap.get(untriggeredEventID) == false && 
+					getBooleanFromDouble(evaluateExpressionRecursive(modelstate, modelstate.eventToTriggerMap.get(untriggeredEventID))) == false)
 				modelstate.eventToPreviousTriggerValueMap.put(untriggeredEventID, false);
 		}
 
@@ -1895,11 +1898,12 @@ public abstract class HierarchicalSimulator {
 
 
 		//fire all events whose fire time is less than the current time	
-		while (modelstate.triggeredEventQueue.size() > 0 && modelstate.triggeredEventQueue.peek().fireTime <= currentTime) {
+		while (modelstate.triggeredEventQueue.size() > 0 &&
+				modelstate.triggeredEventQueue.peek().fireTime <= currentTime) {
 
 			EventToFire eventToFire = modelstate.triggeredEventQueue.poll();
 			String eventToFireID = eventToFire.eventID;
-
+	
 			//System.err.println("firing " + eventToFireID);
 
 			if (modelstate.eventToAffectedReactionSetMap.get(eventToFireID) != null)
@@ -1926,14 +1930,20 @@ public abstract class HierarchicalSimulator {
 					variable = ((EventAssignment) eventAssignment).getVariable();
 					assignmentValue = evaluateExpressionRecursive(modelstate, ((EventAssignment) eventAssignment).getMath());
 				}
+				
+				variableInFiredEvents.add(variable);
+				
 
+				
 				//update the species, but only if it's not a constant (bound. cond. is fine)
 				if (modelstate.variableToIsConstantMap.get(variable) == false) {
 
-					if(replacements.containsKey(variable) && this.replacementSubModels.get(variable).contains(modelstate.ID))
-						replacements.put(variable, assignmentValue);
-					else
-						modelstate.variableToValueMap.put(variable, assignmentValue);
+					if (modelstate.speciesToHasOnlySubstanceUnitsMap.containsKey(variable) && 
+							modelstate.speciesToHasOnlySubstanceUnitsMap.get(variable) == false)
+						modelstate.setvariableToValueMap(variable, 
+								assignmentValue); //needs to fix this
+					else		
+						modelstate.setvariableToValueMap(variable, assignmentValue);
 				}
 
 				if (noAssignmentRulesFlag == false && modelstate.variableToIsInAssignmentRuleMap.get(variable) == true) 
@@ -1954,20 +1964,22 @@ public abstract class HierarchicalSimulator {
 				String triggeredEventID = triggeredEvent.eventID;
 
 				//if the trigger evaluates to false and the trigger isn't persistent
-				if (getBooleanFromDouble(evaluateExpressionRecursive(modelstate, modelstate.eventToTriggerMap.get(triggeredEventID))) == false) {
+				if (modelstate.eventToTriggerPersistenceMap.get(triggeredEventID) == false  &&
+						getBooleanFromDouble(evaluateExpressionRecursive(modelstate, modelstate.eventToTriggerMap.get(triggeredEventID))) == false) {
 
 					untriggeredEvents.add(triggeredEventID);
 					modelstate.eventToPreviousTriggerValueMap.put(triggeredEventID, false);
 				}
 
-				if (getBooleanFromDouble(evaluateExpressionRecursive(modelstate, modelstate.eventToTriggerMap.get(triggeredEventID))) == false)
+				if (modelstate.eventToTriggerPersistenceMap.get(triggeredEventID) == true && 
+						getBooleanFromDouble(evaluateExpressionRecursive(modelstate, modelstate.eventToTriggerMap.get(triggeredEventID))) == false)
 					modelstate.untriggeredEventSet.add(triggeredEventID);
 			}
 
 			//copy the triggered event queue -- except the events that are now untriggered
 			//this is done because the remove function can't work with just a string; it needs to match events
 			//this also re-evaluates the priorities in case they have changed
-			//newTriggeredEventQueue = new LinkedList<EventToFire>();
+			
 			newTriggeredEventQueue = new PriorityQueue<EventToFire>((int)modelstate.numEvents, eventComparator);
 
 			while (modelstate.triggeredEventQueue.size() > 0) {
@@ -1993,8 +2005,10 @@ public abstract class HierarchicalSimulator {
 
 
 		modelstate.untriggeredEventSet.addAll(firedEvents);
-
-		return affectedReactionSet;
+		if(selector.equals("variable"))
+			return variableInFiredEvents;
+		else
+			return affectedReactionSet;
 	}
 
 
