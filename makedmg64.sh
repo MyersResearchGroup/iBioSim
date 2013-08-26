@@ -7,6 +7,7 @@ cp lib64/*.jnilib /Applications/iBioSim.app/Contents/Resources/lib/.
 cp docs/*.html /Applications/iBioSim.app/Contents/Resources/docs/.
 cp docs/*.pdf /Applications/iBioSim.app/Contents/Resources/docs/.
 cp docs/screenshots /Applications/iBioSim.app/Contents/Resources/docs/screenshots/.
+cp -r docs/Tutorial /Applications/iBioSim.app/Contents/Resources/docs/screenshots/.
 cp gui/lib/* /Applications/iBioSim.app/Contents/Resources/gui/lib/.
 cp gui/lib/libsbmlj.jar /Applications/iBioSim.app/Contents/Resources/gui/lib/libsbmlj.jar
 cp gui/icons/* /Applications/iBioSim.app/Contents/Resources/gui/icons/.
