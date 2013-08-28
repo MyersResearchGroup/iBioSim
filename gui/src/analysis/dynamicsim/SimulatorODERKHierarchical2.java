@@ -38,6 +38,8 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 	double absoluteError;
 	double eventOccurred;
 	double nextEventTime;
+	double nextTriggerTime;
+	
 	DiffEquations[] functions;
 	
 	public SimulatorODERKHierarchical2(String SBMLFileName, String outputDirectory, double timeLimit, double maxTimeStep, long randomSeed,
@@ -186,14 +188,18 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 		if (numSteps == 0)
 			numSteps = (int)(timeLimit/printInterval);
 		
+		
+		
 		FirstOrderIntegrator odecalc = new HighamHall54Integrator(minTimeStep, maxTimeStep, absoluteError, relativeError);
 		//FirstOrderIntegrator odecalc = new DormandPrince853Integrator(0, maxTimeStep, relativeError, absoluteError);
 		
 		//odecalc.setMaxEvaluations(numSteps);
 		//add events to queue if they trigger
-		odecalc.addEventHandler(new EventHandlerObject(), maxTimeStep, 0, numSteps);
+		odecalc.addEventHandler(new EventHandlerObject(), maxTimeStep, 1e-18, 1000);
 		
-		nextEventTime = Double.POSITIVE_INFINITY;
+		//nextEventTime = Double.POSITIVE_INFINITY;
+		
+		nextEventTime = handleEvents();
 		
 		for(DiffEquations eq : functions)
 		{
@@ -222,12 +228,14 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 			}
 			
 			//fireEvent(eq, modelstate);
+			nextEventTime = Double.POSITIVE_INFINITY;
+			nextTriggerTime = Double.POSITIVE_INFINITY;
 			
 			if(currentTime < nextEndTime && Math.abs(currentTime - nextEndTime) > 1e-6)
 			{
 				odecalc.integrate(eq, currentTime, eq.state.values, nextEndTime, eq.state.values);
-
-				fireEvent(eq, modelstate);
+				//handleEvents();
+				//fireEvent(eq, modelstate);
 				
 					
 			}
@@ -397,11 +405,16 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 	
 	private class EventHandlerObject implements EventHandler
 	{
+		double t0, t1;
 		public EventHandlerObject() {}
 		
 		@Override
-		public Action eventOccurred(double t0, double[] y, boolean t) 
+		public Action eventOccurred(double t, double[] y, boolean increasing) 
 		{
+
+			currentTime = t;
+			nextTriggerTime = t;
+			nextEventTime = handleEvents();
 			return EventHandler.Action.RESET_STATE;
 		}
 
@@ -410,7 +423,8 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 			
 			double t1 = currentTime;
 			double t2 = nextEventTime;
-		
+
+			/*		
 			if(nextEventTime == Double.POSITIVE_INFINITY)
 			{
 				return 1;
@@ -428,11 +442,29 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 			{
 				return 1;
 			}
-		}
+			*/
+			for(DiffEquations eq : functions)
+				if(isEventTriggered(eq.state.modelstate, t, y, eq.state.variableToIndexMap))
+				{
+					//System.out.println("Time: " + t + " triggered " + y[1]);
+					return -1;
+				}
+			
+			//System.out.println("Time: " + t + " NOT triggered " + y[1]);
+			
+			if(nextEventTime == t)
+				return -1;
+			else if(nextTriggerTime == t)
+				return -1;
+				
+			return 1;
+	}
 
 		@Override
 		public void init(double t0, double[] y, double t) 
 		{
+			this.t0 = t0;
+			this.t1 = t;
 		}
 
 		@Override
@@ -445,9 +477,7 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 				
 				if(modelstate.noEventsFlag == true)
 					continue; 
-				
 
-				currentTime = t;
 				
 				HashSet<String> variables = fireEvent(eq, modelstate);
 				
@@ -457,6 +487,7 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 					int index = eq.state.variableToIndexMap.get(var);
 					y[index] = eq.state.values[index];
 				}
+				
 			}
 			
 		}
@@ -533,12 +564,12 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 			}
 			
 		
-			
-
-			nextEventTime = handleEvents();
-		
 
 			currentTime = t;
+
+			//nextEventTime = handleEvents();
+		
+
 		}
 			
 		
@@ -564,6 +595,8 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 					
 					String variable = rateRule.getVariable();
 					ASTNode formula = inlineFormula(modelstate, rateRule.getMath());
+					
+					System.out.println(formula.getType().name());
 					//update the species count (but only if the species isn't constant) (bound cond is fine)
 					if (modelstate.variableToIsConstantMap.containsKey(variable) && modelstate.variableToIsConstantMap.get(variable) == false) {
 						
