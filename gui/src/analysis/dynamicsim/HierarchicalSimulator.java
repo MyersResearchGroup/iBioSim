@@ -1184,7 +1184,7 @@ public abstract class HierarchicalSimulator {
 
 				double sum = 0.0;
 
-				for (int childIter = 0; childIter < node.getNumChildren(); ++childIter)
+				for (int childIter = 0; childIter < node.getChildCount(); childIter++)
 					sum += evaluateExpressionRecursive(modelstate, node.getChild(childIter));					
 
 				return sum;
@@ -1194,7 +1194,7 @@ public abstract class HierarchicalSimulator {
 
 				double sum = evaluateExpressionRecursive(modelstate, leftChild);
 
-				for (int childIter = 1; childIter < node.getNumChildren(); ++childIter)
+				for (int childIter = 1; childIter < node.getChildCount(); ++childIter)
 					sum -= evaluateExpressionRecursive(modelstate, node.getChild(childIter));					
 
 				return sum;
@@ -1204,7 +1204,7 @@ public abstract class HierarchicalSimulator {
 
 				double product = 1.0;
 
-				for (int childIter = 0; childIter < node.getNumChildren(); ++childIter)
+				for (int childIter = 0; childIter < node.getChildCount(); ++childIter)
 					product *= evaluateExpressionRecursive(modelstate, node.getChild(childIter));
 
 				return product;
@@ -1406,7 +1406,9 @@ public abstract class HierarchicalSimulator {
 		return 0.0;
 	}
 
-
+	
+	
+	
 	/**
 	 * updates reactant/product species counts based on their stoichiometries
 	 * 
@@ -1824,6 +1826,419 @@ public abstract class HierarchicalSimulator {
 	}
 
 
+	/**
+	 * 
+	 */
+	protected boolean isEventTriggered(ModelState modelstate, double t, double [] y, HashMap<String, Integer> variableToIndexMap) {
+
+		if(checkModelTriggerEvent(topmodel, t, y, variableToIndexMap))
+			return true;
+		else
+			return false;
+}
+
+	protected double evaluateStateExpressionRecursive(ModelState modelstate, ASTNode node, double t, double[] y, HashMap<String, Integer> variableToIndexMap) {
+		if (node.isBoolean()) {
+
+			switch (node.getType()) {
+
+			case CONSTANT_TRUE:
+				return 1.0;
+
+			case CONSTANT_FALSE:
+				return 0.0;
+
+			case  LOGICAL_NOT:
+				return getDoubleFromBoolean(!(getBooleanFromDouble(evaluateStateExpressionRecursive(modelstate, node.getLeftChild(), t, y, variableToIndexMap))));
+
+			case LOGICAL_AND: {
+
+				boolean andResult = true;
+
+				for (int childIter = 0; childIter < node.getNumChildren(); ++childIter)
+					andResult = andResult && getBooleanFromDouble(evaluateStateExpressionRecursive(modelstate, node.getChild(childIter), t, y, variableToIndexMap));
+
+				return getDoubleFromBoolean(andResult);
+			}
+
+			case LOGICAL_OR: {
+
+				boolean orResult = false;
+
+				for (int childIter = 0; childIter < node.getNumChildren(); ++childIter)
+					orResult = orResult || getBooleanFromDouble(evaluateStateExpressionRecursive(modelstate, node.getChild(childIter), t, y, variableToIndexMap));
+
+				return getDoubleFromBoolean(orResult);				
+			}
+
+			case LOGICAL_XOR: {
+
+				boolean xorResult = getBooleanFromDouble(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));
+
+				for (int childIter = 1; childIter < node.getNumChildren(); ++childIter)
+					xorResult = xorResult ^ getBooleanFromDouble(evaluateStateExpressionRecursive(modelstate, node.getChild(childIter), t, y, variableToIndexMap));
+
+				return getDoubleFromBoolean(xorResult);
+			}
+
+			case RELATIONAL_EQ:
+				return getDoubleFromBoolean(
+						evaluateStateExpressionRecursive(modelstate, node.getLeftChild(), t, y, variableToIndexMap) == evaluateStateExpressionRecursive(modelstate, node.getRightChild(), t, y, variableToIndexMap));
+
+			case RELATIONAL_NEQ:
+				return getDoubleFromBoolean(
+						evaluateStateExpressionRecursive(modelstate, node.getLeftChild(), t, y, variableToIndexMap) != evaluateStateExpressionRecursive(modelstate, node.getRightChild(), t, y, variableToIndexMap));
+
+			case RELATIONAL_GEQ:
+			{
+				//System.out.println("Node: " + libsbml.formulaToString(node.getRightChild()) + " " + evaluateStateExpressionRecursive(modelstate, node.getRightChild()));
+				//System.out.println("Node: " + evaluateStateExpressionRecursive(modelstate, node.getLeftChild()) + " " + evaluateStateExpressionRecursive(modelstate, node.getRightChild()));
+
+				return getDoubleFromBoolean(
+						evaluateStateExpressionRecursive(modelstate, node.getLeftChild(), t, y, variableToIndexMap) >= evaluateStateExpressionRecursive(modelstate, node.getRightChild(), t, y, variableToIndexMap));
+			}
+			case RELATIONAL_LEQ:
+				return getDoubleFromBoolean(
+						evaluateStateExpressionRecursive(modelstate, node.getLeftChild(), t, y, variableToIndexMap) <= evaluateStateExpressionRecursive(modelstate, node.getRightChild(), t, y, variableToIndexMap));
+
+			case RELATIONAL_GT:
+				return getDoubleFromBoolean(
+						evaluateStateExpressionRecursive(modelstate, node.getLeftChild(), t, y, variableToIndexMap) > evaluateStateExpressionRecursive(modelstate, node.getRightChild(), t, y, variableToIndexMap));
+
+			case RELATIONAL_LT:
+			{
+				return getDoubleFromBoolean(
+						evaluateStateExpressionRecursive(modelstate, node.getLeftChild(), t, y, variableToIndexMap) < evaluateStateExpressionRecursive(modelstate, node.getRightChild(), t, y, variableToIndexMap));			
+			}
+
+			}
+		}
+
+		//if it's a mathematical constant
+		else if (node.isConstant()) {
+
+			switch (node.getType()) {
+
+			case CONSTANT_E:
+				return Math.E;
+
+			case CONSTANT_PI:
+				return Math.PI;
+			}
+		}
+		else if (node.isInteger())
+			return node.getInteger();
+
+		//if it's a number
+		else if (node.isReal())
+			return node.getReal();
+
+		//if it's a user-defined variable
+		//eg, a species name or global/local parameter
+		else if (node.isName()) {
+
+			String name = node.getName().replace("_negative_","-");
+
+			if (node.getType()== org.sbml.jsbml.ASTNode.Type.NAME_TIME) {
+
+				return currentTime;
+			}
+			/*
+			//if it's a reaction id return the propensity
+			else if (modelstate.reactionToPropensityMap.keySet().contains(node.getName())) {
+				return modelstate.reactionToPropensityMap.get(node.getName());
+			}*/
+			else {
+
+				double value;
+				int i, j;
+				if (modelstate.speciesToHasOnlySubstanceUnitsMap.containsKey(name) &&
+						modelstate.speciesToHasOnlySubstanceUnitsMap.get(name) == false) {
+					//value = (modelstate.variableToValueMap.get(name) / modelstate.variableToValueMap.get(modelstate.speciesToCompartmentNameMap.get(name)));
+					//value = (modelstate.getVariableToValue(name) / modelstate.getVariableToValue(modelstate.speciesToCompartmentNameMap.get(name)));
+					i = variableToIndexMap.get(name);
+					j = variableToIndexMap.get(modelstate.speciesToCompartmentNameMap.get(name));
+					value =  y[i] / y[j];
+				}
+				else	
+				{	
+					i = variableToIndexMap.get(name);
+					value = y[i];
+				}
+				return value;
+			}
+		}
+
+		//operators/functions with two children
+		else {
+
+			ASTNode leftChild = node.getLeftChild();
+			ASTNode rightChild = node.getRightChild();
+
+			switch (node.getType()) {
+
+			case PLUS: {
+
+				double sum = 0.0;
+
+				for (int childIter = 0; childIter < node.getNumChildren(); ++childIter)
+					sum += evaluateStateExpressionRecursive(modelstate, node.getChild(childIter), t, y, variableToIndexMap);					
+
+				return sum;
+			}
+
+			case MINUS: {
+
+				double sum = evaluateStateExpressionRecursive(modelstate, leftChild, t, y, variableToIndexMap);
+
+				for (int childIter = 1; childIter < node.getNumChildren(); ++childIter)
+					sum -= evaluateStateExpressionRecursive(modelstate, node.getChild(childIter), t, y, variableToIndexMap);					
+
+				return sum;
+			}
+
+			case TIMES: {
+
+				double product = 1.0;
+
+				for (int childIter = 0; childIter < node.getNumChildren(); ++childIter)
+					product *= evaluateStateExpressionRecursive(modelstate, node.getChild(childIter), t, y, variableToIndexMap);
+
+				return product;
+			}
+
+			case DIVIDE:
+				return (evaluateStateExpressionRecursive(modelstate, leftChild, t, y, variableToIndexMap) / evaluateStateExpressionRecursive(modelstate, rightChild, t, y, variableToIndexMap));
+
+			case FUNCTION_POWER:
+				return (FastMath.pow(evaluateStateExpressionRecursive(modelstate, leftChild, t, y, variableToIndexMap), evaluateStateExpressionRecursive(modelstate, rightChild, t, y, variableToIndexMap)));
+
+			case FUNCTION: {
+				//use node name to determine function
+				//i'm not sure what to do with completely user-defined functions, though
+				String nodeName = node.getName();
+
+				//generates a uniform random number between the upper and lower bound
+				if (nodeName.equals("uniform")) {
+
+					double leftChildValue = evaluateStateExpressionRecursive(modelstate, node.getLeftChild(), t, y, variableToIndexMap);
+					double rightChildValue = evaluateStateExpressionRecursive(modelstate, node.getRightChild(), t, y, variableToIndexMap);
+					double lowerBound = FastMath.min(leftChildValue, rightChildValue);
+					double upperBound = FastMath.max(leftChildValue, rightChildValue);
+
+					return prng.nextDouble(lowerBound, upperBound);
+				}
+				else if (nodeName.equals("exponential")) {
+
+					return prng.nextExponential(evaluateStateExpressionRecursive(modelstate, node.getLeftChild(), t, y, variableToIndexMap), 1);
+				}
+				else if (nodeName.equals("gamma")) {
+
+					return prng.nextGamma(1, evaluateStateExpressionRecursive(modelstate, node.getLeftChild(), t, y, variableToIndexMap), 
+							evaluateStateExpressionRecursive(modelstate, node.getRightChild(), t, y, variableToIndexMap));
+				}
+				else if (nodeName.equals("chisq")) {
+
+					return prng.nextChiSquare((int) evaluateStateExpressionRecursive(modelstate, node.getLeftChild(), t, y, variableToIndexMap));
+				}
+				else if (nodeName.equals("lognormal")) {
+
+					return prng.nextLogNormal(evaluateStateExpressionRecursive(modelstate, node.getLeftChild(), t, y, variableToIndexMap), 
+							evaluateStateExpressionRecursive(modelstate, node.getRightChild(), t, y, variableToIndexMap));
+				}
+				else if (nodeName.equals("laplace")) {
+
+					//function doesn't exist in current libraries
+					return 0;
+				}
+				else if (nodeName.equals("cauchy")) {
+
+					return prng.nextLorentzian(0, evaluateStateExpressionRecursive(modelstate, node.getLeftChild(), t, y, variableToIndexMap));
+				}
+				else if (nodeName.equals("poisson")) {
+
+					return prng.nextPoissonian(evaluateStateExpressionRecursive(modelstate, node.getLeftChild(), t, y, variableToIndexMap));
+				}
+				else if (nodeName.equals("binomial")) {
+
+					return prng.nextBinomial(evaluateStateExpressionRecursive(modelstate, node.getLeftChild(), t, y, variableToIndexMap),
+							(int) evaluateStateExpressionRecursive(modelstate, node.getRightChild(), t, y, variableToIndexMap));
+				}
+				else if (nodeName.equals("bernoulli")) {
+
+					return prng.nextBinomial(evaluateStateExpressionRecursive(modelstate, node.getLeftChild(), t, y, variableToIndexMap), 1);
+				}
+				else if (nodeName.equals("normal")) {
+
+					return prng.nextGaussian(evaluateStateExpressionRecursive(modelstate, node.getLeftChild(), t, y, variableToIndexMap),
+							evaluateStateExpressionRecursive(modelstate, node.getRightChild(), t, y, variableToIndexMap));	
+				}
+
+
+				break;
+			}
+
+			case FUNCTION_ABS:
+				return FastMath.abs(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));
+
+			case FUNCTION_ARCCOS:
+				return FastMath.acos(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));
+
+			case FUNCTION_ARCSIN:
+				return FastMath.asin(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));
+
+			case FUNCTION_ARCTAN:
+				return FastMath.atan(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));
+
+			case FUNCTION_CEILING:
+				return FastMath.ceil(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));				
+
+			case FUNCTION_COS:
+				return FastMath.cos(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));
+
+			case FUNCTION_COSH:
+				return FastMath.cosh(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));
+
+			case FUNCTION_EXP:
+				return FastMath.exp(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));
+
+			case FUNCTION_FLOOR:
+				return FastMath.floor(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));
+
+			case FUNCTION_LN:
+				return FastMath.log(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));
+
+			case FUNCTION_LOG:
+				return FastMath.log10(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));
+
+			case FUNCTION_SIN:
+				return FastMath.sin(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));
+
+			case FUNCTION_SINH:
+				return FastMath.sinh(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));
+
+			case FUNCTION_TAN:
+				return FastMath.tan(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));
+
+			case FUNCTION_TANH:		
+				return FastMath.tanh(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));
+
+			case FUNCTION_PIECEWISE: {
+
+				//loop through child triples
+				//if child 1 is true, return child 0, else return child 2				
+				for (int childIter = 0; childIter < node.getNumChildren(); childIter += 3) {
+
+					if ((childIter + 1) < node.getNumChildren() && 
+							getBooleanFromDouble(evaluateStateExpressionRecursive(modelstate, node.getChild(childIter + 1), t, y, variableToIndexMap))) {
+						return evaluateStateExpressionRecursive(modelstate, node.getChild(childIter), t, y, variableToIndexMap);
+					}
+					else if ((childIter + 2) < node.getNumChildren()) {
+						return evaluateStateExpressionRecursive(modelstate, node.getChild(childIter + 2), t, y, variableToIndexMap);
+					}
+				}
+
+				return 0;
+			}
+
+			case FUNCTION_ROOT:
+				return FastMath.pow(evaluateStateExpressionRecursive(modelstate, node.getRightChild(), t, y, variableToIndexMap), 
+						1 / evaluateStateExpressionRecursive(modelstate, node.getLeftChild(), t, y, variableToIndexMap));
+
+			case FUNCTION_SEC:
+				return Fmath.sec(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));
+
+			case FUNCTION_SECH:
+				return Fmath.sech(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));
+
+			case FUNCTION_FACTORIAL:
+				return Fmath.factorial(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));
+
+			case FUNCTION_COT:
+				return Fmath.cot(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));
+
+			case FUNCTION_COTH:
+				return Fmath.coth(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));
+
+			case FUNCTION_CSC:
+				return Fmath.csc(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));
+
+			case FUNCTION_CSCH:
+				return Fmath.csch(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));
+
+			case FUNCTION_DELAY:
+				//NOT PLANNING TO SUPPORT THIS
+				return 0;
+
+			case FUNCTION_ARCTANH:
+				return Fmath.atanh(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));
+
+			case FUNCTION_ARCSINH:
+				return Fmath.asinh(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));
+
+			case FUNCTION_ARCCOSH:
+				return Fmath.acosh(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));
+
+			case FUNCTION_ARCCOT:
+				return Fmath.acot(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));
+
+			case FUNCTION_ARCCOTH:
+				return Fmath.acoth(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));
+
+			case FUNCTION_ARCCSC:
+				return Fmath.acsc(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));
+
+			case FUNCTION_ARCCSCH:
+				return Fmath.acsch(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));
+
+			case FUNCTION_ARCSEC:
+				return Fmath.asec(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));
+
+			case FUNCTION_ARCSECH:
+				return Fmath.asech(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));
+
+			} //end switch
+
+		}
+		return 0.0;
+	}
+
+	
+	/**
+	 * 
+	 */
+	protected boolean checkModelTriggerEvent(ModelState modelstate, double t, double[] y, HashMap<String, Integer> variableToIndexMap) {
+
+		if(modelstate.noEventsFlag == true)
+			return false;
+		
+		for (String untriggeredEventID : modelstate.untriggeredEventSet) 
+		{
+			//if the trigger evaluates to true
+			if (getBooleanFromDouble(evaluateStateExpressionRecursive(modelstate, modelstate.eventToTriggerMap.get(untriggeredEventID), t, y, variableToIndexMap)) == true) 
+			{
+
+				//skip the event if it's initially true and this is time == 0
+				if (currentTime == 0.0 && modelstate.eventToTriggerInitiallyTrueMap.get(untriggeredEventID) == true)
+					continue;
+
+				//switch from false to true must happen
+				if (modelstate.eventToPreviousTriggerValueMap.get(untriggeredEventID) == true)
+					continue;
+
+				return true;
+
+					
+			}
+		}
+
+		if(modelstate.triggeredEventQueue.peek() != null
+				&& modelstate.triggeredEventQueue.peek().fireTime <= t)
+			
+			return true;
+		
+		return false;
+		}
 
 	/**
 	 * fires events
