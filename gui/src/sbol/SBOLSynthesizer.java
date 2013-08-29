@@ -23,17 +23,26 @@ import sbol.SBOLSynthesisMatcher;
 
 public class SBOLSynthesizer {
 	private SBOLSynthesisMatcher matcher;
+	boolean boundFlag = true;
+	boolean firstFlag = false;
 	
 	public SBOLSynthesizer(Set<SBOLSynthesisGraph> graphLibrary) {
 		this.matcher = new SBOLSynthesisMatcher(graphLibrary);
 	}
 	
 	public List<Integer> mapSpecification(SBOLSynthesisGraph spec) {
+		long startTime = System.nanoTime();
 		for (SBOLSynthesisNode node : spec.postOrderNodes()) {
 			matchNode(node, spec);
 			boundNode(node, spec);
 		}
-		return coverSpec(spec);
+		List<Integer> solution = new LinkedList<Integer>();
+		int solutionCost = coverSpec(spec, solution);
+		long endTime = System.nanoTime();
+		System.out.println("Run took " + (endTime - startTime) + " nanoseconds.");
+		System.out.println("Solution is " + solution + ".");
+		System.out.println("Solution cost is " + solutionCost + " bp.");
+		return solution;
 	}
 	
 	private void matchNode(SBOLSynthesisNode node, SBOLSynthesisGraph spec) {
@@ -64,23 +73,25 @@ public class SBOLSynthesizer {
 	
 	private int boundMatch(SBOLSynthesisNode node, SBOLSynthesisGraph match, SBOLSynthesisGraph spec) {
 		int matchBound = match.getNucleotideCount();
- 		List<String> matchPaths = match.getPaths();
-		for (SBOLSynthesisNode boundedNode : spec.walkPaths(node, matchPaths)) {
-//			if (previousNode.getType().equals("s")) {
-			matchBound += boundedNode.getCoverBound();
-//				SBOLSynthesisNode leafMatch = graphMatch.walkPath(graphMatch.getRoot(), rootPath.substring(2));
-//				if (previousCoverGraph.getRoot().getSignalComponents().size() > 0 && leafMatch.getSignalComponents().size() > 0)
-//					solutionBound -= leafMatch.getNucleotideCount();
-//			}
+		if (boundFlag) {
+			List<String> matchPaths = match.getPaths();
+			for (SBOLSynthesisNode boundedNode : spec.walkPaths(node, matchPaths)) {
+				//			if (previousNode.getType().equals("s")) {
+				matchBound += boundedNode.getCoverBound();
+				//				SBOLSynthesisNode leafMatch = graphMatch.walkPath(graphMatch.getRoot(), rootPath.substring(2));
+				//				if (previousCoverGraph.getRoot().getSignalComponents().size() > 0 && leafMatch.getSignalComponents().size() > 0)
+				//					solutionBound -= leafMatch.getNucleotideCount();
+				//			}
+			}
 		}
 		return matchBound;
 	}
 	
-	private List<Integer> coverSpec(SBOLSynthesisGraph spec) {
+	private int coverSpec(SBOLSynthesisGraph spec, List<Integer> bestSolution) {
 		List<Integer> solution = new LinkedList<Integer>();
 		int solutionCost = 0;
 		Set<String> solutionSignals = new HashSet<String>();
-		List<Integer> bestSolution = new LinkedList<Integer>();
+//		List<Integer> bestSolution = new LinkedList<Integer>();
 		int bestSolutionCost = -1;
 		List<SBOLSynthesisNode> previousNodes = new LinkedList<SBOLSynthesisNode>();
 		List<SBOLSynthesisNode> currentNodes = new LinkedList<SBOLSynthesisNode>();
@@ -89,9 +100,13 @@ public class SBOLSynthesizer {
 			if (currentNodes.get(0).getMatches().size() == 0) {
 				currentNodes.remove(0);
 				if (currentNodes.size() == 0 && previousNodes.size() > 0) {
-					if (bestSolutionCost < 0 || solutionCost < bestSolutionCost) {
+					if (firstFlag) {
+						bestSolution.addAll(solution);
+						return solutionCost;
+					} else if (bestSolutionCost < 0 || solutionCost < bestSolutionCost) {
 						bestSolutionCost = solutionCost;
-						bestSolution = new LinkedList<Integer>(solution);
+						bestSolution.clear();
+						bestSolution.addAll(solution);
 					}
 					solutionCost = removeLastCoverFromSolution(previousNodes.remove(0).getCover(), solution,
 							solutionCost, solutionSignals);
@@ -121,7 +136,7 @@ public class SBOLSynthesizer {
 				currentNodes.add(0, previousNodes.remove(0));
 			}
 		} while (currentNodes.size() > 0);
-		return bestSolution;
+		return bestSolutionCost;
 	}
 	
 	private int addCoverToSolution(int coverIndex, SBOLSynthesisGraph cover, List<Integer> solution, 
@@ -153,7 +168,7 @@ public class SBOLSynthesizer {
 	}
 	
 	private boolean solutionInBound(int solutionCost, int coverBound, int bestSolutionCost) {
-		if (bestSolutionCost < 0)
+		if (!boundFlag || bestSolutionCost < 0)
 			return true;
 		else
 			return solutionCost + coverBound < bestSolutionCost;
@@ -171,7 +186,7 @@ public class SBOLSynthesizer {
 		List<SBOLSynthesisNode> currentNodes = new LinkedList<SBOLSynthesisNode>();
 		List<SBOLSynthesisGraph> previousCovers = new LinkedList<SBOLSynthesisGraph>();
 		List<Integer> inputIndices = new LinkedList<Integer>();
-		int submodelIndex = 1;
+		int submodelIndex = 0;
 		currentNodes.add(spec.getOutput());
 		do {
 			if (previousCovers.size() == 0) {
@@ -211,6 +226,11 @@ public class SBOLSynthesizer {
 		portMapIOSpecies(species, GlobalConstants.INPUT, previousCover.getInput(inputIndices.get(0)).getID(), 
 				previousCover.getSubmodelID(), biomodel);
 		currentNodes.remove(0);
+		inputIndices.add(0, inputIndices.remove(0) + 1);
+		if (inputIndices.get(0) == previousCover.getInputs().size()) {
+			previousCovers.remove(0);
+			inputIndices.remove(0);
+		}
 	}
 	
 	private int composeIntermediate(BioModel biomodel, List<Integer> solution, SBOLSynthesisGraph spec, 
@@ -230,7 +250,6 @@ public class SBOLSynthesizer {
 				previousCover.getInput(inputIndices.get(0)).getID(), currentCover.getOutput().getID(), 
 				previousCover.getInput(inputIndices.get(0)).getSignal(), currentCover.getOutput().getSignal(), 
 				previousCover.getSubmodelID(), currentCover.getSubmodelID());
-
 		List<SBOLSynthesisNode> nextNodes = spec.walkPaths(currentNodes.remove(0), currentCover.getPaths());
 		currentNodes.addAll(0, nextNodes);
 		inputIndices.add(0, inputIndices.remove(0) + 1);
@@ -254,53 +273,63 @@ public class SBOLSynthesizer {
 				subBiomodel.getCompartmentPorts(), -1, -1, 0, 0, md5);
 	}
 	
-	private Species createInterSpecies(String inputSpeciesID, String outputSpeciesID, 
-			String inputDNA, String outputDNA, BioModel biomodel) {
+	private Species createInterSpecies(String inputSubSpeciesID, String outputSubSpeciesID, 
+			String inputSubDNA, String outputSubDNA, BioModel biomodel) {
 		String speciesID;
-		if (outputDNA.length() == 0 && inputDNA.length() > 0) 
-			speciesID = inputSpeciesID;
-		else 
-			speciesID = outputSpeciesID;
 		int speciesIndex = 0;
-		while (biomodel.isSIdInUse(speciesID))
-			speciesID = speciesID + "_" + speciesIndex;
+		if (outputSubDNA.length() == 0 && inputSubDNA.length() > 0) {
+			speciesID = inputSubSpeciesID;
+			while (biomodel.isSIdInUse(speciesID)) {
+				speciesID = inputSubSpeciesID + "_" + speciesIndex;
+				speciesIndex++;
+			}
+		} else {
+			speciesID = outputSubSpeciesID;
+			while (biomodel.isSIdInUse(speciesID)) {
+				speciesID = outputSubSpeciesID + "_" + speciesIndex;
+				speciesIndex++;
+			}
+		}
 		biomodel.createSpecies(speciesID, 0, 0);
 		return biomodel.getSBMLDocument().getModel().getSpecies(speciesID);
 	}
 	
-	private Species createIOSpecies(String SpeciesID, BioModel biomodel) {
+	private Species createIOSpecies(String subSpeciesID, BioModel biomodel) {
+		String speciesID = subSpeciesID;
 		int speciesIndex = 0;
-		while (biomodel.isSIdInUse(SpeciesID))
-			SpeciesID = SpeciesID + "_" + speciesIndex;
-		biomodel.createSpecies(SpeciesID, 0, 0);
-		return biomodel.getSBMLDocument().getModel().getSpecies(SpeciesID);
+		while (biomodel.isSIdInUse(speciesID)) {
+			speciesID = subSpeciesID + "_" + speciesIndex;
+			speciesIndex++;
+		}
+		biomodel.createSpecies(speciesID, 0, 0);
+		return biomodel.getSBMLDocument().getModel().getSpecies(speciesID);
 	}
 	
-	private void portMapInterSpecies(SBase species, String inputSpeciesID, String outputSpeciesID, 
-			String inputDNA, String outputDNA, String inputSubmodelID, String outputSubmodelID) {
+	private void portMapInterSpecies(SBase species, String inputSubSpeciesID, String outputSubSpeciesID, 
+			String inputSubDNA, String outputSubDNA, String inputSubmodelID, String outputSubmodelID) {
 		CompSBasePlugin compSpecies = (CompSBasePlugin) species.getPlugin("comp");
 		ReplacedBy replacement = compSpecies.createReplacedBy();
 		ReplacedElement replacee = compSpecies.createReplacedElement();
-		if (outputDNA.length() == 0 && inputDNA.length() > 0) {
+		if (outputSubDNA.length() == 0 && inputSubDNA.length() > 0) {
 			replacement.setSubmodelRef(inputSubmodelID);
-			replacement.setPortRef("input__" + inputSpeciesID);
+			replacement.setPortRef(GlobalConstants.INPUT + "__" + inputSubSpeciesID);
 			replacee.setSubmodelRef(outputSubmodelID);
-			replacee.setPortRef("output__" + outputSpeciesID);
+			replacee.setPortRef(GlobalConstants.OUTPUT + "__" + outputSubSpeciesID);
 		} else {
 			replacement.setSubmodelRef(outputSubmodelID);
-			replacement.setPortRef("output__" + outputSpeciesID);
+			replacement.setPortRef(GlobalConstants.OUTPUT + "__" + outputSubSpeciesID);
 			replacee.setSubmodelRef(inputSubmodelID);
-			replacee.setPortRef("input__" + inputSpeciesID);
+			replacee.setPortRef(GlobalConstants.INPUT + "__" + inputSubSpeciesID);
 		}
 	}
 	
-	private void portMapIOSpecies(SBase species, String io, String speciesID, String submodelID,
+	private void portMapIOSpecies(SBase species, String io, String subSpeciesID, String submodelID,
 			BioModel biomodel) {
 		CompSBasePlugin compSpecies = (CompSBasePlugin) species.getPlugin("comp");
 		ReplacedBy replacement = compSpecies.createReplacedBy();
 		replacement.setSubmodelRef(submodelID);
-		replacement.setPortRef(io + "__" + speciesID);
-		biomodel.createDirPort(speciesID, io);
+		replacement.setPortRef(io + "__" + subSpeciesID);
+		biomodel.createDirPort(species.getId(), io);
 	}
 	
 //	private void coverSpec(SBOLSynthesisNode node, List<Integer> solution, int solutionCost, 
