@@ -55,16 +55,13 @@ public class SBOLTestFactory {
 		return gateLibrary;
 	}
 	
-	public Set<DnaComponent> annotateTestLibrary(int numer, int denom, int avgCDSCopyNum, int sdCDSCopyNum,
+	public Set<DnaComponent> annotateTestLibrary(int crossGateTotal, int avgCDSCopyNum, int sdCDSCopyNum,
 			List<BioModel> gateLibrary) {
 		Set<DnaComponent> libraryComps = new HashSet<DnaComponent>();
 		List<DnaComponent> cdsComps = new LinkedList<DnaComponent>();
-		int sideCrossCount = 0;
-		int crossGateTotal = gateLibrary.size()/denom*numer + Math.min(gateLibrary.size() % denom, numer);
 		Random rGen = new Random();
 		int cdsCopyNum = 1;
 		int cdsCopyCap = (int) Math.round(avgCDSCopyNum + sdCDSCopyNum*rGen.nextGaussian());
-		boolean moreCrossTalk = true;
 		try {
 			DnaComponent sbolRBS = createTestDNAComponent(
 					new URI(GlobalConstants.MYERS_LAB_AUTHORITY + "#" + "RBS"),
@@ -88,16 +85,12 @@ public class SBOLTestFactory {
 					AnnotationUtility.setSBOLAnnotation(sbmlPromoter, 
 							new SBOLAnnotation(sbmlPromoter.getMetaId(), annotationObject));
 				}
-				if (moreCrossTalk)
-					moreCrossTalk = (i/denom*numer - 1 + Math.min(i % denom, numer) + sideCrossCount < crossGateTotal);
-				boolean hasCrossTalk = cdsComps.size() > 0 && moreCrossTalk && i % denom < numer;
+				boolean hasCrossTalk = cdsComps.size() > 0 && i < crossGateTotal;
 				for (String speciesID : gateModel.getInputSpecies()) {
 					Species sbmlSpecies = gateModel.getSBMLDocument().getModel().getSpecies(speciesID);
 					DnaComponent sbolCDS;
 					if (hasCrossTalk) { 
 						sbolCDS = cdsComps.get(0);
-						if (cdsCopyNum == 1 && !sbolCDS.getDisplayId().endsWith("2"))
-							sideCrossCount++;
 						cdsCopyNum++;
 						if (cdsCopyNum >= cdsCopyCap) {
 							cdsComps.remove(0);
@@ -147,7 +140,7 @@ public class SBOLTestFactory {
 		gateModel.createSpecies(outputID, 30, 30);
 		gateModel.createDirPort(outputID, GlobalConstants.OUTPUT);
 		
-		if (gateID.startsWith("NOT")) 
+		if (gateID.startsWith("INV")) 
 			createInverter(gateModel, promoterID, inputID, outputID);
 		else if (gateID.startsWith("YES")) 
 			createYesGate(gateModel, promoterID, inputID, outputID);

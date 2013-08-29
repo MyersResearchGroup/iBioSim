@@ -34,20 +34,12 @@ public class SBOLSynthesisNode {
 		coverIndex = -1;
 	}
 	
-	public SBOLSynthesisNode() {
-		type = "x";
-		nucleotideCount = 0;
-		coverIndex = -1;
-	}
-	
-	public void processDNAComponents(SBase sbmlElement, SBOLFileManager fileManager) {
+	private void processDNAComponents(SBase sbmlElement, SBOLFileManager fileManager) {
 		List<DnaComponent> dnaComps = fileManager.resolveURIs(AnnotationUtility.parseSBOLAnnotation(sbmlElement));
 		nucleotideCount = SBOLUtility.countNucleotides(dnaComps);
 		Set<String> soFilterTypes = new HashSet<String>();
-		if (type.equals("s"))
-			soFilterTypes.add("coding sequence");
-		else if (type.equals("n") || type.equals("i"))
-			soFilterTypes.add("promoter");
+		soFilterTypes.add("coding sequence");
+		soFilterTypes.add("promoter");
 		List<DnaComponent> signalComps = SBOLUtility.filterDNAComponents(dnaComps, soFilterTypes);
 		if (signalComps.size() > 0)
 			signal = signalComps.get(0).getURI().toString();
@@ -55,9 +47,9 @@ public class SBOLSynthesisNode {
 			signal = "";
 	}
 	
-	public void setID(String id) {
-		this.id = id;
-	}
+//	public void setID(String id) {
+//		this.id = id;
+//	}
 	
 	public String getID() {
 		if (id == null)

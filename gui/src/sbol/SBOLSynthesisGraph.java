@@ -35,9 +35,135 @@ public class SBOLSynthesisGraph {
 		Model sbmlModel = biomodel.getSBMLDocument().getModel();
 		modelID = sbmlModel.getId();
 		Set<SBOLSynthesisNode> nodes = constructGraph(sbmlModel, fileManager);
+		decomposeGraph(nodes);
 		output = identifyOutput(nodes);
 		paths = buildPaths(getOutput());
 //		print();
+	}
+	
+	private void decomposeGraph(Set<SBOLSynthesisNode> nodes) {
+		Set<SBOLSynthesisNode> typedSpeciesNodes = new HashSet<SBOLSynthesisNode>();
+		Set<SBOLSynthesisNode> interNodes = new HashSet<SBOLSynthesisNode>();
+		for (SBOLSynthesisNode node : nodes)
+			if (node.getType().equals("p")) {
+				if (edges.containsKey(node)) {
+					int numActivators = 0;
+					int numRepressors = 0;
+					for (SBOLSynthesisNode tfNode : edges.get(node))
+						if (tfNode.getType().startsWith("r")) {
+							numRepressors++;
+							typedSpeciesNodes.add(tfNode);
+						} else if (tfNode.getType().startsWith("a")) {
+							numActivators++;
+							typedSpeciesNodes.add(tfNode);
+						}
+					if (numRepressors > 0 && numActivators == 0) {
+						if (numRepressors == 1) {
+							decomposeInverterMotif(node);
+						} else if (numRepressors == 2)
+							decomposeNorMotif(node);
+					} else if (numRepressors == 0 && numActivators > 0) {
+						if (numActivators == 1)
+							decomposeYesMotif(node, interNodes);
+						else if (numActivators == 2)
+							decomposeOrMotif1(node, interNodes);
+					} 
+				} else
+					node.setType("c");
+			} else if (node.getType().endsWith("m")) {
+				decomposeOrMotif2(node, interNodes);
+				typedSpeciesNodes.add(node);
+			} else if (node.getType().endsWith("x")) {
+				decomposeAndMotif(node, interNodes);
+				typedSpeciesNodes.add(node);
+			} else if (node.getType().startsWith("v"))
+				typedSpeciesNodes.add(node);
+		for (SBOLSynthesisNode typedSpeciesNode : typedSpeciesNodes) {
+			if (edges.containsKey(typedSpeciesNode)) {
+				List<SBOLSynthesisNode> inputNodes = edges.remove(typedSpeciesNode);
+				typedSpeciesNode.setType("s");
+				edges.put(typedSpeciesNode, inputNodes);
+			} else
+				typedSpeciesNode.setType("s");
+		}
+		nodes.addAll(interNodes);
+	}
+	
+	private void decomposeInverterMotif(SBOLSynthesisNode promoterNode) {
+		List<SBOLSynthesisNode> inputSpeciesNodes = edges.remove(promoterNode);
+		promoterNode.setType("i");
+		edges.put(promoterNode, inputSpeciesNodes);
+	}
+	
+	private void decomposeNorMotif(SBOLSynthesisNode promoterNode) {
+		List<SBOLSynthesisNode> inputSpeciesNodes = edges.remove(promoterNode);
+		promoterNode.setType("n");
+		edges.put(promoterNode, inputSpeciesNodes);
+	}
+	
+	private void decomposeYesMotif(SBOLSynthesisNode promoterNode, Set<SBOLSynthesisNode> nodes) {
+		List<SBOLSynthesisNode> inputSpeciesNodes = edges.remove(promoterNode);
+		promoterNode.setType("i");
+		SBOLSynthesisNode interSpeciesNode = new SBOLSynthesisNode("s");
+		nodes.add(interSpeciesNode);
+		SBOLSynthesisNode interPromoterNode = new SBOLSynthesisNode("i");
+		nodes.add(interPromoterNode);
+		edges.put(promoterNode, new LinkedList<SBOLSynthesisNode>());
+		edges.get(promoterNode).add(interSpeciesNode);
+		edges.put(interSpeciesNode, new LinkedList<SBOLSynthesisNode>());
+		edges.get(interSpeciesNode).add(interPromoterNode);
+		edges.put(interPromoterNode, inputSpeciesNodes);
+	}
+	
+	private void decomposeOrMotif1(SBOLSynthesisNode promoterNode, Set<SBOLSynthesisNode> nodes) {
+		List<SBOLSynthesisNode> inputSpeciesNodes = edges.remove(promoterNode);
+		promoterNode.setType("i");
+		SBOLSynthesisNode interSpeciesNode = new SBOLSynthesisNode("s");
+		nodes.add(interSpeciesNode);
+		SBOLSynthesisNode interPromoterNode = new SBOLSynthesisNode("n");
+		nodes.add(interPromoterNode);
+		edges.put(promoterNode, new LinkedList<SBOLSynthesisNode>());
+		edges.get(promoterNode).add(interSpeciesNode);
+		edges.put(interSpeciesNode, new LinkedList<SBOLSynthesisNode>());
+		edges.get(interSpeciesNode).add(interPromoterNode);
+		edges.put(interPromoterNode, inputSpeciesNodes);
+	}
+	
+	private void decomposeOrMotif2(SBOLSynthesisNode productNode, Set<SBOLSynthesisNode> nodes) {
+		List<SBOLSynthesisNode> inputPromoterNodes = edges.get(productNode);
+		List<SBOLSynthesisNode> interPromoterNodes = new LinkedList<SBOLSynthesisNode>();
+		interPromoterNodes.add(new SBOLSynthesisNode("i"));
+		interPromoterNodes.add(new SBOLSynthesisNode("n"));
+		nodes.addAll(interPromoterNodes);
+		List<SBOLSynthesisNode> interSpeciesNodes = new LinkedList<SBOLSynthesisNode>();
+		for (int i = 0; i < 3; i++)
+			interSpeciesNodes.add(new SBOLSynthesisNode("s"));
+		nodes.addAll(interSpeciesNodes);
+		edges.put(productNode, interPromoterNodes.subList(0, 1));
+		edges.put(interPromoterNodes.get(0), interSpeciesNodes.subList(0, 1));
+		edges.put(interSpeciesNodes.get(0), interPromoterNodes.subList(1, 2));
+		edges.put(interPromoterNodes.get(1), interSpeciesNodes.subList(1, 3));
+		for (int i = 1; i < interSpeciesNodes.size(); i++)
+			edges.put(interSpeciesNodes.get(i), inputPromoterNodes.subList(i - 1, i));
+	}
+	
+	private void decomposeAndMotif(SBOLSynthesisNode complexNode, Set<SBOLSynthesisNode> nodes) {
+		List<SBOLSynthesisNode> inputSpeciesNodes = edges.get(complexNode);
+		List<SBOLSynthesisNode> interPromoterNodes = new LinkedList<SBOLSynthesisNode>();
+		interPromoterNodes.add(new SBOLSynthesisNode("n"));
+		for (int i = 1; i < 3; i++)
+			interPromoterNodes.add(i, new SBOLSynthesisNode("i"));
+		nodes.addAll(interPromoterNodes);
+		List<SBOLSynthesisNode> interSpeciesNodes = new LinkedList<SBOLSynthesisNode>();
+		for (int i = 0; i < 2; i++)
+			interSpeciesNodes.add(new SBOLSynthesisNode("s"));
+		nodes.addAll(interSpeciesNodes);
+		edges.put(complexNode, interPromoterNodes.subList(0, 1));
+		edges.put(interPromoterNodes.get(0), interSpeciesNodes);
+		for (int i = 0; i < interSpeciesNodes.size(); i++) 
+			edges.put(interSpeciesNodes.get(i), interPromoterNodes.subList(i + 1, i + 2));
+		for (int i = 1; i < interPromoterNodes.size(); i++) 
+			edges.put(interPromoterNodes.get(i), inputSpeciesNodes.subList(i - 1, i));
 	}
 
 	private Set<SBOLSynthesisNode> constructGraph(Model sbmlModel, SBOLFileManager fileManager) {
@@ -47,64 +173,118 @@ public class SBOLSynthesisGraph {
 		signals = new HashSet<String>();
 		for (long i = 0; i < sbmlModel.getNumReactions(); i++) {
 			Reaction sbmlReaction = sbmlModel.getReaction(i);
-			if (BioModel.isProductionReaction(sbmlReaction)) {
-				SBOLSynthesisNode promoterNode = new SBOLSynthesisNode();
-				int numRepressors = 0;
-				for (long j = 0; j < sbmlReaction.getNumModifiers(); j++) {
-					ModifierSpeciesReference sbmlModifier = sbmlReaction.getModifier(j);
-					if (BioModel.isRepressor(sbmlModifier)) {
-						numRepressors++;
-						SBOLSynthesisNode repressorNode;
-						if (idToNode.containsKey(sbmlModifier.getSpecies())) 
-							repressorNode = idToNode.get(sbmlModifier.getSpecies());
-						else {
-							Species sbmlSpecies = sbmlModel.getSpecies(sbmlModifier.getSpecies());
-							repressorNode = new SBOLSynthesisNode("s", sbmlSpecies, fileManager);
-							nucleotideCount += repressorNode.getNucleotideCount();
-							if (repressorNode.getSignal().length() > 0)
-								signals.add(repressorNode.getSignal());
-							idToNode.put(sbmlModifier.getSpecies(), repressorNode);
-						}
-						if (!edges.containsKey(promoterNode))
-							edges.put(promoterNode, new LinkedList<SBOLSynthesisNode>());
-						edges.get(promoterNode).add(repressorNode);	
-					}
-					else if (BioModel.isPromoter(sbmlModifier)) {
-						idToNode.put(sbmlModifier.getSpecies(), promoterNode);
-						promoterNode.setID(sbmlModifier.getSpecies());
-					}
+			if (sbmlReaction.getNumProducts() > 0) 
+				if (BioModel.isProductionReaction(sbmlReaction)) {
+					constructTranscriptionMotif(sbmlReaction, idToNode, sbmlModel, fileManager);
+				} else if ((BioModel.isComplexReaction(sbmlReaction))) {
+					constructComplexationMotif(sbmlReaction, idToNode, sbmlModel, fileManager);
 				}
-				if (numRepressors == 0)
-					promoterNode.setType("c");
-				else if (numRepressors == 1)
-					promoterNode.setType("i");
-				else if (numRepressors == 2)
-					promoterNode.setType("n");
-				promoterNode.processDNAComponents(sbmlReaction, fileManager);
-				nucleotideCount += promoterNode.getNucleotideCount();
-				if (promoterNode.getSignal().length() > 0)
-					signals.add(promoterNode.getSignal());
-				for (long j = 0; j < sbmlReaction.getNumProducts(); j++) {
-					SpeciesReference sbmlProduct = sbmlReaction.getProduct(j);
-					SBOLSynthesisNode productNode;
-					if (idToNode.containsKey(sbmlProduct.getSpecies())) 
-						productNode = idToNode.get(sbmlProduct.getSpecies());
-					else {
-						Species sbmlSpecies = sbmlModel.getSpecies(sbmlProduct.getSpecies());
-						productNode = new SBOLSynthesisNode("s", sbmlSpecies, fileManager);
-						nucleotideCount += productNode.getNucleotideCount();
-						if (productNode.getSignal().length() > 0)
-							signals.add(productNode.getSignal());
-						idToNode.put(sbmlProduct.getSpecies(), productNode);
-					}
-					if (!edges.containsKey(productNode))
-						edges.put(productNode, new LinkedList<SBOLSynthesisNode>());
-					edges.get(productNode).add(promoterNode);	
-				}
-			}
 		}
 		return new HashSet<SBOLSynthesisNode>(idToNode.values());
 	}
+	
+	private void constructTranscriptionMotif(Reaction sbmlReaction, HashMap<String, SBOLSynthesisNode> idToNode, 
+			Model sbmlModel, SBOLFileManager fileManager) {
+		SBOLSynthesisNode promoterNode = null;
+		for (long j = 0; j < sbmlReaction.getNumModifiers(); j++) {
+			ModifierSpeciesReference sbmlModifier = sbmlReaction.getModifier(j);
+			if (BioModel.isPromoter(sbmlModifier))
+				promoterNode = constructNode("p", sbmlModel.getSpecies(sbmlModifier.getSpecies()), 
+						idToNode, fileManager);
+		}
+		if (promoterNode == null) 
+			promoterNode = constructNode("p", sbmlReaction, idToNode, fileManager);
+		for (long j = 0; j < sbmlReaction.getNumModifiers(); j++) {
+			ModifierSpeciesReference sbmlModifier = sbmlReaction.getModifier(j);
+			if (BioModel.isRepressor(sbmlModifier) || BioModel.isActivator(sbmlModifier)) {
+				SBOLSynthesisNode tfNode;
+				if (BioModel.isRepressor(sbmlModifier))
+					tfNode = constructNode("r", sbmlModel.getSpecies(sbmlModifier.getSpecies()), 
+							idToNode, fileManager);
+				else
+					tfNode = constructNode("a", sbmlModel.getSpecies(sbmlModifier.getSpecies()), 
+							idToNode, fileManager);
+				if (!edges.containsKey(promoterNode))
+					edges.put(promoterNode, new LinkedList<SBOLSynthesisNode>());
+				edges.get(promoterNode).add(tfNode);	
+			} 
+		}
+		for (long j = 0; j < sbmlReaction.getNumProducts(); j++) {
+			SpeciesReference sbmlProduct = sbmlReaction.getProduct(j);
+			SBOLSynthesisNode productNode = constructNode("s", 
+					sbmlModel.getSpecies(sbmlProduct.getSpecies()), idToNode, fileManager);
+			if (!edges.containsKey(productNode))
+				edges.put(productNode, new LinkedList<SBOLSynthesisNode>());
+			edges.get(productNode).add(promoterNode);	
+		}
+	}
+	
+	private void constructComplexationMotif(Reaction sbmlReaction, HashMap<String, SBOLSynthesisNode> idToNode, 
+			Model sbmlModel, SBOLFileManager fileManager) {
+		SpeciesReference sbmlProduct = sbmlReaction.getProduct(0);
+		SBOLSynthesisNode complexNode = constructNode("x", 
+				sbmlModel.getSpecies(sbmlProduct.getSpecies()), idToNode, fileManager);
+		edges.put(complexNode, new LinkedList<SBOLSynthesisNode>());
+		for (long j = 0; j < sbmlReaction.getNumReactants(); j++) {
+			SpeciesReference sbmlReactant = sbmlReaction.getReactant(j);
+			SBOLSynthesisNode speciesNode = constructNode("v", 
+						sbmlModel.getSpecies(sbmlReactant.getSpecies()), idToNode, fileManager);
+			edges.get(complexNode).add(speciesNode);	
+		}
+	}
+	
+	private SBOLSynthesisNode constructNode(String type, SBase sbmlElement,  
+			HashMap<String, SBOLSynthesisNode> idToNode, SBOLFileManager fileManager) { 
+		SBOLSynthesisNode node;
+		if (idToNode.containsKey(sbmlElement.getId())) {
+			node = idToNode.get(sbmlElement.getId());
+			if (edges.containsKey(node)) {
+				List<SBOLSynthesisNode> destinationNodes = edges.remove(node);
+				if (type.equals("s")) 
+					node.setType(node.getType() + "m");
+				else
+					node.setType(type + node.getType());
+				edges.put(node, destinationNodes);
+			} else if (!type.equals("s"))
+				node.setType(node.getType() + type);
+		} else {
+			node = new SBOLSynthesisNode(type, sbmlElement, fileManager);
+			nucleotideCount += node.getNucleotideCount();
+			if (node.getSignal().length() > 0)
+				signals.add(node.getSignal());
+			idToNode.put(sbmlElement.getId(), node);
+		}
+		return node;
+	}
+	
+//	private SBOLSynthesisNode constructPromoterNode(String promoterID, int numRepressors, int numActivators, 
+//			Reaction sbmlReaction, SBOLFileManager fileManager) { 
+////		if (numRepressors > 0 && numActivators == 0) {
+////			if (numRepressors == 1)
+////				promoterNode.setType("i");
+////			else if (numRepressors == 2)
+////				promoterNode.setType("n");
+////		} else if (numRepressors == 0 && numActivators > 0) {
+////			if (numActivators == 1)
+////				promoterNode.setType("y");
+////			else if (numActivators == 2)
+////				promoterNode.setType("o");
+////		} else
+////			promoterNode.setType("c");
+//		SBOLSynthesisNode promoterNode;
+//		if (idToNode.containsKey(promoterID)) {
+//			promoterNode = idToNode.get(promoterID);
+//		} else {
+//
+//			promoterNode.setID(sbmlModifier.getSpecies());
+//			promoterNode.setType("p");
+//			promoterNode.processDNAComponents(sbmlReaction, fileManager);
+//			nucleotideCount += promoterNode.getNucleotideCount();
+//			if (promoterNode.getSignal().length() > 0)
+//				signals.add(promoterNode.getSignal());
+//			idToNode.put(sbmlModifier.getSpecies(), promoterNode);
+//		}
+//	}
 	
 	private SBOLSynthesisNode identifyOutput(Set<SBOLSynthesisNode> nodes) {
 		HashMap<SBOLSynthesisNode, SBOLSynthesisNode> reverseEdges = new HashMap<SBOLSynthesisNode, SBOLSynthesisNode>();
@@ -136,23 +316,9 @@ public class SBOLSynthesisGraph {
 	
 	public SBOLSynthesisNode getOutput() {
 		if (output == null)
-			output = new SBOLSynthesisNode("r");
+			output = new SBOLSynthesisNode("t");
 		return output;
 	}
-	
-//	public List<String> getInputSignals() {
-//		List<String> inputSignals = new LinkedList<String>();
-//		for (SBOLSynthesisNode input : inputs)
-//			inputSignals.add(input.getSignal());
-//		return inputSignals;
-//	}
-//	
-//	public List<String> getInputIDs() {
-//		List<String> inputIDs = new LinkedList<String>();
-//		for (SBOLSynthesisNode input : inputs)
-//			inputIDs.add(input.getID());
-//		return inputIDs;
-//	}
 	
 	public List<SBOLSynthesisNode> getInputs() {
 		return inputs;
@@ -214,9 +380,9 @@ public class SBOLSynthesisGraph {
 		List<String> paths = new LinkedList<String>();
 		if (node.equals(getOutput())) {
 			inputs = new LinkedList<SBOLSynthesisNode>();
-			buildPathsHelper(node, "r1", paths, true);
+			buildPathsHelper(node, "t1", paths, true);
 		} else 
-			buildPathsHelper(node, "r1", paths, false);
+			buildPathsHelper(node, "t1", paths, false);
 		return paths;
 	}
 	
