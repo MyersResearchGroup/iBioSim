@@ -600,6 +600,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				}
 				else {
 					InitialAssignments.removeInitialAssignment(bioModel, selectedID);
+					InitialAssignments.removeInitialAssignment(bioModel, selectedID + "_" + GlobalConstants.RATE);
 					try {
 						val = Double.parseDouble(paramValue.getText().trim());
 					}
