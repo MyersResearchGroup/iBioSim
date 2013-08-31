@@ -816,6 +816,16 @@ public abstract class HierarchicalSimulator {
 				return true;
 			}
 		}
+		
+		for(int i = 0; i < submodel.getConstraintCount(); i++)
+		{
+			Constraint c = submodel.getConstraint(i);
+			if(c.getMetaId().equals(metaid))
+			{
+				submodel.removeConstraint(i);
+				return true;
+			}
+		}
 
 		return false;
 	}
