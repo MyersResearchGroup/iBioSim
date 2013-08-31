@@ -308,11 +308,11 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 
 				if(replacementSubModels.get(speciesID).contains("topmodel"))
 				
-				bufferedTSDWriter.write(", \"" + speciesID + "\"");
+				bufferedTSDWriter.write(",\"" + speciesID + "\"");
 			}
 			else
 			{
-				bufferedTSDWriter.write(", \"" + speciesID + "\"");
+				bufferedTSDWriter.write(",\"" + speciesID + "\"");
 			}
 				
 		
@@ -322,11 +322,11 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 
 				if(replacementSubModels.get(noConstantParam).contains("topmodel"))
 				
-					bufferedTSDWriter.write(", \"" + noConstantParam + "\"");
+					bufferedTSDWriter.write(",\"" + noConstantParam + "\"");
 			}
 			else
 			{
-				bufferedTSDWriter.write(", \"" + noConstantParam + "\"");
+				bufferedTSDWriter.write(",\"" + noConstantParam + "\"");
 			}
 		/*
 		for (String compartment : topmodel.compartmentIDSet)
@@ -340,22 +340,22 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 				if(replacements.containsKey(speciesID))
 				{
 					if(!replacementSubModels.get(speciesID).contains(model.ID))
-						bufferedTSDWriter.write(", \"" + model.ID + "__" + speciesID + "\"");
+						bufferedTSDWriter.write(",\"" + model.ID + "__" + speciesID + "\"");
 				}
 				else
 				{
-					bufferedTSDWriter.write(", \"" + model.ID + "__" + speciesID + "\"");
+					bufferedTSDWriter.write(",\"" + model.ID + "__" + speciesID + "\"");
 				}
 			
 			for (String noConstantParam : model.nonconstantParameterIDSet)
 				if(replacements.containsKey(noConstantParam))
 				{
 					if(!replacementSubModels.get(noConstantParam).contains(model.ID))
-						bufferedTSDWriter.write(", \"" + model.ID + "__" +  noConstantParam + "\"");
+						bufferedTSDWriter.write(",\"" + model.ID + "__" +  noConstantParam + "\"");
 				}
 				else
 				{
-				bufferedTSDWriter.write(", \"" + model.ID + "__" +  noConstantParam + "\"");
+				bufferedTSDWriter.write(",\"" + model.ID + "__" +  noConstantParam + "\"");
 				}
 			/*
 			for (String compartment : model.compartmentIDSet)
@@ -591,10 +591,10 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 
 		try {
 			for (String speciesID : topmodel.speciesIDSet) {				
-				bufferedTSDWriter.write(", \"" + speciesID + "\"");
+				bufferedTSDWriter.write(",\"" + speciesID + "\"");
 			}
 			for (String noConstantParam : topmodel.nonconstantParameterIDSet) 				
-				bufferedTSDWriter.write(", \"" + noConstantParam + "\"");
+				bufferedTSDWriter.write(",\"" + noConstantParam + "\"");
 			/*
 			for (String compartment : topmodel.compartmentIDSet)
 			{
@@ -604,9 +604,9 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 			for(ModelState model : submodels.values())
 			{
 				for (String speciesID : model.speciesIDSet) 				
-					bufferedTSDWriter.write(", \"" + model.ID + "__" + speciesID + "\"");
+					bufferedTSDWriter.write(",\"" + model.ID + "__" + speciesID + "\"");
 				for (String noConstantParam : model.nonconstantParameterIDSet) 				
-					bufferedTSDWriter.write(", \"" + model.ID + "__" +  noConstantParam + "\"");
+					bufferedTSDWriter.write(",\"" + model.ID + "__" +  noConstantParam + "\"");
 				/*
 				for (String compartment : model.compartmentIDSet)
 					bufferedTSDWriter.write(", \"" + model.ID + "__" + compartment + "\"");

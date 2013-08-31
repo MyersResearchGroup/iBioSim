@@ -105,11 +105,11 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 
 				if(replacementSubModels.get(speciesID).contains("topmodel"))
 				
-				bufferedTSDWriter.write(", \"" + speciesID + "\"");
+				bufferedTSDWriter.write(",\"" + speciesID + "\"");
 			}
 			else
 			{
-				bufferedTSDWriter.write(", \"" + speciesID + "\"");
+				bufferedTSDWriter.write(",\"" + speciesID + "\"");
 			}
 				
 		
@@ -119,11 +119,11 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 
 				if(replacementSubModels.get(noConstantParam).contains("topmodel"))
 				
-					bufferedTSDWriter.write(", \"" + noConstantParam + "\"");
+					bufferedTSDWriter.write(",\"" + noConstantParam + "\"");
 			}
 			else
 			{
-				bufferedTSDWriter.write(", \"" + noConstantParam + "\"");
+				bufferedTSDWriter.write(",\"" + noConstantParam + "\"");
 			}
 		/*
 		for (String compartment : topmodel.compartmentIDSet)
@@ -137,22 +137,22 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 				if(replacements.containsKey(speciesID))
 				{
 					if(!replacementSubModels.get(speciesID).contains(model.ID))
-						bufferedTSDWriter.write(", \"" + model.ID + "__" + speciesID + "\"");
+						bufferedTSDWriter.write(",\"" + model.ID + "__" + speciesID + "\"");
 				}
 				else
 				{
-					bufferedTSDWriter.write(", \"" + model.ID + "__" + speciesID + "\"");
+					bufferedTSDWriter.write(",\"" + model.ID + "__" + speciesID + "\"");
 				}
 			
 			for (String noConstantParam : model.nonconstantParameterIDSet)
 				if(replacements.containsKey(noConstantParam))
 				{
 					if(!replacementSubModels.get(noConstantParam).contains(model.ID))
-						bufferedTSDWriter.write(", \"" + model.ID + "__" +  noConstantParam + "\"");
+						bufferedTSDWriter.write(",\"" + model.ID + "__" +  noConstantParam + "\"");
 				}
 				else
 				{
-				bufferedTSDWriter.write(", \"" + model.ID + "__" +  noConstantParam + "\"");
+				bufferedTSDWriter.write(",\"" + model.ID + "__" +  noConstantParam + "\"");
 				}
 			/*
 			for (String compartment : model.compartmentIDSet)
