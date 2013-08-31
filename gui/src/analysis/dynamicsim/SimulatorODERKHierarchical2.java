@@ -399,7 +399,7 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 	}
 	@Override
 	protected void setupForNewRun(int newRun) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	

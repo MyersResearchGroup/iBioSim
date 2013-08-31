@@ -502,8 +502,8 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 	protected void clear() {
 		topmodel.clear();
 
-		for(int i = 0; i < this.numSubmodels; i++)
-			submodels.clear();
+		for(ModelState modelstate : submodels.values())
+			modelstate.clear();
 
 
 		for(String key : replacements.keySet())
@@ -587,7 +587,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 
 		setupReplacingSpecies();
 
-
+		constraintFlag = true;
 
 		try {
 			for (String speciesID : topmodel.speciesIDSet) {				
