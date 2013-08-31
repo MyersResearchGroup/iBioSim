@@ -296,7 +296,7 @@ public abstract class HierarchicalSimulator {
 		commaSpace = "";
 
 		//print the current time
-		bufferedTSDWriter.write(printTime + ", ");
+		bufferedTSDWriter.write(printTime + ",");
 
 		LinkedHashSet<String> speciesIDSet = topmodel.speciesIDSet;
 		//loop through the speciesIDs and print their current value to the file
@@ -307,13 +307,13 @@ public abstract class HierarchicalSimulator {
 				if(replacementSubModels.get(speciesID).contains("topmodel"))
 				{
 					bufferedTSDWriter.write(commaSpace + topmodel.getVariableToValue(speciesID));
-					commaSpace = ", ";
+					commaSpace = ",";
 				}
 			}
 			else
 			{
 				bufferedTSDWriter.write(commaSpace + topmodel.getVariableToValue(speciesID));
-				commaSpace = ", ";
+				commaSpace = ",";
 			}
 			
 		}
@@ -325,20 +325,20 @@ public abstract class HierarchicalSimulator {
 				if(replacementSubModels.get(noConstantParam).contains("topmodel"))
 				{
 					bufferedTSDWriter.write(commaSpace + topmodel.getVariableToValue(noConstantParam));
-					commaSpace = ", ";
+					commaSpace = ",";
 				}
 			}
 			else
 			{
 				bufferedTSDWriter.write(commaSpace + topmodel.getVariableToValue(noConstantParam));
-				commaSpace = ", ";
+				commaSpace = ",";
 			}
 		}
 /*
 		for (String compartment : topmodel.compartmentIDSet)
 		{
 			bufferedTSDWriter.write(commaSpace + topmodel.getVariableToValue(compartment));
-			commaSpace = ", ";
+			commaSpace = ",";
 		}
 */
 		for (ModelState models : submodels.values())
@@ -351,14 +351,14 @@ public abstract class HierarchicalSimulator {
 					if(!replacementSubModels.get(speciesID).contains(models.ID))
 					{
 						bufferedTSDWriter.write(commaSpace + models.getVariableToValue(speciesID));
-						commaSpace = ", ";
+						commaSpace = ",";
 						}
 				}
 				else
 				{
 
 					bufferedTSDWriter.write(commaSpace + models.getVariableToValue(speciesID));
-					commaSpace = ", ";	
+					commaSpace = ",";	
 				}
 
 			}
@@ -370,14 +370,14 @@ public abstract class HierarchicalSimulator {
 					if(!replacementSubModels.get(noConstantParam).contains(models.ID))
 					{
 						bufferedTSDWriter.write(commaSpace + models.getVariableToValue(noConstantParam));
-						commaSpace = ", ";
+						commaSpace = ",";
 				
 					}
 				}
 				else
 				{
 					bufferedTSDWriter.write(commaSpace + models.getVariableToValue(noConstantParam));
-					commaSpace = ", ";
+					commaSpace = ",";
 			
 				}
 				
@@ -386,7 +386,7 @@ public abstract class HierarchicalSimulator {
 			for (String compartment : topmodel.compartmentIDSet)
 			{
 				bufferedTSDWriter.write(commaSpace + models.getVariableToValue(compartment));
-				commaSpace = ", ";
+				commaSpace = ",";
 			}
 			*/
 		}

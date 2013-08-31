@@ -3318,7 +3318,7 @@ public abstract class Simulator {
 		
 			bufferedTSDWriter.write("(\"time\"");
 			
-			commaSpace = ", ";
+			commaSpace = ",";
 			
 			//if there's an interesting species, only those get printed
 			if (interestingSpecies.size() > 0) {
@@ -3379,7 +3379,7 @@ public abstract class Simulator {
 		commaSpace = "";
 		
 		//print the current time
-		bufferedTSDWriter.write(printTime + ", ");
+		bufferedTSDWriter.write(printTime + ",");
 		
 		//if there's an interesting species, only those get printed
 		if (interestingSpecies.size() > 0) {
@@ -3394,7 +3394,7 @@ public abstract class Simulator {
 				else
 					bufferedTSDWriter.write(commaSpace + variableToValueMap.get(speciesID));
 					
-				commaSpace = ", ";
+				commaSpace = ",";
 			}
 			
 			//always print component location values
@@ -3409,26 +3409,26 @@ public abstract class Simulator {
 			for (String speciesID : speciesIDSet) {
 				
 				bufferedTSDWriter.write(commaSpace + variableToValueMap.get(speciesID));
-				commaSpace = ", ";
+				commaSpace = ",";
 			}
 			
 			//print component location values
 			for (String componentID : componentToLocationMap.keySet()) {
 				bufferedTSDWriter.write(commaSpace + (int) componentToLocationMap.get(componentID).getX());
-				commaSpace = ", ";
+				commaSpace = ",";
 				bufferedTSDWriter.write(commaSpace + (int) componentToLocationMap.get(componentID).getY());
 			}
 			
 			//print compartment sizes
 			for (String componentID : compartmentIDSet) {
 				bufferedTSDWriter.write(commaSpace + variableToValueMap.get(componentID));
-				commaSpace = ", ";
+				commaSpace = ",";
 			}
 			
 			//print nonconstant parameter values
 			for (String parameterID : nonconstantParameterIDSet) {
 				bufferedTSDWriter.write(commaSpace + variableToValueMap.get(parameterID));
-				commaSpace = ", ";
+				commaSpace = ",";
 			}
 		}
 		
