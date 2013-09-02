@@ -14,6 +14,8 @@ public class Variable implements Comparable<Variable>{
 	
 	private boolean care;
 	
+	private boolean interpolate;
+	
 	private DMVCrun runs; // tmp
 	
 	private Double initValue_vMax,initRate_rMax;
@@ -33,6 +35,7 @@ public class Variable implements Comparable<Variable>{
 		this.care = true;
 		this.epsilon = null; //default
 		this.destab = false;
+		this.interpolate = false;
 	}
 
 	public boolean isDmvc() {
@@ -46,17 +49,24 @@ public class Variable implements Comparable<Variable>{
 	public boolean isInput() {
 		return input;
 	}
+	public void setInput(boolean input) {
+		this.input = input;
+	}
 	
 	public boolean isCare() {
 		return care;
 	}
 
-	public void setInput(boolean input) {
-		this.input = input;
-	}
-	
 	public void setCare(boolean care) {
 		this.care = care;
+	}
+	
+	public boolean isInterpolate() {
+		return interpolate;
+	}
+
+	public void setInterpolate(boolean interpolate) {
+		this.interpolate = interpolate;
 	}
 
 	public String getName() {
@@ -158,6 +168,7 @@ public class Variable implements Comparable<Variable>{
 		this.care = a.care;
 		this.epsilon = a.epsilon;
 		this.destab = a.destab;
+		this.interpolate = a.interpolate;
 		// NOT Copying the init values and rates bcoz they get normalized every time a learn is performed on them. 
 		// So the values get multiplied by the same factor multiple times which is wrong.
 	//	this.initValue_vMax = a.initValue_vMax;
