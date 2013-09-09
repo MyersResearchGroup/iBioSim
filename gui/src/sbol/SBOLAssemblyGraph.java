@@ -253,7 +253,7 @@ public class SBOLAssemblyGraph {
 			// Connects assembly nodes for parameters and reactions rates appearing in kinetic law of reaction
 			// to assembly node for reaction
 			KineticLaw kl = sbmlReaction.getKineticLaw();
-			if (kl != null) {
+			if (kl != null && kl.isSetMath()) {
 				for (String input : parseInputHelper(kl.getMath())) {
 					if (idToNode.containsKey(input)) {
 						SBOLAssemblyNode inputNode = idToNode.get(input);
