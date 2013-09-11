@@ -326,41 +326,41 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		thisReactionParams = new ArrayList<String>();
 		if (option.equals("OK")) {
 			Reaction reac = gcm.getSBMLDocument().getModel().getReaction(reactionId);
-			if (reac.getKineticLaw()==null) {
-				reac.createKineticLaw();
-			}
-			ListOf listOfParameters = reac.getKineticLaw().getListOfParameters();
-			reacParams = new String[(int) reac.getKineticLaw().getNumParameters()];
-			for (int i = 0; i < reac.getKineticLaw().getNumParameters(); i++) {
-				/*
-				 * This code is a hack to get around a local parameter
-				 * conversion bug in libsbml
-				 */
-				Parameter pp = (Parameter) listOfParameters.get(i);
-				Parameter parameter = new Parameter(gcm.getSBMLDocument().getLevel(), gcm.getSBMLDocument().getVersion());
-				parameter.setId(pp.getId());
-				parameter.setMetaId(pp.getMetaId());
-				parameter.setName(pp.getName());
-				parameter.setValue(pp.getValue());
-				parameter.setUnits(pp.getUnits());
+			if (reac.getKineticLaw()!=null) {
+				//reac.createKineticLaw();
+				ListOf listOfParameters = reac.getKineticLaw().getListOfParameters();
+				reacParams = new String[(int) reac.getKineticLaw().getNumParameters()];
+				for (int i = 0; i < reac.getKineticLaw().getNumParameters(); i++) {
+					/*
+					 * This code is a hack to get around a local parameter
+					 * conversion bug in libsbml
+					 */
+					Parameter pp = (Parameter) listOfParameters.get(i);
+					Parameter parameter = new Parameter(gcm.getSBMLDocument().getLevel(), gcm.getSBMLDocument().getVersion());
+					parameter.setId(pp.getId());
+					parameter.setMetaId(pp.getMetaId());
+					parameter.setName(pp.getName());
+					parameter.setValue(pp.getValue());
+					parameter.setUnits(pp.getUnits());
 
-				changedParameters.add(parameter);
-				thisReactionParams.add(parameter.getId());
-				String p;
-				if (parameter.isSetUnits()) {
-					p = parameter.getId() + " " + parameter.getValue() + " " + parameter.getUnits();
-				}
-				else {
-					p = parameter.getId() + " " + parameter.getValue();
-				}
-				if (paramsOnly) {
-					for (int j = 0; j < parameterChanges.size(); j++) {
-						if (parameterChanges.get(j).split(" ")[0].equals(selectedReaction + "/"	+ parameter.getId())) {
-							p = parameterChanges.get(j).split("/")[1];
+					changedParameters.add(parameter);
+					thisReactionParams.add(parameter.getId());
+					String p;
+					if (parameter.isSetUnits()) {
+						p = parameter.getId() + " " + parameter.getValue() + " " + parameter.getUnits();
+					}
+					else {
+						p = parameter.getId() + " " + parameter.getValue();
+					}
+					if (paramsOnly) {
+						for (int j = 0; j < parameterChanges.size(); j++) {
+							if (parameterChanges.get(j).split(" ")[0].equals(selectedReaction + "/"	+ parameter.getId())) {
+								p = parameterChanges.get(j).split("/")[1];
+							}
 						}
 					}
+					reacParams[i] = p;
 				}
-				reacParams[i] = p;
 			}
 		}
 		else {
@@ -529,7 +529,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		scroll4.setPreferredSize(new Dimension(100, 100));
 		scroll4.setViewportView(kineticLaw);
 		if (option.equals("OK")) {
-			kineticLaw.setText(bioModel.removeBooleans(gcm.getSBMLDocument().getModel().getReaction(reactionId).getKineticLaw().getMath()));
+			if (gcm.getSBMLDocument().getModel().getReaction(reactionId).getKineticLaw()!=null) {
+				kineticLaw.setText(bioModel.removeBooleans(gcm.getSBMLDocument().getModel().getReaction(reactionId).getKineticLaw().getMath()));
+			}
 		}
 		JPanel kineticPanel = new JPanel(new BorderLayout());
 		kineticPanel.add(kineticLabel, "North");
@@ -798,6 +800,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					Reaction react = gcm.getSBMLDocument().getModel().getReaction(val);
 					ListOf remove;
 					long size;
+					if (react.getKineticLaw()==null) {
+						react.createKineticLaw();
+					}
 					remove = react.getKineticLaw().getListOfParameters();
 					size = react.getKineticLaw().getNumParameters();
 					for (int i = 0; i < size; i++) {
