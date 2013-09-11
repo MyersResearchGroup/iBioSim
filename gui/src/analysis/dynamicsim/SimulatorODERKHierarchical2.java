@@ -594,9 +594,9 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 							int index = variableToIndexMap.get(variable);
 							if(index > currValueChanges.length)
 								continue;
-							double value = evaluateExpressionRecursive(modelstate, rateRule.getMath());
+							double value = evaluateExpressionRecursive(modelstate, formula);
 							currValueChanges[index] = value;
-							//modelstate.setvariableToValueMap(variable, value);
+							//modelstate.setvariableToValueMap(variable, modelstate.getVariableToValue(variable) + value);
 						}
 						
 						affectedVariables.add(variable);
