@@ -2717,6 +2717,8 @@ public abstract class HierarchicalSimulator {
 		//and calculate both propensities
 		if (reversible == true) {
 			//distributes the left child across the parentheses
+			
+			System.out.println(reactionFormula.getType().toString());
 			if (reactionFormula.getType().equals(ASTNode.Type.TIMES)) {
 
 				ASTNode distributedNode = new ASTNode();
@@ -3178,7 +3180,7 @@ public abstract class HierarchicalSimulator {
 		//calculate initial assignments a lot of times in case there are dependencies
 		//running it the number of initial assignments times will avoid problems
 		//and all of them will be fully calculated and determined
-		for (int i = 0; i < modelstate.numInitialAssignments; ++i) {
+		for (int i = 0; i < modelstate.numSpecies; ++i) {
 			for (InitialAssignment initialAssignment : modelstate.model.getListOfInitialAssignments()) {
 
 				String variable = initialAssignment.getVariable().replace("_negative_","-");				
@@ -3195,7 +3197,7 @@ public abstract class HierarchicalSimulator {
 					if(replacements.containsKey(variable) && this.replacementSubModels.get(variable).contains(modelstate.ID))
 						modelstate.variableToValueMap.put(variable, replacements.get(variable));
 					else
-						modelstate.variableToValueMap.put(variable, evaluateExpressionRecursive(modelstate, initialAssignment.getMath()));
+						modelstate.setvariableToValueMap(variable, evaluateExpressionRecursive(modelstate, initialAssignment.getMath()));
 				}
 
 				affectedVariables.add(variable);
@@ -3205,8 +3207,27 @@ public abstract class HierarchicalSimulator {
 		//perform assignment rules again for variable that may have changed due to the initial assignments
 		//they aren't set up yet, so just perform them all
 		performAssignmentRules(modelstate, allAssignmentRules);
-
-
+/*
+		//this is kind of weird, but apparently if an initial assignment changes a compartment size
+				//i need to go back and update species amounts because they used the non-changed-by-assignment sizes
+				for (Species species : model.getListOfSpecies()) {
+					
+					if (species.isSetInitialConcentration()) {
+						
+						String speciesID = species.getId();
+						
+						//revert to the initial concentration value
+						if (Double.isNaN(variableToValueMap.get(speciesID)) == false)
+							variableToValueMap.put(speciesID, 
+									variableToValueMap.get(speciesID) / species.getCompartmentInstance().getSize());
+						else
+							variableToValueMap.put(speciesID, species.getInitialConcentration());
+						
+						//multiply by the new compartment size to get into amount
+						variableToValueMap.put(speciesID, variableToValueMap.get(speciesID) * 
+								variableToValueMap.get(speciesToCompartmentNameMap.get(speciesID)));
+					}
+				}*/
 	}
 
 	/**

@@ -71,8 +71,8 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 		setupSpecies(topmodel);
 		setupParameters(topmodel);			
 		setupConstraints(topmodel);
-		setupInitialAssignments(topmodel);
 		setupRules(topmodel);
+		setupInitialAssignments(topmodel);
 		setupReactions(topmodel);
 		setupEvents(topmodel);
 		functions[index++] = new DiffEquations(new VariableState(topmodel));
@@ -84,8 +84,8 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 			setupSpecies(model);
 			setupParameters(model);		
 			setupConstraints(model);
-			setupInitialAssignments(model);
 			setupRules(model);
+			setupInitialAssignments(model);
 			setupReactions(model);	
 			setupEvents(model);
 			functions[index++] = new DiffEquations(new VariableState(model));
@@ -201,10 +201,6 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 		
 		nextEventTime = handleEvents();
 		
-		for(DiffEquations eq : functions)
-		{
-			performAssignmentRules(eq);
-		}
 		
 		while (currentTime <= timeLimit && !cancelFlag && constraintFlag) 
 		{
@@ -337,32 +333,6 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 					}
 			}
 		return nextEventTime;
-	}
-
-	private void performAssignmentRules(DiffEquations eq)
-	{
-		for(String currentVar : eq.state.modelstate.speciesIDSet)
-		{
-			HashSet<String> affectedVariables = new HashSet<String>();
-
-			HashSet<AssignmentRule> affectedAssignmentRuleSet = new HashSet<AssignmentRule>();
-			if (eq.state.modelstate.variableToIsInAssignmentRuleMap != null && eq.state.modelstate.variableToIsInAssignmentRuleMap.containsKey(currentVar) &&
-				eq.state.modelstate.variableToValueMap.contains(currentVar) && 
-				eq.state.modelstate.variableToIsInAssignmentRuleMap.get(currentVar) == true)
-			
-				affectedAssignmentRuleSet.addAll(eq.state.modelstate.variableToAffectedAssignmentRuleSetMap.get(currentVar));
-			
-			if (affectedAssignmentRuleSet.size() > 0) {
-
-				affectedVariables = performAssignmentRules(eq.state.modelstate, affectedAssignmentRuleSet);
-
-				for (String affectedVariable : affectedVariables) {
-
-					int index = eq.state.variableToIndexMap.get(affectedVariable);
-					eq.state.values[index] = eq.state.modelstate.getVariableToValue(affectedVariable) - eq.state.values[index];
-				}
-			}
-		}
 	}
 		
 	private HashSet<String> fireEvent(DiffEquations eq, ModelState modelstate)
@@ -553,14 +523,16 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 			//if assignment rules are performed, these changes need to be reflected in the currValueChanges
 			//that get passed back
 			if (affectedAssignmentRuleSet.size() > 0) {
+				HashSet<String> affectedVariables;  
+			
+					affectedVariables = performAssignmentRules(state.modelstate, affectedAssignmentRuleSet);
+					
+					for (String affectedVariable : affectedVariables) 
+					{
 
-				HashSet<String> affectedVariables = performAssignmentRules(state.modelstate, affectedAssignmentRuleSet);
-
-				for (String affectedVariable : affectedVariables) {
-
-					int index = state.variableToIndexMap.get(affectedVariable);
-					currValueChanges[index] = state.modelstate.getVariableToValue(affectedVariable) - y[index];
-				}
+						int index = state.variableToIndexMap.get(affectedVariable);
+						currValueChanges[index] = state.modelstate.getVariableToValue(affectedVariable) - y[index];
+					}
 			}
 			
 		
