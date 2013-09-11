@@ -104,6 +104,19 @@ public class HierarchicalSimWrapper {
 		}
 		
 		String testcase = args[1];
+		
+		String[] casesNeedToChangeTimeStep = new String[]{"00028", "00173", "00194", "00196", "00197", "00198", "00200", "00201", "00269", "00274",  
+				"00276", "00278", "00279", "00870", "00872"};
+		
+		for(String s : casesNeedToChangeTimeStep)
+		{
+			if(s.equals(testcase))
+			{
+				maxTimeStep = 0.001;
+				break;
+			}
+		}
+		
 		String filename = args[0] + separator + testcase + separator +testcase + "-sbml-l3v1.xml";
 		String outputDirectory = args[2];
 		String settingsFile =  args[0] + separator+ testcase+ separator + testcase + "-settings.txt";
