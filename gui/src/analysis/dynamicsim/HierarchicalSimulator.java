@@ -2718,7 +2718,6 @@ public abstract class HierarchicalSimulator {
 		if (reversible == true) {
 			//distributes the left child across the parentheses
 			
-			System.out.println(reactionFormula.getType().toString());
 			if (reactionFormula.getType().equals(ASTNode.Type.TIMES)) {
 
 				ASTNode distributedNode = new ASTNode();
@@ -2761,6 +2760,44 @@ public abstract class HierarchicalSimulator {
 				reactionFormula = distributedNode;
 			}
 
+			else if (reactionFormula.getType().equals(ASTNode.Type.MINUS)) {
+
+				ASTNode distributedNode = new ASTNode();
+				ASTNode temp = new ASTNode(1);
+				reactionFormula = inlineFormula(modelstate, reactionFormula);
+				
+				if(reactionFormula.getChildCount() == 1)
+				{
+						for(ASTNode node : reactionFormula.getChild(0).getListOfNodes())
+						{
+							if (node.getChildCount() >= 2)
+							{
+								if(reactionFormula.getChild(0).getType().equals(ASTNode.Type.MINUS))
+									distributedNode = ASTNode.sum(
+											ASTNode.times(new ASTNode(-1), temp, node.getLeftChild()), 
+											ASTNode.times(temp, node.getRightChild()));
+								else
+									distributedNode = ASTNode.diff(
+											ASTNode.times(new ASTNode(-1), temp, node.getLeftChild()), 
+											ASTNode.times(temp, node.getRightChild()));
+								
+							}
+							else
+							{
+								temp = ASTNode.times(temp, node);
+							}
+					}
+				}
+				else
+				{
+					System.out.println("Error in rev. reaction");
+				}
+
+				
+				reactionFormula = distributedNode;
+			}
+			
+				
 			modelstate.reactionToSpeciesAndStoichiometrySetMap.put(reactionID + "_fd", new HashSet<StringDoublePair>());
 			modelstate.reactionToSpeciesAndStoichiometrySetMap.put(reactionID + "_rv", new HashSet<StringDoublePair>());
 			modelstate.reactionToReactantStoichiometrySetMap.put(reactionID + "_fd", new HashSet<StringDoublePair>());
