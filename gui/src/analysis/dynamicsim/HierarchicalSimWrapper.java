@@ -235,7 +235,7 @@ public class HierarchicalSimWrapper {
 		for (String intSpecies : properties.getProperty("variables").split(", "))
 			interestingSpecies.add(intSpecies);		
 		
-		quantityType = properties.getProperty("simulation.printer.tracking.quantity");
+		quantityType = properties.getProperty("concentration");
 	}
 
 }
