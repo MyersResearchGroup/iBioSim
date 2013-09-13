@@ -149,10 +149,11 @@ public class FluxBalanceAnalysis {
 				or.setFi(inequalities);
 				or.setA(stoch);
 				or.setB(zero);
-				//zero = new double[reactionIndex.size()];
-				//for (int j = 0; j < reactionIndex.size(); j++) {
-				//	zero[j] = 0;
-				//}
+				double[] ip = new double[reactionIndex.size()];
+				for (int j = 0; j < reactionIndex.size(); j++) {
+					ip[j] = 0;
+				}
+				or.setNotFeasibleInitialPoint(ip);
 				//or.setInitialPoint(zero);//initial feasible point, not mandatory
 				or.setToleranceFeas(1.E-9);
 				or.setTolerance(1.E-9);

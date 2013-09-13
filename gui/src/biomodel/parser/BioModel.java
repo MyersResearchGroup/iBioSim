@@ -49,6 +49,7 @@ import org.sbml.libsbml.Dimensions;
 import org.sbml.libsbml.Event;
 import org.sbml.libsbml.EventAssignment;
 import org.sbml.libsbml.ExternalModelDefinition;
+import org.sbml.libsbml.FbcModelPlugin;
 import org.sbml.libsbml.FunctionDefinition;
 import org.sbml.libsbml.GeneralGlyph;
 import org.sbml.libsbml.InitialAssignment;
@@ -6510,7 +6511,7 @@ public class BioModel {
 		if (document.getErrorLog().getNumFailsWithSeverity(libsbml.LIBSBML_SEV_ERROR) > 0) {
 			//document.printErrors();
 			return null;
-		} else {
+		} else if (numSubModels > 0) {
 		  /* create a new conversion properties structure */
 	      ConversionProperties props = new ConversionProperties();
 
@@ -6519,6 +6520,9 @@ public class BioModel {
 
 		  /* add an option to leave ports if the user has requested this */
 		  props.addOption("leavePorts", false, "unused ports should be listed in the flattened model");
+
+		  FbcModelPlugin fbc = (FbcModelPlugin)document.getModel().getPlugin("fbc");
+		  System.out.println(fbc.getNumFluxBounds());
 
 		  /* perform the conversion */
 		  if (document.convert(props) != libsbml.LIBSBML_OPERATION_SUCCESS) {
