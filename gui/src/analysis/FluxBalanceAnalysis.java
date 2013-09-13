@@ -222,7 +222,7 @@ public class FluxBalanceAnalysis {
 				ConvexMultivariateRealFunction[] inequalities = new ConvexMultivariateRealFunction[4];
 				//TODO: If G is negative it sets a minimum, positive = maximum..... F always negative? Elaboration: no, F must be positive to set a min with a positive number
 				//Does the position in G correspond with objctivefunction?
-				//F/G=limit, Ex. G=-0.5 F=-100 minimum value >= -200.
+				//F/G=limit, Ex. G=-0.5 F=-100 minimum value >= -200 if there is only one.
 				//Ex. for positive: G = 1 , F = -10 Max <= 10
 				double[][] G = new double[][] {{1,1}, {3,1}, {2, 1.}, {0.5, 1.}};
 				double[] F = new double[] {2., 1./2., 2., 1./2.};
