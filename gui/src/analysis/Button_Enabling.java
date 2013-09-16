@@ -515,8 +515,8 @@ public class Button_Enabling {
 		minStep.setEnabled(false);
 		stepLabel.setEnabled(false);
 		step.setEnabled(false);
-		errorLabel.setEnabled(false);
-		absErr.setEnabled(false);
+		errorLabel.setEnabled(true);
+		absErr.setEnabled(true);
 		limitLabel.setEnabled(false);
 		limit.setEnabled(false);
 		intervalLabel.setEnabled(false);

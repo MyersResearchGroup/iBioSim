@@ -876,8 +876,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			concentrations.setEnabled(false);
 			genRuns.setEnabled(false);
 			genStats.setEnabled(false);
+			absErr.setEnabled(true);
 			report.setEnabled(false);
-			absErr.setEnabled(false);
 			mpde.setEnabled(false);
 			meanPath.setEnabled(false);
 			medianPath.setEnabled(false);
@@ -3441,11 +3441,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("FBA")) {
 						fba.doClick();
-						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep,
-								stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
-								simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel,
-								abstraction, loopAbs, postAbs);
-						absErr.setEnabled(false);
+						Button_Enabling.enableFBA(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel,
+								step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
+								explanation, description, fileStem, fileStemLabel, abstraction, nary, loopAbs, postAbs);
+						//absErr.setEnabled(false);
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("SBML")) {
 						sbml.setSelected(true);
