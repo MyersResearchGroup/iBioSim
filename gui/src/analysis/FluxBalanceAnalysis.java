@@ -154,8 +154,8 @@ public class FluxBalanceAnalysis {
 				or.setA(stoch);
 				or.setB(zero);
 				or.setFi(inequalities);
-				or.setTolerance(1.E-7);
-				or.setToleranceFeas(1.E-7);
+				or.setTolerance(absError);
+				or.setToleranceFeas(absError);
 				double[] ip = new double[reactionIndex.size()];
 				for (int j = 0; j < reactionIndex.size(); j++) {
 					ip[j] = 0;
@@ -180,7 +180,7 @@ public class FluxBalanceAnalysis {
 					}
 				} catch (Exception e) {
 					// TODO: SCOTT - return exit code that problem is infeasible
-					//e.printStackTrace();
+					e.printStackTrace();
 				}
 			}
 			return 0;
