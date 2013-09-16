@@ -593,7 +593,7 @@ public class Run implements ActionListener {
 			}
 			else if (fba.isSelected()) {
 				time1 = System.nanoTime();
-				FluxBalanceAnalysis fluxBalanceAnalysis = new FluxBalanceAnalysis(directory + separator + theFile);
+				FluxBalanceAnalysis fluxBalanceAnalysis = new FluxBalanceAnalysis(directory + separator,theFile,absError);
 				exitValue = fluxBalanceAnalysis.PerformFluxBalanceAnalysis();
 			}
 			else if (sbml.isSelected()) {
@@ -1559,8 +1559,7 @@ public class Run implements ActionListener {
 				if (nary.isSelected() && gcmEditor == null && !lhpn.isSelected() && naryRun == 1) {
 				}
 				else if (fba.isSelected()) {
-					System.out.println("Scott: Here is where you tell me your results");
-					
+					// TODO: SCOTT - use showMessageDialog to report bad exit values
 				}
 				else if (sbml.isSelected()) {
 					if (sbmlName != null && !sbmlName.trim().equals("")) {
