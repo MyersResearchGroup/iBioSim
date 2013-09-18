@@ -1984,63 +1984,63 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else if (e.getActionCommand().equals("createSBOLSynthesisView")) {
 			createSBOLSynthesisView();
-//			boolean libFlag = false;
-//			boolean synFlag = true;
-//			boolean composeFlag = false;
-//			Component comp = tab.getSelectedComponent();
-//			if (comp instanceof ModelEditor) {
-//				SBOLFileManager fileManager = new SBOLFileManager(root, getSbolFiles());
-//				if (libFlag) {
-//					SBOLTestFactory testFactory = new SBOLTestFactory();
-//					int[] gateTotals = new int[] {80, 64, 64, 64, 64, 64};
-//					String[] gateTypes = new String[] {"INV", "YES", "NOR", "OR", "NAND", "AND"};
-//					List<BioModel> gateLibrary = testFactory.createTestLibrary(gateTotals, gateTypes, root);
-//					Set<DnaComponent> libComps = testFactory.annotateTestLibrary(21, gateLibrary);
-//					for (BioModel gateModel : gateLibrary)
-//						gateModel.save(root + separator + gateModel.getSBMLFile());
-//
-//					fileManager.saveDNAComponents(libComps, root + separator + "synTest.sbol");
-//				}
-//				if (synFlag) {
-//					BioModel specModel = ((ModelEditor) comp).getBioModel();
-//					Set<SBOLSynthesisGraph> graphlibrary = new HashSet<SBOLSynthesisGraph>();
-//					for (int i = 0; i < tree.getRoot().getChildCount(); i++) {
-//						String libFileID = tree.getRoot().getChildAt(i).toString();
-//						if (libFileID.endsWith(".xml") && !specModel.getSBMLFile().equals(libFileID)) {
-//							BioModel gateModel = new BioModel(root);
-//							gateModel.load(libFileID);
-//							graphlibrary.add(new SBOLSynthesisGraph(gateModel, fileManager));
-//						}
-//					}
-//					SBOLSynthesizer synthesizer = new SBOLSynthesizer(graphlibrary);
-//					SBOLSynthesisGraph spec = new SBOLSynthesisGraph(specModel, fileManager);
-//					List<Integer> solution = synthesizer.mapSpecification(spec);
-//					if (composeFlag) {
-//						String outputFileID;
-//						int version = 1;
-//						do {
-//							outputFileID = spec.getModelID() + "_v" + version + ".xml";
-//						} while(!overwrite(root + separator + outputFileID, outputFileID));
-//						BioModel outputModel = synthesizer.composeModel(solution, spec, root, outputFileID);
-//						outputModel.save(root + separator + outputFileID);
-//						int i = getTab(outputFileID);
-//						if (i != -1) {
-//							tab.remove(i);
-//						}
-//						ModelEditor modelEditor;
-//						try {
-//							modelEditor = new ModelEditor(root + separator, outputFileID, this, log, false, null, null, null, false, false);
-//
-//							modelEditor.save("Save GCM");
-//							addTab(outputFileID, modelEditor, "GCM Editor");
-//						} catch (Exception e1) {
-//							// TODO Auto-generated catch block
-//							e1.printStackTrace();
-//						}
-//						addToTree(outputFileID);
-//					}
-//				}
-//			}
+			boolean libFlag = true;
+			boolean synFlag = true;
+			boolean composeFlag = true;
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof ModelEditor) {
+				SBOLFileManager fileManager = new SBOLFileManager(root, getSbolFiles());
+				if (libFlag) {
+					SBOLTestFactory testFactory = new SBOLTestFactory();
+					int[] gateTotals = new int[] {20, 16, 16, 16, 16, 16};
+					String[] gateTypes = new String[] {"INV", "YES", "NOR", "OR", "NAND", "AND"};
+					List<BioModel> gateLibrary = testFactory.createTestLibrary(gateTotals, gateTypes, root);
+					Set<DnaComponent> libComps = testFactory.annotateTestLibrary(5, gateLibrary);
+					for (BioModel gateModel : gateLibrary)
+						gateModel.save(root + separator + gateModel.getSBMLFile());
+
+					fileManager.saveDNAComponents(libComps, root + separator + "synTest.sbol");
+				}
+				if (synFlag) {
+					BioModel specModel = ((ModelEditor) comp).getBioModel();
+					Set<SBOLSynthesisGraph> graphlibrary = new HashSet<SBOLSynthesisGraph>();
+					for (int i = 0; i < tree.getRoot().getChildCount(); i++) {
+						String libFileID = tree.getRoot().getChildAt(i).toString();
+						if (libFileID.endsWith(".xml") && !specModel.getSBMLFile().equals(libFileID)) {
+							BioModel gateModel = new BioModel(root);
+							gateModel.load(libFileID);
+							graphlibrary.add(new SBOLSynthesisGraph(gateModel, fileManager));
+						}
+					}
+					SBOLSynthesizer synthesizer = new SBOLSynthesizer(graphlibrary);
+					SBOLSynthesisGraph spec = new SBOLSynthesisGraph(specModel, fileManager);
+					List<Integer> solution = synthesizer.mapSpecification(spec);
+					if (composeFlag) {
+						String outputFileID;
+						int version = 1;
+						do {
+							outputFileID = spec.getModelID() + "_v" + version + ".xml";
+						} while(!overwrite(root + separator + outputFileID, outputFileID));
+						BioModel outputModel = synthesizer.composeModel(solution, spec, root, outputFileID);
+						outputModel.save(root + separator + outputFileID);
+						int i = getTab(outputFileID);
+						if (i != -1) {
+							tab.remove(i);
+						}
+						ModelEditor modelEditor;
+						try {
+							modelEditor = new ModelEditor(root + separator, outputFileID, this, log, false, null, null, null, false, false);
+
+							modelEditor.save("Save GCM");
+							addTab(outputFileID, modelEditor, "GCM Editor");
+						} catch (Exception e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						addToTree(outputFileID);
+					}
+				}
+			}
 		} 
 		// if the verify popup menu is selected on a vhdl or lhpn file
 		else if (e.getActionCommand().equals("createVerify")) {

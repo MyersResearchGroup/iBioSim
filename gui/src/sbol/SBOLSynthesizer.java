@@ -24,7 +24,7 @@ import sbol.SBOLSynthesisMatcher;
 public class SBOLSynthesizer {
 	private SBOLSynthesisMatcher matcher;
 	boolean boundFlag = true;
-	int boundCount = 0;
+//	int boundCount = 0;
 //	boolean greedyFlag = false;
 	int greedCap = 0;
 	int greedCount = 0;
@@ -74,7 +74,7 @@ public class SBOLSynthesizer {
 		System.out.println("Run took " + time + " s.");
 		System.out.println("Solution is " + solution + ".");
 		System.out.println("Solution cost is " + solutionCost + ".");
-		System.out.println("Bounded solution " + boundCount + " times.");
+//		System.out.println("Bounded solution " + boundCount + " times.");
 		return solution;
 	}
 	
@@ -165,7 +165,7 @@ public class SBOLSynthesizer {
 						previousNodes.add(0, currentNodes.remove(0));
 						currentNodes.addAll(0, nextNodes);
 					} else {
-						boundCount++;
+//						boundCount++;
 						currentNodes.get(0).terminateBranch();
 						currentNodes.clear();
 					}
