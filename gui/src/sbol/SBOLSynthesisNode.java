@@ -151,8 +151,7 @@ public class SBOLSynthesisNode {
 	}
 	
 	public void terminateBranch() {
-		if (matches != null)
-			coverIndex = matches.size() - 1;
+		coverIndex = -1;
 	}
 	
 	public boolean branch() {
@@ -204,4 +203,7 @@ public class SBOLSynthesisNode {
 		}
 	}
 	
+	public String toString() {
+		return id;
+	}
 }
