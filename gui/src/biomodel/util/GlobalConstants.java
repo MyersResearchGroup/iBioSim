@@ -143,6 +143,27 @@ public class GlobalConstants {
 	public static final String CONSTRUCT_VALIDATION_WARNING = "False";
 	public static final String CONSTRUCT_VALIDATION_WARNING_PREFERENCE = "biosim.synthesis.validation_warning";
 	public static final String CONSTRUCT_VALIDATION_FAIL_STATE_ID = "Sf";
+	public static final int MEAN_CDS_LENGTH = 695;
+	public static final int SD_CDS_LENGTH = 268;
+	public static final int MEAN_PROMOTER_LENGTH = 62;
+	public static final int SD_PROMOTER_LENGTH = 23;
+	public static final int RBS_LENGTH = 12;
+	public static final int TERMINATOR_LENGTH = 12;
+	public static final int MEAN_GENE_LENGTH = 781;
+	public static final int SD_GENE_LENGTH = 269;
+	public static final String SBOL_PROPERTIES_FILE_EXTENSION = ".sbol.properties";
+	public static final String SBOL_SYNTH_SPEC_PROPERTY = "synthesis.spec";
+	public static final String SBOL_SYNTH_LIBS_PROPERTY = "synthesis.libraries";
+	public static final String SBOL_SYNTH_LIBS_PREFERENCE = "biosim." + SBOL_SYNTH_LIBS_PROPERTY;
+	public static final String SBOL_SYNTH_LIBS_DEFAULT = "";
+	public static final String SBOL_SYNTH_METHOD_PROPERTY = "synthesis.method";
+	public static final String SBOL_SYNTH_METHOD_PREFERENCE = "biosim." + SBOL_SYNTH_METHOD_PROPERTY;
+	public static final int SBOL_SYNTH_METHOD_DEFAULT = 0;
+	public static final String SBOL_SYNTH_STRUCTURAL_METHODS = 
+			"Exhaustive Branch and Bound,Greedy Branch and Bound";
+	public static final String SBOL_SYNTH_NUM_SOLNS_PROPERTY = "synthesis.numsolutions";
+	public static final String SBOL_SYNTH_NUM_SOLNS_PREFERENCE = "biosim." + SBOL_SYNTH_NUM_SOLNS_PROPERTY;
+	public static final String SBOL_SYNTH_NUM_SOLNS_DEFAULT = "1";
 	
 	public static final String BIO = "biochem";
 	public static final String ACTIVATION = "activation";

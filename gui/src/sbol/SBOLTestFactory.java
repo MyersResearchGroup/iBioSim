@@ -55,21 +55,18 @@ public class SBOLTestFactory {
 		return gateLibrary;
 	}
 	
-	public Set<DnaComponent> annotateTestLibrary(int crossGateTotal, int avgCDSCopyNum, int sdCDSCopyNum,
-			List<BioModel> gateLibrary) {
+	public Set<DnaComponent> annotateTestLibrary(int cdsCopyNum, List<BioModel> gateLibrary) {
 		Set<DnaComponent> libraryComps = new HashSet<DnaComponent>();
-		List<DnaComponent> cdsComps = new LinkedList<DnaComponent>();
+		DnaComponent previousCDS = null;
 		Random rGen = new Random();
-		int cdsCopyNum = 1;
-		int cdsCopyCap = (int) Math.round(avgCDSCopyNum + sdCDSCopyNum*rGen.nextGaussian());
 		try {
 			DnaComponent sbolRBS = createTestDNAComponent(
 					new URI(GlobalConstants.MYERS_LAB_AUTHORITY + "#" + "RBS"),
-					"RBS", GlobalConstants.SO_RBS, rGen, 12, 0);
+					"RBS", GlobalConstants.SO_RBS, rGen, GlobalConstants.RBS_LENGTH, 0);
 			libraryComps.add(sbolRBS);
 			DnaComponent sbolTT = createTestDNAComponent(
 					new URI(GlobalConstants.MYERS_LAB_AUTHORITY + "#" + "TT"),
-					"TT", GlobalConstants.SO_TERMINATOR, rGen, 12, 0);
+					"TT", GlobalConstants.SO_TERMINATOR, rGen, GlobalConstants.TERMINATOR_LENGTH, 0);
 			libraryComps.add(sbolTT);
 			for (int i = 0; i < gateLibrary.size(); i++) {
 				BioModel gateModel = gateLibrary.get(i);
@@ -78,32 +75,36 @@ public class SBOLTestFactory {
 					Reaction sbmlPromoter = gateModel.getProductionReaction(promoterID);
 					DnaComponent sbolPromoter = createTestDNAComponent(
 							new URI(GlobalConstants.MYERS_LAB_AUTHORITY + "#" + gateID + "_" + promoterID), 
-							gateID + "_" + promoterID, GlobalConstants.SO_PROMOTER, rGen, 62, 23);
+							gateID + "_" + promoterID, GlobalConstants.SO_PROMOTER, rGen, 
+							GlobalConstants.MEAN_PROMOTER_LENGTH, GlobalConstants.SD_PROMOTER_LENGTH);
 					libraryComps.add(sbolPromoter);
 					List<URI> annotationObject = new LinkedList<URI>();
 					annotationObject.add(sbolPromoter.getURI());
 					AnnotationUtility.setSBOLAnnotation(sbmlPromoter, 
 							new SBOLAnnotation(sbmlPromoter.getMetaId(), annotationObject));
 				}
-				boolean hasCrossTalk = cdsComps.size() > 0 && i < crossGateTotal;
+				boolean isFirstCDS = true;
 				for (String speciesID : gateModel.getInputSpecies()) {
 					Species sbmlSpecies = gateModel.getSBMLDocument().getModel().getSpecies(speciesID);
 					DnaComponent sbolCDS;
-					if (hasCrossTalk) { 
-						sbolCDS = cdsComps.get(0);
-						cdsCopyNum++;
-						if (cdsCopyNum >= cdsCopyCap) {
-							cdsComps.remove(0);
-							cdsCopyNum = 1;
-							cdsCopyCap = (int) Math.round(avgCDSCopyNum + sdCDSCopyNum*rGen.nextGaussian());
+					if (isFirstCDS) {
+						if (i % cdsCopyNum > 0) { 
+							sbolCDS = previousCDS;
+						} else {
+							sbolCDS = createTestDNAComponent(
+									new URI(GlobalConstants.MYERS_LAB_AUTHORITY + "#" + gateID + "_" + speciesID),
+									gateID + "_" + speciesID, GlobalConstants.SO_CDS, rGen, 
+									GlobalConstants.MEAN_CDS_LENGTH, GlobalConstants.SD_CDS_LENGTH);
+							libraryComps.add(sbolCDS);
+							previousCDS = sbolCDS;
 						}
-						hasCrossTalk = false;
+						isFirstCDS = false;
 					} else {
 						sbolCDS = createTestDNAComponent(
 								new URI(GlobalConstants.MYERS_LAB_AUTHORITY + "#" + gateID + "_" + speciesID),
-								gateID + "_" + speciesID, GlobalConstants.SO_CDS, rGen, 695, 268);
+								gateID + "_" + speciesID, GlobalConstants.SO_CDS, rGen, 
+								GlobalConstants.MEAN_CDS_LENGTH, GlobalConstants.SD_CDS_LENGTH);
 						libraryComps.add(sbolCDS);
-						cdsComps.add(0, sbolCDS);
 					}
 					List<URI> annotationObject = new LinkedList<URI>();
 					annotationObject.add(sbolRBS.getURI());
@@ -120,6 +121,72 @@ public class SBOLTestFactory {
 		}
 		return libraryComps;
 	}
+	
+//	public Set<DnaComponent> annotateTestLibrary(int crossGateTotal, int avgCDSCopyNum, int sdCDSCopyNum,
+//			List<BioModel> gateLibrary) {
+//		Set<DnaComponent> libraryComps = new HashSet<DnaComponent>();
+//		List<DnaComponent> cdsComps = new LinkedList<DnaComponent>();
+//		Random rGen = new Random();
+//		int cdsCopyNum = 1;
+//		int cdsCopyCap = (int) Math.round(avgCDSCopyNum + sdCDSCopyNum*rGen.nextGaussian());
+//		try {
+//			DnaComponent sbolRBS = createTestDNAComponent(
+//					new URI(GlobalConstants.MYERS_LAB_AUTHORITY + "#" + "RBS"),
+//					"RBS", GlobalConstants.SO_RBS, rGen, 12, 0);
+//			libraryComps.add(sbolRBS);
+//			DnaComponent sbolTT = createTestDNAComponent(
+//					new URI(GlobalConstants.MYERS_LAB_AUTHORITY + "#" + "TT"),
+//					"TT", GlobalConstants.SO_TERMINATOR, rGen, 12, 0);
+//			libraryComps.add(sbolTT);
+//			for (int i = 0; i < gateLibrary.size(); i++) {
+//				BioModel gateModel = gateLibrary.get(i);
+//				String gateID = gateModel.getSBMLDocument().getModel().getId();
+//				for (String promoterID : gateModel.getPromoters()) {
+//					Reaction sbmlPromoter = gateModel.getProductionReaction(promoterID);
+//					DnaComponent sbolPromoter = createTestDNAComponent(
+//							new URI(GlobalConstants.MYERS_LAB_AUTHORITY + "#" + gateID + "_" + promoterID), 
+//							gateID + "_" + promoterID, GlobalConstants.SO_PROMOTER, rGen, 62, 23);
+//					libraryComps.add(sbolPromoter);
+//					List<URI> annotationObject = new LinkedList<URI>();
+//					annotationObject.add(sbolPromoter.getURI());
+//					AnnotationUtility.setSBOLAnnotation(sbmlPromoter, 
+//							new SBOLAnnotation(sbmlPromoter.getMetaId(), annotationObject));
+//				}
+//				boolean hasCrossTalk = cdsComps.size() > 0 && i < crossGateTotal;
+//				for (String speciesID : gateModel.getInputSpecies()) {
+//					Species sbmlSpecies = gateModel.getSBMLDocument().getModel().getSpecies(speciesID);
+//					DnaComponent sbolCDS;
+//					if (hasCrossTalk) { 
+//						sbolCDS = cdsComps.get(0);
+//						cdsCopyNum++;
+//						if (cdsCopyNum >= cdsCopyCap) {
+//							cdsComps.remove(0);
+//							cdsCopyNum = 1;
+//							cdsCopyCap = (int) Math.round(avgCDSCopyNum + sdCDSCopyNum*rGen.nextGaussian());
+//						}
+//						hasCrossTalk = false;
+//					} else {
+//						sbolCDS = createTestDNAComponent(
+//								new URI(GlobalConstants.MYERS_LAB_AUTHORITY + "#" + gateID + "_" + speciesID),
+//								gateID + "_" + speciesID, GlobalConstants.SO_CDS, rGen, 695, 268);
+//						libraryComps.add(sbolCDS);
+//						cdsComps.add(0, sbolCDS);
+//					}
+//					List<URI> annotationObject = new LinkedList<URI>();
+//					annotationObject.add(sbolRBS.getURI());
+//					annotationObject.add(sbolCDS.getURI());
+//					annotationObject.add(sbolTT.getURI());
+//					AnnotationUtility.setSBOLAnnotation(sbmlSpecies, 
+//							new SBOLAnnotation(sbmlSpecies.getMetaId(), annotationObject));
+//				}
+//					
+//			}
+//		} catch (URISyntaxException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		return libraryComps;
+//	}
 	
 	private BioModel createTestGate(String gateID, String projectDirectory) {
 		BioModel gateModel = new BioModel(projectDirectory);

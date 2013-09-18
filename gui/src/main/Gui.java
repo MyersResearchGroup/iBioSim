@@ -33,6 +33,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.FileReader;
@@ -143,6 +144,7 @@ import sbol.SBOLSynthesisMatcher;
 import sbol.SBOLBrowser;
 import sbol.SBOLFileManager;
 import sbol.SBOLSynthesisGraph;
+import sbol.SBOLSynthesisView;
 import sbol.SBOLSynthesizer;
 import sbol.SBOLTestFactory;
 import sbol.SBOLUtility;
@@ -1672,7 +1674,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		else if (e.getSource() == saveSBOL) {
 			Component comp = tab.getSelectedComponent();
 			if (comp instanceof ModelEditor) {
-				((ModelEditor) comp).saveSBOL(false);
+				((ModelEditor) comp).saveSBOL();
 			}
 		}
 		else if (e.getSource() == exportCsv) {
@@ -1980,65 +1982,66 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JOptionPane.showMessageDialog(frame, "You must open or create a project first.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
-		else if (e.getActionCommand().equals("performGeneticSynthesis")) {
-			boolean libFlag = false;
-			boolean synFlag = true;
-			boolean composeFlag = true;
-			Component comp = tab.getSelectedComponent();
-			if (comp instanceof ModelEditor) {
-				SBOLFileManager fileManager = new SBOLFileManager(root, getSbolFiles());
-				if (libFlag) {
-					SBOLTestFactory testFactory = new SBOLTestFactory();
-					int[] gateTotals = new int[] {5, 4, 4, 4, 4, 4};
-					String[] gateTypes = new String[] {"INV", "YES", "NOR", "OR", "NAND", "AND"};
-					List<BioModel> gateLibrary = testFactory.createTestLibrary(gateTotals, gateTypes, root);
-					Set<DnaComponent> libComps = testFactory.annotateTestLibrary(15, 5, 2, gateLibrary);
-					for (BioModel gateModel : gateLibrary)
-						gateModel.save(root + separator + gateModel.getSBMLFile());
-
-					fileManager.saveDNAComponents(libComps, root + separator + "synTest.sbol");
-				}
-				if (synFlag) {
-					BioModel specModel = ((ModelEditor) comp).getBioModel();
-					Set<SBOLSynthesisGraph> graphlibrary = new HashSet<SBOLSynthesisGraph>();
-					for (int i = 0; i < tree.getRoot().getChildCount(); i++) {
-						String libFileID = tree.getRoot().getChildAt(i).toString();
-						if (libFileID.endsWith(".xml") && !specModel.getSBMLFile().equals(libFileID)) {
-							BioModel gateModel = new BioModel(root);
-							gateModel.load(libFileID);
-							graphlibrary.add(new SBOLSynthesisGraph(gateModel, fileManager));
-						}
-					}
-					SBOLSynthesizer synthesizer = new SBOLSynthesizer(graphlibrary);
-					SBOLSynthesisGraph spec = new SBOLSynthesisGraph(specModel, fileManager);
-					List<Integer> solution = synthesizer.mapSpecification(spec);
-					if (composeFlag) {
-						String outputFileID;
-						int version = 1;
-						do {
-							outputFileID = spec.getModelID() + "_v" + version + ".xml";
-						} while(!overwrite(root + separator + outputFileID, outputFileID));
-						BioModel outputModel = synthesizer.composeModel(solution, spec, root, outputFileID);
-						outputModel.save(root + separator + outputFileID);
-						int i = getTab(outputFileID);
-						if (i != -1) {
-							tab.remove(i);
-						}
-						ModelEditor modelEditor;
-						try {
-							modelEditor = new ModelEditor(root + separator, outputFileID, this, log, false, null, null, null, false, false);
-
-							modelEditor.save("Save GCM");
-							addTab(outputFileID, modelEditor, "GCM Editor");
-						} catch (Exception e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-						addToTree(outputFileID);
-					}
-				}
-			}
-		}
+		else if (e.getActionCommand().equals("createSBOLSynthesisView")) {
+			createSBOLSynthesisView();
+//			boolean libFlag = false;
+//			boolean synFlag = true;
+//			boolean composeFlag = false;
+//			Component comp = tab.getSelectedComponent();
+//			if (comp instanceof ModelEditor) {
+//				SBOLFileManager fileManager = new SBOLFileManager(root, getSbolFiles());
+//				if (libFlag) {
+//					SBOLTestFactory testFactory = new SBOLTestFactory();
+//					int[] gateTotals = new int[] {80, 64, 64, 64, 64, 64};
+//					String[] gateTypes = new String[] {"INV", "YES", "NOR", "OR", "NAND", "AND"};
+//					List<BioModel> gateLibrary = testFactory.createTestLibrary(gateTotals, gateTypes, root);
+//					Set<DnaComponent> libComps = testFactory.annotateTestLibrary(21, gateLibrary);
+//					for (BioModel gateModel : gateLibrary)
+//						gateModel.save(root + separator + gateModel.getSBMLFile());
+//
+//					fileManager.saveDNAComponents(libComps, root + separator + "synTest.sbol");
+//				}
+//				if (synFlag) {
+//					BioModel specModel = ((ModelEditor) comp).getBioModel();
+//					Set<SBOLSynthesisGraph> graphlibrary = new HashSet<SBOLSynthesisGraph>();
+//					for (int i = 0; i < tree.getRoot().getChildCount(); i++) {
+//						String libFileID = tree.getRoot().getChildAt(i).toString();
+//						if (libFileID.endsWith(".xml") && !specModel.getSBMLFile().equals(libFileID)) {
+//							BioModel gateModel = new BioModel(root);
+//							gateModel.load(libFileID);
+//							graphlibrary.add(new SBOLSynthesisGraph(gateModel, fileManager));
+//						}
+//					}
+//					SBOLSynthesizer synthesizer = new SBOLSynthesizer(graphlibrary);
+//					SBOLSynthesisGraph spec = new SBOLSynthesisGraph(specModel, fileManager);
+//					List<Integer> solution = synthesizer.mapSpecification(spec);
+//					if (composeFlag) {
+//						String outputFileID;
+//						int version = 1;
+//						do {
+//							outputFileID = spec.getModelID() + "_v" + version + ".xml";
+//						} while(!overwrite(root + separator + outputFileID, outputFileID));
+//						BioModel outputModel = synthesizer.composeModel(solution, spec, root, outputFileID);
+//						outputModel.save(root + separator + outputFileID);
+//						int i = getTab(outputFileID);
+//						if (i != -1) {
+//							tab.remove(i);
+//						}
+//						ModelEditor modelEditor;
+//						try {
+//							modelEditor = new ModelEditor(root + separator, outputFileID, this, log, false, null, null, null, false, false);
+//
+//							modelEditor.save("Save GCM");
+//							addTab(outputFileID, modelEditor, "GCM Editor");
+//						} catch (Exception e1) {
+//							// TODO Auto-generated catch block
+//							e1.printStackTrace();
+//						}
+//						addToTree(outputFileID);
+//					}
+//				}
+//			}
+		} 
 		// if the verify popup menu is selected on a vhdl or lhpn file
 		else if (e.getActionCommand().equals("createVerify")) {
 			if (root != null) {
@@ -6237,34 +6240,63 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		
 		else {
 			if (tab.getComponentAt(index) instanceof JTabbedPane) {
-				for (int i = 0; i < ((JTabbedPane) tab.getComponentAt(index)).getTabCount(); i++) {
-					if (((JTabbedPane) tab.getComponentAt(index)).getComponentAt(i).getName() != null) {
-						if (((JTabbedPane) tab.getComponentAt(index)).getComponentAt(i).getName().equals("Simulate")) {
-							if (((AnalysisView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).hasChanged()) {
-								if (autosave == 0) {
-									int value = JOptionPane.showOptionDialog(frame,
-											"Do you want to save simulation option changes for " + getTitleAt(index) + "?", "Save Changes",
-											JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
-									if (value == YES_OPTION) {
+				if (tab.getComponentAt(index) instanceof SBOLSynthesisView) {
+					SBOLSynthesisView synthView = (SBOLSynthesisView) tab.getComponentAt(index);
+					Set<Integer> saveIndices = new HashSet<Integer>();
+					for (int i = 0; i < synthView.getTabCount(); i++) {
+						JPanel synthTab = (JPanel) synthView.getComponentAt(i);
+						if (synthView.hasChanged(synthTab)) {
+							if (autosave == 0) {
+								int value = JOptionPane.showOptionDialog(frame,
+										"Do you want to save changes to " + synthTab.getName() + "?", "Save Changes",
+										JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
+								if (value == YES_OPTION) 
+									saveIndices.add(i);
+								else if (value == CANCEL_OPTION)
+									return 0;
+								else if (value == YES_TO_ALL_OPTION) {
+									saveIndices.add(i);
+									autosave = 1;
+								} else if (value == NO_TO_ALL_OPTION)
+									autosave = 2;
+							}
+							else if (autosave == 1)
+								saveIndices.add(i);
+						}
+					}
+					for (int saveIndex : saveIndices) {
+						JPanel synthTab = (JPanel) synthView.getComponentAt(saveIndex);
+						synthView.save(synthTab);
+					}
+				} else {
+					for (int i = 0; i < ((JTabbedPane) tab.getComponentAt(index)).getTabCount(); i++) {
+						if (((JTabbedPane) tab.getComponentAt(index)).getComponentAt(i).getName() != null) {
+							if (((JTabbedPane) tab.getComponentAt(index)).getComponentAt(i).getName().equals("Simulate")) {
+								if (((AnalysisView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).hasChanged()) {
+									if (autosave == 0) {
+										int value = JOptionPane.showOptionDialog(frame,
+												"Do you want to save simulation option changes for " + getTitleAt(index) + "?", "Save Changes",
+												JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
+										if (value == YES_OPTION) {
+											((AnalysisView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
+										}
+										else if (value == CANCEL_OPTION) {
+											return 0;
+										}
+										else if (value == YES_TO_ALL_OPTION) {
+											((AnalysisView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
+											autosave = 1;
+										}
+										else if (value == NO_TO_ALL_OPTION) {
+											autosave = 2;
+										}
+									}
+									else if (autosave == 1) {
 										((AnalysisView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
 									}
-									else if (value == CANCEL_OPTION) {
-										return 0;
-									}
-									else if (value == YES_TO_ALL_OPTION) {
-										((AnalysisView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
-										autosave = 1;
-									}
-									else if (value == NO_TO_ALL_OPTION) {
-										autosave = 2;
-									}
-								}
-								else if (autosave == 1) {
-									((AnalysisView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
 								}
 							}
-						}
-						/*
+							/*
 						else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName().equals("SBML Editor")) {
 							if (((SBML_Editor) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).isDirty()) {
 								if (autosave == 0) {
@@ -6290,158 +6322,159 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								}
 							}
 						}
-						*/
-						/*
-						 * else if (((JTabbedPane)
-						 * tab.getComponentAt(index)).getComponent(i)
-						 * .getName().equals("GCM Editor")) { if
-						 * (((GCM2SBMLEditor) ((JTabbedPane)
-						 * tab.getComponentAt(index))
-						 * .getComponent(i)).isDirty()) { if (autosave == 0) {
-						 * int value = JOptionPane.showOptionDialog(frame,
-						 * "Do you want to save parameter changes for " +
-						 * tab.getTitleAt(index) + "?", "Save Changes",
-						 * JOptionPane.YES_NO_CANCEL_OPTION,
-						 * JOptionPane.PLAIN_MESSAGE, null, OPTIONS,
-						 * OPTIONS[0]); if (value == YES_OPTION) {
-						 * ((GCM2SBMLEditor) ((JTabbedPane)
-						 * tab.getComponentAt(index))
-						 * .getComponent(i)).saveParams(false, ""); } else if
-						 * (value == CANCEL_OPTION) { return 0; } else if (value
-						 * == YES_TO_ALL_OPTION) { ((GCM2SBMLEditor)
-						 * ((JTabbedPane) tab.getComponentAt(index))
-						 * .getComponent(i)).saveParams(false, ""); autosave =
-						 * 1; } else if (value == NO_TO_ALL_OPTION) { autosave =
-						 * 2; } } else if (autosave == 1) { ((GCM2SBMLEditor)
-						 * ((JTabbedPane) tab.getComponentAt(index))
-						 * .getComponent(i)).saveParams(false, ""); } } }
-						 */
-						else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof MovieContainer) {
-							if (((MovieContainer) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).getGCM2SBMLEditor().isDirty()
-									|| ((MovieContainer) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).getIsDirty()) {
-								if (autosave == 0) {
-									int value = JOptionPane.showOptionDialog(frame,
-											"Do you want to save parameter changes for " + getTitleAt(index) + "?", "Save Changes",
-											JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
-									if (value == YES_OPTION) {
-										((MovieContainer) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).savePreferences();
-									}
-									else if (value == CANCEL_OPTION) {
-										return 0;
-									}
-									else if (value == YES_TO_ALL_OPTION) {
-										((MovieContainer) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).savePreferences();
-										autosave = 1;
-									}
-									else if (value == NO_TO_ALL_OPTION) {
-										autosave = 2;
-									}
-								}
-								else if (autosave == 1) {
-									((MovieContainer) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).savePreferences();
-								}
-							}
-						}
-						else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName().equals("Learn Options")) {
-							if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnGCM) {
-								if (((LearnGCM) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).hasChanged()) {
+							 */
+							/*
+							 * else if (((JTabbedPane)
+							 * tab.getComponentAt(index)).getComponent(i)
+							 * .getName().equals("GCM Editor")) { if
+							 * (((GCM2SBMLEditor) ((JTabbedPane)
+							 * tab.getComponentAt(index))
+							 * .getComponent(i)).isDirty()) { if (autosave == 0) {
+							 * int value = JOptionPane.showOptionDialog(frame,
+							 * "Do you want to save parameter changes for " +
+							 * tab.getTitleAt(index) + "?", "Save Changes",
+							 * JOptionPane.YES_NO_CANCEL_OPTION,
+							 * JOptionPane.PLAIN_MESSAGE, null, OPTIONS,
+							 * OPTIONS[0]); if (value == YES_OPTION) {
+							 * ((GCM2SBMLEditor) ((JTabbedPane)
+							 * tab.getComponentAt(index))
+							 * .getComponent(i)).saveParams(false, ""); } else if
+							 * (value == CANCEL_OPTION) { return 0; } else if (value
+							 * == YES_TO_ALL_OPTION) { ((GCM2SBMLEditor)
+							 * ((JTabbedPane) tab.getComponentAt(index))
+							 * .getComponent(i)).saveParams(false, ""); autosave =
+							 * 1; } else if (value == NO_TO_ALL_OPTION) { autosave =
+							 * 2; } } else if (autosave == 1) { ((GCM2SBMLEditor)
+							 * ((JTabbedPane) tab.getComponentAt(index))
+							 * .getComponent(i)).saveParams(false, ""); } } }
+							 */
+							else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof MovieContainer) {
+								if (((MovieContainer) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).getGCM2SBMLEditor().isDirty()
+										|| ((MovieContainer) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).getIsDirty()) {
 									if (autosave == 0) {
 										int value = JOptionPane.showOptionDialog(frame,
-												"Do you want to save learn option changes for " + getTitleAt(index) + "?", "Save Changes",
+												"Do you want to save parameter changes for " + getTitleAt(index) + "?", "Save Changes",
 												JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
 										if (value == YES_OPTION) {
+											((MovieContainer) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).savePreferences();
+										}
+										else if (value == CANCEL_OPTION) {
+											return 0;
+										}
+										else if (value == YES_TO_ALL_OPTION) {
+											((MovieContainer) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).savePreferences();
+											autosave = 1;
+										}
+										else if (value == NO_TO_ALL_OPTION) {
+											autosave = 2;
+										}
+									}
+									else if (autosave == 1) {
+										((MovieContainer) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).savePreferences();
+									}
+								}
+							}
+							else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName().equals("Learn Options")) {
+								if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnGCM) {
+									if (((LearnGCM) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).hasChanged()) {
+										if (autosave == 0) {
+											int value = JOptionPane.showOptionDialog(frame,
+													"Do you want to save learn option changes for " + getTitleAt(index) + "?", "Save Changes",
+													JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
+											if (value == YES_OPTION) {
+												if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnGCM) {
+													((LearnGCM) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
+												}
+											}
+											else if (value == CANCEL_OPTION) {
+												return 0;
+											}
+											else if (value == YES_TO_ALL_OPTION) {
+												if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnGCM) {
+													((LearnGCM) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
+												}
+												autosave = 1;
+											}
+											else if (value == NO_TO_ALL_OPTION) {
+												autosave = 2;
+											}
+										}
+										else if (autosave == 1) {
 											if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnGCM) {
 												((LearnGCM) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
 											}
 										}
-										else if (value == CANCEL_OPTION) {
-											return 0;
-										}
-										else if (value == YES_TO_ALL_OPTION) {
-											if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnGCM) {
-												((LearnGCM) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
-											}
-											autosave = 1;
-										}
-										else if (value == NO_TO_ALL_OPTION) {
-											autosave = 2;
-										}
-									}
-									else if (autosave == 1) {
-										if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnGCM) {
-											((LearnGCM) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
-										}
 									}
 								}
-							}
-							if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnLHPN) {
-								if (((LearnLHPN) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).hasChanged()) {
-									if (autosave == 0) {
-										int value = JOptionPane.showOptionDialog(frame,
-												"Do you want to save learn option changes for " + getTitleAt(index) + "?", "Save Changes",
-												JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
-										if (value == YES_OPTION) {
+								if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnLHPN) {
+									if (((LearnLHPN) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).hasChanged()) {
+										if (autosave == 0) {
+											int value = JOptionPane.showOptionDialog(frame,
+													"Do you want to save learn option changes for " + getTitleAt(index) + "?", "Save Changes",
+													JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
+											if (value == YES_OPTION) {
+												if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnLHPN) {
+													((LearnLHPN) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
+												}
+											}
+											else if (value == CANCEL_OPTION) {
+												return 0;
+											}
+											else if (value == YES_TO_ALL_OPTION) {
+												if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnLHPN) {
+													((LearnLHPN) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
+												}
+												autosave = 1;
+											}
+											else if (value == NO_TO_ALL_OPTION) {
+												autosave = 2;
+											}
+										}
+										else if (autosave == 1) {
 											if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnLHPN) {
 												((LearnLHPN) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
 											}
 										}
-										else if (value == CANCEL_OPTION) {
-											return 0;
-										}
-										else if (value == YES_TO_ALL_OPTION) {
-											if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnLHPN) {
-												((LearnLHPN) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
-											}
-											autosave = 1;
-										}
-										else if (value == NO_TO_ALL_OPTION) {
-											autosave = 2;
-										}
-									}
-									else if (autosave == 1) {
-										if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnLHPN) {
-											((LearnLHPN) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
-										}
 									}
 								}
 							}
-						}
-						else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName().equals("Data Manager")) {
-							if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof DataManager) {
-								((DataManager) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).saveChanges(getTitleAt(index));
+							else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName().equals("Data Manager")) {
+								if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof DataManager) {
+									((DataManager) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).saveChanges(getTitleAt(index));
+								}
 							}
-						}
-						else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName().contains("Graph")) {
-							if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Graph) {
-								if (((Graph) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).hasChanged()) {
-									if (autosave == 0) {
-										int value = JOptionPane.showOptionDialog(frame,
-												"Do you want to save graph changes for " + getTitleAt(index) + "?", "Save Changes",
-												JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
-										if (value == YES_OPTION) {
+							else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName().contains("Graph")) {
+								if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Graph) {
+									if (((Graph) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).hasChanged()) {
+										if (autosave == 0) {
+											int value = JOptionPane.showOptionDialog(frame,
+													"Do you want to save graph changes for " + getTitleAt(index) + "?", "Save Changes",
+													JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
+											if (value == YES_OPTION) {
+												if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Graph) {
+													Graph g = ((Graph) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i));
+													g.save();
+												}
+											}
+											else if (value == CANCEL_OPTION) {
+												return 0;
+											}
+											else if (value == YES_TO_ALL_OPTION) {
+												if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Graph) {
+													Graph g = ((Graph) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i));
+													g.save();
+												}
+												autosave = 1;
+											}
+											else if (value == NO_TO_ALL_OPTION) {
+												autosave = 2;
+											}
+										}
+										else if (autosave == 1) {
 											if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Graph) {
 												Graph g = ((Graph) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i));
 												g.save();
 											}
-										}
-										else if (value == CANCEL_OPTION) {
-											return 0;
-										}
-										else if (value == YES_TO_ALL_OPTION) {
-											if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Graph) {
-												Graph g = ((Graph) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i));
-												g.save();
-											}
-											autosave = 1;
-										}
-										else if (value == NO_TO_ALL_OPTION) {
-											autosave = 2;
-										}
-									}
-									else if (autosave == 1) {
-										if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Graph) {
-											Graph g = ((Graph) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i));
-											g.save();
 										}
 									}
 								}
@@ -7440,14 +7473,16 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
 				boolean sim = false;
+				boolean sbolSynth = false;
 				boolean synth = false;
 				boolean ver = false;
 				boolean learn = false;
 				for (String s : new File(tree.getFile()).list()) {
 					if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
 						sim = true;
-					}
-					else if (s.length() > 3 && s.substring(s.length() - 4).equals(".syn")) {
+					} else if (s.endsWith(GlobalConstants.SBOL_PROPERTIES_FILE_EXTENSION)) {
+						openSBOLSynthesisView();
+					} else if (s.length() > 3 && s.substring(s.length() - 4).equals(".syn")) {
 						synth = true;
 					}
 					else if (s.length() > 3 && s.substring(s.length() - 4).equals(".ver")) {
@@ -7519,6 +7554,61 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			deepComponent.dispatchEvent(new MouseWheelEvent(deepComponent, e.getID(), e.getWhen(), e.getModifiers(), componentPoint.x,
 					componentPoint.y, e.getClickCount(), e.isPopupTrigger(), e.getScrollType(), e.getScrollAmount(), e.getWheelRotation()));
 		}
+	}
+	
+	private void createSBOLSynthesisView() {
+		String specFileID = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
+		String defaultSynthID = specFileID.replace(".xml","");
+		String synthID = JOptionPane.showInputDialog(frame, "Enter synthesis ID (default = " + defaultSynthID + "):", 
+				"Synthesis ID", JOptionPane.PLAIN_MESSAGE);
+		if (synthID != null) {
+			if (synthID.length() == 0)
+				synthID = defaultSynthID;
+			String synthFilePath = root + separator + synthID;
+			new File(synthFilePath).mkdir();
+//			try {
+//				FileOutputStream synthStreamOut = new FileOutputStream(
+//						new File(synthDirectory + separator + synthID + GlobalConstants.SYNTHESIS_FILE_EXTENSION));
+//				synthStreamOut.write(specFileID.getBytes());
+//				synthStreamOut.close();
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+			Preferences synthPrefs = Preferences.userRoot();
+			Properties synthProps = new Properties();
+			synthProps.setProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY, specFileID);
+			synthProps.setProperty(GlobalConstants.SBOL_SYNTH_LIBS_PROPERTY, 
+					synthPrefs.get(GlobalConstants.SBOL_SYNTH_LIBS_PREFERENCE, ""));
+			synthProps.setProperty(GlobalConstants.SBOL_SYNTH_METHOD_PROPERTY,
+					synthPrefs.get(GlobalConstants.SBOL_SYNTH_METHOD_PREFERENCE, "0"));
+			synthProps.setProperty(GlobalConstants.SBOL_SYNTH_NUM_SOLNS_PROPERTY, 
+					synthPrefs.get(GlobalConstants.SBOL_SYNTH_NUM_SOLNS_PREFERENCE, "1"));
+			String propFileID = synthID + GlobalConstants.SBOL_PROPERTIES_FILE_EXTENSION;
+			log.addText("Creating properties file:\n" + synthFilePath + separator + propFileID + "\n");
+			try {
+				FileOutputStream propStreamOut = new FileOutputStream(new File(synthFilePath + separator + propFileID));
+				synthProps.store(propStreamOut, synthID + " SBOL Synthesis Properties");
+				propStreamOut.close();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			SBOLSynthesisView synthView = new SBOLSynthesisView(synthProps);
+			addTab(synthID, synthView, null);
+			addToTree(synthID);
+		}
+	}
+	
+	private void openSBOLSynthesisView() {
+		String synthID = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
+		Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(tree.getFile(),
+				separator, synthID);
+		SBOLSynthesisView synthView = new SBOLSynthesisView(synthProps);
+		addTab(synthID, synthView, null);
 	}
 
 	private void createAnalysisView(int fileType) throws Exception {
@@ -9135,6 +9225,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			Component learnComponent = null;			
 			Boolean learn = false;
 			Boolean learnLHPN = false;
+			int test2 = tab.getSelectedIndex();
+			String test3 = getTitleAt(test2);
+			String test = root + separator + getTitleAt(tab.getSelectedIndex());
 			for (String s : new File(root + separator + getTitleAt(tab.getSelectedIndex())).list()) {
 				if (s.contains("_sg.dot")) {
 					viewSG.setEnabled(true);
@@ -9400,7 +9493,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				createAnal.setEnabled(true);
 				createAnal.setActionCommand("simulate");
 				createSynth.setEnabled(true);
-				createSynth.setActionCommand("performGeneticSynthesis");
+				createSynth.setActionCommand("createSBOLSynthesisView");
 				createLearn.setEnabled(true);
 				copy.setEnabled(true);
 				rename.setEnabled(true);

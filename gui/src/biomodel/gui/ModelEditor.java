@@ -358,11 +358,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		// Annotate SBML model with synthesized SBOL DNA component and save component to local SBOL file
 		if (!biosim.lema && !biomodel.isGridEnabled()) {
 			modelPanel.getSBOLField().deleteRemovedBioSimComponent();
-			if (command.contains("Check")) {
-				saveSBOL(true);
-			} else {
-				saveSBOL(false);
-			}
+//			if (command.contains("Check")) {
+//				saveSBOL(true);
+//			} else {
+				saveSBOL();
+//			}
 		}
 		
 		// Write out species and influences to a gcm file
@@ -430,7 +430,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	}
 
 	// Annotate SBML model with synthesized SBOL DNA component and save component to local SBOL file
-	public void saveSBOL(boolean check) {
+	public void saveSBOL() {
 		SBOLIdentityManager identityManager = new SBOLIdentityManager(biomodel);
 		if (identityManager.containsBioSimURI()) {
 			SBOLAssemblyGraph assemblyGraph = new SBOLAssemblyGraph(biomodel);
