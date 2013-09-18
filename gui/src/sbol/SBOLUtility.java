@@ -1,5 +1,6 @@
 package sbol;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -10,6 +11,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.swing.JOptionPane;
@@ -445,6 +447,23 @@ public class SBOLUtility {
 			return "e";
 		else
 			return "x";
+	}
+	
+	public static Properties loadSBOLSynthesisProperties(String synthFilePath, String separator, String synthID) {
+		Properties synthProps = new Properties();
+		for (String synthFileID : new File(synthFilePath).list())
+			if (synthFileID.endsWith(GlobalConstants.SBOL_PROPERTIES_FILE_EXTENSION)) {
+				try {
+					FileInputStream propStreamIn = new FileInputStream(new File(synthFilePath + separator + synthFileID));
+					synthProps.load(propStreamIn);
+					propStreamIn.close();
+					return synthProps;
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}	
+		return synthProps;
 	}
 	
 }

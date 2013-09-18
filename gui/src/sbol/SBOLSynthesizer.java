@@ -24,13 +24,32 @@ import sbol.SBOLSynthesisMatcher;
 public class SBOLSynthesizer {
 	private SBOLSynthesisMatcher matcher;
 	boolean boundFlag = true;
-	boolean firstFlag = false;
+	int boundCount = 0;
+//	boolean greedyFlag = false;
+	int greedCap = 0;
+	int greedCount = 0;
+//	int solutionCount = 0;
 	
 	public SBOLSynthesizer(Set<SBOLSynthesisGraph> graphLibrary) {
 		this.matcher = new SBOLSynthesisMatcher(graphLibrary);
 	}
 	
 	public List<Integer> mapSpecification(SBOLSynthesisGraph spec) {
+//		int numWarmUps = 0;
+//		int numTrials = 1;
+//		double[] times = new double[numTrials];
+		
+//		List<SBOLSynthesisNode> postOrderedNodes = spec.postOrderNodes();
+//		int solutionCost = 0;
+//		for (int i = 0; i < numWarmUps; i++) {
+//			for (SBOLSynthesisNode node : postOrderedNodes) {
+//				matchNode(node, spec);
+//				boundNode(node, spec);
+//			}
+//			solution.clear();
+//			solutionCost = coverSpec(spec, solution);
+//		}
+//		for (int i = 0; i < numTrials; i++) {
 		long startTime = System.nanoTime();
 		for (SBOLSynthesisNode node : spec.postOrderNodes()) {
 			matchNode(node, spec);
@@ -39,9 +58,23 @@ public class SBOLSynthesizer {
 		List<Integer> solution = new LinkedList<Integer>();
 		int solutionCost = coverSpec(spec, solution);
 		long endTime = System.nanoTime();
-		System.out.println("Run took " + (endTime - startTime) + " nanoseconds.");
+		double time = (endTime - startTime)*Math.pow(10, -9); 
+//			times[i] = (endTime - startTime)*Math.pow(10, -9);
+//		}
+//		double avgTime = 0;
+//		for (int i = 0; i < times.length; i++)
+//			avgTime += times[i];
+//		avgTime = avgTime/numTrials;
+//		double sdTime = 0;
+//		for (int i = 0; i < times.length; i++)
+//			sdTime += Math.pow((times[i] - avgTime), 2);
+//		sdTime = Math.sqrt(sdTime/(numTrials - 1));
+//		System.out.println("Average time is " + avgTime + " s.");
+//		System.out.println("Standard deviation is " + sdTime + " s.");
+		System.out.println("Run took " + time + " s.");
 		System.out.println("Solution is " + solution + ".");
-		System.out.println("Solution cost is " + solutionCost + " bp.");
+		System.out.println("Solution cost is " + solutionCost + ".");
+		System.out.println("Bounded solution " + boundCount + " times.");
 		return solution;
 	}
 	
@@ -72,17 +105,15 @@ public class SBOLSynthesizer {
 	}
 	
 	private int boundMatch(SBOLSynthesisNode node, SBOLSynthesisGraph match, SBOLSynthesisGraph spec) {
-		int matchBound = match.getNucleotideCount();
-		if (boundFlag) {
-			List<String> matchPaths = match.getPaths();
-			for (SBOLSynthesisNode boundedNode : spec.walkPaths(node, matchPaths)) {
-				//			if (previousNode.getType().equals("s")) {
-				matchBound += boundedNode.getCoverBound();
-				//				SBOLSynthesisNode leafMatch = graphMatch.walkPath(graphMatch.getRoot(), rootPath.substring(2));
-				//				if (previousCoverGraph.getRoot().getSignalComponents().size() > 0 && leafMatch.getSignalComponents().size() > 0)
-				//					solutionBound -= leafMatch.getNucleotideCount();
-				//			}
-			}
+		int matchBound = calculateCoverCost(match);
+		List<String> matchPaths = match.getPaths();
+		for (SBOLSynthesisNode boundedNode : spec.walkPaths(node, matchPaths)) {
+			//			if (previousNode.getType().equals("s")) {
+			matchBound += boundedNode.getCoverBound();
+			//				SBOLSynthesisNode leafMatch = graphMatch.walkPath(graphMatch.getRoot(), rootPath.substring(2));
+			//				if (previousCoverGraph.getRoot().getSignalComponents().size() > 0 && leafMatch.getSignalComponents().size() > 0)
+			//					solutionBound -= leafMatch.getNucleotideCount();
+			//			}
 		}
 		return matchBound;
 	}
@@ -100,22 +131,31 @@ public class SBOLSynthesizer {
 			if (currentNodes.get(0).getMatches().size() == 0) {
 				currentNodes.remove(0);
 				if (currentNodes.size() == 0 && previousNodes.size() > 0) {
-					if (firstFlag) {
-						bestSolution.addAll(solution);
-						return solutionCost;
-					} else if (bestSolutionCost < 0 || solutionCost < bestSolutionCost) {
+					if (bestSolutionCost < 0 || solutionCost < bestSolutionCost) {
 						bestSolutionCost = solutionCost;
 						bestSolution.clear();
 						bestSolution.addAll(solution);
+						if (greedCap > 0) {
+							greedCount++;
+							if (greedCount == greedCap)
+								return bestSolutionCost;
+						}
 					}
-					solutionCost = removeLastCoverFromSolution(previousNodes.remove(0).getCover(), solution,
+//					if (!boundFlag) {
+//						solutionCount++;
+//						if (solutionCount == greedCap)
+//							return solutionCost;
+//					}
+					solutionCost = removeCoverFromSolution(previousNodes.get(0).getCover(), solution,
 							solutionCost, solutionSignals);
+					previousNodes.get(0).terminateBranch();
+					previousNodes.remove(0);
 				}
 			} else if (currentNodes.get(0).branch()) {
 				SBOLSynthesisGraph cover = currentNodes.get(0).getCover();
 				if (!crossTalk(cover.getSignals(), solutionSignals) && 
 						ioCompatible(cover.getOutput().getSignal(), currentNodes.get(0).getCoverConstraint())) { 
-					if (solutionInBound(solutionCost, currentNodes.get(0).getCoverBound(), bestSolutionCost)) {
+					if (solutionInBound(solutionCost, currentNodes, bestSolutionCost)) {
 						currentNodes.get(0).setUncoveredNodes(
 								new LinkedList<SBOLSynthesisNode>(currentNodes.subList(1, currentNodes.size())));
 						List<SBOLSynthesisNode> nextNodes = spec.walkPaths(currentNodes.get(0), cover.getPaths());
@@ -124,13 +164,16 @@ public class SBOLSynthesizer {
 								solution, solutionCost, solutionSignals);
 						previousNodes.add(0, currentNodes.remove(0));
 						currentNodes.addAll(0, nextNodes);
-					} else
+					} else {
+						boundCount++;
+						currentNodes.get(0).terminateBranch();
 						currentNodes.clear();
-				}
+					}
+				} 
 			} else
 				currentNodes.clear();
 			if (currentNodes.size() == 0 && previousNodes.size() > 0) {
-				solutionCost = removeLastCoverFromSolution(previousNodes.get(0).getCover(), solution, 
+				solutionCost = removeCoverFromSolution(previousNodes.get(0).getCover(), solution, 
 						solutionCost, solutionSignals);
 				currentNodes.addAll(previousNodes.get(0).getUncoveredNodes());
 				currentNodes.add(0, previousNodes.remove(0));
@@ -143,14 +186,19 @@ public class SBOLSynthesizer {
 			int solutionCost, Set<String> solutionSignals) {
 		solution.add(coverIndex);
 		solutionSignals.addAll(cover.getSignals());
-		return solutionCost + cover.getNucleotideCount();
+		return solutionCost + calculateCoverCost(cover);
 	}
 	
-	private int removeLastCoverFromSolution(SBOLSynthesisGraph lastCover, List<Integer> solution, int solutionCost,
+	private int removeCoverFromSolution(SBOLSynthesisGraph cover, List<Integer> solution, int solutionCost,
 			Set<String> solutionSignals) {
 		solution.remove(solution.size() - 1);
-		solutionSignals.removeAll(lastCover.getSignals());
-		return solutionCost - lastCover.getNucleotideCount();
+		solutionSignals.removeAll(cover.getSignals());
+		return solutionCost - calculateCoverCost(cover);
+	}
+	
+	private int calculateCoverCost(SBOLSynthesisGraph cover) {
+//		return cover.getSignals().size();
+		return cover.getNucleotideCount();
 	}
 	
 	private boolean crossTalk(Set<String> coverSignals, Set<String> solutionSignals) {
@@ -167,21 +215,69 @@ public class SBOLSynthesizer {
 			return inputSignal.equals(outputSignal);
 	}
 	
-	private boolean solutionInBound(int solutionCost, int coverBound, int bestSolutionCost) {
+//	private boolean solutionInBound(int solutionCost, int coverBound, int bestSolutionCost) {
+//		if (!boundFlag || bestSolutionCost < 0)
+//			return true;
+//		else
+//			return solutionCost + coverBound < bestSolutionCost;
+//	}
+
+	private boolean solutionInBound(int solutionCost, List<SBOLSynthesisNode> currentNodes, int bestSolutionCost) {
 		if (!boundFlag || bestSolutionCost < 0)
 			return true;
-		else
-			return solutionCost + coverBound < bestSolutionCost;
+		else {
+			int bestCaseCost = solutionCost;
+			for (SBOLSynthesisNode currentNode : currentNodes)
+				bestCaseCost = bestCaseCost + currentNode.getCoverBound();
+			return (bestCaseCost < bestSolutionCost);
+		}
 	}
+	
+//	private boolean crossTalk(List<SBOLSynthesisNode> currentNodes, Set<String> solutionSignals) {
+//		do 
+//			do
+//				if (!currentNodes.get(0).branch())
+//					return true;
+//			while (crossTalkHelper(currentNodes.get(0).getCover().getSignals(), solutionSignals));
+//		while (crossTalkHelper2(currentNodes, solutionSignals));
+//		return false;
+//	}
+//	private boolean crossTalkHelper2(List<SBOLSynthesisNode> currentNodes, Set<String> solutionSignals) {
+//		List<SBOLSynthesisNode> crossNodes = currentNodes.subList(1, currentNodes.size());
+//		for (int i = 0; i < crossNodes.size(); i++) 
+//			if (crossNodes.get(i).getMatches().size() > 0) 
+//				while (crossTalkHelper(currentNodes.get(0).getCover().getSignals(), 
+//						crossNodes.get(i).getCover().getSignals(), solutionSignals))
+//					if (!crossNodes.get(i).branch()) {
+//						for (int j = 0; j < i; j++)
+//							crossNodes.get(j).terminateBranch();
+//						return true;
+//					}
+//		return false;
+//	}
+//	
+//	private boolean crossTalkHelper(Set<String> coverSignals, Set<String> solutionSignals) {
+//		for (String coverSignal : coverSignals)
+//			if (solutionSignals.contains(coverSignal))
+//				return true;
+//		return false;
+//	}
+//	
+//	private boolean crossTalkHelper(Set<String> coverSignals, Set<String> crossCoverSignals, Set<String> solutionSignals) {
+//		for (String crossCoverSignal : crossCoverSignals)
+//			if (solutionSignals.contains(crossCoverSignal) || coverSignals.contains(crossCoverSignal))
+//				return true;
+//		return false;
+//	}
 	
 	private void constrainNodes(List<SBOLSynthesisNode> nodes, List<SBOLSynthesisNode> nodeCovers) {
 		for (int i = 0; i < nodes.size(); i++)
 			nodes.get(i).setCoverConstraint(nodeCovers.get(i).getSignal());
 	}
 	
-	public BioModel composeModel(List<Integer> solution, SBOLSynthesisGraph spec, String projectDirectory, 
+	public BioModel composeModel(List<Integer> solution, SBOLSynthesisGraph spec, String projectFilePath, 
 			String fileID) {
-		BioModel biomodel = new BioModel(projectDirectory);
+		BioModel biomodel = new BioModel(projectFilePath);
 		biomodel.createSBMLDocument(fileID.replace(".xml", ""), false, false);
 		List<SBOLSynthesisNode> currentNodes = new LinkedList<SBOLSynthesisNode>();
 		List<SBOLSynthesisGraph> previousCovers = new LinkedList<SBOLSynthesisGraph>();

@@ -10,8 +10,12 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.tree.*;
 
+import sbol.SBOLSynthesisView;
+import sbol.SBOLUtility;
+
 import biomodel.parser.BioModel;
 import biomodel.parser.GCM2SBML;
+import biomodel.util.GlobalConstants;
 
 
 /**
@@ -449,8 +453,18 @@ public class FileTree extends JPanel implements MouseListener {
 						catch (Exception e) {
 							e.printStackTrace();
 						}
-					}
-					else if (new File(newPath + separator + d + ".lrn").exists()) {
+					} else if (new File(newPath + separator + d + GlobalConstants.SBOL_PROPERTIES_FILE_EXTENSION).exists()) {
+						try {
+							Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(newPath, separator, d);
+							String refFile = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY);
+							if (refFile.equals(files.get(fnum)) || refFile.replace(".gcm", ".xml").equals(files.get(fnum))) {
+								file.add(new DefaultMutableTreeNode(new IconData(ICON_SYNTHESIS, null, d)));
+							}
+						}
+						catch (Exception e) {
+							e.printStackTrace();
+						}
+					} else if (new File(newPath + separator + d + ".lrn").exists()) {
 						try {
 							Properties load = new Properties();
 							FileInputStream in = new FileInputStream(new File(newPath + separator + d + ".lrn"));
@@ -553,8 +567,34 @@ public class FileTree extends JPanel implements MouseListener {
 				catch (Exception e) {
 					e.printStackTrace();
 				}
-			}
-			else if (new File(path + separator + item + ".lrn").exists()) {
+			} else if (new File(path + separator + item + GlobalConstants.SBOL_PROPERTIES_FILE_EXTENSION).exists()) {
+				try {
+					Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(path, separator, item);
+					String refFile = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY);
+					for (int i = 0; i < root.getChildCount(); i++) {
+						if (root.getChildAt(i).toString().equals(refFile) || root.getChildAt(i).toString().equals(refFile.replace(".gcm", ".xml"))) {
+							int insert = 0;
+							for (int j = 0; j < root.getChildAt(i).getChildCount(); j++) {
+								if (root.getChildAt(i).getChildAt(j).toString().compareToIgnoreCase(item) < 0) {
+									insert++;
+								}
+							}
+							((DefaultMutableTreeNode) root.getChildAt(i)).insert(
+									new DefaultMutableTreeNode(new IconData(ICON_SYNTHESIS, null, item)), insert);
+							Runnable updateTree = new Runnable() {
+								public void run() {
+									tree.updateUI();
+								}
+							};
+							SwingUtilities.invokeLater(updateTree);
+							return;
+						}
+					}
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+			} else if (new File(path + separator + item + ".lrn").exists()) {
 				try {
 					Properties load = new Properties();
 					FileInputStream in = new FileInputStream(new File(path + separator + item + ".lrn"));
