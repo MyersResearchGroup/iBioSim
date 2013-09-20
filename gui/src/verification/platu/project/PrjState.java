@@ -2,20 +2,25 @@ package verification.platu.project;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
 import lpn.parser.LhpnFile;
 import lpn.parser.Transition;
-import verification.platu.logicAnalysis.HashSetWrapper;
-import verification.platu.logicAnalysis.StateSetInterface;
+import verification.platu.main.Options;
 import verification.platu.stategraph.State;
 
 public class PrjState {
 	protected  State[] stateArray;
 	private PrjState father;
-	private PrjState child;
-	//private HashMap<Transition, PrjState> nextStateMap;
+	private PrjState child;	
+	/**
+	 * A hash map recording the transition-state flow information at current global state.
+	 * Key: outgoing transition from current state.
+	 * Value: next global state reached by the corresponding outgoing transition. 
+	 */
+	protected HashMap<Transition, PrjState> nextGlobalStateMap;
 
 	public PrjState() {
 		stateArray = null;
@@ -27,6 +32,8 @@ public class PrjState {
 		stateArray = other;
 		father = null;
 		child = null;
+		if (Options.getOutputSgFlag() || Options.getMarkovianModelFlag())
+			nextGlobalStateMap = new HashMap<Transition, PrjState>();
 	}
 	
 	@Override
@@ -150,49 +157,65 @@ public class PrjState {
 		return stateArray;		
 	}
 
-	/**
-	 * This method uses local state-transition information to search for the next global states of 
-	 * this current global state, and returns a set of such next global states. The search
-	 * is performed based on the local states that this current global state is composed of. For example, assume a current
-	 * global state S0 is composed of n (n>=1) local states: s_00,s_10,s_20...,s_n0. Given the outgoing transition, outTran, 
-	 * it finds in each of the local state, namely s_00, s_10, s_20, ..., s_n0, their next local states, and then pieces them
-	 * together to form the next global state. Next, it grabs the equivalent one from the global state set. The obtained is the
-	 * next global state reached from S0 by taking outTran, and it is returned. 
-	 * @param outTran
-	 * @param globalStateSet
-	 * @return
-	 */
-	public PrjState getNextPrjState(Transition outTran, StateSetInterface globalStateSet) {
-		State[] nextStateArray = new State[this.toStateArray().length];
-		for (State curLocalSt : this.toStateArray()) {
-			State nextLocalSt = curLocalSt.getNextLocalState(outTran);
-			if (nextLocalSt != null) { // outTran leads curLocalSt to a next state.
-				nextStateArray[curLocalSt.getLpn().getLpnIndex()] = nextLocalSt;//nextOtherLocalSt.clone();
-			}
-			else { // No nextLocalSt was found. Transition outTran did not change this local state.
-				nextStateArray[curLocalSt.getLpn().getLpnIndex()] = curLocalSt;
-			}
-		}
-		PrjState tmpPrjSt = new PrjState(nextStateArray);
-		if (((HashSetWrapper)globalStateSet).get(tmpPrjSt) == null) 
-			throw new NullPointerException("Next global state was not found.");		
-		else
-			return ((HashSetWrapper) globalStateSet).get(tmpPrjSt);							
+	
+	public void addNextGlobalState(Transition tran, PrjState nextPrjState) {
+		this.nextGlobalStateMap.put(tran, nextPrjState);
 	}
 	
-	/**
-	 * Return a set of outgoing transitions from this PrjState. 
-	 * @return
-	 */
-	public Set<Transition> getOutgoingTrans() {
-		Set<Transition> outgoingTrans = new HashSet<Transition>();
-		for (State curLocalSt : this.toStateArray())
-			outgoingTrans.addAll(curLocalSt.getOutgoingTranSet());
-		return outgoingTrans;
+//	public PrjState getNextGlobalState(Transition outTran) {
+//		return nextGlobalStateMap.get(outTran);
+//	}
+//		
+	
+//	/**
+//	 * This method uses local state-transition information to search for the next global states of 
+//	 * this current global state, and returns a set of such next global states. The search
+//	 * is performed based on the local states that this current global state is composed of. For example, assume a current
+//	 * global state S0 is composed of n (n>=1) local states: s_00,s_10,s_20...,s_n0. Given the outgoing transition, outTran, 
+//	 * it finds in each of the local state, namely s_00, s_10, s_20, ..., s_n0, their next local states, and then pieces them
+//	 * together to form the next global state. Next, it grabs the equivalent one from the global state set. The obtained is the
+//	 * next global state reached from S0 by taking outTran, and it is returned. 
+//	 * @param outTran
+//	 * @param globalStateSet
+//	 * @return
+//	 */
+//	public PrjState getNextPrjState(Transition outTran, StateSetInterface globalStateSet) {
+//		return null;
+////		State[] nextStateArray = new State[this.toStateArray().length];
+////		for (State curLocalSt : this.toStateArray()) {
+////			State nextLocalSt = curLocalSt.getNextLocalState(outTran);
+////			if (nextLocalSt != null) { // outTran leads curLocalSt to a next state.
+////				nextStateArray[curLocalSt.getLpn().getLpnIndex()] = nextLocalSt;//nextOtherLocalSt.clone();
+////			}
+////			else { // No nextLocalSt was found. Transition outTran did not change this local state.
+////				nextStateArray[curLocalSt.getLpn().getLpnIndex()] = curLocalSt;
+////			}
+////		}
+////		PrjState tmpPrjSt = new PrjState(nextStateArray);
+////		if (((HashSetWrapper)globalStateSet).get(tmpPrjSt) == null) 
+////			throw new NullPointerException("Next global state was not found.");		
+////		else
+////			return ((HashSetWrapper) globalStateSet).get(tmpPrjSt);
+//		
+//	}
+	
+	public HashMap<Transition, PrjState> getNextGlobalStateMap() {
+		return nextGlobalStateMap;
 	}
 
+//	/**
+//	 * Return a set of outgoing transitions from this PrjState. 
+//	 * @return
+//	 */
+//	public Set<Transition> getOutgoingTrans() {
+//		Set<Transition> outgoingTrans = new HashSet<Transition>();
+//		for (State curLocalSt : this.toStateArray())
+//			outgoingTrans.addAll(curLocalSt.getOutgoingTranSet());
+//		return outgoingTrans;
+//	}
+
 	/**
-	 * Return the prjState label, which is concatenated by its local state labels. 
+	 * Return the prjState label, which is the concatenation of local state labels. 
 	 * @return
 	 */
 	public String getLabel() {
