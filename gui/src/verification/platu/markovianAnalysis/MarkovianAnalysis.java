@@ -91,8 +91,10 @@ public class MarkovianAnalysis implements Runnable{
 			counter++;
 			counter = counter % period;
 			for (PrjState curGlobalSt : globalStateSet.keySet()) {				
-				for (Transition outTran : ((ProbGlobalState) curGlobalSt).getOutgoingTranSetForProbGlobalState()) {
-					PrjState nextGlobalSt = ((ProbGlobalState) curGlobalSt).getNextProbGlobalState(outTran, globalStateSet);//					
+//				for (Transition outTran : ((ProbGlobalState) curGlobalSt).getOutgoingTranSetForProbGlobalState()) {
+//					PrjState nextGlobalSt = ((ProbGlobalState) curGlobalSt).getNextGlobalState(outTran);
+				for (Transition outTran : curGlobalSt.getNextGlobalStateMap().keySet()) {
+					PrjState nextGlobalSt = curGlobalSt.getNextGlobalStateMap().get(outTran);
 					double curStCurProb = ((ProbGlobalState) curGlobalSt).getCurrentProb();
 					if (curStCurProb > 0.0) {
 						double nextStNextProb = ((ProbGlobalState) nextGlobalSt).getNextProb();
@@ -129,8 +131,10 @@ public class MarkovianAnalysis implements Runnable{
 		}
 		for (int i=0; i<period; i++) {
 			for (PrjState curGlobalSt : globalStateSet.keySet()) {
-				for (Transition outTran : ((ProbGlobalState) curGlobalSt).getOutgoingTranSetForProbGlobalState()) {
-					PrjState nextGlobalSt = ((ProbGlobalState) curGlobalSt).getNextProbGlobalState(outTran, globalStateSet);						
+//				for (Transition outTran : ((ProbGlobalState) curGlobalSt).getOutgoingTranSetForProbGlobalState()) {
+//					PrjState nextGlobalSt = ((ProbGlobalState) curGlobalSt).getNextGlobalState(outTran);	
+				for (Transition outTran : curGlobalSt.getNextGlobalStateMap().keySet()) {
+					PrjState nextGlobalSt = curGlobalSt.getNextGlobalStateMap().get(outTran);
 					double nextStNextProb = ((ProbGlobalState) nextGlobalSt).getNextProb();
 					double curStCurProb = ((ProbGlobalState) curGlobalSt).getCurrentProb();
 					double tranProb = ((ProbGlobalState) curGlobalSt).getTranProb(outTran);
@@ -218,26 +222,27 @@ public class MarkovianAnalysis implements Runnable{
 		}
 	}
 	
-	private int findPeriod(ProbGlobalState curSt) {
+	private int findPeriod(PrjState curSt) {
 		if (stop) {
 			return 0;
 		}
 		int period = 0;
 		int color = 0;
-		curSt.setColor(color);
-		color = curSt.getColor() + 1;
-		Queue<ProbGlobalState> unVisitedStates = new LinkedList<ProbGlobalState>();
-		for (PrjState nextSt : ((ProbGlobalState) curSt).getNextProbGlobalStateSet(globalStateSet)) {
+		((ProbGlobalState) curSt).setColor(color);
+		color = ((ProbGlobalState) curSt).getColor() + 1;
+		Queue<PrjState> unVisitedStates = new LinkedList<PrjState>();
+		//for (PrjState nextSt : ((ProbGlobalState) curSt).getNextProbGlobalStateSet(globalStateSet)) {
+		for (PrjState nextSt : curSt.getNextGlobalStateMap().values()) {
 			if (((ProbGlobalState) nextSt).getColor() == -1) {
 				((ProbGlobalState) nextSt).setColor(color);
 				unVisitedStates.add((ProbGlobalState) nextSt);
 			}
 			else {
 				if (period == 0) {
-					period = curSt.getColor() - ((ProbGlobalState) nextSt).getColor() + 1;
+					period = ((ProbGlobalState) curSt).getColor() - ((ProbGlobalState) nextSt).getColor() + 1;
 				}
 				else {
-					period = gcd(curSt.getColor() - ((ProbGlobalState) nextSt).getColor() + 1, period);
+					period = gcd(((ProbGlobalState) curSt).getColor() - ((ProbGlobalState) nextSt).getColor() + 1, period);
 				}
 			}
 			if (stop) {
@@ -246,18 +251,19 @@ public class MarkovianAnalysis implements Runnable{
 		}
 		while (!unVisitedStates.isEmpty() && !stop) {
 			curSt = (ProbGlobalState) unVisitedStates.poll();
-			color = curSt.getColor() + 1;
-			for (PrjState nextSt : ((ProbGlobalState)curSt).getNextProbGlobalStateSet(globalStateSet)) {
+			color = ((ProbGlobalState) curSt).getColor() + 1;
+			//for (PrjState nextSt : ((ProbGlobalState)curSt).getNextProbGlobalStateSet(globalStateSet)) {
+			for (PrjState nextSt : curSt.getNextGlobalStateMap().values()) {
 				if (((ProbGlobalState) nextSt).getColor() == -1) {
 					((ProbGlobalState) nextSt).setColor(color);
 					unVisitedStates.add((ProbGlobalState) nextSt);
 				}
 				else {
 					if (period == 0) {
-						period = (curSt.getColor() - ((ProbGlobalState) nextSt).getColor() + 1);
+						period = (((ProbGlobalState) curSt).getColor() - ((ProbGlobalState) nextSt).getColor() + 1);
 					}
 					else {
-						period = gcd(curSt.getColor() - ((ProbGlobalState) nextSt).getColor() + 1, period);
+						period = gcd(((ProbGlobalState) curSt).getColor() - ((ProbGlobalState) nextSt).getColor() + 1, period);
 					}
 				}
 				if (stop) {
@@ -1023,15 +1029,19 @@ public class MarkovianAnalysis implements Runnable{
 			for (int i = startIndex; i < endIndex; i++) {
 				ProbGlobalState curState = (ProbGlobalState) globalStateArray[i];
 				if (!curState.isAbsorbing()) {
-					for (Transition outTran : curState.getOutgoingTranSetForProbGlobalState()) {
-						ProbGlobalState nextState = (ProbGlobalState) curState.getNextProbGlobalState(outTran, globalStateSet);
+//					for (Transition outTran : curState.getOutgoingTranSetForProbGlobalState()) {
+//						ProbGlobalState nextState = (ProbGlobalState) curState.getNextGlobalState(outTran);
+					for (Transition outTran : curState.getNextGlobalStateMap().keySet()) {
+						PrjState nextState = curState.getNextGlobalStateMap().get(outTran);
 						try {
-							nextState.lock.acquire();
-							nextState.setNextProb(nextState.getNextProb() + (curState.getCurrentProb() * (curState.getOutgoingTranRate(outTran) / Gamma)));
+							((ProbGlobalState) nextState).lock.acquire();
+							((ProbGlobalState) nextState).setNextProb(
+									((ProbGlobalState) nextState).getNextProb() 
+									+ (curState.getCurrentProb() * (curState.getOutgoingTranRate(outTran) / Gamma)));
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
-						nextState.lock.release();
+						((ProbGlobalState) nextState).lock.release();
 					}
 				}			
 				if (stop) {
