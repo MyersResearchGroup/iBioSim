@@ -1,5 +1,7 @@
 package verification.platu.markovianAnalysis;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.util.HashMap;
 
 import lpn.parser.LhpnFile;
@@ -21,57 +23,52 @@ public class ProbLocalStateGraph extends StateGraph {
     	nextTranRateMap = new HashMap<State, HashMap<Transition, Double>>();
     }
     
-    public void drawLocalStateGraph() {
-    	// TODO: Need to fix this method.
-//		try {			
-//			String graphFileName = null;
-//			if (Options.getPOR() == null)
-//				graphFileName = Options.getPrjSgPath() + getLpn().getLabel() + "_local_sg.dot";
-//			else
-//				graphFileName = Options.getPrjSgPath() + getLpn().getLabel() + "POR_"+ Options.getCycleClosingMthd() + "_local_sg.dot";
-//			int size = this.lpn.getVarIndexMap().size();
-//			String varNames = "";
-//			for(int i = 0; i < size; i++) {
-//				varNames = varNames + ", " + this.lpn.getVarIndexMap().getKey(i);
-//	    	}
-//			varNames = varNames.replaceFirst(", ", "");
-//			BufferedWriter out = new BufferedWriter(new FileWriter(graphFileName));
-//			out.write("digraph G {\n");
-//			out.write("Inits [shape=plaintext, label=\"<" + varNames + ">\"]\n");
-//			for (State curState : nextProbLocalStateTupleMap.keySet()) {
-//				String markings = intArrayToString("markings", curState);
-//				String vars = intArrayToString("vars", curState);
-//				String enabledTrans = boolArrayToString("enabledTrans", curState);
-//				String curStateName = "S" + curState.getIndex();
-//				out.write(curStateName + "[shape=\"ellipse\",label=\"" + curStateName + "\\n<"+vars+">" + "\\n<"+enabledTrans+">" + "\\n<"+markings+">" + "\"]\n");
-//			}
-//			
-//			for (State curState : nextProbLocalStateTupleMap.keySet()) {
-//				HashMap<Transition, ProbLocalStateTuple> nextStateTupleMap = nextProbLocalStateTupleMap.get(curState);
-//				for (Transition curTran : nextStateTupleMap.keySet()) {
-//					String curStateName = "S" + curState.getIndex();
-//					printPartialNextProbLocalStateTupleMap(curState, "drawLocalStateGraph");
-//					printNextProbLocalStateTupleMap("drawLocalStateGraph");
-//					String nextStateName = "S" + nextStateTupleMap.get(curTran).getNextProbLocalState().getIndex();					
-//					String curTranName = curTran.getLabel();
-//					String curTranRate = nextProbLocalStateTupleMap.get(curState).get(curTran).toString().substring(0, 4);
-//					if (curTran.isFail() && !curTran.isPersistent()) 
-//						out.write(curStateName + " -> " + nextStateName + " [label=\"" + curTranName + ", " + curTranRate + "\", fontcolor=red]\n");
-//					else if (!curTran.isFail() && curTran.isPersistent())						
-//						out.write(curStateName + " -> " + nextStateName + " [label=\"" + curTranName + ", " + curTranRate + "\", fontcolor=blue]\n");
-//					else if (curTran.isFail() && curTran.isPersistent())						
-//						out.write(curStateName + " -> " + nextStateName + " [label=\"" + curTranName + ", " + curTranRate + "\", fontcolor=purple]\n");
-//					else 
-//						out.write(curStateName + " -> " + nextStateName + " [label=\"" + curTranName + ", " + curTranRate + "\"]\n");
-//				}
-//			}
-//			out.write("}");
-//			out.close();
-//		}
-//		catch (Exception e) {
-//			e.printStackTrace();
-//			System.err.println("Error producing local ProbabilisticState graph as dot file.");
-//		}
+    public void drawLocalStateGraph() {    	
+		try {			
+			String graphFileName = null;
+			if (Options.getPOR() == null)
+				graphFileName = Options.getPrjSgPath() + getLpn().getLabel() + "_local_sg.dot";
+			else
+				graphFileName = Options.getPrjSgPath() + getLpn().getLabel() + "POR_"+ Options.getCycleClosingMthd() + "_local_sg.dot";
+			int size = this.lpn.getVarIndexMap().size();
+			String varNames = "";
+			for(int i = 0; i < size; i++) {
+				varNames = varNames + ", " + this.lpn.getVarIndexMap().getKey(i);
+	    	}
+			varNames = varNames.replaceFirst(", ", "");
+			BufferedWriter out = new BufferedWriter(new FileWriter(graphFileName));
+			out.write("digraph G {\n");
+			out.write("Inits [shape=plaintext, label=\"<" + varNames + ">\"]\n");
+			for (State curState : nextStateMap.keySet()) {
+				String markings = intArrayToString("markings", curState);
+				String vars = intArrayToString("vars", curState);
+				String enabledTrans = boolArrayToString("enabledTrans", curState);
+				String curStateName = "S" + curState.getIndex();
+				out.write(curStateName + "[shape=\"ellipse\",label=\"" + curStateName + "\\n<"+vars+">" + "\\n<"+enabledTrans+">" + "\\n<"+markings+">" + "\"]\n");
+			}			
+			for (State curState : nextStateMap.keySet()) {
+				HashMap<Transition, State> stateTransitionPair = nextStateMap.get(curState);
+				for (Transition curTran : stateTransitionPair.keySet()) {
+					String curStateName = "S" + curState.getIndex();
+					String nextStateName = "S" + stateTransitionPair.get(curTran).getIndex();
+					String curTranName = curTran.getLabel();
+					if (curTran.isFail() && !curTran.isPersistent()) 
+						out.write(curStateName + " -> " + nextStateName + " [label=\"" + curTranName + "\", fontcolor=red]\n");
+					else if (!curTran.isFail() && curTran.isPersistent())						
+						out.write(curStateName + " -> " + nextStateName + " [label=\"" + curTranName + "\", fontcolor=blue]\n");
+					else if (curTran.isFail() && curTran.isPersistent())						
+						out.write(curStateName + " -> " + nextStateName + " [label=\"" + curTranName + "\", fontcolor=purple]\n");
+					else 
+						out.write(curStateName + " -> " + nextStateName + " [label=\"" + curTranName + "\"]\n");
+				}
+			}
+			out.write("}");
+			out.close();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			System.err.println("Error producing local ProbabilisticState graph as dot file.");
+		}
 	}
 
 	/**
@@ -444,13 +441,13 @@ public class ProbLocalStateGraph extends StateGraph {
 		return nextTranRateMap.get(curLocalState).get(tran);
 	}
 	
-	public void setTranRate(State curLocalState, Transition tran, double tranRate) {
-		nextTranRateMap.get(curLocalState).put(tran, tranRate);
-	}
+//	public void setTranRate(State curLocalState, Transition tran, double tranRate) {
+//		nextTranRateMap.get(curLocalState).put(tran, tranRate);
+//	}
 	
-	public HashMap<State, HashMap<Transition, Double>> getNextTranRateMap() {
-		return nextTranRateMap;
-	}
+//	public HashMap<State, HashMap<Transition, Double>> getNextTranRateMap() {
+//		return nextTranRateMap;
+//	}
   
     public void printNextProbLocalTranRateMapForGivenState(State givenState, String location) {    	
     	System.out.println("----------------Next Tran Rate Map @ " + location + "----------------");
