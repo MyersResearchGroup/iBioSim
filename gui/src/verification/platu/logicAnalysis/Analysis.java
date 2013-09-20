@@ -423,6 +423,16 @@ public class Analysis {
 					break main_while_loop;
 				}
 			}
+
+			// Build transition rate map on global state.
+			if (Options.getMarkovianModelFlag()) {
+				for (State localSt : stateStackTop.toStateArray()) {					
+					for (Transition t : localSt.getEnabledTransitions()) {
+						double tranRate = ((ProbLocalStateGraph) localSt.getLpn().getStateGraph()).getTranRate(localSt, t);
+						((ProbGlobalState) stateStackTop).addNextGlobalTranRate(t, tranRate);
+					}
+				}
+			}
 			
 			//PrjState nextPrjState = new PrjState(nextStateArray); // Moved earlier. Timing Change.
 			boolean	existingState;
@@ -486,15 +496,6 @@ public class Analysis {
 						}
 					}
 				}			
-			}
-			// Build transition rate map on global state.
-			if (Options.getMarkovianModelFlag()) {
-				for (State localSt : stateStackTop.toStateArray()) {					
-					for (Transition t : localSt.getEnabledTransitions()) {
-						double tranRate = ((ProbLocalStateGraph) localSt.getLpn().getStateGraph()).getTranRate(localSt, t);
-						((ProbGlobalState) stateStackTop).addNextGlobalTranRate(t, tranRate);						
-					}
-				}
 			}
 		}
 		double totalStateCnt =0;
@@ -717,8 +718,7 @@ public class Analysis {
 //				}
 //				else {
 //					outgoingTrans = ((ProbGlobalState) curGlobalState).getOutgoingTranSetForProbGlobalState();				
-//				}					
-				//for (Transition outTran : outgoingTrans) {
+//				}									
 				for (Transition outTran : curGlobalState.getNextGlobalStateMap().keySet()) {
 					PrjState nextGlobalState = null;
 					nextGlobalState = curGlobalState.getNextGlobalStateMap().get(outTran);
@@ -739,8 +739,9 @@ public class Analysis {
 							out.write(curGlobalStateIndex + "->" + nextGlobalStateIndex + "[label=\"" + outTranName + "\"]\n");
 					}
 					else {
-						State localState = curGlobalState.toStateArray()[outTran.getLpn().getLpnIndex()];						
-						String outTranRate = num.format(((ProbLocalStateGraph) localState.getStateGraph()).getTranRate(localState, outTran));
+						//State localState = curGlobalState.toStateArray()[outTran.getLpn().getLpnIndex()];						
+						//String outTranRate = num.format(((ProbLocalStateGraph) localState.getStateGraph()).getTranRate(localState, outTran));
+						String outTranRate = num.format(((ProbGlobalState) curGlobalState).getOutgoingTranRate(outTran));
 						if (outTran.isFail() && !outTran.isPersistent())
 							out.write(curGlobalStateIndex + "->" + nextGlobalStateIndex 
 									+ "[label=\"" + outTranName + "\\n" + outTranRate + "\", fontcolor=red]\n");
@@ -1154,7 +1155,16 @@ public class Analysis {
 				failure = true;
 				break main_while_loop;
 			}
-			//updateLocalPersistentSetTbl(nextPersistentTrans, sgList, nextStateArray);
+
+			// Build transition rate map on global state.
+			if (Options.getMarkovianModelFlag()) {
+				for (State localSt : stateStackTop.toStateArray()) {					
+					for (Transition t : localSt.getEnabledTransitions()) {
+						double tranRate = ((ProbLocalStateGraph) localSt.getLpn().getStateGraph()).getTranRate(localSt, t);
+						((ProbGlobalState) stateStackTop).addNextGlobalTranRate(t, tranRate);
+					}
+				}
+			}			
 			
 			// Moved earlier. 
 //			PrjState nextPrjState;
@@ -1241,7 +1251,6 @@ public class Analysis {
 																	tranFiringFreq, sgList, prjStateSet, nextPrjState, nextPersistentSet, curPersistentSet, stateStack);
 						if (newNextPersistent != null && !newNextPersistent.isEmpty()) {
 							//LpnTranList newNextPersistentTrans = getLpnTranList(newNextPersistent, sgList);
-//							Yohji
 //							if (Options.getDebugMode()) {
 //								printStateArray(stateStackTop.toStateArray(), "%%%%%%% Add state to stateStack %%%%%%%%");
 //								System.out.println("stateStackTop: ");
