@@ -206,11 +206,6 @@ public class Options {
 	 * When true, Markovian analysis can be applied to the LPN model.
 	 */
 	private static boolean markovianModel = false;
-	
-	/**
-	 * When true, builds the global state graph for Probabilistic model. 
-	 */
-	private static boolean buildGlobalStateGraph = false;
 
 	public static void setCompositionalMinimization(String minimizationType){
 		if (minimizationType.equals("abstraction")){
@@ -439,13 +434,6 @@ public class Options {
 	
 	public static boolean getMarkovianModelFlag() {
 		return markovianModel;
-	}
-
-	public static void setBuildGlobalStateGraph() {
-		buildGlobalStateGraph = true;
-	}
-	public static boolean getBuildGlobalStateGraph() {		
-		return buildGlobalStateGraph;
 	}
 
 	public static String getTranRatePorDef() {
