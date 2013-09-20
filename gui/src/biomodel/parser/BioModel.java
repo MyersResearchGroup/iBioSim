@@ -6521,9 +6521,6 @@ public class BioModel {
 		  /* add an option to leave ports if the user has requested this */
 		  props.addOption("leavePorts", false, "unused ports should be listed in the flattened model");
 
-		  FbcModelPlugin fbc = (FbcModelPlugin)document.getModel().getPlugin("fbc");
-		  System.out.println(fbc.getNumFluxBounds());
-
 		  /* perform the conversion */
 		  if (document.convert(props) != libsbml.LIBSBML_OPERATION_SUCCESS) {
 			  return null;
