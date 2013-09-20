@@ -221,17 +221,10 @@ public class ProbGlobalState extends PrjState {
 ////		}
 //	}
 
-	public void computeTranRateSum() {	
-		for (Transition tran : nextGlobalStateMap.keySet())
+	public void computeTranRateSum() {		
+		for (Transition tran : nextGlobalStateMap.keySet()) {			
 			tranRateSum += getOutgoingTranRate(tran);
-		//if (Options.getBuildGlobalStateGraph()) {
-//			for (Transition tran : nextGlobalStateMap.keySet())
-//				tranRateSum += getOutgoingTranRate(tran);
-		//}
-//		else {
-//			for (Transition tran : getOutgoingTranSetForProbGlobalState())
-//				tranRateSum += getOutgoingTranRate(tran);
-//		}
+		}
 	}
 
 	public double getTranRateSum() {
