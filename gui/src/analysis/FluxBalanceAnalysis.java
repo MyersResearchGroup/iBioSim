@@ -1,7 +1,12 @@
 package analysis;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.text.NumberFormat;
 import java.util.HashMap;
+
+import javax.swing.JOptionPane;
 
 import main.Gui;
 
@@ -68,7 +73,6 @@ public class FluxBalanceAnalysis {
 		return result;
 	}
 	
-	// TODO: Scott - remove all print to console
 	public int PerformFluxBalanceAnalysis(){
 		if (fbc != null) {
 			HashMap<String, Integer> reactionIndex = new HashMap<String, Integer>();
@@ -89,45 +93,42 @@ public class FluxBalanceAnalysis {
 					}
 				}
 				LinearMultivariateRealFunction objectiveFunction = new LinearMultivariateRealFunction(objective, 0);
-				System.out.println("Minimize: " + vectorToString(objective,reactionIndex));
-				System.out.println("Subject to:");
+				//System.out.println("Minimize: " + vectorToString(objective,reactionIndex));
+				//System.out.println("Subject to:");
 
-				int numEquals = 0;
-				for (long j = 0; j < fbc.getNumFluxBounds(); j++) {
-					if (fbc.getFluxBound(j).getOperation().equals("equal")) {
-						numEquals++;
-					}
-				}
-				
-				ConvexMultivariateRealFunction[] inequalities = new ConvexMultivariateRealFunction[(int)(fbc.getNumFluxBounds())-numEquals];
-				int m = 0;
+				ConvexMultivariateRealFunction[] inequalities = new ConvexMultivariateRealFunction[(int)(fbc.getNumFluxBounds())];
+
 				for (long j = 0; j < fbc.getNumFluxBounds(); j++) {
 					FluxBound bound = fbc.getFluxBound(j);
 					double R [] = new double [reactionIndex.size()];
+					if(reactionIndex.containsKey(bound.getReaction())){
+						if(bound.getOperation().equals("greaterEqual")) {
+							R[reactionIndex.get(bound.getReaction())]=-1;
+						} else {
+							R[reactionIndex.get(bound.getReaction())]=1;
+						}
+					}
+
 					double boundVal = bound.getValue();
 					if(bound.getOperation().equals("greaterEqual")){
-						R[reactionIndex.get(bound.getReaction())]=-1;
-						inequalities[m] = new LinearMultivariateRealFunction(R, boundVal);
-						m++;
+						inequalities[(int) j] = new LinearMultivariateRealFunction(R, boundVal);
 						if (boundVal!=0) boundVal=(-1)*boundVal;
-						System.out.println("  " + vectorToString(R,reactionIndex) + " <= " + boundVal);
+						//System.out.println("  " + vectorToString(R,reactionIndex) + " <= " + boundVal);
 					}
 					else if(bound.getOperation().equals("lessEqual")){
-						R[reactionIndex.get(bound.getReaction())]=1;
-						System.out.println("  " + vectorToString(R,reactionIndex) + " <= " + boundVal);
+						//System.out.println("  " + vectorToString(R,reactionIndex) + " <= " + boundVal);
 						if (boundVal!=0) boundVal=(-1)*boundVal;
-						inequalities[m] = new LinearMultivariateRealFunction(R, boundVal);
-						m++;
-					} 
+						inequalities[(int) j] = new LinearMultivariateRealFunction(R, boundVal);
+					}
 				}
 
-				m = 0;
+				int m = 0;
 				int nonBoundarySpeciesCount = 0;
 				for (int j = 0; j < sbml.getModel().getNumSpecies(); j++) {
 					if (!sbml.getModel().getSpecies(j).getBoundaryCondition()) nonBoundarySpeciesCount++;
 				}
-				double[][] stoch = new double [nonBoundarySpeciesCount+numEquals][(int) (sbml.getModel().getNumReactions())];
-				double[] zero = new double [nonBoundarySpeciesCount+numEquals];
+				double[][] stoch = new double [nonBoundarySpeciesCount][(int) (sbml.getModel().getNumReactions())];
+				double[] zero = new double [nonBoundarySpeciesCount];
 				for (long j = 0; j < sbml.getModel().getNumSpecies(); j++) {
 					Species species = sbml.getModel().getSpecies(j);
 					if (species.getBoundaryCondition()) continue;
@@ -148,33 +149,23 @@ public class FluxBalanceAnalysis {
 						}
 					}
 					//inequalities[(int) (m + fbc.getNumFluxBounds())] = new LinearMultivariateRealFunction(stoch, 0);
-					System.out.println("  " + vectorToString(stoch[m],reactionIndex) + " = 0" + " (" + species.getId() + ")");
+					//System.out.println("  " + vectorToString(stoch[m],reactionIndex) + " = 0" + " (" + species.getId() + ")");
 					m++;
 				}
-				for (long j = 0; j < fbc.getNumFluxBounds(); j++) {
-					FluxBound bound = fbc.getFluxBound(j);
-					if (bound.getOperation().equals("equal")) {
-						stoch[m][(int)(reactionIndex.get(bound.getReaction()))] = 1.0;
-						zero[m] = bound.getValue();
-						System.out.println("  " + vectorToString(stoch[m],reactionIndex) + " = " + zero[m]);
-						m++;
-					}
-				}
-
 				//optimization problem
 				OptimizationRequest or = new OptimizationRequest();
 				or.setF0(objectiveFunction);
 				or.setA(stoch);
 				or.setB(zero);
 				or.setFi(inequalities);
-				or.setTolerance(absError);
-				or.setToleranceFeas(absError);
-				//double[] ip = new double[reactionIndex.size()];
-				//for (int j = 0; j < reactionIndex.size(); j++) {
-				//	ip[j] = 0;
-				//}
+				or.setTolerance(1.E-7);
+				or.setToleranceFeas(1.E-7);
+				double[] ip = new double[reactionIndex.size()];
+				for (int j = 0; j < reactionIndex.size(); j++) {
+					ip[j] = 0;
+				}
 				//or.setInitialPoint(ip);//initial feasible point, not mandatory
-				//or.setNotFeasibleInitialPoint(ip);
+				or.setNotFeasibleInitialPoint(ip);
 
 				//optimization
 				JOptimizer opt = new JOptimizer();
@@ -182,24 +173,30 @@ public class FluxBalanceAnalysis {
 				try {
 					opt.optimize();
 					// TODO: SCOTT - create (root + "sim-rep.txt") file with the results in it.
+					File f = new File(root + "sim-rep.txt");
+					FileWriter fw = new FileWriter(f);
+					BufferedWriter bw = new BufferedWriter(fw);
 					double [] sol = opt.getOptimizationResponse().getSolution();
 					for (String reaction : reactionIndex.keySet()) {
 						double value = sol[reactionIndex.get(reaction)];
 						double scale = Math.round(1/absError);
 						value = Math.round(value * scale) / scale;  
 						if (value != 0) {
-							System.out.println(reaction + " = " + value);
+							bw.write(reaction + " = " + value);
+							//System.out.println(reaction + " = " + value);
 						}
 					}
 				} catch (Exception e) {
-					// TODO: SCOTT - return exit code that problem is infeasible
-					e.printStackTrace();
+					JOptionPane.showMessageDialog(Gui.frame, "This problem is in feasable.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					//e.printStackTrace();
 				}
 			}
 			return 0;
 		} else {
+			JOptionPane.showMessageDialog(Gui.frame, "No flux balance constraints.", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			//System.out.println("No flux balance constraints");
-			// TODO: SCOTT - change to code indicating no flux balance constraints
 			return 0;
 		}
 	}
