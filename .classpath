@@ -70,6 +70,6 @@
 	<classpathentry kind="lib" path="gui/lib/log4j-1.2.14.jar"/>
 	<classpathentry kind="lib" path="gui/lib/xml-apis-1.0.b2.jar"/>
 	<classpathentry kind="lib" path="gui/lib/commons-math3-3.2.jar"/>
-	<classpathentry kind="lib" path="gui/lib/joptimizer-3.2.1.jar"/>
+	<classpathentry kind="lib" path="gui/lib/joptimizer-3.1.0.jar"/>
 	<classpathentry kind="output" path="gui/dist/classes"/>
 </classpath>
