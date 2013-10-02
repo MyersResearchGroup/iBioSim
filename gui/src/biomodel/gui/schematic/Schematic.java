@@ -907,7 +907,7 @@ public class Schematic extends JPanel implements ActionListener {
 		}
 		else if (command.equals("editSBOLDescriptors")) {
 			Gui gui = modelEditor.getGui();
-			SBOLFileManager fileManager = new SBOLFileManager(gui.getRoot(), gui.getSbolFiles());
+			SBOLFileManager fileManager = new SBOLFileManager(gui.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION));
 			if (fileManager.sbolFilesAreLoaded()) {
 				SBOLIdentityManager identityManager = new SBOLIdentityManager(bioModel);
 				SBOLDescriptorPanel descriptorPanel = new SBOLDescriptorPanel(identityManager, fileManager);

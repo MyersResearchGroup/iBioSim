@@ -36,26 +36,24 @@ import biomodel.parser.BioModel;
 
 public class SBOLFileManager {
 	
-	private String projectDirectory;
 	private HashMap<String, SBOLDocument> fileDocMap = new HashMap<String, SBOLDocument>();
 	private boolean sbolFilesAreLoaded = true;
-	private String locatedFileID;
+	private String locatedFilePath;
 	private UseFirstFound<DnaComponent, URI> aggregateCompResolver = new AggregatingResolver.UseFirstFound<DnaComponent, URI>();
 	
-	public SBOLFileManager(String projectDirectory, Set<String> sbolFileIDs) {
-		if (sbolFileIDs.size() == 0) {
+	public SBOLFileManager(Set<String> sbolFilePaths) {
+		if (sbolFilePaths.size() == 0) {
 			JOptionPane.showMessageDialog(Gui.frame, "No SBOL files are found in project.", 
 					"File Not Found", JOptionPane.ERROR_MESSAGE);
 			sbolFilesAreLoaded = false;
 		} else {
-			this.projectDirectory = projectDirectory;
 			LinkedList<Resolver<DnaComponent, URI>> compResolvers = new LinkedList<Resolver<DnaComponent, URI>>();
-			Iterator<String> sbolFileIterator = sbolFileIDs.iterator();
+			Iterator<String> sbolFileIterator = sbolFilePaths.iterator();
 			do {
-				String sbolFileID = sbolFileIterator.next();
-				SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(projectDirectory + File.separator + sbolFileID);
+				String sbolFilePath = sbolFileIterator.next();
+				SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(sbolFilePath);
 				if (sbolDoc != null) {
-					fileDocMap.put(sbolFileID, sbolDoc);
+					fileDocMap.put(sbolFilePath, sbolDoc);
 					SBOLDocumentImpl flattenedDoc = (SBOLDocumentImpl) SBOLUtility.flattenSBOLDocument(sbolDoc);
 					Resolver<DnaComponent, URI> compResolver = flattenedDoc.getComponentUriResolver();
 					compResolvers.add(compResolver);
@@ -107,11 +105,11 @@ public class SBOLFileManager {
 	}
 	
 	public DnaComponent resolveAndLocateTopLevelURI(URI uri) {
-		for (String sbolFileID : fileDocMap.keySet()) {
-			DnaComponent resolvedComp = ((SBOLDocumentImpl) fileDocMap.get(sbolFileID))
+		for (String sbolFilePath : fileDocMap.keySet()) {
+			DnaComponent resolvedComp = ((SBOLDocumentImpl) fileDocMap.get(sbolFilePath))
 					.getComponentUriResolver().resolve(uri);
 			if (resolvedComp != null) {
-				locatedFileID = sbolFileID;
+				locatedFilePath = sbolFilePath;
 				return resolvedComp;
 			}
 		}
@@ -120,8 +118,8 @@ public class SBOLFileManager {
 		return null;
 	}
 	
-	public DnaComponent resolveDisplayID(String displayID, String sbolFileID) {
-		SBOLDocument sbolDoc = fileDocMap.get(sbolFileID);
+	public DnaComponent resolveDisplayID(String displayID, String sbolFilePath) {
+		SBOLDocument sbolDoc = fileDocMap.get(sbolFilePath);
 		if (sbolDoc != null) 
 			return ((SBOLDocumentImpl) SBOLUtility.flattenSBOLDocument(sbolDoc))
 					.getComponentDisplayIdResolver().resolve(displayID);
@@ -132,32 +130,32 @@ public class SBOLFileManager {
 	
 	public void saveDNAComponent(DnaComponent dnaComp, SBOLIdentityManager identityManager) {
 		BioModel biomodel = identityManager.getBioModel();
-		String targetFileID = biomodel.getSBOLSaveFileID();
-		if (biomodel.getSBOLSaveFileID() != null)
-			targetFileID = biomodel.getSBOLSaveFileID();
+		String targetFilePath = biomodel.getSBOLSaveFilePath();
+		if (biomodel.getSBOLSaveFilePath() != null)
+			targetFilePath = biomodel.getSBOLSaveFilePath();
 		else if (identityManager.getBioSimComponent() != null)
-			targetFileID = "";
+			targetFilePath = "";
 		else 
-			targetFileID = fileDocMap.keySet().iterator().next();
+			targetFilePath = fileDocMap.keySet().iterator().next();
 		
 		// Save component to local SBOL files
-		for (String sbolFileID : fileDocMap.keySet()) {
+		for (String sbolFilePath : fileDocMap.keySet()) {
 //			if (identityManager.getSynthURI().toString().endsWith("iBioSim") || sbolFileID.equals(targetFileID)) {
-			SBOLDocument sbolDoc = fileDocMap.get(sbolFileID);
+			SBOLDocument sbolDoc = fileDocMap.get(sbolFilePath);
 //				if (identityManager.getSynthURI().toString().endsWith("iBioSim"))
 			SBOLUtility.mergeDNAComponent(identityManager.getBioSimURI(), dnaComp, sbolDoc);
-			if (sbolFileID.equals(targetFileID))
+			if (sbolFilePath.equals(targetFilePath))
 				SBOLUtility.addDNAComponent(dnaComp, sbolDoc);
-			SBOLUtility.writeSBOLDocument(projectDirectory + File.separator + sbolFileID, sbolDoc);
+			SBOLUtility.writeSBOLDocument(sbolFilePath, sbolDoc);
 //			}
 		}
 	}
 	
-	public void saveDNAComponents(Set<DnaComponent> dnaComps, String fileID) {
+	public void saveDNAComponents(List<DnaComponent> dnaComps, String filePath) {
 		SBOLDocument sbolDoc = new SBOLDocumentImpl();
 		for (DnaComponent dnaComp : dnaComps)
 			SBOLUtility.addDNAComponent(dnaComp, sbolDoc);
-		SBOLUtility.writeSBOLDocument(fileID, sbolDoc);
+		SBOLUtility.writeSBOLDocument(filePath, sbolDoc);
 	}
 	
 	public void exportDNAComponents(List<DnaComponent> dnaComps, String exportFilePath) {
@@ -185,23 +183,19 @@ public class SBOLFileManager {
 	}
 	
 	public void deleteDNAComponent(URI deletingURI) {
-		for (String sbolFileID : fileDocMap.keySet()) {
-			SBOLDocument sbolDoc = fileDocMap.get(sbolFileID);
+		for (String sbolFilePath : fileDocMap.keySet()) {
+			SBOLDocument sbolDoc = fileDocMap.get(sbolFilePath);
 			SBOLUtility.deleteDNAComponent(deletingURI, sbolDoc);
-			SBOLUtility.writeSBOLDocument(projectDirectory + File.separator + sbolFileID, sbolDoc);
+			SBOLUtility.writeSBOLDocument(sbolFilePath, sbolDoc);
 		}
 	}
 	
-	public Set<String> getSBOLFileIDs() {
+	public Set<String> getSBOLFilePaths() {
 		return fileDocMap.keySet();
 	}
 	
-	public String getLocatedFileID() {
-		return locatedFileID;
-	}
-	
-	public String getProjectDirectory() {
-		return projectDirectory;
+	public String getLocatedFilePath() {
+		return locatedFilePath;
 	}
 	
 }

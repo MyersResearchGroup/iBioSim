@@ -116,7 +116,7 @@ public class SBOLField extends JPanel implements ActionListener {
 				Utility.createErrorMessage("Invalid URI", "SBOL association text could not be parsed as URI.");
 				return false;
 			}
-			for (String filePath : gcmEditor.getGui().getFilePaths(".sbol")) {
+			for (String filePath : gcmEditor.getGui().getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION)) {
 				SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
 				if (sbolDoc != null) {
 					SBOLDocumentImpl flattenedDoc = (SBOLDocumentImpl) SBOLUtility.flattenSBOLDocument(sbolDoc);
@@ -139,7 +139,7 @@ public class SBOLField extends JPanel implements ActionListener {
 	
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("associateSBOL")) {
-			HashSet<String> sbolFilePaths = gcmEditor.getGui().getFilePaths(".sbol");
+			HashSet<String> sbolFilePaths = gcmEditor.getGui().getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION);
 			SBOLAssociationPanel  associationPanel;
 			if (isModelPanelField) {
 				associationPanel = new SBOLAssociationPanel(sbolFilePaths, sbolURIs, 
@@ -170,7 +170,7 @@ public class SBOLField extends JPanel implements ActionListener {
 	// Deletes from local SBOL files any iBioSim composite component that had its URI removed from the SBOLAssociationPanel
 	public void deleteRemovedBioSimComponent() {
 		if (removedBioSimURI != null) {
-			for (String filePath : gcmEditor.getGui().getFilePaths(".sbol")) {
+			for (String filePath : gcmEditor.getGui().getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION)) {
 				SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
 				SBOLUtility.deleteDNAComponent(removedBioSimURI, sbolDoc);
 				SBOLUtility.writeSBOLDocument(filePath, sbolDoc);

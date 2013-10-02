@@ -30,7 +30,7 @@ public class SBOLIdentityManager {
 	private List<DnaComponent> modelComps;
 	private int indexOfBioSimURI = -1;
 	private DnaComponent bioSimComp;
-	private String saveFileID;
+	private String saveFilePath;
 	private String uriAuthority;
 	private String time;
 	
@@ -77,8 +77,8 @@ public class SBOLIdentityManager {
 		return bioSimComp;
 	}
 	
-	public String getSaveFileID() {
-		return saveFileID;
+	public String getSaveFilePath() {
+		return saveFilePath;
 	}
 	
 	public boolean containsBioSimURI() {
@@ -144,7 +144,7 @@ public class SBOLIdentityManager {
 							JOptionPane.WARNING_MESSAGE, null, options, options[0]);
 			return (choice == 0);
 		} else {
-			saveFileID = fileManager.getLocatedFileID();
+			saveFilePath = fileManager.getLocatedFilePath();
 			return true;
 		}
 	}

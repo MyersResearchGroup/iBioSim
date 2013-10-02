@@ -455,7 +455,7 @@ public class FileTree extends JPanel implements MouseListener {
 						}
 					} else if (new File(newPath + separator + d + GlobalConstants.SBOL_PROPERTIES_FILE_EXTENSION).exists()) {
 						try {
-							Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(newPath, separator, d);
+							Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(newPath, separator);
 							String refFile = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY);
 							if (refFile.equals(files.get(fnum)) || refFile.replace(".gcm", ".xml").equals(files.get(fnum))) {
 								file.add(new DefaultMutableTreeNode(new IconData(ICON_SYNTHESIS, null, d)));
@@ -569,7 +569,7 @@ public class FileTree extends JPanel implements MouseListener {
 				}
 			} else if (new File(path + separator + item + GlobalConstants.SBOL_PROPERTIES_FILE_EXTENSION).exists()) {
 				try {
-					Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(path, separator, item);
+					Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(path, separator);
 					String refFile = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY);
 					for (int i = 0; i < root.getChildCount(); i++) {
 						if (root.getChildAt(i).toString().equals(refFile) || root.getChildAt(i).toString().equals(refFile.replace(".gcm", ".xml"))) {

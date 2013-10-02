@@ -1984,63 +1984,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else if (e.getActionCommand().equals("createSBOLSynthesisView")) {
 			createSBOLSynthesisView();
-			boolean libFlag = true;
-			boolean synFlag = true;
-			boolean composeFlag = true;
-			Component comp = tab.getSelectedComponent();
-			if (comp instanceof ModelEditor) {
-				SBOLFileManager fileManager = new SBOLFileManager(root, getSbolFiles());
-				if (libFlag) {
-					SBOLTestFactory testFactory = new SBOLTestFactory();
-					int[] gateTotals = new int[] {20, 16, 16, 16, 16, 16};
-					String[] gateTypes = new String[] {"INV", "YES", "NOR", "OR", "NAND", "AND"};
-					List<BioModel> gateLibrary = testFactory.createTestLibrary(gateTotals, gateTypes, root);
-					Set<DnaComponent> libComps = testFactory.annotateTestLibrary(5, gateLibrary);
-					for (BioModel gateModel : gateLibrary)
-						gateModel.save(root + separator + gateModel.getSBMLFile());
-
-					fileManager.saveDNAComponents(libComps, root + separator + "synTest.sbol");
-				}
-				if (synFlag) {
-					BioModel specModel = ((ModelEditor) comp).getBioModel();
-					Set<SBOLSynthesisGraph> graphlibrary = new HashSet<SBOLSynthesisGraph>();
-					for (int i = 0; i < tree.getRoot().getChildCount(); i++) {
-						String libFileID = tree.getRoot().getChildAt(i).toString();
-						if (libFileID.endsWith(".xml") && !specModel.getSBMLFile().equals(libFileID)) {
-							BioModel gateModel = new BioModel(root);
-							gateModel.load(libFileID);
-							graphlibrary.add(new SBOLSynthesisGraph(gateModel, fileManager));
-						}
-					}
-					SBOLSynthesizer synthesizer = new SBOLSynthesizer(graphlibrary);
-					SBOLSynthesisGraph spec = new SBOLSynthesisGraph(specModel, fileManager);
-					List<Integer> solution = synthesizer.mapSpecification(spec);
-					if (composeFlag) {
-						String outputFileID;
-						int version = 1;
-						do {
-							outputFileID = spec.getModelID() + "_v" + version + ".xml";
-						} while(!overwrite(root + separator + outputFileID, outputFileID));
-						BioModel outputModel = synthesizer.composeModel(solution, spec, root, outputFileID);
-						outputModel.save(root + separator + outputFileID);
-						int i = getTab(outputFileID);
-						if (i != -1) {
-							tab.remove(i);
-						}
-						ModelEditor modelEditor;
-						try {
-							modelEditor = new ModelEditor(root + separator, outputFileID, this, log, false, null, null, null, false, false);
-
-							modelEditor.save("Save GCM");
-							addTab(outputFileID, modelEditor, "GCM Editor");
-						} catch (Exception e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-						addToTree(outputFileID);
-					}
-				}
-			}
 		} 
 		// if the verify popup menu is selected on a vhdl or lhpn file
 		else if (e.getActionCommand().equals("createVerify")) {
@@ -2613,33 +2556,37 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				((Verification) comp).save();
 			}
 			else if (comp instanceof JTabbedPane) {
-				for (Component component : ((JTabbedPane) comp).getComponents()) {
-					int index = ((JTabbedPane) comp).getSelectedIndex();
-					if (component instanceof Graph) {
-						((Graph) component).save();
-					}
-					else if (component instanceof LearnGCM) {
-						((LearnGCM) component).save();
-					}
-					else if (component instanceof LearnLHPN) {
-						((LearnLHPN) component).save();
-					}
-					else if (component instanceof DataManager) {
-						((DataManager) component).saveChanges(((JTabbedPane) comp).getTitleAt(index));
-					}
-					/*
+				if (comp instanceof SBOLSynthesisView)
+					((SBOLSynthesisView) comp).save();
+				else {
+					for (Component component : ((JTabbedPane) comp).getComponents()) {
+						int index = ((JTabbedPane) comp).getSelectedIndex();
+						if (component instanceof Graph) {
+							((Graph) component).save();
+						}
+						else if (component instanceof LearnGCM) {
+							((LearnGCM) component).save();
+						}
+						else if (component instanceof LearnLHPN) {
+							((LearnLHPN) component).save();
+						}
+						else if (component instanceof DataManager) {
+							((DataManager) component).saveChanges(((JTabbedPane) comp).getTitleAt(index));
+						}
+						/*
 					else if (component instanceof SBML_Editor) {
 						((SBML_Editor) component).save(false, "", true, true);
 					}
-					*/
-					else if (component instanceof ModelEditor) {
-						((ModelEditor) component).saveParams(false, "", true, null);
-					}
-					else if (component instanceof AnalysisView) {
-						((AnalysisView) component).save();
-					}
-					else if (component instanceof MovieContainer) {
-						((MovieContainer) component).savePreferences();
+						 */
+						else if (component instanceof ModelEditor) {
+							((ModelEditor) component).saveParams(false, "", true, null);
+						}
+						else if (component instanceof AnalysisView) {
+							((AnalysisView) component).save();
+						}
+						else if (component instanceof MovieContainer) {
+							((MovieContainer) component).savePreferences();
+						}
 					}
 				}
 			}
@@ -2846,21 +2793,25 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			// int index = tab.getSelectedIndex();
 			if (comp instanceof JTabbedPane) {
 				// int index = -1;
-				for (int i = 0; i < ((JTabbedPane) comp).getTabCount(); i++) {
-					Component component = ((JTabbedPane) comp).getComponent(i);
-					if (component instanceof AnalysisView) {
-						((AnalysisView) component).getRunButton().doClick();
-						break;
-					}
-					else if (component instanceof LearnGCM) {
-						((LearnGCM) component).save();
-						new Thread((LearnGCM) component).start();
-						break;
-					}
-					else if (component instanceof LearnLHPN) {
-						((LearnLHPN) component).save();
-						((LearnLHPN) component).learn();
-						break;
+				if (comp instanceof SBOLSynthesisView) {
+					synthesizeSBOL((SBOLSynthesisView) comp);
+				} else {
+					for (int i = 0; i < ((JTabbedPane) comp).getTabCount(); i++) {
+						Component component = ((JTabbedPane) comp).getComponent(i);
+						if (component instanceof AnalysisView) {
+							((AnalysisView) component).getRunButton().doClick();
+							break;
+						}
+						else if (component instanceof LearnGCM) {
+							((LearnGCM) component).save();
+							new Thread((LearnGCM) component).start();
+							break;
+						}
+						else if (component instanceof LearnLHPN) {
+							((LearnLHPN) component).save();
+							((LearnLHPN) component).learn();
+							break;
+						}
 					}
 				}
 			}
@@ -3535,7 +3486,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							URI sbolURI = sbolIterator.next();
 							if (sbolURI.toString().endsWith("iBioSim")) {
 								sbolIterator = null;
-								for (String filePath : getFilePaths(".sbol")) {
+								for (String filePath : getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION)) {
 									SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
 									SBOLUtility.deleteDNAComponent(sbolURI, sbolDoc);
 									SBOLUtility.writeSBOLDocument(filePath, sbolDoc);
@@ -5668,16 +5619,16 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		return filePaths;
 	}
 	
-	public HashSet<String> getSbolFiles() {
-		HashSet<String> sbolFiles = new HashSet<String>();
-		TreeModel tree = getFileTree().tree.getModel();
-		for (int i = 0; i < tree.getChildCount(tree.getRoot()); i++) {
-			String fileName = tree.getChild(tree.getRoot(), i).toString();
-			if (fileName.endsWith(".sbol"))
-				sbolFiles.add(fileName);
-		}
-		return sbolFiles;
-	}
+//	public HashSet<String> getSBOLFilePaths() {
+//		HashSet<String> sbolFilePaths = new HashSet<String>();
+//		TreeModel tree = getFileTree().tree.getModel();
+//		for (int i = 0; i < tree.getChildCount(tree.getRoot()); i++) {
+//			String fileName = tree.getChild(tree.getRoot(), i).toString();
+//			if (fileName.endsWith(".sbol"))
+//				sbolFilePaths.add(root + separator + fileName);
+//		}
+//		return sbolFilePaths;
+//	}
 
 	private void openGraph() {
 		boolean done = false;
@@ -6245,7 +6196,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					Set<Integer> saveIndices = new HashSet<Integer>();
 					for (int i = 0; i < synthView.getTabCount(); i++) {
 						JPanel synthTab = (JPanel) synthView.getComponentAt(i);
-						if (synthView.hasChanged(synthTab)) {
+						if (synthView.tabChanged(i)) {
 							if (autosave == 0) {
 								int value = JOptionPane.showOptionDialog(frame,
 										"Do you want to save changes to " + synthTab.getName() + "?", "Save Changes",
@@ -6264,10 +6215,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								saveIndices.add(i);
 						}
 					}
-					for (int saveIndex : saveIndices) {
-						JPanel synthTab = (JPanel) synthView.getComponentAt(saveIndex);
-						synthView.save(synthTab);
-					}
+					synthView.saveTabs(saveIndices);
 				} else {
 					for (int i = 0; i < ((JTabbedPane) tab.getComponentAt(index)).getTabCount(); i++) {
 						if (((JTabbedPane) tab.getComponentAt(index)).getComponentAt(i).getName() != null) {
@@ -7556,6 +7504,30 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 	}
 	
+	private void synthesizeSBOL(SBOLSynthesisView synthView) {
+		synthView.save();
+		String outputFileID;
+		int version = 1;
+		do {
+			outputFileID = synthView.getSpecFileID().replace(".xml", "") + "_v" + version + ".xml";
+		} while(!overwrite(root + separator + outputFileID, outputFileID));
+		synthView.run(outputFileID);
+		int i = getTab(outputFileID);
+		if (i != -1) {
+			tab.remove(i);
+		}
+		ModelEditor modelEditor;
+		try {
+			modelEditor = new ModelEditor(root + separator, outputFileID, this, log, false, null, null, null, false, false);
+
+			modelEditor.save("Save GCM");
+			addTab(outputFileID, modelEditor, "GCM Editor");
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		addToTree(outputFileID);
+	}
+	
 	private void createSBOLSynthesisView() {
 		String specFileID = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
 		String defaultSynthID = specFileID.replace(".xml","");
@@ -7564,40 +7536,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		if (synthID != null) {
 			if (synthID.length() == 0)
 				synthID = defaultSynthID;
-			String synthFilePath = root + separator + synthID;
-			new File(synthFilePath).mkdir();
-//			try {
-//				FileOutputStream synthStreamOut = new FileOutputStream(
-//						new File(synthDirectory + separator + synthID + GlobalConstants.SYNTHESIS_FILE_EXTENSION));
-//				synthStreamOut.write(specFileID.getBytes());
-//				synthStreamOut.close();
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-			Preferences synthPrefs = Preferences.userRoot();
-			Properties synthProps = new Properties();
-			synthProps.setProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY, specFileID);
-			synthProps.setProperty(GlobalConstants.SBOL_SYNTH_LIBS_PROPERTY, 
-					synthPrefs.get(GlobalConstants.SBOL_SYNTH_LIBS_PREFERENCE, ""));
-			synthProps.setProperty(GlobalConstants.SBOL_SYNTH_METHOD_PROPERTY,
-					synthPrefs.get(GlobalConstants.SBOL_SYNTH_METHOD_PREFERENCE, "0"));
-			synthProps.setProperty(GlobalConstants.SBOL_SYNTH_NUM_SOLNS_PROPERTY, 
-					synthPrefs.get(GlobalConstants.SBOL_SYNTH_NUM_SOLNS_PREFERENCE, "1"));
-			String propFileID = synthID + GlobalConstants.SBOL_PROPERTIES_FILE_EXTENSION;
-			log.addText("Creating properties file:\n" + synthFilePath + separator + propFileID + "\n");
-			try {
-				FileOutputStream propStreamOut = new FileOutputStream(new File(synthFilePath + separator + propFileID));
-				synthProps.store(propStreamOut, synthID + " SBOL Synthesis Properties");
-				propStreamOut.close();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			SBOLSynthesisView synthView = new SBOLSynthesisView(synthProps);
+			SBOLSynthesisView synthView = new SBOLSynthesisView(synthID, separator, root, log, frame);
+			synthView.loadDefaultSynthesisProperties(specFileID);
 			addTab(synthID, synthView, null);
 			addToTree(synthID);
 		}
@@ -7605,9 +7545,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	
 	private void openSBOLSynthesisView() {
 		String synthID = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
+		SBOLSynthesisView synthView = new SBOLSynthesisView(synthID, separator, root, log, frame);
 		Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(tree.getFile(),
-				separator, synthID);
-		SBOLSynthesisView synthView = new SBOLSynthesisView(synthProps);
+				separator);
+		synthView.loadSynthesisProperties(synthProps);
 		addTab(synthID, synthView, null);
 	}
 

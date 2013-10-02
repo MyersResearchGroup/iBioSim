@@ -151,16 +151,18 @@ public class GlobalConstants {
 	public static final int TERMINATOR_LENGTH = 12;
 	public static final int MEAN_GENE_LENGTH = 781;
 	public static final int SD_GENE_LENGTH = 269;
-	public static final String SBOL_PROPERTIES_FILE_EXTENSION = ".sbol.properties";
+	public static final String SBOL_FILE_EXTENSION = ".sbol";
+	public static final String SBOL_PROPERTIES_FILE_EXTENSION = SBOL_FILE_EXTENSION + ".properties";
 	public static final String SBOL_SYNTH_SPEC_PROPERTY = "synthesis.spec";
 	public static final String SBOL_SYNTH_LIBS_PROPERTY = "synthesis.libraries";
 	public static final String SBOL_SYNTH_LIBS_PREFERENCE = "biosim." + SBOL_SYNTH_LIBS_PROPERTY;
 	public static final String SBOL_SYNTH_LIBS_DEFAULT = "";
 	public static final String SBOL_SYNTH_METHOD_PROPERTY = "synthesis.method";
 	public static final String SBOL_SYNTH_METHOD_PREFERENCE = "biosim." + SBOL_SYNTH_METHOD_PROPERTY;
-	public static final int SBOL_SYNTH_METHOD_DEFAULT = 0;
-	public static final String SBOL_SYNTH_STRUCTURAL_METHODS = 
-			"Exhaustive Branch and Bound,Greedy Branch and Bound";
+	public static final String SBOL_SYNTH_EXHAUST_BB = "Exhaustive Branch and Bound";
+	public static final String SBOL_SYNTH_METHOD_DEFAULT = SBOL_SYNTH_EXHAUST_BB;
+	public static final String SBOL_SYNTH_GREEDY_BB = "Greedy Branch and Bound";
+	public static final String SBOL_SYNTH_STRUCTURAL_METHODS = SBOL_SYNTH_EXHAUST_BB + "," + SBOL_SYNTH_GREEDY_BB;
 	public static final String SBOL_SYNTH_NUM_SOLNS_PROPERTY = "synthesis.numsolutions";
 	public static final String SBOL_SYNTH_NUM_SOLNS_PREFERENCE = "biosim." + SBOL_SYNTH_NUM_SOLNS_PROPERTY;
 	public static final String SBOL_SYNTH_NUM_SOLNS_DEFAULT = "1";

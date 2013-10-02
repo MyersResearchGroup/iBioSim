@@ -22,18 +22,21 @@ import biomodel.parser.BioModel;
 
 public class SBOLSynthesisGraph {
 
-	private String modelID;
+	private String rootFilePath;
+	private String sbmlFileID;
 	private String submodelID;
 	private HashMap<SBOLSynthesisNode, List<SBOLSynthesisNode>> edges;
 	private int nucleotideCount;
 	private Set<String> signals;
+	private Set<URI> compURIs;
 	private SBOLSynthesisNode output;
 	private List<SBOLSynthesisNode> inputs;
 	private List<String> paths;
 	
 	public SBOLSynthesisGraph(BioModel biomodel, SBOLFileManager fileManager) {
 		Model sbmlModel = biomodel.getSBMLDocument().getModel();
-		modelID = sbmlModel.getId();
+		rootFilePath = biomodel.getPath();
+		sbmlFileID = biomodel.getSBMLFile();
 		Set<SBOLSynthesisNode> nodes = constructGraph(sbmlModel, fileManager);
 		decomposeGraph(nodes);
 		output = identifyOutput(nodes);
@@ -170,6 +173,7 @@ public class SBOLSynthesisGraph {
 		HashMap<String, SBOLSynthesisNode> idToNode = new HashMap<String, SBOLSynthesisNode>();
 		edges = new HashMap<SBOLSynthesisNode, List<SBOLSynthesisNode>>();
 		nucleotideCount = 0;
+		compURIs = new HashSet<URI>();
 		signals = new HashSet<String>();
 		for (long i = 0; i < sbmlModel.getNumReactions(); i++) {
 			Reaction sbmlReaction = sbmlModel.getReaction(i);
@@ -252,6 +256,7 @@ public class SBOLSynthesisGraph {
 			nucleotideCount += node.getNucleotideCount();
 			if (node.getSignal().length() > 0)
 				signals.add(node.getSignal());
+			compURIs.addAll(node.getCompURIs());
 			idToNode.put(sbmlElement.getId(), node);
 		}
 		return node;
@@ -300,8 +305,12 @@ public class SBOLSynthesisGraph {
 		return null;
 	}
 	
-	public String getModelID() {
-		return modelID;
+	public String getRootFilePath() {
+		return rootFilePath;
+	}
+	
+	public String getSBMLFileID() {
+		return sbmlFileID;
 	}
 	
 	public void setSubmodelID(String submodelID) {
@@ -358,9 +367,13 @@ public class SBOLSynthesisGraph {
 	public Set<String> getSignals() {
 		return signals;
 	}
+	
+	public Set<URI> getCompURIs() {
+		return compURIs;
+	}
 
 	private void print() {
-		System.out.println(modelID);
+		System.out.println(sbmlFileID);
 		for (String path : paths)
 			System.out.println(path);
 		System.out.println();
@@ -421,7 +434,7 @@ public class SBOLSynthesisGraph {
 	}
 	
 	public String toString() {
-		return modelID;
+		return sbmlFileID;
 	}
 
 }

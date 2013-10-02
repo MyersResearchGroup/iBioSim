@@ -13,6 +13,7 @@ import org.sbolstandard.core.impl.AggregatingResolver;
 import org.sbolstandard.core.impl.DnaComponentImpl;
 import org.sbolstandard.core.impl.SBOLDocumentImpl;
 
+import biomodel.util.GlobalConstants;
 import biomodel.util.Utility;
 
 import java.io.*;
@@ -51,7 +52,7 @@ public class SBOLBrowser extends JPanel implements ActionListener {
 		
 		browsePath = browsePath.replace("\\\\", "\\");
 		
-		loadSbolFiles(gui.getFilePaths(".sbol"), browsePath);
+		loadSbolFiles(gui.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION), browsePath);
 		
 		constructBrowser(new HashSet<String>());
 			
@@ -85,7 +86,7 @@ public class SBOLBrowser extends JPanel implements ActionListener {
 		localLibIds = new LinkedList<String>();
 		localCompURIs = new LinkedList<URI>();
 		
-		loadSbolFiles(gui.getFilePaths(".sbol"), browsePath);
+		loadSbolFiles(gui.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION), browsePath);
 		
 		constructBrowser(new HashSet<String>());
 		
