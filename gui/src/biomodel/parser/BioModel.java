@@ -2610,8 +2610,8 @@ public class BioModel {
 		sbolDescriptors = descriptors;
 	}
 	
-	public void setSBOLSaveFile(String saveFile) {
-		sbolSaveFile = saveFile;
+	public void setSBOLSaveFilePath(String saveFile) {
+		sbolSaveFilePath = saveFile;
 	}
 	
 //	public void setRemovedBioSimURI(URI dissociatedBioSimURI) {
@@ -2622,8 +2622,8 @@ public class BioModel {
 		return sbolDescriptors;
 	}
 	
-	public String getSBOLSaveFileID() {
-		return sbolSaveFile;
+	public String getSBOLSaveFilePath() {
+		return sbolSaveFilePath;
 	}
 	
 //	public URI getRemovedBioSimURI() {
@@ -7542,6 +7542,6 @@ public class BioModel {
 	private int elementSBOLCount;
 	private boolean modelSBOLAnnotationFlag;
 	private String[] sbolDescriptors;
-	private String sbolSaveFile;
+	private String sbolSaveFilePath;
 	private int placeHolderIndex;
 }

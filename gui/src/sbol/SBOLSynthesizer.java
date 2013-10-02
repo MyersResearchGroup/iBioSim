@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 import org.sbml.libsbml.CompSBasePlugin;
 import org.sbml.libsbml.ReplacedBy;
@@ -26,12 +27,17 @@ public class SBOLSynthesizer {
 	boolean boundFlag = true;
 //	int boundCount = 0;
 //	boolean greedyFlag = false;
-	int greedCap = 0;
+	int greedCap;
 	int greedCount = 0;
 //	int solutionCount = 0;
 	
-	public SBOLSynthesizer(Set<SBOLSynthesisGraph> graphLibrary) {
+	public SBOLSynthesizer(Set<SBOLSynthesisGraph> graphLibrary, Properties synthProps) {
 		this.matcher = new SBOLSynthesisMatcher(graphLibrary);
+		if (synthProps.getProperty(GlobalConstants.SBOL_SYNTH_METHOD_PROPERTY).equals(
+				GlobalConstants.SBOL_SYNTH_EXHAUST_BB))
+			greedCap = 0;
+		else
+			greedCap = Integer.parseInt(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_NUM_SOLNS_PROPERTY));
 	}
 	
 	public List<Integer> mapSpecification(SBOLSynthesisGraph spec) {
@@ -277,6 +283,8 @@ public class SBOLSynthesizer {
 	
 	public BioModel composeModel(List<Integer> solution, SBOLSynthesisGraph spec, String projectFilePath, 
 			String fileID) {
+		List<Integer> solutionCopy = new LinkedList<Integer>();
+		solutionCopy.addAll(solution);
 		BioModel biomodel = new BioModel(projectFilePath);
 		biomodel.createSBMLDocument(fileID.replace(".xml", ""), false, false);
 		List<SBOLSynthesisNode> currentNodes = new LinkedList<SBOLSynthesisNode>();
@@ -286,12 +294,12 @@ public class SBOLSynthesizer {
 		currentNodes.add(spec.getOutput());
 		do {
 			if (previousCovers.size() == 0) {
-				submodelIndex = composeOutput(biomodel, solution, spec, currentNodes, previousCovers, inputIndices, 
+				submodelIndex = composeOutput(biomodel, solutionCopy, spec, currentNodes, previousCovers, inputIndices, 
 						submodelIndex);
 			} else if (currentNodes.get(0).getMatches().size() == 0) {
 				composeInput(biomodel, currentNodes, previousCovers, inputIndices);
 			} else {
-				submodelIndex = composeIntermediate(biomodel, solution, spec, currentNodes, previousCovers, 
+				submodelIndex = composeIntermediate(biomodel, solutionCopy, spec, currentNodes, previousCovers, 
 						inputIndices, submodelIndex);
 			}
 		} while (currentNodes.size() > 0);
@@ -303,7 +311,7 @@ public class SBOLSynthesizer {
 			List<Integer> inputIndices, int submodelIndex) {
 		SBOLSynthesisGraph currentCover = currentNodes.get(0).getCover(solution.remove(0));
 		currentCover.setSubmodelID("C" + submodelIndex);
-		createSubmodel(currentCover.getSubmodelID(), currentCover.getModelID(), biomodel);
+		createSubmodel(currentCover.getSubmodelID(), currentCover.getSBMLFileID(), biomodel);
 		submodelIndex++;
 		Species species = createIOSpecies(currentCover.getOutput().getID(), biomodel);
 		portMapIOSpecies(species, GlobalConstants.OUTPUT, currentCover.getOutput().getID(), 
@@ -336,7 +344,7 @@ public class SBOLSynthesizer {
 		SBOLSynthesisGraph previousCover = previousCovers.get(0);
 		
 		currentCover.setSubmodelID("C" + submodelIndex);
-		createSubmodel(currentCover.getSubmodelID(), currentCover.getModelID(), biomodel);
+		createSubmodel(currentCover.getSubmodelID(), currentCover.getSBMLFileID(), biomodel);
 		submodelIndex++;
 		Species species = createInterSpecies(
 				previousCover.getInput(inputIndices.get(0)).getID(), currentCover.getOutput().getID(), 
@@ -358,14 +366,14 @@ public class SBOLSynthesizer {
 		return submodelIndex;
 	}
 	
-	private void createSubmodel(String submodelID, String modelID, BioModel biomodel) {
+	private void createSubmodel(String submodelID, String sbmlFileID, BioModel biomodel) {
 		BioModel subBiomodel = new BioModel(biomodel.getPath());
-		subBiomodel.load(biomodel.getPath() + biomodel.getSeparator() + modelID + ".xml");
+		subBiomodel.load(biomodel.getPath() + biomodel.getSeparator() + sbmlFileID);
 		SBMLWriter writer = new SBMLWriter();
 		String sbmlStr = writer.writeSBMLToString(subBiomodel.getSBMLDocument());
 		String md5 = Utility.MD5(sbmlStr);
 		
-		biomodel.addComponent(submodelID, modelID + ".xml", subBiomodel.IsWithinCompartment(), 
+		biomodel.addComponent(submodelID, sbmlFileID, subBiomodel.IsWithinCompartment(), 
 				subBiomodel.getCompartmentPorts(), -1, -1, 0, 0, md5);
 	}
 	

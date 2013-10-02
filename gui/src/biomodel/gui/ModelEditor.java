@@ -435,7 +435,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		if (identityManager.containsBioSimURI()) {
 			SBOLAssemblyGraph assemblyGraph = new SBOLAssemblyGraph(biomodel);
 			if (assemblyGraph.containsSBOL()) {
-				SBOLFileManager fileManager = new SBOLFileManager(biosim.getRoot(), biosim.getSbolFiles());
+				SBOLFileManager fileManager = new SBOLFileManager(
+						biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION));
 				if (fileManager.sbolFilesAreLoaded() && assemblyGraph.loadDNAComponents(fileManager)) {
 					SequenceTypeValidator seqValidator = 
 							new SequenceTypeValidator(Preferences.userRoot().get(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, ""));
@@ -460,7 +461,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				} 
 			} else {
 				if (identityManager.containsBioSimURI() && !identityManager.containsPlaceHolderURI()) {
-					SBOLFileManager fileManager = new SBOLFileManager(biosim.getRoot(), biosim.getSbolFiles());
+					SBOLFileManager fileManager = new SBOLFileManager(
+							biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION));
 					if (fileManager.sbolFilesAreLoaded())
 						fileManager.deleteDNAComponent(identityManager.getBioSimURI());
 				}
@@ -474,7 +476,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	public void exportSBOL() {
 		SBOLIdentityManager identityManager = new SBOLIdentityManager(biomodel);
 		if (identityManager.containsModelURIs()) {
-			SBOLFileManager fileManager = new SBOLFileManager(biosim.getRoot(), biosim.getSbolFiles());
+			SBOLFileManager fileManager = new SBOLFileManager(
+					biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION));
 			if (fileManager.sbolFilesAreLoaded() && identityManager.loadModelComponents(fileManager)) {
 				File lastFilePath;
 				Preferences biosimrc = Preferences.userRoot();

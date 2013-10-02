@@ -449,7 +449,7 @@ public class SBOLUtility {
 			return "x";
 	}
 	
-	public static Properties loadSBOLSynthesisProperties(String synthFilePath, String separator, String synthID) {
+	public static Properties loadSBOLSynthesisProperties(String synthFilePath, String separator) {
 		Properties synthProps = new Properties();
 		for (String synthFileID : new File(synthFilePath).list())
 			if (synthFileID.endsWith(GlobalConstants.SBOL_PROPERTIES_FILE_EXTENSION)) {

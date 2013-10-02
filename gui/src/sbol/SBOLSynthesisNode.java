@@ -1,5 +1,6 @@
 package sbol;
 
+import java.net.URI;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,6 +16,7 @@ public class SBOLSynthesisNode {
 	private String type;
 	private int nucleotideCount;
 	private String signal;
+	private List<URI> compURIs;
 	private String coverConstraint;
 	private List<SBOLSynthesisGraph> matches;
 	private List<Integer> matchBounds;
@@ -35,7 +37,8 @@ public class SBOLSynthesisNode {
 	}
 	
 	private void processDNAComponents(SBase sbmlElement, SBOLFileManager fileManager) {
-		List<DnaComponent> dnaComps = fileManager.resolveURIs(AnnotationUtility.parseSBOLAnnotation(sbmlElement));
+		compURIs = AnnotationUtility.parseSBOLAnnotation(sbmlElement);
+		List<DnaComponent> dnaComps = fileManager.resolveURIs(compURIs);
 		nucleotideCount = SBOLUtility.countNucleotides(dnaComps);
 		Set<String> soFilterTypes = new HashSet<String>();
 		soFilterTypes.add("coding sequence");
@@ -83,6 +86,10 @@ public class SBOLSynthesisNode {
 		if (signal == null)
 			signal = "";
 		return signal;
+	}
+	
+	public List<URI> getCompURIs() {
+		return compURIs;
 	}
 	
 	public void setUncoveredNodes(List<SBOLSynthesisNode> uncoveredNodes) {
