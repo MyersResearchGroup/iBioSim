@@ -52,7 +52,7 @@ public class SBOLSynthesisView extends JTabbedPane implements ActionListener, Ru
 	Properties synthProps;
 	JTextField specText;
 	List<String> libFilePaths;
-	JList<String> libList;
+	JList libList;
 	JScrollPane libScroll;
 	JButton addLibButton;
 	JButton removeLibButton;
@@ -203,7 +203,7 @@ public class SBOLSynthesisView extends JTabbedPane implements ActionListener, Ru
 		for (String libFilePath : synthProps.getProperty(GlobalConstants.SBOL_SYNTH_LIBS_PROPERTY).split(","))
 			if (libFilePath.length() > 0)
 				libFilePaths.add(libFilePath);
-		libList = new JList<String>();
+		libList = new JList();
 //		String[] libListData = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_LIBS_PROPERTY).split(",");
 //		libFilePaths = new LinkedList<String>();
 //		for (int i = 0; i < libListData.length; i++) {
