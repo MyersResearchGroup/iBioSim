@@ -7505,27 +7505,34 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	}
 	
 	private void synthesizeSBOL(SBOLSynthesisView synthView) {
-		synthView.save();
-		String outputFileID;
-		int version = 1;
-		do {
-			outputFileID = synthView.getSpecFileID().replace(".xml", "") + "_v" + version + ".xml";
-		} while(!overwrite(root + separator + outputFileID, outputFileID));
-		synthView.run(outputFileID);
-		int i = getTab(outputFileID);
-		if (i != -1) {
-			tab.remove(i);
+		ActionEvent synthesizedProject = new ActionEvent(newProj, ActionEvent.ACTION_PERFORMED, "synthesized_project");
+		actionPerformed(synthesizedProject);
+		if (!synthView.getRootDirectory().equals(root)) {
+			synthView.save();
+			String outputFileID = synthView.getSpecFileID();
+			int version = 1;
+			while(!overwrite(root + separator + outputFileID, outputFileID)) {
+				outputFileID = synthView.getSpecFileID().replace(".xml", "") + "_" + version + ".xml";
+				version++;
+			}
+			Set<String> compFileIDs = synthView.run(root, outputFileID);
+			//		int i = getTab(outputFileID);
+			//		if (i != -1) {
+			//			tab.remove(i);
+			//		}
+			addToTree(outputFileID);
+			for (String compFileID : compFileIDs)
+				addToTree(compFileID);
+			ModelEditor modelEditor;
+			try {
+				modelEditor = new ModelEditor(root + separator, outputFileID, this, log, false, null, null, null, false, false);
+				ActionEvent applyLayout = new ActionEvent(synthView, ActionEvent.ACTION_PERFORMED, "layout_verticalHierarchical");
+				modelEditor.getSchematic().actionPerformed(applyLayout);
+				addTab(outputFileID, modelEditor, "GCM Editor");
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
 		}
-		ModelEditor modelEditor;
-		try {
-			modelEditor = new ModelEditor(root + separator, outputFileID, this, log, false, null, null, null, false, false);
-
-			modelEditor.save("Save GCM");
-			addTab(outputFileID, modelEditor, "GCM Editor");
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		}
-		addToTree(outputFileID);
 	}
 	
 	private void createSBOLSynthesisView() {
