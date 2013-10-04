@@ -281,89 +281,83 @@ public class SBOLSynthesizer {
 			nodes.get(i).setCoverConstraint(nodeCovers.get(i).getSignal());
 	}
 	
-	public BioModel composeModel(List<Integer> solution, SBOLSynthesisGraph spec, String projectFilePath, 
-			String fileID) {
+	public Set<SBOLSynthesisGraph> extractSolution(List<Integer> solution, SBOLSynthesisGraph spec, BioModel solutionModel) {
+		Set<SBOLSynthesisGraph> coverGraphs = new HashSet<SBOLSynthesisGraph>();
 		List<Integer> solutionCopy = new LinkedList<Integer>();
 		solutionCopy.addAll(solution);
-		BioModel biomodel = new BioModel(projectFilePath);
-		biomodel.createSBMLDocument(fileID.replace(".xml", ""), false, false);
 		List<SBOLSynthesisNode> currentNodes = new LinkedList<SBOLSynthesisNode>();
 		List<SBOLSynthesisGraph> previousCovers = new LinkedList<SBOLSynthesisGraph>();
 		List<Integer> inputIndices = new LinkedList<Integer>();
 		int submodelIndex = 0;
 		currentNodes.add(spec.getOutput());
 		do {
+			if (currentNodes.get(0).getMatches().size() > 0)
+				coverGraphs.add(currentNodes.get(0).getCover(solution.get(0)));
 			if (previousCovers.size() == 0) {
-				submodelIndex = composeOutput(biomodel, solutionCopy, spec, currentNodes, previousCovers, inputIndices, 
-						submodelIndex);
+				SBOLSynthesisGraph currentCover = currentNodes.get(0).getCover(solution.remove(0));
+				coverGraphs.add(currentCover);
+				extractOutput(currentCover, solutionModel, submodelIndex);
+				submodelIndex++;
+				List<SBOLSynthesisNode> nextNodes = spec.walkPaths(currentNodes.remove(0), currentCover.getPaths());
+				currentNodes.addAll(0, nextNodes);
+				previousCovers.add(0, currentCover);
+				inputIndices.add(0, 0);
 			} else if (currentNodes.get(0).getMatches().size() == 0) {
-				composeInput(biomodel, currentNodes, previousCovers, inputIndices);
+				SBOLSynthesisGraph previousCover = previousCovers.get(0);
+				extractInput(previousCover, solutionModel, inputIndices);
+				currentNodes.remove(0);
+				inputIndices.add(0, inputIndices.remove(0) + 1);
+				if (inputIndices.get(0) == previousCover.getInputs().size()) {
+					previousCovers.remove(0);
+					inputIndices.remove(0);
+				}
 			} else {
-				submodelIndex = composeIntermediate(biomodel, solutionCopy, spec, currentNodes, previousCovers, 
-						inputIndices, submodelIndex);
+				SBOLSynthesisGraph currentCover = currentNodes.get(0).getCover(solution.remove(0));
+				coverGraphs.add(currentCover);
+				SBOLSynthesisGraph previousCover = previousCovers.get(0);
+				extractIntermediate(currentCover, previousCover, solutionModel, inputIndices, submodelIndex);
+				submodelIndex++;
+				List<SBOLSynthesisNode> nextNodes = spec.walkPaths(currentNodes.remove(0), currentCover.getPaths());
+				currentNodes.addAll(0, nextNodes);
+				inputIndices.add(0, inputIndices.remove(0) + 1);
+				if (inputIndices.get(0) == previousCover.getInputs().size()) {
+					previousCovers.remove(0);
+					inputIndices.remove(0);
+				}
+				previousCovers.add(0, currentCover);
+				inputIndices.add(0, 0);
 			}
 		} while (currentNodes.size() > 0);
-		return biomodel;
+		return coverGraphs;
 	}
 	
-	private int composeOutput(BioModel biomodel, List<Integer> solution, SBOLSynthesisGraph spec, 
-			List<SBOLSynthesisNode> currentNodes, List<SBOLSynthesisGraph> previousCovers, 
-			List<Integer> inputIndices, int submodelIndex) {
-		SBOLSynthesisGraph currentCover = currentNodes.get(0).getCover(solution.remove(0));
+	private void extractOutput(SBOLSynthesisGraph currentCover, BioModel solutionModel, int submodelIndex) {
 		currentCover.setSubmodelID("C" + submodelIndex);
-		createSubmodel(currentCover.getSubmodelID(), currentCover.getSBMLFileID(), biomodel);
-		submodelIndex++;
-		Species species = createIOSpecies(currentCover.getOutput().getID(), biomodel);
+		createSubmodel(currentCover.getSubmodelID(), currentCover.getImportFileID(), solutionModel);
+		Species species = createIOSpecies(currentCover.getOutput().getID(), solutionModel);
 		portMapIOSpecies(species, GlobalConstants.OUTPUT, currentCover.getOutput().getID(), 
-				currentCover.getSubmodelID(), biomodel);
-		List<SBOLSynthesisNode> nextNodes = spec.walkPaths(currentNodes.remove(0), currentCover.getPaths());
-		currentNodes.addAll(0, nextNodes);
-		previousCovers.add(0, currentCover);
-		inputIndices.add(0, 0);
-		return submodelIndex;
+				currentCover.getSubmodelID(), solutionModel);
 	}
 	
-	private void composeInput(BioModel biomodel, List<SBOLSynthesisNode> currentNodes, 
-			List<SBOLSynthesisGraph> previousCovers, List<Integer> inputIndices) {
-		SBOLSynthesisGraph previousCover = previousCovers.get(0);
-		Species species = createIOSpecies(previousCover.getInput(inputIndices.get(0)).getID(), biomodel);
+	private void extractInput(SBOLSynthesisGraph previousCover, BioModel solutionModel, List<Integer> inputIndices) {
+		Species species = createIOSpecies(previousCover.getInput(inputIndices.get(0)).getID(), solutionModel);
 		portMapIOSpecies(species, GlobalConstants.INPUT, previousCover.getInput(inputIndices.get(0)).getID(), 
-				previousCover.getSubmodelID(), biomodel);
-		currentNodes.remove(0);
-		inputIndices.add(0, inputIndices.remove(0) + 1);
-		if (inputIndices.get(0) == previousCover.getInputs().size()) {
-			previousCovers.remove(0);
-			inputIndices.remove(0);
-		}
+				previousCover.getSubmodelID(), solutionModel);
 	}
 	
-	private int composeIntermediate(BioModel biomodel, List<Integer> solution, SBOLSynthesisGraph spec, 
-			List<SBOLSynthesisNode> currentNodes, List<SBOLSynthesisGraph> previousCovers, 
+	private void extractIntermediate(SBOLSynthesisGraph currentCover, SBOLSynthesisGraph previousCover, BioModel solutionModel, 
 			List<Integer> inputIndices, int submodelIndex) {
-		SBOLSynthesisGraph currentCover = currentNodes.get(0).getCover(solution.remove(0));
-		SBOLSynthesisGraph previousCover = previousCovers.get(0);
-		
 		currentCover.setSubmodelID("C" + submodelIndex);
-		createSubmodel(currentCover.getSubmodelID(), currentCover.getSBMLFileID(), biomodel);
+		createSubmodel(currentCover.getSubmodelID(), currentCover.getImportFileID(), solutionModel);
 		submodelIndex++;
 		Species species = createInterSpecies(
 				previousCover.getInput(inputIndices.get(0)).getID(), currentCover.getOutput().getID(), 
 				previousCover.getInput(inputIndices.get(0)).getSignal(), currentCover.getOutput().getSignal(), 
-				biomodel);
+				solutionModel);
 		portMapInterSpecies(species, 
 				previousCover.getInput(inputIndices.get(0)).getID(), currentCover.getOutput().getID(), 
 				previousCover.getInput(inputIndices.get(0)).getSignal(), currentCover.getOutput().getSignal(), 
 				previousCover.getSubmodelID(), currentCover.getSubmodelID());
-		List<SBOLSynthesisNode> nextNodes = spec.walkPaths(currentNodes.remove(0), currentCover.getPaths());
-		currentNodes.addAll(0, nextNodes);
-		inputIndices.add(0, inputIndices.remove(0) + 1);
-		if (inputIndices.get(0) == previousCover.getInputs().size()) {
-			previousCovers.remove(0);
-			inputIndices.remove(0);
-		}
-		previousCovers.add(0, currentCover);
-		inputIndices.add(0, 0);
-		return submodelIndex;
 	}
 	
 	private void createSubmodel(String submodelID, String sbmlFileID, BioModel biomodel) {

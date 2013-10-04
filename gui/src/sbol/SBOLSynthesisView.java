@@ -46,7 +46,7 @@ public class SBOLSynthesisView extends JTabbedPane implements ActionListener, Ru
 
 	String synthID;
 	String separator;
-	String rootDirectory;
+	String rootFilePath;
 	Log log;
 	JFrame frame;
 	Properties synthProps;
@@ -60,12 +60,12 @@ public class SBOLSynthesisView extends JTabbedPane implements ActionListener, Ru
 	JLabel numSolnsLabel;
 	JTextField numSolnsText;
 	
-	public SBOLSynthesisView(String synthID, String separator, String rootDirectory, Log log, JFrame frame) {
+	public SBOLSynthesisView(String synthID, String separator, String rootFilePath, Log log, JFrame frame) {
 		this.synthID = synthID;
 		this.separator = separator;
-		this.rootDirectory = rootDirectory;
+		this.rootFilePath = rootFilePath;
 		this.log = log;
-		new File(rootDirectory + separator + synthID).mkdir();
+		new File(rootFilePath + separator + synthID).mkdir();
 		JPanel optionsPanel = constructOptionsPanel();
 		addTab("Synthesis Options", optionsPanel);
 		getComponentAt(getComponents().length - 1).setName("Synthesis Options");
@@ -176,7 +176,7 @@ public class SBOLSynthesisView extends JTabbedPane implements ActionListener, Ru
 	}
 	
 	private void saveSynthesisProperties() {
-		String propFilePath = rootDirectory + separator + synthID + separator + synthID 
+		String propFilePath = rootFilePath + separator + synthID + separator + synthID 
 				+ GlobalConstants.SBOL_PROPERTIES_FILE_EXTENSION;
 		log.addText("Creating properties file:\n" + propFilePath + "\n");
 		try {
@@ -272,13 +272,14 @@ public class SBOLSynthesisView extends JTabbedPane implements ActionListener, Ru
 		
 	}
 	
-	public void run(String outputFileID) {
+	public Set<String> run(String synthesisFilePath, String outputFileID) {
 		Set<String> sbolFilePaths = new HashSet<String>();
 		for (String libFilePath : libFilePaths) 
 			for (String fileID : new File(libFilePath).list())
 				if (fileID.endsWith(".sbol"))
 					sbolFilePaths.add(libFilePath + separator + fileID);
 		SBOLFileManager fileManager = new SBOLFileManager(sbolFilePaths);
+		
 		Set<SBOLSynthesisGraph> graphlibrary = new HashSet<SBOLSynthesisGraph>();
 		for (String libFilePath : libFilePaths) 
 			for (String gateFileID : new File(libFilePath).list()) 
@@ -287,38 +288,37 @@ public class SBOLSynthesisView extends JTabbedPane implements ActionListener, Ru
 					gateModel.load(gateFileID);
 					graphlibrary.add(new SBOLSynthesisGraph(gateModel, fileManager));
 				}
-		BioModel specModel = new BioModel(rootDirectory);
+		
+		BioModel specModel = new BioModel(rootFilePath);
 		specModel.load(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY));
 		SBOLSynthesisGraph spec = new SBOLSynthesisGraph(specModel, fileManager);
+		
 		SBOLSynthesizer synthesizer = new SBOLSynthesizer(graphlibrary, synthProps);
 		List<Integer> solution = synthesizer.mapSpecification(spec);
-		importSolutionComponents(solution, spec, outputFileID, fileManager);
-		BioModel outputModel = synthesizer.composeModel(solution, spec, rootDirectory, outputFileID);
-		outputModel.save(rootDirectory + separator + outputFileID);
+		
+		BioModel outputModel = new BioModel(synthesisFilePath);
+		outputModel.createSBMLDocument(outputFileID.replace(".xml", ""), false, false);	
+		Set<SBOLSynthesisGraph> coverGraphs = synthesizer.extractSolution(solution, spec, outputModel);
+		Set<String> compFileIDs = importCoverComponents(synthesisFilePath, coverGraphs, fileManager);
+		outputModel.save(synthesisFilePath + separator + outputFileID);
+		return compFileIDs;
 	}
 	
-	private void importSolutionComponents(List<Integer> solution, SBOLSynthesisGraph spec, 
-			String outputFileID, SBOLFileManager fileManager) {
-		int solutionIndex = 0;
+	private Set<String> importCoverComponents(String synthesisFilePath, Set<SBOLSynthesisGraph> coverGraphs, 
+			SBOLFileManager fileManager) {
+		Set<String> compFileIDs = new HashSet<String>();
 		List<URI> compURIs = new LinkedList<URI>();
-		List<SBOLSynthesisNode> currentNodes = new LinkedList<SBOLSynthesisNode>();
-		currentNodes.add(spec.getOutput());
-		do {
-			if (currentNodes.get(0).getMatches().size() == 0) {
-				currentNodes.remove(0);
-			} else {
-				SBOLSynthesisGraph currentCover = currentNodes.get(0).getCover(solution.get(solutionIndex));
-				compURIs.addAll(currentCover.getCompURIs());
-				BioModel solutionModel = new BioModel(currentCover.getRootFilePath());
-				solutionModel.load(currentCover.getSBMLFileID());
-				solutionModel.save(rootDirectory + separator + solutionModel.getSBMLFile());
-				solutionIndex++;
-				List<SBOLSynthesisNode> nextNodes = spec.walkPaths(currentNodes.remove(0), currentCover.getPaths());
-				currentNodes.addAll(0, nextNodes);
-			}
-		} while (currentNodes.size() > 0);
-		fileManager.saveDNAComponents(fileManager.resolveURIs(compURIs), rootDirectory + separator + 
-				outputFileID.replace(".xml", GlobalConstants.SBOL_FILE_EXTENSION));
+		for (SBOLSynthesisGraph coverGraph : coverGraphs) {
+			compFileIDs.add(coverGraph.getImportFileID());
+			compURIs.addAll(coverGraph.getCompURIs());
+			BioModel compModel = new BioModel(coverGraph.getSBMLFilePath());
+			compModel.load(coverGraph.getSBMLFileID());
+			compModel.save(synthesisFilePath + separator + coverGraph.getImportFileID());
+		}
+		String sbolFileID = getSpecFileID().replace(".xml", GlobalConstants.SBOL_FILE_EXTENSION);
+		fileManager.saveDNAComponents(fileManager.resolveURIs(compURIs), synthesisFilePath + separator + sbolFileID);
+		compFileIDs.add(sbolFileID);
+		return compFileIDs;
 	}
 	
 	public void save() {
@@ -388,6 +388,10 @@ public class SBOLSynthesisView extends JTabbedPane implements ActionListener, Ru
 	
 	public String getSpecFileID() {
 		return specText.getText();
+	}
+	
+	public String getRootDirectory() {
+		return rootFilePath;
 	}
 
 }
