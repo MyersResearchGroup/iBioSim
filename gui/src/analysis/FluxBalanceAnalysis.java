@@ -92,8 +92,8 @@ public class FluxBalanceAnalysis {
 					}
 				}
 				LinearMultivariateRealFunction objectiveFunction = new LinearMultivariateRealFunction(objective, 0);
-				System.out.println("Minimize: " + vectorToString(objective,reactionIndex));
-				System.out.println("Subject to:");
+				//System.out.println("Minimize: " + vectorToString(objective,reactionIndex));
+				//System.out.println("Subject to:");
 
 				int numEquals = 0;
 				for (long j = 0; j < fbc.getNumFluxBounds(); j++) {
@@ -113,11 +113,11 @@ public class FluxBalanceAnalysis {
 						inequalities[m] = new LinearMultivariateRealFunction(R, boundVal);
 						m++;
 						if (boundVal!=0) boundVal=(-1)*boundVal;
-						System.out.println("  " + vectorToString(R,reactionIndex) + " <= " + boundVal);
+						//System.out.println("  " + vectorToString(R,reactionIndex) + " <= " + boundVal);
 					}
 					else if(bound.getOperation().equals("lessEqual")){
 						R[reactionIndex.get(bound.getReaction())]=1;
-						System.out.println("  " + vectorToString(R,reactionIndex) + " <= " + boundVal);
+						//System.out.println("  " + vectorToString(R,reactionIndex) + " <= " + boundVal);
 						if (boundVal!=0) boundVal=(-1)*boundVal;
 						inequalities[m] = new LinearMultivariateRealFunction(R, boundVal);
 						m++;
@@ -157,7 +157,7 @@ public class FluxBalanceAnalysis {
 					if (bound.getOperation().equals("equal")) {
 						stoch[m][(int)(reactionIndex.get(bound.getReaction()))] = 1.0;
 						zero[m] = bound.getValue();
-						System.out.println("  " + vectorToString(stoch[m],reactionIndex) + " = " + zero[m]);
+						//System.out.println("  " + vectorToString(stoch[m],reactionIndex) + " = " + zero[m]);
 						m++;
 					}
 				}
@@ -187,25 +187,38 @@ public class FluxBalanceAnalysis {
 					FileWriter fw = new FileWriter(f);
 					BufferedWriter bw = new BufferedWriter(fw);
 					double [] sol = opt.getOptimizationResponse().getSolution();
+					double objkVal = 0;
+					double objkCo = 0;
+					for (int j = 0; j < fbc.getObjective(i).getNumFluxObjectives(); j++) { 
+						objkCo = fbc.getObjective(i).getFluxObjective(j).getCoefficient();
+						double scale = Math.round(1/absError);
+						objkVal += Math.round(objkCo*sol[reactionIndex.get(fbc.getObjective(i).getFluxObjective(j).getReaction())] * scale) / scale;
+					}
+					String firstLine = ("#total Objective");
+					String secondLine = ("100 " + objkVal);
 					for (String reaction : reactionIndex.keySet()) {
 						double value = sol[reactionIndex.get(reaction)];
 						double scale = Math.round(1/absError);
 						value = Math.round(value * scale) / scale;  
-						if (value != 0) {
-							System.out.println(reaction + " = " + value);
-							bw.write(reaction + " = " + value);
-						}
+						//System.out.println(reaction + " = " + value);
+						firstLine += (" " + reaction);
+						secondLine += (" "+ value);
 					}
+					bw.write(firstLine);
+					bw.write("\n");
+					bw.write(secondLine);
+					bw.write("\n");
+					bw.close();
 				} catch (Exception e) {
 					// TODO: SCOTT - return exit code that problem is infeasible
-					e.printStackTrace();
+					return 1;
 				}
 			}
 			return 0;
 		} else {
 			//System.out.println("No flux balance constraints");
 			// TODO: SCOTT - change to code indicating no flux balance constraints
-			return 0;
+			return 2;
 		}
 	}
 }

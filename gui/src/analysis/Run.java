@@ -1559,6 +1559,12 @@ public class Run implements ActionListener {
 				if (nary.isSelected() && gcmEditor == null && !lhpn.isSelected() && naryRun == 1) {
 				}
 				else if (fba.isSelected()) {
+					if(exitValue == 1){
+						JOptionPane.showMessageDialog(Gui.frame, "The problem is infeasible", "Error", JOptionPane.ERROR_MESSAGE);
+					}
+					else if (exitValue == 2) {
+						JOptionPane.showMessageDialog(Gui.frame, "No flux balance constraints", "Error", JOptionPane.ERROR_MESSAGE);
+					}
 					// TODO: SCOTT - use showMessageDialog to report bad exit values
 				}
 				else if (sbml.isSelected()) {
