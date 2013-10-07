@@ -90,6 +90,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 	 */
 	private void modelEditor(String option) {
 		JPanel modelEditorPanel;
+		// TODO: SCOTT increase vertical size by 1
 		modelEditorPanel = new JPanel(new GridLayout(10, 2));
 		Model model = bioModel.getSBMLDocument().getModel();
 		modelName = new JTextField(model.getName(), 50);
@@ -183,6 +184,9 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 				extentUnits.setSelectedItem(bioModel.getSBMLDocument().getModel().getExtentUnits());
 				conversionFactor.setSelectedItem(bioModel.getSBMLDocument().getModel().getConversionFactor());
 			}
+			// TODO: create a jlabel and jbutton for the Flux Balance Objective and add it to the window
+			// TODO: create a new class similar to SBOLField.java and SBOLAssoicationPanel.java that opens a panel when the button is pushed
+			// TODO: this panel should include a list of all objectives, add, remove, edit, ok, cancel buttons.
 			
 			modelEditorPanel.add(substanceUnitsLabel);
 			modelEditorPanel.add(substanceUnits);
