@@ -166,6 +166,7 @@ public class GlobalConstants {
 	public static final String SBOL_SYNTH_NUM_SOLNS_PROPERTY = "synthesis.numsolutions";
 	public static final String SBOL_SYNTH_NUM_SOLNS_PREFERENCE = "biosim." + SBOL_SYNTH_NUM_SOLNS_PROPERTY;
 	public static final String SBOL_SYNTH_NUM_SOLNS_DEFAULT = "1";
+	public static final String SBOL_SYNTH_COMMAND = "synthesis_project";
 	
 	public static final String BIO = "biochem";
 	public static final String ACTIVATION = "activation";

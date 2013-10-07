@@ -2901,7 +2901,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			else {
 				file = new File(biosimrc.get("biosim.general.project_dir", ""));
 			}
-			String filename = Utility.browse(frame, file, null, JFileChooser.DIRECTORIES_ONLY, "New", -1);
+			String filename;
+			
+			if (e.getActionCommand().startsWith(GlobalConstants.SBOL_SYNTH_COMMAND)) {
+				filename = identifySBOLSynthesisPath(e.getActionCommand());
+			} else
+				filename = Utility.browse(frame, file, null, JFileChooser.DIRECTORIES_ONLY, "New", -1);
 			if (!filename.trim().equals("")) {
 				filename = filename.trim();
 				biosimrc.put("biosim.general.project_dir", filename);
@@ -7504,33 +7509,45 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 	}
 	
+	private String identifySBOLSynthesisPath(String actionCommand) {
+		String[] splitCommand = actionCommand.split("_");
+		String synthFilePath = root.replace(new File(root).getName(), splitCommand[0]);
+		String synthFileID = "";
+		for (int i = 2; i < splitCommand.length; i++)
+			synthFileID = synthFileID + "_" + splitCommand[i];
+		synthFilePath = synthFilePath + synthFileID;
+		int synthIndex = 1;
+		while (new File(synthFilePath + "_" + synthIndex).exists())
+			synthIndex++;
+		synthFilePath = synthFilePath + "_" + synthIndex;
+		return synthFilePath;
+	}
+	
 	private void synthesizeSBOL(SBOLSynthesisView synthView) {
-		ActionEvent synthesizedProject = new ActionEvent(newProj, ActionEvent.ACTION_PERFORMED, "synthesized_project");
-		actionPerformed(synthesizedProject);
+		synthView.save();
+		ActionEvent projectSynthesized = new ActionEvent(newProj, ActionEvent.ACTION_PERFORMED, 
+				GlobalConstants.SBOL_SYNTH_COMMAND + "_" + synthView.getSpecFileID().replace(".xml", ""));
+		actionPerformed(projectSynthesized);
 		if (!synthView.getRootDirectory().equals(root)) {
-			synthView.save();
-			String outputFileID = synthView.getSpecFileID();
-			int version = 1;
-			while(!overwrite(root + separator + outputFileID, outputFileID)) {
-				outputFileID = synthView.getSpecFileID().replace(".xml", "") + "_" + version + ".xml";
-				version++;
-			}
-			Set<String> compFileIDs = synthView.run(root, outputFileID);
-			//		int i = getTab(outputFileID);
-			//		if (i != -1) {
-			//			tab.remove(i);
-			//		}
-			addToTree(outputFileID);
-			for (String compFileID : compFileIDs)
-				addToTree(compFileID);
-			ModelEditor modelEditor;
-			try {
-				modelEditor = new ModelEditor(root + separator, outputFileID, this, log, false, null, null, null, false, false);
-				ActionEvent applyLayout = new ActionEvent(synthView, ActionEvent.ACTION_PERFORMED, "layout_verticalHierarchical");
-				modelEditor.getSchematic().actionPerformed(applyLayout);
-				addTab(outputFileID, modelEditor, "GCM Editor");
-			} catch (Exception e1) {
-				e1.printStackTrace();
+//			String outputFileID = synthView.getSpecFileID();
+//			int version = 1;
+//			while(!overwrite(root + separator + outputFileID, outputFileID)) {
+//				outputFileID = synthView.getSpecFileID().replace(".xml", "") + "_" + version + ".xml";
+//				version++;
+//			}
+			List<String> solutionFileIDs = synthView.run(root);
+			if (solutionFileIDs.size() > 0) {
+				for (String solutionFileID : solutionFileIDs)
+					addToTree(solutionFileID);
+				ModelEditor modelEditor;
+				try {
+					modelEditor = new ModelEditor(root + separator, solutionFileIDs.get(0), this, log, false, null, null, null, false, false);
+					ActionEvent applyLayout = new ActionEvent(synthView, ActionEvent.ACTION_PERFORMED, "layout_verticalHierarchical");
+					modelEditor.getSchematic().actionPerformed(applyLayout);
+					addTab(solutionFileIDs.get(0), modelEditor, "GCM Editor");
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
 			}
 		}
 	}
