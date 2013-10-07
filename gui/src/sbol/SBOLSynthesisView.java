@@ -52,7 +52,7 @@ public class SBOLSynthesisView extends JTabbedPane implements ActionListener, Ru
 	private Properties synthProps;
 	private JTextField specText;
 	private List<String> libFilePaths;
-	private JList<String> libList;
+	private JList libList;
 	private JScrollPane libScroll;
 	private JButton addLibButton;
 	private JButton removeLibButton;
