@@ -39,7 +39,6 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 	double eventOccurred;
 	double nextEventTime;
 	double nextTriggerTime;
-	
 	DiffEquations[] functions;
 	
 	public SimulatorODERKHierarchical2(String SBMLFileName, String outputDirectory, double timeLimit, double maxTimeStep, long randomSeed,
@@ -69,10 +68,13 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 
 		int index = 0;
 		setupSpecies(topmodel);
-		setupParameters(topmodel);			
+		setupParameters(topmodel);	
+
 		setupConstraints(topmodel);
+
 		setupRules(topmodel);
 		setupInitialAssignments(topmodel);
+
 		setupReactions(topmodel);
 		setupEvents(topmodel);
 		functions[index++] = new DiffEquations(new VariableState(topmodel));
@@ -82,10 +84,12 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 		for(ModelState model : submodels.values())
 		{
 			setupSpecies(model);
-			setupParameters(model);		
+			setupParameters(model);	
+
 			setupConstraints(model);
 			setupRules(model);
 			setupInitialAssignments(model);
+
 			setupReactions(model);	
 			setupEvents(model);
 			functions[index++] = new DiffEquations(new VariableState(model));
@@ -99,6 +103,20 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 
 		bufferedTSDWriter.write("(" + "\"" + "time" + "\"");
 
+		if(interestingSpecies.length > 0)
+		{
+			for(String s : interestingSpecies)
+			{
+
+				bufferedTSDWriter.write(",\"" + s + "\"");
+				
+			}
+
+			bufferedTSDWriter.write("),\n");
+			
+			return;
+		}
+		
 		for (String speciesID : topmodel.speciesIDSet) 
 			if(replacements.containsKey(speciesID))
 			{
@@ -190,21 +208,28 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 		
 		
 		
-		FirstOrderIntegrator odecalc = new HighamHall54Integrator(minTimeStep, maxTimeStep, absoluteError, relativeError);
-		//FirstOrderIntegrator odecalc = new DormandPrince853Integrator(0, maxTimeStep, relativeError, absoluteError);
+		HighamHall54Integrator odecalc = new HighamHall54Integrator(minTimeStep, maxTimeStep, absoluteError, relativeError);
+		//FirstOrderIntegrator odecalc = new DormandPrince853Integrator(minTimeStep, maxTimeStep, relativeError, absoluteError);
 		
 		//odecalc.setMaxEvaluations(numSteps);
 		//add events to queue if they trigger
 		odecalc.addEventHandler(new EventHandlerObject(), maxTimeStep, 1e-18, 1000);
-		
 		//nextEventTime = Double.POSITIVE_INFINITY;
 		
 		nextEventTime = handleEvents();
 		
+		for(DiffEquations eq : functions)
+		{
+			ModelState modelstate = eq.state.modelstate;
+			fireEvent(eq, modelstate);
+		
+		}
+		
 		
 		while (currentTime <= timeLimit && !cancelFlag && constraintFlag) 
 		{
-
+			
+		
 			for(DiffEquations eq : functions)
 			{
 			//EVENT HANDLING
@@ -353,7 +378,12 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 				for (String var : vars)
 				{
 					int index = eq.state.variableToIndexMap.get(var);
-					eq.state.values[index] = modelstate.getVariableToValue(var);	
+					if (modelstate.speciesToHasOnlySubstanceUnitsMap.containsKey(var) &&
+							modelstate.speciesToHasOnlySubstanceUnitsMap.get(var) == false)
+						eq.state.values[index] = modelstate.getVariableToValue(var) * 
+							modelstate.variableToValueMap.get(modelstate.speciesToCompartmentNameMap.get(var));
+					else
+						eq.state.values[index] = modelstate.getVariableToValue(var);	
 				}
 			}
 			}
@@ -394,25 +424,6 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 			double t1 = currentTime;
 			double t2 = nextEventTime;
 
-			/*		
-			if(nextEventTime == Double.POSITIVE_INFINITY)
-			{
-				return 1;
-			}
-
-			else if(t <= nextEventTime)
-			{
-				//System.out.println(currentTime);
-				
-				
-				return -1;
-				
-			}
-			else
-			{
-				return 1;
-			}
-			*/
 			for(DiffEquations eq : functions)
 				if(isEventTriggered(eq.state.modelstate, t, y, eq.state.variableToIndexMap))
 				{
@@ -439,6 +450,7 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 
 		@Override
 		public void resetState(double t, double[] y) {
+			
 			
 			for(DiffEquations eq : functions)
 			{
@@ -662,8 +674,8 @@ protected class VariableState
 			HashSet<StringDoublePair> reactantAndStoichiometrySet = modelstate.reactionToReactantStoichiometrySetMap.get(reaction);
 			HashSet<StringDoublePair> speciesAndStoichiometrySet = modelstate.reactionToSpeciesAndStoichiometrySetMap.get(reaction);
 			
-
 			//loop through reactants
+			if(reactantAndStoichiometrySet != null)
 			for (StringDoublePair reactantAndStoichiometry : reactantAndStoichiometrySet) {
 
 				String reactant = reactantAndStoichiometry.string;
@@ -673,8 +685,12 @@ protected class VariableState
 				stoichNode.setValue(-1 * stoichiometry);
 				dvariablesdtime[varIndex] = ASTNode.sum(dvariablesdtime[varIndex], ASTNode.times(formula,stoichNode));
 			}
+		
+			
 			//loop through products
-			for (StringDoublePair speciesAndStoichiometry : speciesAndStoichiometrySet) {
+			if(speciesAndStoichiometrySet!=null)
+			for (StringDoublePair speciesAndStoichiometry : speciesAndStoichiometrySet) 
+			{
 
 				String species = speciesAndStoichiometry.string;
 				double stoichiometry = speciesAndStoichiometry.doub;
@@ -694,6 +710,17 @@ protected class VariableState
 				}
 			}
 
+			HashSet<StringStringPair> nonConstantStoichiometrySet = modelstate.reactionToNonconstantStoichiometriesSetMap.get(reaction);
+			if(nonConstantStoichiometrySet != null)
+			for (StringStringPair reactantAndStoichiometry : nonConstantStoichiometrySet) {
+
+				String reactant = reactantAndStoichiometry.string1;
+				String stoichiometry = reactantAndStoichiometry.string2;		
+				int varIndex = variableToIndexMap.get(reactant);
+				ASTNode stoichNode = new ASTNode(stoichiometry);
+				dvariablesdtime[varIndex] = ASTNode.sum(dvariablesdtime[varIndex], ASTNode.times(formula,stoichNode));
+			
+			}
 		}
 
 	}
