@@ -105,8 +105,8 @@ public class HierarchicalSimWrapper {
 		
 		String testcase = args[1];
 		
-		String[] casesNeedToChangeTimeStep = new String[]{"00028", "00173", "00194", "00196", "00197", "00198", "00200", "00201", "00269", "00274",  
-				"00276", "00278", "00279", "00870", "00872"};
+		String[] casesNeedToChangeTimeStep = new String[]{"00028", "00080", "00128", "00173", "00194", "00196", "00197", "00198", "00200", "00201", "00269", "00274",  
+				"00400", "00460", "00276", "00278", "00279", "00870", "00872"};
 		
 		for(String s : casesNeedToChangeTimeStep)
 		{
@@ -232,7 +232,7 @@ public class HierarchicalSimWrapper {
 		absoluteError = Double.valueOf(properties.getProperty("absolute"));
 		numSteps = Integer.valueOf(properties.getProperty("steps"));
 		
-		for (String intSpecies : properties.getProperty("variables").split(", "))
+		for (String intSpecies : properties.getProperty("variables").replaceAll(" ", "").split(","))
 			interestingSpecies.add(intSpecies);		
 		
 		quantityType = properties.getProperty("concentration");
