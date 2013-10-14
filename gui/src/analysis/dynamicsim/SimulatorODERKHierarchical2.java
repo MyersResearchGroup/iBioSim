@@ -67,6 +67,7 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 	private void initialize(long randomSeed, int runNumber) throws IOException {
 
 		int index = 0;
+		setupNonConstantSpeciesReferences(topmodel);
 		setupSpecies(topmodel);
 		setupParameters(topmodel);	
 
@@ -77,12 +78,14 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 
 		setupReactions(topmodel);
 		setupEvents(topmodel);
+
 		functions[index++] = new DiffEquations(new VariableState(topmodel));
 		setupForOutput(randomSeed, runNumber);
 
 
 		for(ModelState model : submodels.values())
 		{
+			setupNonConstantSpeciesReferences(model);
 			setupSpecies(model);
 			setupParameters(model);	
 
@@ -495,7 +498,10 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 				throws MaxCountExceededException, DimensionMismatchException {
 	
 			HashSet<AssignmentRule> affectedAssignmentRuleSet = new HashSet<AssignmentRule>();
-
+			
+			// Needs to reevaluate some variables that is affected by a nonconstant stoichiometry
+			HashSet<String> revaluateVariables = new HashSet<String>();
+			
 			for (int i = 0; i < y.length; i++)
 				state.modelstate.setvariableToValueMap(state.indexToVariableMap.get(i), y[i]);
 
@@ -510,7 +516,8 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 						(state.modelstate.variableToValueMap.contains(currentVar)) &&
 						state.modelstate.variableToIsConstantMap.get(currentVar) == false) {
 
-					currValueChanges[i] = evaluateExpressionRecursive(state.modelstate, state.dvariablesdtime[i]);
+				
+						currValueChanges[i] = evaluateExpressionRecursive(state.modelstate, state.dvariablesdtime[i]);
 					//if (currValueChanges[i]!=0) {
 					//	System.out.println(indexToVariableMap.get(i) + "= " + dvariablesdtime[i].toFormula() + "=" + currValueChanges[i]);
 					//}
@@ -520,31 +527,46 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 				if (state.modelstate.variableToIsInAssignmentRuleMap != null && state.modelstate.variableToIsInAssignmentRuleMap.containsKey(currentVar) &&
 						state.modelstate.variableToValueMap.contains(currentVar) && 
 						state.modelstate.variableToIsInAssignmentRuleMap.get(currentVar) == true)
+				{
 					affectedAssignmentRuleSet.addAll(state.modelstate.variableToAffectedAssignmentRuleSetMap.get(currentVar));
-
+					revaluateVariables.add(currentVar);
+				}
 				//				if (variableToIsInConstraintMap.get(speciesID) == true)
 				//					affectedConstraintSet.addAll(variableToAffectedConstraintSetMap.get(speciesID));
 			}
 			currValueChanges[currValueChanges.length - 1] = t;
 			state.modelstate.setvariableToValueMap("time", t);
 			//updatePropensities(performRateRules(topmodel, currentTime), "topmodel");
-			performRateRules(state.modelstate, state.variableToIndexMap, currValueChanges);
+			revaluateVariables.addAll(performRateRules(state.modelstate, state.variableToIndexMap, currValueChanges));
 			
 		
 						
 			//if assignment rules are performed, these changes need to be reflected in the currValueChanges
 			//that get passed back
 			if (affectedAssignmentRuleSet.size() > 0) {
-				HashSet<String> affectedVariables;  
-			
-					affectedVariables = performAssignmentRules(state.modelstate, affectedAssignmentRuleSet);
+				
+					HashSet<String> affectedVariables = performAssignmentRules(state.modelstate, affectedAssignmentRuleSet);
 					
 					for (String affectedVariable : affectedVariables) 
 					{
 
 						int index = state.variableToIndexMap.get(affectedVariable);
 						currValueChanges[index] = state.modelstate.getVariableToValue(affectedVariable) - y[index];
+						
 					}
+					
+					for (String variable : revaluateVariables) {
+						int i = state.variableToIndexMap.get(variable);
+
+						if ((state.modelstate.speciesIDSet.contains(variable) && 
+								state.modelstate.speciesToIsBoundaryConditionMap.get(variable) == false) &&
+								(state.modelstate.variableToValueMap.contains(variable)) &&
+								state.modelstate.variableToIsConstantMap.get(variable) == false) {
+
+							currValueChanges[i] = evaluateExpressionRecursive(state.modelstate, state.dvariablesdtime[i]);
+						}
+					}
+					
 			}
 			
 		
@@ -580,7 +602,6 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 					String variable = rateRule.getVariable();
 					ASTNode formula = inlineFormula(modelstate, rateRule.getMath());
 					
-					System.out.println(formula.getType().name());
 					//update the species count (but only if the species isn't constant) (bound cond is fine)
 					if (modelstate.variableToIsConstantMap.containsKey(variable) && modelstate.variableToIsConstantMap.get(variable) == false) {
 						
@@ -673,7 +694,7 @@ protected class VariableState
 			//System.out.println("HERE: " + formula.toFormula());
 			HashSet<StringDoublePair> reactantAndStoichiometrySet = modelstate.reactionToReactantStoichiometrySetMap.get(reaction);
 			HashSet<StringDoublePair> speciesAndStoichiometrySet = modelstate.reactionToSpeciesAndStoichiometrySetMap.get(reaction);
-			
+			HashSet<StringStringPair> nonConstantStoichiometrySet = modelstate.reactionToNonconstantStoichiometriesSetMap.get(reaction);
 			//loop through reactants
 			if(reactantAndStoichiometrySet != null)
 			for (StringDoublePair reactantAndStoichiometry : reactantAndStoichiometrySet) {
@@ -710,16 +731,22 @@ protected class VariableState
 				}
 			}
 
-			HashSet<StringStringPair> nonConstantStoichiometrySet = modelstate.reactionToNonconstantStoichiometriesSetMap.get(reaction);
 			if(nonConstantStoichiometrySet != null)
 			for (StringStringPair reactantAndStoichiometry : nonConstantStoichiometrySet) {
 
 				String reactant = reactantAndStoichiometry.string1;
-				String stoichiometry = reactantAndStoichiometry.string2;		
+				String stoichiometry = reactantAndStoichiometry.string2;
 				int varIndex = variableToIndexMap.get(reactant);
-				ASTNode stoichNode = new ASTNode(stoichiometry);
-				dvariablesdtime[varIndex] = ASTNode.sum(dvariablesdtime[varIndex], ASTNode.times(formula,stoichNode));
-			
+				if(stoichiometry.startsWith("-"))
+				{
+					ASTNode stoichNode = new ASTNode(stoichiometry.substring(1, stoichiometry.length()));
+					dvariablesdtime[varIndex] = ASTNode.diff(dvariablesdtime[varIndex], ASTNode.times(formula,stoichNode));
+				}
+				else
+				{
+					ASTNode stoichNode = new ASTNode(stoichiometry);
+					dvariablesdtime[varIndex] = ASTNode.sum(dvariablesdtime[varIndex], ASTNode.times(formula,stoichNode));
+				}
 			}
 		}
 

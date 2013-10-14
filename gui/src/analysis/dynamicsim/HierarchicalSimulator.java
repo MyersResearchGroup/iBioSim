@@ -2760,6 +2760,40 @@ public abstract class HierarchicalSimulator {
 		}
 	}
 
+	
+	protected void setupNonConstantSpeciesReferences(ModelState modelstate)
+	{
+		
+		//loop through all reactions and calculate their propensities
+		Reaction reaction;
+
+		for (int i = 0;  i < modelstate.numReactions; i++) 
+		{
+			reaction = modelstate.model.getReaction(i);
+
+			for (SpeciesReference reactant : reaction.getListOfReactants()) 
+			{
+				if (reactant.getConstant() == false &&
+						reactant.getId().length() > 0) {
+
+					if(modelstate.variableToValueMap.containsKey(reactant.getId()) == false)
+						modelstate.setvariableToValueMap(reactant.getId(), reactant.getStoichiometry());
+				}
+			}
+			
+			for (SpeciesReference product : reaction.getListOfProducts()) 
+			{
+				if (product.getConstant() == false &&
+						product.getId().length() > 0) {
+
+					if(modelstate.variableToValueMap.containsKey(product.getId()) == false)
+						modelstate.setvariableToValueMap(product.getId(), product.getStoichiometry());
+				}
+			}
+		}
+	}
+	
+	
 	/**
 	 * calculates the initial propensity of a single reaction
 	 * also does some initialization stuff
@@ -2827,7 +2861,11 @@ public abstract class HierarchicalSimulator {
 						}
 					}
 				}
-				reactionFormula = distributedNode;
+				
+				if(distributedNode.isUnknown())
+					reactionFormula = temp;
+				else
+					reactionFormula = distributedNode;
 			}
 
 			else if (reactionFormula.getType().equals(ASTNode.Type.MINUS)) {
@@ -2883,10 +2921,8 @@ public abstract class HierarchicalSimulator {
 				//if there was an initial assignment for the reactant
 				//this applies regardless of constancy of the reactant
 
-				if(replacements.containsKey(reactant.getId()))
-					reactantStoichiometry = replacements.get(reactant.getId());
-				else if (modelstate.variableToValueMap.contains(reactant.getId()))
-					reactantStoichiometry = modelstate.variableToValueMap.get(reactant.getId());
+				if (modelstate.variableToValueMap.contains(reactant.getId()))
+					reactantStoichiometry = modelstate.getVariableToValue(reactant.getId());
 				else
 					reactantStoichiometry = reactant.getStoichiometry();
 
@@ -2915,6 +2951,20 @@ public abstract class HierarchicalSimulator {
 					.add(new StringStringPair(reactantID + "_rv", reactant.getId()));
 					if(modelstate.variableToValueMap.containsKey(reactant.getId()) == false)
 						modelstate.setvariableToValueMap(reactant.getId(), reactantStoichiometry);
+				}
+				
+				else if(modelstate.variableToIsConstantMap.get(reactantID) == false)
+				{
+				
+					modelstate.variableToIsConstantMap.put(reactant.getId(), false);
+						if (modelstate.reactionToNonconstantStoichiometriesSetMap.containsKey(reactionID) == false)
+							modelstate.reactionToNonconstantStoichiometriesSetMap.put(reactionID, new HashSet<StringStringPair>());
+
+						modelstate.reactionToNonconstantStoichiometriesSetMap.get(reactionID)
+							.add(new StringStringPair(reactantID, "-" + reactant.getId()));
+
+						if(modelstate.variableToValueMap.containsKey(reactant.getId()) == false)
+							modelstate.setvariableToValueMap(reactant.getId(), reactantStoichiometry);
 				}
 
 				//as a reactant, this species affects the reaction's propensity in the forward direction
@@ -2950,17 +3000,33 @@ public abstract class HierarchicalSimulator {
 						new StringDoublePair(productID, productStoichiometry));
 
 				//if there wasn't an initial assignment
-				if (product.getConstant() == false && product.getId().length() > 0) 
+				if (product.getConstant() == false) 
 				{
 
-					if (modelstate.reactionToNonconstantStoichiometriesSetMap.containsKey(reactionID) == false)
-						modelstate.reactionToNonconstantStoichiometriesSetMap.put(reactionID, new HashSet<StringStringPair>());
+					if(product.getId().length() > 0 )
+					{
+						modelstate.variableToIsConstantMap.put(product.getId(), false);
+						if (modelstate.reactionToNonconstantStoichiometriesSetMap.containsKey(reactionID) == false)
+							modelstate.reactionToNonconstantStoichiometriesSetMap.put(reactionID, new HashSet<StringStringPair>());
 
-					modelstate.reactionToNonconstantStoichiometriesSetMap.get(reactionID)
-					.add(new StringStringPair(productID, product.getId()));
+						modelstate.reactionToNonconstantStoichiometriesSetMap.get(reactionID)
+							.add(new StringStringPair(productID, product.getId()));
 
-					if(modelstate.variableToValueMap.containsKey(product.getId()) == false)
-						modelstate.setvariableToValueMap(product.getId(), productStoichiometry);
+						if(modelstate.variableToValueMap.containsKey(product.getId()) == false)
+							modelstate.setvariableToValueMap(product.getId(), productStoichiometry);
+					}
+				}
+				else if(modelstate.variableToIsConstantMap.get(productID) == false)
+				{
+				
+						if (modelstate.reactionToNonconstantStoichiometriesSetMap.containsKey(reactionID) == false)
+							modelstate.reactionToNonconstantStoichiometriesSetMap.put(reactionID, new HashSet<StringStringPair>());
+
+						modelstate.reactionToNonconstantStoichiometriesSetMap.get(reactionID)
+							.add(new StringStringPair(productID, product.getId()));
+
+						if(modelstate.variableToValueMap.containsKey(product.getId()) == false)
+							modelstate.setvariableToValueMap(product.getId(), productStoichiometry);
 				}
 
 				//as a product, this species affects the reaction's propensity in the reverse direction
@@ -3166,10 +3232,8 @@ public abstract class HierarchicalSimulator {
 					double reactantStoichiometry;
 
 					//if there was an initial assignment for the speciesref id
-					if(replacements.containsKey(reactant.getId()) && this.replacementSubModels.get(reactant.getId()).contains(modelstate.ID))
-						reactantStoichiometry = replacements.get(reactant.getId());
-					else if (modelstate.variableToValueMap.containsKey(reactant.getId()))
-						reactantStoichiometry = modelstate.variableToValueMap.get(reactant.getId());
+					if (modelstate.variableToValueMap.containsKey(reactant.getId()))
+						reactantStoichiometry = modelstate.getVariableToValue(reactant.getId());
 					else
 						reactantStoichiometry = reactant.getStoichiometry();
 
@@ -3195,9 +3259,7 @@ public abstract class HierarchicalSimulator {
 					double productStoichiometry;
 
 					//if there was an initial assignment for the speciesref id
-					if(replacements.containsKey(product.getId()))
-						productStoichiometry = replacements.get(product.getId());
-					else if (modelstate.variableToValueMap.containsKey(product.getId()))
+					if (modelstate.variableToValueMap.containsKey(product.getId()))
 						productStoichiometry = modelstate.getVariableToValue(product.getId());
 					else
 						productStoichiometry = product.getStoichiometry();
@@ -3442,8 +3504,8 @@ public abstract class HierarchicalSimulator {
 		double newResult = evaluateExpressionRecursive(modelstate, initialAssignment.getMath());
 		double oldResult = modelstate.getVariableToValue(variable);
 
-		if(Double.compare(newResult, oldResult) == 1)
-			return false;
+	//	if(Double.compare(newResult, oldResult) == 0)
+			//return false;
 
 		if(newResult != oldResult)
 		{
@@ -3518,76 +3580,6 @@ public abstract class HierarchicalSimulator {
 		return false;
 	}
 
-	/**
-	 * puts initial assignment-related information into data structures
-	 */
-	/*protected void setupInitialAssignments(ModelState modelstate) {
-
-		HashSet<String> affectedVariables = new HashSet<String>();
-		HashSet<AssignmentRule> allAssignmentRules = new HashSet<AssignmentRule>();
-
-		//perform all assignment rules
-		for (Rule rule : modelstate.model.getListOfRules()) {
-
-			if (rule.isAssignment())
-				allAssignmentRules.add((AssignmentRule)rule);
-		}
-
-		performAssignmentRules(modelstate, allAssignmentRules);
-
-		//calculate initial assignments a lot of times in case there are dependencies
-		//running it the number of initial assignments times will avoid problems
-		//and all of them will be fully calculated and determined
-		for (int i = 0; i < modelstate.numSpecies; ++i) {
-			for (InitialAssignment initialAssignment : modelstate.model.getListOfInitialAssignments()) {
-
-				String variable = initialAssignment.getVariable().replace("_negative_","-");				
-				initialAssignment.setMath(inlineFormula(modelstate, initialAssignment.getMath()));
-
-				if (modelstate.speciesToHasOnlySubstanceUnitsMap.containsKey(variable) &&
-						modelstate.speciesToHasOnlySubstanceUnitsMap.get(variable) == false) {
-
-					modelstate.variableToValueMap.put(variable, 
-							evaluateExpressionRecursive(modelstate, initialAssignment.getMath()) * 
-							modelstate.variableToValueMap.get(modelstate.speciesToCompartmentNameMap.get(variable)));
-				}
-				else {
-					if(replacements.containsKey(variable) && this.replacementSubModels.get(variable).contains(modelstate.ID))
-						modelstate.variableToValueMap.put(variable, replacements.get(variable));
-					else
-						modelstate.setvariableToValueMap(variable, evaluateExpressionRecursive(modelstate, initialAssignment.getMath()));
-				}
-
-				affectedVariables.add(variable);
-			}			
-		}
-
-		//perform assignment rules again for variable that may have changed due to the initial assignments
-		//they aren't set up yet, so just perform them all
-		performAssignmentRules(modelstate, allAssignmentRules);
-
-		//this is kind of weird, but apparently if an initial assignment changes a compartment size
-				//i need to go back and update species amounts because they used the non-changed-by-assignment sizes
-				for (Species species : modelstate.model.getListOfSpecies()) {
-
-					if (species.isSetInitialConcentration()) {
-
-						String speciesID = species.getId();
-
-						//revert to the initial concentration value
-						if (Double.isNaN(modelstate.variableToValueMap.get(speciesID)) == false)
-							modelstate.variableToValueMap.put(speciesID, 
-									modelstate.variableToValueMap.get(speciesID) / species.getCompartmentInstance().getSize());
-						else
-							modelstate.variableToValueMap.put(speciesID, species.getInitialConcentration());
-
-						//multiply by the new compartment size to get into amount
-						modelstate.variableToValueMap.put(speciesID, modelstate.variableToValueMap.get(speciesID) * 
-								modelstate.variableToValueMap.get(modelstate.speciesToCompartmentNameMap.get(speciesID)));
-					}
-				}
-	}
-	 */
 
 	/**
 	 * puts event-related information into data structures
@@ -3914,7 +3906,6 @@ public abstract class HierarchicalSimulator {
 			this.numRules = this.model.getRuleCount();
 			this.numConstraints= this.model.getConstraintCount();
 			this.numCompartments = this.model.getCompartmentCount();
-
 			ibiosimFunctionDefinitions.add("uniform");
 			ibiosimFunctionDefinitions.add("exponential");
 			ibiosimFunctionDefinitions.add("gamma");
