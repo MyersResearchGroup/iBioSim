@@ -43,6 +43,7 @@ import org.sbml.libsbml.UnitDefinition;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
+import biomodel.gui.FBAObjective;
 import biomodel.gui.ModelEditor;
 import biomodel.gui.SBOLField;
 import biomodel.parser.BioModel;
@@ -99,6 +100,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	private JComboBox reacReverse, reacFast; // reaction reversible, fast combo
 
 	// boxes
+	
+	private JButton reacFBA; // Button to activate FBA editor
 
 	/*
 	 * reactant buttons
@@ -301,6 +304,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		JLabel fast = new JLabel("Fast:");
 		reacFast = new JComboBox(options);
 		reacFast.setSelectedItem("false");
+		
+		JLabel FBA = new JLabel("Flux Balance Objective:");
+		reacFBA = new JButton("Edit Objective");
+		
+		
 		String selectedID = "";
 		Reaction copyReact = null;
 		JPanel param = new JPanel(new BorderLayout());
@@ -556,6 +564,12 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			reactionPanelNorth1b.add(reacReverse);
 			reactionPanelNorth1b.add(fast);
 			reactionPanelNorth1b.add(reacFast);
+			
+			reactionPanelNorth1b.add(FBA);
+			reactionPanelNorth1b.add(reacFBA);
+			FBAObjective fbao = new FBAObjective();
+			reactionPanelNorth1b.add(fbao);
+			
 			// Parse out SBOL annotations and add to SBOL field
 			if (!paramsOnly) {
 				// Field for annotating reaction with SBOL DNA components
@@ -591,6 +605,10 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			reactionPanelNorth1b.add(reacReverse);
 			reactionPanelNorth1b.add(fast);
 			reactionPanelNorth1b.add(reacFast);
+
+			reactionPanelNorth1b.add(FBA);
+			reactionPanelNorth1b.add(reacFBA);
+			
 			reactionPanelNorth2.add(reactionPanelNorth1);
 			reactionPanelNorth2.add(reactionPanelNorth1b);
 			reactionPanelNorth.add(reactionPanelNorth2);
