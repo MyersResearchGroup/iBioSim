@@ -120,29 +120,12 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 			return;
 		}
 		
-		for (String speciesID : topmodel.speciesIDSet) 
-			if(replacements.containsKey(speciesID))
-			{
-
-				if(replacementSubModels.get(speciesID).contains("topmodel"))
-				
+		for (String speciesID : topmodel.speciesIDSet)
+		{	
 				bufferedTSDWriter.write(",\"" + speciesID + "\"");
-			}
-			else
-			{
-				bufferedTSDWriter.write(",\"" + speciesID + "\"");
-			}
-				
+		}
 		
 		for (String noConstantParam : topmodel.nonconstantParameterIDSet) 
-			if(replacements.containsKey(noConstantParam))
-			{
-
-				if(replacementSubModels.get(noConstantParam).contains("topmodel"))
-				
-					bufferedTSDWriter.write(",\"" + noConstantParam + "\"");
-			}
-			else
 			{
 				bufferedTSDWriter.write(",\"" + noConstantParam + "\"");
 			}
@@ -155,31 +138,16 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 		for(ModelState model : submodels.values())
 		{
 			for (String speciesID : model.speciesIDSet) 		
-				if(replacements.containsKey(speciesID))
-				{
-					if(!replacementSubModels.get(speciesID).contains(model.ID))
-						bufferedTSDWriter.write(",\"" + model.ID + "__" + speciesID + "\"");
-				}
-				else
+				if(!model.isHierarchical.contains(speciesID))
 				{
 					bufferedTSDWriter.write(",\"" + model.ID + "__" + speciesID + "\"");
 				}
 			
 			for (String noConstantParam : model.nonconstantParameterIDSet)
-				if(replacements.containsKey(noConstantParam))
+				if(!model.isHierarchical.contains(noConstantParam))
 				{
-					if(!replacementSubModels.get(noConstantParam).contains(model.ID))
-						bufferedTSDWriter.write(",\"" + model.ID + "__" +  noConstantParam + "\"");
+					bufferedTSDWriter.write(",\"" + model.ID + "__" +  noConstantParam + "\"");
 				}
-				else
-				{
-				bufferedTSDWriter.write(",\"" + model.ID + "__" +  noConstantParam + "\"");
-				}
-			/*
-			for (String compartment : model.compartmentIDSet)
-				bufferedTSDWriter.write(", \"" + model.ID + "__" + compartment + "\"");
-				*/
-			
 		}
 
 		
