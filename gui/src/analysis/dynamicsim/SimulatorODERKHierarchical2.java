@@ -520,12 +520,16 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 
 						int index = state.variableToIndexMap.get(affectedVariable);
 						currValueChanges[index] = state.modelstate.getVariableToValue(affectedVariable) - y[index];
+						revaluateVariables.add(affectedVariable);
 						
 					}
 					
-					for (String variable : revaluateVariables) {
-						int i = state.variableToIndexMap.get(variable);
+					//for (String variable : revaluateVariables) {
+						//int i = state.variableToIndexMap.get(variable);
+					for (int i = 0; i < currValueChanges.length - 1; i++) {
 
+						String variable = state.indexToVariableMap.get(i);
+						
 						if ((state.modelstate.speciesIDSet.contains(variable) && 
 								state.modelstate.speciesToIsBoundaryConditionMap.get(variable) == false) &&
 								(state.modelstate.variableToValueMap.contains(variable)) &&

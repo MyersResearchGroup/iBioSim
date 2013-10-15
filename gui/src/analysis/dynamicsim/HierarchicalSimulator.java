@@ -535,6 +535,7 @@ public abstract class HierarchicalSimulator {
 	 */
 	protected void getComponentPortMap(SBMLDocument sbml) 
 	{
+	
 		for (int i = 0; i < topmodel.numSpecies; i++) {
 			Species species = sbml.getModel().getSpecies(i);
 			CompSBasePlugin sbmlSBase = (CompSBasePlugin)species.getExtension(CompConstant.namespaceURI);
@@ -1753,54 +1754,32 @@ public abstract class HierarchicalSimulator {
 	 */
 	protected HashSet<String> performAssignmentRules(ModelState modelstate, HashSet<AssignmentRule> affectedAssignmentRuleSet) {
 
+
 		HashSet<String> affectedVariables = new HashSet<String>();
-		boolean hasChanged = true;
-		boolean temp = false;
-		double oldVal, newVal;
-		int watchDog = affectedAssignmentRuleSet.size();
-		int count = 0;
-		while(hasChanged && count < watchDog)
-		{
-			hasChanged = false;
-			count++;
+
 		for (AssignmentRule assignmentRule : affectedAssignmentRuleSet) {
 
 			String variable = assignmentRule.getVariable();
 
 			//update the species count (but only if the species isn't constant) (bound cond is fine)
 			if (modelstate.variableToIsConstantMap.containsKey(variable) && modelstate.variableToIsConstantMap.get(variable) == false
-					|| modelstate.variableToIsConstantMap.containsKey(variable) == false) 
-			{
+					|| modelstate.variableToIsConstantMap.containsKey(variable) == false) {
 
 				if (modelstate.speciesToHasOnlySubstanceUnitsMap.containsKey(variable) &&
 						modelstate.speciesToHasOnlySubstanceUnitsMap.get(variable) == false) {
-						oldVal = modelstate.getVariableToValue(variable);
-						newVal = evaluateExpressionRecursive(modelstate, assignmentRule.getMath()) * 
-								modelstate.getVariableToValue(modelstate.speciesToCompartmentNameMap.get(variable));
-						if(oldVal != newVal)
-						{
-							hasChanged = true;
-							modelstate.setvariableToValueMap(variable, 
-									evaluateExpressionRecursive(modelstate, assignmentRule.getMath()) * newVal);
-							
-						}
-						}
-				
-				else {
-					oldVal = modelstate.getVariableToValue(variable);
-					newVal = evaluateExpressionRecursive(modelstate, assignmentRule.getMath());
-					if(oldVal != newVal)
-					{
-						hasChanged = true;
-						modelstate.setvariableToValueMap(variable, newVal);
-					}
-						
+						modelstate.setvariableToValueMap(variable, 
+								evaluateExpressionRecursive(modelstate, assignmentRule.getMath()) * 
+								//modelstate.variableToValueMap.get(modelstate.speciesToCompartmentNameMap.get(variable)));
+								modelstate.getVariableToValue(modelstate.speciesToCompartmentNameMap.get(variable)));
 				}
-			}
+				else {
+						modelstate.setvariableToValueMap(variable, evaluateExpressionRecursive(modelstate, assignmentRule.getMath()));
+				}
+
 				affectedVariables.add(variable);
 			}
 		}
-		
+
 		return affectedVariables;
 	}
 
