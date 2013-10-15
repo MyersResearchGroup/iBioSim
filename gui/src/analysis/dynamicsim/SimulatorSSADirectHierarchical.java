@@ -13,10 +13,7 @@ import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLReader;
 
 import analysis.dynamicsim.HierarchicalSimulator.ModelState;
-
-
 import odk.lang.FastMath;
-
 import main.Gui;
 import main.util.MutableBoolean;
 
@@ -300,31 +297,29 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		setupReplacingSpecies();
 
 
+
 		bufferedTSDWriter.write("(" + "\"" + "time" + "\"");
 
-		for (String speciesID : topmodel.speciesIDSet) 
-			if(replacements.containsKey(speciesID))
+		if(interestingSpecies.length > 0)
+		{
+			for(String s : interestingSpecies)
 			{
 
-				if(replacementSubModels.get(speciesID).contains("topmodel"))
+				bufferedTSDWriter.write(",\"" + s + "\"");
 				
-				bufferedTSDWriter.write(",\"" + speciesID + "\"");
 			}
-			else
-			{
+
+			bufferedTSDWriter.write("),\n");
+			
+			return;
+		}
+		
+		for (String speciesID : topmodel.speciesIDSet)
+		{	
 				bufferedTSDWriter.write(",\"" + speciesID + "\"");
-			}
-				
+		}
 		
 		for (String noConstantParam : topmodel.nonconstantParameterIDSet) 
-			if(replacements.containsKey(noConstantParam))
-			{
-
-				if(replacementSubModels.get(noConstantParam).contains("topmodel"))
-				
-					bufferedTSDWriter.write(",\"" + noConstantParam + "\"");
-			}
-			else
 			{
 				bufferedTSDWriter.write(",\"" + noConstantParam + "\"");
 			}
@@ -337,36 +332,20 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		for(ModelState model : submodels.values())
 		{
 			for (String speciesID : model.speciesIDSet) 		
-				if(replacements.containsKey(speciesID))
-				{
-					if(!replacementSubModels.get(speciesID).contains(model.ID))
-						bufferedTSDWriter.write(",\"" + model.ID + "__" + speciesID + "\"");
-				}
-				else
+				if(!model.isHierarchical.contains(speciesID))
 				{
 					bufferedTSDWriter.write(",\"" + model.ID + "__" + speciesID + "\"");
 				}
 			
 			for (String noConstantParam : model.nonconstantParameterIDSet)
-				if(replacements.containsKey(noConstantParam))
+				if(!model.isHierarchical.contains(noConstantParam))
 				{
-					if(!replacementSubModels.get(noConstantParam).contains(model.ID))
-						bufferedTSDWriter.write(",\"" + model.ID + "__" +  noConstantParam + "\"");
+					bufferedTSDWriter.write(",\"" + model.ID + "__" +  noConstantParam + "\"");
 				}
-				else
-				{
-				bufferedTSDWriter.write(",\"" + model.ID + "__" +  noConstantParam + "\"");
-				}
-			/*
-			for (String compartment : model.compartmentIDSet)
-				bufferedTSDWriter.write(", \"" + model.ID + "__" + compartment + "\"");
-				*/
-			
 		}
 
-
+		
 		bufferedTSDWriter.write("),\n");
-
 
 	}
 
