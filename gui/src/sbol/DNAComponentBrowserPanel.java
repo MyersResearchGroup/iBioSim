@@ -68,8 +68,8 @@ public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			if (filterType.equals("all") || 
-					SBOLUtility.convertURIToSOType(dnac.getTypes().iterator().next()).equals(filterType)) {
+			if (filterType.equals("all") || (dnac.getTypes().size()>0 &&
+					SBOLUtility.convertURIToSOType(dnac.getTypes().iterator().next()).equals(filterType))) {
 				filteredURIs.add(compURIs.get(i));
 				filteredIDs.add(compIDs.get(i));
 			}

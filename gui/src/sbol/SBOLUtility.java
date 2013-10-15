@@ -266,7 +266,9 @@ public class SBOLUtility {
 	public static List<String> loadDNAComponentTypes(List<DnaComponent> dnaComps) {
 		List<String> types = new LinkedList<String>();
 		for (DnaComponent lowestComp : loadLowestSubComponents(dnaComps))
-			types.add(convertURIToSOType(lowestComp.getTypes().iterator().next()));
+			if (lowestComp.getTypes().size()>0) {
+				types.add(convertURIToSOType(lowestComp.getTypes().iterator().next()));
+			}
 		return types;
 	}
 	
@@ -317,7 +319,7 @@ public class SBOLUtility {
 		List<DnaComponent> tempComps = new LinkedList<DnaComponent>(dnaComps);
 		while (tempComps.size() > 0) {
 			DnaComponent tempComp = tempComps.remove(0);
-			if (soFilterTypes.contains(convertURIToSOType(tempComp.getTypes().iterator().next())))
+			if (tempComp.getTypes().size() > 0 && soFilterTypes.contains(convertURIToSOType(tempComp.getTypes().iterator().next())))
 				subComps.add(tempComp);
 			if (tempComp.getAnnotations().size() > 0)
 				for (SequenceAnnotation anno : tempComp.getAnnotations())
