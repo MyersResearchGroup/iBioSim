@@ -904,7 +904,7 @@ public class MarkovianAnalysis implements Runnable{
 			progressValue = progress.getValue();
 		}
 		// Approximate pi(t)
-		threadCount = 1;
+		threadCount = 4;
 		waitingThreads = threadCount;
 		phase1 = true;
 		phase2 = false;
