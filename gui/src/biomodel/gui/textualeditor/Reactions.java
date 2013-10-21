@@ -565,8 +565,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			reactionPanelNorth1b.add(fast);
 			reactionPanelNorth1b.add(reacFast);
 			
-			reactionPanelNorth1b.add(FBA);
-			reactionPanelNorth1b.add(reacFBA);
+			//reactionPanelNorth1b.add(FBA);
+			//reactionPanelNorth1b.add(reacFBA);
 			FBAObjective fbao = new FBAObjective();
 			reactionPanelNorth1b.add(fbao);
 			
