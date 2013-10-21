@@ -43,6 +43,7 @@ import org.sbml.libsbml.UnitDefinition;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
+import biomodel.gui.FBABounds;
 import biomodel.gui.FBAObjective;
 import biomodel.gui.ModelEditor;
 import biomodel.gui.SBOLField;
@@ -567,8 +568,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			
 			//reactionPanelNorth1b.add(FBA);
 			//reactionPanelNorth1b.add(reacFBA);
-			FBAObjective fbao = new FBAObjective();
-			reactionPanelNorth1b.add(fbao);
+			FBABounds fbab = new FBABounds();
+			reactionPanelNorth1b.add(fbab);
 			
 			// Parse out SBOL annotations and add to SBOL field
 			if (!paramsOnly) {
