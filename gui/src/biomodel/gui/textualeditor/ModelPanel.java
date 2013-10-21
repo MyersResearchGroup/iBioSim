@@ -42,6 +42,7 @@ import sbol.SequenceTypeValidator;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
+import biomodel.gui.FBAObjective;
 import biomodel.gui.ModelEditor;
 import biomodel.gui.SBOLField;
 import biomodel.parser.BioModel;
@@ -62,6 +63,8 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 	
 	private SBOLField sbolField;
 	
+	private FBAObjective fbao;
+	
 	private BioModel bioModel;
 	
 	private ModelEditor gcmEditor;
@@ -75,6 +78,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 		this.bioModel = gcm;
 		this.gcmEditor = gcmEditor;
 		sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 1, true);
+		fbao = new FBAObjective();
 		this.sbmlModel = gcm.getSBMLDocument().getModel();
 		this.dirty = gcmEditor.getDirty();
 		this.setText("Model");
@@ -91,7 +95,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 	private void modelEditor(String option) {
 		JPanel modelEditorPanel;
 		// TODO: SCOTT increase vertical size by 1
-		modelEditorPanel = new JPanel(new GridLayout(10, 2));
+		modelEditorPanel = new JPanel(new GridLayout(11, 2));
 		Model model = bioModel.getSBMLDocument().getModel();
 		modelName = new JTextField(model.getName(), 50);
 		modelID = new JTextField(model.getId(), 16);
@@ -204,6 +208,8 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			modelEditorPanel.add(conversionFactor);
 			modelEditorPanel.add(new JLabel("SBOL DNA Component:"));
 			modelEditorPanel.add(sbolField);
+			modelEditorPanel.add(new JLabel("Flux Objective: "));
+			modelEditorPanel.add(fbao);
 		}
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, modelEditorPanel, "Model Editor", JOptionPane.YES_NO_OPTION,
