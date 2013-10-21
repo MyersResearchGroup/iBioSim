@@ -476,7 +476,7 @@ public class Analysis {
 					PrjState nextPrjStInStateSet = ((ProbGlobalStateSet) prjStateSet).get(nextPrjState);
 					stateStackTop.addNextGlobalState(firedTran, nextPrjStInStateSet);					
 				}
-				else if (Options.getOutputSgFlag()) { // non-stochastic model, but need to draw global state graph.
+				else if (!Options.getMarkovianModelFlag() && Options.getOutputSgFlag()) { // non-stochastic model, but need to draw global state graph.
 					for (PrjState prjSt : prjStateSet) {
 						if (prjSt.equals(nextPrjState)) {
 							stateStackTop.addNextGlobalState(firedTran, prjSt);
@@ -710,49 +710,36 @@ public class Analysis {
 						out.write(curGlobalStateIndex + "[shape=ellipse,label=\"" + curGlobalStateIndex + "\\n<"+curVarValues+">" 
 								+ "\\n<"+curEnabledTrans+">" + "\\n<"+curMarkings+">" + "\\nProb = " + curGlobalStateProb + "\"]\n");
 				}
-								
-				// Build transitions to next global states.
-//				Set <Transition> outgoingTrans = null;
-//				if (!Options.getMarkovianModelFlag()) {
-//					outgoingTrans = curGlobalState.getOutgoingTrans();
-//				}
-//				else {
-//					outgoingTrans = ((ProbGlobalState) curGlobalState).getOutgoingTranSetForProbGlobalState();				
-//				}									
-				for (Transition outTran : curGlobalState.getNextGlobalStateMap().keySet()) {
-					PrjState nextGlobalState = null;
-					nextGlobalState = curGlobalState.getNextGlobalStateMap().get(outTran);
-					String nextGlobalStateIndex = "";
-					for (State nextLocalState : nextGlobalState.toStateArray()) {
-						nextGlobalStateIndex = nextGlobalStateIndex + "_" + "S" + nextLocalState.getIndex();
-					}
-					nextGlobalStateIndex = nextGlobalStateIndex.substring(nextGlobalStateIndex.indexOf("_")+1, nextGlobalStateIndex.length());
+				for (Transition outTran : curGlobalState.getNextGlobalStateMap().keySet()) {					
+					PrjState nextGlobalState = curGlobalState.getNextGlobalStateMap().get(outTran);
+					String nextGlobalStateLabel = nextGlobalState.getLabel();										
 					String outTranName = outTran.getLabel();
 					if (!Options.getMarkovianModelFlag()) {
 						if (outTran.isFail() && !outTran.isPersistent())
-							out.write(curGlobalStateIndex + "->" + nextGlobalStateIndex + "[label=\"" + outTranName + "\", fontcolor=red]\n");
+							out.write(curGlobalStateIndex + "->" + nextGlobalStateLabel + "[label=\"" + outTranName + "\", fontcolor=red]\n");
 						else if (!outTran.isFail() && outTran.isPersistent())						
-							out.write(curGlobalStateIndex + "->" + nextGlobalStateIndex + "[label=\"" + outTranName + "\", fontcolor=blue]\n");
+							out.write(curGlobalStateIndex + "->" + nextGlobalStateLabel + "[label=\"" + outTranName + "\", fontcolor=blue]\n");
 						else if (outTran.isFail() && outTran.isPersistent())
-							out.write(curGlobalStateIndex + "->" + nextGlobalStateIndex + "[label=\"" + outTranName + "\", fontcolor=purple]\n");
+							out.write(curGlobalStateIndex + "->" + nextGlobalStateLabel + "[label=\"" + outTranName + "\", fontcolor=purple]\n");
 						else
-							out.write(curGlobalStateIndex + "->" + nextGlobalStateIndex + "[label=\"" + outTranName + "\"]\n");
+							out.write(curGlobalStateIndex + "->" + nextGlobalStateLabel + "[label=\"" + outTranName + "\"]\n");
 					}
 					else {
 						//State localState = curGlobalState.toStateArray()[outTran.getLpn().getLpnIndex()];						
 						//String outTranRate = num.format(((ProbLocalStateGraph) localState.getStateGraph()).getTranRate(localState, outTran));
 						String outTranRate = num.format(((ProbGlobalState) curGlobalState).getOutgoingTranRate(outTran));
+						
 						if (outTran.isFail() && !outTran.isPersistent())
-							out.write(curGlobalStateIndex + "->" + nextGlobalStateIndex 
+							out.write(curGlobalStateIndex + "->" + nextGlobalStateLabel 
 									+ "[label=\"" + outTranName + "\\n" + outTranRate + "\", fontcolor=red]\n");
 						else if (!outTran.isFail() && outTran.isPersistent())						
-							out.write(curGlobalStateIndex + "->" + nextGlobalStateIndex 
+							out.write(curGlobalStateIndex + "->" + nextGlobalStateLabel 
 									+ "[label=\"" + outTranName + "\\n" + outTranRate + "\", fontcolor=blue]\n");
 						else if (outTran.isFail() && outTran.isPersistent())
-							out.write(curGlobalStateIndex + "->" + nextGlobalStateIndex 
+							out.write(curGlobalStateIndex + "->" + nextGlobalStateLabel 
 									+ "[label=\"" + outTranName + "\\n" + outTranRate + "\", fontcolor=purple]\n");						
 						else
-							out.write(curGlobalStateIndex + "->" + nextGlobalStateIndex 
+							out.write(curGlobalStateIndex + "->" + nextGlobalStateLabel 
 									+ "[label=\"" + outTranName + "\\n" + outTranRate + "\"]\n");
 					}
 				}
@@ -1155,7 +1142,6 @@ public class Analysis {
 				failure = true;
 				break main_while_loop;
 			}
-
 			// Build transition rate map on global state.
 			if (Options.getMarkovianModelFlag()) {
 				for (State localSt : stateStackTop.toStateArray()) {					
@@ -1191,6 +1177,7 @@ public class Analysis {
 				nextPrjState.setFather(stateStackTop);
 				if (Options.getMarkovianModelFlag() || Options.getOutputSgFlag()) {
 					stateStackTop.addNextGlobalState(firedTran, nextPrjState);
+					//System.out.println("@1, added (" + firedTran.getFullLabel() + ", " + nextPrjState.getLabel() + ") to curGlobalState " + stateStackTop.getLabel());
 				}
 				stateStackTop = nextPrjState;
 				stateStack.add(stateStackTop);
@@ -1205,9 +1192,10 @@ public class Analysis {
 			else { // existingState = true
 				if (Options.getMarkovianModelFlag()) {
 					PrjState nextPrjStInStateSet = ((ProbGlobalStateSet) prjStateSet).get(nextPrjState);
-					stateStackTop.addNextGlobalState(firedTran, nextPrjStInStateSet);					
+					stateStackTop.addNextGlobalState(firedTran, nextPrjStInStateSet);
+					//System.out.println("@2, added (" + firedTran.getFullLabel() + ", " + nextPrjStInStateSet.getLabel() + ") to curGlobalState " + stateStackTop.getLabel());
 				}
-				else if (Options.getOutputSgFlag()) { // non-stochastic model, but need to draw global state graph.
+				else if (!Options.getMarkovianModelFlag() && Options.getOutputSgFlag()) { // non-stochastic model, but need to draw global state graph.
 					for (PrjState prjSt : prjStateSet) {
 						if (prjSt.toStateArray().equals(nextPrjState.toStateArray())) {
 							stateStackTop.addNextGlobalState(firedTran, prjSt);
