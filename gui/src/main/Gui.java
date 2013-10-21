@@ -10013,7 +10013,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			if (overwrite(root + separator + extId + ".xml",extId + ".xml")) {
 				org.sbml.libsbml.Model model = new org.sbml.libsbml.Model(md);
 				SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
-				document.setModel(model);
 				document.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
 				document.setPackageRequired("layout", false); 
 				//LayoutModelPlugin documentLayout = (LayoutModelPlugin)document.getModel().getPlugin("layout");
@@ -10021,6 +10020,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				document.setPackageRequired("comp", true);
 				((CompSBMLDocumentPlugin)document.getPlugin("comp")).setRequired(true);
 				CompSBMLDocumentPlugin documentComp = (CompSBMLDocumentPlugin)document.getPlugin("comp");
+				document.setModel(model);
 				CompModelPlugin documentCompModel = (CompModelPlugin)document.getModel().getPlugin("comp");
 				ArrayList<String> comps = new ArrayList<String>();
 				for (long j=0; j < documentCompModel.getNumSubmodels(); j++) {
