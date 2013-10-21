@@ -568,9 +568,8 @@ public class StateGraph {
     	else {
     		nextMap.put(firedTran, nextSt);
     	}
-//    	if (Options.getDebugMode()) {
-//    		printNextStateForGivenState(curSt, "StateGraph.java -> addStateTran(State, Transition, State)");
-//    	}
+//    	if (Options.getDebugMode()) 
+//    		printNextStateForGivenState(curSt, "StateGraph.java -> addStateTran(State, Transition, State)");    	
     }
     
     public State getNextState(State curSt, Transition firedTran) {
@@ -707,14 +706,13 @@ public class StateGraph {
 //        					curStateArray[curIdx].print() + firedTran.getName() + "\n" + 
 //        					cachedOther.getIndex() + ":\n" + cachedOther.print());
             		curSgArray[curIdx].addStateTran(curStateArray[curIdx], firedTran, cachedOther);
-//					if (Options.getDebugMode()) {
-//						String location = "StateGraph.java, fire(StateGraph[], State[], Transition)";
-//						printNextStateForGivenState(curStateArray[curIdx], location);						
-//					}
+					if (Options.getDebugMode()) {
+						String location = "StateGraph.java, fire(StateGraph[], State[], Transition)";
+						printNextStateForGivenState(curStateArray[curIdx], location);						
+					}
         		}   		
         	}
-        }
-		
+        }	
         return nextStateArray;
     }
     

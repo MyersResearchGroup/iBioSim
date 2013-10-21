@@ -279,7 +279,7 @@ public class Project {
 			if (Options.getOutputLogFlag())
 				outputRuntimeLog(false, elapsedTimeSecReachability);			
 			System.gc();
-//			// -------------------- Temp: steady-state analysis --------------
+////			// -------------------- Temp: steady-state analysis --------------
 //			System.out.println("--------- Steady State Analysis ---------");
 //			long startSteadyState = System.currentTimeMillis();
 //			MarkovianAnalysis markovianAnalysis = new MarkovianAnalysis(globalStateSet);
@@ -295,25 +295,26 @@ public class Project {
 			// -------------------- Temp: transient analysis --------------
 			System.out.println("--------- Transient Analysis ---------");
 			long startTransientAnalysis = System.currentTimeMillis();
-			MarkovianAnalysis markovianAnalysis = new MarkovianAnalysis(globalStateSet);			
-//			// ========== Temp: Properties ============
+			MarkovianAnalysis markovianAnalysis = new MarkovianAnalysis(globalStateSet);
+			
+
 //			// --- toggle_switch ---
 //			double timeLimit = 5000.0;
 //			double printInterval = 100.0;			
 //			double timeStep = 100.0;
 //			double absError = 1.0e-9;		
-//			//String prop = "Pr=?{PF[<=5000]((LacI>40)&(TetR<20))}";
-//			String prop = "Pr=?{PF[<=5000]((TetR>40)&(LacI<20))}";			
-//			// --- end of toggle_switch ---
-//		
-//			// === C-element circuits ===
+//			String prop = "Pr=?{PF[<=5000]((LacI>40)&(TetR<20))}";
+			//String prop = "Pr=?{PF[<=5000]((TetR>40)&(LacI<20))}";			
+			// --- end of toggle_switch ---
+		
+			// === C-element circuits ===
 			double timeLimit = 2100.0;
 			double printInterval = 100.0;			
 			double timeStep = 100.0;
 			double absError = 1.0e-9;
 			// --- majority ---
 			String prop = "Pr=?{PF[<=2100]((E>40)&(C<20))}";
-//			// --- end of majority ---
+			// --- end of majority ---
 ////////			
 ////////			// --- speedInd ---
 ////////			//String prop = "Pr=?{PF[<=2100]((S2>80)&(S3<20))}";

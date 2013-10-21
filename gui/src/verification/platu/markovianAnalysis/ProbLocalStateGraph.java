@@ -220,8 +220,6 @@ public class ProbLocalStateGraph extends StateGraph {
     		if (Options.getDebugMode()) {
     			System.out.println("@ ProbLocalStateGraph.java -> fire(StateGraph, State, Transition), nextState is not null. nextState = S" 
     					+ nextState.getIndex() + "("+ nextState.getLpn().getLabel() + ")");
-    			//printPartialNextProbLocalStateTupleMap(curState, "ProbLocalStateGraph.java -> fire(StateGraph, State, Transition)");
-    			
     		}			
     		return nextState;
     	}
@@ -399,11 +397,12 @@ public class ProbLocalStateGraph extends StateGraph {
 //			this.nextTranRateMap.put(nextState, innerMap);
 			this.nextTranRateMap.put(nextState, nextStateTranRateMap);
 		}
-		else {			
+		else {
+			// TODO: Need to remove this step.
 			innerMap.putAll(nextStateTranRateMap);			
 		}		
-//		if (Options.getDebugMode())
-//			printNextProbLocalTranRateMapForGivenState(nextState, "ProbLocalStateGraph.java -> addTranRate(). Adding state " + nextState.getFullLabel() + " to the map.");
+		if (Options.getDebugMode())
+			printNextProbLocalTranRateMapForGivenState(nextState, "ProbLocalStateGraph.java -> (public) addTranRate(). Adding state " + nextState.getFullLabel() + " to the map.");
 	}
 	
 	/**
@@ -423,6 +422,8 @@ public class ProbLocalStateGraph extends StateGraph {
 			innerMap.put(firedTran, tranRate);
 			nextTranRateMap.put(curState, innerMap);
 		}
+//		if (Options.getDebugMode())
+//			printNextProbLocalTranRateMapForGivenState(curState, "ProbLocalStateGraph.java -> (private) addTranRate(). Adding state " + curState.getFullLabel() + " to the map.");
 	}
 
 	public double getTranRate(State curLocalState, Transition tran) {
@@ -432,8 +433,9 @@ public class ProbLocalStateGraph extends StateGraph {
 			NullPointerException npe = new NullPointerException("Next probabilistic local state is null.");
 			npe.printStackTrace();  
 		}
-		else if (nextTranRateMap.get(curLocalState).get(tran) == null) {
+		else if (nextTranRateMap.get(curLocalState).get(tran) == null) {			
 			System.out.println("No entry for " + curLocalState.getFullLabel() + " and transition " + tran.getFullLabel() + " in nextTranRateMap");
+			curLocalState.printStateInfo();			
 			printNextProbLocalTranRateMapForGivenState(curLocalState, "ProbLocalStateGraph.java -> getTranRate()_1");
 			NullPointerException npe1 = new NullPointerException("Next transition rate is null.");
     		npe1.printStackTrace();	 
@@ -449,7 +451,7 @@ public class ProbLocalStateGraph extends StateGraph {
 //		return nextTranRateMap;
 //	}
   
-    public void printNextProbLocalTranRateMapForGivenState(State givenState, String location) {    	
+	public void printNextProbLocalTranRateMapForGivenState(State givenState, String location) {    	
     	System.out.println("----------------Next Tran Rate Map @ " + location + "----------------");
     	System.out.println("state = " + givenState.getFullLabel());
     	HashMap<Transition, State> nextStateMapForGivenState = nextStateMap.get(givenState);
