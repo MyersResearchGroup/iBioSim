@@ -57,13 +57,11 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 
 	private JTextField modelName; // the model's Name
 
-	private JButton modelEditor;
+	private JButton modelEditor, fbaoButton;
 
 	private JComboBox substanceUnits, timeUnits, volumeUnits, areaUnits, lengthUnits, extentUnits, conversionFactor;
 	
 	private SBOLField sbolField;
-	
-	private FBAObjective fbao;
 	
 	private BioModel bioModel;
 	
@@ -78,7 +76,6 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 		this.bioModel = gcm;
 		this.gcmEditor = gcmEditor;
 		sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 1, true);
-		fbao = new FBAObjective();
 		this.sbmlModel = gcm.getSBMLDocument().getModel();
 		this.dirty = gcmEditor.getDirty();
 		this.setText("Model");
@@ -192,6 +189,10 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			// TODO: create a new class similar to SBOLField.java and SBOLAssoicationPanel.java that opens a panel when the button is pushed
 			// TODO: this panel should include a list of all objectives, add, remove, edit, ok, cancel buttons.
 			
+			fbaoButton = new JButton("Edit Objectives");
+			fbaoButton.setActionCommand("fluxObjective");
+			fbaoButton.addActionListener(this);
+			
 			modelEditorPanel.add(substanceUnitsLabel);
 			modelEditorPanel.add(substanceUnits);
 			modelEditorPanel.add(timeUnitsLabel);
@@ -209,7 +210,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			modelEditorPanel.add(new JLabel("SBOL DNA Component:"));
 			modelEditorPanel.add(sbolField);
 			modelEditorPanel.add(new JLabel("Flux Objective: "));
-			modelEditorPanel.add(fbao);
+			modelEditorPanel.add(fbaoButton);
 		}
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, modelEditorPanel, "Model Editor", JOptionPane.YES_NO_OPTION,
@@ -304,6 +305,9 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 		} else if (e.getActionCommand().equals("editDescriptors")) {
 //			if (bioModel.getSBOLDescriptors() != null)
 //				SBOLDescriptorPanel descriptorPanel = new SBOLDescriptorPanel(sbolField.getSBOLURIs().get(0))
+		}
+		else if (e.getActionCommand().equals("fluxObjective")){
+			new FBAObjective(bioModel);
 		}
 
 	}

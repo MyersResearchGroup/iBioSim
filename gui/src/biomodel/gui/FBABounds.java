@@ -78,7 +78,7 @@ public class FBABounds extends JPanel implements ActionListener {
 	}
 	public void createFBAO(){
 		JPanel panel = new JPanel(new BorderLayout());
-		JLabel associationLabel = new JLabel("Flux Objectives");
+		JLabel associationLabel = new JLabel("Flux Bounds");
 		options = new String[]{"Add", "Remove", "Edit", "Ok", "Cancel"};
 		
 		JScrollPane componentScroll = new JScrollPane();
