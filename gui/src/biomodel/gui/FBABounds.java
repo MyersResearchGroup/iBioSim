@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -42,55 +44,209 @@ import org.sbolstandard.core.impl.SBOLDocumentImpl;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.textualeditor.SBMLutilities;
+import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 import biomodel.util.Utility;
 
 import sbol.SBOLAssociationPanel;
 import sbol.SBOLUtility;
 
-public class FBABounds extends JPanel implements ActionListener {
+public class FBABounds extends JPanel implements ActionListener, MouseListener {
 	
-	private JTextField fbobText = new JTextField(20);
-	private JButton fbabButton = new JButton("Edit Bounds");
-	private ModelEditor gcmEditor;
-	private boolean isModelPanelField;
-	private String[] options;
-	private JTextField fbabText;
-	private JList compList;
+	private JButton addEvent, removeEvent, editEvent;
+
+	private JList events; // JList of events
+
+	private JList eventAssign; // JList of event assignments
 	
-	public FBABounds() {
-		super(new GridLayout(1,1));
-		fbabButton.setActionCommand("fluxBounds");
-		fbabButton.addActionListener(this);
-		this.add(fbabButton);
-//		fbaoText = new JTextField(20);
-//		this.add(fbaoText);
-//		fbaoText.setVisible(false);
-//		
+	private BioModel bioModel;
+	
+	public FBABounds(BioModel bioModel) {
+		super(new BorderLayout());
+		this.bioModel = bioModel;
+		
+		JPanel eventPanel = new JPanel(new BorderLayout());
+		
+		String[] assign = new String[0];
+
+		JList eventAssign = new JList();
+		
+		JPanel eventAssignPanel = new JPanel(new BorderLayout());
+		JPanel addEventAssign = new JPanel();
+		JButton addAssignment = new JButton("Add");
+		JButton removeAssignment = new JButton("Remove");
+		JButton editAssignment = new JButton("Edit");
+		addEventAssign.add(addAssignment);
+		addEventAssign.add(removeAssignment);
+		addEventAssign.add(editAssignment);
+		addAssignment.addActionListener(this);
+		removeAssignment.addActionListener(this);
+		editAssignment.addActionListener(this);
+		JLabel eventAssignLabel = new JLabel("List of Flux Bounds:");
+		eventAssign.removeAll();
+		eventAssign.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		JScrollPane scroll = new JScrollPane();
+		scroll.setMinimumSize(new Dimension(260, 220));
+		scroll.setPreferredSize(new Dimension(276, 152));
+		scroll.setViewportView(eventAssign);
+		
+		//Utility.sort(assign);
+		eventAssign.setListData(assign);
+		eventAssign.setSelectedIndex(0);
+		eventAssign.addMouseListener(this);
+		eventAssignPanel.add(eventAssignLabel, "North");
+		eventAssignPanel.add(scroll, "Center");
+		eventAssignPanel.add(addEventAssign, "South");
+		
+		eventPanel.add(eventAssignPanel, "South");
+		Object[] options = { "Ok", "Cancel" };
+		String title = "Flux Bounds Editor";
+		int value = JOptionPane.showOptionDialog(Gui.frame, eventPanel, title, JOptionPane.YES_NO_OPTION, 
+				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+		boolean error = true;
+		while (error && value == JOptionPane.YES_OPTION && value != JOptionPane.YES_OPTION) {
+			if (error) {
+				value = JOptionPane.showOptionDialog(Gui.frame, eventPanel, title, JOptionPane.YES_NO_OPTION, 
+						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			}
+		}
 //		
 	}
+	
+	public void eventEditor(String option){		
+		String[] assign = new String[0];
+		JPanel eventPanel = new JPanel(new BorderLayout());
+		
+		JPanel eventAssignPanel = new JPanel(new BorderLayout());
+		JPanel addEventAssign = new JPanel();
+		JButton addAssignment = new JButton("Add Assignment");
+		JButton removeAssignment = new JButton("Remove Assignment");
+		JButton editAssignment = new JButton("Edit Assignment");
+		addEventAssign.add(addAssignment);
+		addEventAssign.add(removeAssignment);
+		addEventAssign.add(editAssignment);
+		addAssignment.addActionListener(this);
+		removeAssignment.addActionListener(this);
+		editAssignment.addActionListener(this);
+		JLabel eventAssignLabel = new JLabel("List of Assignments:");
+		eventAssign.removeAll();
+		eventAssign.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		JScrollPane scroll = new JScrollPane();
+		scroll.setMinimumSize(new Dimension(260, 220));
+		scroll.setPreferredSize(new Dimension(276, 152));
+		
+		//Utility.sort(assign);
+		eventAssign.setListData(assign);
+		eventAssign.setSelectedIndex(0);
+		eventAssign.addMouseListener(this);
+		eventAssignPanel.add(eventAssignLabel, "North");
+		eventAssignPanel.add(scroll, "Center");
+		eventAssignPanel.add(addEventAssign, "South");
+		
+		eventPanel.add(eventAssignPanel, "South");
+		Object[] options = { option, "Cancel" };
+		String title = "Event Editor";
+		int value = JOptionPane.showOptionDialog(Gui.frame, eventPanel, title, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+				options, options[0]);
+		boolean error = true;
+		while (error && value == JOptionPane.YES_OPTION) {
+			
+		}
+	}
+	
+	private void removeAssignment(JList eventAssign) {
+		int index = eventAssign.getSelectedIndex();
+		if (index != -1) {
+			eventAssign.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+			//Utility.remove(eventAssign);
+			eventAssign.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			if (index < eventAssign.getModel().getSize()) {
+				eventAssign.setSelectedIndex(index);
+			}
+			else {
+				eventAssign.setSelectedIndex(index - 1);
+			}
+		}
+	}
+	
+	private void eventAssignEditor(JList eventAssign, String option) {
+		if (option.equals("OK") && eventAssign.getSelectedIndex() == -1) {
+			JOptionPane.showMessageDialog(Gui.frame, "No event assignment selected.", "Must Select an Event Assignment", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		/* TODO: BUILD YOUR OBJECTIVE PANEL HERE */
+		JPanel evPanel = new JPanel(new GridLayout(1, 2));
+		
+		JLabel objectiveLabel = new JLabel("Bound:");
+		
+		JTextField objective = new JTextField(12);
+		
+		evPanel.add(objectiveLabel);
+		evPanel.add(objective);
+		
+		//EAPanel.add(eqn);
+		Object[] options = { option, "Cancel" };
+		String title = "Flux Bound Editor";
+		int value = JOptionPane.showOptionDialog(Gui.frame, evPanel, title, JOptionPane.YES_NO_OPTION, 
+				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+		boolean error = true;
+		while (error && value == JOptionPane.YES_OPTION && value != JOptionPane.YES_OPTION) {
+			if (error) {
+				value = JOptionPane.showOptionDialog(Gui.frame, evPanel, title, JOptionPane.YES_NO_OPTION, 
+						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			}
+		}
+	}
+		
+
 
 	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals("fluxBounds")) {
-			createFBAO();
+		// if the add event button is clicked
+		if (e.getSource() == addEvent) {
+			eventEditor("Add");
 		}
+		/* TODO: ONLY NEED THE PART BELOW HERE */
+		// if the add event assignment button is clicked
+		else if (((JButton) e.getSource()).getText().equals("Add")) {
+			eventAssignEditor(eventAssign, "Add");
+		}
+		// if the edit event assignment button is clicked
+		else if (((JButton) e.getSource()).getText().equals("Edit")) {
+			eventAssignEditor(eventAssign, "OK");
+		}
+		// if the remove event assignment button is clicked
+		else if (((JButton) e.getSource()).getText().equals("Remove")) {
+			removeAssignment(eventAssign);
+		}
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
 		
 	}
-	public void createFBAO(){
-		JPanel panel = new JPanel(new BorderLayout());
-		JLabel associationLabel = new JLabel("Flux Bounds");
-		options = new String[]{"Add", "Remove", "Edit", "Ok", "Cancel"};
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
 		
-		JScrollPane componentScroll = new JScrollPane();
-		componentScroll.setMinimumSize(new Dimension(260, 200));
-		componentScroll.setPreferredSize(new Dimension(276, 132));
-		componentScroll.setViewportView(compList);
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
 		
-		panel.add(associationLabel, "North");
-		panel.add(componentScroll, "Center");
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
 		
-		JOptionPane.showOptionDialog(Gui.frame, panel,
-				"Flux Objective", JOptionPane.YES_NO_CANCEL_OPTION,
-				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }
