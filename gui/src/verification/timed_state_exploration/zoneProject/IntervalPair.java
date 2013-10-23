@@ -135,10 +135,19 @@ public class IntervalPair {
 	
 	/**
 	 * Determines if zero is this range.
-	 * @return True if the lower bound is less than zero and the upper bound is more
-	 * 			than zero; false otherwise.
+	 * @return True if the lower bound is less than or equal to zero and
+	 *  the upper bound is greater than or equal zero; false otherwise.
 	 */
 	public boolean containsZero(){
 		return _lowerBound<0 && _upperBound>0 || _lowerBound == 0 || _upperBound == 0;
+	}
+	
+	/**
+	 * Determines if zero lies strictly in the range.
+	 * @return True if the lower bound is strictly less than zero and
+	 * the upper bound is strictly greater than zero.
+	 */
+	public boolean strictlyContainsZero(){
+		return _lowerBound<0 && _upperBound>0;
 	}
 }
