@@ -2576,6 +2576,27 @@ public class Zone{
 			// timer.
 			if(!oldTimers.contains(tempZone._indexToTimerPair[i]))
 			{
+				
+				// A hack to ensure that the newly non-zero varaibles
+				// get the new values from the tempZone.
+				if(tempZone._indexToTimerPair[i] instanceof LPNContinuousPair){
+					
+					LPNContinuousPair lcPair = 
+							(LPNContinuousPair) tempZone._indexToTimerPair[i];
+					
+					VariableRangePair vrp = newZone._rateZeroContinuous
+							.get(new LPNContAndRate(lcPair));
+					
+					if(vrp != null){
+						// This means that the continuous varaible was non-zero
+						// and is now zero. Fix up the values according to 
+						// the temp zone.
+						IntervalPair newRange = tempZone.getContinuousBounds(lcPair);
+						vrp.set_range(newRange);
+					}
+					
+				}
+					
 				continue;
 			}
 			
@@ -2587,7 +2608,7 @@ public class Zone{
 				// variables.
 				UpdateContinuous updateRecord = 
 						newAssignValues.get(lcPair);
-
+				
 				if(updateRecord != null){
 					// Since the variable is in the oldTimers, it cannot have had
 					// a new value assigned to it. It must have had a new rate assignment
@@ -2621,6 +2642,7 @@ public class Zone{
 			newZone.setUpperBoundByLPNTransitionPair(tempZone._indexToTimerPair[i],
 					tempZone.getUpperBoundbydbmIndex(i));
 		}
+		
 		
 		// Copy in the new relations for the new timers.
 		for(LPNTransitionPair timerNew : newTimers)
@@ -2680,13 +2702,13 @@ public class Zone{
 //							values.get_UpperBound());
 					
 					// Copy the smallest and greatest continuous value.
-					newZone.setDbmEntryByPair(LPNTransitionPair.ZERO_TIMER_PAIR, 
-							lcPair,
+					newZone.setDbmEntryByPair(lcPair,
+							LPNTransitionPair.ZERO_TIMER_PAIR, 
 							ContinuousUtilities.chkDiv(-1*values.get_LowerBound(),
 									currentRate, true));
 
-					newZone.setDbmEntryByPair(lcPair, 
-							LPNTransitionPair.ZERO_TIMER_PAIR,
+					newZone.setDbmEntryByPair(LPNTransitionPair.ZERO_TIMER_PAIR,
+							lcPair,
 							ContinuousUtilities.chkDiv(values.get_UpperBound(),
 									currentRate, true));
 				}
@@ -2758,14 +2780,14 @@ public class Zone{
 		
 		
 		//Erase relationships for continuous variables that have had new values
-		// assigned to them.
+		// assigned to them or a new non-rate zero value.
 		for(int i = 1; i<newZone._indexToTimerPair.length &&
-					_indexToTimerPair[i] instanceof LPNContinuousPair; i++){
-			LPNContinuousPair lcPair = (LPNContinuousPair) _indexToTimerPair[i];
+					newZone._indexToTimerPair[i] instanceof LPNContinuousPair; i++){
+			LPNContinuousPair lcPair = (LPNContinuousPair) newZone._indexToTimerPair[i];
 			
 			// Get the update variable.
 			UpdateContinuous update = newAssignValues.get(lcPair);
-			if(update != null && update.is_newValue()){
+			if(update != null && (update.is_newValue() || update.newlyNonZero())){
 				for(int j=1; j<newZone._indexToTimerPair.length; j++){
 					if (j==i){
 						continue;
@@ -5175,6 +5197,13 @@ public class Zone{
 					// The current rate rate of this continuous variable.
 					iXDot = Math.floor(Math.abs(
 							(double) this.getCurrentRate(_indexToTimerPair[i])));
+					
+					// I'm not going to do any warping when the previous rate
+					// is zero. This statement is a break to go to next i value
+					// and not the next j.
+					if(iWarp == 0){
+						break;
+					}
 				}
 				
 //		      else {
@@ -5212,6 +5241,12 @@ public class Zone{
 					// The current rate of this continuous variable.
 					jXDot = Math.floor(Math.abs(
 							(double) this.getCurrentRate(_indexToTimerPair[j])));
+					
+					// I'm not going to do any warping when the previous rate is
+					// zero.
+					if(jWarp == 0){
+						continue;
+					}
 				}
 				
 //		      else {
@@ -5325,14 +5360,25 @@ public class Zone{
 //		               ,'C');
 //		      }
 				
-				if(Math.abs(getDbmEntry(i, 0)) != INFINITY){
-					// Undo the old warping and introduce the new warping.
-					// If the bound is infinite, then division does nothing.
-					setDbmEntry(i, 0, ContinuousUtilities.chkDiv(
-							Math.abs(oldZone.getCurrentRate(_indexToTimerPair[i]))
-							* getDbmEntry(i, 0),
-							Math.abs(getCurrentRate(_indexToTimerPair[i])), 
-							true));
+				if(Math.abs(getDbmEntry(i, 0)) != INFINITY ){
+					
+					if(oldZone.getCurrentRate(_indexToTimerPair[i]) == 0){
+						// If the older rate was zero, then we just need to 
+						// divide by the new rate.
+						setDbmEntry(i, 0, ContinuousUtilities.chkDiv(
+								getDbmEntry(i,0),
+								Math.abs(getCurrentRate(_indexToTimerPair[i])),
+								true));
+					}
+					else{
+						// Undo the old warping and introduce the new warping.
+						// If the bound is infinite, then division does nothing.
+						setDbmEntry(i, 0, ContinuousUtilities.chkDiv(
+								Math.abs(oldZone.getCurrentRate(_indexToTimerPair[i]))
+								* getDbmEntry(i, 0),
+								Math.abs(getCurrentRate(_indexToTimerPair[i])), 
+								true));
+					}
 				}
 				
 //		      if(abs(s->z->matrix[i][0]) != INFIN) {
@@ -5344,13 +5390,22 @@ public class Zone{
 //		      }
 				
 				if(Math.abs(getDbmEntry(0, i)) != INFINITY){
-					// Undo the old warping and introduce the new warping.
-					// If the bound is inifite, then division does nothing.
-					setDbmEntry(0, i, ContinuousUtilities.chkDiv(
-							Math.abs(oldZone.getCurrentRate(_indexToTimerPair[i]))
-							* getDbmEntry(0, i),
-							Math.abs(getCurrentRate(_indexToTimerPair[i])), 
-							true));
+					
+					if(oldZone.getCurrentRate(_indexToTimerPair[i]) == 0){
+						setDbmEntry(0, i, ContinuousUtilities.chkDiv(
+								getDbmEntry(0,i),
+								Math.abs(getCurrentRate(_indexToTimerPair[i])),
+								true));
+					}
+					else{
+						// Undo the old warping and introduce the new warping.
+						// If the bound is inifite, then division does nothing.
+						setDbmEntry(0, i, ContinuousUtilities.chkDiv(
+								Math.abs(oldZone.getCurrentRate(_indexToTimerPair[i]))
+								* getDbmEntry(0, i),
+								Math.abs(getCurrentRate(_indexToTimerPair[i])), 
+								true));
+					}
 				}
 //		    }
 //		  }
