@@ -53,8 +53,6 @@ import sbol.SBOLUtility;
 
 public class FBAObjective extends JPanel implements ActionListener, MouseListener {
 	
-	private JButton fbaoButton = new JButton("Edit Objective");
-	
 	private static final long serialVersionUID = 1L;
 
 	private JButton addEvent, removeEvent, editEvent;
@@ -109,7 +107,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 		int value = JOptionPane.showOptionDialog(Gui.frame, eventPanel, title, JOptionPane.YES_NO_OPTION, 
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
-		while (error && value == JOptionPane.YES_OPTION) {
+		while (error && value == JOptionPane.YES_OPTION && value != JOptionPane.YES_OPTION) {
 			if (error) {
 				value = JOptionPane.showOptionDialog(Gui.frame, eventPanel, title, JOptionPane.YES_NO_OPTION, 
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -142,7 +140,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 		//Utility.sort(assign);
 		eventAssign.setListData(assign);
 		eventAssign.setSelectedIndex(0);
-		//eventAssign.addMouseListener(this);
+		eventAssign.addMouseListener(this);
 		eventAssignPanel.add(eventAssignLabel, "North");
 		eventAssignPanel.add(scroll, "Center");
 		eventAssignPanel.add(addEventAssign, "South");
@@ -181,15 +179,15 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 		}
 		/* TODO: ONLY NEED THE PART BELOW HERE */
 		// if the add event assignment button is clicked
-		else if (((JButton) e.getSource()).getText().equals("Add Assignment")) {
+		else if (((JButton) e.getSource()).getText().equals("Add")) {
 			eventAssignEditor(bioModel, eventAssign, "Add");
 		}
 		// if the edit event assignment button is clicked
-		else if (((JButton) e.getSource()).getText().equals("Edit Assignment")) {
+		else if (((JButton) e.getSource()).getText().equals("Edit")) {
 			eventAssignEditor(bioModel, eventAssign, "OK");
 		}
 		// if the remove event assignment button is clicked
-		else if (((JButton) e.getSource()).getText().equals("Remove Assignment")) {
+		else if (((JButton) e.getSource()).getText().equals("Remove")) {
 			removeAssignment(eventAssign);
 		}
 	}
@@ -200,22 +198,35 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 			return;
 		}
 		/* TODO: BUILD YOUR OBJECTIVE PANEL HERE */
-		JPanel eventAssignPanel = new JPanel();
-		JPanel EAPanel = new JPanel();
-		JLabel idLabel = new JLabel("Variable:");
-		JLabel eqnLabel = new JLabel("Assignment:");
-		JComboBox eaID = new JComboBox();
+		JPanel evPanel = new JPanel(new GridLayout(4, 2));
+		
+		JLabel activeObjectiveLabel = new JLabel("Active Objective:");
+		JLabel IDLabel = new JLabel("ID:");
+		JLabel typeLabel = new JLabel("Type:");
+		JLabel objectiveLabel = new JLabel("Objective:");
+		
+		JCheckBox activeObjective = new JCheckBox("");
+		JTextField eventID = new JTextField(12);
+		JComboBox type = new JComboBox(new String[] {"Maximize", "Minimize"});
+		JTextField objective = new JTextField(12);
+		
+		evPanel.add(activeObjectiveLabel);
+		evPanel.add(activeObjective);
+		evPanel.add(IDLabel);
+		evPanel.add(eventID);
+		evPanel.add(typeLabel);
+		evPanel.add(type);
+		evPanel.add(objectiveLabel);
+		evPanel.add(objective);
+		
+		
 		String selected;
 		
 		String[] assign = new String[eventAssign.getModel().getSize()];
 		
-		EAPanel.add(idLabel);
-		EAPanel.add(eaID);
-		EAPanel.add(eqnLabel);
 		//EAPanel.add(eqn);
-		eventAssignPanel.add(EAPanel);
 		Object[] options = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(Gui.frame, eventAssignPanel, "Event Asssignment Editor", JOptionPane.YES_NO_OPTION,
+		int value = JOptionPane.showOptionDialog(Gui.frame, evPanel, "Objective Editor", JOptionPane.YES_NO_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
@@ -255,7 +266,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 				}
 			}
 			if (error) {
-				value = JOptionPane.showOptionDialog(Gui.frame, eventAssignPanel, "Event Assignment Editor", JOptionPane.YES_NO_OPTION,
+				value = JOptionPane.showOptionDialog(Gui.frame, evPanel, "Objective Editor", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			}
 		}

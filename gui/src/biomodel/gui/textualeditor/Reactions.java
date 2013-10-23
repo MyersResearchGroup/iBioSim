@@ -306,8 +306,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		reacFast = new JComboBox(options);
 		reacFast.setSelectedItem("false");
 		
-		JLabel FBA = new JLabel("Flux Balance Objective:");
-		reacFBA = new JButton("Edit Objective");
+		reacFBA = new JButton("Edit Bounds");
+		reacFBA.setActionCommand("fluxBound");
+		reacFBA.addActionListener(this);
 		
 		
 		String selectedID = "";
@@ -566,10 +567,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			reactionPanelNorth1b.add(fast);
 			reactionPanelNorth1b.add(reacFast);
 			
-			//reactionPanelNorth1b.add(FBA);
-			//reactionPanelNorth1b.add(reacFBA);
-			FBABounds fbab = new FBABounds();
-			reactionPanelNorth1b.add(fbab);
+			
+			reactionPanelNorth1b.add(reacFBA);
 			
 			// Parse out SBOL annotations and add to SBOL field
 			if (!paramsOnly) {
@@ -607,7 +606,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			reactionPanelNorth1b.add(fast);
 			reactionPanelNorth1b.add(reacFast);
 
-			reactionPanelNorth1b.add(FBA);
+			//TODO
 			reactionPanelNorth1b.add(reacFBA);
 			
 			reactionPanelNorth2.add(reactionPanelNorth1);
@@ -3151,6 +3150,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		// if the use mass action button is clicked
 		else if (e.getSource() == useMassAction) {
 			useMassAction();
+		}
+		else if (e.getActionCommand().equals("fluxBound")){
+			new FBABounds(bioModel);
 		}
 	}
 
