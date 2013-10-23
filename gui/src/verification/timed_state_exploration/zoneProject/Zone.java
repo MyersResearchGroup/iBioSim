@@ -4372,7 +4372,8 @@ public class Zone{
 				&& (ltContPair.getCurrentRate() == ratePair.getSmallestRate())){
 			// The rate represents a range of rates and no rate change
 			// event has occured.
-			if(ratePair.containsZero()){
+//			if(ratePair.containsZero()){
+			if(ratePair.strictlyContainsZero()){
 				// The rate contians zero, so we need to add two rate
 				// events: one for the lower bound and one for the upper
 				// bound.
