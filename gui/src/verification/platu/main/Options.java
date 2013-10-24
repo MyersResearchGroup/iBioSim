@@ -186,6 +186,19 @@ public class Options {
 		return _TimingLogFile;
 	}
 	
+	/* Flag for range of resets after transitions alone*/
+	public static boolean _resetOnce = false;
+	
+	/* Sets the _resetOnce flag. */
+	public static void set_resetOnce(boolean resetOnce){
+		_resetOnce = resetOnce;
+	}
+	
+	/* gets the _resetOnce flag. */
+	public static boolean get_resetOnce(){
+		return _resetOnce;
+	}
+	
 	/*
 	 * Option for compositional minimization type.
 	 * off - no state space reduction
