@@ -1447,7 +1447,7 @@ public class StateGraph {
 		
 		// Determine if the list of events represents a list of inequalities.
 		if(eventSet.isInequalities()){
-
+			
 			// Create a copy of the current states.
 			State[] oldStates = currentTimedPrjState.getStateArray();
 			
@@ -1493,6 +1493,11 @@ public class StateGraph {
 			
 			// Add any new transitions.
 			z = z.addTransition(newlyEnabled, states);
+			
+			// Reset rates to their lower bounds.
+			if(Options.get_resetOnce()){
+				z = z.resetRates();
+			}
 			
 			z.advance(states);
 			
