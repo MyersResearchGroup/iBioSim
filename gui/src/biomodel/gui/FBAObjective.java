@@ -172,11 +172,26 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 		
 		JCheckBox activeObjective = new JCheckBox("");
 		JTextField objectiveID = new JTextField(12);
+		JComboBox type = new JComboBox(new String[] {"Maximize", "Minimize"});
+		JTextField objective = new JTextField(12);
 		if (option.equals("OK")) {
 			String selectAssign = ((String) objectiveList.getSelectedValue());
-			objectiveID.setText(selectAssign.split("")[1].trim());
+			if(selectAssign.startsWith("*")){
+				activeObjective.setSelected(true);
+			}
+			int m = selectAssign.indexOf("M");
+			if(selectAssign.startsWith("Max", m)){
+				type.setSelectedItem("Maximize");
+			}
+			else{
+				type.setSelectedItem("Minimize");
+			}
+			int leftParenthese = selectAssign.indexOf("(");
+			int rightParenthese = selectAssign.indexOf(")");
+			objectiveID.setText(selectAssign.substring(leftParenthese+1, rightParenthese).trim());
+			int eqsign = selectAssign.indexOf("=");
+			objective.setText(selectAssign.substring(eqsign+1).trim());
 		}
-		JComboBox type = new JComboBox(new String[] {"Maximize", "Minimize"});
 		
 		obPanel.add(activeObjectiveLabel);
 		obPanel.add(activeObjective);
@@ -185,16 +200,10 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 		obPanel.add(typeLabel);
 		obPanel.add(type);
 		obPanel.add(objectiveLabel);
-		
+		obPanel.add(objective);
 		
 		String[] assign = new String[objectiveList.getModel().getSize()];
 		
-		JTextField objective = new JTextField(12);
-		if (option.equals("OK")) {
-			String selectAssign = ((String) objectiveList.getSelectedValue());
-			objective.setText(selectAssign.split("")[1].trim());
-		}
-		obPanel.add(objective);
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, obPanel, "Objective Editor", JOptionPane.YES_NO_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -204,11 +213,22 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 			if (!error) {
 				if (option.equals("OK")) {
 					int index = objectiveList.getSelectedIndex();
+					String assignString = "";
 					objectiveList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					assign = Utility.getList(assign, objectiveList);
 					objectiveList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					assign[index] = "(" + objectiveID.getText().trim() + ") = " + 
+					if(activeObjective.isSelected()){
+						assignString = "*";
+					}
+					if(type.getSelectedItem().equals("Maximize")){
+						assignString += "Max";
+					}
+					else{
+						assignString += "Min";
+					}
+					assignString += "(" + objectiveID.getText().trim() + ") = " + 
 							objective.getText().trim();
+					assign[index] = assignString;
 					Utility.sort(assign);
 					objectiveList.setListData(assign);
 					objectiveList.setSelectedIndex(index);
@@ -216,8 +236,19 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 				else {
 					JList add = new JList();
 					int index = objectiveList.getSelectedIndex();
-					Object[] adding = {"(" + objectiveID.getText().trim() + ") = " + 
-							objective.getText().trim() };
+					String addingString = "";
+					if(activeObjective.isSelected()){
+						addingString = "*";
+					}
+					if(type.getSelectedItem().equals("Maximize")){
+						addingString += "Max";
+					}
+					else{
+						addingString += "Min";
+					}
+					addingString += "(" + objectiveID.getText().trim() + ") = " + 
+							objective.getText().trim();
+					Object[] adding = {addingString};
 					add.setListData(adding);
 					add.setSelectedIndex(0);
 					objectiveList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
