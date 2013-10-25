@@ -11,7 +11,7 @@ import javax.swing.*;
 
 import main.*;
 
-import org.sbml.libsbml.*;
+import org.sbml.jsbml.*;
 
 import biomodel.parser.BioModel;
 

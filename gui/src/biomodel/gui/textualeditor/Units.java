@@ -26,17 +26,18 @@ import main.Gui;
 import main.util.MutableBoolean;
 import main.util.Utility;
 
-import org.sbml.libsbml.Compartment;
-import org.sbml.libsbml.KineticLaw;
-import org.sbml.libsbml.ListOf;
-import org.sbml.libsbml.Model;
-import org.sbml.libsbml.Parameter;
-import org.sbml.libsbml.Port;
-import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.Species;
-import org.sbml.libsbml.Unit;
-import org.sbml.libsbml.UnitDefinition;
-import org.sbml.libsbml.libsbml;
+import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.KineticLaw;
+import org.sbml.jsbml.ListOf;
+import org.sbml.jsbml.LocalParameter;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.ext.comp.Port;
+import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.Species;
+import org.sbml.jsbml.Unit;
+import org.sbml.jsbml.UnitDefinition;
+import org.sbml.jsbml.JSBML;
 
 import biomodel.gui.ModelEditor;
 import biomodel.parser.BioModel;
@@ -332,7 +333,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 						units = Utility.getList(units, unitDefs);
 						unitDefs.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						UnitDefinition u = bioModel.getSBMLDocument().getModel().getUnitDefinition(val);
-						UnitDefinition uCopy = u.cloneObject();
+						UnitDefinition uCopy = u.clone();
 						u.setId(unitID.getText().trim());
 						u.setName(unitName.getText().trim());
 						while (u.getNumUnits() > 0) {
@@ -340,7 +341,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 						}
 						for (int i = 0; i < uList.length; i++) {
 							Unit unit = u.createUnit();
-							unit.setKind(libsbml.UnitKind_forName(extractUnitKind(uList[i])));
+							unit.setKind(Unit.Kind.valueOf(extractUnitKind(uList[i]).toUpperCase()));
 							if (bioModel.getSBMLDocument().getLevel() < 3) {
 								unit.setExponent(Integer.valueOf(extractUnitExp(uList[i])).intValue());
 							}
@@ -360,7 +361,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 									port.setId(GlobalConstants.UNIT+"__"+u.getId());
 									port.setUnitRef(u.getId());
 								} else {
-									port.removeFromParentAndDelete();
+									SBMLutilities.removeFromParentAndDelete(port);
 								}
 							} else {
 								if (onPort.isSelected()) {
@@ -391,7 +392,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 						u.setName(unitName.getText().trim());
 						for (int i = 0; i < uList.length; i++) {
 							Unit unit = u.createUnit();
-							unit.setKind(libsbml.UnitKind_forName(extractUnitKind(uList[i])));
+							unit.setKind(Unit.Kind.valueOf(extractUnitKind(uList[i]).toUpperCase()));
 							if (bioModel.getSBMLDocument().getLevel() < 3) {
 								unit.setExponent(Integer.valueOf(extractUnitExp(uList[i])).intValue());
 							}
@@ -682,10 +683,10 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 						u.remove(i);
 					}
 				}
-				for (long i = 0; i < bioModel.getSBMLCompModel().getNumPorts(); i++) {
-					Port port = bioModel.getSBMLCompModel().getPort(i);
+				for (int i = 0; i < bioModel.getSBMLCompModel().getListOfPorts().size(); i++) {
+					Port port = bioModel.getSBMLCompModel().getListOfPorts().get(i);
 					if (port.isSetIdRef() && port.getIdRef().equals(tempUnit.getId())) {
-						bioModel.getSBMLCompModel().removePort(i);
+						bioModel.getSBMLCompModel().getListOfPorts().remove(i);
 						break;
 					}
 				}
@@ -764,7 +765,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 		ArrayList<String> reacParametersUsing = new ArrayList<String>();
 		for (int i = 0; i < model.getNumReactions(); i++) {
 			for (int j = 0; j < model.getReaction(i).getKineticLaw().getNumParameters(); j++) {
-				Parameter parameters = (Parameter) model.getReaction(i).getKineticLaw().getListOfParameters().get(j);
+				LocalParameter parameters = model.getReaction(i).getKineticLaw().getListOfParameters().get(j);
 				if (parameters.getUnits().equals(unit)) {
 					inUse = true;
 					reacParametersUsing.add(model.getReaction(i).getId() + "/" + parameters.getId());
@@ -1088,9 +1089,10 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 					compartment.setUnits(newId);
 				}
 				comps[i] = compartment.getId();
-				if (compartment.isSetCompartmentType()) {
-					comps[i] += " " + compartment.getCompartmentType();
-				}
+//				CompartmentType not supported in Level 3
+//				if (compartment.isSetCompartmentType()) {
+//					comps[i] += " " + compartment.getCompartmentType();
+//				}
 				if (compartment.isSetSize()) {
 					comps[i] += " " + compartment.getSize();
 				}
@@ -1107,9 +1109,10 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 				if (species.getUnits().equals(origId)) {
 					species.setUnits(newId);
 				}
-				if (species.isSetSpeciesType()) {
-					specs[i] = species.getId() + " " + species.getSpeciesType() + " " + species.getCompartment();
-				}
+//				SpeciesType not supported in Level 3
+//				if (species.isSetSpeciesType()) {
+//					specs[i] = species.getId() + " " + species.getSpeciesType() + " " + species.getCompartment();
+//				}
 				else {
 					specs[i] = species.getId() + " " + species.getCompartment();
 				}

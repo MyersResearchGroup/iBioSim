@@ -8,18 +8,22 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import org.sbml.libsbml.CompSBasePlugin;
-import org.sbml.libsbml.ReplacedBy;
-import org.sbml.libsbml.ReplacedElement;
-import org.sbml.libsbml.SBMLWriter;
-import org.sbml.libsbml.SBase;
-import org.sbml.libsbml.Species;
 
+import javax.xml.stream.XMLStreamException;
 
+import org.sbml.jsbml.ext.comp.CompConstant;
+import org.sbml.jsbml.ext.comp.CompSBasePlugin;
+import org.sbml.jsbml.ext.comp.ReplacedBy;
+import org.sbml.jsbml.ext.comp.ReplacedElement;
+import org.sbml.jsbml.SBMLException;
+import org.sbml.jsbml.SBMLWriter;
+import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.Species;
+
+import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 import biomodel.util.Utility;
-
 import sbol.SBOLSynthesisMatcher;
 
 public class SBOLSynthesizer {
@@ -284,7 +288,18 @@ public class SBOLSynthesizer {
 		BioModel subBiomodel = new BioModel(biomodel.getPath());
 		subBiomodel.load(biomodel.getPath() + biomodel.getSeparator() + sbmlFileID);
 		SBMLWriter writer = new SBMLWriter();
-		String sbmlStr = writer.writeSBMLToString(subBiomodel.getSBMLDocument());
+		String sbmlStr = null;
+		try {
+			sbmlStr = writer.writeSBMLToString(subBiomodel.getSBMLDocument());
+		}
+		catch (SBMLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		String md5 = Utility.MD5(sbmlStr);
 		
 		biomodel.addComponent(submodelID, sbmlFileID, subBiomodel.IsWithinCompartment(), 
@@ -325,7 +340,7 @@ public class SBOLSynthesizer {
 	
 	private void portMapInterSpecies(SBase species, String inputSubSpeciesID, String outputSubSpeciesID, 
 			String inputSubDNA, String outputSubDNA, String inputSubmodelID, String outputSubmodelID) {
-		CompSBasePlugin compSpecies = (CompSBasePlugin) species.getPlugin("comp");
+		CompSBasePlugin compSpecies = (CompSBasePlugin) SBMLutilities.getPlugin(CompConstant.namespaceURI, species, true);
 		ReplacedBy replacement = compSpecies.createReplacedBy();
 		ReplacedElement replacee = compSpecies.createReplacedElement();
 		if (outputSubDNA.length() == 0 && inputSubDNA.length() > 0) {
@@ -343,10 +358,10 @@ public class SBOLSynthesizer {
 	
 	private void portMapIOSpecies(SBase species, String io, String subSpeciesID, String submodelID,
 			BioModel biomodel) {
-		CompSBasePlugin compSpecies = (CompSBasePlugin) species.getPlugin("comp");
+		CompSBasePlugin compSpecies = (CompSBasePlugin) SBMLutilities.getPlugin(CompConstant.namespaceURI, species, true);
 		ReplacedBy replacement = compSpecies.createReplacedBy();
 		replacement.setSubmodelRef(submodelID);
 		replacement.setPortRef(io + "__" + subSpeciesID);
-		biomodel.createDirPort(species.getId(), io);
+		biomodel.createDirPort(SBMLutilities.getId(species), io);
 	}
 }

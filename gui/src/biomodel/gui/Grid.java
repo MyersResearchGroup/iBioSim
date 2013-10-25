@@ -10,8 +10,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.sbml.libsbml.Parameter;
-import org.sbml.libsbml.SBMLWriter;
+import javax.xml.stream.XMLStreamException;
+
+import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.SBMLException;
+import org.sbml.jsbml.SBMLWriter;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.schematic.BioGraph;
@@ -1041,7 +1044,18 @@ public class Grid {
 			BioModel compGCMFile = new BioModel(gcm.getPath());
 			compGCMFile.load(gcm.getPath() + File.separator + compGCM);
 			SBMLWriter writer = new SBMLWriter();
-			String SBMLstr = writer.writeSBMLToString(compGCMFile.getSBMLDocument());
+			String SBMLstr = null;
+			try {
+				SBMLstr = writer.writeSBMLToString(compGCMFile.getSBMLDocument());
+			}
+			catch (SBMLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch (XMLStreamException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			String md5 = Utility.MD5(SBMLstr);
 			gcm.addComponent(null, compGCM, compGCMFile.IsWithinCompartment(), compGCMFile.getCompartmentPorts(), row, col, 
 					col * (width + padding) + padding, row * (height + padding) + padding, md5);
@@ -1464,8 +1478,8 @@ public class Grid {
 		public void setComponent(String compId) {
 			
 			this.compId = compId;
-//			isCompartment = gcm.getSBMLComp().getExternalModelDefinition(
-//					gcm.getSBMLCompModel().getSubmodel(compId).getModelRef()).getAnnotation().toXMLString().contains("compartment");
+//			isCompartment = gcm.getSBMLComp().getListOfExternalModelDefinitions().get(
+//					gcm.getSBMLCompModel().getListOfSubmodels().get(compId).getModelRef()).getAnnotation().toXMLString().contains("compartment");
 		}
 		
 		/**

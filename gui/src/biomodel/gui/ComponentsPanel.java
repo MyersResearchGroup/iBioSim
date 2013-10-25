@@ -15,21 +15,22 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import org.sbml.libsbml.CompModelPlugin;
-import org.sbml.libsbml.CompSBasePlugin;
-import org.sbml.libsbml.Deletion;
-import org.sbml.libsbml.ReplacedElement;
-import org.sbml.libsbml.Replacing;
-import org.sbml.libsbml.SBase;
-import org.sbml.libsbml.SBaseList;
-import org.sbml.libsbml.Submodel;
+import org.sbml.jsbml.ext.comp.CompModelPlugin;
+import org.sbml.jsbml.ext.comp.CompSBasePlugin;
+import org.sbml.jsbml.ext.comp.Deletion;
+import org.sbml.jsbml.ext.comp.ReplacedBy;
+import org.sbml.jsbml.ext.comp.ReplacedElement;
+import org.sbml.jsbml.ext.comp.CompConstant;
+import org.sbml.jsbml.ListOf;
+import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.ext.comp.Submodel;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
+import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 import biomodel.util.Utility;
-
 import main.Gui;
 
 
@@ -528,7 +529,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 		}
 		
 
-		Submodel instance = bioModel.getSBMLCompModel().getSubmodel(subModelId);
+		Submodel instance = bioModel.getSBMLCompModel().getListOfSubmodels().get(subModelId);
 		// ID field
 		PropertyField field = new PropertyField(GlobalConstants.ID, "", null, null,
 				Utility.IDstring, paramsOnly, "default", false);
@@ -600,18 +601,18 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			portmapBox.get(i).addActionListener(this);
 		}
 		if (instance!=null) {
-			for (long j = 0; j < instance.getNumDeletions(); j++) {
-				Deletion deletion = instance.getDeletion(j);
+			for (int j = 0; j < instance.getListOfDeletions().size(); j++) {
+				Deletion deletion = instance.getListOfDeletions().get(j);
 				int l = portIds.indexOf(deletion.getPortRef());
 				if (l >= 0) {
 					portmapBox.get(l).setSelectedItem("--delete--");
 				}
 			}
 		}
-		SBaseList elements = bioModel.getSBMLDocument().getModel().getListOfAllElements();
-		for (long j = 0; j < elements.getSize(); j++) {
+		ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(bioModel.getSBMLDocument().getModel());
+		for (int j = 0; j < elements.size(); j++) {
 			SBase sbase = elements.get(j);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getPlugin("comp");
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbase, false);
 			if (sbase.getElementName().equals(GlobalConstants.ASSIGNMENT_RULE)||
 				sbase.getElementName().equals(GlobalConstants.RATE_RULE)||
 				sbase.getElementName().equals(GlobalConstants.ALGEBRAIC_RULE)||
@@ -621,7 +622,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 				}
 			} else {
 				if (sbmlSBase!=null) {
-					getPortMap(sbmlSBase,sbase.getId());
+					getPortMap(sbmlSBase,SBMLutilities.getId(sbase));
 				}
 			}
 		}
@@ -666,8 +667,8 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 	}
 	
 	private void getPortMap(CompSBasePlugin sbmlSBase,String id) {
-		for (long k = 0; k < sbmlSBase.getNumReplacedElements(); k++) {
-			ReplacedElement replacement = sbmlSBase.getReplacedElement(k);
+		for (int k = 0; k < sbmlSBase.getListOfReplacedElements().size(); k++) {
+			ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(k);
 			if (replacement.getSubmodelRef().equals(subModelId)) {
 				if (replacement.isSetPortRef()) {
 					int l = portIds.indexOf(replacement.getPortRef());
@@ -684,7 +685,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 						}
 					}
 				} else if (replacement.isSetDeletion()) {
-					Deletion deletion = bioModel.getSBMLCompModel().getSubmodel(subModelId).getDeletion(replacement.getDeletion());
+					Deletion deletion = bioModel.getSBMLCompModel().getListOfSubmodels().get(subModelId).getListOfDeletions().get(replacement.getDeletion());
 					if (deletion!=null) {
 						int l = portIds.indexOf(deletion.getPortRef());
 						if (l >= 0) {
@@ -701,7 +702,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			}
 		}
 		if (sbmlSBase.isSetReplacedBy()) {
-			Replacing replacement = sbmlSBase.getReplacedBy();
+			ReplacedBy replacement = sbmlSBase.getReplacedBy();
 			if (replacement.getSubmodelRef().equals(subModelId)) {
 				if (replacement.isSetPortRef()) {
 					int l = portIds.indexOf(replacement.getPortRef());
@@ -729,21 +730,21 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 	}
 	
 	private boolean removePortMaps(CompSBasePlugin sbmlSBase) {
-		long j = 0;
-		while (j < sbmlSBase.getNumReplacedElements()) {
-			ReplacedElement replacement = sbmlSBase.getReplacedElement(j);
+		int j = 0;
+		while (j < sbmlSBase.getListOfReplacedElements().size()) {
+			ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(j);
 			if (replacement.getSubmodelRef().equals(subModelId) && 
 					((replacement.isSetPortRef())||(replacement.isSetDeletion()))) { 
-				replacement.removeFromParentAndDelete();
+				SBMLutilities.removeFromParentAndDelete(replacement);
 				return true;
 			} else {
 				j++;
 			}
 		}
 		if (sbmlSBase.isSetReplacedBy()) {
-			Replacing replacement = sbmlSBase.getReplacedBy();
+			ReplacedBy replacement = sbmlSBase.getReplacedBy();
 			if (replacement.getSubmodelRef().equals(subModelId) && (replacement.isSetPortRef())) {
-				replacement.removeFromParentAndDelete();
+				SBMLutilities.removeFromParentAndDelete(replacement);
 				return true;
 			}
 		}
@@ -788,13 +789,13 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 //			}
 			
 			String id = fields.get(GlobalConstants.ID).getValue();
-			Submodel instance = bioModel.getSBMLCompModel().getSubmodel(subModelId);
+			Submodel instance = bioModel.getSBMLCompModel().getListOfSubmodels().get(subModelId);
 			instance.setName(fields.get(GlobalConstants.NAME).getValue());
 			if (instance != null) {
 				//long k = 0;
-				while (instance.getNumDeletions()>0) {
-					Deletion deletion = instance.getDeletion(0);
-					deletion.removeFromParentAndDelete();
+				while (instance.getListOfDeletions().size()>0) {
+					Deletion deletion = instance.getListOfDeletions().get(0);
+					SBMLutilities.removeFromParentAndDelete(deletion);
 					/*
 					if (deletion.isSetPortRef() && portIds.contains(deletion.getPortRef())) {
 					} else {
@@ -813,13 +814,13 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			} else {
 				instance.setExtentConversionFactor((String)extentConvFactorBox.getSelectedItem());
 			}
-			SBaseList elements = bioModel.getSBMLDocument().getModel().getListOfAllElements();
-			for (long j = 0; j < elements.getSize(); j++) {
+			ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(bioModel.getSBMLDocument().getModel());
+			for (int j = 0; j < elements.size(); j++) {
 				SBase sbase = elements.get(j);
-				CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getPlugin("comp");
+				CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbase, false);
 				if (sbmlSBase!=null) {
 					if (removePortMaps(sbmlSBase)) {
-						elements = bioModel.getSBMLDocument().getModel().getListOfAllElements();
+						elements = SBMLutilities.getListOfAllElements(bioModel.getSBMLDocument().getModel());
 					}
 				}
 			}
@@ -831,9 +832,9 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 				String portmapId = (String)portmapBox.get(i).getSelectedItem();
 				if (!portmapId.equals("--none--")&&!portmapId.equals("--delete--")&&!portmapId.equals("--include--")) {
 					CompSBasePlugin sbmlSBase = null;
-					SBase sbase = bioModel.getSBMLDocument().getModel().getElementBySId(portmapId);
+					SBase sbase = SBMLutilities.getElementBySId(bioModel.getSBMLDocument().getModel(), portmapId);
 					if (sbase!=null) {
-						sbmlSBase = (CompSBasePlugin)sbase.getPlugin("comp");
+						sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbase, false);
 						if (sbmlSBase != null) {
 							if (directionBox.get(i).getSelectedIndex()==0) {
 								ReplacedElement replacement = sbmlSBase.createReplacedElement();
@@ -843,14 +844,14 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 									replacement.setConversionFactor((String)convBox.get(i).getSelectedItem());
 								}
 							} else {
-								Replacing replacement = sbmlSBase.createReplacedBy();
+								ReplacedBy replacement = sbmlSBase.createReplacedBy();
 								replacement.setSubmodelRef(subId);
 								replacement.setPortRef(portId);
 							}
 						}
 					} else {
-						sbase = bioModel.getSBMLDocument().getModel().getElementByMetaId(portmapId);
-						sbmlSBase = (CompSBasePlugin)sbase.getPlugin("comp");
+						sbase = SBMLutilities.getElementByMetaId(bioModel.getSBMLDocument().getModel(), portmapId);
+						sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbase, false);
 						if (sbmlSBase != null) {
 							if (directionBox.get(i).getSelectedIndex()==0) {
 								/* TODO: Code below uses just a replacement */
@@ -862,31 +863,31 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 								}
 								String speciesId = portId.replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "");
 								CompModelPlugin subCompModel = subBioModel.getSBMLCompModel();
-								Submodel submodel = bioModel.getSBMLCompModel().getSubmodel(subId);
+								Submodel submodel = bioModel.getSBMLCompModel().getListOfSubmodels().get(subId);
 								bioModel.addImplicitDeletions(subCompModel, submodel, speciesId);
 								/* Code below using replacement and deletion */
 								/*
 								ReplacedElement replacement = sbmlSBase.createReplacedElement();
 								replacement.setSubmodelRef(subId);
-								Submodel submodel = bioModel.getSBMLCompModel().getSubmodel(subId);
+								Submodel submodel = bioModel.getSBMLCompModel().getListOfSubmodels().get(subId);
 								Deletion deletion = submodel.createDeletion();
 								deletion.setPortRef(portId);
 								deletion.setId("delete_"+portId);
 								replacement.setDeletion("delete_"+portId);
 								*/
 							} else {
-								Replacing replacement = sbmlSBase.createReplacedBy();
+								ReplacedBy replacement = sbmlSBase.createReplacedBy();
 								replacement.setSubmodelRef(subId);
 								replacement.setPortRef(portId);
 								String speciesId = portId.replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "");
 								CompModelPlugin subCompModel = subBioModel.getSBMLCompModel();
-								Submodel submodel = bioModel.getSBMLCompModel().getSubmodel(subId);
-								bioModel.addImplicitReplacedBys(subCompModel,submodel,speciesId,sbase.getId());
+								Submodel submodel = bioModel.getSBMLCompModel().getListOfSubmodels().get(subId);
+								bioModel.addImplicitReplacedBys(subCompModel,submodel,speciesId,SBMLutilities.getId(sbase));
 							}
 						}
 					}
 				} else if (portmapId.equals("--delete--")) {
-					Submodel submodel = bioModel.getSBMLCompModel().getSubmodel(subId);
+					Submodel submodel = bioModel.getSBMLCompModel().getListOfSubmodels().get(subId);
 					Deletion deletion = submodel.createDeletion();
 					deletion.setPortRef(portId);
 					String speciesId = portId.replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "");

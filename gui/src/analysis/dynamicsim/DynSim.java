@@ -10,7 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 
-import org.sbml.libsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLDocument;
 
 import biomodel.network.GeneticNetwork;
 import biomodel.parser.BioModel;
@@ -56,7 +56,7 @@ public class DynSim {
 			System.loadLibrary("sbmlj");
 			// For extra safety, check that the jar file is in the
 			// classpath.
-			Class.forName("org.sbml.libsbml.libsbml");
+			Class.forName("org.sbml.jsbml.libsbml");
 		}
 		catch (UnsatisfiedLinkError e) {
 			e.printStackTrace();

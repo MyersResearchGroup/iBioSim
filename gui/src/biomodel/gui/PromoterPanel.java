@@ -12,10 +12,10 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import org.sbml.libsbml.LocalParameter;
-import org.sbml.libsbml.Model;
-import org.sbml.libsbml.Reaction;
-import org.sbml.libsbml.Species;
+import org.sbml.jsbml.LocalParameter;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.Species;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
@@ -399,14 +399,14 @@ public class PromoterPanel extends JPanel {
 				promoter.setInitialAmount(Double.parseDouble(f.getValue()));
 			}
 			String kaStr = null;
-			production.getKineticLaw().removeLocalParameter(GlobalConstants.STOICHIOMETRY_STRING);
-			production.getKineticLaw().removeLocalParameter(GlobalConstants.OCR_STRING);
-			production.getKineticLaw().removeLocalParameter(GlobalConstants.KBASAL_STRING);
-			production.getKineticLaw().removeLocalParameter(GlobalConstants.ACTIVATED_STRING);
-			production.getKineticLaw().removeLocalParameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING);
-			production.getKineticLaw().removeLocalParameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING);
-			production.getKineticLaw().removeLocalParameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING);
-			production.getKineticLaw().removeLocalParameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING);
+			production.getKineticLaw().getListOfLocalParameters().remove(GlobalConstants.STOICHIOMETRY_STRING);
+			production.getKineticLaw().getListOfLocalParameters().remove(GlobalConstants.OCR_STRING);
+			production.getKineticLaw().getListOfLocalParameters().remove(GlobalConstants.KBASAL_STRING);
+			production.getKineticLaw().getListOfLocalParameters().remove(GlobalConstants.ACTIVATED_STRING);
+			production.getKineticLaw().getListOfLocalParameters().remove(GlobalConstants.FORWARD_RNAP_BINDING_STRING);
+			production.getKineticLaw().getListOfLocalParameters().remove(GlobalConstants.REVERSE_RNAP_BINDING_STRING);
+			production.getKineticLaw().getListOfLocalParameters().remove(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING);
+			production.getKineticLaw().getListOfLocalParameters().remove(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING);
 			f = fields.get(GlobalConstants.ACTIVATED_STRING);
 			if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
 				kaStr = f.getValue();

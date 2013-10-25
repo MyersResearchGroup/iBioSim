@@ -10,9 +10,9 @@ import java.util.HashMap;
 import java.util.Properties;
 
 
-import org.sbml.libsbml.Reaction;
-import org.sbml.libsbml.KineticLaw;
-import org.sbml.libsbml.SBMLDocument;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.KineticLaw;
+import org.sbml.jsbml.SBMLDocument;
 
 import biomodel.network.AbstractionEngine;
 import biomodel.network.BaseSpecies;

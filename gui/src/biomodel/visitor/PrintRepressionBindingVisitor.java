@@ -7,7 +7,9 @@ import java.util.HashMap;
 
 
 
-import org.sbml.libsbml.SBMLDocument;
+
+import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.text.parser.ParseException;
 
 import biomodel.network.BaseSpecies;
 import biomodel.network.ComplexSpecies;
@@ -67,13 +69,13 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		r.setFast(false);
 		kl = r.createKineticLaw();
 		if (kf >= 0) {
-			kl.addParameter(Utility.Parameter(GlobalConstants.FORWARD_KREP_STRING, kf, GeneticNetwork.getMoleTimeParameter(2)));
-			kl.addParameter(Utility.Parameter(GlobalConstants.REVERSE_KREP_STRING, kr, GeneticNetwork.getMoleTimeParameter(1)));
+			kl.addLocalParameter(Utility.Parameter(GlobalConstants.FORWARD_KREP_STRING, kf, GeneticNetwork.getMoleTimeParameter(2)));
+			kl.addLocalParameter(Utility.Parameter(GlobalConstants.REVERSE_KREP_STRING, kr, GeneticNetwork.getMoleTimeParameter(1)));
 		}
 		if ((coop > 1)&&(krep >= 0))
-			kl.addParameter(Utility.Parameter(krepString, krep,	GeneticNetwork.getMoleParameter(2)));
+			kl.addLocalParameter(Utility.Parameter(krepString, krep,	GeneticNetwork.getMoleParameter(2)));
 		if (coop >= 0)
-			kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
+			kl.addLocalParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		else 
 			coop = document.getModel().getParameter(coopString).getValue();
 		String repExpression = "";
@@ -85,7 +87,13 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 			repExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		kl.setFormula(generateLaw(repExpression));
+		try {
+			kl.setFormula(generateLaw(repExpression));
+		}
+		catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Utility.addReaction(document, r);
 	}
 	
@@ -100,13 +108,13 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		r.setFast(false);
 		kl = r.createKineticLaw();
 		if (kf >= 0) {
-			kl.addParameter(Utility.Parameter(GlobalConstants.FORWARD_KREP_STRING, kf, GeneticNetwork.getMoleTimeParameter(2)));
-			kl.addParameter(Utility.Parameter(GlobalConstants.REVERSE_KREP_STRING, kr, GeneticNetwork.getMoleTimeParameter(1)));
+			kl.addLocalParameter(Utility.Parameter(GlobalConstants.FORWARD_KREP_STRING, kf, GeneticNetwork.getMoleTimeParameter(2)));
+			kl.addLocalParameter(Utility.Parameter(GlobalConstants.REVERSE_KREP_STRING, kr, GeneticNetwork.getMoleTimeParameter(1)));
 		}
 		if ((coop > 1)&&(krep >= 0))
-			kl.addParameter(Utility.Parameter(krepString, krep,	GeneticNetwork.getMoleParameter(2)));
+			kl.addLocalParameter(Utility.Parameter(krepString, krep,	GeneticNetwork.getMoleParameter(2)));
 		if (coop >= 0)
-			kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
+			kl.addLocalParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		else 
 			coop = document.getModel().getParameter(coopString).getValue();
 		String repExpression = "";
@@ -117,7 +125,13 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 			repExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		kl.setFormula(generateLaw(repExpression));
+		try {
+			kl.setFormula(generateLaw(repExpression));
+		}
+		catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Utility.addReaction(document, r);
 	}
 
@@ -132,13 +146,13 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		r.setFast(false);
 		kl = r.createKineticLaw();
 		if (kf >= 0) {
-			kl.addParameter(Utility.Parameter(GlobalConstants.FORWARD_KREP_STRING, kf, GeneticNetwork.getMoleTimeParameter(2)));
-			kl.addParameter(Utility.Parameter(GlobalConstants.REVERSE_KREP_STRING, kr, GeneticNetwork.getMoleTimeParameter(1)));
+			kl.addLocalParameter(Utility.Parameter(GlobalConstants.FORWARD_KREP_STRING, kf, GeneticNetwork.getMoleTimeParameter(2)));
+			kl.addLocalParameter(Utility.Parameter(GlobalConstants.REVERSE_KREP_STRING, kr, GeneticNetwork.getMoleTimeParameter(1)));
 		}
 		if ((coop > 1)&&(krep >= 0))
-			kl.addParameter(Utility.Parameter(krepString, krep,	GeneticNetwork.getMoleParameter(2)));
+			kl.addLocalParameter(Utility.Parameter(krepString, krep,	GeneticNetwork.getMoleParameter(2)));
 		if (coop >= 0)
-			kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
+			kl.addLocalParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		else 
 			coop = document.getModel().getParameter(coopString).getValue();
 		String repExpression = "";
@@ -149,7 +163,13 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 			repExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		kl.setFormula(generateLaw(repExpression));
+		try {
+			kl.setFormula(generateLaw(repExpression));
+		}
+		catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Utility.addReaction(document, r);
 	}
 
@@ -164,13 +184,13 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		r.setFast(false);
 		kl = r.createKineticLaw();
 		if (kf >= 0) {
-			kl.addParameter(Utility.Parameter(GlobalConstants.FORWARD_KREP_STRING, kf, GeneticNetwork.getMoleTimeParameter(2)));
-			kl.addParameter(Utility.Parameter(GlobalConstants.REVERSE_KREP_STRING, kr, GeneticNetwork.getMoleTimeParameter(1)));
+			kl.addLocalParameter(Utility.Parameter(GlobalConstants.FORWARD_KREP_STRING, kf, GeneticNetwork.getMoleTimeParameter(2)));
+			kl.addLocalParameter(Utility.Parameter(GlobalConstants.REVERSE_KREP_STRING, kr, GeneticNetwork.getMoleTimeParameter(1)));
 		}
 		if ((coop > 1)&&(krep >= 0))
-			kl.addParameter(Utility.Parameter(krepString, krep,	GeneticNetwork.getMoleParameter(2)));
+			kl.addLocalParameter(Utility.Parameter(krepString, krep,	GeneticNetwork.getMoleParameter(2)));
 		if (coop >= 0)
-			kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
+			kl.addLocalParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		else 
 			coop = document.getModel().getParameter(coopString).getValue();
 		String repExpression = "";
@@ -181,7 +201,13 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 			repExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		kl.setFormula(generateLaw(repExpression));
+		try {
+			kl.setFormula(generateLaw(repExpression));
+		}
+		catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Utility.addReaction(document, r);
 	}
 
@@ -196,13 +222,13 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		r.setFast(false);
 		kl = r.createKineticLaw();
 		if (kf >= 0) {
-			kl.addParameter(Utility.Parameter(GlobalConstants.FORWARD_KREP_STRING, kf, GeneticNetwork.getMoleTimeParameter(2)));
-			kl.addParameter(Utility.Parameter(GlobalConstants.REVERSE_KREP_STRING, kr, GeneticNetwork.getMoleTimeParameter(1)));
+			kl.addLocalParameter(Utility.Parameter(GlobalConstants.FORWARD_KREP_STRING, kf, GeneticNetwork.getMoleTimeParameter(2)));
+			kl.addLocalParameter(Utility.Parameter(GlobalConstants.REVERSE_KREP_STRING, kr, GeneticNetwork.getMoleTimeParameter(1)));
 		}
 		if ((coop > 1)&&(krep >= 0))
-			kl.addParameter(Utility.Parameter(krepString, krep,	GeneticNetwork.getMoleParameter(2)));
+			kl.addLocalParameter(Utility.Parameter(krepString, krep,	GeneticNetwork.getMoleParameter(2)));
 		if (coop >= 0)
-			kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
+			kl.addLocalParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		else 
 			coop = document.getModel().getParameter(coopString).getValue();
 		String repExpression = "";
@@ -213,7 +239,13 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 			repExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		kl.setFormula(generateLaw(repExpression));
+		try {
+			kl.setFormula(generateLaw(repExpression));
+		}
+		catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Utility.addReaction(document, r);
 	}
 	
@@ -228,13 +260,13 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		r.setFast(false);
 		kl = r.createKineticLaw();
 		if (kf >= 0) {
-			kl.addParameter(Utility.Parameter(GlobalConstants.FORWARD_KREP_STRING, kf, GeneticNetwork.getMoleTimeParameter(2)));
-			kl.addParameter(Utility.Parameter(GlobalConstants.REVERSE_KREP_STRING, kr, GeneticNetwork.getMoleTimeParameter(1)));
+			kl.addLocalParameter(Utility.Parameter(GlobalConstants.FORWARD_KREP_STRING, kf, GeneticNetwork.getMoleTimeParameter(2)));
+			kl.addLocalParameter(Utility.Parameter(GlobalConstants.REVERSE_KREP_STRING, kr, GeneticNetwork.getMoleTimeParameter(1)));
 		}
 		if ((coop > 1)&&(krep >= 0))
-			kl.addParameter(Utility.Parameter(krepString, krep,	GeneticNetwork.getMoleParameter(2)));
+			kl.addLocalParameter(Utility.Parameter(krepString, krep,	GeneticNetwork.getMoleParameter(2)));
 		if (coop >= 0)
-			kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
+			kl.addLocalParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		else 
 			coop = document.getModel().getParameter(coopString).getValue();
 		String repExpression = "";
@@ -245,7 +277,13 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 			repExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		kl.setFormula(generateLaw(repExpression));
+		try {
+			kl.setFormula(generateLaw(repExpression));
+		}
+		catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Utility.addReaction(document, r);
 	}	
 	

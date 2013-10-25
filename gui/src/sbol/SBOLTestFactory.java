@@ -9,8 +9,8 @@ import java.util.Random;
 import java.util.Set;
 
 
-import org.sbml.libsbml.Reaction;
-import org.sbml.libsbml.Species;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.Species;
 import org.sbolstandard.core.DnaComponent;
 import org.sbolstandard.core.DnaSequence;
 import org.sbolstandard.core.impl.DnaComponentImpl;

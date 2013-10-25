@@ -6,7 +6,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -27,7 +26,6 @@ import javax.xml.stream.XMLStreamException;
 
 import flanagan.math.Fmath;
 import flanagan.math.PsRandom;
-
 
 import org.sbml.jsbml.ext.SBasePlugin;
 import org.sbml.jsbml.ext.comp.Deletion;
@@ -71,7 +69,6 @@ import main.Gui;
 import main.util.MutableBoolean;
 import main.util.dataparser.DataParser;
 import main.util.dataparser.TSDParser;
-
 import odk.lang.FastMath;
 
 
@@ -79,6 +76,7 @@ import com.sun.org.apache.xpath.internal.operations.Variable;
 
 import analysis.dynamicsim.Simulator.StringDoublePair;
 import analysis.dynamicsim.Simulator.StringStringPair;
+import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 
@@ -440,7 +438,7 @@ public abstract class HierarchicalSimulator {
 	protected long setupSubmodels(SBMLDocument document) throws XMLStreamException, IOException
 	{
 		String path = getPath(outputDirectory);
-		CompModelPlugin sbmlCompModel = (CompModelPlugin)document.getModel().getExtension(CompConstant.namespaceURI);
+		CompModelPlugin sbmlCompModel = (CompModelPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, document.getModel(), false);
 		//CompSBMLDocumentPlugin sbmlComp = (CompSBMLDocumentPlugin)document.getExtension(CompConstant.namespaceURI);
 		//submodels = new ModelState[(int)sbmlCompModel.getListOfSubmodels().size()];
 
@@ -453,6 +451,19 @@ public abstract class HierarchicalSimulator {
 		submodels = new HashMap<String, ModelState>((int)sbmlCompModel.getListOfSubmodels().size());
 		SBMLReader reader = new SBMLReader();
 
+		/*
+		for (Submodel submodel : sbmlCompModel.getListOfSubmodels()) {
+			BioModel subBioModel = new BioModel(path);
+			String extModelFile = sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef())
+					.getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
+			subBioModel.load(path + extModelFile);
+
+			performDeletions(subBioModel, submodel);
+			submodels[i] = new ModelState(subBioModel.getSBMLDocument().getModel(), false, submodel.getId());
+			IDtoIndex.put(submodel.getId(), i);
+		}
+		 */
+
 		int index = 0;
 
 		for (Submodel submodel : sbmlCompModel.getListOfSubmodels()) {
@@ -462,9 +473,9 @@ public abstract class HierarchicalSimulator {
 			performDeletions(model, submodel);
 			if(isGrid)
 			{
-				String annotation = submodel.getAnnotationString();
+				String annotation = submodel.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
 				int copies = getArraySize(annotation);
-				LinkedList<String> ids = getArrayIDs(document.getModel().getParameter(submodel.getModelRef()+ "__locations").getAnnotationString());
+				LinkedList<String> ids = getArrayIDs(document.getModel().getParameter(submodel.getModelRef()+ "__locations").getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim());
 				for(int i = 0; i < copies; i++)
 				{
 					submodels.put(ids.getFirst(), new ModelState(model, 0, ids.getFirst()));
@@ -538,7 +549,7 @@ public abstract class HierarchicalSimulator {
 	
 		for (int i = 0; i < topmodel.numSpecies; i++) {
 			Species species = sbml.getModel().getSpecies(i);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)species.getExtension(CompConstant.namespaceURI);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, species, false);
 
 			String s = species.getId();
 			if(sbmlSBase != null)
@@ -593,7 +604,7 @@ public abstract class HierarchicalSimulator {
 		/*
 		for (int i = 0; i < topmodel.numParameters; i++) {
 			Parameter parameter = sbml.getModel().getParameter(i);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)parameter.getExtension(CompConstant.namespaceURI);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, parameter, false);
 
 			String s = parameter.getId();
 			if(sbmlSBase != null){
@@ -635,7 +646,7 @@ public abstract class HierarchicalSimulator {
 		}
 		for (int i = 0; i < topmodel.model.getCompartmentCount(); i++) {
 			Compartment compartment = sbml.getModel().getCompartment(i);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)compartment.getExtension(CompConstant.namespaceURI);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, compartment, false);
 
 			String c = compartment.getId();
 			if(sbmlSBase != null ){
@@ -676,7 +687,7 @@ public abstract class HierarchicalSimulator {
 		}
 		for (int i = 0; i < topmodel.numReactions; i++) {
 			Reaction reaction = sbml.getModel().getReaction(i);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)reaction.getExtension(CompConstant.namespaceURI);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, reaction, false);
 
 			String r = reaction.getId();
 			if(sbmlSBase != null )
@@ -917,8 +928,7 @@ public abstract class HierarchicalSimulator {
 	private void performDeletions(Model subModel, Submodel instance) {
 
 		//CompModelPlugin sbmlCompModel = (CompModelPlugin)topmodel.model.getModel().getExtension(CompConstant.namespaceURI);
-		CompModelPlugin sbmlCompModel = (CompModelPlugin)subModel.getModel().getExtension(CompConstant.namespaceURI);
-
+		CompModelPlugin sbmlCompModel = (CompModelPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, subModel.getModel(), false);
 		if (instance == null)
 			return;
 
@@ -2603,7 +2613,7 @@ public abstract class HierarchicalSimulator {
 			//alter the local parameter ID so that it goes to the local and not global value
 			if (localParameter.getId() != parameterID) {
 				localParameter.setId(parameterID);
-				localParameter.setMetaId(parameterID);
+				SBMLutilities.setMetaId(localParameter, parameterID);
 			}
 			alterLocalParameter(kineticLaw.getMath(), reaction, oldParameterID, parameterID);
 		}

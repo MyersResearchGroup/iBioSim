@@ -5,8 +5,9 @@ import java.util.Properties;
 
 import main.Gui;
 
-import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.Species;
+import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.Species;
+import org.sbml.jsbml.text.parser.ParseException;
 
 import biomodel.network.BaseSpecies;
 import biomodel.network.ComplexSpecies;
@@ -83,7 +84,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		s.setHasOnlySubstanceUnits(true);
 		Utility.addSpecies(document, s);
 		
-		r = new org.sbml.libsbml.Reaction(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+		r = new org.sbml.jsbml.Reaction(Gui.SBML_LEVEL, Gui.SBML_VERSION);
 		r.setId("Constitutive_production_" + s.getId());
 		r.setCompartment(compartment);
 		r.addProduct(Utility.SpeciesReference(s.getId(), specie.getnp()));
@@ -91,8 +92,14 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		r.setReversible(false);
 		r.setFast(false);
 		kl = r.createKineticLaw();
-		kl.addParameter(Utility.Parameter("kp", specie.getKo()));
-		kl.setFormula("kp");
+		kl.addLocalParameter(Utility.Parameter("kp", specie.getKo()));
+		try {
+			kl.setFormula("kp");
+		}
+		catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Utility.addReaction(document, r);		
 	}
 	
@@ -115,7 +122,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		s.setHasOnlySubstanceUnits(true);
 		Utility.addSpecies(document, s);
 		
-		r = new org.sbml.libsbml.Reaction(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+		r = new org.sbml.jsbml.Reaction(Gui.SBML_LEVEL, Gui.SBML_VERSION);
 		r.setId("Constitutive_production_" + s.getId());
 		r.setCompartment(compartment);
 		r.addProduct(Utility.SpeciesReference(s.getId(), Double.parseDouble(parameters.getParameter(GlobalConstants.STOICHIOMETRY_STRING))));
@@ -123,9 +130,15 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		r.setReversible(false);
 		r.setFast(false);
 		kl = r.createKineticLaw();
-		kl.addParameter(Utility.Parameter("kp", Double.parseDouble(parameters
+		kl.addLocalParameter(Utility.Parameter("kp", Double.parseDouble(parameters
 					.getParameter((GlobalConstants.OCR_STRING)))));	
-		kl.setFormula("kp");
+		try {
+			kl.setFormula("kp");
+		}
+		catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Utility.addReaction(document, r);	
 	}
 	

@@ -9,7 +9,7 @@ import java.util.prefs.Preferences;
 
 import javax.swing.*;
 
-import org.sbml.libsbml.Model;
+import org.sbml.jsbml.Model;
 
 
 import analysis.dynamicsim.DynamicSimulation;

@@ -11,10 +11,10 @@ import java.io.FileOutputStream;
 import java.lang.reflect.Field;
 import java.util.Properties;
 
-import org.sbml.libsbml.KineticLaw;
-import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.SBMLReader;
-import org.sbml.libsbml.libsbml;
+import org.sbml.jsbml.KineticLaw;
+import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLReader;
+import org.sbml.jsbml.libsbml;
 
 import junit.framework.TestCase;
 

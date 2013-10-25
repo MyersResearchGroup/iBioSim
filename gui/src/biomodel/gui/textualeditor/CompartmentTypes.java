@@ -23,10 +23,10 @@ import main.Gui;
 import main.util.MutableBoolean;
 import main.util.Utility;
 
-import org.sbml.libsbml.Compartment;
-import org.sbml.libsbml.CompartmentType;
-import org.sbml.libsbml.ListOf;
-import org.sbml.libsbml.Model;
+import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.CompartmentType;
+import org.sbml.jsbml.ListOf;
+import org.sbml.jsbml.Model;
 
 import biomodel.parser.BioModel;
 

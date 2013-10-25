@@ -12,7 +12,7 @@ import javax.swing.JOptionPane;
 
 import main.Gui;
 
-import org.sbml.libsbml.Model;
+import org.sbml.jsbml.Model;
 import org.sbolstandard.core.DnaComponent;
 import org.sbolstandard.core.SequenceAnnotation;
 import org.sbolstandard.core.util.SBOLDeepEquality;

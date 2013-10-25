@@ -1,5 +1,7 @@
 package lpn.parser;
 
+import java.io.FileNotFoundException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -7,33 +9,40 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
+import javax.xml.stream.XMLStreamException;
+
+
+
 
 //import org.apache.batik.svggen.font.table.Program;
-import org.sbml.libsbml.Compartment;
-import org.sbml.libsbml.Constraint;
-//import org.sbml.libsbml.Delay;
-import org.sbml.libsbml.ASTNode;
-import org.sbml.libsbml.AssignmentRule;
-import org.sbml.libsbml.Event;
-import org.sbml.libsbml.EventAssignment;
-import org.sbml.libsbml.FunctionDefinition;
-import org.sbml.libsbml.InitialAssignment;
-import org.sbml.libsbml.KineticLaw;
-import org.sbml.libsbml.Model;
-import org.sbml.libsbml.ModifierSpeciesReference;
-import org.sbml.libsbml.Parameter;
-import org.sbml.libsbml.RateRule;
-import org.sbml.libsbml.Reaction;
-import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.SBMLWriter;
-import org.sbml.libsbml.Species;
-import org.sbml.libsbml.SpeciesReference;
-import org.sbml.libsbml.Trigger;
-import org.sbml.libsbml.libsbml;
+import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.Constraint;
+//import org.sbml.jsbml.Delay;
+import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.AssignmentRule;
+import org.sbml.jsbml.Event;
+import org.sbml.jsbml.EventAssignment;
+import org.sbml.jsbml.FunctionDefinition;
+import org.sbml.jsbml.InitialAssignment;
+import org.sbml.jsbml.JSBML;
+import org.sbml.jsbml.KineticLaw;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.ModifierSpeciesReference;
+import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.RateRule;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLException;
+import org.sbml.jsbml.SBMLWriter;
+import org.sbml.jsbml.Species;
+import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.Trigger;
+import org.sbml.jsbml.text.parser.FormulaParserLL3;
+import org.sbml.jsbml.text.parser.IFormulaParser;
+import org.sbml.jsbml.text.parser.ParseException;
 
 import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.util.GlobalConstants;
-
 import lpn.parser.ExprTree;
 import main.Gui;
 
@@ -310,9 +319,21 @@ public class Translator {
 
 				// create exp for KineticLaw
 				if (lhpn.getTransition(t).isPersistent())
-					rateReaction.setFormula("(" + modifierStr + Enabling + "*" + lhpn.getTransitionRateTree(t).toString("SBML") + ")"); 
+					try {
+						rateReaction.setFormula("(" + modifierStr + Enabling + "*" + lhpn.getTransitionRateTree(t).toString("SBML") + ")");
+					}
+					catch (ParseException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				else
-					rateReaction.setFormula("(" + reactantStr + Enabling + "*" + lhpn.getTransitionRateTree(t).toString("SBML") + ")"); 
+					try {
+						rateReaction.setFormula("(" + reactantStr + Enabling + "*" + lhpn.getTransitionRateTree(t).toString("SBML") + ")");
+					}
+					catch (ParseException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} 
 
 				Event e = m.createEvent();
 				//					e.setId("event" + counter);		
@@ -417,7 +438,7 @@ public class Translator {
 					assign6.setVariable(failVar.getId());
 					assign6.setMath(SBMLutilities.myParseFormula("1"));
 					Constraint failVarConstraint = m.createConstraint();
-					failVarConstraint.setMetaId("failtrans_" + t);
+					SBMLutilities.setMetaId(failVarConstraint, "failtrans_" + t);
 					failVarConstraint.setMath(SBMLutilities.myParseFormula("eq(" + failVar.getId() + ", 0)"));
 				}
 			}
@@ -693,7 +714,7 @@ public class Translator {
 					assign6.setVariable(failVar.getId());
 					assign6.setMath(SBMLutilities.myParseFormula("1"));
 					Constraint failVarConstraint = m.createConstraint();
-					failVarConstraint.setMetaId("failtrans_" + t);
+					SBMLutilities.setMetaId(failVarConstraint, "failtrans_" + t);
 					failVarConstraint.setMath(SBMLutilities.myParseFormula("eq(" + failVar.getId() + ", 0)"));
 				}
 			}
@@ -826,7 +847,7 @@ public class Translator {
 			rateVar.setConstant(false);
 			rateVar.setId(v + "_" + GlobalConstants.RATE);
 			RateRule rateRule = m.createRateRule();
-			rateRule.setMetaId(GlobalConstants.RULE+"_"+v+"_"+GlobalConstants.RATE);
+			SBMLutilities.setMetaId(rateRule, GlobalConstants.RULE+"_"+v+"_"+GlobalConstants.RATE);
 			rateRule.setVariable(v);
 			rateRule.setMath(SBMLutilities.myParseFormula(rateVar.getId()));
 			String initRate= lhpn.getInitialRate(v);
@@ -914,7 +935,7 @@ public class Translator {
 			else { // transition is persistent
 				// Create a rule for the persistent transition t. 
 				AssignmentRule rulePersisTrigg = m.createAssignmentRule();
-				rulePersisTrigg.setMetaId(GlobalConstants.TRIGGER+"_"+GlobalConstants.RULE+"_"+t);
+				SBMLutilities.setMetaId(rulePersisTrigg, GlobalConstants.TRIGGER+"_"+GlobalConstants.RULE+"_"+t);
 				String rulePersisTriggName = GlobalConstants.TRIGGER + "_" + t;
 				// Create a parameter (id = rulePersisTriggName). 
 				Parameter rulePersisParam = m.createParameter();
@@ -1121,7 +1142,7 @@ public class Translator {
 				assign6.setVariable(failVar.getId());
 				assign6.setMath(SBMLutilities.myParseFormula("1"));
 				Constraint failVarConstraint = m.createConstraint();
-				failVarConstraint.setMetaId(GlobalConstants.FAIL_TRANSITION);
+				SBMLutilities.setMetaId(failVarConstraint, GlobalConstants.FAIL_TRANSITION);
 				failVarConstraint.setMath(SBMLutilities.myParseFormula("eq(" + failVar.getId() + ", 0)"));
 			}
 		}
@@ -1135,14 +1156,39 @@ public class Translator {
 		FunctionDefinition f = model.createFunctionDefinition();
 		f.setId(id);
 		f.setName(name);
-		f.setMath(libsbml.parseFormula(formula));
+		try {
+			IFormulaParser parser = new FormulaParserLL3(new StringReader(""));
+			f.setMath(ASTNode.parseFormula(formula, parser));
+		}
+		catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
 
 	public void outputSBML() {
 		SBMLutilities.pruneUnusedSpecialFunctions(document);
 		SBMLWriter writer = new SBMLWriter();
-		writer.writeSBML(document, filename);
+		try {
+			writer.writeSBMLToFile(document, filename);
+		}
+		catch (SBMLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void setFilename(String filename) {
@@ -1165,8 +1211,8 @@ public class Translator {
 				// probpropParts=[probpropLeft, probpropRight, lowerBound, upperBound]
 				Constraint constraintFail = m.createConstraint();	
 				Constraint constraintSucc = m.createConstraint();
-				constraintFail.setMetaId("Fail");
-				constraintSucc.setMetaId("Success");
+				SBMLutilities.setMetaId(constraintFail, "Fail");
+				SBMLutilities.setMetaId(constraintSucc, "Success");
 				ExprTree probpropLeftTree = null;
 				ExprTree probpropRightTree = null;
 				ExprTree lowerBoundTree = null;

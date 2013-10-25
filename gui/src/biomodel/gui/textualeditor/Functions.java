@@ -3,10 +3,12 @@ package biomodel.gui.textualeditor;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.StringReader;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -23,11 +25,15 @@ import javax.swing.ListSelectionModel;
 import main.Gui;
 import main.util.Utility;
 
-import org.sbml.libsbml.FunctionDefinition;
-import org.sbml.libsbml.ListOf;
-import org.sbml.libsbml.Model;
-import org.sbml.libsbml.Port;
-import org.sbml.libsbml.libsbml;
+import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.FunctionDefinition;
+import org.sbml.jsbml.ListOf;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.ext.comp.Port;
+import org.sbml.jsbml.text.parser.FormulaParserLL3;
+import org.sbml.jsbml.text.parser.IFormulaParser;
+import org.sbml.jsbml.text.parser.ParseException;
+import org.sbml.jsbml.JSBML;
 
 import biomodel.gui.ModelEditor;
 import biomodel.parser.BioModel;
@@ -80,7 +86,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 			FunctionDefinition function = (FunctionDefinition) listOfFunctions.get(i);
 			if (SBMLutilities.isSpecialFunction(function.getId())) continue;
 			funcs[count] = function.getId() + " ( ";
-			for (long j = 0; j < function.getNumArguments(); j++) {
+			for (int j = 0; j < function.getNumArguments(); j++) {
 				if (j != 0) {
 					funcs[count] += ", ";
 				}
@@ -203,7 +209,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 					onPort.setSelected(false);
 				}
 				String argStr = "";
-				for (long j = 0; j < function.getNumArguments(); j++) {
+				for (int j = 0; j < function.getNumArguments(); j++) {
 					if (j != 0) {
 						argStr += ", ";
 					}
@@ -252,42 +258,55 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 				if (eqn.getText().trim().equals("")) {
 					JOptionPane.showMessageDialog(Gui.frame, "Formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 					error = true;
-				}
-				else if (args.getText().trim().equals("") && libsbml.parseFormula("lambda(" + eqn.getText().trim() + ")") == null) {
-					JOptionPane.showMessageDialog(Gui.frame, "Formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
-					error = true;
-				}
-				else if (!args.getText().trim().equals("")
-						&& libsbml.parseFormula("lambda(" + args.getText().trim() + "," + eqn.getText().trim() + ")") == null) {
-					JOptionPane.showMessageDialog(Gui.frame, "Formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
-					error = true;
-				}
-				else {
-					ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(bioModel.getSBMLDocument(), eqn.getText().trim(), args.getText().trim(), true);
-					if (invalidVars.size() > 0) {
-						String invalid = "";
-						for (int i = 0; i < invalidVars.size(); i++) {
-							if (i == invalidVars.size() - 1) {
-								invalid += invalidVars.get(i);
-							}
-							else {
-								invalid += invalidVars.get(i) + "\n";
+				} else
+					try {
+						IFormulaParser parser = new FormulaParserLL3(new StringReader(""));
+						if (args.getText().trim().equals("") && ASTNode.parseFormula("lambda(" + eqn.getText().trim() + ")", parser) == null) {
+							JOptionPane.showMessageDialog(Gui.frame, "Formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
+							error = true;
+						}
+						else if (!args.getText().trim().equals("")
+								&& JSBML.parseFormula("lambda(" + args.getText().trim() + "," + eqn.getText().trim() + ")") == null) {
+							JOptionPane.showMessageDialog(Gui.frame, "Formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
+							error = true;
+						}
+						else {
+							ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(bioModel.getSBMLDocument(), eqn.getText().trim(), args.getText().trim(), true);
+							if (invalidVars.size() > 0) {
+								String invalid = "";
+								for (int i = 0; i < invalidVars.size(); i++) {
+									if (i == invalidVars.size() - 1) {
+										invalid += invalidVars.get(i);
+									}
+									else {
+										invalid += invalidVars.get(i) + "\n";
+									}
+								}
+								String message;
+								message = "Function can only contain the arguments or other function calls.\n\n" + "Illegal variables:\n" + invalid;
+								JTextArea messageArea = new JTextArea(message);
+								messageArea.setLineWrap(true);
+								messageArea.setWrapStyleWord(true);
+								messageArea.setEditable(false);
+								JScrollPane scrolls = new JScrollPane();
+								scrolls.setMinimumSize(new Dimension(300, 300));
+								scrolls.setPreferredSize(new Dimension(300, 300));
+								scrolls.setViewportView(messageArea);
+								JOptionPane.showMessageDialog(Gui.frame, scrolls, "Illegal Variables", JOptionPane.ERROR_MESSAGE);
+								error = true;
 							}
 						}
-						String message;
-						message = "Function can only contain the arguments or other function calls.\n\n" + "Illegal variables:\n" + invalid;
-						JTextArea messageArea = new JTextArea(message);
-						messageArea.setLineWrap(true);
-						messageArea.setWrapStyleWord(true);
-						messageArea.setEditable(false);
-						JScrollPane scrolls = new JScrollPane();
-						scrolls.setMinimumSize(new Dimension(300, 300));
-						scrolls.setPreferredSize(new Dimension(300, 300));
-						scrolls.setViewportView(messageArea);
-						JOptionPane.showMessageDialog(Gui.frame, scrolls, "Illegal Variables", JOptionPane.ERROR_MESSAGE);
-						error = true;
+					} catch (HeadlessException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
-				}
+					catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 			}
 			if (!error) {
 				error = SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), SBMLutilities.myParseFormula(eqn.getText().trim()));
@@ -307,10 +326,20 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 					f.setId(funcID.getText().trim());
 					f.setName(funcName.getText().trim());
 					if (args.getText().trim().equals("")) {
-						f.setMath(libsbml.parseFormula("lambda(" + eqn.getText().trim() + ")"));
+						try {
+							f.setMath(JSBML.parseFormula("lambda(" + eqn.getText().trim() + ")"));
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 					else {
-						f.setMath(libsbml.parseFormula("lambda(" + args.getText().trim() + "," + eqn.getText().trim() + ")"));
+						try {
+							f.setMath(JSBML.parseFormula("lambda(" + args.getText().trim() + "," + eqn.getText().trim() + ")"));
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 					String oldVal = funcs[index];
 					funcs[index] = funcID.getText().trim() + " ( " + args.getText().trim() + " ) = " + eqn.getText().trim();
@@ -328,7 +357,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 							port.setId(GlobalConstants.FUNCTION+"__"+f.getId());
 							port.setIdRef(f.getId());
 						} else {
-							port.removeFromParentAndDelete();
+							SBMLutilities.removeFromParentAndDelete(port);
 						}
 					} else {
 						if (onPort.isSelected()) {
@@ -373,10 +402,20 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 						f.setId(funcID.getText().trim());
 						f.setName(funcName.getText().trim());
 						if (args.getText().trim().equals("")) {
-							f.setMath(libsbml.parseFormula("lambda(" + eqn.getText().trim() + ")"));
+							try {
+								f.setMath(JSBML.parseFormula("lambda(" + eqn.getText().trim() + ")"));
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 						}
 						else {
-							f.setMath(libsbml.parseFormula("lambda(" + args.getText().trim() + "," + eqn.getText().trim() + ")"));
+							try {
+								f.setMath(JSBML.parseFormula("lambda(" + args.getText().trim() + "," + eqn.getText().trim() + ")"));
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 						}
 						if (onPort.isSelected()) {
 							Port port = bioModel.getSBMLCompModel().createPort();
@@ -420,10 +459,10 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 						f.remove(i);
 					}
 				}
-				for (long i = 0; i < bioModel.getSBMLCompModel().getNumPorts(); i++) {
-					Port port = bioModel.getSBMLCompModel().getPort(i);
+				for (int i = 0; i < bioModel.getSBMLCompModel().getListOfPorts().size(); i++) {
+					Port port = bioModel.getSBMLCompModel().getListOfPorts().get(i);
 					if (port.isSetIdRef() && port.getIdRef().equals(tempFunc.getId())) {
-						bioModel.getSBMLCompModel().removePort(i);
+						bioModel.getSBMLCompModel().getListOfPorts().remove(i);
 						break;
 					}
 				}
@@ -459,7 +498,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 			FunctionDefinition function = (FunctionDefinition) listOfFunctions.get(i);
 			if (SBMLutilities.isSpecialFunction(function.getId())) continue;
 			funcs[count] = function.getId() + " ( ";
-			for (long j = 0; j < function.getNumArguments(); j++) {
+			for (int j = 0; j < function.getNumArguments(); j++) {
 				if (j != 0) {
 					funcs[count] += ", ";
 				}

@@ -26,20 +26,21 @@ import javax.swing.ListSelectionModel;
 import main.Gui;
 import main.util.Utility;
 
-import org.sbml.libsbml.Compartment;
-import org.sbml.libsbml.FunctionDefinition;
-import org.sbml.libsbml.InitialAssignment;
-import org.sbml.libsbml.KineticLaw;
-import org.sbml.libsbml.ListOf;
-import org.sbml.libsbml.Model;
-import org.sbml.libsbml.ModifierSpeciesReference;
-import org.sbml.libsbml.Parameter;
-import org.sbml.libsbml.Port;
-import org.sbml.libsbml.Reaction;
-import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.Species;
-import org.sbml.libsbml.SpeciesReference;
-import org.sbml.libsbml.UnitDefinition;
+import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.FunctionDefinition;
+import org.sbml.jsbml.InitialAssignment;
+import org.sbml.jsbml.KineticLaw;
+import org.sbml.jsbml.ListOf;
+import org.sbml.jsbml.LocalParameter;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.ModifierSpeciesReference;
+import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.ext.comp.Port;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.Species;
+import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.UnitDefinition;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
@@ -240,7 +241,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			if (paramsOnly && reaction.getKineticLaw()!=null) {
 				ListOf params = reaction.getKineticLaw().getListOfParameters();
 				for (int j = 0; j < reaction.getKineticLaw().getNumParameters(); j++) {
-					Parameter paramet = ((Parameter) (params.get(j)));
+					LocalParameter paramet = ((LocalParameter) (params.get(j)));
 					for (int k = 0; k < getParams.size(); k++) {
 						if (getParams.get(k).split(" ")[0].equals(reaction.getId() + "/" + paramet.getId())) {
 							parameterChanges.add(getParams.get(k));
@@ -348,7 +349,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					Parameter pp = (Parameter) listOfParameters.get(i);
 					Parameter parameter = new Parameter(gcm.getSBMLDocument().getLevel(), gcm.getSBMLDocument().getVersion());
 					parameter.setId(pp.getId());
-					parameter.setMetaId(pp.getMetaId());
+					SBMLutilities.setMetaId(parameter, pp.getMetaId());
 					parameter.setName(pp.getName());
 					parameter.setValue(pp.getValue());
 					parameter.setUnits(pp.getUnits());
@@ -623,7 +624,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		if (option.equals("OK")) {
 			Reaction reac = gcm.getSBMLDocument().getModel().getReaction(reactionId);
-			copyReact = (Reaction) reac.cloneObject();
+			copyReact = (Reaction) reac.clone();
 			reacID.setText(reac.getId());
 			selectedID = reac.getId();
 			reacName.setText(reac.getName());
@@ -806,7 +807,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 			if (!error && complex==null && production==null) {
-				if (bioModel.addBooleans(kineticLaw.getText().trim()).returnsBoolean(bioModel.getSBMLDocument().getModel())) {
+				if (SBMLutilities.returnsBoolean(bioModel.addBooleans(kineticLaw.getText().trim()), bioModel.getSBMLDocument().getModel())) {
 					JOptionPane.showMessageDialog(Gui.frame, "Kinetic law must evaluate to a number.", "Number Expected", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
@@ -876,7 +877,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							port.setId(GlobalConstants.SBMLREACTION+"__"+react.getId());
 							port.setIdRef(react.getId());
 						} else {
-							port.removeFromParentAndDelete();
+							SBMLutilities.removeFromParentAndDelete(port);
 						}
 					} else {
 						if (onPort.isSelected()) {
@@ -1147,8 +1148,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			for (int i = 0; i < kindsL3V1.length; i++) {
 				validVars.add(kindsL3V1[i]);
 			}
-			for (long i = 0; i < sbml.getModel().getNumUnitDefinitions(); i++) {
-				validVars.add(sbml.getModel().getUnitDefinition(i).getId());
+			for (int i = 0; i < sbml.getModel().getNumUnitDefinitions(); i++) {
+				validVars.add(sbml.getModel().getListOfUnitDefinitions().get(i).getId());
 			}
 		}
 		String[] splitLaw = formula.split(" |\\(|\\)|\\,|\\*|\\+|\\/|\\-|>|=|<|\\^|%|&|\\||!");
@@ -1481,7 +1482,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						reacParameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						paramet.setId(reacParamID.getText().trim());
 						paramet.setName(reacParamName.getText().trim());
-						paramet.setMetaId(reacID.getText()+"___"+reacParamID.getText().trim());
+						SBMLutilities.setMetaId(paramet, reacID.getText()+"___"+reacParamID.getText().trim());
 						for (int i = 0; i < thisReactionParams.size(); i++) {
 							if (thisReactionParams.get(i).equals(v)) {
 								thisReactionParams.set(i, reacParamID.getText().trim());
@@ -1537,7 +1538,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 								port.setId(GlobalConstants.LOCALPARAMETER+"__"+paramet.getMetaId());
 								port.setMetaIdRef(paramet.getMetaId());
 							} else {
-								port.removeFromParentAndDelete();
+								SBMLutilities.removeFromParentAndDelete(port);
 							}
 						} else {
 							if (paramOnPort.isSelected()) {
@@ -1555,7 +1556,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						changedParameters.add(paramet);
 						paramet.setId(reacParamID.getText().trim());
 						paramet.setName(reacParamName.getText().trim());
-						paramet.setMetaId(reacID.getText()+"___"+reacParamID.getText().trim());
+						SBMLutilities.setMetaId(paramet, reacID.getText()+"___"+reacParamID.getText().trim());
 						thisReactionParams.add(reacParamID.getText().trim());
 						paramet.setValue(val);
 						if (!unit.equals("( none )")) {
@@ -1611,7 +1612,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		changedParameters.add(paramet);
 		paramet.setId(id);
 		paramet.setName(id);
-		paramet.setMetaId(reacID.getText()+"___"+id);
+		SBMLutilities.setMetaId(paramet, reacID.getText()+"___"+id);
 		thisReactionParams.add(id);
 		paramet.setValue(val);
 		JList add = new JList();
@@ -1850,7 +1851,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 									SBMLutilities.myParseFormula(productStoichiometry.getText().trim()));
 						}
 						if (!error) {
-							if (SBMLutilities.myParseFormula(productStoichiometry.getText().trim()).returnsBoolean(bioModel.getSBMLDocument().getModel())) {
+							if (SBMLutilities.returnsBoolean(SBMLutilities.myParseFormula(productStoichiometry.getText().trim()), bioModel.getSBMLDocument().getModel())) {
 								JOptionPane.showMessageDialog(Gui.frame, "Stoichiometry math must evaluate to a number.", "Number Expected",
 										JOptionPane.ERROR_MESSAGE);
 								error = true;
@@ -1885,7 +1886,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						produ.unsetStoichiometryMath();
 					}
 					else {
-						produ.createStoichiometryMath();
+//						TODO: Is this necessary?
+//						produ.createStoichiometryMath();
 						produ.getStoichiometryMath().setMath(SBMLutilities.myParseFormula(productStoichiometry.getText().trim()));
 						produ.setStoichiometry(1);
 					}
@@ -1918,7 +1920,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						produ.setStoichiometry(val);
 					}
 					else {
-						produ.createStoichiometryMath();
+//						TODO: Is this necessary?
+//						produ.createStoichiometryMath();
 						produ.getStoichiometryMath().setMath(SBMLutilities.myParseFormula(productStoichiometry.getText().trim()));
 					}
 					if (productConstant.getSelectedItem().equals("true")) {
@@ -2560,7 +2563,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 									SBMLutilities.myParseFormula(reactantStoichiometry.getText().trim()));
 						}
 						if (!error) {
-							if (SBMLutilities.myParseFormula(reactantStoichiometry.getText().trim()).returnsBoolean(bioModel.getSBMLDocument().getModel())) {
+							if (SBMLutilities.returnsBoolean(SBMLutilities.myParseFormula(reactantStoichiometry.getText().trim()), bioModel.getSBMLDocument().getModel())) {
 								JOptionPane.showMessageDialog(Gui.frame, "Stoichiometry math must evaluate to a number.", "Number Expected",
 										JOptionPane.ERROR_MESSAGE);
 								error = true;
@@ -2595,7 +2598,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						reactan.unsetStoichiometryMath();
 					}
 					else {
-						reactan.createStoichiometryMath();
+//						TODO: Is this necessary?
+//						reactan.createStoichiometryMath();
 						reactan.getStoichiometryMath().setMath(SBMLutilities.myParseFormula(reactantStoichiometry.getText().trim()));
 						reactan.setStoichiometry(1);
 					}
@@ -2651,7 +2655,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						reactan.setStoichiometry(val);
 					}
 					else {
-						reactan.createStoichiometryMath();
+//						TODO: Is this necessary?
+//						reactan.createStoichiometryMath();
 						reactan.getStoichiometryMath().setMath(SBMLutilities.myParseFormula(reactantStoichiometry.getText().trim()));
 					}
 					if (complex!=null) {
@@ -3034,7 +3039,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	 * Check the units of a kinetic law
 	 */
 	public boolean checkKineticLawUnits(KineticLaw law) {
-		bioModel.getSBMLDocument().getModel().populateListFormulaUnitsData();
+//		TODO: Is this necessary?
+//		bioModel.getSBMLDocument().getModel().populateListFormulaUnitsData();
 		if (law.containsUndeclaredUnits()) {
 			if (biosim.getCheckUndeclared()) {
 				JOptionPane.showMessageDialog(Gui.frame, "Kinetic law contains literals numbers or parameters with undeclared units.\n"
@@ -3218,7 +3224,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			if (paramsOnly) {
 				ListOf params = reaction.getKineticLaw().getListOfParameters();
 				for (int j = 0; j < reaction.getKineticLaw().getNumParameters(); j++) {
-					Parameter paramet = ((Parameter) (params.get(j)));
+					LocalParameter paramet = ((LocalParameter) (params.get(j)));
 					for (int k = 0; k < parameterChanges.size(); k++) {
 						if (parameterChanges.get(k).split(" ")[0].equals(reaction.getId() + "/" + paramet.getId())) {
 							String[] splits = parameterChanges.get(k).split(" ");

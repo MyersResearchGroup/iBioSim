@@ -19,12 +19,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.sbml.libsbml.InitialAssignment;
-import org.sbml.libsbml.LocalParameter;
-import org.sbml.libsbml.Model;
-import org.sbml.libsbml.Reaction;
-import org.sbml.libsbml.Species;
-import org.sbml.libsbml.Submodel;
+import org.sbml.jsbml.InitialAssignment;
+import org.sbml.jsbml.LocalParameter;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.Species;
+import org.sbml.jsbml.ext.comp.Submodel;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
@@ -913,8 +913,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				bioModel.changeSpeciesId(selected, newSpeciesID);
 				((DefaultListModel) components.getModel()).clear();
 
-				for (long i = 0; i < bioModel.getSBMLCompModel().getNumSubmodels(); i++) {
-					Submodel submodel = bioModel.getSBMLCompModel().getSubmodel(i);
+				for (int i = 0; i < bioModel.getSBMLCompModel().getListOfSubmodels().size(); i++) {
+					Submodel submodel = bioModel.getSBMLCompModel().getListOfSubmodels().get(i);
 					components.addItem(submodel.getId() + " " + submodel.getModelRef() + " " + bioModel.getComponentPortMap(submodel.getId()));
 				}
 			}

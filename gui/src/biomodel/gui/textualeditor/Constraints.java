@@ -22,12 +22,12 @@ import javax.swing.ListSelectionModel;
 import main.Gui;
 import main.util.Utility;
 
-import org.sbml.libsbml.Constraint;
-import org.sbml.libsbml.Layout;
-import org.sbml.libsbml.ListOf;
-import org.sbml.libsbml.Model;
-import org.sbml.libsbml.Port;
-import org.sbml.libsbml.XMLNode;
+import org.sbml.jsbml.Constraint;
+import org.sbml.jsbml.ext.layout.Layout;
+import org.sbml.jsbml.ListOf;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.ext.comp.Port;
+import org.sbml.jsbml.xml.XMLNode;
 
 import biomodel.gui.ModelEditor;
 import biomodel.parser.BioModel;
@@ -73,7 +73,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 					cn++;
 					constraintId = "constraint" + cn;
 				}
-				constraint.setMetaId(constraintId);
+				SBMLutilities.setMetaId(constraint, constraintId);
 			}
 			cons[i] = constraint.getMetaId();
 		}
@@ -161,7 +161,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		else {
 			String constraintId = "constraint0";
 			int cn = 0;
-			while (bioModel.getSBMLDocument().getElementByMetaId(constraintId)!=null) {
+			while (SBMLutilities.getElementByMetaId(bioModel.getSBMLDocument(), constraintId)!=null) {
 				cn++;
 				constraintId = "constraint" + cn;
 			}
@@ -236,7 +236,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						constraints.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						Constraint c = (Constraint) (bioModel.getSBMLDocument().getModel().getListOfConstraints()).get(Cindex);
 						c.setMath(bioModel.addBooleans(consMath.getText().trim()));
-						c.setMetaId(consID.getText().trim());
+						SBMLutilities.setMetaId(c, consID.getText().trim());
 						if (!consMessage.getText().trim().equals("")) {
 							XMLNode xmlNode = XMLNode.convertStringToXMLNode("<message><p xmlns=\"http://www.w3.org/1999/xhtml\">"
 									+ consMessage.getText().trim() + "</p></message>");
@@ -251,7 +251,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 								port.setId(GlobalConstants.CONSTRAINT+"__"+c.getMetaId());
 								port.setMetaIdRef(c.getMetaId());
 							} else {
-								port.removeFromParentAndDelete();
+								SBMLutilities.removeFromParentAndDelete(port);
 							}
 						} else {
 							if (onPort.isSelected()) {
@@ -274,7 +274,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						int index = constraints.getSelectedIndex();
 						Constraint c = bioModel.getSBMLDocument().getModel().createConstraint();
 						c.setMath(bioModel.addBooleans(consMath.getText().trim()));
-						c.setMetaId(consID.getText().trim());
+						SBMLutilities.setMetaId(c, consID.getText().trim());
 						if (!consMessage.getText().trim().equals("")) {
 							XMLNode xmlNode = XMLNode.convertStringToXMLNode("<message><p xmlns=\"http://www.w3.org/1999/xhtml\">"
 									+ consMessage.getText().trim() + "</p></message>");
@@ -335,7 +335,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 					cn++;
 					constraintId = "constraint" + cn;
 				}
-				constraint.setMetaId(constraintId);
+				SBMLutilities.setMetaId(constraint, constraintId);
 			}
 			cons[i] = constraint.getMetaId();
 		}
@@ -355,20 +355,20 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 				break;
 			}
 		}
-		for (long i = 0; i < bioModel.getSBMLCompModel().getNumPorts(); i++) {
-			Port port = bioModel.getSBMLCompModel().getPort(i);
+		for (int i = 0; i < bioModel.getSBMLCompModel().getListOfPorts().size(); i++) {
+			Port port = bioModel.getSBMLCompModel().getListOfPorts().get(i);
 			if (port.isSetMetaIdRef() && port.getMetaIdRef().equals(selected)) {
-				bioModel.getSBMLCompModel().removePort(i);
+				bioModel.getSBMLCompModel().getListOfPorts().remove(i);
 				break;
 			}
 		}
-		if (bioModel.getSBMLLayout().getLayout("iBioSim") != null) {
-			Layout layout = bioModel.getSBMLLayout().getLayout("iBioSim"); 
-			if (layout.getAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+selected)!=null) {
-				layout.removeAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+selected);
+		if (bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim") != null) {
+			Layout layout = bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim"); 
+			if (layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+selected)!=null) {
+				layout.getListOfAdditionalGraphicalObjects().remove(GlobalConstants.GLYPH+"__"+selected);
 			}
 			if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+selected) != null) {
-				layout.removeTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+selected);
+				layout.getListOfTextGlyphs().get(GlobalConstants.TEXT_GLYPH+"__"+selected);
 			}
 		}
 		modelEditor.setDirty(true);

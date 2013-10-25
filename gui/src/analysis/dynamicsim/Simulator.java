@@ -8,7 +8,6 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -25,16 +24,13 @@ import javax.xml.stream.XMLStreamException;
 
 import flanagan.math.Fmath;
 import flanagan.math.PsRandom;
-
 import main.Gui;
 import main.util.dataparser.DTSDParser;
 import main.util.dataparser.DataParser;
 import main.util.dataparser.TSDParser;
-
 import odk.lang.FastMath;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.Annotation;
 import org.sbml.jsbml.AssignmentRule;
@@ -61,6 +57,7 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.text.parser.ParseException;
 
+import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.util.GlobalConstants;
 
 public abstract class Simulator {
@@ -548,7 +545,7 @@ public abstract class Simulator {
 				//duplicate species into the model
 				Species newSpecies = model.getSpecies(parentVariableID).clone();
 				newSpecies.setId(childVariableID);
-				newSpecies.setMetaId(childVariableID);
+				SBMLutilities.setMetaId(newSpecies, childVariableID);
 				model.addSpecies(newSpecies);
 				
 				if (speciesToHasOnlySubstanceUnitsMap.get(parentVariableID) == false)
@@ -1435,7 +1432,7 @@ public abstract class Simulator {
 			String speciesID = species.getId();
 			
 			//check to see if the species is arrayed			
-			if (stripAnnotation(species.getAnnotationString()).contains("array:array")) {
+			if (stripAnnotation(species.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim()).contains("array:array")) {
 				
 				arraysExist = true;
 				
@@ -1447,7 +1444,7 @@ public abstract class Simulator {
 				int numRowsUpper = 0;
 				int numColsUpper = 0;
 				
-				String[] annotationString = stripAnnotation(species.getAnnotationString()).split("=");
+				String[] annotationString = stripAnnotation(species.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim()).split("=");
 				
 				numColsLower = Integer.valueOf(((String[])(annotationString[1].split(" ")))[0].replace("\"",""));
 				numColsUpper = Integer.valueOf(((String[])(annotationString[2].split(" ")))[0].replace("\"",""));
@@ -1468,7 +1465,7 @@ public abstract class Simulator {
 						
 						Species newSpecies = new Species();
 						newSpecies = species.clone();
-						newSpecies.setMetaId(speciesID);
+						SBMLutilities.setMetaId(newSpecies, speciesID);
 						newSpecies.setId(speciesID);
 						newSpecies.setAnnotation(new Annotation());
 						speciesToAdd.add(newSpecies);
@@ -1491,13 +1488,13 @@ public abstract class Simulator {
 		
 		for (Event event : model.getListOfEvents()) {
 			
-			if (stripAnnotation(event.getAnnotationString()).contains("array")) {
+			if (stripAnnotation(event.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim()).contains("array")) {
 				
 				arraysExist = true;
 				
 				eventsToRemove.add(event.getId());
 				
-				String annotationString = stripAnnotation(event.getAnnotationString()).replace("<annotation>","").
+				String annotationString = stripAnnotation(event.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim()).replace("<annotation>","").
 				replace("</annotation>","").replace("\"","");
 				String[] splitAnnotation = annotationString.split("array:");
 				ArrayList<String> eventCompartments = new ArrayList<String>();
@@ -1517,7 +1514,7 @@ public abstract class Simulator {
 					newEvent.setVersion(event.getVersion());
 					newEvent.setLevel(event.getLevel());
 					newEvent.setId(compartmentID + "__" + event.getId());
-					newEvent.setMetaId(compartmentID + "__" + event.getId());
+					SBMLutilities.setMetaId(newEvent, compartmentID + "__" + event.getId());
 					event.getTrigger().getMath().updateVariables();
 					newEvent.setTrigger(event.getTrigger().clone());
 					
@@ -1626,7 +1623,7 @@ public abstract class Simulator {
 				
 				arraysExist = true;
 				
-				String annotationString = stripAnnotation(reaction.getAnnotationString()).replace("<annotation>","").
+				String annotationString = stripAnnotation(reaction.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim()).replace("<annotation>","").
 					replace("</annotation>","").replace("\"","");
 				String[] splitAnnotation = annotationString.split("array:");
 				
@@ -1665,7 +1662,7 @@ public abstract class Simulator {
 					newReaction.setListOfProducts(new ListOf<SpeciesReference>());
 					newReaction.setListOfModifiers(new ListOf<ModifierSpeciesReference>());
 					newReaction.setId(compartmentID  + "__" + reactionID);
-					newReaction.setMetaId(compartmentID  + "__" + reactionID);
+					SBMLutilities.setMetaId(newReaction, compartmentID  + "__" + reactionID);
 					newReaction.setReversible(true);
 					newReaction.setFast(false);
 					newReaction.setCompartment(reaction.getCompartment());
@@ -1805,7 +1802,7 @@ public abstract class Simulator {
 					newReaction.setListOfProducts(new ListOf<SpeciesReference>());
 					newReaction.setListOfModifiers(new ListOf<ModifierSpeciesReference>());
 					newReaction.setId("ROW" + row + "_COL" + col + "_" + reactionID);
-					newReaction.setMetaId("ROW" + row + "_COL" + col + "_" + reactionID);
+					SBMLutilities.setMetaId(newReaction, "ROW" + row + "_COL" + col + "_" + reactionID);
 					newReaction.setReversible(false);					
 					newReaction.setFast(false);
 					newReaction.setCompartment(reaction.getCompartment());
@@ -1975,7 +1972,7 @@ public abstract class Simulator {
 		//add in the new explicit array reactions
 		for (Reaction reactionToAdd : reactionsToAdd) {
 			
-			reactionToAdd.setMetaId(reactionToAdd.getId());
+			SBMLutilities.setMetaId(reactionToAdd, reactionToAdd.getId());
 			if (model.getReaction(reactionToAdd.getId())!=null) {
 				model.removeReaction(reactionToAdd.getId());
 			}
@@ -2761,7 +2758,7 @@ public abstract class Simulator {
 						
 						Species newSpecies = gridSpecies.clone();
 						newSpecies.setId(newID);
-						newSpecies.setMetaId(newID);
+						SBMLutilities.setMetaId(newSpecies, newID);
 						
 						//add new grid species to the model (so that altering the kinetic law through jsbml can work)
 						model.addSpecies(newSpecies);
@@ -2815,7 +2812,7 @@ public abstract class Simulator {
 						
 						Species newSpecies = gridSpecies.clone();
 						newSpecies.setId(newID);
-						newSpecies.setMetaId(newID);
+						SBMLutilities.setMetaId(newSpecies, newID);
 						
 						//add new grid species to the model (so that altering the kinetic law through jsbml can work)
 						model.addSpecies(newSpecies);
@@ -3610,7 +3607,7 @@ public abstract class Simulator {
 			String speciesID = species.getId();
 			
 			//check to see if the species is arrayed			
-			if (stripAnnotation(species.getAnnotationString()).contains("array:array")) {
+			if (stripAnnotation(species.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim()).contains("array:array")) {
 				
 				arraysExist = true;
 				
@@ -3622,7 +3619,7 @@ public abstract class Simulator {
 				int numRowsUpper = 0;
 				int numColsUpper = 0;
 				
-				String[] annotationString = stripAnnotation(species.getAnnotationString()).split("=");
+				String[] annotationString = stripAnnotation(species.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim()).split("=");
 				
 				numColsLower = Integer.valueOf(((String[])(annotationString[1].split(" ")))[0].replace("\"",""));
 				numColsUpper = Integer.valueOf(((String[])(annotationString[2].split(" ")))[0].replace("\"",""));
@@ -3643,7 +3640,7 @@ public abstract class Simulator {
 						
 						Species newSpecies = new Species();
 						newSpecies = species.clone();
-						newSpecies.setMetaId(speciesID);
+						SBMLutilities.setMetaId(newSpecies, speciesID);
 						newSpecies.setId(speciesID);
 						newSpecies.setAnnotation(new Annotation());
 						speciesToAdd.add(newSpecies);
@@ -3666,13 +3663,13 @@ public abstract class Simulator {
 		
 		for (Event event : model.getListOfEvents()) {
 			
-			if (stripAnnotation(event.getAnnotationString()).contains("array")) {
+			if (stripAnnotation(event.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim()).contains("array")) {
 				
 				arraysExist = true;
 				
 				eventsToRemove.add(event.getId());
 				
-				String annotationString = stripAnnotation(event.getAnnotationString()).replace("<annotation>","").
+				String annotationString = stripAnnotation(event.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim()).replace("<annotation>","").
 				replace("</annotation>","").replace("\"","");
 				String[] splitAnnotation = annotationString.split("array:");
 				ArrayList<String> eventCompartments = new ArrayList<String>();
@@ -3692,7 +3689,7 @@ public abstract class Simulator {
 					newEvent.setVersion(event.getVersion());
 					newEvent.setLevel(event.getLevel());
 					newEvent.setId(compartmentID + "__" + event.getId());
-					newEvent.setMetaId(compartmentID + "__" + event.getId());
+					SBMLutilities.setMetaId(newEvent, compartmentID + "__" + event.getId());
 					event.getTrigger().getMath().updateVariables();
 					newEvent.setTrigger(event.getTrigger().clone());
 					
@@ -3801,7 +3798,7 @@ public abstract class Simulator {
 				
 				arraysExist = true;
 				
-				String annotationString = stripAnnotation(reaction.getAnnotationString()).replace("<annotation>","").
+				String annotationString = stripAnnotation(reaction.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim()).replace("<annotation>","").
 					replace("</annotation>","").replace("\"","");
 				String[] splitAnnotation = annotationString.split("array:");
 				
@@ -3840,7 +3837,7 @@ public abstract class Simulator {
 					newReaction.setListOfProducts(new ListOf<SpeciesReference>());
 					newReaction.setListOfModifiers(new ListOf<ModifierSpeciesReference>());
 					newReaction.setId(compartmentID  + "__" + reactionID);
-					newReaction.setMetaId(compartmentID  + "__" + reactionID);
+					SBMLutilities.setMetaId(newReaction, compartmentID  + "__" + reactionID);
 					newReaction.setReversible(true);
 					newReaction.setFast(false);
 					newReaction.setCompartment(reaction.getCompartment());
@@ -3980,7 +3977,7 @@ public abstract class Simulator {
 					newReaction.setListOfProducts(new ListOf<SpeciesReference>());
 					newReaction.setListOfModifiers(new ListOf<ModifierSpeciesReference>());
 					newReaction.setId("ROW" + row + "_COL" + col + "_" + reactionID);
-					newReaction.setMetaId("ROW" + row + "_COL" + col + "_" + reactionID);
+					SBMLutilities.setMetaId(newReaction, "ROW" + row + "_COL" + col + "_" + reactionID);
 					newReaction.setReversible(false);					
 					newReaction.setFast(false);
 					newReaction.setCompartment(reaction.getCompartment());
@@ -4147,7 +4144,7 @@ public abstract class Simulator {
 		//add in the new explicit array reactions
 		for (Reaction reactionToAdd : reactionsToAdd) {
 			
-			reactionToAdd.setMetaId(reactionToAdd.getId());
+			SBMLutilities.setMetaId(reactionToAdd, reactionToAdd.getId());
 			if (model.getReaction(reactionToAdd.getId())!=null) {
 				model.removeReaction(reactionToAdd.getId());
 			}
@@ -4185,7 +4182,7 @@ public abstract class Simulator {
 			if (parameter.getId().contains("_locations")) {
 				if (parameter.getId().contains("_locations"))
 					this.submodelIDToLocationsMap.put(
-							parameter.getId().replace("__locations",""), stripAnnotation(parameter.getAnnotationString()));
+							parameter.getId().replace("__locations",""), stripAnnotation(parameter.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim()));
 				parametersToRemove.add(parameter.getId());
 			}
 		}
@@ -4484,7 +4481,7 @@ public abstract class Simulator {
 			//alter the local parameter ID so that it goes to the local and not global value
 			if (localParameter.getId() != parameterID) {
 				localParameter.setId(parameterID);
-				localParameter.setMetaId(parameterID);
+				SBMLutilities.setMetaId(localParameter, parameterID);
 			}
 			//System.out.println("After: " + localParameter.getId());
 			

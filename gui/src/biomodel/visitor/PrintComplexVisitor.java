@@ -6,7 +6,9 @@ import java.util.Properties;
 
 
 
-import org.sbml.libsbml.SBMLDocument;
+
+import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.text.parser.ParseException;
 
 import biomodel.network.ComplexSpecies;
 import biomodel.network.GeneticNetwork;
@@ -76,20 +78,26 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 			stoich += infl.getCoop();
 			r.addReactant(Utility.SpeciesReference(partId, infl.getCoop()));
 			String nId = coopString + "__" + partId + "_" + specie.getId();
-			kl.addParameter(Utility.Parameter(nId, infl.getCoop(), "dimensionless"));
+			kl.addLocalParameter(Utility.Parameter(nId, infl.getCoop(), "dimensionless"));
 			ncSum = ncSum + nId + "+";
 			compExpression = compExpression + "*" + "(" + partId + ")^" + nId;
 		}
 //		}	
 		if (stoich == 1)
-			kl.addParameter(Utility.Parameter(kcompIdf, kf, GeneticNetwork.getMoleTimeParameter(1)));
+			kl.addLocalParameter(Utility.Parameter(kcompIdf, kf, GeneticNetwork.getMoleTimeParameter(1)));
 		else if (stoich >= 2) {
-			kl.addParameter(Utility.Parameter(kcompIdf, kf, GeneticNetwork.getMoleTimeParameter(2)));
+			kl.addLocalParameter(Utility.Parameter(kcompIdf, kf, GeneticNetwork.getMoleTimeParameter(2)));
 			if (stoich > 2)
-				kl.addParameter(Utility.Parameter(kcompId, kcomp, GeneticNetwork.getMoleParameter(2)));
+				kl.addLocalParameter(Utility.Parameter(kcompId, kcomp, GeneticNetwork.getMoleParameter(2)));
 		}
-		kl.addParameter(Utility.Parameter(kcompIdr, kr, GeneticNetwork.getMoleTimeParameter(1)));
-		kl.setFormula(generateLaw(compExpression, boundExpression, kcompId, kcompIdf, kcompIdr, ncSum, stoich));
+		kl.addLocalParameter(Utility.Parameter(kcompIdr, kr, GeneticNetwork.getMoleTimeParameter(1)));
+		try {
+			kl.setFormula(generateLaw(compExpression, boundExpression, kcompId, kcompIdf, kcompIdr, ncSum, stoich));
+		}
+		catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Utility.addReaction(document, r);
 	}
 	

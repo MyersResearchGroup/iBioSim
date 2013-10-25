@@ -23,14 +23,15 @@ import javax.swing.JScrollPane;
 
 import main.Gui;
 
-import org.sbml.libsbml.Compartment;
-import org.sbml.libsbml.ListOf;
-import org.sbml.libsbml.Parameter;
-import org.sbml.libsbml.Reaction;
-import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.Species;
-import org.sbml.libsbml.SpeciesReference;
-import org.sbml.libsbml.ModifierSpeciesReference;
+import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.ListOf;
+import org.sbml.jsbml.LocalParameter;
+import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.Species;
+import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.ModifierSpeciesReference;
 
 
 /**
@@ -103,16 +104,16 @@ public class Utility {
 		return sr;
 	}
 	
-	public static Parameter Parameter(String id, double value, String units) {
-		Parameter p = new Parameter(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+	public static LocalParameter Parameter(String id, double value, String units) {
+		LocalParameter p = new LocalParameter(Gui.SBML_LEVEL, Gui.SBML_VERSION);
 		p.setId(id);
 		p.setValue(value);
 		p.setUnits(units);
 		return p;
 	}
 	
-	public static Parameter Parameter(String id, double value) {
-		Parameter p = new Parameter(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+	public static LocalParameter Parameter(String id, double value) {
+		LocalParameter p = new LocalParameter(Gui.SBML_LEVEL, Gui.SBML_VERSION);
 		p.setId(id);
 		p.setValue(value);
 		return p;

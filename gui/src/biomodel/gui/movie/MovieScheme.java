@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.sbml.libsbml.Parameter;
+import org.sbml.jsbml.Parameter;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.movie.SerializableScheme;

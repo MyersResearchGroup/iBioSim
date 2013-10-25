@@ -16,27 +16,28 @@ import javax.swing.JOptionPane;
 
 import main.Gui;
 
-import org.sbml.libsbml.ASTNode;
-import org.sbml.libsbml.CompModelPlugin;
-import org.sbml.libsbml.CompSBMLDocumentPlugin;
-import org.sbml.libsbml.CompSBasePlugin;
-import org.sbml.libsbml.ExternalModelDefinition;
-import org.sbml.libsbml.KineticLaw;
-import org.sbml.libsbml.Model;
-import org.sbml.libsbml.Parameter;
-import org.sbml.libsbml.Reaction;
-import org.sbml.libsbml.ReplacedBy;
-import org.sbml.libsbml.ReplacedElement;
-import org.sbml.libsbml.Rule;
-import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.SBase;
-import org.sbml.libsbml.SBaseList;
-import org.sbml.libsbml.Species;
-import org.sbml.libsbml.Submodel;
+import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.KineticLaw;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.Rule;
+import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.Species;
+import org.sbml.jsbml.ext.comp.ExternalModelDefinition;
+import org.sbml.jsbml.ext.comp.Submodel;
+import org.sbml.jsbml.ext.comp.CompConstant;
+import org.sbml.jsbml.ext.comp.CompModelPlugin;
+import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
+import org.sbml.jsbml.ext.comp.CompSBasePlugin;
+import org.sbml.jsbml.ext.comp.ReplacedBy;
+import org.sbml.jsbml.ext.comp.ReplacedElement;
 import org.sbolstandard.core.DnaComponent;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
+import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.network.Influence;
 import biomodel.parser.BioModel;
 import biomodel.parser.GCMParser;
@@ -56,7 +57,7 @@ public class SBOLAssemblyGraph {
 		SBMLDocument sbmlDoc = biomodel.getSBMLDocument();
 		HashMap<String, SBOLAssemblyNode> idToNode = new HashMap<String, SBOLAssemblyNode>();
 //		 Creates assembly nodes for submodels and connect them to nodes for species
-		if (sbmlDoc.isPackageEnabled("comp") 
+		if (sbmlDoc.getExtensionPackages().containsKey(CompConstant.namespaceURI)
 				&& parseSubModelSBOL(sbmlDoc, biomodel.getPath(), idToNode)) {
 			// Creates flattened assembly graph in case hierarchy of SBOL can't be preserved
 			SBMLDocument flatDoc = biomodel.flattenModel();
@@ -97,20 +98,20 @@ public class SBOLAssemblyGraph {
 	
 	// Creates assembly nodes for submodels and connects them to the nodes for their input/output species
 	private boolean parseSubModelSBOL(SBMLDocument sbmlDoc, String path, HashMap<String, SBOLAssemblyNode> idToNode) {
-		CompModelPlugin compSBMLModel = (CompModelPlugin) sbmlDoc.getModel().getPlugin("comp");
-		CompSBMLDocumentPlugin compSBMLDoc = (CompSBMLDocumentPlugin) sbmlDoc.getPlugin("comp");
-		if (compSBMLModel.getNumSubmodels() > 0) {
+		CompModelPlugin compSBMLModel = (CompModelPlugin) SBMLutilities.getPlugin(CompConstant.namespaceURI, sbmlDoc.getModel(), true);
+		CompSBMLDocumentPlugin compSBMLDoc = (CompSBMLDocumentPlugin) SBMLutilities.getPlugin(CompConstant.namespaceURI, sbmlDoc, true);
+		if (compSBMLModel.getListOfSubmodels().size() > 0) {
 			boolean canFlatten = true;
-			for (long i = 0; i < compSBMLModel.getNumSubmodels(); i++) {
+			for (int i = 0; i < compSBMLModel.getListOfSubmodels().size(); i++) {
 				// Stores SBOL annotating the submodel instantiation if present
 				// If not then stores SBOL annotating the model referenced by the submodel instantiation
-				Submodel sbmlSubmodel = compSBMLModel.getSubmodel(i);
+				Submodel sbmlSubmodel = compSBMLModel.getListOfSubmodels().get(i);
 				List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlSubmodel);
 				if (sbolURIs.size() > 0) {
 					containsSBOL = true;
 					canFlatten = false;
 				} else {
-					String subSBMLFileID = compSBMLDoc.getExternalModelDefinition(sbmlSubmodel.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
+					String subSBMLFileID = compSBMLDoc.getListOfExternalModelDefinitions().get(sbmlSubmodel.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
 					BioModel subBioModel = new BioModel(path);
 					subBioModel.load(subSBMLFileID);
 					Model subSBMLModel = subBioModel.getSBMLDocument().getModel();
@@ -133,17 +134,17 @@ public class SBOLAssemblyGraph {
 
 	// Creates assembly nodes for species and maps their metaIDs to the nodes
 	private void parseSpeciesSBOL(Model sbmlModel, HashMap<String, SBOLAssemblyNode> idToNode) {
-		for (long i = 0; i < sbmlModel.getNumSpecies(); i++) {
-			Species sbmlSpecies = sbmlModel.getSpecies(i);
+		for (int i = 0; i < sbmlModel.getSpeciesCount(); i++) {
+			Species sbmlSpecies = sbmlModel.getListOfSpecies().get(i);
 			List<URI> sbolURI = AnnotationUtility.parseSBOLAnnotation(sbmlSpecies);
 			SBOLAssemblyNode assemblyNode = new SBOLAssemblyNode(sbolURI);
 			assemblyNodes.add(assemblyNode);
 			idToNode.put(sbmlSpecies.getId(), assemblyNode);
-			if (sbmlSpecies.isPackageEnabled("comp")) {
-				CompSBasePlugin compSBMLSpecies = (CompSBasePlugin) sbmlSpecies.getPlugin("comp");
+			if (sbmlSpecies.getExtensionPackages().containsKey(CompConstant.namespaceURI)) {
+				CompSBasePlugin compSBMLSpecies = (CompSBasePlugin) SBMLutilities.getPlugin(CompConstant.namespaceURI, sbmlSpecies, true);
 				Set<SBOLAssemblyNode> submodelNodes = new HashSet<SBOLAssemblyNode>();
-				for (long j = 0; j < compSBMLSpecies.getNumReplacedElements(); j++) {
-					String submodelID = compSBMLSpecies.getReplacedElement(j).getSubmodelRef();
+				for (int j = 0; j < compSBMLSpecies.getListOfReplacedElements().size(); j++) {
+					String submodelID = compSBMLSpecies.getListOfReplacedElements().get(j).getSubmodelRef();
 					if (idToNode.containsKey(submodelID)) 
 						submodelNodes.add(idToNode.get(submodelID));
 				}
@@ -170,17 +171,17 @@ public class SBOLAssemblyGraph {
 	
 	// Creates assembly nodes for global parameters and maps their metaIDs to the nodes
 	private void parseParameterSBOL(Model sbmlModel, HashMap<String, SBOLAssemblyNode> idToNode) {
-		for (long i = 0; i < sbmlModel.getNumParameters(); i++) {
+		for (int i = 0; i < sbmlModel.getParameterCount(); i++) {
 			Parameter sbmlParameter = sbmlModel.getParameter(i);
 			List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlParameter);
 			SBOLAssemblyNode assemblyNode = new SBOLAssemblyNode(sbolURIs);
 			assemblyNodes.add(assemblyNode);
 			idToNode.put(sbmlParameter.getId(), assemblyNode);
-			if (sbmlParameter.isPackageEnabled("comp")) {
-				CompSBasePlugin compSBMLParameter = (CompSBasePlugin) sbmlParameter.getPlugin("comp");
+			if (sbmlParameter.getExtensionPackages().containsKey(CompConstant.namespaceURI)) {
+				CompSBasePlugin compSBMLParameter = (CompSBasePlugin) SBMLutilities.getPlugin(CompConstant.namespaceURI, sbmlParameter, true);
 				Set<SBOLAssemblyNode> submodelNodes = new HashSet<SBOLAssemblyNode>();
-				for (long j = 0; j < compSBMLParameter.getNumReplacedElements(); j++) {
-					String submodelID = compSBMLParameter.getReplacedElement(j).getSubmodelRef();
+				for (int j = 0; j < compSBMLParameter.getListOfReplacedElements().size(); j++) {
+					String submodelID = compSBMLParameter.getListOfReplacedElements().get(j).getSubmodelRef();
 					if (idToNode.containsKey(submodelID)) 
 						submodelNodes.add(idToNode.get(submodelID));
 				}
@@ -208,7 +209,7 @@ public class SBOLAssemblyGraph {
 	// Creates assembly nodes for reactions and connects them to nodes for species
 	// Maps reaction parameters to reactions
 	private void parseReactionSbol(Model sbmlModel, HashMap<String, SBOLAssemblyNode> idToNode) {
-		for (long i = 0; i < sbmlModel.getNumReactions(); i++) {
+		for (int i = 0; i < sbmlModel.getReactionCount(); i++) {
 			Reaction sbmlReaction = sbmlModel.getReaction(i);
 			// Creates assembly node for reaction
 			List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlReaction);
@@ -218,11 +219,11 @@ public class SBOLAssemblyGraph {
 			if (sbolURIs.size() > 0)
 				containsSBOL = true;
 		}
-		for (long i = 0; i < sbmlModel.getNumReactions(); i++) {
+		for (int i = 0; i < sbmlModel.getReactionCount(); i++) {
 			Reaction sbmlReaction = sbmlModel.getReaction(i);
 			SBOLAssemblyNode assemblyNode = idToNode.get(sbmlReaction.getId());
 			// Connects assembly nodes for reactants and modifiers to node for reaction
-			for (long j = 0; j < sbmlReaction.getNumReactants(); j++) {
+			for (int j = 0; j < sbmlReaction.getReactantCount(); j++) {
 				String reactantID = sbmlReaction.getReactant(j).getSpecies();
 				if (idToNode.containsKey(reactantID)) {
 					SBOLAssemblyNode reactantNode = idToNode.get(reactantID);
@@ -231,7 +232,7 @@ public class SBOLAssemblyGraph {
 					assemblyEdges.get(reactantNode).add(assemblyNode);
 				}
 			}
-			for (long j = 0; j < sbmlReaction.getNumModifiers(); j++) {
+			for (int j = 0; j < sbmlReaction.getModifierCount(); j++) {
 				String modifierID = sbmlReaction.getModifier(j).getSpecies();
 				if (idToNode.containsKey(modifierID)) {
 					SBOLAssemblyNode modifierNode = idToNode.get(modifierID);
@@ -241,7 +242,7 @@ public class SBOLAssemblyGraph {
 				}
 			}
 			// Connects assembly node for reaction to nodes for its products
-			for (long j = 0; j < sbmlReaction.getNumProducts(); j++) {
+			for (int j = 0; j < sbmlReaction.getProductCount(); j++) {
 				 String productID = sbmlReaction.getProduct(j).getSpecies();
 				if (idToNode.containsKey(productID)) {
 					SBOLAssemblyNode productNode = idToNode.get(productID);
@@ -263,11 +264,11 @@ public class SBOLAssemblyGraph {
 					}
 				}
 			}
-			if (sbmlReaction.isPackageEnabled("comp")) {
-				CompSBasePlugin compSBMLReaction = (CompSBasePlugin) sbmlReaction.getPlugin("comp");
+			if (sbmlReaction.getExtensionPackages().containsKey(CompConstant.namespaceURI)) {
+				CompSBasePlugin compSBMLReaction = (CompSBasePlugin) SBMLutilities.getPlugin(CompConstant.namespaceURI, sbmlReaction, true);
 				Set<SBOLAssemblyNode> submodelNodes = new HashSet<SBOLAssemblyNode>();
-				for (long j = 0; j < compSBMLReaction.getNumReplacedElements(); j++) {
-					String submodelID = compSBMLReaction.getReplacedElement(j).getSubmodelRef();
+				for (int j = 0; j < compSBMLReaction.getListOfReplacedElements().size(); j++) {
+					String submodelID = compSBMLReaction.getListOfReplacedElements().get(j).getSubmodelRef();
 					if (idToNode.containsKey(submodelID)) 
 						submodelNodes.add(idToNode.get(submodelID));
 				}
@@ -293,7 +294,7 @@ public class SBOLAssemblyGraph {
 	// Creates assembly nodes for rules and connects them to nodes for reactions and rules
 	// on the basis of shared parameters
 	private void parseRuleSbol(Model sbmlModel, HashMap<String, SBOLAssemblyNode> idToNode) {
-		for (long i = 0; i < sbmlModel.getNumRules(); i++) {
+		for (int i = 0; i < sbmlModel.getRuleCount(); i++) {
 			Rule sbmlRule = sbmlModel.getRule(i);
 			// Creates assembly node for rule
 			if (sbmlRule.isAssignment() || sbmlRule.isRate()) {
@@ -310,7 +311,7 @@ public class SBOLAssemblyGraph {
 					} 
 				}
 				// Connects assembly node for rule to node for its output species or parameter
-				String output = sbmlRule.getVariable();
+				String output = SBMLutilities.getVariable(sbmlRule);
 				if (output != null) {
 					if (idToNode.containsKey(output)) {
 						SBOLAssemblyNode outputNode = idToNode.get(output);
@@ -319,11 +320,11 @@ public class SBOLAssemblyGraph {
 						assemblyEdges.get(assemblyNode).add(outputNode);
 					} 
 				}
-				if (sbmlRule.isPackageEnabled("comp")) {
-					CompSBasePlugin compSBMLRule = (CompSBasePlugin) sbmlRule.getPlugin("comp");
+				if (sbmlRule.getExtensionPackages().containsKey(CompConstant.namespaceURI)) {
+					CompSBasePlugin compSBMLRule = (CompSBasePlugin) SBMLutilities.getPlugin(CompConstant.namespaceURI, sbmlRule, true);
 					Set<SBOLAssemblyNode> submodelNodes = new HashSet<SBOLAssemblyNode>();
-					for (long j = 0; j < compSBMLRule.getNumReplacedElements(); j++) {
-						String submodelID = compSBMLRule.getReplacedElement(j).getSubmodelRef();
+					for (int j = 0; j < compSBMLRule.getListOfReplacedElements().size(); j++) {
+						String submodelID = compSBMLRule.getListOfReplacedElements().get(j).getSubmodelRef();
 						if (idToNode.containsKey(submodelID)) 
 							submodelNodes.add(idToNode.get(submodelID));
 					}
@@ -353,8 +354,8 @@ public class SBOLAssemblyGraph {
 		LinkedList<String> inputs = new LinkedList<String>();
 		if (!astNode.isOperator() && !astNode.isNumber())
 			inputs.add(astNode.getName());
-		for (long i = 0; i < astNode.getNumChildren(); i++) {
-			inputs.addAll(parseInputHelper(astNode.getChild(i)));
+		for (int i = 0; i < astNode.getChildCount(); i++) {
+			inputs.addAll(parseInputHelper(astNode.getListOfNodes().get(i)));
 		}
 		return inputs;
 	}
