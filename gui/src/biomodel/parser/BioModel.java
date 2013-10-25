@@ -2286,8 +2286,6 @@ public class BioModel {
 	public void save(String filename) {
 		//gcm2sbml.convertGCM2SBML(filename);
 		//updateCompartmentReplacements();
-		FBCModelPlugin fbc = (FBCModelPlugin)SBMLutilities.getPlugin(FBCConstants.namespaceURI, sbml.getModel(), true);
-		System.out.println(fbc.getListOfFluxBounds().size());
 		updatePorts();
 		setGridSize(grid.getNumRows(),grid.getNumCols());
 		SBMLutilities.pruneUnusedSpecialFunctions(sbml);
