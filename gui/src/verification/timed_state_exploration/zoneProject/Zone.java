@@ -1601,7 +1601,11 @@ public class Zone{
 		return new IntervalPair(lower, upper);
 	}
 	
-	
+	/**
+	 * Gets the lowest rate in absolute value.
+	 * @param ltPair
+	 * @return
+	 */
 	public int getSmallestRate(LPNTransitionPair ltPair){
 		
 		int upper;
@@ -1629,6 +1633,24 @@ public class Zone{
 		return Math.abs(lower)<Math.abs(upper) ?
 				lower: upper;
 		
+	}
+	
+	/**
+	 * Gets the lowerest rate in absolute value.
+	 * @param dbmIndex
+	 * @return
+	 */
+	public int getSmallestRate(int dbmIndex){
+		int lower = -1*getLowerBoundbydbmIndex(dbmIndex);
+		int upper = getUpperBoundbydbmIndex(dbmIndex);
+		
+		
+		if(lower < 0 && upper > 0){
+			return 0;
+		}
+		
+		
+		return Math.abs(lower)<= Math.abs(upper) ? lower : upper;
 	}
 	
 	/** 
@@ -2204,6 +2226,9 @@ public class Zone{
 		// Warp the Zone
 		newZone.dbmWarp(this);
 		
+		// Warping can wreck the newly assigned values so correct them.
+		newZone.correctNewAssignemnts(newAssignValues);
+		
 		newZone.recononicalize();
 		
 		newZone.advance(localStates);
@@ -2577,7 +2602,7 @@ public class Zone{
 			if(!oldTimers.contains(tempZone._indexToTimerPair[i]))
 			{
 				
-				// A hack to ensure that the newly non-zero varaibles
+				// A hack to ensure that the newly zero varaibles
 				// get the new values from the tempZone.
 				if(tempZone._indexToTimerPair[i] instanceof LPNContinuousPair){
 					
@@ -2810,6 +2835,53 @@ public class Zone{
 //		newZone.checkZoneMaxSize();
 		
 		return newZone;
+	}
+
+	public void correctNewAssignemnts(ContinuousRecordSet newAssignValues){
+		//Erase relationships for continuous variables that have had new values
+		// assigned to them or a new non-rate zero value.
+		for(int i = 1; i<this._indexToTimerPair.length &&
+				this._indexToTimerPair[i] instanceof LPNContinuousPair; i++){
+			LPNContinuousPair lcPair = (LPNContinuousPair) this._indexToTimerPair[i];
+
+			// Get the update variable.
+			UpdateContinuous update = newAssignValues.get(lcPair);
+			if(update != null && (update.is_newValue() || update.newlyNonZero())){
+				
+				IntervalPair values = update.get_Value();
+				int currentRate = lcPair.getCurrentRate();
+				
+				// Correct the upper and lower bounds.
+				if(lcPair.getCurrentRate()>0){
+					setDbmEntry(i, 0, 
+							ContinuousUtilities.chkDiv(-1*values.get_LowerBound(),
+									currentRate, true));
+					setDbmEntry(0,i, 
+							ContinuousUtilities.chkDiv(values.get_UpperBound(),
+									currentRate, true));
+				}
+				else{
+					setDbmEntry(i,0, 
+							ContinuousUtilities.chkDiv(values.get_UpperBound(),
+									currentRate, true));
+					
+					setDbmEntry(0, i, 
+							ContinuousUtilities.chkDiv(-1*values.get_LowerBound(),
+									currentRate, true));
+				}
+				
+				// Erase the relationships.
+				for(int j=1; j<this._indexToTimerPair.length; j++){
+					if (j==i){
+						continue;
+					}
+					else{
+						this.setDbmEntry(i, j, Zone.INFINITY);
+						this.setDbmEntry(j, i, Zone.INFINITY);
+					}
+				}
+			}
+		}
 	}
 	
 	/**
@@ -3418,6 +3490,8 @@ public class Zone{
 	
 	/**
 	 * This method sets all the rate to their lower bound.
+	 * Will not work quite right for continuous variables
+	 * with rates that include zero.
 	 */
 	private void setAllToLowerBoundRate(){
 		
@@ -3434,6 +3508,117 @@ public class Zone{
 			setCurrentRate(ltContPair, 
 					-1*_matrix[dbmIndexToMatrixIndex(i)][0]);
 		}
+	}
+	
+	/**
+	 * Resets the rates of all continuous varaibles to be their
+	 * lower bounds.
+	 */
+	public Zone resetRates(){
+		
+		// Create the new zone.
+		Zone newZone = new Zone();
+		
+		// Copy the rate zero variables.
+		newZone._rateZeroContinuous = this._rateZeroContinuous.clone();
+		
+		
+		// Copy the LPNs over.
+		newZone._lpnList = new LhpnFile[this._lpnList.length];
+		for(int i=0; i<this._lpnList.length; i++){
+			newZone._lpnList[i] = this._lpnList[i];
+		}
+		
+		// Loop through the variables and save off those
+		// that are rate zero. Accumulate an array that
+		// indicates which are zero for faster 
+		// copying. Save the number of continuous varaibles.
+		boolean[] rateZero = new boolean[this._indexToTimerPair.length]; // Is rate zero.
+		int zeroCount = 0;
+		
+		
+		for(int i=1; i<this._indexToTimerPair.length &&
+				this._indexToTimerPair[i] instanceof LPNContinuousPair; i++){
+			int lowerBound = -1*getLowerBoundbydbmIndex(i);
+			int upperBound = getUpperBoundbydbmIndex(i);
+			
+			if(lowerBound <= 0 && upperBound >= 0){
+				// The rate zero is in the range, so this will be
+				// the new current rate.
+				
+				rateZero[i] = true;
+				
+				LPNContinuousPair lcPair = 
+						(LPNContinuousPair) this._indexToTimerPair[i].clone();
+				
+				lcPair.setCurrentRate(0);
+				
+				// Save as a rate zero continuous variable.
+				LPNContAndRate newRateZero =
+						new LPNContAndRate(lcPair,
+								this.getRateBounds(lcPair));
+				
+				VariableRangePair vcp =
+						new VariableRangePair(
+								this._lpnList[lcPair.get_lpnIndex()]
+										.getContVar(lcPair.get_ContinuousIndex()),
+										this.getContinuousBounds(lcPair));
+				
+				newZone._rateZeroContinuous.insert(newRateZero, vcp);
+				
+				// Update continuous variable counter.
+				zeroCount++;
+			}
+		}
+		
+		
+		// Save over the indexToTimer pairs.
+		newZone._indexToTimerPair =
+				new LPNTransitionPair[this._indexToTimerPair.length-zeroCount];
+		
+		
+		for(int i=0, j=0; i<newZone._indexToTimerPair.length; i++,j++){
+			// Ignore rate zero variables.
+			if(rateZero[j]){
+				j++;
+			}
+			
+			newZone._indexToTimerPair[i] = this._indexToTimerPair[j].clone();
+			
+			// If this is a continuous variable, set the rate to the lower bound.
+			if(newZone._indexToTimerPair[i] instanceof LPNContinuousPair){
+				((LPNContinuousPair) newZone._indexToTimerPair[i])
+				.setCurrentRate(this.getSmallestRate(j));
+			}
+		}
+		
+		// Calculate the size of the matrix and create it.
+		newZone._matrix = new int[newZone.matrixSize()][newZone.matrixSize()];
+		
+		
+		// Copy over the old matrix for all variables except
+		// the rate zero variables.
+		for(int i=0, ioffset=0; i<newZone.matrixSize(); i++){
+			if(i>=1 && rateZero[i-1]){
+				ioffset++;
+			}
+			
+			for(int j=1, joffset=0; j<newZone.matrixSize(); j++){
+				if(j>=1 && rateZero[j-1]){
+					joffset++;
+				}
+				
+				newZone._matrix[i][j] = this._matrix[i+ioffset][j+joffset];
+			}
+		}
+		
+		
+		// Warp
+		newZone.dbmWarp(this);
+	
+		newZone.recononicalize();
+		
+		return newZone;
 	}
 	
 	/**
@@ -5478,8 +5663,8 @@ public class Zone{
 //		    for(int i=1;i<s->z->dbmEnd;i++) {
 //		    if(s->z->curClocks[i].enabling == -2) {
 		
-		for(int i=1; i<dbmSize(); i++){
-			if(_indexToTimerPair[i] instanceof LPNContinuousPair){
+//		for(int i=1; i<dbmSize(); i++){
+//			if(_indexToTimerPair[i] instanceof LPNContinuousPair){
 				
 //		      int newCwarp = s->r->bound[s->z->curClocks[i].enabled-nevents].current;
 //		      int newLwarp = s->r->bound[s->z->curClocks[i].enabled-nevents].lower;
@@ -5499,8 +5684,8 @@ public class Zone{
 			 */
 			
 				
-			}
-		}
+//			}
+//		}
 			
 //		#ifdef __LHPN_DEBUG_WARP__
 //		  printf("Before recanon.\n");
