@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import main.Gui;
@@ -257,18 +258,76 @@ public class SBOLUtility {
 		return subIntersections;
 	}
 	
-	public static List<String> loadDNAComponentTypes(DnaComponent dnaComp) {
-		List<DnaComponent> dnaComps = new LinkedList<DnaComponent>();
-		dnaComps.add(dnaComp);
-		return loadDNAComponentTypes(dnaComps);
+	
+	
+//	public static List<String> loadDNAComponentTypes(DnaComponent dnaComp) {
+//		List<DnaComponent> dnaComps = new LinkedList<DnaComponent>();
+//		dnaComps.add(dnaComp);
+//		return loadDNAComponentTypes(dnaComps);
+//	}
+	
+//	public static List<String> loadDNAComponentTypes(List<DnaComponent> dnaComps) {
+//		List<String> types = new LinkedList<String>();
+//		for (DnaComponent lowestComp : loadLowestSubComponents(dnaComps))
+//			if (lowestComp.getTypes().size() > 0) {
+//				types.add(convertURIToSOType(lowestComp.getTypes().iterator().next()));
+//			}
+//		return types;
+//	}
+
+	public static List<String> loadDNAComponentTypes(DnaComponent dnaComp, String strand) {
+		List<String> types = new LinkedList<String>();
+		if (dnaComp.getAnnotations().size() == 0 && dnaComp.getTypes().size() > 0) {
+			types.add(strand);
+			types.add(convertURIToSOType(dnaComp.getTypes().iterator().next()));
+		} else {
+			List<SequenceAnnotation> annos = sortSequenceAnnotations(dnaComp.getAnnotations());
+			String prevSubStrand = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
+			int minusIndex = 0;
+			for (SequenceAnnotation anno : annos) {
+				String subStrand = anno.getStrand().getSymbol();
+				List<String> nextTypes;
+				if (strand.equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND))
+					if (subStrand.equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND))
+						nextTypes = loadDNAComponentTypes(anno.getSubComponent(), 
+								GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND);
+					else 
+						nextTypes = loadDNAComponentTypes(anno.getSubComponent(), strand);
+				else
+					nextTypes = loadDNAComponentTypes(anno.getSubComponent(), subStrand);
+				if (subStrand.equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND)) {
+					if (!subStrand.equals(prevSubStrand))
+						minusIndex = types.size();
+					types.addAll(minusIndex, nextTypes);
+				} else
+					types.addAll(nextTypes);
+				prevSubStrand = subStrand;
+			}
+		}
+		return types;
 	}
 	
+	public static List<SequenceAnnotation> sortSequenceAnnotations(List<SequenceAnnotation> unsorted) {
+		List<SequenceAnnotation> sorted = new LinkedList<SequenceAnnotation>();
+		for (SequenceAnnotation anno : unsorted)
+			for (int i = 0; i <= sorted.size(); i++)
+				if (i == sorted.size() 
+						|| anno.getBioStart().compareTo(sorted.get(i).getBioStart()) <= 0) {
+					sorted.add(i, anno);
+					i = sorted.size();
+				} 
+		return sorted;
+	}
+	
+	public static List<String> loadDNAComponentTypes(DnaComponent dnaComp) {
+		return loadDNAComponentTypes(dnaComp, GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND);
+	}
+
 	public static List<String> loadDNAComponentTypes(List<DnaComponent> dnaComps) {
 		List<String> types = new LinkedList<String>();
-		for (DnaComponent lowestComp : loadLowestSubComponents(dnaComps))
-			if (lowestComp.getTypes().size()>0) {
-				types.add(convertURIToSOType(lowestComp.getTypes().iterator().next()));
-			}
+		for (DnaComponent dnaComp : dnaComps) {
+			types.addAll(loadDNAComponentTypes(dnaComp, GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND));
+		}
 		return types;
 	}
 	
@@ -451,18 +510,17 @@ public class SBOLUtility {
 			return "x";
 	}
 	
-	public static Properties loadSBOLSynthesisProperties(String synthFilePath, String separator) {
+	public static Properties loadSBOLSynthesisProperties(String synthFilePath, String separator, JFrame frame) {
 		Properties synthProps = new Properties();
 		for (String synthFileID : new File(synthFilePath).list())
-			if (synthFileID.endsWith(GlobalConstants.SBOL_PROPERTIES_FILE_EXTENSION)) {
+			if (synthFileID.endsWith(GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION)) {
 				try {
 					FileInputStream propStreamIn = new FileInputStream(new File(synthFilePath + separator + synthFileID));
 					synthProps.load(propStreamIn);
 					propStreamIn.close();
 					return synthProps;
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					JOptionPane.showMessageDialog(frame, "Unable to load properties file!", "Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 				}
 			}	
 		return synthProps;

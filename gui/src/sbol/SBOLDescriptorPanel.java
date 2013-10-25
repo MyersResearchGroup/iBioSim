@@ -58,7 +58,10 @@ public class SBOLDescriptorPanel extends JPanel {
 		saveFilePaths = new LinkedList<String>(sbolFilePaths);
 		saveFileIDBox = new JComboBox();
 		for (String saveFilePath : saveFilePaths) {
-			String[] splitPath = saveFilePath.split(File.separator);
+			String regex = File.separator;
+			if (regex.equals("\\"))
+				regex = "\\\\";
+			String[] splitPath = saveFilePath.split(regex);
 			saveFileIDBox.addItem(splitPath[splitPath.length - 1]);
 		}
 		add(new JLabel("Save SBOL DNA Component to File:"));

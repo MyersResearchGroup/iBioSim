@@ -39,13 +39,13 @@ public class SBOLSynthesizer {
 		solutionCap = Integer.parseInt(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_NUM_SOLNS_PROPERTY));
 	}
 	
-	public List<List<Integer>> mapSpecification(SBOLSynthesisGraph spec) {
+	public List<List<SBOLSynthesisGraph>> mapSpecification(SBOLSynthesisGraph spec) {
 		long startTime = System.nanoTime();
 		for (SBOLSynthesisNode node : spec.postOrderNodes()) {
 			matchNode(node, spec);
 			boundNode(node, spec);
 		}
-		List<List<Integer>> solutions = new LinkedList<List<Integer>>();
+		List<List<SBOLSynthesisGraph>> solutions = new LinkedList<List<SBOLSynthesisGraph>>();
 		int solutionCost = coverSpec(spec, solutions);
 		long endTime = System.nanoTime();
 		double time = (endTime - startTime)*Math.pow(10, -9); 
@@ -97,9 +97,10 @@ public class SBOLSynthesizer {
 		return matchBound;
 	}
 	
-	private int coverSpec(SBOLSynthesisGraph spec, List<List<Integer>> bestSolutions) {
-		List<Integer> solution = new LinkedList<Integer>();
+	private int coverSpec(SBOLSynthesisGraph spec, List<List<SBOLSynthesisGraph>> bestSolutions) {
+		List<SBOLSynthesisGraph> solution = new LinkedList<SBOLSynthesisGraph>();
 		int solutionCost = 0;
+		int lowerBound = spec.getOutput().getCoverBound();
 		Set<String> solutionSignals = new HashSet<String>();
 		int bestSolutionCost = -1;
 		List<SBOLSynthesisNode> previousNodes = new LinkedList<SBOLSynthesisNode>();
@@ -111,7 +112,7 @@ public class SBOLSynthesizer {
 				if (currentNodes.size() == 0 && previousNodes.size() > 0) {
 					if (bestSolutionCost < 0 || solutionCost < bestSolutionCost) {
 						bestSolutionCost = solutionCost;
-						bestSolutions.add(0, new LinkedList<Integer>(solution));
+						bestSolutions.add(0, new LinkedList<SBOLSynthesisGraph>(solution));
 						if (exhaustive) {
 							if (bestSolutions.size() > solutionCap)
 								bestSolutions.remove(bestSolutions.size() - 1);
@@ -131,9 +132,11 @@ public class SBOLSynthesizer {
 						currentNodes.get(0).setUncoveredNodes(
 								new LinkedList<SBOLSynthesisNode>(currentNodes.subList(1, currentNodes.size())));
 						List<SBOLSynthesisNode> nextNodes = spec.walkPaths(currentNodes.get(0), cover.getPaths());
+						for (SBOLSynthesisNode nextNode : nextNodes)
+							lowerBound = lowerBound + nextNode.getCoverBound();
 						constrainNodes(nextNodes, cover.getInputs());
-						solutionCost = addCoverToSolution(currentNodes.get(0).getCoverIndex(), cover, 
-								solution, solutionCost, solutionSignals);
+						solutionCost = addCoverToSolution(cover, solution, solutionCost, solutionSignals);
+						lowerBound = lowerBound - currentNodes.get(0).getCoverBound();
 						previousNodes.add(0, currentNodes.remove(0));
 						currentNodes.addAll(0, nextNodes);
 					} else {
@@ -147,20 +150,23 @@ public class SBOLSynthesizer {
 				solutionCost = removeCoverFromSolution(previousNodes.get(0).getCover(), solution, 
 						solutionCost, solutionSignals);
 				currentNodes.addAll(previousNodes.get(0).getUncoveredNodes());
+//				for (SBOLSynthesisNode uncoveredNode : previousNodes.get(0).getUncoveredNodes())
+//					lowerBound = lowerBound + uncoveredNode.getCoverBound();
+				lowerBound = lowerBound + previousNodes.get(0).getCoverBound();
 				currentNodes.add(0, previousNodes.remove(0));
 			}
 		} while (currentNodes.size() > 0);
 		return bestSolutionCost;
 	}
 	
-	private int addCoverToSolution(int coverIndex, SBOLSynthesisGraph cover, List<Integer> solution, 
+	private int addCoverToSolution(SBOLSynthesisGraph cover, List<SBOLSynthesisGraph> solution, 
 			int solutionCost, Set<String> solutionSignals) {
-		solution.add(coverIndex);
+		solution.add(cover);
 		solutionSignals.addAll(cover.getSignals());
 		return solutionCost + calculateCoverCost(cover);
 	}
 	
-	private int removeCoverFromSolution(SBOLSynthesisGraph cover, List<Integer> solution, int solutionCost,
+	private int removeCoverFromSolution(SBOLSynthesisGraph cover, List<SBOLSynthesisGraph> solution, int solutionCost,
 			Set<String> solutionSignals) {
 		solution.remove(solution.size() - 1);
 		solutionSignals.removeAll(cover.getSignals());
@@ -201,9 +207,8 @@ public class SBOLSynthesizer {
 			nodes.get(i).setCoverConstraint(nodeCovers.get(i).getSignal());
 	}
 	
-	public Set<SBOLSynthesisGraph> extractSolution(List<Integer> solution, SBOLSynthesisGraph spec, BioModel solutionModel) {
-		Set<SBOLSynthesisGraph> solutionGraphs = new HashSet<SBOLSynthesisGraph>();
-		List<Integer> solutionCopy = new LinkedList<Integer>();
+	public void composeSolutionModel(List<SBOLSynthesisGraph> solution, SBOLSynthesisGraph spec, BioModel solutionModel) {
+		List<SBOLSynthesisGraph> solutionCopy = new LinkedList<SBOLSynthesisGraph>();
 		solutionCopy.addAll(solution);
 		List<SBOLSynthesisNode> currentNodes = new LinkedList<SBOLSynthesisNode>();
 		List<SBOLSynthesisGraph> previousCovers = new LinkedList<SBOLSynthesisGraph>();
@@ -211,12 +216,9 @@ public class SBOLSynthesizer {
 		int submodelIndex = 0;
 		currentNodes.add(spec.getOutput());
 		do {
-//			if (currentNodes.get(0).getMatches().size() > 0)
-//				solutionGraphs.add(currentNodes.get(0).getCover(solution.get(0)));
 			if (previousCovers.size() == 0) {
-				SBOLSynthesisGraph currentCover = currentNodes.get(0).getCover(solution.remove(0));
-				solutionGraphs.add(currentCover);
-				extractOutput(currentCover, solutionModel, submodelIndex);
+				SBOLSynthesisGraph currentCover = solution.remove(0);
+				composeOutput(currentCover, solutionModel, submodelIndex);
 				submodelIndex++;
 				List<SBOLSynthesisNode> nextNodes = spec.walkPaths(currentNodes.remove(0), currentCover.getPaths());
 				currentNodes.addAll(0, nextNodes);
@@ -224,7 +226,7 @@ public class SBOLSynthesizer {
 				inputIndices.add(0, 0);
 			} else if (currentNodes.get(0).getMatches().size() == 0) {
 				SBOLSynthesisGraph previousCover = previousCovers.get(0);
-				extractInput(previousCover, solutionModel, inputIndices);
+				composeInput(previousCover, solutionModel, inputIndices);
 				currentNodes.remove(0);
 				inputIndices.add(0, inputIndices.remove(0) + 1);
 				if (inputIndices.get(0) == previousCover.getInputs().size()) {
@@ -232,10 +234,9 @@ public class SBOLSynthesizer {
 					inputIndices.remove(0);
 				}
 			} else {
-				SBOLSynthesisGraph currentCover = currentNodes.get(0).getCover(solution.remove(0));
-				solutionGraphs.add(currentCover);
+				SBOLSynthesisGraph currentCover = solution.remove(0);
 				SBOLSynthesisGraph previousCover = previousCovers.get(0);
-				extractIntermediate(currentCover, previousCover, solutionModel, inputIndices, submodelIndex);
+				composeIntermediate(currentCover, previousCover, solutionModel, inputIndices, submodelIndex);
 				submodelIndex++;
 				List<SBOLSynthesisNode> nextNodes = spec.walkPaths(currentNodes.remove(0), currentCover.getPaths());
 				currentNodes.addAll(0, nextNodes);
@@ -248,27 +249,26 @@ public class SBOLSynthesizer {
 				inputIndices.add(0, 0);
 			}
 		} while (currentNodes.size() > 0);
-		return solutionGraphs;
 	}
 	
-	private void extractOutput(SBOLSynthesisGraph currentCover, BioModel solutionModel, int submodelIndex) {
+	private void composeOutput(SBOLSynthesisGraph currentCover, BioModel solutionModel, int submodelIndex) {
 		currentCover.setSubmodelID("C" + submodelIndex);
-		createSubmodel(currentCover.getSubmodelID(), currentCover.getImportFileID(), solutionModel);
+		createSubmodel(currentCover.getSubmodelID(), currentCover.getModelFileID(), solutionModel);
 		Species species = createIOSpecies(currentCover.getOutput().getID(), solutionModel);
 		portMapIOSpecies(species, GlobalConstants.OUTPUT, currentCover.getOutput().getID(), 
 				currentCover.getSubmodelID(), solutionModel);
 	}
 	
-	private void extractInput(SBOLSynthesisGraph previousCover, BioModel solutionModel, List<Integer> inputIndices) {
+	private void composeInput(SBOLSynthesisGraph previousCover, BioModel solutionModel, List<Integer> inputIndices) {
 		Species species = createIOSpecies(previousCover.getInput(inputIndices.get(0)).getID(), solutionModel);
 		portMapIOSpecies(species, GlobalConstants.INPUT, previousCover.getInput(inputIndices.get(0)).getID(), 
 				previousCover.getSubmodelID(), solutionModel);
 	}
 	
-	private void extractIntermediate(SBOLSynthesisGraph currentCover, SBOLSynthesisGraph previousCover, BioModel solutionModel, 
+	private void composeIntermediate(SBOLSynthesisGraph currentCover, SBOLSynthesisGraph previousCover, BioModel solutionModel, 
 			List<Integer> inputIndices, int submodelIndex) {
 		currentCover.setSubmodelID("C" + submodelIndex);
-		createSubmodel(currentCover.getSubmodelID(), currentCover.getImportFileID(), solutionModel);
+		createSubmodel(currentCover.getSubmodelID(), currentCover.getModelFileID(), solutionModel);
 		submodelIndex++;
 		Species species = createInterSpecies(
 				previousCover.getInput(inputIndices.get(0)).getID(), currentCover.getOutput().getID(), 

@@ -593,6 +593,8 @@ public class SequenceTypeValidator {
 		private DFAState currentState;
 		private DFAState failState;
 		private List<DFAState> saveStates;
+		private String strand;
+		private String saveStrand;
 		
 		public DFA(Set<NFAState> nfaStates) {
 			states = new HashMap<String, DFAState>();
@@ -601,6 +603,7 @@ public class SequenceTypeValidator {
 			failState = new DFAState(GlobalConstants.CONSTRUCT_VALIDATION_FAIL_STATE_ID);
 			failState.setAccepting(false);
 			saveStates = new LinkedList<DFAState>();
+			strand = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
 		}
 		
 		public DFA(HashMap<String, DFAState> states, DFAState startState, DFAState failState) {
@@ -609,6 +612,7 @@ public class SequenceTypeValidator {
 			currentState = startState;
 			this.failState = failState;
 			saveStates = new LinkedList<DFAState>();
+			strand = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
 		}
 		
 		public DFAState constructDFA(Set<NFAState> nfaStates) {
@@ -715,36 +719,40 @@ public class SequenceTypeValidator {
 		}
 		
 		public boolean runAndSave(List<String> inputs) {
-			DFAState nextState = currentState;
 			for (int i = 0; i < inputs.size(); i++) {
-				nextState = nextState.transition(inputs.get(i));
-				if (nextState == null) {
-					currentState = failState;
-					return false;
-//					return i;
-				} else if (i == inputs.size() - 1)
-					currentState = nextState;
+				if (inputs.get(i).equals(GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND)
+						|| inputs.get(i).equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND)) {
+					if (!strand.equals(inputs.get(i))) {
+						currentState = startState;
+						strand = inputs.get(i);
+					}
+				} else {
+					currentState = currentState.transition(inputs.get(i));
+					if (currentState == null) {
+						currentState = failState;
+						return false;
+					}	
+				}
 			}
-//			if (currentState.isAccepting())
-//				return inputs.size();
-//			else
-//				return -1;
 			return currentState.isAccepting();
 		}
 		
 		public boolean run(List<String> inputs) {
 			DFAState nextState = currentState;
+			String currentStrand = strand;
 			for (int i = 0; i < inputs.size(); i++) {
-				nextState = nextState.transition(inputs.get(i));
-				if (nextState == null) {
-					return false;
-//					return i;
+				if (inputs.get(i).equals(GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND)
+						|| inputs.get(i).equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND)) {
+					if (!currentStrand.equals(inputs.get(i))) {
+						nextState = startState;
+						currentStrand = inputs.get(i);
+					}
+				} else {
+					nextState = nextState.transition(inputs.get(i));
+					if (nextState == null)
+						return false;
 				}
 			}
-//			if (nextState.isAccepting())
-//				return inputs.size();
-//			else
-//				return -1;
 			return nextState.isAccepting();
 		}
 		
@@ -758,14 +766,17 @@ public class SequenceTypeValidator {
 		
 		public void reset() {
 			currentState = startState;
+			strand = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
 		}
 		
 		public void save() {
 			saveStates.add(0, currentState);
+			saveStrand = strand;
 		}
 		
 		public void load() {
 			currentState = saveStates.remove(0);
+			strand = saveStrand;
 		}
 		
 		public boolean inStartState() {
