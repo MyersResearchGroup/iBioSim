@@ -22,19 +22,20 @@ import main.Gui;
 import main.util.MutableBoolean;
 import main.util.Utility;
 
-import org.sbml.libsbml.Compartment;
-import org.sbml.libsbml.InitialAssignment;
-import org.sbml.libsbml.ListOf;
-import org.sbml.libsbml.Model;
-import org.sbml.libsbml.Parameter;
-import org.sbml.libsbml.Reaction;
-import org.sbml.libsbml.Rule;
-import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.SBase;
-import org.sbml.libsbml.Species;
-import org.sbml.libsbml.SpeciesReference;
-import org.sbml.libsbml.SpeciesType;
-import org.sbml.libsbml.UnitDefinition;
+import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.InitialAssignment;
+import org.sbml.jsbml.ListOf;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.Rule;
+import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.Species;
+import org.sbml.jsbml.SpeciesReference;
+//SpeciesType not supported in Level 3
+//import org.sbml.jsbml.SpeciesType;
+import org.sbml.jsbml.UnitDefinition;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.ModelEditor;
@@ -66,7 +67,10 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 
 	private JTextField ID, init, Name; // species text fields
 
-	private JComboBox specTypeBox, specBoundary, specConstant, specHasOnly; // species
+//	SpeciesType not supported in Level 3
+//	private JComboBox specTypeBox; // species
+	
+	private JComboBox specBoundary, specConstant, specHasOnly; // species
 
 	private JComboBox specUnits, initLabel, specConv;
 
@@ -263,15 +267,16 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		specConstant.setSelectedItem("false");
 		specHasOnly = new JComboBox(optionsTF);
 		specHasOnly.setSelectedItem("false");
-		ListOf listOfSpecTypes = bioModel.getSBMLDocument().getModel().getListOfSpeciesTypes();
-		String[] specTypeList = new String[(int) bioModel.getSBMLDocument().getModel().getNumSpeciesTypes() + 1];
-		specTypeList[0] = "( none )";
-		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumSpeciesTypes(); i++) {
-			specTypeList[i + 1] = ((SpeciesType) listOfSpecTypes.get(i)).getId();
-		}
-		Utility.sort(specTypeList);
-		Object[] choices = specTypeList;
-		specTypeBox = new JComboBox(choices);
+//		SpeciesType not supported in Level 3
+//		ListOf listOfSpecTypes = bioModel.getSBMLDocument().getModel().getListOfSpeciesTypes();
+//		String[] specTypeList = new String[(int) bioModel.getSBMLDocument().getModel().getNumSpeciesTypes() + 1];
+//		specTypeList[0] = "( none )";
+//		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumSpeciesTypes(); i++) {
+//			specTypeList[i + 1] = ((SpeciesType) listOfSpecTypes.get(i)).getId();
+//		}
+//		Utility.sort(specTypeList);
+//		Object[] choices = specTypeList;
+//		specTypeBox = new JComboBox(choices);
 		comp = createCompartmentChoices(bioModel);
 		String[] list = { "Original", "Modified" };
 		String[] list1 = { "1", "2" };
@@ -317,7 +322,8 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		if (paramsOnly) {
 			ID.setEditable(false);
 			Name.setEditable(false);
-			specTypeBox.setEnabled(false);
+//			SpeciesType not supported in Level 3
+//			specTypeBox.setEnabled(false);
 			specBoundary.setEnabled(false);
 			specConstant.setEnabled(false);
 			specHasOnly.setEnabled(false);
@@ -334,7 +340,8 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				ID.setText(specie.getId());
 				selectedID = specie.getId();
 				Name.setText(specie.getName());
-				specTypeBox.setSelectedItem(specie.getSpeciesType());
+//				SpeciesType not supported in Level 3
+//				specTypeBox.setSelectedItem(specie.getSpeciesType());
 				if (specie.getBoundaryCondition()) {
 					specBoundary.setSelectedItem("true");
 				}
@@ -406,10 +413,11 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		speciesPanel.add(ID);
 		speciesPanel.add(nameLabel);
 		speciesPanel.add(Name);
-		if (bioModel.getSBMLDocument().getLevel() < 3) {
-			speciesPanel.add(specTypeLabel);
-			speciesPanel.add(specTypeBox);
-		}
+//		SpeciesType not supported in Level 3
+//		if (bioModel.getSBMLDocument().getLevel() < 3) {
+//			speciesPanel.add(specTypeLabel);
+//			speciesPanel.add(specTypeBox);
+//		}
 		speciesPanel.add(compLabel);
 		speciesPanel.add(comp);
 		speciesPanel.add(boundLabel);
@@ -508,7 +516,8 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 					convFactor = (String) specConv.getSelectedItem();
 				}
 				String addSpec = "";
-				String selSpecType = (String) specTypeBox.getSelectedItem();
+//				SpeciesType not supported in Level 3
+//				String selSpecType = (String) specTypeBox.getSelectedItem();
 				if (paramsOnly && !((String) type.getSelectedItem()).equals("Original")) {
 					String[] specs = new String[species.getModel().getSize()];
 					for (int i = 0; i < species.getModel().getSize(); i++) {
@@ -551,16 +560,17 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 					if (option.equals("OK")) {
 						selected = ((String) species.getSelectedValue()).split(" ")[0];
 					}
-					for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumSpecies(); i++) {
-						if (!((Species) listOfSpecies.get(i)).getId().equals(selected)) {
-							if (((Species) listOfSpecies.get(i)).getCompartment().equals((String) comp.getSelectedItem())
-									&& ((Species) listOfSpecies.get(i)).getSpeciesType().equals(selSpecType)) {
-								JOptionPane.showMessageDialog(Gui.frame, "Compartment already contains another species of this type.",
-										"Species Type Not Unique", JOptionPane.ERROR_MESSAGE);
-								error = true;
-							}
-						}
-					}
+//					SpeciesType not supported in Level 3
+//					for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumSpecies(); i++) {
+//						if (!((Species) listOfSpecies.get(i)).getId().equals(selected)) {
+//							if (((Species) listOfSpecies.get(i)).getCompartment().equals((String) comp.getSelectedItem())
+//									&& ((Species) listOfSpecies.get(i)).getSpeciesType().equals(selSpecType)) {
+//								JOptionPane.showMessageDialog(Gui.frame, "Compartment already contains another species of this type.",
+//										"Species Type Not Unique", JOptionPane.ERROR_MESSAGE);
+//								error = true;
+//							}
+//						}
+//					}
 				}
 				if (!error) {
 					Compartment compartment = bioModel.getSBMLDocument().getModel().getCompartment((String) comp.getSelectedItem());
@@ -613,12 +623,15 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						else {
 							specie.setHasOnlySubstanceUnits(false);
 						}
-						if (!selSpecType.equals("( none )")) {
-							specie.setSpeciesType(selSpecType);
-						}
-						else {
-							specie.unsetSpeciesType();
-						}
+//						SpeciesType not supported in Level 3
+//						if (!selSpecType.equals("( none )")) {
+//							specie.setSpeciesType(selSpecType);
+//						}
+//						else {
+//							//specie.unsetSpeciesType();
+//							SpeciesType unset = null;
+//							specie.setSpeciesType(unset);
+//						}
 						if (initLabel.getSelectedItem().equals("Initial Amount")) {
 							specie.unsetInitialConcentration();
 							specie.setInitialAmount(initial);
@@ -695,9 +708,10 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						else {
 							specie.setHasOnlySubstanceUnits(false);
 						}
-						if (!selSpecType.equals("( none )")) {
-							specie.setSpeciesType(selSpecType);
-						}
+//						SpeciesType not supported in Level 3
+//						if (!selSpecType.equals("( none )")) {
+//							specie.setSpeciesType(selSpecType);
+//						}
 						if (initLabel.getSelectedItem().equals("Initial Amount")) {
 							specie.setInitialAmount(initial);
 						}
@@ -978,7 +992,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 			if (model.getNumRules() > 0) {
 				for (int i = 0; i < model.getNumRules(); i++) {
 					Rule rule = (Rule) model.getListOfRules().get(i);
-					if (rule.isSetVariable() && val.equals(rule.getVariable())) {
+					if (SBMLutilities.isSetVariable(rule) && val.equals(SBMLutilities.getVariable(rule))) {
 						inRule = true;
 						break;
 					}

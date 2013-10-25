@@ -15,8 +15,8 @@ import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.sbml.libsbml.Compartment;
-import org.sbml.libsbml.Port;
+import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.ext.comp.Port;
 
 import biomodel.util.GlobalConstants;
 
@@ -987,7 +987,7 @@ public class GCM2SBML {
 			} else {
 				//gcm.setIsWithinCompartment(false);
 				//gcm.setDefaultCompartment("");
-				for (long j = 0; j < gcm.getSBMLDocument().getModel().getNumCompartments(); j++) {
+				for (int j = 0; j < gcm.getSBMLDocument().getModel().getNumCompartments(); j++) {
 					Compartment compartment = gcm.getSBMLDocument().getModel().getCompartment(j);
 					Port port = gcm.getSBMLCompModel().createPort();
 					port.setId(GlobalConstants.COMPARTMENT+"__"+compartment.getId());

@@ -28,25 +28,25 @@ import main.Gui;
 import main.util.MutableBoolean;
 import main.util.Utility;
 
-import org.sbml.libsbml.AlgebraicRule;
-import org.sbml.libsbml.AssignmentRule;
-import org.sbml.libsbml.Compartment;
-import org.sbml.libsbml.InitialAssignment;
-import org.sbml.libsbml.Layout;
-import org.sbml.libsbml.ListOf;
-import org.sbml.libsbml.Model;
-import org.sbml.libsbml.Parameter;
-import org.sbml.libsbml.Port;
-import org.sbml.libsbml.RateRule;
-import org.sbml.libsbml.Reaction;
-import org.sbml.libsbml.Rule;
-import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.SBase;
-import org.sbml.libsbml.Species;
-import org.sbml.libsbml.SpeciesReference;
-import org.sbml.libsbml.Unit;
-import org.sbml.libsbml.UnitDefinition;
-import org.sbml.libsbml.libsbml;
+import org.sbml.jsbml.AlgebraicRule;
+import org.sbml.jsbml.AssignmentRule;
+import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.InitialAssignment;
+import org.sbml.jsbml.ext.layout.Layout;
+import org.sbml.jsbml.ListOf;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.ext.comp.Port;
+import org.sbml.jsbml.RateRule;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.Rule;
+import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.Species;
+import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.Unit;
+import org.sbml.jsbml.UnitDefinition;
+import org.sbml.jsbml.JSBML;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
@@ -103,10 +103,10 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				rul[i] = "0 = " + bioModel.removeBooleans(rule.getMath());
 			}
 			else if (rule.isAssignment()) {
-				rul[i] = rule.getVariable() + " = " + bioModel.removeBooleans(rule.getMath());
+				rul[i] = SBMLutilities.getVariable(rule) + " = " + bioModel.removeBooleans(rule.getMath());
 			}
 			else {
-				rul[i] = "d( " + rule.getVariable() + " )/dt = " + bioModel.removeBooleans(rule.getMath());
+				rul[i] = "d( " + SBMLutilities.getVariable(rule) + " )/dt = " + bioModel.removeBooleans(rule.getMath());
 			}
 		}
 		String[] oldRul = rul;
@@ -158,10 +158,10 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					rul[i] = "0 = " + bioModel.removeBooleans(rule.getMath());
 				}
 				else if (rule.isAssignment()) {
-					rul[i] = rule.getVariable() + " = " + bioModel.removeBooleans(rule.getMath());
+					rul[i] = SBMLutilities.getVariable(rule) + " = " + bioModel.removeBooleans(rule.getMath());
 				}
 				else {
-					rul[i] = "d( " + rule.getVariable() + " )/dt = " + bioModel.removeBooleans(rule.getMath());
+					rul[i] = "d( " + SBMLutilities.getVariable(rule) + " )/dt = " + bioModel.removeBooleans(rule.getMath());
 				}
 			}
 			try {
@@ -200,7 +200,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		JCheckBox onPort = new JCheckBox();
 		if (option.equals("OK")) {
 			ruleType.setEnabled(false);
-			Rule rule = (Rule)bioModel.getSBMLDocument().getModel().getElementByMetaId(metaId);
+			Rule rule = (Rule)SBMLutilities.getElementByMetaId(bioModel.getSBMLDocument().getModel(), metaId);
 			if (rule.getElementName().equals(GlobalConstants.ALGEBRAIC_RULE)) {
 				ruleType.setSelectedItem("Algebraic");
 				ruleVar.setEnabled(false);
@@ -208,18 +208,18 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			}
 			else if  (rule.getElementName().equals(GlobalConstants.RATE_RULE)) {
 				ruleType.setSelectedItem("Rate");
-				rateRuleVar(rule.getVariable());
+				rateRuleVar(SBMLutilities.getVariable(rule));
 				ruleVar.setEnabled(true);
-				ruleVar.setSelectedItem(rule.getVariable());
+				ruleVar.setSelectedItem(SBMLutilities.getVariable(rule));
 				ruleMath.setText(bioModel.removeBooleans(rule.getMath()));
 			}
 			else {
 				ruleType.setSelectedItem("Assignment");
-				assignRuleVar(rule.getVariable());
+				assignRuleVar(SBMLutilities.getVariable(rule));
 				ruleVar.setEnabled(true);
-				ruleVar.setSelectedItem(rule.getVariable());
-				if (bioModel.getSBMLDocument().getModel().getParameter(rule.getVariable())!=null &&
-						SBMLutilities.isBoolean(bioModel.getSBMLDocument().getModel().getParameter(rule.getVariable()))) {
+				ruleVar.setSelectedItem(SBMLutilities.getVariable(rule));
+				if (bioModel.getSBMLDocument().getModel().getParameter(SBMLutilities.getVariable(rule))!=null &&
+						SBMLutilities.isBoolean(bioModel.getSBMLDocument().getModel().getParameter(SBMLutilities.getVariable(rule)))) {
 					ruleMath.setText(bioModel.removeBooleanAssign(rule.getMath()));
 				} else {
 					ruleMath.setText(bioModel.removeBooleans(rule.getMath()));
@@ -236,7 +236,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			} else {
 				String ruleId = "rule0";
 				int cn = 0;
-				while (bioModel.getSBMLDocument().getElementByMetaId(ruleId)!=null) {
+				while (SBMLutilities.getElementByMetaId(bioModel.getSBMLDocument(), ruleId)!=null) {
 					cn++;
 					ruleId = "rule" + cn;
 				}
@@ -263,7 +263,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			}
 			String ruleId = "rule0";
 			int cn = 0;
-			while (bioModel.getSBMLDocument().getElementByMetaId(ruleId)!=null) {
+			while (SBMLutilities.getElementByMetaId(bioModel.getSBMLDocument(), ruleId)!=null) {
 				cn++;
 				ruleId = "rule" + cn;
 			}
@@ -348,12 +348,12 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				if (!error) {
 					if (bioModel.getSBMLDocument().getModel().getParameter(addVar)!=null &&
 							SBMLutilities.isBoolean(bioModel.getSBMLDocument().getModel().getParameter(addVar))) {
-						if (!bioModel.addBooleans(ruleMath.getText().trim()).returnsBoolean(bioModel.getSBMLDocument().getModel())) {
+						if (!SBMLutilities.returnsBoolean(bioModel.addBooleans(ruleMath.getText().trim()), bioModel.getSBMLDocument().getModel())) {
 							JOptionPane.showMessageDialog(Gui.frame, "Rule must evaluate to a Boolean.", "Boolean Expected", JOptionPane.ERROR_MESSAGE);
 							error = true;
 						}
 					} else {
-						if (bioModel.addBooleans(ruleMath.getText().trim()).returnsBoolean(bioModel.getSBMLDocument().getModel())) {
+						if (SBMLutilities.returnsBoolean(bioModel.addBooleans(ruleMath.getText().trim()), bioModel.getSBMLDocument().getModel())) {
 							JOptionPane.showMessageDialog(Gui.frame, "Rule must evaluate to a number.", "Number Expected", JOptionPane.ERROR_MESSAGE);
 							error = true;
 						}
@@ -371,7 +371,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					rul = Utility.getList(rul, rules);
 					String[] oldRul = rul.clone();
 					rules.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					Rule r = (Rule) (bioModel.getSBMLDocument().getModel().getElementByMetaId(metaId));
+					Rule r = (Rule) (SBMLutilities.getElementByMetaId(bioModel.getSBMLDocument().getModel(), metaId));
 					String addStr;
 					String oldVar = "";
 					String oldMath = bioModel.removeBooleans(r.getMath());
@@ -381,15 +381,15 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 						SBMLutilities.checkOverDetermined(bioModel.getSBMLDocument());
 					}
 					else if (ruleType.getSelectedItem().equals("Rate")) {
-						oldVar = r.getVariable();
-						r.setVariable(addVar);
+						oldVar = SBMLutilities.getVariable(r);
+						SBMLutilities.setVariable(r, addVar);
 						r.setMath(bioModel.addBooleans(ruleMath.getText().trim()));
 						error = checkRateRuleUnits(r);
 						addStr = "d( " + addVar + " )/dt = " + bioModel.removeBooleans(r.getMath());
 					}
 					else {
-						oldVar = r.getVariable();
-						r.setVariable(addVar);
+						oldVar = SBMLutilities.getVariable(r);
+						SBMLutilities.setVariable(r, addVar);
 						if (bioModel.getSBMLDocument().getModel().getParameter(addVar)!=null &&
 								SBMLutilities.isBoolean(bioModel.getSBMLDocument().getModel().getParameter(addVar))) {
 							r.setMath(bioModel.addBooleanAssign(ruleMath.getText().trim()));
@@ -452,13 +452,13 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 							}
 
 							Port port = bioModel.getPortByMetaIdRef(r.getMetaId());
-							r.setMetaId(id.getText().trim());
+							SBMLutilities.setMetaId(r, id.getText().trim());
 							if (port!=null) {
 								if (onPort.isSelected()) {
 									port.setId(GlobalConstants.RULE+"__"+r.getMetaId());
 									port.setMetaIdRef(r.getMetaId());
 								} else {
-									port.removeFromParentAndDelete();
+									SBMLutilities.removeFromParentAndDelete(port);
 								}
 							} else {
 								if (onPort.isSelected()) {
@@ -471,7 +471,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					}
 					if (error) {
 						if (!oldVar.equals("")) {
-							r.setVariable(oldVar);
+							SBMLutilities.setVariable(r, oldVar);
 						}
 						r.setMath(bioModel.addBooleans(oldMath));
 						rul = oldRul;
@@ -522,14 +522,14 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 						SBMLDocument sbmlDoc = bioModel.getSBMLDocument();
 						if (ruleType.getSelectedItem().equals("Algebraic")) {
 							AlgebraicRule r = sbmlDoc.getModel().createAlgebraicRule();
-							r.setMetaId(id.getText().trim());
+							SBMLutilities.setMetaId(r, id.getText().trim());
 							r.setMath(bioModel.addBooleans(ruleMath.getText().trim()));
 							SBMLutilities.checkOverDetermined(bioModel.getSBMLDocument());
 							rPointer = r;
 						}
 						else if (ruleType.getSelectedItem().equals("Rate")) {
 							RateRule r = sbmlDoc.getModel().createRateRule();
-							r.setMetaId(id.getText().trim());
+							SBMLutilities.setMetaId(r, id.getText().trim());
 							r.setVariable(addVar);
 							r.setMath(bioModel.addBooleans(ruleMath.getText().trim()));
 							error = checkRateRuleUnits(r);
@@ -537,7 +537,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 						}
 						else {
 							AssignmentRule r = sbmlDoc.getModel().createAssignmentRule();
-							r.setMetaId(id.getText().trim());
+							SBMLutilities.setMetaId(r, id.getText().trim());
 							r.setVariable(addVar);
 							if (bioModel.getSBMLDocument().getModel().getParameter(addVar)!=null &&
 									SBMLutilities.isBoolean(bioModel.getSBMLDocument().getModel().getParameter(addVar))) {
@@ -564,7 +564,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 							port.setId(GlobalConstants.RULE+"__"+rPointer.getMetaId());
 							port.setMetaIdRef(rPointer.getMetaId());
 						}
-						rPointer.setMetaId(id.getText().trim());
+						SBMLutilities.setMetaId(rPointer, id.getText().trim());
 					}
 //					updateRules(rul);
 					rules.setListData(rul);
@@ -613,13 +613,13 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	}
 
 	public void removeRuleByMetaId(String metaId) {
-		SBase rule = bioModel.getSBMLDocument().getModel().getElementByMetaId(metaId);
+		SBase rule = SBMLutilities.getElementByMetaId(bioModel.getSBMLDocument().getModel(), metaId);
 		if (rule != null) {
-			rule.removeFromParentAndDelete();
-			for (long j = 0; j < bioModel.getSBMLCompModel().getNumPorts(); j++) {
-				Port port = bioModel.getSBMLCompModel().getPort(j);
+			SBMLutilities.removeFromParentAndDelete(rule);
+			for (int j = 0; j < bioModel.getSBMLCompModel().getListOfPorts().size(); j++) {
+				Port port = bioModel.getSBMLCompModel().getListOfPorts().get(j);
 				if (port.isSetMetaIdRef() && port.getMetaIdRef().equals(metaId)) {
-					bioModel.getSBMLCompModel().removePort(j);
+					bioModel.getSBMLCompModel().getListOfPorts().remove(j);
 					break;
 				}
 			}
@@ -636,10 +636,10 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			ListOf r = bioModel.getSBMLDocument().getModel().getListOfRules();
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumRules(); i++) {
 				if ((((Rule) r.get(i)).isAlgebraic()) && bioModel.removeBooleans(((Rule) r.get(i)).getMath()).equals(tempMath)) {
-					for (long j = 0; j < bioModel.getSBMLCompModel().getNumPorts(); j++) {
-						Port port = bioModel.getSBMLCompModel().getPort(j);
+					for (int j = 0; j < bioModel.getSBMLCompModel().getListOfPorts().size(); j++) {
+						Port port = bioModel.getSBMLCompModel().getListOfPorts().get(j);
 						if (port.isSetMetaIdRef() && port.getMetaIdRef().equals(r.get(i).getMetaId())) {
-							bioModel.getSBMLCompModel().removePort(j);
+							bioModel.getSBMLCompModel().getListOfPorts().remove(j);
 							break;
 						}
 					}
@@ -654,11 +654,11 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			ListOf r = bioModel.getSBMLDocument().getModel().getListOfRules();
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumRules(); i++) {
 				if ((((Rule) r.get(i)).isRate()) && bioModel.removeBooleans(((Rule) r.get(i)).getMath()).equals(tempMath)
-						&& ((Rule) r.get(i)).getVariable().equals(tempVar)) {
-					for (long j = 0; j < bioModel.getSBMLCompModel().getNumPorts(); j++) {
-						Port port = bioModel.getSBMLCompModel().getPort(j);
+						&& SBMLutilities.getVariable(((Rule) r.get(i))).equals(tempVar)) {
+					for (int j = 0; j < bioModel.getSBMLCompModel().getListOfPorts().size(); j++) {
+						Port port = bioModel.getSBMLCompModel().getListOfPorts().get(j);
 						if (port.isSetMetaIdRef() && port.getMetaIdRef().equals(r.get(i).getMetaId())) {
-							bioModel.getSBMLCompModel().removePort(j);
+							bioModel.getSBMLCompModel().getListOfPorts().remove(j);
 							break;
 						}
 					}
@@ -673,11 +673,11 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			ListOf r = bioModel.getSBMLDocument().getModel().getListOfRules();
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumRules(); i++) {
 				if ((((Rule) r.get(i)).isAssignment()) && bioModel.removeBooleans(((Rule) r.get(i)).getMath()).equals(tempMath)
-						&& ((Rule) r.get(i)).getVariable().equals(tempVar)) {
-					for (long j = 0; j < bioModel.getSBMLCompModel().getNumPorts(); j++) {
-						Port port = bioModel.getSBMLCompModel().getPort(j);
+						&& SBMLutilities.getVariable(((Rule) r.get(i))).equals(tempVar)) {
+					for (int j = 0; j < bioModel.getSBMLCompModel().getListOfPorts().size(); j++) {
+						Port port = bioModel.getSBMLCompModel().getListOfPorts().get(j);
 						if (port.isSetMetaIdRef() && port.getMetaIdRef().equals(r.get(i).getMetaId())) {
-							bioModel.getSBMLCompModel().removePort(j);
+							bioModel.getSBMLCompModel().getListOfPorts().remove(j);
 							break;
 						}
 					}
@@ -685,13 +685,13 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 		}
-		if (bioModel.getSBMLLayout().getLayout("iBioSim") != null) {
-			Layout layout = bioModel.getSBMLLayout().getLayout("iBioSim"); 
-			if (layout.getAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+selected)!=null) {
-				layout.removeAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+selected);
+		if (bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim") != null) {
+			Layout layout = bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim"); 
+			if (layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+selected)!=null) {
+				layout.getListOfAdditionalGraphicalObjects().remove(GlobalConstants.GLYPH+"__"+selected);
 			}
 			if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+selected) != null) {
-				layout.removeTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+selected);
+				layout.getListOfTextGlyphs().remove(GlobalConstants.TEXT_GLYPH+"__"+selected);
 			}
 		}
 	}
@@ -891,7 +891,8 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	 * Check the units of a rate rule
 	 */
 	public boolean checkRateRuleUnits(Rule rule) {
-		bioModel.getSBMLDocument().getModel().populateListFormulaUnitsData();
+//		TODO: Is this necessary?
+//		bioModel.getSBMLDocument().getModel().populateListFormulaUnitsData();
 		if (rule.containsUndeclaredUnits()) {
 			if (biosim.getCheckUndeclared()) {
 				JOptionPane.showMessageDialog(Gui.frame, "Rate rule contains literals numbers or parameters with undeclared units.\n"
@@ -914,7 +915,8 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	 * Check the units of an assignment rule
 	 */
 	public boolean checkAssignmentRuleUnits(Rule rule) {
-		bioModel.getSBMLDocument().getModel().populateListFormulaUnitsData();
+//		TODO: Is this necessary?
+//		bioModel.getSBMLDocument().getModel().populateListFormulaUnitsData();
 		if (rule.containsUndeclaredUnits()) {
 			if (biosim.getCheckUndeclared()) {
 				JOptionPane.showMessageDialog(Gui.frame, "Assignment rule contains literals numbers or parameters with undeclared units.\n"
@@ -973,9 +975,9 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			}
 			ListOf e = gcm.getSBMLDocument().getModel().getListOfEvents();
 			for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumEvents(); i++) {
-				org.sbml.libsbml.Event event = (org.sbml.libsbml.Event) e.get(i);
+				org.sbml.jsbml.Event event = (org.sbml.jsbml.Event) e.get(i);
 				for (int j = 0; j < event.getNumEventAssignments(); j++) {
-					if (id.equals(event.getEventAssignment(j).getVariable())) {
+					if (id.equals(event.getListOfEventAssignments().get(j).getVariable())) {
 						return false;
 					}
 				}
@@ -983,9 +985,9 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			ListOf r = gcm.getSBMLDocument().getModel().getListOfRules();
 			for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumRules(); i++) {
 				Rule rule = (Rule) r.get(i);
-				if (rule.isAssignment() && rule.getVariable().equals(id))
+				if (rule.isAssignment() && SBMLutilities.getVariable(rule).equals(id))
 					return false;
-				if (rule.isRate() && rule.getVariable().equals(id))
+				if (rule.isRate() && SBMLutilities.getVariable(rule).equals(id))
 					return false;
 			}
 		}
@@ -1000,7 +1002,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			ListOf r = gcm.getSBMLDocument().getModel().getListOfRules();
 			for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumRules(); i++) {
 				Rule rule = (Rule) r.get(i);
-				if ((rule.isRate()||rule.isAssignment()) && rule.getVariable().equals(id))
+				if ((rule.isRate()||rule.isAssignment()) && SBMLutilities.getVariable(rule).equals(id))
 					return false;
 			}
 		}
@@ -1034,7 +1036,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				String var = selected.split(" ")[1];
 				ListOf r = bioModel.getSBMLDocument().getModel().getListOfRules();
 				for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumRules(); i++) {
-					if ((((Rule) r.get(i)).isRate()) && ((Rule) r.get(i)).getVariable().equals(var)) {
+					if ((((Rule) r.get(i)).isRate()) && SBMLutilities.getVariable(((Rule) r.get(i))).equals(var)) {
 						metaId = r.get(i).getMetaId();
 					}
 				}
@@ -1043,7 +1045,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				String var = selected.split(" ")[0];
 				ListOf r = bioModel.getSBMLDocument().getModel().getListOfRules();
 				for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumRules(); i++) {
-					if ((((Rule) r.get(i)).isAssignment()) && ((Rule) r.get(i)).getVariable().equals(var)) {
+					if ((((Rule) r.get(i)).isAssignment()) && SBMLutilities.getVariable(((Rule) r.get(i))).equals(var)) {
 						metaId = r.get(i).getMetaId();
 					}
 				}
@@ -1079,7 +1081,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					String var = selected.split(" ")[1];
 					ListOf r = bioModel.getSBMLDocument().getModel().getListOfRules();
 					for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumRules(); i++) {
-						if ((((Rule) r.get(i)).isRate()) && ((Rule) r.get(i)).getVariable().equals(var)) {
+						if ((((Rule) r.get(i)).isRate()) && SBMLutilities.getVariable(((Rule) r.get(i))).equals(var)) {
 							metaId = r.get(i).getMetaId();
 						}
 					}
@@ -1088,7 +1090,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					String var = selected.split(" ")[0];
 					ListOf r = bioModel.getSBMLDocument().getModel().getListOfRules();
 					for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumRules(); i++) {
-						if ((((Rule) r.get(i)).isAssignment()) && ((Rule) r.get(i)).getVariable().equals(var)) {
+						if ((((Rule) r.get(i)).isAssignment()) && SBMLutilities.getVariable(((Rule) r.get(i))).equals(var)) {
 							metaId = r.get(i).getMetaId();
 						}
 					}

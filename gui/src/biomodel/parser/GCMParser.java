@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.prefs.Preferences;
 
-import org.sbml.libsbml.ModifierSpeciesReference;
-import org.sbml.libsbml.Reaction;
-import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.Species;
-import org.sbml.libsbml.SpeciesReference;
+import org.sbml.jsbml.ModifierSpeciesReference;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.Species;
+import org.sbml.jsbml.SpeciesReference;
 
 import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.network.BaseSpecies;
@@ -90,12 +90,12 @@ public class GCMParser {
 
 		// Need to first parse all species that aren't promoters before parsing promoters
 		// since latter process refers to the species list
-		for (long i=0; i<sbml.getModel().getNumSpecies(); i++) {
+		for (int i=0; i<sbml.getModel().getNumSpecies(); i++) {
 			Species species = sbml.getModel().getSpecies(i);
 			if (!BioModel.isPromoterSpecies(species)) 
 				parseSpeciesData(sbml,species);
 		}
-		for (long i=0; i<sbml.getModel().getNumSpecies(); i++) {
+		for (int i=0; i<sbml.getModel().getNumSpecies(); i++) {
 			Species species = sbml.getModel().getSpecies(i);
 			if (BioModel.isPromoterSpecies(species))
 				parsePromoterData(sbml,species);
@@ -192,15 +192,15 @@ public class GCMParser {
 			} else {
 				p.setKArnap(Double.parseDouble(biosimrc.get("biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE", "")),1.0);
 			}
-			for (long j = 0; j < production.getNumProducts(); j++) {
+			for (int j = 0; j < production.getNumProducts(); j++) {
 				SpeciesReference product = production.getProduct(j);
 				if (!BioModel.isMRNASpecies(sbml.getModel().getSpecies(product.getSpecies())))
 					p.addOutput(product.getSpecies(),speciesList.get(product.getSpecies()));
 			}
-			for (long i = 0; i < production.getNumModifiers(); i++) {
+			for (int i = 0; i < production.getNumModifiers(); i++) {
 				ModifierSpeciesReference modifier = production.getModifier(i);
 				if (BioModel.isRepressor(modifier) || BioModel.isRegulator(modifier)) {
-					for (long j = 0; j < production.getNumProducts(); j++) {
+					for (int j = 0; j < production.getNumProducts(); j++) {
 						SpeciesReference product = production.getProduct(j);
 						Influence infl = new Influence();		
 						infl.generateName();
@@ -236,7 +236,7 @@ public class GCMParser {
 					}
 				} 
 				if (BioModel.isActivator(modifier) || BioModel.isRegulator(modifier)) {
-					for (long j = 0; j < production.getNumProducts(); j++) {
+					for (int j = 0; j < production.getNumProducts(); j++) {
 						SpeciesReference product = production.getProduct(j);
 						Influence infl = new Influence();		
 						infl.generateName();
@@ -322,8 +322,9 @@ public class GCMParser {
 		}
 		speciesList.put(species.getId(), speciesIF);
 		
-		speciesIF.setType(BioModel.getSpeciesType(sbml,species.getId()));
-//		String annotation = species.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
+//		SpeciesType not supported in Level 3
+//		speciesIF.setType(BioModel.getSpeciesType(sbml,species.getId()));
+//		String annotation = species.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim().replace("<annotation>","").replace("</annotation>","");
 //		String [] annotations = annotation.split(",");
 //		for (int i=0;i<annotations.length;i++) 
 //			if (annotations[i].startsWith(GlobalConstants.TYPE)) {
@@ -430,7 +431,7 @@ public class GCMParser {
 		speciesIF.setStateName(species.getId());
 		
 		if (complex != null) {
-			for (long i = 0; i < complex.getNumReactants(); i++) {
+			for (int i = 0; i < complex.getNumReactants(); i++) {
 				Influence infl = new Influence();		
 				infl.generateName();		
 				infl.setType("plus");

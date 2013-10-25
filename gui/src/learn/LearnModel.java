@@ -15,7 +15,7 @@ import javax.swing.*;
 
 
 
-//import org.sbml.libsbml.*;
+//import org.sbml.jsbml.*;
 
 /**
  * This class generates an LHPN model from the simulation traces provided

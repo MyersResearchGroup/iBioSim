@@ -22,16 +22,16 @@ import javax.swing.ListSelectionModel;
 import main.Gui;
 import main.util.Utility;
 
-import org.sbml.libsbml.Compartment;
-import org.sbml.libsbml.InitialAssignment;
-import org.sbml.libsbml.ListOf;
-import org.sbml.libsbml.Model;
-import org.sbml.libsbml.Parameter;
-import org.sbml.libsbml.Port;
-import org.sbml.libsbml.Reaction;
-import org.sbml.libsbml.Rule;
-import org.sbml.libsbml.Species;
-import org.sbml.libsbml.SpeciesReference;
+import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.InitialAssignment;
+import org.sbml.jsbml.ListOf;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.ext.comp.Port;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.Rule;
+import org.sbml.jsbml.Species;
+import org.sbml.jsbml.SpeciesReference;
 
 import biomodel.gui.ModelEditor;
 import biomodel.parser.BioModel;
@@ -138,10 +138,10 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 		ListOf r = gcm.getSBMLDocument().getModel().getListOfInitialAssignments();
 		for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumInitialAssignments(); i++) {
 			if (((InitialAssignment) r.get(i)).getSymbol().equals(variable)) {
-				for (long j = 0; j < gcm.getSBMLCompModel().getNumPorts(); j++) {
-					Port port = gcm.getSBMLCompModel().getPort(j);
+				for (int j = 0; j < gcm.getSBMLCompModel().getListOfPorts().size(); j++) {
+					Port port = gcm.getSBMLCompModel().getListOfPorts().get(j);
 					if (port.isSetMetaIdRef() && port.getMetaIdRef().equals(r.get(i).getMetaId())) {
-						gcm.getSBMLCompModel().removePort(j);
+						gcm.getSBMLCompModel().getListOfPorts().remove(j);
 						break;
 					}
 				}
@@ -196,14 +196,14 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 		if (SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), bioModel.addBooleans(assignment.trim()))) {
 			return true;
 		}
-		if (bioModel.addBooleans(assignment.trim()).returnsBoolean(bioModel.getSBMLDocument().getModel())) {
+		if (SBMLutilities.returnsBoolean(bioModel.addBooleans(assignment.trim()), bioModel.getSBMLDocument().getModel())) {
 			JOptionPane.showMessageDialog(Gui.frame, "Initial assignment must evaluate to a number.", "Number Expected", JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
 		boolean error = false;
 		InitialAssignment r = bioModel.getSBMLDocument().getModel().createInitialAssignment();
 		String initialId = "init__"+variable;
-		r.setMetaId(initialId);
+		SBMLutilities.setMetaId(r, initialId);
 		r.setSymbol(variable);
 		r.setMath(bioModel.addBooleans(assignment.trim()));
 		if (checkInitialAssignmentUnits(biosim, bioModel, r)) {
@@ -230,7 +230,8 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 	 * Check the units of an initial assignment
 	 */
 	public static boolean checkInitialAssignmentUnits(Gui biosim, BioModel bioModel, InitialAssignment init) {
-		bioModel.getSBMLDocument().getModel().populateListFormulaUnitsData();
+//		TODO:  Is this necessary?
+//		bioModel.getSBMLDocument().getModel().populateListFormulaUnitsData();
 		if (init.containsUndeclaredUnits()) {
 			if (biosim.getCheckUndeclared()) {
 				JOptionPane.showMessageDialog(Gui.frame, "Initial assignment contains literals numbers or parameters with undeclared units.\n"
@@ -334,7 +335,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 		if (SBMLutilities.checkNumFunctionArguments(bioModel.getSBMLDocument(), SBMLutilities.myParseFormula(assignment))) {
 			return true;
 		}
-		if (SBMLutilities.myParseFormula(assignment).returnsBoolean(bioModel.getSBMLDocument().getModel())) {
+		if (SBMLutilities.returnsBoolean(SBMLutilities.myParseFormula(assignment), bioModel.getSBMLDocument().getModel())) {
 			JOptionPane.showMessageDialog(Gui.frame, "Initial assignment must evaluate to a number.", "Number Expected", JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
@@ -594,7 +595,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			ListOf r = gcm.getSBMLDocument().getModel().getListOfRules();
 			for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumRules(); i++) {
 				Rule rule = (Rule) r.get(i);
-				if (rule.isAssignment() && rule.getVariable().equals(id))
+				if (rule.isAssignment() && SBMLutilities.getVariable(rule).equals(id))
 					return false;
 			}
 		}

@@ -13,10 +13,10 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import org.sbml.libsbml.LocalParameter;
-import org.sbml.libsbml.ModifierSpeciesReference;
-import org.sbml.libsbml.Reaction;
-import org.sbml.libsbml.SpeciesReference;
+import org.sbml.jsbml.LocalParameter;
+import org.sbml.jsbml.ModifierSpeciesReference;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SpeciesReference;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.textualeditor.SBMLutilities;
@@ -134,7 +134,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		production = null;
 		if (promoterId != null) {
 			production = gcm.getProductionReaction(promoterId);
-			ModifierSpeciesReference modifier = production.getModifier(regulator);
+			ModifierSpeciesReference modifier = production.getModifierForSpecies(regulator);
 			if (BioModel.isRepressor(modifier)) {
 				typeBox.setSelectedItem(GlobalConstants.REPRESSION);
 			} else if (BioModel.isActivator(modifier)) {
@@ -313,19 +313,19 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			}
 
 			if (promoterId==null) {
-				production.getKineticLaw().removeLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + regulator);
+				production.getKineticLaw().getListOfLocalParameters().remove(GlobalConstants.COOPERATIVITY_STRING + "_" + regulator);
 			} else if (selection.contains("->")){
-				production.getKineticLaw().removeLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + regulator + "_a");
+				production.getKineticLaw().getListOfLocalParameters().remove(GlobalConstants.COOPERATIVITY_STRING + "_" + regulator + "_a");
 			} else if (selection.contains("-|")){
-				production.getKineticLaw().removeLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + regulator + "_r");
+				production.getKineticLaw().getListOfLocalParameters().remove(GlobalConstants.COOPERATIVITY_STRING + "_" + regulator + "_r");
 			}
 			if (selection.contains("-|")){
-				production.getKineticLaw().removeLocalParameter(GlobalConstants.FORWARD_KREP_STRING.replace("_","_" + regulator + "_"));
-				production.getKineticLaw().removeLocalParameter(GlobalConstants.REVERSE_KREP_STRING.replace("_","_" + regulator + "_"));
+				production.getKineticLaw().getListOfLocalParameters().remove(GlobalConstants.FORWARD_KREP_STRING.replace("_","_" + regulator + "_"));
+				production.getKineticLaw().getListOfLocalParameters().remove(GlobalConstants.REVERSE_KREP_STRING.replace("_","_" + regulator + "_"));
 			}
 			if (selection.contains("->")){
-				production.getKineticLaw().removeLocalParameter(GlobalConstants.FORWARD_KACT_STRING.replace("_","_" + regulator + "_"));
-				production.getKineticLaw().removeLocalParameter(GlobalConstants.REVERSE_KACT_STRING.replace("_","_" + regulator + "_"));
+				production.getKineticLaw().getListOfLocalParameters().remove(GlobalConstants.FORWARD_KACT_STRING.replace("_","_" + regulator + "_"));
+				production.getKineticLaw().getListOfLocalParameters().remove(GlobalConstants.REVERSE_KACT_STRING.replace("_","_" + regulator + "_"));
 			}
 
 			if (promoterId != null && !promoterBox.getSelectedItem().equals(promoterId)) {
@@ -333,14 +333,14 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				//gcm.createProductionKineticLaw(production);
 				gcm.removeInfluence(selection);
 				production = gcm.getProductionReaction(""+promoterBox.getSelectedItem());
-				SpeciesReference productSpecies = production.getProduct(product);
+				SpeciesReference productSpecies = production.getProductForSpecies(product);
 				if (productSpecies==null) {
 					productSpecies = production.createProduct();
 					productSpecies.setSpecies(product);
 					productSpecies.setStoichiometry(1.0);
 					productSpecies.setConstant(true);
 				}
-				ModifierSpeciesReference modifier = production.getModifier(regulator);
+				ModifierSpeciesReference modifier = production.getModifierForSpecies(regulator);
 				if (modifier==null) {
 					modifier = production.createModifier();
 					modifier.setSpecies(regulator);
@@ -363,15 +363,15 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			}
 			
 			if (typeBox.getSelectedItem().equals(GlobalConstants.REPRESSION) &&
-					(BioModel.isActivator(production.getModifier(regulator)) ||
-							BioModel.isNeutral(production.getModifier(regulator)))) {
-				production.getModifier(regulator).setSBOTerm(GlobalConstants.SBO_REPRESSION);
+					(BioModel.isActivator(production.getModifierForSpecies(regulator)) ||
+							BioModel.isNeutral(production.getModifierForSpecies(regulator)))) {
+				production.getModifierForSpecies(regulator).setSBOTerm(GlobalConstants.SBO_REPRESSION);
 			} else if (typeBox.getSelectedItem().equals(GlobalConstants.ACTIVATION) &&
-					(BioModel.isRepressor(production.getModifier(regulator)) ||
-							BioModel.isNeutral(production.getModifier(regulator)))) {
-				production.getModifier(regulator).setSBOTerm(GlobalConstants.SBO_ACTIVATION);
+					(BioModel.isRepressor(production.getModifierForSpecies(regulator)) ||
+							BioModel.isNeutral(production.getModifierForSpecies(regulator)))) {
+				production.getModifierForSpecies(regulator).setSBOTerm(GlobalConstants.SBO_ACTIVATION);
 			} else if (typeBox.getSelectedItem().equals(GlobalConstants.NOINFLUENCE)) {
-				production.getModifier(regulator).setSBOTerm(GlobalConstants.SBO_NEUTRAL);
+				production.getModifierForSpecies(regulator).setSBOTerm(GlobalConstants.SBO_NEUTRAL);
 			}
 			PropertyField f = fields.get(GlobalConstants.COOPERATIVITY_STRING);
 			String CoopStr = null;

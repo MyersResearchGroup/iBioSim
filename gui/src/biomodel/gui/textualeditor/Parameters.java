@@ -23,17 +23,17 @@ import main.Gui;
 import main.util.MutableBoolean;
 import main.util.Utility;
 
-import org.sbml.libsbml.InitialAssignment;
-import org.sbml.libsbml.Layout;
-import org.sbml.libsbml.ListOf;
-import org.sbml.libsbml.Model;
-import org.sbml.libsbml.Parameter;
-import org.sbml.libsbml.Port;
-import org.sbml.libsbml.Reaction;
-import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.Species;
-import org.sbml.libsbml.SpeciesReference;
-import org.sbml.libsbml.UnitDefinition;
+import org.sbml.jsbml.InitialAssignment;
+import org.sbml.jsbml.ext.layout.Layout;
+import org.sbml.jsbml.ListOf;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.ext.comp.Port;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.Species;
+import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.UnitDefinition;
 
 import biomodel.gui.ModelEditor;
 import biomodel.parser.BioModel;
@@ -733,13 +733,13 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 									}
 								}
 								if (paramet.getConstant()) {
-									if (bioModel.getSBMLLayout().getLayout("iBioSim") != null) {
-										Layout layout = bioModel.getSBMLLayout().getLayout("iBioSim"); 
-										if (layout.getAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+selected)!=null) {
-											layout.removeAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+selected);
+									if (bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim") != null) {
+										Layout layout = bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim"); 
+										if (layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+selected)!=null) {
+											layout.getListOfAdditionalGraphicalObjects().remove(GlobalConstants.GLYPH+"__"+selected);
 										}
 										if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+selected) != null) {
-											layout.removeTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+selected);
+											layout.getListOfTextGlyphs().get(GlobalConstants.TEXT_GLYPH+"__"+selected);
 										}
 									}
 								}
@@ -773,21 +773,21 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 								}
 							}
 							if (paramet.getId().equals(GlobalConstants.STOICHIOMETRY_STRING)) {
-								for (long i=0; i<model.getNumReactions(); i++) {
+								for (int i=0; i<model.getNumReactions(); i++) {
 									Reaction r = model.getReaction(i);
 									if (BioModel.isProductionReaction(r)) {
 										if (r.getKineticLaw().getLocalParameter(GlobalConstants.STOICHIOMETRY_STRING)==null) {
-											for (long j=0; j<r.getNumProducts(); j++) {
+											for (int j=0; j<r.getNumProducts(); j++) {
 												r.getProduct(j).setStoichiometry(paramet.getValue());
 											}
 										}
 									}
 								}
 							} else if (paramet.getId().equals(GlobalConstants.COOPERATIVITY_STRING)) {
-								for (long i=0; i<model.getNumReactions(); i++) {
+								for (int i=0; i<model.getNumReactions(); i++) {
 									Reaction r = model.getReaction(i);
 									if (BioModel.isComplexReaction(r)) {
-										for (long j=0; j<r.getNumReactants(); j++) {
+										for (int j=0; j<r.getNumReactants(); j++) {
 											SpeciesReference reactant = r.getReactant(j);
 											if (r.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + reactant.getSpecies())==null) {
 												reactant.setStoichiometry(paramet.getValue());
@@ -869,7 +869,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	private boolean checkNotConstant(String val) {
 		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumSpecies(); i++) {
 			Species species = bioModel.getSBMLDocument().getModel().getSpecies(i);
-			if (species.getConversionFactor().equals(val)) {
+			if (species.isSetConversionFactor() && species.getConversionFactor().equals(val)) {
 				JOptionPane.showMessageDialog(Gui.frame,
 						"Parameter must be constant because it is used as a conversion factor for " + species.getId() + ".",
 						" Parameter Must Be Constant", JOptionPane.ERROR_MESSAGE);
@@ -891,20 +891,20 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 					p.remove(i);
 				}
 			}
-			for (long i = 0; i < bioModel.getSBMLCompModel().getNumPorts(); i++) {
-				Port port = bioModel.getSBMLCompModel().getPort(i);
+			for (int i = 0; i < bioModel.getSBMLCompModel().getListOfPorts().size(); i++) {
+				Port port = bioModel.getSBMLCompModel().getListOfPorts().get(i);
 				if (port.isSetIdRef() && port.getIdRef().equals(tempParameter.getId())) {
-					bioModel.getSBMLCompModel().removePort(i);
+					bioModel.getSBMLCompModel().getListOfPorts().remove(i);
 					break;
 				}
 			}
-			if (bioModel.getSBMLLayout().getLayout("iBioSim") != null) {
-				Layout layout = bioModel.getSBMLLayout().getLayout("iBioSim"); 
-				if (layout.getAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+selected)!=null) {
-					layout.removeAdditionalGraphicalObject(GlobalConstants.GLYPH+"__"+selected);
+			if (bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim") != null) {
+				Layout layout = bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim"); 
+				if (layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+selected)!=null) {
+					layout.getListOfAdditionalGraphicalObjects().remove(GlobalConstants.GLYPH+"__"+selected);
 				}
 				if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+selected) != null) {
-					layout.removeTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+selected);
+					layout.getListOfTextGlyphs().get(GlobalConstants.TEXT_GLYPH+"__"+selected);
 				}
 			}
 			modelEditor.setDirty(true);

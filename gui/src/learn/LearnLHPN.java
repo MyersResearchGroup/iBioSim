@@ -14,7 +14,7 @@ import java.util.prefs.Preferences;
 import javax.swing.*;
 
 
-//import org.sbml.libsbml.*;
+//import org.sbml.jsbml.*;
 
 /**
  * This class creates a GUI for the Learn program. It implements the

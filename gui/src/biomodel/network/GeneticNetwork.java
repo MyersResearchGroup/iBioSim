@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,29 +15,34 @@ import java.util.Properties;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.xml.stream.XMLStreamException;
 
 import lpn.parser.LhpnFile;
 import lpn.parser.Translator;
 import main.Gui;
 import main.util.MutableString;
 
-import org.sbml.libsbml.Event;
-import org.sbml.libsbml.KineticLaw;
-import org.sbml.libsbml.LocalParameter;
-import org.sbml.libsbml.Model;
-import org.sbml.libsbml.Parameter;
-import org.sbml.libsbml.Reaction;
-import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.SBMLReader;
-import org.sbml.libsbml.SBMLWriter;
-import org.sbml.libsbml.Species;
-import org.sbml.libsbml.SpeciesReference;
-import org.sbml.libsbml.Unit;
-import org.sbml.libsbml.UnitDefinition;
-import org.sbml.libsbml.XMLAttributes;
-import org.sbml.libsbml.XMLNode;
-import org.sbml.libsbml.XMLTriple;
-import org.sbml.libsbml.libsbml;
+import org.sbml.jsbml.Event;
+import org.sbml.jsbml.KineticLaw;
+import org.sbml.jsbml.LocalParameter;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLException;
+import org.sbml.jsbml.SBMLReader;
+import org.sbml.jsbml.SBMLWriter;
+import org.sbml.jsbml.Species;
+import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.Unit;
+import org.sbml.jsbml.UnitDefinition;
+import org.sbml.jsbml.Unit.Kind;
+import org.sbml.jsbml.text.parser.ParseException;
+import org.sbml.jsbml.validator.SBMLValidator;
+import org.sbml.jsbml.xml.XMLAttributes;
+import org.sbml.jsbml.xml.XMLNode;
+import org.sbml.jsbml.xml.XMLTriple;
+import org.sbml.jsbml.JSBML;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.textualeditor.SBMLutilities;
@@ -124,7 +130,7 @@ public class GeneticNetwork {
 		this.partsMap = partsMap;
 		this.properties = gcm;
 		this.compartments = new HashMap<String,Properties>(); 
-		for (long i=0; i < gcm.getSBMLDocument().getModel().getNumCompartments(); i++) {
+		for (int i=0; i < gcm.getSBMLDocument().getModel().getNumCompartments(); i++) {
 			compartments.put(gcm.getSBMLDocument().getModel().getCompartment(i).getId(), null);
 		}
 		
@@ -161,7 +167,17 @@ public class GeneticNetwork {
 			m.setId(new File(filename).getName().replace(".xml", ""));	
 			m.setVolumeUnits("litre");
 			m.setSubstanceUnits("mole");
-			p.print(writer.writeSBMLToString(document));
+			try {
+				p.print(writer.writeSBMLToString(document));
+			}
+			catch (SBMLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch (XMLStreamException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			p.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -259,18 +275,18 @@ public class GeneticNetwork {
 				property = prop.getString();
 				Translator.generateSBMLConstraints(document, property, lpn);
 			}
-			if (document != null) {
-				document.setConsistencyChecks(libsbml.LIBSBML_CAT_GENERAL_CONSISTENCY, true);
-				document.setConsistencyChecks(libsbml.LIBSBML_CAT_IDENTIFIER_CONSISTENCY, true);
-				document.setConsistencyChecks(libsbml.LIBSBML_CAT_UNITS_CONSISTENCY, false);
-				document.setConsistencyChecks(libsbml.LIBSBML_CAT_MATHML_CONSISTENCY, false);
-				document.setConsistencyChecks(libsbml.LIBSBML_CAT_SBO_CONSISTENCY, false);
-				document.setConsistencyChecks(libsbml.LIBSBML_CAT_MODELING_PRACTICE, false);
-				document.setConsistencyChecks(libsbml.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
+			if (document != null && !Gui.isLibsbmlFound()) {
+				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.GENERAL_CONSISTENCY, true);
+				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.IDENTIFIER_CONSISTENCY, true);
+				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.UNITS_CONSISTENCY, false);
+				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.MATHML_CONSISTENCY, false);
+				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.SBO_CONSISTENCY, false);
+				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.MODELING_PRACTICE, false);
+				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.OVERDETERMINED_MODEL, true);
 				long numErrors = document.checkConsistency();
 				if (numErrors > 0) {
 					String message = "";
-					for (long i = 0; i < numErrors; i++) {
+					for (int i = 0; i < numErrors; i++) {
 						String error = document.getError(i).getMessage(); // .replace(". ",
 						// ".\n");
 						message += i + ":" + error + "\n";
@@ -292,6 +308,34 @@ public class GeneticNetwork {
 			p.print(writer.writeSBMLToString(document));
 
 			p.close();
+			if (Gui.isLibsbmlFound()) {
+				org.sbml.libsbml.SBMLDocument doc = new org.sbml.libsbml.SBMLReader().readSBML(filename);
+				doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_GENERAL_CONSISTENCY, true);
+				doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_IDENTIFIER_CONSISTENCY, true);
+				doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_UNITS_CONSISTENCY, false);
+				doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_MATHML_CONSISTENCY, false);
+				doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_SBO_CONSISTENCY, false);
+				doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_MODELING_PRACTICE, false);
+				doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
+				long numErrors = document.checkConsistency();
+				if (numErrors > 0) {
+					String message = "";
+					for (int i = 0; i < numErrors; i++) {
+						String error = document.getError(i).getMessage(); // .replace(". ",
+						// ".\n");
+						message += i + ":" + error + "\n";
+					}
+					JTextArea messageArea = new JTextArea(message);
+					messageArea.setLineWrap(true);
+					messageArea.setEditable(false);
+					JScrollPane scroll = new JScrollPane();
+					scroll.setMinimumSize(new Dimension(600, 600));
+					scroll.setPreferredSize(new Dimension(600, 600));
+					scroll.setViewportView(messageArea);
+					JOptionPane.showMessageDialog(Gui.frame, scroll, "Generated SBML Has Errors",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
 			return document;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -358,7 +402,7 @@ public class GeneticNetwork {
 			String rnapName = "RNAP";
 			if (!compartment.equals(document.getModel().getCompartment(0).getId()))
 				rnapName = compartment + "__RNAP";
-			org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+			org.sbml.jsbml.Reaction r = new org.sbml.jsbml.Reaction(Gui.SBML_LEVEL, Gui.SBML_VERSION);
 			r.setCompartment(compartment); 
 			r.setId("R_" + p.getId() + "_RNAP");
 			r.addReactant(Utility.SpeciesReference(rnapName, 1));
@@ -369,17 +413,23 @@ public class GeneticNetwork {
 			KineticLaw kl = r.createKineticLaw();
 			double[] Krnap = p.getKrnap();
 			if (Krnap[0] >= 0) {
-				kl.addParameter(Utility.Parameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING, Krnap[0], 
+				kl.addLocalParameter(Utility.Parameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING, Krnap[0], 
 						GeneticNetwork.getMoleTimeParameter(2)));
 				if (Krnap.length == 2) {
-					kl.addParameter(Utility.Parameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING, Krnap[1], 
+					kl.addLocalParameter(Utility.Parameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING, Krnap[1], 
 							GeneticNetwork.getMoleTimeParameter(1)));
 				} else {
-					kl.addParameter(Utility.Parameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING, 1, GeneticNetwork.getMoleTimeParameter(1)));
+					kl.addLocalParameter(Utility.Parameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING, 1, GeneticNetwork.getMoleTimeParameter(1)));
 				}
 			}
-			kl.setFormula(GlobalConstants.FORWARD_RNAP_BINDING_STRING + "*" + rnapName + "*" + p.getId() + "-"+ 
-					GlobalConstants.REVERSE_RNAP_BINDING_STRING + "*" + p.getId() + "_RNAP");		
+			try {
+				kl.setFormula(GlobalConstants.FORWARD_RNAP_BINDING_STRING + "*" + rnapName + "*" + p.getId() + "-"+ 
+						GlobalConstants.REVERSE_RNAP_BINDING_STRING + "*" + p.getId() + "_RNAP");
+			}
+			catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}		
 			Utility.addReaction(document, r);
 
 			// Next setup activated binding
@@ -424,11 +474,22 @@ public class GeneticNetwork {
 			ArrayList<String> validSubmodels = new ArrayList<String>();
 			
 			//loop through submodels to see if they have this same membrane diffusion reaction ID
-			for (int submodelIndex = 0; submodelIndex < properties.getSBMLCompModel().getNumSubmodels(); ++submodelIndex) {
+			for (int submodelIndex = 0; submodelIndex < properties.getSBMLCompModel().getListOfSubmodels().size(); ++submodelIndex) {
 				
 				SBMLReader sbmlReader = new SBMLReader();
-				Model submodel = sbmlReader.readSBMLFromFile(properties.getPath() + 
-						properties.getSBMLCompModel().getSubmodel(submodelIndex).getModelRef() + ".xml").getModel();
+				Model submodel = null;
+				try {
+					submodel = sbmlReader.readSBMLFromFile(properties.getPath() + 
+							properties.getSBMLCompModel().getListOfSubmodels().get(submodelIndex).getModelRef() + ".xml").getModel();
+				}
+				catch (XMLStreamException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				
 				if (submodel.getReaction(reactionID) != null)
 					validSubmodels.add(submodel.getId());				
@@ -500,8 +561,14 @@ public class GeneticNetwork {
 					newProduct.setConstant(true);
 					
 					//add the product into the kinetic law
-					membraneDiffusionReaction.getKineticLaw().setFormula(
-							membraneDiffusionReaction.getKineticLaw().getFormula() + " * " + potentialProductID);
+					try {
+						membraneDiffusionReaction.getKineticLaw().setFormula(
+								membraneDiffusionReaction.getKineticLaw().getFormula() + " * " + potentialProductID);
+					}
+					catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					
 					//take off the annotation so it's not mistaken as a grid-based memdiff reaction
 					AnnotationUtility.removeArrayAnnotation(membraneDiffusionReaction);
@@ -563,8 +630,19 @@ public class GeneticNetwork {
 		for (String componentID : allComponents) {
 			
 			SBMLReader sbmlReader = new SBMLReader();
-			Model compModel = sbmlReader.readSBMLFromFile(properties.getPath() + 
-					properties.getModelFileName(componentID)).getModel();
+			Model compModel = null;
+			try {
+				compModel = sbmlReader.readSBMLFromFile(properties.getPath() + 
+						properties.getModelFileName(componentID)).getModel();
+			}
+			catch (XMLStreamException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 			//update the kmdiff values for membrane diffusion reactions
 			//takes rates from the internal model
@@ -624,7 +702,7 @@ public class GeneticNetwork {
 		for (Promoter p : promoters.values()) {
 			if (p.getOutputs().size()==0) continue;
 			String compartment = p.getCompartment();
-			org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+			org.sbml.jsbml.Reaction r = new org.sbml.jsbml.Reaction(Gui.SBML_LEVEL, Gui.SBML_VERSION);
 			r.setCompartment(compartment);
 			for (SpeciesInterface species : p.getOutputs()) {
 				r.addProduct(Utility.SpeciesReference(species.getId(), p.getStoich()));
@@ -638,19 +716,37 @@ public class GeneticNetwork {
 				if (properties != null)
 					rnap = Double.parseDouble(properties.getParameter(GlobalConstants.RNAP_STRING));
 				AbstractionEngine e = new AbstractionEngine(species, complexMap, partsMap, rnap, r, kl);
-				kl.setFormula(e.abstractOperatorSite(p));
+				try {
+					kl.setFormula(e.abstractOperatorSite(p));
+				}
+				catch (ParseException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				Utility.addReaction(document, r);
 			} else {
 				r.addModifier(Utility.ModifierSpeciesReference(p.getId() + "_RNAP"));
 				if (p.getActivators().size() > 0) {
 					r.setId("R_basal_production_" + p.getId());
-					kl.addParameter(Utility.Parameter(kBasalString, p.getKbasal(), getMoleTimeParameter(1)));
-					kl.setFormula(kBasalString + "*" + p.getId() + "_RNAP");
+					kl.addLocalParameter(Utility.Parameter(kBasalString, p.getKbasal(), getMoleTimeParameter(1)));
+					try {
+						kl.setFormula(kBasalString + "*" + p.getId() + "_RNAP");
+					}
+					catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 
 				} else {
 					r.setId("R_constitutive_production_" + p.getId());
-					kl.addParameter(Utility.Parameter(kOcString, p.getKoc(), getMoleTimeParameter(1)));
-					kl.setFormula(kOcString + "*" + p.getId() + "_RNAP");
+					kl.addLocalParameter(Utility.Parameter(kOcString, p.getKoc(), getMoleTimeParameter(1)));
+					try {
+						kl.setFormula(kOcString + "*" + p.getId() + "_RNAP");
+					}
+					catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 				Utility.addReaction(document, r);
 				if (p.getActivators().size() > 0) {
@@ -768,7 +864,7 @@ public class GeneticNetwork {
 		Utility.addSpecies(document, s);
 		//Adds RNA polymerase for compartments other than default
 		this.compartments = new HashMap<String,Properties>(); 
-		for (long i=0; i < document.getModel().getNumCompartments(); i++) {
+		for (int i=0; i < document.getModel().getNumCompartments(); i++) {
 			compartments.put(document.getModel().getCompartment(i).getId(), null);
 		}
 		for (String compartment : compartments.keySet()) {
@@ -1096,7 +1192,7 @@ public class GeneticNetwork {
 			name = name + multiplier.get(i) + "_" + unitNames.get(i) + "_"
 					+ sign + Math.abs(exponents.get(i)) + "_";
 			Unit u = t.createUnit();
-			u.setKind(libsbml.UnitKind_forName(unitNames.get(i)));
+			u.setKind(Kind.valueOf(unitNames.get(i).toUpperCase()));
 			u.setExponent(exponents.get(i).intValue());
 			u.setMultiplier(multiplier.get(i).intValue());
 			u.setScale(0);

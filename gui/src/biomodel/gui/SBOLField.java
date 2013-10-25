@@ -14,8 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.sbml.libsbml.Model;
-import org.sbml.libsbml.SBaseList;
+import org.sbml.jsbml.Model;
 import org.sbolstandard.core.*;
 import org.sbolstandard.core.impl.SBOLDocumentImpl;
 

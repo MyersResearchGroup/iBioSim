@@ -33,15 +33,16 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.ListModel;
+import javax.xml.stream.XMLStreamException;
 
-import org.sbml.libsbml.CompModelPlugin;
-import org.sbml.libsbml.SBMLWriter;
+import org.sbml.jsbml.ext.comp.CompModelPlugin;
+import org.sbml.jsbml.SBMLException;
+import org.sbml.jsbml.SBMLWriter;
 import org.sbolstandard.core.DnaComponent;
 import org.sbolstandard.core.SBOLDocument;
 
 import main.Log;
 import main.util.Utility;
-
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 
@@ -403,10 +404,22 @@ public class SBOLSynthesisView extends JTabbedPane implements ActionListener, Ru
 	
 	private boolean compareModels(BioModel subModel1, BioModel subModel2) {
 		SBMLWriter writer = new SBMLWriter();
-		String xml1 = writer.writeSBMLToString(subModel1.getSBMLDocument());
-		String hash1 = biomodel.util.Utility.MD5(xml1);
-		String xml2 = writer.writeSBMLToString(subModel2.getSBMLDocument());
-		String hash2 = biomodel.util.Utility.MD5(xml2);
+		String hash1 = null;
+		String hash2 = null;
+		try {
+			String xml1 = writer.writeSBMLToString(subModel1.getSBMLDocument());
+			hash1 = biomodel.util.Utility.MD5(xml1);
+			String xml2 = writer.writeSBMLToString(subModel2.getSBMLDocument());
+			hash2 = biomodel.util.Utility.MD5(xml2);
+		}
+		catch (SBMLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return hash1 == hash2;
 	}
 	

@@ -9,15 +9,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.sbml.libsbml.Model;
-import org.sbml.libsbml.ModifierSpeciesReference;
-import org.sbml.libsbml.Reaction;
-import org.sbml.libsbml.SBase;
-import org.sbml.libsbml.Species;
-import org.sbml.libsbml.SpeciesReference;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.ModifierSpeciesReference;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.Species;
+import org.sbml.jsbml.SpeciesReference;
 import org.sbolstandard.core.DnaComponent;
 
 import biomodel.annotation.AnnotationUtility;
+import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.parser.BioModel;
 
 public class SBOLSynthesisGraph {
@@ -175,7 +176,7 @@ public class SBOLSynthesisGraph {
 		nucleotideCount = 0;
 		compURIs = new HashSet<URI>();
 		signals = new HashSet<String>();
-		for (long i = 0; i < sbmlModel.getNumReactions(); i++) {
+		for (int i = 0; i < sbmlModel.getNumReactions(); i++) {
 			Reaction sbmlReaction = sbmlModel.getReaction(i);
 			if (sbmlReaction.getNumProducts() > 0) 
 				if (BioModel.isProductionReaction(sbmlReaction)) {
@@ -190,7 +191,7 @@ public class SBOLSynthesisGraph {
 	private void constructTranscriptionMotif(Reaction sbmlReaction, HashMap<String, SBOLSynthesisNode> idToNode, 
 			Model sbmlModel, SBOLFileManager fileManager) {
 		SBOLSynthesisNode promoterNode = null;
-		for (long j = 0; j < sbmlReaction.getNumModifiers(); j++) {
+		for (int j = 0; j < sbmlReaction.getNumModifiers(); j++) {
 			ModifierSpeciesReference sbmlModifier = sbmlReaction.getModifier(j);
 			if (BioModel.isPromoter(sbmlModifier))
 				promoterNode = constructNode("p", sbmlReaction, sbmlModifier.getSpecies(),
@@ -198,7 +199,7 @@ public class SBOLSynthesisGraph {
 		}
 		if (promoterNode == null) 
 			promoterNode = constructNode("p", sbmlReaction, sbmlReaction.getId(), idToNode, fileManager);
-		for (long j = 0; j < sbmlReaction.getNumModifiers(); j++) {
+		for (int j = 0; j < sbmlReaction.getNumModifiers(); j++) {
 			ModifierSpeciesReference sbmlModifier = sbmlReaction.getModifier(j);
 			if (BioModel.isRepressor(sbmlModifier) || BioModel.isActivator(sbmlModifier)) {
 				SBOLSynthesisNode tfNode;
@@ -213,7 +214,7 @@ public class SBOLSynthesisGraph {
 				edges.get(promoterNode).add(tfNode);	
 			} 
 		}
-		for (long j = 0; j < sbmlReaction.getNumProducts(); j++) {
+		for (int j = 0; j < sbmlReaction.getNumProducts(); j++) {
 			SpeciesReference sbmlProduct = sbmlReaction.getProduct(j);
 			SBOLSynthesisNode productNode = constructNode("s", sbmlModel.getSpecies(sbmlProduct.getSpecies()), 
 					sbmlProduct.getSpecies(), idToNode, fileManager);
@@ -229,7 +230,7 @@ public class SBOLSynthesisGraph {
 		SBOLSynthesisNode complexNode = constructNode("x", sbmlModel.getSpecies(sbmlProduct.getSpecies()), 
 				sbmlProduct.getSpecies(), idToNode, fileManager);
 		edges.put(complexNode, new LinkedList<SBOLSynthesisNode>());
-		for (long j = 0; j < sbmlReaction.getNumReactants(); j++) {
+		for (int j = 0; j < sbmlReaction.getNumReactants(); j++) {
 			SpeciesReference sbmlReactant = sbmlReaction.getReactant(j);
 			SBOLSynthesisNode speciesNode = constructNode("v", sbmlModel.getSpecies(sbmlReactant.getSpecies()),
 					sbmlReactant.getSpecies(), idToNode, fileManager);
@@ -240,8 +241,8 @@ public class SBOLSynthesisGraph {
 	private SBOLSynthesisNode constructNode(String type, SBase sbmlElement, String id, 
 			HashMap<String, SBOLSynthesisNode> idToNode, SBOLFileManager fileManager) { 
 		SBOLSynthesisNode node;
-		if (idToNode.containsKey(sbmlElement.getId())) {
-			node = idToNode.get(sbmlElement.getId());
+		if (idToNode.containsKey(SBMLutilities.getId(sbmlElement))) {
+			node = idToNode.get(SBMLutilities.getId(sbmlElement));
 			if (edges.containsKey(node)) {
 				List<SBOLSynthesisNode> destinationNodes = edges.remove(node);
 				if (type.equals("s")) 
@@ -257,7 +258,7 @@ public class SBOLSynthesisGraph {
 			if (node.getSignal().length() > 0)
 				signals.add(node.getSignal());
 			compURIs.addAll(node.getCompURIs());
-			idToNode.put(sbmlElement.getId(), node);
+			idToNode.put(SBMLutilities.getId(sbmlElement), node);
 		}
 		return node;
 	}

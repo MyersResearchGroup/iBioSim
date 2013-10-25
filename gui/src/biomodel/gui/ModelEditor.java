@@ -21,24 +21,26 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.xml.stream.XMLStreamException;
 
 import main.Gui;
 import main.Log;
 import main.util.ExampleFileFilter;
 import main.util.MutableBoolean;
 
-import org.sbml.libsbml.Compartment;
-import org.sbml.libsbml.ExternalModelDefinition;
-import org.sbml.libsbml.InitialAssignment;
-import org.sbml.libsbml.LocalParameter;
-import org.sbml.libsbml.Parameter;
-import org.sbml.libsbml.Reaction;
-import org.sbml.libsbml.Rule;
-import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.SBMLWriter;
-import org.sbml.libsbml.SBase;
-import org.sbml.libsbml.Species;
-import org.sbml.libsbml.Submodel;
+import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.ext.comp.ExternalModelDefinition;
+import org.sbml.jsbml.InitialAssignment;
+import org.sbml.jsbml.LocalParameter;
+import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.Rule;
+import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLException;
+import org.sbml.jsbml.SBMLWriter;
+import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.Species;
+import org.sbml.jsbml.ext.comp.Submodel;
 import org.sbolstandard.core.DnaComponent;
 
 import analysis.ConstraintTermThread;
@@ -66,7 +68,6 @@ import biomodel.parser.BioModel;
 import biomodel.parser.GCMParser;
 import biomodel.util.GlobalConstants;
 import biomodel.util.Utility;
-
 import sbol.SBOLFileManager;
 import sbol.SBOLIdentityManager;
 import sbol.SBOLAssemblyGraph;
@@ -225,22 +226,22 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	}
 	
 	public void renameComponents(String oldname, String newName) {
-		for (long i = 0; i < biomodel.getSBMLComp().getNumExternalModelDefinitions(); i++) {
-			ExternalModelDefinition extModel = biomodel.getSBMLComp().getExternalModelDefinition(i);
+		for (int i = 0; i < biomodel.getSBMLComp().getListOfExternalModelDefinitions().size(); i++) {
+			ExternalModelDefinition extModel = biomodel.getSBMLComp().getListOfExternalModelDefinitions().get(i);
 			if (extModel.getId().equals(oldname)) {
 				extModel.setId(newName);
 				extModel.setSource("file://"+newName+".xml");
 			}
 		}
-		for (long i = 0; i < biomodel.getSBMLCompModel().getNumSubmodels(); i++) {
-			Submodel submodel = biomodel.getSBMLCompModel().getSubmodel(i);
+		for (int i = 0; i < biomodel.getSBMLCompModel().getListOfSubmodels().size(); i++) {
+			Submodel submodel = biomodel.getSBMLCompModel().getListOfSubmodels().get(i);
 			if (submodel.getModelRef().equals(oldname)) {
 				submodel.setModelRef(newName);
 			}
 		}
 		ArrayList<String> comps = new ArrayList<String>();
-		for (long i = 0; i < biomodel.getSBMLCompModel().getNumSubmodels(); i++) {
-			Submodel submodel = biomodel.getSBMLCompModel().getSubmodel(i);
+		for (int i = 0; i < biomodel.getSBMLCompModel().getListOfSubmodels().size(); i++) {
+			Submodel submodel = biomodel.getSBMLCompModel().getListOfSubmodels().get(i);
 			comps.add(submodel.getId() + " " + submodel.getModelRef() + " " + biomodel.getComponentPortMap(submodel.getId()));
 		}
 		components.removeAllItem();
@@ -1222,7 +1223,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	
 	private void performModifications(SBMLDocument d,ArrayList<String> dd) {
 		for (String s : elementsPanel.getElementChanges()) {
-			for (long i = d.getModel().getNumInitialAssignments() - 1; i >= 0; i--) {
+			for (int i = d.getModel().getNumInitialAssignments() - 1; i >= 0; i--) {
 				if (s.contains("=")) {
 					String formula = SBMLutilities.myFormulaToString(((InitialAssignment) d.getModel()
 							.getListOfInitialAssignments().get(i)).getMath());
@@ -1236,23 +1237,23 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 					}
 				}
 			}
-			for (long i = d.getModel().getNumConstraints() - 1; i >= 0; i--) {
+			for (int i = d.getModel().getNumConstraints() - 1; i >= 0; i--) {
 				if (d.getModel().getListOfConstraints().get(i).getMetaId().equals(s)) {
 					d.getModel().getListOfConstraints().remove(i);
 				}
 			}
-			for (long i = d.getModel().getNumEvents() - 1; i >= 0; i--) {
+			for (int i = d.getModel().getNumEvents() - 1; i >= 0; i--) {
 				if (d.getModel().getListOfEvents().get(i).getId().equals(s)) {
 					d.getModel().getListOfEvents().remove(i);
 				}
 			}
-			for (long i = d.getModel().getNumRules() - 1; i >= 0; i--) {
+			for (int i = d.getModel().getNumRules() - 1; i >= 0; i--) {
 				if (s.contains("=")) {
 					String formula = SBMLutilities.myFormulaToString(((Rule) d.getModel().getListOfRules().get(i)).getMath());
 					String sFormula = s.substring(s.indexOf('=') + 1).trim();
 					sFormula = SBMLutilities.myFormulaToString(SBMLutilities.myParseFormula(sFormula));
 					sFormula = s.substring(0, s.indexOf('=') + 1) + " " + sFormula;
-					if ((((Rule) d.getModel().getListOfRules().get(i)).getVariable() + " = " + formula).equals(sFormula)) {
+					if ((SBMLutilities.getVariable(((Rule) d.getModel().getListOfRules().get(i))) + " = " + formula).equals(sFormula)) {
 						d.getModel().getListOfRules().remove(i);
 					}
 				} else if (d.getModel().getListOfRules().get(i).getMetaId().equals(s)) {
@@ -1327,9 +1328,9 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	}
 	
 	private void updateValue(SBMLDocument d,String id,String factor,String paramId,String value,String type) {
-		SBase sbase = d.getElementBySId(id);
+		SBase sbase = SBMLutilities.getElementBySId(d, id);
 		if (d.getModel().getInitialAssignment(id)!=null) {
-			d.getModel().removeInitialAssignment(id);
+			d.getModel().getListOfInitialAssignments().remove(id);
 		}
 		if (sbase != null) {
 			if (sbase.getElementName().equals(GlobalConstants.COMPARTMENT)) {
@@ -1446,9 +1447,9 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 	private void refreshComponentsList() {
 		components.removeAllItem();
-		for (long i = 0; i < biomodel.getSBMLCompModel().getNumSubmodels(); i++) {
+		for (int i = 0; i < biomodel.getSBMLCompModel().getListOfSubmodels().size(); i++) {
 			
-			Submodel submodel = biomodel.getSBMLCompModel().getSubmodel(i);
+			Submodel submodel = biomodel.getSBMLCompModel().getListOfSubmodels().get(i);
 			String locationAnnotationString = "";
 			
 			//if the submodel is gridded, then get the component names from the locations parameter
@@ -2007,8 +2008,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		boolean check = true;
 		BioModel g = new BioModel(path);
 		g.load(path + separator + checkFile);
-		for (long i = 0; i < g.getSBMLComp().getNumExternalModelDefinitions(); i++) {
-			String compGCM = g.getSBMLComp().getExternalModelDefinition(i).getSource().substring(7);
+		for (int i = 0; i < g.getSBMLComp().getListOfExternalModelDefinitions().size(); i++) {
+			String compGCM = g.getSBMLComp().getListOfExternalModelDefinitions().get(i).getSource().substring(7);
 			if (compGCM.equals(gcm)) {
 				return false;
 			}
@@ -2108,7 +2109,18 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 			if(createUsingDefaults){
 				SBMLWriter writer = new SBMLWriter();
-				String SBMLstr = writer.writeSBMLToString(subBioModel.getSBMLDocument());
+				String SBMLstr = null;
+				try {
+					SBMLstr = writer.writeSBMLToString(subBioModel.getSBMLDocument());
+				}
+				catch (SBMLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				catch (XMLStreamException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				String md5 = Utility.MD5(SBMLstr);
 				// TODO: Is this correct?
 				outID = biomodel.addComponent(null, comp, false, null, -1, -1, 0, 0, md5);

@@ -7,7 +7,9 @@ import java.util.HashMap;
 
 
 
-import org.sbml.libsbml.SBMLDocument;
+
+import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.text.parser.ParseException;
 
 import biomodel.network.BaseSpecies;
 import biomodel.network.ComplexSpecies;
@@ -76,16 +78,16 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		r.setFast(false);
 		kl = r.createKineticLaw();
 		if (kf >= 0) {
-			kl.addParameter(Utility.Parameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING, kf, 
+			kl.addLocalParameter(Utility.Parameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING, kf, 
 					GeneticNetwork.getMoleTimeParameter(2)));
-			kl.addParameter(Utility.Parameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING, kr, 
+			kl.addLocalParameter(Utility.Parameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING, kr, 
 					GeneticNetwork.getMoleTimeParameter(1)));
 		} 
 		if (kact >= 0) {
-			kl.addParameter(Utility.Parameter(kactString, kact,GeneticNetwork.getMoleParameter(2)));
+			kl.addLocalParameter(Utility.Parameter(kactString, kact,GeneticNetwork.getMoleParameter(2)));
 		}
 		if (coop >= 0) {
-			kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
+			kl.addLocalParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		}
 		String actExpression = "";
 		//When abstracting, addition of reactants and modifiers to the reaction is handled by AbstractionEngine
@@ -97,7 +99,13 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 			actExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		kl.setFormula(generateLaw(actExpression));
+		try {
+			kl.setFormula(generateLaw(actExpression));
+		}
+		catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Utility.addReaction(document, r);
 	}
 
@@ -113,16 +121,16 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		r.setFast(false);
 		kl = r.createKineticLaw();
 		if (kf >= 0) {
-			kl.addParameter(Utility.Parameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING, kf, 
+			kl.addLocalParameter(Utility.Parameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING, kf, 
 					GeneticNetwork.getMoleTimeParameter(2)));
-			kl.addParameter(Utility.Parameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING, kr, 
+			kl.addLocalParameter(Utility.Parameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING, kr, 
 					GeneticNetwork.getMoleTimeParameter(1)));
 		} 
 		if (kact >= 0) {
-			kl.addParameter(Utility.Parameter(kactString, kact,GeneticNetwork.getMoleParameter(2)));
+			kl.addLocalParameter(Utility.Parameter(kactString, kact,GeneticNetwork.getMoleParameter(2)));
 		}
 		if (coop >= 0) {
-			kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
+			kl.addLocalParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		}
 		String actExpression = "";
 		if (complexAbstraction && specie.isSequesterable()) {
@@ -131,7 +139,13 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 			actExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		kl.setFormula(generateLaw(actExpression));
+		try {
+			kl.setFormula(generateLaw(actExpression));
+		}
+		catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Utility.addReaction(document, r);
 	}
 
@@ -147,16 +161,16 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		r.setFast(false);
 		kl = r.createKineticLaw();
 		if (kf >= 0) {
-			kl.addParameter(Utility.Parameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING, kf, 
+			kl.addLocalParameter(Utility.Parameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING, kf, 
 					GeneticNetwork.getMoleTimeParameter(2)));
-			kl.addParameter(Utility.Parameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING, kr, 
+			kl.addLocalParameter(Utility.Parameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING, kr, 
 					GeneticNetwork.getMoleTimeParameter(1)));
 		} 
 		if (kact >= 0) {
-			kl.addParameter(Utility.Parameter(kactString, kact,GeneticNetwork.getMoleParameter(2)));
+			kl.addLocalParameter(Utility.Parameter(kactString, kact,GeneticNetwork.getMoleParameter(2)));
 		}
 		if (coop >= 0) {
-			kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
+			kl.addLocalParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		}
 		String actExpression = "";
 		if (complexAbstraction && specie.isSequesterable()) {
@@ -165,7 +179,13 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 			actExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		kl.setFormula(generateLaw(actExpression));
+		try {
+			kl.setFormula(generateLaw(actExpression));
+		}
+		catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Utility.addReaction(document, r);
 	}
 
@@ -181,16 +201,16 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		r.setFast(false);
 		kl = r.createKineticLaw();
 		if (kf >= 0) {
-			kl.addParameter(Utility.Parameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING, kf, 
+			kl.addLocalParameter(Utility.Parameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING, kf, 
 					GeneticNetwork.getMoleTimeParameter(2)));
-			kl.addParameter(Utility.Parameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING, kr, 
+			kl.addLocalParameter(Utility.Parameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING, kr, 
 					GeneticNetwork.getMoleTimeParameter(1)));
 		} 
 		if (kact >= 0) {
-			kl.addParameter(Utility.Parameter(kactString, kact,GeneticNetwork.getMoleParameter(2)));
+			kl.addLocalParameter(Utility.Parameter(kactString, kact,GeneticNetwork.getMoleParameter(2)));
 		}
 		if (coop >= 0) {
-			kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
+			kl.addLocalParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		}
 		String actExpression = "";
 		if (complexAbstraction && specie.isSequesterable()) {
@@ -199,7 +219,13 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 			actExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		kl.setFormula(generateLaw(actExpression));
+		try {
+			kl.setFormula(generateLaw(actExpression));
+		}
+		catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Utility.addReaction(document, r);
 	}
 
@@ -215,16 +241,16 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		r.setFast(false);
 		kl = r.createKineticLaw();
 		if (kf >= 0) {
-			kl.addParameter(Utility.Parameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING, kf, 
+			kl.addLocalParameter(Utility.Parameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING, kf, 
 					GeneticNetwork.getMoleTimeParameter(2)));
-			kl.addParameter(Utility.Parameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING, kr, 
+			kl.addLocalParameter(Utility.Parameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING, kr, 
 					GeneticNetwork.getMoleTimeParameter(1)));
 		} 
 		if (kact >= 0) {
-			kl.addParameter(Utility.Parameter(kactString, kact,GeneticNetwork.getMoleParameter(2)));
+			kl.addLocalParameter(Utility.Parameter(kactString, kact,GeneticNetwork.getMoleParameter(2)));
 		}
 		if (coop >= 0) {
-			kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
+			kl.addLocalParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		}
 		String actExpression = "";
 		if (complexAbstraction && specie.isSequesterable()) {
@@ -233,7 +259,13 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 			actExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		kl.setFormula(generateLaw(actExpression));
+		try {
+			kl.setFormula(generateLaw(actExpression));
+		}
+		catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Utility.addReaction(document, r);
 	}
 	
@@ -249,16 +281,16 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		r.setFast(false);
 		kl = r.createKineticLaw();
 		if (kf >= 0) {
-			kl.addParameter(Utility.Parameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING, kf, 
+			kl.addLocalParameter(Utility.Parameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING, kf, 
 					GeneticNetwork.getMoleTimeParameter(2)));
-			kl.addParameter(Utility.Parameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING, kr, 
+			kl.addLocalParameter(Utility.Parameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING, kr, 
 					GeneticNetwork.getMoleTimeParameter(1)));
 		} 
 		if (kact >= 0) {
-			kl.addParameter(Utility.Parameter(kactString, kact,GeneticNetwork.getMoleParameter(2)));
+			kl.addLocalParameter(Utility.Parameter(kactString, kact,GeneticNetwork.getMoleParameter(2)));
 		}
 		if (coop >= 0) {
-			kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
+			kl.addLocalParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		}
 		String actExpression = "";
 		if (complexAbstraction && specie.isSequesterable()) {
@@ -267,7 +299,13 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 			actExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		kl.setFormula(generateLaw(actExpression));
+		try {
+			kl.setFormula(generateLaw(actExpression));
+		}
+		catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Utility.addReaction(document, r);
 	}
 	

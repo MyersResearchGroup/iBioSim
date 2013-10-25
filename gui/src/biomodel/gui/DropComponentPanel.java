@@ -9,20 +9,20 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Properties;
 
-
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.xml.stream.XMLStreamException;
 
-import org.sbml.libsbml.SBMLWriter;
+import org.sbml.jsbml.SBMLException;
+import org.sbml.jsbml.SBMLWriter;
 
 import biomodel.util.GlobalConstants;
 import biomodel.util.Utility;
 import biomodel.parser.BioModel;
-
 import main.Gui;
 
 public class DropComponentPanel extends JPanel implements ActionListener {
@@ -266,7 +266,18 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		BioModel compGCMFile = new BioModel(gcm.getPath());
 		compGCMFile.load(gcm.getPath() + File.separator + component);
 		SBMLWriter writer = new SBMLWriter();
-		String SBMLstr = writer.writeSBMLToString(compGCMFile.getSBMLDocument());
+		String SBMLstr = null;
+		try {
+			SBMLstr = writer.writeSBMLToString(compGCMFile.getSBMLDocument());
+		}
+		catch (SBMLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		String md5 = Utility.MD5(SBMLstr);
 		return gcm.addComponent(null, component, compGCMFile.IsWithinCompartment(), compGCMFile.getCompartmentPorts(), row, col, 
 				col * (width + padding) + padding, row * (height + padding) + padding,md5);
@@ -420,7 +431,18 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 					properties.setProperty("compartment","false");
 				}
 				SBMLWriter writer = new SBMLWriter();
-				String SBMLstr = writer.writeSBMLToString(compGCM.getSBMLDocument());
+				String SBMLstr = null;
+				try {
+					SBMLstr = writer.writeSBMLToString(compGCM.getSBMLDocument());
+				}
+				catch (SBMLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				catch (XMLStreamException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				String md5 = Utility.MD5(SBMLstr);
 				//String id = 
 				gcm.addComponent(null, comp, compGCM.IsWithinCompartment(), compGCM.getCompartmentPorts(), -1, -1, 

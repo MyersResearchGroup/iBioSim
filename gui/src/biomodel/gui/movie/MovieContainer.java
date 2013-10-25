@@ -449,7 +449,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 			speciesTSData = parser.getHashMap(frameIndex);
 			
 			//find all the components
-			for (long i = 0; i < bioModel.getSBMLDocument().getModel().getNumParameters(); i++) {
+			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumParameters(); i++) {
 				
 				if (bioModel.getSBMLDocument().getModel().getParameter(i).getId().contains("__locations")) {
 			
@@ -466,9 +466,9 @@ public class MovieContainer extends JPanel implements ActionListener {
 				else {
 					
 					//look through the submodel IDs for component IDs
-					for (int j = 0; j < bioModel.getSBMLCompModel().getNumSubmodels(); ++j) {						
+					for (int j = 0; j < bioModel.getSBMLCompModel().getListOfSubmodels().size(); ++j) {						
 						
-						String submodelID = bioModel.getSBMLCompModel().getSubmodel(j).getId();
+						String submodelID = bioModel.getSBMLCompModel().getListOfSubmodels().get(j).getId();
 						
 						if (submodelID.contains("GRID__") == false)
 							componentList.add(submodelID);

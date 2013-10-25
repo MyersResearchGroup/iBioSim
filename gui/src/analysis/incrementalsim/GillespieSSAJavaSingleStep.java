@@ -1,6 +1,7 @@
 package analysis.incrementalsim;
 
 import graph.Graph;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -9,19 +10,21 @@ import java.util.Random;
 
 import main.Gui;
 
-import org.sbml.libsbml.*;
+import org.sbml.jsbml.*;
+
+import biomodel.gui.textualeditor.SBMLutilities;
 
 import java.awt.BorderLayout;
 import java.io.*;
 import java.lang.Math;
 import java.lang.Object;
 
-
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.xml.stream.XMLStreamException;
 
 public class GillespieSSAJavaSingleStep {
 	// SpeciesIndex maps from each species to a column index. 
@@ -66,7 +69,7 @@ public class GillespieSSAJavaSingleStep {
 	private PrintStream outTSD;
 	private double runUntil = 0;
 	private boolean[] prevTriggerValArray = null;
-	private ListOfEvents eventList = null;
+	private ListOf<Event> eventList = null;
 	private PriorityQueue<EventQueueElement> eventQueue = null;
 	private int initEventQueueCap = 10;
 	private Model model = null;
@@ -83,7 +86,18 @@ public class GillespieSSAJavaSingleStep {
 	 output = new FileOutputStream(outTSDName);
 	 outTSD = new PrintStream(output);
 	 SBMLReader reader = new SBMLReader();
-	 SBMLDocument document = reader.readSBML(SBMLFileName);
+	 SBMLDocument document = null;
+	try {
+		document = reader.readSBML(SBMLFileName);
+	}
+	catch (XMLStreamException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
 	 model = document.getModel();
 	 outTSD.print("(");
 	 for (int i=0; i < model.getNumReactions(); i++){
@@ -308,7 +322,7 @@ public class GillespieSSAJavaSingleStep {
 			  // Start evaluation from the top AST node: index 0 of ListOfNodes
 			  ASTNode currentASTNode = currentAST.getListOfNodes().get(0);
 			  // get the list of local parameters
-			  ListOfLocalParameters currentListOfLocalParams = currentKineticLaw.getListOfLocalParameters();
+			  ListOf<LocalParameter> currentListOfLocalParams = currentKineticLaw.getListOfLocalParameters();
 			  HashMap<String, Double> LocalParamsList = new HashMap<String, Double>(); 
 			  if (currentListOfLocalParams.size() > 0){  
 				 for (int j=0; j<currentListOfLocalParams.size(); j++){
@@ -553,14 +567,14 @@ public class GillespieSSAJavaSingleStep {
 	
 	
 	private void evaluateRules(Model model) {
-		ListOfRules ruleList= null;
+		ListOf<Rule> ruleList= null;
 		 if (model.getListOfRules().size()>0) {
 			 ruleList = model.getListOfRules();
 			 for (int i=0; i<ruleList.size(); i++){
 				 Rule currRule = ruleList.get(i);
 				 if (currRule.isAssignment()) {
 					 double assignment = Double.parseDouble(evaluateAST(currRule.getMath().getListOfNodes().get(0)));
-					 String variable = currRule.getVariable();
+					 String variable = SBMLutilities.getVariable(currRule);
 					 if(SpeciesList.containsKey(variable)) {
 						SpeciesList.put(variable, assignment);
 					 }
@@ -619,7 +633,7 @@ public class GillespieSSAJavaSingleStep {
 		return CustomParamsUpdateFireEvents;
 	}
 	
-	public String[] updateEventQueue(ListOfEvents eventList, PriorityQueue<EventQueueElement> eventQueue){
+	public String[] updateEventQueue(ListOf<Event> eventList, PriorityQueue<EventQueueElement> eventQueue){
 	 ArrayList<String> eventToRemoveArray = new ArrayList<String>();
 	 boolean eventDelayNegative = false;
 	 String[] ReturnParamsFromUpdateEventQueue = new String[2];
@@ -659,7 +673,7 @@ public class GillespieSSAJavaSingleStep {
 		 // update the event queue
 		 if (!prevTriggerVal && currTriggerVal) {
 			  if (currEvent.getUseValuesFromTriggerTime()) {
-				  ListOfEventAssignments eventToFireAssignList = currEvent.getListOfEventAssignments();
+				  ListOf<EventAssignment> eventToFireAssignList = currEvent.getListOfEventAssignments();
 				  ArrayList<Double> assignList = new ArrayList<Double>();
 				  for (int j = 0; j < eventToFireAssignList.size(); j ++){
 					  double assignVal = Double.parseDouble(evaluateAST(eventToFireAssignList.get(j).getMath().getListOfNodes().get(0)));
@@ -724,7 +738,7 @@ public class GillespieSSAJavaSingleStep {
 	 
 	}
 	
-	private String[] fireEvent(PriorityQueue<EventQueueElement> eventQueue, int initEventQueueCap, ListOfEvents eventList, Graph graph) {
+	private String[] fireEvent(PriorityQueue<EventQueueElement> eventQueue, int initEventQueueCap, ListOf<Event> eventList, Graph graph) {
 		// Assume event assignments are evaluated at fire time
 		boolean isEventFired = false;
 		int optVal = -1;
@@ -745,7 +759,7 @@ public class GillespieSSAJavaSingleStep {
 			int eventToFireIndex = Integer.parseInt(CustomParamsEventMenu[1]);
 			if (optVal != 2 && optVal != -1) { // 2 = terminate  -1 = no action performed
 				Event eventToFire = eventList.get(eventReadyArray.get(eventToFireIndex).getEventId());
-				ListOfEventAssignments eventToFireAssignList = eventToFire.getListOfEventAssignments();
+				ListOf<EventAssignment> eventToFireAssignList = eventToFire.getListOfEventAssignments();
 				if (!eventToFire.getUseValuesFromTriggerTime()) {
 					for (int i = 0; i < eventToFireAssignList.size(); i ++){
 						double assignment = Double.parseDouble(evaluateAST(eventToFireAssignList.get(i).getMath().getListOfNodes().get(0)));
@@ -806,36 +820,36 @@ public class GillespieSSAJavaSingleStep {
 			retStr = evaluateLeafNode(currentASTNode);  
 		}
 		else{  // internal node with left and right children
-			int type_const=currentASTNode.getType();
+			ASTNode.Type type_const = currentASTNode.getType();
 			switch (type_const) {
 				// arithmetic operators
-			    case libsbml.AST_FUNCTION_ABS: retStr = Double.toString(Math.abs(Double.parseDouble(evaluateAST(currentASTNode.getChild(0))))); break;
-			    case libsbml.AST_PLUS: retStr = Double.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) + Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
-				case libsbml.AST_MINUS: retStr = Double.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) - Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
-				case libsbml.AST_TIMES: retStr = Double.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) * Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
-				case libsbml.AST_DIVIDE:retStr = Double.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) / Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
-				case libsbml.AST_FUNCTION_POWER: retStr = Double.toString(Math.pow(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())), Double.parseDouble(evaluateAST(currentASTNode.getRightChild())))); break;
+			    case FUNCTION_ABS: retStr = Double.toString(Math.abs(Double.parseDouble(evaluateAST(currentASTNode.getChild(0))))); break;
+			    case PLUS: retStr = Double.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) + Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
+				case MINUS: retStr = Double.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) - Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
+				case TIMES: retStr = Double.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) * Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
+				case DIVIDE:retStr = Double.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) / Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
+				case FUNCTION_POWER: retStr = Double.toString(Math.pow(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())), Double.parseDouble(evaluateAST(currentASTNode.getRightChild())))); break;
 				// logical operators
-				case libsbml.AST_LOGICAL_AND: retStr = Boolean.toString(Boolean.parseBoolean(evaluateAST(currentASTNode.getLeftChild())) && Boolean.parseBoolean(evaluateAST(currentASTNode.getRightChild()))); break;
-				case libsbml.AST_LOGICAL_OR:  retStr = Boolean.toString(Boolean.parseBoolean(evaluateAST(currentASTNode.getLeftChild())) || Boolean.parseBoolean(evaluateAST(currentASTNode.getRightChild()))); break;
-				case libsbml.AST_LOGICAL_NOT:  retStr = Boolean.toString(!Boolean.parseBoolean(evaluateAST(currentASTNode.getLeftChild()))); break;
-				case libsbml.AST_LOGICAL_XOR:  retStr = Boolean.toString(Boolean.parseBoolean(evaluateAST(currentASTNode.getLeftChild())) ^ Boolean.parseBoolean(evaluateAST(currentASTNode.getRightChild()))); break;
+				case LOGICAL_AND: retStr = Boolean.toString(Boolean.parseBoolean(evaluateAST(currentASTNode.getLeftChild())) && Boolean.parseBoolean(evaluateAST(currentASTNode.getRightChild()))); break;
+				case LOGICAL_OR:  retStr = Boolean.toString(Boolean.parseBoolean(evaluateAST(currentASTNode.getLeftChild())) || Boolean.parseBoolean(evaluateAST(currentASTNode.getRightChild()))); break;
+				case LOGICAL_NOT:  retStr = Boolean.toString(!Boolean.parseBoolean(evaluateAST(currentASTNode.getLeftChild()))); break;
+				case LOGICAL_XOR:  retStr = Boolean.toString(Boolean.parseBoolean(evaluateAST(currentASTNode.getLeftChild())) ^ Boolean.parseBoolean(evaluateAST(currentASTNode.getRightChild()))); break;
 				// relational operators
 				// TODO EQ, NEQ can have boolean arguments
-				case libsbml.AST_RELATIONAL_EQ:  
+				case RELATIONAL_EQ:  
 					retStr = Boolean.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) == Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
-				case libsbml.AST_RELATIONAL_GEQ: 
+				case RELATIONAL_GEQ: 
 					retStr = Boolean.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) >= Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
-				case libsbml.AST_RELATIONAL_GT:  
+				case RELATIONAL_GT:  
 					retStr = Boolean.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) > Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
-				case libsbml.AST_RELATIONAL_LEQ: 
+				case RELATIONAL_LEQ: 
 					retStr = Boolean.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) <= Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
-				case libsbml.AST_RELATIONAL_LT:  
+				case RELATIONAL_LT:  
 					retStr = Boolean.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) < Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
-				case libsbml.AST_RELATIONAL_NEQ:  
+				case RELATIONAL_NEQ:  
 					retStr = Boolean.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) != Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
 				// other operators
-				case libsbml.AST_FUNCTION_PIECEWISE: {
+				case FUNCTION_PIECEWISE: {
 					//Currently, the evaluator only accepts piecewise(1, arg1, 0), where arg1 is boolean
 					if (currentASTNode.getNumChildren() == 3) {
 						if (Boolean.parseBoolean(evaluateAST(currentASTNode.getChild(1)))){
@@ -853,7 +867,7 @@ public class GillespieSSAJavaSingleStep {
 					break;
 				}
 //				// probability distribution functions
-				case libsbml.AST_FUNCTION: {
+				case FUNCTION: {
 					String currNodeName = currentASTNode.getName();
 					if (currNodeName.equals("uniform")) {
 						double lowerBound = Math.min(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())), Double.parseDouble(evaluateAST(currentASTNode.getRightChild())));
@@ -909,14 +923,14 @@ public class GillespieSSAJavaSingleStep {
 	    	}
 	     }
 	    else if(currentASTNode.isConstant()) {
-	    	if (currentASTNode.getType() == libsbml.AST_CONSTANT_E || currentASTNode.getType() == libsbml.AST_CONSTANT_PI) {
+	    	if (currentASTNode.getType() == ASTNode.Type.CONSTANT_E || currentASTNode.getType() == ASTNode.Type.CONSTANT_PI) {
 	    		nodeVal = currentASTNode.getReal();
 	    		nodeValStr = Double.toString(nodeVal);
 	    	}
-	    	else if (currentASTNode.getType() == libsbml.AST_CONSTANT_TRUE) {
+	    	else if (currentASTNode.getType() == ASTNode.Type.CONSTANT_TRUE) {
 	    		nodeValStr = Boolean.toString(true);
 	    	}
-	    	else if (currentASTNode.getType() == libsbml.AST_CONSTANT_FALSE) {
+	    	else if (currentASTNode.getType() == ASTNode.Type.CONSTANT_FALSE) {
 	    		nodeValStr = Boolean.toString(false);
 	    	}
 	    	else {
@@ -1080,29 +1094,29 @@ public class GillespieSSAJavaSingleStep {
 			retStr = evaluatePropensityLeafNode(currentASTNode, ListOfLocalParameters); 
 		}
 		else{  // internal node with left and right children
-			int type_const=currentASTNode.getType();
+			ASTNode.Type type_const = currentASTNode.getType();
 			switch (type_const) {
 				// arithmetic operators
-				case libsbml.AST_PLUS: retStr = Double.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) + Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
-				case libsbml.AST_MINUS: retStr = Double.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) - Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
-				case libsbml.AST_TIMES: retStr = Double.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) * Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
-				case libsbml.AST_DIVIDE:retStr = Double.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) / Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
-				case libsbml.AST_FUNCTION_POWER: retStr = Double.toString(Math.pow(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)), Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters)))); break;
+				case PLUS: retStr = Double.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) + Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
+				case MINUS: retStr = Double.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) - Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
+				case TIMES: retStr = Double.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) * Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
+				case DIVIDE:retStr = Double.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) / Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
+				case FUNCTION_POWER: retStr = Double.toString(Math.pow(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)), Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters)))); break;
 				// logical operators
-				case libsbml.AST_LOGICAL_AND: retStr = Boolean.toString(Boolean.parseBoolean(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) && Boolean.parseBoolean(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
-				case libsbml.AST_LOGICAL_OR:  retStr = Boolean.toString(Boolean.parseBoolean(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) || Boolean.parseBoolean(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
-				case libsbml.AST_LOGICAL_NOT:  retStr = Boolean.toString(!Boolean.parseBoolean(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters))); break;
-				case libsbml.AST_LOGICAL_XOR:  retStr = Boolean.toString(Boolean.parseBoolean(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) ^ Boolean.parseBoolean(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
+				case LOGICAL_AND: retStr = Boolean.toString(Boolean.parseBoolean(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) && Boolean.parseBoolean(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
+				case LOGICAL_OR:  retStr = Boolean.toString(Boolean.parseBoolean(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) || Boolean.parseBoolean(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
+				case LOGICAL_NOT:  retStr = Boolean.toString(!Boolean.parseBoolean(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters))); break;
+				case LOGICAL_XOR:  retStr = Boolean.toString(Boolean.parseBoolean(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) ^ Boolean.parseBoolean(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
 				// relational operators
 				// TODO EQ, NEQ can have boolean arguments
-				case libsbml.AST_RELATIONAL_EQ:  retStr = Boolean.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) == Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
-				case libsbml.AST_RELATIONAL_GEQ: retStr = Boolean.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) >= Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
-				case libsbml.AST_RELATIONAL_GT:  retStr = Boolean.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) > Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
-				case libsbml.AST_RELATIONAL_LEQ:  retStr = Boolean.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) <= Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
-				case libsbml.AST_RELATIONAL_LT:  retStr = Boolean.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) < Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
-				case libsbml.AST_RELATIONAL_NEQ:  retStr = Boolean.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) > Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
+				case RELATIONAL_EQ:  retStr = Boolean.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) == Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
+				case RELATIONAL_GEQ: retStr = Boolean.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) >= Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
+				case RELATIONAL_GT:  retStr = Boolean.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) > Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
+				case RELATIONAL_LEQ:  retStr = Boolean.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) <= Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
+				case RELATIONAL_LT:  retStr = Boolean.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) < Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
+				case RELATIONAL_NEQ:  retStr = Boolean.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) > Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
 				// other operators
-				case libsbml.AST_FUNCTION_PIECEWISE: {
+				case FUNCTION_PIECEWISE: {
 					//Currently, the evaluator only accepts piecewise(1, arg1, 0), where arg1 is boolean
 					if (currentASTNode.getNumChildren() == 3) {
 						if (Boolean.parseBoolean(evaluatePropensityFunction(currentASTNode.getChild(1),ListOfLocalParameters))){
@@ -1119,7 +1133,7 @@ public class GillespieSSAJavaSingleStep {
 					break;
 				}
 //				// probability distribution functions
-				case libsbml.AST_FUNCTION: {
+				case FUNCTION: {
 					String currNodeName = currentASTNode.getName();
 					if (currNodeName.equals("uniform")) {
 						double lowerBound = Math.min(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)), Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters)));

@@ -14,11 +14,11 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.sbml.libsbml.Compartment;
-import org.sbml.libsbml.Model;
-import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.SBMLWriter;
-import org.sbml.libsbml.Species;
+import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLWriter;
+import org.sbml.jsbml.Species;
 
 import biomodelsim.BioSim;
 

@@ -6,10 +6,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.sbml.libsbml.SBase;
+import org.sbml.jsbml.SBase;
 import org.sbolstandard.core.DnaComponent;
 
 import biomodel.annotation.AnnotationUtility;
+import biomodel.gui.textualeditor.SBMLutilities;
 
 public class SBOLSynthesisNode {
 	private String id;
@@ -24,7 +25,7 @@ public class SBOLSynthesisNode {
 	private List<SBOLSynthesisNode> uncoveredNodes;
 	
 	public SBOLSynthesisNode(String type, SBase sbmlElement, SBOLFileManager fileManager) {
-		id = sbmlElement.getId();
+		id = SBMLutilities.getId(sbmlElement);
 		this.type = type;
 		processDNAComponents(sbmlElement, fileManager);
 		coverIndex = -1;

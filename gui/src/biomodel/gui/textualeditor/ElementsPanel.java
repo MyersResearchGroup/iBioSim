@@ -12,12 +12,12 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.sbml.libsbml.Constraint;
-import org.sbml.libsbml.InitialAssignment;
-import org.sbml.libsbml.ListOf;
-import org.sbml.libsbml.Model;
-import org.sbml.libsbml.Rule;
-import org.sbml.libsbml.SBMLDocument;
+import org.sbml.jsbml.Constraint;
+import org.sbml.jsbml.InitialAssignment;
+import org.sbml.jsbml.ListOf;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.Rule;
+import org.sbml.jsbml.SBMLDocument;
 
 public class ElementsPanel extends JPanel { 
 
@@ -62,7 +62,7 @@ public class ElementsPanel extends JPanel {
 					constraintId = "constraint" + cn;
 				}
 				usedIDs.add(constraintId);
-				constraint.setMetaId(constraintId);
+				SBMLutilities.setMetaId(constraint, constraintId);
 			}
 			cons[i] = constraint.getMetaId();
 		}
@@ -75,10 +75,10 @@ public class ElementsPanel extends JPanel {
 				rul[i] = "0 = " + SBMLutilities.myFormulaToString(rule.getMath());
 			}
 			else if (rule.isAssignment()) {
-				rul[i] = rule.getVariable() + " = " + SBMLutilities.myFormulaToString(rule.getMath());
+				rul[i] = SBMLutilities.getVariable(rule) + " = " + SBMLutilities.myFormulaToString(rule.getMath());
 			}
 			else {
-				rul[i] = "d( " + rule.getVariable() + " )/dt = " + SBMLutilities.myFormulaToString(rule.getMath());
+				rul[i] = "d( " + SBMLutilities.getVariable(rule) + " )/dt = " + SBMLutilities.myFormulaToString(rule.getMath());
 			}
 			if (elementChanges.contains(rul[i])) {
 				elementChanges.remove(rul[i]);
@@ -96,8 +96,8 @@ public class ElementsPanel extends JPanel {
 		int evNum = (int) m.getNumEvents();
 		String[] ev = new String[evNum];
 		for (int i = 0; i < evNum; i++) {
-			if (((org.sbml.libsbml.Event) e.get(i)).isSetId()) {
-				ev[i] = ((org.sbml.libsbml.Event) e.get(i)).getId();
+			if (((org.sbml.jsbml.Event) e.get(i)).isSetId()) {
+				ev[i] = ((org.sbml.jsbml.Event) e.get(i)).getId();
 			}
 		}
 		if (initsNum > 0) {

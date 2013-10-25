@@ -7,12 +7,15 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.sbml.libsbml.SBase;
-import org.sbml.libsbml.XMLAttributes;
-import org.sbml.libsbml.XMLNode;
-import org.sbml.libsbml.XMLTriple;
-import org.sbml.libsbml.libsbml;
+import org.sbml.jsbml.Annotation;
+import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.xml.XMLAttributes;
+import org.sbml.jsbml.xml.XMLNode;
+import org.sbml.jsbml.xml.XMLToken;
+import org.sbml.jsbml.xml.XMLTriple;
+import org.sbml.jsbml.JSBML;
 
+import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.util.Utility;
 
 public class AnnotationUtility {
@@ -20,24 +23,24 @@ public class AnnotationUtility {
 	public static void setSBOLAnnotation(SBase sbmlObject, SBOLAnnotation sbolAnnot) {
 		if (sbmlObject.isSetAnnotation())
 			removeSBOLAnnotation(sbmlObject);
-		if (sbmlObject.appendAnnotation(sbolAnnot.toXMLString()) != libsbml.LIBSBML_OPERATION_SUCCESS)
+		if (SBMLutilities.appendAnnotation(sbmlObject, sbolAnnot.toXMLString()) != JSBML.OPERATION_SUCCESS)
 			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
-					+ sbmlObject.getId());
+					+ SBMLutilities.getId(sbmlObject));
 	}
 	
 	public static void removeSBOLAnnotation(SBase sbmlObject) {
-		String annotation = sbmlObject.getAnnotationString();
+		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
 		Pattern sbolPattern = Pattern.compile(SBOL_ANNOTATION);
 		Matcher sbolMatcher = sbolPattern.matcher(annotation);
 		while (sbolMatcher.find()) {
 			String sbolAnnotation = sbolMatcher.group(0);
 			annotation = annotation.replace(sbolAnnotation, "");
 		}
-		sbmlObject.setAnnotation(annotation);
+		sbmlObject.setAnnotation(new Annotation(annotation));
 	}
 	
 	public static List<URI> parseSBOLAnnotation(SBase sbmlObject) {
-		String annotation = sbmlObject.getAnnotationString();
+		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
 		List<URI> sbolURIs = new LinkedList<URI>();
 		Pattern sbolPattern = Pattern.compile(SBOL_ANNOTATION);
 		Matcher sbolMatcher = sbolPattern.matcher(annotation);
@@ -62,25 +65,25 @@ public class AnnotationUtility {
 		attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
 		attr.add("ibiosim:sweep", sweep);
 		XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
-		if (sbmlObject.appendAnnotation(node) != libsbml.LIBSBML_OPERATION_SUCCESS)
+		if (SBMLutilities.appendAnnotation(sbmlObject, node) != JSBML.OPERATION_SUCCESS)
 			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
-					+ sbmlObject.getId());
+					+ SBMLutilities.getId(sbmlObject));
 	}
 	
 	public static void removeSweepAnnotation(SBase sbmlObject) {
-		String annotation = sbmlObject.getAnnotationString();
+		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
 		Pattern sweepPattern = Pattern.compile(SWEEP_ANNOTATION);
 		Matcher sweepMatcher = sweepPattern.matcher(annotation);
 		if (sweepMatcher.find()) {
 			String sweepAnnotation = sweepMatcher.group(0);
 			annotation = annotation.replace(sweepAnnotation, "");
 		}
-		sbmlObject.setAnnotation(annotation);
+		sbmlObject.setAnnotation(new Annotation(annotation));
 	}
 	
 	public static String parseSweepAnnotation(SBase sbmlObject) {
 		if (sbmlObject==null) return null;
-		String annotation = sbmlObject.getAnnotationString();
+		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
 		Pattern sweepPattern = Pattern.compile(SWEEP_ANNOTATION);
 		Matcher sweepMatcher = sweepPattern.matcher(annotation);
 		if (sweepMatcher.find() && sweepMatcher.groupCount()==1) {
@@ -96,25 +99,25 @@ public class AnnotationUtility {
 		attr.add("xmlns:array", "http://www.fakeuri.com");
 		attr.add("array:size", ""+size);
 		XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);
-		if (sbmlObject.appendAnnotation(node) != libsbml.LIBSBML_OPERATION_SUCCESS)
+		if (SBMLutilities.appendAnnotation(sbmlObject, node) != JSBML.OPERATION_SUCCESS)
 			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
-					+ sbmlObject.getId());
+					+ SBMLutilities.getId(sbmlObject));
 	}
 	
 	public static void removeArraySizeAnnotation(SBase sbmlObject) {
-		String annotation = sbmlObject.getAnnotationString();
+		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
 		Pattern arraySizePattern = Pattern.compile(ARRAY_SIZE_ANNOTATION);
 		Matcher arraySizeMatcher = arraySizePattern.matcher(annotation);
 		if (arraySizeMatcher.find()) {
 			String arraySizeAnnotation = arraySizeMatcher.group(0);
 			annotation = annotation.replace(arraySizeAnnotation, "");
 		}
-		sbmlObject.setAnnotation(annotation);
+		sbmlObject.setAnnotation(new Annotation(annotation));
 	}
 	
 	public static int parseArraySizeAnnotation(SBase sbmlObject) {
 		if (sbmlObject==null) return -1;
-		String annotation = sbmlObject.getAnnotationString();
+		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
 		Pattern arraySizePattern = Pattern.compile(ARRAY_SIZE_ANNOTATION);
 		Matcher arraySizeMatcher = arraySizePattern.matcher(annotation);
 		if (arraySizeMatcher.find() && arraySizeMatcher.groupCount()==1) {
@@ -124,14 +127,14 @@ public class AnnotationUtility {
 			arraySizeMatcher = arraySizePattern.matcher(annotation);
 			if (arraySizeMatcher.find() && arraySizeMatcher.groupCount()==1) {
 				annotation = annotation.replace("array:count", "array:size");
-				sbmlObject.setAnnotation(annotation);
+				sbmlObject.setAnnotation(new Annotation(annotation));
 				return Integer.valueOf(arraySizeMatcher.group(1));
 			} else {
 				arraySizePattern = Pattern.compile(OLD_ARRAY_RANGE_ANNOTATION);
 				arraySizeMatcher = arraySizePattern.matcher(annotation);
 				if (arraySizeMatcher.find() && arraySizeMatcher.groupCount()==2) {
 					annotation = annotation.replace("array:min=\"0\" array:max","array:size");
-					sbmlObject.setAnnotation(annotation);
+					sbmlObject.setAnnotation(new Annotation(annotation));
 					return Integer.valueOf(arraySizeMatcher.group(2))+1;
 				}				
 			}
@@ -146,25 +149,25 @@ public class AnnotationUtility {
 		attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
 		attr.add("ibiosim:type", dynamic);
 		XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
-		if (sbmlObject.appendAnnotation(node) != libsbml.LIBSBML_OPERATION_SUCCESS)
+		if (SBMLutilities.appendAnnotation(sbmlObject, node) != JSBML.OPERATION_SUCCESS)
 			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
-					+ sbmlObject.getId());
+					+ SBMLutilities.getId(sbmlObject));
 	}
 	
 	public static void removeDynamicAnnotation(SBase sbmlObject) {
-		String annotation = sbmlObject.getAnnotationString();
+		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
 		Pattern dynamicPattern = Pattern.compile(DYNAMIC_ANNOTATION);
 		Matcher dynamicMatcher = dynamicPattern.matcher(annotation);
 		if (dynamicMatcher.find()) {
 			String dynamicAnnotation = dynamicMatcher.group(0);
 			annotation = annotation.replace(dynamicAnnotation, "");
 		}
-		sbmlObject.setAnnotation(annotation);
+		sbmlObject.setAnnotation(new Annotation(annotation));
 	}
 	
 	public static String parseDynamicAnnotation(SBase sbmlObject) {
 		if (sbmlObject==null) return null;
-		String annotation = sbmlObject.getAnnotationString();
+		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
 		Pattern dynamicPattern = Pattern.compile(DYNAMIC_ANNOTATION);
 		Matcher dynamicMatcher = dynamicPattern.matcher(annotation);
 		if (dynamicMatcher.find() && dynamicMatcher.groupCount()==1) {
@@ -180,13 +183,13 @@ public class AnnotationUtility {
 		attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
 		attr.add("ibiosim:grid", "(" + rows + "," + cols + ")");
 		XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
-		if (sbmlObject.appendAnnotation(node) != libsbml.LIBSBML_OPERATION_SUCCESS)
+		if (SBMLutilities.appendAnnotation(sbmlObject, node) != JSBML.OPERATION_SUCCESS)
 			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
-					+ sbmlObject.getId());
+					+ SBMLutilities.getId(sbmlObject));
 	}
 	
 	public static void removeGridAnnotation(SBase sbmlObject) {
-		String annotation = sbmlObject.getAnnotationString();
+		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
 		Pattern gridPattern = Pattern.compile(GRID_ANNOTATION);
 		Matcher gridMatcher = gridPattern.matcher(annotation);
 		if (gridMatcher.find()) {
@@ -200,11 +203,11 @@ public class AnnotationUtility {
 				annotation = annotation.replace(gridAnnotation, "");
 			}
 		}
-		sbmlObject.setAnnotation(annotation);
+		sbmlObject.setAnnotation(new Annotation(annotation));
 	}
 	
 	public static int[] parseGridAnnotation(SBase sbmlObject) {
-		String annotation = sbmlObject.getAnnotationString();
+		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
 		if (annotation==null) return null;
 		Pattern gridPattern = Pattern.compile(GRID_ANNOTATION);
 		Matcher gridMatcher = gridPattern.matcher(annotation);
@@ -243,9 +246,9 @@ public class AnnotationUtility {
 			attr.add("array:"+attributes[i].split("=")[0], attributes[i].split("=")[1].replace("\"", ""));
 		}
 		XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);
-		if (sbmlObject.appendAnnotation(node) != libsbml.LIBSBML_OPERATION_SUCCESS)
+		if (SBMLutilities.appendAnnotation(sbmlObject, node) != JSBML.OPERATION_SUCCESS)
 			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
-					+ sbmlObject.getId());
+					+ SBMLutilities.getId(sbmlObject));
 	}
 	
 	public static void appendArrayAnnotation(SBase sbmlObject, String newElement) {
@@ -262,34 +265,45 @@ public class AnnotationUtility {
 	public static boolean removeArrayAnnotation(SBase sbmlObject, String element) {
 		//get rid of the component from the location-lookup array and the modelref array
 		if (AnnotationUtility.parseArrayAnnotation(sbmlObject).length==2 &&
-				(sbmlObject.getAnnotation().getChild(0).getAttrIndex("array:" + element)>=0 || 
-				sbmlObject.getAnnotation().getChild(0).getAttrIndex("array:" + element, "http://www.fakeuri.com")>=0 || 
-				sbmlObject.getAnnotation().getChild(0).getAttrIndex(element, "http://www.fakeuri.com")>=0)) {
+				(((XMLToken) sbmlObject.getAnnotation().getChildAt(0)).getAttrIndex("array:" + element)>=0 || 
+				((XMLToken) sbmlObject.getAnnotation().getChildAt(0)).getAttrIndex("array:" + element, "http://www.fakeuri.com")>=0 || 
+				((XMLToken) sbmlObject.getAnnotation().getChildAt(0)).getAttrIndex(element, "http://www.fakeuri.com")>=0)) {
 			removeArrayAnnotation(sbmlObject);
 			return true;
 		} 
-		sbmlObject.getAnnotation().getChild(0).removeAttr(
-				sbmlObject.getAnnotation().getChild(0).getAttrIndex("array:" + element));
-		sbmlObject.getAnnotation().getChild(0).removeAttr(
-				sbmlObject.getAnnotation().getChild(0).getAttrIndex("array:" + element, "http://www.fakeuri.com"));
-		sbmlObject.getAnnotation().getChild(0).removeAttr(
-				sbmlObject.getAnnotation().getChild(0).getAttrIndex(element, "http://www.fakeuri.com"));
+		((XMLToken) sbmlObject.getAnnotation().getChildAt(0)).removeAttr(
+				((XMLToken) sbmlObject.getAnnotation().getChildAt(0)).getAttrIndex("array:" + element));
+		((XMLToken) sbmlObject.getAnnotation().getChildAt(0)).removeAttr(
+				((XMLToken) sbmlObject.getAnnotation().getChildAt(0)).getAttrIndex("array:" + element, "http://www.fakeuri.com"));
+		((XMLToken) sbmlObject.getAnnotation().getChildAt(0)).removeAttr(
+				((XMLToken) sbmlObject.getAnnotation().getChildAt(0)).getAttrIndex(element, "http://www.fakeuri.com"));
 		return false;
 	}
 	
 	public static void removeArrayAnnotation(SBase sbmlObject) {
-		String annotation = sbmlObject.getAnnotationString();
+		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
 		Pattern arrayPattern = Pattern.compile(ARRAY_ANNOTATION);
 		Matcher arrayMatcher = arrayPattern.matcher(annotation);
 		if (arrayMatcher.find()) {
 			String arrayAnnotation = arrayMatcher.group(0);
 			annotation = annotation.replace(arrayAnnotation, "");
 		}
-		sbmlObject.setAnnotation(annotation);
+		sbmlObject.setAnnotation(new Annotation(annotation));
 	}
 	
 	public static String[] parseArrayAnnotation(SBase sbmlObject) {
-		String annotation = sbmlObject.getAnnotationString();
+		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+		Pattern arrayPattern = Pattern.compile(ARRAY_ANNOTATION);
+		Matcher arrayMatcher = arrayPattern.matcher(annotation);
+		if (arrayMatcher.find()) {
+			return arrayMatcher.group(1).replace("\"","").replace(" ","").split("array:");
+		} else {
+			return null;
+		}
+	}
+	
+	public static String[] parseArrayAnnotation(org.sbml.libsbml.SBase sbmlObject) {
+		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
 		Pattern arrayPattern = Pattern.compile(ARRAY_ANNOTATION);
 		Matcher arrayMatcher = arrayPattern.matcher(annotation);
 		if (arrayMatcher.find()) {
@@ -310,7 +324,7 @@ public class AnnotationUtility {
 	}
 	
 	public static boolean checkObsoleteAnnotation(SBase sbmlObject, String annotation) {
-		return sbmlObject.isSetAnnotation() && sbmlObject.getAnnotationString().contains(annotation);
+		return sbmlObject.isSetAnnotation() && sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim().contains(annotation);
 	}
 	
 	public static void removeObsoleteAnnotation(SBase sbmlObject) {
@@ -331,7 +345,8 @@ public class AnnotationUtility {
 	
 	private static final String SBOL_ANNOTATION = 
 		"<ModelToSBOL xmlns=\"http://sbolstandard\\.org/modeltosbol/1\\.0#\">\\s*" +
-			"<rdf:RDF xmlns:rdf=\"http://www\\.w3\\.org/1999/02/22-rdf-syntax-ns#\" xmlns:mts=\"http://sbolstandard\\.org/modeltosbol/1\\.0#\">\\s*" +
+			"(<rdf:RDF xmlns:rdf=\"http://www\\.w3\\.org/1999/02/22-rdf-syntax-ns#\" xmlns:mts=\"http://sbolstandard\\.org/modeltosbol/1\\.0#\">\\s*|"
+			+ "<rdf:RDF xmlns:mts=\"http://sbolstandard\\.org/modeltosbol/1\\.0#\" xmlns:rdf=\"http://www\\.w3\\.org/1999/02/22-rdf-syntax-ns#\">\\s*)" +
 				"<rdf:Description rdf:about=\"#" + XML_NAME + "\">\\s*" +
 					"<mts:DNAComponents>\\s*" +
 						"<rdf:Seq>\\s*" +

@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import org.sbml.jsbml.KineticLaw;
+import org.sbml.jsbml.Reaction;
 
-import org.sbml.libsbml.KineticLaw;
-import org.sbml.libsbml.Reaction;
-
+import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.util.GlobalConstants;
 import biomodel.util.Utility;
 
@@ -52,7 +52,7 @@ public class AbstractionEngine {
 //					r.addReactant(Utility.SpeciesReference(reactant, reactantStoich.get(reactant)));
 //			}
 			for (String modifier : modifiers) {
-				r.removeModifier(modifier);
+				SBMLutilities.removeModifier(r, modifier);
 				r.addModifier(Utility.ModifierSpeciesReference(modifier));
 			}
 		}
@@ -70,28 +70,28 @@ public class AbstractionEngine {
 			String kdecayId = decayString + "__" + complexId;
 			double kdecay = species.get(complexId).getDecay();
 			if (kdecay > 0) {
-				kl.addParameter(Utility.Parameter(kcompIdf, kcomp[0], GeneticNetwork.getMoleTimeParameter(2)));
-				kl.addParameter(Utility.Parameter(kdecayId, kdecay, GeneticNetwork.getMoleTimeParameter(1)));
+				kl.addLocalParameter(Utility.Parameter(kcompIdf, kcomp[0], GeneticNetwork.getMoleTimeParameter(2)));
+				kl.addLocalParameter(Utility.Parameter(kdecayId, kdecay, GeneticNetwork.getMoleTimeParameter(1)));
 			}
 			// Checks if binding parameters are specified as forward and reverse rate constants
 			//  or as equilibrium binding constants before adding to kinetic law
 			if (kcomp.length == 2) {
 				if (kdecay > 0)
-					kl.addParameter(Utility.Parameter(kcompIdr, kcomp[1], GeneticNetwork.getMoleTimeParameter(1)));
+					kl.addLocalParameter(Utility.Parameter(kcompIdr, kcomp[1], GeneticNetwork.getMoleTimeParameter(1)));
 				else
-					kl.addParameter(Utility.Parameter(kcompId, kcomp[0] / kcomp[1], GeneticNetwork.getMoleParameter(2)));
+					kl.addLocalParameter(Utility.Parameter(kcompId, kcomp[0] / kcomp[1], GeneticNetwork.getMoleParameter(2)));
 			} else {
 				if (kdecay > 0)
-					kl.addParameter(Utility.Parameter(kcompIdr, 1, GeneticNetwork.getMoleTimeParameter(1)));
+					kl.addLocalParameter(Utility.Parameter(kcompIdr, 1, GeneticNetwork.getMoleTimeParameter(1)));
 				else
-					kl.addParameter(Utility.Parameter(kcompId, kcomp[0], GeneticNetwork.getMoleParameter(2)));
+					kl.addLocalParameter(Utility.Parameter(kcompId, kcomp[0], GeneticNetwork.getMoleParameter(2)));
 			}
 			String ncSum = "";
 			for (Influence infl : complexMap.get(complexId)) {
 				String partId = infl.getInput();
 				double n = infl.getCoop();
 				String nId = coopString + "__" + partId + "_" + complexId;
-				kl.addParameter(Utility.Parameter(nId, n, "dimensionless"));
+				kl.addLocalParameter(Utility.Parameter(nId, n, "dimensionless"));
 				ncSum = ncSum + nId + "+";
 				if (!partId.equals(sequesterRoot)) {
 					compExpression = compExpression + "*" + "(";
@@ -159,13 +159,13 @@ public class AbstractionEngine {
 		if (sbmlMode) {
 //			if (operatorAbstraction) {
 			if (n > 0) {
-				r.removeModifier(speciesId);
+				SBMLutilities.removeModifier(r, speciesId);
 				r.addModifier(Utility.ModifierSpeciesReference(speciesId));
 			} 
 //			} else if (n > 0)  // n = 0 in the case of a complex formation reaction for a sequestered complex (complex added as reaction product and not reactant)
 //				r.addReactant(Utility.SpeciesReference(speciesId, n));
 			for (String modifier : modifiers) {
-				r.removeModifier(modifier);
+				SBMLutilities.removeModifier(r, modifier);
 				r.addModifier(Utility.ModifierSpeciesReference(modifier));
 			}
 		}
@@ -195,7 +195,7 @@ public class AbstractionEngine {
 
 	public String abstractOperatorSite(Promoter promoter) {
 		if (sbmlMode)
-			kl.addParameter(Utility.Parameter("RNAP", RNAP, GeneticNetwork.getMoleParameter(2)));
+			kl.addLocalParameter(Utility.Parameter("RNAP", RNAP, GeneticNetwork.getMoleParameter(2)));
 		String promRate = "";
 		if (promoter.getActivators().size() != 0) {
 			double np = promoter.getStoich();
@@ -220,13 +220,13 @@ public class AbstractionEngine {
 			if (sbmlMode) {
 				promRate += "(ng__" + promoter.getId() + ")*((kb__" + promoter.getId() + "*Ko__"
 						+ promoter.getId() + "*RNAP)";
-				kl.addParameter(Utility.Parameter("ng__" + promoter.getId(), ng, GeneticNetwork
+				kl.addLocalParameter(Utility.Parameter("ng__" + promoter.getId(), ng, GeneticNetwork
 						.getMoleParameter(2)));
-				kl.addParameter(Utility.Parameter("kb__" + promoter.getId(), kb, GeneticNetwork
+				kl.addLocalParameter(Utility.Parameter("kb__" + promoter.getId(), kb, GeneticNetwork
 						.getMoleTimeParameter(1)));
-				kl.addParameter(Utility.Parameter("Ko__" + promoter.getId(), Ko, GeneticNetwork
+				kl.addLocalParameter(Utility.Parameter("Ko__" + promoter.getId(), Ko, GeneticNetwork
 						.getMoleParameter(2)));
-				kl.addParameter(Utility.Parameter("Kao__" + promoter.getId(), Kao, GeneticNetwork
+				kl.addLocalParameter(Utility.Parameter("Kao__" + promoter.getId(), Kao, GeneticNetwork
 						.getMoleParameter(2)));
 			}
 			else {
@@ -255,7 +255,7 @@ public class AbstractionEngine {
 							expression = abstractComplex(activator, nc, true);
 						} 
 						else if (sbmlMode) {
-							r.removeModifier(activator);
+							SBMLutilities.removeModifier(r, activator);
 							r.addModifier(Utility.ModifierSpeciesReference(activator));
 						}
 						if (sbmlMode) {
@@ -265,11 +265,11 @@ public class AbstractionEngine {
 							actBottom += "+(Kao__" + promoter.getId() + "*RNAP*(Ka__" + activator + "_" + promoter.getId() + "*"
 									+ expression + ")^nc__" + activator + "_" + promoter.getId()
 									+ ")";
-							kl.addParameter(Utility.Parameter("nc__" + activator + "_"
+							kl.addLocalParameter(Utility.Parameter("nc__" + activator + "_"
 									+ promoter.getId(), nc, "dimensionless"));
-							kl.addParameter(Utility.Parameter("Ka__" + activator + "_"
+							kl.addLocalParameter(Utility.Parameter("Ka__" + activator + "_"
 									+ promoter.getId(), Ka, GeneticNetwork.getMoleParameter(2)));
-							kl.addParameter(Utility.Parameter("ka__" + activator + "_"
+							kl.addLocalParameter(Utility.Parameter("ka__" + activator + "_"
 											+ promoter.getId(), ka, GeneticNetwork
 											.getMoleTimeParameter(1)));
 						}
@@ -309,16 +309,16 @@ public class AbstractionEngine {
 									expression = abstractComplex(repressor, nc, true);
 								} 
 								else if (sbmlMode) {
-									r.removeModifier(repressor);
+									SBMLutilities.removeModifier(r, repressor);
 									r.addModifier(Utility.ModifierSpeciesReference(repressor));
 								}
 								if (sbmlMode) {
 									promRate += "+((Kr__" + repressor + "_" + promoter.getId()
 											+ "*" + expression + ")^nc__" + repressor + "_"
 											+ promoter.getId() + ")";
-									kl.addParameter(Utility.Parameter("nc__" + repressor + "_"
+									kl.addLocalParameter(Utility.Parameter("nc__" + repressor + "_"
 											+ promoter.getId(), nc, "dimensionless"));
-									kl.addParameter(Utility.Parameter("Kr__" + repressor + "_"
+									kl.addLocalParameter(Utility.Parameter("Kr__" + repressor + "_"
 											+ promoter.getId(), Kr, GeneticNetwork
 											.getMoleParameter(2)));
 								}
@@ -348,11 +348,11 @@ public class AbstractionEngine {
 				promRate += "(ko__" + promoter.getId() + "*ng__" + promoter.getId()
 				+ ")*((Ko__" + promoter.getId() + "*RNAP))/((1+(Ko__"
 				+ promoter.getId() + "*RNAP))";
-				kl.addParameter(Utility.Parameter("ng__" + promoter.getId(), ng, GeneticNetwork
+				kl.addLocalParameter(Utility.Parameter("ng__" + promoter.getId(), ng, GeneticNetwork
 						.getMoleParameter(2)));
-				kl.addParameter(Utility.Parameter("Ko__" + promoter.getId(), Ko, GeneticNetwork
+				kl.addLocalParameter(Utility.Parameter("Ko__" + promoter.getId(), Ko, GeneticNetwork
 						.getMoleParameter(2)));
-				kl.addParameter(Utility.Parameter("ko__" + promoter.getId(), ko, GeneticNetwork
+				kl.addLocalParameter(Utility.Parameter("ko__" + promoter.getId(), ko, GeneticNetwork
 						.getMoleTimeParameter(1)));
 			}
 			else {
@@ -380,16 +380,16 @@ public class AbstractionEngine {
 							expression = abstractComplex(repressor, nc, true);
 						}
 						else if (sbmlMode) {
-							r.removeModifier(repressor);
+							SBMLutilities.removeModifier(r, repressor);
 							r.addModifier(Utility.ModifierSpeciesReference(repressor));
 						}
 						if (sbmlMode) {
 							promRate += "+((Kr__" + repressor + "_" + promoter.getId() + "*"
 							+ expression + ")^nc__" + repressor + "_"
 							+ promoter.getId() + ")";
-							kl.addParameter(Utility.Parameter("nc__" + repressor + "_"
+							kl.addLocalParameter(Utility.Parameter("nc__" + repressor + "_"
 									+ promoter.getId(), nc, "dimensionless"));
-							kl.addParameter(Utility.Parameter("Kr__" + repressor + "_"
+							kl.addLocalParameter(Utility.Parameter("Kr__" + repressor + "_"
 									+ promoter.getId(), Kr, GeneticNetwork
 									.getMoleParameter(2)));
 						}
@@ -409,7 +409,7 @@ public class AbstractionEngine {
 		double kd = species.get(speciesId).getDecay();
 		if (kdSequesterEquivalence(speciesId, kd)) {
 			if (sbmlMode) {
-				kl.addParameter(Utility.Parameter("kd", kd, GeneticNetwork.getMoleTimeParameter(1)));
+				kl.addLocalParameter(Utility.Parameter("kd", kd, GeneticNetwork.getMoleTimeParameter(1)));
 				r.addReactant(Utility.SpeciesReference(speciesId, 1));
 				decayExpression = "kd*" + speciesId;
 			} else
@@ -422,7 +422,7 @@ public class AbstractionEngine {
 				if (species.get(complexId).isSequesterAbstractable() && species.get(complexId).getDecay() > 0) {
 					kdId = decayString + "__" + complexId;
 					kd = species.get(complexId).getDecay();
-					kl.addParameter(Utility.Parameter(kdId, kd, GeneticNetwork.getMoleTimeParameter(1)));
+					kl.addLocalParameter(Utility.Parameter(kdId, kd, GeneticNetwork.getMoleTimeParameter(1)));
 					decayExpression = decayExpression + "+" + kdId + "*" + abstractComplexHelper(complexId, 1, speciesId, false);
 				}
 			}
@@ -430,14 +430,14 @@ public class AbstractionEngine {
 			if (kd > 0) {
 				kdId = decayString + "__" + speciesId;
 				decayExpression = "(" + kdId + decayExpression + ")*" + sequesterSpeciesHelper(speciesId, "", false);
-				kl.addParameter(Utility.Parameter(kdId, kd, GeneticNetwork.getMoleTimeParameter(1)));
+				kl.addLocalParameter(Utility.Parameter(kdId, kd, GeneticNetwork.getMoleTimeParameter(1)));
 			} else if (decayExpression.length() > 0) {
 				decayExpression = "(" + decayExpression.substring(1, decayExpression.length()) + ")*" 
 				+ sequesterSpeciesHelper(speciesId, "", false);
 			}
 			r.addReactant(Utility.SpeciesReference(speciesId, 1));
 			for (String modifier : modifiers) {
-				r.removeModifier(modifier);
+				SBMLutilities.removeModifier(r, modifier);
 				r.addModifier(Utility.ModifierSpeciesReference(modifier));
 			}
 		} else if (!sbmlMode) {

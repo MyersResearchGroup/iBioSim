@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 
-import org.sbml.libsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.text.parser.ParseException;
 
 import biomodel.network.BaseSpecies;
 import biomodel.network.ComplexSpecies;
@@ -65,15 +66,27 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 			if (complexAbstraction && specie.isSequesterable()) {
 				decayExpression = abstractDecay(specie.getId());
 				if (decayExpression.length() > 0) {
-					kl.setFormula(decayExpression);
+					try {
+						kl.setFormula(decayExpression);
+					}
+					catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					Utility.addReaction(document, r);
 				}
 			} else if (decay > 0 || decay==-1){
 				decayExpression = decayString + "*" + specie.getId();
 				if (decay > 0)
-					kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
+					kl.addLocalParameter(Utility.Parameter(decayString, decay, decayUnitString));
 				r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
-				kl.setFormula(decayExpression);
+				try {
+					kl.setFormula(decayExpression);
+				}
+				catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				Utility.addReaction(document, r);
 			}
 		}
@@ -98,15 +111,27 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		if (complexAbstraction && specie.isSequesterable()) {
 			decayExpression = abstractDecay(specie.getId());
 			if (decayExpression.length() > 0) {
-				kl.setFormula(decayExpression);
+				try {
+					kl.setFormula(decayExpression);
+				}
+				catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				Utility.addReaction(document, r);
 			}
 		} else if (decay > 0 || decay==-1){
 			decayExpression = decayString + "*" + specie.getId();
 			if (decay > 0)
-				kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
+				kl.addLocalParameter(Utility.Parameter(decayString, decay, decayUnitString));
 			r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
-			kl.setFormula(decayExpression);
+			try {
+				kl.setFormula(decayExpression);
+			}
+			catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			Utility.addReaction(document, r);
 		}
 	}
@@ -129,15 +154,27 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		if (complexAbstraction && specie.isSequesterable()) {
 			decayExpression = abstractDecay(specie.getId());
 			if (decayExpression.length() > 0) {
-				kl.setFormula(decayExpression);
+				try {
+					kl.setFormula(decayExpression);
+				}
+				catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				Utility.addReaction(document, r);
 			}
 		} else if (decay > 0 || decay==-1){
 			decayExpression = decayString + "*" + specie.getId();
 			if (decay > 0)
-				kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
+				kl.addLocalParameter(Utility.Parameter(decayString, decay, decayUnitString));
 			r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
-			kl.setFormula(decayExpression);
+			try {
+				kl.setFormula(decayExpression);
+			}
+			catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			Utility.addReaction(document, r);
 		}
 	}
@@ -189,9 +226,15 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		if (decay > 0 || decay == -1){
 			decayExpression = decayString + "*" + specie.getId();
 			if (decay>0)
-				kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
+				kl.addLocalParameter(Utility.Parameter(decayString, decay, decayUnitString));
 			r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
-			kl.setFormula(decayExpression);
+			try {
+				kl.setFormula(decayExpression);
+			}
+			catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			Utility.addReaction(document, r);
 		}
 	}
