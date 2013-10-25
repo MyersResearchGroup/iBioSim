@@ -681,10 +681,10 @@ public class EditPreferences {
 		JButton restoreSyn = new JButton("Restore Defaults");
 		restoreSyn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				uriField.setText(GlobalConstants.MYERS_LAB_AUTHORITY);
-				regexField.setText(GlobalConstants.GENETIC_CONSTRUCT_REGEX);
-				validationBox.setSelectedItem(GlobalConstants.CONSTRUCT_VALIDATION);
-				warningBox.setSelectedItem(GlobalConstants.CONSTRUCT_VALIDATION_WARNING);
+				uriField.setText(GlobalConstants.SBOL_AUTHORITY_DEFAULT);
+				regexField.setText(GlobalConstants.GENETIC_CONSTRUCT_REGEX_DEFAULT);
+				validationBox.setSelectedItem(GlobalConstants.CONSTRUCT_VALIDATION_DEFAULT);
+				warningBox.setSelectedItem(GlobalConstants.CONSTRUCT_VALIDATION_WARNING_DEFAULT);
 			}
 		});	
 		
@@ -1443,16 +1443,16 @@ public class EditPreferences {
 			biosimrc.put("biosim.learn.findbaseprob", "False");
 		}
 		if (biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE, "").equals("")) {
-			biosimrc.put(GlobalConstants.SBOL_AUTHORITY_PREFERENCE, GlobalConstants.MYERS_LAB_AUTHORITY);
+			biosimrc.put(GlobalConstants.SBOL_AUTHORITY_PREFERENCE, GlobalConstants.SBOL_AUTHORITY_DEFAULT);
 		}
 		if (biosimrc.get(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, "").equals("")) {
-			biosimrc.put(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, GlobalConstants.GENETIC_CONSTRUCT_REGEX);
+			biosimrc.put(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, GlobalConstants.GENETIC_CONSTRUCT_REGEX_DEFAULT);
 		}
 		if (biosimrc.get(GlobalConstants.CONSTRUCT_VALIDATION_PREFERENCE, "").equals("")) {
-			biosimrc.put(GlobalConstants.CONSTRUCT_VALIDATION_PREFERENCE, GlobalConstants.CONSTRUCT_VALIDATION);
+			biosimrc.put(GlobalConstants.CONSTRUCT_VALIDATION_PREFERENCE, GlobalConstants.CONSTRUCT_VALIDATION_DEFAULT);
 		}
 		if (biosimrc.get(GlobalConstants.CONSTRUCT_VALIDATION_WARNING_PREFERENCE, "").equals("")) {
-			biosimrc.put(GlobalConstants.CONSTRUCT_VALIDATION_WARNING_PREFERENCE, GlobalConstants.CONSTRUCT_VALIDATION_WARNING);
+			biosimrc.put(GlobalConstants.CONSTRUCT_VALIDATION_WARNING_PREFERENCE, GlobalConstants.CONSTRUCT_VALIDATION_WARNING_DEFAULT);
 		}
 		if (biosimrc.get("biosim.general.tree_icons", "").equals("")) {
 			biosimrc.put("biosim.general.tree_icons", "default");

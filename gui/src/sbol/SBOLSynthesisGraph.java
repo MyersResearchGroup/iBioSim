@@ -22,9 +22,8 @@ import biomodel.parser.BioModel;
 
 public class SBOLSynthesisGraph {
 
-	private String sbmlFilePath;
-	private String sbmlFileID;
-	private String importFileID;
+	private String projectPath;
+	private String modelFileID;
 	private String submodelID;
 	private HashMap<SBOLSynthesisNode, List<SBOLSynthesisNode>> edges;
 	private int nucleotideCount;
@@ -36,10 +35,8 @@ public class SBOLSynthesisGraph {
 	
 	public SBOLSynthesisGraph(BioModel biomodel, SBOLFileManager fileManager) {
 		Model sbmlModel = biomodel.getSBMLDocument().getModel();
-		sbmlFilePath = biomodel.getPath();
-		sbmlFileID = biomodel.getSBMLFile();
-		String[] splitPath = sbmlFilePath.split(biomodel.getSeparator());
-		importFileID = splitPath[splitPath.length - 1] + "_" + sbmlFileID;
+		projectPath = biomodel.getPath();
+		modelFileID = biomodel.getSBMLFile();
 		Set<SBOLSynthesisNode> nodes = constructGraph(sbmlModel, fileManager);
 		decomposeGraph(nodes);
 		output = identifyOutput(nodes);
@@ -308,16 +305,16 @@ public class SBOLSynthesisGraph {
 		return null;
 	}
 	
-	public String getSBMLFilePath() {
-		return sbmlFilePath;
+	public String getProjectPath() {
+		return projectPath;
 	}
 	
-	public String getSBMLFileID() {
-		return sbmlFileID;
+	public void setModelFileID(String modelFileID) {
+		this.modelFileID = modelFileID;
 	}
 	
-	public String getImportFileID() {
-		return importFileID;
+	public String getModelFileID() {
+		return modelFileID;
 	}
 	
 	public void setSubmodelID(String submodelID) {
@@ -380,7 +377,7 @@ public class SBOLSynthesisGraph {
 	}
 
 	private void print() {
-		System.out.println(sbmlFileID);
+		System.out.println(modelFileID);
 		for (String path : paths)
 			System.out.println(path);
 		System.out.println();
@@ -441,7 +438,7 @@ public class SBOLSynthesisGraph {
 	}
 	
 	public String toString() {
-		return sbmlFileID;
+		return modelFileID;
 	}
 
 }

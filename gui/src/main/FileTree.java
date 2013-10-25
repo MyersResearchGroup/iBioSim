@@ -453,13 +453,17 @@ public class FileTree extends JPanel implements MouseListener {
 						catch (Exception e) {
 							e.printStackTrace();
 						}
-					} else if (new File(newPath + separator + d + GlobalConstants.SBOL_PROPERTIES_FILE_EXTENSION).exists()) {
+					} else if (new File(newPath + separator + d + GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION).exists()) {
 						try {
-							Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(newPath, separator);
-							String refFile = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY);
-							if (refFile.equals(files.get(fnum)) || refFile.replace(".gcm", ".xml").equals(files.get(fnum))) {
-								file.add(new DefaultMutableTreeNode(new IconData(ICON_SYNTHESIS, null, d)));
-							}
+							Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(newPath, separator, Gui.frame);
+							if (synthProps != null)
+								if (synthProps.containsKey(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY)) {
+									String refFile = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY);
+									if (refFile.equals(files.get(fnum)) || refFile.replace(".gcm", ".xml").equals(files.get(fnum))) {
+										file.add(new DefaultMutableTreeNode(new IconData(ICON_SYNTHESIS, null, d)));
+									}
+								} else
+									JOptionPane.showMessageDialog(Gui.frame, "Synthesis specification property is missing.", "Missing Property", JOptionPane.ERROR_MESSAGE);
 						}
 						catch (Exception e) {
 							e.printStackTrace();
@@ -567,28 +571,33 @@ public class FileTree extends JPanel implements MouseListener {
 				catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else if (new File(path + separator + item + GlobalConstants.SBOL_PROPERTIES_FILE_EXTENSION).exists()) {
+			} else if (new File(path + separator + item + GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION).exists()) {
 				try {
-					Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(path, separator);
-					String refFile = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY);
-					for (int i = 0; i < root.getChildCount(); i++) {
-						if (root.getChildAt(i).toString().equals(refFile) || root.getChildAt(i).toString().equals(refFile.replace(".gcm", ".xml"))) {
-							int insert = 0;
-							for (int j = 0; j < root.getChildAt(i).getChildCount(); j++) {
-								if (root.getChildAt(i).getChildAt(j).toString().compareToIgnoreCase(item) < 0) {
-									insert++;
+					Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(path, separator, Gui.frame);
+					if (synthProps != null) {
+						if (synthProps.containsKey(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY)) {
+							String refFile = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY);
+							for (int i = 0; i < root.getChildCount(); i++) {
+								if (root.getChildAt(i).toString().equals(refFile) || root.getChildAt(i).toString().equals(refFile.replace(".gcm", ".xml"))) {
+									int insert = 0;
+									for (int j = 0; j < root.getChildAt(i).getChildCount(); j++) {
+										if (root.getChildAt(i).getChildAt(j).toString().compareToIgnoreCase(item) < 0) {
+											insert++;
+										}
+									}
+									((DefaultMutableTreeNode) root.getChildAt(i)).insert(
+											new DefaultMutableTreeNode(new IconData(ICON_SYNTHESIS, null, item)), insert);
+									Runnable updateTree = new Runnable() {
+										public void run() {
+											tree.updateUI();
+										}
+									};
+									SwingUtilities.invokeLater(updateTree);
+									return;
 								}
 							}
-							((DefaultMutableTreeNode) root.getChildAt(i)).insert(
-									new DefaultMutableTreeNode(new IconData(ICON_SYNTHESIS, null, item)), insert);
-							Runnable updateTree = new Runnable() {
-								public void run() {
-									tree.updateUI();
-								}
-							};
-							SwingUtilities.invokeLater(updateTree);
-							return;
-						}
+						} else
+							JOptionPane.showMessageDialog(Gui.frame, "Synthesis specification property is missing.", "Missing Property", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 				catch (Exception e) {

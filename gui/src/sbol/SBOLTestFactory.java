@@ -61,11 +61,11 @@ public class SBOLTestFactory {
 		Random rGen = new Random();
 		try {
 			DnaComponent sbolRBS = createTestDNAComponent(
-					new URI(GlobalConstants.MYERS_LAB_AUTHORITY + "#" + "RBS"),
+					new URI(GlobalConstants.SBOL_AUTHORITY_DEFAULT + "#" + "RBS"),
 					"RBS", GlobalConstants.SO_RBS, rGen, GlobalConstants.RBS_LENGTH, 0);
 			libraryComps.add(sbolRBS);
 			DnaComponent sbolTT = createTestDNAComponent(
-					new URI(GlobalConstants.MYERS_LAB_AUTHORITY + "#" + "TT"),
+					new URI(GlobalConstants.SBOL_AUTHORITY_DEFAULT + "#" + "TT"),
 					"TT", GlobalConstants.SO_TERMINATOR, rGen, GlobalConstants.TERMINATOR_LENGTH, 0);
 			libraryComps.add(sbolTT);
 			for (int i = 0; i < gateLibrary.size(); i++) {
@@ -74,7 +74,7 @@ public class SBOLTestFactory {
 				for (String promoterID : gateModel.getPromoters()) {
 					Reaction sbmlPromoter = gateModel.getProductionReaction(promoterID);
 					DnaComponent sbolPromoter = createTestDNAComponent(
-							new URI(GlobalConstants.MYERS_LAB_AUTHORITY + "#" + gateID + "_" + promoterID), 
+							new URI(GlobalConstants.SBOL_AUTHORITY_DEFAULT + "#" + gateID + "_" + promoterID), 
 							gateID + "_" + promoterID, GlobalConstants.SO_PROMOTER, rGen, 
 							GlobalConstants.MEAN_PROMOTER_LENGTH, GlobalConstants.SD_PROMOTER_LENGTH);
 					libraryComps.add(sbolPromoter);
@@ -92,7 +92,7 @@ public class SBOLTestFactory {
 							sbolCDS = previousCDS;
 						} else {
 							sbolCDS = createTestDNAComponent(
-									new URI(GlobalConstants.MYERS_LAB_AUTHORITY + "#" + gateID + "_" + speciesID),
+									new URI(GlobalConstants.SBOL_AUTHORITY_DEFAULT + "#" + gateID + "_" + speciesID),
 									gateID + "_" + speciesID, GlobalConstants.SO_CDS, rGen, 
 									GlobalConstants.MEAN_CDS_LENGTH, GlobalConstants.SD_CDS_LENGTH);
 							libraryComps.add(sbolCDS);
@@ -101,7 +101,7 @@ public class SBOLTestFactory {
 						isFirstCDS = false;
 					} else {
 						sbolCDS = createTestDNAComponent(
-								new URI(GlobalConstants.MYERS_LAB_AUTHORITY + "#" + gateID + "_" + speciesID),
+								new URI(GlobalConstants.SBOL_AUTHORITY_DEFAULT + "#" + gateID + "_" + speciesID),
 								gateID + "_" + speciesID, GlobalConstants.SO_CDS, rGen, 
 								GlobalConstants.MEAN_CDS_LENGTH, GlobalConstants.SD_CDS_LENGTH);
 						libraryComps.add(sbolCDS);

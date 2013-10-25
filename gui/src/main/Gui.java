@@ -1930,51 +1930,55 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						break;
 					}
 				}
-				String synthName = JOptionPane.showInputDialog(frame, "Enter Synthesis ID:", "Synthesis View ID", JOptionPane.PLAIN_MESSAGE);
-				if (synthName != null && !synthName.trim().equals("")) {
-					synthName = synthName.trim();
-					try {
-						if (overwrite(root + separator + synthName, synthName)) {
-							new File(root + separator + synthName).mkdir();
-							String sbmlFile = tree.getFile();
-							String[] getFilename = sbmlFile.split(separator);
-							String circuitFileNoPath = getFilename[getFilename.length - 1];
-							try {
-								FileOutputStream out = new FileOutputStream(new File(root + separator + synthName.trim() + separator
-										+ synthName.trim() + ".syn"));
-								out.write(("synthesis.file=" + circuitFileNoPath + "\n").getBytes());
-								out.close();
-							}
-							catch (IOException e1) {
-								JOptionPane
-										.showMessageDialog(frame, "Unable to save parameter file!", "Error Saving File", JOptionPane.ERROR_MESSAGE);
-							}
-							try {
-								FileInputStream in = new FileInputStream(new File(root + separator + circuitFileNoPath));
-								FileOutputStream out = new FileOutputStream(new File(root + separator + synthName.trim() + separator
-										+ circuitFileNoPath));
-								int read = in.read();
-								while (read != -1) {
-									out.write(read);
-									read = in.read();
+				if (!async) {
+					createSBOLSynthesisView();
+				} else {
+					String synthName = JOptionPane.showInputDialog(frame, "Enter Synthesis ID:", "Synthesis View ID", JOptionPane.PLAIN_MESSAGE);
+					if (synthName != null && !synthName.trim().equals("")) {
+						synthName = synthName.trim();
+						try {
+							if (overwrite(root + separator + synthName, synthName)) {
+								new File(root + separator + synthName).mkdir();
+								String sbmlFile = tree.getFile();
+								String[] getFilename = sbmlFile.split(separator);
+								String circuitFileNoPath = getFilename[getFilename.length - 1];
+								try {
+									FileOutputStream out = new FileOutputStream(new File(root + separator + synthName.trim() + separator
+											+ synthName.trim() + ".syn"));
+									out.write(("synthesis.file=" + circuitFileNoPath + "\n").getBytes());
+									out.close();
 								}
-								in.close();
-								out.close();
+								catch (IOException e1) {
+									JOptionPane
+									.showMessageDialog(frame, "Unable to save parameter file!", "Error Saving File", JOptionPane.ERROR_MESSAGE);
+								}
+								try {
+									FileInputStream in = new FileInputStream(new File(root + separator + circuitFileNoPath));
+									FileOutputStream out = new FileOutputStream(new File(root + separator + synthName.trim() + separator
+											+ circuitFileNoPath));
+									int read = in.read();
+									while (read != -1) {
+										out.write(read);
+										read = in.read();
+									}
+									in.close();
+									out.close();
+								}
+								catch (Exception e1) {
+									JOptionPane.showMessageDialog(frame, "Unable to copy circuit file!", "Error Saving File", JOptionPane.ERROR_MESSAGE);
+								}
+								addToTree(synthName.trim());
+								String work = root + separator + synthName;
+								String circuitFile = root + separator + synthName.trim() + separator + circuitFileNoPath;
+								JPanel synthPane = new JPanel();
+								Synthesis synth = new Synthesis(work, circuitFile, log, this);
+								synthPane.add(synth);
+								addTab(synthName, synthPane, "Synthesis");
 							}
-							catch (Exception e1) {
-								JOptionPane.showMessageDialog(frame, "Unable to copy circuit file!", "Error Saving File", JOptionPane.ERROR_MESSAGE);
-							}
-							addToTree(synthName.trim());
-							String work = root + separator + synthName;
-							String circuitFile = root + separator + synthName.trim() + separator + circuitFileNoPath;
-							JPanel synthPane = new JPanel();
-							Synthesis synth = new Synthesis(work, circuitFile, log, this);
-							synthPane.add(synth);
-							addTab(synthName, synthPane, "Synthesis");
 						}
-					}
-					catch (Exception e1) {
-						JOptionPane.showMessageDialog(frame, "Unable to create Synthesis View directory.", "Error", JOptionPane.ERROR_MESSAGE);
+						catch (Exception e1) {
+							JOptionPane.showMessageDialog(frame, "Unable to create Synthesis View directory.", "Error", JOptionPane.ERROR_MESSAGE);
+						}
 					}
 				}
 			}
@@ -1982,9 +1986,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JOptionPane.showMessageDialog(frame, "You must open or create a project first.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
-		else if (e.getActionCommand().equals("createSBOLSynthesisView")) {
-			createSBOLSynthesisView();
-		} 
 		// if the verify popup menu is selected on a vhdl or lhpn file
 		else if (e.getActionCommand().equals("createVerify")) {
 			if (root != null) {
@@ -5294,46 +5295,39 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							updateAsyncViews(rename);
 						}
 						if (new File(root + separator + rename).isDirectory()) {
-							if (new File(root + separator + rename + separator
-									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".sim").exists()) {
-								new File(root + separator + rename + separator
-										+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".sim").renameTo(new File(
-										root + separator + rename + separator + rename + ".sim"));
+							String subFilePath = root + separator + rename + separator 
+									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
+							String renamedSubFilePath = root + separator + rename + separator + rename;
+							if (new File(subFilePath + ".sim").exists()) {
+								new File(subFilePath + ".sim").renameTo(
+										new File(renamedSubFilePath + ".sim"));
+							} else if (new File(subFilePath + GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION).exists()) {
+								new File(subFilePath + GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION).renameTo(
+										new File(renamedSubFilePath + GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION));
 							}
-							else if (new File(root + separator + rename + separator
-									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".pms").exists()) {
-								new File(root + separator + rename + separator
-										+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".pms").renameTo(new File(
-										root + separator + rename + separator + rename + ".sim"));
+							else if (new File(subFilePath + ".pms").exists()) {
+								new File(subFilePath + ".pms").renameTo(
+										new File(renamedSubFilePath + ".sim"));
 							}
-							if (new File(root + separator + rename + separator
-									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".lrn").exists()) {
-								new File(root + separator + rename + separator
-										+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".lrn").renameTo(new File(
-										root + separator + rename + separator + rename + ".lrn"));
+							if (new File(subFilePath + ".lrn").exists()) {
+								new File(subFilePath + ".lrn").renameTo(
+										new File(renamedSubFilePath + ".lrn"));
 							}
-							if (new File(root + separator + rename + separator
-									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".ver").exists()) {
-								new File(root + separator + rename + tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
-										+ ".ver").renameTo(new File(root + separator + rename + separator + rename + ".ver"));
+							if (new File(subFilePath + ".ver").exists()) {
+								new File(subFilePath + ".ver").renameTo(
+										new File(renamedSubFilePath + ".ver"));
 							}
-							if (new File(root + separator + rename + separator
-									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".grf").exists()) {
-								new File(root + separator + rename + separator
-										+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".grf").renameTo(new File(
-										root + separator + rename + separator + rename + ".grf"));
+							if (new File(subFilePath + ".grf").exists()) {
+								new File(subFilePath + ".grf").renameTo(
+										new File(renamedSubFilePath + ".grf"));
 							}
-							if (new File(root + separator + rename + separator
-									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".prb").exists()) {
-								new File(root + separator + rename + separator
-										+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".prb").renameTo(new File(
-										root + separator + rename + separator + rename + ".prb"));
+							if (new File(subFilePath + ".prb").exists()) {
+								new File(subFilePath + ".prb").renameTo(
+										new File(renamedSubFilePath + ".prb"));
 							}
-							if (new File(root + separator + rename + separator
-									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".prop").exists()) {
-								new File(root + separator + rename + separator
-										+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".prop").renameTo(new File(
-										root + separator + rename + separator + rename + ".prop"));
+							if (new File(subFilePath + ".prop").exists()) {
+								new File(subFilePath + ".prop").renameTo(
+										new File(renamedSubFilePath + ".prop"));
 							}
 						}
 						for (int i = 0; i < tab.getTabCount(); i++) {
@@ -5367,78 +5361,82 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									tab.setTitleAt(i, rename);
 								}
 								else if (tab.getComponentAt(i) instanceof JTabbedPane) {
-									JTabbedPane t = new JTabbedPane();
-									t.addMouseListener(this);
-									int selected = ((JTabbedPane) tab.getComponentAt(i)).getSelectedIndex();
-									boolean analysis = false;
-									ArrayList<Component> comps = new ArrayList<Component>();
-									for (int j = 0; j < ((JTabbedPane) tab.getComponentAt(i)).getTabCount(); j++) {
-										Component c = ((JTabbedPane) tab.getComponentAt(i)).getComponent(j);
-										comps.add(c);
-									}
-									for (Component c : comps) {
-										if (analysis) {
-											if (c instanceof MovieContainer) {
-												t.addTab("Schematic", c);
-												t.getComponentAt(t.getComponents().length - 1).setName("ModelViewMovie");
-											}
-											else if (c instanceof ModelEditor) {
-												((ModelEditor)c).setParamFile(root + separator + rename + separator + rename + ".sim");
-												t.addTab("Parameters", c);
-												t.getComponentAt(t.getComponents().length - 1).setName("GCM Editor");
-											}
-											else if (c instanceof Graph) {
-												((Graph)c).setDirectory(root + separator + rename);
-												if (((Graph) c).isTSDGraph()) {
-													t.addTab("TSD Graph", c);
-													t.getComponentAt(t.getComponents().length - 1).setName("TSD Graph");
+									if (tab.getComponentAt(i) instanceof SBOLSynthesisView) {
+										((SBOLSynthesisView) tab.getComponentAt(i)).renameView(rename);
+									} else {
+										JTabbedPane t = new JTabbedPane();
+										t.addMouseListener(this);
+										int selected = ((JTabbedPane) tab.getComponentAt(i)).getSelectedIndex();
+										boolean analysis = false;
+										ArrayList<Component> comps = new ArrayList<Component>();
+										for (int j = 0; j < ((JTabbedPane) tab.getComponentAt(i)).getTabCount(); j++) {
+											Component c = ((JTabbedPane) tab.getComponentAt(i)).getComponent(j);
+											comps.add(c);
+										}
+										for (Component c : comps) {
+											if (analysis) {
+												if (c instanceof MovieContainer) {
+													t.addTab("Schematic", c);
+													t.getComponentAt(t.getComponents().length - 1).setName("ModelViewMovie");
+												}
+												else if (c instanceof ModelEditor) {
+													((ModelEditor)c).setParamFile(root + separator + rename + separator + rename + ".sim");
+													t.addTab("Parameters", c);
+													t.getComponentAt(t.getComponents().length - 1).setName("GCM Editor");
+												}
+												else if (c instanceof Graph) {
+													((Graph)c).setDirectory(root + separator + rename);
+													if (((Graph) c).isTSDGraph()) {
+														t.addTab("TSD Graph", c);
+														t.getComponentAt(t.getComponents().length - 1).setName("TSD Graph");
+													}
+													else {
+														t.addTab("Histogram", c);
+														t.getComponentAt(t.getComponents().length - 1).setName("ProbGraph");
+													}
+												}
+												else if (c instanceof JScrollPane) {
+													//JScrollPane scroll = new JScrollPane();
+													//scroll.setViewportView(new JPanel());
+													//t.addTab("SBML Elements", scroll);
+													//t.getComponentAt(t.getComponents().length - 1).setName("");
 												}
 												else {
-													t.addTab("Histogram", c);
-													t.getComponentAt(t.getComponents().length - 1).setName("ProbGraph");
+													t.addTab("Advanced Options", c);
+													t.getComponentAt(t.getComponents().length - 1).setName("");
 												}
-											}
-											else if (c instanceof JScrollPane) {
-												//JScrollPane scroll = new JScrollPane();
-												//scroll.setViewportView(new JPanel());
-												//t.addTab("SBML Elements", scroll);
-												//t.getComponentAt(t.getComponents().length - 1).setName("");
-											}
-											else {
-												t.addTab("Advanced Options", c);
-												t.getComponentAt(t.getComponents().length - 1).setName("");
-											}
-										} else {
-											if (c instanceof AnalysisView) {
-												((AnalysisView) c).setSim(rename);
-												t.addTab("Simulation Options", c);
-												t.getComponentAt(t.getComponents().length - 1).setName("Simulate");
-												analysis = true;
-											}
-											else if (c instanceof Graph) {
-												// c.addMouseListener(this);
-												Graph g = ((Graph) c);
-												g.setDirectory(root + separator + rename);
-												if (g.isTSDGraph()) {
-													g.setGraphName(rename + ".grf");
+											} else {
+												if (c instanceof AnalysisView) {
+													((AnalysisView) c).setSim(rename);
+													t.addTab("Simulation Options", c);
+													t.getComponentAt(t.getComponents().length - 1).setName("Simulate");
+													analysis = true;
+												} 
+												else if (c instanceof Graph) {
+													// c.addMouseListener(this);
+													Graph g = ((Graph) c);
+													g.setDirectory(root + separator + rename);
+													if (g.isTSDGraph()) {
+														g.setGraphName(rename + ".grf");
+													}
+													else {
+														g.setGraphName(rename + ".prb");
+													}
 												}
-												else {
-													g.setGraphName(rename + ".prb");
+												else if (c instanceof LearnGCM) {
+													LearnGCM l = ((LearnGCM) c);
+													l.setDirectory(root + separator + rename);
 												}
-											}
-											else if (c instanceof LearnGCM) {
-												LearnGCM l = ((LearnGCM) c);
-												l.setDirectory(root + separator + rename);
-											}
-											else if (c instanceof DataManager) {
-												DataManager d = ((DataManager) c);
-												d.setDirectory(root + separator + rename);
+												else if (c instanceof DataManager) {
+													DataManager d = ((DataManager) c);
+													d.setDirectory(root + separator + rename);
+												}
 											}
 										}
-									}
-									if (analysis) {
-										t.setSelectedIndex(selected);
-										tab.setComponentAt(i, t);
+										if (analysis) {
+											t.setSelectedIndex(selected);
+											tab.setComponentAt(i, t);
+										}
 									}
 									tab.setTitleAt(i, rename);
 									tab.getComponentAt(i).setName(rename);
@@ -5449,17 +5447,21 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								}
 							}
 							else if (tab.getComponentAt(i) instanceof JTabbedPane) {
-								ArrayList<Component> comps = new ArrayList<Component>();
-								for (int j = 0; j < ((JTabbedPane) tab.getComponentAt(i)).getTabCount(); j++) {
-									Component c = ((JTabbedPane) tab.getComponentAt(i)).getComponent(j);
-									comps.add(c);
-								}
-								for (Component c : comps) {
-									if (c instanceof AnalysisView && ((AnalysisView) c).getBackgroundFile().equals(oldName)) {
-										((AnalysisView) c).updateBackgroundFile(rename);
+								if (tab.getComponentAt(i) instanceof SBOLSynthesisView) {
+									((SBOLSynthesisView) tab.getComponentAt(i)).changeSpecFile(rename);
+								} else {
+									ArrayList<Component> comps = new ArrayList<Component>();
+									for (int j = 0; j < ((JTabbedPane) tab.getComponentAt(i)).getTabCount(); j++) {
+										Component c = ((JTabbedPane) tab.getComponentAt(i)).getComponent(j);
+										comps.add(c);
 									}
-									else if (c instanceof LearnGCM && ((LearnGCM) c).getBackgroundFile().equals(oldName)) {
-										((LearnGCM) c).updateBackgroundFile(rename);
+									for (Component c : comps) {
+										if (c instanceof AnalysisView && ((AnalysisView) c).getBackgroundFile().equals(oldName)) {
+											((AnalysisView) c).updateBackgroundFile(rename);
+										}
+										else if (c instanceof LearnGCM && ((LearnGCM) c).getBackgroundFile().equals(oldName)) {
+											((LearnGCM) c).updateBackgroundFile(rename);
+										}
 									}
 								}
 							}
@@ -6632,6 +6634,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				create.addActionListener(this);
 				create.addMouseListener(this);
 				create.setActionCommand("createSim");
+				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+				createSynthesis.addActionListener(this);
+				createSynthesis.addMouseListener(this);
+				createSynthesis.setActionCommand("createSynthesis");
 				JMenuItem createLearn = new JMenuItem("Create Learn View");
 				createLearn.addActionListener(this);
 				createLearn.addMouseListener(this);
@@ -6661,6 +6667,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				rename.addMouseListener(this);
 				rename.setActionCommand("rename");
 				popup.add(create);
+				popup.add(createSynthesis);
 				popup.add(createLearn);
 				popup.addSeparator();
 				// popup.add(graph);
@@ -7299,7 +7306,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
 						sim = true;
 					}
-					if (s.length() > 3 && s.substring(s.length() - 4).equals(".syn")) {
+					if ((s.length() > 3 && s.substring(s.length() - 4).equals(".syn")) || 
+							s.endsWith(GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION)) {
 						synth = true;
 					}
 					if (s.length() > 3 && s.substring(s.length() - 4).equals(".ver")) {
@@ -7338,21 +7346,23 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					open.setActionCommand("openLearn");
 					popup.add(open);
 				}
+				if (sim || ver || synth || learn)
+					popup.addSeparator();
+				if (sim || ver || learn) {
+					JMenuItem copy = new JMenuItem("Copy");
+					copy.addActionListener(this);
+					copy.addMouseListener(this);
+					popup.add(copy);
+				}
 				if (sim || ver || synth || learn) {
 					JMenuItem delete = new JMenuItem("Delete");
 					delete.addActionListener(this);
 					delete.addMouseListener(this);
 					delete.setActionCommand("deleteSim");
-					JMenuItem copy = new JMenuItem("Copy");
-					copy.addActionListener(this);
-					copy.addMouseListener(this);
-					copy.setActionCommand("copy");
 					JMenuItem rename = new JMenuItem("Rename");
 					rename.addActionListener(this);
 					rename.addMouseListener(this);
 					rename.setActionCommand("rename");
-					popup.addSeparator();
-					popup.add(copy);
 					popup.add(rename);
 					popup.add(delete);
 				}
@@ -7426,16 +7436,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
 				boolean sim = false;
-				boolean sbolSynth = false;
 				boolean synth = false;
 				boolean ver = false;
 				boolean learn = false;
 				for (String s : new File(tree.getFile()).list()) {
 					if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
 						sim = true;
-					} else if (s.endsWith(GlobalConstants.SBOL_PROPERTIES_FILE_EXTENSION)) {
-						openSBOLSynthesisView();
-					} else if (s.length() > 3 && s.substring(s.length() - 4).equals(".syn")) {
+					}
+					else if ((s.length() > 3 && s.substring(s.length() - 4).equals(".syn")) || 
+							s.endsWith(GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION)) {
 						synth = true;
 					}
 					else if (s.length() > 3 && s.substring(s.length() - 4).equals(".ver")) {
@@ -7560,20 +7569,25 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		if (synthID != null) {
 			if (synthID.length() == 0)
 				synthID = defaultSynthID;
-			SBOLSynthesisView synthView = new SBOLSynthesisView(synthID, separator, root, log, frame);
-			synthView.loadDefaultSynthesisProperties(specFileID);
-			addTab(synthID, synthView, null);
-			addToTree(synthID);
+			else 
+				synthID = synthID.trim();
+			if (overwrite(root + separator + synthID, synthID)) {
+				SBOLSynthesisView synthView = new SBOLSynthesisView(synthID, separator, root, log, frame);
+				synthView.loadDefaultSynthesisProperties(specFileID);
+				addTab(synthID, synthView, null);
+				addToTree(synthID);
+			}
 		}
 	}
 	
 	private void openSBOLSynthesisView() {
-		String synthID = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
-		SBOLSynthesisView synthView = new SBOLSynthesisView(synthID, separator, root, log, frame);
-		Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(tree.getFile(),
-				separator);
-		synthView.loadSynthesisProperties(synthProps);
-		addTab(synthID, synthView, null);
+		Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(tree.getFile(), separator, frame);
+		if (synthProps != null) {
+			String synthID = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
+			SBOLSynthesisView synthView = new SBOLSynthesisView(synthID, separator, root, log, frame);
+			synthView.loadSynthesisProperties(synthProps);
+			addTab(synthID, synthView, null);
+		}
 	}
 
 	private void createAnalysisView(int fileType) throws Exception {
@@ -7892,78 +7906,91 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 		}
 		if (!done) {
-			JPanel synthPanel = new JPanel();
-			// String graphFile = "";
+			boolean sbolSynth = false;
 			if (new File(tree.getFile()).isDirectory()) {
-				String[] list = new File(tree.getFile()).list();
-				int run = 0;
-				for (int i = 0; i < list.length; i++) {
-					if (!(new File(list[i]).isDirectory()) && list[i].length() > 4) {
-						String end = "";
-						for (int j = 1; j < 5; j++) {
-							end = list[i].charAt(list[i].length() - j) + end;
-						}
-						if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
-							if (list[i].contains("run-")) {
-								int tempNum = Integer.parseInt(list[i].substring(4, list[i].length() - end.length()));
-								if (tempNum > run) {
-									run = tempNum;
-									// graphFile = tree.getFile() + separator +
-									// list[i];
+				String[] fileIDs = new File(tree.getFile()).list();
+				for (int i = 0; i < fileIDs.length; i++)
+					if (fileIDs[i].endsWith(GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION)) {
+						i = fileIDs.length;
+						sbolSynth = true;
+					}
+			}
+			if (sbolSynth) 
+				openSBOLSynthesisView();
+			else {
+				JPanel synthPanel = new JPanel();
+				// String graphFile = "";
+				if (new File(tree.getFile()).isDirectory()) {
+					String[] list = new File(tree.getFile()).list();
+					int run = 0;
+					for (int i = 0; i < list.length; i++) {
+						if (!(new File(list[i]).isDirectory()) && list[i].length() > 4) {
+							String end = "";
+							for (int j = 1; j < 5; j++) {
+								end = list[i].charAt(list[i].length() - j) + end;
+							}
+							if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
+								if (list[i].contains("run-")) {
+									int tempNum = Integer.parseInt(list[i].substring(4, list[i].length() - end.length()));
+									if (tempNum > run) {
+										run = tempNum;
+										// graphFile = tree.getFile() + separator +
+										// list[i];
+									}
 								}
 							}
 						}
 					}
 				}
-			}
 
-			String synthFile = tree.getFile() + separator + tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".syn";
-			String synthFile2 = tree.getFile() + separator + ".syn";
-			Properties load = new Properties();
-			String synthesisFile = "";
-			try {
-				if (new File(synthFile2).exists()) {
-					FileInputStream in = new FileInputStream(new File(synthFile2));
-					load.load(in);
-					in.close();
-					new File(synthFile2).delete();
+				String synthFile = tree.getFile() + separator + tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".syn";
+				String synthFile2 = tree.getFile() + separator + ".syn";
+				Properties load = new Properties();
+				String synthesisFile = "";
+				try {
+					if (new File(synthFile2).exists()) {
+						FileInputStream in = new FileInputStream(new File(synthFile2));
+						load.load(in);
+						in.close();
+						new File(synthFile2).delete();
+					}
+					if (new File(synthFile).exists()) {
+						FileInputStream in = new FileInputStream(new File(synthFile));
+						load.load(in);
+						in.close();
+						if (load.containsKey("synthesis.file")) {
+							synthesisFile = load.getProperty("synthesis.file");
+							synthesisFile = synthesisFile.split(separator)[synthesisFile.split(separator).length - 1];
+						}
+					}
+					FileOutputStream out = new FileOutputStream(new File(synthesisFile));
+					load.store(out, synthesisFile);
+					out.close();
+
 				}
-				if (new File(synthFile).exists()) {
-					FileInputStream in = new FileInputStream(new File(synthFile));
-					load.load(in);
-					in.close();
-					if (load.containsKey("synthesis.file")) {
-						synthesisFile = load.getProperty("synthesis.file");
-						synthesisFile = synthesisFile.split(separator)[synthesisFile.split(separator).length - 1];
+				catch (Exception e) {
+					JOptionPane.showMessageDialog(frame, "Unable to load properties file!", "Error Loading Properties", JOptionPane.ERROR_MESSAGE);
+				}
+				for (int i = 0; i < tab.getTabCount(); i++) {
+					if (getTitleAt(i).equals(synthesisFile)) {
+						tab.setSelectedIndex(i);
+						if (save(i, 0) == 0) {
+							return;
+						}
+						break;
 					}
 				}
-				FileOutputStream out = new FileOutputStream(new File(synthesisFile));
-				load.store(out, synthesisFile);
-				out.close();
-
-			}
-			catch (Exception e) {
-				JOptionPane.showMessageDialog(frame, "Unable to load properties file!", "Error Loading Properties", JOptionPane.ERROR_MESSAGE);
-			}
-			for (int i = 0; i < tab.getTabCount(); i++) {
-				if (getTitleAt(i).equals(synthesisFile)) {
-					tab.setSelectedIndex(i);
-					if (save(i, 0) == 0) {
-						return;
-					}
-					break;
+				if (!(new File(root + separator + synthesisFile).exists())) {
+					JOptionPane.showMessageDialog(frame, "Unable to open view because " + synthesisFile + " is missing.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
 				}
+				// if (!graphFile.equals("")) {
+				Synthesis synth = new Synthesis(tree.getFile(), "flag", log, this);
+				// synth.addMouseListener(this);
+				synthPanel.add(synth);
+				addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1], synthPanel, "Synthesis");
 			}
-			if (!(new File(root + separator + synthesisFile).exists())) {
-				JOptionPane.showMessageDialog(frame, "Unable to open view because " + synthesisFile + " is missing.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-			// if (!graphFile.equals("")) {
-			Synthesis synth = new Synthesis(tree.getFile(), "flag", log, this);
-			// synth.addMouseListener(this);
-			synthPanel.add(synth);
-			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1], synthPanel, "Synthesis");
 		}
 	}
 
@@ -9434,6 +9461,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		viewModGraph.setEnabled(false);
 		viewModBrowser.setEnabled(false);
 		createAnal.setEnabled(false);
+		createSynth.setEnabled(false);
 		createLearn.setEnabled(false);
 		createVer.setEnabled(false);
 		createSbml.setEnabled(false);
@@ -9458,7 +9486,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				createAnal.setEnabled(true);
 				createAnal.setActionCommand("simulate");
 				createSynth.setEnabled(true);
-				createSynth.setActionCommand("createSBOLSynthesisView");
+				createSynth.setActionCommand("createSynthesis");
 				createLearn.setEnabled(true);
 				copy.setEnabled(true);
 				rename.setEnabled(true);
@@ -9561,7 +9589,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
 						sim = true;
 					}
-					else if (s.length() > 4 && s.substring(s.length() - 4).equals(".syn")) {
+					else if ((s.length() > 4 && s.substring(s.length() - 4).equals(".syn")) || 
+							(s.endsWith(GlobalConstants.SBOL_SYNTH_PROPERTIES_EXTENSION))) {
 						synth = true;
 					}
 					else if (s.length() > 4 && s.substring(s.length() - 4).equals(".ver")) {
@@ -9792,6 +9821,16 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					catch (Exception e) {
 						check = "";
 					}
+				}
+				else if (new File(root + separator + s + separator + s + ".sbolsynth.properties").exists()) {
+					Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(root + separator + s, separator, Gui.frame);
+					if (synthProps != null)
+						if (synthProps.containsKey(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY))
+							check = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY);
+						else
+							JOptionPane.showMessageDialog(frame, "Synthesis specification property is missing.", "Missing Property", JOptionPane.ERROR_MESSAGE);
+					else
+						check = "";
 				}
 				check = check.replace(".gcm",".xml");
 				if (check.equals(filename)) {
