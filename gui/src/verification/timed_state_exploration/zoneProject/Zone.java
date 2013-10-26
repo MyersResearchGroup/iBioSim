@@ -3603,7 +3603,7 @@ public class Zone{
 				ioffset++;
 			}
 			
-			for(int j=1, joffset=0; j<newZone.matrixSize(); j++){
+			for(int j=0, joffset=0; j<newZone.matrixSize(); j++){
 				if(j>=1 && rateZero[j-1]){
 					joffset++;
 				}
