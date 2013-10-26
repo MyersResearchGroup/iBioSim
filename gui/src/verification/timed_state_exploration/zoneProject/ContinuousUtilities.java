@@ -248,7 +248,7 @@ public class ContinuousUtilities {
 		 * 					Since zu = (upper bound)/r, this is the same as 
 		 * 					upper bound < a.
 		 * 					Thus the entire range is below the constant. So the inequality is true,
-		 *                  but it is erroneously marked false. Constrain the varaible from moving any further.
+		 *                  but it is erroneously marked false. Constrain the variable from moving any further.
 		 *                  newMIn = zu.
 		 *                  This case should not happen.
 		 *                  }
@@ -282,7 +282,7 @@ public class ContinuousUtilities {
 		 * 					space since we are dividing by a negative value.
 		 * 				}
 		 * 				else if (-1*zu > -1*a/r){
-		 * 					When the rate is negative, zu=(upper bound)/r. Thus the
+		 * 					When the rate is negative, zu=(lower bound)/r. Thus the
 		 * 					inequality becomes -1*(lower bound)/r > -1*a/r or
 		 * 					lower bound > a.
 		 * 					So the entire range is greater than the constant. But
@@ -430,7 +430,7 @@ public class ContinuousUtilities {
 										z.getCurrentRate(contVar), false)){
 							
 							newMin = z.getDbmEntry(0,contDBMIndex);
-							
+							System.err.println("Warning: my impossible case 2.");
 						}
 
 						// Check if the entire range lies above the constant.
