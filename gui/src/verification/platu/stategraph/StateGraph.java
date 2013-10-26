@@ -1495,7 +1495,7 @@ public class StateGraph {
 			z = z.addTransition(newlyEnabled, states);
 			
 			// Reset rates to their lower bounds.
-			if(Options.get_resetOnce()){
+			if(!Options.get_resetOnce()){
 				z = z.resetRates();
 			}
 			
