@@ -4553,6 +4553,8 @@ public class Zone{
 	private LpnTranList createRateEvents(LPNContinuousPair ltContPair, IntervalPair ratePair,
 			LpnTranList result, State localState){
 		
+		ltContPair = ltContPair.clone();
+		
 		if(!ratePair.singleValue()
 				&& (ltContPair.getCurrentRate() == ratePair.getSmallestRate())){
 			// The rate represents a range of rates and no rate change
