@@ -94,7 +94,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	private JCheckBox abst, partialOrder, dot, verbose, graph, decomposeLPN, multipleLPNs, genrg,
 	timsubset, superset, infopt, orbmatch, interleav, prune, disabling,
 	nofail, noproj, keepgoing, explpn, nochecks, reduction, newTab,
-	postProc, redCheck, xForm2, expandRate, useGraphs;
+	postProc, redCheck, xForm2, expandRate, useGraphs, resetOnce;
 
 	private JTextField bddSize, backgroundField, componentField;
 
@@ -316,6 +316,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		reduction = new JCheckBox("Reduction");
 		nochecks.addActionListener(this);
 		reduction.addActionListener(this);
+		resetOnce = new JCheckBox("Reset Once");
+		resetOnce.addActionListener(this);
 		// Component List
 		addComponent = new JButton("Add Component");
 		removeComponent = new JButton("Remove Component");
@@ -448,6 +450,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		advancedPanel.add(otherOptions2);
 		advancedPanel.add(nochecks);
 		advancedPanel.add(reduction);
+		advancedPanel.add(resetOnce);
 
 		bddPanel.add(bddSizeLabel);
 		bddPanel.add(bddSize);
@@ -1784,7 +1787,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			 * in the Options class that is queried by the search method.
 			 */
 			Options.setTimingAnalsysisType("zone");
-
+			Options.set_resetOnce(resetOnce.isSelected());
+			
 			Zone.setSubsetFlag(!timsubset.isSelected());
 			Zone.setSupersetFlag(!superset.isSelected());
 
