@@ -451,6 +451,11 @@ public class BioModel {
 		return sbml;
 	}
 
+	
+	public FBCModelPlugin getSBMLFBC() {
+		return (FBCModelPlugin)SBMLutilities.getPlugin(FBCConstants.namespaceURI, sbml.getModel(), true);
+	}
+	
 	public LayoutModelPlugin getSBMLLayout() {
 		return sbmlLayout;
 	}

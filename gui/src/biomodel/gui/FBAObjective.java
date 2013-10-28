@@ -19,7 +19,15 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
+import org.sbml.jsbml.ext.fbc.FBCConstants;
+import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
+import org.sbml.jsbml.ext.fbc.FluxObjective;
+import org.sbml.jsbml.ext.fbc.Objective;
+
+import com.joptimizer.functions.LinearMultivariateRealFunction;
+
 import main.Gui;
+import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.parser.BioModel;
 import main.util.Utility;
 
@@ -33,14 +41,36 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 
 	private BioModel bioModel;
 	
+	private FBCModelPlugin fbc;
+	
 	public FBAObjective(BioModel bioModel) {
 		super(new BorderLayout());
 		this.bioModel = bioModel;
-		
+		fbc = bioModel.getSBMLFBC();
 		JPanel bigPanel = new JPanel(new BorderLayout());
-		
+		// TODO: allocate size based on number of objectives
 		String[] objectiveStringArray = new String[0];
-
+		// TODO: get active id from list of objectives
+		String activeObjective = fbc.getListOfObjectives().getActiveObjective();
+			
+		// TODO: Build entries to the objectiveStringArray
+		for (int i = 0; i < fbc.getListOfObjectives().size(); i++) {
+//			double [] objective = new double[(int) sbml.getModel().getNumReactions()];	
+			// TODO: get its type
+			// TODO: get its id
+			// TODO: compare id with active id
+			for (int j = 0; j < fbc.getObjective(i).getListOfFluxObjectives().size(); j++) {
+				// TODO: build the right hand size
+//				if (fbc.getObjective(i).getType().equals("minimize")) {
+//					objective [(int) reactionIndex.get(fbc.getObjective(i).getListOfFluxObjectives().get(j).getReaction())] = fbc.getObjective(i).getListOfFluxObjectives().get(j).getCoefficient();
+//				} else {
+//					objective [(int) reactionIndex.get(fbc.getObjective(i).getListOfFluxObjectives().get(j).getReaction())] = (-1)*fbc.getObjective(i).getListOfFluxObjectives().get(j).getCoefficient();
+//				}
+			}
+//			LinearMultivariateRealFunction objectiveFunction = new LinearMultivariateRealFunction(objective, 0);
+//			System.out.println("Minimize: " + vectorToString(objective,reactionIndex));
+//			System.out.println("Subject to:");
+		}
 		objectives = new JList();
 		objectiveList = new JList();
 		
@@ -77,7 +107,22 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 		int value = JOptionPane.showOptionDialog(Gui.frame, bigPanel, title, JOptionPane.YES_NO_OPTION, 
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
-		while (error && value == JOptionPane.YES_OPTION && value != JOptionPane.YES_OPTION) {
+		while (error && value == JOptionPane.YES_OPTION) {
+			error = false;
+			if (value == JOptionPane.YES_OPTION) {
+				/* TODO: put in when you are sure second part works
+				while (fbc.getListOfObjectives().size() > 0) {
+					fbc.removeObjective(0);
+				}
+				*/
+				// TODO: for each objective in objectiveStringArray
+				  // Objective objective = fbc.createObjective();
+				  // TODO: set id, type
+				  // TODO: if it is active, set activeObjective on the list to this id
+				  // TODO: get RHS of eqn, split on "+"
+				  // TODO: foreach of split on "+", split on "*" and create a fluxObjective with coefficient with left and reaction with right
+				    // FluxObjective fluxObjective = objective.createFluxObjective();
+			}
 			if (error) {
 				value = JOptionPane.showOptionDialog(Gui.frame, bigPanel, title, JOptionPane.YES_NO_OPTION, 
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
