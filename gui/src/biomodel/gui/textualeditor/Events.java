@@ -42,7 +42,6 @@ import biomodel.util.GlobalConstants;
  */
 public class Events extends JPanel implements ActionListener, MouseListener {
 
-	/* TODO: YOU NEED MOST OF THE ITEMS BELOW */
 	private static final long serialVersionUID = 1L;
 
 	private JButton addEvent, addTrans, removeEvent, editEvent;
@@ -60,7 +59,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	private boolean isTextual;
 
 	/* Create event panel */
-	/* TODO: ONLY NEED TO MAKE A COPY OF bioModel */
 	public Events(Gui biosim, BioModel bioModel, ModelEditor modelEditor, boolean isTextual) {
 		super(new BorderLayout());
 		this.bioModel = bioModel;
@@ -134,9 +132,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		String[] assign = new String[0];
 		String[] placeAssign = new String[0];
 		ArrayList<String> presetPlaces = new ArrayList<String>();
-		/* TODO: YOU NEED TO CREATE THE PANEL */
 		JPanel eventPanel = new JPanel(new BorderLayout());
-		/* TODO: TO HERE */
 		// JPanel evPanel = new JPanel(new GridLayout(2, 2));
 		JPanel evPanel = new JPanel(new GridLayout(10, 2));
 		if (isTransition) {
@@ -182,7 +178,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			dynamicProcess.setSelectedItem("none");
 		}
 		
-		/* TODO: NEED TO ADD OBJECTIVES LIST AND BUTTONS */
 		JPanel eventAssignPanel = new JPanel(new BorderLayout());
 		JPanel addEventAssign = new JPanel();
 		JButton addAssignment = new JButton("Add Assignment");
@@ -201,7 +196,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		scroll.setMinimumSize(new Dimension(260, 220));
 		scroll.setPreferredSize(new Dimension(276, 152));
 		scroll.setViewportView(eventAssign);
-		/* TODO: TO HERE */
 		int Eindex = -1;
 		String selectedID = "";
 		if (option.equals("OK")) {
@@ -364,7 +358,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			}
 			eventID.setText(eventId);
 		}
-		/* TODO: NEED THIS STUFF */
 		Utility.sort(assign);
 		eventAssign.setListData(assign);
 		eventAssign.setSelectedIndex(0);
@@ -372,7 +365,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		eventAssignPanel.add(eventAssignLabel, "North");
 		eventAssignPanel.add(scroll, "Center");
 		eventAssignPanel.add(addEventAssign, "South");
-		/* TODO: TO HERE */
 		evPanel.add(IDLabel);
 		evPanel.add(eventID);
 		evPanel.add(NameLabel);
@@ -401,7 +393,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		evPanel.add(onPortLabel);
 		evPanel.add(onPort);
 		eventPanel.add(evPanel, "North");
-		/* TODO: NEED TO ADD OBJECTIVES TO PANEL */
 		eventPanel.add(eventAssignPanel, "South");
 		Object[] options = { option, "Cancel" };
 		String title = "Event Editor";
@@ -412,7 +403,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-		/* TODO: TO HERE */
 			assign = new String[eventAssign.getModel().getSize()];
 			for (int i = 0; i < eventAssign.getModel().getSize(); i++) {
 				assign[i] = eventAssign.getModel().getElementAt(i).toString();
@@ -954,7 +944,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					}
 				}
 			}
-			/* TODO: NEED THIS STUFF */
 			if (error) {
 				value = JOptionPane.showOptionDialog(Gui.frame, eventPanel, title, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 						null, options, options[0]);
@@ -966,7 +955,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		modelEditor.setDirty(true);
 		bioModel.makeUndoPoint();
 		return eventID.getText().trim();
-		/* TODO: TO HERE */
 	}
 
 	/**
@@ -1112,20 +1100,17 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	 * Creates a frame used to edit event assignments or create new ones.
 	 * 
 	 */
-	/* TODO: EVENT ASSIGNMENT EDITOR */
 	private void eventAssignEditor(BioModel gcm, JList eventAssign, String option) {
 		if (option.equals("OK") && eventAssign.getSelectedIndex() == -1) {
 			JOptionPane.showMessageDialog(Gui.frame, "No event assignment selected.", "Must Select an Event Assignment", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		/* TODO: BUILD YOUR OBJECTIVE PANEL HERE */
 		JPanel eventAssignPanel = new JPanel();
 		JPanel EAPanel = new JPanel();
 		JLabel idLabel = new JLabel("Variable:");
 		JLabel eqnLabel = new JLabel("Assignment:");
 		JComboBox eaID = new JComboBox();
 		String selected;
-		/* TODO: TO HERE */
 		String[] assign = new String[eventAssign.getModel().getSize()];
 		for (int i = 0; i < eventAssign.getModel().getSize(); i++) {
 			assign[i] = eventAssign.getModel().getElementAt(i).toString();
@@ -1200,7 +1185,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			eaID.setSelectedItem(selectAssign.split(" ")[0]);
 			eqn.setText(selectAssign.split(":=")[1].trim());
 		}
-		/* TODO: BUILD PANEL */
 		EAPanel.add(idLabel);
 		EAPanel.add(eaID);
 		EAPanel.add(eqnLabel);
@@ -1212,7 +1196,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = false;
-			/* TODO: TO HERE */
 			if (eqn.getText().trim().equals("")) {
 				JOptionPane.showMessageDialog(Gui.frame, "Event assignment is missing.", "Enter Assignment", JOptionPane.ERROR_MESSAGE);
 				error = true;
@@ -1270,7 +1253,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					}
 				}
 			}
-			/* TODO: THIS PART TO ACTUALLY PUT THE STUFF BACK ON THE FIRST PANEL */
 			if (!error) {
 				if (option.equals("OK")) {
 					int index = eventAssign.getSelectedIndex();
@@ -1314,7 +1296,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			return;
 		}
 	}
-	/* TODO: TO HERE */
 
 	/**
 	 * Determines if a variable is already used in assignment rule or another
@@ -1345,7 +1326,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	 * @param assign
 	 *            String array of event assignments for selected event
 	 */
-	/* TODO: remove objective */
 	private void removeAssignment(JList eventAssign) {
 		int index = eventAssign.getSelectedIndex();
 		if (index != -1) {
@@ -1361,7 +1341,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		}
 	}
 
-	/* TODO: NEED ALL THE FUNCTIONS BELOW */
 	public void actionPerformed(ActionEvent e) {
 		// if the add event button is clicked
 		if (e.getSource() == addEvent) {
@@ -1382,7 +1361,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		else if (e.getSource() == removeEvent) {
 			removeEvent(events, bioModel);
 		}
-		/* TODO: ONLY NEED THE PART BELOW HERE */
 		// if the add event assignment button is clicked
 		else if (((JButton) e.getSource()).getText().equals("Add Assignment")) {
 			eventAssignEditor(bioModel, eventAssign, "Add");
