@@ -1,6 +1,11 @@
 package biomodel.gui.textualeditor;
 
+import java.awt.AWTError;
+import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,7 +15,10 @@ import java.util.SortedSet;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 
+import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.tree.TreeNode;
@@ -3605,6 +3613,103 @@ public class SBMLutilities {
 		}
 		else {
 			return null;
+		}
+	}
+	
+	public static void checkModelCompleteness(SBMLDocument document) {
+		FBCModelPlugin fbc = (FBCModelPlugin)SBMLutilities.getPlugin(FBCConstants.namespaceURI, document.getModel(), true);
+		if (fbc != null) return;
+		JTextArea messageArea = new JTextArea();
+		messageArea.append("Model is incomplete.  Cannot be simulated until the following information is provided.\n");
+		boolean display = false;
+		org.sbml.jsbml.Model model = document.getModel();
+		ListOf list = model.getListOfCompartments();
+		for (int i = 0; i < model.getNumCompartments(); i++) {
+			Compartment compartment = (Compartment) list.get(i);
+			if (!compartment.isSetSize()) {
+				messageArea.append("--------------------------------------------------------------------------\n");
+				messageArea.append("Compartment " + compartment.getId() + " needs a size.\n");
+				display = true;
+			}
+		}
+		list = model.getListOfSpecies();
+		for (int i = 0; i < model.getNumSpecies(); i++) {
+			Species species = (Species) list.get(i);
+			if (!(species.isSetInitialAmount()) && !(species.isSetInitialConcentration())) {
+				messageArea.append("--------------------------------------------------------------------------\n");
+				messageArea.append("Species " + species.getId() + " needs an initial amount or concentration.\n");
+				display = true;
+			}
+		}
+		list = model.getListOfParameters();
+		for (int i = 0; i < model.getNumParameters(); i++) {
+			Parameter parameter = (Parameter) list.get(i);
+			if (!(parameter.isSetValue())) {
+				messageArea.append("--------------------------------------------------------------------------\n");
+				messageArea.append("Parameter " + parameter.getId() + " needs an initial value.\n");
+				display = true;
+			}
+		}
+		list = model.getListOfReactions();
+		for (int i = 0; i < model.getNumReactions(); i++) {
+			Reaction reaction = (Reaction) list.get(i);
+			if (!(reaction.isSetKineticLaw())) {
+				messageArea.append("--------------------------------------------------------------------------\n");
+				messageArea.append("Reaction " + reaction.getId() + " needs a kinetic law.\n");
+				display = true;
+			}
+			else {
+				ListOf params = reaction.getKineticLaw().getListOfParameters();
+				for (int j = 0; j < reaction.getKineticLaw().getNumParameters(); j++) {
+					Parameter param = (Parameter) params.get(j);
+					if (!(param.isSetValue())) {
+						messageArea.append("--------------------------------------------------------------------------\n");
+						messageArea.append("Local parameter " + param.getId() + " for reaction " + reaction.getId() + " needs an initial value.\n");
+						display = true;
+					}
+				}
+			}
+		}
+		if (display) {
+			final JFrame f = new JFrame("SBML Model Completeness Errors");
+			messageArea.setLineWrap(true);
+			messageArea.setEditable(false);
+			messageArea.setSelectionStart(0);
+			messageArea.setSelectionEnd(0);
+			JScrollPane scroll = new JScrollPane();
+			scroll.setMinimumSize(new Dimension(600, 600));
+			scroll.setPreferredSize(new Dimension(600, 600));
+			scroll.setViewportView(messageArea);
+			JButton close = new JButton("Dismiss");
+			close.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					f.dispose();
+				}
+			});
+			JPanel consistencyPanel = new JPanel(new BorderLayout());
+			consistencyPanel.add(scroll, "Center");
+			consistencyPanel.add(close, "South");
+			f.setContentPane(consistencyPanel);
+			f.pack();
+			Dimension screenSize;
+			try {
+				Toolkit tk = Toolkit.getDefaultToolkit();
+				screenSize = tk.getScreenSize();
+			}
+			catch (AWTError awe) {
+				screenSize = new Dimension(640, 480);
+			}
+			Dimension frameSize = f.getSize();
+			if (frameSize.height > screenSize.height) {
+				frameSize.height = screenSize.height;
+			}
+			if (frameSize.width > screenSize.width) {
+				frameSize.width = screenSize.width;
+			}
+			int x = screenSize.width / 2 - frameSize.width / 2;
+			int y = screenSize.height / 2 - frameSize.height / 2;
+			f.setLocation(x, y);
+			f.setVisible(true);
 		}
 	}
 }
