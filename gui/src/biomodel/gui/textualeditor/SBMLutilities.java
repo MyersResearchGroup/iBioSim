@@ -3075,7 +3075,7 @@ public class SBMLutilities {
 	}
 	
 	public static void removeFromParentAndDelete(SBase element) {
-		((ListOf) element.getParent()).remove(element);
+		element.removeFromParent();
 	}
 	
 	public static SBase getElementByMetaId(SBMLDocument document, String metaId) {
