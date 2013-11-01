@@ -142,7 +142,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 
 			if (parameter.getId().contains("_locations"))
 				++notIncludedParametersCount;
-			if (constantsOnly && !parameter.getConstant()) {
+			else if (constantsOnly && !parameter.getConstant()) {
 				++notIncludedParametersCount;
 				params[i] = params[i] + "__DELETE";
 			}

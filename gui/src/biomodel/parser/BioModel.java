@@ -1137,6 +1137,9 @@ public class BioModel {
 		dim.setHeight(h);
 		dim.setWidth(w);
 		boundingBox.setDimensions(dim);
+		if (layout.getDimensions() == null) {
+			layout.createDimensions(0, 0, 0);
+		}
 		if (layout.getDimensions().getWidth() < x+w) {
 			layout.getDimensions().setWidth(x+w);
 		}

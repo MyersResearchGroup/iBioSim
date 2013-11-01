@@ -212,10 +212,16 @@ public class AnnotationUtility {
 		Pattern gridPattern = Pattern.compile(GRID_ANNOTATION);
 		Matcher gridMatcher = gridPattern.matcher(annotation);
 		int[] gridSize = null;
-		if (gridMatcher.find() && gridMatcher.groupCount()==2) {
+		if (gridMatcher.find() && gridMatcher.groupCount()==4) {
 			gridSize = new int[2];
-			gridSize[0] = Integer.valueOf(gridMatcher.group(1));
-			gridSize[1] = Integer.valueOf(gridMatcher.group(2));
+			if (gridMatcher.group(1) != null && gridMatcher.group(2) != null) {
+				gridSize[0] = Integer.valueOf(gridMatcher.group(1));
+				gridSize[1] = Integer.valueOf(gridMatcher.group(2));
+			}
+			else {
+				gridSize[0] = Integer.valueOf(gridMatcher.group(3));
+				gridSize[1] = Integer.valueOf(gridMatcher.group(4));
+			}
 		} else {
 			gridPattern = Pattern.compile(OLD_GRID_ANNOTATION);
 			gridMatcher = gridPattern.matcher(annotation);
@@ -296,7 +302,12 @@ public class AnnotationUtility {
 		Pattern arrayPattern = Pattern.compile(ARRAY_ANNOTATION);
 		Matcher arrayMatcher = arrayPattern.matcher(annotation);
 		if (arrayMatcher.find()) {
-			return arrayMatcher.group(1).replace("\"","").replace(" ","").split("array:");
+			if (arrayMatcher.group(1) != null) {
+				return arrayMatcher.group(1).replace("\"","").replace(" ","").split("array:");
+			}
+			else {
+				return arrayMatcher.group(2).replace("\"","").replace(" ","").split("array:");
+			}
 		} else {
 			return null;
 		}
@@ -307,7 +318,12 @@ public class AnnotationUtility {
 		Pattern arrayPattern = Pattern.compile(ARRAY_ANNOTATION);
 		Matcher arrayMatcher = arrayPattern.matcher(annotation);
 		if (arrayMatcher.find()) {
-			return arrayMatcher.group(1).replace("\"","").replace(" ","").split("array:");
+			if (arrayMatcher.group(1) != null) {
+				return arrayMatcher.group(1).replace("\"","").replace(" ","").split("array:");
+			}
+			else {
+				return arrayMatcher.group(2).replace("\"","").replace(" ","").split("array:");
+			}
 		} else {
 			return null;
 		}
@@ -358,7 +374,7 @@ public class AnnotationUtility {
 		"</ModelToSBOL>";
 	
 	private static final String GRID_ANNOTATION =
-			"<ibiosim:ibiosim xmlns:ibiosim=\"http://www\\.fakeuri\\.com\" ibiosim:grid=\"\\((\\d+),(\\d+)\\)\"/>";
+			"<ibiosim:ibiosim xmlns:ibiosim=\"http://www\\.fakeuri\\.com\" ibiosim:grid=\"\\((\\d+),(\\d+)\\)\"/>|<ibiosim:ibiosim ibiosim:grid=\"\\((\\d+),(\\d+)\\)\" xmlns:ibiosim=\"http://www\\.fakeuri\\.com\"/>";
 	
 	private static final String LAYOUT_GRID_ANNOTATION = "grid=\\((\\d+),(\\d+)\\)";
 	
@@ -381,6 +397,6 @@ public class AnnotationUtility {
 			"<array:array xmlns:array=\"http://www\\.fakeuri\\.com\" array:size=\"(\\d+)\"/>";
 	
 	private static final String ARRAY_ANNOTATION =
-			"<array:array xmlns:array=\"http://www\\.fakeuri\\.com\" (.+)/>";
+			"<array:array xmlns:array=\"http://www\\.fakeuri\\.com\" (.+)/>|<array:array (.+) xmlns:array=\"http://www\\.fakeuri\\.com\"/>";
 	
 }
