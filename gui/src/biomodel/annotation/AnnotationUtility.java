@@ -64,7 +64,7 @@ public class AnnotationUtility {
 		XMLAttributes attr = new XMLAttributes();
 		attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
 		attr.add("ibiosim:sweep", sweep);
-		XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
+		XMLNode node = new XMLNode(new XMLTriple("ibiosim","http://www.fakeuri.com ","ibiosim"), attr);
 		if (SBMLutilities.appendAnnotation(sbmlObject, node) != JSBML.OPERATION_SUCCESS)
 			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
 					+ SBMLutilities.getId(sbmlObject));
@@ -98,7 +98,7 @@ public class AnnotationUtility {
 		XMLAttributes attr = new XMLAttributes();
 		attr.add("xmlns:array", "http://www.fakeuri.com");
 		attr.add("array:size", ""+size);
-		XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);
+		XMLNode node = new XMLNode(new XMLTriple("array","http://www.fakeuri.com ","array"), attr);
 		if (SBMLutilities.appendAnnotation(sbmlObject, node) != JSBML.OPERATION_SUCCESS)
 			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
 					+ SBMLutilities.getId(sbmlObject));
@@ -148,7 +148,7 @@ public class AnnotationUtility {
 		XMLAttributes attr = new XMLAttributes();
 		attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
 		attr.add("ibiosim:type", dynamic);
-		XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
+		XMLNode node = new XMLNode(new XMLTriple("ibiosim","http://www.fakeuri.com ","ibiosim"), attr);
 		if (SBMLutilities.appendAnnotation(sbmlObject, node) != JSBML.OPERATION_SUCCESS)
 			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
 					+ SBMLutilities.getId(sbmlObject));
@@ -182,7 +182,7 @@ public class AnnotationUtility {
 		XMLAttributes attr = new XMLAttributes();
 		attr.add("xmlns:ibiosim", "http://www.fakeuri.com");
 		attr.add("ibiosim:grid", "(" + rows + "," + cols + ")");
-		XMLNode node = new XMLNode(new XMLTriple("ibiosim","","ibiosim"), attr);
+		XMLNode node = new XMLNode(new XMLTriple("ibiosim","http://www.fakeuri.com ","ibiosim"), attr);
 		if (SBMLutilities.appendAnnotation(sbmlObject, node) != JSBML.OPERATION_SUCCESS)
 			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
 					+ SBMLutilities.getId(sbmlObject));
@@ -245,7 +245,7 @@ public class AnnotationUtility {
 		for (int i = 0; i < attributes.length; i++) {
 			attr.add("array:"+attributes[i].split("=")[0], attributes[i].split("=")[1].replace("\"", ""));
 		}
-		XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);
+		XMLNode node = new XMLNode(new XMLTriple("array","http://www.fakeuri.com ","array"), attr);
 		if (SBMLutilities.appendAnnotation(sbmlObject, node) != JSBML.OPERATION_SUCCESS)
 			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
 					+ SBMLutilities.getId(sbmlObject));
