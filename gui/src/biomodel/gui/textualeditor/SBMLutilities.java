@@ -3661,7 +3661,7 @@ public class SBMLutilities {
 			else {
 				ListOf params = reaction.getKineticLaw().getListOfParameters();
 				for (int j = 0; j < reaction.getKineticLaw().getNumParameters(); j++) {
-					Parameter param = (Parameter) params.get(j);
+					LocalParameter param = (LocalParameter) params.get(j);
 					if (!(param.isSetValue())) {
 						messageArea.append("--------------------------------------------------------------------------\n");
 						messageArea.append("Local parameter " + param.getId() + " for reaction " + reaction.getId() + " needs an initial value.\n");

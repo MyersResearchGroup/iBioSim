@@ -346,7 +346,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					 * This code is a hack to get around a local parameter
 					 * conversion bug in libsbml
 					 */
-					Parameter pp = (Parameter) listOfParameters.get(i);
+					LocalParameter pp = (LocalParameter) listOfParameters.get(i);
 					Parameter parameter = new Parameter(gcm.getSBMLDocument().getLevel(), gcm.getSBMLDocument().getVersion());
 					parameter.setId(pp.getId());
 					SBMLutilities.setMetaId(parameter, pp.getMetaId());
@@ -918,8 +918,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						changedParameters = new ArrayList<Parameter>();
 						ListOf listOfParameters = react.getKineticLaw().getListOfParameters();
 						for (int i = 0; i < react.getKineticLaw().getNumParameters(); i++) {
-							Parameter parameter = (Parameter) listOfParameters.get(i);
-							changedParameters.add(parameter);
+							LocalParameter parameter = (LocalParameter) listOfParameters.get(i);
+							changedParameters.add(new Parameter(parameter));
 						}
 						changedProducts = new ArrayList<SpeciesReference>();
 						ListOf listOfProducts = react.getListOfProducts();
@@ -1367,7 +1367,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						ListOf list = KL.getListOfParameters();
 						int number = -1;
 						for (int i = 0; i < KL.getNumParameters(); i++) {
-							if (((Parameter) list.get(i)).getId().equals(((String) reacParameters.getSelectedValue()).split(" ")[0])) {
+							if (((LocalParameter) list.get(i)).getId().equals(((String) reacParameters.getSelectedValue()).split(" ")[0])) {
 								number = i;
 							}
 						}
