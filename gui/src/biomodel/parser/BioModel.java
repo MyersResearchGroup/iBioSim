@@ -6860,7 +6860,7 @@ public class BioModel {
 //		model.getSBMLDocument().enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", false);
 //		model.getSBMLDocument().enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", false);
 		model.getSBMLDocument().getModel().setName("Created by iBioSim flatten routine");
-		checkModelConsistency(model.getSBMLDocument());
+//		checkModelConsistency(model.getSBMLDocument());
 		new File(tempFile).delete();
 		return model.getSBMLDocument();
 	}
