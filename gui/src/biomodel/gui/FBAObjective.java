@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.HashMap;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -23,6 +24,7 @@ import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
 import org.sbml.jsbml.ext.fbc.FluxObjective;
 import org.sbml.jsbml.ext.fbc.Objective;
+import org.sbml.jsbml.ext.fbc.Objective.Type;
 
 import com.joptimizer.functions.LinearMultivariateRealFunction;
 
@@ -35,7 +37,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 	
 	private static final long serialVersionUID = 1L;
 
-	private JList objectives; // JList of events
+	private JList objectives; // JList of objectives
 
 	private JList objectiveList; // JList of event assignments
 
@@ -47,29 +49,39 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 		super(new BorderLayout());
 		this.bioModel = bioModel;
 		fbc = bioModel.getSBMLFBC();
+		
+		HashMap<String, Integer> reactionIndex = new HashMap<String, Integer>();
+		int kp = 0;
+		for(int l =0;l<fbc.getListOfFluxBounds().size();l++){
+			if(!reactionIndex.containsKey(fbc.getFluxBound(l).getReaction())){
+				reactionIndex.put(fbc.getFluxBound(l).getReaction(), kp);
+				kp++;
+			}
+		}
+		
 		JPanel bigPanel = new JPanel(new BorderLayout());
 		// TODO: allocate size based on number of objectives
-		String[] objectiveStringArray = new String[0];
+		String[] objectiveStringArray = new String[fbc.getListOfObjectives().size()];
 		// TODO: get active id from list of objectives
 		String activeObjective = fbc.getListOfObjectives().getActiveObjective();
 			
 		// TODO: Build entries to the objectiveStringArray
 		for (int i = 0; i < fbc.getListOfObjectives().size(); i++) {
-//			double [] objective = new double[(int) sbml.getModel().getNumReactions()];	
+			double [] objective = new double[fbc.getObjective(i).getListOfFluxObjectives().size()];
 			// TODO: get its type
+			Type type = fbc.getObjective(i).getType();
 			// TODO: get its id
+			String id = fbc.getObjective(i).getId();
 			// TODO: compare id with active id
 			for (int j = 0; j < fbc.getObjective(i).getListOfFluxObjectives().size(); j++) {
 				// TODO: build the right hand size
-//				if (fbc.getObjective(i).getType().equals("minimize")) {
-//					objective [(int) reactionIndex.get(fbc.getObjective(i).getListOfFluxObjectives().get(j).getReaction())] = fbc.getObjective(i).getListOfFluxObjectives().get(j).getCoefficient();
-//				} else {
-//					objective [(int) reactionIndex.get(fbc.getObjective(i).getListOfFluxObjectives().get(j).getReaction())] = (-1)*fbc.getObjective(i).getListOfFluxObjectives().get(j).getCoefficient();
-//				}
+				if (fbc.getObjective(i).getType().equals("minimize")) {
+					objective [(int) reactionIndex.get(fbc.getObjective(i).getListOfFluxObjectives().get(j).getReaction())] = fbc.getObjective(i).getListOfFluxObjectives().get(j).getCoefficient();
+				} else {
+					objective [(int) reactionIndex.get(fbc.getObjective(i).getListOfFluxObjectives().get(j).getReaction())] = (-1)*fbc.getObjective(i).getListOfFluxObjectives().get(j).getCoefficient();
+				}
 			}
-//			LinearMultivariateRealFunction objectiveFunction = new LinearMultivariateRealFunction(objective, 0);
-//			System.out.println("Minimize: " + vectorToString(objective,reactionIndex));
-//			System.out.println("Subject to:");
+			objectiveStringArray[i] = fbc.getObjective(i).toString();
 		}
 		objectives = new JList();
 		objectiveList = new JList();
@@ -115,12 +127,32 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 					fbc.removeObjective(0);
 				}
 				*/
+				for (int i = 0; i<objectiveStringArray.length;i++){
+					Objective objective = fbc.createObjective();
+					if(objectiveStringArray[i].startsWith("*")){
+						fbc.setActiveObjective(objective);
+					}
+					int m = objectiveStringArray[i].indexOf("M");
+					if(objectiveStringArray[i].startsWith("Max", m)){
+						objective.setType("Maximize");
+					}
+					else{
+						objective.setType("Minimize");
+					}
+					int leftParenthese = objectiveStringArray[i].indexOf("(");
+					int rightParenthese = objectiveStringArray[i].indexOf(")");
+					objective.setId(objectiveStringArray[i].substring(leftParenthese+1,	rightParenthese).trim());
+					int eqsign = objectiveStringArray[i].indexOf("=");
+					
+//					objective.setListOfFluxObjectives(objectiveStringArray[i].substring(eqsign+1).trim());
+				}
 				// TODO: for each objective in objectiveStringArray
 				  // Objective objective = fbc.createObjective();
 				  // TODO: set id, type
 				  // TODO: if it is active, set activeObjective on the list to this id
 				  // TODO: get RHS of eqn, split on "+"
-				  // TODO: foreach of split on "+", split on "*" and create a fluxObjective with coefficient with left and reaction with right
+				  // TODO: foreach of split on "+", split on "*" and create a fluxObjective with 
+				  // TODO: coefficient with left and reaction with right
 				    // FluxObjective fluxObjective = objective.createFluxObjective();
 			}
 			if (error) {
@@ -185,8 +217,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 			}
 		}
 	}
-
-	/* TODO: NEED ALL THE FUNCTIONS BELOW */
+	
 	public void actionPerformed(ActionEvent e) {
 		if (((JButton) e.getSource()).getText().equals("Add")) {
 			objectiveEditor(bioModel, objectiveList, "Add");
@@ -207,7 +238,6 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		/* TODO: BUILD YOUR OBJECTIVE PANEL HERE */
 		JPanel obPanel = new JPanel(new GridLayout(4, 2));
 		
 		JLabel activeObjectiveLabel = new JLabel("Active Objective:");
@@ -329,7 +359,8 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 		if (e.getClickCount() == 2) {
 			if (e.getSource() == objectives) {
 				if (objectives.getSelectedIndex() == -1) {
-					JOptionPane.showMessageDialog(Gui.frame, "No objective selected.", "Must Select an Objective", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "No objective selected.", 
+							"Must Select an Objective", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				String selected = ((String) objectives.getSelectedValue());
