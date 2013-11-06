@@ -61,13 +61,15 @@ public class FBABounds extends JPanel implements ActionListener, MouseListener {
 	
 	private BioModel bioModel;
 	
-	public FBABounds(BioModel bioModel) {
+	public FBABounds(BioModel bioModel,String reactionId) {
 		super(new BorderLayout());
 		this.bioModel = bioModel;
 		
 		JPanel eventPanel = new JPanel(new BorderLayout());
 		
 		String[] assign = new String[0];
+		
+		// TODO: populate the string array with flux bounds corresponding to this reactionId
 
 		JList eventAssign = new JList();
 		
@@ -105,6 +107,12 @@ public class FBABounds extends JPanel implements ActionListener, MouseListener {
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION && value != JOptionPane.YES_OPTION) {
+			error = false;
+			if (value == JOptionPane.YES_OPTION) {
+				// TODO: remove flux bounds for reactionId
+				// TODO: use Utility.getList to get the new bounds
+				// TODO: for each new bound, create a new flux bound and populate it accordingly
+			}
 			if (error) {
 				value = JOptionPane.showOptionDialog(Gui.frame, eventPanel, title, JOptionPane.YES_NO_OPTION, 
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);

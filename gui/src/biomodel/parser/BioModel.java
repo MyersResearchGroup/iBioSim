@@ -5045,7 +5045,6 @@ public class BioModel {
 				unit.setScale(0);
 				unit.setMultiplier(1);
 				ud.setId(decayUnitString);
-				sbml.getModel().addUnitDefinition(ud);
 			}
 			
 			Reaction r = sbml.getModel().createReaction();
@@ -5132,7 +5131,6 @@ public class BioModel {
 				unit.setScale(0);
 				unit.setMultiplier(1);
 				ud.setId(diffusionUnitString);
-				sbml.getModel().addUnitDefinition(ud);
 			}
 			
 			String diffusionString = GlobalConstants.KECDIFF_STRING;

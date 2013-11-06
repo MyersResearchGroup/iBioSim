@@ -148,6 +148,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 					fbc.removeObjective(0);
 				}
 				*/
+				objectiveStringArray = Utility.getList(objectiveStringArray, objectiveList);
 				for (int i = 0; i<objectiveStringArray.length;i++){
 					Objective objective = fbc.createObjective();
 					if(objectiveStringArray[i].startsWith("*")){
@@ -167,7 +168,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 					
 //					objective.setListOfFluxObjectives(objectiveStringArray[i].substring(eqsign+1).trim());
 					
-				    FluxObjective fluxObjective = objective.createFluxObjective();
+				    //FluxObjective fluxObjective = objective.createFluxObjective();
 
 				}
 				// TODO: for each objective in objectiveStringArray
