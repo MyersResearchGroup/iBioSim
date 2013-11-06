@@ -67,21 +67,42 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 			
 		// TODO: Build entries to the objectiveStringArray
 		for (int i = 0; i < fbc.getListOfObjectives().size(); i++) {
-			double [] objective = new double[fbc.getObjective(i).getListOfFluxObjectives().size()];
+			String objective = "";
 			// TODO: get its type
 			Type type = fbc.getObjective(i).getType();
 			// TODO: get its id
 			String id = fbc.getObjective(i).getId();
 			// TODO: compare id with active id
-			for (int j = 0; j < fbc.getObjective(i).getListOfFluxObjectives().size(); j++) {
-				// TODO: build the right hand size
+			if(activeObjective.equals(id)){
+				objective = "*";
+			}
+			if (type.equals("minimize")) {
+				objective += "Min";
+			}
+			else {
+				objective += "Max";
+			}
+			objective += "(" + id + ") = ";
+			
+			// TODO: build the right hand size
+			if (fbc.getObjective(i).getType().equals("minimize")) {
+				objective += fbc.getObjective(i).getListOfFluxObjectives().get(0).getCoefficient() + 
+						" * " + fbc.getObjective(i).getListOfFluxObjectives().get(0).getReaction();
+			} else {
+				objective += (-1)*fbc.getObjective(i).getListOfFluxObjectives().get(0).getCoefficient() + 
+						" * " + fbc.getObjective(i).getListOfFluxObjectives().get(0).getReaction();				
+			}
+			for (int j = 1; j < fbc.getObjective(i).getListOfFluxObjectives().size(); j++) {
 				if (fbc.getObjective(i).getType().equals("minimize")) {
-					objective [(int) reactionIndex.get(fbc.getObjective(i).getListOfFluxObjectives().get(j).getReaction())] = fbc.getObjective(i).getListOfFluxObjectives().get(j).getCoefficient();
+					objective += " + " + fbc.getObjective(i).getListOfFluxObjectives().get(j).getCoefficient() + 
+							" * " + fbc.getObjective(i).getListOfFluxObjectives().get(j).getReaction();
 				} else {
-					objective [(int) reactionIndex.get(fbc.getObjective(i).getListOfFluxObjectives().get(j).getReaction())] = (-1)*fbc.getObjective(i).getListOfFluxObjectives().get(j).getCoefficient();
+					objective += " + " + (-1)*fbc.getObjective(i).getListOfFluxObjectives().get(j).getCoefficient() + 
+							" * " + fbc.getObjective(i).getListOfFluxObjectives().get(j).getReaction();				
 				}
 			}
-			objectiveStringArray[i] = fbc.getObjective(i).toString();
+			objectiveStringArray[i] = objective;
+//			objectiveStringArray[i] = fbc.getObjective(i).toString();
 		}
 		objectives = new JList();
 		objectiveList = new JList();
@@ -145,6 +166,9 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 					int eqsign = objectiveStringArray[i].indexOf("=");
 					
 //					objective.setListOfFluxObjectives(objectiveStringArray[i].substring(eqsign+1).trim());
+					
+				    FluxObjective fluxObjective = objective.createFluxObjective();
+
 				}
 				// TODO: for each objective in objectiveStringArray
 				  // Objective objective = fbc.createObjective();
@@ -153,7 +177,6 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 				  // TODO: get RHS of eqn, split on "+"
 				  // TODO: foreach of split on "+", split on "*" and create a fluxObjective with 
 				  // TODO: coefficient with left and reaction with right
-				    // FluxObjective fluxObjective = objective.createFluxObjective();
 			}
 			if (error) {
 				value = JOptionPane.showOptionDialog(Gui.frame, bigPanel, title, JOptionPane.YES_NO_OPTION, 
