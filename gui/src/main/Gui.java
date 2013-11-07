@@ -10162,6 +10162,16 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		SBMLDocument document = null;
 		try {
 			document = reader.readSBML(filename);
+			// TODO: This is a hack to remove duplicate units
+			int i = 0; 
+			while (i < document.getModel().getUnitDefinitionCount()) {
+				UnitDefinition unitDef = document.getModel().getUnitDefinition(i);
+				if (!unitDef.isSetId()) {
+					document.getModel().removeUnitDefinition(i);
+				} else {
+					i++;
+				}
+			}
 		} catch (XMLStreamException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
