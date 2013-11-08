@@ -178,7 +178,7 @@ public class BioGraph extends mxGraph {
 		SpeciesReferenceGlyph speciesReferenceGlyph = reactionGlyph.createSpeciesReferenceGlyph(GlobalConstants.GLYPH+"__"+reactant+"__product__"+product);
 		speciesReferenceGlyph.setSpeciesGlyph(GlobalConstants.GLYPH+"__"+product);
 		speciesReferenceGlyph.setRole(SpeciesReferenceRole.PRODUCT);
-		LineSegment lineSegment = new LineSegment(); //speciesReferenceGlyph.createLineSegment();
+		LineSegment lineSegment = speciesReferenceGlyph.createCurve().createLineSegment();
 		lineSegment.setStart(new Point(this.getSpeciesOrPromoterCell(reactant).getGeometry().getCenterX(),
 				this.getSpeciesOrPromoterCell(reactant).getGeometry().getCenterY()));
 		lineSegment.setEnd(new Point(this.getSpeciesOrPromoterCell(product).getGeometry().getCenterX(),
@@ -190,7 +190,7 @@ public class BioGraph extends mxGraph {
 			SpeciesReferenceGlyph speciesReferenceGlyph = reactionGlyph.createSpeciesReferenceGlyph(GlobalConstants.GLYPH+"__"+reactionId+"__"+role+"__"+speciesId);
 			speciesReferenceGlyph.setSpeciesGlyph(GlobalConstants.GLYPH+"__"+speciesId);
 			speciesReferenceGlyph.setRole(SpeciesReferenceRole.valueOf(role.toUpperCase()));
-			LineSegment lineSegment = new LineSegment(); //speciesReferenceGlyph.createLineSegment();
+			LineSegment lineSegment = speciesReferenceGlyph.createCurve().createLineSegment();
 			lineSegment.setStart(new Point(cell.getSource().getGeometry().getCenterX(),cell.getSource().getGeometry().getCenterY()));
 			lineSegment.setEnd(new Point(cell.getTarget().getGeometry().getCenterX(),cell.getTarget().getGeometry().getCenterY()));
 		}
@@ -201,7 +201,7 @@ public class BioGraph extends mxGraph {
 			ReferenceGlyph referenceGlyph = generalGlyph.createReferenceGlyph(GlobalConstants.GLYPH+"__"+objectId+"__"+role+"__"+refId);
 			referenceGlyph.setGlyph(GlobalConstants.GLYPH+"__"+refId);
 			referenceGlyph.setRole(role);
-			LineSegment lineSegment = new LineSegment(); //referenceGlyph.createLineSegment();
+			LineSegment lineSegment = referenceGlyph.createCurve().createLineSegment();
 			lineSegment.setStart(new Point(cell.getSource().getGeometry().getCenterX(),cell.getSource().getGeometry().getCenterY()));
 			lineSegment.setEnd(new Point(cell.getTarget().getGeometry().getCenterX(),cell.getTarget().getGeometry().getCenterY()));
 		}
