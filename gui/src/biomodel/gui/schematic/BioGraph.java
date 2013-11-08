@@ -36,7 +36,6 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.ext.layout.ReactionGlyph;
 import org.sbml.jsbml.ext.layout.ReferenceGlyph;
 import org.sbml.jsbml.Rule;
-import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.ext.layout.SpeciesGlyph;
 import org.sbml.jsbml.SpeciesReference;
@@ -187,21 +186,25 @@ public class BioGraph extends mxGraph {
 	}
 
 	private void addSpeciesReferenceGlyph(mxCell cell,ReactionGlyph reactionGlyph,String reactionId,String speciesId, String role) {
-		SpeciesReferenceGlyph speciesReferenceGlyph = reactionGlyph.createSpeciesReferenceGlyph(GlobalConstants.GLYPH+"__"+reactionId+"__"+role+"__"+speciesId);
-		speciesReferenceGlyph.setSpeciesGlyph(GlobalConstants.GLYPH+"__"+speciesId);
-		speciesReferenceGlyph.setRole(SpeciesReferenceRole.valueOf(role.toUpperCase()));
-		LineSegment lineSegment = new LineSegment(); //speciesReferenceGlyph.createLineSegment();
-		lineSegment.setStart(new Point(cell.getSource().getGeometry().getCenterX(),cell.getSource().getGeometry().getCenterY()));
-		lineSegment.setEnd(new Point(cell.getTarget().getGeometry().getCenterX(),cell.getTarget().getGeometry().getCenterY()));
+		if (reactionGlyph.getListOfSpeciesReferenceGlyphs().get(GlobalConstants.GLYPH+"__"+reactionId+"__"+role+"__"+speciesId)==null) {
+			SpeciesReferenceGlyph speciesReferenceGlyph = reactionGlyph.createSpeciesReferenceGlyph(GlobalConstants.GLYPH+"__"+reactionId+"__"+role+"__"+speciesId);
+			speciesReferenceGlyph.setSpeciesGlyph(GlobalConstants.GLYPH+"__"+speciesId);
+			speciesReferenceGlyph.setRole(SpeciesReferenceRole.valueOf(role.toUpperCase()));
+			LineSegment lineSegment = new LineSegment(); //speciesReferenceGlyph.createLineSegment();
+			lineSegment.setStart(new Point(cell.getSource().getGeometry().getCenterX(),cell.getSource().getGeometry().getCenterY()));
+			lineSegment.setEnd(new Point(cell.getTarget().getGeometry().getCenterX(),cell.getTarget().getGeometry().getCenterY()));
+		}
 	}
 
 	private void addReferenceGlyph(mxCell cell,GeneralGlyph generalGlyph,String objectId,String refId, String role) {
-		ReferenceGlyph referenceGlyph = generalGlyph.createReferenceGlyph(GlobalConstants.GLYPH+"__"+objectId+"__"+role+"__"+refId);
-		referenceGlyph.setGlyph(GlobalConstants.GLYPH+"__"+refId);
-		referenceGlyph.setRole(role);
-		LineSegment lineSegment = new LineSegment(); //referenceGlyph.createLineSegment();
-		lineSegment.setStart(new Point(cell.getSource().getGeometry().getCenterX(),cell.getSource().getGeometry().getCenterY()));
-		lineSegment.setEnd(new Point(cell.getTarget().getGeometry().getCenterX(),cell.getTarget().getGeometry().getCenterY()));
+		if (generalGlyph.getListOfReferenceGlyphs().get(GlobalConstants.GLYPH+"__"+objectId+"__"+role+"__"+refId)==null) {
+			ReferenceGlyph referenceGlyph = generalGlyph.createReferenceGlyph(GlobalConstants.GLYPH+"__"+objectId+"__"+role+"__"+refId);
+			referenceGlyph.setGlyph(GlobalConstants.GLYPH+"__"+refId);
+			referenceGlyph.setRole(role);
+			LineSegment lineSegment = new LineSegment(); //referenceGlyph.createLineSegment();
+			lineSegment.setStart(new Point(cell.getSource().getGeometry().getCenterX(),cell.getSource().getGeometry().getCenterY()));
+			lineSegment.setEnd(new Point(cell.getTarget().getGeometry().getCenterX(),cell.getTarget().getGeometry().getCenterY()));
+		}
 	}
 
 	/**
@@ -232,7 +235,7 @@ public class BioGraph extends mxGraph {
 		addGridCells();
 		
 		Layout layout = bioModel.createLayout();
-		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumSpecies(); i++) {
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getSpeciesCount(); i++) {
 			Species s = bioModel.getSBMLDocument().getModel().getSpecies(i);
 			if (layout.getSpeciesGlyph(s.getId()) != null) {
 				layout.getSpeciesGlyph(s.getId()).setId(GlobalConstants.GLYPH+"__"+s.getId());
@@ -244,7 +247,7 @@ public class BioGraph extends mxGraph {
 
 		// add compartments
 		if (!bioModel.isGridEnabled()) {
-			for (int i = 0; i < m.getNumCompartments(); i++) {
+			for (int i = 0; i < m.getCompartmentCount(); i++) {
 				Compartment c = m.getCompartment(i);
 				if (layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+c.getId()) != null) {
 					if(createGraphCompartmentFromModel(c.getId())) needsPositioning = true;			
@@ -254,9 +257,9 @@ public class BioGraph extends mxGraph {
 					compartmentGlyph.createBoundingBox();
 					compartmentGlyph.getBoundingBox().createDimensions();
 					compartmentGlyph.getBoundingBox().createPosition();
-					compartmentGlyph.getBoundingBox().getPosition().setX((i*1070)/m.getNumCompartments());
+					compartmentGlyph.getBoundingBox().getPosition().setX((i*1070)/m.getCompartmentCount());
 					compartmentGlyph.getBoundingBox().getPosition().setY(0);
-					compartmentGlyph.getBoundingBox().getDimensions().setWidth(1070/m.getNumCompartments());
+					compartmentGlyph.getBoundingBox().getDimensions().setWidth(1070/m.getCompartmentCount());
 					compartmentGlyph.getBoundingBox().getDimensions().setHeight(425);
 					TextGlyph textGlyph = null;
 					if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+c.getId())!=null) {
@@ -288,7 +291,7 @@ public class BioGraph extends mxGraph {
 		}
 		
 		// add reactions
-		for (int i = 0; i < m.getNumReactions(); i++) {
+		for (int i = 0; i < m.getReactionCount(); i++) {
 			
 			Reaction r = m.getReaction(i);
 			if (BioModel.isDegradationReaction(r)) continue;
@@ -305,8 +308,8 @@ public class BioGraph extends mxGraph {
 			if (layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+r.getId()) != null) {
 				if(createGraphReactionFromModel(r.getId()))	needsPositioning = true;			
 			} else {
-				if (r.getNumModifiers() > 0 || (r.getNumReactants()>1 && r.getNumProducts()>1) ||
-					r.getNumReactants()==0 || r.getNumProducts()==0) {
+				if (r.getModifierCount() > 0 || (r.getReactantCount()>1 && r.getProductCount()>1) ||
+					r.getReactantCount()==0 || r.getProductCount()==0) {
 					if(createGraphReactionFromModel(r.getId()))
 						needsPositioning = true;			
 				}
@@ -314,7 +317,7 @@ public class BioGraph extends mxGraph {
 		}
 		
 		// add rules
-		for (int i = 0; i < m.getNumRules(); i++) {
+		for (int i = 0; i < m.getRuleCount(); i++) {
 			Rule rule = m.getRule(i);
 			if (rule.getMetaId().endsWith("_"+GlobalConstants.RATE)) continue;
 			if (SBMLutilities.getVariable(rule).startsWith(GlobalConstants.TRIGGER + "_")) continue;
@@ -337,7 +340,7 @@ public class BioGraph extends mxGraph {
 		}
 		
 		// add constraints
-		for (int i = 0; i < m.getNumConstraints(); i++) {
+		for (int i = 0; i < m.getConstraintCount(); i++) {
 			Constraint constraint = m.getConstraint(i);
 			if (constraint.getMetaId().equals(GlobalConstants.FAIL_TRANSITION)) continue;
 			if (layout.getReactionGlyph(constraint.getMetaId()) != null) {
@@ -359,7 +362,7 @@ public class BioGraph extends mxGraph {
 		}
 		
 		// add events
-		for (int i = 0; i < m.getNumEvents(); i++) {
+		for (int i = 0; i < m.getEventCount(); i++) {
 			Event event = m.getEvent(i);
 			if (layout.getReactionGlyph(event.getId()) != null) {
 				layout.getReactionGlyph(event.getId()).setId(GlobalConstants.GLYPH+"__"+event.getId());
@@ -384,7 +387,7 @@ public class BioGraph extends mxGraph {
 
 		// add all variables
 		if (!bioModel.isGridEnabled()) {
-			for (int i = 0; i < m.getNumParameters(); i++) {
+			for (int i = 0; i < m.getParameterCount(); i++) {
 				Parameter p = m.getParameter(i);
 				if (p.getId().equals(GlobalConstants.FAIL)) continue;
 				if (p.getId().endsWith("_" + GlobalConstants.RATE)) continue;
@@ -418,7 +421,7 @@ public class BioGraph extends mxGraph {
 		// add all components
 		if (bioModel.isGridEnabled()) {
 			
-			for (int i = 0; i < m.getNumParameters(); ++i) {
+			for (int i = 0; i < m.getParameterCount(); ++i) {
 				
 				if (m.getParameter(i).getId().contains("__locations")) {
 					
@@ -504,13 +507,13 @@ public class BioGraph extends mxGraph {
 		boolean needsRedrawn = false;
 		
 		// add all the edges. 
-		for (int i = 0; i < m.getNumReactions(); i++) {
+		for (int i = 0; i < m.getReactionCount(); i++) {
 			
 			Reaction r = m.getReaction(i);
 			if (BioModel.isGridReaction(r)) continue;
 			
 			if (BioModel.isComplexReaction(r)) {
-				for (int j = 0; j < r.getNumReactants(); j++) {
+				for (int j = 0; j < r.getReactantCount(); j++) {
 					String reactant = r.getReactant(j).getSpecies();
 					String product = r.getProduct(0).getSpecies();
 					String id = reactant + "+>" + product;
@@ -524,7 +527,7 @@ public class BioGraph extends mxGraph {
 			} else if (BioModel.isProductionReaction(r)) {
 				String promoterId = r.getId().replace("Production_","");
 				if (bioModel.isPromoterExplicit(promoterId)) {
-					for (int j = 0; j < r.getNumProducts(); j++) {
+					for (int j = 0; j < r.getProductCount(); j++) {
 						if (r.getProduct(j).getSpecies().endsWith("_mRNA")) continue;
 						String product = r.getProduct(j).getSpecies();
 						String id = promoterId + "->" + product;
@@ -533,7 +536,7 @@ public class BioGraph extends mxGraph {
 						production.setStyle("PRODUCTION");
 						createLayoutConnection(layout,promoterId,product,GlobalConstants.PRODUCTION);
 					}
-					for (int j = 0; j < r.getNumModifiers(); j++) {
+					for (int j = 0; j < r.getModifierCount(); j++) {
 						if (BioModel.isRepressor(r.getModifier(j))) {
 							String repressor = r.getModifier(j).getSpecies();
 							String id = repressor + "-|" + promoterId;
@@ -579,8 +582,8 @@ public class BioGraph extends mxGraph {
 							createLayoutConnection(layout,regulator,promoterId,GlobalConstants.NOINFLUENCE);						}
 					}
 				} else {
-					for (int j = 0; j < r.getNumModifiers(); j++) {
-						for (int k = 0; k < r.getNumProducts(); k++) {
+					for (int j = 0; j < r.getModifierCount(); j++) {
+						for (int k = 0; k < r.getProductCount(); k++) {
 							if (BioModel.isRepressor(r.getModifier(j))) {
 								String repressor = r.getModifier(j).getSpecies();
 								String product = r.getProduct(k).getSpecies();
@@ -641,7 +644,7 @@ public class BioGraph extends mxGraph {
 		}
 
 		//add reactions
-		for (int i = 0; i < m.getNumReactions(); i++) {
+		for (int i = 0; i < m.getReactionCount(); i++) {
 			
 			Reaction r = m.getReaction(i);
 			if (BioModel.isDegradationReaction(r)) continue;
@@ -655,7 +658,7 @@ public class BioGraph extends mxGraph {
 			if (reactionGlyph != null) {
 				while (reactionGlyph.getListOfSpeciesReferenceGlyphs().size() > 0) 
 					reactionGlyph.getListOfSpeciesReferenceGlyphs().remove(0);
-				for (int j = 0; j < r.getNumReactants(); j++) {
+				for (int j = 0; j < r.getReactantCount(); j++) {
 					
 					SpeciesReference s = r.getReactant(j);
 					mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
@@ -682,7 +685,7 @@ public class BioGraph extends mxGraph {
 					addSpeciesReferenceGlyph(cell,reactionGlyph,r.getId(),reactant,"substrate");
 				}
 				
-				for (int j = 0; j < r.getNumModifiers(); j++) {
+				for (int j = 0; j < r.getModifierCount(); j++) {
 					
 					ModifierSpeciesReference s = r.getModifier(j);
 					mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
@@ -698,7 +701,7 @@ public class BioGraph extends mxGraph {
 					addSpeciesReferenceGlyph(cell,reactionGlyph,r.getId(),modifier,"modifier");
 				}
 				
-				for (int k = 0; k < r.getNumProducts(); k++) {
+				for (int k = 0; k < r.getProductCount(); k++) {
 					
 					SpeciesReference s = r.getProduct(k);
 					mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
@@ -743,11 +746,11 @@ public class BioGraph extends mxGraph {
 				}
 			} 
 			else {
-				for (int j = 0; j < r.getNumReactants(); j++) {
+				for (int j = 0; j < r.getReactantCount(); j++) {
 					
 					SpeciesReference s1 = r.getReactant(j);
 					
-					for (int k = 0; k < r.getNumProducts(); k++) {
+					for (int k = 0; k < r.getProductCount(); k++) {
 						
 						SpeciesReference s2 = r.getProduct(k);
 						mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
@@ -769,7 +772,7 @@ public class BioGraph extends mxGraph {
 		}
 
 		//add rules
-		for (int i = 0; i < m.getNumRules(); i++) {
+		for (int i = 0; i < m.getRuleCount(); i++) {
 			Rule r = m.getRule(i);
 			if (r.getMetaId().endsWith("_"+GlobalConstants.RATE)) continue;
 			if (SBMLutilities.getVariable(r).startsWith(GlobalConstants.TRIGGER+"_")) continue;
@@ -827,7 +830,7 @@ public class BioGraph extends mxGraph {
 		}
 		
 		// add constraints
-		for (int i = 0; i < m.getNumConstraints(); i++) {
+		for (int i = 0; i < m.getConstraintCount(); i++) {
 			Constraint c = m.getConstraint(i);
 			if (m.getMetaId().equals(GlobalConstants.FAIL_TRANSITION)) continue;
 			GeneralGlyph generalGlyph = (GeneralGlyph)
@@ -866,7 +869,7 @@ public class BioGraph extends mxGraph {
 		}
 		
 		// add event edges
-		for (int i = 0; i < m.getNumEvents(); i++) {
+		for (int i = 0; i < m.getEventCount(); i++) {
 			Event e = m.getEvent(i);
 			boolean isTransition = SBMLutilities.isTransition(e);
 			GeneralGlyph generalGlyph = (GeneralGlyph)
@@ -950,7 +953,7 @@ public class BioGraph extends mxGraph {
 					}
 				}
 				// Add variable
-				for (int k = 0; k < e.getNumEventAssignments(); k++) {
+				for (int k = 0; k < e.getEventAssignmentCount(); k++) {
 					EventAssignment ea = e.getListOfEventAssignments().get(k);
 					String initStr = SBMLutilities.myFormulaToString(ea.getMath());
 					if (!isTransition) {
@@ -1049,10 +1052,10 @@ public class BioGraph extends mxGraph {
 		
 		// map influences
 		Model m = bioModel.getSBMLDocument().getModel();
-		for (int i = 0; i < m.getNumReactions(); i++) {
+		for (int i = 0; i < m.getReactionCount(); i++) {
 			Reaction r = m.getReaction(i);
 			if (BioModel.isComplexReaction(r)) {
-				for (int j = 0; j < r.getNumReactants(); j++) {
+				for (int j = 0; j < r.getReactantCount(); j++) {
 					String endA = r.getReactant(j).getSpecies();
 					String endB = r.getProduct(0).getSpecies();
 					String id = r.getReactant(j).getSpecies() + "+>" + r.getProduct(0).getSpecies();
@@ -1071,8 +1074,8 @@ public class BioGraph extends mxGraph {
 			} else if (BioModel.isProductionReaction(r)) {
 				String promoterId = r.getId().replace("Production_","");
 				if (!bioModel.isPromoterExplicit(promoterId)) {
-					for (int j = 0; j < r.getNumModifiers(); j++) {
-						for (int k = 0; k < r.getNumProducts(); k++) {
+					for (int j = 0; j < r.getModifierCount(); j++) {
+						for (int k = 0; k < r.getProductCount(); k++) {
 							String endA = r.getModifier(j).getSpecies();
 							String endB = r.getProduct(k).getSpecies();
 							if (BioModel.isRepressor(r.getModifier(j))) {
@@ -1143,7 +1146,7 @@ public class BioGraph extends mxGraph {
 						}
 					}
 				} else {
-					for (int j = 0; j < r.getNumModifiers(); j++) {
+					for (int j = 0; j < r.getModifierCount(); j++) {
 						String endA = r.getModifier(j).getSpecies();
 						String endB = promoterId;
 						if (BioModel.isRegulator(r.getModifier(j))) {
@@ -1177,7 +1180,7 @@ public class BioGraph extends mxGraph {
 			}
 		}
 		
-		for (int i = 0; i < m.getNumReactions(); i++) {
+		for (int i = 0; i < m.getReactionCount(); i++) {
 			
 			Reaction r = m.getReaction(i);
 			if (BioModel.isDegradationReaction(r)) continue;
@@ -1188,7 +1191,7 @@ public class BioGraph extends mxGraph {
 			
 			if (bioModel.getSBMLLayout().getListOfLayouts().get("iBioSim").getReactionGlyph(GlobalConstants.GLYPH+"__"+r.getId()) != null) {
 				
-				for (int j = 0; j < r.getNumReactants(); j++) {
+				for (int j = 0; j < r.getReactantCount(); j++) {
 					
 					SpeciesReference s = r.getReactant(j);
 					String endA = s.getSpecies();
@@ -1210,7 +1213,7 @@ public class BioGraph extends mxGraph {
 					edgeHash.get(key).add(cell);
 				}
 				
-				for (int j = 0; j < r.getNumModifiers(); j++) {
+				for (int j = 0; j < r.getModifierCount(); j++) {
 					
 					ModifierSpeciesReference s = r.getModifier(j);
 					String endA = s.getSpecies();
@@ -1232,7 +1235,7 @@ public class BioGraph extends mxGraph {
 					edgeHash.get(key).add(cell);
 				}
 				
-				for (int k = 0; k < r.getNumProducts(); k++) {
+				for (int k = 0; k < r.getProductCount(); k++) {
 					
 					SpeciesReference s = r.getProduct(k);
 					String endA = r.getId();
@@ -1255,11 +1258,11 @@ public class BioGraph extends mxGraph {
 				}
 			} 
 			else {
-				for (int j = 0; j < r.getNumReactants(); j++) {
+				for (int j = 0; j < r.getReactantCount(); j++) {
 					
 					SpeciesReference s1 = r.getReactant(j);
 					
-					for (int k = 0; k < r.getNumProducts(); k++) {
+					for (int k = 0; k < r.getProductCount(); k++) {
 						
 						SpeciesReference s2 = r.getProduct(k);
 
@@ -2071,7 +2074,7 @@ public class BioGraph extends mxGraph {
 				return GlobalConstants.PRODUCTION;
 			}
 			else if (sourceType == GlobalConstants.SPECIES && targetType == GlobalConstants.SPECIES &&
-					(bioModel.getSBMLDocument().getModel().getNumReactions() > 0) && cell.getValue() != null &&
+					(bioModel.getSBMLDocument().getModel().getReactionCount() > 0) && cell.getValue() != null &&
 					(bioModel.getSBMLDocument().getModel().getReaction((String)cell.getValue()) != null)) {
 				return GlobalConstants.REACTION_EDGE;
 			}

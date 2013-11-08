@@ -8,10 +8,6 @@ import java.util.HashMap;
 
 import main.Gui;
 
-import org.apache.commons.math3.linear.Array2DRowRealMatrix;
-import org.apache.commons.math3.linear.ArrayRealVector;
-import org.apache.commons.math3.linear.RealMatrix;
-import org.apache.commons.math3.linear.RealVector;
 import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.fbc.FluxBound;
@@ -22,10 +18,8 @@ import org.sbml.jsbml.SpeciesReference;
 
 import biomodel.gui.textualeditor.SBMLutilities;
 
-import com.joptimizer.solvers.*;
 import com.joptimizer.optimizers.*;
 import com.joptimizer.functions.*;
-import com.joptimizer.util.*;
 
 public class FluxBalanceAnalysis {
 	

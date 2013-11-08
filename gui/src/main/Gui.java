@@ -135,19 +135,12 @@ import org.jlibsedml.Task;
 //import org.antlr.runtime.TokenStream;
 import org.sbml.jsbml.*;
 import org.sbml.jsbml.ext.comp.*;
-import org.sbml.jsbml.ext.layout.*;
-import org.sbolstandard.core.DnaComponent;
 import org.sbolstandard.core.SBOLDocument;
 
 //import lpn.parser.properties.*;
 
-import sbol.SBOLSynthesisMatcher;
 import sbol.SBOLBrowser;
-import sbol.SBOLFileManager;
-import sbol.SBOLSynthesisGraph;
 import sbol.SBOLSynthesisView;
-import sbol.SBOLSynthesizer;
-import sbol.SBOLTestFactory;
 import sbol.SBOLUtility;
 
 import java.net.*;
@@ -513,7 +506,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	public Gui(boolean lema, boolean atacs, boolean libsbmlFound) {
 		this.lema = lema;
 		this.atacs = atacs;
-		this.libsbmlFound = libsbmlFound;
+		Gui.libsbmlFound = libsbmlFound;
 		async = lema || atacs;
 		Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler());
 		if (File.separator.equals("\\")) {
