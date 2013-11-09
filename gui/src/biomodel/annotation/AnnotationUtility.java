@@ -86,8 +86,11 @@ public class AnnotationUtility {
 		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
 		Pattern sweepPattern = Pattern.compile(SWEEP_ANNOTATION);
 		Matcher sweepMatcher = sweepPattern.matcher(annotation);
-		if (sweepMatcher.find() && sweepMatcher.groupCount()==1) {
-			return sweepMatcher.group(1);
+		if (sweepMatcher.find() && sweepMatcher.groupCount()==2) {
+			if (sweepMatcher.group(1)!=null)
+				return sweepMatcher.group(1);
+			else 
+				return sweepMatcher.group(2);
 		}
 		return null;
 	}
@@ -120,8 +123,12 @@ public class AnnotationUtility {
 		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
 		Pattern arraySizePattern = Pattern.compile(ARRAY_SIZE_ANNOTATION);
 		Matcher arraySizeMatcher = arraySizePattern.matcher(annotation);
-		if (arraySizeMatcher.find() && arraySizeMatcher.groupCount()==1) {
-			return Integer.valueOf(arraySizeMatcher.group(1));
+		if (arraySizeMatcher.find() && arraySizeMatcher.groupCount()==2) {
+			if (arraySizeMatcher.group(1)!=null) {
+				return Integer.valueOf(arraySizeMatcher.group(1));
+			} else {
+				return Integer.valueOf(arraySizeMatcher.group(2));
+			}
 		} else {
 			arraySizePattern = Pattern.compile(OLD_ARRAY_SIZE_ANNOTATION);
 			arraySizeMatcher = arraySizePattern.matcher(annotation);
@@ -170,8 +177,11 @@ public class AnnotationUtility {
 		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
 		Pattern dynamicPattern = Pattern.compile(DYNAMIC_ANNOTATION);
 		Matcher dynamicMatcher = dynamicPattern.matcher(annotation);
-		if (dynamicMatcher.find() && dynamicMatcher.groupCount()==1) {
-			return dynamicMatcher.group(1);
+		if (dynamicMatcher.find() && dynamicMatcher.groupCount()==2) {
+			if (dynamicMatcher.group(1)!=null) 
+				return dynamicMatcher.group(1);
+			else 
+				return dynamicMatcher.group(2);
 		}
 		return null;
 	}
@@ -374,7 +384,8 @@ public class AnnotationUtility {
 		"</ModelToSBOL>";
 	
 	private static final String GRID_ANNOTATION =
-			"<ibiosim:ibiosim xmlns:ibiosim=\"http://www\\.fakeuri\\.com\" ibiosim:grid=\"\\((\\d+),(\\d+)\\)\"/>|<ibiosim:ibiosim ibiosim:grid=\"\\((\\d+),(\\d+)\\)\" xmlns:ibiosim=\"http://www\\.fakeuri\\.com\"/>";
+			"<ibiosim:ibiosim xmlns:ibiosim=\"http://www\\.fakeuri\\.com\" ibiosim:grid=\"\\((\\d+),(\\d+)\\)\"/>" + "|" +
+					"<ibiosim:ibiosim ibiosim:grid=\"\\((\\d+),(\\d+)\\)\" xmlns:ibiosim=\"http://www\\.fakeuri\\.com\"/>";
 	
 	private static final String LAYOUT_GRID_ANNOTATION = "grid=\\((\\d+),(\\d+)\\)";
 	
@@ -382,10 +393,12 @@ public class AnnotationUtility {
 			"<ibiosim:ibiosim xmlns:ibiosim=\"http://www\\.fakeuri\\.com\" ibiosim:type=\"grid\"/>";
 	
 	private static final String DYNAMIC_ANNOTATION =
-			"<ibiosim:ibiosim xmlns:ibiosim=\"http://www\\.fakeuri\\.com\" ibiosim:type=\"([\\w\\s]+)\"/>";
+			"<ibiosim:ibiosim xmlns:ibiosim=\"http://www\\.fakeuri\\.com\" ibiosim:type=\"([\\w\\s]+)\"/>" + "|" +
+					"<ibiosim:ibiosim ibiosim:type=\"([\\w\\s]+)\" xmlns:ibiosim=\"http://www\\.fakeuri\\.com\"/>";
 	
 	private static final String SWEEP_ANNOTATION =
-			"<ibiosim:ibiosim xmlns:ibiosim=\"http://www\\.fakeuri\\.com\" ibiosim:sweep=\"(\\S+)\"/>";
+			"<ibiosim:ibiosim xmlns:ibiosim=\"http://www\\.fakeuri\\.com\" ibiosim:sweep=\"(\\S+)\"/>" + "|" +
+					"<ibiosim:ibiosim ibiosim:sweep=\"(\\S+)\" xmlns:ibiosim=\"http://www\\.fakeuri\\.com\"/>";
 	
 	private static final String OLD_ARRAY_SIZE_ANNOTATION =
 			"<array:array xmlns:array=\"http://www\\.fakeuri\\.com\" array:count=\"(\\d+)\"/>";
@@ -394,9 +407,11 @@ public class AnnotationUtility {
 			"<array:array xmlns:array=\"http://www\\.fakeuri\\.com\" array:min=\"(\\d+)\" array:max=\"(\\d+)\"/>";
 	
 	private static final String ARRAY_SIZE_ANNOTATION =
-			"<array:array xmlns:array=\"http://www\\.fakeuri\\.com\" array:size=\"(\\d+)\"/>";
+			"<array:array xmlns:array=\"http://www\\.fakeuri\\.com\" array:size=\"(\\d+)\"/>" + "|" +
+					"<array:array array:size=\"(\\d+)\" xmlns:array=\"http://www\\.fakeuri\\.com\"/>";
 	
 	private static final String ARRAY_ANNOTATION =
-			"<array:array xmlns:array=\"http://www\\.fakeuri\\.com\" (.+)/>|<array:array (.+) xmlns:array=\"http://www\\.fakeuri\\.com\"/>";
+			"<array:array xmlns:array=\"http://www\\.fakeuri\\.com\" (.+)/>" + "|" +
+					"<array:array (.+) xmlns:array=\"http://www\\.fakeuri\\.com\"/>";
 	
 }
