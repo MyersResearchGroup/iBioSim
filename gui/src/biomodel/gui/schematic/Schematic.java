@@ -2335,8 +2335,8 @@ public class Schematic extends JPanel implements ActionListener {
 							GeneralGlyph generalGlyph = (GeneralGlyph)
 									layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId());
 							generalGlyph.setId(GlobalConstants.GLYPH+"__"+id);
-							generalGlyph.unsetMetaidRef();
-							generalGlyph.setReference(id);
+							generalGlyph.setMetaidRef(id);
+							generalGlyph.unsetReference();
 						}
 						if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId())!=null) {
 							TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());
@@ -2395,8 +2395,8 @@ public class Schematic extends JPanel implements ActionListener {
 							GeneralGlyph generalGlyph = (GeneralGlyph)
 									layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+cell.getId());
 							generalGlyph.setId(GlobalConstants.GLYPH+"__"+id);
-							generalGlyph.unsetMetaidRef();
-							generalGlyph.setReference(id);
+							generalGlyph.setMetaidRef(id);
+							generalGlyph.unsetReference();
 						}
 						if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId())!=null) {
 							TextGlyph textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+cell.getId());

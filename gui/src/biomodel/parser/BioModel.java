@@ -37,6 +37,7 @@ import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ext.layout.BoundingBox;
+import org.sbml.jsbml.ext.layout.GraphicalObject;
 import org.sbml.jsbml.ext.layout.LayoutConstants;
 import org.sbml.jsbml.ext.comp.CompConstant;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
@@ -2290,8 +2291,29 @@ public class BioModel {
 		Layout layout = createLayout();
 		double width = layout.getDimensions().getWidth();
 		double height = layout.getDimensions().getHeight();
+		for (int i = 0; i < layout.getCompartmentGlyphCount(); i++) {
+			CompartmentGlyph glyph = layout.getCompartmentGlyph(i);
+			double x = glyph.getBoundingBox().getPosition().getX() + glyph.getBoundingBox().getDimensions().getWidth();
+			if (x > width) width = x;
+			double y = glyph.getBoundingBox().getPosition().getY() + glyph.getBoundingBox().getDimensions().getHeight();
+			if (y > height) height = y;
+		}
 		for (int i = 0; i < layout.getSpeciesGlyphCount(); i++) {
 			SpeciesGlyph glyph = layout.getSpeciesGlyph(i);
+			double x = glyph.getBoundingBox().getPosition().getX() + glyph.getBoundingBox().getDimensions().getWidth();
+			if (x > width) width = x;
+			double y = glyph.getBoundingBox().getPosition().getY() + glyph.getBoundingBox().getDimensions().getHeight();
+			if (y > height) height = y;
+		}
+		for (int i = 0; i < layout.getReactionGlyphCount(); i++) {
+			ReactionGlyph glyph = layout.getReactionGlyph(i);
+			double x = glyph.getBoundingBox().getPosition().getX() + glyph.getBoundingBox().getDimensions().getWidth();
+			if (x > width) width = x;
+			double y = glyph.getBoundingBox().getPosition().getY() + glyph.getBoundingBox().getDimensions().getHeight();
+			if (y > height) height = y;
+		}
+		for (int i = 0; i < layout.getAdditionalGraphicalObjectCount(); i++) {
+			GraphicalObject glyph = layout.getAdditionalGraphicalObject(i);
 			double x = glyph.getBoundingBox().getPosition().getX() + glyph.getBoundingBox().getDimensions().getWidth();
 			if (x > width) width = x;
 			double y = glyph.getBoundingBox().getPosition().getY() + glyph.getBoundingBox().getDimensions().getHeight();
@@ -5600,8 +5622,8 @@ public class BioModel {
 			generalGlyph.createBoundingBox();
 			generalGlyph.getBoundingBox().createDimensions();
 			generalGlyph.getBoundingBox().createPosition();
-			generalGlyph.unsetMetaidRef();
-			generalGlyph.setReference(id);
+			generalGlyph.unsetReference();
+			generalGlyph.setMetaidRef(id);
 		}
 		generalGlyph.getBoundingBox().getPosition().setX(x);
 		generalGlyph.getBoundingBox().getPosition().setY(y);
@@ -5632,8 +5654,8 @@ public class BioModel {
 			generalGlyph.createBoundingBox();
 			generalGlyph.getBoundingBox().createDimensions();
 			generalGlyph.getBoundingBox().createPosition();
-			generalGlyph.unsetMetaidRef();
-			generalGlyph.setReference(id);
+			generalGlyph.unsetReference();
+			generalGlyph.setMetaidRef(id);
 		}
 		generalGlyph.getBoundingBox().getPosition().setX(x);
 		generalGlyph.getBoundingBox().getPosition().setY(y);
@@ -6369,8 +6391,16 @@ public class BioModel {
 				i = 0;
 				while (i < layout.getListOfAdditionalGraphicalObjects().size()) {
 					GeneralGlyph g = (GeneralGlyph) layout.getListOfAdditionalGraphicalObjects().get(i);
-					if (g.getReference() == null || 
-							(SBMLutilities.getElementBySId(model, g.getReference())==null && SBMLutilities.getElementByMetaId(model, g.getReference())==null)) {
+					if (g.getReference() == null && g.getMetaidRef() == null) {
+						SBMLutilities.removeFromParentAndDelete(g);
+					} else if (g.isSetReference() && SBMLutilities.getElementBySId(model, g.getReference())==null) {
+						if (SBMLutilities.getElementByMetaId(model, g.getReference())==null) { 
+							SBMLutilities.removeFromParentAndDelete(g);
+						} else {
+							g.setMetaidRef(g.getReference());
+							g.unsetReference();
+						}
+					} else if (g.isSetMetaidRef() && SBMLutilities.getElementByMetaId(model, g.getMetaidRef())==null) {
 						SBMLutilities.removeFromParentAndDelete(g);
 					} else {
 						i++;
