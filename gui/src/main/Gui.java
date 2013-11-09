@@ -10021,11 +10021,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	
 	private boolean updatePortMap(CompSBMLDocumentPlugin sbmlComp,CompSBasePlugin sbmlSBase,BioModel subModel,String subModelId) {
 		boolean updated = false;
-		for (int k = 0; k < sbmlSBase.getListOfReplacedElements().size(); k++) {
-			ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(k);
-			if (replacement.getSubmodelRef().equals(subModelId)) {
-				changeIdToPortRef(replacement,subModel);
-				updated = true;
+		if (sbmlSBase.isSetListOfReplacedElements()) {
+			for (int k = 0; k < sbmlSBase.getListOfReplacedElements().size(); k++) {
+				ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(k);
+				if (replacement.getSubmodelRef().equals(subModelId)) {
+					changeIdToPortRef(replacement,subModel);
+					updated = true;
+				}
 			}
 		}
 		if (sbmlSBase.isSetReplacedBy()) {
@@ -10151,10 +10153,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	}
 	
 	public static SBMLDocument readSBML(String filename) {
-		SBMLReader reader = new SBMLReader();
+		//SBMLReader reader = new SBMLReader();
 		SBMLDocument document = null;
 		try {
-			document = reader.readSBML(filename);
+			document = SBMLReader.read(new File(filename));
 			// TODO: This is a hack to remove duplicate units
 			int i = 0; 
 			while (i < document.getModel().getUnitDefinitionCount()) {
@@ -10257,7 +10259,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				e.printStackTrace();
 			}
 			try {
-				document = reader.readSBML(filename);
+				document = SBMLReader.read(new File(filename));
 			} catch (XMLStreamException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
