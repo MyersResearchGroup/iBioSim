@@ -332,8 +332,8 @@ public class BioGraph extends mxGraph {
 				generalGlyph.createBoundingBox();
 				generalGlyph.getBoundingBox().createDimensions();
 				generalGlyph.getBoundingBox().createPosition();
-				generalGlyph.unsetMetaidRef();
-				generalGlyph.setReference(reactionGlyph.getReaction());
+				generalGlyph.unsetReference();
+				generalGlyph.setMetaidRef(reactionGlyph.getReaction());
 				generalGlyph.setBoundingBox(reactionGlyph.getBoundingBox().clone());
 			}
 			if(createGraphRuleFromModel(rule.getMetaId())) needsPositioning = true;			
@@ -354,8 +354,8 @@ public class BioGraph extends mxGraph {
 				generalGlyph.createBoundingBox();
 				generalGlyph.getBoundingBox().createDimensions();
 				generalGlyph.getBoundingBox().createPosition();
-				generalGlyph.unsetMetaidRef();
-				generalGlyph.setReference(reactionGlyph.getReaction());
+				generalGlyph.unsetReference();
+				generalGlyph.setMetaidRef(reactionGlyph.getReaction());
 				generalGlyph.setBoundingBox(reactionGlyph.getBoundingBox().clone());
 			}
 			if(createGraphConstraintFromModel(constraint.getMetaId())) needsPositioning = true;			
@@ -740,7 +740,10 @@ public class BioGraph extends mxGraph {
 									this.getVariableCell(parameter.getId()), 
 									this.getReactionsCell(r.getId()));
 							cell.setStyle("REACTION_EDGE");
-							addSpeciesReferenceGlyph(cell,reactionGlyph,r.getId(),parameter.getId(),"substrate");
+							//addSpeciesReferenceGlyph(cell,reactionGlyph,r.getId(),parameter.getId(),"substrate");
+							GeneralGlyph generalGlyph = 
+									(GeneralGlyph)layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+parameter.getId());
+							addReferenceGlyph(cell,generalGlyph,parameter.getId(),r.getId(),"product");
 						}
 					}
 				}
@@ -1686,11 +1689,11 @@ public class BioGraph extends mxGraph {
 						layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+(String)cell.getId());
 			} else {
 				generalGlyph = layout.createGeneralGlyph(GlobalConstants.GLYPH+"__"+(String)cell.getId());
-				if (getCellType(cell).equals(GlobalConstants.EVENT)) {
+				if (getCellType(cell).equals(GlobalConstants.EVENT) || getCellType(cell).equals(GlobalConstants.TRANSITION)) {
 					generalGlyph.setReference((String)cell.getId());
 				} else {
-					generalGlyph.unsetMetaidRef();
-					generalGlyph.setReference((String)cell.getId());
+					generalGlyph.unsetReference();
+					generalGlyph.setMetaidRef((String)cell.getId());
 				}
 			}
 			generalGlyph.getBoundingBox().getPosition().setX(geom.getX());
