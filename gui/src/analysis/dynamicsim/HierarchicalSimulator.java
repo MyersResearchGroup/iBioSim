@@ -185,8 +185,7 @@ public abstract class HierarchicalSimulator {
 			stoichAmpGridValue = stoichAmpValue;
 		}
 
-		SBMLReader reader = new SBMLReader();
-		SBMLDocument document = reader.readSBML(SBMLFileName);
+		SBMLDocument document = SBMLReader.read(new File(SBMLFileName));
 		SBMLErrorLog errors = document.getErrorLog();
 
 		//if the sbml document has errors, tell the user and don't simulate
@@ -449,7 +448,6 @@ public abstract class HierarchicalSimulator {
 		}
 
 		submodels = new HashMap<String, ModelState>((int)sbmlCompModel.getListOfSubmodels().size());
-		SBMLReader reader = new SBMLReader();
 
 		/*
 		for (Submodel submodel : sbmlCompModel.getListOfSubmodels()) {
@@ -469,7 +467,7 @@ public abstract class HierarchicalSimulator {
 		for (Submodel submodel : sbmlCompModel.getListOfSubmodels()) {
 
 			String file = path+submodel.getModelRef()+".xml";
-			Model model = reader.readSBML(file).getModel();
+			Model model = SBMLReader.read(new File(file)).getModel();
 			performDeletions(model, submodel);
 			if(isGrid)
 			{

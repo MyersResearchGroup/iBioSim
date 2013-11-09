@@ -4,6 +4,7 @@ import gnu.trove.map.hash.TObjectDoubleHashMap;
 
 import java.awt.Point;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -267,10 +268,9 @@ public abstract class Simulator {
 			stoichAmpGridValue = stoichAmpValue;
 		}
 		
-		SBMLReader reader = new SBMLReader();
 		SBMLDocument document = null;
 		
-		document = reader.readSBML(SBMLFileName);
+		document = SBMLReader.read(new File(SBMLFileName));
 		
 		SBMLErrorLog errors = document.getListOfErrors();
 		
@@ -1402,11 +1402,10 @@ public abstract class Simulator {
 	public static void expandArrays(String filename, double stoichAmpValue) {
 		
 		//open the sbml file for reading/writing
-		SBMLReader reader = new SBMLReader();
 		SBMLDocument document = null;
 		
 		try {
-			document = reader.readSBML(filename);
+			document = SBMLReader.read(new File(filename));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return;

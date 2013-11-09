@@ -2286,6 +2286,21 @@ public class BioModel {
 		return kineticLaw;
  	}
 	
+	public void setLayoutSize() {
+		Layout layout = createLayout();
+		double width = layout.getDimensions().getWidth();
+		double height = layout.getDimensions().getHeight();
+		for (int i = 0; i < layout.getSpeciesGlyphCount(); i++) {
+			SpeciesGlyph glyph = layout.getSpeciesGlyph(i);
+			double x = glyph.getBoundingBox().getPosition().getX() + glyph.getBoundingBox().getDimensions().getWidth();
+			if (x > width) width = x;
+			double y = glyph.getBoundingBox().getPosition().getY() + glyph.getBoundingBox().getDimensions().getHeight();
+			if (y > height) height = y;
+		}
+		layout.getDimensions().setWidth(width);
+		layout.getDimensions().setHeight(height);
+	}
+	
 	/**
 	 * Save the current object to file.
 	 * 
@@ -2296,6 +2311,7 @@ public class BioModel {
 		//updateCompartmentReplacements();
 		updatePorts();
 		setGridSize(grid.getNumRows(),grid.getNumCols());
+		setLayoutSize();
 		SBMLutilities.pruneUnusedSpecialFunctions(sbml);
 		SBMLWriter writer = new SBMLWriter();
 		try {
@@ -4853,7 +4869,6 @@ public class BioModel {
 		String externalModelID = 
 			this.getSBMLComp().getListOfExternalModelDefinitions().get(componentModelRef).getSource().replace("file://","").replace("file:","");
 		
-		SBMLReader reader = new SBMLReader();
 		SBMLDocument document = null;
 		
 		String path = this.getPath();
@@ -4863,7 +4878,7 @@ public class BioModel {
 		
 		//load the sbml file
 		try {
-			document = reader.readSBML(path + externalModelID);
+			document = SBMLReader.read(new File(path + externalModelID));
 		} catch (XMLStreamException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -4910,7 +4925,7 @@ public class BioModel {
 			
 			//load the sbml file
 			try {
-				document = reader.readSBML(path + externalModelID);
+				document = SBMLReader.read(new File(path + externalModelID));
 			} catch (XMLStreamException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -4958,7 +4973,6 @@ public class BioModel {
 		String externalModelID = 
 			this.getSBMLComp().getListOfExternalModelDefinitions().get(componentModelRef).getSource().replace("file://","").replace("file:","");
 		
-		SBMLReader reader = new SBMLReader();
 		SBMLDocument document = null;
 		
 		if (this.getPath().charAt(this.getPath().length() - 1) != '/')
@@ -4966,7 +4980,7 @@ public class BioModel {
 		
 		//load the sbml file
 		try {
-			document = reader.readSBML(this.getPath() + externalModelID);
+			document = SBMLReader.read(new File(this.getPath() + externalModelID));
 		} catch (XMLStreamException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -6414,9 +6428,8 @@ public class BioModel {
 	}
 
 	private void loadSBMLFromBuffer(StringBuffer buffer) {	
-		SBMLReader reader = new SBMLReader();
 		try {
-			sbml = reader.readSBMLFromString(buffer.toString());
+			sbml = SBMLReader.read(buffer.toString());
 		} catch (XMLStreamException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
