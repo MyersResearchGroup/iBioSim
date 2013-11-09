@@ -85,10 +85,9 @@ public class GillespieSSAJavaSingleStep {
 	 String outTSDName = outDir + "/run-1.tsd";
 	 output = new FileOutputStream(outTSDName);
 	 outTSD = new PrintStream(output);
-	 SBMLReader reader = new SBMLReader();
 	 SBMLDocument document = null;
 	try {
-		document = reader.readSBML(SBMLFileName);
+		document = SBMLReader.read(new File(SBMLFileName));
 	}
 	catch (XMLStreamException e) {
 		// TODO Auto-generated catch block

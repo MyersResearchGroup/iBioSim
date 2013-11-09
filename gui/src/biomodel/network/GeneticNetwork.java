@@ -476,11 +476,10 @@ public class GeneticNetwork {
 			//loop through submodels to see if they have this same membrane diffusion reaction ID
 			for (int submodelIndex = 0; submodelIndex < properties.getSBMLCompModel().getListOfSubmodels().size(); ++submodelIndex) {
 				
-				SBMLReader sbmlReader = new SBMLReader();
 				Model submodel = null;
 				try {
-					submodel = sbmlReader.readSBMLFromFile(properties.getPath() + 
-							properties.getSBMLCompModel().getListOfSubmodels().get(submodelIndex).getModelRef() + ".xml").getModel();
+					submodel = SBMLReader.read(new File(properties.getPath() + 
+							properties.getSBMLCompModel().getListOfSubmodels().get(submodelIndex).getModelRef() + ".xml")).getModel();
 				}
 				catch (XMLStreamException e) {
 					// TODO Auto-generated catch block
@@ -629,11 +628,10 @@ public class GeneticNetwork {
 		
 		for (String componentID : allComponents) {
 			
-			SBMLReader sbmlReader = new SBMLReader();
 			Model compModel = null;
 			try {
-				compModel = sbmlReader.readSBMLFromFile(properties.getPath() + 
-						properties.getModelFileName(componentID)).getModel();
+				compModel = SBMLReader.read(new File(properties.getPath() + 
+						properties.getModelFileName(componentID))).getModel();
 			}
 			catch (XMLStreamException e) {
 				// TODO Auto-generated catch block
