@@ -135,6 +135,7 @@ import org.jlibsedml.Task;
 //import org.antlr.runtime.TokenStream;
 import org.sbml.jsbml.*;
 import org.sbml.jsbml.ext.comp.*;
+import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.layout.LayoutConstants;
 import org.sbolstandard.core.SBOLDocument;
 
@@ -1868,10 +1869,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			try {
 				prop.buildProperty(tree.getFile());
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			} catch (RecognitionException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			String theFile = "";
@@ -3160,10 +3159,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			try {
 				prop.buildProperty(root, separator);
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			} catch (RecognitionException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			//property();
@@ -4215,15 +4212,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							} else {
 								document.getModel().setId(newFile.replace(".xml",""));
 							}
-//							document.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
-//							document.setPackageRequired("layout", false);
-//							document.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
-//							document.setPackageRequired("comp", true); 
-							document.addNamespace("layout","",LayoutConstants.namespaceURI);
-							document.addNamespace("comp","",CompConstant.namespaceURI);
+							SBMLutilities.addPackage(document, "layout", LayoutConstants.namespaceURI, "false");
+							SBMLutilities.addPackage(document, "comp", CompConstant.namespaceURI, "true");
+							SBMLutilities.addPackage(document, "fbc", FBCConstants.namespaceURI, "false");
 							CompSBMLDocumentPlugin documentComp = (CompSBMLDocumentPlugin) SBMLutilities.getPlugin(CompConstant.namespaceURI, document, true);
-//							((CompSBMLDocumentPlugin)document.getExtension(CompConstant.namespaceURI)).setRequired(true);
-//							CompSBMLDocumentPlugin documentComp = (CompSBMLDocumentPlugin)document.getExtension(CompConstant.namespaceURI);
 							CompModelPlugin documentCompModel = (CompModelPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, document.getModel(), true);
 							if (documentComp.getListOfModelDefinitions().size() > 0 ||
 								documentComp.getListOfExternalModelDefinitions().size() > 0) {
@@ -5480,11 +5472,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JOptionPane.showMessageDialog(frame, "Unable to rename selected file.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 			catch (SBMLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			catch (XMLStreamException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -7001,16 +6991,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					popup.add(createLearn);
 					popup.addSeparator();
 				}
-				// popup.add(createAnalysis); // TODO
-				// popup.add(viewStateGraph);
-				/*
-				 * if (!atacs && !lema && LPN2SBML) { popup.add(convertToSBML);
-				 * // changed the order. SB }
-				 */
 				if (atacs || lema) {
 					popup.add(convertToVerilog);
 				}
-				// popup.add(markovAnalysis);
 				popup.add(viewModel);
 				popup.addSeparator();
 				popup.add(view);
@@ -7049,14 +7032,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					popup.addSeparator();
 					popup.add(viewModel);
 				}
-				// popup.add(createAnalysis); // TODO
-				// popup.add(viewStateGraph);
-				/*
-				 * if (!atacs && !lema && LPN2SBML) { popup.add(convertToSBML);
-				 * // changed the order. SB }
-				 */
-				
-				// popup.add(markovAnalysis);
 				popup.addSeparator();
 				popup.add(view);
 				popup.add(copy);
@@ -10078,16 +10053,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			if (overwrite(root + separator + extId + ".xml",extId + ".xml")) {
 				org.sbml.jsbml.Model model = new org.sbml.jsbml.Model(md);
 				SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
-				document.setModel(model);
-//				document.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
-//				document.setPackageRequired("layout", false);
-//				document.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
-//				document.setPackageRequired("comp", true);
-//				((CompSBMLDocumentPlugin)document.getExtension(CompConstant.namespaceURI)).setRequired(true);
-				document.addNamespace("layout","",LayoutConstants.namespaceURI);
-				document.addNamespace("comp","",CompConstant.namespaceURI);
+				SBMLutilities.addPackage(document, "layout", LayoutConstants.namespaceURI, "false");
+				SBMLutilities.addPackage(document, "comp", CompConstant.namespaceURI, "true");
+				SBMLutilities.addPackage(document, "fbc", FBCConstants.namespaceURI, "false");
 				CompSBMLDocumentPlugin documentComp = (CompSBMLDocumentPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, document, true);
 				CompModelPlugin documentCompModel = (CompModelPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, document.getModel(), true);
+				document.setModel(model);
 				ArrayList<String> comps = new ArrayList<String>();
 				for (int j=0; j < documentCompModel.getListOfSubmodels().size(); j++) {
 					String subModelType = documentCompModel.getListOfSubmodels().get(j).getModelRef();
@@ -10099,7 +10070,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 				// Make compartment enclosing
-				if (document.getModel().getNumCompartments()==0) {
+				if (document.getModel().getCompartmentCount()==0) {
 					Compartment c = document.getModel().createCompartment();
 					c.setId("default");
 					c.setSize(1);
@@ -10111,13 +10082,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				try {
 					writer.writeSBMLToFile(document, root + separator + extId + ".xml");
 				} catch (SBMLException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (XMLStreamException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				addToTree(extId+".xml");
@@ -10173,103 +10141,93 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 			}
 		} catch (XMLStreamException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
+			JOptionPane.showMessageDialog(frame, "Invalid XML in SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
+			return null;
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
+			JOptionPane.showMessageDialog(frame, "I/O error when opening SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
+			return null;
 		}
 		if (document.getModel().isSetId()) {
 			document.getModel().setId(document.getModel().getId().replace(".","_"));
 		}
-		JTextArea messageArea = new JTextArea();
-		messageArea.append("Conversion to SBML level " + SBML_LEVEL + " version " + SBML_VERSION + " produced the errors listed below. ");
-		messageArea.append("It is recommended that you fix them before using these models or you may get unexpected results.\n\n");
-		boolean display = false;
-		long numErrors = 0;
-//		TODO: May want to run with libsbml
-//		if (SBMLLevelVersion!= null && SBMLLevelVersion.equals("L2V4")) {
-//			numErrors = document.checkL2v4Compatibility();
-//		}
-//		else {
-//			numErrors = document.checkL3v1Compatibility();
-//		}
-		if (numErrors > 0) {
-			display = true;
-			messageArea.append("--------------------------------------------------------------------------------------\n");
-			messageArea.append(filename);
-			messageArea.append("\n--------------------------------------------------------------------------------------\n\n");
-			for (int i = 0; i < numErrors; i++) {
-				String error = document.getError(i).getMessage();
-				messageArea.append(i + ":" + error + "\n");
-			}
-		}
-		if (display) {
-			final JFrame f = new JFrame("SBML Conversion Errors and Warnings");
-			messageArea.setLineWrap(true);
-			messageArea.setEditable(false);
-			messageArea.setSelectionStart(0);
-			messageArea.setSelectionEnd(0);
-			JScrollPane scroll = new JScrollPane();
-			scroll.setMinimumSize(new Dimension(600, 600));
-			scroll.setPreferredSize(new Dimension(600, 600));
-			scroll.setViewportView(messageArea);
-			JButton close = new JButton("Dismiss");
-			close.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					f.dispose();
-				}
-			});
-			JPanel consistencyPanel = new JPanel(new BorderLayout());
-			consistencyPanel.add(scroll, "Center");
-			consistencyPanel.add(close, "South");
-			f.setContentPane(consistencyPanel);
-			f.pack();
-			Dimension screenSize;
-			try {
-				Toolkit tk = Toolkit.getDefaultToolkit();
-				screenSize = tk.getScreenSize();
-			}
-			catch (AWTError awe) {
-				screenSize = new Dimension(640, 480);
-			}
-			Dimension frameSize = f.getSize();
-			if (frameSize.height > screenSize.height) {
-				frameSize.height = screenSize.height;
-			}
-			if (frameSize.width > screenSize.width) {
-				frameSize.width = screenSize.width;
-			}
-			int x = screenSize.width / 2 - frameSize.width / 2;
-			int y = screenSize.height / 2 - frameSize.height / 2;
-			f.setLocation(x, y);
-			f.setVisible(true);
-			Object[] options = { "Dismiss" };
-			JOptionPane.showOptionDialog(frame, scroll, "SBML Conversion Errors and Warnings", JOptionPane.YES_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
-					options[0]);
-		}
 		if (document.getLevel() < SBML_LEVEL || document.getVersion() < SBML_VERSION) {
-			document.setLevelAndVersion(SBML_LEVEL, SBML_VERSION,false);
-			SBMLWriter writer = new SBMLWriter();
-			try {
-				writer.writeSBMLToFile(document, filename);
-			} catch (SBMLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (XMLStreamException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			if (!libsbmlFound) {
+				JOptionPane.showMessageDialog(frame, "Unable convert model to Level "+SBML_LEVEL+" Version " + SBML_VERSION,
+						"Error Opening File", JOptionPane.ERROR_MESSAGE);
+				return null;
+			} 
+			long numErrors = 0;
+			org.sbml.libsbml.SBMLReader reader = new org.sbml.libsbml.SBMLReader();
+			org.sbml.libsbml.SBMLDocument doc = reader.readSBML(filename);
+			numErrors = doc.checkL3v1Compatibility();
+			if (numErrors > 0) {
+				JTextArea messageArea = new JTextArea();
+				messageArea.append("Conversion to SBML level " + SBML_LEVEL + " version " + SBML_VERSION + " produced the errors listed below. ");
+				messageArea.append("It is recommended that you fix them before using these models or you may get unexpected results.\n\n");
+				messageArea.append("--------------------------------------------------------------------------------------\n");
+				messageArea.append(filename);
+				messageArea.append("\n--------------------------------------------------------------------------------------\n\n");
+				for (int i = 0; i < numErrors; i++) {
+					String error = doc.getError(i).getMessage();
+					messageArea.append(i + ":" + error + "\n");
+				}
+				final JFrame f = new JFrame("SBML Conversion Errors and Warnings");
+				messageArea.setLineWrap(true);
+				messageArea.setEditable(false);
+				messageArea.setSelectionStart(0);
+				messageArea.setSelectionEnd(0);
+				JScrollPane scroll = new JScrollPane();
+				scroll.setMinimumSize(new Dimension(600, 600));
+				scroll.setPreferredSize(new Dimension(600, 600));
+				scroll.setViewportView(messageArea);
+				JButton close = new JButton("Dismiss");
+				close.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						f.dispose();
+					}
+				});
+				JPanel consistencyPanel = new JPanel(new BorderLayout());
+				consistencyPanel.add(scroll, "Center");
+				consistencyPanel.add(close, "South");
+				f.setContentPane(consistencyPanel);
+				f.pack();
+				Dimension screenSize;
+				try {
+					Toolkit tk = Toolkit.getDefaultToolkit();
+					screenSize = tk.getScreenSize();
+				}
+				catch (AWTError awe) {
+					screenSize = new Dimension(640, 480);
+				}
+				Dimension frameSize = f.getSize();
+				if (frameSize.height > screenSize.height) {
+					frameSize.height = screenSize.height;
+				}
+				if (frameSize.width > screenSize.width) {
+					frameSize.width = screenSize.width;
+				}
+				int x = screenSize.width / 2 - frameSize.width / 2;
+				int y = screenSize.height / 2 - frameSize.height / 2;
+				f.setLocation(x, y);
+				f.setVisible(true);
+				Object[] options = { "Dismiss" };
+				JOptionPane.showOptionDialog(frame, scroll, "SBML Conversion Errors and Warnings", JOptionPane.YES_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+						options[0]);
 			}
+			doc.setLevelAndVersion(SBML_LEVEL, SBML_VERSION,false);
+			org.sbml.libsbml.SBMLWriter writer = new org.sbml.libsbml.SBMLWriter();
+			try {
+				writer.writeSBMLToFile(doc, filename);
+			} catch (SBMLException e) {
+				e.printStackTrace();
+			} 
 			try {
 				document = SBMLReader.read(new File(filename));
 			} catch (XMLStreamException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -10277,5 +10235,4 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	}
 
 	static final String SFILELINE = "input (\\S+?)\n";
-	private static final String overlap = "|->";
 }

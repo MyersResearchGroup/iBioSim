@@ -10,6 +10,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.prefs.Preferences;
@@ -40,6 +41,7 @@ import org.sbml.jsbml.ext.comp.ReplacedBy;
 import org.sbml.jsbml.ext.comp.ReplacedElement;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
+import org.sbml.jsbml.ext.fbc.FluxBound;
 import org.sbml.jsbml.ext.qual.QualConstant;
 import org.sbml.jsbml.ext.qual.QualitativeModel;
 import org.sbml.jsbml.Compartment;
@@ -3187,6 +3189,15 @@ public class SBMLutilities {
 		return JSBML.OPERATION_SUCCESS;
 	}
 	
+	public static void addPackage(SBMLDocument document,String packageName,String packageURI,String required) {
+		document.addNamespace(packageName,"xmlns",packageURI);
+		Map<String, String> docAttr = document.getSBMLDocumentAttributes();
+		if (!docAttr.containsKey(packageName+":required")) {
+			docAttr.put(packageName+":required",required);
+		}
+		document.setSBMLDocumentAttributes(docAttr);
+	}
+	
 	public static SBasePlugin getPlugin(String namespace, SBase sb, boolean createPlugin) {
 		if (sb.getExtension(namespace) != null) {
 			return sb.getExtension(namespace);
@@ -3618,13 +3629,12 @@ public class SBMLutilities {
 	
 	public static void checkModelCompleteness(SBMLDocument document) {
 		FBCModelPlugin fbc = (FBCModelPlugin)SBMLutilities.getPlugin(FBCConstants.namespaceURI, document.getModel(), true);
-		if (fbc != null) return;
 		JTextArea messageArea = new JTextArea();
 		messageArea.append("Model is incomplete.  Cannot be simulated until the following information is provided.\n");
 		boolean display = false;
 		org.sbml.jsbml.Model model = document.getModel();
 		ListOf list = model.getListOfCompartments();
-		for (int i = 0; i < model.getNumCompartments(); i++) {
+		for (int i = 0; i < model.getCompartmentCount(); i++) {
 			Compartment compartment = (Compartment) list.get(i);
 			if (!compartment.isSetSize()) {
 				messageArea.append("--------------------------------------------------------------------------\n");
@@ -3633,7 +3643,7 @@ public class SBMLutilities {
 			}
 		}
 		list = model.getListOfSpecies();
-		for (int i = 0; i < model.getNumSpecies(); i++) {
+		for (int i = 0; i < model.getSpeciesCount(); i++) {
 			Species species = (Species) list.get(i);
 			if (!(species.isSetInitialAmount()) && !(species.isSetInitialConcentration())) {
 				messageArea.append("--------------------------------------------------------------------------\n");
@@ -3642,7 +3652,7 @@ public class SBMLutilities {
 			}
 		}
 		list = model.getListOfParameters();
-		for (int i = 0; i < model.getNumParameters(); i++) {
+		for (int i = 0; i < model.getParameterCount(); i++) {
 			Parameter parameter = (Parameter) list.get(i);
 			if (!(parameter.isSetValue())) {
 				messageArea.append("--------------------------------------------------------------------------\n");
@@ -3650,17 +3660,27 @@ public class SBMLutilities {
 				display = true;
 			}
 		}
-		list = model.getListOfReactions();
-		for (int i = 0; i < model.getNumReactions(); i++) {
-			Reaction reaction = (Reaction) list.get(i);
+		for (int i = 0; i < model.getReactionCount(); i++) {
+			Reaction reaction = model.getReaction(i);
+			if (fbc!=null) {
+				boolean foundIt = false;
+				for (int j = 0; j < fbc.getListOfFluxBounds().size(); j++) {
+					FluxBound fb = fbc.getFluxBound(j);
+					if (fb.getReaction().equals(reaction.getId())) {
+						foundIt = true;
+						break;
+					}
+				}
+				if (foundIt) continue;
+			}
 			if (!(reaction.isSetKineticLaw())) {
 				messageArea.append("--------------------------------------------------------------------------\n");
 				messageArea.append("Reaction " + reaction.getId() + " needs a kinetic law.\n");
 				display = true;
 			}
 			else {
-				ListOf params = reaction.getKineticLaw().getListOfParameters();
-				for (int j = 0; j < reaction.getKineticLaw().getNumParameters(); j++) {
+				ListOf params = reaction.getKineticLaw().getListOfLocalParameters();
+				for (int j = 0; j < reaction.getKineticLaw().getLocalParameterCount(); j++) {
 					LocalParameter param = (LocalParameter) params.get(j);
 					if (!(param.isSetValue())) {
 						messageArea.append("--------------------------------------------------------------------------\n");
