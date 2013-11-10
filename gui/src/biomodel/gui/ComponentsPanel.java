@@ -556,8 +556,12 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 		timePanel.add(timeConvFactorBox);
 		extentPanel.add(extentConvFactorLabel);
 		extentPanel.add(extentConvFactorBox);
-		timeConvFactorBox.setSelectedItem(instance.getTimeConversionFactor());
-		extentConvFactorBox.setSelectedItem(instance.getExtentConversionFactor());
+		if (instance.isSetTimeConversionFactor()) {
+			timeConvFactorBox.setSelectedItem(instance.getTimeConversionFactor());
+		}
+		if (instance.isSetExtentConversionFactor()) {
+			extentConvFactorBox.setSelectedItem(instance.getExtentConversionFactor());
+		}
 		add(timePanel);
 		add(extentPanel);
 		// Parse out SBOL annotations and add to SBOL field
