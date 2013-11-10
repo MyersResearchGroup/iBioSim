@@ -11,6 +11,7 @@ import main.Gui;
 import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.fbc.FluxBound;
+import org.sbml.jsbml.ext.fbc.Objective.Type;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.Species;
@@ -68,7 +69,6 @@ public class FluxBalanceAnalysis {
 		return result;
 	}
 	
-	// TODO: Scott - remove all print to console
 	public int PerformFluxBalanceAnalysis(){
 		if (fbc != null) {
 			HashMap<String, Integer> reactionIndex = new HashMap<String, Integer>();
@@ -80,9 +80,9 @@ public class FluxBalanceAnalysis {
 				}
 			}
 			for (int i = 0; i < fbc.getListOfObjectives().size(); i++) {
-				double [] objective = new double[(int) sbml.getModel().getNumReactions()];				
+				double [] objective = new double[(int) sbml.getModel().getReactionCount()];				
 				for (int j = 0; j < fbc.getObjective(i).getListOfFluxObjectives().size(); j++) {
-					if (fbc.getObjective(i).getType().equals("minimize")) {
+					if (fbc.getObjective(i).getType().equals(Type.MINIMIZE)) {
 						objective [(int) reactionIndex.get(fbc.getObjective(i).getListOfFluxObjectives().get(j).getReaction())] = fbc.getObjective(i).getListOfFluxObjectives().get(j).getCoefficient();
 					} else {
 						objective [(int) reactionIndex.get(fbc.getObjective(i).getListOfFluxObjectives().get(j).getReaction())] = (-1)*fbc.getObjective(i).getListOfFluxObjectives().get(j).getCoefficient();
@@ -123,24 +123,24 @@ public class FluxBalanceAnalysis {
 
 				m = 0;
 				int nonBoundarySpeciesCount = 0;
-				for (int j = 0; j < sbml.getModel().getNumSpecies(); j++) {
+				for (int j = 0; j < sbml.getModel().getSpeciesCount(); j++) {
 					if (!sbml.getModel().getSpecies(j).getBoundaryCondition()) nonBoundarySpeciesCount++;
 				}
-				double[][] stoch = new double [nonBoundarySpeciesCount+numEquals][(int) (sbml.getModel().getNumReactions())];
+				double[][] stoch = new double [nonBoundarySpeciesCount+numEquals][(int) (sbml.getModel().getReactionCount())];
 				double[] zero = new double [nonBoundarySpeciesCount+numEquals];
-				for (int j = 0; j < sbml.getModel().getNumSpecies(); j++) {
+				for (int j = 0; j < sbml.getModel().getSpeciesCount(); j++) {
 					Species species = sbml.getModel().getSpecies(j);
 					if (species.getBoundaryCondition()) continue;
 					zero[m] = 0;
-					for (int k = 0; k < sbml.getModel().getNumReactions(); k++) {
+					for (int k = 0; k < sbml.getModel().getReactionCount(); k++) {
 						Reaction r = sbml.getModel().getReaction(k);
-						for (int l = 0; l < r.getNumReactants(); l++) {
+						for (int l = 0; l < r.getReactantCount(); l++) {
 							SpeciesReference sr = r.getReactant(l);
 							if (sr.getSpecies().equals(species.getId())) {
 								stoch[m][(int) (reactionIndex.get(r.getId()))]=(-1)*sr.getStoichiometry();
 							}
 						}
-						for (int l = 0; l < r.getNumProducts(); l++) {
+						for (int l = 0; l < r.getProductCount(); l++) {
 							SpeciesReference sr = r.getProduct(l);
 							if (sr.getSpecies().equals(species.getId())) {
 								stoch[m][(int) (reactionIndex.get(r.getId()))]=sr.getStoichiometry();

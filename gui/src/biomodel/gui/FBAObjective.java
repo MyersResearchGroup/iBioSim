@@ -76,7 +76,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 			if(activeObjective.equals(id)){
 				objective = "*";
 			}
-			if (type.equals("minimize")) {
+			if (type.equals(Type.MINIMIZE)) {
 				objective += "Min";
 			}
 			else {
@@ -85,7 +85,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 			objective += "(" + id + ") = ";
 			
 			// TODO: build the right hand size
-			if (fbc.getObjective(i).getType().equals("minimize")) {
+			if (fbc.getObjective(i).getType().equals(Type.MINIMIZE)) {
 				objective += fbc.getObjective(i).getListOfFluxObjectives().get(0).getCoefficient() + 
 						" * " + fbc.getObjective(i).getListOfFluxObjectives().get(0).getReaction();
 			} else {
@@ -93,7 +93,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 						" * " + fbc.getObjective(i).getListOfFluxObjectives().get(0).getReaction();				
 			}
 			for (int j = 1; j < fbc.getObjective(i).getListOfFluxObjectives().size(); j++) {
-				if (fbc.getObjective(i).getType().equals("minimize")) {
+				if (fbc.getObjective(i).getType().equals(Type.MINIMIZE)) {
 					objective += " + " + fbc.getObjective(i).getListOfFluxObjectives().get(j).getCoefficient() + 
 							" * " + fbc.getObjective(i).getListOfFluxObjectives().get(j).getReaction();
 				} else {
@@ -159,10 +159,10 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 					}
 					int m = objectiveStringArray[i].indexOf("M");
 					if(objectiveStringArray[i].startsWith("Max", m)){
-						objective.setType("Maximize");
+						objective.setType(Type.MAXIMIZE);
 					}
 					else{
-						objective.setType("Minimize");
+						objective.setType(Type.MINIMIZE);
 					}
 					int leftParenthese = objectiveStringArray[i].indexOf("(");
 					int rightParenthese = objectiveStringArray[i].indexOf(")");

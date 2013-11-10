@@ -21,7 +21,6 @@ import org.sbml.jsbml.ext.comp.Deletion;
 import org.sbml.jsbml.ext.comp.ReplacedBy;
 import org.sbml.jsbml.ext.comp.ReplacedElement;
 import org.sbml.jsbml.ext.comp.CompConstant;
-import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.ext.comp.Submodel;
 
