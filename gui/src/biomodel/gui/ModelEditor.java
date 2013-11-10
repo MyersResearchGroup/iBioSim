@@ -253,14 +253,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		refreshComponentsList();		
 		reloadParameters();
 		if (paramsOnly) {
-			/*
-			GCMParser parser = new GCMParser(path + separator + refFile);
-			GeneticNetwork network = parser.buildNetwork();
-			GeneticNetwork.setRoot(path + separator);
-			network.mergeSBML(path + separator + simName + separator + gcmname + ".xml");
-			*/
-			//reb2sac.updateSpeciesList();
-			//biomodel.reloadSBMLFile();
 			compartmentPanel.refreshCompartmentPanel(biomodel);
 			speciesPanel.refreshSpeciesPanel(biomodel);
 			parametersPanel.refreshParameterPanel(biomodel);
