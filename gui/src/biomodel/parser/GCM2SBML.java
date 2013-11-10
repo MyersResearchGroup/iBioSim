@@ -987,7 +987,7 @@ public class GCM2SBML {
 			} else {
 				//gcm.setIsWithinCompartment(false);
 				//gcm.setDefaultCompartment("");
-				for (int j = 0; j < gcm.getSBMLDocument().getModel().getNumCompartments(); j++) {
+				for (int j = 0; j < gcm.getSBMLDocument().getModel().getCompartmentCount(); j++) {
 					Compartment compartment = gcm.getSBMLDocument().getModel().getCompartment(j);
 					Port port = gcm.getSBMLCompModel().createPort();
 					port.setId(GlobalConstants.COMPARTMENT+"__"+compartment.getId());
