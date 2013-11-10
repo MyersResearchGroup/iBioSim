@@ -135,6 +135,7 @@ import org.jlibsedml.Task;
 //import org.antlr.runtime.TokenStream;
 import org.sbml.jsbml.*;
 import org.sbml.jsbml.ext.comp.*;
+import org.sbml.jsbml.ext.layout.LayoutConstants;
 import org.sbolstandard.core.SBOLDocument;
 
 //import lpn.parser.properties.*;
@@ -4218,6 +4219,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 //							document.setPackageRequired("layout", false);
 //							document.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
 //							document.setPackageRequired("comp", true); 
+							document.addNamespace("layout","",LayoutConstants.namespaceURI);
+							document.addNamespace("comp","",CompConstant.namespaceURI);
 							CompSBMLDocumentPlugin documentComp = (CompSBMLDocumentPlugin) SBMLutilities.getPlugin(CompConstant.namespaceURI, document, true);
 //							((CompSBMLDocumentPlugin)document.getExtension(CompConstant.namespaceURI)).setRequired(true);
 //							CompSBMLDocumentPlugin documentComp = (CompSBMLDocumentPlugin)document.getExtension(CompConstant.namespaceURI);
@@ -10081,6 +10084,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 //				document.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
 //				document.setPackageRequired("comp", true);
 //				((CompSBMLDocumentPlugin)document.getExtension(CompConstant.namespaceURI)).setRequired(true);
+				document.addNamespace("layout","",LayoutConstants.namespaceURI);
+				document.addNamespace("comp","",CompConstant.namespaceURI);
 				CompSBMLDocumentPlugin documentComp = (CompSBMLDocumentPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, document, true);
 				CompModelPlugin documentCompModel = (CompModelPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, document.getModel(), true);
 				ArrayList<String> comps = new ArrayList<String>();

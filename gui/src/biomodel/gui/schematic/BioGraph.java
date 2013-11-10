@@ -234,7 +234,7 @@ public class BioGraph extends mxGraph {
 		//put the grid cells in first so that they're below the other cells
 		addGridCells();
 		
-		Layout layout = bioModel.createLayout();
+		Layout layout = bioModel.getLayout();
 		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getSpeciesCount(); i++) {
 			Species s = bioModel.getSBMLDocument().getModel().getSpecies(i);
 			if (layout.getSpeciesGlyph(s.getId()) != null) {
