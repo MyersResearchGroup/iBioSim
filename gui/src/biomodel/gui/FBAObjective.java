@@ -50,14 +50,14 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 		this.bioModel = bioModel;
 		fbc = bioModel.getSBMLFBC();
 		
-		HashMap<String, Integer> reactionIndex = new HashMap<String, Integer>();
-		int kp = 0;
-		for(int l =0;l<fbc.getListOfFluxBounds().size();l++){
-			if(!reactionIndex.containsKey(fbc.getFluxBound(l).getReaction())){
-				reactionIndex.put(fbc.getFluxBound(l).getReaction(), kp);
-				kp++;
-			}
-		}
+//		HashMap<String, Integer> reactionIndex = new HashMap<String, Integer>();
+//		int kp = 0;
+//		for(int l =0;l<fbc.getListOfFluxBounds().size();l++){
+//			if(!reactionIndex.containsKey(fbc.getFluxBound(l).getReaction())){
+//				reactionIndex.put(fbc.getFluxBound(l).getReaction(), kp);
+//				kp++;
+//			}
+//		}
 		
 		JPanel bigPanel = new JPanel(new BorderLayout());
 		// TODO: allocate size based on number of objectives
@@ -148,7 +148,10 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 					fbc.removeObjective(0);
 				}
 				*/
-				objectiveStringArray = Utility.getList(objectiveStringArray, objectiveList);
+				objectiveStringArray = new String[objectiveList.getModel().getSize()];
+				for (int i = 0; i < objectiveList.getModel().getSize(); i++) {
+					objectiveStringArray[i] = objectiveList.getModel().getElementAt(i).toString();
+				}
 				for (int i = 0; i<objectiveStringArray.length;i++){
 					Objective objective = fbc.createObjective();
 					if(objectiveStringArray[i].startsWith("*")){

@@ -159,6 +159,8 @@ public class BioModel {
 		sbmlFile = modelId + ".xml";
 //		sbml.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
 //		sbml.setPackageRequired("layout", false); 
+		sbml.addNamespace("layout","",LayoutConstants.namespaceURI);
+		sbml.addNamespace("comp","",CompConstant.namespaceURI);
 		sbmlLayout = (LayoutModelPlugin)SBMLutilities.getPlugin(LayoutConstants.namespaceURI, sbml.getModel(), true);
 //		sbml.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
 //		sbml.setPackageRequired("comp", true);
@@ -454,6 +456,7 @@ public class BioModel {
 
 	
 	public FBCModelPlugin getSBMLFBC() {
+		sbml.addNamespace("fbc","",FBCConstants.namespaceURI);
 		return (FBCModelPlugin)SBMLutilities.getPlugin(FBCConstants.namespaceURI, sbml.getModel(), true);
 	}
 	
@@ -490,6 +493,8 @@ public class BioModel {
 		sbml = Gui.readSBML(path + separator + sbmlFile);
 //		sbml.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
 //		sbml.setPackageRequired("layout", false); 
+		sbml.addNamespace("layout","",LayoutConstants.namespaceURI);
+		sbml.addNamespace("comp","",CompConstant.namespaceURI);
 		sbmlLayout = (LayoutModelPlugin)SBMLutilities.getPlugin(LayoutConstants.namespaceURI, sbml.getModel(), true);
 //		sbml.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
 //		sbml.setPackageRequired("comp", true); 
@@ -1104,10 +1109,11 @@ public class BioModel {
 				property.getProperty(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING),false);
 	}
 	
-	public Layout createLayout() {
+	public Layout getLayout() {
 		if (sbmlLayout==null) {
 //			sbml.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
 //			sbml.setPackageRequired("layout", false); 
+			sbml.addNamespace("layout","",LayoutConstants.namespaceURI);
 			sbmlLayout = (LayoutModelPlugin)SBMLutilities.getPlugin(LayoutConstants.namespaceURI, sbml.getModel(), true);
 		}
 		Layout layout;
@@ -1427,6 +1433,7 @@ public class BioModel {
 //			sbml.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
 //			sbml.setPackageRequired("comp", true); 
 //			((CompSBMLDocumentPlugin)sbml.getExtension(CompConstant.namespaceURI)).setRequired(true);
+			sbml.addNamespace("comp","",CompConstant.namespaceURI);
 			sbmlComp = (CompSBMLDocumentPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbml, true);
 			sbmlCompModel = (CompModelPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbml.getModel(), true);
 		}
@@ -2288,7 +2295,7 @@ public class BioModel {
  	}
 	
 	public void setLayoutSize() {
-		Layout layout = createLayout();
+		Layout layout = getLayout();
 		double width = layout.getDimensions().getWidth();
 		double height = layout.getDimensions().getHeight();
 		for (int i = 0; i < layout.getCompartmentGlyphCount(); i++) {
@@ -6431,6 +6438,8 @@ public class BioModel {
 				sbml = Gui.readSBML(path + separator + sbmlFile);
 //				sbml.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
 //				sbml.setPackageRequired("layout", false); 
+				sbml.addNamespace("layout","",LayoutConstants.namespaceURI);
+				sbml.addNamespace("comp","",CompConstant.namespaceURI);
 				sbmlLayout = (LayoutModelPlugin)SBMLutilities.getPlugin(LayoutConstants.namespaceURI, sbml.getModel(), true);
 //				sbml.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
 //				sbml.setPackageRequired("comp", true); 
@@ -6506,6 +6515,8 @@ public class BioModel {
 	public void exportSingleFile(String exportFile) {
 		ArrayList<String> comps = new ArrayList<String>();
 		SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+		document.addNamespace("layout","",LayoutConstants.namespaceURI);
+		document.addNamespace("comp","",CompConstant.namespaceURI);
 //		document.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
 //		document.setPackageRequired("layout", false); 
 		SBMLutilities.getPlugin(LayoutConstants.namespaceURI, document, true);

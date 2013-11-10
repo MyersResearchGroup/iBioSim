@@ -994,7 +994,7 @@ public class GCM2SBML {
 					port.setIdRef(compartment.getId());
 				}
 			}
-			gcm.createLayout();
+			gcm.getLayout();
 			for (String s : species.keySet()) {
 				Properties prop = species.get(s);
 				if (prop.containsKey("graphx") && prop.containsKey("graphy") &&
