@@ -214,8 +214,6 @@ public class FluxBalanceAnalysis {
 			}
 			return 0;
 		} else {
-			//System.out.println("No flux balance constraints");
-			// TODO: SCOTT - change to code indicating no flux balance constraints
 			return 2;
 		}
 	}
