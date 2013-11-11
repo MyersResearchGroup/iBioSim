@@ -1009,7 +1009,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 							} else {
 								np.setValue(Double.parseDouble(value));
 							}
-							for (int i = 0; i<reaction.getNumProducts(); i++) {
+							for (int i = 0; i<reaction.getProductCount(); i++) {
 								if (value.startsWith("(")) {
 									reaction.getProduct(i).setStoichiometry(1.0);
 								} else {
@@ -1215,7 +1215,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	
 	private void performModifications(SBMLDocument d,ArrayList<String> dd) {
 		for (String s : elementsPanel.getElementChanges()) {
-			for (int i = d.getModel().getNumInitialAssignments() - 1; i >= 0; i--) {
+			for (int i = d.getModel().getInitialAssignmentCount() - 1; i >= 0; i--) {
 				if (s.contains("=")) {
 					String formula = SBMLutilities.myFormulaToString(((InitialAssignment) d.getModel()
 							.getListOfInitialAssignments().get(i)).getMath());
@@ -1229,17 +1229,17 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 					}
 				}
 			}
-			for (int i = d.getModel().getNumConstraints() - 1; i >= 0; i--) {
+			for (int i = d.getModel().getConstraintCount() - 1; i >= 0; i--) {
 				if (d.getModel().getListOfConstraints().get(i).getMetaId().equals(s)) {
 					d.getModel().getListOfConstraints().remove(i);
 				}
 			}
-			for (int i = d.getModel().getNumEvents() - 1; i >= 0; i--) {
+			for (int i = d.getModel().getEventCount() - 1; i >= 0; i--) {
 				if (d.getModel().getListOfEvents().get(i).getId().equals(s)) {
 					d.getModel().getListOfEvents().remove(i);
 				}
 			}
-			for (int i = d.getModel().getNumRules() - 1; i >= 0; i--) {
+			for (int i = d.getModel().getRuleCount() - 1; i >= 0; i--) {
 				if (s.contains("=")) {
 					String formula = SBMLutilities.myFormulaToString(((Rule) d.getModel().getListOfRules().get(i)).getMath());
 					String sFormula = s.substring(s.indexOf('=') + 1).trim();

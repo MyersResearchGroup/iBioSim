@@ -50,7 +50,7 @@ public class ElementsPanel extends JPanel {
 		}
 		Model m = document.getModel();
 		ListOf e = m.getListOfConstraints();
-		int consNum = (int) m.getNumConstraints();
+		int consNum = (int) m.getConstraintCount();
 		String[] cons = new String[(int) consNum];
 		for (int i = 0; i < consNum; i++) {
 			Constraint constraint = (Constraint) e.get(i);
@@ -67,7 +67,7 @@ public class ElementsPanel extends JPanel {
 			cons[i] = constraint.getMetaId();
 		}
 		e = m.getListOfRules();
-		int rulNum = (int) m.getNumRules();
+		int rulNum = (int) m.getRuleCount();
 		String[] rul = new String[rulNum];
 		for (int i = 0; i < rulNum; i++) {
 			Rule rule = (Rule) e.get(i);
@@ -86,14 +86,14 @@ public class ElementsPanel extends JPanel {
 			}
 		}
 		e = m.getListOfInitialAssignments();
-		int initsNum = (int) m.getNumInitialAssignments();
+		int initsNum = (int) m.getInitialAssignmentCount();
 		String[] inits = new String[initsNum];
 		for (int i = 0; i < initsNum; i++) {
 			inits[i] = ((InitialAssignment) e.get(i)).getSymbol() + " = "
 					+ SBMLutilities.myFormulaToString(((InitialAssignment) e.get(i)).getMath());
 		}
 		e = m.getListOfEvents();
-		int evNum = (int) m.getNumEvents();
+		int evNum = (int) m.getEventCount();
 		String[] ev = new String[evNum];
 		for (int i = 0; i < evNum; i++) {
 			if (((org.sbml.jsbml.Event) e.get(i)).isSetId()) {

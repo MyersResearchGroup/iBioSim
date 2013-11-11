@@ -124,8 +124,8 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		scroll1.setViewportView(species);
 		Model model = bioModel.getSBMLDocument().getModel();
 		ListOf listOfSpecies = model.getListOfSpecies();
-		String[] specs = new String[(int) model.getNumSpecies()];
-		for (int i = 0; i < model.getNumSpecies(); i++) {
+		String[] specs = new String[(int) model.getSpeciesCount()];
+		for (int i = 0; i < model.getSpeciesCount(); i++) {
 			Species species = (Species) listOfSpecies.get(i);
 			/*
 			 * if (species.isSetSpeciesType()) { specs[i] = species.getId() +
@@ -193,8 +193,8 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		this.bioModel = gcm;
 		Model model = gcm.getSBMLDocument().getModel();
 		ListOf listOfSpecies = model.getListOfSpecies();
-		String[] specs = new String[(int) model.getNumSpecies()];
-		for (int i = 0; i < model.getNumSpecies(); i++) {
+		String[] specs = new String[(int) model.getSpeciesCount()];
+		for (int i = 0; i < model.getSpeciesCount(); i++) {
 			Species species = (Species) listOfSpecies.get(i);
 			specs[i] = species.getId();
 			if (species.isSetInitialAmount()) {
@@ -269,9 +269,9 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		specHasOnly.setSelectedItem("false");
 //		SpeciesType not supported in Level 3
 //		ListOf listOfSpecTypes = bioModel.getSBMLDocument().getModel().getListOfSpeciesTypes();
-//		String[] specTypeList = new String[(int) bioModel.getSBMLDocument().getModel().getNumSpeciesTypes() + 1];
+//		String[] specTypeList = new String[(int) bioModel.getSBMLDocument().getModel().getSpeciesTypeCount() + 1];
 //		specTypeList[0] = "( none )";
-//		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumSpeciesTypes(); i++) {
+//		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getSpeciesTypeCount(); i++) {
 //			specTypeList[i + 1] = ((SpeciesType) listOfSpecTypes.get(i)).getId();
 //		}
 //		Utility.sort(specTypeList);
@@ -561,7 +561,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						selected = ((String) species.getSelectedValue()).split(" ")[0];
 					}
 //					SpeciesType not supported in Level 3
-//					for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumSpecies(); i++) {
+//					for (int i = 0; i < bioModel.getSBMLDocument().getModel().getSpeciesCount(); i++) {
 //						if (!((Species) listOfSpecies.get(i)).getId().equals(selected)) {
 //							if (((Species) listOfSpecies.get(i)).getCompartment().equals((String) comp.getSelectedItem())
 //									&& ((Species) listOfSpecies.get(i)).getSpeciesType().equals(selSpecType)) {
@@ -745,7 +745,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						Utility.sort(specs);
 						species.setListData(specs);
 						species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-						if (bioModel.getSBMLDocument().getModel().getNumSpecies() == 1) {
+						if (bioModel.getSBMLDocument().getModel().getSpeciesCount() == 1) {
 							species.setSelectedIndex(0);
 						}
 						else {
@@ -928,8 +928,8 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 	
 	public static JComboBox createCompartmentChoices(BioModel gcm) {
 		ListOf listOfCompartments = gcm.getSBMLDocument().getModel().getListOfCompartments();
-		String[] add = new String[(int) gcm.getSBMLDocument().getModel().getNumCompartments()];
-		for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumCompartments(); i++) {
+		String[] add = new String[(int) gcm.getSBMLDocument().getModel().getCompartmentCount()];
+		for (int i = 0; i < gcm.getSBMLDocument().getModel().getCompartmentCount(); i++) {
 			add[i] = ((Compartment) listOfCompartments.get(i)).getId();
 		}
 		try {
@@ -989,8 +989,8 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		Model model = bioModel.getSBMLDocument().getModel();
 		boolean inRule = false;
 		if (checkRule) {
-			if (model.getNumRules() > 0) {
-				for (int i = 0; i < model.getNumRules(); i++) {
+			if (model.getRuleCount() > 0) {
+				for (int i = 0; i < model.getRuleCount(); i++) {
 					Rule rule = (Rule) model.getListOfRules().get(i);
 					if (SBMLutilities.isSetVariable(rule) && val.equals(SBMLutilities.getVariable(rule))) {
 						inRule = true;
@@ -1001,9 +1001,9 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 			if (!inRule)
 				return false;
 		}
-		for (int i = 0; i < model.getNumReactions(); i++) {
+		for (int i = 0; i < model.getReactionCount(); i++) {
 			Reaction reaction = (Reaction) model.getListOfReactions().get(i);
-			for (int j = 0; j < reaction.getNumProducts(); j++) {
+			for (int j = 0; j < reaction.getProductCount(); j++) {
 				if (reaction.getProduct(j).isSetSpecies()) {
 					SpeciesReference specRef = reaction.getProduct(j);
 					if (val.equals(specRef.getSpecies())) {
@@ -1020,7 +1020,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 					}
 				}
 			}
-			for (int j = 0; j < reaction.getNumReactants(); j++) {
+			for (int j = 0; j < reaction.getReactantCount(); j++) {
 				if (reaction.getReactant(j).isSetSpecies()) {
 					SpeciesReference specRef = reaction.getReactant(j);
 					if (val.equals(specRef.getSpecies())) {
@@ -1062,7 +1062,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				if (!SBMLutilities.variableInUse(bioModel.getSBMLDocument(), id, false, true, true)) {
 					Species tempSpecies = bioModel.getSBMLDocument().getModel().getSpecies(id);
 					ListOf s = bioModel.getSBMLDocument().getModel().getListOfSpecies();
-					for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumSpecies(); i++) {
+					for (int i = 0; i < bioModel.getSBMLDocument().getModel().getSpeciesCount(); i++) {
 						if (((Species) s.get(i)).getId().equals(tempSpecies.getId())) {
 							s.remove(i);
 						}

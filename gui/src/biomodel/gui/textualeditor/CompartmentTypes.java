@@ -140,7 +140,7 @@ public class CompartmentTypes extends JPanel implements ActionListener, MouseLis
 					Utility.sort(cpTyp);
 					compTypes.setListData(cpTyp);
 					compTypes.setSelectedIndex(index);
-					for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumCompartments(); i++) {
+					for (int i = 0; i < gcm.getSBMLDocument().getModel().getCompartmentCount(); i++) {
 						Compartment compartment = gcm.getSBMLDocument().getModel().getCompartment(i);
 						if (compartment.getCompartmentType().equals(val)) {
 							compartment.setCompartmentType(compTypeID.getText().trim());
@@ -197,7 +197,7 @@ public class CompartmentTypes extends JPanel implements ActionListener, MouseLis
 		if (index != -1) {
 			boolean remove = true;
 			ArrayList<String> compartmentUsing = new ArrayList<String>();
-			for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumCompartments(); i++) {
+			for (int i = 0; i < gcm.getSBMLDocument().getModel().getCompartmentCount(); i++) {
 				Compartment compartment = (Compartment) gcm.getSBMLDocument().getModel().getListOfCompartments().get(i);
 				if (compartment.isSetCompartmentType()) {
 					if (compartment.getCompartmentType().equals(((String) compTypes.getSelectedValue()).split(" ")[0])) {

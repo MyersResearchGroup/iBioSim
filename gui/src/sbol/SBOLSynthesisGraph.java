@@ -176,9 +176,9 @@ public class SBOLSynthesisGraph {
 		nucleotideCount = 0;
 		compURIs = new HashSet<URI>();
 		signals = new HashSet<String>();
-		for (int i = 0; i < sbmlModel.getNumReactions(); i++) {
+		for (int i = 0; i < sbmlModel.getReactionCount(); i++) {
 			Reaction sbmlReaction = sbmlModel.getReaction(i);
-			if (sbmlReaction.getNumProducts() > 0) 
+			if (sbmlReaction.getProductCount() > 0) 
 				if (BioModel.isProductionReaction(sbmlReaction)) {
 					constructTranscriptionMotif(sbmlReaction, idToNode, sbmlModel, fileManager);
 				} else if ((BioModel.isComplexReaction(sbmlReaction))) {
@@ -191,7 +191,7 @@ public class SBOLSynthesisGraph {
 	private void constructTranscriptionMotif(Reaction sbmlReaction, HashMap<String, SBOLSynthesisNode> idToNode, 
 			Model sbmlModel, SBOLFileManager fileManager) {
 		SBOLSynthesisNode promoterNode = null;
-		for (int j = 0; j < sbmlReaction.getNumModifiers(); j++) {
+		for (int j = 0; j < sbmlReaction.getModifierCount(); j++) {
 			ModifierSpeciesReference sbmlModifier = sbmlReaction.getModifier(j);
 			if (BioModel.isPromoter(sbmlModifier))
 				promoterNode = constructNode("p", sbmlReaction, sbmlModifier.getSpecies(),
@@ -199,7 +199,7 @@ public class SBOLSynthesisGraph {
 		}
 		if (promoterNode == null) 
 			promoterNode = constructNode("p", sbmlReaction, sbmlReaction.getId(), idToNode, fileManager);
-		for (int j = 0; j < sbmlReaction.getNumModifiers(); j++) {
+		for (int j = 0; j < sbmlReaction.getModifierCount(); j++) {
 			ModifierSpeciesReference sbmlModifier = sbmlReaction.getModifier(j);
 			if (BioModel.isRepressor(sbmlModifier) || BioModel.isActivator(sbmlModifier)) {
 				SBOLSynthesisNode tfNode;
@@ -214,7 +214,7 @@ public class SBOLSynthesisGraph {
 				edges.get(promoterNode).add(tfNode);	
 			} 
 		}
-		for (int j = 0; j < sbmlReaction.getNumProducts(); j++) {
+		for (int j = 0; j < sbmlReaction.getProductCount(); j++) {
 			SpeciesReference sbmlProduct = sbmlReaction.getProduct(j);
 			SBOLSynthesisNode productNode = constructNode("s", sbmlModel.getSpecies(sbmlProduct.getSpecies()), 
 					sbmlProduct.getSpecies(), idToNode, fileManager);
@@ -230,7 +230,7 @@ public class SBOLSynthesisGraph {
 		SBOLSynthesisNode complexNode = constructNode("x", sbmlModel.getSpecies(sbmlProduct.getSpecies()), 
 				sbmlProduct.getSpecies(), idToNode, fileManager);
 		edges.put(complexNode, new LinkedList<SBOLSynthesisNode>());
-		for (int j = 0; j < sbmlReaction.getNumReactants(); j++) {
+		for (int j = 0; j < sbmlReaction.getReactantCount(); j++) {
 			SpeciesReference sbmlReactant = sbmlReaction.getReactant(j);
 			SBOLSynthesisNode speciesNode = constructNode("v", sbmlModel.getSpecies(sbmlReactant.getSpecies()),
 					sbmlReactant.getSpecies(), idToNode, fileManager);

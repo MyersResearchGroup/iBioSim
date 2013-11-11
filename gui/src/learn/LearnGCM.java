@@ -382,36 +382,36 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 			try {
 				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
 				write.write("digraph G {\n");
-				for (int i = 0; i < model.getNumSpecies(); i++) {
+				for (int i = 0; i < model.getSpeciesCount(); i++) {
 					if (BioModel.isPromoterSpecies(((Species)ids.get(i)))) continue;
 					speciesList.add(((Species) ids.get(i)).getId());
 					write.write(((Species) ids.get(i)).getId() + " [shape=ellipse,color=black,label=\"" + ((Species) ids.get(i)).getId() + "\"" + "];\n");
 				}
-				for (int i = 0; i < model.getNumReactions(); i++) {
+				for (int i = 0; i < model.getReactionCount(); i++) {
 					Reaction r = model.getReaction(i);
 					if (BioModel.isProductionReaction(r)) {
-						for (int j = 0; j < r.getNumModifiers(); j++) {
+						for (int j = 0; j < r.getModifierCount(); j++) {
 							ModifierSpeciesReference modifier = r.getModifier(j);
 							if (BioModel.isNeutral(modifier)) {
-								for (int k = 0; k < r.getNumProducts(); k++) {
+								for (int k = 0; k < r.getProductCount(); k++) {
 									SpeciesReference product = r.getProduct(k);
 									write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=diamond];\n");
 								}
 							}
 							if (BioModel.isActivator(modifier)) {
-								for (int k = 0; k < r.getNumProducts(); k++) {
+								for (int k = 0; k < r.getProductCount(); k++) {
 									SpeciesReference product = r.getProduct(k);
 									write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=vee];\n");
 								}
 							}
 							if (BioModel.isRepressor(modifier)) {
-								for (int k = 0; k < r.getNumProducts(); k++) {
+								for (int k = 0; k < r.getProductCount(); k++) {
 									SpeciesReference product = r.getProduct(k);
 									write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=tee];\n");
 								}
 							}
 							if (BioModel.isRegulator(modifier)) {
-								for (int k = 0; k < r.getNumProducts(); k++) {
+								for (int k = 0; k < r.getProductCount(); k++) {
 									SpeciesReference product = r.getProduct(k);
 									write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=tee];\n");
 									write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=vee];\n");
@@ -1368,36 +1368,36 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 			try {
 				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
 				write.write("digraph G {\n");
-				for (int i = 0; i < model.getNumSpecies(); i++) {
+				for (int i = 0; i < model.getSpeciesCount(); i++) {
 					if (BioModel.isPromoterSpecies(((Species)ids.get(i)))) continue;
 					speciesList.add(((Species) ids.get(i)).getId());
 					write.write(((Species) ids.get(i)).getId() + " [shape=ellipse,color=black,label=\"" + ((Species) ids.get(i)).getId() + "\"" + "];\n");
 				}
-				for (int i = 0; i < model.getNumReactions(); i++) {
+				for (int i = 0; i < model.getReactionCount(); i++) {
 					Reaction r = model.getReaction(i);
 					if (BioModel.isProductionReaction(r)) {
-						for (int j = 0; j < r.getNumModifiers(); j++) {
+						for (int j = 0; j < r.getModifierCount(); j++) {
 							ModifierSpeciesReference modifier = r.getModifier(j);
 							if (BioModel.isNeutral(modifier)) {
-								for (int k = 0; k < r.getNumProducts(); k++) {
+								for (int k = 0; k < r.getProductCount(); k++) {
 									SpeciesReference product = r.getProduct(k);
 									write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=diamond];\n");
 								}
 							}
 							if (BioModel.isActivator(modifier)) {
-								for (int k = 0; k < r.getNumProducts(); k++) {
+								for (int k = 0; k < r.getProductCount(); k++) {
 									SpeciesReference product = r.getProduct(k);
 									write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=vee];\n");
 								}
 							}
 							if (BioModel.isRepressor(modifier)) {
-								for (int k = 0; k < r.getNumProducts(); k++) {
+								for (int k = 0; k < r.getProductCount(); k++) {
 									SpeciesReference product = r.getProduct(k);
 									write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=tee];\n");
 								}
 							}
 							if (BioModel.isRegulator(modifier)) {
-								for (int k = 0; k < r.getNumProducts(); k++) {
+								for (int k = 0; k < r.getProductCount(); k++) {
 									SpeciesReference product = r.getProduct(k);
 									write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=tee];\n");
 									write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=vee];\n");

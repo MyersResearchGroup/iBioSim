@@ -90,10 +90,7 @@ import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.ext.layout.Layout;
 import org.sbml.jsbml.text.parser.ParseException;
 import org.sbml.jsbml.validator.SBMLValidator;
-import org.sbml.jsbml.xml.XMLAttributes;
 import org.sbml.jsbml.xml.XMLNode;
-import org.sbml.jsbml.xml.XMLTriple;
-import org.sbml.jsbml.JSBML;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.Grid;
@@ -150,12 +147,8 @@ public class BioModel {
 	
 	public void createSBMLDocument(String modelId,boolean grid,boolean lema) {
 		sbml = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
-		Model m = sbml.createModel();
+		Model m = sbml.createModel(modelId);
 		metaIDIndex = SBMLutilities.setDefaultMetaID(sbml, m, metaIDIndex); 
-		sbml.setModel(m);
-		m.setId(modelId);
-		//SBMLutilities.addRandomFunctions(sbml);
-		//loadDefaultParameters();
 		sbmlFile = modelId + ".xml";
 		createCompPlugin();
 		createLayoutPlugin();
@@ -169,7 +162,6 @@ public class BioModel {
 					c.setId("GridComp");
 				}
 				loadDefaultParameters();
-				//createDiffusionDefaultParameters();
 			} else {
 				if (!modelId.equals("Cell")) {
 					c.setId("Cell");
@@ -360,8 +352,8 @@ public class BioModel {
 	}
 	
 	public boolean IsWithinCompartment() {
-		if (sbml.getModel().getNumCompartments()==0) return false;
-		for (int i = 0; i < sbml.getModel().getNumCompartments(); i++) {
+		if (sbml.getModel().getCompartmentCount()==0) return false;
+		for (int i = 0; i < sbml.getModel().getCompartmentCount(); i++) {
 			Compartment compartment = sbml.getModel().getCompartment(i);
 			if (getPortByIdRef(compartment.getId())!=null) return false;
 			//if (sbmlCompModel.getListOfPorts().get(GlobalConstants.COMPARTMENT + "__" + compartment.getId()) != null) return false;
@@ -800,11 +792,11 @@ public class BioModel {
 						String reactionProductions = "";
 						String reactionDegradations = "";
 						ListOf reactions = sbml.getModel().getListOfReactions();
-						for (int j = 0; j < sbml.getModel().getNumReactions(); j++) {
+						for (int j = 0; j < sbml.getModel().getReactionCount(); j++) {
 							Reaction r = (Reaction) reactions.get(j);
 							if (!r.getId().contains("Production_") && !r.getId().contains("Degradation_")
 									&& !r.getId().contains("Complex_")) {
-								for (int k = 0; k < r.getNumReactants(); k++) {
+								for (int k = 0; k < r.getReactantCount(); k++) {
 									if (r.getReactant(k).getSpecies().equals(specs.get(i))) {
 										KineticLaw law = r.getKineticLaw();
 										HashMap<String, String> parameters = new HashMap<String, String>();
@@ -833,7 +825,7 @@ public class BioModel {
 										}
 									}
 								}
-								for (int k = 0; k < r.getNumProducts(); k++) {
+								for (int k = 0; k < r.getProductCount(); k++) {
 									if (r.getProduct(k).getSpecies().equals(specs.get(i))) {
 										KineticLaw law = r.getKineticLaw();
 										HashMap<String, String> parameters = new HashMap<String, String>();
@@ -982,7 +974,7 @@ public class BioModel {
 	}
 
 	public void createCondition(String s,int condition) {
-		for (int i = 0; i < sbml.getModel().getNumConstraints(); i++) {
+		for (int i = 0; i < sbml.getModel().getConstraintCount(); i++) {
 			if (sbml.getModel().getConstraint(i).isSetMetaId() &&
 				sbml.getModel().getConstraint(i).getMetaId().equals("Condition_"+condition)) return;
 		}
@@ -1012,7 +1004,7 @@ public class BioModel {
 	}
 	
 	public String getDefaultCompartment() {
-		if (sbml.getModel().getNumCompartments() > 0) {
+		if (sbml.getModel().getCompartmentCount() > 0) {
 			return sbml.getModel().getCompartment(0).getId();
 		} else {
 			return "";
@@ -1932,11 +1924,11 @@ public class BioModel {
 				npVal = Double.parseDouble(np);
 			}
 			p.setValue(npVal);
-			for (int i = 0; i < r.getNumProducts(); i++) {
+			for (int i = 0; i < r.getProductCount(); i++) {
 				r.getProduct(i).setStoichiometry(npVal);
 			}
 		} else {
-			for (int i = 0; i < r.getNumProducts(); i++) {
+			for (int i = 0; i < r.getProductCount(); i++) {
 				r.getProduct(i).setStoichiometry(sbml.getModel().getParameter(GlobalConstants.STOICHIOMETRY_STRING).getValue());
 			}
 		}
@@ -2079,11 +2071,11 @@ public class BioModel {
 				npVal = Double.parseDouble(np);
 			}
 			p.setValue(npVal);
-			for (int i = 0; i < r.getNumProducts(); i++) {
+			for (int i = 0; i < r.getProductCount(); i++) {
 				r.getProduct(i).setStoichiometry(npVal);
 			}
 		} else {
-			for (int i = 0; i < r.getNumProducts(); i++) {
+			for (int i = 0; i < r.getProductCount(); i++) {
 				r.getProduct(i).setStoichiometry(sbml.getModel().getParameter(GlobalConstants.STOICHIOMETRY_STRING).getValue());
 			}
 		}
@@ -2171,7 +2163,7 @@ public class BioModel {
 	public static String createComplexKineticLaw(Reaction reaction) {
 		String kineticLaw;
 		kineticLaw = GlobalConstants.FORWARD_KCOMPLEX_STRING;
-		for (int i=0;i<reaction.getNumReactants();i++) {
+		for (int i=0;i<reaction.getReactantCount();i++) {
 			if (reaction.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + 
 					reaction.getReactant(i).getSpecies())==null) {
 				kineticLaw += "*pow(" + reaction.getReactant(i).getSpecies() + "," + GlobalConstants.COOPERATIVITY_STRING + ")";
@@ -2188,7 +2180,7 @@ public class BioModel {
 		String kineticLaw;
 		boolean activated = false;
 		String promoter = "";
-		for (int i=0;i<reaction.getNumModifiers();i++) {
+		for (int i=0;i<reaction.getModifierCount();i++) {
 			if (isActivator(reaction.getModifier(i))||isRegulator(reaction.getModifier(i))) {
 				activated = true;
 			} else if (isPromoter(reaction.getModifier(i))) {
@@ -2200,7 +2192,7 @@ public class BioModel {
 					"(" + GlobalConstants.FORWARD_RNAP_BINDING_STRING + "/" + GlobalConstants.REVERSE_RNAP_BINDING_STRING + ")*" 
 					+ GlobalConstants.RNAP_STRING;
 			String actBottom = "";
-			for (int i=0;i<reaction.getNumModifiers();i++) {
+			for (int i=0;i<reaction.getModifierCount();i++) {
 				if (isActivator(reaction.getModifier(i)) || isRegulator(reaction.getModifier(i))) {
 					String activator = reaction.getModifier(i).getSpecies();
 					if (reaction.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KACT_STRING.replace("_","_"+activator+"_"))==null) {
@@ -2235,7 +2227,7 @@ public class BioModel {
 			}
 			kineticLaw += ")/(1+(" + GlobalConstants.FORWARD_RNAP_BINDING_STRING + "/" + 
 					GlobalConstants.REVERSE_RNAP_BINDING_STRING + ")*" + GlobalConstants.RNAP_STRING + actBottom;
-			for (int i=0;i<reaction.getNumModifiers();i++) {
+			for (int i=0;i<reaction.getModifierCount();i++) {
 				if (isRepressor(reaction.getModifier(i)) || isRegulator(reaction.getModifier(i))) {
 					String repressor = reaction.getModifier(i).getSpecies();
 					if (reaction.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KREP_STRING.replace("_","_"+repressor+"_"))==null) {
@@ -2259,7 +2251,7 @@ public class BioModel {
 					+ GlobalConstants.RNAP_STRING + ")/(1+(" + 
 					GlobalConstants.FORWARD_RNAP_BINDING_STRING + "/" + GlobalConstants.REVERSE_RNAP_BINDING_STRING + ")*" 
 					+ GlobalConstants.RNAP_STRING;
-			for (int i=0;i<reaction.getNumModifiers();i++) {
+			for (int i=0;i<reaction.getModifierCount();i++) {
 				if (isRepressor(reaction.getModifier(i))) {
 					String repressor = reaction.getModifier(i).getSpecies();
 					if (reaction.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KREP_STRING.replace("_","_"+repressor+"_"))==null) {
@@ -2358,23 +2350,23 @@ public class BioModel {
 		LhpnFile lpn = new LhpnFile();
 		String message = "The following items cannot be converted to an LPN:\n";
 		boolean error = false;
-		if (flatSBML.getModel().getNumCompartments()>0) {
+		if (flatSBML.getModel().getCompartmentCount()>0) {
 			message += "Compartments: ";
-			for (int i = 0; i < flatSBML.getModel().getNumCompartments(); i++) {
+			for (int i = 0; i < flatSBML.getModel().getCompartmentCount(); i++) {
 				message += flatSBML.getModel().getCompartment(i).getId() + " ";
 			}
 			message += "\n";
 			error = true;
 		}
-		if (flatSBML.getModel().getNumSpecies()>0) {
+		if (flatSBML.getModel().getSpeciesCount()>0) {
 			message += "Species: ";
-			for (int i = 0; i < flatSBML.getModel().getNumSpecies(); i++) {
+			for (int i = 0; i < flatSBML.getModel().getSpeciesCount(); i++) {
 				message += flatSBML.getModel().getSpecies(i).getId() + " ";
 			}
 			message += "\n";
 			error = true;
 		}
-		for (int i = 0; i < flatSBML.getModel().getNumRules(); i++) {
+		for (int i = 0; i < flatSBML.getModel().getRuleCount(); i++) {
 			Rule r = flatSBML.getModel().getRule(i);
 			if (r.isRate()) {
 				if (r.getMath().isName()) {
@@ -2482,7 +2474,7 @@ public class BioModel {
 			}
 		}
 		boolean foundFail = false;
-		for (int i = 0; i < flatSBML.getModel().getNumConstraints(); i++) {
+		for (int i = 0; i < flatSBML.getModel().getConstraintCount(); i++) {
 			Constraint c = flatSBML.getModel().getConstraint(i);
 			ASTNode math = c.getMath();
 			if (math.getType()==ASTNode.Type.FUNCTION && math.getName().equals("G") && math.getNumChildren()==2) {
@@ -2505,7 +2497,7 @@ public class BioModel {
 			message += "Constraint: " + SBMLutilities.myFormulaToString(math) + "\n";
 			//lpn.addProperty(SBMLutilities.SBMLMathToLPNString(c.getMath(), constants, booleans));
 		}
-		for (int i = 0; i < flatSBML.getModel().getNumEvents(); i++) {
+		for (int i = 0; i < flatSBML.getModel().getEventCount(); i++) {
 			Event e = flatSBML.getModel().getEvent(i);
 			if (SBMLutilities.isTransition(e)) {
 				Transition t = new Transition();
@@ -2562,7 +2554,7 @@ public class BioModel {
 				if (e.isSetPriority()) {
 					t.addPriority(SBMLutilities.SBMLMathToLPNString(e.getPriority().getMath(),constants,booleans));
 				}
-				for (int j = 0; j < e.getNumEventAssignments(); j++) {
+				for (int j = 0; j < e.getEventAssignmentCount(); j++) {
 					EventAssignment ea = e.getListOfEventAssignments().get(j);
 					Parameter p = flatSBML.getModel().getParameter(ea.getVariable());
 					if (p != null && !SBMLutilities.isPlace(p)) {
@@ -2647,7 +2639,7 @@ public class BioModel {
 	
 //	public void correctPromoterToSBOLAnnotations() {
 //		Model sbmlModel = sbml.getModel();
-//		for (int i = 0; i < sbmlModel.getNumSpecies(); i++) {
+//		for (int i = 0; i < sbmlModel.getSpeciesCount(); i++) {
 //			Species sbmlSpecies = sbmlModel.getSpecies(i);
 //			if (isPromoterSpecies(sbmlSpecies)) {
 //				List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlSpecies);
@@ -2817,11 +2809,11 @@ public class BioModel {
 			Reaction reaction = getComplexReaction(oldId);
 			reaction.setId("Complex_"+baseId);
 		}
-		for (int i=0;i<sbml.getModel().getNumReactions();i++) {
+		for (int i=0;i<sbml.getModel().getReactionCount();i++) {
 			Reaction reaction = sbml.getModel().getReaction(i);
 			if (isComplexReaction(reaction)) {
 				KineticLaw k = reaction.getKineticLaw();
-				for (int j=0;j<k.getNumLocalParameters();j++) {
+				for (int j=0;j<k.getLocalParameterCount();j++) {
 					LocalParameter param = k.getLocalParameter(j);
 					if (param.getId().equals(GlobalConstants.COOPERATIVITY_STRING + "_" + oldId)) {
 						param.setId(GlobalConstants.COOPERATIVITY_STRING + "_" + newId);
@@ -2830,7 +2822,7 @@ public class BioModel {
 				reaction.getKineticLaw().setMath(SBMLutilities.myParseFormula(createComplexKineticLaw(reaction)));
 			} else if (isProductionReaction(reaction)) {
 				KineticLaw k = reaction.getKineticLaw();
-				for (int j=0;j<k.getNumLocalParameters();j++) {
+				for (int j=0;j<k.getLocalParameterCount();j++) {
 					LocalParameter param = k.getLocalParameter(j);
 					if (param.getId().equals(GlobalConstants.COOPERATIVITY_STRING + "_" + oldId + "_r")) {
 						param.setId(GlobalConstants.COOPERATIVITY_STRING + "_" + newId + "_r");
@@ -2955,7 +2947,7 @@ public class BioModel {
 		
 		subModel.setId(submodelID.replace(oldName, newName));
 		
-		for (int i = 0; i < sbml.getModel().getNumSpecies(); i++) {
+		for (int i = 0; i < sbml.getModel().getSpeciesCount(); i++) {
 			CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbml.getModel().getSpecies(i), true);
 			ReplacedElement replacement = null;
 			for (int j = 0; j < sbmlSBase.getListOfReplacedElements().size(); j++) {
@@ -2995,7 +2987,7 @@ public class BioModel {
 		JPanel reactionListPanel = new JPanel(new GridLayout(1, 1));
 		ArrayList<String> choices = new ArrayList<String>();
 		choices.add("Create a new reaction");
-		for (int i=0; i < m.getNumReactions(); i++) {
+		for (int i=0; i < m.getReactionCount(); i++) {
 			Reaction r = m.getReaction(i);
 			if (isDegradationReaction(r)) continue;
 			if (isDiffusionReaction(r)) continue;
@@ -3384,7 +3376,7 @@ public class BioModel {
 	public void removeReaction(String id) {
 		Reaction tempReaction = sbml.getModel().getReaction(id);
 		ListOf r = sbml.getModel().getListOfReactions();
-		for (int i = 0; i < sbml.getModel().getNumReactions(); i++) {
+		for (int i = 0; i < sbml.getModel().getReactionCount(); i++) {
 			if (((Reaction) r.get(i)).getId().equals(tempReaction.getId())) {
 				r.remove(i);
 			}
@@ -3470,7 +3462,7 @@ public class BioModel {
 	public ArrayList<String> getCompartments() {
 		ArrayList<String> compartmentSet = new ArrayList<String>();
 		if (sbml!=null) {
-			for (int i = 0; i < sbml.getModel().getNumCompartments(); i++) {
+			for (int i = 0; i < sbml.getModel().getCompartmentCount(); i++) {
 				Compartment compartment = sbml.getModel().getCompartment(i);
 				compartmentSet.add(compartment.getId());
 			}
@@ -3482,7 +3474,7 @@ public class BioModel {
 	public ArrayList<String> getFunctions() {
 		ArrayList<String> functionSet = new ArrayList<String>();
 		if (sbml!=null) {
-			for (int i = 0; i < sbml.getModel().getNumFunctionDefinitions(); i++) {
+			for (int i = 0; i < sbml.getModel().getFunctionDefinitionCount(); i++) {
 				FunctionDefinition function = sbml.getModel().getFunctionDefinition(i);
 				functionSet.add(function.getId());
 			}
@@ -3504,7 +3496,7 @@ public class BioModel {
 	public ArrayList<String> getAlgebraicRules() {
 		ArrayList<String> ruleSet = new ArrayList<String>();
 		if (sbml!=null) {
-			for (int i = 0; i < sbml.getModel().getNumRules(); i++) {
+			for (int i = 0; i < sbml.getModel().getRuleCount(); i++) {
 				Rule rule = sbml.getModel().getRule(i);
 				if (rule.isAlgebraic()) {
 					ruleSet.add(rule.getMetaId());
@@ -3517,7 +3509,7 @@ public class BioModel {
 	public ArrayList<String> getAssignmentRules() {
 		ArrayList<String> ruleSet = new ArrayList<String>();
 		if (sbml!=null) {
-			for (int i = 0; i < sbml.getModel().getNumRules(); i++) {
+			for (int i = 0; i < sbml.getModel().getRuleCount(); i++) {
 				Rule rule = sbml.getModel().getRule(i);
 				if (rule.isAssignment()) {
 					ruleSet.add(rule.getMetaId());
@@ -3530,7 +3522,7 @@ public class BioModel {
 	public ArrayList<String> getRateRules() {
 		ArrayList<String> ruleSet = new ArrayList<String>();
 		if (sbml!=null) {
-			for (int i = 0; i < sbml.getModel().getNumRules(); i++) {
+			for (int i = 0; i < sbml.getModel().getRuleCount(); i++) {
 				Rule rule = sbml.getModel().getRule(i);
 				if (rule.isRate()) {
 					ruleSet.add(rule.getMetaId());
@@ -3543,7 +3535,7 @@ public class BioModel {
 	public ArrayList<String> getConstraints() {
 		ArrayList<String> constraintSet = new ArrayList<String>();
 		if (sbml!=null) {
-			for (int i = 0; i < sbml.getModel().getNumConstraints(); i++) {
+			for (int i = 0; i < sbml.getModel().getConstraintCount(); i++) {
 				Constraint constraint = sbml.getModel().getConstraint(i);
 				constraintSet.add(constraint.getMetaId());
 			}
@@ -3554,7 +3546,7 @@ public class BioModel {
 	public ArrayList<String> getEvents() {
 		ArrayList<String> eventSet = new ArrayList<String>();
 		if (sbml!=null) {
-			for (int i = 0; i < sbml.getModel().getNumEvents(); i++) {
+			for (int i = 0; i < sbml.getModel().getEventCount(); i++) {
 				Event event = sbml.getModel().getEvent(i);
 				if (SBMLutilities.isTransition(event)) continue;
 				eventSet.add(event.getId());
@@ -3566,7 +3558,7 @@ public class BioModel {
 	public ArrayList<String> getTransitions() {
 		ArrayList<String> eventSet = new ArrayList<String>();
 		if (sbml!=null) {
-			for (int i = 0; i < sbml.getModel().getNumEvents(); i++) {
+			for (int i = 0; i < sbml.getModel().getEventCount(); i++) {
 				Event event = sbml.getModel().getEvent(i);
 				if (!SBMLutilities.isTransition(event)) continue;
 				eventSet.add(event.getId());
@@ -3579,7 +3571,7 @@ public class BioModel {
 	public ArrayList<String> getReactions() {
 		ArrayList<String> reactionSet = new ArrayList<String>();
 		if (sbml!=null) {
-			for (int i = 0; i < sbml.getModel().getNumReactions(); i++) {
+			for (int i = 0; i < sbml.getModel().getReactionCount(); i++) {
 				Reaction r = sbml.getModel().getReaction(i);
 				if (isDegradationReaction(r)) continue;
 				if (isDiffusionReaction(r)) continue;
@@ -3646,7 +3638,7 @@ public class BioModel {
 	public ArrayList<String> getSpecies() {
 		ArrayList<String> speciesSet = new ArrayList<String>();
 		if (sbml!=null) {
-			for (int i = 0; i < sbml.getModel().getNumSpecies(); i++) {
+			for (int i = 0; i < sbml.getModel().getSpeciesCount(); i++) {
 				Species species = sbml.getModel().getSpecies(i);
 				if (!isPromoterSpecies(species) && !isMRNASpecies(species)) {
 					speciesSet.add(species.getId());
@@ -3658,7 +3650,7 @@ public class BioModel {
 
 	public ArrayList<String> getPromoters() {
 		ArrayList<String> promoterSet = new ArrayList<String>();
-		for (int i = 0; i < sbml.getModel().getNumSpecies(); i++) {
+		for (int i = 0; i < sbml.getModel().getSpeciesCount(); i++) {
 			Species species = sbml.getModel().getSpecies(i);
 			if (isPromoterSpecies(species)) {
 				promoterSet.add(species.getId());
@@ -3669,7 +3661,7 @@ public class BioModel {
 	
 	public ArrayList<String> getCompartmentPorts() {
 		ArrayList<String> compartments = new ArrayList<String>();
-		for (int i = 0; i < sbml.getModel().getNumCompartments(); i++) {
+		for (int i = 0; i < sbml.getModel().getCompartmentCount(); i++) {
 			Compartment compartment = sbml.getModel().getCompartment(i);
 			if (sbmlCompModel.getListOfPorts().get(GlobalConstants.COMPARTMENT+"__"+compartment.getId())!=null) {
 				compartments.add(compartment.getId());
@@ -3808,7 +3800,7 @@ public class BioModel {
 		ArrayList<String> genetic = new ArrayList<String>();
 		ArrayList<String> biochemical = new ArrayList<String>();
 		for (String spec : getSpecies()) {
-			for (int i=0; i<sbml.getModel().getNumReactions(); i++) {
+			for (int i=0; i<sbml.getModel().getReactionCount(); i++) {
 				Reaction r = sbml.getModel().getReaction(i);
 				if (r.getProductForSpecies(spec)!=null) {
 					genetic.add(spec);
@@ -3857,7 +3849,7 @@ public class BioModel {
 
 	public HashMap<String, String> getInputConnections(BioModel compBioModel,String compId) {
 		HashMap<String, String> inputs = new HashMap<String, String>();
-		for (int i = 0; i < sbml.getModel().getNumSpecies(); i++) {
+		for (int i = 0; i < sbml.getModel().getSpeciesCount(); i++) {
 			CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbml.getModel().getSpecies(i), true);
 			for (int j = 0; j < sbmlSBase.getListOfReplacedElements().size(); j++) {
 				ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(j);
@@ -3905,7 +3897,7 @@ public class BioModel {
 
 	public HashMap<String, String> getOutputConnections(BioModel compBioModel,String compId) {
 		HashMap<String, String> outputs = new HashMap<String, String>();
-		for (int i = 0; i < sbml.getModel().getNumSpecies(); i++) {
+		for (int i = 0; i < sbml.getModel().getSpeciesCount(); i++) {
 			CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbml.getModel().getSpecies(i), true);
 			for (int j = 0; j < sbmlSBase.getListOfReplacedElements().size(); j++) {
 				ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(j);
@@ -4446,7 +4438,7 @@ public class BioModel {
 	public String getComponentPortMap(String s) {
 		String portmap = "(";
 		boolean first = true;
-		for (int i = 0; i < sbml.getModel().getNumSpecies(); i++) {
+		for (int i = 0; i < sbml.getModel().getSpeciesCount(); i++) {
 			Species species = sbml.getModel().getSpecies(i);
 			CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, species, true);
 			for (int j = 0; j < sbmlSBase.getListOfReplacedElements().size(); j++) {
@@ -4768,7 +4760,7 @@ public class BioModel {
 		if (name.contains("+")) {
 			Reaction reaction = getComplexReaction(name.substring(name.indexOf(">")+1));
 			reaction.removeReactant(name.substring(0,name.indexOf("+")));
-			if (reaction.getNumReactants()==0) {
+			if (reaction.getReactantCount()==0) {
 				sbml.getModel().removeReaction(reaction.getId());
 			} else {
 				reaction.getKineticLaw().setMath(SBMLutilities.myParseFormula(createComplexKineticLaw(reaction)));
@@ -4795,7 +4787,7 @@ public class BioModel {
 						SBMLutilities.removeModifier(reaction, name.substring(0,name.indexOf("-")));
 					}
 				}
-				if (reaction.getNumModifiers()==1) {
+				if (reaction.getModifierCount()==1) {
 					sbml.getModel().removeSpecies(name.substring(name.indexOf(",")+1));
 					sbml.getModel().removeReaction(reaction.getId());
 				} else {
@@ -4838,7 +4830,7 @@ public class BioModel {
 				String promoterId = name.substring(0,name.indexOf("-"));
 				reaction = getProductionReaction(promoterId);
 				reaction.removeProduct(name.substring(name.indexOf(">")+1));
-				if (reaction.getNumProducts()==0) {
+				if (reaction.getProductCount()==0) {
 					Species mRNA = sbml.getModel().createSpecies();
 					mRNA.setId(promoterId+"_mRNA");
 					mRNA.setCompartment(reaction.getCompartment());
@@ -4909,7 +4901,7 @@ public class BioModel {
 		//check all species in the component for diffusibility
 		//if they're diffusible, they're candidates for being removed from the model
 		//also, if they're not diffusible and on the grid species list, they're candidates for removal
-		for (int speciesIndex = 0; speciesIndex < componentModel.getNumSpecies(); ++speciesIndex) {
+		for (int speciesIndex = 0; speciesIndex < componentModel.getSpeciesCount(); ++speciesIndex) {
 			
 			String speciesID = componentModel.getListOfSpecies().get(speciesIndex).getId();			
 			Reaction diffusionReaction = componentModel.getReaction("MembraneDiffusion_" + speciesID);
@@ -4953,7 +4945,7 @@ public class BioModel {
 			
 			//check all species in the component for diffusibility
 			//if they're diffusible and they're in the removal list, they shouldn't be removed as grid species
-			for (int speciesIndex = 0; speciesIndex < componentModel.getNumSpecies(); ++speciesIndex) {
+			for (int speciesIndex = 0; speciesIndex < componentModel.getSpeciesCount(); ++speciesIndex) {
 				
 				String speciesID = componentModel.getListOfSpecies().get(speciesIndex).getId();			
 				Reaction diffusionReaction = componentModel.getReaction("MembraneDiffusion_" + speciesID);
@@ -5010,7 +5002,7 @@ public class BioModel {
 		
 		//check all species in the component for diffusibility
 		//if they're diffusible, they're candidates for being added as a grid species
-		for (int speciesIndex = 0; speciesIndex < componentModel.getNumSpecies(); ++speciesIndex) {
+		for (int speciesIndex = 0; speciesIndex < componentModel.getSpeciesCount(); ++speciesIndex) {
 			
 			String speciesID = componentModel.getListOfSpecies().get(speciesIndex).getId();			
 			Reaction diffusionReaction = componentModel.getReaction("MembraneDiffusion_" + speciesID);
@@ -5324,7 +5316,7 @@ public class BioModel {
 	}
 	
 	public boolean checkCompartmentLocation(String id,double x, double y, double w, double h) {
-		for (int i = 0; i < sbml.getModel().getNumCompartments(); i++) {
+		for (int i = 0; i < sbml.getModel().getCompartmentCount(); i++) {
 			Compartment c = sbml.getModel().getCompartment(i);
 			if (c.getId().equals(id)) continue;
 			Layout layout = null;
@@ -5354,7 +5346,7 @@ public class BioModel {
 		Layout layout = null;
 		if (sbmlLayout.getListOfLayouts().get("iBioSim") != null) {
 			layout = sbmlLayout.getListOfLayouts().get("iBioSim"); 
-			for (int i = 0; i < sbml.getModel().getNumSpecies(); i++) {
+			for (int i = 0; i < sbml.getModel().getSpeciesCount(); i++) {
 				Species s = sbml.getModel().getSpecies(i);
 				SpeciesGlyph speciesGlyph = null;
 				if (layout.getSpeciesGlyph(GlobalConstants.GLYPH+"__"+s.getId())!=null) {
@@ -5363,7 +5355,7 @@ public class BioModel {
 							(float)speciesGlyph.getBoundingBox().getPosition().getY(),(float)speciesGlyph.getBoundingBox().getDimensions().getWidth(),
 							(float)speciesGlyph.getBoundingBox().getDimensions().getHeight());
 					if (compartment.equals("")) {
-						if (sbml.getModel().getNumCompartments()>1) {
+						if (sbml.getModel().getCompartmentCount()>1) {
 							return false;
 						} else {
 							CompartmentGlyph compartmentGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+s.getCompartment());
@@ -5394,7 +5386,7 @@ public class BioModel {
 					if (!checkOnly)	s.setCompartment(compartment);
 				}
 			}
-			for (int i = 0; i < sbml.getModel().getNumReactions(); i++) {
+			for (int i = 0; i < sbml.getModel().getReactionCount(); i++) {
 				Reaction r = sbml.getModel().getReaction(i);
 				ReactionGlyph reactionGlyph = null;
 				if (layout.getReactionGlyph(GlobalConstants.GLYPH+"__"+r.getId())!=null) {
@@ -5403,7 +5395,7 @@ public class BioModel {
 						(float)reactionGlyph.getBoundingBox().getPosition().getY(),(float)reactionGlyph.getBoundingBox().getDimensions().getWidth(),
 						(float)reactionGlyph.getBoundingBox().getDimensions().getHeight());
 					if (compartment.equals("")) {
-						if (sbml.getModel().getNumCompartments()>1) {
+						if (sbml.getModel().getCompartmentCount()>1) {
 							return false;
 						} else {
 							CompartmentGlyph compartmentGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+r.getCompartment());
@@ -5440,11 +5432,11 @@ public class BioModel {
 	
 	public String getCompartmentByLocation(float x, float y, float w, float h) {
 		String compartment = "";
-		if (sbml.getModel().getNumCompartments() > 0) {
+		if (sbml.getModel().getCompartmentCount() > 0) {
 			compartment = sbml.getModel().getCompartment(0).getId();
 		}
 		double distance = -1;
-		for (int i = 0; i < sbml.getModel().getNumCompartments(); i++) {
+		for (int i = 0; i < sbml.getModel().getCompartmentCount(); i++) {
 			Compartment c = sbml.getModel().getCompartment(i);
 			Layout layout = null;
 			if (sbmlLayout.getListOfLayouts().get("iBioSim") != null) {
@@ -5480,7 +5472,7 @@ public class BioModel {
 				return null;
 			}
 		} else {
-			if (sbml.getModel().getNumCompartments()==0) {
+			if (sbml.getModel().getCompartmentCount()==0) {
 				Utility.createErrorMessage("Compartment Required", "Species must be placed within a compartment.");
 				return null;
 			} else {
@@ -6015,7 +6007,7 @@ public class BioModel {
 
 	private void loadDefaultEnclosingCompartment() {
 		if (sbml != null) {
-			if (sbml.getModel().getNumCompartments()==0) {
+			if (sbml.getModel().getCompartmentCount()==0) {
 				/*
 				Compartment c = sbml.getModel().createCompartment();
 				c.setId("Cell");
@@ -6025,7 +6017,7 @@ public class BioModel {
 				*/
 				return;
 			}
-			for (int i = 0; i < sbml.getModel().getNumCompartments(); i++) {
+			for (int i = 0; i < sbml.getModel().getCompartmentCount(); i++) {
 				Compartment compartment = sbml.getModel().getCompartment(i);
 				if (AnnotationUtility.checkObsoleteAnnotation(compartment,"EnclosingCompartment")) {
 					AnnotationUtility.removeObsoleteAnnotation(compartment);
@@ -6647,7 +6639,7 @@ public class BioModel {
 					doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_SBO_CONSISTENCY, false);
 					doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_MODELING_PRACTICE, false);
 					doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
-					int numErrors = document.checkConsistency();
+					long numErrors = doc.checkConsistency();
 					if (numErrors > 0) {
 						//Utility.createErrorMessage("Merged SBMLs Are Inconsistent", "The merged sbml files have inconsistencies.");
 						String message = "";
@@ -7093,7 +7085,7 @@ public class BioModel {
 //		}
 //		SpeciesType not supported in Level 3
 		// Rename species types
-//		for (int i = 0; i < subModel.getNumSpeciesTypes(); i++) {
+//		for (int i = 0; i < subModel.getSpeciesTypeCount(); i++) {
 //			SpeciesType s = subModel.getSpeciesType(i);
 //			String newName = subModelId + "__" + s.getId();
 //			updateVarId(false, s.getId(), newName, subBioModel);
@@ -7106,10 +7098,10 @@ public class BioModel {
 //			}
 //		}
 		// Rename compartments
-		for (int i = 0; i < subModel.getNumCompartments(); i++) {
+		for (int i = 0; i < subModel.getCompartmentCount(); i++) {
 			Compartment c = subModel.getCompartment(i);
 			String newName = subModelId + "__" + c.getId();
-			for (int j = 0; j < model.getNumCompartments(); j++) {
+			for (int j = 0; j < model.getCompartmentCount(); j++) {
 				CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, model.getCompartment(j), true);
 				newName = prepareReplacement(newName,subBioModel,subModelId,replacementModelId,sbmlSBase,c.getId(),
 						model.getCompartment(j).getId());
@@ -7119,7 +7111,7 @@ public class BioModel {
 			c.setId(newName);
 			if (c.isSetMetaId()) SBMLutilities.setMetaId(c, subModelId + "__" + c.getMetaId());
 		}
-		for (int i = 0; i < subModel.getNumCompartments(); i++) {
+		for (int i = 0; i < subModel.getCompartmentCount(); i++) {
 			Compartment c = subModel.getCompartment(i).clone();
 			if (c.getId().startsWith("_" + subModelId + "__")) {
 				updateVarId(false, c.getId(), c.getId().substring(3 + subModelId.length()), subBioModel);
@@ -7155,10 +7147,10 @@ public class BioModel {
 			}
 		}
 		// Rename species 
-		for (int i = 0; i < subModel.getNumSpecies(); i++) {
+		for (int i = 0; i < subModel.getSpeciesCount(); i++) {
 			Species spec = subModel.getSpecies(i);
 			String newName = subModelId + "__" + spec.getId();
-			for (int j = 0; j < model.getNumSpecies(); j++) {
+			for (int j = 0; j < model.getSpeciesCount(); j++) {
 				CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, model.getSpecies(j), true);
 				newName = prepareReplacement(newName,subBioModel,subModelId,replacementModelId,sbmlSBase,spec.getId(),
 						model.getSpecies(j).getId());
@@ -7174,7 +7166,7 @@ public class BioModel {
 			spec.setId(newName);
 			if (spec.isSetMetaId()) SBMLutilities.setMetaId(spec, subModelId + "__" + spec.getMetaId());
 		}
-		for (int i = 0; i < subModel.getNumSpecies(); i++) {
+		for (int i = 0; i < subModel.getSpeciesCount(); i++) {
 			Species spec = subModel.getSpecies(i).clone();
 			if (spec.getId().startsWith("_" + subModelId + "__")) {
 				/*
@@ -7258,11 +7250,11 @@ public class BioModel {
 			}
 		}
 
-		for (int i = 0; i < subModel.getNumReactions(); i++) {
+		for (int i = 0; i < subModel.getReactionCount(); i++) {
 			Reaction r = subModel.getReaction(i);
 			if (r.getId().contains("MembraneDiffusion")) continue;
 			String newName = subModelId + "__" + r.getId();
-			for (int j = 0; j < model.getNumReactions(); j++) {
+			for (int j = 0; j < model.getReactionCount(); j++) {
 				CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, model.getReaction(j), true);
 				newName = prepareReplacement(newName,subBioModel,subModelId,replacementModelId,sbmlSBase,r.getId(),
 						model.getReaction(j).getId());
@@ -7270,12 +7262,12 @@ public class BioModel {
 			updateVarId(false, r.getId(), newName, subBioModel);
 			r.setId(newName);
 			if (r.isSetMetaId()) SBMLutilities.setMetaId(r, subModelId + "__" + r.getMetaId());
-			for (int j = 0; j < r.getKineticLaw().getNumLocalParameters(); j++) {
+			for (int j = 0; j < r.getKineticLaw().getLocalParameterCount(); j++) {
 				LocalParameter l = r.getKineticLaw().getLocalParameter(j);
 				if (l.isSetMetaId()) SBMLutilities.setMetaId(l, subModelId + "__" + l.getMetaId());
 			}
 		}
-		for (int i = 0; i < subModel.getNumReactions(); i++) {
+		for (int i = 0; i < subModel.getReactionCount(); i++) {
 			Reaction r = subModel.getReaction(i).clone();
 			if (r.getId().startsWith("_" + subModelId + "__")) {
 				updateVarId(false, r.getId(), r.getId().substring(3 + subModelId.length()), subBioModel);
@@ -7303,25 +7295,25 @@ public class BioModel {
 				}
 			}
 		}
-		for (int i = 0; i < subModel.getNumInitialAssignments(); i++) {
+		for (int i = 0; i < subModel.getInitialAssignmentCount(); i++) {
 			InitialAssignment init = (InitialAssignment) subModel.getListOfInitialAssignments().get(i).clone();
 			if (init.isSetMetaId()) {
 				SBMLutilities.setMetaId(init, subModelId + "__" + init.getMetaId());
 			}
 			model.addInitialAssignment(init);
 		}
-		for (int i = 0; i < subModel.getNumRules(); i++) {
+		for (int i = 0; i < subModel.getRuleCount(); i++) {
 			org.sbml.jsbml.Rule r = subModel.getRule(i).clone();
 			if (r.isSetMetaId()) {
 				SBMLutilities.setMetaId(r, subModelId + "__" + r.getMetaId());
 			}
 			model.addRule(r);
 		}
-		for (int i = 0; i < subModel.getNumConstraints(); i++) {
+		for (int i = 0; i < subModel.getConstraintCount(); i++) {
 			Constraint constraint = (Constraint) subModel.getListOfConstraints().get(i).clone();
 			String newName = subModelId + "__" + constraint.getMetaId();
 			SBMLutilities.setMetaId(constraint, newName);
-			for (int j = 0; j < model.getNumConstraints(); j++) {
+			for (int j = 0; j < model.getConstraintCount(); j++) {
 				if (model.getConstraint(j).getMetaId().equals(constraint.getMetaId())) {
 					Constraint c = model.getConstraint(j);
 					if (!c.getMessageString().equals(constraint.getMessageString())) {
@@ -7335,7 +7327,7 @@ public class BioModel {
 			model.addConstraint(constraint);
 		}
 		
-		for (int i = 0; i < subModel.getNumEvents(); i++) {
+		for (int i = 0; i < subModel.getEventCount(); i++) {
 			org.sbml.jsbml.Event event = (org.sbml.jsbml.Event) subModel.getListOfEvents().get(i).clone();
 			
 			/*
@@ -7352,7 +7344,7 @@ public class BioModel {
 			if (event.isSetMetaId()) {
 				SBMLutilities.setMetaId(event, subModelId + "__" + event.getMetaId());
 			}
-			for (int j = 0; j < model.getNumEvents(); j++) {
+			for (int j = 0; j < model.getEventCount(); j++) {
 				if (model.getEvent(j).getId().equals(event.getId())) {
 					org.sbml.jsbml.Event e = model.getEvent(j);
 					if (!e.getName().equals(event.getName())) {
@@ -7370,10 +7362,10 @@ public class BioModel {
 					if (!e.getTrigger().equals(event.getTrigger())) {
 						return null;
 					}
-					for (int k = 0; k < e.getNumEventAssignments(); k++) {
+					for (int k = 0; k < e.getEventAssignmentCount(); k++) {
 						EventAssignment a = e.getListOfEventAssignments().get(k);
 						boolean found = false;
-						for (int l = 0; l < event.getNumEventAssignments(); l++) {
+						for (int l = 0; l < event.getEventAssignmentCount(); l++) {
 							EventAssignment assign = event.getListOfEventAssignments().get(l);
 							if (a.getVariable().equals(assign.getVariable())) {
 								found = true;
@@ -7415,10 +7407,10 @@ public class BioModel {
 		}
 		
 
-		for (int i = 0; i < subModel.getNumFunctionDefinitions(); i++) {
+		for (int i = 0; i < subModel.getFunctionDefinitionCount(); i++) {
 			FunctionDefinition f = subModel.getFunctionDefinition(i).clone();
 			boolean add = true;
-			for (int j = 0; j < model.getNumFunctionDefinitions(); j++) {
+			for (int j = 0; j < model.getFunctionDefinitionCount(); j++) {
 				if (model.getFunctionDefinition(j).getId().equals(f.getId())) {
 					add = false;
 				}
@@ -7500,7 +7492,7 @@ public class BioModel {
 				port.setIdRef(newId);
 			}
 		}
-		for (int i = 0; i < model.getNumSpecies(); i++) {
+		for (int i = 0; i < model.getSpeciesCount(); i++) {
 			Species species = model.getSpecies(i);
 			if (species.getCompartment().equals(origId)) {
 				species.setCompartment(newId);
@@ -7511,18 +7503,18 @@ public class BioModel {
 //			}
 		}
 //		CompartmentType not supported in Level 3
-//		for (int i = 0; i < model.getNumCompartments(); i++) {
+//		for (int i = 0; i < model.getCompartmentCount(); i++) {
 //			Compartment compartment = (Compartment) model.getListOfCompartments().get(i);
 //			if (compartment.getCompartmentType().equals(origId)) {
 //				compartment.setCompartmentType(newId);
 //			}
 //		}
-		for (int i = 0; i < model.getNumReactions(); i++) {
+		for (int i = 0; i < model.getReactionCount(); i++) {
 			Reaction reaction = (Reaction) model.getListOfReactions().get(i);
 			if (!reaction.isSetCompartment() || reaction.getCompartment().equals(origId)) {
 				reaction.setCompartment(newId);
 			}
-			for (int j = 0; j < reaction.getNumProducts(); j++) {
+			for (int j = 0; j < reaction.getProductCount(); j++) {
 				if (reaction.getProduct(j).isSetSpecies()) {
 					SpeciesReference specRef = reaction.getProduct(j);
 					if (isSpecies && origId.equals(specRef.getSpecies())) {
@@ -7536,7 +7528,7 @@ public class BioModel {
 				}
 			}
 			if (isSpecies) {
-				for (int j = 0; j < reaction.getNumModifiers(); j++) {
+				for (int j = 0; j < reaction.getModifierCount(); j++) {
 					if (reaction.getModifier(j).isSetSpecies()) {
 						ModifierSpeciesReference specRef = reaction.getModifier(j);
 						if (origId.equals(specRef.getSpecies())) {
@@ -7545,7 +7537,7 @@ public class BioModel {
 					}
 				}
 			}
-			for (int j = 0; j < reaction.getNumReactants(); j++) {
+			for (int j = 0; j < reaction.getReactantCount(); j++) {
 				if (reaction.getReactant(j).isSetSpecies()) {
 					SpeciesReference specRef = reaction.getReactant(j);
 					if (isSpecies && origId.equals(specRef.getSpecies())) {
@@ -7563,8 +7555,8 @@ public class BioModel {
 						updateMathVar(reaction.getKineticLaw().getMath(), origId, newId));
 			}
 		}
-		if (model.getNumInitialAssignments() > 0) {
-			for (int i = 0; i < model.getNumInitialAssignments(); i++) {
+		if (model.getInitialAssignmentCount() > 0) {
+			for (int i = 0; i < model.getInitialAssignmentCount(); i++) {
 				InitialAssignment init = (InitialAssignment) model.getListOfInitialAssignments()
 						.get(i);
 				if (origId.equals(init.getSymbol())) {
@@ -7573,8 +7565,8 @@ public class BioModel {
 				init.setMath(updateMathVar(init.getMath(), origId, newId));
 			}
 		}
-		if (model.getNumRules() > 0) {
-			for (int i = 0; i < model.getNumRules(); i++) {
+		if (model.getRuleCount() > 0) {
+			for (int i = 0; i < model.getRuleCount(); i++) {
 				Rule rule = (Rule) model.getListOfRules().get(i);
 				if (SBMLutilities.isSetVariable(rule) && origId.equals(SBMLutilities.getVariable(rule))) {
 					SBMLutilities.setVariable(rule, newId);
@@ -7582,14 +7574,14 @@ public class BioModel {
 				rule.setMath(updateMathVar(rule.getMath(), origId, newId));
 			}
 		}
-		if (model.getNumConstraints() > 0) {
-			for (int i = 0; i < model.getNumConstraints(); i++) {
+		if (model.getConstraintCount() > 0) {
+			for (int i = 0; i < model.getConstraintCount(); i++) {
 				Constraint constraint = (Constraint) model.getListOfConstraints().get(i);
 				constraint.setMath(updateMathVar(constraint.getMath(), origId, newId));
 			}
 		}
-		if (model.getNumEvents() > 0) {
-			for (int i = 0; i < model.getNumEvents(); i++) {
+		if (model.getEventCount() > 0) {
+			for (int i = 0; i < model.getEventCount(); i++) {
 				org.sbml.jsbml.Event event = (org.sbml.jsbml.Event) model.getListOfEvents()
 						.get(i);
 				if (event.isSetTrigger()) {
@@ -7600,7 +7592,7 @@ public class BioModel {
 					event.getDelay().setMath(
 							updateMathVar(event.getDelay().getMath(), origId, newId));
 				}
-				for (int j = 0; j < event.getNumEventAssignments(); j++) {
+				for (int j = 0; j < event.getEventAssignmentCount(); j++) {
 					EventAssignment ea = (EventAssignment) event.getListOfEventAssignments().get(j);
 					if (ea.getVariable().equals(origId)) {
 						ea.setVariable(newId);

@@ -90,12 +90,12 @@ public class GCMParser {
 
 		// Need to first parse all species that aren't promoters before parsing promoters
 		// since latter process refers to the species list
-		for (int i=0; i<sbml.getModel().getNumSpecies(); i++) {
+		for (int i=0; i<sbml.getModel().getSpeciesCount(); i++) {
 			Species species = sbml.getModel().getSpecies(i);
 			if (!BioModel.isPromoterSpecies(species)) 
 				parseSpeciesData(sbml,species);
 		}
-		for (int i=0; i<sbml.getModel().getNumSpecies(); i++) {
+		for (int i=0; i<sbml.getModel().getSpeciesCount(); i++) {
 			Species species = sbml.getModel().getSpecies(i);
 			if (BioModel.isPromoterSpecies(species))
 				parsePromoterData(sbml,species);
@@ -192,15 +192,15 @@ public class GCMParser {
 			} else {
 				p.setKArnap(Double.parseDouble(biosimrc.get("biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE", "")),1.0);
 			}
-			for (int j = 0; j < production.getNumProducts(); j++) {
+			for (int j = 0; j < production.getProductCount(); j++) {
 				SpeciesReference product = production.getProduct(j);
 				if (!BioModel.isMRNASpecies(sbml.getModel().getSpecies(product.getSpecies())))
 					p.addOutput(product.getSpecies(),speciesList.get(product.getSpecies()));
 			}
-			for (int i = 0; i < production.getNumModifiers(); i++) {
+			for (int i = 0; i < production.getModifierCount(); i++) {
 				ModifierSpeciesReference modifier = production.getModifier(i);
 				if (BioModel.isRepressor(modifier) || BioModel.isRegulator(modifier)) {
-					for (int j = 0; j < production.getNumProducts(); j++) {
+					for (int j = 0; j < production.getProductCount(); j++) {
 						SpeciesReference product = production.getProduct(j);
 						Influence infl = new Influence();		
 						infl.generateName();
@@ -236,7 +236,7 @@ public class GCMParser {
 					}
 				} 
 				if (BioModel.isActivator(modifier) || BioModel.isRegulator(modifier)) {
-					for (int j = 0; j < production.getNumProducts(); j++) {
+					for (int j = 0; j < production.getProductCount(); j++) {
 						SpeciesReference product = production.getProduct(j);
 						Influence infl = new Influence();		
 						infl.generateName();
@@ -431,7 +431,7 @@ public class GCMParser {
 		speciesIF.setStateName(species.getId());
 		
 		if (complex != null) {
-			for (int i = 0; i < complex.getNumReactants(); i++) {
+			for (int i = 0; i < complex.getReactantCount(); i++) {
 				Influence infl = new Influence();		
 				infl.generateName();		
 				infl.setType("plus");

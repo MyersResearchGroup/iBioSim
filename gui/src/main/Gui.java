@@ -5589,7 +5589,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			int x = 50;
 			int y = 50;
 			if (m != null) {
-				for (int i = 0; i < m.getNumSpecies(); i++) {
+				for (int i = 0; i < m.getSpeciesCount(); i++) {
 					gcmFile.createSpecies(document.getModel().getSpecies(i).getId(), x, y);
 					x += 50;
 					y += 50;

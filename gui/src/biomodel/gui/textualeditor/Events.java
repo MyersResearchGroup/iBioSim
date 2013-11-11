@@ -78,8 +78,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		events = new JList();
 		eventAssign = new JList();
 		ListOf listOfEvents = model.getListOfEvents();
-		String[] ev = new String[(int) model.getNumEvents()];
-		for (int i = 0; i < model.getNumEvents(); i++) {
+		String[] ev = new String[(int) model.getEventCount()];
+		for (int i = 0; i < model.getEventCount(); i++) {
 			org.sbml.jsbml.Event event = (org.sbml.jsbml.Event) listOfEvents.get(i);
 			if (!event.isSetId()) {
 				String eventId = "event0";
@@ -200,7 +200,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		String selectedID = "";
 		if (option.equals("OK")) {
 			ListOf e = bioModel.getSBMLDocument().getModel().getListOfEvents();
-			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumEvents(); i++) {
+			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getEventCount(); i++) {
 				org.sbml.jsbml.Event event = (org.sbml.jsbml.Event) e.get(i);
 				if (event.getId().equals(selected)) {
 					isTransition = SBMLutilities.isTransition(event);
@@ -298,7 +298,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					}
 					int numPlaces=0;
 					int numFail=0;
-					for (int j = 0; j < event.getNumEventAssignments(); j++) {
+					for (int j = 0; j < event.getEventAssignmentCount(); j++) {
 						EventAssignment ea = event.getListOfEventAssignments().get(j);
 						Parameter parameter = bioModel.getSBMLDocument().getModel().getParameter(ea.getVariable());
 						if (parameter!=null && SBMLutilities.isPlace(parameter)) {
@@ -308,19 +308,19 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						}
 					}
 					if (isTextual) {
-						assign = new String[(int) event.getNumEventAssignments()-(numFail)];
+						assign = new String[(int) event.getEventAssignmentCount()-(numFail)];
 					} else {
-						assign = new String[(int) event.getNumEventAssignments()-(numPlaces+numFail)];
+						assign = new String[(int) event.getEventAssignmentCount()-(numPlaces+numFail)];
 					}
 					if (isTextual) {
 						placeAssign = new String[0];
 					} else {
 						placeAssign = new String[numPlaces];
 					}
-					origAssign = new String[(int) event.getNumEventAssignments()];
+					origAssign = new String[(int) event.getEventAssignmentCount()];
 					int k=0;
 					int l=0;
-					for (int j = 0; j < event.getNumEventAssignments(); j++) {
+					for (int j = 0; j < event.getEventAssignmentCount(); j++) {
 						Parameter parameter = 
 								bioModel.getSBMLDocument().getModel().getParameter(event.getListOfEventAssignments().get(j).getVariable());
 						EventAssignment ea = event.getListOfEventAssignments().get(j);
@@ -549,7 +549,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					events.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					org.sbml.jsbml.Event e = (org.sbml.jsbml.Event) (bioModel.getSBMLDocument().getModel().getListOfEvents()).get(Eindex);
 					e.setUseValuesFromTriggerTime(assignTime.isSelected());
-					while (e.getNumEventAssignments() > 0) {
+					while (e.getEventAssignmentCount() > 0) {
 						e.getListOfEventAssignments().remove(0);
 					}
 					for (int i = 0; i < assign.length; i++) {
@@ -760,7 +760,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						}
 					}
 					else {
-						while (e.getNumEventAssignments() > 0) {
+						while (e.getEventAssignmentCount() > 0) {
 							e.getListOfEventAssignments().remove(0);
 						}
 						for (int i = 0; i < origAssign.length; i++) {
@@ -933,7 +933,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					int index = events.getSelectedIndex();
 					events.setListData(ev);
 					events.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					if (bioModel.getSBMLDocument().getModel().getNumEvents() == 1) {
+					if (bioModel.getSBMLDocument().getModel().getEventCount() == 1) {
 						events.setSelectedIndex(0);
 					}
 					else {
@@ -1012,8 +1012,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	public void refreshEventsPanel() {
 		Model model = bioModel.getSBMLDocument().getModel();
 		ListOf listOfEvents = model.getListOfEvents();
-		String[] ev = new String[(int) model.getNumEvents()];
-		for (int i = 0; i < model.getNumEvents(); i++) {
+		String[] ev = new String[(int) model.getEventCount()];
+		for (int i = 0; i < model.getEventCount(); i++) {
 			org.sbml.jsbml.Event event = (org.sbml.jsbml.Event) listOfEvents.get(i);
 			if (!event.isSetId()) {
 				String eventId = "event0";
@@ -1072,7 +1072,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	 */
 	public void removeTheEvent(BioModel gcm, String selected) {
 		ListOf EL = gcm.getSBMLDocument().getModel().getListOfEvents();
-		for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumEvents(); i++) {
+		for (int i = 0; i < gcm.getSBMLDocument().getModel().getEventCount(); i++) {
 			org.sbml.jsbml.Event E = (org.sbml.jsbml.Event) EL.get(i);
 			if (E.getId().equals(selected)) {
 				EL.remove(i);
@@ -1123,7 +1123,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		}
 		Model model = gcm.getSBMLDocument().getModel();
 		ListOf ids = model.getListOfCompartments();
-		for (int i = 0; i < model.getNumCompartments(); i++) {
+		for (int i = 0; i < model.getCompartmentCount(); i++) {
 			String id = ((Compartment) ids.get(i)).getId();
 			if (!((Compartment) ids.get(i)).getConstant()) {
 				if (keepVarEvent(gcm, assign, selected, id)) {
@@ -1147,7 +1147,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			}
 		}
 		ids = model.getListOfSpecies();
-		for (int i = 0; i < model.getNumSpecies(); i++) {
+		for (int i = 0; i < model.getSpeciesCount(); i++) {
 			String id = ((Species) ids.get(i)).getId();
 			if (!((Species) ids.get(i)).getConstant()) {
 				if (keepVarEvent(gcm, assign, selected, id)) {
@@ -1156,10 +1156,10 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			}
 		}
 		ids = model.getListOfReactions();
-		for (int i = 0; i < model.getNumReactions(); i++) {
+		for (int i = 0; i < model.getReactionCount(); i++) {
 			Reaction reaction = (Reaction) ids.get(i);
 			ListOf ids2 = reaction.getListOfReactants();
-			for (int j = 0; j < reaction.getNumReactants(); j++) {
+			for (int j = 0; j < reaction.getReactantCount(); j++) {
 				SpeciesReference reactant = (SpeciesReference) ids2.get(j);
 				if ((reactant.isSetId()) && (!reactant.getId().equals("")) && !(reactant.getConstant())) {
 					String id = reactant.getId();
@@ -1169,7 +1169,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 			ids2 = reaction.getListOfProducts();
-			for (int j = 0; j < reaction.getNumProducts(); j++) {
+			for (int j = 0; j < reaction.getProductCount(); j++) {
 				SpeciesReference product = (SpeciesReference) ids2.get(j);
 				if ((product.isSetId()) && (!product.getId().equals("")) && !(product.getConstant())) {
 					String id = product.getId();
@@ -1309,7 +1309,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 			ListOf<Rule> r = gcm.getSBMLDocument().getModel().getListOfRules();
-			for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumRules(); i++) {
+			for (int i = 0; i < gcm.getSBMLDocument().getModel().getRuleCount(); i++) {
 				Rule rule = (Rule) r.get(i);
 				if (rule.isAssignment() && SBMLutilities.getVariable(rule).equals(id))
 					return false;

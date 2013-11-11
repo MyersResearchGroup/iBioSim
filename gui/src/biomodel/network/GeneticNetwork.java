@@ -130,7 +130,7 @@ public class GeneticNetwork {
 		this.partsMap = partsMap;
 		this.properties = gcm;
 		this.compartments = new HashMap<String,Properties>(); 
-		for (int i=0; i < gcm.getSBMLDocument().getModel().getNumCompartments(); i++) {
+		for (int i=0; i < gcm.getSBMLDocument().getModel().getCompartmentCount(); i++) {
 			compartments.put(gcm.getSBMLDocument().getModel().getCompartment(i).getId(), null);
 		}
 		
@@ -458,7 +458,7 @@ public class GeneticNetwork {
 		ArrayList<Reaction> membraneDiffusionReactions = new ArrayList<Reaction>();
 		
 		//find all individual membrane diffusion reactions
-		for (int i = 0; i < document.getModel().getNumReactions(); ++i) {
+		for (int i = 0; i < document.getModel().getReactionCount(); ++i) {
 			
 			if (document.getModel().getReaction(i).getId().contains("MembraneDiffusion"))
 				membraneDiffusionReactions.add(document.getModel().getReaction(i));
@@ -541,7 +541,7 @@ public class GeneticNetwork {
 			//so we need to see if the appropriate product is available
 			//if it isn't, the reaction needs to be deleted as it shouldn't exist
 			//unless the species exists on both sides of the membrane
-			if (membraneDiffusionReaction.getNumProducts() == 0) {
+			if (membraneDiffusionReaction.getProductCount() == 0) {
 				
 				//take off the immediate compartment ID
 				String[] splitReactantID = membraneDiffusionReaction.getReactant(0).getSpecies().split("__");
@@ -578,7 +578,7 @@ public class GeneticNetwork {
 		}
 		//find all individual dynamic events (within submodels)
 		Model submodel = document.getModel();
-		for (int i = 0; i < submodel.getNumEvents(); ++i) {
+		for (int i = 0; i < submodel.getEventCount(); ++i) {
 
 			Event event = submodel.getEvent(i);
 
@@ -595,7 +595,7 @@ public class GeneticNetwork {
 		}
 
 		//replace all Type=Grid occurrences with more complete information
-		for (int i = 0; i < document.getModel().getNumSpecies(); ++i) {
+		for (int i = 0; i < document.getModel().getSpeciesCount(); ++i) {
 			Species species = document.getModel().getSpecies(i);
 			if (AnnotationUtility.parseGridAnnotation(species) != null) {
 				AnnotationUtility.removeGridAnnotation(species);
@@ -644,7 +644,7 @@ public class GeneticNetwork {
 			
 			//update the kmdiff values for membrane diffusion reactions
 			//takes rates from the internal model
-			for (int j = 0; j < compModel.getNumReactions(); ++j) {
+			for (int j = 0; j < compModel.getReactionCount(); ++j) {
 				
 				if (compModel.getReaction(j).getId().contains("MembraneDiffusion")) {
 					
@@ -862,7 +862,7 @@ public class GeneticNetwork {
 		Utility.addSpecies(document, s);
 		//Adds RNA polymerase for compartments other than default
 		this.compartments = new HashMap<String,Properties>(); 
-		for (int i=0; i < document.getModel().getNumCompartments(); i++) {
+		for (int i=0; i < document.getModel().getCompartmentCount(); i++) {
 			compartments.put(document.getModel().getCompartment(i).getId(), null);
 		}
 		for (String compartment : compartments.keySet()) {

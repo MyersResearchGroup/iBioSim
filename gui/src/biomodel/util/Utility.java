@@ -343,7 +343,7 @@ public class Utility {
 		}
 		else {
 			ListOf rr = document.getModel().getListOfReactions();
-			for (int i = 0; i < document.getModel().getNumReactions(); i++) {
+			for (int i = 0; i < document.getModel().getReactionCount(); i++) {
 				if (((Reaction) rr.get(i)).getId().equals(r.getId())) {
 					rr.remove(i);
 				}
@@ -388,7 +388,7 @@ public class Utility {
 		}
 		else {
 			ListOf c = document.getModel().getListOfCompartments();
-			for (int i = 0; i < document.getModel().getNumCompartments(); i++) {
+			for (int i = 0; i < document.getModel().getCompartmentCount(); i++) {
 				if (((Compartment) c.get(i)).getId().equals(compartment)) {
 					c.remove(i);
 				}

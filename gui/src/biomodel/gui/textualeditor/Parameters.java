@@ -773,21 +773,21 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 								}
 							}
 							if (paramet.getId().equals(GlobalConstants.STOICHIOMETRY_STRING)) {
-								for (int i=0; i<model.getNumReactions(); i++) {
+								for (int i=0; i<model.getReactionCount(); i++) {
 									Reaction r = model.getReaction(i);
 									if (BioModel.isProductionReaction(r)) {
 										if (r.getKineticLaw().getLocalParameter(GlobalConstants.STOICHIOMETRY_STRING)==null) {
-											for (int j=0; j<r.getNumProducts(); j++) {
+											for (int j=0; j<r.getProductCount(); j++) {
 												r.getProduct(j).setStoichiometry(paramet.getValue());
 											}
 										}
 									}
 								}
 							} else if (paramet.getId().equals(GlobalConstants.COOPERATIVITY_STRING)) {
-								for (int i=0; i<model.getNumReactions(); i++) {
+								for (int i=0; i<model.getReactionCount(); i++) {
 									Reaction r = model.getReaction(i);
 									if (BioModel.isComplexReaction(r)) {
-										for (int j=0; j<r.getNumReactants(); j++) {
+										for (int j=0; j<r.getReactantCount(); j++) {
 											SpeciesReference reactant = r.getReactant(j);
 											if (r.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + reactant.getSpecies())==null) {
 												reactant.setStoichiometry(paramet.getValue());
@@ -867,7 +867,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	 * Parameter that is used in a conversion factor must be constant.
 	 */
 	private boolean checkNotConstant(String val) {
-		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumSpecies(); i++) {
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getSpeciesCount(); i++) {
 			Species species = bioModel.getSBMLDocument().getModel().getSpecies(i);
 			if (species.isSetConversionFactor() && species.getConversionFactor().equals(val)) {
 				JOptionPane.showMessageDialog(Gui.frame,

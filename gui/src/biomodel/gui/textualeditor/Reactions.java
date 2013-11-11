@@ -234,8 +234,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		JScrollPane scroll2 = new JScrollPane();
 		scroll2.setViewportView(reactions);
 		ListOf listOfReactions = model.getListOfReactions();
-		reacts = new String[(int) model.getNumReactions()];
-		for (int i = 0; i < model.getNumReactions(); i++) {
+		reacts = new String[(int) model.getReactionCount()];
+		for (int i = 0; i < model.getReactionCount(); i++) {
 			Reaction reaction = (Reaction) listOfReactions.get(i);
 			reacts[i] = reaction.getId();
 			if (paramsOnly && reaction.getKineticLaw()!=null) {
@@ -294,8 +294,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		onPort = new JCheckBox();
 		JLabel reactionCompLabel = new JLabel("Compartment:");
 		ListOf listOfCompartments = gcm.getSBMLDocument().getModel().getListOfCompartments();
-		String[] addC = new String[(int) gcm.getSBMLDocument().getModel().getNumCompartments()];
-		for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumCompartments(); i++) {
+		String[] addC = new String[(int) gcm.getSBMLDocument().getModel().getCompartmentCount()];
+		for (int i = 0; i < gcm.getSBMLDocument().getModel().getCompartmentCount(); i++) {
 			addC[i] = ((Compartment) listOfCompartments.get(i)).getId();
 		}
 		reactionComp = new JComboBox(addC);
@@ -423,8 +423,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		if (option.equals("OK")) {
 			Reaction reac = gcm.getSBMLDocument().getModel().getReaction(reactionId);
 			ListOf listOfReactants = reac.getListOfReactants();
-			reacta = new String[(int) reac.getNumReactants()];
-			for (int i = 0; i < reac.getNumReactants(); i++) {
+			reacta = new String[(int) reac.getReactantCount()];
+			for (int i = 0; i < reac.getReactantCount(); i++) {
 				SpeciesReference reactant = (SpeciesReference) listOfReactants.get(i);
 				changedReactants.add(reactant);
 				if (reactant.isSetStoichiometryMath()) {
@@ -466,8 +466,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		if (option.equals("OK")) {
 			Reaction reac = gcm.getSBMLDocument().getModel().getReaction(reactionId);
 			ListOf listOfProducts = reac.getListOfProducts();
-			proda = new String[(int) reac.getNumProducts()];
-			for (int i = 0; i < reac.getNumProducts(); i++) {
+			proda = new String[(int) reac.getProductCount()];
+			for (int i = 0; i < reac.getProductCount(); i++) {
 				SpeciesReference product = (SpeciesReference) listOfProducts.get(i);
 				changedProducts.add(product);
 				if (product.isSetStoichiometryMath()) {
@@ -509,8 +509,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		if (option.equals("OK")) {
 			Reaction reac = gcm.getSBMLDocument().getModel().getReaction(reactionId);
 			ListOf listOfModifiers = reac.getListOfModifiers();
-			modifier = new String[(int) reac.getNumModifiers()];
-			for (int i = 0; i < reac.getNumModifiers(); i++) {
+			modifier = new String[(int) reac.getModifierCount()];
+			for (int i = 0; i < reac.getModifierCount(); i++) {
 				ModifierSpeciesReference modifier = (ModifierSpeciesReference) listOfModifiers.get(i);
 				changedModifiers.add(modifier);
 				this.modifier[i] = modifier.getSpecies();
@@ -831,7 +831,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						react.getKineticLaw().addParameter(changedParameters.get(i));
 					}
 					remove = react.getListOfProducts();
-					size = react.getNumProducts();
+					size = react.getProductCount();
 					for (int i = 0; i < size; i++) {
 						remove.remove(0);
 					}
@@ -839,7 +839,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						react.addProduct(changedProducts.get(i));
 					}
 					remove = react.getListOfModifiers();
-					size = react.getNumModifiers();
+					size = react.getModifierCount();
 					for (int i = 0; i < size; i++) {
 						remove.remove(0);
 					}
@@ -847,7 +847,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						react.addModifier(changedModifiers.get(i));
 					}
 					remove = react.getListOfReactants();
-					size = react.getNumReactants();
+					size = react.getReactantCount();
 					for (int i = 0; i < size; i++) {
 						remove.remove(0);
 					}
@@ -923,19 +923,19 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						}
 						changedProducts = new ArrayList<SpeciesReference>();
 						ListOf listOfProducts = react.getListOfProducts();
-						for (int i = 0; i < react.getNumProducts(); i++) {
+						for (int i = 0; i < react.getProductCount(); i++) {
 							SpeciesReference product = (SpeciesReference) listOfProducts.get(i);
 							changedProducts.add(product);
 						}
 						changedReactants = new ArrayList<SpeciesReference>();
 						ListOf listOfReactants = react.getListOfReactants();
-						for (int i = 0; i < react.getNumReactants(); i++) {
+						for (int i = 0; i < react.getReactantCount(); i++) {
 							SpeciesReference reactant = (SpeciesReference) listOfReactants.get(i);
 							changedReactants.add(reactant);
 						}
 						changedModifiers = new ArrayList<ModifierSpeciesReference>();
 						ListOf listOfModifiers = react.getListOfModifiers();
-						for (int i = 0; i < react.getNumModifiers(); i++) {
+						for (int i = 0; i < react.getModifierCount(); i++) {
 							ModifierSpeciesReference modifier = (ModifierSpeciesReference) listOfModifiers.get(i);
 							changedModifiers.add(modifier);
 						}
@@ -1045,7 +1045,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						Utility.sort(reacts);
 						reactions.setListData(reacts);
 						reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-						if (gcm.getSBMLDocument().getModel().getNumReactions() == 1) {
+						if (gcm.getSBMLDocument().getModel().getReactionCount() == 1) {
 							reactions.setSelectedIndex(0);
 						}
 						else {
@@ -1081,7 +1081,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		ArrayList<String> validVars = new ArrayList<String>();
 		ArrayList<String> invalidVars = new ArrayList<String>();
 		ListOf sbml = bioModel.getSBMLDocument().getModel().getListOfFunctionDefinitions();
-		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumFunctionDefinitions(); i++) {
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getFunctionDefinitionCount(); i++) {
 			validVars.add(((FunctionDefinition) sbml.get(i)).getId());
 		}
 		if (isReaction) {
@@ -1102,7 +1102,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		else if (!isFunction) {
 			sbml = bioModel.getSBMLDocument().getModel().getListOfSpecies();
-			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumSpecies(); i++) {
+			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getSpeciesCount(); i++) {
 				validVars.add(((Species) sbml.get(i)).getId());
 			}
 		}
@@ -1114,7 +1114,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		else {
 			sbml = bioModel.getSBMLDocument().getModel().getListOfCompartments();
-			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumCompartments(); i++) {
+			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getCompartmentCount(); i++) {
 				if (bioModel.getSBMLDocument().getLevel() > 2 || ((Compartment) sbml.get(i)).getSpatialDimensions() != 0) {
 					validVars.add(((Compartment) sbml.get(i)).getId());
 				}
@@ -1124,18 +1124,18 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				validVars.add(((Parameter) sbml.get(i)).getId());
 			}
 			sbml = bioModel.getSBMLDocument().getModel().getListOfReactions();
-			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumReactions(); i++) {
+			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getReactionCount(); i++) {
 				Reaction reaction = (Reaction) sbml.get(i);
 				validVars.add(reaction.getId());
 				ListOf sbml2 = reaction.getListOfReactants();
-				for (int j = 0; j < reaction.getNumReactants(); j++) {
+				for (int j = 0; j < reaction.getReactantCount(); j++) {
 					SpeciesReference reactant = (SpeciesReference) sbml2.get(j);
 					if ((reactant.isSetId()) && (!reactant.getId().equals(""))) {
 						validVars.add(reactant.getId());
 					}
 				}
 				sbml2 = reaction.getListOfProducts();
-				for (int j = 0; j < reaction.getNumProducts(); j++) {
+				for (int j = 0; j < reaction.getProductCount(); j++) {
 					SpeciesReference product = (SpeciesReference) sbml2.get(j);
 					if ((product.isSetId()) && (!product.getId().equals(""))) {
 						validVars.add(product.getId());
@@ -1656,8 +1656,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		Object[] productConstantOptions = { "true", "false" };
 		productConstant = new JComboBox(productConstantOptions);
 		ListOf listOfSpecies = gcm.getSBMLDocument().getModel().getListOfSpecies();
-		String[] speciesList = new String[(int) gcm.getSBMLDocument().getModel().getNumSpecies()];
-		for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumSpecies(); i++) {
+		String[] speciesList = new String[(int) gcm.getSBMLDocument().getModel().getSpeciesCount()];
+		for (int i = 0; i < gcm.getSBMLDocument().getModel().getSpeciesCount(); i++) {
 			speciesList[i] = ((Species) listOfSpecies.get(i)).getId();
 		}
 		Utility.sort(speciesList);
@@ -1978,8 +1978,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		JPanel modifiersPanel;
 		JLabel speciesLabel = new JLabel("Species:");
 		ListOf listOfSpecies = bioModel.getSBMLDocument().getModel().getListOfSpecies();
-		String[] speciesList = new String[(int) bioModel.getSBMLDocument().getModel().getNumSpecies()];
-		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumSpecies(); i++) {
+		String[] speciesList = new String[(int) bioModel.getSBMLDocument().getModel().getSpeciesCount()];
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getSpeciesCount(); i++) {
 			speciesList[i] = ((Species) listOfSpecies.get(i)).getId();
 		}
 		Utility.sort(speciesList);
@@ -2324,7 +2324,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					modifiers.setListData(modifier);
 					modifiers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					try {
-						if (bioModel.getSBMLDocument().getModel().getReaction(selectedReaction).getNumModifiers() == 1) {
+						if (bioModel.getSBMLDocument().getModel().getReaction(selectedReaction).getModifierCount() == 1) {
 							modifiers.setSelectedIndex(0);
 						}
 						else {
@@ -2370,8 +2370,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		Object[] reactantConstantOptions = { "true", "false" };
 		reactantConstant = new JComboBox(reactantConstantOptions);
 		ListOf listOfSpecies = gcm.getSBMLDocument().getModel().getListOfSpecies();
-		String[] speciesList = new String[(int) gcm.getSBMLDocument().getModel().getNumSpecies()];
-		for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumSpecies(); i++) {
+		String[] speciesList = new String[(int) gcm.getSBMLDocument().getModel().getSpeciesCount()];
+		for (int i = 0; i < gcm.getSBMLDocument().getModel().getSpeciesCount(); i++) {
 			speciesList[i] = ((Species) listOfSpecies.get(i)).getId();
 		}
 		Utility.sort(speciesList);
@@ -2748,7 +2748,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	public void removeTheReaction(BioModel gcm, String selected) {
 		Reaction tempReaction = gcm.getSBMLDocument().getModel().getReaction(selected);
 		ListOf r = gcm.getSBMLDocument().getModel().getListOfReactions();
-		for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumReactions(); i++) {
+		for (int i = 0; i < gcm.getSBMLDocument().getModel().getReactionCount(); i++) {
 			if (((Reaction) r.get(i)).getId().equals(tempReaction.getId())) {
 				r.remove(i);
 			}
@@ -3217,8 +3217,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		this.bioModel = gcm;
 		Model model = gcm.getSBMLDocument().getModel();
 		ListOf listOfReactions = model.getListOfReactions();
-		reacts = new String[(int) model.getNumReactions()];
-		for (int i = 0; i < model.getNumReactions(); i++) {
+		reacts = new String[(int) model.getReactionCount()];
+		for (int i = 0; i < model.getReactionCount(); i++) {
 			Reaction reaction = (Reaction) listOfReactions.get(i);
 			reacts[i] = reaction.getId();
 			if (paramsOnly) {

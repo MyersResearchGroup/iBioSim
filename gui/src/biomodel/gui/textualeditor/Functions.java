@@ -76,13 +76,13 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 		functions = new JList();
 		ListOf listOfFunctions = model.getListOfFunctionDefinitions();
 		int count = 0;
-		for (int i = 0; i < model.getNumFunctionDefinitions(); i++) {
+		for (int i = 0; i < model.getFunctionDefinitionCount(); i++) {
 			FunctionDefinition function = (FunctionDefinition) listOfFunctions.get(i);
 			if (!SBMLutilities.isSpecialFunction(function.getId())) count++;
 		}
 		String[] funcs = new String[count];
 		count = 0;
-		for (int i = 0; i < model.getNumFunctionDefinitions(); i++) {
+		for (int i = 0; i < model.getFunctionDefinitionCount(); i++) {
 			FunctionDefinition function = (FunctionDefinition) listOfFunctions.get(i);
 			if (SBMLutilities.isSpecialFunction(function.getId())) continue;
 			funcs[count] = function.getId() + " ( ";
@@ -425,7 +425,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 					}
 					functions.setListData(funcs);
 					functions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					if (bioModel.getSBMLDocument().getModel().getNumFunctionDefinitions() == 1) {
+					if (bioModel.getSBMLDocument().getModel().getFunctionDefinitionCount() == 1) {
 						functions.setSelectedIndex(0);
 					}
 					else {
@@ -454,7 +454,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 			if (!SBMLutilities.variableInUse(bioModel.getSBMLDocument(), ((String) functions.getSelectedValue()).split(" ")[0], false, true, true)) {
 				FunctionDefinition tempFunc = bioModel.getSBMLDocument().getModel().getFunctionDefinition(((String) functions.getSelectedValue()).split(" ")[0]);
 				ListOf f = bioModel.getSBMLDocument().getModel().getListOfFunctionDefinitions();
-				for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumFunctionDefinitions(); i++) {
+				for (int i = 0; i < bioModel.getSBMLDocument().getModel().getFunctionDefinitionCount(); i++) {
 					if (((FunctionDefinition) f.get(i)).getId().equals(tempFunc.getId())) {
 						f.remove(i);
 					}
@@ -488,13 +488,13 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 		Model model = bioModel.getSBMLDocument().getModel();
 		ListOf listOfFunctions = model.getListOfFunctionDefinitions();
 		int count = 0;
-		for (int i = 0; i < model.getNumFunctionDefinitions(); i++) {
+		for (int i = 0; i < model.getFunctionDefinitionCount(); i++) {
 			FunctionDefinition function = (FunctionDefinition) listOfFunctions.get(i);
 			if (!SBMLutilities.isSpecialFunction(function.getId())) count++;
 		}
 		String[] funcs = new String[count];
 		count = 0;
-		for (int i = 0; i < model.getNumFunctionDefinitions(); i++) {
+		for (int i = 0; i < model.getFunctionDefinitionCount(); i++) {
 			FunctionDefinition function = (FunctionDefinition) listOfFunctions.get(i);
 			if (SBMLutilities.isSpecialFunction(function.getId())) continue;
 			funcs[count] = function.getId() + " ( ";
