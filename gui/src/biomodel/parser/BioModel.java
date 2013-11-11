@@ -2275,8 +2275,10 @@ public class BioModel {
 	
 	public void setLayoutSize() {
 		Layout layout = getLayout();
-		double width = layout.getDimensions().getWidth();
-		double height = layout.getDimensions().getHeight();
+		//double width = layout.getDimensions().getWidth();
+		//double height = layout.getDimensions().getHeight();
+		double width = 0;
+		double height = 0;
 		for (int i = 0; i < layout.getCompartmentGlyphCount(); i++) {
 			CompartmentGlyph glyph = layout.getCompartmentGlyph(i);
 			double x = glyph.getBoundingBox().getPosition().getX() + glyph.getBoundingBox().getDimensions().getWidth();
@@ -2304,6 +2306,9 @@ public class BioModel {
 			if (x > width) width = x;
 			double y = glyph.getBoundingBox().getPosition().getY() + glyph.getBoundingBox().getDimensions().getHeight();
 			if (y > height) height = y;
+		}
+		if (!layout.isSetDimensions()) {
+			layout.createDimensions(0, 0, 0);
 		}
 		layout.getDimensions().setWidth(width);
 		layout.getDimensions().setHeight(height);
