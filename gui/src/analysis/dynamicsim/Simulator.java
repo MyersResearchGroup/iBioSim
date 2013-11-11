@@ -292,13 +292,13 @@ public abstract class Simulator {
 		
 		model = document.getModel();
 		
-		numSpecies = model.getNumSpecies();
+		numSpecies = model.getSpeciesCount();
 		numParameters = model.getNumParameters();
-		numReactions = model.getNumReactions();
-		numEvents = model.getNumEvents();
-		numRules = model.getNumRules();
-		numConstraints = model.getNumConstraints();
-		numInitialAssignments = model.getNumInitialAssignments();
+		numReactions = model.getReactionCount();
+		numEvents = model.getEventCount();
+		numRules = model.getRuleCount();
+		numConstraints = model.getConstraintCount();
+		numInitialAssignments = model.getInitialAssignmentCount();
 		
 		//set initial capacities for collections (1.5 is used to multiply numReactions due to reversible reactions)
 		speciesToAffectedReactionSetMap = new HashMap<String, HashSet<String> >((int) numSpecies);
@@ -1777,7 +1777,7 @@ public abstract class Simulator {
 			//check to see if the (non-membrane-diffusion) reaction has arrayed species
 			//right now i'm only checking the first reactant species, due to a bad assumption
 			//about the homogeneity of the arrayed reaction (ie, if one species is arrayed, they all are)
-			else if (reaction.getNumReactants() > 0 &&
+			else if (reaction.getReactantCount() > 0 &&
 					speciesToIsArrayedMap.get(reaction.getReactant(0).getSpeciesInstance().getId()) == true) {
 				
 				arraysExist = true;
@@ -3952,7 +3952,7 @@ public abstract class Simulator {
 			//check to see if the (non-membrane-diffusion) reaction has arrayed species
 			//right now i'm only checking the first reactant species, due to a bad assumption
 			//about the homogeneity of the arrayed reaction (ie, if one species is arrayed, they all are)
-			else if (reaction.getNumReactants() > 0 &&
+			else if (reaction.getReactantCount() > 0 &&
 					speciesToIsArrayedMap.get(reaction.getReactant(0).getSpeciesInstance().getId()) == true) {
 				
 				arraysExist = true;

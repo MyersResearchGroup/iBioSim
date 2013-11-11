@@ -99,7 +99,7 @@ public class GillespieSSAJavaSingleStep {
 	}
 	 model = document.getModel();
 	 outTSD.print("(");
-	 for (int i=0; i < model.getNumReactions(); i++){
+	 for (int i=0; i < model.getReactionCount(); i++){
 		 Reaction reaction = model.getReaction(i);
 		 if (reaction.getReversible())
 			 NumReversible ++;
@@ -108,12 +108,12 @@ public class GillespieSSAJavaSingleStep {
 	 }
 /*
     model = document.getModel();
-    long num = model.getNumReactions();	
+    long num = model.getReactionCount();	
     int iter = 0;
     while (iter < 100000) {
     	for (long i = 0; i < num; i++) {
    		  Reaction reaction = model.getReaction(i);
-   		  for (long a = 0; a < reaction.getNumReactants(); a++) {
+   		  for (long a = 0; a < reaction.getReactantCount(); a++) {
    			  SpeciesReference reactant = reaction.getReactant(a);
    			  reactant.getSpecies();
    			  reactant.getStoichiometry();
@@ -126,14 +126,14 @@ public class GillespieSSAJavaSingleStep {
 */
 	 
 	 NumReactions = 2*NumReversible + NumIrreversible;
-	 StateChangeVector=new double[(int) NumReactions][(int) model.getNumSpecies()];
+	 StateChangeVector=new double[(int) NumReactions][(int) model.getSpeciesCount()];
 	 
 	//---------Gillespie's SSA---------
 	// 1. Initialization
 	// Initialize time (t) and states (x) 
 	 time = 0.0;
 	 // get the species and the associated initial values
-	 for (int i=0;i<model.getNumSpecies();i++){
+	 for (int i=0;i<model.getSpeciesCount();i++){
 		 SpeciesID= model.getListOfSpecies().get(i).getId();
 		 SpeciesInitAmount = model.getListOfSpecies().get(i).getInitialAmount();
 		 SpeciesList.put(SpeciesID, SpeciesInitAmount);
@@ -176,8 +176,8 @@ public class GillespieSSAJavaSingleStep {
 
 	 //Currently, we assume only one compartment in one SBML file
 	 // get compartments and their sizes. 
-	 //  if (model.getNumCompartments() !=0){
-	 //  for (int i=0;i<model.getNumCompartments();i++){
+	 //  if (model.getCompartmentCount() !=0){
+	 //  for (int i=0;i<model.getCompartmentCount();i++){
 	 //  CompartmentID = model.getListOfCompartments().get(i).getId();
 	 //  ComparmentSize = model.getListOfCompartments().get(i).getSize();
 	 ////  CompartmentList.put(CompartmentID, ComparmentSize);
@@ -197,11 +197,11 @@ public class GillespieSSAJavaSingleStep {
 			 String currentReactionID = currentReaction.getId();
 			 ReactionsToIndex.put(currentReactionID, index);
 			 IndexToReactions.put(index, currentReactionID);
-			 for (int j=0; j < currentReaction.getNumReactants(); j++){
+			 for (int j=0; j < currentReaction.getReactantCount(); j++){
 				 String SpeciesAsReactant = currentReaction.getReactant(j).getSpecies();
 				 StateChangeVector[index][SpeciesToIndex.get(SpeciesAsReactant)] = -currentReaction.getReactant(j).getStoichiometry();
 			 }  
-			 for (int j=0; j < currentReaction.getNumProducts(); j++){
+			 for (int j=0; j < currentReaction.getProductCount(); j++){
 				 String SpeciesAsProduct = currentReaction.getProduct(j).getSpecies();
 				 StateChangeVector[index][SpeciesToIndex.get(SpeciesAsProduct)] = currentReaction.getProduct(j).getStoichiometry();
 			 }
@@ -213,12 +213,12 @@ public class GillespieSSAJavaSingleStep {
 			 ReactionsToIndex.put(currentReactionID + "_rev",  index+1);
 			 IndexToReactions.put(index, currentReactionID);
 			 IndexToReactions.put(index+1, currentReactionID+ "_rev");
-			 for (int j=0; j < currentReaction.getNumReactants(); j++){
+			 for (int j=0; j < currentReaction.getReactantCount(); j++){
 				 String SpeciesAsReactant = currentReaction.getReactant(j).getSpecies();
 				 StateChangeVector[index][SpeciesToIndex.get(SpeciesAsReactant)] = -currentReaction.getReactant(j).getStoichiometry();
 				 StateChangeVector[index+1][SpeciesToIndex.get(SpeciesAsReactant)] = currentReaction.getReactant(j).getStoichiometry();
 			 }  
-			 for (int j=0; j < currentReaction.getNumProducts(); j++){
+			 for (int j=0; j < currentReaction.getProductCount(); j++){
 				 String SpeciesAsProduct = currentReaction.getProduct(j).getSpecies();
 				 StateChangeVector[index][SpeciesToIndex.get(SpeciesAsProduct)] = currentReaction.getProduct(j).getStoichiometry();
 				 StateChangeVector[index+1][SpeciesToIndex.get(SpeciesAsProduct)] = -currentReaction.getProduct(j).getStoichiometry();
@@ -299,12 +299,12 @@ public class GillespieSSAJavaSingleStep {
 		  InitializeEnoughMolecules();
 		  PropensitySum = 0.0;
 		  // get the reactions  
-		  for (int i=0;i<model.getNumReactions();i++){
+		  for (int i=0;i<model.getReactionCount();i++){
 			  Reaction currentReaction = model.getListOfReactions().get(i);
 			  //outTXT.println("Reactions" + i + ": " + currentReaction.getId());  
 			  boolean ModifierNotEmpty = true;
-			  if (currentReaction.getNumModifiers()>0){
-				  for (int k=0; k<currentReaction.getNumModifiers();k++){
+			  if (currentReaction.getModifierCount()>0){
+				  for (int k=0; k<currentReaction.getModifierCount();k++){
 					  if (SpeciesList.get(currentReaction.getModifier(k).getSpecies())==0.0){
 						  ModifierNotEmpty = false;
 						  //break;
@@ -333,7 +333,7 @@ public class GillespieSSAJavaSingleStep {
 			  // For irreversible reaction, propensity function = kinetic law
 			  if (!currentReaction.getReversible()){
 				  // enzymatic reaction with no reactants
-				  if (currentReaction.getNumReactants() == 0 && currentReaction.getNumProducts()>0 && currentReaction.getNumModifiers()>0){
+				  if (currentReaction.getReactantCount() == 0 && currentReaction.getProductCount()>0 && currentReaction.getModifierCount()>0){
 					 boolean EnoughMoleculesCond = ModifierNotEmpty;
 					 if(!EnoughMoleculesCond){
 						 PropensityFunctionValue = 0;
@@ -344,8 +344,8 @@ public class GillespieSSAJavaSingleStep {
 					 }
 				  }
 				  // other reactions
-				  if (currentReaction.getNumReactants() > 0){ 
-				    for (int j=0; j < currentReaction.getNumReactants(); j++){
+				  if (currentReaction.getReactantCount() > 0){ 
+				    for (int j=0; j < currentReaction.getReactantCount(); j++){
 					    // not enough reactant Molecules
 					    boolean EnoughMoleculesCond = SpeciesList.get(currentReaction.getReactant(j).getSpecies()) >= currentReaction.getReactant(j).getStoichiometry();
 					    if(!EnoughMoleculesCond){
@@ -366,7 +366,7 @@ public class GillespieSSAJavaSingleStep {
 				  // For reversible, the root node should be a minus operation
 				  // Evaluate kinetic law for the forward reaction
 				  // Check that there are enough Molecules for the reaction to happen     
-				  for (int j=0; j < currentReaction.getNumReactants(); j++){
+				  for (int j=0; j < currentReaction.getReactantCount(); j++){
 					  // not enough reactant Molecules
 					  boolean EnoughMoleculesCondFW = SpeciesList.get(currentReaction.getReactant(j).getSpecies()) >= currentReaction.getReactant(j).getStoichiometry();
 					  if(!EnoughMoleculesCondFW){
@@ -386,7 +386,7 @@ public class GillespieSSAJavaSingleStep {
 			    
 			      // Evaluate kinetic law for the reverse reaction
 			      // Check that there are enough Molecules for the reaction to happen
-			      for (int j=0; j < currentReaction.getNumProducts(); j++){
+			      for (int j=0; j < currentReaction.getProductCount(); j++){
 			    	  // not enough reactant Molecules
 			    	  boolean EnoughMoleculesCondRV = SpeciesList.get(currentReaction.getProduct(j).getSpecies()) >= currentReaction.getProduct(j).getStoichiometry();      
 			    	  if(!EnoughMoleculesCondRV){
@@ -509,7 +509,7 @@ public class GillespieSSAJavaSingleStep {
 			 time = time + tau;
 		 // Determine the next reaction to fire, in row miu of StateChangeVector.
 		 // Update the species amounts according to the state-change-vector in row miu. 
-		 for (int i=0; i < model.getNumSpecies(); i++){
+		 for (int i=0; i < model.getSpeciesCount(); i++){
 			if (StateChangeVector[miu][i]!=0){
 				String SpeciesToUpdate = IndexToSpecies.get(i);
 				// System.out.println("SpeciesToUpdate = " + SpeciesToUpdate);

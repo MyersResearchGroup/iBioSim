@@ -63,8 +63,8 @@ public class SpeciesTypes extends JPanel implements ActionListener, MouseListene
 		editSpecType = new JButton("Edit Type");
 		specTypes = new JList();
 		ListOf listOfSpeciesTypes = model.getListOfSpeciesTypes();
-		String[] spTyp = new String[(int) model.getNumSpeciesTypes()];
-		for (int i = 0; i < model.getNumSpeciesTypes(); i++) {
+		String[] spTyp = new String[(int) model.getSpeciesTypeCount()];
+		for (int i = 0; i < model.getSpeciesTypeCount(); i++) {
 			SpeciesType specType = (SpeciesType) listOfSpeciesTypes.get(i);
 			spTyp[i] = specType.getId();
 		}
@@ -143,7 +143,7 @@ public class SpeciesTypes extends JPanel implements ActionListener, MouseListene
 					Utility.sort(spTyp);
 					specTypes.setListData(spTyp);
 					specTypes.setSelectedIndex(index);
-					for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumSpecies(); i++) {
+					for (int i = 0; i < gcm.getSBMLDocument().getModel().getSpeciesCount(); i++) {
 						Species species = gcm.getSBMLDocument().getModel().getSpecies(i);
 						if (species.getSpeciesType().equals(val)) {
 							species.setSpeciesType(specTypeID.getText().trim());
@@ -172,7 +172,7 @@ public class SpeciesTypes extends JPanel implements ActionListener, MouseListene
 					Utility.sort(spTyp);
 					specTypes.setListData(spTyp);
 					specTypes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					if (gcm.getSBMLDocument().getModel().getNumSpeciesTypes() == 1) {
+					if (gcm.getSBMLDocument().getModel().getSpeciesTypeCount() == 1) {
 						specTypes.setSelectedIndex(0);
 					}
 					else {
@@ -200,7 +200,7 @@ public class SpeciesTypes extends JPanel implements ActionListener, MouseListene
 		if (index != -1) {
 			boolean remove = true;
 			ArrayList<String> speciesUsing = new ArrayList<String>();
-			for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumSpecies(); i++) {
+			for (int i = 0; i < gcm.getSBMLDocument().getModel().getSpeciesCount(); i++) {
 				Species species = (Species) gcm.getSBMLDocument().getModel().getListOfSpecies().get(i);
 				if (species.isSetSpeciesType()) {
 					if (species.getSpeciesType().equals(((String) specTypes.getSelectedValue()).split(" ")[0])) {
@@ -212,7 +212,7 @@ public class SpeciesTypes extends JPanel implements ActionListener, MouseListene
 			if (remove) {
 				SpeciesType tempSpecType = gcm.getSBMLDocument().getModel().getSpeciesType(((String) specTypes.getSelectedValue()).split(" ")[0]);
 				ListOf s = gcm.getSBMLDocument().getModel().getListOfSpeciesTypes();
-				for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumSpeciesTypes(); i++) {
+				for (int i = 0; i < gcm.getSBMLDocument().getModel().getSpeciesTypeCount(); i++) {
 					if (((SpeciesType) s.get(i)).getId().equals(tempSpecType.getId())) {
 						s.remove(i);
 					}

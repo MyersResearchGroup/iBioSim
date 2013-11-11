@@ -794,7 +794,7 @@ public abstract class HierarchicalSimulator {
 			}
 		}
 
-		for(int i = 0; i < submodel.getNumInitialAssignments(); i++)
+		for(int i = 0; i < submodel.getInitialAssignmentCount(); i++)
 		{
 			if(submodel.getInitialAssignment(i).getMetaId().equals(metaid))
 			{
@@ -899,7 +899,7 @@ public abstract class HierarchicalSimulator {
 
 
 
-		for(int i = 0; i < submodel.getNumInitialAssignments(); i++)
+		for(int i = 0; i < submodel.getInitialAssignmentCount(); i++)
 		{
 			if(submodel.getInitialAssignment(i).getMetaId().equals(sid))
 			{
@@ -2670,7 +2670,7 @@ public abstract class HierarchicalSimulator {
 
 
 		//add compartment sizes in
-		size = modelstate.model.getNumCompartments();
+		size = modelstate.model.getCompartmentCount();
 		for (int i = 0; i < size; i++) 
 		{
 			Compartment compartment = modelstate.model.getCompartment(i);
@@ -3489,7 +3489,7 @@ public abstract class HierarchicalSimulator {
 		//this needs to happen after calculating initial propensities
 		//so that the speciesToAffectedReactionSetMap is populated
 
-		long size = modelstate.model.getNumEvents();
+		long size = modelstate.model.getEventCount();
 
 		for (int i = 0; i < size; i++)
 		{
@@ -3838,7 +3838,7 @@ public abstract class HierarchicalSimulator {
 			reactionToFormulaMap = new HashMap<String, ASTNode>((int) (numReactions * 1.5));
 
 
-			variableToAffectedConstraintSetMap = new HashMap<String, HashSet<ASTNode> >((int) model.getNumConstraints());		
+			variableToAffectedConstraintSetMap = new HashMap<String, HashSet<ASTNode> >((int) model.getConstraintCount());		
 			variableToIsInConstraintMap = new HashMap<String, Boolean>((int) (numSpecies + numParameters));
 
 			nonConstantStoichiometry = new HashSet<String>();

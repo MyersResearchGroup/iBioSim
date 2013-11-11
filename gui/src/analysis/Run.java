@@ -540,7 +540,7 @@ public class Run implements ActionListener {
 				ArrayList<String> propList = new ArrayList<String>();
 				if (prop == null) {
 					Model m = bioModel.getSBMLDocument().getModel();
-					for (int num = 0; num < m.getNumConstraints(); num++) {
+					for (int num = 0; num < m.getConstraintCount(); num++) {
 						String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
 						if (constraint.startsWith("G(") || constraint.startsWith("F(") || constraint.startsWith("U(")) {
 							propList.add(constraint);
@@ -552,7 +552,7 @@ public class Run implements ActionListener {
 							"Property Selection", JOptionPane.PLAIN_MESSAGE, null, propList.toArray(), null);
 					if ((s != null) && (s.length() > 0)) {
 						Model m = bioModel.getSBMLDocument().getModel();
-						for (int num = 0; num < m.getNumConstraints(); num++) {
+						for (int num = 0; num < m.getConstraintCount(); num++) {
 							String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
 							if (s.equals(constraint)) {
 								prop = Translator.convertProperty(m.getConstraint(num).getMath());
@@ -675,7 +675,7 @@ public class Run implements ActionListener {
 							ArrayList<String> propList = new ArrayList<String>();
 							if (prop == null) {
 								Model m = gcm.getSBMLDocument().getModel();
-								for (int num = 0; num < m.getNumConstraints(); num++) {
+								for (int num = 0; num < m.getConstraintCount(); num++) {
 									String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
 									if (constraint.startsWith("G(") || constraint.startsWith("F(") || constraint.startsWith("U(")) {
 										propList.add(constraint);
@@ -687,7 +687,7 @@ public class Run implements ActionListener {
 										"Property Selection", JOptionPane.PLAIN_MESSAGE, null, propList.toArray(), null);
 								if ((s != null) && (s.length() > 0)) {
 									Model m = gcm.getSBMLDocument().getModel();
-									for (int num = 0; num < m.getNumConstraints(); num++) {
+									for (int num = 0; num < m.getConstraintCount(); num++) {
 										String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
 										if (s.equals(constraint)) {
 											prop = Translator.convertProperty(m.getConstraint(num).getMath());
@@ -836,7 +836,7 @@ public class Run implements ActionListener {
 							ArrayList<String> propList = new ArrayList<String>();
 							if (prop == null) {
 								Model m = gcm.getSBMLDocument().getModel();
-								for (int num = 0; num < m.getNumConstraints(); num++) {
+								for (int num = 0; num < m.getConstraintCount(); num++) {
 									String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
 									if (constraint.startsWith("G(") || constraint.startsWith("F(") || constraint.startsWith("U(")) {
 										propList.add(constraint);
@@ -848,7 +848,7 @@ public class Run implements ActionListener {
 										"Property Selection", JOptionPane.PLAIN_MESSAGE, null, propList.toArray(), null);
 								if ((s != null) && (s.length() > 0)) {
 									Model m = gcm.getSBMLDocument().getModel();
-									for (int num = 0; num < m.getNumConstraints(); num++) {
+									for (int num = 0; num < m.getConstraintCount(); num++) {
 										String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
 										if (s.equals(constraint)) {
 											prop = Translator.convertProperty(m.getConstraint(num).getMath());
@@ -967,7 +967,7 @@ public class Run implements ActionListener {
 							ArrayList<String> propList = new ArrayList<String>();
 							if (prop == null) {
 								Model m = gcm.getSBMLDocument().getModel();
-								for (int num = 0; num < m.getNumConstraints(); num++) {
+								for (int num = 0; num < m.getConstraintCount(); num++) {
 									String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
 									if (constraint.startsWith("G(") || constraint.startsWith("F(") || constraint.startsWith("U(")) {
 										propList.add(constraint);
@@ -979,7 +979,7 @@ public class Run implements ActionListener {
 										"Property Selection", JOptionPane.PLAIN_MESSAGE, null, propList.toArray(), null);
 								if ((s != null) && (s.length() > 0)) {
 									Model m = gcm.getSBMLDocument().getModel();
-									for (int num = 0; num < m.getNumConstraints(); num++) {
+									for (int num = 0; num < m.getConstraintCount(); num++) {
 										String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
 										if (s.equals(constraint)) {
 											prop = Translator.convertProperty(m.getConstraint(num).getMath());
@@ -1072,7 +1072,7 @@ public class Run implements ActionListener {
 									ArrayList<Property> propList = new ArrayList<Property>();
 									if (prop == null) {
 										Model m = gcm.getSBMLDocument().getModel();
-										for (int num = 0; num < m.getNumConstraints(); num++) {
+										for (int num = 0; num < m.getConstraintCount(); num++) {
 											String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
 											if (constraint.startsWith("St(")) {
 												propList.add(sg.createProperty(constraint.trim().replace(" ", ""), Translator.convertProperty(m.getConstraint(num).getMath())));

@@ -831,7 +831,7 @@ public class Schematic extends JPanel implements ActionListener {
 		}
 		else if(command.indexOf("layout_") == 0){
 			// Layout actioncommands are prepended with "_"
-			if (bioModel.getSBMLDocument().getModel().getNumCompartments() > 1) {
+			if (bioModel.getSBMLDocument().getModel().getCompartmentCount() > 1) {
 				Utility.createErrorMessage("Error Applying Layout", "Automatic layout routines cannot be used with multi-compartment models.");
 				return;
 			}
@@ -1431,7 +1431,7 @@ public class Schematic extends JPanel implements ActionListener {
 						(graph.getCellType(target) == GlobalConstants.SPECIES)) {
 						Reaction r = bioModel.getSBMLDocument().getModel().getReaction((String)cell.getValue());
 						ListOf reactants = r.getListOfReactants();
-						for (int i = 0; i < r.getNumReactants(); i++) {
+						for (int i = 0; i < r.getReactantCount(); i++) {
 							SpeciesReference s = (SpeciesReference)reactants.get(i);
 							if (s.getSpecies().equals(source.getId())) {
 								if (s.isSetId() && 
@@ -1442,7 +1442,7 @@ public class Schematic extends JPanel implements ActionListener {
 							}
 						} 
 						ListOf products = r.getListOfProducts();
-						for (int i = 0; i < r.getNumProducts(); i++) {
+						for (int i = 0; i < r.getProductCount(); i++) {
 							SpeciesReference s = (SpeciesReference)products.get(i);
 							if (s.getSpecies().equals(target.getId())) {
 								if (s.isSetId() && 
@@ -1457,7 +1457,7 @@ public class Schematic extends JPanel implements ActionListener {
 						(graph.getCellType(target) == GlobalConstants.REACTION)) {
 						Reaction r = bioModel.getSBMLDocument().getModel().getReaction(target.getId());
 						ListOf reactants = r.getListOfReactants();
-						for (int i = 0; i < r.getNumReactants(); i++) {
+						for (int i = 0; i < r.getReactantCount(); i++) {
 							SpeciesReference s = (SpeciesReference)reactants.get(i);
 							if (s.getSpecies().equals(source.getId())) {
 								if (s.isSetId() && 
@@ -1472,7 +1472,7 @@ public class Schematic extends JPanel implements ActionListener {
 						(graph.getCellType(target) == GlobalConstants.SPECIES)) {
 						Reaction r = bioModel.getSBMLDocument().getModel().getReaction(source.getId());
 						ListOf products = r.getListOfProducts();
-						for (int i = 0; i < r.getNumProducts(); i++) {
+						for (int i = 0; i < r.getProductCount(); i++) {
 							SpeciesReference s = (SpeciesReference)products.get(i);
 							if (s.getSpecies().equals(target.getId())) {
 								if (s.isSetId() && 
@@ -1512,14 +1512,14 @@ public class Schematic extends JPanel implements ActionListener {
 						
 						Reaction r = bioModel.getSBMLDocument().getModel().getReaction((String)cell.getValue());
 						
-						if (r.getNumReactants()==1 && r.getNumProducts()==1) {
+						if (r.getReactantCount()==1 && r.getProductCount()==1) {
 							reactions.removeTheReaction(bioModel,(String)cell.getValue());
 						} 
-						else if (r.getNumReactants() > 1) {
+						else if (r.getReactantCount() > 1) {
 							
 							ListOf reactants = r.getListOfReactants();
 							
-							for (int i = 0; i < r.getNumReactants(); i++) {
+							for (int i = 0; i < r.getReactantCount(); i++) {
 								
 								SpeciesReference s = (SpeciesReference)reactants.get(i);
 								
@@ -1529,11 +1529,11 @@ public class Schematic extends JPanel implements ActionListener {
 								}
 							}
 						} 
-						else if (r.getNumProducts() > 1) {
+						else if (r.getProductCount() > 1) {
 							
 							ListOf products = r.getListOfProducts();
 							
-							for (int i = 0; i < r.getNumProducts(); i++) {
+							for (int i = 0; i < r.getProductCount(); i++) {
 								
 								SpeciesReference s = (SpeciesReference)products.get(i);
 								
@@ -1551,7 +1551,7 @@ public class Schematic extends JPanel implements ActionListener {
 						boolean found = false;
 						ListOf reactants = r.getListOfReactants();
 						
-						for (int i = 0; i < r.getNumReactants(); i++) {
+						for (int i = 0; i < r.getReactantCount(); i++) {
 							
 							SpeciesReference s = (SpeciesReference)reactants.get(i);
 							
@@ -1565,7 +1565,7 @@ public class Schematic extends JPanel implements ActionListener {
 							
 							ListOf modifiers = r.getListOfModifiers();
 							
-							for (int i = 0; i < r.getNumModifiers(); i++) {
+							for (int i = 0; i < r.getModifierCount(); i++) {
 								
 								ModifierSpeciesReference s = (ModifierSpeciesReference)modifiers.get(i);
 								
@@ -1582,7 +1582,7 @@ public class Schematic extends JPanel implements ActionListener {
 						Reaction r = bioModel.getSBMLDocument().getModel().getReaction(source.getId());
 						ListOf products = r.getListOfProducts();
 						
-						for (int i = 0; i < r.getNumProducts(); i++) {
+						for (int i = 0; i < r.getProductCount(); i++) {
 							
 							SpeciesReference s = (SpeciesReference)products.get(i);
 							
@@ -2505,7 +2505,7 @@ public class Schematic extends JPanel implements ActionListener {
 						subModel.load(bioModel.getPath() + bioModel.getSeparator() + extModel);
 						Model submodel = subModel.getSBMLDocument().getModel();
 						
-						for (int j = 0; j < submodel.getNumSpecies(); ++j)
+						for (int j = 0; j < submodel.getSpeciesCount(); ++j)
 							compSpecies.add(cell.getId() + "__" + submodel.getSpecies(j).getId());
 						
 						break;						

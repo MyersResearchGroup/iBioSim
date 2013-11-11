@@ -8277,7 +8277,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				SBMLDocument document = Gui.readSBML(background);
 				Model model = document.getModel();
 				ListOf ids = model.getListOfSpecies();
-				for (int i = 0; i < model.getNumSpecies(); i++) {
+				for (int i = 0; i < model.getSpeciesCount(); i++) {
 					learnSpecs.add(((Species) ids.get(i)).getId());
 				}
 			}

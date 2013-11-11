@@ -103,8 +103,8 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		}
 		compartments = new JList();
 		ListOf listOfCompartments = model.getListOfCompartments();
-		String[] comps = new String[(int) model.getNumCompartments()];
-		for (int i = 0; i < model.getNumCompartments(); i++) {
+		String[] comps = new String[(int) model.getCompartmentCount()];
+		for (int i = 0; i < model.getCompartmentCount(); i++) {
 			Compartment compartment = (Compartment) listOfCompartments.get(i);
 			comps[i] = compartment.getId();
 			if (paramsOnly) {
@@ -544,13 +544,13 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						Utility.sort(comps);
 						compartments.setListData(comps);
 						compartments.setSelectedIndex(index);
-						for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumSpecies(); i++) {
+						for (int i = 0; i < bioModel.getSBMLDocument().getModel().getSpeciesCount(); i++) {
 							Species species = bioModel.getSBMLDocument().getModel().getSpecies(i);
 							if (species.getCompartment().equals(val)) {
 								species.setCompartment(compID.getText().trim());
 							}
 						}
-						for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumReactions(); i++) {
+						for (int i = 0; i < bioModel.getSBMLDocument().getModel().getReactionCount(); i++) {
 							Reaction reaction = bioModel.getSBMLDocument().getModel().getReaction(i);
 							if (reaction.getCompartment().equals(val)) {
 								reaction.setCompartment(compID.getText().trim());
@@ -572,7 +572,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						}
 						else {
 							SBMLutilities.updateVarId(bioModel.getSBMLDocument(), false, val, compID.getText().trim());
-							for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumCompartments(); i++) {
+							for (int i = 0; i < bioModel.getSBMLDocument().getModel().getCompartmentCount(); i++) {
 								Compartment compartment = bioModel.getSBMLDocument().getModel().getCompartment(i);
 								if (compartment.getOutside().equals(val)) {
 									compartment.setOutside(compID.getText().trim());
@@ -641,7 +641,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						Utility.sort(comps);
 						compartments.setListData(comps);
 						compartments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-						if (bioModel.getSBMLDocument().getModel().getNumCompartments() == 1) {
+						if (bioModel.getSBMLDocument().getModel().getCompartmentCount() == 1) {
 							compartments.setSelectedIndex(0);
 						}
 						else {
@@ -668,7 +668,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 //	 */
 //	private boolean checkOutsideCycle(String compID, String outside, int depth) {
 //		depth++;
-//		if (depth > bioModel.getSBMLDocument().getModel().getNumCompartments())
+//		if (depth > bioModel.getSBMLDocument().getModel().getCompartmentCount())
 //			return true;
 //		Compartment compartment = bioModel.getSBMLDocument().getModel().getCompartment(outside);
 //		if (compartment.isSetOutside()) {
@@ -795,8 +795,8 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		this.bioModel = gcm;
 		Model model = gcm.getSBMLDocument().getModel();
 		ListOf listOfCompartments = model.getListOfCompartments();
-		String[] comparts = new String[(int) model.getNumCompartments()];
-		for (int i = 0; i < model.getNumCompartments(); i++) {
+		String[] comparts = new String[(int) model.getCompartmentCount()];
+		for (int i = 0; i < model.getCompartmentCount(); i++) {
 			Compartment compartment = (Compartment) listOfCompartments.get(i);
 			comparts[i] = compartment.getId();
 			comparts[i] += " " + compartment.getSize();
@@ -828,13 +828,13 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 	private void removeCompartment() {
 		int index = compartments.getSelectedIndex();
 		if (index != -1) {
-			if (bioModel.getSBMLDocument().getModel().getNumCompartments() != 1) {
+			if (bioModel.getSBMLDocument().getModel().getCompartmentCount() != 1) {
 				if (!SBMLutilities.compartmentInUse(bioModel.getSBMLDocument(),
 						((String) compartments.getSelectedValue()).split(" ")[0])) {
 					if (!SBMLutilities.variableInUse(bioModel.getSBMLDocument(), ((String) compartments.getSelectedValue()).split(" ")[0], false, true, true)) {
 						Compartment tempComp = bioModel.getSBMLDocument().getModel().getCompartment(((String) compartments.getSelectedValue()).split(" ")[0]);
 						ListOf c = bioModel.getSBMLDocument().getModel().getListOfCompartments();
-						for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumCompartments(); i++) {
+						for (int i = 0; i < bioModel.getSBMLDocument().getModel().getCompartmentCount(); i++) {
 							if (((Compartment) c.get(i)).getId().equals(tempComp.getId())) {
 								c.remove(i);
 							}

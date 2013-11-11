@@ -739,7 +739,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			}
 		}
 		ArrayList<String> compartmentsUsing = new ArrayList<String>();
-		for (int i = 0; i < model.getNumCompartments(); i++) {
+		for (int i = 0; i < model.getCompartmentCount(); i++) {
 			Compartment compartment = (Compartment) model.getListOfCompartments().get(i);
 			if (compartment.getUnits().equals(unit)) {
 				inUse = true;
@@ -747,7 +747,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			}
 		}
 		ArrayList<String> speciesUsing = new ArrayList<String>();
-		for (int i = 0; i < model.getNumSpecies(); i++) {
+		for (int i = 0; i < model.getSpeciesCount(); i++) {
 			Species species = (Species) model.getListOfSpecies().get(i);
 			if (species.getUnits().equals(unit)) {
 				inUse = true;
@@ -763,7 +763,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			}
 		}
 		ArrayList<String> reacParametersUsing = new ArrayList<String>();
-		for (int i = 0; i < model.getNumReactions(); i++) {
+		for (int i = 0; i < model.getReactionCount(); i++) {
 			for (int j = 0; j < model.getReaction(i).getKineticLaw().getNumParameters(); j++) {
 				LocalParameter parameters = model.getReaction(i).getKineticLaw().getListOfParameters().get(j);
 				if (parameters.getUnits().equals(unit)) {
@@ -1081,9 +1081,9 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 		}
-		if (model.getNumCompartments() > 0) {
-			String[] comps = new String[(int) model.getNumCompartments()];
-			for (int i = 0; i < model.getNumCompartments(); i++) {
+		if (model.getCompartmentCount() > 0) {
+			String[] comps = new String[(int) model.getCompartmentCount()];
+			for (int i = 0; i < model.getCompartmentCount(); i++) {
 				Compartment compartment = (Compartment) model.getListOfCompartments().get(i);
 				if (compartment.getUnits().equals(origId)) {
 					compartment.setUnits(newId);
@@ -1102,9 +1102,9 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			}
 			Utility.sort(comps);
 		}
-		if (model.getNumSpecies() > 0) {
-			String[] specs = new String[(int) model.getNumSpecies()];
-			for (int i = 0; i < model.getNumSpecies(); i++) {
+		if (model.getSpeciesCount() > 0) {
+			String[] specs = new String[(int) model.getSpeciesCount()];
+			for (int i = 0; i < model.getSpeciesCount(); i++) {
 				Species species = (Species) model.getListOfSpecies().get(i);
 				if (species.getUnits().equals(origId)) {
 					species.setUnits(newId);
@@ -1144,7 +1144,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			}
 			Utility.sort(params);
 		}
-		for (int i = 0; i < model.getNumReactions(); i++) {
+		for (int i = 0; i < model.getReactionCount(); i++) {
 			KineticLaw kineticLaw = (KineticLaw) model.getReaction(i).getKineticLaw();
 			for (int j = 0; j < kineticLaw.getNumParameters(); j++) {
 				if (kineticLaw.getParameter(j).getUnits().equals(origId)) {
