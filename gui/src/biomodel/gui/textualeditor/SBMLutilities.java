@@ -933,8 +933,10 @@ public class SBMLutilities {
 		for (int i = 0; i < model.getRuleCount(); i++) 
 			metaIDIndex = setDefaultMetaID(document, model.getRule(i), metaIDIndex);
 		CompModelPlugin compModel = (CompModelPlugin) document.getModel().getExtension(CompConstant.namespaceURI);
-		for (int i = 0; i < compModel.getListOfSubmodels().size(); i++)
-			metaIDIndex = setDefaultMetaID(document, compModel.getListOfSubmodels().get(i), metaIDIndex);
+		if (compModel != null && compModel.isSetListOfSubmodels()) {
+			for (int i = 0; i < compModel.getListOfSubmodels().size(); i++)
+				metaIDIndex = setDefaultMetaID(document, compModel.getListOfSubmodels().get(i), metaIDIndex);
+		}
 	}
 	
 	public static int setDefaultMetaID(SBMLDocument document, SBase sbmlObject, int metaIDIndex) {
