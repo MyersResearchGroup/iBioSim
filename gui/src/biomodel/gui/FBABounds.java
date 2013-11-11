@@ -28,6 +28,8 @@ import javax.swing.ListSelectionModel;
 
 import main.Gui;
 
+import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
+import org.sbml.jsbml.ext.fbc.FluxBound;
 import org.sbml.libsbml.ASTNode;
 import org.sbml.libsbml.Constraint;
 import org.sbml.libsbml.EventAssignment;
@@ -52,8 +54,6 @@ import sbol.SBOLAssociationPanel;
 import sbol.SBOLUtility;
 
 public class FBABounds extends JPanel implements ActionListener, MouseListener {
-	
-	private JButton addEvent, removeEvent, editEvent;
 
 	private JList events; // JList of events
 
@@ -61,29 +61,36 @@ public class FBABounds extends JPanel implements ActionListener, MouseListener {
 	
 	private BioModel bioModel;
 	
+	private FBCModelPlugin fbc;
+	
 	public FBABounds(BioModel bioModel,String reactionId) {
 		super(new BorderLayout());
 		this.bioModel = bioModel;
+		fbc = bioModel.getSBMLFBC();
 		
 		JPanel eventPanel = new JPanel(new BorderLayout());
 		
 		String[] assign = new String[0];
 		
+		FluxBound fluxBound = fbc.getListOfFluxBounds().get(reactionId);
+		System.out.println(fluxBound);
+		System.out.println(reactionId);
+		
 		// TODO: populate the string array with flux bounds corresponding to this reactionId
 
 		JList eventAssign = new JList();
 		
-		JPanel eventAssignPanel = new JPanel(new BorderLayout());
-		JPanel addEventAssign = new JPanel();
-		JButton addAssignment = new JButton("Add");
-		JButton removeAssignment = new JButton("Remove");
-		JButton editAssignment = new JButton("Edit");
-		addEventAssign.add(addAssignment);
-		addEventAssign.add(removeAssignment);
-		addEventAssign.add(editAssignment);
-		addAssignment.addActionListener(this);
-		removeAssignment.addActionListener(this);
-		editAssignment.addActionListener(this);
+		JPanel biggerPanel = new JPanel(new BorderLayout());
+		JPanel smallerPanel = new JPanel();
+		JButton addBound = new JButton("Add");
+		JButton removeBound = new JButton("Remove");
+		JButton editBound = new JButton("Edit");
+		smallerPanel.add(addBound);
+		smallerPanel.add(removeBound);
+		smallerPanel.add(editBound);
+		addBound.addActionListener(this);
+		removeBound.addActionListener(this);
+		editBound.addActionListener(this);
 		JLabel eventAssignLabel = new JLabel("List of Flux Bounds:");
 		eventAssign.removeAll();
 		eventAssign.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -96,11 +103,11 @@ public class FBABounds extends JPanel implements ActionListener, MouseListener {
 		eventAssign.setListData(assign);
 		eventAssign.setSelectedIndex(0);
 		eventAssign.addMouseListener(this);
-		eventAssignPanel.add(eventAssignLabel, "North");
-		eventAssignPanel.add(scroll, "Center");
-		eventAssignPanel.add(addEventAssign, "South");
+		biggerPanel.add(eventAssignLabel, "North");
+		biggerPanel.add(scroll, "Center");
+		biggerPanel.add(smallerPanel, "South");
 		
-		eventPanel.add(eventAssignPanel, "South");
+		eventPanel.add(biggerPanel, "South");
 		Object[] options = { "Ok", "Cancel" };
 		String title = "Flux Bounds Editor";
 		int value = JOptionPane.showOptionDialog(Gui.frame, eventPanel, title, JOptionPane.YES_NO_OPTION, 
@@ -121,48 +128,7 @@ public class FBABounds extends JPanel implements ActionListener, MouseListener {
 //		
 	}
 	
-	public void eventEditor(String option){		
-		String[] assign = new String[0];
-		JPanel eventPanel = new JPanel(new BorderLayout());
-		
-		JPanel eventAssignPanel = new JPanel(new BorderLayout());
-		JPanel addEventAssign = new JPanel();
-		JButton addAssignment = new JButton("Add Assignment");
-		JButton removeAssignment = new JButton("Remove Assignment");
-		JButton editAssignment = new JButton("Edit Assignment");
-		addEventAssign.add(addAssignment);
-		addEventAssign.add(removeAssignment);
-		addEventAssign.add(editAssignment);
-		addAssignment.addActionListener(this);
-		removeAssignment.addActionListener(this);
-		editAssignment.addActionListener(this);
-		JLabel eventAssignLabel = new JLabel("List of Assignments:");
-		eventAssign.removeAll();
-		eventAssign.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		JScrollPane scroll = new JScrollPane();
-		scroll.setMinimumSize(new Dimension(260, 220));
-		scroll.setPreferredSize(new Dimension(276, 152));
-		
-		//Utility.sort(assign);
-		eventAssign.setListData(assign);
-		eventAssign.setSelectedIndex(0);
-		eventAssign.addMouseListener(this);
-		eventAssignPanel.add(eventAssignLabel, "North");
-		eventAssignPanel.add(scroll, "Center");
-		eventAssignPanel.add(addEventAssign, "South");
-		
-		eventPanel.add(eventAssignPanel, "South");
-		Object[] options = { option, "Cancel" };
-		String title = "Event Editor";
-		int value = JOptionPane.showOptionDialog(Gui.frame, eventPanel, title, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-				options, options[0]);
-		boolean error = true;
-		while (error && value == JOptionPane.YES_OPTION) {
-			
-		}
-	}
-	
-	private void removeAssignment(JList eventAssign) {
+	private void removeFluxBound(JList eventAssign) {
 		int index = eventAssign.getSelectedIndex();
 		if (index != -1) {
 			eventAssign.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -177,7 +143,7 @@ public class FBABounds extends JPanel implements ActionListener, MouseListener {
 		}
 	}
 	
-	private void eventAssignEditor(JList eventAssign, String option) {
+	private void fluxBoundEditor(JList eventAssign, String option) {
 		if (option.equals("OK") && eventAssign.getSelectedIndex() == -1) {
 			JOptionPane.showMessageDialog(Gui.frame, "No event assignment selected.", "Must Select an Event Assignment", JOptionPane.ERROR_MESSAGE);
 			return;
@@ -209,22 +175,16 @@ public class FBABounds extends JPanel implements ActionListener, MouseListener {
 
 
 	public void actionPerformed(ActionEvent e) {
-		// if the add event button is clicked
-		if (e.getSource() == addEvent) {
-			eventEditor("Add");
-		}
-		/* TODO: ONLY NEED THE PART BELOW HERE */
-		// if the add event assignment button is clicked
-		else if (((JButton) e.getSource()).getText().equals("Add")) {
-			eventAssignEditor(eventAssign, "Add");
+		if (((JButton) e.getSource()).getText().equals("Add")) {
+			fluxBoundEditor(eventAssign, "Add");
 		}
 		// if the edit event assignment button is clicked
 		else if (((JButton) e.getSource()).getText().equals("Edit")) {
-			eventAssignEditor(eventAssign, "OK");
+			fluxBoundEditor(eventAssign, "OK");
 		}
 		// if the remove event assignment button is clicked
 		else if (((JButton) e.getSource()).getText().equals("Remove")) {
-			removeAssignment(eventAssign);
+			removeFluxBound(eventAssign);
 		}
 	}
 

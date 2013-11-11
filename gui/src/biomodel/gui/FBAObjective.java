@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -168,10 +169,19 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 					int rightParenthese = objectiveStringArray[i].indexOf(")");
 					objective.setId(objectiveStringArray[i].substring(leftParenthese+1,	rightParenthese).trim());
 					int eqsign = objectiveStringArray[i].indexOf("=");
+					String equationString = objectiveStringArray[i].substring(eqsign + 1, 
+							objectiveStringArray[i].length()).trim();
+					System.out.println(equationString);
 					
-//					objective.setListOfFluxObjectives(objectiveStringArray[i].substring(eqsign+1).trim());
-					
-				    //FluxObjective fluxObjective = objective.createFluxObjective();
+					//Dangling meta character?
+					String[] equationTokens = equationString.split("+");
+					System.out.println(equationTokens);
+					for (int j = 0; j<equationTokens.length; j++){
+						FluxObjective fluxObjective = objective.createFluxObjective();
+						String [] coefficeintReaction = equationTokens[j].split("*");
+						fluxObjective.setCoefficient(Double.parseDouble(coefficeintReaction[0]));
+						fluxObjective.setReaction(coefficeintReaction[1]);
+					}
 
 				}
 				// TODO: for each objective in objectiveStringArray
