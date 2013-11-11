@@ -3157,6 +3157,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		else if (e.getSource() == useMassAction) {
 			useMassAction();
 		}
+		//TODO: Need to adjust reaction String that gets passed to FBABounds
 		else if (e.getActionCommand().equals("fluxBound")){
 			new FBABounds(bioModel,((String) reactions.getSelectedValue()).split(" ")[0]);
 		}
