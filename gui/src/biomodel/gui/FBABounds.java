@@ -72,7 +72,12 @@ public class FBABounds extends JPanel implements ActionListener, MouseListener {
 		
 		String[] assign = new String[0];
 		
-		FluxBound fluxBound = fbc.getListOfFluxBounds().get(reactionId);
+		FluxBound fluxBound = new FluxBound();
+		for(int i = 0; i < fbc.getListOfFluxBounds().size(); i++){
+			if(fbc.getListOfFluxBounds().get(i).getReaction()==reactionId){
+				fluxBound = fbc.getListOfFluxBounds().get(i);
+			}
+		}
 		System.out.println(fluxBound);
 		System.out.println(reactionId);
 		
