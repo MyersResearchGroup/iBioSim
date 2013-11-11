@@ -307,6 +307,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		reacFast = new JComboBox(options);
 		reacFast.setSelectedItem("false");
 		
+		// TODO: REMVOE ALL STUFF RELATED TO THIS WAY OF ADDING BOUNDS
 		reacFBA = new JButton("Edit Bounds");
 		reacFBA.setActionCommand("fluxBound");
 		reacFBA.addActionListener(this);
@@ -524,6 +525,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		modifierPanel.add(scroll5, "Center");
 		modifierPanel.add(addModifiers, "South");
 
+		// TODO: Change to combo box "Kinetic Law:" and "Flux bound:"
 		JLabel kineticLabel = new JLabel("Kinetic Law:");
 		kineticLaw = new JTextArea();
 		kineticLaw.setLineWrap(true);
@@ -541,7 +543,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		scroll4.setViewportView(kineticLaw);
 		if (option.equals("OK")) {
 			if (gcm.getSBMLDocument().getModel().getReaction(reactionId).getKineticLaw()!=null) {
+				// TODO: set combo box to Kinetic law:
 				kineticLaw.setText(bioModel.removeBooleans(gcm.getSBMLDocument().getModel().getReaction(reactionId).getKineticLaw().getMath()));
+			} else {
+				// TODO: set combo box to Flux bound:
+				// TODO: Search the flux bounds to find bounds related to reactionId, build a flux bound relation using that
 			}
 		}
 		JPanel kineticPanel = new JPanel(new BorderLayout());
