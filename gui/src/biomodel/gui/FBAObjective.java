@@ -21,6 +21,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
+import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
 import org.sbml.jsbml.ext.fbc.FluxObjective;
@@ -85,22 +86,11 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 			}
 			objective += "(" + id + ") = ";
 			
-			// TODO: build the right hand size
-			if (fbc.getObjective(i).getType().equals(Type.MINIMIZE)) {
-				objective += fbc.getObjective(i).getListOfFluxObjectives().get(0).getCoefficient() + 
-						" * " + fbc.getObjective(i).getListOfFluxObjectives().get(0).getReaction();
-			} else {
-				objective += (-1)*fbc.getObjective(i).getListOfFluxObjectives().get(0).getCoefficient() + 
-						" * " + fbc.getObjective(i).getListOfFluxObjectives().get(0).getReaction();				
-			}
+			objective += fbc.getObjective(i).getListOfFluxObjectives().get(0).getCoefficient() + 
+					" * " + fbc.getObjective(i).getListOfFluxObjectives().get(0).getReaction();
 			for (int j = 1; j < fbc.getObjective(i).getListOfFluxObjectives().size(); j++) {
-				if (fbc.getObjective(i).getType().equals(Type.MINIMIZE)) {
-					objective += " + " + fbc.getObjective(i).getListOfFluxObjectives().get(j).getCoefficient() + 
-							" * " + fbc.getObjective(i).getListOfFluxObjectives().get(j).getReaction();
-				} else {
-					objective += " + " + (-1)*fbc.getObjective(i).getListOfFluxObjectives().get(j).getCoefficient() + 
-							" * " + fbc.getObjective(i).getListOfFluxObjectives().get(j).getReaction();				
-				}
+				objective += " + " + fbc.getObjective(i).getListOfFluxObjectives().get(j).getCoefficient() + 
+						" * " + fbc.getObjective(i).getListOfFluxObjectives().get(j).getReaction();
 			}
 			objectiveStringArray[i] = objective;
 //			objectiveStringArray[i] = fbc.getObjective(i).toString();
@@ -144,20 +134,15 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = false;
 			if (value == JOptionPane.YES_OPTION) {
-				/* TODO: put in when you are sure second part works
-				while (fbc.getListOfObjectives().size() > 0) {
-					fbc.removeObjective(0);
-				}
-				*/
 				objectiveStringArray = new String[objectiveList.getModel().getSize()];
 				for (int i = 0; i < objectiveList.getModel().getSize(); i++) {
 					objectiveStringArray[i] = objectiveList.getModel().getElementAt(i).toString();
 				}
+				while (fbc.getListOfObjectives().size() > 0) {
+					fbc.removeObjective(0);
+				}
 				for (int i = 0; i<objectiveStringArray.length;i++){
 					Objective objective = fbc.createObjective();
-					if(objectiveStringArray[i].startsWith("*")){
-						fbc.setActiveObjective(objective);
-					}
 					int m = objectiveStringArray[i].indexOf("M");
 					if(objectiveStringArray[i].startsWith("Max", m)){
 						objective.setType(Type.MAXIMIZE);
@@ -168,29 +153,24 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 					int leftParenthese = objectiveStringArray[i].indexOf("(");
 					int rightParenthese = objectiveStringArray[i].indexOf(")");
 					objective.setId(objectiveStringArray[i].substring(leftParenthese+1,	rightParenthese).trim());
+					if(objectiveStringArray[i].startsWith("*")){
+						fbc.setActiveObjective(objective.getId());
+					}
 					int eqsign = objectiveStringArray[i].indexOf("=");
 					String equationString = objectiveStringArray[i].substring(eqsign + 1, 
 							objectiveStringArray[i].length()).trim();
 					System.out.println(equationString);
 					
-					//Dangling meta character?
-					String[] equationTokens = equationString.split("+");
-					System.out.println(equationTokens);
+					// TODO: get this working when no coefficient is provided
+					String[] equationTokens = equationString.split("\\+");
 					for (int j = 0; j<equationTokens.length; j++){
 						FluxObjective fluxObjective = objective.createFluxObjective();
-						String [] coefficeintReaction = equationTokens[j].split("*");
-						fluxObjective.setCoefficient(Double.parseDouble(coefficeintReaction[0]));
-						fluxObjective.setReaction(coefficeintReaction[1]);
+						String [] coefficeintReaction = equationTokens[j].split("\\*");
+						fluxObjective.setCoefficient(Double.parseDouble(coefficeintReaction[0].trim()));
+						fluxObjective.setReaction(coefficeintReaction[1].trim());
 					}
 
 				}
-				// TODO: for each objective in objectiveStringArray
-				  // Objective objective = fbc.createObjective();
-				  // TODO: set id, type
-				  // TODO: if it is active, set activeObjective on the list to this id
-				  // TODO: get RHS of eqn, split on "+"
-				  // TODO: foreach of split on "+", split on "*" and create a fluxObjective with 
-				  // TODO: coefficient with left and reaction with right
 			}
 			if (error) {
 				value = JOptionPane.showOptionDialog(Gui.frame, bigPanel, title, JOptionPane.YES_NO_OPTION, 
@@ -286,6 +266,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 		JTextField objectiveID = new JTextField(12);
 		JComboBox type = new JComboBox(new String[] {"Maximize", "Minimize"});
 		JTextField objective = new JTextField(12);
+		String selectedID = "";
 		if (option.equals("OK")) {
 			String selectAssign = ((String) objectiveList.getSelectedValue());
 			if(selectAssign.startsWith("*")){
@@ -300,6 +281,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 			}
 			int leftParenthese = selectAssign.indexOf("(");
 			int rightParenthese = selectAssign.indexOf(")");
+			selectedID = selectAssign.substring(leftParenthese+1, rightParenthese).trim();
 			objectiveID.setText(selectAssign.substring(leftParenthese+1, rightParenthese).trim());
 			int eqsign = selectAssign.indexOf("=");
 			objective.setText(selectAssign.substring(eqsign+1).trim());
@@ -321,7 +303,17 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = false;
+			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), objectiveID.getText().trim(), selectedID, false, false);
+			if (!error) {
+				// TODO: error check the formula (##.##)? \\* ID (+ (##.##)? \\* ID)*
+				// set error=true if violation
+				// error message
+			} 
+			if (!error) {
+				// TODO: check that all id's in the formula are valid reactions, namely, bioModel.getDocument().getReaction(ID) should not be null
+				// if problem set error=true
+				// error message
+			}
 			if (!error) {
 				if (option.equals("OK")) {
 					int index = objectiveList.getSelectedIndex();
@@ -331,6 +323,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 					objectiveList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					if(activeObjective.isSelected()){
 						assignString = "*";
+						// TODO: remove * from any other member of "assign" which has a "*"
 					}
 					if(type.getSelectedItem().equals("Maximize")){
 						assignString += "Max";
@@ -340,6 +333,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 					}
 					assignString += "(" + objectiveID.getText().trim() + ") = " + 
 							objective.getText().trim();
+					// TODO: change "assign" to be more meaningful
 					assign[index] = assignString;
 					Utility.sort(assign);
 					objectiveList.setListData(assign);
@@ -351,6 +345,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 					String addingString = "";
 					if(activeObjective.isSelected()){
 						addingString = "*";
+						// TODO: remove * from all other entries of "assign"
 					}
 					if(type.getSelectedItem().equals("Maximize")){
 						addingString += "Max";
