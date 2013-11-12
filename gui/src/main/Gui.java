@@ -4212,9 +4212,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							} else {
 								document.getModel().setId(newFile.replace(".xml",""));
 							}
-							SBMLutilities.addPackage(document, "layout", LayoutConstants.namespaceURI, "false");
-							SBMLutilities.addPackage(document, "comp", CompConstant.namespaceURI, "true");
-							SBMLutilities.addPackage(document, "fbc", FBCConstants.namespaceURI, "false");
+							document.addPackageDeclaration("layout", LayoutConstants.namespaceURI, "false");
+							document.addPackageDeclaration("comp", CompConstant.namespaceURI, "true");
+							document.addPackageDeclaration("fbc", FBCConstants.namespaceURI, "false");
 							CompSBMLDocumentPlugin documentComp = (CompSBMLDocumentPlugin) SBMLutilities.getPlugin(CompConstant.namespaceURI, document, true);
 							CompModelPlugin documentCompModel = (CompModelPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, document.getModel(), true);
 							if (documentComp.getListOfModelDefinitions().size() > 0 ||
@@ -10053,9 +10053,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			if (overwrite(root + separator + extId + ".xml",extId + ".xml")) {
 				org.sbml.jsbml.Model model = new org.sbml.jsbml.Model(md);
 				SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
-				SBMLutilities.addPackage(document, "layout", LayoutConstants.namespaceURI, "false");
-				SBMLutilities.addPackage(document, "comp", CompConstant.namespaceURI, "true");
-				SBMLutilities.addPackage(document, "fbc", FBCConstants.namespaceURI, "false");
+				document.addPackageDeclaration("layout", LayoutConstants.namespaceURI, "false");
+				document.addPackageDeclaration("comp", CompConstant.namespaceURI, "true");
+				document.addPackageDeclaration("fbc", FBCConstants.namespaceURI, "false");
 				CompSBMLDocumentPlugin documentComp = (CompSBMLDocumentPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, document, true);
 				CompModelPlugin documentCompModel = (CompModelPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, document.getModel(), true);
 				document.setModel(model);

@@ -1398,21 +1398,21 @@ public class BioModel {
 
 	public void createLayoutPlugin() {
 		if (sbmlLayout==null) {
-			SBMLutilities.addPackage(sbml, "layout", LayoutConstants.namespaceURI, "false");
+			sbml.addPackageDeclaration("layout", LayoutConstants.namespaceURI, "false");
 			sbmlLayout = (LayoutModelPlugin)SBMLutilities.getPlugin(LayoutConstants.namespaceURI, sbml.getModel(), true);
 		}
 	}
 
 	public void createFBCPlugin() {
 		if (sbmlFBC==null) {
-			SBMLutilities.addPackage(sbml, "fbc", FBCConstants.namespaceURI, "false");
+			sbml.addPackageDeclaration("fbc", FBCConstants.namespaceURI, "false");
 			sbmlFBC = (FBCModelPlugin)SBMLutilities.getPlugin(FBCConstants.namespaceURI, sbml.getModel(), true);
 		}
 	}
 
 	public void createCompPlugin() {
 		if (sbmlComp==null) {
-			SBMLutilities.addPackage(sbml, "comp", CompConstant.namespaceURI, "true");
+			sbml.addPackageDeclaration("comp", CompConstant.namespaceURI, "true");
 			sbmlComp = (CompSBMLDocumentPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbml, true);
 			sbmlCompModel = (CompModelPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbml.getModel(), true);
 		}
@@ -6494,13 +6494,13 @@ public class BioModel {
 		ArrayList<String> comps = new ArrayList<String>();
 		SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
 		document.setModel(sbml.getModel());
-		SBMLutilities.addPackage(document, "layout", LayoutConstants.namespaceURI, "false");
+		document.addPackageDeclaration("layout", LayoutConstants.namespaceURI, "false");
 		SBMLutilities.getPlugin(LayoutConstants.namespaceURI, document.getModel(), true);
 		if (sbmlCompModel.getListOfPorts().size() > 0 || sbmlCompModel.getListOfSubmodels().size() > 0) {
-			SBMLutilities.addPackage(document, "comp", CompConstant.namespaceURI, "true");
+			document.addPackageDeclaration("comp", CompConstant.namespaceURI, "true");
 		}
 		if (sbmlFBC.getListOfObjectives().size() > 0 || sbmlFBC.getListOfFluxBounds().size() > 0) {
-			SBMLutilities.addPackage(document, "fbc", FBCConstants.namespaceURI, "false");
+			document.addPackageDeclaration("fbc", FBCConstants.namespaceURI, "false");
 		}
 		if (sbmlCompModel.getListOfSubmodels().size()>0) {
 			CompSBMLDocumentPlugin documentComp = (CompSBMLDocumentPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, document, true);
