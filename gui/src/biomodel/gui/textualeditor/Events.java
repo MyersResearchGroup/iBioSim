@@ -213,7 +213,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					eventName.setText(event.getName());
 					String trigger = SBMLutilities.myFormulaToString(event.getTrigger().getMath());
 					ASTNode triggerMath = event.getTrigger().getMath();
-					for (int j = 0; j < bioModel.getSBMLDocument().getModel().getNumParameters(); j++) {
+					for (int j = 0; j < bioModel.getSBMLDocument().getModel().getParameterCount(); j++) {
 						Parameter parameter = bioModel.getSBMLDocument().getModel().getParameter(j);
 						if (parameter!=null && SBMLutilities.isPlace(parameter)) {
 							if (!isTextual && (trigger.contains("eq("+parameter.getId()+", 1)")||
@@ -261,8 +261,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					if (event.getTrigger().isSetPersistent()) {
 						persistentTrigger.setSelected(event.getTrigger().getPersistent());
 						if (isTransition) {
-							// TODO: Hack to make sure listOfRules is not null
-							bioModel.getSBMLDocument().getModel().getListOfRules();
 							Rule r = bioModel.getSBMLDocument().getModel().getRule(GlobalConstants.TRIGGER + "_" + event.getId());
 							if (r != null) {
 								persistentTrigger.setSelected(true);
@@ -272,7 +270,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 									if (triggerMath.getType()==ASTNode.Type.LOGICAL_OR) {
 										triggerMath = triggerMath.getLeftChild();
 										trigger = SBMLutilities.myFormulaToString(triggerMath);
-										for (int j = 0; j < bioModel.getSBMLDocument().getModel().getNumParameters(); j++) {
+										for (int j = 0; j < bioModel.getSBMLDocument().getModel().getParameterCount(); j++) {
 											Parameter parameter = bioModel.getSBMLDocument().getModel().getParameter(j);
 											if (parameter!=null && SBMLutilities.isPlace(parameter)) {
 												if (!isTextual && (trigger.contains("eq("+parameter.getId()+", 1)")||
@@ -1133,7 +1131,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 		}
-		for (int i = 0; i < model.getNumParameters(); i++) {
+		for (int i = 0; i < model.getParameterCount(); i++) {
 			Parameter p = model.getParameter(i);
 			if ((!isTextual && SBMLutilities.isPlace(p))||p.getId().endsWith("_"+GlobalConstants.RATE)) continue;
 			String id = p.getId();

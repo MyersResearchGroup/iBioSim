@@ -141,7 +141,7 @@ public class GillespieSSAJavaSingleStep {
 		 IndexToSpecies.put(i,SpeciesID); 
 	 }  	 
 	 // get the global parameters
-	 for (int i=0;i<model.getNumParameters();i++){
+	 for (int i=0;i<model.getParameterCount();i++){
 		 GlobalParamID= model.getListOfParameters().get(i).getId();
 		 GlobalParamValue = model.getListOfParameters().get(i).getValue();
 		 GlobalParamsList.put(GlobalParamID,GlobalParamValue);

@@ -449,7 +449,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 			speciesTSData = parser.getHashMap(frameIndex);
 			
 			//find all the components
-			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumParameters(); i++) {
+			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
 				
 				if (bioModel.getSBMLDocument().getModel().getParameter(i).getId().contains("__locations")) {
 			

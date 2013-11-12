@@ -843,7 +843,7 @@ public class Grid {
 		
 		locToComponentMap.clear();	
 		
-		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumParameters(); ++i) {
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); ++i) {
 			
 			Parameter parameter = bioModel.getSBMLDocument().getModel().getParameter(i);
 			
@@ -992,7 +992,7 @@ public class Grid {
 	 */
 	private void putComponentsOntoGrid() {
 		
-		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumParameters(); ++i) {
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); ++i) {
 			
 			Parameter parameter = bioModel.getSBMLDocument().getModel().getParameter(i);
 			

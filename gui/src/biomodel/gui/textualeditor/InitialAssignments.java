@@ -480,7 +480,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			}
 		}
 		ids = model.getListOfParameters();
-		for (int i = 0; i < model.getNumParameters(); i++) {
+		for (int i = 0; i < model.getParameterCount(); i++) {
 			String id = ((Parameter) ids.get(i)).getId();
 			if (keepVarInit(bioModel, selected.split(" ")[0], id)) {
 				initVar.addItem(id);

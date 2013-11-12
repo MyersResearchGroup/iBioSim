@@ -772,7 +772,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 		}
-		for (int i = 0; i < model.getNumParameters(); i++) {
+		for (int i = 0; i < model.getParameterCount(); i++) {
 			Parameter p = model.getParameter(i);
 			if (!(p.getConstant()) && !SBMLutilities.isPlace(p) /*&& !SBMLutilities.isBoolean(p)*/) {
 				if (keepVarAssignRule(bioModel, selected, p.getId())) {
@@ -838,7 +838,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 		}
-		for (int i = 0; i < model.getNumParameters(); i++) {
+		for (int i = 0; i < model.getParameterCount(); i++) {
 			Parameter p = model.getParameter(i);
 			if (!(p.getConstant()) && !SBMLutilities.isPlace(p) && !SBMLutilities.isBoolean(p)) {
 				if (keepVarRateRule(bioModel, selected, p.getId())) {

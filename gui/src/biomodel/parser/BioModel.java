@@ -803,9 +803,9 @@ public class BioModel {
 										for (String parameter : getParameters()) {
 											parameters.put(parameter, getParameter(parameter));
 										}
-										for (int l = 0; l < law.getNumParameters(); l++) {
-											parameters.put(law.getParameter(l).getId(), ""
-													+ law.getParameter(l).getValue());
+										for (int l = 0; l < law.getLocalParameterCount(); l++) {
+											parameters.put(law.getLocalParameter(l).getId(), ""
+													+ law.getLocalParameter(l).getValue());
 										}
 										if (r.isSetReversible() && law.getMath().getCharacter() == '-') {
 											reactionDegradations += "(("
@@ -832,7 +832,7 @@ public class BioModel {
 										for (String parameter : getParameters()) {
 											parameters.put(parameter, getParameter(parameter));
 										}
-										for (int l = 0; l < law.getNumParameters(); l++) {
+										for (int l = 0; l < law.getLocalParameterCount(); l++) {
 											parameters.put(law.getParameter(l).getId(), ""
 													+ law.getParameter(l).getValue());
 										}
@@ -2390,7 +2390,7 @@ public class BioModel {
  				message += "Algebraic rule: 0 := " + SBMLutilities.myFormulaToString(r.getMath()) + "\n";
  			}
  		}
-		for (int i = 0; i < flatSBML.getModel().getNumParameters(); i++) {
+		for (int i = 0; i < flatSBML.getModel().getParameterCount(); i++) {
 			Parameter p = flatSBML.getModel().getParameter(i);
 			if (SBMLutilities.isPlace(p)) {
 				lpn.addPlace(p.getId(), (p.getValue()==1));
@@ -2527,7 +2527,7 @@ public class BioModel {
 						triggerMath = triggerMath.getChild(1);
 						if (triggerMath.getType()==ASTNode.Type.LOGICAL_OR) {
 							triggerMath = triggerMath.getLeftChild();
-							for (int j = 0; j < sbml.getModel().getNumParameters(); j++) {
+							for (int j = 0; j < sbml.getModel().getParameterCount(); j++) {
 								Parameter parameter = sbml.getModel().getParameter(j);
 								if (parameter!=null && SBMLutilities.isPlace(parameter)) {
 									if (trigger.contains("eq("+parameter.getId()+", 1)")||
@@ -2542,7 +2542,7 @@ public class BioModel {
 				} else if (e.isSetTrigger()) {
 					ASTNode triggerMath = e.getTrigger().getMath();
 					String trigger = SBMLutilities.myFormulaToString(triggerMath);
-					for (int j = 0; j < flatSBML.getModel().getNumParameters(); j++) {
+					for (int j = 0; j < flatSBML.getModel().getParameterCount(); j++) {
 						Parameter parameter = flatSBML.getSBMLDocument().getModel().getParameter(j);
 						if (parameter!=null && SBMLutilities.isPlace(parameter)) {
 							if (trigger.contains("eq("+parameter.getId()+", 1)")||
@@ -2919,7 +2919,7 @@ public class BioModel {
 		String submodelID = oldName;
 		
 		//look through locations parameters for find the submodel
-		for (int i = 0; i < sbml.getModel().getNumParameters(); ++i) {
+		for (int i = 0; i < sbml.getModel().getParameterCount(); ++i) {
 			
 			Parameter param = sbml.getModel().getParameter(i);
 			
@@ -3130,7 +3130,7 @@ public class BioModel {
 					submodelID = "C" + count;
 					changed = true;
 				}
-				for (int i = 0; i < sbml.getModel().getNumParameters(); ++i) {
+				for (int i = 0; i < sbml.getModel().getParameterCount(); ++i) {
 					Parameter parameter = sbml.getModel().getParameter(i);
 					if (parameter.getId().endsWith("__locations")) {
 						while (AnnotationUtility.parseArrayAnnotation(parameter, submodelID)!=null) {
@@ -3593,7 +3593,7 @@ public class BioModel {
 	public ArrayList<String> getParameters() {
 		ArrayList<String> parameterSet = new ArrayList<String>();
 		if (sbml!=null) {
-			for (int i = 0; i < sbml.getModel().getNumParameters(); i++) {
+			for (int i = 0; i < sbml.getModel().getParameterCount(); i++) {
 				Parameter parameter = sbml.getModel().getParameter(i);
 				if (SBMLutilities.isBoolean(parameter)) continue;
 				if (SBMLutilities.isPlace(parameter)) continue;
@@ -3606,7 +3606,7 @@ public class BioModel {
 	public ArrayList<String> getBooleans() {
 		ArrayList<String> parameterSet = new ArrayList<String>();
 		if (sbml!=null) {
-			for (int i = 0; i < sbml.getModel().getNumParameters(); i++) {
+			for (int i = 0; i < sbml.getModel().getParameterCount(); i++) {
 				Parameter parameter = sbml.getModel().getParameter(i);
 				if (!SBMLutilities.isBoolean(parameter)) continue;
 				parameterSet.add(parameter.getId());
@@ -3618,7 +3618,7 @@ public class BioModel {
 	public ArrayList<String> getPlaces() {
 		ArrayList<String> parameterSet = new ArrayList<String>();
 		if (sbml!=null) {
-			for (int i = 0; i < sbml.getModel().getNumParameters(); i++) {
+			for (int i = 0; i < sbml.getModel().getParameterCount(); i++) {
 				Parameter parameter = sbml.getModel().getParameter(i);
 				if (!SBMLutilities.isPlace(parameter)) continue;
 				parameterSet.add(parameter.getId());
@@ -3630,7 +3630,7 @@ public class BioModel {
 	public ArrayList<String> getConstantUserParameters() {
 		ArrayList<String> parameterSet = new ArrayList<String>();
 		if (sbml!=null) {
-			for (int i = 0; i < sbml.getModel().getNumParameters(); i++) {
+			for (int i = 0; i < sbml.getModel().getParameterCount(); i++) {
 				Parameter parameter = sbml.getModel().getParameter(i);
 				if (parameter.getConstant() && !IsDefaultParameter(parameter.getId())) {
 					parameterSet.add(parameter.getId());
@@ -3829,7 +3829,7 @@ public class BioModel {
 		else {
 			
 			//search through the parameter location arrays to find the correct one
-			for (int i = 0; i < sbml.getModel().getNumParameters(); ++i) {
+			for (int i = 0; i < sbml.getModel().getParameterCount(); ++i) {
 				
 				Parameter parameter = sbml.getModel().getParameter(i);
 				
@@ -3950,7 +3950,7 @@ public class BioModel {
 
 	public HashMap<String, String> getVariableInputConnections(BioModel compBioModel,String compId) {
 		HashMap<String, String> variables = new HashMap<String, String>();
-		for (int i = 0; i < sbml.getModel().getNumParameters(); i++) {
+		for (int i = 0; i < sbml.getModel().getParameterCount(); i++) {
 			Parameter p = sbml.getModel().getParameter(i);
 			if (!p.getConstant()) {
 				CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, p, true);
@@ -3989,7 +3989,7 @@ public class BioModel {
 	
 	public HashMap<String, String> getVariableOutputConnections(BioModel compBioModel,String compId) {
 		HashMap<String, String> variables = new HashMap<String, String>();
-		for (int i = 0; i < sbml.getModel().getNumParameters(); i++) {
+		for (int i = 0; i < sbml.getModel().getParameterCount(); i++) {
 			Parameter p = sbml.getModel().getParameter(i);
 			if (!p.getConstant()) {
 				CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, p, true);
@@ -4041,7 +4041,7 @@ public class BioModel {
 	public int getSubmodelRow(String submodelID) {
 		//search through the parameter location arrays to find the correct one
 		String locationAnnotationString = null;
-		for (int i = 0; i < sbml.getModel().getNumParameters(); ++i) {
+		for (int i = 0; i < sbml.getModel().getParameterCount(); ++i) {
 			Parameter parameter = sbml.getModel().getParameter(i);
 			//if it's a location parameter
 			if (parameter.getId().contains("__locations")) {
@@ -4062,7 +4062,7 @@ public class BioModel {
 	public int getSubmodelCol(String submodelID) {
 		//search through the parameter location arrays to find the correct one
 		String locationAnnotationString = null;
-		for (int i = 0; i < sbml.getModel().getNumParameters(); ++i) {
+		for (int i = 0; i < sbml.getModel().getParameterCount(); ++i) {
 			Parameter parameter = sbml.getModel().getParameter(i);
 			//if it's a location parameter
 			if (parameter.getId().contains("__locations")) {
@@ -4089,7 +4089,7 @@ public class BioModel {
 		String componentModelRefID = "";
 		
 		//search through the parameter location arrays to find the correct one
-		for (int i = 0; i < sbml.getModel().getNumParameters(); ++i) {
+		for (int i = 0; i < sbml.getModel().getParameterCount(); ++i) {
 			
 			Parameter parameter = sbml.getModel().getParameter(i);
 			
@@ -4627,7 +4627,7 @@ public class BioModel {
 		else {
 			
 			//look through the location parameter arrays to find the correct model ref
-			for (int i = 0; i < sbml.getModel().getNumParameters(); ++i) {
+			for (int i = 0; i < sbml.getModel().getParameterCount(); ++i) {
 				
 				Parameter parameter = sbml.getModel().getParameter(i);
 				
@@ -6436,7 +6436,7 @@ public class BioModel {
 		updatePorts();
 		removeStaleLayout();
 		
-		for (int i = 0; i < sbml.getModel().getNumParameters(); ++i) {
+		for (int i = 0; i < sbml.getModel().getParameterCount(); ++i) {
 			if (sbml.getModel().getParameter(i).getId().contains("__locations")) {
 				updateGridSpecies(sbml.getModel().getParameter(i).getId().replace("__locations",""));
 			}
@@ -6576,7 +6576,7 @@ public class BioModel {
 		if (this.getGridEnabledFromFile(filename.replace(".gcm",".xml"))) {
 			
 			//look through the location parameter arrays
-			for (int i = 0; i < sbml.getModel().getNumParameters(); ++i) {
+			for (int i = 0; i < sbml.getModel().getParameterCount(); ++i) {
 				
 				Parameter parameter = sbml.getModel().getParameter(i);
 				
@@ -6607,7 +6607,7 @@ public class BioModel {
 		if (this.getGridEnabledFromFile(filename.replace(".gcm",".xml"))) {
 		
 			//look through the location parameter arrays to find the correct model ref
-			for (int i = 0; i < sbml.getModel().getNumParameters(); ++i) {
+			for (int i = 0; i < sbml.getModel().getParameterCount(); ++i) {
 				
 				Parameter parameter = sbml.getModel().getParameter(i);
 				
@@ -7215,10 +7215,10 @@ public class BioModel {
 			}
 		}
 		// Rename parameters
-		for (int i = 0; i < subModel.getNumParameters(); i++) {
+		for (int i = 0; i < subModel.getParameterCount(); i++) {
 			Parameter p = subModel.getParameter(i);
 			String newName = subModelId + "__" + p.getId();
-			for (int j = 0; j < model.getNumParameters(); j++) {
+			for (int j = 0; j < model.getParameterCount(); j++) {
 				CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, model.getParameter(j), true);
 				newName = prepareReplacement(newName,subBioModel,subModelId,replacementModelId,sbmlSBase,p.getId(),
 						model.getParameter(j).getId());
@@ -7227,7 +7227,7 @@ public class BioModel {
 			p.setId(newName);
 			if (p.isSetMetaId()) SBMLutilities.setMetaId(p, subModelId + "__" + p.getMetaId());
 		}
-		for (int i = 0; i < subModel.getNumParameters(); i++) {
+		for (int i = 0; i < subModel.getParameterCount(); i++) {
 			Parameter p = subModel.getParameter(i).clone();
 			if (p.getId().startsWith("_" + subModelId + "__")) {
 				updateVarId(false, p.getId(), p.getId().substring(3 + subModelId.length()), subBioModel);
@@ -7708,7 +7708,7 @@ public class BioModel {
 	
 	public ASTNode addBooleans(String formula) {
 		formula = SBMLutilities.myFormulaToString(SBMLutilities.myParseFormula(formula));
-		for (int j = 0; j < sbml.getModel().getNumParameters(); j++) {
+		for (int j = 0; j < sbml.getModel().getParameterCount(); j++) {
 			Parameter parameter = sbml.getModel().getParameter(j);
 			if (SBMLutilities.isBoolean(parameter)) {
 				formula = SBMLutilities.addBoolean(formula,parameter.getId());
@@ -7719,7 +7719,7 @@ public class BioModel {
 	
 	public ASTNode addBooleanAssign(String formula) {
 		formula = SBMLutilities.myFormulaToString(SBMLutilities.myParseFormula(formula));
-		for (int j = 0; j < sbml.getModel().getNumParameters(); j++) {
+		for (int j = 0; j < sbml.getModel().getParameterCount(); j++) {
 			Parameter parameter = sbml.getModel().getParameter(j);
 			if (SBMLutilities.isBoolean(parameter)) {
 				formula = SBMLutilities.addBoolean(formula,parameter.getId());
@@ -7730,7 +7730,7 @@ public class BioModel {
 	}
 	
 	public String removeBooleans(ASTNode math) {
-		for (int j = 0; j < sbml.getModel().getNumParameters(); j++) {
+		for (int j = 0; j < sbml.getModel().getParameterCount(); j++) {
 			Parameter parameter = sbml.getModel().getParameter(j);
 			if (SBMLutilities.isBoolean(parameter)) {
 				math = SBMLutilities.removeBoolean(math,parameter.getId());
@@ -7743,7 +7743,7 @@ public class BioModel {
 	public String removeBooleanAssign(ASTNode math) {
 		if (math.getType() == ASTNode.Type.FUNCTION_PIECEWISE && math.getNumChildren() > 1) {
 			ASTNode result = math.getChild(1);
-			for (int j = 0; j < sbml.getModel().getNumParameters(); j++) {
+			for (int j = 0; j < sbml.getModel().getParameterCount(); j++) {
 				Parameter parameter = sbml.getModel().getParameter(j);
 				if (SBMLutilities.isBoolean(parameter)) {
 					result = SBMLutilities.removeBoolean(result,parameter.getId());
