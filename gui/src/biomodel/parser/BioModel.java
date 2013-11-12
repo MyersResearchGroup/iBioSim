@@ -6451,6 +6451,7 @@ public class BioModel {
 			e.printStackTrace();
 		}
 		sbmlLayout = (LayoutModelPlugin)SBMLutilities.getPlugin(LayoutConstants.namespaceURI, sbml.getModel(), true);
+		sbmlFBC = (FBCModelPlugin)SBMLutilities.getPlugin(FBCConstants.namespaceURI, sbml.getModel(), true);
 		sbmlComp = (CompSBMLDocumentPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbml, true);
 		sbmlCompModel = (CompModelPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbml.getModel(), true);
 		loadDefaultEnclosingCompartment();
@@ -6650,7 +6651,7 @@ public class BioModel {
 						String message = "";
 						for (int i = 0; i < numErrors; i++) {
 							if (document.getError(i).getErrorId()==1020204) continue;
-							String error = document.getError(i).getMessage(); // .replace(". ",
+							String error = doc.getError(i).getMessage(); // .replace(". ",
 							// ".\n");
 							message += i + ":" + error + "\n";
 						}

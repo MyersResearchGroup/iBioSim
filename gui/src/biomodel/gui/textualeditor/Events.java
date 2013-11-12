@@ -261,6 +261,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					if (event.getTrigger().isSetPersistent()) {
 						persistentTrigger.setSelected(event.getTrigger().getPersistent());
 						if (isTransition) {
+							// TODO: Hack to make sure listOfRules is not null
+							bioModel.getSBMLDocument().getModel().getListOfRules();
 							Rule r = bioModel.getSBMLDocument().getModel().getRule(GlobalConstants.TRIGGER + "_" + event.getId());
 							if (r != null) {
 								persistentTrigger.setSelected(true);
