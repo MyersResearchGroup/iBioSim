@@ -1182,7 +1182,7 @@ public class SBMLutilities {
 				doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_SBO_CONSISTENCY, false);
 				doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_MODELING_PRACTICE, false);
 				doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
-				long numErrors = document.checkConsistency();
+				long numErrors = doc.checkConsistency();
 				/*
 				String message = "";
 				for (long i = 0; i < numErrors; i++) {

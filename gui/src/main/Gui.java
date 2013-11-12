@@ -8763,7 +8763,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			String tab = this.getTitleAt(i);
 			if (gcmName.equals(tab)) {
 				if (this.tab.getComponentAt(i) instanceof ModelEditor) {
-					((ModelEditor) this.tab.getComponentAt(i)).reload(gcmName.replace(".gcm", ""));
+					((ModelEditor) this.tab.getComponentAt(i)).reload(gcmName.replace(".gcm", "").replace(".xml", ""));
 					((ModelEditor) this.tab.getComponentAt(i)).refresh();
 					((ModelEditor) this.tab.getComponentAt(i)).getSchematic().getGraph().buildGraph();
 					return true;
