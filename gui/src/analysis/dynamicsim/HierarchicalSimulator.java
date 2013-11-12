@@ -2593,7 +2593,7 @@ public abstract class HierarchicalSimulator {
 		String reactionID = reaction.getId();
 		reactionID = reactionID.replace("_negative_","-");
 
-		for (int i = 0; i < kineticLaw.getNumParameters(); i++) {
+		for (int i = 0; i < kineticLaw.getLocalParameterCount(); i++) {
 
 			LocalParameter localParameter = kineticLaw.getLocalParameter(i);
 

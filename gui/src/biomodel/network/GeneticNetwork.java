@@ -611,7 +611,7 @@ public class GeneticNetwork {
 		ArrayList<String> allComponents = new ArrayList<String>();
 		
 		//search through the parameter location arrays
-		for (int i = 0; i < document.getModel().getNumParameters(); ++i) {
+		for (int i = 0; i < document.getModel().getParameterCount(); ++i) {
 			
 			Parameter parameter = document.getModel().getParameter(i);
 			

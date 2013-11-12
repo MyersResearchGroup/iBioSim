@@ -169,7 +169,7 @@ public class SBMLutilities {
 				}
 			}
 			sbml = model.getListOfParameters();
-			for (int i = 0; i < model.getNumParameters(); i++) {
+			for (int i = 0; i < model.getParameterCount(); i++) {
 				validVars.add(((Parameter) sbml.get(i)).getId());
 			}
 			sbml = model.getListOfReactions();
@@ -924,7 +924,7 @@ public class SBMLutilities {
 		int metaIDIndex = 1;
 		Model model = document.getModel();
 		setDefaultMetaID(document, model, metaIDIndex);
-		for (int i = 0; i < model.getNumParameters(); i++) 
+		for (int i = 0; i < model.getParameterCount(); i++) 
 			metaIDIndex = setDefaultMetaID(document, model.getParameter(i), metaIDIndex);
 		for (int i = 0; i < model.getSpeciesCount(); i++) 
 			metaIDIndex = setDefaultMetaID(document, model.getSpecies(i), metaIDIndex);
@@ -1003,7 +1003,7 @@ public class SBMLutilities {
 			usedIDs.add(((Compartment) ids.get(i)).getId());
 		}
 		ids = model.getListOfParameters();
-		for (int i = 0; i < model.getNumParameters(); i++) {
+		for (int i = 0; i < model.getParameterCount(); i++) {
 			usedIDs.add(((Parameter) ids.get(i)).getId());
 		}
 		ids = model.getListOfReactions();

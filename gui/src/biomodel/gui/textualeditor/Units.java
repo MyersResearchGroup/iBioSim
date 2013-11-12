@@ -755,7 +755,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			}
 		}
 		ArrayList<String> parametersUsing = new ArrayList<String>();
-		for (int i = 0; i < model.getNumParameters(); i++) {
+		for (int i = 0; i < model.getParameterCount(); i++) {
 			Parameter parameters = (Parameter) model.getListOfParameters().get(i);
 			if (parameters.getUnits().equals(unit)) {
 				inUse = true;
@@ -764,7 +764,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 		}
 		ArrayList<String> reacParametersUsing = new ArrayList<String>();
 		for (int i = 0; i < model.getReactionCount(); i++) {
-			for (int j = 0; j < model.getReaction(i).getKineticLaw().getNumParameters(); j++) {
+			for (int j = 0; j < model.getReaction(i).getKineticLaw().getLocalParameterCount(); j++) {
 				LocalParameter parameters = model.getReaction(i).getKineticLaw().getListOfParameters().get(j);
 				if (parameters.getUnits().equals(unit)) {
 					inUse = true;
@@ -1128,9 +1128,9 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			}
 			Utility.sort(specs);
 		}
-		if (model.getNumParameters() > 0) {
-			String[] params = new String[(int) model.getNumParameters()];
-			for (int i = 0; i < model.getNumParameters(); i++) {
+		if (model.getParameterCount() > 0) {
+			String[] params = new String[(int) model.getParameterCount()];
+			for (int i = 0; i < model.getParameterCount(); i++) {
 				Parameter parameter = (Parameter) model.getListOfParameters().get(i);
 				if (parameter.getUnits().equals(origId)) {
 					parameter.setUnits(newId);
@@ -1146,7 +1146,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 		}
 		for (int i = 0; i < model.getReactionCount(); i++) {
 			KineticLaw kineticLaw = (KineticLaw) model.getReaction(i).getKineticLaw();
-			for (int j = 0; j < kineticLaw.getNumParameters(); j++) {
+			for (int j = 0; j < kineticLaw.getLocalParameterCount(); j++) {
 				if (kineticLaw.getParameter(j).getUnits().equals(origId)) {
 					kineticLaw.getParameter(j).setUnits(newId);
 				}

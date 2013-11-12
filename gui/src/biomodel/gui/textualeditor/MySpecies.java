@@ -972,7 +972,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		specConv = new JComboBox();
 		specConv.addItem("( none )");
 		ListOf listOfParameters = bioModel.getSBMLDocument().getModel().getListOfParameters();
-		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumParameters(); i++) {
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
 			Parameter param = (Parameter) listOfParameters.get(i);
 			if (param.getConstant() && !bioModel.IsDefaultParameter(param.getId())) {
 				specConv.addItem(param.getId());

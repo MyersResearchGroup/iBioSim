@@ -132,10 +132,10 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		JScrollPane scroll3 = new JScrollPane();
 		scroll3.setViewportView(parameters);
 		ListOf listOfParameters = model.getListOfParameters();
-		String[] params = new String[(int) model.getNumParameters()];
+		String[] params = new String[(int) model.getParameterCount()];
 		int notIncludedParametersCount = 0;
 		
-		for (int i = 0; i < model.getNumParameters(); i++) {
+		for (int i = 0; i < model.getParameterCount(); i++) {
 			Parameter parameter = (Parameter) listOfParameters.get(i);
 			
 			params[i] = parameter.getId(); 
@@ -215,13 +215,13 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		ListOf listOfParameters = model.getListOfParameters();
 		
 		int skip = 0;
-		for (int i = 0; i < model.getNumParameters(); i++) {
+		for (int i = 0; i < model.getParameterCount(); i++) {
 			Parameter parameter = (Parameter) listOfParameters.get(i);
 			if (constantsOnly && !parameter.getConstant()) skip++;
 		}
 		int k = 0;
-		String[] params = new String[(int) model.getNumParameters()-skip];
-		for (int i = 0; i < model.getNumParameters(); i++) {
+		String[] params = new String[(int) model.getParameterCount()-skip];
+		for (int i = 0; i < model.getParameterCount(); i++) {
 			Parameter parameter = (Parameter) listOfParameters.get(i);
 			if (constantsOnly && !parameter.getConstant()) continue;
 			params[k] = parameter.getId();
@@ -725,7 +725,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 									Utility.sort(params);
 									parameters.setListData(params);
 									parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-									if (bioModel.getSBMLDocument().getModel().getNumParameters() == 1) {
+									if (bioModel.getSBMLDocument().getModel().getParameterCount() == 1) {
 										parameters.setSelectedIndex(0);
 									}
 									else {
@@ -839,7 +839,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 								Utility.sort(params);
 								parameters.setListData(params);
 								parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-								if (bioModel.getSBMLDocument().getModel().getNumParameters() == 1) {
+								if (bioModel.getSBMLDocument().getModel().getParameterCount() == 1) {
 									parameters.setSelectedIndex(0);
 								}
 								else {
@@ -886,7 +886,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		if (!SBMLutilities.variableInUse(bioModel.getSBMLDocument(), selected, false, true, true)) {
 			Parameter tempParameter = bioModel.getSBMLDocument().getModel().getParameter(selected);
 			ListOf p = bioModel.getSBMLDocument().getModel().getListOfParameters();
-			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumParameters(); i++) {
+			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
 				if (((Parameter) p.get(i)).getId().equals(tempParameter.getId())) {
 					p.remove(i);
 				}

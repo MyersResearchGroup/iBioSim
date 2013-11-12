@@ -227,7 +227,7 @@ public class MovieScheme {
 			if (cellType.equals(GlobalConstants.COMPONENT)) {
 				
 				//look through the location parameter arrays to find the correct model ref
-				for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumParameters(); ++i) {
+				for (int i = 0; i < gcm.getSBMLDocument().getModel().getParameterCount(); ++i) {
 					
 					Parameter parameter = gcm.getSBMLDocument().getModel().getParameter(i);
 					

@@ -293,7 +293,7 @@ public abstract class Simulator {
 		model = document.getModel();
 		
 		numSpecies = model.getSpeciesCount();
-		numParameters = model.getNumParameters();
+		numParameters = model.getParameterCount();
 		numReactions = model.getReactionCount();
 		numEvents = model.getEventCount();
 		numRules = model.getRuleCount();

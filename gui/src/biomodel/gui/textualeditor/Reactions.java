@@ -240,7 +240,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			reacts[i] = reaction.getId();
 			if (paramsOnly && reaction.getKineticLaw()!=null) {
 				ListOf params = reaction.getKineticLaw().getListOfParameters();
-				for (int j = 0; j < reaction.getKineticLaw().getNumParameters(); j++) {
+				for (int j = 0; j < reaction.getKineticLaw().getLocalParameterCount(); j++) {
 					LocalParameter paramet = ((LocalParameter) (params.get(j)));
 					for (int k = 0; k < getParams.size(); k++) {
 						if (getParams.get(k).split(" ")[0].equals(reaction.getId() + "/" + paramet.getId())) {
@@ -341,8 +341,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			if (reac.getKineticLaw()!=null) {
 				//reac.createKineticLaw();
 				ListOf listOfParameters = reac.getKineticLaw().getListOfParameters();
-				reacParams = new String[(int) reac.getKineticLaw().getNumParameters()];
-				for (int i = 0; i < reac.getKineticLaw().getNumParameters(); i++) {
+				reacParams = new String[(int) reac.getKineticLaw().getLocalParameterCount()];
+				for (int i = 0; i < reac.getKineticLaw().getLocalParameterCount(); i++) {
 					/*
 					 * This code is a hack to get around a local parameter
 					 * conversion bug in libsbml
@@ -829,7 +829,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						react.createKineticLaw();
 					}
 					remove = react.getKineticLaw().getListOfParameters();
-					size = react.getKineticLaw().getNumParameters();
+					size = react.getKineticLaw().getLocalParameterCount();
 					for (int i = 0; i < size; i++) {
 						remove.remove(0);
 					}
@@ -923,7 +923,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					else {
 						changedParameters = new ArrayList<Parameter>();
 						ListOf listOfParameters = react.getKineticLaw().getListOfParameters();
-						for (int i = 0; i < react.getKineticLaw().getNumParameters(); i++) {
+						for (int i = 0; i < react.getKineticLaw().getLocalParameterCount(); i++) {
 							LocalParameter parameter = (LocalParameter) listOfParameters.get(i);
 							changedParameters.add(new Parameter(parameter));
 						}
@@ -1126,7 +1126,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 			sbml = bioModel.getSBMLDocument().getModel().getListOfParameters();
-			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumParameters(); i++) {
+			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
 				validVars.add(((Parameter) sbml.get(i)).getId());
 			}
 			sbml = bioModel.getSBMLDocument().getModel().getListOfReactions();
@@ -1372,7 +1372,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						KineticLaw KL = d.getModel().getReaction(selectedReaction).getKineticLaw();
 						ListOf list = KL.getListOfParameters();
 						int number = -1;
-						for (int i = 0; i < KL.getNumParameters(); i++) {
+						for (int i = 0; i < KL.getLocalParameterCount(); i++) {
 							if (((LocalParameter) list.get(i)).getId().equals(((String) reacParameters.getSelectedValue()).split(" ")[0])) {
 								number = i;
 							}
@@ -1588,7 +1588,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						reacParameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						try {
 							if (bioModel.getSBMLDocument().getModel().getReaction(selectedReaction).getKineticLaw()
-									.getNumParameters() == 1) {
+									.getLocalParameterCount() == 1) {
 								reacParameters.setSelectedIndex(0);
 							}
 							else {
@@ -3230,7 +3230,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			reacts[i] = reaction.getId();
 			if (paramsOnly) {
 				ListOf params = reaction.getKineticLaw().getListOfParameters();
-				for (int j = 0; j < reaction.getKineticLaw().getNumParameters(); j++) {
+				for (int j = 0; j < reaction.getKineticLaw().getLocalParameterCount(); j++) {
 					LocalParameter paramet = ((LocalParameter) (params.get(j)));
 					for (int k = 0; k < parameterChanges.size(); k++) {
 						if (parameterChanges.get(k).split(" ")[0].equals(reaction.getId() + "/" + paramet.getId())) {
