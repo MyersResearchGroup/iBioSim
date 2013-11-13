@@ -4212,9 +4212,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							} else {
 								document.getModel().setId(newFile.replace(".xml",""));
 							}
-							document.addPackageDeclaration("layout", LayoutConstants.namespaceURI, "false");
-							document.addPackageDeclaration("comp", CompConstant.namespaceURI, "true");
-							document.addPackageDeclaration("fbc", FBCConstants.namespaceURI, "false");
+							document.addPackageDeclaration(LayoutConstants.shortLabel, LayoutConstants.namespaceURI, "false");
+							document.addPackageDeclaration(CompConstant.shortLabel, CompConstant.namespaceURI, "true");
+							document.addPackageDeclaration(FBCConstants.shortLabel, FBCConstants.namespaceURI, "false");
 							CompSBMLDocumentPlugin documentComp = (CompSBMLDocumentPlugin) SBMLutilities.getPlugin(CompConstant.namespaceURI, document, true);
 							CompModelPlugin documentCompModel = (CompModelPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, document.getModel(), true);
 							if (documentComp.getListOfModelDefinitions().size() > 0 ||
@@ -4228,6 +4228,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							} else {
 								newFile = document.getModel().getId()+".xml";
 							}
+							documentCompModel = (CompModelPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, document.getModel(), true);
 							writer.writeSBMLToFile(document, root + separator + newFile);
 							addToTree(newFile);
 							openSBML(root + separator + newFile);
@@ -10053,9 +10054,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			if (overwrite(root + separator + extId + ".xml",extId + ".xml")) {
 				org.sbml.jsbml.Model model = new org.sbml.jsbml.Model(md);
 				SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
-				document.addPackageDeclaration("layout", LayoutConstants.namespaceURI, "false");
-				document.addPackageDeclaration("comp", CompConstant.namespaceURI, "true");
-				document.addPackageDeclaration("fbc", FBCConstants.namespaceURI, "false");
+				document.addPackageDeclaration(LayoutConstants.shortLabel, LayoutConstants.namespaceURI, "false");
+				document.addPackageDeclaration(CompConstant.shortLabel, CompConstant.namespaceURI, "true");
+				document.addPackageDeclaration(FBCConstants.shortLabel, FBCConstants.namespaceURI, "false");
 				CompSBMLDocumentPlugin documentComp = (CompSBMLDocumentPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, document, true);
 				CompModelPlugin documentCompModel = (CompModelPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, document.getModel(), true);
 				document.setModel(model);
