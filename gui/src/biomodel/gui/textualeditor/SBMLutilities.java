@@ -3191,17 +3191,6 @@ public class SBMLutilities {
 		return JSBML.OPERATION_SUCCESS;
 	}
 	
-	/*
-	public static void addPackage(SBMLDocument document,String packageName,String packageURI,String required) {
-		document.addNamespace(packageName,"xmlns",packageURI);
-		Map<String, String> docAttr = document.getSBMLDocumentAttributes();
-		if (!docAttr.containsKey(packageName+":required")) {
-			docAttr.put(packageName+":required",required);
-		}
-		document.setSBMLDocumentAttributes(docAttr);
-	}
-	*/
-	
 	public static SBasePlugin getPlugin(String namespace, SBase sb, boolean createPlugin) {
 		if (sb.getExtension(namespace) != null) {
 			return sb.getExtension(namespace);

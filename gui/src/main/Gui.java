@@ -4228,7 +4228,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							} else {
 								newFile = document.getModel().getId()+".xml";
 							}
-							documentCompModel = (CompModelPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, document.getModel(), true);
 							writer.writeSBMLToFile(document, root + separator + newFile);
 							addToTree(newFile);
 							openSBML(root + separator + newFile);
@@ -10030,7 +10029,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(document.getModel());
 			for (int j = 0; j < elements.size(); j++) {
 				SBase sbase = elements.get(j);
-				CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbase, true);
+				CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbase, false);
 				if (sbmlSBase!=null) {
 					if (updatePortMap(sbmlComp,sbmlSBase,subModel,submodel.getId())) {
 						elements = SBMLutilities.getListOfAllElements(document.getModel());
