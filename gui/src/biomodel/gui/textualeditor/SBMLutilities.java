@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -197,7 +199,7 @@ public class SBMLutilities {
 			for (int i = 0; i < kindsL3V1.length; i++) {
 				validVars.add(kindsL3V1[i]);
 			}
-			for (int i = 0; i < model.getNumUnitDefinitions(); i++) {
+			for (int i = 0; i < model.getUnitDefinitionCount(); i++) {
 				validVars.add(model.getListOfUnitDefinitions().get(i).getId());
 			}
 		}
@@ -551,7 +553,7 @@ public class SBMLutilities {
 		else if (node.getType() == ASTNode.Type.NAME_AVOGADRO) {
 			node.setName("avogadro");
 		}
-		for (int c = 0; c < node.getNumChildren(); c++)
+		for (int c = 0; c < node.getChildCount(); c++)
 			setTimeToT(node.getChild(c));
 	}
 
@@ -630,7 +632,7 @@ public class SBMLutilities {
 			}
 		}
 
-		for (int c = 0; c < node.getNumChildren(); c++)
+		for (int c = 0; c < node.getChildCount(); c++)
 			setTimeAndTrigVar(node.getChild(c));
 	}
 
@@ -670,8 +672,8 @@ public class SBMLutilities {
 		case FUNCTION_EXP:
 		case FUNCTION_FLOOR:
 		case FUNCTION_LN:
-			if (node.getNumChildren() != 1) {
-				JOptionPane.showMessageDialog(Gui.frame, "Expected 1 argument for " + node.getName() + " but found " + node.getNumChildren() + ".",
+			if (node.getChildCount() != 1) {
+				JOptionPane.showMessageDialog(Gui.frame, "Expected 1 argument for " + node.getName() + " but found " + node.getChildCount() + ".",
 						"Number of Arguments Incorrect", JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
@@ -682,8 +684,8 @@ public class SBMLutilities {
 			}
 			break;
 		case LOGICAL_NOT:
-			if (node.getNumChildren() != 1) {
-				JOptionPane.showMessageDialog(Gui.frame, "Expected 1 argument for " + node.getName() + " but found " + node.getNumChildren() + ".",
+			if (node.getChildCount() != 1) {
+				JOptionPane.showMessageDialog(Gui.frame, "Expected 1 argument for " + node.getName() + " but found " + node.getChildCount() + ".",
 						"Number of Arguments Incorrect", JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
@@ -696,7 +698,7 @@ public class SBMLutilities {
 		case LOGICAL_AND:
 		case LOGICAL_OR:
 		case LOGICAL_XOR:
-			for (int i = 0; i < node.getNumChildren(); i++) {
+			for (int i = 0; i < node.getChildCount(); i++) {
 				if (!node.getChild(i).isBoolean()) {
 					JOptionPane.showMessageDialog(Gui.frame, "Argument " + i + " for " + node.getName() + " function is not of type Boolean.",
 							"Boolean Expected", JOptionPane.ERROR_MESSAGE);
@@ -722,7 +724,7 @@ public class SBMLutilities {
 						JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
-			if ((node.getNumChildren() > 1) && (node.getChild(1).isBoolean())) {
+			if ((node.getChildCount() > 1) && (node.getChild(1).isBoolean())) {
 				JOptionPane.showMessageDialog(Gui.frame, "Argument 2 for - operator must evaluate to a number.", "Number Expected",
 						JOptionPane.ERROR_MESSAGE);
 				return true;
@@ -772,8 +774,8 @@ public class SBMLutilities {
 		case RELATIONAL_LT:
 		case RELATIONAL_GT:
 		case FUNCTION_LOG:
-			if (node.getNumChildren() != 2) {
-				JOptionPane.showMessageDialog(Gui.frame, "Expected 2 arguments for " + node.getName() + " but found " + node.getNumChildren() + ".",
+			if (node.getChildCount() != 2) {
+				JOptionPane.showMessageDialog(Gui.frame, "Expected 2 arguments for " + node.getName() + " but found " + node.getChildCount() + ".",
 						"Number of Arguments Incorrect", JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
@@ -790,8 +792,8 @@ public class SBMLutilities {
 			break;
 		case RELATIONAL_EQ:
 		case RELATIONAL_NEQ:
-			if (node.getNumChildren() != 2) {
-				JOptionPane.showMessageDialog(Gui.frame, "Expected 2 arguments for " + node.getName() + " but found " + node.getNumChildren() + ".",
+			if (node.getChildCount() != 2) {
+				JOptionPane.showMessageDialog(Gui.frame, "Expected 2 arguments for " + node.getName() + " but found " + node.getChildCount() + ".",
 						"Number of Arguments Incorrect", JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
@@ -802,12 +804,12 @@ public class SBMLutilities {
 			}
 			break;
 		case FUNCTION_PIECEWISE:
-			if (node.getNumChildren() < 1) {
+			if (node.getChildCount() < 1) {
 				JOptionPane.showMessageDialog(Gui.frame, "Piecewise function requires at least 1 argument.", "Number of Arguments Incorrect",
 						JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
-			for (int i = 1; i < node.getNumChildren(); i += 2) {
+			for (int i = 1; i < node.getChildCount(); i += 2) {
 				if (!node.getChild(i).isBoolean()) {
 					JOptionPane.showMessageDialog(Gui.frame, "Even arguments of piecewise function must be of type Boolean.", "Boolean Expected",
 							JOptionPane.ERROR_MESSAGE);
@@ -815,7 +817,7 @@ public class SBMLutilities {
 				}
 			}
 			int pieceType = -1;
-			for (int i = 0; i < node.getNumChildren(); i += 2) {
+			for (int i = 0; i < node.getChildCount(); i += 2) {
 				if (node.getChild(i).isBoolean()) {
 					if (pieceType == 2) {
 						JOptionPane.showMessageDialog(Gui.frame, "All odd arguments of a piecewise function must agree.", "Type Mismatch",
@@ -837,9 +839,9 @@ public class SBMLutilities {
 			for (int i = 0; i < document.getModel().getFunctionDefinitionCount(); i++) {
 				if (((FunctionDefinition) sbml.get(i)).getId().equals(node.getName())) {
 					long numArgs = ((FunctionDefinition) sbml.get(i)).getNumArguments();
-					if (numArgs != node.getNumChildren()) {
+					if (numArgs != node.getChildCount()) {
 						JOptionPane.showMessageDialog(Gui.frame,
-								"Expected " + numArgs + " argument(s) for " + node.getName() + " but found " + node.getNumChildren() + ".",
+								"Expected " + numArgs + " argument(s) for " + node.getName() + " but found " + node.getChildCount() + ".",
 								"Number of Arguments Incorrect", JOptionPane.ERROR_MESSAGE);
 						return true;
 					}
@@ -889,7 +891,7 @@ public class SBMLutilities {
 			}
 			break;
 		}
-		for (int c = 0; c < node.getNumChildren(); c++) {
+		for (int c = 0; c < node.getChildCount(); c++) {
 			if (checkNumFunctionArguments(document, node.getChild(c))) {
 				return true;
 			}
@@ -986,7 +988,7 @@ public class SBMLutilities {
 		usedIDs.add("F");
 		usedIDs.add("U");
 		ids = model.getListOfUnitDefinitions();
-		for (int i = 0; i < model.getNumUnitDefinitions(); i++) {
+		for (int i = 0; i < model.getUnitDefinitionCount(); i++) {
 			usedIDs.add(((UnitDefinition) ids.get(i)).getId());
 		}
 //		CompartmentType and SpeciesType not supported in Level 3
@@ -1183,14 +1185,6 @@ public class SBMLutilities {
 				doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_MODELING_PRACTICE, false);
 				doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
 				long numErrors = doc.checkConsistency();
-				/*
-				String message = "";
-				for (long i = 0; i < numErrors; i++) {
-					String error = document.getError(i).getMessage(); // .replace(". ",
-					// ".\n");
-					message += i + ":" + error + "\n";
-				}
-				 */
 				if (numErrors > 0) {
 					JOptionPane.showMessageDialog(Gui.frame, "Algebraic rules make model overdetermined.", "Model is Overdetermined",
 							JOptionPane.WARNING_MESSAGE);
@@ -1212,14 +1206,6 @@ public class SBMLutilities {
 			document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.MODELING_PRACTICE, false);
 			document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.OVERDETERMINED_MODEL, true);
 			long numErrors = document.checkConsistency();
-			/*
-			String message = "";
-			for (long i = 0; i < numErrors; i++) {
-				String error = document.getError(i).getMessage(); // .replace(". ",
-				// ".\n");
-				message += i + ":" + error + "\n";
-			}
-			 */
 			if (numErrors > 0) {
 				JOptionPane.showMessageDialog(Gui.frame, "Algebraic rules make model overdetermined.", "Model is Overdetermined",
 						JOptionPane.WARNING_MESSAGE);
@@ -1881,41 +1867,70 @@ public class SBMLutilities {
 	/**
 	 * Checks consistency of the sbml file.
 	 */
-	public static void check(String file) {
-		// Hack to avoid weird bug.
-		// By reloading the file before consistency checks, it seems to avoid a
-		// crash when attempting to save a newly added parameter with no units
+	public static boolean check(String file,SBMLDocument doc,boolean warnings) {
 		String message = "";
 		long numErrors = 0;
 		if (Gui.isLibsbmlFound()) {
-			org.sbml.libsbml.SBMLDocument document = new org.sbml.libsbml.SBMLReader().readSBML(file);
+			org.sbml.libsbml.SBMLDocument document = null;
+			if (doc == null) {
+				document = new org.sbml.libsbml.SBMLReader().readSBML(file);
+			} else {
+				try {
+					document = new org.sbml.libsbml.SBMLReader().readSBMLFromString(new SBMLWriter().writeSBMLToString(doc));
+				}
+				catch (SBMLException e) {
+					JOptionPane.showMessageDialog(Gui.frame, "Invalid SBML file","Error Checking File", JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
+				catch (XMLStreamException e) {
+					JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file","Error Checking File", JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
+			}
+			if (document==null) return false;
 			document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_GENERAL_CONSISTENCY, true);
 			document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_IDENTIFIER_CONSISTENCY, true);
-			document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_UNITS_CONSISTENCY, true);
-			document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_MATHML_CONSISTENCY, true);
-			document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_SBO_CONSISTENCY, true);
-			document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_MODELING_PRACTICE, true);
 			document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
+			if (warnings) {
+				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_UNITS_CONSISTENCY, true);
+				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_MATHML_CONSISTENCY, true);
+				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_SBO_CONSISTENCY, true);
+				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_MODELING_PRACTICE, true);
+			} else {
+				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_UNITS_CONSISTENCY, false);
+				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_MATHML_CONSISTENCY, false);
+				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_SBO_CONSISTENCY, false);
+				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_MODELING_PRACTICE, false);
+			}			
 			numErrors = document.checkConsistency();
 			for (int i = 0; i < numErrors; i++) {
-				String error = document.getError(i).getMessage(); // .replace(". ",
-				// ".\n");
+				String error = document.getError(i).getMessage(); 
 				message += i + ":" + error + "\n";
 			}
 		}
 		else {
-			SBMLDocument document = Gui.readSBML(file);
+			SBMLDocument document = doc;
+			if (document==null) {
+				document = SBMLutilities.readSBML(file);
+			} 
+			if (document==null) return false;
 			document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.GENERAL_CONSISTENCY, true);
 			document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.IDENTIFIER_CONSISTENCY, true);
-			document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.UNITS_CONSISTENCY, true);
-			document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.MATHML_CONSISTENCY, true);
-			document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.SBO_CONSISTENCY, true);
-			document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.MODELING_PRACTICE, true);
 			document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.OVERDETERMINED_MODEL, true);
+			if (warnings) {
+				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.UNITS_CONSISTENCY, true);
+				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.MATHML_CONSISTENCY, true);
+				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.SBO_CONSISTENCY, true);
+				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.MODELING_PRACTICE, true);
+			} else {
+				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.UNITS_CONSISTENCY, false);
+				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.MATHML_CONSISTENCY, false);
+				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.SBO_CONSISTENCY, false);
+				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.MODELING_PRACTICE, false);
+			}			
 			numErrors = document.checkConsistency();
 			for (int i = 0; i < numErrors; i++) {
-				String error = document.getError(i).getMessage(); // .replace(". ",
-				// ".\n");
+				String error = document.getError(i).getMessage(); 
 				message += i + ":" + error + "\n";
 			}
 		}
@@ -1928,7 +1943,9 @@ public class SBMLutilities {
 			scroll.setPreferredSize(new Dimension(600, 600));
 			scroll.setViewportView(messageArea);
 			JOptionPane.showMessageDialog(Gui.frame, scroll, "SBML Errors and Warnings", JOptionPane.ERROR_MESSAGE);
+			return false;
 		}
+		return true;
 	}
 	
 	public static boolean checkUnitsInAssignmentRule(SBMLDocument document,Rule rule) {
@@ -1969,7 +1986,7 @@ public class SBMLutilities {
 		}
 		if (document.getModel().getUnitDefinition("time") != null) {
 			UnitDefinition timeUnitDef = document.getModel().getUnitDefinition("time");
-			for (int i = 0; i < timeUnitDef.getNumUnits(); i++) {
+			for (int i = 0; i < timeUnitDef.getUnitCount(); i++) {
 				Unit timeUnit = timeUnitDef.getUnit(i);
 				Unit recTimeUnit = unitDefVar.createUnit();
 				recTimeUnit.setKind(timeUnit.getKind());
@@ -1977,7 +1994,7 @@ public class SBMLutilities {
 					recTimeUnit.setExponent(timeUnit.getExponent() * (-1));
 				}
 				else {
-					recTimeUnit.setExponent(timeUnit.getExponentAsDouble() * (-1));
+					recTimeUnit.setExponent(timeUnit.getExponent() * (-1));
 				}
 				recTimeUnit.setScale(timeUnit.getScale());
 				recTimeUnit.setMultiplier(timeUnit.getMultiplier());
@@ -1986,7 +2003,7 @@ public class SBMLutilities {
 		else {
 			Unit unit = unitDefVar.createUnit();
 			unit.setKind(Unit.Kind.valueOf("second".toUpperCase()));
-			unit.setExponent(-1);
+			unit.setExponent(-1.0);
 			unit.setScale(0);
 			unit.setMultiplier(1.0);
 		}
@@ -2022,7 +2039,7 @@ public class SBMLutilities {
 		UnitDefinition unitDefLaw = new UnitDefinition(document.getLevel(), document.getVersion());
 		if (document.getModel().getUnitDefinition("substance") != null) {
 			UnitDefinition subUnitDef = document.getModel().getUnitDefinition("substance");
-			for (int i = 0; i < subUnitDef.getNumUnits(); i++) {
+			for (int i = 0; i < subUnitDef.getUnitCount(); i++) {
 				Unit subUnit = subUnitDef.getUnit(i);
 				unitDefLaw.addUnit(subUnit);
 			}
@@ -2030,13 +2047,13 @@ public class SBMLutilities {
 		else {
 			Unit unit = unitDefLaw.createUnit();
 			unit.setKind(Unit.Kind.valueOf("mole".toUpperCase()));
-			unit.setExponent(1);
+			unit.setExponent(1.0);
 			unit.setScale(0);
 			unit.setMultiplier(1.0);
 		}
 		if (document.getModel().getUnitDefinition("time") != null) {
 			UnitDefinition timeUnitDef = document.getModel().getUnitDefinition("time");
-			for (int i = 0; i < timeUnitDef.getNumUnits(); i++) {
+			for (int i = 0; i < timeUnitDef.getUnitCount(); i++) {
 				Unit timeUnit = timeUnitDef.getUnit(i);
 				Unit recTimeUnit = unitDefLaw.createUnit();
 				recTimeUnit.setKind(timeUnit.getKind());
@@ -2044,7 +2061,7 @@ public class SBMLutilities {
 					recTimeUnit.setExponent(timeUnit.getExponent() * (-1));
 				}
 				else {
-					recTimeUnit.setExponent(timeUnit.getExponentAsDouble() * (-1));
+					recTimeUnit.setExponent(timeUnit.getExponent() * (-1));
 				}
 				recTimeUnit.setScale(timeUnit.getScale());
 				recTimeUnit.setMultiplier(timeUnit.getMultiplier());
@@ -2053,7 +2070,7 @@ public class SBMLutilities {
 		else {
 			Unit unit = unitDefLaw.createUnit();
 			unit.setKind(Unit.Kind.valueOf("second".toUpperCase()));
-			unit.setExponent(-1);
+			unit.setExponent(-1.0);
 			unit.setScale(0);
 			unit.setMultiplier(1.0);
 		}
@@ -2232,7 +2249,7 @@ public class SBMLutilities {
 	      return false;
 	    }
 	  } else if (node.getType() == ASTNode.Type.FUNCTION_PIECEWISE) {
-	    for (int c = 0; c < node.getNumChildren(); c += 2) {
+	    for (int c = 0; c < node.getChildCount(); c += 2) {
 	      if ( !isBoolean( document, node.getChild(c) ) ) return false;
 	    }
 	    return true;
@@ -2288,7 +2305,7 @@ public class SBMLutilities {
 				return deepCopy(math.getLeftChild());
 			}
 		}
-		for (int i = 0; i < math.getNumChildren(); i++) {
+		for (int i = 0; i < math.getChildCount(); i++) {
 			ASTNode child = removePreset(math.getChild(i),place);
 			math.replaceChild(i, child);
 		}
@@ -2321,7 +2338,7 @@ public class SBMLutilities {
 				return deepCopy(math.getLeftChild());
 			}
 		}
-		for (int i = 0; i < math.getNumChildren(); i++) {
+		for (int i = 0; i < math.getChildCount(); i++) {
 			ASTNode child = removeBoolean(math.getChild(i),boolVar);
 			math.replaceChild(i, child);
 		}
@@ -2343,10 +2360,10 @@ public class SBMLutilities {
 			return "(" + leftStr + " / " + rightStr + ")";
 		} else if (math.getType() == ASTNode.Type.FUNCTION) {
 			String result = math.getName() + "(";
-			for (int i = 0; i < math.getNumChildren(); i++) {
+			for (int i = 0; i < math.getChildCount(); i++) {
 				String child = myFormulaToStringInfix(math.getChild(i));
 				result += child;
-				if (i+1 < math.getNumChildren()) {
+				if (i+1 < math.getChildCount()) {
 					result += ",";
 				}
 			}
@@ -2406,10 +2423,10 @@ public class SBMLutilities {
 			return "ln(" + myFormulaToStringInfix(math.getChild(0)) + ")";
 		} else if (math.getType() == ASTNode.Type.FUNCTION_LOG) {
 			String result = "log(";
-			for (int i = 0; i < math.getNumChildren(); i++) {
+			for (int i = 0; i < math.getChildCount(); i++) {
 				String child = myFormulaToStringInfix(math.getChild(i));
 				result += child;
-				if (i+1 < math.getNumChildren()) {
+				if (i+1 < math.getChildCount()) {
 					result += ",";
 				}
 			}
@@ -2417,10 +2434,10 @@ public class SBMLutilities {
 			return result;
 		} else if (math.getType() == ASTNode.Type.FUNCTION_PIECEWISE) {
 			String result = "piecewise(";
-			for (int i = 0; i < math.getNumChildren(); i++) {
+			for (int i = 0; i < math.getChildCount(); i++) {
 				String child = myFormulaToStringInfix(math.getChild(i));
 				result += child;
-				if (i+1 < math.getNumChildren()) {
+				if (i+1 < math.getChildCount()) {
 					result += ",";
 				}
 			}
@@ -2453,50 +2470,50 @@ public class SBMLutilities {
 				return "" + math.getInteger();
 			}
 		} else if (math.getType() == ASTNode.Type.LOGICAL_AND) {
-			if (math.getNumChildren()==0) return "";
+			if (math.getChildCount()==0) return "";
 			String result = "(";
-			for (int i = 0; i < math.getNumChildren(); i++) {
+			for (int i = 0; i < math.getChildCount(); i++) {
 				String child = myFormulaToStringInfix(math.getChild(i));
 				result += child;
-				if (i+1 < math.getNumChildren()) {
+				if (i+1 < math.getChildCount()) {
 					result += " && ";
 				}
 			}
 			result += ")";
 			return result;
 		} else if (math.getType() == ASTNode.Type.LOGICAL_NOT) {
-			if (math.getNumChildren()==0) return "";
+			if (math.getChildCount()==0) return "";
 			String result = "!(";
 			String child = myFormulaToStringInfix(math.getChild(0));
 			result += child;
 			result += ")";
 			return result;
 		} else if (math.getType() == ASTNode.Type.LOGICAL_OR) {
-			if (math.getNumChildren()==0) return "";
+			if (math.getChildCount()==0) return "";
 			String result = "(";
-			for (int i = 0; i < math.getNumChildren(); i++) {
+			for (int i = 0; i < math.getChildCount(); i++) {
 				String child = myFormulaToStringInfix(math.getChild(i));
 				result += child;
-				if (i+1 < math.getNumChildren()) {
+				if (i+1 < math.getChildCount()) {
 					result += " || ";
 				}
 			}
 			result += ")";
 			return result;
 		} else if (math.getType() == ASTNode.Type.LOGICAL_XOR) {
-			if (math.getNumChildren()==0) return "";
+			if (math.getChildCount()==0) return "";
 			String result = "xor(";
-			for (int i = 0; i < math.getNumChildren(); i++) {
+			for (int i = 0; i < math.getChildCount(); i++) {
 				String child = myFormulaToStringInfix(math.getChild(i));
 				result += child;
-				if (i+1 < math.getNumChildren()) {
+				if (i+1 < math.getChildCount()) {
 					result += ",";
 				}
 			}
 			result += ")";
 			return result;
 		} else if (math.getType() == ASTNode.Type.MINUS) {
-			if (math.getNumChildren()==1) { 
+			if (math.getChildCount()==1) { 
 				return "-" + myFormulaToStringInfix(math.getChild(0));
 			} else {
 				String leftStr = myFormulaToStringInfix(math.getLeftChild());
@@ -2512,7 +2529,7 @@ public class SBMLutilities {
 		} else if (math.getType() == ASTNode.Type.PLUS) {
 			String returnVal = "(";
 			boolean first = true;
-			for (int i=0; i < math.getNumChildren(); i++) {
+			for (int i=0; i < math.getChildCount(); i++) {
 				if (first) {
 					first = false;
 				} else {
@@ -2571,7 +2588,7 @@ public class SBMLutilities {
 		} else if (math.getType() == ASTNode.Type.TIMES) {
 			String returnVal = "(";
 			boolean first = true;
-			for (int i=0; i < math.getNumChildren(); i++) {
+			for (int i=0; i < math.getChildCount(); i++) {
 				if (first) {
 					first = false;
 				} else {
@@ -2660,7 +2677,7 @@ public class SBMLutilities {
 			return false;
 		} else if (math.getType() == ASTNode.Type.FUNCTION_PIECEWISE) {
 			boolean result = true;
-			for (int i = 0; i < math.getNumChildren(); i++) {
+			for (int i = 0; i < math.getChildCount(); i++) {
 				result = result && returnsBoolean(math.getChild(i), model);
 			}
 			return result;
@@ -2733,7 +2750,7 @@ public class SBMLutilities {
 	}
 	
 	public static String SBMLMathToBoolLPNString(ASTNode math,HashMap<String,Integer> constants,ArrayList<String> booleans) {
-		if (math.getType() == ASTNode.Type.FUNCTION_PIECEWISE && math.getNumChildren() > 1) {
+		if (math.getType() == ASTNode.Type.FUNCTION_PIECEWISE && math.getChildCount() > 1) {
 			return SBMLMathToLPNString(math.getChild(1),constants,booleans);
 		}
 		return SBMLMathToLPNString(math,constants,booleans);
@@ -2755,10 +2772,10 @@ public class SBMLutilities {
  			return math.getName();
 		} else if (math.getType() == ASTNode.Type.FUNCTION) {
 			String result = math.getName() + "(";
-			for (int i = 0; i < math.getNumChildren(); i++) {
+			for (int i = 0; i < math.getChildCount(); i++) {
 				String child = SBMLMathToLPNString(math.getChild(i),constants,booleans);
 				result += child;
-				if (i+1 < math.getNumChildren()) {
+				if (i+1 < math.getChildCount()) {
 					result += ",";
 				}
 			}
@@ -2769,7 +2786,7 @@ public class SBMLutilities {
 			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants,booleans);
 			return "(" + leftStr + "+" + rightStr + ")";
 		} else if (math.getType() == ASTNode.Type.MINUS) {
-			if (math.getNumChildren()==1) {
+			if (math.getChildCount()==1) {
 				return "-" + SBMLMathToLPNString(math.getChild(0),constants,booleans);
 			} 
 			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants,booleans);
@@ -2816,43 +2833,43 @@ public class SBMLutilities {
 			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants,booleans);
 			return "(" + leftStr + "!=" + rightStr + ")";
 		} else if (math.getType() == ASTNode.Type.LOGICAL_NOT) {
-			if (math.getNumChildren()==0) return "";
+			if (math.getChildCount()==0) return "";
 			String result = "~(";
 			String child = SBMLMathToLPNString(math.getChild(0),constants,booleans);
 			result += child;
 			result += ")";
 			return result;
 		} else if (math.getType() == ASTNode.Type.LOGICAL_AND) {
-			if (math.getNumChildren()==0) return "";
+			if (math.getChildCount()==0) return "";
 			String result = "(";
-			for (int i = 0; i < math.getNumChildren(); i++) {
+			for (int i = 0; i < math.getChildCount(); i++) {
 				String child = SBMLMathToLPNString(math.getChild(i),constants,booleans);
 				result += child;
-				if (i+1 < math.getNumChildren()) {
+				if (i+1 < math.getChildCount()) {
 					result += "&";
 				}
 			}
 			result += ")";
 			return result;
 		} else if (math.getType() == ASTNode.Type.LOGICAL_OR) {
-			if (math.getNumChildren()==0) return "";
+			if (math.getChildCount()==0) return "";
 			String result = "(";
-			for (int i = 0; i < math.getNumChildren(); i++) {
+			for (int i = 0; i < math.getChildCount(); i++) {
 				String child = SBMLMathToLPNString(math.getChild(i),constants,booleans);
 				result += child;
-				if (i+1 < math.getNumChildren()) {
+				if (i+1 < math.getChildCount()) {
 					result += "|";
 				}
 			}
 			result += ")";
 			return result;
 		} else if (math.getType() == ASTNode.Type.LOGICAL_XOR) {
-			if (math.getNumChildren()==0) return "";
+			if (math.getChildCount()==0) return "";
 			String result = "exor(";
-			for (int i = 0; i < math.getNumChildren(); i++) {
+			for (int i = 0; i < math.getChildCount(); i++) {
 				String child = SBMLMathToLPNString(math.getChild(i),constants,booleans);
 				result += child;
-				if (i+1 < math.getNumChildren()) {
+				if (i+1 < math.getChildCount()) {
 					result += ",";
 				}
 			}
@@ -2894,11 +2911,11 @@ public class SBMLutilities {
 	
 	public static void replaceArgument(ASTNode formula,String bvar, ASTNode arg) {
 		int n = 0;
-		for (int i = 0; i < formula.getNumChildren(); i++) {
+		for (int i = 0; i < formula.getChildCount(); i++) {
 			ASTNode child = formula.getChild(i);
 			if (child.getName() != null && child.getName().equals(bvar)) {
 				formula.replaceChild(n, deepCopy(arg));
-			} else if (child.getNumChildren() > 0) {
+			} else if (child.getChildCount() > 0) {
 				replaceArgument(child, bvar, arg);
 			}
 			n++;
@@ -2913,9 +2930,9 @@ public class SBMLutilities {
 	 */
 	protected static void getAllASTNodeChildren(ASTNode node, ArrayList<ASTNode> nodeChildrenList) {
 		
-		for (int i = 0; i < node.getNumChildren(); i++) {
+		for (int i = 0; i < node.getChildCount(); i++) {
 			ASTNode child = node.getChild(i);
-			if (child.getNumChildren() == 0)
+			if (child.getChildCount() == 0)
 				nodeChildrenList.add(child);
 			else {
 				nodeChildrenList.add(child);
@@ -2960,7 +2977,7 @@ public class SBMLutilities {
 		
 		if (formula.isFunction() == false /* || formula.isLeaf() == false*/) {
 			
-			for (int i = 0; i < formula.getNumChildren(); ++i)
+			for (int i = 0; i < formula.getChildCount(); ++i)
 				formula.replaceChild(i, inlineFormula(model,formula.getChild(i)));//.clone()));
 
 		} else if (formula.isFunction() && model.getFunctionDefinition(formula.getName()) != null) {
@@ -2987,12 +3004,12 @@ public class SBMLutilities {
 				
 				ASTNode child = inlinedChildren.get(i);
 				
-				if (child.getNumChildren()==0 && child.isName()) {
+				if (child.getChildCount()==0 && child.isName()) {
 					
 					int index = inlinedChildToOldIndexMap.get(child.getName());
 					replaceArgument(inlinedFormula,myFormulaToString(child), oldFormula.getChild(index));
 					
-					if (inlinedFormula.getNumChildren() == 0)
+					if (inlinedFormula.getChildCount() == 0)
 						inlinedFormula = oldFormula.getChild(index);
 				}
 			}
@@ -3191,41 +3208,58 @@ public class SBMLutilities {
 		return JSBML.OPERATION_SUCCESS;
 	}
 	
-	public static SBasePlugin getPlugin(String namespace, SBase sb, boolean createPlugin) {
-		if (sb.getExtension(namespace) != null) {
-			return sb.getExtension(namespace);
-		}
-		else if (createPlugin && namespace.equals(CompConstant.namespaceURI)) {
-			SBasePlugin comp;
-			if (sb instanceof SBMLDocument) {
-				comp = new CompSBMLDocumentPlugin((SBMLDocument) sb);
-			}
-			else if (sb instanceof Model) {
-				comp = new CompModelPlugin((Model) sb);;
-			}
-			else {
-				comp = new CompSBasePlugin(sb);
-			}
-			sb.addExtension(namespace, comp);
-			return comp;
-		}
-		else if (createPlugin && namespace.equals(LayoutConstants.namespaceURI) && sb instanceof Model) {
-			LayoutModelPlugin layout = new LayoutModelPlugin((Model) sb);
-			sb.addExtension(namespace, layout);
-			return layout;
-		}
-		else if (createPlugin && namespace.equals(FBCConstants.namespaceURI) && sb instanceof Model) {
-			FBCModelPlugin fbc = new FBCModelPlugin((Model) sb);
-			sb.addExtension(namespace, fbc);
-			return fbc;
-		}
-		else if (createPlugin && namespace.equals(QualConstant.namespaceURI) && sb instanceof Model) {
-			QualitativeModel qual = new QualitativeModel((Model) sb);
-			sb.addExtension(namespace, qual);
-			return qual;
+	public static FBCModelPlugin getFBCModelPlugin(Model model) {
+		if (model.getExtension(FBCConstants.namespaceURI) != null) {
+			return (FBCModelPlugin)model.getExtension(FBCConstants.namespaceURI);
 		}
 		else {
-			return null;
+			FBCModelPlugin fbc = new FBCModelPlugin(model);
+			model.addExtension(FBCConstants.namespaceURI, fbc);
+			return fbc;
+		}
+	}
+	
+	public static LayoutModelPlugin getLayoutModelPlugin(Model model) {
+		if (model.getExtension(LayoutConstants.namespaceURI) != null) {
+			return (LayoutModelPlugin)model.getExtension(LayoutConstants.namespaceURI);
+		}
+		else {
+			LayoutModelPlugin layout = new LayoutModelPlugin(model);
+			model.addExtension(LayoutConstants.namespaceURI, layout);
+			return layout;
+		}
+	}
+	
+	public static CompSBMLDocumentPlugin getCompSBMLDocumentPlugin(SBMLDocument document) {
+		if (document.getExtension(CompConstant.namespaceURI) != null) {
+			return (CompSBMLDocumentPlugin)document.getExtension(CompConstant.namespaceURI);
+		}
+		else {
+			CompSBMLDocumentPlugin comp = new CompSBMLDocumentPlugin(document);
+			document.addExtension(CompConstant.namespaceURI, comp);
+			return comp;
+		}
+	}
+	
+	public static CompModelPlugin getCompModelPlugin(Model model) {
+		if (model.getExtension(CompConstant.namespaceURI) != null) {
+			return (CompModelPlugin)model.getExtension(CompConstant.namespaceURI);
+		}
+		else {
+			CompModelPlugin comp = new CompModelPlugin(model);
+			model.addExtension(CompConstant.namespaceURI, comp);
+			return comp;
+		}
+	}
+	
+	public static CompSBasePlugin getCompSBasePlugin(SBase sb) {
+		if (sb.getExtension(CompConstant.namespaceURI) != null) {
+			return (CompSBasePlugin)sb.getExtension(CompConstant.namespaceURI);
+		}
+		else {
+			CompSBasePlugin comp = new CompSBasePlugin(sb);
+			sb.addExtension(CompConstant.namespaceURI, comp);
+			return comp;
 		}
 	}
 
@@ -3277,7 +3311,7 @@ public class SBMLutilities {
 
 				boolean andResult = true;
 
-				for (int childIter = 0; childIter < node.getNumChildren(); ++childIter)
+				for (int childIter = 0; childIter < node.getChildCount(); ++childIter)
 					andResult = andResult && getBooleanFromDouble(evaluateExpression(model, node.getChild(childIter)));
 
 				return getDoubleFromBoolean(andResult);
@@ -3287,7 +3321,7 @@ public class SBMLutilities {
 
 				boolean orResult = false;
 
-				for (int childIter = 0; childIter < node.getNumChildren(); ++childIter)
+				for (int childIter = 0; childIter < node.getChildCount(); ++childIter)
 					orResult = orResult || getBooleanFromDouble(evaluateExpression(model, node.getChild(childIter)));
 
 				return getDoubleFromBoolean(orResult);				
@@ -3297,7 +3331,7 @@ public class SBMLutilities {
 
 				boolean xorResult = getBooleanFromDouble(evaluateExpression(model, node.getChild(0)));
 
-				for (int childIter = 1; childIter < node.getNumChildren(); ++childIter)
+				for (int childIter = 1; childIter < node.getChildCount(); ++childIter)
 					xorResult = xorResult ^ getBooleanFromDouble(evaluateExpression(model, node.getChild(childIter)));
 
 				return getDoubleFromBoolean(xorResult);
@@ -3377,7 +3411,7 @@ public class SBMLutilities {
 
 				double sum = 0.0;
 
-				for (int childIter = 0; childIter < node.getNumChildren(); ++childIter)
+				for (int childIter = 0; childIter < node.getChildCount(); ++childIter)
 					sum += evaluateExpression(model, node.getChild(childIter));					
 
 				return sum;
@@ -3387,7 +3421,7 @@ public class SBMLutilities {
 
 				double sum = evaluateExpression(model, leftChild);
 
-				for (int childIter = 1; childIter < node.getNumChildren(); ++childIter)
+				for (int childIter = 1; childIter < node.getChildCount(); ++childIter)
 					sum -= evaluateExpression(model, node.getChild(childIter));					
 
 				return sum;
@@ -3397,7 +3431,7 @@ public class SBMLutilities {
 
 				double product = 1.0;
 
-				for (int childIter = 0; childIter < node.getNumChildren(); ++childIter)
+				for (int childIter = 0; childIter < node.getChildCount(); ++childIter)
 					product *= evaluateExpression(model, node.getChild(childIter));
 
 				return product;
@@ -3523,13 +3557,13 @@ public class SBMLutilities {
 
 				//loop through child triples
 				//if child 1 is true, return child 0, else return child 2				
-				for (int childIter = 0; childIter < node.getNumChildren(); childIter += 3) {
+				for (int childIter = 0; childIter < node.getChildCount(); childIter += 3) {
 
-					if ((childIter + 1) < node.getNumChildren() && 
+					if ((childIter + 1) < node.getChildCount() && 
 							getBooleanFromDouble(evaluateExpression(model, node.getChild(childIter + 1)))) {
 						return evaluateExpression(model, node.getChild(childIter));
 					}
-					else if ((childIter + 2) < node.getNumChildren()) {
+					else if ((childIter + 2) < node.getChildCount()) {
 						return evaluateExpression(model, node.getChild(childIter + 2));
 					}
 				}
@@ -3621,7 +3655,7 @@ public class SBMLutilities {
 	}
 	
 	public static void checkModelCompleteness(SBMLDocument document) {
-		FBCModelPlugin fbc = (FBCModelPlugin)SBMLutilities.getPlugin(FBCConstants.namespaceURI, document.getModel(), true);
+		FBCModelPlugin fbc = SBMLutilities.getFBCModelPlugin(document.getModel());
 		JTextArea messageArea = new JTextArea();
 		messageArea.append("Model is incomplete.  Cannot be simulated until the following information is provided.\n");
 		boolean display = false;
@@ -3724,5 +3758,114 @@ public class SBMLutilities {
 			f.setLocation(x, y);
 			f.setVisible(true);
 		}
+	}
+
+	public static SBMLDocument readSBML(String filename) {
+		//SBMLReader reader = new SBMLReader();
+		SBMLDocument document = null;
+		try {
+			document = SBMLReader.read(new File(filename));
+			// TODO: This is a hack to remove duplicate units
+			int i = 0; 
+			while (i < document.getModel().getUnitDefinitionCount()) {
+				UnitDefinition unitDef = document.getModel().getUnitDefinition(i);
+				if (!unitDef.isSetId()) {
+					document.getModel().removeUnitDefinition(i);
+				} else {
+					i++;
+				}
+			}
+		} catch (XMLStreamException e1) {
+			e1.printStackTrace();
+			JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
+			return null;
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
+		if (document.getModel().isSetId()) {
+			document.getModel().setId(document.getModel().getId().replace(".","_"));
+		}
+		if (document.getLevel() < Gui.SBML_LEVEL || document.getVersion() < Gui.SBML_VERSION) {
+			if (!Gui.libsbmlFound) {
+				JOptionPane.showMessageDialog(Gui.frame, "Unable convert model to Level "+Gui.SBML_LEVEL+" Version " + Gui.SBML_VERSION,
+						"Error Opening File", JOptionPane.ERROR_MESSAGE);
+				return null;
+			} 
+			long numErrors = 0;
+			org.sbml.libsbml.SBMLReader reader = new org.sbml.libsbml.SBMLReader();
+			org.sbml.libsbml.SBMLDocument doc = reader.readSBML(filename);
+			numErrors = doc.checkL3v1Compatibility();
+			if (numErrors > 0) {
+				JTextArea messageArea = new JTextArea();
+				messageArea.append("Conversion to SBML level " + Gui.SBML_LEVEL + " version " + Gui.SBML_VERSION + " produced the errors listed below. ");
+				messageArea.append("It is recommended that you fix them before using these models or you may get unexpected results.\n\n");
+				messageArea.append("--------------------------------------------------------------------------------------\n");
+				messageArea.append(filename);
+				messageArea.append("\n--------------------------------------------------------------------------------------\n\n");
+				for (int i = 0; i < numErrors; i++) {
+					String error = doc.getError(i).getMessage();
+					messageArea.append(i + ":" + error + "\n");
+				}
+				final JFrame f = new JFrame("SBML Conversion Errors and Warnings");
+				messageArea.setLineWrap(true);
+				messageArea.setEditable(false);
+				messageArea.setSelectionStart(0);
+				messageArea.setSelectionEnd(0);
+				JScrollPane scroll = new JScrollPane();
+				scroll.setMinimumSize(new Dimension(600, 600));
+				scroll.setPreferredSize(new Dimension(600, 600));
+				scroll.setViewportView(messageArea);
+				JButton close = new JButton("Dismiss");
+				close.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						f.dispose();
+					}
+				});
+				JPanel consistencyPanel = new JPanel(new BorderLayout());
+				consistencyPanel.add(scroll, "Center");
+				consistencyPanel.add(close, "South");
+				f.setContentPane(consistencyPanel);
+				f.pack();
+				Dimension screenSize;
+				try {
+					Toolkit tk = Toolkit.getDefaultToolkit();
+					screenSize = tk.getScreenSize();
+				}
+				catch (AWTError awe) {
+					screenSize = new Dimension(640, 480);
+				}
+				Dimension frameSize = f.getSize();
+				if (frameSize.height > screenSize.height) {
+					frameSize.height = screenSize.height;
+				}
+				if (frameSize.width > screenSize.width) {
+					frameSize.width = screenSize.width;
+				}
+				int x = screenSize.width / 2 - frameSize.width / 2;
+				int y = screenSize.height / 2 - frameSize.height / 2;
+				f.setLocation(x, y);
+				f.setVisible(true);
+				Object[] options = { "Dismiss" };
+				JOptionPane.showOptionDialog(Gui.frame, scroll, "SBML Conversion Errors and Warnings", JOptionPane.YES_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+						options[0]);
+			}
+			doc.setLevelAndVersion(Gui.SBML_LEVEL, Gui.SBML_VERSION,false);
+			org.sbml.libsbml.SBMLWriter writer = new org.sbml.libsbml.SBMLWriter();
+			try {
+				writer.writeSBMLToFile(doc, filename);
+			} catch (SBMLException e) {
+				e.printStackTrace();
+			} 
+			try {
+				document = SBMLReader.read(new File(filename));
+			} catch (XMLStreamException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return document;
 	}
 }

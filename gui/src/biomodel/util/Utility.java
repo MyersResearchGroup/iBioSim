@@ -33,6 +33,8 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.ModifierSpeciesReference;
 
+import biomodel.gui.textualeditor.SBMLutilities;
+
 
 /**
  * This is a utility class. The constructor is private so that only one instance
@@ -263,7 +265,7 @@ public class Utility {
 	}
 	
 	public static SBMLDocument openDocument(String filename) {
-		SBMLDocument document = Gui.readSBML(filename);
+		SBMLDocument document = SBMLutilities.readSBML(filename);
 		return document;
 	}
 

@@ -850,7 +850,7 @@ public class GillespieSSAJavaSingleStep {
 				// other operators
 				case FUNCTION_PIECEWISE: {
 					//Currently, the evaluator only accepts piecewise(1, arg1, 0), where arg1 is boolean
-					if (currentASTNode.getNumChildren() == 3) {
+					if (currentASTNode.getChildCount() == 3) {
 						if (Boolean.parseBoolean(evaluateAST(currentASTNode.getChild(1)))){
 							retStr = Double.toString(Double.parseDouble(evaluateAST(currentASTNode.getChild(0))));
 						}
@@ -1117,7 +1117,7 @@ public class GillespieSSAJavaSingleStep {
 				// other operators
 				case FUNCTION_PIECEWISE: {
 					//Currently, the evaluator only accepts piecewise(1, arg1, 0), where arg1 is boolean
-					if (currentASTNode.getNumChildren() == 3) {
+					if (currentASTNode.getChildCount() == 3) {
 						if (Boolean.parseBoolean(evaluatePropensityFunction(currentASTNode.getChild(1),ListOfLocalParameters))){
 							retStr = Double.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getChild(0),ListOfLocalParameters)));
 						}

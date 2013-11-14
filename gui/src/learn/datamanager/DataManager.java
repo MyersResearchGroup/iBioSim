@@ -26,6 +26,7 @@ import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.Species;
 
 
+import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.parser.BioModel;
 
 
@@ -1182,7 +1183,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				// END ADDED BY SB.
 			}
 			else {
-				SBMLDocument document = Gui.readSBML(background);
+				SBMLDocument document = SBMLutilities.readSBML(background);
 				Model model = document.getModel();
 				ListOf ids = model.getListOfSpecies();
 				ArrayList<String> getSpecies = new ArrayList<String>();

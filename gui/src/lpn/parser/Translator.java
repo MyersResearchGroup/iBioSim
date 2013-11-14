@@ -1471,7 +1471,7 @@ public class Translator {
 			String min = "0";
 			String max = "inf";
 			ASTNode child;
-			for (int i = 0; i < node.getNumChildren(); i++) {
+			for (int i = 0; i < node.getChildCount(); i++) {
 				child = node.getChild(i);
 				if (child.getName().equals("lt")) {
 					if (child.getChild(0).isNumber()) {
@@ -1566,7 +1566,7 @@ public class Translator {
 		if (op.getName() != null) {
 			if (op.getName().equals("and")) {
 				convert = "(" + convertHelper(op.getChild(0));
-				for (int i = 1; i < op.getNumChildren(); i++) {
+				for (int i = 1; i < op.getChildCount(); i++) {
 					convert += "&" + convertHelper(op.getChild(i));
 				}
 				convert += ")";
@@ -1574,7 +1574,7 @@ public class Translator {
 			}
 			else if (op.getName().equals("or")) {
 				convert = "(" + convertHelper(op.getChild(0));
-				for (int i = 1; i < op.getNumChildren(); i++) {
+				for (int i = 1; i < op.getChildCount(); i++) {
 					convert += "|" + convertHelper(op.getChild(i));
 				}
 				convert += ")";
@@ -1623,7 +1623,7 @@ public class Translator {
 					String min = "0";
 					String max = "inf";
 					ASTNode child;
-					for (int i = 0; i < node.getNumChildren(); i++) {
+					for (int i = 0; i < node.getChildCount(); i++) {
 						child = node.getChild(i);
 						if (child.getName().equals("lt")) {
 							if (child.getChild(0).isNumber()) {

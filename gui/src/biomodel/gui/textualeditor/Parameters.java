@@ -299,8 +299,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		portDir.setSelectedItem(GlobalConstants.INTERNAL);
 		Model model = bioModel.getSBMLDocument().getModel();
 		ListOf listOfUnits = model.getListOfUnitDefinitions();
-		String[] units = new String[(int) model.getNumUnitDefinitions()];
-		for (int i = 0; i < model.getNumUnitDefinitions(); i++) {
+		String[] units = new String[(int) model.getUnitDefinitionCount()];
+		for (int i = 0; i < model.getUnitDefinitionCount(); i++) {
 			UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
 			units[i] = unit.getId();
 		}
@@ -516,7 +516,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						paramValue.setEnabled(false);
 						placeMarking.setEnabled(false);
 						paramUnits.setEnabled(false);
-						SBMLDocument d = Gui.readSBML(file);
+						SBMLDocument d = SBMLutilities.readSBML(file);
 						if (d.getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]).isSetValue()) {
 							paramValue.setText(d.getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]).getValue() + "");
 						}

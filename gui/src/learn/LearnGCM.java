@@ -13,6 +13,7 @@ import main.*;
 
 import org.sbml.jsbml.*;
 
+import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.parser.BioModel;
 
 /**
@@ -376,7 +377,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 
 		speciesList = new ArrayList<String>();
 		if ((learnFile.contains(".sbml")) || (learnFile.contains(".xml"))) {
-			SBMLDocument document = Gui.readSBML(learnFile);
+			SBMLDocument document = SBMLutilities.readSBML(learnFile);
 			Model model = document.getModel();
 			ListOf ids = model.getListOfSpecies();
 			try {
@@ -1362,7 +1363,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 		learnFile = newLearnFile;
 		speciesList = new ArrayList<String>();
 		if ((learnFile.contains(".sbml")) || (learnFile.contains(".xml"))) {
-			SBMLDocument document = Gui.readSBML(learnFile);
+			SBMLDocument document = SBMLutilities.readSBML(learnFile);
 			Model model = document.getModel();
 			ListOf ids = model.getListOfSpecies();
 			try {

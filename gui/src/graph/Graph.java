@@ -107,6 +107,7 @@ import org.w3c.dom.DOMImplementation;
 
 
 import analysis.AnalysisView;
+import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.parser.BioModel;
 
 import com.lowagie.text.Document;
@@ -8274,9 +8275,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				// END ADDED BY SB.
 			}
 			else {
-				SBMLDocument document = Gui.readSBML(background);
+				SBMLDocument document = SBMLutilities.readSBML(background);
 				Model model = document.getModel();
-				ListOf ids = model.getListOfSpecies();
+				ListOf<Species> ids = model.getListOfSpecies();
 				for (int i = 0; i < model.getSpeciesCount(); i++) {
 					learnSpecs.add(((Species) ids.get(i)).getId());
 				}

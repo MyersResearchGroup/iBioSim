@@ -615,16 +615,14 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 		ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(bioModel.getSBMLDocument().getModel());
 		for (int j = 0; j < elements.size(); j++) {
 			SBase sbase = elements.get(j);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbase, false);
-			if (sbase.getElementName().equals(GlobalConstants.ASSIGNMENT_RULE)||
-				sbase.getElementName().equals(GlobalConstants.RATE_RULE)||
-				sbase.getElementName().equals(GlobalConstants.ALGEBRAIC_RULE)||
-				sbase.getElementName().equals(GlobalConstants.CONSTRAINT)) {
-				if (sbmlSBase!=null) {
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getExtension(CompConstant.namespaceURI);
+			if (sbmlSBase!=null) {
+				if (sbase.getElementName().equals(GlobalConstants.ASSIGNMENT_RULE)||
+						sbase.getElementName().equals(GlobalConstants.RATE_RULE)||
+						sbase.getElementName().equals(GlobalConstants.ALGEBRAIC_RULE)||
+						sbase.getElementName().equals(GlobalConstants.CONSTRAINT)) {
 					getPortMap(sbmlSBase,sbase.getMetaId());
-				}
-			} else {
-				if (sbmlSBase!=null) {
+				} else {
 					getPortMap(sbmlSBase,SBMLutilities.getId(sbase));
 				}
 			}
@@ -820,7 +818,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(bioModel.getSBMLDocument().getModel());
 			for (int j = 0; j < elements.size(); j++) {
 				SBase sbase = elements.get(j);
-				CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbase, false);
+				CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getExtension(CompConstant.namespaceURI);
 				if (sbmlSBase!=null) {
 					if (removePortMaps(sbmlSBase)) {
 						elements = SBMLutilities.getListOfAllElements(bioModel.getSBMLDocument().getModel());
@@ -837,7 +835,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 					CompSBasePlugin sbmlSBase = null;
 					SBase sbase = SBMLutilities.getElementBySId(bioModel.getSBMLDocument().getModel(), portmapId);
 					if (sbase!=null) {
-						sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbase, false);
+						sbmlSBase = (CompSBasePlugin)sbase.getExtension(CompConstant.namespaceURI);
 						if (sbmlSBase != null) {
 							if (directionBox.get(i).getSelectedIndex()==0) {
 								ReplacedElement replacement = sbmlSBase.createReplacedElement();
@@ -854,7 +852,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 						}
 					} else {
 						sbase = SBMLutilities.getElementByMetaId(bioModel.getSBMLDocument().getModel(), portmapId);
-						sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbase, false);
+						sbmlSBase = (CompSBasePlugin)sbase.getExtension(CompConstant.namespaceURI);
 						if (sbmlSBase != null) {
 							if (directionBox.get(i).getSelectedIndex()==0) {
 								/* TODO: Code below uses just a replacement */

@@ -340,7 +340,7 @@ public class SBOLSynthesizer {
 	
 	private void portMapInterSpecies(SBase species, String inputSubSpeciesID, String outputSubSpeciesID, 
 			String inputSubDNA, String outputSubDNA, String inputSubmodelID, String outputSubmodelID) {
-		CompSBasePlugin compSpecies = (CompSBasePlugin) SBMLutilities.getPlugin(CompConstant.namespaceURI, species, true);
+		CompSBasePlugin compSpecies = SBMLutilities.getCompSBasePlugin(species);
 		ReplacedBy replacement = compSpecies.createReplacedBy();
 		ReplacedElement replacee = compSpecies.createReplacedElement();
 		if (outputSubDNA.length() == 0 && inputSubDNA.length() > 0) {
@@ -358,7 +358,7 @@ public class SBOLSynthesizer {
 	
 	private void portMapIOSpecies(SBase species, String io, String subSpeciesID, String submodelID,
 			BioModel biomodel) {
-		CompSBasePlugin compSpecies = (CompSBasePlugin) SBMLutilities.getPlugin(CompConstant.namespaceURI, species, true);
+		CompSBasePlugin compSpecies = SBMLutilities.getCompSBasePlugin(species);
 		ReplacedBy replacement = compSpecies.createReplacedBy();
 		replacement.setSubmodelRef(submodelID);
 		replacement.setPortRef(io + "__" + subSpeciesID);

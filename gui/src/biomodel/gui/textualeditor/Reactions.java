@@ -239,7 +239,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			Reaction reaction = (Reaction) listOfReactions.get(i);
 			reacts[i] = reaction.getId();
 			if (paramsOnly && reaction.getKineticLaw()!=null) {
-				ListOf params = reaction.getKineticLaw().getListOfParameters();
+				ListOf params = reaction.getKineticLaw().getListOfLocalParameters();
 				for (int j = 0; j < reaction.getKineticLaw().getLocalParameterCount(); j++) {
 					LocalParameter paramet = ((LocalParameter) (params.get(j)));
 					for (int k = 0; k < getParams.size(); k++) {
@@ -340,7 +340,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			Reaction reac = gcm.getSBMLDocument().getModel().getReaction(reactionId);
 			if (reac.getKineticLaw()!=null) {
 				//reac.createKineticLaw();
-				ListOf listOfParameters = reac.getKineticLaw().getListOfParameters();
+				ListOf listOfParameters = reac.getKineticLaw().getListOfLocalParameters();
 				reacParams = new String[(int) reac.getKineticLaw().getLocalParameterCount()];
 				for (int i = 0; i < reac.getKineticLaw().getLocalParameterCount(); i++) {
 					/*
@@ -828,7 +828,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					if (react.getKineticLaw()==null) {
 						react.createKineticLaw();
 					}
-					remove = react.getKineticLaw().getListOfParameters();
+					remove = react.getKineticLaw().getListOfLocalParameters();
 					size = react.getKineticLaw().getLocalParameterCount();
 					for (int i = 0; i < size; i++) {
 						remove.remove(0);
@@ -922,7 +922,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 					else {
 						changedParameters = new ArrayList<Parameter>();
-						ListOf listOfParameters = react.getKineticLaw().getListOfParameters();
+						ListOf listOfParameters = react.getKineticLaw().getListOfLocalParameters();
 						for (int i = 0; i < react.getKineticLaw().getLocalParameterCount(); i++) {
 							LocalParameter parameter = (LocalParameter) listOfParameters.get(i);
 							changedParameters.add(new Parameter(parameter));
@@ -1154,7 +1154,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			for (int i = 0; i < kindsL3V1.length; i++) {
 				validVars.add(kindsL3V1[i]);
 			}
-			for (int i = 0; i < sbml.getModel().getNumUnitDefinitions(); i++) {
+			for (int i = 0; i < sbml.getModel().getUnitDefinitionCount(); i++) {
 				validVars.add(sbml.getModel().getListOfUnitDefinitions().get(i).getId());
 			}
 		}
@@ -1225,8 +1225,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		reacParamUnits.addItem("( none )");
 		Model model = bioModel.getSBMLDocument().getModel();
 		ListOf listOfUnits = model.getListOfUnitDefinitions();
-		String[] units = new String[(int) model.getNumUnitDefinitions()];
-		for (int i = 0; i < model.getNumUnitDefinitions(); i++) {
+		String[] units = new String[(int) model.getUnitDefinitionCount()];
+		for (int i = 0; i < model.getUnitDefinitionCount(); i++) {
 			UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
 			units[i] = unit.getId();
 			// GET OTHER THINGS
@@ -1368,9 +1368,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						sweep.setEnabled(false);
 						reacParamValue.setEnabled(false);
 						reacParamUnits.setEnabled(false);
-						SBMLDocument d = Gui.readSBML(file);
+						SBMLDocument d = SBMLutilities.readSBML(file);
 						KineticLaw KL = d.getModel().getReaction(selectedReaction).getKineticLaw();
-						ListOf list = KL.getListOfParameters();
+						ListOf list = KL.getListOfLocalParameters();
 						int number = -1;
 						for (int i = 0; i < KL.getLocalParameterCount(); i++) {
 							if (((LocalParameter) list.get(i)).getId().equals(((String) reacParameters.getSelectedValue()).split(" ")[0])) {
@@ -1378,14 +1378,14 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							}
 						}
 						reacParamValue.setText(d.getModel().getReaction(selectedReaction).getKineticLaw()
-								.getParameter(number).getValue()
+								.getLocalParameter(number).getValue()
 								+ "");
-						if (d.getModel().getReaction(selectedReaction).getKineticLaw().getParameter(number)
+						if (d.getModel().getReaction(selectedReaction).getKineticLaw().getLocalParameter(number)
 								.isSetUnits()) {
 							reacParamUnits.setSelectedItem(d.getModel().getReaction(selectedReaction)
-									.getKineticLaw().getParameter(number).getUnits());
+									.getKineticLaw().getLocalParameter(number).getUnits());
 						}
-						reacParamValue.setText(d.getModel().getReaction(selectedReaction).getKineticLaw().getParameter(number).getValue()	+ "");
+						reacParamValue.setText(d.getModel().getReaction(selectedReaction).getKineticLaw().getLocalParameter(number).getValue()	+ "");
 					}
 				}
 			});
@@ -3229,7 +3229,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			Reaction reaction = (Reaction) listOfReactions.get(i);
 			reacts[i] = reaction.getId();
 			if (paramsOnly) {
-				ListOf params = reaction.getKineticLaw().getListOfParameters();
+				ListOf params = reaction.getKineticLaw().getListOfLocalParameters();
 				for (int j = 0; j < reaction.getKineticLaw().getLocalParameterCount(); j++) {
 					LocalParameter paramet = ((LocalParameter) (params.get(j)));
 					for (int k = 0; k < parameterChanges.size(); k++) {

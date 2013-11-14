@@ -791,7 +791,7 @@ public class BioModel {
 						}
 						String reactionProductions = "";
 						String reactionDegradations = "";
-						ListOf reactions = sbml.getModel().getListOfReactions();
+						ListOf<Reaction> reactions = sbml.getModel().getListOfReactions();
 						for (int j = 0; j < sbml.getModel().getReactionCount(); j++) {
 							Reaction r = (Reaction) reactions.get(j);
 							if (!r.getId().contains("Production_") && !r.getId().contains("Degradation_")
@@ -833,8 +833,8 @@ public class BioModel {
 											parameters.put(parameter, getParameter(parameter));
 										}
 										for (int l = 0; l < law.getLocalParameterCount(); l++) {
-											parameters.put(law.getParameter(l).getId(), ""
-													+ law.getParameter(l).getValue());
+											parameters.put(law.getLocalParameter(l).getId(), ""
+													+ law.getLocalParameter(l).getValue());
 										}
 										if (r.isSetReversible() && law.getMath().getCharacter() == '-') {
 											reactionProductions += "(("
@@ -962,8 +962,8 @@ public class BioModel {
 	}
 	
 	private ASTNode replaceParams(ASTNode formula, HashMap<String,String> parameters) {
-		if (formula.getNumChildren() > 0) {
-			for (int i = 0; i < formula.getNumChildren(); i ++) {
+		if (formula.getChildCount() > 0) {
+			for (int i = 0; i < formula.getChildCount(); i ++) {
 				formula.replaceChild(i, replaceParams(formula.getChild(i), parameters));
 			}
 		}
@@ -1082,7 +1082,7 @@ public class BioModel {
 	
 	public Layout getLayout() {
 		if (sbmlLayout==null) {
-			sbmlLayout = (LayoutModelPlugin)SBMLutilities.getPlugin(LayoutConstants.namespaceURI, sbml.getModel(), true);
+			sbmlLayout = SBMLutilities.getLayoutModelPlugin(sbml.getModel());
 		}
 		Layout layout;
 		if (sbmlLayout.getListOfLayouts().get("iBioSim")==null) {
@@ -1358,8 +1358,7 @@ public class BioModel {
 					&& prop.keySet().contains("type_" + propName)) {
 				if (prop.getProperty("type_" + propName).equals("Output")) {
 					String speciesId = prop.getProperty(propName.toString()).toString();
-					CompSBasePlugin sbmlSBase = 
-							(CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbml.getModel().getSpecies(speciesId), true);
+					CompSBasePlugin sbmlSBase = SBMLutilities.getCompSBasePlugin(sbml.getModel().getSpecies(speciesId));
 					ReplacedElement replacement = null;
 					boolean found = false;
 					for (int i = 0; i < sbmlSBase.getListOfReplacedElements().size(); i++) {
@@ -1376,8 +1375,7 @@ public class BioModel {
 				}
 				else {
 					String speciesId = prop.getProperty(propName.toString()).toString();
-					CompSBasePlugin sbmlSBase = 
-							(CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbml.getModel().getSpecies(speciesId), true);
+					CompSBasePlugin sbmlSBase = SBMLutilities.getCompSBasePlugin(sbml.getModel().getSpecies(speciesId));
 					ReplacedElement replacement = null;
 					boolean found = false;
 					for (int i = 0; i < sbmlSBase.getListOfReplacedElements().size(); i++) {
@@ -1399,22 +1397,22 @@ public class BioModel {
 	public void createLayoutPlugin() {
 		if (sbmlLayout==null) {
 			sbml.addPackageDeclaration(LayoutConstants.shortLabel, LayoutConstants.namespaceURI, "false");
-			sbmlLayout = (LayoutModelPlugin)SBMLutilities.getPlugin(LayoutConstants.namespaceURI, sbml.getModel(), true);
+			sbmlLayout = SBMLutilities.getLayoutModelPlugin(sbml.getModel());
 		}
 	}
 
 	public void createFBCPlugin() {
 		if (sbmlFBC==null) {
 			sbml.addPackageDeclaration(FBCConstants.shortLabel, FBCConstants.namespaceURI, "false");
-			sbmlFBC = (FBCModelPlugin)SBMLutilities.getPlugin(FBCConstants.namespaceURI, sbml.getModel(), true);
+			sbmlFBC = SBMLutilities.getFBCModelPlugin(sbml.getModel());
 		}
 	}
 
 	public void createCompPlugin() {
 		if (sbmlComp==null) {
 			sbml.addPackageDeclaration(CompConstant.shortLabel, CompConstant.namespaceURI, "true");
-			sbmlComp = (CompSBMLDocumentPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbml, true);
-			sbmlCompModel = (CompModelPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbml.getModel(), true);
+			sbmlComp = SBMLutilities.getCompSBMLDocumentPlugin(sbml);
+			sbmlCompModel = SBMLutilities.getCompModelPlugin(sbml.getModel());
 		}
 	}
 	
@@ -2482,7 +2480,7 @@ public class BioModel {
 		for (int i = 0; i < flatSBML.getModel().getConstraintCount(); i++) {
 			Constraint c = flatSBML.getModel().getConstraint(i);
 			ASTNode math = c.getMath();
-			if (math.getType()==ASTNode.Type.FUNCTION && math.getName().equals("G") && math.getNumChildren()==2) {
+			if (math.getType()==ASTNode.Type.FUNCTION && math.getName().equals("G") && math.getChildCount()==2) {
 				ASTNode left = c.getMath().getLeftChild();
 				ASTNode right = c.getMath().getRightChild();
 				if (left.getType()==ASTNode.Type.CONSTANT_TRUE && right.getType()==ASTNode.Type.LOGICAL_NOT) {
@@ -2523,7 +2521,7 @@ public class BioModel {
 					t.setPersistent(true);
 					ASTNode triggerMath = r.getMath();
 					String trigger = SBMLutilities.myFormulaToString(triggerMath);
-					if (triggerMath.getType()==ASTNode.Type.FUNCTION_PIECEWISE && triggerMath.getNumChildren() > 2) {
+					if (triggerMath.getType()==ASTNode.Type.FUNCTION_PIECEWISE && triggerMath.getChildCount() > 2) {
 						triggerMath = triggerMath.getChild(1);
 						if (triggerMath.getType()==ASTNode.Type.LOGICAL_OR) {
 							triggerMath = triggerMath.getLeftChild();
@@ -2953,7 +2951,7 @@ public class BioModel {
 		subModel.setId(submodelID.replace(oldName, newName));
 		
 		for (int i = 0; i < sbml.getModel().getSpeciesCount(); i++) {
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbml.getModel().getSpecies(i), true);
+			CompSBasePlugin sbmlSBase = SBMLutilities.getCompSBasePlugin(sbml.getModel().getSpecies(i));
 			ReplacedElement replacement = null;
 			for (int j = 0; j < sbmlSBase.getListOfReplacedElements().size(); j++) {
 				replacement = sbmlSBase.getListOfReplacedElements().get(j);
@@ -3186,7 +3184,7 @@ public class BioModel {
 				potentialGridSubmodel.setModelRef(extId);
 				
 				if (compartment!=null) {
-					CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, compartment, true);
+					CompSBasePlugin sbmlSBase = SBMLutilities.getCompSBasePlugin(compartment);
 					boolean foundIt = false;
 					for (int i=0;i<sbmlSBase.getListOfReplacedElements().size();i++) {
 						ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(i);
@@ -3216,7 +3214,7 @@ public class BioModel {
 				metaIDIndex = SBMLutilities.setDefaultMetaID(sbml, submodel, metaIDIndex); 
 				
 				if (compartment!=null) {
-					CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, compartment, true);
+					CompSBasePlugin sbmlSBase = SBMLutilities.getCompSBasePlugin(compartment);
 					boolean foundIt = false;
 					for (int i=0;i<sbmlSBase.getListOfReplacedElements().size();i++) {
 						ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(i);
@@ -3380,7 +3378,7 @@ public class BioModel {
 
 	public void removeReaction(String id) {
 		Reaction tempReaction = sbml.getModel().getReaction(id);
-		ListOf r = sbml.getModel().getListOfReactions();
+		ListOf<Reaction> r = sbml.getModel().getListOfReactions();
 		for (int i = 0; i < sbml.getModel().getReactionCount(); i++) {
 			if (((Reaction) r.get(i)).getId().equals(tempReaction.getId())) {
 				r.remove(i);
@@ -3490,7 +3488,7 @@ public class BioModel {
 	public ArrayList<String> getUnits() {
 		ArrayList<String> unitSet = new ArrayList<String>();
 		if (sbml!=null) {
-			for (int i = 0; i < sbml.getModel().getNumUnitDefinitions(); i++) {
+			for (int i = 0; i < sbml.getModel().getUnitDefinitionCount(); i++) {
 				UnitDefinition unit = sbml.getModel().getUnitDefinition(i);
 				unitSet.add(unit.getId());
 			}
@@ -3855,7 +3853,7 @@ public class BioModel {
 	public HashMap<String, String> getInputConnections(BioModel compBioModel,String compId) {
 		HashMap<String, String> inputs = new HashMap<String, String>();
 		for (int i = 0; i < sbml.getModel().getSpeciesCount(); i++) {
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbml.getModel().getSpecies(i), true);
+			CompSBasePlugin sbmlSBase = SBMLutilities.getCompSBasePlugin(sbml.getModel().getSpecies(i));
 			for (int j = 0; j < sbmlSBase.getListOfReplacedElements().size(); j++) {
 				ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(j);
 				if (replacement.getSubmodelRef().equals(compId) && 
@@ -3903,7 +3901,7 @@ public class BioModel {
 	public HashMap<String, String> getOutputConnections(BioModel compBioModel,String compId) {
 		HashMap<String, String> outputs = new HashMap<String, String>();
 		for (int i = 0; i < sbml.getModel().getSpeciesCount(); i++) {
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbml.getModel().getSpecies(i), true);
+			CompSBasePlugin sbmlSBase = SBMLutilities.getCompSBasePlugin(sbml.getModel().getSpecies(i));
 			for (int j = 0; j < sbmlSBase.getListOfReplacedElements().size(); j++) {
 				ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(j);
 				if (replacement.getSubmodelRef().equals(compId) && 
@@ -3953,7 +3951,7 @@ public class BioModel {
 		for (int i = 0; i < sbml.getModel().getParameterCount(); i++) {
 			Parameter p = sbml.getModel().getParameter(i);
 			if (!p.getConstant()) {
-				CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, p, true);
+				CompSBasePlugin sbmlSBase = SBMLutilities.getCompSBasePlugin(p);
 				for (int j = 0; j < sbmlSBase.getListOfReplacedElements().size(); j++) {
 					ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(j);
 					if (replacement.getSubmodelRef().equals(compId) && replacement.isSetPortRef()) {
@@ -3992,7 +3990,7 @@ public class BioModel {
 		for (int i = 0; i < sbml.getModel().getParameterCount(); i++) {
 			Parameter p = sbml.getModel().getParameter(i);
 			if (!p.getConstant()) {
-				CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, p, true);
+				CompSBasePlugin sbmlSBase = SBMLutilities.getCompSBasePlugin(p);
 				for (int j = 0; j < sbmlSBase.getListOfReplacedElements().size(); j++) {
 					ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(j);
 					if (replacement.getSubmodelRef().equals(compId) && replacement.isSetPortRef()) {
@@ -4202,7 +4200,7 @@ public class BioModel {
 	
 	public static String getSpeciesType(SBMLDocument sbml,String speciesId) {
 		Species species = sbml.getModel().getSpecies(speciesId);
-		CompModelPlugin sbmlCompModel = (CompModelPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbml.getModel(), false);
+		CompModelPlugin sbmlCompModel = (CompModelPlugin)sbml.getModel().getExtension(CompConstant.namespaceURI);
 		if (sbmlCompModel!=null) {
 			Port port = getPortByIdRef(sbmlCompModel,speciesId);
 			if (port != null) {
@@ -4383,7 +4381,7 @@ public class BioModel {
 	}
 
 	public void connectComponentAndSpecies(String compId, String port, String specId) {
-		CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbml.getModel().getSpecies(specId), true);
+		CompSBasePlugin sbmlSBase = SBMLutilities.getCompSBasePlugin(sbml.getModel().getSpecies(specId));
 		boolean found = false;
 		ReplacedElement replacement = null;
 		for (int i = 0; i < sbmlSBase.getListOfReplacedElements().size(); i++) {
@@ -4401,7 +4399,7 @@ public class BioModel {
 	}
 
 	public void connectComponentAndVariable(String compId, String port, String varId) {
-		CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbml.getModel().getParameter(varId), true);
+		CompSBasePlugin sbmlSBase = SBMLutilities.getCompSBasePlugin(sbml.getModel().getParameter(varId));
 		boolean found = false;
 		ReplacedElement replacement = null;
 		for (int i = 0; i < sbmlSBase.getListOfReplacedElements().size(); i++) {
@@ -4445,7 +4443,7 @@ public class BioModel {
 		boolean first = true;
 		for (int i = 0; i < sbml.getModel().getSpeciesCount(); i++) {
 			Species species = sbml.getModel().getSpecies(i);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, species, true);
+			CompSBasePlugin sbmlSBase = SBMLutilities.getCompSBasePlugin(species);
 			for (int j = 0; j < sbmlSBase.getListOfReplacedElements().size(); j++) {
 				ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(j);
 				if (replacement.getSubmodelRef().equals(s)) {
@@ -4710,7 +4708,7 @@ public class BioModel {
 		ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(sbml.getModel());
 		for (int i = 0; i < elements.size(); i++) {
 			SBase sbase = elements.get(i);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbase, false);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getExtension(CompConstant.namespaceURI);
 			if (sbmlSBase!=null) {
 				for (int j = 0; j < sbmlSBase.getListOfReplacedElements().size(); j++) {
 					ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(j);
@@ -4745,7 +4743,7 @@ public class BioModel {
 	public void removeComponentConnection(String variableId,String componentId,String portId) {
 		SBase variable = SBMLutilities.getElementBySId(sbml.getModel(), variableId);
 		if (variable!=null) {
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, variable, true);
+			CompSBasePlugin sbmlSBase = SBMLutilities.getCompSBasePlugin(variable);
 			for (int j = 0; j < sbmlSBase.getListOfReplacedElements().size(); j++) {
 				ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(j);
 				if (replacement.getSubmodelRef().equals(componentId) && replacement.getPortRef().equals(portId)) {
@@ -5048,7 +5046,7 @@ public class BioModel {
 		
 		String speciesID = species.getId();
 		Boolean speciesDegrades = false;			
-		Reaction degradation = BioModel.getDegradationReaction(speciesID, compModel);
+		//Reaction degradation = BioModel.getDegradationReaction(speciesID, compModel);
 		
 		//fix the sbo term/annotation stuff if it's not correct
 		//if (degradation != null)
@@ -5067,7 +5065,7 @@ public class BioModel {
 				
 				UnitDefinition ud = sbml.getModel().createUnitDefinition();
 				Unit unit = ud.createUnit();
-				unit.setExponent(-1);
+				unit.setExponent(-1.0);
 				unit.setKind(Unit.Kind.valueOf("second".toUpperCase()));
 				unit.setScale(0);
 				unit.setMultiplier(1);
@@ -5153,7 +5151,7 @@ public class BioModel {
 				
 				UnitDefinition ud = sbml.getModel().createUnitDefinition();
 				Unit unit = ud.createUnit();
-				unit.setExponent(-1);
+				unit.setExponent(-1.0);
 				unit.setKind(Unit.Kind.valueOf("second".toUpperCase()));
 				unit.setScale(0);
 				unit.setMultiplier(1);
@@ -6095,7 +6093,7 @@ public class BioModel {
 		ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(sbml.getModel());
 		for (int i = 0; i < elements.size(); i++) {
 			SBase sbase = elements.get(i);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbase, false);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getExtension(CompConstant.namespaceURI);
 			if (sbmlSBase!=null) {
 				for (int j = 0; j < sbmlSBase.getListOfReplacedElements().size(); j++) {
 					ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(j);
@@ -6148,7 +6146,7 @@ public class BioModel {
 		if (r!=null) {
 			if (subCompModel.getListOfPorts().get(prefix+"_"+speciesId)!=null && 
 					getDeletionByPortRef(submodel,prefix+"_"+speciesId)==null) {
-				CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, r, false);
+				CompSBasePlugin sbmlSBase = (CompSBasePlugin)r.getExtension(CompConstant.namespaceURI);
 				if (sbmlSBase != null) {
 					ReplacedBy replacement = sbmlSBase.createReplacedBy();
 					replacement.setSubmodelRef(submodel.getId());
@@ -6179,7 +6177,7 @@ public class BioModel {
 		ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(sbml.getModel());
 		for (int i = 0; i < elements.size(); i++) {
 			SBase sbase = elements.get(i);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbase, false);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getExtension(CompConstant.namespaceURI);
 			if (sbmlSBase!=null) {
 				for (int j = 0; j < sbmlSBase.getListOfReplacedElements().size(); j++) {
 					ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(j);
@@ -6218,7 +6216,7 @@ public class BioModel {
 		ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(sbml.getModel());
 		for (int i = 0; i < elements.size(); i++) {
 			SBase sbase = elements.get(i);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbase, false);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getExtension(CompConstant.namespaceURI);
 			if (sbmlSBase!=null) {
 				for (int j = 0; j < sbmlSBase.getListOfReplacedElements().size(); j++) {
 					ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(j);
@@ -6419,7 +6417,7 @@ public class BioModel {
 	private void loadSBMLFile(String sbmlFile) {
 		if (!sbmlFile.equals("")) {
 			if (new File(path + separator + sbmlFile).exists()) {
-				sbml = Gui.readSBML(path + separator + sbmlFile);
+				sbml = SBMLutilities.readSBML(path + separator + sbmlFile);
 				createLayoutPlugin();
 				createCompPlugin();
 				createFBCPlugin();
@@ -6450,10 +6448,10 @@ public class BioModel {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		sbmlLayout = (LayoutModelPlugin)SBMLutilities.getPlugin(LayoutConstants.namespaceURI, sbml.getModel(), true);
-		sbmlFBC = (FBCModelPlugin)SBMLutilities.getPlugin(FBCConstants.namespaceURI, sbml.getModel(), true);
-		sbmlComp = (CompSBMLDocumentPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbml, true);
-		sbmlCompModel = (CompModelPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, sbml.getModel(), true);
+		sbmlLayout = SBMLutilities.getLayoutModelPlugin(sbml.getModel());
+		sbmlFBC = SBMLutilities.getFBCModelPlugin(sbml.getModel());
+		sbmlComp = SBMLutilities.getCompSBMLDocumentPlugin(sbml);
+		sbmlCompModel = SBMLutilities.getCompModelPlugin(sbml.getModel());
 		loadDefaultEnclosingCompartment();
 		loadGridSize();
 	}
@@ -6466,8 +6464,8 @@ public class BioModel {
 					.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
 			if (!comps.contains((String)extModel)) {
 				comps.add(extModel);
-				SBMLDocument subDocument = Gui.readSBML(path + separator + extModel);
-				CompModelPlugin subDocumentCompModel = (CompModelPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, subDocument.getModel(), true);
+				SBMLDocument subDocument = SBMLutilities.readSBML(path + separator + extModel);
+				CompModelPlugin subDocumentCompModel = SBMLutilities.getCompModelPlugin(subDocument.getModel());
 				ModelDefinition md = new ModelDefinition(subDocument.getModel());
 				String id = subDocument.getModel().getId();
 				ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(subDocument);
@@ -6484,8 +6482,8 @@ public class BioModel {
 					}
 				}
 				documentComp.addModelDefinition(md);
-				recurseExportSingleFile(comps,(CompModelPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, subDocument.getModel(), true),
-						(CompSBMLDocumentPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, subDocument, true),documentComp);
+				recurseExportSingleFile(comps,SBMLutilities.getCompModelPlugin(subDocument.getModel()),
+							SBMLutilities.getCompSBMLDocumentPlugin(subDocument),documentComp);
 			}
 		}
 	}
@@ -6495,7 +6493,7 @@ public class BioModel {
 		SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
 		document.setModel(sbml.getModel());
 		document.addPackageDeclaration(LayoutConstants.shortLabel, LayoutConstants.namespaceURI, "false");
-		SBMLutilities.getPlugin(LayoutConstants.namespaceURI, document.getModel(), true);
+		SBMLutilities.getLayoutModelPlugin(document.getModel());
 		if (sbmlCompModel.getListOfPorts().size() > 0 || sbmlCompModel.getListOfSubmodels().size() > 0) {
 			document.addPackageDeclaration(CompConstant.shortLabel, CompConstant.namespaceURI, "true");
 		}
@@ -6503,15 +6501,15 @@ public class BioModel {
 			document.addPackageDeclaration(FBCConstants.shortLabel, FBCConstants.namespaceURI, "false");
 		}
 		if (sbmlCompModel.getListOfSubmodels().size()>0) {
-			CompSBMLDocumentPlugin documentComp = (CompSBMLDocumentPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, document, true);
+			CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
 			for (int i = 0; i < sbmlCompModel.getListOfSubmodels().size(); i++) {
 				String subModelId = sbmlCompModel.getListOfSubmodels().get(i).getId();
 				String extModel = sbmlComp.getListOfExternalModelDefinitions().get(sbmlCompModel.getListOfSubmodels().get(subModelId)
 						.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
 				if (!comps.contains((String)extModel)) {
 					comps.add(extModel);
-					SBMLDocument subDocument = Gui.readSBML(path + separator + extModel);
-					CompModelPlugin subDocumentCompModel = (CompModelPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, subDocument.getModel(), true);
+					SBMLDocument subDocument = SBMLutilities.readSBML(path + separator + extModel);
+					CompModelPlugin subDocumentCompModel = SBMLutilities.getCompModelPlugin(subDocument.getModel());
 					String id = subDocument.getModel().getId();
 					ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(subDocument);
 					for (int j = 0; j < elements.size(); j++) {
@@ -6528,8 +6526,8 @@ public class BioModel {
 					}
 					ModelDefinition md = new ModelDefinition(subDocument.getModel());
 					documentComp.addModelDefinition(md);
-					recurseExportSingleFile(comps,(CompModelPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, subDocument.getModel(), true),
-							(CompSBMLDocumentPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, subDocument, true),documentComp);
+					recurseExportSingleFile(comps,SBMLutilities.getCompModelPlugin(subDocument.getModel()),
+							SBMLutilities.getCompSBMLDocumentPlugin(subDocument),documentComp);
 				}
 			}
 		}
@@ -6633,84 +6631,84 @@ public class BioModel {
 		return extModel;
 	}
 	
-	private boolean checkModelConsistency(SBMLDocument document) {
-		if (document != null) {
-			if (Gui.isLibsbmlFound()) {
-				try {
-					org.sbml.libsbml.SBMLDocument doc = new org.sbml.libsbml.SBMLReader().readSBMLFromString(new SBMLWriter().writeSBMLToString(document));
-					doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_GENERAL_CONSISTENCY, true);
-					doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_IDENTIFIER_CONSISTENCY, true);
-					doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_UNITS_CONSISTENCY, false);
-					doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_MATHML_CONSISTENCY, false);
-					doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_SBO_CONSISTENCY, false);
-					doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_MODELING_PRACTICE, false);
-					doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
-					long numErrors = doc.checkConsistency();
-					if (numErrors > 0) {
-						//Utility.createErrorMessage("Merged SBMLs Are Inconsistent", "The merged sbml files have inconsistencies.");
-						String message = "";
-						for (int i = 0; i < numErrors; i++) {
-							if (document.getError(i).getErrorId()==1020204) continue;
-							String error = doc.getError(i).getMessage(); // .replace(". ",
-							// ".\n");
-							message += i + ":" + error + "\n";
-						}
-						if (!message.equals("")) {
-							JTextArea messageArea = new JTextArea(message);
-							messageArea.setLineWrap(true);
-							messageArea.setEditable(false);
-							JScrollPane scroll = new JScrollPane();
-							scroll.setMinimumSize(new Dimension(600, 600));
-							scroll.setPreferredSize(new Dimension(600, 600));
-							scroll.setViewportView(messageArea);
-							JOptionPane.showMessageDialog(Gui.frame, scroll, "SBML Errors and Warnings", JOptionPane.ERROR_MESSAGE);
-						}
-						return false;
-					}
-				} catch (SBMLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (XMLStreamException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}			
-			}
-			else {
-				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.GENERAL_CONSISTENCY, true);
-				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.IDENTIFIER_CONSISTENCY, true);
-				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.UNITS_CONSISTENCY, false);
-				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.MATHML_CONSISTENCY, false);
-				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.SBO_CONSISTENCY, false);
-				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.MODELING_PRACTICE, false);
-				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.OVERDETERMINED_MODEL, true);
-				int numErrors = document.checkConsistency();
-				if (numErrors > 0) {
-					// Utility.createErrorMessage("Merged SBMLs Are Inconsistent",
-					// "The merged sbml files have inconsistencies.");
-					String message = "";
-					for (int i = 0; i < numErrors; i++) {
-						if (document.getError(i).getErrorId() == 1020204)
-							continue;
-						String error = document.getError(i).getMessage(); // .replace(". ",
-						// ".\n");
-						message += i + ":" + error + "\n";
-					}
-					if (!message.equals("")) {
-						JTextArea messageArea = new JTextArea(message);
-						messageArea.setLineWrap(true);
-						messageArea.setEditable(false);
-						JScrollPane scroll = new JScrollPane();
-						scroll.setMinimumSize(new Dimension(600, 600));
-						scroll.setPreferredSize(new Dimension(600, 600));
-						scroll.setViewportView(messageArea);
-						JOptionPane.showMessageDialog(Gui.frame, scroll, "SBML Errors and Warnings", JOptionPane.ERROR_MESSAGE);
-					}
-					return false;
-				}
-			}
-		}
-		return true;
-	}
+//	private boolean checkModelConsistency(SBMLDocument document) {
+//		if (document != null) {
+//			if (Gui.isLibsbmlFound()) {
+//				try {
+//					org.sbml.libsbml.SBMLDocument doc = new org.sbml.libsbml.SBMLReader().readSBMLFromString(new SBMLWriter().writeSBMLToString(document));
+//					doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_GENERAL_CONSISTENCY, true);
+//					doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_IDENTIFIER_CONSISTENCY, true);
+//					doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_UNITS_CONSISTENCY, false);
+//					doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_MATHML_CONSISTENCY, false);
+//					doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_SBO_CONSISTENCY, false);
+//					doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_MODELING_PRACTICE, false);
+//					doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
+//					long numErrors = doc.checkConsistency();
+//					if (numErrors > 0) {
+//						//Utility.createErrorMessage("Merged SBMLs Are Inconsistent", "The merged sbml files have inconsistencies.");
+//						String message = "";
+//						for (int i = 0; i < numErrors; i++) {
+//							if (doc.getError(i).getErrorId()==1020204) continue;
+//							String error = doc.getError(i).getMessage(); // .replace(". ",
+//							// ".\n");
+//							message += i + ":" + error + "\n";
+//						}
+//						if (!message.equals("")) {
+//							JTextArea messageArea = new JTextArea(message);
+//							messageArea.setLineWrap(true);
+//							messageArea.setEditable(false);
+//							JScrollPane scroll = new JScrollPane();
+//							scroll.setMinimumSize(new Dimension(600, 600));
+//							scroll.setPreferredSize(new Dimension(600, 600));
+//							scroll.setViewportView(messageArea);
+//							JOptionPane.showMessageDialog(Gui.frame, scroll, "SBML Errors and Warnings", JOptionPane.ERROR_MESSAGE);
+//						}
+//						return false;
+//					}
+//				} catch (SBMLException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				} catch (XMLStreamException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}			
+//			}
+//			else {
+//				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.GENERAL_CONSISTENCY, true);
+//				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.IDENTIFIER_CONSISTENCY, true);
+//				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.UNITS_CONSISTENCY, false);
+//				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.MATHML_CONSISTENCY, false);
+//				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.SBO_CONSISTENCY, false);
+//				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.MODELING_PRACTICE, false);
+//				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.OVERDETERMINED_MODEL, true);
+//				int numErrors = document.checkConsistency();
+//				if (numErrors > 0) {
+//					// Utility.createErrorMessage("Merged SBMLs Are Inconsistent",
+//					// "The merged sbml files have inconsistencies.");
+//					String message = "";
+//					for (int i = 0; i < numErrors; i++) {
+//						if (document.getError(i).getErrorId() == 1020204)
+//							continue;
+//						String error = document.getError(i).getMessage(); // .replace(". ",
+//						// ".\n");
+//						message += i + ":" + error + "\n";
+//					}
+//					if (!message.equals("")) {
+//						JTextArea messageArea = new JTextArea(message);
+//						messageArea.setLineWrap(true);
+//						messageArea.setEditable(false);
+//						JScrollPane scroll = new JScrollPane();
+//						scroll.setMinimumSize(new Dimension(600, 600));
+//						scroll.setPreferredSize(new Dimension(600, 600));
+//						scroll.setViewportView(messageArea);
+//						JOptionPane.showMessageDialog(Gui.frame, scroll, "SBML Errors and Warnings", JOptionPane.ERROR_MESSAGE);
+//					}
+//					return false;
+//				}
+//			}
+//		}
+//		return true;
+//	}
 	
 	public SBMLDocument newFlattenModel() throws Exception {
 		if (Gui.isLibsbmlFound()) {
@@ -6766,55 +6764,7 @@ public class BioModel {
 			throw new Exception("libsbml not found.  Unable to flatten model.");
 		}
 	}
-	
-	public BioModel partiallyFlattenModel(String subModelId) {
-		ArrayList<String> modelList = new ArrayList<String>();
-		modelList.add(filename);
-		String tempFile = filename.replace(".gcm","").replace(".xml","")+"_temp.xml";
-		save(tempFile);
 		
-		BioModel model = new BioModel(path);
-		model.load(tempFile);
-
-		// flatten one submodel instead of looping through all submodels
-		BioModel subModel = new BioModel(path);		
-		String extModelFile = getExtModelFileName(subModelId);
-		subModel.load(path + separator + extModelFile);
-		ArrayList<String> modelListCopy = copyArray(modelList);
-		if (modelListCopy.contains(subModel.getFilename())) {
-			Utility.createErrorMessage("Loop Detected", "Cannot flatten model.\n" + "There is a loop in the components.");
-			load(tempFile);
-			new File(tempFile).delete();
-			return null;
-		}
-		modelListCopy.add(subModel.getFilename());
-
-		// recursively add this component's sbml to the overall sbml
-		unionSBML(model, subModel, subModelId, subModel.getParameter(GlobalConstants.RNAP_STRING));
-		if (model.getSBMLDocument() == null && modelListCopy.isEmpty()) {
-			Utility.createErrorMessage("Loop Detected", "Cannot flatten model.\n" + "There is a loop in the components.");
-			load(tempFile);
-			new File(tempFile).delete();
-			return null;
-		}
-		else if (model.getSBMLDocument() == null) {
-			Utility.createErrorMessage("Cannot Flatten Model", "Unable to flatten sbml files from components.");
-			load(tempFile);
-			new File(tempFile).delete();
-			return null;
-		}
-		if (model.getSBMLCompModel().getListOfSubmodels().size() == 0) {
-			
-			model.getSBMLDocument().getExtensionPackages().remove(LayoutConstants.namespaceURI);
-			model.getSBMLDocument().getExtensionPackages().remove(CompConstant.namespaceURI);
-//			model.getSBMLDocument().enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", false);
-//			model.getSBMLDocument().enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", false);
-		}
-		checkModelConsistency(model.getSBMLDocument());
-		new File(tempFile).delete();
-		return model;
-	}
-	
 	public SBMLDocument flattenModel() {
 		Preferences biosimrc = Preferences.userRoot();
 		if (biosimrc.get("biosim.general.flatten", "").equals("libsbml")) {
@@ -6917,7 +6867,8 @@ public class BioModel {
 				return null;
 			}
 		}
-		checkModelConsistency(this.getSBMLDocument());
+		//checkModelConsistency(this.getSBMLDocument());
+		SBMLutilities.check(this.getFilename(), this.getSBMLDocument(),false);
 		return this.getSBMLDocument();
 	}
 	
@@ -7108,7 +7059,7 @@ public class BioModel {
 			Compartment c = subModel.getCompartment(i);
 			String newName = subModelId + "__" + c.getId();
 			for (int j = 0; j < model.getCompartmentCount(); j++) {
-				CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, model.getCompartment(j), true);
+				CompSBasePlugin sbmlSBase = SBMLutilities.getCompSBasePlugin(model.getCompartment(j));
 				newName = prepareReplacement(newName,subBioModel,subModelId,replacementModelId,sbmlSBase,c.getId(),
 						model.getCompartment(j).getId());
 			}
@@ -7128,14 +7079,14 @@ public class BioModel {
 				updateVarId(false, c.getId(), topId, subBioModel);
 				compartments.remove(c.getId());
 				c.setId(topId);
-				CompSBasePlugin SbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, model.getCompartment(topId), true);
+				CompSBasePlugin SbmlSBase = SBMLutilities.getCompSBasePlugin(model.getCompartment(topId));
 				ArrayList<ReplacedElement> replacements = new ArrayList<ReplacedElement>();
 				for (int j = 0; j < SbmlSBase.getListOfReplacedElements().size(); j++) {
 					replacements.add(SbmlSBase.getListOfReplacedElements().get(j));
 				}
 				model.removeCompartment(topId);
 				model.addCompartment(c);
-				SbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, model.getSpecies(c.getId()), true);
+				SbmlSBase = SBMLutilities.getCompSBasePlugin(model.getSpecies(c.getId()));
 				for (ReplacedElement r : replacements) {
 					SbmlSBase.addReplacedElement(r);
 				}
@@ -7157,7 +7108,7 @@ public class BioModel {
 			Species spec = subModel.getSpecies(i);
 			String newName = subModelId + "__" + spec.getId();
 			for (int j = 0; j < model.getSpeciesCount(); j++) {
-				CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, model.getSpecies(j), true);
+				CompSBasePlugin sbmlSBase = SBMLutilities.getCompSBasePlugin(model.getSpecies(j));
 				newName = prepareReplacement(newName,subBioModel,subModelId,replacementModelId,sbmlSBase,spec.getId(),
 						model.getSpecies(j).getId());
 			}
@@ -7195,14 +7146,14 @@ public class BioModel {
 				*/
 				updateVarId(true, spec.getId(), topId, subBioModel);
 				spec.setId(topId);
-				CompSBasePlugin SbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, model.getSpecies(topId), true);
+				CompSBasePlugin SbmlSBase = SBMLutilities.getCompSBasePlugin(model.getSpecies(topId));
 				ArrayList<ReplacedElement> replacements = new ArrayList<ReplacedElement>();
 				for (int j = 0; j < SbmlSBase.getListOfReplacedElements().size(); j++) {
 					replacements.add(SbmlSBase.getListOfReplacedElements().get(j));
 				}
 				model.removeSpecies(topId);
 				model.addSpecies(spec);
-				SbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, spec, true);
+				SbmlSBase = SBMLutilities.getCompSBasePlugin(spec);
 				for (ReplacedElement r : replacements) {
 					SbmlSBase.addReplacedElement(r);
 				}
@@ -7219,7 +7170,7 @@ public class BioModel {
 			Parameter p = subModel.getParameter(i);
 			String newName = subModelId + "__" + p.getId();
 			for (int j = 0; j < model.getParameterCount(); j++) {
-				CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, model.getParameter(j), true);
+				CompSBasePlugin sbmlSBase = SBMLutilities.getCompSBasePlugin(model.getParameter(j));
 				newName = prepareReplacement(newName,subBioModel,subModelId,replacementModelId,sbmlSBase,p.getId(),
 						model.getParameter(j).getId());
 			}
@@ -7236,14 +7187,14 @@ public class BioModel {
 				String topId = p.getId().substring(4 + subModelId.length());
 				updateVarId(false, p.getId(), topId, subBioModel);
 				p.setId(topId);
-				CompSBasePlugin SbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, model.getParameter(topId), true);
+				CompSBasePlugin SbmlSBase = SBMLutilities.getCompSBasePlugin(model.getParameter(topId));
 				ArrayList<ReplacedElement> replacements = new ArrayList<ReplacedElement>();
 				for (int j = 0; j < SbmlSBase.getListOfReplacedElements().size(); j++) {
 					replacements.add(SbmlSBase.getListOfReplacedElements().get(j));
 				}
 				model.removeParameter(topId);
 				model.addParameter(p);
-				SbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, model.getParameter(p.getId()), true);
+				SbmlSBase = SBMLutilities.getCompSBasePlugin(model.getParameter(p.getId()));
 				for (ReplacedElement r : replacements) {
 					SbmlSBase.addReplacedElement(r);
 				}
@@ -7261,7 +7212,7 @@ public class BioModel {
 			if (r.getId().contains("MembraneDiffusion")) continue;
 			String newName = subModelId + "__" + r.getId();
 			for (int j = 0; j < model.getReactionCount(); j++) {
-				CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, model.getReaction(j), true);
+				CompSBasePlugin sbmlSBase = SBMLutilities.getCompSBasePlugin(model.getReaction(j));
 				newName = prepareReplacement(newName,subBioModel,subModelId,replacementModelId,sbmlSBase,r.getId(),
 						model.getReaction(j).getId());
 			}
@@ -7282,14 +7233,14 @@ public class BioModel {
 				String topId = r.getId().substring(4 + subModelId.length());
 				updateVarId(false, r.getId(), topId, subBioModel);
 				r.setId(topId);
-				CompSBasePlugin SbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, model.getReaction(topId), true);
+				CompSBasePlugin SbmlSBase = SBMLutilities.getCompSBasePlugin(model.getReaction(topId));
 				ArrayList<ReplacedElement> replacements = new ArrayList<ReplacedElement>();
 				for (int j = 0; j < SbmlSBase.getListOfReplacedElements().size(); j++) {
 					replacements.add(SbmlSBase.getListOfReplacedElements().get(j));
 				}
 				model.removeReaction(topId);
 				model.addReaction(r);
-				SbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, model.getReaction(r.getId()), true);
+				SbmlSBase = SBMLutilities.getCompSBasePlugin(model.getReaction(r.getId()));
 				for (ReplacedElement repl : replacements) {
 					SbmlSBase.addReplacedElement(repl);
 				}
@@ -7389,11 +7340,11 @@ public class BioModel {
 			model.addEvent(event);
 		}
 		
-		for (int i = 0; i < subModel.getNumUnitDefinitions(); i++) {
+		for (int i = 0; i < subModel.getUnitDefinitionCount(); i++) {
 			UnitDefinition u = subModel.getUnitDefinition(i).clone();
 			String newName = u.getId();
 			boolean add = true;
-			for (int j = 0; j < model.getNumUnitDefinitions(); j++) {
+			for (int j = 0; j < model.getUnitDefinitionCount(); j++) {
 				if (model.getUnitDefinition(j).getId().equals(u.getId())) {
 					if (UnitDefinition.areIdentical(model.getUnitDefinition(j), u)) {
 						add = false;
@@ -7741,7 +7692,7 @@ public class BioModel {
 	
 
 	public String removeBooleanAssign(ASTNode math) {
-		if (math.getType() == ASTNode.Type.FUNCTION_PIECEWISE && math.getNumChildren() > 1) {
+		if (math.getType() == ASTNode.Type.FUNCTION_PIECEWISE && math.getChildCount() > 1) {
 			ASTNode result = math.getChild(1);
 			for (int j = 0; j < sbml.getModel().getParameterCount(); j++) {
 				Parameter parameter = sbml.getModel().getParameter(j);

@@ -265,7 +265,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							if (r != null) {
 								persistentTrigger.setSelected(true);
 								triggerMath = r.getMath();
-								if (triggerMath.getType()==ASTNode.Type.FUNCTION_PIECEWISE && triggerMath.getNumChildren() > 2) {
+								if (triggerMath.getType()==ASTNode.Type.FUNCTION_PIECEWISE && triggerMath.getChildCount() > 2) {
 									triggerMath = triggerMath.getChild(1);
 									if (triggerMath.getType()==ASTNode.Type.LOGICAL_OR) {
 										triggerMath = triggerMath.getLeftChild();

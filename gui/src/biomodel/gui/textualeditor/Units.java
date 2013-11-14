@@ -23,7 +23,6 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
 import main.Gui;
-import main.util.MutableBoolean;
 import main.util.Utility;
 
 import org.sbml.jsbml.Compartment;
@@ -33,11 +32,9 @@ import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.ext.comp.Port;
-import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
-import org.sbml.jsbml.JSBML;
 
 import biomodel.gui.ModelEditor;
 import biomodel.parser.BioModel;
@@ -84,9 +81,9 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 		removeUnit = new JButton("Remove Unit");
 		editUnit = new JButton("Edit Unit");
 		unitDefs = new JList();
-		ListOf listOfUnits = model.getListOfUnitDefinitions();
-		String[] units = new String[(int) model.getNumUnitDefinitions()];
-		for (int i = 0; i < model.getNumUnitDefinitions(); i++) {
+		ListOf<UnitDefinition> listOfUnits = model.getListOfUnitDefinitions();
+		String[] units = new String[(int) model.getUnitDefinitionCount()];
+		for (int i = 0; i < model.getUnitDefinitionCount(); i++) {
 			UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
 			units[i] = unit.getId();
 			// GET OTHER THINGS
@@ -171,8 +168,8 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 				} else {
 					onPort.setSelected(false);
 				}
-				uList = new String[(int) unit.getNumUnits()];
-				for (int i = 0; i < unit.getNumUnits(); i++) {
+				uList = new String[(int) unit.getUnitCount()];
+				for (int i = 0; i < unit.getUnitCount(); i++) {
 					uList[i] = "";
 					if (unit.getUnit(i).getMultiplier() != 1.0) {
 						uList[i] = unit.getUnit(i).getMultiplier() + " * ";
@@ -187,8 +184,8 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 						}
 					}
 					else {
-						if (unit.getUnit(i).getExponentAsDouble() != 1) {
-							uList[i] = "( " + uList[i] + " )^" + unit.getUnit(i).getExponentAsDouble();
+						if (unit.getUnit(i).getExponent() != 1) {
+							uList[i] = "( " + uList[i] + " )^" + unit.getUnit(i).getExponent();
 						}
 					}
 				}
@@ -336,18 +333,13 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 						UnitDefinition uCopy = u.clone();
 						u.setId(unitID.getText().trim());
 						u.setName(unitName.getText().trim());
-						while (u.getNumUnits() > 0) {
+						while (u.getUnitCount() > 0) {
 							u.getListOfUnits().remove(0);
 						}
 						for (int i = 0; i < uList.length; i++) {
 							Unit unit = u.createUnit();
 							unit.setKind(Unit.Kind.valueOf(extractUnitKind(uList[i]).toUpperCase()));
-							if (bioModel.getSBMLDocument().getLevel() < 3) {
-								unit.setExponent(Integer.valueOf(extractUnitExp(uList[i])).intValue());
-							}
-							else {
-								unit.setExponent(Double.valueOf(extractUnitExp(uList[i])).doubleValue());
-							}
+							unit.setExponent(Double.valueOf(extractUnitExp(uList[i])).doubleValue());
 							unit.setScale(Integer.valueOf(extractUnitScale(uList[i])).intValue());
 							unit.setMultiplier(Double.valueOf(extractUnitMult(uList[i])).doubleValue());
 						}
@@ -393,12 +385,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 						for (int i = 0; i < uList.length; i++) {
 							Unit unit = u.createUnit();
 							unit.setKind(Unit.Kind.valueOf(extractUnitKind(uList[i]).toUpperCase()));
-							if (bioModel.getSBMLDocument().getLevel() < 3) {
-								unit.setExponent(Integer.valueOf(extractUnitExp(uList[i])).intValue());
-							}
-							else {
-								unit.setExponent(Double.valueOf(extractUnitExp(uList[i])).doubleValue());
-							}
+							unit.setExponent(Double.valueOf(extractUnitExp(uList[i])).doubleValue());
 							unit.setScale(Integer.valueOf(extractUnitScale(uList[i])).intValue());
 							unit.setMultiplier(Double.valueOf(extractUnitMult(uList[i])).doubleValue());
 						}
@@ -420,7 +407,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 						Utility.sort(units);
 						unitDefs.setListData(units);
 						unitDefs.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-						if (bioModel.getSBMLDocument().getModel().getNumUnitDefinitions() == 1) {
+						if (bioModel.getSBMLDocument().getModel().getUnitDefinitionCount() == 1) {
 							unitDefs.setSelectedIndex(0);
 						}
 						else {
@@ -614,9 +601,9 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 	 */
 	public void refreshUnitsPanel() {
 		Model model = bioModel.getSBMLDocument().getModel();
-		ListOf listOfUnits = model.getListOfUnitDefinitions();
-		String[] units = new String[(int) model.getNumUnitDefinitions()];
-		for (int i = 0; i < model.getNumUnitDefinitions(); i++) {
+		ListOf<UnitDefinition> listOfUnits = model.getListOfUnitDefinitions();
+		String[] units = new String[(int) model.getUnitDefinitionCount()];
+		for (int i = 0; i < model.getUnitDefinitionCount(); i++) {
 			UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
 			units[i] = unit.getId();
 			// GET OTHER THINGS
@@ -649,7 +636,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 //			if (unitList.getSelectedIndex() != -1) {
 //				String selected = (String) unitList.getSelectedValue();
 //				ListOf u = tempUnit.getListOfUnits();
-//				for (int i = 0; i < tempUnit.getNumUnits(); i++) {
+//				for (int i = 0; i < tempUnit.getUnitCount(); i++) {
 //					if (selected.contains(unitToString(tempUnit.getUnit(i)))) {
 //						u.remove(i);
 //					}
@@ -677,8 +664,8 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 		if (index != -1) {
 			if (!unitsInUse(((String) unitDefs.getSelectedValue()).split(" ")[0])) {
 				UnitDefinition tempUnit = bioModel.getSBMLDocument().getModel().getUnitDefinition(((String) unitDefs.getSelectedValue()).split(" ")[0]);
-				ListOf u = bioModel.getSBMLDocument().getModel().getListOfUnitDefinitions();
-				for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumUnitDefinitions(); i++) {
+				ListOf<UnitDefinition> u = bioModel.getSBMLDocument().getModel().getListOfUnitDefinitions();
+				for (int i = 0; i < bioModel.getSBMLDocument().getModel().getUnitDefinitionCount(); i++) {
 					if (((UnitDefinition) u.get(i)).getId().equals(tempUnit.getId())) {
 						u.remove(i);
 					}
@@ -765,7 +752,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 		ArrayList<String> reacParametersUsing = new ArrayList<String>();
 		for (int i = 0; i < model.getReactionCount(); i++) {
 			for (int j = 0; j < model.getReaction(i).getKineticLaw().getLocalParameterCount(); j++) {
-				LocalParameter parameters = model.getReaction(i).getKineticLaw().getListOfParameters().get(j);
+				LocalParameter parameters = model.getReaction(i).getKineticLaw().getListOfLocalParameters().get(j);
 				if (parameters.getUnits().equals(unit)) {
 					inUse = true;
 					reacParametersUsing.add(model.getReaction(i).getId() + "/" + parameters.getId());
@@ -1147,8 +1134,8 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 		for (int i = 0; i < model.getReactionCount(); i++) {
 			KineticLaw kineticLaw = (KineticLaw) model.getReaction(i).getKineticLaw();
 			for (int j = 0; j < kineticLaw.getLocalParameterCount(); j++) {
-				if (kineticLaw.getParameter(j).getUnits().equals(origId)) {
-					kineticLaw.getParameter(j).setUnits(newId);
+				if (kineticLaw.getLocalParameter(j).getUnits().equals(origId)) {
+					kineticLaw.getLocalParameter(j).setUnits(newId);
 				}
 			}
 		}
