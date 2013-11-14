@@ -437,7 +437,7 @@ public abstract class HierarchicalSimulator {
 	protected long setupSubmodels(SBMLDocument document) throws XMLStreamException, IOException
 	{
 		String path = getPath(outputDirectory);
-		CompModelPlugin sbmlCompModel = (CompModelPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, document.getModel(), false);
+		CompModelPlugin sbmlCompModel = (CompModelPlugin)document.getModel().getExtension(CompConstant.namespaceURI);
 		//CompSBMLDocumentPlugin sbmlComp = (CompSBMLDocumentPlugin)document.getExtension(CompConstant.namespaceURI);
 		//submodels = new ModelState[(int)sbmlCompModel.getListOfSubmodels().size()];
 
@@ -547,7 +547,7 @@ public abstract class HierarchicalSimulator {
 	
 		for (int i = 0; i < topmodel.numSpecies; i++) {
 			Species species = sbml.getModel().getSpecies(i);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, species, false);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)species.getExtension(CompConstant.namespaceURI);
 
 			String s = species.getId();
 			if(sbmlSBase != null)
@@ -926,7 +926,7 @@ public abstract class HierarchicalSimulator {
 	private void performDeletions(Model subModel, Submodel instance) {
 
 		//CompModelPlugin sbmlCompModel = (CompModelPlugin)topmodel.model.getModel().getExtension(CompConstant.namespaceURI);
-		CompModelPlugin sbmlCompModel = (CompModelPlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, subModel.getModel(), false);
+		CompModelPlugin sbmlCompModel = (CompModelPlugin)subModel.getModel().getExtension(CompConstant.namespaceURI);
 		if (instance == null)
 			return;
 
@@ -1366,13 +1366,13 @@ public abstract class HierarchicalSimulator {
 
 				//loop through child triples
 				//if child 1 is true, return child 0, else return child 2				
-				for (int childIter = 0; childIter < node.getNumChildren(); childIter += 3) {
+				for (int childIter = 0; childIter < node.getChildCount(); childIter += 3) {
 
-					if ((childIter + 1) < node.getNumChildren() && 
+					if ((childIter + 1) < node.getChildCount() && 
 							getBooleanFromDouble(evaluateExpressionRecursive(modelstate, node.getChild(childIter + 1)))) {
 						return evaluateExpressionRecursive(modelstate, node.getChild(childIter));
 					}
-					else if ((childIter + 2) < node.getNumChildren()) {
+					else if ((childIter + 2) < node.getChildCount()) {
 						return evaluateExpressionRecursive(modelstate, node.getChild(childIter + 2));
 					}
 				}
@@ -1734,7 +1734,7 @@ public abstract class HierarchicalSimulator {
 		}
 		else {
 			ASTNode childNode;
-			for(int i = 0; i < node.getNumChildren(); i++)
+			for(int i = 0; i < node.getChildCount(); i++)
 			{
 				childNode = node.getChild(i);
 				alterLocalParameter(childNode, reaction, oldString, newString);
@@ -1887,7 +1887,7 @@ public abstract class HierarchicalSimulator {
 
 				boolean andResult = true;
 
-				for (int childIter = 0; childIter < node.getNumChildren(); ++childIter)
+				for (int childIter = 0; childIter < node.getChildCount(); ++childIter)
 					andResult = andResult && getBooleanFromDouble(evaluateStateExpressionRecursive(modelstate, node.getChild(childIter), t, y, variableToIndexMap));
 
 				return getDoubleFromBoolean(andResult);
@@ -1897,7 +1897,7 @@ public abstract class HierarchicalSimulator {
 
 				boolean orResult = false;
 
-				for (int childIter = 0; childIter < node.getNumChildren(); ++childIter)
+				for (int childIter = 0; childIter < node.getChildCount(); ++childIter)
 					orResult = orResult || getBooleanFromDouble(evaluateStateExpressionRecursive(modelstate, node.getChild(childIter), t, y, variableToIndexMap));
 
 				return getDoubleFromBoolean(orResult);				
@@ -1907,7 +1907,7 @@ public abstract class HierarchicalSimulator {
 
 				boolean xorResult = getBooleanFromDouble(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));
 
-				for (int childIter = 1; childIter < node.getNumChildren(); ++childIter)
+				for (int childIter = 1; childIter < node.getChildCount(); ++childIter)
 					xorResult = xorResult ^ getBooleanFromDouble(evaluateStateExpressionRecursive(modelstate, node.getChild(childIter), t, y, variableToIndexMap));
 
 				return getDoubleFromBoolean(xorResult);
@@ -2013,7 +2013,7 @@ public abstract class HierarchicalSimulator {
 
 				double sum = 0.0;
 
-				for (int childIter = 0; childIter < node.getNumChildren(); ++childIter)
+				for (int childIter = 0; childIter < node.getChildCount(); ++childIter)
 					sum += evaluateStateExpressionRecursive(modelstate, node.getChild(childIter), t, y, variableToIndexMap);					
 
 				return sum;
@@ -2023,7 +2023,7 @@ public abstract class HierarchicalSimulator {
 
 				double sum = evaluateStateExpressionRecursive(modelstate, leftChild, t, y, variableToIndexMap);
 
-				for (int childIter = 1; childIter < node.getNumChildren(); ++childIter)
+				for (int childIter = 1; childIter < node.getChildCount(); ++childIter)
 					sum -= evaluateStateExpressionRecursive(modelstate, node.getChild(childIter), t, y, variableToIndexMap);					
 
 				return sum;
@@ -2033,7 +2033,7 @@ public abstract class HierarchicalSimulator {
 
 				double product = 1.0;
 
-				for (int childIter = 0; childIter < node.getNumChildren(); ++childIter)
+				for (int childIter = 0; childIter < node.getChildCount(); ++childIter)
 					product *= evaluateStateExpressionRecursive(modelstate, node.getChild(childIter), t, y, variableToIndexMap);
 
 				return product;
@@ -2159,13 +2159,13 @@ public abstract class HierarchicalSimulator {
 
 				//loop through child triples
 				//if child 1 is true, return child 0, else return child 2				
-				for (int childIter = 0; childIter < node.getNumChildren(); childIter += 3) {
+				for (int childIter = 0; childIter < node.getChildCount(); childIter += 3) {
 
-					if ((childIter + 1) < node.getNumChildren() && 
+					if ((childIter + 1) < node.getChildCount() && 
 							getBooleanFromDouble(evaluateStateExpressionRecursive(modelstate, node.getChild(childIter + 1), t, y, variableToIndexMap))) {
 						return evaluateStateExpressionRecursive(modelstate, node.getChild(childIter), t, y, variableToIndexMap);
 					}
-					else if ((childIter + 2) < node.getNumChildren()) {
+					else if ((childIter + 2) < node.getChildCount()) {
 						return evaluateStateExpressionRecursive(modelstate, node.getChild(childIter + 2), t, y, variableToIndexMap);
 					}
 				}

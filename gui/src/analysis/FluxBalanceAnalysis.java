@@ -6,10 +6,8 @@ import java.io.FileWriter;
 import java.text.NumberFormat;
 import java.util.HashMap;
 
-import main.Gui;
 
 import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
-import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.fbc.FluxBound;
 import org.sbml.jsbml.ext.fbc.Objective.Type;
 import org.sbml.jsbml.Reaction;
@@ -42,8 +40,8 @@ public class FluxBalanceAnalysis {
 		this.root = root;
 		this.sbmlFileName = sbmlFileName;
 		this.absError = absError;
-		sbml = Gui.readSBML(root + this.sbmlFileName);
-		fbc = (FBCModelPlugin)SBMLutilities.getPlugin(FBCConstants.namespaceURI, sbml.getModel(), true);
+		sbml = SBMLutilities.readSBML(root + this.sbmlFileName);
+		fbc = SBMLutilities.getFBCModelPlugin(sbml.getModel());
 		
 		//Set number of digits after decimal point
 		nf = NumberFormat.getNumberInstance();		

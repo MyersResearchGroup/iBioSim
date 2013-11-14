@@ -439,7 +439,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						sweep.setEnabled(false);
 						init.setEnabled(false);
 						initLabel.setEnabled(false);
-						SBMLDocument d = Gui.readSBML(file);
+						SBMLDocument d = SBMLutilities.readSBML(file);
 						if (d.getModel().getSpecies(((String) species.getSelectedValue()).split(" ")[0]).isSetInitialAmount()) {
 							init.setText(d.getModel().getSpecies(((String) species.getSelectedValue()).split(" ")[0]).getInitialAmount() + "");
 							initLabel.setSelectedItem("Initial Amount");
@@ -947,11 +947,11 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		JComboBox specUnits = new JComboBox();
 		specUnits.addItem("( none )");
 		ListOf listOfUnits = gcm.getSBMLDocument().getModel().getListOfUnitDefinitions();
-		for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumUnitDefinitions(); i++) {
+		for (int i = 0; i < gcm.getSBMLDocument().getModel().getUnitDefinitionCount(); i++) {
 			UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
-			if ((unit.getNumUnits() == 1)
+			if ((unit.getUnitCount() == 1)
 					&& (unit.getUnit(0).isMole() || unit.getUnit(0).isItem() || unit.getUnit(0).isGram() || unit.getUnit(0).isKilogram())
-					&& (unit.getUnit(0).getExponentAsDouble() == 1)) {
+					&& (unit.getUnit(0).getExponent() == 1)) {
 				if (!(gcm.getSBMLDocument().getLevel() < 3 && unit.getId().equals("substance"))) {
 					specUnits.addItem(unit.getId());
 				}

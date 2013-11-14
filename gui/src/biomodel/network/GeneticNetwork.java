@@ -39,10 +39,6 @@ import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.Unit.Kind;
 import org.sbml.jsbml.text.parser.ParseException;
 import org.sbml.jsbml.validator.SBMLValidator;
-import org.sbml.jsbml.xml.XMLAttributes;
-import org.sbml.jsbml.xml.XMLNode;
-import org.sbml.jsbml.xml.XMLTriple;
-import org.sbml.jsbml.JSBML;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.textualeditor.SBMLutilities;
@@ -275,67 +271,10 @@ public class GeneticNetwork {
 				property = prop.getString();
 				Translator.generateSBMLConstraints(document, property, lpn);
 			}
-			if (document != null && !Gui.isLibsbmlFound()) {
-				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.GENERAL_CONSISTENCY, true);
-				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.IDENTIFIER_CONSISTENCY, true);
-				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.UNITS_CONSISTENCY, false);
-				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.MATHML_CONSISTENCY, false);
-				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.SBO_CONSISTENCY, false);
-				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.MODELING_PRACTICE, false);
-				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.OVERDETERMINED_MODEL, true);
-				long numErrors = document.checkConsistency();
-				if (numErrors > 0) {
-					String message = "";
-					for (int i = 0; i < numErrors; i++) {
-						String error = document.getError(i).getMessage(); // .replace(". ",
-						// ".\n");
-						message += i + ":" + error + "\n";
-					}
-					JTextArea messageArea = new JTextArea(message);
-					messageArea.setLineWrap(true);
-					messageArea.setEditable(false);
-					JScrollPane scroll = new JScrollPane();
-					scroll.setMinimumSize(new Dimension(600, 600));
-					scroll.setPreferredSize(new Dimension(600, 600));
-					scroll.setViewportView(messageArea);
-					JOptionPane.showMessageDialog(Gui.frame, scroll, "Generated SBML Has Errors",
-							JOptionPane.ERROR_MESSAGE);
-				}
-			}
-			
 			reformatArrayContent(document, filename);
-			
 			p.print(writer.writeSBMLToString(document));
-
 			p.close();
-			if (Gui.isLibsbmlFound()) {
-				org.sbml.libsbml.SBMLDocument doc = new org.sbml.libsbml.SBMLReader().readSBML(filename);
-				doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_GENERAL_CONSISTENCY, true);
-				doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_IDENTIFIER_CONSISTENCY, true);
-				doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_UNITS_CONSISTENCY, false);
-				doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_MATHML_CONSISTENCY, false);
-				doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_SBO_CONSISTENCY, false);
-				doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_MODELING_PRACTICE, false);
-				doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
-				long numErrors = doc.checkConsistency();
-				if (numErrors > 0) {
-					String message = "";
-					for (int i = 0; i < numErrors; i++) {
-						String error = doc.getError(i).getMessage(); // .replace(". ",
-						// ".\n");
-						message += i + ":" + error + "\n";
-					}
-					JTextArea messageArea = new JTextArea(message);
-					messageArea.setLineWrap(true);
-					messageArea.setEditable(false);
-					JScrollPane scroll = new JScrollPane();
-					scroll.setMinimumSize(new Dimension(600, 600));
-					scroll.setPreferredSize(new Dimension(600, 600));
-					scroll.setViewportView(messageArea);
-					JOptionPane.showMessageDialog(Gui.frame, scroll, "Generated SBML Has Errors",
-							JOptionPane.ERROR_MESSAGE);
-				}
-			}
+			SBMLutilities.check(filename, document, false);
 			return document;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -356,7 +295,7 @@ public class GeneticNetwork {
 					return outputSBML(filename);
 				}
 
-				SBMLDocument document = Gui.readSBML(currentRoot + sbmlDocument);
+				SBMLDocument document = SBMLutilities.readSBML(currentRoot + sbmlDocument);
 				// checkConsistancy(document);
 				currentDocument = document;
 				return outputSBML(filename, document);
@@ -1191,7 +1130,7 @@ public class GeneticNetwork {
 					+ sign + Math.abs(exponents.get(i)) + "_";
 			Unit u = t.createUnit();
 			u.setKind(Kind.valueOf(unitNames.get(i).toUpperCase()));
-			u.setExponent(exponents.get(i).intValue());
+			u.setExponent(exponents.get(i).intValue()*1.0);
 			u.setMultiplier(multiplier.get(i).intValue());
 			u.setScale(0);
 		}

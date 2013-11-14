@@ -124,25 +124,25 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			conversionFactor.addItem("( none )");
 
 			ListOf listOfUnits = bioModel.getSBMLDocument().getModel().getListOfUnitDefinitions();
-			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumUnitDefinitions(); i++) {
+			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getUnitDefinitionCount(); i++) {
 				UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
-				if ((unit.getNumUnits() == 1)
+				if ((unit.getUnitCount() == 1)
 						&& (unit.getUnit(0).isMole() || unit.getUnit(0).isItem() || unit.getUnit(0).isGram() || unit.getUnit(0).isKilogram())
-						&& (unit.getUnit(0).getExponentAsDouble() == 1)) {
+						&& (unit.getUnit(0).getExponent() == 1)) {
 					substanceUnits.addItem(unit.getId());
 					extentUnits.addItem(unit.getId());
 				}
-				if ((unit.getNumUnits() == 1) && (unit.getUnit(0).isSecond()) && (unit.getUnit(0).getExponentAsDouble() == 1)) {
+				if ((unit.getUnitCount() == 1) && (unit.getUnit(0).isSecond()) && (unit.getUnit(0).getExponent() == 1)) {
 					timeUnits.addItem(unit.getId());
 				}
-				if ((unit.getNumUnits() == 1) && (unit.getUnit(0).isLitre() && unit.getUnit(0).getExponentAsDouble() == 1)
-						|| (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponentAsDouble() == 3)) {
+				if ((unit.getUnitCount() == 1) && (unit.getUnit(0).isLitre() && unit.getUnit(0).getExponent() == 1)
+						|| (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == 3)) {
 					volumeUnits.addItem(unit.getId());
 				}
-				if ((unit.getNumUnits() == 1) && (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponentAsDouble() == 2)) {
+				if ((unit.getUnitCount() == 1) && (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == 2)) {
 					areaUnits.addItem(unit.getId());
 				}
-				if ((unit.getNumUnits() == 1) && (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponentAsDouble() == 1)) {
+				if ((unit.getUnitCount() == 1) && (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == 1)) {
 					lengthUnits.addItem(unit.getId());
 				}
 			}

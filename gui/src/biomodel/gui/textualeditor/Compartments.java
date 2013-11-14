@@ -359,7 +359,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 					else {
 						sweep.setEnabled(false);
 						compSize.setEnabled(false);
-						SBMLDocument d = Gui.readSBML(file);
+						SBMLDocument d = SBMLutilities.readSBML(file);
 						if (d.getModel().getCompartment(((String) compartments.getSelectedValue()).split(" ")[0]).isSetSize()) {
 							compSize.setText(d.getModel().getCompartment(((String) compartments.getSelectedValue()).split(" ")[0]).getSize() + "");
 						}
@@ -695,10 +695,10 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 			compUnits.removeAllItems();
 			compUnits.addItem("( none )");
 			ListOf listOfUnits = bioModel.getSBMLDocument().getModel().getListOfUnitDefinitions();
-			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumUnitDefinitions(); i++) {
+			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getUnitDefinitionCount(); i++) {
 				UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
-				if ((unit.getNumUnits() == 1) && (unit.getUnit(0).isLitre() && unit.getUnit(0).getExponentAsDouble() == 1)
-						|| (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponentAsDouble() == 3)) {
+				if ((unit.getUnitCount() == 1) && (unit.getUnit(0).isLitre() && unit.getUnit(0).getExponent() == 1)
+						|| (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == 3)) {
 					if (!(bioModel.getSBMLDocument().getLevel() < 3 && unit.getId().equals("volume"))) {
 						compUnits.addItem(unit.getId());
 					}
@@ -718,9 +718,9 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 			compUnits.removeAllItems();
 			compUnits.addItem("( none )");
 			ListOf listOfUnits = bioModel.getSBMLDocument().getModel().getListOfUnitDefinitions();
-			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumUnitDefinitions(); i++) {
+			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getUnitDefinitionCount(); i++) {
 				UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
-				if ((unit.getNumUnits() == 1) && (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponentAsDouble() == 2)) {
+				if ((unit.getUnitCount() == 1) && (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == 2)) {
 					if (!(bioModel.getSBMLDocument().getLevel() < 3 && unit.getId().equals("area"))) {
 						compUnits.addItem(unit.getId());
 					}
@@ -739,9 +739,9 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 			compUnits.removeAllItems();
 			compUnits.addItem("( none )");
 			ListOf listOfUnits = bioModel.getSBMLDocument().getModel().getListOfUnitDefinitions();
-			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumUnitDefinitions(); i++) {
+			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getUnitDefinitionCount(); i++) {
 				UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
-				if ((unit.getNumUnits() == 1) && (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponentAsDouble() == 1)) {
+				if ((unit.getUnitCount() == 1) && (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == 1)) {
 					if (!(bioModel.getSBMLDocument().getLevel() < 3 && unit.getId().equals("length"))) {
 						compUnits.addItem(unit.getId());
 					}
@@ -770,9 +770,9 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 			compUnits.removeAllItems();
 			compUnits.addItem("( none )");
 			ListOf listOfUnits = bioModel.getSBMLDocument().getModel().getListOfUnitDefinitions();
-			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getNumUnitDefinitions(); i++) {
+			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getUnitDefinitionCount(); i++) {
 				UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
-				if ((unit.getNumUnits() == 1) && (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponentAsDouble() == dim)) {
+				if ((unit.getUnitCount() == 1) && (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == dim)) {
 					compUnits.addItem(unit.getId());
 				}
 			}
