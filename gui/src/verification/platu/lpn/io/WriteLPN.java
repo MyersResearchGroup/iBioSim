@@ -6,14 +6,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import verification.platu.lpn.LPN;
 import verification.platu.lpn.LPNTran;
 import verification.platu.lpn.VarSet;
 import verification.platu.lpn.VarVal;
-import verification.platu.lpn.VarValSet;
 
 /**
  * @author ldtwo

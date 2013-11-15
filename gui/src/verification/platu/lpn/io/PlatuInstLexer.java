@@ -4,9 +4,6 @@
 
 
 import org.antlr.runtime.*;
-import java.util.Stack;
-import java.util.List;
-import java.util.ArrayList;
 
 public class PlatuInstLexer extends Lexer {
     public static final int EOF=-1;

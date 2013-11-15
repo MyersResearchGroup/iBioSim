@@ -19,7 +19,6 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
 import main.Gui;
-import main.util.MutableBoolean;
 import main.util.Utility;
 
 import org.sbml.jsbml.Compartment;
@@ -899,7 +898,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				Model model = bioModel.getSBMLDocument().getModel();
 				String formula = init.getText();
 				InitialAssignment initialAssignment = new InitialAssignment(model.getLevel(), model.getVersion());
-				initialAssignment.setSymbol(selectedSpecies.getId());
+				initialAssignment.setVariable(selectedSpecies.getId());
 				initialAssignment.setMath(bioModel.addBooleans(formula));				
 				
 				model.addInitialAssignment(initialAssignment);

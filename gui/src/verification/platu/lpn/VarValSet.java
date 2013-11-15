@@ -8,15 +8,18 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import verification.platu.main.Main;
-
 /**
  *
  * @author ldtwo
  */
 public class VarValSet extends HashSet<VarVal> {
 
-    public VarValSet(String list) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public VarValSet(String list) {
         super();
         list = list.replace(" ", "");
         String[] tmp = list.split(",\\(");

@@ -89,7 +89,7 @@ public class ElementsPanel extends JPanel {
 		int initsNum = (int) m.getInitialAssignmentCount();
 		String[] inits = new String[initsNum];
 		for (int i = 0; i < initsNum; i++) {
-			inits[i] = ((InitialAssignment) e.get(i)).getSymbol() + " = "
+			inits[i] = ((InitialAssignment) e.get(i)).getVariable() + " = "
 					+ SBMLutilities.myFormulaToString(((InitialAssignment) e.get(i)).getMath());
 		}
 		e = m.getListOfEvents();

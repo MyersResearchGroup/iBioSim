@@ -6,11 +6,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-import junit.framework.Assert;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.omg.PortableInterceptor.INACTIVE;
 
 public class ZoneTest {
 

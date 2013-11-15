@@ -16,7 +16,6 @@ import biomodel.gui.schematic.ListChooser;
 import biomodel.gui.schematic.Schematic;
 import biomodel.gui.schematic.TreeChooser;
 import biomodel.gui.schematic.Utils;
-import biomodel.gui.textualeditor.MySpecies;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 
@@ -41,7 +40,6 @@ import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;

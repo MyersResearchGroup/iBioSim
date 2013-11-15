@@ -4,7 +4,6 @@
  */
 package verification.platu.gui;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;

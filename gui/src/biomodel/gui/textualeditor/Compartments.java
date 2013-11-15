@@ -794,7 +794,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		}
 		this.bioModel = gcm;
 		Model model = gcm.getSBMLDocument().getModel();
-		ListOf listOfCompartments = model.getListOfCompartments();
+		ListOf<Compartment> listOfCompartments = model.getListOfCompartments();
 		String[] comparts = new String[(int) model.getCompartmentCount()];
 		for (int i = 0; i < model.getCompartmentCount(); i++) {
 			Compartment compartment = (Compartment) listOfCompartments.get(i);

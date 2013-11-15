@@ -1,8 +1,5 @@
 package verification.platu.TimingAnalysis;
 
-import java.util.*;
-
-import verification.platu.lpn.LPN;
 import verification.platu.stategraph.State;
 
 public class TimingState {

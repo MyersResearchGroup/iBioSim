@@ -10,6 +10,11 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 public class SimResultsTable extends JPanel{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public SimResultsTable(DefaultTableModel tableModel){
 		super(new GridLayout(1,0));
 		JTable table = new JTable(tableModel);

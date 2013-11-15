@@ -1,16 +1,11 @@
 package biomodel.visitor;
 
-
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
-
-
 import org.sbml.jsbml.SBMLDocument;
-import org.sbml.jsbml.text.parser.ParseException;
 
+import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.network.BaseSpecies;
 import biomodel.network.ComplexSpecies;
 import biomodel.network.ConstantSpecies;
@@ -87,13 +82,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 			repExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		try {
-			kl.setFormula(generateLaw(repExpression));
-		}
-		catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		kl.setMath(SBMLutilities.myParseFormula(generateLaw(repExpression)));
 		Utility.addReaction(document, r);
 	}
 	
@@ -125,13 +114,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 			repExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		try {
-			kl.setFormula(generateLaw(repExpression));
-		}
-		catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		kl.setMath(SBMLutilities.myParseFormula(generateLaw(repExpression)));
 		Utility.addReaction(document, r);
 	}
 
@@ -163,13 +146,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 			repExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		try {
-			kl.setFormula(generateLaw(repExpression));
-		}
-		catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		kl.setMath(SBMLutilities.myParseFormula(generateLaw(repExpression)));
 		Utility.addReaction(document, r);
 	}
 
@@ -201,13 +178,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 			repExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		try {
-			kl.setFormula(generateLaw(repExpression));
-		}
-		catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		kl.setMath(SBMLutilities.myParseFormula(generateLaw(repExpression)));
 		Utility.addReaction(document, r);
 	}
 
@@ -239,13 +210,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 			repExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		try {
-			kl.setFormula(generateLaw(repExpression));
-		}
-		catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		kl.setMath(SBMLutilities.myParseFormula(generateLaw(repExpression)));
 		Utility.addReaction(document, r);
 	}
 	
@@ -277,13 +242,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 			repExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		try {
-			kl.setFormula(generateLaw(repExpression));
-		}
-		catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		kl.setMath(SBMLutilities.myParseFormula(generateLaw(repExpression)));
 		Utility.addReaction(document, r);
 	}	
 	

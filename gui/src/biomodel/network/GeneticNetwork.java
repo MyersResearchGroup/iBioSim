@@ -1,7 +1,5 @@
- package biomodel.network;
+package biomodel.network;
 
-
-import java.awt.Dimension;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -12,9 +10,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Properties;
 
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.xml.stream.XMLStreamException;
 
 import lpn.parser.LhpnFile;
@@ -37,8 +32,6 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.Unit.Kind;
-import org.sbml.jsbml.text.parser.ParseException;
-import org.sbml.jsbml.validator.SBMLValidator;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.textualeditor.SBMLutilities;
@@ -52,9 +45,6 @@ import biomodel.visitor.PrintComplexVisitor;
 import biomodel.visitor.PrintDecaySpeciesVisitor;
 import biomodel.visitor.PrintRepressionBindingVisitor;
 import biomodel.visitor.PrintSpeciesVisitor;
-
-
-
 
 /**
  * This class represents a genetic network
@@ -147,7 +137,7 @@ public class GeneticNetwork {
 		
 		SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
 		currentDocument = document;
-		Model m = document.createModel();
+		Model m = document.createModel(new File(filename).getName().replace(".xml", ""));
 		document.setModel(m);
 		Utility.addCompartments(document, "Cell");
 		document.getModel().getCompartment("Cell").setSize(1);
@@ -160,7 +150,7 @@ public class GeneticNetwork {
 		try {
 			PrintStream p = new PrintStream(new FileOutputStream(filename));
 			//m.setName("Created from " + gcm);
-			m.setId(new File(filename).getName().replace(".xml", ""));	
+			//m.setId(new File(filename).getName().replace(".xml", ""));	
 			m.setVolumeUnits("litre");
 			m.setSubstanceUnits("mole");
 			try {
@@ -228,7 +218,7 @@ public class GeneticNetwork {
 	public SBMLDocument outputSBML(String filename) {
 		SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
 		currentDocument = document;
-		Model m = document.createModel();
+		Model m = document.createModel(new File(filename).getName().replace(".xml", ""));
 		document.setModel(m);
 		Utility.addCompartments(document, "Cell");
 		document.getModel().getCompartment("Cell").setSize(1);
@@ -361,14 +351,8 @@ public class GeneticNetwork {
 					kl.addLocalParameter(Utility.Parameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING, 1, GeneticNetwork.getMoleTimeParameter(1)));
 				}
 			}
-			try {
-				kl.setFormula(GlobalConstants.FORWARD_RNAP_BINDING_STRING + "*" + rnapName + "*" + p.getId() + "-"+ 
-						GlobalConstants.REVERSE_RNAP_BINDING_STRING + "*" + p.getId() + "_RNAP");
-			}
-			catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}		
+			kl.setMath(SBMLutilities.myParseFormula(GlobalConstants.FORWARD_RNAP_BINDING_STRING + "*" + rnapName + "*" + p.getId() + "-"+ 
+					GlobalConstants.REVERSE_RNAP_BINDING_STRING + "*" + p.getId() + "_RNAP"));
 			Utility.addReaction(document, r);
 
 			// Next setup activated binding
@@ -499,14 +483,8 @@ public class GeneticNetwork {
 					newProduct.setConstant(true);
 					
 					//add the product into the kinetic law
-					try {
-						membraneDiffusionReaction.getKineticLaw().setFormula(
-								membraneDiffusionReaction.getKineticLaw().getFormula() + " * " + potentialProductID);
-					}
-					catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					membraneDiffusionReaction.getKineticLaw().setMath(SBMLutilities.myParseFormula(
+							SBMLutilities.myFormulaToString(membraneDiffusionReaction.getKineticLaw().getMath()) + " * " + potentialProductID));
 					
 					//take off the annotation so it's not mistaken as a grid-based memdiff reaction
 					AnnotationUtility.removeArrayAnnotation(membraneDiffusionReaction);
@@ -653,37 +631,18 @@ public class GeneticNetwork {
 				if (properties != null)
 					rnap = Double.parseDouble(properties.getParameter(GlobalConstants.RNAP_STRING));
 				AbstractionEngine e = new AbstractionEngine(species, complexMap, partsMap, rnap, r, kl);
-				try {
-					kl.setFormula(e.abstractOperatorSite(p));
-				}
-				catch (ParseException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				kl.setMath(SBMLutilities.myParseFormula(e.abstractOperatorSite(p)));
 				Utility.addReaction(document, r);
 			} else {
 				r.addModifier(Utility.ModifierSpeciesReference(p.getId() + "_RNAP"));
 				if (p.getActivators().size() > 0) {
 					r.setId("R_basal_production_" + p.getId());
 					kl.addLocalParameter(Utility.Parameter(kBasalString, p.getKbasal(), getMoleTimeParameter(1)));
-					try {
-						kl.setFormula(kBasalString + "*" + p.getId() + "_RNAP");
-					}
-					catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-
+					kl.setMath(SBMLutilities.myParseFormula(kBasalString + "*" + p.getId() + "_RNAP"));
 				} else {
 					r.setId("R_constitutive_production_" + p.getId());
 					kl.addLocalParameter(Utility.Parameter(kOcString, p.getKoc(), getMoleTimeParameter(1)));
-					try {
-						kl.setFormula(kOcString + "*" + p.getId() + "_RNAP");
-					}
-					catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					kl.setMath(SBMLutilities.myParseFormula(kOcString + "*" + p.getId() + "_RNAP"));
 				}
 				Utility.addReaction(document, r);
 				if (p.getActivators().size() > 0) {

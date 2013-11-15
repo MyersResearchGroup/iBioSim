@@ -16,7 +16,6 @@ import org.sbml.jsbml.Model;
 import org.sbolstandard.core.DnaComponent;
 import org.sbolstandard.core.SequenceAnnotation;
 import org.sbolstandard.core.util.SBOLDeepEquality;
-import org.sbolstandard.core.util.SequenceOntology;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;

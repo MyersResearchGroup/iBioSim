@@ -10,7 +10,6 @@ import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -344,7 +343,7 @@ public class Utility {
 			return true;
 		}
 		else {
-			ListOf rr = document.getModel().getListOfReactions();
+			ListOf<Reaction> rr = document.getModel().getListOfReactions();
 			for (int i = 0; i < document.getModel().getReactionCount(); i++) {
 				if (((Reaction) rr.get(i)).getId().equals(r.getId())) {
 					rr.remove(i);
@@ -389,7 +388,7 @@ public class Utility {
 			return true;
 		}
 		else {
-			ListOf c = document.getModel().getListOfCompartments();
+			ListOf<Compartment> c = document.getModel().getListOfCompartments();
 			for (int i = 0; i < document.getModel().getCompartmentCount(); i++) {
 				if (((Compartment) c.get(i)).getId().equals(compartment)) {
 					c.remove(i);

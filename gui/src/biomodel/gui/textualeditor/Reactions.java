@@ -45,7 +45,6 @@ import org.sbml.jsbml.UnitDefinition;
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
 import biomodel.gui.FBABounds;
-import biomodel.gui.FBAObjective;
 import biomodel.gui.ModelEditor;
 import biomodel.gui.SBOLField;
 import biomodel.parser.BioModel;

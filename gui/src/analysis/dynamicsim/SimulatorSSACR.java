@@ -15,9 +15,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
-import org.sbml.jsbml.AssignmentRule;
-import org.sbml.jsbml.Rule;
-
 import main.Gui;
 import main.util.MutableBoolean;
 import odk.lang.FastMath;

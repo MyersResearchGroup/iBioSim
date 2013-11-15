@@ -11,20 +11,14 @@ import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 import javax.xml.stream.XMLStreamException;
 
-
-
-
-//import org.apache.batik.svggen.font.table.Program;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.Constraint;
-//import org.sbml.jsbml.Delay;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.Event;
 import org.sbml.jsbml.EventAssignment;
 import org.sbml.jsbml.FunctionDefinition;
 import org.sbml.jsbml.InitialAssignment;
-import org.sbml.jsbml.JSBML;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
@@ -67,9 +61,8 @@ public class Translator {
 		// create sbml file
 		//document = new SBMLDocument(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 		document = new SBMLDocument(3,1);
-		Model m = document.createModel();
+		Model m = document.createModel(filename.replace(".xml", ""));
 		Compartment c = m.createCompartment();
-		m.setId(filename.replace(".xml", ""));
 		c.setId("default");
 		c.setSize(1.0);
 		c.setConstant(true);
@@ -122,7 +115,7 @@ public class Translator {
 					if (!initVarIsInt && initVarIsRange && initVarRangeFound) {
 						var.setValue(0);
 						InitialAssignment initAssign = m.createInitialAssignment();
-						initAssign.setSymbol(var.getId());
+						initAssign.setVariable(var.getId());
 						String initVarAssignRHS = "uniform(";
 						for (int i=1; i<=initRangeBoundMatcher.groupCount();i++) {
 							initVarAssignRHS = initVarAssignRHS + initRangeBoundMatcher.group(i);
@@ -155,7 +148,7 @@ public class Translator {
 						if (!initRateIsInt && initRateIsRange && initRateRangeFound) {
 							rateVar.setValue(0);
 							InitialAssignment initAssign = m.createInitialAssignment();
-							initAssign.setSymbol(rateVar.getId());
+							initAssign.setVariable(rateVar.getId());
 							initAssign.setMath(SBMLutilities.myParseFormula(initRate));
 							String initRateAssignRHS = "uniform(";
 							for (int i=1; i<=initRateRangeMatcher.groupCount();i++) {
@@ -319,21 +312,9 @@ public class Translator {
 
 				// create exp for KineticLaw
 				if (lhpn.getTransition(t).isPersistent())
-					try {
-						rateReaction.setFormula("(" + modifierStr + Enabling + "*" + lhpn.getTransitionRateTree(t).toString("SBML") + ")");
-					}
-					catch (ParseException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
+					rateReaction.setMath(SBMLutilities.myParseFormula("(" + modifierStr + Enabling + "*" + lhpn.getTransitionRateTree(t).toString("SBML") + ")"));
 				else
-					try {
-						rateReaction.setFormula("(" + reactantStr + Enabling + "*" + lhpn.getTransitionRateTree(t).toString("SBML") + ")");
-					}
-					catch (ParseException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} 
+					rateReaction.setMath(SBMLutilities.myParseFormula("(" + reactantStr + Enabling + "*" + lhpn.getTransitionRateTree(t).toString("SBML") + ")"));
 
 				Event e = m.createEvent();
 				//					e.setId("event" + counter);		
@@ -735,8 +716,7 @@ public class Translator {
 		// create sbml file
 		//document = new SBMLDocument(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 		document = new SBMLDocument(3,1);
-		Model m = document.createModel();
-		m.setId(filename.replace(".xml", ""));
+		Model m = document.createModel(filename.replace(".xml", ""));
 		
 		// Create bitwise operators for sbml
 		createFunction(m, "rate", "Rate", "lambda(a,a)");
@@ -785,7 +765,7 @@ public class Translator {
 					if (!initVarIsInt && initVarIsRange && initVarRangeFound) {
 						var.setValue(0);
 						InitialAssignment initAssign = m.createInitialAssignment();
-						initAssign.setSymbol(var.getId());
+						initAssign.setVariable(var.getId());
 						String initVarAssignRHS = "uniform(";
 						for (int i=1; i<=initRangeBoundMatcher.groupCount();i++) {
 							initVarAssignRHS = initVarAssignRHS + initRangeBoundMatcher.group(i);
@@ -833,7 +813,7 @@ public class Translator {
 			if (!initVarIsInt && initVarIsRange && initVarRangeFound) {
 				var.setValue(0);
 				InitialAssignment initAssign = m.createInitialAssignment();
-				initAssign.setSymbol(var.getId());
+				initAssign.setVariable(var.getId());
 				String initVarAssignRHS = "uniform(";
 				for (int i=1; i<=initRangeBoundMatcher.groupCount();i++) {
 					initVarAssignRHS = initVarAssignRHS + initRangeBoundMatcher.group(i);
@@ -863,7 +843,7 @@ public class Translator {
 			if (!initRateIsInt && initRateIsRange && initRateRangeFound) {
 				rateVar.setValue(0);
 				InitialAssignment initAssign = m.createInitialAssignment();
-				initAssign.setSymbol(rateVar.getId());
+				initAssign.setVariable(rateVar.getId());
 				initAssign.setMath(SBMLutilities.myParseFormula(initRate));
 				String initRateAssignRHS = "uniform(";
 				for (int i=1; i<=initRateRangeMatcher.groupCount();i++) {

@@ -134,7 +134,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		String selectedID = "";
 		int Cindex = -1;
 		if (option.equals("OK")) {
-			ListOf c = bioModel.getSBMLDocument().getModel().getListOfConstraints();
+			ListOf<Constraint> c = bioModel.getSBMLDocument().getModel().getListOfConstraints();
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getConstraintCount(); i++) {
 				if ((((Constraint) c.get(i)).getMetaId()).equals(selected)) {
 					Cindex = i;

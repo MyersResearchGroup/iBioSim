@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.Properties;
 
 import org.sbml.jsbml.SBMLDocument;
-import org.sbml.jsbml.text.parser.ParseException;
 
+import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.network.BaseSpecies;
 import biomodel.network.ComplexSpecies;
 import biomodel.network.ConstantSpecies;
@@ -66,13 +66,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 			if (complexAbstraction && specie.isSequesterable()) {
 				decayExpression = abstractDecay(specie.getId());
 				if (decayExpression.length() > 0) {
-					try {
-						kl.setFormula(decayExpression);
-					}
-					catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					kl.setMath(SBMLutilities.myParseFormula(decayExpression));
 					Utility.addReaction(document, r);
 				}
 			} else if (decay > 0 || decay==-1){
@@ -80,13 +74,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 				if (decay > 0)
 					kl.addLocalParameter(Utility.Parameter(decayString, decay, decayUnitString));
 				r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
-				try {
-					kl.setFormula(decayExpression);
-				}
-				catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				kl.setMath(SBMLutilities.myParseFormula(decayExpression));
 				Utility.addReaction(document, r);
 			}
 		}
@@ -111,13 +99,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		if (complexAbstraction && specie.isSequesterable()) {
 			decayExpression = abstractDecay(specie.getId());
 			if (decayExpression.length() > 0) {
-				try {
-					kl.setFormula(decayExpression);
-				}
-				catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				kl.setMath(SBMLutilities.myParseFormula(decayExpression));
 				Utility.addReaction(document, r);
 			}
 		} else if (decay > 0 || decay==-1){
@@ -125,13 +107,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 			if (decay > 0)
 				kl.addLocalParameter(Utility.Parameter(decayString, decay, decayUnitString));
 			r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
-			try {
-				kl.setFormula(decayExpression);
-			}
-			catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			kl.setMath(SBMLutilities.myParseFormula(decayExpression));
 			Utility.addReaction(document, r);
 		}
 	}
@@ -154,13 +130,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		if (complexAbstraction && specie.isSequesterable()) {
 			decayExpression = abstractDecay(specie.getId());
 			if (decayExpression.length() > 0) {
-				try {
-					kl.setFormula(decayExpression);
-				}
-				catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				kl.setMath(SBMLutilities.myParseFormula(decayExpression));
 				Utility.addReaction(document, r);
 			}
 		} else if (decay > 0 || decay==-1){
@@ -168,13 +138,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 			if (decay > 0)
 				kl.addLocalParameter(Utility.Parameter(decayString, decay, decayUnitString));
 			r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
-			try {
-				kl.setFormula(decayExpression);
-			}
-			catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			kl.setMath(SBMLutilities.myParseFormula(decayExpression));
 			Utility.addReaction(document, r);
 		}
 	}
@@ -207,7 +171,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 //				kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
 //			
 //			//formula: kd * inner species
-//			kl.setFormula(decayExpression);
+//			kl.setMath(SBMLutilities.myParseFormula(decayExpression);
 //			Utility.addReaction(document, r);
 //		}
 	}
@@ -228,13 +192,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 			if (decay>0)
 				kl.addLocalParameter(Utility.Parameter(decayString, decay, decayUnitString));
 			r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
-			try {
-				kl.setFormula(decayExpression);
-			}
-			catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			kl.setMath(SBMLutilities.myParseFormula(decayExpression));
 			Utility.addReaction(document, r);
 		}
 	}

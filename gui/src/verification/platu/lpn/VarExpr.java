@@ -1,11 +1,7 @@
 package verification.platu.lpn;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-
 import verification.platu.expression.Expression;
-import verification.platu.expression.ExpressionNode;
 import verification.platu.expression.VarNode;
 
 /**

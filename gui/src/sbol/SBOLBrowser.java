@@ -10,15 +10,12 @@ import javax.swing.*;
 import org.sbolstandard.core.*;
 import org.sbolstandard.core.impl.AggregatingResolver.UseFirstFound;
 import org.sbolstandard.core.impl.AggregatingResolver;
-import org.sbolstandard.core.impl.DnaComponentImpl;
 import org.sbolstandard.core.impl.SBOLDocumentImpl;
 
 import biomodel.util.GlobalConstants;
-import biomodel.util.Utility;
 
 import java.io.*;
 import java.net.URI;
-import java.net.URISyntaxException;
 
 import java.util.*;
 
@@ -26,6 +23,7 @@ import main.Gui;
 
 public class SBOLBrowser extends JPanel implements ActionListener {
 	
+	private static final long serialVersionUID = 1L;
 	private String[] options = {"Ok", "Cancel"};
 	private JPanel selectionPanel = new JPanel(new GridLayout(1,2));
 	private JPanel filterPanel = new JPanel(new GridLayout(1,3));

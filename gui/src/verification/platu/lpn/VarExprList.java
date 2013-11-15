@@ -30,7 +30,12 @@ public class VarExprList extends ArrayList<VarExpr> {
 //        }
 //    }
 
-    public VarExprList() {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public VarExprList() {
         super();
     }
 

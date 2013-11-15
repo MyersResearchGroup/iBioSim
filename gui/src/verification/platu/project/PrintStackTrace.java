@@ -11,7 +11,12 @@ package verification.platu.project;
  */
 public class PrintStackTrace extends Exception{
 
-    public PrintStackTrace() {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public PrintStackTrace() {
         this.printStackTrace();
     }
 

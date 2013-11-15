@@ -19,11 +19,7 @@ import verification.platu.lpn.LPN;
 import verification.platu.lpn.LPNTran;
 import verification.platu.lpn.LpnTranList;
 import verification.platu.project.Project;
-import verification.platu.stategraph.StateGraph;
-
-
 import org.antlr.runtime.*;
-import java.util.Stack;
 import java.util.List;
 import java.util.ArrayList;
 

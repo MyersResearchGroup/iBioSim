@@ -5,7 +5,6 @@ import java.util.List;
 
 import lpn.parser.LhpnFile;
 import lpn.parser.Transition;
-import verification.platu.expression.VarNode;
 import verification.platu.stategraph.StateGraph;
 
 public class CompositionalThread extends Thread{

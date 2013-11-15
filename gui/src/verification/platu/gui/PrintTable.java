@@ -6,7 +6,6 @@ package verification.platu.gui;
 
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 
 /**
  *

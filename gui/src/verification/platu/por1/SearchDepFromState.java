@@ -9,8 +9,6 @@ import java.util.Map.Entry;
 
 import lpn.parser.Transition;
 
-import verification.platu.lpn.LPN;
-import verification.platu.lpn.LPNTran;
 import verification.platu.lpn.LPNTranRelation;
 import verification.platu.lpn.LpnTranList;
 import verification.platu.stategraph.StateGraph;

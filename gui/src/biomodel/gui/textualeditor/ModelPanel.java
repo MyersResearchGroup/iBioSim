@@ -6,11 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URI;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -24,18 +20,7 @@ import main.util.MutableBoolean;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
-import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.UnitDefinition;
-import org.sbolstandard.core.DnaComponent;
-import org.sbolstandard.core.Resolver;
-import org.sbolstandard.core.SBOLDocument;
-import org.sbolstandard.core.impl.AggregatingResolver;
-import org.sbolstandard.core.impl.SBOLDocumentImpl;
-import org.sbolstandard.core.impl.AggregatingResolver.UseFirstFound;
-
-import sbol.SBOLUtility;
-import sbol.SequenceTypeValidator;
-
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
 import biomodel.gui.FBAObjective;

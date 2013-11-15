@@ -20,6 +20,7 @@ import java.util.List;
 
 public class SBOLAssociationPanel extends JPanel {
 
+	private static final long serialVersionUID = 1L;
 	private HashSet<String> sbolFilePaths;
 //	private HashMap<String, SBOLDocument> sbolFileDocMap = new HashMap<String, SBOLDocument>();
 	private List<URI> compURIs;

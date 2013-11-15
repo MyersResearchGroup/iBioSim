@@ -4,12 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 
-
-
-
 import org.sbml.jsbml.SBMLDocument;
-import org.sbml.jsbml.text.parser.ParseException;
 
+import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.network.ComplexSpecies;
 import biomodel.network.GeneticNetwork;
 import biomodel.network.Influence;
@@ -91,13 +88,7 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 				kl.addLocalParameter(Utility.Parameter(kcompId, kcomp, GeneticNetwork.getMoleParameter(2)));
 		}
 		kl.addLocalParameter(Utility.Parameter(kcompIdr, kr, GeneticNetwork.getMoleTimeParameter(1)));
-		try {
-			kl.setFormula(generateLaw(compExpression, boundExpression, kcompId, kcompIdf, kcompIdr, ncSum, stoich));
-		}
-		catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		kl.setMath(SBMLutilities.myParseFormula(generateLaw(compExpression, boundExpression, kcompId, kcompIdf, kcompIdr, ncSum, stoich)));
 		Utility.addReaction(document, r);
 	}
 	

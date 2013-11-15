@@ -1,7 +1,5 @@
 package learn;
 
-import verification.AbstPane;
-import lpn.parser.Abstraction;
 import lpn.parser.LhpnFile;
 import main.*;
 import main.util.dataparser.*;

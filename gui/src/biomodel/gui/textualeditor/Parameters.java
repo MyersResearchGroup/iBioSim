@@ -9,7 +9,6 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -20,7 +19,6 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
 import main.Gui;
-import main.util.MutableBoolean;
 import main.util.Utility;
 
 import org.sbml.jsbml.InitialAssignment;

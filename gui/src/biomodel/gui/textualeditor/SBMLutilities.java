@@ -563,12 +563,10 @@ public class SBMLutilities {
 			}
 		}
 		catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return null;
 		}
 		catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return null;
 		}
 		if (mathFormula == null)
 			return null;
@@ -1054,7 +1052,7 @@ public class SBMLutilities {
 		String[] initRules = new String[(int) model.getInitialAssignmentCount()];
 		for (int i = 0; i < model.getInitialAssignmentCount(); i++) {
 			InitialAssignment init = (InitialAssignment) listOfInitials.get(i);
-			initRules[i] = init.getSymbol() + " = " + myFormulaToString(init.getMath());
+			initRules[i] = init.getVariable() + " = " + myFormulaToString(init.getMath());
 		}
 		ListOf listOfRules = model.getListOfRules();
 		String[] rules = new String[(int) model.getRuleCount()];
@@ -1461,7 +1459,7 @@ public class SBMLutilities {
 			String[] vars = initStr.split(" |\\(|\\)|\\,");
 			for (int j = 0; j < vars.length; j++) {
 				if (vars[j].equals(species)) {
-					initsUsing.add(init.getSymbol() + " = " + SBMLutilities.myFormulaToString(init.getMath()));
+					initsUsing.add(init.getVariable() + " = " + SBMLutilities.myFormulaToString(init.getMath()));
 					inUse = true;
 					break;
 				}
@@ -1766,8 +1764,8 @@ public class SBMLutilities {
 		if (model.getInitialAssignmentCount() > 0) {
 			for (int i = 0; i < model.getInitialAssignmentCount(); i++) {
 				InitialAssignment init = (InitialAssignment) model.getListOfInitialAssignments().get(i);
-				if (origId.equals(init.getSymbol())) {
-					init.setSymbol(newId);
+				if (origId.equals(init.getVariable())) {
+					init.setVariable(newId);
 				}
 				init.setMath(SBMLutilities.updateMathVar(init.getMath(), origId, newId));
 			}
@@ -2019,9 +2017,9 @@ public class SBMLutilities {
 	public static boolean checkUnitsInInitialAssignment(SBMLDocument document,InitialAssignment init) {
 		UnitDefinition unitDef = init.getDerivedUnitDefinition();
 		UnitDefinition unitDefVar;
-		Species species = document.getModel().getSpecies(init.getSymbol());
-		Compartment compartment = document.getModel().getCompartment(init.getSymbol());
-		Parameter parameter = document.getModel().getParameter(init.getSymbol());
+		Species species = document.getModel().getSpecies(init.getVariable());
+		Compartment compartment = document.getModel().getCompartment(init.getVariable());
+		Parameter parameter = document.getModel().getParameter(init.getVariable());
 		if (species != null) {
 			unitDefVar = species.getDerivedUnitDefinition();
 		}
@@ -2133,7 +2131,7 @@ public class SBMLutilities {
 		for (int i = 0; i < document.getModel().getInitialAssignmentCount(); i++) {
 			InitialAssignment init = document.getModel().getInitialAssignment(i);
 			if (checkUnitsInInitialAssignment(document,init)) {
-				message += "Initial assignment on variable: " + init.getSymbol() + "\n";
+				message += "Initial assignment on variable: " + init.getVariable() + "\n";
 				numErrors++;
 			} 
 		}
