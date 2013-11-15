@@ -62,7 +62,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		removeConstraint = new JButton("Remove Constraint");
 		editConstraint = new JButton("Edit Constraint");
 		constraints = new JList();
-		ListOf listOfConstraints = model.getListOfConstraints();
+		ListOf<Constraint> listOfConstraints = model.getListOfConstraints();
 		String[] cons = new String[(int) model.getConstraintCount()];
 		for (int i = 0; i < model.getConstraintCount(); i++) {
 			Constraint constraint = (Constraint) listOfConstraints.get(i);
@@ -324,7 +324,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 	 */
 	public void refreshConstraintsPanel() {
 		Model model = bioModel.getSBMLDocument().getModel();
-		ListOf listOfConstraints = model.getListOfConstraints();
+		ListOf<Constraint> listOfConstraints = model.getListOfConstraints();
 		String[] cons = new String[(int) model.getConstraintCount()];
 		for (int i = 0; i < model.getConstraintCount(); i++) {
 			Constraint constraint = (Constraint) listOfConstraints.get(i);
@@ -348,7 +348,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 	 * Remove a constraint
 	 */
 	public void removeConstraint(String selected) {
-		ListOf c = bioModel.getSBMLDocument().getModel().getListOfConstraints();
+		ListOf<Constraint> c = bioModel.getSBMLDocument().getModel().getListOfConstraints();
 		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getConstraintCount(); i++) {
 			if ((((Constraint) c.get(i)).getMetaId()).equals(selected)) {
 				c.remove(i);

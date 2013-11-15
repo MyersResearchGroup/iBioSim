@@ -74,7 +74,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 		removeFunction = new JButton("Remove Function");
 		editFunction = new JButton("Edit Function");
 		functions = new JList();
-		ListOf listOfFunctions = model.getListOfFunctionDefinitions();
+		ListOf<FunctionDefinition> listOfFunctions = model.getListOfFunctionDefinitions();
 		int count = 0;
 		for (int i = 0; i < model.getFunctionDefinitionCount(); i++) {
 			FunctionDefinition function = (FunctionDefinition) listOfFunctions.get(i);
@@ -453,7 +453,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 		if (index != -1) {
 			if (!SBMLutilities.variableInUse(bioModel.getSBMLDocument(), ((String) functions.getSelectedValue()).split(" ")[0], false, true, true)) {
 				FunctionDefinition tempFunc = bioModel.getSBMLDocument().getModel().getFunctionDefinition(((String) functions.getSelectedValue()).split(" ")[0]);
-				ListOf f = bioModel.getSBMLDocument().getModel().getListOfFunctionDefinitions();
+				ListOf<FunctionDefinition> f = bioModel.getSBMLDocument().getModel().getListOfFunctionDefinitions();
 				for (int i = 0; i < bioModel.getSBMLDocument().getModel().getFunctionDefinitionCount(); i++) {
 					if (((FunctionDefinition) f.get(i)).getId().equals(tempFunc.getId())) {
 						f.remove(i);
@@ -486,7 +486,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 	 */
 	public void refreshFunctionsPanel() {
 		Model model = bioModel.getSBMLDocument().getModel();
-		ListOf listOfFunctions = model.getListOfFunctionDefinitions();
+		ListOf<FunctionDefinition> listOfFunctions = model.getListOfFunctionDefinitions();
 		int count = 0;
 		for (int i = 0; i < model.getFunctionDefinitionCount(); i++) {
 			FunctionDefinition function = (FunctionDefinition) listOfFunctions.get(i);

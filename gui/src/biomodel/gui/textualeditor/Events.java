@@ -77,7 +77,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		}
 		events = new JList();
 		eventAssign = new JList();
-		ListOf listOfEvents = model.getListOfEvents();
+		ListOf<Event> listOfEvents = model.getListOfEvents();
 		String[] ev = new String[(int) model.getEventCount()];
 		for (int i = 0; i < model.getEventCount(); i++) {
 			org.sbml.jsbml.Event event = (org.sbml.jsbml.Event) listOfEvents.get(i);
@@ -199,7 +199,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		int Eindex = -1;
 		String selectedID = "";
 		if (option.equals("OK")) {
-			ListOf e = bioModel.getSBMLDocument().getModel().getListOfEvents();
+			ListOf<Event> e = bioModel.getSBMLDocument().getModel().getListOfEvents();
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getEventCount(); i++) {
 				org.sbml.jsbml.Event event = (org.sbml.jsbml.Event) e.get(i);
 				if (event.getId().equals(selected)) {
@@ -1011,7 +1011,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	 */
 	public void refreshEventsPanel() {
 		Model model = bioModel.getSBMLDocument().getModel();
-		ListOf listOfEvents = model.getListOfEvents();
+		ListOf<Event> listOfEvents = model.getListOfEvents();
 		String[] ev = new String[(int) model.getEventCount()];
 		for (int i = 0; i < model.getEventCount(); i++) {
 			org.sbml.jsbml.Event event = (org.sbml.jsbml.Event) listOfEvents.get(i);
@@ -1071,7 +1071,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	 *            the event Id to remove
 	 */
 	public void removeTheEvent(BioModel gcm, String selected) {
-		ListOf EL = gcm.getSBMLDocument().getModel().getListOfEvents();
+		ListOf<Event> EL = gcm.getSBMLDocument().getModel().getListOfEvents();
 		for (int i = 0; i < gcm.getSBMLDocument().getModel().getEventCount(); i++) {
 			org.sbml.jsbml.Event E = (org.sbml.jsbml.Event) EL.get(i);
 			if (E.getId().equals(selected)) {
@@ -1158,7 +1158,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		ids = model.getListOfReactions();
 		for (int i = 0; i < model.getReactionCount(); i++) {
 			Reaction reaction = (Reaction) ids.get(i);
-			ListOf ids2 = reaction.getListOfReactants();
+			ListOf<SpeciesReference> ids2 = reaction.getListOfReactants();
 			for (int j = 0; j < reaction.getReactantCount(); j++) {
 				SpeciesReference reactant = (SpeciesReference) ids2.get(j);
 				if ((reactant.isSetId()) && (!reactant.getId().equals("")) && !(reactant.getConstant())) {
