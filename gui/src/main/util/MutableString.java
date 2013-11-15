@@ -2,7 +2,7 @@ package main.util;
 
 import java.io.Serializable;
 
-public class MutableString implements Mutable, Serializable, Comparable {
+public class MutableString implements Mutable, Serializable, Comparable<Object> {
 
 	private static final long serialVersionUID = 5709256424906470057L;
 

@@ -67,7 +67,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-import javax.swing.JRadioButton;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
@@ -79,7 +78,6 @@ import javax.swing.KeyStroke;
 import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
-import javax.swing.AbstractAction;
 import javax.swing.JViewport;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
@@ -2184,7 +2182,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JCheckBox dummy = new JCheckBox();
 				dummy.setSelected(false);
 				JList empty = new JList();
-				JRadioButton emptyButton = new JRadioButton();
+				//JRadioButton emptyButton = new JRadioButton();
 				run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1, 1, new String[0], "tsd.printer", "amount", "false",
 						(directory + theFile).split(separator), "none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, 
 						null, false, false, false, false, false);
@@ -2373,7 +2371,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JCheckBox dummy = new JCheckBox();
 				dummy.setSelected(false);
 				JList empty = new JList();
-				JRadioButton emptyButton = new JRadioButton();
+				//JRadioButton emptyButton = new JRadioButton();
 				run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1, 1, new String[0], "tsd.printer", "amount", "false",
 						(directory + theFile).split(separator), "none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, 
 						null, false, false, false, false, false);
@@ -3148,44 +3146,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		else if (e.getSource() == newLhpn) {
 			createLPN();
 		}
-		/*else if (e.getSource() == newProperty) {    //DK
-			Property prop = new Property();
-			prop.property(root, separator);
-			//property();
-		} */
-		
-	/*	else if (e.getSource() == newProperty) {    //DK
-			BuildProperty prop = new BuildProperty();
-			try {
-				prop.buildProperty(root, separator);
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			} catch (RecognitionException e1) {
-				e1.printStackTrace();
-			}
-			//property();
-		} */
-		
 		else if (e.getSource() == newProperty) {  //DK
 			newModel("Property", ".prop");
 		} 
-		
-	/*	else if (e.getSource() == newProperty) {    //DK
-			//importFile("txt", ".txt", ".txt");
-			BuildProperty prop = new BuildProperty();
-			
-				try {
-					prop.buildProperty();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (RecognitionException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-		//newModel("PROP" , ".prop");
-			
-		} */
 		// if the new csp menu item is selected
 		else if (e.getSource() == newCsp) {
 			newModel("CSP", ".csp");
@@ -5459,7 +5422,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			tab.setSelectedIndex(i);
 		}
 		else {
-			SBOLBrowser browser = new SBOLBrowser(this, filePath);
+			//SBOLBrowser browser = new SBOLBrowser(this, filePath);
+			new SBOLBrowser(this, filePath);
 		}
 	}
 	
@@ -8180,11 +8144,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 		});
 	}
-
+/*
 	private class NewAction extends AbstractAction {
-		/**
-		 * 
-		 */
+
 		private static final long serialVersionUID = 1L;
 
 		NewAction() {
@@ -8220,9 +8182,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	}
 
 	private class ImportAction extends AbstractAction {
-		/**
-		 * 
-		 */
 		private static final long serialVersionUID = 1L;
 
 		ImportAction() {
@@ -8259,9 +8218,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	}
 
 	private class ExportAction extends AbstractAction {
-		/**
-		 * 
-		 */
 		private static final long serialVersionUID = 1L;
 
 		ExportAction() {
@@ -8284,9 +8240,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	}
 
 	private class ModelAction extends AbstractAction {
-		/**
-		 * 
-		 */
 		private static final long serialVersionUID = 1L;
 
 		ModelAction() {
@@ -8301,7 +8254,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 		}
 	}
-
+*/
 	public void mouseClicked(MouseEvent e) {
 		executeMouseClickEvent(e);
 	}
@@ -8364,11 +8317,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 		}
 		if (!lemaFlag && !atacsFlag) {
+			/*
 			String varname;
 			if (System.getProperty("mrj.version") != null)
 				varname = "DYLD_LIBRARY_PATH"; // We're on a Mac.
 			else
 				varname = "LD_LIBRARY_PATH"; // We're not on a Mac.
+				*/
 			try {
 				System.loadLibrary("sbmlj");
 				// For extra safety, check that the jar file is in the
@@ -9063,9 +9018,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			Component learnComponent = null;			
 			Boolean learn = false;
 			Boolean learnLHPN = false;
-			int test2 = tab.getSelectedIndex();
-			String test3 = getTitleAt(test2);
-			String test = root + separator + getTitleAt(tab.getSelectedIndex());
 			for (String s : new File(root + separator + getTitleAt(tab.getSelectedIndex())).list()) {
 				if (s.contains("_sg.dot")) {
 					viewSG.setEnabled(true);
