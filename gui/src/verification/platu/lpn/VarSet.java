@@ -13,7 +13,12 @@ import java.util.HashSet;
  */
 public class VarSet extends HashSet<String> {
 
-   public    VarSet(HashSet<String> in) {
+   /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+public    VarSet(HashSet<String> in) {
         super(in);
     }
 

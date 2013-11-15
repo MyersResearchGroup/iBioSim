@@ -13,9 +13,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.PriorityQueue;
-import java.util.Queue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,16 +25,12 @@ import javax.xml.stream.XMLStreamException;
 import flanagan.math.Fmath;
 import flanagan.math.PsRandom;
 
-import org.sbml.jsbml.ext.SBasePlugin;
 import org.sbml.jsbml.ext.comp.Deletion;
 import org.sbml.jsbml.EventAssignment;
 import org.sbml.jsbml.Constraint;
 import org.sbml.jsbml.ext.comp.CompConstant;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
-import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
 import org.sbml.jsbml.ext.comp.CompSBasePlugin;
-import org.sbml.jsbml.ext.comp.ExternalModelDefinition;
-import org.sbml.jsbml.ext.comp.ModelDefinition;
 import org.sbml.jsbml.ext.comp.ReplacedBy;
 import org.sbml.jsbml.Event;
 import org.sbml.jsbml.InitialAssignment;
@@ -49,13 +43,11 @@ import org.sbml.jsbml.ext.comp.Port;
 import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.ext.comp.ReplacedElement;
 import org.sbml.jsbml.Rule;
-import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.ext.comp.Submodel;
 import org.sbml.jsbml.FunctionDefinition;
-import org.sbml.jsbml.JSBML;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
@@ -66,19 +58,10 @@ import org.sbml.jsbml.SBMLErrorLog;
 import org.sbml.jsbml.SBMLReader;
 
 import main.Gui;
-import main.util.MutableBoolean;
-import main.util.dataparser.DataParser;
-import main.util.dataparser.TSDParser;
 import odk.lang.FastMath;
 
 
-import com.sun.org.apache.xpath.internal.operations.Variable;
-
-import analysis.dynamicsim.Simulator.StringDoublePair;
-import analysis.dynamicsim.Simulator.StringStringPair;
 import biomodel.gui.textualeditor.SBMLutilities;
-import biomodel.parser.BioModel;
-import biomodel.util.GlobalConstants;
 
 public abstract class HierarchicalSimulator {
 
@@ -189,16 +172,16 @@ public abstract class HierarchicalSimulator {
 		SBMLErrorLog errors = document.getErrorLog();
 
 		//if the sbml document has errors, tell the user and don't simulate
-		if (document.getNumErrors() > 0) 
+		if (document.getErrorCount() > 0) 
 		{	
 			String errorString = "";
 
-			for (int i = 0; i < errors.getNumErrors(); i++) {
+			for (int i = 0; i < errors.getErrorCount(); i++) {
 				errorString += errors.getError(i);
 			}
 
 			JOptionPane.showMessageDialog(Gui.frame, 
-					"The SBML file contains " + document.getNumErrors() + " error(s):\n" + errorString,
+					"The SBML file contains " + document.getErrorCount() + " error(s):\n" + errorString,
 					"SBML Error", JOptionPane.ERROR_MESSAGE);
 
 			sbmlHasErrorsFlag = true;

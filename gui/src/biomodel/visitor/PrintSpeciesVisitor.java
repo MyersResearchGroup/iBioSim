@@ -7,8 +7,8 @@ import main.Gui;
 
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.Species;
-import org.sbml.jsbml.text.parser.ParseException;
 
+import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.network.BaseSpecies;
 import biomodel.network.ComplexSpecies;
 import biomodel.network.ConstantSpecies;
@@ -18,7 +18,6 @@ import biomodel.network.SpasticSpecies;
 import biomodel.network.SpeciesInterface;
 import biomodel.util.GlobalConstants;
 import biomodel.util.Utility;
-
 
 public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 
@@ -93,13 +92,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		r.setFast(false);
 		kl = r.createKineticLaw();
 		kl.addLocalParameter(Utility.Parameter("kp", specie.getKo()));
-		try {
-			kl.setFormula("kp");
-		}
-		catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		kl.setMath(SBMLutilities.myParseFormula("kp"));
 		Utility.addReaction(document, r);		
 	}
 	
@@ -132,13 +125,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		kl = r.createKineticLaw();
 		kl.addLocalParameter(Utility.Parameter("kp", Double.parseDouble(parameters
 					.getParameter((GlobalConstants.OCR_STRING)))));	
-		try {
-			kl.setFormula("kp");
-		}
-		catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		kl.setMath(SBMLutilities.myParseFormula("kp"));
 		Utility.addReaction(document, r);	
 	}
 	

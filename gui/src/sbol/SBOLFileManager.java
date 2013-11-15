@@ -3,35 +3,25 @@ package sbol;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Calendar;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.prefs.Preferences;
 
 import javax.swing.JOptionPane;
 
 import main.Gui;
 
-import org.sbml.jsbml.Model;
 import org.sbolstandard.core.DnaComponent;
 import org.sbolstandard.core.MergerException;
 import org.sbolstandard.core.Resolver;
 import org.sbolstandard.core.SBOLDocument;
 import org.sbolstandard.core.SBOLFactory;
-import org.sbolstandard.core.SequenceAnnotation;
 import org.sbolstandard.core.impl.AggregatingResolver;
 import org.sbolstandard.core.impl.SBOLDocumentImpl;
 import org.sbolstandard.core.impl.AggregatingResolver.UseFirstFound;
-import org.sbolstandard.core.util.SBOLDeepEquality;
-import org.sbolstandard.core.util.SequenceOntology;
 
-import biomodel.annotation.AnnotationUtility;
-import biomodel.annotation.SBOLAnnotation;
 import biomodel.parser.BioModel;
 
 public class SBOLFileManager {

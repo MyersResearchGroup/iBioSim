@@ -1,13 +1,8 @@
 package biomodel.visitor;
 
-
-
-
-
-
 import org.sbml.jsbml.SBMLDocument;
-import org.sbml.jsbml.text.parser.ParseException;
 
+import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.network.BaseSpecies;
 import biomodel.network.ComplexSpecies;
 import biomodel.network.ConstantSpecies;
@@ -19,7 +14,6 @@ import biomodel.network.SpasticSpecies;
 import biomodel.network.SpeciesInterface;
 import biomodel.util.GlobalConstants;
 import biomodel.util.Utility;
-
 
 public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 
@@ -63,13 +57,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		kl = r.createKineticLaw();
 		kl.addLocalParameter(Utility.Parameter(actString, act, GeneticNetwork
 				.getMoleTimeParameter(1)));
-		try {
-			kl.setFormula(actString+ "*" + speciesName);
-		}
-		catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		kl.setMath(SBMLutilities.myParseFormula(actString+ "*" + speciesName));
 		Utility.addReaction(document, r);
 	}
 
@@ -87,13 +75,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		kl = r.createKineticLaw();
 		kl.addLocalParameter(Utility.Parameter(actString, act, GeneticNetwork
 				.getMoleTimeParameter(1)));
-		try {
-			kl.setFormula(actString+ "*" + speciesName);
-		}
-		catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		kl.setMath(SBMLutilities.myParseFormula(actString+ "*" + speciesName));
 		Utility.addReaction(document, r);
 	}
 
@@ -111,13 +93,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		kl = r.createKineticLaw();
 		kl.addLocalParameter(Utility.Parameter(actString, act, GeneticNetwork
 				.getMoleTimeParameter(1)));
-		try {
-			kl.setFormula(actString+ "*" + speciesName);
-		}
-		catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		kl.setMath(SBMLutilities.myParseFormula(actString+ "*" + speciesName));
 		Utility.addReaction(document, r);
 	}
 
@@ -135,13 +111,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		kl = r.createKineticLaw();
 		kl.addLocalParameter(Utility.Parameter(actString, act, GeneticNetwork
 				.getMoleTimeParameter(1)));
-		try {
-			kl.setFormula(actString+ "*" + speciesName);
-		}
-		catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		kl.setMath(SBMLutilities.myParseFormula(actString+ "*" + speciesName));
 		Utility.addReaction(document, r);
 	}
 	
@@ -159,13 +129,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		kl = r.createKineticLaw();
 		kl.addLocalParameter(Utility.Parameter(actString, act, GeneticNetwork
 				.getMoleTimeParameter(1)));
-		try {
-			kl.setFormula(actString+ "*" + speciesName);
-		}
-		catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		kl.setMath(SBMLutilities.myParseFormula(actString+ "*" + speciesName));
 		Utility.addReaction(document, r);
 	}
 
@@ -183,13 +147,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		kl = r.createKineticLaw();
 		kl.addLocalParameter(Utility.Parameter(actString, act, GeneticNetwork
 				.getMoleTimeParameter(1)));
-		try {
-			kl.setFormula(actString+ "*" + speciesName);
-		}
-		catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		kl.setMath(SBMLutilities.myParseFormula(actString+ "*" + speciesName));
 		Utility.addReaction(document, r);
 	}
 	

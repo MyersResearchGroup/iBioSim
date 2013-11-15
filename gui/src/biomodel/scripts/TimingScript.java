@@ -17,10 +17,9 @@ public class TimingScript extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		// TODO Auto-generated method stub
 		keySpeciesList = new ArrayList<String>();
 		keySpeciesList.add(keySpecies);
-		script = new GCMScript();
+		//script = new GCMScript();
 	}
 
 	public void testTiming() {
@@ -116,9 +115,9 @@ public class TimingScript extends TestCase {
 		}
 	}
 
-	private GCMScript script = null;
+	//private GCMScript script = null;
 
-	private String[] gate = { "maj", "tog", "si" };
+	//private String[] gate = { "maj", "tog", "si" };
 	private String[] dataGate = { "majority", "toggle", "si" };
 	ArrayList<String> keySpeciesList = null;
 	String keySpecies = "C";

@@ -13,12 +13,6 @@ import javax.swing.JProgressBar;
 import main.Gui;
 import main.util.dataparser.TSDParser;
 
-import org.sbml.jsbml.SBMLDocument;
-
-import biomodel.network.GeneticNetwork;
-import biomodel.parser.BioModel;
-import biomodel.parser.GCMParser;
-
 public class HierarchicalSimWrapper {
 
 	static double timeLimit = 5.0;

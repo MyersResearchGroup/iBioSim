@@ -14,11 +14,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.sbml.jsbml.Model;
 import org.sbolstandard.core.*;
 import org.sbolstandard.core.impl.SBOLDocumentImpl;
 
-import biomodel.annotation.AnnotationUtility;
 import biomodel.util.GlobalConstants;
 import biomodel.util.Utility;
 
@@ -27,6 +25,10 @@ import sbol.SBOLUtility;
 
 public class SBOLField extends JPanel implements ActionListener {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String sbolType;
 	private int styleOption;
 	private JLabel sbolLabel;

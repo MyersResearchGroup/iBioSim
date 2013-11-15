@@ -9,7 +9,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.prefs.Preferences;
@@ -18,7 +17,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.xml.stream.XMLStreamException;
@@ -1222,8 +1220,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 					String sFormula = s.substring(s.indexOf('=') + 1).trim();
 					sFormula = SBMLutilities.myFormulaToString(SBMLutilities.myParseFormula(sFormula));
 					sFormula = s.substring(0, s.indexOf('=') + 1) + " " + sFormula;
-					if ((((InitialAssignment) d.getModel().getListOfInitialAssignments().get(i))
-							.getSymbol()
+					if ((((InitialAssignment) d.getModel().getListOfInitialAssignments().get(i)).getVariable()
 							+ " = " + formula).equals(sFormula)) {
 						d.getModel().getListOfInitialAssignments().remove(i);
 					}
@@ -1442,7 +1439,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		for (int i = 0; i < biomodel.getSBMLCompModel().getListOfSubmodels().size(); i++) {
 			
 			Submodel submodel = biomodel.getSBMLCompModel().getListOfSubmodels().get(i);
-			String locationAnnotationString = "";
 			
 			//if the submodel is gridded, then get the component names from the locations parameter
 			if (biomodel.getSBMLDocument().getModel().getParameter(submodel.getId().replace("GRID__","") + "__locations") != null) {
@@ -1681,6 +1677,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 //	}
 
 	private class RemoveButton extends AbstractRunnableNamedButton {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		public RemoveButton(String name, PropertyList list) {
 			super(name);
 			this.list = list;
@@ -1736,6 +1737,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	}
 
 	private class EditButton extends AbstractRunnableNamedButton {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		public EditButton(String name, PropertyList list) {
 			super(name);
 			this.list = list;

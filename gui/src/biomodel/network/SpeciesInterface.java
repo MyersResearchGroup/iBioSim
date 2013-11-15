@@ -1,11 +1,6 @@
 package biomodel.network;
 
-import java.util.Properties;
-
 import biomodel.visitor.VisitableSpecies;
-
-
-
 
 /**
  * This interface describes a species. Species are nodes in the graph

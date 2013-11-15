@@ -2,7 +2,6 @@ package sbol;
 
 //import java.net.URI;
 import java.net.URI;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.sbolstandard.core.DnaComponent;

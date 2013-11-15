@@ -1,7 +1,6 @@
 package analysis.dynamicsim;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -13,20 +12,12 @@ import main.util.MutableBoolean;
 
 import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.exception.MaxCountExceededException;
-import org.apache.commons.math3.exception.NumberIsTooSmallException;
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
-import org.apache.commons.math3.ode.FirstOrderIntegrator;
 import org.apache.commons.math3.ode.events.EventHandler;
-import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator;
-import org.apache.commons.math3.ode.nonstiff.DormandPrince853Integrator;
 import org.apache.commons.math3.ode.nonstiff.HighamHall54Integrator;
-import org.apache.commons.math3.ode.sampling.StepHandler;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.RateRule;
-
-import analysis.dynamicsim.HierarchicalSimulator.ModelState;
-import analysis.dynamicsim.HierarchicalSimulator.StringDoublePair;
 
 
 

@@ -9,6 +9,11 @@ import javax.swing.JList;
 public class PropertyList extends JList implements EnableElement, NamedObject,
 		Runnable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public PropertyList(String name) {
 		super();
 		model = new DefaultListModel();

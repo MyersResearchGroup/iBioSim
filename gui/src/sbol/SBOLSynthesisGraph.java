@@ -1,10 +1,8 @@
 package sbol;
 
 import java.net.URI;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -13,11 +11,8 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBase;
-import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
-import org.sbolstandard.core.DnaComponent;
 
-import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.parser.BioModel;
 

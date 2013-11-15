@@ -19,7 +19,12 @@ import javax.swing.JPanel;
  */
 public class GraphFrame extends javax.swing.JFrame {
 
-    /** Creates new form Graph */
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/** Creates new form Graph */
     public GraphFrame(JPanel p) {
         initComponents();
 setContentPane(p);

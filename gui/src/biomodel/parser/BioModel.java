@@ -88,8 +88,6 @@ import org.sbml.jsbml.ext.layout.TextGlyph;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.ext.layout.Layout;
-import org.sbml.jsbml.text.parser.ParseException;
-import org.sbml.jsbml.validator.SBMLValidator;
 import org.sbml.jsbml.xml.XMLNode;
 
 import biomodel.annotation.AnnotationUtility;
@@ -5107,12 +5105,7 @@ public class BioModel {
 				kl.addLocalParameter(Utility.Parameter(decayString, decayRate, decayUnitString));
 				
 				//formula: kecd * species
-				try {
-					kl.setFormula(decayExpression);
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				kl.setMath(SBMLutilities.myParseFormula(decayExpression));
 				
 				Utility.addReaction(sbml, r);
 			}
@@ -5221,13 +5214,7 @@ public class BioModel {
 					kecdiffParam.setId(diffusionString);
 					kecdiffParam.setValue(kecdiff);
 					kecdiffParam.setUnits(diffusionUnitString);
-									
-					try {
-						kl.setFormula(diffusionExpression);
-					} catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					kl.setMath(SBMLutilities.myParseFormula(diffusionExpression));
 					
 					Utility.addReaction(sbml, r);
 				}
@@ -5274,12 +5261,7 @@ public class BioModel {
 			i.setId("i");
 			j.setId("j");
 			
-			try {
-				kl.setFormula(membraneDiffusionExpression);
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			kl.setMath(SBMLutilities.myParseFormula(membraneDiffusionExpression));
 			Utility.addReaction(sbml, r);			
 		}
 	}
@@ -7516,8 +7498,8 @@ public class BioModel {
 			for (int i = 0; i < model.getInitialAssignmentCount(); i++) {
 				InitialAssignment init = (InitialAssignment) model.getListOfInitialAssignments()
 						.get(i);
-				if (origId.equals(init.getSymbol())) {
-					init.setSymbol(newId);
+				if (origId.equals(init.getVariable())) {
+					init.setVariable(newId);
 				}
 				init.setMath(updateMathVar(init.getMath(), origId, newId));
 			}

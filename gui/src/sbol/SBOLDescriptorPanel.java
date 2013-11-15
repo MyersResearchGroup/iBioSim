@@ -1,39 +1,28 @@
 package sbol;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import main.Gui;
 
 import org.sbolstandard.core.DnaComponent;
-import org.sbolstandard.core.Resolver;
-import org.sbolstandard.core.SBOLDocument;
-import org.sbolstandard.core.impl.AggregatingResolver;
-import org.sbolstandard.core.impl.SBOLDocumentImpl;
-import org.sbolstandard.core.impl.AggregatingResolver.UseFirstFound;
 
-import biomodel.annotation.AnnotationUtility;
-import biomodel.parser.BioModel;
 import biomodel.util.Utility;
 
 public class SBOLDescriptorPanel extends JPanel {
+
+	private static final long serialVersionUID = 1L;
 	private String initialID;
 	private JTextField idText, nameText, descriptionText;
 	private JComboBox saveFileIDBox;

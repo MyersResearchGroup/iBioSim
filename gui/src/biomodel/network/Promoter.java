@@ -3,10 +3,6 @@ package biomodel.network;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Properties;
-
-import biomodel.util.GlobalConstants;
-
 
 /**
  * This class describes a promoter

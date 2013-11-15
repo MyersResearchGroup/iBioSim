@@ -1,7 +1,5 @@
 package verification.platu.markovianAnalysis;
 
-import verification.platu.stategraph.State;
-
 public class ProbLocalStateTuple {
 //	State probLocalState; 
 //	double tranRate;

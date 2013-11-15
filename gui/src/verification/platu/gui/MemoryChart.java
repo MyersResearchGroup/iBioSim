@@ -4,7 +4,6 @@
  */
 package verification.platu.gui;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
@@ -16,7 +15,6 @@ import org.jfree.data.xy.*;
 
 import verification.platu.lpn.LPN;
 import verification.platu.main.Main;
-import verification.platu.stategraph.StateGraph;
 
 /**
  *

@@ -3,11 +3,8 @@ package verification.timed_state_exploration.zone;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.HashMap;
-import java.util.List;
-
 import lpn.parser.LhpnFile;
 import lpn.parser.Transition;
-import verification.platu.lpn.LPNTran;
 import verification.platu.lpn.LpnTranList;
 import verification.platu.stategraph.State;
 import verification.platu.stategraph.StateGraph;

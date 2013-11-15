@@ -1,20 +1,12 @@
 package sbol;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.prefs.Preferences;
-
-import javax.swing.JOptionPane;
-
-import main.Gui;
 
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.KineticLaw;
@@ -23,24 +15,17 @@ import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SBMLDocument;
-import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
-import org.sbml.jsbml.ext.comp.ExternalModelDefinition;
 import org.sbml.jsbml.ext.comp.Submodel;
 import org.sbml.jsbml.ext.comp.CompConstant;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
 import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
 import org.sbml.jsbml.ext.comp.CompSBasePlugin;
-import org.sbml.jsbml.ext.comp.ReplacedBy;
-import org.sbml.jsbml.ext.comp.ReplacedElement;
 import org.sbolstandard.core.DnaComponent;
 
 import biomodel.annotation.AnnotationUtility;
-import biomodel.annotation.SBOLAnnotation;
 import biomodel.gui.textualeditor.SBMLutilities;
-import biomodel.network.Influence;
 import biomodel.parser.BioModel;
-import biomodel.parser.GCMParser;
 
 public class SBOLAssemblyGraph {
 

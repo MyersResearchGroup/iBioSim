@@ -335,6 +335,11 @@ public class ParamEditor extends JPanel implements ActionListener {
 	}
 	
 	public class EditButton extends AbstractRunnableNamedButton {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		public EditButton(String name, PropertyList list) {
 			super(name);
 			this.list = list;

@@ -10,8 +10,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -25,7 +23,6 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
 import main.Gui;
-import main.util.MutableBoolean;
 import main.util.Utility;
 
 import org.sbml.jsbml.AlgebraicRule;
@@ -44,10 +41,6 @@ import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
-import org.sbml.jsbml.Unit;
-import org.sbml.jsbml.UnitDefinition;
-import org.sbml.jsbml.JSBML;
-
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
 import biomodel.gui.ModelEditor;
@@ -970,7 +963,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			ListOf ia = gcm.getSBMLDocument().getModel().getListOfInitialAssignments();
 			for (int i = 0; i < gcm.getSBMLDocument().getModel().getInitialAssignmentCount(); i++) {
 				InitialAssignment init = (InitialAssignment) ia.get(i);
-				if (init.getSymbol().equals(id))
+				if (init.getVariable().equals(id))
 					return false;
 			}
 			ListOf e = gcm.getSBMLDocument().getModel().getListOfEvents();

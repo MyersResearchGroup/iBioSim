@@ -5,11 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.*;
 
-import verification.timed_state_exploration.dbm2.LPNTransitionState.IllegalTransitionFireException;
 import verification.timed_state_exploration.dbm2.LPNTranslator.UnsafeLPNException;
 import lpn.parser.*;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 
 /**
  * This class finds the state graph for an LPN from an LPNFile object.

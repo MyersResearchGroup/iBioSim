@@ -7,8 +7,6 @@ import lpn.parser.LhpnFile;
 import lpn.parser.Transition;
 
 import verification.platu.common.PlatuObj;
-import verification.platu.lpn.LPN;
-import verification.platu.lpn.LPNTran;
 import verification.platu.stategraph.*;
 
 /**

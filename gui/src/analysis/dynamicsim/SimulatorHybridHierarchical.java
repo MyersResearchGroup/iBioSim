@@ -9,21 +9,15 @@ import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
 import main.util.MutableBoolean;
-import odk.lang.FastMath;
-
 import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.exception.MaxCountExceededException;
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 import org.apache.commons.math3.ode.FirstOrderIntegrator;
 import org.apache.commons.math3.ode.events.EventHandler;
-import org.apache.commons.math3.ode.events.EventHandler.Action;
 import org.apache.commons.math3.ode.nonstiff.HighamHall54Integrator;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.RateRule;
-
-import analysis.dynamicsim.HierarchicalSimulator.ModelState;
-import analysis.dynamicsim.HierarchicalSimulator.StringDoublePair;
 
 
 public class SimulatorHybridHierarchical  extends HierarchicalSimulator {

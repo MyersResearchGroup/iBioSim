@@ -1,13 +1,10 @@
 package sbol;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -28,18 +25,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import javax.swing.ListModel;
 import javax.xml.stream.XMLStreamException;
 
-import org.sbml.jsbml.ext.comp.CompModelPlugin;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLWriter;
-import org.sbolstandard.core.DnaComponent;
-import org.sbolstandard.core.SBOLDocument;
 
 import main.Log;
 import main.util.Utility;
@@ -48,6 +40,7 @@ import biomodel.util.GlobalConstants;
 
 public class SBOLSynthesisView extends JTabbedPane implements ActionListener, Runnable {
 
+	private static final long serialVersionUID = 1L;
 	private String synthID;
 	private String separator;
 	private String rootFilePath;

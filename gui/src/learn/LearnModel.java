@@ -2,7 +2,6 @@ package learn;
 
 //import gcm2sbml.parser.GCMFile;
 import lpn.parser.LhpnFile;
-import lpn.parser.Lpn2verilog;
 import main.*;
 import main.util.dataparser.*;
 

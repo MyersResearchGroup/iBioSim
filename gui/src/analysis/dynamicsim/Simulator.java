@@ -275,16 +275,16 @@ public abstract class Simulator {
 		SBMLErrorLog errors = document.getListOfErrors();
 		
 		//if the sbml document has errors, tell the user and don't simulate
-		if (document.getNumErrors() > 0) {
+		if (document.getErrorCount() > 0) {
 			
 			String errorString = "";
 			
-			for (int i = 0; i < errors.getNumErrors(); i++) {
+			for (int i = 0; i < errors.getErrorCount(); i++) {
 				errorString += errors.getError(i);
 			}
 			
 			JOptionPane.showMessageDialog(Gui.frame, 
-			"The SBML file contains " + document.getNumErrors() + " error(s):\n" + errorString,
+			"The SBML file contains " + document.getErrorCount() + " error(s):\n" + errorString,
 			"SBML Error", JOptionPane.ERROR_MESSAGE);
 			
 			sbmlHasErrorsFlag = true;
@@ -823,14 +823,10 @@ public abstract class Simulator {
 				ea.setVariable(((EventAssignment)assignment).getVariable()
 						.replace(parentComponentID, childComponentID));
 				
-				try {					
 //					ea.setMath(ASTNode.parseFormula(((EventAssignment)assignment).getMath().toFormula()
 //							.replace(parentComponentID, childComponentID)));
-					ea.setFormula(((EventAssignment)assignment).getMath().toFormula()
-							.replace(parentComponentID, childComponentID));
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
+				ea.setMath(SBMLutilities.myParseFormula(((EventAssignment)assignment).getMath().toFormula()
+						.replace(parentComponentID, childComponentID)));
 				
 				assignmentSetMap.add(ea);				
 				

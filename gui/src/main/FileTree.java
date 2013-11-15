@@ -10,7 +10,6 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.tree.*;
 
-import sbol.SBOLSynthesisView;
 import sbol.SBOLUtility;
 
 import biomodel.parser.BioModel;

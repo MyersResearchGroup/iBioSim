@@ -4,7 +4,6 @@ package biomodel.gui;
 import java.awt.GridLayout;
 import java.net.URI;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JComboBox;

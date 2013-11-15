@@ -1,21 +1,13 @@
 package analysis.dynamicsim;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.HashSet;
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
-import org.sbml.jsbml.SBMLDocument;
-import org.sbml.jsbml.SBMLReader;
-
-import analysis.dynamicsim.HierarchicalSimulator.ModelState;
 import odk.lang.FastMath;
-import main.Gui;
-import main.util.MutableBoolean;
 
 public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 

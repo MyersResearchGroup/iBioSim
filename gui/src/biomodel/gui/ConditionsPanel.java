@@ -15,6 +15,11 @@ import main.Gui;
 
 public class ConditionsPanel extends JPanel {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private String selected = "";
 
 	private String[] options = { "Ok", "Cancel" };
