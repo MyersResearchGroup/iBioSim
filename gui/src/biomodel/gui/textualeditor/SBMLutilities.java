@@ -12,8 +12,6 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
@@ -32,20 +30,13 @@ import main.util.Utility;
 import odk.lang.FastMath;
 
 import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.ext.SBasePlugin;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
 import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
 import org.sbml.jsbml.ext.comp.CompConstant;
 import org.sbml.jsbml.ext.comp.CompSBasePlugin;
-import org.sbml.jsbml.ext.comp.ExternalModelDefinition;
-import org.sbml.jsbml.ext.comp.ModelDefinition;
-import org.sbml.jsbml.ext.comp.ReplacedBy;
-import org.sbml.jsbml.ext.comp.ReplacedElement;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
 import org.sbml.jsbml.ext.fbc.FluxBound;
-import org.sbml.jsbml.ext.qual.QualConstant;
-import org.sbml.jsbml.ext.qual.QualitativeModel;
 import org.sbml.jsbml.Compartment;
 //CompartmentType not supported in Level 3
 //import org.sbml.jsbml.CompartmentType;
@@ -56,8 +47,6 @@ import org.sbml.jsbml.EventAssignment;
 import org.sbml.jsbml.FunctionDefinition;
 import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.KineticLaw;
-import org.sbml.jsbml.ext.layout.GraphicalObject;
-import org.sbml.jsbml.ext.layout.Layout;
 import org.sbml.jsbml.ext.layout.LayoutConstants;
 import org.sbml.jsbml.ext.layout.LayoutModelPlugin;
 import org.sbml.jsbml.text.parser.FormulaParserLL3;
@@ -838,7 +827,7 @@ public class SBMLutilities {
 		case FUNCTION:
 			for (int i = 0; i < document.getModel().getFunctionDefinitionCount(); i++) {
 				if (((FunctionDefinition) sbml.get(i)).getId().equals(node.getName())) {
-					long numArgs = ((FunctionDefinition) sbml.get(i)).getNumArguments();
+					long numArgs = ((FunctionDefinition) sbml.get(i)).getArgumentCount();
 					if (numArgs != node.getChildCount()) {
 						JOptionPane.showMessageDialog(Gui.frame,
 								"Expected " + numArgs + " argument(s) for " + node.getName() + " but found " + node.getChildCount() + ".",
@@ -883,7 +872,7 @@ public class SBMLutilities {
 			}
 			for (int i = 0; i < document.getModel().getFunctionDefinitionCount(); i++) {
 				if (((FunctionDefinition) sbml.get(i)).getId().equals(node.getName())) {
-					long numArgs = ((FunctionDefinition) sbml.get(i)).getNumArguments();
+					long numArgs = ((FunctionDefinition) sbml.get(i)).getArgumentCount();
 					JOptionPane.showMessageDialog(Gui.frame, "Expected " + numArgs + " argument(s) for " + node.getName() + " but found 0.",
 							"Number of Arguments Incorrect", JOptionPane.ERROR_MESSAGE);
 					return true;
@@ -1844,7 +1833,7 @@ public class SBMLutilities {
 	public static boolean checkConstant(SBMLDocument document, String varType, String val) {
 		for (int i = 0; i < document.getModel().getRuleCount(); i++) {
 			Rule rule = document.getModel().getRule(i);
-			if (getVariable(rule).equals(val)) {
+			if (getVariable(rule)!=null && getVariable(rule).equals(val)) {
 				JOptionPane.showMessageDialog(Gui.frame, varType + " cannot be constant if updated by a rule.", varType + " Cannot Be Constant",
 						JOptionPane.ERROR_MESSAGE);
 				return true;
@@ -1867,7 +1856,7 @@ public class SBMLutilities {
 	/**
 	 * Checks consistency of the sbml file.
 	 */
-	public static boolean check(String file,SBMLDocument doc,boolean warnings) {
+	public static boolean check(String file,SBMLDocument doc,boolean warnings,boolean overdetermined) {
 		String message = "";
 		long numErrors = 0;
 		if (Gui.isLibsbmlFound()) {
@@ -1888,9 +1877,17 @@ public class SBMLutilities {
 				}
 			}
 			if (document==null) return false;
-			document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_GENERAL_CONSISTENCY, true);
-			document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_IDENTIFIER_CONSISTENCY, true);
-			document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
+			if (overdetermined) {
+				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_GENERAL_CONSISTENCY, false);
+				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_IDENTIFIER_CONSISTENCY, false);
+				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_INTERNAL_CONSISTENCY, false);
+				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
+			} else {
+				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_GENERAL_CONSISTENCY, true);
+				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_IDENTIFIER_CONSISTENCY, true);
+				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_INTERNAL_CONSISTENCY, true);
+				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
+			}
 			if (warnings) {
 				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_UNITS_CONSISTENCY, true);
 				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_MATHML_CONSISTENCY, true);
@@ -1914,9 +1911,15 @@ public class SBMLutilities {
 				document = SBMLutilities.readSBML(file);
 			} 
 			if (document==null) return false;
-			document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.GENERAL_CONSISTENCY, true);
-			document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.IDENTIFIER_CONSISTENCY, true);
-			document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.OVERDETERMINED_MODEL, true);
+			if (overdetermined) {
+				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.GENERAL_CONSISTENCY, false);
+				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.IDENTIFIER_CONSISTENCY, false);
+				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.OVERDETERMINED_MODEL, true);
+			} else {
+				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.GENERAL_CONSISTENCY, true);
+				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.IDENTIFIER_CONSISTENCY, true);
+				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.OVERDETERMINED_MODEL, true);
+			}
 			if (warnings) {
 				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.UNITS_CONSISTENCY, true);
 				document.setConsistencyChecks(SBMLValidator.CHECK_CATEGORY.MATHML_CONSISTENCY, true);
@@ -2996,7 +2999,7 @@ public class SBMLutilities {
 			
 			HashMap<String, Integer> inlinedChildToOldIndexMap = new HashMap<String, Integer>();
 			
-			for (int i = 0; i < model.getFunctionDefinition(formula.getName()).getNumArguments(); ++i) {
+			for (int i = 0; i < model.getFunctionDefinition(formula.getName()).getArgumentCount(); ++i) {
 				inlinedChildToOldIndexMap.put(model.getFunctionDefinition(formula.getName()).getArgument(i).getName(), i);
 			}
 			

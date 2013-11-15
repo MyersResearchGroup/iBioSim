@@ -2531,7 +2531,7 @@ public abstract class Simulator {
 			
 			HashMap<String, Integer> inlinedChildToOldIndexMap = new HashMap<String, Integer>();
 			
-			for (int i = 0; i < model.getFunctionDefinition(formula.getName()).getNumArguments(); ++i) {
+			for (int i = 0; i < model.getFunctionDefinition(formula.getName()).getArgumentCount(); ++i) {
 				inlinedChildToOldIndexMap.put(model.getFunctionDefinition(formula.getName()).getArgument(i).getName(), i);
 			}
 			
