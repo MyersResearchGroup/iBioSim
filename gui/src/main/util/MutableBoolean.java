@@ -27,7 +27,7 @@ import java.io.Serializable;
  * @author Apache Software Foundation
  * @version $Id$
  */
-public class MutableBoolean implements Mutable, Serializable, Comparable {
+public class MutableBoolean implements Mutable, Serializable, Comparable<Object> {
 
 	/**
 	 * Required for serialization support.
