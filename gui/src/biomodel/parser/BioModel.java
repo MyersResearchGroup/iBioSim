@@ -6868,7 +6868,7 @@ public class BioModel {
 			}
 		}
 		//checkModelConsistency(this.getSBMLDocument());
-		SBMLutilities.check(this.getFilename(), this.getSBMLDocument(),false);
+		SBMLutilities.check(this.getFilename(), this.getSBMLDocument(),false,false);
 		return this.getSBMLDocument();
 	}
 	

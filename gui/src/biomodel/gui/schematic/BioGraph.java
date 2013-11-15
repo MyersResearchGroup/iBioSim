@@ -320,7 +320,8 @@ public class BioGraph extends mxGraph {
 		for (int i = 0; i < m.getRuleCount(); i++) {
 			Rule rule = m.getRule(i);
 			if (rule.getMetaId().endsWith("_"+GlobalConstants.RATE)) continue;
-			if (SBMLutilities.getVariable(rule).startsWith(GlobalConstants.TRIGGER + "_")) continue;
+			if (SBMLutilities.getVariable(rule) != null &&
+					SBMLutilities.getVariable(rule).startsWith(GlobalConstants.TRIGGER + "_")) continue;
 			if (layout.getReactionGlyph(rule.getMetaId()) != null) {
 				layout.getReactionGlyph(rule.getMetaId()).setId(GlobalConstants.GLYPH+"__"+rule.getMetaId());
 				layout.getTextGlyph(rule.getMetaId()).setId(GlobalConstants.TEXT_GLYPH+"__"+rule.getMetaId());
@@ -778,7 +779,8 @@ public class BioGraph extends mxGraph {
 		for (int i = 0; i < m.getRuleCount(); i++) {
 			Rule r = m.getRule(i);
 			if (r.getMetaId().endsWith("_"+GlobalConstants.RATE)) continue;
-			if (SBMLutilities.getVariable(r).startsWith(GlobalConstants.TRIGGER+"_")) continue;
+			if (SBMLutilities.getVariable(r) != null &&
+					SBMLutilities.getVariable(r).startsWith(GlobalConstants.TRIGGER+"_")) continue;
 			GeneralGlyph generalGlyph = (GeneralGlyph)
 					layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+r.getMetaId());
 			if (generalGlyph != null) {

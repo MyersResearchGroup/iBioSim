@@ -274,7 +274,7 @@ public class GeneticNetwork {
 			reformatArrayContent(document, filename);
 			p.print(writer.writeSBMLToString(document));
 			p.close();
-			SBMLutilities.check(filename, document, false);
+			SBMLutilities.check(filename, document, false, false);
 			return document;
 		} catch (Exception e) {
 			e.printStackTrace();

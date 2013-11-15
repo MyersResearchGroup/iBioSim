@@ -86,7 +86,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 			FunctionDefinition function = (FunctionDefinition) listOfFunctions.get(i);
 			if (SBMLutilities.isSpecialFunction(function.getId())) continue;
 			funcs[count] = function.getId() + " ( ";
-			for (int j = 0; j < function.getNumArguments(); j++) {
+			for (int j = 0; j < function.getArgumentCount(); j++) {
 				if (j != 0) {
 					funcs[count] += ", ";
 				}
@@ -209,7 +209,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 					onPort.setSelected(false);
 				}
 				String argStr = "";
-				for (int j = 0; j < function.getNumArguments(); j++) {
+				for (int j = 0; j < function.getArgumentCount(); j++) {
 					if (j != 0) {
 						argStr += ", ";
 					}
@@ -498,7 +498,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 			FunctionDefinition function = (FunctionDefinition) listOfFunctions.get(i);
 			if (SBMLutilities.isSpecialFunction(function.getId())) continue;
 			funcs[count] = function.getId() + " ( ";
-			for (int j = 0; j < function.getNumArguments(); j++) {
+			for (int j = 0; j < function.getArgumentCount(); j++) {
 				if (j != 0) {
 					funcs[count] += ", ";
 				}
