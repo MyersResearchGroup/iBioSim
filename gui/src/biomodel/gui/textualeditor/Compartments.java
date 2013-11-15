@@ -102,7 +102,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 			removeCompart.setEnabled(false);
 		}
 		compartments = new JList();
-		ListOf listOfCompartments = model.getListOfCompartments();
+		ListOf<Compartment> listOfCompartments = model.getListOfCompartments();
 		String[] comps = new String[(int) model.getCompartmentCount()];
 		for (int i = 0; i < model.getCompartmentCount(); i++) {
 			Compartment compartment = (Compartment) listOfCompartments.get(i);
@@ -171,7 +171,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		}
 		JLabel idLabel = new JLabel("ID:");
 		JLabel nameLabel = new JLabel("Name:");
-		JLabel compTypeLabel = new JLabel("Type:");
+//		JLabel compTypeLabel = new JLabel("Type:");
 		JLabel dimLabel = new JLabel("Dimensions:");
 		JLabel constLabel = new JLabel("Constant:");
 		JLabel sizeLabel = new JLabel("Size:");
@@ -282,8 +282,8 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 //				if (compartment.isSetCompartmentType()) {
 //					compTypeBox.setSelectedItem(compartment.getCompartmentType());
 //				}
-				dimText.setText(String.valueOf(compartment.getSpatialDimensionsAsDouble()));
-				setCompartOptions(String.valueOf(compartment.getSpatialDimensionsAsDouble()));
+				dimText.setText(String.valueOf(compartment.getSpatialDimensions()));
+				setCompartOptions(String.valueOf(compartment.getSpatialDimensions()));
 				InitialAssignment init = bioModel.getSBMLDocument().getModel().getInitialAssignment(selectedID);
 				if (init!=null) {
 					compSize.setText(bioModel.removeBooleans(init.getMath()));
@@ -572,12 +572,6 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						}
 						else {
 							SBMLutilities.updateVarId(bioModel.getSBMLDocument(), false, val, compID.getText().trim());
-							for (int i = 0; i < bioModel.getSBMLDocument().getModel().getCompartmentCount(); i++) {
-								Compartment compartment = bioModel.getSBMLDocument().getModel().getCompartment(i);
-								if (compartment.getOutside().equals(val)) {
-									compartment.setOutside(compID.getText().trim());
-								}
-							}
 						}
 					}
 					else {
@@ -694,7 +688,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		if (dim == 3) {
 			compUnits.removeAllItems();
 			compUnits.addItem("( none )");
-			ListOf listOfUnits = bioModel.getSBMLDocument().getModel().getListOfUnitDefinitions();
+			ListOf<UnitDefinition> listOfUnits = bioModel.getSBMLDocument().getModel().getListOfUnitDefinitions();
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getUnitDefinitionCount(); i++) {
 				UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
 				if ((unit.getUnitCount() == 1) && (unit.getUnit(0).isLitre() && unit.getUnit(0).getExponent() == 1)
@@ -717,7 +711,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		else if (dim == 2) {
 			compUnits.removeAllItems();
 			compUnits.addItem("( none )");
-			ListOf listOfUnits = bioModel.getSBMLDocument().getModel().getListOfUnitDefinitions();
+			ListOf<UnitDefinition> listOfUnits = bioModel.getSBMLDocument().getModel().getListOfUnitDefinitions();
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getUnitDefinitionCount(); i++) {
 				UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
 				if ((unit.getUnitCount() == 1) && (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == 2)) {
@@ -738,7 +732,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		else if (dim == 1) {
 			compUnits.removeAllItems();
 			compUnits.addItem("( none )");
-			ListOf listOfUnits = bioModel.getSBMLDocument().getModel().getListOfUnitDefinitions();
+			ListOf<UnitDefinition> listOfUnits = bioModel.getSBMLDocument().getModel().getListOfUnitDefinitions();
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getUnitDefinitionCount(); i++) {
 				UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
 				if ((unit.getUnitCount() == 1) && (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == 1)) {
@@ -769,7 +763,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		else {
 			compUnits.removeAllItems();
 			compUnits.addItem("( none )");
-			ListOf listOfUnits = bioModel.getSBMLDocument().getModel().getListOfUnitDefinitions();
+			ListOf<UnitDefinition> listOfUnits = bioModel.getSBMLDocument().getModel().getListOfUnitDefinitions();
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getUnitDefinitionCount(); i++) {
 				UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
 				if ((unit.getUnitCount() == 1) && (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == dim)) {
@@ -833,7 +827,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						((String) compartments.getSelectedValue()).split(" ")[0])) {
 					if (!SBMLutilities.variableInUse(bioModel.getSBMLDocument(), ((String) compartments.getSelectedValue()).split(" ")[0], false, true, true)) {
 						Compartment tempComp = bioModel.getSBMLDocument().getModel().getCompartment(((String) compartments.getSelectedValue()).split(" ")[0]);
-						ListOf c = bioModel.getSBMLDocument().getModel().getListOfCompartments();
+						ListOf<Compartment> c = bioModel.getSBMLDocument().getModel().getListOfCompartments();
 						for (int i = 0; i < bioModel.getSBMLDocument().getModel().getCompartmentCount(); i++) {
 							if (((Compartment) c.get(i)).getId().equals(tempComp.getId())) {
 								c.remove(i);
