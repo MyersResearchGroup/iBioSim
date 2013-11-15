@@ -174,7 +174,7 @@ public class GlobalConstants {
 	public static final String ACTIVATION = "activation";
 	public static final String REPRESSION = "repression";
 	public static final String REGULATION = "regulation";
-	public static final String NOINFLUENCE = "no influence";
+	public static final String NOINFLUENCE = "no_influence";
 	
 	public static final int SBO_ACTIVATION = 459;
 	public static final int SBO_REPRESSION = 20;
