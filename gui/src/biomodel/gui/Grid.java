@@ -2,7 +2,6 @@ package biomodel.gui;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.File;
@@ -182,7 +181,7 @@ public class Grid {
 	 */
 	public void drawGrid(Graphics g, BioGraph graph) {
 		
-		Graphics2D g2 = (Graphics2D) g;
+		//Graphics2D g2 = (Graphics2D) g;
 		
 		this.graph = graph;
 		
@@ -1388,7 +1387,7 @@ public class Grid {
 		private String compId;
 		private int row, col; //location on the grid (not x,y coords)
 		private Rectangle snapRectangle; //x,y coordinate of the top-left of the component (not grid) rectangle
-		private boolean isCompartment; //component is a compartment or not
+		//private boolean isCompartment; //component is a compartment or not
 		private boolean selected; //is the grid location selected or not
 		private boolean hover; //is the grid location being hovered over or not
 		private Rectangle gridRectangle; //contains the grid coordinates and size
@@ -1403,7 +1402,7 @@ public class Grid {
 		public GridNode() {
 			
 			occupied = false;
-			isCompartment = false;
+			//isCompartment = false;
 			compId = null;
 			selected = false;
 			hover = false;
@@ -1421,7 +1420,7 @@ public class Grid {
 			
 			occupied = false;
 			compId = null;
-			isCompartment = false;
+			//isCompartment = false;
 		}
 		
 		
@@ -1576,16 +1575,16 @@ public class Grid {
 		/**
 		 * @return the isCompartment
 		 */
-		public boolean isCompartment() {
-			return isCompartment;
-		}
-
-		/**
-		 * @param isCompartment the isCompartment to set
-		 */
-		public void setCompartment(boolean isCompartment) {
-			this.isCompartment = isCompartment;
-		}
+//		public boolean isCompartment() {
+//			return isCompartment;
+//		}
+//
+//		/**
+//		 * @param isCompartment the isCompartment to set
+//		 */
+//		public void setCompartment(boolean isCompartment) {
+//			this.isCompartment = isCompartment;
+//		}
 
 		/**
 		 * @param selected the selected status
