@@ -29,7 +29,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		this.species = species;
 		this.complexMap = complexMap;
 		this.partsMap = partsMap;
-		this.compartment = compartment;
+		//this.compartment = compartment;
 	}
 
 	/**
@@ -296,6 +296,6 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 
 	private String boundId;
 	private String reactionId;
-	private String compartment;
+	//private String compartment;
 }
 

@@ -8355,7 +8355,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 	}
 
-	private Hashtable makeIcons() {
+	private Hashtable<String, Icon> makeIcons() {
 		Hashtable<String, Icon> icons = new Hashtable<String, Icon>();
 		icons.put("floppyDrive", MetalIconFactory.getTreeFloppyDriveIcon());
 		icons.put("hardDrive", MetalIconFactory.getTreeHardDriveIcon());
