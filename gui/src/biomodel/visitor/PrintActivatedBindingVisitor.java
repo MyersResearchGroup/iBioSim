@@ -1,7 +1,5 @@
 package biomodel.visitor;
 
-
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -35,7 +33,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		this.species = species;
 		this.complexMap = complexMap;
 		this.partsMap = partsMap;
-		this.compartment = compartment;
+		//this.compartment = compartment;
 		if (compartment.equals(document.getModel().getCompartment(0).getId()))
 			rnapId = "RNAP";
 		else
@@ -323,5 +321,5 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 	private String boundId;
 	private String reactionId;
 	private String rnapId;
-	private String compartment;
+	//private String compartment;
 }

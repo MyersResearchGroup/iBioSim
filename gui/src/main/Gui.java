@@ -4016,6 +4016,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						SBMLutilities.check(filename.trim(), document, false, false);
 						newFile = file[file.length - 1];
 						newFile = newFile.replaceAll("[^a-zA-Z0-9_.]+", "_");
+						if (Character.isDigit(newFile.charAt(0))) {
+							newFile = "M" + newFile;
+						}
 						if (document != null) {
 							if (document.getModel().isSetId()) {
 								newFile = document.getModel().getId();
@@ -9851,12 +9854,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			String extId = md.getId();
 			if (overwrite(root + separator + extId + ".xml",extId + ".xml")) {
 				org.sbml.jsbml.Model model = new org.sbml.jsbml.Model(md);
+				model.getNamespaces().clear();
 				SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
 				document.addPackageDeclaration(LayoutConstants.shortLabel, LayoutConstants.namespaceURI, "false");
 				document.addPackageDeclaration(CompConstant.shortLabel, CompConstant.namespaceURI, "true");
 				document.addPackageDeclaration(FBCConstants.shortLabel, FBCConstants.namespaceURI, "false");
 				CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
-				CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(document.getModel());
+				CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(model);
 				document.setModel(model);
 				ArrayList<String> comps = new ArrayList<String>();
 				for (int j=0; j < documentCompModel.getListOfSubmodels().size(); j++) {

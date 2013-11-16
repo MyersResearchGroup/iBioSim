@@ -12,6 +12,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
@@ -1400,17 +1401,6 @@ public class SBMLutilities {
 							inUse = true;
 							productsUsing.add(reaction.getId());
 						}
-						else if (reaction.getProduct(j).isSetStoichiometryMath()) {
-							String[] vars = SBMLutilities.myFormulaToString(reaction.getProduct(j).getStoichiometryMath().getMath()).split(
-									" |\\(|\\)|\\,");
-							for (int k = 0; k < vars.length; k++) {
-								if (vars[k].equals(species)) {
-									stoicMathUsing.add(reaction.getId() + "/" + specRef);
-									inUse = true;
-									break;
-								}
-							}
-						}
 					}
 				}
 				for (int j = 0; j < reaction.getReactantCount(); j++) {
@@ -1419,17 +1409,6 @@ public class SBMLutilities {
 						if (species.equals(specRef)) {
 							inUse = true;
 							reactantsUsing.add(reaction.getId());
-						}
-						else if (reaction.getReactant(j).isSetStoichiometryMath()) {
-							String[] vars = SBMLutilities.myFormulaToString(reaction.getReactant(j).getStoichiometryMath().getMath()).split(
-									" |\\(|\\)|\\,");
-							for (int k = 0; k < vars.length; k++) {
-								if (vars[k].equals(species)) {
-									stoicMathUsing.add(reaction.getId() + "/" + specRef);
-									inUse = true;
-									break;
-								}
-							}
 						}
 					}
 				}
@@ -1716,9 +1695,6 @@ public class SBMLutilities {
 					if (isSpecies && origId.equals(specRef.getSpecies())) {
 						specRef.setSpecies(newId);
 					}
-					if (specRef.isSetStoichiometryMath()) {
-						specRef.getStoichiometryMath().setMath(SBMLutilities.updateMathVar(specRef.getStoichiometryMath().getMath(), origId, newId));
-					}
 				}
 			}
 			if (isSpecies) {
@@ -1736,9 +1712,6 @@ public class SBMLutilities {
 					SpeciesReference specRef = reaction.getReactant(j);
 					if (isSpecies && origId.equals(specRef.getSpecies())) {
 						specRef.setSpecies(newId);
-					}
-					if (specRef.isSetStoichiometryMath()) {
-						specRef.getStoichiometryMath().setMath(SBMLutilities.updateMathVar(specRef.getStoichiometryMath().getMath(), origId, newId));
 					}
 				}
 			}
@@ -3264,7 +3237,18 @@ public class SBMLutilities {
 		}
 	}
 
-	public static void setNamespaces(SBMLDocument document, SortedSet<String> namespaces) {
+	public static void setNamespaces(SBMLDocument document, Map<String,String> namespaces) {
+		document.getSBMLDocumentNamespaces().clear();
+		for (String key : namespaces.keySet()) {
+			String prefix = "";
+			String shortName = key;
+			if (key.contains(":")) {
+				prefix = key.split(":")[0];
+				shortName = key.split(":")[1];
+			} 
+			document.addNamespace(shortName, prefix, namespaces.get(key));
+		}
+		/*
 		ArrayList<String> remove = new ArrayList<String>();
 		for (String namespace : document.getNamespaces()) {
 			remove.add(namespace);
@@ -3275,6 +3259,7 @@ public class SBMLutilities {
 		for (String namespace : namespaces) {
 			document.addNamespace(namespace);
 		}
+		*/
 	}
 	
 	public static boolean getBooleanFromDouble(double value) {

@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.prefs.Preferences;
 
@@ -6261,13 +6262,13 @@ public class BioModel {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			String md5 = Utility.MD5(SBMLstr);
 //			TODO:  Not currently supported.
-//			if (!sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()).getMd5().equals("") &&
-//					!sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()).getMd5().equals(md5)) {
-//				//System.out.println("MD5 DOES NOT MATCH");
-//				sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()).setMd5(md5);
-//			}
+			String md5 = Utility.MD5(SBMLstr);
+			if (!sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()).getMd5().equals("") &&
+					!sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()).getMd5().equals(md5)) {
+				//System.out.println("MD5 DOES NOT MATCH");
+				sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()).setMd5(md5);
+			}
 			removeStaleReplacementsDeletions(subBioModel,submodel);
 			addImplicitReplacementsDeletions(subBioModel,submodel);
 			for (j = 0; j < subBioModel.getSBMLCompModel().getListOfPorts().size(); j++) {
@@ -6981,7 +6982,7 @@ public class BioModel {
 		
 		SBMLDocument document = bioModel.getSBMLDocument();
 		SBMLDocument subDocument = subBioModel.getSBMLDocument();
-		SBMLutilities.setNamespaces(subDocument, document.getNamespaces());
+		SBMLutilities.setNamespaces(subDocument, document.getSBMLDocumentNamespaces());
 
 		Model model = document.getModel();
 		Model subModel = subDocument.getModel();
@@ -7459,11 +7460,6 @@ public class BioModel {
 					if (isSpecies && origId.equals(specRef.getSpecies())) {
 						specRef.setSpecies(newId);
 					}
-					if (specRef.isSetStoichiometryMath()) {
-						specRef.getStoichiometryMath().setMath(
-								updateMathVar(specRef.getStoichiometryMath().getMath(), origId,
-										newId));
-					}
 				}
 			}
 			if (isSpecies) {
@@ -7481,11 +7477,6 @@ public class BioModel {
 					SpeciesReference specRef = reaction.getReactant(j);
 					if (isSpecies && origId.equals(specRef.getSpecies())) {
 						specRef.setSpecies(newId);
-					}
-					if (specRef.isSetStoichiometryMath()) {
-						specRef.getStoichiometryMath().setMath(
-								updateMathVar(specRef.getStoichiometryMath().getMath(), origId,
-										newId));
 					}
 				}
 			}
