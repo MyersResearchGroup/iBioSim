@@ -1805,10 +1805,10 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 			}
 			else if (getName().contains("Property")) {
-				String selected = null;
-				if (list.getSelectedValue() != null && getName().contains("Edit")) {
-					selected = list.getSelectedValue().toString();
-				}
+//				String selected = null;
+//				if (list.getSelectedValue() != null && getName().contains("Edit")) {
+//					selected = list.getSelectedValue().toString();
+//				}
 				//ConditionsPanel panel = new ConditionsPanel(selected, list, gcm, paramsOnly,gcmEditor);
 			}
 			else if (getName().contains("Component")) {
@@ -1819,15 +1819,15 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				}
 			}
 			else if (getName().contains("Parameter")) {
-				String selected = null;
-				if (list.getSelectedValue() != null && getName().contains("Edit")) {
-					selected = list.getSelectedValue().toString();
-				}
-				BioModel refGCM = null;
-				if (paramsOnly) {
-					refGCM = new BioModel(path);
-					refGCM.load(path + separator + refFile);
-				}
+//				String selected = null;
+//				if (list.getSelectedValue() != null && getName().contains("Edit")) {
+//					selected = list.getSelectedValue().toString();
+//				}
+//				BioModel refGCM = null;
+//				if (paramsOnly) {
+//					refGCM = new BioModel(path);
+//					refGCM.load(path + separator + refFile);
+//				}
 				/*
 				ParameterPanel panel = new ParameterPanel(selected, list, gcm, paramsOnly, refGCM, gcmEditor);
 				if (paramsOnly) {

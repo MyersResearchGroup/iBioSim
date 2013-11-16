@@ -221,7 +221,7 @@ public class MovieScheme {
 			//this is done so that other component or grid location prefixes can be added
 			String[] speciesParts = speciesID.split("__");
 			String speciesIDNoPrefix = speciesID.replace(new String(speciesParts[0] + "__"), "");
-			String compID = speciesParts[0];
+			//String compID = speciesParts[0];
 			
 			//if the user selected to change components
 			if (cellType.equals(GlobalConstants.COMPONENT)) {

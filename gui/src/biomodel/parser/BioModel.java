@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.prefs.Preferences;
 
@@ -6726,9 +6725,6 @@ public class BioModel {
 				/* add an option to leave ports if the user has requested this */
 				props.addOption("leavePorts", false, "unused ports should be listed in the flattened model");
 
-				org.sbml.libsbml.FbcModelPlugin fbc = (org.sbml.libsbml.FbcModelPlugin)document.getModel().getPlugin("fbc");
-				//System.out.println(fbc.getNumFluxBounds());
-				
 				/* perform the conversion */
 				if (document.convert(props) != org.sbml.libsbml.libsbml.LIBSBML_OPERATION_SUCCESS) {
 					return null;
@@ -7294,9 +7290,6 @@ public class BioModel {
 						return null;
 					}
 					if (!e.getDelay().equals(event.getDelay())) {
-						return null;
-					}
-					if (!e.getTimeUnits().equals(event.getTimeUnits())) {
 						return null;
 					}
 					if (!e.getTrigger().equals(event.getTrigger())) {

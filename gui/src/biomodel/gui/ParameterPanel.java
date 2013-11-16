@@ -23,9 +23,9 @@ public class ParameterPanel extends JPanel {
 		super(new GridLayout(1, 2));
 		this.totalSelected = totalSelected;
 		this.parameterList = parameterList;
-		this.gcm = gcm;
-		this.refGCM = refGCM;
-		this.paramsOnly = paramsOnly;
+		//this.gcm = gcm;
+		//this.refGCM = refGCM;
+		//this.paramsOnly = paramsOnly;
 		this.gcmEditor = gcmEditor;
 		changedParam = "";
 
@@ -146,12 +146,12 @@ public class ParameterPanel extends JPanel {
 
 	private String[] options = { "Ok", "Cancel" };
 
-	private boolean paramsOnly;
+	//private boolean paramsOnly;
 	private String changedParam = "";
 	private String totalSelected = "";
 	private String selected = "";
-	private BioModel gcm = null;
-	private BioModel refGCM = null;
+	//private BioModel gcm = null;
+	//private BioModel refGCM = null;
 	private PropertyList parameterList = null;
 	private HashMap<String, PropertyField> fields = null;
 	private ModelEditor gcmEditor = null;
