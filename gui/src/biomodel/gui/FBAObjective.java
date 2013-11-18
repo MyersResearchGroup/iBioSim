@@ -45,14 +45,6 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 		this.bioModel = bioModel;
 		fbc = bioModel.getSBMLFBC();
 		
-//		HashMap<String, Integer> reactionIndex = new HashMap<String, Integer>();
-//		int kp = 0;
-//		for(int l =0;l<fbc.getListOfFluxBounds().size();l++){
-//			if(!reactionIndex.containsKey(fbc.getFluxBound(l).getReaction())){
-//				reactionIndex.put(fbc.getFluxBound(l).getReaction(), kp);
-//				kp++;
-//			}
-//		}
 		
 		JPanel bigPanel = new JPanel(new BorderLayout());
 		// TODO: allocate size based on number of objectives
@@ -152,15 +144,20 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 					int eqsign = objectiveStringArray[i].indexOf("=");
 					String equationString = objectiveStringArray[i].substring(eqsign + 1, 
 							objectiveStringArray[i].length()).trim();
-					System.out.println(equationString);
 					
-					// TODO: get this working when no coefficient is provided
 					String[] equationTokens = equationString.split("\\+");
 					for (int j = 0; j<equationTokens.length; j++){
 						FluxObjective fluxObjective = objective.createFluxObjective();
 						String [] coefficeintReaction = equationTokens[j].split("\\*");
-						fluxObjective.setCoefficient(Double.parseDouble(coefficeintReaction[0].trim()));
-						fluxObjective.setReaction(coefficeintReaction[1].trim());
+						if(coefficeintReaction.length>1){
+							fluxObjective.setCoefficient(Double.parseDouble(coefficeintReaction[0].trim()));
+							fluxObjective.setReaction(coefficeintReaction[1].trim());
+						}
+						else{
+							fluxObjective.setCoefficient(1.0);
+							fluxObjective.setReaction(coefficeintReaction[0].trim());
+						}
+						
 					}
 
 				}
@@ -172,48 +169,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 		}
 	}
 	
-	public void objectiveEditor(String option){		
-		String[] assign = new String[0];
-		JPanel eventPanel = new JPanel(new BorderLayout());
-		
-		JPanel eventAssignPanel = new JPanel(new BorderLayout());
-		JPanel addEventAssign = new JPanel();
-		JButton addAssignment = new JButton("Add Assignment");
-		JButton removeAssignment = new JButton("Remove Assignment");
-		JButton editAssignment = new JButton("Edit Assignment");
-		addEventAssign.add(addAssignment);
-		addEventAssign.add(removeAssignment);
-		addEventAssign.add(editAssignment);
-		addAssignment.addActionListener(this);
-		removeAssignment.addActionListener(this);
-		editAssignment.addActionListener(this);
-		JLabel eventAssignLabel = new JLabel("List of Assignments:");
-		objectiveList.removeAll();
-		objectiveList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		JScrollPane scroll = new JScrollPane();
-		scroll.setMinimumSize(new Dimension(260, 220));
-		scroll.setPreferredSize(new Dimension(276, 152));
-		
-		Utility.sort(assign);
-		objectiveList.setListData(assign);
-		objectiveList.setSelectedIndex(0);
-		objectiveList.addMouseListener(this);
-		eventAssignPanel.add(eventAssignLabel, "North");
-		eventAssignPanel.add(scroll, "Center");
-		eventAssignPanel.add(addEventAssign, "South");
-		
-		eventPanel.add(eventAssignPanel, "South");
-		Object[] options = { option, "Cancel" };
-		String title = "Event Editor";
-		int value = JOptionPane.showOptionDialog(Gui.frame, eventPanel, title, JOptionPane.YES_NO_OPTION, 
-				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-		boolean error = true;
-		while (error && value == JOptionPane.YES_OPTION) {
-			
-		}
-	}
-	
-	private void removeAssignment(JList objectiveList) {
+	private void removeObjective(JList objectiveList) {
 		int index = objectiveList.getSelectedIndex();
 		if (index != -1) {
 			objectiveList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -238,7 +194,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 		}
 		// if the remove event assignment button is clicked
 		else if (((JButton) e.getSource()).getText().equals("Remove")) {
-			removeAssignment(objectiveList);
+			removeObjective(objectiveList);
 		}
 	}
 	
@@ -261,23 +217,23 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 		JTextField objective = new JTextField(12);
 		String selectedID = "";
 		if (option.equals("OK")) {
-			String selectAssign = ((String) objectiveList.getSelectedValue());
-			if(selectAssign.startsWith("*")){
+			String objectiveInput = ((String) objectiveList.getSelectedValue());
+			if(objectiveInput.startsWith("*")){
 				activeObjective.setSelected(true);
 			}
-			int m = selectAssign.indexOf("M");
-			if(selectAssign.startsWith("Max", m)){
+			int m = objectiveInput.indexOf("M");
+			if(objectiveInput.startsWith("Max", m)){
 				type.setSelectedItem("Maximize");
 			}
 			else{
 				type.setSelectedItem("Minimize");
 			}
-			int leftParenthese = selectAssign.indexOf("(");
-			int rightParenthese = selectAssign.indexOf(")");
-			selectedID = selectAssign.substring(leftParenthese+1, rightParenthese).trim();
-			objectiveID.setText(selectAssign.substring(leftParenthese+1, rightParenthese).trim());
-			int eqsign = selectAssign.indexOf("=");
-			objective.setText(selectAssign.substring(eqsign+1).trim());
+			int leftParenthese = objectiveInput.indexOf("(");
+			int rightParenthese = objectiveInput.indexOf(")");
+			selectedID = objectiveInput.substring(leftParenthese+1, rightParenthese).trim();
+			objectiveID.setText(objectiveInput.substring(leftParenthese+1, rightParenthese).trim());
+			int eqsign = objectiveInput.indexOf("=");
+			objective.setText(objectiveInput.substring(eqsign+1).trim());
 		}
 		
 		obPanel.add(activeObjectiveLabel);
@@ -289,7 +245,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 		obPanel.add(objectiveLabel);
 		obPanel.add(objective);
 		
-		String[] assign = new String[objectiveList.getModel().getSize()];
+		String[] listOfObjectives = new String[objectiveList.getModel().getSize()];
 		
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, obPanel, "Objective Editor", JOptionPane.YES_NO_OPTION,
@@ -303,6 +259,11 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 				// error message
 			} 
 			if (!error) {
+//				if(!bioModel.getReactions().contains(objectiveID)){
+//					error = true;
+//					JOptionPane.showMessageDialog(Gui.frame, "ID is not a valid reaction!", 
+//							"Must input vaild reaction IDs", JOptionPane.ERROR_MESSAGE);
+//				}
 				// TODO: check that all id's in the formula are valid reactions, namely, bioModel.getDocument().getReaction(ID) should not be null
 				// if problem set error=true
 				// error message
@@ -310,55 +271,60 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 			if (!error) {
 				if (option.equals("OK")) {
 					int index = objectiveList.getSelectedIndex();
-					String assignString = "";
+					String editedObjectiveString = "";
 					objectiveList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					assign = Utility.getList(assign, objectiveList);
+					listOfObjectives = Utility.getList(listOfObjectives, objectiveList);
 					objectiveList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					if(activeObjective.isSelected()){
-						assignString = "*";
-						// TODO: remove * from any other member of "assign" which has a "*"
+						editedObjectiveString = "*";
+						for(int i = 0; i < listOfObjectives.length;i++){
+							if(listOfObjectives[i].startsWith("*")){
+								listOfObjectives[i] = listOfObjectives[i].substring(1, listOfObjectives[i].length());
+							}
+						}
 					}
 					if(type.getSelectedItem().equals("Maximize")){
-						assignString += "Max";
+						editedObjectiveString += "Max";
 					}
 					else{
-						assignString += "Min";
+						editedObjectiveString += "Min";
 					}
-					assignString += "(" + objectiveID.getText().trim() + ") = " + 
+					editedObjectiveString += "(" + objectiveID.getText().trim() + ") = " + 
 							objective.getText().trim();
-					// TODO: change "assign" to be more meaningful
-					assign[index] = assignString;
-					Utility.sort(assign);
-					objectiveList.setListData(assign);
+					listOfObjectives[index] = editedObjectiveString;
+					Utility.sort(listOfObjectives);
+					objectiveList.setListData(listOfObjectives);
 					objectiveList.setSelectedIndex(index);
 				}
 				else {
 					JList add = new JList();
 					int index = objectiveList.getSelectedIndex();
-					String addingString = "";
+					String newObjectiveString = "";
 					if(activeObjective.isSelected()){
-						addingString = "*";
-						// TODO: remove * from all other entries of "assign"
+						newObjectiveString = "*";
 					}
 					if(type.getSelectedItem().equals("Maximize")){
-						addingString += "Max";
+						newObjectiveString += "Max";
 					}
 					else{
-						addingString += "Min";
+						newObjectiveString += "Min";
 					}
-					addingString += "(" + objectiveID.getText().trim() + ") = " + 
+					newObjectiveString += "(" + objectiveID.getText().trim() + ") = " + 
 							objective.getText().trim();
-					Object[] adding = {addingString};
+					Object[] adding = {newObjectiveString};
 					add.setListData(adding);
 					add.setSelectedIndex(0);
 					objectiveList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					adding = Utility.add(assign, objectiveList, add, null, null, null, null, null, Gui.frame);
-					assign = new String[adding.length];
+					adding = Utility.add(listOfObjectives, objectiveList, add, null, null, null, null, null, Gui.frame);
+					listOfObjectives = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
-						assign[i] = (String) adding[i];
+						listOfObjectives[i] = (String) adding[i];
+						if (listOfObjectives[i].startsWith("*")&& !listOfObjectives[i].equals(newObjectiveString)) {
+							listOfObjectives[i] = listOfObjectives[i].substring(1, listOfObjectives[i].length());
+						}
 					}
-					Utility.sort(assign);
-					objectiveList.setListData(assign);
+					Utility.sort(listOfObjectives);
+					objectiveList.setListData(listOfObjectives);
 					objectiveList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					if (adding.length == 1) {
 						objectiveList.setSelectedIndex(0);
@@ -389,7 +355,6 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 					return;
 				}
 				String selected = ((String) objectives.getSelectedValue());
-				objectiveEditor("OK");
 			}
 			else if (e.getSource() == objectiveList) {
 				objectiveEditor(bioModel, objectiveList, "OK");
