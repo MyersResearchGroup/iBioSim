@@ -660,28 +660,28 @@ public class EditPreferences {
 		return modelPrefsFinal;
 	}
 	
-	private JPanel synthesisPreferences(Preferences biosimrc) {	
-		// synthesis preferences
-		JPanel synthesisLabels = new JPanel(new GridLayout(13, 1));
-		synthesisLabels.add(new JLabel("URI Authority"));
-		synthesisLabels.add(new JLabel("Validate Assembly of DNA Components"));
-		synthesisLabels.add(new JLabel("Regular Expression for Complete Genetic Construct"));
-		synthesisLabels.add(new JLabel("Incomplete Construct Warning"));
+	private JPanel assemblyPreferences(Preferences biosimrc) {	
+		// assembly preferences
+		JPanel assemblyLabels = new JPanel(new GridLayout(13, 1));
+		assemblyLabels.add(new JLabel("URI Authority"));
+		assemblyLabels.add(new JLabel("Validate Assembly of DNA Components"));
+		assemblyLabels.add(new JLabel("Regex for Complete Genetic Construct"));
+		assemblyLabels.add(new JLabel("Incomplete Construct Warning"));
 		
-		JPanel synthesisFields = new JPanel(new GridLayout(13 ,1));
+		JPanel assemblyFields = new JPanel(new GridLayout(13 ,1));
 		uriField = new JTextField(biosimrc.get(GlobalConstants.SBOL_AUTHORITY_PREFERENCE, ""),15);
 		regexField = new JTextField(biosimrc.get(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, ""),15);
 		validationBox = new JComboBox(new String[]{"True", "False"});
 		validationBox.setSelectedItem(biosimrc.get(GlobalConstants.CONSTRUCT_VALIDATION_PREFERENCE, ""));
 		warningBox = new JComboBox(new String[]{"True", "False"});
 		warningBox.setSelectedItem(biosimrc.get(GlobalConstants.CONSTRUCT_VALIDATION_WARNING_PREFERENCE, ""));
-		synthesisFields.add(uriField);
-		synthesisFields.add(validationBox);
-		synthesisFields.add(regexField);
-		synthesisFields.add(warningBox);
+		assemblyFields.add(uriField);
+		assemblyFields.add(validationBox);
+		assemblyFields.add(regexField);
+		assemblyFields.add(warningBox);
 		
-		JButton restoreSyn = new JButton("Restore Defaults");
-		restoreSyn.addActionListener(new ActionListener() {
+		JButton restoreDefaultsButton = new JButton("Restore Defaults");
+		restoreDefaultsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				uriField.setText(GlobalConstants.SBOL_AUTHORITY_DEFAULT);
 				regexField.setText(GlobalConstants.GENETIC_CONSTRUCT_REGEX_DEFAULT);
@@ -690,14 +690,14 @@ public class EditPreferences {
 			}
 		});	
 		
-		// create synthesis preferences panel
-		JPanel synthesisPrefs = new JPanel(new GridLayout(1, 2));
-		synthesisPrefs.add(synthesisLabels);
-		synthesisPrefs.add(synthesisFields);
-		JPanel synthesisPrefsFinal = new JPanel(new BorderLayout());
-		synthesisPrefsFinal.add(synthesisPrefs,"North");
-		synthesisPrefsFinal.add(restoreSyn,"South");
-		return synthesisPrefsFinal;
+		// create assembly preferences panel
+		JPanel assemblyPrefsPane = new JPanel(new GridLayout(1, 2));
+		assemblyPrefsPane.add(assemblyLabels);
+		assemblyPrefsPane.add(assemblyFields);
+		JPanel assemblyPrefsTop = new JPanel(new BorderLayout());
+		assemblyPrefsTop.add(assemblyPrefsPane,"North");
+		assemblyPrefsTop.add(restoreDefaultsButton,"South");
+		return assemblyPrefsTop;
 	}
 
 	private JPanel analysisPreferences(Preferences biosimrc) {	
@@ -1218,7 +1218,7 @@ public class EditPreferences {
 		return problem;
 	}
 	
-	private boolean saveSynthesisPreferences(Preferences biosimrc) {
+	private boolean saveAssemblyPreferences(Preferences biosimrc) {
 		boolean problem = false;
 		if (!uriField.getText().trim().equals(""))
 			biosimrc.put(GlobalConstants.SBOL_AUTHORITY_PREFERENCE, uriField.getText().trim());
@@ -1265,7 +1265,7 @@ public class EditPreferences {
 		JPanel generalPrefs = generalPreferences(biosimrc);
 		JPanel schematicPrefs = schematicPreferences(biosimrc);
 		JPanel modelPrefs = modelPreferences(biosimrc);
-		JPanel synthesisPrefs = synthesisPreferences(biosimrc);
+		JPanel assemblyPrefs = assemblyPreferences(biosimrc);
 		JPanel analysisPrefs = analysisPreferences(biosimrc);
 		JPanel learnPrefs = learnPreferences(biosimrc);
 
@@ -1273,7 +1273,7 @@ public class EditPreferences {
 		JTabbedPane prefTabs = new JTabbedPane();
 		prefTabs.addTab("General Preferences", generalPrefs);
 		prefTabs.addTab("Schematic Preferences", schematicPrefs);
-		if (!async) prefTabs.addTab("Synthesis Preferences", synthesisPrefs);
+		if (!async) prefTabs.addTab("SBOL Assembly Preferences", assemblyPrefs);
 		prefTabs.addTab("Model Preferences", modelPrefs);
 		prefTabs.addTab("Analysis Preferences", analysisPrefs);
 		if (!async) prefTabs.addTab("Learn Preferences", learnPrefs);
@@ -1293,7 +1293,7 @@ public class EditPreferences {
 				if (!problem) problem = saveModelPreferences(biosimrc);
 				if (!problem) problem = saveAnalysisPreferences(biosimrc);
 				if (!problem) problem = saveLearnPreferences(biosimrc);
-				if (!problem) problem = saveSynthesisPreferences(biosimrc);
+				if (!problem) problem = saveAssemblyPreferences(biosimrc);
 			}
 		} while (value == JOptionPane.YES_OPTION && problem);
 	}

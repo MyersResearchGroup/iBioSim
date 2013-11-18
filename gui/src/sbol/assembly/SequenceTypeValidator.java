@@ -16,6 +16,7 @@ public class SequenceTypeValidator {
 	private int stateIndex;
 	
 	public SequenceTypeValidator(String regex) {
+//		regex = quantifyRegex();
 		String rightAltRegex = altFragmentRegex(regex);
 		String revRegex = reverseRegex(regex);
 		String leftAltRegex = altFragmentRegex(revRegex);
@@ -110,6 +111,27 @@ public class SequenceTypeValidator {
 		if (quantifier.equals("*") || quantifier.equals("?"))
 			acceptStates.addAll(startStates);
 	}
+	
+//	private String quantifyRegex(String regex) {
+//		int leftParenCount = 0;
+//		int rightParenCount = 0;
+//		for (int i = 0; i < regex.length(); i++)
+//			if (regex.substring(i, i + 1).equals("("))
+//				leftParenCount++;
+//			else
+//				i = regex.length() - 1;
+//		for (int i = regex.length() - 1; i >= 0; i--)
+//			if (regex.substring(i, i + 1).equals(")"))
+//				rightParenCount++;
+//			else
+//				i = 0;
+//		int trimCount = Math.min(leftParenCount, rightParenCount);
+//		regex = regex.substring(trimCount, regex.length() - trimCount + 1);	
+//		
+//				
+//		
+//		return regex;
+//	}
 	
 	private String altFragmentRegex(String regex) {
 		List<String> orFragments = findOrFragments(regex);
