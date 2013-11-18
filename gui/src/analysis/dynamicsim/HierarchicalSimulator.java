@@ -2810,14 +2810,11 @@ public abstract class HierarchicalSimulator {
 							temp = ASTNode.times(temp, node);
 						}
 					}
-				}
-				else
-				{
-					System.out.println("Error in rev. reaction");
-				}
 
 
-				reactionFormula = distributedNode;
+					reactionFormula = distributedNode;
+				}
+
 			}
 
 
