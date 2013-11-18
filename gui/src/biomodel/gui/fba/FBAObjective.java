@@ -253,20 +253,36 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), objectiveID.getText().trim(), selectedID, false, false);
-			if (!error) {
+//			if (!error) {
+//				error = objective.getText().matches("([0-9]*'.'[0-9]*)? \\*? [0-9]*[a-z A-Z]* (+ ([0-9]*'.'[0-9]*)? \\* ID)*");
+//				JOptionPane.showMessageDialog(Gui.frame, "Invalid formula!", 
+//						"Input does not match acceptable formula format.", JOptionPane.ERROR_MESSAGE);
 				// TODO: error check the formula (##.##)? \\* ID (+ (##.##)? \\* ID)*
 				// set error=true if violation
 				// error message
-			} 
+//			} 
 			if (!error) {
-//				if(!bioModel.getReactions().contains(objectiveID)){
-//					error = true;
-//					JOptionPane.showMessageDialog(Gui.frame, "ID is not a valid reaction!", 
-//							"Must input vaild reaction IDs", JOptionPane.ERROR_MESSAGE);
-//				}
-				// TODO: check that all id's in the formula are valid reactions, namely, bioModel.getDocument().getReaction(ID) should not be null
-				// if problem set error=true
-				// error message
+				int eqsign = objective.getText().indexOf("=");
+				String editEquationString = objective.getText().substring(eqsign + 1, 
+						objective.getText().length()).trim();
+				String[] editEquationTokens = editEquationString.split("\\+");
+				for (int j = 0; j<editEquationTokens.length; j++){
+					String [] coefficeintReaction = editEquationTokens[j].split("\\*");
+					if(coefficeintReaction.length>1){
+						if(!bioModel.getReactions().contains(coefficeintReaction[1].trim())){
+							error = true;
+							JOptionPane.showMessageDialog(Gui.frame, "Reaction ID is not a valid reaction!", 
+									"Must input vaild reaction IDs", JOptionPane.ERROR_MESSAGE);
+						}
+					}
+					else{
+						if(!bioModel.getReactions().contains(coefficeintReaction[0].trim())){
+							error = true;
+							JOptionPane.showMessageDialog(Gui.frame, "Reaction ID is not a valid reaction!", 
+									"Must input vaild reaction IDs", JOptionPane.ERROR_MESSAGE);
+						}
+					}
+				}
 			}
 			if (!error) {
 				if (option.equals("OK")) {
