@@ -11,12 +11,16 @@ import org.sbolstandard.core.impl.AggregatingResolver;
 import org.sbolstandard.core.impl.SBOLDocumentImpl;
 import org.sbolstandard.core.impl.AggregatingResolver.UseFirstFound;
 
+import biomodel.util.GlobalConstants;
+
 import sbol.SBOLUtility;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.List;
+
+import javax.swing.JCheckBox;
 
 public class SBOLAssociationPanel extends JPanel {
 
@@ -25,15 +29,17 @@ public class SBOLAssociationPanel extends JPanel {
 //	private HashMap<String, SBOLDocument> sbolFileDocMap = new HashMap<String, SBOLDocument>();
 	private List<URI> compURIs;
 	private List<URI> defaultCompURIs;
+	private boolean defaultMinusBoxState;
 	private Set<String> soTypes;
 	private String modelID;
 	private UseFirstFound<DnaComponent, URI> aggregateCompResolver;
 	private JList compList = new JList();
+	private JCheckBox minusBox = new JCheckBox();
 	private String[] options;
 	private boolean iBioSimURIPresent;
 	private URI removedBioSimURI;
 	
-	public SBOLAssociationPanel(HashSet<String> sbolFilePaths, List<URI> defaultCompURIs, Set<String> soTypes, String modelID) {
+	public SBOLAssociationPanel(HashSet<String> sbolFilePaths, List<URI> defaultCompURIs, String defaultCompStrand, Set<String> soTypes, String modelID) {
 		super(new BorderLayout());
 		
 		this.sbolFilePaths = sbolFilePaths;
@@ -44,6 +50,8 @@ public class SBOLAssociationPanel extends JPanel {
 		} else 
 			compURIs = new LinkedList<URI>(defaultCompURIs);
 		this.defaultCompURIs = defaultCompURIs;
+		minusBox.setSelected(defaultCompStrand.equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND));
+		defaultMinusBoxState = minusBox.isSelected();
 		this.soTypes = soTypes;
 		this.modelID = modelID;
 		
@@ -52,13 +60,15 @@ public class SBOLAssociationPanel extends JPanel {
 		constructPanel();
 	}
 	
-	public SBOLAssociationPanel(HashSet<String> sbolFilePaths, List<URI> defaultCompURIs, Set<String> soTypes) {
+	public SBOLAssociationPanel(HashSet<String> sbolFilePaths, List<URI> defaultCompURIs, String defaultCompStrand, Set<String> soTypes) {
 		super(new BorderLayout());
 		
 		this.sbolFilePaths = sbolFilePaths;
 			
 		compURIs = new LinkedList<URI>(defaultCompURIs);
 		this.defaultCompURIs = defaultCompURIs;
+		minusBox.setSelected(defaultCompStrand.equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND));
+		defaultMinusBoxState = minusBox.isSelected();
 		this.soTypes = soTypes;
 		
 		options = new String[]{"Add", "Remove", "Ok", "Cancel"};
@@ -73,8 +83,14 @@ public class SBOLAssociationPanel extends JPanel {
 		componentScroll.setPreferredSize(new Dimension(276, 132));
 		componentScroll.setViewportView(compList);
 		
+		JPanel minusPanel = new JPanel();
+		JLabel minusLabel = new JLabel("Minus Strand");
+		minusPanel.add(minusBox);
+		minusPanel.add(minusLabel);
+		
 		this.add(associationLabel, "North");
 		this.add(componentScroll, "Center");
+		this.add(minusPanel, "South");
 		
 		if (loadSBOLFiles(sbolFilePaths)) {
 			boolean display = setComponentIDList();
@@ -180,6 +196,7 @@ public class SBOLAssociationPanel extends JPanel {
 			return false;
 		else {
 			compURIs = defaultCompURIs;
+			minusBox.setSelected(defaultMinusBoxState);
 			removedBioSimURI = null;
 			return false;
 		}
@@ -268,4 +285,12 @@ public class SBOLAssociationPanel extends JPanel {
 	public URI getRemovedBioSimURI() {
 		return removedBioSimURI;
 	}
+	
+	public String getComponentStrand() {
+		if (minusBox.isSelected())
+			return GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND;
+		else
+			return GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
+	}
+
 }

@@ -8,6 +8,8 @@ import javax.swing.*;
 import org.sbolstandard.core.*;
 import org.sbolstandard.core.impl.AggregatingResolver.UseFirstFound;
 
+import biomodel.util.GlobalConstants;
+
 import java.net.URI;
 import java.util.*;
 
@@ -204,7 +206,11 @@ public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 					annotations = annotations + subComponent.getDisplayId();
 			} else
 				annotations = annotations + "NA"; 
-			String symbol = arraySA[k].getStrand().getSymbol();
+			String symbol;
+			if (arraySA[k].getStrand() != null)
+				symbol = arraySA[k].getStrand().getSymbol();
+			else
+				symbol = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
 			annotations = annotations + " " + symbol + arraySA[k].getBioStart() + " to " + symbol + arraySA[k].getBioEnd() + ", "; 
 			
 		}

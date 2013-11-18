@@ -132,12 +132,12 @@ public class SBOLBrowser extends JPanel implements ActionListener {
 			if (browsePath.equals("") || browseFile.equals(file)) {
 				SBOLDocument sbolDoc = SBOLUtility.loadSBOLFile(filePath);
 				if (sbolDoc != null) {
-					SBOLDocumentImpl flattenedDoc = (SBOLDocumentImpl) SBOLUtility.flattenSBOLDocument(sbolDoc);
-					compResolvers.add(flattenedDoc.getComponentUriResolver());
-					annoResolvers.add(flattenedDoc.getAnnotationUriResolver());
-					seqResolvers.add(flattenedDoc.getSequenceUriResolver());
-					libResolvers.add(flattenedDoc.getCollectionUriResolver());
-					for (SBOLRootObject sbolObj : flattenedDoc.getContents())
+					SBOLDocumentImpl flatDoc = (SBOLDocumentImpl) SBOLUtility.flattenSBOLDocument(sbolDoc);
+					compResolvers.add(flatDoc.getComponentUriResolver());
+					annoResolvers.add(flatDoc.getAnnotationUriResolver());
+					seqResolvers.add(flatDoc.getSequenceUriResolver());
+					libResolvers.add(flatDoc.getCollectionUriResolver());
+					for (SBOLRootObject sbolObj : flatDoc.getContents())
 						if (sbolObj instanceof org.sbolstandard.core.Collection) {
 							org.sbolstandard.core.Collection lib = (org.sbolstandard.core.Collection) sbolObj;
 							if (lib.getDisplayId() != null && !lib.getDisplayId().equals("") && 

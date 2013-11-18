@@ -8,6 +8,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JComboBox;
@@ -567,8 +568,10 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 		// Parse out SBOL annotations and add to SBOL field
 		if(!paramsOnly) {
 			// Field for annotating submodel with SBOL DNA components
-			List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(instance);
-			sbolField = new SBOLField(sbolURIs, GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 2, false);
+			List<URI> sbolURIs = new LinkedList<URI>(); 
+			String sbolStrand = AnnotationUtility.parseSBOLAnnotation(instance, sbolURIs);
+			sbolField = new SBOLField(sbolURIs, sbolStrand, GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 
+					2, false);
 			add(sbolField);
 		}
 		
@@ -905,9 +908,9 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			componentsList.setSelectedValue(id + " " + selectedComponent.replace(".xml", "") + " " + newPort, true);
 			if (!paramsOnly) {
 				// Add SBOL annotation to submodel
-				List<URI> sbolURIs = sbolField.getSBOLURIs();
-				if (sbolURIs.size() > 0) {
-					SBOLAnnotation sbolAnnot = new SBOLAnnotation(instance.getMetaId(), sbolURIs);
+				if (sbolField.getSBOLURIs().size() > 0) {
+					SBOLAnnotation sbolAnnot = new SBOLAnnotation(instance.getMetaId(), 
+							sbolField.getSBOLURIs(), sbolField.getSBOLStrand());
 					AnnotationUtility.setSBOLAnnotation(instance, sbolAnnot);
 					if (sbolField.wasInitiallyBlank())
 						bioModel.setElementSBOLCount(bioModel.getElementSBOLCount() + 1);

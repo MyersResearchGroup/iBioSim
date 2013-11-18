@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -570,8 +571,10 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			if (!paramsOnly) {
 				// Field for annotating reaction with SBOL DNA components
 				Reaction reac = gcm.getSBMLDocument().getModel().getReaction(reactionId);
-				List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(reac);
-				sbolField = new SBOLField(sbolURIs, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 2, false);
+				List<URI> sbolURIs = new LinkedList<URI>();
+				String sbolStrand = AnnotationUtility.parseSBOLAnnotation(reac, sbolURIs);
+				sbolField = new SBOLField(sbolURIs, sbolStrand, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 
+						2, false);
 				reactionPanelNorth1b.add(sbolField);
 			}
 			reactionPanelNorth.add(reactionPanelNorth1);
@@ -954,9 +957,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 //						}
 						if (!error) {
 							// Add SBOL annotation to reaction
-							List<URI> sbolURIs = sbolField.getSBOLURIs();
-							if (sbolURIs.size() > 0) {
-								SBOLAnnotation sbolAnnot = new SBOLAnnotation(react.getMetaId(), sbolURIs);
+							if (sbolField.getSBOLURIs().size() > 0) {
+								SBOLAnnotation sbolAnnot = new SBOLAnnotation(react.getMetaId(), sbolField.getSBOLURIs(),
+										sbolField.getSBOLStrand());
 								AnnotationUtility.setSBOLAnnotation(react, sbolAnnot);
 								if (sbolField.wasInitiallyBlank())
 									bioModel.setElementSBOLCount(bioModel.getElementSBOLCount() + 1);

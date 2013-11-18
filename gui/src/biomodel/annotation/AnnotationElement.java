@@ -6,6 +6,7 @@ public class AnnotationElement {
 	
 	private String prefix;
 	private String name;
+	private String literal;
 	private LinkedList<AnnotationAttribute> attributes = new LinkedList<AnnotationAttribute>();
 	private LinkedList<AnnotationNamespace> namespaces = new LinkedList<AnnotationNamespace>();
 	private LinkedList<AnnotationElement> children = new LinkedList<AnnotationElement>();
@@ -17,6 +18,12 @@ public class AnnotationElement {
 	public AnnotationElement(String prefix, String name) {
 		this.prefix = prefix;
 		this.name = name;
+	}
+	
+	public AnnotationElement(String prefix, String name, String literal) {
+		this.prefix = prefix;
+		this.name = name;
+		this.literal = literal;
 	}
 	
 	public String getPrefix() {
@@ -76,22 +83,25 @@ public class AnnotationElement {
 		if (prefix != null)
 			xml = xml + prefix + ":";
 		xml += name;
-		for (AnnotationAttribute attribute : attributes)
-			xml = xml + " " + attribute.toXMLString();
 		for (AnnotationNamespace namespace : namespaces) {
 			xml = xml + " " + namespace.toXMLString();
 		}
-		if (children.size() == 0)
-			xml += "/";
-		xml += ">";
-		for (AnnotationElement child : children)
-			xml += child.toXMLString();
-		if (children.size() > 0) {
+		for (AnnotationAttribute attribute : attributes)
+			xml = xml + " " + attribute.toXMLString();
+		if (literal != null || children.size() > 0) {
+			xml += ">";
+			if (children.size() > 0)
+				for (AnnotationElement child : children)
+					xml += child.toXMLString();
+			else
+				xml += literal;
 			xml += "</";
 			if (prefix != null)
 				xml = xml + prefix + ":";
 			xml = xml + name + ">";
-		}
+		} else
+			xml += "/>";
+		
 		return xml;
 	}
 	

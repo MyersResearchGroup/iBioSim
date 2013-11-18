@@ -34,26 +34,28 @@ public class SBOLField extends JPanel implements ActionListener {
 	private JLabel sbolLabel;
 	private JTextField sbolText = new JTextField(20);
 	private List<URI> sbolURIs = new LinkedList<URI>();
-	private List<URI> initialURIs;
+	private String sbolStrand;
 	private boolean initiallyBlank;
 	private JButton sbolButton = new JButton("Associate SBOL");
 	private ModelEditor gcmEditor;
 	private boolean isModelPanelField;
 	private URI removedBioSimURI;
 	
-	public SBOLField(List<URI> sbolURIs, String sbolType, ModelEditor gcmEditor, int styleOption, boolean isModelPanelField) {
+	public SBOLField(List<URI> sbolURIs, String sbolStrand, String sbolType, ModelEditor gcmEditor, 
+			int styleOption, boolean isModelPanelField) {
 		super(new GridLayout(1, styleOption));
 		this.sbolURIs.addAll(sbolURIs);
+		this.sbolStrand = sbolStrand;
 		constructField(sbolType, gcmEditor, styleOption, isModelPanelField);
 	}
 	
 	public SBOLField(String sbolType, ModelEditor gcmEditor, int styleOption, boolean isModelPanelField) {
 		super(new GridLayout(1, styleOption));
+		sbolStrand = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
 		constructField(sbolType, gcmEditor, styleOption, isModelPanelField);
 	}
 	
 	public void constructField(String sbolType, ModelEditor gcmEditor, int styleOption, boolean isModelPanelField) {
-		this.initialURIs = new LinkedList<URI>(sbolURIs);
 		initiallyBlank = sbolURIs.size() == 0;
 		this.sbolType = sbolType;
 		this.styleOption = styleOption;
@@ -74,10 +76,6 @@ public class SBOLField extends JPanel implements ActionListener {
 	
 	public boolean wasInitiallyBlank() {
 		return initiallyBlank;
-	}
-	
-	public List<URI> getInitialURIs() {
-		return initialURIs;
 	}
 	
 	public String getType() {
@@ -102,6 +100,14 @@ public class SBOLField extends JPanel implements ActionListener {
 	
 	public void addSBOLURI(URI uri) {
 		sbolURIs.add(uri);
+	}
+	
+	public String getSBOLStrand() {
+		return sbolStrand;
+	}
+	
+	public void setSBOLStrand(String sbolStrand) {
+		this.sbolStrand = sbolStrand;
 	}
 	
 	public boolean isValidText() {
@@ -143,12 +149,14 @@ public class SBOLField extends JPanel implements ActionListener {
 			HashSet<String> sbolFilePaths = gcmEditor.getGui().getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION);
 			SBOLAssociationPanel  associationPanel;
 			if (isModelPanelField) {
-				associationPanel = new SBOLAssociationPanel(sbolFilePaths, sbolURIs, 
+				associationPanel = new SBOLAssociationPanel(sbolFilePaths, sbolURIs, sbolStrand, 
 						SBOLUtility.soSynonyms(sbolType), gcmEditor.getBioModel().getSBMLDocument().getModel().getId());
 				removedBioSimURI = associationPanel.getRemovedBioSimURI();
 			} else
-				associationPanel = new SBOLAssociationPanel(sbolFilePaths, sbolURIs, SBOLUtility.soSynonyms(sbolType));
+				associationPanel = new SBOLAssociationPanel(sbolFilePaths, sbolURIs, sbolStrand,
+						SBOLUtility.soSynonyms(sbolType));
 			sbolURIs = associationPanel.getComponentURIs();
+			sbolStrand = associationPanel.getComponentStrand();
 		} 
 	}
 	

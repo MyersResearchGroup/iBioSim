@@ -35,6 +35,7 @@ public class SBOLAssemblyGraph {
 	private Set<SBOLAssemblyNode> startNodes;
 	private SBOLAssemblyGraph flatAssemblyGraph;
 	private boolean containsSBOL = false;
+	private boolean minusFlag = true;
 	
 	public SBOLAssemblyGraph(BioModel biomodel) {
 		assemblyNodes = new HashSet<SBOLAssemblyNode>(); // Initialize map of SBML element meta IDs to assembly nodes they identify
@@ -77,8 +78,6 @@ public class SBOLAssemblyGraph {
 		
 		constructReverseEdges();
 		selectStartNodes();
-//		idNodes();
-//		print();
 	}
 	
 	// Creates assembly nodes for submodels and connects them to the nodes for their input/output species
@@ -91,7 +90,8 @@ public class SBOLAssemblyGraph {
 				// Stores SBOL annotating the submodel instantiation if present
 				// If not then stores SBOL annotating the model referenced by the submodel instantiation
 				Submodel sbmlSubmodel = compSBMLModel.getListOfSubmodels().get(i);
-				List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlSubmodel);
+				List<URI> sbolURIs = new LinkedList<URI>();
+				String sbolStrand = AnnotationUtility.parseSBOLAnnotation(sbmlSubmodel, sbolURIs);
 				if (sbolURIs.size() > 0) {
 					containsSBOL = true;
 					canFlatten = false;
@@ -100,7 +100,7 @@ public class SBOLAssemblyGraph {
 					BioModel subBioModel = new BioModel(path);
 					subBioModel.load(subSBMLFileID);
 					Model subSBMLModel = subBioModel.getSBMLDocument().getModel();
-					sbolURIs = AnnotationUtility.parseSBOLAnnotation(subSBMLModel);
+					sbolStrand = AnnotationUtility.parseSBOLAnnotation(subSBMLModel, sbolURIs);
 					Iterator<URI> uriIterator = sbolURIs.iterator();
 					while (canFlatten && uriIterator.hasNext()) {
 						canFlatten = uriIterator.next().toString().endsWith("iBioSim");
@@ -108,9 +108,15 @@ public class SBOLAssemblyGraph {
 					if (sbolURIs.size() > 0)
 						containsSBOL = true;
 				}
-				SBOLAssemblyNode assemblyNode = new SBOLAssemblyNode(sbolURIs);
+				SBOLAssemblyNode assemblyNode = new SBOLAssemblyNode(sbolURIs, sbolStrand);
+//				if (minusFlag){
+//					assemblyNode.setStrand(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND);
+//					minusFlag = false;
+//				} else
+//					minusFlag = true;
 				assemblyNodes.add(assemblyNode);
 				idToNode.put(sbmlSubmodel.getId(), assemblyNode);
+				assemblyNode.setID(sbmlSubmodel.getId());
 			}
 			return canFlatten;
 		} else
@@ -121,10 +127,12 @@ public class SBOLAssemblyGraph {
 	private void parseSpeciesSBOL(Model sbmlModel, HashMap<String, SBOLAssemblyNode> idToNode) {
 		for (int i = 0; i < sbmlModel.getSpeciesCount(); i++) {
 			Species sbmlSpecies = sbmlModel.getListOfSpecies().get(i);
-			List<URI> sbolURI = AnnotationUtility.parseSBOLAnnotation(sbmlSpecies);
-			SBOLAssemblyNode assemblyNode = new SBOLAssemblyNode(sbolURI);
+			List<URI> sbolURIs = new LinkedList<URI>(); 
+			String sbolStrand = AnnotationUtility.parseSBOLAnnotation(sbmlSpecies, sbolURIs);
+			SBOLAssemblyNode assemblyNode = new SBOLAssemblyNode(sbolURIs, sbolStrand);
 			assemblyNodes.add(assemblyNode);
 			idToNode.put(sbmlSpecies.getId(), assemblyNode);
+			assemblyNode.setID(sbmlSpecies.getId());
 			if (sbmlSpecies.getExtensionPackages().containsKey(CompConstant.namespaceURI)) {
 				CompSBasePlugin compSBMLSpecies = SBMLutilities.getCompSBasePlugin(sbmlSpecies);
 				Set<SBOLAssemblyNode> submodelNodes = new HashSet<SBOLAssemblyNode>();
@@ -149,7 +157,7 @@ public class SBOLAssemblyGraph {
 					assemblyEdges.get(assemblyNode).addAll(submodelNodes);
 				}
 			}
-			if (sbolURI.size() > 0)
+			if (sbolURIs.size() > 0)
 				containsSBOL = true;
 		}
 	}
@@ -158,10 +166,12 @@ public class SBOLAssemblyGraph {
 	private void parseParameterSBOL(Model sbmlModel, HashMap<String, SBOLAssemblyNode> idToNode) {
 		for (int i = 0; i < sbmlModel.getParameterCount(); i++) {
 			Parameter sbmlParameter = sbmlModel.getParameter(i);
-			List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlParameter);
-			SBOLAssemblyNode assemblyNode = new SBOLAssemblyNode(sbolURIs);
+			List<URI> sbolURIs = new LinkedList<URI>();
+			String sbolStrand = AnnotationUtility.parseSBOLAnnotation(sbmlParameter, sbolURIs);
+			SBOLAssemblyNode assemblyNode = new SBOLAssemblyNode(sbolURIs, sbolStrand);
 			assemblyNodes.add(assemblyNode);
 			idToNode.put(sbmlParameter.getId(), assemblyNode);
+			assemblyNode.setID(sbmlParameter.getId());
 			if (sbmlParameter.getExtensionPackages().containsKey(CompConstant.namespaceURI)) {
 				CompSBasePlugin compSBMLParameter = SBMLutilities.getCompSBasePlugin(sbmlParameter);
 				Set<SBOLAssemblyNode> submodelNodes = new HashSet<SBOLAssemblyNode>();
@@ -197,10 +207,12 @@ public class SBOLAssemblyGraph {
 		for (int i = 0; i < sbmlModel.getReactionCount(); i++) {
 			Reaction sbmlReaction = sbmlModel.getReaction(i);
 			// Creates assembly node for reaction
-			List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlReaction);
-			SBOLAssemblyNode assemblyNode = new SBOLAssemblyNode(sbolURIs);
+			List<URI> sbolURIs = new LinkedList<URI>();
+			String sbolStrand = AnnotationUtility.parseSBOLAnnotation(sbmlReaction, sbolURIs);
+			SBOLAssemblyNode assemblyNode = new SBOLAssemblyNode(sbolURIs, sbolStrand);
 			assemblyNodes.add(assemblyNode);
 			idToNode.put(sbmlReaction.getId(), assemblyNode);
+			assemblyNode.setID(sbmlReaction.getId());
 			if (sbolURIs.size() > 0)
 				containsSBOL = true;
 		}
@@ -283,8 +295,9 @@ public class SBOLAssemblyGraph {
 			Rule sbmlRule = sbmlModel.getRule(i);
 			// Creates assembly node for rule
 			if (sbmlRule.isAssignment() || sbmlRule.isRate()) {
-				List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlRule);
-				SBOLAssemblyNode assemblyNode = new SBOLAssemblyNode(sbolURIs);
+				List<URI> sbolURIs = new LinkedList<URI>();
+				String sbolStrand = AnnotationUtility.parseSBOLAnnotation(sbmlRule, sbolURIs);
+				SBOLAssemblyNode assemblyNode = new SBOLAssemblyNode(sbolURIs, sbolStrand);
 				assemblyNodes.add(assemblyNode);
 				// Connects assembly nodes for input species and parameters to node for rule
 				for (String input : parseInputHelper(sbmlRule.getMath())) {
@@ -412,7 +425,7 @@ public class SBOLAssemblyGraph {
 	}
 	
 	public void print() {
-		idNodes();
+//		idNodes();
 		HashMap<SBOLAssemblyNode, String> nodeToState = new HashMap<SBOLAssemblyNode, String>();
 		int stateIndex = 0;
 		for (SBOLAssemblyNode assemblyNode : assemblyNodes) {

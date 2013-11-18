@@ -38,7 +38,7 @@ public class SBOLSynthesisNode {
 	}
 	
 	private void processDNAComponents(SBase sbmlElement, SBOLFileManager fileManager) {
-		compURIs = AnnotationUtility.parseSBOLAnnotation(sbmlElement);
+		AnnotationUtility.parseSBOLAnnotation(sbmlElement, compURIs);
 		List<DnaComponent> dnaComps = fileManager.resolveURIs(compURIs);
 		nucleotideCount = SBOLUtility.countNucleotides(dnaComps);
 		Set<String> soFilterTypes = new HashSet<String>();

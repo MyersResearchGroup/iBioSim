@@ -7,6 +7,8 @@ import java.util.*;
 import java.util.prefs.Preferences;
 import javax.swing.*;
 
+import biomodel.util.GlobalConstants;
+
 /**
  * This class contains static methods that perform tasks based on which buttons
  * are pressed.
@@ -67,7 +69,8 @@ public class Utility {
 					fd = new FileDialog(frame, approve, FileDialog.LOAD);
 					fd.setFilenameFilter(new FilenameFilter() {
 						public boolean accept(File dir, String name) {
-							return name.endsWith(".xml") || name.endsWith(".sbol");
+							return name.endsWith(".xml") || name.endsWith(GlobalConstants.SBOL_FILE_EXTENSION)
+									|| name.endsWith(GlobalConstants.RDF_FILE_EXTENSION);
 						}
 					});
 				}

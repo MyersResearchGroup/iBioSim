@@ -135,7 +135,15 @@ public class SBOLFileManager {
 //				if (identityManager.getSynthURI().toString().endsWith("iBioSim"))
 			SBOLUtility.mergeDNAComponent(identityManager.getBioSimURI(), dnaComp, sbolDoc);
 			if (sbolFilePath.equals(targetFilePath))
-				SBOLUtility.addDNAComponent(dnaComp, sbolDoc);
+				SBOLUtility.addDNAComponent(dnaComp, sbolDoc, false);
+//			SBOLDocument sbolDoc2 = new SBOLDocumentImpl();
+//			Set<String> uris = new HashSet<String>();
+//			for (SBOLRootObject obj : sbolDoc.getContents()) {
+//				if (!uris.contains(obj.getURI().toString())) {
+//					sbolDoc2.addContent(obj);
+//					uris.add(obj.getURI().toString());
+//				}
+//			}
 			SBOLUtility.writeSBOLDocument(sbolFilePath, sbolDoc);
 //			}
 		}
@@ -144,7 +152,7 @@ public class SBOLFileManager {
 	public void saveDNAComponents(List<DnaComponent> dnaComps, String filePath) {
 		SBOLDocument sbolDoc = new SBOLDocumentImpl();
 		for (DnaComponent dnaComp : dnaComps)
-			SBOLUtility.addDNAComponent(dnaComp, sbolDoc);
+			SBOLUtility.addDNAComponent(dnaComp, sbolDoc, false);
 		SBOLUtility.writeSBOLDocument(filePath, sbolDoc);
 	}
 	
@@ -155,13 +163,13 @@ public class SBOLFileManager {
 			sbolDoc = SBOLUtility.loadSBOLFile(exportFilePath);
 			if (sbolDoc != null) {
 				for (DnaComponent dnaComp : dnaComps)
-					SBOLUtility.addDNAComponent(dnaComp, sbolDoc);
+					SBOLUtility.addDNAComponent(dnaComp, sbolDoc, false);
 				SBOLUtility.writeSBOLDocument(exportFilePath, sbolDoc);
 			}
 		} else {
 			sbolDoc = SBOLFactory.createDocument();
 			for (DnaComponent dnaComp : dnaComps)
-				SBOLUtility.addDNAComponent(dnaComp, sbolDoc);
+				SBOLUtility.addDNAComponent(dnaComp, sbolDoc, false);
 			try {
 				exportFile.createNewFile();
 			} catch (IOException e) {
