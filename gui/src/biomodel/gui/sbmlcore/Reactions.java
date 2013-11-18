@@ -772,10 +772,12 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
+				// TODO: do not check if flux bound selected
 				else if (complex==null && production==null && SBMLutilities.myParseFormula(kineticLaw.getText().trim()) == null) {
 					JOptionPane.showMessageDialog(Gui.frame, "Unable to parse kinetic law.", "Kinetic Law Error", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
+				// TODO: do not check if flux bound selected
 				else if (complex==null && production==null){
 					ArrayList<String> invalidKineticVars = getInvalidVariablesInReaction(kineticLaw.getText().trim(), true, "", false);
 					if (invalidKineticVars.size() > 0) {
@@ -805,6 +807,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						error = SBMLutilities.checkNumFunctionArguments(gcm.getSBMLDocument(), SBMLutilities.myParseFormula(kineticLaw.getText().trim()));
 					}
 				}
+				// TODO: do flux bound syntax check here if needed
+				
 			}
 			if (!error && complex==null && production==null) {
 				if (SBMLutilities.returnsBoolean(bioModel.addBooleans(kineticLaw.getText().trim()), bioModel.getSBMLDocument().getModel())) {
@@ -886,6 +890,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							port.setIdRef(react.getId());
 						}
 					}
+					// TODO: if kinetic law selected do below
 					if (complex==null && production==null) {
 						react.getKineticLaw().setMath(bioModel.addBooleans(kineticLaw.getText().trim()));
 					} else if (complex!=null) {
@@ -894,6 +899,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						react.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createProductionKineticLaw(production)));
 					}
 					error = checkKineticLawUnits(react.getKineticLaw());
+					// TODO: remove flux bounds if kinetic law selected
+					// TODO: else set flux bound, remember remove the kinetic law
+					//react.unsetKineticLaw();
 					if (!error) {
 						error = SBMLutilities.checkCycles(gcm.getSBMLDocument());
 						if (error) {
@@ -980,11 +988,13 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				}
 				else {
 					Reaction react = gcm.getSBMLDocument().getModel().createReaction();
+					// TODO: don't create kinetic law if flux bound
 					react.createKineticLaw();
 					int index = reactions.getSelectedIndex();
 					for (int i = 0; i < changedParameters.size(); i++) {
 						react.getKineticLaw().addLocalParameter(changedParameters.get(i));
 					}
+					// TODO: TO HERE
 					for (int i = 0; i < changedProducts.size(); i++) {
 						react.addProduct(changedProducts.get(i));
 					}
@@ -1016,6 +1026,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						port.setId(GlobalConstants.SBMLREACTION+"__"+react.getId());
 						port.setIdRef(react.getId());
 					}
+					// TOOD: only do below for kinetic law
 					if (complex==null && production==null) {
 						react.getKineticLaw().setMath(bioModel.addBooleans(kineticLaw.getText().trim()));
 					} else if (complex!=null) {
@@ -1024,6 +1035,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						react.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createProductionKineticLaw(production)));
 					}
 					error = checkKineticLawUnits(react.getKineticLaw());
+					// TODO: else add flux bounds
 					if (!error) {
 						error = SBMLutilities.checkCycles(gcm.getSBMLDocument());
 						if (error) {
