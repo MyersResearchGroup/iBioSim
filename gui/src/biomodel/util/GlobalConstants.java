@@ -135,13 +135,13 @@ public class GlobalConstants {
 	public static final String SO_CDS = "SO_0000316";
 	public static final String SBOL_DNA_COMPONENT = "sbolDnaComponent";
 	public static final String GENETIC_CONSTRUCT_REGEX_DEFAULT = "(promoter(ribosome entry site,coding sequence)+terminator+)+";
-	public static final String GENETIC_CONSTRUCT_REGEX_PREFERENCE = "biosim.synthesis.regex";
-	public static final String SBOL_AUTHORITY_PREFERENCE = "biosim.synthesis.uri";
+	public static final String GENETIC_CONSTRUCT_REGEX_PREFERENCE = "biosim.assembly.regex";
+	public static final String SBOL_AUTHORITY_PREFERENCE = "biosim.assembly.authority";
 	public static final String SBOL_AUTHORITY_DEFAULT = "http://www.async.ece.utah.edu";
 	public static final String CONSTRUCT_VALIDATION_DEFAULT = "True";
-	public static final String CONSTRUCT_VALIDATION_PREFERENCE = "biosim.synthesis.validation";
+	public static final String CONSTRUCT_VALIDATION_PREFERENCE = "biosim.assembly.validation";
 	public static final String CONSTRUCT_VALIDATION_WARNING_DEFAULT = "False";
-	public static final String CONSTRUCT_VALIDATION_WARNING_PREFERENCE = "biosim.synthesis.validation_warning";
+	public static final String CONSTRUCT_VALIDATION_WARNING_PREFERENCE = "biosim.assembly.warning";
 	public static final String CONSTRUCT_VALIDATION_FAIL_STATE_ID = "Sf";
 	public static final String SBOL_ASSEMBLY_PLUS_STRAND = "+";
 	public static final String SBOL_ASSEMBLY_MINUS_STRAND = "-";
