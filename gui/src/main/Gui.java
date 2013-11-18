@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
@@ -3443,7 +3444,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					System.gc();
 					if (fullPath.endsWith(".xml")) {
 						SBMLDocument document = SBMLutilities.readSBML(fullPath);
-						Iterator<URI> sbolIterator = AnnotationUtility.parseSBOLAnnotation(document.getModel()).iterator();
+						List<URI> sbolURIs = new LinkedList<URI>();
+						AnnotationUtility.parseSBOLAnnotation(document.getModel(), sbolURIs);
+						Iterator<URI> sbolIterator = sbolURIs.iterator();
 						while (sbolIterator != null && sbolIterator.hasNext()) {
 							URI sbolURI = sbolIterator.next();
 							if (sbolURI.toString().endsWith("iBioSim")) {
@@ -4841,7 +4844,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					if (overwrite(root + separator + copy, copy)) {
 						if (copy.endsWith(".xml")) {
 							SBMLDocument document = SBMLutilities.readSBML(tree.getFile());
-							List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(document.getModel());
+							List<URI> sbolURIs = new LinkedList<URI>();
+							String sbolStrand = AnnotationUtility.parseSBOLAnnotation(document.getModel(), sbolURIs);
 							Iterator<URI> sbolIterator = sbolURIs.iterator();
 							while (sbolIterator != null && sbolIterator.hasNext()) {
 								if (sbolIterator.next().toString().endsWith("iBioSim")) {
@@ -4849,7 +4853,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									sbolIterator = null;
 									if (sbolURIs.size() > 0)
 										AnnotationUtility.setSBOLAnnotation(document.getModel(), 
-											new SBOLAnnotation(document.getModel().getMetaId(), sbolURIs));
+											new SBOLAnnotation(document.getModel().getMetaId(), sbolURIs, sbolStrand));
 									else
 										AnnotationUtility.removeSBOLAnnotation(document.getModel());
 								}

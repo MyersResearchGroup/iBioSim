@@ -68,13 +68,16 @@ public class SBOLUtility {
 	// Adds given DNA component and all its subcomponents to top level of SBOL Document if not already present
 	// Subcomponents of the given component are replaced by components of matching URIs from the SBOL document to avoid having
 	// multiple data structures of the same URI
-	public static void addDNAComponent(DnaComponent dnac, SBOLDocument sbolDoc) {
+	public static void addDNAComponent(DnaComponent dnac, SBOLDocument sbolDoc, boolean flatten) {
 		dnac = replaceDNAComponent(dnac, sbolDoc);
 		Set<String> topURIs = new HashSet<String>();
 		for (SBOLRootObject sbolObj : sbolDoc.getContents())
 			if (sbolObj instanceof DnaComponent)
 				topURIs.add(sbolObj.getURI().toString());
-		flattenDNAComponent(dnac, sbolDoc, topURIs);
+		if (flatten)
+			flattenDNAComponent(dnac, sbolDoc, topURIs);
+		else if (!topURIs.contains(dnac.getURI().toString()))
+			sbolDoc.addContent(dnac);
 	}
 	
 	// Adds given DNA component and all its subcomponents to top level of SBOL Document if not already present
@@ -284,7 +287,11 @@ public class SBOLUtility {
 			String prevSubStrand = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
 			int minusIndex = 0;
 			for (SequenceAnnotation anno : annos) {
-				String subStrand = anno.getStrand().getSymbol();
+				String subStrand;
+				if (anno.getStrand() == null) {
+					subStrand = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
+				} else
+					subStrand = anno.getStrand().getSymbol();
 				List<String> nextTypes;
 				if (strand.equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND))
 					if (subStrand.equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND))
@@ -455,21 +462,41 @@ public class SBOLUtility {
 		return types;
 	}
 	
+//	public static String convertURIToSOType(URI uri) {
+//		String temp = uri.toString();
+//		if (temp.equals(SequenceOntology.PROMOTER.toString()))
+//			return "promoter";
+//		else if (temp.equals(SequenceOntology.type("SO_0001203").toString()))
+//			return "RNA polymerase promoter";
+//		else if (temp.equals(SequenceOntology.type("SO_0000139").toString()))
+//			return "ribosome entry site";
+//		else if (temp.equals(SequenceOntology.CDS.toString()))
+//			return "coding sequence";
+//		else if (temp.equals(SequenceOntology.TERMINATOR.toString()))
+//			return "terminator";
+//		else if (temp.equals(SequenceOntology.type("SO_0000614").toString()))
+//			return "bacterial terminator";
+//		else if (temp.equals(SequenceOntology.type("SO_0000804").toString()))
+//			return "engineered region";
+//		else
+//			return "N/A";
+//	}
+	
 	public static String convertURIToSOType(URI uri) {
-		String temp = uri.toString();
-		if (temp.equals(SequenceOntology.PROMOTER.toString()))
+		if (uri.equals(SequenceOntology.PROMOTER))
 			return "promoter";
-		else if (temp.equals(SequenceOntology.type("SO_0001203").toString()))
+		else if (uri.equals(SequenceOntology.type("SO_0001203")))
 			return "RNA polymerase promoter";
-		else if (temp.equals(SequenceOntology.type("SO_0000139").toString()))
+		else if (uri.equals(SequenceOntology.type("SO_0000139")) 
+				|| uri.equals(SequenceOntology.type("SO_0000552")))
 			return "ribosome entry site";
-		else if (temp.equals(SequenceOntology.CDS.toString()))
+		else if (uri.equals(SequenceOntology.CDS))
 			return "coding sequence";
-		else if (temp.equals(SequenceOntology.TERMINATOR.toString()))
+		else if (uri.equals(SequenceOntology.TERMINATOR))
 			return "terminator";
-		else if (temp.equals(SequenceOntology.type("SO_0000614").toString()))
+		else if (uri.equals(SequenceOntology.type("SO_0000614")))
 			return "bacterial terminator";
-		else if (temp.equals(SequenceOntology.type("SO_0000804").toString()))
+		else if (uri.equals(SequenceOntology.type("SO_0000804")))
 			return "engineered region";
 		else
 			return "N/A";

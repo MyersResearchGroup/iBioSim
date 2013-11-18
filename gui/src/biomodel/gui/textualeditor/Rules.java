@@ -220,9 +220,11 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			}
 			if (!modelEditor.isParamsOnly()) {
 				//Parse out SBOL annotations and add to SBOL field
-				List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(rule);
+				List<URI> sbolURIs = new LinkedList<URI>();
+				String sbolStrand = AnnotationUtility.parseSBOLAnnotation(rule, sbolURIs);
 				// Field for annotating rules with SBOL DNA components
-				sbolField = new SBOLField(sbolURIs, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 2, false);
+				sbolField = new SBOLField(sbolURIs, sbolStrand, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 
+						2, false);
 			}
 			if (rule.isSetMetaId()) {
 				id.setText(rule.getMetaId());
@@ -243,7 +245,8 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		}
 		else {
 			// Field for annotating rules with SBOL DNA components
-			sbolField = new SBOLField(new LinkedList<URI>(), GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 2, false);
+			sbolField = new SBOLField(new LinkedList<URI>(), GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND, 
+					GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 2, false);
 			if (!assignRuleVar("") && !rateRuleVar("")) {
 				ruleType.removeItem("Assignment");
 				ruleType.removeItem("Rate");
@@ -427,9 +430,9 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 //						}
 						if (!error) {
 							// Add SBOL annotation to rule
-							List<URI> sbolURIs = sbolField.getSBOLURIs();
-							if (sbolURIs.size() > 0) {
-								SBOLAnnotation sbolAnnot = new SBOLAnnotation(r.getMetaId(), sbolURIs);
+							if (sbolField.getSBOLURIs().size() > 0) {
+								SBOLAnnotation sbolAnnot = new SBOLAnnotation(r.getMetaId(), sbolField.getSBOLURIs(), 
+										sbolField.getSBOLStrand());
 								AnnotationUtility.setSBOLAnnotation(r, sbolAnnot);
 								if (sbolField.wasInitiallyBlank())
 									bioModel.setElementSBOLCount(bioModel.getElementSBOLCount() + 1);

@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URI;
+import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -148,7 +149,11 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			extentUnits.addItem("item");
 			extentUnits.addItem("kilogram");
 			extentUnits.addItem("mole");
-			sbolField.setSBOLURIs(AnnotationUtility.parseSBOLAnnotation(sbmlModel));
+			
+			List<URI> sbolURIs = new LinkedList<URI>();
+			String sbolStrand = AnnotationUtility.parseSBOLAnnotation(sbmlModel, sbolURIs);
+			sbolField.setSBOLURIs(sbolURIs);
+			sbolField.setSBOLStrand(sbolStrand);
 			
 			ListOf listOfParameters = bioModel.getSBMLDocument().getModel().getListOfParameters();
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
@@ -203,15 +208,12 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			error = false;
 			// Add SBOL annotation to SBML model itself
 			if (!error) {
-				List<URI> sbolURIs = sbolField.getSBOLURIs();
-				if (sbolURIs.size() > 0) {
-					SBOLAnnotation sbolAnnot = new SBOLAnnotation(sbmlModel.getMetaId(), sbolURIs);
+				if (sbolField.getSBOLURIs().size() > 0) {
+					SBOLAnnotation sbolAnnot = new SBOLAnnotation(sbmlModel.getMetaId(), sbolField.getSBOLURIs(), 
+							sbolField.getSBOLStrand());
 					AnnotationUtility.setSBOLAnnotation(sbmlModel, sbolAnnot);
-					bioModel.setModelSBOLAnnotationFlag(true);
-				} else {
+				} else 
 					AnnotationUtility.removeSBOLAnnotation(sbmlModel);
-					bioModel.setModelSBOLAnnotationFlag(false);
-				}
 				// Deletes iBioSim composite components that have been removed from association panel
 //				URI deletionURI = sbolField.getDeletionURI();
 //				if (deletionURI != null)

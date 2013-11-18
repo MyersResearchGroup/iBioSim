@@ -31,7 +31,7 @@ public class SBOLAssembler {
 	public DnaComponent exportDnaComponent(String exportFilePath, String saveDirectory) {
 		DnaComponent assemblyComp = null;
 		SBOLDocument sbolDoc = SBOLFactory.createDocument();
-		SBOLUtility.addDNAComponent(assemblyComp, sbolDoc);
+		SBOLUtility.addDNAComponent(assemblyComp, sbolDoc, false);
 		SBOLUtility.writeSBOLDocument(exportFilePath, sbolDoc);
 		return assemblyComp;
 	}
@@ -72,13 +72,23 @@ public class SBOLAssembler {
 			
 			int position = 1;
 			LinkedList<String> subCompTypes = new LinkedList<String>();
-			for (SBOLAssemblyNode assemblyNode : orderedNodes) 
-				for (DnaComponent subComp : assemblyNode.getDNAComponents()) {
-					position = addSubComponent(position, subComp, assembledComp);
-					if (position == -1)
-						return null;
-					subCompTypes.addAll(SBOLUtility.loadDNAComponentTypes(subComp));
-				}
+			for (SBOLAssemblyNode assemblyNode : orderedNodes) {
+				List<DnaComponent> subComps = assemblyNode.getDNAComponents();
+				if (assemblyNode.getStrand().equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND))
+					for (int i = subComps.size() - 1; i >= 0; i--) {
+						position = addSubComponent(position, subComps.get(i), assembledComp, assemblyNode.getStrand());
+						if (position == -1)
+							return null;
+						subCompTypes.addAll(0, SBOLUtility.loadDNAComponentTypes(subComps.get(i)));
+					}
+				else
+					for (int i = 0; i < subComps.size(); i++) {
+						position = addSubComponent(position, subComps.get(i), assembledComp, assemblyNode.getStrand());
+						if (position == -1)
+							return null;
+						subCompTypes.addAll(SBOLUtility.loadDNAComponentTypes(subComps.get(i)));
+					}
+			}
 			if (Preferences.userRoot().get(GlobalConstants.CONSTRUCT_VALIDATION_PREFERENCE, "").equals("True") &&
 					Preferences.userRoot().get(GlobalConstants.CONSTRUCT_VALIDATION_WARNING_PREFERENCE, "").equals("True") &&
 					!seqValidator.validateCompleteConstruct(subCompTypes, false)) {
@@ -169,18 +179,27 @@ public class SBOLAssembler {
 		return flatOrderedNodes;
 	}
 	
-	private int addSubComponent(int position, DnaComponent subComp, DnaComponent synthComp) {	
+	private int addSubComponent(int position, DnaComponent subComp, DnaComponent parentComp, String strand) {	
 		if (subComp.getDnaSequence() != null && subComp.getDnaSequence().getNucleotides() != null 
 				&& subComp.getDnaSequence().getNucleotides().length() >= 1) {
 			SequenceAnnotation annot = new SequenceAnnotationImpl();
 			annot.setBioStart(position);
 			position += subComp.getDnaSequence().getNucleotides().length() - 1;
 			annot.setBioEnd(position);
-			annot.setStrand(StrandType.POSITIVE);
+			if (strand.equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND))
+				annot.setStrand(StrandType.NEGATIVE);
+			else
+				annot.setStrand(StrandType.POSITIVE);
 			annot.setSubComponent(subComp);
-			synthComp.addAnnotation(annot);
+			parentComp.addAnnotation(annot);
 			position++;
-			synthComp.getDnaSequence().setNucleotides(synthComp.getDnaSequence().getNucleotides() + subComp.getDnaSequence().getNucleotides());
+			DnaSequenceImpl subSeq = (DnaSequenceImpl) subComp.getDnaSequence();
+			if (strand.equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND))
+				parentComp.getDnaSequence().setNucleotides(parentComp.getDnaSequence().getNucleotides() 
+					+ subSeq.getReverseComplementaryNucleotides());
+			else
+				parentComp.getDnaSequence().setNucleotides(parentComp.getDnaSequence().getNucleotides() 
+						+ subSeq.getNucleotides());
 		} else {
 			JOptionPane.showMessageDialog(Gui.frame, "DNA Component " + subComp.getDisplayId() + " has no DNA sequence.", 
 					"Missing DNA Sequence", JOptionPane.ERROR_MESSAGE);
@@ -203,22 +222,48 @@ public class SBOLAssembler {
 					seqValidator.validateTerminalConstruct(currentNodeTypes, true);
 					List<SBOLAssemblyNode> nextNodes = new LinkedList<SBOLAssemblyNode>();
 					for (SBOLAssemblyNode nextNode : assemblyGraph.getNextNodes(currentNodes.get(0))) {
-						Set<SBOLAssemblyNode> previousNodes = new HashSet<SBOLAssemblyNode>(assemblyGraph.getPreviousNodes(nextNode));
-						previousNodes.remove(currentNodes.get(0));
-						if (previousNodes.size() == 0 || (seqValidator.isPartialConstructStarted() && !seqValidator.isTerminalConstructValid()) 
-								|| (globalVisitedNodes.containsAll(previousNodes) && !globalVisitedNodes.contains(nextNode))
-								|| (localVisitedNodes.containsAll(previousNodes) && !localVisitedNodes.contains(nextNode))) {
-							List<String> nextNodeTypes = SBOLUtility.loadNodeTypes(nextNode);
-							if (nextNodeTypes.size() > 1)
-								nextNodeTypes = nextNodeTypes.subList(0, 1);
-							if (nextNodeTypes.size() > 0 && 
-									(!seqValidator.validatePartialConstruct(nextNodeTypes, false) 
-									|| !seqValidator.isPartialConstructStarted() 
-									|| (seqValidator.isTerminalConstructValid() 
-											&& !seqValidator.validateTerminalConstruct(nextNodeTypes, false)))) 
-								startNodes.add(nextNode);
-							else if (!localVisitedNodes.contains(nextNode))
-								nextNodes.add(nextNode);
+//						Set<SBOLAssemblyNode> previousNodes = new HashSet<SBOLAssemblyNode>(assemblyGraph.getPreviousNodes(nextNode));
+//						previousNodes.remove(currentNodes.get(0));
+//						if (previousNodes.size() == 0 || (seqValidator.isPartialConstructStarted() && !seqValidator.isTerminalConstructValid()) 
+//								|| (globalVisitedNodes.containsAll(previousNodes) && !globalVisitedNodes.contains(nextNode))
+//								|| (localVisitedNodes.containsAll(previousNodes) && !localVisitedNodes.contains(nextNode))) {
+//							List<String> nextNodeTypes = SBOLUtility.loadNodeTypes(nextNode);
+//							if (nextNodeTypes.size() > 1)
+//								nextNodeTypes = nextNodeTypes.subList(0, 1);
+//							if (nextNodeTypes.size() > 0 && 
+//									(!seqValidator.validatePartialConstruct(nextNodeTypes, false) 
+//									|| !seqValidator.isPartialConstructStarted() 
+//									|| (seqValidator.isTerminalConstructValid() 
+//											&& !seqValidator.validateTerminalConstruct(nextNodeTypes, false)))) 
+//								startNodes.add(nextNode);
+//							else if (!localVisitedNodes.contains(nextNode))
+//								nextNodes.add(nextNode);
+//						}
+						if (!localVisitedNodes.contains(nextNode)) {
+							boolean nextValid = false;
+							if (seqValidator.isPartialConstructStarted() && !seqValidator.isTerminalConstructValid())
+								nextValid = true;
+							else if (!globalVisitedNodes.contains(nextNode)) {
+								Set<SBOLAssemblyNode> previousNodes = new HashSet<SBOLAssemblyNode>(assemblyGraph.getPreviousNodes(nextNode));
+								previousNodes.remove(currentNodes.get(0));
+								if (previousNodes.size() == 0 || localVisitedNodes.containsAll(previousNodes)
+										|| globalVisitedNodes.containsAll(previousNodes))
+									nextValid = true;
+							}
+							if (nextValid) {
+								List<String> nextNodeTypes = SBOLUtility.loadNodeTypes(nextNode);
+								if (nextNodeTypes.size() > 2)
+									nextNodeTypes = nextNodeTypes.subList(0, 2);
+								if (nextNodeTypes.size() > 0 && 
+										(!seqValidator.validatePartialConstruct(nextNodeTypes, false) 
+										|| !seqValidator.isPartialConstructStarted() 
+										|| (seqValidator.isTerminalConstructValid() 
+												&& !seqValidator.validateTerminalConstruct(nextNodeTypes, false)))) 
+									startNodes.add(nextNode);
+								else if (!localVisitedNodes.contains(nextNode))
+									nextNodes.add(nextNode);
+							}
+								
 						}
 					}
 					walkNodes.add(currentNodes.remove(0));
@@ -272,7 +317,7 @@ public class SBOLAssembler {
 //						"without introducing potentially unintended component interactions.", 
 //						"Invalid SBOL Assembly", JOptionPane.ERROR_MESSAGE);
 				return null;
-			} else
+			} else 
 				orderedNodes.addAll(walkNodes);
 			walkNodes.clear();
 			globalVisitedNodes.addAll(localVisitedNodes);
@@ -287,7 +332,7 @@ public class SBOLAssembler {
 			Set<String> startNodeTypes = seqValidator.getStartTypes();
 			for (SBOLAssemblyNode cycleNode : cycleNodes) {
 				List<String> cycleNodeTypes = SBOLUtility.loadNodeTypes(cycleNode);
-				if (cycleNodeTypes.size() > 0 && startNodeTypes.contains(cycleNodeTypes.get(0))) 
+				if (cycleNodeTypes.size() > 1 && startNodeTypes.contains(cycleNodeTypes.get(1))) 
 					startNodes.add(cycleNode);
 			}
 			List<SBOLAssemblyNode> cycleSolution;

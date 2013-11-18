@@ -9,6 +9,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
@@ -585,8 +586,10 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		// Parse out GCM and SBOL annotations and add to respective fields
 		if (!paramsOnly) {
 			// Field for annotating species with SBOL DNA components
-			List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(species);
-			sbolField = new SBOLField(sbolURIs, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 3, false);
+			List<URI> sbolURIs = new LinkedList<URI>();
+			String sbolStrand = AnnotationUtility.parseSBOLAnnotation(species, sbolURIs);
+			sbolField = new SBOLField(sbolURIs, sbolStrand, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 
+					3, false);
 
 			grid.add(sbolField);
 
@@ -891,9 +894,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			
 			if (!paramsOnly) {
 				// Add SBOL annotation to species
-				List<URI> sbolURIs = sbolField.getSBOLURIs();
-				if (sbolURIs.size() > 0) {
-					SBOLAnnotation sbolAnnot = new SBOLAnnotation(species.getMetaId(), sbolURIs);
+				if (sbolField.getSBOLURIs().size() > 0) {
+					SBOLAnnotation sbolAnnot = new SBOLAnnotation(species.getMetaId(), 
+							sbolField.getSBOLURIs(), sbolField.getSBOLStrand());
 					AnnotationUtility.setSBOLAnnotation(species, sbolAnnot);
 					if (sbolField.wasInitiallyBlank())
 						bioModel.setElementSBOLCount(bioModel.getElementSBOLCount() + 1);

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.prefs.Preferences;
@@ -2619,20 +2620,21 @@ public class BioModel {
 		sbmlFile = splitPath[splitPath.length-1].replace(".gcm",".xml");
 		loadSBMLFile(sbmlFile);
 		setElementSBOLCount();
-		setModelSBOLAnnotationFlag();
 	}
 	
 	public void setElementSBOLCount() {
 		elementSBOLCount = 0;
 		ArrayList<SBase> modelElements = SBMLutilities.getListOfAllElements(sbml.getModel());
 		for (int i = 0; i < modelElements.size(); i++) {
-			List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(modelElements.get(i));
+			List<URI> sbolURIs = new LinkedList<URI>();
+			AnnotationUtility.parseSBOLAnnotation(modelElements.get(i), sbolURIs);
 			if (sbolURIs.size() > 0)
 				elementSBOLCount++;
 		}
 		for (int i = 0; i < sbmlCompModel.getListOfSubmodels().size(); i++) {
 			Submodel instantiation = sbmlCompModel.getListOfSubmodels().get(i);
-			List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(instantiation);
+			List<URI> sbolURIs = new LinkedList<URI>();
+			AnnotationUtility.parseSBOLAnnotation(instantiation, sbolURIs);
 			if (sbolURIs.size() > 0)
 				elementSBOLCount++;
 		}
@@ -2651,28 +2653,12 @@ public class BioModel {
 //		}
 //	}
 	
-	public void setModelSBOLAnnotationFlag() {
-		modelSBOLAnnotationFlag = false;
-		Model sbmlModel = sbml.getModel();
-		List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(sbmlModel);
-		if (sbolURIs.size() > 0)
-			modelSBOLAnnotationFlag = true;
-	}
-	
 	public void setElementSBOLCount(int set) {
 		elementSBOLCount = set;
 	}
 	
-	public void setModelSBOLAnnotationFlag(boolean set) {
-		modelSBOLAnnotationFlag = set;
-	}
-	
 	public int getElementSBOLCount() {
 		return elementSBOLCount;
-	}
-	
-	public boolean getModelSBOLAnnotationFlag() {
-		return modelSBOLAnnotationFlag;
 	}
 	
 	// Descriptor array should be size 3 and contain DNA component ID, name, and description in that order

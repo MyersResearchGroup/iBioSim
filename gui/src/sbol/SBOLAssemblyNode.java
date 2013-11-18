@@ -6,20 +6,24 @@ import java.util.List;
 
 import org.sbolstandard.core.DnaComponent;
 
+import biomodel.util.GlobalConstants;
+
 public class SBOLAssemblyNode {
 
 	private List<URI> sbolURIs;
 	private List<DnaComponent> dnaComps;
 	private String id;
-//	private List<SBOLAssemblyNode> nextNodes = new LinkedList<SBOLAssemblyNode>();
-	
-//	public SBOLAssemblyNode() {
-//		
-//	}
+	private String strand;
 	
 	public SBOLAssemblyNode(List<URI> sbolURIs) {
 //		this.id = id;
 		this.sbolURIs = sbolURIs;
+		this.strand = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
+	}
+	
+	public SBOLAssemblyNode(List<URI> sbolURIs, String strand) {
+		this.sbolURIs = sbolURIs;
+		this.strand = strand;
 	}
 	
 	public String getID() {
@@ -30,22 +34,10 @@ public class SBOLAssemblyNode {
 		this.id = id;
 	}
 	
-//	public String toString() {
-//		return id;
-//	}
-	
 	public List<URI> getURIs() {
 		return sbolURIs;
 	}
-//	
-//	public void addURI(URI uri) {
-//		sbolURIs.add(uri);
-//	}
-//	
-//	public void setURIs(List<URI> sbolURIs) {
-//		this.sbolURIs = sbolURIs;
-//	}
-//	
+
 	public List<DnaComponent> getDNAComponents() {
 		return dnaComps;
 	}
@@ -54,15 +46,16 @@ public class SBOLAssemblyNode {
 		this.dnaComps = dnaComps;
 	}
 	
-//	public void addNextNode(SBOLAssemblyNode nextNode) {
-//		nextNodes.add(nextNode);
-//	}
-//	
-//	public void setNextNodes(List<SBOLAssemblyNode> nextNodes) {
-//		this.nextNodes = nextNodes;
-//	}
-//	
-//	public List<SBOLAssemblyNode> getNextNodes() {
-//		return nextNodes;
-//	}
+	public String toString() {
+		return id;
+	}
+	
+	public void setStrand(String strand) {
+		this.strand = strand;
+	}
+	
+	public String getStrand() {
+		return strand;
+	}
+	
 }

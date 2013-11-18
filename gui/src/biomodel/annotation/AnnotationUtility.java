@@ -16,6 +16,7 @@ import org.sbml.jsbml.xml.XMLTriple;
 import org.sbml.jsbml.JSBML;
 
 import biomodel.gui.textualeditor.SBMLutilities;
+import biomodel.util.GlobalConstants;
 import biomodel.util.Utility;
 
 public class AnnotationUtility {
@@ -39,23 +40,29 @@ public class AnnotationUtility {
 		sbmlObject.setAnnotation(new Annotation(annotation));
 	}
 	
-	public static List<URI> parseSBOLAnnotation(SBase sbmlObject) {
+	public static String parseSBOLAnnotation(SBase sbmlObject, List<URI> sbolURIs) {
 		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-		List<URI> sbolURIs = new LinkedList<URI>();
 		Pattern sbolPattern = Pattern.compile(SBOL_ANNOTATION);
 		Matcher sbolMatcher = sbolPattern.matcher(annotation);
-		Pattern componentPattern = Pattern.compile(DNA_COMPONENT_ANNOTATION);
-		Matcher componentMatcher = componentPattern.matcher(annotation);
-		while (sbolMatcher.find()) {
-			annotation = sbolMatcher.group(0);
-			while (componentMatcher.find()) 
-				try {
-					sbolURIs.add(new URI(componentMatcher.group(1)));
-				} catch (URISyntaxException e) {
-					e.printStackTrace();
-				}
+		if (sbolMatcher.find()) {
+			Pattern componentPattern = Pattern.compile(DNA_COMPONENTS_ELEMENT);
+			Matcher componentMatcher = componentPattern.matcher(sbolMatcher.group(0));
+			if (componentMatcher.find()) {
+				Pattern uriPattern = Pattern.compile(URI_LIST_ELEMENT);
+				Matcher uriMatcher = uriPattern.matcher(componentMatcher.group(0));
+				while (uriMatcher.find())
+					try {
+						sbolURIs.add(new URI(uriMatcher.group(1)));
+					} catch (URISyntaxException e) {
+						e.printStackTrace();
+					}
+			}
+			Pattern strandPattern = Pattern.compile(STRAND_ELEMENT);
+			Matcher strandMatcher = strandPattern.matcher(sbolMatcher.group(0));
+			if (strandMatcher.find())
+				return strandMatcher.group(1);
 		}
-		return sbolURIs;
+		return GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
 	}
 
 	public static void setSweepAnnotation(SBase sbmlObject, String sweep) {
@@ -363,22 +370,35 @@ public class AnnotationUtility {
 	
 	private static final String XML_NAME_CHAR = "[" + XML_NAME_START_CHAR + "[-\\.[0-9]\\u00B7[\\u0300-\\u036F][\\u203F-\\u2040]]]";
 	
-	private static final String XML_NAME = "(?:" + XML_NAME_START_CHAR + XML_NAME_CHAR + "*)";
+	private static final String XML_NAME = XML_NAME_START_CHAR + XML_NAME_CHAR + "*";
 	
 	// Current regular expression for component URI is \\S+ (any sequence of non-whitespace characters)
 	// until we have a reason to prefer a certain form (e.g. a use case other than copying the URI over)
-	private static final String DNA_COMPONENT_ANNOTATION = "(?:<rdf:li rdf:resource=\"(\\S+)\"/>)";
+	private static final String URI_LIST_ELEMENT = "<rdf:li rdf:resource=\"(\\S+)\"/>";
+	
+	private static final String DNA_COMPONENTS_ELEMENT = 
+			"<mts:DNAComponents>\\s*" +
+				"<rdf:Seq>\\s*" +
+					"(?:" + URI_LIST_ELEMENT + "\\s*)+" +
+				"</rdf:Seq>\\s*" + 
+			"</mts:DNAComponents>";
+	
+	private static final String STRAND_ELEMENT = "<mts:Strand>(\\" + GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND + "|" + GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND + ")</mts:Strand>";
+	
+	private static final String SBOL_ELEMENT = 	
+			"(?:" + DNA_COMPONENTS_ELEMENT + "\\s*" + 
+					STRAND_ELEMENT + "|" + 
+					STRAND_ELEMENT + "\\s*" + 
+					DNA_COMPONENTS_ELEMENT + "|" + 
+					DNA_COMPONENTS_ELEMENT + "|" +
+					STRAND_ELEMENT + ")";
 	
 	private static final String SBOL_ANNOTATION = 
 		"<ModelToSBOL xmlns=\"http://sbolstandard\\.org/modeltosbol/1\\.0#\">\\s*" +
-			"(<rdf:RDF xmlns:rdf=\"http://www\\.w3\\.org/1999/02/22-rdf-syntax-ns#\" xmlns:mts=\"http://sbolstandard\\.org/modeltosbol/1\\.0#\">\\s*|"
-			+ "<rdf:RDF xmlns:mts=\"http://sbolstandard\\.org/modeltosbol/1\\.0#\" xmlns:rdf=\"http://www\\.w3\\.org/1999/02/22-rdf-syntax-ns#\">\\s*)" +
+			"(?:<rdf:RDF xmlns:rdf=\"http://www\\.w3\\.org/1999/02/22-rdf-syntax-ns#\" xmlns:mts=\"http://sbolstandard\\.org/modeltosbol/1\\.0#\">|" +
+			"<rdf:RDF xmlns:mts=\"http://sbolstandard\\.org/modeltosbol/1\\.0#\" xmlns:rdf=\"http://www\\.w3\\.org/1999/02/22-rdf-syntax-ns#\">)\\s*" +
 				"<rdf:Description rdf:about=\"#" + XML_NAME + "\">\\s*" +
-					"<mts:DNAComponents>\\s*" +
-						"<rdf:Seq>\\s*" +
-							"(?:" + DNA_COMPONENT_ANNOTATION + "\\s*)+" +
-						"</rdf:Seq>\\s*" + 
-					"</mts:DNAComponents>\\s*" +
+					SBOL_ELEMENT + "\\s*" +
 				"</rdf:Description>\\s*" +
 			"</rdf:RDF>\\s*" +
 		"</ModelToSBOL>";

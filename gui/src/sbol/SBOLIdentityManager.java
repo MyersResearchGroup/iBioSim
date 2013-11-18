@@ -26,6 +26,7 @@ public class SBOLIdentityManager {
 
 	private BioModel biomodel;
 	private List<URI> modelURIs;
+	private String modelStrand;
 	private List<DnaComponent> modelComps;
 	private int indexOfBioSimURI = -1;
 	private DnaComponent bioSimComp;
@@ -36,7 +37,8 @@ public class SBOLIdentityManager {
 	public SBOLIdentityManager(BioModel biomodel) {
 		this.biomodel = biomodel;
 		loadAuthority();
-		modelURIs = AnnotationUtility.parseSBOLAnnotation(biomodel.getSBMLDocument().getModel());
+		modelURIs = new LinkedList<URI>();
+		modelStrand = AnnotationUtility.parseSBOLAnnotation(biomodel.getSBMLDocument().getModel(), modelURIs);
 		if (modelURIs.size() == 0) {
 			try {
 				modelURIs.add(new URI(uriAuthority + "#iBioSimPlaceHolder"));
@@ -231,9 +233,8 @@ public class SBOLIdentityManager {
 	public void annotateBioModel() {
 		Model sbmlModel = biomodel.getSBMLDocument().getModel();
 		if (modelURIs.size() > 0) {
-			SBOLAnnotation sbolAnnot = new SBOLAnnotation(sbmlModel.getMetaId(), modelURIs);
+			SBOLAnnotation sbolAnnot = new SBOLAnnotation(sbmlModel.getMetaId(), modelURIs, modelStrand);
 			AnnotationUtility.setSBOLAnnotation(sbmlModel, sbolAnnot);
-			biomodel.setModelSBOLAnnotationFlag(true);
 		} else
 			AnnotationUtility.removeSBOLAnnotation(sbmlModel);
 	}

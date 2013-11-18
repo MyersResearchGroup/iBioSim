@@ -4,6 +4,7 @@ package biomodel.gui;
 import java.awt.GridLayout;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JComboBox;
@@ -313,8 +314,10 @@ public class PromoterPanel extends JPanel {
 		// Parse out SBOL annotations and add to SBOL field
 		if (!paramsOnly) {
 			// Field for annotating promoter with SBOL DNA components
-			List<URI> sbolURIs = AnnotationUtility.parseSBOLAnnotation(production);
-			sbolField = new SBOLField(sbolURIs, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 3, false);
+			List<URI> sbolURIs = new LinkedList<URI>();
+			String sbolStrand = AnnotationUtility.parseSBOLAnnotation(production, sbolURIs);
+			sbolField = new SBOLField(sbolURIs, sbolStrand, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 
+					3, false);
 			add(sbolField);
 		}
 
@@ -439,9 +442,9 @@ public class PromoterPanel extends JPanel {
 
 			if (!paramsOnly) {
 				// Add SBOL annotation to promoter
-				List<URI> sbolURIs = sbolField.getSBOLURIs();
-				if (sbolURIs.size() > 0) {
-					SBOLAnnotation sbolAnnot = new SBOLAnnotation(production.getMetaId(), sbolURIs);
+				if (sbolField.getSBOLURIs().size() > 0) {
+					SBOLAnnotation sbolAnnot = new SBOLAnnotation(production.getMetaId(), 
+							sbolField.getSBOLURIs(), sbolField.getSBOLStrand());
 					AnnotationUtility.setSBOLAnnotation(production, sbolAnnot);
 					if (sbolField.wasInitiallyBlank())
 						bioModel.setElementSBOLCount(bioModel.getElementSBOLCount() + 1);

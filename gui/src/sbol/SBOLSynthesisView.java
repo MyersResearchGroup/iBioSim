@@ -377,7 +377,7 @@ public class SBOLSynthesisView extends JTabbedPane implements ActionListener, Ru
 			solutionGraph.setModelFileID(subModelFileID);
 			BioModel solutionSubModel = new BioModel(solutionGraph.getProjectPath());
 			solutionSubModel.load(solutionGraph.getModelFileID());
-			solutionSubModel.getSBMLDocument().getModel().setId(subModelFileID);
+			solutionSubModel.getSBMLDocument().getModel().setId(subModelFileID.replace(".xml", ""));
 			solutionSubModel.save(synthFilePath + separator + subModelFileID);
 		}
 		return solutionFileIDs;
