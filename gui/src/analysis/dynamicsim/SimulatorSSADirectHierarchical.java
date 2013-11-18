@@ -7,6 +7,9 @@ import javax.swing.JFrame;
 import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
+import org.sbml.jsbml.RateRule;
+import org.sbml.jsbml.Rule;
+
 import odk.lang.FastMath;
 
 public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
@@ -212,7 +215,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 					}
 				}
 			}
-			/*
+			
 			if(updateRateRule)
 			{
 				//updatePropensities(performRateRules(topmodel, currentTime), "topmodel");
@@ -224,7 +227,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 					performRateRules(modelstate, currentTime);
 				}
 			}
-			*/
+			
 			updateRules();
 
 			//update time for next iteration
@@ -251,6 +254,52 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		}
 	}
 
+	/**
+	 * performs every rate rule using the current time step
+	 * 
+	 * @param delta_t
+	 * @return
+	 */
+	protected HashSet<String> performRateRules(ModelState modelstate, double delta_t) {
+		
+		HashSet<String> affectedVariables = new HashSet<String>();
+		
+		for (Rule rule : modelstate.model.getListOfRules()) {
+			
+			if (rule.isRate()) {
+				
+				RateRule rateRule = (RateRule) rule;			
+				String variable = rateRule.getVariable();
+				
+				//update the species count (but only if the species isn't constant) (bound cond is fine)
+				if (modelstate.variableToIsConstantMap.containsKey(variable) && modelstate.variableToIsConstantMap.get(variable) == false) {
+					
+					if (modelstate.speciesToHasOnlySubstanceUnitsMap.containsKey(variable) &&
+							modelstate.speciesToHasOnlySubstanceUnitsMap.get(variable) == false) {
+						
+						double currVal = modelstate.getVariableToValue(variable);
+						double incr = delta_t * (
+								evaluateExpressionRecursive(modelstate, rateRule.getMath()) * 
+								modelstate.getVariableToValue(modelstate.speciesToCompartmentNameMap.get(variable)));
+						modelstate.setvariableToValueMap(variable, currVal + incr);
+					}
+					else {
+						double currVal = modelstate.getVariableToValue(variable);
+						double incr = delta_t * evaluateExpressionRecursive(modelstate, rateRule.getMath());
+						
+						modelstate.setvariableToValueMap(variable, currVal + incr);
+					}
+					
+					affectedVariables.add(variable);
+				}
+			}
+		}
+		
+		return affectedVariables;
+	}
+
+	
+	
 	/**
 	 * sets up data structures local to the SSA-Direct method
 	 * 

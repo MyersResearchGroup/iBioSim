@@ -59,8 +59,6 @@ import org.sbml.jsbml.SBMLReader;
 
 import main.Gui;
 import odk.lang.FastMath;
-
-
 import biomodel.gui.textualeditor.SBMLutilities;
 
 public abstract class HierarchicalSimulator {
@@ -949,101 +947,7 @@ public abstract class HierarchicalSimulator {
 	}
 
 
-	/**
-	 * performs every rate rule using the current time step
-	 * 
-	 * @param delta_t
-	 * @return
-	 */
-	/*protected HashSet<String> performRateRules(ModelState modelstate, HashMap<String, Integer> variableToIndexMap, double[] currValueChanges) {
-
-		HashSet<String> affectedVariables = new HashSet<String>();
-
-		for (Rule rule : modelstate.model.getListOfRules()) {
-
-			if (rule.isRate()) {
-
-				RateRule rateRule = (RateRule) rule;			
-				String variable = rateRule.getVariable();
-
-				//update the species count (but only if the species isn't constant) (bound cond is fine)
-				if (modelstate.variableToIsConstantMap.containsKey(variable) && modelstate.variableToIsConstantMap.get(variable) == false) {
-
-					if (modelstate.speciesToHasOnlySubstanceUnitsMap.containsKey(variable) &&
-							modelstate.speciesToHasOnlySubstanceUnitsMap.get(variable) == false) 
-					{
-						if(!variableToIndexMap.containsKey(variable))
-							continue;
-						int index = variableToIndexMap.get(variable);
-
-						if(index > currValueChanges.length)
-							continue;
-
-						double value = (evaluateExpressionRecursive(modelstate, rateRule.getMath()) *
-								modelstate.getVariableToValue(modelstate.speciesToCompartmentNameMap.get(variable)));
-						currValueChanges[index] = value;
-						//modelstate.setvariableToValueMap(variable, value);
-
-					}
-					else {
-						if(!variableToIndexMap.containsKey(variable))
-							continue;
-						int index = variableToIndexMap.get(variable);
-						if(index > currValueChanges.length)
-							continue;
-						double value = evaluateExpressionRecursive(modelstate, rateRule.getMath());
-						currValueChanges[index] = value;
-						//modelstate.setvariableToValueMap(variable, value);
-					}
-
-					affectedVariables.add(variable);
-				}
-			}
-		}
-	 */
-	/*
-		for (RateRule rateRule : modelstate.rateRulesList) {
-
-				String variable = rateRule.getVariable();
-
-				//update the species count (but only if the species isn't constant) (bound cond is fine)
-				if (modelstate.variableToIsConstantMap.containsKey(variable) && modelstate.variableToIsConstantMap.get(variable) == false) {
-
-					if (modelstate.speciesToHasOnlySubstanceUnitsMap.containsKey(variable) &&
-							modelstate.speciesToHasOnlySubstanceUnitsMap.get(variable) == false) 
-					{
-						if(!variableToIndexMap.containsKey(variable))
-							continue;
-						int index = variableToIndexMap.get(variable);
-
-						if(index > currValueChanges.length)
-							continue;
-
-						double value = (evaluateExpressionRecursive(modelstate, rateRule.getMath()) *
-								modelstate.getVariableToValue(modelstate.speciesToCompartmentNameMap.get(variable)));
-						currValueChanges[index] = value;
-						//modelstate.setvariableToValueMap(variable, value);
-
-					}
-					else {
-						if(!variableToIndexMap.containsKey(variable))
-							continue;
-						int index = variableToIndexMap.get(variable);
-						if(index > currValueChanges.length)
-							continue;
-						double value = evaluateExpressionRecursive(modelstate, rateRule.getMath());
-						currValueChanges[index] = value;
-						//modelstate.setvariableToValueMap(variable, value);
-					}
-
-					affectedVariables.add(variable);
-				}
-			}
-
-		return affectedVariables;
-	}
-	 */
-
+	
 	/**
 	 * calculates an expression using a recursive algorithm
 	 * 
@@ -1124,6 +1028,9 @@ public abstract class HierarchicalSimulator {
 				return getDoubleFromBoolean(
 						evaluateExpressionRecursive(modelstate, node.getLeftChild()) < evaluateExpressionRecursive(modelstate, node.getRightChild()));			
 			}
+			
+			default:
+				return 0.0;
 
 			}
 		}
@@ -1138,6 +1045,10 @@ public abstract class HierarchicalSimulator {
 
 			case CONSTANT_PI:
 				return Math.PI;
+				
+
+			default:
+				return 0.0;
 			}
 		}
 		else if (node.isInteger())
@@ -1425,6 +1336,10 @@ public abstract class HierarchicalSimulator {
 				double x = evaluateExpressionRecursive(modelstate, node.getChild(0));
 				return FastMath.log((1 + FastMath.sqrt(1 - x*x))/x);
 			}
+			
+
+			default:
+				return 0.0;
 
 			//return Fmath.asech(evaluateExpressionRecursive(modelstate, node.getChild(0)));
 
@@ -1657,9 +1572,9 @@ public abstract class HierarchicalSimulator {
 	 */
 	protected void updateRules()
 	{
-		ModelState model;
-		HashSet<AssignmentRule> affectedAssignmentRuleSet = new HashSet<AssignmentRule>();
-		HashSet<ASTNode> affectedConstraintSet = new HashSet<ASTNode>();
+		//ModelState model;
+		//HashSet<AssignmentRule> affectedAssignmentRuleSet = new HashSet<AssignmentRule>();
+		//HashSet<ASTNode> affectedConstraintSet = new HashSet<ASTNode>();
 /*
 		for(String species : replacementSubModels.keySet())
 			for(String submodel : replacementSubModels.get(species))
@@ -1711,7 +1626,7 @@ public abstract class HierarchicalSimulator {
 	 */
 	private void alterLocalParameter(ASTNode node, Reaction reaction, String oldString, String newString) 
 	{
-		String reactionID = reaction.getId();
+		//String reactionID = reaction.getId();
 		if (node.isName() && node.getName().equals(oldString)) {
 			node.setVariable(reaction.getKineticLaw().getLocalParameter(newString));
 		}
@@ -1925,6 +1840,10 @@ public abstract class HierarchicalSimulator {
 				return getDoubleFromBoolean(
 						evaluateStateExpressionRecursive(modelstate, node.getLeftChild(), t, y, variableToIndexMap) < evaluateStateExpressionRecursive(modelstate, node.getRightChild(), t, y, variableToIndexMap));			
 			}
+			
+
+			default:
+				return 0.0;
 
 			}
 		}
@@ -1939,6 +1858,10 @@ public abstract class HierarchicalSimulator {
 
 			case CONSTANT_PI:
 				return Math.PI;
+				
+
+			default:
+				return 0.0;
 			}
 		}
 		else if (node.isInteger())
@@ -2212,6 +2135,8 @@ public abstract class HierarchicalSimulator {
 			case FUNCTION_ARCSECH:
 				return Fmath.asech(evaluateStateExpressionRecursive(modelstate, node.getChild(0), t, y, variableToIndexMap));
 
+			default:
+				return 0.0;
 			} //end switch
 
 		}
@@ -2298,6 +2223,8 @@ public abstract class HierarchicalSimulator {
 		while (modelstate.triggeredEventQueue.size() > 0) {
 
 			EventToFire event = modelstate.triggeredEventQueue.poll();
+			
+			@SuppressWarnings("unchecked")
 			EventToFire eventToAdd = new EventToFire(modelstate.ID, event.eventID, (HashSet<Object>) event.eventAssignmentSet.clone(), event.fireTime);
 
 			if (untriggeredEvents.contains(event.eventID) == false)
@@ -2415,6 +2342,8 @@ public abstract class HierarchicalSimulator {
 			while (modelstate.triggeredEventQueue.size() > 0) {
 
 				EventToFire event = modelstate.triggeredEventQueue.poll();
+				
+				@SuppressWarnings("unchecked")
 				EventToFire eventToAdd = 
 						new EventToFire(modelstate.ID, event.eventID, (HashSet<Object>) event.eventAssignmentSet.clone(), event.fireTime);
 
@@ -2493,7 +2422,7 @@ public abstract class HierarchicalSimulator {
 		else if (species.isSetInitialConcentration()) 
 		{
 
-			double s = modelstate.model.getCompartment(species.getCompartment()).getSize();
+			//double s = modelstate.model.getCompartment(species.getCompartment()).getSize();
 			modelstate.variableToValueMap.put(speciesID, species.getInitialConcentration() 
 					* modelstate.model.getCompartment(species.getCompartment()).getSize());
 		}
@@ -3541,7 +3470,7 @@ public abstract class HierarchicalSimulator {
 
 				//Rules don't have a getVariable method, so this needs to be cast to an ExplicitRule
 				RateRule rateRule = (RateRule) rule;			
-				String variable = rateRule.getVariable();
+				//String variable = rateRule.getVariable();
 
 				modelstate.rateRulesList.add(rateRule);
 

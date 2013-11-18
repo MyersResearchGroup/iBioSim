@@ -197,7 +197,7 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 			//EVENT HANDLING
 			//trigger and/or fire events, etc.
 				
-			ModelState modelstate = eq.state.modelstate;
+			//ModelState modelstate = eq.state.modelstate;
 
 			//nextEventTime = handleEvents();
 			
@@ -367,7 +367,7 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 	
 	private class EventHandlerObject implements EventHandler
 	{
-		double t0, t1;
+		//double t0, t1;
 		public EventHandlerObject() {}
 		
 		@Override
@@ -383,8 +383,8 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 		@Override
 		public double g(double t, double[] y) {
 			
-			double t1 = currentTime;
-			double t2 = nextEventTime;
+			//double t1 = currentTime;
+			//double t2 = nextEventTime;
 
 			for(DiffEquations eq : functions)
 				if(isEventTriggered(eq.state.modelstate, t, y, eq.state.variableToIndexMap))
@@ -406,8 +406,8 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 		@Override
 		public void init(double t0, double[] y, double t) 
 		{
-			this.t0 = t0;
-			this.t1 = t;
+			//this.t0 = t0;
+			//this.t1 = t;
 		}
 
 		@Override
