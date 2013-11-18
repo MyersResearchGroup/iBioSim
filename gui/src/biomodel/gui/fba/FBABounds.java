@@ -134,7 +134,6 @@ public class FBABounds extends JPanel implements ActionListener, MouseListener {
 			JOptionPane.showMessageDialog(Gui.frame, "No event assignment selected.", "Must Select an Event Assignment", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		/* TODO: BUILD YOUR OBJECTIVE PANEL HERE */
 		JPanel evPanel = new JPanel(new GridLayout(1, 2));
 		
 		JLabel objectiveLabel = new JLabel("Bound:");

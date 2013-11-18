@@ -170,9 +170,11 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 	}
 	
 	private void removeObjective(JList objectiveList) {
+		// find where the selected objective is on the list
 		int index = objectiveList.getSelectedIndex();
 		if (index != -1) {
 			objectiveList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+			// remove it
 			Utility.remove(objectiveList);
 			objectiveList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			if (index < objectiveList.getModel().getSize()) {
@@ -185,14 +187,15 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 	}
 	
 	public void actionPerformed(ActionEvent e) {
+		// if the add objective button is clicked
 		if (((JButton) e.getSource()).getText().equals("Add")) {
 			objectiveEditor(bioModel, objectiveList, "Add");
 		}
-		// if the edit event assignment button is clicked
+		// if the edit objective button is clicked
 		else if (((JButton) e.getSource()).getText().equals("Edit")) {
 			objectiveEditor(bioModel, objectiveList, "OK");
 		}
-		// if the remove event assignment button is clicked
+		// if the remove objective button is clicked
 		else if (((JButton) e.getSource()).getText().equals("Remove")) {
 			removeObjective(objectiveList);
 		}
@@ -253,14 +256,14 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), objectiveID.getText().trim(), selectedID, false, false);
-//			if (!error) {
+			if (!error) {
 //				error = objective.getText().matches("([0-9]*'.'[0-9]*)? \\*? [0-9]*[a-z A-Z]* (+ ([0-9]*'.'[0-9]*)? \\* ID)*");
-//				JOptionPane.showMessageDialog(Gui.frame, "Invalid formula!", 
-//						"Input does not match acceptable formula format.", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Invalid formula!", 
+						"Input does not match acceptable formula format.", JOptionPane.ERROR_MESSAGE);
 				// TODO: error check the formula (##.##)? \\* ID (+ (##.##)? \\* ID)*
 				// set error=true if violation
 				// error message
-//			} 
+			} 
 			if (!error) {
 				int eqsign = objective.getText().indexOf("=");
 				String editEquationString = objective.getText().substring(eqsign + 1, 
