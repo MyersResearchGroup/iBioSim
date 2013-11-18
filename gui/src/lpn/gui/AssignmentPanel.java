@@ -16,7 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JCheckBox;
 
-import biomodel.gui.*;
+import biomodel.gui.util.PropertyList;
 import biomodel.util.Utility;
 
 

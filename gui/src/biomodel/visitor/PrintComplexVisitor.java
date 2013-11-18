@@ -6,12 +6,12 @@ import java.util.Properties;
 
 import org.sbml.jsbml.SBMLDocument;
 
-import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.network.ComplexSpecies;
 import biomodel.network.GeneticNetwork;
 import biomodel.network.Influence;
 import biomodel.network.SpeciesInterface;
 import biomodel.util.GlobalConstants;
+import biomodel.util.SBMLutilities;
 import biomodel.util.Utility;
 
 public class PrintComplexVisitor extends AbstractPrintVisitor {

@@ -89,18 +89,18 @@ import javax.mail.*;
 import javax.mail.PasswordAuthentication;
 import javax.mail.internet.*;
 
-import analysis.AnalysisView;
-import analysis.Run;
+import analysis.main.AnalysisView;
+import analysis.main.Run;
 import lpn.parser.properties.BuildProperty;
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
-import biomodel.gui.ModelEditor;
 import biomodel.gui.movie.MovieContainer;
-import biomodel.gui.textualeditor.ElementsPanel;
-import biomodel.gui.textualeditor.SBMLutilities;
+import biomodel.gui.sbmlcore.ElementsPanel;
+import biomodel.gui.schematic.ModelEditor;
 import biomodel.parser.BioModel;
 import biomodel.parser.GCM2SBML;
 import biomodel.util.GlobalConstants;
+import biomodel.util.SBMLutilities;
 
 import com.apple.eawt.ApplicationAdapter;
 import com.apple.eawt.ApplicationEvent;
@@ -108,12 +108,15 @@ import com.apple.eawt.Application;
 
 import java.io.Writer;
 
-import learn.LearnGCM;
-import learn.LearnLHPN;
+import learn.AMSModel.LearnLHPN;
+import learn.GCM.LearnGCM;
 import learn.datamanager.DataManager;
+import main.util.EditPreferences;
+import main.util.FileTree;
 import main.util.Utility;
 import main.util.tabs.CloseAndMaxTabbedPane;
-import synthesis.Synthesis;
+import synthesis.async.Synthesis;
+import synthesis.genetic.SynthesisView;
 import verification.*;
 import verification.platu.lpn.io.PlatuGrammarLexer;
 import verification.platu.lpn.io.PlatuGrammarParser;
@@ -140,9 +143,8 @@ import org.sbolstandard.core.SBOLDocument;
 
 //import lpn.parser.properties.*;
 
-import sbol.SBOLBrowser;
-import sbol.SBOLSynthesisView;
-import sbol.SBOLUtility;
+import sbol.browser.SBOLBrowser;
+import sbol.util.SBOLUtility;
 
 import java.net.*;
 
@@ -2551,8 +2553,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				((Verification) comp).save();
 			}
 			else if (comp instanceof JTabbedPane) {
-				if (comp instanceof SBOLSynthesisView)
-					((SBOLSynthesisView) comp).save();
+				if (comp instanceof SynthesisView)
+					((SynthesisView) comp).save();
 				else {
 					for (Component component : ((JTabbedPane) comp).getComponents()) {
 						int index = ((JTabbedPane) comp).getSelectedIndex();
@@ -2788,8 +2790,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			// int index = tab.getSelectedIndex();
 			if (comp instanceof JTabbedPane) {
 				// int index = -1;
-				if (comp instanceof SBOLSynthesisView) {
-					synthesizeSBOL((SBOLSynthesisView) comp);
+				if (comp instanceof SynthesisView) {
+					synthesizeSBOL((SynthesisView) comp);
 				} else {
 					for (int i = 0; i < ((JTabbedPane) comp).getTabCount(); i++) {
 						Component component = ((JTabbedPane) comp).getComponent(i);
@@ -5173,8 +5175,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									tab.setTitleAt(i, rename);
 								}
 								else if (tab.getComponentAt(i) instanceof JTabbedPane) {
-									if (tab.getComponentAt(i) instanceof SBOLSynthesisView) {
-										((SBOLSynthesisView) tab.getComponentAt(i)).renameView(rename);
+									if (tab.getComponentAt(i) instanceof SynthesisView) {
+										((SynthesisView) tab.getComponentAt(i)).renameView(rename);
 									} else {
 										JTabbedPane t = new JTabbedPane();
 										t.addMouseListener(this);
@@ -5259,8 +5261,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								}
 							}
 							else if (tab.getComponentAt(i) instanceof JTabbedPane) {
-								if (tab.getComponentAt(i) instanceof SBOLSynthesisView) {
-									((SBOLSynthesisView) tab.getComponentAt(i)).changeSpecFile(rename);
+								if (tab.getComponentAt(i) instanceof SynthesisView) {
+									((SynthesisView) tab.getComponentAt(i)).changeSpecFile(rename);
 								} else {
 									ArrayList<Component> comps = new ArrayList<Component>();
 									for (int j = 0; j < ((JTabbedPane) tab.getComponentAt(i)).getTabCount(); j++) {
@@ -6017,8 +6019,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		
 		else {
 			if (tab.getComponentAt(index) instanceof JTabbedPane) {
-				if (tab.getComponentAt(index) instanceof SBOLSynthesisView) {
-					SBOLSynthesisView synthView = (SBOLSynthesisView) tab.getComponentAt(index);
+				if (tab.getComponentAt(index) instanceof SynthesisView) {
+					SynthesisView synthView = (SynthesisView) tab.getComponentAt(index);
 					Set<Integer> saveIndices = new HashSet<Integer>();
 					for (int i = 0; i < synthView.getTabCount(); i++) {
 						JPanel synthTab = (JPanel) synthView.getComponentAt(i);
@@ -7336,7 +7338,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		return synthFilePath;
 	}
 	
-	private void synthesizeSBOL(SBOLSynthesisView synthView) {
+	private void synthesizeSBOL(SynthesisView synthView) {
 		synthView.save();
 		ActionEvent projectSynthesized = new ActionEvent(newProj, ActionEvent.ACTION_PERFORMED, 
 				GlobalConstants.SBOL_SYNTH_COMMAND + "_" + synthView.getSpecFileID().replace(".xml", ""));
@@ -7376,7 +7378,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			else 
 				synthID = synthID.trim();
 			if (overwrite(root + separator + synthID, synthID)) {
-				SBOLSynthesisView synthView = new SBOLSynthesisView(synthID, separator, root, log, frame);
+				SynthesisView synthView = new SynthesisView(synthID, separator, root, log, frame);
 				synthView.loadDefaultSynthesisProperties(specFileID);
 				addTab(synthID, synthView, null);
 				addToTree(synthID);
@@ -7388,7 +7390,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(tree.getFile(), separator, frame);
 		if (synthProps != null) {
 			String synthID = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
-			SBOLSynthesisView synthView = new SBOLSynthesisView(synthID, separator, root, log, frame);
+			SynthesisView synthView = new SynthesisView(synthID, separator, root, log, frame);
 			synthView.loadSynthesisProperties(synthProps);
 			addTab(synthID, synthView, null);
 		}

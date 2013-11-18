@@ -62,7 +62,7 @@ import main.Log;
 import verification.platu.main.Options;
 import verification.platu.project.Project;
 import verification.timed_state_exploration.zoneProject.Zone;
-import biomodel.gui.PropertyList;
+import biomodel.gui.util.PropertyList;
 import biomodel.util.Utility;
 
 

@@ -15,8 +15,8 @@ import org.sbml.jsbml.xml.XMLToken;
 import org.sbml.jsbml.xml.XMLTriple;
 import org.sbml.jsbml.JSBML;
 
-import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.util.GlobalConstants;
+import biomodel.util.SBMLutilities;
 import biomodel.util.Utility;
 
 public class AnnotationUtility {

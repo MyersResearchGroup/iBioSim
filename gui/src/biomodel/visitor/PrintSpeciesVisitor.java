@@ -8,7 +8,6 @@ import main.Gui;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.Species;
 
-import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.network.BaseSpecies;
 import biomodel.network.ComplexSpecies;
 import biomodel.network.ConstantSpecies;
@@ -17,6 +16,7 @@ import biomodel.network.DiffusibleSpecies;
 import biomodel.network.SpasticSpecies;
 import biomodel.network.SpeciesInterface;
 import biomodel.util.GlobalConstants;
+import biomodel.util.SBMLutilities;
 import biomodel.util.Utility;
 
 public class PrintSpeciesVisitor extends AbstractPrintVisitor {

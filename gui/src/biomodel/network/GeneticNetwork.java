@@ -34,9 +34,9 @@ import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.Unit.Kind;
 
 import biomodel.annotation.AnnotationUtility;
-import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
+import biomodel.util.SBMLutilities;
 import biomodel.util.Utility;
 import biomodel.visitor.AbstractPrintVisitor;
 import biomodel.visitor.PrintActivatedBindingVisitor;

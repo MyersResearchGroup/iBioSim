@@ -59,7 +59,7 @@ import org.sbml.jsbml.SBMLReader;
 
 import main.Gui;
 import odk.lang.FastMath;
-import biomodel.gui.textualeditor.SBMLutilities;
+import biomodel.util.SBMLutilities;
 
 public abstract class HierarchicalSimulator {
 

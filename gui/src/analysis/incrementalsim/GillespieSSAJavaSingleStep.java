@@ -12,7 +12,7 @@ import main.Gui;
 
 import org.sbml.jsbml.*;
 
-import biomodel.gui.textualeditor.SBMLutilities;
+import biomodel.util.SBMLutilities;
 
 import java.awt.BorderLayout;
 import java.io.*;

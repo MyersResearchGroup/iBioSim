@@ -5,9 +5,9 @@ import javax.swing.JPopupMenu;
 
 import main.Gui;
 
-import biomodel.gui.ComponentAction;
-import biomodel.gui.Grid;
-import biomodel.gui.GridAction;
+import biomodel.gui.comp.Grid;
+import biomodel.gui.comp.GridAction;
+import biomodel.gui.util.ComponentAction;
 import biomodel.util.GlobalConstants;
 
 import com.mxgraph.model.mxCell;
