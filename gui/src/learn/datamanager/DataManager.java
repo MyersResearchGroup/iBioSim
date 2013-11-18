@@ -26,8 +26,8 @@ import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.Species;
 
 
-import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.parser.BioModel;
+import biomodel.util.SBMLutilities;
 
 
 public class DataManager extends JPanel implements ActionListener, TableModelListener, ListSelectionListener {

@@ -32,7 +32,6 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.ModifierSpeciesReference;
 
-import biomodel.gui.textualeditor.SBMLutilities;
 
 
 /**

@@ -106,9 +106,9 @@ import org.sbml.jsbml.Species;
 import org.w3c.dom.DOMImplementation;
 
 
-import analysis.AnalysisView;
-import biomodel.gui.textualeditor.SBMLutilities;
+import analysis.main.AnalysisView;
 import biomodel.parser.BioModel;
+import biomodel.util.SBMLutilities;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.Rectangle;

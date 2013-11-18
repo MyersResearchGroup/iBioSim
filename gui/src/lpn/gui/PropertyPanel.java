@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import biomodel.gui.*;
+import biomodel.gui.util.PropertyList;
 import biomodel.util.Utility;
 
 

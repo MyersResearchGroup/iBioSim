@@ -2,7 +2,7 @@ package verification;
 
 import javax.swing.*;
 
-import biomodel.gui.PropertyList;
+import biomodel.gui.util.PropertyList;
 
 import java.awt.*;
 import java.awt.event.*;

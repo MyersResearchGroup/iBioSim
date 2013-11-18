@@ -25,9 +25,9 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 
-import biomodel.gui.AbstractRunnableNamedButton;
-import biomodel.gui.PropertyList;
-import biomodel.gui.Runnable;
+import biomodel.gui.util.AbstractRunnableNamedButton;
+import biomodel.gui.util.PropertyList;
+import biomodel.gui.util.Runnable;
 import biomodel.util.Utility;
 
 

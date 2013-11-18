@@ -35,8 +35,8 @@ import org.sbml.jsbml.text.parser.FormulaParserLL3;
 import org.sbml.jsbml.text.parser.IFormulaParser;
 import org.sbml.jsbml.text.parser.ParseException;
 
-import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.util.GlobalConstants;
+import biomodel.util.SBMLutilities;
 import lpn.parser.ExprTree;
 import main.Gui;
 

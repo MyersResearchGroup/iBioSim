@@ -2,9 +2,9 @@ package verification;
 
 import javax.swing.*;
 
-import biomodel.gui.AbstractRunnableNamedButton;
-import biomodel.gui.PropertyList;
-import biomodel.gui.Runnable;
+import biomodel.gui.util.AbstractRunnableNamedButton;
+import biomodel.gui.util.PropertyList;
+import biomodel.gui.util.Runnable;
 import biomodel.util.Utility;
 
 import main.*;

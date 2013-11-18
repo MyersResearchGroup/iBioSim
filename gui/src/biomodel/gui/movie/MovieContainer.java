@@ -7,12 +7,12 @@ import main.util.Utility;
 import main.util.dataparser.DTSDParser;
 import main.util.dataparser.TSDParser;
 
-import analysis.AnalysisView;
+import analysis.main.AnalysisView;
 import biomodel.annotation.AnnotationUtility;
-import biomodel.gui.Grid;
-import biomodel.gui.ModelEditor;
+import biomodel.gui.comp.Grid;
 import biomodel.gui.movie.SerializableScheme;
 import biomodel.gui.schematic.ListChooser;
+import biomodel.gui.schematic.ModelEditor;
 import biomodel.gui.schematic.Schematic;
 import biomodel.gui.schematic.TreeChooser;
 import biomodel.gui.schematic.Utils;

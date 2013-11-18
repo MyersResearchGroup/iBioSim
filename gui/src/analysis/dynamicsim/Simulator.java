@@ -58,8 +58,8 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.text.parser.ParseException;
 
-import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.util.GlobalConstants;
+import biomodel.util.SBMLutilities;
 
 public abstract class Simulator {
 	

@@ -19,8 +19,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JCheckBox;
 
-import biomodel.gui.*;
-import biomodel.gui.Runnable;
+import biomodel.gui.util.AbstractRunnableNamedButton;
+import biomodel.gui.util.PropertyList;
+import biomodel.gui.util.Runnable;
 import biomodel.util.GlobalConstants;
 import biomodel.util.Utility;
 
