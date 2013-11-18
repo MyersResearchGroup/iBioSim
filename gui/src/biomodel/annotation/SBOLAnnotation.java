@@ -26,20 +26,22 @@ public class SBOLAnnotation {
 		description.addAttribute(new AnnotationAttribute("rdf", "about", "#" + sbmlMetaId));
 		rdf.addChild(description);
 		
-		AnnotationElement dnaComponents = new AnnotationElement("mts", "DNAComponents");
-		description.addChild(dnaComponents);
-		
-		AnnotationElement seq = new AnnotationElement("rdf", "Seq");
-		dnaComponents.addChild(seq);
+		if (sbolURIs.size() > 0) {
+			AnnotationElement dnaComponents = new AnnotationElement("mts", "DNAComponents");
+			description.addChild(dnaComponents);
+
+			AnnotationElement seq = new AnnotationElement("rdf", "Seq");
+			dnaComponents.addChild(seq);
+
+			for (URI uri : sbolURIs) {
+				AnnotationElement li = new AnnotationElement("rdf", "li");
+				li.addAttribute(new AnnotationAttribute("rdf", "resource", uri.toString()));
+				seq.addChild(li);
+			}
+		}
 		
 		AnnotationElement strand = new AnnotationElement("mts", "Strand", sbolStrand);
 		description.addChild(strand);
-		
-		for (URI uri : sbolURIs) {
-			AnnotationElement li = new AnnotationElement("rdf", "li");
-			li.addAttribute(new AnnotationAttribute("rdf", "resource", uri.toString()));
-			seq.addChild(li);
-		}
 	}
 	
 	public String toXMLString() {

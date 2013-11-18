@@ -28,6 +28,7 @@ import sbol.util.SBOLUtility;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.parser.BioModel;
+import biomodel.util.GlobalConstants;
 import biomodel.util.SBMLutilities;
 
 public class AssemblyGraph {
@@ -103,7 +104,12 @@ public class AssemblyGraph {
 					BioModel subBioModel = new BioModel(path);
 					subBioModel.load(subSBMLFileID);
 					Model subSBMLModel = subBioModel.getSBMLDocument().getModel();
-					sbolStrand = AnnotationUtility.parseSBOLAnnotation(subSBMLModel, sbolURIs);
+					String subSBOLStrand = AnnotationUtility.parseSBOLAnnotation(subSBMLModel, sbolURIs);
+					if (sbolStrand.equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND) && 
+							subSBOLStrand.equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND))
+						sbolStrand = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
+					else if (subSBOLStrand.equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND))
+						sbolStrand = GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND;
 					Iterator<URI> uriIterator = sbolURIs.iterator();
 					while (canFlatten && uriIterator.hasNext()) {
 						canFlatten = uriIterator.next().toString().endsWith("iBioSim");

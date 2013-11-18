@@ -912,7 +912,8 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			componentsList.setSelectedValue(id + " " + selectedComponent.replace(".xml", "") + " " + newPort, true);
 			if (!paramsOnly) {
 				// Add SBOL annotation to submodel
-				if (sbolField.getSBOLURIs().size() > 0) {
+				if (sbolField.getSBOLURIs().size() > 0 || 
+						sbolField.getSBOLStrand().equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND)) {
 					SBOLAnnotation sbolAnnot = new SBOLAnnotation(instance.getMetaId(), 
 							sbolField.getSBOLURIs(), sbolField.getSBOLStrand());
 					AnnotationUtility.setSBOLAnnotation(instance, sbolAnnot);
