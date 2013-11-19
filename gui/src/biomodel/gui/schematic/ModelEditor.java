@@ -436,7 +436,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				SBOLFileManager fileManager = new SBOLFileManager(
 						biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION));
 				if (fileManager.sbolFilesAreLoaded() && assemblyGraph.loadDNAComponents(fileManager)) {
-					assemblyGraph.print();
+//					assemblyGraph.print();
 					SequenceTypeValidator seqValidator = 
 							new SequenceTypeValidator(Preferences.userRoot().get(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, ""));
 					Assembler assembler = new Assembler(assemblyGraph, seqValidator);

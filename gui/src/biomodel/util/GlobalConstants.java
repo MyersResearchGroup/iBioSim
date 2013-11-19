@@ -134,7 +134,7 @@ public class GlobalConstants {
 	public static final String SO_RBS = "SO_0000139";
 	public static final String SO_CDS = "SO_0000316";
 	public static final String SBOL_DNA_COMPONENT = "sbolDnaComponent";
-	public static final String GENETIC_CONSTRUCT_REGEX_DEFAULT = "(promoter(ribosome entry site,coding sequence)+terminator+)+";
+	public static final String GENETIC_CONSTRUCT_REGEX_DEFAULT = "promoter(ribosome entry site,coding sequence)+terminator+";
 	public static final String GENETIC_CONSTRUCT_REGEX_PREFERENCE = "biosim.assembly.regex";
 	public static final String SBOL_AUTHORITY_PREFERENCE = "biosim.assembly.authority";
 	public static final String SBOL_AUTHORITY_DEFAULT = "http://www.async.ece.utah.edu";

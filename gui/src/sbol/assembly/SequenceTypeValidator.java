@@ -6,6 +6,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.JOptionPane;
+
+import main.Gui;
+
 import biomodel.util.GlobalConstants;
 
 public class SequenceTypeValidator {
@@ -16,7 +20,7 @@ public class SequenceTypeValidator {
 	private int stateIndex;
 	
 	public SequenceTypeValidator(String regex) {
-//		regex = quantifyRegex();
+		regex = kleeneRegex(regex);
 		String rightAltRegex = altFragmentRegex(regex);
 		String revRegex = reverseRegex(regex);
 		String leftAltRegex = altFragmentRegex(revRegex);
@@ -112,26 +116,21 @@ public class SequenceTypeValidator {
 			acceptStates.addAll(startStates);
 	}
 	
-//	private String quantifyRegex(String regex) {
-//		int leftParenCount = 0;
-//		int rightParenCount = 0;
-//		for (int i = 0; i < regex.length(); i++)
-//			if (regex.substring(i, i + 1).equals("("))
-//				leftParenCount++;
-//			else
-//				i = regex.length() - 1;
-//		for (int i = regex.length() - 1; i >= 0; i--)
-//			if (regex.substring(i, i + 1).equals(")"))
-//				rightParenCount++;
-//			else
-//				i = 0;
-//		int trimCount = Math.min(leftParenCount, rightParenCount);
-//		regex = regex.substring(trimCount, regex.length() - trimCount + 1);	
-//		
-//				
-//		
-//		return regex;
-//	}
+	private String kleeneRegex(String regex) {
+		if (isBalanced(regex)) {
+			regex = trimOuterParentheses(regex);
+			if ((isQuantifier(regex.substring(regex.length() - 1, regex.length())) &&  
+					(locateClosingLetter(regex, 0) == regex.length() - 2 || locateClosingParen(regex, 0) == regex.length() - 2)) ||
+					locateClosingLetter(regex, 0) == regex.length() - 1) { 
+				if (regex.endsWith("?"))
+					regex = regex.substring(0, regex.length() - 1) + "*";
+				else if (!regex.endsWith("*") && !regex.endsWith("+"))
+					regex = regex + "+";
+			} else 
+				regex = "(" + regex + ")+";
+		} 
+		return regex;
+	}
 	
 	private String altFragmentRegex(String regex) {
 		List<String> orFragments = findOrFragments(regex);
@@ -361,6 +360,22 @@ public class SequenceTypeValidator {
 		return (token.equals("+") || token.equals("*") || token.equals("?"));
 	}
 	
+	private boolean isBalanced(String regex) {
+		int uncapturedCount = 0;
+		for (int i = 0; i < regex.length(); i++)
+			if (regex.substring(i, i + 1).equals("("))
+				uncapturedCount++;
+			else if (regex.substring(i, i + 1).equals(")"))
+				uncapturedCount--;
+		if (uncapturedCount == 0)
+			return true;
+		else {
+			JOptionPane.showMessageDialog(Gui.frame, "Regular expression for SBOL assembly has unbalanced parentheses.", 
+					"Unbalanced Regex", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+	}
+	
 	
 	private List<String> findOrFragments(String regex) {
 		List<String> orFragments = new LinkedList<String>();
@@ -395,6 +410,25 @@ public class SequenceTypeValidator {
 			return subRegex;
 	}
 	
+	private String trimOuterParentheses(String regex) {
+		int leftParenCount = 0;
+		int rightParenCount = 0;
+		for (int i = 0; i < regex.length(); i++)
+			if (regex.substring(i, i + 1).equals("("))
+				leftParenCount++;
+			else
+				i = regex.length() - 1;
+		for (int i = regex.length() - 1; i >= 0; i--)
+			if (regex.substring(i, i + 1).equals(")"))
+				rightParenCount++;
+			else
+				i = 0;
+		int trimParenCount = Math.min(leftParenCount, rightParenCount);
+		if (trimParenCount > 0)
+			return regex.substring(trimParenCount, regex.length() - trimParenCount + 1);
+		else
+			return regex;
+	}
 	public boolean validateCompleteConstruct(List<String> types, boolean saveState) {
 		if (saveState)
 			return completeConstructDFA.runAndSave(types);
