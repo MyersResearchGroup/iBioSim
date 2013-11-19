@@ -20,6 +20,7 @@ import main.Gui;
 
 import org.sbolstandard.core.*;
 
+import org.sbolstandard.core.impl.DnaSequenceImpl;
 import org.sbolstandard.core.impl.SBOLDocumentImpl;
 import org.sbolstandard.core.util.*;
 
@@ -181,7 +182,12 @@ public class SBOLUtility {
 				String nucleotides = "";
 				int position = 0;
 				for (SequenceAnnotation anno : intersectedDnac.getAnnotations()) {
-					String subNucleotides = anno.getSubComponent().getDnaSequence().getNucleotides();
+					String subNucleotides;
+					if (anno.getStrand() != null && 
+							anno.getStrand().getSymbol().equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND))
+						subNucleotides = ((DnaSequenceImpl) anno.getSubComponent().getDnaSequence()).getReverseComplementaryNucleotides();
+					else
+						subNucleotides = anno.getSubComponent().getDnaSequence().getNucleotides();
 					nucleotides = nucleotides + subNucleotides;
 					anno.setBioStart(position + 1);
 					position = position + subNucleotides.length();

@@ -664,8 +664,8 @@ public class EditPreferences {
 		// assembly preferences
 		JPanel assemblyLabels = new JPanel(new GridLayout(13, 1));
 		assemblyLabels.add(new JLabel("URI Authority"));
-		assemblyLabels.add(new JLabel("Validate Assembly of DNA Components"));
 		assemblyLabels.add(new JLabel("Regex for Complete Genetic Construct"));
+		assemblyLabels.add(new JLabel("Validate Assembled Constructs"));
 		assemblyLabels.add(new JLabel("Incomplete Construct Warning"));
 		
 		JPanel assemblyFields = new JPanel(new GridLayout(13 ,1));
@@ -673,11 +673,24 @@ public class EditPreferences {
 		regexField = new JTextField(biosimrc.get(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, ""),15);
 		validationBox = new JComboBox(new String[]{"True", "False"});
 		validationBox.setSelectedItem(biosimrc.get(GlobalConstants.CONSTRUCT_VALIDATION_PREFERENCE, ""));
+		validationBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (validationBox.getSelectedIndex() == 0) {
+					warningBox.setSelectedIndex(0);
+					warningBox.setEnabled(true);
+					warningBox.setSelectedIndex(1);
+				} else {
+					warningBox.setSelectedIndex(1);
+					warningBox.setSelectedIndex(1);
+					warningBox.setEnabled(false);
+				}
+			}
+		});
 		warningBox = new JComboBox(new String[]{"True", "False"});
 		warningBox.setSelectedItem(biosimrc.get(GlobalConstants.CONSTRUCT_VALIDATION_WARNING_PREFERENCE, ""));
 		assemblyFields.add(uriField);
-		assemblyFields.add(validationBox);
 		assemblyFields.add(regexField);
+		assemblyFields.add(validationBox);
 		assemblyFields.add(warningBox);
 		
 		JButton restoreDefaultsButton = new JButton("Restore Defaults");
