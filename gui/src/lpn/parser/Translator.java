@@ -716,7 +716,9 @@ public class Translator {
 		// create sbml file
 		//document = new SBMLDocument(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 		document = new SBMLDocument(3,1);
-		Model m = document.createModel(filename.replace(".xml", ""));
+		String[] filenameSplit = filename.split(Gui.separator);
+		String modelId = filenameSplit[filenameSplit.length-1].replace(".xml","");
+		Model m = document.createModel(modelId);
 		
 		// Create bitwise operators for sbml
 		createFunction(m, "rate", "Rate", "lambda(a,a)");
