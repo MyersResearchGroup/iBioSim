@@ -233,7 +233,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private JPopupMenu popup; // popup menu
 
-	private String separator;
+	public static String separator;
 
 	private KeyEventDispatcher dispatcher;
 
