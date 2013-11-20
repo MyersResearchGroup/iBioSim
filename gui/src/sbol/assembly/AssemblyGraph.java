@@ -434,7 +434,6 @@ public class AssemblyGraph {
 	}
 	
 	public void print() {
-//		idNodes();
 		HashMap<AssemblyNode, String> nodeToState = new HashMap<AssemblyNode, String>();
 		int stateIndex = 0;
 		for (AssemblyNode assemblyNode : assemblyNodes) {
@@ -443,12 +442,11 @@ public class AssemblyGraph {
 		}
 		System.out.println("digraph G {");
 		for (AssemblyNode assemblyNode : assemblyNodes) {
-			String soTypes = "";
-			for (DnaComponent dnaComp : assemblyNode.getDNAComponents())
-				for (String soType : SBOLUtility.loadDNAComponentTypes(dnaComp))
-					soTypes = soTypes + " " + soType;
+			String compURIs = "";
+			for (URI uri : SBOLUtility.loadDNAComponentURIs(assemblyNode.getDNAComponents()))
+				compURIs = compURIs + ", " + uri.toString();
 			String state = nodeToState.get(assemblyNode);
-			System.out.println(state + " [label=\"" + assemblyNode.getID() + soTypes + "\"]");
+			System.out.println(state + " [label=\"" + assemblyNode.getID() + compURIs + "\"]");
 			if (assemblyEdges.containsKey(assemblyNode))
 				for (AssemblyNode nextNode : assemblyEdges.get(assemblyNode))
 					System.out.println(state + " -> " + nodeToState.get(nextNode));
@@ -456,34 +454,34 @@ public class AssemblyGraph {
 		System.out.println("}");
 	}
 	
-	public void print(List<AssemblyNode> orderedNodes) {
-		idNodes();
-		HashMap<AssemblyNode, String> nodeToState = new HashMap<AssemblyNode, String>();
-		int stateIndex = 0;
-		for (AssemblyNode assemblyNode : assemblyNodes) {
-			nodeToState.put(assemblyNode, "S" + stateIndex);
-			stateIndex++;
-		}
-		System.out.println("digraph G {");
-		for (AssemblyNode assemblyNode : assemblyNodes) {
-			String soTypes = "";
-			for (DnaComponent dnaComp : assemblyNode.getDNAComponents())
-				for (String soType : SBOLUtility.loadDNAComponentTypes(dnaComp))
-					soTypes = soTypes + " " + soType;
-			String state = nodeToState.get(assemblyNode);
-			int order = 0;
-			while (order < orderedNodes.size() && !orderedNodes.get(order).equals(assemblyNode))
-				order++;
-			if (order == orderedNodes.size())
-				System.out.println(state + " [label=\" ! " + soTypes + "\"]");
-			else
-				System.out.println(state + " [label=\" " + order + " " + soTypes + "\"]");
-			if (assemblyEdges.containsKey(assemblyNode))
-				for (AssemblyNode nextNode : assemblyEdges.get(assemblyNode))
-					System.out.println(state + " -> " + nodeToState.get(nextNode));
-		}
-		System.out.println("}");
-	}
+//	public void print(List<AssemblyNode> orderedNodes) {
+//		idNodes();
+//		HashMap<AssemblyNode, String> nodeToState = new HashMap<AssemblyNode, String>();
+//		int stateIndex = 0;
+//		for (AssemblyNode assemblyNode : assemblyNodes) {
+//			nodeToState.put(assemblyNode, "S" + stateIndex);
+//			stateIndex++;
+//		}
+//		System.out.println("digraph G {");
+//		for (AssemblyNode assemblyNode : assemblyNodes) {
+//			String soTypes = "";
+//			for (DnaComponent dnaComp : assemblyNode.getDNAComponents())
+//				for (String soType : SBOLUtility.loadDNAComponentTypes(dnaComp))
+//					soTypes = soTypes + " " + soType;
+//			String state = nodeToState.get(assemblyNode);
+//			int order = 0;
+//			while (order < orderedNodes.size() && !orderedNodes.get(order).equals(assemblyNode))
+//				order++;
+//			if (order == orderedNodes.size())
+//				System.out.println(state + " [label=\" ! " + soTypes + "\"]");
+//			else
+//				System.out.println(state + " [label=\" " + order + " " + soTypes + "\"]");
+//			if (assemblyEdges.containsKey(assemblyNode))
+//				for (AssemblyNode nextNode : assemblyEdges.get(assemblyNode))
+//					System.out.println(state + " -> " + nodeToState.get(nextNode));
+//		}
+//		System.out.println("}");
+//	}
 	
 	private void idNodes() {
 		String id = "node";

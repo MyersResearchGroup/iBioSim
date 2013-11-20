@@ -20,9 +20,6 @@ public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 	private static final long serialVersionUID = 1L;
 	private LinkedList<URI> compURIs;
 	private LinkedList<String> compIDs;
-//	private HashMap<String, DnaComponent> compMap;
-//	private HashMap<String, SequenceAnnotation> annoMap;
-//	private HashMap<String, DnaSequence> seqMap;
 	private UseFirstFound<DnaComponent, URI> aggregateCompResolver;
 	private UseFirstFound<SequenceAnnotation, URI> aggregateAnnoResolver;
 	private UseFirstFound<DnaSequence, URI> aggregateSeqResolver;
@@ -45,8 +42,6 @@ public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 		JScrollPane componentScroll = new JScrollPane();
 		componentScroll.setMinimumSize(new Dimension(260, 200));
 		componentScroll.setPreferredSize(new Dimension(276, 132));
-//		componentScroll.setMinimumSize(new Dimension(276, 50));
-//		componentScroll.setPreferredSize(new Dimension(276, 50));
 		componentScroll.setViewportView(compList);
 		
 		this.add(componentLabel, "North");
@@ -72,8 +67,8 @@ public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			if (filterType.equals("all") || (dnac.getTypes().size()>0 &&
-					SBOLUtility.convertURIToSOType(dnac.getTypes().iterator().next()).equals(filterType))) {
+			if (filterType.equals("all") || (dnac.getTypes().size() > 0 &&
+					SBOLUtility.convertURIToSOTerm(dnac.getTypes().iterator().next()).equals(filterType))) {
 				filteredURIs.add(compURIs.get(i));
 				filteredIDs.add(compIDs.get(i));
 			}
@@ -102,7 +97,6 @@ public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 					e1.printStackTrace();
 				}
 				if (dnac != null) {
-//					DnaComponent dnac = compMap.get(compURI);
 					
 					viewArea.append("Display ID:  " + dnac.getDisplayId() + "\n");
 					
@@ -127,7 +121,6 @@ public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 								e1.printStackTrace();
 							}
 							if (resolvedSA != null)
-//								unsortedSA.add(annoMap.get(sa.getURI().toString()));
 								unsortedSA.add(resolvedSA);
 							else
 								unsortedSA.add(sa);
@@ -144,7 +137,7 @@ public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 					viewArea.append("Types:  ");
 					String types = "";
 					for (URI uri : dnac.getTypes()) 
-						types = types + SBOLUtility.convertURIToSOType(uri) + ", ";
+						types = types + SBOLUtility.convertURIToSOTerm(uri) + ", ";
 					if (types.length() > 0)
 						viewArea.append(types.substring(0, types.length() - 2) + "\n");
 					else

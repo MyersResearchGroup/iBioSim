@@ -13,6 +13,7 @@ import sbol.util.SBOLFileManager;
 import sbol.util.SBOLUtility;
 
 import biomodel.annotation.AnnotationUtility;
+import biomodel.util.GlobalConstants;
 import biomodel.util.SBMLutilities;
 
 public class SynthesisNode {
@@ -45,8 +46,8 @@ public class SynthesisNode {
 		List<DnaComponent> dnaComps = fileManager.resolveURIs(compURIs);
 		nucleotideCount = SBOLUtility.countNucleotides(dnaComps);
 		Set<String> soFilterTypes = new HashSet<String>();
-		soFilterTypes.add("coding sequence");
-		soFilterTypes.add("promoter");
+		soFilterTypes.add(GlobalConstants.SO_CDS);
+		soFilterTypes.add(GlobalConstants.SO_PROMOTER);
 		List<DnaComponent> signalComps = SBOLUtility.filterDNAComponents(dnaComps, soFilterTypes);
 		if (signalComps.size() > 0)
 			signal = signalComps.get(0).getURI().toString();

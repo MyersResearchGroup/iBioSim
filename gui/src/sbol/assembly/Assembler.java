@@ -52,14 +52,14 @@ public class Assembler {
 					new LinkedList<AssemblyNode>(), new LinkedList<AssemblyNode>(), new LinkedList<AssemblyNode>(), 
 					new HashSet<AssemblyNode>(), new HashSet<AssemblyNode>());
 			assemblyGraph = temp;
-			if (orderedNodes != null && SBOLUtility.loadNodeTypes(orderedNodes).size() > 0 
-					&& flatOrderedNodes != null && SBOLUtility.loadNodeTypes(flatOrderedNodes).size() > 0)
+			if (orderedNodes != null && loadNodeTypes(orderedNodes).size() > 0 
+					&& flatOrderedNodes != null && loadNodeTypes(flatOrderedNodes).size() > 0)
 				orderedNodes = compareOrderedNodes(orderedNodes, flatOrderedNodes);
 			else
 				orderedNodes = flatOrderedNodes;
 		}
 //		assemblyGraph.print(orderedNodes);
-		if (orderedNodes == null || SBOLUtility.loadNodeTypes(orderedNodes).size() == 0) {
+		if (orderedNodes == null || loadNodeTypes(orderedNodes).size() == 0) {
 			JOptionPane.showMessageDialog(Gui.frame, "Failed to assemble composite DNA component with valid ordering of sequence types among its subcomponents.\n" +
 					"(No orderings matching regular expressions for complete or partial genetic constructs were found.)", 
 					"No Valid Sequence Type Order", JOptionPane.ERROR_MESSAGE);
@@ -81,14 +81,14 @@ public class Assembler {
 						position = addSubComponent(position, subComps.get(i), assembledComp, assemblyNode.getStrand());
 						if (position == -1)
 							return null;
-						subCompTypes.addAll(0, SBOLUtility.loadDNAComponentTypes(subComps.get(i)));
+						subCompTypes.addAll(0, loadAssemblyTypes(subComps.get(i)));
 					}
 				else
 					for (int i = 0; i < subComps.size(); i++) {
 						position = addSubComponent(position, subComps.get(i), assembledComp, assemblyNode.getStrand());
 						if (position == -1)
 							return null;
-						subCompTypes.addAll(SBOLUtility.loadDNAComponentTypes(subComps.get(i)));
+						subCompTypes.addAll(loadAssemblyTypes(subComps.get(i)));
 					}
 			}
 			if (Preferences.userRoot().get(GlobalConstants.CONSTRUCT_VALIDATION_PREFERENCE, "").equals("True") &&
@@ -112,14 +112,14 @@ public class Assembler {
 		while (i < orderedNodes.size()) {
 			List<AssemblyNode> construct = new LinkedList<AssemblyNode>();
 			int j = i;
-			seqValidator.validateTerminalConstruct(SBOLUtility.loadNodeTypes(orderedNodes.get(j)), true);
+			seqValidator.validateTerminalConstruct(loadNodeTypes(orderedNodes.get(j)), true);
 			List<String> nextNodeTypes;
 			do {
 				construct.add(orderedNodes.get(j));
-				seqValidator.validateTerminalConstruct(SBOLUtility.loadNodeTypes(orderedNodes.get(j)), true);
+				seqValidator.validateTerminalConstruct(loadNodeTypes(orderedNodes.get(j)), true);
 				j++;
 				if (j < orderedNodes.size()) {
-					nextNodeTypes = SBOLUtility.loadNodeTypes(orderedNodes.get(j));
+					nextNodeTypes = loadNodeTypes(orderedNodes.get(j));
 					if (nextNodeTypes.size() > 1)
 						nextNodeTypes = nextNodeTypes.subList(0, 1);
 				} else 
@@ -136,14 +136,14 @@ public class Assembler {
 		while (i < flatOrderedNodes.size()) {
 			List<AssemblyNode> flatConstruct = new LinkedList<AssemblyNode>();
 			int j = i;
-			seqValidator.validateTerminalConstruct(SBOLUtility.loadNodeTypes(flatOrderedNodes.get(j)), true);
+			seqValidator.validateTerminalConstruct(loadNodeTypes(flatOrderedNodes.get(j)), true);
 			List<String> nextNodeTypes;
 			do {
 				flatConstruct.add(flatOrderedNodes.get(j));
-				seqValidator.validateTerminalConstruct(SBOLUtility.loadNodeTypes(flatOrderedNodes.get(j)), true);
+				seqValidator.validateTerminalConstruct(loadNodeTypes(flatOrderedNodes.get(j)), true);
 				j++;
 				if (j < flatOrderedNodes.size()) {
-					nextNodeTypes = SBOLUtility.loadNodeTypes(flatOrderedNodes.get(j));
+					nextNodeTypes = loadNodeTypes(flatOrderedNodes.get(j));
 					if (nextNodeTypes.size() > 1)
 						nextNodeTypes = nextNodeTypes.subList(0, 1);
 				} else 
@@ -155,14 +155,14 @@ public class Assembler {
 			i = j;
 		}
 		int initialJ = 0;
-		if (constructs.size() > 1 && !seqValidator.validateCompleteConstruct(SBOLUtility.loadNodeTypes(constructs.get(initialJ)), false))
+		if (constructs.size() > 1 && !seqValidator.validateCompleteConstruct(loadNodeTypes(constructs.get(initialJ)), false))
 			initialJ++;
 		int finalJ = constructs.size();
-		if (constructs.size() > 1 && !seqValidator.validateCompleteConstruct(SBOLUtility.loadNodeTypes(constructs.get(finalJ - 1)), false))
+		if (constructs.size() > 1 && !seqValidator.validateCompleteConstruct(loadNodeTypes(constructs.get(finalJ - 1)), false))
 			finalJ--;
 		String flatConstructURISig = "";
 		for (List<AssemblyNode> flatConstruct : flatConstructs) {
-			List<URI> flatConstructURIs = SBOLUtility.loadNodeURIs(flatConstruct);
+			List<URI> flatConstructURIs = loadNodeURIs(flatConstruct);
 			for (URI flatConstructURI : flatConstructURIs)
 				flatConstructURISig = flatConstructURISig + flatConstructURI.toString();
 		}
@@ -171,7 +171,7 @@ public class Assembler {
 				constructs.add(finalJ - 1, constructs.remove(j));
 				String constructURISig = "";
 				for (List<AssemblyNode> construct : constructs) {
-					List<URI> constructURIs = SBOLUtility.loadNodeURIs(construct);
+					List<URI> constructURIs = loadNodeURIs(construct);
 					for (URI constructURI : constructURIs)
 						constructURISig = constructURISig + constructURI.toString();
 				}
@@ -217,7 +217,7 @@ public class Assembler {
 			if (currentNodes.size() == 0)
 				currentNodes.add(startNodes.get(0));
 			while (currentNodes.size() > 0) {		
-				List<String> currentNodeTypes = SBOLUtility.loadNodeTypes(currentNodes.get(0));
+				List<String> currentNodeTypes = loadNodeTypes(currentNodes.get(0));
 //				currentNodeTypes.size() == 0 || 
 				if (seqValidator.validatePartialConstruct(currentNodeTypes, true)) {
 					localVisitedNodes.add(currentNodes.get(0));
@@ -253,7 +253,7 @@ public class Assembler {
 									nextValid = true;
 							}
 							if (nextValid) {
-								List<String> nextNodeTypes = SBOLUtility.loadNodeTypes(nextNode);
+								List<String> nextNodeTypes = loadNodeTypes(nextNode);
 								if (nextNodeTypes.size() > 2)
 									nextNodeTypes = nextNodeTypes.subList(0, 2);
 								if (nextNodeTypes.size() > 0 && 
@@ -306,8 +306,8 @@ public class Assembler {
 			} 
 			seqValidator.resetTerminalConstructValidator();
 			seqValidator.resetPartialConstructValidator();
-			List<String> walkNodeTypes = SBOLUtility.loadNodeTypes(walkNodes);
-			List<String> orderedNodeTypes = SBOLUtility.loadNodeTypes(orderedNodes);
+			List<String> walkNodeTypes = loadNodeTypes(walkNodes);
+			List<String> orderedNodeTypes = loadNodeTypes(orderedNodes);
 			if (seqValidator.validateStartConstruct(walkNodeTypes, false) 
 					&& seqValidator.validateTerminalConstruct(orderedNodeTypes, false))
 				orderedNodes.addAll(walkNodes);
@@ -333,7 +333,7 @@ public class Assembler {
 			cycleNodes.removeAll(globalVisitedNodes);
 			Set<String> startNodeTypes = seqValidator.getStartTypes();
 			for (AssemblyNode cycleNode : cycleNodes) {
-				List<String> cycleNodeTypes = SBOLUtility.loadNodeTypes(cycleNode);
+				List<String> cycleNodeTypes = loadNodeTypes(cycleNode);
 				if (cycleNodeTypes.size() > 1 && startNodeTypes.contains(cycleNodeTypes.get(1))) 
 					startNodes.add(cycleNode);
 			}
@@ -374,6 +374,79 @@ public class Assembler {
 			return null;
 		} else
 			return orderedNodes;
+	}
+	
+	private List<String> loadAssemblyTypes(DnaComponent dnaComp, String strand) {
+		List<String> types = new LinkedList<String>();
+		if (dnaComp.getAnnotations().size() == 0) {
+			String soNum = SBOLUtility.loadSONumber(dnaComp);
+			if (soNum != null) {
+				types.add(strand);
+				types.add(soNum);
+			}
+		} else {
+			List<SequenceAnnotation> annos = SBOLUtility.orderSequenceAnnotations(dnaComp.getAnnotations());
+			String prevSubStrand = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
+			int minusIndex = 0;
+			for (SequenceAnnotation anno : annos) {
+				String subStrand;
+				if (anno.getStrand() == null) {
+					subStrand = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
+				} else
+					subStrand = anno.getStrand().getSymbol();
+				List<String> nextTypes;
+				if (strand.equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND))
+					if (subStrand.equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND))
+						nextTypes = loadAssemblyTypes(anno.getSubComponent(), 
+								GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND);
+					else 
+						nextTypes = loadAssemblyTypes(anno.getSubComponent(), strand);
+				else
+					nextTypes = loadAssemblyTypes(anno.getSubComponent(), subStrand);
+				if (subStrand.equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND)) {
+					if (!subStrand.equals(prevSubStrand))
+						minusIndex = types.size();
+					types.addAll(minusIndex, nextTypes);
+				} else
+					types.addAll(nextTypes);
+				prevSubStrand = subStrand;
+			}
+		}
+		return types;
+	}
+	
+	private List<String> loadAssemblyTypes(DnaComponent dnaComp) {
+		return loadAssemblyTypes(dnaComp, GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND);
+	}
+
+	private List<String> loadAssemblyTypes(List<DnaComponent> dnaComps) {
+		List<String> types = new LinkedList<String>();
+		for (DnaComponent dnaComp : dnaComps) {
+			types.addAll(loadAssemblyTypes(dnaComp, GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND));
+		}
+		return types;
+	}
+	
+	private List<String> loadNodeTypes(AssemblyNode assemblyNode) {
+		return loadAssemblyTypes(assemblyNode.getDNAComponents());
+	}
+	
+	private List<String> loadNodeTypes(List<AssemblyNode> assemblyNodes) {
+		List<String> types = new LinkedList<String>();
+		for (AssemblyNode assemblyNode : assemblyNodes)
+			types.addAll(loadNodeTypes(assemblyNode));
+		return types;
+	}
+	
+	private List<URI> loadNodeURIs(AssemblyNode assemblyNode) {
+		return SBOLUtility.loadDNAComponentURIs(assemblyNode.getDNAComponents());
+	}
+	
+	private List<URI> loadNodeURIs(List<AssemblyNode> assemblyNodes) {
+		List<URI> uris = new LinkedList<URI>();
+		for (AssemblyNode assemblyNode : assemblyNodes)
+			uris.addAll(loadNodeURIs(assemblyNode));
+		return uris;
 	}
 	
 }

@@ -168,7 +168,7 @@ public class SBOLBrowser extends JPanel implements ActionListener {
 				e.printStackTrace();
 			}
 			if (localComp.getTypes().size() > 0) {	
-				dnacTypes.add(SBOLUtility.convertURIToSOType(localComp.getTypes().iterator().next()));
+				dnacTypes.add(SBOLUtility.convertURIToSOTerm(localComp.getTypes().iterator().next()));
 			}
 		}
 		filterBox = new JComboBox(dnacTypes.toArray(new String[dnacTypes.size()]));
