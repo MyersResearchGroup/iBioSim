@@ -78,6 +78,7 @@ import sbol.assembly.AssemblyGraph;
 import sbol.assembly.SequenceTypeValidator;
 import sbol.util.SBOLFileManager;
 import sbol.util.SBOLIdentityManager;
+import sbol.util.SBOLUtility;
 
 /**
  * This is the GCM2SBMLEditor class. It takes in a gcm file and allows the user
@@ -437,8 +438,9 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 						biosim.getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION));
 				if (fileManager.sbolFilesAreLoaded() && assemblyGraph.loadDNAComponents(fileManager)) {
 //					assemblyGraph.print();
-					SequenceTypeValidator seqValidator = 
-							new SequenceTypeValidator(Preferences.userRoot().get(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, ""));
+					String regex = SBOLUtility.convertRegexSOTermsToNumbers(
+							Preferences.userRoot().get(GlobalConstants.GENETIC_CONSTRUCT_REGEX_PREFERENCE, ""));
+					SequenceTypeValidator seqValidator = new SequenceTypeValidator(regex);
 					Assembler assembler = new Assembler(assemblyGraph, seqValidator);
 					DnaComponent assembledComp = assembler.assembleDNAComponent();
 					if (assembledComp != null) {
