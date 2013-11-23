@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
+
 import verification.platu.lpn.LPN;
 import verification.platu.lpn.LPNTran;
 import verification.platu.lpn.VarSet;
@@ -122,7 +123,7 @@ static final Comparator<VarVal> vvComparator=new Comparator<VarVal>() {
         List<Integer> tmp1 = new ArrayList<Integer>();
 //        for(int i = 0; i < lpn.getInitStateTimed().getMarking().length; i++)
 //        	tmp1.add(lpn.getInitStateTimed().getMarking()[i]);
-        Iterator it = tmp1.iterator();
+        Iterator<Integer> it = tmp1.iterator();
 
         // debugPrint("MARK>>");
         while (it.hasNext()) {

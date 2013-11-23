@@ -2466,7 +2466,7 @@ public class LhpnFile {
 							+ "given to a boolean variable.");
 				}
 				else{
-					InequalityVariable iv = (InequalityVariable) v;
+//					InequalityVariable iv = (InequalityVariable) v;
 					
 //					
 //					Not needed anymore since the list is not dynamically change

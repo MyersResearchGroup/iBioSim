@@ -665,6 +665,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			}
 		}
 		catch (Exception e) {
+			e.printStackTrace();
 			JOptionPane.showMessageDialog(Gui.frame, "Unable to load properties file!",
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}

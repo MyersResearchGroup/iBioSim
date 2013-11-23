@@ -374,6 +374,7 @@ public class SynthesisGraph {
 		return compURIs;
 	}
 
+	@SuppressWarnings("unused")
 	private void print() {
 		System.out.println(modelFileID);
 		for (String path : paths)

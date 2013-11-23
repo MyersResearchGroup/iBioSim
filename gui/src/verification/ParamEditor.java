@@ -43,13 +43,17 @@ public class ParamEditor extends JPanel implements ActionListener {
 			orbmatch, interleav, prune, disabling, nofail, keepgoing, explpn, nochecks, reduction,
 			newTab, postProc, redCheck, xForm2, expandRate;
 
-	private JTextField bddSize, backgroundField, componentField;
+	private JTextField bddSize;
+
+	//private JTextField backgroundField, componentField;
 
 	private ButtonGroup timingMethodGroup, algorithmGroup, abstractionGroup;
 	
 	private PropertyList variables;
 
-	private String directory, separator, root, verFile, oldBdd, sourceFileNoPath;
+	private String separator, root;
+
+	//private String directory, verFile, oldBdd, sourceFileNoPath;
 	
 	public String verifyFile;
 
@@ -80,7 +84,7 @@ public class ParamEditor extends JPanel implements ActionListener {
 		//this.atacs = atacs;
 		//this.biosim = biosim;
 		//this.log = log;
-		this.directory = directory;
+		//this.directory = directory;
 		//this.bigTab = bigTab;
 		// String[] getFilename = directory.split(separator);
 		//String[] tempArray = filename.split("\\.");
@@ -117,8 +121,8 @@ public class ParamEditor extends JPanel implements ActionListener {
 
 		bddSize = new JTextField("");
 		bddSize.setPreferredSize(new Dimension(40, 18));
-		oldBdd = bddSize.getText();
-		componentField = new JTextField("");
+		//oldBdd = bddSize.getText();
+		//componentField = new JTextField("");
 		//componentList = new PropertyList("");
 
 		abstractLabel = new JLabel("Abstraction:");
@@ -354,7 +358,7 @@ public class ParamEditor extends JPanel implements ActionListener {
 	
 	private class EditCommand implements Runnable {
 		public EditCommand(String name, PropertyList list) {
-			this.name = name;
+	//		this.name = name;
 			//this.list = list;
 		}
 
@@ -362,12 +366,13 @@ public class ParamEditor extends JPanel implements ActionListener {
 			
 		}
 
+		/*
 		public String getName() {
 			return name;
 		}
 
 		private String name = null;
-
+*/
 		//private PropertyList list = null;
 	}
 	

@@ -855,9 +855,6 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 		else if (unit.isCandela()) {
 			return "candela";
 		}
-		else if (unit.isCelsius()) {
-			return "celsius";
-		}
 		else if (unit.isCoulomb()) {
 			return "coulomb";
 		}

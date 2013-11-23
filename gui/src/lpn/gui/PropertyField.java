@@ -169,13 +169,13 @@ public class PropertyField extends JPanel implements ActionListener {
 
 	private JLabel name = null;
 
-	private JLabel idLabel = null;
+	//private JLabel idLabel = null;
 
 	private JComboBox box = null;
 
 	private JTextField field = null;
 
-	private JTextField idField = null;
+	//private JTextField idField = null;
 
 	// private JLabel idL
 

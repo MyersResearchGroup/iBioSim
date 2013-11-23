@@ -1389,7 +1389,7 @@ public class Grid {
 		private Rectangle snapRectangle; //x,y coordinate of the top-left of the component (not grid) rectangle
 		//private boolean isCompartment; //component is a compartment or not
 		private boolean selected; //is the grid location selected or not
-		private boolean hover; //is the grid location being hovered over or not
+		//private boolean hover; //is the grid location being hovered over or not
 		private Rectangle gridRectangle; //contains the grid coordinates and size
 		
 		//-------------
@@ -1405,7 +1405,7 @@ public class Grid {
 			//isCompartment = false;
 			compId = null;
 			selected = false;
-			hover = false;
+			//hover = false;
 			snapRectangle = new Rectangle(0, 0, 0, 0);
 			gridRectangle = new Rectangle(0, 0, 0, 0);
 		}
@@ -1512,11 +1512,11 @@ public class Grid {
 		 * 
 		 * @return the grid rectangle for the node
 		 */
-		public Rectangle getRectangle() {
-			
-			return new Rectangle(gridRectangle.x, gridRectangle.y + verticalOffset, 
-					gridRectangle.width, gridRectangle.height);
-		}
+//		public Rectangle getRectangle() {
+//			
+//			return new Rectangle(gridRectangle.x, gridRectangle.y + verticalOffset, 
+//					gridRectangle.width, gridRectangle.height);
+//		}
 		
 		/**
 		 * returns rectangle after applying zoom scaling
@@ -1544,10 +1544,10 @@ public class Grid {
 		 * @param x
 		 * @param y
 		 */
-		public void setSnapRectangle(Rectangle r) {
-			
-			snapRectangle = r;
-		}
+//		public void setSnapRectangle(Rectangle r) {
+//			
+//			snapRectangle = r;
+//		}
 		
 		/**
 		 * used by the schematic to move cells around the graph
@@ -1604,15 +1604,16 @@ public class Grid {
 		 * @param selected the hover status
 		 */
 		public void setHover(boolean hover) {
-			this.hover = hover;
+			// TODO: this variable appears to not be in use anymore, can the whole function be removed.
+			//this.hover = hover;
 		}
 
 		/**
 		 * @return the hover status
 		 */
-		public boolean isHover() {
-			return hover;
-		}
+//		public boolean isHover() {
+//			return hover;
+//		}
 	}
 
 }

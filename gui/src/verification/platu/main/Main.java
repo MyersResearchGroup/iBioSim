@@ -98,10 +98,11 @@ public class Main {
      */
     public static void main(String[] args) {
         try {
-            String optFileString = null, cmdFileString = null, switches = "";
+            String optFileString = null, cmdFileString = null;
+//            String switches = "";
             for (String arg : args) {
                 if (arg.startsWith("/")) {
-                    switches += arg + "\n";
+ //                   switches += arg + "\n";
                 } 
                 else if (arg.endsWith(".cmd") || arg.endsWith(".cmnd")) {
                     cmdFileString = arg;

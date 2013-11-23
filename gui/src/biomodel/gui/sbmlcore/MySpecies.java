@@ -23,7 +23,6 @@ import main.util.Utility;
 
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.InitialAssignment;
-import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
@@ -123,10 +122,9 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		JScrollPane scroll1 = new JScrollPane();
 		scroll1.setViewportView(species);
 		Model model = bioModel.getSBMLDocument().getModel();
-		ListOf listOfSpecies = model.getListOfSpecies();
 		String[] specs = new String[(int) model.getSpeciesCount()];
 		for (int i = 0; i < model.getSpeciesCount(); i++) {
-			Species species = (Species) listOfSpecies.get(i);
+			Species species = model.getSpecies(i);
 			/*
 			 * if (species.isSetSpeciesType()) { specs[i] = species.getId() +
 			 * " " + species.getSpeciesType() + " " + species.getCompartment();
@@ -192,10 +190,9 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		}
 		this.bioModel = gcm;
 		Model model = gcm.getSBMLDocument().getModel();
-		ListOf listOfSpecies = model.getListOfSpecies();
 		String[] specs = new String[(int) model.getSpeciesCount()];
 		for (int i = 0; i < model.getSpeciesCount(); i++) {
-			Species species = (Species) listOfSpecies.get(i);
+			Species species = model.getSpecies(i);
 			specs[i] = species.getId();
 			if (species.isSetInitialAmount()) {
 				specs[i] += " " + species.getInitialAmount();
@@ -242,7 +239,6 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		}
 		JLabel idLabel = new JLabel("ID:");
 		JLabel nameLabel = new JLabel("Name:");
-		JLabel specTypeLabel = new JLabel("Type:");
 		JLabel compLabel = new JLabel("Compartment:");
 		String[] initLabels = { "Initial Amount", "Initial Concentration", "Initial Assignment" };
 		initLabel = new JComboBox(initLabels);
@@ -555,24 +551,6 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 					 */
 				}
 				if (!error) {
-					ListOf listOfSpecies = bioModel.getSBMLDocument().getModel().getListOfSpecies();
-					String selected = "";
-					if (option.equals("OK")) {
-						selected = ((String) species.getSelectedValue()).split(" ")[0];
-					}
-//					SpeciesType not supported in Level 3
-//					for (int i = 0; i < bioModel.getSBMLDocument().getModel().getSpeciesCount(); i++) {
-//						if (!((Species) listOfSpecies.get(i)).getId().equals(selected)) {
-//							if (((Species) listOfSpecies.get(i)).getCompartment().equals((String) comp.getSelectedItem())
-//									&& ((Species) listOfSpecies.get(i)).getSpeciesType().equals(selSpecType)) {
-//								JOptionPane.showMessageDialog(Gui.frame, "Compartment already contains another species of this type.",
-//										"Species Type Not Unique", JOptionPane.ERROR_MESSAGE);
-//								error = true;
-//							}
-//						}
-//					}
-				}
-				if (!error) {
 					Compartment compartment = bioModel.getSBMLDocument().getModel().getCompartment((String) comp.getSelectedItem());
 					if (initLabel.getSelectedItem().equals("Initial Concentration") && bioModel.getSBMLDocument().getLevel() < 3
 							&& compartment.getSpatialDimensions() == 0) {
@@ -860,11 +838,11 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 
 		Reaction diffusion = bioModel.getSBMLDocument().getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Above");
 		if (diffusion!=null) {
-			kecdiff.setText(String.valueOf(diffusion.getKineticLaw().getParameter("kecdiff").getValue()));
+			kecdiff.setText(String.valueOf(diffusion.getKineticLaw().getLocalParameter("kecdiff").getValue()));
 		}
 		Reaction degradation = bioModel.getSBMLDocument().getModel().getReaction("Degradation_" + selectedSpecies.getId());
 		if (degradation!=null) {
-			kecd.setText(String.valueOf(degradation.getKineticLaw().getParameter("kecd").getValue()));			
+			kecd.setText(String.valueOf(degradation.getKineticLaw().getLocalParameter("kecd").getValue()));			
 		}
 		
 		//show the frame
@@ -910,27 +888,26 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 			double kecdRate = Double.parseDouble(kecd.getText());
 			
 			if (degradation!=null) {
-				degradation.getKineticLaw().getParameter("kecd").setValue(kecdRate);		
+				degradation.getKineticLaw().getLocalParameter("kecd").setValue(kecdRate);		
 			}
 			if (diffusion!=null) {
 				AnnotationUtility.parseArraySizeAnnotation(bioModel.getSBMLDocument().getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Above").getKineticLaw().getLocalParameter("i"));
 				bioModel.getSBMLDocument().getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Above")
-					.getKineticLaw().getParameter("kecdiff").setValue(kecdiffRate);			
+					.getKineticLaw().getLocalParameter("kecdiff").setValue(kecdiffRate);			
 				bioModel.getSBMLDocument().getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Below")
-					.getKineticLaw().getParameter("kecdiff").setValue(kecdiffRate);
+					.getKineticLaw().getLocalParameter("kecdiff").setValue(kecdiffRate);
 				bioModel.getSBMLDocument().getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Left")
-					.getKineticLaw().getParameter("kecdiff").setValue(kecdiffRate);
+					.getKineticLaw().getLocalParameter("kecdiff").setValue(kecdiffRate);
 				bioModel.getSBMLDocument().getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Right")
-					.getKineticLaw().getParameter("kecdiff").setValue(kecdiffRate);	
+					.getKineticLaw().getLocalParameter("kecdiff").setValue(kecdiffRate);	
 			}
 		}
 	}
 	
-	public static JComboBox createCompartmentChoices(BioModel gcm) {
-		ListOf listOfCompartments = gcm.getSBMLDocument().getModel().getListOfCompartments();
-		String[] add = new String[(int) gcm.getSBMLDocument().getModel().getCompartmentCount()];
-		for (int i = 0; i < gcm.getSBMLDocument().getModel().getCompartmentCount(); i++) {
-			add[i] = ((Compartment) listOfCompartments.get(i)).getId();
+	public static JComboBox createCompartmentChoices(BioModel bioModel) {
+		String[] add = new String[(int) bioModel.getSBMLDocument().getModel().getCompartmentCount()];
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getCompartmentCount(); i++) {
+			add[i] = bioModel.getSBMLDocument().getModel().getCompartment(i).getId();
 		}
 		try {
 			add[0].getBytes();
@@ -943,21 +920,20 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		return comp;
 	}
 
-	public static JComboBox createUnitsChoices(BioModel gcm) {
+	public static JComboBox createUnitsChoices(BioModel bioModel) {
 		JComboBox specUnits = new JComboBox();
 		specUnits.addItem("( none )");
-		ListOf listOfUnits = gcm.getSBMLDocument().getModel().getListOfUnitDefinitions();
-		for (int i = 0; i < gcm.getSBMLDocument().getModel().getUnitDefinitionCount(); i++) {
-			UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getUnitDefinitionCount(); i++) {
+			UnitDefinition unit = bioModel.getSBMLDocument().getModel().getUnitDefinition(i);
 			if ((unit.getUnitCount() == 1)
 					&& (unit.getUnit(0).isMole() || unit.getUnit(0).isItem() || unit.getUnit(0).isGram() || unit.getUnit(0).isKilogram())
 					&& (unit.getUnit(0).getExponent() == 1)) {
-				if (!(gcm.getSBMLDocument().getLevel() < 3 && unit.getId().equals("substance"))) {
+				if (!(bioModel.getSBMLDocument().getLevel() < 3 && unit.getId().equals("substance"))) {
 					specUnits.addItem(unit.getId());
 				}
 			}
 		}
-		if (gcm.getSBMLDocument().getLevel() < 3) {
+		if (bioModel.getSBMLDocument().getLevel() < 3) {
 			specUnits.addItem("substance");
 		}
 		String[] unitIds = { "dimensionless", "gram", "item", "kilogram", "mole" };
@@ -971,9 +947,8 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		JComboBox specConv;
 		specConv = new JComboBox();
 		specConv.addItem("( none )");
-		ListOf listOfParameters = bioModel.getSBMLDocument().getModel().getListOfParameters();
 		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
-			Parameter param = (Parameter) listOfParameters.get(i);
+			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
 			if (param.getConstant() && !bioModel.IsDefaultParameter(param.getId())) {
 				specConv.addItem(param.getId());
 			}

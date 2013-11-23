@@ -34,6 +34,7 @@ import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.ext.comp.Port;
+import org.sbml.jsbml.Event;
 import org.sbml.jsbml.RateRule;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Rule;
@@ -89,10 +90,9 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		removeRule = new JButton("Remove Rule");
 		editRule = new JButton("Edit Rule");
 		rules = new JList();
-		ListOf listOfRules = model.getListOfRules();
 		String[] rul = new String[(int) model.getRuleCount()];
 		for (int i = 0; i < model.getRuleCount(); i++) {
-			Rule rule = (Rule) listOfRules.get(i);
+			Rule rule = model.getRule(i);
 			if (rule.isAlgebraic()) {
 				rul[i] = "0 = " + bioModel.removeBooleans(rule.getMath());
 			}
@@ -630,7 +630,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		// algebraic rule
 		if ((selected.split(" ")[0]).equals("0")) {
 			String tempMath = selected.substring(4);
-			ListOf r = bioModel.getSBMLDocument().getModel().getListOfRules();
+			ListOf<Rule> r = bioModel.getSBMLDocument().getModel().getListOfRules();
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getRuleCount(); i++) {
 				if ((((Rule) r.get(i)).isAlgebraic()) && bioModel.removeBooleans(((Rule) r.get(i)).getMath()).equals(tempMath)) {
 					for (int j = 0; j < bioModel.getSBMLCompModel().getListOfPorts().size(); j++) {
@@ -648,7 +648,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		else if ((selected.split(" ")[0]).equals("d(")) {
 			String tempVar = selected.split(" ")[1];
 			String tempMath = selected.substring(selected.indexOf('=') + 2);
-			ListOf r = bioModel.getSBMLDocument().getModel().getListOfRules();
+			ListOf<Rule> r = bioModel.getSBMLDocument().getModel().getListOfRules();
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getRuleCount(); i++) {
 				if ((((Rule) r.get(i)).isRate()) && bioModel.removeBooleans(((Rule) r.get(i)).getMath()).equals(tempMath)
 						&& SBMLutilities.getVariable(((Rule) r.get(i))).equals(tempVar)) {
@@ -667,7 +667,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		else {
 			String tempVar = selected.split(" ")[0];
 			String tempMath = selected.substring(selected.indexOf('=') + 2);
-			ListOf r = bioModel.getSBMLDocument().getModel().getListOfRules();
+			ListOf<Rule> r = bioModel.getSBMLDocument().getModel().getListOfRules();
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getRuleCount(); i++) {
 				if ((((Rule) r.get(i)).isAssignment()) && bioModel.removeBooleans(((Rule) r.get(i)).getMath()).equals(tempMath)
 						&& SBMLutilities.getVariable(((Rule) r.get(i))).equals(tempVar)) {
@@ -759,12 +759,12 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		boolean assignOK = false;
 		ruleVar.removeAllItems();
 		Model model = bioModel.getSBMLDocument().getModel();
-		ListOf ids = model.getListOfCompartments();
 		for (int i = 0; i < model.getCompartmentCount(); i++) {
-			String id = ((Compartment) ids.get(i)).getId();
-			if (!((Compartment) ids.get(i)).getConstant()) {
+			Compartment compartment = model.getCompartment(i);
+			String id = compartment.getId();
+			if (!compartment.getConstant()) {
 				if (keepVarAssignRule(bioModel, selected, id)) {
-					ruleVar.addItem(((Compartment) ids.get(i)).getId());
+					ruleVar.addItem(compartment.getId());
 					assignOK = true;
 				}
 			}
@@ -778,23 +778,21 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 		}
-		ids = model.getListOfSpecies();
 		for (int i = 0; i < model.getSpeciesCount(); i++) {
-			String id = ((Species) ids.get(i)).getId();
-			if (!((Species) ids.get(i)).getConstant()) {
+			Species species = model.getSpecies(i);
+			String id = species.getId();
+			if (!species.getConstant()) {
 				if (keepVarAssignRule(bioModel, selected, id))
-					if (((Species) ids.get(i)).getBoundaryCondition() || !SBMLutilities.usedInReaction(bioModel.getSBMLDocument(), id)) {
-						ruleVar.addItem(((Species) ids.get(i)).getId());
+					if (species.getBoundaryCondition() || !SBMLutilities.usedInReaction(bioModel.getSBMLDocument(), id)) {
+						ruleVar.addItem(species.getId());
 						assignOK = true;
 					}
 			}
 		}
-		ids = model.getListOfReactions();
 		for (int i = 0; i < model.getReactionCount(); i++) {
-			Reaction reaction = (Reaction) ids.get(i);
-			ListOf ids2 = reaction.getListOfReactants();
+			Reaction reaction = model.getReaction(i);
 			for (int j = 0; j < reaction.getReactantCount(); j++) {
-				SpeciesReference reactant = (SpeciesReference) ids2.get(j);
+				SpeciesReference reactant = reaction.getReactant(j);
 				if ((reactant.isSetId()) && (!reactant.getId().equals("")) && !(reactant.getConstant())) {
 					String id = reactant.getId();
 					if (keepVarAssignRule(bioModel, selected, id)) {
@@ -803,9 +801,8 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					}
 				}
 			}
-			ids2 = reaction.getListOfProducts();
 			for (int j = 0; j < reaction.getProductCount(); j++) {
-				SpeciesReference product = (SpeciesReference) ids2.get(j);
+				SpeciesReference product = reaction.getProduct(j);
 				if ((product.isSetId()) && (!product.getId().equals("")) && !(product.getConstant())) {
 					String id = product.getId();
 					if (keepVarAssignRule(bioModel, selected, id)) {
@@ -825,12 +822,12 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		boolean rateOK = false;
 		ruleVar.removeAllItems();
 		Model model = bioModel.getSBMLDocument().getModel();
-		ListOf ids = model.getListOfCompartments();
 		for (int i = 0; i < model.getCompartmentCount(); i++) {
-			String id = ((Compartment) ids.get(i)).getId();
-			if (!((Compartment) ids.get(i)).getConstant()) {
+			Compartment compartment = model.getCompartment(i);
+			String id = compartment.getId();
+			if (!compartment.getConstant()) {
 				if (keepVarRateRule(bioModel, selected, id)) {
-					ruleVar.addItem(((Compartment) ids.get(i)).getId());
+					ruleVar.addItem(compartment.getId());
 					rateOK = true;
 				}
 			}
@@ -844,23 +841,21 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 		}
-		ids = model.getListOfSpecies();
 		for (int i = 0; i < model.getSpeciesCount(); i++) {
-			String id = ((Species) ids.get(i)).getId();
-			if (!((Species) ids.get(i)).getConstant()) {
+			Species species = model.getSpecies(i);
+			String id = species.getId();
+			if (!species.getConstant()) {
 				if (keepVarRateRule(bioModel, selected, id))
-					if (((Species) ids.get(i)).getBoundaryCondition() || !SBMLutilities.usedInReaction(bioModel.getSBMLDocument(), id)) {
-						ruleVar.addItem(((Species) ids.get(i)).getId());
+					if (species.getBoundaryCondition() || !SBMLutilities.usedInReaction(bioModel.getSBMLDocument(), id)) {
+						ruleVar.addItem(species.getId());
 						rateOK = true;
 					}
 			}
 		}
-		ids = model.getListOfReactions();
 		for (int i = 0; i < model.getReactionCount(); i++) {
-			Reaction reaction = (Reaction) ids.get(i);
-			ListOf ids2 = reaction.getListOfReactants();
+			Reaction reaction = model.getReaction(i);
 			for (int j = 0; j < reaction.getReactantCount(); j++) {
-				SpeciesReference reactant = (SpeciesReference) ids2.get(j);
+				SpeciesReference reactant = reaction.getReactant(j);
 				if ((reactant.isSetId()) && (!reactant.getId().equals("")) && !(reactant.getConstant())) {
 					String id = reactant.getId();
 					if (keepVarRateRule(bioModel, selected, id)) {
@@ -869,9 +864,8 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					}
 				}
 			}
-			ids2 = reaction.getListOfProducts();
 			for (int j = 0; j < reaction.getProductCount(); j++) {
-				SpeciesReference product = (SpeciesReference) ids2.get(j);
+				SpeciesReference product = reaction.getProduct(j);
 				if ((product.isSetId()) && (!product.getId().equals("")) && !(product.getConstant())) {
 					String id = product.getId();
 					if (keepVarRateRule(bioModel, selected, id)) {
@@ -962,26 +956,24 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	 * Determines if a variable is already in an initial assignment, assignment
 	 * rule, or rate rule
 	 */
-	public static boolean keepVarAssignRule(BioModel gcm, String selected, String id) {
+	public static boolean keepVarAssignRule(BioModel bioModel, String selected, String id) {
 		if (!selected.equals(id)) {
-			ListOf ia = gcm.getSBMLDocument().getModel().getListOfInitialAssignments();
-			for (int i = 0; i < gcm.getSBMLDocument().getModel().getInitialAssignmentCount(); i++) {
-				InitialAssignment init = (InitialAssignment) ia.get(i);
+			Model model = bioModel.getSBMLDocument().getModel();
+			for (int i = 0; i < model.getInitialAssignmentCount(); i++) {
+				InitialAssignment init = model.getInitialAssignment(i);
 				if (init.getVariable().equals(id))
 					return false;
 			}
-			ListOf e = gcm.getSBMLDocument().getModel().getListOfEvents();
-			for (int i = 0; i < gcm.getSBMLDocument().getModel().getEventCount(); i++) {
-				org.sbml.jsbml.Event event = (org.sbml.jsbml.Event) e.get(i);
+			for (int i = 0; i < model.getEventCount(); i++) {
+				Event event = model.getEvent(i);
 				for (int j = 0; j < event.getEventAssignmentCount(); j++) {
 					if (id.equals(event.getListOfEventAssignments().get(j).getVariable())) {
 						return false;
 					}
 				}
 			}
-			ListOf r = gcm.getSBMLDocument().getModel().getListOfRules();
-			for (int i = 0; i < gcm.getSBMLDocument().getModel().getRuleCount(); i++) {
-				Rule rule = (Rule) r.get(i);
+			for (int i = 0; i < model.getRuleCount(); i++) {
+				Rule rule = model.getRule(i);
 				if (rule.isAssignment() && SBMLutilities.getVariable(rule).equals(id))
 					return false;
 				if (rule.isRate() && SBMLutilities.getVariable(rule).equals(id))
@@ -994,11 +986,10 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Determines if a variable is already in a rate rule
 	 */
-	public static boolean keepVarRateRule(BioModel gcm, String selected, String id) {
+	public static boolean keepVarRateRule(BioModel bioModel, String selected, String id) {
 		if (!selected.equals(id)) {
-			ListOf r = gcm.getSBMLDocument().getModel().getListOfRules();
-			for (int i = 0; i < gcm.getSBMLDocument().getModel().getRuleCount(); i++) {
-				Rule rule = (Rule) r.get(i);
+			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getRuleCount(); i++) {
+				Rule rule = bioModel.getSBMLDocument().getModel().getRule(i);
 				if ((rule.isRate()||rule.isAssignment()) && SBMLutilities.getVariable(rule).equals(id))
 					return false;
 			}
@@ -1021,7 +1012,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			String selected = ((String) rules.getSelectedValue());
 			if ((selected.split(" ")[0]).equals("0")) {
 				String math = selected.substring(4);
-				ListOf r = bioModel.getSBMLDocument().getModel().getListOfRules();
+				ListOf<Rule> r = bioModel.getSBMLDocument().getModel().getListOfRules();
 				for (int i = 0; i < bioModel.getSBMLDocument().getModel().getRuleCount(); i++) {
 					if ((((Rule) r.get(i)).isAlgebraic())
 							&& (bioModel.removeBooleans(((Rule) r.get(i)).getMath()).equals(math))) {
@@ -1031,7 +1022,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			}
 			else if ((selected.split(" ")[0]).equals("d(")) {
 				String var = selected.split(" ")[1];
-				ListOf r = bioModel.getSBMLDocument().getModel().getListOfRules();
+				ListOf<Rule> r = bioModel.getSBMLDocument().getModel().getListOfRules();
 				for (int i = 0; i < bioModel.getSBMLDocument().getModel().getRuleCount(); i++) {
 					if ((((Rule) r.get(i)).isRate()) && SBMLutilities.getVariable(((Rule) r.get(i))).equals(var)) {
 						metaId = r.get(i).getMetaId();
@@ -1040,7 +1031,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			}
 			else {
 				String var = selected.split(" ")[0];
-				ListOf r = bioModel.getSBMLDocument().getModel().getListOfRules();
+				ListOf<Rule> r = bioModel.getSBMLDocument().getModel().getListOfRules();
 				for (int i = 0; i < bioModel.getSBMLDocument().getModel().getRuleCount(); i++) {
 					if ((((Rule) r.get(i)).isAssignment()) && SBMLutilities.getVariable(((Rule) r.get(i))).equals(var)) {
 						metaId = r.get(i).getMetaId();
@@ -1066,7 +1057,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				String selected = ((String) rules.getSelectedValue());
 				if ((selected.split(" ")[0]).equals("0")) {
 					String math = selected.substring(4);
-					ListOf r = bioModel.getSBMLDocument().getModel().getListOfRules();
+					ListOf<Rule> r = bioModel.getSBMLDocument().getModel().getListOfRules();
 					for (int i = 0; i < bioModel.getSBMLDocument().getModel().getRuleCount(); i++) {
 						if ((((Rule) r.get(i)).isAlgebraic())
 								&& (bioModel.removeBooleans(((Rule) r.get(i)).getMath()).equals(math))) {
@@ -1076,7 +1067,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				}
 				else if ((selected.split(" ")[0]).equals("d(")) {
 					String var = selected.split(" ")[1];
-					ListOf r = bioModel.getSBMLDocument().getModel().getListOfRules();
+					ListOf<Rule> r = bioModel.getSBMLDocument().getModel().getListOfRules();
 					for (int i = 0; i < bioModel.getSBMLDocument().getModel().getRuleCount(); i++) {
 						if ((((Rule) r.get(i)).isRate()) && SBMLutilities.getVariable(((Rule) r.get(i))).equals(var)) {
 							metaId = r.get(i).getMetaId();
@@ -1085,7 +1076,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				}
 				else {
 					String var = selected.split(" ")[0];
-					ListOf r = bioModel.getSBMLDocument().getModel().getListOfRules();
+					ListOf<Rule> r = bioModel.getSBMLDocument().getModel().getListOfRules();
 					for (int i = 0; i < bioModel.getSBMLDocument().getModel().getRuleCount(); i++) {
 						if ((((Rule) r.get(i)).isAssignment()) && SBMLutilities.getVariable(((Rule) r.get(i))).equals(var)) {
 							metaId = r.get(i).getMetaId();

@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.SortedSet;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 
@@ -136,14 +135,12 @@ public class SBMLutilities {
 		ArrayList<String> validVars = new ArrayList<String>();
 		ArrayList<String> invalidVars = new ArrayList<String>();
 		Model model = document.getModel();
-		ListOf sbml = model.getListOfFunctionDefinitions();
 		for (int i = 0; i < model.getFunctionDefinitionCount(); i++) {
-			validVars.add(((FunctionDefinition) sbml.get(i)).getId());
+			validVars.add(model.getFunctionDefinition(i).getId());
 		}
 		if (!isFunction) {
-			sbml = model.getListOfSpecies();
 			for (int i = 0; i < model.getSpeciesCount(); i++) {
-				validVars.add(((Species) sbml.get(i)).getId());
+				validVars.add(model.getSpecies(i).getId());
 			}
 		}
 		if (isFunction) {
@@ -153,30 +150,25 @@ public class SBMLutilities {
 			}
 		}
 		else {
-			sbml = model.getListOfCompartments();
 			for (int i = 0; i < model.getCompartmentCount(); i++) {
-				if (document.getLevel() > 2 || ((Compartment) sbml.get(i)).getSpatialDimensions() != 0) {
-					validVars.add(((Compartment) sbml.get(i)).getId());
+				if (document.getLevel() > 2 || model.getCompartment(i).getSpatialDimensions() != 0) {
+					validVars.add(model.getCompartment(i).getId());
 				}
 			}
-			sbml = model.getListOfParameters();
 			for (int i = 0; i < model.getParameterCount(); i++) {
-				validVars.add(((Parameter) sbml.get(i)).getId());
+				validVars.add(model.getParameter(i).getId());
 			}
-			sbml = model.getListOfReactions();
 			for (int i = 0; i < model.getReactionCount(); i++) {
-				Reaction reaction = (Reaction) sbml.get(i);
+				Reaction reaction = model.getReaction(i);
 				validVars.add(reaction.getId());
-				ListOf sbml2 = reaction.getListOfReactants();
 				for (int j = 0; j < reaction.getReactantCount(); j++) {
-					SpeciesReference reactant = (SpeciesReference) sbml2.get(j);
+					SpeciesReference reactant = reaction.getReactant(j);
 					if ((reactant.isSetId()) && (!reactant.getId().equals(""))) {
 						validVars.add(reactant.getId());
 					}
 				}
-				sbml2 = reaction.getListOfProducts();
 				for (int j = 0; j < reaction.getProductCount(); j++) {
-					SpeciesReference product = (SpeciesReference) sbml2.get(j);
+					SpeciesReference product = reaction.getProduct(j);
 					if ((product.isSetId()) && (!product.getId().equals(""))) {
 						validVars.add(product.getId());
 					}
@@ -281,24 +273,24 @@ public class SBMLutilities {
 						} else if (splitLaw[i].equals("mod")) {
 							createFunction(model, "mod", "Modular", "lambda(a,b,a-floor(a/b)*b)");
 						} else if (splitLaw[i].equals("neighborQuantityLeft")) {
-							createFunction(sbml.getModel(), "neighborQuantityLeft", "neighborQuantityLeft", "lambda(a,0)");
-							createFunction(sbml.getModel(), "neighborQuantityLeftFull", "neighborQuantityLeftFull", "lambda(a,b,c,0)");
+							createFunction(model, "neighborQuantityLeft", "neighborQuantityLeft", "lambda(a,0)");
+							createFunction(model, "neighborQuantityLeftFull", "neighborQuantityLeftFull", "lambda(a,b,c,0)");
 						} else if (splitLaw[i].equals("neighborQuantityRight")) {
-							createFunction(sbml.getModel(), "neighborQuantityRight", "neighborQuantityRight", "lambda(a,0)");
-							createFunction(sbml.getModel(), "neighborQuantityRightFull", "neighborQuantityRightFull", "lambda(a,b,c,0)");
+							createFunction(model, "neighborQuantityRight", "neighborQuantityRight", "lambda(a,0)");
+							createFunction(model, "neighborQuantityRightFull", "neighborQuantityRightFull", "lambda(a,b,c,0)");
 						} else if (splitLaw[i].equals("neighborQuantityAbove")) {
-							createFunction(sbml.getModel(), "neighborQuantityAbove", "neighborQuantityAbove", "lambda(a,0)");
-							createFunction(sbml.getModel(), "neighborQuantityAboveFull", "neighborQuantityAboveFull", "lambda(a,b,c,0)");
+							createFunction(model, "neighborQuantityAbove", "neighborQuantityAbove", "lambda(a,0)");
+							createFunction(model, "neighborQuantityAboveFull", "neighborQuantityAboveFull", "lambda(a,b,c,0)");
 						} else if (splitLaw[i].equals("neighborQuantityBelow")) {
-							createFunction(sbml.getModel(), "neighborQuantityBelow", "neighborQuantityBelow", "lambda(a,0)");
-							createFunction(sbml.getModel(), "neighborQuantityBelowFull", "neighborQuantityBelowFull", "lambda(a,b,c,0)");
+							createFunction(model, "neighborQuantityBelow", "neighborQuantityBelow", "lambda(a,0)");
+							createFunction(model, "neighborQuantityBelowFull", "neighborQuantityBelowFull", "lambda(a,b,c,0)");
 						}
 						else {
 							invalidVars.add(splitLaw[i]);
 						}
 						if (splitLaw[i].contains("neighborQuantity")) {
-							createFunction(sbml.getModel(), "getCompartmentLocationX", "getCompartmentLocationX", "lambda(a,0)");
-							createFunction(sbml.getModel(), "getCompartmentLocationY", "getCompartmentLocationY", "lambda(a,0)");
+							createFunction(model, "getCompartmentLocationX", "getCompartmentLocationX", "lambda(a,0)");
+							createFunction(model, "getCompartmentLocationY", "getCompartmentLocationY", "lambda(a,0)");
 						}
 					}
 				}
@@ -627,7 +619,7 @@ public class SBMLutilities {
 	 * Check the number of arguments to a function
 	 */
 	public static boolean checkNumFunctionArguments(SBMLDocument document, ASTNode node) {
-		ListOf sbml = document.getModel().getListOfFunctionDefinitions();
+		ListOf<FunctionDefinition> sbml = document.getModel().getListOfFunctionDefinitions();
 		switch (node.getType()) {
 		case FUNCTION_ABS:
 		case FUNCTION_ARCCOS:
@@ -951,9 +943,8 @@ public class SBMLutilities {
 		if (model.isSetId()) {
 			usedIDs.add(model.getId());
 		}
-		ListOf ids = model.getListOfFunctionDefinitions();
 		for (int i = 0; i < model.getFunctionDefinitionCount(); i++) {
-			usedIDs.add(((FunctionDefinition) ids.get(i)).getId());
+			usedIDs.add(model.getFunctionDefinition(i).getId());
 		}
 		usedIDs.add("uniform");
 		usedIDs.add("normal");
@@ -974,9 +965,8 @@ public class SBMLutilities {
 		usedIDs.add("G");
 		usedIDs.add("F");
 		usedIDs.add("U");
-		ids = model.getListOfUnitDefinitions();
 		for (int i = 0; i < model.getUnitDefinitionCount(); i++) {
-			usedIDs.add(((UnitDefinition) ids.get(i)).getId());
+			usedIDs.add(model.getUnitDefinition(i).getId());
 		}
 //		CompartmentType and SpeciesType not supported in Level 3
 //		ids = model.getListOfCompartmentTypes();
@@ -987,47 +977,41 @@ public class SBMLutilities {
 //		for (int i = 0; i < model.getSpeciesTypeCount(); i++) {
 //			usedIDs.add(((SpeciesType) ids.get(i)).getId());
 //		}
-		ids = model.getListOfCompartments();
 		for (int i = 0; i < model.getCompartmentCount(); i++) {
-			usedIDs.add(((Compartment) ids.get(i)).getId());
+			usedIDs.add(model.getCompartment(i).getId());
 		}
-		ids = model.getListOfParameters();
 		for (int i = 0; i < model.getParameterCount(); i++) {
-			usedIDs.add(((Parameter) ids.get(i)).getId());
+			usedIDs.add(model.getParameter(i).getId());
 		}
-		ids = model.getListOfReactions();
 		for (int i = 0; i < model.getReactionCount(); i++) {
-			Reaction reaction = (Reaction) ids.get(i);
+			Reaction reaction = model.getReaction(i);
 			usedIDs.add(reaction.getId());
-			ListOf ids2 = reaction.getListOfReactants();
 			for (int j = 0; j < reaction.getReactantCount(); j++) {
-				SpeciesReference reactant = (SpeciesReference) ids2.get(j);
+				SpeciesReference reactant = reaction.getReactant(j);
 				if ((reactant.isSetId()) && (!reactant.getId().equals(""))) {
 					usedIDs.add(reactant.getId());
 				}
 			}
-			ids2 = reaction.getListOfProducts();
 			for (int j = 0; j < reaction.getProductCount(); j++) {
-				SpeciesReference product = (SpeciesReference) ids2.get(j);
+				SpeciesReference product = reaction.getProduct(j);
 				if ((product.isSetId()) && (!product.getId().equals(""))) {
 					usedIDs.add(product.getId());
 				}
 			}
 		}
-		ids = model.getListOfSpecies();
 		for (int i = 0; i < model.getSpeciesCount(); i++) {
-			usedIDs.add(((Species) ids.get(i)).getId());
+			usedIDs.add(model.getSpecies(i).getId());
 		}
-		ids = model.getListOfConstraints();
 		for (int i = 0; i < model.getConstraintCount(); i++) {
-			if (((Constraint) ids.get(i)).isSetMetaId()) {
-				usedIDs.add(((Constraint) ids.get(i)).getMetaId());
+			Constraint constraint = model.getConstraint(i);
+			if (constraint.isSetMetaId()) {
+				usedIDs.add(constraint.getMetaId());
 			}
 		}
-		ids = model.getListOfEvents();
 		for (int i = 0; i < model.getEventCount(); i++) {
-			if (((org.sbml.jsbml.Event) ids.get(i)).isSetId()) {
-				usedIDs.add(((org.sbml.jsbml.Event) ids.get(i)).getId());
+			Event event = model.getEvent(i);
+			if (event.isSetId()) {
+				usedIDs.add(event.getId());
 			}
 		}
 		return usedIDs;
@@ -1038,26 +1022,23 @@ public class SBMLutilities {
 	 */
 	public static boolean checkCycles(SBMLDocument document) {
 		Model model = document.getModel();
-		ListOf listOfReactions = model.getListOfReactions();
 		String[] rateLaws = new String[(int) model.getReactionCount()];
 		for (int i = 0; i < model.getReactionCount(); i++) {
-			Reaction reaction = (Reaction) listOfReactions.get(i);
+			Reaction reaction = model.getReaction(i);
 			if (reaction.getKineticLaw()==null || reaction.getKineticLaw().getMath()==null) {
 				rateLaws[i] = reaction.getId() + " = 0.0"; 
 			} else {
 				rateLaws[i] = reaction.getId() + " = " + myFormulaToString(reaction.getKineticLaw().getMath());
 			}
 		}
-		ListOf listOfInitials = model.getListOfInitialAssignments();
 		String[] initRules = new String[(int) model.getInitialAssignmentCount()];
 		for (int i = 0; i < model.getInitialAssignmentCount(); i++) {
-			InitialAssignment init = (InitialAssignment) listOfInitials.get(i);
+			InitialAssignment init = model.getInitialAssignment(i);
 			initRules[i] = init.getVariable() + " = " + myFormulaToString(init.getMath());
 		}
-		ListOf listOfRules = model.getListOfRules();
 		String[] rules = new String[(int) model.getRuleCount()];
 		for (int i = 0; i < model.getRuleCount(); i++) {
-			Rule rule = (Rule) listOfRules.get(i);
+			Rule rule = model.getRule(i);
 			if (rule.isAlgebraic()) {
 				rules[i] = "0 = " + SBMLutilities.myFormulaToString(rule.getMath());
 			}
@@ -1430,9 +1411,8 @@ public class SBMLutilities {
 				}
 			}
 		}
-		ListOf ia = document.getModel().getListOfInitialAssignments();
-		for (int i = 0; i < document.getModel().getInitialAssignmentCount(); i++) {
-			InitialAssignment init = (InitialAssignment) ia.get(i);
+		for (int i = 0; i < model.getInitialAssignmentCount(); i++) {
+			InitialAssignment init = model.getInitialAssignment(i);
 			String initStr = SBMLutilities.myFormulaToString(init.getMath());
 			String[] vars = initStr.split(" |\\(|\\)|\\,");
 			for (int j = 0; j < vars.length; j++) {
@@ -1443,9 +1423,8 @@ public class SBMLutilities {
 				}
 			}
 		}
-		ListOf r = document.getModel().getListOfRules();
-		for (int i = 0; i < document.getModel().getRuleCount(); i++) {
-			Rule rule = (Rule) r.get(i);
+		for (int i = 0; i < model.getRuleCount(); i++) {
+			Rule rule = model.getRule(i);
 			String initStr = SBMLutilities.myFormulaToString(rule.getMath());
 			if (rule.isAssignment() || rule.isRate()) {
 				initStr += " = " + getVariable(rule);
@@ -1467,9 +1446,8 @@ public class SBMLutilities {
 				}
 			}
 		}
-		ListOf c = document.getModel().getListOfConstraints();
-		for (int i = 0; i < document.getModel().getConstraintCount(); i++) {
-			Constraint constraint = (Constraint) c.get(i);
+		for (int i = 0; i < model.getConstraintCount(); i++) {
+			Constraint constraint = model.getConstraint(i);
 			String consStr = SBMLutilities.myFormulaToString(constraint.getMath());
 			String[] vars = consStr.split(" |\\(|\\)|\\,");
 			for (int j = 0; j < vars.length; j++) {
@@ -1480,9 +1458,8 @@ public class SBMLutilities {
 				}
 			}
 		}
-		ListOf e = model.getListOfEvents();
 		for (int i = 0; i < model.getEventCount(); i++) {
-			org.sbml.jsbml.Event event = (org.sbml.jsbml.Event) e.get(i);
+			org.sbml.jsbml.Event event = model.getEvent(i);
 			String trigger = SBMLutilities.myFormulaToString(event.getTrigger().getMath());
 			String eventStr = trigger;
 			if (event.isSetDelay()) {
@@ -3645,27 +3622,24 @@ public class SBMLutilities {
 		messageArea.append("Model is incomplete.  Cannot be simulated until the following information is provided.\n");
 		boolean display = false;
 		org.sbml.jsbml.Model model = document.getModel();
-		ListOf list = model.getListOfCompartments();
 		for (int i = 0; i < model.getCompartmentCount(); i++) {
-			Compartment compartment = (Compartment) list.get(i);
+			Compartment compartment = model.getCompartment(i);
 			if (!compartment.isSetSize()) {
 				messageArea.append("--------------------------------------------------------------------------\n");
 				messageArea.append("Compartment " + compartment.getId() + " needs a size.\n");
 				display = true;
 			}
 		}
-		list = model.getListOfSpecies();
 		for (int i = 0; i < model.getSpeciesCount(); i++) {
-			Species species = (Species) list.get(i);
+			Species species = model.getSpecies(i);
 			if (!(species.isSetInitialAmount()) && !(species.isSetInitialConcentration())) {
 				messageArea.append("--------------------------------------------------------------------------\n");
 				messageArea.append("Species " + species.getId() + " needs an initial amount or concentration.\n");
 				display = true;
 			}
 		}
-		list = model.getListOfParameters();
 		for (int i = 0; i < model.getParameterCount(); i++) {
-			Parameter parameter = (Parameter) list.get(i);
+			Parameter parameter = model.getParameter(i);
 			if (!(parameter.isSetValue())) {
 				messageArea.append("--------------------------------------------------------------------------\n");
 				messageArea.append("Parameter " + parameter.getId() + " needs an initial value.\n");
@@ -3691,9 +3665,8 @@ public class SBMLutilities {
 				display = true;
 			}
 			else {
-				ListOf params = reaction.getKineticLaw().getListOfLocalParameters();
 				for (int j = 0; j < reaction.getKineticLaw().getLocalParameterCount(); j++) {
-					LocalParameter param = (LocalParameter) params.get(j);
+					LocalParameter param = reaction.getKineticLaw().getLocalParameter(j);
 					if (!(param.isSetValue())) {
 						messageArea.append("--------------------------------------------------------------------------\n");
 						messageArea.append("Local parameter " + param.getId() + " for reaction " + reaction.getId() + " needs an initial value.\n");

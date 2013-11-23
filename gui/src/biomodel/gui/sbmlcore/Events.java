@@ -1123,10 +1123,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			selected = "";
 		}
 		Model model = gcm.getSBMLDocument().getModel();
-		ListOf ids = model.getListOfCompartments();
 		for (int i = 0; i < model.getCompartmentCount(); i++) {
-			String id = ((Compartment) ids.get(i)).getId();
-			if (!((Compartment) ids.get(i)).getConstant()) {
+			String id = model.getCompartment(i).getId();
+			if (!(model.getCompartment(i).getConstant())) {
 				if (keepVarEvent(gcm, assign, selected, id)) {
 					eaID.addItem(id);
 				}
@@ -1147,21 +1146,18 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 		}
-		ids = model.getListOfSpecies();
 		for (int i = 0; i < model.getSpeciesCount(); i++) {
-			String id = ((Species) ids.get(i)).getId();
-			if (!((Species) ids.get(i)).getConstant()) {
+			String id = model.getSpecies(i).getId();
+			if (!(model.getSpecies(i).getConstant())) {
 				if (keepVarEvent(gcm, assign, selected, id)) {
 					eaID.addItem(id);
 				}
 			}
 		}
-		ids = model.getListOfReactions();
 		for (int i = 0; i < model.getReactionCount(); i++) {
-			Reaction reaction = (Reaction) ids.get(i);
-			ListOf<SpeciesReference> ids2 = reaction.getListOfReactants();
+			Reaction reaction = model.getReaction(i);
 			for (int j = 0; j < reaction.getReactantCount(); j++) {
-				SpeciesReference reactant = (SpeciesReference) ids2.get(j);
+				SpeciesReference reactant = reaction.getReactant(j);
 				if ((reactant.isSetId()) && (!reactant.getId().equals("")) && !(reactant.getConstant())) {
 					String id = reactant.getId();
 					if (keepVarEvent(gcm, assign, selected, id)) {
@@ -1169,9 +1165,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					}
 				}
 			}
-			ids2 = reaction.getListOfProducts();
 			for (int j = 0; j < reaction.getProductCount(); j++) {
-				SpeciesReference product = (SpeciesReference) ids2.get(j);
+				SpeciesReference product = reaction.getProduct(j);
 				if ((product.isSetId()) && (!product.getId().equals("")) && !(product.getConstant())) {
 					String id = product.getId();
 					if (keepVarEvent(gcm, assign, selected, id)) {
