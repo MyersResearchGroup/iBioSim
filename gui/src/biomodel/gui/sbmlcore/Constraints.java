@@ -243,7 +243,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 									+ consMessage.getText().trim() + "</p></message>");
 							c.setMessage(xmlNode);
 						}
-						else {
+						else if (c.isSetMessage()){
 							c.unsetMessage();
 						}
 						Port port = bioModel.getPortByMetaIdRef(selectedID);
@@ -369,7 +369,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 				layout.getListOfAdditionalGraphicalObjects().remove(GlobalConstants.GLYPH+"__"+selected);
 			}
 			if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+selected) != null) {
-				layout.getListOfTextGlyphs().get(GlobalConstants.TEXT_GLYPH+"__"+selected);
+				layout.getListOfTextGlyphs().remove(GlobalConstants.TEXT_GLYPH+"__"+selected);
 			}
 		}
 		modelEditor.setDirty(true);

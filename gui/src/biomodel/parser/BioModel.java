@@ -3345,7 +3345,7 @@ public class BioModel {
 					layout.getListOfSpeciesGlyphs().remove(GlobalConstants.GLYPH+"__"+id);
 				}
 				if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+id) != null) {
-					layout.getListOfTextGlyphs().get(GlobalConstants.TEXT_GLYPH+"__"+id);
+					layout.getListOfTextGlyphs().remove(GlobalConstants.TEXT_GLYPH+"__"+id);
 				}
 			}
 			for (int i = 0; i < sbmlCompModel.getListOfPorts().size(); i++) {
@@ -3381,7 +3381,7 @@ public class BioModel {
 				layout.getListOfReactionGlyphs().remove(GlobalConstants.GLYPH+"__"+id);
 			}
 			if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+id) != null) {
-				layout.getListOfTextGlyphs().get(GlobalConstants.TEXT_GLYPH+"__"+id);
+				layout.getListOfTextGlyphs().remove(GlobalConstants.TEXT_GLYPH+"__"+id);
 			}
 		}
 	}
@@ -3404,7 +3404,7 @@ public class BioModel {
 				layout.getListOfAdditionalGraphicalObjects().remove(GlobalConstants.GLYPH+"__"+metaId);
 			}
 			if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+metaId) != null) {
-				layout.getListOfTextGlyphs().get(GlobalConstants.TEXT_GLYPH+"__"+metaId);
+				layout.getListOfTextGlyphs().remove(GlobalConstants.TEXT_GLYPH+"__"+metaId);
 			}
 		}
 	}
@@ -3437,7 +3437,7 @@ public class BioModel {
 				layout.getListOfAdditionalGraphicalObjects().remove(GlobalConstants.GLYPH+"__"+id);
 			}
 			if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+id) != null) {
-				layout.getListOfTextGlyphs().get(GlobalConstants.TEXT_GLYPH+"__"+id);
+				layout.getListOfTextGlyphs().remove(GlobalConstants.TEXT_GLYPH+"__"+id);
 			}
 		}
 	}
@@ -4580,7 +4580,7 @@ public class BioModel {
 				layout.getListOfSpeciesGlyphs().remove(GlobalConstants.GLYPH+"__"+id);
 			}
 			if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+id) != null) {
-				layout.getListOfTextGlyphs().get(GlobalConstants.TEXT_GLYPH+"__"+id);
+				layout.getListOfTextGlyphs().remove(GlobalConstants.TEXT_GLYPH+"__"+id);
 			}
 		}
 		if (speciesPanel!=null)
