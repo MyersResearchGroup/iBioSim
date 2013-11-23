@@ -1139,16 +1139,14 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getReactionCount(); i++) {
 				Reaction reaction = (Reaction) sbml.get(i);
 				validVars.add(reaction.getId());
-				ListOf sbml2 = reaction.getListOfReactants();
 				for (int j = 0; j < reaction.getReactantCount(); j++) {
-					SpeciesReference reactant = (SpeciesReference) sbml2.get(j);
+					SpeciesReference reactant = reaction.getReactant(j);
 					if ((reactant.isSetId()) && (!reactant.getId().equals(""))) {
 						validVars.add(reactant.getId());
 					}
 				}
-				sbml2 = reaction.getListOfProducts();
 				for (int j = 0; j < reaction.getProductCount(); j++) {
-					SpeciesReference product = (SpeciesReference) sbml2.get(j);
+					SpeciesReference product = reaction.getProduct(j);
 					if ((product.isSetId()) && (!product.getId().equals(""))) {
 						validVars.add(product.getId());
 					}

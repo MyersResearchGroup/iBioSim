@@ -295,7 +295,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	
 	private static final String lemaVersion = "1.9";
 	
-	private static final String atacsVersion = "6.9";
+	private static final String atacsVersion = "6.1";
 	
 	private static final String iBioSimVersion = "2.5.1";
 		
@@ -7769,9 +7769,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							synthesisFile = synthesisFile.split(separator)[synthesisFile.split(separator).length - 1];
 						}
 					}
-					FileOutputStream out = new FileOutputStream(new File(synthesisFile));
-					load.store(out, synthesisFile);
-					out.close();
+					//FileOutputStream out = new FileOutputStream(new File(synthesisFile));
+					//load.store(out, synthesisFile);
+					//out.close();
 
 				}
 				catch (Exception e) {

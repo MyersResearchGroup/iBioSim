@@ -699,6 +699,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 			
 			cancel.addActionListener(new ActionListener() {
 
+				@SuppressWarnings("deprecation")
 				public void actionPerformed(ActionEvent arg0) {
 					
 					label.setText("Canceling movie");					

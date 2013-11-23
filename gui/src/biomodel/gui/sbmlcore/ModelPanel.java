@@ -18,7 +18,6 @@ import javax.swing.JTextField;
 import main.Gui;
 import main.util.MutableBoolean;
 
-import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.UnitDefinition;
@@ -39,7 +38,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 
 	private JTextField modelName; // the model's Name
 
-	private JButton modelEditor, fbaoButton;
+	private JButton fbaoButton;
 
 	private JComboBox substanceUnits, timeUnits, volumeUnits, areaUnits, lengthUnits, extentUnits, conversionFactor;
 	
@@ -47,23 +46,20 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 	
 	private BioModel bioModel;
 	
-	private ModelEditor gcmEditor;
-	
 	private Model sbmlModel;
 
 	private MutableBoolean dirty;
 
-	public ModelPanel(BioModel gcm, ModelEditor gcmEditor) {
+	public ModelPanel(BioModel gcm, ModelEditor modelEditor) {
 		super();
 		this.bioModel = gcm;
-		this.gcmEditor = gcmEditor;
-		sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor, 1, true);
+		sbolField = new SBOLField(GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 1, true);
 		this.sbmlModel = gcm.getSBMLDocument().getModel();
-		this.dirty = gcmEditor.getDirty();
+		this.dirty = modelEditor.getDirty();
 		this.setText("Model");
 		this.setToolTipText("Edit Model Attributes");
 		this.addActionListener((ActionListener) this);
-		if (gcmEditor.isParamsOnly()) {
+		if (modelEditor.isParamsOnly()) {
 			this.setEnabled(false);
 		}
 	}
@@ -109,9 +105,8 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			conversionFactor = new JComboBox();
 			conversionFactor.addItem("( none )");
 
-			ListOf listOfUnits = bioModel.getSBMLDocument().getModel().getListOfUnitDefinitions();
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getUnitDefinitionCount(); i++) {
-				UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
+				UnitDefinition unit = bioModel.getSBMLDocument().getModel().getUnitDefinition(i);
 				if ((unit.getUnitCount() == 1)
 						&& (unit.getUnit(0).isMole() || unit.getUnit(0).isItem() || unit.getUnit(0).isGram() || unit.getUnit(0).isKilogram())
 						&& (unit.getUnit(0).getExponent() == 1)) {
@@ -155,9 +150,8 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			sbolField.setSBOLURIs(sbolURIs);
 			sbolField.setSBOLStrand(sbolStrand);
 			
-			ListOf listOfParameters = bioModel.getSBMLDocument().getModel().getListOfParameters();
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
-				Parameter param = (Parameter) listOfParameters.get(i);
+				Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
 				if (param.getConstant() && !bioModel.IsDefaultParameter(param.getId())) {
 					conversionFactor.addItem(param.getId());
 				}

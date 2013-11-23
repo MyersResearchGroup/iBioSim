@@ -2399,6 +2399,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		}
 	}
 
+	/* TODO: Not sure why this is not used
 	private void checkDecomposition(LhpnFile lpn, LhpnFile lpnComp) {
 		// Places
 		for (String placeName : lpnComp.getPlaceList()) {
@@ -2428,6 +2429,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			}
 		}
 	}
+	*/
 
 	public void saveAs() {
 		String newName = JOptionPane.showInputDialog(Gui.frame,

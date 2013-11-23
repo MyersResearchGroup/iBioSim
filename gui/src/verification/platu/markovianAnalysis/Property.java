@@ -18,6 +18,7 @@ public class Property {
 		return property;
 	}
 
+	/*
 	private void setLabel(String label) {
 		this.label = label;
 	}
@@ -25,4 +26,5 @@ public class Property {
 	private void setProperty(String property) {
 		this.property = property;
 	}
+	*/
 }

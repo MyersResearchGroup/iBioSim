@@ -379,14 +379,15 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 		if ((learnFile.contains(".sbml")) || (learnFile.contains(".xml"))) {
 			SBMLDocument document = SBMLutilities.readSBML(learnFile);
 			Model model = document.getModel();
-			ListOf ids = model.getListOfSpecies();
+			//ListOf ids = model.getListOfSpecies();
 			try {
 				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
 				write.write("digraph G {\n");
 				for (int i = 0; i < model.getSpeciesCount(); i++) {
-					if (BioModel.isPromoterSpecies(((Species)ids.get(i)))) continue;
-					speciesList.add(((Species) ids.get(i)).getId());
-					write.write(((Species) ids.get(i)).getId() + " [shape=ellipse,color=black,label=\"" + ((Species) ids.get(i)).getId() + "\"" + "];\n");
+					Species species = model.getSpecies(i);
+					if (BioModel.isPromoterSpecies(species)) continue;
+					speciesList.add(species.getId());
+					write.write(species.getId() + " [shape=ellipse,color=black,label=\"" + species.getId() + "\"" + "];\n");
 				}
 				for (int i = 0; i < model.getReactionCount(); i++) {
 					Reaction r = model.getReaction(i);
@@ -1365,14 +1366,14 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 		if ((learnFile.contains(".sbml")) || (learnFile.contains(".xml"))) {
 			SBMLDocument document = SBMLutilities.readSBML(learnFile);
 			Model model = document.getModel();
-			ListOf ids = model.getListOfSpecies();
 			try {
 				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
 				write.write("digraph G {\n");
 				for (int i = 0; i < model.getSpeciesCount(); i++) {
-					if (BioModel.isPromoterSpecies(((Species)ids.get(i)))) continue;
-					speciesList.add(((Species) ids.get(i)).getId());
-					write.write(((Species) ids.get(i)).getId() + " [shape=ellipse,color=black,label=\"" + ((Species) ids.get(i)).getId() + "\"" + "];\n");
+					Species species = model.getSpecies(i);
+					if (BioModel.isPromoterSpecies(species)) continue;
+					speciesList.add(species.getId());
+					write.write(species.getId() + " [shape=ellipse,color=black,label=\"" + species.getId() + "\"" + "];\n");
 				}
 				for (int i = 0; i < model.getReactionCount(); i++) {
 					Reaction r = model.getReaction(i);

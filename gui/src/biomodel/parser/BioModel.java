@@ -7702,7 +7702,7 @@ public class BioModel {
 	private HashMap<String, Properties> compartments;
 	
 	private int elementSBOLCount;
-	private boolean modelSBOLAnnotationFlag;
+	//private boolean modelSBOLAnnotationFlag;
 	private String[] sbolDescriptors;
 	private String sbolSaveFilePath;
 	private int placeHolderIndex;

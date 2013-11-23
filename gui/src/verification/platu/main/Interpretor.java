@@ -71,8 +71,8 @@ public class Interpretor {
             new Exception("Main: interpretcommand: prj is NULL").printStackTrace();
         }
 
-        String systemcommand = commandline;
-        systemcommand += " ";
+        //String systemcommand = commandline;
+        //systemcommand += " ";
         LinkedList<String> arguments = new LinkedList<String>();
         String command;
         String argument1 = "";

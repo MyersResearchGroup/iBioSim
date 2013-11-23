@@ -14,7 +14,6 @@ import javax.swing.JPanel;
 
 import org.sbml.jsbml.Constraint;
 import org.sbml.jsbml.InitialAssignment;
-import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SBMLDocument;
@@ -51,11 +50,10 @@ public class ElementsPanel extends JPanel {
 		catch (Exception e) {
 		}
 		Model m = document.getModel();
-		ListOf e = m.getListOfConstraints();
 		int consNum = (int) m.getConstraintCount();
 		String[] cons = new String[(int) consNum];
 		for (int i = 0; i < consNum; i++) {
-			Constraint constraint = (Constraint) e.get(i);
+			Constraint constraint = m.getConstraint(i);
 			if (!constraint.isSetMetaId()) {
 				String constraintId = "constraint0";
 				int cn = 0;
@@ -68,11 +66,10 @@ public class ElementsPanel extends JPanel {
 			}
 			cons[i] = constraint.getMetaId();
 		}
-		e = m.getListOfRules();
 		int rulNum = (int) m.getRuleCount();
 		String[] rul = new String[rulNum];
 		for (int i = 0; i < rulNum; i++) {
-			Rule rule = (Rule) e.get(i);
+			Rule rule = (Rule) m.getRule(i);
 			if (rule.isAlgebraic()) {
 				rul[i] = "0 = " + SBMLutilities.myFormulaToString(rule.getMath());
 			}
@@ -87,19 +84,17 @@ public class ElementsPanel extends JPanel {
 				elementChanges.add(rule.getMetaId());
 			}
 		}
-		e = m.getListOfInitialAssignments();
 		int initsNum = (int) m.getInitialAssignmentCount();
 		String[] inits = new String[initsNum];
 		for (int i = 0; i < initsNum; i++) {
-			inits[i] = ((InitialAssignment) e.get(i)).getVariable() + " = "
-					+ SBMLutilities.myFormulaToString(((InitialAssignment) e.get(i)).getMath());
+			inits[i] = ((InitialAssignment) m.getInitialAssignment(i)).getVariable() + " = "
+					+ SBMLutilities.myFormulaToString(((InitialAssignment) m.getInitialAssignment(i)).getMath());
 		}
-		e = m.getListOfEvents();
 		int evNum = (int) m.getEventCount();
 		String[] ev = new String[evNum];
 		for (int i = 0; i < evNum; i++) {
-			if (((org.sbml.jsbml.Event) e.get(i)).isSetId()) {
-				ev[i] = ((org.sbml.jsbml.Event) e.get(i)).getId();
+			if (((org.sbml.jsbml.Event) m.getEvent(i)).isSetId()) {
+				ev[i] = ((org.sbml.jsbml.Event) m.getEvent(i)).getId();
 			}
 		}
 		if (initsNum > 0) {
