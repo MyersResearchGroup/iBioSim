@@ -61,8 +61,8 @@ public class CompositionalThread extends Thread{
 //		int index = sg.getInterfaceIndex(srcSG.getLabel());
 //		int[] thisIndexList = sg.getThisIndexArray(index);
 //		int[] otherIndexList = sg.getOtherIndexArray(index);
-		LhpnFile srcLpn = srcSG.getLpn();
-		LhpnFile lpn = sg.getLpn();
+		//LhpnFile srcLpn = srcSG.getLpn();
+		//LhpnFile lpn = sg.getLpn();
 		
 		// TODO: (future)need to add getThisIndexArray in LhpnFile. 
 		/*
@@ -125,6 +125,7 @@ public class CompositionalThread extends Thread{
      * Determines whether a constraint is compatible with a state.
      * @return True if compatible, otherwise False.
      */
+	@SuppressWarnings("unused")
 	private boolean compatible(verification.platu.stategraph.State currentState, Constraint constr, int[] thisIndexList, int[] otherIndexList){
 		int[] constraintVector = constr.getVector();
 		int[] currentVector = currentState.getVariableVector();
@@ -145,6 +146,7 @@ public class CompositionalThread extends Thread{
      * Creates a state from a given constraint and compatible state.  If the state is new, then findSG is called.
      * @return Number of new transitions.
      */
+	@SuppressWarnings("unused")
 	private int createNewState(StateGraph sg, verification.platu.stategraph.State compatibleState, Constraint c){
 		int newTransitions = 0;
 

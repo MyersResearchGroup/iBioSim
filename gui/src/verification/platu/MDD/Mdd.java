@@ -7,7 +7,7 @@ import verification.platu.stategraph.*;
 public class Mdd {
 	static mddNode terminal = new mddNode();
 
-	private int stateCount;
+	//private int stateCount;
 	private HashMap<mddNode, mddNode>[] nodeTbl;
 	private HashMap<State, HashSet<State>>[] localFirings;
 	private int peakNodes;
@@ -18,7 +18,7 @@ public class Mdd {
 	 */
 	public Mdd(int numMods) {
 		Mdd.terminal.level = numMods;
-		stateCount = 0;
+		//stateCount = 0;
 		height = numMods;
 		nodeTbl = (HashMap<mddNode, mddNode>[])new HashMap[height];
 		localFirings = (HashMap<State, HashSet<State>>[])new HashMap[height+1];
@@ -58,7 +58,7 @@ public class Mdd {
 		if(curNodes > peakNodes)
 			peakNodes = curNodes;
 
-		stateCount++;
+		//stateCount++;
 		return true;
 	}	
 	

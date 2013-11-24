@@ -19,7 +19,6 @@ public class prjStateTimed extends PrjState {
     }
     
     @Override
-    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
     public boolean equals(final Object other) {
         return super.equals(other) && zone.equals(((prjStateTimed) other).zone);
     }

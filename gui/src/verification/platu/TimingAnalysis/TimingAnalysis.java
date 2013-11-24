@@ -94,10 +94,11 @@ public class TimingAnalysis {
 		System.out.println("---> total runtime: " + elapsedTimeSec + " sec\n");// </editor-fold>
 	}
 
+	@SuppressWarnings("unused")
 	private void search_dfs(StateGraph[] lpnList, State[] initStateArray) {
 		System.out.println("---> Calling TimingAnalysis.search_dfs");
 
-		int zoneType = 0;
+		//int zoneType = 0;
 
 		int arraySize = lpnList.length;
 		int max_stack_depth = 0;
@@ -257,8 +258,9 @@ public class TimingAnalysis {
 				LpnTranList enabledList = null;
 				enabledList = lpn_tmp.getEnabled(curStateArray[i]);
 				curEnabledArray[i] = enabledList;
-				enabledList = lpn_tmp.getEnabled(nextStateArray[i]);
-				nextEnabledArray[i] = enabledList.clone();
+				// TODO: have to cut below because NULL
+				//enabledList = lpn_tmp.getEnabled(nextStateArray[i]);
+				//nextEnabledArray[i] = enabledList.clone();
 			}
 
 			// System.out.println(curZone);
@@ -315,6 +317,8 @@ public class TimingAnalysis {
 			// TODO: disablingError was moved to StateGraph.
 			Transition disabledTran = null;//firedTran.disablingError(curTimedEnabled,
 			//		nextTimedEnabled);
+			// TODO: dead code
+			/*
 			if (disabledTran != null) {
 				System.out.println("---> Disabling Error: "
 						+ disabledTran.getFullLabel() + " is disabled by "
@@ -343,6 +347,7 @@ public class TimingAnalysis {
 				failure = true;
 				break main_while_loop;
 			}
+			*/
 
 			/*
 			 * Check deadlock.
@@ -351,7 +356,7 @@ public class TimingAnalysis {
 				System.out.println("---> ERROR: Verification failed: deadlock.");
 				for (int ii = 0; ii < arraySize; ii++) {
 					System.out.println("module " + lpnList[ii].getLpn().getLabel());
-					System.out.println(nextStateArray[ii]);
+					//System.out.println(nextStateArray[ii]);
 					System.out.println("Enabled set: " + nextEnabledArray[ii]);
 				}
 				System.out.println("Zone: " + nextZone);
@@ -587,7 +592,7 @@ public class TimingAnalysis {
 //			System.out.println();
 //			System.out.println("firedTran " + firedTran.getFullLabel());
 
-			int curIndex = firedTran.getLpn().getLpnIndex();
+			//int curIndex = firedTran.getLpn().getLpnIndex();
 			// TODO: fire has been moved to StateGraph.
 			State[] nextStateArray = null; //firedTran.fire(lpnList, curStateArray);
 			tranFiringCnt++;
@@ -599,8 +604,9 @@ public class TimingAnalysis {
 				LpnTranList enabledList = null;
 				enabledList = lpn_tmp.getEnabled(curStateArray[i]);
 				curEnabledArray[i] = enabledList;
-				enabledList = lpn_tmp.getEnabled(nextStateArray[i]);
-				nextEnabledArray[i] = enabledList.clone();
+				// TODO: have to cut below because NULL
+				//enabledList = lpn_tmp.getEnabled(nextStateArray[i]);
+				//nextEnabledArray[i] = enabledList.clone();
 			}
 
 			// System.out.println(curZone);
@@ -655,8 +661,10 @@ public class TimingAnalysis {
 			 * Check disabling error
 			 */
 			// TODO: disablingError was moved to StateGraph.
-			Transition disabledTran = null;//firedTran.disablingError(curTimedEnabled,
+			//Transition disabledTran = null;//firedTran.disablingError(curTimedEnabled,
 			//		nextTimedEnabled);
+			// TODO: DEAD CODE
+			/*
 			if (disabledTran != null) {
 				System.out.println("---> Disabling Error: "
 						+ disabledTran.getFullLabel() + " is disabled by "
@@ -685,6 +693,7 @@ public class TimingAnalysis {
 				failure = true;
 				break main_while_loop;
 			}
+			*/
 
 			/*
 			 * Check deadlock.
@@ -694,7 +703,7 @@ public class TimingAnalysis {
 						.println("---> ERROR: Verification failed: deadlock.");
 				for (int ii = 0; ii < arraySize; ii++) {
 					System.out.println("module " + lpnList[ii].getLpn().getLabel());
-					System.out.println(nextStateArray[ii]);
+					//System.out.println(nextStateArray[ii]);
 					System.out.println("Enabled set: " + nextEnabledArray[ii]);
 				}
 				System.out.println("Zone: " + nextZone);

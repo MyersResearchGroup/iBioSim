@@ -24,7 +24,7 @@ public class SimulatorHybridHierarchical  extends HierarchicalSimulator {
 
 
 	private static Long initializationTime = new Long(0);
-	private String modelstateID;
+	//private String modelstateID;
 	int numSteps;
 	double relativeError, absoluteError , nextReactionStep, nextEventTime, nextTriggerTime;
 
@@ -43,7 +43,7 @@ public class SimulatorHybridHierarchical  extends HierarchicalSimulator {
 		this.numSteps = numSteps;
 		relativeError = relError;
 		absoluteError = absError;
-		modelstateID = "topmodel";
+		//modelstateID = "topmodel";
 		functions = new DiffEquations[numSubmodels + 1];
 		
 		try {
@@ -185,7 +185,7 @@ public class SimulatorHybridHierarchical  extends HierarchicalSimulator {
 			//EVENT HANDLING
 			//trigger and/or fire events, etc.
 				
-			ModelState modelstate = eq.state.modelstate;
+			//ModelState modelstate = eq.state.modelstate;
 
 			//nextEventTime = handleEvents();
 			
@@ -376,7 +376,7 @@ public class SimulatorHybridHierarchical  extends HierarchicalSimulator {
 	
 	private class EventHandlerObject implements EventHandler
 	{
-		double t0, t1;
+		//double t0, t1;
 		public EventHandlerObject() {}
 		
 		@Override
@@ -392,8 +392,8 @@ public class SimulatorHybridHierarchical  extends HierarchicalSimulator {
 		@Override
 		public double g(double t, double[] y) {
 			
-			double t1 = currentTime;
-			double t2 = nextEventTime;
+			//double t1 = currentTime;
+			//double t2 = nextEventTime;
 
 			/*		
 			if(nextEventTime == Double.POSITIVE_INFINITY)
@@ -434,8 +434,8 @@ public class SimulatorHybridHierarchical  extends HierarchicalSimulator {
 		@Override
 		public void init(double t0, double[] y, double t) 
 		{
-			this.t0 = t0;
-			this.t1 = t;
+			//this.t0 = t0;
+			//this.t1 = t;
 		}
 
 		@Override

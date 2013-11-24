@@ -451,7 +451,7 @@ public class BuildProperty {
 								sb.append(newEnablingCond1);
 
 							}
-							String newEnablingCond = sb.toString();
+							//String newEnablingCond = sb.toString();
 							//System.out.println("newEnablinCondition : "+newEnablingCond+"\n");
 
 							lpnObj.addEnabling("t" +numTransitions, enablingCond);

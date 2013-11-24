@@ -273,6 +273,7 @@ public class AmpleSet {
 	 * @param interleavingEnabledSet
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	private LpnTranList getSubsetOfInterleavingTrans(LpnTranList interleavingEnabledSet)
 	{
 		LpnTranList set1 = new LpnTranList();

@@ -87,7 +87,7 @@ public class Zone extends ZoneType {
 	private static boolean _FAILURE = false;
 	
 	/* Hack to pass a parameter to the equals method though a variable */
-	private boolean subsetting = false;
+	//private boolean subsetting = false;
 	
 	/**
 	 * Construct a zone that has the given timers.
@@ -504,6 +504,7 @@ public class Zone extends ZoneType {
 	 * @return
 	 * 			The index in the _matrix.
 	 */
+	@SuppressWarnings("unused")
 	private int timerIndexToMatrixIndex(int i)
 	{
 		//return i+2;
@@ -531,6 +532,7 @@ public class Zone extends ZoneType {
 	 * @return
 	 * 			The row/column index of the DBM.
 	 */
+	@SuppressWarnings("unused")
 	private int matrixIndexTodbmIndex(int i)
 	{
 		return i-1;
@@ -782,6 +784,7 @@ public class Zone extends ZoneType {
 	 * @return
 	 * 			True if the arrays is square, non-zero, and non-null, false otherwise.
 	 */
+	@SuppressWarnings("unused")
 	private boolean checkSquare(int[][] array)
 	{
 		//boolean result = true; 
@@ -1379,6 +1382,7 @@ public class Zone extends ZoneType {
 	 * 				A HashMap that maps the index of a value in the baseTimers array
 	 * 				to its index in the newTimers array.
 	 */
+	@SuppressWarnings("unused")
 	private HashMap<Integer, Integer> makeIndexMap(int[] baseTimers, int[] newTimers)
 	{	
 		// Map the new index of the timer to the old timer.
@@ -1663,6 +1667,7 @@ public class Zone extends ZoneType {
 	 * @param popUps
 	 * 		Enables pop up windows notifying that a zone failed.
 	 */
+	@SuppressWarnings("unused")
 	private void testSplit(Zone z, boolean popUp)
 	{
 		// Get a new copy of the matrix to manipulate.
@@ -1781,9 +1786,9 @@ public class Zone extends ZoneType {
 					continue;
 				}
 				
-				String edge = "";
+				//String edge = "";
 				
-				edge += "\"t" + _indexToTimer[i] + "\"";
+				//edge += "\"t" + _indexToTimer[i] + "\"";
 
 				
 				writer.println("\"t" + _indexToTimer[i] + "\"" + " -> " + 

@@ -47,7 +47,6 @@ public class MemoryWindow extends Thread {
  
 
     @Override
-    @SuppressWarnings("deprecation")
     public void run() {
         try { 
             EventQueue.invokeLater(new Thread(new Runnable() {

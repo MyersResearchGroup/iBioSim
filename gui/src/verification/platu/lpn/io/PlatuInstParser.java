@@ -654,7 +654,7 @@ public class PlatuInstParser extends Parser {
     // $ANTLR start "process"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:273:1: process : '<' 'process' 'name' '=' '\"' processName= ID '\"' '>' '<' '/process' '>' ;
     public final void process() throws RecognitionException {
-        Token processName=null;
+        //Token processName=null;
 
         try {
             // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:274:2: ( '<' 'process' 'name' '=' '\"' processName= ID '\"' '>' '<' '/process' '>' )
@@ -665,7 +665,8 @@ public class PlatuInstParser extends Parser {
             match(input,NAME,FOLLOW_NAME_in_process202); 
             match(input,EQUALS,FOLLOW_EQUALS_in_process204); 
             match(input,QUOTE,FOLLOW_QUOTE_in_process206); 
-            processName=(Token)match(input,ID,FOLLOW_ID_in_process210); 
+            //processName=(Token)
+            match(input,ID,FOLLOW_ID_in_process210); 
             match(input,QUOTE,FOLLOW_QUOTE_in_process212); 
             match(input,GREATER,FOLLOW_GREATER_in_process214); 
             match(input,LESS,FOLLOW_LESS_in_process216); 
@@ -2094,7 +2095,7 @@ public class PlatuInstParser extends Parser {
                     match(input,75,FOLLOW_75_in_arrayDecl920); 
 
                     				//TODO: (original) initialize array
-                    				int dimensions = dimensionList.size();
+                    				//int dimensions = dimensionList.size();
                     			
 
                     }

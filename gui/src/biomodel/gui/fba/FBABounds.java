@@ -29,17 +29,12 @@ public class FBABounds extends JPanel implements ActionListener, MouseListener {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private JList events; // JList of events
-
 	private JList eventAssign; // JList of event assignments
-	
-	private BioModel bioModel;
 	
 	private FBCModelPlugin fbc;
 	
 	public FBABounds(BioModel bioModel,String reactionId) {
 		super(new BorderLayout());
-		this.bioModel = bioModel;
 		fbc = bioModel.getSBMLFBC();
 		
 		JPanel eventPanel = new JPanel(new BorderLayout());

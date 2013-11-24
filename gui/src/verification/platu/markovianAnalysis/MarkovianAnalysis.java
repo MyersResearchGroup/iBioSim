@@ -828,12 +828,14 @@ public class MarkovianAnalysis implements Runnable{
 				output.put("Failure", failureProb);
 				output.put("Success", successProb);
 				output.put("Timelimit", timelimitProb);
+				/*
 				String result1 = "#total";
 				String result2 = "1.0";
 				for (String s : output.keySet()) {
 					result1 += " " + s;
 					result2 += " " + output.get(s);
 				}
+				*/
 				// --- Temp: Print results -----
 				System.out.println("Failure = " + failureProb);
 				System.out.println("Success = " + successProb);

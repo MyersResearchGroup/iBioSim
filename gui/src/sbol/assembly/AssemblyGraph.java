@@ -39,7 +39,7 @@ public class AssemblyGraph {
 	private Set<AssemblyNode> startNodes;
 	private AssemblyGraph flatAssemblyGraph;
 	private boolean containsSBOL = false;
-	private boolean minusFlag = true;
+	//private boolean minusFlag = true;
 	
 	public AssemblyGraph(BioModel biomodel) {
 		assemblyNodes = new HashSet<AssemblyNode>(); // Initialize map of SBML element meta IDs to assembly nodes they identify
@@ -483,6 +483,7 @@ public class AssemblyGraph {
 //		System.out.println("}");
 //	}
 	
+	@SuppressWarnings("unused")
 	private void idNodes() {
 		String id = "node";
 		int i = 0;

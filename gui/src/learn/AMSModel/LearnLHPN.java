@@ -61,7 +61,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 
 	private ArrayList<String> variablesList;
 
-	private boolean firstRead, generate, execute;
+//	private boolean firstRead;
+
+	private boolean generate, execute;
 
 	private ArrayList<Variable> reqdVarsL;
 
@@ -119,7 +121,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	//private double unstableTime;
 	private double stableTolerance;
 	
-	private boolean pseudoEnable;
+	//private boolean pseudoEnable;
 
 	private JTextField epsilonG;
 
@@ -813,7 +815,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		//this.addTab("Basic", (JComponent)firstTab);
 		//this.addTab("Advanced", (JComponent)firstTab);
 		// this.add(runHolder, "South");
-		firstRead = true;
+		//firstRead = true;
 		/* if (user.isSelected()) {
 		 auto.doClick();
 	     user.doClick();
@@ -822,7 +824,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		 user.doClick();
 		 auto.doClick();
 		 } */
-		firstRead = false;
+		//firstRead = false;
 		change = false;
 	}
 
@@ -1527,11 +1529,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							
 							}
 							String selected = (String) ((JComboBox) specs.get(6)).getSelectedItem();
-							int combox_selected;
-							if (!selected.equalsIgnoreCase("Auto"))
-								combox_selected = Integer.parseInt(selected);
-							else
-								combox_selected = 0;
+							//int combox_selected;
+							if (!selected.equalsIgnoreCase("Auto")) {
+								//combox_selected = Integer.parseInt(selected);
+							} else {
+							//	combox_selected = 0;
+							}
 							//for (int i = 0; i < combox_selected - 1; i++) {
 						/*	if (specs.size() > 8) { //new for interpolation
 								((JTextField) specs.get(7)).setEnabled(true);
@@ -1578,11 +1581,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							((JComboBox) specs.get(6)).setEnabled(false);
 							((JCheckBox) specs.get(7)).setEnabled(false);
 							String selected = (String) ((JComboBox) specs.get(6)).getSelectedItem();
-							int combox_selected;
-							if (!selected.equalsIgnoreCase("Auto"))
-								combox_selected = Integer.parseInt(selected);
-							else
-								combox_selected = 0;
+							//int combox_selected;
+							if (!selected.equalsIgnoreCase("Auto")) {
+								//combox_selected = Integer.parseInt(selected);
+							} else {
+								//combox_selected = 0;
+							}
 							///specs.add(interpolate);
 							//sp.add(specs.get(7));
 							//((JCheckBox) specs.get(7)).setEnabled(true);
@@ -1636,11 +1640,11 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						}
 						String selected = (String) ((JComboBox) specs.get(6)).getSelectedItem();
 						
-						int combox_selected;
+						//int combox_selected;
 						if (!selected.equalsIgnoreCase("Auto")){//System.out.println("I am here");
-							combox_selected = Integer.parseInt(selected);}
-						else
-							combox_selected = 0;
+							//combox_selected = Integer.parseInt(selected);
+						} else
+							//combox_selected = 0;
 						
 								specs.add(new JTextField("",20));
 								sp.add(specs.get(8));// changed 1 to 2 SB //changed to 4 bcoz of a bug
@@ -1694,11 +1698,13 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					}
 				}
 				biosim.saveLhpn(copy, directory + separator + lhpnFile);
-			} else {
+			} /* TODO: dead code
+			else {
 				JOptionPane.showMessageDialog(Gui.frame,
 						"No circuit has been generated yet.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
+			*/
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(Gui.frame,
 					"Unable to save model.", "Error",
@@ -2304,7 +2310,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						
 					} else if ((variables.get(i).get(variables.get(i).size()-1) instanceof JTextField)) { 
 						
-						int size = thresholds.get(((JTextField) variables.get(i).get(0)).getText().trim()).size();
+						//int size = thresholds.get(((JTextField) variables.get(i).get(0)).getText().trim()).size();
 						String currentVar = ((JTextField) variables.get(i).get(0)).getText().trim();
 						thresh = ((JTextField) variables.get(i).get(variables.get(i).size()-1)).getText().trim();
 						
@@ -2411,6 +2417,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			out = new BufferedWriter(new FileWriter(logFile));
 			cancel.setActionCommand("Cancel");
 			cancel.addActionListener(new ActionListener() {
+				@SuppressWarnings("deprecation")
 				public void actionPerformed(ActionEvent e) {
 					running.setCursor(null);
 					running.dispose();

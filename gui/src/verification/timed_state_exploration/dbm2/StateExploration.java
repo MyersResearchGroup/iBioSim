@@ -129,6 +129,7 @@ public class StateExploration {
 	 * Convenience method to get both the place and Boolean dictionaries.
 	 * @param lpn
 	 */
+	@SuppressWarnings("unused")
 	private void createDictionaries(LhpnFile lpn)
 	{
 		createPlaceDictionaries(lpn);
@@ -299,6 +300,7 @@ public class StateExploration {
 	 * @param array2
 	 * @return True if the two arrays are equal, false otherwise.
 	 */
+	@SuppressWarnings("unused")
 	private static boolean checkBooleanArrays(boolean[] array1, boolean[] array2)
 	{
 		if(array1 == null)

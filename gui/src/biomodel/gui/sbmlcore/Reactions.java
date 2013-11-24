@@ -28,14 +28,12 @@ import main.Gui;
 import main.util.Utility;
 
 import org.sbml.jsbml.Compartment;
-import org.sbml.jsbml.FunctionDefinition;
 import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ModifierSpeciesReference;
-import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.ext.comp.Port;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
@@ -1092,9 +1090,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	private ArrayList<String> getInvalidVariablesInReaction(String formula, boolean isReaction, String arguments, boolean isFunction) {
 		ArrayList<String> validVars = new ArrayList<String>();
 		ArrayList<String> invalidVars = new ArrayList<String>();
-		ListOf sbml = bioModel.getSBMLDocument().getModel().getListOfFunctionDefinitions();
+		Model model = bioModel.getSBMLDocument().getModel();
 		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getFunctionDefinitionCount(); i++) {
-			validVars.add(((FunctionDefinition) sbml.get(i)).getId());
+			validVars.add(model.getFunctionDefinition(i).getId());
 		}
 		if (isReaction) {
 			for (int i = 0; i < changedParameters.size(); i++) {
@@ -1113,9 +1111,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 		}
 		else if (!isFunction) {
-			sbml = bioModel.getSBMLDocument().getModel().getListOfSpecies();
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getSpeciesCount(); i++) {
-				validVars.add(((Species) sbml.get(i)).getId());
+				validVars.add(model.getSpecies(i).getId());
 			}
 		}
 		if (isFunction) {
@@ -1125,19 +1122,16 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 		}
 		else {
-			sbml = bioModel.getSBMLDocument().getModel().getListOfCompartments();
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getCompartmentCount(); i++) {
-				if (bioModel.getSBMLDocument().getLevel() > 2 || ((Compartment) sbml.get(i)).getSpatialDimensions() != 0) {
-					validVars.add(((Compartment) sbml.get(i)).getId());
+				if (bioModel.getSBMLDocument().getLevel() > 2 || (model.getCompartment(i).getSpatialDimensions() != 0)) {
+					validVars.add(model.getCompartment(i).getId());
 				}
 			}
-			sbml = bioModel.getSBMLDocument().getModel().getListOfParameters();
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
-				validVars.add(((Parameter) sbml.get(i)).getId());
+				validVars.add(model.getParameter(i).getId());
 			}
-			sbml = bioModel.getSBMLDocument().getModel().getListOfReactions();
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getReactionCount(); i++) {
-				Reaction reaction = (Reaction) sbml.get(i);
+				Reaction reaction = model.getReaction(i);
 				validVars.add(reaction.getId());
 				for (int j = 0; j < reaction.getReactantCount(); j++) {
 					SpeciesReference reactant = reaction.getReactant(j);
@@ -1158,8 +1152,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			for (int i = 0; i < kindsL3V1.length; i++) {
 				validVars.add(kindsL3V1[i]);
 			}
-			for (int i = 0; i < sbml.getModel().getUnitDefinitionCount(); i++) {
-				validVars.add(sbml.getModel().getListOfUnitDefinitions().get(i).getId());
+			for (int i = 0; i < model.getUnitDefinitionCount(); i++) {
+				validVars.add(model.getUnitDefinition(i).getId());
 			}
 		}
 		String[] splitLaw = formula.split(" |\\(|\\)|\\,|\\*|\\+|\\/|\\-|>|=|<|\\^|%|&|\\||!");

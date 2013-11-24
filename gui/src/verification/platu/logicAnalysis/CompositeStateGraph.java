@@ -5,7 +5,6 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -36,15 +35,17 @@ public class CompositeStateGraph {
 	}
 	
 	public List<Transition> getEnabled(CompositeState currentState){
-		Set<Transition> lpnTranSet = new HashSet<Transition>(currentState.numOutgoingTrans());
+		//Set<Transition> lpnTranSet = new HashSet<Transition>(currentState.numOutgoingTrans());
 		List<Transition> enabled = new ArrayList<Transition>(currentState.numOutgoingTrans());
 		
+		/*
 		for(CompositeStateTran stTran : currentState.getOutgoingStateTranList()){
 			// TODO: (future) Fix stTran.getLPNTran().
 			Transition lpnTran = null; //stTran.getLPNTran();
 			if(lpnTranSet.add(lpnTran))
 				enabled.add(lpnTran);
 		}
+		*/
 		
 		return enabled;
 	}

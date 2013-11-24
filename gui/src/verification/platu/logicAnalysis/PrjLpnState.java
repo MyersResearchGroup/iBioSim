@@ -16,7 +16,6 @@ public class PrjLpnState {
 	}
 	
 	@Override
-    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
 	public boolean equals(final Object other) {
 		PrjLpnState otherState = (PrjLpnState)other;
 

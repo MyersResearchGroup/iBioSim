@@ -90,7 +90,7 @@ public class Zone1 {
 		 */
 		int newLpnTranCnt = this.enabledSet.size();
 		for(int i = 1; i <= newLpnTranCnt; i++) {
-			Transition tran = this.enabledSet.getKey(i);
+			//Transition tran = this.enabledSet.getKey(i);
 			// TODO: Get the upper/lower bound of our LPN delay
 			int premax = 3;//tran.getDelayUB()==INFINITY ? tran.getDelayLB() : tran.getDelayUB();
 			int delta = this.dbm.value(i, 0) + premax;
@@ -108,13 +108,13 @@ public class Zone1 {
 		
 		LinkedList<Integer> fixup = new LinkedList<Integer>();
 		for(int i = 1; i <= newLpnTranCnt; i++) {
-			Transition tran_i = this.enabledSet.getKey(i);
+			//Transition tran_i = this.enabledSet.getKey(i);
 			// TODO: Get the upper/lower bound of our LPN delay
 			int premax_i = 3; //tran_i.getDelayUB()==INFINITY ? tran_i.getDelayLB() : tran_i.getDelayUB();
 			if(this.dbm.value(0, i) > premax_i) {
 				int t = premax_i;
 				for(int j = 1; j <= newLpnTranCnt; j++) {
-					Transition tran_j = this.enabledSet.getKey(j);
+					//Transition tran_j = this.enabledSet.getKey(j);
 					// TODO: Get the upper/lower bound of our LPN delay
 					int premax_j = 3; //tran_j.getDelayUB()==INFINITY ? tran_j.getDelayLB() : tran_j.getDelayUB();
 					int min = this.dbm.value(0, j) < premax_j ? this.dbm.value(0, j) : premax_j;
@@ -186,7 +186,7 @@ public class Zone1 {
 		this.dbm = new DBM(lpnTranCnt+1);
 		
 		for(int y = 1; y <= lpnTranCnt; y++) {
-			Transition curTran = this.enabledSet.getKey(y);
+			//Transition curTran = this.enabledSet.getKey(y);
 			// TODO: Get the upper/lower bound of our LPN delay
 			//this.dbm.assign(0, y, curTran.getDelayUB());
 		}
@@ -328,7 +328,7 @@ public class Zone1 {
 		 * Zone normalization
 		 */
 		for(int i = 1; i <= newLpnTranCnt; i++) {
-			Transition tran = newZone.enabledSet.getKey(i);
+			//Transition tran = newZone.enabledSet.getKey(i);
 			// TODO: Get the upper/lower bound of our LPN delay
 			int premax = 3; //tran.getDelayUB()==INFINITY ? tran.getDelayLB() : tran.getDelayUB();
 			int delta = newZone.dbm.value(i, 0) + premax;
@@ -346,13 +346,13 @@ public class Zone1 {
 		
 		LinkedList<Integer> fixup = new LinkedList<Integer>();
 		for(int i = 1; i <= newLpnTranCnt; i++) {
-			Transition tran_i = newZone.enabledSet.getKey(i);
+			//Transition tran_i = newZone.enabledSet.getKey(i);
 			// TODO: Get the upper/lower bound of our LPN delay
 			int premax_i = 3; //tran_i.getDelayUB()==INFINITY ? tran_i.getDelayLB() : tran_i.getDelayUB();
 			if(newZone.dbm.value(0, i) > premax_i) {
 				int t = premax_i;
 				for(int j = 1; j <= newLpnTranCnt; j++) {
-					Transition tran_j = newZone.enabledSet.getKey(j);
+					//Transition tran_j = newZone.enabledSet.getKey(j);
 					// TODO: Get the upper/lower bound of our LPN delay
 					int premax_j = 3; //tran_j.getDelayUB()==INFINITY ? tran_j.getDelayLB() : tran_j.getDelayUB();
 					int min = newZone.dbm.value(0, j) < premax_j ? newZone.dbm.value(0, j) : premax_j;
@@ -389,7 +389,7 @@ public class Zone1 {
 		int arraySize = enabledArray.length;
         Zone1[] subZoneArray = new Zone1[arraySize];
         
-        HashMap<LinkedList<Transition>, Integer> timeSepSet = new HashMap<LinkedList<Transition>, Integer>();
+        //HashMap<LinkedList<Transition>, Integer> timeSepSet = new HashMap<LinkedList<Transition>, Integer>();
         
         /*
          * Create the local zones and initialize their local enabledSet.
@@ -403,7 +403,7 @@ public class Zone1 {
     		Zone1 curSubZone = new Zone1();
     		curSubZone.enabledSet = new DualHashMap<Transition, Integer>();
     		int tranIdx = 1;
-    		Transition curFirstTran = enabledArray[curIdx].getFirst();
+    		//Transition curFirstTran = enabledArray[curIdx].getFirst();
     		for(Transition curTran : enabledArray[curIdx]) 
     			curSubZone.enabledSet.insert(curTran, tranIdx++);
     		
@@ -480,7 +480,7 @@ public class Zone1 {
 				if(i == j)
 					continue;
 				
-				boolean first_j = true;
+				//boolean first_j = true;
 				for(Transition tran_i : enabledArray[i]) {
 					int m_i = this.enabledSet.getValue(tran_i);
 					for(Transition tran_j : enabledArray[j]) {

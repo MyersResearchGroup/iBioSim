@@ -196,6 +196,7 @@ public class SequenceTypeValidator {
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	private String exFragmentRegex(String regex) {
 		List<String> orFragments = findOrFragments(regex);
 		if (orFragments.size() > 1) {
@@ -748,6 +749,7 @@ public class SequenceTypeValidator {
 		}
 		
 		// Prints out DFA in dot format
+		@SuppressWarnings("unused")
 		public void print() {
 			int reindex = 0;
 			for (DFAState state : states.values()) {

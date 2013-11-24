@@ -110,6 +110,7 @@ public class LpnComponentGraph{
 		}			
 	}
 
+	@SuppressWarnings("unused")
 	private void printVertexQueue(PriorityQueue<Vertex> vertexQueue) {
 		System.out.println("%%%%%%%%%% vertex queue %%%%%%%%%%%");
 		int i = 0;
