@@ -12,6 +12,7 @@ public class GreatNode implements ExpressionNode {
 		this.RightOperand = rightOperand;
 	}
 	
+	@Override
 	public int evaluate(int[] stateVector){
 		if(LeftOperand.evaluate(stateVector) > RightOperand.evaluate(stateVector))
 			return 1;
@@ -19,6 +20,7 @@ public class GreatNode implements ExpressionNode {
 		return 0;
 	}
 	
+	@Override
 	public void getVariables(HashSet<VarNode> variables){
 		LeftOperand.getVariables(variables);
 		RightOperand.getVariables(variables);
@@ -29,6 +31,7 @@ public class GreatNode implements ExpressionNode {
 		return LeftOperand.toString() + ">" + RightOperand.toString();
 	}
 	
+	@Override
 	public ExpressionNode copy(HashMap<String, VarNode> variables){
 		return new GreatNode(this.LeftOperand.copy(variables), this.RightOperand.copy(variables));
 	}

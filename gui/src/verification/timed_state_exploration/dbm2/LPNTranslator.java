@@ -443,6 +443,7 @@ public class LPNTranslator{
 	/**
 	 * Overrides the toString method. It prints the lexicon.
 	 */
+	@Override
 	public String toString()
 	{
 		String result = "";

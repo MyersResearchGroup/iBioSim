@@ -4567,6 +4567,7 @@ public class LearnModel { // added ItemListener SB
 				}
 			});*/
 			Collections.sort(dmvcPlaces,new Comparator<String>(){
+				@Override
 				public int compare(String a, String b){
 					if (Integer.parseInt(a.split("_")[1]) < Integer.parseInt(b.split("_")[1])){
 						return -1;
@@ -4581,6 +4582,7 @@ public class LearnModel { // added ItemListener SB
 			});
 			Collections.sort(ratePlaces,new Comparator<String>(){
 				String v1,v2;
+				@Override
 				public int compare(String a, String b){
 					if (!isTransientPlace(a) && !isTransientPlace(b)){
 						v1 = placeInfo.get(getPlaceInfoIndex(a)).getProperty("placeNum");
@@ -4916,6 +4918,7 @@ public class LearnModel { // added ItemListener SB
 				System.out.println("p" + placeInfo.get(st).getProperty("placeNum") + "," +placeInfo.get(st).getProperty("DMVCVariable"));
 			}*/ 
 			Collections.sort(dmvcPlaces,new Comparator<String>(){
+				@Override
 				public int compare(String a, String b){
 					if (Integer.parseInt(a.split("_")[1]) < Integer.parseInt(b.split("_")[1])){
 						return -1;
@@ -4938,6 +4941,7 @@ public class LearnModel { // added ItemListener SB
 			});
 			Collections.sort(ratePlaces,new Comparator<String>(){
 				String v1,v2;
+				@Override
 				public int compare(String a, String b){
 					if (!isTransientPlace(a) && !isTransientPlace(b)){
 						v1 = placeInfo.get(getPlaceInfoIndex(a)).getProperty("placeNum");
@@ -4971,6 +4975,7 @@ public class LearnModel { // added ItemListener SB
 				transitions.add(t);
 			}
 			Collections.sort(transitions,new Comparator<String>(){
+				@Override
 				public int compare(String a, String b){
 					String v1 = a.split("t")[1];
 					String v2 = b.split("t")[1];

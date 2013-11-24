@@ -34,7 +34,8 @@ final static JFrame f=new JFrame(StackWindow.class.getSimpleName());
 
         Timer t=new Timer(3000,new ActionListener() {
 
-            public void actionPerformed(ActionEvent e) {
+            @Override
+			public void actionPerformed(ActionEvent e) {
                 jTabbedPane1.removeAll();
               Map<Thread,StackTraceElement[]> traces= Thread.getAllStackTraces();
 //              System.out.println(traces);

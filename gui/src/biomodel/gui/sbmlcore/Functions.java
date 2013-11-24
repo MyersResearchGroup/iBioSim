@@ -520,6 +520,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 		this.rulesPanel = rulesPanel;
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		// if the add event button is clicked
 		if (e.getSource() == addFunction) {
@@ -537,6 +538,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 		}
 	}
 
+	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2) {
 			if (e.getSource() == functions) {
@@ -550,24 +552,28 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mouseEntered(MouseEvent e) {
 	}
 
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mouseExited(MouseEvent e) {
 	}
 
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mousePressed(MouseEvent e) {
 	}
 
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mouseReleased(MouseEvent e) {
 	}
 }

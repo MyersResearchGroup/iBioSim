@@ -120,8 +120,10 @@ public class PlatuInstParser extends Parser {
         }
         
 
-    public String[] getTokenNames() { return PlatuInstParser.tokenNames; }
-    public String getGrammarFileName() { return "/Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g"; }
+    @Override
+	public String[] getTokenNames() { return PlatuInstParser.tokenNames; }
+    @Override
+	public String getGrammarFileName() { return "/Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g"; }
 
 
     	// static variables

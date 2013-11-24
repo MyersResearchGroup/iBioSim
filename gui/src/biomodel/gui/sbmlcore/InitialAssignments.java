@@ -589,6 +589,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 		return true;
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		// if the add event button is clicked
 		if (e.getSource() == addInit) {
@@ -604,6 +605,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 		}
 	}
 
+	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2) {
 			if (e.getSource() == initAssigns) {
@@ -615,24 +617,28 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mouseEntered(MouseEvent e) {
 	}
 
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mouseExited(MouseEvent e) {
 	}
 
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mousePressed(MouseEvent e) {
 	}
 
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mouseReleased(MouseEvent e) {
 	}
 }

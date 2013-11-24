@@ -22,6 +22,7 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 	 * 
 	 * @return the id of the species
 	 */
+	@Override
 	public String getId() {
 		return id;
 	}
@@ -32,6 +33,7 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 	 * @param id
 	 *            the id of the species
 	 */
+	@Override
 	public void setId(String id) {
 		this.id = id;
 	}
@@ -41,6 +43,7 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 	 * 
 	 * @return the name of the species
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -51,6 +54,7 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 	 * @param name
 	 *            the name of the species
 	 */
+	@Override
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -60,6 +64,7 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 	 * 
 	 * @return the statename of the species
 	 */
+	@Override
 	public String getStateName() {
 		return stateName;
 	}
@@ -70,6 +75,7 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 	 * @param stateName
 	 *            the state name of the species
 	 */
+	@Override
 	public void setStateName(String stateName) {
 		this.stateName = stateName;
 	}
@@ -110,22 +116,27 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 	}
 	*/
 	
+	@Override
 	public boolean isDiffusible() {
 		return diffusible;
 	}
 	
+	@Override
 	public void setDiffusible(boolean diffusible) {
 		this.diffusible = diffusible;
 	}
 	
+	@Override
 	public String getType() {
 		return type;
 	}
 	
+	@Override
 	public void setType(String type) {
 		this.type = type;
 	}
 	
+	@Override
 	public double getInitialAmount() {
 		/*
 		if (getProperty(GlobalConstants.INITIAL_STRING) != null &&
@@ -137,11 +148,13 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 		return amount;
 	}
 	
+	@Override
 	public void setInitialAmount(double amount) {
 		this.amount = amount;
 		this.concentration = -1;
 	}
 	
+	@Override
 	public double getInitialConcentration() {
 		/*
 		if (getProperty(GlobalConstants.INITIAL_STRING) != null &&
@@ -157,35 +170,43 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 		return concentration;
 	}
 	
+	@Override
 	public void setInitialConcentration(double concentration) {
 		this.amount = -1;
 		this.concentration = concentration;
 	}
 	
+	@Override
 	public double getDecay() {
 		return kd;
 	}
 	
+	@Override
 	public void setDecay(double kd) {
 		this.kd = kd;
 	}
 	
+	@Override
 	public double getKo() {
 		return ko;
 	}
 	
+	@Override
 	public void setKo(double ko) {
 		this.ko = ko;
 	}
 	
+	@Override
 	public double getnp() {
 		return np;
 	}
 	
+	@Override
 	public void setnp(double np) {
 		this.np = np;
 	}
 		
+	@Override
 	public double[] getKmdiff() {
 		/*
 		if (getProperty(GlobalConstants.MEMDIFF_STRING)==null) {
@@ -216,12 +237,14 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 		return Kmdiff;
 	}
 	
+	@Override
 	public void setKmdiff(double kmdiff_f,double kmdiff_r) {
 		Kmdiff = new double[2];
 		Kmdiff[0] = kmdiff_f;
 		Kmdiff[1] = kmdiff_r;
 	}
 	
+	@Override
 	public double getKecdiff() {
 		/*
 		if (getProperty(GlobalConstants.KECDIFF_STRING)!=null) 
@@ -230,6 +253,7 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 		return -1;
 	}
 	
+	@Override
 	public double getKecdecay() {
 		/*
 		if (getProperty(GlobalConstants.KECDECAY_STRING)!=null) 
@@ -238,6 +262,7 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 		return -1;
 	}
 	
+	@Override
 	public double[] getKc() {
 		/*
 		if (getProperty(GlobalConstants.KCOMPLEX_STRING)==null) {
@@ -254,56 +279,69 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 		return Kc;
 	}
 	
+	@Override
 	public void setKc(double kc_f,double kc_r) {
 		Kc = new double[2];
 		Kc[0] = kc_f;
 		Kc[1] = kc_r;
 	}
 	
+	@Override
 	public boolean isActivator() {
 		return isActivator;
 	}
 	
+	@Override
 	public void setActivator(boolean set) {
 		isActivator = set;
 	}
 	
+	@Override
 	public boolean isRepressor() {
 		return isRepressor;
 	}
 	
+	@Override
 	public void setRepressor(boolean set) {
 		isRepressor = set;
 	}
 	
+	@Override
 	public boolean isAbstractable() {
 		return isAbstractable;
 	}
 	
+	@Override
 	public void setAbstractable(boolean set) {
 		isAbstractable = set;
 	}
 	
+	@Override
 	public boolean isSequesterAbstractable() {
 		return isSequesterAbstractable;
 	}
 	
+	@Override
 	public void setSequesterAbstractable(boolean set) {
 		isSequesterAbstractable = set;
 	}
 	
+	@Override
 	public boolean isSequesterable() {
 		return isSequesterable;
 	}
 	
+	@Override
 	public void setSequesterable(boolean set) {
 		isSequesterable = set;
 	}
 	
+	@Override
 	public boolean isConvergent() {
 		return isConvergent;
 	}
 	
+	@Override
 	public void setConvergent(boolean set) {
 		isConvergent = set;
 	}

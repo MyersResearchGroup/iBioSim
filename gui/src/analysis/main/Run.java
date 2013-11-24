@@ -2170,6 +2170,7 @@ public class Run implements ActionListener {
 	/**
 	 * This method is called if a button that cancels the simulation is pressed.
 	 */
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		
 		if (dynSim != null) {

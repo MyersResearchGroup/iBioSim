@@ -812,6 +812,7 @@ public class Schematic extends JPanel implements ActionListener {
 	/**
 	 * Called when a toolbar button is clicked.
 	 */
+	@Override
 	public void actionPerformed(ActionEvent event){
 		
 		String command = event.getActionCommand();
@@ -949,6 +950,7 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		return new AbstractAction(name, null)
 		{
+			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				action.actionPerformed(new ActionEvent(getGraphComponent(), 
@@ -964,6 +966,7 @@ public class Schematic extends JPanel implements ActionListener {
 			// this is useful if component/compartment status changes
 			tabbedPane.addChangeListener(new ChangeListener() {
 
+				@Override
 				public void stateChanged(ChangeEvent event) {
 
 					graph.buildGraph();
@@ -983,6 +986,7 @@ public class Schematic extends JPanel implements ActionListener {
 		//vertical scrolling listener for grid stuff
 		graphComponent.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener(){
 
+			@Override
 			public void adjustmentValueChanged(AdjustmentEvent arg0) {				
 
 				if (grid.isEnabled()) {
@@ -999,6 +1003,7 @@ public class Schematic extends JPanel implements ActionListener {
 		//horizontal scrolling listener for grid stuff
 		graphComponent.getHorizontalScrollBar().addAdjustmentListener(new AdjustmentListener(){
 
+			@Override
 			public void adjustmentValueChanged(AdjustmentEvent arg0) {				
 
 				if (grid.isEnabled()) {
@@ -1015,6 +1020,7 @@ public class Schematic extends JPanel implements ActionListener {
 		//mouse clicked listener for grid stuff
 		graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
 				
+			@Override
 			public void mouseReleased(MouseEvent event) {
 				
 				Point location = event.getPoint();
@@ -1030,6 +1036,7 @@ public class Schematic extends JPanel implements ActionListener {
 		//mouse moved listener for grid stuff
 		graphComponent.getGraphControl().addMouseMotionListener(new MouseMotionListener() {
 			
+			@Override
 			public void mouseMoved(MouseEvent event) {
 				
 				if (grid.isEnabled()) {
@@ -1041,6 +1048,7 @@ public class Schematic extends JPanel implements ActionListener {
 				}
 			}
 			
+			@Override
 			public void mouseDragged(MouseEvent event) {
 				
 				if (rubberband.isEnabled()){
@@ -1054,6 +1062,7 @@ public class Schematic extends JPanel implements ActionListener {
 		//mouse wheel moved (ie, scrolling) listener for grid stuff
 		graphComponent.getGraphControl().addMouseWheelListener(new MouseWheelListener() {
 			
+			@Override
 			public void mouseWheelMoved(MouseWheelEvent event) {
 				
 				if ((zoomButton != null && zoomButton.isSelected()) || event.isControlDown() || event.isAltDown()) {
@@ -1091,6 +1100,7 @@ public class Schematic extends JPanel implements ActionListener {
 		//mouse released listener -- on cells or on the graph
 		graphComponent.getGraphControl().addMouseListener(new MouseAdapter(){
 			
+			@Override
 			public void mouseReleased(MouseEvent e) {
 				
 				grid.setMouseReleased(true);
@@ -1234,6 +1244,7 @@ public class Schematic extends JPanel implements ActionListener {
 		// Listen for moved cells
 		graph.addListener(mxEvent.CELLS_MOVED, new mxEventSource.mxIEventListener() {
 			
+			@Override
 			public void invoke(Object arg0, mxEventObject event) {
 				
 				Object cells[] = (Object [])event.getProperties().get("cells");
@@ -1293,6 +1304,7 @@ public class Schematic extends JPanel implements ActionListener {
 		// Listen for deleted cells
 		graph.addListener(mxEvent.CELLS_REMOVED, new mxEventSource.mxIEventListener() {
 			
+			@Override
 			public void invoke(Object arg0, mxEventObject event) {
 				removeCells(arg0, event);
 			}
@@ -1300,6 +1312,7 @@ public class Schematic extends JPanel implements ActionListener {
 		});
 
 		graph.addListener(mxEvent.CELLS_RESIZED, new mxEventSource.mxIEventListener() {
+			@Override
 			public void invoke(Object arg0, mxEventObject event) {
 				Object cells[] = (Object [])event.getProperties().get("cells");
 
@@ -1317,6 +1330,7 @@ public class Schematic extends JPanel implements ActionListener {
 		// listener for added influences
 		graph.addListener(mxEvent.CELLS_ADDED, new mxEventSource.mxIEventListener() {
 		
+			@Override
 			public void invoke(Object arg0, mxEventObject event) {
 				
 				if (graph.dynamic == true)
@@ -1357,6 +1371,7 @@ public class Schematic extends JPanel implements ActionListener {
 		graph.addListener(null, new mxEventSource.mxIEventListener() {
 			
 			//@Override
+			@Override
 			public void invoke(Object arg0, mxEventObject event) {
 			}
 		});
@@ -1379,6 +1394,7 @@ public class Schematic extends JPanel implements ActionListener {
 			// get deleted before anything they are connected to.
 			Arrays.sort(cells, 0, cells.length, new Comparator<Object>() {
 				
+				@Override
 				public int compare(Object a, Object b){
 					
 					boolean av = ((mxCell)a).isEdge();
@@ -2770,6 +2786,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 * 
 	 * @param g Graphics object 
 	 */
+	@Override
 	public void paintComponent(Graphics g) {
 				
 		if (movieMode == false) {

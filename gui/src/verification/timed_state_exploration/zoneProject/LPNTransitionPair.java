@@ -180,6 +180,7 @@ public class LPNTransitionPair implements Comparable<LPNTransitionPair>{
 	 * "(LPN Index, Continuous Variable) = (x, y)" where x and y are the LPNIndex
 	 * and the index of the continuous variable, respectively.
 	 */
+	@Override
 	public String toString(){
 		String result = "";
 		
@@ -207,6 +208,7 @@ public class LPNTransitionPair implements Comparable<LPNTransitionPair>{
 	 * (non-Javadoc)
 	 * @see java.lang.Object#clone()
 	 */
+	@Override
 	public LPNTransitionPair clone(){
 		
 		LPNTransitionPair newPair = new LPNTransitionPair();
@@ -231,6 +233,7 @@ public class LPNTransitionPair implements Comparable<LPNTransitionPair>{
 	 * 		LPNTransitionPair is less than, equal, or greater than the otherPair
 	 * 		LPNTransitionPair.
 	 */
+	@Override
 	public int compareTo(LPNTransitionPair otherPair) {
 
 		/*

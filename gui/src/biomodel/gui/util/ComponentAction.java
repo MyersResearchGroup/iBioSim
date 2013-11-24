@@ -23,6 +23,7 @@ public class ComponentAction extends AbstractAction {
 		this.biosim = biosim;
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		biosim.openGCM(id, false);
 	}

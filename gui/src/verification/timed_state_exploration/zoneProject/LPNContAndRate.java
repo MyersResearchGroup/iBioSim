@@ -81,6 +81,7 @@ public class LPNContAndRate {
 	 * by the LPNContinuousPair portion of the LPNContAndRate variable. It is
 	 * not equal to objects that are not one of these two types.
 	 */
+	@Override
 	public boolean equals(Object other){
 		
 		if(other instanceof LPNContinuousPair){
@@ -95,10 +96,12 @@ public class LPNContAndRate {
 		return false;
 	}
 	
+	@Override
 	public String toString(){
 		return _lcPair.toString() + " " +_rateInterval.toString();
 	}
 	
+	@Override
 	public int hashCode(){
 		return _lcPair.hashCode();
 	}

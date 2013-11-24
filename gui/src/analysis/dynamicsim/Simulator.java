@@ -5346,6 +5346,7 @@ public abstract class Simulator {
 		/**
 		 * compares two events based on their fire times and priorities
 		 */
+		@Override
 		public int compare(EventToFire event1, EventToFire event2) {
 			
 			if (event1.fireTime > event2.fireTime)

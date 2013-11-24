@@ -66,6 +66,7 @@ public class Project_Timed extends Project{
 		// TODO Auto-generated constructor stub
 	}
 	
+	@Override
 	public void search() {	
 		validateInputs();
 		

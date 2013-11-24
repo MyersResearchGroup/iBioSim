@@ -697,6 +697,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	 * This method performs different functions depending on what buttons are
 	 * pushed and what input fields contain data.
 	 */
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		// if the none Radio Button is selected
 		change = true;
@@ -2088,26 +2089,33 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		final JButton cancel = new JButton("Cancel");
 		final JFrame running = new JFrame("Progress");
 		WindowListener w = new WindowListener() {
+			@Override
 			public void windowClosing(WindowEvent arg0) {
 				cancel.doClick();
 				running.dispose();
 			}
 
+			@Override
 			public void windowOpened(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowClosed(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowIconified(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowDeiconified(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowActivated(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowDeactivated(WindowEvent arg0) {
 			}
 		};
@@ -2347,30 +2355,35 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	 * JLists or termination conditions JLists. Adds or removes the selected
 	 * interesting species or termination conditions.
 	 */
+	@Override
 	public void mouseClicked(MouseEvent e) {
 	}
 
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mousePressed(MouseEvent e) {
 	}
 
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mouseReleased(MouseEvent e) {
 	}
 
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mouseEntered(MouseEvent e) {
 	}
 
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mouseExited(MouseEvent e) {
 	}
 
@@ -3912,6 +3925,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 	}
 
+	@Override
 	public void run() {
 	}
 
@@ -3923,6 +3937,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		JPanel runHolder = new JPanel();
 		runHolder.add(runButton);
 		runButton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				run.doClick();
 			}
@@ -3930,6 +3945,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		runButton.setMnemonic(KeyEvent.VK_R);
 		runHolder.add(saveButton);
 		saveButton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				save.doClick();
 			}
@@ -3950,6 +3966,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		JPanel runHolder = new JPanel();
 		runHolder.add(runButton);
 		runButton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				run.doClick();
 			}
@@ -3957,6 +3974,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		runButton.setMnemonic(KeyEvent.VK_R);
 		runHolder.add(saveButton);
 		saveButton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				save.doClick();
 			}

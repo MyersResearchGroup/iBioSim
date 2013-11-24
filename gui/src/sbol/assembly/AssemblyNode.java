@@ -46,6 +46,7 @@ public class AssemblyNode {
 		this.dnaComps = dnaComps;
 	}
 	
+	@Override
 	public String toString() {
 		return id;
 	}

@@ -203,6 +203,7 @@ public class MddTable extends SetIntTuple {
 		MddTable.MDDBUF_MODE = Options.getStateFormat() == "mddbuf";
 	}
 
+	@Override
 	public int add(int[] IntArray) {	
 		long curUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 
@@ -249,6 +250,7 @@ public class MddTable extends SetIntTuple {
 		return  0;
 	}
 
+	@Override
 	public boolean contains(int[] IntArray) {
 		//int[] byteVec = toByteArray(IntArray);
 		int[] byteVec = this.encode(IntArray);
@@ -263,10 +265,12 @@ public class MddTable extends SetIntTuple {
 		return false;
 	}
 
+	@Override
 	public int size() {
 		return this.Size;
 	}
 
+	@Override
 	public String stats() {
 		return "State count: " + this.Size + ",  " + "MDD node count: " + this.mddMgr.nodeCnt();
 

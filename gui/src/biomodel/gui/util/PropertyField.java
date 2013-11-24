@@ -164,6 +164,7 @@ public class PropertyField extends JPanel implements ActionListener,
 		}
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("comboBoxChanged")) {
 			if (paramsOnly) {
@@ -313,19 +314,23 @@ public class PropertyField extends JPanel implements ActionListener,
 		return box.getSelectedItem().toString();
 	}
 
+	@Override
 	public String getKey() {
 		return name.getName();
 	}
 
+	@Override
 	public String getValue() {
 		return field.getText();
 	}
 
+	@Override
 	public void setKey(String key) {
 		name.setName(key);
 		name.setText(CompatibilityFixer.getGuiName(key));
 	}
 
+	@Override
 	public void setValue(String value) {
 		field.setText(value);
 	}

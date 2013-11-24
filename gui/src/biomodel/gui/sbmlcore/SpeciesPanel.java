@@ -1039,6 +1039,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		return updates;
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		
 		if (e.getActionCommand().equals("comboBoxChanged") || 

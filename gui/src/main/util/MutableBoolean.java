@@ -92,6 +92,7 @@ public class MutableBoolean implements Mutable, Serializable, Comparable<Object>
 	 * @throws ClassCastException
 	 *             if the argument is not a MutableInt
 	 */
+	@Override
 	public int compareTo(Object obj) {
 		MutableBoolean other = (MutableBoolean) obj;
 		boolean anotherVal = other.value;
@@ -110,6 +111,7 @@ public class MutableBoolean implements Mutable, Serializable, Comparable<Object>
 	 * @return <code>true</code> if the objects are the same; <code>false</code>
 	 *         otherwise.
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof MutableBoolean) {
 			return value == ((MutableBoolean) obj).booleanValue();
@@ -123,6 +125,7 @@ public class MutableBoolean implements Mutable, Serializable, Comparable<Object>
 	 * 
 	 * @return the value as a Boolean
 	 */
+	@Override
 	public Object getValue() {
 		return this.value;
 	}
@@ -134,6 +137,7 @@ public class MutableBoolean implements Mutable, Serializable, Comparable<Object>
 	 *         <code>true</code>; returns the integer <code>1237</code> if this
 	 *         object represents <code>false</code>.
 	 */
+	@Override
 	public int hashCode() {
 		return value ? Boolean.TRUE.hashCode() : Boolean.FALSE.hashCode();
 	}
@@ -158,6 +162,7 @@ public class MutableBoolean implements Mutable, Serializable, Comparable<Object>
 	 * @throws ClassCastException
 	 *             if the type is not a {@link Boolean}
 	 */
+	@Override
 	public void setValue(Object value) {
 		setValue(((Boolean) value).booleanValue());
 	}
@@ -167,6 +172,7 @@ public class MutableBoolean implements Mutable, Serializable, Comparable<Object>
 	 * 
 	 * @return the mutable value as a string
 	 */
+	@Override
 	public String toString() {
 		return String.valueOf(value);
 	}

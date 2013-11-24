@@ -23,7 +23,8 @@ public class ProbLocalStateGraph extends StateGraph {
     	nextTranRateMap = new HashMap<State, HashMap<Transition, Double>>();
     }
     
-    public void drawLocalStateGraph() {    	
+    @Override
+	public void drawLocalStateGraph() {    	
 		try {			
 			String graphFileName = null;
 			if (Options.getPOR() == null)
@@ -191,6 +192,7 @@ public class ProbLocalStateGraph extends StateGraph {
 //    	return this.nextProbLocalStateTupleMap;
 //    }
     
+	@Override
 	public State genInitialState() {	
 		// create initial vector
 		int size = this.lpn.getVarIndexMap().size();
@@ -214,7 +216,8 @@ public class ProbLocalStateGraph extends StateGraph {
      * Fire a transition, generate the local next state (if it is not created yet) from the current local state. Also, update the enabled transition vector
      * and its corresponding tranRate vector.
      */
-    public State fire(final StateGraph thisSg, final State curState, Transition firedTran){
+    @Override
+	public State fire(final StateGraph thisSg, final State curState, Transition firedTran){
     	State nextState = thisSg.getNextState(curState, firedTran);
     	if(nextState != null) {
     		if (Options.getDebugMode()) {
@@ -336,7 +339,8 @@ public class ProbLocalStateGraph extends StateGraph {
      * @see verification.platu.stategraph.StateGraph#fire(verification.platu.stategraph.StateGraph[], verification.platu.stategraph.State[], lpn.parser.Transition)
      * This method executes firedTran first by calling fire(StateGraph, State, Transition), and then it updates the affected state graphs.
      */
-    public State[] fire(final StateGraph[] curSgArray, final State[] curStateArray, Transition firedTran){
+    @Override
+	public State[] fire(final StateGraph[] curSgArray, final State[] curStateArray, Transition firedTran){
     	int thisLpnIndex = this.getLpn().getLpnIndex(); 
     	State[] nextStateArray = curStateArray.clone();    	
     	State curState = curStateArray[thisLpnIndex];

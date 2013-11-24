@@ -37,6 +37,7 @@ public class SimulatorSSADirect extends Simulator {
 		}
 	}
 
+	@Override
 	public void simulate() {
 		
 		if (sbmlHasErrorsFlag == true)
@@ -322,12 +323,14 @@ public class SimulatorSSADirect extends Simulator {
 		}
 	}
 
+	@Override
 	protected void eraseComponentFurther(HashSet<String> reactionIDs) {
 	}
 	
 	/**
 	 * 
 	 */
+	@Override
 	protected void updateAfterDynamicChanges() {
 		
 	}
@@ -407,6 +410,7 @@ public class SimulatorSSADirect extends Simulator {
 	/**
 	 * cancels the current run
 	 */
+	@Override
 	protected void cancel() {
 	
 		cancelFlag = true;
@@ -415,6 +419,7 @@ public class SimulatorSSADirect extends Simulator {
 	/**
 	 * clears data structures for new run
 	 */
+	@Override
 	protected void clear() {
 		
 		variableToValueMap.clear();
@@ -451,6 +456,7 @@ public class SimulatorSSADirect extends Simulator {
 	/**
 	 * does minimized initalization process to prepare for a new run
 	 */
+	@Override
 	protected void setupForNewRun(int newRun) {
 		
 		try {

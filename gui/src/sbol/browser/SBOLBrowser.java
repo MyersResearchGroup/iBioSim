@@ -219,6 +219,7 @@ public class SBOLBrowser extends JPanel implements ActionListener {
 		return selectedCompURIs;
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("filterSBOL")) {
 			libPanel.displaySelected();

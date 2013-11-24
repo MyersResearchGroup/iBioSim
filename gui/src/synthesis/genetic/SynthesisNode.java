@@ -215,6 +215,7 @@ public class SynthesisNode {
 		}
 	}
 	
+	@Override
 	public String toString() {
 		return id;
 	}

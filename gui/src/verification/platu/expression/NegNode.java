@@ -10,6 +10,7 @@ public class NegNode implements ExpressionNode {
 		this.RightOperand = rightOperand;
 	}
 	
+	@Override
 	public int evaluate(int[] stateVector){
 		if(RightOperand.evaluate(stateVector) == 0)
 			return 1;
@@ -17,6 +18,7 @@ public class NegNode implements ExpressionNode {
 		return 0;
 	}
 	
+	@Override
 	public void getVariables(HashSet<VarNode> variables){
 		RightOperand.getVariables(variables);
 	}
@@ -26,6 +28,7 @@ public class NegNode implements ExpressionNode {
 		return "!" + RightOperand.toString();
 	}
 	
+	@Override
 	public ExpressionNode copy(HashMap<String, VarNode> variables){
 		return new NegNode(this.RightOperand.copy(variables));
 	}

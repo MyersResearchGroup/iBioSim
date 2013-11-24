@@ -29,6 +29,7 @@ public class GridAction extends AbstractAction {
 		this.grid = schematic.getGrid();
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent event) {
 
 		if (event.getActionCommand().equals("Clear Selected Location(s)")) {

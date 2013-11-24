@@ -12,6 +12,7 @@ public class AndNode implements ExpressionNode {
 		this.RightOperand = rightOperand;
 	}
 	
+	@Override
 	public int evaluate(int[] statevector){
 		if(LeftOperand.evaluate(statevector) == 0 || RightOperand.evaluate(statevector) == 0)
 			return 0;
@@ -19,6 +20,7 @@ public class AndNode implements ExpressionNode {
 		return 1;
 	}
 	
+	@Override
 	public void getVariables(HashSet<VarNode> variables){
 		LeftOperand.getVariables(variables);
 		RightOperand.getVariables(variables);
@@ -29,6 +31,7 @@ public class AndNode implements ExpressionNode {
 		return LeftOperand.toString() + "&&" + RightOperand.toString();
 	}
 	
+	@Override
 	public ExpressionNode copy(HashMap<String, VarNode> variables){
 		return new AndNode(this.LeftOperand.copy(variables), this.RightOperand.copy(variables));
 	}

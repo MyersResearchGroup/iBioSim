@@ -12,6 +12,7 @@ public class DependentSetComparator implements Comparator<DependentSet>{
 		this.tranFiringFreqMap = tranFiringFreq;
 	}
 
+	@Override
 	public int compare(DependentSet dep0, DependentSet dep1) {
 		if (!dep0.isEnabledTranDummy() && dep1.isEnabledTranDummy()) {
 			return -1;

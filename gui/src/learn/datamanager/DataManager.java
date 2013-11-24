@@ -152,6 +152,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 		this.add(dataPanel, "Center");
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == add) {
 			String dataFile = JOptionPane.showInputDialog(Gui.frame, "Enter Data File ID:", "Data File ID", JOptionPane.PLAIN_MESSAGE);
@@ -1061,6 +1062,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 		return newData;
 	}
 
+	@Override
 	public void tableChanged(TableModelEvent e) {
 		dirty = true;
 	}
@@ -1241,6 +1243,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 		}
 	}
 
+	@Override
 	public void valueChanged(ListSelectionEvent e) {
 		if (files.getSelectedValue() != null) {
 			String file = (String) files.getSelectedValue();
@@ -1336,6 +1339,7 @@ class TableSorter extends TableMap implements TableModelListener {
 		this.table = table;
 	}
 
+	@Override
 	public void setModel(TableModel model) {
 		super.setModel(model);
 		reallocateIndexes();
@@ -1474,6 +1478,7 @@ class TableSorter extends TableMap implements TableModelListener {
 		}
 	}
 
+	@Override
 	public void tableChanged(TableModelEvent tableModelEvent) {
 		super.tableChanged(tableModelEvent);
 		reallocateIndexes();
@@ -1523,11 +1528,13 @@ class TableSorter extends TableMap implements TableModelListener {
 		}
 	}
 
+	@Override
 	public Object getValueAt(int row, int column) {
 		checkModel();
 		return model.getValueAt(indexes[row], column);
 	}
 
+	@Override
 	public void setValueAt(Object aValue, int row, int column) {
 		checkModel();
 		model.setValueAt(aValue, indexes[row], column);
@@ -1563,6 +1570,7 @@ class TableHeaderSorter extends MouseAdapter {
 		tableHeader.addMouseListener(tableHeaderSorter);
 	}
 
+	@Override
 	public void mouseClicked(MouseEvent mouseEvent) {
 		TableColumnModel columnModel = table.getColumnModel();
 		int viewColumn = columnModel.getColumnIndexAtX(mouseEvent.getX());
@@ -1599,34 +1607,42 @@ class TableMap extends AbstractTableModel implements TableModelListener {
 		}
 	}
 
+	@Override
 	public Class<?> getColumnClass(int column) {
 		return model.getColumnClass(column);
 	}
 
+	@Override
 	public int getColumnCount() {
 		return ((model == null) ? 0 : model.getColumnCount());
 	}
 
+	@Override
 	public String getColumnName(int column) {
 		return model.getColumnName(column);
 	}
 
+	@Override
 	public int getRowCount() {
 		return ((model == null) ? 0 : model.getRowCount());
 	}
 
+	@Override
 	public Object getValueAt(int row, int column) {
 		return model.getValueAt(row, column);
 	}
 
+	@Override
 	public void setValueAt(Object value, int row, int column) {
 		model.setValueAt(value, row, column);
 	}
 
+	@Override
 	public boolean isCellEditable(int row, int column) {
 		return model.isCellEditable(row, column);
 	}
 
+	@Override
 	public void tableChanged(TableModelEvent tableModelEvent) {
 		fireTableChanged(tableModelEvent);
 	}

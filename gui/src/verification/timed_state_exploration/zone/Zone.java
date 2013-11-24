@@ -386,6 +386,7 @@ public class Zone extends ZoneType {
 	/* (non-Javadoc)
 	 * @see verification.timed_state_exploration.zone.ZoneType#getUpperBoundbyTransitionIndex(int)
 	 */
+	@Override
 	public int getUpperBoundbyTransitionIndex(int timer)
 	{
 		return getUpperBoundbydbmIndex(Arrays.binarySearch(_indexToTimer, timer));
@@ -394,6 +395,7 @@ public class Zone extends ZoneType {
 	/* (non-Javadoc)
 	 * @see verification.timed_state_exploration.zone.ZoneType#getUpperBoundbydbmIndex(int)
 	 */
+	@Override
 	public int getUpperBoundbydbmIndex(int index)
 	{
 		return _matrix[0][dbmIndexToMatrixIndex(index)];
@@ -426,6 +428,7 @@ public class Zone extends ZoneType {
 	/* (non-Javadoc)
 	 * @see verification.timed_state_exploration.zone.ZoneType#getLowerBoundbyTransitionIndex(int)
 	 */
+	@Override
 	public int getLowerBoundbyTransitionIndex(int timer)
 	{
 		return -1*getLowerBoundbydbmIndex(Arrays.binarySearch(_indexToTimer, timer));
@@ -434,6 +437,7 @@ public class Zone extends ZoneType {
 	/* (non-Javadoc)
 	 * @see verification.timed_state_exploration.zone.ZoneType#getLowerBoundbydbmIndex(int)
 	 */
+	@Override
 	public int getLowerBoundbydbmIndex(int index)
 	{
 		return _matrix[dbmIndexToMatrixIndex(index)][0];
@@ -478,6 +482,7 @@ public class Zone extends ZoneType {
 	/* (non-Javadoc)
 	 * @see verification.timed_state_exploration.zone.ZoneType#getdbm(int, int)
 	 */
+	@Override
 	public int getDbmEntry(int i, int j)
 	{
 		return _matrix[dbmIndexToMatrixIndex(i)][dbmIndexToMatrixIndex(j)];
@@ -541,6 +546,7 @@ public class Zone extends ZoneType {
 	/**
 	 * The matrix labeled with 'ti' where i is the transition index associated with the timer.
 	 */
+	@Override
 	public String toString()
 	{
 		String result = "Timer and delay.\n";
@@ -598,6 +604,7 @@ public class Zone extends ZoneType {
 	 * Tests for equality. Overrides inherited equals method.
 	 * @return True if o is equal to this object, false otherwise.
 	 */
+	@Override
 	public boolean equals(Object o)
 	{
 		// Check if the reference is null.
@@ -696,6 +703,7 @@ public class Zone extends ZoneType {
 	/* (non-Javadoc)
 	 * @see verification.timed_state_exploration.zone.ZoneType#subset(Zone)
 	 */
+	@Override
 	public boolean subset(ZoneType otherZone){
 		// Check if the reference is null first.
 				if(otherZone == null)
@@ -749,6 +757,7 @@ public class Zone extends ZoneType {
 	/**
 	 * Overrides the hashCode.
 	 */
+	@Override
 	public int hashCode()
 	{
 		// Check if the hash code has been set.
@@ -864,6 +873,7 @@ public class Zone extends ZoneType {
 	/* (non-Javadoc)
 	 * @see verification.timed_state_exploration.zone.ZoneType#exceedsLowerBoundbyTransitionIndex(int)
 	 */
+	@Override
 	public boolean exceedsLowerBoundbyTransitionIndex(int timer)
 	{
 		// TODO : Check if finished.
@@ -873,6 +883,7 @@ public class Zone extends ZoneType {
 	/* (non-Javadoc)
 	 * @see verification.timed_state_exploration.zone.ZoneType#exceedsLowerBoundbydbmIndex(int)
 	 */
+	@Override
 	public boolean exceedsLowerBoundbydbmIndex(int index)
 	{
 		// TODO: Check if finished.
@@ -886,6 +897,7 @@ public class Zone extends ZoneType {
 	/* (non-Javadoc)
 	 * @see verification.timed_state_exploration.zone.ZoneType#fireTransitionbyTransitionIndex(int, int[], verification.platu.stategraph.State)
 	 */
+	@Override
 	public ZoneType fireTransitionbyTransitionIndex(int timer, int[] enabledTimers, 
 			State state)
 	{
@@ -906,6 +918,7 @@ public class Zone extends ZoneType {
 	/* (non-Javadoc)
 	 * @see verification.timed_state_exploration.zone.ZoneType#fireTransitionbydbmIndex(int, int[], verification.platu.stategraph.State)
 	 */
+	@Override
 	public ZoneType fireTransitionbydbmIndex(int index, int[] enabledTimers,
 			State state)
 	{
@@ -1412,6 +1425,7 @@ public class Zone extends ZoneType {
 	/* (non-Javadoc)
 	 * @see verification.timed_state_exploration.zone.ZoneType#clone()
 	 */
+	@Override
 	public Zone clone()
 	{
 		// TODO: Check if finished.
@@ -1452,6 +1466,7 @@ public class Zone extends ZoneType {
 	/* (non-Javadoc)
 	 * @see verification.timed_state_exploration.zone.ZoneType#getEnabledTransitions()
 	 */
+	@Override
 	public List<Transition> getEnabledTransitions()
 	{
 		ArrayList<Transition> enabledTransitions = new ArrayList<Transition>();
@@ -1472,6 +1487,7 @@ public class Zone extends ZoneType {
 	/* (non-Javadoc)
 	 * @see verification.timed_state_exploration.zone.ZoneType#getLexicon()
 	 */
+	@Override
 	public HashMap<Integer, Transition> getLexicon(){
 		if(_indexToTransition == null){
 			return null;
@@ -1626,6 +1642,7 @@ public class Zone extends ZoneType {
 			this._timer = _timer;
 		}
 		
+		@Override
 		public String toString()
 		{	
 			String result= "";

@@ -68,6 +68,7 @@ public class MovieScheme {
 		
 		SchemeApplyFunction schemeApply = new SchemeApplyFunction() {
 
+			@Override
 			public void apply(String speciesID) {
 				
 				speciesSchemes.get(speciesID).setColorGradient(gradient);
@@ -87,6 +88,7 @@ public class MovieScheme {
 		
 		SchemeApplyFunction schemeApply = new SchemeApplyFunction() {
 
+			@Override
 			public void apply(String speciesID) {
 				
 				if (speciesSchemes.get(speciesID) != null)
@@ -112,6 +114,7 @@ public class MovieScheme {
 		
 		SchemeApplyFunction schemeApply = new SchemeApplyFunction() {
 
+			@Override
 			public void apply(String speciesID) {
 				
 				speciesSchemes.get(speciesID).setOpacityState(true);
@@ -131,6 +134,7 @@ public class MovieScheme {
 				
 		SchemeApplyFunction schemeApply = new SchemeApplyFunction() {
 
+			@Override
 			public void apply(String speciesID) {
 				
 				if (speciesSchemes.get(speciesID) != null)
@@ -155,6 +159,7 @@ public class MovieScheme {
 		
 		SchemeApplyFunction schemeApply = new SchemeApplyFunction() {
 
+			@Override
 			public void apply(String speciesID) {
 				
 				speciesSchemes.get(speciesID).setSizeState(true);
@@ -175,6 +180,7 @@ public class MovieScheme {
 		
 		SchemeApplyFunction schemeApply = new SchemeApplyFunction() {
 
+			@Override
 			public void apply(String speciesID) {
 				
 				if (speciesSchemes.get(speciesID) != null)

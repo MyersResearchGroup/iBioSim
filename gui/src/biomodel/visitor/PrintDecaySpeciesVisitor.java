@@ -143,6 +143,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		}
 	}
 	
+	@Override
 	public void visitDiffusibleSpecies(DiffusibleSpecies species) {
 		
 		//this is now added during component dropping
@@ -176,6 +177,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 //		}
 	}
 	
+	@Override
 	public void visitDiffusibleConstitutiveSpecies(DiffusibleConstitutiveSpecies specie) {
 		
 		loadValues(specie);

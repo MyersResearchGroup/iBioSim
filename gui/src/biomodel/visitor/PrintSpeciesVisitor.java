@@ -96,6 +96,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		Utility.addReaction(document, r);		
 	}
 	
+	@Override
 	public void visitDiffusibleSpecies(DiffusibleSpecies species) {
 		
 		loadValues(species);
@@ -106,6 +107,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		Utility.addSpecies(document, s);
 	}
 	
+	@Override
 	public void visitDiffusibleConstitutiveSpecies(DiffusibleConstitutiveSpecies specie) {
 		
 		loadValues(specie);

@@ -28,6 +28,7 @@ public class CompositionalThread extends Thread{
 		return this.sg;
 	}
 	
+	@Override
 	public void run(){
 		List<Constraint> newConstraintSet = new ArrayList<Constraint>();
 		List<Constraint> oldConstraintSet = new ArrayList<Constraint>();

@@ -84,6 +84,7 @@ public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 		return selectedURIs;
 	}
 	
+	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (e.getSource() == compList) {
 			viewArea.setText("");
@@ -213,21 +214,25 @@ public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 		return annotations;
 	}
 	
+	@Override
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
+	@Override
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
+	@Override
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
+	@Override
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
 		

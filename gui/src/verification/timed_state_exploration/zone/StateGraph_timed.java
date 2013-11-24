@@ -19,6 +19,7 @@ public class StateGraph_timed extends StateGraph{
 	
 	
 //	public LpnTranList getEnabled(TimedState curState)
+	@Override
 	public LpnTranList getEnabled(State curState)
 	{
 		// TODO: Overrides the base state and must add checks with zones.

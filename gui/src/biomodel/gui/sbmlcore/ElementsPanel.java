@@ -106,6 +106,7 @@ public class ElementsPanel extends JPanel {
 					temp.setSelected(true);
 				}
 				temp.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(ActionEvent e) {
 						JCheckBox clicked = ((JCheckBox) e.getSource());
 						if (clicked.isSelected()) {
@@ -132,6 +133,7 @@ public class ElementsPanel extends JPanel {
 					temp.setSelected(true);
 				}
 				temp.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(ActionEvent e) {
 						JCheckBox clicked = ((JCheckBox) e.getSource());
 						if (clicked.isSelected()) {
@@ -158,6 +160,7 @@ public class ElementsPanel extends JPanel {
 					temp.setSelected(true);
 				}
 				temp.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(ActionEvent e) {
 						JCheckBox clicked = ((JCheckBox) e.getSource());
 						if (clicked.isSelected()) {
@@ -184,6 +187,7 @@ public class ElementsPanel extends JPanel {
 					temp.setSelected(true);
 				}
 				temp.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(ActionEvent e) {
 						JCheckBox clicked = ((JCheckBox) e.getSource());
 						if (clicked.isSelected()) {

@@ -185,6 +185,7 @@ public class EditPreferences {
 		
 		JButton restoreGen = new JButton("Restore Defaults");
 		restoreGen.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				dialog.setSelected(false);
 				icons.setSelected(false);
@@ -231,6 +232,7 @@ public class EditPreferences {
 		colorButton.setUI(new MetalButtonUI());
 		//colorButton.setActionCommand("" + i);
 		colorButton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				//int i = Integer.parseInt(e.getActionCommand());
 				Color newColor = JColorChooser.showDialog(Gui.frame, "Choose Color", ((JButton) e.getSource()).getBackground());
@@ -520,6 +522,7 @@ public class EditPreferences {
 
 		JButton restoreSchematic = new JButton("Restore Defaults");
 		restoreSchematic.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				restoreDefaultSchematicPreferences();
 			}
@@ -625,6 +628,7 @@ public class EditPreferences {
 		
 		JButton restoreModel = new JButton("Restore Defaults");
 		restoreModel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				Undeclared.setSelected(true);
 				Units.setSelected(true);
@@ -678,6 +682,7 @@ public class EditPreferences {
 		validationBox = new JComboBox(new String[]{"True", "False"});
 		validationBox.setSelectedItem(biosimrc.get(GlobalConstants.CONSTRUCT_VALIDATION_PREFERENCE, ""));
 		validationBox.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (validationBox.getSelectedIndex() == 0) {
 					warningBox.setSelectedIndex(0);
@@ -699,6 +704,7 @@ public class EditPreferences {
 		
 		JButton restoreDefaultsButton = new JButton("Restore Defaults");
 		restoreDefaultsButton.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				uriField.setText(GlobalConstants.SBOL_AUTHORITY_DEFAULT);
 				regexField.setText(GlobalConstants.GENETIC_CONSTRUCT_REGEX_DEFAULT);
@@ -754,6 +760,7 @@ public class EditPreferences {
 		sim = new JComboBox(choices);
 		sim.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
 		abs.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (abs.getSelectedItem().equals("None")) {
 					Object o = type.getSelectedItem();
@@ -790,6 +797,7 @@ public class EditPreferences {
 		});
 
 		type.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (type.getSelectedItem() == null) {
 				}
@@ -897,6 +905,7 @@ public class EditPreferences {
 		
 		JButton restoreAn = new JButton("Restore Defaults");
 		restoreAn.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				simCommand.setText("");
 				abs.setSelectedItem("None");
@@ -987,6 +996,7 @@ public class EditPreferences {
 		
 		JButton restoreLearn = new JButton("Restore Defaults");
 		restoreLearn.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				tn.setText("2");
 				tj.setText("2");

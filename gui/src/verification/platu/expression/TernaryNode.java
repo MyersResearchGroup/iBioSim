@@ -14,6 +14,7 @@ public class TernaryNode implements ExpressionNode {
 		this.RightOperand = rightOperand;
 	}
 	
+	@Override
 	public int evaluate(int[] stateVector){
 		if(this.Condition.evaluate(stateVector) != 0)
 			return LeftOperand.evaluate(stateVector);
@@ -21,6 +22,7 @@ public class TernaryNode implements ExpressionNode {
 		return RightOperand.evaluate(stateVector);
 	}
 	
+	@Override
 	public void getVariables(HashSet<VarNode> variables){
 		LeftOperand.getVariables(variables);
 		RightOperand.getVariables(variables);
@@ -31,6 +33,7 @@ public class TernaryNode implements ExpressionNode {
 		return Condition + "?" + LeftOperand.toString() + ":" + RightOperand.toString();
 	}
 	
+	@Override
 	public ExpressionNode copy(HashMap<String, VarNode> variables){
 		return new TernaryNode(this.Condition.copy(variables), this.LeftOperand.copy(variables), this.RightOperand.copy(variables));
 	}

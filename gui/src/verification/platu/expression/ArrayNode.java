@@ -66,6 +66,7 @@ public class ArrayNode extends VarNode{
 		return (VarNode) ((List<Object>)currentArray).get(lastIndex);
 	}
 	
+	@Override
 	public void getVariables(HashSet<VarNode> variables){
 		variables.add(this);
 	}
@@ -79,6 +80,7 @@ public class ArrayNode extends VarNode{
 		return new ArrayNode(this.name, this.array, this.dimensions, this.dimensionList, this.variableList);
 	}
 	
+	@Override
 	public ExpressionNode copy(HashMap<String, VarNode> variables){
 		VarNode varNode = variables.get(this.name);
 		if(varNode != null){

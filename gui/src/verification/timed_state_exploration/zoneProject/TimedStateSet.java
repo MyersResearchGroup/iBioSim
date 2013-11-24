@@ -92,6 +92,7 @@ public class TimedStateSet extends HashSet<PrjState> implements StateSetInterfac
 	 * @return
 	 * 		True if any PrjStates are in the StateSet, false otherwise.
 	 */
+	@Override
 	public boolean isEmpty(){
 		if(_singletonList != null){
 			return _singletonList.isEmpty();
@@ -106,6 +107,7 @@ public class TimedStateSet extends HashSet<PrjState> implements StateSetInterfac
 	 * @return
 	 * 		A non-negative integer that gives the number of PrjStates are in the StateSet.
 	 */
+	@Override
 	public int size(){
 		if(_singletonList != null){
 			return _singletonList.size();
@@ -128,6 +130,7 @@ public class TimedStateSet extends HashSet<PrjState> implements StateSetInterfac
 	 * @return
 	 * 		True if the StateSet changes by adding the element s.
 	 */
+	@Override
 	public boolean add(PrjState s){
 		
 		if(_singletonList != null){
@@ -228,6 +231,7 @@ public class TimedStateSet extends HashSet<PrjState> implements StateSetInterfac
 	 * Overrides the HashSet version of the contains method since TimedStateSets
 	 * handle containment a little differently.
 	 */
+	@Override
 	public boolean contains(Object obj){
 		if(!(obj instanceof PrjState)){
 			return false;
@@ -243,6 +247,7 @@ public class TimedStateSet extends HashSet<PrjState> implements StateSetInterfac
 	 * @return
 	 * 		True if s is in the PrjState, false otherwise.
 	 */
+	@Override
 	public boolean contains(PrjState s){
 		if(_singletonList != null){
 			return _singletonList.contains(s);
@@ -415,6 +420,7 @@ public class TimedStateSet extends HashSet<PrjState> implements StateSetInterfac
 		}
 	}
 	
+	@Override
 	public String toString(){
 		
 		String result = "";
@@ -441,6 +447,7 @@ public class TimedStateSet extends HashSet<PrjState> implements StateSetInterfac
 	 * (non-Javadoc)
 	 * @see java.lang.Iterable#iterator()
 	 */
+	@Override
 	public Iterator<PrjState> iterator(){
 		Iterator<PrjState> hashIterator = null;
 		Iterator<LinkedList<TimedPrjState>> listIterator = null;
@@ -542,6 +549,7 @@ public class TimedStateSet extends HashSet<PrjState> implements StateSetInterfac
 		 * (non-Javadoc)
 		 * @see java.util.Iterator#hasNext()
 		 */
+		@Override
 		public boolean hasNext() {
 			
 			if(_hashIterator !=null){
@@ -559,6 +567,7 @@ public class TimedStateSet extends HashSet<PrjState> implements StateSetInterfac
 		 * (non-Javadoc)
 		 * @see java.util.Iterator#next()
 		 */
+		@Override
 		public PrjState next() {
 			
 			if(_hashIterator != null){
@@ -580,6 +589,7 @@ public class TimedStateSet extends HashSet<PrjState> implements StateSetInterfac
 		 * (non-Javadoc)
 		 * @see java.util.Iterator#remove()
 		 */
+		@Override
 		public void remove() {
 			if(_hashIterator != null){
 				_hashIterator.remove();

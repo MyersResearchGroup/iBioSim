@@ -102,6 +102,7 @@ public class IntervalPair {
 		return true;
 	}
 	
+	@Override
 	public String toString(){
 		return "[" + _lowerBound + "," + _upperBound + "]";
 	}

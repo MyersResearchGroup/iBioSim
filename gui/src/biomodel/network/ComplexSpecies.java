@@ -52,6 +52,7 @@ public class ComplexSpecies extends AbstractSpecies {
 		super();
 	}
 	
+	@Override
 	public void accept(SpeciesVisitor visitor) {
 		visitor.visitComplex(this);
 	}

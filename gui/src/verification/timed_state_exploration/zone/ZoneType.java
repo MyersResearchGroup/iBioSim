@@ -151,6 +151,7 @@ public abstract class ZoneType {
 	/**
 	 * Overrides the clone method from Object.
 	 */
+	@Override
 	public abstract ZoneType clone();
 
 	/**

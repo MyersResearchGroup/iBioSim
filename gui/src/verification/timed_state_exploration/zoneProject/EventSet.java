@@ -180,6 +180,7 @@ public class EventSet extends Transition implements Iterable<Event>{
 	/**
 	 * Returns an iterator that returns the elements in the set as Event objects.
 	 */
+	@Override
 	public Iterator<Event> iterator(){
 		return new EventSetIterator();
 	}
@@ -188,6 +189,7 @@ public class EventSet extends Transition implements Iterable<Event>{
 	 * Clones the EventSet. Copies the internal objects by copying their reference. It does not make new instances
 	 * of the contained objects.
 	 */
+	@Override
 	public EventSet clone(){
 		
 		// Create a new EventSet instance.
@@ -297,6 +299,7 @@ public class EventSet extends Transition implements Iterable<Event>{
 	 * (non-Javadoc)
 	 * @see lpn.parser.Transition#toString()
 	 */
+	@Override
 	public String toString(){
 		String result = "";
 		
@@ -321,6 +324,7 @@ public class EventSet extends Transition implements Iterable<Event>{
 		return result;
 	}
 	
+	@Override
 	public String getLabel(){
 		return toString();
 	}
@@ -332,6 +336,7 @@ public class EventSet extends Transition implements Iterable<Event>{
 	 * @return
 	 * 		True if this EventSet is storing a failure transition; false otherwise.
 	 */
+	@Override
 	public boolean isFail() {
 		
 		// If this eventSet represents a transition to fire, then check if the
@@ -343,6 +348,7 @@ public class EventSet extends Transition implements Iterable<Event>{
 	/**
 	 * This method disables (ha ha) the disablingError. It needs to be finished.
 	 */
+	@Override
 	public Transition disablingError(final LinkedList<Transition> current_enabled_transitions,
 			LinkedList<Transition> next_enabled_transitions) {
 		return null;

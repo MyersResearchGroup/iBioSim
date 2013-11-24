@@ -176,6 +176,7 @@ public class InequalityVariable extends Variable {
 	 * Overrides the toString method of Variable. Removes the pre-appended
 	 * '$' of the InequalityVariable name.
 	 */
+	@Override
 	public String toString(){
 		//return "Inequality Variable : " + getName().substring(1);
 		return getName().substring(1);
@@ -184,6 +185,7 @@ public class InequalityVariable extends Variable {
 	/**
 	 * Override the equals method.
 	 */
+	@Override
 	public boolean equals(Object var){
 		/*
 		 * Due to the fact that twoString returns the name without the '$' sign
@@ -233,6 +235,7 @@ public class InequalityVariable extends Variable {
 	/**
 	 * Returns false. InequalityVaribles are dealt with separately.
 	 */
+	@Override
 	public boolean isInput() {
 		return false;
 	}
@@ -240,6 +243,7 @@ public class InequalityVariable extends Variable {
 	/**
 	 * Returns false. InequalityVaribles are dealt with separately.
 	 */
+	@Override
 	public boolean isOutput() {
 		return false;
 	}
@@ -247,6 +251,7 @@ public class InequalityVariable extends Variable {
 	/**
 	 * Returns false. InequalityVaribles are dealt with separately.
 	 */
+	@Override
 	public boolean isInternal() { 
 		return false;
 	}

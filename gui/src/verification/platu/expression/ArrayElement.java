@@ -19,6 +19,7 @@ public class ArrayElement extends VarNode{
 		return this.array;
 	}
 	
+	@Override
 	public int evaluate(int[] statevector){
 		List<Integer> indexValues = new ArrayList<Integer>(this.indexVariables.size());
 		for(ExpressionNode n : this.indexVariables){
@@ -28,6 +29,7 @@ public class ArrayElement extends VarNode{
 		return this.array.getElement(indexValues).evaluate(statevector);
 	}
 	
+	@Override
 	public void getVariables(HashSet<VarNode> variables){
 		variables.add(this.array);
 	}
@@ -52,6 +54,7 @@ public class ArrayElement extends VarNode{
 		return this.array.getElement(indexValues).getIndex(stateVector);
 	}
 	
+	@Override
 	public ExpressionNode copy(HashMap<String, VarNode> variables){
 		List<ExpressionNode> copyList = new ArrayList<ExpressionNode>(this.indexVariables.size());
 		for(ExpressionNode n : this.indexVariables){

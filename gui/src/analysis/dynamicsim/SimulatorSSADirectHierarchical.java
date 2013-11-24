@@ -38,6 +38,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 
 	}
 
+	@Override
 	public void simulate() {
 
 		if (sbmlHasErrorsFlag)
@@ -511,6 +512,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 	/**
 	 * cancels the current run
 	 */
+	@Override
 	protected void cancel() {
 
 		cancelFlag = true;
@@ -519,6 +521,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 	/**
 	 * clears data structures for new run
 	 */
+	@Override
 	protected void clear() {
 		topmodel.clear();
 
@@ -568,6 +571,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 	/**
 	 * does minimized initalization process to prepare for a new run
 	 */
+	@Override
 	protected void setupForNewRun(int newRun) {
 
 		try {

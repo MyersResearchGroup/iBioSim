@@ -3687,6 +3687,7 @@ public class SBMLutilities {
 			scroll.setViewportView(messageArea);
 			JButton close = new JButton("Dismiss");
 			close.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					f.dispose();
 				}
@@ -3777,6 +3778,7 @@ public class SBMLutilities {
 				scroll.setViewportView(messageArea);
 				JButton close = new JButton("Dismiss");
 				close.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(ActionEvent e) {
 						f.dispose();
 					}

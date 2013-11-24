@@ -12,10 +12,12 @@ public class AddNode implements ExpressionNode{
 		this.RightOperand = rightOperand;
 	}
 	
+	@Override
 	public int evaluate(int[] statevector){
 		return LeftOperand.evaluate(statevector) + RightOperand.evaluate(statevector);
 	}
 	
+	@Override
 	public void getVariables(HashSet<VarNode> variables){
 		LeftOperand.getVariables(variables);
 		RightOperand.getVariables(variables);
@@ -26,6 +28,7 @@ public class AddNode implements ExpressionNode{
 		return LeftOperand.toString() + "+" + RightOperand.toString();
 	}
 	
+	@Override
 	public ExpressionNode copy(HashMap<String, VarNode> variables){
 		return new AddNode(this.LeftOperand.copy(variables), this.RightOperand.copy(variables));
 	}

@@ -41,6 +41,7 @@ public class BaseSpecies extends AbstractSpecies {
 	}
 	
 	
+	@Override
 	public void accept(SpeciesVisitor visitor) {
 		visitor.visitBaseSpecies(this);
 	}

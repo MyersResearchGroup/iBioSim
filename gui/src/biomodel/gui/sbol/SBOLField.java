@@ -144,6 +144,7 @@ public class SBOLField extends JPanel implements ActionListener {
 		}
 	}
 	
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("associateSBOL")) {
 			HashSet<String> sbolFilePaths = gcmEditor.getGui().getFilePaths(GlobalConstants.SBOL_FILE_EXTENSION);

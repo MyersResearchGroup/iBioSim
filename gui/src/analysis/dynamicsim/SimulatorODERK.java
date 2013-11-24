@@ -230,6 +230,7 @@ public class SimulatorODERK extends Simulator {
 		
 	}
 
+	@Override
 	protected void simulate() {
 		int currSteps = 0;
 		
@@ -412,6 +413,7 @@ public class SimulatorODERK extends Simulator {
 		 * it needs to return the changes in values for y
 		 * (ie, its length is the same)
 		 */
+		@Override
 		public double[] derivn(double x, double[] y) {
 			
 			double[] currValueChanges = new double[y.length];

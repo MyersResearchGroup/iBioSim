@@ -45,10 +45,12 @@ public class FieldPanel extends JPanel implements NamedObject, FocusListener {
 		return field.getText();
 	}
 
+	@Override
 	public void focusGained(FocusEvent e) {
 		//Do nothing
 	}
 	
+	@Override
 	public void focusLost(FocusEvent e) {
 		//Must check to see if input was valid
 		Matcher matcher =  pattern.matcher(field.getText());

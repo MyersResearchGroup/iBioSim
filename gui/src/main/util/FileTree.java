@@ -151,6 +151,7 @@ public class FileTree extends JPanel implements MouseListener {
 			tree.setCellRenderer(renderer);
 			// Add a listener
 			tree.addTreeSelectionListener(new TreeSelectionListener() {
+				@Override
 				public void valueChanged(TreeSelectionEvent e) {
 					DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.getPath().getLastPathComponent();
 					fileLocation = "";
@@ -196,6 +197,7 @@ public class FileTree extends JPanel implements MouseListener {
 			UIManager.put("Tree.collapsedIcon", ICON_PLUS);
 		}
 		Runnable updateTree = new Runnable() {
+			@Override
 			public void run() {
 				tree.updateUI();
 			}
@@ -560,6 +562,7 @@ public class FileTree extends JPanel implements MouseListener {
 							((DefaultMutableTreeNode) root.getChildAt(i)).insert(
 									new DefaultMutableTreeNode(new IconData(ICON_SIMULATION, null, item)), insert);
 							Runnable updateTree = new Runnable() {
+								@Override
 								public void run() {
 									tree.updateUI();
 								}
@@ -589,6 +592,7 @@ public class FileTree extends JPanel implements MouseListener {
 									((DefaultMutableTreeNode) root.getChildAt(i)).insert(
 											new DefaultMutableTreeNode(new IconData(ICON_SYNTHESIS, null, item)), insert);
 									Runnable updateTree = new Runnable() {
+										@Override
 										public void run() {
 											tree.updateUI();
 										}
@@ -624,6 +628,7 @@ public class FileTree extends JPanel implements MouseListener {
 								((DefaultMutableTreeNode) root.getChildAt(i)).insert(
 										new DefaultMutableTreeNode(new IconData(ICON_LEARN, null, item)), insert);
 								Runnable updateTree = new Runnable() {
+									@Override
 									public void run() {
 										tree.updateUI();
 									}
@@ -647,6 +652,7 @@ public class FileTree extends JPanel implements MouseListener {
 								((DefaultMutableTreeNode) root.getChildAt(i)).insert(
 										new DefaultMutableTreeNode(new IconData(ICON_LEARN, null, item)), insert);
 								Runnable updateTree = new Runnable() {
+									@Override
 									public void run() {
 										tree.updateUI();
 									}
@@ -680,6 +686,7 @@ public class FileTree extends JPanel implements MouseListener {
 								((DefaultMutableTreeNode) root.getChildAt(i)).insert(new DefaultMutableTreeNode(new IconData(ICON_SYNTHESIS, null,
 										item)), insert);
 								Runnable updateTree = new Runnable() {
+									@Override
 									public void run() {
 										tree.updateUI();
 									}
@@ -713,6 +720,7 @@ public class FileTree extends JPanel implements MouseListener {
 								((DefaultMutableTreeNode) root.getChildAt(i)).insert(
 										new DefaultMutableTreeNode(new IconData(ICON_VERIFY, null, item)), insert);
 								Runnable updateTree = new Runnable() {
+									@Override
 									public void run() {
 										tree.updateUI();
 									}
@@ -870,6 +878,7 @@ public class FileTree extends JPanel implements MouseListener {
 				root.insert(node, insert);
 				tree.expandPath(new TreePath(root.getPath()));
 				Runnable updateTree = new Runnable() {
+					@Override
 					public void run() {
 						tree.updateUI();
 					}
@@ -903,6 +912,7 @@ public class FileTree extends JPanel implements MouseListener {
 			if (root.getChildAt(i).toString().equals(item)) {
 				root.remove(i);
 				Runnable updateTree = new Runnable() {
+					@Override
 					public void run() {
 						tree.updateUI();
 					}
@@ -914,6 +924,7 @@ public class FileTree extends JPanel implements MouseListener {
 				if (root.getChildAt(i).getChildAt(j).toString().equals(item)) {
 					((DefaultMutableTreeNode) root.getChildAt(i)).remove(j);
 					Runnable updateTree = new Runnable() {
+						@Override
 						public void run() {
 							tree.updateUI();
 						}
@@ -928,6 +939,7 @@ public class FileTree extends JPanel implements MouseListener {
 	public void fixTree() {
 		fixTree(null, root, dir, false);
 		Runnable updateTree = new Runnable() {
+			@Override
 			public void run() {
 				tree.updateUI();
 			}
@@ -1389,17 +1401,21 @@ public class FileTree extends JPanel implements MouseListener {
 		}
 	}
 
+	@Override
 	public Dimension getMinimumSize() {
 		return new Dimension(200, 400);
 	}
 
+	@Override
 	public Dimension getPreferredSize() {
 		return new Dimension(200, 400);
 	}
 
+	@Override
 	public void mouseClicked(MouseEvent e) {
 	}
 
+	@Override
 	public void mousePressed(MouseEvent e) {
 		if (!e.isPopupTrigger())
 			return;
@@ -1412,6 +1428,7 @@ public class FileTree extends JPanel implements MouseListener {
 		tree.setSelectionPath(selPath);
 	}
 
+	@Override
 	public void mouseReleased(MouseEvent e) {
 		if (!e.isPopupTrigger())
 			return;
@@ -1424,9 +1441,11 @@ public class FileTree extends JPanel implements MouseListener {
 		tree.setSelectionPath(selPath);
 	}
 
+	@Override
 	public void mouseEntered(MouseEvent e) {
 	}
 
+	@Override
 	public void mouseExited(MouseEvent e) {
 	}
 
@@ -1458,6 +1477,7 @@ public class FileTree extends JPanel implements MouseListener {
 			setOpaque(false);
 		}
 
+		@Override
 		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus)
 
 		{
@@ -1485,6 +1505,7 @@ public class FileTree extends JPanel implements MouseListener {
 			return this;
 		}
 
+		@Override
 		public void paintComponent(Graphics g) {
 			Color bColor = getBackground();
 			Icon icon = getIcon();
@@ -1534,6 +1555,7 @@ public class FileTree extends JPanel implements MouseListener {
 			return m_data;
 		}
 
+		@Override
 		public String toString() {
 			return m_data.toString();
 		}
