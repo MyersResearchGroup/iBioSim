@@ -2,6 +2,7 @@ package analysis.incrementalsim;
 import java.util.Comparator;
 
 public class EventQueueComparator implements Comparator<EventQueueElement>{
+	@Override
 	public int compare(EventQueueElement e1, EventQueueElement e2) {
 		if (e1.getScheduledTime() < e2.getScheduledTime()){
 			return -1;

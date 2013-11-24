@@ -355,6 +355,7 @@ public class GridPanel extends JPanel implements ActionListener {
 	 * called when the user clicks on something
 	 * in this case i only care about the spatial and cell pop radio buttons
 	 */
+	@Override
 	public void actionPerformed(ActionEvent event) {
 		
 	}

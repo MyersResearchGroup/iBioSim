@@ -89,6 +89,7 @@ public class PrjState {
 		return this.child; 
 	}
 	
+	@Override
 	public String toString() {
 		String line ="";
 		for(int i = 0; i < stateArray.length; i++) {

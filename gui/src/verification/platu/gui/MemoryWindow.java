@@ -52,7 +52,8 @@ public class MemoryWindow extends Thread {
             EventQueue.invokeLater(new Thread(new Runnable() {
 
                 JFrame frame;
-                public void run() {
+                @Override
+				public void run() {
                     frame = new JFrame();
                     f = frame;
                       ChartPanel pan = new ChartPanel(getChart());
@@ -76,7 +77,8 @@ public class MemoryWindow extends Thread {
                     //System.gc();
                     Runnable runnable = new Runnable() {
 
-                        public void run() {
+                        @Override
+						public void run() {
                             addToSeries();
                         }
 

@@ -304,6 +304,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		String message;
 		
 		//Implements Thread.UncaughtExceptionHandler.uncaughtException()
+		@Override
 		public void uncaughtException(Thread th, Throwable ex) {
 			final JFrame exp = new JFrame("Unhandled Exception");
 			StringWriter sw = new StringWriter();
@@ -315,6 +316,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			JLabel errMsg = new JLabel(ex.toString());
 			JButton details = new JButton("Details");
 			details.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					Object[] options = { "Close" };
 					JOptionPane.showOptionDialog(exp, message, "Details", JOptionPane.YES_OPTION, 
@@ -323,12 +325,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			});
 			JButton report = new JButton("Send Bug Report");
 			report.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					submitBugReport("\n\nStack trace:\n"+message);
 				}
 			});
 			JButton close = new JButton("Close");
 			close.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					exp.dispose();
 				}
@@ -462,6 +466,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 
 		class AboutBoxHandler extends ApplicationAdapter {
+			@Override
 			public void handleAbout(ApplicationEvent event) {
 				about();
 				event.setHandled(true);
@@ -476,6 +481,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 
 		class PreferencesHandler extends ApplicationAdapter {
+			@Override
 			public void handlePreferences(ApplicationEvent event) {
 				EditPreferences editPreferences = new EditPreferences(frame,async,tree);
 				editPreferences.preferences();
@@ -491,6 +497,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 
 		class QuitHandler extends ApplicationAdapter {
+			@Override
 			public void handleQuit(ApplicationEvent event) {
 				if (exit())
 					event.setHandled(true);
@@ -547,25 +554,32 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 		// Makes it so that clicking the x in the corner closes the program
 		WindowListener w = new WindowListener() {
+			@Override
 			public void windowClosing(WindowEvent arg0) {
 				exit.doClick();
 			}
 
+			@Override
 			public void windowOpened(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowClosed(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowIconified(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowDeiconified(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowActivated(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowDeactivated(WindowEvent arg0) {
 			}
 		};
@@ -1338,6 +1352,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		frame.setLocation(x, y);
 		frame.setVisible(true);
 		dispatcher = new KeyEventDispatcher() {
+			@Override
 			public boolean dispatchKeyEvent(KeyEvent e) {
 				if (e.getID() == KeyEvent.KEY_TYPED) {
 					if (e.getKeyChar() == '') {
@@ -1415,6 +1430,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		JLabel uOfU = new JLabel("University of Utah", JLabel.CENTER);
 		JButton credits = new JButton("Credits");
 		credits.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				Object[] options = { "Close" };
 				JOptionPane.showOptionDialog(f, developers, "Credits", JOptionPane.YES_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -1422,6 +1438,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		});
 		JButton close = new JButton("Close");
 		close.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				f.dispose();
 			}
@@ -1522,6 +1539,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	 * This method performs different functions depending on what menu items are
 	 * selected.
 	 */
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == viewCircuit) {
 			Component comp = tab.getSelectedComponent();
@@ -3499,7 +3517,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		progressBar.setValue(0);
 		runGetNames = true;
 		final Thread getNamesThread = new Thread(new Runnable() {
-		    public void run() {
+		    @Override
+			public void run() {
 		    	for (int i = 0; i < BioModelIds.length && runGetNames; i++) {
 					try {
 						progressBar.setValue(100 * i / BioModelIds.length);
@@ -3519,6 +3538,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		    }
 		});
 		GetNames.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (runGetNames && !getNamesThread.isAlive()) {
 					getNamesThread.start();
@@ -3526,6 +3546,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 		});
 		GetDescription.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (ListOfBioModels.isSelectionEmpty()) return;
 				String SelectedModel = ((String) ListOfBioModels.getSelectedValue()).split(" ")[0];
@@ -3550,6 +3571,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 		});
 		GetReference.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (ListOfBioModels.isSelectionEmpty()) return;
 				String SelectedModel = ((String) ListOfBioModels.getSelectedValue()).split(" ")[0];
@@ -4148,6 +4170,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					scroll.setViewportView(messageArea);
 					JButton close = new JButton("Dismiss");
 					close.addActionListener(new ActionListener() {
+						@Override
 						public void actionPerformed(ActionEvent e) {
 							f.dispose();
 						}
@@ -6437,10 +6460,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		// Do saveas & save button too
 	}
 
+	@Override
 	public void mousePressed(MouseEvent e) {
 		executePopupMenu(e);
 	}
 
+	@Override
 	public void mouseReleased(MouseEvent e) {
 		executePopupMenu(e);
 	}
@@ -7294,10 +7319,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		enableTabMenu(tab.getSelectedIndex());
 	}
 
+	@Override
 	public void mouseMoved(MouseEvent e) {
 
 	}
 
+	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		Component glassPane = frame.getGlassPane();
 		Point glassPanePoint = e.getPoint();
@@ -8137,6 +8164,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		// When the Graphical View panel gets clicked on, tell it to display
 		// itself.
 		tabPane.addChangeListener(new ChangeListener() {
+			@Override
 			public void stateChanged(ChangeEvent e) {
 
 				JTabbedPane selectedTab = (JTabbedPane) (e.getSource());
@@ -8264,18 +8292,22 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 	}
 */
+	@Override
 	public void mouseClicked(MouseEvent e) {
 		executeMouseClickEvent(e);
 	}
 
+	@Override
 	public void mouseEntered(MouseEvent e) {
 
 	}
 
+	@Override
 	public void mouseExited(MouseEvent e) {
 
 	}
 
+	@Override
 	public void mouseDragged(MouseEvent e) {
 		Component glassPane = frame.getGlassPane();
 		Point glassPanePoint = e.getPoint();

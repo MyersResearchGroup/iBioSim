@@ -292,6 +292,7 @@ public class TimedState extends State{
 		_state.addTimeExtension(this);
 	}
 	
+	@Override
 	public String toString()
 	{
 		if(_useGraph){

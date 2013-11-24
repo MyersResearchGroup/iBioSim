@@ -127,11 +127,13 @@ public class State extends PlatuObj {
     	return this.lpn;
     }
     
-    public void setLabel(String lbl) {
+    @Override
+	public void setLabel(String lbl) {
     	
     }
     
-    public String getLabel() {
+    @Override
+	public String getLabel() {
     	return "S" + getIndex();
     }
     
@@ -143,11 +145,13 @@ public class State extends PlatuObj {
     	return tranVector;
     }
     
-    public void setIndex(int newIndex) {
+    @Override
+	public void setIndex(int newIndex) {
     	this.index = newIndex;
     }
     
-    public int getIndex() {
+    @Override
+	public int getIndex() {
     	return this.index;
     }
     

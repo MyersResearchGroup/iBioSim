@@ -801,6 +801,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 	 * @throws
 	 * @throws
 	 */
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		change = true;
 		if (e.getSource() == run) {
@@ -871,6 +872,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		}
 	}
 
+	@Override
 	public void run() {
 		String[] tempArray = synthesisFile.split(separator);
 		String circuitFile = tempArray[tempArray.length - 1];
@@ -1108,26 +1110,33 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		final JButton cancel = new JButton("Cancel");
 		final JFrame running = new JFrame("Progress");
 		WindowListener w = new WindowListener() {
+			@Override
 			public void windowClosing(WindowEvent arg0) {
 				cancel.doClick();
 				running.dispose();
 			}
 
+			@Override
 			public void windowOpened(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowClosed(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowIconified(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowDeiconified(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowActivated(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowDeactivated(WindowEvent arg0) {
 			}
 		};
@@ -1175,6 +1184,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			final Process synth = exec.exec(cmd, null, work);
 			cancel.setActionCommand("Cancel");
 			cancel.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					synth.destroy();
 					running.setCursor(null);
@@ -1183,6 +1193,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			});
 			biosim.getExitButton().setActionCommand("Exit program");
 			biosim.getExitButton().addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					synth.destroy();
 					running.setCursor(null);
@@ -1191,6 +1202,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			});
 			cancel.setActionCommand("Cancel");
 			cancel.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					synth.destroy();
 					running.setCursor(null);
@@ -1199,6 +1211,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			});
 			biosim.getExitButton().setActionCommand("Exit program");
 			biosim.getExitButton().addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					synth.destroy();
 					running.setCursor(null);

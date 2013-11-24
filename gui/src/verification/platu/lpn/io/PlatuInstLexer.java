@@ -97,7 +97,8 @@ public class PlatuInstLexer extends Lexer {
         super(input,state);
 
     }
-    public String getGrammarFileName() { return "/Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g"; }
+    @Override
+	public String getGrammarFileName() { return "/Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g"; }
 
     // $ANTLR start "T__60"
     public final void mT__60() throws RecognitionException {
@@ -2147,7 +2148,8 @@ public class PlatuInstLexer extends Lexer {
     }
     // $ANTLR end "IGNORE"
 
-    public void mTokens() throws RecognitionException {
+    @Override
+	public void mTokens() throws RecognitionException {
         // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:8: ( T__60 | T__61 | T__62 | T__63 | T__64 | T__65 | T__66 | T__67 | T__68 | T__69 | T__70 | T__71 | T__72 | T__73 | T__74 | T__75 | T__76 | T__77 | T__78 | T__79 | T__80 | T__81 | LPAREN | RPAREN | QMARK | COLON | SEMICOLON | PERIOD | UNDERSCORE | COMMA | QUOTE | MODULE | NAME | INPUT | OUTPUT | INTERNAL | MARKING | STATE_VECTOR | TRANSITION | LABEL | PRESET | POSTSET | TRUE | FALSE | PLUS | MINUS | TIMES | DIV | MOD | EQUALS | GREATER | LESS | GREATER_EQUAL | LESS_EQUAL | EQUIV | NOT_EQUIV | NEGATION | AND | OR | IMPLICATION | BITWISE_NEGATION | BITWISE_AND | BITWISE_OR | BITWISE_XOR | BITWISE_LSHIFT | BITWISE_RSHIFT | INT | ID | PATH | MEMBER | WS | COMMENT | MULTILINECOMMENT | XMLCOMMENT | IGNORE )
         int alt14=75;
         alt14 = dfa14.predict(input);
@@ -2737,7 +2739,8 @@ public class PlatuInstLexer extends Lexer {
             this.special = DFA8_special;
             this.transition = DFA8_transition;
         }
-        public String getDescription() {
+        @Override
+		public String getDescription() {
             return "()* loopback of 1494:29: ( FILE ( '/' | '\\\\' ) )*";
         }
     }
@@ -3232,7 +3235,8 @@ public class PlatuInstLexer extends Lexer {
             this.special = DFA14_special;
             this.transition = DFA14_transition;
         }
-        public String getDescription() {
+        @Override
+		public String getDescription() {
             return "1:1: Tokens : ( T__60 | T__61 | T__62 | T__63 | T__64 | T__65 | T__66 | T__67 | T__68 | T__69 | T__70 | T__71 | T__72 | T__73 | T__74 | T__75 | T__76 | T__77 | T__78 | T__79 | T__80 | T__81 | LPAREN | RPAREN | QMARK | COLON | SEMICOLON | PERIOD | UNDERSCORE | COMMA | QUOTE | MODULE | NAME | INPUT | OUTPUT | INTERNAL | MARKING | STATE_VECTOR | TRANSITION | LABEL | PRESET | POSTSET | TRUE | FALSE | PLUS | MINUS | TIMES | DIV | MOD | EQUALS | GREATER | LESS | GREATER_EQUAL | LESS_EQUAL | EQUIV | NOT_EQUIV | NEGATION | AND | OR | IMPLICATION | BITWISE_NEGATION | BITWISE_AND | BITWISE_OR | BITWISE_XOR | BITWISE_LSHIFT | BITWISE_RSHIFT | INT | ID | PATH | MEMBER | WS | COMMENT | MULTILINECOMMENT | XMLCOMMENT | IGNORE );";
         }
     }

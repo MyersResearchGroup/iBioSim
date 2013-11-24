@@ -186,6 +186,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 		}
 	}
 	
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		// if the add objective button is clicked
 		if (((JButton) e.getSource()).getText().equals("Add")) {
@@ -368,6 +369,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 	}
 		
 
+	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2) {
 			if (e.getSource() == objectives) {
@@ -387,24 +389,28 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mouseEntered(MouseEvent e) {
 	}
 
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mouseExited(MouseEvent e) {
 	}
 
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mousePressed(MouseEvent e) {
 	}
 
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mouseReleased(MouseEvent e) {
 	}
 }

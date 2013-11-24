@@ -350,6 +350,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		XVariable.setPreferredSize(dim);
 		updateXNumber = false;
 		XVariable.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (updateXNumber && node != null) {
 					String curDir = "";
@@ -664,6 +665,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 * This method adds and removes plots from the graph depending on what check
 	 * boxes are selected.
 	 */
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		// if the save button is clicked
 		if (e.getSource() == run) {
@@ -784,6 +786,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					all.revalidate();
 					all.repaint();
 					TreeSelectionListener t = new TreeSelectionListener() {
+						@Override
 						public void valueChanged(TreeSelectionEvent e) {
 							node = (IconNode) e.getPath().getLastPathComponent();
 						}
@@ -830,6 +833,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		else if (e.getActionCommand().equals("delete")) {
 			TreePath[] selected = tree.getSelectionPaths();
 			TreeSelectionListener t = new TreeSelectionListener() {
+				@Override
 				public void valueChanged(TreeSelectionEvent e) {
 					node = (IconNode) e.getPath().getLastPathComponent();
 				}
@@ -1064,6 +1068,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			all.revalidate();
 			all.repaint();
 			t = new TreeSelectionListener() {
+				@Override
 				public void valueChanged(TreeSelectionEvent e) {
 					node = (IconNode) e.getPath().getLastPathComponent();
 				}
@@ -1142,6 +1147,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			all.revalidate();
 			all.repaint();
 			TreeSelectionListener t = new TreeSelectionListener() {
+				@Override
 				public void valueChanged(TreeSelectionEvent e) {
 					node = (IconNode) e.getPath().getLastPathComponent();
 				}
@@ -1230,6 +1236,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			all.revalidate();
 			all.repaint();
 			TreeSelectionListener t = new TreeSelectionListener() {
+				@Override
 				public void valueChanged(TreeSelectionEvent e) {
 					node = (IconNode) e.getPath().getLastPathComponent();
 				}
@@ -1392,6 +1399,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 * After the chart is redrawn, this method calculates the x and y scale and
 	 * updates those text fields.
 	 */
+	@Override
 	public void chartProgress(ChartProgressEvent e) {
 		// if the chart drawing is started
 		if (e.getType() == ChartProgressEvent.DRAWING_STARTED) {
@@ -1417,6 +1425,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 * Invoked when the mouse is clicked on the chart. Allows the user to edit
 	 * the title and labels of the chart.
 	 */
+	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (e.getSource() != tree) {
 			if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
@@ -1430,6 +1439,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 	}
 
+	@Override
 	public void mousePressed(MouseEvent e) {
 		if (e.getSource() == tree) {
 			int selRow = tree.getRowForLocation(e.getX(), e.getY());
@@ -1483,6 +1493,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 	}
 
+	@Override
 	public void mouseReleased(MouseEvent e) {
 		if (e.getSource() == tree) {
 			int selRow = tree.getRowForLocation(e.getX(), e.getY());
@@ -1539,12 +1550,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mouseEntered(MouseEvent e) {
 	}
 
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mouseExited(MouseEvent e) {
 	}
 
@@ -1624,6 +1637,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		final JLabel yMax = new JLabel("Y-Max:");
 		final JLabel yScale = new JLabel("Y-Step:");
 		LogX.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				XYPlot plot = (XYPlot) chart.getXYPlot();
 				Font rangeFont = chart.getXYPlot().getRangeAxis().getLabelFont();
@@ -1654,6 +1668,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 		});
 		LogY.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				XYPlot plot = (XYPlot) chart.getXYPlot();
 				Font rangeFont = chart.getXYPlot().getRangeAxis().getLabelFont();
@@ -1684,6 +1699,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 		});
 		visibleLegend.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (((JCheckBox) e.getSource()).isSelected()) {
 					if (chart.getLegend() == null) {
@@ -1699,6 +1715,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 		});
 		resize.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (((JCheckBox) e.getSource()).isSelected()) {
 					xMin.setEnabled(false);
@@ -2566,6 +2583,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			scroll.getVerticalScrollBar().setUnitIncrement(10);
 			final JButton deselect = new JButton("Deselect All");
 			deselect.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					// selected = "";
 					int size = graphed.size();
@@ -3888,6 +3906,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 		}
 		tree.addTreeSelectionListener(new TreeSelectionListener() {
+			@Override
 			public void valueChanged(TreeSelectionEvent e) {
 				node = (IconNode) e.getPath().getLastPathComponent();
 				updateVariableChoices(node,null);
@@ -4399,6 +4418,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			specs.setSelectedItem(startsWith);
 		}
 		specs.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				String startsWith = null;
 				if (!specs.getSelectedItem().equals("All Variables")) {
@@ -4424,6 +4444,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		visible = new ArrayList<JCheckBox>();
 		filled = new ArrayList<JCheckBox>();
 		use.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (use.isSelected()) {
 					for (JCheckBox box : boxes) {
@@ -4442,6 +4463,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 		});
 		connectedLabel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (connectedLabel.isSelected()) {
 					for (JCheckBox box : connected) {
@@ -4460,6 +4482,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 		});
 		visibleLabel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (visibleLabel.isSelected()) {
 					for (JCheckBox box : visible) {
@@ -4478,6 +4501,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 		});
 		filledLabel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (filledLabel.isSelected()) {
 					for (JCheckBox box : filled) {
@@ -4508,6 +4532,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			JCheckBox temp = new JCheckBox();
 			temp.setActionCommand("" + i);
 			temp.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					int i = Integer.parseInt(e.getActionCommand());
 					if (((JCheckBox) e.getSource()).isSelected()) {
@@ -4594,6 +4619,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			temp = new JCheckBox();
 			temp.setActionCommand("" + i);
 			temp.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					int i = Integer.parseInt(e.getActionCommand());
 					if (((JCheckBox) e.getSource()).isSelected()) {
@@ -4627,6 +4653,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			temp = new JCheckBox();
 			temp.setActionCommand("" + i);
 			temp.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					int i = Integer.parseInt(e.getActionCommand());
 					if (((JCheckBox) e.getSource()).isSelected()) {
@@ -4660,6 +4687,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			temp = new JCheckBox();
 			temp.setActionCommand("" + i);
 			temp.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					int i = Integer.parseInt(e.getActionCommand());
 					if (((JCheckBox) e.getSource()).isSelected()) {
@@ -4693,6 +4721,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			JTextField seriesName = new JTextField(graphSpecies.get(i + 1), 20);
 			seriesName.setName("" + i);
 			seriesName.addKeyListener(new KeyListener() {
+				@Override
 				public void keyPressed(KeyEvent e) {
 					int i = Integer.parseInt(((JTextField) e.getSource()).getName());
 					for (GraphSpecies g : graphed) {
@@ -4702,6 +4731,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					}
 				}
 
+				@Override
 				public void keyReleased(KeyEvent e) {
 					int i = Integer.parseInt(((JTextField) e.getSource()).getName());
 					for (GraphSpecies g : graphed) {
@@ -4711,6 +4741,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					}
 				}
 
+				@Override
 				public void keyTyped(KeyEvent e) {
 					int i = Integer.parseInt(((JTextField) e.getSource()).getName());
 					for (GraphSpecies g : graphed) {
@@ -4733,6 +4764,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			JComboBox colBox = new JComboBox(col);
 			colBox.setActionCommand("" + i);
 			colBox.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					int i = Integer.parseInt(e.getActionCommand());
 					if (!((JComboBox) (e.getSource())).getSelectedItem().equals("Custom")) {
@@ -4756,6 +4788,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			JComboBox shapBox = new JComboBox(shap);
 			shapBox.setActionCommand("" + i);
 			shapBox.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					int i = Integer.parseInt(e.getActionCommand());
 					for (GraphSpecies g : graphed) {
@@ -4774,6 +4807,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			colorButton.setUI(new MetalButtonUI());
 			colorButton.setActionCommand("" + i);
 			colorButton.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					int i = Integer.parseInt(e.getActionCommand());
 					Color newColor = JColorChooser.showDialog(Gui.frame, "Choose Color", ((JButton) e.getSource()).getBackground());
@@ -6879,6 +6913,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		final JCheckBox shadow = new JCheckBox("Paint Bar Shadows");
 		shadow.setSelected(((BarRenderer) chart.getCategoryPlot().getRenderer()).getShadowsVisible());
 		visibleLegend.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (((JCheckBox) e.getSource()).isSelected()) {
 					if (chart.getLegend() == null) {
@@ -7055,6 +7090,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			final JPanel all = new JPanel(new BorderLayout());
 			final JScrollPane scroll = new JScrollPane();
 			tree.addTreeExpansionListener(new TreeExpansionListener() {
+				@Override
 				public void treeCollapsed(TreeExpansionEvent e) {
 					JScrollPane scrollpane = new JScrollPane();
 					scrollpane.getViewport().add(tree);
@@ -7066,6 +7102,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					all.repaint();
 				}
 
+				@Override
 				public void treeExpanded(TreeExpansionEvent e) {
 					JScrollPane scrollpane = new JScrollPane();
 					scrollpane.getViewport().add(tree);
@@ -7095,6 +7132,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 			}
 			tree.addTreeSelectionListener(new TreeSelectionListener() {
+				@Override
 				public void valueChanged(TreeSelectionEvent e) {
 					node = (IconNode) e.getPath().getLastPathComponent();
 					if (!directories.contains(node.getName())) {
@@ -7268,6 +7306,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			scroll.setViewportView(editPanel);
 			final JButton deselect = new JButton("Deselect All");
 			deselect.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					int size = probGraphed.size();
 					for (int i = 0; i < size; i++) {
@@ -7481,6 +7520,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		colorsCombo = new ArrayList<JComboBox>();
 		colorsButtons = new ArrayList<JButton>();
 		use.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (use.isSelected()) {
 					for (JCheckBox box : boxes) {
@@ -7506,6 +7546,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			JCheckBox temp = new JCheckBox();
 			temp.setActionCommand("" + i);
 			temp.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					int i = Integer.parseInt(e.getActionCommand());
 					if (((JCheckBox) e.getSource()).isSelected()) {
@@ -7894,6 +7935,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			JTextField seriesName = new JTextField(graphProbs.get(i));
 			seriesName.setName("" + i);
 			seriesName.addKeyListener(new KeyListener() {
+				@Override
 				public void keyPressed(KeyEvent e) {
 					int i = Integer.parseInt(((JTextField) e.getSource()).getName());
 					for (GraphProbs g : probGraphed) {
@@ -7903,6 +7945,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					}
 				}
 
+				@Override
 				public void keyReleased(KeyEvent e) {
 					int i = Integer.parseInt(((JTextField) e.getSource()).getName());
 					for (GraphProbs g : probGraphed) {
@@ -7912,6 +7955,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					}
 				}
 
+				@Override
 				public void keyTyped(KeyEvent e) {
 					int i = Integer.parseInt(((JTextField) e.getSource()).getName());
 					for (GraphProbs g : probGraphed) {
@@ -7932,6 +7976,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			JComboBox colBox = new JComboBox(col);
 			colBox.setActionCommand("" + i);
 			colBox.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					int i = Integer.parseInt(e.getActionCommand());
 					if (!((JComboBox) (e.getSource())).getSelectedItem().equals("Custom")) {
@@ -7963,6 +8008,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			colorButton.setUI(new MetalButtonUI());
 			colorButton.setActionCommand("" + i);
 			colorButton.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					int i = Integer.parseInt(e.getActionCommand());
 					Color newColor = JColorChooser.showDialog(Gui.frame, "Choose Color", ((JButton) e.getSource()).getBackground());
@@ -8396,6 +8442,7 @@ class IconNodeRenderer extends DefaultTreeCellRenderer {
 	 */
 	private static final long serialVersionUID = -940588131120912851L;
 
+	@Override
 	public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
 
 		super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
@@ -8499,6 +8546,7 @@ class TextIcons extends MetalIconFactory.TreeLeafIcon {
 	protected TextIcons() {
 	}
 
+	@Override
 	public void paintIcon(Component c, Graphics g, int x, int y) {
 		super.paintIcon(c, g, x, y);
 		if (label != null) {

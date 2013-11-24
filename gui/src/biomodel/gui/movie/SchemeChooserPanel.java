@@ -241,6 +241,7 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 		speciesChooser = new JComboBox(newSpeciesNames);
 		speciesChooser.addActionListener(new ActionListener(){
 
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				
 				updatePanelValues();
@@ -449,6 +450,7 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 	/**
 	 * not currently used
 	 */
+	@Override
 	public void actionPerformed(ActionEvent event) {
 	}
 	
@@ -488,6 +490,7 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 		 * the user has hovered over or clicked on
 		 * this is then painted (using the paintComponent function below) when it's passed back
 		 */
+		@Override
 		public Component getListCellRendererComponent(
 		                    JList list,
 		                    Object value,
@@ -521,6 +524,7 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 		/**
 		 * draw the gradient for whichever item in the list
 		 */
+		@Override
 		public void paintComponent(Graphics g) {
 			
 			Color endColor;

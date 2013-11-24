@@ -1801,6 +1801,7 @@ public class Zone{
 	/**
 	 * The matrix labeled with 'ti' where i is the transition index associated with the timer.
 	 */
+	@Override
 	public String toString()
 	{
 		// TODO : Fix the handling of continuous variables in the 
@@ -1896,6 +1897,7 @@ public class Zone{
 	 * Tests for equality. Overrides inherited equals method.
 	 * @return True if o is equal to this object, false otherwise.
 	 */
+	@Override
 	public boolean equals(Object o)
 	{
 		// Check if the reference is null.
@@ -2033,6 +2035,7 @@ public class Zone{
 	/**
 	 * Overrides the hashCode.
 	 */
+	@Override
 	public int hashCode()
 	{
 		// Check if the hash code has been set.
@@ -4197,6 +4200,7 @@ public class Zone{
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
 	 */
+	@Override
 	public Zone clone()
 	{
 		// TODO: Check if finished.

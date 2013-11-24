@@ -47,19 +47,23 @@ public class LpnState extends PlatuObj {
     	this.state = newState;
     }
     
-    public void setLabel(String lbl) {
+    @Override
+	public void setLabel(String lbl) {
     	
     }
     
-    public String getLabel() {
+    @Override
+	public String getLabel() {
     	return null;
     }
     
-    public void setIndex(int i) {
+    @Override
+	public void setIndex(int i) {
     	this.index = i;
     }
     
-    public int getIndex() {
+    @Override
+	public int getIndex() {
     	return this.index;
     }
     

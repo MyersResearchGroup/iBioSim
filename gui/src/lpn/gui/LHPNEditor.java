@@ -314,6 +314,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 			super(name);
 		}
 
+		@Override
 		public void run() {
 			lhpnFile.save(getName());
 		}
@@ -327,6 +328,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 			this.list = list;
 		}
 
+		@Override
 		public void run() {
 			new EditCommand(getName(), list).run();
 		}
@@ -342,6 +344,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 			this.list = list;
 		}
 
+		@Override
 		public void run() {
 			if (getName().contains("Variable")) {
 				if (!list.isSelectionEmpty()) {
@@ -404,6 +407,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		private PropertyList list = null;
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		dirty = true;
 		Object o = e.getSource();
@@ -463,6 +467,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		}
 	}
 
+	@Override
 	public void mousePressed(MouseEvent e) {
 		if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
 			if (flag) {
@@ -484,15 +489,19 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		}
 	}
 
+	@Override
 	public void mouseReleased(MouseEvent e) {
 	}
 
+	@Override
 	public void mouseClicked(MouseEvent e) {
 	}
 
+	@Override
 	public void mouseEntered(MouseEvent e) {
 	}
 
+	@Override
 	public void mouseExited(MouseEvent e) {
 	}
 
@@ -502,6 +511,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 			this.list = list;
 		}
 
+		@Override
 		public void run() {
 			if (name == null || name.equals("")) {
 				Utility.createErrorMessage("Error", "Nothing selected to edit");

@@ -68,7 +68,8 @@ public class MemoryChart extends Thread {
         }
         Runnable runnable = new Runnable() {
 
-            public void run() {
+            @Override
+			public void run() {
   //              SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh.mm.ss.SSSS");
  //               String date = df.format(new Date());
 //                try {

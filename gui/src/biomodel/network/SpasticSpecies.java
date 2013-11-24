@@ -23,6 +23,7 @@ public class SpasticSpecies extends AbstractSpecies {
 	}
 	
 	
+	@Override
 	public void accept(SpeciesVisitor visitor) {
 		visitor.visitSpasticSpecies(this);
 	}

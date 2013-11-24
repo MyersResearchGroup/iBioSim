@@ -938,6 +938,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 		return true;
 	}
 	
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("comboBoxChanged")) {
 			updateComboBoxEnabling();

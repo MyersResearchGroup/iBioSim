@@ -206,12 +206,15 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		}
 		setCompartOptions("3");
 		dimText.addKeyListener(new KeyListener() {
+			@Override
 			public void keyTyped(KeyEvent e) {
 			}
 
+			@Override
 			public void keyPressed(KeyEvent e) {
 			}
 
+			@Override
 			public void keyReleased(KeyEvent e) {
 				if (editComp) {
 					setCompartOptions(dimText.getText());
@@ -230,6 +233,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		final JComboBox level = new JComboBox(list1);
 		final JButton sweep = new JButton("Sweep");
 		sweep.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				Object[] options = { "Ok", "Close" };
 				JPanel p = new JPanel(new GridLayout(4, 2));
@@ -352,6 +356,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		if (paramsOnly) {
 			JLabel typeLabel = new JLabel("Value Type:");
 			type.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					if (!((String) type.getSelectedItem()).equals("Original")) {
 						sweep.setEnabled(true);
@@ -867,6 +872,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		this.rulesPanel = rulesPanel;
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		// if the add compartment type button is clicked
 		// if the add species type button is clicked
@@ -891,6 +897,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		}
 	}
 
+	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2) {
 			if (e.getSource() == compartments) {
@@ -909,24 +916,28 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mouseEntered(MouseEvent e) {
 	}
 
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mouseExited(MouseEvent e) {
 	}
 
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mousePressed(MouseEvent e) {
 	}
 
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mouseReleased(MouseEvent e) {
 	}
 }

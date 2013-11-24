@@ -944,6 +944,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	 * @throws
 	 * @throws
 	 */
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		change = true;
 		if (e.getSource() == run) {
@@ -1083,6 +1084,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	//		System.out.println("~~~~~~~~~~End~~~~~~~~~");
 	//	}
 
+	@Override
 	public void run() {
 		copyFile();
 		String[] array = directory.split(separator);
@@ -2103,26 +2105,33 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			final JButton cancel = new JButton("Cancel");
 			final JFrame running = new JFrame("Progress");
 			WindowListener w = new WindowListener() {
+				@Override
 				public void windowClosing(WindowEvent arg0) {
 					cancel.doClick();
 					running.dispose();
 				}
 
+				@Override
 				public void windowOpened(WindowEvent arg0) {
 				}
 
+				@Override
 				public void windowClosed(WindowEvent arg0) {
 				}
 
+				@Override
 				public void windowIconified(WindowEvent arg0) {
 				}
 
+				@Override
 				public void windowDeiconified(WindowEvent arg0) {
 				}
 
+				@Override
 				public void windowActivated(WindowEvent arg0) {
 				}
 
+				@Override
 				public void windowDeactivated(WindowEvent arg0) {
 				}
 			};
@@ -2173,6 +2182,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					final Process ver = exec.exec(cmd, null, work);
 					cancel.setActionCommand("Cancel");
 					cancel.addActionListener(new ActionListener() {
+						@Override
 						public void actionPerformed(ActionEvent e) {
 							ver.destroy();
 							running.setCursor(null);
@@ -2182,6 +2192,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					biosim.getExitButton().setActionCommand("Exit program");
 					biosim.getExitButton().addActionListener(
 							new ActionListener() {
+								@Override
 								public void actionPerformed(ActionEvent e) {
 									ver.destroy();
 									running.setCursor(null);
@@ -2210,6 +2221,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					final Process ver = exec.exec(cmd, null, work);
 					cancel.setActionCommand("Cancel");
 					cancel.addActionListener(new ActionListener() {
+						@Override
 						public void actionPerformed(ActionEvent e) {
 							ver.destroy();
 							running.setCursor(null);
@@ -2219,6 +2231,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					biosim.getExitButton().setActionCommand("Exit program");
 					biosim.getExitButton().addActionListener(
 							new ActionListener() {
+								@Override
 								public void actionPerformed(ActionEvent e) {
 									ver.destroy();
 									running.setCursor(null);

@@ -528,6 +528,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 	 * This method performs different functions depending on what menu items or
 	 * buttons are selected.
 	 */
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		/*
 		 * if (e.getActionCommand().contains("box")) { int num =
@@ -1072,6 +1073,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 		}
 	}
 
+	@Override
 	public void run() {
 		String geneNet = "GeneNet";
 		geneNet += " --debug " + debug.getSelectedItem();
@@ -1165,26 +1167,33 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 		final JButton cancel = new JButton("Cancel");
 		final JFrame running = new JFrame("Progress");
 		WindowListener w = new WindowListener() {
+			@Override
 			public void windowClosing(WindowEvent arg0) {
 				cancel.doClick();
 				running.dispose();
 			}
 
+			@Override
 			public void windowOpened(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowClosed(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowIconified(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowDeiconified(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowActivated(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowDeactivated(WindowEvent arg0) {
 			}
 		};
@@ -1237,6 +1246,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 			learn = exec.exec(geneNet, null, work);
 			cancel.setActionCommand("Cancel");
 			cancel.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					learn.destroy();
 					running.setCursor(null);
@@ -1245,6 +1255,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 			});
 			biosim.getExitButton().setActionCommand("Exit program");
 			biosim.getExitButton().addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					learn.destroy();
 					running.setCursor(null);

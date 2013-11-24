@@ -20,7 +20,8 @@ public class ProbLocalState extends State{
      * @see verification.platu.stategraph.State#update(verification.platu.stategraph.StateGraph, java.util.HashMap, verification.platu.lpn.DualHashMap)
      * Return a new state if the newVector leads to a new state from this state; otherwise return null. Also, adjust the tranRateVector.
      */
-    public State update(StateGraph thisSg, HashMap<String, Integer> newVector, DualHashMap<String, Integer> VarIndexMap) {
+    @Override
+	public State update(StateGraph thisSg, HashMap<String, Integer> newVector, DualHashMap<String, Integer> VarIndexMap) {
     	int[] newVariableVector = new int[this.vector.length];   	
     	boolean nextStateExists = false;
     	for(int index = 0; index < vector.length; index++) {

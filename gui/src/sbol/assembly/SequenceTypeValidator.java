@@ -565,6 +565,7 @@ public class SequenceTypeValidator {
 			return id;
 		}
 		
+		@Override
 		public String toString() {
 			return id;
 		}
@@ -615,6 +616,7 @@ public class SequenceTypeValidator {
 			this.id = id;
 		}
 		
+		@Override
 		public String toString() {
 			return id;
 		}

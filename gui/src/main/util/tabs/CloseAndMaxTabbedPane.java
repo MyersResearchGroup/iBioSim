@@ -157,10 +157,12 @@ public class CloseAndMaxTabbedPane extends JTabbedPane {
 
 			long end;
 
+			@Override
 			public void windowGainedFocus(WindowEvent e) {
 				start = System.currentTimeMillis();
 			}
 
+			@Override
 			public void windowLostFocus(WindowEvent e) {
 				end = System.currentTimeMillis();
 				long elapsed = end - start;

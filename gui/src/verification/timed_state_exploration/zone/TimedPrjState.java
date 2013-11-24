@@ -27,6 +27,7 @@ public class TimedPrjState extends PrjState{
 		return _zones;
 	}
 	
+	@Override
 	public boolean equals(Object other){
 		if(!super.equals(other)){
 			return false;
@@ -49,6 +50,7 @@ public class TimedPrjState extends PrjState{
 		return true;
 	}
 	
+	@Override
 	public String toString(){
 		String result = super.toString();
 		

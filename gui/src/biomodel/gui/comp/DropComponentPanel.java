@@ -454,6 +454,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		this.droppedComponent = true;
 	}
 	
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		updateTilingEnabled();
 	}

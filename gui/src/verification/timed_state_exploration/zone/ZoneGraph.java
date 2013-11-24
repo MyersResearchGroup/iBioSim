@@ -87,6 +87,7 @@ public class ZoneGraph{
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
 	 */
+	@Override
 	public ZoneType clone(){
 		throw new UnsupportedOperationException();
 		
@@ -698,6 +699,7 @@ public class ZoneGraph{
 		/**
 		 * Overrides the Object's toString method.
 		 */
+		@Override
 		public String toString(){
 			String result = "------------------------\n Partition nodes." +
 					"\n------------------------\n";
@@ -773,6 +775,7 @@ public class ZoneGraph{
 		 * Provides a lexigraphical ordering of the node according to the partition elements
 		 * and internal edges.
 		 */
+		@Override
 		public int compareTo(Node o) {
 
 			// Should be defined to be consistent with the equals property.
@@ -835,6 +838,7 @@ public class ZoneGraph{
 		/* (non-Javadoc)
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 */
+		@Override
 		public boolean equals(Object o) {	
 			// Check if the reference is null.
 			if(o == null)
@@ -915,6 +919,7 @@ public class ZoneGraph{
 		/* (non-Javadoc)
 		 * @see java.lang.Object#hashCode()
 		 */
+		@Override
 		public int hashCode(){
 			if(_nodeHashCode >=0){
 				return _nodeHashCode;
@@ -1036,6 +1041,7 @@ public class ZoneGraph{
 		/**
 		 * Overrides Object's toString().
 		 */
+		@Override
 		public String toString(){
 			String s = "";
 			
@@ -1110,6 +1116,7 @@ public class ZoneGraph{
 			return ZoneGraph.this;
 		}
 		
+		@Override
 		public String toString(){
 			return "(" + this._leftInt + "," + this._rightInt + ")"; 
 		}

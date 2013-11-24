@@ -91,6 +91,7 @@ public class PropertyField extends JPanel implements ActionListener {
 		this.add(field);
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("comboBoxChanged")) {
 			if (box.getSelectedItem().equals(states[0])) {

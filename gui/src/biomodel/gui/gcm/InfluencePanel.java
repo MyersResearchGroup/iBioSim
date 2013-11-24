@@ -510,6 +510,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		return out;
 	}
 	
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("comboBoxChanged")
 				&& e.getSource().equals(typeBox)) {

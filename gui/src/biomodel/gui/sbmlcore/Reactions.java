@@ -1261,6 +1261,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		final JComboBox level = new JComboBox(list1);
 		final JButton sweep = new JButton("Sweep");
 		sweep.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				Object[] options = { "Ok", "Close" };
 				JPanel p = new JPanel(new GridLayout(4, 2));
@@ -1356,6 +1357,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		if (paramsOnly) {
 			JLabel typeLabel = new JLabel("Type:");
 			type.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					if (!((String) type.getSelectedItem()).equals("Original")) {
 						sweep.setEnabled(true);
@@ -2984,6 +2986,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		this.rulesPanel = rulesPanel;
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		// if the add compartment type button is clicked
 		// if the add species type button is clicked
@@ -3083,6 +3086,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 	}
 
+	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2) {
 			if (e.getSource() == reactions) {
@@ -3179,24 +3183,28 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mouseEntered(MouseEvent e) {
 	}
 
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mouseExited(MouseEvent e) {
 	}
 
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mousePressed(MouseEvent e) {
 	}
 
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mouseReleased(MouseEvent e) {
 	}
 

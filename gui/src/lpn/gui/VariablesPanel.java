@@ -300,6 +300,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 		return true;
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("comboBoxChanged")) {
 		}

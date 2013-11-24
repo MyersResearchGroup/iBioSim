@@ -180,25 +180,32 @@ public class Nary_Run implements ActionListener, Runnable {
 		// creates the nary frame and adds a window listener
 		naryFrame = new JFrame("Nary Properties");
 		WindowListener w = new WindowListener() {
+			@Override
 			public void windowClosing(WindowEvent arg0) {
 				naryFrame.dispose();
 			}
 
+			@Override
 			public void windowOpened(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowClosed(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowIconified(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowDeiconified(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowActivated(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowDeactivated(WindowEvent arg0) {
 			}
 		};
@@ -402,6 +409,7 @@ public class Nary_Run implements ActionListener, Runnable {
 	 * This method performs different functions depending on what buttons are
 	 * pushed and what input fields contain data.
 	 */
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		// if the nary run button is clicked
 		if (e.getSource() == naryRun) {
@@ -472,31 +480,39 @@ public class Nary_Run implements ActionListener, Runnable {
 	 * If the nary run button is pressed, this method starts a new thread for
 	 * the nary abstraction.
 	 */
+	@Override
 	public void run() {
 		naryFrame.dispose();
 		final JButton naryCancel = new JButton("Cancel Nary");
 		final JFrame running = new JFrame("Running...");
 		WindowListener w = new WindowListener() {
+			@Override
 			public void windowClosing(WindowEvent arg0) {
 				naryCancel.doClick();
 				running.dispose();
 			}
 
+			@Override
 			public void windowOpened(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowClosed(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowIconified(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowDeiconified(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowActivated(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowDeactivated(WindowEvent arg0) {
 			}
 		};

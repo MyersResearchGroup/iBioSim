@@ -69,6 +69,7 @@ public class SimulatorSSACR extends Simulator {
 	/**
 	 * runs the composition and rejection simulation
 	 */
+	@Override
 	public void simulate() {
 		
 		if (sbmlHasErrorsFlag == true)
@@ -506,6 +507,7 @@ public class SimulatorSSACR extends Simulator {
 	/**
 	 * cancels the current run
 	 */
+	@Override
 	protected void cancel() {
 	
 		cancelFlag = true;
@@ -514,6 +516,7 @@ public class SimulatorSSACR extends Simulator {
 	/**
 	 * clears data structures for new run
 	 */
+	@Override
 	protected void clear() {
 		
 		variableToValueMap.clear();
@@ -558,6 +561,7 @@ public class SimulatorSSACR extends Simulator {
 	/**
 	 * removes a component's reactions from reactionToGroupMap and groupToReactionSetList
 	 */
+	@Override
 	protected void eraseComponentFurther(HashSet<String> reactionIDs) {
 		
 		for (String reactionID : reactionIDs) {
@@ -758,6 +762,7 @@ public class SimulatorSSACR extends Simulator {
 	/**
 	 * does a minimized initialization process to prepare for a new run
 	 */
+	@Override
 	protected void setupForNewRun(int newRun) {
 			
 		try {
@@ -809,6 +814,7 @@ public class SimulatorSSACR extends Simulator {
 	/**
 	 * updates the groups
 	 */
+	@Override
 	protected void updateAfterDynamicChanges() {
 		
 		reassignAllReactionsToGroups();

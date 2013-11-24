@@ -20,6 +20,7 @@ abstract public class AbstractTester implements TesterInterface {
 		this.timeEnd = timeEnd;
 	}
 
+	@Override
 	public boolean[] passedTest(ExperimentResult experiment) {
 		boolean[] results = new boolean[(int)((timeEnd-timeStart)/timeSpan+1)];
 		for (int i = 0; i < results.length; i++) {
@@ -53,6 +54,7 @@ abstract public class AbstractTester implements TesterInterface {
 		return results;
 	}
 	
+	@Override
 	public double[] getTimes() {
 		double[] times = new double[(int)((timeEnd-timeStart)/timeSpan+1)];
 		for (double i = timeStart; i <= timeEnd; i=i+timeSpan) {

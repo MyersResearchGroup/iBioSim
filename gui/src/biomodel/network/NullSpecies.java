@@ -18,6 +18,7 @@ public class NullSpecies extends AbstractSpecies implements SpeciesInterface {
 		setStateName("Null");
 	}
 	
+	@Override
 	public void accept(SpeciesVisitor visitor) {
 		// TODO Auto-generated method stub
 

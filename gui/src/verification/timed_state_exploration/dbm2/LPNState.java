@@ -107,6 +107,7 @@ public class LPNState {
 	/**
 	 * Overrides the clone method from the object class.
 	 */
+	@Override
 	public LPNState clone()
 	{
 		LPNState newState = new LPNState(markedPlaces, booleanValues);
@@ -140,6 +141,7 @@ public class LPNState {
 	 * Tests for equality.
 	 * @return True if o is equal to this object, false otherwise.
 	 */
+	@Override
 	public boolean equals(Object o)
 	{
 		// Check if the reference is null.
@@ -308,6 +310,7 @@ public class LPNState {
 	/**
 	 * Overrides the hashCode.
 	 */
+	@Override
 	public int hashCode()
 	{
 		if(cachedHashCode <0)		// Check if the hash code has been calculated
@@ -359,6 +362,7 @@ public class LPNState {
 	/**
 	 * Overrides the toString method.
 	 */
+	@Override
 	public String toString()
 	{	
 		String result = "\n";		// The intended result.

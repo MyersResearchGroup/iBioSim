@@ -182,6 +182,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		Utility.addReaction(document, r);
 	}
 
+	@Override
 	public void visitDiffusibleSpecies(DiffusibleSpecies specie) {
 		
 		loadValues(specie);
@@ -214,6 +215,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		Utility.addReaction(document, r);
 	}
 	
+	@Override
 	public void visitDiffusibleConstitutiveSpecies(DiffusibleConstitutiveSpecies specie) {
 		
 		loadValues(specie);

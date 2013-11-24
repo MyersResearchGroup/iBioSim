@@ -18,10 +18,12 @@ public class MutableString implements Mutable, Serializable, Comparable<Object> 
 		this.value = value;
 	}
 
+	@Override
 	public int compareTo(Object o) {
 		return value.compareTo((String) o);
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof MutableString) {
 			return value.equals(((MutableString) obj).getString());
@@ -29,10 +31,12 @@ public class MutableString implements Mutable, Serializable, Comparable<Object> 
 		return false;
 	}
 
+	@Override
 	public String toString() {
 		return value;
 	}
 
+	@Override
 	public Object getValue() {
 		return value;
 	}
@@ -45,6 +49,7 @@ public class MutableString implements Mutable, Serializable, Comparable<Object> 
 		this.value = value;
 	}
 
+	@Override
 	public void setValue(Object value) {
 		this.value = (String) value;
 	}

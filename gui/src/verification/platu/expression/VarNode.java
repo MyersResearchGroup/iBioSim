@@ -49,6 +49,7 @@ public class VarNode implements ExpressionNode {
 		return this.value;
 	}
 	
+	@Override
 	public int evaluate(int[] stateVector){
 		return stateVector[this.index];
 	}
@@ -62,6 +63,7 @@ public class VarNode implements ExpressionNode {
 		return this.index;
 	}
 	
+	@Override
 	public void getVariables(HashSet<VarNode> variables){
 		variables.add(this);
 	}
@@ -79,6 +81,7 @@ public class VarNode implements ExpressionNode {
 		return cloneNode;
 	}
 	
+	@Override
 	public ExpressionNode copy(HashMap<String, VarNode> variables){
 		VarNode node = variables.get(this.name);
 		if(node == null){

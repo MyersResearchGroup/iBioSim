@@ -301,6 +301,7 @@ public class UpdateContinuous {
 	}
 	
 	
+	@Override
 	public String toString(){
 		
 		String s = "Variable: " + _lcrPair + "\n" 

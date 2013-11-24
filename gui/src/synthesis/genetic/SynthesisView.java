@@ -220,6 +220,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		numSolnsText.setText(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_NUM_SOLNS_PROPERTY));
 	}
 	
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == addLibButton)
 			addLibraryFile(libList.getSelectedIndex());
@@ -284,6 +285,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		libList.setListData(libListData);
 	}
 	
+	@Override
 	public void run() { 
 		
 	}

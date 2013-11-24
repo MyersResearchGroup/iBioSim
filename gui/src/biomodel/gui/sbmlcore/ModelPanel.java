@@ -274,6 +274,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 		}
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		// if the add unit button is clicked
 		// if the add function button is clicked
@@ -289,30 +290,35 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 
 	}
 
+	@Override
 	public void mouseClicked(MouseEvent e) {
 	}
 
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mouseEntered(MouseEvent e) {
 	}
 
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mouseExited(MouseEvent e) {
 	}
 
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mousePressed(MouseEvent e) {
 	}
 
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mouseReleased(MouseEvent e) {
 	}
 	

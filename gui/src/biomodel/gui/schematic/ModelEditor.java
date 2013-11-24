@@ -276,6 +276,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 	}
 	
+	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2) {
 			Object o = e.getSource();
@@ -289,15 +290,19 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		schematic.reloadGrid();
 	}
 
+	@Override
 	public void mouseEntered(MouseEvent e) {
 	}
 
+	@Override
 	public void mouseExited(MouseEvent e) {
 	}
 
+	@Override
 	public void mousePressed(MouseEvent e) {
 	}
 
+	@Override
 	public void mouseReleased(MouseEvent e) {
 	}
 
@@ -1429,6 +1434,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		return refFile;
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		
 		Object o = e.getSource();
@@ -1697,6 +1703,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			this.list = list;
 		}
 
+		@Override
 		public void run() {
 			//dirty = true;
 			if (getName().contains("Influence")) {
@@ -1757,6 +1764,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			this.list = list;
 		}
 
+		@Override
 		public void run() {
 			new EditCommand(getName(), list).run();
 		}
@@ -1770,6 +1778,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			this.list = list;
 		}
 
+		@Override
 		public void run() {
 			
 			if (name == null || name.equals("")) {
@@ -2265,6 +2274,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		this.textBased = textBased;
 	}
 
+	@Override
 	public void stateChanged(ChangeEvent arg0) {
 		if (tab.getSelectedIndex()==0) {
 			schematic.getGraph().buildGraph();

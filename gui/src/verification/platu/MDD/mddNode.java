@@ -622,6 +622,7 @@ public class mddNode {
 		return true;
 	}
 	
+	@Override
 	public int hashCode() {
 		if(hashVal == 0)
 			hashVal = Arrays.hashCode(this.blkHashVal);

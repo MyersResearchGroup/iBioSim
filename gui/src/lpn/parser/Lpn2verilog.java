@@ -78,6 +78,7 @@ public class Lpn2verilog {
 			ArrayList<String> transArrayList = new ArrayList(Arrays.asList(transitionList));
 			//System.out.println("\ntransArray list is  " + transArrayList + "\n");
 			Collections.sort(transArrayList,new Comparator<String>(){
+				@Override
 				public int compare(String a, String b){
 					return(a.compareToIgnoreCase(b));
 				}
@@ -86,6 +87,7 @@ public class Lpn2verilog {
 			String[] placeList = lpn.getPlaceList();
 			ArrayList<String> placeArrayList = new ArrayList(Arrays.asList(placeList));
 			Collections.sort(placeArrayList,new Comparator<String>(){
+				@Override
 				public int compare(String a, String b){
 					return(a.compareToIgnoreCase(b));
 				}

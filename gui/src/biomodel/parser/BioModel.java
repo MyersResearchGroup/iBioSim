@@ -482,25 +482,32 @@ public class BioModel {
 		}
 		final JFrame naryFrame = new JFrame("Thresholds");
 		WindowListener w = new WindowListener() {
+			@Override
 			public void windowClosing(WindowEvent arg0) {
 				naryFrame.dispose();
 			}
 
+			@Override
 			public void windowOpened(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowClosed(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowIconified(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowDeiconified(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowActivated(WindowEvent arg0) {
 			}
 
+			@Override
 			public void windowDeactivated(WindowEvent arg0) {
 			}
 		};
@@ -535,6 +542,7 @@ public class BioModel {
 			JButton Add = new JButton("Add");
 			JButton Remove = new JButton("Remove");
 			Add.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					int number = Integer.parseInt(e.getActionCommand().substring(3,
 							e.getActionCommand().length()));
@@ -574,6 +582,7 @@ public class BioModel {
 			});
 			Add.setActionCommand("Add" + (consLevel.size() - 1));
 			Remove.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					int number = Integer.parseInt(e.getActionCommand().substring(6,
 							e.getActionCommand().length()));
@@ -596,6 +605,7 @@ public class BioModel {
 		JButton naryRun = new JButton("Create");
 		JButton naryClose = new JButton("Cancel");
 		naryRun.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				flattenModel();
 				convertToLHPN(specs, conLevel, new MutableString()).save(filename);
@@ -606,6 +616,7 @@ public class BioModel {
 			}
 		});
 		naryClose.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				naryFrame.dispose();
 				new File(filename + ".temp").delete();

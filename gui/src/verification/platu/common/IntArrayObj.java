@@ -19,16 +19,20 @@ public class IntArrayObj extends PlatuObj {
 		return this.IntArray;
 	}
 	
+	@Override
 	public void setIndex(int Idx) {
 		this.index = Idx;
 	}
 	
+	@Override
 	public int getIndex() {
 		return this.index;
 	}
 	
+	@Override
 	public void setLabel(String lbl) {}
 
+	@Override
 	public String getLabel() { return null; }
 
 	@Override

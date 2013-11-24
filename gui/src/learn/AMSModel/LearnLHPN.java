@@ -846,6 +846,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	 * This method performs different functions depending on what menu items or
 	 * buttons are selected.
 	 */
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		/*
 		 * if (e.getActionCommand().contains("box")) { int num =
@@ -1283,6 +1284,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		}
 	}
 
+	@Override
 	public void itemStateChanged(ItemEvent e) {
 		Object source = e.getItemSelectable();
 		if (source == absTimeG) {
@@ -2340,6 +2342,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	}
 	
 
+	@Override
 	public void run() {
 		/* TODO: need to update for new thresholds */
 		new File(directory + separator + lhpnFile).delete();
@@ -2351,26 +2354,33 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			final JButton cancel = new JButton("Cancel");
 			running.setResizable(false);
 			WindowListener w = new WindowListener() {
+				@Override
 				public void windowClosing(WindowEvent arg0) {
 					//	cancel.doClick();
 					running.dispose();
 				}
 
+				@Override
 				public void windowOpened(WindowEvent arg0) {
 				}
 
+				@Override
 				public void windowClosed(WindowEvent arg0) {
 				}
 
+				@Override
 				public void windowIconified(WindowEvent arg0) {
 				}
 
+				@Override
 				public void windowDeiconified(WindowEvent arg0) {
 				}
 
+				@Override
 				public void windowActivated(WindowEvent arg0) {
 				}
 
+				@Override
 				public void windowDeactivated(WindowEvent arg0) {
 				}
 			};
@@ -2417,6 +2427,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			out = new BufferedWriter(new FileWriter(logFile));
 			cancel.setActionCommand("Cancel");
 			cancel.addActionListener(new ActionListener() {
+				@Override
 				@SuppressWarnings("deprecation")
 				public void actionPerformed(ActionEvent e) {
 					running.setCursor(null);

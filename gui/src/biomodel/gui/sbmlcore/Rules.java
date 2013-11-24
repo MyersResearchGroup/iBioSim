@@ -267,6 +267,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			id.setText(ruleId);
 		}
 		ruleType.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (((String) ruleType.getSelectedItem()).equals("Assignment")) {
 					assignRuleVar("");
@@ -997,6 +998,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		return true;
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		// if the add event button is clicked
 		if (e.getSource() == addRule) {
@@ -1046,6 +1048,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		}
 	}
 
+	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2) {
 			if (e.getSource() == rules) {
@@ -1091,24 +1094,28 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mouseEntered(MouseEvent e) {
 	}
 
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mouseExited(MouseEvent e) {
 	}
 
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mousePressed(MouseEvent e) {
 	}
 
 	/**
 	 * This method currently does nothing.
 	 */
+	@Override
 	public void mouseReleased(MouseEvent e) {
 	}
 }

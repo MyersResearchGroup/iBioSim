@@ -302,6 +302,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	/**
 	 * event handler for when UI buttons are pressed.
 	 */
+	@Override
 	public void actionPerformed(ActionEvent event) {
 
 		String command = event.getActionCommand();
@@ -359,6 +360,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	 * event handler for when the timer ticks
 	 */
 	ActionListener playTimerEventHandler = new ActionListener() {
+		@Override
 		public void actionPerformed(ActionEvent evt) {
 			nextFrame();
 		}
@@ -699,6 +701,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 			
 			cancel.addActionListener(new ActionListener() {
 
+				@Override
 				@SuppressWarnings("deprecation")
 				public void actionPerformed(ActionEvent arg0) {
 					
@@ -950,6 +953,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 			this.scale = scale;
 		}		
 		
+		@Override
 		public void run() {
 			
 			schematic.setMovieMode(true);

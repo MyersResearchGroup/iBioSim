@@ -139,6 +139,7 @@ public class LPNTransitionState{
 	 * Returns a new instance identical to this instance.
 	 * @return The new instance.
 	 */
+	@Override
 	public LPNTransitionState clone()
 	{
 		LPNTransitionState newState = new LPNTransitionState(state);
@@ -280,6 +281,7 @@ public class LPNTransitionState{
 	/**
 	 * Overrides the toString method.
 	 */
+	@Override
 	public String toString()
 	{
 		String result = state.toString(); 	// Variable for building the string.

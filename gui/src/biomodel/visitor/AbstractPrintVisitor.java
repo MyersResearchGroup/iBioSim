@@ -82,20 +82,28 @@ public abstract class AbstractPrintVisitor implements SpeciesVisitor {
 		return expression;
 	}
 	
+	@Override
 	public void visitBaseSpecies(BaseSpecies specie) {}
 
+	@Override
 	public void visitComplex(ComplexSpecies specie) {}
 	
+	@Override
 	public void visitConstantSpecies(ConstantSpecies specie) {}
 
+	@Override
 	public void visitNullSpecies(NullSpecies specie) {}
 
+	@Override
 	public void visitSpasticSpecies(SpasticSpecies specie) {}
 
+	@Override
 	public void visitSpecies(SpeciesInterface specie) {}
 	
+	@Override
 	public void visitDiffusibleSpecies(DiffusibleSpecies species) {}
 
+	@Override
 	public void visitDiffusibleConstitutiveSpecies(DiffusibleConstitutiveSpecies species) {}
 	
 	protected static BioModel parameters = null;

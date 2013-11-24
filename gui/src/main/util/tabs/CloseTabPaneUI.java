@@ -175,6 +175,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		closeItem = new JMenuItem("Close");
 
 		closeItem.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				((CloseAndMaxTabbedPane) tabPane).fireCloseTabEvent(null, tabPane.getSelectedIndex());
 
@@ -819,6 +820,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		 */
 		private static final long serialVersionUID = 1372089458264627655L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			JTabbedPane pane = (JTabbedPane) e.getSource();
 			CloseTabPaneUI ui = (CloseTabPaneUI) pane.getUI();
@@ -832,6 +834,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		 */
 		private static final long serialVersionUID = -2840127075487509680L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			JTabbedPane pane = (JTabbedPane) e.getSource();
 			CloseTabPaneUI ui = (CloseTabPaneUI) pane.getUI();
@@ -845,6 +848,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		 */
 		private static final long serialVersionUID = -5022434551873267653L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			JTabbedPane pane = (JTabbedPane) e.getSource();
 			CloseTabPaneUI ui = (CloseTabPaneUI) pane.getUI();
@@ -858,6 +862,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		 */
 		private static final long serialVersionUID = 3095536365104725070L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			JTabbedPane pane = (JTabbedPane) e.getSource();
 			CloseTabPaneUI ui = (CloseTabPaneUI) pane.getUI();
@@ -871,6 +876,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		 */
 		private static final long serialVersionUID = 5492119175649068664L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			JTabbedPane pane = (JTabbedPane) e.getSource();
 			CloseTabPaneUI ui = (CloseTabPaneUI) pane.getUI();
@@ -884,6 +890,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		 */
 		private static final long serialVersionUID = -5721846316112045696L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			JTabbedPane pane = (JTabbedPane) e.getSource();
 			CloseTabPaneUI ui = (CloseTabPaneUI) pane.getUI();
@@ -897,6 +904,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		 */
 		private static final long serialVersionUID = 3901523699837556597L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			JTabbedPane pane = (JTabbedPane) e.getSource();
 			CloseTabPaneUI ui = (CloseTabPaneUI) pane.getUI();
@@ -916,6 +924,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		 */
 		private static final long serialVersionUID = -8234056647814092293L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			JTabbedPane pane = (JTabbedPane) e.getSource();
 			CloseTabPaneUI ui = (CloseTabPaneUI) pane.getUI();
@@ -935,6 +944,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		 */
 		private static final long serialVersionUID = -5155228427948248055L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			JTabbedPane pane = (JTabbedPane) e.getSource();
 			pane.requestFocus();
@@ -947,6 +957,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		 */
 		private static final long serialVersionUID = 7735773325665374956L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			JTabbedPane pane = (JTabbedPane) e.getSource();
 			CloseTabPaneUI ui = (CloseTabPaneUI) pane.getUI();
@@ -965,6 +976,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		 */
 		private static final long serialVersionUID = 8262059252993642009L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			JTabbedPane pane = (JTabbedPane) e.getSource();
 
@@ -992,6 +1004,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		 */
 		private static final long serialVersionUID = 4722476981006125635L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			JTabbedPane pane = null;
 			Object src = e.getSource();
@@ -1017,6 +1030,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		 */
 		private static final long serialVersionUID = 5913237628993582792L;
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			JTabbedPane pane = null;
 			Object src = e.getSource();
@@ -1295,6 +1309,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 			viewport.setViewPosition(tabViewPosition);
 		}
 
+		@Override
 		public void stateChanged(ChangeEvent e) {
 			JViewport viewport = (JViewport) e.getSource();
 			int tabPlacement = tabPane.getTabPlacement();
@@ -1383,6 +1398,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	 * Instantiate it only within subclasses of BasicTabbedPaneUI.
 	 */
 	public class TabSelectionHandler implements ChangeListener {
+		@Override
 		public void stateChanged(ChangeEvent e) {
 			JTabbedPane tabPane = (JTabbedPane) e.getSource();
 			tabPane.revalidate();
@@ -1433,6 +1449,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	 */
 
 	private class ContainerHandler implements ContainerListener {
+		@Override
 		public void componentAdded(ContainerEvent e) {
 			JTabbedPane tp = (JTabbedPane) e.getContainer();
 			Component child = e.getChild();
@@ -1458,6 +1475,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 			}
 		}
 
+		@Override
 		public void componentRemoved(ContainerEvent e) {
 			JTabbedPane tp = (JTabbedPane) e.getContainer();
 			Component child = e.getChild();
@@ -1581,6 +1599,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 	class MyMouseMotionListener implements MouseMotionListener {
 
+		@Override
 		public void mouseMoved(MouseEvent e) {
 			if (actionPopupMenu.isVisible())
 				return; // No updates when popup is visible
@@ -1588,6 +1607,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 			setTabIcons(e.getX(), e.getY());
 		}
 
+		@Override
 		public void mouseDragged(MouseEvent e) {
 			if (actionPopupMenu.isVisible())
 				return; // No updates when popup is visible

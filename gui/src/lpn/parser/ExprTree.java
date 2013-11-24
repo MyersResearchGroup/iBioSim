@@ -1743,6 +1743,7 @@ public class ExprTree {
 		return true;
 	}
 
+	@Override
 	public String toString() {
 		String result = "";
 		result = getElement("LHPN");
@@ -4551,6 +4552,7 @@ public class ExprTree {
 		return r2;
 	}
 	
+	@Override
 	@SuppressWarnings("unchecked")
 	public ExprTree clone(){
 		

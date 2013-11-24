@@ -332,6 +332,7 @@ public class TransitionsPanel extends JPanel implements ActionListener, MouseLis
 		return true;
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("comboBoxChanged")) {
 
@@ -353,6 +354,7 @@ public class TransitionsPanel extends JPanel implements ActionListener, MouseLis
 			this.list = list;
 		}
 
+		@Override
 		public void run() {
 			if (list.getSelectedValue() != null) {
 				String assignment = list.getSelectedValue().toString();
@@ -393,6 +395,7 @@ public class TransitionsPanel extends JPanel implements ActionListener, MouseLis
 			this.list = list;
 		}
 
+		@Override
 		public void run() {
 			new EditCommand(getName(), list).run();
 		}
@@ -406,6 +409,7 @@ public class TransitionsPanel extends JPanel implements ActionListener, MouseLis
 			this.list = list;
 		}
 
+		@Override
 		public void run() {
 			if (name == null || name.equals("")) {
 				Utility.createErrorMessage("Error", "Nothing selected to edit");
@@ -480,12 +484,15 @@ public class TransitionsPanel extends JPanel implements ActionListener, MouseLis
 		return false;
 	}
 	
+	@Override
 	public void mouseEntered(MouseEvent e) {
 	}
 	
+	@Override
 	public void mouseExited(MouseEvent e) {	
 	}
 	
+	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
 			flag = !flag;
@@ -496,9 +503,11 @@ public class TransitionsPanel extends JPanel implements ActionListener, MouseLis
 		}
 	}
 	
+	@Override
 	public void mousePressed(MouseEvent e) {
 	}
 	
+	@Override
 	public void mouseReleased(MouseEvent e) {
 	}
 

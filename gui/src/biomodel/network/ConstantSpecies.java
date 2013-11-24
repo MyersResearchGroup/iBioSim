@@ -23,6 +23,7 @@ public class ConstantSpecies extends AbstractSpecies {
 	}
 	
 	
+	@Override
 	public void accept(SpeciesVisitor visitor) {
 		visitor.visitConstantSpecies(this);
 	}

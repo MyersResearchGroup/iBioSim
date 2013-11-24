@@ -12,10 +12,12 @@ public class ConstNode implements ExpressionNode {
 		this.Value = value; 
 	}
 
+	@Override
 	public int evaluate(int[] stateVector){
 		return this.Value;
 	}
 	
+	@Override
 	public void getVariables(HashSet<VarNode> variables){
 
 	}
@@ -25,6 +27,7 @@ public class ConstNode implements ExpressionNode {
 		return "" + Value;
 	}
 	
+	@Override
 	public ExpressionNode copy(HashMap<String, VarNode> variables){
 		return this;
 	}
