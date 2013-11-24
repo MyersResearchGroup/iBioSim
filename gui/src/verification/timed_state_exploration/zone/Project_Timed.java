@@ -169,7 +169,9 @@ public class Project_Timed extends Project{
 		{
 			Analysis_Timed dfsTimedStateExploration = new Analysis_Timed(sgArray);
 			long startTimed = System.currentTimeMillis(); 
-			StateGraph_timed[] states = dfsTimedStateExploration.search_dfs_timed(sgArray, initStateArray);
+			// TODO: states not used
+			//StateGraph_timed[] states = dfsTimedStateExploration.search_dfs_timed(sgArray, initStateArray);
+			dfsTimedStateExploration.search_dfs_timed(sgArray, initStateArray);
 			long elapsedTimeMillisForTimed = System.currentTimeMillis() - startTimed;
 			System.out.println("---> totoal runtime: " + (double)elapsedTimeMillisForTimed/1000 + " sec\n");
 			//return new StateGraph_timed[0];

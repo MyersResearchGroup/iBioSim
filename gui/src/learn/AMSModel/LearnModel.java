@@ -30,15 +30,15 @@ import javax.swing.*;
 
 public class LearnModel { // added ItemListener SB
 
-	private static final long serialVersionUID = -5806315070287184299L;
+	private String directory;
 
-	private String directory, lrnFile;
-
-	private Log log;
+//	private String lrnFile;
 
 	private String separator;
 
-	private String learnFile, lhpnFile;
+	private String lhpnFile;
+
+//	private String learnFile;
 
 	private ArrayList<Variable> reqdVarsL;
 
@@ -135,7 +135,7 @@ public class LearnModel { // added ItemListener SB
 
 	private HashMap<String,Properties> dmvcValuesUnique;
 
-	private Double dsFactor, vsFactor;
+	//private Double dsFactor, vsFactor;
 
 	private String currentPlace;
 
@@ -149,9 +149,9 @@ public class LearnModel { // added ItemListener SB
 
 	private ArrayList<HashMap<String, String>> constVal;
 
-	private boolean dmvDetectDone = false;
+	//private boolean dmvDetectDone = false;
 
-	private boolean dmvStatusLoaded = false;
+	//private boolean dmvStatusLoaded = false;
 
 	private int pathLengthVar = 40;
 
@@ -239,12 +239,12 @@ public class LearnModel { // added ItemListener SB
 						String transition2 = trans2.get(j);
 						ArrayList scaledThresh = scaledThresholds.get(InterpolateInfo2.get(transition1).get("variable"));
 						Object lastThresh1 = scaledThresh.get((scaledThresh.size())-1);
-						Object firstThresh1=scaledThresh.get(0);
+						//Object firstThresh1=scaledThresh.get(0);
 						System.out.println("scaled thresh:"+lastThresh1);
-						double lastThresh2 = (Double)lastThresh1;
-						Integer lastThresh = (int)lastThresh2;
-						double firstThresh2 = (Double)firstThresh1;
-						Integer firstThresh = (int)firstThresh2;
+						//double lastThresh2 = (Double)lastThresh1;
+						//Integer lastThresh = (int)lastThresh2;
+						//double firstThresh2 = (Double)firstThresh1;
+						//Integer firstThresh = (int)firstThresh2;
 						Properties dmvProp = dmvcValuesUnique.get(InterpolateInfo2.get(transition1).get("variable"));
 						Properties dmvProp2= new Properties();
 						Set dmvSet = dmvProp.keySet();
@@ -581,7 +581,6 @@ public class LearnModel { // added ItemListener SB
 			separator = File.separator;
 		}
 		// Assign the parameters received from the call to the fields of this class
-		this.log = log;
 		this.directory = directory;
 		this.reqdVarsL = rVarsL;
 		this.thresholds = thresh;
@@ -656,8 +655,8 @@ public class LearnModel { // added ItemListener SB
 				numTransitions++;
 			}
 			out.write("epsilon = " + "; ratesampling = " + rateSampling + "; pathLengthBin = " + pathLengthBin + "; percent = " + percent + "; runlength = " + runLength + "; runtime = " + runTime + "; absoluteTime = " + absoluteTime + "; delayscalefactor = " + delayScaleFactor + "; valuescalefactor = " + valScaleFactor + "\n");
-			dsFactor = this.delayScaleFactor;
-			vsFactor = this.valScaleFactor;
+			//dsFactor = this.delayScaleFactor;
+			//vsFactor = this.valScaleFactor;
 			dmvcValuesUnique = new HashMap<String, Properties>();
 			constVal = new ArrayList<HashMap<String, String>>();
 			int tsdFileNum = 1;
@@ -746,7 +745,7 @@ public class LearnModel { // added ItemListener SB
 			}
 			HashMap<String, ArrayList<Double>> scaledThresholds; 
 			scaledThresholds = normalize();
-			HashMap<String, ArrayList<Double>> threshForInterpolation= threshForInterpolation(scaledThresholds);   // The thresholds generated before are changed here to be used during interpolation.
+			//HashMap<String, ArrayList<Double>> threshForInterpolation= threshForInterpolation(scaledThresholds);   // The thresholds generated before are changed here to be used during interpolation.
 			initCond = new Properties(); 
 			for (Variable v : reqdVarsL) {	// Updating with scaled initial values & rates
 				if (v.isDmvc()) {
@@ -761,9 +760,9 @@ public class LearnModel { // added ItemListener SB
 				}
 			}
 			String[] transitionList = g.getTransitionList();
-			int transNum;
-			int i=0;
-			int counter=0;
+			//int transNum;
+			//int i=0;
+			//int counter=0;
 
 
 			ArrayList<String> transNeeded =  new ArrayList<String>();
@@ -772,7 +771,7 @@ public class LearnModel { // added ItemListener SB
 			for (String t : transitionList) {
 				Properties transProp = new Properties();
 
-				transNum = Integer.parseInt(t.split("t")[1]);
+				//transNum = Integer.parseInt(t.split("t")[1]);
 
 				if ((g.getPreset(t) != null) && (g.getPostset(t) != null)){
 					if (!isTransientTransition(t)){
@@ -791,7 +790,7 @@ public class LearnModel { // added ItemListener SB
 							String[] binIncoming = prevPlaceFullKey.split(",");
 							String[] binOutgoing = nextPlaceFullKey.split(",");
 							Boolean firstInputBinChg = true;
-							Boolean firstOutputBinChg = true;
+							//Boolean firstOutputBinChg = true;
 							Boolean careOpChange = false, careIpChange = false;
 							System.out.println("new");
 							for (int k : diffL) {
@@ -924,7 +923,7 @@ public class LearnModel { // added ItemListener SB
 											
 											
 										}
-										int dmvTnum =  Integer.parseInt(t.split("t")[1]);
+										//int dmvTnum =  Integer.parseInt(t.split("t")[1]);
 										if (!vamsRandom){
 										}
 										else{
@@ -1073,7 +1072,7 @@ public class LearnModel { // added ItemListener SB
 										g.addIntAssign(t,reqdVarsL.get(k).getName(),"uniform(" + minv + ","+ maxv + ")");
 									else
 										g.addIntAssign(t,reqdVarsL.get(k).getName(),String.valueOf(minv));
-									int dmvTnum =  Integer.parseInt(t.split("t")[1]);
+									//int dmvTnum =  Integer.parseInt(t.split("t")[1]);
 									if (!vamsRandom){
 									}
 									else{
@@ -1438,14 +1437,14 @@ public class LearnModel { // added ItemListener SB
 				Properties dmvProp2= new Properties();
 				Set dmvSet = dmvProp.keySet();
 				Double scaleFactor = getValueScaleFactor();
-				String lastKey="";
+				//String lastKey="";
 				//System.out.println("scale factor:"+dmvProp.get(key));
 				Iterator<String> dmvSetIterator = dmvSet.iterator();
 				while(dmvSetIterator.hasNext()){
 					String valueKey = dmvSetIterator.next();
 					int valueKeyInt = Integer.valueOf(valueKey);
 					
-					if (valueKeyInt==dmvProp2.size()-1) lastKey=valueKey;
+					//if (valueKeyInt==dmvProp2.size()-1) lastKey=valueKey;
 				//String newValue= (String)dmvProp.get(key);
 					System.out.println("key is :"+valueKeyInt);
 					Integer newValue = Integer.valueOf((int)(scaleFactor*Double.valueOf((String)dmvProp.get(valueKey))));
@@ -1643,7 +1642,7 @@ public class LearnModel { // added ItemListener SB
 	public ArrayList modeBinsCalculate(HashMap<String, ArrayList<String>> useMap, int i)
 	{
 		ArrayList currentBinArray = new ArrayList();
-		ArrayList<ArrayList> modeBinArray = new ArrayList<ArrayList>();
+		//ArrayList<ArrayList> modeBinArray = new ArrayList<ArrayList>();
 		Set<String> useMapKeySet = useMap.keySet();
 		int index  =0;
 		int bin=0;
@@ -1676,7 +1675,7 @@ public class LearnModel { // added ItemListener SB
 	public ArrayList varsBinsCalculate(HashMap<String, ArrayList<String>> useMap, int i)
 	{
 		ArrayList currentBinArray = new ArrayList();
-		ArrayList<ArrayList> varsBinArray = new ArrayList<ArrayList>();
+		//ArrayList<ArrayList> varsBinArray = new ArrayList<ArrayList>();
 		Set<String> useMapKeySet = useMap.keySet();
 		int index  =0;
 		int bin=0;
@@ -2422,7 +2421,7 @@ public class LearnModel { // added ItemListener SB
 		String key = "", fullKey = "";
 		Double prevPlaceDuration = null;
 		String transId = null;
-		int outputIndex= -1;
+		//int outputIndex= -1;
 		ArrayList<Integer> inputIndex = new ArrayList<Integer>();
 		//ArrayList<String> allKeys = null;
 		Boolean prevIpChange = false, prevOpChange = false, ipChange = false, opChange = false, careIpChange = false;
@@ -2533,7 +2532,7 @@ public class LearnModel { // added ItemListener SB
 										careIpChange = true;
 									    
 								} else {
-									outputIndex = k;
+									//outputIndex = k;
 									opChange = true;
 								}
 							}
@@ -3074,7 +3073,7 @@ public class LearnModel { // added ItemListener SB
 					"Log file couldn't be opened for writing rates and bins.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
-		dmvDetectDone = true;
+		//dmvDetectDone = true;
 		return(dmvDivisions);
 	}
 
@@ -4991,14 +4990,14 @@ public class LearnModel { // added ItemListener SB
 			//ratePlaces.remove(0);
 
 			ArrayList<ArrayList<String>> dmvcVarPlaces = new ArrayList<ArrayList<String>>();
-			boolean contVarExists = false;
+			//boolean contVarExists = false;
 			for (Variable var: reqdVarsL){
 				dmvcVarPlaces.add(new ArrayList<String>());
 				if (var.isDmvc()){
 					continue;
 				}
 				else{
-					contVarExists = true;
+					//contVarExists = true;
 				}
 			}
 			for (String st:dmvcPlaces){

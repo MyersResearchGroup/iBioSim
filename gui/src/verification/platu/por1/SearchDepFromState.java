@@ -143,8 +143,8 @@ public class SearchDepFromState {
 	{
 		//get all transitions
 		LpnTranList allTran = new LpnTranList();
-		for(StateGraph sg : lpnList)
-		{
+		//for(StateGraph sg : lpnList)
+		//{
 			// TODO: (future) need to user our transitions.
 			/*
 			LpnTranList trans = sg.getLpn().getTransitions();
@@ -153,7 +153,7 @@ public class SearchDepFromState {
 				allTran.add(tran);
 			}
 			*/
-		}
+		//}
 		//save to indepTranSet
 		for(Transition key: allTran)
 		{

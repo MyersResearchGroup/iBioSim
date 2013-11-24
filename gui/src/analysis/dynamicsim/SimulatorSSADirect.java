@@ -49,18 +49,18 @@ public class SimulatorSSADirect extends Simulator {
 		final boolean noConstraintsFlag = (Boolean) constraintsFlag.getValue();
 		
 		initializationTime += System.nanoTime() - initTime2;
-		long initTime3 = System.nanoTime() - initTime2;
+		//long initTime3 = System.nanoTime() - initTime2;
 		
 		//System.err.println("initialization time: " + initializationTime / 1e9f);
 		
 		//SIMULATION LOOP
 		//simulate until the time limit is reached
 		
-		long step1Time = 0;
-		long step2Time = 0;
-		long step3Time = 0;
-		long step4Time = 0;
-		long step5Time = 0;
+		//long step1Time = 0;
+		//long step2Time = 0;
+		//long step3Time = 0;
+		//long step4Time = 0;
+		//long step5Time = 0;
 		
 		currentTime = 0.0;
 		double printTime = printInterval;

@@ -517,7 +517,7 @@ public class ZoneGraph{
 		/*
 		 * Label for the node.
 		 */
-		String _name;
+		//String _name;
 		
 		/* 
 		 * List of out edges.
@@ -528,7 +528,7 @@ public class ZoneGraph{
 		 * Previous nodes, ie list of nodes prevNode such that there is an edge
 		 * from preNode to this node.
 		 */
-		ArrayList<Node> _previousNode;
+		//ArrayList<Node> _previousNode;
 		
 		/* The partition. */
 		TreeSet<Integer> _partition;
@@ -542,13 +542,14 @@ public class ZoneGraph{
 		/* Cached hash code. Code should be -1 if not created yet. */
 		int _nodeHashCode;
 		
+		@SuppressWarnings("unused")
 		public Node(String name){
 			_edges = new ArrayList<Edge>();
-			_previousNode = new ArrayList<Node>();
+			//_previousNode = new ArrayList<Node>();
 			_partition = new TreeSet<Integer>();
 			_nodeHashCode = -1;
 			
-			_name = name;
+			//_name = name;
 		}
 		
 		/**
@@ -558,7 +559,7 @@ public class ZoneGraph{
 		 */
 		public Node(int i) {
 			_edges = new ArrayList<Edge>();
-			_previousNode = new ArrayList<Node>();
+			//_previousNode = new ArrayList<Node>();
 			_partition = new TreeSet<Integer>();
 			_internalEdges = new ArrayList<Integer>();
 			_nodeHashCode = -1; 		// Indicates the hash code has not been calculated.
@@ -967,7 +968,6 @@ public class ZoneGraph{
 			return this.equals(other);
 		}
 		
-		@SuppressWarnings("unused")
 		public boolean equals(Edge other){
 			if(this == other){
 				return true;
@@ -1092,6 +1092,7 @@ public class ZoneGraph{
 			return _leftInt;
 		}
 
+		@SuppressWarnings("unused")
 		public void setLeftInt(int leftInt) {
 			this._leftInt = leftInt;
 		}
@@ -1100,6 +1101,7 @@ public class ZoneGraph{
 			return _rightInt;
 		}
 
+		@SuppressWarnings("unused")
 		public void setRightInt(int rightInt) {
 			this._rightInt = rightInt;
 		}

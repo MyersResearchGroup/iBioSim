@@ -2688,6 +2688,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	private void saveSEDML() {
 		double timeLimit = Double.parseDouble(limit.getText().trim());
 		double printInterval = Double.parseDouble(interval.getText().trim());
@@ -2789,6 +2790,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		return algorithm;
 	}
 
+	@SuppressWarnings("unused")
 	private void setAlgorithm(Algorithm algorithm) {
 		if (algorithm.getKisaoID().equals(GlobalConstants.KISAO_EULER)) {
 			ODE.setEnabled(true);
@@ -2809,7 +2811,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			simulators.setSelectedItem("SSA-CR");
 		} else if (algorithm.getKisaoID().equals(GlobalConstants.KISAO_MONTE_CARLO)) {
 			monteCarlo.setEnabled(true);
-			Annotation annotation = getSEDBaseAnnotation(algorithm,"analysis");
+			//Annotation annotation = getSEDBaseAnnotation(algorithm,"analysis");
 			simulators.setSelectedItem("SSA-CR");
 			/*
 			Algorithm algorithm = new Algorithm(GlobalConstants.KISAO_GENERIC);
@@ -2824,6 +2826,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	}
 
 	private Annotation getSEDBaseAnnotation(SEDBase sedBase,String name) {
+		@SuppressWarnings("deprecation")
 		List<Annotation> annotations = sedBase.getAnnotation();
 		for (int i = 0; i < annotations.size(); i++) {
 			Annotation annotation = annotations.get(i);

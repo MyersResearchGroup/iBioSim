@@ -6,7 +6,7 @@ public class DMVCrun {
 	
 	private static int numDMVCruns = 0;
 	
-	private int id;
+	//private int id;
 	
 	private ArrayList<ArrayList<Double>> valueL;
 	
@@ -17,7 +17,7 @@ public class DMVCrun {
 	private ArrayList<Double> avgVals;
 	
 	public DMVCrun(){
-		this.id = DMVCrun.numDMVCruns; // required?? whenever required the absolute id would be different. here it remains the same for all the runs of the same variable.
+		//this.id = DMVCrun.numDMVCruns; // required?? whenever required the absolute id would be different. here it remains the same for all the runs of the same variable.
 		DMVCrun.numDMVCruns = DMVCrun.numDMVCruns + 1;
 		valueL = new ArrayList<ArrayList<Double>>();
 		startPoints = new ArrayList<Integer>();

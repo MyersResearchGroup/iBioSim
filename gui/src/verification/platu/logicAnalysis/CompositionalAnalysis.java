@@ -826,10 +826,10 @@ public class CompositionalAnalysis {
 		CompositeState initNode = new CompositeState(initStates);
 		
 		HashSet<Integer> synchronousTrans = new HashSet<Integer>();
-		for(StateGraph g1 : stateGraphArray1){
-			LhpnFile lpn1 = g1.getLpn();
-			for(StateGraph g2 : stateGraphArray2){
-				LhpnFile lpn2 = g2.getLpn();
+		//for(StateGraph g1 : stateGraphArray1){
+			//LhpnFile lpn1 = g1.getLpn();
+			//for(StateGraph g2 : stateGraphArray2){
+				//LhpnFile lpn2 = g2.getLpn();
 				
 				// TOOD: Need to use our LPN
 				/*
@@ -849,8 +849,8 @@ public class CompositionalAnalysis {
 					synchronousTrans.add(lpnTran.getIndex());
 				}
 				*/
-			}
-		}
+			//}
+		//}
 		
 		// create new composite state graph
 		StateGraph[] sgArray = new StateGraph[size];
@@ -1166,10 +1166,10 @@ public class CompositionalAnalysis {
 		CompositeState initNode = new CompositeState(initStates);
 		
 		HashSet<Transition> synchronousTrans = new HashSet<Transition>();
-		for(StateGraph g1 : stateGraphArray1){
-			LhpnFile lpn1 = g1.getLpn();
-			for(StateGraph g2 : stateGraphArray2){
-				LhpnFile lpn2 = g2.getLpn();
+		//for(StateGraph g1 : stateGraphArray1){
+			//LhpnFile lpn1 = g1.getLpn();
+			//for(StateGraph g2 : stateGraphArray2){
+				//LhpnFile lpn2 = g2.getLpn();
 				// TOOD: need to change to use our LPN
 				/*
 				HashSet<LPNTran> inputTrans = new HashSet<LPNTran>();
@@ -1183,8 +1183,8 @@ public class CompositionalAnalysis {
 				synchronousTrans.addAll(inputTrans);
 				synchronousTrans.addAll(outputTrans);
 				*/
-			}
-		}
+			//}
+		//}
 		
 		// create new composite state graph
 		StateGraph[] sgArray = new StateGraph[size];
@@ -2083,6 +2083,7 @@ public class CompositionalAnalysis {
 		return equivalentSet;
 	}
 	
+	@SuppressWarnings("unused")
 	private boolean equivalentOutgoing(Set<Transition> enabled1, List<Transition> enabled2){
 //		enabled2.containsAll(enabled1) && enabled1.containsAll(enabled2)
 		HashSet<Transition> enabled2Set = new HashSet<Transition>();
@@ -2093,6 +2094,7 @@ public class CompositionalAnalysis {
 		
 		return false;
 	}
+	
 	private HashSet<Pair<Integer, Integer>> findInitialEquivalentPairs2(CompositeStateGraph sg){
 		HashSet<Pair<Integer, Integer>> equivalentSet = new HashSet<Pair<Integer, Integer>>();
 		
@@ -2607,11 +2609,11 @@ public class CompositionalAnalysis {
 					if(sg == sg2) continue;
 					
 					boolean src = false;
-					int interfaceSize = 0;
+					//int interfaceSize = 0;
 					Set<String> outputs = lpn2.getAllOutputs().keySet();
 					for(String output : outputs){
 						if (inputSet.contains(output)){
-							interfaceSize++;
+							//interfaceSize++;
 							src = true;
 						}
 					}
@@ -2620,24 +2622,24 @@ public class CompositionalAnalysis {
 						Set<String> inputs = lpn2.getAllInputs().keySet();
 						for(String input : inputs){
 							if (outputSet.contains(input)){
-								interfaceSize++;
+								//interfaceSize++;
 							}
 						}
 						
 						for(String input : inputs){
 							if (inputSet.contains(input)){
-								interfaceSize++;
+								//interfaceSize++;
 							}
 						}
 						
 						for(String output : outputs){
 							if (outputSet.contains(output)){
-								interfaceSize++;
+								//interfaceSize++;
 							}
 						}
 						
-						int[] thisIndexList = new int[interfaceSize];
-						int[] otherIndexList = new int[interfaceSize];
+						//int[] thisIndexList = new int[interfaceSize];
+						//int[] otherIndexList = new int[interfaceSize];
 						// TODO: (future) need to add getThisIndexArray in LhpnFile
 						/*
 						lpn.genIndexLists(thisIndexList, otherIndexList, lpn2);
@@ -2859,6 +2861,7 @@ public class CompositionalAnalysis {
 		return newTransitions;
 	}
 	
+	@SuppressWarnings("unused")
 	private String printTranVecotr(boolean[] tranVector) {
 		String tranVecStr = "[";
 		for (boolean i : tranVector) {

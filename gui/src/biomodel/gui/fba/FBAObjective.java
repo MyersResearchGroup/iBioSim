@@ -376,7 +376,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 							"Must Select an Objective", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				String selected = ((String) objectives.getSelectedValue());
+				//String selected = ((String) objectives.getSelectedValue());
 			}
 			else if (e.getSource() == objectiveList) {
 				objectiveEditor(bioModel, objectiveList, "OK");

@@ -225,6 +225,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Creates a frame used to edit species or create new ones.
 	 */
+	@SuppressWarnings("unused")
 	private void speciesEditor(String option) {
 		if (option.equals("OK") && species.getSelectedIndex() == -1) {
 			JOptionPane.showMessageDialog(Gui.frame, "No species selected.", "Must Select A Species", JOptionPane.ERROR_MESSAGE);

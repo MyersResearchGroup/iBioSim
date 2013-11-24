@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Set;
 import lpn.parser.Transition;
 
-import verification.platu.expression.VarNode;
 import verification.platu.stategraph.StateGraph;
 
 /**
@@ -169,6 +168,8 @@ public class SearchDepFromLPN {
 	{
 		boolean flag = false;
 		// TODO: (future) Hack here. Created tmp to get rid of all errors
+		// TODO: must cut because NULL
+		/*
 		int[] tmp = null;
 		for(int i : tmp)//t1.getPreSet())
 		{
@@ -182,7 +183,8 @@ public class SearchDepFromLPN {
 			}
 			if(flag==true)
 				break;
-		}	
+		}
+		*/	
 		return flag;
 	}
 	
@@ -196,17 +198,20 @@ public class SearchDepFromLPN {
 	{
 		boolean flag = false;
 		// TODO: (future) Hack here. Created tmp to get rid of all errors
+		// TODO: Must cut below because NULL
+		/*
 		int[] tmp = null;
 		for(int i : tmp)//t2.getPreSet())
 		{
-			/*
+			*//*
 			if(t1.getPostSet().contains(i))
 			{
 				flag = true;
 				break;
 			}
-			*/
-		}		
+			*//*
+		}
+		*/
 		return flag;
 	}
 	/**Condition 4
@@ -219,6 +224,8 @@ public class SearchDepFromLPN {
 	{
 		boolean flag = false;	
 		// TODO: (future) Hack here. Created tmp to get rid of all errors
+		// TODO: must cut because null
+		/*
 		VarNode[] tmp = null;
 		for(VarNode var1 : tmp)//t1.getAssignedVar())
 		{
@@ -233,6 +240,7 @@ public class SearchDepFromLPN {
 			if(flag==true)
 				break;
 		}
+		*/
 		return flag;
 	}
 	/**Condition 5 and 6
@@ -245,16 +253,19 @@ public class SearchDepFromLPN {
 	{
 		boolean flag = false;
 		// TODO: (future) Hack here. Created tmp to get rid of all errors
+		// TODO: must cut because NULL
+		/*
 		VarNode[] tmp = null;
 		for(VarNode var1 : tmp)//t1.getAssignedVar())
 		{
-			/*
+			*//*
 			if(t2.getSupportVar().contains(var1.getName()))
 			{
 				flag = true;break;
 			}
-			*/
+			*//*
 		}
+		*/
 		return flag;
 	}
 	/**Condition 7
@@ -275,25 +286,26 @@ public class SearchDepFromLPN {
 				boolean flag_1 = false;
 				boolean flag_2 = false;
 				// TODO: (future) Hack here. Created tmp to get rid of all errors
-				VarNode[] tmp = null;
-				for(VarNode var : tmp)//t1.getAssignedVar())
-				{
-					/*
-					if(t3.getSupportVar().contains(var.getName()))
-					{
-						flag_1 = true;break;
-					}
-					*/
-				}
-				for(VarNode var : tmp) //t2.getAssignedVar())
-				{
-					/*
-					if(t3.getSupportVar().contains(var.getName()))
-					{
-						flag_2 = true;break;
-					}
-					*/
-				}
+				// TODO: must cut because NULL
+//				VarNode[] tmp = null;
+//				for(VarNode var : tmp)//t1.getAssignedVar())
+//				{
+//					/*
+//					if(t3.getSupportVar().contains(var.getName()))
+//					{
+//						flag_1 = true;break;
+//					}
+//					*/
+//				}
+//				for(VarNode var : tmp) //t2.getAssignedVar())
+//				{
+//					/*
+//					if(t3.getSupportVar().contains(var.getName()))
+//					{
+//						flag_2 = true;break;
+//					}
+//					*/
+//				}
 				if(flag_1 == true && flag_2 == true)
 				{
 					flag = true;

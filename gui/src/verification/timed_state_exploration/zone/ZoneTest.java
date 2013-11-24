@@ -196,6 +196,7 @@ public class ZoneTest {
 		System.out.println(z);
 	}
 	
+	@SuppressWarnings("unused")
 	@Test
 	public void testMergeZone3(){
 		boolean exceptionThrown = false;
@@ -219,6 +220,7 @@ public class ZoneTest {
 	 * 			An array of zones for testing.
 	 * 			
 	 */
+	@SuppressWarnings("unused")
 	private ZoneType[] readTestZones(File zoneFile)
 	{
 		try {

@@ -417,7 +417,7 @@ public class DBMLL {
 		}
 		
 		
-		int currentSize = enabledTimers.size();
+		//int currentSize = enabledTimers.size();
 		
 		HashSet<Integer> newTransitions = new HashSet<Integer>();
 		for(Integer i : enabledTransitions)
@@ -623,6 +623,7 @@ public class DBMLL {
 //		
 //	}
 	
+	@SuppressWarnings("unused")
 	private int get(int i, int j)
 	{
 		return matrix.get(i+1).get(j+1);
@@ -634,6 +635,7 @@ public class DBMLL {
 	 * @param j
 	 * @param value
 	 */
+	@SuppressWarnings("unused")
 	private void set(int i, int j, int value)
 	{
 		matrix.get(i+1).set(j+1, value);
@@ -645,7 +647,6 @@ public class DBMLL {
 	}
 	
 	
-	@SuppressWarnings("unchecked")
 	public DBMLL clone()
 	{
 		DBMLL newZone = new DBMLL();

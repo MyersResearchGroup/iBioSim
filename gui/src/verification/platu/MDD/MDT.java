@@ -12,8 +12,8 @@ public class MDT {
 	static mdtNode terminal = new mdtNode();
 
 	private mdtNode root;
-	private int stateCount;
-	private int peakNodes;
+	//private int stateCount;
+	//private int peakNodes;
 	int height;
 	int Size;
 		
@@ -22,9 +22,9 @@ public class MDT {
 	 */
 	public MDT(int levels) {
 		root = new mdtNode();
-		stateCount = 0;
+		//stateCount = 0;
 		height = levels;
-		peakNodes = 0;
+		//peakNodes = 0;
 	}
 		
 	public void push(State[] curIdxArray) {

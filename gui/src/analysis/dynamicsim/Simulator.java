@@ -400,7 +400,7 @@ public abstract class Simulator {
 	 */
 	private void alterLocalParameter(ASTNode node, Reaction reaction, String oldString, String newString) {
 		
-		String reactionID = reaction.getId();
+		//String reactionID = reaction.getId();
 		if (node.isName() && node.getName().equals(oldString)) {
 			node.setVariable(reaction.getKineticLaw().getLocalParameter(newString));
 		}

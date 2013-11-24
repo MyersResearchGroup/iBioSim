@@ -2640,7 +2640,7 @@ public class Zone{
 
 					IntervalPair rates = updateRecord.get_lcrPair().get_rateInterval();
 					
-					IntervalPair values = updateRecord.get_Value();
+					//IntervalPair values = updateRecord.get_Value();
 					
 					// Copy the new rate information
 					newZone.setLowerBoundByLPNTransitionPair(_indexToTimerPair[i],
@@ -2954,6 +2954,7 @@ public class Zone{
 //			ArrayList<HashMap<LPNContAndRate, IntervalPair>> newAssignValues){
 //	private void copyRates(Zone newZone, LpnTranList enabledTran,
 //			ArrayList<UpdateContinuous> newAssignValues){
+	@SuppressWarnings("unused")
 	private void copyRates(Zone newZone, LpnTranList enabledTran,
 			ContinuousRecordSet newAssignValues){
 		/*

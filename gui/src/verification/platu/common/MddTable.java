@@ -200,7 +200,7 @@ public class MddTable extends SetIntTuple {
 
 		nextMemUpBound = 500000000;
 		this.Size = 0;
-		this.MDDBUF_MODE = Options.getStateFormat() == "mddbuf";
+		MddTable.MDDBUF_MODE = Options.getStateFormat() == "mddbuf";
 	}
 
 	public int add(int[] IntArray) {	
@@ -287,6 +287,7 @@ public class MddTable extends SetIntTuple {
 		return charArray;
 	}
 
+	@SuppressWarnings("unused")
 	private int[] toByteArray(int[] intVec) {
 		//System.out.println(Arrays.toString(intVec));
 		int[] byteArray = new int[intVec.length*4];
@@ -336,6 +337,7 @@ public class MddTable extends SetIntTuple {
 		return codeArray;
 	}
 
+	@SuppressWarnings("unused")
 	private HashSet<IntArrayObj> decompose(int[] IntArray) {
 		HashSet<IntArrayObj> result = new HashSet<IntArrayObj>();
 		

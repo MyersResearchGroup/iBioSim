@@ -341,9 +341,12 @@ public class Project {
 				}
 				performMarkovAnalysisThread.start(timeLimit, timeStep, printInterval, absError, condition, globallyTrue);
 			}
+			/* TODO: DEAD CODE
 			else {
 				performMarkovAnalysisThread.start(timeLimit, timeStep, printInterval, absError, null, false);
 			}
+			*/
+			
 			try {
 				performMarkovAnalysisThread.join();
 			} catch (InterruptedException e) {

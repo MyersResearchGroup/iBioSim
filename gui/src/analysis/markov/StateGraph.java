@@ -918,9 +918,9 @@ public class StateGraph implements Runnable {
 					}
 					performTransientMarkovianAnalysis(step, Gamma, K, null);
 				}
-				double failureProb = 0;
+				//double failureProb = 0;
 				double successProb = 0;
-				double timelimitProb = 0;
+				//double timelimitProb = 0;
 				for (State m : stateGraph) {
 					// for (String state : stateGraph.keySet()) {
 					// for (State m : stateGraph.get(state)) {
@@ -937,21 +937,21 @@ public class StateGraph implements Runnable {
 						successExpr.intexpr_L(condition[1]);
 					}
 					if (failureExpr.evaluateExpr(m.getVariables()) == 1.0) {
-						failureProb += m.getCurrentProb();
+						//failureProb += m.getCurrentProb();
 					}
 					else if (successExpr.evaluateExpr(m.getVariables()) == 1.0) {
 						successProb += m.getCurrentProb();
 					}
 					else {
 						if (!globallyTrue) {
-							timelimitProb += m.getCurrentProb();
+							//timelimitProb += m.getCurrentProb();
 						}
 					}
 					// }
 				}
 				if (globallyTrue) {
 					successProb = 1 - successProb;
-					timelimitProb = 1 - (failureProb + successProb);
+					//timelimitProb = 1 - (failureProb + successProb);
 				}
 				initial.addVariable(id, "" + successProb);
 			}
@@ -1689,10 +1689,12 @@ public class StateGraph implements Runnable {
 			return property;
 		}
 
+		@SuppressWarnings("unused")
 		private void setLabel(String label) {
 			this.label = label;
 		}
 
+		@SuppressWarnings("unused")
 		private void setProperty(String property) {
 			this.property = property;
 		}
@@ -2007,10 +2009,12 @@ public class StateGraph implements Runnable {
 			prevStates = newPrevStates;
 		}
 
+		@SuppressWarnings("unused")
 		private void setNextStatesWithTrans(StateTransitionPair[] trans) {
 			nextStates = trans;
 		}
 
+		@SuppressWarnings("unused")
 		private void setPrevStatesWithTrans(StateTransitionPair[] trans) {
 			prevStates = trans;
 		}

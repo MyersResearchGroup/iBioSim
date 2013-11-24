@@ -137,7 +137,6 @@ public class VarValSet extends HashSet<VarVal> {
     }
 
     @Override
-    @SuppressWarnings("element-type-mismatch")
     public boolean removeAll(Collection<?> vvc) {
         Iterator<?> it = vvc.iterator();
         Object vv;

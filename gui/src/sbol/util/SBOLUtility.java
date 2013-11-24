@@ -24,8 +24,6 @@ import org.sbolstandard.core.impl.DnaSequenceImpl;
 import org.sbolstandard.core.impl.SBOLDocumentImpl;
 import org.sbolstandard.core.util.*;
 
-import sbol.assembly.AssemblyNode;
-
 import biomodel.util.GlobalConstants;
 
 public class SBOLUtility {

@@ -473,13 +473,13 @@ public class LPNTran {
         
         // Update other local states with the new values generated for the shared variables.
 		nextStateArray[this.lpn.getIndex()] = nextState;
-        for(LPN curLpn : this.dstLpnList) {
-        	int curIdx = curLpn.getIndex();
+//        for(LPN curLpn : this.dstLpnList) {
+//        	int curIdx = curLpn.getIndex();
         	// (temp) Hack here.  Probably LPNTran.java will go away.
-    		State newState = null; //curSgArray[curIdx].getNextState(curStateArray[curIdx], this);
-    		if(newState != null) 
-        		nextStateArray[curIdx] = newState;
-        	else {
+ //   		State newState = null; //curSgArray[curIdx].getNextState(curStateArray[curIdx], this);
+//    		if(newState != null) {
+        		//nextStateArray[curIdx] = newState;
+//   		} else {
         		// (done) may not need to be updated, but could change to use our var index map
         		/*
         		State newOther = curStateArray[curIdx].update(vvSet, curSgArray[curIdx].getLpn().getVarIndexMap());
@@ -492,8 +492,8 @@ public class LPNTran {
             		curSgArray[curIdx].addStateTran(curStateArray[curIdx], this, cachedOther);
         		}
         		*/
-        	}
-        }
+ //       	}
+ //       }
         
         return nextStateArray;
     }
@@ -504,9 +504,9 @@ public class LPNTran {
 //    	if(this.nextStateMap.containsKey(curState) == true)
 //    		return (State)this.nextStateMap.get(curState);
     	// (temp) Hack here.  Probably LPNTran.java will go away.
-    	State nextState = null; // thisSg.getNextState(curState, this);
-    	if(nextState != null)
-    		return nextState;
+    	//State nextState = null; // thisSg.getNextState(curState, this);
+    	//if(nextState != null)
+    	//	return nextState;
     	
     	// If no cached next state exists, do regular firing. 
     	// Marking update
@@ -547,6 +547,7 @@ public class LPNTran {
                 
         State newState = null; //= thisSg.addState(new State(this.lpn, curNewMarking, newVectorArray));
         
+        /*
         int[] newVector = newState.getVariableVector();
 		for(Expression e : assertions){
         	if(e.evaluate(newVector) == 0){
@@ -554,6 +555,7 @@ public class LPNTran {
         		System.exit(1);
         	}
         }
+        */
 		// (temp) Hack here.  Probably LPNTran.java will go away.
 		//thisSg.addStateTran(curState, this, newState);
 		return newState;
@@ -618,14 +620,15 @@ public class LPNTran {
         //(temp) Hack here. Probably LPNTran.java will go away.
         State newState = null; //new State(this.lpn, curNewMarking, newVectorArray);
         
-        int[] newVector = newState.getVariableVector();
+        //int[] newVector = newState.getVariableVector();
+        /* 
 		for(Expression e : assertions){
         	if(e.evaluate(newVector) == 0){
         		System.err.println("Assertion " + e.toString() + " failed in LPN transition " + this.lpn.getLabel() + ":" + this.label);
         		System.exit(1);
         	}
         }
-		
+		*/
 		return newState;
     }
         

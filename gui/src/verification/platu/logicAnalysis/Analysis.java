@@ -1323,6 +1323,7 @@ public class Analysis {
 		
 	}
 
+	@SuppressWarnings("unused")
 	private void printNextGlobalStateMap(HashMap<Transition, PrjState> nextStateMap) {
 		for (Transition t: nextStateMap.keySet()) {
 			System.out.println(t.getFullLabel() + " -> ");
@@ -1929,6 +1930,7 @@ public class Analysis {
      * @param isNextState
      * @return
      */
+	@SuppressWarnings("unused")
 	private LpnTranList getPersistentRefinedCycleRule(State[] curStateArray, State[] nextStateArray, HashMap<Transition,StaticDependencySets> staticSetsMap, 
 			boolean init, HashMap<Transition,Integer> tranFiringFreq, StateGraph[] sgList, 
 			HashSet<PrjState> stateStack, PrjState stateStackTop) {
@@ -2321,7 +2323,8 @@ public class Analysis {
 		return null;
  	}
 			
- 	private LpnTranList allIgnoredTransFired(LpnTranList ignoredTrans, 
+ 	@SuppressWarnings("unused")
+	private LpnTranList allIgnoredTransFired(LpnTranList ignoredTrans, 
  			HashSet<Integer> stateVisited, PrjState stateStackEntry, int lpnIndex, StateGraph sg) {
  		State state = stateStackEntry.get(lpnIndex);
  		System.out.println("state = " + state.getIndex());
@@ -2664,7 +2667,7 @@ public class Analysis {
 		int tranFiringCnt = 0;
 		int totalStates = 1;
 		int arraySize = lpnList.length;
-		int newStateCnt = 0;
+		//int newStateCnt = 0;
 		
 		Stack<State[]> stateStack = new Stack<State[]>();
 		Stack<LinkedList<Transition>> lpnTranStack = new Stack<LinkedList<Transition>>();
@@ -2807,7 +2810,7 @@ public class Analysis {
 			
 			if (existingState == false) {
 				mddMgr.add(reach, localIdxArray, compressed);
-				newStateCnt++;
+				//newStateCnt++;
 				stateStack.push(nextStateArray);
 				lpnTranStack.push((LpnTranList) nextEnabledArray[0].clone());
 				curIndexStack.push(0);

@@ -79,8 +79,8 @@ public class mddNode {
 		
 		int curIdx = idxArray[this.level];
 		int stateIdx = curIdx;
-		int blockIdx = stateIdx & this.blockIdxMask;
-		int arrayIdx = stateIdx >> this.arrayIdxoffset;
+		int blockIdx = stateIdx & mddNode.blockIdxMask;
+		int arrayIdx = stateIdx >> mddNode.arrayIdxoffset;
 		
 		mddNode nextNode = this.getSucc(blockIdx, arrayIdx);
 
@@ -119,8 +119,8 @@ public class mddNode {
 		
 		int curIdx = idxArray[this.level];
 		int stateIdx = curIdx;
-		int blockIdx = stateIdx & this.blockIdxMask;
-		int arrayIdx = stateIdx >> this.arrayIdxoffset;
+		int blockIdx = stateIdx & mddNode.blockIdxMask;
+		int arrayIdx = stateIdx >> mddNode.arrayIdxoffset;
 		
 		mddNode nextNode = this.getSucc(blockIdx, arrayIdx);
 
@@ -158,7 +158,7 @@ public class mddNode {
 				if(level < shrLevel) {
 				mddNode newThis = nodeTbl[this.level].get(this);
 				if (newThis != null) {		
-					for(int blkIter = 0; blkIter < this.numBlocks; blkIter++) {
+					for(int blkIter = 0; blkIter < mddNode.numBlocks; blkIter++) {
 						if(this.nodeMap[blkIter] == null)
 							continue;
 						for(int arrayIter = 0; arrayIter < this.nodeMap[blkIter].length; arrayIter++)
@@ -460,13 +460,13 @@ public class mddNode {
 		
 		stateStack.push(curState);
 		enabledStack.push(localTranSet);
-		LinkedList<State[]> nextSet_tmp = new LinkedList<State[]>();
+		//LinkedList<State[]> nextSet_tmp = new LinkedList<State[]>();
 
 		while(stateStack.size() != 0) {
 			curState = stateStack.pop();
 			LinkedList<Transition> curLocalEnabled = enabledStack.pop();
 			for(Transition tran2fire : curLocalEnabled) {
-				//System.out.println("tran2fire = " + tran2fire.getLabel() + " in  curlocalState = " + curState.getLabel());
+				System.out.println("tran2fire = " + tran2fire.getLabel() + " in  curlocalState = " + curState.getLabel());
 				// TODO: Need to fix this.
 				State nextState = null; //tran2fire.fire(curLpnArray[tran2fire.getLpn().getIndex()], curState); 
 				
@@ -480,32 +480,36 @@ public class mddNode {
 				LinkedList<Transition> nextEnabled = curLpn.getEnabled(nextState);
 				
 				// TODO: Need to fix this.
-				Transition disabledTran = null; //tran2fire.disablingError(curEnabled, nextEnabled);
+				//Transition disabledTran = null; //tran2fire.disablingError(curEnabled, nextEnabled);
+				/*
 				if(disabledTran != null) {
 					System.err.println("Verification failed: disabling error: " 
 							+ disabledTran.getFullLabel()  + " is disabled by "
 									+ tran2fire.getFullLabel() + "!");
 					System.exit(0);
 				} 
+				*/
 				
 				//System.out.println("addlocal nextLocalState = " + nextState.getLabel());
 				curLocalNewStates.add(nextState);
 				
-				int nextBlkIdx = nextState.getIndex() & mddNode.blockIdxMask;
-				int nextArrayIdx = nextState.getIndex() >> mddNode.arrayIdxoffset;				
-				this.addSucc(nextBlkIdx, nextArrayIdx, succ);
+				// TODO: had to remove because nextState is null
+				//int nextBlkIdx = nextState.getIndex() & mddNode.blockIdxMask;
+				//int nextArrayIdx = nextState.getIndex() >> mddNode.arrayIdxoffset;				
+				//this.addSucc(nextBlkIdx, nextArrayIdx, succ);
 
 				LinkedList<Transition> nextLocalEnabled = new LinkedList<Transition>();
-				boolean nonLocalNext = false;
+				//boolean nonLocalNext = false;
 				for(Transition tran : nextEnabled) {
 					if(tran.isLocal()==true)
 						nextLocalEnabled.addLast(tran);
-					else
-						nonLocalNext = true;
+					//else
+						//nonLocalNext = true;
 				}
 				
-				nextState.hasNonLocalEnabled(nonLocalNext);
-				nextSetArray[this.level].addLast(nextState);
+				// TODO: had to remove because nextState is null
+				//nextState.hasNonLocalEnabled(nonLocalNext);
+				//nextSetArray[this.level].addLast(nextState);
 				
 				if(nextLocalEnabled.size() == 0)
 					continue;				
@@ -543,12 +547,12 @@ public class mddNode {
 	 * Insert a succNode with index into the nodeMap, whose size is automatically adjusted.
 	 */
 	private boolean addSucc(int blockIdx, int arrayIdx, mddNode succNode) {
-		int oldsize = nodeMap.length;
+		//int oldsize = nodeMap.length;
 		
-		boolean newState = false;
+		//boolean newState = false;
 		if(this.nodeMap[blockIdx]==null || arrayIdx >= this.nodeMap[blockIdx].length) {
 			this.resizeNodeMap(blockIdx, arrayIdx);
-			newState = true;
+			//newState = true;
 			//System.out.println(this + " >>> node level = " + level + "  state label = " + index + "  " + oldsize + "  " + this.nodeMap.length);
 		}
 		
@@ -799,7 +803,7 @@ public class mddNode {
 			for(int arrayIter = 0; arrayIter < nodeMap[blkIter].length; arrayIter++) {
 				if(this.nodeMap[blkIter][arrayIter] == null)
 					continue;
-				System.out.println(this + " level = " + level + ",  " + (blkIter + (arrayIter << this.arrayIdxoffset)) + " -> " + nodeMap[blkIter][arrayIter] + "  refCount = " + nodeMap[blkIter][arrayIter].refCount);
+				System.out.println(this + " level = " + level + ",  " + (blkIter + (arrayIter << mddNode.arrayIdxoffset)) + " -> " + nodeMap[blkIter][arrayIter] + "  refCount = " + nodeMap[blkIter][arrayIter].refCount);
 				nodeMap[blkIter][arrayIter].print();
 			}
 		}

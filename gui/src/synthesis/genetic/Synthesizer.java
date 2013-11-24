@@ -28,7 +28,7 @@ public class Synthesizer {
 	private SynthesisMatcher matcher;
 	private boolean exhaustive;
 	private int solutionCap;
-	private int greedCount = 0;
+	//private int greedCount = 0;
 	
 	public Synthesizer(Set<SynthesisGraph> graphLibrary, Properties synthProps) {
 		this.matcher = new SynthesisMatcher(graphLibrary);
@@ -42,15 +42,15 @@ public class Synthesizer {
 	}
 	
 	public List<List<SynthesisGraph>> mapSpecification(SynthesisGraph spec) {
-		long startTime = System.nanoTime();
+		//long startTime = System.nanoTime();
 		for (SynthesisNode node : spec.postOrderNodes()) {
 			matchNode(node, spec);
 			boundNode(node, spec);
 		}
 		List<List<SynthesisGraph>> solutions = new LinkedList<List<SynthesisGraph>>();
-		int solutionCost = coverSpec(spec, solutions);
-		long endTime = System.nanoTime();
-		double time = (endTime - startTime)*Math.pow(10, -9); 
+		//int solutionCost = coverSpec(spec, solutions);
+		//ong endTime = System.nanoTime();
+		//double time = (endTime - startTime)*Math.pow(10, -9); 
 
 //		System.out.println("Run took " + time + " s.");
 //		System.out.println("Solution is " + solution + ".");
@@ -99,6 +99,7 @@ public class Synthesizer {
 		return matchBound;
 	}
 	
+	@SuppressWarnings("unused")
 	private int coverSpec(SynthesisGraph spec, List<List<SynthesisGraph>> bestSolutions) {
 		List<SynthesisGraph> solution = new LinkedList<SynthesisGraph>();
 		int solutionCost = 0;

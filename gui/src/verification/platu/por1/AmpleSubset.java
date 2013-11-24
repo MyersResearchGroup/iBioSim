@@ -327,6 +327,7 @@ public class AmpleSubset {
 		return subset;
 	}
 	
+	@SuppressWarnings("unused")
 	private LpnTranList subset_indepIsEmpty(LpnTranList interleavingEnabledSet,
 									       HashMap<Transition, HashSet<Transition>> interleavingSet,
 									       LpnTranList dep_interleaving,
@@ -503,7 +504,7 @@ public class AmpleSubset {
 	public void printMap(HashMap<Transition, HashSet<Transition>> tranSet)
 	{
 		long number = 0;
-		Iterator it = tranSet.keySet().iterator();
+		Iterator<Transition> it = tranSet.keySet().iterator();
 		if(!it.hasNext())
 		{
 			System.out.println("this transition type is null");
@@ -513,7 +514,7 @@ public class AmpleSubset {
 			Transition key = (Transition)it.next();
 			HashSet<Transition> value = tranSet.get(key);
 			System.out.print(key.getFullLabel()+"   " );
-			Iterator bb = value.iterator();
+			Iterator<Transition> bb = value.iterator();
 			while(bb.hasNext())
 			{
 				number++;

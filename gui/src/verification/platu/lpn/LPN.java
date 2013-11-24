@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import verification.platu.expression.ArrayElement;
 import verification.platu.expression.ArrayNode;
 import verification.platu.expression.VarNode;
 import verification.platu.project.Project;
@@ -97,11 +96,13 @@ public class LPN {
 
         // Adjust the visibility of lpn transitions.
         // TODO: (temp) Hack here, but no problem as LPN.java will go away.
+        // TODO: cut below because transitionsTemp is null
+        /*
         ArrayList<LPNTran> transitionsTemp = null;
 		for (LPNTran curTran : transitionsTemp) { //transitions) {
             curTran.initialize(this, outputs);
         }
-        
+		*/
         // TODO: (temp) Hack here, but no problem as LPN.java will go away.
         this.stateGraph = null; //new StateGraph(this);
     }
@@ -127,11 +128,14 @@ public class LPN {
         
         // Adjust the visibility of lpn transitions.
         // TODO: (temp) Hack here, but no problem as LPN.java will go away.
+        // (temp) Hack here, but no problem as LPN.java will go away.
+        // TODO: cut below because transitionsTemp is null
+        /*
         ArrayList<LPNTran> transitionsTemp = null;
         for (LPNTran curTran : transitionsTemp) {
             curTran.initialize(this, outputs);
         }
-        
+        */
         // TODO: (temp) Hack here, but no problem as LPN.java will go away.
         this.stateGraph = null;  // new StateGraph(this);
     }
@@ -171,7 +175,8 @@ public class LPN {
         LPN newLPN = new LPN(this.prj, this.label, this.inputs.clone(), this.outputs.clone(),
                 this.internals.clone(), varNodeMap, transitions, initVector, this.initMark);
         
-        transitions.setLPN(newLPN);
+        // TODO: have to cut below because transitions is null
+        // transitions.setLPN(newLPN);
         newLPN.setVarIndexMap(varIndexMap);
         newLPN.argumentList = this.argumentList;
 
@@ -191,6 +196,8 @@ public class LPN {
     					addList.add(element.getName());
     				}
     			    // TODO: (temp) Hack here, but no problem as LPN.java will go away.
+    		        // TODO: cut below because transitionsTemp is null
+    		        /*
     		        ArrayList<LPNTran> transitionsTemp = null;
     				for(LPNTran lpnTran : transitionsTemp) {//this.transitions){
     	    			for(VarNode assignedVar : lpnTran.getAssignedVar()){
@@ -199,20 +206,23 @@ public class LPN {
     		        			lpnTran.setLocalFlag(false);
     		        			for(StateGraph sg : designUnitSet){
     		        				// TODO: (temp) broken but okay depracting this class
-    		        				/*
+    		        				*//*
     		        				LPN dstLpn = sg.getLpn();
     	    	    				if(dstLpn == this) continue;
     	    	    				
     		    	    			dstLpn.addInputTran(lpnTran);
     		    	    			lpnTran.addDstLpn(dstLpn);  
-    		    	    			*/
+    		    	    			*//*
     	    	    			}
     		        		}
     	    			}
     	        	}
+    				*/
     			}
     			else{
     			     // TODO: (temp) Hack here, but no problem as LPN.java will go away.
+    		        // TODO: cut below because transitionsTemp is null
+    		        /*
     		        ArrayList<LPNTran> transitionsTemp = null;
 	    			for(LPNTran lpnTran : transitionsTemp) {//this.transitions){
 	    	    		if(lpnTran.getAssignedVar().contains(var)){
@@ -222,16 +232,17 @@ public class LPN {
 	    	    			
 	    	    			for(StateGraph sg : designUnitSet){
 		        				// TODO: (temp) broken but okay depracting this class
-	    	    				/*
+	    	    				*//*
 	    	    				LPN dstLpn = sg.getLpn();
 	    	    				if(dstLpn == this) continue;
 	    	    				
 		    	    			dstLpn.addInputTran(lpnTran);
 		    	    			lpnTran.addDstLpn(dstLpn);  
-		    	    			*/
+		    	    			*//*
 	    	    			}
 	    	    		}
 	    	    	}
+    				*/
     			}
     		}
     	}
@@ -364,6 +375,8 @@ public class LPN {
     		// put in dstLpn's inputTranList
     		// set as non local
         // (temp) Hack here, but no problem as LPN.java will go away.
+        // TODO: cut below because transitionsTemp is null
+        /*
         ArrayList<LPNTran> transitionsTemp = null;
     	for(LPNTran lpnTran : transitionsTemp) {//this.transitions){
     		if(lpnTran.getAssignedVar().contains(outputVarNode)){
@@ -373,7 +386,7 @@ public class LPN {
     			lpnTran.addDstLpn(dstLpn);
     		}
     	}
-    	
+    	*/
     	// get input VarNode
     		// make sure it is an input
     	VarNode inputVarNode = dstLpn.varNodeMap.get(inputVar);
@@ -448,6 +461,8 @@ public class LPN {
 	    		outputVarNode.setType(VarType.OUTPUT);
 	    		
 	    	    // TODO: (temp) Hack here, but no problem as LPN.java will go away.
+	            // TODO: cut below because transitionsTemp is null
+	            /*
 	    		for(LPNTran lpnTran : transitionsTemp) {//this.transitions){
 	    			for(VarNode assignedVar : lpnTran.getAssignedVar()){
 		        		if(ArrayElement.class.isAssignableFrom(assignedVar.getClass()) && ((ArrayElement)assignedVar).getArray() == outputArray){
@@ -458,7 +473,7 @@ public class LPN {
 		        		}
 	    			}
 	        	}
-	    		
+	             */	    		
 	    		// get output initial value
 	    		// modify dstLpn's init vector
 		    	int initialValue = this.getInitVector().get(outputVarNode.getName());
@@ -688,6 +703,8 @@ public class LPN {
     public LpnTranList getOutputTrans() {
         LpnTranList outputTranSet = new LpnTranList();
         // TODO: (temp) Hack here, but no problem as LPN.java will go away.
+        // TODO: cut below because transitionsTemp is null
+        /*
         ArrayList<LPNTran> transitionsTemp = null;
         for (LPNTran curTran : transitionsTemp) {// this.transitions) {
             HashSet<VarNode> assignedVars = curTran.getAssignedVar();
@@ -698,7 +715,7 @@ public class LPN {
                 }
             }
         }
-
+         */
         return outputTranSet;
     }
     

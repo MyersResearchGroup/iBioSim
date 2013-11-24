@@ -406,11 +406,11 @@ public class InequalityVariable extends Variable {
 		// Extract the continuous variable from the zone.
 		
 		// Get the variable for the inequality.
-		Variable v = _variables.get(0);
+		//Variable v = _variables.get(0);
 		
-		int lpnIndex = _lpn.getLpnIndex();
+		//int lpnIndex = _lpn.getLpnIndex();
 		
-		int varIndex = _lpn.getContVarIndex(v.toString());
+		//int varIndex = _lpn.getContVarIndex(v.toString());
 		
 		
 		

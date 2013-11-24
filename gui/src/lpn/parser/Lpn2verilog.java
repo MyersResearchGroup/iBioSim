@@ -229,7 +229,7 @@ public class Lpn2verilog {
 			boolean firstCont = true;
 			for (String v: varsList){
 				if ((v != null) && (lpn.isOutput(v))){		//Initialize only outputs. Inputs will be initialized in their driver modules. Null condition Not Required ??
-					String initVal = lpn.getInitialVal(v);
+					//String initVal = lpn.getInitialVal(v);
 					if (lpn.isContinuous(v) || lpn.isInteger(v)){
 						if (lpn.isContinuous(v)){
 							// TODO: Call Verilog-AMS generation from here. No System Verilog in this case
@@ -241,11 +241,11 @@ public class Lpn2verilog {
 							}
 							//sv.write("\treal rate_" + v + ", change_" + v + ";\n");
 							if ((lpn.getInitialRate(v) != null) && (!lpn.getInitialRate(v).equalsIgnoreCase("unknown"))){
-								String initBufferString = getInitBufferString(v, lpn.getInitialRate(v));
+								//String initBufferString = getInitBufferString(v, lpn.getInitialRate(v));
 								//initBuffer.append("\t\trate_" + initBufferString);
 							}
 							if ((lpn.getInitialVal(v) != null)  && (!lpn.getInitialVal(v).equalsIgnoreCase("unknown"))){
-								String initBufferString = getInitBufferString(v, lpn.getInitialVal(v));
+								//String initBufferString = getInitBufferString(v, lpn.getInitialVal(v));
 							//	initBuffer.append("\t\tchange_" + initBufferString);
 							}
 						} else {
@@ -297,7 +297,7 @@ public class Lpn2verilog {
 			if (contiCounter ==0) sv.write("\t\t end \n\n");
 			
 			Boolean[] firstTransition = new Boolean[netCount];
-			StringBuffer[] alwaysBuffer = new StringBuffer[netCount];
+			//StringBuffer[] alwaysBuffer = new StringBuffer[netCount];
 			//	StringBuffer[] prioritiesBuffer = new StringBuffer[netCount];
 			StringBuffer[] assignmentsBuffer = new StringBuffer[netCount];
 			for (int j = 0; j < netCount; j++){ //System.out.println("Netcount is :"+netCount);
@@ -393,11 +393,11 @@ public class Lpn2verilog {
 				else{
 
 					//if(	lpn.getTransition(st).hasConflictSet()){ 
-						int size = 	transitionList.length;
+						//int size = 	transitionList.length;
 						//System.out.println("st in conflict:"+st);
 						//Transition[] trans = new Transition[5];
-						Transition[] conflictSet = new Transition[size];
-						conflictSet = lpn.getTransition(st).getConflictSet();
+						//Transition[] conflictSet = new Transition[size];
+						//conflictSet = lpn.getTransition(st).getConflictSet();
 						//System.out.println("This is the conflict set size :"+size);
 						
 						
@@ -459,7 +459,7 @@ public class Lpn2verilog {
 							else assignmentsBuffer[tag.get(st)].append("\talways @(posedge " +place+") begin\n");
 						}
 
-						ExprTree delay = lpn.getDelayTree(st);
+						//ExprTree delay = lpn.getDelayTree(st);
 						//System.out.println(" delay....delay :"+delay);
 						for (String st2 : lpn.getPreset(st)){
 						if (lpn.getEnablingTree(st) != null){

@@ -81,22 +81,22 @@ public class SimulatorSSACR extends Simulator {
 		final boolean noConstraintsFlag = (Boolean) constraintsFlag.getValue();
 		
 		initializationTime += System.nanoTime() - initTime2;
-		long initTime3 = System.nanoTime() - initTime2;
+		//long initTime3 = System.nanoTime() - initTime2;
 		
 		//System.err.println("initialization time: " + initializationTime / 1e9f);
 		
 		//SIMULATION LOOP
 		//simulate until the time limit is reached
 		
-		long step1Time = 0;
-		long step2Time = 0;
-		long step3aTime = 0;
-		long step3bTime = 0;
-		long step4Time = 0;
-		long step5Time = 0;
-		long step6Time = 0;
+		//long step1Time = 0;
+		//long step2Time = 0;
+		//long step3aTime = 0;
+		//long step3bTime = 0;
+		//long step4Time = 0;
+		//long step5Time = 0;
+		//long step6Time = 0;
 		
-		TObjectIntHashMap<String> reactionToTimesFired = new TObjectIntHashMap<String>();
+		//TObjectIntHashMap<String> reactionToTimesFired = new TObjectIntHashMap<String>();
 		
 		currentTime = 0.0;
 		double printTime = printInterval;
