@@ -134,7 +134,7 @@ public class DBMLL {
 	
 	private void initializeZone(LPNTranslator lpn, Iterable<Integer> timers)
 	{
-		// TODO check logic for zero timer.
+		// check logic for zero timer.
 		
 		int counter =2;
 		matrix = new ArrayList<ArrayList<Integer>>();	// Set up the matrix.
@@ -191,7 +191,6 @@ public class DBMLL {
 	
 //	private void setLowerBounds(LPNTranslator lpn)
 //	{
-//		// TODO Auto-generated method stub
 //		for(Integer i : enabledTimers.keySet())
 //		{
 //			
@@ -201,7 +200,6 @@ public class DBMLL {
 //
 //	private void setUpperBounds(LPNTranslator lpn) 
 //	{
-//		// TODO Auto-generated method stub
 //		for(Integer i : enabledTimers.keySet())
 //		{
 //			
@@ -388,7 +386,6 @@ public class DBMLL {
 			boolean[] newMarkedPlaces, boolean[] newBooleanValues,
 			HashSet<Integer> enabledTransitions)
 	{
-		// TODO Auto-generated method stub
 		
 		
 		// Restrict to lower bound.
@@ -609,7 +606,7 @@ public class DBMLL {
 	
 	public int getUpperBound(int timer)
 	{
-		// TODO fix.
+		// fix.
 		return matrix.get(0).get(enabledTimers.get(timer));
 	}
 	
