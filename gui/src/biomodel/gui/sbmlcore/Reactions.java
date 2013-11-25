@@ -538,6 +538,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				kineticFluxLabel.setSelectedIndex(1);
 				// TODO: set combo box to Flux bound:
 				// TODO: Search the flux bounds to find bounds related to reactionId, build a flux bound relation using that
+				// TODO: <lowerbound> <= reactionId <= <upperbound>
 			}
 		}
 		JPanel kineticPanel = new JPanel(new BorderLayout());
@@ -3080,7 +3081,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		else if (e.getSource() == useMassAction) {
 			useMassAction();
 		}
-		//TODO: Need to adjust reaction String that gets passed to FBABounds
+		//TODO: Need to adjust reaction String that gets passed to FBABounds REMOVED
 		else if (e.getActionCommand().equals("fluxBound")){
 			new FBABounds(bioModel,((String) reactions.getSelectedValue()).split(" ")[0]);
 		}
