@@ -3153,9 +3153,8 @@ public class Abstraction extends LhpnFile {
 					} else {
 						return false;
 					}
-				} else {
-					return false;
 				}
+				return false;
 			} else if (t.containsAssignment(var2)) {
 				return false;
 			}

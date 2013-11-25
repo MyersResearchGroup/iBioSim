@@ -136,8 +136,7 @@ public class AmpleSet {
 		//set subset
 		if(set1.size() > set2.size() && set2.size() != 0)
 			return set2;
-		else
-			return set1;
+		return set1;
 	}
 	
 	
@@ -257,12 +256,9 @@ public class AmpleSet {
 			//System.out.println("there exists interleaving pairs ready to fire!");
 			return ready_interleaving;
 		}
-		else
-		{
-			//System.out.println("choose all of the interleaving transitions which are independent with others");
-			return interleavingEnabledSet;
-			//return this.getSubsetOfInterleavingTrans(interleavingEnabledSet);
-		}
+		//System.out.println("choose all of the interleaving transitions which are independent with others");
+		return interleavingEnabledSet;
+		//return this.getSubsetOfInterleavingTrans(interleavingEnabledSet);
 
 	}
 	

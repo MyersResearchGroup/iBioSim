@@ -54,9 +54,8 @@ public abstract class AbstractPrintVisitor implements SpeciesVisitor {
 	public double getProperty(String key, Properties property, double defaultValue) {
 		if (property.get(key) != null) {
 			return Double.parseDouble(property.getProperty(key));
-		} else {
-			return defaultValue;
 		}
+		return defaultValue;
 	}
 	
 	public static void setGCMFile(BioModel file) {
