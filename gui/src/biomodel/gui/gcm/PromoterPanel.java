@@ -366,13 +366,13 @@ public class PromoterPanel extends JPanel {
 //			boolean removeModelSBOLAnnotationFlag = false;
 			if (!paramsOnly) {
 				if (oldName == null) {
-					if (bioModel.isSIdInUse((String)fields.get(GlobalConstants.ID).getValue())) {
+					if (bioModel.isSIdInUse(fields.get(GlobalConstants.ID).getValue())) {
 						Utility.createErrorMessage("Error", "Id already exists.");
 						return false;
 					}
 				}
 				else if (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
-					if (bioModel.isSIdInUse((String)fields.get(GlobalConstants.ID).getValue())) {
+					if (bioModel.isSIdInUse(fields.get(GlobalConstants.ID).getValue())) {
 						Utility.createErrorMessage("Error","Id already exists.");
 						return false;
 					}

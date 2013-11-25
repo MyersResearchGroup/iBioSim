@@ -162,14 +162,12 @@ public class PlacePanel extends JPanel implements ActionListener {
 			placeList.setSelectedValue(listName, true);
 			if (oldName != null  && !id.equals(oldName)) {
 				for (String s : controlList.getItems()) {
-					if (oldName != null) {
-						String[] array = s.split("\\s");
-						for (String t : array) {
-							if (t.equals(oldName)) {
-								controlList.removeItem(s);
-								s = s.replace(oldName, id);
-								controlList.addItem(s);
-							}
+					String[] array = s.split("\\s");
+					for (String t : array) {
+						if (t.equals(oldName)) {
+							controlList.removeItem(s);
+							s = s.replace(oldName, id);
+							controlList.addItem(s);
 						}
 					}
 				}

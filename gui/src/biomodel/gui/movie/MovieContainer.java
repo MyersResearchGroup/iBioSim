@@ -597,124 +597,121 @@ public class MovieContainer extends JPanel implements ActionListener {
 			JOptionPane.showMessageDialog(Gui.frame, "You must first choose a simulation (tsd) file.");
 			return;
 		}
-		else {
-
-			if (movieFormat.equals("mp4"))
-				outputFilename = Utility.browse(Gui.frame, null, null, JFileChooser.FILES_ONLY, "Save MP4", -1);
-			else if (movieFormat.equals("avi"))
-				outputFilename = Utility.browse(Gui.frame, null, null, JFileChooser.FILES_ONLY, "Save AVI", -1);
-			
-			if (outputFilename == null || outputFilename.length() == 0)
-				return;
-			
-			pause();
-			
-			int startFrame = 0;
-			int endFrame = numTimePoints - 1;
-			int skipFrame = 0;
-			
-			//get the start/end frames from the user
-			JPanel tilePanel;
-			JTextField startFrameChooser;
-			JTextField endFrameChooser;
-			JTextField printFrameChooser;
-			JCheckBox scaleChooser;
-			
-			//panel that contains grid size options
-			tilePanel = new JPanel(new GridLayout(5, 2));
-			this.add(tilePanel, BorderLayout.SOUTH);
-
-			tilePanel.add(new JLabel("Start Frame"));
-			startFrameChooser = new JTextField("0");
-			tilePanel.add(startFrameChooser);
-			
-			tilePanel.add(new JLabel("End Frame"));
-			endFrameChooser = new JTextField(String.valueOf(numTimePoints - 1));
-			tilePanel.add(endFrameChooser);
-			
-			tilePanel.add(new JLabel("Print Frame"));
-			printFrameChooser = new JTextField("0"); 
-			tilePanel.add(printFrameChooser);
-			
-			scaleChooser = new JCheckBox("Scale");
-			tilePanel.add(scaleChooser);
-			
-			String[] options = {GlobalConstants.OK, GlobalConstants.CANCEL};
-			
-			boolean error = true;
-			
-			while (error) {
-			
-				int okCancel = JOptionPane.showOptionDialog(Gui.frame, tilePanel, "Select Frames",
-						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+		if (movieFormat.equals("mp4"))
+			outputFilename = Utility.browse(Gui.frame, null, null, JFileChooser.FILES_ONLY, "Save MP4", -1);
+		else if (movieFormat.equals("avi"))
+			outputFilename = Utility.browse(Gui.frame, null, null, JFileChooser.FILES_ONLY, "Save AVI", -1);
 		
-				//if the user clicks "ok" on the panel
-				if (okCancel == JOptionPane.OK_OPTION) {
-					
-					startFrame = Integer.valueOf(startFrameChooser.getText());
-					endFrame = Integer.valueOf(endFrameChooser.getText());
-					skipFrame = Integer.valueOf(printFrameChooser.getText());
-					
-					if (endFrame < numTimePoints && startFrame >= 0)
-						error = false;
-				}
-			}
-			
-			//disable all buttons and stuff
-			fileButton.setEnabled(false);
-			playPauseButton.setEnabled(false);
-			rewindButton.setEnabled(false);
-			singleStepButton.setEnabled(false);
-			clearButton.setEnabled(false);
-			slider.setEnabled(false);
-			
-			//un-zoom so that the frames print properly
-			schematic.getGraph().getView().setScale(1.0);
-			
-			JPanel button = new JPanel();
-			JPanel progressPanel = new JPanel(new BorderLayout());
-			final JLabel label = new JLabel("Creating movie . . .");
-			JPanel frameText = new JPanel();
-			JButton cancel = new JButton("Cancel");
-			final JFrame progressFrame = new JFrame("Progress");
-			
-			JProgressBar movieProgress = new JProgressBar(0, 100);
-			movieProgress.setStringPainted(true);
-			movieProgress.setValue(0);
-			frameText.add(label);
-			button.add(cancel);
-			progressPanel.add(frameText, "North");
-			progressPanel.add(movieProgress, "Center");
-			progressPanel.add(button, "South");
-			
-			progressFrame.getContentPane().add(progressPanel);
-			progressFrame.setLocationRelativeTo(null);
-			progressFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			progressFrame.pack();
-			progressFrame.setVisible(true);
-			
-			MovieProgress printMovieFrames = 
-				new MovieProgress(movieProgress, startFrame, endFrame, skipFrame, 
-						scaleChooser.isSelected(), movieFormat, progressFrame);
-			
-			final Thread printThread = new Thread(printMovieFrames);
-			
-			cancel.addActionListener(new ActionListener() {
+		if (outputFilename == null || outputFilename.length() == 0)
+			return;
+		
+		pause();
+		
+		int startFrame = 0;
+		int endFrame = numTimePoints - 1;
+		int skipFrame = 0;
+		
+		//get the start/end frames from the user
+		JPanel tilePanel;
+		JTextField startFrameChooser;
+		JTextField endFrameChooser;
+		JTextField printFrameChooser;
+		JCheckBox scaleChooser;
+		
+		//panel that contains grid size options
+		tilePanel = new JPanel(new GridLayout(5, 2));
+		this.add(tilePanel, BorderLayout.SOUTH);
 
-				@Override
-				@SuppressWarnings("deprecation")
-				public void actionPerformed(ActionEvent arg0) {
-					
-					label.setText("Canceling movie");					
-					progressFrame.dispose();
-					printThread.stop();
-					removeJPGs();
-					addPlayUI();
-				}
-			});
-			
-			printThread.start();
+		tilePanel.add(new JLabel("Start Frame"));
+		startFrameChooser = new JTextField("0");
+		tilePanel.add(startFrameChooser);
+		
+		tilePanel.add(new JLabel("End Frame"));
+		endFrameChooser = new JTextField(String.valueOf(numTimePoints - 1));
+		tilePanel.add(endFrameChooser);
+		
+		tilePanel.add(new JLabel("Print Frame"));
+		printFrameChooser = new JTextField("0"); 
+		tilePanel.add(printFrameChooser);
+		
+		scaleChooser = new JCheckBox("Scale");
+		tilePanel.add(scaleChooser);
+		
+		String[] options = {GlobalConstants.OK, GlobalConstants.CANCEL};
+		
+		boolean error = true;
+		
+		while (error) {
+		
+			int okCancel = JOptionPane.showOptionDialog(Gui.frame, tilePanel, "Select Frames",
+					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+
+			//if the user clicks "ok" on the panel
+			if (okCancel == JOptionPane.OK_OPTION) {
+				
+				startFrame = Integer.valueOf(startFrameChooser.getText());
+				endFrame = Integer.valueOf(endFrameChooser.getText());
+				skipFrame = Integer.valueOf(printFrameChooser.getText());
+				
+				if (endFrame < numTimePoints && startFrame >= 0)
+					error = false;
+			}
 		}
+		
+		//disable all buttons and stuff
+		fileButton.setEnabled(false);
+		playPauseButton.setEnabled(false);
+		rewindButton.setEnabled(false);
+		singleStepButton.setEnabled(false);
+		clearButton.setEnabled(false);
+		slider.setEnabled(false);
+		
+		//un-zoom so that the frames print properly
+		schematic.getGraph().getView().setScale(1.0);
+		
+		JPanel button = new JPanel();
+		JPanel progressPanel = new JPanel(new BorderLayout());
+		final JLabel label = new JLabel("Creating movie . . .");
+		JPanel frameText = new JPanel();
+		JButton cancel = new JButton("Cancel");
+		final JFrame progressFrame = new JFrame("Progress");
+		
+		JProgressBar movieProgress = new JProgressBar(0, 100);
+		movieProgress.setStringPainted(true);
+		movieProgress.setValue(0);
+		frameText.add(label);
+		button.add(cancel);
+		progressPanel.add(frameText, "North");
+		progressPanel.add(movieProgress, "Center");
+		progressPanel.add(button, "South");
+		
+		progressFrame.getContentPane().add(progressPanel);
+		progressFrame.setLocationRelativeTo(null);
+		progressFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		progressFrame.pack();
+		progressFrame.setVisible(true);
+		
+		MovieProgress printMovieFrames = 
+			new MovieProgress(movieProgress, startFrame, endFrame, skipFrame, 
+					scaleChooser.isSelected(), movieFormat, progressFrame);
+		
+		final Thread printThread = new Thread(printMovieFrames);
+		
+		cancel.addActionListener(new ActionListener() {
+
+			@Override
+			@SuppressWarnings("deprecation")
+			public void actionPerformed(ActionEvent arg0) {
+				
+				label.setText("Canceling movie");					
+				progressFrame.dispose();
+				printThread.stop();
+				removeJPGs();
+				addPlayUI();
+			}
+		});
+		
+		printThread.start();
 	}
 	
 	/**
@@ -776,7 +773,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	    		analysisView.getRootPath() + separator + jpgNumString + ".jpg";
 		    File jpgFile = new File(jpgFilename);
 		    
-		    if (jpgFile != null && jpgFile.exists() && jpgFile.canWrite())
+		    if (jpgFile.exists() && jpgFile.canWrite())
 		    	jpgFile.delete();		    	
 	    }
 	    
@@ -976,7 +973,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 				//frame numbers need to start at 001
 				outputJPG(frameNumber, scale);				
 				
-				progressBar.setValue((int) (100 * (currentFrame - startFrame) / (endFrame - startFrame)));
+				progressBar.setValue((100 * (currentFrame - startFrame) / (endFrame - startFrame)));
 			}
 			
 			String separator = "";

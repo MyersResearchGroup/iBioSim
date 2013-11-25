@@ -260,8 +260,7 @@ public abstract class HierarchicalSimulator {
 	{
 		if(model.getCompartment("Grid") != null)
 			return true;
-		else
-			return false;
+		return false;
 	}
 
 	protected void printAllToTSD(double printTime) throws IOException 
@@ -428,7 +427,7 @@ public abstract class HierarchicalSimulator {
 			return 0;
 		}
 
-		submodels = new HashMap<String, ModelState>((int)sbmlCompModel.getListOfSubmodels().size());
+		submodels = new HashMap<String, ModelState>(sbmlCompModel.getListOfSubmodels().size());
 
 		/*
 		for (Submodel submodel : sbmlCompModel.getListOfSubmodels()) {
@@ -711,8 +710,7 @@ public abstract class HierarchicalSimulator {
 	{
 		if(id.equals("topmodel"))
 			return topmodel;
-		else
-			return submodels.get(id);
+		return submodels.get(id);
 	}
 
 	/**
@@ -1489,8 +1487,7 @@ public abstract class HierarchicalSimulator {
 
 		if (value == 0.0) 
 			return false;
-		else 
-			return true;
+		return true;
 	}
 
 	/**
@@ -1503,8 +1500,7 @@ public abstract class HierarchicalSimulator {
 
 		if (value == true)
 			return 1.0;
-		else 
-			return 0.0;
+		return 0.0;
 	}
 
 
@@ -1560,9 +1556,7 @@ public abstract class HierarchicalSimulator {
 
 			return inlinedFormula;
 		}
-		else {
-			return formula;
-		}
+		return formula;
 	}
 
 	/**
@@ -1763,8 +1757,7 @@ public abstract class HierarchicalSimulator {
 
 		if(checkModelTriggerEvent(topmodel, t, y, variableToIndexMap))
 			return true;
-		else
-			return false;
+		return false;
 	}
 
 	protected double evaluateStateExpressionRecursive(ModelState modelstate, ASTNode node, double t, double[] y, HashMap<String, Integer> variableToIndexMap) {
@@ -1881,30 +1874,22 @@ public abstract class HierarchicalSimulator {
 
 				return currentTime;
 			}
-			/*
-			//if it's a reaction id return the propensity
-			else if (modelstate.reactionToPropensityMap.keySet().contains(node.getName())) {
-				return modelstate.reactionToPropensityMap.get(node.getName());
-			}*/
-			else {
-
-				double value;
-				int i, j;
-				if (modelstate.speciesToHasOnlySubstanceUnitsMap.containsKey(name) &&
-						modelstate.speciesToHasOnlySubstanceUnitsMap.get(name) == false) {
-					//value = (modelstate.variableToValueMap.get(name) / modelstate.variableToValueMap.get(modelstate.speciesToCompartmentNameMap.get(name)));
-					//value = (modelstate.getVariableToValue(name) / modelstate.getVariableToValue(modelstate.speciesToCompartmentNameMap.get(name)));
-					i = variableToIndexMap.get(name);
-					j = variableToIndexMap.get(modelstate.speciesToCompartmentNameMap.get(name));
-					value =  y[i] / y[j];
-				}
-				else	
-				{	
-					i = variableToIndexMap.get(name);
-					value = y[i];
-				}
-				return value;
+			double value;
+			int i, j;
+			if (modelstate.speciesToHasOnlySubstanceUnitsMap.containsKey(name) &&
+					modelstate.speciesToHasOnlySubstanceUnitsMap.get(name) == false) {
+				//value = (modelstate.variableToValueMap.get(name) / modelstate.variableToValueMap.get(modelstate.speciesToCompartmentNameMap.get(name)));
+				//value = (modelstate.getVariableToValue(name) / modelstate.getVariableToValue(modelstate.speciesToCompartmentNameMap.get(name)));
+				i = variableToIndexMap.get(name);
+				j = variableToIndexMap.get(modelstate.speciesToCompartmentNameMap.get(name));
+				value =  y[i] / y[j];
 			}
+			else	
+			{	
+				i = variableToIndexMap.get(name);
+				value = y[i];
+			}
+			return value;
 		}
 
 		//operators/functions with two children
@@ -2366,8 +2351,7 @@ public abstract class HierarchicalSimulator {
 		modelstate.untriggeredEventSet.addAll(firedEvents);
 		if(selector.equals("variable"))
 			return variableInFiredEvents;
-		else
-			return affectedReactionSet;
+		return affectedReactionSet;
 	}
 
 
@@ -3031,7 +3015,7 @@ public abstract class HierarchicalSimulator {
 				{
 
 
-					SpeciesReference reactant = (SpeciesReference)reactantsList.get(i);
+					SpeciesReference reactant = reactantsList.get(i);
 
 
 
@@ -3062,7 +3046,7 @@ public abstract class HierarchicalSimulator {
 
 				size = productsList.size();
 				for (int i = 0; i < size; i ++) {
-					SpeciesReference product = (SpeciesReference)productsList.get(i); 
+					SpeciesReference product = productsList.get(i); 
 
 					String productID = product.getSpecies().replace("_negative_","-");
 					double productStoichiometry;
@@ -3567,15 +3551,10 @@ public abstract class HierarchicalSimulator {
 				if (state1.eventToPriorityMap.get(event1.eventID) == null) {
 					if (state2.eventToPriorityMap.get(event2.eventID) != null)
 						return -1;
-					else {
-
-						if ((Math.random() * 100) > 50) {
-							return -1;
-						}
-						else {
-							return 1;
-						}
+					if ((Math.random() * 100) > 50) {
+						return -1;
 					}
+					return 1;
 				}
 
 				if (evaluateExpressionRecursive(state1, state1.eventToPriorityMap.get(event1.eventID)) >  
@@ -3588,9 +3567,7 @@ public abstract class HierarchicalSimulator {
 					if ((Math.random() * 100) > 50) {
 						return -1;
 					}
-					else {
-						return 1;
-					}
+					return 1;
 				}
 			}
 		}
@@ -3714,7 +3691,7 @@ public abstract class HierarchicalSimulator {
 			this.numSpecies = this.model.getSpeciesCount();
 			this.numParameters = this.model.getParameterCount();
 			this.numReactions = this.model.getReactionCount();
-			this.numInitialAssignments = (int)this.model.getInitialAssignmentCount();
+			this.numInitialAssignments = this.model.getInitialAssignmentCount();
 			this.ID = submodelID;
 			this.numEvents = this.model.getEventCount();
 			this.numRules = this.model.getRuleCount();
@@ -3748,7 +3725,7 @@ public abstract class HierarchicalSimulator {
 			reactionToFormulaMap = new HashMap<String, ASTNode>((int) (numReactions * 1.5));
 
 
-			variableToAffectedConstraintSetMap = new HashMap<String, HashSet<ASTNode> >((int) model.getConstraintCount());		
+			variableToAffectedConstraintSetMap = new HashMap<String, HashSet<ASTNode> >(model.getConstraintCount());		
 			variableToIsInConstraintMap = new HashMap<String, Boolean>((int) (numSpecies + numParameters));
 
 			nonConstantStoichiometry = new HashSet<String>();

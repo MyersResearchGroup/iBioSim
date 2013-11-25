@@ -73,12 +73,10 @@ public class mdtNode {
 				totalStates++;
 				return dbm;
 			}
-			else {
-				DBM existingDbm = this.dbmSet.removeFirst();
-				DBM newDbm = dbm.merge(existingDbm);
-				this.dbmSet.addLast(newDbm);
-				return newDbm;
-			}
+			DBM existingDbm = this.dbmSet.removeFirst();
+			DBM newDbm = dbm.merge(existingDbm);
+			this.dbmSet.addLast(newDbm);
+			return newDbm;
 		}
 		
 		State curState = stateArray[level];
@@ -94,9 +92,7 @@ public class mdtNode {
 			this.nodeMap.put(curState, nextNode);
 			return newDbm;
 		}
-		else {
-			return nextNode.merge(stateArray, dbm, nextLevel);
-		}		
+		return nextNode.merge(stateArray, dbm, nextLevel);		
 	}
 	
 	public DBM getDbm(State[] stateArray, int level) {
@@ -119,13 +115,11 @@ public class mdtNode {
 			}
 			return false;
 		}
-		else {
-			mdtNode nextNode = this.nodeMap.get(stateArray[level]);
-			if (nextNode == null)
-				return false;
-			System.out.println("level = " + level + ": " + stateArray[level] + " ---> "  + nextNode);
-			return nextNode.contains(stateArray, dbm, level+1);
-		}			 
+		mdtNode nextNode = this.nodeMap.get(stateArray[level]);
+		if (nextNode == null)
+			return false;
+		System.out.println("level = " + level + ": " + stateArray[level] + " ---> "  + nextNode);
+		return nextNode.contains(stateArray, dbm, level+1);			 
 	}
 	
 	public int pathCount() {

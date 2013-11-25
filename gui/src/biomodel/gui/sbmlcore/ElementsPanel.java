@@ -13,7 +13,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.sbml.jsbml.Constraint;
-import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SBMLDocument;
@@ -50,8 +49,8 @@ public class ElementsPanel extends JPanel {
 		catch (Exception e) {
 		}
 		Model m = document.getModel();
-		int consNum = (int) m.getConstraintCount();
-		String[] cons = new String[(int) consNum];
+		int consNum = m.getConstraintCount();
+		String[] cons = new String[consNum];
 		for (int i = 0; i < consNum; i++) {
 			Constraint constraint = m.getConstraint(i);
 			if (!constraint.isSetMetaId()) {
@@ -66,10 +65,10 @@ public class ElementsPanel extends JPanel {
 			}
 			cons[i] = constraint.getMetaId();
 		}
-		int rulNum = (int) m.getRuleCount();
+		int rulNum = m.getRuleCount();
 		String[] rul = new String[rulNum];
 		for (int i = 0; i < rulNum; i++) {
-			Rule rule = (Rule) m.getRule(i);
+			Rule rule = m.getRule(i);
 			if (rule.isAlgebraic()) {
 				rul[i] = "0 = " + SBMLutilities.myFormulaToString(rule.getMath());
 			}
@@ -84,17 +83,17 @@ public class ElementsPanel extends JPanel {
 				elementChanges.add(rule.getMetaId());
 			}
 		}
-		int initsNum = (int) m.getInitialAssignmentCount();
+		int initsNum = m.getInitialAssignmentCount();
 		String[] inits = new String[initsNum];
 		for (int i = 0; i < initsNum; i++) {
-			inits[i] = ((InitialAssignment) m.getInitialAssignment(i)).getVariable() + " = "
-					+ SBMLutilities.myFormulaToString(((InitialAssignment) m.getInitialAssignment(i)).getMath());
+			inits[i] = m.getInitialAssignment(i).getVariable() + " = "
+					+ SBMLutilities.myFormulaToString(m.getInitialAssignment(i).getMath());
 		}
-		int evNum = (int) m.getEventCount();
+		int evNum = m.getEventCount();
 		String[] ev = new String[evNum];
 		for (int i = 0; i < evNum; i++) {
-			if (((org.sbml.jsbml.Event) m.getEvent(i)).isSetId()) {
-				ev[i] = ((org.sbml.jsbml.Event) m.getEvent(i)).getId();
+			if (m.getEvent(i).isSetId()) {
+				ev[i] = m.getEvent(i).getId();
 			}
 		}
 		if (initsNum > 0) {

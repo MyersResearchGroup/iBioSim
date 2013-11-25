@@ -108,9 +108,7 @@ public class StateGraph_timed extends StateGraph{
 		if(usegraph){
 			return new TimedState(initialStateNoTime, true);
 		}
-		else{
-			return new TimedState(initialStateNoTime, false);
-		}
+		return new TimedState(initialStateNoTime, false);
 	}
 	 
 	

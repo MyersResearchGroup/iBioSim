@@ -86,56 +86,54 @@ public class ArrayNode extends VarNode{
 		if(varNode != null){
 			 return varNode;
 		}
-		else{
-			int iter = dimensionList.size() - 1;
-			int dIndex = 0;
-			int arraySize = dimensionList.get(dIndex++);
-			int lastSize = 0;
-			List<Object> topLevelArray = new ArrayList<Object>(arraySize);
+		int iter = dimensionList.size() - 1;
+		int dIndex = 0;
+		int arraySize = dimensionList.get(dIndex++);
+		int lastSize = 0;
+		List<Object> topLevelArray = new ArrayList<Object>(arraySize);
+		
+		Queue<List<Object>> arrayQueue = new LinkedList<List<Object>>();
+		arrayQueue.offer(topLevelArray);
+				
+		while(iter > 0){
+			lastSize = arraySize;
+			arraySize = dimensionList.get(dIndex++);
+			int qSize = arrayQueue.size();
+			for(int i = 0; i < qSize; i++){
+				List<Object> array = arrayQueue.poll();
+				for(int j = 0 ; j < lastSize; j++){
+					List<Object> newArray = new ArrayList<Object>(arraySize);
+					array.add(j, newArray);
+					arrayQueue.offer(newArray);
+				}
+			}
 			
-			Queue<List<Object>> arrayQueue = new LinkedList<List<Object>>();
-			arrayQueue.offer(topLevelArray);
-					
-			while(iter > 0){
-				lastSize = arraySize;
-				arraySize = dimensionList.get(dIndex++);
-				int qSize = arrayQueue.size();
-				for(int i = 0; i < qSize; i++){
-					List<Object> array = arrayQueue.poll();
-					for(int j = 0 ; j < lastSize; j++){
-						List<Object> newArray = new ArrayList<Object>(arraySize);
-						array.add(j, newArray);
-						arrayQueue.offer(newArray);
-					}
+			iter--;
+		}
+		
+		dIndex--;
+		arraySize = dimensionList.get(dIndex);
+		
+		int nodeIndex = 0;
+		List<VarNode> varList = new ArrayList<VarNode>();
+		while(!arrayQueue.isEmpty()){
+			List<Object> array = arrayQueue.poll();
+			for(int i = 0; i < arraySize; i++){
+				VarNode node = this.variableList.get(nodeIndex++);
+				
+				VarNode newNode = variables.get(node.getName());
+				if(newNode == null){
+					newNode = node.clone();
 				}
 				
-				iter--;
+				array.add(i, newNode);
+				varList.add(newNode);
 			}
-			
-			dIndex--;
-			arraySize = dimensionList.get(dIndex);
-			
-			int nodeIndex = 0;
-			List<VarNode> varList = new ArrayList<VarNode>();
-			while(!arrayQueue.isEmpty()){
-				List<Object> array = arrayQueue.poll();
-				for(int i = 0; i < arraySize; i++){
-					VarNode node = this.variableList.get(nodeIndex++);
-					
-					VarNode newNode = variables.get(node.getName());
-					if(newNode == null){
-						newNode = node.clone();
-					}
-					
-					array.add(i, newNode);
-					varList.add(newNode);
-				}
-			}
-	
-			ArrayNode newArray = new ArrayNode(this.name, topLevelArray, this.dimensionList.size(), this.dimensionList, varList);
-			newArray.setType(this.type);
-			
-			return newArray;
 		}
+
+		ArrayNode newArray = new ArrayNode(this.name, topLevelArray, this.dimensionList.size(), this.dimensionList, varList);
+		newArray.setType(this.type);
+		
+		return newArray;
 	}
 }

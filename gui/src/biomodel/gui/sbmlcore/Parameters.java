@@ -131,11 +131,11 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		JScrollPane scroll3 = new JScrollPane();
 		scroll3.setViewportView(parameters);
 		ListOf<Parameter> listOfParameters = model.getListOfParameters();
-		String[] params = new String[(int) model.getParameterCount()];
+		String[] params = new String[model.getParameterCount()];
 		int notIncludedParametersCount = 0;
 		
 		for (int i = 0; i < model.getParameterCount(); i++) {
-			Parameter parameter = (Parameter) listOfParameters.get(i);
+			Parameter parameter = listOfParameters.get(i);
 			
 			params[i] = parameter.getId(); 
 
@@ -186,10 +186,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			
 			if (paramsCopy[i].contains("_locations")||paramsCopy[i].endsWith("__DELETE"))
 				continue;
-			else {				
-				params[j] = paramsCopy[i];
-				j++;
-			}
+			params[j] = paramsCopy[i];
+			j++;
 		}
 		
 		Utility.sort(params);
@@ -215,13 +213,13 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		
 		int skip = 0;
 		for (int i = 0; i < model.getParameterCount(); i++) {
-			Parameter parameter = (Parameter) listOfParameters.get(i);
+			Parameter parameter = listOfParameters.get(i);
 			if (constantsOnly && !parameter.getConstant()) skip++;
 		}
 		int k = 0;
-		String[] params = new String[(int) model.getParameterCount()-skip];
+		String[] params = new String[model.getParameterCount()-skip];
 		for (int i = 0; i < model.getParameterCount(); i++) {
-			Parameter parameter = (Parameter) listOfParameters.get(i);
+			Parameter parameter = listOfParameters.get(i);
 			if (constantsOnly && !parameter.getConstant()) continue;
 			params[k] = parameter.getId();
 			if (paramsOnly) {
@@ -298,9 +296,9 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		portDir.setSelectedItem(GlobalConstants.INTERNAL);
 		Model model = bioModel.getSBMLDocument().getModel();
 		ListOf<UnitDefinition> listOfUnits = model.getListOfUnitDefinitions();
-		String[] units = new String[(int) model.getUnitDefinitionCount()];
+		String[] units = new String[model.getUnitDefinitionCount()];
 		for (int i = 0; i < model.getUnitDefinitionCount(); i++) {
-			UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
+			UnitDefinition unit = listOfUnits.get(i);
 			units[i] = unit.getId();
 		}
 		for (int i = 0; i < units.length; i++) {
@@ -888,7 +886,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			Parameter tempParameter = bioModel.getSBMLDocument().getModel().getParameter(selected);
 			ListOf<Parameter> p = bioModel.getSBMLDocument().getModel().getListOfParameters();
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
-				if (((Parameter) p.get(i)).getId().equals(tempParameter.getId())) {
+				if (p.get(i).getId().equals(tempParameter.getId())) {
 					p.remove(i);
 				}
 			}

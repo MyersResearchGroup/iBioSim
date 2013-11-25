@@ -136,7 +136,7 @@ public class Transition {
 			retVal = true;
 		}
 		ExprTree expr = new ExprTree(lhpn);
-		if (newEnab != null && !newEnab.equals("")) {
+		if (!newEnab.equals("")) {
 			expr.token = expr.intexpr_gettok(newEnab);
 			retVal = expr.intexpr_L(newEnab);
 			if (retVal) {

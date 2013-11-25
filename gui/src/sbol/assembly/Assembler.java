@@ -64,45 +64,44 @@ public class Assembler {
 					"(No orderings matching regular expressions for complete or partial genetic constructs were found.)", 
 					"No Valid Sequence Type Order", JOptionPane.ERROR_MESSAGE);
 			return null;
-		} else { 
-			// Create composite component and its sequence
-			DnaComponent assembledComp = new DnaComponentImpl();
-			assembledComp.addType(SequenceOntology.type("SO_0000804"));
-			DnaSequence synthSeq = new DnaSequenceImpl();
-			synthSeq.setNucleotides("");
-			assembledComp.setDnaSequence(synthSeq);
-			
-			int position = 1;
-			LinkedList<String> subCompTypes = new LinkedList<String>();
-			for (AssemblyNode assemblyNode : orderedNodes) {
-				List<DnaComponent> subComps = assemblyNode.getDNAComponents();
-				if (assemblyNode.getStrand().equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND))
-					for (int i = subComps.size() - 1; i >= 0; i--) {
-						position = addSubComponent(position, subComps.get(i), assembledComp, assemblyNode.getStrand());
-						if (position == -1)
-							return null;
-						subCompTypes.addAll(0, loadAssemblyTypes(subComps.get(i)));
-					}
-				else
-					for (int i = 0; i < subComps.size(); i++) {
-						position = addSubComponent(position, subComps.get(i), assembledComp, assemblyNode.getStrand());
-						if (position == -1)
-							return null;
-						subCompTypes.addAll(loadAssemblyTypes(subComps.get(i)));
-					}
-			}
-			if (Preferences.userRoot().get(GlobalConstants.CONSTRUCT_VALIDATION_PREFERENCE, "").equals("True") &&
-					Preferences.userRoot().get(GlobalConstants.CONSTRUCT_VALIDATION_WARNING_PREFERENCE, "").equals("True") &&
-					!seqValidator.validateCompleteConstruct(subCompTypes, false)) {
-				Object[] options = { "OK", "Cancel" };
-				int choice = JOptionPane.showOptionDialog(null, "Assembled Composite DNA component has incomplete ordering of sequence types among its subcomponents.\n" +
-						"(Ordering does not match preferred regular expression for complete genetic construct.)", 
-						"Incomplete Sequence Type Order", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
-				if (choice != JOptionPane.OK_OPTION)
-					return null;
-			}
-			return assembledComp;
 		}
+		// Create composite component and its sequence
+		DnaComponent assembledComp = new DnaComponentImpl();
+		assembledComp.addType(SequenceOntology.type("SO_0000804"));
+		DnaSequence synthSeq = new DnaSequenceImpl();
+		synthSeq.setNucleotides("");
+		assembledComp.setDnaSequence(synthSeq);
+		
+		int position = 1;
+		LinkedList<String> subCompTypes = new LinkedList<String>();
+		for (AssemblyNode assemblyNode : orderedNodes) {
+			List<DnaComponent> subComps = assemblyNode.getDNAComponents();
+			if (assemblyNode.getStrand().equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND))
+				for (int i = subComps.size() - 1; i >= 0; i--) {
+					position = addSubComponent(position, subComps.get(i), assembledComp, assemblyNode.getStrand());
+					if (position == -1)
+						return null;
+					subCompTypes.addAll(0, loadAssemblyTypes(subComps.get(i)));
+				}
+			else
+				for (int i = 0; i < subComps.size(); i++) {
+					position = addSubComponent(position, subComps.get(i), assembledComp, assemblyNode.getStrand());
+					if (position == -1)
+						return null;
+					subCompTypes.addAll(loadAssemblyTypes(subComps.get(i)));
+				}
+		}
+		if (Preferences.userRoot().get(GlobalConstants.CONSTRUCT_VALIDATION_PREFERENCE, "").equals("True") &&
+				Preferences.userRoot().get(GlobalConstants.CONSTRUCT_VALIDATION_WARNING_PREFERENCE, "").equals("True") &&
+				!seqValidator.validateCompleteConstruct(subCompTypes, false)) {
+			Object[] options = { "OK", "Cancel" };
+			int choice = JOptionPane.showOptionDialog(null, "Assembled Composite DNA component has incomplete ordering of sequence types among its subcomponents.\n" +
+					"(Ordering does not match preferred regular expression for complete genetic construct.)", 
+					"Incomplete Sequence Type Order", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+			if (choice != JOptionPane.OK_OPTION)
+				return null;
+		}
+		return assembledComp;
 	}
 	
 	private List<AssemblyNode> compareOrderedNodes(List<AssemblyNode> orderedNodes, List<AssemblyNode> flatOrderedNodes) {
@@ -372,8 +371,8 @@ public class Assembler {
 					return cycleSolution;
 			}
 			return null;
-		} else
-			return orderedNodes;
+		}
+		return orderedNodes;
 	}
 	
 	private List<String> loadAssemblyTypes(DnaComponent dnaComp, String strand) {

@@ -132,12 +132,10 @@ public class Node {
 			}
 			return lIntList;
 		}
-		else {
-			LinkedList<Integer> result = new LinkedList<Integer>();
-			result.addLast(lLit);
-			result.addLast(rLit);
-			return result;
-		}
+		LinkedList<Integer> result = new LinkedList<Integer>();
+		result.addLast(lLit);
+		result.addLast(rLit);
+		return result;
 	}
 
 

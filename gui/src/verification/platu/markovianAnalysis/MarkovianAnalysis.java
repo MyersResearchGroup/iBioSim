@@ -82,7 +82,7 @@ public class MarkovianAnalysis implements Runnable{
 			((ProbGlobalState) initial).setCurrentProb(1.0);
 		}
 		resetColorsForMarkovianAnalysis();
-		int period = findPeriod((ProbGlobalState) initial);
+		int period = findPeriod(initial);
 		System.out.println("period = " + period);
 		if (period == 0) {
 			period = 1;
@@ -235,7 +235,7 @@ public class MarkovianAnalysis implements Runnable{
 		for (PrjState nextSt : curSt.getNextGlobalStateMap().values()) {
 			if (((ProbGlobalState) nextSt).getColor() == -1) {
 				((ProbGlobalState) nextSt).setColor(color);
-				unVisitedStates.add((ProbGlobalState) nextSt);
+				unVisitedStates.add(nextSt);
 			}
 			else {
 				if (period == 0) {
@@ -250,13 +250,13 @@ public class MarkovianAnalysis implements Runnable{
 			}
 		}
 		while (!unVisitedStates.isEmpty() && !stop) {
-			curSt = (ProbGlobalState) unVisitedStates.poll();
+			curSt = unVisitedStates.poll();
 			color = ((ProbGlobalState) curSt).getColor() + 1;
 			//for (PrjState nextSt : ((ProbGlobalState)curSt).getNextProbGlobalStateSet(globalStateSet)) {
 			for (PrjState nextSt : curSt.getNextGlobalStateMap().values()) {
 				if (((ProbGlobalState) nextSt).getColor() == -1) {
 					((ProbGlobalState) nextSt).setColor(color);
-					unVisitedStates.add((ProbGlobalState) nextSt);
+					unVisitedStates.add(nextSt);
 				}
 				else {
 					if (period == 0) {
@@ -340,9 +340,7 @@ public class MarkovianAnalysis implements Runnable{
 					+ removeNesting(error, timeStep, cond, progress);
 			return newProp;
 		}
-		else {
-			return prop;
-		}
+		return prop;
 	}
 
 	private String determineNestedProbability(double error, double timeStep, String property) {
@@ -843,57 +841,51 @@ public class MarkovianAnalysis implements Runnable{
 				// -----------------------------
 				return true;
 			}
-			else {
-				return false;
-			}
+			return false;
 		}
-		else { // condition == null
-			progress.setMaximum((int) timeLimit);
-			ProbGlobalState initial = (ProbGlobalState) globalStateSet.getInitialState();			
-			if (initial != null) {
-				initial.setCurrentProb(1.0);
-				initial.setPiProb(1.0);
-				boolean stop = false;
-				// Compute Gamma
-				double Gamma = 0;
-				for (PrjState m : globalStateSet.keySet())
-					Gamma = Math.max(((ProbGlobalState) m).getTranRateSum(), Gamma);				
-				// Compute K
-				int K = 0;
-				double xi = 1;
-				double delta = 1;
-				double eta = (1 - error) / (Math.pow(Math.E, ((0 - Gamma) * timeStep)));
-				while (delta < eta) {
-					K = K + 1;
-					xi = xi * ((Gamma * timeStep) / K);
-					delta = delta + xi;
-				}
-				for (double i = 0; i < timeLimit; i += timeStep) {
-					double step = Math.min(timeStep, timeLimit - i);
-					if (step == timeLimit - i) {
-						// Compute K
-						K = 0;
-						xi = 1;
-						delta = 1;
-						eta = (1 - error) / (Math.pow(Math.E, ((0 - Gamma) * step)));
-						while (delta < eta) {
-							K = K + 1;
-							xi = xi * ((Gamma * step) / K);
-							delta = delta + xi;
-						}
-					}
-					stop = !performTransientMarkovianAnalysis(step, Gamma, K, progress);
-					progress.setValue((int) i);
-					if (stop) {
-						return false;
+		progress.setMaximum((int) timeLimit);
+		ProbGlobalState initial = (ProbGlobalState) globalStateSet.getInitialState();			
+		if (initial != null) {
+			initial.setCurrentProb(1.0);
+			initial.setPiProb(1.0);
+			boolean stop = false;
+			// Compute Gamma
+			double Gamma = 0;
+			for (PrjState m : globalStateSet.keySet())
+				Gamma = Math.max(((ProbGlobalState) m).getTranRateSum(), Gamma);				
+			// Compute K
+			int K = 0;
+			double xi = 1;
+			double delta = 1;
+			double eta = (1 - error) / (Math.pow(Math.E, ((0 - Gamma) * timeStep)));
+			while (delta < eta) {
+				K = K + 1;
+				xi = xi * ((Gamma * timeStep) / K);
+				delta = delta + xi;
+			}
+			for (double i = 0; i < timeLimit; i += timeStep) {
+				double step = Math.min(timeStep, timeLimit - i);
+				if (step == timeLimit - i) {
+					// Compute K
+					K = 0;
+					xi = 1;
+					delta = 1;
+					eta = (1 - error) / (Math.pow(Math.E, ((0 - Gamma) * step)));
+					while (delta < eta) {
+						K = K + 1;
+						xi = xi * ((Gamma * step) / K);
+						delta = delta + xi;
 					}
 				}
-				return !stop;
+				stop = !performTransientMarkovianAnalysis(step, Gamma, K, progress);
+				progress.setValue((int) i);
+				if (stop) {
+					return false;
+				}
 			}
-			else {
-				return false;
-			}
+			return !stop;
 		}
+		return false;
 	}
 	
 	private synchronized boolean performTransientMarkovianAnalysis(double timeLimit, double Gamma, int K,
@@ -914,10 +906,10 @@ public class MarkovianAnalysis implements Runnable{
 		for (int i = 0; i < globalStArray.length; i++) {
 			ProbGlobalState m = (ProbGlobalState) globalStArray[i];
 			if (m.isAbsorbing()) {
-				m.setNextProb(((ProbGlobalState) m).getCurrentProb());
+				m.setNextProb(m.getCurrentProb());
 			}
 			else {
-				m.setNextProb(((ProbGlobalState) m).getCurrentProb() * (1 - (m.getTranRateSum() / Gamma)));
+				m.setNextProb(m.getCurrentProb() * (1 - (m.getTranRateSum() / Gamma)));
 			}
 		}
 		ArrayList<TransientMarkovMatrixMultiplyThread> threads = new ArrayList<TransientMarkovMatrixMultiplyThread>();
@@ -1070,7 +1062,7 @@ public class MarkovianAnalysis implements Runnable{
 				m.setPiProb(m.getPiProb() + m.getNextProb());
 				m.setCurrentProbToNext();
 				if (m.isAbsorbing()) {
-					m.setNextProb(((ProbGlobalState) m).getCurrentProb());
+					m.setNextProb(m.getCurrentProb());
 				}
 				else {
 					m.setNextProb(m.getCurrentProb() * (1 - (m.getTranRateSum() / Gamma)));					

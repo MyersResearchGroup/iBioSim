@@ -190,19 +190,16 @@ public class Synthesizer {
 	private boolean ioCompatible(String outputSignal, String inputSignal) {
 		if (outputSignal.length() == 0 || inputSignal.length() == 0)
 			return true;
-		else
-			return inputSignal.equals(outputSignal);
+		return inputSignal.equals(outputSignal);
 	}
 
 	private boolean solutionInBound(int solutionCost, List<SynthesisNode> currentNodes, int bestSolutionCost) {
 		if (bestSolutionCost < 0)
 			return true;
-		else {
-			int bestCaseCost = solutionCost;
-			for (SynthesisNode currentNode : currentNodes)
-				bestCaseCost = bestCaseCost + currentNode.getCoverBound();
-			return (bestCaseCost < bestSolutionCost);
-		}
+		int bestCaseCost = solutionCost;
+		for (SynthesisNode currentNode : currentNodes)
+			bestCaseCost = bestCaseCost + currentNode.getCoverBound();
+		return (bestCaseCost < bestSolutionCost);
 	}
 	
 	private void constrainNodes(List<SynthesisNode> nodes, List<SynthesisNode> nodeCovers) {

@@ -808,74 +808,72 @@ public class Run implements ActionListener {
 						logFile.close();
 						return exitValue;
 					}
-					else {
-						ArrayList<String> specs = new ArrayList<String>();
-						ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
-						for (int i = 0; i < intSpecies.length; i++) {
-							if (!intSpecies[i].equals("")) {
-								String[] split = intSpecies[i].split(" ");
-								if (split.length > 1) {
-									String[] levels = split[1].split(",");
-									if (levels.length > 0) {
-										specs.add(split[0]);
-										conLevel.add(levels);
-									}
+					ArrayList<String> specs = new ArrayList<String>();
+					ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
+					for (int i = 0; i < intSpecies.length; i++) {
+						if (!intSpecies[i].equals("")) {
+							String[] split = intSpecies[i].split(" ");
+							if (split.length > 1) {
+								String[] levels = split[1].split(",");
+								if (levels.length > 0) {
+									specs.add(split[0]);
+									conLevel.add(levels);
 								}
 							}
 						}
-						progress.setIndeterminate(true);
-						//BioModel paramGCM = gcmEditor.getBioModel();
-						BioModel gcm = new BioModel(root);
-						gcm.load(root + separator + gcmEditor.getRefFile());
-						//gcm.getSBMLDocument().setModel(paramGCM.getSBMLDocument().getModel().cloneObject());
-						if (gcm.flattenModel() != null) {
-							time1 = System.nanoTime();
-							String prop = null;
-							if (!lpnProperty.equals("")) {
-								prop = lpnProperty;
+					}
+					progress.setIndeterminate(true);
+					//BioModel paramGCM = gcmEditor.getBioModel();
+					BioModel gcm = new BioModel(root);
+					gcm.load(root + separator + gcmEditor.getRefFile());
+					//gcm.getSBMLDocument().setModel(paramGCM.getSBMLDocument().getModel().cloneObject());
+					if (gcm.flattenModel() != null) {
+						time1 = System.nanoTime();
+						String prop = null;
+						if (!lpnProperty.equals("")) {
+							prop = lpnProperty;
+						}
+						ArrayList<String> propList = new ArrayList<String>();
+						if (prop == null) {
+							Model m = gcm.getSBMLDocument().getModel();
+							for (int num = 0; num < m.getConstraintCount(); num++) {
+								String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
+								if (constraint.startsWith("G(") || constraint.startsWith("F(") || constraint.startsWith("U(")) {
+									propList.add(constraint);
+								}
 							}
-							ArrayList<String> propList = new ArrayList<String>();
-							if (prop == null) {
+						}
+						if (propList.size() > 0) {
+							String s = (String) JOptionPane.showInputDialog(component, "Select a property:",
+									"Property Selection", JOptionPane.PLAIN_MESSAGE, null, propList.toArray(), null);
+							if ((s != null) && (s.length() > 0)) {
 								Model m = gcm.getSBMLDocument().getModel();
 								for (int num = 0; num < m.getConstraintCount(); num++) {
 									String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
-									if (constraint.startsWith("G(") || constraint.startsWith("F(") || constraint.startsWith("U(")) {
-										propList.add(constraint);
+									if (s.equals(constraint)) {
+										prop = Translator.convertProperty(m.getConstraint(num).getMath());
 									}
 								}
 							}
-							if (propList.size() > 0) {
-								String s = (String) JOptionPane.showInputDialog(component, "Select a property:",
-										"Property Selection", JOptionPane.PLAIN_MESSAGE, null, propList.toArray(), null);
-								if ((s != null) && (s.length() > 0)) {
-									Model m = gcm.getSBMLDocument().getModel();
-									for (int num = 0; num < m.getConstraintCount(); num++) {
-										String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
-										if (s.equals(constraint)) {
-											prop = Translator.convertProperty(m.getConstraint(num).getMath());
-										}
-									}
-								}
-							}
-							MutableString mutProp = new MutableString(prop);
-							LhpnFile lhpnFile = gcm.convertToLHPN(specs, conLevel, mutProp);
-							prop = mutProp.getString();
-							if (lhpnFile == null) {
-								new File(directory + separator + "running").delete();
-								logFile.close();
-								return 0;
-							}
-							lhpnFile.save(root + separator + lhpnName);
-							log.addText("Saving GCM file as LHPN:\n" + root + separator + lhpnName + "\n");
-							logFile.write("Saving GCM file as LHPN:\n" + root + separator + lhpnName + "\n\n");
 						}
-						else {
+						MutableString mutProp = new MutableString(prop);
+						LhpnFile lhpnFile = gcm.convertToLHPN(specs, conLevel, mutProp);
+						prop = mutProp.getString();
+						if (lhpnFile == null) {
 							new File(directory + separator + "running").delete();
 							logFile.close();
 							return 0;
 						}
-						exitValue = 0;
+						lhpnFile.save(root + separator + lhpnName);
+						log.addText("Saving GCM file as LHPN:\n" + root + separator + lhpnName + "\n");
+						logFile.write("Saving GCM file as LHPN:\n" + root + separator + lhpnName + "\n\n");
 					}
+					else {
+						new File(directory + separator + "running").delete();
+						logFile.close();
+						return 0;
+					}
+					exitValue = 0;
 				}
 				else {
 					time1 = System.nanoTime();
@@ -1008,133 +1006,131 @@ public class Run implements ActionListener {
 							return 0;
 						}
 					}
-					if (lhpnFile != null) {
-						sg = new StateGraph(lhpnFile);
-						BuildStateGraphThread buildStateGraph = new BuildStateGraphThread(sg, progress);
-						buildStateGraph.start();
-						buildStateGraph.join();
-						log.addText("Number of states found: " + sg.getNumberOfStates());
-						logFile.write("Number of states found: " + sg.getNumberOfStates() + "\n");
-						log.addText("Number of transitions found: " + sg.getNumberOfTransitions());
-						logFile.write("Number of transitions found: " + sg.getNumberOfTransitions() + "\n");
-						log.addText("Memory used during state exploration: " + sg.getMemoryUsed() + "MB");
-						logFile.write("Memory used during state exploration: " + sg.getMemoryUsed() + "MB\n");
-						log.addText("Total memory used: " + sg.getTotalMemoryUsed() + "MB\n");
-						logFile.write("Total memory used: " + sg.getTotalMemoryUsed() + "MB\n\n");
-						if (sim.equals("reachability-analysis") && !sg.getStop()) {
-							time2 = System.nanoTime();
-							Object[] options = { "Yes", "No" };
-							int value = JOptionPane.showOptionDialog(Gui.frame, "The state graph contains " + sg.getNumberOfStates()
-									+ " states and " + sg.getNumberOfTransitions() + " transitions.\n" + "Do you want to view it in Graphviz?", "View State Graph",
-									JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-							if (value == JOptionPane.YES_OPTION) {
-								String graphFile = filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot";
-								sg.outputStateGraph(graphFile, true);
-								try {
-									Runtime execGraph = Runtime.getRuntime();
-									if (System.getProperty("os.name").contentEquals("Linux")) {
-										log.addText("Executing:\ndotty " + graphFile + "\n");
-										logFile.write("Executing:\ndotty " + graphFile + "\n\n");
-										execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
-												+ "_sg.dot", null, new File(directory));
-									}
-									else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-										log.addText("Executing:\nopen " + graphFile + "\n");
-										logFile.write("Executing:\nopen " + graphFile + "\n\n");
-										execGraph.exec("open " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
-												+ "_sg.dot", null, new File(directory));
-									}
-									else {
-										log.addText("Executing:\ndotty " + graphFile + "\n");
-										logFile.write("Executing:\ndotty " + graphFile + "\n\n");
-										execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
-												+ "_sg.dot", null, new File(directory));
-									}
+					sg = new StateGraph(lhpnFile);
+					BuildStateGraphThread buildStateGraph = new BuildStateGraphThread(sg, progress);
+					buildStateGraph.start();
+					buildStateGraph.join();
+					log.addText("Number of states found: " + sg.getNumberOfStates());
+					logFile.write("Number of states found: " + sg.getNumberOfStates() + "\n");
+					log.addText("Number of transitions found: " + sg.getNumberOfTransitions());
+					logFile.write("Number of transitions found: " + sg.getNumberOfTransitions() + "\n");
+					log.addText("Memory used during state exploration: " + sg.getMemoryUsed() + "MB");
+					logFile.write("Memory used during state exploration: " + sg.getMemoryUsed() + "MB\n");
+					log.addText("Total memory used: " + sg.getTotalMemoryUsed() + "MB\n");
+					logFile.write("Total memory used: " + sg.getTotalMemoryUsed() + "MB\n\n");
+					if (sim.equals("reachability-analysis") && !sg.getStop()) {
+						time2 = System.nanoTime();
+						Object[] options = { "Yes", "No" };
+						int value = JOptionPane.showOptionDialog(Gui.frame, "The state graph contains " + sg.getNumberOfStates()
+								+ " states and " + sg.getNumberOfTransitions() + " transitions.\n" + "Do you want to view it in Graphviz?", "View State Graph",
+								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+						if (value == JOptionPane.YES_OPTION) {
+							String graphFile = filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot";
+							sg.outputStateGraph(graphFile, true);
+							try {
+								Runtime execGraph = Runtime.getRuntime();
+								if (System.getProperty("os.name").contentEquals("Linux")) {
+									log.addText("Executing:\ndotty " + graphFile + "\n");
+									logFile.write("Executing:\ndotty " + graphFile + "\n\n");
+									execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
+											+ "_sg.dot", null, new File(directory));
 								}
-								catch (Exception e1) {
-									JOptionPane.showMessageDialog(Gui.frame, "Error viewing state graph.", "Error",
-											JOptionPane.ERROR_MESSAGE);
-								}
-								// biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
-							}
-						}
-						else if (sim.equals("steady-state-markov-chain-analysis")) {
-							if (!sg.getStop()) {
-								log.addText("Performing steady state Markov chain analysis.\n");
-								logFile.write("Performing steady state Markov chain analysis.\n\n");
-								PerfromSteadyStateMarkovAnalysisThread performMarkovAnalysis = new PerfromSteadyStateMarkovAnalysisThread(
-										sg, progress);
-								if (modelFile.contains(".lpn")) {
-									performMarkovAnalysis.start(absError, null);
+								else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+									log.addText("Executing:\nopen " + graphFile + "\n");
+									logFile.write("Executing:\nopen " + graphFile + "\n\n");
+									execGraph.exec("open " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
+											+ "_sg.dot", null, new File(directory));
 								}
 								else {
-									BioModel gcm = new BioModel(root);
-									gcm.load(root + separator + gcmEditor.getRefFile());
-									ArrayList<Property> propList = new ArrayList<Property>();
-									if (prop == null) {
-										Model m = gcm.getSBMLDocument().getModel();
-										for (int num = 0; num < m.getConstraintCount(); num++) {
-											String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
-											if (constraint.startsWith("St(")) {
-												propList.add(sg.createProperty(constraint.trim().replace(" ", ""), Translator.convertProperty(m.getConstraint(num).getMath())));
-											}
+									log.addText("Executing:\ndotty " + graphFile + "\n");
+									logFile.write("Executing:\ndotty " + graphFile + "\n\n");
+									execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
+											+ "_sg.dot", null, new File(directory));
+								}
+							}
+							catch (Exception e1) {
+								JOptionPane.showMessageDialog(Gui.frame, "Error viewing state graph.", "Error",
+										JOptionPane.ERROR_MESSAGE);
+							}
+							// biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
+						}
+					}
+					else if (sim.equals("steady-state-markov-chain-analysis")) {
+						if (!sg.getStop()) {
+							log.addText("Performing steady state Markov chain analysis.\n");
+							logFile.write("Performing steady state Markov chain analysis.\n\n");
+							PerfromSteadyStateMarkovAnalysisThread performMarkovAnalysis = new PerfromSteadyStateMarkovAnalysisThread(
+									sg, progress);
+							if (modelFile.contains(".lpn")) {
+								performMarkovAnalysis.start(absError, null);
+							}
+							else {
+								BioModel gcm = new BioModel(root);
+								gcm.load(root + separator + gcmEditor.getRefFile());
+								ArrayList<Property> propList = new ArrayList<Property>();
+								if (prop == null) {
+									Model m = gcm.getSBMLDocument().getModel();
+									for (int num = 0; num < m.getConstraintCount(); num++) {
+										String constraint = SBMLutilities.myFormulaToString(m.getConstraint(num).getMath());
+										if (constraint.startsWith("St(")) {
+											propList.add(sg.createProperty(constraint.trim().replace(" ", ""), Translator.convertProperty(m.getConstraint(num).getMath())));
 										}
 									}
-									// TODO: THIS NEEDS FIXING
-									/*
+								}
+								// TODO: THIS NEEDS FIXING
+								/*
 									for (int i = 0; i < gcmEditor.getGCM().getConditions().size(); i++) {
 										if (gcmEditor.getGCM().getConditions().get(i).startsWith("St")) {
 											conditions.add(Translator.getProbpropExpression(gcmEditor.getGCM().getConditions().get(i)));
 										}
 									}
-									*/
-									performMarkovAnalysis.start(absError, propList);
+								 */
+								performMarkovAnalysis.start(absError, propList);
+							}
+							performMarkovAnalysis.join();
+							time2 = System.nanoTime();
+							if (!sg.getStop()) {
+								String simrep = sg.getMarkovResults();
+								if (simrep != null) {
+									FileOutputStream simrepstream = new FileOutputStream(
+											new File(directory + separator + "sim-rep.txt"));
+									simrepstream.write((simrep).getBytes());
+									simrepstream.close();
 								}
-								performMarkovAnalysis.join();
-								time2 = System.nanoTime();
-								if (!sg.getStop()) {
-									String simrep = sg.getMarkovResults();
-									if (simrep != null) {
-										FileOutputStream simrepstream = new FileOutputStream(
-												new File(directory + separator + "sim-rep.txt"));
-										simrepstream.write((simrep).getBytes());
-										simrepstream.close();
-									}
-									Object[] options = { "Yes", "No" };
-									int value = JOptionPane.showOptionDialog(Gui.frame, "The state graph contains " + sg.getNumberOfStates()
-											+ " states and " + sg.getNumberOfTransitions() + " transitions.\n" + "Do you want to view it in Graphviz?", "View State Graph",
-											JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-									if (value == JOptionPane.YES_OPTION) {
-										String graphFile = filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
-												+ "_sg.dot";
-										sg.outputStateGraph(graphFile, true);
-										try {
-											Runtime execGraph = Runtime.getRuntime();
-											if (System.getProperty("os.name").contentEquals("Linux")) {
-												log.addText("Executing:\ndotty " + graphFile + "\n");
-												logFile.write("Executing:\ndotty " + graphFile + "\n\n");
-												execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
-														+ "_sg.dot", null, new File(directory));
-											}
-											else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-												log.addText("Executing:\nopen " + graphFile + "\n");
-												logFile.write("Executing:\nopen " + graphFile + "\n\n");
-												execGraph.exec("open " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
-														+ "_sg.dot", null, new File(directory));
-											}
-											else {
-												log.addText("Executing:\ndotty " + graphFile + "\n");
-												logFile.write("Executing:\ndotty " + graphFile + "\n\n");
-												execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
-														+ "_sg.dot", null, new File(directory));
-											}
+								Object[] options = { "Yes", "No" };
+								int value = JOptionPane.showOptionDialog(Gui.frame, "The state graph contains " + sg.getNumberOfStates()
+										+ " states and " + sg.getNumberOfTransitions() + " transitions.\n" + "Do you want to view it in Graphviz?", "View State Graph",
+										JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+								if (value == JOptionPane.YES_OPTION) {
+									String graphFile = filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
+											+ "_sg.dot";
+									sg.outputStateGraph(graphFile, true);
+									try {
+										Runtime execGraph = Runtime.getRuntime();
+										if (System.getProperty("os.name").contentEquals("Linux")) {
+											log.addText("Executing:\ndotty " + graphFile + "\n");
+											logFile.write("Executing:\ndotty " + graphFile + "\n\n");
+											execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
+													+ "_sg.dot", null, new File(directory));
 										}
-										catch (Exception e1) {
-											JOptionPane.showMessageDialog(Gui.frame, "Error viewing state graph.", "Error",
-													JOptionPane.ERROR_MESSAGE);
+										else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+											log.addText("Executing:\nopen " + graphFile + "\n");
+											logFile.write("Executing:\nopen " + graphFile + "\n\n");
+											execGraph.exec("open " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
+													+ "_sg.dot", null, new File(directory));
 										}
-										// biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
+										else {
+											log.addText("Executing:\ndotty " + graphFile + "\n");
+											logFile.write("Executing:\ndotty " + graphFile + "\n\n");
+											execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
+													+ "_sg.dot", null, new File(directory));
+										}
 									}
+									catch (Exception e1) {
+										JOptionPane.showMessageDialog(Gui.frame, "Error viewing state graph.", "Error",
+												JOptionPane.ERROR_MESSAGE);
+									}
+									// biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
 								}
 							}
 						}

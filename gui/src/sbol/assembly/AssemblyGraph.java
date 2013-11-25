@@ -128,8 +128,8 @@ public class AssemblyGraph {
 				assemblyNode.setID(sbmlSubmodel.getId());
 			}
 			return canFlatten;
-		} else
-			return false;
+		}
+		return false;
 	}
 
 	// Creates assembly nodes for species and maps their metaIDs to the nodes
@@ -410,15 +410,13 @@ public class AssemblyGraph {
 	public Set<AssemblyNode> getNextNodes(AssemblyNode assemblyNode) {
 		if (assemblyEdges.containsKey(assemblyNode))
 			return assemblyEdges.get(assemblyNode);
-		else
-			return new HashSet<AssemblyNode>();
+		return new HashSet<AssemblyNode>();
 	}
 	
 	public Set<AssemblyNode> getPreviousNodes(AssemblyNode assemblyNode) {
 		if (reverseAssemblyEdges.containsKey(assemblyNode))
 			return reverseAssemblyEdges.get(assemblyNode);
-		else
-			return new HashSet<AssemblyNode>();
+		return new HashSet<AssemblyNode>();
 	}
 	
 	public AssemblyGraph getFlatGraph() {

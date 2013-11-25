@@ -511,69 +511,64 @@ public class TermCond {
 					doaction = true; // get ready to execute
 					break; // drop down to actions
 				}
-				else // ERROR RECOVERY
+				if (yyerrflag == 0) {
+					yyerror("syntax error");
+					yynerrs++;
+				}
+				if (yyerrflag < 3) // low error count?
 				{
-					if (yyerrflag == 0) {
-						yyerror("syntax error");
-						yynerrs++;
-					}
-					if (yyerrflag < 3) // low error count?
+					yyerrflag = 3;
+					while (true) // do until break
 					{
-						yyerrflag = 3;
-						while (true) // do until break
+						if (stateptr < 0) // check for under & overflow here
 						{
-							if (stateptr < 0) // check for under & overflow here
-							{
-								yyerror("stack underflow. aborting..."); // note
-																			// lower
-																			// case
-																			// 's'
-								return 1;
-							}
-							yyn = yysindex[state_peek(0)];
-							if ((yyn != 0) && (yyn += YYERRCODE) >= 0 && yyn <= YYTABLESIZE
-									&& yycheck[yyn] == YYERRCODE) {
-								// if (yydebug)
-								// debug("state "+state_peek(0)+", error
-								// recovery shifting to
-								// state "+yytable[yyn]+" ");
-								yystate = yytable[yyn];
-								state_push(yystate);
-								val_push(yylval);
-								doaction = false;
-								break;
-							}
-							else {
-								// if (yydebug)
-								// debug("error recovery discarding state "+state_peek(0)+" ");
-								if (stateptr < 0) // check for under & overflow
-													// here
-								{
-									yyerror("Stack underflow. aborting..."); // capital
-																				// 'S'
-									return 1;
-								}
-								state_pop();
-								val_pop();
-							}
+							yyerror("stack underflow. aborting..."); // note
+																		// lower
+																		// case
+																		// 's'
+							return 1;
 						}
-					}
-					else // discard this token
-					{
-						if (yychar == 0)
-							return 1; // yyabort
+						yyn = yysindex[state_peek(0)];
+						if ((yyn != 0) && (yyn += YYERRCODE) >= 0 && yyn <= YYTABLESIZE
+								&& yycheck[yyn] == YYERRCODE) {
+							// if (yydebug)
+							// debug("state "+state_peek(0)+", error
+							// recovery shifting to
+							// state "+yytable[yyn]+" ");
+							yystate = yytable[yyn];
+							state_push(yystate);
+							val_push(yylval);
+							doaction = false;
+							break;
+						}
 						// if (yydebug)
-						// {
-						// yys = null;
-						// if (yychar <= YYMAXTOKEN) yys = yyname[yychar];
-						// if (yys == null) yys = "illegal-symbol";
-						// debug("state "+yystate+", error recovery discards
-						// token
-						// "+yychar+" ("+yys+")");
-						// }
-						yychar = -1; // read another
+						// debug("error recovery discarding state "+state_peek(0)+" ");
+						if (stateptr < 0) // check for under & overflow
+											// here
+						{
+							yyerror("Stack underflow. aborting..."); // capital
+																		// 'S'
+							return 1;
+						}
+						state_pop();
+						val_pop();
 					}
-				}// end error recovery
+				}
+				else // discard this token
+				{
+					if (yychar == 0)
+						return 1; // yyabort
+					// if (yydebug)
+					// {
+					// yys = null;
+					// if (yychar <= YYMAXTOKEN) yys = yyname[yychar];
+					// if (yys == null) yys = "illegal-symbol";
+					// debug("state "+yystate+", error recovery discards
+					// token
+					// "+yychar+" ("+yys+")");
+					// }
+					yychar = -1; // read another
+				}
 			}// yyn=0 loop
 			if (!doaction) // any reason not to proceed?
 				continue; // skip action

@@ -193,7 +193,7 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 
 			// Check to see if we need to add or edit
 
-			if (selected != null && !oldName.equals(id) && oldName != null) {
+			if (selected != null && oldName != null && !oldName.equals(id)) {
 				lhpn.removeMovement(oldFlow[0], oldFlow[1]);
 			}
 			lhpn.addMovement(fromBox.getSelectedItem().toString(), toBox.getSelectedItem()

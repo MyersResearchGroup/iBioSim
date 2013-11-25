@@ -96,13 +96,11 @@ public class SBOLIdentityManager {
 	public boolean containsModelURIs() {
 		if (modelURIs.size() > 0 && !(modelURIs.size() == 1 && containsPlaceHolderURI()))
 			return true;
-		else {
-			JOptionPane.showMessageDialog(Gui.frame, "There is no SBOL associated with the model itself " +
-					"(to associate SBOL with the model itself, you must associate SBOL with its elements and save " +
-					"or associate SBOL directly via the model panel).",
-					"No Model SBOL", JOptionPane.ERROR_MESSAGE);
-			return false;
-		}
+		JOptionPane.showMessageDialog(Gui.frame, "There is no SBOL associated with the model itself " +
+				"(to associate SBOL with the model itself, you must associate SBOL with its elements and save " +
+				"or associate SBOL directly via the model panel).",
+				"No Model SBOL", JOptionPane.ERROR_MESSAGE);
+		return false;
 	}
 	
 	public void removeBioSimURI() {
@@ -131,8 +129,8 @@ public class SBOLIdentityManager {
 							"  Would you like to overwrite?", "Warning", JOptionPane.DEFAULT_OPTION, 
 							JOptionPane.WARNING_MESSAGE, null, options, options[0]);
 			return (choice == 0);
-		} else
-			return true;
+		}
+		return true;
 	}
 	
 	public boolean loadAndLocateBioSimComponent(SBOLFileManager fileManager) {
@@ -144,10 +142,9 @@ public class SBOLIdentityManager {
 							"  Would you like to overwrite?", "Warning", JOptionPane.DEFAULT_OPTION, 
 							JOptionPane.WARNING_MESSAGE, null, options, options[0]);
 			return (choice == 0);
-		} else {
-			saveFilePath = fileManager.getLocatedFilePath();
-			return true;
 		}
+		saveFilePath = fileManager.getLocatedFilePath();
+		return true;
 	}
 	
 	public boolean loadModelComponents(SBOLFileManager fileManager) {
@@ -157,8 +154,8 @@ public class SBOLIdentityManager {
 		if (exportURIs.size() > 0) {
 			modelComps = fileManager.resolveURIs(exportURIs);
 			return modelComps.size() > 0;
-		} else
-			return false;
+		}
+		return false;
 	}
 	
 	// Loads SBOL descriptors such as display ID, name, and description for newly synthesized iBioSim composite component 

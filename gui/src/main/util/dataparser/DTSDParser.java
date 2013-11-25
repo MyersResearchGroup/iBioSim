@@ -453,10 +453,10 @@ public class DTSDParser {
 				
 				if (speciesID.contains("ROW") && speciesID.contains("COL") && speciesID.contains("__")) {
 					
-					int row = Integer.parseInt(((String[])speciesID.split("_"))[0].replace("ROW",""));
-					int col = Integer.parseInt(((String[])speciesID.split("_"))[1].replace("COL",""));
+					int row = Integer.parseInt(speciesID.split("_")[0].replace("ROW",""));
+					int col = Integer.parseInt(speciesID.split("_")[1].replace("COL",""));
 					
-					String underlyingSpeciesID = ((String[])speciesID.split("__"))[1];
+					String underlyingSpeciesID = speciesID.split("__")[1];
 					
 					speciesToAdd.put("ROW" + (row - overallMinRow) + "_COL" 
 							+ (col - overallMinCol) + "__" + underlyingSpeciesID,

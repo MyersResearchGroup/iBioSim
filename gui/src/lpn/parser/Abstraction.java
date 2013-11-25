@@ -509,25 +509,23 @@ public class Abstraction extends LhpnFile {
 				vars.add(s.getName());
 			}
 		}
-		if (vars != null) {
-			for (String s : vars) {
-				for (Transition t : transitions.values()) {
-					if (t.getAssignments().containsKey(s)) {
-						// Remove assignments to removed variables
-						t.removeAssignment(s);
-					}
+		for (String s : vars) {
+			for (Transition t : transitions.values()) {
+				if (t.getAssignments().containsKey(s)) {
+					// Remove assignments to removed variables
+					t.removeAssignment(s);
 				}
-				// Set initial condition of removed variables to "unknown"
-				if (booleans.containsKey(s)) {
-					booleans.get(s).addInitValue("unknown");
-				} else if (continuous.containsKey(s)) {
-					Properties prop = new Properties();
-					prop.setProperty("value", "[-INF,INF]");
-					prop.setProperty("rate", "[-INF,INF]");
-					continuous.get(s).addInitCond(prop);
-				} else if (integers.containsKey(s)) {
-					integers.get(s).addInitValue("[-INF,INF]");
-				}
+			}
+			// Set initial condition of removed variables to "unknown"
+			if (booleans.containsKey(s)) {
+				booleans.get(s).addInitValue("unknown");
+			} else if (continuous.containsKey(s)) {
+				Properties prop = new Properties();
+				prop.setProperty("value", "[-INF,INF]");
+				prop.setProperty("rate", "[-INF,INF]");
+				continuous.get(s).addInitCond(prop);
+			} else if (integers.containsKey(s)) {
+				integers.get(s).addInitValue("[-INF,INF]");
 			}
 		}
 	}

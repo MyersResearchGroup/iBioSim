@@ -126,7 +126,7 @@ public class GillespieSSAJavaSingleStep {
 */
 	 
 	 NumReactions = 2*NumReversible + NumIrreversible;
-	 StateChangeVector=new double[(int) NumReactions][(int) model.getSpeciesCount()];
+	 StateChangeVector=new double[NumReactions][model.getSpeciesCount()];
 	 
 	//---------Gillespie's SSA---------
 	// 1. Initialization
@@ -239,7 +239,7 @@ public class GillespieSSAJavaSingleStep {
 	 // if model does not include any events, both eventList and eventQueue are set to null
 	 if (model.getListOfEvents().size() >0) {
 		  eventList = model.getListOfEvents();
-		  prevTriggerValArray = new boolean[(int) eventList.size()];
+		  prevTriggerValArray = new boolean[eventList.size()];
 		  for(int i=0; i< eventList.size();i++){
 			  Event event = eventList.get(i); 
 			  Trigger trigger = event.getTrigger();
@@ -730,10 +730,8 @@ public class GillespieSSAJavaSingleStep {
 		 ReturnParamsFromUpdateEventQueue[1] = eventQueue.peek().getScheduledTime() + "";
 		 return ReturnParamsFromUpdateEventQueue;
 	 }
-	 else {
-		 ReturnParamsFromUpdateEventQueue[1] = -1 + "";
-		 return ReturnParamsFromUpdateEventQueue;
-	 }
+	ReturnParamsFromUpdateEventQueue[1] = -1 + "";
+	 return ReturnParamsFromUpdateEventQueue;
 	 
 	}
 	
@@ -1055,22 +1053,20 @@ public class GillespieSSAJavaSingleStep {
 			CustomParamsEventMenu[1] = "" + eventReadyArray.indexOf(eventToFire);
 			return CustomParamsEventMenu;
 		}
-		else {
-			int eventSelectedIndex = -1;
-			double eventSelectedScheduledTime = -1;
-			for (int i = 0; i<sizeEventReadyArray; i++) {
-				if (eventReadyArray.get(i).getEventId() == eventSelected) {
-					eventSelectedIndex = i;
-					eventSelectedScheduledTime = eventReadyArray.get(i).getScheduledTime();
-					break;
-				}
+		int eventSelectedIndex = -1;
+		double eventSelectedScheduledTime = -1;
+		for (int i = 0; i<sizeEventReadyArray; i++) {
+			if (eventReadyArray.get(i).getEventId() == eventSelected) {
+				eventSelectedIndex = i;
+				eventSelectedScheduledTime = eventReadyArray.get(i).getScheduledTime();
+				break;
 			}
-			nextEventFireTimePanel.add(new JLabel("The selected event will fire at some time " + eventSelectedScheduledTime + "."));
-			JOptionPane.showOptionDialog(Gui.frame, nextEventFireTimePanel, "Next Event Selection",
-					JOptionPane.YES_OPTION, JOptionPane.PLAIN_MESSAGE, null, singleOpt, singleOpt[0]);
-			CustomParamsEventMenu[1] = "" + eventSelectedIndex;
-			return CustomParamsEventMenu;
 		}
+		nextEventFireTimePanel.add(new JLabel("The selected event will fire at some time " + eventSelectedScheduledTime + "."));
+		JOptionPane.showOptionDialog(Gui.frame, nextEventFireTimePanel, "Next Event Selection",
+				JOptionPane.YES_OPTION, JOptionPane.PLAIN_MESSAGE, null, singleOpt, singleOpt[0]);
+		CustomParamsEventMenu[1] = "" + eventSelectedIndex;
+		return CustomParamsEventMenu;
 	}
 	
 	private int openReactionDialogue() {

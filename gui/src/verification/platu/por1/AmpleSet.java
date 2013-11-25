@@ -299,8 +299,7 @@ public class AmpleSet {
 		
 		if(set1.size() > set2.size() && set2.size() != 0)
 			return set2;
-		else
-			return set1;
+		return set1;
 	}
 	
 	/**

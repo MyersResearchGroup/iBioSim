@@ -1380,9 +1380,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		if (biosimrc.get("biosim.check.undeclared", "").equals("false")) {
 			return false;
 		}
-		else {
-			return true;
-		}
+		return true;
 	}
 
 	public boolean getCheckUnits() {
@@ -1390,9 +1388,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		if (biosimrc.get("biosim.check.units", "").equals("false")) {
 			return false;
 		}
-		else {
-			return true;
-		}
+		return true;
 	}
 
 	public void about() {
@@ -2624,7 +2620,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						String text = ((JTextArea) array[0]).getText();
 						char[] chars = text.toCharArray();
 						for (int j = 0; j < chars.length; j++) {
-							outStream.write((int) chars[j]);
+							outStream.write(chars[j]);
 						}
 					}
 					outStream.close();
@@ -2787,7 +2783,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						String text = ((JTextArea) array[0]).getText();
 						char[] chars = text.toCharArray();
 						for (int j = 0; j < chars.length; j++) {
-							outStream.write((int) chars[j]);
+							outStream.write(chars[j]);
 						}
 					}
 					outStream.close();
@@ -9534,13 +9530,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				return true;
 			}
-			else {
-				return false;
-			}
+			return false;
 		}
-		else {
-			return true;
-		}
+		return true;
 	}
 
 	/*
@@ -9798,20 +9790,17 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					id = id + "__" + sbaseRef.getIdRef();
 				}
 				if (port == null) {
-					if (sbase!=null) { 
-						port = bioModel.getSBMLCompModel().createPort();
-						port.setId(id);
-						port.setIdRef(sbaseRef.getIdRef());
-						port.setSBaseRef(sbaseRef.getSBaseRef());
-					}
+					port = bioModel.getSBMLCompModel().createPort();
+					port.setId(id);
+					port.setIdRef(sbaseRef.getIdRef());
+					port.setSBaseRef(sbaseRef.getSBaseRef());
 				} 
 				sbaseRef.unsetIdRef();
 				sbaseRef.unsetSBaseRef();
 				sbaseRef.setPortRef(port.getId());
 				return id;
-			} else {
-				return "";
 			}
+			return "";
 		} 
 		if (sbaseRef.isSetMetaIdRef()) {
 			Port port = bioModel.getPortBySBaseRef(sbaseRef);

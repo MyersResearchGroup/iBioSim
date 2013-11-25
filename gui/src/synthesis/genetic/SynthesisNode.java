@@ -134,8 +134,7 @@ public class SynthesisNode {
 	public SynthesisGraph getCover(int coverIndex) {
 		if (coverIndex >= 0 && matches != null && coverIndex < matches.size())
 			return matches.get(coverIndex);
-		else
-			return null;
+		return null;
 	}
 	
 	public SynthesisGraph getCover() {
@@ -146,8 +145,8 @@ public class SynthesisNode {
 				return matches.get(coverIndex);
 			else
 				return null;
-		} else
-			return null;
+		}
+		return null;
 	}
 	
 	public int getCoverBound() {
@@ -158,8 +157,8 @@ public class SynthesisNode {
 				return matchBounds.get(coverIndex);
 			else
 				return 0;
-		} else
-			return 0;
+		}
+		return 0;
 	}
 	
 	public void terminateBranch() {
@@ -171,12 +170,11 @@ public class SynthesisNode {
 			coverIndex++;
 			if (coverIndex < matches.size()) {
 				return true;
-			} else {
-				coverIndex = -1;
-				return false;
 			}
-		} else
+			coverIndex = -1;
 			return false;
+		}
+		return false;
 	}
 	
 	public void sortMatches() {

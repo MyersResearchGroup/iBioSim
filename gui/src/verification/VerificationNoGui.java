@@ -91,7 +91,7 @@ public class VerificationNoGui {
 			}
 			
 		}
-		if (directory.trim().equals("") || directory == null) {
+		if (directory == null || directory.trim().equals("")) {
 			System.out.println("Direcotry provided is empty. Exit.");
 			System.exit(0);
 		}

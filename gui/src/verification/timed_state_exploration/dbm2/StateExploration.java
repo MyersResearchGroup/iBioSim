@@ -190,10 +190,7 @@ public class StateExploration {
 					continue;
 				}
 				// if it is empty, break out of the loop.
-				else
-				{
-					break;
-				}
+				break;
 			}
 			// Get an enabled transition
 			int transition = currentState.getATransition();

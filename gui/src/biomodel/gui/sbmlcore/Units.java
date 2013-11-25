@@ -83,9 +83,9 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 		editUnit = new JButton("Edit Unit");
 		unitDefs = new JList();
 		ListOf<UnitDefinition> listOfUnits = model.getListOfUnitDefinitions();
-		String[] units = new String[(int) model.getUnitDefinitionCount()];
+		String[] units = new String[model.getUnitDefinitionCount()];
 		for (int i = 0; i < model.getUnitDefinitionCount(); i++) {
-			UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
+			UnitDefinition unit = listOfUnits.get(i);
 			units[i] = unit.getId();
 			// GET OTHER THINGS
 		}
@@ -169,7 +169,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 				} else {
 					onPort.setSelected(false);
 				}
-				uList = new String[(int) unit.getUnitCount()];
+				uList = new String[unit.getUnitCount()];
 				for (int i = 0; i < unit.getUnitCount(); i++) {
 					uList[i] = "";
 					if (unit.getUnit(i).getMultiplier() != 1.0) {
@@ -247,7 +247,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 				if (!error) {
 					for (int i = 0; i < unitDefs.getModel().getSize(); i++) {
 						if (option.equals("OK")) {
-							if (unitDefs.getModel().getElementAt(i).toString().equals((String) unitDefs.getSelectedValue()))
+							if (unitDefs.getModel().getElementAt(i).toString().equals(unitDefs.getSelectedValue()))
 								continue;
 						}
 						if (unitDefs.getModel().getElementAt(i).toString().equals(addUnit)) {
@@ -603,9 +603,9 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 	public void refreshUnitsPanel() {
 		Model model = bioModel.getSBMLDocument().getModel();
 		ListOf<UnitDefinition> listOfUnits = model.getListOfUnitDefinitions();
-		String[] units = new String[(int) model.getUnitDefinitionCount()];
+		String[] units = new String[model.getUnitDefinitionCount()];
 		for (int i = 0; i < model.getUnitDefinitionCount(); i++) {
-			UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
+			UnitDefinition unit = listOfUnits.get(i);
 			units[i] = unit.getId();
 			// GET OTHER THINGS
 		}
@@ -667,7 +667,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 				UnitDefinition tempUnit = bioModel.getSBMLDocument().getModel().getUnitDefinition(((String) unitDefs.getSelectedValue()).split(" ")[0]);
 				ListOf<UnitDefinition> u = bioModel.getSBMLDocument().getModel().getListOfUnitDefinitions();
 				for (int i = 0; i < bioModel.getSBMLDocument().getModel().getUnitDefinitionCount(); i++) {
-					if (((UnitDefinition) u.get(i)).getId().equals(tempUnit.getId())) {
+					if (u.get(i).getId().equals(tempUnit.getId())) {
 						u.remove(i);
 					}
 				}
@@ -728,7 +728,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 		}
 		ArrayList<String> compartmentsUsing = new ArrayList<String>();
 		for (int i = 0; i < model.getCompartmentCount(); i++) {
-			Compartment compartment = (Compartment) model.getListOfCompartments().get(i);
+			Compartment compartment = model.getListOfCompartments().get(i);
 			if (compartment.getUnits().equals(unit)) {
 				inUse = true;
 				compartmentsUsing.add(compartment.getId());
@@ -736,7 +736,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 		}
 		ArrayList<String> speciesUsing = new ArrayList<String>();
 		for (int i = 0; i < model.getSpeciesCount(); i++) {
-			Species species = (Species) model.getListOfSpecies().get(i);
+			Species species = model.getListOfSpecies().get(i);
 			if (species.getUnits().equals(unit)) {
 				inUse = true;
 				speciesUsing.add(species.getId());
@@ -744,7 +744,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 		}
 		ArrayList<String> parametersUsing = new ArrayList<String>();
 		for (int i = 0; i < model.getParameterCount(); i++) {
-			Parameter parameters = (Parameter) model.getListOfParameters().get(i);
+			Parameter parameters = model.getListOfParameters().get(i);
 			if (parameters.getUnits().equals(unit)) {
 				inUse = true;
 				parametersUsing.add(parameters.getId());
@@ -1067,9 +1067,9 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			}
 		}
 		if (model.getCompartmentCount() > 0) {
-			String[] comps = new String[(int) model.getCompartmentCount()];
+			String[] comps = new String[model.getCompartmentCount()];
 			for (int i = 0; i < model.getCompartmentCount(); i++) {
-				Compartment compartment = (Compartment) model.getListOfCompartments().get(i);
+				Compartment compartment = model.getListOfCompartments().get(i);
 				if (compartment.getUnits().equals(origId)) {
 					compartment.setUnits(newId);
 				}
@@ -1088,9 +1088,9 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			Utility.sort(comps);
 		}
 		if (model.getSpeciesCount() > 0) {
-			String[] specs = new String[(int) model.getSpeciesCount()];
+			String[] specs = new String[model.getSpeciesCount()];
 			for (int i = 0; i < model.getSpeciesCount(); i++) {
-				Species species = (Species) model.getListOfSpecies().get(i);
+				Species species = model.getListOfSpecies().get(i);
 				if (species.getUnits().equals(origId)) {
 					species.setUnits(newId);
 				}
@@ -1114,9 +1114,9 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			Utility.sort(specs);
 		}
 		if (model.getParameterCount() > 0) {
-			String[] params = new String[(int) model.getParameterCount()];
+			String[] params = new String[model.getParameterCount()];
 			for (int i = 0; i < model.getParameterCount(); i++) {
-				Parameter parameter = (Parameter) model.getListOfParameters().get(i);
+				Parameter parameter = model.getListOfParameters().get(i);
 				if (parameter.getUnits().equals(origId)) {
 					parameter.setUnits(newId);
 				}
@@ -1130,7 +1130,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			Utility.sort(params);
 		}
 		for (int i = 0; i < model.getReactionCount(); i++) {
-			KineticLaw kineticLaw = (KineticLaw) model.getReaction(i).getKineticLaw();
+			KineticLaw kineticLaw = model.getReaction(i).getKineticLaw();
 			for (int j = 0; j < kineticLaw.getLocalParameterCount(); j++) {
 				if (kineticLaw.getLocalParameter(j).getUnits().equals(origId)) {
 					kineticLaw.getLocalParameter(j).setUnits(newId);

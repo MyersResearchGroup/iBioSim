@@ -28,7 +28,6 @@ import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SBMLDocument;
-import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 //SpeciesType not supported in Level 3
@@ -122,7 +121,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		JScrollPane scroll1 = new JScrollPane();
 		scroll1.setViewportView(species);
 		Model model = bioModel.getSBMLDocument().getModel();
-		String[] specs = new String[(int) model.getSpeciesCount()];
+		String[] specs = new String[model.getSpeciesCount()];
 		for (int i = 0; i < model.getSpeciesCount(); i++) {
 			Species species = model.getSpecies(i);
 			/*
@@ -190,7 +189,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		}
 		this.bioModel = gcm;
 		Model model = gcm.getSBMLDocument().getModel();
-		String[] specs = new String[(int) model.getSpeciesCount()];
+		String[] specs = new String[model.getSpeciesCount()];
 		for (int i = 0; i < model.getSpeciesCount(); i++) {
 			Species species = model.getSpecies(i);
 			specs[i] = species.getId();
@@ -908,7 +907,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 	}
 	
 	public static JComboBox createCompartmentChoices(BioModel bioModel) {
-		String[] add = new String[(int) bioModel.getSBMLDocument().getModel().getCompartmentCount()];
+		String[] add = new String[bioModel.getSBMLDocument().getModel().getCompartmentCount()];
 		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getCompartmentCount(); i++) {
 			add[i] = bioModel.getSBMLDocument().getModel().getCompartment(i).getId();
 		}
@@ -969,7 +968,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		if (checkRule) {
 			if (model.getRuleCount() > 0) {
 				for (int i = 0; i < model.getRuleCount(); i++) {
-					Rule rule = (Rule) model.getListOfRules().get(i);
+					Rule rule = model.getListOfRules().get(i);
 					if (SBMLutilities.isSetVariable(rule) && val.equals(SBMLutilities.getVariable(rule))) {
 						inRule = true;
 						break;
@@ -980,7 +979,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				return false;
 		}
 		for (int i = 0; i < model.getReactionCount(); i++) {
-			Reaction reaction = (Reaction) model.getListOfReactions().get(i);
+			Reaction reaction = model.getListOfReactions().get(i);
 			for (int j = 0; j < reaction.getProductCount(); j++) {
 				if (reaction.getProduct(j).isSetSpecies()) {
 					SpeciesReference specRef = reaction.getProduct(j);
@@ -1106,7 +1105,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		else if (e.getSource() == editSpec) {
 			if (species.getModel().getSize() > 0) {
 				//if we're dealing with grid species, use a different species editor
-				if (AnnotationUtility.parseGridAnnotation((SBase)bioModel.getSBMLDocument().getModel().
+				if (AnnotationUtility.parseGridAnnotation(bioModel.getSBMLDocument().getModel().
 								getSpecies(((String)species.getModel().getElementAt(0)).split(" ")[0]))!=null) {
 					openGridSpeciesEditor();
 				}

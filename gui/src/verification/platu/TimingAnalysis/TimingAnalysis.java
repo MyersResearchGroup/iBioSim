@@ -76,7 +76,7 @@ public class TimingAnalysis {
 		this.search_dfs_abstraction(SgArray, initStateArray);
 		// this.search_dfs_split_zone(SgArray, initStateArray);
 
-		while (traceCex != null && traceCex.size() > 0) {
+		while (traceCex.size() > 0) {
 			Transition lpnTran = traceCex.removeFirst();
 			System.out.println(lpnTran.getLpn().getLabel() + " : "
 					+ lpnTran.getLabel());

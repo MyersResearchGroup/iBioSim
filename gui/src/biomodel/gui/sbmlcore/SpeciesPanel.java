@@ -717,14 +717,14 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 			
 			if (selected == null) {
-				if (bioModel.isSIdInUse((String)fields.get(GlobalConstants.ID).getValue())) {
+				if (bioModel.isSIdInUse(fields.get(GlobalConstants.ID).getValue())) {
 					Utility.createErrorMessage("Error", "ID already exists.");
 					return false;
 				}
 			}
 			else if (!selected.equals(fields.get(GlobalConstants.ID).getValue())) {
 				
-				if (bioModel.isSIdInUse((String)fields.get(GlobalConstants.ID).getValue())) {
+				if (bioModel.isSIdInUse(fields.get(GlobalConstants.ID).getValue())) {
 					
 					Utility.createErrorMessage("Error", "ID already exists.");
 					return false;

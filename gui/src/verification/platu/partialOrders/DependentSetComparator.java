@@ -27,8 +27,7 @@ public class DependentSetComparator implements Comparator<DependentSet>{
 			else {
 				if (tranFiringFreqMap.get(dep0.getSeed()) < tranFiringFreqMap.get(dep1.getSeed())) 
 					return -1;
-				else 
-					return 0;
+				return 0;
 			}
 		}	
 	}

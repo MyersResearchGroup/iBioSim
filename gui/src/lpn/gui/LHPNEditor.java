@@ -432,7 +432,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 				variables[k] = boolVars[j];
 				k++;
 			}
-			String abstFilename = (String) JOptionPane.showInputDialog(this,
+			String abstFilename = JOptionPane.showInputDialog(this,
 					"Please enter the file name for the abstracted LPN.",
 					"Enter Filename", JOptionPane.PLAIN_MESSAGE);
 			if (abstFilename != null) {

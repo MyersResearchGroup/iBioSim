@@ -42,18 +42,16 @@ public class IDGenerator<T> extends HashMap<T, Integer> {
 	public int tryInsert(T item) {
 		if (containsKey(item)) {
 			return get(item);
-		} else {
-			int ID = next++;
-			put(item, ID);
-			return ID;
 		}
+		int ID = next++;
+		put(item, ID);
+		return ID;
 	}
 
 	public int test(T item) {
 		if (containsKey(item)) {
 			return get(item);
-		} else {
-			return next;
 		}
+		return next;
 	}
 }

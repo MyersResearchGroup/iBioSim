@@ -93,9 +93,7 @@ public class TimedState extends State{
 		if(_useGraph){
 			return new TimedState(_state, _zone, true);
 		}
-		else{
-			return new TimedState(_state, _zone, false);
-		}
+		return new TimedState(_state, _zone, false);
 	}
 
 	@Override
@@ -129,9 +127,7 @@ public class TimedState extends State{
 		if(_useGraph){
 			return _graph.equals(other._graph);
 		}
-		else{
-			return _zone.equals(other._zone);
-		}
+		return _zone.equals(other._zone);
 	}
 
 	@Override
@@ -298,9 +294,7 @@ public class TimedState extends State{
 		if(_useGraph){
 			return _state.toString() + "\n" + _graph;
 		}
-		else{
-			return _state.toString() + "\n" + _zone;
-		}
+		return _state.toString() + "\n" + _zone;
 	}
 	
 	public List<Transition> getEnabledTransitionByZone()
@@ -308,9 +302,7 @@ public class TimedState extends State{
 		if(_useGraph){
 			return _graph.extractZone().getEnabledTransitions();
 		}
-		else{
-			return _zone.getEnabledTransitions();
-		}
+		return _zone.getEnabledTransitions();
 	}
 	
 	public ZoneType getZone()
@@ -318,9 +310,7 @@ public class TimedState extends State{
 		if(_useGraph){
 			return _graph.extractZone();
 		}
-		else{
-			return _zone;
-		}
+		return _zone;
 	}
 	
 	public ZoneGraph getZoneGraph(){

@@ -17,7 +17,6 @@ import lpn.parser.Translator;
 
 import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
-import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.TokenStream;
 
 import verification.platu.logicAnalysis.Analysis;
@@ -251,10 +250,9 @@ public class Project {
 			if (Options.getOutputLogFlag())
 				outputRuntimeLog(false, elapsedTimeSec);
 			if (Options.getOutputSgFlag()) {
-				if (sgArray != null)
-					for (int i=0; i<sgArray.length; i++) {								
-						sgArray[i].drawLocalStateGraph();
-					}
+				for (int i=0; i<sgArray.length; i++) {								
+					sgArray[i].drawLocalStateGraph();
+				}
 			}
 		}
 		else { // Probabilistic model
@@ -329,23 +327,16 @@ public class Project {
 
 			PerfromTransientMarkovAnalysisThread performMarkovAnalysisThread = new PerfromTransientMarkovAnalysisThread(
 					markovianAnalysis, progress);			
-			if (prop != null) {
-				String[] condition = Translator.getProbpropParts(Translator.getProbpropExpression(prop));
-				boolean globallyTrue = false;
-				if (prop.contains("PF")) {
-					condition[0] = "true";
-				}
-				else if (prop.contains("PG")) {
-					condition[0] = "true";
-					globallyTrue = true;
-				}
-				performMarkovAnalysisThread.start(timeLimit, timeStep, printInterval, absError, condition, globallyTrue);
+			String[] condition = Translator.getProbpropParts(Translator.getProbpropExpression(prop));
+			boolean globallyTrue = false;
+			if (prop.contains("PF")) {
+				condition[0] = "true";
 			}
-			/* TODO: DEAD CODE
-			else {
-				performMarkovAnalysisThread.start(timeLimit, timeStep, printInterval, absError, null, false);
+			else if (prop.contains("PG")) {
+				condition[0] = "true";
+				globallyTrue = true;
 			}
-			*/
+			performMarkovAnalysisThread.start(timeLimit, timeStep, printInterval, absError, condition, globallyTrue);
 			
 			try {
 				performMarkovAnalysisThread.join();
@@ -364,9 +355,8 @@ public class Project {
 //			// ------------------------------------------------------------
 		}
 		//if (Options.getOutputSgFlag())
-			if (sgArray != null)
-				for (int i=0; i<sgArray.length; i++) 
-					sgArray[i].drawLocalStateGraph();				
+			for (int i=0; i<sgArray.length; i++) 
+				sgArray[i].drawLocalStateGraph();				
 	}
 
 	public Set<LPN> readLpn(final String src_file) {
@@ -432,13 +422,7 @@ public class Project {
 			TokenStream tokenStream = new CommonTokenStream(lexer);
 			PlatuInstParser parser = new PlatuInstParser(tokenStream);
 			
-			try {
-				parser.parseLpnFile(this);
-			} 
-			catch (RecognitionException e) {
-				System.err.println("error: error parsing " + srcFile);
-				System.exit(1);
-			}
+			parser.parseLpnFile(this);
 		}
 
 		PlatuInstParser.includeSet.removeAll(fileList);
@@ -461,13 +445,7 @@ public class Project {
 			TokenStream tokenStream = new CommonTokenStream(lexer);
 			PlatuInstParser parser = new PlatuInstParser(tokenStream);
 			
-			try {
-				parser.parseLpnFile(this);
-			} 
-			catch (RecognitionException e) {
-				System.err.println("error: error parsing " + srcFile);
-				System.exit(1);
-			}
+			parser.parseLpnFile(this);
 		}
 		
 		verification.platu.lpn.LPN.nextID = 1;

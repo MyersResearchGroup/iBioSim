@@ -86,7 +86,7 @@ public class BuildProperty {
 		PropertyParser.program_return program = parser.program();
 		//System.out.println("tree: "+((Tree)program.tree).toStringTree()+"\n");
 
-		CommonTree r0 = ((CommonTree)program.tree);
+		CommonTree r0 = program.tree;
 		//System.out.println("parent :"+program.start.getText());
 		int number = r0.getChildCount();
 		//System.out.println("NUMBER : "+number+"\n");
@@ -175,7 +175,7 @@ public class BuildProperty {
 					
 					//System.out.println("pFirst is :"+pFirst);
 					//for(int q=0; q<switchCaseTree.getChildCount();q++){
-					lpnObj = generateLPN((CommonTree)switchCaseTree, lpnObj, false);
+					lpnObj = generateLPN(switchCaseTree, lpnObj, false);
 				//	}
 					pLast="p"+(numPlaces-1);
 					loop=true;

@@ -352,7 +352,7 @@ public class Grid {
 	public boolean moveNode(String compID, double centerX, double centerY, BioModel gcm) {
 		
 		//adjust the point for zoom
-		Point moveToPoint = new Point((int)((double)centerX*zoomAmount), (int)((double)centerY*zoomAmount + verticalOffset));
+		Point moveToPoint = new Point((int)(centerX*zoomAmount), (int)(centerY*zoomAmount + verticalOffset));
 		
 		//if the user is trying to move the component to a place within the grid
 		//then pay attention
@@ -390,11 +390,11 @@ public class Grid {
 					
 					return true;
 				}
-				else return false;
+				return false;
 			}
-			else return false;
+			return false;
 		}
-		else return false;		
+		return false;		
 	}
 	
 	/**
@@ -500,10 +500,7 @@ public class Grid {
 		
 		if (node != null)
 			return node.isOccupied();
-		
-		//return true because it's easier to consider outside the grid as occupied
-		//so nothing can ever get placed there
-		else return true;
+		return true;
 	}
 	
 	/**
@@ -557,11 +554,9 @@ public class Grid {
 			if (!node.getZoomedSnapRectangle().contains(clickPoint) || node.isOccupied() == false) {
 				return true;
 			}
-			else 
-				return false;
+			return false;
 		}
-		//allows de-selection of all on clicking out-of-bounds
-		else return true;
+		return true;
 	}
 	
 	/**
@@ -732,9 +727,7 @@ public class Grid {
 					
 					//if it's null, there's nothing to erase
 					if (compID != null) {
-						
-						//if it's null, there's nothing to erase
-						if (compID != null) eraseNode(compID, gcm);
+						eraseNode(compID, gcm);
 					}
 				}				
 			}
@@ -978,7 +971,7 @@ public class Grid {
 		
 		//set the total grid bounds
 		int outerX = (int)gridWidth * numCols;
-		int outerY = (int)gridHeight * numRows + (int)verticalOffset;
+		int outerY = (int)gridHeight * numRows + verticalOffset;
 		
 		gridBounds.setBounds(15, 15, outerX, outerY);
 	}
@@ -1526,10 +1519,10 @@ public class Grid {
 		public Rectangle getZoomedRectangle() {
 			
 			return new Rectangle(
-					(int)((double)gridRectangle.x * zoomAmount + 0.5),
-					(int)((double)gridRectangle.y * zoomAmount + verticalOffset + 0.5),
-					(int)((double)gridRectangle.width * zoomAmount + 0.5),
-					(int)((double)gridRectangle.height * zoomAmount + 0.5));
+					(int)(gridRectangle.x * zoomAmount + 0.5),
+					(int)(gridRectangle.y * zoomAmount + verticalOffset + 0.5),
+					(int)(gridRectangle.width * zoomAmount + 0.5),
+					(int)(gridRectangle.height * zoomAmount + 0.5));
 			
 		}
 	

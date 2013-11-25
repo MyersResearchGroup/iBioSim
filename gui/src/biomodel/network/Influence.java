@@ -173,8 +173,7 @@ public class Influence {
 	public String getProperty(String key) {
 		if (properties!=null)
 			return properties.getProperty(key);
-		else 
-			return null;
+		return null;
 	}	
 	
 	private static int uid = 0;

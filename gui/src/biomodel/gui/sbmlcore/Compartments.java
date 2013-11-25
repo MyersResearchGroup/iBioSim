@@ -104,9 +104,9 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		}
 		compartments = new JList();
 		ListOf<Compartment> listOfCompartments = model.getListOfCompartments();
-		String[] comps = new String[(int) model.getCompartmentCount()];
+		String[] comps = new String[model.getCompartmentCount()];
 		for (int i = 0; i < model.getCompartmentCount(); i++) {
-			Compartment compartment = (Compartment) listOfCompartments.get(i);
+			Compartment compartment = listOfCompartments.get(i);
 			comps[i] = compartment.getId();
 			if (paramsOnly) {
 				for (int j = 0; j < getParams.size(); j++) {
@@ -434,7 +434,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 			double dim = 3;
 			if (!error) {
 				try {
-					dim = Double.parseDouble((String) dimText.getText());
+					dim = Double.parseDouble(dimText.getText());
 				}
 				catch (Exception e1) {
 					JOptionPane.showMessageDialog(Gui.frame, "Compartment spatial dimensions must be a real number.", "Invalid Spatial Dimensions",
@@ -696,7 +696,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 			compUnits.addItem("( none )");
 			ListOf<UnitDefinition> listOfUnits = bioModel.getSBMLDocument().getModel().getListOfUnitDefinitions();
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getUnitDefinitionCount(); i++) {
-				UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
+				UnitDefinition unit = listOfUnits.get(i);
 				if ((unit.getUnitCount() == 1) && (unit.getUnit(0).isLitre() && unit.getUnit(0).getExponent() == 1)
 						|| (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == 3)) {
 					if (!(bioModel.getSBMLDocument().getLevel() < 3 && unit.getId().equals("volume"))) {
@@ -719,7 +719,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 			compUnits.addItem("( none )");
 			ListOf<UnitDefinition> listOfUnits = bioModel.getSBMLDocument().getModel().getListOfUnitDefinitions();
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getUnitDefinitionCount(); i++) {
-				UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
+				UnitDefinition unit = listOfUnits.get(i);
 				if ((unit.getUnitCount() == 1) && (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == 2)) {
 					if (!(bioModel.getSBMLDocument().getLevel() < 3 && unit.getId().equals("area"))) {
 						compUnits.addItem(unit.getId());
@@ -740,7 +740,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 			compUnits.addItem("( none )");
 			ListOf<UnitDefinition> listOfUnits = bioModel.getSBMLDocument().getModel().getListOfUnitDefinitions();
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getUnitDefinitionCount(); i++) {
-				UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
+				UnitDefinition unit = listOfUnits.get(i);
 				if ((unit.getUnitCount() == 1) && (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == 1)) {
 					if (!(bioModel.getSBMLDocument().getLevel() < 3 && unit.getId().equals("length"))) {
 						compUnits.addItem(unit.getId());
@@ -771,7 +771,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 			compUnits.addItem("( none )");
 			ListOf<UnitDefinition> listOfUnits = bioModel.getSBMLDocument().getModel().getListOfUnitDefinitions();
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getUnitDefinitionCount(); i++) {
-				UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
+				UnitDefinition unit = listOfUnits.get(i);
 				if ((unit.getUnitCount() == 1) && (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == dim)) {
 					compUnits.addItem(unit.getId());
 				}
@@ -795,9 +795,9 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		this.bioModel = gcm;
 		Model model = gcm.getSBMLDocument().getModel();
 		ListOf<Compartment> listOfCompartments = model.getListOfCompartments();
-		String[] comparts = new String[(int) model.getCompartmentCount()];
+		String[] comparts = new String[model.getCompartmentCount()];
 		for (int i = 0; i < model.getCompartmentCount(); i++) {
-			Compartment compartment = (Compartment) listOfCompartments.get(i);
+			Compartment compartment = listOfCompartments.get(i);
 			comparts[i] = compartment.getId();
 			comparts[i] += " " + compartment.getSize();
 			if (paramsOnly) {
@@ -835,7 +835,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						Compartment tempComp = bioModel.getSBMLDocument().getModel().getCompartment(((String) compartments.getSelectedValue()).split(" ")[0]);
 						ListOf<Compartment> c = bioModel.getSBMLDocument().getModel().getListOfCompartments();
 						for (int i = 0; i < bioModel.getSBMLDocument().getModel().getCompartmentCount(); i++) {
-							if (((Compartment) c.get(i)).getId().equals(tempComp.getId())) {
+							if (c.get(i).getId().equals(tempComp.getId())) {
 								c.remove(i);
 							}
 						}

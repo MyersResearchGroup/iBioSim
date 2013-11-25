@@ -290,8 +290,7 @@ public class SBOLAssociationPanel extends JPanel {
 	public String getComponentStrand() {
 		if (minusBox.isSelected())
 			return GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND;
-		else
-			return GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
+		return GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
 	}
 
 }

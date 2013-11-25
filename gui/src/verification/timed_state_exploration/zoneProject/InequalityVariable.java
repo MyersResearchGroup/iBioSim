@@ -563,19 +563,13 @@ public class InequalityVariable extends Variable {
 			if(_isRight){
 				return value >= constant;
 			}
-			else{
-				return value <= constant;
-			}
+			return value <= constant;
 		}
-		else{
-			// Determine which side the constant lives on.
-			if(_isRight){
-				return value <= constant;
-			}
-			else{
-				return value >= constant;
-			}
+		// Determine which side the constant lives on.
+		if(_isRight){
+			return value <= constant;
 		}
+		return value >= constant;
 		
 	}
 	

@@ -68,7 +68,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 		removeInit = new JButton("Remove Initial");
 		editInit = new JButton("Edit Initial");
 		initAssigns = new JList();
-		String[] inits = new String[(int) model.getInitialAssignmentCount()];
+		String[] inits = new String[model.getInitialAssignmentCount()];
 		for (int i = 0; i < model.getInitialAssignmentCount(); i++) {
 			InitialAssignment init = model.getInitialAssignment(i);
 			inits[i] = init.getVariable() + " = " + SBMLutilities.myFormulaToString(init.getMath());
@@ -108,9 +108,9 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 	public void refreshInitialAssignmentPanel(BioModel gcm) {
 		Model model = gcm.getSBMLDocument().getModel();
 		if (model.getInitialAssignmentCount() > 0) {
-			String[] inits = new String[(int) model.getInitialAssignmentCount()];
+			String[] inits = new String[model.getInitialAssignmentCount()];
 			for (int i = 0; i < model.getInitialAssignmentCount(); i++) {
-				InitialAssignment init = (InitialAssignment) model.getListOfInitialAssignments().get(i);
+				InitialAssignment init = model.getListOfInitialAssignments().get(i);
 				inits[i] = init.getVariable() + " = " + SBMLutilities.myFormulaToString(init.getMath());
 			}
 			try {
@@ -134,7 +134,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 	public static void removeInitialAssignment(BioModel gcm, String variable) {
 		ListOf<InitialAssignment> r = gcm.getSBMLDocument().getModel().getListOfInitialAssignments();
 		for (int i = 0; i < gcm.getSBMLDocument().getModel().getInitialAssignmentCount(); i++) {
-			if (((InitialAssignment) r.get(i)).getVariable().equals(variable)) {
+			if (r.get(i).getVariable().equals(variable)) {
 				for (int j = 0; j < gcm.getSBMLCompModel().getListOfPorts().size(); j++) {
 					Port port = gcm.getSBMLCompModel().getListOfPorts().get(j);
 					if (port.isSetMetaIdRef() && port.getMetaIdRef().equals(r.get(i).getMetaId())) {
@@ -344,7 +344,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			initAssigns.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			inits = Utility.getList(inits, initAssigns);
 			initAssigns.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			InitialAssignment r = (InitialAssignment) (bioModel.getSBMLDocument().getModel().getListOfInitialAssignments()).get(Rindex);
+			InitialAssignment r = (bioModel.getSBMLDocument().getModel().getListOfInitialAssignments()).get(Rindex);
 			String oldSymbol = r.getVariable();
 			String oldInit = SBMLutilities.myFormulaToString(r.getMath());
 			String oldVal = inits[index];
@@ -421,9 +421,9 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 				inits = oldInits;
 				ListOf<InitialAssignment> ia = bioModel.getSBMLDocument().getModel().getListOfInitialAssignments();
 				for (int i = 0; i < bioModel.getSBMLDocument().getModel().getInitialAssignmentCount(); i++) {
-					if (SBMLutilities.myFormulaToString(((InitialAssignment) ia.get(i)).getMath()).equals(
+					if (SBMLutilities.myFormulaToString(ia.get(i).getMath()).equals(
 							SBMLutilities.myFormulaToString(r.getMath()))
-							&& ((InitialAssignment) ia.get(i)).getVariable().equals(r.getVariable())) {
+							&& ia.get(i).getVariable().equals(r.getVariable())) {
 						ia.remove(i);
 					}
 				}
@@ -513,8 +513,8 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			initMath.setText(selected.substring(selected.indexOf('=') + 2));
 			ListOf<InitialAssignment> r = bioModel.getSBMLDocument().getModel().getListOfInitialAssignments();
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getInitialAssignmentCount(); i++) {
-				if (SBMLutilities.myFormulaToString(((InitialAssignment) r.get(i)).getMath()).equals(initMath.getText())
-						&& ((InitialAssignment) r.get(i)).getVariable().equals(initVar.getSelectedItem())) {
+				if (SBMLutilities.myFormulaToString(r.get(i).getMath()).equals(initMath.getText())
+						&& r.get(i).getVariable().equals(initVar.getSelectedItem())) {
 					Rindex = i;
 				}
 			}
@@ -551,8 +551,8 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			String tempMath = selected.substring(selected.indexOf('=') + 2);
 			ListOf<InitialAssignment> r = bioModel.getSBMLDocument().getModel().getListOfInitialAssignments();
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getInitialAssignmentCount(); i++) {
-				if (SBMLutilities.myFormulaToString(((InitialAssignment) r.get(i)).getMath()).equals(tempMath)
-						&& ((InitialAssignment) r.get(i)).getVariable().equals(tempVar)) {
+				if (SBMLutilities.myFormulaToString(r.get(i).getMath()).equals(tempMath)
+						&& r.get(i).getVariable().equals(tempVar)) {
 					r.remove(i);
 				}
 			}

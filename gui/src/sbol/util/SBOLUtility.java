@@ -116,12 +116,10 @@ public class SBOLUtility {
 		DnaComponent resolvedDnac = flattenedResolver.resolve(dnac.getURI());
 		if (resolvedDnac != null)
 			return resolvedDnac;
-		else {
-			List<SequenceAnnotation> annos = dnac.getAnnotations();
-			if (annos != null && annos.size() > 0)
-				replaceSubComponents(annos, flattenedResolver);
-			return dnac;
-		}
+		List<SequenceAnnotation> annos = dnac.getAnnotations();
+		if (annos != null && annos.size() > 0)
+			replaceSubComponents(annos, flattenedResolver);
+		return dnac;
 	}
 	
 	private static void replaceSubComponents(List<SequenceAnnotation> annos, UriResolver<DnaComponent> flattenedResolver) {
@@ -415,8 +413,8 @@ public class SBOLUtility {
 				if (!dnaComps1.get(i).equals(dnaComps2.get(i)))
 					return false;
 			return true;
-		} else
-			return false;
+		}
+		return false;
 	}
 	
 	public static boolean compareDNAComponents(Set<DnaComponent> dnaComps1, Set<DnaComponent> dnaComps2) {
@@ -520,8 +518,8 @@ public class SBOLUtility {
 			if (path != null && path.length() > 0) {
 				String[] splitPath = path.split("/");
 				return splitPath[splitPath.length - 1];
-			} else
-				return "N/A";
+			}
+			return "N/A";
 		}
 	}
 	

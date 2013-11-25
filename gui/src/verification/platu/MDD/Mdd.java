@@ -20,8 +20,8 @@ public class Mdd {
 		Mdd.terminal.level = numMods;
 		//stateCount = 0;
 		height = numMods;
-		nodeTbl = (HashMap<mddNode, mddNode>[])new HashMap[height];
-		localFirings = (HashMap<State, HashSet<State>>[])new HashMap[height+1];
+		nodeTbl = new HashMap[height];
+		localFirings = new HashMap[height+1];
 		for(int i = 0; i < this.height; i++) { 
 			nodeTbl[i] = new HashMap<mddNode, mddNode>();
 			localFirings[i] = new HashMap<State, HashSet<State>>();
@@ -79,7 +79,7 @@ public class Mdd {
 	
 	public mddNode doLocalFirings(StateGraph[] curLpnArray, State[] curStateArray, mddNode reachSet) {
 		mddNode result = this.newNode();
-		LinkedList<State>[] nextSetArray = (LinkedList<State>[])(new LinkedList[curLpnArray.length]);
+		LinkedList<State>[] nextSetArray = (new LinkedList[curLpnArray.length]);
 		for(int i = 0; i < curLpnArray.length; i++)
 			nextSetArray[i] = new LinkedList<State>();
 		
@@ -117,9 +117,7 @@ public class Mdd {
 	public int[] next(mddNode curNode, int[] curIdxArray) {
 		if(curIdxArray == null)
 			return curNode.next(height);
-		else {
-			return curNode.next(height, curIdxArray);
-		}
+		return curNode.next(height, curIdxArray);
 	}
 	
 	public double numberOfStates(mddNode target) {

@@ -144,19 +144,21 @@ public class SequenceTypeValidator {
 			String xFragment = regex.substring(1, i);
 			if (i + 1 < regex.length()) {
 				String quantifier = regex.substring(i + 1, i + 2);
-				if (quantifier.equals("*") || quantifier.equals("+"))
+				if (quantifier.equals("*") || quantifier.equals("+")) {
 					if (i + 2 < regex.length()) {
 						String yFragment = getSubRegex(regex, i + 2);
 						return "(" + altFragmentRegex(xFragment) + ")" + "(" + xFragment + ")*" + yFragment + "|"
 								+ altFragmentRegex(yFragment);
-					} else
-						return "(" + altFragmentRegex(xFragment) + ")" + "(" + xFragment + ")*";
-				else if (quantifier.equals("?") || quantifier.equals(","))
+					}
+					return "(" + altFragmentRegex(xFragment) + ")" + "(" + xFragment + ")*";
+				}
+				else if (quantifier.equals("?") || quantifier.equals(",")) {
 					if (i + 2 < regex.length()) {
 						String yFragment = getSubRegex(regex, i + 2);
 						return altFragmentRegex("(" + xFragment + ")" + yFragment);
-					} else
-						return altFragmentRegex(xFragment);
+					}
+					return altFragmentRegex(xFragment);
+				}
 				else {
 					String yFragment = getSubRegex(regex, i + 1);
 					orFragments = findOrFragments(xFragment);
@@ -165,34 +167,36 @@ public class SequenceTypeValidator {
 						for (int j = 1; j < orFragments.size(); j++)
 							result = result + "|" + altFragmentRegex(orFragments.get(j));
 						return ("(" + result + ")" + yFragment + "|" + altFragmentRegex(yFragment));
-					} else
-						return altFragmentRegex(xFragment + "," + yFragment);
+					}
+					return altFragmentRegex(xFragment + "," + yFragment);
 				}
-			} else 
-				return altFragmentRegex(xFragment);
+			}
+			return altFragmentRegex(xFragment);
 		} else {
 			int i = locateClosingLetter(regex, 0);
 			String terminal = regex.substring(0, i + 1);
 			if (i + 1 < regex.length()) {
 				String quantifier = regex.substring(i + 1, i + 2);
-				if (quantifier.equals("*") || quantifier.equals("+"))
+				if (quantifier.equals("*") || quantifier.equals("+")) {
 					if (i + 2 < regex.length()) {
 						String xFragment = getSubRegex(regex, i + 2);
 						return terminal + "," + terminal + "*" + xFragment + "|" + altFragmentRegex(xFragment);
-					} else
-						return terminal + "," + terminal + "*";
-				else if (quantifier.equals("?") || quantifier.equals(","))
+					}
+					return terminal + "," + terminal + "*";
+				}
+				else if (quantifier.equals("?") || quantifier.equals(",")) {
 					if (i + 2 < regex.length()) {
 						String xFragment = getSubRegex(regex, i + 2);
 						return terminal + "," + xFragment + "|" + altFragmentRegex(xFragment);
-					} else
-						return terminal;
+					}
+					return terminal;
+				}
 				else {
 					String xFragment = getSubRegex(regex, i + 1);
 					return terminal + "," + xFragment + "|" + altFragmentRegex(xFragment);
 				}
-			} else
-				return terminal;
+			}
+			return terminal;
 		}
 	}
 	
@@ -209,30 +213,34 @@ public class SequenceTypeValidator {
 			String xFragment = regex.substring(1, i);
 			if (i + 1 < regex.length()) {
 				String quantifier = regex.substring(i + 1, i + 2);
-				if (quantifier.equals("*"))
+				if (quantifier.equals("*")) {
 					if (i + 2 < regex.length()) {
 						String yFragment = getSubRegex(regex, i + 2);
 						return "(" + xFragment + ")*(" + exFragmentRegex(xFragment) + "|" + exFragmentRegex(yFragment) + ")";
-					} else
-						return "(" + xFragment + ")*(" + exFragmentRegex(xFragment) + ")?";
-				else if (quantifier.equals("+")) 
+					}
+					return "(" + xFragment + ")*(" + exFragmentRegex(xFragment) + ")?";
+				}
+				else if (quantifier.equals("+")) {
 					if (i + 2 < regex.length()) {
 						String yFragment = getSubRegex(regex, i + 2);
 						return "(" + xFragment + ")*" + exFragmentRegex(xFragment + "," + yFragment);
-					} else
-						return "(" + xFragment + ")*" + exFragmentRegex(xFragment);
-				else if (quantifier.equals("?"))
+					}
+					return "(" + xFragment + ")*" + exFragmentRegex(xFragment);
+				}
+				else if (quantifier.equals("?")) {
 					if (i + 2 < regex.length()) {
 						String yFragment = getSubRegex(regex, i + 2);
 						return "(" + exFragmentRegex(xFragment) + ")?" + exFragmentRegex(yFragment);
-					} else
-						return "(" + exFragmentRegex(xFragment) + ")?";
-				else if (quantifier.equals(","))
+					}
+					return "(" + exFragmentRegex(xFragment) + ")?";
+				}
+				else if (quantifier.equals(",")) {
 					if (i + 2 < regex.length()) {
 						String yFragment = getSubRegex(regex, i + 2);
 						return exFragmentRegex("(" + xFragment + ")" + yFragment);
-					} else
-						return exFragmentRegex(xFragment);
+					}
+					return exFragmentRegex(xFragment);
+				}
 				else {
 					String yFragment = getSubRegex(regex, i + 1);
 					orFragments = findOrFragments(xFragment);
@@ -241,46 +249,50 @@ public class SequenceTypeValidator {
 						for (int j = 1; j < orFragments.size(); j++)
 							result = result + "|" + exFragmentRegex(orFragments.get(j) + "," + yFragment);
 						return result;
-					} else
-						return exFragmentRegex(xFragment + "," + yFragment);
+					}
+					return exFragmentRegex(xFragment + "," + yFragment);
 				}
-			} else 
-				return exFragmentRegex(xFragment);
+			}
+			return exFragmentRegex(xFragment);
 		} else {
 			int i = locateClosingLetter(regex, 0);
 			String terminal = regex.substring(0, i + 1);
 			if (i + 1 < regex.length()) {
 				String quantifier = regex.substring(i + 1, i + 2);
-				if (quantifier.equals("*"))
+				if (quantifier.equals("*")) {
 					if (i + 2 < regex.length()) {
 						String xFragment = getSubRegex(regex, i + 2);
 						return terminal + "*(" + terminal + "|" + exFragmentRegex(xFragment) + ")";
-					} else
-						return terminal + "*";
-				else if (quantifier.equals("+"))
+					}
+					return terminal + "*";
+				}
+				else if (quantifier.equals("+")) {
 					if (i + 2 < regex.length()) {
 						String xFragment = getSubRegex(regex, i + 2);
 						return terminal + "*" + exFragmentRegex(terminal + "," + xFragment);
-					} else
-						return terminal + "*" + terminal;
-				else if (quantifier.equals("?"))
+					}
+					return terminal + "*" + terminal;
+				}
+				else if (quantifier.equals("?")) {
 					if (i + 2 < regex.length()) {
 						String xFragment = getSubRegex(regex, i + 2);
 						return terminal + "?" + exFragmentRegex(xFragment);
-					} else
-						return terminal + "?";
-				else if (quantifier.equals(","))
+					}
+					return terminal + "?";
+				}
+				else if (quantifier.equals(",")) {
 					if (i + 2 < regex.length()) {
 						String xFragment = getSubRegex(regex, i + 2);
 						return terminal + "(" + exFragmentRegex(xFragment) + ")?";
-					} else
-						return terminal;
+					}
+					return terminal;
+				}
 				else {
 					String xFragment = getSubRegex(regex, i + 1);
 					return terminal + "(" + exFragmentRegex(xFragment) + ")?";
 				}
-			} else
-				return terminal;
+			}
+			return terminal;
 		}	
 	}
 	
@@ -291,42 +303,41 @@ public class SequenceTypeValidator {
 			for (int i = 1; i < orFragments.size(); i++)
 				result = result + "|" + reverseRegex(orFragments.get(i));
 			return result;
-		} else {
-			String result = "";
-			int i = 0;
-			while (i < regex.length()) {
-				String token = regex.substring(i, i + 1);
-				if (token.equals("(")) {
-					int j = locateClosingParen(regex, i);
-					if (j + 1 < regex.length()) {
-						String quantifier = regex.substring(j + 1, j + 2);
-						if (isQuantifier(quantifier))
-							result = "(" + reverseRegex(regex.substring(i + 1, j)) + ")" + quantifier + result;
-						else
-							result = "(" + reverseRegex(regex.substring(i + 1, j)) + ")" + result;
-					} else
-						result = "(" + reverseRegex(regex.substring(i + 1, j)) + ")" + result;
-					i = j + 1;
-				} else if (isLetter(token)) {
-					int j = locateClosingLetter(regex, i);
-					if (j + 1 < regex.length()) {
-						String quantifier = regex.substring(j + 1, j + 2);
-						if (isQuantifier(quantifier))
-							result = regex.substring(i, j + 1) + quantifier + result;
-						else if (i > 0)
-							result = regex.substring(i, j + 1) + "," + result;
-						else 
-							result = regex.substring(i, j + 1) + result;
-					} else if (i > 0)
-						result = regex.substring(i, j + 1) + "," + result;
-					else
-						result = regex.substring(i, j + 1) + result;
-					i = j + 1;
-				} else
-					i++;
-			}
-			return result;
 		}
+		String result = "";
+		int i = 0;
+		while (i < regex.length()) {
+			String token = regex.substring(i, i + 1);
+			if (token.equals("(")) {
+				int j = locateClosingParen(regex, i);
+				if (j + 1 < regex.length()) {
+					String quantifier = regex.substring(j + 1, j + 2);
+					if (isQuantifier(quantifier))
+						result = "(" + reverseRegex(regex.substring(i + 1, j)) + ")" + quantifier + result;
+					else
+						result = "(" + reverseRegex(regex.substring(i + 1, j)) + ")" + result;
+				} else
+					result = "(" + reverseRegex(regex.substring(i + 1, j)) + ")" + result;
+				i = j + 1;
+			} else if (isLetter(token)) {
+				int j = locateClosingLetter(regex, i);
+				if (j + 1 < regex.length()) {
+					String quantifier = regex.substring(j + 1, j + 2);
+					if (isQuantifier(quantifier))
+						result = regex.substring(i, j + 1) + quantifier + result;
+					else if (i > 0)
+						result = regex.substring(i, j + 1) + "," + result;
+					else 
+						result = regex.substring(i, j + 1) + result;
+				} else if (i > 0)
+					result = regex.substring(i, j + 1) + "," + result;
+				else
+					result = regex.substring(i, j + 1) + result;
+				i = j + 1;
+			} else
+				i++;
+		}
+		return result;
 	}
 	
 	private int locateClosingParen(String regex, int i) {
@@ -370,11 +381,9 @@ public class SequenceTypeValidator {
 				uncapturedCount--;
 		if (uncapturedCount == 0)
 			return true;
-		else {
-			JOptionPane.showMessageDialog(Gui.frame, "Regular expression for SBOL assembly has unbalanced parentheses.", 
-					"Unbalanced Regex", JOptionPane.ERROR_MESSAGE);
-			return false;
-		}
+		JOptionPane.showMessageDialog(Gui.frame, "Regular expression for SBOL assembly has unbalanced parentheses.", 
+				"Unbalanced Regex", JOptionPane.ERROR_MESSAGE);
+		return false;
 	}
 	
 	
@@ -407,8 +416,7 @@ public class SequenceTypeValidator {
 		String subRegex = regex.substring(index);
 		if (subRegex.startsWith(","))
 			return subRegex.substring(1);
-		else
-			return subRegex;
+		return subRegex;
 	}
 	
 	private String trimOuterParentheses(String regex) {
@@ -427,28 +435,24 @@ public class SequenceTypeValidator {
 		int trimParenCount = Math.min(leftParenCount, rightParenCount);
 		if (trimParenCount > 0)
 			return regex.substring(trimParenCount, regex.length() - trimParenCount + 1);
-		else
-			return regex;
+		return regex;
 	}
 	public boolean validateCompleteConstruct(List<String> types, boolean saveState) {
 		if (saveState)
 			return completeConstructDFA.runAndSave(types);
-		else 
-			return completeConstructDFA.run(types);
+		return completeConstructDFA.run(types);
 	}
 	
 	public boolean validatePartialConstruct(List<String> types, boolean saveState) {
 		if (saveState)
 			return partialConstructDFA.runAndSave(types);
-		else 
-			return partialConstructDFA.run(types);
+		return partialConstructDFA.run(types);
 	}
 	
 	public boolean validateTerminalConstruct(List<String> types, boolean saveState) {
 		if (saveState)
 			return terminalConstructDFA.runAndSave(types);
-		else 
-			return terminalConstructDFA.run(types);
+		return terminalConstructDFA.run(types);
 	}
 	
 	public boolean validateStartConstruct(List<String> types, boolean saveState) {
@@ -457,8 +461,7 @@ public class SequenceTypeValidator {
 			reverseTypes.add(0, types.get(i));
 		if (saveState)
 			return startConstructDFA.runAndSave(reverseTypes);
-		else 
-			return startConstructDFA.run(reverseTypes);
+		return startConstructDFA.run(reverseTypes);
 	}
 
 	public boolean isCompleteConstructValid() {

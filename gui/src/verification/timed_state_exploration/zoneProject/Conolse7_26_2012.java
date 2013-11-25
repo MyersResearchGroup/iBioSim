@@ -66,7 +66,7 @@ public class Conolse7_26_2012 {
 		// Add the current LPN to the list.
 		selectedLPNs.add(lpn);
 		for (int i=1; i < lpnList.length; i++) {
-			 String curLPNname = (String) lpnList[i];
+			 String curLPNname = lpnList[i];
 			 LhpnFile curLPN = new LhpnFile();
 			 curLPN.load(directory + File.separator + curLPNname);
 			 selectedLPNs.add(curLPN);

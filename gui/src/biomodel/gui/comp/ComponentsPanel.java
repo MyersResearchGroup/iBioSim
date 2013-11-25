@@ -561,10 +561,10 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 		timePanel.add(timeConvFactorBox);
 		extentPanel.add(extentConvFactorLabel);
 		extentPanel.add(extentConvFactorBox);
-		if (instance.isSetTimeConversionFactor()) {
+		if (instance != null && instance.isSetTimeConversionFactor()) {
 			timeConvFactorBox.setSelectedItem(instance.getTimeConversionFactor());
 		}
-		if (instance.isSetExtentConversionFactor()) {
+		if (instance != null && instance.isSetExtentConversionFactor()) {
 			extentConvFactorBox.setSelectedItem(instance.getExtentConversionFactor());
 		}
 		add(timePanel);
@@ -745,9 +745,8 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 					((replacement.isSetPortRef())||(replacement.isSetDeletion()))) { 
 				SBMLutilities.removeFromParentAndDelete(replacement);
 				return true;
-			} else {
-				j++;
 			}
+			j++;
 		}
 		if (sbmlSBase.isSetReplacedBy()) {
 			ReplacedBy replacement = sbmlSBase.getReplacedBy();
@@ -769,13 +768,13 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 				return false;
 			}
 			if (oldName == null) {
-				if (bioModel.isSIdInUse((String)fields.get(GlobalConstants.ID).getValue())) {
+				if (bioModel.isSIdInUse(fields.get(GlobalConstants.ID).getValue())) {
 					Utility.createErrorMessage("Error", "Id already exists.");
 					return false;
 				}
 			}
 			else if (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
-				if (bioModel.isSIdInUse((String)fields.get(GlobalConstants.ID).getValue())) {
+				if (bioModel.isSIdInUse(fields.get(GlobalConstants.ID).getValue())) {
 					Utility.createErrorMessage("Error", "Id already exists.");
 					return false;
 				}
@@ -798,8 +797,8 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			
 			String id = fields.get(GlobalConstants.ID).getValue();
 			Submodel instance = bioModel.getSBMLCompModel().getListOfSubmodels().get(subModelId);
-			instance.setName(fields.get(GlobalConstants.NAME).getValue());
 			if (instance != null) {
+				instance.setName(fields.get(GlobalConstants.NAME).getValue());
 				//long k = 0;
 				while (instance.getListOfDeletions().size()>0) {
 					Deletion deletion = instance.getListOfDeletions().get(0);

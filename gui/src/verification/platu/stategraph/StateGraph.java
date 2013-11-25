@@ -98,7 +98,7 @@ public class StateGraph {
         // TODO: What if we just read tranVector from baseState?
         LpnTranList currentEnabledTransitions = getEnabled(baseState);
         stStack.push(baseState);
-        tranStack.push((LpnTranList) currentEnabledTransitions);
+        tranStack.push(currentEnabledTransitions);
         while (true){
             ptr--;
             State currentState = stStack.pop();
@@ -167,7 +167,7 @@ public class StateGraph {
         LpnTranList currentEnabledTransitions = getEnabled(baseState);
 
         stStack.push(baseState);
-        tranStack.push((LpnTranList) currentEnabledTransitions);
+        tranStack.push(currentEnabledTransitions);
         while (true){
             ptr--;
             State currentState = stStack.pop();
@@ -416,7 +416,7 @@ public class StateGraph {
         }
     	
     	if(enabledSetTbl.containsKey(curState) == true){
-    		return (LpnTranList)enabledSetTbl.get(curState).clone();
+    		return enabledSetTbl.get(curState).clone();
     	}
     	
         LpnTranList curEnabled = new LpnTranList();
@@ -1837,17 +1837,12 @@ public class StateGraph {
 					// Nothing needs to be done, so continue.
 					continue;
 				}
-				else{
-					
-					// Setting the  old zero and new zero will be handled below.
-					
-					newRecord.set_lcrPair(new LPNContAndRate(contVar, newRate));
-					
-					newRecord.set_newValue(false);
-					
-					// Set the rate to the lower bound or zero.
-					contVar.setCurrentRate(z.getSmallestRate(contVar));
-				}
+				newRecord.set_lcrPair(new LPNContAndRate(contVar, newRate));
+				
+				newRecord.set_newValue(false);
+				
+				// Set the rate to the lower bound or zero.
+				contVar.setCurrentRate(z.getSmallestRate(contVar));
 			}
 
 			// If the value did not get assigned, put in the old value.
@@ -2135,18 +2130,16 @@ public class StateGraph {
 				presetNotMarked = false;
 				continue;
 			}
+			if (this.lpn.getEnablingTree(tranName) != null && this.lpn.getEnablingTree(tranName).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(initialVector)) == 0.0) {
+				initEnabledTrans[i] = false;
+				continue;
+			}
+			else if (this.lpn.getTransitionRateTree(tranName) != null && this.lpn.getTransitionRateTree(tranName).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(initialVector)) == 0.0) {
+				initEnabledTrans[i] = false;
+				continue;
+			}
 			else {
-				if (this.lpn.getEnablingTree(tranName) != null && this.lpn.getEnablingTree(tranName).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(initialVector)) == 0.0) {
-					initEnabledTrans[i] = false;
-					continue;
-				}
-				else if (this.lpn.getTransitionRateTree(tranName) != null && this.lpn.getTransitionRateTree(tranName).evaluateExpr(this.lpn.getAllVarsWithValuesAsString(initialVector)) == 0.0) {
-					initEnabledTrans[i] = false;
-					continue;
-				}
-				else {
-					initEnabledTrans[i] = true;
-				}
+				initEnabledTrans[i] = true;
 			}			
 		}
 		return initEnabledTrans;
