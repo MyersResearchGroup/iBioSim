@@ -37,9 +37,9 @@ public class FBABounds extends JPanel implements ActionListener, MouseListener {
 		super(new BorderLayout());
 		fbc = bioModel.getSBMLFBC();
 		
-		JPanel eventPanel = new JPanel(new BorderLayout());
+		JPanel largestPanel = new JPanel(new BorderLayout());
 		
-		String[] assign = new String[0];
+		String[] list = new String[0];
 		
 		FluxBound fluxBound = new FluxBound();
 		for(int i = 0; i < fbc.getListOfFluxBounds().size(); i++){
@@ -50,8 +50,11 @@ public class FBABounds extends JPanel implements ActionListener, MouseListener {
 				System.out.println(fluxBound.getReaction());
 				System.out.println(reactionId);
 				
-				if(assign[0].isEmpty()){
-					assign[0]=reactionId + "";
+				if(list[0].isEmpty()){
+					list[0]=reactionId + fluxBound.getOperation() + fluxBound.getValue() + "";
+				}
+				else{
+					list[1]=reactionId + fluxBound.getOperation() + fluxBound.getValue() + "";
 				}
 			}
 		}
@@ -59,7 +62,7 @@ public class FBABounds extends JPanel implements ActionListener, MouseListener {
 		
 		// TODO: populate the string array with flux bounds corresponding to this reactionId
 
-		JList eventAssign = new JList();
+		JList listOfBounds = new JList();
 		
 		JPanel biggerPanel = new JPanel(new BorderLayout());
 		JPanel smallerPanel = new JPanel();
@@ -72,26 +75,26 @@ public class FBABounds extends JPanel implements ActionListener, MouseListener {
 		addBound.addActionListener(this);
 		removeBound.addActionListener(this);
 		editBound.addActionListener(this);
-		JLabel eventAssignLabel = new JLabel("List of Flux Bounds:");
-		eventAssign.removeAll();
-		eventAssign.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		JLabel listOfBoundsLabel = new JLabel("List of Flux Bounds:");
+		listOfBounds.removeAll();
+		listOfBounds.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scroll = new JScrollPane();
 		scroll.setMinimumSize(new Dimension(260, 220));
 		scroll.setPreferredSize(new Dimension(276, 152));
-		scroll.setViewportView(eventAssign);
+		scroll.setViewportView(listOfBounds);
 		
 		//Utility.sort(assign);
-		eventAssign.setListData(assign);
-		eventAssign.setSelectedIndex(0);
-		eventAssign.addMouseListener(this);
-		biggerPanel.add(eventAssignLabel, "North");
+		listOfBounds.setListData(list);
+		listOfBounds.setSelectedIndex(0);
+		listOfBounds.addMouseListener(this);
+		biggerPanel.add(listOfBoundsLabel, "North");
 		biggerPanel.add(scroll, "Center");
 		biggerPanel.add(smallerPanel, "South");
 		
-		eventPanel.add(biggerPanel, "South");
+		largestPanel.add(biggerPanel, "South");
 		Object[] options = { "Ok", "Cancel" };
 		String title = "Flux Bounds Editor";
-		int value = JOptionPane.showOptionDialog(Gui.frame, eventPanel, title, JOptionPane.YES_NO_OPTION, 
+		int value = JOptionPane.showOptionDialog(Gui.frame, largestPanel, title, JOptionPane.YES_NO_OPTION, 
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION && value != JOptionPane.YES_OPTION) {
@@ -102,7 +105,7 @@ public class FBABounds extends JPanel implements ActionListener, MouseListener {
 				// TODO: for each new bound, create a new flux bound and populate it accordingly
 			}
 			if (error) {
-				value = JOptionPane.showOptionDialog(Gui.frame, eventPanel, title, JOptionPane.YES_NO_OPTION, 
+				value = JOptionPane.showOptionDialog(Gui.frame, largestPanel, title, JOptionPane.YES_NO_OPTION, 
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			}
 		}
