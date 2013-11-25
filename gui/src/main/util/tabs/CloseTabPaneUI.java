@@ -1374,7 +1374,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		}
 	}
 
-	protected class ScrollableTabButton extends BasicArrowButton implements UIResource, SwingConstants {
+	protected class ScrollableTabButton extends BasicArrowButton implements UIResource {
 		/**
 		 * 
 		 */

@@ -1822,11 +1822,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 						"Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			else {
-				JOptionPane.showMessageDialog(Gui.frame, "Must Enter An Integer Into The Number Of Steps Field.",
-						"Error", JOptionPane.ERROR_MESSAGE);
-				return;
-			}
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter An Integer Into The Number Of Steps Field.",
+					"Error", JOptionPane.ERROR_MESSAGE);
+			return;
 		}
 		String sim = (String) simulators.getSelectedItem();
 		if (step.getText().trim().equals("inf") && !sim.equals("euler")) {
@@ -2420,11 +2418,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 						"Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			else {
-				JOptionPane.showMessageDialog(Gui.frame, "Must Enter An Integer Into The Number Of Steps Field.",
-						"Error", JOptionPane.ERROR_MESSAGE);
-				return;
-			}
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter An Integer Into The Number Of Steps Field.",
+					"Error", JOptionPane.ERROR_MESSAGE);
+			return;
 		}
 		if (step.getText().trim().equals("inf")) {
 			timeStep = Double.MAX_VALUE;
@@ -3991,13 +3987,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			if (!((String) transientProperties.getSelectedItem()).equals("none")) {
 				return ((String) transientProperties.getSelectedItem());
 			}
-			else {
-				return "";
-			}
+			return "";
 		}
-		else {
-			return null;
-		}
+		return null;
 	}
 
 	public String getSimName() {
@@ -4012,9 +4004,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		if (!fileStem.getText().trim().equals("")) {
 			return root + separator + simName + separator + fileStem.getText().trim();
 		}
-		else {
-			return root + separator + simName;
-		}
+		return root + separator + simName;
 	}
 
 	public void updateBackgroundFile(String updatedFile) {

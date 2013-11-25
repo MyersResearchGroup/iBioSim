@@ -10,7 +10,7 @@ import biomodel.visitor.SpeciesVisitor;
  * @organization University of Utah
  * @email namphuon@cs.utah.edu
  */
-public class NullSpecies extends AbstractSpecies implements SpeciesInterface {
+public class NullSpecies extends AbstractSpecies {
 
 	public NullSpecies() {
 		super();

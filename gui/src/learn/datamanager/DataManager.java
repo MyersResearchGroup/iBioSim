@@ -1311,7 +1311,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 	}
 }
 
-class TableSorter extends TableMap implements TableModelListener {
+class TableSorter extends TableMap {
 	/**
 	 * 
 	 */
