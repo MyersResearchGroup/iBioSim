@@ -103,9 +103,7 @@ public class GCMParser {
 		GeneticNetwork network = new GeneticNetwork(speciesList, complexMap, partsMap, promoterList, biomodel);
 		
 		network.setSBMLFile(biomodel.getSBMLFile());
-		if (sbml != null) {
-			network.setSBML(sbml);
-		}
+		network.setSBML(sbml);
 		
 		return network;		
 	}

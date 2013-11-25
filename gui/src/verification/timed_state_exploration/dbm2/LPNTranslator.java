@@ -315,10 +315,7 @@ public class LPNTranslator{
 			{
 				throw new UnsafeLPNException("\nThe LPN is not safe.\n");
 			}
-			else
-			{
-				newMarkings[index] = true;
-			}
+			newMarkings[index] = true;
 		}
 		
 		return newMarkings;
@@ -492,10 +489,7 @@ public class LPNTranslator{
 			exp = exp.getLeftChild();
 			return -1*(int) exp.evaluateExpr(values);
 		}
-		else
-		{
-			return -1 *(int) exp.evaluateExpr(values);
-		}
+		return -1 *(int) exp.evaluateExpr(values);
 	}
 	
 	private HashMap<String, String> createBooleanHashMap(boolean[] booleanMarkings)
@@ -528,9 +522,6 @@ public class LPNTranslator{
 			exp = exp.getRightChild();
 			return (int) exp.evaluateExpr(values);
 		}
-		else
-		{
-			return (int) exp.evaluateExpr(values);
-		}
+		return (int) exp.evaluateExpr(values);
 	}
 }

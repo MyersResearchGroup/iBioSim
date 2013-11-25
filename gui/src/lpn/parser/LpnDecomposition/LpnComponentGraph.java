@@ -94,20 +94,16 @@ public class LpnComponentGraph{
 		if (vertices.size() < 1) {
 			return null;
 		}
-		else {
-			PriorityQueue<Vertex> vertexQueue = new PriorityQueue<Vertex>(vertices.size(),comparator);
-			for (Vertex vertex : vertices.values()) {
-				//System.out.println("adding vertex " + vertex.componentID);
-				vertexQueue.add(vertex);
-			}
+		PriorityQueue<Vertex> vertexQueue = new PriorityQueue<Vertex>(vertices.size(),comparator);
+		for (Vertex vertex : vertices.values()) {
+			//System.out.println("adding vertex " + vertex.componentID);
+			vertexQueue.add(vertex);
+		}
 //			printVertexQueue(vertexQueue);
-			Vertex destVertex = vertexQueue.poll(); // vertexToMerge and its most connected neighbor will be coalesced into one component.
-			if (destVertex.getBestNetGain() < 0) 
-				return null;
-			else {
-				return destVertex;
-			}
-		}			
+		Vertex destVertex = vertexQueue.poll(); // vertexToMerge and its most connected neighbor will be coalesced into one component.
+		if (destVertex.getBestNetGain() < 0) 
+			return null;
+		return destVertex;			
 	}
 
 	@SuppressWarnings("unused")

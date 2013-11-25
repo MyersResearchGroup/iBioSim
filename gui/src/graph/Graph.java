@@ -595,70 +595,67 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				return calculateAverageVarianceDeviation(runs, 2, directory, warn, outputFile);
 			}
 		}
-		//if it's not a stats file
-		else {
-			Gui.frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		Gui.frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		
+		DTSDParser dtsdParser;
+		TSDParser p;
+		ArrayList<ArrayList<Double>> data;
+		
+		if (file.contains(".dtsd")) {
 			
-			DTSDParser dtsdParser;
-			TSDParser p;
-			ArrayList<ArrayList<Double>> data;
-			
-			if (file.contains(".dtsd")) {
-				
-				dtsdParser = new DTSDParser(file);
-				Gui.frame.setCursor(null);
-				warn = false;
-				graphSpecies = dtsdParser.getSpecies();
-				data = dtsdParser.getData();
-			}
-			else {
-				p = new TSDParser(file, warn);
-				Gui.frame.setCursor(null);
-				warn = p.getWarning();
-				graphSpecies = p.getSpecies();
-				data = p.getData();
-			}
-			
-			if (learnSpecs != null) {
-				for (String spec : learnSpecs) {
-					if (!graphSpecies.contains(spec)) {
-						graphSpecies.add(spec);
-						ArrayList<Double> d = new ArrayList<Double>();
-						for (int i = 0; i < data.get(0).size(); i++) {
-							d.add(0.0);
-						}
-						data.add(d);
-					}
-				}
-				for (int i = 1; i < graphSpecies.size(); i++) {
-					if (!learnSpecs.contains(graphSpecies.get(i))) {
-						graphSpecies.remove(i);
-						data.remove(i);
-						i--;
-					}
-				}
-			}
-			else if (averageOrder != null) {
-				for (String spec : averageOrder) {
-					if (!graphSpecies.contains(spec)) {
-						graphSpecies.add(spec);
-						ArrayList<Double> d = new ArrayList<Double>();
-						for (int i = 0; i < data.get(0).size(); i++) {
-							d.add(0.0);
-						}
-						data.add(d);
-					}
-				}
-				for (int i = 1; i < graphSpecies.size(); i++) {
-					if (!averageOrder.contains(graphSpecies.get(i))) {
-						graphSpecies.remove(i);
-						data.remove(i);
-						i--;
-					}
-				}
-			}
-			return data;
+			dtsdParser = new DTSDParser(file);
+			Gui.frame.setCursor(null);
+			warn = false;
+			graphSpecies = dtsdParser.getSpecies();
+			data = dtsdParser.getData();
 		}
+		else {
+			p = new TSDParser(file, warn);
+			Gui.frame.setCursor(null);
+			warn = p.getWarning();
+			graphSpecies = p.getSpecies();
+			data = p.getData();
+		}
+		
+		if (learnSpecs != null) {
+			for (String spec : learnSpecs) {
+				if (!graphSpecies.contains(spec)) {
+					graphSpecies.add(spec);
+					ArrayList<Double> d = new ArrayList<Double>();
+					for (int i = 0; i < data.get(0).size(); i++) {
+						d.add(0.0);
+					}
+					data.add(d);
+				}
+			}
+			for (int i = 1; i < graphSpecies.size(); i++) {
+				if (!learnSpecs.contains(graphSpecies.get(i))) {
+					graphSpecies.remove(i);
+					data.remove(i);
+					i--;
+				}
+			}
+		}
+		else if (averageOrder != null) {
+			for (String spec : averageOrder) {
+				if (!graphSpecies.contains(spec)) {
+					graphSpecies.add(spec);
+					ArrayList<Double> d = new ArrayList<Double>();
+					for (int i = 0; i < data.get(0).size(); i++) {
+						d.add(0.0);
+					}
+					data.add(d);
+				}
+			}
+			for (int i = 1; i < graphSpecies.size(); i++) {
+				if (!averageOrder.contains(graphSpecies.get(i))) {
+					graphSpecies.remove(i);
+					data.remove(i);
+					i--;
+				}
+			}
+		}
+		return data;
 	}
 
 	/**
@@ -1409,7 +1406,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		else if (e.getType() == ChartProgressEvent.DRAWING_FINISHED) {
 			this.setCursor(null);
 			JFreeChart chart = e.getChart();
-			XYPlot plot = (XYPlot) chart.getXYPlot();
+			XYPlot plot = chart.getXYPlot();
 			NumberAxis axis = (NumberAxis) plot.getRangeAxis();
 			YMin.setText("" + axis.getLowerBound());
 			YMax.setText("" + axis.getUpperBound());
@@ -1639,7 +1636,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		LogX.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				XYPlot plot = (XYPlot) chart.getXYPlot();
+				XYPlot plot = chart.getXYPlot();
 				Font rangeFont = chart.getXYPlot().getRangeAxis().getLabelFont();
 				Font rangeTickFont = chart.getXYPlot().getRangeAxis().getTickLabelFont();
 				Font domainFont = chart.getXYPlot().getDomainAxis().getLabelFont();
@@ -1670,7 +1667,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		LogY.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				XYPlot plot = (XYPlot) chart.getXYPlot();
+				XYPlot plot = chart.getXYPlot();
 				Font rangeFont = chart.getXYPlot().getRangeAxis().getLabelFont();
 				Font rangeTickFont = chart.getXYPlot().getRangeAxis().getTickLabelFont();
 				Font domainFont = chart.getXYPlot().getDomainAxis().getLabelFont();
@@ -8325,7 +8322,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				Model model = document.getModel();
 				ListOf<Species> ids = model.getListOfSpecies();
 				for (int i = 0; i < model.getSpeciesCount(); i++) {
-					learnSpecs.add(((Species) ids.get(i)).getId());
+					learnSpecs.add(ids.get(i).getId());
 				}
 			}
 		}
@@ -8514,16 +8511,12 @@ class IconNode extends DefaultMutableTreeNode {
 		if (iconName != null) {
 			return iconName;
 		}
-		else {
-			String str = userObject.toString();
-			int index = str.lastIndexOf(".");
-			if (index != -1) {
-				return str.substring(++index);
-			}
-			else {
-				return null;
-			}
+		String str = userObject.toString();
+		int index = str.lastIndexOf(".");
+		if (index != -1) {
+			return str.substring(++index);
 		}
+		return null;
 	}
 
 	public void setIconName(String name) {
@@ -8565,7 +8558,7 @@ class TextIcons extends MetalIconFactory.TreeLeafIcon {
 			setDefaultSet();
 		}
 		TextIcons icon = new TextIcons();
-		icon.label = (String) labels.get(str);
+		icon.label = labels.get(str);
 		return icon;
 	}
 

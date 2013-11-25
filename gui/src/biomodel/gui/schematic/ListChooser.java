@@ -97,10 +97,9 @@ public class ListChooser extends JPanel {
 		if(list.length == 1){
 			return (String)list[0];
 			
-		}else{
-			ListChooser pc = new ListChooser(frame, list, message);
-			return pc.getSelectedValue();
 		}
+		ListChooser pc = new ListChooser(frame, list, message);
+		return pc.getSelectedValue();
 	}
 	
 	

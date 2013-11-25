@@ -1829,13 +1829,13 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 
 		}
 		if (lhpn.isSelected()) {
-			abstFilename = (String) JOptionPane.showInputDialog(this,
+			abstFilename = JOptionPane.showInputDialog(this,
 					"Please enter the file name for the abstracted LPN.",
 					"Enter Filename", JOptionPane.PLAIN_MESSAGE);
 			if (abstFilename != null) {
 				if (!abstFilename.endsWith(".lpn")) {
 					while (abstFilename.contains("\\.")) {
-						abstFilename = (String) JOptionPane.showInputDialog(this,
+						abstFilename = JOptionPane.showInputDialog(this,
 								"Please enter a valid file name for the abstracted LPN.",
 								"Invalid Filename", JOptionPane.PLAIN_MESSAGE);
 					}

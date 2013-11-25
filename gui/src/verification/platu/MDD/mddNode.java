@@ -91,24 +91,20 @@ public class mddNode {
 				this.hashVal = 0;		
 				return null;
 			}
-			else { 
-				nextNode = new mddNode();
-				nextNode.level = this.level + 1;
-				nextNode.add(idxArray);
-				this.addSucc(blockIdx, arrayIdx, nextNode);
-				this.blkHashVal[blockIdx] = Integer.rotateLeft(Arrays.hashCode(this.nodeMap[blockIdx]), this.level);
-				this.hashVal = 0;
-				
-				return null;
-			}			
+			nextNode = new mddNode();
+			nextNode.level = this.level + 1;
+			nextNode.add(idxArray);
+			this.addSucc(blockIdx, arrayIdx, nextNode);
+			this.blkHashVal[blockIdx] = Integer.rotateLeft(Arrays.hashCode(this.nodeMap[blockIdx]), this.level);
+			this.hashVal = 0;
+			
+			return null;			
 		}
-		else {
-			if(nextNode == Mdd.terminal)
-				return this;
-			else if(nextNode.add(idxArray)==null)
-				return null;
+		if(nextNode == Mdd.terminal)
 			return this;
-		}
+		else if(nextNode.add(idxArray)==null)
+			return null;
+		return this;
 	}
 	
 	public mddNode add(int[] idxArray, HashMap<mddNode, mddNode>[] nodeTbl, int shrLevel) {	
@@ -139,40 +135,38 @@ public class mddNode {
 				nodeTbl[this.level].put(this, this);
 				return this;
 			}
-			else { 
-				nextNode = new mddNode();
-				nextNode.level = this.level + 1;
+			nextNode = new mddNode();
+			nextNode.level = this.level + 1;
+			
+			mddNode newNextNode = nextNode.add(idxArray, nodeTbl, shrLevel);				
+			if(newNextNode != nextNode) 
+				nextNode = newNextNode;
+			nextNode.refCount++;	
+			
+			if(level < shrLevel) 
+				nodeTbl[this.level].remove(this);
+			
+			this.addSucc(blockIdx, arrayIdx, nextNode);
+			this.blkHashVal[blockIdx] = Integer.rotateLeft(Arrays.hashCode(this.nodeMap[blockIdx]), this.level);
+			this.hashVal = 0;
 				
-				mddNode newNextNode = nextNode.add(idxArray, nodeTbl, shrLevel);				
-				if(newNextNode != nextNode) 
-					nextNode = newNextNode;
-				nextNode.refCount++;	
-				
-				if(level < shrLevel) 
-					nodeTbl[this.level].remove(this);
-				
-				this.addSucc(blockIdx, arrayIdx, nextNode);
-				this.blkHashVal[blockIdx] = Integer.rotateLeft(Arrays.hashCode(this.nodeMap[blockIdx]), this.level);
-				this.hashVal = 0;
-					
-				if(level < shrLevel) {
-				mddNode newThis = nodeTbl[this.level].get(this);
-				if (newThis != null) {		
-					for(int blkIter = 0; blkIter < mddNode.numBlocks; blkIter++) {
-						if(this.nodeMap[blkIter] == null)
-							continue;
-						for(int arrayIter = 0; arrayIter < this.nodeMap[blkIter].length; arrayIter++)
-							if(this.nodeMap[blkIter][arrayIter] != null)
-								this.nodeMap[blkIter][arrayIter].refCount--;
-					} 
-				    
-					return newThis;
-				}
-				
-				nodeTbl[this.level].put(this, this);
-				}
-				return this;
-			}			
+			if(level < shrLevel) {
+			mddNode newThis = nodeTbl[this.level].get(this);
+			if (newThis != null) {		
+				for(int blkIter = 0; blkIter < mddNode.numBlocks; blkIter++) {
+					if(this.nodeMap[blkIter] == null)
+						continue;
+					for(int arrayIter = 0; arrayIter < this.nodeMap[blkIter].length; arrayIter++)
+						if(this.nodeMap[blkIter][arrayIter] != null)
+							this.nodeMap[blkIter][arrayIter].refCount--;
+				} 
+			    
+				return newThis;
+			}
+			
+			nodeTbl[this.level].put(this, this);
+			}
+			return this;			
 		}
 		else if(nextNode == Mdd.terminal) {
 			//System.out.println("mddNode: should not reach here. Abort!");
@@ -715,37 +709,35 @@ public class mddNode {
 			}
 			return null;
 		}
-		else {
-			int curBlkIdx = curIdx & mddNode.blockIdxMask;
-			int curArrayIdx = curIdx >> mddNode.arrayIdxoffset;
-			mddNode thisSucc = this.getSucc(curBlkIdx, curArrayIdx);
-			int[] tmp = thisSucc.next(mddHeight, curIdxArray);
-			if(tmp != null) {
-				tmp[this.level] = curIdx;
-				return tmp;
-			}
-			
-			int newIdx = curIdx + 1;
-			int newBlkIdx = newIdx & mddNode.blockIdxMask;
-			int newArrayIdx = newIdx >> mddNode.arrayIdxoffset;
-			
-			for(int arrayIter = newArrayIdx; arrayIter < maxArrayBound; arrayIter++) {
-				int startingBlkIdx = (arrayIter > newArrayIdx) ? 0 : newBlkIdx; 
-				for(int blkIter = startingBlkIdx; blkIter < mddNode.numBlocks; blkIter++) {
+		int curBlkIdx = curIdx & mddNode.blockIdxMask;
+		int curArrayIdx = curIdx >> mddNode.arrayIdxoffset;
+		mddNode thisSucc = this.getSucc(curBlkIdx, curArrayIdx);
+		int[] tmp = thisSucc.next(mddHeight, curIdxArray);
+		if(tmp != null) {
+			tmp[this.level] = curIdx;
+			return tmp;
+		}
+		
+		int newIdx = curIdx + 1;
+		int newBlkIdx = newIdx & mddNode.blockIdxMask;
+		int newArrayIdx = newIdx >> mddNode.arrayIdxoffset;
+		
+		for(int arrayIter = newArrayIdx; arrayIter < maxArrayBound; arrayIter++) {
+			int startingBlkIdx = (arrayIter > newArrayIdx) ? 0 : newBlkIdx; 
+			for(int blkIter = startingBlkIdx; blkIter < mddNode.numBlocks; blkIter++) {
 //						if(this.nodeMap[blkIter] == null)
 //							continue;
-					thisSucc = this.getSucc(blkIter, arrayIter);
-					if(thisSucc == null) 
-						continue;
-						
-					int stateIdx = (arrayIter << mddNode.arrayIdxoffset) | blkIter;
-					int[] result = thisSucc.next(mddHeight);
-					result[this.level] = stateIdx;
-					return result;
-				}
+				thisSucc = this.getSucc(blkIter, arrayIter);
+				if(thisSucc == null) 
+					continue;
+					
+				int stateIdx = (arrayIter << mddNode.arrayIdxoffset) | blkIter;
+				int[] result = thisSucc.next(mddHeight);
+				result[this.level] = stateIdx;
+				return result;
 			}
-			return null;
 		}
+		return null;
 	}
 	
 	

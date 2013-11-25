@@ -28,11 +28,9 @@ import main.util.MutableBoolean;
 
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.ext.comp.ExternalModelDefinition;
-import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
-import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLWriter;
@@ -1230,12 +1228,12 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		for (String s : elementsPanel.getElementChanges()) {
 			for (int i = d.getModel().getInitialAssignmentCount() - 1; i >= 0; i--) {
 				if (s.contains("=")) {
-					String formula = SBMLutilities.myFormulaToString(((InitialAssignment) d.getModel()
-							.getListOfInitialAssignments().get(i)).getMath());
+					String formula = SBMLutilities.myFormulaToString(d.getModel()
+							.getListOfInitialAssignments().get(i).getMath());
 					String sFormula = s.substring(s.indexOf('=') + 1).trim();
 					sFormula = SBMLutilities.myFormulaToString(SBMLutilities.myParseFormula(sFormula));
 					sFormula = s.substring(0, s.indexOf('=') + 1) + " " + sFormula;
-					if ((((InitialAssignment) d.getModel().getListOfInitialAssignments().get(i)).getVariable()
+					if ((d.getModel().getListOfInitialAssignments().get(i).getVariable()
 							+ " = " + formula).equals(sFormula)) {
 						d.getModel().getListOfInitialAssignments().remove(i);
 					}
@@ -1253,11 +1251,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			}
 			for (int i = d.getModel().getRuleCount() - 1; i >= 0; i--) {
 				if (s.contains("=")) {
-					String formula = SBMLutilities.myFormulaToString(((Rule) d.getModel().getListOfRules().get(i)).getMath());
+					String formula = SBMLutilities.myFormulaToString(d.getModel().getListOfRules().get(i).getMath());
 					String sFormula = s.substring(s.indexOf('=') + 1).trim();
 					sFormula = SBMLutilities.myFormulaToString(SBMLutilities.myParseFormula(sFormula));
 					sFormula = s.substring(0, s.indexOf('=') + 1) + " " + sFormula;
-					if ((SBMLutilities.getVariable(((Rule) d.getModel().getListOfRules().get(i))) + " = " + formula).equals(sFormula)) {
+					if ((SBMLutilities.getVariable(d.getModel().getListOfRules().get(i)) + " = " + formula).equals(sFormula)) {
 						d.getModel().getListOfRules().remove(i);
 					}
 				} else if (d.getModel().getListOfRules().get(i).getMetaId().equals(s)) {
@@ -2030,9 +2028,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			if (compGCM.equals(gcm)) {
 				return false;
 			}
-			else {
-				check = checkNoComponentLoop(gcm, compGCM);
-			}
+			check = checkNoComponentLoop(gcm, compGCM);
 		}
 		return check;
 	}
@@ -2099,7 +2095,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			ArrayList<String> components = getComponentsList();
 
 			if (components.size() == 0) {
-				comp = null;
 				JOptionPane.showMessageDialog(Gui.frame,
 						"There aren't any other models to use as components."
 								+ "\nCreate a new model or import a model into the project first.",

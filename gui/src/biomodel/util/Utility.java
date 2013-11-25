@@ -343,18 +343,15 @@ public class Utility {
 			document.getModel().addReaction(r);
 			return true;
 		}
-		else {
-			ListOf<Reaction> rr = document.getModel().getListOfReactions();
-			for (int i = 0; i < document.getModel().getReactionCount(); i++) {
-				if (((Reaction) rr.get(i)).getId().equals(r.getId())) {
-					rr.remove(i);
-				}
+		ListOf<Reaction> rr = document.getModel().getListOfReactions();
+		for (int i = 0; i < document.getModel().getReactionCount(); i++) {
+			if (rr.get(i).getId().equals(r.getId())) {
+				rr.remove(i);
 			}
-			document.getModel().addReaction(r);
-			return true;
-			//Give warning
-		}		
-//		return false;
+		}
+		document.getModel().addReaction(r);
+		return true;
+		//Give warning
 	}
 	
 	public static boolean addSpecies(SBMLDocument document, Species species) {
@@ -363,17 +360,15 @@ public class Utility {
 			document.getModel().addSpecies(species);
 			return true;
 		}
-		else {
-			/* TODO: this is not quite right  */
-			if (species.isSetInitialAmount() && species.getInitialAmount() >= 0) {
-				s.setInitialAmount(species.getInitialAmount());
-			} else if (species.isSetInitialConcentration() && species.getInitialConcentration() >= 0){
-				s.setInitialConcentration(species.getInitialConcentration());
-			}
-			s.unsetSBOTerm();
-			return true;
-			//Give warning
+		/* TODO: this is not quite right  */
+		if (species.isSetInitialAmount() && species.getInitialAmount() >= 0) {
+			s.setInitialAmount(species.getInitialAmount());
+		} else if (species.isSetInitialConcentration() && species.getInitialConcentration() >= 0){
+			s.setInitialConcentration(species.getInitialConcentration());
 		}
+		s.unsetSBOTerm();
+		return true;
+		//Give warning
 	}
 	
 	public static boolean addUnits() {
@@ -388,21 +383,18 @@ public class Utility {
 			comp.setConstant(true);
 			return true;
 		}
-		else {
-			ListOf<Compartment> c = document.getModel().getListOfCompartments();
-			for (int i = 0; i < document.getModel().getCompartmentCount(); i++) {
-				if (((Compartment) c.get(i)).getId().equals(compartment)) {
-					c.remove(i);
-				}
+		ListOf<Compartment> c = document.getModel().getListOfCompartments();
+		for (int i = 0; i < document.getModel().getCompartmentCount(); i++) {
+			if (c.get(i).getId().equals(compartment)) {
+				c.remove(i);
 			}
-			Compartment comp = document.getModel().createCompartment();
-			comp.setId(compartment);
-			comp.setSpatialDimensions(3);
-			comp.setConstant(true);
-			return true;
-			//Give warning
 		}
-//		return false;
+		Compartment comp = document.getModel().createCompartment();
+		comp.setId(compartment);
+		comp.setSpatialDimensions(3);
+		comp.setConstant(true);
+		return true;
+		//Give warning
 	}
 	
 	public static double[] getEquilibrium(String Keq) {

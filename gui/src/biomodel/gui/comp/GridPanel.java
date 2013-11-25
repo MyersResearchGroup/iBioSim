@@ -156,52 +156,46 @@ public class GridPanel extends JPanel implements ActionListener {
 					
 					continue;
 				}
-				else {			
+				int rowCount = 0, colCount = 0;
 				
-					int rowCount = 0, colCount = 0;
+				//try to get the number of rows and columns from the user
+				try{
 					
-					//try to get the number of rows and columns from the user
-					try{
-						
-						rowCount = Integer.parseInt(rowsChooser.getText());
-						colCount = Integer.parseInt(columnsChooser.getText());
-					}
-					catch(NumberFormatException e){
-						
-						JOptionPane.showMessageDialog(Gui.frame,
-								"A number you entered could not be parsed.",
-								"Invalid number format",
-								JOptionPane.ERROR_MESSAGE);
-					}
-					
-					if (rowCount < 1 || colCount < 1) {
-						
-						JOptionPane.showMessageDialog(Gui.frame,
-								"The size must be positive",
-								"Invalid size",
-								JOptionPane.ERROR_MESSAGE);
-						
-						return false;
-					}
-					
-					//filename of the component
-					String compGCMName = (String)componentChooser.getSelectedItem();
-					
-					//create the grid with these components
-					//these will be added to the GCM as well
-					Grid grid = gcm.getGrid();
-					grid.setEnabled(true);
-					grid.createGrid(rowCount, colCount, gcm, compGCMName);
-					
-					return true;
+					rowCount = Integer.parseInt(rowsChooser.getText());
+					colCount = Integer.parseInt(columnsChooser.getText());
 				}
-			}
-			else {
+				catch(NumberFormatException e){
+					
+					JOptionPane.showMessageDialog(Gui.frame,
+							"A number you entered could not be parsed.",
+							"Invalid number format",
+							JOptionPane.ERROR_MESSAGE);
+				}
 				
+				if (rowCount < 1 || colCount < 1) {
+					
+					JOptionPane.showMessageDialog(Gui.frame,
+							"The size must be positive",
+							"Invalid size",
+							JOptionPane.ERROR_MESSAGE);
+					
+					return false;
+				}
+				
+				//filename of the component
+				String compGCMName = (String)componentChooser.getSelectedItem();
+				
+				//create the grid with these components
+				//these will be added to the GCM as well
 				Grid grid = gcm.getGrid();
 				grid.setEnabled(true);
+				grid.createGrid(rowCount, colCount, gcm, compGCMName);
+				
 				return true;
 			}
+			Grid grid = gcm.getGrid();
+			grid.setEnabled(true);
+			return true;
 		}
 		
 		return false;
@@ -279,45 +273,42 @@ public class GridPanel extends JPanel implements ActionListener {
 						"Cannot drop a grid component", JOptionPane.ERROR_MESSAGE);
 					continue;
 				}
-				else {		
+				int rowCount = 0, colCount = 0;
 				
-					int rowCount = 0, colCount = 0;
+				//try to get the number of rows and columns from the user
+				try{
 					
-					//try to get the number of rows and columns from the user
-					try{
-						
-						rowCount = Integer.parseInt(rowsChooser.getText());
-						colCount = Integer.parseInt(columnsChooser.getText());
-					}
-					catch (NumberFormatException e) {
-						
-						JOptionPane.showMessageDialog(Gui.frame,
-								"A number you entered could not be parsed.",
-								"Invalid number format",
-								JOptionPane.ERROR_MESSAGE);
-					}
-					
-					if ((rowCount < 1 || colCount < 1) || (rowCount < 2 && colCount < 2)) {
-						
-						JOptionPane.showMessageDialog(Gui.frame,
-								"The size must be at least 1x2 or 2x1",
-								"Invalid size",
-								JOptionPane.ERROR_MESSAGE);
-						
-						continue;
-					}
-					
-					//filename of the component
-					String compGCMName = (String)componentChooser.getSelectedItem();
-					
-					//if the grid size increases, then add the new components to the GCM
-					//if it decreases, delete components from the GCM (getComponents.remove(id))
-					grid.changeGridSize(rowCount, colCount, compGCMName, gcm);
-		
-					return true;
+					rowCount = Integer.parseInt(rowsChooser.getText());
+					colCount = Integer.parseInt(columnsChooser.getText());
 				}
+				catch (NumberFormatException e) {
+					
+					JOptionPane.showMessageDialog(Gui.frame,
+							"A number you entered could not be parsed.",
+							"Invalid number format",
+							JOptionPane.ERROR_MESSAGE);
+				}
+				
+				if ((rowCount < 1 || colCount < 1) || (rowCount < 2 && colCount < 2)) {
+					
+					JOptionPane.showMessageDialog(Gui.frame,
+							"The size must be at least 1x2 or 2x1",
+							"Invalid size",
+							JOptionPane.ERROR_MESSAGE);
+					
+					continue;
+				}
+				
+				//filename of the component
+				String compGCMName = (String)componentChooser.getSelectedItem();
+				
+				//if the grid size increases, then add the new components to the GCM
+				//if it decreases, delete components from the GCM (getComponents.remove(id))
+				grid.changeGridSize(rowCount, colCount, compGCMName, gcm);
+
+				return true;
 			}
-			else return false;
+			return false;
 		}
 		
 		return false;
@@ -348,7 +339,7 @@ public class GridPanel extends JPanel implements ActionListener {
 			
 			return true;
 		}
-		else return false;
+		return false;
 	}
 	
 	/**

@@ -338,8 +338,7 @@ public class SynthesisGraph {
 	public SynthesisNode getInput(int inputIndex) {
 		if (inputIndex < inputs.size())
 			return inputs.get(inputIndex);
-		else
-			return null;
+		return null;
 	}
 	
 	public List<SynthesisNode> postOrderNodes() {
@@ -358,8 +357,7 @@ public class SynthesisGraph {
 	public List<SynthesisNode> getChildren(SynthesisNode node) {
 		if (edges.containsKey(node))
 			return edges.get(node);
-		else
-			return new LinkedList<SynthesisNode>();
+		return new LinkedList<SynthesisNode>();
 	}
 	
 	public int getNucleotideCount() {

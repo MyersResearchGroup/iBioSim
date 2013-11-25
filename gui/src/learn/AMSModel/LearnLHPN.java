@@ -1507,7 +1507,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								for (int o=0;o<div.size();o++){//DRK	
 										
 										long app = (long) ((div.get(o))*valScaleFactor);
-										builder.append((double) (app/valScaleFactor));
+										builder.append((app/valScaleFactor));
 										//builder.
 										if (o!=div.size()-1)
 										builder.append(",");}//DRK  
@@ -1957,7 +1957,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			prop.setProperty("learn.valueScaling", this.globalValueScaling.getText().trim());
 			prop.setProperty("learn.delayScaling", this.globalDelayScaling.getText().trim());
 			prop.setProperty("learn.bins", (String) this.numBins.getSelectedItem());
-			prop.setProperty("learn.prop", (String) this.propertyG.getText().trim());
+			prop.setProperty("learn.prop", this.propertyG.getText().trim());
 			String varsList = null;
 			if (range.isSelected()) {
 				prop.setProperty("learn.equal", "range");
@@ -2735,14 +2735,14 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			}
 			out.write("epsilon = " + epsilon + "; ratesampling = " + rateSampling + "; pathLengthBin = " + pathLengthBin + "; percent = " + percent + "; runlength = " + runLength + "; runtime = " + runTime + "; absoluteTime = " + absoluteTime + "; delayscalefactor = " + delayScaleFactor + "; valuescalefactor = " + valScaleFactor + "; unstableTime = " + stableTolerance + "\n");
 			tPar.put("epsilon", epsilon);
-			tPar.put("pathLengthBin", Double.valueOf((double) pathLengthBin));
-			tPar.put("pathLengthVar", Double.valueOf((double) pathLengthVar));
-			tPar.put("rateSampling", Double.valueOf((double) rateSampling));
+			tPar.put("pathLengthBin", Double.valueOf(pathLengthBin));
+			tPar.put("pathLengthVar", Double.valueOf(pathLengthVar));
+			tPar.put("rateSampling", Double.valueOf(rateSampling));
 			tPar.put("percent", percent);
 			if (absoluteTime)
 				tPar.put("runTime", runTime);
 			else
-				tPar.put("runLength", Double.valueOf((double) runLength));
+				tPar.put("runLength", Double.valueOf(runLength));
 		//	tPar.put("unstableTime", unstableTime);
 		tPar.put("stableTolerance", stableTolerance);
 		} catch (IOException e){
@@ -2835,19 +2835,17 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					if (varNum == -1){
 						continue;
 					}
-					else{
-						String s = load.getProperty("learn.bins" + st1);
-						String[] savedBins = s.split("\\s");
-						//variablesList.add(savedBins[0]);
-						//	((JComboBox)(((JPanel)variablesPanel.getComponent(j+1)).getComponent(2))).setSelectedItem(savedBins[1]);
-						for (int i = 2; i < savedBins.length ; i++){
-							//		((JTextField)(((JPanel)variablesPanel.getComponent(j+1)).getComponent(i+1))).setText(savedBins[i]);
-							if (varNum < variablesMap.size()) {	// chk for varNum or j ????
-								thresholds.get(st1).add(Double.parseDouble(savedBins[i]));
-							}
+					String s = load.getProperty("learn.bins" + st1);
+					String[] savedBins = s.split("\\s");
+					//variablesList.add(savedBins[0]);
+					//	((JComboBox)(((JPanel)variablesPanel.getComponent(j+1)).getComponent(2))).setSelectedItem(savedBins[1]);
+					for (int i = 2; i < savedBins.length ; i++){
+						//		((JTextField)(((JPanel)variablesPanel.getComponent(j+1)).getComponent(i+1))).setText(savedBins[i]);
+						if (varNum < variablesMap.size()) {	// chk for varNum or j ????
+							thresholds.get(st1).add(Double.parseDouble(savedBins[i]));
 						}
-						//j++;
 					}
+					//j++;
 				}
 			}
 			if (load.containsKey("learn.inputs")){
@@ -3234,9 +3232,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			if (value <= varThresholds.get(l)) {
 				bin = l;
 				break;
-			} else {
-				bin = l + 1; 
 			}
+			bin = l + 1;
 		}
 		return bin;
 	}
@@ -3245,9 +3242,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		for (int i = 0; i < reqdVarsL.size(); i++) {
 			if (bins[i][j] != bins[i][mark]) {
 				return false;
-			} else {
-				continue;
 			}
+			continue;
 		}
 		return true;
 	}
@@ -3436,7 +3432,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 									double d1 = (Double.valueOf(p3.getProperty(String.valueOf(p3.size() - 1))) + Double.valueOf(p3.getProperty(String.valueOf(p3.size() - 2))))/2.0;
 									d1 = d1*10000;
 									int d2 = (int) d1; 
-									dmvSplits.add(((double)d2)/10000.0); // truncating to 4 decimal places
+									dmvSplits.add(d2/10000.0); // truncating to 4 decimal places
 								}
 								l++;
 								for (int k = j+1; k < dmvcValues.length; k++){
@@ -3478,10 +3474,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						if (data.get(i+1).get(k) <= localThresholds.get(currentVar).get(l)) {
 							bins[i][k] = l;
 							break;
-						} else {
-							bins[i][k] = l + 1; // indices of bins not same as that of the variable. i here. not j; if j
-							// wanted, then size of bins array should be varNames not reqdVars
 						}
+						bins[i][k] = l + 1; // indices of bins not same as that of the variable. i here. not j; if j
+						// wanted, then size of bins array should be varNames not reqdVars
 					}
 				}
 			}
@@ -3572,14 +3567,13 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			p.setProperty(name + "_vMin", v.toString());
 			p.setProperty(name + "_vMax", v.toString());
 			return;
-		} else {
-			vMin = Double.parseDouble(p.getProperty(name + "_vMin"));
-			vMax = Double.parseDouble(p.getProperty(name + "_vMax"));
-			if (v < vMin) {
-				vMin = v;
-			} else if (v > vMax) {
-				vMax = v;
-			}
+		}
+		vMin = Double.parseDouble(p.getProperty(name + "_vMin"));
+		vMax = Double.parseDouble(p.getProperty(name + "_vMax"));
+		if (v < vMin) {
+			vMin = v;
+		} else if (v > vMax) {
+			vMax = v;
 		}
 		p.setProperty(name + "_vMin", vMin.toString());
 		p.setProperty(name + "_vMax", vMax.toString());
@@ -3593,14 +3587,13 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			p.setProperty(name + "_rMin", r.toString());
 			p.setProperty(name + "_rMax", r.toString());
 			return;
-		} else {
-			rMin = Double.parseDouble(p.getProperty(name + "_rMin"));
-			rMax = Double.parseDouble(p.getProperty(name + "_rMax"));
-			if (r < rMin) {
-				rMin = r;
-			} else if (r > rMax) {
-				rMax = r;
-			}
+		}
+		rMin = Double.parseDouble(p.getProperty(name + "_rMin"));
+		rMax = Double.parseDouble(p.getProperty(name + "_rMax"));
+		if (r < rMin) {
+			rMin = r;
+		} else if (r > rMax) {
+			rMax = r;
 		}
 		p.setProperty(name + "_rMin", rMin.toString());
 		p.setProperty(name + "_rMax", rMax.toString());
@@ -3900,14 +3893,13 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			p.setProperty("dMin", d.toString());
 			p.setProperty("dMax", d.toString());
 			return;
-		} else {
-			dMin = Double.parseDouble(p.getProperty("dMin"));
-			dMax = Double.parseDouble(p.getProperty("dMax"));
-			if (d < dMin) {
-				dMin = d;
-			} else if (d > dMax) {
-				dMax = d;
-			}
+		}
+		dMin = Double.parseDouble(p.getProperty("dMin"));
+		dMax = Double.parseDouble(p.getProperty("dMax"));
+		if (d < dMin) {
+			dMin = d;
+		} else if (d > dMax) {
+			dMax = d;
 		}
 		p.setProperty("dMin", dMin.toString());
 		p.setProperty("dMax", dMax.toString());
@@ -4099,9 +4091,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								running.setCursor(null);
 								running.dispose();
 								return(localThresholds);
-							} else {
-								out.write(reqdVarsL.get(l).getName() + " is a dmv in autogenT.");
 							}
+							out.write(reqdVarsL.get(l).getName() + " is a dmv in autogenT.");
 							if (k.equalsIgnoreCase(reqdVarsL.get(l).getName())){
 								localThresholds.put(k,dmvDivs.get(k));
 							}
@@ -4618,9 +4609,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		for (int i = 0; i < reqdVarsL.size(); i++) {
 			if (bins[i][j] != bins[i][mark]) {
 				return false;
-			} else {
-				continue;
 			}
+			continue;
 		}
 		return true;
 	}
@@ -4663,31 +4653,30 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			if (reqdVarsL.get(i).isInput()){
 				if (Integer.valueOf(currPlaceBin[i]) == Integer.valueOf(nextPlaceBin[i])){
 					continue;
-				} else {
-					if (!pseudoVars.containsKey(reqdVarsL.get(i).getName())){
-						pseudo = false;
-						break;
-					}
-					if (Math.abs(Integer.valueOf(currPlaceBin[i]) - Integer.valueOf(nextPlaceBin[i])) > 1){
-						pseudo = false;
-						break;
-					}
-					pseudo = true;
-					bin = Integer.valueOf(nextPlaceBin[i]);
-					st = reqdVarsL.get(i).getName();
-					if (bin == 0){
-						if (!enabling.equalsIgnoreCase(""))
-							enabling += "&";
-						enabling += "~(" + st + ">=" + (int) Math.ceil(scaledThresholds.get(st).get(bin).doubleValue()) + ")";
-					} else if (bin == (scaledThresholds.get(st).size())){
-						if (!enabling.equalsIgnoreCase(""))
-							enabling += "&";
-						enabling += "(" + st + ">="	+ (int) Math.floor(scaledThresholds.get(st).get(bin-1).doubleValue()) + ")";
-					} else{
-						if (!enabling.equalsIgnoreCase(""))
-							enabling += "&";
-						enabling += "(" + st + ">=" + (int) Math.floor(scaledThresholds.get(st).get(bin-1).doubleValue()) + ")&~(" + st + ">=" + (int) Math.ceil(scaledThresholds.get(st).get(bin).doubleValue()) + ")";
-					}
+				}
+				if (!pseudoVars.containsKey(reqdVarsL.get(i).getName())){
+					pseudo = false;
+					break;
+				}
+				if (Math.abs(Integer.valueOf(currPlaceBin[i]) - Integer.valueOf(nextPlaceBin[i])) > 1){
+					pseudo = false;
+					break;
+				}
+				pseudo = true;
+				bin = Integer.valueOf(nextPlaceBin[i]);
+				st = reqdVarsL.get(i).getName();
+				if (bin == 0){
+					if (!enabling.equalsIgnoreCase(""))
+						enabling += "&";
+					enabling += "~(" + st + ">=" + (int) Math.ceil(scaledThresholds.get(st).get(bin).doubleValue()) + ")";
+				} else if (bin == (scaledThresholds.get(st).size())){
+					if (!enabling.equalsIgnoreCase(""))
+						enabling += "&";
+					enabling += "(" + st + ">="	+ (int) Math.floor(scaledThresholds.get(st).get(bin-1).doubleValue()) + ")";
+				} else{
+					if (!enabling.equalsIgnoreCase(""))
+						enabling += "&";
+					enabling += "(" + st + ">=" + (int) Math.floor(scaledThresholds.get(st).get(bin-1).doubleValue()) + ")&~(" + st + ">=" + (int) Math.ceil(scaledThresholds.get(st).get(bin).doubleValue()) + ")";
 				}
 			} else {
 				if (Integer.valueOf(currPlaceBin[i]) != Integer.valueOf(nextPlaceBin[i])){

@@ -233,14 +233,14 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		JScrollPane scroll2 = new JScrollPane();
 		scroll2.setViewportView(reactions);
 		ListOf<Reaction> listOfReactions = model.getListOfReactions();
-		reacts = new String[(int) model.getReactionCount()];
+		reacts = new String[model.getReactionCount()];
 		for (int i = 0; i < model.getReactionCount(); i++) {
-			Reaction reaction = (Reaction) listOfReactions.get(i);
+			Reaction reaction = listOfReactions.get(i);
 			reacts[i] = reaction.getId();
 			if (paramsOnly && reaction.getKineticLaw()!=null) {
 				ListOf<LocalParameter> params = reaction.getKineticLaw().getListOfLocalParameters();
 				for (int j = 0; j < reaction.getKineticLaw().getLocalParameterCount(); j++) {
-					LocalParameter paramet = ((LocalParameter) (params.get(j)));
+					LocalParameter paramet = (params.get(j));
 					for (int k = 0; k < getParams.size(); k++) {
 						if (getParams.get(k).split(" ")[0].equals(reaction.getId() + "/" + paramet.getId())) {
 							parameterChanges.add(getParams.get(k));
@@ -293,9 +293,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		onPort = new JCheckBox();
 		JLabel reactionCompLabel = new JLabel("Compartment:");
 		ListOf<Compartment> listOfCompartments = gcm.getSBMLDocument().getModel().getListOfCompartments();
-		String[] addC = new String[(int) gcm.getSBMLDocument().getModel().getCompartmentCount()];
+		String[] addC = new String[gcm.getSBMLDocument().getModel().getCompartmentCount()];
 		for (int i = 0; i < gcm.getSBMLDocument().getModel().getCompartmentCount(); i++) {
-			addC[i] = ((Compartment) listOfCompartments.get(i)).getId();
+			addC[i] = listOfCompartments.get(i).getId();
 		}
 		reactionComp = new JComboBox(addC);
 		JLabel reverse = new JLabel("Reversible:");
@@ -340,13 +340,13 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			if (reac.getKineticLaw()!=null) {
 				//reac.createKineticLaw();
 				ListOf<LocalParameter> listOfParameters = reac.getKineticLaw().getListOfLocalParameters();
-				reacParams = new String[(int) reac.getKineticLaw().getLocalParameterCount()];
+				reacParams = new String[reac.getKineticLaw().getLocalParameterCount()];
 				for (int i = 0; i < reac.getKineticLaw().getLocalParameterCount(); i++) {
 					/*
 					 * This code is a hack to get around a local parameter
 					 * conversion bug in libsbml
 					 */
-					LocalParameter pp = (LocalParameter) listOfParameters.get(i);
+					LocalParameter pp = listOfParameters.get(i);
 					LocalParameter parameter = new LocalParameter(gcm.getSBMLDocument().getLevel(), gcm.getSBMLDocument().getVersion());
 					parameter.setId(pp.getId());
 					SBMLutilities.setMetaId(parameter, pp.getMetaId());
@@ -423,9 +423,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		if (option.equals("OK")) {
 			Reaction reac = gcm.getSBMLDocument().getModel().getReaction(reactionId);
 			ListOf<SpeciesReference> listOfReactants = reac.getListOfReactants();
-			reacta = new String[(int) reac.getReactantCount()];
+			reacta = new String[reac.getReactantCount()];
 			for (int i = 0; i < reac.getReactantCount(); i++) {
-				SpeciesReference reactant = (SpeciesReference) listOfReactants.get(i);
+				SpeciesReference reactant = listOfReactants.get(i);
 				changedReactants.add(reactant);
 				reacta[i] = reactant.getSpecies() + " " + reactant.getStoichiometry();
 			}
@@ -461,9 +461,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		if (option.equals("OK")) {
 			Reaction reac = gcm.getSBMLDocument().getModel().getReaction(reactionId);
 			ListOf<SpeciesReference> listOfProducts = reac.getListOfProducts();
-			proda = new String[(int) reac.getProductCount()];
+			proda = new String[reac.getProductCount()];
 			for (int i = 0; i < reac.getProductCount(); i++) {
-				SpeciesReference product = (SpeciesReference) listOfProducts.get(i);
+				SpeciesReference product = listOfProducts.get(i);
 				changedProducts.add(product);
 				this.proda[i] = product.getSpecies() + " " + product.getStoichiometry();
 			}
@@ -499,9 +499,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		if (option.equals("OK")) {
 			Reaction reac = gcm.getSBMLDocument().getModel().getReaction(reactionId);
 			ListOf<ModifierSpeciesReference> listOfModifiers = reac.getListOfModifiers();
-			modifier = new String[(int) reac.getModifierCount()];
+			modifier = new String[reac.getModifierCount()];
 			for (int i = 0; i < reac.getModifierCount(); i++) {
-				ModifierSpeciesReference modifier = (ModifierSpeciesReference) listOfModifiers.get(i);
+				ModifierSpeciesReference modifier = listOfModifiers.get(i);
 				changedModifiers.add(modifier);
 				this.modifier[i] = modifier.getSpecies();
 			}
@@ -623,7 +623,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		if (option.equals("OK")) {
 			Reaction reac = gcm.getSBMLDocument().getModel().getReaction(reactionId);
-			copyReact = (Reaction) reac.clone();
+			copyReact = reac.clone();
 			reacID.setText(reac.getId());
 			selectedID = reac.getId();
 			reacName.setText(reac.getName());
@@ -925,25 +925,25 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						changedParameters = new ArrayList<LocalParameter>();
 						ListOf<LocalParameter> listOfParameters = react.getKineticLaw().getListOfLocalParameters();
 						for (int i = 0; i < react.getKineticLaw().getLocalParameterCount(); i++) {
-							LocalParameter parameter = (LocalParameter) listOfParameters.get(i);
+							LocalParameter parameter = listOfParameters.get(i);
 							changedParameters.add(new LocalParameter(parameter));
 						}
 						changedProducts = new ArrayList<SpeciesReference>();
 						ListOf<SpeciesReference> listOfProducts = react.getListOfProducts();
 						for (int i = 0; i < react.getProductCount(); i++) {
-							SpeciesReference product = (SpeciesReference) listOfProducts.get(i);
+							SpeciesReference product = listOfProducts.get(i);
 							changedProducts.add(product);
 						}
 						changedReactants = new ArrayList<SpeciesReference>();
 						ListOf<SpeciesReference> listOfReactants = react.getListOfReactants();
 						for (int i = 0; i < react.getReactantCount(); i++) {
-							SpeciesReference reactant = (SpeciesReference) listOfReactants.get(i);
+							SpeciesReference reactant = listOfReactants.get(i);
 							changedReactants.add(reactant);
 						}
 						changedModifiers = new ArrayList<ModifierSpeciesReference>();
 						ListOf<ModifierSpeciesReference> listOfModifiers = react.getListOfModifiers();
 						for (int i = 0; i < react.getModifierCount(); i++) {
-							ModifierSpeciesReference modifier = (ModifierSpeciesReference) listOfModifiers.get(i);
+							ModifierSpeciesReference modifier = listOfModifiers.get(i);
 							changedModifiers.add(modifier);
 						}
 					}
@@ -1097,18 +1097,18 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		if (isReaction) {
 			for (int i = 0; i < changedParameters.size(); i++) {
-				validVars.add(((LocalParameter) changedParameters.get(i)).getId());
+				validVars.add(changedParameters.get(i).getId());
 			}
 			for (int i = 0; i < changedReactants.size(); i++) {
-				validVars.add(((SpeciesReference) changedReactants.get(i)).getSpecies());
-				validVars.add(((SpeciesReference) changedReactants.get(i)).getId());
+				validVars.add(changedReactants.get(i).getSpecies());
+				validVars.add(changedReactants.get(i).getId());
 			}
 			for (int i = 0; i < changedProducts.size(); i++) {
-				validVars.add(((SpeciesReference) changedProducts.get(i)).getSpecies());
-				validVars.add(((SpeciesReference) changedProducts.get(i)).getId());
+				validVars.add(changedProducts.get(i).getSpecies());
+				validVars.add(changedProducts.get(i).getId());
 			}
 			for (int i = 0; i < changedModifiers.size(); i++) {
-				validVars.add(((ModifierSpeciesReference) changedModifiers.get(i)).getSpecies());
+				validVars.add(changedModifiers.get(i).getSpecies());
 			}
 		}
 		else if (!isFunction) {
@@ -1224,9 +1224,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		reacParamUnits.addItem("( none )");
 		Model model = bioModel.getSBMLDocument().getModel();
 		ListOf<UnitDefinition> listOfUnits = model.getListOfUnitDefinitions();
-		String[] units = new String[(int) model.getUnitDefinitionCount()];
+		String[] units = new String[model.getUnitDefinitionCount()];
 		for (int i = 0; i < model.getUnitDefinitionCount(); i++) {
-			UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
+			UnitDefinition unit = listOfUnits.get(i);
 			units[i] = unit.getId();
 			// GET OTHER THINGS
 		}
@@ -1374,7 +1374,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						ListOf<LocalParameter> list = KL.getListOfLocalParameters();
 						int number = -1;
 						for (int i = 0; i < KL.getLocalParameterCount(); i++) {
-							if (((LocalParameter) list.get(i)).getId().equals(((String) reacParameters.getSelectedValue()).split(" ")[0])) {
+							if (list.get(i).getId().equals(((String) reacParameters.getSelectedValue()).split(" ")[0])) {
 								number = i;
 							}
 						}
@@ -1663,9 +1663,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		Object[] productConstantOptions = { "true", "false" };
 		productConstant = new JComboBox(productConstantOptions);
 		ListOf<Species> listOfSpecies = gcm.getSBMLDocument().getModel().getListOfSpecies();
-		String[] speciesList = new String[(int) gcm.getSBMLDocument().getModel().getSpeciesCount()];
+		String[] speciesList = new String[gcm.getSBMLDocument().getModel().getSpeciesCount()];
 		for (int i = 0; i < gcm.getSBMLDocument().getModel().getSpeciesCount(); i++) {
-			speciesList[i] = ((Species) listOfSpecies.get(i)).getId();
+			speciesList[i] = listOfSpecies.get(i).getId();
 		}
 		Utility.sort(speciesList);
 		productSpecies = new JComboBox();
@@ -1963,9 +1963,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		JPanel modifiersPanel;
 		JLabel speciesLabel = new JLabel("Species:");
 		ListOf<Species> listOfSpecies = bioModel.getSBMLDocument().getModel().getListOfSpecies();
-		String[] speciesList = new String[(int) bioModel.getSBMLDocument().getModel().getSpeciesCount()];
+		String[] speciesList = new String[bioModel.getSBMLDocument().getModel().getSpeciesCount()];
 		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getSpeciesCount(); i++) {
-			speciesList[i] = ((Species) listOfSpecies.get(i)).getId();
+			speciesList[i] = listOfSpecies.get(i).getId();
 		}
 		Utility.sort(speciesList);
 		Object[] choices = speciesList;
@@ -2355,9 +2355,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		Object[] reactantConstantOptions = { "true", "false" };
 		reactantConstant = new JComboBox(reactantConstantOptions);
 		ListOf<Species> listOfSpecies = gcm.getSBMLDocument().getModel().getListOfSpecies();
-		String[] speciesList = new String[(int) gcm.getSBMLDocument().getModel().getSpeciesCount()];
+		String[] speciesList = new String[gcm.getSBMLDocument().getModel().getSpeciesCount()];
 		for (int i = 0; i < gcm.getSBMLDocument().getModel().getSpeciesCount(); i++) {
-			speciesList[i] = ((Species) listOfSpecies.get(i)).getId();
+			speciesList[i] = listOfSpecies.get(i).getId();
 		}
 		Utility.sort(speciesList);
 		reactantSpecies = new JComboBox();
@@ -2712,7 +2712,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		Reaction tempReaction = gcm.getSBMLDocument().getModel().getReaction(selected);
 		ListOf<Reaction> r = gcm.getSBMLDocument().getModel().getListOfReactions();
 		for (int i = 0; i < gcm.getSBMLDocument().getModel().getReactionCount(); i++) {
-			if (((Reaction) r.get(i)).getId().equals(tempReaction.getId())) {
+			if (r.get(i).getId().equals(tempReaction.getId())) {
 				r.remove(i);
 			}
 		}
@@ -3143,14 +3143,14 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		this.bioModel = gcm;
 		Model model = gcm.getSBMLDocument().getModel();
 		ListOf<Reaction> listOfReactions = model.getListOfReactions();
-		reacts = new String[(int) model.getReactionCount()];
+		reacts = new String[model.getReactionCount()];
 		for (int i = 0; i < model.getReactionCount(); i++) {
-			Reaction reaction = (Reaction) listOfReactions.get(i);
+			Reaction reaction = listOfReactions.get(i);
 			reacts[i] = reaction.getId();
 			if (paramsOnly) {
 				ListOf<LocalParameter> params = reaction.getKineticLaw().getListOfLocalParameters();
 				for (int j = 0; j < reaction.getKineticLaw().getLocalParameterCount(); j++) {
-					LocalParameter paramet = ((LocalParameter) (params.get(j)));
+					LocalParameter paramet = (params.get(j));
 					for (int k = 0; k < parameterChanges.size(); k++) {
 						if (parameterChanges.get(k).split(" ")[0].equals(reaction.getId() + "/" + paramet.getId())) {
 							String[] splits = parameterChanges.get(k).split(" ");

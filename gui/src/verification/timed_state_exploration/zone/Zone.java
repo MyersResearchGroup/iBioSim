@@ -723,9 +723,7 @@ public class Zone extends ZoneType {
 					throw new UnsupportedOperationException("Tried subset with Zone and other" +
 							"ZoneType");
 				}
-				else{
-					oZ = (Zone) otherZone;
-				}
+				oZ = (Zone) otherZone;
 				
 				if(this._indexToTimer.length != oZ._indexToTimer.length){
 					return false;
@@ -1164,10 +1162,7 @@ public class Zone extends ZoneType {
 					{
 						throw new IncompatibleZoneException("The common timers do not agree.");
 					}
-					else
-					{
-						mergedZone.setDbmEntry(i, j, value1);
-					}
+					mergedZone.setDbmEntry(i, j, value1);
 				}
 				
 				// The timer does not occur in both.

@@ -1068,7 +1068,7 @@ public class CompositionalAnalysis {
 		
 		if(elapsedTimeSec > 60){
 			float elapsedTime = elapsedTimeSec;
-			elapsedTime = elapsedTimeSec/(float)60;
+			elapsedTime = elapsedTimeSec/60;
 			System.out.println("   --> Elapsed time: " + elapsedTime + " min");
 		}
 		
@@ -1410,7 +1410,7 @@ public class CompositionalAnalysis {
 		
 		if(elapsedTimeSec > 60){
 			float elapsedTime = elapsedTimeSec;
-			elapsedTime = elapsedTimeSec/(float)60;
+			elapsedTime = elapsedTimeSec/60;
 			System.out.println("   --> Elapsed time: " + elapsedTime + " min");
 		}
 		
@@ -1584,7 +1584,7 @@ public class CompositionalAnalysis {
 		System.out.println("\n****** Total Elapsed Time: " + totalSec + " sec ******");
 		
 		if(totalSec > 60){
-			float totalTime = totalSec/(float)60;
+			float totalTime = totalSec/60;
 			System.out.println("****** Total Elapsed Time: " + totalTime + " min ******");
 		}
 		
@@ -2546,7 +2546,7 @@ public class CompositionalAnalysis {
 		float elapsedTimeSec = elapsedTimeMillis/1000F;
 		System.out.println("   --> Elapsed time: " + elapsedTimeSec + " sec");
 		if(elapsedTimeSec > 60){
-			float elapsedTime = elapsedTimeSec/(float)60;
+			float elapsedTime = elapsedTimeSec/60;
 			System.out.println("   --> Elapsed time: " + elapsedTime + " min");
 		}
 	}
@@ -2737,7 +2737,7 @@ public class CompositionalAnalysis {
 		System.out.println("   --> Elapsed time: " + elapsedTimeSec + " sec");
 		
 		if(elapsedTimeSec > 60){
-			float elapsedTime = elapsedTimeSec/(float)60;
+			float elapsedTime = elapsedTimeSec/60;
 			System.out.println("   --> Elapsed time: " + elapsedTime + " min");
 		}	
 	}

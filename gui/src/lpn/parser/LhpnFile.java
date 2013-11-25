@@ -962,8 +962,7 @@ public class LhpnFile {
 			}
 			return allTransitions;
 		}
-		else
-			return allTransitions;
+		return allTransitions;
 	}
 	
 	public Transition getTransition(int index) {
@@ -1035,9 +1034,7 @@ public class LhpnFile {
 		if (transitions.get(transition).getDelayTree() == null) {
 			return null;
 		}
-		else {
-			return transitions.get(transition).getDelayTree();
-		}
+		return transitions.get(transition).getDelayTree();
 	}
 
 	public ExprTree getEnablingTree(String transition) {
@@ -1061,8 +1058,7 @@ public class LhpnFile {
 			}
 			return placeList;
 		}
-		else
-			return this.placeList;		
+		return this.placeList;		
 	}
 	
 //	public ArrayList<String> getAllPlaces() {
@@ -1239,9 +1235,7 @@ public class LhpnFile {
 			
 			return varIndexMap;
 		}
-		else{
-			return _varIndexMap;
-		}
+		return _varIndexMap;
 	}
 	
 	/**
@@ -1264,9 +1258,7 @@ public class LhpnFile {
 			_continuousIndexMap = contIndexMap;
 			return contIndexMap;
 		}
-		else{
-			return _continuousIndexMap;
-		}
+		return _continuousIndexMap;
 	}
 	
 	public HashMap<String, String> getAllVarsWithValuesAsString(int[] varValueVector) {
@@ -1534,8 +1526,8 @@ public class LhpnFile {
 	public String getInitialRate(String var) {
 		if (isContinuous(var)) {
 			return continuous.get(var).getInitRate();
-		} else
-			return null;
+		}
+		return null;
 	}
 	
 	/** 
@@ -1547,8 +1539,7 @@ public class LhpnFile {
 		if (isBoolean(var)) {
 			if(booleans.get(var).getInitValue().equals("true"))
 				return 1;
-			else 
-				return 0;
+			return 0;
 		}
 		else if (isInteger(var)) {
 			return Integer.parseInt(integers.get(var).getInitValue());
@@ -1773,17 +1764,15 @@ public class LhpnFile {
 	public boolean containsMovement(String name) {
 		if (places.containsKey(name)) {
 			return places.get(name).isConnected();
-		} else {
-			return transitions.get(name).isConnected();
 		}
+		return transitions.get(name).isConnected();
 	}
 
 	public boolean containsMovement(String from, String to) {
 		if (isTransition(from)) {
 			return transitions.get(from).containsPostset(to);
-		} else {
-			return places.get(from).containsPostset(to);
 		}
+		return places.get(from).containsPostset(to);
 	}
 
 	public Abstraction abstractLhpn(Verification pane) {
@@ -2465,6 +2454,7 @@ public class LhpnFile {
 							+ "name for an InequalityVariable matches a name already "
 							+ "given to a boolean variable.");
 				}
+				/*
 				else{
 //					InequalityVariable iv = (InequalityVariable) v;
 					
@@ -2474,6 +2464,7 @@ public class LhpnFile {
 //					
 //					iv.increaseCount();
 				}
+				*/
 			}
 			else{
 				// Register variable with the continuous variable.

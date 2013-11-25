@@ -725,9 +725,7 @@ public class ContinuousUtilities {
 						(-1)*chkDiv(ineq.getConstant(), currentRate, false)){	
 					return true;
 				}
-				else{
-					return false;
-				}
+				return false;
 			}
 			
 			// Inequality is x>a. This is the case
@@ -739,9 +737,7 @@ public class ContinuousUtilities {
 						chkDiv(ineq.getConstant(), currentRate, false)){
 					return true;
 				}
-				else{
-					return false;
-				}
+				return false;
 			}
 		}
 		/* < or <= */
@@ -756,9 +752,7 @@ public class ContinuousUtilities {
 						(-1)*chkDiv(ineq.getConstant(), currentRate, false)){
 					return true;
 				}
-				else{
-					return false;
-				}
+				return false;
 			}
 			
 			// Inequality is x<a. This is the case where the variable
@@ -770,9 +764,7 @@ public class ContinuousUtilities {
 						chkDiv(ineq.getConstant(), currentRate, false)){
 					return true;
 				}
-				else {
-					return false;
-				}
+				return false;
 			}
 		
 			else {

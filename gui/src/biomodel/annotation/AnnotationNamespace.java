@@ -33,7 +33,6 @@ public class AnnotationNamespace {
 	public String toXMLString() {
 		if (prefix != null)
 			return "xmlns:" + prefix + "=\"" + namespace + "\"";
-		else
-			return "xmlns=\"" + namespace + "\"";
+		return "xmlns=\"" + namespace + "\"";
 	}
 }

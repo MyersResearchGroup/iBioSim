@@ -2820,10 +2820,8 @@ public class Zone{
 					if (j==i){
 						continue;
 					}
-					else{
-						newZone.setDbmEntry(i, j, Zone.INFINITY);
-						newZone.setDbmEntry(j, i, Zone.INFINITY);
-					}
+					newZone.setDbmEntry(i, j, Zone.INFINITY);
+					newZone.setDbmEntry(j, i, Zone.INFINITY);
 				}
 			}
 		}
@@ -2878,10 +2876,8 @@ public class Zone{
 					if (j==i){
 						continue;
 					}
-					else{
-						this.setDbmEntry(i, j, Zone.INFINITY);
-						this.setDbmEntry(j, i, Zone.INFINITY);
-					}
+					this.setDbmEntry(i, j, Zone.INFINITY);
+					this.setDbmEntry(j, i, Zone.INFINITY);
 				}
 			}
 		}
@@ -3062,7 +3058,7 @@ public class Zone{
 		// rate zero.
 		for(LPNContAndRate ltTranPair : _rateZeroContinuous.keySet()){
 			// Cast the index.
-			LPNContinuousPair ltContPair = (LPNContinuousPair) ltTranPair.get_lcPair();
+			LPNContinuousPair ltContPair = ltTranPair.get_lcPair();
 			if(!newAssignValues.get(ltContPair).is_newZero()){
 				// The variable no longer is rate zero, so do nothing.
 				continue;
@@ -3226,7 +3222,7 @@ public class Zone{
 		// Sort the previous rate zero continuous variables into rate zero or non-zero.
 		for(LPNContAndRate ltTranPair : _rateZeroContinuous.keySet()){
 			// Cast the index.
-			LPNContinuousPair ltContPair = (LPNContinuousPair) ltTranPair.get_lcPair();
+			LPNContinuousPair ltContPair = ltTranPair.get_lcPair();
 
 			// Check if the variable is a newly assigned value.
 			UpdateContinuous assignedLtContPair = newAssignValues.get(ltContPair);
@@ -4351,10 +4347,8 @@ public class Zone{
 					// adjusted.
 					continue;
 				}
-				else{
-					// Add one to the upper bounds.
-					setDbmEntry(0, i, getDbmEntry(0, i)+1);
-				}
+				// Add one to the upper bounds.
+				setDbmEntry(0, i, getDbmEntry(0, i)+1);
 			}
 		}
 	}
@@ -5111,7 +5105,7 @@ public class Zone{
 		
 		if(!done && possible){
 			eSet.add(e);
-			newE.add((Transition) eSet);
+			newE.add(eSet);
 		}
 		
 //E.clear();
@@ -5877,11 +5871,9 @@ public class Zone{
 			cV = (LPNContinuousPair) _indexToTimerPair[index];
 			return cV.getCurrentRate();
 		}
-		else{
-			// Since the variable was not found in the non-zero rate continuous
-			// variables, assume the rate is zero.
-			return 0;
-		}
+		// Since the variable was not found in the non-zero rate continuous
+		// variables, assume the rate is zero.
+		return 0;
 	}
 	
 	/**
@@ -5910,7 +5902,7 @@ public class Zone{
 				getValue(new LPNContAndRate(cV, new IntervalPair(0,0)));
 		
 		if(variableRange != null){
-			LPNContinuousPair lcPair = (LPNContinuousPair)_rateZeroContinuous.
+			LPNContinuousPair lcPair = _rateZeroContinuous.
 					getKey(variableRange).get_lcPair();
 			lcPair.setCurrentRate(currentRate);
 			return;
@@ -6118,10 +6110,8 @@ public class Zone{
 			if(i == index){
 				continue;
 			}
-			else{
-				newZone.setDbmEntry(index, i, Zone.INFINITY);
-				newZone.setDbmEntry(i, index, Zone.INFINITY);
-			}
+			newZone.setDbmEntry(index, i, Zone.INFINITY);
+			newZone.setDbmEntry(i, index, Zone.INFINITY);
 		}
 		
 //		newZone.advance(localStates);

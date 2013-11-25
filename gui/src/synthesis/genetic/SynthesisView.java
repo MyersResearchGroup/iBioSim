@@ -474,8 +474,8 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	public boolean tabChanged(int tabIndex) {
 		if (tabIndex == 0) {
 			return (libsChanged() || methodChanged() || numSolnsChanged());
-		} else
-			return false;
+		}
+		return false;
 	}
 	
 	private boolean libsChanged() {
@@ -485,11 +485,9 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 					prevLibFilePaths.add(prevLibFilePath);
 		if (prevLibFilePaths.size() != libFilePaths.size())
 			return true;
-		else {
-			for (String prevLibFilePath : prevLibFilePaths)
-				if (!libFilePaths.contains(prevLibFilePath))
-					return true;
-		}
+		for (String prevLibFilePath : prevLibFilePaths)
+			if (!libFilePaths.contains(prevLibFilePath))
+				return true;
 		return false;
 	}
 	

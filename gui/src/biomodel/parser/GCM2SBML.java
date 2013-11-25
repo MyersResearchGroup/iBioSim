@@ -700,16 +700,13 @@ public class GCM2SBML {
 		if (parameters.containsKey(parameter)) {
 			return parameters.get(parameter);
 		}
-		else {
-			return null;
-		}
+		return null;
 	}
 
 	private String getProp(Properties props, String prop) {
 		if (props.containsKey(prop))
 			return props.getProperty(prop);
-		else
-			return getParameter(prop);
+		return getParameter(prop);
 	}
 
 	private String checkCompabilityLoad(String key) {

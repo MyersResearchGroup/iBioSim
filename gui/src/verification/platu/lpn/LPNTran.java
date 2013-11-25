@@ -541,7 +541,7 @@ public class LPNTran {
         int[] curVector = curState.getVariableVector();
         
         for (VarExpr s : getAssignments()) {
-            int newValue = (int) s.getExpr().evaluate(curVector);
+            int newValue = s.getExpr().evaluate(curVector);
             newVectorArray[s.getVar().getIndex(curVector)] = newValue;
         }
                 

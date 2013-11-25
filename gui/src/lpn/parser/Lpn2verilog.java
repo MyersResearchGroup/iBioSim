@@ -528,7 +528,7 @@ public class Lpn2verilog {
 				}
 			}
 			if (transitionList.length > 0){
-				if ((assertionBuffer != null) && (assertionBuffer.length()!= 0)){
+				if (assertionBuffer.length()!= 0){
 					sv.write(assertionBuffer.toString());
 				}
 				for (int j = 0; j < netCount; j++){

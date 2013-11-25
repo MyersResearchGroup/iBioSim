@@ -969,7 +969,7 @@ public class Analysis {
 			allTransitions.put(lpnIndex, lpnList[lpnIndex].getAllTransitions());
 			Abstraction abs = new Abstraction(lpnList[lpnIndex]);
 			abs.decomposeLpnIntoProcesses();				 
-			allProcessTransInOneLpn = (HashMap<Transition, Integer>)abs.getTransWithProcIDs();
+			allProcessTransInOneLpn = abs.getTransWithProcIDs();
 			HashMap<Integer, LpnProcess> processMapForOneLpn = new HashMap<Integer, LpnProcess>();
 			for (Transition curTran: allProcessTransInOneLpn.keySet()) {
 				Integer procId = allProcessTransInOneLpn.get(curTran);
@@ -2334,8 +2334,7 @@ public class Analysis {
  		if (predecessor == null || stateVisited.contains(predecessor.getIndex())) {
  			return ignoredTrans;
  		}
- 		else 
- 			stateVisited.add(predecessor.getIndex());
+		stateVisited.add(predecessor.getIndex());
  		LpnTranList predecessorOldPersistent = sg.getEnabledSetTbl().get(predecessor);//enabledSetTbl.get(predecessor);
  		for (Transition oldPersistentTran : predecessorOldPersistent) {
  			State tmpState = sg.getNextStateMap().get(predecessor).get(oldPersistentTran);
@@ -2347,9 +2346,7 @@ public class Analysis {
  		if (ignoredTrans.size()==0) {
  			return ignoredTrans;
  		}
- 		else {
- 			ignoredTrans = allIgnoredTransFired(ignoredTrans, stateVisited, stateStackEntry.getFather(), lpnIndex, sg);
- 		}
+		ignoredTrans = allIgnoredTransFired(ignoredTrans, stateVisited, stateStackEntry.getFather(), lpnIndex, sg);
 		return ignoredTrans;
  	}
 
@@ -2573,7 +2570,7 @@ public class Analysis {
 					lpnEnabledSet.add(tran);
 				}
 				LpnState tmp = new LpnState(lpnList[i].getLpn(), nextStateArray[i], lpnEnabledSet);
-				LpnState tmpCached = (LpnState)(lpnStateCache[i].add(tmp));
+				LpnState tmpCached = (lpnStateCache[i].add(tmp));
 				nextLpnStateArray[i] = tmpCached; 
 				
 			}
@@ -2755,8 +2752,8 @@ public class Analysis {
 						lpnTranStack.push(curEnabled);
 						curIndexStack.push(curIndex);
 						break;
-					} else
-						curIndex++;
+					}
+					curIndex++;
 				}
 			}
 
@@ -3170,7 +3167,7 @@ public class Analysis {
 		// mddMgr.add(reachSet, curLocalStateArray);
 		mddNode reachSet = null;
 		mddNode exploredSet = null;
-		LinkedList<State>[] nextSetArray = (LinkedList<State>[]) (new LinkedList[arraySize]);
+		LinkedList<State>[] nextSetArray = (new LinkedList[arraySize]);
 		for (int i = 0; i < arraySize; i++)
 			nextSetArray[i] = new LinkedList<State>();
 
@@ -4400,8 +4397,7 @@ public class Analysis {
 	private boolean isDummyTran(String tranName) {
 		if (tranName.contains("_dummy"))
 			return true;
-		else
-			return false;
+		return false;
 	}    
     
     private HashSet<Transition> computeDependent(State[] curStateArray,
@@ -4579,8 +4575,7 @@ public class Analysis {
 							}		
 							continue;
 						}
-						else
-							visitedTrans.add(presetTran);
+						visitedTrans.add(presetTran);
 						if (Options.getDebugMode()) {
 							System.out.println("~~~~~~~~~ transVisited ~~~~~~~~~");
 							for (Transition visitedTran :visitedTrans) {
@@ -4677,8 +4672,7 @@ public class Analysis {
 								}				
 								continue;
 							}
-							else 
-								visitedTrans.add(tranCanEnable);
+							visitedTrans.add(tranCanEnable);
 							if (Options.getDebugMode()) {
 								System.out.println("@ nEnable: Transition " + tranCanEnable.getFullLabel()
 										+ " is not enabled. Compute its necessary set.");
@@ -4772,13 +4766,11 @@ public class Analysis {
 					}					
 					return nMarking;
 				}
-				else {
-					cachedNecessarySets.put(tran, nEnable);
-					if (Options.getDebugMode()) {
-						printCachedNecessarySets();
-					}
-					return nEnable;
+				cachedNecessarySets.put(tran, nEnable);
+				if (Options.getDebugMode()) {
+					printCachedNecessarySets();
 				}
+				return nEnable;
 			}
 			else if (nMarking.isEmpty() && !nEnable.isEmpty()) {
 				cachedNecessarySets.put(tran, nEnable);

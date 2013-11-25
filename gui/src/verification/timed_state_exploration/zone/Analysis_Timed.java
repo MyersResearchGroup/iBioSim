@@ -104,7 +104,7 @@ public class Analysis_Timed extends Analysis{
 				curIndexStack.pop();
 				curIndex++;
 				while (curIndex < arraySize) {
-					curEnabled = (sgList[curIndex].getEnabled((TimedState) curStateArray[curIndex])).clone();
+					curEnabled = (sgList[curIndex].getEnabled(curStateArray[curIndex])).clone();
 					if (curEnabled.size() > 0) {
 						lpnTranStack.push(curEnabled);
 						curIndexStack.push(curIndex);
@@ -136,9 +136,9 @@ public class Analysis_Timed extends Analysis{
 			LinkedList<Transition>[] nextEnabledArray = new LinkedList[arraySize];
 			for (int i = 0; i < arraySize; i++) {
 				StateGraph_timed sg = sgList[i];
-				LinkedList<Transition> enabledList = sg.getEnabled((TimedState) curStateArray[i]);
+				LinkedList<Transition> enabledList = sg.getEnabled(curStateArray[i]);
 				curEnabledArray[i] = enabledList;
-				enabledList = sg.getEnabled((TimedState) nextStateArray[i]);
+				enabledList = sg.getEnabled(nextStateArray[i]);
 				//enabledList = sg.getEnabled(nextStateArray[i]);
 				nextEnabledArray[i] = enabledList;
 				Transition disabledTran = firedTran.disablingError(

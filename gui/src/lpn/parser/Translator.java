@@ -1688,9 +1688,7 @@ public class Translator {
 				if (op.getName().equals("PG") || op.getName().equals("PF")) {
 					return "Pr=?{" + operator + convertHelper(op.getChild(1)) + "}";
 				}
-				else {
-					return "Pr=?{" + convertHelper(op.getChild(1)) + operator + convertHelper(op.getChild(2)) + "}";
-				}
+				return "Pr=?{" + convertHelper(op.getChild(1)) + operator + convertHelper(op.getChild(2)) + "}";
 			}
 			else {
 				String finalString = SBMLutilities.myFormulaToString(op);
@@ -1718,31 +1716,29 @@ public class Translator {
 				return finalString;
 			}
 		}
-		else {
-			String finalString = SBMLutilities.myFormulaToString(op);
-			String[] opers = new String[] { "and(", "or(", "not(", "lt(", "leq(", "gt(", "geq(", "eq(", "PG(", "PF(", "PU(" };
-			for (String o : opers) {
-				while (finalString.contains(o)) {
-					String temp = finalString.substring(finalString.indexOf(o) + o.length());
-					String formula = "o";
-					int paren = 1;
-					while (paren != 0) {
-						char c = temp.charAt(0);
-						if (c == '(') {
-							paren++;
-						}
-						else if (c == ')') {
-							paren--;
-						}
-						formula += c;
-						temp.substring(1);
+		String finalString = SBMLutilities.myFormulaToString(op);
+		String[] opers = new String[] { "and(", "or(", "not(", "lt(", "leq(", "gt(", "geq(", "eq(", "PG(", "PF(", "PU(" };
+		for (String o : opers) {
+			while (finalString.contains(o)) {
+				String temp = finalString.substring(finalString.indexOf(o) + o.length());
+				String formula = "o";
+				int paren = 1;
+				while (paren != 0) {
+					char c = temp.charAt(0);
+					if (c == '(') {
+						paren++;
 					}
-					finalString = finalString.substring(0, finalString.indexOf(o))
-							+ convertHelper(SBMLutilities.myParseFormula(formula)) + temp;
+					else if (c == ')') {
+						paren--;
+					}
+					formula += c;
+					temp.substring(1);
 				}
+				finalString = finalString.substring(0, finalString.indexOf(o))
+						+ convertHelper(SBMLutilities.myParseFormula(formula)) + temp;
 			}
-			return finalString;
 		}
+		return finalString;
 	}
 	
 	// getProbpropParts extracts the expressions before and after the PU (after PG and PF)

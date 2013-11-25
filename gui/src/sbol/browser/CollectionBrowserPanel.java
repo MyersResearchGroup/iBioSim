@@ -170,8 +170,8 @@ public class CollectionBrowserPanel extends JPanel implements MouseListener {
 				compIdNames.add(dnac.getDisplayId());
 			compURIs.add(dnac.getURI());
 			return true;
-		} else
-			return false;
+		}
+		return false;
 	}
 	
 	private boolean filterFeature(DnaComponent dnac) {

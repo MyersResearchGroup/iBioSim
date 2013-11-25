@@ -72,14 +72,13 @@ public class SBOLDescriptorPanel extends JPanel {
 			initialID = identityManager.getBioModel().getSBMLDocument().getModel().getId();
 			idText.setText(initialID);
 			return false;
-		} else {
-			initialID = sbolDescriptors[0];
-			idText.setText(initialID);
-			nameText.setText(sbolDescriptors[1]);
-			descriptionText.setText(sbolDescriptors[2]);
-			saveFileIDBox.setSelectedIndex(saveFilePaths.indexOf(identityManager.getBioModel().getSBOLSaveFilePath()));
-			return true;
 		}
+		initialID = sbolDescriptors[0];
+		idText.setText(initialID);
+		nameText.setText(sbolDescriptors[1]);
+		descriptionText.setText(sbolDescriptors[2]);
+		saveFileIDBox.setSelectedIndex(saveFilePaths.indexOf(identityManager.getBioModel().getSBOLSaveFilePath()));
+		return true;
 	}
 	
 	private boolean loadBioSimComponentDescriptors(SBOLIdentityManager identityManager, SBOLFileManager fileManager) {
@@ -96,8 +95,8 @@ public class SBOLDescriptorPanel extends JPanel {
 			} else 
 				removeBioSimURI = true;
 			return true;
-		} else
-			return false;
+		}
+		return false;
 	}
 	
 	private boolean panelOpen(SBOLIdentityManager identityManager, SBOLFileManager fileManager) {
@@ -109,25 +108,23 @@ public class SBOLDescriptorPanel extends JPanel {
 					isSourceIdentifierDuplicate(idText.getText(), 
 							saveFilePaths.get(saveFileIDBox.getSelectedIndex()), fileManager))
 				return true;
-			else {
-				String[] sbolDescriptors = new String[3];
-				sbolDescriptors[0] = idText.getText();
-				sbolDescriptors[1] = nameText.getText();
-				sbolDescriptors[2] = descriptionText.getText(); 
-				identityManager.getBioModel().setSBOLDescriptors(sbolDescriptors);
-				identityManager.getBioModel().setSBOLSaveFilePath(saveFilePaths.get(saveFileIDBox.getSelectedIndex()));
-				if (removeBioSimURI) {
-					try {
-						identityManager.replaceBioSimURI(new URI("http://www.async.ece.utah.edu#iBioSimPlaceHolder"));
-					} catch (URISyntaxException e) {
-						e.printStackTrace();
-					}
-					identityManager.annotateBioModel();
+			String[] sbolDescriptors = new String[3];
+			sbolDescriptors[0] = idText.getText();
+			sbolDescriptors[1] = nameText.getText();
+			sbolDescriptors[2] = descriptionText.getText(); 
+			identityManager.getBioModel().setSBOLDescriptors(sbolDescriptors);
+			identityManager.getBioModel().setSBOLSaveFilePath(saveFilePaths.get(saveFileIDBox.getSelectedIndex()));
+			if (removeBioSimURI) {
+				try {
+					identityManager.replaceBioSimURI(new URI("http://www.async.ece.utah.edu#iBioSimPlaceHolder"));
+				} catch (URISyntaxException e) {
+					e.printStackTrace();
 				}
-				return false;
+				identityManager.annotateBioModel();
 			}
-		} else 
 			return false;
+		}
+		return false;
 	}
 	
 	private boolean isSourceIdentifierInvalid(String sourceID) {

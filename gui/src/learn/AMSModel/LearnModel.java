@@ -272,7 +272,7 @@ public class LearnModel { // added ItemListener SB
 										Iterator<String>  dmvIterator = dmvSet2.iterator();
 										HashMap<String, Object> calculate = new HashMap();
 										while(dmvIterator.hasNext()){
-											String key = (String) dmvIterator.next();
+											String key = dmvIterator.next();
 											if((Double.valueOf((String)dmvProp2.get(key))> Double.valueOf((String)InterpolateInfo2.get(transition1).get("lowerThresh"))) & (Double.valueOf((String)dmvProp2.get(key))< Double.valueOf((String)InterpolateInfo2.get(transition1).get("upperThresh")))){
 												calculate.put("lowerThresh", Double.valueOf((String)dmvProp2.get(key)));
 											}
@@ -299,7 +299,7 @@ public class LearnModel { // added ItemListener SB
 										Iterator<String>  dmvIterator = dmvSet2.iterator();
 										HashMap<String, Object> calculate = new HashMap();
 										while(dmvIterator.hasNext()){
-											String key = (String) dmvIterator.next();
+											String key = dmvIterator.next();
 											if((Double.valueOf((String)dmvProp2.get(key))> Double.valueOf((String)InterpolateInfo2.get(transition1).get("lowerThresh"))) & (Double.valueOf((String)dmvProp2.get(key))< Double.valueOf((String)InterpolateInfo2.get(transition1).get("upperThresh")))){
 												calculate.put("upperThresh", Double.valueOf((String) dmvProp2.get(key)));
 											}
@@ -328,7 +328,7 @@ public class LearnModel { // added ItemListener SB
 										Iterator<String>  dmvIterator = dmvSet2.iterator();
 										HashMap<String, Object> calculate = new HashMap();
 										while(dmvIterator.hasNext()){
-											String key = (String) dmvIterator.next();
+											String key = dmvIterator.next();
 											if((Double.valueOf((String)dmvProp2.get(key))> Double.valueOf((String)InterpolateInfo2.get(transition1).get("lowerThresh"))) & (Double.valueOf((String)dmvProp2.get(key))< Double.valueOf((String)InterpolateInfo2.get(transition1).get("upperThresh")))){
 												calculate.put("upperThresh", Double.valueOf((String)dmvProp2.get(key)));
 											}
@@ -394,7 +394,7 @@ public class LearnModel { // added ItemListener SB
 										Iterator<String>  dmvIterator = dmvSet2.iterator();
 										HashMap<String, Object> calculate = new HashMap();
 										while(dmvIterator.hasNext()){
-											String key = (String) dmvIterator.next();
+											String key = dmvIterator.next();
 											if((Double.valueOf((String)dmvProp2.get(key))> Double.valueOf((String)InterpolateInfo2.get(transition1).get("lowerThresh"))) & (Double.valueOf((String)dmvProp2.get(key))< Double.valueOf((String)InterpolateInfo2.get(transition1).get("upperThresh")))){
 												calculate.put("lowerThresh", Double.valueOf((String)dmvProp2.get(key)));
 											}
@@ -439,7 +439,7 @@ public class LearnModel { // added ItemListener SB
 									Iterator<String>  dmvIterator = dmvSet2.iterator();
 									HashMap<String, Object> calculate = new HashMap();
 									while(dmvIterator.hasNext()){
-										String key = (String) dmvIterator.next();
+										String key = dmvIterator.next();
 										if((Double.valueOf((String)dmvProp2.get(key))< Double.valueOf((String)InterpolateInfo2.get(transition1).get("onlyLowerThresh")))){
 											calculate.put("lowerThresh", Double.valueOf((String)dmvProp2.get(key)));
 										}
@@ -479,7 +479,7 @@ public class LearnModel { // added ItemListener SB
 							Iterator<String>  dmvIterator = dmvSet2.iterator();
 							HashMap<String, Object> calculate = new HashMap();
 							while(dmvIterator.hasNext()){
-								String key = (String) dmvIterator.next();
+								String key = dmvIterator.next();
 								if((Double.valueOf((String)dmvProp2.get(key))> Double.valueOf((String)InterpolateInfo2.get(transition1).get("onlyUpperThresh")))){
 									calculate.put("upperThresh", Double.valueOf((String)dmvProp2.get(key)));
 								}
@@ -2217,9 +2217,8 @@ public class LearnModel { // added ItemListener SB
 
 						// System.out.print(" ");
 						break;
-					} else {
-						out.write("WARNING: A variable in reqdVarsL wasn't found in the complete list of names.\n");
 					}
+					out.write("WARNING: A variable in reqdVarsL wasn't found in the complete list of names.\n");
 				}
 			}
 			/*
@@ -2369,9 +2368,8 @@ public class LearnModel { // added ItemListener SB
 				if (value <= varThresholds.get(l)) {
 					bin = l;
 					break;
-				} else {
-					bin = l + 1; 
 				}
+				bin = l + 1;
 			}
 		} catch (NullPointerException e){
 			e.printStackTrace();
@@ -2386,9 +2384,8 @@ public class LearnModel { // added ItemListener SB
 			if (reqdVarsL.get(i).isCare()){
 				if (bins[i][j] != bins[i][mark]) {
 					return false;
-				} else {
-					continue;
 				}
+				continue;
 			}
 		}
 		return true;
@@ -2398,9 +2395,8 @@ public class LearnModel { // added ItemListener SB
 		for (int i = 0; i < reqdVarsL.size(); i++) {
 			if (reqdVarsL.get(i).isInput() && (bins[i][j] != bins[i][mark])) {
 				return false;
-			} else {
-				continue;
 			}
+			continue;
 		}
 		return true;
 	}
@@ -2409,9 +2405,8 @@ public class LearnModel { // added ItemListener SB
 		for (int i = 0; i < reqdVarsL.size(); i++) {
 			if (bins[i][j] != bins[i][mark]) {
 				return false;
-			} else {
-				continue;
 			}
+			continue;
 		}
 		return true;
 	}
@@ -2879,8 +2874,8 @@ public class LearnModel { // added ItemListener SB
 			}
 			//System.out.println(fullKey + "\n");
 			return(fullKey);
-		} else 
-			return null;
+		}
+		return null;
 	}
 
 	public String getPostsetPlaceFullKey(String transition){
@@ -2894,8 +2889,8 @@ public class LearnModel { // added ItemListener SB
 					fullKey += "," + b[j + reqdVarsL.size()];
 			}
 			return(fullKey);
-		} else 
-			return null;
+		}
+		return null;
 	}
 
 	public void updateGraph(int[][] bins, Double[][] rates, int traceNum, Boolean transientPlaceReqd, Properties cvgProp) {
@@ -3094,14 +3089,13 @@ public class LearnModel { // added ItemListener SB
 			p.setProperty(name + "_vMin", v.toString());
 			p.setProperty(name + "_vMax", v.toString());
 			return;
-		} else {
-			vMin = Double.parseDouble(p.getProperty(name + "_vMin"));
-			vMax = Double.parseDouble(p.getProperty(name + "_vMax"));
-			if (v < vMin) {
-				vMin = v;
-			} else if (v > vMax) {
-				vMax = v;
-			}
+		}
+		vMin = Double.parseDouble(p.getProperty(name + "_vMin"));
+		vMax = Double.parseDouble(p.getProperty(name + "_vMax"));
+		if (v < vMin) {
+			vMin = v;
+		} else if (v > vMax) {
+			vMax = v;
 		}
 		p.setProperty(name + "_vMin", vMin.toString());
 		p.setProperty(name + "_vMax", vMax.toString());
@@ -3115,14 +3109,13 @@ public class LearnModel { // added ItemListener SB
 			p.setProperty(name + "_rMin", r.toString());
 			p.setProperty(name + "_rMax", r.toString());
 			return;
-		} else {
-			rMin = Double.parseDouble(p.getProperty(name + "_rMin"));
-			rMax = Double.parseDouble(p.getProperty(name + "_rMax"));
-			if (r < rMin) {
-				rMin = r;
-			} else if (r > rMax) {
-				rMax = r;
-			}
+		}
+		rMin = Double.parseDouble(p.getProperty(name + "_rMin"));
+		rMax = Double.parseDouble(p.getProperty(name + "_rMax"));
+		if (r < rMin) {
+			rMin = r;
+		} else if (r > rMax) {
+			rMax = r;
 		}
 		p.setProperty(name + "_rMin", rMin.toString());
 		p.setProperty(name + "_rMax", rMax.toString());
@@ -3830,14 +3823,13 @@ public class LearnModel { // added ItemListener SB
 			p.setProperty("dMin", d.toString());
 			p.setProperty("dMax", d.toString());
 			return;
-		} else {
-			dMin = Double.parseDouble(p.getProperty("dMin"));
-			dMax = Double.parseDouble(p.getProperty("dMax"));
-			if (d < dMin) {
-				dMin = d;
-			} else if (d > dMax) {
-				dMax = d;
-			}
+		}
+		dMin = Double.parseDouble(p.getProperty("dMin"));
+		dMax = Double.parseDouble(p.getProperty("dMax"));
+		if (d < dMin) {
+			dMin = d;
+		} else if (d > dMax) {
+			dMax = d;
 		}
 		p.setProperty("dMin", dMin.toString());
 		p.setProperty("dMax", dMax.toString());
@@ -3915,9 +3907,8 @@ public class LearnModel { // added ItemListener SB
 		if (p.getProperty(name + "_rMin") != null)
 			return ((int) Math.floor(Double.parseDouble(p.getProperty(name
 					+ "_rMin"))));
-		else 
-			return null;
-		// return(rMin[i]);
+		return null;
+// return(rMin[i]);
 	}
 
 	public Integer getMaxRate(String place, String name) {
@@ -3925,9 +3916,8 @@ public class LearnModel { // added ItemListener SB
 		if (p.getProperty(name + "_rMax") != null)
 			return ((int) Math.floor(Double.parseDouble(p.getProperty(name
 					+ "_rMax"))));
-		else 
-			return null;
-		// return(rMin[i]);
+		return null;
+// return(rMin[i]);
 	}
 
 	/*	public Double[][] getDataExtrema(ArrayList<ArrayList<Double>> data){
@@ -3978,9 +3968,8 @@ public class LearnModel { // added ItemListener SB
 		for (int i = 0; i < reqdVarsL.size(); i++) {
 			if (bins[i][j] != bins[i][mark]) {
 				return false;
-			} else {
-				continue;
 			}
+			continue;
 		}
 		return true;
 	}
@@ -4045,37 +4034,36 @@ public class LearnModel { // added ItemListener SB
 					binIndex++;
 					if (Integer.valueOf(currPlaceBin[binIndex]) == Integer.valueOf(nextPlaceBin[binIndex])){
 						continue;
-					} else {
-						if (!pseudoVars.containsKey(reqdVarsL.get(i).getName())){
-							// If the 2 places differ in the bins of a non-pseudovar, then u can't add pseudotrans there coz other variables belong to diff bins in these 2 places
-							pseudo = false;
-							break;
-						}
-						//if (Math.abs(Integer.valueOf(currPlaceBin[binIndex]) - Integer.valueOf(nextPlaceBin[binIndex])) > 1){
-						// If the 2 places differ in the bins of a pseudovar but are not adjacent, then u can't add pseudotrans there
-						//	pseudo = false;
-						//	break;
-						//}
-						pseudo = true;
-						bin = Integer.valueOf(nextPlaceBin[binIndex]);
-						st = reqdVarsL.get(i).getName();
-						if (bin == 0){
-							if (!enabling.equalsIgnoreCase(""))
-								enabling += "&";
-							enabling += "~(" + st + ">=" + (int) Math.floor(scaledThresholds.get(st).get(bin).doubleValue()) + ")";//changed ceil to floor on aug 7,2010
-						} else if (bin == (scaledThresholds.get(st).size())){
-							if (!enabling.equalsIgnoreCase(""))
-								enabling += "&";
-							enabling += "(" + st + ">="	+ (int) Math.floor(scaledThresholds.get(st).get(bin-1).doubleValue()) + ")";
-						} else{
-							if (!enabling.equalsIgnoreCase(""))
-								enabling += "&";
-							enabling += "(" + st + ">=" + (int) Math.floor(scaledThresholds.get(st).get(bin-1).doubleValue()) + ")&~(" + st + ">=" + (int) Math.floor(scaledThresholds.get(st).get(bin).doubleValue()) + ")";//changed ceil to floor on aug 7,2010
-						}
+					}
+					if (!pseudoVars.containsKey(reqdVarsL.get(i).getName())){
+						// If the 2 places differ in the bins of a non-pseudovar, then u can't add pseudotrans there coz other variables belong to diff bins in these 2 places
+						pseudo = false;
+						break;
+					}
+					//if (Math.abs(Integer.valueOf(currPlaceBin[binIndex]) - Integer.valueOf(nextPlaceBin[binIndex])) > 1){
+					// If the 2 places differ in the bins of a pseudovar but are not adjacent, then u can't add pseudotrans there
+					//	pseudo = false;
+					//	break;
+					//}
+					pseudo = true;
+					bin = Integer.valueOf(nextPlaceBin[binIndex]);
+					st = reqdVarsL.get(i).getName();
+					if (bin == 0){
+						if (!enabling.equalsIgnoreCase(""))
+							enabling += "&";
+						enabling += "~(" + st + ">=" + (int) Math.floor(scaledThresholds.get(st).get(bin).doubleValue()) + ")";//changed ceil to floor on aug 7,2010
+					} else if (bin == (scaledThresholds.get(st).size())){
+						if (!enabling.equalsIgnoreCase(""))
+							enabling += "&";
+						enabling += "(" + st + ">="	+ (int) Math.floor(scaledThresholds.get(st).get(bin-1).doubleValue()) + ")";
+					} else{
+						if (!enabling.equalsIgnoreCase(""))
+							enabling += "&";
+						enabling += "(" + st + ">=" + (int) Math.floor(scaledThresholds.get(st).get(bin-1).doubleValue()) + ")&~(" + st + ">=" + (int) Math.floor(scaledThresholds.get(st).get(bin).doubleValue()) + ")";//changed ceil to floor on aug 7,2010
 					}
 				} else if ((!reqdVarsL.get(i).isInput()) && (reqdVarsL.get(i).isCare())){
 					binIndex++;
-					if ( (int) Integer.valueOf(currPlaceBin[binIndex]) != (int) Integer.valueOf(nextPlaceBin[binIndex])){
+					if ( Integer.valueOf(currPlaceBin[binIndex]) != Integer.valueOf(nextPlaceBin[binIndex])){
 						pseudo = false;
 						break;
 					}
@@ -4645,9 +4633,7 @@ public class LearnModel { // added ItemListener SB
 				if (v.isDmvc()){
 					continue;
 				}
-				else{
-					contVarExists = true;
-				}
+				contVarExists = true;
 			}
 			for (String st:dmvcPlaces){
 				dmvcVarPlaces.get(Integer.parseInt(st.split("_")[1])).add(st);
@@ -5001,9 +4987,9 @@ public class LearnModel { // added ItemListener SB
 				if (var.isDmvc()){
 					continue;
 				}
-				else{
+				//else{
 					//contVarExists = true;
-				}
+				//}
 			}
 			for (String st:dmvcPlaces){
 				dmvcVarPlaces.get(Integer.parseInt(st.split("_")[1])).add(st);

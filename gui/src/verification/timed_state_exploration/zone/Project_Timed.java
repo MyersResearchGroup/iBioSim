@@ -142,7 +142,7 @@ public class Project_Timed extends Project{
 		{
 			for(int index =0; index < lpnCnt; index++)
 			{
-				if(sgArray[index] instanceof StateGraph_timed)
+				if(sgArray[index] != null)
 				{
 					
 				}

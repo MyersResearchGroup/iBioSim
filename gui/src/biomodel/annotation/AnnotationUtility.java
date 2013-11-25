@@ -95,8 +95,7 @@ public class AnnotationUtility {
 		if (sweepMatcher.find() && sweepMatcher.groupCount()==2) {
 			if (sweepMatcher.group(1)!=null)
 				return sweepMatcher.group(1);
-			else 
-				return sweepMatcher.group(2);
+			return sweepMatcher.group(2);
 		}
 		return null;
 	}
@@ -132,25 +131,22 @@ public class AnnotationUtility {
 		if (arraySizeMatcher.find() && arraySizeMatcher.groupCount()==2) {
 			if (arraySizeMatcher.group(1)!=null) {
 				return Integer.valueOf(arraySizeMatcher.group(1));
-			} else {
-				return Integer.valueOf(arraySizeMatcher.group(2));
 			}
-		} else {
-			arraySizePattern = Pattern.compile(OLD_ARRAY_SIZE_ANNOTATION);
-			arraySizeMatcher = arraySizePattern.matcher(annotation);
-			if (arraySizeMatcher.find() && arraySizeMatcher.groupCount()==1) {
-				annotation = annotation.replace("array:count", "array:size");
-				sbmlObject.setAnnotation(new Annotation(annotation));
-				return Integer.valueOf(arraySizeMatcher.group(1));
-			} else {
-				arraySizePattern = Pattern.compile(OLD_ARRAY_RANGE_ANNOTATION);
-				arraySizeMatcher = arraySizePattern.matcher(annotation);
-				if (arraySizeMatcher.find() && arraySizeMatcher.groupCount()==2) {
-					annotation = annotation.replace("array:min=\"0\" array:max","array:size");
-					sbmlObject.setAnnotation(new Annotation(annotation));
-					return Integer.valueOf(arraySizeMatcher.group(2))+1;
-				}				
-			}
+			return Integer.valueOf(arraySizeMatcher.group(2));
+		}
+		arraySizePattern = Pattern.compile(OLD_ARRAY_SIZE_ANNOTATION);
+		arraySizeMatcher = arraySizePattern.matcher(annotation);
+		if (arraySizeMatcher.find() && arraySizeMatcher.groupCount()==1) {
+			annotation = annotation.replace("array:count", "array:size");
+			sbmlObject.setAnnotation(new Annotation(annotation));
+			return Integer.valueOf(arraySizeMatcher.group(1));
+		}
+		arraySizePattern = Pattern.compile(OLD_ARRAY_RANGE_ANNOTATION);
+		arraySizeMatcher = arraySizePattern.matcher(annotation);
+		if (arraySizeMatcher.find() && arraySizeMatcher.groupCount()==2) {
+			annotation = annotation.replace("array:min=\"0\" array:max","array:size");
+			sbmlObject.setAnnotation(new Annotation(annotation));
+			return Integer.valueOf(arraySizeMatcher.group(2))+1;
 		}
 		return -1;
 	}
@@ -186,8 +182,7 @@ public class AnnotationUtility {
 		if (dynamicMatcher.find() && dynamicMatcher.groupCount()==2) {
 			if (dynamicMatcher.group(1)!=null) 
 				return dynamicMatcher.group(1);
-			else 
-				return dynamicMatcher.group(2);
+			return dynamicMatcher.group(2);
 		}
 		return null;
 	}
@@ -321,12 +316,9 @@ public class AnnotationUtility {
 			if (arrayMatcher.group(1) != null) {
 				return arrayMatcher.group(1).replace("\"","").replace(" ","").split("array:");
 			}
-			else {
-				return arrayMatcher.group(2).replace("\"","").replace(" ","").split("array:");
-			}
-		} else {
-			return null;
+			return arrayMatcher.group(2).replace("\"","").replace(" ","").split("array:");
 		}
+		return null;
 	}
 	
 	public static String[] parseArrayAnnotation(org.sbml.libsbml.SBase sbmlObject) {
@@ -337,12 +329,9 @@ public class AnnotationUtility {
 			if (arrayMatcher.group(1) != null) {
 				return arrayMatcher.group(1).replace("\"","").replace(" ","").split("array:");
 			}
-			else {
-				return arrayMatcher.group(2).replace("\"","").replace(" ","").split("array:");
-			}
-		} else {
-			return null;
+			return arrayMatcher.group(2).replace("\"","").replace(" ","").split("array:");
 		}
+		return null;
 	}
 	
 	public static String parseArrayAnnotation(SBase sbmlObject,String element) {

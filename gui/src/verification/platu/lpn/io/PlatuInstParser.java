@@ -286,7 +286,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "parseLpnFile"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:201:1: parseLpnFile[Project prj] : ( include )? ( globalConstants )? ( globalVariables )? ( main[prj] )? ( moduleClass[prj] )* EOF ;
-    public final void parseLpnFile(Project prj) throws RecognitionException {
+    public final void parseLpnFile(Project prj) {
         try {
             // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:202:5: ( ( include )? ( globalConstants )? ( globalVariables )? ( main[prj] )? ( moduleClass[prj] )* EOF )
             // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:202:7: ( include )? ( globalConstants )? ( globalVariables )? ( main[prj] )? ( moduleClass[prj] )* EOF
@@ -452,7 +452,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "include"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:213:1: include : '<' 'include' '>' ( PATH ';' )+ '<' '/include' '>' ;
-    public final void include() throws RecognitionException {
+    public final void include() {
         Token PATH1=null;
 
         try {
@@ -520,7 +520,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "main"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:222:1: main[Project prj] : '<' 'mod' 'name' '=' '\"' 'main' '\"' '>' ( variables )? ( constants )? instantiation '<' '/mod' '>' ;
-    public final void main(Project prj) throws RecognitionException {
+    public final void main(Project prj) {
         try {
             // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:223:2: ( '<' 'mod' 'name' '=' '\"' 'main' '\"' '>' ( variables )? ( constants )? instantiation '<' '/mod' '>' )
             // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:223:4: '<' 'mod' 'name' '=' '\"' 'main' '\"' '>' ( variables )? ( constants )? instantiation '<' '/mod' '>'
@@ -655,7 +655,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "process"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:273:1: process : '<' 'process' 'name' '=' '\"' processName= ID '\"' '>' '<' '/process' '>' ;
-    public final void process() throws RecognitionException {
+    public final void process() {
         //Token processName=null;
 
         try {
@@ -694,7 +694,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "moduleClass"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:278:1: moduleClass[Project prj] returns [LPN lpn] : ( '<' 'class' 'name' '=' '\"' modName= ID '\"' 'arg' '=' '\"' ( ( (arrayArg2= ID ( '[' arrayExpr2= expression ']' )+ ) | (arg2= ID ) ) ( ( ',' arrayArg= ID ( '[' arrayExpr= expression ']' )+ ) | ( ',' arg= ID ) )* )? '\"' '>' ( constants )? variables logic '<' '/class' '>' ) ;
-    public final LPN moduleClass(Project prj) throws RecognitionException {
+    public final LPN moduleClass(Project prj) {
         LPN lpn = null;
 
         Token modName=null;
@@ -725,7 +725,7 @@ public class PlatuInstParser extends Parser {
 
                 			// module names must be unique
                 			if(LpnMap.containsKey((modName!=null?modName.getText():null))){
-                				System.err.println("error on line " + modName.getLine() + ": module " + (modName!=null?modName.getText():null) + " already exists");
+                				System.err.println("error on line " + (modName!=null?modName.getLine():null) + ": module " + (modName!=null?modName.getText():null) + " already exists");
                 				System.exit(1);
                 			}
                 			
@@ -823,15 +823,15 @@ public class PlatuInstParser extends Parser {
 
                                 			// check aginst globals and other inputs
                             	   			if(GlobalConstHashMap.containsKey((arrayArg2!=null?arrayArg2.getText():null))){
-                            	   				System.err.println("error on line " + arrayArg2.getLine() + ": variable " + (arrayArg2!=null?arrayArg2.getText():null) + " is already defined as a global constant");
+                            	   				System.err.println("error on line " + (arrayArg2!=null?arrayArg2.getLine():null) + ": variable " + (arrayArg2!=null?arrayArg2.getText():null) + " is already defined as a global constant");
                             	   				System.exit(1);
                             	   			}
                             	   			else if(GlobalVarHashMap.containsKey((arrayArg2!=null?arrayArg2.getText():null))){
-                            	   				System.err.println("error on line " + arrayArg2.getLine() + ": variable " + (arrayArg2!=null?arrayArg2.getText():null) + " is already defined as a global variable");
+                            	   				System.err.println("error on line " + (arrayArg2!=null?arrayArg2.getLine():null) + ": variable " + (arrayArg2!=null?arrayArg2.getText():null) + " is already defined as a global variable");
                             	   				System.exit(1);
                             	   			}
                             	   			else if(VarNodeMap.containsKey((arrayArg2!=null?arrayArg2.getText():null))){
-                            	   				System.err.println("error on line " + arrayArg2.getLine() + ": variable " + (arrayArg2!=null?arrayArg2.getText():null) + " is already defined");
+                            	   				System.err.println("error on line " + (arrayArg2!=null?arrayArg2.getLine():null) + ": variable " + (arrayArg2!=null?arrayArg2.getText():null) + " is already defined");
                             	   				System.exit(1);
                             	   			}
                             	   			
@@ -895,11 +895,11 @@ public class PlatuInstParser extends Parser {
 
                                 			// check against globals
                                 			if(GlobalConstHashMap.containsKey((arg2!=null?arg2.getText():null))){
-                                				System.err.println("error on line " + arg2.getLine() + ": variable " + (arg2!=null?arg2.getText():null) + " is already defined as a global constant");
+                                				System.err.println("error on line " + (arg2!=null?arg2.getLine():null) + ": variable " + (arg2!=null?arg2.getText():null) + " is already defined as a global constant");
                                 				System.exit(1);
                                 			}
                                 			else if(GlobalVarHashMap.containsKey((arg2!=null?arg2.getText():null))){
-                                				System.err.println("error on line " + arg2.getLine() + ": variable " + (arg2!=null?arg2.getText():null) + " is already defined as a global variable");
+                                				System.err.println("error on line " + (arg2!=null?arg2.getLine():null) + ": variable " + (arg2!=null?arg2.getText():null) + " is already defined as a global variable");
                                 				System.exit(1);
                                 			}
                                 			
@@ -965,15 +965,15 @@ public class PlatuInstParser extends Parser {
 
                     	    	    		// check aginst globals and other inputs
                     	    	   			if(GlobalConstHashMap.containsKey((arrayArg!=null?arrayArg.getText():null))){
-                    	    	   				System.err.println("error on line " + arrayArg.getLine() + ": variable " + (arrayArg!=null?arrayArg.getText():null) + " is already defined as a global constant");
+                    	    	   				System.err.println("error on line " + (arrayArg!=null?arrayArg.getLine():null) + ": variable " + (arrayArg!=null?arrayArg.getText():null) + " is already defined as a global constant");
                     	    	   				System.exit(1);
                     	    	   			}
                     	    	   			else if(GlobalVarHashMap.containsKey((arrayArg!=null?arrayArg.getText():null))){
-                    	    	   				System.err.println("error on line " + arrayArg.getLine() + ": variable " + (arrayArg!=null?arrayArg.getText():null) + " is already defined as a global variable");
+                    	    	   				System.err.println("error on line " + (arrayArg!=null?arrayArg.getLine():null) + ": variable " + (arrayArg!=null?arrayArg.getText():null) + " is already defined as a global variable");
                     	    	   				System.exit(1);
                     	    	   			}
                     	    	   			else if(VarNodeMap.containsKey((arrayArg!=null?arrayArg.getText():null))){
-                    	    	   				System.err.println("error on line " + arrayArg.getLine() + ": variable " + (arrayArg!=null?arrayArg.getText():null) + " is already defined");
+                    	    	   				System.err.println("error on line " + (arrayArg!=null?arrayArg.getLine():null) + ": variable " + (arrayArg!=null?arrayArg.getText():null) + " is already defined");
                     	    	   				System.exit(1);
                     	    	   			}
                     	    	   			
@@ -1038,15 +1038,15 @@ public class PlatuInstParser extends Parser {
 
                     	        			// check aginst globals and other inputs
                     	        			if(GlobalConstHashMap.containsKey((arg!=null?arg.getText():null))){
-                    	        				System.err.println("error on line " + arg.getLine() + ": variable " + (arg!=null?arg.getText():null) + " is already defined as a global constant");
+                    	        				System.err.println("error on line " + (arg!=null?arg.getLine():null) + ": variable " + (arg!=null?arg.getText():null) + " is already defined as a global constant");
                     	        				System.exit(1);
                     	        			}
                     	        			else if(GlobalVarHashMap.containsKey((arg!=null?arg.getText():null))){
-                    	        				System.err.println("error on line " + arg.getLine() + ": variable " + (arg!=null?arg.getText():null) + " is already defined as a global variable");
+                    	        				System.err.println("error on line " + (arg!=null?arg.getLine():null) + ": variable " + (arg!=null?arg.getText():null) + " is already defined as a global variable");
                     	        				System.exit(1);
                     	        			}
                     	        			else if(VarNodeMap.containsKey((arg!=null?arg.getText():null))){
-                    	        				System.err.println("error on line " + arg.getLine() + ": variable " + (arg!=null?arg.getText():null) + " is already defined");
+                    	        				System.err.println("error on line " + (arg!=null?arg.getLine():null) + ": variable " + (arg!=null?arg.getText():null) + " is already defined");
                     	        				System.exit(1);
                     	        			}
                     	        			
@@ -1184,7 +1184,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "constants"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:480:1: constants : '<' 'const' '>' (const1= ID '=' val1= INT ';' )* '<' '/const' '>' ;
-    public final void constants() throws RecognitionException {
+    public final void constants() {
         Token const1=null;
         Token val1=null;
 
@@ -1216,22 +1216,22 @@ public class PlatuInstParser extends Parser {
 
             	    				// make sure constant is not defined as something else
             	    				if(VarNodeMap.containsKey((const1!=null?const1.getText():null))){
-            	    					System.err.println("error on line " + const1.getLine() + ": " + (const1!=null?const1.getText():null) + " already exists as a variable"); 
+            	    					System.err.println("error on line " + (const1!=null?const1.getLine():null) + ": " + (const1!=null?const1.getText():null) + " already exists as a variable"); 
             	    					System.exit(1);
             	    				}
             	    				else if(GlobalConstHashMap.containsKey((const1!=null?const1.getText():null))){
-            	    				    System.err.println("error on line " + const1.getLine() + ": " + (const1!=null?const1.getText():null) + " already exists as a global constant");
+            	    				    System.err.println("error on line " + (const1!=null?const1.getLine():null) + ": " + (const1!=null?const1.getText():null) + " already exists as a global constant");
             	    				    System.exit(1);
             	    				}
             	    				else if(GlobalVarHashMap.containsKey((const1!=null?const1.getText():null))){
-            	                		System.err.println("error on line " + const1.getLine() + ": " + (const1!=null?const1.getText():null) + " is already defined as a global variable");
+            	                		System.err.println("error on line " + (const1!=null?const1.getLine():null) + ": " + (const1!=null?const1.getText():null) + " is already defined as a global variable");
             	                		System.exit(1);
             	                	}
             	    				
             	    				// put will override previous value
             	    				Integer result = ConstHashMap.put((const1!=null?const1.getText():null), Integer.parseInt((val1!=null?val1.getText():null)));
             	    				if(result != null){
-            	    					System.err.println("error on line " + const1.getLine() + ": " + (const1!=null?const1.getText():null) + " has already been defined");
+            	    					System.err.println("error on line " + (const1!=null?const1.getLine():null) + ": " + (const1!=null?const1.getText():null) + " has already been defined");
             	    					System.exit(1);
             	    				}
             	    			
@@ -1268,7 +1268,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "globalConstants"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:507:1: globalConstants : '<' 'const' '>' (const1= ID '=' val1= INT ';' )* '<' '/const' '>' ;
-    public final void globalConstants() throws RecognitionException {
+    public final void globalConstants() {
         Token const1=null;
         Token val1=null;
 
@@ -1300,14 +1300,14 @@ public class PlatuInstParser extends Parser {
 
             	                	// make sure constant has not been defined already
             	                	if(GlobalVarHashMap.containsKey((const1!=null?const1.getText():null))){
-            	                		System.err.println("error on line " + const1.getLine() + ": " + (const1!=null?const1.getText():null) + " is already defined as a global variable");
+            	                		System.err.println("error on line " + (const1!=null?const1.getLine():null) + ": " + (const1!=null?const1.getText():null) + " is already defined as a global variable");
             	                		System.exit(1);
             	                	}
             	                	
             	                	// put will override previous value
             	                    Integer result = GlobalConstHashMap.put((const1!=null?const1.getText():null), Integer.parseInt((val1!=null?val1.getText():null)));
             	                    if(result != null){
-            	                        System.err.println("error on line " + const1.getLine() + ": " + (const1!=null?const1.getText():null) + " has already been defined");
+            	                        System.err.println("error on line " + (const1!=null?const1.getLine():null) + ": " + (const1!=null?const1.getText():null) + " has already been defined");
             	                        System.exit(1);
             	                    }
             	                
@@ -1344,7 +1344,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "globalVariables"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:526:1: globalVariables : '<' 'var' '>' ( globalVarDecl | globalArrayDecl )+ '<' '/var' '>' ;
-    public final void globalVariables() throws RecognitionException {
+    public final void globalVariables() {
         try {
             // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:527:2: ( '<' 'var' '>' ( globalVarDecl | globalArrayDecl )+ '<' '/var' '>' )
             // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:527:4: '<' 'var' '>' ( globalVarDecl | globalArrayDecl )+ '<' '/var' '>'
@@ -1429,7 +1429,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "globalVarDecl"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:530:1: globalVarDecl : var= ID '=' (val= INT | var2= ID ) ';' ;
-    public final void globalVarDecl() throws RecognitionException {
+    public final void globalVarDecl() {
         Token var=null;
         Token val=null;
         Token var2=null;
@@ -1443,17 +1443,17 @@ public class PlatuInstParser extends Parser {
             				// make sure global variables are consistently defined in each lpn file
             				if(GlobalSize == 0){
             					if(GlobalConstHashMap.containsKey((var!=null?var.getText():null))){
-            						System.err.println("error on line" + var.getLine() + ": " + (var!=null?var.getText():null) + "already exists as a constant"); 
+            						System.err.println("error on line" + (var!=null?var.getLine():null) + ": " + (var!=null?var.getText():null) + "already exists as a constant"); 
             	                    System.exit(1);
             					}
             					else if(GlobalVarHashMap.containsKey((var!=null?var.getText():null))){
-            						System.err.println("error on line " + var.getLine() + ": " + (var!=null?var.getText():null) + " has already been defined");
+            						System.err.println("error on line " + (var!=null?var.getLine():null) + ": " + (var!=null?var.getText():null) + " has already been defined");
             						System.exit(1);
             					}
             				}
             				else{
             					if(!GlobalVarHashMap.containsKey((var!=null?var.getText():null))){
-            						System.err.println("error on line " + var.getLine() + ": " + (var!=null?var.getText():null) + " is inconsistently defined");
+            						System.err.println("error on line " + (var!=null?var.getLine():null) + ": " + (var!=null?var.getText():null) + " is inconsistently defined");
             						System.exit(1);
             					}
             				}
@@ -1510,11 +1510,11 @@ public class PlatuInstParser extends Parser {
                     					value = GlobalConstHashMap.get((var2!=null?var2.getText():null));
                     				}
                     				else if(GlobalVarHashMap.containsKey((var2!=null?var2.getText():null))){
-                    					System.err.println("error on line " + var2.getLine() + ": global variable " + (var2!=null?var2.getText():null) + " cannot be assigned to global variable " + (var!=null?var.getText():null)); 
+                    					System.err.println("error on line " + (var2!=null?var2.getLine():null) + ": global variable " + (var2!=null?var2.getText():null) + " cannot be assigned to global variable " + (var!=null?var.getText():null)); 
                         				System.exit(1);
                     				}
                     				else{
-                    					System.err.println("error on line " + var2.getLine() + ": " + (var2!=null?var2.getText():null) + " is not defined"); 
+                    					System.err.println("error on line " + (var2!=null?var2.getLine():null) + ": " + (var2!=null?var2.getText():null) + " is not defined"); 
                         				System.exit(1);
                     				}
                     				
@@ -1525,7 +1525,7 @@ public class PlatuInstParser extends Parser {
                     				else{
                     					int globalVal = GlobalVarHashMap.get((var!=null?var.getText():null));
                     					if(globalVal != value){
-                    						System.err.println("error on line " + var2.getLine() + ": " + (var!=null?var.getText():null) + " is inconsistently assigned");
+                    						System.err.println("error on line " + (var2!=null?var2.getLine():null) + ": " + (var!=null?var.getText():null) + " is inconsistently assigned");
                     						System.exit(1);
                     					}
                     				}
@@ -1557,7 +1557,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "globalArrayDecl"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:599:1: globalArrayDecl : arrayVar= ID ( '[' (arrayExpr= expression ) ']' )+ ';' ;
-    public final void globalArrayDecl() throws RecognitionException {
+    public final void globalArrayDecl() {
         Token arrayVar=null;
         PlatuInstParser.expression_return arrayExpr = null;
 
@@ -1573,17 +1573,17 @@ public class PlatuInstParser extends Parser {
             				// make sure global variables are consistently defined in each lpn file
             				if(GlobalSize == 0){
             					if(GlobalConstHashMap.containsKey((arrayVar!=null?arrayVar.getText():null))){
-            						System.err.println("error on line" + arrayVar.getLine() + ": " + (arrayVar!=null?arrayVar.getText():null) + "already exists as a constant"); 
+            						System.err.println("error on line" + (arrayVar!=null?arrayVar.getLine():null) + ": " + (arrayVar!=null?arrayVar.getText():null) + "already exists as a constant"); 
             	                    System.exit(1);
             					}
             					else if(GlobalVarHashMap.containsKey((arrayVar!=null?arrayVar.getText():null))){
-            						System.err.println("error on line " + arrayVar.getLine() + ": " + (arrayVar!=null?arrayVar.getText():null) + " has already been defined");
+            						System.err.println("error on line " + (arrayVar!=null?arrayVar.getLine():null) + ": " + (arrayVar!=null?arrayVar.getText():null) + " has already been defined");
             						System.exit(1);
             					}
             				}
             				else{
             					if(!GlobalVarHashMap.containsKey((arrayVar!=null?arrayVar.getText():null))){
-            						System.err.println("error on line " + arrayVar.getLine() + ": " + (arrayVar!=null?arrayVar.getText():null) + " is inconsistently defined");
+            						System.err.println("error on line " + (arrayVar!=null?arrayVar.getLine():null) + ": " + (arrayVar!=null?arrayVar.getText():null) + " is inconsistently defined");
             						System.exit(1);
             					}
             				}
@@ -1645,13 +1645,13 @@ public class PlatuInstParser extends Parser {
             				else{
             					ArrayNode node = (ArrayNode) GlobalVarNodeMap.get((arrayVar!=null?arrayVar.getText():null));
             					if(node.getDimensions() != dimensionList.size()){
-            						error("error on line " + arrayVar.getLine() + ": " + (arrayVar!=null?arrayVar.getText():null) + " is inconsistently assigned");
+            						error("error on line " + (arrayVar!=null?arrayVar.getLine():null) + ": " + (arrayVar!=null?arrayVar.getText():null) + " is inconsistently assigned");
             					}
             					
             					List<Integer> dimList = node.getDimensionList();
             					for(int i = 0; i < dimensionList.size(); i++){
             						if(dimList.get(i) != dimensionList.get(i)){
-            							error("error on line " + arrayVar.getLine() + ": " + (arrayVar!=null?arrayVar.getText():null) + " is inconsistently assigned");
+            							error("error on line " + (arrayVar!=null?arrayVar.getLine():null) + ": " + (arrayVar!=null?arrayVar.getText():null) + " is inconsistently assigned");
             						}
             					}
             				}
@@ -1676,7 +1676,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "variables"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:650:1: variables : '<' 'var' '>' ( varDecl | arrayDecl )+ '<' '/var' '>' ;
-    public final void variables() throws RecognitionException {
+    public final void variables() {
         try {
             // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:651:2: ( '<' 'var' '>' ( varDecl | arrayDecl )+ '<' '/var' '>' )
             // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:651:4: '<' 'var' '>' ( varDecl | arrayDecl )+ '<' '/var' '>'
@@ -1761,7 +1761,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "varDecl"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:654:1: varDecl : var= ID '=' (val= INT | var2= ID ) ';' ;
-    public final void varDecl() throws RecognitionException {
+    public final void varDecl() {
         Token var=null;
         Token val=null;
         Token var2=null;
@@ -1775,15 +1775,15 @@ public class PlatuInstParser extends Parser {
 
             				// check variable is unique in scope
             				if(GlobalConstHashMap.containsKey((var!=null?var.getText():null))){
-            					System.err.println("error on line " + var.getLine() + ": " + (var!=null?var.getText():null) + " is a global constant"); 
+            					System.err.println("error on line " + (var!=null?var.getLine():null) + ": " + (var!=null?var.getText():null) + " is a global constant"); 
                 				System.exit(1);
             				}
             				else if(GlobalVarHashMap.containsKey((var!=null?var.getText():null))){
-            					System.err.println("error on line " + var.getLine() + ": " + (var!=null?var.getText():null) + " is a global variable"); 
+            					System.err.println("error on line " + (var!=null?var.getLine():null) + ": " + (var!=null?var.getText():null) + " is a global variable"); 
                 				System.exit(1);
             				}
             				else if(VarNodeMap.containsKey((var!=null?var.getText():null))){
-            					System.err.println("error on line " + var.getLine() + ": " + (var!=null?var.getText():null) + " has already been defined");
+            					System.err.println("error on line " + (var!=null?var.getLine():null) + ": " + (var!=null?var.getText():null) + " has already been defined");
             					System.exit(1);
             				}
             				
@@ -1837,7 +1837,7 @@ public class PlatuInstParser extends Parser {
                     					value = StatevectorMap.get((var!=null?var.getText():null));
                     				}
                     				else{
-                    					System.err.println("error on line " + var2.getLine() + ": " + (var2!=null?var2.getText():null) + " is not defined or is not compatible"); 
+                    					System.err.println("error on line " + (var2!=null?var2.getLine():null) + ": " + (var2!=null?var2.getText():null) + " is not defined or is not compatible"); 
                         				System.exit(1);
                     				}
                     				
@@ -1885,7 +1885,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "arrayDecl"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:720:1: arrayDecl : var= ID ( '[' (arrayExpr= expression ) ']' )+ ( '=' '{' (val2= INT | var2= ID )+ '}' )? ';' ;
-    public final void arrayDecl() throws RecognitionException {
+    public final void arrayDecl() {
         Token var=null;
         Token val2=null;
         Token var2=null;
@@ -2071,12 +2071,12 @@ public class PlatuInstParser extends Parser {
                     	    					initVal = StatevectorMap.get((var2!=null?var2.getText():null));
                     	    				}
                     	    				else{
-                    	    					System.err.println("error on line " + var2.getLine() + ": " + (var2!=null?var2.getText():null) + " is not defined"); 
+                    	    					System.err.println("error on line " + (var2!=null?var2.getLine():null) + ": " + (var2!=null?var2.getText():null) + " is not defined"); 
                     	        				System.exit(1);
                     	    				}
                     	    				
                     	    				if(initVal < 1){
-                    	    					error("error on line " + var2.getLine() + ": invalid dimension");
+                    	    					error("error on line " + (var2!=null?var2.getLine():null) + ": invalid dimension");
                     	    				}
                     	    				
                     	    				valueList.add(initVal);
@@ -2126,7 +2126,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "instantiation"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:837:1: instantiation : (modName= ID instName= ID '(' ( (var= MEMBER ',' )* var2= MEMBER )? ')' ';' )+ ;
-    public final void instantiation() throws RecognitionException {
+    public final void instantiation() {
         Token modName=null;
         Token instName=null;
         Token var=null;
@@ -2272,7 +2272,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "logic"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:873:1: logic returns [List<Integer> initMarking, LpnTranList lpnTranSet] : marking ( transition )+ ;
-    public final PlatuInstParser.logic_return logic() throws RecognitionException {
+    public final PlatuInstParser.logic_return logic() {
         PlatuInstParser.logic_return retval = new PlatuInstParser.logic_return();
         retval.start = input.LT(1);
 
@@ -2357,7 +2357,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "marking"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:881:1: marking returns [List<Integer> mark] : ( '<' 'marking' '>' ( (m1= INT | c1= ID ) ( ',' (m2= INT | c2= ID ) )* )? '<' '/marking' '>' )? ;
-    public final List<Integer> marking() throws RecognitionException {
+    public final List<Integer> marking() {
         List<Integer> mark = null;
 
         Token m1=null;
@@ -2433,7 +2433,7 @@ public class PlatuInstParser extends Parser {
 
                                             		result = ConstHashMap.get((c1!=null?c1.getText():null));
                                             		if(result == null){
-                                            			System.err.println("error on line " + c1.getLine() + ": " + (c1!=null?c1.getText():null) + " is not a valid constant");
+                                            			System.err.println("error on line " + (c1!=null?c1.getLine():null) + ": " + (c1!=null?c1.getText():null) + " is not a valid constant");
                                             			System.exit(1);
                                             		}
                                             		
@@ -2495,7 +2495,7 @@ public class PlatuInstParser extends Parser {
 
                             	                    		result = ConstHashMap.get((c2!=null?c2.getText():null));
                             	                    		if(result == null){
-                            	                    			System.err.println("error on line " + c2.getLine() + ": " + (c2!=null?c2.getText():null) + " is not a valid constant");
+                            	                    			System.err.println("error on line " + (c2!=null?c2.getLine():null) + ": " + (c2!=null?c2.getText():null) + " is not a valid constant");
                             	                    			System.exit(1);
                             	                    		}
                             	                    		
@@ -2551,7 +2551,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "transition"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:914:1: transition returns [LPNTran lpnTran] : '<' 'transition' 'label' '=' '\"' lbl= ( ID | INT ) '\"' 'preset' '=' ( '\"' '\"' | ( '\"' (pre= INT | pre1= ID ) ( ',' pre2= INT | ',' pre3= ID )* '\"' ) ) 'postset' '=' ( '\"' '\"' | ( '\"' (post= INT | post1= ID ) ( ( ',' post2= INT ) | ( ',' post3= ID ) )* '\"' ) ) '>' ( guard )? ( delay )? ( ( assertion ) | ( assignment ) )* '<' '/transition' '>' ;
-    public final LPNTran transition() throws RecognitionException {
+    public final LPNTran transition() {
         LPNTran lpnTran = null;
 
         Token lbl=null;
@@ -2592,7 +2592,7 @@ public class PlatuInstParser extends Parser {
             match(input,LABEL,FOLLOW_LABEL_in_transition1279); 
             match(input,EQUALS,FOLLOW_EQUALS_in_transition1281); 
             match(input,QUOTE,FOLLOW_QUOTE_in_transition1283); 
-            lbl=(Token)input.LT(1);
+            lbl=input.LT(1);
             if ( (input.LA(1)>=ID && input.LA(1)<=INT) ) {
                 input.consume();
                 state.errorRecovery=false;
@@ -2681,7 +2681,7 @@ public class PlatuInstParser extends Parser {
 
                               				result = ConstHashMap.get((pre1!=null?pre1.getText():null)); 
                               				if(result == null){
-                              					System.err.println("error on line " + pre1.getLine() + ": " + (pre1!=null?pre1.getText():null) + " is not a constant");
+                              					System.err.println("error on line " + (pre1!=null?pre1.getLine():null) + ": " + (pre1!=null?pre1.getText():null) + " is not a constant");
                               					System.exit(1);
                               				}
                               				
@@ -2733,7 +2733,7 @@ public class PlatuInstParser extends Parser {
 
                     	      				result = ConstHashMap.get((pre3!=null?pre3.getText():null)); 
                     	      				if(result == null){
-                    	      					System.err.println("error on line " + pre3.getLine() + ": " + (pre3!=null?pre3.getText():null) + " is not a constant");
+                    	      					System.err.println("error on line " + (pre3!=null?pre3.getLine():null) + ": " + (pre3!=null?pre3.getText():null) + " is not a constant");
                     	      					System.exit(1);
                     	      				}
                     	      				
@@ -2836,7 +2836,7 @@ public class PlatuInstParser extends Parser {
 
                                 			result = ConstHashMap.get((post1!=null?post1.getText():null)); 
                               				if(result == null){
-                              					System.err.println("error on line " + post1.getLine() + ": " + (post1!=null?post1.getText():null) + " is not a constant");
+                              					System.err.println("error on line " + (post1!=null?post1.getLine():null) + ": " + (post1!=null?post1.getText():null) + " is not a constant");
                               					System.exit(1);
                               				}
                               				
@@ -2897,7 +2897,7 @@ public class PlatuInstParser extends Parser {
 
                     	        			result = ConstHashMap.get((post3!=null?post3.getText():null)); 
                     	      				if(result == null){
-                    	      					System.err.println("error on line " + post3.getLine() + ": " + (post3!=null?post3.getText():null) + " is not a constant");
+                    	      					System.err.println("error on line " + (post3!=null?post3.getLine():null) + ": " + (post3!=null?post3.getText():null) + " is not a constant");
                     	      					System.exit(1);
                     	      				}
                     	      				
@@ -3070,7 +3070,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "assertion"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1012:1: assertion returns [Expression booleanExpr] : 'assert' '(' expression ')' ';' ;
-    public final Expression assertion() throws RecognitionException {
+    public final Expression assertion() {
         Expression booleanExpr = null;
 
         PlatuInstParser.expression_return expression9 = null;
@@ -3080,7 +3080,6 @@ public class PlatuInstParser extends Parser {
             // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1013:2: ( 'assert' '(' expression ')' ';' )
             // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1013:4: 'assert' '(' expression ')' ';'
             {
-            booleanExpr = null;
             match(input,78,FOLLOW_78_in_assertion1631); 
             match(input,LPAREN,FOLLOW_LPAREN_in_assertion1633); 
             pushFollow(FOLLOW_expression_in_assertion1635);
@@ -3113,7 +3112,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "guard"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1020:1: guard returns [Expression expr] : 'condition' '(' expression ')' ';' ;
-    public final Expression guard() throws RecognitionException {
+    public final Expression guard() {
         Expression expr = null;
 
         PlatuInstParser.expression_return expression10 = null;
@@ -3159,7 +3158,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "delay"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1027:1: delay returns [int delayLB, int delayUB] : 'delay' '(' lb= INT ',' (ub= INT | 'inf' ) ')' ';' ;
-    public final PlatuInstParser.delay_return delay() throws RecognitionException {
+    public final PlatuInstParser.delay_return delay() {
         PlatuInstParser.delay_return retval = new PlatuInstParser.delay_return();
         retval.start = input.LT(1);
 
@@ -3254,7 +3253,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "assignment"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1056:1: assignment returns [VarExpr assign] : ( (var1= ID '=' var2= ID ) | (var= ID '=' varExpr= expression ';' ) | (arrayVar= ID ( '[' (arrayExpr= expression ) ']' )+ '=' assignExpr= expression ';' ) );
-    public final VarExpr assignment() throws RecognitionException {
+    public final VarExpr assignment() {
         VarExpr assign = null;
 
         Token var1=null;
@@ -3380,19 +3379,19 @@ public class PlatuInstParser extends Parser {
 
                         			// make sure only global, internal and output variables are assigned
                         			if(GlobalConstHashMap.containsKey((var1!=null?var1.getText():null))){
-                        				System.err.println("error on line " + var1.getLine() + ": global constant " + (var1!=null?var1.getText():null) + " cannot be assigned");
+                        				System.err.println("error on line " + (var1!=null?var1.getLine():null) + ": global constant " + (var1!=null?var1.getText():null) + " cannot be assigned");
                         				System.exit(1);
                         			}
                         			else if(ConstHashMap.containsKey((var1!=null?var1.getText():null))){
-                        				System.err.println("error on line " + var1.getLine() + ": constant " + (var1!=null?var1.getText():null) + " cannot be assigned");
+                        				System.err.println("error on line " + (var1!=null?var1.getLine():null) + ": constant " + (var1!=null?var1.getText():null) + " cannot be assigned");
                         				System.exit(1);
                         			}
                         			else if(!VarNodeMap.containsKey((var1!=null?var1.getText():null))){
-                        				System.err.println("error on line " + var1.getLine() + ": variable " + (var1!=null?var1.getText():null) + " was not declared");
+                        				System.err.println("error on line " + (var1!=null?var1.getLine():null) + ": variable " + (var1!=null?var1.getText():null) + " was not declared");
                         				System.exit(1);
                         			}
-                        			else if(!Outputs.contains((var1!=null?var1.getText():null)) && !Internals.contains((var!=null?var.getText():null))){
-                        				System.err.println("error on line " + var1.getLine() + ": input variable " + (var1!=null?var1.getText():null) + " cannot be assigned");
+                        			else if(!Outputs.contains((var1!=null?var1.getText():null)) && !Internals.contains((var1!=null?var1.getText():null))){
+                        				System.err.println("error on line " + (var1!=null?var1.getLine():null) + ": input variable " + (var1!=null?var1.getText():null) + " cannot be assigned");
                         				System.exit(1);
                         			}
                         			
@@ -3407,7 +3406,7 @@ public class PlatuInstParser extends Parser {
                         				node2 = VarNodeMap.get((var2!=null?var2.getText():null));
                         			}
                         			else if(!VarNodeMap.containsKey((var2!=null?var2.getText():null))){
-                        				System.err.println("error on line " + var2.getLine() + ": variable " + (var2!=null?var2.getText():null) + " was not declared");
+                        				System.err.println("error on line " + (var2!=null?var2.getLine():null) + ": variable " + (var2!=null?var2.getText():null) + " was not declared");
                         				System.exit(1);
                         			}
                         			else{
@@ -3417,7 +3416,7 @@ public class PlatuInstParser extends Parser {
                     	    		VarNode node1 = VarNodeMap.get((var1!=null?var1.getText():null));
                     	    		if(ArrayNode.class.isAssignableFrom(node1.getClass())){
                     	    			if(!ArrayNode.class.isAssignableFrom(node2.getClass())){
-                    	   					System.err.println("error on line " + var.getLine() + ": variable " + (var!=null?var.getText():null) + " is an array");
+                    	   					System.err.println("error on line " + (var1!=null?var1.getLine():null) + ": variable " + (var1!=null?var1.getText():null) + " is an array");
                     	   					System.exit(1);
                        					}
                        					
@@ -3428,13 +3427,13 @@ public class PlatuInstParser extends Parser {
                        					List<Integer> dimensionList2 = arrayNode2.getDimensionList();
                        					
                        					if(dimensionList1.size() != dimensionList2.size()){
-                       						System.err.println("error on line " + var1.getLine() + ": incompatible array dimensions");
+                       						System.err.println("error on line " + (var1!=null?var1.getLine():null) + ": incompatible array dimensions");
                        						System.exit(1);
                        					}
                        					
                        					for(int i = 0; i < dimensionList1.size(); i++){
                        						if(dimensionList1.get(i) != dimensionList2.get(i)){
-                       							System.err.println("error on line " + var1.getLine() + ": incompatible array dimensions");
+                       							System.err.println("error on line " + (var1!=null?var1.getLine():null) + ": incompatible array dimensions");
                        							System.exit(1);
                        						}
                        					}
@@ -3442,7 +3441,7 @@ public class PlatuInstParser extends Parser {
                        					//TODO: (original) array to array assignment
                        					
                        				}else if(ArrayNode.class.isAssignableFrom(node2.getClass())){
-                       					System.err.println("error on line " + var2.getLine() + ": variable " + (var2!=null?var2.getText():null) + " is an array");
+                       					System.err.println("error on line " + (var2!=null?var2.getLine():null) + ": variable " + (var2!=null?var2.getText():null) + " is an array");
                        					System.exit(1);
                        				}
                        				else{
@@ -3470,19 +3469,19 @@ public class PlatuInstParser extends Parser {
                     	
                         			// make sure only global, internal and output variables are assigned
                         			if(GlobalConstHashMap.containsKey((var!=null?var.getText():null))){
-                        				System.err.println("error on line " + var.getLine() + ": global constant " + (var!=null?var.getText():null) + " cannot be assigned");
+                        				System.err.println("error on line " + (var!=null?var.getLine():null) + ": global constant " + (var!=null?var.getText():null) + " cannot be assigned");
                         				System.exit(1);
                         			}
                         			else if(ConstHashMap.containsKey((var!=null?var.getText():null))){
-                        				System.err.println("error on line " + var.getLine() + ": constant " + (var!=null?var.getText():null) + " cannot be assigned");
+                        				System.err.println("error on line " + (var!=null?var.getLine():null) + ": constant " + (var!=null?var.getText():null) + " cannot be assigned");
                         				System.exit(1);
                         			}
                         			else if(!VarNodeMap.containsKey((var!=null?var.getText():null))){
-                        				System.err.println("error on line " + var.getLine() + ": variable " + (var!=null?var.getText():null) + " was not declared");
+                        				System.err.println("error on line " + (var!=null?var.getLine():null) + ": variable " + (var!=null?var.getText():null) + " was not declared");
                         				System.exit(1);
                         			}
                         			else if(!Outputs.contains((var!=null?var.getText():null)) && !Internals.contains((var!=null?var.getText():null))){
-                        				System.err.println("error on line " + var.getLine() + ": input variable " + (var!=null?var.getText():null) + " cannot be assigned");
+                        				System.err.println("error on line " + (var!=null?var.getLine():null) + ": input variable " + (var!=null?var.getText():null) + " cannot be assigned");
                         				System.exit(1);
                         			}
                         		
@@ -3495,7 +3494,7 @@ public class PlatuInstParser extends Parser {
                     	    		Expression expr = new Expression((varExpr!=null?varExpr.expr:null));
                     	    		VarNode node = VarNodeMap.get((var!=null?var.getText():null));
                     	    		if(ArrayNode.class.isAssignableFrom(node.getClass())){
-                       					System.err.println("error on line " + var.getLine() + ": variable " + (var!=null?var.getText():null) + " is an array");
+                       					System.err.println("error on line " + (var!=null?var.getLine():null) + ": variable " + (var!=null?var.getText():null) + " is an array");
                        					System.exit(1);
                        				}
                        				
@@ -3525,19 +3524,19 @@ public class PlatuInstParser extends Parser {
                     	   			
                     	   			// make sure only global, internal and output variables are assigned
                         			if(GlobalConstHashMap.containsKey((arrayVar!=null?arrayVar.getText():null))){
-                        				System.err.println("error on line " + arrayVar.getLine() + ": global constant " + (arrayVar!=null?arrayVar.getText():null) + " cannot be assigned");
+                        				System.err.println("error on line " + (arrayVar!=null?arrayVar.getLine():null) + ": global constant " + (arrayVar!=null?arrayVar.getText():null) + " cannot be assigned");
                         				System.exit(1);
                         			}
                         			else if(ConstHashMap.containsKey((arrayVar!=null?arrayVar.getText():null))){
-                        				System.err.println("error on line " + arrayVar.getLine() + ": constant " + (arrayVar!=null?arrayVar.getText():null) + " cannot be assigned");
+                        				System.err.println("error on line " + (arrayVar!=null?arrayVar.getLine():null) + ": constant " + (arrayVar!=null?arrayVar.getText():null) + " cannot be assigned");
                         				System.exit(1);
                         			}
                         			else if(!VarNodeMap.containsKey((arrayVar!=null?arrayVar.getText():null))){
-                        				System.err.println("error on line " + arrayVar.getLine() + ": variable " + (arrayVar!=null?arrayVar.getText():null) + " was not declared");
+                        				System.err.println("error on line " + (arrayVar!=null?arrayVar.getLine():null) + ": variable " + (arrayVar!=null?arrayVar.getText():null) + " was not declared");
                         				System.exit(1);
                         			}
                         			else if(!Outputs.contains((arrayVar!=null?arrayVar.getText():null)) && !Internals.contains((arrayVar!=null?arrayVar.getText():null))){
-                        				System.err.println("error on line " + arrayVar.getLine() + ": input variable " + (arrayVar!=null?arrayVar.getText():null) + " cannot be assigned");
+                        				System.err.println("error on line " + (arrayVar!=null?arrayVar.getLine():null) + ": input variable " + (arrayVar!=null?arrayVar.getText():null) + " cannot be assigned");
                         				System.exit(1);
                         			}
                     	   		
@@ -3600,7 +3599,7 @@ public class PlatuInstParser extends Parser {
                     	    			assign = new VarExpr(new ArrayElement((ArrayNode) arrayNode, indexList), expr);
                     	    		}
                     	    		else{
-                    	    			System.err.println("error on line " + arrayVar.getLine() + ": " + (arrayVar!=null?arrayVar.getText():null) + " is not an array");
+                    	    			System.err.println("error on line " + (arrayVar!=null?arrayVar.getLine():null) + ": " + (arrayVar!=null?arrayVar.getText():null) + " is not an array");
                     	    			System.exit(1);
                     	    		}
                     	    		
@@ -3639,7 +3638,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "term"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1221:1: term returns [ExpressionNode expr, int value] : (var= ID | (array= ID ( '[' (arrayExpr= expression ) ']' )+ ) | LPAREN expression RPAREN | INT | TRUE | FALSE );
-    public final PlatuInstParser.term_return term() throws RecognitionException {
+    public final PlatuInstParser.term_return term() {
         PlatuInstParser.term_return retval = new PlatuInstParser.term_return();
         retval.start = input.LT(1);
 
@@ -3723,11 +3722,11 @@ public class PlatuInstParser extends Parser {
                         				retval.expr = VarNodeMap.get((var!=null?var.getText():null));
                         			}
                         			else if(VarNodeMap.containsKey((var!=null?var.getText():null))){
-                       					System.err.println("error on line " + var.getLine() + ": variable " + (var!=null?var.getText():null) + " is an array");
+                       					System.err.println("error on line " + (var!=null?var.getLine():null) + ": variable " + (var!=null?var.getText():null) + " is an array");
                        					System.exit(1);
                         			}
                         			else{
-                    					System.err.println("error on line " + var.getLine() + ": variable " + (var!=null?var.getText():null) + " is not valid");
+                    					System.err.println("error on line " + (var!=null?var.getLine():null) + ": variable " + (var!=null?var.getText():null) + " is not valid");
                     					System.exit(1);
                         			}
                        			
@@ -3747,13 +3746,13 @@ public class PlatuInstParser extends Parser {
                       				VarNode arrayNode = null;
                       				
                       				if(!VarNodeMap.containsKey((array!=null?array.getText():null))){
-                      					System.err.println("error on line " + array.getLine() + ": " + (array!=null?array.getText():null) + " is not a valid array");
+                      					System.err.println("error on line " + (array!=null?array.getLine():null) + ": " + (array!=null?array.getText():null) + " is not a valid array");
                        					System.exit(1);
                       				}
                       				
                       				arrayNode = VarNodeMap.get((array!=null?array.getText():null));
                       				if(!ArrayNode.class.isAssignableFrom(arrayNode.getClass())){
-                       					System.err.println("error on line " + array.getLine() + ": " + (array!=null?array.getText():null) + " is not a valid array");
+                       					System.err.println("error on line " + (array!=null?array.getLine():null) + ": " + (array!=null?array.getText():null) + " is not a valid array");
                        					System.exit(1);
                        				}
                        			
@@ -3878,7 +3877,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "unary"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1285:1: unary returns [ExpressionNode expr, int value] : ( '+' | ( '-' ) )* term ;
-    public final PlatuInstParser.unary_return unary() throws RecognitionException {
+    public final PlatuInstParser.unary_return unary() {
         PlatuInstParser.unary_return retval = new PlatuInstParser.unary_return();
         retval.start = input.LT(1);
 
@@ -3973,7 +3972,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "bitwiseNegation"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1300:1: bitwiseNegation returns [ExpressionNode expr, int value] : ( '~' )* unary ;
-    public final PlatuInstParser.bitwiseNegation_return bitwiseNegation() throws RecognitionException {
+    public final PlatuInstParser.bitwiseNegation_return bitwiseNegation() {
         PlatuInstParser.bitwiseNegation_return retval = new PlatuInstParser.bitwiseNegation_return();
         retval.start = input.LT(1);
 
@@ -4052,7 +4051,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "negation"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1315:1: negation returns [ExpressionNode expr, int value] : ( '!' )* bitwiseNegation ;
-    public final PlatuInstParser.negation_return negation() throws RecognitionException {
+    public final PlatuInstParser.negation_return negation() {
         PlatuInstParser.negation_return retval = new PlatuInstParser.negation_return();
         retval.start = input.LT(1);
 
@@ -4131,7 +4130,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "mult"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1330:1: mult returns [ExpressionNode expr, int value] : op1= negation ( '*' op2= negation | '/' op2= negation | '%' op2= negation )* ;
-    public final PlatuInstParser.mult_return mult() throws RecognitionException {
+    public final PlatuInstParser.mult_return mult() {
         PlatuInstParser.mult_return retval = new PlatuInstParser.mult_return();
         retval.start = input.LT(1);
 
@@ -4245,7 +4244,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "add"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1338:1: add returns [ExpressionNode expr, int value] : op1= mult ( '+' op2= mult | '-' op2= mult )* ;
-    public final PlatuInstParser.add_return add() throws RecognitionException {
+    public final PlatuInstParser.add_return add() {
         PlatuInstParser.add_return retval = new PlatuInstParser.add_return();
         retval.start = input.LT(1);
 
@@ -4337,7 +4336,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "shift"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1345:1: shift returns [ExpressionNode expr, int value] : op1= add ( '<<' op2= add | '>>' op2= add )* ;
-    public final PlatuInstParser.shift_return shift() throws RecognitionException {
+    public final PlatuInstParser.shift_return shift() {
         PlatuInstParser.shift_return retval = new PlatuInstParser.shift_return();
         retval.start = input.LT(1);
 
@@ -4429,7 +4428,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "relation"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1352:1: relation returns [ExpressionNode expr, int value] : op1= shift ( '<' op2= shift | '<=' op2= shift | '>=' op2= shift | '>' op2= shift )* ;
-    public final PlatuInstParser.relation_return relation() throws RecognitionException {
+    public final PlatuInstParser.relation_return relation() {
         PlatuInstParser.relation_return retval = new PlatuInstParser.relation_return();
         retval.start = input.LT(1);
 
@@ -4561,7 +4560,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "equivalence"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1361:1: equivalence returns [ExpressionNode expr, int value] : op1= relation ( '==' op2= relation | '!=' op2= relation )* ;
-    public final PlatuInstParser.equivalence_return equivalence() throws RecognitionException {
+    public final PlatuInstParser.equivalence_return equivalence() {
         PlatuInstParser.equivalence_return retval = new PlatuInstParser.equivalence_return();
         retval.start = input.LT(1);
 
@@ -4653,7 +4652,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "bitwiseAnd"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1368:1: bitwiseAnd returns [ExpressionNode expr, int value] : op1= equivalence ( '&' op2= equivalence )* ;
-    public final PlatuInstParser.bitwiseAnd_return bitwiseAnd() throws RecognitionException {
+    public final PlatuInstParser.bitwiseAnd_return bitwiseAnd() {
         PlatuInstParser.bitwiseAnd_return retval = new PlatuInstParser.bitwiseAnd_return();
         retval.start = input.LT(1);
 
@@ -4729,7 +4728,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "bitwiseXor"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1374:1: bitwiseXor returns [ExpressionNode expr, int value] : op1= bitwiseAnd ( '^' op2= bitwiseAnd )* ;
-    public final PlatuInstParser.bitwiseXor_return bitwiseXor() throws RecognitionException {
+    public final PlatuInstParser.bitwiseXor_return bitwiseXor() {
         PlatuInstParser.bitwiseXor_return retval = new PlatuInstParser.bitwiseXor_return();
         retval.start = input.LT(1);
 
@@ -4805,7 +4804,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "bitwiseOr"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1380:1: bitwiseOr returns [ExpressionNode expr, int value] : op1= bitwiseXor ( '|' op2= bitwiseXor )* ;
-    public final PlatuInstParser.bitwiseOr_return bitwiseOr() throws RecognitionException {
+    public final PlatuInstParser.bitwiseOr_return bitwiseOr() {
         PlatuInstParser.bitwiseOr_return retval = new PlatuInstParser.bitwiseOr_return();
         retval.start = input.LT(1);
 
@@ -4881,7 +4880,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "and"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1386:1: and returns [ExpressionNode expr, int value] : op1= bitwiseOr ( '&&' op2= bitwiseOr )* ;
-    public final PlatuInstParser.and_return and() throws RecognitionException {
+    public final PlatuInstParser.and_return and() {
         PlatuInstParser.and_return retval = new PlatuInstParser.and_return();
         retval.start = input.LT(1);
 
@@ -4957,7 +4956,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "or"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1392:1: or returns [ExpressionNode expr, int value] : op1= and ( '||' op2= and )* ;
-    public final PlatuInstParser.or_return or() throws RecognitionException {
+    public final PlatuInstParser.or_return or() {
         PlatuInstParser.or_return retval = new PlatuInstParser.or_return();
         retval.start = input.LT(1);
 
@@ -5033,7 +5032,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "implication"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1398:1: implication returns [ExpressionNode expr, int value] : op1= or ( '->' op2= or )* ;
-    public final PlatuInstParser.implication_return implication() throws RecognitionException {
+    public final PlatuInstParser.implication_return implication() {
         PlatuInstParser.implication_return retval = new PlatuInstParser.implication_return();
         retval.start = input.LT(1);
 
@@ -5109,7 +5108,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "expression"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1404:1: expression returns [ExpressionNode expr, int value] : op1= implication ( '?' op2= expression ':' op3= expression )? ;
-    public final PlatuInstParser.expression_return expression() throws RecognitionException {
+    public final PlatuInstParser.expression_return expression() {
         PlatuInstParser.expression_return retval = new PlatuInstParser.expression_return();
         retval.start = input.LT(1);
 
@@ -5185,7 +5184,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "ctlTerm"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1415:1: ctlTerm : ( ID | LPAREN ctl LPAREN );
-    public final void ctlTerm() throws RecognitionException {
+    public final void ctlTerm() {
         try {
             // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1416:2: ( ID | LPAREN ctl LPAREN )
             int alt63=2;
@@ -5243,7 +5242,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "ctl"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1420:1: ctl : ;
-    public final void ctl() throws RecognitionException {
+    public final void ctl() {
         try {
             // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1421:2: ()
             // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1422:2: 

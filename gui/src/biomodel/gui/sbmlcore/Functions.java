@@ -78,13 +78,13 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 		ListOf<FunctionDefinition> listOfFunctions = model.getListOfFunctionDefinitions();
 		int count = 0;
 		for (int i = 0; i < model.getFunctionDefinitionCount(); i++) {
-			FunctionDefinition function = (FunctionDefinition) listOfFunctions.get(i);
+			FunctionDefinition function = listOfFunctions.get(i);
 			if (!SBMLutilities.isSpecialFunction(function.getId())) count++;
 		}
 		String[] funcs = new String[count];
 		count = 0;
 		for (int i = 0; i < model.getFunctionDefinitionCount(); i++) {
-			FunctionDefinition function = (FunctionDefinition) listOfFunctions.get(i);
+			FunctionDefinition function = listOfFunctions.get(i);
 			if (SBMLutilities.isSpecialFunction(function.getId())) continue;
 			funcs[count] = function.getId() + " ( ";
 			for (int j = 0; j < function.getArgumentCount(); j++) {
@@ -456,7 +456,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 				FunctionDefinition tempFunc = bioModel.getSBMLDocument().getModel().getFunctionDefinition(((String) functions.getSelectedValue()).split(" ")[0]);
 				ListOf<FunctionDefinition> f = bioModel.getSBMLDocument().getModel().getListOfFunctionDefinitions();
 				for (int i = 0; i < bioModel.getSBMLDocument().getModel().getFunctionDefinitionCount(); i++) {
-					if (((FunctionDefinition) f.get(i)).getId().equals(tempFunc.getId())) {
+					if (f.get(i).getId().equals(tempFunc.getId())) {
 						f.remove(i);
 					}
 				}
@@ -490,13 +490,13 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 		ListOf<FunctionDefinition> listOfFunctions = model.getListOfFunctionDefinitions();
 		int count = 0;
 		for (int i = 0; i < model.getFunctionDefinitionCount(); i++) {
-			FunctionDefinition function = (FunctionDefinition) listOfFunctions.get(i);
+			FunctionDefinition function = listOfFunctions.get(i);
 			if (!SBMLutilities.isSpecialFunction(function.getId())) count++;
 		}
 		String[] funcs = new String[count];
 		count = 0;
 		for (int i = 0; i < model.getFunctionDefinitionCount(); i++) {
-			FunctionDefinition function = (FunctionDefinition) listOfFunctions.get(i);
+			FunctionDefinition function = listOfFunctions.get(i);
 			if (SBMLutilities.isSpecialFunction(function.getId())) continue;
 			funcs[count] = function.getId() + " ( ";
 			for (int j = 0; j < function.getArgumentCount(); j++) {

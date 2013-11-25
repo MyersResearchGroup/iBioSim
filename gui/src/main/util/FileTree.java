@@ -249,7 +249,7 @@ public class FileTree extends JPanel implements MouseListener {
 		ArrayList<String> dirs = new ArrayList<String>();
 		// Make two passes, one for Dirs and one for Files. This is #1.
 		for (int i = 0; i < ol.size(); i++) {
-			String thisObject = (String) ol.get(i);
+			String thisObject = ol.get(i);
 			String newPath;
 			if (curPath.equals("."))
 				newPath = thisObject;
@@ -1005,7 +1005,7 @@ public class FileTree extends JPanel implements MouseListener {
 			}
 		}
 		for (int i = 0; i < ol.size(); i++) {
-			String thisObject = (String) ol.get(i);
+			String thisObject = ol.get(i);
 			String newPath;
 			if (curPath.equals("."))
 				newPath = thisObject;

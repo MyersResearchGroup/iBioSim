@@ -97,9 +97,7 @@ public class TimedStateSet extends HashSet<PrjState> implements StateSetInterfac
 		if(_singletonList != null){
 			return _singletonList.isEmpty();
 		}
-		else{
-			return _setList.isEmpty();
-		}
+		return _setList.isEmpty();
 	}
 	
 	/**
@@ -112,15 +110,13 @@ public class TimedStateSet extends HashSet<PrjState> implements StateSetInterfac
 		if(_singletonList != null){
 			return _singletonList.size();
 		}
-		else{
-			int result = 0;
-			
-			for(LinkedList<TimedPrjState> l : _setList.values()){
-				result += l.size();
-			}
-			
-			return result;
+		int result = 0;
+		
+		for(LinkedList<TimedPrjState> l : _setList.values()){
+			result += l.size();
 		}
+		
+		return result;
 	}
 	
 	/**
@@ -166,10 +162,8 @@ public class TimedStateSet extends HashSet<PrjState> implements StateSetInterfac
 				// The set already contains the timed project state. So nothing changes.
 				return false;
 			}
-			else{
-				// The set does not already contain the timed project state. So add it.
-				list.add(ts);
-			}
+			// The set does not already contain the timed project state. So add it.
+			list.add(ts);
 			
 			
 			return true;
@@ -410,14 +404,12 @@ public class TimedStateSet extends HashSet<PrjState> implements StateSetInterfac
 		if(_singletonList != null){
 			return _singletonList;
 		}
-		else{
-			HashSet<PrjState> result = new HashSet<PrjState>();
-			//throw new IllegalStateException("Array initialized in subset/superset mode.");
-			for(LinkedList<TimedPrjState> list : _setList.values()){
-				result.addAll(list);
-			}
-			return result;
+		HashSet<PrjState> result = new HashSet<PrjState>();
+		//throw new IllegalStateException("Array initialized in subset/superset mode.");
+		for(LinkedList<TimedPrjState> list : _setList.values()){
+			result.addAll(list);
 		}
+		return result;
 	}
 	
 	@Override

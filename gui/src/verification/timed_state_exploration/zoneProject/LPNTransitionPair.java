@@ -287,11 +287,9 @@ public class LPNTransitionPair implements Comparable<LPNTransitionPair>{
 		if(dlpnIndex != 0){
 			return dlpnIndex;
 		}
-		else{
-			// Reaching here means that the first values are equal.
-			// So the sign is determined by the second pair.
-			return this._transitionIndex - otherPair._transitionIndex;
-		}
+		// Reaching here means that the first values are equal.
+		// So the sign is determined by the second pair.
+		return this._transitionIndex - otherPair._transitionIndex;
 	}
 	
 	

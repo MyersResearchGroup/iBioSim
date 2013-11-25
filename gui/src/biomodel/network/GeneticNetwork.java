@@ -290,10 +290,8 @@ public class GeneticNetwork {
 				currentDocument = document;
 				return outputSBML(filename, document);
 			}
-			else {
-				currentDocument = document;
-				return outputSBML(filename, document);
-			}
+			currentDocument = document;
+			return outputSBML(filename, document);
 		}
 		catch (Exception e) {
 			e.printStackTrace();

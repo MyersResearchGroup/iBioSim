@@ -669,9 +669,7 @@ public class BioModel {
 			String[] parts = value.split("/");
 			return Double.parseDouble(parts[0]) / Double.parseDouble(parts[1]);
 		}
-		else {
-			return Double.parseDouble(value);
-		}
+		return Double.parseDouble(value);
 	}
 
 	public LhpnFile convertToLHPN(ArrayList<String> specs, ArrayList<Object[]> conLevel, MutableString lpnProperty) {
@@ -803,7 +801,7 @@ public class BioModel {
 						String reactionDegradations = "";
 						ListOf<Reaction> reactions = sbml.getModel().getListOfReactions();
 						for (int j = 0; j < sbml.getModel().getReactionCount(); j++) {
-							Reaction r = (Reaction) reactions.get(j);
+							Reaction r = reactions.get(j);
 							if (!r.getId().contains("Production_") && !r.getId().contains("Degradation_")
 									&& !r.getId().contains("Complex_")) {
 								for (int k = 0; k < r.getReactantCount(); k++) {
@@ -1016,9 +1014,8 @@ public class BioModel {
 	public String getDefaultCompartment() {
 		if (sbml.getModel().getCompartmentCount() > 0) {
 			return sbml.getModel().getCompartment(0).getId();
-		} else {
-			return "";
-		}	
+		}
+		return "";	
 	}
 	
 	// Note this doesn't appear to be used anywhere
@@ -3143,8 +3140,8 @@ public class BioModel {
 		
 		Compartment compartment = sbml.getModel().getCompartment(getDefaultCompartment());
 		if (!isGridEnabled()) {
-			sbml.getModel().getCompartment(getCompartmentByLocation((float)x,(float)y,(float)GlobalConstants.DEFAULT_COMPONENT_WIDTH,
-					(float)GlobalConstants.DEFAULT_COMPONENT_HEIGHT));
+			sbml.getModel().getCompartment(getCompartmentByLocation((float)x,(float)y,GlobalConstants.DEFAULT_COMPONENT_WIDTH,
+					GlobalConstants.DEFAULT_COMPONENT_HEIGHT));
 		}
 			
 		int numRows = grid.getNumRows();
@@ -3375,7 +3372,7 @@ public class BioModel {
 		Reaction tempReaction = sbml.getModel().getReaction(id);
 		ListOf<Reaction> r = sbml.getModel().getListOfReactions();
 		for (int i = 0; i < sbml.getModel().getReactionCount(); i++) {
-			if (((Reaction) r.get(i)).getId().equals(tempReaction.getId())) {
+			if (r.get(i).getId().equals(tempReaction.getId())) {
 				r.remove(i);
 			}
 		}
@@ -4200,7 +4197,7 @@ public class BioModel {
 			Port port = getPortByIdRef(sbmlCompModel,speciesId);
 			if (port != null) {
 				if (BioModel.isInputPort(port)) return GlobalConstants.INPUT;
-				else return GlobalConstants.OUTPUT;
+				return GlobalConstants.OUTPUT;
 			}
 			if (AnnotationUtility.checkObsoleteAnnotation(species, GlobalConstants.INPUT)) {
 				port = sbmlCompModel.createPort();
@@ -5339,30 +5336,29 @@ public class BioModel {
 					if (compartment.equals("")) {
 						if (sbml.getModel().getCompartmentCount()>1) {
 							return false;
-						} else {
-							CompartmentGlyph compartmentGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+s.getCompartment());
-							double x = speciesGlyph.getBoundingBox().getPosition().getX();
-							double y = speciesGlyph.getBoundingBox().getPosition().getY();
-							double w = speciesGlyph.getBoundingBox().getDimensions().getWidth();
-							double h = speciesGlyph.getBoundingBox().getDimensions().getHeight();
-							double cx = compartmentGlyph.getBoundingBox().getPosition().getX();
-							double cy = compartmentGlyph.getBoundingBox().getPosition().getY();
-							double cw = compartmentGlyph.getBoundingBox().getDimensions().getWidth();
-							double ch = compartmentGlyph.getBoundingBox().getDimensions().getHeight();
-							if (x < cx) {
-								compartmentGlyph.getBoundingBox().getPosition().setX(x);
-								compartmentGlyph.getBoundingBox().getDimensions().setWidth(cw + cx - x);
-							}
-							if (y < cy) {
-								compartmentGlyph.getBoundingBox().getPosition().setY(y);
-								compartmentGlyph.getBoundingBox().getDimensions().setHeight(ch + cy - y);
-							}
-							if (x + w > cx + cw) {
-								compartmentGlyph.getBoundingBox().getDimensions().setWidth(x + w - cx);
-							}
-							if (y + h > cy + ch) {
-								compartmentGlyph.getBoundingBox().getDimensions().setHeight(y + h - cy);
-							}
+						}
+						CompartmentGlyph compartmentGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+s.getCompartment());
+						double x = speciesGlyph.getBoundingBox().getPosition().getX();
+						double y = speciesGlyph.getBoundingBox().getPosition().getY();
+						double w = speciesGlyph.getBoundingBox().getDimensions().getWidth();
+						double h = speciesGlyph.getBoundingBox().getDimensions().getHeight();
+						double cx = compartmentGlyph.getBoundingBox().getPosition().getX();
+						double cy = compartmentGlyph.getBoundingBox().getPosition().getY();
+						double cw = compartmentGlyph.getBoundingBox().getDimensions().getWidth();
+						double ch = compartmentGlyph.getBoundingBox().getDimensions().getHeight();
+						if (x < cx) {
+							compartmentGlyph.getBoundingBox().getPosition().setX(x);
+							compartmentGlyph.getBoundingBox().getDimensions().setWidth(cw + cx - x);
+						}
+						if (y < cy) {
+							compartmentGlyph.getBoundingBox().getPosition().setY(y);
+							compartmentGlyph.getBoundingBox().getDimensions().setHeight(ch + cy - y);
+						}
+						if (x + w > cx + cw) {
+							compartmentGlyph.getBoundingBox().getDimensions().setWidth(x + w - cx);
+						}
+						if (y + h > cy + ch) {
+							compartmentGlyph.getBoundingBox().getDimensions().setHeight(y + h - cy);
 						}
 					}
 					if (!checkOnly)	s.setCompartment(compartment);
@@ -5379,30 +5375,29 @@ public class BioModel {
 					if (compartment.equals("")) {
 						if (sbml.getModel().getCompartmentCount()>1) {
 							return false;
-						} else {
-							CompartmentGlyph compartmentGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+r.getCompartment());
-							double x = reactionGlyph.getBoundingBox().getPosition().getX();
-							double y = reactionGlyph.getBoundingBox().getPosition().getY();
-							double w = reactionGlyph.getBoundingBox().getDimensions().getWidth();
-							double h = reactionGlyph.getBoundingBox().getDimensions().getHeight();
-							double cx = compartmentGlyph.getBoundingBox().getPosition().getX();
-							double cy = compartmentGlyph.getBoundingBox().getPosition().getY();
-							double cw = compartmentGlyph.getBoundingBox().getDimensions().getWidth();
-							double ch = compartmentGlyph.getBoundingBox().getDimensions().getHeight();
-							if (x < cx) {
-								compartmentGlyph.getBoundingBox().getPosition().setX(x);
-								compartmentGlyph.getBoundingBox().getDimensions().setWidth(cw + cx - x);
-							}
-							if (y < cy) {
-								compartmentGlyph.getBoundingBox().getPosition().setY(y);
-								compartmentGlyph.getBoundingBox().getDimensions().setHeight(ch + cy - y);
-							}
-							if (x + w > cx + cw) {
-								compartmentGlyph.getBoundingBox().getDimensions().setWidth(x + w - cx);
-							}
-							if (y + h > cy + ch) {
-								compartmentGlyph.getBoundingBox().getDimensions().setHeight(y + h - cy);
-							}
+						}
+						CompartmentGlyph compartmentGlyph = layout.getCompartmentGlyph(GlobalConstants.GLYPH+"__"+r.getCompartment());
+						double x = reactionGlyph.getBoundingBox().getPosition().getX();
+						double y = reactionGlyph.getBoundingBox().getPosition().getY();
+						double w = reactionGlyph.getBoundingBox().getDimensions().getWidth();
+						double h = reactionGlyph.getBoundingBox().getDimensions().getHeight();
+						double cx = compartmentGlyph.getBoundingBox().getPosition().getX();
+						double cy = compartmentGlyph.getBoundingBox().getPosition().getY();
+						double cw = compartmentGlyph.getBoundingBox().getDimensions().getWidth();
+						double ch = compartmentGlyph.getBoundingBox().getDimensions().getHeight();
+						if (x < cx) {
+							compartmentGlyph.getBoundingBox().getPosition().setX(x);
+							compartmentGlyph.getBoundingBox().getDimensions().setWidth(cw + cx - x);
+						}
+						if (y < cy) {
+							compartmentGlyph.getBoundingBox().getPosition().setY(y);
+							compartmentGlyph.getBoundingBox().getDimensions().setHeight(ch + cy - y);
+						}
+						if (x + w > cx + cw) {
+							compartmentGlyph.getBoundingBox().getDimensions().setWidth(x + w - cx);
+						}
+						if (y + h > cy + ch) {
+							compartmentGlyph.getBoundingBox().getDimensions().setHeight(y + h - cy);
 						}
 					}
 					if (!checkOnly) r.setCompartment(compartment);
@@ -5457,9 +5452,8 @@ public class BioModel {
 			if (sbml.getModel().getCompartmentCount()==0) {
 				Utility.createErrorMessage("Compartment Required", "Species must be placed within a compartment.");
 				return null;
-			} else {
-				compartment = sbml.getModel().getCompartment(0).getId();
 			}
+			compartment = sbml.getModel().getCompartment(0).getId();
 		}
 		if (id == null) {
 			do {
@@ -5803,8 +5797,8 @@ public class BioModel {
 	}
 	
 	public String createCompartment(String id, float x, float y) {
-		if (!checkCompartmentLocation(id,(double)x,(double)y,
-				(double)GlobalConstants.DEFAULT_COMPARTMENT_WIDTH,(double)GlobalConstants.DEFAULT_COMPARTMENT_HEIGHT)) {
+		if (!checkCompartmentLocation(id,x,y,
+				GlobalConstants.DEFAULT_COMPARTMENT_WIDTH,GlobalConstants.DEFAULT_COMPARTMENT_HEIGHT)) {
 			Utility.createErrorMessage("Compartment Overlap", "Compartments must not overlap.");
 			return "";
 		}
@@ -5872,8 +5866,7 @@ public class BioModel {
 	public boolean isPromoterExplicit(String promoterId) {
 		if (promoterId != null && sbmlLayout.getListOfLayouts().get("iBioSim").getSpeciesGlyph(GlobalConstants.GLYPH+"__"+promoterId)!=null)
 			return true;
-		else 
-			return false;
+		return false;
 	}
 	
 	public String influenceHasExplicitPromoter(String infName) {
@@ -5884,7 +5877,7 @@ public class BioModel {
 			promoterName = infName.substring(infName.indexOf("|")+1);
 		}
 		if (getPromoters().contains(promoterName)) return promoterName;
-		else return null;
+		return null;
 	}
 
 	/*
@@ -6441,7 +6434,7 @@ public class BioModel {
 			String subModelId = subCompModel.getListOfSubmodels().get(i).getId();
 			String extModel = subComp.getListOfExternalModelDefinitions().get(subCompModel.getListOfSubmodels().get(subModelId)
 					.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
-			if (!comps.contains((String)extModel)) {
+			if (!comps.contains(extModel)) {
 				comps.add(extModel);
 				SBMLDocument subDocument = SBMLutilities.readSBML(path + separator + extModel);
 				CompModelPlugin subDocumentCompModel = SBMLutilities.getCompModelPlugin(subDocument.getModel());
@@ -6485,7 +6478,7 @@ public class BioModel {
 				String subModelId = sbmlCompModel.getListOfSubmodels().get(i).getId();
 				String extModel = sbmlComp.getListOfExternalModelDefinitions().get(sbmlCompModel.getListOfSubmodels().get(subModelId)
 						.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
-				if (!comps.contains((String)extModel)) {
+				if (!comps.contains(extModel)) {
 					comps.add(extModel);
 					SBMLDocument subDocument = SBMLutilities.readSBML(path + separator + extModel);
 					CompModelPlugin subDocumentCompModel = SBMLutilities.getCompModelPlugin(subDocument.getModel());
@@ -6736,9 +6729,7 @@ public class BioModel {
 			SBMLDocument doc = bioModel.getSBMLDocument();
 			return doc;
 		}
-		else {
-			throw new Exception("libsbml not found.  Unable to flatten model.");
-		}
+		throw new Exception("libsbml not found.  Unable to flatten model.");
 	}
 		
 	public SBMLDocument flattenModel() {
@@ -7229,7 +7220,7 @@ public class BioModel {
 			}
 		}
 		for (int i = 0; i < subModel.getInitialAssignmentCount(); i++) {
-			InitialAssignment init = (InitialAssignment) subModel.getListOfInitialAssignments().get(i).clone();
+			InitialAssignment init = subModel.getListOfInitialAssignments().get(i).clone();
 			if (init.isSetMetaId()) {
 				SBMLutilities.setMetaId(init, subModelId + "__" + init.getMetaId());
 			}
@@ -7243,7 +7234,7 @@ public class BioModel {
 			model.addRule(r);
 		}
 		for (int i = 0; i < subModel.getConstraintCount(); i++) {
-			Constraint constraint = (Constraint) subModel.getListOfConstraints().get(i).clone();
+			Constraint constraint = subModel.getListOfConstraints().get(i).clone();
 			String newName = subModelId + "__" + constraint.getMetaId();
 			SBMLutilities.setMetaId(constraint, newName);
 			for (int j = 0; j < model.getConstraintCount(); j++) {
@@ -7261,7 +7252,7 @@ public class BioModel {
 		}
 		
 		for (int i = 0; i < subModel.getEventCount(); i++) {
-			org.sbml.jsbml.Event event = (org.sbml.jsbml.Event) subModel.getListOfEvents().get(i).clone();
+			org.sbml.jsbml.Event event = subModel.getListOfEvents().get(i).clone();
 			
 			/*
 			if (event.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim().length() > 0 && (
@@ -7440,7 +7431,7 @@ public class BioModel {
 //			}
 //		}
 		for (int i = 0; i < model.getReactionCount(); i++) {
-			Reaction reaction = (Reaction) model.getListOfReactions().get(i);
+			Reaction reaction = model.getListOfReactions().get(i);
 			if (!reaction.isSetCompartment() || reaction.getCompartment().equals(origId)) {
 				reaction.setCompartment(newId);
 			}
@@ -7477,7 +7468,7 @@ public class BioModel {
 		}
 		if (model.getInitialAssignmentCount() > 0) {
 			for (int i = 0; i < model.getInitialAssignmentCount(); i++) {
-				InitialAssignment init = (InitialAssignment) model.getListOfInitialAssignments()
+				InitialAssignment init = model.getListOfInitialAssignments()
 						.get(i);
 				if (origId.equals(init.getVariable())) {
 					init.setVariable(newId);
@@ -7487,7 +7478,7 @@ public class BioModel {
 		}
 		if (model.getRuleCount() > 0) {
 			for (int i = 0; i < model.getRuleCount(); i++) {
-				Rule rule = (Rule) model.getListOfRules().get(i);
+				Rule rule = model.getListOfRules().get(i);
 				if (SBMLutilities.isSetVariable(rule) && origId.equals(SBMLutilities.getVariable(rule))) {
 					SBMLutilities.setVariable(rule, newId);
 				}
@@ -7496,13 +7487,13 @@ public class BioModel {
 		}
 		if (model.getConstraintCount() > 0) {
 			for (int i = 0; i < model.getConstraintCount(); i++) {
-				Constraint constraint = (Constraint) model.getListOfConstraints().get(i);
+				Constraint constraint = model.getListOfConstraints().get(i);
 				constraint.setMath(updateMathVar(constraint.getMath(), origId, newId));
 			}
 		}
 		if (model.getEventCount() > 0) {
 			for (int i = 0; i < model.getEventCount(); i++) {
-				org.sbml.jsbml.Event event = (org.sbml.jsbml.Event) model.getListOfEvents()
+				org.sbml.jsbml.Event event = model.getListOfEvents()
 						.get(i);
 				if (event.isSetTrigger()) {
 					event.getTrigger().setMath(
@@ -7513,7 +7504,7 @@ public class BioModel {
 							updateMathVar(event.getDelay().getMath(), origId, newId));
 				}
 				for (int j = 0; j < event.getEventAssignmentCount(); j++) {
-					EventAssignment ea = (EventAssignment) event.getListOfEventAssignments().get(j);
+					EventAssignment ea = event.getListOfEventAssignments().get(j);
 					if (ea.getVariable().equals(origId)) {
 						ea.setVariable(newId);
 					}

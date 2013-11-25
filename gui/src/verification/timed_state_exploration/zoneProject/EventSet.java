@@ -252,11 +252,9 @@ public class EventSet extends Transition implements Iterable<Event>{
 			// If we are in the Transition mode or Rate mode, the size is 1.
 			return 1;
 		}
-		else{
-			// If we are in the Inequality mode, the size is the 
-			// number of inequalities.
-			return _inequalities.size();
-		}
+		// If we are in the Inequality mode, the size is the 
+		// number of inequalities.
+		return _inequalities.size();
 	}
 	
 	/**
@@ -479,11 +477,9 @@ public class EventSet extends Transition implements Iterable<Event>{
 			
 				return new Event(tmpTran);
 			}
-			else{
-				LPNContinuousPair tmpRate = _r;
-				_r = null;
-				return new Event(tmpRate);
-			}
+			LPNContinuousPair tmpRate = _r;
+			_r = null;
+			return new Event(tmpRate);
 		}
 
 		/*
@@ -500,9 +496,7 @@ public class EventSet extends Transition implements Iterable<Event>{
 				throw new UnsupportedOperationException("The remove method is not supported when for the EventSet" +
 						" iterator when in the Transition mode.");
 			}
-			else{
-				_inequal.remove();
-			}
+			_inequal.remove();
 		}
 		
 	}

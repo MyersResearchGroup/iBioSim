@@ -87,19 +87,16 @@ public class AmpleSubset {
 	    			//System.out.println("ampleList.size():"+ampleList.size());
 	    			return ampleList;
 	    		}
-	    		else //partition enable transition to four part:(1)interleaving(2)dep_interleaving(3)set1 and set2
-	    		{
-	    			/*
-	    			System.out.print("interleaving trans:");
-	    			for(LPNTran tran : interleavingEnabledSet)
-	    			{
-	    				System.out.print(tran.getFullLabel()+",");
-	    			}
-	    			System.out.println();
-	    			*/
-	    			ampleList = this.getSubset_withInterleaving(interleavingEnabledSet, enabledArray, allIndepSet,this.interleavingSet);
-	    			return ampleList;
-	    		}
+				/*
+				System.out.print("interleaving trans:");
+				for(LPNTran tran : interleavingEnabledSet)
+				{
+					System.out.print(tran.getFullLabel()+",");
+				}
+				System.out.println();
+				*/
+				ampleList = this.getSubset_withInterleaving(interleavingEnabledSet, enabledArray, allIndepSet,this.interleavingSet);
+				return ampleList;
 	    	}
 		}
 
@@ -215,8 +212,7 @@ public class AmpleSubset {
 		//set subset
 		if(set1.size() > set2.size() && set2.size() != 0)
 			return set2;
-		else
-			return set1;
+		return set1;
 	}
 /**
  * partition to 3 part: 
@@ -366,17 +362,14 @@ public class AmpleSubset {
 			}
 			return ready_interleaving;
 		}
-		else
+		LpnTranList subset = this.getSubsetOfInterleavingTrans(interleavingEnabledSet);
+		if(!dep_interleaving.isEmpty())
 		{
-			LpnTranList subset = this.getSubsetOfInterleavingTrans(interleavingEnabledSet);
-			if(!dep_interleaving.isEmpty())
-			{
-				LpnTranList dep = this.getDepOfInterleavingTrans(subset, dep_interleaving, allIndepSet);
-				for(Transition tran : dep)
-					subset.add(tran);
-			}
-			return subset;
+			LpnTranList dep = this.getDepOfInterleavingTrans(subset, dep_interleaving, allIndepSet);
+			for(Transition tran : dep)
+				subset.add(tran);
 		}
+		return subset;
 	}
 	/**
 	 * if there does not exist ready_interleaving, 
@@ -413,8 +406,7 @@ public class AmpleSubset {
 		
 		if(set1.size() > set2.size() && set2.size() != 0)
 			return set2;
-		else
-			return set1;
+		return set1;
 	}
 	
 	/**
@@ -511,14 +503,14 @@ public class AmpleSubset {
 		}
 		while(it.hasNext())
 		{
-			Transition key = (Transition)it.next();
+			Transition key = it.next();
 			HashSet<Transition> value = tranSet.get(key);
 			System.out.print(key.getFullLabel()+"   " );
 			Iterator<Transition> bb = value.iterator();
 			while(bb.hasNext())
 			{
 				number++;
-				System.out.print(((Transition)bb.next()).getFullLabel()+",");
+				System.out.print(bb.next().getFullLabel()+",");
 			}
 			System.out.println();
 		}

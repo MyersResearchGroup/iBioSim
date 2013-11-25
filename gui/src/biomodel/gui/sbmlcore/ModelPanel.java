@@ -58,7 +58,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 		this.dirty = modelEditor.getDirty();
 		this.setText("Model");
 		this.setToolTipText("Edit Model Attributes");
-		this.addActionListener((ActionListener) this);
+		this.addActionListener(this);
 		if (modelEditor.isParamsOnly()) {
 			this.setEnabled(false);
 		}

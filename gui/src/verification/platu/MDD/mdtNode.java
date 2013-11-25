@@ -25,18 +25,16 @@ public class mdtNode {
 			nextNode.push(curIdxArray, level+1);
 			return true;
 		}
+		if(this.level == curIdxArray.length-1) 
+			this.nodeMap.put(curIdx, MDT.terminal);
 		else {
-			if(this.level == curIdxArray.length-1) 
-				this.nodeMap.put(curIdx, MDT.terminal);
-			else {
-				nextNode = new mdtNode();
-				nextNode.level = this.level + 1;
-				nextNode.push(curIdxArray, level+1);
-				this.nodeMap.put(curIdx, nextNode);
-			}
-			//this.localStateSet.push(curIdx);
-			return true;
+			nextNode = new mdtNode();
+			nextNode.level = this.level + 1;
+			nextNode.push(curIdxArray, level+1);
+			this.nodeMap.put(curIdx, nextNode);
 		}
+		//this.localStateSet.push(curIdx);
+		return true;
 	}
 	
 	public State[] pop(State[] prjState) {
@@ -132,10 +130,8 @@ public class mdtNode {
 		
 		if(level == curIdxArray.length-1)
 				return true;
-		else {
-			mdtNode nextNode = this.nodeMap.get(curIdxArray[level]);
-			return nextNode.contains(curIdxArray, level+1);
-		}
+		mdtNode nextNode = this.nodeMap.get(curIdxArray[level]);
+		return nextNode.contains(curIdxArray, level+1);
 	}
 	
 	public boolean empty() {

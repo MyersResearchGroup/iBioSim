@@ -64,9 +64,9 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		editConstraint = new JButton("Edit Constraint");
 		constraints = new JList();
 		ListOf<Constraint> listOfConstraints = model.getListOfConstraints();
-		String[] cons = new String[(int) model.getConstraintCount()];
+		String[] cons = new String[model.getConstraintCount()];
 		for (int i = 0; i < model.getConstraintCount(); i++) {
-			Constraint constraint = (Constraint) listOfConstraints.get(i);
+			Constraint constraint = listOfConstraints.get(i);
 			if (!constraint.isSetMetaId()) {
 				String constraintId = "constraint0";
 				int cn = 0;
@@ -137,15 +137,15 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		if (option.equals("OK")) {
 			ListOf<Constraint> c = bioModel.getSBMLDocument().getModel().getListOfConstraints();
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getConstraintCount(); i++) {
-				if ((((Constraint) c.get(i)).getMetaId()).equals(selected)) {
+				if ((c.get(i).getMetaId()).equals(selected)) {
 					Cindex = i;
-					consMath.setText(bioModel.removeBooleans(((Constraint) c.get(i)).getMath()));
-					if (((Constraint) c.get(i)).isSetMetaId()) {
-						selectedID = ((Constraint) c.get(i)).getMetaId();
+					consMath.setText(bioModel.removeBooleans(c.get(i).getMath()));
+					if (c.get(i).isSetMetaId()) {
+						selectedID = c.get(i).getMetaId();
 						consID.setText(selectedID);
 					}
-					if (((Constraint) c.get(i)).isSetMessage()) {
-						String message = ((Constraint) c.get(i)).getMessageString();
+					if (c.get(i).isSetMessage()) {
+						String message = c.get(i).getMessageString();
 						// XMLNode.convertXMLNodeToString(((Constraint)
 						// c.get(i)).getMessage());
 						message = message.substring(message.indexOf("xhtml\">") + 7, message.indexOf("</p>"));
@@ -235,7 +235,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						constraints.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 						cons = Utility.getList(cons, constraints);
 						constraints.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-						Constraint c = (Constraint) (bioModel.getSBMLDocument().getModel().getListOfConstraints()).get(Cindex);
+						Constraint c = (bioModel.getSBMLDocument().getModel().getListOfConstraints()).get(Cindex);
 						c.setMath(bioModel.addBooleans(consMath.getText().trim()));
 						SBMLutilities.setMetaId(c, consID.getText().trim());
 						if (!consMessage.getText().trim().equals("")) {
@@ -326,9 +326,9 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 	public void refreshConstraintsPanel() {
 		Model model = bioModel.getSBMLDocument().getModel();
 		ListOf<Constraint> listOfConstraints = model.getListOfConstraints();
-		String[] cons = new String[(int) model.getConstraintCount()];
+		String[] cons = new String[model.getConstraintCount()];
 		for (int i = 0; i < model.getConstraintCount(); i++) {
-			Constraint constraint = (Constraint) listOfConstraints.get(i);
+			Constraint constraint = listOfConstraints.get(i);
 			if (!constraint.isSetMetaId()) {
 				String constraintId = "constraint0";
 				int cn = 0;
@@ -351,7 +351,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 	public void removeConstraint(String selected) {
 		ListOf<Constraint> c = bioModel.getSBMLDocument().getModel().getListOfConstraints();
 		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getConstraintCount(); i++) {
-			if ((((Constraint) c.get(i)).getMetaId()).equals(selected)) {
+			if ((c.get(i).getMetaId()).equals(selected)) {
 				c.remove(i);
 				break;
 			}

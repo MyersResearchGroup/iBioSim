@@ -816,8 +816,8 @@ public class SBMLutilities {
 			}
 		case FUNCTION:
 			for (int i = 0; i < document.getModel().getFunctionDefinitionCount(); i++) {
-				if (((FunctionDefinition) sbml.get(i)).getId().equals(node.getName())) {
-					long numArgs = ((FunctionDefinition) sbml.get(i)).getArgumentCount();
+				if (sbml.get(i).getId().equals(node.getName())) {
+					long numArgs = sbml.get(i).getArgumentCount();
 					if (numArgs != node.getChildCount()) {
 						JOptionPane.showMessageDialog(Gui.frame,
 								"Expected " + numArgs + " argument(s) for " + node.getName() + " but found " + node.getChildCount() + ".",
@@ -861,8 +861,8 @@ public class SBMLutilities {
 				return true;
 			}
 			for (int i = 0; i < document.getModel().getFunctionDefinitionCount(); i++) {
-				if (((FunctionDefinition) sbml.get(i)).getId().equals(node.getName())) {
-					long numArgs = ((FunctionDefinition) sbml.get(i)).getArgumentCount();
+				if (sbml.get(i).getId().equals(node.getName())) {
+					long numArgs = sbml.get(i).getArgumentCount();
 					JOptionPane.showMessageDialog(Gui.frame, "Expected " + numArgs + " argument(s) for " + node.getName() + " but found 0.",
 							"Number of Arguments Incorrect", JOptionPane.ERROR_MESSAGE);
 					return true;
@@ -1022,7 +1022,7 @@ public class SBMLutilities {
 	 */
 	public static boolean checkCycles(SBMLDocument document) {
 		Model model = document.getModel();
-		String[] rateLaws = new String[(int) model.getReactionCount()];
+		String[] rateLaws = new String[model.getReactionCount()];
 		for (int i = 0; i < model.getReactionCount(); i++) {
 			Reaction reaction = model.getReaction(i);
 			if (reaction.getKineticLaw()==null || reaction.getKineticLaw().getMath()==null) {
@@ -1031,12 +1031,12 @@ public class SBMLutilities {
 				rateLaws[i] = reaction.getId() + " = " + myFormulaToString(reaction.getKineticLaw().getMath());
 			}
 		}
-		String[] initRules = new String[(int) model.getInitialAssignmentCount()];
+		String[] initRules = new String[model.getInitialAssignmentCount()];
 		for (int i = 0; i < model.getInitialAssignmentCount(); i++) {
 			InitialAssignment init = model.getInitialAssignment(i);
 			initRules[i] = init.getVariable() + " = " + myFormulaToString(init.getMath());
 		}
-		String[] rules = new String[(int) model.getRuleCount()];
+		String[] rules = new String[model.getRuleCount()];
 		for (int i = 0; i < model.getRuleCount(); i++) {
 			Rule rule = model.getRule(i);
 			if (rule.isAlgebraic()) {
@@ -1246,7 +1246,7 @@ public class SBMLutilities {
 		boolean remove = true;
 		ArrayList<String> speciesUsing = new ArrayList<String>();
 		for (int i = 0; i < document.getModel().getSpeciesCount(); i++) {
-			Species species = (Species) document.getModel().getListOfSpecies().get(i);
+			Species species = document.getModel().getListOfSpecies().get(i);
 			if (species.isSetCompartment()) {
 				if (species.getCompartment().equals(compartmentId)) {
 					remove = false;
@@ -1356,7 +1356,7 @@ public class SBMLutilities {
 				usedInModelConversionFactor = true;
 			}
 			for (int i = 0; i < model.getSpeciesCount(); i++) {
-				Species speciesConv = (Species) model.getListOfSpecies().get(i);
+				Species speciesConv = model.getListOfSpecies().get(i);
 				if (speciesConv.isSetConversionFactor()) {
 					if (species.equals(speciesConv.getConversionFactor())) {
 						inUse = true;
@@ -1367,7 +1367,7 @@ public class SBMLutilities {
 		}
 		if (checkReactions) {
 			for (int i = 0; i < model.getReactionCount(); i++) {
-				Reaction reaction = (Reaction) model.getListOfReactions().get(i);
+				Reaction reaction = model.getListOfReactions().get(i);
 				if (isSpecies && (BioModel.isDegradationReaction(reaction) || BioModel.isDiffusionReaction(reaction) ||
 						BioModel.isConstitutiveReaction(reaction))) continue;
 				if (BioModel.isProductionReaction(reaction) && BioModel.IsDefaultProductionParameter(species)) {
@@ -1664,7 +1664,7 @@ public class SBMLutilities {
 			return;
 		Model model = document.getModel();
 		for (int i = 0; i < model.getReactionCount(); i++) {
-			Reaction reaction = (Reaction) model.getListOfReactions().get(i);
+			Reaction reaction = model.getListOfReactions().get(i);
 			for (int j = 0; j < reaction.getProductCount(); j++) {
 				if (reaction.getProduct(j).isSetSpecies()) {
 					SpeciesReference specRef = reaction.getProduct(j);
@@ -1701,7 +1701,7 @@ public class SBMLutilities {
 			}
 			if (model.getSpeciesCount() > 0) {
 				for (int i = 0; i < model.getSpeciesCount(); i++) {
-					Species species = (Species) model.getListOfSpecies().get(i);
+					Species species = model.getListOfSpecies().get(i);
 					if (species.isSetConversionFactor()) {
 						if (origId.equals(species.getConversionFactor())) {
 							species.setConversionFactor(newId);
@@ -1712,7 +1712,7 @@ public class SBMLutilities {
 		}
 		if (model.getInitialAssignmentCount() > 0) {
 			for (int i = 0; i < model.getInitialAssignmentCount(); i++) {
-				InitialAssignment init = (InitialAssignment) model.getListOfInitialAssignments().get(i);
+				InitialAssignment init = model.getListOfInitialAssignments().get(i);
 				if (origId.equals(init.getVariable())) {
 					init.setVariable(newId);
 				}
@@ -1730,7 +1730,7 @@ public class SBMLutilities {
 		}
 		if (model.getRuleCount() > 0) {
 			for (int i = 0; i < model.getRuleCount(); i++) {
-				Rule rule = (Rule) model.getListOfRules().get(i);
+				Rule rule = model.getListOfRules().get(i);
 				if (isSetVariable(rule) && origId.equals(getVariable(rule))) {
 					setVariable(rule, newId);
 				}
@@ -1748,13 +1748,13 @@ public class SBMLutilities {
 		}
 		if (model.getConstraintCount() > 0) {
 			for (int i = 0; i < model.getConstraintCount(); i++) {
-				Constraint constraint = (Constraint) model.getListOfConstraints().get(i);
+				Constraint constraint = model.getListOfConstraints().get(i);
 				constraint.setMath(SBMLutilities.updateMathVar(constraint.getMath(), origId, newId));
 			}
 		}
 		if (model.getEventCount() > 0) {
 			for (int i = 0; i < model.getEventCount(); i++) {
-				org.sbml.jsbml.Event event = (org.sbml.jsbml.Event) model.getListOfEvents().get(i);
+				org.sbml.jsbml.Event event = model.getListOfEvents().get(i);
 				if (event.isSetTrigger()) {
 					event.getTrigger().setMath(SBMLutilities.updateMathVar(event.getTrigger().getMath(), origId, newId));
 				}
@@ -1762,7 +1762,7 @@ public class SBMLutilities {
 					event.getDelay().setMath(SBMLutilities.updateMathVar(event.getDelay().getMath(), origId, newId));
 				}
 				for (int j = 0; j < event.getEventAssignmentCount(); j++) {
-					EventAssignment ea = (EventAssignment) event.getListOfEventAssignments().get(j);
+					EventAssignment ea = event.getListOfEventAssignments().get(j);
 					if (ea.getVariable().equals(origId)) {
 						ea.setVariable(newId);
 					}
@@ -1787,9 +1787,9 @@ public class SBMLutilities {
 			}
 		}
 		for (int i = 0; i < document.getModel().getEventCount(); i++) {
-			org.sbml.jsbml.Event event = (org.sbml.jsbml.Event) document.getModel().getListOfEvents().get(i);
+			org.sbml.jsbml.Event event = document.getModel().getListOfEvents().get(i);
 			for (int j = 0; j < event.getEventAssignmentCount(); j++) {
-				EventAssignment ea = (EventAssignment) event.getListOfEventAssignments().get(j);
+				EventAssignment ea = event.getListOfEventAssignments().get(j);
 				if (ea.getVariable().equals(val)) {
 					JOptionPane.showMessageDialog(Gui.frame, varType + " cannot be constant if updated by an event.",
 							varType + " Cannot Be Constant", JOptionPane.ERROR_MESSAGE);
@@ -2195,9 +2195,8 @@ public class SBMLutilities {
 	    FunctionDefinition fd = document.getModel().getFunctionDefinition( node.getName() );
 	    if (fd != null && fd.isSetMath()) {
 	      return isBoolean( document, fd.getMath().getRightChild() );
-	    } else {
-	      return false;
 	    }
+		return false;
 	  } else if (node.getType() == ASTNode.Type.FUNCTION_PIECEWISE) {
 	    for (int c = 0; c < node.getChildCount(); c += 2) {
 	      if ( !isBoolean( document, node.getChild(c) ) ) return false;
@@ -2416,9 +2415,8 @@ public class SBMLutilities {
 		} else if (math.getType() == ASTNode.Type.INTEGER) {
 			if (math.hasUnits()) {
 				return "" + math.getInteger() + " " + math.getUnits();
-			} else {
-				return "" + math.getInteger();
 			}
+			return "" + math.getInteger();
 		} else if (math.getType() == ASTNode.Type.LOGICAL_AND) {
 			if (math.getChildCount()==0) return "";
 			String result = "(";
@@ -2465,11 +2463,10 @@ public class SBMLutilities {
 		} else if (math.getType() == ASTNode.Type.MINUS) {
 			if (math.getChildCount()==1) { 
 				return "-" + myFormulaToStringInfix(math.getChild(0));
-			} else {
-				String leftStr = myFormulaToStringInfix(math.getLeftChild());
-				String rightStr = myFormulaToStringInfix(math.getRightChild());
-				return "(" + leftStr + " - " + rightStr + ")";
 			}
+			String leftStr = myFormulaToStringInfix(math.getLeftChild());
+			String rightStr = myFormulaToStringInfix(math.getRightChild());
+			return "(" + leftStr + " - " + rightStr + ")";
 		} else if (math.getType() == ASTNode.Type.NAME) {
  			return math.getName();
 		} else if (math.getType() == ASTNode.Type.NAME_AVOGADRO) {
@@ -2496,21 +2493,18 @@ public class SBMLutilities {
 		} else if (math.getType() == ASTNode.Type.RATIONAL) {
 			if (math.hasUnits()) {
 				return math.getNumerator() + "/" + math.getDenominator() + " " + math.getUnits();
-			} else {
-				return math.getNumerator() + "/" + math.getDenominator();
 			}
+			return math.getNumerator() + "/" + math.getDenominator();
 		} else if (math.getType() == ASTNode.Type.REAL) {
 			if (math.hasUnits()) {
 				return "" + math.getReal() + " " + math.getUnits();
-			} else {
-				return "" + math.getReal();
 			}
+			return "" + math.getReal();
 		} else if (math.getType() == ASTNode.Type.REAL_E) {
 			if (math.hasUnits()) {
 				return math.getMantissa() + "e" + math.getExponent() + " " + math.getUnits();
-			} else {
-				return math.getMantissa() + "e" + math.getExponent();
 			}
+			return math.getMantissa() + "e" + math.getExponent();
 		} else if (math.getType() == ASTNode.Type.RELATIONAL_EQ) {
 			String leftStr = myFormulaToStringInfix(math.getLeftChild());
 			String rightStr = myFormulaToStringInfix(math.getRightChild());
@@ -2759,9 +2753,8 @@ public class SBMLutilities {
 			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants,booleans);
 			if (booleans.contains(leftStr) && rightStr.equals("1")) {
 				return leftStr;
-			} else {
-				return "(" + leftStr + "=" + rightStr + ")";
 			}
+			return "(" + leftStr + "=" + rightStr + ")";
 		} else if (math.getType() == ASTNode.Type.RELATIONAL_GEQ) {
 			String leftStr = SBMLMathToLPNString(math.getLeftChild(),constants,booleans);
 			String rightStr = SBMLMathToLPNString(math.getRightChild(),constants,booleans);
@@ -3142,9 +3135,7 @@ public class SBMLutilities {
 		if (sb instanceof AbstractNamedSBase) {
 			return ((AbstractNamedSBase) sb).getId();
 		}
-		else {
-			return null;
-		}
+		return null;
 	}
 	
 	public static int appendAnnotation(SBase sbmlObject, String annotation) {
@@ -3162,55 +3153,45 @@ public class SBMLutilities {
 		if (model.getExtension(FBCConstants.namespaceURI) != null) {
 			return (FBCModelPlugin)model.getExtension(FBCConstants.namespaceURI);
 		}
-		else {
-			FBCModelPlugin fbc = new FBCModelPlugin(model);
-			model.addExtension(FBCConstants.namespaceURI, fbc);
-			return fbc;
-		}
+		FBCModelPlugin fbc = new FBCModelPlugin(model);
+		model.addExtension(FBCConstants.namespaceURI, fbc);
+		return fbc;
 	}
 	
 	public static LayoutModelPlugin getLayoutModelPlugin(Model model) {
 		if (model.getExtension(LayoutConstants.namespaceURI) != null) {
 			return (LayoutModelPlugin)model.getExtension(LayoutConstants.namespaceURI);
 		}
-		else {
-			LayoutModelPlugin layout = new LayoutModelPlugin(model);
-			model.addExtension(LayoutConstants.namespaceURI, layout);
-			return layout;
-		}
+		LayoutModelPlugin layout = new LayoutModelPlugin(model);
+		model.addExtension(LayoutConstants.namespaceURI, layout);
+		return layout;
 	}
 	
 	public static CompSBMLDocumentPlugin getCompSBMLDocumentPlugin(SBMLDocument document) {
 		if (document.getExtension(CompConstant.namespaceURI) != null) {
 			return (CompSBMLDocumentPlugin)document.getExtension(CompConstant.namespaceURI);
 		}
-		else {
-			CompSBMLDocumentPlugin comp = new CompSBMLDocumentPlugin(document);
-			document.addExtension(CompConstant.namespaceURI, comp);
-			return comp;
-		}
+		CompSBMLDocumentPlugin comp = new CompSBMLDocumentPlugin(document);
+		document.addExtension(CompConstant.namespaceURI, comp);
+		return comp;
 	}
 	
 	public static CompModelPlugin getCompModelPlugin(Model model) {
 		if (model.getExtension(CompConstant.namespaceURI) != null) {
 			return (CompModelPlugin)model.getExtension(CompConstant.namespaceURI);
 		}
-		else {
-			CompModelPlugin comp = new CompModelPlugin(model);
-			model.addExtension(CompConstant.namespaceURI, comp);
-			return comp;
-		}
+		CompModelPlugin comp = new CompModelPlugin(model);
+		model.addExtension(CompConstant.namespaceURI, comp);
+		return comp;
 	}
 	
 	public static CompSBasePlugin getCompSBasePlugin(SBase sb) {
 		if (sb.getExtension(CompConstant.namespaceURI) != null) {
 			return (CompSBasePlugin)sb.getExtension(CompConstant.namespaceURI);
 		}
-		else {
-			CompSBasePlugin comp = new CompSBasePlugin(sb);
-			sb.addExtension(CompConstant.namespaceURI, comp);
-			return comp;
-		}
+		CompSBasePlugin comp = new CompSBasePlugin(sb);
+		sb.addExtension(CompConstant.namespaceURI, comp);
+		return comp;
 	}
 
 	public static void setNamespaces(SBMLDocument document, Map<String,String> namespaces) {
@@ -3242,16 +3223,14 @@ public class SBMLutilities {
 
 		if (value == 0.0) 
 			return false;
-		else 
-			return true;
+		return true;
 	}
 
 	public static double getDoubleFromBoolean(boolean value) {
 
 		if (value == true)
 			return 1.0;
-		else 
-			return 0.0;
+		return 0.0;
 	}
 	
 	public static double evaluateExpression(Model model, ASTNode node) {
@@ -3611,9 +3590,7 @@ public class SBMLutilities {
 		if (r.getListOfModifiers() != null) {
 			return r.removeModifier(species);
 		}
-		else {
-			return null;
-		}
+		return null;
 	}
 	
 	public static void checkModelCompleteness(SBMLDocument document) {

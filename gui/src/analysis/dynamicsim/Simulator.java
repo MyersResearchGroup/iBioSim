@@ -645,7 +645,7 @@ public abstract class Simulator {
 					}
 					else {
 						
-						String childSpeciesID = ((String[])childReactionFormula.split("\\*"))[1];
+						String childSpeciesID = childReactionFormula.split("\\*")[1];
 						String underlyingSpeciesID = childSpeciesID.split("__")[childSpeciesID.split("__").length - 1];
 						
 						//we want the parent's kmdiff parameter, as the child's doesn't exist
@@ -1214,7 +1214,7 @@ public abstract class Simulator {
 					
 					if (variableToValueMap.containsKey(speciesName))
 						return variableToValueMap.get(speciesName);
-					else return 1;
+					return 1;
 				}
 				else if (nodeName.equals("neighborQuantityRightFull")) {
 					
@@ -1226,7 +1226,7 @@ public abstract class Simulator {
 					if (variableToValueMap.containsKey(speciesName)) {
 						return variableToValueMap.get(speciesName);
 					}
-					else return 1;
+					return 1;
 				}
 				else if (nodeName.equals("neighborQuantityAboveFull")) {
 					
@@ -1237,7 +1237,7 @@ public abstract class Simulator {
 					
 					if (variableToValueMap.containsKey(speciesName))
 						return variableToValueMap.get(speciesName);
-					else return 1;
+					return 1;
 				}
 				else if (nodeName.equals("neighborQuantityBelowFull")) {
 					
@@ -1248,7 +1248,7 @@ public abstract class Simulator {
 					
 					if (variableToValueMap.containsKey(speciesName))
 						return variableToValueMap.get(speciesName);
-					else return 1;
+					return 1;
 				}
 				else if (nodeName.equals("getCompartmentLocationX")) {
 					
@@ -1441,10 +1441,10 @@ public abstract class Simulator {
 				
 				String[] annotationString = stripAnnotation(species.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim()).split("=");
 				
-				numColsLower = Integer.valueOf(((String[])(annotationString[1].split(" ")))[0].replace("\"",""));
-				numColsUpper = Integer.valueOf(((String[])(annotationString[2].split(" ")))[0].replace("\"",""));
-				numRowsLower = Integer.valueOf(((String[])(annotationString[3].split(" ")))[0].replace("\"",""));
-				numRowsUpper = Integer.valueOf(((String[])(annotationString[4].split(" ")))[0].replace("\"",""));
+				numColsLower = Integer.valueOf((annotationString[1].split(" "))[0].replace("\"",""));
+				numColsUpper = Integer.valueOf((annotationString[2].split(" "))[0].replace("\"",""));
+				numRowsLower = Integer.valueOf((annotationString[3].split(" "))[0].replace("\"",""));
+				numRowsUpper = Integer.valueOf((annotationString[4].split(" "))[0].replace("\"",""));
 				
 				SpeciesDimensions speciesDimensions = 
 					new SpeciesDimensions(numRowsLower, numRowsUpper, numColsLower, numColsUpper);
@@ -1494,11 +1494,11 @@ public abstract class Simulator {
 				String[] splitAnnotation = annotationString.split("array:");
 				ArrayList<String> eventCompartments = new ArrayList<String>();
 				
-				splitAnnotation[splitAnnotation.length - 2] = ((String[])splitAnnotation[splitAnnotation.length - 2].split("xmlns:"))[0];
+				splitAnnotation[splitAnnotation.length - 2] = splitAnnotation[splitAnnotation.length - 2].split("xmlns:")[0];
 				
 				for (int i = 2; i < splitAnnotation.length; ++i) {
 					
-					String compartmentID = ((String[])splitAnnotation[i].split("="))[0];
+					String compartmentID = splitAnnotation[i].split("=")[0];
 					eventCompartments.add(compartmentID);
 				}
 				
@@ -1626,13 +1626,13 @@ public abstract class Simulator {
 					continue;
 				}
 				
-				splitAnnotation[splitAnnotation.length - 2] = ((String[])splitAnnotation[splitAnnotation.length - 2].split("xmlns:"))[0];
+				splitAnnotation[splitAnnotation.length - 2] = splitAnnotation[splitAnnotation.length - 2].split("xmlns:")[0];
 				
 				for (int i = 2; i < splitAnnotation.length; ++i) {
 					
-					String compartmentID = ((String[])splitAnnotation[i].split("="))[0];
-					String row = ((String[])((String[])splitAnnotation[i].split(" ")[0].split("="))[1].split(","))[0].replace("(","");
-					String col = ((String[])((String[])splitAnnotation[i].split(" ")[0].split("="))[1].split(","))[1].replace(")","");
+					String compartmentID = splitAnnotation[i].split("=")[0];
+					String row = splitAnnotation[i].split(" ")[0].split("=")[1].split(",")[0].replace("(","");
+					String col = splitAnnotation[i].split(" ")[0].split("=")[1].split(",")[1].replace(")","");
 					
 					membraneDiffusionRows.add(Integer.valueOf(row.trim()));
 					membraneDiffusionCols.add(Integer.valueOf(col.trim()));
@@ -2117,17 +2117,17 @@ public abstract class Simulator {
 			//so those only get executed here if it's not a dynamic event
 			if (eventToFire.eventID.contains("__AsymmetricDivision__")) {
 				
-				String compartmentID = ((String[])eventToFire.eventID.split("__"))[0];
+				String compartmentID = eventToFire.eventID.split("__")[0];
 				duplicateComponent(compartmentID, eventToFire.eventID, "asymmetric");
 			}
 			else if (eventToFire.eventID.contains("__SymmetricDivision__")) {
 				
-				String compartmentID = ((String[])eventToFire.eventID.split("__"))[0];
+				String compartmentID = eventToFire.eventID.split("__")[0];
 				duplicateComponent(compartmentID, eventToFire.eventID, "symmetric");
 			}
 			else if (eventToFire.eventID.contains("__Death__")) {
 				
-				String compartmentID = ((String[])eventToFire.eventID.split("__"))[0];
+				String compartmentID = eventToFire.eventID.split("__")[0];
 				deadEvents = eraseComponent(compartmentID);
 				
 				firedEvents.removeAll(deadEvents);
@@ -2181,7 +2181,7 @@ public abstract class Simulator {
 				//reactions that change and thus need their propensities re-evaluated
 				HashSet<String> reactionsToAdjust = new HashSet<String>();
 				
-				String compartmentID = ((String[])eventToFire.eventID.split("__"))[0];
+				String compartmentID = eventToFire.eventID.split("__")[0];
 				Point parentLocation = componentToLocationMap.get(compartmentID);
 				Point childLocation = (Point) parentLocation.clone();
 				moveComponent(compartmentID, "", new Point(), childLocation, direction, reactionsToAdjust);
@@ -2354,8 +2354,7 @@ public abstract class Simulator {
 		
 		if (value == 0.0) 
 			return false;
-		else 
-			return true;
+		return true;
 	}
 	
 	/**
@@ -2368,8 +2367,7 @@ public abstract class Simulator {
 		
 		if (value == true)
 			return 1.0;
-		else 
-			return 0.0;
+		return 0.0;
 	}
 
 	/**
@@ -2547,9 +2545,7 @@ public abstract class Simulator {
 			
 			return inlinedFormula;
 		}
-		else {
-			return formula;
-		}
+		return formula;
 	}
 	
 	/**
@@ -3066,11 +3062,11 @@ public abstract class Simulator {
 									case 7: {oldLocation.x = locationToMove.x - 1; oldLocation.y = locationToMove.y - 1; break;}
 								}
 								
-								String oldRowCol = "ROW" + (int) oldLocation.x + "_COL" + (int) oldLocation.y;
+								String oldRowCol = "ROW" + oldLocation.x + "_COL" + oldLocation.y;
 								oldRowCol = oldRowCol.replace("ROW-", "ROW_negative_");
 								oldRowCol = oldRowCol.replace("COL-", "COL_negative_");
 								
-								String newRowCol = "ROW" + (int) locationToMove.x + "_COL" + (int) locationToMove.y;
+								String newRowCol = "ROW" + locationToMove.x + "_COL" + locationToMove.y;
 								newRowCol = newRowCol.replace("ROW-", "ROW_negative_");
 								newRowCol = newRowCol.replace("COL-", "COL_negative_");
 								
@@ -3616,10 +3612,10 @@ public abstract class Simulator {
 				
 				String[] annotationString = stripAnnotation(species.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim()).split("=");
 				
-				numColsLower = Integer.valueOf(((String[])(annotationString[1].split(" ")))[0].replace("\"",""));
-				numColsUpper = Integer.valueOf(((String[])(annotationString[2].split(" ")))[0].replace("\"",""));
-				numRowsLower = Integer.valueOf(((String[])(annotationString[3].split(" ")))[0].replace("\"",""));
-				numRowsUpper = Integer.valueOf(((String[])(annotationString[4].split(" ")))[0].replace("\"",""));
+				numColsLower = Integer.valueOf((annotationString[1].split(" "))[0].replace("\"",""));
+				numColsUpper = Integer.valueOf((annotationString[2].split(" "))[0].replace("\"",""));
+				numRowsLower = Integer.valueOf((annotationString[3].split(" "))[0].replace("\"",""));
+				numRowsUpper = Integer.valueOf((annotationString[4].split(" "))[0].replace("\"",""));
 				
 				SpeciesDimensions speciesDimensions = 
 					new SpeciesDimensions(numRowsLower, numRowsUpper, numColsLower, numColsUpper);
@@ -3669,11 +3665,11 @@ public abstract class Simulator {
 				String[] splitAnnotation = annotationString.split("array:");
 				ArrayList<String> eventCompartments = new ArrayList<String>();
 				
-				splitAnnotation[splitAnnotation.length - 2] = ((String[])splitAnnotation[splitAnnotation.length - 2].split("xmlns:"))[0];
+				splitAnnotation[splitAnnotation.length - 2] = splitAnnotation[splitAnnotation.length - 2].split("xmlns:")[0];
 				
 				for (int i = 2; i < splitAnnotation.length; ++i) {
 					
-					String compartmentID = ((String[])splitAnnotation[i].split("="))[0];
+					String compartmentID = splitAnnotation[i].split("=")[0];
 					eventCompartments.add(compartmentID);
 				}
 				
@@ -3801,13 +3797,13 @@ public abstract class Simulator {
 					continue;
 				}
 				
-				splitAnnotation[splitAnnotation.length - 2] = ((String[])splitAnnotation[splitAnnotation.length - 2].split("xmlns:"))[0];
+				splitAnnotation[splitAnnotation.length - 2] = splitAnnotation[splitAnnotation.length - 2].split("xmlns:")[0];
 				
 				for (int i = 2; i < splitAnnotation.length; ++i) {
 					
-					String compartmentID = ((String[])splitAnnotation[i].split("="))[0];
-					String row = ((String[])((String[])splitAnnotation[i].split(" ")[0].split("="))[1].split(","))[0].replace("(","");
-					String col = ((String[])((String[])splitAnnotation[i].split(" ")[0].split("="))[1].split(","))[1].replace(")","");
+					String compartmentID = splitAnnotation[i].split("=")[0];
+					String row = splitAnnotation[i].split(" ")[0].split("=")[1].split(",")[0].replace("(","");
+					String col = splitAnnotation[i].split(" ")[0].split("=")[1].split(",")[1].replace(")","");
 					
 					membraneDiffusionRows.add(Integer.valueOf(row.trim()));
 					membraneDiffusionCols.add(Integer.valueOf(col.trim()));
@@ -4211,7 +4207,7 @@ public abstract class Simulator {
 				continue;
 			
 			//this will leave us with compartmentID or stuff_compartmentID
-			String componentID = ((String[])reactionID.split("__"))[0];
+			String componentID = reactionID.split("__")[0];
 			
 			//if there's an underscore, remove everything before it to leave the compartmentID
 			String[] splitReactionID = componentID.split("_");
@@ -4229,7 +4225,7 @@ public abstract class Simulator {
 				}
 				
 				String[] locationInfo = 
-					((String[])productID.split("__"))[0].split("_");
+					productID.split("__")[0].split("_");
 				
 				int row, col;
 				
@@ -4258,7 +4254,7 @@ public abstract class Simulator {
 				continue;
 			
 			//this will leave us with compartmentID or stuff_compartmentID
-			String componentID = ((String[])variableID.split("__"))[0];
+			String componentID = variableID.split("__")[0];
 			
 			//if there's an underscore, remove everything before it to leave the compartmentID
 			String[] splitVariableID = componentID.split("_");
@@ -4278,7 +4274,7 @@ public abstract class Simulator {
 				if (eventID.contains("__") == false)
 					continue;
 				
-				String componentID = ((String[])eventID.split("__"))[0];
+				String componentID = eventID.split("__")[0];
 				
 				//if there's an underscore, remove everything before it to leave the compartmentID
 				String[] splitEventID = componentID.split("_");
@@ -4303,13 +4299,13 @@ public abstract class Simulator {
 					replace("</annotation>","").replace("\"","");
 				String[] splitAnnotation = annotationString.split("array:");
 				
-				splitAnnotation[splitAnnotation.length - 2] = ((String[])splitAnnotation[splitAnnotation.length - 2].split("xmlns:"))[0];
+				splitAnnotation[splitAnnotation.length - 2] = splitAnnotation[splitAnnotation.length - 2].split("xmlns:")[0];
 				
 				for (int i = 2; i < splitAnnotation.length; ++i) {
 					
-					String compartmentID = ((String[])splitAnnotation[i].split("="))[0];
-					String row = ((String[])((String[])splitAnnotation[i].split(" ")[0].split("="))[1].split(","))[0].replace("(","");
-					String col = ((String[])((String[])splitAnnotation[i].split(" ")[0].split("="))[1].split(","))[1].replace(")","");
+					String compartmentID = splitAnnotation[i].split("=")[0];
+					String row = splitAnnotation[i].split(" ")[0].split("=")[1].split(",")[0].replace("(","");
+					String col = splitAnnotation[i].split(" ")[0].split("=")[1].split(",")[1].replace(")","");
 					
 					componentToLocationMap.put(compartmentID, new Point(Integer.valueOf(row.trim()), Integer.valueOf(col.trim())));
 				}
@@ -5358,15 +5354,10 @@ public abstract class Simulator {
 				if (eventToPriorityMap.get(event1.eventID) == null) {
 					if (eventToPriorityMap.get(event2.eventID) != null)
 						return -1;
-					else {
-						
-						if ((Math.random() * 100) > 50) {
-							return -1;
-						}
-						else {
-							return 1;
-						}
+					if ((Math.random() * 100) > 50) {
+						return -1;
 					}
+					return 1;
 				}
 				
 				if (evaluateExpressionRecursive(eventToPriorityMap.get(event1.eventID)) >  
@@ -5379,9 +5370,7 @@ public abstract class Simulator {
 					if ((Math.random() * 100) > 50) {
 						return -1;
 					}
-					else {
-						return 1;
-					}
+					return 1;
 				}
 			}
 		}

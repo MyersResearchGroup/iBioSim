@@ -51,22 +51,20 @@ public class Common {
             // prln("simulate " + iterations++ + " >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ");
             if (con == null) {
                 break;
-            } else {
-                String line = con.readLine();
-                if (line == null) {
-                    pErr("line==null");
-                }
-                if (line.length() > 0) {
-                    cmd = line.charAt(0);
-                    if (cmd == 'n' || cmd == 'y') {
-                        break;
-                    } else {
-                        prln("Wrong command. Try again");
-                    }
-                } else {
-                    pErr("type 'y' OR 'n'");
-                }
             }
+			String line = con.readLine();
+			if (line == null) {
+			    pErr("line==null");
+			}
+			if (line.length() > 0) {
+			    cmd = line.charAt(0);
+			    if (cmd == 'n' || cmd == 'y') {
+			        break;
+			    }
+				prln("Wrong command. Try again");
+			} else {
+			    pErr("type 'y' OR 'n'");
+			}
         }
         if (cmd == 'n') {
             return false;

@@ -54,9 +54,7 @@ public class PropertyField extends JPanel implements ActionListener,
 		if (paramsOnly) {
 			return paramStates;
 		}
-		else {
-			return states;
-		}
+		return states;
 	}
 
 	@Override

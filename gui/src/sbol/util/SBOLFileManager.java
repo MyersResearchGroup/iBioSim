@@ -113,8 +113,7 @@ public class SBOLFileManager {
 		if (sbolDoc != null) 
 			return ((SBOLDocumentImpl) SBOLUtility.flattenSBOLDocument(sbolDoc))
 					.getComponentDisplayIdResolver().resolve(displayID);
-		else
-			return null;
+		return null;
 	
 	}
 	

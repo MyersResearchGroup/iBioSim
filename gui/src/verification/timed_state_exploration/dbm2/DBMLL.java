@@ -373,10 +373,7 @@ public class DBMLL {
 			{
 				continue;
 			}
-			else
-			{
-				result[counter++] = getTimer.get(i);
-			}
+			result[counter++] = getTimer.get(i);
 		}
 		
 		return result;

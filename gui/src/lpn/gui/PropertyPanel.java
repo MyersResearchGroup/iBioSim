@@ -58,16 +58,13 @@ public class PropertyPanel extends JPanel implements ActionListener {
 	public boolean parseProperty() {
 		boolean goodProperty = false;
 		String propertyTemp = field.getValue();
-		if(!propertyTemp.equals("") && propertyTemp!=null){
+		if(propertyTemp!=null && !propertyTemp.equals("")){
 			Parser p = new Parser(propertyTemp);
 			goodProperty = p.parseProperty();
 			return goodProperty;
 		}
-		else
-		{
-			goodProperty = true;
-			return goodProperty;
-		}
+		goodProperty = true;
+		return goodProperty;
 		
 	}
 

@@ -78,12 +78,12 @@ public class FluxBalanceAnalysis {
 				}
 			}
 			for (int i = 0; i < fbc.getListOfObjectives().size(); i++) {
-				double [] objective = new double[(int) sbml.getModel().getReactionCount()];				
+				double [] objective = new double[sbml.getModel().getReactionCount()];				
 				for (int j = 0; j < fbc.getObjective(i).getListOfFluxObjectives().size(); j++) {
 					if (fbc.getObjective(i).getType().equals(Type.MINIMIZE)) {
-						objective [(int) reactionIndex.get(fbc.getObjective(i).getListOfFluxObjectives().get(j).getReaction())] = fbc.getObjective(i).getListOfFluxObjectives().get(j).getCoefficient();
+						objective [reactionIndex.get(fbc.getObjective(i).getListOfFluxObjectives().get(j).getReaction())] = fbc.getObjective(i).getListOfFluxObjectives().get(j).getCoefficient();
 					} else {
-						objective [(int) reactionIndex.get(fbc.getObjective(i).getListOfFluxObjectives().get(j).getReaction())] = (-1)*fbc.getObjective(i).getListOfFluxObjectives().get(j).getCoefficient();
+						objective [reactionIndex.get(fbc.getObjective(i).getListOfFluxObjectives().get(j).getReaction())] = (-1)*fbc.getObjective(i).getListOfFluxObjectives().get(j).getCoefficient();
 					}
 				}
 				LinearMultivariateRealFunction objectiveFunction = new LinearMultivariateRealFunction(objective, 0);
@@ -97,7 +97,7 @@ public class FluxBalanceAnalysis {
 					}
 				}
 				
-				ConvexMultivariateRealFunction[] inequalities = new ConvexMultivariateRealFunction[(int)(fbc.getListOfFluxBounds().size())-numEquals];
+				ConvexMultivariateRealFunction[] inequalities = new ConvexMultivariateRealFunction[(fbc.getListOfFluxBounds().size())-numEquals];
 				int m = 0;
 				for (int j = 0; j < fbc.getListOfFluxBounds().size(); j++) {
 					FluxBound bound = fbc.getFluxBound(j);
@@ -124,7 +124,7 @@ public class FluxBalanceAnalysis {
 				for (int j = 0; j < sbml.getModel().getSpeciesCount(); j++) {
 					if (!sbml.getModel().getSpecies(j).getBoundaryCondition()) nonBoundarySpeciesCount++;
 				}
-				double[][] stoch = new double [nonBoundarySpeciesCount+numEquals][(int) (sbml.getModel().getReactionCount())];
+				double[][] stoch = new double [nonBoundarySpeciesCount+numEquals][(sbml.getModel().getReactionCount())];
 				double[] zero = new double [nonBoundarySpeciesCount+numEquals];
 				for (int j = 0; j < sbml.getModel().getSpeciesCount(); j++) {
 					Species species = sbml.getModel().getSpecies(j);
@@ -135,13 +135,13 @@ public class FluxBalanceAnalysis {
 						for (int l = 0; l < r.getReactantCount(); l++) {
 							SpeciesReference sr = r.getReactant(l);
 							if (sr.getSpecies().equals(species.getId())) {
-								stoch[m][(int) (reactionIndex.get(r.getId()))]=(-1)*sr.getStoichiometry();
+								stoch[m][(reactionIndex.get(r.getId()))]=(-1)*sr.getStoichiometry();
 							}
 						}
 						for (int l = 0; l < r.getProductCount(); l++) {
 							SpeciesReference sr = r.getProduct(l);
 							if (sr.getSpecies().equals(species.getId())) {
-								stoch[m][(int) (reactionIndex.get(r.getId()))]=sr.getStoichiometry();
+								stoch[m][(reactionIndex.get(r.getId()))]=sr.getStoichiometry();
 							}
 						}
 					}
@@ -150,7 +150,7 @@ public class FluxBalanceAnalysis {
 				for (int j = 0; j < fbc.getListOfFluxBounds().size(); j++) {
 					FluxBound bound = fbc.getFluxBound(j);
 					if (bound.getOperation().equals(FluxBound.Operation.EQUAL)) {
-						stoch[m][(int)(reactionIndex.get(bound.getReaction()))] = 1.0;
+						stoch[m][(reactionIndex.get(bound.getReaction()))] = 1.0;
 						zero[m] = bound.getValue();
 //						System.out.println("  " + vectorToString(stoch[m],reactionIndex) + " = " + zero[m]);
 						m++;
@@ -211,8 +211,7 @@ public class FluxBalanceAnalysis {
 				}
 			}
 			return 0;
-		} else {
-			return 2;
 		}
+		return 2;
 	}
 }
