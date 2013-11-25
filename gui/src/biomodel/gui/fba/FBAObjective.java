@@ -258,14 +258,9 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), objectiveID.getText().trim(), selectedID, false, false);
 			if (!error) {
-//				error = objective.getText().matches("([0-9]*(\\.[0-9]*)? \\*? [0-9]*[a-z A-Z]* (+ ([0-9]*'.'[0-9]*)? \\* ID)*");
-				if (error) {
-					JOptionPane.showMessageDialog(Gui.frame, "Invalid formula!", 
-							"Input does not match acceptable formula format.", JOptionPane.ERROR_MESSAGE);
-				}
-				// TODO: error check the formula (##.##)? \\* ID (+ (##.##)? \\* ID)*
-				// set error=true if violation
-				// error message
+				error = !objective.getText().matches("((\\d*\\.\\d*\\*)?[_\\da-zA-Z]+)+");
+				JOptionPane.showMessageDialog(Gui.frame, "Invalid formula!", 
+						"Input does not match acceptable formula format.", JOptionPane.ERROR_MESSAGE);
 			} 
 			if (!error) {
 				int eqsign = objective.getText().indexOf("=");
@@ -280,7 +275,14 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 							JOptionPane.showMessageDialog(Gui.frame, "Reaction " + coefficeintReaction[1].trim() + " is not a valid reaction!", 
 									"Must input vaild reaction IDs", JOptionPane.ERROR_MESSAGE);
 						}
-						// TODO: check that [0] is a valid double
+						try{
+							Double.parseDouble(coefficeintReaction[0]);
+						}
+						catch(Exception e){
+							error = true;
+							JOptionPane.showMessageDialog(Gui.frame, coefficeintReaction[0].trim() + " is not a double!", 
+									"Must input vaild reaction IDs", JOptionPane.ERROR_MESSAGE);
+						}
 					}
 					else{
 						if(!bioModel.getReactions().contains(coefficeintReaction[0].trim())){
