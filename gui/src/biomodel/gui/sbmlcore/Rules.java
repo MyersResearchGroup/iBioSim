@@ -478,6 +478,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 //					updateRules(rul);
 					rules.setListData(rul);
 					rules.setSelectedIndex(index);
+					bioModel.makeUndoPoint();
 				}
 				else {
 					String[] rul = new String[rules.getModel().getSize()];
@@ -575,7 +576,6 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					}
 				}
 				modelEditor.setDirty(true);
-				bioModel.makeUndoPoint();
 			}
 			if (error) {
 				value = JOptionPane.showOptionDialog(Gui.frame, rulePanel, "Rule Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
@@ -1003,6 +1003,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		// if the add event button is clicked
 		if (e.getSource() == addRule) {
 			ruleEditor("Add","");
+			bioModel.makeUndoPoint();
 		}
 		// if the edit event button is clicked
 		else if (e.getSource() == editRule) {

@@ -750,6 +750,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						Utility.sort(ev);
 						events.setListData(ev);
 						events.setSelectedIndex(index);
+						bioModel.makeUndoPoint();
 					}
 					//edit dynamic process
 					if (!error) {
@@ -954,7 +955,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			return selected;
 		}
 		modelEditor.setDirty(true);
-		bioModel.makeUndoPoint();
 		return eventID.getText().trim();
 	}
 
@@ -1342,8 +1342,10 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		// if the add event button is clicked
 		if (e.getSource() == addEvent) {
 			eventEditor("Add","",false);
+			bioModel.makeUndoPoint();
 		}else if (e.getSource() == addTrans) {
 			eventEditor("Add","",true);
+			bioModel.makeUndoPoint();
 		}
 		// if the edit event button is clicked
 		else if (e.getSource() == editEvent) {

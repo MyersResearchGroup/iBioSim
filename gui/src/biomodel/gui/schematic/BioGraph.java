@@ -2309,13 +2309,14 @@ public class BioGraph extends mxGraph {
 		
 		String label = truncID + "\n" + truncGCM;
 		CellValueObject cvo = new CellValueObject(label, "Component", null);
-		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
-		this.componentsToMxCellMap.put(id, (mxCell)insertedVertex);
+		mxCell insertedVertex = (mxCell) this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
+		insertedVertex.setId(id);
+		this.componentsToMxCellMap.put(id, insertedVertex);
 		
 		//pass whether or not the component is a compartment, as the styles are different
 		this.setComponentStyles(id, compart);
 		
-		needsPositioning = sizeAndPositionFromProperties((mxCell)insertedVertex,
+		needsPositioning = sizeAndPositionFromProperties(insertedVertex,
 				GlobalConstants.DEFAULT_COMPONENT_WIDTH,GlobalConstants.DEFAULT_COMPONENT_HEIGHT);
 
 		// now draw the edges that connect the component
@@ -2395,12 +2396,13 @@ public class BioGraph extends mxGraph {
 		}
 		
 		CellValueObject cvo = new CellValueObject(label, "Species", null);
-		Object insertedVertex = this.insertVertex(this.getDefaultParent(), sp, cvo, 1, 1, 1, 1);
-		this.speciesToMxCellMap.put(sp, (mxCell)insertedVertex);
+		mxCell insertedVertex = (mxCell) this.insertVertex(this.getDefaultParent(), sp, cvo, 1, 1, 1, 1);
+		insertedVertex.setId(sp);
+		this.speciesToMxCellMap.put(sp, insertedVertex);
 		
 		this.setSpeciesStyles(sp);
 		
-		return sizeAndPositionFromProperties((mxCell)insertedVertex,
+		return sizeAndPositionFromProperties(insertedVertex,
 				GlobalConstants.DEFAULT_SPECIES_WIDTH,GlobalConstants.DEFAULT_SPECIES_HEIGHT);
 	}
 	
@@ -2412,19 +2414,20 @@ public class BioGraph extends mxGraph {
 	 */
 	private boolean createGraphReactionFromModel(String id){
 		CellValueObject cvo = new CellValueObject(id, "Reaction", null);
-		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
-		this.reactionsToMxCellMap.put(id, (mxCell)insertedVertex);
+		mxCell insertedVertex = (mxCell) this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
+		insertedVertex.setId(id);
+		this.reactionsToMxCellMap.put(id, insertedVertex);
 		
 		this.setReactionStyles(id);
 		
-		return sizeAndPositionFromProperties((mxCell)insertedVertex,
+		return sizeAndPositionFromProperties(insertedVertex,
 				GlobalConstants.DEFAULT_REACTION_WIDTH,GlobalConstants.DEFAULT_REACTION_HEIGHT);
 	}
 	
 	private boolean createGraphCompartmentFromModel(String id){
 		CellValueObject cvo = new CellValueObject(id, "Compartment", null);
-		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
-		mxCell cell = (mxCell)insertedVertex;
+		mxCell cell = (mxCell) this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
+		cell.setId(id);
 		cell.setConnectable(false);
 		this.compartmentsToMxCellMap.put(id, cell);
 		
@@ -2440,45 +2443,49 @@ public class BioGraph extends mxGraph {
 	
 	private boolean createGraphRuleFromModel(String id){
 		CellValueObject cvo = new CellValueObject(id, "Rule", null);
-		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
-		this.rulesToMxCellMap.put(id, (mxCell)insertedVertex);
+		mxCell insertedVertex = (mxCell) this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
+		insertedVertex.setId(id);
+		this.rulesToMxCellMap.put(id, insertedVertex);
 		
 		this.setRuleStyles(id);
 		
-		return sizeAndPositionFromProperties((mxCell)insertedVertex,
+		return sizeAndPositionFromProperties(insertedVertex,
 				GlobalConstants.DEFAULT_RULE_WIDTH,GlobalConstants.DEFAULT_RULE_HEIGHT);
 	}
 	
 	private boolean createGraphConstraintFromModel(String id){
 		CellValueObject cvo = new CellValueObject(id, "Constraint", null);
-		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
-		this.constraintsToMxCellMap.put(id, (mxCell)insertedVertex);
+		mxCell insertedVertex = (mxCell) this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
+		insertedVertex.setId(id);
+		this.constraintsToMxCellMap.put(id, insertedVertex);
 		
 		this.setConstraintStyles(id);
 		
-		return sizeAndPositionFromProperties((mxCell)insertedVertex,
+		return sizeAndPositionFromProperties(insertedVertex,
 				GlobalConstants.DEFAULT_CONSTRAINT_WIDTH,GlobalConstants.DEFAULT_CONSTRAINT_HEIGHT);
 	}
 	
 	private boolean createGraphEventFromModel(String id){
 		CellValueObject cvo = new CellValueObject(id, "Event", null);
-		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
-		this.eventsToMxCellMap.put(id, (mxCell)insertedVertex);
+		mxCell insertedVertex = (mxCell) this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
+		insertedVertex.setId(id);
+		this.eventsToMxCellMap.put(id, insertedVertex);
 		
 		this.setEventStyles(id);
 		
-		return sizeAndPositionFromProperties((mxCell)insertedVertex,
+		return sizeAndPositionFromProperties(insertedVertex,
 				GlobalConstants.DEFAULT_EVENT_WIDTH,GlobalConstants.DEFAULT_EVENT_HEIGHT);
 	}
 	
 	private boolean createGraphTransitionFromModel(String id){
 		CellValueObject cvo = new CellValueObject(id, "Transition", null);
-		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
-		this.eventsToMxCellMap.put(id, (mxCell)insertedVertex);
+		mxCell insertedVertex = (mxCell) this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
+		insertedVertex.setId(id);
+		this.eventsToMxCellMap.put(id, insertedVertex);
 		
 		this.setTransitionStyles(id);
 		
-		return sizeAndPositionFromProperties((mxCell)insertedVertex,
+		return sizeAndPositionFromProperties(insertedVertex,
 				GlobalConstants.DEFAULT_TRANSITION_WIDTH,GlobalConstants.DEFAULT_TRANSITION_HEIGHT);
 	}
 	
@@ -2496,12 +2503,13 @@ public class BioGraph extends mxGraph {
 		else truncID = id;
 
 		CellValueObject cvo = new CellValueObject(truncID, "Promoter", null);
-		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
-		this.drawnPromoterToMxCellMap.put(id, (mxCell)insertedVertex);
+		mxCell insertedVertex = (mxCell) this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
+		insertedVertex.setId(id);
+		this.drawnPromoterToMxCellMap.put(id, insertedVertex);
 		
 		this.setDrawnPromoterStyles(id);
 		
-		return sizeAndPositionFromProperties((mxCell)insertedVertex,
+		return sizeAndPositionFromProperties(insertedVertex,
 				GlobalConstants.DEFAULT_SPECIES_WIDTH,GlobalConstants.DEFAULT_SPECIES_HEIGHT);
 	}
 	
@@ -2519,12 +2527,13 @@ public class BioGraph extends mxGraph {
 		else truncID = id;
 
 		CellValueObject cvo = new CellValueObject(truncID, "Variable", null);
-		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
-		this.variableToMxCellMap.put(id, (mxCell)insertedVertex);
+		mxCell insertedVertex = (mxCell) this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
+		insertedVertex.setId(id);
+		this.variableToMxCellMap.put(id, insertedVertex);
 		
 		this.setVariableStyles(id);
 		
-		return sizeAndPositionFromProperties((mxCell)insertedVertex,
+		return sizeAndPositionFromProperties(insertedVertex,
 				GlobalConstants.DEFAULT_VARIABLE_WIDTH,GlobalConstants.DEFAULT_VARIABLE_HEIGHT);
 	}
 	
@@ -2542,8 +2551,9 @@ public class BioGraph extends mxGraph {
 		else truncID = id;
 
 		CellValueObject cvo = new CellValueObject(truncID, "Place", null);
-		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
-		this.variableToMxCellMap.put(id, (mxCell)insertedVertex);
+		mxCell insertedVertex = (mxCell) this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
+		insertedVertex.setId(id);
+		this.variableToMxCellMap.put(id, insertedVertex);
 		
 		if (marked) {
 			this.setMarkedPlaceStyles(id);
@@ -2551,7 +2561,7 @@ public class BioGraph extends mxGraph {
 			this.setPlaceStyles(id);
 		}
 		
-		return sizeAndPositionFromProperties((mxCell)insertedVertex,
+		return sizeAndPositionFromProperties(insertedVertex,
 				GlobalConstants.DEFAULT_VARIABLE_WIDTH,GlobalConstants.DEFAULT_VARIABLE_HEIGHT);
 	}
 	
@@ -2569,8 +2579,9 @@ public class BioGraph extends mxGraph {
 		else truncID = id;
 
 		CellValueObject cvo = new CellValueObject(truncID, "Boolean", null);
-		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
-		this.variableToMxCellMap.put(id, (mxCell)insertedVertex);
+		mxCell insertedVertex = (mxCell) this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
+		insertedVertex.setId(id);
+		this.variableToMxCellMap.put(id, insertedVertex);
 
 		if (initial) {
 			this.setTrueBooleanStyles(id);
@@ -2578,7 +2589,7 @@ public class BioGraph extends mxGraph {
 			this.setBooleanStyles(id);
 		}
 		
-		return sizeAndPositionFromProperties((mxCell)insertedVertex,
+		return sizeAndPositionFromProperties(insertedVertex,
 				GlobalConstants.DEFAULT_VARIABLE_WIDTH,GlobalConstants.DEFAULT_VARIABLE_HEIGHT);
 	}
 	
