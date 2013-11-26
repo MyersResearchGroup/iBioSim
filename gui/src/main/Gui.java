@@ -2487,7 +2487,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JCheckBox dummy = new JCheckBox();
 				JList empty = new JList();
 				dummy.setSelected(false);
-				run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1, 1, new String[0], "tsd.printer", "amount", "false",
+				run.createProperties(0.0, "Print Interval", 1.0, 1.0, 1.0, 1.0, directory, 314159L, 1, 1, new String[0], "tsd.printer", "amount", "false",
 						(directory + theFile).split(separator), "none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, 
 						null, false, false, false);
 				log.addText("Executing:\nreb2sac --target.encoding=xhtml --out=" + directory + out + ".xhtml " + directory + theFile + "\n");
@@ -4048,9 +4048,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							} else {
 								document.getModel().setId(newFile.replace(".xml",""));
 							}
-							document.addPackageDeclaration(LayoutConstants.shortLabel, LayoutConstants.namespaceURI, "false");
-							document.addPackageDeclaration(CompConstant.shortLabel, CompConstant.namespaceURI, "true");
-							document.addPackageDeclaration(FBCConstants.shortLabel, FBCConstants.namespaceURI, "false");
+							document.addPackageDeclaration(LayoutConstants.shortLabel, LayoutConstants.namespaceURI, false);
+							document.addPackageDeclaration(CompConstant.shortLabel, CompConstant.namespaceURI, true);
+							document.addPackageDeclaration(FBCConstants.shortLabel, FBCConstants.namespaceURI, false);
 							CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
 							CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(document.getModel());
 							if (documentComp.getListOfModelDefinitions().size() > 0 ||
@@ -9881,9 +9881,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				org.sbml.jsbml.Model model = new org.sbml.jsbml.Model(md);
 				model.getNamespaces().clear();
 				SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
-				document.addPackageDeclaration(LayoutConstants.shortLabel, LayoutConstants.namespaceURI, "false");
-				document.addPackageDeclaration(CompConstant.shortLabel, CompConstant.namespaceURI, "true");
-				document.addPackageDeclaration(FBCConstants.shortLabel, FBCConstants.namespaceURI, "false");
+				document.addPackageDeclaration(LayoutConstants.shortLabel, LayoutConstants.namespaceURI, false);
+				document.addPackageDeclaration(CompConstant.shortLabel, CompConstant.namespaceURI, true);
+				document.addPackageDeclaration(FBCConstants.shortLabel, FBCConstants.namespaceURI, false);
 				CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
 				CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(model);
 				document.setModel(model);
