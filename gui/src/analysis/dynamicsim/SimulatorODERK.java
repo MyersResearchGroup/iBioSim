@@ -268,7 +268,7 @@ public class SimulatorODERK extends Simulator {
 		
 		//add events to queue if they trigger
 		if (noEventsFlag == false)
-			handleEvents(noAssignmentRulesFlag, noConstraintsFlag);
+			handleEvents();
 		
 		while (printTime <= timeLimit && cancelFlag == false) {
 			
@@ -382,7 +382,7 @@ public class SimulatorODERK extends Simulator {
 			//add events to queue if they trigger
 			if (noEventsFlag == false) {
 				
-				handleEvents(noAssignmentRulesFlag, noConstraintsFlag);
+				handleEvents();
 							
 				//step to the next event fire time if it comes before the next time step
 				if (!triggeredEventQueue.isEmpty() && triggeredEventQueue.peek().fireTime <= currentTime)

@@ -161,7 +161,8 @@ static final Comparator<VarVal> vvComparator=new Comparator<VarVal>() {
          out.write("\n.end".getBytes());
     }
 
-    private static void debugPrint(Object o) {
+    @SuppressWarnings("unused")
+	private static void debugPrint(Object o) {
         // System.out.println(o);
     }
 }

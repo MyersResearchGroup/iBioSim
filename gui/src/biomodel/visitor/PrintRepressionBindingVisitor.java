@@ -22,8 +22,8 @@ import biomodel.util.Utility;
 public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 
 	public PrintRepressionBindingVisitor(SBMLDocument document, Promoter p, HashMap<String, SpeciesInterface> species, 
-			String compartment, 
-			HashMap<String, ArrayList<Influence>> complexMap, HashMap<String, ArrayList<Influence>> partsMap) {
+			HashMap<String, ArrayList<Influence>> complexMap, 
+			HashMap<String, ArrayList<Influence>> partsMap) {
 		super(document);
 		this.promoter = p;
 		this.species = species;

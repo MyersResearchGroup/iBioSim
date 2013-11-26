@@ -191,21 +191,21 @@ public class SynthesisGraph {
 		for (int j = 0; j < sbmlReaction.getModifierCount(); j++) {
 			ModifierSpeciesReference sbmlModifier = sbmlReaction.getModifier(j);
 			if (BioModel.isPromoter(sbmlModifier))
-				promoterNode = constructNode("p", sbmlReaction, sbmlModifier.getSpecies(),
-						idToNode, fileManager);
+				promoterNode = constructNode("p", sbmlReaction, idToNode,
+						fileManager);
 		}
 		if (promoterNode == null) 
-			promoterNode = constructNode("p", sbmlReaction, sbmlReaction.getId(), idToNode, fileManager);
+			promoterNode = constructNode("p", sbmlReaction, idToNode, fileManager);
 		for (int j = 0; j < sbmlReaction.getModifierCount(); j++) {
 			ModifierSpeciesReference sbmlModifier = sbmlReaction.getModifier(j);
 			if (BioModel.isRepressor(sbmlModifier) || BioModel.isActivator(sbmlModifier)) {
 				SynthesisNode tfNode;
 				if (BioModel.isRepressor(sbmlModifier))
 					tfNode = constructNode("r", sbmlModel.getSpecies(sbmlModifier.getSpecies()), 
-							sbmlModifier.getSpecies(), idToNode, fileManager);
+							idToNode, fileManager);
 				else
 					tfNode = constructNode("a", sbmlModel.getSpecies(sbmlModifier.getSpecies()), 
-							sbmlModifier.getSpecies(), idToNode, fileManager);
+							idToNode, fileManager);
 				if (!edges.containsKey(promoterNode))
 					edges.put(promoterNode, new LinkedList<SynthesisNode>());
 				edges.get(promoterNode).add(tfNode);	
@@ -214,7 +214,7 @@ public class SynthesisGraph {
 		for (int j = 0; j < sbmlReaction.getProductCount(); j++) {
 			SpeciesReference sbmlProduct = sbmlReaction.getProduct(j);
 			SynthesisNode productNode = constructNode("s", sbmlModel.getSpecies(sbmlProduct.getSpecies()), 
-					sbmlProduct.getSpecies(), idToNode, fileManager);
+					idToNode, fileManager);
 			if (!edges.containsKey(productNode))
 				edges.put(productNode, new LinkedList<SynthesisNode>());
 			edges.get(productNode).add(promoterNode);	
@@ -225,18 +225,18 @@ public class SynthesisGraph {
 			Model sbmlModel, SBOLFileManager fileManager) {
 		SpeciesReference sbmlProduct = sbmlReaction.getProduct(0);
 		SynthesisNode complexNode = constructNode("x", sbmlModel.getSpecies(sbmlProduct.getSpecies()), 
-				sbmlProduct.getSpecies(), idToNode, fileManager);
+				idToNode, fileManager);
 		edges.put(complexNode, new LinkedList<SynthesisNode>());
 		for (int j = 0; j < sbmlReaction.getReactantCount(); j++) {
 			SpeciesReference sbmlReactant = sbmlReaction.getReactant(j);
 			SynthesisNode speciesNode = constructNode("v", sbmlModel.getSpecies(sbmlReactant.getSpecies()),
-					sbmlReactant.getSpecies(), idToNode, fileManager);
+					idToNode, fileManager);
 			edges.get(complexNode).add(speciesNode);	
 		}
 	}
 	
-	private SynthesisNode constructNode(String type, SBase sbmlElement, String id, 
-			HashMap<String, SynthesisNode> idToNode, SBOLFileManager fileManager) { 
+	private SynthesisNode constructNode(String type, SBase sbmlElement, HashMap<String, SynthesisNode> idToNode, 
+			SBOLFileManager fileManager) { 
 		SynthesisNode node;
 		if (idToNode.containsKey(SBMLutilities.getId(sbmlElement))) {
 			node = idToNode.get(SBMLutilities.getId(sbmlElement));

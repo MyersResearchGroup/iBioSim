@@ -102,8 +102,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	 * the input fields, puts them on panels, adds the panels to the frame, and
 	 * then displays the frame.
 	 */
-	public AbstPane(String directory, Verification verification, Log log,
-			boolean lema, boolean atacs) {
+	public AbstPane(String directory, Verification verification, Log log) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		} else {
@@ -253,8 +252,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		change = false;
 	}
 
-	public AbstPane(String directory, String lpnFile, Log log, Gui biosim,
-			boolean lema, boolean atacs) {
+	public AbstPane(String directory, String lpnFile, Log log) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		} else {
@@ -597,14 +595,10 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		if (!newName.endsWith(".ver")) {
 			newName = newName + ".ver";
 		}
-		save(newName);
+		save();
 	}
 
 	public void save() {
-		save(absFile);
-	}
-
-	public void save(String filename) {
 		try {
 			Properties prop = new Properties();
 			String intVars = "";
@@ -802,7 +796,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		return change;
 	}
 
-	public void mouseClicked(MouseEvent e) {
+	public void mouseClicked() {
 	}
 
 }

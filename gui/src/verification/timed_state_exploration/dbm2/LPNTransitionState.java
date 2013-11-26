@@ -185,8 +185,8 @@ public class LPNTransitionState{
 		
 		DBMLL newZone = zone.clone();
 		
-		newZone.updateZone(transition, LPNTrans, newMarkedPlaces, 
-				newBooleanValues, newTransitions);
+		newZone.updateZone(transition, LPNTrans, newBooleanValues, 
+				newTransitions);
 		
 		// Set the enabled transitions.
 		//enabledTransitions = newTransitions;

@@ -61,8 +61,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 
 	private String[] list;
 
-	public DataManager(String directory, Gui biosim, boolean lema) {
-		// this.lema = lema;
+	public DataManager(String directory, Gui biosim) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -214,7 +213,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 					files.setListData(s);
 					this.list = s;
 					files.setSelectedValue(dataFile, true);
-					biosim.refreshLearn(directory.split(separator)[directory.split(separator).length - 1], true);
+					biosim.refreshLearn(directory.split(separator)[directory.split(separator).length - 1]);
 				}
 				catch (IOException e1) {
 					JOptionPane.showMessageDialog(Gui.frame, "Unable to add new file.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -277,7 +276,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 					sort(s);
 					files.setListData(s);
 					list = s;
-					biosim.refreshLearn(directory.split(separator)[directory.split(separator).length - 1], true);
+					biosim.refreshLearn(directory.split(separator)[directory.split(separator).length - 1]);
 					this.removeAll();
 					table = new JTable();
 					scroll1 = new JScrollPane();
@@ -295,7 +294,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 					this.revalidate();
 					this.repaint();
 					dirty = false;
-					biosim.refreshLearn(directory.split(separator)[directory.split(separator).length - 1], false);
+					biosim.refreshLearn(directory.split(separator)[directory.split(separator).length - 1]);
 				}
 				catch (IOException e1) {
 					JOptionPane.showMessageDialog(Gui.frame, "Unable to remove selected files.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -577,7 +576,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 						p.store(store, "Learn File Data");
 						store.close();
 						if (ss.length > 0) {
-							biosim.refreshLearn(directory.split(separator)[directory.split(separator).length - 1], true);
+							biosim.refreshLearn(directory.split(separator)[directory.split(separator).length - 1]);
 						}
 					}
 					catch (IOException e1) {
@@ -703,7 +702,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 						p.store(store, "Learn File Data");
 						store.close();
 						if (s.length > 0) {
-							biosim.refreshLearn(directory.split(separator)[directory.split(separator).length - 1], true);
+							biosim.refreshLearn(directory.split(separator)[directory.split(separator).length - 1]);
 						}
 					}
 					catch (IOException e1) {
@@ -796,7 +795,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 								previous = "";
 								files.setSelectedValue(importFile, true);
 								if (s.length > 0) {
-									biosim.refreshLearn(directory.split(separator)[directory.split(separator).length - 1], true);
+									biosim.refreshLearn(directory.split(separator)[directory.split(separator).length - 1]);
 								}
 							}
 						}
@@ -838,7 +837,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				catch (IOException e1) {
 					JOptionPane.showMessageDialog(Gui.frame, "Unable to save file.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
-				biosim.refreshLearn(directory.split(separator)[directory.split(separator).length - 1], true);
+				biosim.refreshLearn(directory.split(separator)[directory.split(separator).length - 1]);
 			}
 			dirty = false;
 		}
@@ -925,7 +924,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 		}
 	}
 
-	public void mouseClicked(MouseEvent e) {
+	public void mouseClicked() {
 	}
 
 	private void sort(String[] sort) {
@@ -1103,7 +1102,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 					catch (IOException e1) {
 						JOptionPane.showMessageDialog(Gui.frame, "Unable to save file.", "Error", JOptionPane.ERROR_MESSAGE);
 					}
-					biosim.refreshLearn(directory.split(separator)[directory.split(separator).length - 1], true);
+					biosim.refreshLearn(directory.split(separator)[directory.split(separator).length - 1]);
 				}
 				dirty = false;
 			}

@@ -181,7 +181,7 @@ public class GeneticNetwork {
 		properties = gcm;
 	}
 	
-	public void loadProperties(BioModel gcm, ArrayList<String> gcmAbstractions, String[] interestingSpecies, String property) {
+	public void loadProperties(BioModel gcm, ArrayList<String> gcmAbstractions, String property) {
 		properties = gcm;
 		for (String abstractionOption : gcmAbstractions) {
 			if (abstractionOption.equals("complex-formation-and-sequestering-abstraction"))
@@ -189,7 +189,6 @@ public class GeneticNetwork {
 			else if (abstractionOption.equals("operator-site-reduction-abstraction"))
 				operatorAbstraction = true;
 		}
-		//this.interestingSpecies = interestingSpecies;
 		this.property = property;
 	}
 	
@@ -361,7 +360,7 @@ public class GeneticNetwork {
 
 			// Next setup repression binding
 			PrintRepressionBindingVisitor v2 = new PrintRepressionBindingVisitor(
-					document, p, species, compartment, complexMap, partsMap);
+					document, p, species, complexMap, partsMap);
 			v2.setComplexAbstraction(complexAbstraction);
 			v2.run();
 		}

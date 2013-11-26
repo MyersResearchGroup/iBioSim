@@ -408,7 +408,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			for (int i = 0; i < eventAssign.getModel().getSize(); i++) {
 				assign[i] = eventAssign.getModel().getElementAt(i).toString();
 			}
-			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), eventID.getText().trim(), selectedID, false, false);
+			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), eventID.getText().trim(), selectedID, false);
 			if (eventTrigger.getText().trim().equals("")) {
 				JOptionPane.showMessageDialog(Gui.frame, "Event must have a trigger formula.", "Enter Trigger Formula", JOptionPane.ERROR_MESSAGE);
 				error = true;
@@ -925,7 +925,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					for (int i = 0; i < events.getModel().getSize(); i++) {
 						ev[i] = events.getModel().getElementAt(i).toString();
 					}
-					adding = Utility.add(ev, events, add, null, null, null, null, null, Gui.frame);
+					adding = Utility.add(ev, events, add);
 					ev = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
 						ev[i] = (String) adding[i];
@@ -973,7 +973,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			return false;
 		}
 		else if (biosim.getCheckUnits()) {
-			if (SBMLutilities.checkUnitsInEventDelay(bioModel.getSBMLDocument(), delay)) {
+			if (SBMLutilities.checkUnitsInEventDelay(delay)) {
 				JOptionPane.showMessageDialog(Gui.frame, "Event delay should be units of time.", "Event Delay Not Time Units",
 						JOptionPane.ERROR_MESSAGE);
 				return true;
@@ -1267,7 +1267,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					add.setListData(adding);
 					add.setSelectedIndex(0);
 					eventAssign.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					adding = Utility.add(assign, eventAssign, add, null, null, null, null, null, Gui.frame);
+					adding = Utility.add(assign, eventAssign, add);
 					assign = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
 						assign[i] = (String) adding[i];

@@ -89,7 +89,7 @@ public class SBMLutilities {
 	/**
 	 * Check that ID is valid and unique
 	 */
-	public static boolean checkID(SBMLDocument document, String ID, String selectedID, boolean isReacParam, boolean isMetaId) {
+	public static boolean checkID(SBMLDocument document, String ID, String selectedID, boolean isReacParam) {
 		Pattern IDpat = Pattern.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
 		if (ID.equals("")) {
 			JOptionPane.showMessageDialog(Gui.frame, "An ID is required.", "Enter an ID", JOptionPane.ERROR_MESSAGE);
@@ -2030,7 +2030,7 @@ public class SBMLutilities {
 		return false;
 	}
 
-	public static boolean checkUnitsInEventDelay(SBMLDocument document,Delay delay) {
+	public static boolean checkUnitsInEventDelay(Delay delay) {
 		UnitDefinition unitDef = delay.getDerivedUnitDefinition();
 		if (unitDef != null && !(unitDef.isVariantOfTime())) {
 			return true;
@@ -2102,7 +2102,7 @@ public class SBMLutilities {
 			Event event = document.getModel().getEvent(i);
 			Delay delay = event.getDelay();
 			if (delay != null) {
-				if (checkUnitsInEventDelay(document,delay)) {
+				if (checkUnitsInEventDelay(delay)) {
 					message += "Delay on event: " + event.getId() + "\n";
 					numErrors++;
 				}

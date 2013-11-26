@@ -205,7 +205,7 @@ public class Grid {
 			if (gridBounds.contains(mouseClickLocation)) {
 			
 				//if the user has clicked, select/de-select that location
-				if (mouseClicked) selectGridLocation(g);
+				if (mouseClicked) selectGridLocation();
 			}
 			//if the user clicks out of bounds
 			//de-select all grid locations
@@ -1068,8 +1068,6 @@ public class Grid {
 		GridNode hoveredNode = getNodeFromPoint(mouseLocation);	
 		
 		if (hoveredNode != null) {
-			
-			hoveredNode.setHover(true);
 			drawGridHoverBox(g, hoveredNode.getZoomedRectangle());
 		}
 	}
@@ -1077,10 +1075,9 @@ public class Grid {
 	/**
 	 * based on the mouse-click location, selects the grid location
 	 * also draws a selection box
-	 * 
 	 * @param location the mouse-click x,y coordinates
 	 */
-	private void selectGridLocation(Graphics g) {
+	private void selectGridLocation() {
 		
 		GridNode hoveredNode = getNodeFromPoint(mouseClickLocation);
 		
@@ -1593,20 +1590,6 @@ public class Grid {
 			return selected;
 		}
 		
-		/**
-		 * @param selected the hover status
-		 */
-		public void setHover(boolean hover) {
-			// TODO: this variable appears to not be in use anymore, can the whole function be removed.
-			//this.hover = hover;
-		}
-
-		/**
-		 * @return the hover status
-		 */
-//		public boolean isHover() {
-//			return hover;
-//		}
 	}
 
 }

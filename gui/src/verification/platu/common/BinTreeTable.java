@@ -10,7 +10,7 @@ public class BinTreeTable extends SetIntTuple {
 	int Size = 0;
 
 	public BinTreeTable() {
-		this.StateTable = new BinaryTree(false);
+		this.StateTable = new BinaryTree();
 		this.Size = 0;
 	}
 	

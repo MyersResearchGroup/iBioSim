@@ -37,10 +37,6 @@ public class GCMParser {
 	private String separator;
 
 	public GCMParser(String filename) {
-		this(filename, false);
-	}
-
-	public GCMParser(String filename, boolean debug) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -67,7 +63,7 @@ public class GCMParser {
 		}
 	}
 	
-	public GCMParser(BioModel gcm, boolean debug) {
+	public GCMParser(BioModel gcm) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}

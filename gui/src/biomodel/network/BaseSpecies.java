@@ -1,6 +1,5 @@
 package biomodel.network;
 
-import java.util.Properties;
 
 import biomodel.visitor.SpeciesVisitor;
 
@@ -26,8 +25,7 @@ public class BaseSpecies extends AbstractSpecies {
 	 * @param maxDimer
 	 * 			  the maximum monomers can combine to form dimer
 	 */
-	public BaseSpecies(String name, String stateName, Properties properties) {
-		//this.properties = properties;
+	public BaseSpecies(String name, String stateName) {
 		this.id = name;
 		this.stateName = stateName;
 	}

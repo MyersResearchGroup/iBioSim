@@ -2,7 +2,6 @@ package lpn.gui;
 
 import lpn.parser.*;
 import main.Gui;
-import main.Log;
 
 
 import java.awt.BorderLayout;
@@ -46,8 +45,6 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 	private PropertyList variables, places, transitions, controlFlow,
 			properties;
 
-	private Log log;
-
 	private String filename = "", directory = "", separator = "";
 
 	private String[] varOptions = new String[] { "Boolean", "Continuous",
@@ -68,10 +65,9 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 	}
 
 	public LHPNEditor(String directory, String filename, LhpnFile lhpn,
-			Gui biosim, Log log) {
+			Gui biosim) {
 		super();
 		this.biosim = biosim;
-		this.log = log;
 		addMouseListener(biosim);
 
 		if (File.separator.equals("\\")) {
@@ -140,10 +136,10 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		add(tab, BorderLayout.CENTER);
 
 		JPanel buttons = new JPanel();
-		SaveButton saveButton = new SaveButton("Save LPN", lhpnNameTextField);
+		SaveButton saveButton = new SaveButton("Save LPN");
 		buttons.add(saveButton);
 		saveButton.addActionListener(this);
-		saveButton = new SaveButton("Save LPN as", lhpnNameTextField);
+		saveButton = new SaveButton("Save LPN as");
 		buttons.add(saveButton);
 		saveButton.addActionListener(this);
 
@@ -310,7 +306,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 	public class SaveButton extends AbstractRunnableNamedButton {
 		private static final long serialVersionUID = 1L;
 
-		public SaveButton(String name, JTextField fieldNameField) {
+		public SaveButton(String name) {
 			super(name);
 		}
 
@@ -536,7 +532,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 						integer = true;
 					}
 					new VariablesPanel(selected, list, continuous, integer,
-							lhpnFile, biosim.atacs);
+							lhpnFile);
 				} else {
 					String temp = (String) JOptionPane.showInputDialog(
 							mainPanel, "", "Variable Type Selection",
@@ -549,7 +545,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 							integer = true;
 						}
 						new VariablesPanel(selected, list, continuous, integer,
-								lhpnFile, biosim.atacs);
+								lhpnFile);
 					}
 				}
 			} else if (getName().contains("Place")) {
@@ -567,7 +563,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 						&& getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
 				}
-				new TransitionsPanel(selected, list, controlFlow, lhpnFile, log);
+				new TransitionsPanel(selected, list, controlFlow, lhpnFile);
 			} else if (getName().contains("Movement")) {
 				String selected = null;
 				if (list.getSelectedValue() != null

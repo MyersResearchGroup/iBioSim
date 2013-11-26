@@ -399,7 +399,7 @@ public class Schematic extends JPanel implements ActionListener {
 	}
 	
 	public void cut() {
-		removeCells(null,null);
+		removeCells();
 	}
 	
 	public void addCompartment(int x, int y) {
@@ -1302,7 +1302,7 @@ public class Schematic extends JPanel implements ActionListener {
 			
 			@Override
 			public void invoke(Object arg0, mxEventObject event) {
-				removeCells(arg0, event);
+				removeCells();
 			}
 	
 		});
@@ -1374,7 +1374,7 @@ public class Schematic extends JPanel implements ActionListener {
 		
 	}
 	
-	public void removeCells(Object arg0, mxEventObject event) {
+	public void removeCells() {
 		
 		if (graph.dynamic == true)
 			return;

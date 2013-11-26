@@ -54,7 +54,6 @@ public class Nary_Run implements ActionListener, Runnable {
 	/*
 	 * Radio Buttons for termination conditions
 	 */
-	private JRadioButton ge, gt, eq, le, lt;
 
 	private JComboBox simulators; // Combo Box for possible simulators
 
@@ -121,13 +120,12 @@ public class Nary_Run implements ActionListener, Runnable {
 	 * input fields for the nary abstraction. This constructor initializes the
 	 * member variables and creates the nary frame.
 	 */
-	public Nary_Run(Component component, JRadioButton ge, JRadioButton gt, JRadioButton eq, JRadioButton lt, JRadioButton le,
-			JComboBox simulators, String[] getFilename, String filename, JRadioButton fba, JRadioButton sbml, JRadioButton dot, JRadioButton xhtml, JRadioButton lhpn,
-			JRadioButton nary, JRadioButton ODE, JRadioButton monteCarlo, double timeLimit, String useInterval, double printInterval,
-			double minTimeStep, double timeStep, String outDir, long rndSeed, int run, String printer_id, String printer_track_quantity,
-			String[] intSpecies, double rap1, double rap2, double qss, int con, Log log, String ssaFile,
-			Gui biomodelsim, JTabbedPane simTab, String root, String direct, String modelFile, JRadioButton abstraction, AbstPane abstPane,
-			double absError) {
+	public Nary_Run(Component component, JComboBox simulators, String[] getFilename, String filename, JRadioButton fba, JRadioButton sbml,
+			JRadioButton dot, JRadioButton xhtml, JRadioButton lhpn, JRadioButton nary, JRadioButton ODE, JRadioButton monteCarlo, double timeLimit, String useInterval,
+			double printInterval, double minTimeStep, double timeStep, String outDir, long rndSeed, int run,
+			String printer_id, String printer_track_quantity, String[] intSpecies, double rap1, double rap2, double qss, int con,
+			Log log, Gui biomodelsim, JTabbedPane simTab, String root, String direct, String modelFile, JRadioButton abstraction,
+			AbstPane abstPane, double absError) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -143,11 +141,6 @@ public class Nary_Run implements ActionListener, Runnable {
 		this.qss = qss;
 		this.con = con;
 		this.intSpecies = intSpecies;
-		this.ge = ge;
-		this.gt = gt;
-		this.eq = eq;
-		this.le = le;
-		this.lt = lt;
 		this.timeLimit = timeLimit;
 		this.printInterval = printInterval;
 		this.minTimeStep = minTimeStep;
@@ -425,7 +418,7 @@ public class Nary_Run implements ActionListener, Runnable {
 			Object[] adding = { highLow.getSelectedItem() + "." + speci.getSelectedItem() };
 			add.setListData(adding);
 			add.setSelectedIndex(0);
-			finalStates = Utility.add(finalStates, finalState, add, ge, gt, eq, lt, le, naryFrame);
+			finalStates = Utility.add(finalStates, finalState, add);
 		}
 		// if the remove button for the final states is clicked
 		else if (e.getSource() == finalRemove) {
@@ -447,8 +440,7 @@ public class Nary_Run implements ActionListener, Runnable {
 						Object[] adding = { "" + get };
 						add.setListData(adding);
 						add.setSelectedIndex(0);
-						Object[] sort = Utility.add(conLevel.get(number), consLevel.get(number), add, ge, gt, eq, lt, le,
-								naryFrame);
+						Object[] sort = Utility.add(conLevel.get(number), consLevel.get(number), add);
 						int in;
 						for (int out = 1; out < sort.length; out++) {
 							double temp = Double.parseDouble((String) sort[out]);
@@ -572,7 +564,7 @@ public class Nary_Run implements ActionListener, Runnable {
 		naryCancel.addActionListener(runProgram);
 		runProgram.createNaryProperties(timeLimit, useInterval, printInterval, minTimeStep, timeStep, outDir, rndSeed, run, 1, printer_id,
 				printer_track_quantity, getFilename, naryFrame, filename, monteCarlo, stopE, stopR, finalS, inhib, consLevel, getSpeciesProps,
-				conLevel, termCond, intSpecies, rap1, rap2, qss, con, counts, false, false, false, false, false);
+				conLevel, termCond, intSpecies, rap1, rap2, qss, con, counts, false, false, false);
 		if (monteCarlo.isSelected()) {
 			File[] files = new File(outDir).listFiles();
 			for (File f : files) {

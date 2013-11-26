@@ -7,15 +7,9 @@ import biomodel.gui.util.PropertyList;
 import biomodel.gui.util.Runnable;
 import biomodel.util.Utility;
 
-import main.*;
-
 import java.awt.*;
 import java.awt.event.*;
-//import java.io.BufferedReader;
 import java.io.File;
-//import java.io.FileInputStream;
-//import java.io.FileOutputStream;
-//import java.io.FileReader;
 
 
 
@@ -73,8 +67,7 @@ public class ParamEditor extends JPanel implements ActionListener {
 	 * the input fields, puts them on panels, adds the panels to the frame, and
 	 * then displays the frame.
 	 */
-	public ParamEditor(String directory, Verification verification, String filename, Log log,
-			Gui biosim, boolean lema, boolean atacs) {
+	public ParamEditor(String directory, boolean lema, boolean atacs) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -220,7 +213,7 @@ public class ParamEditor extends JPanel implements ActionListener {
 		// removeComponent.addActionListener(this);
 		GridBagConstraints constraints = new GridBagConstraints();
 		variables = new PropertyList("Variable List");
-		EditButton editVar = new EditButton("Edit Variable", variables);
+		EditButton editVar = new EditButton("Edit Variable");
 		JPanel varPanel = Utility.createPanel(this, "Variables", variables, null, null, editVar);
 		constraints.gridx = 0;
 		constraints.gridy = 1;
@@ -345,21 +338,19 @@ public class ParamEditor extends JPanel implements ActionListener {
 		 */
 		private static final long serialVersionUID = 1L;
 
-		public EditButton(String name, PropertyList list) {
+		public EditButton(String name) {
 			super(name);
-			this.list = list;
 		}
 
 		@Override
 		public void run() {
-			new EditCommand(getName(), list).run();
+			new EditCommand().run();
 		}
 
-		private PropertyList list = null;
 	}
 	
 	private class EditCommand implements Runnable {
-		public EditCommand(String name, PropertyList list) {
+		public EditCommand() {
 	//		this.name = name;
 			//this.list = list;
 		}

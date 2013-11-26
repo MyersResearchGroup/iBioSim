@@ -494,8 +494,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					abstractLhpn.setSelected(true);
 				}
 			}
-			abstPane = new AbstPane(root + separator + verName, this, log,
-					lema, atacs);
+			abstPane = new AbstPane(root + separator + verName, this, log);
 			if (load.containsKey("verification.timing.methods")) {
 				if (atacs) {
 					if (load.getProperty("verification.timing.methods").equals(
@@ -2813,7 +2812,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		}
 	}
 
-	public void reload(String newname) {
+	public void reload() {
 	}
 
 	public void viewCircuit() {

@@ -190,11 +190,11 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 	public void actionPerformed(ActionEvent e) {
 		// if the add objective button is clicked
 		if (((JButton) e.getSource()).getText().equals("Add")) {
-			objectiveEditor(bioModel, objectiveList, "Add");
+			objectiveEditor(objectiveList, "Add");
 		}
 		// if the edit objective button is clicked
 		else if (((JButton) e.getSource()).getText().equals("Edit")) {
-			objectiveEditor(bioModel, objectiveList, "OK");
+			objectiveEditor(objectiveList, "OK");
 		}
 		// if the remove objective button is clicked
 		else if (((JButton) e.getSource()).getText().equals("Remove")) {
@@ -202,7 +202,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 		}
 	}
 	
-	private void objectiveEditor(BioModel gcm, JList objectiveList, String option) {
+	private void objectiveEditor(JList objectiveList, String option) {
 		if (option.equals("OK") && objectiveList.getSelectedIndex() == -1) {
 			JOptionPane.showMessageDialog(Gui.frame, "No objective selected.", "Must Select an Objective", 
 					JOptionPane.ERROR_MESSAGE);
@@ -256,7 +256,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), objectiveID.getText().trim(), selectedID, false, false);
+			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), objectiveID.getText().trim(), selectedID, false);
 			if (!error) {
 				error = !objective.getText().matches("((\\d*\\.\\d*\\*)?[_\\da-zA-Z]+)+");
 				JOptionPane.showMessageDialog(Gui.frame, "Invalid formula!", 
@@ -340,7 +340,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 					add.setListData(adding);
 					add.setSelectedIndex(0);
 					objectiveList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					adding = Utility.add(listOfObjectives, objectiveList, add, null, null, null, null, null, Gui.frame);
+					adding = Utility.add(listOfObjectives, objectiveList, add);
 					listOfObjectives = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
 						listOfObjectives[i] = (String) adding[i];
@@ -383,7 +383,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 				//String selected = ((String) objectives.getSelectedValue());
 			}
 			else if (e.getSource() == objectiveList) {
-				objectiveEditor(bioModel, objectiveList, "OK");
+				objectiveEditor(objectiveList, "OK");
 			}
 		}
 	}

@@ -1159,9 +1159,9 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 					id = splits[0];
 					String value = splits[1].trim();
 					if (splits[splits.length - 2].equals("Sweep")) {
-						biomodel.setParameter(id, value, splits[splits.length-1]);
+						biomodel.setParameter(id, value);
 					} else {
-						biomodel.setParameter(id, value, null);
+						biomodel.setParameter(id, value);
 					}
 				}
 			}
@@ -1194,13 +1194,13 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		{
 			SBMLDocument sbml = biomodel.flattenModel();		
 			performModifications(sbml,dd);
-			GCMParser parser = new GCMParser(biomodel, false);
+			GCMParser parser = new GCMParser(biomodel);
 			GeneticNetwork network = parser.buildNetwork(sbml);
 			
 			if (network==null)
 				return false;
 			if (reb2sac != null)
-				network.loadProperties(biomodel, reb2sac.getGcmAbstractions(), reb2sac.getInterestingSpecies(), reb2sac.getProperty());
+				network.loadProperties(biomodel, reb2sac.getGcmAbstractions(), reb2sac.getProperty());
 			else
 				network.loadProperties(biomodel);
 			
@@ -1670,7 +1670,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				if (!update.contains("/")) {
 					id = update.split(" ")[0];
 					String value = update.split(" ")[1].trim();
-					biomodel.setParameter(id, value, null);
+					biomodel.setParameter(id, value);
 				}
 			}
 		}
@@ -1943,7 +1943,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			refGCM = new BioModel(path);
 			refGCM.load(path + separator + refFile);
 		}
-		InfluencePanel panel = new InfluencePanel(id, influences, biomodel, paramsOnly, refGCM, this);
+		InfluencePanel panel = new InfluencePanel(id, biomodel, paramsOnly, refGCM, this);
 		
 		if (paramsOnly) {
 			String updates = panel.updates();
@@ -2281,8 +2281,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	private String[] options = { "Ok", "Cancel" };
 
 	private PropertyList species = null;
-
-	private PropertyList influences = null;
 
 	private PropertyList components = null;
 

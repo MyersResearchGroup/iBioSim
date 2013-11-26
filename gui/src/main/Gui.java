@@ -593,23 +593,23 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		// Sets up the Tool Bar
 		toolbar = new JToolBar();
 		String imgName = ENVVAR + separator + "gui" + separator + "icons" + separator + "save.png";
-		saveButton = makeToolButton(imgName, "save", "Save", "Save");
+		saveButton = makeToolButton(imgName, "save", "Save");
 		// toolButton = new JButton("Save");
 		toolbar.add(saveButton);
 		imgName = ENVVAR + separator + "gui" + separator + "icons" + separator + "saveas.png";
-		saveasButton = makeToolButton(imgName, "saveas", "Save As", "Save As");
+		saveasButton = makeToolButton(imgName, "saveas", "Save As");
 		toolbar.add(saveasButton);
 		imgName = ENVVAR + separator + "gui" + separator + "icons" + separator + "savecheck.png";
-		checkButton = makeToolButton(imgName, "check", "Save and Check", "Save and Check");
+		checkButton = makeToolButton(imgName, "check", "Save and Check");
 		toolbar.add(checkButton);
 		imgName = ENVVAR + separator + "gui" + separator + "icons" + separator + "export.jpg";
-		exportButton = makeToolButton(imgName, "export", "Export", "Export");
+		exportButton = makeToolButton(imgName, "export", "Export");
 		toolbar.add(exportButton);
 		imgName = ENVVAR + separator + "gui" + separator + "icons" + separator + "run-icon.jpg";
-		runButton = makeToolButton(imgName, "run", "Save and Run", "Run");
+		runButton = makeToolButton(imgName, "run", "Save and Run");
 		toolbar.add(runButton);
 		imgName = ENVVAR + separator + "gui" + separator + "icons" + separator + "refresh.jpg";
-		refreshButton = makeToolButton(imgName, "refresh", "Refresh", "Refresh");
+		refreshButton = makeToolButton(imgName, "refresh", "Refresh");
 		toolbar.add(refreshButton);
 		saveButton.setEnabled(false);
 		runButton.setEnabled(false);
@@ -2202,7 +2202,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				//JRadioButton emptyButton = new JRadioButton();
 				run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1, 1, new String[0], "tsd.printer", "amount", "false",
 						(directory + theFile).split(separator), "none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, 
-						null, false, false, false, false, false);
+						null, false, false, false);
 				log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + directory + out + ".dot " + directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
 				Process graph = exec.exec("reb2sac --target.encoding=dot --out=" + out + ".dot " + theFile, null, work);
@@ -2391,7 +2391,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				//JRadioButton emptyButton = new JRadioButton();
 				run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1, 1, new String[0], "tsd.printer", "amount", "false",
 						(directory + theFile).split(separator), "none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, 
-						null, false, false, false, false, false);
+						null, false, false, false);
 				log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + directory + out + ".dot " + directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
 				Process graph = exec.exec("reb2sac --target.encoding=dot --out=" + out + ".dot " + theFile, null, work);
@@ -2489,7 +2489,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				dummy.setSelected(false);
 				run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1, 1, new String[0], "tsd.printer", "amount", "false",
 						(directory + theFile).split(separator), "none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, 
-						null, false, false, false, false, false);
+						null, false, false, false);
 				log.addText("Executing:\nreb2sac --target.encoding=xhtml --out=" + directory + out + ".xhtml " + directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
 				Process browse = exec.exec("reb2sac --target.encoding=xhtml --out=" + out + ".xhtml " + theFile, null, work);
@@ -3673,7 +3673,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						if (i != -1) {
 							tab.remove(i);
 						}
-						LHPNEditor lhpn = new LHPNEditor(root + separator, f.getName(), null, this, log);
+						LHPNEditor lhpn = new LHPNEditor(root + separator, f.getName(), null, this);
 						// lhpn.addMouseListener(this);
 						addTab(f.getName(), lhpn, "LHPN Editor");
 						addToTree(f.getName());
@@ -4099,8 +4099,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		addToTree(simName);
 		JTabbedPane simTab = new JTabbedPane();
 		simTab.addMouseListener(this);
-		AnalysisView reb2sac = new AnalysisView(sbmlFile, sbmlFileProp, root, this, simName.trim(), log, simTab, null, sbml1[sbml1.length - 1], null,
-				null);
+		AnalysisView reb2sac = new AnalysisView(sbmlFile, sbmlFileProp, root, this, simName.trim(), log, simTab, null, sbml1[sbml1.length - 1], null);
 		simTab.addTab("Simulation Options", reb2sac);
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 		simTab.addTab("Advanced Options", reb2sac.getAdvanced());
@@ -4416,7 +4415,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					addToTree(lrnName);
 					JTabbedPane lrnTab = new JTabbedPane();
 					lrnTab.addMouseListener(this);
-					DataManager data = new DataManager(root + separator + lrnName, this, lema);
+					DataManager data = new DataManager(root + separator + lrnName, this);
 					lrnTab.addTab("Data Manager", data);
 					lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Data Manager");
 					if (lema) {
@@ -5527,7 +5526,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				tab.setSelectedIndex(i);
 			}
 			else {
-				LHPNEditor editor = new LHPNEditor(work.getAbsolutePath(), theFile, lhpn, this, log);
+				LHPNEditor editor = new LHPNEditor(work.getAbsolutePath(), theFile, lhpn, this);
 				addTab(theFile, editor, "LHPN Editor");
 			}
 		}
@@ -7401,7 +7400,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			else 
 				synthID = synthID.trim();
 			if (overwrite(root + separator + synthID, synthID)) {
-				SynthesisView synthView = new SynthesisView(synthID, separator, root, log, frame);
+				SynthesisView synthView = new SynthesisView(synthID, separator, root, log);
 				synthView.loadDefaultSynthesisProperties(specFileID);
 				addTab(synthID, synthView, null);
 				addToTree(synthID);
@@ -7413,7 +7412,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		Properties synthProps = SBOLUtility.loadSBOLSynthesisProperties(tree.getFile(), separator, frame);
 		if (synthProps != null) {
 			String synthID = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
-			SynthesisView synthView = new SynthesisView(synthID, separator, root, log, frame);
+			SynthesisView synthView = new SynthesisView(synthID, separator, root, log);
 			synthView.loadSynthesisProperties(synthProps);
 			addTab(synthID, synthView, null);
 		}
@@ -7477,12 +7476,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		addToTree(simName);
 		JTabbedPane simTab = new JTabbedPane();
 		simTab.addMouseListener(this);
-		AnalysisView reb2sac = new AnalysisView(sbmlFile, sbmlFileProp, root, this, simName.trim(), log, simTab, null, sbml1[sbml1.length - 1], null,
-				null);
+		AnalysisView reb2sac = new AnalysisView(sbmlFile, sbmlFileProp, root, this, simName.trim(), log, simTab, null, sbml1[sbml1.length - 1], null);
 		simTab.addTab("Simulation Options", reb2sac);
 		simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 		if (fileType == 2) {
-			simTab.addTab("Advanced Options", new AbstPane(root, sbml1[sbml1.length - 1], log, this, false, false));
+			simTab.addTab("Advanced Options", new AbstPane(root, sbml1[sbml1.length - 1], log));
 		}
 		else {
 			simTab.addTab("Advanced Options", reb2sac.getAdvanced());
@@ -7611,7 +7609,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				return;
 			}
 			// if (!graphFile.equals("")) {
-			DataManager data = new DataManager(tree.getFile(), this, lema);
+			DataManager data = new DataManager(tree.getFile(), this);
 			// data.addMouseListener(this);
 			lrnTab.addTab("Data Manager", data);
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Data Manager");
@@ -7710,7 +7708,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JOptionPane.showMessageDialog(frame, "Unable to open view because " + learnFile + " is missing.", "Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			DataManager data = new DataManager(tree.getFile(), this, lema);
+			DataManager data = new DataManager(tree.getFile(), this);
 			lrnTab.addTab("Data Manager", data);
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Data Manager");
 			LearnLHPN learn = new LearnLHPN(tree.getFile(), log, this);
@@ -8087,16 +8085,16 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						simTab.addMouseListener(this);
 						AbstPane lhpnAbstraction = null;
 						if (gcmFile.contains(".lpn")) {
-							lhpnAbstraction = new AbstPane(root, gcmFile, log, this, false, false);
+							lhpnAbstraction = new AbstPane(root, gcmFile, log);
 						}
 						AnalysisView reb2sac;
 						if (gcmFile.contains(".lpn")) {
 							reb2sac = new AnalysisView(sbmlLoadFile, getAFile, root, this, split[split.length - 1].trim(), log, simTab, openFile, gcmFile,
-									lhpnAbstraction, null);
+									lhpnAbstraction);
 						}
 						else {
 							reb2sac = new AnalysisView(sbmlLoadFile, getAFile, root, this, split[split.length - 1].trim(), log, simTab, openFile, gcmFile,
-									null, null);
+									null);
 						}
 						simTab.addTab("Simulation Options", reb2sac);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
@@ -8331,7 +8329,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 	}
 
-	public void windowLostFocus(WindowEvent e) {
+	public void windowLostFocus() {
 	}
 
 	public JMenuItem getExitButton() {
@@ -8519,7 +8517,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			addToTree(newSim);
 			JTabbedPane simTab = new JTabbedPane();
 			simTab.addMouseListener(this);
-			AnalysisView reb2sac = new AnalysisView(sbmlLoadFile, sbmlFile, root, this, newSim, log, simTab, propertiesFile, gcmFile, null, null);
+			AnalysisView reb2sac = new AnalysisView(sbmlLoadFile, sbmlFile, root, this, newSim, log, simTab, propertiesFile, gcmFile, null);
 			simTab.addTab("Simulation Options", reb2sac);
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 			simTab.addTab("Advanced Options", reb2sac.getAdvanced());
@@ -8552,7 +8550,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 	}
 
-	public void refreshLearn(String learnName, boolean data) {
+	public void refreshLearn(String learnName) {
 		for (int i = 0; i < tab.getTabCount(); i++) {
 			if (getTitleAt(i).equals(learnName)) {
 				for (int j = 0; j < ((JTabbedPane) tab.getComponentAt(i)).getComponentCount(); j++) {
@@ -8632,7 +8630,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			String properties2 = root + separator + tab + separator + tab + ".lrn";
 			if (new File(properties).exists()) {
 				Verification verify = ((Verification) (this.tab.getComponentAt(i)));
-				verify.reload(updatedFile);
+				verify.reload();
 			}
 			if (new File(properties1).exists()) {
 				JTabbedPane sim = ((JTabbedPane) (this.tab.getComponentAt(i)));
@@ -9567,7 +9565,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			String tab = this.getTitleAt(i);
 			if (lhpnName.equals(tab)) {
 				if (this.tab.getComponentAt(i) instanceof LHPNEditor) {
-					LHPNEditor newLHPN = new LHPNEditor(root, lhpnName, null, this, log);
+					LHPNEditor newLHPN = new LHPNEditor(root, lhpnName, null, this);
 					this.tab.setComponentAt(i, newLHPN);
 					this.tab.getComponentAt(i).setName("LHPN Editor");
 					return true;
@@ -9760,7 +9758,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 	}
 
-	protected JButton makeToolButton(String imageName, String actionCommand, String toolTipText, String altText) {
+	protected JButton makeToolButton(String imageName, String actionCommand, String toolTipText) {
 		JButton button = new JButton();
 		button.setActionCommand(actionCommand);
 		button.setToolTipText(toolTipText);
@@ -9826,7 +9824,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		return "";
 	}
 	
-	private boolean updatePortMap(CompSBMLDocumentPlugin sbmlComp,CompSBasePlugin sbmlSBase,BioModel subModel,String subModelId) {
+	private boolean updatePortMap(CompSBasePlugin sbmlSBase,BioModel subModel,String subModelId) {
 		boolean updated = false;
 		if (sbmlSBase.isSetListOfReplacedElements()) {
 			for (int k = 0; k < sbmlSBase.getListOfReplacedElements().size(); k++) {
@@ -9860,7 +9858,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				SBase sbase = elements.get(j);
 				CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getExtension(CompConstant.namespaceURI);
 				if (sbmlSBase!=null) {
-					if (updatePortMap(sbmlComp,sbmlSBase,subModel,submodel.getId())) {
+					if (updatePortMap(sbmlSBase,subModel,submodel.getId())) {
 						elements = SBMLutilities.getListOfAllElements(document.getModel());
 					}
 				}

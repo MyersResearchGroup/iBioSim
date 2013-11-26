@@ -47,9 +47,9 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 	private HashMap<String, PropertyField> fields = null;
 
 
-	public AssignmentPanel(String transition, String selected, PropertyList assignmentList,
-			PropertyList continuousList, PropertyList rateList, PropertyList booleanList,
-			PropertyList integerList, LhpnFile lhpn) {
+	public AssignmentPanel(String selected, PropertyList assignmentList, PropertyList continuousList,
+			PropertyList rateList, PropertyList booleanList, PropertyList integerList,
+			LhpnFile lhpn) {
 		super(new GridLayout(3, 1));
 		this.selected = selected;
 		this.assignmentList = assignmentList;

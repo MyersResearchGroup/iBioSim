@@ -55,7 +55,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 	private HashMap<String, PropertyField> fields = null;
 
 	public VariablesPanel(String selected, PropertyList variablesList,
-			Boolean boolCont, Boolean integer, LhpnFile lhpn, boolean atacs) {
+			Boolean boolCont, Boolean integer, LhpnFile lhpn) {
 		super(new GridLayout(5, 1));
 		if (selected != null) {
 			String[] array = selected.split(" ");

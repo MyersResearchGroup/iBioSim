@@ -1,6 +1,5 @@
 package verification.timed_state_exploration.dbm2;
 
-import lpn.parser.*;
 import java.util.*;
 
 /**
@@ -133,7 +132,7 @@ public class LPNState {
 	 * Initializes the LhpnFile to the state given by this LPNState.
 	 * @return
 	 */
-	public void initializeLhpnFile(LhpnFile lpn)
+	public void initializeLhpnFile()
 	{
 	}
 	

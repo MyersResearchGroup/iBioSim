@@ -1,6 +1,5 @@
 package biomodel.network;
 
-import java.util.Properties;
 
 import biomodel.visitor.SpeciesVisitor;
 
@@ -12,8 +11,7 @@ import biomodel.visitor.SpeciesVisitor;
  *
  */
 public class SpasticSpecies extends AbstractSpecies {
-	public SpasticSpecies(String name, String stateName, Properties properties) {
-		//this.properties = properties;
+	public SpasticSpecies(String name, String stateName) {
 		this.id = name;
 		this.stateName = stateName;
 	}

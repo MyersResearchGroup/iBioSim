@@ -165,8 +165,8 @@ public class Analysis_Timed extends Analysis{
 			Boolean existingState = checkStateSet(prjStateSet, nextPrjState, 
 					ZoneType.getSubsetFlag(), ZoneType.getSupersetFlag())
 					| checkStack(nextPrjState, stateStackTop, lpnTranStack,
-							curIndexStack, stateStack, prjStateSet,
-							ZoneType.getSubsetFlag(), ZoneType.getSupersetFlag());
+							curIndexStack, stateStack, ZoneType.getSubsetFlag(),
+							ZoneType.getSupersetFlag());
 			
 			
 			if (existingState == false) {
@@ -239,8 +239,8 @@ public class Analysis_Timed extends Analysis{
 	
 	private boolean checkStack(PrjState nextPrjState, PrjState stateStackTop,
 			Stack<LinkedList<Transition>> lpnTranStack, Stack<Integer> curIndexStack,
-			HashSet<PrjState> stateStack, HashSet<PrjState> prjStateSet,
-			boolean subsets, boolean supersets){
+			HashSet<PrjState> stateStack, boolean subsets,
+			boolean supersets){
 		
 		boolean existingState = false;
 		

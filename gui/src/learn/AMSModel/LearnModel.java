@@ -688,7 +688,7 @@ public class LearnModel { // added ItemListener SB
 				if ((destabMap != null) && (destabMap.size() != 0)){
 					out.write("Generating data for stables \n");
 					//addStablesToData(thresholds, destabMap);
-					addStablesToData2(bins,duration,thresholds,destabMap, reqdVarsL);
+					addStablesToData2(duration,destabMap,reqdVarsL);
 					for (String s : varNames)
 						out.write(s + " ");
 					out.write("\n");
@@ -1736,7 +1736,7 @@ public class LearnModel { // added ItemListener SB
 	 */
 
 
-	public void addStablesToData2(int[][]bins, Double[] duration, HashMap<String, ArrayList<Double>> localThresholds, HashMap<String, ArrayList<String>> useMap, ArrayList<Variable> reqdVarsL)
+	public void addStablesToData2(Double[] duration, HashMap<String, ArrayList<String>> useMap, ArrayList<Variable> reqdVarsL)
 	{
 
 

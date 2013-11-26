@@ -380,8 +380,7 @@ public class DBMLL {
 	}
 
 	public DBMLL updateZone(int transition, LPNTranslator lpn,
-			boolean[] newMarkedPlaces, boolean[] newBooleanValues,
-			HashSet<Integer> enabledTransitions)
+			boolean[] newBooleanValues, HashSet<Integer> enabledTransitions)
 	{
 		
 		

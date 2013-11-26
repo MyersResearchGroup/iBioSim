@@ -570,7 +570,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), paramID.getText().trim(), selectedID, false, false);
+			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), paramID.getText().trim(), selectedID, false);
 			if (!error) {
 				if (isPlace | isBoolean) {
 					if (placeMarking.getSelectedIndex()==0) {
@@ -716,7 +716,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 									add.setListData(adding);
 									add.setSelectedIndex(0);
 									parameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-									adding = Utility.add(params, parameters, add, null, null, null, null, null, Gui.frame);
+									adding = Utility.add(params, parameters, add);
 									params = new String[adding.length];
 									for (int i = 0; i < adding.length; i++) {
 										params[i] = (String) adding[i];
@@ -830,7 +830,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 								add.setListData(adding);
 								add.setSelectedIndex(0);
 								parameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-								adding = Utility.add(params, parameters, add, null, null, null, null, null, Gui.frame);
+								adding = Utility.add(params, parameters, add);
 								params = new String[adding.length];
 								for (int i = 0; i < adding.length; i++) {
 									params[i] = (String) adding[i];
