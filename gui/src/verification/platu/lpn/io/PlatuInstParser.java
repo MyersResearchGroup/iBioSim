@@ -392,7 +392,7 @@ public class PlatuInstParser extends Parser {
                     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:210:8: main[prj]
                     {
                     pushFollow(FOLLOW_main_in_parseLpnFile82);
-                    main(prj);
+                    main();
 
                     state._fsp--;
 
@@ -520,7 +520,7 @@ public class PlatuInstParser extends Parser {
 
     // $ANTLR start "main"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:222:1: main[Project prj] : '<' 'mod' 'name' '=' '\"' 'main' '\"' '>' ( variables )? ( constants )? instantiation '<' '/mod' '>' ;
-    public final void main(Project prj) {
+    public final void main() {
         try {
             // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:223:2: ( '<' 'mod' 'name' '=' '\"' 'main' '\"' '>' ( variables )? ( constants )? instantiation '<' '/mod' '>' )
             // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:223:4: '<' 'mod' 'name' '=' '\"' 'main' '\"' '>' ( variables )? ( constants )? instantiation '<' '/mod' '>'

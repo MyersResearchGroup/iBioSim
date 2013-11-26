@@ -8,7 +8,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FilenameFilter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -65,8 +64,7 @@ public class Utility {
 		return copy;
 	}
 
-	public static String makeBindingReaction(String name,
-			ArrayList<String> reactants, ArrayList<String> products) {
+	public static String makeBindingReaction() {
 		return "";
 	}
 

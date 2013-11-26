@@ -187,7 +187,7 @@ public class SBOLAssociationPanel extends JPanel {
 				insertPlaceHolder();
 			return true;
 		} else if (choice == 1) {
-			SBOLBrowser browser = new SBOLBrowser(sbolFilePaths, soTypes, getSelectedURIs());
+			SBOLBrowser browser = new SBOLBrowser(sbolFilePaths, soTypes);
 			insertComponentURIs(browser.getSelection());
 			return true;
 		} else if (choice == 2) {
@@ -222,6 +222,7 @@ public class SBOLAssociationPanel extends JPanel {
 		setComponentIDList();
 	}
 	
+	@SuppressWarnings("unused")
 	private LinkedList<URI> getSelectedURIs() {
 		LinkedList<URI> selectedURIs = new LinkedList<URI>();
 		int[] selectedIndices = compList.getSelectedIndices();

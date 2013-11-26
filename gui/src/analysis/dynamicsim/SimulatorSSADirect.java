@@ -69,7 +69,7 @@ public class SimulatorSSADirect extends Simulator {
 		
 		//add events to queue if they trigger
 		if (noEventsFlag == false)
-			handleEvents(noAssignmentRulesFlag, noConstraintsFlag);
+			handleEvents();
 
 		while (currentTime < timeLimit && cancelFlag == false) {
 			
@@ -130,7 +130,7 @@ public class SimulatorSSADirect extends Simulator {
 			//add events to queue if they trigger
 			if (noEventsFlag == false) {
 
-				handleEvents(noAssignmentRulesFlag, noConstraintsFlag);
+				handleEvents();
 				nextEventTime = Double.POSITIVE_INFINITY;
 				//step to the next event fire time if it comes before the next time step
 				if (!triggeredEventQueue.isEmpty() && triggeredEventQueue.peek().fireTime <= nextEventTime)

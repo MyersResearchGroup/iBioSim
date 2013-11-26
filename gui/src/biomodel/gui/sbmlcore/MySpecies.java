@@ -469,7 +469,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), ID.getText().trim(), selectedID, false, false);
+			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), ID.getText().trim(), selectedID, false);
 			double initial = 0;
 			if (!error) {
 				if (init.getText().trim().startsWith("(") && init.getText().trim().endsWith(")")) {
@@ -717,7 +717,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						addIt.setListData(adding);
 						addIt.setSelectedIndex(0);
 						species.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-						adding = Utility.add(specs, species, addIt, null, null, null, null, null, Gui.frame);
+						adding = Utility.add(specs, species, addIt);
 						specs = new String[adding.length];
 						for (int i = 0; i < adding.length; i++) {
 							specs[i] = (String) adding[i];

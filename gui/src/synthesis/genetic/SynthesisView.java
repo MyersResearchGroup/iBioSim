@@ -60,7 +60,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	private JLabel numSolnsLabel;
 	private JTextField numSolnsText;
 	
-	public SynthesisView(String synthID, String separator, String rootFilePath, Log log, JFrame frame) {
+	public SynthesisView(String synthID, String separator, String rootFilePath, Log log) {
 		this.synthID = synthID;
 		this.separator = separator;
 		this.rootFilePath = rootFilePath;
@@ -322,14 +322,14 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 			Synthesizer synthesizer, SBOLFileManager fileManager, String synthFilePath) {
 		List<BioModel> solutionModels = new LinkedList<BioModel>();
 		Set<String> solutionFileIDs = new HashSet<String>();
-		Set<URI> compURIs = new HashSet<URI>();
+		//Set<URI> compURIs = new HashSet<URI>();
 		int idIndex = 1;
 		for (List<SynthesisGraph> solutionGraphs : solutions) {
 			BioModel solutionModel = new BioModel(synthFilePath);
 			solutionModel.createSBMLDocument("tempID_" + idIndex, false, false);	
 			idIndex++;
 			
-			solutionFileIDs.addAll(importSolutionSubModels(solutionGraphs, compURIs, synthFilePath));
+			solutionFileIDs.addAll(importSolutionSubModels(solutionGraphs, synthFilePath));
 			solutionFileIDs.add(importSolutionComponents(solutionGraphs, fileManager, synthFilePath));
 			synthesizer.composeSolutionModel(solutionGraphs, spec, solutionModel);
 			solutionModels.add(solutionModel);
@@ -351,7 +351,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	}
 	
 	private Set<String> importSolutionSubModels(List<SynthesisGraph> solutionGraphs, 
-			Set<URI> compURIs, String synthFilePath) {
+			String synthFilePath) {
 		Set<String> solutionFileIDs = new HashSet<String>();
 		HashMap<String, SynthesisGraph> solutionFileToGraph = new HashMap<String, SynthesisGraph>();
 		Set<String> clashingFileIDs = new HashSet<String>();

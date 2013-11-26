@@ -273,7 +273,7 @@ public class TermCond {
 
 	private ArrayList<String> listOfReactions;
 
-	void yyerror(String s) {
+	void yyerror() {
 		// JOptionPane.showMessageDialog(BioSim.frame, s,
 		// "Error", JOptionPane.ERROR_MESSAGE);
 		// System.out.println("error: "+s);
@@ -512,7 +512,7 @@ public class TermCond {
 					break; // drop down to actions
 				}
 				if (yyerrflag == 0) {
-					yyerror("syntax error");
+					yyerror();
 					yynerrs++;
 				}
 				if (yyerrflag < 3) // low error count?
@@ -522,7 +522,7 @@ public class TermCond {
 					{
 						if (stateptr < 0) // check for under & overflow here
 						{
-							yyerror("stack underflow. aborting..."); // note
+							yyerror(); // note
 																		// lower
 																		// case
 																		// 's'
@@ -546,7 +546,7 @@ public class TermCond {
 						if (stateptr < 0) // check for under & overflow
 											// here
 						{
-							yyerror("Stack underflow. aborting..."); // capital
+							yyerror(); // capital
 																		// 'S'
 							return 1;
 						}

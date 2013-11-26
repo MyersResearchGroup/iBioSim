@@ -603,7 +603,7 @@ public class GillespieSSAJavaSingleStep {
 				  eventDelayNegative = Boolean.parseBoolean(ReturnParamsFromUpdateEventQueue[0]);
 				  nextEventTime = Double.parseDouble(ReturnParamsFromUpdateEventQueue[1]);
 				   if (!eventDelayNegative && eventQueue.size() > 0) {
-					  CustomParamsEventFired = fireEvent(eventQueue, initEventQueueCap, eventList, graph);
+					  CustomParamsEventFired = fireEvent(eventQueue, eventList, graph);
 					  optVal = Integer.parseInt(CustomParamsEventFired[0]);
 					  if (optVal == 2 || optVal == -1) { // 2=terminate -1=No interaction performed
 						  break;
@@ -735,7 +735,7 @@ public class GillespieSSAJavaSingleStep {
 	 
 	}
 	
-	private String[] fireEvent(PriorityQueue<EventQueueElement> eventQueue, int initEventQueueCap, ListOf<Event> eventList, Graph graph) {
+	private String[] fireEvent(PriorityQueue<EventQueueElement> eventQueue, ListOf<Event> eventList, Graph graph) {
 		// Assume event assignments are evaluated at fire time
 		boolean isEventFired = false;
 		int optVal = -1;

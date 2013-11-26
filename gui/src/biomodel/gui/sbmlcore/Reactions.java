@@ -759,7 +759,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			String reac = reacID.getText().trim();
-			error = SBMLutilities.checkID(gcm.getSBMLDocument(), reac, selectedID, false, false);
+			error = SBMLutilities.checkID(gcm.getSBMLDocument(), reac, selectedID, false);
 			
 			if (!error) {
 				if (complex==null && production==null && kineticLaw.getText().trim().equals("")) {
@@ -1048,7 +1048,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						add.setListData(adding);
 						add.setSelectedIndex(0);
 						reactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-						adding = Utility.add(reacts, reactions, add, null, null, null, null, null, Gui.frame);
+						adding = Utility.add(reacts, reactions, add);
 						reacts = new String[adding.length];
 						for (int i = 0; i < adding.length; i++) {
 							reacts[i] = (String) adding[i];
@@ -1408,7 +1408,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), reacParamID.getText().trim(), selectedID, true, false);
+			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), reacParamID.getText().trim(), selectedID, true);
 			if (!error) {
 				if (thisReactionParams.contains(reacParamID.getText().trim()) && (!reacParamID.getText().trim().equals(selectedID))) {
 					JOptionPane.showMessageDialog(Gui.frame, "ID is not unique.", "ID Not Unique", JOptionPane.ERROR_MESSAGE);
@@ -1579,7 +1579,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						add.setListData(adding);
 						add.setSelectedIndex(0);
 						reacParameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-						adding = Utility.add(reacParams, reacParameters, add, null, null, null, null, null, Gui.frame);
+						adding = Utility.add(reacParams, reacParameters, add);
 						reacParams = new String[adding.length];
 						for (int i = 0; i < adding.length; i++) {
 							reacParams[i] = (String) adding[i];
@@ -1628,7 +1628,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		add.setListData(adding);
 		add.setSelectedIndex(0);
 		reacParameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		adding = Utility.add(reacParams, reacParameters, add, null, null, null, null, null, Gui.frame);
+		adding = Utility.add(reacParams, reacParameters, add);
 		reacParams = new String[adding.length];
 		for (int i = 0; i < adding.length; i++) {
 			reacParams[i] = (String) adding[i];
@@ -1756,7 +1756,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				error = SBMLutilities.variableInUse(gcm.getSBMLDocument(), selectedID, false, true, true);
 			}
 			else {
-				error = SBMLutilities.checkID(gcm.getSBMLDocument(), productId.getText().trim(), selectedID, false, false);
+				error = SBMLutilities.checkID(gcm.getSBMLDocument(), productId.getText().trim(), selectedID, false);
 			}
 			if (!error) {
 				if (stoiciLabel.getSelectedItem().equals("Stoichiometry")) {
@@ -1920,7 +1920,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					add.setListData(adding);
 					add.setSelectedIndex(0);
 					products.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					adding = Utility.add(proda, products, add, null, null, null, null, null, Gui.frame);
+					adding = Utility.add(proda, products, add);
 					proda = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
 						proda[i] = (String) adding[i];
@@ -2300,7 +2300,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					add.setListData(adding);
 					add.setSelectedIndex(0);
 					modifiers.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					adding = Utility.add(modifier, modifiers, add, null, null, null, null, null, Gui.frame);
+					adding = Utility.add(modifier, modifiers, add);
 					modifier = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
 						modifier[i] = (String) adding[i];
@@ -2446,7 +2446,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				error = SBMLutilities.variableInUse(gcm.getSBMLDocument(), selectedID, false, true, true);
 			}
 			else {
-				error = SBMLutilities.checkID(gcm.getSBMLDocument(), reactantId.getText().trim(), selectedID, false, false);
+				error = SBMLutilities.checkID(gcm.getSBMLDocument(), reactantId.getText().trim(), selectedID, false);
 			}
 			if (!error) {
 				if (stoiciLabel.getSelectedItem().equals("Stoichiometry")) {
@@ -2655,7 +2655,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					add.setListData(adding);
 					add.setSelectedIndex(0);
 					reactants.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					adding = Utility.add(reacta, reactants, add, null, null, null, null, null, Gui.frame);
+					adding = Utility.add(reacta, reactants, add);
 					reacta = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
 						reacta[i] = (String) adding[i];

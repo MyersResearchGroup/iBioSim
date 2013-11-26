@@ -1,7 +1,6 @@
 package main.util;
 
 import java.io.*;
-import java.awt.Component;
 import java.awt.FileDialog;
 import java.util.*;
 import java.util.prefs.Preferences;
@@ -637,8 +636,7 @@ public class Utility {
 	 * Adds the selected values in the add JList to the list JList. Stores all
 	 * these values into the currentList array and returns this array.
 	 */
-	public static Object[] add(Object[] currentList, JList list, JList add, JRadioButton ge,
-			JRadioButton gt, JRadioButton eq, JRadioButton lt, JRadioButton le, Component component) {
+	public static Object[] add(Object[] currentList, JList list, JList add) {
 		int[] select = new int[currentList.length];
 		for (int i = 0; i < currentList.length; i++) {
 			select[i] = i;

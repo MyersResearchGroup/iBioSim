@@ -130,7 +130,7 @@ public class DynSim {
 		 	BioModel biomodel = new BioModel(outputDirectory);
 		 	biomodel.load(filename);
 			SBMLDocument sbml = biomodel.flattenModel();		
-			GCMParser parser = new GCMParser(biomodel, false);
+			GCMParser parser = new GCMParser(biomodel);
 			GeneticNetwork network = parser.buildNetwork(sbml);
 			sbml = network.getSBML();
 			network.mergeSBML(filename, sbml);

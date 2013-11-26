@@ -12,7 +12,7 @@ import biomodel.util.Utility;
 public class GCMScript {
 
 	public void generateThresholds(String directory, String species,
-			double bestTime, String type, int num) {
+			double bestTime, int num) {
 		double[] highs = new double[3 * num];
 		double[] lows = new double[3 * num];
 

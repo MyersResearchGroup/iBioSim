@@ -185,7 +185,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), consID.getText().trim(), selectedID, false, true);
+			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), consID.getText().trim(), selectedID, false);
 			if (!error) {
 				ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(bioModel.getSBMLDocument(), consMath.getText().trim(), "", false);
 				if (consMath.getText().trim().equals("") || SBMLutilities.myParseFormula(consMath.getText().trim()) == null) {
@@ -290,7 +290,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						add.setListData(adding);
 						add.setSelectedIndex(0);
 						constraints.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-						adding = Utility.add(cons, constraints, add, null, null, null, null, null, Gui.frame);
+						adding = Utility.add(cons, constraints, add);
 						cons = new String[adding.length];
 						for (int i = 0; i < adding.length; i++) {
 							cons[i] = (String) adding[i];

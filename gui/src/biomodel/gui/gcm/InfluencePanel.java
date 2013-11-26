@@ -21,7 +21,6 @@ import org.sbml.jsbml.SpeciesReference;
 import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.schematic.ModelEditor;
 import biomodel.gui.util.PropertyField;
-import biomodel.gui.util.PropertyList;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 import biomodel.util.SBMLutilities;
@@ -36,7 +35,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	public InfluencePanel(String selection, PropertyList list, BioModel gcm, boolean paramsOnly, BioModel refGCM, ModelEditor gcmEditor) {
+	public InfluencePanel(String selection, BioModel gcm, boolean paramsOnly, BioModel refGCM, ModelEditor gcmEditor) {
 		super(new GridLayout(5, 1));
 		this.selection = selection;
 		this.gcm = gcm;

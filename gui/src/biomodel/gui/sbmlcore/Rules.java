@@ -305,7 +305,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			error = false;
 			String addVar = "";
 			addVar = (String) ruleVar.getSelectedItem();
-			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), id.getText().trim(), metaId, false, true);
+			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), id.getText().trim(), metaId, false);
 			
 			if (ruleMath.getText().trim().equals("")) {
 				JOptionPane.showMessageDialog(Gui.frame, "Rule must have formula.", "Enter Rule Formula", JOptionPane.ERROR_MESSAGE);
@@ -501,7 +501,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					add.setListData(adding);
 					add.setSelectedIndex(0);
 					rules.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					adding = Utility.add(rul, rules, add, null, null, null, null, null, Gui.frame);
+					adding = Utility.add(rul, rules, add);
 					String[] oldRul = rul;
 					rul = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {

@@ -520,7 +520,7 @@ public abstract class Simulator {
 				
 		//MOVE COMPONENTS
 		//this places the child and shuffles others around as needed
-		moveComponent(parentComponentID, childComponentID, parentLocation, childLocation, randomDirection, reactionsToAdjust);
+		moveComponent(parentComponentID, childComponentID, childLocation, randomDirection, reactionsToAdjust);
 				
 		
 		//DUPLICATE VARIABLES and alter them to coincide with the new ID
@@ -2184,7 +2184,7 @@ public abstract class Simulator {
 				String compartmentID = eventToFire.eventID.split("__")[0];
 				Point parentLocation = componentToLocationMap.get(compartmentID);
 				Point childLocation = (Point) parentLocation.clone();
-				moveComponent(compartmentID, "", new Point(), childLocation, direction, reactionsToAdjust);
+				moveComponent(compartmentID, "", childLocation, direction, reactionsToAdjust);
 				updatePropensities(reactionsToAdjust);
 				updateAfterDynamicChanges();
 			}
@@ -2272,7 +2272,7 @@ public abstract class Simulator {
 			triggeredEventQueue = newTriggeredEventQueue;
 			
 			//some events might trigger after this
-			handleEvents(noAssignmentRulesFlag, noConstraintsFlag);
+			handleEvents();
 		}//end loop through event queue
 		
 		//add the fired events back into the untriggered set
@@ -2415,7 +2415,7 @@ public abstract class Simulator {
 	 * updates the event queue and fires events and so on
 	 * @param currentTime the current time in the simulation
 	 */
-	protected void handleEvents(final boolean noAssignmentRulesFlag, final boolean noConstraintsFlag) {
+	protected void handleEvents() {
 		
 		HashSet<String> triggeredEvents = new HashSet<String>();
 		
@@ -2556,8 +2556,8 @@ public abstract class Simulator {
 	 * @param parentComponentID
 	 * @param direction
 	 */
-	protected void moveComponent(String parentComponentID, String childComponentID, Point parentLocation, Point childLocation,
-			int direction, HashSet<String> reactionsToAdjust) {
+	protected void moveComponent(String parentComponentID, String childComponentID, Point childLocation, int direction,
+			HashSet<String> reactionsToAdjust) {
 		
 		HashSet<Integer> newRows = new HashSet<Integer>();
 		HashSet<Integer> newCols = new HashSet<Integer>();

@@ -30,7 +30,7 @@ public class Assembler {
 		this.seqValidator = seqValidator;
 	}
 	
-	public DnaComponent exportDnaComponent(String exportFilePath, String saveDirectory) {
+	public DnaComponent exportDnaComponent(String exportFilePath) {
 		DnaComponent assemblyComp = null;
 		SBOLDocument sbolDoc = SBOLFactory.createDocument();
 		SBOLUtility.addDNAComponent(assemblyComp, sbolDoc, false);

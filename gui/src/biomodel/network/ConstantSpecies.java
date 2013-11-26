@@ -1,6 +1,5 @@
 package biomodel.network;
 
-import java.util.Properties;
 
 import biomodel.visitor.SpeciesVisitor;
 
@@ -12,7 +11,7 @@ import biomodel.visitor.SpeciesVisitor;
  *
  */
 public class ConstantSpecies extends AbstractSpecies {
-	public ConstantSpecies(String name, String stateName, Properties properties) {
+	public ConstantSpecies(String name, String stateName) {
 		//this.properties = properties;
 		this.id = name;
 		this.stateName = stateName;

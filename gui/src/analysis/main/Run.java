@@ -69,9 +69,7 @@ public class Run implements ActionListener {
 	/**
 	 * This method is given which buttons are selected and creates the properties
 	 * file from all the other information given.
-	 * 
 	 * @param useInterval
-	 * 
 	 * @param stem
 	 */
 	public void createProperties(double timeLimit, String useInterval, double printInterval, double minTimeStep,
@@ -79,7 +77,7 @@ public class Run implements ActionListener {
 			String printer_id, String printer_track_quantity, String genStats, String[] getFilename, String selectedButtons,
 			Component component, String filename, double rap1, double rap2, double qss, int con, double stoichAmp,
 			JList preAbs, JList loopAbs, JList postAbs, AbstPane abstPane, boolean mpde, boolean meanPath,
-			boolean medianPath, boolean adaptive, boolean nonAdaptive) {
+			boolean adaptive) {
 		Properties abs = new Properties();
 		if (selectedButtons.contains("abs") || selectedButtons.contains("nary")) {
 			int gcmIndex = 1;
@@ -345,8 +343,7 @@ public class Run implements ActionListener {
 			String[] getFilename, Component component, String filename, JRadioButton monteCarlo, String stopE, double stopR,
 			String[] finalS, ArrayList<JTextField> inhib, ArrayList<JList> consLevel, ArrayList<String> getSpeciesProps,
 			ArrayList<Object[]> conLevel, String[] termCond, String[] intSpecies, double rap1, double rap2, double qss,
-			int con, ArrayList<Integer> counts, boolean mpde, boolean meanPath, boolean medianPath, boolean adaptive, 
-			boolean nonAdaptive) {
+			int con, ArrayList<Integer> counts, boolean mpde, boolean meanPath, boolean adaptive) {
 		Properties nary = new Properties();
 		try {
 			FileInputStream load = new FileInputStream(new File(outDir + separator + "species.properties"));
@@ -1587,7 +1584,7 @@ public class Run implements ActionListener {
 				else if (lhpn.isSelected()) {
 					if (lhpnName != null && !lhpnName.trim().equals("")) {
 						if (!biomodelsim.updateOpenLHPN(lhpnName)) {
-							biomodelsim.addTab(lhpnName, new LHPNEditor(root, lhpnName, null, biomodelsim, log), "LHPN Editor");
+							biomodelsim.addTab(lhpnName, new LHPNEditor(root, lhpnName, null, biomodelsim), "LHPN Editor");
 							biomodelsim.addToTree(lhpnName);
 						}
 						else {

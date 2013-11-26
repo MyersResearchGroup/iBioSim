@@ -15,7 +15,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-import javax.swing.JComponent;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicGraphicsUtils;
 import javax.swing.text.View;
@@ -46,7 +45,7 @@ public class CloseTabPaneEnhancedUI extends CloseTabPaneUI {
 		super(biosim);
 	}
 
-	public static ComponentUI createUI(JComponent c, Gui biosim) {
+	public static ComponentUI createUI(Gui biosim) {
 		return new CloseTabPaneEnhancedUI(biosim);
 	}
 

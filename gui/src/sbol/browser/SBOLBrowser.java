@@ -101,7 +101,7 @@ public class SBOLBrowser extends JPanel implements ActionListener {
 	}
 	
 	//Constructor when browsing RDF file subsets for SBOL to GCM association
-	public SBOLBrowser(HashSet<String> sbolFilePaths, Set<String> filter, LinkedList<URI> defaultSelectedCompURIs) {
+	public SBOLBrowser(HashSet<String> sbolFilePaths, Set<String> filter) {
 //		super(new GridLayout(3,1));
 		super(new BorderLayout());
 		isAssociationBrowser = true;

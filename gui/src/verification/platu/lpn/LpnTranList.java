@@ -20,7 +20,8 @@ final public class LpnTranList extends LinkedList<Transition> {
         super(lpnt);
     }
 
-    public LpnTranList(final int i) {
+    @SuppressWarnings("unused")
+	public LpnTranList(final int i) {
     }
 
     public Transition get(Transition lpnt) {
@@ -86,11 +87,13 @@ final public class LpnTranList extends LinkedList<Transition> {
     	return copy;
     }
 
+	@SuppressWarnings("unused")
 	public void setLPN(LPN lpn2) {
 		// TODO: (temp) Hack here. This is used to get rid of erros in PlatuGrammearParser.
 		
 	}
 
+	@SuppressWarnings("unused")
 	public void add(LPNTran transition4) {
 		// TODO: (temp) Hack here. This is used to get rid of erros in PlatuGrammearParser.
 		

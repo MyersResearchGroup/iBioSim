@@ -1289,14 +1289,10 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		if (!newName.endsWith(".syn")) {
 			newName = newName + ".syn";
 		}
-		save(newName);
+		save();
 	}
 
 	public void save() {
-		save(synthFile);
-	}
-
-	public void save(String filename) {
 		try {
 			Properties prop = new Properties();
 			prop.setProperty("synthesis.file", synthesisFile);

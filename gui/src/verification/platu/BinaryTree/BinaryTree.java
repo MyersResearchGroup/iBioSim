@@ -17,7 +17,7 @@ public class BinaryTree {
 	LinkedList<Integer> lastAccessedIdxList;
 	
 	
-	public BinaryTree(boolean uniqueRootIdx) {
+	public BinaryTree() {
 		this.uniqueNodeTbl = new HashMap<Node, Node>();
 		this.NodeIdxTbl = new Vector<Node>(100);
 		

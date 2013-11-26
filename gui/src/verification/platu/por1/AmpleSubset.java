@@ -42,14 +42,13 @@ public class AmpleSubset {
 	
 	/**(POR)
 	 * reduce enableList to ampleList
-	 * @param lpnList
 	 * @param stateVisited
 	 * @param enabledArray
 	 * @param allIndepSet
+	 * @param lpnList
 	 * @return
 	 */
 	public LpnTranList generateAmpleList(boolean stateVisited,
-										String approach,
 										LinkedList<Transition>[] enabledArray,
 										HashMap<Transition,HashSet<Transition>> allIndepSet)
 	{
@@ -95,7 +94,7 @@ public class AmpleSubset {
 				}
 				System.out.println();
 				*/
-				ampleList = this.getSubset_withInterleaving(interleavingEnabledSet, enabledArray, allIndepSet,this.interleavingSet);
+				ampleList = this.getSubset_withInterleaving(interleavingEnabledSet, enabledArray, allIndepSet);
 				return ampleList;
 	    	}
 		}
@@ -219,14 +218,13 @@ public class AmpleSubset {
  * (1)transition t1 dependent with interleaving and transition t2 dependent with t1
  * (2) set1 and set2
  * @param interleavingEnabledSet
- * @param remainEnabledList
  * @param indepTranSet
+ * @param remainEnabledList
  * @return
  */
 	private LpnTranList getSubset_withInterleaving(LpnTranList interleavingEnabledSet,
 			                                      LinkedList<Transition>[] enabledList,
-			                                      HashMap<Transition,HashSet<Transition>> indepTranSet,
-			                                      HashMap<Transition, HashSet<Transition>> interleavingSet)
+			                                      HashMap<Transition,HashSet<Transition>> indepTranSet)
 	{
 		LpnTranList subset = new LpnTranList();
 		LpnTranList dep_interleaving = new LpnTranList();

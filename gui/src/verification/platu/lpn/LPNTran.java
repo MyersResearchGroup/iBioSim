@@ -101,7 +101,7 @@ public class LPNTran {
         }
     }
     
-    public void initialize(final LPN lpnModel, final VarSet outputs) {
+    public void initialize(final LPN lpnModel) {
     	// Computer the variables on the left hand side of the assignments.
     	this.lpn = lpnModel;
     	this.supportSet = new HashSet<String>();
@@ -230,7 +230,8 @@ public class LPNTran {
     
     // Check if this LPN transition satisfies the timing constraint: its lower bound of delay
     // is larger than the maximal value of its timed in curZone.
-    public boolean isTimedEnabled(final State curState, final Zone1 curZone) {
+    @SuppressWarnings("unused")
+	public boolean isTimedEnabled(final State curState, final Zone1 curZone) {
     	if(this.isEnabled(curState) == false)
     		return false;
     	
@@ -499,7 +500,8 @@ public class LPNTran {
     }
     
     // (done) Moved fire to StateGraph    
-    public State fire(final StateGraph thisSg, final State curState) {  		
+    @SuppressWarnings("unused")
+	public State fire(final StateGraph thisSg, final State curState) {  		
     	// Search for and return cached next state first. 
 //    	if(this.nextStateMap.containsKey(curState) == true)
 //    		return (State)this.nextStateMap.get(curState);

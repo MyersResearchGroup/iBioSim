@@ -559,7 +559,7 @@ public class BioModel {
 							add.setListData(adding);
 							add.setSelectedIndex(0);
 							Object[] sort = main.util.Utility.add(conLevel.get(number),
-									consLevel.get(number), add, null, null, null, null, null, naryFrame);
+									consLevel.get(number), add);
 							int in;
 							for (int out = 1; out < sort.length; out++) {
 								int temp = Integer.parseInt((String) sort[out]);
@@ -673,7 +673,7 @@ public class BioModel {
 	}
 
 	public LhpnFile convertToLHPN(ArrayList<String> specs, ArrayList<Object[]> conLevel, MutableString lpnProperty) {
-		GCMParser parser = new GCMParser(this, false);
+		GCMParser parser = new GCMParser(this);
 		SBMLDocument sbml = this.flattenModel();		
 		GeneticNetwork network = parser.buildNetwork(sbml);
 		if (network == null) return null;
@@ -3104,8 +3104,7 @@ public class BioModel {
 		
 		extModel.setId(extId);
 		extModel.setSource("file:" + modelFile.replace(".gcm",".xml"));
-//		TODO:  Not currently supported.
-//		extModel.setMd5(md5);
+		extModel.setMd5(md5);
 		
 		//figure out what the submodel's ID should be if it's not provided
 		if (submodelID == null) {
@@ -5009,7 +5008,7 @@ public class BioModel {
 				//if it's degradable and there's no degradation reaction, add one
 				if (getDegradationReaction(speciesID) == null /*&&
 						getDegradationReaction(speciesID, componentModel) != null*/) {
-					createGridDegradationReaction(componentModel.getListOfSpecies().get(speciesIndex), sbml.getModel());
+					createGridDegradationReaction(componentModel.getListOfSpecies().get(speciesIndex));
 				}				
 			}
 		}
@@ -5034,7 +5033,7 @@ public class BioModel {
 			createGridSpeciesReactions(speciesToAdd, componentModel);
 	}
 	
-	public void createGridDegradationReaction(Species species, Model compModel) {
+	public void createGridDegradationReaction(Species species) {
 		
 		String speciesID = species.getId();
 		Boolean speciesDegrades = false;			
@@ -5121,7 +5120,7 @@ public class BioModel {
 			
 			if (getDegradationReaction(newSpecies.getId()) == null &&
 					getDegradationReaction(newSpecies.getId(), compModel) != null) {
-				createGridDegradationReaction(newSpecies, compModel);
+				createGridDegradationReaction(newSpecies);
 			}
 			if (sbml.getModel().getReaction("Diffusion_"+newSpecies.getId()+"_Above")!=null) continue;
 			
@@ -5954,7 +5953,7 @@ public class BioModel {
 		*/
 	}
 
-	public void setParameter(String parameter, String value, String sweep) {
+	public void setParameter(String parameter, String value) {
 		//globalParameters.put(parameter, value);
 		if (sbml != null) { 
 			if (value.startsWith("(")) {
@@ -6774,7 +6773,7 @@ public class BioModel {
 
 			// recursively add this component's sbml (and its inside components'
 			// sbml, etc.) to the overall sbml
-			unionSBML(model, flattenModelRecurse(subModel, subModelId, modelListCopy), subModelId, 
+			unionSBML(model, flattenModelRecurse(subModel, modelListCopy), subModelId, 
 					subModel.getParameter(GlobalConstants.RNAP_STRING));
 			if (model.getSBMLDocument() == null && modelListCopy.isEmpty()) {
 				Utility.createErrorMessage("Loop Detected", "Cannot flatten model.\n" + "There is a loop in the components.");
@@ -6823,7 +6822,7 @@ public class BioModel {
 
 			// recursively add this component's sbml (and its inside components'
 			// sbml, etc.) to the overall sbml
-			unionSBML(this, flattenModelRecurse(subModel, subModelId, modelListCopy), subModelId, 
+			unionSBML(this, flattenModelRecurse(subModel, modelListCopy), subModelId, 
 					subModel.getParameter(GlobalConstants.RNAP_STRING));
 			if (this.getSBMLDocument() == null && modelListCopy.isEmpty()) {
 				Utility.createErrorMessage("Loop Detected", "Cannot flatten model.\n" + "There is a loop in the components.");
@@ -6839,7 +6838,7 @@ public class BioModel {
 		return this.getSBMLDocument();
 	}
 	
-	private BioModel flattenModelRecurse(BioModel model, String modelId, ArrayList<String> modelList) {
+	private BioModel flattenModelRecurse(BioModel model, ArrayList<String> modelList) {
 		ArrayList<String> comps = new ArrayList<String>();
 		
 		for (int i = 0; i < model.getSBMLCompModel().getListOfSubmodels().size(); i++) {
@@ -6859,7 +6858,7 @@ public class BioModel {
 				return null;
 			}
 			modelListCopy.add(subModel.getFilename());
-			unionSBML(model, flattenModelRecurse(subModel, s, modelListCopy), s, subModel.getParameter(GlobalConstants.RNAP_STRING));
+			unionSBML(model, flattenModelRecurse(subModel, modelListCopy), s, subModel.getParameter(GlobalConstants.RNAP_STRING));
 		}
 		return model;
 	}

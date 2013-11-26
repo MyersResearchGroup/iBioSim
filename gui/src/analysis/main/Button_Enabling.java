@@ -17,20 +17,19 @@ public class Button_Enabling {
 	/**
 	 * This static method enables and disables the required fields for none and
 	 * abstraction.
-	 * 
 	 * @param lhpn
 	 * @param gcmEditor
 	 */
 	public static void enableNoneOrAbs(JRadioButton ODE, JRadioButton monteCarlo, JRadioButton markov, JRadioButton fba,
-			JRadioButton sbml, JTextField seed, JLabel seedLabel, JTextField runs, JLabel runsLabel,
-			JLabel minStepLabel, JTextField minStep, JLabel stepLabel, JTextField step, JLabel errorLabel,
-			JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel, JTextField interval,
-			JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description, JRadioButton none,
-			JTextField rapid1, JTextField rapid2, JTextField qssa, JTextField maxCon, JTextField diffStoichAmp, JLabel rapidLabel1,
-			JLabel rapidLabel2, JLabel qssaLabel, JLabel maxConLabel, JLabel diffStoichAmpLabel, JTextField fileStem, JLabel fileStemLabel,
-			JList preAbs, JList loopAbs, JList postAbs, JLabel preAbsLabel, JLabel loopAbsLabel, JLabel postAbsLabel,
-			JButton addPreAbs, JButton rmPreAbs, JButton editPreAbs, JButton addLoopAbs, JButton rmLoopAbs,
-			JButton editLoopAbs, JButton addPostAbs, JButton rmPostAbs, JButton editPostAbs, JRadioButton lhpn) {
+			JTextField seed, JLabel seedLabel, JTextField runs, JLabel runsLabel, JLabel minStepLabel,
+			JTextField minStep, JLabel stepLabel, JTextField step, JLabel errorLabel, JTextField absErr,
+			JLabel limitLabel, JTextField limit, JComboBox intervalLabel, JTextField interval, JComboBox simulators,
+			JLabel simulatorsLabel, JLabel explanation, JLabel description, JRadioButton none, JTextField rapid1,
+			JTextField rapid2, JTextField qssa, JTextField maxCon, JTextField diffStoichAmp, JLabel rapidLabel1, JLabel rapidLabel2,
+			JLabel qssaLabel, JLabel maxConLabel, JLabel diffStoichAmpLabel, JTextField fileStem, JLabel fileStemLabel, JList preAbs,
+			JList loopAbs, JList postAbs, JLabel preAbsLabel, JLabel loopAbsLabel, JLabel postAbsLabel, JButton addPreAbs,
+			JButton rmPreAbs, JButton editPreAbs, JButton addLoopAbs, JButton rmLoopAbs, JButton editLoopAbs,
+			JButton addPostAbs, JButton rmPostAbs, JButton editPostAbs, JRadioButton lhpn) {
 		ODE.setEnabled(true);
 		monteCarlo.setEnabled(true);
 		fba.setEnabled(true);
@@ -326,7 +325,7 @@ public class Button_Enabling {
 			JLabel minStepLabel, JTextField minStep, JLabel stepLabel, JTextField step, JLabel errorLabel,
 			JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel, JTextField interval,
 			JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description, JTextField fileStem,
-			JLabel fileStemLabel, JList postAbs, JRadioButton abstraction) {
+			JLabel fileStemLabel, JList postAbs) {
 		seed.setEnabled(true);
 		seedLabel.setEnabled(true);
 		runs.setEnabled(true);
@@ -366,15 +365,14 @@ public class Button_Enabling {
 	/**
 	 * This static method enables and disables the required fields for Monte
 	 * Carlo.
-	 * 
-	 * @param fileStemLabel
 	 * @param fileStem
+	 * @param fileStemLabel
 	 */
 	public static void enableMonteCarlo(JTextField seed, JLabel seedLabel, JTextField runs, JLabel runsLabel,
 			JLabel minStepLabel, JTextField minStep, JLabel stepLabel, JTextField step, JLabel errorLabel,
 			JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel, JTextField interval,
 			JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description, JTextField fileStem,
-			JLabel fileStemLabel, JList postAbs, JRadioButton abstraction, JRadioButton nary) {
+			JLabel fileStemLabel, JList postAbs, JRadioButton nary) {
 		seed.setEnabled(true);
 		seedLabel.setEnabled(true);
 		runs.setEnabled(true);
@@ -468,7 +466,7 @@ public class Button_Enabling {
 			JLabel minStepLabel, JTextField minStep, JLabel stepLabel, JTextField step, JLabel errorLabel,
 			JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel, JTextField interval,
 			JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description, JTextField fileStem,
-			JLabel fileStemLabel, JRadioButton abstraction, JList loopAbs, JList postAbs) {
+			JLabel fileStemLabel, JList postAbs) {
 		seed.setEnabled(false);
 		seedLabel.setEnabled(false);
 		runs.setEnabled(false);
@@ -504,7 +502,7 @@ public class Button_Enabling {
 			JLabel minStepLabel, JTextField minStep, JLabel stepLabel, JTextField step, JLabel errorLabel,
 			JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel, JTextField interval,
 			JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description, JTextField fileStem,
-			JLabel fileStemLabel, JRadioButton abstraction, JRadioButton nary, JList loopAbs, JList postAbs) {
+			JLabel fileStemLabel, JRadioButton abstraction, JRadioButton nary, JList postAbs) {
 		seed.setEnabled(false);
 		seedLabel.setEnabled(false);
 		runs.setEnabled(false);

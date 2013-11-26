@@ -314,7 +314,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 			updateCloseIcon(x, y);
 	}
 
-	public static ComponentUI createUI(JComponent c, Gui biosim) {
+	public static ComponentUI createUI(Gui biosim) {
 		return new CloseTabPaneUI(biosim);
 	}
 
@@ -351,7 +351,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	protected void installComponents() {
 
 		if (tabScroller == null) {
-			tabScroller = new ScrollableTabSupport(tabPane.getTabPlacement());
+			tabScroller = new ScrollableTabSupport();
 			tabPane.add(tabScroller.viewport);
 			tabPane.add(tabScroller.scrollForwardButton);
 			tabPane.add(tabScroller.scrollBackwardButton);
@@ -618,7 +618,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		paintFocusIndicator(g, tabPlacement, rects, tabIndex, iconRect, textRect, isSelected);
 
 		if (cropShape) {
-			paintCroppedTabEdge(g, tabPlacement, tabIndex, isSelected, cropx, cropy);
+			paintCroppedTabEdge(g, tabIndex, cropx, cropy);
 			g2.setClip(save);
 
 		}
@@ -674,7 +674,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	 * from (tab.y + tab.height) and adding yCropLen[i] to (tab.x).
 	 */
 
-	private void paintCroppedTabEdge(Graphics g, int tabPlacement, int tabIndex, boolean isSelected, int x, int y) {
+	private void paintCroppedTabEdge(Graphics g, int tabIndex, int x, int y) {
 
 		g.setColor(shadow);
 		g.drawLine(x, y, x, y + rects[tabIndex].height);
@@ -1045,7 +1045,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 			}
 			CloseTabPaneUI ui = (CloseTabPaneUI) pane.getUI();
 
-			ui.tabScroller.scrollBackward(pane.getTabPlacement());
+			ui.tabScroller.scrollBackward();
 
 		}
 	}
@@ -1256,7 +1256,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 		private Point tabViewPosition = new Point(0, 0);
 
-		ScrollableTabSupport(int tabPlacement) {
+		ScrollableTabSupport() {
 			viewport = new ScrollableTabViewport();
 			tabPanel = new ScrollableTabPanel();
 			viewport.setView(tabPanel);
@@ -1282,17 +1282,17 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 					return;
 				}
 			}
-			setLeadingTabIndex(tabPlacement, leadingTabIndex + 1);
+			setLeadingTabIndex(leadingTabIndex + 1);
 		}
 
-		public void scrollBackward(int tabPlacement) {
+		public void scrollBackward() {
 			if (leadingTabIndex == 0) {
 				return; // no room left to scroll
 			}
-			setLeadingTabIndex(tabPlacement, leadingTabIndex - 1);
+			setLeadingTabIndex(leadingTabIndex - 1);
 		}
 
-		public void setLeadingTabIndex(int tabPlacement, int index) {
+		public void setLeadingTabIndex(int index) {
 			leadingTabIndex = index;
 			Dimension viewSize = viewport.getViewSize();
 			Rectangle viewRect = viewport.getViewRect();
