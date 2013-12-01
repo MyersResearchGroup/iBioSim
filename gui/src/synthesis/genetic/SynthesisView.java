@@ -352,7 +352,6 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 	
 	private Set<String> importSolutionSubModels(List<SynthesisGraph> solutionGraphs, 
 			String synthFilePath) {
-		Set<String> solutionFileIDs = new HashSet<String>();
 		HashMap<String, SynthesisGraph> solutionFileToGraph = new HashMap<String, SynthesisGraph>();
 		Set<String> clashingFileIDs = new HashSet<String>();
 		for (SynthesisGraph solutionGraph : solutionGraphs) {
@@ -384,7 +383,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 			solutionSubModel.getSBMLDocument().getModel().setId(subModelFileID.replace(".xml", ""));
 			solutionSubModel.save(synthFilePath + separator + subModelFileID);
 		}
-		return solutionFileIDs;
+		return solutionFileToGraph.keySet();
 	}
 	
 	private String flattenProjectIntoModelFileID(BioModel biomodel, Set<String> modelFileIDs) {
