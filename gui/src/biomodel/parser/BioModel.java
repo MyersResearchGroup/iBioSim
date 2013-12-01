@@ -2627,25 +2627,6 @@ public class BioModel {
 		String[] splitPath = filename.split(separator);
 		sbmlFile = splitPath[splitPath.length-1].replace(".gcm",".xml");
 		loadSBMLFile(sbmlFile);
-		setElementSBOLCount();
-	}
-	
-	public void setElementSBOLCount() {
-		elementSBOLCount = 0;
-		ArrayList<SBase> modelElements = SBMLutilities.getListOfAllElements(sbml.getModel());
-		for (int i = 0; i < modelElements.size(); i++) {
-			List<URI> sbolURIs = new LinkedList<URI>();
-			AnnotationUtility.parseSBOLAnnotation(modelElements.get(i), sbolURIs);
-			if (sbolURIs.size() > 0)
-				elementSBOLCount++;
-		}
-		for (int i = 0; i < sbmlCompModel.getListOfSubmodels().size(); i++) {
-			Submodel instantiation = sbmlCompModel.getListOfSubmodels().get(i);
-			List<URI> sbolURIs = new LinkedList<URI>();
-			AnnotationUtility.parseSBOLAnnotation(instantiation, sbolURIs);
-			if (sbolURIs.size() > 0)
-				elementSBOLCount++;
-		}
 	}
 	
 //	public void correctPromoterToSBOLAnnotations() {

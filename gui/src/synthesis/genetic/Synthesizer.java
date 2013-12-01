@@ -48,7 +48,7 @@ public class Synthesizer {
 			boundNode(node, spec);
 		}
 		List<List<SynthesisGraph>> solutions = new LinkedList<List<SynthesisGraph>>();
-		//int solutionCost = coverSpec(spec, solutions);
+		coverSpec(spec, solutions);
 		//ong endTime = System.nanoTime();
 		//double time = (endTime - startTime)*Math.pow(10, -9); 
 
