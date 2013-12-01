@@ -31,12 +31,14 @@ public class SynthesisNode {
 	public SynthesisNode(String type, SBase sbmlElement, SBOLFileManager fileManager) {
 		id = SBMLutilities.getId(sbmlElement);
 		this.type = type;
+		compURIs = new LinkedList<URI>();
 		processDNAComponents(sbmlElement, fileManager);
 		coverIndex = -1;
 	}
 	
 	public SynthesisNode(String type) {
 		this.type = type;
+		compURIs = new LinkedList<URI>();
 		nucleotideCount = 0;
 		coverIndex = -1;
 	}
