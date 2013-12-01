@@ -7,7 +7,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.net.URI;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -29,6 +32,8 @@ import org.sbml.jsbml.ext.comp.Port;
 import org.sbml.jsbml.ext.layout.Layout;
 
 import biomodel.annotation.AnnotationUtility;
+import biomodel.annotation.SBOLAnnotation;
+import biomodel.gui.sbol.SBOLField;
 import biomodel.gui.schematic.ModelEditor;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
@@ -54,6 +59,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	private BioModel bioModel;
 
 	private ModelEditor modelEditor;
+	
+	private SBOLField sbolField;
 
 	private Gui biosim;
 	
@@ -345,10 +352,21 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						}
 						origAssign[j] = ea.getVariable() + " := " + SBMLutilities.myFormulaToString(ea.getMath());
 					}
+					if (!modelEditor.isParamsOnly()) {
+						//Parse out SBOL annotations and add to SBOL field
+						List<URI> sbolURIs = new LinkedList<URI>();
+						String sbolStrand = AnnotationUtility.parseSBOLAnnotation(event, sbolURIs);
+						// Field for annotating event with SBOL DNA components
+						sbolField = new SBOLField(sbolURIs, sbolStrand, GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 
+								2, false);
+					}
 				}
 			}
 		}
 		else {
+			// Field for annotating event with SBOL DNA components
+			sbolField = new SBOLField(new LinkedList<URI>(), GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND, 
+					GlobalConstants.SBOL_DNA_COMPONENT, modelEditor, 2, false);
 			String eventId = "event0";
 			if (isTransition) eventId = "t0";
 			int en = 0;
@@ -394,6 +412,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		evPanel.add(onPortLabel);
 		evPanel.add(onPort);
 		eventPanel.add(evPanel, "North");
+		if (!modelEditor.isParamsOnly())
+			eventPanel.add(sbolField, "Center");
 		eventPanel.add(eventAssignPanel, "South");
 		Object[] options = { option, "Cancel" };
 		String title = "Event Editor";
@@ -541,6 +561,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			}
 			if (!error) {
 				//edit event
+				org.sbml.jsbml.Event e = (bioModel.getSBMLDocument().getModel().getListOfEvents()).get(Eindex);
 				if (option.equals("OK")) {
 					events.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					String[] ev = new String[events.getModel().getSize()];
@@ -548,7 +569,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						ev[i] = events.getModel().getElementAt(i).toString();
 					}
 					events.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					org.sbml.jsbml.Event e = (bioModel.getSBMLDocument().getModel().getListOfEvents()).get(Eindex);
 					e.setUseValuesFromTriggerTime(assignTime.isSelected());
 					while (e.getEventAssignmentCount() > 0) {
 						e.getListOfEventAssignments().remove(0);
@@ -775,7 +795,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				//add event
 				else {
 					JList add = new JList();
-					org.sbml.jsbml.Event e = bioModel.getSBMLDocument().getModel().createEvent();
+					e = bioModel.getSBMLDocument().getModel().createEvent();
 					if (isTransition) {
 						e.setSBOTerm(GlobalConstants.SBO_PETRI_NET_TRANSITION);
 					}
@@ -784,6 +804,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					if (!eventID.getText().trim().equals("")) {
 						e.setId(eventID.getText().trim());
 					}
+					bioModel.setMetaIDIndex(
+							SBMLutilities.setDefaultMetaID(bioModel.getSBMLDocument(), e, bioModel.getMetaIDIndex()));
 					if (!eventName.getText().trim().equals("")) {
 						e.setName(eventName.getText().trim());
 					}
@@ -944,6 +966,15 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					if (error) {
 						removeTheEvent(bioModel, SBMLutilities.myFormulaToString(e.getTrigger().getMath()));
 					}
+				}
+				if (!error && !modelEditor.isParamsOnly()) {
+					// Add SBOL annotation to event
+					if (sbolField.getSBOLURIs().size() > 0) {
+						SBOLAnnotation sbolAnnot = new SBOLAnnotation(e.getMetaId(), sbolField.getSBOLURIs(), 
+								sbolField.getSBOLStrand());
+						AnnotationUtility.setSBOLAnnotation(e, sbolAnnot);
+					} else
+						AnnotationUtility.removeSBOLAnnotation(e);
 				}
 			}
 			if (error) {

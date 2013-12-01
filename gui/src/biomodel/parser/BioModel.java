@@ -2661,14 +2661,6 @@ public class BioModel {
 //		}
 //	}
 	
-	public void setElementSBOLCount(int set) {
-		elementSBOLCount = set;
-	}
-	
-	public int getElementSBOLCount() {
-		return elementSBOLCount;
-	}
-	
 	// Descriptor array should be size 3 and contain DNA component ID, name, and description in that order
 	public void setSBOLDescriptors(String[] descriptors) {
 		sbolDescriptors = descriptors;
@@ -7656,6 +7648,14 @@ public class BioModel {
 			return SBMLutilities.myFormulaToString(result);
 		}
 		return SBMLutilities.myFormulaToString(math);
+	}
+	
+	public int getMetaIDIndex() {
+		return metaIDIndex;
+	}
+	
+	public void setMetaIDIndex(int metaIDIndex) {
+		this.metaIDIndex = metaIDIndex;
 	}
 	
 	private SBMLDocument sbml = null;

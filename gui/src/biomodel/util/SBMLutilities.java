@@ -913,6 +913,8 @@ public class SBMLutilities {
 			metaIDIndex = setDefaultMetaID(document, model.getReaction(i), metaIDIndex);
 		for (int i = 0; i < model.getRuleCount(); i++) 
 			metaIDIndex = setDefaultMetaID(document, model.getRule(i), metaIDIndex);
+		for (int i = 0; i < model.getEventCount(); i++)
+			metaIDIndex = setDefaultMetaID(document, model.getEvent(i), metaIDIndex);
 		CompModelPlugin compModel = (CompModelPlugin) document.getModel().getExtension(CompConstant.namespaceURI);
 		if (compModel != null && compModel.isSetListOfSubmodels()) {
 			for (int i = 0; i < compModel.getListOfSubmodels().size(); i++)

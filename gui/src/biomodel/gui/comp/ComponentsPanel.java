@@ -916,18 +916,9 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 					SBOLAnnotation sbolAnnot = new SBOLAnnotation(instance.getMetaId(), 
 							sbolField.getSBOLURIs(), sbolField.getSBOLStrand());
 					AnnotationUtility.setSBOLAnnotation(instance, sbolAnnot);
-					if (sbolField.wasInitiallyBlank())
-						bioModel.setElementSBOLCount(bioModel.getElementSBOLCount() + 1);
-//					if (removeModelSBOLAnnotationFlag) {
-//						AnnotationUtility.removeSBOLAnnotation(bioModel.getSBMLDocument().getModel());
-//						bioModel.setModelSBOLAnnotationFlag(false);
-//						modelEditor.getSchematic().getSBOLDescriptorsButton().setEnabled(true);
-//					}
-				} else {
+
+				} else
 					AnnotationUtility.removeSBOLAnnotation(instance);
-					if (!sbolField.wasInitiallyBlank())
-						bioModel.setElementSBOLCount(bioModel.getElementSBOLCount() - 1);
-				}
 			}
 			modelEditor.setDirty(true);
 		}
