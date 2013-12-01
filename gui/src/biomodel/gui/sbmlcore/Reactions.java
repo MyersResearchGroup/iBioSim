@@ -970,18 +970,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 								SBOLAnnotation sbolAnnot = new SBOLAnnotation(react.getMetaId(), sbolField.getSBOLURIs(),
 										sbolField.getSBOLStrand());
 								AnnotationUtility.setSBOLAnnotation(react, sbolAnnot);
-								if (sbolField.wasInitiallyBlank())
-									bioModel.setElementSBOLCount(bioModel.getElementSBOLCount() + 1);
-//								if (removeModelSBOLAnnotationFlag) {
-//									AnnotationUtility.removeSBOLAnnotation(bioModel.getSBMLDocument().getModel());
-//									bioModel.setModelSBOLAnnotationFlag(false);
-//									modelEditor.getSchematic().getSBOLDescriptorsButton().setEnabled(true);
-//								}
-							} else {
+							} else 
 								AnnotationUtility.removeSBOLAnnotation(react);
-								if (!sbolField.wasInitiallyBlank())
-									bioModel.setElementSBOLCount(bioModel.getElementSBOLCount() - 1);
-							}
 						}
 					}
 				}

@@ -35,7 +35,6 @@ public class SBOLField extends JPanel implements ActionListener {
 	private JTextField sbolText = new JTextField(20);
 	private List<URI> sbolURIs = new LinkedList<URI>();
 	private String sbolStrand;
-	private boolean initiallyBlank;
 	private JButton sbolButton = new JButton("Associate SBOL");
 	private ModelEditor gcmEditor;
 	private boolean isModelPanelField;
@@ -56,7 +55,6 @@ public class SBOLField extends JPanel implements ActionListener {
 	}
 	
 	public void constructField(String sbolType, ModelEditor gcmEditor, int styleOption, boolean isModelPanelField) {
-		initiallyBlank = sbolURIs.size() == 0;
 		this.sbolType = sbolType;
 		this.styleOption = styleOption;
 		if (styleOption == 2 || styleOption  == 3) {
@@ -72,10 +70,6 @@ public class SBOLField extends JPanel implements ActionListener {
 		
 		this.gcmEditor = gcmEditor;
 		this.isModelPanelField = isModelPanelField;
-	}
-	
-	public boolean wasInitiallyBlank() {
-		return initiallyBlank;
 	}
 	
 	public String getType() {

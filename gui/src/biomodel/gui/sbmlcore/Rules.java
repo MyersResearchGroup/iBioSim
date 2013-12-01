@@ -359,6 +359,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 			if (!error) {
+				Rule r = (Rule) (SBMLutilities.getElementByMetaId(bioModel.getSBMLDocument().getModel(), metaId));
 				if (option.equals("OK")) {
 					String[] rul = new String[rules.getModel().getSize()];
 					for (int i = 0; i < rules.getModel().getSize(); i++) {
@@ -369,7 +370,6 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					rul = Utility.getList(rul, rules);
 					String[] oldRul = rul.clone();
 					rules.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					Rule r = (Rule) (SBMLutilities.getElementByMetaId(bioModel.getSBMLDocument().getModel(), metaId));
 					String addStr;
 					String oldVar = "";
 					String oldMath = bioModel.removeBooleans(r.getMath());
@@ -414,56 +414,21 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 						error = true;
 					}
 					if (!error && !modelEditor.isParamsOnly()) {
-						// Handle SBOL data
-						// Checks whether SBOL annotation on model needs to be deleted later when annotating rule with SBOL
-//						boolean removeModelSBOLAnnotationFlag = false;
-//						LinkedList<URI> sbolURIs = sbolField.getSBOLURIs();
-//						if (sbolField.getSBOLURIs().size() > 0 && 
-//								bioModel.getElementSBOLCount() == 0 && bioModel.getModelSBOLAnnotationFlag()) {
-//							Object[] sbolOptions = { "OK", "Cancel" };
-//							int choice = JOptionPane.showOptionDialog(null, 
-//									"SBOL associated to model elements can't coexist with SBOL associated to model itself unless" +
-//											" the latter was previously generated from the former.  Remove SBOL associated to model?", 
-//											"Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, sbolOptions, sbolOptions[0]);
-//							if (choice == JOptionPane.OK_OPTION)
-//								removeModelSBOLAnnotationFlag = true;
-//							else
-//								error = true;
-//						}
-						if (!error) {
-							// Add SBOL annotation to rule
-							if (sbolField.getSBOLURIs().size() > 0) {
-								SBOLAnnotation sbolAnnot = new SBOLAnnotation(r.getMetaId(), sbolField.getSBOLURIs(), 
-										sbolField.getSBOLStrand());
-								AnnotationUtility.setSBOLAnnotation(r, sbolAnnot);
-								if (sbolField.wasInitiallyBlank())
-									bioModel.setElementSBOLCount(bioModel.getElementSBOLCount() + 1);
-//								if (removeModelSBOLAnnotationFlag) {
-//									AnnotationUtility.removeSBOLAnnotation(bioModel.getSBMLDocument().getModel());
-//									bioModel.setModelSBOLAnnotationFlag(false);
-//									modelEditor.getSchematic().getSBOLDescriptorsButton().setEnabled(true);
-//								}
-							} else {
-								AnnotationUtility.removeSBOLAnnotation(r);
-								if (!sbolField.wasInitiallyBlank())
-									bioModel.setElementSBOLCount(bioModel.getElementSBOLCount() - 1);
-							}
 
-							Port port = bioModel.getPortByMetaIdRef(r.getMetaId());
-							SBMLutilities.setMetaId(r, id.getText().trim());
-							if (port!=null) {
-								if (onPort.isSelected()) {
-									port.setId(GlobalConstants.RULE+"__"+r.getMetaId());
-									port.setMetaIdRef(r.getMetaId());
-								} else {
-									SBMLutilities.removeFromParentAndDelete(port);
-								}
+						Port port = bioModel.getPortByMetaIdRef(r.getMetaId());
+						SBMLutilities.setMetaId(r, id.getText().trim());
+						if (port!=null) {
+							if (onPort.isSelected()) {
+								port.setId(GlobalConstants.RULE+"__"+r.getMetaId());
+								port.setMetaIdRef(r.getMetaId());
 							} else {
-								if (onPort.isSelected()) {
-									port = bioModel.getSBMLCompModel().createPort();
-									port.setId(GlobalConstants.RULE+"__"+r.getMetaId());
-									port.setMetaIdRef(r.getMetaId());
-								}
+								SBMLutilities.removeFromParentAndDelete(port);
+							}
+						} else {
+							if (onPort.isSelected()) {
+								port = bioModel.getSBMLCompModel().createPort();
+								port.setId(GlobalConstants.RULE+"__"+r.getMetaId());
+								port.setMetaIdRef(r.getMetaId());
 							}
 						}
 					}
@@ -516,28 +481,25 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 						error = true;
 //						rul = oldRul;
 					}
-					Rule rPointer = null;
 					if (!error) {
 						SBMLDocument sbmlDoc = bioModel.getSBMLDocument();
 						if (ruleType.getSelectedItem().equals("Algebraic")) {
-							AlgebraicRule r = sbmlDoc.getModel().createAlgebraicRule();
+							r = sbmlDoc.getModel().createAlgebraicRule();
 							SBMLutilities.setMetaId(r, id.getText().trim());
 							r.setMath(bioModel.addBooleans(ruleMath.getText().trim()));
 							error = !SBMLutilities.check("",bioModel.getSBMLDocument(),false,true);
-							rPointer = r;
 						}
 						else if (ruleType.getSelectedItem().equals("Rate")) {
-							RateRule r = sbmlDoc.getModel().createRateRule();
+							r = sbmlDoc.getModel().createRateRule();
 							SBMLutilities.setMetaId(r, id.getText().trim());
-							r.setVariable(addVar);
+							((RateRule) r).setVariable(addVar);
 							r.setMath(bioModel.addBooleans(ruleMath.getText().trim()));
 							error = checkRateRuleUnits(r);
-							rPointer = r;
 						}
 						else {
-							AssignmentRule r = sbmlDoc.getModel().createAssignmentRule();
+							r = sbmlDoc.getModel().createAssignmentRule();
 							SBMLutilities.setMetaId(r, id.getText().trim());
-							r.setVariable(addVar);
+							((AssignmentRule) r).setVariable(addVar);
 							if (bioModel.getSBMLDocument().getModel().getParameter(addVar)!=null &&
 									SBMLutilities.isBoolean(bioModel.getSBMLDocument().getModel().getParameter(addVar))) {
 								r.setMath(bioModel.addBooleanAssign(ruleMath.getText().trim()));
@@ -545,14 +507,13 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 								r.setMath(bioModel.addBooleans(ruleMath.getText().trim()));
 							}
 							error = checkAssignmentRuleUnits(r);
-							rPointer = r;
 						}
-					}
-					if (!error && SBMLutilities.checkCycles(bioModel.getSBMLDocument())) {
-						JOptionPane.showMessageDialog(Gui.frame, "Cycle detected within initial assignments, assignment rules, and rate laws.",
-								"Cycle Detected", JOptionPane.ERROR_MESSAGE);
-						error = true;
-//						rul = oldRul;
+						if (!error && SBMLutilities.checkCycles(bioModel.getSBMLDocument())) {
+							JOptionPane.showMessageDialog(Gui.frame, "Cycle detected within initial assignments, assignment rules, and rate laws.",
+									"Cycle Detected", JOptionPane.ERROR_MESSAGE);
+							error = true;
+//							rul = oldRul;
+						}
 					}
 					if (error) {
 						rul = oldRul;
@@ -560,10 +521,9 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					} else {
 						if (onPort.isSelected()) {
 							Port port = bioModel.getSBMLCompModel().createPort();
-							port.setId(GlobalConstants.RULE+"__"+rPointer.getMetaId());
-							port.setMetaIdRef(rPointer.getMetaId());
+							port.setId(GlobalConstants.RULE + "__" + r.getMetaId());
+							port.setMetaIdRef(r.getMetaId());
 						}
-						SBMLutilities.setMetaId(rPointer, id.getText().trim());
 					}
 //					updateRules(rul);
 					rules.setListData(rul);
@@ -576,6 +536,15 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					}
 				}
 				modelEditor.setDirty(true);
+				if (!error && !modelEditor.isParamsOnly()) {
+					// Add SBOL annotation to rule
+					if (sbolField.getSBOLURIs().size() > 0) {
+						SBOLAnnotation sbolAnnot = new SBOLAnnotation(r.getMetaId(), sbolField.getSBOLURIs(), 
+								sbolField.getSBOLStrand());
+						AnnotationUtility.setSBOLAnnotation(r, sbolAnnot);
+					} else
+						AnnotationUtility.removeSBOLAnnotation(r);
+				}
 			}
 			if (error) {
 				value = JOptionPane.showOptionDialog(Gui.frame, rulePanel, "Rule Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,

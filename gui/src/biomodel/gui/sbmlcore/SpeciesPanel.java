@@ -900,18 +900,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					SBOLAnnotation sbolAnnot = new SBOLAnnotation(species.getMetaId(), 
 							sbolField.getSBOLURIs(), sbolField.getSBOLStrand());
 					AnnotationUtility.setSBOLAnnotation(species, sbolAnnot);
-					if (sbolField.wasInitiallyBlank())
-						bioModel.setElementSBOLCount(bioModel.getElementSBOLCount() + 1);
-//					if (removeModelSBOLAnnotationFlag) {
-//						AnnotationUtility.removeSBOLAnnotation(bioModel.getSBMLDocument().getModel());
-//						bioModel.setModelSBOLAnnotationFlag(false);
-//						modelEditor.getSchematic().getSBOLDescriptorsButton().setEnabled(true);
-//					}
-				} else {
+				} else 
 					AnnotationUtility.removeSBOLAnnotation(species);
-					if (!sbolField.wasInitiallyBlank())
-						bioModel.setElementSBOLCount(bioModel.getElementSBOLCount() - 1);
-				}
 			}
 			
 			if (selected != null && !selected.equals(newSpeciesID)) {

@@ -9,13 +9,19 @@ import java.util.List;
 import java.util.Set;
 
 import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.AbstractMathContainer;
+import org.sbml.jsbml.Delay;
+import org.sbml.jsbml.Event;
 import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Parameter;
+import org.sbml.jsbml.Priority;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
+import org.sbml.jsbml.Trigger;
 import org.sbml.jsbml.ext.comp.Submodel;
 import org.sbml.jsbml.ext.comp.CompConstant;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
@@ -74,14 +80,36 @@ public class AssemblyGraph {
 
 		// Creates assembly nodes for reactions and connects them to nodes for species
 		// Maps reaction parameters to reactions
-		parseReactionSbol(sbmlModel, idToNode);
+		parseReactionSBOL(sbmlModel, idToNode);
 
 		// Creates assembly nodes for rules and connects them to nodes for reactions and rules
 		// on the basis of shared parameters
-		parseRuleSbol(sbmlModel, idToNode);
+		parseRuleSBOL(sbmlModel, idToNode);
+		
+		parseEventSBOL(sbmlModel, idToNode);
 		
 		constructReverseEdges();
 		selectStartNodes();
+	}
+	
+	private AssemblyNode constructNode(SBase sbmlElement, String sbmlID) {
+		AssemblyNode node = constructNode(sbmlElement);
+		node.setID(sbmlID);
+		return node;
+	}
+	
+	private AssemblyNode constructNode(SBase sbmlElement) {
+		List<URI> sbolURIs = new LinkedList<URI>(); 
+		String sbolStrand = AnnotationUtility.parseSBOLAnnotation(sbmlElement, sbolURIs);
+		AssemblyNode node = new AssemblyNode(sbolURIs, sbolStrand);
+		assemblyNodes.add(node);
+		return node;
+	}
+	
+	private void constructEdge(AssemblyNode sourceNode, AssemblyNode sinkNode) {
+		if (!assemblyEdges.containsKey(sourceNode))
+			assemblyEdges.put(sourceNode, new HashSet<AssemblyNode>());
+		assemblyEdges.get(sourceNode).add(sinkNode);
 	}
 	
 	// Creates assembly nodes for submodels and connects them to the nodes for their input/output species
@@ -93,39 +121,32 @@ public class AssemblyGraph {
 			for (int i = 0; i < compSBMLModel.getListOfSubmodels().size(); i++) {
 				// Stores SBOL annotating the submodel instantiation if present
 				// If not then stores SBOL annotating the model referenced by the submodel instantiation
-				Submodel sbmlSubmodel = compSBMLModel.getListOfSubmodels().get(i);
-				List<URI> sbolURIs = new LinkedList<URI>();
-				String sbolStrand = AnnotationUtility.parseSBOLAnnotation(sbmlSubmodel, sbolURIs);
-				if (sbolURIs.size() > 0) {
+				Submodel sbmlSubModel = compSBMLModel.getListOfSubmodels().get(i);
+				AssemblyNode subModelNode = constructNode(sbmlSubModel, sbmlSubModel.getId());
+				if (subModelNode.getURIs().size() > 0) {
 					containsSBOL = true;
 					canFlatten = false;
+					idToNode.put(sbmlSubModel.getId(), subModelNode);
 				} else {
-					String subSBMLFileID = compSBMLDoc.getListOfExternalModelDefinitions().get(sbmlSubmodel.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
-					BioModel subBioModel = new BioModel(path);
-					subBioModel.load(subSBMLFileID);
-					Model subSBMLModel = subBioModel.getSBMLDocument().getModel();
-					String subSBOLStrand = AnnotationUtility.parseSBOLAnnotation(subSBMLModel, sbolURIs);
-					if (sbolStrand.equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND) && 
-							subSBOLStrand.equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND))
-						sbolStrand = GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
-					else if (subSBOLStrand.equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND))
-						sbolStrand = GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND;
-					Iterator<URI> uriIterator = sbolURIs.iterator();
+					assemblyNodes.remove(subModelNode);
+					String extSBMLFileID = compSBMLDoc.getListOfExternalModelDefinitions().get(sbmlSubModel.getModelRef()).getSource().replace("file://","").replace("file:","").replace(".gcm",".xml");
+					BioModel extBioModel = new BioModel(path);
+					extBioModel.load(extSBMLFileID);
+					Model extSBMLModel = extBioModel.getSBMLDocument().getModel();
+					AssemblyNode extModelNode = constructNode(extSBMLModel, extSBMLModel.getId());
+					if (subModelNode.getStrand().equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND))
+						if (extModelNode.getStrand().equals(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND))
+							extModelNode.setStrand(GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND);
+						else
+							extModelNode.setStrand(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND);
+					if (extModelNode.getURIs().size() > 0)
+						containsSBOL = true;
+					Iterator<URI> uriIterator = extModelNode.getURIs().iterator();
 					while (canFlatten && uriIterator.hasNext()) {
 						canFlatten = uriIterator.next().toString().endsWith("iBioSim");
 					}
-					if (sbolURIs.size() > 0)
-						containsSBOL = true;
+					idToNode.put(sbmlSubModel.getId(), extModelNode);
 				}
-				AssemblyNode assemblyNode = new AssemblyNode(sbolURIs, sbolStrand);
-//				if (minusFlag){
-//					assemblyNode.setStrand(GlobalConstants.SBOL_ASSEMBLY_MINUS_STRAND);
-//					minusFlag = false;
-//				} else
-//					minusFlag = true;
-				assemblyNodes.add(assemblyNode);
-				idToNode.put(sbmlSubmodel.getId(), assemblyNode);
-				assemblyNode.setID(sbmlSubmodel.getId());
 			}
 			return canFlatten;
 		}
@@ -136,38 +157,13 @@ public class AssemblyGraph {
 	private void parseSpeciesSBOL(Model sbmlModel, HashMap<String, AssemblyNode> idToNode) {
 		for (int i = 0; i < sbmlModel.getSpeciesCount(); i++) {
 			Species sbmlSpecies = sbmlModel.getListOfSpecies().get(i);
-			List<URI> sbolURIs = new LinkedList<URI>(); 
-			String sbolStrand = AnnotationUtility.parseSBOLAnnotation(sbmlSpecies, sbolURIs);
-			AssemblyNode assemblyNode = new AssemblyNode(sbolURIs, sbolStrand);
-			assemblyNodes.add(assemblyNode);
-			idToNode.put(sbmlSpecies.getId(), assemblyNode);
-			assemblyNode.setID(sbmlSpecies.getId());
-			if (sbmlSpecies.getExtensionPackages().containsKey(CompConstant.namespaceURI)) {
-				CompSBasePlugin compSBMLSpecies = SBMLutilities.getCompSBasePlugin(sbmlSpecies);
-				Set<AssemblyNode> submodelNodes = new HashSet<AssemblyNode>();
-				for (int j = 0; j < compSBMLSpecies.getListOfReplacedElements().size(); j++) {
-					String submodelID = compSBMLSpecies.getListOfReplacedElements().get(j).getSubmodelRef();
-					if (idToNode.containsKey(submodelID)) 
-						submodelNodes.add(idToNode.get(submodelID));
-				}
-				if (compSBMLSpecies.isSetReplacedBy()) {
-					String submodelID = compSBMLSpecies.getReplacedBy().getSubmodelRef();
-					if (idToNode.containsKey(submodelID)) 
-						submodelNodes.add(idToNode.get(submodelID));
-				}
-				for (AssemblyNode submodelNode : submodelNodes) {
-					if (!assemblyEdges.containsKey(submodelNode))
-						assemblyEdges.put(submodelNode, new HashSet<AssemblyNode>());
-					assemblyEdges.get(submodelNode).add(assemblyNode);
-				}
-				if (submodelNodes.size() > 0) {
-					if (!assemblyEdges.containsKey(assemblyNode))
-						assemblyEdges.put(assemblyNode, new HashSet<AssemblyNode>());
-					assemblyEdges.get(assemblyNode).addAll(submodelNodes);
-				}
-			}
-			if (sbolURIs.size() > 0)
+			AssemblyNode speciesNode = constructNode(sbmlSpecies, sbmlSpecies.getId());
+			if (speciesNode.getURIs().size() > 0)
 				containsSBOL = true;
+			idToNode.put(sbmlSpecies.getId(), speciesNode);
+			if (sbmlSpecies.getExtensionPackages().containsKey(CompConstant.namespaceURI))
+				parsePortMappings(sbmlSpecies, speciesNode, idToNode);
+			
 		}
 	}
 	
@@ -175,76 +171,42 @@ public class AssemblyGraph {
 	private void parseParameterSBOL(Model sbmlModel, HashMap<String, AssemblyNode> idToNode) {
 		for (int i = 0; i < sbmlModel.getParameterCount(); i++) {
 			Parameter sbmlParameter = sbmlModel.getParameter(i);
-			List<URI> sbolURIs = new LinkedList<URI>();
-			String sbolStrand = AnnotationUtility.parseSBOLAnnotation(sbmlParameter, sbolURIs);
-			AssemblyNode assemblyNode = new AssemblyNode(sbolURIs, sbolStrand);
-			assemblyNodes.add(assemblyNode);
-			idToNode.put(sbmlParameter.getId(), assemblyNode);
-			assemblyNode.setID(sbmlParameter.getId());
-			if (sbmlParameter.getExtensionPackages().containsKey(CompConstant.namespaceURI)) {
-				CompSBasePlugin compSBMLParameter = SBMLutilities.getCompSBasePlugin(sbmlParameter);
-				Set<AssemblyNode> submodelNodes = new HashSet<AssemblyNode>();
-				for (int j = 0; j < compSBMLParameter.getListOfReplacedElements().size(); j++) {
-					String submodelID = compSBMLParameter.getListOfReplacedElements().get(j).getSubmodelRef();
-					if (idToNode.containsKey(submodelID)) 
-						submodelNodes.add(idToNode.get(submodelID));
-				}
-				if (compSBMLParameter.isSetReplacedBy()) {
-					String submodelID = compSBMLParameter.getReplacedBy().getSubmodelRef();
-					if (idToNode.containsKey(submodelID)) 
-						submodelNodes.add(idToNode.get(submodelID));
-				}
-				for (AssemblyNode submodelNode : submodelNodes) {
-					if (!assemblyEdges.containsKey(submodelNode))
-						assemblyEdges.put(submodelNode, new HashSet<AssemblyNode>());
-					assemblyEdges.get(submodelNode).add(assemblyNode);
-				}
-				if (submodelNodes.size() > 0) {
-					if (!assemblyEdges.containsKey(assemblyNode))
-						assemblyEdges.put(assemblyNode, new HashSet<AssemblyNode>());
-					assemblyEdges.get(assemblyNode).addAll(submodelNodes);
-				}
-			}
-			if (sbolURIs.size() > 0)
+			AssemblyNode parameterNode = constructNode(sbmlParameter, sbmlParameter.getId());
+			if (parameterNode.getURIs().size() > 0)
 				containsSBOL = true;
+			idToNode.put(sbmlParameter.getId(), parameterNode);
+			if (sbmlParameter.getExtensionPackages().containsKey(CompConstant.namespaceURI))
+				parsePortMappings(sbmlParameter, parameterNode, idToNode);
 		}
 	}
 	
 	// Creates assembly nodes for reactions and connects them to nodes for species
 	// Maps reaction parameters to reactions
-	private void parseReactionSbol(Model sbmlModel, HashMap<String, AssemblyNode> idToNode) {
+	private void parseReactionSBOL(Model sbmlModel, HashMap<String, AssemblyNode> idToNode) {
 		for (int i = 0; i < sbmlModel.getReactionCount(); i++) {
 			Reaction sbmlReaction = sbmlModel.getReaction(i);
 			// Creates assembly node for reaction
-			List<URI> sbolURIs = new LinkedList<URI>();
-			String sbolStrand = AnnotationUtility.parseSBOLAnnotation(sbmlReaction, sbolURIs);
-			AssemblyNode assemblyNode = new AssemblyNode(sbolURIs, sbolStrand);
-			assemblyNodes.add(assemblyNode);
-			idToNode.put(sbmlReaction.getId(), assemblyNode);
-			assemblyNode.setID(sbmlReaction.getId());
-			if (sbolURIs.size() > 0)
+			AssemblyNode reactionNode = constructNode(sbmlReaction, sbmlReaction.getId());
+			if (reactionNode.getURIs().size() > 0)
 				containsSBOL = true;
+			idToNode.put(sbmlReaction.getId(), reactionNode);
 		}
 		for (int i = 0; i < sbmlModel.getReactionCount(); i++) {
 			Reaction sbmlReaction = sbmlModel.getReaction(i);
-			AssemblyNode assemblyNode = idToNode.get(sbmlReaction.getId());
+			AssemblyNode reactionNode = idToNode.get(sbmlReaction.getId());
 			// Connects assembly nodes for reactants and modifiers to node for reaction
 			for (int j = 0; j < sbmlReaction.getReactantCount(); j++) {
 				String reactantID = sbmlReaction.getReactant(j).getSpecies();
 				if (idToNode.containsKey(reactantID)) {
 					AssemblyNode reactantNode = idToNode.get(reactantID);
-					if (!assemblyEdges.containsKey(reactantNode))
-						assemblyEdges.put(reactantNode, new HashSet<AssemblyNode>());
-					assemblyEdges.get(reactantNode).add(assemblyNode);
+					constructEdge(reactantNode, reactionNode);
 				}
 			}
 			for (int j = 0; j < sbmlReaction.getModifierCount(); j++) {
 				String modifierID = sbmlReaction.getModifier(j).getSpecies();
 				if (idToNode.containsKey(modifierID)) {
 					AssemblyNode modifierNode = idToNode.get(modifierID);
-					if (!assemblyEdges.containsKey(modifierNode))
-						assemblyEdges.put(modifierNode, new HashSet<AssemblyNode>());
-					assemblyEdges.get(modifierNode).add(assemblyNode);
+					constructEdge(modifierNode, reactionNode);
 				}
 			}
 			// Connects assembly node for reaction to nodes for its products
@@ -252,117 +214,105 @@ public class AssemblyGraph {
 				 String productID = sbmlReaction.getProduct(j).getSpecies();
 				if (idToNode.containsKey(productID)) {
 					AssemblyNode productNode = idToNode.get(productID);
-					if (!assemblyEdges.containsKey(assemblyNode))
-						assemblyEdges.put(assemblyNode, new HashSet<AssemblyNode>());
-					assemblyEdges.get(assemblyNode).add(productNode);
+					constructEdge(reactionNode, productNode);
 				}
 			}
-			// Connects assembly nodes for parameters and reactions rates appearing in kinetic law of reaction
+			// Connects assembly nodes for parameters and reaction rates appearing in kinetic law of reaction
 			// to assembly node for reaction
-			KineticLaw kl = sbmlReaction.getKineticLaw();
-			if (kl != null && kl.isSetMath()) {
-				for (String input : parseInputHelper(kl.getMath())) {
-					if (idToNode.containsKey(input)) {
-						AssemblyNode inputNode = idToNode.get(input);
-						if (!assemblyEdges.containsKey(inputNode))
-							assemblyEdges.put(inputNode, new HashSet<AssemblyNode>());
-						assemblyEdges.get(inputNode).add(assemblyNode);
-					}
-				}
-			}
-			if (sbmlReaction.getExtensionPackages().containsKey(CompConstant.namespaceURI)) {
-				CompSBasePlugin compSBMLReaction = SBMLutilities.getCompSBasePlugin(sbmlReaction);
-				Set<AssemblyNode> submodelNodes = new HashSet<AssemblyNode>();
-				for (int j = 0; j < compSBMLReaction.getListOfReplacedElements().size(); j++) {
-					String submodelID = compSBMLReaction.getListOfReplacedElements().get(j).getSubmodelRef();
-					if (idToNode.containsKey(submodelID)) 
-						submodelNodes.add(idToNode.get(submodelID));
-				}
-				if (compSBMLReaction.isSetReplacedBy()) {
-					String submodelID = compSBMLReaction.getReplacedBy().getSubmodelRef();
-					if (idToNode.containsKey(submodelID)) 
-						submodelNodes.add(idToNode.get(submodelID));
-				}
-				for (AssemblyNode submodelNode : submodelNodes) {
-					if (!assemblyEdges.containsKey(submodelNode))
-						assemblyEdges.put(submodelNode, new HashSet<AssemblyNode>());
-					assemblyEdges.get(submodelNode).add(assemblyNode);
-				}
-				if (submodelNodes.size() > 0) {
-					if (!assemblyEdges.containsKey(assemblyNode))
-						assemblyEdges.put(assemblyNode, new HashSet<AssemblyNode>());
-					assemblyEdges.get(assemblyNode).addAll(submodelNodes);
-				}
-			}
+			parseMath(sbmlReaction.getKineticLaw(), reactionNode, idToNode);
+			if (sbmlReaction.getExtensionPackages().containsKey(CompConstant.namespaceURI))
+				parsePortMappings(sbmlReaction, reactionNode, idToNode);
 		}
 	}
 	
-	// Creates assembly nodes for rules and connects them to nodes for reactions and rules
-	// on the basis of shared parameters
-	private void parseRuleSbol(Model sbmlModel, HashMap<String, AssemblyNode> idToNode) {
+	// Creates assembly nodes for rules and connects them to nodes for input/output species,
+	// reaction rates, and parameters
+	private void parseRuleSBOL(Model sbmlModel, HashMap<String, AssemblyNode> idToNode) {
 		for (int i = 0; i < sbmlModel.getRuleCount(); i++) {
 			Rule sbmlRule = sbmlModel.getRule(i);
 			// Creates assembly node for rule
 			if (sbmlRule.isAssignment() || sbmlRule.isRate()) {
-				List<URI> sbolURIs = new LinkedList<URI>();
-				String sbolStrand = AnnotationUtility.parseSBOLAnnotation(sbmlRule, sbolURIs);
-				AssemblyNode assemblyNode = new AssemblyNode(sbolURIs, sbolStrand);
-				assemblyNodes.add(assemblyNode);
-				// Connects assembly nodes for input species and parameters to node for rule
-				for (String input : parseInputHelper(sbmlRule.getMath())) {
-					if (idToNode.containsKey(input)) {
-						AssemblyNode inputNode = idToNode.get(input);
-						if (!assemblyEdges.containsKey(inputNode))
-							assemblyEdges.put(inputNode, new HashSet<AssemblyNode>());
-						assemblyEdges.get(inputNode).add(assemblyNode);
-					} 
-				}
+				AssemblyNode ruleNode = constructNode(sbmlRule);
+				if (ruleNode.getURIs().size() > 0)
+					containsSBOL = true;
+				// Connects assembly nodes for input species, reaction rates, and parameters to node for rule
+				parseMath(sbmlRule, ruleNode, idToNode);
 				// Connects assembly node for rule to node for its output species or parameter
 				String output = SBMLutilities.getVariable(sbmlRule);
-				if (output != null) {
-					if (idToNode.containsKey(output)) {
-						AssemblyNode outputNode = idToNode.get(output);
-						if (!assemblyEdges.containsKey(assemblyNode))
-							assemblyEdges.put(assemblyNode, new HashSet<AssemblyNode>());
-						assemblyEdges.get(assemblyNode).add(outputNode);
-					} 
+				if (output != null && idToNode.containsKey(output)) {
+					AssemblyNode outputNode = idToNode.get(output);
+					constructEdge(ruleNode, outputNode);
 				}
-				if (sbmlRule.getExtensionPackages().containsKey(CompConstant.namespaceURI)) {
-					CompSBasePlugin compSBMLRule = SBMLutilities.getCompSBasePlugin(sbmlRule);
-					Set<AssemblyNode> submodelNodes = new HashSet<AssemblyNode>();
-					for (int j = 0; j < compSBMLRule.getListOfReplacedElements().size(); j++) {
-						String submodelID = compSBMLRule.getListOfReplacedElements().get(j).getSubmodelRef();
-						if (idToNode.containsKey(submodelID)) 
-							submodelNodes.add(idToNode.get(submodelID));
-					}
-					if (compSBMLRule.isSetReplacedBy()) {
-						String submodelID = compSBMLRule.getReplacedBy().getSubmodelRef();
-						if (idToNode.containsKey(submodelID)) 
-							submodelNodes.add(idToNode.get(submodelID));
-					}
-					for (AssemblyNode submodelNode : submodelNodes) {
-						if (!assemblyEdges.containsKey(submodelNode))
-							assemblyEdges.put(submodelNode, new HashSet<AssemblyNode>());
-						assemblyEdges.get(submodelNode).add(assemblyNode);
-					}
-					if (submodelNodes.size() > 0) {
-						if (!assemblyEdges.containsKey(assemblyNode))
-							assemblyEdges.put(assemblyNode, new HashSet<AssemblyNode>());
-						assemblyEdges.get(assemblyNode).addAll(submodelNodes);
-					}
-				}
-				if (sbolURIs.size() > 0)
-					containsSBOL = true;
+				if (sbmlRule.getExtensionPackages().containsKey(CompConstant.namespaceURI))
+					parsePortMappings(sbmlRule, ruleNode, idToNode);
 			}
 		}
 	}
 	
-	private LinkedList<String> parseInputHelper(ASTNode astNode) {
+	// Creates assembly nodes for events and connects them to nodes for input/output species,
+	// reaction rates, and parameters
+	private void parseEventSBOL(Model sbmlModel, HashMap<String, AssemblyNode> idToNode) {
+		for (int i = 0; i < sbmlModel.getEventCount(); i++) {
+			Event sbmlEvent = sbmlModel.getListOfEvents().get(i);
+			AssemblyNode eventNode = constructNode(sbmlEvent, sbmlEvent.getId());
+			if (eventNode.getURIs().size() > 0)
+				containsSBOL = true;
+			idToNode.put(sbmlEvent.getId(), eventNode);
+			if (sbmlEvent.getTrigger() != null)
+				parseMath(sbmlEvent.getTrigger(), eventNode, idToNode);
+			if (sbmlEvent.getDelay() != null)
+				parseMath(sbmlEvent.getDelay(), eventNode, idToNode);
+			if (sbmlEvent.getPriority() != null)
+				parseMath(sbmlEvent.getPriority(), eventNode, idToNode);
+			for (int j = 0; j < sbmlEvent.getEventAssignmentCount(); j++) {
+				parseMath(sbmlEvent.getEventAssignment(j), eventNode, idToNode);
+				String output = sbmlEvent.getEventAssignment(j).getVariable();
+				if (output != null && idToNode.containsKey(output)) {
+					AssemblyNode outputNode = idToNode.get(output);
+					constructEdge(eventNode, outputNode);
+				}
+			}
+			if (sbmlEvent.getExtensionPackages().containsKey(CompConstant.namespaceURI))
+				parsePortMappings(sbmlEvent, eventNode, idToNode);
+		}
+	}
+
+	private void parsePortMappings(SBase sbmlElement, AssemblyNode node, 
+			HashMap<String, AssemblyNode> idToNode) {
+		CompSBasePlugin compSBMLElement = SBMLutilities.getCompSBasePlugin(sbmlElement);
+		Set<AssemblyNode> submodelNodes = new HashSet<AssemblyNode>();
+		for (int j = 0; j < compSBMLElement.getListOfReplacedElements().size(); j++) {
+			String submodelID = compSBMLElement.getListOfReplacedElements().get(j).getSubmodelRef();
+			if (idToNode.containsKey(submodelID)) 
+				submodelNodes.add(idToNode.get(submodelID));
+		}
+		if (compSBMLElement.isSetReplacedBy()) {
+			String submodelID = compSBMLElement.getReplacedBy().getSubmodelRef();
+			if (idToNode.containsKey(submodelID)) 
+				submodelNodes.add(idToNode.get(submodelID));
+		}
+		for (AssemblyNode submodelNode : submodelNodes) {
+			constructEdge(submodelNode, node);
+			constructEdge(node, submodelNode);
+		}
+	}
+	
+	private void parseMath(AbstractMathContainer sbmlMathContainer, AssemblyNode sinkNode,
+			HashMap<String, AssemblyNode> idToNode) {
+		if (sbmlMathContainer.isSetMath())
+			for (String input : parseMathHelper(sbmlMathContainer.getMath()))
+				if (idToNode.containsKey(input)) {
+					AssemblyNode inputNode = idToNode.get(input);
+					constructEdge(inputNode, sinkNode);
+				}
+	}
+	
+	private LinkedList<String> parseMathHelper(ASTNode astNode) {
 		LinkedList<String> inputs = new LinkedList<String>();
 		if (!astNode.isOperator() && !astNode.isNumber())
 			inputs.add(astNode.getName());
 		for (int i = 0; i < astNode.getChildCount(); i++) {
-			inputs.addAll(parseInputHelper(astNode.getListOfNodes().get(i)));
+			inputs.addAll(parseMathHelper(astNode.getListOfNodes().get(i)));
 		}
 		return inputs;
 	}

@@ -450,18 +450,8 @@ public class PromoterPanel extends JPanel {
 					SBOLAnnotation sbolAnnot = new SBOLAnnotation(production.getMetaId(), 
 							sbolField.getSBOLURIs(), sbolField.getSBOLStrand());
 					AnnotationUtility.setSBOLAnnotation(production, sbolAnnot);
-					if (sbolField.wasInitiallyBlank())
-						bioModel.setElementSBOLCount(bioModel.getElementSBOLCount() + 1);
-//					if (removeModelSBOLAnnotationFlag) {
-//						AnnotationUtility.removeSBOLAnnotation(bioModel.getSBMLDocument().getModel());
-//						bioModel.setModelSBOLAnnotationFlag(false);
-//						modelEditor.getSchematic().getSBOLDescriptorsButton().setEnabled(true);
-//					}
-				} else {
+				} else
 					AnnotationUtility.removeSBOLAnnotation(production);
-					if (!sbolField.wasInitiallyBlank())
-						bioModel.setElementSBOLCount(bioModel.getElementSBOLCount() - 1);
-				}
 
 				// rename all the influences that use this promoter if name was changed
 				if (selected != null && !oldName.equals(id)) {
