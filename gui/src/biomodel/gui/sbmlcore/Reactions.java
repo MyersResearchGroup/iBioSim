@@ -821,10 +821,12 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				// TODO: do flux bound syntax check here if needed
 				
 			}
-			if (!error && complex==null && production==null) {
-				if (SBMLutilities.returnsBoolean(bioModel.addBooleans(kineticLaw.getText().trim()), bioModel.getSBMLDocument().getModel())) {
-					JOptionPane.showMessageDialog(Gui.frame, "Kinetic law must evaluate to a number.", "Number Expected", JOptionPane.ERROR_MESSAGE);
-					error = true;
+			if(kineticFluxLabel.getSelectedItem().equals("Kinetic Law:")){
+				if (!error && complex==null && production==null) {
+					if (SBMLutilities.returnsBoolean(bioModel.addBooleans(kineticLaw.getText().trim()), bioModel.getSBMLDocument().getModel())) {
+						JOptionPane.showMessageDialog(Gui.frame, "Kinetic law must evaluate to a number.", "Number Expected", JOptionPane.ERROR_MESSAGE);
+						error = true;
+					}
 				}
 			}
 			if (!error) {
