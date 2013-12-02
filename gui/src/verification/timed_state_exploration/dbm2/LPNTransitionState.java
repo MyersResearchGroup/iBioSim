@@ -57,6 +57,7 @@ public class LPNTransitionState{
 		zone = new DBMLL(baseState);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public LPNTransitionState(LPNState baseState, HashSet<Integer> enabledTransitions)
 	{
 		this.state = baseState;
