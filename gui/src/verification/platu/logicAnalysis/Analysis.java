@@ -54,6 +54,7 @@ public class Analysis {
 	private HashSet<Transition> visitedTrans;
 	HashMap<Transition, StaticDependencySets> staticDependency = new HashMap<Transition, StaticDependencySets>();
 		
+	@SuppressWarnings("unused")
 	public Analysis(StateGraph[] lpnList, State[] initStateArray, LPNTranRelation lpnTranRelation, String method) {
 		traceCex = new LinkedList<Transition>();
 		mddMgr = new Mdd(lpnList.length);
@@ -517,7 +518,7 @@ public class Analysis {
 			
 			// TODO: Andrew: I don't think you need the toHashSet() now.
 			//drawGlobalStateGraph(sgList, prjStateSet.toHashSet(), true);
-			drawGlobalStateGraph(sgList, initPrjState, prjStateSet);
+			drawGlobalStateGraph(initPrjState, prjStateSet);
 		}
 //		// ---- TEMP ----
 //		try{
@@ -641,7 +642,7 @@ public class Analysis {
 		return failureTranIsEnabled;
 	}
 
-	public void drawGlobalStateGraph(StateGraph[] sgList, PrjState initGlobalState, StateSetInterface globalStateSet) {
+	public void drawGlobalStateGraph(PrjState initGlobalState, StateSetInterface globalStateSet) {
 		try {
 			String fileName = null;
 			if (Options.getPOR().toLowerCase().equals("off")) {
@@ -752,6 +753,7 @@ public class Analysis {
 		}	
 	}
 	
+	@SuppressWarnings("unused")
 	private void drawDependencyGraphs(LhpnFile[] lpnList) {
 		String fileName = Options.getPrjSgPath() + "dependencyGraph.dot";
 		BufferedWriter out;
@@ -1043,9 +1045,9 @@ public class Analysis {
 			}			
 		}
 		if (Options.getDebugMode()) {
-			printStaticSetsMap(lpnList);
+			printStaticSetsMap();
 		}			
-		LpnTranList initPersistentTrans = getPersistentSet(initStateArray, null, tranFiringFreq, sgList, lpnList, prjStateSet, stateStackTop);
+		LpnTranList initPersistentTrans = getPersistentSet(initStateArray, null, tranFiringFreq, sgList, prjStateSet);
 		lpnTranStack.push(initPersistentTrans);
 		if (Options.getDebugMode()) {			
 			printTransList(initPersistentTrans, "+++++++ Push trans onto lpnTranStack @ 1++++++++");
@@ -1134,7 +1136,7 @@ public class Analysis {
 				}
 			}
 			LpnTranList nextPersistentTrans = new LpnTranList();
-			nextPersistentTrans = getPersistentSet(curStateArray, nextStateArray, tranFiringFreq, sgList, lpnList, prjStateSet, stateStackTop);
+			nextPersistentTrans = getPersistentSet(curStateArray, nextStateArray, tranFiringFreq, sgList, prjStateSet);
 			// check for possible deadlock
 			if (nextPersistentTrans.size() == 0) {
 				System.out.println("*** Verification failed: deadlock.");
@@ -1234,8 +1236,8 @@ public class Analysis {
 							
 						}
 						LpnTranList newNextPersistent = new LpnTranList();
-						newNextPersistent = computeCycleClosingTrans(curStateArray, nextStateArray, staticDependency, 
-																	tranFiringFreq, sgList, prjStateSet, nextPrjState, nextPersistentSet, curPersistentSet, stateStack);
+						newNextPersistent = computeCycleClosingTrans(curStateArray, nextStateArray, tranFiringFreq, 
+																	sgList, nextPersistentSet, curPersistentSet);
 						if (newNextPersistent != null && !newNextPersistent.isEmpty()) {
 							//LpnTranList newNextPersistentTrans = getLpnTranList(newNextPersistent, sgList);
 //							if (Options.getDebugMode()) {
@@ -1270,7 +1272,7 @@ public class Analysis {
 			writePerformanceResultsToLogFile(true, tranFiringCnt, totalStateCnt, peakTotalMem / 1000000, peakUsedMem / 1000000);
 		if (Options.getOutputSgFlag()) {
 			System.out.println("outputSGPath = "  + Options.getPrjSgPath());			//
-			drawGlobalStateGraph(sgList, initPrjState, prjStateSet);
+			drawGlobalStateGraph(initPrjState, prjStateSet);
 		}
 		return prjStateSet;
 	}
@@ -1345,11 +1347,9 @@ public class Analysis {
 
 	private LpnTranList computeCycleClosingTrans(State[] curStateArray,
 			State[] nextStateArray,
-			HashMap<Transition, StaticDependencySets> staticSetsMap,
 			HashMap<Transition, Integer> tranFiringFreq,
-			StateGraph[] sgList, StateSetInterface prjStateSet,
-			PrjState nextPrjState, HashSet<Transition> nextPersistent, 
-			HashSet<Transition> curPersistent, HashSet<PrjState> stateStack) {		
+			StateGraph[] sgList,
+			HashSet<Transition> nextPersistent, HashSet<Transition> curPersistent) {		
     	for (State s : nextStateArray)
     		if (s == null) 
     			throw new NullPointerException();
@@ -1725,7 +1725,7 @@ public class Analysis {
 //		return null;
 //	}
 
-	private void printStaticSetsMap( LhpnFile[] lpnList) {		
+	private void printStaticSetsMap() {		
 		System.out.println("============ staticSetsMap ============");			
 		for (Transition lpnTranPair : staticDependency.keySet()) {
 			StaticDependencySets statSets = staticDependency.get(lpnTranPair);			
@@ -1810,17 +1810,16 @@ public class Analysis {
     /**
      * Return the set of all LPN transitions that are enabled in 'state'.
      * The enabledSetTbl (for each StateGraph obj) stores the persistent set for each state of each LPN.
-     * @param stateArray
+     * @param sgList 
      * @param prjStateSet 
+     * @param stateArray
      * @param enable 
      * @param disableByStealingToken 
      * @param disable 
-     * @param sgList 
      * @return
      */
     private LpnTranList getPersistentSet(State[] curStateArray, State[] nextStateArray, 
-    			HashMap<Transition, Integer> tranFiringFreq, StateGraph[] sgList, LhpnFile[] lpnList,
-    			StateSetInterface prjStateSet, PrjState stateStackTop) {
+    			HashMap<Transition, Integer> tranFiringFreq, StateGraph[] sgList, StateSetInterface prjStateSet) {
     	State[] stateArray = null;
     	if (nextStateArray == null)
     		stateArray = curStateArray;
@@ -1852,7 +1851,7 @@ public class Analysis {
         if (curEnabled.isEmpty()) {
         	return persistentSet;
         }       
-        HashSet<Transition> ready = computePersistentSet(stateArray, curEnabled, tranFiringFreq, sgList);
+        HashSet<Transition> ready = computePersistentSet(stateArray, curEnabled, tranFiringFreq);
     	if (Options.getDebugMode()) {
 	    	System.out.println("******* End POR *******");
 	    	printIntegerSet(ready, "Persistent set");
@@ -4190,8 +4189,8 @@ public class Analysis {
 	 *  Return: sticky transitions from curStickyTransArray that are not marking disabled in nextState.
 	 */
 	public static LpnTranList[] checkStickyTrans(
-			LpnTranList[] curStickyTransArray, LpnTranList[] nextEnabledArray, 
-			LpnTranList[] nextStickyTransArray, State nextState, LhpnFile LPN) {
+			LpnTranList[] curStickyTransArray, LpnTranList[] nextStickyTransArray, 
+			State nextState, LhpnFile LPN) {
 		int arraySize = curStickyTransArray.length;
 		LpnTranList[] stickyTransArray = new LpnTranList[arraySize];
 		boolean[] hasStickyTrans = new boolean[arraySize];
@@ -4275,7 +4274,7 @@ public class Analysis {
 	}
     
     private HashSet<Transition> computePersistentSet(State[] curStateArray,
-    		HashSet<Transition> curEnabled, HashMap<Transition,Integer> tranFiringFreq, StateGraph[] sgList) {
+    		HashSet<Transition> curEnabled, HashMap<Transition,Integer> tranFiringFreq) {
     	if (curEnabled.size() == 1) 
     		return curEnabled;
     	HashSet<Transition> ready = new HashSet<Transition>();
