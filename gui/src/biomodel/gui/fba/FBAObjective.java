@@ -258,9 +258,13 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), objectiveID.getText().trim(), selectedID, false);
 			if (!error) {
-				error = !objective.getText().matches("((\\d*\\.\\d*\\*)?[_\\da-zA-Z]+)+");
-				JOptionPane.showMessageDialog(Gui.frame, "Invalid formula!", 
-						"Input does not match acceptable formula format.", JOptionPane.ERROR_MESSAGE);
+				String tester = objective.getText().replaceAll("\\s", "");
+				if(!tester.matches("((\\d*\\.\\d*\\*)?[\\_\\da-zA-Z]+\\+?)+")){
+					error = true;
+					JOptionPane.showMessageDialog(Gui.frame, "Input does not match acceptable formula format.",
+						"Invalid formula!", JOptionPane.ERROR_MESSAGE);
+				}
+				
 			} 
 			if (!error) {
 				int eqsign = objective.getText().indexOf("=");
@@ -272,7 +276,8 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 					if(coefficeintReaction.length>1){
 						if(!bioModel.getReactions().contains(coefficeintReaction[1].trim())){
 							error = true;
-							JOptionPane.showMessageDialog(Gui.frame, "Reaction " + coefficeintReaction[1].trim() + " is not a valid reaction!", 
+							JOptionPane.showMessageDialog(Gui.frame, "Reaction " + 
+									coefficeintReaction[1].trim() + " is not a valid reaction!", 
 									"Must input vaild reaction IDs", JOptionPane.ERROR_MESSAGE);
 						}
 						try{
