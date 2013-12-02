@@ -47,19 +47,13 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 		
 		
 		JPanel bigPanel = new JPanel(new BorderLayout());
-		// TODO: allocate size based on number of objectives
 		String[] objectiveStringArray = new String[fbc.getListOfObjectives().size()];
-		// TODO: get active id from list of objectives
 		String activeObjective = fbc.getListOfObjectives().getActiveObjective();
 			
-		// TODO: Build entries to the objectiveStringArray
 		for (int i = 0; i < fbc.getListOfObjectives().size(); i++) {
 			String objective = "";
-			// TODO: get its type
 			Type type = fbc.getObjective(i).getType();
-			// TODO: get its id
 			String id = fbc.getObjective(i).getId();
-			// TODO: compare id with active id
 			if(activeObjective.equals(id)){
 				objective = "*";
 			}

@@ -42,6 +42,8 @@ import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.ext.comp.Port;
 import org.sbml.jsbml.ext.fbc.FluxBound;
 
+import sun.tools.java.Type;
+
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
 import biomodel.gui.sbol.SBOLField;
@@ -507,7 +509,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		modifierPanel.add(scroll5, "Center");
 		modifierPanel.add(addModifiers, "South");
 
-		// TODO: Change to combo box "Kinetic Law:" and "Flux bound:"
 		JComboBox kineticFluxLabel = new JComboBox(new String[] {"Kinetic Law:","Flux Bounds:"});
 		kineticLaw = new JTextArea();
 		kineticLaw.setLineWrap(true);
@@ -552,9 +553,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 				}
 				kineticLaw.setText(fluxbounds);
-				// TODO: set combo box to Flux bound:
-				// TODO: Search the flux bounds to find bounds related to reactionId, build a flux bound relation using that
-				// TODO: <lowerbound> <= reactionId <= <upperbound>
 			}
 		}
 		JPanel kineticPanel = new JPanel(new BorderLayout());
@@ -782,12 +780,10 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					error = true;
 				}
 				else if(kineticFluxLabel.getSelectedItem().equals("Kinteic Law:")){
-					// TODO: do not check if flux bound selected
 					if (complex==null && production==null && SBMLutilities.myParseFormula(kineticLaw.getText().trim()) == null) {
 						JOptionPane.showMessageDialog(Gui.frame, "Unable to parse kinetic law.", "Kinetic Law Error", JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
-					// TODO: do not check if flux bound selected
 					else if (complex==null && production==null){
 						ArrayList<String> invalidKineticVars = getInvalidVariablesInReaction(kineticLaw.getText().trim(), true, "", false);
 						if (invalidKineticVars.size() > 0) {
@@ -817,8 +813,18 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							error = SBMLutilities.checkNumFunctionArguments(gcm.getSBMLDocument(), SBMLutilities.myParseFormula(kineticLaw.getText().trim()));
 						}
 					}
-				}
+				} else {
 				// TODO: do flux bound syntax check here if needed
+					// Ensure you have a "double a <= reactionId <= double b" where a <= b
+					// reactionId = double
+					// reactionId <= double
+					// reactionId >= double
+					// double >= reactionId >= double
+					// (double a (>=,<=))? reactionId ((>=,=,<=) double b)
+					// If two operators, they should be the same two.
+					// If operators are <=, then a <= b
+					// If operators are >=, then a >= b
+				}
 				
 			}
 			if(kineticFluxLabel.getSelectedItem().equals("Kinetic Law:")){
@@ -904,7 +910,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						}
 					}
 					if(kineticFluxLabel.getSelectedItem().equals("Kinetic Law:")){
-						// TODO: if kinetic law selected do below
 						if (complex==null && production==null) {
 							react.getKineticLaw().setMath(bioModel.addBooleans(kineticLaw.getText().trim()));
 						} else if (complex!=null) {
@@ -914,27 +919,27 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						}
 						error = checkKineticLawUnits(react.getKineticLaw());
 						
-						FluxBound fx = new FluxBound();
-						fx.setReaction(reactionId);
-						bioModel.getSBMLFBC().removeFluxBound(fx);
-						// TODO: remove flux bounds if kinetic law selected
+						// TODO: remove any flux bounds on this reactionId
 					}
 					else{
 						react.unsetKineticLaw();
-						FluxBound fx = new FluxBound();
-						fx.setReaction(reactionId);
-						bioModel.getSBMLFBC().removeFluxBound(fx);
+						// TODO: remove any flux bounds on this reactionId
 						String[] userInput = kineticLaw.getText().trim().split("<=");
-						fx.setValue(Double.parseDouble(userInput[0]));
-						//fx.setOperation("lessEqual");
-						bioModel.getSBMLFBC().addFluxBound(fx);
-						fx.setValue(Double.parseDouble(userInput[2]));
-						//fx.setOperation("greaterEqual");
-						bioModel.getSBMLFBC().addFluxBound(fx);
+						double greaterValue = Double.parseDouble(userInput[0]);
+						double lessValue = Double.parseDouble(userInput[2]);
+						if (greaterValue != lessValue) {
+							// TODO: create greater than flux bound
+							// bioModel.getSBMLFBC().createFluxBound();
+							// populate it
+
+							// TODO: create less than flux bound 
+							// bioModel.getSBMLFBC().createFluxBound();
+							// populate it
+						} else {
+							// TODO: create equals flux bound
+						}
 					}
 
-					// TODO: else set flux bound, remember remove the kinetic law
-					//react.unsetKineticLaw();
 					if (!error) {
 						error = SBMLutilities.checkCycles(gcm.getSBMLDocument());
 						if (error) {
@@ -1012,14 +1017,12 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				else {
 					Reaction react = gcm.getSBMLDocument().getModel().createReaction();
 					int index = reactions.getSelectedIndex();
-					// TODO: don't create kinetic law if flux bound
 					if(kineticFluxLabel.getSelectedItem().equals("Kinetic Law:")){
 						react.createKineticLaw();
 						for (int i = 0; i < changedParameters.size(); i++) {
 							react.getKineticLaw().addLocalParameter(changedParameters.get(i));
 						}
 					}
-					// TODO: TO HERE
 					for (int i = 0; i < changedProducts.size(); i++) {
 						react.addProduct(changedProducts.get(i));
 					}
@@ -1063,18 +1066,23 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						error = checkKineticLawUnits(react.getKineticLaw());
 					}
 					else{
-						FluxBound fx = new FluxBound();
-						fx.setReaction(reactionId);
-						bioModel.getSBMLFBC().removeFluxBound(fx);
 						String[] userInput = kineticLaw.getText().trim().split("<=");
-						fx.setValue(Double.parseDouble(userInput[0]));
-						//fx.setOperation("lessEqual");
-						bioModel.getSBMLFBC().addFluxBound(fx);
-						fx.setValue(Double.parseDouble(userInput[2]));
-						//fx.setOperation("greaterEqual");
-						bioModel.getSBMLFBC().addFluxBound(fx);
+						double greaterValue = Double.parseDouble(userInput[0]);
+						double lessValue = Double.parseDouble(userInput[2]);
+						if (greaterValue != lessValue) {
+							// TODO: create greater than flux bound
+							// bioModel.getSBMLFBC().createFluxBound();
+							// populate it
+							//FluxBound fb = bioModel.getSBMLFBC().createFluxBound();
+							//fb.setOperation(FluxBound.Operation.GREATER_EQUAL);
+
+							// TODO: create less than flux bound 
+							// bioModel.getSBMLFBC().createFluxBound();
+							// populate it
+						} else {
+							// TODO: create equals flux bound
+						}
 					}
-					// TODO: else add flux bounds
 					if (!error) {
 						error = SBMLutilities.checkCycles(gcm.getSBMLDocument());
 						if (error) {
