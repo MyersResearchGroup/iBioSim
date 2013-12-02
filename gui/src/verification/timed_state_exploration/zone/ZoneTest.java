@@ -237,10 +237,13 @@ public class ZoneTest {
 				}
 			}
 			
+			read.close();
+			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			System.err.print("File not found.");
 		}
+		
 		
 		return null;
 	}
