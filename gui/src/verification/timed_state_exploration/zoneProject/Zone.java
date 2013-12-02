@@ -2254,6 +2254,7 @@ public class Zone{
 	 * @return
 	 * 			The updated Zone.
 	 */
+	@SuppressWarnings("unused")
 	public Zone fireTransitionbydbmIndex(int index, LpnTranList enabledTimers,
 			State[] localStates, 
 			ArrayList<HashMap<LPNContAndRate, IntervalPair>> newAssignValues)
@@ -4361,6 +4362,7 @@ public class Zone{
 	 * 		The new zone that is the result of restricting this zone according to the firing of the inequalities
 	 * 		in the eventSet.
 	 */
+	@SuppressWarnings("unused")
 	public Zone getContinuousRestrictedZone(EventSet eventSet, State[] localStates){
 		// Make a new copy of the zone.
 		Zone z = this.clone();
@@ -4595,6 +4597,7 @@ public class Zone{
 	 * @param EventList
 	 * 			The list of possible events.
 	 */
+	@SuppressWarnings("unused")
 	public LpnTranList addSetItem(LpnTranList E, Event e, State s){
 //		void lhpnAddSetItem(eventSets &E,lhpnEventADT e,ineqList &ineqL,lhpnZoneADT z,
 //                lhpnRateADT r,eventADT *events,int nevents,
@@ -5183,6 +5186,7 @@ public class Zone{
 	 */
 //	public void updateContinuousAssignment(ArrayList<HashMap<LPNContAndRate, IntervalPair>> newAssignValues){
 //	public void updateContinuousAssignment(ArrayList<UpdateContinuous> newAssignValues){
+	@SuppressWarnings("unused")
 	public void updateContinuousAssignment(ContinuousRecordSet newAssignValues){
 		/*
 		 * In dealing with the rates and continuous variables, there are four cases to consider. These cases

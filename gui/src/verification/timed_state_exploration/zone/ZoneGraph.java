@@ -70,10 +70,12 @@ public class ZoneGraph{
 		_bounds = new HashMap<Integer, intPair>();
 	}
 	
+	@SuppressWarnings("unused")
 	public ZoneGraph(int[] timers, int[][] matrix){
 		
 	}
 	
+	@SuppressWarnings("unused")
 	public ZoneGraph(State initialState){
 		
 	}
@@ -1122,47 +1124,56 @@ public class ZoneGraph{
 		}
 	}
 
+	@SuppressWarnings("unused")
 	public int getUpperBoundbyTransitionIndex(int timer) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
+	@SuppressWarnings("unused")
 	public int getUpperBoundbydbmIndex(int index) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
+	@SuppressWarnings("unused")
 	public int getLowerBoundbyTransitionIndex(int timer) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
+	@SuppressWarnings("unused")
 	public int getLowerBoundbydbmIndex(int index) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
+	@SuppressWarnings("unused")
 	public int getDbmEntry(int i, int j) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
+	@SuppressWarnings("unused")
 	public boolean exceedsLowerBoundbyTransitionIndex(int timer) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
+	@SuppressWarnings("unused")
 	public boolean exceedsLowerBoundbydbmIndex(int index) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
+	@SuppressWarnings("unused")
 	public ZoneType fireTransitionbyTransitionIndex(int timer,
 			int[] enabledTimers, State state) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@SuppressWarnings("unused")
 	public ZoneType fireTransitionbydbmIndex(int index, int[] enabledTimers,
 			State state) {
 		// TODO Auto-generated method stub
