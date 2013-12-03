@@ -23,7 +23,7 @@ import org.sbml.jsbml.RateRule;
 public class SimulatorHybridHierarchical  extends HierarchicalSimulator {
 
 
-	private static Long initializationTime = new Long(0);
+	//private static Long initializationTime = new Long(0);
 	//private String modelstateID;
 	int numSteps;
 	double relativeError, absoluteError , nextReactionStep, nextEventTime, nextTriggerTime;
@@ -37,8 +37,8 @@ public class SimulatorHybridHierarchical  extends HierarchicalSimulator {
 			{
 
 		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep,
-				randomSeed, progress, printInterval, initializationTime,
-				stoichAmpValue, running, interestingSpecies, quantityType);
+				randomSeed, progress, printInterval, stoichAmpValue,
+				running, interestingSpecies, quantityType);
 
 		this.numSteps = numSteps;
 		relativeError = relError;
@@ -288,7 +288,7 @@ public class SimulatorHybridHierarchical  extends HierarchicalSimulator {
 		double nextEventTime = Double.POSITIVE_INFINITY;
 		if (topmodel.noEventsFlag == false)
 		{
-			handleEvents(topmodel, topmodel.noRuleFlag, topmodel.noConstraintsFlag);
+			handleEvents(topmodel);
 			//step to the next event fire time if it comes before the next time step
 			if (!topmodel.triggeredEventQueue.isEmpty() && topmodel.triggeredEventQueue.peek().fireTime <= nextEventTime)
 				if(topmodel.triggeredEventQueue.peek().fireTime < nextEventTime)
@@ -299,7 +299,7 @@ public class SimulatorHybridHierarchical  extends HierarchicalSimulator {
 
 		for(ModelState models : submodels.values())
 			if (models.noEventsFlag == false){
-				handleEvents(models, models.noRuleFlag, models.noConstraintsFlag);
+				handleEvents(models);
 				//step to the next event fire time if it comes before the next time step
 				if (!models.triggeredEventQueue.isEmpty() && models.triggeredEventQueue.peek().fireTime <= nextEventTime)
 					if(models.triggeredEventQueue.peek().fireTime < nextEventTime)

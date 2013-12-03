@@ -25,7 +25,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 					throws IOException, XMLStreamException {
 
 		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed,
-				progress, printInterval, initializationTime, stoichAmpValue, running, interestingSpecies, quantityType);
+				progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType);
 
 		try {
 			initialize(randomSeed, 1);
@@ -405,14 +405,14 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 			{
 				HashSet<StringDoublePair> reactantStoichiometrySet = 
 						topmodel.reactionToReactantStoichiometrySetMap.get(affectedReactionID);
-				updatePropensities(topmodel, affectedReactionSet,affectedReactionID, reactantStoichiometrySet);
+				updatePropensities(topmodel, affectedReactionID,reactantStoichiometrySet);
 			}
 			else
 			{
 				HashSet<StringDoublePair> reactantStoichiometrySet = 
 
 						submodels.get(id).reactionToReactantStoichiometrySetMap.get(affectedReactionID);
-				updatePropensities(submodels.get(id), affectedReactionSet,affectedReactionID, reactantStoichiometrySet); 
+				updatePropensities(submodels.get(id), affectedReactionID,reactantStoichiometrySet); 
 			}		
 		}
 	}
@@ -420,7 +420,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 	/**
 	 * Helper method
 	 */
-	private void updatePropensities(ModelState model, HashSet<String> affectedReactionSet, String affectedReactionID, HashSet<StringDoublePair> reactantStoichiometrySet) 
+	private void updatePropensities(ModelState model, String affectedReactionID, HashSet<StringDoublePair> reactantStoichiometrySet) 
 	{
 		boolean notEnoughMoleculesFlag = false; 
 
@@ -550,7 +550,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		double nextEventTime = Double.POSITIVE_INFINITY;
 		if (topmodel.noEventsFlag == false)
 		{
-			handleEvents(topmodel, topmodel.noRuleFlag, topmodel.noConstraintsFlag);
+			handleEvents(topmodel);
 			//step to the next event fire time if it comes before the next time step
 			if (!topmodel.triggeredEventQueue.isEmpty() && topmodel.triggeredEventQueue.peek().fireTime <= nextEventTime)
 				if(topmodel.triggeredEventQueue.peek().fireTime < nextEventTime)
@@ -559,7 +559,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 
 		for(ModelState models : submodels.values())
 			if (models.noEventsFlag == false){
-				handleEvents(models, models.noRuleFlag, models.noConstraintsFlag);
+				handleEvents(models);
 				//step to the next event fire time if it comes before the next time step
 				if (!models.triggeredEventQueue.isEmpty() && models.triggeredEventQueue.peek().fireTime <= nextEventTime)
 					if(models.triggeredEventQueue.peek().fireTime < nextEventTime)
