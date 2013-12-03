@@ -23,7 +23,7 @@ import org.sbml.jsbml.RateRule;
 
 public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 	
-	private static Long initializationTime = new Long(0);
+	//private static Long initializationTime = new Long(0);
 	int numSteps;
 	double relativeError;
 	double absoluteError;
@@ -39,8 +39,8 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 
 
 		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, 0.0, randomSeed,
-				progress, printInterval, initializationTime, stoichAmpValue, running,
-				interestingSpecies, quantityType);
+				progress, printInterval, stoichAmpValue, running, interestingSpecies,
+				quantityType);
 
 
 		this.numSteps = numSteps;
@@ -300,7 +300,7 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 		double nextEventTime = Double.POSITIVE_INFINITY;
 		if (topmodel.noEventsFlag == false)
 		{
-			handleEvents(topmodel, topmodel.noRuleFlag, topmodel.noConstraintsFlag);
+			handleEvents(topmodel);
 			//step to the next event fire time if it comes before the next time step
 			if (!topmodel.triggeredEventQueue.isEmpty() && topmodel.triggeredEventQueue.peek().fireTime <= nextEventTime)
 				if(topmodel.triggeredEventQueue.peek().fireTime < nextEventTime)
@@ -311,7 +311,7 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 
 		for(ModelState models : submodels.values())
 			if (models.noEventsFlag == false){
-				handleEvents(models, models.noRuleFlag, models.noConstraintsFlag);
+				handleEvents(models);
 				//step to the next event fire time if it comes before the next time step
 				if (!models.triggeredEventQueue.isEmpty() && models.triggeredEventQueue.peek().fireTime <= nextEventTime)
 					if(models.triggeredEventQueue.peek().fireTime < nextEventTime)

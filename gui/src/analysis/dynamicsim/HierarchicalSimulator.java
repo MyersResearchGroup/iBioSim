@@ -132,8 +132,7 @@ public abstract class HierarchicalSimulator {
 	 */
 	public HierarchicalSimulator(String SBMLFileName, String outputDirectory, double timeLimit, 
 			double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, 
-			Long initializationTime, double stoichAmpValue, JFrame running, String[] interestingSpecies, 
-			String quantityType) 
+			double stoichAmpValue, JFrame running, String[] interestingSpecies, String quantityType) 
 					throws IOException, XMLStreamException {
 
 		this.SBMLFileName = SBMLFileName;
@@ -197,7 +196,7 @@ public abstract class HierarchicalSimulator {
 
 		isGrid = checkGrid(document.getModel());
 
-		topmodel = new ModelState(document.getModel(), 0, "topmodel");
+		topmodel = new ModelState(document.getModel(), "topmodel");
 
 		numSubmodels = (int)setupSubmodels(document);
 		getComponentPortMap(document);
@@ -456,14 +455,14 @@ public abstract class HierarchicalSimulator {
 				LinkedList<String> ids = getArrayIDs(document.getModel().getParameter(submodel.getModelRef()+ "__locations").getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim());
 				for(int i = 0; i < copies; i++)
 				{
-					submodels.put(ids.getFirst(), new ModelState(model, 0, ids.getFirst()));
+					submodels.put(ids.getFirst(), new ModelState(model, ids.getFirst()));
 					ids.removeFirst();
 					index++;
 				}
 			}
 			else
 			{
-				submodels.put(submodel.getId(), new ModelState(model, 0, submodel.getId()));
+				submodels.put(submodel.getId(), new ModelState(model, submodel.getId()));
 				index++;
 			}
 		}
@@ -1687,7 +1686,7 @@ public abstract class HierarchicalSimulator {
 	 * updates the event queue and fires events and so on
 	 * @param currentTime the current time in the simulation
 	 */
-	protected void handleEvents(ModelState modelstate, final boolean noAssignmentRulesFlag, final boolean noConstraintsFlag) {
+	protected void handleEvents(ModelState modelstate) {
 
 		HashSet<String> triggeredEvents = new HashSet<String>();
 
@@ -2341,7 +2340,7 @@ public abstract class HierarchicalSimulator {
 			modelstate.triggeredEventQueue = newTriggeredEventQueue;
 
 			//some events might trigger after this
-			handleEvents(modelstate, noAssignmentRulesFlag, noConstraintsFlag);
+			handleEvents(modelstate);
 		}//end loop through event queue
 
 		//add the fired events back into the untriggered set
@@ -2625,7 +2624,6 @@ public abstract class HierarchicalSimulator {
 	/**
 	 * calculates the initial propensity of a single reaction
 	 * also does some initialization stuff
-	 * 
 	 * @param reactionID
 	 * @param reactionFormula
 	 * @param reversible
@@ -2633,9 +2631,8 @@ public abstract class HierarchicalSimulator {
 	 * @param productsList
 	 * @param modifiersList
 	 */
-	private void setupSingleReaction(ModelState modelstate, String reactionID, ASTNode reactionFormula, boolean reversible, boolean fast,
-			ListOf<SpeciesReference> reactantsList, ListOf<SpeciesReference> productsList, 
-			ListOf<ModifierSpeciesReference> modifiersList) {
+	private void setupSingleReaction(ModelState modelstate, String reactionID, ASTNode reactionFormula, boolean reversible, ListOf<SpeciesReference> reactantsList,
+			ListOf<SpeciesReference> productsList, ListOf<ModifierSpeciesReference> modifiersList) {
 		reactionID = reactionID.replace("_negative_","-");
 
 		long size;
@@ -3121,8 +3118,8 @@ public abstract class HierarchicalSimulator {
 
 			ASTNode reactionFormula = reaction.getKineticLaw().getMath();
 
-			setupSingleReaction(modelstate, reactionID, reactionFormula, reaction.getReversible(), reaction.getFast(),
-					reaction.getListOfReactants(), reaction.getListOfProducts(), reaction.getListOfModifiers());
+			setupSingleReaction(modelstate, reactionID, reactionFormula, reaction.getReversible(), reaction.getListOfReactants(),
+					reaction.getListOfProducts(), reaction.getListOfModifiers());
 		}
 	}
 
@@ -3391,14 +3388,6 @@ public abstract class HierarchicalSimulator {
 			setupSingleEvent(modelstate, event);
 		}
 	}
-
-
-	protected void setupFunctionDefinition(ModelState modelstate)
-	{
-		//for(FunctionDefinition function: modelstate.model.getListOfFunctionDefinitions())
-		//modelstate.ibiosimFunctionDefinitions.add(function.getName());
-	}
-
 
 	protected void setupRules(ModelState modelstate)
 	{
@@ -3685,7 +3674,7 @@ public abstract class HierarchicalSimulator {
 		protected HashMap<String, String> replacementDependency = null;
 
 		
-		public ModelState(Model bioModel, int index, String submodelID)
+		public ModelState(Model bioModel, String submodelID)
 		{
 			this.model = bioModel;
 			this.numSpecies = this.model.getSpeciesCount();
