@@ -144,6 +144,14 @@ public class IntervalPair {
 	}
 	
 	/**
+	 * Determines if this interval is just the value zero.
+	 * @return True if the interval is just the zero singleton.
+	 */
+	public boolean isZero(){
+		return singleValue() && _lowerBound == 0;
+	}
+	
+	/**
 	 * Determines if zero lies strictly in the range.
 	 * @return True if the lower bound is strictly less than zero and
 	 * the upper bound is strictly greater than zero.
