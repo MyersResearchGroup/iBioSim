@@ -3166,7 +3166,7 @@ public class Analysis {
 		// mddMgr.add(reachSet, curLocalStateArray);
 		mddNode reachSet = null;
 		mddNode exploredSet = null;
-		LinkedList<State>[] nextSetArray = (new LinkedList[arraySize]);
+		LinkedList<State>[] nextSetArray = new LinkedList[arraySize];
 		for (int i = 0; i < arraySize; i++)
 			nextSetArray[i] = new LinkedList<State>();
 

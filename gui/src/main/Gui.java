@@ -3791,6 +3791,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 			}
 			catch (Exception e1) {
+				//e1.printStackTrace();
 				JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
