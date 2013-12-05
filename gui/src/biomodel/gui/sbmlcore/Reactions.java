@@ -40,9 +40,6 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.ext.comp.Port;
-import org.sbml.jsbml.ext.fbc.FluxBound;
-
-import sun.tools.java.Type;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;

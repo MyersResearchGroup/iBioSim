@@ -25,7 +25,6 @@ import javax.swing.ListSelectionModel;
 import main.Gui;
 import main.util.Utility;
 
-import org.sbml.jsbml.AlgebraicRule;
 import org.sbml.jsbml.AssignmentRule;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.InitialAssignment;
@@ -852,8 +851,6 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	 * Check the units of a rate rule
 	 */
 	public boolean checkRateRuleUnits(Rule rule) {
-//		TODO: Is this necessary?
-//		bioModel.getSBMLDocument().getModel().populateListFormulaUnitsData();
 		if (rule.containsUndeclaredUnits()) {
 			if (biosim.getCheckUndeclared()) {
 				JOptionPane.showMessageDialog(Gui.frame, "Rate rule contains literals numbers or parameters with undeclared units.\n"
@@ -876,8 +873,6 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	 * Check the units of an assignment rule
 	 */
 	public boolean checkAssignmentRuleUnits(Rule rule) {
-//		TODO: Is this necessary?
-//		bioModel.getSBMLDocument().getModel().populateListFormulaUnitsData();
 		if (rule.containsUndeclaredUnits()) {
 			if (biosim.getCheckUndeclared()) {
 				JOptionPane.showMessageDialog(Gui.frame, "Assignment rule contains literals numbers or parameters with undeclared units.\n"
