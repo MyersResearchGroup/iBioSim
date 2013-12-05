@@ -3707,6 +3707,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			try {
 				if (new File(filename).exists()) {
 					file[file.length - 1] = file[file.length - 1].replaceAll("[^a-zA-Z0-9_.]+", "_");
+					if (Character.isDigit(file[file.length - 1].charAt(0))) {
+						file[file.length - 1] = "M" + file[file.length - 1];
+					}
 					if (checkFiles(root + separator + file[file.length - 1], filename.trim())) {
 						if (overwrite(root + separator + file[file.length - 1], file[file.length - 1])) {
 							// Identify which LPN format is imported.
@@ -3777,6 +3780,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					atacs = Runtime.getRuntime().exec("atacs -llsl " + lpnName, null, work);
 					atacs.waitFor();
 					lpnName = lpnName.replaceAll("[^a-zA-Z0-9_.]+", "_");
+					if (Character.isDigit(lpnName.charAt(0))) {
+						lpnName = "M" + lpnName;
+					}
 					FileOutputStream out = new FileOutputStream(new File(lpnName));
 					FileInputStream in = new FileInputStream(new File(newName));
 					int read = in.read();
@@ -3791,7 +3797,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 			}
 			catch (Exception e1) {
-				//e1.printStackTrace();
+				e1.printStackTrace();
 				JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
