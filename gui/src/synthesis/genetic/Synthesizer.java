@@ -99,7 +99,6 @@ public class Synthesizer {
 		return matchBound;
 	}
 	
-	@SuppressWarnings("unused")
 	private int coverSpec(SynthesisGraph spec, List<List<SynthesisGraph>> bestSolutions) {
 		List<SynthesisGraph> solution = new LinkedList<SynthesisGraph>();
 		int solutionCost = 0;

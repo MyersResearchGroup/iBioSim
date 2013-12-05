@@ -13,13 +13,10 @@ import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Properties;
 import java.util.prefs.Preferences;
 
@@ -7683,7 +7680,7 @@ public class BioModel {
 
 	private HashMap<String, Properties> compartments;
 	
-	private int elementSBOLCount;
+	//private int elementSBOLCount;
 	//private boolean modelSBOLAnnotationFlag;
 	private String[] sbolDescriptors;
 	private String sbolSaveFilePath;
