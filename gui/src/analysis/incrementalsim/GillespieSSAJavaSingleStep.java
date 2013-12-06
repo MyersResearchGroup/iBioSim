@@ -881,6 +881,10 @@ public class GillespieSSAJavaSingleStep {
 						double expRandNumber = -Math.log(uniformRandNumber)/lambda;
 						retStr = Double.toString(expRandNumber);
 					}
+					break;
+				}
+				default: {
+					System.out.println("Unimplemented function");
 				}
 				// TODO MOD, BITNOT, BITOR, BITAND, BITXOR, idiv
 			}
@@ -1145,6 +1149,10 @@ public class GillespieSSAJavaSingleStep {
 						double expRandNumber = -Math.log(uniformRandNumber)/lambda;
 						retStr = Double.toString(expRandNumber);
 					}
+					break;
+				}
+				default: {
+					System.out.println("Unimplemented function");
 				}
 				// TODO MOD, BITNOT, BITOR, BITAND, BITXOR, idiv
 			}

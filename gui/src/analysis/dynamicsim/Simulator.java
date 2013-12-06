@@ -1041,7 +1041,8 @@ public abstract class Simulator {
 			case RELATIONAL_LT:
 				return getDoubleFromBoolean(
 						evaluateExpressionRecursive(node.getLeftChild()) < evaluateExpressionRecursive(node.getRightChild()));			
-			}			
+			default:
+			}		
 		}
 		
 		//if it's a mathematical constant
@@ -1054,6 +1055,8 @@ public abstract class Simulator {
 				
 			case CONSTANT_PI:
 				return Math.PI;
+				
+			default:
 			}
 		}
 		
@@ -1380,6 +1383,8 @@ public abstract class Simulator {
 			
 			case FUNCTION_ARCSECH:
 				return Fmath.asech(evaluateExpressionRecursive(node.getChild(0)));
+			
+			default:
 				
 			} //end switch
 			

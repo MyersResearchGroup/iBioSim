@@ -559,7 +559,7 @@ public abstract class HierarchicalSimulator {
 				{
 					ReplacedBy replacement = sbmlSBase.getReplacedBy();
 					String submodel = replacement.getSubmodelRef();
-					String subSpecies = replacement.getPortRef().replaceAll("(\\w)+[_]{2}", "");;
+					String subSpecies = replacement.getPortRef().replaceAll("(\\w)+[_]{2}", "");
 
 					ModelState temp = getModel(submodel);
 					

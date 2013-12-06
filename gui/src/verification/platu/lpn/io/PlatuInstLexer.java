@@ -89,7 +89,7 @@ public class PlatuInstLexer extends Lexer {
     // delegates
     // delegators
 
-    public PlatuInstLexer() {;} 
+    public PlatuInstLexer() {} 
     public PlatuInstLexer(CharStream input) {
         this(input, new RecognizerSharedState());
     }

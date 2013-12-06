@@ -152,8 +152,8 @@ public class Analysis {
 				// enabled transition.
 				PrjState nextPrjState = new PrjState(nextStateArray);
 
-				if (stateTrace.contains(nextPrjState) == true)
-					;// System.out.println("found a cycle");
+				//if (stateTrace.contains(nextPrjState) == true)
+				//	System.out.println("found a cycle");
 
 				if (prjStateSet.add(nextPrjState) == false) {
 					continue;
@@ -3353,7 +3353,7 @@ public class Analysis {
 		
 		boolean failure = false;
 		int tranFiringCnt = 0;
-		int arraySize = lpnList.length;;
+		int arraySize = lpnList.length;
 
 		HashSet<PrjState> stateStack = new HashSet<PrjState>();
 		Stack<LpnTranList> lpnTranStack = new Stack<LpnTranList>();
@@ -3740,7 +3740,7 @@ public class Analysis {
 		
 		boolean failure = false;
 		int tranFiringCnt = 0;
-		int arraySize = sgList.length;;
+		int arraySize = sgList.length;
 
 		HashSet<PrjState> stateStack = new HashSet<PrjState>();
 		Stack<LpnTranList> lpnTranStack = new Stack<LpnTranList>();

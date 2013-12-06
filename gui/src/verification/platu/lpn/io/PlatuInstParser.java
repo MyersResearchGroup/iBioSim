@@ -2268,7 +2268,7 @@ public class PlatuInstParser extends Parser {
     public static class logic_return extends ParserRuleReturnScope {
         public List<Integer> initMarking;
         public LpnTranList lpnTranSet;
-    };
+    }
 
     // $ANTLR start "logic"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:873:1: logic returns [List<Integer> initMarking, LpnTranList lpnTranSet] : marking ( transition )+ ;
@@ -3154,7 +3154,7 @@ public class PlatuInstParser extends Parser {
     public static class delay_return extends ParserRuleReturnScope {
         public int delayLB;
         public int delayUB;
-    };
+    }
 
     // $ANTLR start "delay"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1027:1: delay returns [int delayLB, int delayUB] : 'delay' '(' lb= INT ',' (ub= INT | 'inf' ) ')' ';' ;
@@ -3634,7 +3634,7 @@ public class PlatuInstParser extends Parser {
     public static class term_return extends ParserRuleReturnScope {
         public ExpressionNode expr;
         public int value;
-    };
+    }
 
     // $ANTLR start "term"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1221:1: term returns [ExpressionNode expr, int value] : (var= ID | (array= ID ( '[' (arrayExpr= expression ) ']' )+ ) | LPAREN expression RPAREN | INT | TRUE | FALSE );
@@ -3873,7 +3873,7 @@ public class PlatuInstParser extends Parser {
     public static class unary_return extends ParserRuleReturnScope {
         public ExpressionNode expr;
         public int value;
-    };
+    }
 
     // $ANTLR start "unary"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1285:1: unary returns [ExpressionNode expr, int value] : ( '+' | ( '-' ) )* term ;
@@ -3968,7 +3968,7 @@ public class PlatuInstParser extends Parser {
     public static class bitwiseNegation_return extends ParserRuleReturnScope {
         public ExpressionNode expr;
         public int value;
-    };
+    }
 
     // $ANTLR start "bitwiseNegation"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1300:1: bitwiseNegation returns [ExpressionNode expr, int value] : ( '~' )* unary ;
@@ -4047,7 +4047,7 @@ public class PlatuInstParser extends Parser {
     public static class negation_return extends ParserRuleReturnScope {
         public ExpressionNode expr;
         public int value;
-    };
+    }
 
     // $ANTLR start "negation"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1315:1: negation returns [ExpressionNode expr, int value] : ( '!' )* bitwiseNegation ;
@@ -4126,7 +4126,7 @@ public class PlatuInstParser extends Parser {
     public static class mult_return extends ParserRuleReturnScope {
         public ExpressionNode expr;
         public int value;
-    };
+    }
 
     // $ANTLR start "mult"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1330:1: mult returns [ExpressionNode expr, int value] : op1= negation ( '*' op2= negation | '/' op2= negation | '%' op2= negation )* ;
@@ -4240,7 +4240,7 @@ public class PlatuInstParser extends Parser {
     public static class add_return extends ParserRuleReturnScope {
         public ExpressionNode expr;
         public int value;
-    };
+    }
 
     // $ANTLR start "add"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1338:1: add returns [ExpressionNode expr, int value] : op1= mult ( '+' op2= mult | '-' op2= mult )* ;
@@ -4332,7 +4332,7 @@ public class PlatuInstParser extends Parser {
     public static class shift_return extends ParserRuleReturnScope {
         public ExpressionNode expr;
         public int value;
-    };
+    }
 
     // $ANTLR start "shift"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1345:1: shift returns [ExpressionNode expr, int value] : op1= add ( '<<' op2= add | '>>' op2= add )* ;
@@ -4424,7 +4424,7 @@ public class PlatuInstParser extends Parser {
     public static class relation_return extends ParserRuleReturnScope {
         public ExpressionNode expr;
         public int value;
-    };
+    }
 
     // $ANTLR start "relation"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1352:1: relation returns [ExpressionNode expr, int value] : op1= shift ( '<' op2= shift | '<=' op2= shift | '>=' op2= shift | '>' op2= shift )* ;
@@ -4556,7 +4556,7 @@ public class PlatuInstParser extends Parser {
     public static class equivalence_return extends ParserRuleReturnScope {
         public ExpressionNode expr;
         public int value;
-    };
+    }
 
     // $ANTLR start "equivalence"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1361:1: equivalence returns [ExpressionNode expr, int value] : op1= relation ( '==' op2= relation | '!=' op2= relation )* ;
@@ -4648,7 +4648,7 @@ public class PlatuInstParser extends Parser {
     public static class bitwiseAnd_return extends ParserRuleReturnScope {
         public ExpressionNode expr;
         public int value;
-    };
+    }
 
     // $ANTLR start "bitwiseAnd"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1368:1: bitwiseAnd returns [ExpressionNode expr, int value] : op1= equivalence ( '&' op2= equivalence )* ;
@@ -4724,7 +4724,7 @@ public class PlatuInstParser extends Parser {
     public static class bitwiseXor_return extends ParserRuleReturnScope {
         public ExpressionNode expr;
         public int value;
-    };
+    }
 
     // $ANTLR start "bitwiseXor"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1374:1: bitwiseXor returns [ExpressionNode expr, int value] : op1= bitwiseAnd ( '^' op2= bitwiseAnd )* ;
@@ -4800,7 +4800,7 @@ public class PlatuInstParser extends Parser {
     public static class bitwiseOr_return extends ParserRuleReturnScope {
         public ExpressionNode expr;
         public int value;
-    };
+    }
 
     // $ANTLR start "bitwiseOr"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1380:1: bitwiseOr returns [ExpressionNode expr, int value] : op1= bitwiseXor ( '|' op2= bitwiseXor )* ;
@@ -4876,7 +4876,7 @@ public class PlatuInstParser extends Parser {
     public static class and_return extends ParserRuleReturnScope {
         public ExpressionNode expr;
         public int value;
-    };
+    }
 
     // $ANTLR start "and"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1386:1: and returns [ExpressionNode expr, int value] : op1= bitwiseOr ( '&&' op2= bitwiseOr )* ;
@@ -4952,7 +4952,7 @@ public class PlatuInstParser extends Parser {
     public static class or_return extends ParserRuleReturnScope {
         public ExpressionNode expr;
         public int value;
-    };
+    }
 
     // $ANTLR start "or"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1392:1: or returns [ExpressionNode expr, int value] : op1= and ( '||' op2= and )* ;
@@ -5028,7 +5028,7 @@ public class PlatuInstParser extends Parser {
     public static class implication_return extends ParserRuleReturnScope {
         public ExpressionNode expr;
         public int value;
-    };
+    }
 
     // $ANTLR start "implication"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1398:1: implication returns [ExpressionNode expr, int value] : op1= or ( '->' op2= or )* ;
@@ -5104,7 +5104,7 @@ public class PlatuInstParser extends Parser {
     public static class expression_return extends ParserRuleReturnScope {
         public ExpressionNode expr;
         public int value;
-    };
+    }
 
     // $ANTLR start "expression"
     // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1404:1: expression returns [ExpressionNode expr, int value] : op1= implication ( '?' op2= expression ':' op3= expression )? ;

@@ -133,7 +133,6 @@ public class SimulatorODERK extends Simulator {
 				ASTNode stoichNode = new ASTNode();
 				stoichNode.setValue(-1 * stoichiometry);
 				
-				;
 				dvariablesdtime[varIndex] = ASTNode.sum(dvariablesdtime[varIndex], ASTNode.times(formula,stoichNode));
 			}
 			

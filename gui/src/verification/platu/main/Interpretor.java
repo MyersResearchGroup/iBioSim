@@ -35,7 +35,7 @@ public class Interpretor {
         sgreduce, reduce, deletesg, help, quit, q, interactive,
         print, chkpie, sghide, abstStateTran, hidevar, readrsg,
         readlpn, chkpi, del, draw
-    };
+    }
     
     static final String[] CMD = {"compAnalysis", "findallsg", "skip", "set", "last", "liststg", "sglist", "readcsp",
         "setinterface", "savesg", "savelpn", "join", "compose", "removedummypn",

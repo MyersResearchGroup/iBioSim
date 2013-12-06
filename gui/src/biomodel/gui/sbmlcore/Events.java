@@ -130,7 +130,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		this.add(panelLabel, "North");
 		this.add(scroll, "Center");
 		this.add(addRem, "South");
-	};
+	}
 
 	/**
 	 * Creates a frame used to edit events or create new ones.

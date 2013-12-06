@@ -42,7 +42,7 @@ public class Options {
 		TBOFF, // POR without trace-back
 		BEHAVIORAL, // POR with behavioral analysis
 		OFF // No POR
-		};
+		}
 	private static String POR = "off";
 	
 
@@ -77,7 +77,7 @@ public class Options {
 		CCTB, // cycle closing with trace-back
 		CCTBDG, // cycle closing with trace-back using dependency graphs
 		CCTBOFF // cycle closing without trace-back
-		};
+		}
 	private static String cycleClosingPersistentMethd = "cctb";
 	
 	
@@ -139,7 +139,7 @@ public class Options {
 		DFS, 			// DFS search on the entire state space
 		BFS, 			// BFS on the entire state space.
 		COMPOSITIONAL 	// using compositional search/reduction to build the reduce SG.
-		};
+		}
 		
 	private static String searchType = "dfs";
 	
