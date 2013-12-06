@@ -1565,7 +1565,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						// Cancel
 						return;
 					}
-					Integer maxNumVarsInOneComp = Integer.parseInt(maxVarsText.getText().trim());;
+					Integer maxNumVarsInOneComp = Integer.parseInt(maxVarsText.getText().trim());
 					if (leastNumVarsInOneProcess >= maxNumVarsInOneComp) {
 						// The original LPN is decomposed into processes.
 						// Store each process as individual LPN.

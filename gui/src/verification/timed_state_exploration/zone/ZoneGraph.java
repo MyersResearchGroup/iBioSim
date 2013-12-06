@@ -728,7 +728,7 @@ public class ZoneGraph{
 				
 				//j = _partition.first();
 				
-				result += "" + i + "-" + _internalEdges.get(l) + "->" + k + "\n";;
+				result += "" + i + "-" + _internalEdges.get(l) + "->" + k + "\n";
 			}
 			else{
 				for(Integer i : _partition){

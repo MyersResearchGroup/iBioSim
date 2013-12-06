@@ -42,7 +42,7 @@ import org.sbml.jsbml.ModifierSpeciesReference;
  */
 public class Utility {
 	private Utility() {
-	};
+	}
 
 	public static final Utility getInstance() {
 		if (instance == null) {

@@ -1,6 +1,6 @@
 package verification.platu.BinaryTree;
 
-import java.util.*;;
+import java.util.*;
 
 public class Node {
 

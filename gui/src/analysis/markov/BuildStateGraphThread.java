@@ -15,7 +15,7 @@ public class BuildStateGraphThread extends Thread {
 	}
 
 	@Override
-	public void start() {
+	public synchronized void start() {
 		super.start();
 	}
 

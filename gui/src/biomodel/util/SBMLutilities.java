@@ -814,6 +814,7 @@ public class SBMLutilities {
 					pieceType = 2;
 				}
 			}
+			break;
 		case FUNCTION:
 			for (int i = 0; i < document.getModel().getFunctionDefinitionCount(); i++) {
 				if (sbml.get(i).getId().equals(node.getName())) {
@@ -869,6 +870,7 @@ public class SBMLutilities {
 				}
 			}
 			break;
+		default: 
 		}
 		for (int c = 0; c < node.getChildCount(); c++) {
 			if (checkNumFunctionArguments(document, node.getChild(c))) {
@@ -3309,7 +3311,7 @@ public class SBMLutilities {
 				return getDoubleFromBoolean(
 						evaluateExpression(model, node.getLeftChild()) < evaluateExpression(model, node.getRightChild()));			
 			}
-
+			default:
 			}
 		}
 
@@ -3323,6 +3325,8 @@ public class SBMLutilities {
 
 			case CONSTANT_PI:
 				return Math.PI;
+				
+			default:
 			}
 		}
 		else if (node.isInteger())
@@ -3570,6 +3574,7 @@ public class SBMLutilities {
 			case FUNCTION_ARCSECH:
 				return Fmath.asech(evaluateExpression(model, node.getChild(0)));
 
+			default:
 			} //end switch
 
 		}

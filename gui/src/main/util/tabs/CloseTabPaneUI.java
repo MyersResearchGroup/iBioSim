@@ -826,7 +826,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 			CloseTabPaneUI ui = (CloseTabPaneUI) pane.getUI();
 			ui.navigateSelectedTab(EAST);
 		}
-	};
+	}
 
 	private static class LeftAction extends AbstractAction {
 		/**
@@ -840,7 +840,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 			CloseTabPaneUI ui = (CloseTabPaneUI) pane.getUI();
 			ui.navigateSelectedTab(WEST);
 		}
-	};
+	}
 
 	private static class UpAction extends AbstractAction {
 		/**
@@ -854,7 +854,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 			CloseTabPaneUI ui = (CloseTabPaneUI) pane.getUI();
 			ui.navigateSelectedTab(NORTH);
 		}
-	};
+	}
 
 	private static class DownAction extends AbstractAction {
 		/**
@@ -868,7 +868,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 			CloseTabPaneUI ui = (CloseTabPaneUI) pane.getUI();
 			ui.navigateSelectedTab(SOUTH);
 		}
-	};
+	}
 
 	private static class NextAction extends AbstractAction {
 		/**
@@ -882,7 +882,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 			CloseTabPaneUI ui = (CloseTabPaneUI) pane.getUI();
 			ui.navigateSelectedTab(NEXT);
 		}
-	};
+	}
 
 	private static class PreviousAction extends AbstractAction {
 		/**
@@ -896,7 +896,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 			CloseTabPaneUI ui = (CloseTabPaneUI) pane.getUI();
 			ui.navigateSelectedTab(PREVIOUS);
 		}
-	};
+	}
 
 	private static class PageUpAction extends AbstractAction {
 		/**
@@ -916,7 +916,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 				ui.navigateSelectedTab(NORTH);
 			}
 		}
-	};
+	}
 
 	private static class PageDownAction extends AbstractAction {
 		/**
@@ -936,7 +936,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 				ui.navigateSelectedTab(SOUTH);
 			}
 		}
-	};
+	}
 
 	private static class RequestFocusAction extends AbstractAction {
 		/**
@@ -949,7 +949,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 			JTabbedPane pane = (JTabbedPane) e.getSource();
 			pane.requestFocus();
 		}
-	};
+	}
 
 	private static class RequestFocusForVisibleAction extends AbstractAction {
 		/**
@@ -963,7 +963,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 			CloseTabPaneUI ui = (CloseTabPaneUI) pane.getUI();
 			ui.requestMyFocusForVisibleComponent();
 		}
-	};
+	}
 
 	/**
 	 * Selects a tab in the JTabbedPane based on the String of the action
@@ -996,7 +996,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 				}
 			}
 		}
-	};
+	}
 
 	private static class ScrollTabsForwardAction extends AbstractAction {
 		/**
@@ -1136,7 +1136,6 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 							if (totalTabWidth > tw) {
 								// Need to allow space for scrollbuttons
 								vw = Math.max(tw - 36, 36);
-								;
 								if (totalTabWidth - viewRect.x <= vw) {
 									// Scrolled to the end, so ensure the
 									// viewport size is

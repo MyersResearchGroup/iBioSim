@@ -75,8 +75,7 @@
       case MINUS:
       case OPAR:
       case NOT:
-        ;
-        break;
+         break;
       default:
         jj_la1[0] = jj_gen;
         break label_1;

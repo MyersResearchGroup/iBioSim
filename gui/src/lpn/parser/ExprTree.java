@@ -274,6 +274,8 @@ public class ExprTree {
 					readsign = true;
 					tokvalue += c;
 					break;
+				} else {
+					return -1;
 				}
 			default:
 				if ((readnum) || (readsci)) {
@@ -2377,6 +2379,7 @@ public class ExprTree {
 				r1.replaceVar(var1, var2);
 			if (r2 != null)
 				r2.replaceVar(var1, var2);
+			break;
 		case 't': // Truth value
 		case 'n': // Number
 			break;
@@ -2503,6 +2506,7 @@ public class ExprTree {
 				}
 				return 'U';
 			}
+			break;
 		case 'r': // Relational
 			boolean flag = false;
 			for (String var : getVars()) {
@@ -2629,6 +2633,7 @@ public class ExprTree {
 				}
 				return false;
 			}
+			break;
 		case 'w': // bitWise
 			if (op.equals("&")) {
 				if (!(evaluateExpr(variables) == 0.0)) {
@@ -2651,6 +2656,7 @@ public class ExprTree {
 				}
 				return false;
 			} 
+			break;
 		case 'r': // Relational
 			if (r1.isit == 'i') {
 				if (!variables.containsKey(r1.variable)) {
@@ -2777,6 +2783,7 @@ public class ExprTree {
 				}
 				return false;
 			}
+			break;
 		case 'w': // bitWise
 			if (op.equals("&")) {
 				if (evaluateExpr(variables) == 0.0) {
@@ -2804,6 +2811,7 @@ public class ExprTree {
 				}
 				return true;
 			}
+			break;
 		case 'r': // Relational
 			if (r1.isit == 'i') {
 				if (!variables.containsKey(r1.variable)) {
@@ -4340,6 +4348,7 @@ public class ExprTree {
 			} else if (op.equals("X")) {
 				return ((int) left) ^ ((int) right);
 			}
+			break;
 		case 'a': // Arithmetic
 		case 'r': // Relational
 		case 'l': // Logical

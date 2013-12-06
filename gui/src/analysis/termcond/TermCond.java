@@ -395,6 +395,8 @@ public class TermCond {
 					readsign = true;
 					tokvalue += c;
 					break;
+				} else {
+					return -1;
 				}
 			default:
 				if ((readnum) || (readsci)) {
