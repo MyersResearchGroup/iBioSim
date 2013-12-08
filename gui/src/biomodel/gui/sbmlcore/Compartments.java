@@ -82,17 +82,14 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 	private Rules rulesPanel;
 	
 	private JCheckBox onPort;
-	
-	private Gui biosim;
 
-	public Compartments(Gui biosim, BioModel gcm, ModelEditor modelEditor, Boolean paramsOnly, 
-			ArrayList<String> getParams, String file, ArrayList<String> parameterChanges, Boolean editOnly) {
+	public Compartments(BioModel gcm, ModelEditor modelEditor, Boolean paramsOnly, ArrayList<String> getParams, 
+			String file, ArrayList<String> parameterChanges, Boolean editOnly) {
 		super(new BorderLayout());
 		this.bioModel = gcm;
 		this.paramsOnly = paramsOnly;
 		this.file = file;
 		this.parameterChanges = parameterChanges;
-		this.biosim = biosim;
 		this.modelEditor = modelEditor;
 		Model model = gcm.getSBMLDocument().getModel();
 		addCompart = new JButton("Add Compartment");
@@ -420,8 +417,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						addCompSize = Double.parseDouble(compSize.getText().trim());
 					}
 					catch (Exception e1) {
-						error = InitialAssignments.addInitialAssignment(biosim, bioModel, compID.getText().trim(), 
-								compSize.getText().trim());
+						error = InitialAssignments.addInitialAssignment(bioModel, compID.getText().trim(), compSize.getText().trim());
 						addCompSize = 1.0;
 						/*
 						JOptionPane.showMessageDialog(Gui.frame, "The compartment size must be a real number.", "Enter a Valid Size",

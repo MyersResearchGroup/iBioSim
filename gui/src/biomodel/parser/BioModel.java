@@ -87,6 +87,7 @@ import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.ext.layout.Layout;
 import org.sbml.jsbml.xml.XMLNode;
+import org.sbml.libsbml.libsbmlConstants;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.comp.Grid;
@@ -298,7 +299,7 @@ public class BioModel {
 		createGlobalParameter(GlobalConstants.ACTIVATED_STRING, biosimrc.get("biosim.gcm.ACTIVED_VALUE", ""));
 	}
 	
-	public boolean IsDefaultParameter(String paramId) {
+	public static boolean IsDefaultParameter(String paramId) {
 		if (paramId.equals(GlobalConstants.FORWARD_KREP_STRING) ||
 			paramId.equals(GlobalConstants.REVERSE_KREP_STRING) ||
 			paramId.equals(GlobalConstants.FORWARD_KACT_STRING) ||
@@ -652,7 +653,7 @@ public class BioModel {
 		naryFrame.setVisible(true);
 	}
 
-	private ArrayList<String> copyArray(ArrayList<String> original) {
+	private static ArrayList<String> copyArray(ArrayList<String> original) {
 		ArrayList<String> copy = new ArrayList<String>();
 		for (String element : original) {
 			copy.add(element);
@@ -660,7 +661,7 @@ public class BioModel {
 		return copy;
 	}
 	
-	private double parseValue(String value) {
+	private static double parseValue(String value) {
 		if (value == null) return 0.0;
 		if (value.contains("/")) {
 			String[] parts = value.split("/");
@@ -1076,12 +1077,21 @@ public class BioModel {
 		promoter.setConstant(false);
 		promoter.setHasOnlySubstanceUnits(true);
 		promoter.setSBOTerm(GlobalConstants.SBO_PROMOTER_BINDING_REGION);
-		createProductionReaction(s,property.getProperty(GlobalConstants.ACTIVATED_STRING),
-				property.getProperty(GlobalConstants.STOICHIOMETRY_STRING),
-				property.getProperty(GlobalConstants.OCR_STRING),
-				property.getProperty(GlobalConstants.KBASAL_STRING),
-				property.getProperty(GlobalConstants.RNAP_BINDING_STRING),
-				property.getProperty(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING),false);
+		if (property==null) {
+			createProductionReaction(s,GlobalConstants.ACTIVATED_STRING,
+					GlobalConstants.STOICHIOMETRY_STRING,
+					GlobalConstants.OCR_STRING,
+					GlobalConstants.KBASAL_STRING,
+					GlobalConstants.RNAP_BINDING_STRING,
+					GlobalConstants.ACTIVATED_RNAP_BINDING_STRING,false);
+		} else {
+			createProductionReaction(s,property.getProperty(GlobalConstants.ACTIVATED_STRING),
+					property.getProperty(GlobalConstants.STOICHIOMETRY_STRING),
+					property.getProperty(GlobalConstants.OCR_STRING),
+					property.getProperty(GlobalConstants.KBASAL_STRING),
+					property.getProperty(GlobalConstants.RNAP_BINDING_STRING),
+					property.getProperty(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING),false);
+		}
 	}
 	
 	public Layout getLayout() {
@@ -1373,9 +1383,11 @@ public class BioModel {
 							break;
 						}
 					}
-					if (!found) replacement = sbmlSBase.createReplacedElement();
-					replacement.setSubmodelRef(s);
-					replacement.setPortRef(GlobalConstants.OUTPUT+"__"+propName.toString());
+					if (!found) {
+						replacement = sbmlSBase.createReplacedElement();
+						replacement.setSubmodelRef(s);
+						replacement.setPortRef(GlobalConstants.OUTPUT+"__"+propName.toString());
+					}
 				}
 				else {
 					String speciesId = prop.getProperty(propName.toString()).toString();
@@ -1390,9 +1402,11 @@ public class BioModel {
 							break;
 						}
 					}
-					if (!found) replacement = sbmlSBase.createReplacedElement();
-					replacement.setSubmodelRef(s);
-					replacement.setPortRef(GlobalConstants.INPUT+"__"+propName.toString());
+					if (!found) {
+						replacement = sbmlSBase.createReplacedElement();
+						replacement.setSubmodelRef(s);
+						replacement.setPortRef(GlobalConstants.INPUT+"__"+propName.toString());
+					}
 				}
 			}
 		}
@@ -4353,9 +4367,11 @@ public class BioModel {
 				break;
 			}
 		}
-		if (!found) replacement = sbmlSBase.createReplacedElement();
-		replacement.setSubmodelRef(compId);
-		replacement.setPortRef(port);
+		if (!found) {
+			replacement = sbmlSBase.createReplacedElement();
+			replacement.setSubmodelRef(compId);
+			replacement.setPortRef(port);
+		}
 		return;
 	}
 
@@ -4371,9 +4387,11 @@ public class BioModel {
 				break;
 			}
 		}
-		if (!found) replacement = sbmlSBase.createReplacedElement();
-		replacement.setSubmodelRef(compId);
-		replacement.setPortRef(port);
+		if (!found) {
+			replacement = sbmlSBase.createReplacedElement();
+			replacement.setSubmodelRef(compId);
+			replacement.setPortRef(port);
+		}
 		return;
 	}
 	
@@ -4440,7 +4458,7 @@ public class BioModel {
 	 *            influence to remove
 	 * @return true, it is always okay to remove influence
 	 */
-	public boolean removeInfluenceCheck(String name) {
+	public static boolean removeInfluenceCheck(String name) {
 		return true;
 	}
 
@@ -4851,12 +4869,12 @@ public class BioModel {
 		//load the sbml file
 		try {
 			document = SBMLReader.read(new File(path + externalModelID));
-		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (XMLStreamException e1) {
+			JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
+			return;
+		} catch (IOException e1) {
+			JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
+			return;
 		}
 		Model componentModel = document.getModel();
 		
@@ -4898,12 +4916,12 @@ public class BioModel {
 			//load the sbml file
 			try {
 				document = SBMLReader.read(new File(path + externalModelID));
-			} catch (XMLStreamException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (XMLStreamException e1) {
+				JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
+				return;
+			} catch (IOException e1) {
+				JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
+				return;
 			}
 			componentModel = document.getModel();
 			
@@ -4953,12 +4971,12 @@ public class BioModel {
 		//load the sbml file
 		try {
 			document = SBMLReader.read(new File(this.getPath() + externalModelID));
-		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (XMLStreamException e1) {
+			JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
+			return;
+		} catch (IOException e1) {
+			JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
+			return;
 		}
 		Model componentModel = document.getModel();
 		
@@ -6055,7 +6073,7 @@ public class BioModel {
 		return false;
 	}
 	
-	private Deletion getDeletionByPortRef(Submodel submodel,String portRef) {
+	private static Deletion getDeletionByPortRef(Submodel submodel,String portRef) {
 		for (int i = 0; i < submodel.getListOfDeletions().size(); i++) {
 			Deletion d = submodel.getListOfDeletions().get(i);
 			if (d.getPortRef().equals(portRef)) {
@@ -6065,7 +6083,7 @@ public class BioModel {
 		return null;
 	}
 	
-	private void addImplicitDeletion(CompModelPlugin subCompModel,Submodel submodel,String speciesId,String prefix) {
+	private static void addImplicitDeletion(CompModelPlugin subCompModel,Submodel submodel,String speciesId,String prefix) {
 		if (subCompModel.getListOfPorts().get(prefix + "_"+ speciesId)!=null && 
 				getDeletionByPortRef(submodel,prefix + "_"+speciesId)==null) {
 			Deletion d = submodel.createDeletion();
@@ -6073,7 +6091,7 @@ public class BioModel {
 		}
 	}
 	
-	public void addImplicitDeletions(CompModelPlugin subCompModel,Submodel submodel,String speciesId) {
+	public static void addImplicitDeletions(CompModelPlugin subCompModel,Submodel submodel,String speciesId) {
 		addImplicitDeletion(subCompModel,submodel,speciesId,"Degradation");
 		addImplicitDeletion(subCompModel,submodel,speciesId,"Diffusion");
 		addImplicitDeletion(subCompModel,submodel,speciesId,"Constitutive");
@@ -6670,7 +6688,7 @@ public class BioModel {
 			if (numSubModels > 0 && isGridEnabled()) {
 				expandListOfSubmodels(sbmlCompModel, document);
 			}
-			if (document.getErrorLog().getNumFailsWithSeverity(org.sbml.libsbml.libsbml.LIBSBML_SEV_ERROR) > 0) {
+			if (document.getErrorLog().getNumFailsWithSeverity(libsbmlConstants.LIBSBML_SEV_ERROR) > 0) {
 				// document.printErrors();
 				return null;
 			}
@@ -6685,7 +6703,7 @@ public class BioModel {
 				props.addOption("leavePorts", false, "unused ports should be listed in the flattened model");
 
 				/* perform the conversion */
-				if (document.convert(props) != org.sbml.libsbml.libsbml.LIBSBML_OPERATION_SUCCESS) {
+				if (document.convert(props) != libsbmlConstants.LIBSBML_OPERATION_SUCCESS) {
 					return null;
 				}
 			}
@@ -6833,7 +6851,7 @@ public class BioModel {
 		return model;
 	}
 
-	private String buildReplacementId(SBaseRef replacement) {
+	private static String buildReplacementId(SBaseRef replacement) {
 		String replacementId = replacement.getIdRef();
 		for(SBaseRef sBaseRef = replacement.getSBaseRef(); sBaseRef != null;
 				sBaseRef = sBaseRef.getSBaseRef()) {
@@ -6842,7 +6860,7 @@ public class BioModel {
 		return replacementId;
 	}
 	
-	private void performDeletions(BioModel bioModel, BioModel subBioModel, String subModelId) {
+	private static void performDeletions(BioModel bioModel, BioModel subBioModel, String subModelId) {
 
 		SBMLDocument subDocument = subBioModel.getSBMLDocument();
 		Model subModel = subDocument.getModel();
@@ -6893,7 +6911,7 @@ public class BioModel {
 		}
 	}
 	
-	private String prepareReplacement(String newName,BioModel subBioModel,String subModelId,String replacementModelId,
+	private static String prepareReplacement(String newName,BioModel subBioModel,String subModelId,String replacementModelId,
 			CompSBasePlugin sbmlSBase,String subId,String id) {
 
 		for (int k = 0; k < sbmlSBase.getListOfReplacedElements().size(); k++) {
@@ -7348,7 +7366,7 @@ public class BioModel {
 	}
 	*/
 
-	private String updateFormulaVar(String s, String origVar, String newVar) {
+	private static String updateFormulaVar(String s, String origVar, String newVar) {
 		s = " " + s + " ";
 		String olds;
 		do { 
@@ -7366,12 +7384,12 @@ public class BioModel {
 		return s.trim();
 	}
 
-	private ASTNode updateMathVar(ASTNode math, String origVar, String newVar) {
+	private static ASTNode updateMathVar(ASTNode math, String origVar, String newVar) {
 		String s = updateFormulaVar(SBMLutilities.myFormulaToString(math), origVar, newVar);
 		return SBMLutilities.myParseFormula(s);
 	}
 
-	private void updateVarId(boolean isSpecies, String origId, String newId, BioModel bioModel) {
+	private static void updateVarId(boolean isSpecies, String origId, String newId, BioModel bioModel) {
 		SBMLDocument document = bioModel.getSBMLDocument();
 		if (origId.equals(newId))
 			return;

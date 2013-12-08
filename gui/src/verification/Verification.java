@@ -1840,6 +1840,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					}
 					abstFilename = abstFilename + ".lpn";
 				}
+			} else {
+				abstFilename = lpnFileName.replace(".lpn", "_abs.lpn");
 			}
 		} else {
 			abstFilename = lpnFileName.replace(".lpn", "_abs.lpn");
@@ -1864,14 +1866,12 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				variables[k] = boolVars[j];
 				k++;
 			}
-			if (abstFilename != null) {
-				if (!abstFilename.endsWith(".lpn"))
-					abstFilename = abstFilename + ".lpn";
-				if (abstPane.loopAbsModel.contains("Remove Variables")) {
-					abstraction.abstractVars(abstPane.getIntVars());
-				}
-				abstraction.abstractSTG(true);
+			if (!abstFilename.endsWith(".lpn"))
+				abstFilename = abstFilename + ".lpn";
+			if (abstPane.loopAbsModel.contains("Remove Variables")) {
+				abstraction.abstractVars(abstPane.getIntVars());
 			}
+			abstraction.abstractSTG(true);
 			if (!lhpn.isSelected() && !view.isSelected()) {
 				abstraction.save(directory + separator + abstFilename);
 			}
@@ -3075,7 +3075,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	}
 	
 	
-	public boolean canPerformMarkovianAnalysis(LhpnFile lpn) {
+	public static boolean canPerformMarkovianAnalysis(LhpnFile lpn) {
 		for (String trans : lpn.getTransitionList()) {
 			if (!lpn.isExpTransitionRateTree(trans)) {
 //				JOptionPane.showMessageDialog(Gui.frame, "LPN has transitions without exponential delay.",

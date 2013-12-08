@@ -126,7 +126,7 @@ public class Node {
 			}
 			
 			// Case: this.terminal==0x00
-			while(rIntList.size() > 0) {
+			while(rIntList!=null && lIntList != null && rIntList.size() > 0) {
 				int number = rIntList.removeFirst();
 				lIntList.addLast(number);
 			}

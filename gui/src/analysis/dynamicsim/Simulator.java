@@ -1838,6 +1838,11 @@ public abstract class Simulator {
 								break;
 							}
 						}
+						if (reactantHeadNode==null) {
+							// TODO: Is this possible?
+							System.out.println("Could not find reactant");
+							return;
+						}
 						
 						if (reactantHeadNode.getChild(1).getType().name().equals("PLUS"))							
 							rowOffset = reactantHeadNode.getChild(1).getRightChild().getInteger();
@@ -1894,6 +1899,11 @@ public abstract class Simulator {
 								productHeadNode = headNode;
 								break;
 							}
+						}
+						if (productHeadNode==null) {
+							// TODO: Is this possible?
+							System.out.println("Could not find product");
+							return;
 						}
 						
 						if (productHeadNode.getChild(1).getType().name().equals("PLUS"))							
@@ -2355,7 +2365,7 @@ public abstract class Simulator {
 	 * @param value the double to be translated to a boolean
 	 * @return the translated boolean value
 	 */
-	protected boolean getBooleanFromDouble(double value) {
+	protected static boolean getBooleanFromDouble(double value) {
 		
 		if (value == 0.0) 
 			return false;
@@ -2368,7 +2378,7 @@ public abstract class Simulator {
 	 * @param value the boolean to be translated to a double
 	 * @return the translated double value
 	 */
-	protected double getDoubleFromBoolean(boolean value) {
+	protected static double getDoubleFromBoolean(boolean value) {
 		
 		if (value == true)
 			return 1.0;
@@ -2751,6 +2761,11 @@ public abstract class Simulator {
 									&& species.getId().contains("COL"))
 								gridSpecies = species;
 						}
+						if (gridSpecies==null) {
+							// TODO: Is this possible?
+							System.out.println("Could not find grid species");
+							return;
+						}
 						
 						Species newSpecies = gridSpecies.clone();
 						newSpecies.setId(newID);
@@ -2804,6 +2819,11 @@ public abstract class Simulator {
 							if (species.getId().contains("__" + underlyingSpeciesID) && species.getId().contains("ROW") 
 									&& species.getId().contains("COL"))
 								gridSpecies = species;
+						}
+						if (gridSpecies==null) {
+							// TODO: Is this possible?
+							System.out.println("Could not find grid species");
+							return;
 						}
 						
 						Species newSpecies = gridSpecies.clone();
@@ -4007,6 +4027,11 @@ public abstract class Simulator {
 								break;
 							}
 						}
+						if (reactantHeadNode==null) {
+							// TODO: Is this possible?
+							System.out.println("Could not find reactant");
+							return;
+						}
 						
 						if (reactantHeadNode.getChild(1).getType().name().equals("PLUS"))							
 							rowOffset = reactantHeadNode.getChild(1).getRightChild().getInteger();
@@ -4062,6 +4087,11 @@ public abstract class Simulator {
 								productHeadNode = headNode;
 								break;
 							}
+						}
+						if (productHeadNode==null) {
+							// TODO: Is this possible?
+							System.out.println("Could not find product");
+							return;
 						}
 						
 						if (productHeadNode.getChild(1).getType().name().equals("PLUS"))							

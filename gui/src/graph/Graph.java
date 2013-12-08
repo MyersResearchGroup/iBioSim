@@ -486,8 +486,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				stem += getLast.charAt(t);
 				t++;
 			}
-		}
-		catch (Exception e) {
+		} catch (StringIndexOutOfBoundsException e) {
+			
 		}
 		if ((label.contains("average") && file.contains("mean")) || (label.contains("variance") && file.contains("variance"))
 				|| (label.contains("deviation") && file.contains("standard_deviation"))) {
@@ -1782,6 +1782,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				load.close();
 			}
 			catch (Exception e) {
+				e.printStackTrace();
+				return;
 			}
 		}
 		String simDirString = outDir.split(separator)[outDir.split(separator).length - 1];
@@ -2157,7 +2159,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 												new File(outDir + separator + file + separator + f 
 														+ separator + "run-" + (i + 1) + ".dtsd").exists()) {
 											IconNode n;
-											if (learnSpecs != null) {
+											if (learnSpecs != null && p != null) {
 												n = new IconNode(p.get("run-" + (i + 1) + "." + printer_id.substring(0, printer_id.length() - 8)),
 														"run-" + (i + 1));
 												if (d2.getChildCount() > 3) {
@@ -2348,7 +2350,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							if (new File(outDir + separator + file + separator + "run-" + (i + 1) + "."
 									+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 								IconNode n;
-								if (learnSpecs != null) {
+								if (learnSpecs != null && p != null) {
 									n = new IconNode(p.get("run-" + (i + 1) + "." + printer_id.substring(0, printer_id.length() - 8)), "run-"
 											+ (i + 1));
 									if (d.getChildCount() > 3) {
@@ -2521,7 +2523,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				if (new File(outDir + separator + "run-" + (i + 1) + "." + printer_id.substring(0, printer_id.length() - 8)).exists()
 						|| new File(outDir + separator + "run-" + (i + 1) + ".dtsd").exists()) {
 					IconNode n;
-					if (learnSpecs != null) {
+					if (learnSpecs != null && p != null) {
 						n = new IconNode(p.get("run-" + (i + 1) + "." + printer_id.substring(0, printer_id.length() - 8)), "run-" + (i + 1));
 						if (simDir.getChildCount() > 3) {
 							boolean added = false;
@@ -8061,7 +8063,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 	}
 
-	private double[] readProbs(String file) {
+	private static double[] readProbs(String file) {
 		ArrayList<String> data = new ArrayList<String>();
 		try {
 			Scanner s = new Scanner(new File(file));
@@ -8398,7 +8400,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 	}
 
-	private Hashtable<String, Icon> makeIcons() {
+	private static Hashtable<String, Icon> makeIcons() {
 		Hashtable<String, Icon> icons = new Hashtable<String, Icon>();
 		icons.put("floppyDrive", MetalIconFactory.getTreeFloppyDriveIcon());
 		icons.put("hardDrive", MetalIconFactory.getTreeHardDriveIcon());

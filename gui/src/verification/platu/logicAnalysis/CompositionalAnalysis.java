@@ -737,7 +737,7 @@ public class CompositionalAnalysis {
 //		return compositeSG;
 //	}
 	
-	public CompositeStateGraph compose2(CompositeStateGraph sg1, CompositeStateGraph sg2){
+	public static CompositeStateGraph compose2(CompositeStateGraph sg1, CompositeStateGraph sg2){
 		long start = System.currentTimeMillis(); 
 		
 		if(sg1 == null || sg2 == null){
@@ -1077,7 +1077,7 @@ public class CompositionalAnalysis {
 		return compositeSG;
 	}
 	
-	public CompositeStateGraph compose(CompositeStateGraph sg1, CompositeStateGraph sg2){
+	public static CompositeStateGraph compose(CompositeStateGraph sg1, CompositeStateGraph sg2){
 		long start = System.currentTimeMillis(); 
 		
 		if(sg1 == null || sg2 == null){
@@ -1503,7 +1503,7 @@ public class CompositionalAnalysis {
 			sgList.remove(0);
 		}
 
-		while(sgList.size() > 1){
+		while(csg != null && sgList.size() > 1){
 			CompositeStateGraph tmpSG = null;
 			
 			for(CompositeStateGraph sg2 : sgList){
@@ -1646,7 +1646,7 @@ public class CompositionalAnalysis {
 //		System.out.println("   --> Elapsed time: " + elapsedTimeSec + " sec\n");
 //	}
 	
-	public void transitionBasedAbstraction(CompositeStateGraph sg){
+	public static void transitionBasedAbstraction(CompositeStateGraph sg){
 		HashSet<Integer> stateSet = new HashSet<Integer>();
 		HashSet<CompositeStateTran> tranSet = new HashSet<CompositeStateTran>();
 		CompositeState initialState = sg.getInitState();
@@ -2050,14 +2050,14 @@ public class CompositionalAnalysis {
 		System.out.println("   --> # transitions: " + sg.numStateTrans());
 	}
 	
-	private HashSet<Pair<Integer, Integer>> findInitialEquivalentPairs(CompositeStateGraph sg){
+	private static HashSet<Pair<Integer, Integer>> findInitialEquivalentPairs(CompositeStateGraph sg){
 		HashSet<Pair<Integer, Integer>> equivalentSet = new HashSet<Pair<Integer, Integer>>();
 		CompositeState[] stateArray = sg.getStateSet().toArray(new CompositeState[sg.numStates()]);
 		
 		for(int i = 0; i < stateArray.length; i++){
 //			System.out.println("  " + i + "/" + stateArray.length);
 			CompositeState state1 = stateArray[i];
-			List<Transition> enabled1 = sg.getEnabled(state1);
+			List<Transition> enabled1 = CompositeStateGraph.getEnabled(state1);
 //			HashSet<LPNTran> enabled1Set = new HashSet<LPNTran>();
 //			enabled1Set.addAll(enabled1);
 			
@@ -2066,7 +2066,7 @@ public class CompositionalAnalysis {
 				CompositeState state2 = stateArray[j];
 				CompositeState state = state1;
 				
-				List<Transition> enabled2 = sg.getEnabled(state2);
+				List<Transition> enabled2 = CompositeStateGraph.getEnabled(state2);
 				
 				if(enabled1.containsAll(enabled2) && enabled2.containsAll(enabled1)){
 					if(state2.getIndex() < state.getIndex()){
@@ -2084,7 +2084,7 @@ public class CompositionalAnalysis {
 	}
 	
 	@SuppressWarnings("unused")
-	private boolean equivalentOutgoing(Set<Transition> enabled1, List<Transition> enabled2){
+	private static boolean equivalentOutgoing(Set<Transition> enabled1, List<Transition> enabled2){
 //		enabled2.containsAll(enabled1) && enabled1.containsAll(enabled2)
 		HashSet<Transition> enabled2Set = new HashSet<Transition>();
 		enabled2Set.addAll(enabled2);
@@ -2095,19 +2095,19 @@ public class CompositionalAnalysis {
 		return false;
 	}
 	
-	private HashSet<Pair<Integer, Integer>> findInitialEquivalentPairs2(CompositeStateGraph sg){
+	private static HashSet<Pair<Integer, Integer>> findInitialEquivalentPairs2(CompositeStateGraph sg){
 		HashSet<Pair<Integer, Integer>> equivalentSet = new HashSet<Pair<Integer, Integer>>();
 		
 		CompositeState[] stateArray = sg.getStateSet().toArray(new CompositeState[sg.numStates()]);
 		for(int i = 0; i < stateArray.length; i++){
 			CompositeState state1 = stateArray[i];
-			List<Transition> enabled1 = this.getIncomingLpnTrans(state1);
+			List<Transition> enabled1 = CompositionalAnalysis.getIncomingLpnTrans(state1);
 			
 			for(int j = i + 1; j < stateArray.length; j++){
 				CompositeState state2 = stateArray[j];
 				CompositeState state = state1;
 				
-				List<Transition> enabled2 = this.getIncomingLpnTrans(state2);
+				List<Transition> enabled2 = CompositionalAnalysis.getIncomingLpnTrans(state2);
 				
 				if(enabled2.containsAll(enabled1) && enabled1.containsAll(enabled2)){
 					if(state2.getIndex() < state.getIndex()){
@@ -2124,7 +2124,7 @@ public class CompositionalAnalysis {
 		return equivalentSet;
 	}
 	
-	private List<Transition> getIncomingLpnTrans(CompositeState currentState){
+	private static List<Transition> getIncomingLpnTrans(CompositeState currentState){
 		Set<Transition> lpnTranSet = new HashSet<Transition>(currentState.numOutgoingTrans());
 		List<Transition> enabled = new ArrayList<Transition>(currentState.numOutgoingTrans());
 		
@@ -2378,7 +2378,7 @@ public class CompositionalAnalysis {
 	/**
      * Constructs the compositional state graphs.
      */
-	public void compositionalFindSG(StateGraph[] sgArray){
+	public static void compositionalFindSG(StateGraph[] sgArray){
 //		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 //		try {
 //			br.readLine();
@@ -2554,7 +2554,7 @@ public class CompositionalAnalysis {
 	/**
      * Constructs the compositional state graphs.
      */
-	public void parallelCompositionalFindSG(List<StateGraph> designUnitSet){
+	public static void parallelCompositionalFindSG(List<StateGraph> designUnitSet){
 //		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 //		try {
 //			br.readLine();
@@ -2746,7 +2746,7 @@ public class CompositionalAnalysis {
 	 * Applies new constraints to the entire state set, and applies old constraints to the frontier state set.
      * @return Number of new transitions.
      */
-	private int applyConstraintSet(StateGraph sg, StateGraph srcSG, List<Constraint> newConstraintSet, List<Constraint> oldConstraintSet){
+	private static int applyConstraintSet(StateGraph sg, StateGraph srcSG, List<Constraint> newConstraintSet, List<Constraint> oldConstraintSet){
 		int newTransitions = 0;
 		LhpnFile srcLpn = srcSG.getLpn();
 		LhpnFile lpn = sg.getLpn();
@@ -2787,7 +2787,7 @@ public class CompositionalAnalysis {
      * @param sg - The state graph the constraints are to be applied.
      * @param srcSG - The state graph the constraint are extracted from.
      */
-	private void extractConstraints(StateGraph sg, StateGraph srcSG, List<Constraint> newConstraintSet, List<Constraint> oldConstraintSet){
+	private static void extractConstraints(StateGraph sg, StateGraph srcSG, List<Constraint> newConstraintSet, List<Constraint> oldConstraintSet){
 		newConstraintSet.clear();
 		oldConstraintSet.clear();
 		LhpnFile srcLpn = srcSG.getLpn();
@@ -2807,7 +2807,7 @@ public class CompositionalAnalysis {
      * Determines whether a constraint is compatible with a state.
      * @return True if compatible, otherwise False.
      */
-	private boolean compatible(State currentState, Constraint constr, int[] thisIndexList, int[] otherIndexList){
+	private static boolean compatible(State currentState, Constraint constr, int[] thisIndexList, int[] otherIndexList){
 		int[] constraintVector = constr.getVector();
 		int[] currentVector = currentState.getVariableVector();
 		for(int i = 0; i < thisIndexList.length; i++){
@@ -2824,7 +2824,7 @@ public class CompositionalAnalysis {
      * Creates a state from a given constraint and compatible state and insert into state graph.  If the state is new, then findSG is called.
      * @return Number of new transitions.
      */
-	private int createNewState(StateGraph sg, State compatibleState, Constraint c){
+	private static int createNewState(StateGraph sg, State compatibleState, Constraint c){
 		int newTransitions = 0;
 		State newState = new State(compatibleState);
 		int[] newVector = newState.getVariableVector();		
@@ -2862,7 +2862,7 @@ public class CompositionalAnalysis {
 	}
 	
 	@SuppressWarnings("unused")
-	private String printTranVecotr(boolean[] tranVector) {
+	private static String printTranVecotr(boolean[] tranVector) {
 		String tranVecStr = "[";
 		for (boolean i : tranVector) {
 			tranVecStr = tranVecStr + "," + i;
@@ -2880,7 +2880,7 @@ public class CompositionalAnalysis {
      * @param newVector
      * @return
      */
-    public void updateTranVectorByConstraint(LhpnFile lpn, boolean[] enabledTran,
+    public static void updateTranVectorByConstraint(LhpnFile lpn, boolean[] enabledTran,
 			int[] marking, int[] newVector) {    	
         // find newly enabled transition(s) based on the updated variables vector.
         for (Transition tran : lpn.getAllTransitions()) {
@@ -2926,7 +2926,7 @@ public class CompositionalAnalysis {
         }
 	}
 
-	private void constructDstLpnList(StateGraph[] sgArray) {
+	private static void constructDstLpnList(StateGraph[] sgArray) {
 		for (int i=0; i<sgArray.length; i++) {
 			LhpnFile curLPN = sgArray[i].getLpn();
 			Transition[] allTrans = curLPN.getAllTransitions();

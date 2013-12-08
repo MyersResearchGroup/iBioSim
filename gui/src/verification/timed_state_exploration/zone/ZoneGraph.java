@@ -364,7 +364,7 @@ public class ZoneGraph{
 		
 		Zone newZone = new Zone(timers, matrix);
 		
-		newZone.setLexicon(_indexToTransition);
+		Zone.setLexicon(_indexToTransition);
 		
 		for(int i=1; i<_indexToTimer.length; i++){
 			int timerIndex = _indexToTimer[i];
@@ -1125,62 +1125,62 @@ public class ZoneGraph{
 	}
 
 	@SuppressWarnings("unused")
-	public int getUpperBoundbyTransitionIndex(int timer) {
+	public static int getUpperBoundbyTransitionIndex(int timer) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@SuppressWarnings("unused")
-	public int getUpperBoundbydbmIndex(int index) {
+	public static int getUpperBoundbydbmIndex(int index) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@SuppressWarnings("unused")
-	public int getLowerBoundbyTransitionIndex(int timer) {
+	public static int getLowerBoundbyTransitionIndex(int timer) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@SuppressWarnings("unused")
-	public int getLowerBoundbydbmIndex(int index) {
+	public static int getLowerBoundbydbmIndex(int index) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@SuppressWarnings("unused")
-	public int getDbmEntry(int i, int j) {
+	public static int getDbmEntry(int i, int j) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@SuppressWarnings("unused")
-	public boolean exceedsLowerBoundbyTransitionIndex(int timer) {
+	public static boolean exceedsLowerBoundbyTransitionIndex(int timer) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@SuppressWarnings("unused")
-	public boolean exceedsLowerBoundbydbmIndex(int index) {
+	public static boolean exceedsLowerBoundbydbmIndex(int index) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@SuppressWarnings("unused")
-	public ZoneType fireTransitionbyTransitionIndex(int timer,
+	public static ZoneType fireTransitionbyTransitionIndex(int timer,
 			int[] enabledTimers, State state) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@SuppressWarnings("unused")
-	public ZoneType fireTransitionbydbmIndex(int index, int[] enabledTimers,
+	public static ZoneType fireTransitionbydbmIndex(int index, int[] enabledTimers,
 			State state) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public List<Transition> getEnabledTransitions() {
+	public static List<Transition> getEnabledTransitions() {
 		// TODO Auto-generated method stub
 		return null;
 	}

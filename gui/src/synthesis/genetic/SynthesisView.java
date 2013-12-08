@@ -163,7 +163,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		loadSynthesisOptions();
 	}
 	
-	private Properties createDefaultSynthesisProperties(String specFileID) {
+	private static Properties createDefaultSynthesisProperties(String specFileID) {
 		Properties synthProps = new Properties();
 		Preferences prefs = Preferences.userRoot();
 		synthProps.setProperty(GlobalConstants.SBOL_SYNTH_SPEC_PROPERTY, specFileID);
@@ -331,7 +331,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 			
 			solutionFileIDs.addAll(importSolutionSubModels(solutionGraphs, synthFilePath));
 			solutionFileIDs.add(importSolutionComponents(solutionGraphs, fileManager, synthFilePath));
-			synthesizer.composeSolutionModel(solutionGraphs, spec, solutionModel);
+			Synthesizer.composeSolutionModel(solutionGraphs, spec, solutionModel);
 			solutionModels.add(solutionModel);
 		}
 		List<String> orderedSolnFileIDs = new LinkedList<String>();
@@ -398,7 +398,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		return splitPath[splitPath.length - 1] + "_" + biomodel.getSBMLFile();
 	}
 	
-	private boolean compareModels(BioModel subModel1, BioModel subModel2) {
+	private static boolean compareModels(BioModel subModel1, BioModel subModel2) {
 		SBMLWriter writer = new SBMLWriter();
 		String hash1 = null;
 		String hash2 = null;
@@ -428,7 +428,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 					compURIs.add(compURI);
 		}
 		String sbolFileID = getSpecFileID().replace(".xml", GlobalConstants.SBOL_FILE_EXTENSION);
-		fileManager.saveDNAComponents(fileManager.resolveURIs(new LinkedList<URI>(compURIs)), 
+		SBOLFileManager.saveDNAComponents(fileManager.resolveURIs(new LinkedList<URI>(compURIs)), 
 				synthFilePath + separator + sbolFileID);
 		return sbolFileID;
 	}

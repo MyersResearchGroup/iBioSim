@@ -152,7 +152,7 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 			
 			for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
 				Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
-				if (param.getConstant() && !bioModel.IsDefaultParameter(param.getId())) {
+				if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
 					conversionFactor.addItem(param.getId());
 				}
 			}
@@ -285,7 +285,8 @@ public class ModelPanel extends JButton implements ActionListener, MouseListener
 //				SBOLDescriptorPanel descriptorPanel = new SBOLDescriptorPanel(sbolField.getSBOLURIs().get(0))
 		}
 		else if (e.getActionCommand().equals("fluxObjective")){
-			new FBAObjective(bioModel);
+			FBAObjective fbaObjective = new FBAObjective(bioModel);
+			fbaObjective.openGui();
 		}
 
 	}

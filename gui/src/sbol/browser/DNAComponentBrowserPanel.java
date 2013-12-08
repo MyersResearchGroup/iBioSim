@@ -64,8 +64,8 @@ public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 			try {
 				dnac = aggregateCompResolver.resolve(compURIs.get(i));
 			} catch (MergerException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				return;
 			}
 			if (filterType.equals("all") || (dnac.getTypes().size() > 0 &&
 					SBOLUtility.convertURIToSOTerm(dnac.getTypes().iterator().next()).equals(filterType))) {
@@ -163,7 +163,7 @@ public class DNAComponentBrowserPanel extends JPanel implements MouseListener {
 		} 
 	}
 	
-	private SequenceAnnotation[] sortAnnotations(LinkedList<SequenceAnnotation> unsortedSA) {
+	private static SequenceAnnotation[] sortAnnotations(LinkedList<SequenceAnnotation> unsortedSA) {
 		SequenceAnnotation[] sortedSA = new SequenceAnnotation[unsortedSA.size()];
 		int n = 0;
 		for (SequenceAnnotation sa : unsortedSA) {

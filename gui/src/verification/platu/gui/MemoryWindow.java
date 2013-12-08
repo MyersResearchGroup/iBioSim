@@ -101,7 +101,7 @@ public class MemoryWindow extends Thread {
         }
     }
 
-    private void chartVisual(JFreeChart chart) {
+    private static void chartVisual(JFreeChart chart) {
         chart.setBackgroundPaint(Color.BLACK);
         chart.setBorderPaint(Color.green);
         chart.getXYPlot().setBackgroundPaint(Color.black);

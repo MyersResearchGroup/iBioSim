@@ -60,7 +60,7 @@ public class Poset {
 			HashSet<Transition> curEnabledSet = this.causalityFwd.get(curTran);
 			if(curEnabledSet==null) {
 				System.out.println("*** Transition does not exist in causalityFwd");
-				System.exit(0);
+				return null;
 			}
 			newPoset.causalityFwd.put(curTran, (HashSet)curEnabledSet.clone());
 			

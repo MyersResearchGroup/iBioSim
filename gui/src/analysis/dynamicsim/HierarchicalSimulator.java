@@ -230,7 +230,7 @@ public abstract class HierarchicalSimulator {
 	/**
 	 * Get path to submodels xml files
 	 */
-	protected String getPath(String path)
+	protected static String getPath(String path)
 	{
 		String separator;
 
@@ -255,7 +255,7 @@ public abstract class HierarchicalSimulator {
 	}
 
 
-	private boolean checkGrid(Model model)
+	private static boolean checkGrid(Model model)
 	{
 		if(model.getCompartment("Grid") != null)
 			return true;
@@ -476,7 +476,7 @@ public abstract class HierarchicalSimulator {
 	 * @param annotation
 	 * @return size of array
 	 */
-	private int getArraySize(String annotation)
+	private static int getArraySize(String annotation)
 	{
 		String size = "";
 
@@ -501,7 +501,7 @@ public abstract class HierarchicalSimulator {
 	 * @param annotation
 	 * @return size of array
 	 */
-	private LinkedList<String> getArrayIDs(String annotation)
+	private static LinkedList<String> getArrayIDs(String annotation)
 	{
 		LinkedList<String> id = new LinkedList<String>();
 
@@ -734,7 +734,7 @@ public abstract class HierarchicalSimulator {
 	 * @param metaid
 	 * @return
 	 */
-	private boolean deleteElementByMetaId(Model submodel, String metaid)
+	private static boolean deleteElementByMetaId(Model submodel, String metaid)
 	{
 		for(Species s : submodel.getListOfSpecies())
 		{
@@ -828,7 +828,7 @@ public abstract class HierarchicalSimulator {
 	 * @param sid
 	 * @return
 	 */
-	private boolean deleteElementBySId(Model submodel, String sid)
+	private static boolean deleteElementBySId(Model submodel, String sid)
 	{
 		for(Species s : submodel.getListOfSpecies())
 		{
@@ -901,7 +901,7 @@ public abstract class HierarchicalSimulator {
 	/**
 	 * Perform deletion on comp model
 	 */
-	private void performDeletions(Model subModel, Submodel instance) {
+	private static void performDeletions(Model subModel, Submodel instance) {
 
 		//CompModelPlugin sbmlCompModel = (CompModelPlugin)topmodel.model.getModel().getExtension(CompConstant.namespaceURI);
 		CompModelPlugin sbmlCompModel = (CompModelPlugin)subModel.getModel().getExtension(CompConstant.namespaceURI);
@@ -1448,7 +1448,7 @@ public abstract class HierarchicalSimulator {
 	 * @param selectedReactionID the reaction that was recently performed
 	 * @return the set of all reactions that the performed reaction affects the propensity of
 	 */
-	protected HashSet<String> getAffectedReactionSet(ModelState modelstate, String selectedReactionID, boolean noAssignmentRulesFlag) {
+	protected static HashSet<String> getAffectedReactionSet(ModelState modelstate, String selectedReactionID, boolean noAssignmentRulesFlag) {
 
 		HashSet<String> affectedReactionSet = new HashSet<String>(20);
 		affectedReactionSet.add(selectedReactionID);
@@ -1482,7 +1482,7 @@ public abstract class HierarchicalSimulator {
 	 * @param value the double to be translated to a boolean
 	 * @return the translated boolean value
 	 */
-	protected boolean getBooleanFromDouble(double value) {
+	protected static boolean getBooleanFromDouble(double value) {
 
 		if (value == 0.0) 
 			return false;
@@ -1495,7 +1495,7 @@ public abstract class HierarchicalSimulator {
 	 * @param value the boolean to be translated to a double
 	 * @return the translated double value
 	 */
-	protected double getDoubleFromBoolean(boolean value) {
+	protected static double getDoubleFromBoolean(boolean value) {
 
 		if (value == true)
 			return 1.0;
@@ -2390,7 +2390,7 @@ public abstract class HierarchicalSimulator {
 	 * @param species
 	 * @param speciesID
 	 */
-	private void setupSingleSpecies(ModelState modelstate, Species species, String speciesID) {
+	private static void setupSingleSpecies(ModelState modelstate, Species species, String speciesID) {
 		if (modelstate.speciesIDSet.contains(speciesID))
 			return;
 
@@ -2464,7 +2464,7 @@ public abstract class HierarchicalSimulator {
 	 * 
 	 * @throws IOException
 	 */
-	protected void setupSpecies(ModelState modelstate) throws IOException {
+	protected static void setupSpecies(ModelState modelstate) throws IOException {
 
 		//add values to hashmap for easy access to species amounts
 		Species species;
@@ -2517,7 +2517,7 @@ public abstract class HierarchicalSimulator {
 	 * 
 	 * @param parameter
 	 */
-	private void setupSingleParameter(ModelState modelstate, Parameter parameter) {
+	private static void setupSingleParameter(ModelState modelstate, Parameter parameter) {
 
 		String parameterID = parameter.getId();
 		modelstate.variableToValueMap.put(parameterID, parameter.getValue());
@@ -2588,7 +2588,7 @@ public abstract class HierarchicalSimulator {
 	}
 
 	
-	protected void setupNonConstantSpeciesReferences(ModelState modelstate)
+	protected static void setupNonConstantSpeciesReferences(ModelState modelstate)
 	{
 		
 		//loop through all reactions and calculate their propensities

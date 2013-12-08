@@ -442,7 +442,7 @@ public class LPNState {
 	 * Returns the number of states given an id.
 	 * @return The total number of states given an id.
 	 */
-	public long getNumberOfStates()
+	public static long getNumberOfStates()
 	{
 		return numberOfStates;
 	}

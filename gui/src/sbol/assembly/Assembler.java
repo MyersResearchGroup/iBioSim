@@ -30,7 +30,7 @@ public class Assembler {
 		this.seqValidator = seqValidator;
 	}
 	
-	public DnaComponent exportDnaComponent(String exportFilePath) {
+	public static DnaComponent exportDnaComponent(String exportFilePath) {
 		DnaComponent assemblyComp = null;
 		SBOLDocument sbolDoc = SBOLFactory.createDocument();
 		SBOLUtility.addDNAComponent(assemblyComp, sbolDoc, false);
@@ -180,7 +180,7 @@ public class Assembler {
 		return flatOrderedNodes;
 	}
 	
-	private int addSubComponent(int position, DnaComponent subComp, DnaComponent parentComp, String strand) {	
+	private static int addSubComponent(int position, DnaComponent subComp, DnaComponent parentComp, String strand) {	
 		if (subComp.getDnaSequence() != null && subComp.getDnaSequence().getNucleotides() != null 
 				&& subComp.getDnaSequence().getNucleotides().length() >= 1) {
 			SequenceAnnotation annot = new SequenceAnnotationImpl();
@@ -437,11 +437,11 @@ public class Assembler {
 		return types;
 	}
 	
-	private List<URI> loadNodeURIs(AssemblyNode assemblyNode) {
+	private static List<URI> loadNodeURIs(AssemblyNode assemblyNode) {
 		return SBOLUtility.loadDNAComponentURIs(assemblyNode.getDNAComponents());
 	}
 	
-	private List<URI> loadNodeURIs(List<AssemblyNode> assemblyNodes) {
+	private static List<URI> loadNodeURIs(List<AssemblyNode> assemblyNodes) {
 		List<URI> uris = new LinkedList<URI>();
 		for (AssemblyNode assemblyNode : assemblyNodes)
 			uris.addAll(loadNodeURIs(assemblyNode));

@@ -44,7 +44,7 @@ public class CompositionalThread extends Thread{
      * @return Number of new transitions.
      */
 	@SuppressWarnings("unused")
-	private int applyConstraintSet(StateGraph sg, StateGraph srcSG, int iter, List<Constraint> newConstraintSet, List<Constraint> oldConstraintSet){
+	private static int applyConstraintSet(StateGraph sg, StateGraph srcSG, int iter, List<Constraint> newConstraintSet, List<Constraint> oldConstraintSet){
 		int newTransitions = 0;
 //		int[] thisIndexList = null;
 //		int[] otherIndexList = null;
@@ -109,7 +109,7 @@ public class CompositionalThread extends Thread{
      * @param sg The state graph the constraints are to be applied.
      * @param srcSG The state graph the constraint are extracted from.
      */
-	private void extractConstraints(StateGraph sg, StateGraph srcSG, List<Constraint> newConstraintSet, List<Constraint> oldConstraintSet){
+	private static void extractConstraints(StateGraph sg, StateGraph srcSG, List<Constraint> newConstraintSet, List<Constraint> oldConstraintSet){
 		newConstraintSet.clear();
 		oldConstraintSet.clear();
 		LhpnFile srcLpn = srcSG.getLpn();
@@ -128,7 +128,7 @@ public class CompositionalThread extends Thread{
      * @return True if compatible, otherwise False.
      */
 	@SuppressWarnings("unused")
-	private boolean compatible(verification.platu.stategraph.State currentState, Constraint constr, int[] thisIndexList, int[] otherIndexList){
+	private static boolean compatible(verification.platu.stategraph.State currentState, Constraint constr, int[] thisIndexList, int[] otherIndexList){
 		int[] constraintVector = constr.getVector();
 		int[] currentVector = currentState.getVariableVector();
 		
@@ -149,7 +149,7 @@ public class CompositionalThread extends Thread{
      * @return Number of new transitions.
      */
 	@SuppressWarnings("unused")
-	private int createNewState(StateGraph sg, verification.platu.stategraph.State compatibleState, Constraint c){
+	private static int createNewState(StateGraph sg, verification.platu.stategraph.State compatibleState, Constraint c){
 		int newTransitions = 0;
 
 		// Create new state and insert into state graph

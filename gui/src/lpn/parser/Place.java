@@ -42,7 +42,7 @@ public class Place {
 		postset.remove(transition);
 	}
 
-	public void setMarking(Boolean marking) {
+	public void setMarking(boolean marking) {
 		marked = marking;
 	}
 	

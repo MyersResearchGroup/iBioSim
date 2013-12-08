@@ -61,8 +61,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	private ModelEditor modelEditor;
 	
 	private SBOLField sbolField;
-
-	private Gui biosim;
 	
 	private boolean isTextual;
 
@@ -70,7 +68,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	public Events(Gui biosim, BioModel bioModel, ModelEditor modelEditor, boolean isTextual) {
 		super(new BorderLayout());
 		this.bioModel = bioModel;
-		this.biosim = biosim;
 		this.isTextual = isTextual;
 		this.modelEditor = modelEditor;
 		Model model = bioModel.getSBMLDocument().getModel();
@@ -136,7 +133,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	 * Creates a frame used to edit events or create new ones.
 	 */
 	public String eventEditor(String option,String selected,boolean isTransition) {
-		String[] origAssign = null;
+		String[] origAssign = new String[0];
 		String[] assign = new String[0];
 		String[] placeAssign = new String[0];
 		ArrayList<String> presetPlaces = new ArrayList<String>();
@@ -992,18 +989,18 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Check the units of an event delay
 	 */
-	private boolean checkEventDelayUnits(Delay delay) {
+	private static boolean checkEventDelayUnits(Delay delay) {
 //		TODO:  Is this necessary?
 //		bioModel.getSBMLDocument().getModel().populateListFormulaUnitsData();
 		if (delay.containsUndeclaredUnits()) {
-			if (biosim.getCheckUndeclared()) {
+			if (Gui.getCheckUndeclared()) {
 				JOptionPane.showMessageDialog(Gui.frame, "Event assignment delay contains literals numbers or parameters with undeclared units.\n"
 						+ "Therefore, it is not possible to completely verify the consistency of the units.", "Contains Undeclared Units",
 						JOptionPane.WARNING_MESSAGE);
 			}
 			return false;
 		}
-		else if (biosim.getCheckUnits()) {
+		else if (Gui.getCheckUnits()) {
 			if (SBMLutilities.checkUnitsInEventDelay(delay)) {
 				JOptionPane.showMessageDialog(Gui.frame, "Event delay should be units of time.", "Event Delay Not Time Units",
 						JOptionPane.ERROR_MESSAGE);
@@ -1020,7 +1017,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 //		TODO:  Is this necessary?
 //		bioModel.getSBMLDocument().getModel().populateListFormulaUnitsData();
 		if (assign.containsUndeclaredUnits()) {
-			if (biosim.getCheckUndeclared()) {
+			if (Gui.getCheckUndeclared()) {
 				JOptionPane.showMessageDialog(Gui.frame, "Event assignment to " + assign.getVariable()
 						+ " contains literals numbers or parameters with undeclared units.\n"
 						+ "Therefore, it is not possible to completely verify the consistency of the units.", "Contains Undeclared Units",
@@ -1028,7 +1025,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			}
 			return false;
 		}
-		else if (biosim.getCheckUnits()) {
+		else if (Gui.getCheckUnits()) {
 			if (SBMLutilities.checkUnitsInEventAssignment(bioModel.getSBMLDocument(), assign)) {
 				JOptionPane.showMessageDialog(Gui.frame, "Units on the left and right-hand side for the event assignment " + assign.getVariable()
 						+ " do not agree.", "Units Do Not Match", JOptionPane.ERROR_MESSAGE);
@@ -1102,7 +1099,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	 * @param selected
 	 *            the event Id to remove
 	 */
-	public void removeTheEvent(BioModel gcm, String selected) {
+	public static void removeTheEvent(BioModel gcm, String selected) {
 		ListOf<Event> EL = gcm.getSBMLDocument().getModel().getListOfEvents();
 		for (int i = 0; i < gcm.getSBMLDocument().getModel().getEventCount(); i++) {
 			org.sbml.jsbml.Event E = EL.get(i);
@@ -1328,7 +1325,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	 * Determines if a variable is already used in assignment rule or another
 	 * event assignment
 	 */
-	private boolean keepVarEvent(BioModel gcm, String[] assign, String selected, String id) {
+	private static boolean keepVarEvent(BioModel gcm, String[] assign, String selected, String id) {
 		if (!selected.equals(id)) {
 			for (int j = 0; j < assign.length; j++) {
 				if (id.equals(assign[j].split(" ")[0])) {
@@ -1353,7 +1350,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	 * @param assign
 	 *            String array of event assignments for selected event
 	 */
-	private void removeAssignment(JList eventAssign) {
+	private static void removeAssignment(JList eventAssign) {
 		int index = eventAssign.getSelectedIndex();
 		if (index != -1) {
 			eventAssign.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);

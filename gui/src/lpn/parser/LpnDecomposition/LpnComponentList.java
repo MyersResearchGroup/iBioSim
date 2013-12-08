@@ -121,7 +121,7 @@ public class LpnComponentList extends LhpnFile{
 		System.out.println("*****************************************************");
 	}
 
-	private void printProcessMap(HashMap<Integer, LpnProcess> processMap) {
+	private static void printProcessMap(HashMap<Integer, LpnProcess> processMap) {
 		System.out.println("~~~~~~~~~~~~process map~~~~~~~~~~~~~~");
 		for (Iterator<Integer> processMapIter = processMap.keySet().iterator(); processMapIter.hasNext();) {
 			Integer procID = processMapIter.next();
@@ -210,7 +210,7 @@ public class LpnComponentList extends LhpnFile{
 		return sharedVars;
 	}
 
-	private void printSharedProcessVarMap(
+	private static void printSharedProcessVarMap(
 			HashMap<Variable, ArrayList<LpnProcess>> sharedVarMap) {
 		System.out.println("~~~~~~ shared variables map ~~~~~~~~~~~");
 		for (Iterator<Variable> sharedVarMapIter = sharedVarMap.keySet().iterator(); sharedVarMapIter.hasNext();) {

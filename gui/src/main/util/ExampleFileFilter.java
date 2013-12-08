@@ -158,7 +158,7 @@ public class ExampleFileFilter extends FileFilter {
 	 * @see #getExtension
 	 * @see FileFilter#accept
 	 */
-	public String getExtension(File f) {
+	public static String getExtension(File f) {
 		if (f != null) {
 			String filename = f.getName();
 			int i = filename.lastIndexOf('.');

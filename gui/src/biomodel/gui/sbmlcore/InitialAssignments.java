@@ -54,13 +54,10 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 
 	private ModelEditor modelEditor;
 
-	private Gui biosim;
-
 	/* Create initial assignment panel */
-	public InitialAssignments(Gui biosim, BioModel bioModel, ModelEditor modelEditor) {
+	public InitialAssignments(BioModel bioModel, ModelEditor modelEditor) {
 		super(new BorderLayout());
 		this.bioModel = bioModel;
-		this.biosim = biosim;
 		this.modelEditor = modelEditor;
 		Model model = bioModel.getSBMLDocument().getModel();
 		/* Create initial assignment panel */
@@ -150,7 +147,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 	/**
 	 * Try to add or edit initial assignments
 	 */
-	public static boolean addInitialAssignment(Gui biosim, BioModel bioModel, String variable, String assignment) {
+	public static boolean addInitialAssignment(BioModel bioModel, String variable, String assignment) {
 		if (assignment.trim().equals("")) {
 			JOptionPane.showMessageDialog(Gui.frame, "Initial assignment is empty.", "Enter Assignment", JOptionPane.ERROR_MESSAGE);
 			return true;
@@ -203,7 +200,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 		SBMLutilities.setMetaId(r, initialId);
 		r.setVariable(variable);
 		r.setMath(bioModel.addBooleans(assignment.trim()));
-		if (checkInitialAssignmentUnits(biosim, bioModel, r)) {
+		if (checkInitialAssignmentUnits(bioModel, r)) {
 			error = true;
 		}
 		if (!error && SBMLutilities.checkCycles(bioModel.getSBMLDocument())) {
@@ -226,16 +223,16 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 	/**
 	 * Check the units of an initial assignment
 	 */
-	public static boolean checkInitialAssignmentUnits(Gui biosim, BioModel bioModel, InitialAssignment init) {
+	public static boolean checkInitialAssignmentUnits(BioModel bioModel, InitialAssignment init) {
 		if (init.containsUndeclaredUnits()) {
-			if (biosim.getCheckUndeclared()) {
+			if (Gui.getCheckUndeclared()) {
 				JOptionPane.showMessageDialog(Gui.frame, "Initial assignment contains literals numbers or parameters with undeclared units.\n"
 						+ "Therefore, it is not possible to completely verify the consistency of the units.", "Contains Undeclared Units",
 						JOptionPane.WARNING_MESSAGE);
 			}
 			return false;
 		}
-		else if (biosim.getCheckUnits()) {
+		else if (Gui.getCheckUnits()) {
 			if (SBMLutilities.checkUnitsInInitialAssignment(bioModel.getSBMLDocument(), init)) {
 				JOptionPane.showMessageDialog(Gui.frame, "Units on the left and right-hand side of the initial assignment do not agree.",
 						"Units Do Not Match", JOptionPane.ERROR_MESSAGE);
@@ -248,7 +245,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 	/**
 	 * Sort initial rules in order to be evaluated
 	 */
-	private String[] sortInitRules(String[] initRules) {
+	private static String[] sortInitRules(String[] initRules) {
 		String[] result = new String[initRules.length];
 		int j = 0;
 		boolean[] used = new boolean[initRules.length];
@@ -351,7 +348,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			r.setVariable(variable);
 			r.setMath(SBMLutilities.myParseFormula(assignment));
 			inits[index] = variable + " = " + SBMLutilities.myFormulaToString(r.getMath());
-			if (InitialAssignments.checkInitialAssignmentUnits(biosim, bioModel, r)) {
+			if (InitialAssignments.checkInitialAssignmentUnits(bioModel, r)) {
 				error = true;
 			}
 			if (!error) {
@@ -400,7 +397,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			for (int i = 0; i < adding.length; i++) {
 				inits[i] = (String) adding[i];
 			}
-			if (InitialAssignments.checkInitialAssignmentUnits(biosim, bioModel, r)) {
+			if (InitialAssignments.checkInitialAssignmentUnits(bioModel, r)) {
 				error = true;
 			}
 			if (!error) {

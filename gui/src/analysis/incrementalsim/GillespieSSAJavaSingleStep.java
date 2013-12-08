@@ -86,17 +86,15 @@ public class GillespieSSAJavaSingleStep {
 	 output = new FileOutputStream(outTSDName);
 	 outTSD = new PrintStream(output);
 	 SBMLDocument document = null;
-	try {
-		document = SBMLReader.read(new File(SBMLFileName));
-	}
-	catch (XMLStreamException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-	catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
+	 try {
+		 document = SBMLReader.read(new File(SBMLFileName));
+	 } catch (XMLStreamException e1) {
+		 JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
+		 return;
+	 } catch (IOException e1) {
+		 JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
+		 return;
+	 }
 	 model = document.getModel();
 	 outTSD.print("(");
 	 for (int i=0; i < model.getReactionCount(); i++){
@@ -696,7 +694,7 @@ public class GillespieSSAJavaSingleStep {
 		 
 		 if (prevTriggerVal && !currTriggerVal ) { 
 			  // non-persistent trigger
-			  if (eventQueueContainsEvent && !trigger.getPersistent()) { 
+			  if (eventQueueContainsEvent && trigger != null && !trigger.getPersistent()) { 
 				  // add event to eventToRemove
 				  eventToRemoveArray.add(currEvent.getId());
 			  }
@@ -892,7 +890,7 @@ public class GillespieSSAJavaSingleStep {
 		return retStr;
 	}
 	 
-	public boolean isLeafNode(ASTNode node){
+	public static boolean isLeafNode(ASTNode node){
 		boolean ret = false;
 		ret = node.isConstant() || node.isInteger() || node.isReal() || node.isName() || node.isRational();
 		return ret;

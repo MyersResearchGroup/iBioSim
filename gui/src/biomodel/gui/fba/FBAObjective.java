@@ -40,15 +40,21 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 	
 	private FBCModelPlugin fbc;
 	
+	private JPanel bigPanel = null;
+
+	private String[] objectiveStringArray = null;
+	
+	private String activeObjective = null;
+	
 	public FBAObjective(BioModel bioModel) {
 		super(new BorderLayout());
 		this.bioModel = bioModel;
 		fbc = bioModel.getSBMLFBC();
 		
 		
-		JPanel bigPanel = new JPanel(new BorderLayout());
-		String[] objectiveStringArray = new String[fbc.getListOfObjectives().size()];
-		String activeObjective = fbc.getListOfObjectives().getActiveObjective();
+		bigPanel = new JPanel(new BorderLayout());
+		objectiveStringArray = new String[fbc.getListOfObjectives().size()];
+		activeObjective = fbc.getListOfObjectives().getActiveObjective();
 			
 		for (int i = 0; i < fbc.getListOfObjectives().size(); i++) {
 			String objective = "";
@@ -105,6 +111,9 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 		ObjectiveCreationPanel.add(buttons, "South");
 		
 		bigPanel.add(ObjectiveCreationPanel, "South");
+	}
+	
+	public void openGui() {
 		Object[] options = { "Ok", "Cancel" };
 		String title = "Objectives Editor";
 		int value = JOptionPane.showOptionDialog(Gui.frame, bigPanel, title, JOptionPane.YES_NO_OPTION, 
@@ -163,7 +172,7 @@ public class FBAObjective extends JPanel implements ActionListener, MouseListene
 		}
 	}
 	
-	private void removeObjective(JList objectiveList) {
+	private static void removeObjective(JList objectiveList) {
 		// find where the selected objective is on the list
 		int index = objectiveList.getSelectedIndex();
 		if (index != -1) {

@@ -4694,6 +4694,8 @@ public class ExprTree {
 				if ((r2Range.get_LowerBound() == - INFIN) || (r1Range.get_UpperBound() == INFIN)){
 					return new IntervalPair(-INFIN, INFIN);
 				}
+			} else {
+				r2Range = new IntervalPair(-INFIN, INFIN);
 			}
 			
 //			    if (op=="||"){
@@ -4747,7 +4749,7 @@ public class ExprTree {
 //				tu2 = r2->uvalue;
 //			      }
 			
-				if( r2Range != null && r2.logical){ // Note : r2Range can only be set if r2 was non-null.
+				if(r2.logical){ // Note : r2Range can only be set if r2 was non-null.
 					tl2 = r2Range.get_LowerBound() != 0; // False if value is zero and true otherwise.
 					tu2 = r2Range.get_UpperBound() != 0; // False if value is zero and true otherwise.
 				}
@@ -4839,7 +4841,7 @@ public class ExprTree {
 //				tu2 = r2->uvalue;
 //			      }
 //			      else{//convert numeric r2 to boolean
-				if( r2Range != null && r2.logical){ // Note : r2Range can only be set if r2 was non-null.
+				if(r2.logical){ // Note : r2Range can only be set if r2 was non-null.
 					tl2 = r2Range.get_LowerBound() != 0; // False if value is zero and true otherwise.
 					tu2 = r2Range.get_UpperBound() != 0; // False if value is zero and true otherwise.
 				}
@@ -5719,16 +5721,20 @@ public class ExprTree {
 		}
 		else{
 		
-			
-			if((range.get_LowerBound() == 0) && (range.get_UpperBound() == 0)){// false
-				lower = upper = false;
-			}	
-			else if (((range.get_LowerBound() < 0) && (range.get_UpperBound() < 0)) ||
-					((range.get_LowerBound() > 0) && (range.get_UpperBound() > 0))){ // true
-				lower = upper = true;
-			}
-			
-			else{
+			if (range!=null) {
+				if((range.get_LowerBound() == 0) && (range.get_UpperBound() == 0)){// false
+					lower = upper = false;
+				}	
+				else if (((range.get_LowerBound() < 0) && (range.get_UpperBound() < 0)) ||
+						((range.get_LowerBound() > 0) && (range.get_UpperBound() > 0))){ // true
+					lower = upper = true;
+				}
+
+				else{
+					lower = false;
+					upper = true;
+				}
+			} else {
 				lower = false;
 				upper = true;
 			}

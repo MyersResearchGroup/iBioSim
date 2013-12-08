@@ -23,7 +23,7 @@ public class SimResultsTable extends JPanel{
 		add(scrollPane);
 	}
 	
-	public void showTable(JFrame tableFrame, SimResultsTable simResultsTbl){
+	public static void showTable(JFrame tableFrame, SimResultsTable simResultsTbl){
 		//Create and set up the content pane.
 	    tableFrame.setContentPane(simResultsTbl);
 	    //Display the window.

@@ -474,7 +474,7 @@ public class Zone extends ZoneType {
 	 * @return
 	 * 			The row/column index of _matrix.
 	 */
-	private int dbmIndexToMatrixIndex(int i)
+	private static int dbmIndexToMatrixIndex(int i)
 	{
 		return i+1;
 	}
@@ -538,7 +538,7 @@ public class Zone extends ZoneType {
 	 * 			The row/column index of the DBM.
 	 */
 	@SuppressWarnings("unused")
-	private int matrixIndexTodbmIndex(int i)
+	private static int matrixIndexTodbmIndex(int i)
 	{
 		return i-1;
 	}
@@ -792,7 +792,7 @@ public class Zone extends ZoneType {
 	 * 			True if the arrays is square, non-zero, and non-null, false otherwise.
 	 */
 	@SuppressWarnings("unused")
-	private boolean checkSquare(int[][] array)
+	private static boolean checkSquare(int[][] array)
 	{
 		//boolean result = true; 
 		
@@ -995,7 +995,7 @@ public class Zone extends ZoneType {
 				int newIndexj = j==0 ? 0 : 
 					Arrays.binarySearch(newZone._indexToTimer, tempZone._indexToTimer[j]);
 				
-				newZone._matrix[newZone.dbmIndexToMatrixIndex(newIndexi)][newZone.dbmIndexToMatrixIndex(newIndexj)]
+				newZone._matrix[Zone.dbmIndexToMatrixIndex(newIndexi)][Zone.dbmIndexToMatrixIndex(newIndexj)]
 				                                                            = tempZone.getDbmEntry(i, j);
 				// In above, changed getDBMIndex to getdbm
 			}
@@ -1391,7 +1391,7 @@ public class Zone extends ZoneType {
 	 * 				to its index in the newTimers array.
 	 */
 	@SuppressWarnings("unused")
-	private HashMap<Integer, Integer> makeIndexMap(int[] baseTimers, int[] newTimers)
+	private static HashMap<Integer, Integer> makeIndexMap(int[] baseTimers, int[] newTimers)
 	{	
 		// Map the new index of the timer to the old timer.
 		HashMap<Integer, Integer> newIndex = new HashMap<Integer, Integer>();
@@ -1491,7 +1491,7 @@ public class Zone extends ZoneType {
 		return new HashMap<Integer, Transition>(_indexToTransition);
 	}
 	
-	public void setLexicon(HashMap<Integer, Transition> lexicon){
+	public static void setLexicon(HashMap<Integer, Transition> lexicon){
 		_indexToTransition = lexicon;
 	}
 	
@@ -1680,7 +1680,7 @@ public class Zone extends ZoneType {
 	 * 		Enables pop up windows notifying that a zone failed.
 	 */
 	@SuppressWarnings("unused")
-	private void testSplit(Zone z, boolean popUp)
+	private static void testSplit(Zone z, boolean popUp)
 	{
 		// Get a new copy of the matrix to manipulate.
 		int[][] m = z._matrix;
@@ -1755,7 +1755,7 @@ public class Zone extends ZoneType {
 	 * @param z
 	 * 		Zone to test.
 	 */
-	public void testZoneGraphMinimization(Zone z, boolean popUp){
+	public static void testZoneGraphMinimization(Zone z, boolean popUp){
 
 		ZoneGraph g = ZoneGraph.extractZoneGraph(z);
 		

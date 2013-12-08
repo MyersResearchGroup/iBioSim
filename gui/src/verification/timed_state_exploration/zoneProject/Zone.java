@@ -1714,7 +1714,7 @@ public class Zone{
 	 * @return
 	 * 			The row/column index of _matrix.
 	 */
-	private int dbmIndexToMatrixIndex(int i)
+	private static int dbmIndexToMatrixIndex(int i)
 	{
 		return i+1;
 	}
@@ -2353,8 +2353,8 @@ public class Zone{
 				int newIndexj = j==0 ? 0 : 
 					Arrays.binarySearch(newZone._indexToTimerPair, tempZone._indexToTimerPair[j]);
 				
-				newZone._matrix[newZone.dbmIndexToMatrixIndex(newIndexi)]
-						[newZone.dbmIndexToMatrixIndex(newIndexj)]
+				newZone._matrix[Zone.dbmIndexToMatrixIndex(newIndexi)]
+						[Zone.dbmIndexToMatrixIndex(newIndexj)]
 								= tempZone.getDbmEntry(i, j);
 			}
 		}
@@ -2591,8 +2591,8 @@ public class Zone{
 					Arrays.binarySearch(newZone._indexToTimerPair,
 							tempZone._indexToTimerPair[j]);
 				
-				newZone._matrix[newZone.dbmIndexToMatrixIndex(newIndexi)]
-						[newZone.dbmIndexToMatrixIndex(newIndexj)]
+				newZone._matrix[Zone.dbmIndexToMatrixIndex(newIndexi)]
+						[Zone.dbmIndexToMatrixIndex(newIndexj)]
 								= tempZone.getDbmEntry(i, j);
 			}
 		}
@@ -5142,7 +5142,7 @@ public class Zone{
 	 * @return
 	 * The new event set.
 	 */
-	public LpnTranList addSetItem(LpnTranList E, Event e, State s, 
+	public static LpnTranList addSetItem(LpnTranList E, Event e, State s, 
 			boolean removeNext){
 		
 		return null;
@@ -5305,7 +5305,7 @@ public class Zone{
 	 * @return
 	 * 		r1*z2 - r1*z1 + r2*z1
 	 */
-	public int warp(int z1, int z2, int r1, int r2){
+	public static int warp(int z1, int z2, int r1, int r2){
 		/*
 		 *  See "Verification of Analog/Mixed-Signal Circuits Using Labeled Hybrid Petri Nets"
 		 *  by S. Little, D. Walter, C. Myers, R. Thacker, S. Batchu, and T. Yoneda
@@ -5764,7 +5764,7 @@ public class Zone{
 //		_indexToTransition = null;
 //	}
 	
-	private IntervalPair parseRate(String rate){
+	private static IntervalPair parseRate(String rate){
 		
 		String rateNoSpaces = rate.trim();
 		

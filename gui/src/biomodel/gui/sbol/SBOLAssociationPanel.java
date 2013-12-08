@@ -254,7 +254,7 @@ public class SBOLAssociationPanel extends JPanel {
 		insertComponentURIs(createPlaceHolder(), insertionIndices);
 	}
 	
-	private LinkedList<URI> createPlaceHolder() {
+	private static LinkedList<URI> createPlaceHolder() {
 		LinkedList<URI> placeHolderList = new LinkedList<URI>();
 		try {
 			placeHolderList.add(new URI("http://www.async.ece.utah.edu#iBioSimPlaceHolder"));

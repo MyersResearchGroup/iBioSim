@@ -213,7 +213,7 @@ public class SearchDepFromState {
 		}
 	}
 	
-	public void printMap(HashMap<Transition, HashSet<Transition>> tranSet)
+	public static void printMap(HashMap<Transition, HashSet<Transition>> tranSet)
 	{
 		long number = 0;
 		Iterator it = tranSet.keySet().iterator();
@@ -237,7 +237,7 @@ public class SearchDepFromState {
 		System.out.println("number"+number);
 	}
 	
-	public void printSet(Set<Entry<Transition, Set<Transition>>> tranSet)
+	public static void printSet(Set<Entry<Transition, Set<Transition>>> tranSet)
 	{
 		Iterator in = tranSet.iterator();  
 		if(!in.hasNext())

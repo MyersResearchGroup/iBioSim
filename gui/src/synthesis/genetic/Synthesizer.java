@@ -77,7 +77,7 @@ public class Synthesizer {
 		node.setMatches(confirmedMatches);
 	}
 	
-	private void boundNode(SynthesisNode node, SynthesisGraph spec) {
+	private static void boundNode(SynthesisNode node, SynthesisGraph spec) {
 		List<Integer> matchBounds = new LinkedList<Integer>();
 		for (SynthesisGraph match : node.getMatches())
 			matchBounds.add(boundMatch(node, match, spec));
@@ -85,7 +85,7 @@ public class Synthesizer {
 		node.sortMatches();
 	}
 	
-	private int boundMatch(SynthesisNode node, SynthesisGraph match, SynthesisGraph spec) {
+	private static int boundMatch(SynthesisNode node, SynthesisGraph match, SynthesisGraph spec) {
 		int matchBound = calculateCoverCost(match);
 		List<String> matchPaths = match.getPaths();
 		for (SynthesisNode boundedNode : spec.walkPaths(node, matchPaths)) {
@@ -161,38 +161,38 @@ public class Synthesizer {
 		return bestSolutionCost;
 	}
 	
-	private int addCoverToSolution(SynthesisGraph cover, List<SynthesisGraph> solution, 
+	private static int addCoverToSolution(SynthesisGraph cover, List<SynthesisGraph> solution, 
 			int solutionCost, Set<String> solutionSignals) {
 		solution.add(cover);
 		solutionSignals.addAll(cover.getSignals());
 		return solutionCost + calculateCoverCost(cover);
 	}
 	
-	private int removeCoverFromSolution(SynthesisGraph cover, List<SynthesisGraph> solution, int solutionCost,
+	private static int removeCoverFromSolution(SynthesisGraph cover, List<SynthesisGraph> solution, int solutionCost,
 			Set<String> solutionSignals) {
 		solution.remove(solution.size() - 1);
 		solutionSignals.removeAll(cover.getSignals());
 		return solutionCost - calculateCoverCost(cover);
 	}
 	
-	private int calculateCoverCost(SynthesisGraph cover) {
+	private static int calculateCoverCost(SynthesisGraph cover) {
 		return cover.getNucleotideCount();
 	}
 	
-	private boolean crossTalk(Set<String> coverSignals, Set<String> solutionSignals) {
+	private static boolean crossTalk(Set<String> coverSignals, Set<String> solutionSignals) {
 		for (String coverSignal : coverSignals)
 			if (solutionSignals.contains(coverSignal))
 				return true;
 		return false;
 	}
 	
-	private boolean ioCompatible(String outputSignal, String inputSignal) {
+	private static boolean ioCompatible(String outputSignal, String inputSignal) {
 		if (outputSignal.length() == 0 || inputSignal.length() == 0)
 			return true;
 		return inputSignal.equals(outputSignal);
 	}
 
-	private boolean solutionInBound(int solutionCost, List<SynthesisNode> currentNodes, int bestSolutionCost) {
+	private static boolean solutionInBound(int solutionCost, List<SynthesisNode> currentNodes, int bestSolutionCost) {
 		if (bestSolutionCost < 0)
 			return true;
 		int bestCaseCost = solutionCost;
@@ -201,12 +201,12 @@ public class Synthesizer {
 		return (bestCaseCost < bestSolutionCost);
 	}
 	
-	private void constrainNodes(List<SynthesisNode> nodes, List<SynthesisNode> nodeCovers) {
+	private static void constrainNodes(List<SynthesisNode> nodes, List<SynthesisNode> nodeCovers) {
 		for (int i = 0; i < nodes.size(); i++)
 			nodes.get(i).setCoverConstraint(nodeCovers.get(i).getSignal());
 	}
 	
-	public void composeSolutionModel(List<SynthesisGraph> solution, SynthesisGraph spec, BioModel solutionModel) {
+	public static void composeSolutionModel(List<SynthesisGraph> solution, SynthesisGraph spec, BioModel solutionModel) {
 		List<SynthesisGraph> solutionCopy = new LinkedList<SynthesisGraph>();
 		solutionCopy.addAll(solution);
 		List<SynthesisNode> currentNodes = new LinkedList<SynthesisNode>();
@@ -250,7 +250,7 @@ public class Synthesizer {
 		} while (currentNodes.size() > 0);
 	}
 	
-	private void composeOutput(SynthesisGraph currentCover, BioModel solutionModel, int submodelIndex) {
+	private static void composeOutput(SynthesisGraph currentCover, BioModel solutionModel, int submodelIndex) {
 		currentCover.setSubmodelID("C" + submodelIndex);
 		createSubmodel(currentCover.getSubmodelID(), currentCover.getModelFileID(), solutionModel);
 		Species species = createIOSpecies(currentCover.getOutput().getID(), solutionModel);
@@ -258,13 +258,13 @@ public class Synthesizer {
 				currentCover.getSubmodelID(), solutionModel);
 	}
 	
-	private void composeInput(SynthesisGraph previousCover, BioModel solutionModel, List<Integer> inputIndices) {
+	private static void composeInput(SynthesisGraph previousCover, BioModel solutionModel, List<Integer> inputIndices) {
 		Species species = createIOSpecies(previousCover.getInput(inputIndices.get(0)).getID(), solutionModel);
 		portMapIOSpecies(species, GlobalConstants.INPUT, previousCover.getInput(inputIndices.get(0)).getID(), 
 				previousCover.getSubmodelID(), solutionModel);
 	}
 	
-	private void composeIntermediate(SynthesisGraph currentCover, SynthesisGraph previousCover, BioModel solutionModel, 
+	private static void composeIntermediate(SynthesisGraph currentCover, SynthesisGraph previousCover, BioModel solutionModel, 
 			List<Integer> inputIndices, int submodelIndex) {
 		currentCover.setSubmodelID("C" + submodelIndex);
 		createSubmodel(currentCover.getSubmodelID(), currentCover.getModelFileID(), solutionModel);
@@ -279,7 +279,7 @@ public class Synthesizer {
 				previousCover.getSubmodelID(), currentCover.getSubmodelID());
 	}
 	
-	private void createSubmodel(String submodelID, String sbmlFileID, BioModel biomodel) {
+	private static void createSubmodel(String submodelID, String sbmlFileID, BioModel biomodel) {
 		BioModel subBiomodel = new BioModel(biomodel.getPath());
 		subBiomodel.load(biomodel.getPath() + biomodel.getSeparator() + sbmlFileID);
 		SBMLWriter writer = new SBMLWriter();
@@ -301,7 +301,7 @@ public class Synthesizer {
 				subBiomodel.getCompartmentPorts(), -1, -1, 0, 0, md5);
 	}
 	
-	private Species createInterSpecies(String inputSubSpeciesID, String outputSubSpeciesID, 
+	private static Species createInterSpecies(String inputSubSpeciesID, String outputSubSpeciesID, 
 			String inputSubDNA, String outputSubDNA, BioModel biomodel) {
 		String speciesID;
 		int speciesIndex = 0;
@@ -322,7 +322,7 @@ public class Synthesizer {
 		return biomodel.getSBMLDocument().getModel().getSpecies(speciesID);
 	}
 	
-	private Species createIOSpecies(String subSpeciesID, BioModel biomodel) {
+	private static Species createIOSpecies(String subSpeciesID, BioModel biomodel) {
 		String speciesID = subSpeciesID;
 		int speciesIndex = 0;
 		while (biomodel.isSIdInUse(speciesID)) {
@@ -333,7 +333,7 @@ public class Synthesizer {
 		return biomodel.getSBMLDocument().getModel().getSpecies(speciesID);
 	}
 	
-	private void portMapInterSpecies(SBase species, String inputSubSpeciesID, String outputSubSpeciesID, 
+	private static void portMapInterSpecies(SBase species, String inputSubSpeciesID, String outputSubSpeciesID, 
 			String inputSubDNA, String outputSubDNA, String inputSubmodelID, String outputSubmodelID) {
 		CompSBasePlugin compSpecies = SBMLutilities.getCompSBasePlugin(species);
 		ReplacedBy replacement = compSpecies.createReplacedBy();
@@ -351,7 +351,7 @@ public class Synthesizer {
 		}
 	}
 	
-	private void portMapIOSpecies(SBase species, String io, String subSpeciesID, String submodelID,
+	private static void portMapIOSpecies(SBase species, String io, String subSpeciesID, String submodelID,
 			BioModel biomodel) {
 		CompSBasePlugin compSpecies = SBMLutilities.getCompSBasePlugin(species);
 		ReplacedBy replacement = compSpecies.createReplacedBy();

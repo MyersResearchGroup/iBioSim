@@ -90,7 +90,7 @@ public class GCMScript {
 		return new double[][] {low, high};
 	}
 	
-	public double[][] generateStatistics(String directory, TesterInterface tester) {
+	public static double[][] generateStatistics(String directory, TesterInterface tester) {
 		double[][] passed = null;
 		String[] files = Utility.getTSDFiles(directory);
 		for (int i = 0; i < files.length; i++) {
@@ -105,10 +105,12 @@ public class GCMScript {
 			}
 		}
 		double[] times = tester.getTimes();
-		for (int i = 0; i < passed[0].length; i++) {
-			passed[0][i] = times[i];
-			passed[1][i] = 1-passed[1][i]/files.length;
-			passed[2][i] = 1.96*Math.sqrt(passed[1][i]*(1-passed[1][i])/files.length);
+		if (passed != null) {
+			for (int i = 0; i < passed[0].length; i++) {
+				passed[0][i] = times[i];
+				passed[1][i] = 1-passed[1][i]/files.length;
+				passed[2][i] = 1.96*Math.sqrt(passed[1][i]*(1-passed[1][i])/files.length);
+			}
 		}
 		
 		return passed;

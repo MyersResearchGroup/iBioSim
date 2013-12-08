@@ -34,7 +34,7 @@ public class CompositeStateGraph {
 		this.stateMap = stateMap;
 	}
 	
-	public List<Transition> getEnabled(CompositeState currentState){
+	public static List<Transition> getEnabled(CompositeState currentState){
 		//Set<Transition> lpnTranSet = new HashSet<Transition>(currentState.numOutgoingTrans());
 		List<Transition> enabled = new ArrayList<Transition>(currentState.numOutgoingTrans());
 		
@@ -290,6 +290,7 @@ public class CompositeStateGraph {
 			graph = new PrintStream(new FileOutputStream(dotFile));
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
+			return;
 		}
     	
     	graph.println("digraph SG{");

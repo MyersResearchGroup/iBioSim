@@ -30,7 +30,7 @@ public class Mdd {
 		peakNodes = 0;
 	}
 	
-	public mddNode newNode() {
+	public static mddNode newNode() {
 		return new mddNode(0);
 	}
 	
@@ -78,7 +78,7 @@ public class Mdd {
 	
 	
 	public mddNode doLocalFirings(StateGraph[] curLpnArray, State[] curStateArray, mddNode reachSet) {
-		mddNode result = this.newNode();
+		mddNode result = Mdd.newNode();
 		LinkedList<State>[] nextSetArray = (new LinkedList[curLpnArray.length]);
 		for(int i = 0; i < curLpnArray.length; i++)
 			nextSetArray[i] = new LinkedList<State>();
@@ -102,7 +102,7 @@ public class Mdd {
 	/*
 	 * Check if there is a path in MDD that corresponds to stateArray. Return true if so.
 	 */
-	public boolean contains(mddNode target, int[] idxArray) {
+	public static boolean contains(mddNode target, int[] idxArray) {
 		if(target == null)
 			return false;
 		return target.contains(idxArray)==Mdd.terminal;
@@ -120,7 +120,7 @@ public class Mdd {
 		return curNode.next(height, curIdxArray);
 	}
 	
-	public double numberOfStates(mddNode target) {
+	public static double numberOfStates(mddNode target) {
 		HashSet<mddNode> uniqueNodes = new HashSet<mddNode>();
 		double paths = target.pathCount(uniqueNodes);
 		return paths;

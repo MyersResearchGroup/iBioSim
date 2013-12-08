@@ -49,7 +49,7 @@ public class FluxBalanceAnalysis {
 		nf.setGroupingUsed(false);
 	}
 	
-	public String vectorToString(double[] objective, HashMap<String,Integer> reactionIndex) {
+	public static String vectorToString(double[] objective, HashMap<String,Integer> reactionIndex) {
 		String result = "";
 		for (String reaction : reactionIndex.keySet()) {
 			double value = objective[reactionIndex.get(reaction)];

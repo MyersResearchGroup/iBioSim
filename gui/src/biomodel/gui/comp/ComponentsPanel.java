@@ -810,16 +810,19 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 					}
 					*/
 				}
-			}
-			if (timeConvFactorBox.getSelectedItem().equals("(none)")) {
-				instance.unsetTimeConversionFactor();
+				if (timeConvFactorBox.getSelectedItem().equals("(none)")) {
+					instance.unsetTimeConversionFactor();
+				} else {
+					instance.setTimeConversionFactor((String)timeConvFactorBox.getSelectedItem());
+				}
+				if (extentConvFactorBox.getSelectedItem().equals("(none)")) {
+					instance.unsetExtentConversionFactor();
+				} else {
+					instance.setExtentConversionFactor((String)extentConvFactorBox.getSelectedItem());
+				}
 			} else {
-				instance.setTimeConversionFactor((String)timeConvFactorBox.getSelectedItem());
-			}
-			if (extentConvFactorBox.getSelectedItem().equals("(none)")) {
-				instance.unsetExtentConversionFactor();
-			} else {
-				instance.setExtentConversionFactor((String)extentConvFactorBox.getSelectedItem());
+				Utility.createErrorMessage("Error", "Submodel is missing.");
+				return false;
 			}
 			ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(bioModel.getSBMLDocument().getModel());
 			for (int j = 0; j < elements.size(); j++) {
@@ -871,7 +874,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 								String speciesId = portId.replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "");
 								CompModelPlugin subCompModel = subBioModel.getSBMLCompModel();
 								Submodel submodel = bioModel.getSBMLCompModel().getListOfSubmodels().get(subId);
-								bioModel.addImplicitDeletions(subCompModel, submodel, speciesId);
+								BioModel.addImplicitDeletions(subCompModel, submodel, speciesId);
 								/* Code below using replacement and deletion */
 								/*
 								ReplacedElement replacement = sbmlSBase.createReplacedElement();
@@ -899,10 +902,10 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 					deletion.setPortRef(portId);
 					String speciesId = portId.replace(GlobalConstants.INPUT+"__", "").replace(GlobalConstants.OUTPUT+"__", "");
 					CompModelPlugin subCompModel = subBioModel.getSBMLCompModel();
-					bioModel.addImplicitDeletions(subCompModel, submodel, speciesId);
+					BioModel.addImplicitDeletions(subCompModel, submodel, speciesId);
 				}
 			}
-			if (selected != null && !oldName.equals(id)) {
+			if (selected != null && oldName != null && !oldName.equals(id)) {
 				bioModel.changeComponentName(oldName, id);
 			}
 			String newPort = bioModel.getComponentPortMap(id);

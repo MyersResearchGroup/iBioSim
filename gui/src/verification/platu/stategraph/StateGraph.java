@@ -315,6 +315,7 @@ public class StateGraph {
 			graph = new PrintStream(new FileOutputStream(dotFile));
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
+			return;
 		}
     	
     	graph.println("digraph SG{");
@@ -438,7 +439,7 @@ public class StateGraph {
      * @param curState
      * @return
      */
-    public LpnTranList getEnabledFromTranVector(State curState) {
+    public static LpnTranList getEnabledFromTranVector(State curState) {
     	if (curState == null) {
     		throw new NullPointerException();
     	}   	
@@ -454,7 +455,7 @@ public class StateGraph {
 //    	}	
 //	}
 
-    protected void printTransitionSet(LpnTranList transitionSet, String setName) {
+    protected static void printTransitionSet(LpnTranList transitionSet, String setName) {
 		if (!setName.isEmpty()) 
 			System.out.println(setName + " : ");
 		if (transitionSet.isEmpty()) {
@@ -515,7 +516,7 @@ public class StateGraph {
 		return this.stateCache.size();
     }
     
-	public boolean stateOnStack(State curState, HashSet<PrjState> stateStack) {
+	public static boolean stateOnStack(State curState, HashSet<PrjState> stateStack) {
 		boolean isStateOnStack = false;
 		for (PrjState prjState : stateStack) {
 			State[] stateArray = prjState.toStateArray();
@@ -1235,7 +1236,7 @@ public class StateGraph {
 		}
 	}
 
-	protected String intArrayToString(String type, State curState) {
+	protected static String intArrayToString(String type, State curState) {
 		String arrayStr = "";
 		if (type.equals("markings")) {
 			for (int i=0; i< curState.getMarking().length; i++) {
@@ -1260,7 +1261,7 @@ public class StateGraph {
 		return arrayStr;
 	}
 	
-	protected String boolArrayToString(String type, State curState) {
+	protected static String boolArrayToString(String type, State curState) {
 		String arrayStr = "";
 		if (type.equals("enabledTrans")) {
 			for (int i=0; i< curState.getTranVector().length; i++) {
@@ -1592,7 +1593,7 @@ public class StateGraph {
 	}
 	
 	@SuppressWarnings("unused")
-	public TimedPrjState fireRateChange(final StateGraph[] curSgArray, 
+	public static TimedPrjState fireRateChange(final StateGraph[] curSgArray, 
 			final PrjState currentPrjState, LPNContinuousPair firedRate){
 		
 		TimedPrjState currentTimedPrjState;
@@ -1849,6 +1850,9 @@ public class StateGraph {
 			// If the value did not get assigned, put in the old value.
 			if(newValue == null){
 				newValue = z.getContinuousBounds(contVar);
+				if (newValue == null) {
+					newValue = new IntervalPair(0,0);
+				}
 				newRecord.set_newValue(false);
 				newRecord.set_Value(newValue);
 			}

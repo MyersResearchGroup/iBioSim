@@ -130,7 +130,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Sort functions in order to be evaluated
 	 */
-	private String[] sortFunctions(String[] funcs) {
+	private static String[] sortFunctions(String[] funcs) {
 		String[] result = new String[funcs.length];
 		String temp;
 		String temp2;

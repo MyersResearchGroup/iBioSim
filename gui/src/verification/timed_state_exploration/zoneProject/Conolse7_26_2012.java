@@ -53,7 +53,7 @@ public class Conolse7_26_2012 {
 		
 		String[] lpnList = directory.list();
 		
-		if(lpnList == null | lpnList.length == 0){
+		if(lpnList == null || lpnList.length == 0){
 			System.out.println("Directory is emtpy!");
 			return;
 		}

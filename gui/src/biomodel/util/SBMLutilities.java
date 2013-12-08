@@ -78,6 +78,7 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.Unit;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.JSBML;
+import org.sbml.libsbml.libsbmlConstants;
 
 import flanagan.math.Fmath;
 import flanagan.math.PsRandom;
@@ -1149,13 +1150,13 @@ public class SBMLutilities {
 		if (Gui.isLibsbmlFound()) {
 			try {
 				org.sbml.libsbml.SBMLDocument doc = new org.sbml.libsbml.SBMLReader().readSBMLFromString(new SBMLWriter().writeSBMLToString(document));
-				doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_GENERAL_CONSISTENCY, false);
-				doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_IDENTIFIER_CONSISTENCY, false);
-				doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_UNITS_CONSISTENCY, false);
-				doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_MATHML_CONSISTENCY, false);
-				doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_SBO_CONSISTENCY, false);
-				doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_MODELING_PRACTICE, false);
-				doc.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
+				doc.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_GENERAL_CONSISTENCY, false);
+				doc.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_IDENTIFIER_CONSISTENCY, false);
+				doc.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_UNITS_CONSISTENCY, false);
+				doc.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_MATHML_CONSISTENCY, false);
+				doc.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_SBO_CONSISTENCY, false);
+				doc.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_MODELING_PRACTICE, false);
+				doc.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
 				long numErrors = doc.checkConsistency();
 				if (numErrors > 0) {
 					JOptionPane.showMessageDialog(Gui.frame, "Algebraic rules make model overdetermined.", "Model is Overdetermined",
@@ -1829,26 +1830,26 @@ public class SBMLutilities {
 			}
 			if (document==null) return false;
 			if (overdetermined) {
-				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_GENERAL_CONSISTENCY, false);
-				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_IDENTIFIER_CONSISTENCY, false);
-				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_INTERNAL_CONSISTENCY, false);
-				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
+				document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_GENERAL_CONSISTENCY, false);
+				document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_IDENTIFIER_CONSISTENCY, false);
+				document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_INTERNAL_CONSISTENCY, false);
+				document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
 			} else {
-				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_GENERAL_CONSISTENCY, true);
-				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_IDENTIFIER_CONSISTENCY, true);
-				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_INTERNAL_CONSISTENCY, true);
-				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
+				document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_GENERAL_CONSISTENCY, true);
+				document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_IDENTIFIER_CONSISTENCY, true);
+				document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_INTERNAL_CONSISTENCY, true);
+				document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
 			}
 			if (warnings) {
-				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_UNITS_CONSISTENCY, true);
-				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_MATHML_CONSISTENCY, true);
-				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_SBO_CONSISTENCY, true);
-				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_MODELING_PRACTICE, true);
+				document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_UNITS_CONSISTENCY, true);
+				document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_MATHML_CONSISTENCY, true);
+				document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_SBO_CONSISTENCY, true);
+				document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_MODELING_PRACTICE, true);
 			} else {
-				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_UNITS_CONSISTENCY, false);
-				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_MATHML_CONSISTENCY, false);
-				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_SBO_CONSISTENCY, false);
-				document.setConsistencyChecks(org.sbml.libsbml.libsbml.LIBSBML_CAT_MODELING_PRACTICE, false);
+				document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_UNITS_CONSISTENCY, false);
+				document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_MATHML_CONSISTENCY, false);
+				document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_SBO_CONSISTENCY, false);
+				document.setConsistencyChecks(libsbmlConstants.LIBSBML_CAT_MODELING_PRACTICE, false);
 			}			
 			numErrors = document.checkConsistency();
 			for (int i = 0; i < numErrors; i++) {
@@ -3719,11 +3720,9 @@ public class SBMLutilities {
 				}
 			}
 		} catch (XMLStreamException e1) {
-			e1.printStackTrace();
 			JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
 			return null;
 		} catch (IOException e1) {
-			e1.printStackTrace();
 			JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}

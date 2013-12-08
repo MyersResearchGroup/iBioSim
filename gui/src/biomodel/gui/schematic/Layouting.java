@@ -165,10 +165,10 @@ public class Layouting {
 				layout = new mxCircleLayout(graph);
 			}
 		}
-
-		Object cell = graph.getDefaultParent();
-		layout.execute(cell);
-		graph.updateAllInternalPosition();
-		
+		if (layout != null) {
+			Object cell = graph.getDefaultParent();
+			layout.execute(cell);
+			graph.updateAllInternalPosition();
+		}
 	}
 }

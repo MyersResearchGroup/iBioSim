@@ -63,12 +63,12 @@ public class SearchDepFromLPN {
     		for(int t2=t1+1;t2<wholeSet.length;t2++)
     		{
     			//System.out.println(wholeSet[0].getFullLabel()+","+wholeSet[1]).getFullLabel());
-    			int flag = this.checkDep(wholeSet[t1], wholeSet[t2], wholeSet);
+    			int flag = SearchDepFromLPN.checkDep(wholeSet[t1], wholeSet[t2], wholeSet);
     			//independent
     			if(flag == 0)
-    				this.addTran(wholeSet[t1], wholeSet[t2], indepTranSet);
+    				SearchDepFromLPN.addTran(wholeSet[t1], wholeSet[t2], indepTranSet);
     			else if(flag == 2)
-    				this.addTran(wholeSet[t1], wholeSet[t2], interleavingSet);
+    				SearchDepFromLPN.addTran(wholeSet[t1], wholeSet[t2], interleavingSet);
     		}
     	}
     	/*
@@ -85,7 +85,7 @@ public class SearchDepFromLPN {
 	 * @param t2
 	 * @param LPNTransSet
 	 */
-    private void addTran(Transition t1,Transition t2,HashMap<Transition, HashSet<Transition>> LPNTransSet)
+    private static void addTran(Transition t1,Transition t2,HashMap<Transition, HashSet<Transition>> LPNTransSet)
     {
     	HashSet<Transition> t1_dep = LPNTransSet.get(t1);
     	if(t1_dep == null)
@@ -112,19 +112,19 @@ public class SearchDepFromLPN {
 	 * @param wholeSet
 	 * @return
 	 */
-	private int checkDep(Transition t1, Transition t2, Transition[] wholeSet)
+	private static int checkDep(Transition t1, Transition t2, Transition[] wholeSet)
 	{
 		int flag = 0;	
 		//in same LPN
 		if(t1.getLpn().getLabel().equals(t2.getLpn().getLabel()) )
 		{
-			if(this.ConditionCommonPreset(t1, t2))
+			if(SearchDepFromLPN.ConditionCommonPreset(t1, t2))
 			{
 				flag = 2;
 				//System.out.println("condition 1:"+ t1.getFullLabel()+ " same preset, interleaving "+t2.getFullLabel());
 				return flag;
 			}
-			else if(this.ConditionPrePost(t1, t2) || this.ConditionPrePost(t2, t1))
+			else if(SearchDepFromLPN.ConditionPrePost(t1, t2) || SearchDepFromLPN.ConditionPrePost(t2, t1))
 			{
 				flag = 1;
 				//System.out.println("condition 2,3:"+ t1.getFullLabel()+ " pre-post,calsality "+t2.getFullLabel());
@@ -133,19 +133,19 @@ public class SearchDepFromLPN {
 			
 		}
 		//change
-		if(this.ConditionSameAssignVar(t1, t2))
+		if(SearchDepFromLPN.ConditionSameAssignVar(t1, t2))
 		{
 			flag = 2;
 			//System.out.println("condition 4:"+t1.getFullLabel()+ " same assign, interleaving "+t2.getFullLabel());
 		}
 		//change
-		else if(this.ConditionSuppAssign(t1, t2) || this.ConditionSuppAssign(t2, t1))
+		else if(SearchDepFromLPN.ConditionSuppAssign(t1, t2) || SearchDepFromLPN.ConditionSuppAssign(t2, t1))
 		{
 			flag = 1;
 			//System.out.println("condition 5,6:"+t1.getFullLabel()+ " supp assign calsality "+t2.getFullLabel());//????????
 		}
 		//change
-		else if(this.ConditionChangeThirdTrans(t1, t2, wholeSet))
+		else if(SearchDepFromLPN.ConditionChangeThirdTrans(t1, t2, wholeSet))
 		{
 			flag = 2;
 			//System.out.println("condition 7:"+t1.getFullLabel()+ " third transition interleaving "+t2.getFullLabel());
@@ -165,7 +165,7 @@ public class SearchDepFromLPN {
 	 * @param t2
 	 * @return
 	 */
-	private boolean ConditionCommonPreset(Transition t1, Transition t2)
+	private static boolean ConditionCommonPreset(Transition t1, Transition t2)
 	{
 		boolean flag = false;
 		// TODO: (future) Hack here. Created tmp to get rid of all errors
@@ -195,7 +195,7 @@ public class SearchDepFromLPN {
 	 * @param t2
 	 * @return
 	 */
-	private boolean ConditionPrePost(Transition t1, Transition t2)
+	private static boolean ConditionPrePost(Transition t1, Transition t2)
 	{
 		boolean flag = false;
 		// TODO: (future) Hack here. Created tmp to get rid of all errors
@@ -221,7 +221,7 @@ public class SearchDepFromLPN {
 	 * @param t2
 	 * @return
 	 */
-	private boolean ConditionSameAssignVar(Transition t1, Transition t2)
+	private static boolean ConditionSameAssignVar(Transition t1, Transition t2)
 	{
 		boolean flag = false;	
 		// TODO: (future) Hack here. Created tmp to get rid of all errors
@@ -250,7 +250,7 @@ public class SearchDepFromLPN {
 	 * @param t2
 	 * @return
 	 */
-	private boolean ConditionSuppAssign(Transition t1, Transition t2)
+	private static boolean ConditionSuppAssign(Transition t1, Transition t2)
 	{
 		boolean flag = false;
 		// TODO: (future) Hack here. Created tmp to get rid of all errors
@@ -277,7 +277,7 @@ public class SearchDepFromLPN {
 	 * @param set
 	 * @return
 	 */
-	private boolean ConditionChangeThirdTrans(Transition t1, Transition t2, Transition[] wholeSet)
+	private static boolean ConditionChangeThirdTrans(Transition t1, Transition t2, Transition[] wholeSet)
 	{
 		boolean flag = false;
 		for(Transition t3 : wholeSet)
@@ -336,7 +336,7 @@ public class SearchDepFromLPN {
 		}
 	}
 	
-	public void printMap(HashMap<Transition, HashSet<Transition>> tranSet)
+	public static void printMap(HashMap<Transition, HashSet<Transition>> tranSet)
 	{
 		//long number = 0;
 		Iterator it = tranSet.keySet().iterator();

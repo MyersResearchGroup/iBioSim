@@ -57,8 +57,6 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 
 	private ArrayList<String> parameterChanges;
 
-	private Gui biosim;
-
 	private JButton addSpec, addComplex, addPromoter, removeSpec, editSpec; // species buttons
 
 	private JList species; // JList of species
@@ -84,11 +82,10 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 	
 	private ModelEditor modelEditor;
 
-	public MySpecies(Gui biosim, BioModel bioModel, Boolean paramsOnly, ArrayList<String> getParams, String file, 
-			ArrayList<String> parameterChanges, Boolean editOnly, ModelEditor modelEditor) {
+	public MySpecies(BioModel bioModel, Boolean paramsOnly, ArrayList<String> getParams, String file, ArrayList<String> parameterChanges, 
+			Boolean editOnly, ModelEditor modelEditor) {
 		super(new BorderLayout());
 		this.bioModel = bioModel;
-		this.biosim = biosim;
 		this.paramsOnly = paramsOnly;
 		this.file = file;
 		this.parameterChanges = parameterChanges;
@@ -491,7 +488,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				else {
 					if (initLabel.getSelectedItem().equals("Initial Assignment")) {
 						InitialAssignments.removeInitialAssignment(bioModel, selectedID);
-						error = InitialAssignments.addInitialAssignment(biosim, bioModel, ID.getText().trim(), init.getText().trim());
+						error = InitialAssignments.addInitialAssignment(bioModel, ID.getText().trim(), init.getText().trim());
 						initial = 0.0;
 					}
 					else {
@@ -510,9 +507,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				}
 				String unit = (String) specUnits.getSelectedItem();
 				String convFactor = null;
-				if (bioModel.getSBMLDocument().getLevel() > 2) {
-					convFactor = (String) specConv.getSelectedItem();
-				}
+				convFactor = (String) specConv.getSelectedItem();
 				String addSpec = "";
 //				SpeciesType not supported in Level 3
 //				String selSpecType = (String) specTypeBox.getSelectedItem();
@@ -630,13 +625,11 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						else {
 							specie.setUnits(unit);
 						}
-						if (bioModel.getSBMLDocument().getLevel() > 2) {
-							if (convFactor.equals("( none )")) {
-								specie.unsetConversionFactor();
-							}
-							else {
-								specie.setConversionFactor(convFactor);
-							}
+						if (convFactor.equals("( none )")) {
+							specie.unsetConversionFactor();
+						}
+						else {
+							specie.setConversionFactor(convFactor);
 						}
 						specs[index1] = addSpec;
 						Utility.sort(specs);
@@ -704,13 +697,11 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						if (!unit.equals("( none )")) {
 							specie.setUnits(unit);
 						}
-						if (bioModel.getSBMLDocument().getLevel() > 2) {
-							if (convFactor.equals("( none )")) {
-								specie.unsetConversionFactor();
-							}
-							else {
-								specie.setConversionFactor(convFactor);
-							}
+						if (convFactor.equals("( none )")) {
+							specie.unsetConversionFactor();
+						}
+						else {
+							specie.setConversionFactor(convFactor);
 						}
 						JList addIt = new JList();
 						Object[] adding = { addSpec };
@@ -744,7 +735,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		if (value == JOptionPane.NO_OPTION) {
 			if (!origAssign.equals("")) {
 				InitialAssignments.removeInitialAssignment(bioModel, selectedID);
-				error = InitialAssignments.addInitialAssignment(biosim, bioModel, selectedID, origAssign);
+				error = InitialAssignments.addInitialAssignment(bioModel, selectedID, origAssign);
 			}
 			return;
 		}
@@ -951,7 +942,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		specConv.addItem("( none )");
 		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
 			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
-			if (param.getConstant() && !bioModel.IsDefaultParameter(param.getId())) {
+			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
 				specConv.addItem(param.getId());
 			}
 		}

@@ -107,7 +107,7 @@ public class LpnComponentGraph{
 	}
 
 	@SuppressWarnings("unused")
-	private void printVertexQueue(PriorityQueue<Vertex> vertexQueue) {
+	private static void printVertexQueue(PriorityQueue<Vertex> vertexQueue) {
 		System.out.println("%%%%%%%%%% vertex queue %%%%%%%%%%%");
 		int i = 0;
 		for (Iterator<Vertex> vertexQueueIter = vertexQueue.iterator(); vertexQueueIter.hasNext();) {

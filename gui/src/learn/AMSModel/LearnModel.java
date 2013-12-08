@@ -174,7 +174,7 @@ public class LearnModel { // added ItemListener SB
 		//HashMap<String, Double[]> extrema = newObject.getExtrema();
 		return newObject.extrema;
 	} */
-	public HashMap<String, Double> getEquation(HashMap<String, Object> valuesForEquation){
+	public static HashMap<String, Double> getEquation(HashMap<String, Object> valuesForEquation){
 		HashMap<String, Double> equation =  new HashMap<String, Double>();	
 		 double lowerThresh = (Double) valuesForEquation.get("lowerThresh");
 		 double upperThresh = (Double) valuesForEquation.get("upperThresh");
@@ -518,7 +518,7 @@ public class LearnModel { // added ItemListener SB
 	 *
 	 **/
 
-	public HashMap<String, ArrayList<Double>> threshForInterpolation(HashMap<String, ArrayList<Double>> scaledThresholds){
+	public static HashMap<String, ArrayList<Double>> threshForInterpolation(HashMap<String, ArrayList<Double>> scaledThresholds){
 		double diff=0;
 		HashMap<String, ArrayList<Double>> threshForInterpolation = new HashMap();
 		Set variableSet = scaledThresholds.keySet();
@@ -1701,7 +1701,7 @@ public class LearnModel { // added ItemListener SB
 
 	 */
 
-	public ArrayList returnBin(ArrayList<Object> allInfo, int i ){
+	public static ArrayList returnBin(ArrayList<Object> allInfo, int i ){
 
 		ArrayList binInfo2 = (ArrayList) allInfo.get(i);
 		ArrayList varsBinAtEnd2 = (ArrayList)binInfo2.get(1);
@@ -1712,7 +1712,7 @@ public class LearnModel { // added ItemListener SB
 
 	 */
 
-	public int returnTime(ArrayList allInfo, int i ){
+	public static int returnTime(ArrayList allInfo, int i ){
 
 		ArrayList binInfo2 = (ArrayList) allInfo.get(i);
 		int time = (Integer) binInfo2.get(0);
@@ -1724,7 +1724,7 @@ public class LearnModel { // added ItemListener SB
 
 	 */
 
-	public double returnDuration(ArrayList allInfo, int i ){
+	public static double returnDuration(ArrayList allInfo, int i ){
 
 		ArrayList binInfo2 = (ArrayList) allInfo.get(i);
 		double duration = (Double) binInfo2.get(2);
@@ -2797,7 +2797,7 @@ public class LearnModel { // added ItemListener SB
 						//	g.addMovement("t" + transientNetTransitions.get(prevPlaceKey + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
 						//	numTransitions++;
 						//}
-						if (prevPlaceDuration != null){ //Delay on a transition is the duration spent at its preceding place
+						if (prevPlaceDuration != null && p1 != null){ //Delay on a transition is the duration spent at its preceding place
 							/*if (!(ipChange & opChange)){
 								addDuration(p1, prevPlaceDuration);
 								out.write(" Added duration "  + prevPlaceDuration + " to transition t" + p1.getProperty("transitionNum") + "\n");
@@ -3077,11 +3077,11 @@ public class LearnModel { // added ItemListener SB
 		// should add some next run logic later..?
 	}
 
-	public double calcDelayWithData(int i, int j, ArrayList<ArrayList<Double>> data) {
+	public static double calcDelayWithData(int i, int j, ArrayList<ArrayList<Double>> data) {
 		return (data.get(0).get(j) - data.get(0).get(i));
 	}
 
-	public void addValue(Properties p, String name, Double v) { 
+	public static void addValue(Properties p, String name, Double v) { 
 		Double vMin;
 		Double vMax;
 		if ((p.getProperty(name + "_vMin") == null)
@@ -3101,7 +3101,7 @@ public class LearnModel { // added ItemListener SB
 		p.setProperty(name + "_vMax", vMax.toString());
 	}
 
-	public void addRate(Properties p, String name, Double r) { 
+	public static void addRate(Properties p, String name, Double r) { 
 		Double rMin;
 		Double rMax;
 		if ((p.getProperty(name + "_rMin") == null)
@@ -3121,7 +3121,7 @@ public class LearnModel { // added ItemListener SB
 		p.setProperty(name + "_rMax", rMax.toString());
 	}
 
-	public void deleteInvalidDmvcTime(Properties p, Double t) {
+	public static void deleteInvalidDmvcTime(Properties p, Double t) {
 		String[] times = null;
 		String name = p.getProperty("DMVCVariable");
 		String s = p.getProperty("dmvcTime_" + name);
@@ -3138,14 +3138,14 @@ public class LearnModel { // added ItemListener SB
 					}
 					else{
 						newS += " " + times[i];
-						dMin = (Double.parseDouble(times[i]) < dMin) ? Double.parseDouble(times[i]) : dMin;
-						dMax = (Double.parseDouble(times[i]) > dMax) ? Double.parseDouble(times[i]) : dMax;
+						dMin = (dMin==null || Double.parseDouble(times[i]) < dMin) ? Double.parseDouble(times[i]) : dMin;
+						dMax = (dMax==null || Double.parseDouble(times[i]) > dMax) ? Double.parseDouble(times[i]) : dMax;
 					}
 				}
 			}
 			p.setProperty("dmvcTime_" + name, newS);
 		}
-		if (dMin != null){
+		if (dMin != null && dMax != null){
 			p.setProperty("dMin", dMin.toString());
 			p.setProperty("dMax", dMax.toString());
 		}
@@ -3589,7 +3589,7 @@ public class LearnModel { // added ItemListener SB
 		}
 	}
 
-	public Double getMinDiv(HashMap<String, ArrayList<Double>> divisions) {
+	public static Double getMinDiv(HashMap<String, ArrayList<Double>> divisions) {
 		Double minDiv = null;
 		for (String s : divisions.keySet()) {
 			if (minDiv == null){
@@ -3604,7 +3604,7 @@ public class LearnModel { // added ItemListener SB
 		return minDiv;
 	}
 
-	public Double getMaxDiv(HashMap<String, ArrayList<Double>> divisions) {
+	public static Double getMaxDiv(HashMap<String, ArrayList<Double>> divisions) {
 		Double maxDiv = null;
 		for (String s : divisions.keySet()) {
 			if (maxDiv == null){
@@ -3626,10 +3626,10 @@ public class LearnModel { // added ItemListener SB
 			if (p.getProperty("type").equals("RATE")) {
 				for (Variable v : reqdVarsL) {
 					if (!v.isDmvc()){
-						if ((minRate == null)
-								&& (p.getProperty(v.getName() + "_rMin") != null)) {
-							minRate = Double.parseDouble(p.getProperty(v.getName()
-									+ "_rMin"));
+						if (minRate == null) {
+							if (p.getProperty(v.getName() + "_rMin") != null) {
+								minRate = Double.parseDouble(p.getProperty(v.getName() + "_rMin"));
+							}
 						} else if ((p.getProperty(v.getName() + "_rMin") != null)
 								&& (Double.parseDouble(p.getProperty(v.getName()
 										+ "_rMin")) < minRate)
@@ -3652,10 +3652,10 @@ public class LearnModel { // added ItemListener SB
 			if (p.getProperty("type").equals("RATE")) {
 				for (Variable v : reqdVarsL) {
 					if (!v.isDmvc()){
-						if ((maxRate == null)
-								&& (p.getProperty(v.getName() + "_rMax") != null)) {
-							maxRate = Double.parseDouble(p.getProperty(v.getName()
-									+ "_rMax"));
+						if (maxRate == null) {
+							if (p.getProperty(v.getName() + "_rMax") != null) {
+								maxRate = Double.parseDouble(p.getProperty(v.getName() + "_rMax"));
+							}
 						} else if ((p.getProperty(v.getName() + "_rMax") != null)
 								&& (Double.parseDouble(p.getProperty(v.getName()
 										+ "_rMax")) > maxRate)
@@ -3812,7 +3812,7 @@ public class LearnModel { // added ItemListener SB
 		return maxDelay;
 	}
 
-	public void addDuration(Properties p, Double d) {
+	public static void addDuration(Properties p, Double d) {
 		Double dMin;
 		Double dMax;
 		//System.out.println("Adding duration of " + d);
@@ -3887,7 +3887,7 @@ public class LearnModel { // added ItemListener SB
 		return index;
 	}
 
-	public ArrayList<Integer> diff(String pre_bin, String post_bin) {
+	public static ArrayList<Integer> diff(String pre_bin, String post_bin) {
 		//Parameters are bins formed from reqdVarsL (not just cares).
 		ArrayList<Integer> diffL = new ArrayList<Integer>();
 		if ((pre_bin != null) && (post_bin != null)){
@@ -3947,7 +3947,7 @@ public class LearnModel { // added ItemListener SB
 		return extrema;
 	}
 
-	public Double[] getMinMaxRates(Double[] rateList){
+	public static Double[] getMinMaxRates(Double[] rateList){
 		ArrayList<Double> cmpL = new ArrayList<Double>();
 		Double[] minMax = {null,null};// new Double[2];
 		for (Double r : rateList){
@@ -5011,8 +5011,11 @@ public class LearnModel { // added ItemListener SB
 				cnt = transNum;
 				if (!isTransientTransition(t)){
 					if (placeInfo.get(getPlaceInfoIndex(presetPlace)).getProperty("type").equals("RATE")){
-						if (g.getPostset(t).length != 0)
+						if (g.getPostset(t).length != 0) {
 							postsetPlace = g.getPostset(t)[0];
+						} else {
+							continue;
+						}
 						for (int j = 0; j < transNum; j++){
 							if ((transEnablingsVAMS[j] != null) && (transEnablingsVAMS[j].equalsIgnoreCase(transEnablingsVAMS[transNum]))){
 								cnt = j;
@@ -5073,8 +5076,11 @@ public class LearnModel { // added ItemListener SB
 				}
 				else{
 					if (transientNetPlaces.get(getTransientNetPlaceIndex(presetPlace)).getProperty("type").equals("RATE")){
-						if (g.getPostset(t).length != 0)
+						if (g.getPostset(t).length != 0) {
 							postsetPlace = g.getPostset(t)[0];
+						} else {
+							continue;
+						}
 						for (int j = 0; j < transNum; j++){
 							if ((transEnablingsVAMS[j] != null) && (transEnablingsVAMS[j].equalsIgnoreCase(transEnablingsVAMS[transNum]))){
 								cnt = j;

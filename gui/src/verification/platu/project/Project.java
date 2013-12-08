@@ -241,7 +241,7 @@ public class Project {
 			}				
 			else if (Options.getPOR().toLowerCase().equals("behavioral")) {
 				CompositionalAnalysis compAnalysis = new CompositionalAnalysis();
-				compAnalysis.compositionalFindSG(sgArray);			
+				CompositionalAnalysis.compositionalFindSG(sgArray);			
 				dfsStateExploration.searchPOR_behavioral(sgArray, initStateArray, lpnTranRelation, "state");
 			}			
 			long elapsedTimeMillis = System.currentTimeMillis() - startReachability; 
@@ -266,7 +266,7 @@ public class Project {
 			}
 			else if (Options.getPOR().toLowerCase().equals("behavioral")) {
 				CompositionalAnalysis compAnalysis = new CompositionalAnalysis();
-				compAnalysis.compositionalFindSG(sgArray);	
+				CompositionalAnalysis.compositionalFindSG(sgArray);	
 				// TODO: (temp) Temporarily disable POR behavioral analysis on prob. models.
 				//globalStateSet = (ProbGlobalStateSet) dfsStateExploration.searchPOR_behavioral(sgArray, initStateArray, lpnTranRelation, "state");
 			}
@@ -359,7 +359,7 @@ public class Project {
 				sgArray[i].drawLocalStateGraph();				
 	}
 
-	public Set<LPN> readLpn(final String src_file) {
+	public static Set<LPN> readLpn(final String src_file) {
 		Set<LPN> lpnSet = null;
 
 		try {
@@ -382,7 +382,7 @@ public class Project {
 		return lpnSet;
 	}
 	
-	private void outputRuntimeLog(boolean isPOR, float runtime) {
+	private static void outputRuntimeLog(boolean isPOR, float runtime) {
 		try {
 			String fileName = null;
 			if (isPOR)
@@ -455,7 +455,7 @@ public class Project {
 			LPN lpn = PlatuInstParser.LpnMap.get(inst.getLpnLabel());
 			if(lpn == null){
 				System.err.println("error: class " + inst.getLpnLabel() + " does not exist");
-				System.exit(1);
+				return;
 			}
 			
 			LPN instLpn = lpn.instantiate(inst.getName());
@@ -475,7 +475,7 @@ public class Project {
 			LPN dstLpn = instanceMap.get(inst.getName());
 			if(dstLpn == null){
 				System.err.println("error: instance " + inst.getName() + " does not exist");
-				System.exit(1);
+				return;
 			}
 			
 			List<String> argumentList = dstLpn.getArgumentList();
@@ -484,14 +484,14 @@ public class Project {
 
 			if(argumentList.size() != varList.size()){
 				System.err.println("error: incompatible number of arguments for instance " + inst.getName());
-				System.exit(1);
+				return;
 			}
 			
 			for(int i = 0; i < argumentList.size(); i++){
 				LPN srcLpn = instanceMap.get(modList.get(i));
 				if(srcLpn == null){
 					System.err.println("error: instance " + modList.get(i) + " does not exist");
-					System.exit(1);
+					return;
 				}
 				
 				String outputVar = varList.get(i);

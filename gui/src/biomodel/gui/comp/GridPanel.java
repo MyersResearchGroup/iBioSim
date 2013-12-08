@@ -38,25 +38,25 @@ public class GridPanel extends JPanel implements ActionListener {
 	 * calls the buildPanel method
 	 * builds component and compartment lists
 	 * 
-	 * @param gcm2sbml the gui/editor
-	 * @param gcm the gcm file to work with
+	 * @param modelEditor the gui/editor
+	 * @param bioModel the gcm file to work with
 	 */
-	private GridPanel(ModelEditor gcm2sbml, BioModel gcm, boolean editMode) {
+	private GridPanel(ModelEditor modelEditor, BioModel bioModel, boolean editMode) {
 		
 		//call the JPanel constructor to make this a border layout panel
 		super(new BorderLayout());
 		
-		if (gcm2sbml == null && gcm == null && editMode == false) {
+		if (modelEditor == null) {
 			built = buildPromptPanel() == true ? true : false;
 			return;
 		}
 
-		this.gcm = gcm;
+		this.gcm = bioModel;
 		
 		//component list is the gcms that can be added to a spatial grid
 		//but components that aren't compartments are ineligible for
 		//being added to a cell population
-		componentList = gcm2sbml.getComponentsList();
+		componentList = modelEditor.getComponentsList();
 		componentList.add("none");
 		
 		//editMode is false means creating a grid
@@ -72,9 +72,9 @@ public class GridPanel extends JPanel implements ActionListener {
 	 * 
 	 * @return if a population is being built or not
 	 */
-	public static boolean showGridPanel(ModelEditor gcm2sbml, BioModel gcm, boolean editMode) {
+	public static boolean showGridPanel(ModelEditor modelEditor, BioModel bioModel, boolean editMode) {
 		
-		new GridPanel(gcm2sbml, gcm, editMode);
+		GridPanel gridPanel = new GridPanel(modelEditor, bioModel, editMode);
 		
 		return built;
 	}
@@ -84,12 +84,14 @@ public class GridPanel extends JPanel implements ActionListener {
 	 * 
 	 * @return ok/cancel
 	 */
+	/* TODO: appears to not be used
 	public static boolean showGridPromptPanel() {
 		
 		new GridPanel(null, null, false);
 		
 		return built;
 	}
+	*/
 	
 	/**
 	 * builds the grid creation panel

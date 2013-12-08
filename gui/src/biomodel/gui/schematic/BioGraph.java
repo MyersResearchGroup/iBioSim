@@ -184,7 +184,7 @@ public class BioGraph extends mxGraph {
 				this.getSpeciesOrPromoterCell(product).getGeometry().getCenterY()));
 	}
 
-	private void addSpeciesReferenceGlyph(mxCell cell,ReactionGlyph reactionGlyph,String reactionId,String speciesId, String role) {
+	private static void addSpeciesReferenceGlyph(mxCell cell,ReactionGlyph reactionGlyph,String reactionId,String speciesId, String role) {
 		if (reactionGlyph.getListOfSpeciesReferenceGlyphs().get(GlobalConstants.GLYPH+"__"+reactionId+"__"+role+"__"+speciesId)==null) {
 			SpeciesReferenceGlyph speciesReferenceGlyph = reactionGlyph.createSpeciesReferenceGlyph(GlobalConstants.GLYPH+"__"+reactionId+"__"+role+"__"+speciesId);
 			speciesReferenceGlyph.setSpeciesGlyph(GlobalConstants.GLYPH+"__"+speciesId);
@@ -195,7 +195,7 @@ public class BioGraph extends mxGraph {
 		}
 	}
 
-	private void addReferenceGlyph(mxCell cell,GeneralGlyph generalGlyph,String objectId,String refId, String role) {
+	private static void addReferenceGlyph(mxCell cell,GeneralGlyph generalGlyph,String objectId,String refId, String role) {
 		if (generalGlyph.getListOfReferenceGlyphs().get(GlobalConstants.GLYPH+"__"+objectId+"__"+role+"__"+refId)==null) {
 			ReferenceGlyph referenceGlyph = generalGlyph.createReferenceGlyph(GlobalConstants.GLYPH+"__"+objectId+"__"+role+"__"+refId);
 			referenceGlyph.setGlyph(GlobalConstants.GLYPH+"__"+refId);

@@ -104,7 +104,7 @@ public class SequenceTypeValidator {
 		return acceptStates;
 	}
 	
-	private void quantifyNFAStates(Set<NFAState> startStates, Set<NFAState> acceptStates, String quantifier, Set<String> localIDs) {
+	private static void quantifyNFAStates(Set<NFAState> startStates, Set<NFAState> acceptStates, String quantifier, Set<String> localIDs) {
 		if (quantifier.equals("+") || quantifier.equals("*"))
 			for (NFAState startState : startStates) 
 				for (String label : startState.getTransitions().keySet()) 
@@ -116,7 +116,7 @@ public class SequenceTypeValidator {
 			acceptStates.addAll(startStates);
 	}
 	
-	private String kleeneRegex(String regex) {
+	private static String kleeneRegex(String regex) {
 		if (isBalanced(regex)) {
 			regex = trimOuterParentheses(regex);
 			if ((isQuantifier(regex.substring(regex.length() - 1, regex.length())) &&  
@@ -340,7 +340,7 @@ public class SequenceTypeValidator {
 		return result;
 	}
 	
-	private int locateClosingParen(String regex, int i) {
+	private static int locateClosingParen(String regex, int i) {
 		int openParen = 0;
 		int closeParen = 0;
 		for (int j = i; j < regex.length(); j++) {
@@ -354,7 +354,7 @@ public class SequenceTypeValidator {
 		return regex.length();
 	}
 	
-	private int locateClosingLetter(String regex, int i) {
+	private static int locateClosingLetter(String regex, int i) {
 		for (int j = i; j < regex.length(); j++) {
 			String token = regex.substring(j, j + 1);
 			if (!isLetter(token) && j > i)
@@ -363,16 +363,16 @@ public class SequenceTypeValidator {
 		return regex.length() - 1;
 	}
 	
-	private boolean isLetter(String token) {
+	private static boolean isLetter(String token) {
 		return (!token.equals("(") && !token.equals(")") && !token.equals("+") && !token.equals("*")
 				&& !token.equals("|") && !token.equals("?") && !token.equals(","));
 	}
 	
-	private boolean isQuantifier(String token) {
+	private static boolean isQuantifier(String token) {
 		return (token.equals("+") || token.equals("*") || token.equals("?"));
 	}
 	
-	private boolean isBalanced(String regex) {
+	private static boolean isBalanced(String regex) {
 		int uncapturedCount = 0;
 		for (int i = 0; i < regex.length(); i++)
 			if (regex.substring(i, i + 1).equals("("))
@@ -387,7 +387,7 @@ public class SequenceTypeValidator {
 	}
 	
 	
-	private List<String> findOrFragments(String regex) {
+	private static List<String> findOrFragments(String regex) {
 		List<String> orFragments = new LinkedList<String>();
 		int j = locateClosingOr(regex, 0);
 		orFragments.add(regex.substring(0, j));
@@ -399,7 +399,7 @@ public class SequenceTypeValidator {
 		return orFragments;
 	}
 	
-	private int locateClosingOr(String regex, int i) {
+	private static int locateClosingOr(String regex, int i) {
 		int openParen = 0;
 		int closedParen = 0;
 		for (int j = i; j < regex.length(); j++)
@@ -412,14 +412,14 @@ public class SequenceTypeValidator {
 		return regex.length();
 	}
 	
-	private String getSubRegex(String regex, int index) {
+	private static String getSubRegex(String regex, int index) {
 		String subRegex = regex.substring(index);
 		if (subRegex.startsWith(","))
 			return subRegex.substring(1);
 		return subRegex;
 	}
 	
-	private String trimOuterParentheses(String regex) {
+	private static String trimOuterParentheses(String regex) {
 		int leftParenCount = 0;
 		int rightParenCount = 0;
 		for (int i = 0; i < regex.length(); i++)

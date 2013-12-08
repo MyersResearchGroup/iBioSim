@@ -34,7 +34,7 @@ public class BuildProperty {
 	static boolean loop = false;
 	
 	static List list = new List();
-	public void buildProperty(String propFileName) throws IOException, RecognitionException {
+	public static void buildProperty(String propFileName) throws IOException, RecognitionException {
 
 		//String propertyId = JOptionPane.showInputDialog(frame, "Enter the SVA property name:", "Model ID", JOptionPane.PLAIN_MESSAGE);
 		//System.out.println(propertyId);
@@ -94,7 +94,7 @@ public class BuildProperty {
 		generateFile(r0, lpn,lpnFileName);
 	}
 
-	public void generateFile(CommonTree r0, LhpnFile lpn, String lpnFileName){
+	public static void generateFile(CommonTree r0, LhpnFile lpn, String lpnFileName){
 		LhpnFile lpnFinal = new LhpnFile();
 		File lpnFile = new File(".lpn");
 		try {

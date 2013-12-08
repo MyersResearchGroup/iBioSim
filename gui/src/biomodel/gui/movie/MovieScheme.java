@@ -616,7 +616,7 @@ public class MovieScheme {
 	 * @param gradientValue the location along the gradient (on 0 to 1)
 	 * @return the intermediate color
 	 */
-	private MovieAppearance getIntermediateAppearance(
+	private static MovieAppearance getIntermediateAppearance(
 			GradientPaint colorGradient, double gradientValue, 
 			Boolean opacityState, Boolean sizeState, String cellType) {
 		

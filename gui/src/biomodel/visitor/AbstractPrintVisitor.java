@@ -51,7 +51,7 @@ public abstract class AbstractPrintVisitor implements SpeciesVisitor {
 	 * @param property the property to check
 	 * @return the property if it exists, else return the default value
 	 */
-	public double getProperty(String key, Properties property, double defaultValue) {
+	public static double getProperty(String key, Properties property, double defaultValue) {
 		if (property.get(key) != null) {
 			return Double.parseDouble(property.getProperty(key));
 		}
