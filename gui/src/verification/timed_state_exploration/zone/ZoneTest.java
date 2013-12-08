@@ -73,7 +73,7 @@ public class ZoneTest {
 	}
 	
 	@Test
-	public void testInifinity()
+	public static void testInifinity()
 	{
 		int expected02 = 2;
 		int expected03 = 2;
@@ -85,27 +85,27 @@ public class ZoneTest {
 	}
 
 	@Test
-	public void testHashCode() { 
+	public static void testHashCode() { 
 		
 		assertEquals(zone1.hashCode(), zone2.hashCode());
 	}
 
 	@Test
-	public void testZone() {
+	public static void testZone() {
 		
 		assertTrue(zone1.equals(zone2));
 		
 	}
 
 	@Test
-	public void testGetdbm() {
+	public static void testGetdbm() {
 		int expected = 2;
 		int actual = zone1.getDbmEntry(0, 1);
 		assertEquals(expected, actual);
 	}
 
 	@Test
-	public void testGetUpperBoundbyTransitionIndex() {
+	public static void testGetUpperBoundbyTransitionIndex() {
 	
 		int expected2 = 12;
 		int expected3 = 13;
@@ -123,7 +123,7 @@ public class ZoneTest {
 	}
 
 	@Test
-	public void testGetUpperBoundbydbmIndex() {
+	public static void testGetUpperBoundbydbmIndex() {
 		
 		int expected2 = 12;
 		int expected3 = 13;
@@ -141,7 +141,7 @@ public class ZoneTest {
 	}
 
 	@Test
-	public void testGetLowerBoundbyTransitionIndex() {
+	public static void testGetLowerBoundbyTransitionIndex() {
 		int expected2 = -2;
 		int expected3 = -3;
 		int expected6 = -6;
@@ -158,7 +158,7 @@ public class ZoneTest {
 	}
 
 	@Test
-	public void testGetLowerBoundbydbmIndex() {
+	public static void testGetLowerBoundbydbmIndex() {
 		int expected2 = -2;
 		int expected3 = -3;
 		int expected6 = -6;
@@ -175,12 +175,12 @@ public class ZoneTest {
 	}
 
 	@Test
-	public void testEqualsZone() {
+	public static void testEqualsZone() {
 		assertFalse(zone3.equals(zone4));
 	}
 	
 	@Test
-	public void testMergeZone(){
+	public static void testMergeZone(){
 		ZoneType z = zone1.mergeZones(zone2);
 		
 		System.out.println("Merging zones 1 and 2 :");
@@ -188,7 +188,7 @@ public class ZoneTest {
 	}
 	
 	@Test
-	public void testMergeZone2(){
+	public static void testMergeZone2(){
 		ZoneType z = zone3.mergeZones(zone4);
 		
 		
@@ -198,7 +198,7 @@ public class ZoneTest {
 	
 	@SuppressWarnings("unused")
 	@Test
-	public void testMergeZone3(){
+	public static void testMergeZone3(){
 		boolean exceptionThrown = false;
 		
 		try{
@@ -221,7 +221,7 @@ public class ZoneTest {
 	 * 			
 	 */
 	@SuppressWarnings("unused")
-	private ZoneType[] readTestZones(File zoneFile)
+	private static ZoneType[] readTestZones(File zoneFile)
 	{
 		try {
 			Scanner read = new Scanner(zoneFile);

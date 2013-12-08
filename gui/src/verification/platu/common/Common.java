@@ -56,7 +56,7 @@ public class Common {
 			if (line == null) {
 			    pErr("line==null");
 			}
-			if (line.length() > 0) {
+			else if (line.length() > 0) {
 			    cmd = line.charAt(0);
 			    if (cmd == 'n' || cmd == 'y') {
 			        break;

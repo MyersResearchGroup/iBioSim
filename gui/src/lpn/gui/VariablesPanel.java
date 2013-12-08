@@ -257,7 +257,7 @@ public class VariablesPanel extends JPanel implements ActionListener {
 				property.remove("Initial Rate");
 			}
 
-			if (name != null && !oldName.equals(id)) {
+			if (name != null && oldName != null && !oldName.equals(id)) {
 				lhpn.changeVariableName(oldName, id);
 			}
 			if (id.equals(oldName)) {

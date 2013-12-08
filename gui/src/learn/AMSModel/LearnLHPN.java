@@ -1811,7 +1811,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 
 	// SB
 
-	public void viewLearnComplete() {
+	public static void viewLearnComplete() {
 		JFrame learnComplete = new JFrame("LEMA");
 		learnComplete.setResizable(false);
 		JPanel all = new JPanel(new BorderLayout());
@@ -3226,7 +3226,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 
 		}
 
-	public int getRegion(double value, ArrayList<Double> varThresholds){
+	public static int getRegion(double value, ArrayList<Double> varThresholds){
 		int bin = 0;
 		for (int l = 0; l < varThresholds.size(); l++) {
 			if (value <= varThresholds.get(l)) {
@@ -3555,11 +3555,11 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		return (data.get(0).get(j) - data.get(0).get(i));
 	}
 
-	public double calcDelayWithData(int i, int j, ArrayList<ArrayList<Double>> data) {
+	public static double calcDelayWithData(int i, int j, ArrayList<ArrayList<Double>> data) {
 		return (data.get(0).get(j) - data.get(0).get(i));
 	}
 
-	public void addValue(Properties p, String name, Double v) { 
+	public static void addValue(Properties p, String name, Double v) { 
 		Double vMin;
 		Double vMax;
 		if ((p.getProperty(name + "_vMin") == null)
@@ -3579,7 +3579,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		p.setProperty(name + "_vMax", vMax.toString());
 	}
 
-	public void addRate(Properties p, String name, Double r) { 
+	public static void addRate(Properties p, String name, Double r) { 
 		Double rMin;
 		Double rMax;
 		if ((p.getProperty(name + "_rMin") == null)
@@ -3722,7 +3722,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		}
 	}
 
-	public Double getMinDiv(HashMap<String, ArrayList<Double>> divisions) {
+	public static Double getMinDiv(HashMap<String, ArrayList<Double>> divisions) {
 		Double minDiv = null;
 		for (String s : divisions.keySet()) {
 			if (minDiv == null){
@@ -3737,7 +3737,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		return minDiv;
 	}
 
-	public Double getMaxDiv(HashMap<String, ArrayList<Double>> divisions) {
+	public static Double getMaxDiv(HashMap<String, ArrayList<Double>> divisions) {
 		Double maxDiv = null;
 		for (String s : divisions.keySet()) {
 			if (maxDiv == null){
@@ -3759,17 +3759,14 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			if (p.getProperty("type").equals("RATE")) {
 				for (Variable v : reqdVarsL) {
 					if (!v.isDmvc()){
-						if ((minRate == null)
-								&& (p.getProperty(v.getName() + "_rMin") != null)) {
-							minRate = Double.parseDouble(p.getProperty(v.getName()
-									+ "_rMin"));
+						if (minRate == null) {
+							if (p.getProperty(v.getName() + "_rMin") != null) {
+								minRate = Double.parseDouble(p.getProperty(v.getName() + "_rMin"));
+							}
 						} else if ((p.getProperty(v.getName() + "_rMin") != null)
-								&& (Double.parseDouble(p.getProperty(v.getName()
-										+ "_rMin")) < minRate)
-										&& (Double.parseDouble(p.getProperty(v.getName()
-												+ "_rMin")) != 0.0)) {
-							minRate = Double.parseDouble(p.getProperty(v.getName()
-									+ "_rMin"));
+								&& (Double.parseDouble(p.getProperty(v.getName() + "_rMin")) < minRate)
+								&& (Double.parseDouble(p.getProperty(v.getName() + "_rMin")) != 0.0)) {
+							minRate = Double.parseDouble(p.getProperty(v.getName() + "_rMin"));
 						}
 					}
 				}
@@ -3785,10 +3782,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			if (p.getProperty("type").equals("RATE")) {
 				for (Variable v : reqdVarsL) {
 					if (!v.isDmvc()){
-						if ((maxRate == null)
-								&& (p.getProperty(v.getName() + "_rMax") != null)) {
-							maxRate = Double.parseDouble(p.getProperty(v.getName()
-									+ "_rMax"));
+						if (maxRate == null) {
+							if (p.getProperty(v.getName() + "_rMax") != null) {
+								maxRate = Double.parseDouble(p.getProperty(v.getName() + "_rMax"));
+							}
 						} else if ((p.getProperty(v.getName() + "_rMax") != null)
 								&& (Double.parseDouble(p.getProperty(v.getName()
 										+ "_rMax")) > maxRate)
@@ -3883,7 +3880,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		return maxDelay;
 	}
 
-	public void addDuration(Properties p, Double d) {
+	public static void addDuration(Properties p, Double d) {
 		Double dMin;
 		Double dMax;
 		// d = d*(10^6);
@@ -3929,7 +3926,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		return index;
 	}
 
-	public ArrayList<Integer> diff(String pre_bin, String post_bin) {
+	public static ArrayList<Integer> diff(String pre_bin, String post_bin) {
 		ArrayList<Integer> diffL = new ArrayList<Integer>();
 		String[] preset_encoding = pre_bin.split(",");
 		String[] postset_encoding = post_bin.split(",");
@@ -4469,7 +4466,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		return total;
 	}
 
-	public int pointDistCostVar(ArrayList<Double> dat,ArrayList<Double> div){
+	public static int pointDistCostVar(ArrayList<Double> dat,ArrayList<Double> div){
 		int optPointsPerBin = dat.size()/(div.size()+1);
 		boolean top = false;
 		ArrayList<Integer> pointsPerBin = new ArrayList<Integer>();
@@ -4497,7 +4494,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	}
 
 
-	public Double[] getMinMaxRates(Double[] rateList){
+	public static Double[] getMinMaxRates(Double[] rateList){
 		ArrayList<Double> cmpL = new ArrayList<Double>();
 		Double[] minMax = {null,null};// new Double[2];
 		for (Double r : rateList){

@@ -255,7 +255,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		return new ScrollableTabButton(direction);
 	}
 
-	protected Rectangle newCloseRect(Rectangle rect) {
+	protected static Rectangle newCloseRect(Rectangle rect) {
 		int dx = rect.x + rect.width;
 		int dy = (rect.y + rect.height) / 2 - 6;
 		return new Rectangle(dx - BUTTONSIZE - WIDTHDELTA, dy, BUTTONSIZE, BUTTONSIZE);
@@ -464,7 +464,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 	}
 
-	InputMap getMyInputMap(int condition) {
+	static InputMap getMyInputMap(int condition) {
 		if (condition == JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT) {
 			return (InputMap) UIManager.get("TabbedPane.ancestorInputMap");
 		}
@@ -474,7 +474,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		return null;
 	}
 
-	ActionMap createMyActionMap() {
+	static ActionMap createMyActionMap() {
 		ActionMap map = new ActionMapUIResource();
 		map.put("navigateNext", new NextAction());
 		map.put("navigatePrevious", new PreviousAction());
@@ -619,7 +619,8 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 		if (cropShape) {
 			paintCroppedTabEdge(g, tabIndex, cropx, cropy);
-			g2.setClip(save);
+			if (g2 != null)
+				g2.setClip(save);
 
 		}
 		else { // if (isOver || isSelected) {

@@ -454,7 +454,7 @@ public class PromoterPanel extends JPanel {
 					AnnotationUtility.removeSBOLAnnotation(production);
 
 				// rename all the influences that use this promoter if name was changed
-				if (selected != null && !oldName.equals(id)) {
+				if (selected != null && oldName != null && !oldName.equals(id)) {
 					bioModel.changePromoterId(oldName, id);
 					this.secondToLastUsedPromoter = oldName;
 					promoterNameChange = true;

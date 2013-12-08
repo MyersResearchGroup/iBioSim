@@ -103,8 +103,8 @@ public class CollectionBrowserPanel extends JPanel implements MouseListener {
 			try {
 				lib = aggregateLibResolver.resolve(selectedURIs[0]);
 			} catch (MergerException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				return;
 			}
 			if (lib.getName() != null)
 				viewArea.append("Name:  " + lib.getName() + "\n");
@@ -184,7 +184,7 @@ public class CollectionBrowserPanel extends JPanel implements MouseListener {
 	}
 	
 	//Sorts first m entries of string array lexographically
-	private void lexoSort(LinkedList<String> sortingList, LinkedList<URI> companionList, int m) {
+	private static void lexoSort(LinkedList<String> sortingList, LinkedList<URI> companionList, int m) {
 		for (int j = 1; j < m; j++) {
 			String key = sortingList.get(j);
 			URI companionKey = companionList.get(j);

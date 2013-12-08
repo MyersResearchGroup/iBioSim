@@ -93,7 +93,7 @@ public class TimingScript extends TestCase {
 		printResults(Utility.directory + File.separator + files + ".dat", timingResults);
 	}
 
-	private void printResults(String file, double[][] results) {
+	private static void printResults(String file, double[][] results) {
 		try {
 			// Create file
 			FileWriter fstream = new FileWriter(file);

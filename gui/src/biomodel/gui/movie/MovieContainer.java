@@ -5,6 +5,7 @@ import main.Gui;
 import main.util.ExampleFileFilter;
 import main.util.Utility;
 import main.util.dataparser.DTSDParser;
+import main.util.dataparser.DataParser;
 import main.util.dataparser.TSDParser;
 
 import analysis.main.AnalysisView;
@@ -836,7 +837,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		String json = null;
 		
 		try {
-			json = TSDParser.readFileToString(fullPath);
+			json = DataParser.readFileToString(fullPath);
 		} 
 		catch (IOException e) {
 		}

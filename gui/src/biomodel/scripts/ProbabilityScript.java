@@ -69,24 +69,24 @@ public class ProbabilityScript extends TestCase {
 			for (int j = 0; j < 3; j++) {
 				SpeciesThresholdTester highTester = new SpeciesThresholdTester(
 						currDir, gate[j], highSpecies.get(j), lowSpecies.get(j));
-				double[][] results = script.generateStatistics(currDir
+				double[][] results = GCMScript.generateStatistics(currDir
 						+ File.separator + gate[j] + experiment[1], highTester);
 				printResults(currDir + File.separator + dataGate[j] + "-"
 						+ dataInput[0] + "-" + dataChange[1] + ".dat", results);
 
-				results = script.generateStatistics(currDir + File.separator
+				results = GCMScript.generateStatistics(currDir + File.separator
 						+ gate[j] + experiment[3], highTester);
 				printResults(currDir + File.separator + dataGate[j] + "-"
 						+ dataInput[1] + "-" + dataChange[1] + ".dat", results);
 
 				SpeciesThresholdTester lowTester = new SpeciesThresholdTester(
 						currDir, gate[j], lowSpecies.get(j), highSpecies.get(j));
-				results = script.generateStatistics(currDir + File.separator
+				results = GCMScript.generateStatistics(currDir + File.separator
 						+ gate[j] + experiment[0], lowTester);
 				printResults(currDir + File.separator + dataGate[j] + "-"
 						+ dataInput[0] + "-" + dataChange[0] + ".dat", results);
 
-				results = script.generateStatistics(currDir + File.separator
+				results = GCMScript.generateStatistics(currDir + File.separator
 						+ gate[j] + experiment[2], highTester);
 				printResults(currDir + File.separator + dataGate[j] + "-"
 						+ dataInput[1] + "-" + dataChange[0] + ".dat", results);
@@ -134,24 +134,24 @@ public class ProbabilityScript extends TestCase {
 				
 				SpeciesThresholdTester highTester = new SpeciesThresholdTester(
 						currDir, gate[j], highSpecies.get(j), lowSpecies.get(j));
-				double[][] results = script.generateStatistics(currDir
+				double[][] results = GCMScript.generateStatistics(currDir
 						+ File.separator + gate[j] + experiment[1], highTester);
 				printResults(currDir + File.separator + dataGate[j] + "-"
 						+ dataInput[0] + "-" + dataChange[1] + ".dat", results);
 				System.out.println("Finished " + 1);
-				results = script.generateStatistics(currDir + File.separator
+				results = GCMScript.generateStatistics(currDir + File.separator
 						+ gate[j] + experiment[3], highTester);
 				printResults(currDir + File.separator + dataGate[j] + "-"
 						+ dataInput[1] + "-" + dataChange[1] + ".dat", results);
 				System.out.println("Finished " + 2);
 				SpeciesThresholdTester lowTester = new SpeciesThresholdTester(
 						currDir, gate[j], lowSpecies.get(j), highSpecies.get(j));
-				results = script.generateStatistics(currDir + File.separator
+				results = GCMScript.generateStatistics(currDir + File.separator
 						+ gate[j] + experiment[0], lowTester);
 				printResults(currDir + File.separator + dataGate[j] + "-"
 						+ dataInput[0] + "-" + dataChange[0] + ".dat", results);
 				System.out.println("Finished " + 3);
-				results = script.generateStatistics(currDir + File.separator
+				results = GCMScript.generateStatistics(currDir + File.separator
 						+ gate[j] + experiment[2], lowTester);
 				printResults(currDir + File.separator + dataGate[j] + "-"
 						+ dataInput[1] + "-" + dataChange[0] + ".dat", results);
@@ -160,7 +160,7 @@ public class ProbabilityScript extends TestCase {
 		}
 	}
 
-	private void printResults(String file, double[][] results) {
+	private static void printResults(String file, double[][] results) {
 		try {
 			// Create file
 			FileWriter fstream = new FileWriter(file);
@@ -191,7 +191,6 @@ public class ProbabilityScript extends TestCase {
 	
 	private ArrayList<String> specialHigh = null;
 	private ArrayList<String> specialLow = null;
-
 	private GCMScript script = null;
 
 	private ArrayList<ArrayList<String>> highSpecies = null;

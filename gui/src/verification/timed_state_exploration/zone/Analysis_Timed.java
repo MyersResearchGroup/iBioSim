@@ -192,7 +192,7 @@ public class Analysis_Timed extends Analysis{
 		return sgList;
 	}
 	
-	private void constructDstLpnList(StateGraph[] lpnList) {
+	private static void constructDstLpnList(StateGraph[] lpnList) {
 		for (int i=0; i<lpnList.length; i++) {
 			LhpnFile curLPN = lpnList[i].getLpn();
 			Transition[] allTrans = curLPN.getAllTransitions();
@@ -206,7 +206,7 @@ public class Analysis_Timed extends Analysis{
 		}
 	}
 	
-	private void printDstLpnList(StateGraph[] lpnList) {
+	private static void printDstLpnList(StateGraph[] lpnList) {
 		System.out.println("++++++ dstLpnList ++++++");
 		for (int i=0; i<lpnList.length; i++) {
 			LhpnFile curLPN = lpnList[i].getLpn();
@@ -224,7 +224,7 @@ public class Analysis_Timed extends Analysis{
 		System.out.println("++++++++++++++++++++");
 	}
 	
-	private boolean projectUntimedEquals(PrjState left, PrjState right){
+	private static boolean projectUntimedEquals(PrjState left, PrjState right){
 		State[] leftArray = left.toStateArray();
 		State[] rightArray = right.toStateArray();
 		
@@ -237,7 +237,7 @@ public class Analysis_Timed extends Analysis{
 		return equals;
 	}
 	
-	private boolean checkStack(PrjState nextPrjState, PrjState stateStackTop,
+	private static boolean checkStack(PrjState nextPrjState, PrjState stateStackTop,
 			Stack<LinkedList<Transition>> lpnTranStack, Stack<Integer> curIndexStack,
 			HashSet<PrjState> stateStack, boolean subsets,
 			boolean supersets){
@@ -311,7 +311,7 @@ public class Analysis_Timed extends Analysis{
 		return existingState;
 	}
 	
-	private boolean checkStateSet(HashSet<PrjState> prjStateSet, PrjState nextPrjState,
+	private static boolean checkStateSet(HashSet<PrjState> prjStateSet, PrjState nextPrjState,
 			boolean subsets, boolean supersets){
 		
 		if(!subsets && !supersets){

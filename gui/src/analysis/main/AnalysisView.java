@@ -2181,7 +2181,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		biomodelsim.getExitButton().addActionListener(runProgram);
 		// saveSAD(outDir);
 		int numPaths = Integer.parseInt((String)(bifurcation.getSelectedItem()));
-		runProgram.createProperties(timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval,
+		Run.createProperties(timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval,
 				minTimeStep, timeStep, absError, ".", rndSeed, run, numPaths, intSpecies, printer_id, printer_track_quantity, 
 				generate_statistics, simProp.split(separator), selectedButtons, this, simProp, rap1, rap2, qss, con, 
 				stoichAmp, preAbs, loopAbs, postAbs, lhpnAbstraction, mpde.isSelected(), meanPath.isSelected(), 
@@ -2620,7 +2620,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				+ getFilename[getFilename.length - 1].substring(0, cut) + ".properties";
 		log.addText("Creating properties file1:\n" + propName + "\n");
 		int numPaths = Integer.parseInt((String)(bifurcation.getSelectedItem()));
-		runProgram.createProperties(timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval,
+		Run.createProperties(timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval,
 				minTimeStep, timeStep, absError, ".", rndSeed, run, numPaths, intSpecies, printer_id, printer_track_quantity, 
 				generate_statistics, sbmlProp.split(separator), selectedButtons, this, sbmlProp, rap1, rap2, qss, con, 
 				stoichAmp, preAbs, loopAbs, postAbs, lhpnAbstraction, mpde.isSelected(), meanPath.isSelected(), 
@@ -2829,7 +2829,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 	}
 
-	private Annotation getSEDBaseAnnotation(SEDBase sedBase,String name) {
+	private static Annotation getSEDBaseAnnotation(SEDBase sedBase,String name) {
 		@SuppressWarnings("deprecation")
 		List<Annotation> annotations = sedBase.getAnnotation();
 		for (int i = 0; i < annotations.size(); i++) {

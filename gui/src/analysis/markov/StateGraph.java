@@ -1558,7 +1558,7 @@ public class StateGraph implements Runnable {
 		return transitions;
 	}
 
-	private ArrayList<String> copyArrayList(ArrayList<String> original) {
+	private static ArrayList<String> copyArrayList(ArrayList<String> original) {
 		ArrayList<String> copy = new ArrayList<String>();
 		for (String element : original) {
 			copy.add(element);
@@ -1566,7 +1566,7 @@ public class StateGraph implements Runnable {
 		return copy;
 	}
 
-	private HashMap<String, String> copyAllVariables(HashMap<String, String> original) {
+	private static HashMap<String, String> copyAllVariables(HashMap<String, String> original) {
 		HashMap<String, String> copy = new HashMap<String, String>();
 		for (String s : original.keySet()) {
 			copy.put(s, original.get(s));
@@ -1574,7 +1574,7 @@ public class StateGraph implements Runnable {
 		return copy;
 	}
 
-	private String createStateVector(ArrayList<String> variables, HashMap<String, String> allVariables) {
+	private static String createStateVector(ArrayList<String> variables, HashMap<String, String> allVariables) {
 		String vector = "";
 		for (String s : variables) {
 			if (allVariables.get(s).toLowerCase().equals("true")) {

@@ -148,14 +148,14 @@ public class SBOLFileManager {
 		}
 	}
 	
-	public void saveDNAComponents(List<DnaComponent> dnaComps, String filePath) {
+	public static void saveDNAComponents(List<DnaComponent> dnaComps, String filePath) {
 		SBOLDocument sbolDoc = new SBOLDocumentImpl();
 		for (DnaComponent dnaComp : dnaComps)
 			SBOLUtility.addDNAComponent(dnaComp, sbolDoc, false);
 		SBOLUtility.writeSBOLDocument(filePath, sbolDoc);
 	}
 	
-	public void exportDNAComponents(List<DnaComponent> dnaComps, String exportFilePath) {
+	public static void exportDNAComponents(List<DnaComponent> dnaComps, String exportFilePath) {
 		SBOLDocument sbolDoc;
 		File exportFile = new File(exportFilePath);
 		if (exportFile.exists()) {

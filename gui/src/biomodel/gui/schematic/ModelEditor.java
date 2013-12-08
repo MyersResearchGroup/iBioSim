@@ -492,7 +492,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				String exportFilePath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export SBOL", -1);
 				if (!exportFilePath.equals("")) {
 					biosimrc.put("biosim.general.export_dir", exportFilePath);
-					fileManager.exportDNAComponents(identityManager.getModelComponents(), exportFilePath);
+					SBOLFileManager.exportDNAComponents(identityManager.getModelComponents(), exportFilePath);
 				}
 			}
 		}
@@ -606,7 +606,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
         }
 	}
 	
-	private void sweepHelper(ArrayList<ArrayList<Double>> sweep, String s) {
+	private static void sweepHelper(ArrayList<ArrayList<Double>> sweep, String s) {
 		double[] start = {0, 0};
 		double[] stop = {0, 0};
 		double[] step = {0, 0};
@@ -1329,7 +1329,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 	}
 	
-	private void updateValue(SBMLDocument d,String id,String factor,String paramId,String value,String type) {
+	private static void updateValue(SBMLDocument d,String id,String factor,String paramId,String value,String type) {
 		SBase sbase = SBMLutilities.getElementBySId(d, id);
 		if (d.getModel().getInitialAssignment(id)!=null) {
 			d.getModel().getListOfInitialAssignments().remove(id);
@@ -1496,13 +1496,12 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		
 		String file = filename.replace(".gcm", ".xml");
 		
-		compartmentPanel = new Compartments(biosim,biomodel,this, paramsOnly,getParams, path + separator + file, parameterChanges,false);
-		reactionPanel = new Reactions(biosim,biomodel,paramsOnly,getParams,path + separator + file,parameterChanges, this);
-		speciesPanel = new MySpecies(biosim,biomodel,paramsOnly,getParams,path + separator + file,parameterChanges,
-				biomodel.getGrid().isEnabled(),this);
-		parametersPanel = new Parameters(biosim, biomodel,this, paramsOnly,getParams,path + separator + file,parameterChanges, 
-				!paramsOnly && !biomodel.getGrid().isEnabled() && !textBased);
-		rulesPanel = new Rules(biosim, biomodel, this);
+		compartmentPanel = new Compartments(biomodel,this,paramsOnly, getParams,path + separator + file, parameterChanges, false);
+		reactionPanel = new Reactions(biomodel,paramsOnly,getParams,path + separator + file,parameterChanges,this);
+		speciesPanel = new MySpecies(biomodel,paramsOnly,getParams,path + separator + file,parameterChanges,biomodel.getGrid().isEnabled(),
+				this);
+		parametersPanel = new Parameters(biomodel, this,paramsOnly, getParams,path + separator + file,parameterChanges,!paramsOnly && !biomodel.getGrid().isEnabled() && !textBased);
+		rulesPanel = new Rules(biomodel, this);
 		consPanel = new Constraints(biomodel, this);
 		eventPanel = new Events(biosim,biomodel,this,textBased);
 
@@ -1565,7 +1564,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 		
 		functionPanel = new Functions(biomodel,this);
-		unitPanel = new Units(biosim,biomodel,this);
+		unitPanel = new Units(biomodel,this);
 		//JPanel defnPanel = new JPanel(new BorderLayout());
 		//defnPanel.add(mainPanelNorth, "North");
 		//defnPanel.add(functionPanel,"Center");
@@ -1586,7 +1585,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 		*/
 
-		InitialAssignments initialsPanel = new InitialAssignments(biosim,biomodel,this);
+		InitialAssignments initialsPanel = new InitialAssignments(biomodel,this);
 		compartmentPanel.setPanels(initialsPanel, rulesPanel);
 		functionPanel.setPanels(initialsPanel, rulesPanel);
 		speciesPanel.setPanels(reactionPanel, initialsPanel, rulesPanel, parametersPanel);
@@ -1708,7 +1707,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				String name = null;
 				if (list.getSelectedValue() != null) {
 					name = list.getSelectedValue().toString();
-					if (biomodel.removeInfluenceCheck(name)) {
+					if (BioModel.removeInfluenceCheck(name)) {
 						biomodel.removeInfluence(name);
 						list.removeItem(name);
 					}
@@ -1916,7 +1915,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			refGCM.load(path + separator + refFile);
 		}
 		
-		SpeciesPanel panel = new SpeciesPanel(biosim, id, species, components, biomodel, paramsOnly, refGCM, this, inTab);
+		SpeciesPanel panel = new SpeciesPanel(id, species, components, biomodel, paramsOnly, refGCM, this, inTab);
 		
 //		if (paramsOnly) {
 //			String updates = panel.updates();
@@ -2011,7 +2010,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 	}
 	
-	public SchemeChooserPanel getSchemeChooserPanel(
+	public static SchemeChooserPanel getSchemeChooserPanel(
 			String cellID, MovieContainer movieContainer, boolean inTab) {
 		
 		return new SchemeChooserPanel(cellID, movieContainer, inTab);

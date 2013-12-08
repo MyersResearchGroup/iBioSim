@@ -368,7 +368,7 @@ public class LPN {
     	VarNode outputVarNode = this.varNodeMap.get(outputVar);
     	if(outputVarNode == null){
     		System.err.println("connect: " + outputVar + " does not exist in " + this.getLabel());
-    		System.exit(1);
+    		return;
     	}
 		
     	// find associated LPNTrans
@@ -395,18 +395,18 @@ public class LPN {
     	dstLpn.varNodeMap.put(outputVar, inputVarNode);
     	if(inputVarNode == null){
     		System.err.println("connect: " + inputVar + " does not exist in " + dstLpn.getLabel());
-    		System.exit(1);
+    		return;
     	}
     	else if(!dstLpn.getInputs().contains(inputVar)){
     		System.err.println("connect: " + inputVar + " is not an input variable");
-    		System.exit(1);
+    		return;
     	}
     	
     	// make sure types are compatible
     	if(ArrayNode.class.isAssignableFrom(inputVarNode.getClass())){
 			if(!ArrayNode.class.isAssignableFrom(outputVarNode.getClass())){
 				System.err.println("error: variable " + inputVarNode.getName() + " is an array");
-				System.exit(1);
+				return;
 			}
 			
 			// make sure dimensions are the same
@@ -415,19 +415,19 @@ public class LPN {
 			
 			if(inputDimensions.size() != outputDimensions.size()){
 				System.err.println("error: incompatible dimensions");
-				System.exit(1);
+				return;
 			}
 			
 			for(int i = 0; i < inputDimensions.size(); i++){
 				if(inputDimensions.get(i) != outputDimensions.get(i)){
 					System.err.println("error: incompatible dimensions");
-					System.exit(1);
+					return;
 				}
 			}
     	}
     	else if(ArrayNode.class.isAssignableFrom(outputVarNode.getClass())){
     		System.err.println("error: variable " + outputVarNode.getName() + " is an array");
-			System.exit(1);
+			return;
     	}
     	
     	if(ArrayNode.class.isAssignableFrom(outputVarNode.getClass())){
@@ -438,7 +438,7 @@ public class LPN {
         	}
         	else if(!outputVarNode.getType().equals(VarType.OUTPUT)){
         		System.err.println("connect: " + outputVar + " is not an internal or output var in " + this.getLabel());
-        		System.exit(1);
+        		return;
         	}
 
     		ArrayNode inputArray = (ArrayNode) inputVarNode;
@@ -631,7 +631,7 @@ public class LPN {
 //        return ret;
 //    }
 
-    String blankString(int len) {
+    static String blankString(int len) {
         String ret = "";
         for (int i = 0; i < len; i++) {
             ret += " ";
@@ -701,7 +701,7 @@ public class LPN {
         return transitions;
     }
     
-    public LpnTranList getOutputTrans() {
+    public static LpnTranList getOutputTrans() {
         LpnTranList outputTranSet = new LpnTranList();
         // TODO: (temp) Hack here, but no problem as LPN.java will go away.
         // TODO: cut below because transitionsTemp is null

@@ -74,21 +74,18 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	private InitialAssignments initialsPanel;
 
 	private Rules rulesPanel;
-
-	private Gui biosim;
 	
 	private ModelEditor modelEditor;
 	
 	private boolean constantsOnly;
 
-	public Parameters(Gui biosim, BioModel gcm, ModelEditor modelEditor, Boolean paramsOnly, ArrayList<String> getParams,
-			String file, ArrayList<String> parameterChanges, boolean constantsOnly) {
+	public Parameters(BioModel gcm, ModelEditor modelEditor, Boolean paramsOnly, ArrayList<String> getParams, String file,
+			ArrayList<String> parameterChanges, boolean constantsOnly) {
 		super(new BorderLayout());
 		this.bioModel = gcm;
 		this.paramsOnly = paramsOnly;
 		this.file = file;
 		this.parameterChanges = parameterChanges;
-		this.biosim = biosim;
 		this.modelEditor = modelEditor;
 		this.constantsOnly = constantsOnly;
 		Model model = gcm.getSBMLDocument().getModel();
@@ -604,8 +601,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						val = Double.parseDouble(paramValue.getText().trim());
 					}
 					catch (Exception e1) {
-						error = InitialAssignments.addInitialAssignment(biosim, bioModel, paramID.getText().trim(), 
-								paramValue.getText().trim());
+						error = InitialAssignments.addInitialAssignment(bioModel, paramID.getText().trim(), paramValue.getText().trim());
 						val = 0.0;
 					}
 					if (rateParam!=null) {
@@ -613,8 +609,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							rateVal = Double.parseDouble(rateValue.getText().trim());
 						}
 						catch (Exception e1) {
-							error = InitialAssignments.addInitialAssignment(biosim, bioModel, paramID.getText().trim() + "_" + GlobalConstants.RATE, 
-									rateValue.getText().trim());
+							error = InitialAssignments.addInitialAssignment(bioModel, paramID.getText().trim() + "_" + GlobalConstants.RATE, rateValue.getText().trim());
 							rateVal = 0.0;
 						}
 					}

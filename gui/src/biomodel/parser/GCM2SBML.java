@@ -709,7 +709,7 @@ public class GCM2SBML {
 		return getParameter(prop);
 	}
 
-	private String checkCompabilityLoad(String key) {
+	private static String checkCompabilityLoad(String key) {
 		if (key.equals("maxDimer")) {
 			return GlobalConstants.MAX_DIMER_STRING;
 		}

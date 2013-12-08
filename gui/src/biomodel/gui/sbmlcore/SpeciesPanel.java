@@ -49,23 +49,21 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 	/**
 	 * calls constructor to construct the panel
-	 * 
 	 * @param selected
 	 * @param speciesList
-	 * @param influencesList
-	 * @param conditionsList
 	 * @param componentsList
 	 * @param bioModel
 	 * @param paramsOnly
 	 * @param refGCM
 	 * @param modelEditor
+	 * @param influencesList
+	 * @param conditionsList
 	 */
-	public SpeciesPanel(Gui biosim, String selected, PropertyList speciesList, 
-			PropertyList componentsList, BioModel bioModel, boolean paramsOnly,
-			BioModel refGCM, ModelEditor modelEditor, boolean inTab){
+	public SpeciesPanel(String selected, PropertyList speciesList, PropertyList componentsList, 
+			BioModel bioModel, boolean paramsOnly, BioModel refGCM,
+			ModelEditor modelEditor, boolean inTab){
 
 		super(new BorderLayout());
-		this.biosim = biosim;
 		constructor(selected, speciesList, componentsList, bioModel, paramsOnly, refGCM, modelEditor, inTab);
 	}
 	
@@ -750,8 +748,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					else if (Utility.isValid(initialField.getText(), Utility.CONCstring)) {
 						species.setInitialConcentration(Double.parseDouble(initialField.getText().substring(1,initialField.getText().length()-1)));
 					} else {
-						boolean error = InitialAssignments.addInitialAssignment(biosim, bioModel, species.getId(), 
-								initialField.getText().trim());
+						boolean error = InitialAssignments.addInitialAssignment(bioModel, species.getId(), initialField.getText().trim());
 						if (error) return false;
 						species.setInitialAmount(Double.parseDouble("0.0"));
 					}
@@ -1127,6 +1124,4 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	private boolean paramsOnly;
 	
 	private ModelEditor modelEditor;
-	
-	private Gui biosim;
 }

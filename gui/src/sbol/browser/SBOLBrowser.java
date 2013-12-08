@@ -164,8 +164,8 @@ public class SBOLBrowser extends JPanel implements ActionListener {
 			try {
 				localComp = aggregateCompResolver.resolve(localCompURIs.get(i));
 			} catch (MergerException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				return;
 			}
 			if (localComp.getTypes().size() > 0) {	
 				dnacTypes.add(SBOLUtility.convertURIToSOTerm(localComp.getTypes().iterator().next()));

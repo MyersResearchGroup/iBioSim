@@ -223,7 +223,7 @@ public class EditPreferences {
 		return generalPrefsFinal;
 	}
 	
-	private JButton createColorButton(Color color) {
+	private static JButton createColorButton(Color color) {
 		JButton colorButton = new JButton();
 		colorButton.setPreferredSize(new Dimension(30, 20));
 		colorButton.setBorder(BorderFactory.createLineBorder(Color.darkGray));
@@ -245,7 +245,7 @@ public class EditPreferences {
 		return colorButton;
 	}
 	
-	private Color createColorFromString(String colorStr) {
+	private static Color createColorFromString(String colorStr) {
 		int red = Integer.valueOf(colorStr.substring(1,3),16);
 		int green = Integer.valueOf(colorStr.substring(3,5),16);
 		int blue = Integer.valueOf(colorStr.substring(5,7),16);
@@ -1055,7 +1055,7 @@ public class EditPreferences {
 		biosimrc.put("lema.general.viewer", viewerField.getText().trim());
 	}
 	
-	private String colorToString(Color color) {
+	private static String colorToString(Color color) {
 		String red = Integer.toString(color.getRed(),16);
 		if (color.getRed() < 16) red = "0" + red;
 		String green = Integer.toString(color.getGreen(),16);

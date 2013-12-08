@@ -294,10 +294,12 @@ public class Utility {
 			}
 		}
 
-		for (String s : average.keySet()) {
-			double[] averages = average.get(s);
-			for (int j = 0; j < averages.length; j++) {
-				averages[j] = averages[j]/files.length;
+		if (average != null) {
+			for (String s : average.keySet()) {
+				double[] averages = average.get(s);
+				for (int j = 0; j < averages.length; j++) {
+					averages[j] = averages[j]/files.length;
+				}
 			}
 		}
 

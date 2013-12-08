@@ -927,7 +927,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 	public void mouseClicked() {
 	}
 
-	private void sort(String[] sort) {
+	private static void sort(String[] sort) {
 		int i, j;
 		String index;
 		for (i = 1; i < sort.length; i++) {
@@ -993,7 +993,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 		this.repaint();
 	}
 
-	private String[][] sortData(TableModel m) {
+	private static String[][] sortData(TableModel m) {
 		String[][] dat = new String[m.getRowCount()][m.getColumnCount()];
 		for (int i = 0; i < m.getColumnCount(); i++) {
 			for (int j = 0; j < m.getRowCount(); j++) {

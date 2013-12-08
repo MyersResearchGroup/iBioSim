@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Properties;
 
+import javax.swing.JOptionPane;
 import javax.xml.stream.XMLStreamException;
 
 import lpn.parser.LhpnFile;
@@ -155,14 +156,12 @@ public class GeneticNetwork {
 			m.setSubstanceUnits("mole");
 			try {
 				p.print(writer.writeSBMLToString(document));
-			}
-			catch (SBMLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			catch (XMLStreamException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (XMLStreamException e1) {
+				JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
+				return;
+			} catch (SBMLException e1) {
+				JOptionPane.showMessageDialog(Gui.frame, "Invalid SBML when opening SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
+				return;
 			}
 			p.close();
 		} catch (FileNotFoundException e) {
@@ -400,14 +399,12 @@ public class GeneticNetwork {
 				try {
 					submodel = SBMLReader.read(new File(properties.getPath() + 
 							properties.getSBMLCompModel().getListOfSubmodels().get(submodelIndex).getModelRef() + ".xml")).getModel();
-				}
-				catch (XMLStreamException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				} catch (XMLStreamException e1) {
+					JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
+					return;
+				} catch (IOException e1) {
+					JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
+					return;
 				}
 				
 				if (submodel.getReaction(reactionID) != null)
@@ -546,14 +543,12 @@ public class GeneticNetwork {
 			try {
 				compModel = SBMLReader.read(new File(properties.getPath() + 
 						properties.getModelFileName(componentID))).getModel();
-			}
-			catch (XMLStreamException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (XMLStreamException e1) {
+				JOptionPane.showMessageDialog(Gui.frame, "Invalid XML in SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
+				return;
+			} catch (IOException e1) {
+				JOptionPane.showMessageDialog(Gui.frame, "I/O error when opening SBML file","Error Opening File", JOptionPane.ERROR_MESSAGE);
+				return;
 			}
 			
 			//update the kmdiff values for membrane diffusion reactions

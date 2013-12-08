@@ -156,7 +156,7 @@ public class PropertyField extends JPanel implements ActionListener,
 			sweep = new JButton("Sweep");
 			sweep.addActionListener(this);
 			this.add(sweep);
-			if (stateString.equals(paramStates[0])) {
+			if (stateString != null && stateString.equals(paramStates[0])) {
 				sweep.setEnabled(false);
 			}
 		}

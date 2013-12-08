@@ -62,7 +62,7 @@ final static JFrame f=new JFrame(StackWindow.class.getSimpleName());
         f.setVisible(true);
        f. setLocation(410, 0);
     }
-String arrayToString(Object[] objs){
+static String arrayToString(Object[] objs){
     String ret="";
     for(Object o:objs)ret=o+"\n"+ret;
     return ret;

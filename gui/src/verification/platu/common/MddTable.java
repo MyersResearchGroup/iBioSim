@@ -194,7 +194,7 @@ public class MddTable extends SetIntTuple {
 		mddMgr = new Mdd(TupleLength*4);
 		this.ReachSet = null;
 		if (UseBuffer == true)
-			this.buffer = mddMgr.newNode();
+			this.buffer = Mdd.newNode();
 		else
 			this.buffer = null;
 
@@ -208,7 +208,7 @@ public class MddTable extends SetIntTuple {
 		long curUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 
 		//int[] byteVec = toByteArray(IntArray);
-		int[] byteVec = this.encode(IntArray);
+		int[] byteVec = MddTable.encode(IntArray);
 		
 		if(MddTable.UseBuffer == true && MddTable.MDDBUF_MODE==true) {
 			mddMgr.add(this.buffer, byteVec, false);
@@ -231,7 +231,7 @@ public class MddTable extends SetIntTuple {
 					}
 				}
 				mddMgr.remove(this.buffer);
-				this.buffer = mddMgr.newNode();
+				this.buffer = Mdd.newNode();
 				Runtime.getRuntime().gc();
 				MddTable.UseBuffer = false;
 				System.out.println("*** stop buffering");
@@ -239,7 +239,7 @@ public class MddTable extends SetIntTuple {
 		}
 		else {
 			if(this.ReachSet==null)
-				this.ReachSet = mddMgr.newNode();
+				this.ReachSet = Mdd.newNode();
 			mddMgr.add(this.ReachSet, byteVec, true);
 			if((Options.getMemUpperBound() - curUsedMem / 1000000) > 400) 
 				MddTable.UseBuffer = true;
@@ -253,14 +253,14 @@ public class MddTable extends SetIntTuple {
 	@Override
 	public boolean contains(int[] IntArray) {
 		//int[] byteVec = toByteArray(IntArray);
-		int[] byteVec = this.encode(IntArray);
+		int[] byteVec = MddTable.encode(IntArray);
 
-		boolean existing = mddMgr.contains(this.ReachSet, byteVec);
+		boolean existing = Mdd.contains(this.ReachSet, byteVec);
 		if (existing == true)
 			return true;
 
 		if (this.buffer != null)
-			return mddMgr.contains(this.buffer, byteVec);
+			return Mdd.contains(this.buffer, byteVec);
 
 		return false;
 	}
@@ -279,7 +279,7 @@ public class MddTable extends SetIntTuple {
 	/*
 	 * Utilities for search functions
 	 */
-	private int[] toIntArray(int i) {
+	private static int[] toIntArray(int i) {
 		int[] charArray = new int[4];
 
 		int mask = 0x000000FF;
@@ -292,7 +292,7 @@ public class MddTable extends SetIntTuple {
 	}
 
 	@SuppressWarnings("unused")
-	private int[] toByteArray(int[] intVec) {
+	private static int[] toByteArray(int[] intVec) {
 		//System.out.println(Arrays.toString(intVec));
 		int[] byteArray = new int[intVec.length*4];
 		int offset = intVec.length;
@@ -325,7 +325,7 @@ public class MddTable extends SetIntTuple {
 		return byteArray;
 	}
 	
-	private int[] encode(int[] intVec) {
+	private static int[] encode(int[] intVec) {
 		int[] codeArray = new int[intVec.length*2];
 		int offset = intVec.length;
 
@@ -342,7 +342,7 @@ public class MddTable extends SetIntTuple {
 	}
 
 	@SuppressWarnings("unused")
-	private HashSet<IntArrayObj> decompose(int[] IntArray) {
+	private static HashSet<IntArrayObj> decompose(int[] IntArray) {
 		HashSet<IntArrayObj> result = new HashSet<IntArrayObj>();
 		
 		for (int i = 1; i < IntArray.length-1; i++) {

@@ -539,7 +539,7 @@ public class MarkovianAnalysis implements Runnable{
 		return id;
 	}
 	
-	public Property createProperty(String label, String property) {
+	public static Property createProperty(String label, String property) {
 		return new Property(label, property);
 	}
 	

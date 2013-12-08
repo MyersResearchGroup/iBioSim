@@ -65,17 +65,14 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 	private BioModel bioModel;
 
 	private ModelEditor modelEditor;
-
-	private Gui biosim;
 	
 	private JCheckBox onPort;
 
 	//private String[] uList;
 
-	public Units(Gui biosim, BioModel gcm, ModelEditor modelEditor) {
+	public Units(BioModel gcm, ModelEditor modelEditor) {
 		super(new BorderLayout());
 		this.bioModel = gcm;
-		this.biosim = biosim;
 		this.modelEditor = modelEditor;
 		Model model = gcm.getSBMLDocument().getModel();
 		addUnit = new JButton("Add Unit");
@@ -344,7 +341,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 							unit.setScale(Integer.valueOf(extractUnitScale(uList[i])).intValue());
 							unit.setMultiplier(Double.valueOf(extractUnitMult(uList[i])).doubleValue());
 						}
-						if (biosim.getCheckUnits()) {
+						if (Gui.getCheckUnits()) {
 							error = SBMLutilities.checkUnits(bioModel.getSBMLDocument());
 						}
 						if (!error) {
@@ -842,7 +839,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Convert unit kind to string
 	 */
-	private String unitToString(Unit unit) {
+	private static String unitToString(Unit unit) {
 		if (unit.isAmpere()) {
 			return "ampere";
 		}
@@ -975,7 +972,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Extract unit exponent from string
 	 */
-	private String extractUnitExp(String selected) {
+	private static String extractUnitExp(String selected) {
 		if (selected.contains(")^")) {
 			return selected.substring(selected.indexOf(")^") + 2);
 		}
@@ -985,7 +982,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Extract unit scale from string
 	 */
-	private String extractUnitScale(String selected) {
+	private static String extractUnitScale(String selected) {
 		if (selected.contains(")^")) {
 			if (selected.contains("10^")) {
 				return selected.substring(selected.indexOf("10^") + 3, selected.lastIndexOf("*") - 1);
@@ -1000,7 +997,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Extract unit multiplier from string
 	 */
-	private String extractUnitMult(String selected) {
+	private static String extractUnitMult(String selected) {
 		if (selected.contains(")^")) {
 			if (selected.contains("10^")) {
 				String multStr = selected.substring(2, selected.indexOf("*") - 1);

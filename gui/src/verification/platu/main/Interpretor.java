@@ -69,6 +69,7 @@ public class Interpretor {
     public int interpretcommand(Project prj, final String commandline) {
         if (prj == null) {
             new Exception("Main: interpretcommand: prj is NULL").printStackTrace();
+            return 0;
         }
 
         //String systemcommand = commandline;
@@ -185,14 +186,14 @@ public class Interpretor {
             }
             else{
             	File f = new File(argument1);
-                prj.readLpn(f.getAbsolutePath());
+                Project.readLpn(f.getAbsolutePath());
             }
         }
 
         return 0;
     }
 
-    String mergeColumns(String a, String b) {
+    static String mergeColumns(String a, String b) {
         String ret = "";
         StringTokenizer tk1 = new StringTokenizer(a, "\n");
         StringTokenizer tk2 = new StringTokenizer(b, "\n");

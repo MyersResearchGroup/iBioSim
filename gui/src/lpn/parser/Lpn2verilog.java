@@ -568,7 +568,7 @@ public class Lpn2verilog {
 		}
 	}
 
-	private String getInitBufferString(String v, String initValue) {
+	private static String getInitBufferString(String v, String initValue) {
 		// Assign initial values/rates to continuous, discrete and boolean variables
 		//		As per translator.java: Extract the lower and upper bounds and set the initial value to the mean. 
 		//		Anything that involves infinity, take either the lower or upper bound which is not infinity.  
@@ -577,16 +577,16 @@ public class Lpn2verilog {
 		String initBufferString = null;
 		String tmp_initValue = initValue;
 		String[] subString = initValue.split(",");
-		String lowerBound = null;
-		String upperBound = null;
+		String lowerBound = "0";
+		String upperBound = "inf";
 		if (tmp_initValue.contains(",")){
 			tmp_initValue = tmp_initValue.replaceFirst(",", "");
 			for (int i = 0; i<subString.length; i ++)
 			{
 				if (subString[i].contains("[")){
 					lowerBound = subString[i].replace("[", "");	
-				}
-				if (subString[i].contains("uniform(")){
+				} 
+				else if (subString[i].contains("uniform(")){
 					lowerBound = subString[i].replace("uniform(", "");	
 				}
 				else if(subString[i].contains("]")){

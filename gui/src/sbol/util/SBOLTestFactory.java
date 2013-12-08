@@ -29,7 +29,7 @@ public class SBOLTestFactory {
 	}
 	
 	//Gate proportions: [inverter yes nor or nand and]
-	public List<BioModel> createTestLibrary(int[] gateTotals, String[] gateTypes, String projectDirectory) {
+	public static List<BioModel> createTestLibrary(int[] gateTotals, String[] gateTypes, String projectDirectory) {
 		List<BioModel> gateLibrary = new LinkedList<BioModel>();
 		int[] gateCounts = gateTotals.clone();
 		int[] gateSums = new int[gateCounts.length];
@@ -55,7 +55,7 @@ public class SBOLTestFactory {
 		return gateLibrary;
 	}
 	
-	public Set<DnaComponent> annotateTestLibrary(int cdsCopyNum, List<BioModel> gateLibrary) {
+	public static Set<DnaComponent> annotateTestLibrary(int cdsCopyNum, List<BioModel> gateLibrary) {
 		Set<DnaComponent> libraryComps = new HashSet<DnaComponent>();
 		DnaComponent previousCDS = null;
 		Random rGen = new Random();
@@ -188,7 +188,7 @@ public class SBOLTestFactory {
 //		return libraryComps;
 //	}
 	
-	private BioModel createTestGate(String gateID, String projectDirectory) {
+	private static BioModel createTestGate(String gateID, String projectDirectory) {
 		BioModel gateModel = new BioModel(projectDirectory);
 		gateModel.createSBMLDocument(gateID, false, false);
 		
@@ -222,7 +222,7 @@ public class SBOLTestFactory {
 		return gateModel;
 	}
 	
-	private DnaComponent createTestDNAComponent(URI uri, String displayID, String soType, Random rGen,
+	private static DnaComponent createTestDNAComponent(URI uri, String displayID, String soType, Random rGen,
 			int avgSize, int sdSize) {
 		DnaComponent dnaComp = new DnaComponentImpl();
 		dnaComp.setURI(uri);
@@ -245,7 +245,7 @@ public class SBOLTestFactory {
 		
 	}
 	
-	private String createTestNucleotides(int size) {
+	private static String createTestNucleotides(int size) {
 		StringBuilder sb = new StringBuilder(size);
 		for (int i = 0 ; i < size; i++) {
 			sb.append('a');
@@ -253,15 +253,15 @@ public class SBOLTestFactory {
 		return sb.toString();
 	}
 	
-	private void createInverter(BioModel gateModel, String promoterID, String inputID, String outputID) {
+	private static void createInverter(BioModel gateModel, String promoterID, String inputID, String outputID) {
 		gateModel.addRepressorToProductionReaction(promoterID, inputID, outputID, null, null, null);
 	}
 
-	private void createYesGate(BioModel bioGate, String promoterID, String inputID, String outputID) {
+	private static void createYesGate(BioModel bioGate, String promoterID, String inputID, String outputID) {
 		bioGate.addActivatorToProductionReaction(promoterID, inputID, outputID, null, null, null);
 	}
 
-	private void createNorGate(BioModel gateModel, String promoterID, String inputID, String outputID) {
+	private static void createNorGate(BioModel gateModel, String promoterID, String inputID, String outputID) {
 		String inputID2 = inputID + "2";
 		gateModel.createSpecies(inputID2, 20, 10);
 		gateModel.createDirPort(inputID2, GlobalConstants.INPUT);
@@ -269,7 +269,7 @@ public class SBOLTestFactory {
 		gateModel.addRepressorToProductionReaction(promoterID, inputID2, "none", null, null, null);
 	}
 
-	private void createOrGate(BioModel gateModel, String promoterID, String inputID, String outputID) {
+	private static void createOrGate(BioModel gateModel, String promoterID, String inputID, String outputID) {
 		String inputID2 = inputID + "2";
 		gateModel.createSpecies(inputID2, 20, 10);
 		gateModel.createDirPort(inputID2, GlobalConstants.INPUT);
@@ -277,7 +277,7 @@ public class SBOLTestFactory {
 		gateModel.addActivatorToProductionReaction(promoterID, inputID2, "none", null, null, null);
 	}
 
-	private void createNandGate(BioModel gateModel, String promoterID, String inputID, String outputID) {
+	private static void createNandGate(BioModel gateModel, String promoterID, String inputID, String outputID) {
 		String inputID2 = inputID + "2";
 		gateModel.createSpecies(inputID2, 20, 10);
 		gateModel.createDirPort(inputID2, GlobalConstants.INPUT);
@@ -289,7 +289,7 @@ public class SBOLTestFactory {
 		gateModel.addRepressorToProductionReaction(promoterID, complexID, outputID, null, null, null);
 	}
 
-	private void createAndGate(BioModel gateModel, String promoterID, String inputID, String outputID) {
+	private static void createAndGate(BioModel gateModel, String promoterID, String inputID, String outputID) {
 		String inputID2 = inputID + "2";
 		gateModel.createSpecies(inputID2, 20, 10);
 		gateModel.createDirPort(inputID2, GlobalConstants.INPUT);

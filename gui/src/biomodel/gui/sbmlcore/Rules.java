@@ -66,8 +66,6 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 
 	private BioModel bioModel;
 
-	private Gui biosim;
-
 	private JComboBox ruleType, ruleVar;
 	
 	private ModelEditor modelEditor;
@@ -77,10 +75,9 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	private JTextField ruleMath;
 
 	/* Create rule panel */
-	public Rules(Gui biosim, BioModel gcm, ModelEditor modelEditor) {
+	public Rules(BioModel gcm, ModelEditor modelEditor) {
 		super(new BorderLayout());
 		this.bioModel = gcm;
-		this.biosim = biosim;
 		this.modelEditor = modelEditor;
 
 		/* Create rule panel */
@@ -665,7 +662,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Sort rules in order to be evaluated
 	 */
-	private String[] sortRules(String[] rules) {
+	private static String[] sortRules(String[] rules) {
 		String[] result = new String[rules.length];
 		int j = 0;
 		boolean[] used = new boolean[rules.length];
@@ -852,14 +849,14 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	 */
 	public boolean checkRateRuleUnits(Rule rule) {
 		if (rule.containsUndeclaredUnits()) {
-			if (biosim.getCheckUndeclared()) {
+			if (Gui.getCheckUndeclared()) {
 				JOptionPane.showMessageDialog(Gui.frame, "Rate rule contains literals numbers or parameters with undeclared units.\n"
 						+ "Therefore, it is not possible to completely verify the consistency of the units.", "Contains Undeclared Units",
 						JOptionPane.WARNING_MESSAGE);
 			}
 			return false;
 		}
-		else if (biosim.getCheckUnits()) {
+		else if (Gui.getCheckUnits()) {
 			if (SBMLutilities.checkUnitsInRateRule(bioModel.getSBMLDocument(), rule)) {
 				JOptionPane.showMessageDialog(Gui.frame, "Units on the left and right-hand side of the rate rule do not agree.",
 						"Units Do Not Match", JOptionPane.ERROR_MESSAGE);
@@ -874,14 +871,14 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	 */
 	public boolean checkAssignmentRuleUnits(Rule rule) {
 		if (rule.containsUndeclaredUnits()) {
-			if (biosim.getCheckUndeclared()) {
+			if (Gui.getCheckUndeclared()) {
 				JOptionPane.showMessageDialog(Gui.frame, "Assignment rule contains literals numbers or parameters with undeclared units.\n"
 						+ "Therefore, it is not possible to completely verify the consistency of the units.", "Contains Undeclared Units",
 						JOptionPane.WARNING_MESSAGE);
 			}
 			return false;
 		}
-		else if (biosim.getCheckUnits()) {
+		else if (Gui.getCheckUnits()) {
 			if (SBMLutilities.checkUnitsInAssignmentRule(bioModel.getSBMLDocument(), rule)) {
 				JOptionPane.showMessageDialog(Gui.frame, "Units on the left and right-hand side of the assignment rule do not agree.",
 						"Units Do Not Match", JOptionPane.ERROR_MESSAGE);

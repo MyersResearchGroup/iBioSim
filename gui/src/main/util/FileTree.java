@@ -30,7 +30,7 @@ public class FileTree extends JPanel implements MouseListener {
 
 	private DefaultMutableTreeNode root; // root node
 
-	private File dir; // root directory
+	//private File dir; // root directory
 
 	public JTree tree; // JTree
 
@@ -138,7 +138,7 @@ public class FileTree extends JPanel implements MouseListener {
 
 		setLayout(new BorderLayout());
 
-		this.dir = dir;
+		//this.dir = dir;
 		// Make a tree list with all the nodes, and make it a JTree
 		if (dir != null) {
 			if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
@@ -893,7 +893,7 @@ public class FileTree extends JPanel implements MouseListener {
 		tree.expandPath(new TreePath(node.getPath()));
 	}
 
-	private void sort(Object[] sort) {
+	private static void sort(Object[] sort) {
 		int i, j;
 		String index;
 		for (i = 1; i < sort.length; i++) {
@@ -936,6 +936,7 @@ public class FileTree extends JPanel implements MouseListener {
 		}
 	}
 
+	/*
 	public void fixTree() {
 		fixTree(null, root, dir, false);
 		Runnable updateTree = new Runnable() {
@@ -946,11 +947,13 @@ public class FileTree extends JPanel implements MouseListener {
 		};
 		SwingUtilities.invokeLater(updateTree);
 	}
+	*/
 
 	public DefaultMutableTreeNode getRoot() {
 		return root;
 	}
 
+	/*
 	private void fixTree(DefaultMutableTreeNode parent, DefaultMutableTreeNode current, File dir, boolean add) {
 		String curPath = dir.getPath();
 		if (add) {
@@ -1056,12 +1059,6 @@ public class FileTree extends JPanel implements MouseListener {
 							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5).equals(".sbol")) {
 						file = new DefaultMutableTreeNode(new IconData(ICON_SBOL, null, files.get(fnum)));
 					}
-					/*
-					else if (!async && files.get(fnum).toString().length() > 3
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".gcm")) {
-						file = new DefaultMutableTreeNode(new IconData(ICON_DOT, null, files.get(fnum)));
-					}
-					*/
 					else if (async && files.get(fnum).toString().length() > 3
 							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".vhd")) {
 						file = new DefaultMutableTreeNode(new IconData(ICON_VHDL, null, files.get(fnum)));
@@ -1142,12 +1139,6 @@ public class FileTree extends JPanel implements MouseListener {
 							files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".xml")) { 
 						file = new DefaultMutableTreeNode(new IconData(ICON_SBML, null, files.get(fnum)));
 					}
-					/*
-					else if (!async && files.get(fnum).toString().length() > 3
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".gcm")) {
-						file = new DefaultMutableTreeNode(new IconData(ICON_DOT, null, files.get(fnum)));
-					}
-					*/
 					else if (async && files.get(fnum).toString().length() > 3
 							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".vhd")) {
 						file = new DefaultMutableTreeNode(new IconData(ICON_VHDL, null, files.get(fnum)));
@@ -1400,6 +1391,7 @@ public class FileTree extends JPanel implements MouseListener {
 			}
 		}
 	}
+	*/
 
 	@Override
 	public Dimension getMinimumSize() {

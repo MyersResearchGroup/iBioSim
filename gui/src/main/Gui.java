@@ -20,6 +20,7 @@ import java.awt.Point;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -78,9 +79,11 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.JViewport;
 import javax.swing.UIManager;
+import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.tree.TreeModel;
@@ -584,7 +587,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 		};
 		frame.addWindowListener(w);
-		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		popup = new JPopupMenu();
 		popup.addMouseListener(this);
 		// popup.addFocusListener(this);
@@ -874,51 +877,51 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		newProj.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ShortCutKey));
 		openProj.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ShortCutKey));
 		close.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ShortCutKey));
-		closeAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ShortCutKey | KeyEvent.SHIFT_MASK));
-		saveAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ShortCutKey | KeyEvent.ALT_MASK));
+		closeAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ShortCutKey | InputEvent.SHIFT_MASK));
+		saveAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ShortCutKey | InputEvent.ALT_MASK));
 		save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ShortCutKey));
-		saveAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ShortCutKey | KeyEvent.SHIFT_MASK));
+		saveAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ShortCutKey | InputEvent.SHIFT_MASK));
 		run.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ShortCutKey));
 		if (lema) {
 			newSBMLModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey));
 		}
 		else {
 			check.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, ShortCutKey));
-			saveSBOL.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ShortCutKey | KeyEvent.ALT_MASK));
+			saveSBOL.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ShortCutKey | InputEvent.ALT_MASK));
 			refresh.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0));
 			newSBMLModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey));
-			newGridModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ShortCutKey | KeyEvent.ALT_MASK));
-			createAnal.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ShortCutKey | KeyEvent.SHIFT_MASK));
-			createLearn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ShortCutKey | KeyEvent.SHIFT_MASK));
+			newGridModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ShortCutKey | InputEvent.ALT_MASK));
+			createAnal.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ShortCutKey | InputEvent.SHIFT_MASK));
+			createLearn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ShortCutKey | InputEvent.SHIFT_MASK));
 		}
 		newLhpn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ShortCutKey));
 		graph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ShortCutKey));
-		probGraph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, ShortCutKey | KeyEvent.SHIFT_MASK));
+		probGraph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, ShortCutKey | InputEvent.SHIFT_MASK));
 		select.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0));
 		cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0));
-		addCompartment.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.ALT_MASK));
+		addCompartment.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.ALT_MASK));
 		addSpecies.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0));
 		addReaction.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, 0));
 		addComponent.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, 0));
-		addPromoter.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.SHIFT_MASK));
+		addPromoter.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.SHIFT_MASK));
 		addVariable.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, 0));
 		addBoolean.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, 0));
 		addPlace.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, 0));
 		addTransition.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, 0));
-		addRule.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.SHIFT_MASK));
-		addConstraint.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.SHIFT_MASK));
+		addRule.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.SHIFT_MASK));
+		addConstraint.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.SHIFT_MASK));
 		addEvent.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, 0));
 		addSelfInfl.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, 0));
-		moveLeft.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, KeyEvent.SHIFT_MASK));
-		moveRight.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.SHIFT_MASK));
-		moveUp.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, KeyEvent.SHIFT_MASK));
-		moveDown.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, KeyEvent.SHIFT_MASK));
+		moveLeft.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.SHIFT_MASK));
+		moveRight.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.SHIFT_MASK));
+		moveUp.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.SHIFT_MASK));
+		moveDown.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.SHIFT_MASK));
 		undo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, ShortCutKey));
-		redo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, ShortCutKey | KeyEvent.SHIFT_MASK));
-		copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ShortCutKey | KeyEvent.SHIFT_MASK));
-		rename.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, ShortCutKey | KeyEvent.SHIFT_MASK));
-		delete.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ShortCutKey | KeyEvent.SHIFT_MASK));
-		manual.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey | KeyEvent.SHIFT_MASK));
+		redo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, ShortCutKey | InputEvent.SHIFT_MASK));
+		copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ShortCutKey | InputEvent.SHIFT_MASK));
+		rename.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, ShortCutKey | InputEvent.SHIFT_MASK));
+		delete.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ShortCutKey | InputEvent.SHIFT_MASK));
+		manual.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey | InputEvent.SHIFT_MASK));
 		bugReport.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, ShortCutKey));
 		exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ShortCutKey));
 		pref.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, ShortCutKey));
@@ -1375,7 +1378,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		return tab.getTitleAt(i).replace("*","");
 	}
 	
-	public boolean getCheckUndeclared() {
+	public static boolean getCheckUndeclared() {
 		Preferences biosimrc = Preferences.userRoot();
 		if (biosimrc.get("biosim.check.undeclared", "").equals("false")) {
 			return false;
@@ -1383,7 +1386,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		return true;
 	}
 
-	public boolean getCheckUnits() {
+	public static boolean getCheckUnits() {
 		Preferences biosimrc = Preferences.userRoot();
 		if (biosimrc.get("biosim.check.units", "").equals("false")) {
 			return false;
@@ -1402,28 +1405,28 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		JLabel version;
 		final String developers;
 		if (lema) {
-			name = new JLabel("LEMA", JLabel.CENTER);
-			version = new JLabel("Version "+lemaVersion, JLabel.CENTER);
+			name = new JLabel("LEMA", SwingConstants.CENTER);
+			version = new JLabel("Version "+lemaVersion, SwingConstants.CENTER);
 			developers = "Satish Batchu\nAndrew Fisher\nKevin Jones\nDhanashree Kulkarni\nScott Little\nCurtis Madsen\nChris Myers\nNicholas Seegmiller\n"
 					+ "Robert Thacker\nDavid Walter\nZhen Zhang";
 		}
 		else if (atacs) {
-			name = new JLabel("ATACS", JLabel.CENTER);
-			version = new JLabel("Version "+atacsVersion, JLabel.CENTER);
+			name = new JLabel("ATACS", SwingConstants.CENTER);
+			version = new JLabel("Version "+atacsVersion, SwingConstants.CENTER);
 			developers = "Wendy Belluomini\nJeff Cuthbert\nHans Jacobson\nKevin Jones\nSung-Tae Jung\n"
 					+ "Christopher Krieger\nScott Little\nCurtis Madsen\nEric Mercer\nChris Myers\n"
 					+ "Curt Nelson\nEric Peskin\nNicholas Seegmiller\nDavid Walter\nHao Zheng";
 		}
 		else {
-			name = new JLabel("iBioSim", JLabel.CENTER);
-			version = new JLabel("Version "+iBioSimVersion, JLabel.CENTER);
+			name = new JLabel("iBioSim", SwingConstants.CENTER);
+			version = new JLabel("Version "+iBioSimVersion, SwingConstants.CENTER);
 			developers = "Nathan Barker\nKevin Jones\nHiroyuki Kuwahara\n"
 					+ "Curtis Madsen\nChris Myers\nNam Nguyen\nTyler Patterson\nNicholas Roehner\nJason Stevens\nLeandro Watanabe";
 		}
 		Font font = name.getFont();
 		font = font.deriveFont(Font.BOLD, 36.0f);
 		name.setFont(font);
-		JLabel uOfU = new JLabel("University of Utah", JLabel.CENTER);
+		JLabel uOfU = new JLabel("University of Utah", SwingConstants.CENTER);
 		JButton credits = new JButton("Credits");
 		credits.addActionListener(new ActionListener() {
 			@Override
@@ -1882,7 +1885,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		else if (e.getActionCommand().equals("convertToLPN")) {
 			BuildProperty prop = new BuildProperty();
 			try {
-				prop.buildProperty(tree.getFile());
+				BuildProperty.buildProperty(tree.getFile());
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			} catch (RecognitionException e1) {
@@ -2200,7 +2203,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				dummy.setSelected(false);
 				JList empty = new JList();
 				//JRadioButton emptyButton = new JRadioButton();
-				run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1, 1, new String[0], "tsd.printer", "amount", "false",
+				Run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1, 1, new String[0], "tsd.printer", "amount", "false",
 						(directory + theFile).split(separator), "none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, 
 						null, false, false, false);
 				log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + directory + out + ".dot " + directory + theFile + "\n");
@@ -2389,7 +2392,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				dummy.setSelected(false);
 				JList empty = new JList();
 				//JRadioButton emptyButton = new JRadioButton();
-				run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1, 1, new String[0], "tsd.printer", "amount", "false",
+				Run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1, 1, new String[0], "tsd.printer", "amount", "false",
 						(directory + theFile).split(separator), "none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, 
 						null, false, false, false);
 				log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + directory + out + ".dot " + directory + theFile + "\n");
@@ -2487,7 +2490,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JCheckBox dummy = new JCheckBox();
 				JList empty = new JList();
 				dummy.setSelected(false);
-				run.createProperties(0.0, "Print Interval", 1.0, 1.0, 1.0, 1.0, directory, 314159L, 1, 1, new String[0], "tsd.printer", "amount", "false",
+				Run.createProperties(0.0, "Print Interval", 1.0, 1.0, 1.0, 1.0, directory, 314159L, 1, 1, new String[0], "tsd.printer", "amount", "false",
 						(directory + theFile).split(separator), "none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, 2.0, empty, empty, empty, 
 						null, false, false, false);
 				log.addText("Executing:\nreb2sac --target.encoding=xhtml --out=" + directory + out + ".xhtml " + directory + theFile + "\n");
@@ -7185,6 +7188,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					JMenuItem copy = new JMenuItem("Copy");
 					copy.addActionListener(this);
 					copy.addMouseListener(this);
+					copy.setActionCommand("copy");
 					popup.add(copy);
 				}
 				if (sim || ver || synth || learn) {
@@ -8436,7 +8440,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			String sbmlFile = "";
 			String propertiesFile = "";
 			String sbmlLoadFile = null;
-			String gcmFile = null;
 			for (String ss : s) {
 				if (ss.length() > 4 && ss.substring(ss.length() - 5).equals(".sbml") || ss.length() > 3
 						&& ss.substring(ss.length() - 4).equals(".xml")) {
@@ -8495,15 +8498,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							if (scan.hasNextLine()) {
 								sbmlLoadFile = scan.nextLine();
 								sbmlLoadFile = sbmlLoadFile.split(separator)[sbmlLoadFile.split(separator).length - 1];
-								gcmFile = sbmlLoadFile;
+								//gcmFile = sbmlLoadFile;
 								if (sbmlLoadFile.contains(".gcm")) {
-									// GCMParser parser = new GCMParser(root +
-									// separator + sbmlLoadFile);
-									// GeneticNetwork network =
-									// parser.buildNetwork();
-									// GeneticNetwork.setRoot(root + separator);
 									sbmlLoadFile = root + separator + newSim + separator + sbmlLoadFile.replace(".gcm", ".sbml");
-									// network.mergeSBML(sbmlLoadFile);
 								}
 								else {
 									sbmlLoadFile = root + separator + sbmlLoadFile;
@@ -8514,9 +8511,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							}
 							scan.close();
 						}
-						catch (Exception e) {
-							e.printStackTrace();
-							JOptionPane.showMessageDialog(frame, "Unable to load sbml file.", "Error", JOptionPane.ERROR_MESSAGE);
+						catch (IOException e) {
+							JOptionPane.showMessageDialog(frame, "Unable to analysis properties file.", "Error", JOptionPane.ERROR_MESSAGE);
+							return;
 						}
 					}
 				}
@@ -8524,24 +8521,24 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			addToTree(newSim);
 			JTabbedPane simTab = new JTabbedPane();
 			simTab.addMouseListener(this);
-			AnalysisView reb2sac = new AnalysisView(sbmlLoadFile, sbmlFile, root, this, newSim, log, simTab, propertiesFile, gcmFile, null);
+			AnalysisView reb2sac = new AnalysisView(sbmlLoadFile, sbmlFile, root, this, newSim, log, simTab, propertiesFile, sbmlLoadFile, null);
 			simTab.addTab("Simulation Options", reb2sac);
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 			simTab.addTab("Advanced Options", reb2sac.getAdvanced());
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-			if (gcmFile.contains(".gcm")) {
-				ModelEditor modelEditor = new ModelEditor(root + separator, gcmFile, this, log, true, newSim, root + separator + newSim + separator
-						+ newSim + ".sim", reb2sac, false, false);
-				reb2sac.setGcm(modelEditor);
-				ElementsPanel elementsPanel = new ElementsPanel(modelEditor.getBioModel().getSBMLDocument(),
-						root + separator + newSim + separator + newSim + ".sim");
-				modelEditor.setElementsPanel(elementsPanel);
-				addModelViewTab(reb2sac, simTab, modelEditor);
-				simTab.addTab("Parameters", modelEditor);
-				simTab.getComponentAt(simTab.getComponents().length - 1).setName("GCM Editor");
-				//simTab.addTab("SBML Elements", elementsPanel);
-				//simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-			}
+//			if (gcmFile.contains(".gcm")) {
+//				ModelEditor modelEditor = new ModelEditor(root + separator, gcmFile, this, log, true, newSim, root + separator + newSim + separator
+//						+ newSim + ".sim", reb2sac, false, false);
+//				reb2sac.setGcm(modelEditor);
+//				ElementsPanel elementsPanel = new ElementsPanel(modelEditor.getBioModel().getSBMLDocument(),
+//						root + separator + newSim + separator + newSim + ".sim");
+//				modelEditor.setElementsPanel(elementsPanel);
+//				addModelViewTab(reb2sac, simTab, modelEditor);
+//				simTab.addTab("Parameters", modelEditor);
+//				simTab.getComponentAt(simTab.getComponents().length - 1).setName("GCM Editor");
+//				//simTab.addTab("SBML Elements", elementsPanel);
+//				//simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
+//			}
 			Graph tsdGraph = reb2sac.createGraph(null);
 			simTab.addTab("TSD Graph", tsdGraph);
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("TSD Graph");
@@ -9086,7 +9083,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				close.setEnabled(true);
 				closeAll.setEnabled(true);
 				run.setEnabled(true);
-				if (learn) {
+				if (learn && learnComponent != null) {
 					if (new File(root + separator + getTitleAt(tab.getSelectedIndex()) + separator + "method.gcm").exists()) {
 						viewLearnedModel.setEnabled(true);
 					}
@@ -9096,7 +9093,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					viewCircuit.setEnabled(((LearnGCM) learnComponent).getViewModelEnabled());
 					viewLog.setEnabled(((LearnGCM) learnComponent).getViewLogEnabled());
 				}
-				else if (learnLHPN) {
+				else if (learnLHPN && learnComponent != null) {
 					run.setEnabled(true);
 					saveModel.setEnabled(((LearnLHPN) learnComponent).getViewLhpnEnabled());
 					saveAsVerilog.setEnabled(false);
@@ -9194,7 +9191,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				viewCircuit.setEnabled(((LearnLHPN) component).getViewLhpnEnabled());
 				viewLog.setEnabled(((LearnLHPN) component).getViewLogEnabled());
 				viewCoverage.setEnabled(((LearnLHPN) component).getViewCoverageEnabled());
-				saveModel.setEnabled(((LearnLHPN) learnComponent).getViewLhpnEnabled());
+				saveModel.setEnabled(((LearnLHPN) component).getViewLhpnEnabled());
 			}
 			else if (component instanceof DataManager) {
 				saveButton.setEnabled(true);
@@ -9204,7 +9201,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				saveAll.setEnabled(true);
 				close.setEnabled(true);
 				closeAll.setEnabled(true);
-				if (learn) {
+				if (learn && learnComponent != null) {
 					if (new File(root + separator + getTitleAt(tab.getSelectedIndex()) + separator + "method.gcm").exists()) {
 						viewLearnedModel.setEnabled(true);
 					}
@@ -9213,7 +9210,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					viewCircuit.setEnabled(((LearnGCM) learnComponent).getViewModelEnabled());
 					viewLog.setEnabled(((LearnGCM) learnComponent).getViewLogEnabled());
 				}
-				else if (learnLHPN) {
+				else if (learnLHPN && learnComponent != null) {
 					run.setEnabled(true);
 					saveModel.setEnabled(((LearnLHPN) learnComponent).getViewLhpnEnabled());
 					viewLearnedModel.setEnabled(((LearnLHPN) learnComponent).getViewLhpnEnabled());
@@ -9230,7 +9227,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				close.setEnabled(true);
 				closeAll.setEnabled(true);
 				run.setEnabled(true);
-				if (learn) {
+				if (learn && learnComponent != null) {
 					if (new File(root + separator + getTitleAt(tab.getSelectedIndex()) + separator + "method.gcm").exists()) {
 						viewLearnedModel.setEnabled(true);
 					}
@@ -9239,7 +9236,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					viewCircuit.setEnabled(((LearnGCM) learnComponent).getViewModelEnabled());
 					viewLog.setEnabled(((LearnGCM) learnComponent).getViewLogEnabled());
 				}
-				else if (learnLHPN) {
+				else if (learnLHPN && learnComponent != null) {
 					run.setEnabled(true);
 					saveModel.setEnabled(((LearnLHPN) learnComponent).getViewLhpnEnabled());
 					viewLearnedModel.setEnabled(((LearnLHPN) learnComponent).getViewLhpnEnabled());
@@ -9453,7 +9450,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		return root;
 	}
 
-	public boolean checkFiles(String input, String output) {
+	public static boolean checkFiles(String input, String output) {
 		input = input.replaceAll("//", "/");
 		output = output.replaceAll("//", "/");
 		if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
@@ -9695,7 +9692,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		return usingViews;
 	}
 
-	private void sort(String[] sort) {
+	private static void sort(String[] sort) {
 		int i, j;
 		String index;
 		for (i = 1; i < sort.length; i++) {
@@ -9815,18 +9812,18 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			} else {
 				id = id + "__" + sbaseRef.getMetaIdRef();
 			}
-			if (port == null) {
-				if (sbase!=null) { 
+			if (sbase!=null) { 
+				if (port == null) {
 					port = bioModel.getSBMLCompModel().createPort();
 					port.setId(id);
 					port.setMetaIdRef(sbaseRef.getMetaIdRef());
 					port.setSBaseRef(sbaseRef.getSBaseRef());
 				}
-			} 
-			sbaseRef.unsetMetaIdRef();
-			sbaseRef.unsetSBaseRef();
-			sbaseRef.setPortRef(port.getId());
-			return id;
+				sbaseRef.unsetMetaIdRef();
+				sbaseRef.unsetSBaseRef();
+				sbaseRef.setPortRef(port.getId());
+				return id;
+			}
 		} 
 		return "";
 	}

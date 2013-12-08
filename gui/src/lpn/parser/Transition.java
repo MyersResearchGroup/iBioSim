@@ -148,10 +148,10 @@ public class Transition {
 	}
 	
 	public void addEnablingWithoutLPN(ExprTree newEnab) {
-		if (newEnab != null)
+		if (newEnab != null) {
 			enablingTree = newEnab;
 			enabling = newEnab.toString();
-			
+		}
 	}
 
 	public boolean addIntAssign(String variable, String assignment) {

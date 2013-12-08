@@ -53,7 +53,7 @@ public class AmpleSubset {
 										HashMap<Transition,HashSet<Transition>> allIndepSet)
 	{
 		LpnTranList ampleList = new LpnTranList();
-		LpnTranList enableTranSet = this.getEnableTranSet(enabledArray);
+		LpnTranList enableTranSet = AmpleSubset.getEnableTranSet(enabledArray);
 				
 		if(enableTranSet.size()==0)
 		{
@@ -77,12 +77,12 @@ public class AmpleSubset {
 	    		ampleList = enableTranSet;
 	    	else
 	    	{
-	    		LpnTranList interleavingEnabledSet = this.getInterleavingEnabledSet(enableTranSet, allInterleavingTrans);
+	    		LpnTranList interleavingEnabledSet = AmpleSubset.getInterleavingEnabledSet(enableTranSet, allInterleavingTrans);
 	    		//System.out.println("interleavingEnabledSet.size():"+interleavingEnabledSet.size());
 	    		
 	    		if(interleavingEnabledSet.size() == 0)   //only consider set1 and set2
 	    		{
-	    			ampleList = this.getSubset_noInterleaving(enabledArray, allIndepSet);
+	    			ampleList = AmpleSubset.getSubset_noInterleaving(enabledArray, allIndepSet);
 	    			//System.out.println("ampleList.size():"+ampleList.size());
 	    			return ampleList;
 	    		}
@@ -94,7 +94,7 @@ public class AmpleSubset {
 				}
 				System.out.println();
 				*/
-				ampleList = this.getSubset_withInterleaving(interleavingEnabledSet, enabledArray, allIndepSet);
+				ampleList = AmpleSubset.getSubset_withInterleaving(interleavingEnabledSet, enabledArray, allIndepSet);
 				return ampleList;
 	    	}
 		}
@@ -108,7 +108,7 @@ public class AmpleSubset {
 	 * @param interleavingSet
 	 * @return
 	 */
-	private LpnTranList getInterleavingEnabledSet(LpnTranList enableTranSet, HashSet<Transition> interleavingSet)
+	private static LpnTranList getInterleavingEnabledSet(LpnTranList enableTranSet, HashSet<Transition> interleavingSet)
 	{
 		LpnTranList interleavingEnabledSet = new LpnTranList();
 		//System.out.println("interleavingSet.size():"+interleavingSet.size());
@@ -155,14 +155,14 @@ public class AmpleSubset {
 	 * @param indepTranSet
 	 * @return
 	 */
-	private LpnTranList getSubset_noInterleaving(LinkedList<Transition>[] enabledList,
+	private static LpnTranList getSubset_noInterleaving(LinkedList<Transition>[] enabledList,
 			                                    HashMap<Transition,HashSet<Transition>> indepTranSet)
 	{
 		LpnTranList set1 = new LpnTranList();
 		LpnTranList set2 = new LpnTranList();
 		//order
 		if(enabledList.length>1)
-			this.order(enabledList);
+			AmpleSubset.order(enabledList);
 		//partition set1 and set2
 		for(int i=0;i<=enabledList.length-1;i++)
 		{
@@ -222,7 +222,7 @@ public class AmpleSubset {
  * @param remainEnabledList
  * @return
  */
-	private LpnTranList getSubset_withInterleaving(LpnTranList interleavingEnabledSet,
+	private static LpnTranList getSubset_withInterleaving(LpnTranList interleavingEnabledSet,
 			                                      LinkedList<Transition>[] enabledList,
 			                                      HashMap<Transition,HashSet<Transition>> indepTranSet)
 	{
@@ -232,7 +232,7 @@ public class AmpleSubset {
 		LpnTranList set2 = new LpnTranList();
 		//order
 		if(enabledList.length>1)
-			this.order(enabledList);
+			AmpleSubset.order(enabledList);
 		//partition to 3 part               
 		for(int i=0;i<=enabledList.length-1;i++)
 		{
@@ -354,7 +354,7 @@ public class AmpleSubset {
 		{
 			if(!dep_interleaving.isEmpty())
 			{
-				LpnTranList dep = this.getDepOfInterleavingTrans(ready_interleaving, dep_interleaving, allIndepSet);
+				LpnTranList dep = AmpleSubset.getDepOfInterleavingTrans(ready_interleaving, dep_interleaving, allIndepSet);
 				for(Transition tran : dep)
 					ready_interleaving.add(tran);
 			}
@@ -363,7 +363,7 @@ public class AmpleSubset {
 		LpnTranList subset = this.getSubsetOfInterleavingTrans(interleavingEnabledSet);
 		if(!dep_interleaving.isEmpty())
 		{
-			LpnTranList dep = this.getDepOfInterleavingTrans(subset, dep_interleaving, allIndepSet);
+			LpnTranList dep = AmpleSubset.getDepOfInterleavingTrans(subset, dep_interleaving, allIndepSet);
 			for(Transition tran : dep)
 				subset.add(tran);
 		}
@@ -414,7 +414,7 @@ public class AmpleSubset {
 	 * @param allIndepSet
 	 * @return
 	 */
-	private LpnTranList getDepOfInterleavingTrans(LpnTranList subInterleavingSet, LpnTranList dep_interleaving,
+	private static LpnTranList getDepOfInterleavingTrans(LpnTranList subInterleavingSet, LpnTranList dep_interleaving,
 			                                     HashMap<Transition,HashSet<Transition>> allIndepSet)
 	{
 		//dependent on interleaving
@@ -458,7 +458,7 @@ public class AmpleSubset {
 	 * order the enabledList: the smallest the first
 	 * @param enabledList
 	 */
-	private void order(LinkedList<Transition>[] enabledList)
+	private static void order(LinkedList<Transition>[] enabledList)
 	{
 		LinkedList<Transition> temp = new LinkedList<Transition>();
 		for(int i=0;i<enabledList.length-1;i++)
@@ -475,7 +475,7 @@ public class AmpleSubset {
 		}
 	}
 	
-	private LpnTranList getEnableTranSet(LinkedList<Transition>[] enabledList)
+	private static LpnTranList getEnableTranSet(LinkedList<Transition>[] enabledList)
 	{
 		LpnTranList enableTranSet = new LpnTranList();
 		for (int index = 0; index < enabledList.length; index++) 
@@ -491,7 +491,7 @@ public class AmpleSubset {
 		return enableTranSet;
 	}
 	
-	public void printMap(HashMap<Transition, HashSet<Transition>> tranSet)
+	public static void printMap(HashMap<Transition, HashSet<Transition>> tranSet)
 	{
 		long number = 0;
 		Iterator<Transition> it = tranSet.keySet().iterator();

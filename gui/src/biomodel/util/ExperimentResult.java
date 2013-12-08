@@ -61,11 +61,11 @@ public class ExperimentResult {
 		return results.get(species);
 	}
 
-	private double interpolateIndex(double[] times, double timePoint) {
+	private static double interpolateIndex(double[] times, double timePoint) {
 		return interpolateIndex(times, timePoint, 0);
 	}
 	
-	private double interpolateIndex(double[] times, double timePoint, int index) {
+	private static double interpolateIndex(double[] times, double timePoint, int index) {
 		for (int i = index; i < times.length - 1; i++) {
 			if (times[i] < timePoint && times[i + 1] >= timePoint) {
 				return (timePoint - times[i + 1]) / (times[i] - times[i + 1])
@@ -80,7 +80,7 @@ public class ExperimentResult {
 	}
 	
 
-	private double interpolateValue(double[] values, double index) {
+	private static double interpolateValue(double[] values, double index) {
 		int prev = (int) Math.floor(index);
 		if (Math.abs(prev - index) < 1e-10) {
 			return values[prev];

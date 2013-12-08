@@ -1262,7 +1262,7 @@ public class Abstraction extends LhpnFile {
 		return intVars;
 	}
 
-	private boolean comparePreset(Place p1, Place p2) {
+	private static boolean comparePreset(Place p1, Place p2) {
 		Transition[] pre1 = p1.getPreset();
 		Transition[] pre2 = p2.getPreset();
 		if (pre1.length != pre2.length || pre1.length == 0) {
@@ -1283,7 +1283,7 @@ public class Abstraction extends LhpnFile {
 		return true;
 	}
 
-	private boolean comparePreset(Place p1, Place p2, Transition trans1,
+	private static boolean comparePreset(Place p1, Place p2, Transition trans1,
 			Transition trans2) {
 		Transition[] set1 = p1.getPreset();
 		Transition[] set2 = p2.getPreset();
@@ -1304,7 +1304,7 @@ public class Abstraction extends LhpnFile {
 		return true;
 	}
 
-	private boolean comparePreset(Transition t1, Transition t2) {
+	private static boolean comparePreset(Transition t1, Transition t2) {
 		Place[] pre1 = t1.getPreset();
 		Place[] pre2 = t2.getPreset();
 		if (pre1.length != pre2.length || pre1.length == 0) {
@@ -1325,7 +1325,7 @@ public class Abstraction extends LhpnFile {
 		return true;
 	}
 
-	private boolean comparePostset(Place p1, Place p2) {
+	private static boolean comparePostset(Place p1, Place p2) {
 		Transition[] pre1 = p1.getPostset();
 		Transition[] pre2 = p2.getPostset();
 		if (pre1.length != pre2.length || pre1.length == 0) {
@@ -1346,7 +1346,7 @@ public class Abstraction extends LhpnFile {
 		return true;
 	}
 
-	private boolean comparePostset(Place p1, Place p2, Transition trans1,
+	private static boolean comparePostset(Place p1, Place p2, Transition trans1,
 			Transition trans2) {
 		Transition[] set1 = p1.getPostset();
 		Transition[] set2 = p2.getPostset();
@@ -1367,7 +1367,7 @@ public class Abstraction extends LhpnFile {
 		return true;
 	}
 
-	private boolean comparePostset(Transition t1, Transition t2) {
+	private static boolean comparePostset(Transition t1, Transition t2) {
 		Place[] post1 = t1.getPostset();
 		Place[] post2 = t2.getPostset();
 		if (post1.length != post1.length || post1.length == 0) {
@@ -2606,7 +2606,7 @@ public class Abstraction extends LhpnFile {
 		return false;
 	}
 
-	private boolean weakReadBeforeWrite(Transition trans, String var) {
+	private static boolean weakReadBeforeWrite(Transition trans, String var) {
 		for (Place p : trans.getPostset()) {
 			for (Transition t : p.getPostset()) {
 				boolean written = false;
@@ -2631,7 +2631,7 @@ public class Abstraction extends LhpnFile {
 		return true;
 	}
 
-	private Boolean removeDanglingTransitions(Boolean change) {
+	private boolean removeDanglingTransitions(boolean change) {
 		ArrayList<Transition> remove = new ArrayList<Transition>();
 		for (Transition t : transitions.values()) {
 			if (t.getPostset().length == 0) {
@@ -3070,19 +3070,19 @@ public class Abstraction extends LhpnFile {
 			ExprTree e1 = trans.getAssignTree(v);
 			if (e1 != null) {
 				e1.replace(var, type, expr);
-			}
-			if (isBoolean(v)) {
-				trans.addBoolAssign(v, e1.toString("boolean", "LHPN"));
-			} else if (isInteger(v)) {
-				trans.addIntAssign(v, e1.toString("integer", "LHPN"));
-			} else if (isContinuous(v)
-					&& trans.getContAssignments().containsKey(var)) {
-				trans.addContAssign(v, e1.toString("continuous", "LHPN"));
-			} else if (trans.getRateAssignments().containsKey(var)) {
-				trans.addRateAssign(v, e1.toString("continuous", "LHPN"));
-			} else {
-				trans.addRateAssign(v.split("\\s")[0], e1.toString(
-						"continuous", "LHPN"));
+				if (isBoolean(v)) {
+					trans.addBoolAssign(v, e1.toString("boolean", "LHPN"));
+				} else if (isInteger(v)) {
+					trans.addIntAssign(v, e1.toString("integer", "LHPN"));
+				} else if (isContinuous(v)
+						&& trans.getContAssignments().containsKey(var)) {
+					trans.addContAssign(v, e1.toString("continuous", "LHPN"));
+				} else if (trans.getRateAssignments().containsKey(var)) {
+					trans.addRateAssign(v, e1.toString("continuous", "LHPN"));
+				} else {
+					trans.addRateAssign(v.split("\\s")[0], e1.toString(
+							"continuous", "LHPN"));
+				}
 			}
 		}
 		if (isInteger(var)) {
@@ -3559,7 +3559,7 @@ public class Abstraction extends LhpnFile {
 		}
 	}
 
-	private boolean hasAssignments(Transition trans) {
+	private static boolean hasAssignments(Transition trans) {
 		if (trans.getEnabling() != null) {
 			return true;
 		}

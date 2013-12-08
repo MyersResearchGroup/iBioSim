@@ -182,8 +182,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 
 	private ArrayList<String> parameterChanges;
 
-	private Gui biosim;
-
 	private InitialAssignments initialsPanel;
 
 	private Rules rulesPanel;
@@ -200,11 +198,10 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	
 	private JTextField repCooperativity, actCooperativity, repBinding, actBinding;
 
-	public Reactions(Gui biosim, BioModel gcm, Boolean paramsOnly, ArrayList<String> getParams, String file, 
-			ArrayList<String> parameterChanges, ModelEditor gcmEditor) {
+	public Reactions(BioModel gcm, Boolean paramsOnly, ArrayList<String> getParams, String file, ArrayList<String> parameterChanges, 
+			ModelEditor gcmEditor) {
 		super(new BorderLayout());
 		this.bioModel = gcm;
-		this.biosim = biosim;
 		this.paramsOnly = paramsOnly;
 		this.file = file;
 		this.parameterChanges = parameterChanges;
@@ -1357,6 +1354,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					paramet = p;
 				}
 			}
+			if (paramet==null) return;
 			reacParamID.setText(paramet.getId());
 			selectedID = paramet.getId();
 			reacParamName.setText(paramet.getName());
@@ -1529,6 +1527,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 								paramet = p;
 							}
 						}
+						if (paramet==null) return;
 						reacParameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 						reacParams = Utility.getList(reacParams, reacParameters);
 						reacParameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -1742,6 +1741,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 				}
 			}
+			if (product==null) return;
 			if (product.isSetName()) {
 				productName.setText(product.getName());
 			}
@@ -1815,8 +1815,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 									JOptionPane.ERROR_MESSAGE);
 							error = true;
 						} else {
-							error = InitialAssignments.addInitialAssignment(biosim, bioModel, productId.getText().trim(), 
-									productStoichiometry.getText().trim());
+							error = InitialAssignments.addInitialAssignment(bioModel, productId.getText().trim(), productStoichiometry.getText().trim());
 							val = 1.0;
 						}
 					}
@@ -1924,6 +1923,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						proda = Utility.getList(proda, products);
 						products.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					}
+					if (produ==null) return;
 					produ.setId(productId.getText().trim());
 					produ.setName(productName.getText().trim());
 					produ.setSpecies((String) productSpecies.getSelectedItem());
@@ -2033,6 +2033,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					modifier = p;
 				}
 			}
+			if (modifier==null) return;
 			modifierSpecies.setSelectedItem(modifier.getSpecies());
 			if (production!=null) {
 				if (BioModel.isPromoter(modifier)) {
@@ -2203,6 +2204,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							modi = p;
 						}
 					}
+					if (modi==null) return;
 					modifiers.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					modifier = Utility.getList(modifier, modifiers);
 					modifiers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -2505,8 +2507,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 									JOptionPane.ERROR_MESSAGE);
 							error = true;
 						} else {
-							error = InitialAssignments.addInitialAssignment(biosim, bioModel, reactantId.getText().trim(), 
-									reactantStoichiometry.getText().trim());
+							error = InitialAssignments.addInitialAssignment(bioModel, reactantId.getText().trim(), reactantStoichiometry.getText().trim());
 							val = 1.0;
 						}
 					}
@@ -2614,6 +2615,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						reacta = Utility.getList(reacta, reactants);
 						reactants.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					}
+					if (reactan==null) return;
 					reactan.setId(reactantId.getText().trim());
 					reactan.setName(reactantName.getText().trim());
 					reactan.setSpecies((String) reactantSpecies.getSelectedItem());
@@ -2753,7 +2755,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Remove the reaction
 	 */
-	public void removeTheReaction(BioModel gcm, String selected) {
+	public static void removeTheReaction(BioModel gcm, String selected) {
 		Reaction tempReaction = gcm.getSBMLDocument().getModel().getReaction(selected);
 		ListOf<Reaction> r = gcm.getSBMLDocument().getModel().getListOfReactions();
 		for (int i = 0; i < gcm.getSBMLDocument().getModel().getReactionCount(); i++) {
@@ -3010,14 +3012,14 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	 */
 	public boolean checkKineticLawUnits(KineticLaw law) {
 		if (law.containsUndeclaredUnits()) {
-			if (biosim.getCheckUndeclared()) {
+			if (Gui.getCheckUndeclared()) {
 				JOptionPane.showMessageDialog(Gui.frame, "Kinetic law contains literals numbers or parameters with undeclared units.\n"
 						+ "Therefore, it is not possible to completely verify the consistency of the units.", "Contains Undeclared Units",
 						JOptionPane.WARNING_MESSAGE);
 			}
 			return false;
 		}
-		else if (biosim.getCheckUnits()) {
+		else if (Gui.getCheckUnits()) {
 			if (SBMLutilities.checkUnitsInKineticLaw(bioModel.getSBMLDocument(), law)) {
 				JOptionPane.showMessageDialog(Gui.frame, "Kinetic law units should be substance / time.", "Units Do Not Match",
 						JOptionPane.ERROR_MESSAGE);

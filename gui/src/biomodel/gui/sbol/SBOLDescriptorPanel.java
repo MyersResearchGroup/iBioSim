@@ -127,7 +127,7 @@ public class SBOLDescriptorPanel extends JPanel {
 		return false;
 	}
 	
-	private boolean isSourceIdentifierInvalid(String sourceID) {
+	private static boolean isSourceIdentifierInvalid(String sourceID) {
 		if (sourceID.equals("")) {
 			JOptionPane.showMessageDialog(Gui.frame, "Chosen ID is blank.", "Invalid ID", JOptionPane.ERROR_MESSAGE);
 			return true;

@@ -92,7 +92,7 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 		Utility.addReaction(document, r);
 	}
 	
-	private String generateLaw(String compExpression, String boundExpression, String kcompId, String kcompIdf, 
+	private static String generateLaw(String compExpression, String boundExpression, String kcompId, String kcompIdf, 
 			String kcompIdr, String ncSum, double stoich) {
 		String law = "";
 		if (stoich == 1 || stoich == 2)

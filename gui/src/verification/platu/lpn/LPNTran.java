@@ -244,7 +244,7 @@ public class LPNTran {
         return false;
     }
 
-    public boolean containsAll(Integer[] set1, int[] set2) {
+    public static boolean containsAll(Integer[] set1, int[] set2) {
         int curMarkingSize = set1.length;
         for (int prep : set2) {
             boolean existed = false;
@@ -787,7 +787,7 @@ public class LPNTran {
     /*
      * Needed in Moore's code. Should be removed later.
      */
-    public int getID() {
+    public static int getID() {
     	return 0;
     }
     

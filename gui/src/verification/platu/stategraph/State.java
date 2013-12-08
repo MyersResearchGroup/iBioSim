@@ -69,6 +69,7 @@ public class State extends PlatuObj {
     public State(State other) {
         if (other == null) {
             new NullPointerException().printStackTrace();
+            return;
         }
         
         this.lpn = other.lpn;        	
@@ -320,7 +321,7 @@ public class State extends PlatuObj {
     /**
      * @return the enabledSet
      */
-    public int[] getEnabledSet() {
+    public static int[] getEnabledSet() {
         return null;// enabledSet;
     }
     

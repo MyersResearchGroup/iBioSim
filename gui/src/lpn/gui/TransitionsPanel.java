@@ -229,7 +229,7 @@ public class TransitionsPanel extends JPanel implements ActionListener, MouseLis
 					}
 				}
 			}
-			else if (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
+			else if (oldName != null && !oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
 				for (int i = 0; i < allVariables.length; i++) {
 					if (allVariables[i].equals(fields.get(GlobalConstants.ID).getValue())) {
 						Utility.createErrorMessage("Error", "Transition id already exists.");
@@ -255,7 +255,7 @@ public class TransitionsPanel extends JPanel implements ActionListener, MouseLis
 				}
 			}
 
-			if (selected != null && !oldName.equals(id)) {
+			if (selected != null && oldName != null && !oldName.equals(id)) {
 				lhpn.changeTransitionName(oldName, id);
 			}
 			transitionsList.removeItem(oldName);

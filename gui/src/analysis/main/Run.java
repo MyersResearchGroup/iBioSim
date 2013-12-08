@@ -72,7 +72,7 @@ public class Run implements ActionListener {
 	 * @param useInterval
 	 * @param stem
 	 */
-	public void createProperties(double timeLimit, String useInterval, double printInterval, double minTimeStep,
+	public static void createProperties(double timeLimit, String useInterval, double printInterval, double minTimeStep,
 			double timeStep, double absError, String outDir, long rndSeed, int run, int numPaths, String[] intSpecies,
 			String printer_id, String printer_track_quantity, String genStats, String[] getFilename, String selectedButtons,
 			Component component, String filename, double rap1, double rap2, double qss, int con, double stoichAmp,

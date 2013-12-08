@@ -53,4 +53,10 @@ public class MutableString implements Mutable, Serializable, Comparable<Object> 
 	public void setValue(Object value) {
 		this.value = (String) value;
 	}
+
+	@Override
+	public int hashCode() {
+		// TODO Auto-generated method stub
+		return super.hashCode();
+	}
 }

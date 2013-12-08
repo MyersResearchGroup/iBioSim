@@ -217,7 +217,7 @@ public class LPNTransitionState{
 		enabledTransitions = transLPN.getEnabledTransitions(this);
 	}
 	
-	public void initializeEnabledTransitions(LPNTranslator transLPN, 
+	public static void initializeEnabledTransitions(LPNTranslator transLPN, 
 			HashSet<Integer> enabledTransitions, boolean[] newMarkedPlaces,
 			boolean[] newBooleanValues)
 	{

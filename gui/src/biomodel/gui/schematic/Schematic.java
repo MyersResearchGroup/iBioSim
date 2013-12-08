@@ -50,6 +50,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -904,8 +905,7 @@ public class Schematic extends JPanel implements ActionListener {
 			if (fileManager.sbolFilesAreLoaded()) {
 				SBOLIdentityManager identityManager = new SBOLIdentityManager(bioModel);
 				// TODO: descriptorPanel not used
-				// SBOLDescriptorPanel descriptorPanel = 
-				new SBOLDescriptorPanel(identityManager, fileManager);
+				SBOLDescriptorPanel descriptorPanel = new SBOLDescriptorPanel(identityManager, fileManager);
 			}
 		}
 		else if(command == ""){
@@ -1526,7 +1526,7 @@ public class Schematic extends JPanel implements ActionListener {
 						Reaction r = bioModel.getSBMLDocument().getModel().getReaction((String)cell.getValue());
 						
 						if (r.getReactantCount()==1 && r.getProductCount()==1) {
-							reactions.removeTheReaction(bioModel,(String)cell.getValue());
+							Reactions.removeTheReaction(bioModel,(String)cell.getValue());
 						} 
 						else if (r.getReactantCount() > 1) {
 							
@@ -2219,7 +2219,7 @@ public class Schematic extends JPanel implements ActionListener {
 				
 				//make sure a simulation file is selected before adding the appearance panel
 				if(movieContainer != null && movieContainer.getTSDParser() != null) {
-					scPanel = modelEditor.getSchemeChooserPanel(cell.getId(), movieContainer, true);
+					scPanel = ModelEditor.getSchemeChooserPanel(cell.getId(), movieContainer, true);
 					speciesPane.addTab("Appearance", scPanel);
 				}
 				else {
@@ -2227,8 +2227,8 @@ public class Schematic extends JPanel implements ActionListener {
 					 JPanel panel = new JPanel(false);
 				        JLabel text = new JLabel(
 				        		"To modify this species' appearance, please select a simulation file");
-				        text.setHorizontalAlignment(JLabel.LEFT);
-				        text.setVerticalAlignment(JLabel.TOP);
+				        text.setHorizontalAlignment(SwingConstants.LEFT);
+				        text.setVerticalAlignment(SwingConstants.TOP);
 				        panel.setLayout(new GridLayout(1, 1));
 				        panel.add(text);
 				        
@@ -2573,7 +2573,7 @@ public class Schematic extends JPanel implements ActionListener {
 				
 				//make sure a simulation file is selected before adding the appearance panel
 				if (movieContainer != null && (movieContainer.getTSDParser() != null || movieContainer.getDTSDParser() != null)) {
-					scPanel = modelEditor.getSchemeChooserPanel(cell.getId(), movieContainer, true);
+					scPanel = ModelEditor.getSchemeChooserPanel(cell.getId(), movieContainer, true);
 					speciesPane.addTab("Appearance", scPanel);
 				}
 				else {
@@ -2581,8 +2581,8 @@ public class Schematic extends JPanel implements ActionListener {
 					JPanel panel = new JPanel(false);
 			        JLabel text = new JLabel(
 			        		"To modify this submodel's appearances, please select a simulation file.");
-			        text.setHorizontalAlignment(JLabel.LEFT);
-			        text.setVerticalAlignment(JLabel.TOP);
+			        text.setHorizontalAlignment(SwingConstants.LEFT);
+			        text.setVerticalAlignment(SwingConstants.TOP);
 			        panel.setLayout(new GridLayout(1, 1));
 			        panel.add(text);
 				        
@@ -2905,6 +2905,7 @@ public class Schematic extends JPanel implements ActionListener {
 		} 
 		catch (FileNotFoundException e) {
 			e.printStackTrace();
+			return;
 		}
 		
 		//add some padding to the edges of the graph

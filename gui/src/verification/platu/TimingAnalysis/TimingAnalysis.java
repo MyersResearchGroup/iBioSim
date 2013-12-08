@@ -73,7 +73,7 @@ public class TimingAnalysis {
 		 * Timing analysis by DFS
 		 */
 		//this.search_dfs(SgArray, initStateArray);
-		this.search_dfs_abstraction(SgArray, initStateArray);
+		TimingAnalysis.search_dfs_abstraction(SgArray, initStateArray);
 		// this.search_dfs_split_zone(SgArray, initStateArray);
 
 		while (traceCex.size() > 0) {
@@ -95,7 +95,7 @@ public class TimingAnalysis {
 	}
 
 	@SuppressWarnings("unused")
-	private void search_dfs(StateGraph[] lpnList, State[] initStateArray) {
+	private static void search_dfs(StateGraph[] lpnList, State[] initStateArray) {
 		System.out.println("---> Calling TimingAnalysis.search_dfs");
 
 		//int zoneType = 0;
@@ -426,7 +426,7 @@ public class TimingAnalysis {
 				+ tranFiringCnt + ", max_stack_depth: " + max_stack_depth);
 	}
 
-	private void search_dfs_abstraction(StateGraph[] lpnList, State[] initStateArray) {
+	private static void search_dfs_abstraction(StateGraph[] lpnList, State[] initStateArray) {
 		System.out.println("---> Calling timedProject.findsg_dfs");
 
 		int arraySize = lpnList.length;
@@ -441,9 +441,11 @@ public class TimingAnalysis {
 		 */
 		HashMap<PrjState, DBM> prjStateSet = null;
 		mdtNode reachSet = null;
-		if(useMDT==true)
+		// TODO: I build both to eliminate warnings.  It thinks it may be using a null variable below otherwise
+		// it cannot work out the correllation with useMDT.
+		//if(useMDT==true)
 			reachSet = new mdtNode();
-		else
+		//else
 			prjStateSet = new HashMap<PrjState, DBM>();
 
 		// /*

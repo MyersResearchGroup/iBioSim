@@ -244,7 +244,7 @@ public class Analysis {
 			printDstLpnList(sgList);		
 		LpnTranList initEnabled;
 		if(!Options.getTimingAnalysisFlag()){ // Timing Change.
-			initEnabled = sgList[0].getEnabledFromTranVector(initStateArray[0]);
+			initEnabled = StateGraph.getEnabledFromTranVector(initStateArray[0]);
 			// The init
 		}
 		else
@@ -315,7 +315,7 @@ public class Analysis {
 				while (curIndex < numLpns) {
 //					System.out.println("call getEnabled on curStateArray at 1: ");
 					if(!Options.getTimingAnalysisFlag()){ // Timing Change
-						curEnabled = sgList[curIndex].getEnabledFromTranVector(curStateArray[curIndex]).clone();
+						curEnabled = StateGraph.getEnabledFromTranVector(curStateArray[curIndex]).clone();
 					}
 					else{
 						// Get the enabled transitions from the zone that are associated with
@@ -374,7 +374,7 @@ public class Analysis {
 			for (int i = 0; i < numLpns; i++) {
 				LinkedList<Transition> enabledList;
 				if(!Options.getTimingAnalysisFlag()){ // Timing Change.
-					enabledList = sgList[i].getEnabledFromTranVector(curStateArray[i]);
+					enabledList = StateGraph.getEnabledFromTranVector(curStateArray[i]);
 				}
 				else{
 					// Get the enabled transitions from the Zone for the appropriate
@@ -384,7 +384,7 @@ public class Analysis {
 				}
 				curEnabledArray[i] = enabledList;
 				if(!Options.getTimingAnalysisFlag()){ // Timing Change.
-					enabledList = sgList[i].getEnabledFromTranVector(nextStateArray[i]);
+					enabledList = StateGraph.getEnabledFromTranVector(nextStateArray[i]);
 				}
 				else{
 					//enabledList = ((TimedPrjState) nextPrjState).getEnabled(i);
@@ -602,7 +602,7 @@ public class Analysis {
 	 * 		Returns a HashSet<PrjState>, a StateSet, or a ProbGlobalStateSet
 	 * 				depending on the type.
 	 */
-	private StateSetInterface generateStateSet(){
+	private static StateSetInterface generateStateSet(){
 		
 		boolean timed = Options.getTimingAnalysisFlag();
 		boolean subsets = Zone.getSubsetFlag();
@@ -618,7 +618,7 @@ public class Analysis {
 		return new HashSetWrapper();
 	}
 	
-	private boolean failureTranIsEnabled(LinkedList<Transition> curPersistentTrans) {
+	private static boolean failureTranIsEnabled(LinkedList<Transition> curPersistentTrans) {
 		boolean failureTranIsEnabled = false;
 		for (Transition tran : curPersistentTrans) {
 			if (tran.isFail()) {
@@ -642,7 +642,7 @@ public class Analysis {
 		return failureTranIsEnabled;
 	}
 
-	public void drawGlobalStateGraph(PrjState initGlobalState, StateSetInterface globalStateSet) {
+	public static void drawGlobalStateGraph(PrjState initGlobalState, StateSetInterface globalStateSet) {
 		try {
 			String fileName = null;
 			if (Options.getPOR().toLowerCase().equals("off")) {
@@ -813,7 +813,7 @@ public class Analysis {
 	}
 
 	
-	private String intArrayToString(String type, State curState) {
+	private static String intArrayToString(String type, State curState) {
 		String arrayStr = "";
 		if (type.equals("markings")) {
 			for (int i=0; i< curState.getMarking().length; i++) {
@@ -838,7 +838,7 @@ public class Analysis {
 		return arrayStr;
 	}
 	
-	private String boolArrayToString(String type, State curState) {
+	private static String boolArrayToString(String type, State curState) {
 		String arrayStr = "";
 		if (type.equals("enabled trans")) {
 			for (int i=0; i< curState.getTranVector().length; i++) {
@@ -853,7 +853,7 @@ public class Analysis {
 		return arrayStr;
 	}
 
-	private void printStateArray(State[] stateArray, String title) {
+	private static void printStateArray(State[] stateArray, String title) {
 		if (title != null)
 			System.out.println(title);		
 		for (int i=0; i<stateArray.length; i++) {
@@ -865,7 +865,7 @@ public class Analysis {
 		System.out.println("----------------------------");
 	}
 
-	private void printTransList(LinkedList<Transition> tranList, String title) {
+	private static void printTransList(LinkedList<Transition> tranList, String title) {
 		if (title != null && !title.equals(""))
 			System.out.println("+++++++" + title + "+++++++");
 		for (int i=0; i< tranList.size(); i++) 
@@ -882,7 +882,7 @@ public class Analysis {
 //		System.out.println("------------------");
 //	}
 
-	private void printDstLpnList(StateGraph[] lpnList) {
+	private static void printDstLpnList(StateGraph[] lpnList) {
 		System.out.println("++++++ dstLpnList ++++++");
 		for (int i=0; i<lpnList.length; i++) {
 			LhpnFile curLPN = lpnList[i].getLpn();
@@ -900,7 +900,7 @@ public class Analysis {
 		System.out.println("++++++++++++++++++++");
 	}
 
-	private void constructDstLpnList(StateGraph[] sgList) {
+	private static void constructDstLpnList(StateGraph[] sgList) {
 		for (int i=0; i<sgList.length; i++) {
 			LhpnFile curLPN = sgList[i].getLpn();
 			Transition[] allTrans = curLPN.getAllTransitions();
@@ -1282,7 +1282,7 @@ public class Analysis {
 	 * @param prjState
 	 * @return
 	 */
-	private String printGlobalStateLabel(PrjState prjState) {
+	private static String printGlobalStateLabel(PrjState prjState) {
 		String prjStateLabel = "";
 		for (State local : prjState.toStateArray()) {
 			prjStateLabel += local.getFullLabel() + "_";
@@ -1312,7 +1312,7 @@ public class Analysis {
 		}	
 	}
 
-	private void printTranStack(Stack<LinkedList<Transition>> lpnTranStack, String title) {
+	private static void printTranStack(Stack<LinkedList<Transition>> lpnTranStack, String title) {
 		if (title != null)
 			System.out.println(title);
 		for (int i=0; i<lpnTranStack.size(); i++) {
@@ -1326,7 +1326,7 @@ public class Analysis {
 	}
 
 	@SuppressWarnings("unused")
-	private void printNextGlobalStateMap(HashMap<Transition, PrjState> nextStateMap) {
+	private static void printNextGlobalStateMap(HashMap<Transition, PrjState> nextStateMap) {
 		for (Transition t: nextStateMap.keySet()) {
 			System.out.println(t.getFullLabel() + " -> ");
 			State[] stateArray = nextStateMap.get(t).getStateArray();
@@ -1442,7 +1442,7 @@ public class Analysis {
   		return newNextPersistent;
 	}
 
-	private void updateLocalPersistentSetTbl(LpnTranList nextPersistentTrans,
+	private static void updateLocalPersistentSetTbl(LpnTranList nextPersistentTrans,
 			StateGraph[] sgList, State[] nextStateArray) {
 		// Persistent set at each state is stored in the enabledSetTbl in each state graph.
 		for (Transition tran : nextPersistentTrans) {
@@ -1464,7 +1464,7 @@ public class Analysis {
 		}
 	}
 
-	private void printPrjStateSet(StateSetInterface prjStateSet) {
+	private static void printPrjStateSet(StateSetInterface prjStateSet) {
 		for (PrjState curGlobal : prjStateSet) {
 			State[] curStateArray = curGlobal.toStateArray();
 			printStateArray(curStateArray, null);
@@ -1736,7 +1736,7 @@ public class Analysis {
 		}
 	}
 	
-	private void printLpnTranPair(Transition curTran,
+	private static void printLpnTranPair(Transition curTran,
 			HashSet<Transition> TransitionSet, String setName) {				
 		System.out.println(setName + " for transition " + curTran.getFullLabel() + " is: ");
 		if (TransitionSet.isEmpty()) {
@@ -1831,7 +1831,7 @@ public class Analysis {
     	LpnTranList persistentSet = new LpnTranList();
     	HashSet<Transition> curEnabled = new HashSet<Transition>();
    		for (int lpnIndex=0; lpnIndex<stateArray.length; lpnIndex++) {
-   			curEnabled.addAll(sgList[lpnIndex].getEnabledFromTranVector(stateArray[lpnIndex]));
+   			curEnabled.addAll(StateGraph.getEnabledFromTranVector(stateArray[lpnIndex]));
    		}  		
         if (Options.getDebugMode()) {
 	      	System.out.println("******* Partial Order Reduction *******");
@@ -1893,7 +1893,7 @@ public class Analysis {
 		return merge(left, right, tranFiringFreq);
 	}
 
-	private LinkedList<Transition> merge(LinkedList<Transition> left,
+	private static LinkedList<Transition> merge(LinkedList<Transition> left,
 			LinkedList<Transition> right, HashMap<Transition, Integer> tranFiringFreq) {
 		LinkedList<Transition> result = new LinkedList<Transition>(); 
 		while (left.size() > 0 || right.size() > 0) {
@@ -1930,7 +1930,7 @@ public class Analysis {
      * @return
      */
 	@SuppressWarnings("unused")
-	private LpnTranList getPersistentRefinedCycleRule(State[] curStateArray, State[] nextStateArray, HashMap<Transition,StaticDependencySets> staticSetsMap, 
+	private static LpnTranList getPersistentRefinedCycleRule(State[] curStateArray, State[] nextStateArray, HashMap<Transition,StaticDependencySets> staticSetsMap, 
 			boolean init, HashMap<Transition,Integer> tranFiringFreq, StateGraph[] sgList, 
 			HashSet<PrjState> stateStack, PrjState stateStackTop) {
 //    	PersistentSet nextPersistent = new PersistentSet();
@@ -2496,7 +2496,13 @@ public class Analysis {
 					sg = lpnList[i];
 				}
 			}
-			State[] nextStateArray = sg.fire(lpnList, curStateArray, firedTran);
+			State[] nextStateArray = null;
+			if (sg != null) {
+				nextStateArray = sg.fire(lpnList, curStateArray, firedTran);
+			} else {
+				System.out.println("No state graph found.");
+				return null;
+			}
 			
 			// Check if the firedTran causes disabling error or deadlock.
 			@SuppressWarnings("unchecked")
@@ -2670,7 +2676,7 @@ public class Analysis {
 		Stack<Integer> curIndexStack = new Stack<Integer>();
 
 		mddNode reachAll = null;
-		mddNode reach = mddMgr.newNode();
+		mddNode reach = Mdd.newNode();
 		
 		int[] localIdxArray = Analysis.getLocalStateIdxArray(lpnList, initStateArray, true);
 		mddMgr.add(reach, localIdxArray, compressed);
@@ -2723,7 +2729,7 @@ public class Analysis {
 							}
 						}
 						mddMgr.remove(reach);
-						reach = mddMgr.newNode();
+						reach = Mdd.newNode();
 
 						if(memUpBound < 1500)
 							memUpBound *= numMddCompression;
@@ -2799,9 +2805,9 @@ public class Analysis {
 			localIdxArray = Analysis.getLocalStateIdxArray(lpnList, nextStateArray, true);
 
 			Boolean existingState = false;
-			if (reachAll != null && mddMgr.contains(reachAll, localIdxArray) == true)
+			if (reachAll != null && Mdd.contains(reachAll, localIdxArray) == true)
 				existingState = true;
-			else if (mddMgr.contains(reach, localIdxArray) == true)
+			else if (Mdd.contains(reach, localIdxArray) == true)
 				existingState = true;
 			
 			if (existingState == false) {
@@ -2814,7 +2820,7 @@ public class Analysis {
 			}
 		}
 
-		double totalStateCnt = mddMgr.numberOfStates(reach);
+		double totalStateCnt = Mdd.numberOfStates(reach);
 		
 		System.out.println("---> run statistics: \n"
 				+ "# LPN transition firings: "	+ tranFiringCnt + "\n" 
@@ -2864,7 +2870,7 @@ public class Analysis {
 		
 		boolean compressed = false;
 		mddNode reachAll = null;
-		mddNode reach = mddMgr.newNode();
+		mddNode reach = Mdd.newNode();
 
 		main_while_loop: 
 		while (failure == false	&& state2Explore.empty() == false) {
@@ -2906,7 +2912,7 @@ public class Analysis {
 						}
 					}
 					mddMgr.remove(reach);
-					reach = mddMgr.newNode();
+					reach = Mdd.newNode();
 				}
 			}
 			
@@ -2963,9 +2969,9 @@ public class Analysis {
 					localIdxArray = Analysis.getLocalStateIdxArray(lpnList, nextStateArray, false);
 
 					Boolean existingState = false;
-					if (reachAll != null && mddMgr.contains(reachAll, localIdxArray) == true)
+					if (reachAll != null && Mdd.contains(reachAll, localIdxArray) == true)
 						existingState = true;
-					else if (mddMgr.contains(reach, localIdxArray) == true)
+					else if (Mdd.contains(reach, localIdxArray) == true)
 						existingState = true;
 					else if(state2Explore.contains(nextStateArray)==true)
 						existingState = true;
@@ -3012,7 +3018,7 @@ public class Analysis {
 			sgList[i].addState(initStateArray[i]);
 		
 		mddNode reachSet = null;
-		mddNode reach = mddMgr.newNode();
+		mddNode reach = Mdd.newNode();
 		MDT frontier = new MDT(arraySize);
 		MDT image = new MDT(arraySize);
 
@@ -3062,7 +3068,7 @@ public class Analysis {
 						}
 					}
 					mddMgr.remove(reach);
-					reach = mddMgr.newNode();
+					reach = Mdd.newNode();
 				}
 			
 			while(frontier.empty() == false) {
@@ -3102,7 +3108,7 @@ public class Analysis {
 						}
 						
 						localIdxArray = Analysis.getLocalStateIdxArray(sgList, nextStateArray, false);
-						if (mddMgr.contains(reachSet, localIdxArray) == false && mddMgr.contains(reach, localIdxArray) == false && frontier.contains(nextStateArray) == false) {
+						if (Mdd.contains(reachSet, localIdxArray) == false && Mdd.contains(reach, localIdxArray) == false && frontier.contains(nextStateArray) == false) {
 							if(image.contains(nextStateArray)==false) {
 							image.push(nextStateArray);
 							imageSize++;
@@ -3151,6 +3157,7 @@ public class Analysis {
 	 * @return a linked list of a sequence of LPN transitions leading to the
 	 *         failure if it is not empty.
 	 */
+	@SuppressWarnings("static-access")
 	public LinkedList<Transition> search_bfs_mdd_localFirings(final StateGraph[] lpnList, final State[] initStateArray) {
 		System.out.println("---> starting search_bfs");
 		
@@ -3223,12 +3230,12 @@ public class Analysis {
 						+ " used memory: " + (float) curUsedMem / 1000000
 						+ " free memory: "
 						+ (float) Runtime.getRuntime().freeMemory() / 1000000);
-				System.out.println("---> # of prjStates found: " + mddMgr.numberOfStates(reachSet) 
-						+ ",  CurSet.Size = " + mddMgr.numberOfStates(curMdd));
+				System.out.println("---> # of prjStates found: " + Mdd.numberOfStates(reachSet) 
+						+ ",  CurSet.Size = " + Mdd.numberOfStates(curMdd));
 				continue;
 			}
 
-			if (exploredSet != null && mddMgr.contains(exploredSet, curStateArray) == true)
+			if (exploredSet != null && Mdd.contains(exploredSet, curStateArray) == true)
 				continue;
 
 			// If curStateArray deadlocks (no enabled transitions), terminate.
@@ -3286,7 +3293,7 @@ public class Analysis {
 					// next
 					// enabled transition.
 					int[] nextIdxArray = Analysis.getIdxArray(nextStateArray);
-					if (reachSet != null && mddMgr.contains(reachSet, nextIdxArray) == true)
+					if (reachSet != null && Mdd.contains(reachSet, nextIdxArray) == true)
 						continue;
 
 					mddNode newNextMdd = mddMgr.doLocalFirings(lpnList, nextStateArray, reachSet);
@@ -3337,7 +3344,7 @@ public class Analysis {
 		int max_stack_depth = 0;
 		int iterations = 0;
 		boolean useMdd = true;
-		mddNode reach = mddMgr.newNode();
+		mddNode reach = Mdd.newNode();
 				
 		//init por
 		verification.platu.por1.AmpleSet ampleClass = new verification.platu.por1.AmpleSet();
@@ -3409,7 +3416,7 @@ public class Analysis {
 			iterations++;
 			if (iterations % 500000 == 0) {
 				if (useMdd==true)
-					stateCount = mddMgr.numberOfStates(reach);
+					stateCount = Mdd.numberOfStates(reach);
 				else
 					stateCount = prjStateSet.size();
 			
@@ -3459,7 +3466,13 @@ public class Analysis {
 					sg = lpnList[i];
 				}
 			}
-			State[] nextStateArray = sg.fire(lpnList, curStateArray, firedTran);
+			State[] nextStateArray = null;
+			if (sg != null) {
+				nextStateArray = sg.fire(lpnList, curStateArray, firedTran);
+			} else {
+				System.out.println("No state graph found.");
+				return null;
+			}
 			tranFiringCnt++;
 			
 			// Check if the firedTran causes disabling error or deadlock.
@@ -3526,7 +3539,7 @@ public class Analysis {
 				nextIdxArray = Analysis.getIdxArray(nextStateArray);
 			
 			if (useMdd == true) 
-				isExisting = mddMgr.contains(reach, nextIdxArray);
+				isExisting = Mdd.contains(reach, nextIdxArray);
 			else
 				isExisting = prjStateSet.contains(nextPrjState);
 			
@@ -3688,7 +3701,7 @@ public class Analysis {
 
 		
 		if (useMdd==true)
-			stateCount = mddMgr.numberOfStates(reach);
+			stateCount = Mdd.numberOfStates(reach);
 		else
 			stateCount = prjStateSet.size();
 		
@@ -3724,7 +3737,7 @@ public class Analysis {
 		int iterations = 0;
 		//boolean useMdd = true;
 		boolean useMdd = false;
-		mddNode reach = mddMgr.newNode();
+		mddNode reach = Mdd.newNode();
 				
 		//init por
 		AmpleSet ampleClass = new AmpleSet();
@@ -3795,7 +3808,7 @@ public class Analysis {
 			iterations++;
 			if (iterations % 500000 == 0) {
 				if (useMdd==true)
-					stateCount = mddMgr.numberOfStates(reach);
+					stateCount = Mdd.numberOfStates(reach);
 				else
 					stateCount = prjStateSet.size();
 			
@@ -3843,7 +3856,13 @@ public class Analysis {
 					sg = sgList[i];
 				}
 			}
-			State[] nextStateArray = sg.fire(sgList, curStateArray, firedTran);
+			State[] nextStateArray = null;
+			if (sg != null) {
+				nextStateArray = sg.fire(sgList, curStateArray, firedTran);
+			} else {
+				System.out.println("No state graph found.");
+				return null;
+			}
 			tranFiringCnt++;
 			
 			// Check if the firedTran causes disabling error or deadlock.
@@ -3910,7 +3929,7 @@ public class Analysis {
 				nextIdxArray = Analysis.getIdxArray(nextStateArray);
 			
 			if (useMdd == true) 
-				isExisting = mddMgr.contains(reach, nextIdxArray);
+				isExisting = Mdd.contains(reach, nextIdxArray);
 			else
 				isExisting = prjStateSet.contains(nextPrjState);
 			
@@ -4072,7 +4091,7 @@ public class Analysis {
 
 		
 		if (useMdd==true)
-			stateCount = mddMgr.numberOfStates(reach);
+			stateCount = Mdd.numberOfStates(reach);
 		else
 			stateCount = prjStateSet.size();
 		
@@ -4263,7 +4282,7 @@ public class Analysis {
 		return localIdxArray;
 	}
 	
-    private void printPersistentSetTbl(StateGraph[] sgList) {
+    private static void printPersistentSetTbl(StateGraph[] sgList) {
     	for (int i=0; i<sgList.length; i++) {
     		System.out.println("******* Stored persistent sets for state graph " + sgList[i].getLpn().getLabel() + " *******");
     		for (State s : sgList[i].getEnabledSetTbl().keySet()) {
@@ -4393,7 +4412,7 @@ public class Analysis {
 //		return ready;
 //	}
 
-	private boolean isDummyTran(String tranName) {
+	private static boolean isDummyTran(String tranName) {
 		if (tranName.contains("_dummy"))
 			return true;
 		return false;
@@ -4753,7 +4772,7 @@ public class Analysis {
 			}
 			return nEnable;
 		}
-		else if (nMarking == null && nEnable == null) {
+		else if (nMarking == null || nEnable == null) {
 			return null;
 		}
 		else {
@@ -4892,7 +4911,7 @@ public class Analysis {
 		}	
 	}
 	
-	private HashSet<Transition> setSubstraction(
+	private static HashSet<Transition> setSubstraction(
 			HashSet<Transition> left, HashSet<Transition> right) {
 		HashSet<Transition> sub = new HashSet<Transition>();
 		for (Transition lpnTranPair : left) {
@@ -4902,7 +4921,7 @@ public class Analysis {
 		return sub;
 	}
 	
-	public boolean stateOnStack(int lpnIndex, State curState, HashSet<PrjState> stateStack) {
+	public static boolean stateOnStack(int lpnIndex, State curState, HashSet<PrjState> stateStack) {
 		boolean isStateOnStack = false;
 		for (PrjState prjState : stateStack) {
 			State[] stateArray = prjState.toStateArray();
@@ -4914,7 +4933,7 @@ public class Analysis {
 		return isStateOnStack;
 	}
 	
-	private void printIntegerSet(HashSet<Transition> Trans, String setName) {
+	private static void printIntegerSet(HashSet<Transition> Trans, String setName) {
 		if (!setName.isEmpty())
 			System.out.print(setName + ": ");
 		if (Trans == null) {
@@ -4932,7 +4951,7 @@ public class Analysis {
 		}	
 	}
 	
-	private void printIntegerSet(ArrayList<HashSet<Transition>> transSet, String setName) {
+	private static void printIntegerSet(ArrayList<HashSet<Transition>> transSet, String setName) {
 		if (!setName.isEmpty())
 			System.out.print(setName + ": ");
 		if (transSet == null) {
