@@ -260,35 +260,6 @@ public class SynthesisGraph {
 		return node;
 	}
 	
-//	private SBOLSynthesisNode constructPromoterNode(String promoterID, int numRepressors, int numActivators, 
-//			Reaction sbmlReaction, SBOLFileManager fileManager) { 
-////		if (numRepressors > 0 && numActivators == 0) {
-////			if (numRepressors == 1)
-////				promoterNode.setType("i");
-////			else if (numRepressors == 2)
-////				promoterNode.setType("n");
-////		} else if (numRepressors == 0 && numActivators > 0) {
-////			if (numActivators == 1)
-////				promoterNode.setType("y");
-////			else if (numActivators == 2)
-////				promoterNode.setType("o");
-////		} else
-////			promoterNode.setType("c");
-//		SBOLSynthesisNode promoterNode;
-//		if (idToNode.containsKey(promoterID)) {
-//			promoterNode = idToNode.get(promoterID);
-//		} else {
-//
-//			promoterNode.setID(sbmlModifier.getSpecies());
-//			promoterNode.setType("p");
-//			promoterNode.processDNAComponents(sbmlReaction, fileManager);
-//			nucleotideCount += promoterNode.getNucleotideCount();
-//			if (promoterNode.getSignal().length() > 0)
-//				signals.add(promoterNode.getSignal());
-//			idToNode.put(sbmlModifier.getSpecies(), promoterNode);
-//		}
-//	}
-	
 	private SynthesisNode identifyOutput(Set<SynthesisNode> nodes) {
 		HashMap<SynthesisNode, SynthesisNode> reverseEdges = new HashMap<SynthesisNode, SynthesisNode>();
 		for (SynthesisNode node : nodes) {
