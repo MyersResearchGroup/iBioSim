@@ -32,25 +32,22 @@ public class Synthesizer {
 	
 	public Synthesizer(Set<SynthesisGraph> graphLibrary, Properties synthProps) {
 		this.matcher = new SynthesisMatcher(graphLibrary);
-//		if (synthProps.getProperty(GlobalConstants.SBOL_SYNTH_METHOD_PROPERTY).equals(
-//				GlobalConstants.SBOL_SYNTH_EXHAUST_BB))
-//			solutionCap = 0;
-//		else
 		exhaustive = synthProps.getProperty(GlobalConstants.SBOL_SYNTH_METHOD_PROPERTY).equals(
 				GlobalConstants.SBOL_SYNTH_EXHAUST_BB);
 		solutionCap = Integer.parseInt(synthProps.getProperty(GlobalConstants.SBOL_SYNTH_NUM_SOLNS_PROPERTY));
 	}
 	
 	public List<List<SynthesisGraph>> mapSpecification(SynthesisGraph spec) {
-		//long startTime = System.nanoTime();
+//		long startTime = System.nanoTime();
 		for (SynthesisNode node : spec.postOrderNodes()) {
 			matchNode(node, spec);
 			boundNode(node, spec);
 		}
 		List<List<SynthesisGraph>> solutions = new LinkedList<List<SynthesisGraph>>();
+//		int solutionCost = coverSpec(spec, solutions);
 		coverSpec(spec, solutions);
-		//ong endTime = System.nanoTime();
-		//double time = (endTime - startTime)*Math.pow(10, -9); 
+//		long endTime = System.nanoTime();
+//		double time = (endTime - startTime)*Math.pow(10, -9); 
 
 //		System.out.println("Run took " + time + " s.");
 //		System.out.println("Solution is " + solution + ".");
@@ -102,7 +99,6 @@ public class Synthesizer {
 	private int coverSpec(SynthesisGraph spec, List<List<SynthesisGraph>> bestSolutions) {
 		List<SynthesisGraph> solution = new LinkedList<SynthesisGraph>();
 		int solutionCost = 0;
-		int lowerBound = spec.getOutput().getCoverBound();
 		Set<String> solutionSignals = new HashSet<String>();
 		int bestSolutionCost = -1;
 		List<SynthesisNode> previousNodes = new LinkedList<SynthesisNode>();
@@ -130,17 +126,13 @@ public class Synthesizer {
 				SynthesisGraph cover = currentNodes.get(0).getCover();
 				if (!crossTalk(cover.getSignals(), solutionSignals) && 
 						ioCompatible(cover.getOutput().getSignal(), currentNodes.get(0).getCoverConstraint())) { 
-					if (solutionInBound(solutionCost, currentNodes, bestSolutionCost)) {
-						currentNodes.get(0).setUncoveredNodes(
-								new LinkedList<SynthesisNode>(currentNodes.subList(1, currentNodes.size())));
-						List<SynthesisNode> nextNodes = spec.walkPaths(currentNodes.get(0), cover.getPaths());
-						for (SynthesisNode nextNode : nextNodes)
-							lowerBound = lowerBound + nextNode.getCoverBound();
-						constrainNodes(nextNodes, cover.getInputs());
+					if (solutionInBound(solutionCost, currentNodes.get(0), bestSolutionCost)) {
 						solutionCost = addCoverToSolution(cover, solution, solutionCost, solutionSignals);
-						lowerBound = lowerBound - currentNodes.get(0).getCoverBound();
+						List<SynthesisNode> nextNodes = spec.walkPaths(currentNodes.get(0), cover.getPaths());
+						constrainNodes(nextNodes, cover.getInputs());
 						previousNodes.add(0, currentNodes.remove(0));
 						currentNodes.addAll(0, nextNodes);
+						documentUncoveredNodes(nextNodes, currentNodes);
 					} else {
 						currentNodes.get(0).terminateBranch();
 						currentNodes.clear();
@@ -152,13 +144,31 @@ public class Synthesizer {
 				solutionCost = removeCoverFromSolution(previousNodes.get(0).getCover(), solution, 
 						solutionCost, solutionSignals);
 				currentNodes.addAll(previousNodes.get(0).getUncoveredNodes());
-//				for (SBOLSynthesisNode uncoveredNode : previousNodes.get(0).getUncoveredNodes())
-//					lowerBound = lowerBound + uncoveredNode.getCoverBound();
-				lowerBound = lowerBound + previousNodes.get(0).getCoverBound();
 				currentNodes.add(0, previousNodes.remove(0));
 			}
 		} while (currentNodes.size() > 0);
 		return bestSolutionCost;
+	}
+	
+	private void documentUncoveredNodes(List<SynthesisNode> nextNodes, List<SynthesisNode> currentNodes) {
+		int j = 0;
+		if (nextNodes.size() < currentNodes.size()) {
+			if (nextNodes.size() > 1)
+				j = nextNodes.size() - 1;
+		} else if (nextNodes.size() > 2)
+			j = nextNodes.size() - 2;
+		List<SynthesisNode> uncoveredNodes = currentNodes.subList(j + 1, currentNodes.size());
+		nextNodes.get(j).setUncoveredNodes(new LinkedList<SynthesisNode>(uncoveredNodes));
+		int uncoveredBound = 0;
+		for (SynthesisNode uncoveredNode : uncoveredNodes)
+			uncoveredBound += uncoveredNode.getCoverBound();
+		nextNodes.get(j).setUncoveredBound(uncoveredBound);
+		for (int i = j - 1; i >= 0; i--) {
+			uncoveredNodes = currentNodes.subList(i + 1, currentNodes.size());
+			nextNodes.get(i).setUncoveredNodes(new LinkedList<SynthesisNode>(uncoveredNodes));
+			uncoveredBound = nextNodes.get(i + 1).getCoverBound() + nextNodes.get(i + 1).getUncoveredBound();
+			nextNodes.get(i).setUncoveredBound(uncoveredBound);
+		}
 	}
 	
 	private static int addCoverToSolution(SynthesisGraph cover, List<SynthesisGraph> solution, 
@@ -192,18 +202,19 @@ public class Synthesizer {
 		return inputSignal.equals(outputSignal);
 	}
 
-	private static boolean solutionInBound(int solutionCost, List<SynthesisNode> currentNodes, int bestSolutionCost) {
+	private static boolean solutionInBound(int solutionCost, SynthesisNode currentNode, int bestSolutionCost) {
 		if (bestSolutionCost < 0)
 			return true;
-		int bestCaseCost = solutionCost;
-		for (SynthesisNode currentNode : currentNodes)
-			bestCaseCost = bestCaseCost + currentNode.getCoverBound();
+		int lowerBound = currentNode.getCoverBound() + currentNode.getUncoveredBound();
+		int bestCaseCost = solutionCost + lowerBound;
+//		for (SynthesisNode currentNode : currentNodes)
+//			bestCaseCost = bestCaseCost + currentNode.getCoverBound();
 		return (bestCaseCost < bestSolutionCost);
 	}
 	
-	private static void constrainNodes(List<SynthesisNode> nodes, List<SynthesisNode> nodeCovers) {
-		for (int i = 0; i < nodes.size(); i++)
-			nodes.get(i).setCoverConstraint(nodeCovers.get(i).getSignal());
+	private void constrainNodes(List<SynthesisNode> specNodes, List<SynthesisNode> coverNodes) {
+		for (int i = 0; i < specNodes.size(); i++)
+			specNodes.get(i).setCoverConstraint(coverNodes.get(i).getSignal());
 	}
 	
 	public static void composeSolutionModel(List<SynthesisGraph> solution, SynthesisGraph spec, BioModel solutionModel) {

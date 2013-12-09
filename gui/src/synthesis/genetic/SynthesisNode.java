@@ -27,6 +27,7 @@ public class SynthesisNode {
 	private List<Integer> matchBounds;
 	private int coverIndex;
 	private List<SynthesisNode> uncoveredNodes;
+	private int uncoveredBound;
 	
 	public SynthesisNode(String type, SBase sbmlElement, SBOLFileManager fileManager) {
 		id = SBMLutilities.getId(sbmlElement);
@@ -34,6 +35,7 @@ public class SynthesisNode {
 		compURIs = new LinkedList<URI>();
 		processDNAComponents(sbmlElement, fileManager);
 		coverIndex = -1;
+		uncoveredBound = 0;
 	}
 	
 	public SynthesisNode(String type) {
@@ -41,6 +43,7 @@ public class SynthesisNode {
 		compURIs = new LinkedList<URI>();
 		nucleotideCount = 0;
 		coverIndex = -1;
+		uncoveredBound = 0;
 	}
 	
 	private void processDNAComponents(SBase sbmlElement, SBOLFileManager fileManager) {
@@ -109,6 +112,14 @@ public class SynthesisNode {
 		return uncoveredNodes;
 	}
 	
+	public void setUncoveredBound(int uncoveredBound) {
+		this.uncoveredBound = uncoveredBound;
+	}
+	
+	public int getUncoveredBound() {
+		return uncoveredBound;
+	}
+	
 	public void setCoverConstraint(String coverConstraint) {
 		this.coverConstraint = coverConstraint;
 	}
@@ -137,6 +148,12 @@ public class SynthesisNode {
 		if (coverIndex >= 0 && matches != null && coverIndex < matches.size())
 			return matches.get(coverIndex);
 		return null;
+	}
+	
+	public int getCoverBound(int coverIndex) {
+		if (coverIndex >= 0 && matchBounds != null && coverIndex < matchBounds.size())
+			return matchBounds.get(coverIndex);
+		return 0;
 	}
 	
 	public SynthesisGraph getCover() {
