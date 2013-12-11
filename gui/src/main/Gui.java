@@ -1153,9 +1153,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		help.add(manual);
 		help.add(bugReport);
 		if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-			new MacOSAboutHandler();
-			new MacOSPreferencesHandler();
-			new MacOSQuitHandler();
+			MacOSAboutHandler macOSAboutHandler = new MacOSAboutHandler();
+			MacOSPreferencesHandler macOSPreferencesHandler = new MacOSPreferencesHandler();
+			MacOSQuitHandler macOSQuitHandler = new MacOSQuitHandler();
 			Application application = new Application();
 			application.addPreferencesMenuItem();
 			application.setEnabledPreferencesMenu(true);
@@ -1279,19 +1279,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		openRecent.addSeparator();
 		openRecent.add(clearRecent);
-		if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-			new MacOSAboutHandler();
-			new MacOSPreferencesHandler();
-			new MacOSQuitHandler();
-			Application application = new Application();
-			application.addPreferencesMenuItem();
-			application.setEnabledPreferencesMenu(true);
-		}
-		else {
-			// file.add(pref);
-			// file.add(exit);
-			help.add(about);
-		}
+//		if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+//			new MacOSAboutHandler();
+//			new MacOSPreferencesHandler();
+//			new MacOSQuitHandler();
+//			Application application = new Application();
+//			application.addPreferencesMenuItem();
+//			application.setEnabledPreferencesMenu(true);
+//		}
+//		else {
+//			// file.add(pref);
+//			// file.add(exit);
+//			help.add(about);
+//		}
 		/*if (biosimrc.get("biosim.sbml.level_version", "").equals("L2V4")) {
 			SBMLLevelVersion = "L2V4";
 			SBML_LEVEL = 2;
@@ -1613,7 +1613,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 		}
 		else if (e.getSource() == saveAsVerilog) {
-			new Lpn2verilog(tree.getFile());
+			Lpn2verilog lpn2verilog = new Lpn2verilog(tree.getFile());
 			String theFile = "";
 			if (tree.getFile().lastIndexOf('/') >= 0) {
 				theFile = tree.getFile().substring(tree.getFile().lastIndexOf('/') + 1);
@@ -1871,7 +1871,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			addToTree(theFile.replace(".lpn", ".xml"));
 		}
 		else if (e.getActionCommand().equals("convertToVerilog")) {
-			new Lpn2verilog(tree.getFile());
+			Lpn2verilog lpn2verilog = new Lpn2verilog(tree.getFile());
 			String theFile = "";
 			if (tree.getFile().lastIndexOf('/') >= 0) {
 				theFile = tree.getFile().substring(tree.getFile().lastIndexOf('/') + 1);
@@ -5460,7 +5460,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else {
 			//SBOLBrowser browser = new SBOLBrowser(this, filePath);
-			new SBOLBrowser(this, filePath);
+			SBOLBrowser sbolBrowser = new SBOLBrowser(this, filePath);
 		}
 	}
 	
@@ -8423,7 +8423,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				libsbmlFound = false;
 			}
 		}
-		new Gui(lemaFlag, atacsFlag, libsbmlFound);
+		Gui gui = new Gui(lemaFlag, atacsFlag, libsbmlFound);
 	}
 	
 	public static boolean isLibsbmlFound() {

@@ -433,7 +433,7 @@ public class TransitionsPanel extends JPanel implements ActionListener, MouseLis
 						"All variables have already been assigned in this transition");
 			}
 			else {
-				new AssignmentPanel(variable, list, varAssignments,
+				AssignmentPanel assignmentPanel = new AssignmentPanel(variable, list, varAssignments,
 						rateAssignments, boolAssignments, intAssignments, lhpn);
 			}
 		}
@@ -496,7 +496,7 @@ public class TransitionsPanel extends JPanel implements ActionListener, MouseLis
 		if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
 			flag = !flag;
 			if (flag) {
-				new AssignmentPanel(assignments.getSelectedValue().toString(), assignments, varAssignments,
+				AssignmentPanel assignmentPanel = new AssignmentPanel(assignments.getSelectedValue().toString(), assignments, varAssignments,
 					rateAssignments, boolAssignments, intAssignments, lhpn);
 			}
 		}

@@ -300,12 +300,12 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 		
 		Synthesizer synthesizer = new Synthesizer(graphlibrary, synthProps);
 		List<List<SynthesisGraph>> solutions = synthesizer.mapSpecification(spec);
-		List<String> solutionFileIDs = importSolutions(solutions, spec, synthesizer, fileManager, synthFilePath);
+		List<String> solutionFileIDs = importSolutions(solutions, spec, fileManager, synthFilePath);
 		return solutionFileIDs;
 	}
 	
 	private List<String> importSolutions(List<List<SynthesisGraph>> solutions, SynthesisGraph spec, 
-			Synthesizer synthesizer, SBOLFileManager fileManager, String synthFilePath) {
+			SBOLFileManager fileManager, String synthFilePath) {
 		List<BioModel> solutionModels = new LinkedList<BioModel>();
 		Set<String> solutionFileIDs = new HashSet<String>();
 		for (List<SynthesisGraph> solutionGraphs : solutions) {
@@ -317,7 +317,7 @@ public class SynthesisView extends JTabbedPane implements ActionListener, Runnab
 			BioModel solutionModel = new BioModel(synthFilePath);
 			solutionModel.createSBMLDocument("tempID_" + idIndex, false, false);	
 			idIndex++;
-			synthesizer.composeSolutionModel(solutionGraphs, spec, solutionModel);
+			Synthesizer.composeSolutionModel(solutionGraphs, spec, solutionModel);
 			solutionModels.add(solutionModel);
 		}
 		List<String> orderedSolnFileIDs = new LinkedList<String>();
