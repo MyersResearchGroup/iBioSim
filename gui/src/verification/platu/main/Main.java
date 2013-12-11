@@ -134,7 +134,7 @@ public class Main {
                     setOptions(prop);
             }
             
-            new Main(cmdFileString);
+            Main main = new Main(cmdFileString);
 
 //            if (PRINT_USAGE_STATS) {
 //                VarVal.printUsageStats();

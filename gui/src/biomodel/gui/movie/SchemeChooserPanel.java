@@ -206,7 +206,7 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 	 */
 	public static boolean showSchemeChooserPanel(String cellID, MovieContainer movieContainer) {
 
-		new SchemeChooserPanel(cellID, movieContainer, false);
+		SchemeChooserPanel schemeChooserPanel = new SchemeChooserPanel(cellID, movieContainer, false);
 		
 		return changed;
 	}

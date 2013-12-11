@@ -2293,7 +2293,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			if (!direct.equals(".")) {
 				d = direct;
 			}
-			new Nary_Run(this, simulators, simProp.split(separator), simProp, fba, sbml, dot, xhtml, lhpn, nary, ODE, monteCarlo, timeLimit,
+			Nary_Run nary_Run = new Nary_Run(this, simulators, simProp.split(separator), simProp, fba, sbml, dot, xhtml, lhpn, nary, ODE, monteCarlo, timeLimit,
 					((String) (intervalLabel.getSelectedItem())), printInterval, minTimeStep, timeStep, root + separator + simName, rndSeed,
 					run, printer_id, printer_track_quantity, intSpecies, rap1, rap2, qss,
 					con, log, biomodelsim, simTab, root, d, modelFile, abstraction, lhpnAbstraction, absError);
