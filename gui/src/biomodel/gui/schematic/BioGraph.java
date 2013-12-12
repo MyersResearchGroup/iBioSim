@@ -1890,7 +1890,7 @@ public class BioGraph extends mxGraph {
 							}
 						}
 					}
-					bioModel.placeSpecies(cell.getId(), x, y, height, width);
+					bioModel.placeGeneral(cell.getId(), x, y, height, width, null);
 				}
 			} 
 		} else if (getCellType(cell).equals(GlobalConstants.REACTION)) {
@@ -1952,7 +1952,12 @@ public class BioGraph extends mxGraph {
 							}
 						}
 					}
-					bioModel.placeReaction(cell.getId(), x, y, height, width);
+					if ((getCellType(cell).equals(GlobalConstants.RULE) ||
+							getCellType(cell).equals(GlobalConstants.CONSTRAINT))) {
+						bioModel.placeGeneral(cell.getId(), x, y, height, width, cell.getId());
+					} else {
+						bioModel.placeGeneral(cell.getId(), x, y, height, width, null);
+					}
 				} 
 			} 
 		} else if (!bioModel.isGridEnabled() && getCellType(cell).equals(GlobalConstants.COMPARTMENT)) {
@@ -1987,7 +1992,7 @@ public class BioGraph extends mxGraph {
 					needsPositioning = true;
 					x = (unpositionedElementCount%50) * 20;
 					y = (unpositionedElementCount%10) * (height + 10);
-					bioModel.placeCompartment(cell.getId(), x, y, height, width);
+					bioModel.placeGeneral(cell.getId(), x, y, height, width, null);
 				} 
 			} 
 		} 

@@ -1231,6 +1231,55 @@ public class BioModel {
 		textGlyph.setBoundingBox(compartmentGlyph.getBoundingBox().clone());
 	}
 	
+	public void placeGeneral(String s,Double x,Double y,Double h,Double w,String metaidRef) {
+		Layout layout = sbmlLayout.getListOfLayouts().get("iBioSim");
+		GeneralGlyph generalGlyph;
+		if (layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+s)!=null) {
+			generalGlyph = (GeneralGlyph)layout.getListOfAdditionalGraphicalObjects().get(GlobalConstants.GLYPH+"__"+s);
+		} else {
+			generalGlyph = layout.createGeneralGlyph(GlobalConstants.GLYPH+"__"+s);
+			generalGlyph.createBoundingBox();
+			generalGlyph.getBoundingBox().createDimensions();
+			generalGlyph.getBoundingBox().createPosition();
+			if (metaidRef == null) {
+				generalGlyph.setReference(s);
+			} else {
+				generalGlyph.setMetaidRef(metaidRef);
+			}
+		}
+		BoundingBox boundingBox = new BoundingBox();
+		boundingBox.createPosition();
+		boundingBox.getPosition().setX(x);
+		boundingBox.getPosition().setY(y);
+		Dimensions dim = new Dimensions();
+		dim.setHeight(h);
+		dim.setWidth(w);
+		boundingBox.setDimensions(dim);
+		if (layout.getDimensions() == null) {
+			layout.createDimensions(0, 0, 0);
+		}
+		if (layout.getDimensions().getWidth() < x+w) {
+			layout.getDimensions().setWidth(x+w);
+		}
+		if (layout.getDimensions().getHeight() < y+h) {
+			layout.getDimensions().setHeight(y+h);
+		}
+		generalGlyph.setBoundingBox(boundingBox);
+		TextGlyph textGlyph = null;
+		if (layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+s)!=null) {
+			textGlyph = layout.getTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+s);
+		} else {
+			textGlyph = layout.createTextGlyph(GlobalConstants.TEXT_GLYPH+"__"+s);
+			textGlyph.createBoundingBox();
+			textGlyph.getBoundingBox().createDimensions();
+			textGlyph.getBoundingBox().createPosition();
+		}
+		textGlyph.setId(GlobalConstants.TEXT_GLYPH+"__"+s);
+		textGlyph.setGraphicalObject(GlobalConstants.GLYPH+"__"+s);
+		textGlyph.setText(s);
+		textGlyph.setBoundingBox(generalGlyph.getBoundingBox().clone());
+	}
+	
 	public void updateLayoutDimensions() {
 		Layout layout = sbmlLayout.getListOfLayouts().get("iBioSim");
 		for (int i=0; i<layout.getListOfCompartmentGlyphs().size(); i++ ) {
