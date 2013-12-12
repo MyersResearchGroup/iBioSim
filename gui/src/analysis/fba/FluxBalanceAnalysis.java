@@ -9,6 +9,8 @@ import java.util.HashMap;
 
 import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
 import org.sbml.jsbml.ext.fbc.FluxBound;
+import org.sbml.jsbml.ext.fbc.FluxObjective;
+import org.sbml.jsbml.ext.fbc.Objective;
 import org.sbml.jsbml.ext.fbc.Objective.Type;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
@@ -30,23 +32,15 @@ public class FluxBalanceAnalysis {
 	
 	private FBCModelPlugin fbc;
 	
-	private NumberFormat nf;
-	
 	private double absError;
 	
 	
 	public FluxBalanceAnalysis(String root,String sbmlFileName,double absError) {
-		// Load the SBML file
 		this.root = root;
 		this.sbmlFileName = sbmlFileName;
 		this.absError = absError;
 		sbml = SBMLutilities.readSBML(root + this.sbmlFileName);
 		fbc = SBMLutilities.getFBCModelPlugin(sbml.getModel());
-		
-		//Set number of digits after decimal point
-		nf = NumberFormat.getNumberInstance();		
-		nf.setMaximumFractionDigits(4);
-		nf.setGroupingUsed(false);
 	}
 	
 	public static String vectorToString(double[] objective, HashMap<String,Integer> reactionIndex) {
@@ -78,6 +72,7 @@ public class FluxBalanceAnalysis {
 				}
 			}
 			for (int i = 0; i < fbc.getListOfObjectives().size(); i++) {
+				if (!fbc.getActiveObjective().equals(fbc.getObjective(i).getId())) continue;
 				double [] objective = new double[sbml.getModel().getReactionCount()];				
 				for (int j = 0; j < fbc.getObjective(i).getListOfFluxObjectives().size(); j++) {
 					if (fbc.getObjective(i).getType().equals(Type.MINIMIZE)) {

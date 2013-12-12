@@ -3191,6 +3191,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			Reaction reaction = listOfReactions.get(i);
 			reacts[i] = reaction.getId();
 			if (paramsOnly) {
+				if (!reaction.isSetKineticLaw()) continue;
 				ListOf<LocalParameter> params = reaction.getKineticLaw().getListOfLocalParameters();
 				for (int j = 0; j < reaction.getKineticLaw().getLocalParameterCount(); j++) {
 					LocalParameter paramet = (params.get(j));

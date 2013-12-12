@@ -189,6 +189,7 @@ public class AssemblyGraph {
 		}
 		for (int i = 0; i < sbmlModel.getReactionCount(); i++) {
 			Reaction sbmlReaction = sbmlModel.getReaction(i);
+			if (!sbmlReaction.isSetKineticLaw()) continue;
 			AssemblyNode reactionNode = idToNode.get(sbmlReaction.getId());
 			// Connects assembly nodes for reactants and modifiers to node for reaction
 			for (int j = 0; j < sbmlReaction.getReactantCount(); j++) {
