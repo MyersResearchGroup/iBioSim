@@ -1406,12 +1406,14 @@ public class SBMLutilities {
 						}
 					}
 				}
-				String[] vars = SBMLutilities.myFormulaToString(reaction.getKineticLaw().getMath()).split(" |\\(|\\)|\\,");
-				for (int j = 0; j < vars.length; j++) {
-					if (vars[j].equals(species)) {
-						kineticLawsUsing.add(reaction.getId());
-						inUse = true;
-						break;
+				if (reaction.isSetKineticLaw()) {
+					String[] vars = SBMLutilities.myFormulaToString(reaction.getKineticLaw().getMath()).split(" |\\(|\\)|\\,");
+					for (int j = 0; j < vars.length; j++) {
+						if (vars[j].equals(species)) {
+							kineticLawsUsing.add(reaction.getId());
+							inUse = true;
+							break;
+						}
 					}
 				}
 			}
