@@ -42,7 +42,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 			String[] splitted = repressor.split("__");
 			if (splitted.length > 1)
 				repressor = splitted[1];
-			boundId = promoter.getId() + "_" + repressor + "_bound";
+			boundId = promoter.getId() + "_" + repressor;
 			reactionId = "R_repression_binding_" + promoter.getId() + "_" + repressor;
 			specie.accept(this);
 		}
