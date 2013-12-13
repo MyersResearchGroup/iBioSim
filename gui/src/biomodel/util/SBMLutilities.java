@@ -2070,12 +2070,11 @@ public class SBMLutilities {
 	 * Checks consistency of the sbml file.
 	 */
 	public static boolean checkUnits(SBMLDocument document) {
-		//TODO: Does this need to be ported over?
-		//document.getModel().populateListFormulaUnitsData();
 		long numErrors = 0;
 		String message = "Change in unit definition causes unit errors in the following elements:\n";
 		for (int i = 0; i < document.getModel().getReactionCount(); i++) {
 			Reaction reaction = document.getModel().getReaction(i);
+			if (!reaction.isSetKineticLaw()) continue;
 			KineticLaw law = reaction.getKineticLaw();
 			if (law != null) {
 				if (checkUnitsInKineticLaw(document,law)) {

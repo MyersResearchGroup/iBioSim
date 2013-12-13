@@ -4551,6 +4551,7 @@ public abstract class Simulator {
 		//add local parameters
 		for (Reaction reaction : model.getListOfReactions()) {
 			
+			if (!reaction.isSetKineticLaw()) continue;
 			KineticLaw kineticLaw = reaction.getKineticLaw();
 			setupLocalParameters(kineticLaw, reaction);
 		}
@@ -5193,7 +5194,8 @@ public abstract class Simulator {
 		
 		//loop through all reactions and calculate their propensities
 		for (Reaction reaction : model.getListOfReactions()) {
-			
+			if (!reaction.isSetKineticLaw()) continue;
+
 			String reactionID = reaction.getId();
 			ASTNode reactionFormula = reaction.getKineticLaw().getMath();
 						

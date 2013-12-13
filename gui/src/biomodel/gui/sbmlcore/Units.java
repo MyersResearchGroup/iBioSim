@@ -749,6 +749,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 		}
 		ArrayList<String> reacParametersUsing = new ArrayList<String>();
 		for (int i = 0; i < model.getReactionCount(); i++) {
+			if (!model.getReaction(i).isSetKineticLaw()) continue;
 			for (int j = 0; j < model.getReaction(i).getKineticLaw().getLocalParameterCount(); j++) {
 				LocalParameter parameters = model.getReaction(i).getKineticLaw().getListOfLocalParameters().get(j);
 				if (parameters.getUnits().equals(unit)) {
@@ -1127,6 +1128,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			Utility.sort(params);
 		}
 		for (int i = 0; i < model.getReactionCount(); i++) {
+			if (!model.getReaction(i).isSetKineticLaw()) continue;
 			KineticLaw kineticLaw = model.getReaction(i).getKineticLaw();
 			for (int j = 0; j < kineticLaw.getLocalParameterCount(); j++) {
 				if (kineticLaw.getLocalParameter(j).getUnits().equals(origId)) {
