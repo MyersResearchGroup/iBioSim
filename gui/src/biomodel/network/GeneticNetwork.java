@@ -713,7 +713,7 @@ public class GeneticNetwork {
 				String[] splitted = repressor.split("__");
 				if (splitted.length > 1)
 					repressor = splitted[1];
-				s = Utility.makeSpecies(p.getId() + "_"	+ repressor + "_bound", compartment, 0, -1);
+				s = Utility.makeSpecies(p.getId() + "_"	+ repressor, compartment, 0, -1);
 				s.setHasOnlySubstanceUnits(true);
 				Utility.addSpecies(document, s);
 			}
