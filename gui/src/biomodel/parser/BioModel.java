@@ -7223,6 +7223,7 @@ public class BioModel {
 			updateVarId(false, r.getId(), newName, subBioModel);
 			r.setId(newName);
 			if (r.isSetMetaId()) SBMLutilities.setMetaId(r, subModelId + "__" + r.getMetaId());
+			if (!r.isSetKineticLaw()) continue;
 			for (int j = 0; j < r.getKineticLaw().getLocalParameterCount(); j++) {
 				LocalParameter l = r.getKineticLaw().getLocalParameter(j);
 				if (l.isSetMetaId()) SBMLutilities.setMetaId(l, subModelId + "__" + l.getMetaId());

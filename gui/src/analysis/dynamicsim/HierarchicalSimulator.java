@@ -2548,6 +2548,7 @@ public abstract class HierarchicalSimulator {
 		for (int i = 0; i < size; i++) 
 		{
 			reaction = modelstate.model.getReaction(i);
+			if (!reaction.isSetKineticLaw()) continue;
 			KineticLaw kineticLaw = reaction.getKineticLaw();
 			setupLocalParameters(modelstate, kineticLaw, reaction);
 		}
@@ -3108,6 +3109,8 @@ public abstract class HierarchicalSimulator {
 		for (int i = 0;  i < modelstate.numReactions; i++) 
 		{
 			reaction = modelstate.model.getReaction(i);
+			if (!reaction.isSetKineticLaw()) continue;
+			
 			String reactionID = reaction.getId();
 
 			String species = reactionID.replace("Degradation_", "");
