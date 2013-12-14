@@ -1560,12 +1560,20 @@ public class Run implements ActionListener {
 						JOptionPane.showMessageDialog(Gui.frame, "Flux balance analysis failed.", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 					else if(exitValue == -1){
-						JOptionPane.showMessageDialog(Gui.frame, "The problem is infeasible", "Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(Gui.frame, "No flux balance constraints.", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 					else if (exitValue == -2) {
-						JOptionPane.showMessageDialog(Gui.frame, "No flux balance constraints", "Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(Gui.frame, "Initial point must be strictly feasible.", "Error", JOptionPane.ERROR_MESSAGE);
 					}
-					// TODO: SCOTT - use showMessageDialog to report bad exit values
+					else if (exitValue == -3) {
+						JOptionPane.showMessageDialog(Gui.frame, "The FBA problem is infeasible.", "Error", JOptionPane.ERROR_MESSAGE);
+					} 
+					else if (exitValue == -4) {
+						JOptionPane.showMessageDialog(Gui.frame, "The FBA problem has a singular KKT system.", "Error", JOptionPane.ERROR_MESSAGE);
+					} 
+					else if (exitValue == -5) {
+						JOptionPane.showMessageDialog(Gui.frame, "Miscellaneous FBA failure (see console for details).", "Error", JOptionPane.ERROR_MESSAGE);
+					}
 				}
 				else if (sbml.isSelected()) {
 					if (sbmlName != null && !sbmlName.trim().equals("")) {

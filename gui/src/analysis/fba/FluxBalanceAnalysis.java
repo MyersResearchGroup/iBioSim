@@ -205,11 +205,16 @@ public class FluxBalanceAnalysis {
 						f.delete();
 					}
 					// TODO: SCOTT - return different code based on the message
-					//System.out.println(e.getMessage());
-					return -1;
+					if (e.getMessage().equals("initial point must be strictly feasible")) return -2;
+					else if (e.getMessage().equals("Infeasible problem")) return -3;
+					else if (e.getMessage().equals("singular KKT system")) return -4;
+					else {
+						System.out.println(e.getMessage());
+						return -5;
+					}
 				}
 			}
 		}
-		return -2;
+		return -1;
 	}
 }
