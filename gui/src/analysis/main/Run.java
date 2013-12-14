@@ -1554,9 +1554,15 @@ public class Run implements ActionListener {
 				}
 				else if (fba.isSelected()) {
 					if(exitValue == 1){
+						JOptionPane.showMessageDialog(Gui.frame, "Flux balance analysis did not converge.", "Error", JOptionPane.ERROR_MESSAGE);
+					}
+					else if(exitValue == 2){
+						JOptionPane.showMessageDialog(Gui.frame, "Flux balance analysis failed.", "Error", JOptionPane.ERROR_MESSAGE);
+					}
+					else if(exitValue == -1){
 						JOptionPane.showMessageDialog(Gui.frame, "The problem is infeasible", "Error", JOptionPane.ERROR_MESSAGE);
 					}
-					else if (exitValue == 2) {
+					else if (exitValue == -2) {
 						JOptionPane.showMessageDialog(Gui.frame, "No flux balance constraints", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 					// TODO: SCOTT - use showMessageDialog to report bad exit values

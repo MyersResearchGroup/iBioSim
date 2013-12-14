@@ -171,7 +171,7 @@ public class FluxBalanceAnalysis {
 				JOptimizer opt = new JOptimizer();
 				opt.setOptimizationRequest(or);
 				try {
-					opt.optimize();
+					int error = opt.optimize();
 					File f = new File(root + "sim-rep.txt");
 					FileWriter fw = new FileWriter(f);
 					BufferedWriter bw = new BufferedWriter(fw);
@@ -198,15 +198,18 @@ public class FluxBalanceAnalysis {
 					bw.write(secondLine);
 					bw.write("\n");
 					bw.close();
+					return error;
 				} catch (Exception e) {
-					// DELETE sim-rep.txt here if it exists
+					File f = new File(root + "sim-rep.txt");
+					if (f.exists()) {
+						f.delete();
+					}
 					// TODO: SCOTT - return different code based on the message
-					System.out.println(e.getMessage());
-					return 1;
+					//System.out.println(e.getMessage());
+					return -1;
 				}
 			}
-			return 0;
 		}
-		return 2;
+		return -2;
 	}
 }
