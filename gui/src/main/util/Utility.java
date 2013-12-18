@@ -192,7 +192,7 @@ public class Utility {
 						if (!selectedFile.endsWith("-sedml.xml"))
 							selectedFile += "-sedml.xml";
 					}
-					else if (approve.equals("Import SBML") || (approve.equals("Export SMBL"))) {
+					else if (approve.equals("Import SBML") || (approve.equals("Export SBML"))) {
 						if (!selectedFile.endsWith(".sbml") && !selectedFile.endsWith(".xml")) {
 							selectedFile += ".xml";
 						}

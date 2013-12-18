@@ -809,27 +809,47 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						}
 					}
 				} else {
+					// TODO: pull into its own method
+					// TODO: if contains >= 
+					//			split >=
+					//			if (length == 3)
+					//				check for double, reactionId, double
+					//				check double1 >= double2
+					//			else if (length == 2)
+					//				check for (double, reactionId) OR (reactionId,double)
+					//			else ERROR
+					//		else if contains <=
+					//			split <=
+					//			if (length == 3)
+					//				check for double, reactionId, double
+					//				check double1 <= double2
+					//			else if (length == 2)
+					//				check for (double, reactionId) OR (reactionId,double)
+					//			else ERROR
+					//		else if contains =
+					//			split =
+					//			if (length == 2)
+					//				check for (double, reactionId) OR (reactionId,double)
+					//			else ERROR
+					//		else ERROR
 					String[] correctnessTest = kineticLaw.getText().replaceAll("\\s","").split("=");
 					if(correctnessTest.length == 3){
 						try{
 							Double.parseDouble(correctnessTest[0].substring(0, correctnessTest[0].length()));
 						}
-						catch(Exception e){
-							if(e.equals(new NumberFormatException())){
-								JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0].substring(0, correctnessTest[0].length())
-										+ " has to be a double.", "Incorrect Element", JOptionPane.ERROR_MESSAGE);
-								error = true;
-							}
+						catch(NumberFormatException e){
+							JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0].substring(0, correctnessTest[0].length())
+									+ " has to be a double.", "Incorrect Element", JOptionPane.ERROR_MESSAGE);
+							error = true;
 						}
+						// TODO: wrap all checks with if !error
 						try{
 							Double.parseDouble(correctnessTest[2]);
 						}
-						catch(Exception e){
-							if(e.equals(new NumberFormatException())){
-								JOptionPane.showMessageDialog(Gui.frame, correctnessTest[2] + " has to be a double.", "Incorrect Element",
-										JOptionPane.ERROR_MESSAGE);
-								error = true;
-							}
+						catch(NumberFormatException e){
+							JOptionPane.showMessageDialog(Gui.frame, correctnessTest[2] + " has to be a double.", "Incorrect Element",
+									JOptionPane.ERROR_MESSAGE);
+							error = true;
 						}
 						if(!correctnessTest[1].substring(0, reactionId.length()).equals(reactionId)){
 							JOptionPane.showMessageDialog(Gui.frame, "Must have "+ reactionId + " in the middle.", "Incorrect Reaction",
@@ -1016,54 +1036,67 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							react.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createProductionKineticLaw(production)));
 						}
 						error = checkKineticLawUnits(react.getKineticLaw());
-
-						for(int i = 0; i < bioModel.getSBMLFBC().getListOfFluxBounds().size(); i++){
+						int i = 0;
+						while (i < bioModel.getSBMLFBC().getListOfFluxBounds().size()) {
 							if(bioModel.getSBMLFBC().getListOfFluxBounds().get(i).getReaction().equals(reactionId)){
 								bioModel.getSBMLFBC().removeFluxBound(i);
+							} else {
+								i++;
 							}
 						}
 					}
 					else{
 						react.unsetKineticLaw();
-						for(int i = 0; i < bioModel.getSBMLFBC().getListOfFluxBounds().size(); i++){
+						int i = 0;
+						while(i < bioModel.getSBMLFBC().getListOfFluxBounds().size()){
 							if(bioModel.getSBMLFBC().getListOfFluxBounds().get(i).getReaction().equals(reactionId)){
 								bioModel.getSBMLFBC().removeFluxBound(i);
+							} else {
+								i++;
 							}
 						}
 						if(kineticLaw.getText().contains("<=")){
 							String[] userInput = kineticLaw.getText().replaceAll("\\s","").split("<=");
-							double greaterValue = Double.parseDouble(userInput[0]);
-							double lessValue = Double.parseDouble(userInput[2]);
-							if (greaterValue != lessValue) {
+							if (userInput.length==3) {
+								double greaterValue = Double.parseDouble(userInput[0]);
 								FluxBound fxGreater = bioModel.getSBMLFBC().createFluxBound();
 								fxGreater.setOperation(FluxBound.Operation.GREATER_EQUAL);
 								fxGreater.setValue(greaterValue);
+								fxGreater.setReaction(reactionId);
 
+								double lessValue = Double.parseDouble(userInput[2]);
 								FluxBound fxLess = bioModel.getSBMLFBC().createFluxBound();
 								fxLess.setOperation(FluxBound.Operation.LESS_EQUAL);
 								fxLess.setValue(lessValue);
+								fxLess.setReaction(reactionId);
+							} else {
+								// TODO: deal with one sided bounds
 							}
 						}
 						else if(kineticLaw.getText().contains(">=")){
-							String[] userInput = kineticLaw.getText().replaceAll("\\s","").split("<=");
-							double greaterValue = Double.parseDouble(userInput[2]);
-							double lessValue = Double.parseDouble(userInput[0]);
-							if (greaterValue != lessValue) {
+							String[] userInput = kineticLaw.getText().replaceAll("\\s","").split(">=");
+							if (userInput.length==3) {
+								double greaterValue = Double.parseDouble(userInput[2]);
 								FluxBound fxGreater = bioModel.getSBMLFBC().createFluxBound();
 								fxGreater.setOperation(FluxBound.Operation.GREATER_EQUAL);
 								fxGreater.setValue(greaterValue);
+								fxGreater.setReaction(reactionId);
 
+								double lessValue = Double.parseDouble(userInput[0]);
 								FluxBound fxLess = bioModel.getSBMLFBC().createFluxBound();
 								fxLess.setOperation(FluxBound.Operation.LESS_EQUAL);
 								fxLess.setValue(lessValue);
+								fxLess.setReaction(reactionId);
+							} else {
+								// TODO: deal with one sided bounds
 							}
-
 						}
 						else{
 							String[] userInput = kineticLaw.getText().replaceAll("\\s","").split("=");
 							FluxBound fxEqual = bioModel.getSBMLFBC().createFluxBound();
 							fxEqual.setOperation(FluxBound.Operation.EQUAL);
-							if(userInput[0].contains(reactionId)){
+							fxEqual.setReaction(reactionId);
+							if(userInput[0].equals(reactionId)){
 								fxEqual.setValue(Double.parseDouble(userInput[1]));
 							}
 							else{
@@ -1199,6 +1232,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						error = checkKineticLawUnits(react.getKineticLaw());
 					}
 					else{
+						// TODO: needs to be copied from above
 						String[] userInput = kineticLaw.getText().trim().split("<=");
 						double greaterValue = Double.parseDouble(userInput[0]);
 						double lessValue = Double.parseDouble(userInput[2]);
@@ -1206,14 +1240,17 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							FluxBound fxGreater = bioModel.getSBMLFBC().createFluxBound();
 							fxGreater.setOperation(FluxBound.Operation.GREATER_EQUAL);
 							fxGreater.setValue(greaterValue);
+							fxGreater.setReaction(reactionId);
 
 							FluxBound fxLess = bioModel.getSBMLFBC().createFluxBound();
 							fxLess.setOperation(FluxBound.Operation.LESS_EQUAL);
 							fxLess.setValue(lessValue);
+							fxLess.setReaction(reactionId);
 						} else {
 							FluxBound fxEqual = bioModel.getSBMLFBC().createFluxBound();
 							fxEqual.setOperation(FluxBound.Operation.EQUAL);
 							fxEqual.setValue(greaterValue);
+							fxEqual.setReaction(reactionId);
 						}
 					}
 					if (!error) {
