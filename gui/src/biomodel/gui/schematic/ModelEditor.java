@@ -511,7 +511,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		if (!exportPath.equals("")) {
 			biosimrc.put("biosim.general.export_dir",exportPath);
 			biomodel.exportSingleFile(exportPath);
-			log.addText("Saving GCM file as SBML file:\n" + exportPath + "\n");
+			log.addText("Exporting SBML file:\n" + exportPath + "\n");
 		}
 	}
 	
@@ -536,7 +536,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			if (network==null) return;
 			network.loadProperties(biomodel);
 			network.mergeSBML(exportPath);
-			log.addText("Saving GCM file as SBML file:\n" + exportPath + "\n");
+			log.addText("Exporting flat SBML file:\n" + exportPath + "\n");
 		}
 	}
 	
@@ -585,25 +585,38 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	 * user selects a file; schematic is printed there as a JPG file
 	 */
 	public void saveSchematic() {
-		
-		JFileChooser fc = new JFileChooser("Save Schematic");
-		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		
-		ExampleFileFilter jpgFilter = new ExampleFileFilter();
-		jpgFilter.addExtension("jpg");
-		jpgFilter.setDescription("Image Files");		
-		
-		fc.addChoosableFileFilter(jpgFilter);
-		fc.setAcceptAllFileFilterUsed(false);
-		fc.setFileFilter(jpgFilter);
-		
-		int returnVal = fc.showDialog(Gui.frame, "Save Schematic");
-		
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			
-            File file = fc.getSelectedFile();
-            schematic.outputFrame(file.getAbsoluteFile().toString(), false);
-        }
+		File lastFilePath;
+		Preferences biosimrc = Preferences.userRoot();
+		if (biosimrc.get("biosim.general.export_dir", "").equals("")) {
+			lastFilePath = null;
+		}
+		else {
+			lastFilePath = new File(biosimrc.get("biosim.general.export_dir", ""));
+		}
+		String exportPath = main.util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export " + "Schematic", -1);
+		if (!exportPath.equals("")) {
+			biosimrc.put("biosim.general.export_dir",exportPath);
+            schematic.outputFrame(exportPath, false);
+			log.addText("Exporting schmeatic image:\n" + exportPath + "\n");
+		}
+//		JFileChooser fc = new JFileChooser("Save Schematic");
+//		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+//		
+//		ExampleFileFilter jpgFilter = new ExampleFileFilter();
+//		jpgFilter.addExtension("jpg");
+//		jpgFilter.setDescription("Image Files");		
+//		
+//		fc.addChoosableFileFilter(jpgFilter);
+//		fc.setAcceptAllFileFilterUsed(false);
+//		fc.setFileFilter(jpgFilter);
+//		
+//		int returnVal = fc.showDialog(Gui.frame, "Save Schematic");
+//		
+//		if (returnVal == JFileChooser.APPROVE_OPTION) {
+//			
+//            File file = fc.getSelectedFile();
+//            schematic.outputFrame(file.getAbsoluteFile().toString(), false);
+//        }
 	}
 	
 	private static void sweepHelper(ArrayList<ArrayList<Double>> sweep, String s) {
