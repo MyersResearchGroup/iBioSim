@@ -112,6 +112,15 @@ public class Utility {
 						}
 					});
 				}
+				else if (approve.equals("Export Schematic")) {
+					fd = new FileDialog(frame, approve, FileDialog.SAVE);
+					fd.setFilenameFilter(new FilenameFilter() {
+						@Override
+						public boolean accept(File dir, String name) {
+							return name.endsWith(".jpg");
+						}
+					});
+				}
 				else if (approve.equals("Save AVI")) {
 					fd = new FileDialog(frame, approve, FileDialog.SAVE);
 					fd.setFilenameFilter(new FilenameFilter() {
@@ -195,6 +204,11 @@ public class Utility {
 					else if (approve.equals("Import SBML") || (approve.equals("Export SBML"))) {
 						if (!selectedFile.endsWith(".sbml") && !selectedFile.endsWith(".xml")) {
 							selectedFile += ".xml";
+						}
+					}
+					else if (approve.equals("Export Schematic")) {
+						if (!selectedFile.endsWith(".jpg")) {
+							selectedFile += ".jpg";
 						}
 					}
 					else if (approve.equals("Import Genetic Circuit")) {
@@ -431,6 +445,12 @@ public class Utility {
 			fc.setFileFilter(xmlFilter);
 			retValue = fc.showDialog(frame, approve);
 		}
+		else if (approve.equals("Export Schematic")) {
+			fc.addChoosableFileFilter(jpgFilter);
+			fc.setAcceptAllFileFilterUsed(false);
+			fc.setFileFilter(jpgFilter);
+			retValue = fc.showDialog(frame, approve);
+		}
 		else if (approve.equals("Save MP4")) {
 			fc.addChoosableFileFilter(mp4Filter);
 			fc.setAcceptAllFileFilterUsed(false);
@@ -524,6 +544,12 @@ public class Utility {
 				if ((filename.length() < 4)
 						|| (!(filename.substring((filename.length() - 4), filename.length()).equals(".xml")))) {
 					filename += ".xml";
+				}
+			}
+			else if (approve.equals("Export Schematic")) {
+				if ((filename.length() < 4)
+						|| (!(filename.substring((filename.length() - 4), filename.length()).equals(".jpg")))) {
+					filename += ".jpg";
 				}
 			}
 			else if (approve.equals("Save MP4")) {
