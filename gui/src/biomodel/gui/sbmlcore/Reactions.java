@@ -40,6 +40,7 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.UnitDefinition;
 import org.sbml.jsbml.ext.comp.Port;
+import org.sbml.jsbml.ext.fbc.FluxBound;
 
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
@@ -92,7 +93,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	private JComboBox reacParamUnits;
 
 	private JTextField reacID, reacName; // reaction name and id text
-	
+
 	private JCheckBox onPort, paramOnPort;
 
 	// fields
@@ -163,7 +164,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	private JTextField reactantId;
 
 	private JTextField reactantName;
-	
+
 	private SBOLField sbolField;
 
 	private JTextField reactantStoichiometry;
@@ -185,17 +186,17 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	private InitialAssignments initialsPanel;
 
 	private Rules rulesPanel;
-	
+
 	private String selectedReaction;
-	
+
 	private ModelEditor modelEditor;
-	
+
 	private Reaction complex = null;
-	
+
 	private Reaction production = null;
-	
+
 	private JComboBox SBOTerms = null;
-	
+
 	private JTextField repCooperativity, actCooperativity, repBinding, actBinding;
 
 	public Reactions(BioModel gcm, Boolean paramsOnly, ArrayList<String> getParams, String file, ArrayList<String> parameterChanges, 
@@ -299,8 +300,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		JLabel fast = new JLabel("Fast:");
 		reacFast = new JComboBox(options);
 		reacFast.setSelectedItem("false");
-		
-		
+
+
 		String selectedID = "";
 		Reaction copyReact = null;
 		JPanel param = new JPanel(new BorderLayout());
@@ -543,7 +544,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							double value = bioModel.getSBMLFBC().getListOfFluxBounds().get(i).getValue();
 							fluxbounds = value + "<=" + reactionId + "<=" + value;
 						}
-						
+
 					}
 				}
 				kineticLaw.setText(fluxbounds);
@@ -572,7 +573,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			reactionPanelNorth1b.add(reacReverse);
 			reactionPanelNorth1b.add(fast);
 			reactionPanelNorth1b.add(reacFast);
-			
+
 			// Parse out SBOL annotations and add to SBOL field
 			if (!paramsOnly) {
 				// Field for annotating reaction with SBOL DNA components
@@ -585,11 +586,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			reactionPanelNorth.add(reactionPanelNorth1);
 			reactionPanelNorth.add(reactionPanelNorth1b);
-			
+
 			reactionPanel.add(reactionPanelNorth, "North");
 			reactionPanel.add(param, "Center");
 			reactionPanel.add(kineticPanel, "South");
-			
+
 		}
 		else {
 			JPanel reactionPanelNorth = new JPanel();
@@ -610,7 +611,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			reactionPanelNorth1b.add(reacReverse);
 			reactionPanelNorth1b.add(fast);
 			reactionPanelNorth1b.add(reacFast);
-			
+
 			reactionPanelNorth2.add(reactionPanelNorth1);
 			reactionPanelNorth2.add(reactionPanelNorth1b);
 			reactionPanelNorth.add(reactionPanelNorth2);
@@ -762,7 +763,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		while (error && value == JOptionPane.YES_OPTION) {
 			String reac = reacID.getText().trim();
 			error = SBMLutilities.checkID(gcm.getSBMLDocument(), reac, selectedID, false);
-			
+
 			if (!error) {
 				if (complex==null && production==null && kineticLaw.getText().trim().equals("")) {
 					JOptionPane.showMessageDialog(Gui.frame, "A reaction must have a kinetic law.", "Enter A Kinetic Law", JOptionPane.ERROR_MESSAGE);
@@ -808,7 +809,110 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						}
 					}
 				} else {
-				// TODO: do flux bound syntax check here if needed
+					String[] correctnessTest = kineticLaw.getText().replaceAll("\\s","").split("=");
+					if(correctnessTest.length == 3){
+						try{
+							Double.parseDouble(correctnessTest[0].substring(0, correctnessTest[0].length()));
+						}
+						catch(Exception e){
+							if(e.equals(new NumberFormatException())){
+								JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0].substring(0, correctnessTest[0].length())
+										+ " has to be a double.", "Incorrect Element", JOptionPane.ERROR_MESSAGE);
+								error = true;
+							}
+						}
+						try{
+							Double.parseDouble(correctnessTest[2]);
+						}
+						catch(Exception e){
+							if(e.equals(new NumberFormatException())){
+								JOptionPane.showMessageDialog(Gui.frame, correctnessTest[2] + " has to be a double.", "Incorrect Element",
+										JOptionPane.ERROR_MESSAGE);
+								error = true;
+							}
+						}
+						if(!correctnessTest[1].substring(0, reactionId.length()).equals(reactionId)){
+							JOptionPane.showMessageDialog(Gui.frame, "Must have "+ reactionId + " in the middle.", "Incorrect Reaction",
+									JOptionPane.ERROR_MESSAGE);
+							error = true;
+						}
+						String firstSymbol = correctnessTest[0].substring(correctnessTest[0].length()-1);
+						String secondSymbol = correctnessTest[1].substring(correctnessTest[1].length()-1);
+						if(!firstSymbol.equals(secondSymbol)){
+							JOptionPane.showMessageDialog(Gui.frame, "Operations must match.", "Mismatching Operations",
+									JOptionPane.ERROR_MESSAGE);
+							error = true;
+						}
+						if(correctnessTest[0].endsWith("<")){
+							if(Double.parseDouble(correctnessTest[0].substring(0, correctnessTest[0].indexOf("<")))> 
+							Double.parseDouble(correctnessTest[2])){
+								JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0].substring(0, correctnessTest[0].indexOf("<"))+ " !< " +
+										Double.parseDouble(correctnessTest[2]), "Impossible Bounds.", JOptionPane.ERROR_MESSAGE);
+								error = true;
+							}
+						}
+						else{
+							if(Double.parseDouble(correctnessTest[0].substring(0, correctnessTest[0].indexOf(">")))< 
+									Double.parseDouble(correctnessTest[2])){
+								JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0].substring(0, correctnessTest[0].indexOf(">"))+ " !> " +
+										Double.parseDouble(correctnessTest[2]), "Impossible Bounds.", JOptionPane.ERROR_MESSAGE);
+								error = true;
+							}
+						}
+					}
+					else{
+						int i = 0;
+						// TODO: NOTE TO SELF: Check this out! Set ints before test cases to test for things you can't 
+						// normally
+						if(correctnessTest.length>2)i=3;
+						if(correctnessTest.length<2)i=1;
+						switch(i){
+						case(3):
+							JOptionPane.showMessageDialog(Gui.frame, "Too many equals(=) signs", "Incorrect Format",
+									JOptionPane.ERROR_MESSAGE);
+						error = true;
+						break;
+						case(1):
+							JOptionPane.showMessageDialog(Gui.frame, "Not enough data", "Incorrect Format",
+									JOptionPane.ERROR_MESSAGE);
+						error = true;
+						break;
+						default:
+							if(!correctnessTest[0].equals(reactionId) && !correctnessTest[1].equals(reactionId)){
+								JOptionPane.showMessageDialog(Gui.frame, "Must have "+ reactionId + " in the equation.", "No Reaction",
+										JOptionPane.ERROR_MESSAGE);
+								error = true;
+							}
+							if(correctnessTest[0].equals(reactionId)){
+								try{
+									Double.parseDouble(correctnessTest[1]);
+								}
+								catch(Exception e){
+									if(e.equals(new NumberFormatException())){
+										JOptionPane.showMessageDialog(Gui.frame, correctnessTest[1] + " has to be a double.", "Incorrect Element",
+												JOptionPane.ERROR_MESSAGE);
+										error = true;
+									}
+								}
+							}
+							else{
+								try{
+									Double.parseDouble(correctnessTest[0]);
+								}
+								catch(Exception e){
+									if(e.equals(new NumberFormatException())){
+										JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0] + " has to be a double.", "Incorrect Element",
+												JOptionPane.ERROR_MESSAGE);
+										error = true;
+									}
+								}
+							}
+						}
+
+					}
+
+					// TODO: do flux bound syntax check here if needed
+					// See above^
 					// Ensure you have a "double a <= reactionId <= double b" where a <= b
 					// reactionId = double
 					// reactionId <= double
@@ -819,7 +923,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					// If operators are <=, then a <= b
 					// If operators are >=, then a >= b
 				}
-				
+
 			}
 			if(kineticFluxLabel.getSelectedItem().equals("Kinetic Law:")){
 				if (!error && complex==null && production==null) {
@@ -912,26 +1016,62 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							react.getKineticLaw().setMath(SBMLutilities.myParseFormula(BioModel.createProductionKineticLaw(production)));
 						}
 						error = checkKineticLawUnits(react.getKineticLaw());
-						
-						// TODO: remove any flux bounds on this reactionId
+
+						for(int i = 0; i < bioModel.getSBMLFBC().getListOfFluxBounds().size(); i++){
+							if(bioModel.getSBMLFBC().getListOfFluxBounds().get(i).getReaction().equals(reactionId)){
+								bioModel.getSBMLFBC().removeFluxBound(i);
+							}
+						}
 					}
 					else{
 						react.unsetKineticLaw();
-						// TODO: remove any flux bounds on this reactionId
-						String[] userInput = kineticLaw.getText().trim().split("<=");
-						double greaterValue = Double.parseDouble(userInput[0]);
-						double lessValue = Double.parseDouble(userInput[2]);
-						if (greaterValue != lessValue) {
-							// TODO: create greater than flux bound
-							// bioModel.getSBMLFBC().createFluxBound();
-							// populate it
-
-							// TODO: create less than flux bound 
-							// bioModel.getSBMLFBC().createFluxBound();
-							// populate it
-						} else {
-							// TODO: create equals flux bound
+						for(int i = 0; i < bioModel.getSBMLFBC().getListOfFluxBounds().size(); i++){
+							if(bioModel.getSBMLFBC().getListOfFluxBounds().get(i).getReaction().equals(reactionId)){
+								bioModel.getSBMLFBC().removeFluxBound(i);
+							}
 						}
+						if(kineticLaw.getText().contains("<=")){
+							String[] userInput = kineticLaw.getText().replaceAll("\\s","").split("<=");
+							double greaterValue = Double.parseDouble(userInput[0]);
+							double lessValue = Double.parseDouble(userInput[2]);
+							if (greaterValue != lessValue) {
+								FluxBound fxGreater = bioModel.getSBMLFBC().createFluxBound();
+								fxGreater.setOperation(FluxBound.Operation.GREATER_EQUAL);
+								fxGreater.setValue(greaterValue);
+
+								FluxBound fxLess = bioModel.getSBMLFBC().createFluxBound();
+								fxLess.setOperation(FluxBound.Operation.LESS_EQUAL);
+								fxLess.setValue(lessValue);
+							}
+						}
+						else if(kineticLaw.getText().contains(">=")){
+							String[] userInput = kineticLaw.getText().replaceAll("\\s","").split("<=");
+							double greaterValue = Double.parseDouble(userInput[2]);
+							double lessValue = Double.parseDouble(userInput[0]);
+							if (greaterValue != lessValue) {
+								FluxBound fxGreater = bioModel.getSBMLFBC().createFluxBound();
+								fxGreater.setOperation(FluxBound.Operation.GREATER_EQUAL);
+								fxGreater.setValue(greaterValue);
+
+								FluxBound fxLess = bioModel.getSBMLFBC().createFluxBound();
+								fxLess.setOperation(FluxBound.Operation.LESS_EQUAL);
+								fxLess.setValue(lessValue);
+							}
+
+						}
+						else{
+							String[] userInput = kineticLaw.getText().replaceAll("\\s","").split("=");
+							FluxBound fxEqual = bioModel.getSBMLFBC().createFluxBound();
+							fxEqual.setOperation(FluxBound.Operation.EQUAL);
+							if(userInput[0].contains(reactionId)){
+								fxEqual.setValue(Double.parseDouble(userInput[1]));
+							}
+							else{
+								fxEqual.setValue(Double.parseDouble(userInput[0]));
+							}
+
+						}
+
 					}
 
 					if (!error) {
@@ -983,20 +1123,20 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					// Handle SBOL data
 					if (!error && inSchematic && !paramsOnly) {
 						// Checks whether SBOL annotation on model needs to be deleted later when annotating rxn with SBOL
-//						boolean removeModelSBOLAnnotationFlag = false;
-//						LinkedList<URI> sbolURIs = sbolField.getSBOLURIs();
-//						if (sbolURIs.size() > 0 && bioModel.getElementSBOLCount() == 0 
-//								&& bioModel.getModelSBOLAnnotationFlag()) {
-//							Object[] sbolOptions = { "OK", "Cancel" };
-//							int choice = JOptionPane.showOptionDialog(null, 
-//									"SBOL associated to model elements can't coexist with SBOL associated to model itself unless" +
-//											" the latter was previously generated from the former.  Remove SBOL associated to model?", 
-//											"Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, sbolOptions, sbolOptions[0]);
-//							if (choice == JOptionPane.OK_OPTION)
-//								removeModelSBOLAnnotationFlag = true;
-//							else
-//								error = true;
-//						}
+						//						boolean removeModelSBOLAnnotationFlag = false;
+						//						LinkedList<URI> sbolURIs = sbolField.getSBOLURIs();
+						//						if (sbolURIs.size() > 0 && bioModel.getElementSBOLCount() == 0 
+						//								&& bioModel.getModelSBOLAnnotationFlag()) {
+						//							Object[] sbolOptions = { "OK", "Cancel" };
+						//							int choice = JOptionPane.showOptionDialog(null, 
+						//									"SBOL associated to model elements can't coexist with SBOL associated to model itself unless" +
+						//											" the latter was previously generated from the former.  Remove SBOL associated to model?", 
+						//											"Warning", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, sbolOptions, sbolOptions[0]);
+						//							if (choice == JOptionPane.OK_OPTION)
+						//								removeModelSBOLAnnotationFlag = true;
+						//							else
+						//								error = true;
+						//						}
 						if (!error) {
 							// Add SBOL annotation to reaction
 							if (sbolField.getSBOLURIs().size() > 0) {
@@ -1048,7 +1188,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						port.setId(GlobalConstants.SBMLREACTION+"__"+react.getId());
 						port.setIdRef(react.getId());
 					}
-					// TOOD: only do below for kinetic law
 					if(kineticFluxLabel.getSelectedItem().equals("Kinetic Law:")){
 						if (complex==null && production==null) {
 							react.getKineticLaw().setMath(bioModel.addBooleans(kineticLaw.getText().trim()));
@@ -1064,17 +1203,17 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						double greaterValue = Double.parseDouble(userInput[0]);
 						double lessValue = Double.parseDouble(userInput[2]);
 						if (greaterValue != lessValue) {
-							// TODO: create greater than flux bound
-							// bioModel.getSBMLFBC().createFluxBound();
-							// populate it
-							//FluxBound fb = bioModel.getSBMLFBC().createFluxBound();
-							//fb.setOperation(FluxBound.Operation.GREATER_EQUAL);
+							FluxBound fxGreater = bioModel.getSBMLFBC().createFluxBound();
+							fxGreater.setOperation(FluxBound.Operation.GREATER_EQUAL);
+							fxGreater.setValue(greaterValue);
 
-							// TODO: create less than flux bound 
-							// bioModel.getSBMLFBC().createFluxBound();
-							// populate it
+							FluxBound fxLess = bioModel.getSBMLFBC().createFluxBound();
+							fxLess.setOperation(FluxBound.Operation.LESS_EQUAL);
+							fxLess.setValue(lessValue);
 						} else {
-							// TODO: create equals flux bound
+							FluxBound fxEqual = bioModel.getSBMLFBC().createFluxBound();
+							fxEqual.setOperation(FluxBound.Operation.EQUAL);
+							fxEqual.setValue(greaterValue);
 						}
 					}
 					if (!error) {
@@ -1373,7 +1512,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				type.setSelectedItem("Modified");
 				sweep.setEnabled(true);
 				reacParamValue.setText(((String) reacParameters.getSelectedValue()).split(" ")[((String) reacParameters.getSelectedValue())
-						.split(" ").length - 1]);
+				                                                                               .split(" ").length - 1]);
 				reacParamValue.setEnabled(true);
 				reacParamUnits.setEnabled(false);
 				if (reacParamValue.getText().trim().startsWith("(")) {
@@ -1482,7 +1621,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 					catch (Exception e1) {
 						JOptionPane
-								.showMessageDialog(Gui.frame, "The value must be a real number.", "Enter A Valid Value", JOptionPane.ERROR_MESSAGE);
+						.showMessageDialog(Gui.frame, "The value must be a real number.", "Enter A Valid Value", JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
 				}
@@ -1657,7 +1796,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			return;
 		}
 	}
-	
+
 	private void addLocalParameter(String id,double val) {
 		LocalParameter paramet = new LocalParameter(bioModel.getSBMLDocument().getLevel(), bioModel.getSBMLDocument().getVersion());
 		changedParameters.add(paramet);
@@ -1987,7 +2126,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			return;
 		}
 	}
-	
+
 	private LocalParameter getChangedParameter(String paramStr) {
 		for (LocalParameter r : changedParameters) {
 			if (r.getId().equals(paramStr)) {
@@ -2086,7 +2225,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				SBOTerms.setEnabled(false);
 			} else {
 				String selectedID = (String)modifierSpecies.getSelectedItem();
-				
+
 				modifiersPanel.add(RepStoichiometryLabel);
 				repCooperativity = new JTextField();
 				double nc = bioModel.getSBMLDocument().getModel().getParameter(GlobalConstants.COOPERATIVITY_STRING).getValue();
@@ -2144,9 +2283,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					if (modifier[i].equals(modifierSpecies.getSelectedItem())) {
 						error = true;
 						JOptionPane
-								.showMessageDialog(Gui.frame, "Unable to add species as a modifier.\n"
-										+ "Each species can only be used as a modifier once.", "Species Can Only Be Used Once",
-										JOptionPane.ERROR_MESSAGE);
+						.showMessageDialog(Gui.frame, "Unable to add species as a modifier.\n"
+								+ "Each species can only be used as a modifier once.", "Species Can Only Be Used Once",
+								JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			}
@@ -2829,7 +2968,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			for (int i = 0; i < changedModifiers.size(); i++) {
 				if (changedModifiers.get(i).getSpecies().equals(v)) {
 					if (!changedModifiers.get(i).isSetSBOTerm() || 
-						changedModifiers.get(i).getSBOTerm()!=GlobalConstants.SBO_PROMOTER_MODIFIER) {
+							changedModifiers.get(i).getSBOTerm()!=GlobalConstants.SBO_PROMOTER_MODIFIER) {
 						changedModifiers.remove(i);
 					} else {
 						return;
@@ -2985,7 +3124,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			bioModel.makeUndoPoint();
 		}
 	}
-	
+
 	private void removeLocalParameter(String v) {
 		for (int i = 0; i < reacParameters.getModel().getSize(); i++) {
 			if (((String)reacParameters.getModel().getElementAt(i)).split(" ")[0].equals(v)) {
@@ -3174,7 +3313,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 		}
 	}
-	
+
 	/**
 	 * Refresh reaction panel
 	 */
