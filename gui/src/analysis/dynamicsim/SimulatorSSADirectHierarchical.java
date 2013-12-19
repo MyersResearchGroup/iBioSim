@@ -312,7 +312,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 	 */
 	private void initialize(long randomSeed, int runNumber) 
 			throws IOException, XMLStreamException {	
-
+		setupNonConstantSpeciesReferences(topmodel);
 		setupSpecies(topmodel);
 		setupParameters(topmodel);	
 		setupReactions(topmodel);		
@@ -326,6 +326,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 
 			for(ModelState model : submodels.values())
 			{
+				setupNonConstantSpeciesReferences(model);
 				setupSpecies(model);
 				setupParameters(model);	
 				setupReactions(model);		
@@ -575,6 +576,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 	protected void setupForNewRun(int newRun) {
 
 		try {
+			setupNonConstantSpeciesReferences(topmodel);
 			setupSpecies(topmodel);
 			setupParameters(topmodel);	
 			setupReactions(topmodel);		
@@ -593,6 +595,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		for(ModelState model : submodels.values())
 		{
 			try {
+				setupNonConstantSpeciesReferences(model);
 				setupSpecies(model);
 				setupParameters(model);	
 				setupReactions(model);		
