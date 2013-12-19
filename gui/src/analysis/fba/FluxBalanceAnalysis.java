@@ -3,14 +3,11 @@ package analysis.fba;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.text.NumberFormat;
 import java.util.HashMap;
 
 
 import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
 import org.sbml.jsbml.ext.fbc.FluxBound;
-import org.sbml.jsbml.ext.fbc.FluxObjective;
-import org.sbml.jsbml.ext.fbc.Objective;
 import org.sbml.jsbml.ext.fbc.Objective.Type;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
