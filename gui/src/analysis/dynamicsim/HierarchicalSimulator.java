@@ -2601,21 +2601,27 @@ public abstract class HierarchicalSimulator {
 
 			for (SpeciesReference reactant : reaction.getListOfReactants()) 
 			{
-				if (reactant.getConstant() == false &&
-						reactant.getId().length() > 0) {
+				if(reactant.getId().length() > 0)
+				{
+					modelstate.variableToIsConstantMap.put(reactant.getId(), reactant.getConstant());
+					if (reactant.getConstant() == false) {
 
-					if(modelstate.variableToValueMap.containsKey(reactant.getId()) == false)
-						modelstate.setvariableToValueMap(reactant.getId(), reactant.getStoichiometry());
+						if(modelstate.variableToValueMap.containsKey(reactant.getId()) == false)
+							modelstate.setvariableToValueMap(reactant.getId(), reactant.getStoichiometry());
+					}
 				}
 			}
 			
 			for (SpeciesReference product : reaction.getListOfProducts()) 
 			{
-				if (product.getConstant() == false &&
-						product.getId().length() > 0) {
+				if(product.getId().length() > 0)
+				{
+					modelstate.variableToIsConstantMap.put(product.getId(), product.getConstant());
+				if (product.getConstant() == false) {
 
 					if(modelstate.variableToValueMap.containsKey(product.getId()) == false)
 						modelstate.setvariableToValueMap(product.getId(), product.getStoichiometry());
+				}
 				}
 			}
 		}
