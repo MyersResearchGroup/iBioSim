@@ -116,7 +116,7 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 				bufferedTSDWriter.write(",\"" + speciesID + "\"");
 		}
 		
-		for (String noConstantParam : topmodel.nonconstantParameterIDSet) 
+		for (String noConstantParam : topmodel.variablesToPrint) 
 			{
 				bufferedTSDWriter.write(",\"" + noConstantParam + "\"");
 			}
@@ -134,7 +134,7 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 					bufferedTSDWriter.write(",\"" + model.ID + "__" + speciesID + "\"");
 				}
 			
-			for (String noConstantParam : model.nonconstantParameterIDSet)
+			for (String noConstantParam : model.variablesToPrint)
 				if(!model.isHierarchical.contains(noConstantParam))
 				{
 					bufferedTSDWriter.write(",\"" + model.ID + "__" +  noConstantParam + "\"");
