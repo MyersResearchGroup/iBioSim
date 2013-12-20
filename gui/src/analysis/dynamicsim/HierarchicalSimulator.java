@@ -293,7 +293,7 @@ public abstract class HierarchicalSimulator {
 
 		}
 
-		for (String noConstantParam : topmodel.nonconstantParameterIDSet)
+		for (String noConstantParam : topmodel.variablesToPrint)
 		{
 
 			bufferedTSDWriter.write(commaSpace + topmodel.getVariableToValue(noConstantParam));
@@ -312,7 +312,7 @@ public abstract class HierarchicalSimulator {
 				}
 			}
 
-			for (String noConstantParam : models.nonconstantParameterIDSet)
+			for (String noConstantParam : models.variablesToPrint)
 			{	
 				if(!models.isHierarchical.contains(noConstantParam))
 				{
@@ -2491,7 +2491,7 @@ public abstract class HierarchicalSimulator {
 		for (int i = 0; i < kineticLaw.getLocalParameterCount(); i++) {
 
 			LocalParameter localParameter = kineticLaw.getLocalParameter(i);
-
+	
 			String parameterID = "";
 
 			//the parameters don't get reset after each run, so don't re-do this prepending
@@ -2501,7 +2501,7 @@ public abstract class HierarchicalSimulator {
 				parameterID = localParameter.getId();
 
 			String oldParameterID = localParameter.getId();
-			modelstate.variableToValueMap.put(parameterID, localParameter.getValue());
+			modelstate.setvariableToValueMap(parameterID, localParameter.getValue());
 
 			//alter the local parameter ID so that it goes to the local and not global value
 			if (localParameter.getId() != parameterID) {
@@ -2522,7 +2522,8 @@ public abstract class HierarchicalSimulator {
 		String parameterID = parameter.getId();
 		modelstate.variableToValueMap.put(parameterID, parameter.getValue());
 		modelstate.variableToIsConstantMap.put(parameterID, parameter.getConstant());
-
+		if(!parameter.getConstant())
+			modelstate.variablesToPrint.add(parameter.getId());
 		if (parameter.getConstant() == false)
 			modelstate.nonconstantParameterIDSet.add(parameterID);
 
@@ -2573,13 +2574,16 @@ public abstract class HierarchicalSimulator {
 			String compartmentID = compartment.getId();
 
 			modelstate.compartmentIDSet.add(compartmentID);
-			modelstate.variableToValueMap.put(compartmentID, compartment.getSize());
+			modelstate.setvariableToValueMap(compartmentID, compartment.getSize());
 
 			if (Double.isNaN(compartment.getSize()))
-				modelstate.variableToValueMap.put(compartmentID, 1.0);
+				modelstate.setvariableToValueMap(compartmentID, 1.0);
 
 			modelstate.variableToIsConstantMap.put(compartmentID, compartment.getConstant());
-
+			
+			if(!compartment.getConstant())
+				modelstate.variablesToPrint.add(compartmentID);
+			
 			if (modelstate.numRules > 0)
 				modelstate.variableToIsInAssignmentRuleMap.put(compartmentID, false);
 
@@ -2605,7 +2609,7 @@ public abstract class HierarchicalSimulator {
 				{
 					modelstate.variableToIsConstantMap.put(reactant.getId(), reactant.getConstant());
 					if (reactant.getConstant() == false) {
-
+						modelstate.variablesToPrint.add(reactant.getId());
 						if(modelstate.variableToValueMap.containsKey(reactant.getId()) == false)
 							modelstate.setvariableToValueMap(reactant.getId(), reactant.getStoichiometry());
 					}
@@ -2618,7 +2622,7 @@ public abstract class HierarchicalSimulator {
 				{
 					modelstate.variableToIsConstantMap.put(product.getId(), product.getConstant());
 					if (product.getConstant() == false) {
-
+						modelstate.variablesToPrint.add(product.getId());
 						if(modelstate.variableToValueMap.containsKey(product.getId()) == false)
 							modelstate.setvariableToValueMap(product.getId(), product.getStoichiometry());
 					}
@@ -3749,7 +3753,8 @@ public abstract class HierarchicalSimulator {
 
 		protected HashMap<String, String> replacementDependency = null;
 
-
+		protected HashSet<String> variablesToPrint; 
+		
 		public ModelState(Model bioModel, String submodelID)
 		{
 			this.model = bioModel;
@@ -3824,6 +3829,8 @@ public abstract class HierarchicalSimulator {
 			isHierarchical = new HashSet<String>();
 
 			replacementDependency = new HashMap<String, String>();
+			
+			variablesToPrint = new HashSet<String>();
 
 		}
 

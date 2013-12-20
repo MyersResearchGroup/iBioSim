@@ -362,7 +362,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 				bufferedTSDWriter.write(",\"" + speciesID + "\"");
 		}
 		
-		for (String noConstantParam : topmodel.nonconstantParameterIDSet) 
+		for (String noConstantParam : topmodel.variablesToPrint) 
 			{
 				bufferedTSDWriter.write(",\"" + noConstantParam + "\"");
 			}
@@ -380,7 +380,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 					bufferedTSDWriter.write(",\"" + model.ID + "__" + speciesID + "\"");
 				}
 			
-			for (String noConstantParam : model.nonconstantParameterIDSet)
+			for (String noConstantParam : model.variablesToPrint)
 				if(!model.isHierarchical.contains(noConstantParam))
 				{
 					bufferedTSDWriter.write(",\"" + model.ID + "__" +  noConstantParam + "\"");
@@ -620,7 +620,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 			for (String speciesID : topmodel.speciesIDSet) {				
 				bufferedTSDWriter.write(",\"" + speciesID + "\"");
 			}
-			for (String noConstantParam : topmodel.nonconstantParameterIDSet) 				
+			for (String noConstantParam : topmodel.variablesToPrint) 				
 				bufferedTSDWriter.write(",\"" + noConstantParam + "\"");
 			/*
 			for (String compartment : topmodel.compartmentIDSet)
@@ -632,7 +632,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 			{
 				for (String speciesID : model.speciesIDSet) 				
 					bufferedTSDWriter.write(",\"" + model.ID + "__" + speciesID + "\"");
-				for (String noConstantParam : model.nonconstantParameterIDSet) 				
+				for (String noConstantParam : model.variablesToPrint) 				
 					bufferedTSDWriter.write(",\"" + model.ID + "__" +  noConstantParam + "\"");
 				/*
 				for (String compartment : model.compartmentIDSet)
