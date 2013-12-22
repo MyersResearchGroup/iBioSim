@@ -126,7 +126,7 @@ public abstract class HierarchicalSimulator {
 	protected String[] interestingSpecies;
 	PsRandom prng = new PsRandom();
 
-	
+
 	HashMap<String, Model> models;
 	/**
 	 * does lots of initialization
@@ -153,7 +153,7 @@ public abstract class HierarchicalSimulator {
 		//replacementSubModels = new HashMap<String, HashSet<String>>();
 		//replacingModel = new HashMap<String,String>();
 		models = new HashMap<String, Model>();
-		
+
 		this.interestingSpecies = interestingSpecies;
 		if (quantityType != null)
 		{
@@ -202,7 +202,7 @@ public abstract class HierarchicalSimulator {
 		isGrid = checkGrid(document.getModel());
 		models.put(document.getModel().getId(), document.getModel());
 		topmodel = new ModelState(document.getModel().getId(), "topmodel");
-		
+
 		numSubmodels = (int)setupSubmodels(document);
 		getComponentPortMap(document);
 
@@ -450,22 +450,22 @@ public abstract class HierarchicalSimulator {
 
 		for (Submodel submodel : sbmlCompModel.getListOfSubmodels()) {
 
-//			String file = path+submodel.getModelRef()+".xml";
-//			Model model = SBMLReader.read(new File(file)).getModel();
-//			performDeletions(model, submodel);
-			
+			//			String file = path+submodel.getModelRef()+".xml";
+			//			Model model = SBMLReader.read(new File(file)).getModel();
+			//			performDeletions(model, submodel);
+
 			if(!models.containsKey(submodel.getModelRef()))
 			{
 
 				String filename = path+submodel.getModelRef()+".xml";
-			
-				
+
+
 				Model sub = SBMLReader.read(new File(filename)).getModel();
 				//models.put(submodel.getModelRef(), flattenModel(path, filename));
 				models.put(submodel.getModelRef(), sub);
-				
+
 			}
-			
+
 			if(isGrid)
 			{
 				String annotation = submodel.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
@@ -485,17 +485,17 @@ public abstract class HierarchicalSimulator {
 				performDeletions(modelstate, submodel);
 				index++;
 			}
-			
+
 		}
 
 		return index;
 	}
 
-	
+
 	private static Model flattenModel(String path, String filename)
 	{
 		BioModel biomodel = new BioModel(path);
-	 	biomodel.load(filename);
+		biomodel.load(filename);
 		SBMLDocument sbml = biomodel.flattenBioModel();		
 		GCMParser parser = new GCMParser(biomodel);
 		GeneticNetwork network = parser.buildNetwork(sbml);
@@ -503,7 +503,7 @@ public abstract class HierarchicalSimulator {
 		network.mergeSBML(filename, sbml);
 		return sbml.getModel();
 	}
-	
+
 	/**
 	 * Helper method to strip annotation and get size of array.
 	 * 
@@ -552,13 +552,13 @@ public abstract class HierarchicalSimulator {
 
 	}
 
+
 	/**
 	 * Stores replacing values in a global map
 	 */
-	protected void getComponentPortMap(SBMLDocument sbml) 
+	private void setupSpeciesReplacement(SBMLDocument sbml, CompModelPlugin sbmlCompModel)
 	{
-		CompModelPlugin sbmlCompModel = (CompModelPlugin)sbml.getModel().getExtension(CompConstant.namespaceURI);
-		
+
 		for (int i = 0; i < topmodel.numSpecies; i++) {
 			Species species = sbml.getModel().getSpecies(i);
 			CompSBasePlugin sbmlSBase = (CompSBasePlugin)species.getExtension(CompConstant.namespaceURI);
@@ -570,8 +570,8 @@ public abstract class HierarchicalSimulator {
 				{
 					replacements.put(s, species.getInitialAmount());	
 					initReplacementState.put(s, species.getInitialAmount());
-					
-					
+
+
 					for(ReplacedElement element: sbmlSBase.getListOfReplacedElements())
 					{
 						String submodel = element.getSubmodelRef();
@@ -637,126 +637,470 @@ public abstract class HierarchicalSimulator {
 				}
 			}
 		}
+	}
 
-		/*
+
+	private void setupParameterReplacement(SBMLDocument sbml, CompModelPlugin sbmlCompModel)
+	{
+
 		for (int i = 0; i < topmodel.numParameters; i++) {
 			Parameter parameter = sbml.getModel().getParameter(i);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, parameter, false);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)parameter.getExtension(CompConstant.namespaceURI);
 
-			String s = parameter.getId();
-			if(sbmlSBase != null){
+			String p = parameter.getId();
+			if(sbmlSBase != null)
+			{
 				if(sbmlSBase.getListOfReplacedElements() != null)
 				{
-					replacements.put(s, parameter.getValue());	
-					initReplacementState.put(s, parameter.getValue());
-					if(!replacementSubModels.containsKey(s))
-						replacementSubModels.put(s, new HashSet<String>());
+					replacements.put(p, parameter.getValue());	
+					initReplacementState.put(p, parameter.getValue());
 
-					replacementSubModels.get(s).add("topmodel");
 
 					for(ReplacedElement element: sbmlSBase.getListOfReplacedElements())
 					{
-						replacementSubModels.get(s).add(element.getSubmodelRef());
+						String submodel = element.getSubmodelRef();
+						sbmlCompModel = (CompModelPlugin)models.get(submodels.get(submodel).model).getExtension(CompConstant.namespaceURI);
+						if(element.isSetIdRef())
+						{
+							String subParameter = element.getIdRef();
+							topmodel.isHierarchical.add(p);
+							topmodel.replacementDependency.put(p, p);
+							getModel(submodel).isHierarchical.add(subParameter);
+							getModel(submodel).replacementDependency.put(subParameter, p);
+						}
+						else if(element.isSetPortRef())
+						{
+							Port port = sbmlCompModel.getListOfPorts().get(element.getPortRef());
+							String subParameter = port.getIdRef();
+
+							topmodel.isHierarchical.add(p);
+							topmodel.replacementDependency.put(p, p);
+							getModel(submodel).isHierarchical.add(subParameter);
+							getModel(submodel).replacementDependency.put(subParameter, p);
+						}
+						else
+						{
+							continue;
+						}
 					}
+				}
 
 
-					if(sbmlSBase.isSetReplacedBy())
+				if(sbmlSBase.isSetReplacedBy())
+				{
+					ReplacedBy replacement = sbmlSBase.getReplacedBy();
+					String submodel = replacement.getSubmodelRef();
+					sbmlCompModel = (CompModelPlugin)models.get(submodels.get(submodel).model).getExtension(CompConstant.namespaceURI);
+					if(replacement.isSetIdRef())
 					{
-						ReplacedBy replacement = sbmlSBase.getReplacedBy();
-						String submodel = replacement.getSubmodelRef();
-						if(!replacementSubModels.containsKey(s))
-							replacementSubModels.put(s, new HashSet<String>());
-
-						replacementSubModels.get(s).add("topmodel");
-
+						String subParameter = replacement.getIdRef();
 						ModelState temp = getModel(submodel);
-
-						replacementSubModels.get(s).add(submodel);
-						replacements.put(s, temp.model.getModel().getParameter(s).getValue());
-						initReplacementState.put(s, temp.model.getModel().getParameter(s).getValue());
-
-
+						replacements.put(p, models.get(temp.model).getModel().getParameter(subParameter).getValue());
+						initReplacementState.put(p, models.get(temp.model).getModel().getParameter(subParameter).getValue());
+						topmodel.isHierarchical.add(p);
+						topmodel.replacementDependency.put(p, p);
+						getModel(submodel).isHierarchical.add(subParameter);
+						getModel(submodel).replacementDependency.put(subParameter, p);
+					}
+					else if(replacement.isSetPortRef())
+					{
+						Port port = sbmlCompModel.getListOfPorts().get(replacement.getPortRef());
+						String subParameter = port.getIdRef();
+						ModelState temp = getModel(submodel);
+						replacements.put(p, models.get(temp.model).getModel().getParameter(subParameter).getValue());
+						initReplacementState.put(p, models.get(temp.model).getParameter(subParameter).getValue());
+						topmodel.isHierarchical.add(p);
+						topmodel.replacementDependency.put(p, p);
+						getModel(submodel).isHierarchical.add(subParameter);
+						getModel(submodel).replacementDependency.put(subParameter, p);
+					}
+					else
+					{
+						continue;
 					}
 				}
 			}
-
 		}
-		for (int i = 0; i < topmodel.model.getCompartmentCount(); i++) {
+	}
+
+
+	private void setupCompartmentReplacement(SBMLDocument sbml, CompModelPlugin sbmlCompModel)
+	{
+
+		for (int i = 0; i < topmodel.numCompartments; i++) {
 			Compartment compartment = sbml.getModel().getCompartment(i);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, compartment, false);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)compartment.getExtension(CompConstant.namespaceURI);
 
 			String c = compartment.getId();
-			if(sbmlSBase != null ){
+			if(sbmlSBase != null)
+			{
 				if(sbmlSBase.getListOfReplacedElements() != null)
 				{
 					replacements.put(c, compartment.getSize());	
 					initReplacementState.put(c, compartment.getSize());
-					if(!replacementSubModels.containsKey(c))
-						replacementSubModels.put(c, new HashSet<String>());
 
-					replacementSubModels.get(c).add("topmodel");
 
 					for(ReplacedElement element: sbmlSBase.getListOfReplacedElements())
 					{
-						replacementSubModels.get(c).add(element.getSubmodelRef());
+						String submodel = element.getSubmodelRef();
+						sbmlCompModel = (CompModelPlugin)models.get(submodels.get(submodel).model).getExtension(CompConstant.namespaceURI);
+						if(element.isSetIdRef())
+						{
+							String subCompartment = element.getIdRef();
+							topmodel.isHierarchical.add(c);
+							topmodel.replacementDependency.put(c, c);
+							getModel(submodel).isHierarchical.add(subCompartment);
+							getModel(submodel).replacementDependency.put(subCompartment, c);
+						}
+						else if(element.isSetPortRef())
+						{
+							Port port = sbmlCompModel.getListOfPorts().get(element.getPortRef());
+							String subCompartment = port.getIdRef();
+
+							topmodel.isHierarchical.add(c);
+							topmodel.replacementDependency.put(c, c);
+							getModel(submodel).isHierarchical.add(subCompartment);
+							getModel(submodel).replacementDependency.put(subCompartment, c);
+						}
+						else
+						{
+							continue;
+						}
 					}
+				}
 
 
-					if(sbmlSBase.isSetReplacedBy())
+				if(sbmlSBase.isSetReplacedBy())
+				{
+					ReplacedBy replacement = sbmlSBase.getReplacedBy();
+					String submodel = replacement.getSubmodelRef();
+					sbmlCompModel = (CompModelPlugin)models.get(submodels.get(submodel).model).getExtension(CompConstant.namespaceURI);
+					if(replacement.isSetIdRef())
 					{
-						ReplacedBy replacement = sbmlSBase.getReplacedBy();
-						String submodel = replacement.getSubmodelRef();
-						if(!replacementSubModels.containsKey(c))
-							replacementSubModels.put(c, new HashSet<String>());
-
-						replacementSubModels.get(c).add("topmodel");
-
+						String subCompartment = replacement.getIdRef();
 						ModelState temp = getModel(submodel);
-
-						replacementSubModels.get(c).add(submodel);
-						replacements.put(c, temp.model.getModel().getParameter(c).getValue());
-						initReplacementState.put(c, temp.model.getModel().getParameter(c).getValue());
-
-
+						replacements.put(c, models.get(temp.model).getModel().getCompartment(subCompartment).getSize());
+						initReplacementState.put(c, models.get(temp.model).getModel().getCompartment(subCompartment).getSize());
+						topmodel.isHierarchical.add(c);
+						topmodel.replacementDependency.put(c, c);
+						getModel(submodel).isHierarchical.add(subCompartment);
+						getModel(submodel).replacementDependency.put(subCompartment, c);
+					}
+					else if(replacement.isSetPortRef())
+					{
+						Port port = sbmlCompModel.getListOfPorts().get(replacement.getPortRef());
+						String subCompartment = port.getIdRef();
+						ModelState temp = getModel(submodel);
+						replacements.put(c, models.get(temp.model).getModel().getCompartment(subCompartment).getSize());
+						initReplacementState.put(c, models.get(temp.model).getCompartment(subCompartment).getSize());
+						topmodel.isHierarchical.add(c);
+						topmodel.replacementDependency.put(c, c);
+						getModel(submodel).isHierarchical.add(subCompartment);
+						getModel(submodel).replacementDependency.put(subCompartment, c);
+					}
+					else
+					{
+						continue;
 					}
 				}
 			}
 		}
+	}
+
+
+
+	private void setupReactionReplacement(SBMLDocument sbml, CompModelPlugin sbmlCompModel)
+	{
+
 		for (int i = 0; i < topmodel.numReactions; i++) {
 			Reaction reaction = sbml.getModel().getReaction(i);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)SBMLutilities.getPlugin(CompConstant.namespaceURI, reaction, false);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)reaction.getExtension(CompConstant.namespaceURI);
 
-			String r = reaction.getId();
-			if(sbmlSBase != null )
+			if(sbmlSBase != null)
 			{
 				if(sbmlSBase.getListOfReplacedElements() != null)
 				{
-					if(!replacementSubModels.containsKey(r))
-						replacementSubModels.put(r, new HashSet<String>());
-
-					//replacementSubModels.get(r).add("topmodel");
-
 					for(ReplacedElement element: sbmlSBase.getListOfReplacedElements())
 					{
-						replacementSubModels.get(r).add(element.getSubmodelRef());
+						String submodel = element.getSubmodelRef();
+						ModelState modelstate = submodels.get(submodel);
+						if(element.isSetIdRef())
+						{
+							modelstate.deletedElementsById.add(element.getIdRef());
+						}
+						else if(element.isSetPortRef())
+						{
+							Port port = sbmlCompModel.getListOfPorts().get(element.getPortRef());
+							String subCompartment = port.getIdRef();
+							modelstate.deletedElementsById.add(subCompartment);
+						}
+						else if(element.isSetMetaIdRef())
+						{
+							modelstate.deletedElementsByMetaId.add(element.getMetaIdRef());
+						}
 					}
+				}
 
 
-					if(sbmlSBase.isSetReplacedBy())
+				if(sbmlSBase.isSetReplacedBy())
+				{
+					ReplacedBy replacement = sbmlSBase.getReplacedBy();
+					if(replacement.isSetIdRef())
 					{
-						ReplacedBy replacement = sbmlSBase.getReplacedBy();
-
-						String submodel = replacement.getSubmodelRef();
-						if(!replacementSubModels.containsKey(r))
-							replacementSubModels.put(r, new HashSet<String>());
-
-						replacementSubModels.get(r).add("topmodel");
-						//replacementSubModels.get(r).add(submodel);
+						topmodel.deletedElementsById.add(replacement.getIdRef());
 					}
+					else if(replacement.isSetPortRef())
+					{
+						Port port = sbmlCompModel.getListOfPorts().get(replacement.getPortRef());
+						String subCompartment = port.getIdRef();
+						topmodel.deletedElementsById.add(subCompartment);
+					}
+					else if(replacement.isSetMetaIdRef())
+					{
+						topmodel.deletedElementsByMetaId.add(replacement.getMetaIdRef());
+					}	
+						
 				}
 			}
 		}
-		 */
+	}
+	
+	private void setupConstraintReplacement(SBMLDocument sbml, CompModelPlugin sbmlCompModel)
+	{
+
+		for (int i = 0; i < topmodel.numConstraints; i++) {
+			Constraint constraint = sbml.getModel().getConstraint(i);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)constraint.getExtension(CompConstant.namespaceURI);
+
+			if(sbmlSBase != null)
+			{
+				if(sbmlSBase.getListOfReplacedElements() != null)
+				{
+					for(ReplacedElement element: sbmlSBase.getListOfReplacedElements())
+					{
+						String submodel = element.getSubmodelRef();
+						ModelState modelstate = submodels.get(submodel);
+						if(element.isSetIdRef())
+						{
+							modelstate.deletedElementsById.add(element.getIdRef());
+						}
+						else if(element.isSetPortRef())
+						{
+							Port port = sbmlCompModel.getListOfPorts().get(element.getPortRef());
+							String subCompartment = port.getIdRef();
+							modelstate.deletedElementsById.add(subCompartment);
+						}
+						else if(element.isSetMetaIdRef())
+						{
+							modelstate.deletedElementsByMetaId.add(element.getMetaIdRef());
+						}
+					}
+				}
+
+
+				if(sbmlSBase.isSetReplacedBy())
+				{
+					ReplacedBy replacement = sbmlSBase.getReplacedBy();
+					if(replacement.isSetIdRef())
+					{
+						topmodel.deletedElementsById.add(replacement.getIdRef());
+					}
+					else if(replacement.isSetPortRef())
+					{
+						Port port = sbmlCompModel.getListOfPorts().get(replacement.getPortRef());
+						String subCompartment = port.getIdRef();
+						topmodel.deletedElementsById.add(subCompartment);
+					}
+					else if(replacement.isSetMetaIdRef())
+					{
+						topmodel.deletedElementsByMetaId.add(replacement.getMetaIdRef());
+					}	
+						
+				}
+			}
+		}
+	}
+	
+	private void setupEventReplacement(SBMLDocument sbml, CompModelPlugin sbmlCompModel)
+	{
+
+		for (int i = 0; i < topmodel.numEvents; i++) {
+			Event event = sbml.getModel().getEvent(i);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)event.getExtension(CompConstant.namespaceURI);
+
+			if(sbmlSBase != null)
+			{
+				if(sbmlSBase.getListOfReplacedElements() != null)
+				{
+					for(ReplacedElement element: sbmlSBase.getListOfReplacedElements())
+					{
+						String submodel = element.getSubmodelRef();
+						ModelState modelstate = submodels.get(submodel);
+						if(element.isSetIdRef())
+						{
+							modelstate.deletedElementsById.add(element.getIdRef());
+						}
+						else if(element.isSetPortRef())
+						{
+							Port port = sbmlCompModel.getListOfPorts().get(element.getPortRef());
+							String subCompartment = port.getIdRef();
+							modelstate.deletedElementsById.add(subCompartment);
+						}
+						else if(element.isSetMetaIdRef())
+						{
+							modelstate.deletedElementsByMetaId.add(element.getMetaIdRef());
+						}
+					}
+				}
+
+
+				if(sbmlSBase.isSetReplacedBy())
+				{
+					ReplacedBy replacement = sbmlSBase.getReplacedBy();
+					if(replacement.isSetIdRef())
+					{
+						topmodel.deletedElementsById.add(replacement.getIdRef());
+					}
+					else if(replacement.isSetPortRef())
+					{
+						Port port = sbmlCompModel.getListOfPorts().get(replacement.getPortRef());
+						String subCompartment = port.getIdRef();
+						topmodel.deletedElementsById.add(subCompartment);
+					}
+					else if(replacement.isSetMetaIdRef())
+					{
+						topmodel.deletedElementsByMetaId.add(replacement.getMetaIdRef());
+					}	
+						
+				}
+			}
+		}
+	}
+	
+	private void setupRuleReplacement(SBMLDocument sbml, CompModelPlugin sbmlCompModel)
+	{
+
+		for (Rule rule : sbml.getModel().getListOfRules()) {
+			
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)rule.getExtension(CompConstant.namespaceURI);
+
+			if(sbmlSBase != null)
+			{
+				if(sbmlSBase.getListOfReplacedElements() != null)
+				{
+					for(ReplacedElement element: sbmlSBase.getListOfReplacedElements())
+					{
+						String submodel = element.getSubmodelRef();
+						ModelState modelstate = submodels.get(submodel);
+						if(element.isSetIdRef())
+						{
+							modelstate.deletedElementsById.add(element.getIdRef());
+						}
+						else if(element.isSetPortRef())
+						{
+							Port port = sbmlCompModel.getListOfPorts().get(element.getPortRef());
+							String subCompartment = port.getIdRef();
+							modelstate.deletedElementsById.add(subCompartment);
+						}
+						else if(element.isSetMetaIdRef())
+						{
+							modelstate.deletedElementsByMetaId.add(element.getMetaIdRef());
+						}
+					}
+				}
+
+
+				if(sbmlSBase.isSetReplacedBy())
+				{
+					ReplacedBy replacement = sbmlSBase.getReplacedBy();
+					if(replacement.isSetIdRef())
+					{
+						topmodel.deletedElementsById.add(replacement.getIdRef());
+					}
+					else if(replacement.isSetPortRef())
+					{
+						Port port = sbmlCompModel.getListOfPorts().get(replacement.getPortRef());
+						String subCompartment = port.getIdRef();
+						topmodel.deletedElementsById.add(subCompartment);
+					}
+					else if(replacement.isSetMetaIdRef())
+					{
+						topmodel.deletedElementsByMetaId.add(replacement.getMetaIdRef());
+					}	
+						
+				}
+			}
+		}
+	}
+
+	private void setupInitAssignmentReplacement(SBMLDocument sbml, CompModelPlugin sbmlCompModel)
+	{
+
+		for (InitialAssignment init : sbml.getModel().getListOfInitialAssignments()) {
+			
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)init.getExtension(CompConstant.namespaceURI);
+
+			if(sbmlSBase != null)
+			{
+				if(sbmlSBase.getListOfReplacedElements() != null)
+				{
+					for(ReplacedElement element: sbmlSBase.getListOfReplacedElements())
+					{
+						String submodel = element.getSubmodelRef();
+						ModelState modelstate = submodels.get(submodel);
+						if(element.isSetIdRef())
+						{
+							modelstate.deletedElementsById.add(element.getIdRef());
+						}
+						else if(element.isSetPortRef())
+						{
+							Port port = sbmlCompModel.getListOfPorts().get(element.getPortRef());
+							String subCompartment = port.getIdRef();
+							modelstate.deletedElementsById.add(subCompartment);
+						}
+						else if(element.isSetMetaIdRef())
+						{
+							modelstate.deletedElementsByMetaId.add(element.getMetaIdRef());
+						}
+					}
+				}
+
+
+				if(sbmlSBase.isSetReplacedBy())
+				{
+					ReplacedBy replacement = sbmlSBase.getReplacedBy();
+					if(replacement.isSetIdRef())
+					{
+						topmodel.deletedElementsById.add(replacement.getIdRef());
+					}
+					else if(replacement.isSetPortRef())
+					{
+						Port port = sbmlCompModel.getListOfPorts().get(replacement.getPortRef());
+						String subCompartment = port.getIdRef();
+						topmodel.deletedElementsById.add(subCompartment);
+					}
+					else if(replacement.isSetMetaIdRef())
+					{
+						topmodel.deletedElementsByMetaId.add(replacement.getMetaIdRef());
+					}	
+						
+				}
+			}
+		}
+	}
+	
+
+	protected void getComponentPortMap(SBMLDocument sbml) 
+	{
+		CompModelPlugin sbmlCompModel = (CompModelPlugin)sbml.getModel().getExtension(CompConstant.namespaceURI);
+		setupSpeciesReplacement(sbml, sbmlCompModel);	
+		setupCompartmentReplacement(sbml, sbmlCompModel);	
+		setupParameterReplacement(sbml, sbmlCompModel);
+		setupReactionReplacement(sbml, sbmlCompModel); 
+		setupConstraintReplacement(sbml, sbmlCompModel);
+		setupEventReplacement(sbml, sbmlCompModel);
+		setupRuleReplacement(sbml, sbmlCompModel);
+		setupInitAssignmentReplacement(sbml, sbmlCompModel);
 	}
 
 
@@ -805,21 +1149,21 @@ public abstract class HierarchicalSimulator {
 				ListOf<Port> ports = ((CompModelPlugin) models.get(modelstate.model).getExtension(CompConstant.namespaceURI)).getListOfPorts();
 				Port port = ports.get(deletion.getPortRef());
 				if (port!=null) 
+				{
+					if (port.isSetIdRef())
 					{
-						if (port.isSetIdRef())
-						{
-							modelstate.deletedElementsById.add(port.getIdRef());
-						}
-						else if (port.isSetMetaIdRef()) 
-						{
-							modelstate.deletedElementsByMetaId.add(port.getIdRef());
-						}
-						else if (port.isSetUnitRef())
-						{
-							modelstate.deletedElementsByUId.add(port.getIdRef());
-						}
+						modelstate.deletedElementsById.add(port.getIdRef());
 					}
-				
+					else if (port.isSetMetaIdRef()) 
+					{
+						modelstate.deletedElementsByMetaId.add(port.getIdRef());
+					}
+					else if (port.isSetUnitRef())
+					{
+						modelstate.deletedElementsByUId.add(port.getIdRef());
+					}
+				}
+
 			}
 			else if (deletion.isSetIdRef()) {
 				modelstate.deletedElementsById.add(deletion.getIdRef());
@@ -2363,14 +2707,14 @@ public abstract class HierarchicalSimulator {
 		long size = models.get(modelstate.model).getListOfSpecies().size();
 		for (int i = 0; i < size; i++) 
 		{
-			
+
 			species = models.get(modelstate.model).getSpecies(i);
-			
+
 			if(species.isSetId() && modelstate.isDeletedBySID(species.getId()))
 				continue;
 			else if(species.isSetMetaId() && modelstate.isDeletedByMetaID(species.getMetaId()))
 				continue;
-			
+
 			setupSingleSpecies(modelstate, species, species.getId());
 		}
 
@@ -2390,7 +2734,7 @@ public abstract class HierarchicalSimulator {
 		for (int i = 0; i < kineticLaw.getLocalParameterCount(); i++) {
 
 			LocalParameter localParameter = kineticLaw.getLocalParameter(i);
-	
+
 			String parameterID = "";
 
 			//the parameters don't get reset after each run, so don't re-do this prepending
@@ -2450,7 +2794,7 @@ public abstract class HierarchicalSimulator {
 			reaction = models.get(modelstate.model).getReaction(i);
 			if (!reaction.isSetKineticLaw()) continue;
 			KineticLaw kineticLaw = reaction.getKineticLaw();
-			
+
 			if(kineticLaw.isSetMetaId() && modelstate.isDeletedByMetaID(kineticLaw.getMetaId()))
 				continue;
 			setupLocalParameters(modelstate, kineticLaw, reaction);
@@ -2464,12 +2808,12 @@ public abstract class HierarchicalSimulator {
 		for (int i = 0; i < size; i++) 
 		{
 			parameter = models.get(modelstate.model).getParameter(i);
-			
+
 			if(parameter.isSetId() && modelstate.isDeletedBySID(parameter.getId()))
 				continue;
 			else if(parameter.isSetMetaId() && modelstate.isDeletedByMetaID(parameter.getMetaId()))
 				continue;
-			
+
 			setupSingleParameter(modelstate, parameter);
 		}
 
@@ -2485,7 +2829,7 @@ public abstract class HierarchicalSimulator {
 				continue;
 			else if(compartment.isSetMetaId() && modelstate.isDeletedByMetaID(compartment.getMetaId()))
 				continue;
-			
+
 			modelstate.compartmentIDSet.add(compartmentID);
 			modelstate.setvariableToValueMap(compartmentID, compartment.getSize());
 
@@ -2493,10 +2837,10 @@ public abstract class HierarchicalSimulator {
 				modelstate.setvariableToValueMap(compartmentID, 1.0);
 
 			modelstate.variableToIsConstantMap.put(compartmentID, compartment.getConstant());
-			
+
 			if(!compartment.getConstant())
 				modelstate.variablesToPrint.add(compartmentID);
-			
+
 			if (modelstate.numRules > 0)
 				modelstate.variableToIsInAssignmentRuleMap.put(compartmentID, false);
 
@@ -2522,7 +2866,7 @@ public abstract class HierarchicalSimulator {
 					continue;
 				else if(reactant.isSetMetaId() && modelstate.isDeletedByMetaID(reactant.getMetaId()))
 					continue;
-				
+
 				if(reactant.getId().length() > 0)
 				{
 					modelstate.variableToIsConstantMap.put(reactant.getId(), reactant.getConstant());
@@ -3389,7 +3733,7 @@ public abstract class HierarchicalSimulator {
 
 		for (int i = 0; i < size; i++)
 		{
-			
+
 			Event event = models.get(modelstate.model).getEvent(i);
 			if(event.isSetId() && modelstate.isDeletedBySID(event.getId()))
 				continue;
@@ -3420,11 +3764,11 @@ public abstract class HierarchicalSimulator {
 
 		for(Rule rule : models.get(modelstate.model).getListOfRules())
 		{
-			
-			
+
+
 			if(rule.isSetMetaId() && modelstate.isDeletedByMetaID(rule.getMetaId()))
 				continue;
-		
+
 			if (rule.isAssignment()) {
 
 				//Rules don't have a getVariable method, so this needs to be cast to an ExplicitRule
@@ -3698,9 +4042,9 @@ public abstract class HierarchicalSimulator {
 		{
 			this.model = bioModel;
 			this.ID = submodelID;
-			
+
 			setCountVariables(models.get(model));
-			
+
 			ibiosimFunctionDefinitions.add("uniform");
 			ibiosimFunctionDefinitions.add("exponential");
 			ibiosimFunctionDefinitions.add("gamma");
@@ -3763,9 +4107,9 @@ public abstract class HierarchicalSimulator {
 			isHierarchical = new HashSet<String>();
 
 			replacementDependency = new HashMap<String, String>();
-			
+
 			variablesToPrint = new HashSet<String>();
-			
+
 			deletedElementsById = new HashSet<String>();
 			deletedElementsByMetaId = new HashSet<String>();
 			deletedElementsByUId = new HashSet<String>();
@@ -3798,7 +4142,7 @@ public abstract class HierarchicalSimulator {
 			this.numParameters = model.getParameterCount();
 			this.numReactions = model.getReactionCount();
 			this.numInitialAssignments = model.getInitialAssignmentCount();
-			
+
 			this.numEvents = model.getEventCount();
 			this.numRules = model.getRuleCount();
 			this.numConstraints= model.getConstraintCount();
@@ -3829,7 +4173,7 @@ public abstract class HierarchicalSimulator {
 			}
 			variableToValueMap.put(variable, value);
 		}
-		
+
 		protected boolean isDeletedBySID(String sid)
 		{
 			if(deletedElementsById.contains(sid))
@@ -3838,7 +4182,7 @@ public abstract class HierarchicalSimulator {
 				return false;
 		}
 
-		
+
 		protected boolean isDeletedByMetaID(String metaid)
 		{
 			if(deletedElementsByMetaId.contains(metaid))
@@ -3846,7 +4190,7 @@ public abstract class HierarchicalSimulator {
 			else
 				return false;
 		}
-		
+
 		protected boolean isDeletedByUID(String uid)
 		{
 			if(deletedElementsByUId.contains(uid))
