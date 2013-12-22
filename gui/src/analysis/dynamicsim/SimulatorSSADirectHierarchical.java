@@ -265,7 +265,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		
 		HashSet<String> affectedVariables = new HashSet<String>();
 		
-		for (Rule rule : modelstate.model.getListOfRules()) {
+		for (Rule rule : models.get(modelstate.model).getListOfRules()) {
 			
 			if (rule.isRate()) {
 				
