@@ -402,7 +402,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			GeneticNetwork network = null;
 			BioModel bioModel = new BioModel(path);
 			bioModel.load(path + separator + modelId + ".xml");
-			SBMLDocument sbml = bioModel.flattenModel();		
+			SBMLDocument sbml = bioModel.flattenModel(true);		
 			network = parser.buildNetwork(sbml);
 			if (network == null) return;
 			network.loadProperties(biomodel);
@@ -531,7 +531,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			GeneticNetwork network = null;
 			BioModel bioModel = new BioModel(path);
 			bioModel.load(path + separator + modelId + ".xml");
-			SBMLDocument sbml = bioModel.flattenModel();		
+			SBMLDocument sbml = bioModel.flattenModel(true);		
 			network = parser.buildNetwork(sbml);
 			if (network==null) return;
 			network.loadProperties(biomodel);
@@ -1205,7 +1205,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 		if(analysisMethod != null && !analysisMethod.contains("Hierarchical"))
 		{
-			SBMLDocument sbml = biomodel.flattenModel();		
+			SBMLDocument sbml = biomodel.flattenModel(true);		
 			performModifications(sbml,dd);
 			GCMParser parser = new GCMParser(biomodel);
 			GeneticNetwork network = parser.buildNetwork(sbml);

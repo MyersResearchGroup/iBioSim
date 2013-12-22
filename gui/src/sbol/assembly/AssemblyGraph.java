@@ -52,7 +52,7 @@ public class AssemblyGraph {
 		if (sbmlDoc.getExtensionPackages().containsKey(CompConstant.namespaceURI)
 				&& parseSubModelSBOL(sbmlDoc, biomodel.getPath(), idToNode)) {
 			// Creates flattened assembly graph in case hierarchy of SBOL can't be preserved
-			SBMLDocument flatDoc = biomodel.flattenModel();
+			SBMLDocument flatDoc = biomodel.flattenModel(true);
 			flatAssemblyGraph = new AssemblyGraph(flatDoc);
 		}
 		constructGraph(sbmlDoc, idToNode);

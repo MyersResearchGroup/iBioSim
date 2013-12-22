@@ -605,7 +605,7 @@ public class BioModel {
 		naryRun.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				flattenModel();
+				flattenModel(true);
 				convertToLHPN(specs, conLevel, new MutableString()).save(filename);
 				log.addText("Saving model as LPN:\n" + path + separator + lpnName + "\n");
 				biosim.addToTree(lpnName);
@@ -672,7 +672,7 @@ public class BioModel {
 
 	public LhpnFile convertToLHPN(ArrayList<String> specs, ArrayList<Object[]> conLevel, MutableString lpnProperty) {
 		GCMParser parser = new GCMParser(this);
-		SBMLDocument sbml = this.flattenModel();		
+		SBMLDocument sbml = this.flattenModel(true);		
 		GeneticNetwork network = parser.buildNetwork(sbml);
 		if (network == null) return null;
 		network.markAbstractable();
@@ -2413,7 +2413,7 @@ public class BioModel {
 		HashMap<String,Integer> constants = new HashMap<String,Integer>();
 		ArrayList<String> booleans = new ArrayList<String>();
 		HashMap<String,String> rates = new HashMap<String,String>();
-		SBMLDocument flatSBML = flattenModel();
+		SBMLDocument flatSBML = flattenModel(true);
 		SBMLutilities.expandFunctionDefinitions(flatSBML);
 		//flatSBML.expandFunctionDefinitions();
 		SBMLutilities.expandInitialAssignments(flatSBML);
@@ -6769,7 +6769,7 @@ public class BioModel {
 		throw new Exception("libsbml not found.  Unable to flatten model.");
 	}
 		
-	public SBMLDocument flattenModel() {
+	public SBMLDocument flattenModel(boolean removeComp) {
 		Preferences biosimrc = Preferences.userRoot();
 		if (biosimrc.get("biosim.general.flatten", "").equals("libsbml")) {
 			//String tempFile = filename.replace(".gcm","").replace(".xml","")+"_temp.xml";
@@ -6828,10 +6828,13 @@ public class BioModel {
 		}
 		
 		model.getSBMLDocument().getModel().getExtensionPackages().remove(LayoutConstants.namespaceURI);
-		model.getSBMLDocument().getModel().getExtensionPackages().remove(CompConstant.namespaceURI);
-		model.getSBMLDocument().getExtensionPackages().remove(CompConstant.namespaceURI);
-		for (SBase sb : SBMLutilities.getListOfAllElements(model.getSBMLDocument().getModel())) {
-			sb.getExtensionPackages().remove(CompConstant.namespaceURI);
+		if(removeComp)
+		{
+			model.getSBMLDocument().getModel().getExtensionPackages().remove(CompConstant.namespaceURI);
+			model.getSBMLDocument().getExtensionPackages().remove(CompConstant.namespaceURI);
+			for (SBase sb : SBMLutilities.getListOfAllElements(model.getSBMLDocument().getModel())) {
+				sb.getExtensionPackages().remove(CompConstant.namespaceURI);
+			}
 		}
 //		model.getSBMLDocument().enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", false);
 //		model.getSBMLDocument().enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", false);

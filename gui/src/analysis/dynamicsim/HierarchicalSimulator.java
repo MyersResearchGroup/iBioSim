@@ -460,10 +460,11 @@ public abstract class HierarchicalSimulator {
 				String filename = path+submodel.getModelRef()+".xml";
 
 
-				Model sub = SBMLReader.read(new File(filename)).getModel();
-				//models.put(submodel.getModelRef(), flattenModel(path, filename));
-				models.put(submodel.getModelRef(), sub);
+//				Model sub = SBMLReader.read(new File(filename)).getModel();
+//				models.put(submodel.getModelRef(), sub);
 
+				models.put(submodel.getModelRef(), flattenModel(path, filename));
+				
 			}
 
 			if(isGrid)
@@ -496,7 +497,7 @@ public abstract class HierarchicalSimulator {
 	{
 		BioModel biomodel = new BioModel(path);
 		biomodel.load(filename);
-		SBMLDocument sbml = biomodel.flattenBioModel();		
+		SBMLDocument sbml = biomodel.flattenModel(false);		
 		GCMParser parser = new GCMParser(biomodel);
 		GeneticNetwork network = parser.buildNetwork(sbml);
 		sbml = network.getSBML();
@@ -568,8 +569,14 @@ public abstract class HierarchicalSimulator {
 			{
 				if(sbmlSBase.getListOfReplacedElements() != null)
 				{
-					replacements.put(s, species.getInitialAmount());	
-					initReplacementState.put(s, species.getInitialAmount());
+					double initVal = 0;
+					if(species.isSetInitialAmount())
+						initVal = species.getInitialAmount();
+					else if(species.isSetInitialConcentration())
+						initVal = species.getInitialAmount() * sbml.getModel().getCompartment(species.getCompartment()).getSize();
+					
+					replacements.put(s, initVal);	
+					initReplacementState.put(s, initVal);
 
 
 					for(ReplacedElement element: sbmlSBase.getListOfReplacedElements())
@@ -611,8 +618,14 @@ public abstract class HierarchicalSimulator {
 					{
 						String subSpecies = replacement.getIdRef();
 						ModelState temp = getModel(submodel);
-						replacements.put(s, models.get(temp.model).getModel().getSpecies(subSpecies).getInitialAmount());
-						initReplacementState.put(s, models.get(temp.model).getModel().getSpecies(subSpecies).getInitialAmount());
+						Species subSpeciesRef = models.get(temp.model).getModel().getSpecies(subSpecies);
+						double initVal = 0;
+						if(subSpeciesRef.isSetInitialAmount())
+							initVal = subSpeciesRef.getInitialAmount();
+						else if(subSpeciesRef.isSetInitialConcentration())
+							initVal = subSpeciesRef.getInitialAmount() * models.get(temp.model).getCompartment(subSpeciesRef.getCompartment()).getSize();
+						replacements.put(s,initVal);
+						initReplacementState.put(s, initVal);
 						topmodel.isHierarchical.add(s);
 						topmodel.replacementDependency.put(s, s);
 						getModel(submodel).isHierarchical.add(subSpecies);
@@ -623,8 +636,14 @@ public abstract class HierarchicalSimulator {
 						Port port = sbmlCompModel.getListOfPorts().get(replacement.getPortRef());
 						String subSpecies = port.getIdRef();
 						ModelState temp = getModel(submodel);
-						replacements.put(s, models.get(temp.model).getModel().getSpecies(subSpecies).getInitialAmount());
-						initReplacementState.put(s, models.get(temp.model).getSpecies(subSpecies).getInitialAmount());
+						Species subSpeciesRef = models.get(temp.model).getModel().getSpecies(subSpecies);
+						double initVal = 0;
+						if(subSpeciesRef.isSetInitialAmount())
+							initVal = subSpeciesRef.getInitialAmount();
+						else if(subSpeciesRef.isSetInitialConcentration())
+							initVal = subSpeciesRef.getInitialConcentration() * models.get(temp.model).getCompartment(subSpeciesRef.getCompartment()).getSize();
+						replacements.put(s, initVal);
+						initReplacementState.put(s, initVal);
 						topmodel.isHierarchical.add(s);
 						topmodel.replacementDependency.put(s, s);
 						getModel(submodel).isHierarchical.add(subSpecies);
