@@ -24,8 +24,8 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 			double stoichAmpValue, JFrame running, String[] interestingSpecies, String quantityType) 
 					throws IOException, XMLStreamException {
 
-		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed,
-				progress, printInterval, stoichAmpValue, running, interestingSpecies, quantityType);
+		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep, progress,
+				printInterval, stoichAmpValue, running, interestingSpecies, quantityType);
 
 		try {
 			initialize(randomSeed, 1);

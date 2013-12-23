@@ -135,8 +135,8 @@ public abstract class HierarchicalSimulator {
 	 * @throws XMLStreamException
 	 */
 	public HierarchicalSimulator(String SBMLFileName, String outputDirectory, double timeLimit, 
-			double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, 
-			double stoichAmpValue, JFrame running, String[] interestingSpecies, String quantityType) 
+			double maxTimeStep, double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, 
+			JFrame running, String[] interestingSpecies, String quantityType) 
 					throws IOException, XMLStreamException {
 
 		this.SBMLFileName = SBMLFileName;

@@ -37,8 +37,8 @@ public class SimulatorHybridHierarchical  extends HierarchicalSimulator {
 			{
 
 		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep,
-				randomSeed, progress, printInterval, stoichAmpValue,
-				running, interestingSpecies, quantityType);
+				progress, printInterval, stoichAmpValue, running,
+				interestingSpecies, quantityType);
 
 		this.numSteps = numSteps;
 		relativeError = relError;

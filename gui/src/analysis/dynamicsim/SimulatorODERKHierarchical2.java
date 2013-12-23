@@ -38,9 +38,8 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 					throws IOException, XMLStreamException {
 
 
-		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, 0.0, randomSeed,
-				progress, printInterval, stoichAmpValue, running, interestingSpecies,
-				quantityType);
+		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, 0.0, progress,
+				printInterval, stoichAmpValue, running, interestingSpecies, quantityType);
 
 
 		this.numSteps = numSteps;
