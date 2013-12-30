@@ -808,140 +808,10 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							error = SBMLutilities.checkNumFunctionArguments(gcm.getSBMLDocument(), SBMLutilities.myParseFormula(kineticLaw.getText().trim()));
 						}
 					}
-				} else {
-					// TODO: pull into its own method
-					// TODO: if contains >= 
-					//			split >=
-					//			if (length == 3)
-					//				check for double, reactionId, double
-					//				check double1 >= double2
-					//			else if (length == 2)
-					//				check for (double, reactionId) OR (reactionId,double)
-					//			else ERROR
-					//		else if contains <=
-					//			split <=
-					//			if (length == 3)
-					//				check for double, reactionId, double
-					//				check double1 <= double2
-					//			else if (length == 2)
-					//				check for (double, reactionId) OR (reactionId,double)
-					//			else ERROR
-					//		else if contains =
-					//			split =
-					//			if (length == 2)
-					//				check for (double, reactionId) OR (reactionId,double)
-					//			else ERROR
-					//		else ERROR
-					String[] correctnessTest = kineticLaw.getText().replaceAll("\\s","").split("=");
-					if(correctnessTest.length == 3){
-						try{
-							Double.parseDouble(correctnessTest[0].substring(0, correctnessTest[0].length()));
-						}
-						catch(NumberFormatException e){
-							JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0].substring(0, correctnessTest[0].length())
-									+ " has to be a double.", "Incorrect Element", JOptionPane.ERROR_MESSAGE);
-							error = true;
-						}
-						// TODO: wrap all checks with if !error
-						try{
-							Double.parseDouble(correctnessTest[2]);
-						}
-						catch(NumberFormatException e){
-							JOptionPane.showMessageDialog(Gui.frame, correctnessTest[2] + " has to be a double.", "Incorrect Element",
-									JOptionPane.ERROR_MESSAGE);
-							error = true;
-						}
-						if(!correctnessTest[1].substring(0, reactionId.length()).equals(reactionId)){
-							JOptionPane.showMessageDialog(Gui.frame, "Must have "+ reactionId + " in the middle.", "Incorrect Reaction",
-									JOptionPane.ERROR_MESSAGE);
-							error = true;
-						}
-						String firstSymbol = correctnessTest[0].substring(correctnessTest[0].length()-1);
-						String secondSymbol = correctnessTest[1].substring(correctnessTest[1].length()-1);
-						if(!firstSymbol.equals(secondSymbol)){
-							JOptionPane.showMessageDialog(Gui.frame, "Operations must match.", "Mismatching Operations",
-									JOptionPane.ERROR_MESSAGE);
-							error = true;
-						}
-						if(correctnessTest[0].endsWith("<")){
-							if(Double.parseDouble(correctnessTest[0].substring(0, correctnessTest[0].indexOf("<")))> 
-							Double.parseDouble(correctnessTest[2])){
-								JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0].substring(0, correctnessTest[0].indexOf("<"))+ " !< " +
-										Double.parseDouble(correctnessTest[2]), "Impossible Bounds.", JOptionPane.ERROR_MESSAGE);
-								error = true;
-							}
-						}
-						else{
-							if(Double.parseDouble(correctnessTest[0].substring(0, correctnessTest[0].indexOf(">")))< 
-									Double.parseDouble(correctnessTest[2])){
-								JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0].substring(0, correctnessTest[0].indexOf(">"))+ " !> " +
-										Double.parseDouble(correctnessTest[2]), "Impossible Bounds.", JOptionPane.ERROR_MESSAGE);
-								error = true;
-							}
-						}
-					}
-					else{
-						int i = 0;
-						// TODO: NOTE TO SELF: Check this out! Set ints before test cases to test for things you can't 
-						// normally
-						if(correctnessTest.length>2)i=3;
-						if(correctnessTest.length<2)i=1;
-						switch(i){
-						case(3):
-							JOptionPane.showMessageDialog(Gui.frame, "Too many equals(=) signs", "Incorrect Format",
-									JOptionPane.ERROR_MESSAGE);
-						error = true;
-						break;
-						case(1):
-							JOptionPane.showMessageDialog(Gui.frame, "Not enough data", "Incorrect Format",
-									JOptionPane.ERROR_MESSAGE);
-						error = true;
-						break;
-						default:
-							if(!correctnessTest[0].equals(reactionId) && !correctnessTest[1].equals(reactionId)){
-								JOptionPane.showMessageDialog(Gui.frame, "Must have "+ reactionId + " in the equation.", "No Reaction",
-										JOptionPane.ERROR_MESSAGE);
-								error = true;
-							}
-							if(correctnessTest[0].equals(reactionId)){
-								try{
-									Double.parseDouble(correctnessTest[1]);
-								}
-								catch(Exception e){
-									if(e.equals(new NumberFormatException())){
-										JOptionPane.showMessageDialog(Gui.frame, correctnessTest[1] + " has to be a double.", "Incorrect Element",
-												JOptionPane.ERROR_MESSAGE);
-										error = true;
-									}
-								}
-							}
-							else{
-								try{
-									Double.parseDouble(correctnessTest[0]);
-								}
-								catch(Exception e){
-									if(e.equals(new NumberFormatException())){
-										JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0] + " has to be a double.", "Incorrect Element",
-												JOptionPane.ERROR_MESSAGE);
-										error = true;
-									}
-								}
-							}
-						}
-
-					}
-
-					// TODO: do flux bound syntax check here if needed
-					// See above^
-					// Ensure you have a "double a <= reactionId <= double b" where a <= b
-					// reactionId = double
-					// reactionId <= double
-					// reactionId >= double
-					// double >= reactionId >= double
-					// (double a (>=,<=))? reactionId ((>=,=,<=) double b)
-					// If two operators, they should be the same two.
-					// If operators are <=, then a <= b
-					// If operators are >=, then a >= b
+				} 
+				else {
+					// TODO: see method
+					error = !fluxBoundisGood(kineticLaw.getText().replaceAll("\\s",""), reactionId);
 				}
 
 			}
@@ -1069,9 +939,26 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 								fxLess.setOperation(FluxBound.Operation.LESS_EQUAL);
 								fxLess.setValue(lessValue);
 								fxLess.setReaction(reactionId);
-							} else {
+							} 
+							else {
+									try{
+										double lessValue = Double.parseDouble(userInput[1]);
+										FluxBound fxLess = bioModel.getSBMLFBC().createFluxBound();
+										fxLess.setOperation(FluxBound.Operation.LESS_EQUAL);
+										fxLess.setValue(lessValue);
+										fxLess.setReaction(reactionId);
+										//TODO: should I add infinity?
+									}
+									catch(Exception e){
+										double greaterValue = Double.parseDouble(userInput[0]);
+										FluxBound fxGreater = bioModel.getSBMLFBC().createFluxBound();
+										fxGreater.setOperation(FluxBound.Operation.GREATER_EQUAL);
+										fxGreater.setValue(greaterValue);
+										fxGreater.setReaction(reactionId);
+									}
+								}
 								// TODO: deal with one sided bounds
-							}
+							
 						}
 						else if(kineticLaw.getText().contains(">=")){
 							String[] userInput = kineticLaw.getText().replaceAll("\\s","").split(">=");
@@ -1088,7 +975,22 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 								fxLess.setValue(lessValue);
 								fxLess.setReaction(reactionId);
 							} else {
-								// TODO: deal with one sided bounds
+								try{
+									double greaterValue = Double.parseDouble(userInput[1]);
+									FluxBound fxGreater = bioModel.getSBMLFBC().createFluxBound();
+									fxGreater.setOperation(FluxBound.Operation.GREATER_EQUAL);
+									fxGreater.setValue(greaterValue);
+									fxGreater.setReaction(reactionId);
+								}
+								catch(Exception e){
+									double lessValue = Double.parseDouble(userInput[0]);
+									FluxBound fxLess = bioModel.getSBMLFBC().createFluxBound();
+									fxLess.setOperation(FluxBound.Operation.LESS_EQUAL);
+									fxLess.setValue(lessValue);
+									fxLess.setReaction(reactionId);
+									//TODO: should I add infinity?
+									
+								}
 							}
 						}
 						else{
@@ -1233,26 +1135,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 					else{
 						// TODO: needs to be copied from above
-						String[] userInput = kineticLaw.getText().trim().split("<=");
-						double greaterValue = Double.parseDouble(userInput[0]);
-						double lessValue = Double.parseDouble(userInput[2]);
-						if (greaterValue != lessValue) {
-							FluxBound fxGreater = bioModel.getSBMLFBC().createFluxBound();
-							fxGreater.setOperation(FluxBound.Operation.GREATER_EQUAL);
-							fxGreater.setValue(greaterValue);
-							fxGreater.setReaction(reactionId);
-
-							FluxBound fxLess = bioModel.getSBMLFBC().createFluxBound();
-							fxLess.setOperation(FluxBound.Operation.LESS_EQUAL);
-							fxLess.setValue(lessValue);
-							fxLess.setReaction(reactionId);
-						} else {
-							FluxBound fxEqual = bioModel.getSBMLFBC().createFluxBound();
-							fxEqual.setOperation(FluxBound.Operation.EQUAL);
-							fxEqual.setValue(greaterValue);
-							fxEqual.setReaction(reactionId);
-						}
+						error = !fluxBoundisGood(kineticLaw.getText().replaceAll("\\s",""), reactionId);
 					}
+						
 					if (!error) {
 						error = SBMLutilities.checkCycles(gcm.getSBMLDocument());
 						if (error) {
@@ -3204,6 +3089,190 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		return false;
 	}
+	
+	/**
+	 * Checks the string to see if there are any errors. Retruns true if there are no errors, else returns false.
+	 */
+	public boolean fluxBoundisGood(String s, String reactionId){
+		if(s.contains("<=")){
+			String [] correctnessTest = s.split("<=");
+			if(correctnessTest.length == 3){
+				try{
+					Double.parseDouble(correctnessTest[0]);
+				}
+				catch(NumberFormatException e){
+					JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0]+ " has to be a double.",
+							"Incorrect Element", JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
+				try{
+					Double.parseDouble(correctnessTest[2]);
+				}
+				catch(NumberFormatException e){
+					JOptionPane.showMessageDialog(Gui.frame, correctnessTest[2] + " has to be a double.", 
+							"Incorrect Element", JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
+				if(Double.parseDouble(correctnessTest[0]) > Double.parseDouble(correctnessTest[2])){
+					JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0] + " must be less than " + correctnessTest[2], 
+							"Imbalance with Bounds", JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
+				return true;
+			}
+			else if(correctnessTest.length == 2){
+				if(!correctnessTest[0].equals(reactionId) && !correctnessTest[1].equals(reactionId)){
+					JOptionPane.showMessageDialog(Gui.frame, "Must have "+ reactionId + " in the equation.", "No Reaction",
+							JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
+				if(correctnessTest[0].equals(reactionId)){
+					try{
+						Double.parseDouble(correctnessTest[1]);
+					}
+					catch(Exception e){
+						if(e.equals(new NumberFormatException())){
+							JOptionPane.showMessageDialog(Gui.frame, correctnessTest[1] + " has to be a double.", "Incorrect Element",
+									JOptionPane.ERROR_MESSAGE);
+							return false;
+						}
+					}
+				}
+				else{
+					try{
+						Double.parseDouble(correctnessTest[0]);
+					}
+					catch(Exception e){
+						if(e.equals(new NumberFormatException())){
+							JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0] + " has to be a double.", "Incorrect Element",
+									JOptionPane.ERROR_MESSAGE);
+							return false;
+						}
+					}
+				}
+				return true;
+			} else{
+				JOptionPane.showMessageDialog(Gui.frame, "Wrong number of elements.", "Bad Format",
+						JOptionPane.ERROR_MESSAGE);
+				return false;
+			}
+		}
+		else if(s.contains(">=")){
+			String [] correctnessTest = s.split(">=");
+			if(correctnessTest.length == 3){
+				try{
+					Double.parseDouble(correctnessTest[0]);
+				}
+				catch(NumberFormatException e){
+					JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0]+ " has to be a double.",
+							"Incorrect Element", JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
+				try{
+					Double.parseDouble(correctnessTest[2]);
+				}
+				catch(NumberFormatException e){
+					JOptionPane.showMessageDialog(Gui.frame, correctnessTest[2] + " has to be a double.", 
+							"Incorrect Element", JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
+				if(Double.parseDouble(correctnessTest[0]) < Double.parseDouble(correctnessTest[2])){
+					JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0] + " must be greater than " + correctnessTest[2], 
+							"Imbalance with Bounds", JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
+				return true;
+			}
+			else if(correctnessTest.length == 2){
+				if(!correctnessTest[0].equals(reactionId) && !correctnessTest[1].equals(reactionId)){
+					JOptionPane.showMessageDialog(Gui.frame, "Must have "+ reactionId + " in the equation.", "No Reaction",
+							JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
+				if(correctnessTest[0].equals(reactionId)){
+					try{
+						Double.parseDouble(correctnessTest[1]);
+					}
+					catch(Exception e){
+						if(e.equals(new NumberFormatException())){
+							JOptionPane.showMessageDialog(Gui.frame, correctnessTest[1] + " has to be a double.", "Incorrect Element",
+									JOptionPane.ERROR_MESSAGE);
+							return false;
+						}
+					}
+				}
+				else{
+					try{
+						Double.parseDouble(correctnessTest[0]);
+					}
+					catch(Exception e){
+						if(e.equals(new NumberFormatException())){
+							JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0] + " has to be a double.", "Incorrect Element",
+									JOptionPane.ERROR_MESSAGE);
+							return false;
+						}
+					}
+				}
+				return true;
+			} else{
+				JOptionPane.showMessageDialog(Gui.frame, "Wrong number of elements.", "Bad Format",
+						JOptionPane.ERROR_MESSAGE);
+				return false;
+			}
+		}
+		else if(s.contains("=")){
+			String [] correctnessTest = s.split("=");
+			if(correctnessTest.length == 2){
+				if(!correctnessTest[0].equals(reactionId) && !correctnessTest[1].equals(reactionId)){
+					JOptionPane.showMessageDialog(Gui.frame, "Must have "+ reactionId + " in the equation.", "No Reaction",
+							JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
+				if(correctnessTest[0].equals(reactionId)){
+					try{
+						Double.parseDouble(correctnessTest[1]);
+					}
+					catch(Exception e){
+						if(e.equals(new NumberFormatException())){
+							JOptionPane.showMessageDialog(Gui.frame, correctnessTest[1] + " has to be a double.", "Incorrect Element",
+									JOptionPane.ERROR_MESSAGE);
+							return false;
+						}
+					}
+				}
+				else{
+					try{
+						Double.parseDouble(correctnessTest[0]);
+					}
+					catch(Exception e){
+						if(e.equals(new NumberFormatException())){
+							JOptionPane.showMessageDialog(Gui.frame, correctnessTest[0] + " has to be a double.", "Incorrect Element",
+									JOptionPane.ERROR_MESSAGE);
+							return false;
+						}
+					}
+				}
+				return true;
+			} else{
+				JOptionPane.showMessageDialog(Gui.frame, "Wrong number of elements.", "Bad Format",
+						JOptionPane.ERROR_MESSAGE);
+				return false;
+			}
+		}
+		else{
+			JOptionPane.showMessageDialog(Gui.frame, "Need Operations.", "Bad Format",
+					JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+	}
+	// TODO: if contains >= 
+	//			split >=
+	//			if (length == 3)
+	//				check for double, reactionId, double
+	//				check double1 >= double2
+	//			else if (length == 2)
+	//				check for (double, reactionId) OR (reactionId,double)
+	//			else ERROR
 
 	public void setPanels(InitialAssignments initialsPanel, Rules rulesPanel) {
 		this.initialsPanel = initialsPanel;
