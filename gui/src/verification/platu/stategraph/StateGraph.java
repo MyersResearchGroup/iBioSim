@@ -1401,7 +1401,7 @@ public class StateGraph {
 		for(int i=0; i<newStates.length; i++)
 		{
 			
-			// The stategraph has to be used to call getEnabled
+			// The StateGraph has to be used to call getEnabled
 			// since it is being passed implicitly.
 			LpnTranList localEnabledTransitions = curSgArray[i].getEnabled(newStates[i]);
 			
@@ -1485,7 +1485,8 @@ public class StateGraph {
 			}
 			
 			// Get a new zone that has been restricted according to the inequalities firing.
-			Zone z = currentTimedPrjState.get_zones()[0].getContinuousRestrictedZone(eventSet, states);
+			Zone z = currentTimedPrjState.get_zones()[0]
+					.getContinuousRestrictedZone(eventSet, states);
 			
 			
 			
@@ -1591,7 +1592,7 @@ public class StateGraph {
 		
 		return new TimedPrjState(currentTimedPrjState.getStateArray(), newZones);
 	}
-	
+
 	@SuppressWarnings("unused")
 	public static TimedPrjState fireRateChange(final StateGraph[] curSgArray, 
 			final PrjState currentPrjState, LPNContinuousPair firedRate){
@@ -1619,6 +1620,20 @@ public class StateGraph {
 		if(currentTimedPrjState.get_zones()[0].getCurrentRate(firedRate) == 0){
 			// Need to add the rate zero continuous variables back into the zone.
 			newZones[0] = oldZones[0].moveOldRateZero(firedRate);
+			newZones[0].advance(currentTimedPrjState.getStateArray());
+			newZones[0].recononicalize();
+
+			State[] localStates  = currentTimedPrjState.getStateArray();
+			
+			return new TimedPrjState(localStates, newZones);
+		}
+		else if(firedRate.getCurrentRate() == 0){
+			/*
+			 * If the rate change event is zero, then the variable needs to be
+			 * saved off into the rate zero variables. No warping or recanonicalizing
+			 * is necessary since all the other relationship remain the same.
+			 */
+			newZones[0] = oldZones[0].saveOutZeroRate(firedRate);
 		}
 		else{
 //			newZones[0] = currentTimedPrjState.get_zones()[0]
@@ -1830,21 +1845,25 @@ public class StateGraph {
 //			}
 			
 			
-			
 			if(newValue == null && newRate == null){
-				// Need to check if the current rate will be set to zero.
+				// Need to check if the current rate will be set to non-zero
+				// when it is currently zero.
 				newRate = z.getRateBounds(contVar);
 				
-				if(!newRate.containsZero()){
+				if(newRate.isZero() || !(newRate.containsZero())){
 					// Nothing needs to be done, so continue.
 					continue;
 				}
 				newRecord.set_lcrPair(new LPNContAndRate(contVar, newRate));
 				
-				newRecord.set_newValue(false);
+				// Since we are going to be adding the continuous variable back
+				// into the zone, the value should be treated as new.
+				newValue = z.getContinuousBounds(contVar);
+				newRecord.set_Value(newValue);
+				newRecord.set_newValue(true);
 				
 				// Set the rate to the lower bound or zero.
-				contVar.setCurrentRate(z.getSmallestRate(contVar));
+				contVar.setCurrentRate(z.rateResetValue(contVar));
 			}
 
 			// If the value did not get assigned, put in the old value.
@@ -1871,7 +1890,7 @@ public class StateGraph {
 				newRecord.set_lcrPair(new LPNContAndRate(contVar, newRate));
 				
 				// Set the rate to the lower bound or zero.
-				contVar.setCurrentRate(z.getSmallestRate(contVar));
+				contVar.setCurrentRate(z.rateResetValue(contVar));
 			}
 			
 //			newRecord.set_lcrPair(new LPNContAndRate(contVar, newRate));
@@ -1883,7 +1902,7 @@ public class StateGraph {
 //			boolean newRateZero = newRate.singleValue() ? 
 //					newRate.get_LowerBound() == 0 : false;
 			
-			boolean newRateZero = newRate.containsZero();
+			boolean newRateZero = newRate.isZero();
 			
 			// Check if the variable was already rate zero. 
 			boolean oldRateZero = z.getCurrentRate(contVar) == 0;
