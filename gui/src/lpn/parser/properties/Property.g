@@ -317,7 +317,8 @@ constantValue
 
 wait_statement
 	: WAIT^ LPARA! expression RPARA! SEMICOL!
-	| WAIT^ LPARA! expression COMMA!  expression (GET expression)* RPARA! SEMICOL!
+//  | WAIT^ LPARA! expression COMMA!  expression (GET expression)* RPARA! SEMICOL!
+  | WAIT^ LPARA! expression COMMA!  expression RPARA! SEMICOL!
 	;
 		
 	
