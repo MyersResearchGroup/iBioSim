@@ -293,6 +293,12 @@ public class Analysis {
 			int curIndex = curIndexStack.peek();
 			LinkedList<Transition> curEnabled = lpnTranStack.peek();
 			if (failureTranIsEnabled(curEnabled)) {
+				System.out.println("---> final numbers: # LPN transition firings: "	+ tranFiringCnt 
+						+ ", # of prjStates found: " + prjStateSet.size()
+						+ ", max_stack_depth: " + max_stack_depth 
+						+ ", peak total memory: " + peakTotalMem / 1000000 + " MB"
+						+ ", peak used memory: " + peakUsedMem / 1000000 + " MB");
+				System.out.println(prjStateSet.toString());
 				return null;
 			}
 			if (Options.getDebugMode()) {
