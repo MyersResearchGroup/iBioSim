@@ -7,9 +7,13 @@ import lpn.parser.Translator;
 import graph.Graph;
 //import lpn.parser.properties.BuildProperty;
 
+
+
+
 import java.awt.AWTError;
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -71,6 +75,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -86,6 +91,8 @@ import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
 import javax.swing.tree.TreeModel;
 import javax.xml.stream.XMLStreamException;
 import javax.mail.*;
@@ -116,6 +123,7 @@ import learn.GCM.LearnGCM;
 import learn.datamanager.DataManager;
 import main.util.EditPreferences;
 import main.util.FileTree;
+import main.util.MutableBoolean;
 import main.util.Utility;
 import main.util.tabs.CloseAndMaxTabbedPane;
 import synthesis.async.Synthesis;
@@ -146,12 +154,21 @@ import org.sbolstandard.core.SBOLDocument;
 
 //import lpn.parser.properties.*;
 
+
+
+
 import sbol.browser.SBOLBrowser;
 import sbol.util.SBOLUtility;
 
 import java.net.*;
 
 import uk.ac.ebi.biomodels.*;
+import virtualparts.PartsHandler;
+import virtualparts.entity.Interaction;
+import virtualparts.entity.Interactions;
+import virtualparts.entity.Summary;
+import virtualparts.entity.Parts;
+import virtualparts.entity.Part;
 
 /**
  * This class creates a GUI for the Tstubd program. It implements the
@@ -188,6 +205,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private JMenuItem importSedml;
 	private JMenuItem importSbml; // The import sbml menu item
 	private JMenuItem importBioModel; // The import sbml menu item
+	private JMenuItem importVirtualPart;
 	//private JMenuItem importDot; // The import dot menu item
 	private JMenuItem importVhdl; // The import vhdl menu item
 	private JMenuItem importS; // The import assembly file menu item
@@ -261,8 +279,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private String viewer;
 	
 	private boolean runGetNames;
+	
+	private boolean showParts = false;
+	
+	private Thread getPartsThread = null;
 
 	private String[] BioModelIds = null;
+	
+	private Parts allVirtualParts = null;
 
 	private JMenuItem addCompartment, addSpecies, addReaction, addComponent, addPromoter, addVariable, addBoolean, addPlace,
 		addTransition, addRule, addConstraint, addEvent, addSelfInfl, cut, select,undo, redo, copy, rename, delete,
@@ -696,6 +720,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		importSedml = new JMenuItem("SED-ML File");
 		importSbml = new JMenuItem("SBML Model");
 		importBioModel = new JMenuItem("BioModel");
+		importVirtualPart = new JMenuItem("Virtual Part");
 		convertToLPN= new JMenuItem("Convert To LPN");   //convert
 		//importDot = new JMenuItem("iBioSim Model");
 		importG = new JMenuItem("Petri Net");
@@ -806,6 +831,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		importSedml.addActionListener(this);
 		importSbml.addActionListener(this);
 		importBioModel.addActionListener(this);
+		importVirtualPart.addActionListener(this);
 		//importDot.addActionListener(this);
 		importVhdl.addActionListener(this);
 		importS.addActionListener(this);
@@ -930,6 +956,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		importSedml.setEnabled(false);
 		importSbml.setEnabled(false);
 		importBioModel.setEnabled(false);
+		importVirtualPart.setEnabled(false);
 		importVhdl.setEnabled(false);
 		importS.setEnabled(false);
 		importInst.setEnabled(false);
@@ -1110,6 +1137,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			//importMenu.add(importDot);
 			importMenu.add(importSbml);
 			importMenu.add(importBioModel);
+			//importMenu.add(importVirtualPart);
 			importMenu.add(importLpn);
 			importMenu.add(importSbol);
 			importMenu.add(importSedml);
@@ -2970,6 +2998,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				importSedml.setEnabled(true);
 				importSbml.setEnabled(true);
 				importBioModel.setEnabled(true);
+				importVirtualPart.setEnabled(true);
 				importVhdl.setEnabled(true);
 				importS.setEnabled(true);
 				importInst.setEnabled(true);
@@ -3102,6 +3131,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						importSedml.setEnabled(true);
 						importSbml.setEnabled(true);
 						importBioModel.setEnabled(true);
+						importVirtualPart.setEnabled(true);
 						importVhdl.setEnabled(true);
 						importS.setEnabled(true);
 						importInst.setEnabled(true);
@@ -3201,6 +3231,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else if (e.getSource() == importBioModel) {
 			importBioModel();
+		}
+		else if (e.getSource() == importVirtualPart) {
+			importVirtualPart();
 		}
 		// if the import dot menu item is selected
 		/*
@@ -3638,6 +3671,353 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			catch (Exception e1) {
 				JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
+		}
+	}
+	
+	private void importVirtualPart() {
+		try {
+			final PartsHandler partsHandler = new PartsHandler("http://www.virtualparts.org");
+			if (!showParts && getPartsThread == null) {
+				getPartsThread = new Thread(new Runnable() {
+				    @Override
+					public void run() {
+						try {
+							final JButton cancel = new JButton("Cancel");
+							final MutableBoolean stop = new MutableBoolean(false);
+							cancel.addActionListener(new ActionListener() {
+								@Override
+								public void actionPerformed(ActionEvent arg0) {
+									stop.setValue(true);
+								}
+							});
+							final JFrame running = new JFrame("Progress");
+							WindowListener w = new WindowListener() {
+								@Override
+								public void windowClosing(WindowEvent arg0) {
+									running.setCursor(null);
+									cancel.doClick();
+									running.dispose();
+								}
+
+								@Override
+								public void windowOpened(WindowEvent arg0) {
+								}
+
+								@Override
+								public void windowClosed(WindowEvent arg0) {
+								}
+
+								@Override
+								public void windowIconified(WindowEvent arg0) {
+								}
+
+								@Override
+								public void windowDeiconified(WindowEvent arg0) {
+								}
+
+								@Override
+								public void windowActivated(WindowEvent arg0) {
+								}
+
+								@Override
+								public void windowDeactivated(WindowEvent arg0) {
+								}
+							};
+							running.addWindowListener(w);
+							JPanel text = new JPanel();
+							JPanel progBar = new JPanel();
+							JPanel button = new JPanel();
+							JPanel all = new JPanel(new BorderLayout());
+							JLabel label = new JLabel("Retrieving Virtual Parts");
+							PartsHandler partsHandler = new PartsHandler("http://www.virtualparts.org");
+							Summary summary = partsHandler.GetPartsSummary();
+							int pageCount = summary.getPageCount();
+							JProgressBar progress = new JProgressBar(0, pageCount);
+							progress.setStringPainted(true);
+							progress.setValue(0);
+							text.add(label);
+							progBar.add(progress);
+							button.add(cancel);
+							all.add(text, "North");
+							all.add(progBar, "Center");
+							all.add(button, "South");
+							running.setContentPane(all);
+							running.pack();
+							Dimension screenSize;
+							try {
+								Toolkit tk = Toolkit.getDefaultToolkit();
+								screenSize = tk.getScreenSize();
+							}
+							catch (AWTError awe) {
+								screenSize = new Dimension(640, 480);
+							}
+							Dimension frameSize = running.getSize();
+
+							if (frameSize.height > screenSize.height) {
+								frameSize.height = screenSize.height;
+							}
+							if (frameSize.width > screenSize.width) {
+								frameSize.width = screenSize.width;
+							}
+							int x = screenSize.width / 2 - frameSize.width / 2;
+							int y = screenSize.height / 2 - frameSize.height / 2;
+							running.setLocation(x, y);
+							running.setVisible(true);
+							running.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+							allVirtualParts = new Parts();
+							for (int i = 1; i <= pageCount && !stop.booleanValue(); i++) {
+								Parts parts = partsHandler.GetParts(i);
+								allVirtualParts.getParts().addAll(parts.getParts());
+								progress.setValue(i);
+							}
+							running.setCursor(null);
+							running.dispose();
+							if (!stop.booleanValue()) {
+								showParts = true;
+								importVirtualPart();
+							}
+							else {
+								getPartsThread = null;
+							}
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+				    }
+				});
+				getPartsThread.start();
+			}
+			else if (showParts) {
+				final List<Part> list = allVirtualParts.getParts();
+				final JPanel virtualPartsPanel = new JPanel(new BorderLayout());
+				final JPanel labelPanel = new JPanel(new BorderLayout());
+				TableModel dataModel = new AbstractTableModel() {
+					public int getColumnCount() {
+						return 6;
+					}
+
+					public int getRowCount() {
+						return list.size();
+					}
+
+					public Object getValueAt(int row, int col) {
+						Part p = list.get(row);
+						switch (col) {
+						case 0:
+							return p.getName();
+						case 1:
+							return p.getType();
+						case 2:
+							return p.getDisplayName();
+						case 3:
+							return p.getOrganism();
+						case 4:
+							return p.getDescription();
+						default:
+							return row;
+						}
+					}
+
+					public String getColumnName(int col) {
+						switch (col) {
+						case 0:
+							return "ID";
+						case 1:
+							return "Type";
+						case 2:
+							return "Name";
+						case 3:
+							return "Organism";
+						case 4:
+							return "Description";
+						default:
+							return "Entry";
+						}
+					}
+				};
+				final JTable tableOfVirtualParts = new JTable(dataModel);
+				tableOfVirtualParts.setAutoCreateRowSorter(true);
+				tableOfVirtualParts.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+				tableOfVirtualParts.getColumnModel().getColumn(0).setPreferredWidth(150);
+				tableOfVirtualParts.getColumnModel().getColumn(1).setPreferredWidth(150);
+				tableOfVirtualParts.getColumnModel().getColumn(2).setPreferredWidth(150);
+				tableOfVirtualParts.getColumnModel().getColumn(3).setPreferredWidth(150);
+				tableOfVirtualParts.getColumnModel().getColumn(4).setPreferredWidth(150);
+				tableOfVirtualParts.getColumnModel().getColumn(5).setMinWidth(0);
+				tableOfVirtualParts.getColumnModel().getColumn(5).setMaxWidth(0);
+				tableOfVirtualParts.getColumnModel().getColumn(5).setWidth(0);
+				tableOfVirtualParts.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+				tableOfVirtualParts.addMouseListener(new MouseListener() {
+					@Override
+					public void mouseClicked(MouseEvent arg0) {
+						try {
+							if (arg0.getButton() == MouseEvent.BUTTON1 && arg0.getClickCount() == 2) {
+								int selected = tableOfVirtualParts.getSelectedRow();
+								if (selected >= 0) {
+									Part part = list.get((Integer) tableOfVirtualParts.getModel().getValueAt(tableOfVirtualParts.convertRowIndexToModel(selected), 5));
+									final Interactions interactions = partsHandler.GetInteractions(part);
+									if (interactions != null && interactions.getInteractions() != null) {
+										TableModel dataModel = new AbstractTableModel() {
+											public int getColumnCount() {
+												return 4;
+											}
+
+											public int getRowCount() {
+												return interactions.getInteractions().size();
+											}
+
+											public Object getValueAt(int row, int col) {
+												Interaction i = interactions.getInteractions().get(row);
+												switch (col) {
+												case 0:
+													return i.getName();
+												case 1:
+													String parts = "";
+													for (String p : i.getParts()) {
+														parts += p + ", ";
+													}
+													return parts.substring(0, parts.length() - 2);
+												case 2:
+													return i.getInteractionType();
+												default:
+													return i.getDescription();
+												}
+											}
+
+											public String getColumnName(int col) {
+												switch (col) {
+												case 0:
+													return "ID";
+												case 1:
+													return "Parts";
+												case 2:
+													return "Type";
+												default:
+													return "Description";
+												}
+											}
+										};
+										JTable tableOfInteractions = new JTable(dataModel);
+										tableOfInteractions.setAutoCreateRowSorter(true);
+										tableOfInteractions.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+										tableOfInteractions.getColumnModel().getColumn(0).setPreferredWidth(150);
+										tableOfInteractions.getColumnModel().getColumn(1).setPreferredWidth(150);
+										tableOfInteractions.getColumnModel().getColumn(2).setPreferredWidth(150);
+										tableOfInteractions.getColumnModel().getColumn(3).setPreferredWidth(150);
+										JScrollPane ScrollInteractions = new JScrollPane();
+										ScrollInteractions.setMinimumSize(new Dimension(520, 150));
+										ScrollInteractions.setPreferredSize(new Dimension(552, 150));
+										ScrollInteractions.setViewportView(tableOfInteractions);
+										JOptionPane.showMessageDialog(frame, ScrollInteractions, "Interactions for Part " + part.getName(),
+												JOptionPane.PLAIN_MESSAGE);
+									}
+									else {
+										JOptionPane.showMessageDialog(frame, "There are no interactions associated with this part in the reposiotry.", "No Interactions",
+												JOptionPane.ERROR_MESSAGE);
+									}
+								}
+							}
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (XMLStreamException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					@Override
+					public void mouseEntered(MouseEvent arg0) {						
+					}
+					@Override
+					public void mouseExited(MouseEvent arg0) {
+					}
+					@Override
+					public void mousePressed(MouseEvent arg0) {
+					}
+					@Override
+					public void mouseReleased(MouseEvent arg0) {
+					}
+				});
+				JLabel TextVirtualParts = new JLabel("List of Virtual Parts:");
+				JLabel DoubleClick = new JLabel("Double click on a part to view its interactions.");
+				JScrollPane ScrollVirtualParts = new JScrollPane();
+				ScrollVirtualParts.setMinimumSize(new Dimension(520, 250));
+				ScrollVirtualParts.setPreferredSize(new Dimension(552, 250));
+				ScrollVirtualParts.setViewportView(tableOfVirtualParts);
+				labelPanel.add(TextVirtualParts, "North");
+				labelPanel.add(DoubleClick, "Center");
+				virtualPartsPanel.add(labelPanel, "North");
+				virtualPartsPanel.add(ScrollVirtualParts, "Center");
+				Object[] options = { "Import Part", "Import Part & Interactions", "Cancel" };				
+				int value = JOptionPane.showOptionDialog(frame,	virtualPartsPanel, "List of Virtual Parts", JOptionPane.YES_NO_CANCEL_OPTION,
+						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				int selected = tableOfVirtualParts.getSelectedRow();
+				if (selected >= 0) {
+					Part part = list.get((Integer) tableOfVirtualParts.getModel().getValueAt(tableOfVirtualParts.convertRowIndexToModel(selected), 5));
+					if (value == JOptionPane.YES_OPTION || value == JOptionPane.NO_OPTION) {
+						SBMLDocument sbmlDocument = partsHandler.GetModel(part);
+						if (sbmlDocument != null) {
+							sbmlDocument.setLevelAndVersion(SBML_LEVEL, SBML_VERSION);
+							SBMLWriter writer = new SBMLWriter();
+							writer.writeSBMLToFile(sbmlDocument, root + separator + part.getName() + ".xml");
+							SBMLDocument document = SBMLutilities.readSBML(root + separator + part.getName() + ".xml");
+							SBMLutilities.check(root + separator + part.getName() + ".xml", document, false, false);
+							writer.writeSBMLToFile(document, root + separator + part.getName() + ".xml");
+							addToTree(part.getName() + ".xml");
+							openSBML(root + separator + part.getName() + ".xml");
+						}
+						else {
+							JOptionPane.showMessageDialog(frame, "There is no SBML model associated with this part in the reposiotry.", "No SBML Model",
+									JOptionPane.ERROR_MESSAGE);
+						}
+					}
+					if (value == JOptionPane.NO_OPTION) {
+						Interactions interactions=partsHandler.GetInteractions(part);
+						if (interactions != null && interactions.getInteractions() != null) {
+							for (Interaction interaction : interactions.getInteractions()) {
+								for (String p : interaction.getParts()) {
+									if (!p.equals(part.getName())) {
+										for (Part tempPart : list) {
+											if (p.equals(tempPart.getName())) {
+												SBMLDocument sbmlDocument = partsHandler.GetModel(tempPart);
+												if (sbmlDocument != null) {
+													sbmlDocument.setLevelAndVersion(SBML_LEVEL, SBML_VERSION);
+													SBMLWriter writer = new SBMLWriter();
+													writer.writeSBMLToFile(sbmlDocument, root + separator + tempPart.getName() + ".xml");
+													SBMLDocument document = SBMLutilities.readSBML(root + separator + tempPart.getName() + ".xml");
+													SBMLutilities.check(root + separator + tempPart.getName() + ".xml", document, false, false);
+													writer.writeSBMLToFile(document, root + separator + tempPart.getName() + ".xml");
+													addToTree(tempPart.getName() + ".xml");
+												}
+											}
+										}
+									}
+								}
+								SBMLDocument sbmlDocument=partsHandler.GetInteractionModel(interaction);
+								if (sbmlDocument != null) {
+									sbmlDocument.setLevelAndVersion(SBML_LEVEL, SBML_VERSION);
+									SBMLWriter writer = new SBMLWriter();
+									writer.writeSBMLToFile(sbmlDocument, root + separator + interaction.getName() + ".xml");
+									SBMLDocument document = SBMLutilities.readSBML(root + separator + interaction.getName() + ".xml");
+									SBMLutilities.check(root + separator + interaction.getName() + ".xml", document, false, false);
+									writer.writeSBMLToFile(document, root + separator + interaction.getName() + ".xml");
+									addToTree(interaction.getName() + ".xml");
+								}
+							}
+						}
+						else {
+							JOptionPane.showMessageDialog(frame, "There are no interactions associated with this part in the reposiotry.", "No Interactions",
+									JOptionPane.ERROR_MESSAGE);
+						}
+					}
+				}
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
