@@ -62,6 +62,12 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	private JComboBox placeMarking;
 	
 	private JComboBox portDir;
+	
+	private JComboBox dimentionType;
+	
+	private JComboBox dimentionX;
+	
+	private JComboBox dimentionY;
 
 	private BioModel bioModel;
 
@@ -256,18 +262,19 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	 */
 	public String parametersEditor(String option,String selected,boolean isBoolean,boolean isPlace) {
 		JPanel parametersPanel;
+		//TODO: Ask about possible window dimensions
 		if (paramsOnly) {
 			if (isBoolean || isPlace) {
-				parametersPanel = new JPanel(new GridLayout(6, 2));
-			} else {
 				parametersPanel = new JPanel(new GridLayout(8, 2));
+			} else {
+				parametersPanel = new JPanel(new GridLayout(10, 2));
 			}
 		}
 		else {
 			if (isBoolean || isPlace) {
-				parametersPanel = new JPanel(new GridLayout(4, 2));
-			} else {
 				parametersPanel = new JPanel(new GridLayout(6, 2));
+			} else {
+				parametersPanel = new JPanel(new GridLayout(8, 2));
 			}
 		}
 		JLabel idLabel = new JLabel("ID:");
@@ -277,6 +284,26 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		JLabel unitLabel = new JLabel("Units:");
 		JLabel constLabel = new JLabel("Constant:");
 		JLabel onPortLabel = new JLabel("Port Type:");
+		
+		dimentionType = new JComboBox();
+		dimentionType.addItem("Scalar");
+		dimentionType.addItem("Vector");
+		dimentionType.addItem("Matrix");
+		dimentionX = new JComboBox();
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
+			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
+			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
+				dimentionX.addItem(param.getId());
+			}
+		}
+		dimentionY = new JComboBox();
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
+			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
+			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
+				dimentionY.addItem(param.getId());
+			}
+		}
+		
 		paramID = new JTextField();
 		paramName = new JTextField();
 		paramValue = new JTextField();
@@ -556,6 +583,11 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		}
 		parametersPanel.add(onPortLabel);
 		parametersPanel.add(portDir);
+		parametersPanel.add(dimentionType);
+		parametersPanel.add(dimentionX);
+		//TODO: Crude, but effective?
+		parametersPanel.add(new JLabel());
+		parametersPanel.add(dimentionY);
 		Object[] options = { option, "Cancel" };
 		String editorTitle = "Parameter Editor";
 		if (isPlace) {
