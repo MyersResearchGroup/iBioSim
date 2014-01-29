@@ -65,6 +65,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	
 	private JComboBox dimentionType;
 	
+	private JTextField dimentionSize;
+	
 	private JComboBox dimentionX;
 	
 	private JComboBox dimentionY;
@@ -289,6 +291,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		dimentionType.addItem("Scalar");
 		dimentionType.addItem("Vector");
 		dimentionType.addItem("Matrix");
+		dimentionSize = new JTextField();
 		dimentionX = new JComboBox();
 		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
 			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
@@ -583,11 +586,20 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		}
 		parametersPanel.add(onPortLabel);
 		parametersPanel.add(portDir);
+		
 		parametersPanel.add(dimentionType);
-		parametersPanel.add(dimentionX);
-		//TODO: Crude, but effective?
-		parametersPanel.add(new JLabel());
-		parametersPanel.add(dimentionY);
+		if(dimentionType.getSelectedItem().equals("Scalar")){
+			parametersPanel.add(dimentionSize);
+		}
+		else if(dimentionType.getSelectedItem().equals("Vector")){
+			parametersPanel.add(dimentionX);
+			parametersPanel.add(new JLabel());
+			//TODO: Crude, but effective?
+			//TODO: turn dimentionY gray
+			//dimentionY.setVisible(false); ?
+			parametersPanel.add(dimentionY);
+		}
+		
 		Object[] options = { option, "Cancel" };
 		String editorTitle = "Parameter Editor";
 		if (isPlace) {
