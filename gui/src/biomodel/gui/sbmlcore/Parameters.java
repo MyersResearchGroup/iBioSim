@@ -62,14 +62,17 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	private JComboBox placeMarking;
 	
 	private JComboBox portDir;
+
+	//Added for actionlistener
+	private JPanel parametersPanel;
 	
-	private JComboBox dimentionType;
+	private JComboBox dimensionType;
 	
-	private JTextField dimentionSize;
+	private JTextField dimensionSize;
 	
-	private JComboBox dimentionX;
+	private JComboBox dimensionX;
 	
-	private JComboBox dimentionY;
+	private JComboBox dimensionY;
 
 	private BioModel bioModel;
 
@@ -263,7 +266,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	 * Creates a frame used to edit parameters or create new ones.
 	 */
 	public String parametersEditor(String option,String selected,boolean isBoolean,boolean isPlace) {
-		JPanel parametersPanel;
+		// Old code:
+		// Jpanel parametersPanel;
 		//TODO: Ask about possible window dimensions
 		if (paramsOnly) {
 			if (isBoolean || isPlace) {
@@ -287,23 +291,24 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		JLabel constLabel = new JLabel("Constant:");
 		JLabel onPortLabel = new JLabel("Port Type:");
 		
-		dimentionType = new JComboBox();
-		dimentionType.addItem("Scalar");
-		dimentionType.addItem("Vector");
-		dimentionType.addItem("Matrix");
-		dimentionSize = new JTextField();
-		dimentionX = new JComboBox();
+		dimensionType = new JComboBox();
+		dimensionType.addItem("Scalar");
+		dimensionType.addItem("Vector");
+		dimensionType.addItem("Matrix");
+		dimensionType.addActionListener(this);
+		dimensionSize = new JTextField();
+		dimensionX = new JComboBox();
 		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
 			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
 			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
-				dimentionX.addItem(param.getId());
+				dimensionX.addItem(param.getId());
 			}
 		}
-		dimentionY = new JComboBox();
+		dimensionY = new JComboBox();
 		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
 			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
 			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
-				dimentionY.addItem(param.getId());
+				dimensionY.addItem(param.getId());
 			}
 		}
 		
@@ -586,19 +591,15 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		}
 		parametersPanel.add(onPortLabel);
 		parametersPanel.add(portDir);
-		
-		parametersPanel.add(dimentionType);
-		if(dimentionType.getSelectedItem().equals("Scalar")){
-			parametersPanel.add(dimentionSize);
-		}
-		else if(dimentionType.getSelectedItem().equals("Vector")){
-			parametersPanel.add(dimentionX);
-			parametersPanel.add(new JLabel());
-			//TODO: Crude, but effective?
-			//TODO: turn dimentionY gray
-			//dimentionY.setVisible(false); ?
-			parametersPanel.add(dimentionY);
-		}
+
+		//TODO: add reader to see what dimension type the parameter has when already set
+		parametersPanel.add(dimensionType);
+		// if previously set to vector make sure to add dimensionX and not dimensionSize
+		parametersPanel.add(dimensionX);
+		//TODO: Crude, but effective?
+		parametersPanel.add(new JLabel());
+		dimensionY.setEnabled(false);
+		parametersPanel.add(dimensionY);
 		
 		Object[] options = { option, "Cancel" };
 		String editorTitle = "Parameter Editor";
@@ -993,6 +994,28 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						parameters.setSelectedIndex(index - 1);
 					}
 				}
+			}
+		}
+		// if the dimension type is changed
+		else if (e.getSource() == dimensionType) {
+			int index = dimensionType.getSelectedIndex();
+			if (index == 0) {
+				parametersPanel.remove(dimensionX);
+				parametersPanel.add(dimensionSize);
+				dimensionY.setEnabled(false);
+			}
+			else if (index == 1) {
+				parametersPanel.remove(dimensionSize);
+				//TODO: Why doesn't it add the combo box???
+				parametersPanel.add(dimensionX);
+				dimensionY.setEnabled(false);
+			}
+			else if (index == 2) {
+				parametersPanel.remove(dimensionSize);
+				//TODO: Why doesn't it add the combo box???
+				//TODO: Clear dimensionSize of content?
+				parametersPanel.add(dimensionX);
+				dimensionY.setEnabled(true);
 			}
 		}
 	}
