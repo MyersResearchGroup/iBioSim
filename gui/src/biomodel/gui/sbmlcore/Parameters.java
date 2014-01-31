@@ -586,13 +586,52 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		parametersPanel.add(portDir);
 
 		//TODO: add reader to see what dimension type the parameter has when already set
+//		int i = 0;
+//		while(i < bioModel.getParameterArray().getListOfParameters().size()){
+//			if(bioModel.getParameterArray().getListOfParameters().get(i).equals(paramID)){
+//				int choice = bioModel.getParameterArray().getListOfParameters().get(i).getChoice();
+//				switch: choice
+//					case:1
+//						int xDimension = bioModel.getParameterArray().getListOfParameters().get(i).getChoice(1);
+//					case:2
+//						int xDimension = bioModel.getParameterArray().getListOfParameters().get(i).getChoice(1);
+//						int yDimension = bioModel.getParameterArray().getListOfParameters().get(i).getChoice(2);
+//				break;
+//			} else {
+//				i++;
+//			}
+//		}
+//		dimensionType.setSelectedIndex(choice);
 		parametersPanel.add(dimensionType);
-		dimensionX.setEnabled(false);
-		parametersPanel.add(dimensionX);
-		//TODO: Crude, but effective?
-		parametersPanel.add(new JLabel());
-		dimensionY.setEnabled(false);
-		parametersPanel.add(dimensionY);
+//		switch (choice){
+//		case 1: 
+			dimensionX.setEnabled(false);
+			parametersPanel.add(dimensionX);
+			//TODO: Crude, but effective?
+			parametersPanel.add(new JLabel());
+			dimensionY.setEnabled(false);
+			parametersPanel.add(dimensionY);
+//			break;
+//		case 2:
+//			dimensionX.setSelectedIndex(xDimension);
+//			dimensionX.setEnabled(true);
+//			parametersPanel.add(dimensionX);
+//			//TODO: Crude, but effective?
+//			parametersPanel.add(new JLabel());
+//			dimensionY.setEnabled(false);
+//			parametersPanel.add(dimensionY);
+//			break;
+//		default:		
+//			dimensionX.setSelectedIndex(xDimension);
+//			dimensionX.setEnabled(false);
+//			parametersPanel.add(dimensionX);
+//			//TODO: Crude, but effective?
+//			parametersPanel.add(new JLabel());
+//			dimensionY.setSelectedIndex(yDimension);
+//			dimensionY.setEnabled(false);
+//			parametersPanel.add(dimensionY);
+//			break;
+//		}
 		
 		Object[] options = { option, "Cancel" };
 		String editorTitle = "Parameter Editor";
@@ -883,6 +922,9 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						bioModel.makeUndoPoint();
 					}
 				}
+				if(!error){
+					//TODO: Here is where Scott will write the dimension info into the bioModel
+				}
 			}
 			if (error) {
 				value = JOptionPane.showOptionDialog(Gui.frame, parametersPanel, editorTitle, JOptionPane.YES_NO_OPTION,
@@ -1004,6 +1046,14 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				dimensionX.setEnabled(true);
 				dimensionY.setEnabled(true);
 			}
+		}
+	}
+	
+	public int getChoice(int whatToGet){
+		switch (whatToGet){
+		case 1: return dimensionX.getSelectedIndex();
+		case 2: return dimensionY.getSelectedIndex(); 
+		default: return dimensionType.getSelectedIndex();
 		}
 	}
 
