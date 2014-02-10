@@ -26,7 +26,6 @@
 	<classpathentry kind="lib" path="gui/lib/org-jdesktop-layout.jar"/>
 	<classpathentry kind="lib" path="gui/lib/pdf-transcoder.jar"/>
 	<classpathentry kind="lib" path="gui/lib/xalan-2.6.0.jar"/>
-	<classpathentry kind="lib" path="gui/lib/xerces_2_5_0.jar"/>
 	<classpathentry kind="lib" path="gui/lib/xml-apis-ext.jar"/>
 	<classpathentry kind="lib" path="gui/lib/xml-apis.jar"/>
 	<classpathentry kind="lib" path="gui/lib/swing-layout-1.0.3.jar"/>
@@ -72,5 +71,6 @@
 	<classpathentry kind="lib" path="gui/lib/libSBOLj-0.7.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jsbml-1.0-a1-with-dependencies-rev1556.jar"/>
 	<classpathentry kind="lib" path="gui/lib/JParts-1.0-SNAPSHOT-withDependencies.jar"/>
+	<classpathentry kind="lib" path="gui/lib/xerces_2_11_0.jar"/>
 	<classpathentry kind="output" path="gui/dist/classes"/>
 </classpath>
