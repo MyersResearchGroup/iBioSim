@@ -164,7 +164,7 @@ public class GlobalConstants {
 	public static final String SBOL_SYNTH_LIBS_DEFAULT = "";
 	public static final String SBOL_SYNTH_METHOD_PROPERTY = "synthesis.method";
 	public static final String SBOL_SYNTH_METHOD_PREFERENCE = "biosim." + SBOL_SYNTH_METHOD_PROPERTY;
-	public static final String SBOL_SYNTH_EXHAUST_BB = "Exhaustive Branch and Bound";
+	public static final String SBOL_SYNTH_EXHAUST_BB = "Exact Branch and Bound";
 	public static final String SBOL_SYNTH_METHOD_DEFAULT = SBOL_SYNTH_EXHAUST_BB;
 	public static final String SBOL_SYNTH_GREEDY_BB = "Greedy Branch and Bound";
 	public static final String SBOL_SYNTH_STRUCTURAL_METHODS = SBOL_SYNTH_EXHAUST_BB + "," + SBOL_SYNTH_GREEDY_BB;
