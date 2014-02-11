@@ -99,7 +99,33 @@ public class AnnotationUtility {
 		}
 		return null;
 	}
+	
+	public static void setVectorSizeAnnotation(SBase sbmlObject, String length) {
+		// TODO: Scott fill in these methods
+	}
 
+	public static void removeVectorSizeAnnotation(SBase sbmlObject) {
+		// TODO: Scott fill in these methods
+	}
+	
+	public static String parseVectorSizeAnnotation(SBase sbmlObject) {
+		// TODO: Scott fill in these methods
+		return null;
+	}
+	
+	public static void setMatrixSizeAnnotation(SBase sbmlObject, String numRows, String numCols) {
+		// TODO: Scott fill in these methods
+	}
+
+	public static void removeMatrixSizeAnnotation(SBase sbmlObject) {
+		// TODO: Scott fill in these methods
+	}
+	
+	public static String[] parseMatrixSizeAnnotation(SBase sbmlObject) {
+		// TODO: Scott fill in these methods
+		return null;
+	}
+	
 	public static void setArraySizeAnnotation(SBase sbmlObject, int size) {
 		if (sbmlObject.isSetAnnotation())
 			removeArraySizeAnnotation(sbmlObject);
