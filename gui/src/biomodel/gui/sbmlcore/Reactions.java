@@ -808,11 +808,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							error = SBMLutilities.checkNumFunctionArguments(gcm.getSBMLDocument(), SBMLutilities.myParseFormula(kineticLaw.getText().trim()));
 						}
 					}
-				} 
-				else {
-					error = !fluxBoundisGood(kineticLaw.getText().replaceAll("\\s",""), reactionId);
+					else {
+						// TODO: see method
+						error = !fluxBoundisGood(kineticLaw.getText().replaceAll("\\s",""), reactionId);
+					}
 				}
-
 			}
 			if(kineticFluxLabel.getSelectedItem().equals("Kinetic Law:")){
 				if (!error && complex==null && production==null) {

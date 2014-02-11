@@ -363,7 +363,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Object[] options = { "Ok", "Close" };
-				JPanel p = new JPanel(new GridLayout(4, 2));
+				JPanel p = new JPanel(new GridLayout(6, 2));
 				JLabel startLabel = new JLabel("Start:");
 				JLabel stopLabel = new JLabel("Stop:");
 				JLabel stepLabel = new JLabel("Step:");
@@ -418,9 +418,9 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						isPlace = true;
 					}
 					if (paramsOnly) {
-						parametersPanel.setLayout(new GridLayout(6, 2));
+						parametersPanel.setLayout(new GridLayout(8, 2));
 					} else {
-						parametersPanel.setLayout(new GridLayout(4, 2));
+						parametersPanel.setLayout(new GridLayout(6, 2));
 					}
 					if (paramet.getValue()==0) {
 						placeMarking.setSelectedIndex(0);
@@ -431,9 +431,9 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 					rateParam = bioModel.getSBMLDocument().getModel().getParameter(selected + "_" + GlobalConstants.RATE);
 					if (rateParam!=null) {
 						if (paramsOnly) {
-							parametersPanel = new JPanel(new GridLayout(9, 2));
+							parametersPanel = new JPanel(new GridLayout(10, 2));
 						} else {
-							parametersPanel = new JPanel(new GridLayout(7, 2));
+							parametersPanel = new JPanel(new GridLayout(8, 2));
 						}
 						if (paramsOnly) {
 							if (rateParam.isSetValue()) {
@@ -584,6 +584,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		parametersPanel.add(onPortLabel);
 		parametersPanel.add(portDir);
 
+		// TODO: String = parseVectorAnnotation, if (null) (String,String) = parseMatrixAnnotation, if (null), then scalar
 		//TODO: add reader to see what dimension type the parameter has when already set
 //		int i = 0;
 //		while(i < bioModel.getParameterArray().getListOfParameters().size()){
@@ -754,6 +755,10 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							Parameter paramet = bioModel.getSBMLDocument().getModel().getParameter(selected);
 							paramet.setId(paramID.getText().trim());
 							paramet.setName(paramName.getText().trim());
+							// TODO: SCOTT: add dimensions here
+							// if (paramet is vector) removeVectorSize(paramet)
+							// if (paramet is matrix) removeMatrixSize(paramet)
+							// Call setVectorSizeAnnotation(paramet,String) OR setMatrixSizeAnnotation(paramet,String,String)
 							if (paramConst.getSelectedItem().equals("true")) {
 								paramet.setConstant(true);
 							}
@@ -877,6 +882,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							Parameter paramet = bioModel.getSBMLDocument().getModel().createParameter();
 							paramet.setId(paramID.getText().trim());
 							paramet.setName(paramName.getText().trim());
+							// TODO: SCOTT: add dimensions here
+							// Call SetVectorSizeAnnotation(paramet,String) OR SetMatrixSizeAnnotation(paramet,String,String)
 							if (paramConst.getSelectedItem().equals("true")) {
 								paramet.setConstant(true);
 							}
@@ -920,9 +927,6 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						modelEditor.setDirty(true);
 						bioModel.makeUndoPoint();
 					}
-				}
-				if(!error){
-					//TODO: Here is where Scott will write the dimension info into the bioModel
 				}
 			}
 			if (error) {
