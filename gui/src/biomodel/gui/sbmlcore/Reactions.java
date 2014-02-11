@@ -810,7 +810,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					}
 				} 
 				else {
-					// TODO: see method
 					error = !fluxBoundisGood(kineticLaw.getText().replaceAll("\\s",""), reactionId);
 				}
 
@@ -947,7 +946,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 										fxLess.setOperation(FluxBound.Operation.LESS_EQUAL);
 										fxLess.setValue(lessValue);
 										fxLess.setReaction(reactionId);
-										//TODO: should I add infinity?
 									}
 									catch(Exception e){
 										double greaterValue = Double.parseDouble(userInput[0]);
@@ -957,7 +955,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 										fxGreater.setReaction(reactionId);
 									}
 								}
-								// TODO: deal with one sided bounds
 							
 						}
 						else if(kineticLaw.getText().contains(">=")){
@@ -987,9 +984,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 									FluxBound fxLess = bioModel.getSBMLFBC().createFluxBound();
 									fxLess.setOperation(FluxBound.Operation.LESS_EQUAL);
 									fxLess.setValue(lessValue);
-									fxLess.setReaction(reactionId);
-									//TODO: should I add infinity?
-									
+									fxLess.setReaction(reactionId);									
 								}
 							}
 						}
@@ -1134,7 +1129,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						error = checkKineticLawUnits(react.getKineticLaw());
 					}
 					else{
-						// TODO: needs to be copied from above
 						error = !fluxBoundisGood(kineticLaw.getText().replaceAll("\\s",""), reactionId);
 					}
 						
@@ -3265,14 +3259,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			return false;
 		}
 	}
-	// TODO: if contains >= 
-	//			split >=
-	//			if (length == 3)
-	//				check for double, reactionId, double
-	//				check double1 >= double2
-	//			else if (length == 2)
-	//				check for (double, reactionId) OR (reactionId,double)
-	//			else ERROR
 
 	public void setPanels(InitialAssignments initialsPanel, Rules rulesPanel) {
 		this.initialsPanel = initialsPanel;

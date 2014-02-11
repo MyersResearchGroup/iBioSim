@@ -262,7 +262,6 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	 */
 	public String parametersEditor(String option,String selected,boolean isBoolean,boolean isPlace) {
 		JPanel parametersPanel;
-		//TODO: Ask about possible window dimensions
 		if (paramsOnly) {
 			if (isBoolean || isPlace) {
 				parametersPanel = new JPanel(new GridLayout(8, 2));
@@ -602,12 +601,14 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 //			}
 //		}
 //		dimensionType.setSelectedIndex(choice);
+		if(paramsOnly){
+			dimensionType.setEnabled(false);
+		}
 		parametersPanel.add(dimensionType);
 //		switch (choice){
 //		case 1: 
 			dimensionX.setEnabled(false);
 			parametersPanel.add(dimensionX);
-			//TODO: Crude, but effective?
 			parametersPanel.add(new JLabel());
 			dimensionY.setEnabled(false);
 			parametersPanel.add(dimensionY);
@@ -616,7 +617,6 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 //			dimensionX.setSelectedIndex(xDimension);
 //			dimensionX.setEnabled(true);
 //			parametersPanel.add(dimensionX);
-//			//TODO: Crude, but effective?
 //			parametersPanel.add(new JLabel());
 //			dimensionY.setEnabled(false);
 //			parametersPanel.add(dimensionY);
@@ -625,7 +625,6 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 //			dimensionX.setSelectedIndex(xDimension);
 //			dimensionX.setEnabled(false);
 //			parametersPanel.add(dimensionX);
-//			//TODO: Crude, but effective?
 //			parametersPanel.add(new JLabel());
 //			dimensionY.setSelectedIndex(yDimension);
 //			dimensionY.setEnabled(false);
