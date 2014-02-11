@@ -82,7 +82,14 @@ public class DynamicSimulation {
 		catch (XMLStreamException e) {
 			e.printStackTrace();
 			return;
-		}		
+		}
+		finally
+		{
+			if(hSimulator != null)
+			{
+				hSimulator.deleteFiles();
+			}
+		}
 		double val1 = System.currentTimeMillis();
 		for (int run = 1; run <= runs; ++run) {
 			
