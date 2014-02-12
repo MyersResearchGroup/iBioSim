@@ -41,7 +41,7 @@ public class GridPanel extends JPanel implements ActionListener {
 	 * @param modelEditor the gui/editor
 	 * @param bioModel the gcm file to work with
 	 */
-	private GridPanel(ModelEditor modelEditor, BioModel bioModel, boolean editMode) {
+	public GridPanel(ModelEditor modelEditor, BioModel bioModel) {
 		
 		//call the JPanel constructor to make this a border layout panel
 		super(new BorderLayout());
@@ -58,13 +58,6 @@ public class GridPanel extends JPanel implements ActionListener {
 		//being added to a cell population
 		componentList = modelEditor.getComponentsList();
 		componentList.add("none");
-		
-		//editMode is false means creating a grid
-		if (!editMode)
-			built = buildPanel() == true ? true : false;
-		//editMode is true means editing a grid
-		else
-			built = buildEditPanel() == true ? true : false;
 	}
 	
 	/**
@@ -72,10 +65,14 @@ public class GridPanel extends JPanel implements ActionListener {
 	 * 
 	 * @return if a population is being built or not
 	 */
-	public static boolean showGridPanel(ModelEditor modelEditor, BioModel bioModel, boolean editMode) {
+	public boolean showGridPanel(boolean editMode) {
 		
-		GridPanel gridPanel = new GridPanel(modelEditor, bioModel, editMode);
-		
+		//editMode is false means creating a grid
+		if (!editMode)
+			built = buildPanel() == true ? true : false;
+		//editMode is true means editing a grid
+		else
+			built = buildEditPanel() == true ? true : false;		
 		return built;
 	}
 	
@@ -194,10 +191,8 @@ public class GridPanel extends JPanel implements ActionListener {
 				grid.createGrid(rowCount, colCount, gcm, compGCMName);
 				
 				return true;
-			}
-			Grid grid = gcm.getGrid();
-			grid.setEnabled(true);
-			return true;
+			} 
+			return false;
 		}
 		
 		return false;

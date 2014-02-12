@@ -203,11 +203,19 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 			}
 			fields.get("Assignment").setValue(tempArray[1]);
 		}
-
+		/*
 		boolean display = false;
 		while (!display) {
 			display = openGui(oldName);
 		}
+		*/
+	}
+	
+	public void displayTransitionGui() {
+		boolean display = false;
+		while (!display) {
+			display = openGui(oldName);
+		}	
 	}
 
 	private boolean checkValues() {

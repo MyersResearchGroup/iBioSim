@@ -23,7 +23,6 @@ import javax.xml.stream.XMLStreamException;
 
 import main.Gui;
 import main.Log;
-import main.util.ExampleFileFilter;
 import main.util.MutableBoolean;
 
 import org.sbml.jsbml.Compartment;
@@ -189,8 +188,9 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			loadParams();
 		}
 		if (grid) {
-			launchGridPanel();
-			rebuildGui();
+			if (launchGridPanel()) {
+				rebuildGui();
+			}
 		} else {
 			buildGui();
 		}
@@ -2005,22 +2005,25 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	/**
 	 * launches a panel for grid creation
 	 */
-	public void launchGridPanel() {
+	public boolean launchGridPanel() {
 		
 		//static method that builds the grid panel
 		//the false field means to open the grid creation panel
 		//and not the grid editing panel
-		boolean created = GridPanel.showGridPanel(this, biomodel, false);
+		GridPanel gridPanel = new GridPanel(this,biomodel);
+		boolean created = gridPanel.showGridPanel(false);
 
 		//if the grid is built, then draw it and so on
 		if (created) {
 			
 			this.setDirty(true);
+			return true;
 			//this.refresh();
 			//schematic.getGraph().buildGraph();
 			//schematic.display();
 			//biomodel.makeUndoPoint();
 		}
+		return false;
 	}
 	
 	public static SchemeChooserPanel getSchemeChooserPanel(

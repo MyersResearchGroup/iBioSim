@@ -435,6 +435,7 @@ public class TransitionsPanel extends JPanel implements ActionListener, MouseLis
 			else {
 				AssignmentPanel assignmentPanel = new AssignmentPanel(variable, list, varAssignments,
 						rateAssignments, boolAssignments, intAssignments, lhpn);
+				assignmentPanel.displayTransitionGui();
 			}
 		}
 
@@ -498,6 +499,7 @@ public class TransitionsPanel extends JPanel implements ActionListener, MouseLis
 			if (flag) {
 				AssignmentPanel assignmentPanel = new AssignmentPanel(assignments.getSelectedValue().toString(), assignments, varAssignments,
 					rateAssignments, boolAssignments, intAssignments, lhpn);
+				assignmentPanel.displayTransitionGui();
 			}
 		}
 	}

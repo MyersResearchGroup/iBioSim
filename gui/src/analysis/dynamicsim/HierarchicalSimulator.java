@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -427,7 +426,8 @@ public abstract class HierarchicalSimulator {
 	public static void copyFile( File from, File to ) throws IOException {
 		if(to.exists())
 			to.delete();
-		Files.copy( from.toPath(), to.toPath() );
+		// TODO: this does not appear to be part of Java 1.6
+		//Files.copy( from.toPath(), to.toPath() );
 	}
 
 	private static boolean checkFileExists(String filename)
@@ -4473,16 +4473,14 @@ public abstract class HierarchicalSimulator {
 		protected double maxPropensity = Double.MIN_VALUE / 10.0;
 
 		//file writing variables
-		protected FileWriter TSDWriter = null;
-		protected BufferedWriter bufferedTSDWriter = null;
-
-		protected boolean printConcentrations = false;
 		protected boolean noConstraintsFlag = true;
 		protected boolean noRuleFlag = true;
-		protected JFrame running = new JFrame();
 
-
-		PsRandom prng = new PsRandom();
+		//protected FileWriter TSDWriter = null;
+		//protected BufferedWriter bufferedTSDWriter = null;
+		//protected boolean printConcentrations = false;
+		//protected JFrame running = new JFrame();
+		//PsRandom prng = new PsRandom();
 
 		//stores events in order of fire time and priority
 		//protected LinkedList<EventToFire> triggeredEventQueue = null;
