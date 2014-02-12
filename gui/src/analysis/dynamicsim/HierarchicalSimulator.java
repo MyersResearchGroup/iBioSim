@@ -36,7 +36,7 @@ import org.sbml.jsbml.ext.comp.CompSBasePlugin;
 import org.sbml.jsbml.ext.comp.ExternalModelDefinition;
 import org.sbml.jsbml.ext.comp.ModelDefinition;
 import org.sbml.jsbml.ext.comp.ReplacedBy;
-import org.sbml.jsbml.ext.comp.SBaseRef;
+//import org.sbml.jsbml.ext.comp.SBaseRef;
 import org.sbml.jsbml.Event;
 import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.KineticLaw;
@@ -59,7 +59,7 @@ import org.sbml.jsbml.Model;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLWriter;
-import org.sbml.jsbml.SBase;
+//import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLErrorLog;
@@ -423,12 +423,7 @@ public abstract class HierarchicalSimulator {
 		}
 	}
 
-	public static void copyFile( File from, File to ) throws IOException {
-		if(to.exists())
-			to.delete();
-		// TODO: this does not appear to be part of Java 1.6
-		//Files.copy( from.toPath(), to.toPath() );
-	}
+
 
 	private static boolean checkFileExists(String filename)
 	{
@@ -481,11 +476,16 @@ public abstract class HierarchicalSimulator {
 				if(sbmlComp.getListOfExternalModelDefinitions() != null &&
 						sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()) != null)
 				{
+					SBMLDocument extDoc = null;
 					if(checkFileExists(alternativePath+separator+sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()).getSource()))
 					{
-						copyFile(new File(alternativePath+separator+sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()).getSource()), new File(filename));
+						//copyFile(new File(alternativePath+separator+sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()).getSource()), new File(filename));
+						extDoc = SBMLReader.read(new File(alternativePath+separator+sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()).getSource()));
 					}
-					SBMLDocument extDoc = SBMLReader.read(new File(filename));
+					else
+					{
+						extDoc = SBMLReader.read(new File(filename));
+					}
 					CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(extDoc.getModel());
 					CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(extDoc);
 
