@@ -404,12 +404,17 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 
 			if(id.equals("topmodel"))
 			{
+				if(topmodel.isDeletedByMetaID(affectedReactionID))
+					continue;
+				
 				HashSet<StringDoublePair> reactantStoichiometrySet = 
 						topmodel.reactionToReactantStoichiometrySetMap.get(affectedReactionID);
 				updatePropensities(topmodel, affectedReactionID,reactantStoichiometrySet);
 			}
 			else
 			{
+				if(submodels.get(id).isDeletedByMetaID(affectedReactionID))
+					continue;
 				HashSet<StringDoublePair> reactantStoichiometrySet = 
 
 						submodels.get(id).reactionToReactantStoichiometrySetMap.get(affectedReactionID);
@@ -423,6 +428,13 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 	 */
 	private void updatePropensities(ModelState model, String affectedReactionID, HashSet<StringDoublePair> reactantStoichiometrySet) 
 	{
+
+		if(model.reactionToFormulaMap.get(affectedReactionID) == null)
+		{
+
+			model.reactionToPropensityMap.put(affectedReactionID, 0.0);
+			return;
+		}
 		boolean notEnoughMoleculesFlag = false; 
 
 		//check for enough molecules for the reaction to occur
@@ -449,8 +461,8 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		double oldPropensity = model.reactionToPropensityMap.get(affectedReactionID);
 
 		//add the difference of new v. old propensity to the total propensity
-		model.propensity += newPropensity - oldPropensity;
-
+		//model.propensity += newPropensity - oldPropensity;
+		model.propensity = newPropensity - oldPropensity;
 		//totalPropensity += newPropensity - oldPropensity;
 
 		model.reactionToPropensityMap.put(affectedReactionID, newPropensity);

@@ -9,7 +9,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
-
 import main.Gui;
 import main.util.dataparser.TSDParser;
 
@@ -159,6 +158,7 @@ public class HierarchicalSimWrapper {
 			JOptionPane.showMessageDialog(Gui.frame, "Unable to create sbml file.",
 					"Error Creating File", JOptionPane.ERROR_MESSAGE);
 		}
+		
 
 
 	}
