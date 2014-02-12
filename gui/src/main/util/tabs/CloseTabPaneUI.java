@@ -248,7 +248,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 	@Override
 	protected MouseListener createMouseListener() {
-		return new MyMouseHandler(biosim);
+		return new MyMouseHandler();
 	}
 
 	protected ScrollableTabButton createScrollableTabButton(int direction) {
@@ -1516,11 +1516,9 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	}
 
 	class MyMouseHandler extends MouseHandler {
-		private Gui biosim;
 
-		public MyMouseHandler(Gui biosim) {
+		public MyMouseHandler() {
 			super();
-			this.biosim = biosim;
 		}
 
 		@Override

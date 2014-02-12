@@ -150,7 +150,7 @@ public class Synthesizer {
 		return bestSolutionCost;
 	}
 	
-	private void documentUncoveredNodes(List<SynthesisNode> nextNodes, List<SynthesisNode> currentNodes) {
+	private static void documentUncoveredNodes(List<SynthesisNode> nextNodes, List<SynthesisNode> currentNodes) {
 		int j = 0;
 		if (nextNodes.size() < currentNodes.size()) {
 			if (nextNodes.size() > 1)
@@ -212,7 +212,7 @@ public class Synthesizer {
 		return (bestCaseCost < bestSolutionCost);
 	}
 	
-	private void constrainNodes(List<SynthesisNode> specNodes, List<SynthesisNode> coverNodes) {
+	private static void constrainNodes(List<SynthesisNode> specNodes, List<SynthesisNode> coverNodes) {
 		for (int i = 0; i < specNodes.size(); i++)
 			specNodes.get(i).setCoverConstraint(coverNodes.get(i).getSignal());
 	}

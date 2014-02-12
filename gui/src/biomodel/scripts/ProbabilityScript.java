@@ -59,8 +59,6 @@ public class ProbabilityScript extends TestCase {
 		lowSpecies.add(togLow);
 		lowSpecies.add(siLow);
 		lowSpecies.add(specialLow);
-
-		script = new GCMScript();
 	}
 
 	public void Promoter() {
@@ -191,7 +189,6 @@ public class ProbabilityScript extends TestCase {
 	
 	private ArrayList<String> specialHigh = null;
 	private ArrayList<String> specialLow = null;
-	private GCMScript script = null;
 
 	private ArrayList<ArrayList<String>> highSpecies = null;
 	private ArrayList<ArrayList<String>> lowSpecies = null;

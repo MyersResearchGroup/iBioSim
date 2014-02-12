@@ -1774,7 +1774,7 @@ public class StateGraph implements Runnable {
 
 		private double piProb;
 
-		private String variables;
+		private String variablesStr;
 
 		private double transitionSum;
 
@@ -1790,13 +1790,13 @@ public class StateGraph implements Runnable {
 			color = 0;
 			currentProb = 0.0;
 			nextProb = 0.0;
-			this.variables = "";
+			this.variablesStr = "";
 			for (String key : variables.keySet()) {
-				if (this.variables.equals("")) {
-					this.variables += key + "=" + variables.get(key);
+				if (this.variablesStr.equals("")) {
+					this.variablesStr += key + "=" + variables.get(key);
 				}
 				else {
-					this.variables += "," + key + "=" + variables.get(key);
+					this.variablesStr += "," + key + "=" + variables.get(key);
 				}
 			}
 			transitionSum = -1;
@@ -1804,11 +1804,11 @@ public class StateGraph implements Runnable {
 		}
 
 		private void addVariable(String variable, String value) {
-			if (this.variables.equals("")) {
-				this.variables += variable + "=" + value;
+			if (this.variablesStr.equals("")) {
+				this.variablesStr += variable + "=" + value;
 			}
 			else {
-				this.variables += "," + variable + "=" + value;
+				this.variablesStr += "," + variable + "=" + value;
 			}
 		}
 
@@ -1854,8 +1854,8 @@ public class StateGraph implements Runnable {
 
 		private HashMap<String, String> getVariables() {
 			HashMap<String, String> vars = new HashMap<String, String>();
-			if (!variables.equals("")) {
-				String[] assignments = variables.split(",");
+			if (!variablesStr.equals("")) {
+				String[] assignments = variablesStr.split(",");
 				for (String assignment : assignments) {
 					String[] split = assignment.split("=");
 					vars.put(split[0], split[1]);

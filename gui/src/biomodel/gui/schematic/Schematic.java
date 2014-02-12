@@ -883,7 +883,8 @@ public class Schematic extends JPanel implements ActionListener {
 			
 			//static method that builds the grid editing panel
 			//the true field means to open the grid edit panel
-			boolean changed = GridPanel.showGridPanel(modelEditor, bioModel, true);
+			GridPanel gridPanel = new GridPanel(modelEditor, bioModel);
+			boolean changed = gridPanel.showGridPanel(true);
 			
 			//if the grid size is changed, then draw it and so on
 			if (changed) {

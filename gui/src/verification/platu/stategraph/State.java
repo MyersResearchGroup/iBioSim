@@ -164,7 +164,8 @@ public class State extends PlatuObj {
     	this.localEnabledOnly = nonLocalEnabled;
     }
 
-    public boolean isFailure() {
+    @SuppressWarnings("static-method")
+	public boolean isFailure() {
         return false;// getType() != getType().NORMAL || getType() !=
         // getType().TERMINAL;
     }
@@ -339,7 +340,8 @@ public class State extends PlatuObj {
        return enabledTrans;
     }
     
-    public String getEnabledSetString() {
+    @SuppressWarnings("static-method")
+	public String getEnabledSetString() {
         String ret = "";
         // for (int i : enabledSet) {
         // ret += i + ", ";

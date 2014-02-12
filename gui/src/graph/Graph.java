@@ -6732,7 +6732,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	private class GraphSpecies {
 		private ShapeAndPaint sP;
 
-		private boolean filled, visible, connected;
+		private boolean speciesFilled, speciesVisible, speciesConnected;
 
 		private String runNumber, species, directory, id;
 
@@ -6741,9 +6741,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		private GraphSpecies(Shape s, String p, boolean filled, boolean visible, boolean connected, String runNumber, String id, String species,
 				int xnumber, int number, String directory) {
 			sP = new ShapeAndPaint(s, p);
-			this.filled = filled;
-			this.visible = visible;
-			this.connected = connected;
+			this.speciesFilled = filled;
+			this.speciesVisible = visible;
+			this.speciesConnected = connected;
 			this.runNumber = runNumber;
 			this.species = species;
 			this.xnumber = xnumber;
@@ -6777,15 +6777,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 
 		private void setVisible(boolean b) {
-			visible = b;
+			speciesVisible = b;
 		}
 
 		private void setFilled(boolean b) {
-			filled = b;
+			speciesFilled = b;
 		}
 
 		private void setConnected(boolean b) {
-			connected = b;
+			speciesConnected = b;
 		}
 
 		private int getXNumber() {
@@ -6805,15 +6805,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 
 		private boolean getFilled() {
-			return filled;
+			return speciesFilled;
 		}
 
 		private boolean getVisible() {
-			return visible;
+			return speciesVisible;
 		}
 
 		private boolean getConnected() {
-			return connected;
+			return speciesConnected;
 		}
 
 		private String getRunNumber() {
