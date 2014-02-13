@@ -322,11 +322,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private static final String[] bugReportTypes = new String[] { "BUG", "CHANGE", "FEATURE" };
 	
-	private static final String lemaVersion = "1.9";
+	private static final String lemaVersion = "2.0";
 	
 	private static final String atacsVersion = "6.1";
 	
-	private static final String iBioSimVersion = "2.5.1";
+	private static final String iBioSimVersion = "2.6";
 		
 	public static class UncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
 		
@@ -1450,7 +1450,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		else {
 			name = new JLabel("iBioSim", SwingConstants.CENTER);
 			version = new JLabel("Version "+iBioSimVersion, SwingConstants.CENTER);
-			developers = "Nathan Barker\nKevin Jones\nHiroyuki Kuwahara\n"
+			developers = "Nathan Barker\nScott Glass\nKevin Jones\nHiroyuki Kuwahara\n"
 					+ "Curtis Madsen\nChris Myers\nNam Nguyen\nTyler Patterson\nNicholas Roehner\nJason Stevens\nLeandro Watanabe";
 		}
 		Font font = name.getFont();
