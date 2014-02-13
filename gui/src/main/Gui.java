@@ -3677,7 +3677,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	}
 	
 	private void importVirtualPart() {
-		final PartsHandler partsHandler = new PartsHandler("http://www.virtualparts.org");
+		final PartsHandler partsHandler = new PartsHandler("http://sbol.ncl.ac.uk:8081/");
 		if (!showParts && getPartsThread == null) {
 			getPartsThread = new Thread(new Runnable() {
 			    @Override
@@ -3730,7 +3730,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						JPanel button = new JPanel();
 						JPanel all = new JPanel(new BorderLayout());
 						JLabel label = new JLabel("Retrieving Virtual Parts");
-						PartsHandler partsHandler = new PartsHandler("http://sbol.ncl.ac.uk:8081/");
 						Summary summary = partsHandler.GetPartsSummary();
 						int pageCount = summary.getPageCount();
 						JProgressBar progress = new JProgressBar(0, pageCount);
