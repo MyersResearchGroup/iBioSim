@@ -1570,8 +1570,17 @@ public class Run implements ActionListener {
 					} 
 					else if (exitValue == -4) {
 						JOptionPane.showMessageDialog(Gui.frame, "The FBA problem has a singular KKT system.", "Error", JOptionPane.ERROR_MESSAGE);
-					} 
+					}
 					else if (exitValue == -5) {
+						JOptionPane.showMessageDialog(Gui.frame, "The matrix must have at least one row.", "Error", JOptionPane.ERROR_MESSAGE);
+					}
+					else if (exitValue == -6) {
+						JOptionPane.showMessageDialog(Gui.frame, "The matrix is singular.", "Error", JOptionPane.ERROR_MESSAGE);
+					}
+					else if (exitValue == -7) {
+						JOptionPane.showMessageDialog(Gui.frame, "Equalities matrix A must have full rank.", "Error", JOptionPane.ERROR_MESSAGE);
+					}
+					else if (exitValue == -8) {
 						JOptionPane.showMessageDialog(Gui.frame, "Miscellaneous FBA failure (see console for details).", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}

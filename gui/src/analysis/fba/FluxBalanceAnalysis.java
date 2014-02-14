@@ -205,9 +205,12 @@ public class FluxBalanceAnalysis {
 					if (e.getMessage().equals("initial point must be strictly feasible")) return -2;
 					else if (e.getMessage().equals("Infeasible problem")) return -3;
 					else if (e.getMessage().equals("singular KKT system")) return -4;
+					else if (e.getMessage().equals("matrix must have at least one row")) return -5;
+					else if (e.getMessage().equals("matrix is singular")) return -6;
+					else if (e.getMessage().equals("Equalities matrix A must have full rank")) return -7;
 					else {
 						System.out.println(e.getMessage());
-						return -5;
+						return -8;
 					}
 				}
 			}

@@ -33,6 +33,7 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.UnitDefinition;
 
+import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.schematic.ModelEditor;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
@@ -755,10 +756,16 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							Parameter paramet = bioModel.getSBMLDocument().getModel().getParameter(selected);
 							paramet.setId(paramID.getText().trim());
 							paramet.setName(paramName.getText().trim());
-							// TODO: SCOTT: add dimensions here
-							// if (paramet is vector) removeVectorSize(paramet)
-							// if (paramet is matrix) removeMatrixSize(paramet)
-							// Call setVectorSizeAnnotation(paramet,String) OR setMatrixSizeAnnotation(paramet,String,String)
+							//TODO: SCOTT: add dimensions here
+							if (dimensionType.getSelectedIndex() == 1){
+								AnnotationUtility.setVectorSizeAnnotation(paramet,(String) dimensionX.getSelectedItem());
+								AnnotationUtility.removeVectorSizeAnnotation(paramet);
+							}
+							else if (dimensionType.getSelectedIndex() == 2){
+								AnnotationUtility.setMatrixSizeAnnotation(paramet,(String) dimensionX.getSelectedItem(), 
+										(String) dimensionY.getSelectedItem());
+								AnnotationUtility.removeMatrixSizeAnnotation(paramet);
+							}
 							if (paramConst.getSelectedItem().equals("true")) {
 								paramet.setConstant(true);
 							}
@@ -883,7 +890,13 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							paramet.setId(paramID.getText().trim());
 							paramet.setName(paramName.getText().trim());
 							// TODO: SCOTT: add dimensions here
-							// Call SetVectorSizeAnnotation(paramet,String) OR SetMatrixSizeAnnotation(paramet,String,String)
+							if (dimensionType.getSelectedIndex() == 1){
+								AnnotationUtility.setVectorSizeAnnotation(paramet,(String) dimensionX.getSelectedItem());
+							}
+							else if (dimensionType.getSelectedIndex() == 2){
+								AnnotationUtility.setMatrixSizeAnnotation(paramet,(String) dimensionX.getSelectedItem(), 
+										(String) dimensionY.getSelectedItem());
+							}
 							if (paramConst.getSelectedItem().equals("true")) {
 								paramet.setConstant(true);
 							}
