@@ -101,29 +101,81 @@ public class AnnotationUtility {
 	}
 	
 	public static void setVectorSizeAnnotation(SBase sbmlObject, String length) {
-		// TODO: Scott fill in these methods
+		if (sbmlObject.isSetAnnotation())
+			removeVectorSizeAnnotation(sbmlObject);
+		XMLAttributes attr = new XMLAttributes();
+		attr.add("xmlns:vector", "http://www.fakeuri.com");
+		attr.add("vector:length", ""+length);
+		XMLNode node = new XMLNode(new XMLTriple("vector","http://www.fakeuri.com ","vector"), attr);
+		if (SBMLutilities.appendAnnotation(sbmlObject, node) != JSBML.OPERATION_SUCCESS)
+			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
+					+ SBMLutilities.getId(sbmlObject)); 
 	}
 
 	public static void removeVectorSizeAnnotation(SBase sbmlObject) {
-		// TODO: Scott fill in these methods
+		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+		Pattern vectorSizePattern = Pattern.compile(VECTOR_SIZE_ANNOTATION);
+		Matcher vectorSizeMatcher = vectorSizePattern.matcher(annotation);
+		if (vectorSizeMatcher.find()) {
+			String vectorSizeAnnotation = vectorSizeMatcher.group(0);
+			annotation = annotation.replace(vectorSizeAnnotation, "");
+		}
+		sbmlObject.setAnnotation(new Annotation(annotation));
 	}
 	
 	public static String parseVectorSizeAnnotation(SBase sbmlObject) {
-		// TODO: Scott fill in these methods
+		if (sbmlObject==null)
+			return null;
+		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+		Pattern vectorSizePattern = Pattern.compile(VECTOR_SIZE_ANNOTATION);
+		Matcher vectorSizeMatcher = vectorSizePattern.matcher(annotation);
+		if (vectorSizeMatcher.find() && vectorSizeMatcher.groupCount()==2) {
+			if (vectorSizeMatcher.group(1)!=null) {
+				return (String) vectorSizeMatcher.group(1);
+			}
+			return (String) vectorSizeMatcher.group(2);
+		}
 		return null;
 	}
 	
 	public static void setMatrixSizeAnnotation(SBase sbmlObject, String numRows, String numCols) {
-		// TODO: Scott fill in these methods
+		if (sbmlObject.isSetAnnotation())
+			removeVectorSizeAnnotation(sbmlObject);
+		XMLAttributes attr = new XMLAttributes();
+		attr.add("xmlns:matrix", "http://www.fakeuri.com");
+		attr.add("matrix:rows,columns", ""+numRows + ", " + numCols);
+		XMLNode node = new XMLNode(new XMLTriple("matrix","http://www.fakeuri.com ","matrix"), attr);
+		if (SBMLutilities.appendAnnotation(sbmlObject, node) != JSBML.OPERATION_SUCCESS)
+			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
+					+ SBMLutilities.getId(sbmlObject)); 
 	}
 
 	public static void removeMatrixSizeAnnotation(SBase sbmlObject) {
-		// TODO: Scott fill in these methods
+		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+		Pattern marixSizePattern = Pattern.compile(MATRIX_SIZE_ANNOTATION);
+		Matcher mateixSizeMatcher = marixSizePattern.matcher(annotation);
+		if (mateixSizeMatcher.find()) {
+			String matrixSizeAnnotation = mateixSizeMatcher.group(0);
+			annotation = annotation.replace(matrixSizeAnnotation, "");
+		}
+		sbmlObject.setAnnotation(new Annotation(annotation));
 	}
 	
+	@SuppressWarnings("null")
 	public static String[] parseMatrixSizeAnnotation(SBase sbmlObject) {
-		// TODO: Scott fill in these methods
-		return null;
+		if (sbmlObject==null)
+			return null;
+		String [] ret = null;
+		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+		Pattern matrixSizePattern = Pattern.compile(MATRIX_SIZE_ANNOTATION);
+		Matcher matrixSizeMatcher = matrixSizePattern.matcher(annotation);
+		if (matrixSizeMatcher.find() && matrixSizeMatcher.groupCount()==2) {
+			if (matrixSizeMatcher.group(1)!=null) {
+				ret[0] = matrixSizeMatcher.group(1);
+			}
+			ret[1] = matrixSizeMatcher.group(2);
+		}
+		return ret;
 	}
 	
 	public static void setArraySizeAnnotation(SBase sbmlObject, int size) {
@@ -422,12 +474,12 @@ public class AnnotationUtility {
 					"<ibiosim:ibiosim ibiosim:grid=\"\\((\\d+),(\\d+)\\)\" xmlns:ibiosim=\"http://www\\.fakeuri\\.com\"/>";
 	
 	private static final String VECTOR_SIZE_ANNOTATION =
-			"<ibiosim:ibiosim xmlns:ibiosim=\"http://www\\.fakeuri\\.com\" ibiosim:grid=\"\\(([a-zA-Z]+[_a-zA-Z\\d]*),([a-zA-Z]+[_a-zA-Z\\d]*)\\)\"/>" + "|" +
-					"<ibiosim:ibiosim ibiosim:grid=\"\\(([a-zA-Z]+[_a-zA-Z\\d]*),([a-zA-Z]+[_a-zA-Z\\d]*)\\)\" xmlns:ibiosim=\"http://www\\.fakeuri\\.com\"/>";
+			"<vector:vector xmlns:vector=\"http://www\\.fakeuri\\.com\" vector:length=\"([a-zA-Z]+[_a-zA-Z\\d]*)\"/>" + "|" +
+					"<vector:vector vector:length=\"([a-zA-Z]+[_a-zA-Z\\d]*)\" xmlns:vector=\"http://www\\.fakeuri\\.com\"/>";
 	
 	private static final String MATRIX_SIZE_ANNOTATION =
-			"<ibiosim:ibiosim xmlns:ibiosim=\"http://www\\.fakeuri\\.com\" ibiosim:grid=\"\\(([a-zA-Z]+[_a-zA-Z\\d]*),([a-zA-Z]+[_a-zA-Z\\d]*)\\)\"/>" + "|" +
-					"<ibiosim:ibiosim ibiosim:grid=\"\\(([a-zA-Z]+[_a-zA-Z\\d]*),([a-zA-Z]+[_a-zA-Z\\d]*)\\)\" xmlns:ibiosim=\"http://www\\.fakeuri\\.com\"/>";
+			"<matrix:matrix xmlns:matrix=\"http://www\\.fakeuri\\.com\" matrix:rows, columns=\"([a-zA-Z]+[_a-zA-Z\\d]*)\"/>" + "|" +
+					"<matrix:matrix matrix:rows, columns=\"([a-zA-Z]+[_a-zA-Z\\d]*)\" xmlns:matrix=\"http://www\\.fakeuri\\.com\"/>";
 	
 	private static final String LAYOUT_GRID_ANNOTATION = "grid=\\((\\d+),(\\d+)\\)";
 	
