@@ -485,6 +485,9 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				} else {
 					portDir.setSelectedItem(GlobalConstants.INTERNAL);
 				}
+				// TODO: Parse size information here
+				// TODO: String = parseVectorSizeAnnotation, if (null) (String,String) = parseMatrixSizeAnnotation, if (null), then scalar
+				//System.out.println(AnnotationUtility.parseVectorSizeAnnotation(paramet));
 				if (paramsOnly && parameters.getSelectedValue()!=null) {
 					if (((String) parameters.getSelectedValue()).contains("Modified")
 						|| (((String) parameters.getSelectedValue()).contains("Custom"))
@@ -585,8 +588,6 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		parametersPanel.add(onPortLabel);
 		parametersPanel.add(portDir);
 
-		// TODO: String = parseVectorAnnotation, if (null) (String,String) = parseMatrixAnnotation, if (null), then scalar
-		//TODO: add reader to see what dimension type the parameter has when already set
 //		int i = 0;
 //		while(i < bioModel.getParameterArray().getListOfParameters().size()){
 //			if(bioModel.getParameterArray().getListOfParameters().get(i).equals(paramID)){
@@ -759,12 +760,10 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							//TODO: SCOTT: add dimensions here
 							if (dimensionType.getSelectedIndex() == 1){
 								AnnotationUtility.setVectorSizeAnnotation(paramet,(String) dimensionX.getSelectedItem());
-								AnnotationUtility.removeVectorSizeAnnotation(paramet);
 							}
 							else if (dimensionType.getSelectedIndex() == 2){
 								AnnotationUtility.setMatrixSizeAnnotation(paramet,(String) dimensionX.getSelectedItem(), 
 										(String) dimensionY.getSelectedItem());
-								AnnotationUtility.removeMatrixSizeAnnotation(paramet);
 							}
 							if (paramConst.getSelectedItem().equals("true")) {
 								paramet.setConstant(true);
