@@ -105,7 +105,7 @@ public class AnnotationUtility {
 			removeVectorSizeAnnotation(sbmlObject);
 		XMLAttributes attr = new XMLAttributes();
 		attr.add("xmlns:vector", "http://www.fakeuri.com");
-		attr.add("vector:length", ""+length);
+		attr.add("vector:size", ""+length);
 		XMLNode node = new XMLNode(new XMLTriple("vector","http://www.fakeuri.com ","vector"), attr);
 		if (SBMLutilities.appendAnnotation(sbmlObject, node) != JSBML.OPERATION_SUCCESS)
 			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
@@ -143,7 +143,7 @@ public class AnnotationUtility {
 			removeVectorSizeAnnotation(sbmlObject);
 		XMLAttributes attr = new XMLAttributes();
 		attr.add("xmlns:matrix", "http://www.fakeuri.com");
-		attr.add("matrix:rows,columns", ""+numRows + ", " + numCols);
+		attr.add("matrix:size", "("+numRows + "," + numCols + ")");
 		XMLNode node = new XMLNode(new XMLTriple("matrix","http://www.fakeuri.com ","matrix"), attr);
 		if (SBMLutilities.appendAnnotation(sbmlObject, node) != JSBML.OPERATION_SUCCESS)
 			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
@@ -474,12 +474,12 @@ public class AnnotationUtility {
 					"<ibiosim:ibiosim ibiosim:grid=\"\\((\\d+),(\\d+)\\)\" xmlns:ibiosim=\"http://www\\.fakeuri\\.com\"/>";
 	
 	private static final String VECTOR_SIZE_ANNOTATION =
-			"<vector:vector xmlns:vector=\"http://www\\.fakeuri\\.com\" vector:length=\"([a-zA-Z]+[_a-zA-Z\\d]*)\"/>" + "|" +
-					"<vector:vector vector:length=\"([a-zA-Z]+[_a-zA-Z\\d]*)\" xmlns:vector=\"http://www\\.fakeuri\\.com\"/>";
+			"<vector:vector xmlns:vector=\"http://www\\.fakeuri\\.com\" vector:size=\"([a-zA-Z]+[_a-zA-Z\\d]*)\"/>" + "|" +
+					"<vector:vector vector:size=\"([a-zA-Z]+[_a-zA-Z\\d]*)\" xmlns:vector=\"http://www\\.fakeuri\\.com\"/>";
 	
 	private static final String MATRIX_SIZE_ANNOTATION =
-			"<matrix:matrix xmlns:matrix=\"http://www\\.fakeuri\\.com\" matrix:rows, columns=\"([a-zA-Z]+[_a-zA-Z\\d]*)\"/>" + "|" +
-					"<matrix:matrix matrix:rows, columns=\"([a-zA-Z]+[_a-zA-Z\\d]*)\" xmlns:matrix=\"http://www\\.fakeuri\\.com\"/>";
+			"<matrix:matrix xmlns:matrix=\"http://www\\.fakeuri\\.com\" matrix:size=\"([a-zA-Z]+[_a-zA-Z\\d]*)\"/>" + "|" +
+					"<matrix:matrix matrix:size=\"([a-zA-Z]+[_a-zA-Z\\d]*)\" xmlns:matrix=\"http://www\\.fakeuri\\.com\"/>";
 	
 	private static final String LAYOUT_GRID_ANNOTATION = "grid=\\((\\d+),(\\d+)\\)";
 	
