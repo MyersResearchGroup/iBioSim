@@ -11,6 +11,7 @@ import graph.Graph;
 
 
 
+
 import java.awt.AWTError;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -159,12 +160,14 @@ import org.sbolstandard.core.SBOLDocument;
 
 
 
+
 import sbol.browser.SBOLBrowser;
 import sbol.util.SBOLUtility;
 
 import java.net.*;
 
 import uk.ac.ebi.biomodels.*;
+import virtualparts.ModelBuilder;
 import virtualparts.PartsHandler;
 import virtualparts.entity.Interaction;
 import virtualparts.entity.Interactions;
@@ -3948,7 +3951,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			labelPanel.add(DoubleClick, "Center");
 			virtualPartsPanel.add(labelPanel, "North");
 			virtualPartsPanel.add(ScrollVirtualParts, "Center");
-			Object[] options = { "Import Part", "Import Part & Interactions", "Cancel" };
+			Object[] options = { "Import Part", "Import Part's Interactions", "Cancel" };
 			showVirtualPartImportOption(virtualPartsPanel, options, tableOfVirtualParts, partsHandler);
 		}
 	}
@@ -3961,10 +3964,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			int selected = tableOfVirtualParts.getSelectedRow();
 			if (selected >= 0) {
 				Part part = list.get((Integer) tableOfVirtualParts.getModel().getValueAt(tableOfVirtualParts.convertRowIndexToModel(selected), 5));
-				virtualparts.ModelBuilder modelBuilder = null;
-				if (value == JOptionPane.YES_OPTION || value == JOptionPane.NO_OPTION) {
+				if (value == JOptionPane.YES_OPTION) {
 					SBMLDocument sbmlDocument = partsHandler.GetModel(part);
-					modelBuilder = new virtualparts.ModelBuilder(sbmlDocument);
 					if (sbmlDocument != null) {
 						SBMLWriter writer = new SBMLWriter();
 						writer.writeSBMLToFile(sbmlDocument, root + separator + part.getName() + ".xml.temp");
@@ -4015,58 +4016,60 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					Interactions interactions=partsHandler.GetInteractions(part);
 					if (interactions != null && interactions.getInteractions() != null) {
 						for (Interaction interaction : interactions.getInteractions()) {
+							SBMLDocument sbmlDocumentPart = partsHandler.GetModel(part);
+							ModelBuilder modelBuilder = new ModelBuilder(sbmlDocumentPart);
 							for (String p : interaction.getParts()) {
 								if (!p.equals(part.getName())) {
 									for (Part tempPart : list) {
 										if (p.equals(tempPart.getName())) {
 											SBMLDocument sbmlDocument = partsHandler.GetModel(tempPart);
-											modelBuilder.Add(sbmlDocument);
 											if (sbmlDocument != null) {
-												SBMLWriter writer = new SBMLWriter();
-												writer.writeSBMLToFile(sbmlDocument, root + separator + tempPart.getName() + ".xml.temp");
-												SBMLDocument document = SBMLutilities.readSBML(root + separator + tempPart.getName() + ".xml.temp");
-												String newFile = tempPart.getName() + ".xml";
-												newFile = newFile.replaceAll("[^a-zA-Z0-9_.]+", "_");
-												if (Character.isDigit(newFile.charAt(0))) {
-													newFile = "M" + newFile;
-												}
-												if (document != null) {
-													if (document.getModel().isSetId()) {
-														newFile = document.getModel().getId();
-													} else {
-														document.getModel().setId(newFile.replace(".xml",""));
-													}
-													document.addPackageDeclaration(LayoutConstants.shortLabel, LayoutConstants.namespaceURI, false);
-													document.addPackageDeclaration(CompConstant.shortLabel, CompConstant.namespaceURI, true);
-													document.addPackageDeclaration(FBCConstants.shortLabel, FBCConstants.namespaceURI, false);
-													CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
-													CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(document.getModel());
-													if (documentComp.getListOfModelDefinitions().size() > 0 ||
-														documentComp.getListOfExternalModelDefinitions().size() > 0) {
-														if (!extractModelDefinitions(documentComp,documentCompModel))
-															JOptionPane.showMessageDialog(frame, "Unable to extract model definitions from the model.", "Unable to Extract Model Definitions",
-																	JOptionPane.ERROR_MESSAGE);;
-													}
-													updateReplacementsDeletions(document, documentComp, documentCompModel);
-													if (document.getModel().getId()==null||document.getModel().getId().equals("")) {
-														document.getModel().setId(newFile.replace(".xml",""));
-													} else {
-														newFile = document.getModel().getId()+".xml";
-													}
-													writer.writeSBMLToFile(document, root + separator + newFile);
-													addToTree(newFile);
-													new File(root + separator + tempPart.getName() + ".xml.temp").delete();
-												}
+												modelBuilder.Add(sbmlDocument);
+//												SBMLWriter writer = new SBMLWriter();
+//												writer.writeSBMLToFile(sbmlDocument, root + separator + tempPart.getName() + ".xml.temp");
+//												SBMLDocument document = SBMLutilities.readSBML(root + separator + tempPart.getName() + ".xml.temp");
+//												String newFile = tempPart.getName() + ".xml";
+//												newFile = newFile.replaceAll("[^a-zA-Z0-9_.]+", "_");
+//												if (Character.isDigit(newFile.charAt(0))) {
+//													newFile = "M" + newFile;
+//												}
+//												if (document != null) {
+//													if (document.getModel().isSetId()) {
+//														newFile = document.getModel().getId();
+//													} else {
+//														document.getModel().setId(newFile.replace(".xml",""));
+//													}
+//													document.addPackageDeclaration(LayoutConstants.shortLabel, LayoutConstants.namespaceURI, false);
+//													document.addPackageDeclaration(CompConstant.shortLabel, CompConstant.namespaceURI, true);
+//													document.addPackageDeclaration(FBCConstants.shortLabel, FBCConstants.namespaceURI, false);
+//													CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
+//													CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(document.getModel());
+//													if (documentComp.getListOfModelDefinitions().size() > 0 ||
+//														documentComp.getListOfExternalModelDefinitions().size() > 0) {
+//														if (!extractModelDefinitions(documentComp,documentCompModel))
+//															JOptionPane.showMessageDialog(frame, "Unable to extract model definitions from the model.", "Unable to Extract Model Definitions",
+//																	JOptionPane.ERROR_MESSAGE);;
+//													}
+//													updateReplacementsDeletions(document, documentComp, documentCompModel);
+//													if (document.getModel().getId()==null||document.getModel().getId().equals("")) {
+//														document.getModel().setId(newFile.replace(".xml",""));
+//													} else {
+//														newFile = document.getModel().getId()+".xml";
+//													}
+//													writer.writeSBMLToFile(document, root + separator + newFile);
+//													addToTree(newFile);
+//													new File(root + separator + tempPart.getName() + ".xml.temp").delete();
+//												}
 											}
 										}
 									}
 								}
 							}
 							SBMLDocument sbmlDocument=partsHandler.GetInteractionModel(interaction);
-							modelBuilder.Add(sbmlDocument);
 							if (sbmlDocument != null) {
+								modelBuilder.Add(sbmlDocument);
 								SBMLWriter writer = new SBMLWriter();
-								writer.writeSBMLToFile(sbmlDocument, root + separator + interaction.getName() + ".xml.temp");
+								writer.writeSBMLToFile(modelBuilder.GetModel(), root + separator + interaction.getName() + ".xml.temp");
 								SBMLDocument document = SBMLutilities.readSBML(root + separator + interaction.getName() + ".xml.temp");
 								String newFile = interaction.getName() + ".xml";
 								newFile = newFile.replaceAll("[^a-zA-Z0-9_.]+", "_");
@@ -4074,9 +4077,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									newFile = "M" + newFile;
 								}
 								if (document != null) {
-									if (document.getModel().isSetId()) {
-										newFile = document.getModel().getId();
-									} else {
+									if (!document.getModel().isSetId()) {
 										document.getModel().setId(newFile.replace(".xml",""));
 									}
 									document.addPackageDeclaration(LayoutConstants.shortLabel, LayoutConstants.namespaceURI, false);
@@ -4093,52 +4094,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									updateReplacementsDeletions(document, documentComp, documentCompModel);
 									if (document.getModel().getId()==null||document.getModel().getId().equals("")) {
 										document.getModel().setId(newFile.replace(".xml",""));
-									} else {
-										newFile = document.getModel().getId()+".xml";
 									}
 									writer.writeSBMLToFile(document, root + separator + newFile);
 									addToTree(newFile);
+									openSBML(root + separator + newFile);
 									new File(root + separator + interaction.getName() + ".xml.temp").delete();
 								}
 							}
-						}
-						SBMLWriter writer = new SBMLWriter();
-						writer.writeSBMLToFile(modelBuilder.GetModel(), root + separator + part.getName() + "_with_interactions.xml.temp");
-						SBMLDocument document = SBMLutilities.readSBML(root + separator + part.getName() + "_with_interactions.xml.temp");
-						SBMLutilities.checkModelCompleteness(document);
-						SBMLutilities.check(root + separator + part.getName() + "_with_interactions.xml.temp", document, false, false);
-						String newFile = part.getName() + "_with_interactions.xml";
-						newFile = newFile.replaceAll("[^a-zA-Z0-9_.]+", "_");
-						if (Character.isDigit(newFile.charAt(0))) {
-							newFile = "M" + newFile;
-						}
-						if (document != null) {
-							if (document.getModel().isSetId()) {
-								newFile = document.getModel().getId();
-							} else {
-								document.getModel().setId(newFile.replace("_with_interactions.xml",""));
-							}
-							document.addPackageDeclaration(LayoutConstants.shortLabel, LayoutConstants.namespaceURI, false);
-							document.addPackageDeclaration(CompConstant.shortLabel, CompConstant.namespaceURI, true);
-							document.addPackageDeclaration(FBCConstants.shortLabel, FBCConstants.namespaceURI, false);
-							CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
-							CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(document.getModel());
-							if (documentComp.getListOfModelDefinitions().size() > 0 ||
-								documentComp.getListOfExternalModelDefinitions().size() > 0) {
-								if (!extractModelDefinitions(documentComp,documentCompModel))
-									JOptionPane.showMessageDialog(frame, "Unable to extract model definitions from the model.", "Unable to Extract Model Definitions",
-											JOptionPane.ERROR_MESSAGE);;
-							}
-							updateReplacementsDeletions(document, documentComp, documentCompModel);
-							if (document.getModel().getId()==null||document.getModel().getId().equals("")) {
-								document.getModel().setId(newFile.replace("_with_interactions.xml",""));
-							} else {
-								newFile = document.getModel().getId()+"_with_interactions.xml";
-							}
-							writer.writeSBMLToFile(document, root + separator + newFile);
-							addToTree(newFile);
-							openSBML(root + separator + newFile);
-							new File(root + separator + part.getName() + "_with_interactions.xml.temp").delete();
 						}
 					}
 					else {
