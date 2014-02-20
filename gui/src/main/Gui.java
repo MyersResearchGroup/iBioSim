@@ -12,6 +12,7 @@ import graph.Graph;
 
 
 
+
 import java.awt.AWTError;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -161,6 +162,7 @@ import org.sbolstandard.core.SBOLDocument;
 
 
 
+
 import sbol.browser.SBOLBrowser;
 import sbol.util.SBOLUtility;
 
@@ -169,6 +171,7 @@ import java.net.*;
 import uk.ac.ebi.biomodels.*;
 import virtualparts.ModelBuilder;
 import virtualparts.PartsHandler;
+import virtualparts.SBML.SBMLHandler;
 import virtualparts.entity.Interaction;
 import virtualparts.entity.Interactions;
 import virtualparts.entity.Summary;
@@ -4000,9 +4003,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							} else {
 								newFile = document.getModel().getId()+".xml";
 							}
-							writer.writeSBMLToFile(document, root + separator + newFile);
-							addToTree(newFile);
-							openSBML(root + separator + newFile);
+							if (overwrite(root + separator + newFile, newFile)) {
+								writer.writeSBMLToFile(document, root + separator + newFile);
+								addToTree(newFile);
+								openSBML(root + separator + newFile);
+							}
 							new File(root + separator + part.getName() + ".xml.temp").delete();
 						}
 					}
@@ -4016,8 +4021,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					Interactions interactions=partsHandler.GetInteractions(part);
 					if (interactions != null && interactions.getInteractions() != null) {
 						for (Interaction interaction : interactions.getInteractions()) {
+							SBMLHandler sbmlHandler = new SBMLHandler();
+							SBMLDocument sbmlContainer=sbmlHandler.GetSBMLTemplateModel(interaction.getName() + "_model");
+							ModelBuilder modelBuilder = new ModelBuilder(sbmlContainer);
 							SBMLDocument sbmlDocumentPart = partsHandler.GetModel(part);
-							ModelBuilder modelBuilder = new ModelBuilder(sbmlDocumentPart);
+							modelBuilder.Add(sbmlDocumentPart);
 							for (String p : interaction.getParts()) {
 								if (!p.equals(part.getName())) {
 									for (Part tempPart : list) {
@@ -4077,7 +4085,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									newFile = "M" + newFile;
 								}
 								if (document != null) {
-									if (!document.getModel().isSetId()) {
+									if (document.getModel().isSetId()) {
+										newFile = document.getModel().getId();
+									} else {
 										document.getModel().setId(newFile.replace(".xml",""));
 									}
 									document.addPackageDeclaration(LayoutConstants.shortLabel, LayoutConstants.namespaceURI, false);
@@ -4094,10 +4104,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									updateReplacementsDeletions(document, documentComp, documentCompModel);
 									if (document.getModel().getId()==null||document.getModel().getId().equals("")) {
 										document.getModel().setId(newFile.replace(".xml",""));
+									} else {
+										newFile = document.getModel().getId()+".xml";
 									}
-									writer.writeSBMLToFile(document, root + separator + newFile);
-									addToTree(newFile);
-									openSBML(root + separator + newFile);
+									if (overwrite(root + separator + newFile, newFile)) {
+										writer.writeSBMLToFile(document, root + separator + newFile);
+										addToTree(newFile);
+										openSBML(root + separator + newFile);
+									}
 									new File(root + separator + interaction.getName() + ".xml.temp").delete();
 								}
 							}
