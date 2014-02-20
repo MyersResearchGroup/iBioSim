@@ -15,8 +15,8 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+//import java.util.regex.Matcher;
+//import java.util.regex.Pattern;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -439,6 +439,8 @@ public abstract class HierarchicalSimulator {
 			if(file.exists())
 				file.delete();
 		}
+		
+		filesCreated.clear();
 	}
 	/**
 	 * Initializes the modelstate array
@@ -552,15 +554,28 @@ public abstract class HierarchicalSimulator {
 
 			if(isGrid)
 			{
-				String annotation = submodel.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-				int copies = getArraySize(annotation);
-				LinkedList<String> ids = getArrayIDs(document.getModel().getParameter(submodel.getModelRef()+ "__locations").getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim());
+				//String annotation = submodel.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+				//int copies = getArraySize(annotation);
+				
+				//int copies = biomodel.annotation.AnnotationUtility.parseArraySizeAnnotation(submodel);
+				
+				String[] ids = biomodel.annotation.AnnotationUtility.parseArrayAnnotation(document.getModel().getParameter(submodel.getModelRef()+ "__locations"));
+				for(String s : ids)
+				{
+					if(s.isEmpty())
+						continue;
+					String getID = s.replaceAll("[=].*", "");
+					submodels.put(getID, new ModelState(submodel.getModelRef(), getID));
+					
+				}
+				
+				/*LinkedList<String> ids = getArrayIDs(document.getModel().getParameter(submodel.getModelRef()+ "__locations").getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim());
 				for(int i = 0; i < copies; i++)
 				{
 					submodels.put(ids.getFirst(), new ModelState(submodel.getModelRef(), ids.getFirst()));
 					ids.removeFirst();
 					index++;
-				}
+				}*/
 			}
 			else
 			{
@@ -828,14 +843,17 @@ public abstract class HierarchicalSimulator {
 		return sbml.getModel();
 	}
 
+
 	/**
 	 * Helper method to strip annotation and get size of array.
 	 * 
 	 * @param annotation
 	 * @return size of array
 	 */
-	private static int getArraySize(String annotation)
+/*	private static int getArraySize(String annotation)
 	{
+		
+		//biomodel.annotation.AnnotationUtility.
 		String size = "";
 
 		Pattern pattern = Pattern.compile("size=\"[1-9][0-9]*\"");
@@ -852,14 +870,14 @@ public abstract class HierarchicalSimulator {
 
 
 	}
-
+*/
 	/**
 	 * Helper method to strip annotation and get size of array.
 	 * 
 	 * @param annotation
 	 * @return size of array
 	 */
-	private static LinkedList<String> getArrayIDs(String annotation)
+	/*private static LinkedList<String> getArrayIDs(String annotation)
 	{
 		LinkedList<String> id = new LinkedList<String>();
 
@@ -874,7 +892,7 @@ public abstract class HierarchicalSimulator {
 		return id;
 
 
-	}
+	}*/
 
 
 
