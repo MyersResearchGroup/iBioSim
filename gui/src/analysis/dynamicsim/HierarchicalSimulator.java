@@ -3243,13 +3243,20 @@ public abstract class HierarchicalSimulator {
 	 * 
 	 * @param parameter
 	 */
-	private static void setupSingleParameter(ModelState modelstate, Parameter parameter) {
+	private static void setupSingleParameter(ModelState modelstate, Parameter parameter, boolean vector, boolean matrix, int i, int j) {
+
 
 		String parameterID = parameter.getId();
+		
+		if(vector)
+			parameterID = parameterID + "__" + i;
+		else if(matrix)
+			parameterID = parameterID + "__" + i + "__" + j;
+		
 		modelstate.variableToValueMap.put(parameterID, parameter.getValue());
 		modelstate.variableToIsConstantMap.put(parameterID, parameter.getConstant());
 		if(!parameter.getConstant())
-			modelstate.variablesToPrint.add(parameter.getId());
+			modelstate.variablesToPrint.add(parameterID);
 		if (parameter.getConstant() == false)
 			modelstate.nonconstantParameterIDSet.add(parameterID);
 
@@ -3259,6 +3266,9 @@ public abstract class HierarchicalSimulator {
 		if (modelstate.numConstraints > 0)
 			modelstate.variableToIsInConstraintMap.put(parameterID, false);
 	}
+	
+	
+	
 
 	/**
 	 * puts parameter-related information into data structures
@@ -3296,8 +3306,40 @@ public abstract class HierarchicalSimulator {
 				continue;
 			else if(parameter.isSetMetaId() && modelstate.isDeletedByMetaID(parameter.getMetaId()))
 				continue;
+			// Check if it is a vector 
+			String vSize = biomodel.annotation.AnnotationUtility.parseVectorSizeAnnotation(parameter);
+			if(vSize != null)
+			{
+				
+				int n = (int)models.get(modelstate.model).getParameter(vSize).getValue();
+				
+				for(int j = 0; j < n; j++)
+				{
+					setupSingleParameter(modelstate, parameter, true, false, j, 0);
+				}
+				
+				continue;
+			}
+			// Check if it is a vector 
+			String [] mSize = biomodel.annotation.AnnotationUtility.parseMatrixSizeAnnotation(parameter);
+			if(mSize != null && mSize.length == 2)
+			{
+				int n = (int)models.get(modelstate.model).getParameter(mSize[0]).getValue();
+				
+				int m = (int)models.get(modelstate.model).getParameter(mSize[1]).getValue();
+				
+				for(int j = 0; j < m; j++)
+				{
+					for(int k = 0; k < n; k++)
+					{
 
-			setupSingleParameter(modelstate, parameter);
+						setupSingleParameter(modelstate, parameter, false, true, k, j);
+					}
+				}
+				continue;
+			}
+
+			setupSingleParameter(modelstate, parameter, false, false, 0, 0);
 		}
 
 
