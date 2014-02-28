@@ -120,7 +120,11 @@ public class AnnotationUtility {
 			String vectorSizeAnnotation = vectorSizeMatcher.group(0);
 			annotation = annotation.replace(vectorSizeAnnotation, "");
 		}
+		//if (annotation.trim().equals("")) {
+		//	sbmlObject.unsetAnnotation();
+		//} else {
 		sbmlObject.setAnnotation(new Annotation(annotation));
+		//}
 	}
 	
 	public static String parseVectorSizeAnnotation(SBase sbmlObject) {
