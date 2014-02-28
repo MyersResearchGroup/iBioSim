@@ -304,6 +304,9 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				dimensionY.addItem(param.getId());
 			}
 		}
+		// TODO: added default
+		dimensionX.setEnabled(false);
+		dimensionY.setEnabled(false);
 		
 		paramID = new JTextField();
 		paramName = new JTextField();

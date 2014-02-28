@@ -214,6 +214,9 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				dimensionY.addItem(param.getId());
 			}
 		}
+		// TODO: added default
+		dimensionX.setEnabled(false);
+		dimensionY.setEnabled(false);
 		eqnIndex1 = new JTextField(10);
 		eqnIndex2 = new JTextField(10);
 		
@@ -533,13 +536,6 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					else {
 						addStr = addVar + " = " + SBMLutilities.myFormulaToString(SBMLutilities.myParseFormula(ruleMath.getText().trim()));
 					}
-					if (dimensionType.getSelectedIndex() == 1){
-						AnnotationUtility.setVectorSizeAnnotation(r,(String) dimensionX.getSelectedItem());
-					}
-					else if (dimensionType.getSelectedIndex() == 2){
-						AnnotationUtility.setMatrixSizeAnnotation(r,(String) dimensionX.getSelectedItem(), 
-								(String) dimensionY.getSelectedItem());
-					}
 					Object[] adding = { addStr };
 					add.setListData(adding);
 					add.setSelectedIndex(0);
@@ -601,6 +597,13 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 							port.setId(GlobalConstants.RULE + "__" + r.getMetaId());
 							port.setMetaIdRef(r.getMetaId());
 						}
+					}
+					if (dimensionType.getSelectedIndex() == 1){
+						AnnotationUtility.setVectorSizeAnnotation(r,(String) dimensionX.getSelectedItem());
+					}
+					else if (dimensionType.getSelectedIndex() == 2){
+						AnnotationUtility.setMatrixSizeAnnotation(r,(String) dimensionX.getSelectedItem(), 
+								(String) dimensionY.getSelectedItem());
 					}
 //					updateRules(rul);
 					rules.setListData(rul);
