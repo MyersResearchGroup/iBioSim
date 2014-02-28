@@ -71,7 +71,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	
 	private JComboBox dimensionType, dimensionX, dimensionY;
 	
-	private JTextField eqnIndex1, eqnIndex2;
+	private JTextField iIndex, jIndex;
 	
 	private ModelEditor modelEditor;
 	
@@ -217,8 +217,10 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		// TODO: added default
 		dimensionX.setEnabled(false);
 		dimensionY.setEnabled(false);
-		eqnIndex1 = new JTextField(10);
-		eqnIndex2 = new JTextField(10);
+		iIndex = new JTextField(10);
+		jIndex = new JTextField(10);
+		iIndex.setEnabled(false);
+		jIndex.setEnabled(false);
 		
 		if (option.equals("OK")) {
 			ruleType.setEnabled(false);
@@ -272,6 +274,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				onPort.setSelected(false);
 			}
 			String[] sizes = new String[2];
+			String[] indecies = new String[2];
 			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(rule);
 			if(sizes[0]==null){
 				sizes = AnnotationUtility.parseMatrixSizeAnnotation(rule);
@@ -293,6 +296,22 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				dimensionX.setEnabled(true);
 				dimensionX.setSelectedItem(sizes[0]);
 				dimensionY.setEnabled(false);
+			}
+			indecies[0] = AnnotationUtility.parseVectorIndexAnnotation(rule);
+			if(indecies[0]==null){
+				indecies[1] = AnnotationUtility.parseMatrixIndexAnnotation(rule);
+				if(indecies[1]==null){
+					iIndex.setText("");
+					jIndex.setText("");
+				}
+				else{
+					iIndex.setText(indecies[0]);
+					jIndex.setText(indecies[1]);
+				}
+			}
+			else{
+				iIndex.setText(indecies[0]);
+				jIndex.setText("");
 			}
 		}
 		else {
@@ -348,10 +367,10 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		rulePanel.add(mathPanel,"Center");
 		dimensionPanel.add(dimensionType);
 		dimensionPanel.add(dimensionX);
-		dimensionPanel.add(eqnIndex1);
+		dimensionPanel.add(iIndex);
 		dimensionPanel.add(new JLabel());
 		dimensionPanel.add(dimensionY);
-		dimensionPanel.add(eqnIndex2);
+		dimensionPanel.add(jIndex);
 		
 		if (!modelEditor.isParamsOnly())
 			southPanel.add(sbolField,"North");
@@ -507,15 +526,21 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					if (dimensionType.getSelectedIndex() == 1){
 						AnnotationUtility.removeMatrixSizeAnnotation(r);
 						AnnotationUtility.setVectorSizeAnnotation(r,(String) dimensionX.getSelectedItem());
+						AnnotationUtility.removeMatrixIndexAnnotation(r);
+						AnnotationUtility.setVectorIndexAnnotation(r,(String) iIndex.getText());
 					}
 					else if (dimensionType.getSelectedIndex() == 2){
 						AnnotationUtility.removeVectorSizeAnnotation(r);
 						AnnotationUtility.setMatrixSizeAnnotation(r,(String) dimensionX.getSelectedItem(), 
 								(String) dimensionY.getSelectedItem());
+						AnnotationUtility.setVectorIndexAnnotation(r,(String) iIndex.getText());
+						AnnotationUtility.setMatrixIndexAnnotation(r,(String) jIndex.getText());
 					}
 					else{
 						AnnotationUtility.removeVectorSizeAnnotation(r);
 						AnnotationUtility.removeMatrixSizeAnnotation(r);
+						AnnotationUtility.removeVectorIndexAnnotation(r);
+						AnnotationUtility.removeMatrixIndexAnnotation(r);
 					}
 				}
 				else {
@@ -599,11 +624,23 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 						}
 					}
 					if (dimensionType.getSelectedIndex() == 1){
+						AnnotationUtility.removeMatrixSizeAnnotation(r);
 						AnnotationUtility.setVectorSizeAnnotation(r,(String) dimensionX.getSelectedItem());
+						AnnotationUtility.removeMatrixIndexAnnotation(r);
+						AnnotationUtility.setVectorIndexAnnotation(r,(String) iIndex.getText());
 					}
 					else if (dimensionType.getSelectedIndex() == 2){
+						AnnotationUtility.removeVectorSizeAnnotation(r);
 						AnnotationUtility.setMatrixSizeAnnotation(r,(String) dimensionX.getSelectedItem(), 
 								(String) dimensionY.getSelectedItem());
+						AnnotationUtility.setVectorIndexAnnotation(r,(String) iIndex.getText());
+						AnnotationUtility.setMatrixIndexAnnotation(r,(String) jIndex.getText());
+					}
+					else{
+						AnnotationUtility.removeVectorSizeAnnotation(r);
+						AnnotationUtility.removeMatrixSizeAnnotation(r);
+						AnnotationUtility.removeVectorIndexAnnotation(r);
+						AnnotationUtility.removeMatrixIndexAnnotation(r);
 					}
 //					updateRules(rul);
 					rules.setListData(rul);
@@ -1098,14 +1135,20 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			if (index == 0) {
 				dimensionX.setEnabled(false);
 				dimensionY.setEnabled(false);
+				iIndex.setEnabled(false);
+				jIndex.setEnabled(false);
 			}
 			else if (index == 1) {
 				dimensionX.setEnabled(true);
 				dimensionY.setEnabled(false);
+				iIndex.setEnabled(true);
+				jIndex.setEnabled(false);
 			}
 			else if (index == 2) {
 				dimensionX.setEnabled(true);
 				dimensionY.setEnabled(true);
+				iIndex.setEnabled(true);
+				jIndex.setEnabled(true);
 			}
 		}
 	}

@@ -2,6 +2,7 @@ package biomodel.gui.sbmlcore;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -26,9 +28,11 @@ import org.sbml.jsbml.Constraint;
 import org.sbml.jsbml.ext.layout.Layout;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
+import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.ext.comp.Port;
 import org.sbml.jsbml.xml.XMLNode;
 
+import biomodel.annotation.AnnotationUtility;
 import biomodel.gui.schematic.ModelEditor;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
@@ -48,6 +52,10 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 	private JButton addConstraint, removeConstraint, editConstraint;
 
 	private JList constraints; // JList of initial assignments
+	
+	private JComboBox dimensionType, dimensionX, dimensionY;
+	
+	private JTextField iIndex, jIndex;
 
 	private BioModel bioModel;
 
@@ -105,6 +113,8 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 	public String constraintEditor(String option,String selected) {
 		JPanel constraintPanel = new JPanel();
 		JPanel consPanel = new JPanel(new BorderLayout());
+		JPanel dimensionPanel = new JPanel(new GridLayout(2,3));
+		JPanel southPanel = new JPanel(new BorderLayout());
 		JPanel IDPanel = new JPanel();
 		JPanel mathPanel = new JPanel(new BorderLayout());
 		JPanel messagePanel = new JPanel(new BorderLayout());
@@ -113,6 +123,33 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		JLabel messageLabel = new JLabel("Messsage:");
 		JLabel onPortLabel = new JLabel("Is Mapped to a Port:");
 		JTextField consID = new JTextField(12);
+		
+		dimensionType = new JComboBox();
+		dimensionType.addItem("Scalar");
+		dimensionType.addItem("Vector");
+		dimensionType.addItem("Matrix");
+		dimensionType.addActionListener(this);
+		dimensionX = new JComboBox();
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
+			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
+			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
+				dimensionX.addItem(param.getId());
+			}
+		}
+		dimensionY = new JComboBox();
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
+			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
+			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
+				dimensionY.addItem(param.getId());
+			}
+		}
+		// TODO: added default
+		dimensionX.setEnabled(false);
+		dimensionY.setEnabled(false);
+		iIndex = new JTextField(10);
+		jIndex = new JTextField(10);
+		iIndex.setEnabled(false);
+		jIndex.setEnabled(false);
 		
 		JTextArea consMath = new JTextArea(3,30);
 		consMath.setLineWrap(true);
@@ -158,6 +195,46 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 					}
 				}
 			}
+			String[] sizes = new String[2];
+			String[] indecies = new String[2];
+			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(c);
+			if(sizes[0]==null){
+				sizes = AnnotationUtility.parseMatrixSizeAnnotation(c);
+				if(sizes==null){
+					dimensionType.setSelectedIndex(0);
+					dimensionX.setEnabled(false);
+					dimensionY.setEnabled(false);
+				}
+				else{
+					dimensionType.setSelectedIndex(2);
+					dimensionX.setEnabled(true);
+					dimensionY.setEnabled(true);
+					dimensionX.setSelectedItem(sizes[0]);
+					dimensionY.setSelectedItem(sizes[1]);
+				}
+			}
+			else{
+				dimensionType.setSelectedIndex(1);
+				dimensionX.setEnabled(true);
+				dimensionX.setSelectedItem(sizes[0]);
+				dimensionY.setEnabled(false);
+			}
+			indecies[0] = AnnotationUtility.parseVectorIndexAnnotation(c);
+			if(indecies[0]==null){
+				indecies[1] = AnnotationUtility.parseMatrixIndexAnnotation(c);
+				if(indecies[1]==null){
+					iIndex.setText("");
+					jIndex.setText("");
+				}
+				else{
+					iIndex.setText(indecies[0]);
+					jIndex.setText(indecies[1]);
+				}
+			}
+			else{
+				iIndex.setText(indecies[0]);
+				jIndex.setText("");
+			}
 		}
 		else {
 			String constraintId = "constraint0";
@@ -179,7 +256,16 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		consPanel.add(IDPanel,"North");
 		consPanel.add(mathPanel,"Center");
 		consPanel.add(messagePanel,"South");
-		constraintPanel.add(consPanel);
+		dimensionPanel.add(dimensionType);
+		dimensionPanel.add(dimensionX);
+		dimensionPanel.add(iIndex);
+		dimensionPanel.add(new JLabel());
+		dimensionPanel.add(dimensionY);
+		dimensionPanel.add(jIndex);
+		southPanel.add(consPanel,"North");
+		southPanel.add(dimensionPanel,"South");
+		constraintPanel.add(southPanel);
+		
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, constraintPanel, "Constraint Editor", JOptionPane.YES_NO_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -266,6 +352,26 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						constraints.setListData(cons);
 						constraints.setSelectedIndex(index);
 						bioModel.makeUndoPoint();
+						
+						if (dimensionType.getSelectedIndex() == 1){
+							AnnotationUtility.removeMatrixSizeAnnotation(c);
+							AnnotationUtility.setVectorSizeAnnotation(c,(String) dimensionX.getSelectedItem());
+							AnnotationUtility.removeMatrixIndexAnnotation(c);
+							AnnotationUtility.setVectorIndexAnnotation(c,(String) iIndex.getText());
+						}
+						else if (dimensionType.getSelectedIndex() == 2){
+							AnnotationUtility.removeVectorSizeAnnotation(c);
+							AnnotationUtility.setMatrixSizeAnnotation(c,(String) dimensionX.getSelectedItem(), 
+									(String) dimensionY.getSelectedItem());
+							AnnotationUtility.setVectorIndexAnnotation(c,(String) iIndex.getText());
+							AnnotationUtility.setMatrixIndexAnnotation(c,(String) jIndex.getText());
+						}
+						else{
+							AnnotationUtility.removeVectorSizeAnnotation(c);
+							AnnotationUtility.removeMatrixSizeAnnotation(c);
+							AnnotationUtility.removeVectorIndexAnnotation(c);
+							AnnotationUtility.removeMatrixIndexAnnotation(c);
+						}
 					}
 					else {
 						String[] cons = new String[constraints.getModel().getSize()];
@@ -304,6 +410,25 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						}
 						else {
 							constraints.setSelectedIndex(index);
+						}
+						if (dimensionType.getSelectedIndex() == 1){
+							AnnotationUtility.removeMatrixSizeAnnotation(c);
+							AnnotationUtility.setVectorSizeAnnotation(c,(String) dimensionX.getSelectedItem());
+							AnnotationUtility.removeMatrixIndexAnnotation(c);
+							AnnotationUtility.setVectorIndexAnnotation(c,(String) iIndex.getText());
+						}
+						else if (dimensionType.getSelectedIndex() == 2){
+							AnnotationUtility.removeVectorSizeAnnotation(c);
+							AnnotationUtility.setMatrixSizeAnnotation(c,(String) dimensionX.getSelectedItem(), 
+									(String) dimensionY.getSelectedItem());
+							AnnotationUtility.setVectorIndexAnnotation(c,(String) iIndex.getText());
+							AnnotationUtility.setMatrixIndexAnnotation(c,(String) jIndex.getText());
+						}
+						else{
+							AnnotationUtility.removeVectorSizeAnnotation(c);
+							AnnotationUtility.removeMatrixSizeAnnotation(c);
+							AnnotationUtility.removeVectorIndexAnnotation(c);
+							AnnotationUtility.removeMatrixIndexAnnotation(c);
 						}
 					}
 					modelEditor.setDirty(true);
@@ -407,6 +532,28 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 				else {
 					constraints.setSelectedIndex(index - 1);
 				}
+			}
+		}
+		// if the dimension type is changed
+		else if (e.getSource() == dimensionType) {
+			int index = dimensionType.getSelectedIndex();
+			if (index == 0) {
+				dimensionX.setEnabled(false);
+				dimensionY.setEnabled(false);
+				iIndex.setEnabled(false);
+				jIndex.setEnabled(false);
+			}
+			else if (index == 1) {
+				dimensionX.setEnabled(true);
+				dimensionY.setEnabled(false);
+				iIndex.setEnabled(true);
+				jIndex.setEnabled(false);
+			}
+			else if (index == 2) {
+				dimensionX.setEnabled(true);
+				dimensionY.setEnabled(true);
+				iIndex.setEnabled(true);
+				jIndex.setEnabled(true);
 			}
 		}
 	}

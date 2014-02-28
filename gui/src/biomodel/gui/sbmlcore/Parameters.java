@@ -514,11 +514,6 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 					dimensionX.setSelectedItem(sizes[0]);
 					dimensionY.setEnabled(false);
 				}
-
-				
-				// TODO: Parse size information here
-				// TODO: String = parseVectorSizeAnnotation, if (null) (String,String) = parseMatrixSizeAnnotation, if (null), then scalar
-				//System.out.println(AnnotationUtility.parseVectorSizeAnnotation(paramet));
 				if (paramsOnly && parameters.getSelectedValue()!=null) {
 					if (((String) parameters.getSelectedValue()).contains("Modified")
 						|| (((String) parameters.getSelectedValue()).contains("Custom"))
