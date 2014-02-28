@@ -55,6 +55,10 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	private JList events; // JList of events
 
 	private JList eventAssign; // JList of event assignments
+	
+	private JComboBox dimensionType, dimensionX, dimensionY;
+	
+	private JTextField iIndex, jIndex;
 
 	private BioModel bioModel;
 
@@ -139,6 +143,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		ArrayList<String> presetPlaces = new ArrayList<String>();
 		JPanel eventPanel = new JPanel(new BorderLayout());
 		// JPanel evPanel = new JPanel(new GridLayout(2, 2));
+		JPanel dimensionPanel = new JPanel(new GridLayout(2,3));
+		JPanel southPanel = new JPanel(new BorderLayout());
 		JPanel evPanel = new JPanel(new GridLayout(10, 2));
 		if (isTransition) {
 			evPanel.setLayout(new GridLayout(8, 2));
@@ -177,6 +183,33 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		JComboBox dynamicProcess = new JComboBox(new String[] {"none",
 				"Symmetric Division","Asymmetric Division","Death", "Move Random", "Move Left", "Move Right", "Move Above", "Move Below"});
 		JCheckBox onPort = new JCheckBox();
+		
+		dimensionType = new JComboBox();
+		dimensionType.addItem("Scalar");
+		dimensionType.addItem("Vector");
+		dimensionType.addItem("Matrix");
+		dimensionType.addActionListener(this);
+		dimensionX = new JComboBox();
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
+			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
+			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
+				dimensionX.addItem(param.getId());
+			}
+		}
+		dimensionY = new JComboBox();
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
+			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
+			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
+				dimensionY.addItem(param.getId());
+			}
+		}
+		// TODO: added default
+		dimensionX.setEnabled(false);
+		dimensionY.setEnabled(false);
+		iIndex = new JTextField(10);
+		jIndex = new JTextField(10);
+		iIndex.setEnabled(false);
+		jIndex.setEnabled(false);
 		
 		if (bioModel != null && bioModel.IsWithinCompartment() == false) {
 			dynamicProcess.setEnabled(false);
@@ -359,6 +392,46 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					}
 				}
 			}
+			String[] sizes = new String[2];
+			String[] indecies = new String[2];
+			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(e);
+			if(sizes[0]==null){
+				sizes = AnnotationUtility.parseMatrixSizeAnnotation(e);
+				if(sizes==null){
+					dimensionType.setSelectedIndex(0);
+					dimensionX.setEnabled(false);
+					dimensionY.setEnabled(false);
+				}
+				else{
+					dimensionType.setSelectedIndex(2);
+					dimensionX.setEnabled(true);
+					dimensionY.setEnabled(true);
+					dimensionX.setSelectedItem(sizes[0]);
+					dimensionY.setSelectedItem(sizes[1]);
+				}
+			}
+			else{
+				dimensionType.setSelectedIndex(1);
+				dimensionX.setEnabled(true);
+				dimensionX.setSelectedItem(sizes[0]);
+				dimensionY.setEnabled(false);
+			}
+			indecies[0] = AnnotationUtility.parseVectorIndexAnnotation(e);
+			if(indecies[0]==null){
+				indecies[1] = AnnotationUtility.parseMatrixIndexAnnotation(e);
+				if(indecies[1]==null){
+					iIndex.setText("");
+					jIndex.setText("");
+				}
+				else{
+					iIndex.setText(indecies[0]);
+					jIndex.setText(indecies[1]);
+				}
+			}
+			else{
+				iIndex.setText(indecies[0]);
+				jIndex.setText("");
+			}
 		}
 		else {
 			// Field for annotating event with SBOL DNA components
@@ -411,7 +484,15 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		eventPanel.add(evPanel, "North");
 		if (!modelEditor.isParamsOnly())
 			eventPanel.add(sbolField, "Center");
-		eventPanel.add(eventAssignPanel, "South");
+		dimensionPanel.add(dimensionType);
+		dimensionPanel.add(dimensionX);
+		dimensionPanel.add(iIndex);
+		dimensionPanel.add(new JLabel());
+		dimensionPanel.add(dimensionY);
+		dimensionPanel.add(jIndex);
+		southPanel.add(eventAssignPanel, "North");
+		southPanel.add(dimensionPanel, "South");
+		eventPanel.add(southPanel, "South");
 		Object[] options = { option, "Cancel" };
 		String title = "Event Editor";
 		if (isTransition) {
@@ -788,6 +869,25 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							ea.setMath(SBMLutilities.myParseFormula(origAssign[i].split(":=")[1].trim()));
 						}
 					}
+					if (dimensionType.getSelectedIndex() == 1){
+						AnnotationUtility.removeMatrixSizeAnnotation(e);
+						AnnotationUtility.setVectorSizeAnnotation(e,(String) dimensionX.getSelectedItem());
+						AnnotationUtility.removeMatrixIndexAnnotation(e);
+						AnnotationUtility.setVectorIndexAnnotation(e,(String) iIndex.getText());
+					}
+					else if (dimensionType.getSelectedIndex() == 2){
+						AnnotationUtility.removeVectorSizeAnnotation(e);
+						AnnotationUtility.setMatrixSizeAnnotation(e,(String) dimensionX.getSelectedItem(), 
+								(String) dimensionY.getSelectedItem());
+						AnnotationUtility.setVectorIndexAnnotation(e,(String) iIndex.getText());
+						AnnotationUtility.setMatrixIndexAnnotation(e,(String) jIndex.getText());
+					}
+					else{
+						AnnotationUtility.removeVectorSizeAnnotation(e);
+						AnnotationUtility.removeMatrixSizeAnnotation(e);
+						AnnotationUtility.removeVectorIndexAnnotation(e);
+						AnnotationUtility.removeMatrixIndexAnnotation(e);
+					}
 				} //end if option is "ok"
 				//add event
 				else {
@@ -962,6 +1062,25 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					}
 					if (error) {
 						removeTheEvent(bioModel, SBMLutilities.myFormulaToString(e.getTrigger().getMath()));
+					}
+					if (dimensionType.getSelectedIndex() == 1){
+						AnnotationUtility.removeMatrixSizeAnnotation(e);
+						AnnotationUtility.setVectorSizeAnnotation(e,(String) dimensionX.getSelectedItem());
+						AnnotationUtility.removeMatrixIndexAnnotation(e);
+						AnnotationUtility.setVectorIndexAnnotation(e,(String) iIndex.getText());
+					}
+					else if (dimensionType.getSelectedIndex() == 2){
+						AnnotationUtility.removeVectorSizeAnnotation(e);
+						AnnotationUtility.setMatrixSizeAnnotation(e,(String) dimensionX.getSelectedItem(), 
+								(String) dimensionY.getSelectedItem());
+						AnnotationUtility.setVectorIndexAnnotation(e,(String) iIndex.getText());
+						AnnotationUtility.setMatrixIndexAnnotation(e,(String) jIndex.getText());
+					}
+					else{
+						AnnotationUtility.removeVectorSizeAnnotation(e);
+						AnnotationUtility.removeMatrixSizeAnnotation(e);
+						AnnotationUtility.removeVectorIndexAnnotation(e);
+						AnnotationUtility.removeMatrixIndexAnnotation(e);
 					}
 				}
 				if (!error && !modelEditor.isParamsOnly()) {
@@ -1399,6 +1518,28 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		// if the remove event assignment button is clicked
 		else if (((JButton) e.getSource()).getText().equals("Remove Assignment")) {
 			removeAssignment(eventAssign);
+		}
+		// if the dimension type is changed
+		else if (e.getSource() == dimensionType) {
+			int index = dimensionType.getSelectedIndex();
+			if (index == 0) {
+				dimensionX.setEnabled(false);
+				dimensionY.setEnabled(false);
+				iIndex.setEnabled(false);
+				jIndex.setEnabled(false);
+			}
+			else if (index == 1) {
+				dimensionX.setEnabled(true);
+				dimensionY.setEnabled(false);
+				iIndex.setEnabled(true);
+				jIndex.setEnabled(false);
+			}
+			else if (index == 2) {
+				dimensionX.setEnabled(true);
+				dimensionY.setEnabled(true);
+				iIndex.setEnabled(true);
+				jIndex.setEnabled(true);
+			}
 		}
 	}
 

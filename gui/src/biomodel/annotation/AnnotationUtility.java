@@ -187,6 +187,90 @@ public class AnnotationUtility {
 		return ret;
 	}
 	
+	public static void setVectorIndexAnnotation(SBase sbmlObject, String i) {
+		if (sbmlObject.isSetAnnotation())
+			removeVectorIndexAnnotation(sbmlObject);
+		XMLAttributes attr = new XMLAttributes();
+		attr.add("xmlns:iIndex", "http://www.fakeuri.com");
+		attr.add("iIndex:eqn", ""+i);
+		XMLNode node = new XMLNode(new XMLTriple("iIndex","http://www.fakeuri.com ","iIndex"), attr);
+		if (SBMLutilities.appendAnnotation(sbmlObject, node) != JSBML.OPERATION_SUCCESS)
+			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
+					+ SBMLutilities.getId(sbmlObject)); 
+	}
+
+	public static void removeVectorIndexAnnotation(SBase sbmlObject) {
+		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+		Pattern vectorIndexPattern = Pattern.compile(I_INDEX_ANNOTATION);
+		Matcher vectorIndexMatcher = vectorIndexPattern.matcher(annotation);
+		if (vectorIndexMatcher.find()) {
+			String matrixIndexAnnotation = vectorIndexMatcher.group(0);
+			annotation = annotation.replace(matrixIndexAnnotation, "");
+		}
+		//if (annotation.trim().equals("")) {
+		//	sbmlObject.unsetAnnotation();
+		//} else {
+		sbmlObject.setAnnotation(new Annotation(annotation));
+		//}
+	}
+	
+	public static String parseVectorIndexAnnotation(SBase sbmlObject) {
+		if (sbmlObject==null)
+			return null;
+		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+		Pattern vectorIndexPattern = Pattern.compile(I_INDEX_ANNOTATION);
+		Matcher vectorIndexMatcher = vectorIndexPattern.matcher(annotation);
+		if (vectorIndexMatcher.find() && vectorIndexMatcher.groupCount()==2) {
+			if (vectorIndexMatcher.group(1)!=null) {
+				return (String) vectorIndexMatcher.group(1);
+			}
+			return (String) vectorIndexMatcher.group(2);
+		}
+		return null;
+	}
+	
+	public static void setMatrixIndexAnnotation(SBase sbmlObject, String j) {
+		if (sbmlObject.isSetAnnotation())
+			removeMatrixIndexAnnotation(sbmlObject);
+		XMLAttributes attr = new XMLAttributes();
+		attr.add("xmlns:jIndex", "http://www.fakeuri.com");
+		attr.add("jIndex:eqn", ""+j);
+		XMLNode node = new XMLNode(new XMLTriple("jIndex","http://www.fakeuri.com ","jIndex"), attr);
+		if (SBMLutilities.appendAnnotation(sbmlObject, node) != JSBML.OPERATION_SUCCESS)
+			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
+					+ SBMLutilities.getId(sbmlObject)); 
+	}
+
+	public static void removeMatrixIndexAnnotation(SBase sbmlObject) {
+		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+		Pattern matrixIndexPattern = Pattern.compile(J_INDEX_ANNOTATION);
+		Matcher matrixIndexMatcher = matrixIndexPattern.matcher(annotation);
+		if (matrixIndexMatcher.find()) {
+			String matricIndexAnnotation = matrixIndexMatcher.group(0);
+			annotation = annotation.replace(matricIndexAnnotation, "");
+		}
+		//if (annotation.trim().equals("")) {
+		//	sbmlObject.unsetAnnotation();
+		//} else {
+		sbmlObject.setAnnotation(new Annotation(annotation));
+		//}
+	}
+	
+	public static String parseMatrixIndexAnnotation(SBase sbmlObject) {
+		if (sbmlObject==null)
+			return null;
+		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+		Pattern matrixIndexPattern = Pattern.compile(J_INDEX_ANNOTATION);
+		Matcher matrixIndexMatcher = matrixIndexPattern.matcher(annotation);
+		if (matrixIndexMatcher.find() && matrixIndexMatcher.groupCount()==2) {
+			if (matrixIndexMatcher.group(1)!=null) {
+				return (String) matrixIndexMatcher.group(1);
+			}
+			return (String) matrixIndexMatcher.group(2);
+		}
+		return null;
+	}
+	
 	public static void setArraySizeAnnotation(SBase sbmlObject, int size) {
 		if (sbmlObject.isSetAnnotation())
 			removeArraySizeAnnotation(sbmlObject);
@@ -489,6 +573,14 @@ public class AnnotationUtility {
 	private static final String MATRIX_SIZE_ANNOTATION =
 			"<matrix:matrix xmlns:matrix=\"http://www\\.fakeuri\\.com\" matrix:size=\"\\(([a-zA-Z]+[_a-zA-Z\\d]*),([a-zA-Z]+[_a-zA-Z\\d]*)\\)\"/>" + "|" +
 					"<matrix:matrix matrix:size=\"\\(([a-zA-Z]+[_a-zA-Z\\d]*),([a-zA-Z]+[_a-zA-Z\\d]*)\\)\" xmlns:matrix=\"http://www\\.fakeuri\\.com\"/>";
+	
+	private static final String I_INDEX_ANNOTATION =
+			"<iIndex:iIndex xmlns:iIndex=\"http://www\\.fakeuri\\.com\" iIndex:eqn=\"(.)\"/>" + "|" +
+					"<iIndex:iIndex iIndex:eqn=\"(.)\" xmlns:iIndex=\"http://www\\.fakeuri\\.com\"/>";
+	
+	private static final String J_INDEX_ANNOTATION =
+			"<jIndex:jIndex xmlns:jIndex=\"http://www\\.fakeuri\\.com\" jIndex:eqn=\"(.)\"/>" + "|" +
+					"<jIndex:jIndex jIndex:eqn=\"(.)\" xmlns:jIndex=\"http://www\\.fakeuri\\.com\"/>";
 	
 	private static final String LAYOUT_GRID_ANNOTATION = "grid=\\((\\d+),(\\d+)\\)";
 	
