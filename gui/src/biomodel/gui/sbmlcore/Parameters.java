@@ -485,6 +485,34 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				} else {
 					portDir.setSelectedItem(GlobalConstants.INTERNAL);
 				}
+				String[] sizes = new String[2];
+				if(paramsOnly){
+					dimensionType.setEnabled(false);
+				}
+				sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(paramet);
+				if(sizes[0]==null){
+					sizes = AnnotationUtility.parseMatrixSizeAnnotation(paramet);
+					if(sizes==null){
+						dimensionType.setSelectedIndex(0);
+						dimensionX.setEnabled(false);
+						dimensionY.setEnabled(false);
+					}
+					else{
+						dimensionType.setSelectedIndex(2);
+						dimensionX.setEnabled(true);
+						dimensionY.setEnabled(true);
+						dimensionX.setSelectedItem(sizes[0]);
+						dimensionY.setSelectedItem(sizes[1]);
+					}
+				}
+				else{
+					dimensionType.setSelectedIndex(1);
+					dimensionX.setEnabled(true);
+					dimensionX.setSelectedItem(sizes[0]);
+					dimensionY.setEnabled(false);
+				}
+
+				
 				// TODO: Parse size information here
 				// TODO: String = parseVectorSizeAnnotation, if (null) (String,String) = parseMatrixSizeAnnotation, if (null), then scalar
 				//System.out.println(AnnotationUtility.parseVectorSizeAnnotation(paramet));
@@ -587,53 +615,11 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		}
 		parametersPanel.add(onPortLabel);
 		parametersPanel.add(portDir);
-
-//		int i = 0;
-//		while(i < bioModel.getParameterArray().getListOfParameters().size()){
-//			if(bioModel.getParameterArray().getListOfParameters().get(i).equals(paramID)){
-//				int choice = bioModel.getParameterArray().getListOfParameters().get(i).getChoice();
-//				switch: choice
-//					case:1
-//						int xDimension = bioModel.getParameterArray().getListOfParameters().get(i).getChoice(1);
-//					case:2
-//						int xDimension = bioModel.getParameterArray().getListOfParameters().get(i).getChoice(1);
-//						int yDimension = bioModel.getParameterArray().getListOfParameters().get(i).getChoice(2);
-//				break;
-//			} else {
-//				i++;
-//			}
-//		}
-//		dimensionType.setSelectedIndex(choice);
-		if(paramsOnly){
-			dimensionType.setEnabled(false);
-		}
+		
 		parametersPanel.add(dimensionType);
-//		switch (choice){
-//		case 1: 
-			dimensionX.setEnabled(false);
-			parametersPanel.add(dimensionX);
-			parametersPanel.add(new JLabel());
-			dimensionY.setEnabled(false);
-			parametersPanel.add(dimensionY);
-//			break;
-//		case 2:
-//			dimensionX.setSelectedIndex(xDimension);
-//			dimensionX.setEnabled(true);
-//			parametersPanel.add(dimensionX);
-//			parametersPanel.add(new JLabel());
-//			dimensionY.setEnabled(false);
-//			parametersPanel.add(dimensionY);
-//			break;
-//		default:		
-//			dimensionX.setSelectedIndex(xDimension);
-//			dimensionX.setEnabled(false);
-//			parametersPanel.add(dimensionX);
-//			parametersPanel.add(new JLabel());
-//			dimensionY.setSelectedIndex(yDimension);
-//			dimensionY.setEnabled(false);
-//			parametersPanel.add(dimensionY);
-//			break;
-//		}
+		parametersPanel.add(dimensionX);
+		parametersPanel.add(new JLabel());
+		parametersPanel.add(dimensionY);
 		
 		Object[] options = { option, "Cancel" };
 		String editorTitle = "Parameter Editor";
@@ -757,13 +743,18 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							Parameter paramet = bioModel.getSBMLDocument().getModel().getParameter(selected);
 							paramet.setId(paramID.getText().trim());
 							paramet.setName(paramName.getText().trim());
-							//TODO: SCOTT: add dimensions here
 							if (dimensionType.getSelectedIndex() == 1){
+								AnnotationUtility.removeMatrixSizeAnnotation(paramet);
 								AnnotationUtility.setVectorSizeAnnotation(paramet,(String) dimensionX.getSelectedItem());
 							}
 							else if (dimensionType.getSelectedIndex() == 2){
+								AnnotationUtility.removeVectorSizeAnnotation(paramet);
 								AnnotationUtility.setMatrixSizeAnnotation(paramet,(String) dimensionX.getSelectedItem(), 
 										(String) dimensionY.getSelectedItem());
+							}
+							else{
+								AnnotationUtility.removeVectorSizeAnnotation(paramet);
+								AnnotationUtility.removeMatrixSizeAnnotation(paramet);
 							}
 							if (paramConst.getSelectedItem().equals("true")) {
 								paramet.setConstant(true);
@@ -888,7 +879,6 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							Parameter paramet = bioModel.getSBMLDocument().getModel().createParameter();
 							paramet.setId(paramID.getText().trim());
 							paramet.setName(paramName.getText().trim());
-							// TODO: SCOTT: add dimensions here
 							if (dimensionType.getSelectedIndex() == 1){
 								AnnotationUtility.setVectorSizeAnnotation(paramet,(String) dimensionX.getSelectedItem());
 							}
@@ -1061,14 +1051,6 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				dimensionX.setEnabled(true);
 				dimensionY.setEnabled(true);
 			}
-		}
-	}
-	
-	public int getChoice(int whatToGet){
-		switch (whatToGet){
-		case 1: return dimensionX.getSelectedIndex();
-		case 2: return dimensionY.getSelectedIndex(); 
-		default: return dimensionType.getSelectedIndex();
 		}
 	}
 
