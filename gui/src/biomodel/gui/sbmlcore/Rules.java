@@ -2,6 +2,7 @@ package biomodel.gui.sbmlcore;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -67,6 +68,10 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	private BioModel bioModel;
 
 	private JComboBox ruleType, ruleVar;
+	
+	private JComboBox dimensionType, dimensionX, dimensionY;
+	
+	private JTextField eqnIndex1, eqnIndex2;
 	
 	private ModelEditor modelEditor;
 	
@@ -176,6 +181,8 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		JPanel rulePanel = new JPanel(new BorderLayout());
 		JPanel IDPanel = new JPanel();
 		JPanel mathPanel = new JPanel();
+		JPanel dimensionPanel = new JPanel(new GridLayout(2,3));
+		JPanel southPanel = new JPanel(new BorderLayout());
 		JLabel IDLabel = new JLabel("ID:");
 		JLabel typeLabel = new JLabel("Type:");
 		JLabel varLabel = new JLabel("Variable:");
@@ -188,6 +195,28 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		ruleMath = new JTextField(30);
 		ruleVar.setEnabled(false);
 		JCheckBox onPort = new JCheckBox();
+		dimensionType = new JComboBox();
+		dimensionType.addItem("Scalar");
+		dimensionType.addItem("Vector");
+		dimensionType.addItem("Matrix");
+		dimensionType.addActionListener(this);
+		dimensionX = new JComboBox();
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
+			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
+			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
+				dimensionX.addItem(param.getId());
+			}
+		}
+		dimensionY = new JComboBox();
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
+			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
+			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
+				dimensionY.addItem(param.getId());
+			}
+		}
+		eqnIndex1 = new JTextField(10);
+		eqnIndex2 = new JTextField(10);
+		
 		if (option.equals("OK")) {
 			ruleType.setEnabled(false);
 			Rule rule = (Rule)SBMLutilities.getElementByMetaId(bioModel.getSBMLDocument().getModel(), metaId);
@@ -238,6 +267,29 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				onPort.setSelected(true);
 			} else {
 				onPort.setSelected(false);
+			}
+			String[] sizes = new String[2];
+			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(rule);
+			if(sizes[0]==null){
+				sizes = AnnotationUtility.parseMatrixSizeAnnotation(rule);
+				if(sizes==null){
+					dimensionType.setSelectedIndex(0);
+					dimensionX.setEnabled(false);
+					dimensionY.setEnabled(false);
+				}
+				else{
+					dimensionType.setSelectedIndex(2);
+					dimensionX.setEnabled(true);
+					dimensionY.setEnabled(true);
+					dimensionX.setSelectedItem(sizes[0]);
+					dimensionY.setSelectedItem(sizes[1]);
+				}
+			}
+			else{
+				dimensionType.setSelectedIndex(1);
+				dimensionX.setEnabled(true);
+				dimensionX.setSelectedItem(sizes[0]);
+				dimensionY.setEnabled(false);
 			}
 		}
 		else {
@@ -291,8 +343,17 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		mathPanel.add(onPort);
 		rulePanel.add(IDPanel,"North");
 		rulePanel.add(mathPanel,"Center");
+		dimensionPanel.add(dimensionType);
+		dimensionPanel.add(dimensionX);
+		dimensionPanel.add(eqnIndex1);
+		dimensionPanel.add(new JLabel());
+		dimensionPanel.add(dimensionY);
+		dimensionPanel.add(eqnIndex2);
+		
 		if (!modelEditor.isParamsOnly())
-			rulePanel.add(sbolField,"South");
+			southPanel.add(sbolField,"North");
+		southPanel.add(dimensionPanel, "South");
+		rulePanel.add(southPanel, "South");
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, rulePanel, "Rule Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
 				options, options[0]);
@@ -440,6 +501,19 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					rules.setListData(rul);
 					rules.setSelectedIndex(index);
 					bioModel.makeUndoPoint();
+					if (dimensionType.getSelectedIndex() == 1){
+						AnnotationUtility.removeMatrixSizeAnnotation(r);
+						AnnotationUtility.setVectorSizeAnnotation(r,(String) dimensionX.getSelectedItem());
+					}
+					else if (dimensionType.getSelectedIndex() == 2){
+						AnnotationUtility.removeVectorSizeAnnotation(r);
+						AnnotationUtility.setMatrixSizeAnnotation(r,(String) dimensionX.getSelectedItem(), 
+								(String) dimensionY.getSelectedItem());
+					}
+					else{
+						AnnotationUtility.removeVectorSizeAnnotation(r);
+						AnnotationUtility.removeMatrixSizeAnnotation(r);
+					}
 				}
 				else {
 					String[] rul = new String[rules.getModel().getSize()];
@@ -458,6 +532,13 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					}
 					else {
 						addStr = addVar + " = " + SBMLutilities.myFormulaToString(SBMLutilities.myParseFormula(ruleMath.getText().trim()));
+					}
+					if (dimensionType.getSelectedIndex() == 1){
+						AnnotationUtility.setVectorSizeAnnotation(r,(String) dimensionX.getSelectedItem());
+					}
+					else if (dimensionType.getSelectedIndex() == 2){
+						AnnotationUtility.setMatrixSizeAnnotation(r,(String) dimensionX.getSelectedItem(), 
+								(String) dimensionY.getSelectedItem());
 					}
 					Object[] adding = { addStr };
 					add.setListData(adding);
@@ -1007,6 +1088,22 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		// if the remove event button is clicked
 		else if (e.getSource() == removeRule) {
 			removeRule();
+		}
+		// if the dimension type is changed
+		else if (e.getSource() == dimensionType) {
+			int index = dimensionType.getSelectedIndex();
+			if (index == 0) {
+				dimensionX.setEnabled(false);
+				dimensionY.setEnabled(false);
+			}
+			else if (index == 1) {
+				dimensionX.setEnabled(true);
+				dimensionY.setEnabled(false);
+			}
+			else if (index == 2) {
+				dimensionX.setEnabled(true);
+				dimensionY.setEnabled(true);
+			}
 		}
 	}
 

@@ -140,10 +140,10 @@ public class AnnotationUtility {
 	
 	public static void setMatrixSizeAnnotation(SBase sbmlObject, String numRows, String numCols) {
 		if (sbmlObject.isSetAnnotation())
-			removeVectorSizeAnnotation(sbmlObject);
+			removeMatrixSizeAnnotation(sbmlObject);
 		XMLAttributes attr = new XMLAttributes();
 		attr.add("xmlns:matrix", "http://www.fakeuri.com");
-		attr.add("matrix:size", "("+numRows + "," + numCols + ")");
+		attr.add("matrix:size", "(" + numRows + "," + numCols + ")");
 		XMLNode node = new XMLNode(new XMLTriple("matrix","http://www.fakeuri.com ","matrix"), attr);
 		if (SBMLutilities.appendAnnotation(sbmlObject, node) != JSBML.OPERATION_SUCCESS)
 			Utility.createErrorMessage("Invalid XML Operation", "Error occurred while annotating SBML element " 
@@ -169,11 +169,16 @@ public class AnnotationUtility {
 		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
 		Pattern matrixSizePattern = Pattern.compile(MATRIX_SIZE_ANNOTATION);
 		Matcher matrixSizeMatcher = matrixSizePattern.matcher(annotation);
-		if (matrixSizeMatcher.find() && matrixSizeMatcher.groupCount()==2) {
-			if (matrixSizeMatcher.group(1)!=null) {
+		if (matrixSizeMatcher.find() && matrixSizeMatcher.groupCount()==4) {
+			ret = new String[2];
+			if (matrixSizeMatcher.group(1) != null && matrixSizeMatcher.group(2) != null) {
 				ret[0] = matrixSizeMatcher.group(1);
+				ret[1] = matrixSizeMatcher.group(2);
 			}
-			ret[1] = matrixSizeMatcher.group(2);
+			else {
+				ret[0] = matrixSizeMatcher.group(3);
+				ret[1] = matrixSizeMatcher.group(4);
+			}
 		}
 		return ret;
 	}
@@ -478,8 +483,8 @@ public class AnnotationUtility {
 					"<vector:vector vector:size=\"([a-zA-Z]+[_a-zA-Z\\d]*)\" xmlns:vector=\"http://www\\.fakeuri\\.com\"/>";
 	
 	private static final String MATRIX_SIZE_ANNOTATION =
-			"<matrix:matrix xmlns:matrix=\"http://www\\.fakeuri\\.com\" matrix:size=\"([a-zA-Z]+[_a-zA-Z\\d]*)\"/>" + "|" +
-					"<matrix:matrix matrix:size=\"([a-zA-Z]+[_a-zA-Z\\d]*)\" xmlns:matrix=\"http://www\\.fakeuri\\.com\"/>";
+			"<matrix:matrix xmlns:matrix=\"http://www\\.fakeuri\\.com\" matrix:size=\"\\(([a-zA-Z]+[_a-zA-Z\\d]*),([a-zA-Z]+[_a-zA-Z\\d]*)\\)\"/>" + "|" +
+					"<matrix:matrix matrix:size=\"\\(([a-zA-Z]+[_a-zA-Z\\d]*),([a-zA-Z]+[_a-zA-Z\\d]*)\\)\" xmlns:matrix=\"http://www\\.fakeuri\\.com\"/>";
 	
 	private static final String LAYOUT_GRID_ANNOTATION = "grid=\\((\\d+),(\\d+)\\)";
 	
