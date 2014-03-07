@@ -196,6 +196,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 		}
 		boolean error = false;
 		InitialAssignment r = bioModel.getSBMLDocument().getModel().createInitialAssignment();
+		// TODO: add dimensions and index
 		String initialId = "init__"+variable;
 		SBMLutilities.setMetaId(r, initialId);
 		r.setVariable(variable);

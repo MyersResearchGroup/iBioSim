@@ -362,6 +362,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						Parameter parameter = 
 								bioModel.getSBMLDocument().getModel().getParameter(event.getListOfEventAssignments().get(j).getVariable());
 						EventAssignment ea = event.getListOfEventAssignments().get(j);
+						// TODO: add the index in the field
 						if (parameter!=null && SBMLutilities.isPlace(parameter)) {
 							if (isTextual) {
 								assign[l] = ea.getVariable() + " := " + SBMLutilities.myFormulaToString(ea.getMath());
@@ -653,6 +654,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					}
 					for (int i = 0; i < assign.length; i++) {
 						EventAssignment ea = e.createEventAssignment();
+						// TODO: extract the index, if one exisits and add annotations for them
 						String var = assign[i].split(" ")[0];
 						ea.setVariable(var);
 						Parameter p = bioModel.getSBMLDocument().getModel().getParameter(var);
@@ -971,6 +973,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					if (!error) {
 						for (int i = 0; i < assign.length; i++) {
 							EventAssignment ea = e.createEventAssignment();
+							// TODO: extract the index, if one exisits and add annotations for them
 							String var = assign[i].split(" ")[0];
 							if (var.endsWith("\'")) {
 								var = "rate_" + var.replace("\'","");
