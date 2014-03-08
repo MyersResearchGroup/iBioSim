@@ -274,7 +274,7 @@ public class ExprTree {
 					readsign = true;
 					tokvalue += c;
 					break;
-				} else {
+				} else if (!readword){
 					return -1;
 				}
 			default:
