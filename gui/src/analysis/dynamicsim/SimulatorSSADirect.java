@@ -22,19 +22,12 @@ public class SimulatorSSADirect extends Simulator {
 
 	public SimulatorSSADirect(String SBMLFileName, String outputDirectory, double timeLimit, 
 			double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, 
-			double stoichAmpValue, JFrame running, String[] interestingSpecies, String quantityType) 
-	throws IOException, XMLStreamException {
+			double stoichAmpValue, JFrame running, String[] interestingSpecies, String quantityType)  throws IOException, XMLStreamException {	
 		
 		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep, randomSeed,
 				progress, printInterval, initializationTime, stoichAmpValue, running, interestingSpecies, quantityType);
 	
-		try {
-			initialize(randomSeed, 1);
-		} catch (IOException e2) {
-			e2.printStackTrace();
-		} catch (XMLStreamException e2) {
-			e2.printStackTrace();
-		}
+		initialize(randomSeed, 1);
 	}
 
 	@Override
@@ -243,8 +236,7 @@ public class SimulatorSSADirect extends Simulator {
 	 * @throws IOException
 	 * @throws XMLStreamException
 	 */
-	private void initialize(long randomSeed, int runNumber) 
-	throws IOException, XMLStreamException {	
+	private void initialize(long randomSeed, int runNumber)  throws IOException {		
 		
 		setupArrays();
 		setupSpecies();

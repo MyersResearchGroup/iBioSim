@@ -32,7 +32,7 @@ import odk.lang.FastMath;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
 import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
-import org.sbml.jsbml.ext.comp.CompConstant;
+import org.sbml.jsbml.ext.comp.CompConstants;
 import org.sbml.jsbml.ext.comp.CompSBasePlugin;
 import org.sbml.jsbml.ext.fbc.FBCConstants;
 import org.sbml.jsbml.ext.fbc.FBCModelPlugin;
@@ -918,7 +918,7 @@ public class SBMLutilities {
 			metaIDIndex = setDefaultMetaID(document, model.getRule(i), metaIDIndex);
 		for (int i = 0; i < model.getEventCount(); i++)
 			metaIDIndex = setDefaultMetaID(document, model.getEvent(i), metaIDIndex);
-		CompModelPlugin compModel = (CompModelPlugin) document.getModel().getExtension(CompConstant.namespaceURI);
+		CompModelPlugin compModel = (CompModelPlugin) document.getModel().getExtension(CompConstants.namespaceURI);
 		if (compModel != null && compModel.isSetListOfSubmodels()) {
 			for (int i = 0; i < compModel.getListOfSubmodels().size(); i++)
 				metaIDIndex = setDefaultMetaID(document, compModel.getListOfSubmodels().get(i), metaIDIndex);
@@ -926,7 +926,7 @@ public class SBMLutilities {
 	}
 	
 	public static int setDefaultMetaID(SBMLDocument document, SBase sbmlObject, int metaIDIndex) {
-		CompSBMLDocumentPlugin compDocument = (CompSBMLDocumentPlugin) document.getExtension(CompConstant.namespaceURI);
+		CompSBMLDocumentPlugin compDocument = (CompSBMLDocumentPlugin) document.getExtension(CompConstants.namespaceURI);
 		String metaID = sbmlObject.getMetaId();
 		if (metaID == null || metaID.equals("")) {
 			metaID = "iBioSim" + metaIDIndex;
@@ -3145,14 +3145,30 @@ public class SBMLutilities {
 	}
 	
 	public static int appendAnnotation(SBase sbmlObject, String annotation) {
-		sbmlObject.getAnnotation().appendNoRDFAnnotation(annotation);
+		try {
+			sbmlObject.getAnnotation().appendNoRDFAnnotation(annotation);
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		//sbmlObject.setAnnotation(new Annotation(sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim() + annotation));
 		return JSBML.OPERATION_SUCCESS;
 	}
 	
 	public static int appendAnnotation(SBase sbmlObject, XMLNode annotation) {
-		sbmlObject.getAnnotation().appendNoRDFAnnotation(annotation.toXMLString());
-		//sbmlObject.setAnnotation(new Annotation(sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim() + annotation.toXMLString()));
+
+		try {
+			sbmlObject.getAnnotation().appendNoRDFAnnotation( annotation.toXMLString());
+
+
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+//=======
+//		sbmlObject.getAnnotation().appendNoRDFAnnotation(annotation.toXMLString());
+//		//sbmlObject.setAnnotation(new Annotation(sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim() + annotation.toXMLString()));
+//>>>>>>> 1.11
 		return JSBML.OPERATION_SUCCESS;
 	}
 	
@@ -3175,29 +3191,29 @@ public class SBMLutilities {
 	}
 	
 	public static CompSBMLDocumentPlugin getCompSBMLDocumentPlugin(SBMLDocument document) {
-		if (document.getExtension(CompConstant.namespaceURI) != null) {
-			return (CompSBMLDocumentPlugin)document.getExtension(CompConstant.namespaceURI);
+		if (document.getExtension(CompConstants.namespaceURI) != null) {
+			return (CompSBMLDocumentPlugin)document.getExtension(CompConstants.namespaceURI);
 		}
 		CompSBMLDocumentPlugin comp = new CompSBMLDocumentPlugin(document);
-		document.addExtension(CompConstant.namespaceURI, comp);
+		document.addExtension(CompConstants.namespaceURI, comp);
 		return comp;
 	}
 	
 	public static CompModelPlugin getCompModelPlugin(Model model) {
-		if (model.getExtension(CompConstant.namespaceURI) != null) {
-			return (CompModelPlugin)model.getExtension(CompConstant.namespaceURI);
+		if (model.getExtension(CompConstants.namespaceURI) != null) {
+			return (CompModelPlugin)model.getExtension(CompConstants.namespaceURI);
 		}
 		CompModelPlugin comp = new CompModelPlugin(model);
-		model.addExtension(CompConstant.namespaceURI, comp);
+		model.addExtension(CompConstants.namespaceURI, comp);
 		return comp;
 	}
 	
 	public static CompSBasePlugin getCompSBasePlugin(SBase sb) {
-		if (sb.getExtension(CompConstant.namespaceURI) != null) {
-			return (CompSBasePlugin)sb.getExtension(CompConstant.namespaceURI);
+		if (sb.getExtension(CompConstants.namespaceURI) != null) {
+			return (CompSBasePlugin)sb.getExtension(CompConstants.namespaceURI);
 		}
 		CompSBasePlugin comp = new CompSBasePlugin(sb);
-		sb.addExtension(CompConstant.namespaceURI, comp);
+		sb.addExtension(CompConstants.namespaceURI, comp);
 		return comp;
 	}
 

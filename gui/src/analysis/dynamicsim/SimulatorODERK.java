@@ -14,7 +14,6 @@ import org.sbml.jsbml.AssignmentRule;
 
 import flanagan.integration.RungeKutta;
 import flanagan.integration.DerivnFunction;
-
 import main.Gui;
 import main.util.MutableBoolean;
 
@@ -39,7 +38,7 @@ public class SimulatorODERK extends Simulator {
 	public SimulatorODERK(String SBMLFileName, String outputDirectory, double timeLimit, double maxTimeStep, long randomSeed,
 			JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running,
 			String[] interestingSpecies, int numSteps, double relError, double absError, String quantityType) 
-	throws IOException, XMLStreamException {
+					throws IOException, XMLStreamException {	
 		
 		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, 0.0, randomSeed,
 				progress, printInterval, initializationTime, stoichAmpValue, running,
@@ -49,14 +48,10 @@ public class SimulatorODERK extends Simulator {
 		relativeError = relError;
 		absoluteError = absError;
 		
-		try {
-			initialize(randomSeed, 1);
-		} catch (IOException e2) {
-			e2.printStackTrace();
-		}
+		initialize(randomSeed, 1);
 	}
 
-	private void initialize(long randomSeed, int runNumber) throws IOException {
+	private void initialize(long randomSeed, int runNumber) throws IOException {	
 	
 		setupArrays();
 		setupSpecies();

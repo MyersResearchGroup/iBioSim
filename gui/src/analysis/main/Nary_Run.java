@@ -4,11 +4,12 @@ import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+
 import javax.swing.*;
+import javax.xml.stream.XMLStreamException;
 
 import main.*;
 import main.util.*;
-
 import verification.AbstPane;
 
 /**
@@ -573,9 +574,17 @@ public class Nary_Run implements ActionListener, Runnable {
 				}
 			}
 		}
-		runProgram.execute(filename, fba, sbml, dot, xhtml, lhpn, naryFrame, ODE, monteCarlo, sim, printer_id, printer_track_quantity, outDir, nary, 2,
-				intSpecies, log, biomodelsim, simTab, root, progress, "", null, direct, timeLimit, timeLimit * run, modelFile,
-				abstPane, abstraction, null, absError, timeStep, printInterval, run, rndSeed, true, label, running);
+		try {
+			runProgram.execute(filename, fba, sbml, dot, xhtml, lhpn, naryFrame, ODE, monteCarlo, sim, printer_id, printer_track_quantity, outDir, nary, 2,
+					intSpecies, log, biomodelsim, simTab, root, progress, "", null, direct, timeLimit, timeLimit * run, modelFile,
+					abstPane, abstraction, null, absError, timeStep, printInterval, run, rndSeed, true, label, running);
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		running.setCursor(null);
 		running.dispose();
 		naryCancel.removeActionListener(runProgram);

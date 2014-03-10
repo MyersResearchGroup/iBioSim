@@ -59,7 +59,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 
 	private JTextField compID, compSize, compName; // compartment fields;
 
-	private JComboBox compUnits, compConstant; // compartment units
+	private JComboBox compUnits, CompConstants; // compartment units
 
 //	private JComboBox compTypeBox; // compartment type combo box
 
@@ -193,8 +193,8 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		compSize.setText("1.0");
 		compUnits = new JComboBox();
 		String[] optionsTF = { "true", "false" };
-		compConstant = new JComboBox(optionsTF);
-		compConstant.setSelectedItem("true");
+		CompConstants = new JComboBox(optionsTF);
+		CompConstants.setSelectedItem("true");
 		onPort = new JCheckBox();
 		editComp = false;
 		String selectedID = "";
@@ -269,7 +269,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 //			compTypeBox.setEnabled(false);
 			dimText.setEnabled(false);
 			compUnits.setEnabled(false);
-			compConstant.setEnabled(false);
+			CompConstants.setEnabled(false);
 			compSize.setEnabled(false);
 			onPort.setEnabled(false);
 			sweep.setEnabled(false);
@@ -299,10 +299,10 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 					compUnits.setSelectedItem("( none )");
 				}
 				if (compartment.getConstant()) {
-					compConstant.setSelectedItem("true");
+					CompConstants.setSelectedItem("true");
 				}
 				else {
-					compConstant.setSelectedItem("false");
+					CompConstants.setSelectedItem("false");
 				}
 				if (bioModel.getPortByIdRef(compartment.getId())!=null) {
 					onPort.setSelected(true);
@@ -349,7 +349,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		compPanel.add(dimLabel);
 		compPanel.add(dimText);
 		compPanel.add(constLabel);
-		compPanel.add(compConstant);
+		compPanel.add(CompConstants);
 		if (paramsOnly) {
 			JLabel typeLabel = new JLabel("Value Type:");
 			type.addActionListener(new ActionListener() {
@@ -389,7 +389,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = SBMLutilities.checkID(bioModel.getSBMLDocument(), compID.getText().trim(), selectedID, false);
-			if (!error && option.equals("OK") && compConstant.getSelectedItem().equals("true")) {
+			if (!error && option.equals("OK") && CompConstants.getSelectedItem().equals("true")) {
 				String val = selected;
 				error = SBMLutilities.checkConstant(bioModel.getSBMLDocument(), "Compartment", val);
 			}
@@ -521,7 +521,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						else {
 							c.setUnits((String) compUnits.getSelectedItem());
 						}
-						if (compConstant.getSelectedItem().equals("true")) {
+						if (CompConstants.getSelectedItem().equals("true")) {
 							c.setConstant(true);
 						}
 						else {
@@ -601,7 +601,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						if (!compUnits.getSelectedItem().equals("( none )")) {
 							c.setUnits((String) compUnits.getSelectedItem());
 						}
-						if (compConstant.getSelectedItem().equals("true")) {
+						if (CompConstants.getSelectedItem().equals("true")) {
 							c.setConstant(true);
 						}
 						else {
@@ -706,7 +706,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 			compUnits.addItem("litre");
 			compUnits.addItem("dimensionless");
 			if (!paramsOnly) {
-				compConstant.setEnabled(true);
+				CompConstants.setEnabled(true);
 				compSize.setEnabled(true);
 			}
 		}
@@ -727,7 +727,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 			}
 			compUnits.addItem("dimensionless");
 			if (!paramsOnly) {
-				compConstant.setEnabled(true);
+				CompConstants.setEnabled(true);
 				compSize.setEnabled(true);
 			}
 		}
@@ -749,7 +749,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 			compUnits.addItem("metre");
 			compUnits.addItem("dimensionless");
 			if (!paramsOnly) {
-				compConstant.setEnabled(true);
+				CompConstants.setEnabled(true);
 				compSize.setEnabled(true);
 			}
 		}
@@ -758,7 +758,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 			compUnits.addItem("( none )");
 			if (bioModel.getSBMLDocument().getLevel() < 3) {
 				compSize.setText("");
-				compConstant.setEnabled(false);
+				CompConstants.setEnabled(false);
 				compSize.setEnabled(false);
 			}
 		}
@@ -774,7 +774,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 			}
 			compUnits.addItem("dimensionless");
 			if (!paramsOnly) {
-				compConstant.setEnabled(true);
+				CompConstants.setEnabled(true);
 				compSize.setEnabled(true);
 			}
 		}

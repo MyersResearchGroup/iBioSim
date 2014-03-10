@@ -234,14 +234,11 @@ public abstract class Simulator {
 	 * @param progress
 	 * @param printInterval
 	 * @param initializationTime
-	 * @throws IOException
-	 * @throws XMLStreamException
 	 */
 	public Simulator(String SBMLFileName, String outputDirectory, double timeLimit, 
 			double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, 
 			Long initializationTime, double stoichAmpValue, JFrame running, String[] interestingSpecies, 
-			String quantityType) 
-	throws IOException, XMLStreamException {
+			String quantityType) {
 		
 		long initTime1 = System.nanoTime();
 		
@@ -270,7 +267,15 @@ public abstract class Simulator {
 		
 		SBMLDocument document = null;
 		
-		document = SBMLReader.read(new File(SBMLFileName));
+		try {
+			document = SBMLReader.read(new File(SBMLFileName));
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		SBMLErrorLog errors = document.getListOfErrors();
 		
@@ -1427,6 +1432,7 @@ public abstract class Simulator {
 		HashMap<String, SpeciesDimensions> arrayedSpeciesToDimensionsMap = 
 			new HashMap<String, SpeciesDimensions>();
 		
+		try{
 		for (Species species : model.getListOfSpecies()) {
 			
 			String speciesID = species.getId();
@@ -2038,6 +2044,11 @@ public abstract class Simulator {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+		}
+		catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
@@ -3617,54 +3628,56 @@ public abstract class Simulator {
 		HashMap<String, Boolean> speciesToIsArrayedMap = new HashMap<String, Boolean>();
 		HashMap<String, SpeciesDimensions> arrayedSpeciesToDimensionsMap = 
 			new HashMap<String, SpeciesDimensions>();
-		
+	
+		try{
 		for (Species species : model.getListOfSpecies()) {
 			
 			String speciesID = species.getId();
 			
 			//check to see if the species is arrayed			
-			if (stripAnnotation(species.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim()).contains("array:array")) {
-				
-				arraysExist = true;
-				
-				speciesToIsArrayedMap.put(speciesID, true);
-				speciesToRemove.add(speciesID);
-				
-				int numRowsLower = 0;
-				int numColsLower = 0;
-				int numRowsUpper = 0;
-				int numColsUpper = 0;
-				
-				String[] annotationString = stripAnnotation(species.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim()).split("=");
-				
-				numColsLower = Integer.valueOf((annotationString[1].split(" "))[0].replace("\"",""));
-				numColsUpper = Integer.valueOf((annotationString[2].split(" "))[0].replace("\"",""));
-				numRowsLower = Integer.valueOf((annotationString[3].split(" "))[0].replace("\"",""));
-				numRowsUpper = Integer.valueOf((annotationString[4].split(" "))[0].replace("\"",""));
-				
-				SpeciesDimensions speciesDimensions = 
-					new SpeciesDimensions(numRowsLower, numRowsUpper, numColsLower, numColsUpper);
-				
-				arrayedSpeciesToDimensionsMap.put(speciesID, speciesDimensions);
-				
-				//loop through all species in the array
-				//prepend the row/col information to create a new ID
-				for (int row = numRowsLower; row <= numRowsUpper; ++row) {
-					for (int col = numColsLower; col <= numColsUpper; ++col) {
-						
-						speciesID = "ROW" + row + "_COL" + col + "__" + species.getId();
-						
-						Species newSpecies = new Species();
-						newSpecies = species.clone();
-						SBMLutilities.setMetaId(newSpecies, speciesID);
-						newSpecies.setId(speciesID);
-						newSpecies.setAnnotation(new Annotation());
-						speciesToAdd.add(newSpecies);
+			
+				if (stripAnnotation(species.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim()).contains("array:array")) {
+					
+					arraysExist = true;
+					
+					speciesToIsArrayedMap.put(speciesID, true);
+					speciesToRemove.add(speciesID);
+					
+					int numRowsLower = 0;
+					int numColsLower = 0;
+					int numRowsUpper = 0;
+					int numColsUpper = 0;
+					
+					String[] annotationString = stripAnnotation(species.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim()).split("=");
+					
+					numColsLower = Integer.valueOf((annotationString[1].split(" "))[0].replace("\"",""));
+					numColsUpper = Integer.valueOf((annotationString[2].split(" "))[0].replace("\"",""));
+					numRowsLower = Integer.valueOf((annotationString[3].split(" "))[0].replace("\"",""));
+					numRowsUpper = Integer.valueOf((annotationString[4].split(" "))[0].replace("\"",""));
+					
+					SpeciesDimensions speciesDimensions = 
+						new SpeciesDimensions(numRowsLower, numRowsUpper, numColsLower, numColsUpper);
+					
+					arrayedSpeciesToDimensionsMap.put(speciesID, speciesDimensions);
+					
+					//loop through all species in the array
+					//prepend the row/col information to create a new ID
+					for (int row = numRowsLower; row <= numRowsUpper; ++row) {
+						for (int col = numColsLower; col <= numColsUpper; ++col) {
+							
+							speciesID = "ROW" + row + "_COL" + col + "__" + species.getId();
+							
+							Species newSpecies = new Species();
+							newSpecies = species.clone();
+							SBMLutilities.setMetaId(newSpecies, speciesID);
+							newSpecies.setId(speciesID);
+							newSpecies.setAnnotation(new Annotation());
+							speciesToAdd.add(newSpecies);
+						}
 					}
 				}
-			}
-			else
-				speciesToIsArrayedMap.put(speciesID, false);
+				else
+					speciesToIsArrayedMap.put(speciesID, false);
 		} //end species for loop
 		
 		//add new row/col species to the model
@@ -3679,112 +3692,113 @@ public abstract class Simulator {
 		
 		for (Event event : model.getListOfEvents()) {
 			
-			if (stripAnnotation(event.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim()).contains("array")) {
-				
-				arraysExist = true;
-				
-				eventsToRemove.add(event.getId());
-				
-				String annotationString = stripAnnotation(event.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim()).replace("<annotation>","").
-				replace("</annotation>","").replace("\"","");
-				String[] splitAnnotation = annotationString.split("array:");
-				ArrayList<String> eventCompartments = new ArrayList<String>();
-				
-				splitAnnotation[splitAnnotation.length - 2] = splitAnnotation[splitAnnotation.length - 2].split("xmlns:")[0];
-				
-				for (int i = 2; i < splitAnnotation.length; ++i) {
+				if (stripAnnotation(event.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim()).contains("array")) {
 					
-					String compartmentID = splitAnnotation[i].split("=")[0];
-					eventCompartments.add(compartmentID);
-				}
-				
-				//loop through all compartments and create an event for each one
-				for (String compartmentID : eventCompartments) {
+					arraysExist = true;
 					
-					Event newEvent = new Event();
-					newEvent.setVersion(event.getVersion());
-					newEvent.setLevel(event.getLevel());
-					newEvent.setId(compartmentID + "__" + event.getId());
-					SBMLutilities.setMetaId(newEvent, compartmentID + "__" + event.getId());
-					event.getTrigger().getMath().updateVariables();
-					newEvent.setTrigger(event.getTrigger().clone());
+					eventsToRemove.add(event.getId());
 					
-					//at this point, the formula has something like neighborQuantity(Species1)
-					//this needs to become neighborQuantity(Species1, CompartmentLocationX(Comp1), CompartmentLocationY(Comp1))
-					if (newEvent.getTrigger().getMath().toFormula().contains("neighborQuantity")) {
+					String annotationString = stripAnnotation(event.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim()).replace("<annotation>","").
+					replace("</annotation>","").replace("\"","");
+					String[] splitAnnotation = annotationString.split("array:");
+					ArrayList<String> eventCompartments = new ArrayList<String>();
+					
+					splitAnnotation[splitAnnotation.length - 2] = splitAnnotation[splitAnnotation.length - 2].split("xmlns:")[0];
+					
+					for (int i = 2; i < splitAnnotation.length; ++i) {
 						
-						String triggerMath = newEvent.getTrigger().getMath().toFormula();						
-						ArrayList<ASTNode> nqNodes = new ArrayList<ASTNode>();
+						String compartmentID = splitAnnotation[i].split("=")[0];
+						eventCompartments.add(compartmentID);
+					}
+					
+					//loop through all compartments and create an event for each one
+					for (String compartmentID : eventCompartments) {
 						
-						this.getSatisfyingNodesLax(newEvent.getTrigger().getMath(), "neighborQuantity", nqNodes);
+						Event newEvent = new Event();
+						newEvent.setVersion(event.getVersion());
+						newEvent.setLevel(event.getLevel());
+						newEvent.setId(compartmentID + "__" + event.getId());
+						SBMLutilities.setMetaId(newEvent, compartmentID + "__" + event.getId());
+						event.getTrigger().getMath().updateVariables();
+						newEvent.setTrigger(event.getTrigger().clone());
 						
-						//loop through all neighbor quantity nodes in the trigger formula
-						for (ASTNode nqNode : nqNodes) {
+						//at this point, the formula has something like neighborQuantity(Species1)
+						//this needs to become neighborQuantity(Species1, CompartmentLocationX(Comp1), CompartmentLocationY(Comp1))
+						if (newEvent.getTrigger().getMath().toFormula().contains("neighborQuantity")) {
 							
-							String direction = "";
+							String triggerMath = newEvent.getTrigger().getMath().toFormula();						
+							ArrayList<ASTNode> nqNodes = new ArrayList<ASTNode>();
 							
-							if (triggerMath.contains("QuantityLeft"))
-								direction = "Left";
-							else if (triggerMath.contains("QuantityRight"))
-								direction = "Right";
-							else if (triggerMath.contains("QuantityAbove"))
-								direction = "Above";
-							else
-								direction = "Below";
+							this.getSatisfyingNodesLax(newEvent.getTrigger().getMath(), "neighborQuantity", nqNodes);
 							
-							String speciesID = nqNode.toFormula().split(
-									"neighborQuantity" + direction)[1].replace("(","").replace(")","");							
-							
-							try {
-								ASTNode newFormula = ASTNode.parseFormula(
-										"neighborQuantity" + direction + "Full(" + compartmentID + "__" + speciesID + 
-										", getCompartmentLocationX(" + compartmentID + "__Cell" +
-										"), getCompartmentLocationY(" + compartmentID + "__Cell" + "))");
+							//loop through all neighbor quantity nodes in the trigger formula
+							for (ASTNode nqNode : nqNodes) {
 								
-								for (int i = 0; i < ((ASTNode) nqNode.getParent()).getChildCount(); ++i) {
+								String direction = "";
+								
+								if (triggerMath.contains("QuantityLeft"))
+									direction = "Left";
+								else if (triggerMath.contains("QuantityRight"))
+									direction = "Right";
+								else if (triggerMath.contains("QuantityAbove"))
+									direction = "Above";
+								else
+									direction = "Below";
+								
+								String speciesID = nqNode.toFormula().split(
+										"neighborQuantity" + direction)[1].replace("(","").replace(")","");							
+								
+								try {
+									ASTNode newFormula = ASTNode.parseFormula(
+											"neighborQuantity" + direction + "Full(" + compartmentID + "__" + speciesID + 
+											", getCompartmentLocationX(" + compartmentID + "__Cell" +
+											"), getCompartmentLocationY(" + compartmentID + "__Cell" + "))");
 									
-									if (((ASTNode) nqNode.getParent().getChildAt(i)).isFunction() &&
-											((ASTNode) nqNode.getParent().getChildAt(i)).getVariable().toString()
-											.contains("neighborQuantity" + direction)) {
+									for (int i = 0; i < ((ASTNode) nqNode.getParent()).getChildCount(); ++i) {
 										
-										((ASTNode) nqNode.getParent()).replaceChild(i, newFormula);
-										break;
-									}										
+										if (((ASTNode) nqNode.getParent().getChildAt(i)).isFunction() &&
+												((ASTNode) nqNode.getParent().getChildAt(i)).getVariable().toString()
+												.contains("neighborQuantity" + direction)) {
+											
+											((ASTNode) nqNode.getParent()).replaceChild(i, newFormula);
+											break;
+										}										
+									}
+								} catch (ParseException e) {
+									e.printStackTrace();
 								}
-							} catch (ParseException e) {
-								e.printStackTrace();
 							}
 						}
-					}
-					
-					if (event.isSetPriority())
-						newEvent.setPriority(event.getPriority().clone());
-					
-					if (event.isSetDelay())
-						newEvent.setDelay(event.getDelay().clone());
-					
-					newEvent.setUseValuesFromTriggerTime(event.getUseValuesFromTriggerTime());
-					
-					for (EventAssignment eventAssignment : event.getListOfEventAssignments()) {
 						
-						EventAssignment ea = eventAssignment.clone();
-						ea.setMath(eventAssignment.getMath().clone());
-						ea.setVariable(eventAssignment.getVariable());
-						newEvent.addEventAssignment(ea);
-					}
-					
-					for (EventAssignment eventAssignment : newEvent.getListOfEventAssignments()) {
+						if (event.isSetPriority())
+							newEvent.setPriority(event.getPriority().clone());
+						
+						if (event.isSetDelay())
+							newEvent.setDelay(event.getDelay().clone());
+						
+						newEvent.setUseValuesFromTriggerTime(event.getUseValuesFromTriggerTime());
+						
+						for (EventAssignment eventAssignment : event.getListOfEventAssignments()) {
 							
-						eventAssignment.setVariable(compartmentID + "__" + eventAssignment.getVariable());
+							EventAssignment ea = eventAssignment.clone();
+							ea.setMath(eventAssignment.getMath().clone());
+							ea.setVariable(eventAssignment.getVariable());
+							newEvent.addEventAssignment(ea);
+						}
 						
-						//prepends the compartment ID to all variables in the event assignment
-						prependToVariableNodes(eventAssignment.getMath(), compartmentID + "__", model);
+						for (EventAssignment eventAssignment : newEvent.getListOfEventAssignments()) {
+								
+							eventAssignment.setVariable(compartmentID + "__" + eventAssignment.getVariable());
+							
+							//prepends the compartment ID to all variables in the event assignment
+							prependToVariableNodes(eventAssignment.getMath(), compartmentID + "__", model);
+						}
+						
+						eventsToAdd.add(newEvent);
 					}
-					
-					eventsToAdd.add(newEvent);
 				}
-			}
-		}
+			} 
+		
 		
 		for (Event eventToAdd : eventsToAdd) {
 			model.addEvent(eventToAdd);
@@ -4207,15 +4221,23 @@ public abstract class Simulator {
 		for (Parameter parameter : model.getListOfParameters()) {
 			if (parameter.getId().contains("_locations")) {
 				if (parameter.getId().contains("_locations"))
-					this.submodelIDToLocationsMap.put(
-							parameter.getId().replace("__locations",""), stripAnnotation(parameter.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim()));
+
+						this.submodelIDToLocationsMap.put(
+								parameter.getId().replace("__locations",""), stripAnnotation(parameter.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim()));
+				
 				parametersToRemove.add(parameter.getId());
 			}
 		}
 		
+		
 		for (String parameterID : parametersToRemove)
 			model.removeParameter(parameterID);
 		
+		}
+		catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		if (arraysExist) {
 			
 			SBMLWriter writer = new SBMLWriter();
@@ -4228,6 +4250,7 @@ public abstract class Simulator {
 				e.printStackTrace();
 			}
 		}
+		
 	}
 	
 	/**

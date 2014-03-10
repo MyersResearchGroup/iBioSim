@@ -27,14 +27,8 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep, progress,
 				printInterval, stoichAmpValue, running, interestingSpecies, quantityType);
 
-		try {
-			initialize(randomSeed, 1);
-			modelstateID = "topmodel";
-		} catch (IOException e2) {
-			e2.printStackTrace();
-		} catch (XMLStreamException e2) {
-			e2.printStackTrace();
-		}
+		initialize(randomSeed, 1);
+		modelstateID = "topmodel";
 
 	}
 
@@ -305,11 +299,8 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 	 * @param noEventsFlag
 	 * @param noAssignmentRulesFlag
 	 * @param noConstraintsFlag
-	 * @throws IOException
-	 * @throws XMLStreamException
 	 */
-	private void initialize(long randomSeed, int runNumber) 
-			throws IOException, XMLStreamException {	
+	private void initialize(long randomSeed, int runNumber) throws IOException, XMLStreamException {	 
 		setupNonConstantSpeciesReferences(topmodel);
 		setupSpecies(topmodel);
 		setupParameters(topmodel);	

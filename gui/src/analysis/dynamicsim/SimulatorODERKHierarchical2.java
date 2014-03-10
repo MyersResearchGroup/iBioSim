@@ -34,8 +34,7 @@ public class SimulatorODERKHierarchical2  extends HierarchicalSimulator{
 
 	public SimulatorODERKHierarchical2(String SBMLFileName, String outputDirectory, double timeLimit, double maxTimeStep, long randomSeed,
 			JProgressBar progress, double printInterval, double stoichAmpValue, JFrame running,
-			String[] interestingSpecies, int numSteps, double relError, double absError, String quantityType) 
-					throws IOException, XMLStreamException {
+			String[] interestingSpecies, int numSteps, double relError, double absError, String quantityType)  throws IOException, XMLStreamException {	
 
 
 		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, 0.0, progress,

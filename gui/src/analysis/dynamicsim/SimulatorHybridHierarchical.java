@@ -33,8 +33,8 @@ public class SimulatorHybridHierarchical  extends HierarchicalSimulator {
 	public SimulatorHybridHierarchical(String SBMLFileName, String outputDirectory, double timeLimit, 
 			double maxTimeStep, double minTimeStep, long randomSeed, JProgressBar progress, double printInterval, 
 			double stoichAmpValue, JFrame running, String[] interestingSpecies, int numSteps, double relError, 
-			double absError, String quantityType) throws IOException, XMLStreamException 
-			{
+			double absError, String quantityType)
+					throws IOException, XMLStreamException {	
 
 		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, minTimeStep,
 				progress, printInterval, stoichAmpValue, running,

@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
+import javax.xml.stream.XMLStreamException;
 
 import org.jdom.Element;
 import org.jdom.Namespace;
@@ -34,10 +35,8 @@ import lpn.parser.Translator;
 import main.*;
 import main.util.*;
 import main.util.dataparser.DataParser;
-
 import biomodel.gui.schematic.ModelEditor;
 import biomodel.util.GlobalConstants;
-
 import verification.AbstPane;
 import graph.*;
 
@@ -1769,8 +1768,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	 * simulation.
 	 * 
 	 * @param refresh
+	 * @throws XMLStreamException 
+	 * @throws NumberFormatException 
 	 */
-	public void run(String direct, boolean refresh) {
+	public void run(String direct, boolean refresh) throws NumberFormatException, XMLStreamException {
 		double timeLimit = 100.0;
 		double printInterval = 1.0;
 		double minTimeStep = 0.0;

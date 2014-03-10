@@ -20,6 +20,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.xml.stream.XMLStreamException;
 
 import main.Gui;
 import main.util.Utility;
@@ -182,11 +183,18 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						consID.setText(selectedID);
 					}
 					if (c.get(i).isSetMessage()) {
-						String message = c.get(i).getMessageString();
-						// XMLNode.convertXMLNodeToString(((Constraint)
-						// c.get(i)).getMessage());
-						message = message.substring(message.indexOf("xhtml\">") + 7, message.indexOf("</p>"));
-						consMessage.setText(message);
+						String message;
+						try {
+							message = c.get(i).getMessageString();
+							// XMLNode.convertXMLNodeToString(((Constraint)
+							// c.get(i)).getMessage());
+							message = message.substring(message.indexOf("xhtml\">") + 7, message.indexOf("</p>"));
+							consMessage.setText(message);
+						} catch (XMLStreamException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
 					}
 					if (bioModel.getPortByMetaIdRef(c.get(i).getMetaId())!=null) {
 						onPort.setSelected(true);
@@ -325,9 +333,16 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						c.setMath(bioModel.addBooleans(consMath.getText().trim()));
 						SBMLutilities.setMetaId(c, consID.getText().trim());
 						if (!consMessage.getText().trim().equals("")) {
-							XMLNode xmlNode = XMLNode.convertStringToXMLNode("<message><p xmlns=\"http://www.w3.org/1999/xhtml\">"
-									+ consMessage.getText().trim() + "</p></message>");
-							c.setMessage(xmlNode);
+							XMLNode xmlNode;
+							try {
+								xmlNode = XMLNode.convertStringToXMLNode("<message><p xmlns=\"http://www.w3.org/1999/xhtml\">"
+										+ consMessage.getText().trim() + "</p></message>");
+								c.setMessage(xmlNode);
+							} catch (XMLStreamException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							
 						}
 						else if (c.isSetMessage()){
 							c.unsetMessage();
@@ -355,12 +370,14 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						
 						if (dimensionType.getSelectedIndex() == 1){
 							AnnotationUtility.removeMatrixSizeAnnotation(c);
+
 							AnnotationUtility.setVectorSizeAnnotation(c,(String) dimensionX.getSelectedItem());
 							AnnotationUtility.removeMatrixIndexAnnotation(c);
 							AnnotationUtility.setVectorIndexAnnotation(c,(String) iIndex.getText());
 						}
 						else if (dimensionType.getSelectedIndex() == 2){
 							AnnotationUtility.removeVectorSizeAnnotation(c);
+
 							AnnotationUtility.setMatrixSizeAnnotation(c,(String) dimensionX.getSelectedItem(), 
 									(String) dimensionY.getSelectedItem());
 							AnnotationUtility.setVectorIndexAnnotation(c,(String) iIndex.getText());
@@ -368,6 +385,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						}
 						else{
 							AnnotationUtility.removeVectorSizeAnnotation(c);
+
 							AnnotationUtility.removeMatrixSizeAnnotation(c);
 							AnnotationUtility.removeVectorIndexAnnotation(c);
 							AnnotationUtility.removeMatrixIndexAnnotation(c);
@@ -384,9 +402,16 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						c.setMath(bioModel.addBooleans(consMath.getText().trim()));
 						SBMLutilities.setMetaId(c, consID.getText().trim());
 						if (!consMessage.getText().trim().equals("")) {
-							XMLNode xmlNode = XMLNode.convertStringToXMLNode("<message><p xmlns=\"http://www.w3.org/1999/xhtml\">"
-									+ consMessage.getText().trim() + "</p></message>");
-							c.setMessage(xmlNode);
+							XMLNode xmlNode;
+							try {
+								xmlNode = XMLNode.convertStringToXMLNode("<message><p xmlns=\"http://www.w3.org/1999/xhtml\">"
+										+ consMessage.getText().trim() + "</p></message>");
+
+								c.setMessage(xmlNode);
+							} catch (XMLStreamException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 						}
 						if (onPort.isSelected()) {
 							Port port = bioModel.getSBMLCompModel().createPort();
@@ -413,12 +438,14 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						}
 						if (dimensionType.getSelectedIndex() == 1){
 							AnnotationUtility.removeMatrixSizeAnnotation(c);
+
 							AnnotationUtility.setVectorSizeAnnotation(c,(String) dimensionX.getSelectedItem());
 							AnnotationUtility.removeMatrixIndexAnnotation(c);
 							AnnotationUtility.setVectorIndexAnnotation(c,(String) iIndex.getText());
 						}
 						else if (dimensionType.getSelectedIndex() == 2){
 							AnnotationUtility.removeVectorSizeAnnotation(c);
+
 							AnnotationUtility.setMatrixSizeAnnotation(c,(String) dimensionX.getSelectedItem(), 
 									(String) dimensionY.getSelectedItem());
 							AnnotationUtility.setVectorIndexAnnotation(c,(String) iIndex.getText());
@@ -426,6 +453,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						}
 						else{
 							AnnotationUtility.removeVectorSizeAnnotation(c);
+
 							AnnotationUtility.removeMatrixSizeAnnotation(c);
 							AnnotationUtility.removeVectorIndexAnnotation(c);
 							AnnotationUtility.removeMatrixIndexAnnotation(c);

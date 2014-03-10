@@ -23,6 +23,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.xml.stream.XMLStreamException;
 
 import main.Gui;
 import main.util.Utility;
@@ -879,6 +880,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					}
 					else if (dimensionType.getSelectedIndex() == 2){
 						AnnotationUtility.removeVectorSizeAnnotation(e);
+
 						AnnotationUtility.setMatrixSizeAnnotation(e,(String) dimensionX.getSelectedItem(), 
 								(String) dimensionY.getSelectedItem());
 						AnnotationUtility.setVectorIndexAnnotation(e,(String) iIndex.getText());
@@ -886,6 +888,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					}
 					else{
 						AnnotationUtility.removeVectorSizeAnnotation(e);
+
 						AnnotationUtility.removeMatrixSizeAnnotation(e);
 						AnnotationUtility.removeVectorIndexAnnotation(e);
 						AnnotationUtility.removeMatrixIndexAnnotation(e);
@@ -1071,9 +1074,11 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						AnnotationUtility.setVectorSizeAnnotation(e,(String) dimensionX.getSelectedItem());
 						AnnotationUtility.removeMatrixIndexAnnotation(e);
 						AnnotationUtility.setVectorIndexAnnotation(e,(String) iIndex.getText());
+						
 					}
 					else if (dimensionType.getSelectedIndex() == 2){
 						AnnotationUtility.removeVectorSizeAnnotation(e);
+
 						AnnotationUtility.setMatrixSizeAnnotation(e,(String) dimensionX.getSelectedItem(), 
 								(String) dimensionY.getSelectedItem());
 						AnnotationUtility.setVectorIndexAnnotation(e,(String) iIndex.getText());
@@ -1081,6 +1086,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					}
 					else{
 						AnnotationUtility.removeVectorSizeAnnotation(e);
+
 						AnnotationUtility.removeMatrixSizeAnnotation(e);
 						AnnotationUtility.removeVectorIndexAnnotation(e);
 						AnnotationUtility.removeMatrixIndexAnnotation(e);
