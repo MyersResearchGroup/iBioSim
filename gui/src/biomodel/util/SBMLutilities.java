@@ -3151,7 +3151,8 @@ public class SBMLutilities {
 	}
 	
 	public static int appendAnnotation(SBase sbmlObject, XMLNode annotation) {
-		sbmlObject.setAnnotation(new Annotation(sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim() + annotation.toXMLString()));
+		sbmlObject.getAnnotation().appendNoRDFAnnotation(annotation.toXMLString());
+		//sbmlObject.setAnnotation(new Annotation(sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim() + annotation.toXMLString()));
 		return JSBML.OPERATION_SUCCESS;
 	}
 	
