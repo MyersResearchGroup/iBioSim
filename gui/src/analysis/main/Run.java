@@ -8,9 +8,9 @@ import java.util.*;
 import java.util.prefs.Preferences;
 
 import javax.swing.*;
+import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.Model;
-
 
 import analysis.dynamicsim.DynamicSimulation;
 import analysis.dynamicsim.Simulator;
@@ -34,7 +34,6 @@ import lpn.parser.Translator;
 import main.*;
 import main.util.*;
 import main.util.dataparser.*;
-
 import graph.*;
 import verification.AbstPane;
 
@@ -466,6 +465,8 @@ public class Run implements ActionListener {
 	 * 
 	 * @param runTime
 	 * @param refresh
+	 * @throws XMLStreamException 
+	 * @throws NumberFormatException 
 	 */
 	public int execute(String filename, JRadioButton fba, JRadioButton sbml, JRadioButton dot, JRadioButton xhtml, JRadioButton lhpn,
 			Component component, JRadioButton ode, JRadioButton monteCarlo, String sim, String printer_id,
@@ -473,7 +474,7 @@ public class Run implements ActionListener {
 			Gui biomodelsim, JTabbedPane simTab, String root, JProgressBar progress,
 			String simName, ModelEditor gcmEditor, String direct, double timeLimit, double runTime, String modelFile,
 			AbstPane abstPane, JRadioButton abstraction, String lpnProperty, double absError, double timeStep,
-			double printInterval, int runs, long rndSeed, boolean refresh, JLabel progressLabel, JFrame running) {
+			double printInterval, int runs, long rndSeed, boolean refresh, JLabel progressLabel, JFrame running) throws NumberFormatException, XMLStreamException {
 		Runtime exec = Runtime.getRuntime();
 		int exitValue = 255;
 		while (outDir.split(separator)[outDir.split(separator).length - 1].equals(".")) {

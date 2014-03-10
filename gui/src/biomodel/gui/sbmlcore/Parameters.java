@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.xml.stream.XMLStreamException;
 
 import main.Gui;
 import main.util.Utility;
@@ -744,14 +745,16 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							if (dimensionType.getSelectedIndex() == 1){
 								AnnotationUtility.removeMatrixSizeAnnotation(paramet);
 								AnnotationUtility.setVectorSizeAnnotation(paramet,(String) dimensionX.getSelectedItem());
-							}
+								}
 							else if (dimensionType.getSelectedIndex() == 2){
 								AnnotationUtility.removeVectorSizeAnnotation(paramet);
+
 								AnnotationUtility.setMatrixSizeAnnotation(paramet,(String) dimensionX.getSelectedItem(), 
 										(String) dimensionY.getSelectedItem());
 							}
 							else{
 								AnnotationUtility.removeVectorSizeAnnotation(paramet);
+
 								AnnotationUtility.removeMatrixSizeAnnotation(paramet);
 							}
 							if (paramConst.getSelectedItem().equals("true")) {

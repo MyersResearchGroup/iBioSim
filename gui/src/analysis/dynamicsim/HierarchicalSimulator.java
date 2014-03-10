@@ -29,7 +29,7 @@ import flanagan.math.PsRandom;
 import org.sbml.jsbml.ext.comp.Deletion;
 import org.sbml.jsbml.EventAssignment;
 import org.sbml.jsbml.Constraint;
-import org.sbml.jsbml.ext.comp.CompConstant;
+import org.sbml.jsbml.ext.comp.CompConstants;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
 import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
 import org.sbml.jsbml.ext.comp.CompSBasePlugin;
@@ -94,7 +94,7 @@ public abstract class HierarchicalSimulator {
 	final protected int SBML_LEVEL = 3;
 	final protected int SBML_VERSION = 1;
 
-	
+
 	//generates random numbers based on the xorshift method
 	protected XORShiftRandom randomNumberGenerator = null;
 
@@ -136,19 +136,16 @@ public abstract class HierarchicalSimulator {
 
 
 	HashMap<String, Model> models;
-	
-	
+
+
 	protected ArrayList<String> filesCreated = new ArrayList<String>();
 	/**
 	 * does lots of initialization
-	 * 
-	 * @throws IOException
-	 * @throws XMLStreamException
 	 */
 	public HierarchicalSimulator(String SBMLFileName, String outputDirectory, double timeLimit, 
 			double maxTimeStep, double minTimeStep, JProgressBar progress, double printInterval, double stoichAmpValue, 
-			JFrame running, String[] interestingSpecies, String quantityType) 
-					throws IOException, XMLStreamException {
+			JFrame running, String[] interestingSpecies, String quantityType) throws IOException, XMLStreamException 
+			{
 
 		this.SBMLFileName = SBMLFileName;
 		this.timeLimit = timeLimit;
@@ -221,7 +218,7 @@ public abstract class HierarchicalSimulator {
 
 
 
-	}
+			}
 
 	/**
 	 * abstract simulate method
@@ -435,24 +432,22 @@ public abstract class HierarchicalSimulator {
 		for(String f : filesCreated)
 		{
 			File file = new File(f);
-			
+
 			if(file.exists())
 				file.delete();
 		}
-		
+
 		filesCreated.clear();
 	}
 	/**
 	 * Initializes the modelstate array
-	 * @throws IOException 
-	 * @throws XMLStreamException 
 	 */
-	protected long setupSubmodels(SBMLDocument document) throws XMLStreamException, IOException
+	protected long setupSubmodels(SBMLDocument document)
 	{
 		String path = getPath(outputDirectory);
 		String alternativePath = getPath(SBMLFileName);
-		CompModelPlugin sbmlCompModel = (CompModelPlugin)document.getModel().getExtension(CompConstant.namespaceURI);
-		CompSBMLDocumentPlugin sbmlComp = (CompSBMLDocumentPlugin)document.getExtension(CompConstant.namespaceURI);
+		CompModelPlugin sbmlCompModel = (CompModelPlugin)document.getModel().getExtension(CompConstants.namespaceURI);
+		CompSBMLDocumentPlugin sbmlComp = (CompSBMLDocumentPlugin)document.getExtension(CompConstants.namespaceURI);
 
 		//submodels = new ModelState[(int)sbmlCompModel.getListOfSubmodels().size()];
 
@@ -479,21 +474,33 @@ public abstract class HierarchicalSimulator {
 						sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()) != null)
 				{
 					SBMLDocument extDoc = null;
-					if(checkFileExists(alternativePath+separator+sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()).getSource()))
-					{
-						//copyFile(new File(alternativePath+separator+sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()).getSource()), new File(filename));
-						extDoc = SBMLReader.read(new File(alternativePath+separator+sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()).getSource()));
+					try {
+						if(checkFileExists(alternativePath+separator+sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()).getSource()))
+						{
+							//copyFile(new File(alternativePath+separator+sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()).getSource()), new File(filename));
+
+							extDoc = SBMLReader.read(new File(alternativePath+separator+sbmlComp.getListOfExternalModelDefinitions().get(submodel.getModelRef()).getSource()));
+
+						}
+						else
+						{
+							extDoc = SBMLReader.read(new File(filename));
+						}
+
 					}
-					else
-					{
-						extDoc = SBMLReader.read(new File(filename));
+					catch (XMLStreamException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 					CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(extDoc.getModel());
 					CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(extDoc);
 
 					for (Submodel sub : documentCompModel.getListOfSubmodels())
 						extractModelDefintion(path,  document,  sub,  sbmlComp);
-					
+
 					ArrayList<String> comps = new ArrayList<String>();
 
 					for (int j=0; j < documentCompModel.getListOfSubmodels().size(); j++) {
@@ -548,7 +555,7 @@ public abstract class HierarchicalSimulator {
 				Model flattenModel = flattenModel(path, filename);
 
 				models.put(submodel.getModelRef(), flattenModel);
-				
+
 				filesCreated.add(filename.replace(".xml", "__temp.xml"));
 			}
 
@@ -556,9 +563,9 @@ public abstract class HierarchicalSimulator {
 			{
 				//String annotation = submodel.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
 				//int copies = getArraySize(annotation);
-				
+
 				//int copies = biomodel.annotation.AnnotationUtility.parseArraySizeAnnotation(submodel);
-				
+
 				String[] ids = biomodel.annotation.AnnotationUtility.parseArrayAnnotation(document.getModel().getParameter(submodel.getModelRef()+ "__locations"));
 				for(String s : ids)
 				{
@@ -566,9 +573,9 @@ public abstract class HierarchicalSimulator {
 						continue;
 					String getID = s.replaceAll("[=].*", "");
 					submodels.put(getID, new ModelState(submodel.getModelRef(), getID));
-					
+
 				}
-				
+
 				/*LinkedList<String> ids = getArrayIDs(document.getModel().getParameter(submodel.getModelRef()+ "__locations").getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim());
 				for(int i = 0; i < copies; i++)
 				{
@@ -592,7 +599,7 @@ public abstract class HierarchicalSimulator {
 		return index;
 	}
 
-/*
+	/*
 	private String changeIdToPortRef(SBaseRef sbaseRef,BioModel bioModel, String path) {
 		String id = "";
 		if (sbaseRef.isSetSBaseRef()) {
@@ -682,7 +689,7 @@ public abstract class HierarchicalSimulator {
 			ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(document.getModel());
 			for (int j = 0; j < elements.size(); j++) {
 				SBase sbase = elements.get(j);
-				CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getExtension(CompConstant.namespaceURI);
+				CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getExtension(CompConstants.namespaceURI);
 				if (sbmlSBase!=null) {
 					if (updatePortMap(sbmlSBase,subModel,submodel.getId(), path)) {
 						elements = SBMLutilities.getListOfAllElements(document.getModel());
@@ -698,7 +705,7 @@ public abstract class HierarchicalSimulator {
 
 		return true;
 	}
-	
+
 	private boolean extractModelDefinitions(String path, SBMLDocument document, Submodel submodel, CompSBMLDocumentPlugin sbmlComp, CompModelPlugin sbmlCompModel) {
 			ModelDefinition md = sbmlComp.getListOfModelDefinitions().get(submodel.getModelRef());
 			String extId = md.getId();
@@ -706,7 +713,7 @@ public abstract class HierarchicalSimulator {
 			model.getNamespaces().clear();
 			SBMLDocument newDoc = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
 			newDoc.addPackageDeclaration(LayoutConstants.shortLabel, LayoutConstants.namespaceURI, false);
-			newDoc.addPackageDeclaration(CompConstant.shortLabel, CompConstant.namespaceURI, true);
+			newDoc.addPackageDeclaration(CompConstants.shortLabel, CompConstants.namespaceURI, true);
 			newDoc.addPackageDeclaration(FBCConstants.shortLabel, FBCConstants.namespaceURI, false);
 			CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(newDoc);
 			CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(model);
@@ -752,7 +759,7 @@ public abstract class HierarchicalSimulator {
 				}
 			}
 
-		
+
 		while (sbmlComp.getListOfModelDefinitions().size() > 0) {
 			sbmlComp.removeModelDefinition(0);
 		}
@@ -773,21 +780,22 @@ public abstract class HierarchicalSimulator {
 		}
 		return true;
 	}*/
-	
+
 	private void extractModelDefintion(String path, SBMLDocument document, Submodel submodel, CompSBMLDocumentPlugin sbmlComp)
 	{
 		ModelDefinition md = sbmlComp.getListOfModelDefinitions().get(submodel.getModelRef());
 
 		if(md == null)
 			return;
-		
+
 		String extId = md.getId();
 		Model model = new Model(md);
-		model.getNamespaces().clear();
+		model.getDeclaredNamespaces().clear();
 		SBMLDocument newDoc = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
-		newDoc.addPackageDeclaration(LayoutConstants.shortLabel, LayoutConstants.namespaceURI, false);
-		newDoc.addPackageDeclaration(CompConstant.shortLabel, CompConstant.namespaceURI, true);
-		newDoc.addPackageDeclaration(FBCConstants.shortLabel, FBCConstants.namespaceURI, false);
+		newDoc.enablePackage(LayoutConstants.shortLabel, false);
+		newDoc.enablePackage(CompConstants.shortLabel,  true);
+		newDoc.enablePackage(FBCConstants.shortLabel, false);
+
 		CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(newDoc);
 		CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(model);
 		newDoc.setModel(model);
@@ -826,7 +834,7 @@ public abstract class HierarchicalSimulator {
 
 
 	}
-	 
+
 	private static Model flattenModel(String path, String filename)
 	{
 
@@ -850,9 +858,9 @@ public abstract class HierarchicalSimulator {
 	 * @param annotation
 	 * @return size of array
 	 */
-/*	private static int getArraySize(String annotation)
+	/*	private static int getArraySize(String annotation)
 	{
-		
+
 		//biomodel.annotation.AnnotationUtility.
 		String size = "";
 
@@ -870,7 +878,7 @@ public abstract class HierarchicalSimulator {
 
 
 	}
-*/
+	 */
 	/**
 	 * Helper method to strip annotation and get size of array.
 	 * 
@@ -904,7 +912,7 @@ public abstract class HierarchicalSimulator {
 
 		for (int i = 0; i < topmodel.numSpecies; i++) {
 			Species species = sbml.getModel().getSpecies(i);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)species.getExtension(CompConstant.namespaceURI);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)species.getExtension(CompConstants.namespaceURI);
 
 			String s = species.getId();
 			if(sbmlSBase != null)
@@ -927,7 +935,7 @@ public abstract class HierarchicalSimulator {
 					for(ReplacedElement element: sbmlSBase.getListOfReplacedElements())
 					{
 						String submodel = element.getSubmodelRef();
-						sbmlCompModel = (CompModelPlugin)models.get(submodels.get(submodel).model).getExtension(CompConstant.namespaceURI);
+						sbmlCompModel = (CompModelPlugin)models.get(submodels.get(submodel).model).getExtension(CompConstants.namespaceURI);
 						if(element.isSetIdRef())
 						{
 							String subSpecies = element.getIdRef();
@@ -960,7 +968,7 @@ public abstract class HierarchicalSimulator {
 				{
 					ReplacedBy replacement = sbmlSBase.getReplacedBy();
 					String submodel = replacement.getSubmodelRef();
-					sbmlCompModel = (CompModelPlugin)models.get(submodels.get(submodel).model).getExtension(CompConstant.namespaceURI);
+					sbmlCompModel = (CompModelPlugin)models.get(submodels.get(submodel).model).getExtension(CompConstants.namespaceURI);
 					if(replacement.isSetIdRef())
 					{
 						String subSpecies = replacement.getIdRef();
@@ -1017,7 +1025,7 @@ public abstract class HierarchicalSimulator {
 
 		for (int i = 0; i < topmodel.numParameters; i++) {
 			Parameter parameter = sbml.getModel().getParameter(i);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)parameter.getExtension(CompConstant.namespaceURI);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)parameter.getExtension(CompConstants.namespaceURI);
 
 			String p = parameter.getId();
 			if(sbmlSBase != null)
@@ -1031,7 +1039,7 @@ public abstract class HierarchicalSimulator {
 					for(ReplacedElement element: sbmlSBase.getListOfReplacedElements())
 					{
 						String submodel = element.getSubmodelRef();
-						sbmlCompModel = (CompModelPlugin)models.get(submodels.get(submodel).model).getExtension(CompConstant.namespaceURI);
+						sbmlCompModel = (CompModelPlugin)models.get(submodels.get(submodel).model).getExtension(CompConstants.namespaceURI);
 						if(element.isSetIdRef())
 						{
 							String subParameter = element.getIdRef();
@@ -1071,7 +1079,7 @@ public abstract class HierarchicalSimulator {
 				{
 					ReplacedBy replacement = sbmlSBase.getReplacedBy();
 					String submodel = replacement.getSubmodelRef();
-					sbmlCompModel = (CompModelPlugin)models.get(submodels.get(submodel).model).getExtension(CompConstant.namespaceURI);
+					sbmlCompModel = (CompModelPlugin)models.get(submodels.get(submodel).model).getExtension(CompConstants.namespaceURI);
 					if(replacement.isSetIdRef())
 					{
 						String subParameter = replacement.getIdRef();
@@ -1110,7 +1118,7 @@ public abstract class HierarchicalSimulator {
 	{
 		for (int i = 0; i < topmodel.numCompartments; i++) {
 			Compartment compartment = sbml.getModel().getCompartment(i);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)compartment.getExtension(CompConstant.namespaceURI);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)compartment.getExtension(CompConstants.namespaceURI);
 
 			String c = compartment.getId();
 			if(sbmlSBase != null)
@@ -1124,7 +1132,7 @@ public abstract class HierarchicalSimulator {
 					for(ReplacedElement element: sbmlSBase.getListOfReplacedElements())
 					{
 						String submodel = element.getSubmodelRef();
-						sbmlCompModel = (CompModelPlugin)models.get(submodels.get(submodel).model).getExtension(CompConstant.namespaceURI);
+						sbmlCompModel = (CompModelPlugin)models.get(submodels.get(submodel).model).getExtension(CompConstants.namespaceURI);
 						if(element.isSetIdRef())
 						{
 							String subCompartment = element.getIdRef();
@@ -1159,7 +1167,7 @@ public abstract class HierarchicalSimulator {
 				{
 					ReplacedBy replacement = sbmlSBase.getReplacedBy();
 					String submodel = replacement.getSubmodelRef();
-					sbmlCompModel = (CompModelPlugin)models.get(submodels.get(submodel).model).getExtension(CompConstant.namespaceURI);
+					sbmlCompModel = (CompModelPlugin)models.get(submodels.get(submodel).model).getExtension(CompConstants.namespaceURI);
 					if(replacement.isSetIdRef())
 					{
 						String subCompartment = replacement.getIdRef();
@@ -1198,7 +1206,7 @@ public abstract class HierarchicalSimulator {
 	//
 	//		for (LocalParameter parameter : k.getListOfLocalParameters()) {
 	//			
-	//			CompSBasePlugin sbmlSBase = (CompSBasePlugin)parameter.getExtension(CompConstant.namespaceURI);
+	//			CompSBasePlugin sbmlSBase = (CompSBasePlugin)parameter.getExtension(CompConstants.namespaceURI);
 	//
 	//			String p = parameter.getId();
 	//			if(sbmlSBase != null)
@@ -1212,7 +1220,7 @@ public abstract class HierarchicalSimulator {
 	//					for(ReplacedElement element: sbmlSBase.getListOfReplacedElements())
 	//					{
 	//						String submodel = element.getSubmodelRef();
-	//						sbmlCompModel = (CompModelPlugin)models.get(submodels.get(submodel).model).getExtension(CompConstant.namespaceURI);
+	//						sbmlCompModel = (CompModelPlugin)models.get(submodels.get(submodel).model).getExtension(CompConstants.namespaceURI);
 	//						if(element.isSetIdRef())
 	//						{
 	//							String subParameter = element.getIdRef();
@@ -1243,7 +1251,7 @@ public abstract class HierarchicalSimulator {
 	//				{
 	//					ReplacedBy replacement = sbmlSBase.getReplacedBy();
 	//					String submodel = replacement.getSubmodelRef();
-	//					sbmlCompModel = (CompModelPlugin)models.get(submodels.get(submodel).model).getExtension(CompConstant.namespaceURI);
+	//					sbmlCompModel = (CompModelPlugin)models.get(submodels.get(submodel).model).getExtension(CompConstants.namespaceURI);
 	//					if(replacement.isSetIdRef())
 	//					{
 	//						String subParameter = replacement.getIdRef();
@@ -1283,7 +1291,7 @@ public abstract class HierarchicalSimulator {
 		for (int i = 0; i < topmodel.numReactions; i++) {
 			Reaction reaction = sbml.getModel().getReaction(i);
 			//setupLocalParameterReplacement(reaction.getKineticLaw(), sbml, sbmlCompModel);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)reaction.getExtension(CompConstant.namespaceURI);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)reaction.getExtension(CompConstants.namespaceURI);
 
 			if(sbmlSBase != null)
 			{
@@ -1293,7 +1301,7 @@ public abstract class HierarchicalSimulator {
 					{
 						String submodel = element.getSubmodelRef();
 						ModelState modelstate = submodels.get(submodel);
-						CompModelPlugin subCompModel = (CompModelPlugin)models.get(submodels.get(submodel).model).getExtension(CompConstant.namespaceURI);
+						CompModelPlugin subCompModel = (CompModelPlugin)models.get(submodels.get(submodel).model).getExtension(CompConstants.namespaceURI);
 						if(element.isSetPortRef())
 						{
 							Port port = subCompModel.getListOfPorts().get(element.getPortRef());
@@ -1336,7 +1344,7 @@ public abstract class HierarchicalSimulator {
 
 		for (int i = 0; i < topmodel.numConstraints; i++) {
 			Constraint constraint = sbml.getModel().getConstraint(i);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)constraint.getExtension(CompConstant.namespaceURI);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)constraint.getExtension(CompConstants.namespaceURI);
 
 			if(sbmlSBase != null)
 			{
@@ -1346,7 +1354,7 @@ public abstract class HierarchicalSimulator {
 					{
 						String submodel = element.getSubmodelRef();
 						ModelState modelstate = submodels.get(submodel);
-						CompModelPlugin subCompModel = (CompModelPlugin)models.get(submodels.get(submodel).model).getExtension(CompConstant.namespaceURI);
+						CompModelPlugin subCompModel = (CompModelPlugin)models.get(submodels.get(submodel).model).getExtension(CompConstants.namespaceURI);
 						if(element.isSetPortRef())
 						{
 							Port port = subCompModel.getListOfPorts().get(element.getPortRef());
@@ -1389,7 +1397,7 @@ public abstract class HierarchicalSimulator {
 
 		for (int i = 0; i < topmodel.numEvents; i++) {
 			Event event = sbml.getModel().getEvent(i);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)event.getExtension(CompConstant.namespaceURI);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)event.getExtension(CompConstants.namespaceURI);
 
 			if(sbmlSBase != null)
 			{
@@ -1399,7 +1407,7 @@ public abstract class HierarchicalSimulator {
 					{
 						String submodel = element.getSubmodelRef();
 						ModelState modelstate = submodels.get(submodel);
-						CompModelPlugin subCompModel = (CompModelPlugin)models.get(submodels.get(submodel).model).getExtension(CompConstant.namespaceURI);
+						CompModelPlugin subCompModel = (CompModelPlugin)models.get(submodels.get(submodel).model).getExtension(CompConstants.namespaceURI);
 						if(element.isSetPortRef())
 						{
 							Port port = subCompModel.getListOfPorts().get(element.getPortRef());
@@ -1442,7 +1450,7 @@ public abstract class HierarchicalSimulator {
 
 		for (Rule rule : sbml.getModel().getListOfRules()) {
 
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)rule.getExtension(CompConstant.namespaceURI);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)rule.getExtension(CompConstants.namespaceURI);
 
 			if(sbmlSBase != null)
 			{
@@ -1452,7 +1460,7 @@ public abstract class HierarchicalSimulator {
 					{
 						String submodel = element.getSubmodelRef();
 						ModelState modelstate = submodels.get(submodel);
-						CompModelPlugin subCompModel = (CompModelPlugin)models.get(submodels.get(submodel).model).getExtension(CompConstant.namespaceURI);
+						CompModelPlugin subCompModel = (CompModelPlugin)models.get(submodels.get(submodel).model).getExtension(CompConstants.namespaceURI);
 						//						modelstate.deletedElementsByMetaId.add(rule.getMetaId());
 						if(element.isSetPortRef())
 						{
@@ -1496,7 +1504,7 @@ public abstract class HierarchicalSimulator {
 
 		for (InitialAssignment init : sbml.getModel().getListOfInitialAssignments()) {
 
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)init.getExtension(CompConstant.namespaceURI);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)init.getExtension(CompConstants.namespaceURI);
 
 			if(sbmlSBase != null)
 			{
@@ -1550,7 +1558,7 @@ public abstract class HierarchicalSimulator {
 
 	protected void getComponentPortMap(SBMLDocument sbml) 
 	{
-		CompModelPlugin sbmlCompModel = (CompModelPlugin)sbml.getModel().getExtension(CompConstant.namespaceURI);
+		CompModelPlugin sbmlCompModel = (CompModelPlugin)sbml.getModel().getExtension(CompConstants.namespaceURI);
 		setupSpeciesReplacement(sbml, sbmlCompModel);	
 		setupCompartmentReplacement(sbml, sbmlCompModel);	
 		setupParameterReplacement(sbml, sbmlCompModel);
@@ -1604,7 +1612,7 @@ public abstract class HierarchicalSimulator {
 
 			if (deletion.isSetPortRef()) 
 			{
-				ListOf<Port> ports = ((CompModelPlugin) models.get(modelstate.model).getExtension(CompConstant.namespaceURI)).getListOfPorts();
+				ListOf<Port> ports = ((CompModelPlugin) models.get(modelstate.model).getExtension(CompConstants.namespaceURI)).getListOfPorts();
 				Port port = ports.get(deletion.getPortRef());
 				if (port!=null) 
 				{
@@ -3247,12 +3255,12 @@ public abstract class HierarchicalSimulator {
 
 
 		String parameterID = parameter.getId();
-		
+
 		if(vector)
 			parameterID = parameterID + "__" + i;
 		else if(matrix)
 			parameterID = parameterID + "__" + i + "__" + j;
-		
+
 		modelstate.variableToValueMap.put(parameterID, parameter.getValue());
 		modelstate.variableToIsConstantMap.put(parameterID, parameter.getConstant());
 		if(!parameter.getConstant())
@@ -3266,9 +3274,9 @@ public abstract class HierarchicalSimulator {
 		if (modelstate.numConstraints > 0)
 			modelstate.variableToIsInConstraintMap.put(parameterID, false);
 	}
-	
-	
-	
+
+
+
 
 	/**
 	 * puts parameter-related information into data structures
@@ -3310,14 +3318,14 @@ public abstract class HierarchicalSimulator {
 			String vSize = biomodel.annotation.AnnotationUtility.parseVectorSizeAnnotation(parameter);
 			if(vSize != null)
 			{
-				
+
 				int n = (int)models.get(modelstate.model).getParameter(vSize).getValue();
-				
+
 				for(int j = 0; j < n; j++)
 				{
 					setupSingleParameter(modelstate, parameter, true, false, j, 0);
 				}
-				
+
 				continue;
 			}
 			// Check if it is a vector 
@@ -3325,9 +3333,9 @@ public abstract class HierarchicalSimulator {
 			if(mSize != null && mSize.length == 2)
 			{
 				int n = (int)models.get(modelstate.model).getParameter(mSize[0]).getValue();
-				
+
 				int m = (int)models.get(modelstate.model).getParameter(mSize[1]).getValue();
-				
+
 				for(int j = 0; j < m; j++)
 				{
 					for(int k = 0; k < n; k++)

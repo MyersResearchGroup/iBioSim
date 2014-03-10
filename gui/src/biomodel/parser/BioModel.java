@@ -37,7 +37,7 @@ import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ext.layout.BoundingBox;
 import org.sbml.jsbml.ext.layout.GraphicalObject;
 import org.sbml.jsbml.ext.layout.LayoutConstants;
-import org.sbml.jsbml.ext.comp.CompConstant;
+import org.sbml.jsbml.ext.comp.CompConstants;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
 import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
 import org.sbml.jsbml.ext.comp.CompSBasePlugin;
@@ -990,12 +990,19 @@ public class BioModel {
 		s = s.replace(">"," greater than ");
 		s = s.replace("&"," and ");
 		s = s.replace("|"," or ");
-		XMLNode xmlNode = XMLNode.convertStringToXMLNode("<message><p xmlns=\"http://www.w3.org/1999/xhtml\">"
-				+ s.trim() + "</p></message>");
-		Constraint c = sbml.getModel().createConstraint();
-		SBMLutilities.setMetaId(c, "Condition_"+condition);
-		c.setMath(SBMLutilities.myParseFormula("true"));
-		c.setMessage(xmlNode);
+		XMLNode xmlNode;
+		try {
+			xmlNode = XMLNode.convertStringToXMLNode("<message><p xmlns=\"http://www.w3.org/1999/xhtml\">"
+					+ s.trim() + "</p></message>");
+			Constraint c = sbml.getModel().createConstraint();
+			SBMLutilities.setMetaId(c, "Condition_"+condition);
+			c.setMath(SBMLutilities.myParseFormula("true"));
+			c.setMessage(xmlNode);
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 	public void createGlobalParameter(String global,String value) {
@@ -1463,21 +1470,21 @@ public class BioModel {
 
 	public void createLayoutPlugin() {
 		if (sbmlLayout==null) {
-			sbml.addPackageDeclaration(LayoutConstants.shortLabel, LayoutConstants.namespaceURI, false);
+			sbml.enablePackage(LayoutConstants.shortLabel,  false);
 			sbmlLayout = SBMLutilities.getLayoutModelPlugin(sbml.getModel());
 		}
 	}
 
 	public void createFBCPlugin() {
 		if (sbmlFBC==null) {
-			sbml.addPackageDeclaration(FBCConstants.shortLabel, FBCConstants.namespaceURI, false);
+			sbml.enablePackage(FBCConstants.shortLabel,  false);
 			sbmlFBC = SBMLutilities.getFBCModelPlugin(sbml.getModel());
 		}
 	}
 
 	public void createCompPlugin() {
 		if (sbmlComp==null) {
-			sbml.addPackageDeclaration(CompConstant.shortLabel, CompConstant.namespaceURI, true);
+			sbml.enablePackage(CompConstants.shortLabel,  true);
 			sbmlComp = SBMLutilities.getCompSBMLDocumentPlugin(sbml);
 			sbmlCompModel = SBMLutilities.getCompModelPlugin(sbml.getModel());
 		}
@@ -4224,7 +4231,7 @@ public class BioModel {
 	
 	public static String getSpeciesType(SBMLDocument sbml,String speciesId) {
 		Species species = sbml.getModel().getSpecies(speciesId);
-		CompModelPlugin sbmlCompModel = (CompModelPlugin)sbml.getModel().getExtension(CompConstant.namespaceURI);
+		CompModelPlugin sbmlCompModel = (CompModelPlugin)sbml.getModel().getExtension(CompConstants.namespaceURI);
 		if (sbmlCompModel!=null) {
 			Port port = getPortByIdRef(sbmlCompModel,speciesId);
 			if (port != null) {
@@ -4736,7 +4743,7 @@ public class BioModel {
 		ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(sbml.getModel());
 		for (int i = 0; i < elements.size(); i++) {
 			SBase sbase = elements.get(i);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getExtension(CompConstant.namespaceURI);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getExtension(CompConstants.namespaceURI);
 			if (sbmlSBase!=null) {
 				for (int j = 0; j < sbmlSBase.getListOfReplacedElements().size(); j++) {
 					ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(j);
@@ -6051,7 +6058,7 @@ public class BioModel {
 	/*
 	private void updateCompartmentReplacements() {
 		Compartment compartment = sbml.getModel().getCompartment(defaultCompartment); //port.getIdRef());
-		CompSBasePlugin sbmlSBase = (CompSBasePlugin)compartment.getExtension(CompConstant.namespaceURI);
+		CompSBasePlugin sbmlSBase = (CompSBasePlugin)compartment.getExtension(CompConstants.namespaceURI);
 		int l = 0;
 		while (l < sbmlSBase.getListOfReplacedElements().size()) {
 			ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(l);
@@ -6101,7 +6108,7 @@ public class BioModel {
 		ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(sbml.getModel());
 		for (int i = 0; i < elements.size(); i++) {
 			SBase sbase = elements.get(i);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getExtension(CompConstant.namespaceURI);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getExtension(CompConstants.namespaceURI);
 			if (sbmlSBase!=null) {
 				for (int j = 0; j < sbmlSBase.getListOfReplacedElements().size(); j++) {
 					ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(j);
@@ -6154,7 +6161,7 @@ public class BioModel {
 		if (r!=null) {
 			if (subCompModel.getListOfPorts().get(prefix+"_"+speciesId)!=null && 
 					getDeletionByPortRef(submodel,prefix+"_"+speciesId)==null) {
-				CompSBasePlugin sbmlSBase = (CompSBasePlugin)r.getExtension(CompConstant.namespaceURI);
+				CompSBasePlugin sbmlSBase = (CompSBasePlugin)r.getExtension(CompConstants.namespaceURI);
 				if (sbmlSBase != null) {
 					ReplacedBy replacement = sbmlSBase.createReplacedBy();
 					replacement.setSubmodelRef(submodel.getId());
@@ -6185,7 +6192,7 @@ public class BioModel {
 		ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(sbml.getModel());
 		for (int i = 0; i < elements.size(); i++) {
 			SBase sbase = elements.get(i);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getExtension(CompConstant.namespaceURI);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getExtension(CompConstants.namespaceURI);
 			if (sbmlSBase!=null) {
 				for (int j = 0; j < sbmlSBase.getListOfReplacedElements().size(); j++) {
 					ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(j);
@@ -6224,7 +6231,7 @@ public class BioModel {
 		ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(sbml.getModel());
 		for (int i = 0; i < elements.size(); i++) {
 			SBase sbase = elements.get(i);
-			CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getExtension(CompConstant.namespaceURI);
+			CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getExtension(CompConstants.namespaceURI);
 			if (sbmlSBase!=null) {
 				for (int j = 0; j < sbmlSBase.getListOfReplacedElements().size(); j++) {
 					ReplacedElement replacement = sbmlSBase.getListOfReplacedElements().get(j);
@@ -6500,13 +6507,13 @@ public class BioModel {
 		ArrayList<String> comps = new ArrayList<String>();
 		SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
 		document.setModel(sbml.getModel());
-		document.addPackageDeclaration(LayoutConstants.shortLabel, LayoutConstants.namespaceURI, false);
+		document.enablePackage(LayoutConstants.shortLabel, false);
 		SBMLutilities.getLayoutModelPlugin(document.getModel());
 		if (sbmlCompModel.getListOfPorts().size() > 0 || sbmlCompModel.getListOfSubmodels().size() > 0) {
-			document.addPackageDeclaration(CompConstant.shortLabel, CompConstant.namespaceURI, true);
+			document.enablePackage(CompConstants.shortLabel, true);
 		}
 		if (sbmlFBC.getListOfObjectives().size() > 0 || sbmlFBC.getListOfFluxBounds().size() > 0) {
-			document.addPackageDeclaration(FBCConstants.shortLabel, FBCConstants.namespaceURI, false);
+			document.enablePackage(FBCConstants.shortLabel,  false);
 		}
 		if (sbmlCompModel.getListOfSubmodels().size()>0) {
 			CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
@@ -6830,10 +6837,10 @@ public class BioModel {
 		model.getSBMLDocument().getModel().getExtensionPackages().remove(LayoutConstants.namespaceURI);
 		if(removeComp)
 		{
-			model.getSBMLDocument().getModel().getExtensionPackages().remove(CompConstant.namespaceURI);
-			model.getSBMLDocument().getExtensionPackages().remove(CompConstant.namespaceURI);
+			model.getSBMLDocument().getModel().getExtensionPackages().remove(CompConstants.namespaceURI);
+			model.getSBMLDocument().getExtensionPackages().remove(CompConstants.namespaceURI);
 			for (SBase sb : SBMLutilities.getListOfAllElements(model.getSBMLDocument().getModel())) {
-				sb.getExtensionPackages().remove(CompConstant.namespaceURI);
+				sb.getExtensionPackages().remove(CompConstants.namespaceURI);
 			}
 		}
 //		model.getSBMLDocument().enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", false);
@@ -7281,8 +7288,13 @@ public class BioModel {
 			for (int j = 0; j < model.getConstraintCount(); j++) {
 				if (model.getConstraint(j).getMetaId().equals(constraint.getMetaId())) {
 					Constraint c = model.getConstraint(j);
-					if (!c.getMessageString().equals(constraint.getMessageString())) {
-						return null;
+					try {
+						if (!c.getMessageString().equals(constraint.getMessageString())) {
+							return null;
+						}
+					} catch (XMLStreamException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 					if (c.getMath() != constraint.getMath()) {
 						return null;

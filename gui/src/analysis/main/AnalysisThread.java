@@ -1,5 +1,7 @@
 package analysis.main;
 
+import javax.xml.stream.XMLStreamException;
+
 
 public class AnalysisThread extends Thread {
 
@@ -22,6 +24,14 @@ public class AnalysisThread extends Thread {
 
 	@Override
 	public void run() {
-		reb.run(direct, refresh);
+		try {
+			reb.run(direct, refresh);
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

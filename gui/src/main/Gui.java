@@ -3986,9 +3986,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							} else {
 								document.getModel().setId(newFile.replace(".xml",""));
 							}
-							document.addPackageDeclaration(LayoutConstants.shortLabel, LayoutConstants.namespaceURI, false);
-							document.addPackageDeclaration(CompConstant.shortLabel, CompConstant.namespaceURI, true);
-							document.addPackageDeclaration(FBCConstants.shortLabel, FBCConstants.namespaceURI, false);
+							document.enablePackage(LayoutConstants.shortLabel,  false);
+							document.enablePackage(CompConstants.shortLabel,  true);
+							document.enablePackage(FBCConstants.shortLabel, false);
 							CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
 							CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(document.getModel());
 							if (documentComp.getListOfModelDefinitions().size() > 0 ||
@@ -4048,7 +4048,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 //														document.getModel().setId(newFile.replace(".xml",""));
 //													}
 //													document.addPackageDeclaration(LayoutConstants.shortLabel, LayoutConstants.namespaceURI, false);
-//													document.addPackageDeclaration(CompConstant.shortLabel, CompConstant.namespaceURI, true);
+//													document.addPackageDeclaration(CompConstants.shortLabel, CompConstants.namespaceURI, true);
 //													document.addPackageDeclaration(FBCConstants.shortLabel, FBCConstants.namespaceURI, false);
 //													CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
 //													CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(document.getModel());
@@ -4090,9 +4090,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									} else {
 										document.getModel().setId(newFile.replace(".xml",""));
 									}
-									document.addPackageDeclaration(LayoutConstants.shortLabel, LayoutConstants.namespaceURI, false);
-									document.addPackageDeclaration(CompConstant.shortLabel, CompConstant.namespaceURI, true);
-									document.addPackageDeclaration(FBCConstants.shortLabel, FBCConstants.namespaceURI, false);
+									document.enablePackage(LayoutConstants.shortLabel, false);
+									document.enablePackage(CompConstants.shortLabel, true);
+									document.enablePackage(FBCConstants.shortLabel,  false);
 									CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
 									CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(document.getModel());
 									if (documentComp.getListOfModelDefinitions().size() > 0 ||
@@ -4546,9 +4546,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							} else {
 								document.getModel().setId(newFile.replace(".xml",""));
 							}
-							document.addPackageDeclaration(LayoutConstants.shortLabel, LayoutConstants.namespaceURI, false);
-							document.addPackageDeclaration(CompConstant.shortLabel, CompConstant.namespaceURI, true);
-							document.addPackageDeclaration(FBCConstants.shortLabel, FBCConstants.namespaceURI, false);
+							document.enablePackage(LayoutConstants.shortLabel, false);
+							document.enablePackage(CompConstants.shortLabel, true);
+							document.enablePackage(FBCConstants.shortLabel, false);
 							CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
 							CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(document.getModel());
 							if (documentComp.getListOfModelDefinitions().size() > 0 ||
@@ -5919,8 +5919,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			document.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
 			document.setPackageRequired("comp", true); 
 			gcmFile.setSBMLLayout((LayoutModelPlugin)document.getModel().getPlugin("layout"));
-			gcmFile.setSBMLComp((CompSBMLDocumentPlugin)document.getExtension(CompConstant.namespaceURI));
-			gcmFile.setSBMLCompModel((CompModelPlugin)document.getModel().getExtension(CompConstant.namespaceURI));
+			gcmFile.setSBMLComp((CompSBMLDocumentPlugin)document.getExtension(CompConstants.namespaceURI));
+			gcmFile.setSBMLCompModel((CompModelPlugin)document.getModel().getExtension(CompConstants.namespaceURI));
 			int x = 50;
 			int y = 50;
 			if (m != null) {
@@ -10348,7 +10348,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			ArrayList<SBase> elements = SBMLutilities.getListOfAllElements(document.getModel());
 			for (int j = 0; j < elements.size(); j++) {
 				SBase sbase = elements.get(j);
-				CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getExtension(CompConstant.namespaceURI);
+				CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbase.getExtension(CompConstants.namespaceURI);
 				if (sbmlSBase!=null) {
 					if (updatePortMap(sbmlSBase,subModel,submodel.getId())) {
 						elements = SBMLutilities.getListOfAllElements(document.getModel());
@@ -10371,11 +10371,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			String extId = md.getId();
 			if (overwrite(root + separator + extId + ".xml",extId + ".xml")) {
 				org.sbml.jsbml.Model model = new org.sbml.jsbml.Model(md);
-				model.getNamespaces().clear();
+				model.getDeclaredNamespaces().clear();
 				SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
-				document.addPackageDeclaration(LayoutConstants.shortLabel, LayoutConstants.namespaceURI, false);
-				document.addPackageDeclaration(CompConstant.shortLabel, CompConstant.namespaceURI, true);
-				document.addPackageDeclaration(FBCConstants.shortLabel, FBCConstants.namespaceURI, false);
+				document.enablePackage(LayoutConstants.shortLabel, false);
+				document.enablePackage(CompConstants.shortLabel,  true);
+				document.enablePackage(FBCConstants.shortLabel, false);
 				CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
 				CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(model);
 				document.setModel(model);

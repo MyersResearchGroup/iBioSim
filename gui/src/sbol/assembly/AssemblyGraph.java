@@ -18,8 +18,8 @@ import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
+import org.sbml.jsbml.ext.comp.CompConstants;
 import org.sbml.jsbml.ext.comp.Submodel;
-import org.sbml.jsbml.ext.comp.CompConstant;
 import org.sbml.jsbml.ext.comp.CompModelPlugin;
 import org.sbml.jsbml.ext.comp.CompSBMLDocumentPlugin;
 import org.sbml.jsbml.ext.comp.CompSBasePlugin;
@@ -27,7 +27,6 @@ import org.sbolstandard.core.DnaComponent;
 
 import sbol.util.SBOLFileManager;
 import sbol.util.SBOLUtility;
-
 import biomodel.annotation.AnnotationUtility;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
@@ -49,7 +48,7 @@ public class AssemblyGraph {
 		SBMLDocument sbmlDoc = biomodel.getSBMLDocument();
 		HashMap<String, AssemblyNode> idToNode = new HashMap<String, AssemblyNode>();
 //		 Creates assembly nodes for submodels and connect them to nodes for species
-		if (sbmlDoc.getExtensionPackages().containsKey(CompConstant.namespaceURI)
+		if (sbmlDoc.getExtensionPackages().containsKey(CompConstants.namespaceURI)
 				&& parseSubModelSBOL(sbmlDoc, biomodel.getPath(), idToNode)) {
 			// Creates flattened assembly graph in case hierarchy of SBOL can't be preserved
 			SBMLDocument flatDoc = biomodel.flattenModel(true);
@@ -157,7 +156,7 @@ public class AssemblyGraph {
 			if (speciesNode.getURIs().size() > 0)
 				containsSBOL = true;
 			idToNode.put(sbmlSpecies.getId(), speciesNode);
-			if (sbmlSpecies.getExtensionPackages().containsKey(CompConstant.namespaceURI))
+			if (sbmlSpecies.getExtensionPackages().containsKey(CompConstants.namespaceURI))
 				parsePortMappings(sbmlSpecies, speciesNode, idToNode);
 			
 		}
@@ -171,7 +170,7 @@ public class AssemblyGraph {
 			if (parameterNode.getURIs().size() > 0)
 				containsSBOL = true;
 			idToNode.put(sbmlParameter.getId(), parameterNode);
-			if (sbmlParameter.getExtensionPackages().containsKey(CompConstant.namespaceURI))
+			if (sbmlParameter.getExtensionPackages().containsKey(CompConstants.namespaceURI))
 				parsePortMappings(sbmlParameter, parameterNode, idToNode);
 		}
 	}
@@ -217,7 +216,7 @@ public class AssemblyGraph {
 			// Connects assembly nodes for parameters and reaction rates appearing in kinetic law of reaction
 			// to assembly node for reaction
 			parseMath(sbmlReaction.getKineticLaw(), reactionNode, idToNode);
-			if (sbmlReaction.getExtensionPackages().containsKey(CompConstant.namespaceURI))
+			if (sbmlReaction.getExtensionPackages().containsKey(CompConstants.namespaceURI))
 				parsePortMappings(sbmlReaction, reactionNode, idToNode);
 		}
 	}
@@ -240,7 +239,7 @@ public class AssemblyGraph {
 					AssemblyNode outputNode = idToNode.get(output);
 					constructEdge(ruleNode, outputNode);
 				}
-				if (sbmlRule.getExtensionPackages().containsKey(CompConstant.namespaceURI))
+				if (sbmlRule.getExtensionPackages().containsKey(CompConstants.namespaceURI))
 					parsePortMappings(sbmlRule, ruleNode, idToNode);
 			}
 		}
@@ -269,7 +268,7 @@ public class AssemblyGraph {
 					constructEdge(eventNode, outputNode);
 				}
 			}
-			if (sbmlEvent.getExtensionPackages().containsKey(CompConstant.namespaceURI))
+			if (sbmlEvent.getExtensionPackages().containsKey(CompConstants.namespaceURI))
 				parsePortMappings(sbmlEvent, eventNode, idToNode);
 		}
 	}

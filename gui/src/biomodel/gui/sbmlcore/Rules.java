@@ -11,6 +11,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -22,6 +23,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.xml.stream.XMLStreamException;
 
 import main.Gui;
 import main.util.Utility;
@@ -42,6 +44,7 @@ import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
+
 import biomodel.annotation.AnnotationUtility;
 import biomodel.annotation.SBOLAnnotation;
 import biomodel.gui.sbol.SBOLField;
@@ -525,12 +528,14 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					bioModel.makeUndoPoint();
 					if (dimensionType.getSelectedIndex() == 1){
 						AnnotationUtility.removeMatrixSizeAnnotation(r);
+
 						AnnotationUtility.setVectorSizeAnnotation(r,(String) dimensionX.getSelectedItem());
 						AnnotationUtility.removeMatrixIndexAnnotation(r);
 						AnnotationUtility.setVectorIndexAnnotation(r,(String) iIndex.getText());
 					}
 					else if (dimensionType.getSelectedIndex() == 2){
 						AnnotationUtility.removeVectorSizeAnnotation(r);
+
 						AnnotationUtility.setMatrixSizeAnnotation(r,(String) dimensionX.getSelectedItem(), 
 								(String) dimensionY.getSelectedItem());
 						AnnotationUtility.setVectorIndexAnnotation(r,(String) iIndex.getText());
@@ -538,6 +543,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					}
 					else{
 						AnnotationUtility.removeVectorSizeAnnotation(r);
+
 						AnnotationUtility.removeMatrixSizeAnnotation(r);
 						AnnotationUtility.removeVectorIndexAnnotation(r);
 						AnnotationUtility.removeMatrixIndexAnnotation(r);
@@ -628,9 +634,11 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 						AnnotationUtility.setVectorSizeAnnotation(r,(String) dimensionX.getSelectedItem());
 						AnnotationUtility.removeMatrixIndexAnnotation(r);
 						AnnotationUtility.setVectorIndexAnnotation(r,(String) iIndex.getText());
+					
 					}
 					else if (dimensionType.getSelectedIndex() == 2){
 						AnnotationUtility.removeVectorSizeAnnotation(r);
+
 						AnnotationUtility.setMatrixSizeAnnotation(r,(String) dimensionX.getSelectedItem(), 
 								(String) dimensionY.getSelectedItem());
 						AnnotationUtility.setVectorIndexAnnotation(r,(String) iIndex.getText());
@@ -638,6 +646,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					}
 					else{
 						AnnotationUtility.removeVectorSizeAnnotation(r);
+
 						AnnotationUtility.removeMatrixSizeAnnotation(r);
 						AnnotationUtility.removeVectorIndexAnnotation(r);
 						AnnotationUtility.removeMatrixIndexAnnotation(r);

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.sbml.jsbml.Annotation;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.xml.XMLAttributes;
@@ -29,39 +31,58 @@ public class AnnotationUtility {
 	}
 	
 	public static void removeSBOLAnnotation(SBase sbmlObject) {
-		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-		Pattern sbolPattern = Pattern.compile(SBOL_ANNOTATION);
-		Matcher sbolMatcher = sbolPattern.matcher(annotation);
-		while (sbolMatcher.find()) {
-			String sbolAnnotation = sbolMatcher.group(0);
-			annotation = annotation.replace(sbolAnnotation, "");
+		String annotation;
+		try {
+			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+			Pattern sbolPattern = Pattern.compile(SBOL_ANNOTATION);
+			Matcher sbolMatcher = sbolPattern.matcher(annotation);
+			while (sbolMatcher.find()) {
+				String sbolAnnotation = sbolMatcher.group(0);
+				annotation = annotation.replace(sbolAnnotation, "");
+			}
+			if (annotation.equals("")) {
+				sbmlObject.unsetAnnotation();
+			} else {
+				sbmlObject.setAnnotation(new Annotation(annotation));				
+			}
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		sbmlObject.setAnnotation(new Annotation(annotation));
+
 	}
 	
 	public static String parseSBOLAnnotation(SBase sbmlObject, List<URI> sbolURIs) {
-		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-		Pattern sbolPattern = Pattern.compile(SBOL_ANNOTATION);
-		Matcher sbolMatcher = sbolPattern.matcher(annotation);
-		if (sbolMatcher.find()) {
-			Pattern componentPattern = Pattern.compile(DNA_COMPONENTS_ELEMENT);
-			Matcher componentMatcher = componentPattern.matcher(sbolMatcher.group(0));
-			if (componentMatcher.find()) {
-				Pattern uriPattern = Pattern.compile(URI_LIST_ELEMENT);
-				Matcher uriMatcher = uriPattern.matcher(componentMatcher.group(0));
-				while (uriMatcher.find())
-					try {
-						sbolURIs.add(new URI(uriMatcher.group(1)));
-					} catch (URISyntaxException e) {
-						e.printStackTrace();
-					}
+		String annotation;
+		try {
+			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+			Pattern sbolPattern = Pattern.compile(SBOL_ANNOTATION);
+			Matcher sbolMatcher = sbolPattern.matcher(annotation);
+			if (sbolMatcher.find()) {
+				Pattern componentPattern = Pattern.compile(DNA_COMPONENTS_ELEMENT);
+				Matcher componentMatcher = componentPattern.matcher(sbolMatcher.group(0));
+				if (componentMatcher.find()) {
+					Pattern uriPattern = Pattern.compile(URI_LIST_ELEMENT);
+					Matcher uriMatcher = uriPattern.matcher(componentMatcher.group(0));
+					while (uriMatcher.find())
+						try {
+							sbolURIs.add(new URI(uriMatcher.group(1)));
+						} catch (URISyntaxException e) {
+							e.printStackTrace();
+						}
+				}
+				Pattern strandPattern = Pattern.compile(STRAND_ELEMENT);
+				Matcher strandMatcher = strandPattern.matcher(sbolMatcher.group(0));
+				if (strandMatcher.find())
+					return strandMatcher.group(1);
 			}
-			Pattern strandPattern = Pattern.compile(STRAND_ELEMENT);
-			Matcher strandMatcher = strandPattern.matcher(sbolMatcher.group(0));
-			if (strandMatcher.find())
-				return strandMatcher.group(1);
+			return GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
+		} catch (XMLStreamException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
-		return GlobalConstants.SBOL_ASSEMBLY_PLUS_STRAND;
+		return null;
+	
 	}
 
 	public static void setSweepAnnotation(SBase sbmlObject, String sweep) {
@@ -77,30 +98,48 @@ public class AnnotationUtility {
 	}
 	
 	public static void removeSweepAnnotation(SBase sbmlObject) {
-		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-		Pattern sweepPattern = Pattern.compile(SWEEP_ANNOTATION);
-		Matcher sweepMatcher = sweepPattern.matcher(annotation);
-		if (sweepMatcher.find()) {
-			String sweepAnnotation = sweepMatcher.group(0);
-			annotation = annotation.replace(sweepAnnotation, "");
+		String annotation;
+		try {
+			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+			Pattern sweepPattern = Pattern.compile(SWEEP_ANNOTATION);
+			Matcher sweepMatcher = sweepPattern.matcher(annotation);
+			if (sweepMatcher.find()) {
+				String sweepAnnotation = sweepMatcher.group(0);
+				annotation = annotation.replace(sweepAnnotation, "");
+			}
+			if (annotation.equals("")) {
+				sbmlObject.unsetAnnotation();
+			} else {
+				sbmlObject.setAnnotation(new Annotation(annotation));				
+			}
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		sbmlObject.setAnnotation(new Annotation(annotation));
+	
 	}
 	
 	public static String parseSweepAnnotation(SBase sbmlObject) {
 		if (sbmlObject==null) return null;
-		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-		Pattern sweepPattern = Pattern.compile(SWEEP_ANNOTATION);
-		Matcher sweepMatcher = sweepPattern.matcher(annotation);
-		if (sweepMatcher.find() && sweepMatcher.groupCount()==2) {
-			if (sweepMatcher.group(1)!=null)
-				return sweepMatcher.group(1);
-			return sweepMatcher.group(2);
+		String annotation;
+		try {
+			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+			Pattern sweepPattern = Pattern.compile(SWEEP_ANNOTATION);
+			Matcher sweepMatcher = sweepPattern.matcher(annotation);
+			if (sweepMatcher.find() && sweepMatcher.groupCount()==2) {
+				if (sweepMatcher.group(1)!=null)
+					return sweepMatcher.group(1);
+				return sweepMatcher.group(2);
+			}
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+	
 		return null;
 	}
 	
-	public static void setVectorSizeAnnotation(SBase sbmlObject, String length) {
+	public static void setVectorSizeAnnotation(SBase sbmlObject, String length)  {
 		if (sbmlObject.isSetAnnotation())
 			removeVectorSizeAnnotation(sbmlObject);
 		XMLAttributes attr = new XMLAttributes();
@@ -112,7 +151,9 @@ public class AnnotationUtility {
 					+ SBMLutilities.getId(sbmlObject)); 
 	}
 
-	public static void removeVectorSizeAnnotation(SBase sbmlObject) {
+	public static void removeVectorSizeAnnotation(SBase sbmlObject)  {
+
+		try {
 		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
 		Pattern vectorSizePattern = Pattern.compile(VECTOR_SIZE_ANNOTATION);
 		Matcher vectorSizeMatcher = vectorSizePattern.matcher(annotation);
@@ -123,22 +164,38 @@ public class AnnotationUtility {
 		//if (annotation.trim().equals("")) {
 		//	sbmlObject.unsetAnnotation();
 		//} else {
-		sbmlObject.setAnnotation(new Annotation(annotation));
+		if (annotation.equals("")) {
+			sbmlObject.unsetAnnotation();
+		} else {
+				sbmlObject.setAnnotation(new Annotation(annotation));
+			} 			
+		}
+		catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
 		//}
 	}
 	
 	public static String parseVectorSizeAnnotation(SBase sbmlObject) {
 		if (sbmlObject==null)
 			return null;
-		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-		Pattern vectorSizePattern = Pattern.compile(VECTOR_SIZE_ANNOTATION);
-		Matcher vectorSizeMatcher = vectorSizePattern.matcher(annotation);
-		if (vectorSizeMatcher.find() && vectorSizeMatcher.groupCount()==2) {
-			if (vectorSizeMatcher.group(1)!=null) {
-				return (String) vectorSizeMatcher.group(1);
+		String annotation;
+		try {
+			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+			Pattern vectorSizePattern = Pattern.compile(VECTOR_SIZE_ANNOTATION);
+			Matcher vectorSizeMatcher = vectorSizePattern.matcher(annotation);
+			if (vectorSizeMatcher.find() && vectorSizeMatcher.groupCount()==2) {
+				if (vectorSizeMatcher.group(1)!=null) {
+					return (String) vectorSizeMatcher.group(1);
+				}
+				return (String) vectorSizeMatcher.group(2);
 			}
-			return (String) vectorSizeMatcher.group(2);
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		
 		return null;
 	}
 	
@@ -154,15 +211,26 @@ public class AnnotationUtility {
 					+ SBMLutilities.getId(sbmlObject)); 
 	}
 
-	public static void removeMatrixSizeAnnotation(SBase sbmlObject) {
-		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-		Pattern marixSizePattern = Pattern.compile(MATRIX_SIZE_ANNOTATION);
-		Matcher mateixSizeMatcher = marixSizePattern.matcher(annotation);
-		if (mateixSizeMatcher.find()) {
-			String matrixSizeAnnotation = mateixSizeMatcher.group(0);
-			annotation = annotation.replace(matrixSizeAnnotation, "");
+	public static void removeMatrixSizeAnnotation(SBase sbmlObject)  {
+		String annotation;
+		try {
+			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+			Pattern marixSizePattern = Pattern.compile(MATRIX_SIZE_ANNOTATION);
+			Matcher mateixSizeMatcher = marixSizePattern.matcher(annotation);
+			if (mateixSizeMatcher.find()) {
+				String matrixSizeAnnotation = mateixSizeMatcher.group(0);
+				annotation = annotation.replace(matrixSizeAnnotation, "");
+			}
+			if (annotation.equals("")) {
+				sbmlObject.unsetAnnotation();
+			} else {
+				sbmlObject.setAnnotation(new Annotation(annotation));				
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		sbmlObject.setAnnotation(new Annotation(annotation));
+	
 	}
 	
 	@SuppressWarnings("null")
@@ -170,20 +238,27 @@ public class AnnotationUtility {
 		if (sbmlObject==null)
 			return null;
 		String [] ret = null;
-		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-		Pattern matrixSizePattern = Pattern.compile(MATRIX_SIZE_ANNOTATION);
-		Matcher matrixSizeMatcher = matrixSizePattern.matcher(annotation);
-		if (matrixSizeMatcher.find() && matrixSizeMatcher.groupCount()==4) {
-			ret = new String[2];
-			if (matrixSizeMatcher.group(1) != null && matrixSizeMatcher.group(2) != null) {
-				ret[0] = matrixSizeMatcher.group(1);
-				ret[1] = matrixSizeMatcher.group(2);
+		String annotation;
+		try {
+			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+			Pattern matrixSizePattern = Pattern.compile(MATRIX_SIZE_ANNOTATION);
+			Matcher matrixSizeMatcher = matrixSizePattern.matcher(annotation);
+			if (matrixSizeMatcher.find() && matrixSizeMatcher.groupCount()==4) {
+				ret = new String[2];
+				if (matrixSizeMatcher.group(1) != null && matrixSizeMatcher.group(2) != null) {
+					ret[0] = matrixSizeMatcher.group(1);
+					ret[1] = matrixSizeMatcher.group(2);
+				}
+				else {
+					ret[0] = matrixSizeMatcher.group(3);
+					ret[1] = matrixSizeMatcher.group(4);
+				}
 			}
-			else {
-				ret[0] = matrixSizeMatcher.group(3);
-				ret[1] = matrixSizeMatcher.group(4);
-			}
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		
 		return ret;
 	}
 	
@@ -200,32 +275,50 @@ public class AnnotationUtility {
 	}
 
 	public static void removeVectorIndexAnnotation(SBase sbmlObject) {
-		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-		Pattern vectorIndexPattern = Pattern.compile(I_INDEX_ANNOTATION);
-		Matcher vectorIndexMatcher = vectorIndexPattern.matcher(annotation);
-		if (vectorIndexMatcher.find()) {
-			String matrixIndexAnnotation = vectorIndexMatcher.group(0);
-			annotation = annotation.replace(matrixIndexAnnotation, "");
+		String annotation;
+		try {
+			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+			Pattern vectorIndexPattern = Pattern.compile(I_INDEX_ANNOTATION);
+			Matcher vectorIndexMatcher = vectorIndexPattern.matcher(annotation);
+			if (vectorIndexMatcher.find()) {
+				String matrixIndexAnnotation = vectorIndexMatcher.group(0);
+				annotation = annotation.replace(matrixIndexAnnotation, "");
+			}
+			//if (annotation.trim().equals("")) {
+			//	sbmlObject.unsetAnnotation();
+			//} else {
+			if (annotation.equals("")) {
+				sbmlObject.unsetAnnotation();
+			} else {
+				sbmlObject.setAnnotation(new Annotation(annotation));				
+			}
+			//}
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		//if (annotation.trim().equals("")) {
-		//	sbmlObject.unsetAnnotation();
-		//} else {
-		sbmlObject.setAnnotation(new Annotation(annotation));
-		//}
+		
 	}
 	
 	public static String parseVectorIndexAnnotation(SBase sbmlObject) {
 		if (sbmlObject==null)
 			return null;
-		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-		Pattern vectorIndexPattern = Pattern.compile(I_INDEX_ANNOTATION);
-		Matcher vectorIndexMatcher = vectorIndexPattern.matcher(annotation);
-		if (vectorIndexMatcher.find() && vectorIndexMatcher.groupCount()==2) {
-			if (vectorIndexMatcher.group(1)!=null) {
-				return (String) vectorIndexMatcher.group(1);
+		String annotation;
+		try {
+			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+			Pattern vectorIndexPattern = Pattern.compile(I_INDEX_ANNOTATION);
+			Matcher vectorIndexMatcher = vectorIndexPattern.matcher(annotation);
+			if (vectorIndexMatcher.find() && vectorIndexMatcher.groupCount()==2) {
+				if (vectorIndexMatcher.group(1)!=null) {
+					return (String) vectorIndexMatcher.group(1);
+				}
+				return (String) vectorIndexMatcher.group(2);
 			}
-			return (String) vectorIndexMatcher.group(2);
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+	
 		return null;
 	}
 	
@@ -242,33 +335,52 @@ public class AnnotationUtility {
 	}
 
 	public static void removeMatrixIndexAnnotation(SBase sbmlObject) {
-		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-		Pattern matrixIndexPattern = Pattern.compile(J_INDEX_ANNOTATION);
-		Matcher matrixIndexMatcher = matrixIndexPattern.matcher(annotation);
-		if (matrixIndexMatcher.find()) {
-			String matricIndexAnnotation = matrixIndexMatcher.group(0);
-			annotation = annotation.replace(matricIndexAnnotation, "");
+		String annotation;
+		try {
+			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+			Pattern matrixIndexPattern = Pattern.compile(J_INDEX_ANNOTATION);
+			Matcher matrixIndexMatcher = matrixIndexPattern.matcher(annotation);
+			if (matrixIndexMatcher.find()) {
+				String matricIndexAnnotation = matrixIndexMatcher.group(0);
+				annotation = annotation.replace(matricIndexAnnotation, "");
+			}
+			//if (annotation.trim().equals("")) {
+			//	sbmlObject.unsetAnnotation();
+			//} else {
+			if (annotation.equals("")) {
+				sbmlObject.unsetAnnotation();
+			} else {
+				sbmlObject.setAnnotation(new Annotation(annotation));				
+			}
+			//}
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		//if (annotation.trim().equals("")) {
-		//	sbmlObject.unsetAnnotation();
-		//} else {
-		sbmlObject.setAnnotation(new Annotation(annotation));
-		//}
+	
 	}
 	
 	public static String parseMatrixIndexAnnotation(SBase sbmlObject) {
 		if (sbmlObject==null)
 			return null;
-		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-		Pattern matrixIndexPattern = Pattern.compile(J_INDEX_ANNOTATION);
-		Matcher matrixIndexMatcher = matrixIndexPattern.matcher(annotation);
-		if (matrixIndexMatcher.find() && matrixIndexMatcher.groupCount()==2) {
-			if (matrixIndexMatcher.group(1)!=null) {
-				return (String) matrixIndexMatcher.group(1);
+		String annotation;
+		try {
+			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+			Pattern matrixIndexPattern = Pattern.compile(J_INDEX_ANNOTATION);
+			Matcher matrixIndexMatcher = matrixIndexPattern.matcher(annotation);
+			if (matrixIndexMatcher.find() && matrixIndexMatcher.groupCount()==2) {
+				if (matrixIndexMatcher.group(1)!=null) {
+					return (String) matrixIndexMatcher.group(1);
+				}
+				return (String) matrixIndexMatcher.group(2);
 			}
-			return (String) matrixIndexMatcher.group(2);
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+
 		return null;
+	
 	}
 	
 	public static void setArraySizeAnnotation(SBase sbmlObject, int size) {
@@ -284,41 +396,59 @@ public class AnnotationUtility {
 	}
 	
 	public static void removeArraySizeAnnotation(SBase sbmlObject) {
-		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-		Pattern arraySizePattern = Pattern.compile(ARRAY_SIZE_ANNOTATION);
-		Matcher arraySizeMatcher = arraySizePattern.matcher(annotation);
-		if (arraySizeMatcher.find()) {
-			String arraySizeAnnotation = arraySizeMatcher.group(0);
-			annotation = annotation.replace(arraySizeAnnotation, "");
+		String annotation;
+		try {
+			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+			Pattern arraySizePattern = Pattern.compile(ARRAY_SIZE_ANNOTATION);
+			Matcher arraySizeMatcher = arraySizePattern.matcher(annotation);
+			if (arraySizeMatcher.find()) {
+				String arraySizeAnnotation = arraySizeMatcher.group(0);
+				annotation = annotation.replace(arraySizeAnnotation, "");
+			}
+			if (annotation.equals("")) {
+				sbmlObject.unsetAnnotation();
+			} else {
+				sbmlObject.setAnnotation(new Annotation(annotation));				
+			}
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		sbmlObject.setAnnotation(new Annotation(annotation));
+		
 	}
 	
 	public static int parseArraySizeAnnotation(SBase sbmlObject) {
 		if (sbmlObject==null) return -1;
-		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-		Pattern arraySizePattern = Pattern.compile(ARRAY_SIZE_ANNOTATION);
-		Matcher arraySizeMatcher = arraySizePattern.matcher(annotation);
-		if (arraySizeMatcher.find() && arraySizeMatcher.groupCount()==2) {
-			if (arraySizeMatcher.group(1)!=null) {
+		String annotation;
+		try {
+			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+			Pattern arraySizePattern = Pattern.compile(ARRAY_SIZE_ANNOTATION);
+			Matcher arraySizeMatcher = arraySizePattern.matcher(annotation);
+			if (arraySizeMatcher.find() && arraySizeMatcher.groupCount()==2) {
+				if (arraySizeMatcher.group(1)!=null) {
+					return Integer.valueOf(arraySizeMatcher.group(1));
+				}
+				return Integer.valueOf(arraySizeMatcher.group(2));
+			}
+			arraySizePattern = Pattern.compile(OLD_ARRAY_SIZE_ANNOTATION);
+			arraySizeMatcher = arraySizePattern.matcher(annotation);
+			if (arraySizeMatcher.find() && arraySizeMatcher.groupCount()==1) {
+				annotation = annotation.replace("array:count", "array:size");
+				sbmlObject.setAnnotation(new Annotation(annotation));
 				return Integer.valueOf(arraySizeMatcher.group(1));
 			}
-			return Integer.valueOf(arraySizeMatcher.group(2));
+			arraySizePattern = Pattern.compile(OLD_ARRAY_RANGE_ANNOTATION);
+			arraySizeMatcher = arraySizePattern.matcher(annotation);
+			if (arraySizeMatcher.find() && arraySizeMatcher.groupCount()==2) {
+				annotation = annotation.replace("array:min=\"0\" array:max","array:size");
+				sbmlObject.setAnnotation(new Annotation(annotation));
+				return Integer.valueOf(arraySizeMatcher.group(2))+1;
+			}
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		arraySizePattern = Pattern.compile(OLD_ARRAY_SIZE_ANNOTATION);
-		arraySizeMatcher = arraySizePattern.matcher(annotation);
-		if (arraySizeMatcher.find() && arraySizeMatcher.groupCount()==1) {
-			annotation = annotation.replace("array:count", "array:size");
-			sbmlObject.setAnnotation(new Annotation(annotation));
-			return Integer.valueOf(arraySizeMatcher.group(1));
-		}
-		arraySizePattern = Pattern.compile(OLD_ARRAY_RANGE_ANNOTATION);
-		arraySizeMatcher = arraySizePattern.matcher(annotation);
-		if (arraySizeMatcher.find() && arraySizeMatcher.groupCount()==2) {
-			annotation = annotation.replace("array:min=\"0\" array:max","array:size");
-			sbmlObject.setAnnotation(new Annotation(annotation));
-			return Integer.valueOf(arraySizeMatcher.group(2))+1;
-		}
+		
 		return -1;
 	}
 	
@@ -335,25 +465,43 @@ public class AnnotationUtility {
 	}
 	
 	public static void removeDynamicAnnotation(SBase sbmlObject) {
-		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-		Pattern dynamicPattern = Pattern.compile(DYNAMIC_ANNOTATION);
-		Matcher dynamicMatcher = dynamicPattern.matcher(annotation);
-		if (dynamicMatcher.find()) {
-			String dynamicAnnotation = dynamicMatcher.group(0);
-			annotation = annotation.replace(dynamicAnnotation, "");
+		String annotation;
+		try {
+			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+			Pattern dynamicPattern = Pattern.compile(DYNAMIC_ANNOTATION);
+			Matcher dynamicMatcher = dynamicPattern.matcher(annotation);
+			if (dynamicMatcher.find()) {
+				String dynamicAnnotation = dynamicMatcher.group(0);
+				annotation = annotation.replace(dynamicAnnotation, "");
+			}
+			if (annotation.equals("")) {
+				sbmlObject.unsetAnnotation();
+			} else {
+				sbmlObject.setAnnotation(new Annotation(annotation));				
+			}
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		sbmlObject.setAnnotation(new Annotation(annotation));
+	
 	}
 	
 	public static String parseDynamicAnnotation(SBase sbmlObject) {
 		if (sbmlObject==null) return null;
-		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-		Pattern dynamicPattern = Pattern.compile(DYNAMIC_ANNOTATION);
-		Matcher dynamicMatcher = dynamicPattern.matcher(annotation);
-		if (dynamicMatcher.find() && dynamicMatcher.groupCount()==2) {
-			if (dynamicMatcher.group(1)!=null) 
-				return dynamicMatcher.group(1);
-			return dynamicMatcher.group(2);
+		String annotation;
+		try {
+			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+
+			Pattern dynamicPattern = Pattern.compile(DYNAMIC_ANNOTATION);
+			Matcher dynamicMatcher = dynamicPattern.matcher(annotation);
+			if (dynamicMatcher.find() && dynamicMatcher.groupCount()==2) {
+				if (dynamicMatcher.group(1)!=null) 
+					return dynamicMatcher.group(1);
+				return dynamicMatcher.group(2);
+			}
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -371,57 +519,76 @@ public class AnnotationUtility {
 	}
 	
 	public static void removeGridAnnotation(SBase sbmlObject) {
-		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-		Pattern gridPattern = Pattern.compile(GRID_ANNOTATION);
-		Matcher gridMatcher = gridPattern.matcher(annotation);
-		if (gridMatcher.find()) {
-			String gridAnnotation = gridMatcher.group(0);
-			annotation = annotation.replace(gridAnnotation, "");
-		} else {
-			gridPattern = Pattern.compile(OLD_GRID_ANNOTATION);
-			gridMatcher = gridPattern.matcher(annotation);
+		String annotation;
+		try {
+			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+			Pattern gridPattern = Pattern.compile(GRID_ANNOTATION);
+			Matcher gridMatcher = gridPattern.matcher(annotation);
 			if (gridMatcher.find()) {
 				String gridAnnotation = gridMatcher.group(0);
 				annotation = annotation.replace(gridAnnotation, "");
+			} else {
+				gridPattern = Pattern.compile(OLD_GRID_ANNOTATION);
+				gridMatcher = gridPattern.matcher(annotation);
+				if (gridMatcher.find()) {
+					String gridAnnotation = gridMatcher.group(0);
+					annotation = annotation.replace(gridAnnotation, "");
+				}
 			}
+			if (annotation.equals("")) {
+				sbmlObject.unsetAnnotation();
+			} else {
+				sbmlObject.setAnnotation(new Annotation(annotation));				
+			}
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		sbmlObject.setAnnotation(new Annotation(annotation));
+	
 	}
 	
 	public static int[] parseGridAnnotation(SBase sbmlObject) {
-		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-		if (annotation==null) return null;
-		Pattern gridPattern = Pattern.compile(GRID_ANNOTATION);
-		Matcher gridMatcher = gridPattern.matcher(annotation);
-		int[] gridSize = null;
-		if (gridMatcher.find() && gridMatcher.groupCount()==4) {
-			gridSize = new int[2];
-			if (gridMatcher.group(1) != null && gridMatcher.group(2) != null) {
-				gridSize[0] = Integer.valueOf(gridMatcher.group(1));
-				gridSize[1] = Integer.valueOf(gridMatcher.group(2));
-			}
-			else {
-				gridSize[0] = Integer.valueOf(gridMatcher.group(3));
-				gridSize[1] = Integer.valueOf(gridMatcher.group(4));
-			}
-		} else {
-			gridPattern = Pattern.compile(OLD_GRID_ANNOTATION);
-			gridMatcher = gridPattern.matcher(annotation);
-			if (gridMatcher.find()) {
+		String annotation;
+		try {
+			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+			if (annotation==null) return null;
+			Pattern gridPattern = Pattern.compile(GRID_ANNOTATION);
+			Matcher gridMatcher = gridPattern.matcher(annotation);
+			int[] gridSize = null;
+			if (gridMatcher.find() && gridMatcher.groupCount()==4) {
 				gridSize = new int[2];
-				gridSize[0]=0;
-				gridSize[1]=0;
-			} else {
-				gridPattern = Pattern.compile(LAYOUT_GRID_ANNOTATION);
-				gridMatcher = gridPattern.matcher(annotation);
-				if (gridMatcher.find() && gridMatcher.groupCount()==2) {
-					gridSize = new int[2];
+				if (gridMatcher.group(1) != null && gridMatcher.group(2) != null) {
 					gridSize[0] = Integer.valueOf(gridMatcher.group(1));
 					gridSize[1] = Integer.valueOf(gridMatcher.group(2));
-				}				
+				}
+				else {
+					gridSize[0] = Integer.valueOf(gridMatcher.group(3));
+					gridSize[1] = Integer.valueOf(gridMatcher.group(4));
+				}
+			} else {
+				gridPattern = Pattern.compile(OLD_GRID_ANNOTATION);
+				gridMatcher = gridPattern.matcher(annotation);
+				if (gridMatcher.find()) {
+					gridSize = new int[2];
+					gridSize[0]=0;
+					gridSize[1]=0;
+				} else {
+					gridPattern = Pattern.compile(LAYOUT_GRID_ANNOTATION);
+					gridMatcher = gridPattern.matcher(annotation);
+					if (gridMatcher.find() && gridMatcher.groupCount()==2) {
+						gridSize = new int[2];
+						gridSize[0] = Integer.valueOf(gridMatcher.group(1));
+						gridSize[1] = Integer.valueOf(gridMatcher.group(2));
+					}				
+				}
 			}
+			return gridSize;
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		return gridSize;
+		return null;
+		
 	}
 	
 	public static void setArrayAnnotation(SBase sbmlObject, String array) {
@@ -469,25 +636,43 @@ public class AnnotationUtility {
 	}
 	
 	public static void removeArrayAnnotation(SBase sbmlObject) {
-		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-		Pattern arrayPattern = Pattern.compile(ARRAY_ANNOTATION);
-		Matcher arrayMatcher = arrayPattern.matcher(annotation);
-		if (arrayMatcher.find()) {
-			String arrayAnnotation = arrayMatcher.group(0);
-			annotation = annotation.replace(arrayAnnotation, "");
+		String annotation;
+		try {
+			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+
+			Pattern arrayPattern = Pattern.compile(ARRAY_ANNOTATION);
+			Matcher arrayMatcher = arrayPattern.matcher(annotation);
+			if (arrayMatcher.find()) {
+				String arrayAnnotation = arrayMatcher.group(0);
+				annotation = annotation.replace(arrayAnnotation, "");
+			}
+			if (annotation.equals("")) {
+				sbmlObject.unsetAnnotation();
+			} else {
+				sbmlObject.setAnnotation(new Annotation(annotation));				
+			}
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		sbmlObject.setAnnotation(new Annotation(annotation));
 	}
 	
 	public static String[] parseArrayAnnotation(SBase sbmlObject) {
-		String annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
-		Pattern arrayPattern = Pattern.compile(ARRAY_ANNOTATION);
-		Matcher arrayMatcher = arrayPattern.matcher(annotation);
-		if (arrayMatcher.find()) {
-			if (arrayMatcher.group(1) != null) {
-				return arrayMatcher.group(1).replace("\"","").replace(" ","").split("array:");
+		String annotation;
+		try {
+			annotation = sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim();
+
+			Pattern arrayPattern = Pattern.compile(ARRAY_ANNOTATION);
+			Matcher arrayMatcher = arrayPattern.matcher(annotation);
+			if (arrayMatcher.find()) {
+				if (arrayMatcher.group(1) != null) {
+					return arrayMatcher.group(1).replace("\"","").replace(" ","").split("array:");
+				}
+				return arrayMatcher.group(2).replace("\"","").replace(" ","").split("array:");
 			}
-			return arrayMatcher.group(2).replace("\"","").replace(" ","").split("array:");
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -516,7 +701,13 @@ public class AnnotationUtility {
 	}
 	
 	public static boolean checkObsoleteAnnotation(SBase sbmlObject, String annotation) {
-		return sbmlObject.isSetAnnotation() && sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim().contains(annotation);
+		try {
+			return sbmlObject.isSetAnnotation() && sbmlObject.getAnnotationString().replace("<annotation>", "").replace("</annotation>", "").trim().contains(annotation);
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
 	}
 	
 	public static void removeObsoleteAnnotation(SBase sbmlObject) {
