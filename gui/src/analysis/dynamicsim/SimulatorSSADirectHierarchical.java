@@ -261,15 +261,13 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 	 * @param delta_t
 	 * @return
 	 */
-	protected HashSet<String> performRateRules(ModelState modelstate, double delta_t) {
+	private HashSet<String> performRateRules(ModelState modelstate, double delta_t) {
 		
 		HashSet<String> affectedVariables = new HashSet<String>();
 		
-		for (Rule rule : models.get(modelstate.model).getListOfRules()) {
-			
-			if (rule.isRate()) {
-				
-				RateRule rateRule = (RateRule) rule;			
+		for (Rule rule : modelstate.rateRulesList) {
+
+				RateRule rateRule = (RateRule) rule;	
 				String variable = rateRule.getVariable();
 				
 				//update the species count (but only if the species isn't constant) (bound cond is fine)
@@ -293,7 +291,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 					
 					affectedVariables.add(variable);
 				}
-			}
+			
 		}
 		
 		return affectedVariables;
@@ -461,8 +459,8 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		double oldPropensity = model.reactionToPropensityMap.get(affectedReactionID);
 
 		//add the difference of new v. old propensity to the total propensity
-		//model.propensity += newPropensity - oldPropensity;
-		model.propensity = newPropensity - oldPropensity;
+		model.propensity += newPropensity - oldPropensity;
+		//model.propensity = newPropensity - oldPropensity;
 		//totalPropensity += newPropensity - oldPropensity;
 
 		model.reactionToPropensityMap.put(affectedReactionID, newPropensity);
@@ -558,7 +556,7 @@ public class SimulatorSSADirectHierarchical extends HierarchicalSimulator{
 		 */
 	}
 
-	protected double handleEvents()
+	private double handleEvents()
 	{
 		double nextEventTime = Double.POSITIVE_INFINITY;
 		if (topmodel.noEventsFlag == false)
