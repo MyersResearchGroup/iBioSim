@@ -792,9 +792,9 @@ public abstract class HierarchicalSimulator {
 		Model model = new Model(md);
 		model.getDeclaredNamespaces().clear();
 		SBMLDocument newDoc = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
-		newDoc.enablePackage(LayoutConstants.shortLabel, false);
-		newDoc.enablePackage(CompConstants.shortLabel,  true);
-		newDoc.enablePackage(FBCConstants.shortLabel, false);
+		newDoc.enablePackage(LayoutConstants.namespaceURI);
+		newDoc.enablePackage(CompConstants.namespaceURI);
+		newDoc.enablePackage(FBCConstants.namespaceURI);
 
 		CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(newDoc);
 		CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(model);
