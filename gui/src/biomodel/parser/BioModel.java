@@ -3375,7 +3375,9 @@ public class BioModel {
 
 	public void removeSpecies(String id) {
 		if (id != null) {
-			sbml.getModel().getListOfInitialAssignments().remove(id);
+			if (sbml.getModel().getInitialAssignment(id)!=null) {
+				sbml.getModel().getListOfInitialAssignments().remove(id);
+			}
 			sbml.getModel().removeSpecies(id);
 			if (isSpeciesConstitutive(id)) {
 				removeReaction("Constitutive_"+id);
@@ -3458,7 +3460,9 @@ public class BioModel {
 	
 	public void removeById(String id) {
 		SBase sbase = SBMLutilities.getElementBySId(sbml.getModel(), id);
-		sbml.getModel().getListOfInitialAssignments().remove(id);
+		if (sbml.getModel().getInitialAssignment(id)!=null) {
+			sbml.getModel().getListOfInitialAssignments().remove(id);
+		}
 		if (sbase != null) {
 			SBMLutilities.removeFromParentAndDelete(sbase);
 			for (int j = 0; j < sbmlCompModel.getListOfPorts().size(); j++) {
@@ -4621,7 +4625,9 @@ public class BioModel {
     */
 
 	public void removePromoter(String id) {
-		sbml.getModel().getListOfInitialAssignments().remove(id);
+		if (sbml.getModel().getInitialAssignment(id)!=null) {
+			sbml.getModel().getListOfInitialAssignments().remove(id);
+		}
 		sbml.getModel().removeSpecies(id);
 		sbml.getModel().removeSpecies(id+"_mRNA");
 		removeReaction("Production_"+id);
