@@ -1470,21 +1470,21 @@ public class BioModel {
 
 	public void createLayoutPlugin() {
 		if (sbmlLayout==null) {
-			sbml.enablePackage(LayoutConstants.shortLabel,  false);
+			sbml.enablePackage(LayoutConstants.namespaceURI);
 			sbmlLayout = SBMLutilities.getLayoutModelPlugin(sbml.getModel());
 		}
 	}
 
 	public void createFBCPlugin() {
 		if (sbmlFBC==null) {
-			sbml.enablePackage(FBCConstants.shortLabel,  false);
+			sbml.enablePackage(FBCConstants.namespaceURI);
 			sbmlFBC = SBMLutilities.getFBCModelPlugin(sbml.getModel());
 		}
 	}
 
 	public void createCompPlugin() {
 		if (sbmlComp==null) {
-			sbml.enablePackage(CompConstants.shortLabel,  true);
+			sbml.enablePackage(CompConstants.namespaceURI);
 			sbmlComp = SBMLutilities.getCompSBMLDocumentPlugin(sbml);
 			sbmlCompModel = SBMLutilities.getCompModelPlugin(sbml.getModel());
 		}
@@ -6513,13 +6513,13 @@ public class BioModel {
 		ArrayList<String> comps = new ArrayList<String>();
 		SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
 		document.setModel(sbml.getModel());
-		document.enablePackage(LayoutConstants.shortLabel, false);
+		document.enablePackage(LayoutConstants.namespaceURI);
 		SBMLutilities.getLayoutModelPlugin(document.getModel());
 		if (sbmlCompModel.getListOfPorts().size() > 0 || sbmlCompModel.getListOfSubmodels().size() > 0) {
-			document.enablePackage(CompConstants.shortLabel, true);
+			document.enablePackage(CompConstants.namespaceURI);
 		}
 		if (sbmlFBC.getListOfObjectives().size() > 0 || sbmlFBC.getListOfFluxBounds().size() > 0) {
-			document.enablePackage(FBCConstants.shortLabel,  false);
+			document.enablePackage(FBCConstants.namespaceURI);
 		}
 		if (sbmlCompModel.getListOfSubmodels().size()>0) {
 			CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
