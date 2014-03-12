@@ -3989,6 +3989,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							document.enablePackage(LayoutConstants.namespaceURI);
 							document.enablePackage(CompConstants.namespaceURI);
 							document.enablePackage(FBCConstants.namespaceURI);
+							// TODO: workaround
+							document.getSBMLDocumentAttributes().put("fbc:required", "false");
 							CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
 							CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(document.getModel());
 							if (documentComp.getListOfModelDefinitions().size() > 0 ||
@@ -4093,6 +4095,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									document.enablePackage(LayoutConstants.namespaceURI);
 									document.enablePackage(CompConstants.namespaceURI);
 									document.enablePackage(FBCConstants.namespaceURI);
+									// TODO: workaround
+									document.getSBMLDocumentAttributes().put("fbc:required", "false");
 									CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
 									CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(document.getModel());
 									if (documentComp.getListOfModelDefinitions().size() > 0 ||
@@ -4549,6 +4553,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							document.enablePackage(LayoutConstants.namespaceURI);
 							document.enablePackage(CompConstants.namespaceURI);
 							document.enablePackage(FBCConstants.namespaceURI);
+							// TODO: workaround
+							document.getSBMLDocumentAttributes().put("fbc:required", "false");
 							CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
 							CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(document.getModel());
 							if (documentComp.getListOfModelDefinitions().size() > 0 ||
@@ -10376,6 +10382,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				document.enablePackage(LayoutConstants.namespaceURI);
 				document.enablePackage(CompConstants.namespaceURI);
 				document.enablePackage(FBCConstants.namespaceURI);
+				// TODO: workaround
+				document.getSBMLDocumentAttributes().put("fbc:required", "false");
 				CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
 				CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(model);
 				document.setModel(model);

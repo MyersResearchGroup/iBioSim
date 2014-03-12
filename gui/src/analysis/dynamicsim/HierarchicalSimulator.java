@@ -795,6 +795,8 @@ public abstract class HierarchicalSimulator {
 		newDoc.enablePackage(LayoutConstants.namespaceURI);
 		newDoc.enablePackage(CompConstants.namespaceURI);
 		newDoc.enablePackage(FBCConstants.namespaceURI);
+		// TODO: workaround
+		newDoc.getSBMLDocumentAttributes().put("fbc:required", "false");
 
 		CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(newDoc);
 		CompModelPlugin documentCompModel = SBMLutilities.getCompModelPlugin(model);
