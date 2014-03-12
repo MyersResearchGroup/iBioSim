@@ -3375,8 +3375,11 @@ public class BioModel {
 
 	public void removeSpecies(String id) {
 		if (id != null) {
-			if (sbml.getModel().getInitialAssignment(id)!=null) {
-				sbml.getModel().getListOfInitialAssignments().remove(id);
+			ListOf<InitialAssignment> r = sbml.getModel().getListOfInitialAssignments();
+			for (int i = 0; i < sbml.getModel().getInitialAssignmentCount(); i++) {
+				if (r.get(i).getVariable().equals(id)) {
+					r.remove(i);
+				}
 			}
 			sbml.getModel().removeSpecies(id);
 			if (isSpeciesConstitutive(id)) {
@@ -3460,8 +3463,11 @@ public class BioModel {
 	
 	public void removeById(String id) {
 		SBase sbase = SBMLutilities.getElementBySId(sbml.getModel(), id);
-		if (sbml.getModel().getInitialAssignment(id)!=null) {
-			sbml.getModel().getListOfInitialAssignments().remove(id);
+		ListOf<InitialAssignment> r = sbml.getModel().getListOfInitialAssignments();
+		for (int i = 0; i < sbml.getModel().getInitialAssignmentCount(); i++) {
+			if (r.get(i).getVariable().equals(id)) {
+				r.remove(i);
+			}
 		}
 		if (sbase != null) {
 			SBMLutilities.removeFromParentAndDelete(sbase);
@@ -4625,8 +4631,11 @@ public class BioModel {
     */
 
 	public void removePromoter(String id) {
-		if (sbml.getModel().getInitialAssignment(id)!=null) {
-			sbml.getModel().getListOfInitialAssignments().remove(id);
+		ListOf<InitialAssignment> r = sbml.getModel().getListOfInitialAssignments();
+		for (int i = 0; i < sbml.getModel().getInitialAssignmentCount(); i++) {
+			if (r.get(i).getVariable().equals(id)) {
+				r.remove(i);
+			}
 		}
 		sbml.getModel().removeSpecies(id);
 		sbml.getModel().removeSpecies(id+"_mRNA");
@@ -7527,8 +7536,7 @@ public class BioModel {
 		}
 		if (model.getInitialAssignmentCount() > 0) {
 			for (int i = 0; i < model.getInitialAssignmentCount(); i++) {
-				InitialAssignment init = model.getListOfInitialAssignments()
-						.get(i);
+				InitialAssignment init = model.getListOfInitialAssignments().get(i);
 				if (origId.equals(init.getVariable())) {
 					init.setVariable(newId);
 				}
