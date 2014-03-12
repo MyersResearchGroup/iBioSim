@@ -71,6 +71,6 @@
 	<classpathentry kind="lib" path="gui/lib/libSBOLj-0.7.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="gui/lib/JParts-1.0-SNAPSHOT-withDependencies.jar"/>
 	<classpathentry kind="lib" path="gui/lib/xerces_2_11_0.jar"/>
-	<classpathentry kind="lib" path="lib/jsbml-1.0-b1-with-dependencies.jar"/>
+	<classpathentry kind="lib" path="gui/lib/jsbml-1.0-b1-with-dependencies-rev1668.jar"/>
 	<classpathentry kind="output" path="gui/dist/classes"/>
 </classpath>
