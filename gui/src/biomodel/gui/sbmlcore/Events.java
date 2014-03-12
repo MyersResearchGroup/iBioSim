@@ -144,11 +144,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		ArrayList<String> presetPlaces = new ArrayList<String>();
 		JPanel eventPanel = new JPanel(new BorderLayout());
 		// JPanel evPanel = new JPanel(new GridLayout(2, 2));
-		JPanel dimensionPanel = new JPanel(new GridLayout(2,3));
-		JPanel southPanel = new JPanel(new BorderLayout());
-		JPanel evPanel = new JPanel(new GridLayout(10, 2));
+		JPanel evPanel = new JPanel(new GridLayout(12, 2));
 		if (isTransition) {
-			evPanel.setLayout(new GridLayout(8, 2));
+			evPanel.setLayout(new GridLayout(10, 2));
 		}
 		JLabel IDLabel = new JLabel("ID:");
 		JLabel NameLabel = new JLabel("Name:");
@@ -244,7 +242,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				if (event.getId().equals(selected)) {
 					isTransition = SBMLutilities.isTransition(event);
 					if (isTransition) {
-						evPanel.setLayout(new GridLayout(8, 2));
+						evPanel.setLayout(new GridLayout(10, 2));
 					}
 					Eindex = i;
 					eventID.setText(event.getId());
@@ -359,11 +357,28 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					origAssign = new String[event.getEventAssignmentCount()];
 					int k=0;
 					int l=0;
+					String[] indecies = new String[2];
 					for (int j = 0; j < event.getEventAssignmentCount(); j++) {
 						Parameter parameter = 
 								bioModel.getSBMLDocument().getModel().getParameter(event.getListOfEventAssignments().get(j).getVariable());
 						EventAssignment ea = event.getListOfEventAssignments().get(j);
 						// TODO: add the index in the field
+						indecies[0] = AnnotationUtility.parseVectorIndexAnnotation(ea);
+						if(indecies[0]==null){
+							indecies[1] = AnnotationUtility.parseMatrixIndexAnnotation(ea);
+							if(indecies[1]==null){
+								iIndex.setText("");
+								jIndex.setText("");
+							}
+							else{
+								iIndex.setText(indecies[0]);
+								jIndex.setText(indecies[1]);
+							}
+						}
+						else{
+							iIndex.setText(indecies[0]);
+							jIndex.setText("");
+						}
 						if (parameter!=null && SBMLutilities.isPlace(parameter)) {
 							if (isTextual) {
 								assign[l] = ea.getVariable() + " := " + SBMLutilities.myFormulaToString(ea.getMath());
@@ -393,46 +408,29 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 								2, false);
 					}
 				}
-			}
-			String[] sizes = new String[2];
-			String[] indecies = new String[2];
-			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(e);
-			if(sizes[0]==null){
-				sizes = AnnotationUtility.parseMatrixSizeAnnotation(e);
-				if(sizes==null){
-					dimensionType.setSelectedIndex(0);
-					dimensionX.setEnabled(false);
+				String[] sizes = new String[2];
+				sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(event);
+				if(sizes[0]==null){
+					sizes = AnnotationUtility.parseMatrixSizeAnnotation(event);
+					if(sizes==null){
+						dimensionType.setSelectedIndex(0);
+						dimensionX.setEnabled(false);
+						dimensionY.setEnabled(false);
+					}
+					else{
+						dimensionType.setSelectedIndex(2);
+						dimensionX.setEnabled(true);
+						dimensionY.setEnabled(true);
+						dimensionX.setSelectedItem(sizes[0]);
+						dimensionY.setSelectedItem(sizes[1]);
+					}
+				}
+				else{
+					dimensionType.setSelectedIndex(1);
+					dimensionX.setEnabled(true);
+					dimensionX.setSelectedItem(sizes[0]);
 					dimensionY.setEnabled(false);
 				}
-				else{
-					dimensionType.setSelectedIndex(2);
-					dimensionX.setEnabled(true);
-					dimensionY.setEnabled(true);
-					dimensionX.setSelectedItem(sizes[0]);
-					dimensionY.setSelectedItem(sizes[1]);
-				}
-			}
-			else{
-				dimensionType.setSelectedIndex(1);
-				dimensionX.setEnabled(true);
-				dimensionX.setSelectedItem(sizes[0]);
-				dimensionY.setEnabled(false);
-			}
-			indecies[0] = AnnotationUtility.parseVectorIndexAnnotation(e);
-			if(indecies[0]==null){
-				indecies[1] = AnnotationUtility.parseMatrixIndexAnnotation(e);
-				if(indecies[1]==null){
-					iIndex.setText("");
-					jIndex.setText("");
-				}
-				else{
-					iIndex.setText(indecies[0]);
-					jIndex.setText(indecies[1]);
-				}
-			}
-			else{
-				iIndex.setText(indecies[0]);
-				jIndex.setText("");
 			}
 		}
 		else {
@@ -483,18 +481,14 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		}
 		evPanel.add(onPortLabel);
 		evPanel.add(onPort);
+		evPanel.add(dimensionType);
+		evPanel.add(dimensionX);
+		evPanel.add(new JLabel());
+		evPanel.add(dimensionY);
 		eventPanel.add(evPanel, "North");
 		if (!modelEditor.isParamsOnly())
 			eventPanel.add(sbolField, "Center");
-		dimensionPanel.add(dimensionType);
-		dimensionPanel.add(dimensionX);
-		dimensionPanel.add(iIndex);
-		dimensionPanel.add(new JLabel());
-		dimensionPanel.add(dimensionY);
-		dimensionPanel.add(jIndex);
-		southPanel.add(eventAssignPanel, "North");
-		southPanel.add(dimensionPanel, "South");
-		eventPanel.add(southPanel, "South");
+		eventPanel.add(eventAssignPanel, "South");
 		Object[] options = { option, "Cancel" };
 		String title = "Event Editor";
 		if (isTransition) {
@@ -656,6 +650,18 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					for (int i = 0; i < assign.length; i++) {
 						EventAssignment ea = e.createEventAssignment();
 						// TODO: extract the index, if one exisits and add annotations for them
+						if (dimensionType.getSelectedIndex() == 1){
+							AnnotationUtility.removeMatrixIndexAnnotation(ea);
+							AnnotationUtility.setVectorIndexAnnotation(ea,(String) iIndex.getText());
+						}
+						else if (dimensionType.getSelectedIndex() == 2){
+							AnnotationUtility.setVectorIndexAnnotation(ea,(String) iIndex.getText());
+							AnnotationUtility.setMatrixIndexAnnotation(ea,(String) jIndex.getText());
+						}
+						else{
+							AnnotationUtility.removeVectorIndexAnnotation(ea);
+							AnnotationUtility.removeMatrixIndexAnnotation(ea);
+						}
 						String var = assign[i].split(" ")[0];
 						ea.setVariable(var);
 						Parameter p = bioModel.getSBMLDocument().getModel().getParameter(var);
@@ -875,23 +881,16 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					if (dimensionType.getSelectedIndex() == 1){
 						AnnotationUtility.removeMatrixSizeAnnotation(e);
 						AnnotationUtility.setVectorSizeAnnotation(e,(String) dimensionX.getSelectedItem());
-						AnnotationUtility.removeMatrixIndexAnnotation(e);
-						AnnotationUtility.setVectorIndexAnnotation(e,(String) iIndex.getText());
 					}
 					else if (dimensionType.getSelectedIndex() == 2){
 						AnnotationUtility.removeVectorSizeAnnotation(e);
 
 						AnnotationUtility.setMatrixSizeAnnotation(e,(String) dimensionX.getSelectedItem(), 
 								(String) dimensionY.getSelectedItem());
-						AnnotationUtility.setVectorIndexAnnotation(e,(String) iIndex.getText());
-						AnnotationUtility.setMatrixIndexAnnotation(e,(String) jIndex.getText());
 					}
 					else{
 						AnnotationUtility.removeVectorSizeAnnotation(e);
-
 						AnnotationUtility.removeMatrixSizeAnnotation(e);
-						AnnotationUtility.removeVectorIndexAnnotation(e);
-						AnnotationUtility.removeMatrixIndexAnnotation(e);
 					}
 				} //end if option is "ok"
 				//add event
@@ -977,6 +976,18 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						for (int i = 0; i < assign.length; i++) {
 							EventAssignment ea = e.createEventAssignment();
 							// TODO: extract the index, if one exisits and add annotations for them
+							if (!iIndex.getText().isEmpty() && jIndex.getText().isEmpty()){
+								AnnotationUtility.removeMatrixIndexAnnotation(ea);
+								AnnotationUtility.setVectorIndexAnnotation(ea,(String) iIndex.getText());
+							}
+							else if (!iIndex.getText().isEmpty() && !jIndex.getText().isEmpty()){
+								AnnotationUtility.setVectorIndexAnnotation(ea,(String) iIndex.getText());
+								AnnotationUtility.setMatrixIndexAnnotation(ea,(String) jIndex.getText());
+							}
+							else{
+								AnnotationUtility.removeVectorIndexAnnotation(ea);
+								AnnotationUtility.removeMatrixIndexAnnotation(ea);
+							}
 							String var = assign[i].split(" ")[0];
 							if (var.endsWith("\'")) {
 								var = "rate_" + var.replace("\'","");
@@ -1072,24 +1083,16 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					if (dimensionType.getSelectedIndex() == 1){
 						AnnotationUtility.removeMatrixSizeAnnotation(e);
 						AnnotationUtility.setVectorSizeAnnotation(e,(String) dimensionX.getSelectedItem());
-						AnnotationUtility.removeMatrixIndexAnnotation(e);
-						AnnotationUtility.setVectorIndexAnnotation(e,(String) iIndex.getText());
 						
 					}
 					else if (dimensionType.getSelectedIndex() == 2){
 						AnnotationUtility.removeVectorSizeAnnotation(e);
-
 						AnnotationUtility.setMatrixSizeAnnotation(e,(String) dimensionX.getSelectedItem(), 
 								(String) dimensionY.getSelectedItem());
-						AnnotationUtility.setVectorIndexAnnotation(e,(String) iIndex.getText());
-						AnnotationUtility.setMatrixIndexAnnotation(e,(String) jIndex.getText());
 					}
 					else{
 						AnnotationUtility.removeVectorSizeAnnotation(e);
-
 						AnnotationUtility.removeMatrixSizeAnnotation(e);
-						AnnotationUtility.removeVectorIndexAnnotation(e);
-						AnnotationUtility.removeMatrixIndexAnnotation(e);
 					}
 				}
 				if (!error && !modelEditor.isParamsOnly()) {
@@ -1262,11 +1265,15 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			JOptionPane.showMessageDialog(Gui.frame, "No event assignment selected.", "Must Select an Event Assignment", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		JPanel eventAssignPanel = new JPanel();
-		JPanel EAPanel = new JPanel();
+		JPanel eventAssignPanel = new JPanel(new GridLayout(2,1));
+		JPanel northEAPanel = new JPanel();
+		JPanel southEAPanel = new JPanel();
 		JLabel idLabel = new JLabel("Variable:");
+		JLabel indexLabel = new JLabel("Indecies:");
 		JLabel eqnLabel = new JLabel("Assignment:");
 		JComboBox eaID = new JComboBox();
+		iIndex = new JTextField(10);
+		jIndex = new JTextField(10);
 		String selected;
 		String[] assign = new String[eventAssign.getModel().getSize()];
 		for (int i = 0; i < eventAssign.getModel().getSize(); i++) {
@@ -1337,11 +1344,15 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			eaID.setSelectedItem(selectAssign.split(" ")[0]);
 			eqn.setText(selectAssign.split(":=")[1].trim());
 		}
-		EAPanel.add(idLabel);
-		EAPanel.add(eaID);
-		EAPanel.add(eqnLabel);
-		EAPanel.add(eqn);
-		eventAssignPanel.add(EAPanel);
+		northEAPanel.add(idLabel);
+		northEAPanel.add(eaID);
+		northEAPanel.add(indexLabel);
+		northEAPanel.add(iIndex);
+		northEAPanel.add(jIndex);
+		southEAPanel.add(eqnLabel);
+		southEAPanel.add(eqn);
+		eventAssignPanel.add(northEAPanel,"North");
+		eventAssignPanel.add(southEAPanel,"South");
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, eventAssignPanel, "Event Asssignment Editor", JOptionPane.YES_NO_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);

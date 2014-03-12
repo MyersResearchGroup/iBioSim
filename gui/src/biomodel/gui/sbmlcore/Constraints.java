@@ -55,8 +55,6 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 	private JList constraints; // JList of initial assignments
 	
 	private JComboBox dimensionType, dimensionX, dimensionY;
-	
-	private JTextField iIndex, jIndex;
 
 	private BioModel bioModel;
 
@@ -114,7 +112,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 	public String constraintEditor(String option,String selected) {
 		JPanel constraintPanel = new JPanel();
 		JPanel consPanel = new JPanel(new BorderLayout());
-		JPanel dimensionPanel = new JPanel(new GridLayout(2,3));
+		JPanel dimensionPanel = new JPanel(new GridLayout(2,2));
 		JPanel southPanel = new JPanel(new BorderLayout());
 		JPanel IDPanel = new JPanel();
 		JPanel mathPanel = new JPanel(new BorderLayout());
@@ -147,10 +145,6 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		// TODO: added default
 		dimensionX.setEnabled(false);
 		dimensionY.setEnabled(false);
-		iIndex = new JTextField(10);
-		jIndex = new JTextField(10);
-		iIndex.setEnabled(false);
-		jIndex.setEnabled(false);
 		
 		JTextArea consMath = new JTextArea(3,30);
 		consMath.setLineWrap(true);
@@ -204,10 +198,9 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 				}
 			}
 			String[] sizes = new String[2];
-			String[] indecies = new String[2];
-			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(c);
+			sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(c.get(Cindex));
 			if(sizes[0]==null){
-				sizes = AnnotationUtility.parseMatrixSizeAnnotation(c);
+				sizes = AnnotationUtility.parseMatrixSizeAnnotation(c.get(Cindex));
 				if(sizes==null){
 					dimensionType.setSelectedIndex(0);
 					dimensionX.setEnabled(false);
@@ -226,22 +219,6 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 				dimensionX.setEnabled(true);
 				dimensionX.setSelectedItem(sizes[0]);
 				dimensionY.setEnabled(false);
-			}
-			indecies[0] = AnnotationUtility.parseVectorIndexAnnotation(c);
-			if(indecies[0]==null){
-				indecies[1] = AnnotationUtility.parseMatrixIndexAnnotation(c);
-				if(indecies[1]==null){
-					iIndex.setText("");
-					jIndex.setText("");
-				}
-				else{
-					iIndex.setText(indecies[0]);
-					jIndex.setText(indecies[1]);
-				}
-			}
-			else{
-				iIndex.setText(indecies[0]);
-				jIndex.setText("");
 			}
 		}
 		else {
@@ -266,10 +243,8 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		consPanel.add(messagePanel,"South");
 		dimensionPanel.add(dimensionType);
 		dimensionPanel.add(dimensionX);
-		dimensionPanel.add(iIndex);
 		dimensionPanel.add(new JLabel());
 		dimensionPanel.add(dimensionY);
-		dimensionPanel.add(jIndex);
 		southPanel.add(consPanel,"North");
 		southPanel.add(dimensionPanel,"South");
 		constraintPanel.add(southPanel);
@@ -372,23 +347,17 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 							AnnotationUtility.removeMatrixSizeAnnotation(c);
 
 							AnnotationUtility.setVectorSizeAnnotation(c,(String) dimensionX.getSelectedItem());
-							AnnotationUtility.removeMatrixIndexAnnotation(c);
-							AnnotationUtility.setVectorIndexAnnotation(c,(String) iIndex.getText());
 						}
 						else if (dimensionType.getSelectedIndex() == 2){
 							AnnotationUtility.removeVectorSizeAnnotation(c);
 
 							AnnotationUtility.setMatrixSizeAnnotation(c,(String) dimensionX.getSelectedItem(), 
 									(String) dimensionY.getSelectedItem());
-							AnnotationUtility.setVectorIndexAnnotation(c,(String) iIndex.getText());
-							AnnotationUtility.setMatrixIndexAnnotation(c,(String) jIndex.getText());
 						}
 						else{
 							AnnotationUtility.removeVectorSizeAnnotation(c);
 
 							AnnotationUtility.removeMatrixSizeAnnotation(c);
-							AnnotationUtility.removeVectorIndexAnnotation(c);
-							AnnotationUtility.removeMatrixIndexAnnotation(c);
 						}
 					}
 					else {
@@ -440,23 +409,17 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 							AnnotationUtility.removeMatrixSizeAnnotation(c);
 
 							AnnotationUtility.setVectorSizeAnnotation(c,(String) dimensionX.getSelectedItem());
-							AnnotationUtility.removeMatrixIndexAnnotation(c);
-							AnnotationUtility.setVectorIndexAnnotation(c,(String) iIndex.getText());
 						}
 						else if (dimensionType.getSelectedIndex() == 2){
 							AnnotationUtility.removeVectorSizeAnnotation(c);
 
 							AnnotationUtility.setMatrixSizeAnnotation(c,(String) dimensionX.getSelectedItem(), 
 									(String) dimensionY.getSelectedItem());
-							AnnotationUtility.setVectorIndexAnnotation(c,(String) iIndex.getText());
-							AnnotationUtility.setMatrixIndexAnnotation(c,(String) jIndex.getText());
 						}
 						else{
 							AnnotationUtility.removeVectorSizeAnnotation(c);
 
 							AnnotationUtility.removeMatrixSizeAnnotation(c);
-							AnnotationUtility.removeVectorIndexAnnotation(c);
-							AnnotationUtility.removeMatrixIndexAnnotation(c);
 						}
 					}
 					modelEditor.setDirty(true);
@@ -568,20 +531,14 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 			if (index == 0) {
 				dimensionX.setEnabled(false);
 				dimensionY.setEnabled(false);
-				iIndex.setEnabled(false);
-				jIndex.setEnabled(false);
 			}
 			else if (index == 1) {
 				dimensionX.setEnabled(true);
 				dimensionY.setEnabled(false);
-				iIndex.setEnabled(true);
-				jIndex.setEnabled(false);
 			}
 			else if (index == 2) {
 				dimensionX.setEnabled(true);
 				dimensionY.setEnabled(true);
-				iIndex.setEnabled(true);
-				jIndex.setEnabled(true);
 			}
 		}
 	}
