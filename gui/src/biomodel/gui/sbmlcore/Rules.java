@@ -543,7 +543,6 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					}
 					else{
 						AnnotationUtility.removeVectorSizeAnnotation(r);
-
 						AnnotationUtility.removeMatrixSizeAnnotation(r);
 						AnnotationUtility.removeVectorIndexAnnotation(r);
 						AnnotationUtility.removeMatrixIndexAnnotation(r);
