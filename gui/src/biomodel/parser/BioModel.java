@@ -1478,8 +1478,6 @@ public class BioModel {
 	public void createFBCPlugin() {
 		if (sbmlFBC==null) {
 			sbml.enablePackage(FBCConstants.namespaceURI);
-			// TODO: workaround
-			sbml.getSBMLDocumentAttributes().put("fbc:required", "false");
 			sbmlFBC = SBMLutilities.getFBCModelPlugin(sbml.getModel());
 		}
 	}
@@ -6531,8 +6529,6 @@ public class BioModel {
 		}
 		if (sbmlFBC.getListOfObjectives().size() > 0 || sbmlFBC.getListOfFluxBounds().size() > 0) {
 			document.enablePackage(FBCConstants.namespaceURI);
-			// TODO: workaround
-			document.getSBMLDocumentAttributes().put("fbc:required", "false");
 		}
 		if (sbmlCompModel.getListOfSubmodels().size()>0) {
 			CompSBMLDocumentPlugin documentComp = SBMLutilities.getCompSBMLDocumentPlugin(document);
