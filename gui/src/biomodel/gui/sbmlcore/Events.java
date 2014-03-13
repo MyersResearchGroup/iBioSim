@@ -1527,18 +1527,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		else if (e.getSource() == removeEvent) {
 			removeEvent(events, bioModel);
 		}
-		// if the add event assignment button is clicked
-		else if (((JButton) e.getSource()).getText().equals("Add Assignment")) {
-			eventAssignEditor(bioModel, eventAssign, "Add");
-		}
-		// if the edit event assignment button is clicked
-		else if (((JButton) e.getSource()).getText().equals("Edit Assignment")) {
-			eventAssignEditor(bioModel, eventAssign, "OK");
-		}
-		// if the remove event assignment button is clicked
-		else if (((JButton) e.getSource()).getText().equals("Remove Assignment")) {
-			removeAssignment(eventAssign);
-		}
 		// if the dimension type is changed
 		else if (e.getSource() == dimensionType) {
 			int index = dimensionType.getSelectedIndex();
@@ -1560,6 +1548,18 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				iIndex.setEnabled(true);
 				jIndex.setEnabled(true);
 			}
+		}
+		// if the add event assignment button is clicked
+		else if (((JButton) e.getSource()).getText().equals("Add Assignment")) {
+			eventAssignEditor(bioModel, eventAssign, "Add");
+		}
+		// if the edit event assignment button is clicked
+		else if (((JButton) e.getSource()).getText().equals("Edit Assignment")) {
+			eventAssignEditor(bioModel, eventAssign, "OK");
+		}
+		// if the remove event assignment button is clicked
+		else if (((JButton) e.getSource()).getText().equals("Remove Assignment")) {
+			removeAssignment(eventAssign);
 		}
 	}
 
