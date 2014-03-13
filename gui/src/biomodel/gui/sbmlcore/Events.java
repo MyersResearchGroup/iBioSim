@@ -51,7 +51,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 
 	private static final long serialVersionUID = 1L;
 
-	private JButton addEvent, addTrans, removeEvent, editEvent;
+	private JButton addEvent, addTrans, removeEvent, editEvent, addAssignment, editAssignment, removeAssignment;
 
 	private JList events; // JList of events
 
@@ -217,9 +217,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		
 		JPanel eventAssignPanel = new JPanel(new BorderLayout());
 		JPanel addEventAssign = new JPanel();
-		JButton addAssignment = new JButton("Add Assignment");
-		JButton removeAssignment = new JButton("Remove Assignment");
-		JButton editAssignment = new JButton("Edit Assignment");
+		addAssignment = new JButton("Add Assignment");
+		removeAssignment = new JButton("Remove Assignment");
+		editAssignment = new JButton("Edit Assignment");
 		addEventAssign.add(addAssignment);
 		addEventAssign.add(removeAssignment);
 		addEventAssign.add(editAssignment);
@@ -1550,15 +1550,16 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			}
 		}
 		// if the add event assignment button is clicked
-		else if (((JButton) e.getSource()).getText().equals("Add Assignment")) {
+		else if (e.getSource() == addAssignment) {
+		//else if (((JButton) e.getSource()).getText().equals("Add Assignment")) {
 			eventAssignEditor(bioModel, eventAssign, "Add");
 		}
 		// if the edit event assignment button is clicked
-		else if (((JButton) e.getSource()).getText().equals("Edit Assignment")) {
+		else if (e.getSource() == editAssignment) {
 			eventAssignEditor(bioModel, eventAssign, "OK");
 		}
 		// if the remove event assignment button is clicked
-		else if (((JButton) e.getSource()).getText().equals("Remove Assignment")) {
+		else if (e.getSource() == removeAssignment) {
 			removeAssignment(eventAssign);
 		}
 	}
