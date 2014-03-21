@@ -261,7 +261,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 					JOptionPane.showMessageDialog(Gui.frame, "Formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
-				else if (!SBMLutilities.isBoolean(bioModel.getSBMLDocument(), bioModel.addBooleans(consMath.getText().trim()))) {
+				else if (!SBMLutilities.returnsBoolean(bioModel.addBooleans(consMath.getText().trim()),bioModel.getSBMLDocument().getModel())) {
 					JOptionPane.showMessageDialog(Gui.frame, "Constraint formula must be of type Boolean.", "Enter Valid Formula",
 							JOptionPane.ERROR_MESSAGE);
 					error = true;
