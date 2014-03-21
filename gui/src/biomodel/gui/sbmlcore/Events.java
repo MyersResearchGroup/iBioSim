@@ -649,7 +649,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					}
 					for (int i = 0; i < assign.length; i++) {
 						EventAssignment ea = e.createEventAssignment();
-						// TODO: extract the index, if one exisits and add annotations for them
+						// TODO: extract the index, if one exists and add annotations for them
 						if (dimensionType.getSelectedIndex() == 1){
 							AnnotationUtility.removeMatrixIndexAnnotation(ea);
 							AnnotationUtility.setVectorIndexAnnotation(ea,(String) iIndex.getText());
@@ -975,7 +975,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					if (!error) {
 						for (int i = 0; i < assign.length; i++) {
 							EventAssignment ea = e.createEventAssignment();
-							// TODO: extract the index, if one exisits and add annotations for them
+							// TODO: extract the index, if one exists and add annotations for them
 							if (!iIndex.getText().isEmpty() && jIndex.getText().isEmpty()){
 								AnnotationUtility.removeMatrixIndexAnnotation(ea);
 								AnnotationUtility.setVectorIndexAnnotation(ea,(String) iIndex.getText());
@@ -1413,6 +1413,18 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 								error = true;
 							}
 						}
+					}
+					if (!iIndex.getText().isEmpty() && jIndex.getText().isEmpty()){
+						AnnotationUtility.removeMatrixIndexAnnotation(p);
+						AnnotationUtility.setVectorIndexAnnotation(p,(String) iIndex.getText());
+					}
+					else if (!iIndex.getText().isEmpty() && !jIndex.getText().isEmpty()){
+						AnnotationUtility.setVectorIndexAnnotation(p,(String) iIndex.getText());
+						AnnotationUtility.setMatrixIndexAnnotation(p,(String) jIndex.getText());
+					}
+					else{
+						AnnotationUtility.removeVectorIndexAnnotation(p);
+						AnnotationUtility.removeMatrixIndexAnnotation(p);
 					}
 				}
 			}
