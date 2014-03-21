@@ -25,6 +25,7 @@ import main.util.Utility;
 import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.Model;
+import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.ext.comp.Port;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Rule;
@@ -53,6 +54,10 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 	private BioModel bioModel;
 
 	private ModelEditor modelEditor;
+	
+	private JComboBox dimensionType, dimensionX, dimensionY;
+	
+	private JTextField iIndex, jIndex;
 
 	/* Create initial assignment panel */
 	public InitialAssignments(BioModel bioModel, ModelEditor modelEditor) {
@@ -65,6 +70,31 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 		removeInit = new JButton("Remove Initial");
 		editInit = new JButton("Edit Initial");
 		initAssigns = new JList();
+		dimensionType = new JComboBox();
+		dimensionType.addItem("Scalar");
+		dimensionType.addItem("Vector");
+		dimensionType.addItem("Matrix");
+		dimensionType.addActionListener(this);
+		dimensionX = new JComboBox();
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
+			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
+			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
+				dimensionX.addItem(param.getId());
+			}
+		}
+		dimensionY = new JComboBox();
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
+			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
+			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
+				dimensionY.addItem(param.getId());
+			}
+		}
+		dimensionX.setEnabled(false);
+		dimensionY.setEnabled(false);
+		iIndex = new JTextField(10);
+		jIndex = new JTextField(10);
+		iIndex.setEnabled(false);
+		jIndex.setEnabled(false);
 		String[] inits = new String[model.getInitialAssignmentCount()];
 		for (int i = 0; i < model.getInitialAssignmentCount(); i++) {
 			InitialAssignment init = model.getInitialAssignment(i);
