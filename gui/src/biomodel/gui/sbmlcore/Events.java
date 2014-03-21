@@ -379,6 +379,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							iIndex.setText(indecies[0]);
 							jIndex.setText("");
 						}
+						// TODO: update assign with index in the string
 						if (parameter!=null && SBMLutilities.isPlace(parameter)) {
 							if (isTextual) {
 								assign[l] = ea.getVariable() + " := " + SBMLutilities.myFormulaToString(ea.getMath());
@@ -650,6 +651,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					for (int i = 0; i < assign.length; i++) {
 						EventAssignment ea = e.createEventAssignment();
 						// TODO: extract the index, if one exists and add annotations for them
+						// look at assign[i]
 						if (dimensionType.getSelectedIndex() == 1){
 							AnnotationUtility.removeMatrixIndexAnnotation(ea);
 							AnnotationUtility.setVectorIndexAnnotation(ea,(String) iIndex.getText());
@@ -976,6 +978,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						for (int i = 0; i < assign.length; i++) {
 							EventAssignment ea = e.createEventAssignment();
 							// TODO: extract the index, if one exists and add annotations for them
+							// look at assign[i]
 							if (!iIndex.getText().isEmpty() && jIndex.getText().isEmpty()){
 								AnnotationUtility.removeMatrixIndexAnnotation(ea);
 								AnnotationUtility.setVectorIndexAnnotation(ea,(String) iIndex.getText());
@@ -1434,6 +1437,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					eventAssign.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					assign = Utility.getList(assign, eventAssign);
 					eventAssign.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+					// TODO: add the index into the assign[index] string
 					assign[index] = eaID.getSelectedItem() + " := " + eqn.getText().trim();
 					Utility.sort(assign);
 					eventAssign.setListData(assign);
@@ -1442,6 +1446,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				else {
 					JList add = new JList();
 					int index = eventAssign.getSelectedIndex();
+					// TODO: add the index into the assign[index] string
 					Object[] adding = { eaID.getSelectedItem() + " := " + eqn.getText().trim() };
 					add.setListData(adding);
 					add.setSelectedIndex(0);
