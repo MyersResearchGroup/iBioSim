@@ -363,9 +363,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 								bioModel.getSBMLDocument().getModel().getParameter(event.getListOfEventAssignments().get(j).getVariable());
 						EventAssignment ea = event.getListOfEventAssignments().get(j);
 						// TODO: add the index in the field
-						indecies[0] = AnnotationUtility.parseVectorIndexAnnotation(ea);
+						indecies[0] = AnnotationUtility.parseRowIndexAnnotation(ea);
 						if(indecies[0]==null){
-							indecies[1] = AnnotationUtility.parseMatrixIndexAnnotation(ea);
+							indecies[1] = AnnotationUtility.parseColIndexAnnotation(ea);
 							if(indecies[1]==null){
 								iIndex.setText("");
 								jIndex.setText("");
@@ -653,16 +653,16 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						// TODO: extract the index, if one exists and add annotations for them
 						// look at assign[i]
 						if (dimensionType.getSelectedIndex() == 1){
-							AnnotationUtility.removeMatrixIndexAnnotation(ea);
-							AnnotationUtility.setVectorIndexAnnotation(ea,(String) iIndex.getText());
+							AnnotationUtility.removeColIndexAnnotation(ea);
+							AnnotationUtility.setRowIndexAnnotation(ea,(String) iIndex.getText());
 						}
 						else if (dimensionType.getSelectedIndex() == 2){
-							AnnotationUtility.setVectorIndexAnnotation(ea,(String) iIndex.getText());
-							AnnotationUtility.setMatrixIndexAnnotation(ea,(String) jIndex.getText());
+							AnnotationUtility.setRowIndexAnnotation(ea,(String) iIndex.getText());
+							AnnotationUtility.setColIndexAnnotation(ea,(String) jIndex.getText());
 						}
 						else{
-							AnnotationUtility.removeVectorIndexAnnotation(ea);
-							AnnotationUtility.removeMatrixIndexAnnotation(ea);
+							AnnotationUtility.removeRowIndexAnnotation(ea);
+							AnnotationUtility.removeColIndexAnnotation(ea);
 						}
 						String var = assign[i].split(" ")[0];
 						ea.setVariable(var);
@@ -980,16 +980,16 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							// TODO: extract the index, if one exists and add annotations for them
 							// look at assign[i]
 							if (!iIndex.getText().isEmpty() && jIndex.getText().isEmpty()){
-								AnnotationUtility.removeMatrixIndexAnnotation(ea);
-								AnnotationUtility.setVectorIndexAnnotation(ea,(String) iIndex.getText());
+								AnnotationUtility.removeColIndexAnnotation(ea);
+								AnnotationUtility.setRowIndexAnnotation(ea,(String) iIndex.getText());
 							}
 							else if (!iIndex.getText().isEmpty() && !jIndex.getText().isEmpty()){
-								AnnotationUtility.setVectorIndexAnnotation(ea,(String) iIndex.getText());
-								AnnotationUtility.setMatrixIndexAnnotation(ea,(String) jIndex.getText());
+								AnnotationUtility.setRowIndexAnnotation(ea,(String) iIndex.getText());
+								AnnotationUtility.setColIndexAnnotation(ea,(String) jIndex.getText());
 							}
 							else{
-								AnnotationUtility.removeVectorIndexAnnotation(ea);
-								AnnotationUtility.removeMatrixIndexAnnotation(ea);
+								AnnotationUtility.removeRowIndexAnnotation(ea);
+								AnnotationUtility.removeColIndexAnnotation(ea);
 							}
 							String var = assign[i].split(" ")[0];
 							if (var.endsWith("\'")) {
@@ -1418,16 +1418,16 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						}
 					}
 					if (!iIndex.getText().isEmpty() && jIndex.getText().isEmpty()){
-						AnnotationUtility.removeMatrixIndexAnnotation(p);
-						AnnotationUtility.setVectorIndexAnnotation(p,(String) iIndex.getText());
+						AnnotationUtility.removeColIndexAnnotation(p);
+						AnnotationUtility.setRowIndexAnnotation(p,iIndex.getText());
 					}
 					else if (!iIndex.getText().isEmpty() && !jIndex.getText().isEmpty()){
-						AnnotationUtility.setVectorIndexAnnotation(p,(String) iIndex.getText());
-						AnnotationUtility.setMatrixIndexAnnotation(p,(String) jIndex.getText());
+						AnnotationUtility.setRowIndexAnnotation(p,iIndex.getText());
+						AnnotationUtility.setColIndexAnnotation(p,jIndex.getText());
 					}
 					else{
-						AnnotationUtility.removeVectorIndexAnnotation(p);
-						AnnotationUtility.removeMatrixIndexAnnotation(p);
+						AnnotationUtility.removeRowIndexAnnotation(p);
+						AnnotationUtility.removeColIndexAnnotation(p);
 					}
 				}
 			}
