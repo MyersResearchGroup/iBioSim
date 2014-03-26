@@ -23,6 +23,7 @@ import javax.swing.JTextField;
 import org.sbml.jsbml.InitialAssignment;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Model;
+import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.ext.comp.Submodel;
@@ -88,14 +89,14 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		
 		//if this is in analysis mode, only show the sweepable/changeable values
 		if (paramsOnly)
-			grid = new JPanel(new GridLayout(7,1));
+			grid = new JPanel(new GridLayout(8,1));
 		else {
 			
 			if (bioModel.getSBMLDocument().getLevel() > 2) {
-				grid = new JPanel(new GridLayout(17,1));
+				grid = new JPanel(new GridLayout(18,1));
 			} 
 			else {
-				grid = new JPanel(new GridLayout(16,1));
+				grid = new JPanel(new GridLayout(17,1));
 			}
 		}
 		
@@ -603,6 +604,36 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				typeBox.setSelectedItem(GlobalConstants.INTERNAL);
 			}
 		}
+		
+		// Dimension field
+		tempPanel = new JPanel();
+		dimensionType = new JComboBox();
+		dimensionType.addItem("Scalar");
+		dimensionType.addItem("Vector");
+		dimensionType.addItem("Matrix");
+		dimensionType.addActionListener(this);
+		dimensionX = new JComboBox();
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
+			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
+			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
+				dimensionX.addItem(param.getId());
+			}
+		}
+		dimensionY = new JComboBox();
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
+			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
+			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
+				dimensionY.addItem(param.getId());
+			}
+		}
+		dimensionX.setEnabled(false);
+		dimensionY.setEnabled(false);
+		tempPanel.setLayout(new GridLayout(1, 3));
+		tempPanel.add(dimensionType);
+		tempPanel.add(dimensionX);
+		tempPanel.add(dimensionY);
+		if (!paramsOnly) grid.add(tempPanel);
+		
 		setFieldEnablings();
 		
 		boolean display = false;
@@ -1045,6 +1076,24 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 		if (paramsOnly)
 			thresholdTextField.setEnabled(specInteresting.isSelected());
+		
+
+		// if the dimension type is changed
+		else if (e.getSource() == dimensionType) {
+			int index = dimensionType.getSelectedIndex();
+			if (index == 0) {
+				dimensionX.setEnabled(false);
+				dimensionY.setEnabled(false);
+			}
+			else if (index == 1) {
+				dimensionX.setEnabled(true);
+				dimensionY.setEnabled(false);
+			}
+			else if (index == 2) {
+				dimensionX.setEnabled(true);
+				dimensionY.setEnabled(true);
+			}
+		}
 	}
 
 	/**
@@ -1100,6 +1149,10 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	private JComboBox specConstant = null;
 	private JComboBox specHasOnly = null;
 	private JTextField initialField = null;
+	
+	private JComboBox dimensionType = null;
+	private JComboBox dimensionX = null;
+	private JComboBox dimensionY = null;
 	
 	private JCheckBox specInteresting = null;
 	private JCheckBox specDiffusible = null;
