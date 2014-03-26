@@ -305,7 +305,6 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				dimensionY.addItem(param.getId());
 			}
 		}
-		// TODO: added default
 		dimensionX.setEnabled(false);
 		dimensionY.setEnabled(false);
 		
@@ -754,7 +753,6 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							}
 							else{
 								AnnotationUtility.removeVectorSizeAnnotation(paramet);
-
 								AnnotationUtility.removeMatrixSizeAnnotation(paramet);
 							}
 							if (paramConst.getSelectedItem().equals("true")) {

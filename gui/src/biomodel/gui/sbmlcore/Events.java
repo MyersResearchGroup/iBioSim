@@ -202,7 +202,6 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				dimensionY.addItem(param.getId());
 			}
 		}
-		// TODO: added default
 		dimensionX.setEnabled(false);
 		dimensionY.setEnabled(false);
 		iIndex = new JTextField(10);
@@ -364,28 +363,28 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						EventAssignment ea = event.getListOfEventAssignments().get(j);
 						// TODO: add the index in the field
 						indecies[0] = AnnotationUtility.parseRowIndexAnnotation(ea);
+						String assignIndex = " [";
+						indecies[0] = AnnotationUtility.parseRowIndexAnnotation(ea);
 						if(indecies[0]==null){
 							indecies[1] = AnnotationUtility.parseColIndexAnnotation(ea);
 							if(indecies[1]==null){
-								iIndex.setText("");
-								jIndex.setText("");
+								assignIndex = "";
 							}
 							else{
-								iIndex.setText(indecies[0]);
-								jIndex.setText(indecies[1]);
+								assignIndex += (indecies[0] + ",");
+								assignIndex += (indecies[1] + "]");
 							}
 						}
 						else{
-							iIndex.setText(indecies[0]);
-							jIndex.setText("");
+							assignIndex += (indecies[0] + "]");
 						}
 						// TODO: update assign with index in the string
 						if (parameter!=null && SBMLutilities.isPlace(parameter)) {
 							if (isTextual) {
-								assign[l] = ea.getVariable() + " := " + SBMLutilities.myFormulaToString(ea.getMath());
+								assign[l] = ea.getVariable() + assignIndex + " := " + SBMLutilities.myFormulaToString(ea.getMath());
 								l++;
 							} else {
-								placeAssign[k] = ea.getVariable() + " := " + SBMLutilities.myFormulaToString(ea.getMath());
+								placeAssign[k] = ea.getVariable() + assignIndex + " := " + SBMLutilities.myFormulaToString(ea.getMath());
 								k++;
 							}
 						} else if (ea.getVariable().equals(GlobalConstants.FAIL)){
@@ -395,10 +394,10 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							if (parameter!=null && SBMLutilities.isBoolean(parameter)) {
 								assignMath = bioModel.removeBooleanAssign(event.getListOfEventAssignments().get(j).getMath());
 							} 
-							assign[l] = ea.getVariable() + " := " + assignMath;
+							assign[l] = ea.getVariable() + assignIndex + " := " + assignMath;
 							l++;
 						}
-						origAssign[j] = ea.getVariable() + " := " + SBMLutilities.myFormulaToString(ea.getMath());
+						origAssign[j] = ea.getVariable() + assignIndex + " := " + SBMLutilities.myFormulaToString(ea.getMath());
 					}
 					if (!modelEditor.isParamsOnly()) {
 						//Parse out SBOL annotations and add to SBOL field
@@ -650,22 +649,33 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					}
 					for (int i = 0; i < assign.length; i++) {
 						EventAssignment ea = e.createEventAssignment();
-						// TODO: extract the index, if one exists and add annotations for them
-						// look at assign[i]
-						if (dimensionType.getSelectedIndex() == 1){
-							AnnotationUtility.removeColIndexAnnotation(ea);
-							AnnotationUtility.setRowIndexAnnotation(ea,(String) iIndex.getText());
-						}
-						else if (dimensionType.getSelectedIndex() == 2){
-							AnnotationUtility.setRowIndexAnnotation(ea,(String) iIndex.getText());
-							AnnotationUtility.setColIndexAnnotation(ea,(String) jIndex.getText());
-						}
-						else{
-							AnnotationUtility.removeRowIndexAnnotation(ea);
-							AnnotationUtility.removeColIndexAnnotation(ea);
-						}
 						String var = assign[i].split(" ")[0];
 						ea.setVariable(var);
+						// TODO: extract the index, if one exists and add annotations for them
+						// look at assign[i]
+						String left = assign[i].split(":=")[0].trim();
+						if(left.contains("[")){
+							String ind = left.split("\\[")[1].trim();
+							if(!ind.contains(",")){
+								AnnotationUtility.setRowIndexAnnotation(ea, ind.replace("]", ""));
+							}
+							else{
+								AnnotationUtility.setRowIndexAnnotation(ea,ind.split(",")[0]);
+								AnnotationUtility.setColIndexAnnotation(ea,ind.split(",")[1].replace("]", ""));
+							}
+							if (dimensionType.getSelectedIndex() == 1){
+								AnnotationUtility.removeColIndexAnnotation(ea);
+								AnnotationUtility.setRowIndexAnnotation(ea,(String) iIndex.getText());
+							}
+							else if (dimensionType.getSelectedIndex() == 2){
+								AnnotationUtility.setRowIndexAnnotation(ea,(String) iIndex.getText());
+								AnnotationUtility.setColIndexAnnotation(ea,(String) jIndex.getText());
+							}
+							else{
+								AnnotationUtility.removeRowIndexAnnotation(ea);
+								AnnotationUtility.removeColIndexAnnotation(ea);
+							}
+						}
 						Parameter p = bioModel.getSBMLDocument().getModel().getParameter(var);
 						if (p != null && SBMLutilities.isBoolean(p)) {
 							ea.setMath(bioModel.addBooleanAssign(assign[i].split(":=")[1].trim()));
@@ -688,6 +698,17 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					for (int i = 0; i < placeAssign.length; i++) {
 						EventAssignment ea = e.createEventAssignment();
 						ea.setVariable(placeAssign[i].split(" ")[0]);
+						String left = placeAssign[i].split(":=")[0].trim();
+						if(left.contains("[")){
+							String ind = left.split("\\[")[1].trim();
+							if(!ind.contains(",")){
+								AnnotationUtility.setRowIndexAnnotation(ea, ind.replace("]", ""));
+							}
+							else{
+								AnnotationUtility.setRowIndexAnnotation(ea,ind.split(",")[0]);
+								AnnotationUtility.setColIndexAnnotation(ea, ind.split(",")[1].replace("]", ""));
+							}
+						}
 						ea.setMath(SBMLutilities.myParseFormula(placeAssign[i].split(":=")[1].trim()));
 						error = checkEventAssignmentUnits(ea);
 						if (error) break;
@@ -977,21 +998,32 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					if (!error) {
 						for (int i = 0; i < assign.length; i++) {
 							EventAssignment ea = e.createEventAssignment();
+							String var = assign[i].split(" ")[0];
 							// TODO: extract the index, if one exists and add annotations for them
 							// look at assign[i]
-							if (!iIndex.getText().isEmpty() && jIndex.getText().isEmpty()){
-								AnnotationUtility.removeColIndexAnnotation(ea);
-								AnnotationUtility.setRowIndexAnnotation(ea,(String) iIndex.getText());
+							String left = assign[i].split(":=")[0].trim();
+							if(left.contains("[")){
+								String ind = left.split("\\[")[1].trim();
+								if(!ind.contains(",")){
+									AnnotationUtility.setRowIndexAnnotation(ea, ind.replace("]", ""));
+								}
+								else{
+									AnnotationUtility.setRowIndexAnnotation(ea,ind.split(",")[0]);
+									AnnotationUtility.setColIndexAnnotation(ea, ind.split(",")[1].replace("]", ""));
+								}
+								if (!iIndex.getText().isEmpty() && jIndex.getText().isEmpty()){
+									AnnotationUtility.removeColIndexAnnotation(ea);
+									AnnotationUtility.setRowIndexAnnotation(ea,(String) iIndex.getText());
+								}
+								else if (!iIndex.getText().isEmpty() && !jIndex.getText().isEmpty()){
+									AnnotationUtility.setRowIndexAnnotation(ea,(String) iIndex.getText());
+									AnnotationUtility.setColIndexAnnotation(ea,(String) jIndex.getText());
+								}
+								else{
+									AnnotationUtility.removeRowIndexAnnotation(ea);
+									AnnotationUtility.removeColIndexAnnotation(ea);
+								}
 							}
-							else if (!iIndex.getText().isEmpty() && !jIndex.getText().isEmpty()){
-								AnnotationUtility.setRowIndexAnnotation(ea,(String) iIndex.getText());
-								AnnotationUtility.setColIndexAnnotation(ea,(String) jIndex.getText());
-							}
-							else{
-								AnnotationUtility.removeRowIndexAnnotation(ea);
-								AnnotationUtility.removeColIndexAnnotation(ea);
-							}
-							String var = assign[i].split(" ")[0];
 							if (var.endsWith("\'")) {
 								var = "rate_" + var.replace("\'","");
 							}
@@ -1345,6 +1377,17 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		if (option.equals("OK")) {
 			String selectAssign = ((String) eventAssign.getSelectedValue());
 			eaID.setSelectedItem(selectAssign.split(" ")[0]);
+			String left = selectAssign.split(":=")[0].trim();
+			if(left.contains("[")){
+				String ind = left.split("\\[")[1].trim();
+				if(!ind.contains(",")){
+					iIndex.setText(ind.replace("]", ""));
+				}
+				else{
+					iIndex.setText(ind.split("\\,")[0]);
+					jIndex.setText(ind.split("\\,")[1].replace("]", ""));
+				}
+			}
 			eqn.setText(selectAssign.split(":=")[1].trim());
 		}
 		northEAPanel.add(idLabel);
@@ -1438,7 +1481,19 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					assign = Utility.getList(assign, eventAssign);
 					eventAssign.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					// TODO: add the index into the assign[index] string
-					assign[index] = eaID.getSelectedItem() + " := " + eqn.getText().trim();
+					String assignIndex = " [";
+					if(dimensionType.getSelectedIndex()==0){
+						assignIndex = "";
+					}
+					else if (dimensionType.getSelectedIndex()==2){
+						assignIndex += (iIndex.getText() + ",");
+						assignIndex += (jIndex.getText() + "]");
+					}
+
+					else{
+						assignIndex += (iIndex.getText() + "]");
+					}
+					assign[index] = eaID.getSelectedItem() + assignIndex + " := " + eqn.getText().trim();
 					Utility.sort(assign);
 					eventAssign.setListData(assign);
 					eventAssign.setSelectedIndex(index);
@@ -1447,7 +1502,19 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					JList add = new JList();
 					int index = eventAssign.getSelectedIndex();
 					// TODO: add the index into the assign[index] string
-					Object[] adding = { eaID.getSelectedItem() + " := " + eqn.getText().trim() };
+					String assignIndex = " [";
+					if(dimensionType.getSelectedIndex()==0){
+						assignIndex = "";
+					}
+					else if (dimensionType.getSelectedIndex()==2){
+						assignIndex += (iIndex.getText() + ",");
+						assignIndex += (jIndex.getText() + "]");
+					}
+
+					else{
+						assignIndex += (iIndex.getText() + "]");
+					}
+					Object[] adding = { eaID.getSelectedItem() + assignIndex + " := " + eqn.getText().trim() };
 					add.setListData(adding);
 					add.setSelectedIndex(0);
 					eventAssign.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);

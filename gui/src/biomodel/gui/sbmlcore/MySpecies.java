@@ -62,6 +62,8 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 	private JList species; // JList of species
 
 	private JTextField ID, init, Name; // species text fields
+	
+	private JComboBox dimensionType, dimensionX, dimensionY;
 
 //	SpeciesType not supported in Level 3
 //	private JComboBox specTypeBox; // species
@@ -221,6 +223,9 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Creates a frame used to edit species or create new ones.
 	 */
+	/**
+	 * @param option
+	 */
 	@SuppressWarnings("unused")
 	private void speciesEditor(String option) {
 		if (option.equals("OK") && species.getSelectedIndex() == -1) {
@@ -260,6 +265,29 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		specConstant.setSelectedItem("false");
 		specHasOnly = new JComboBox(optionsTF);
 		specHasOnly.setSelectedItem("false");
+		
+		dimensionType = new JComboBox();
+		dimensionType.addItem("Scalar");
+		dimensionType.addItem("Vector");
+		dimensionType.addItem("Matrix");
+		dimensionType.addActionListener(this);
+		dimensionX = new JComboBox();
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
+			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
+			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
+				dimensionX.addItem(param.getId());
+			}
+		}
+		dimensionY = new JComboBox();
+		for (int i = 0; i < bioModel.getSBMLDocument().getModel().getParameterCount(); i++) {
+			Parameter param = bioModel.getSBMLDocument().getModel().getParameter(i);
+			if (param.getConstant() && !BioModel.IsDefaultParameter(param.getId())) {
+				dimensionY.addItem(param.getId());
+			}
+		}
+		dimensionX.setEnabled(false);
+		dimensionY.setEnabled(false);
+		
 //		SpeciesType not supported in Level 3
 //		ListOf listOfSpecTypes = bioModel.getSBMLDocument().getModel().getListOfSpeciesTypes();
 //		String[] specTypeList = new String[(int) bioModel.getSBMLDocument().getModel().getSpeciesTypeCount() + 1];
@@ -327,6 +355,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 			specUnits.setEnabled(false);
 			specConv.setEnabled(false);
 			sweep.setEnabled(false);
+			dimensionType.setEnabled(false);
 		}
 		if (option.equals("OK")) {
 			try {
@@ -398,6 +427,29 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						catch (Exception e1) {
 						}
 					}
+				}
+				String[] sizes = new String[2];
+				sizes[0] = AnnotationUtility.parseVectorSizeAnnotation(specie);
+				if(sizes[0]==null){
+					sizes = AnnotationUtility.parseMatrixSizeAnnotation(specie);
+					if(sizes==null){
+						dimensionType.setSelectedIndex(0);
+						dimensionX.setEnabled(false);
+						dimensionY.setEnabled(false);
+					}
+					else{
+						dimensionType.setSelectedIndex(2);
+						dimensionX.setEnabled(true);
+						dimensionY.setEnabled(true);
+						dimensionX.setSelectedItem(sizes[0]);
+						dimensionY.setSelectedItem(sizes[1]);
+					}
+				}
+				else{
+					dimensionType.setSelectedIndex(1);
+					dimensionX.setEnabled(true);
+					dimensionX.setSelectedItem(sizes[0]);
+					dimensionY.setEnabled(false);
 				}
 			}
 			catch (Exception e) {
@@ -651,6 +703,20 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						}
 						else {
 							SBMLutilities.updateVarId(bioModel.getSBMLDocument(), true, speciesName, specie.getId());
+						}
+						if (dimensionType.getSelectedIndex() == 1){
+							AnnotationUtility.removeMatrixSizeAnnotation(specie);
+							AnnotationUtility.setVectorSizeAnnotation(specie,(String) dimensionX.getSelectedItem());
+							}
+						else if (dimensionType.getSelectedIndex() == 2){
+							AnnotationUtility.removeVectorSizeAnnotation(specie);
+
+							AnnotationUtility.setMatrixSizeAnnotation(specie,(String) dimensionX.getSelectedItem(), 
+									(String) dimensionY.getSelectedItem());
+						}
+						else{
+							AnnotationUtility.removeVectorSizeAnnotation(specie);
+							AnnotationUtility.removeMatrixSizeAnnotation(specie);
 						}
 					}
 					else {
